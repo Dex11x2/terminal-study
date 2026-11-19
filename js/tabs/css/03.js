@@ -3,12 +3,1858 @@ MORE("css", [
     {
       t: "الجداول",
       projects: [
-        { lvl: 'صغير', t: R`جدول باقات جيم متخيل`, what: R`جدول بيقارن ٣ باقات لـ «جيم الأبطال» (شهري، ٣ شهور، سنوي): caption، و th بـ [[scope="col"]] لأسامي الباقات، و th بـ [[scope="row"]] لكل ميزة (السعر، الحصص، الساونا)، وعلامة ✓ أو ✗ في الخلايا ومعاها كلام مخفي بالشكل للقارئ («موجود» أو «مش موجود»)، و tfoot فيه زرار «اشترك» لكل باقة. من درس «table».`, done: R`تاب Accessibility بيقول [[columnheader]] لأسامي الباقات و [[rowheader]] للمميزات، واسم الجدول من الـ caption، وقارئ الشاشة (أو ARIA snapshot) بيقرا «الساونا، سنوي، موجود» مش «✓» بس.` },
-        { lvl: 'صغير', t: R`مواعيد عيادة على الموبايل`, what: R`جدول مواعيد أطبا لـ «عيادة الشفاء» فيه ٧ أعمدة (أيام الأسبوع) جوه wrapper بـ [[overflow-x: auto]] و [[tabindex="0"]] و [[role="region"]]، وأول عمود (اسم الدكتور) [[position: sticky]] على [[inset-inline-start: 0]] عشان يفضل ظاهر وانت بتعمل scroll. من درس «جدول responsive».`, done: R`على 360px الصفحة مفيهاش scroll أفقي ([[document.documentElement.scrollWidth]] = 360) والجدول بس اللي بيتحرك، واسم الدكتور فاضل مكانه وانت بتتحرك، والـ wrapper بياخد focus بـ Tab والأسهم بتحرّكه.` },
-        { lvl: 'متوسط', t: R`لوحة طلبات لمتجر متخيل`, what: R`جدول طلبات فيه ٣٠ طلب من JSON: عناوين لازقة فوق، وصفوف مخططة، وحالة كل طلب شارة ملوّنة (مدفوع، مستني، ملغي) بلون خلفية فاتح ولون كلام غامق من نفس العيلة، وعمود أرقام [[tabular-nums]]، وترتيب بأزرار جوه الـ th و [[aria-sort]]، والحالة كلها في الـ URL. من دروس الوحدة كلها.`, done: R`الضغط على «الإجمالي» بيرتب تصاعدي وتاني ضغطة تنازلي، والـ URL بيتغيّر و Back بيرجّع الترتيب اللي قبله، والـ refresh بيفتح على نفس الترتيب، وكل شارة تباينها 4.5:1 أو أكتر في DevTools، و axe صفر violations.` },
-        { lvl: 'متوسط', t: R`كتالوج كتب بالبحث والصفحات`, what: R`جدول ١٠٠ كتاب لـ «مكتبة الحروف» (اسم متخيل): حقل بحث بيفلتر بالعنوان أو الكاتب ويكتب [[?q=]] بـ [[replaceState]] (مش مع كل حرف خطوة history)، وصفحات ٢٠ كتاب بأزرار «اللي قبله» و «اللي بعده» وأرقام، وعداد «لقينا ١٢ كتاب» عليه [[aria-live="polite"]]. من درس «ترتيب وصفحات في الـ URL».`, done: R`كتابة «نجيب» بتفلتر من غير reload وزرار Back بيرجّعك للصفحة اللي قبل البحث بضغطة واحدة، و [[?page=99]] بيفتح آخر صفحة مش صفحة فاضية، و [[?q=]] بكلمة عربي بيشتغل لو اتبعت لحد تاني.` },
-        { lvl: 'كبير', t: R`فاتورة ومخزن لمحل متخيل`, what: R`أداة لمحل أدوات منزلية متخيل: فورم بيزوّد صنف (الاسم، والكمية، والسعر) لجدول الفاتورة، والإجمالي والضريبة بيتحسبوا في الـ tfoot، وحذف صنف بزرار ليه [[aria-label]] باسم الصنف، والفاتورة بتتحفظ في localStorage وترجع بعد الـ refresh، ورقم الفاتورة بيزيد لوحده. وصفحة الطباعة: A4 بهامش 12mm، ورقم «صفحة ١ من ٢» تحت، والـ thead والـ tfoot بيتكرروا، والصف مبيتقطعش، والأزرار والفورم مخفيين، وشعار المحل ولون عنوان الجدول بيتطبعوا. يجمع الوحدة دي مع وحدة الفورم.`, done: R`بـ ٤٠ صنف الـ Save as PDF بيطلع أكتر من ورقة وكل ورقة فيها العناوين فوق والإجمالي تحت ورقمها، ومفيش زرار ولا حقل في الورق، والرقم الغلط (كمية 0 أو سعر سالب) بيترفض برسالة جنب الحقل، والـ refresh مبيضيّعش الفاتورة، والطباعة مرتين ورا بعض بتطلع نفس الـ PDF، و axe صفر violations على الشاشة.`, ext: R`زوّد تصدير CSV بزرار، وفلتر بالتاريخ، ونسخة «إيصال كاشير» بـ [[size: 80mm 200mm]]، وخلي الـ PDF يتعمل في السيرفر بـ Playwright ([[page.pdf]]) لما تتعلم Node.` },
-        { lvl: 'فكرة', t: R`جدول لحاجة بتتابعها انت`, what: R`مصاريفك، أو ماتشات فريقك، أو مذاكرتك: جدول بياناته حقيقية من عندك، بترتيب وبحث وصفحة طباعة. انت اللي تحدد الأعمدة.`, done: R`فيه ٣٠ صف حقيقي على الأقل، والترتيب والبحث في الـ URL، والطباعة نضيفة، وواحد صاحبك فتح اللينك وشاف نفس الترتيب.`, ext: R`زوّد رسم بياني بسيط بـ SVG أو CSS (أعمدة بـ [[height]] من متغير) جنب الجدول.` },
+        { lvl: 'صغير', dir: "gym-compare", t: R`جدول باقات جيم متخيل`, what: R`جدول بيقارن ٣ باقات لـ «جيم الأبطال» (شهري، ٣ شهور، سنوي): caption، و th بـ [[scope="col"]] لأسامي الباقات، و th بـ [[scope="row"]] لكل ميزة (السعر، الحصص، الساونا)، وعلامة ✓ أو ✗ في الخلايا ومعاها كلام مخفي بالشكل للقارئ («موجود» أو «مش موجود»)، و tfoot فيه زرار «اشترك» لكل باقة. من درس «table».`, done: R`تاب Accessibility بيقول [[columnheader]] لأسامي الباقات و [[rowheader]] للمميزات، واسم الجدول من الـ caption، وقارئ الشاشة (أو ARIA snapshot) بيقرا «الساونا، سنوي، موجود» مش «✓» بس.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قارن الباقات: جيم الأبطال</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
+  table { width: 100%; max-width: 640px; margin-inline: auto; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
+  h1 { max-width: 640px; margin: 0 auto 12px; font-size: 24px; }
+  caption { font-size: 18px; font-weight: 700; padding-block: 0 12px; }
+  th, td { padding: 12px 10px; border-block-end: 1px solid #e2e8f0; text-align: center; }
+  thead th { background: #0f766e; color: white; }
+  tbody th { text-align: start; font-weight: 600; }
+  .yes { color: #15803d; font-size: 20px; }
+  .no { color: #b91c1c; font-size: 20px; }
+  tfoot td { border: 0; }
+  tfoot a { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+<h1>باقات جيم الأبطال</h1>
+<table>
+  <caption>قارن باقات جيم الأبطال</caption>
+  <thead>
+    <tr>
+      <td></td>
+      <th scope="col">شهري</th>
+      <th scope="col">٣ شهور</th>
+      <th scope="col">سنوي</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">السعر</th>
+      <td>٥٠٠ ج</td><td>١٣٠٠ ج</td><td>٤٥٠٠ ج</td>
+    </tr>
+    <tr>
+      <th scope="row">حصص مع مدرب</th>
+      <td>٢</td><td>٨</td><td>٤٠</td>
+    </tr>
+    <tr>
+      <th scope="row">الساونا</th>
+      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
+      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
+      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
+    </tr>
+    <tr>
+      <th scope="row">تجميد الاشتراك</th>
+      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
+      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
+      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td></td>
+      <td><a href="signup.html?plan=month" aria-label="اشترك في الباقة الشهري">اشترك</a></td>
+      <td><a href="signup.html?plan=quarter" aria-label="اشترك في باقة ٣ شهور">اشترك</a></td>
+      <td><a href="signup.html?plan=year" aria-label="اشترك في الباقة السنوي">اشترك</a></td>
+    </tr>
+  </tfoot>
+</table>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 420 460 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قارن الباقات: جيم الأبطال</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
+  table { width: 100%; max-width: 640px; margin-inline: auto; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
+  h1 { max-width: 640px; margin: 0 auto 12px; font-size: 24px; }
+  caption { font-size: 18px; font-weight: 700; padding-block: 0 12px; }
+  th, td { padding: 12px 10px; border-block-end: 1px solid #e2e8f0; text-align: center; }
+  thead th { background: #0f766e; color: white; }
+  tbody th { text-align: start; font-weight: 600; }
+  .yes { color: #15803d; font-size: 20px; }
+  .no { color: #b91c1c; font-size: 20px; }
+  tfoot td { border: 0; }
+  tfoot a { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+<h1>باقات جيم الأبطال</h1>
+<table>
+  <caption>قارن باقات جيم الأبطال</caption>
+  <thead>
+    <tr>
+      <td></td>
+      <th scope="col">شهري</th>
+      <th scope="col">٣ شهور</th>
+      <th scope="col">سنوي</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">السعر</th>
+      <td>٥٠٠ ج</td><td>١٣٠٠ ج</td><td>٤٥٠٠ ج</td>
+    </tr>
+    <tr>
+      <th scope="row">حصص مع مدرب</th>
+      <td>٢</td><td>٨</td><td>٤٠</td>
+    </tr>
+    <tr>
+      <th scope="row">الساونا</th>
+      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
+      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
+      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
+    </tr>
+    <tr>
+      <th scope="row">تجميد الاشتراك</th>
+      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
+      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
+      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td></td>
+      <td><a href="signup.html?plan=month" aria-label="اشترك في الباقة الشهري">اشترك</a></td>
+      <td><a href="signup.html?plan=quarter" aria-label="اشترك في باقة ٣ شهور">اشترك</a></td>
+      <td><a href="signup.html?plan=year" aria-label="اشترك في الباقة السنوي">اشترك</a></td>
+    </tr>
+  </tfoot>
+</table>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** عنوان، وتحته جدول أبيض بحواف مدوّرة: صف أخضر غامق فوق فيه أسامي الباقات، وكل صف تحته ميزة (السعر، والحصص، والساونا، وتجميد الاشتراك)، والعلامات ✓ خضرا و ✗ حمرا، وفي الآخر زرار «اشترك» أخضر تحت كل باقة.
+
+**ليه كل حتة:**
+- [[<caption>]]: اسم الجدول. قارئ الشاشة بيقوله أول ما يدخل الجدول، وهو اللي بيبقى اسم الـ table في شجرة الـ accessibility.
+- [[<th scope="col">]] لأسامي الباقات و [[<th scope="row">]] لأسامي المميزات: كده كل خلية ليها عنوانين. قارئ الشاشة وانت ماشي في الجدول بيقول «سنوي، الساونا، موجود».
+- الخانة الفاضية فوق على اليمين [[<td>]] مش [[<th>]]: هي مش عنوان لحاجة.
+- ✓ و ✗ عليهم [[aria-hidden="true"]]، وجنبهم كلام مخفي بالشكل بس («موجود» أو «مش موجود»). من غيره قارئ الشاشة بيقول «check mark» أو «multiplication x»، أو مبيقولش حاجة خالص.
+- [[<tfoot>]] للأزرار: صف تحت كل الأعمدة. واللينك عليه [[aria-label]] بالباقة، عشان لو حد عرض لستة اللينكات في الصفحة ميلاقيش «اشترك» تلات مرات من غير ما يعرف أنهي.
+
+**الغلطة اللي axe مسكها:** النسخة الأولى مكانش فيها [[<h1>]] ([[page-has-heading-one]]). الـ caption اسم الجدول، مش عنوان الصفحة.
+
+~~~text الناتج (Chrome، شجرة الـ accessibility)
+table "قارن باقات جيم الأبطال"
+  cell (فاضية)   columnheader "شهري"   columnheader "٣ شهور"   columnheader "سنوي"
+  rowheader "السعر"           cell "٥٠٠ ج"     cell "١٣٠٠ ج"    cell "٤٥٠٠ ج"
+  rowheader "الساونا"         cell "مش موجود"  cell "موجود"     cell "موجود"
+  rowheader "تجميد الاشتراك"  cell "مش موجود"  cell "مش موجود"  cell "موجود"
+  cell "اشترك في الباقة الشهري"   cell "اشترك في باقة ٣ شهور"   cell "اشترك في الباقة السنوي"
+axe: 0 violations (كانت page-has-heading-one قبل الـ h1)   الـ validator: مفيش رسايل   overflow على 360: 0
+~~~` },
+        { lvl: 'صغير', dir: "clinic-hours", t: R`مواعيد عيادة على الموبايل`, what: R`جدول مواعيد أطبا لـ «عيادة الشفاء» فيه ٧ أعمدة (أيام الأسبوع) جوه wrapper بـ [[overflow-x: auto]] و [[tabindex="0"]] و [[role="region"]]، وأول عمود (اسم الدكتور) [[position: sticky]] على [[inset-inline-start: 0]] عشان يفضل ظاهر وانت بتعمل scroll. من درس «جدول responsive».`, done: R`على 360px الصفحة مفيهاش scroll أفقي ([[document.documentElement.scrollWidth]] = 360) والجدول بس اللي بيتحرك، واسم الدكتور فاضل مكانه وانت بتتحرك، والـ wrapper بياخد focus بـ Tab والأسهم بتحرّكه.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مواعيد الأطبا: عيادة الشفاء</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f0f9ff; color: #0c4a6e; }
+  h1 { font-size: 22px; margin: 0 0 12px; }
+  /* only this box scrolls sideways, never the page */
+  .scroll { overflow-x: auto; border-radius: 12px; background: white; }
+  .scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+  table { border-collapse: separate; border-spacing: 0; min-width: 760px; }
+  caption { text-align: start; padding: 12px; font-weight: 700; }
+  th, td { padding: 10px 12px; border-block-end: 1px solid #e0f2fe; white-space: nowrap; text-align: center; }
+  thead th { background: #e0f2fe; }
+  /* the doctor's name stays on the start side while the days move under it */
+  tbody th, thead th:first-child { position: sticky; inset-inline-start: 0; background: white; text-align: start; box-shadow: -1px 0 0 #bae6fd inset; }
+  thead th:first-child { background: #e0f2fe; z-index: 1; }
+  .off { color: #94a3b8; }
+</style>
+</head>
+<body>
+<main>
+<h1>مواعيد الأطبا</h1>
+<div class="scroll" role="region" aria-labelledby="cap" tabindex="0">
+  <table>
+    <caption id="cap">مواعيد الأسبوع (حرّك الجدول بالعرض)</caption>
+    <thead>
+      <tr><th scope="col">الدكتور</th><th scope="col">السبت</th><th scope="col">الحد</th><th scope="col">الاتنين</th><th scope="col">التلات</th><th scope="col">الأربع</th><th scope="col">الخميس</th><th scope="col">الجمعة</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">د. سلمى فؤاد (قلب)</th><td>٥–٩</td><td class="off">إجازة</td><td>٥–٩</td><td class="off">إجازة</td><td>٥–٩</td><td>١٠–٢</td><td class="off">إجازة</td></tr>
+      <tr><th scope="row">د. كريم ناجي (عظام)</th><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td></tr>
+      <tr><th scope="row">د. هالة سمير (جلدية)</th><td>١٠–٢</td><td>١٠–٢</td><td>١٠–٢</td><td class="off">إجازة</td><td>٦–١٠</td><td class="off">إجازة</td><td class="off">إجازة</td></tr>
+    </tbody>
+  </table>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 300 300 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مواعيد الأطبا: عيادة الشفاء</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f0f9ff; color: #0c4a6e; }
+  h1 { font-size: 22px; margin: 0 0 12px; }
+  /* only this box scrolls sideways, never the page */
+  .scroll { overflow-x: auto; border-radius: 12px; background: white; }
+  .scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+  table { border-collapse: separate; border-spacing: 0; min-width: 760px; }
+  caption { text-align: start; padding: 12px; font-weight: 700; }
+  th, td { padding: 10px 12px; border-block-end: 1px solid #e0f2fe; white-space: nowrap; text-align: center; }
+  thead th { background: #e0f2fe; }
+  /* the doctor's name stays on the start side while the days move under it */
+  tbody th, thead th:first-child { position: sticky; inset-inline-start: 0; background: white; text-align: start; box-shadow: -1px 0 0 #bae6fd inset; }
+  thead th:first-child { background: #e0f2fe; z-index: 1; }
+  .off { color: #94a3b8; }
+</style>
+</head>
+<body>
+<main>
+<h1>مواعيد الأطبا</h1>
+<div class="scroll" role="region" aria-labelledby="cap" tabindex="0">
+  <table>
+    <caption id="cap">مواعيد الأسبوع (حرّك الجدول بالعرض)</caption>
+    <thead>
+      <tr><th scope="col">الدكتور</th><th scope="col">السبت</th><th scope="col">الحد</th><th scope="col">الاتنين</th><th scope="col">التلات</th><th scope="col">الأربع</th><th scope="col">الخميس</th><th scope="col">الجمعة</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">د. سلمى فؤاد (قلب)</th><td>٥–٩</td><td class="off">إجازة</td><td>٥–٩</td><td class="off">إجازة</td><td>٥–٩</td><td>١٠–٢</td><td class="off">إجازة</td></tr>
+      <tr><th scope="row">د. كريم ناجي (عظام)</th><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td></tr>
+      <tr><th scope="row">د. هالة سمير (جلدية)</th><td>١٠–٢</td><td>١٠–٢</td><td>١٠–٢</td><td class="off">إجازة</td><td>٦–١٠</td><td class="off">إجازة</td><td class="off">إجازة</td></tr>
+    </tbody>
+  </table>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** على الكمبيوتر الجدول كله ظاهر. على «موبايل» بتشوف عمود الدكتور وجنبه يومين تلاتة بس، والصندوق الأبيض بيتحرك بالعرض (بالصباع أو بالأسهم) والصفحة نفسها ثابتة. وانت بتحرّكه اسم الدكتور فاضل مكانه والأيام بتعدّي تحته.
+
+**ليه كده:**
+- **[[overflow-x: auto]] على الـ div، مش على الجدول ولا الصفحة:** الجدول نفسه عرضه 760px ([[min-width]])، والصندوق بس اللي بيعمل scroll. الصفحة عرضها 360 زي ما هي.
+- **[[tabindex="0"]]:** من غيره الصندوق مبياخدش focus، واللي معهوش ماوس ولا صباع (كيبورد بس) ميقدرش يحرّكه. و [[role="region"]] و [[aria-labelledby]] بيدّوه اسم، عشان قارئ الشاشة يقول إيه اللي واقف عليه.
+- **[[position: sticky]] و [[inset-inline-start: 0]] على أول عمود:** [[inset-inline-start]] معناها «أول السطر»، يعني اليمين في صفحة عربي والشمال في صفحة إنجليزي. ولازم الخلية يبقى ليها [[background]]، وإلا الأيام اللي بتعدّي تحتها هتبان من وراها.
+- **[[border-collapse: separate]]:** مع [[collapse]] الحدود ممكن تختفي من الخلية اللازقة وانت بتعمل scroll، فبنستخدم [[box-shadow]] كخط فاصل.
+- **[[white-space: nowrap]]:** «د. سلمى فؤاد (قلب)» تفضل سطر واحد.
+
+**فخ اتقاس:** في صفحة [[dir="rtl"]] الـ [[scrollLeft]] بيبدأ من [[0]] ويروح **بالسالب** وانت بتتحرك (اتقاس: [[-120]] بعد ٣ أسهم). لو كتبت JavaScript بيقول «لو [[scrollLeft > 0]] يبقى المستخدم اتحرك»، مش هيشتغل في العربي أبدًا. استخدم [[Math.abs(box.scrollLeft)]].
+
+~~~text الناتج (Chrome، موبايل 360)
+الصفحة                scrollWidth = 360 من 360 (مفيش scroll أفقي)
+الصندوق               scrollWidth = 760 جوه 328
+Tab                   الـ focus على .scroll
+٣ ضغطات سهم شمال      scrollLeft = -120
+اسم الدكتور           حافته فضلت عند 344 قبل وبعد
+أول يوم (السبت)        حافته اتحركت من 145 لـ 265 (دخل تحت عمود الاسم)
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'صغير', dir: "progress-report", t: R`تقرير تقدّم مشروع: كروت أرقام وجدول بأشرطة`, what: R`صفحة واحدة غامقة بـ HTML و CSS بس (من غير JavaScript) لتقرير أسبوعي عن تطبيق متخيل اسمه «رسمة»: فوق ٤ كروت أرقام كبيرة ([[<ul>]]، و grid بـ [[auto-fit]] و [[minmax(min(160px, 100%), 1fr)]])، وتحت جدول الأجزاء: اسم الجزء [[<th scope="row">]]، وشريط تقدّم عرضه جاي من رقم مكتوب في الـ HTML نفسه ([[style="--p: 85"]] و [[width: calc(var(--p) * 1%)]])، والرقم جنبه مكتوب كلام، وعمود اختبارات بـ [[tabular-nums]]، وشارة حالة ملوّنة. نمط تقارير التقدّم اللي أي فريق بيبعتها كل أسبوع. من دروس «table» و «جدول responsive».`, done: R`تغيير [[--p]] في سطر واحد في الـ HTML بيغيّر طول الشريط بس (من غير ما تلمس الـ CSS)، والشرايط بتطلع 100% و 85% و 70% و 40% و 0% من عرض مكانها، والكروت ٤ جنب بعض على 800 وواحد في السطر على 360 من غير scroll أفقي، و axe صفر violations (التباين كمان على الخلفية الغامقة).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تقرير تقدّم: تطبيق «رسمة»</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #0f172a; color: #e2e8f0; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  main { max-width: 820px; margin-inline: auto; }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  .sub { margin: 0 0 16px; color: #94a3b8; }
+
+  /* the KPI cards: as many as fit, never narrower than 160px */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 12px; margin: 0 0 20px; padding: 0; list-style: none; }
+  .kpis li { padding: 14px; border-radius: 14px; background: #1e293b; }
+  .kpis b { display: block; font-size: 30px; font-variant-numeric: tabular-nums; color: white; }
+  .kpis span { color: #94a3b8; font-size: 14px; }
+
+  table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 14px; overflow: hidden; }
+  caption { text-align: start; font-weight: 700; padding-block-end: 8px; }
+  th, td { padding: 10px 12px; text-align: start; border-block-end: 1px solid #334155; }
+  thead th { color: #94a3b8; font-weight: 600; font-size: 13px; }
+  .num { text-align: end; font-variant-numeric: tabular-nums; }
+
+  /* the bar's width comes from the number in the HTML: style="--p: 72" */
+  .meter { display: flex; align-items: center; gap: 8px; }
+  .meter i { flex: 1; height: 8px; border-radius: 99px; background: #334155; overflow: hidden; }
+  .meter i::before { content: ""; display: block; height: 100%; width: calc(var(--p) * 1%); background: #38bdf8; border-radius: inherit; }
+
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 13px; font-weight: 700; }
+  .done { background: #14532d; color: #bbf7d0; }
+  .doing { background: #713f12; color: #fde68a; }
+  .todo { background: #334155; color: #e2e8f0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>تقرير تقدّم: تطبيق «رسمة»</h1>
+  <p class="sub">الأسبوع ٤٧ · مقارنة بالأداة المرجعية</p>
+
+  <ul class="kpis">
+    <li><b>٧٢٪</b><span>الميزات اللي خلصت</span></li>
+    <li><b>٤٧٨/٤٨٠</b><span>فريم مطابق للمرجع</span></li>
+    <li><b>١٢</b><span>باج اتقفل الأسبوع ده</span></li>
+    <li><b>٣</b><span>مفتوح لسه</span></li>
+  </ul>
+
+  <table>
+    <caption>الأجزاء</caption>
+    <thead><tr><th scope="col">الجزء</th><th scope="col">التقدّم</th><th scope="col" class="num">الاختبارات</th><th scope="col">الحالة</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">التايم لاين</th><td><div class="meter"><i style="--p: 100" aria-hidden="true"></i><span>١٠٠٪</span></div></td><td class="num">٤٢</td><td><span class="badge done">خلص</span></td></tr>
+      <tr><th scope="row">أدوات الرسم</th><td><div class="meter"><i style="--p: 85" aria-hidden="true"></i><span>٨٥٪</span></div></td><td class="num">٣١</td><td><span class="badge doing">شغالين</span></td></tr>
+      <tr><th scope="row">الطبقات</th><td><div class="meter"><i style="--p: 70" aria-hidden="true"></i><span>٧٠٪</span></div></td><td class="num">١٨</td><td><span class="badge doing">شغالين</span></td></tr>
+      <tr><th scope="row">التصدير</th><td><div class="meter"><i style="--p: 40" aria-hidden="true"></i><span>٤٠٪</span></div></td><td class="num">٦</td><td><span class="badge doing">شغالين</span></td></tr>
+      <tr><th scope="row">الصوت</th><td><div class="meter"><i style="--p: 0" aria-hidden="true"></i><span>٠٪</span></div></td><td class="num">٠</td><td><span class="badge todo">لسه</span></td></tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 560 900 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تقرير تقدّم: تطبيق «رسمة»</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #0f172a; color: #e2e8f0; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  main { max-width: 820px; margin-inline: auto; }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  .sub { margin: 0 0 16px; color: #94a3b8; }
+
+  /* the KPI cards: as many as fit, never narrower than 160px */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 12px; margin: 0 0 20px; padding: 0; list-style: none; }
+  .kpis li { padding: 14px; border-radius: 14px; background: #1e293b; }
+  .kpis b { display: block; font-size: 30px; font-variant-numeric: tabular-nums; color: white; }
+  .kpis span { color: #94a3b8; font-size: 14px; }
+
+  table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 14px; overflow: hidden; }
+  caption { text-align: start; font-weight: 700; padding-block-end: 8px; }
+  th, td { padding: 10px 12px; text-align: start; border-block-end: 1px solid #334155; }
+  thead th { color: #94a3b8; font-weight: 600; font-size: 13px; }
+  .num { text-align: end; font-variant-numeric: tabular-nums; }
+
+  /* the bar's width comes from the number in the HTML: style="--p: 72" */
+  .meter { display: flex; align-items: center; gap: 8px; }
+  .meter i { flex: 1; height: 8px; border-radius: 99px; background: #334155; overflow: hidden; }
+  .meter i::before { content: ""; display: block; height: 100%; width: calc(var(--p) * 1%); background: #38bdf8; border-radius: inherit; }
+
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 13px; font-weight: 700; }
+  .done { background: #14532d; color: #bbf7d0; }
+  .doing { background: #713f12; color: #fde68a; }
+  .todo { background: #334155; color: #e2e8f0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>تقرير تقدّم: تطبيق «رسمة»</h1>
+  <p class="sub">الأسبوع ٤٧ · مقارنة بالأداة المرجعية</p>
+
+  <ul class="kpis">
+    <li><b>٧٢٪</b><span>الميزات اللي خلصت</span></li>
+    <li><b>٤٧٨/٤٨٠</b><span>فريم مطابق للمرجع</span></li>
+    <li><b>١٢</b><span>باج اتقفل الأسبوع ده</span></li>
+    <li><b>٣</b><span>مفتوح لسه</span></li>
+  </ul>
+
+  <table>
+    <caption>الأجزاء</caption>
+    <thead><tr><th scope="col">الجزء</th><th scope="col">التقدّم</th><th scope="col" class="num">الاختبارات</th><th scope="col">الحالة</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">التايم لاين</th><td><div class="meter"><i style="--p: 100" aria-hidden="true"></i><span>١٠٠٪</span></div></td><td class="num">٤٢</td><td><span class="badge done">خلص</span></td></tr>
+      <tr><th scope="row">أدوات الرسم</th><td><div class="meter"><i style="--p: 85" aria-hidden="true"></i><span>٨٥٪</span></div></td><td class="num">٣١</td><td><span class="badge doing">شغالين</span></td></tr>
+      <tr><th scope="row">الطبقات</th><td><div class="meter"><i style="--p: 70" aria-hidden="true"></i><span>٧٠٪</span></div></td><td class="num">١٨</td><td><span class="badge doing">شغالين</span></td></tr>
+      <tr><th scope="row">التصدير</th><td><div class="meter"><i style="--p: 40" aria-hidden="true"></i><span>٤٠٪</span></div></td><td class="num">٦</td><td><span class="badge doing">شغالين</span></td></tr>
+      <tr><th scope="row">الصوت</th><td><div class="meter"><i style="--p: 0" aria-hidden="true"></i><span>٠٪</span></div></td><td class="num">٠</td><td><span class="badge todo">لسه</span></td></tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خلفية كحلي غامق جدًا، وعنوان أبيض، وتحته ٤ كروت أغمق شوية كل واحد فيه رقم كبير أبيض وكلمة رمادي تحته. وبعدهم جدول كل صف فيه اسم الجزء، وشريط رمادي جواه لون لبني على قد النسبة، والرقم جنبه، وشارة: أخضر «خلص»، وبني «شغالين»، ورمادي «لسه».
+
+**ليه كده:**
+- **الشريط من متغيّر:** [[style="--p: 85"]] على العنصر، والـ CSS بيقول [[width: calc(var(--p) * 1%)]]. الرقم في مكان واحد، ولما التقرير يتعمل من بيانات (في كورس JavaScript) السكربت هيغيّر [[--p]] بس.
+- **الشريط [[aria-hidden="true"]] والرقم مكتوب جنبه:** الشريط شكل بس، والرقم هو المعلومة. كده قارئ الشاشة بيقرا «٨٥٪» مرة واحدة. (البديل [[<progress>]] أو [[<meter>]]، بس تلوينهم في كل المتصفحات أصعب بكتير.)
+- **الكروت [[<ul>]]:** ٤ حاجات من نفس النوع، فهي لستة. وقارئ الشاشة بيقول «list, 4 items».
+- **[[minmax(min(160px, 100%), 1fr)]]:** الكارت ميصغرش عن 160px، و [[min(..., 100%)]] بتمنعه يطلع برّه الشاشة لو هي أضيق من 160.
+- **الألوان على خلفية غامقة:** الكلام الرمادي [[#94a3b8]] على [[#1e293b]]، والشارات كلامها فاتح على خلفية غامقة من نفس اللون. axe بيقيس التباين فعلًا، وطلع صفر مشاكل.
+
+~~~text الناتج (Chrome)
+عرض الشرايط من مكانها     100% 85% 70% 40% 0%
+الكروت على 800            4 أعمدة كل واحد 182.2px
+الكروت على 360            عمود واحد، و overflow = 0
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "orders-board", t: R`لوحة طلبات لمتجر متخيل`, what: R`جدول طلبات فيه ٣٠ طلب من JSON: عناوين لازقة فوق، وصفوف مخططة، وحالة كل طلب شارة ملوّنة (مدفوع، مستني، ملغي) بلون خلفية فاتح ولون كلام غامق من نفس العيلة، وعمود أرقام [[tabular-nums]]، وترتيب بأزرار جوه الـ th و [[aria-sort]]، والحالة كلها في الـ URL. من دروس الوحدة كلها.`, done: R`الضغط على «الإجمالي» بيرتب تصاعدي وتاني ضغطة تنازلي، والـ URL بيتغيّر و Back بيرجّع الترتيب اللي قبله، والـ refresh بيفتح على نفس الترتيب، وكل شارة تباينها 4.5:1 أو أكتر في DevTools، و axe صفر violations.`, sol: R`~~~text
+orders-board/
+├── index.html   الجدول فاضي (العناوين بس)
+├── style.css    الصندوق والعناوين اللازقة والشارات
+├── orders.js    بيانات ٣٠ طلب
+└── app.js       الرسم والترتيب والـ URL
+~~~
+
+**ليه البيانات في [[orders.js]] مش [[orders.json]]:** [[fetch('orders.json')]] مبيشتغلش لو فتحت الصفحة كملف ([[file://]]). [[orders.js]] فيه نفس شكل الـ JSON بالظبط، وبيشتغل من غير سيرفر. ولما الطلبات تيجي من API حقيقي، السطر ده بس اللي بيتغيّر.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الطلبات: متجر نسمة</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<h1>الطلبات</h1>
+<div class="scroll" role="region" aria-labelledby="cap" tabindex="0">
+  <table>
+    <caption id="cap">آخر ٣٠ طلب في متجر نسمة</caption>
+    <thead>
+      <tr>
+        <th scope="col" data-key="id"><button type="button">رقم الطلب</button></th>
+        <th scope="col" data-key="name"><button type="button">العميل</button></th>
+        <th scope="col" data-key="date"><button type="button">التاريخ</button></th>
+        <th scope="col" data-key="items" class="num"><button type="button">القطع</button></th>
+        <th scope="col" data-key="total" class="num"><button type="button">الإجمالي</button></th>
+        <th scope="col">الحالة</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+</main>
+<script src="orders.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 900px; margin-inline: auto; }
+h1 { margin: 0 0 12px; }
+
+/* the box scrolls both ways, so the sticky header sticks to the box, not the page */
+.scroll { max-height: 70vh; overflow: auto; border-radius: 12px; background: white; }
+.scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+table { width: 100%; min-width: 620px; border-collapse: separate; border-spacing: 0; }
+caption { padding: 12px; text-align: start; font-weight: 700; }
+th, td { padding: 8px 12px; text-align: start; border-block-end: 1px solid #e2e8f0; }
+
+thead th { position: sticky; top: 0; z-index: 1; background: #1e293b; color: white; }
+thead button { all: unset; cursor: pointer; font-weight: 700; }
+thead button:focus-visible { outline: 2px solid #fbbf24; outline-offset: 3px; }
+/* the arrow comes from aria-sort itself, so the look and what a screen reader hears can't disagree */
+th[aria-sort="ascending"] button::after { content: " ▲"; }
+th[aria-sort="descending"] button::after { content: " ▼"; }
+
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:hover { background: #eef2ff; }
+.num { text-align: end; font-variant-numeric: tabular-nums; }
+
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.paid { background: #dcfce7; color: #166534; }
+.pending { background: #fef3c7; color: #92400e; }
+.cancelled { background: #fee2e2; color: #991b1b; }
+~~~
+
+~~~js orders.js
+// 30 orders of an invented shop (the same shape an API would send as JSON)
+const ORDERS = [
+  { id: 1001, name: "منى سامي", date: "2026-11-01", items: 1, total: 120, status: "paid" },
+  { id: 1002, name: "ياسين طارق", date: "2026-11-01", items: 2, total: 257, status: "pending" },
+  { id: 1003, name: "ليلى فؤاد", date: "2026-11-02", items: 3, total: 394, status: "paid" },
+  { id: 1004, name: "كريم ناجي", date: "2026-11-02", items: 4, total: 531, status: "cancelled" },
+  { id: 1005, name: "هدى رمزي", date: "2026-11-03", items: 1, total: 668, status: "paid" },
+  { id: 1006, name: "عمر خالد", date: "2026-11-04", items: 2, total: 805, status: "pending" },
+  { id: 1007, name: "سارة علي", date: "2026-11-04", items: 3, total: 942, status: "paid" },
+  { id: 1008, name: "آدم شريف", date: "2026-11-05", items: 4, total: 199, status: "pending" },
+  { id: 1009, name: "نور حسام", date: "2026-11-05", items: 1, total: 336, status: "paid" },
+  { id: 1010, name: "حسن عادل", date: "2026-11-06", items: 2, total: 473, status: "cancelled" },
+  { id: 1011, name: "منى سامي", date: "2026-11-07", items: 3, total: 610, status: "paid" },
+  { id: 1012, name: "ياسين طارق", date: "2026-11-07", items: 4, total: 747, status: "pending" },
+  { id: 1013, name: "ليلى فؤاد", date: "2026-11-08", items: 1, total: 884, status: "paid" },
+  { id: 1014, name: "كريم ناجي", date: "2026-11-08", items: 2, total: 141, status: "pending" },
+  { id: 1015, name: "هدى رمزي", date: "2026-11-09", items: 3, total: 278, status: "paid" },
+  { id: 1016, name: "عمر خالد", date: "2026-11-10", items: 4, total: 415, status: "cancelled" },
+  { id: 1017, name: "سارة علي", date: "2026-11-10", items: 1, total: 552, status: "paid" },
+  { id: 1018, name: "آدم شريف", date: "2026-11-11", items: 2, total: 689, status: "pending" },
+  { id: 1019, name: "نور حسام", date: "2026-11-11", items: 3, total: 826, status: "paid" },
+  { id: 1020, name: "حسن عادل", date: "2026-11-12", items: 4, total: 963, status: "pending" },
+  { id: 1021, name: "منى سامي", date: "2026-11-13", items: 1, total: 220, status: "paid" },
+  { id: 1022, name: "ياسين طارق", date: "2026-11-13", items: 2, total: 357, status: "cancelled" },
+  { id: 1023, name: "ليلى فؤاد", date: "2026-11-14", items: 3, total: 494, status: "paid" },
+  { id: 1024, name: "كريم ناجي", date: "2026-11-14", items: 4, total: 631, status: "pending" },
+  { id: 1025, name: "هدى رمزي", date: "2026-11-15", items: 1, total: 768, status: "paid" },
+  { id: 1026, name: "عمر خالد", date: "2026-11-16", items: 2, total: 905, status: "pending" },
+  { id: 1027, name: "سارة علي", date: "2026-11-16", items: 3, total: 162, status: "paid" },
+  { id: 1028, name: "آدم شريف", date: "2026-11-17", items: 4, total: 299, status: "cancelled" },
+  { id: 1029, name: "نور حسام", date: "2026-11-17", items: 1, total: 436, status: "paid" },
+  { id: 1030, name: "حسن عادل", date: "2026-11-18", items: 2, total: 573, status: "pending" }
+];
+~~~
+
+~~~js app.js
+const rows = document.getElementById('rows');
+const heads = [...document.querySelectorAll('th[data-key]')];
+const LABEL = { paid: 'مدفوع', pending: 'مستني', cancelled: 'ملغي' };
+const money = n => n.toLocaleString('ar-EG') + ' ج';
+
+// the sort lives in the URL: ?sort=total&dir=desc
+function readState() {
+  const p = new URLSearchParams(location.search);
+  const sort = heads.some(h => h.dataset.key === p.get('sort')) ? p.get('sort') : 'id';
+  const dir = p.get('dir') === 'desc' ? 'desc' : 'asc';
+  return { sort, dir };
+}
+
+function render() {
+  const { sort, dir } = readState();
+  const list = [...ORDERS].sort((a, b) => {
+    const x = a[sort], y = b[sort];
+    const c = typeof x === 'number' ? x - y : x.localeCompare(y, 'ar');
+    return dir === 'asc' ? c : -c;
+  });
+  rows.innerHTML = '';
+  for (const o of list) {
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + o.id + '</td><td></td><td>' + o.date + '</td>' +
+      '<td class="num">' + o.items + '</td><td class="num">' + money(o.total) + '</td>' +
+      '<td><span class="badge ' + o.status + '">' + LABEL[o.status] + '</span></td>';
+    tr.children[1].textContent = o.name; // a name typed by a customer is text, never HTML
+    rows.append(tr);
+  }
+  for (const h of heads) {
+    if (h.dataset.key === sort) h.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+    else h.removeAttribute('aria-sort');
+  }
+}
+
+for (const h of heads) {
+  h.querySelector('button').addEventListener('click', () => {
+    const { sort, dir } = readState();
+    const next = sort === h.dataset.key && dir === 'asc' ? 'desc' : 'asc';
+    // pushState: every sort is a step in history, so Back returns to the one before
+    history.pushState(null, '', '?sort=' + h.dataset.key + '&dir=' + next);
+    render();
+  });
+}
+window.addEventListener('popstate', render);
+render();
+~~~
+
+~~~view 560 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الطلبات: متجر نسمة</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 900px; margin-inline: auto; }
+h1 { margin: 0 0 12px; }
+
+/* the box scrolls both ways, so the sticky header sticks to the box, not the page */
+.scroll { max-height: 70vh; overflow: auto; border-radius: 12px; background: white; }
+.scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+table { width: 100%; min-width: 620px; border-collapse: separate; border-spacing: 0; }
+caption { padding: 12px; text-align: start; font-weight: 700; }
+th, td { padding: 8px 12px; text-align: start; border-block-end: 1px solid #e2e8f0; }
+
+thead th { position: sticky; top: 0; z-index: 1; background: #1e293b; color: white; }
+thead button { all: unset; cursor: pointer; font-weight: 700; }
+thead button:focus-visible { outline: 2px solid #fbbf24; outline-offset: 3px; }
+/* the arrow comes from aria-sort itself, so the look and what a screen reader hears can't disagree */
+th[aria-sort="ascending"] button::after { content: " ▲"; }
+th[aria-sort="descending"] button::after { content: " ▼"; }
+
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:hover { background: #eef2ff; }
+.num { text-align: end; font-variant-numeric: tabular-nums; }
+
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.paid { background: #dcfce7; color: #166534; }
+.pending { background: #fef3c7; color: #92400e; }
+.cancelled { background: #fee2e2; color: #991b1b; }
+</style>
+</head>
+<body>
+<main>
+<h1>الطلبات</h1>
+<div class="scroll" role="region" aria-labelledby="cap" tabindex="0">
+  <table>
+    <caption id="cap">آخر ٣٠ طلب في متجر نسمة</caption>
+    <thead>
+      <tr>
+        <th scope="col" data-key="id"><button type="button">رقم الطلب</button></th>
+        <th scope="col" data-key="name"><button type="button">العميل</button></th>
+        <th scope="col" data-key="date"><button type="button">التاريخ</button></th>
+        <th scope="col" data-key="items" class="num"><button type="button">القطع</button></th>
+        <th scope="col" data-key="total" class="num"><button type="button">الإجمالي</button></th>
+        <th scope="col">الحالة</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+</main>
+<script>
+// 30 orders of an invented shop (the same shape an API would send as JSON)
+const ORDERS = [
+  { id: 1001, name: "منى سامي", date: "2026-11-01", items: 1, total: 120, status: "paid" },
+  { id: 1002, name: "ياسين طارق", date: "2026-11-01", items: 2, total: 257, status: "pending" },
+  { id: 1003, name: "ليلى فؤاد", date: "2026-11-02", items: 3, total: 394, status: "paid" },
+  { id: 1004, name: "كريم ناجي", date: "2026-11-02", items: 4, total: 531, status: "cancelled" },
+  { id: 1005, name: "هدى رمزي", date: "2026-11-03", items: 1, total: 668, status: "paid" },
+  { id: 1006, name: "عمر خالد", date: "2026-11-04", items: 2, total: 805, status: "pending" },
+  { id: 1007, name: "سارة علي", date: "2026-11-04", items: 3, total: 942, status: "paid" },
+  { id: 1008, name: "آدم شريف", date: "2026-11-05", items: 4, total: 199, status: "pending" },
+  { id: 1009, name: "نور حسام", date: "2026-11-05", items: 1, total: 336, status: "paid" },
+  { id: 1010, name: "حسن عادل", date: "2026-11-06", items: 2, total: 473, status: "cancelled" },
+  { id: 1011, name: "منى سامي", date: "2026-11-07", items: 3, total: 610, status: "paid" },
+  { id: 1012, name: "ياسين طارق", date: "2026-11-07", items: 4, total: 747, status: "pending" },
+  { id: 1013, name: "ليلى فؤاد", date: "2026-11-08", items: 1, total: 884, status: "paid" },
+  { id: 1014, name: "كريم ناجي", date: "2026-11-08", items: 2, total: 141, status: "pending" },
+  { id: 1015, name: "هدى رمزي", date: "2026-11-09", items: 3, total: 278, status: "paid" },
+  { id: 1016, name: "عمر خالد", date: "2026-11-10", items: 4, total: 415, status: "cancelled" },
+  { id: 1017, name: "سارة علي", date: "2026-11-10", items: 1, total: 552, status: "paid" },
+  { id: 1018, name: "آدم شريف", date: "2026-11-11", items: 2, total: 689, status: "pending" },
+  { id: 1019, name: "نور حسام", date: "2026-11-11", items: 3, total: 826, status: "paid" },
+  { id: 1020, name: "حسن عادل", date: "2026-11-12", items: 4, total: 963, status: "pending" },
+  { id: 1021, name: "منى سامي", date: "2026-11-13", items: 1, total: 220, status: "paid" },
+  { id: 1022, name: "ياسين طارق", date: "2026-11-13", items: 2, total: 357, status: "cancelled" },
+  { id: 1023, name: "ليلى فؤاد", date: "2026-11-14", items: 3, total: 494, status: "paid" },
+  { id: 1024, name: "كريم ناجي", date: "2026-11-14", items: 4, total: 631, status: "pending" },
+  { id: 1025, name: "هدى رمزي", date: "2026-11-15", items: 1, total: 768, status: "paid" },
+  { id: 1026, name: "عمر خالد", date: "2026-11-16", items: 2, total: 905, status: "pending" },
+  { id: 1027, name: "سارة علي", date: "2026-11-16", items: 3, total: 162, status: "paid" },
+  { id: 1028, name: "آدم شريف", date: "2026-11-17", items: 4, total: 299, status: "cancelled" },
+  { id: 1029, name: "نور حسام", date: "2026-11-17", items: 1, total: 436, status: "paid" },
+  { id: 1030, name: "حسن عادل", date: "2026-11-18", items: 2, total: 573, status: "pending" }
+];
+</script>
+<script>
+const rows = document.getElementById('rows');
+const heads = [...document.querySelectorAll('th[data-key]')];
+const LABEL = { paid: 'مدفوع', pending: 'مستني', cancelled: 'ملغي' };
+const money = n => n.toLocaleString('ar-EG') + ' ج';
+
+// the sort lives in the URL: ?sort=total&dir=desc
+function readState() {
+  const p = new URLSearchParams(location.search);
+  const sort = heads.some(h => h.dataset.key === p.get('sort')) ? p.get('sort') : 'id';
+  const dir = p.get('dir') === 'desc' ? 'desc' : 'asc';
+  return { sort, dir };
+}
+
+function render() {
+  const { sort, dir } = readState();
+  const list = [...ORDERS].sort((a, b) => {
+    const x = a[sort], y = b[sort];
+    const c = typeof x === 'number' ? x - y : x.localeCompare(y, 'ar');
+    return dir === 'asc' ? c : -c;
+  });
+  rows.innerHTML = '';
+  for (const o of list) {
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + o.id + '</td><td></td><td>' + o.date + '</td>' +
+      '<td class="num">' + o.items + '</td><td class="num">' + money(o.total) + '</td>' +
+      '<td><span class="badge ' + o.status + '">' + LABEL[o.status] + '</span></td>';
+    tr.children[1].textContent = o.name; // a name typed by a customer is text, never HTML
+    rows.append(tr);
+  }
+  for (const h of heads) {
+    if (h.dataset.key === sort) h.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+    else h.removeAttribute('aria-sort');
+  }
+}
+
+for (const h of heads) {
+  h.querySelector('button').addEventListener('click', () => {
+    const { sort, dir } = readState();
+    const next = sort === h.dataset.key && dir === 'asc' ? 'desc' : 'asc';
+    // pushState: every sort is a step in history, so Back returns to the one before
+    history.pushState(null, '', '?sort=' + h.dataset.key + '&dir=' + next);
+    render();
+  });
+}
+window.addEventListener('popstate', render);
+render();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** صندوق أبيض فيه صف عناوين كحلي غامق، والصفوف مخططة أبيض ورمادي فاتح، وكل طلب جنبه شارة مدوّرة: خضرا «مدفوع»، وصفرا «مستني»، وحمرا «ملغي». دوس «الإجمالي» وجنبه يظهر ▲ والطلبات تترتب من الأرخص، ودوسة تانية ▼ من الأغلى. انزل جوه الصندوق وصف العناوين يفضل فوق.
+
+**ليه كده:**
+- **العناوين لازقة جوه الصندوق:** [[position: sticky]] و [[top: 0]] على الـ [[th]]. الصندوق عليه [[overflow: auto]]، فالعناوين بتلزق في أوله هو مش في أول الصفحة. وده سبب [[max-height: 70vh]]: من غيره الصندوق بيطول على قد الجدول ومفيش scroll جواه يلزق فيه.
+- **زرار جوه الـ [[th]]:** العنوان نفسه مش بيتداس بالكيبورد. الزرار بيتوصله بـ Tab وبيشتغل بـ Enter والمسافة.
+- **السهم من [[aria-sort]]:** [[th[aria-sort="ascending"] button::after]]. حالة واحدة بيقراها قارئ الشاشة («sorted ascending») وبيشوفها اللي بيبص، فمستحيل الاتنين يختلفوا.
+- **الترتيب في الـ URL بـ [[pushState]]:** كل ترتيب خطوة في الـ history، فـ Back بيرجّع اللي قبله، و [[popstate]] بيعيد الرسم. والـ refresh بيقرا الـ URL فبيفتح على نفس الترتيب، واللينك اللي تبعته لحد بيفتح عنده بنفس الترتيب.
+- **اسم العميل [[textContent]] مش [[innerHTML]]:** الاسم كتبه عميل. لو كتب [[<img src=x onerror=...>]] وحطيناه بـ [[innerHTML]] السكربت بتاعه هيشتغل عندك في لوحة الأدمن.
+- **[[tabular-nums]]:** كل الأرقام نفس العرض، فالإجماليات تحت بعض بالظبط.
+- **الشارات:** خلفية فاتحة وكلام غامق من نفس اللون. قست التباين: كلهم فوق 6:1 (المطلوب 4.5:1).
+
+~~~text الناتج (Chrome)
+أول فتح                      أول ٣ إجماليات: ١٢٠ ج | ٢٥٧ ج | ٣٩٤ ج   (بالترتيب الأصلي)
+ضغطة على «الإجمالي»           ?sort=total&dir=asc    ١٢٠ ج | ١٤١ ج | ١٦٢ ج   aria-sort=ascending
+ضغطة تانية                   ?sort=total&dir=desc   ٩٦٣ ج | ٩٤٢ ج | ٩٠٥ ج   aria-sort=descending
+Back                         ?sort=total&dir=asc    ١٢٠ ج | ١٤١ ج | ١٦٢ ج
+Refresh                      ?sort=total&dir=asc    نفس الترتيب
+scroll 400 جوه الصندوق        مكان صف العناوين: 47px من فوق قبل، و 0px بعد (لزق)
+تباين الشارات                 مدفوع 6.49:1   مستني 6.37:1   ملغي 6.80:1
+axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
+~~~` },
+        { lvl: 'متوسط', dir: "books-catalog", t: R`كتالوج كتب بالبحث والصفحات`, what: R`جدول ١٠٠ كتاب لـ «مكتبة الحروف» (اسم متخيل): حقل بحث بيفلتر بالعنوان أو الكاتب ويكتب [[?q=]] بـ [[replaceState]] (مش مع كل حرف خطوة history)، وصفحات ٢٠ كتاب بأزرار «اللي قبله» و «اللي بعده» وأرقام، وعداد «لقينا ١٢ كتاب» عليه [[aria-live="polite"]]. من درس «ترتيب وصفحات في الـ URL».`, done: R`كتابة «نجيب» بتفلتر من غير reload وزرار Back بيرجّعك للصفحة اللي قبل البحث بضغطة واحدة، و [[?page=99]] بيفتح آخر صفحة مش صفحة فاضية، و [[?q=]] بكلمة عربي بيشتغل لو اتبعت لحد تاني.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كتالوج مكتبة الحروف</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #fffbeb; color: #292524; font: 15px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  main { max-width: 760px; margin-inline: auto; }
+  h1 { margin: 0 0 12px; }
+  .search { display: grid; gap: 4px; margin-block-end: 8px; font-weight: 600; }
+  .search input { font: inherit; padding: 10px 12px; border: 1px solid #a8a29e; border-radius: 10px; }
+  #count { margin: 0 0 8px; color: #57534e; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
+  th, td { padding: 8px 12px; text-align: start; border-block-end: 1px solid #f5f5f4; }
+  thead th { background: #78350f; color: #fffbeb; }
+  .num { font-variant-numeric: tabular-nums; }
+  nav ul { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 12px 0 0; list-style: none; }
+  nav a { display: inline-block; min-width: 40px; padding: 6px 10px; border: 1px solid #d6d3d1; border-radius: 8px; text-align: center; color: inherit; text-decoration: none; background: white; }
+  nav a[aria-current="page"] { background: #78350f; border-color: #78350f; color: white; }
+  nav a[aria-disabled="true"] { opacity: .4; pointer-events: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>كتالوج مكتبة الحروف</h1>
+  <label class="search">دوّر بالعنوان أو الكاتب
+    <input id="q" type="search" autocomplete="off">
+  </label>
+  <p id="count" aria-live="polite"></p>
+  <table>
+    <thead><tr><th scope="col">العنوان</th><th scope="col">الكاتب</th><th scope="col" class="num">السنة</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <nav aria-label="صفحات النتايج"><ul id="pages"></ul></nav>
+</main>
+<script src="books.js"></script>
+<script>
+  const PER = 20;
+  const q = document.getElementById('q');
+  // أ إ آ → ا، ة → ه، ى → ي، ومن غير تشكيل: «أحمد» و «احمد» يلاقوا نفس الكتب
+  const norm = s => s.normalize('NFKD').replace(/[ً-ٟ]/g, '')
+    .replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase().trim();
+
+  function state() {
+    const p = new URLSearchParams(location.search);
+    return { q: p.get('q') || '', page: parseInt(p.get('page'), 10) || 1 };
+  }
+  function url(s) {
+    const p = new URLSearchParams();
+    if (s.q) p.set('q', s.q);
+    if (s.page > 1) p.set('page', s.page);
+    return '?' + p.toString();
+  }
+
+  function render() {
+    const s = state();
+    const found = BOOKS.filter(b => norm(b.title + ' ' + b.author).includes(norm(s.q)));
+    const last = Math.max(1, Math.ceil(found.length / PER));
+    // ?page=99 → the last page, never an empty one
+    const page = Math.min(Math.max(1, s.page), last);
+    if (page !== s.page) history.replaceState(null, '', url({ q: s.q, page }));
+
+    document.getElementById('count').textContent = 'لقينا ' + found.length + ' كتاب' + (last > 1 ? '، صفحة ' + page + ' من ' + last : '');
+    const tbody = document.getElementById('rows');
+    tbody.innerHTML = '';
+    for (const b of found.slice((page - 1) * PER, page * PER)) {
+      const tr = tbody.insertRow();
+      tr.insertCell().textContent = b.title;
+      tr.insertCell().textContent = b.author;
+      const y = tr.insertCell(); y.textContent = b.year; y.className = 'num';
+    }
+
+    const ul = document.getElementById('pages');
+    ul.innerHTML = '';
+    const link = (text, n, label) => {
+      const a = document.createElement('a');
+      a.textContent = text;
+      a.href = url({ q: s.q, page: n });
+      if (label) a.setAttribute('aria-label', label);
+      if (n === page && !label) a.setAttribute('aria-current', 'page');
+      if (n < 1 || n > last) a.setAttribute('aria-disabled', 'true');
+      const li = document.createElement('li'); li.append(a); ul.append(li);
+    };
+    link('‹', page - 1, 'الصفحة اللي قبلها');
+    for (let n = 1; n <= last; n++) link(String(n), n);
+    link('›', page + 1, 'الصفحة اللي بعدها');
+    if (document.activeElement !== q) q.value = s.q;
+  }
+
+  // typing replaces the current URL (no history step per letter); Back leaves the search in one press
+  q.addEventListener('input', () => {
+    history.replaceState(null, '', url({ q: q.value.trim(), page: 1 }));
+    render();
+  });
+  // page links: a real step in history, without reloading
+  document.getElementById('pages').addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (!a || a.getAttribute('aria-disabled') === 'true') return;
+    e.preventDefault();
+    history.pushState(null, '', a.getAttribute('href'));
+    render();
+  });
+  window.addEventListener('popstate', render);
+  render();
+</script>
+</body>
+</html>
+~~~
+
+~~~js books.js
+// 100 invented books of an invented library
+const BOOKS = [
+  { id: 1, title: "ليالي البحر", author: "نجيب سالم", year: 1990 },
+  { id: 2, title: "بيت البحر", author: "منى فهمي", year: 1997 },
+  { id: 3, title: "رسايل البحر", author: "طارق شاكر", year: 2004 },
+  { id: 4, title: "حكايات البحر", author: "ليلى عادل", year: 2011 },
+  { id: 5, title: "أسرار البحر", author: "نجيب حمدي", year: 2018 },
+  { id: 6, title: "طريق البحر", author: "هالة نصر", year: 1990 },
+  { id: 7, title: "مدينة البحر", author: "يوسف عادل", year: 1997 },
+  { id: 8, title: "نجوم البحر", author: "سلوى رأفت", year: 2004 },
+  { id: 9, title: "بحر البحر", author: "نجيب سالم", year: 2011 },
+  { id: 10, title: "شتا البحر", author: "منى فهمي", year: 2018 },
+  { id: 11, title: "ليالي الجدة", author: "طارق شاكر", year: 1990 },
+  { id: 12, title: "بيت الجدة", author: "ليلى عادل", year: 1997 },
+  { id: 13, title: "رسايل الجدة", author: "نجيب حمدي", year: 2004 },
+  { id: 14, title: "حكايات الجدة", author: "هالة نصر", year: 2011 },
+  { id: 15, title: "أسرار الجدة", author: "يوسف عادل", year: 2018 },
+  { id: 16, title: "طريق الجدة", author: "سلوى رأفت", year: 1990 },
+  { id: 17, title: "مدينة الجدة", author: "نجيب سالم", year: 1997 },
+  { id: 18, title: "نجوم الجدة", author: "منى فهمي", year: 2004 },
+  { id: 19, title: "بحر الجدة", author: "طارق شاكر", year: 2011 },
+  { id: 20, title: "شتا الجدة", author: "ليلى عادل", year: 2018 },
+  { id: 21, title: "ليالي الصحرا", author: "نجيب حمدي", year: 1990 },
+  { id: 22, title: "بيت الصحرا", author: "هالة نصر", year: 1997 },
+  { id: 23, title: "رسايل الصحرا", author: "يوسف عادل", year: 2004 },
+  { id: 24, title: "حكايات الصحرا", author: "سلوى رأفت", year: 2011 },
+  { id: 25, title: "أسرار الصحرا", author: "نجيب سالم", year: 2018 },
+  { id: 26, title: "طريق الصحرا", author: "منى فهمي", year: 1990 },
+  { id: 27, title: "مدينة الصحرا", author: "طارق شاكر", year: 1997 },
+  { id: 28, title: "نجوم الصحرا", author: "ليلى عادل", year: 2004 },
+  { id: 29, title: "بحر الصحرا", author: "نجيب حمدي", year: 2011 },
+  { id: 30, title: "شتا الصحرا", author: "هالة نصر", year: 2018 },
+  { id: 31, title: "ليالي القمر", author: "يوسف عادل", year: 1990 },
+  { id: 32, title: "بيت القمر", author: "سلوى رأفت", year: 1997 },
+  { id: 33, title: "رسايل القمر", author: "نجيب سالم", year: 2004 },
+  { id: 34, title: "حكايات القمر", author: "منى فهمي", year: 2011 },
+  { id: 35, title: "أسرار القمر", author: "طارق شاكر", year: 2018 },
+  { id: 36, title: "طريق القمر", author: "ليلى عادل", year: 1990 },
+  { id: 37, title: "مدينة القمر", author: "نجيب حمدي", year: 1997 },
+  { id: 38, title: "نجوم القمر", author: "هالة نصر", year: 2004 },
+  { id: 39, title: "بحر القمر", author: "يوسف عادل", year: 2011 },
+  { id: 40, title: "شتا القمر", author: "سلوى رأفت", year: 2018 },
+  { id: 41, title: "ليالي الغريب", author: "نجيب سالم", year: 1990 },
+  { id: 42, title: "بيت الغريب", author: "منى فهمي", year: 1997 },
+  { id: 43, title: "رسايل الغريب", author: "طارق شاكر", year: 2004 },
+  { id: 44, title: "حكايات الغريب", author: "ليلى عادل", year: 2011 },
+  { id: 45, title: "أسرار الغريب", author: "نجيب حمدي", year: 2018 },
+  { id: 46, title: "طريق الغريب", author: "هالة نصر", year: 1990 },
+  { id: 47, title: "مدينة الغريب", author: "يوسف عادل", year: 1997 },
+  { id: 48, title: "نجوم الغريب", author: "سلوى رأفت", year: 2004 },
+  { id: 49, title: "بحر الغريب", author: "نجيب سالم", year: 2011 },
+  { id: 50, title: "شتا الغريب", author: "منى فهمي", year: 2018 },
+  { id: 51, title: "ليالي النيل", author: "طارق شاكر", year: 1990 },
+  { id: 52, title: "بيت النيل", author: "ليلى عادل", year: 1997 },
+  { id: 53, title: "رسايل النيل", author: "نجيب حمدي", year: 2004 },
+  { id: 54, title: "حكايات النيل", author: "هالة نصر", year: 2011 },
+  { id: 55, title: "أسرار النيل", author: "يوسف عادل", year: 2018 },
+  { id: 56, title: "طريق النيل", author: "سلوى رأفت", year: 1990 },
+  { id: 57, title: "مدينة النيل", author: "نجيب سالم", year: 1997 },
+  { id: 58, title: "نجوم النيل", author: "منى فهمي", year: 2004 },
+  { id: 59, title: "بحر النيل", author: "طارق شاكر", year: 2011 },
+  { id: 60, title: "شتا النيل", author: "ليلى عادل", year: 2018 },
+  { id: 61, title: "ليالي الحارة", author: "نجيب حمدي", year: 1990 },
+  { id: 62, title: "بيت الحارة", author: "هالة نصر", year: 1997 },
+  { id: 63, title: "رسايل الحارة", author: "يوسف عادل", year: 2004 },
+  { id: 64, title: "حكايات الحارة", author: "سلوى رأفت", year: 2011 },
+  { id: 65, title: "أسرار الحارة", author: "نجيب سالم", year: 2018 },
+  { id: 66, title: "طريق الحارة", author: "منى فهمي", year: 1990 },
+  { id: 67, title: "مدينة الحارة", author: "طارق شاكر", year: 1997 },
+  { id: 68, title: "نجوم الحارة", author: "ليلى عادل", year: 2004 },
+  { id: 69, title: "بحر الحارة", author: "نجيب حمدي", year: 2011 },
+  { id: 70, title: "شتا الحارة", author: "هالة نصر", year: 2018 },
+  { id: 71, title: "ليالي الشمال", author: "يوسف عادل", year: 1990 },
+  { id: 72, title: "بيت الشمال", author: "سلوى رأفت", year: 1997 },
+  { id: 73, title: "رسايل الشمال", author: "نجيب سالم", year: 2004 },
+  { id: 74, title: "حكايات الشمال", author: "منى فهمي", year: 2011 },
+  { id: 75, title: "أسرار الشمال", author: "طارق شاكر", year: 2018 },
+  { id: 76, title: "طريق الشمال", author: "ليلى عادل", year: 1990 },
+  { id: 77, title: "مدينة الشمال", author: "نجيب حمدي", year: 1997 },
+  { id: 78, title: "نجوم الشمال", author: "هالة نصر", year: 2004 },
+  { id: 79, title: "بحر الشمال", author: "يوسف عادل", year: 2011 },
+  { id: 80, title: "شتا الشمال", author: "سلوى رأفت", year: 2018 },
+  { id: 81, title: "ليالي المطر", author: "نجيب سالم", year: 1990 },
+  { id: 82, title: "بيت المطر", author: "منى فهمي", year: 1997 },
+  { id: 83, title: "رسايل المطر", author: "طارق شاكر", year: 2004 },
+  { id: 84, title: "حكايات المطر", author: "ليلى عادل", year: 2011 },
+  { id: 85, title: "أسرار المطر", author: "نجيب حمدي", year: 2018 },
+  { id: 86, title: "طريق المطر", author: "هالة نصر", year: 1990 },
+  { id: 87, title: "مدينة المطر", author: "يوسف عادل", year: 1997 },
+  { id: 88, title: "نجوم المطر", author: "سلوى رأفت", year: 2004 },
+  { id: 89, title: "بحر المطر", author: "نجيب سالم", year: 2011 },
+  { id: 90, title: "شتا المطر", author: "منى فهمي", year: 2018 },
+  { id: 91, title: "ليالي الحديقة", author: "طارق شاكر", year: 1990 },
+  { id: 92, title: "بيت الحديقة", author: "ليلى عادل", year: 1997 },
+  { id: 93, title: "رسايل الحديقة", author: "نجيب حمدي", year: 2004 },
+  { id: 94, title: "حكايات الحديقة", author: "هالة نصر", year: 2011 },
+  { id: 95, title: "أسرار الحديقة", author: "يوسف عادل", year: 2018 },
+  { id: 96, title: "طريق الحديقة", author: "سلوى رأفت", year: 1990 },
+  { id: 97, title: "مدينة الحديقة", author: "نجيب سالم", year: 1997 },
+  { id: 98, title: "نجوم الحديقة", author: "منى فهمي", year: 2004 },
+  { id: 99, title: "بحر الحديقة", author: "طارق شاكر", year: 2011 },
+  { id: 100, title: "شتا الحديقة", author: "ليلى عادل", year: 2018 }
+];
+~~~
+
+~~~view 620 760 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كتالوج مكتبة الحروف</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #fffbeb; color: #292524; font: 15px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  main { max-width: 760px; margin-inline: auto; }
+  h1 { margin: 0 0 12px; }
+  .search { display: grid; gap: 4px; margin-block-end: 8px; font-weight: 600; }
+  .search input { font: inherit; padding: 10px 12px; border: 1px solid #a8a29e; border-radius: 10px; }
+  #count { margin: 0 0 8px; color: #57534e; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
+  th, td { padding: 8px 12px; text-align: start; border-block-end: 1px solid #f5f5f4; }
+  thead th { background: #78350f; color: #fffbeb; }
+  .num { font-variant-numeric: tabular-nums; }
+  nav ul { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 12px 0 0; list-style: none; }
+  nav a { display: inline-block; min-width: 40px; padding: 6px 10px; border: 1px solid #d6d3d1; border-radius: 8px; text-align: center; color: inherit; text-decoration: none; background: white; }
+  nav a[aria-current="page"] { background: #78350f; border-color: #78350f; color: white; }
+  nav a[aria-disabled="true"] { opacity: .4; pointer-events: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>كتالوج مكتبة الحروف</h1>
+  <label class="search">دوّر بالعنوان أو الكاتب
+    <input id="q" type="search" autocomplete="off">
+  </label>
+  <p id="count" aria-live="polite"></p>
+  <table>
+    <thead><tr><th scope="col">العنوان</th><th scope="col">الكاتب</th><th scope="col" class="num">السنة</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <nav aria-label="صفحات النتايج"><ul id="pages"></ul></nav>
+</main>
+<script>
+// 100 invented books of an invented library
+const BOOKS = [
+  { id: 1, title: "ليالي البحر", author: "نجيب سالم", year: 1990 },
+  { id: 2, title: "بيت البحر", author: "منى فهمي", year: 1997 },
+  { id: 3, title: "رسايل البحر", author: "طارق شاكر", year: 2004 },
+  { id: 4, title: "حكايات البحر", author: "ليلى عادل", year: 2011 },
+  { id: 5, title: "أسرار البحر", author: "نجيب حمدي", year: 2018 },
+  { id: 6, title: "طريق البحر", author: "هالة نصر", year: 1990 },
+  { id: 7, title: "مدينة البحر", author: "يوسف عادل", year: 1997 },
+  { id: 8, title: "نجوم البحر", author: "سلوى رأفت", year: 2004 },
+  { id: 9, title: "بحر البحر", author: "نجيب سالم", year: 2011 },
+  { id: 10, title: "شتا البحر", author: "منى فهمي", year: 2018 },
+  { id: 11, title: "ليالي الجدة", author: "طارق شاكر", year: 1990 },
+  { id: 12, title: "بيت الجدة", author: "ليلى عادل", year: 1997 },
+  { id: 13, title: "رسايل الجدة", author: "نجيب حمدي", year: 2004 },
+  { id: 14, title: "حكايات الجدة", author: "هالة نصر", year: 2011 },
+  { id: 15, title: "أسرار الجدة", author: "يوسف عادل", year: 2018 },
+  { id: 16, title: "طريق الجدة", author: "سلوى رأفت", year: 1990 },
+  { id: 17, title: "مدينة الجدة", author: "نجيب سالم", year: 1997 },
+  { id: 18, title: "نجوم الجدة", author: "منى فهمي", year: 2004 },
+  { id: 19, title: "بحر الجدة", author: "طارق شاكر", year: 2011 },
+  { id: 20, title: "شتا الجدة", author: "ليلى عادل", year: 2018 },
+  { id: 21, title: "ليالي الصحرا", author: "نجيب حمدي", year: 1990 },
+  { id: 22, title: "بيت الصحرا", author: "هالة نصر", year: 1997 },
+  { id: 23, title: "رسايل الصحرا", author: "يوسف عادل", year: 2004 },
+  { id: 24, title: "حكايات الصحرا", author: "سلوى رأفت", year: 2011 },
+  { id: 25, title: "أسرار الصحرا", author: "نجيب سالم", year: 2018 },
+  { id: 26, title: "طريق الصحرا", author: "منى فهمي", year: 1990 },
+  { id: 27, title: "مدينة الصحرا", author: "طارق شاكر", year: 1997 },
+  { id: 28, title: "نجوم الصحرا", author: "ليلى عادل", year: 2004 },
+  { id: 29, title: "بحر الصحرا", author: "نجيب حمدي", year: 2011 },
+  { id: 30, title: "شتا الصحرا", author: "هالة نصر", year: 2018 },
+  { id: 31, title: "ليالي القمر", author: "يوسف عادل", year: 1990 },
+  { id: 32, title: "بيت القمر", author: "سلوى رأفت", year: 1997 },
+  { id: 33, title: "رسايل القمر", author: "نجيب سالم", year: 2004 },
+  { id: 34, title: "حكايات القمر", author: "منى فهمي", year: 2011 },
+  { id: 35, title: "أسرار القمر", author: "طارق شاكر", year: 2018 },
+  { id: 36, title: "طريق القمر", author: "ليلى عادل", year: 1990 },
+  { id: 37, title: "مدينة القمر", author: "نجيب حمدي", year: 1997 },
+  { id: 38, title: "نجوم القمر", author: "هالة نصر", year: 2004 },
+  { id: 39, title: "بحر القمر", author: "يوسف عادل", year: 2011 },
+  { id: 40, title: "شتا القمر", author: "سلوى رأفت", year: 2018 },
+  { id: 41, title: "ليالي الغريب", author: "نجيب سالم", year: 1990 },
+  { id: 42, title: "بيت الغريب", author: "منى فهمي", year: 1997 },
+  { id: 43, title: "رسايل الغريب", author: "طارق شاكر", year: 2004 },
+  { id: 44, title: "حكايات الغريب", author: "ليلى عادل", year: 2011 },
+  { id: 45, title: "أسرار الغريب", author: "نجيب حمدي", year: 2018 },
+  { id: 46, title: "طريق الغريب", author: "هالة نصر", year: 1990 },
+  { id: 47, title: "مدينة الغريب", author: "يوسف عادل", year: 1997 },
+  { id: 48, title: "نجوم الغريب", author: "سلوى رأفت", year: 2004 },
+  { id: 49, title: "بحر الغريب", author: "نجيب سالم", year: 2011 },
+  { id: 50, title: "شتا الغريب", author: "منى فهمي", year: 2018 },
+  { id: 51, title: "ليالي النيل", author: "طارق شاكر", year: 1990 },
+  { id: 52, title: "بيت النيل", author: "ليلى عادل", year: 1997 },
+  { id: 53, title: "رسايل النيل", author: "نجيب حمدي", year: 2004 },
+  { id: 54, title: "حكايات النيل", author: "هالة نصر", year: 2011 },
+  { id: 55, title: "أسرار النيل", author: "يوسف عادل", year: 2018 },
+  { id: 56, title: "طريق النيل", author: "سلوى رأفت", year: 1990 },
+  { id: 57, title: "مدينة النيل", author: "نجيب سالم", year: 1997 },
+  { id: 58, title: "نجوم النيل", author: "منى فهمي", year: 2004 },
+  { id: 59, title: "بحر النيل", author: "طارق شاكر", year: 2011 },
+  { id: 60, title: "شتا النيل", author: "ليلى عادل", year: 2018 },
+  { id: 61, title: "ليالي الحارة", author: "نجيب حمدي", year: 1990 },
+  { id: 62, title: "بيت الحارة", author: "هالة نصر", year: 1997 },
+  { id: 63, title: "رسايل الحارة", author: "يوسف عادل", year: 2004 },
+  { id: 64, title: "حكايات الحارة", author: "سلوى رأفت", year: 2011 },
+  { id: 65, title: "أسرار الحارة", author: "نجيب سالم", year: 2018 },
+  { id: 66, title: "طريق الحارة", author: "منى فهمي", year: 1990 },
+  { id: 67, title: "مدينة الحارة", author: "طارق شاكر", year: 1997 },
+  { id: 68, title: "نجوم الحارة", author: "ليلى عادل", year: 2004 },
+  { id: 69, title: "بحر الحارة", author: "نجيب حمدي", year: 2011 },
+  { id: 70, title: "شتا الحارة", author: "هالة نصر", year: 2018 },
+  { id: 71, title: "ليالي الشمال", author: "يوسف عادل", year: 1990 },
+  { id: 72, title: "بيت الشمال", author: "سلوى رأفت", year: 1997 },
+  { id: 73, title: "رسايل الشمال", author: "نجيب سالم", year: 2004 },
+  { id: 74, title: "حكايات الشمال", author: "منى فهمي", year: 2011 },
+  { id: 75, title: "أسرار الشمال", author: "طارق شاكر", year: 2018 },
+  { id: 76, title: "طريق الشمال", author: "ليلى عادل", year: 1990 },
+  { id: 77, title: "مدينة الشمال", author: "نجيب حمدي", year: 1997 },
+  { id: 78, title: "نجوم الشمال", author: "هالة نصر", year: 2004 },
+  { id: 79, title: "بحر الشمال", author: "يوسف عادل", year: 2011 },
+  { id: 80, title: "شتا الشمال", author: "سلوى رأفت", year: 2018 },
+  { id: 81, title: "ليالي المطر", author: "نجيب سالم", year: 1990 },
+  { id: 82, title: "بيت المطر", author: "منى فهمي", year: 1997 },
+  { id: 83, title: "رسايل المطر", author: "طارق شاكر", year: 2004 },
+  { id: 84, title: "حكايات المطر", author: "ليلى عادل", year: 2011 },
+  { id: 85, title: "أسرار المطر", author: "نجيب حمدي", year: 2018 },
+  { id: 86, title: "طريق المطر", author: "هالة نصر", year: 1990 },
+  { id: 87, title: "مدينة المطر", author: "يوسف عادل", year: 1997 },
+  { id: 88, title: "نجوم المطر", author: "سلوى رأفت", year: 2004 },
+  { id: 89, title: "بحر المطر", author: "نجيب سالم", year: 2011 },
+  { id: 90, title: "شتا المطر", author: "منى فهمي", year: 2018 },
+  { id: 91, title: "ليالي الحديقة", author: "طارق شاكر", year: 1990 },
+  { id: 92, title: "بيت الحديقة", author: "ليلى عادل", year: 1997 },
+  { id: 93, title: "رسايل الحديقة", author: "نجيب حمدي", year: 2004 },
+  { id: 94, title: "حكايات الحديقة", author: "هالة نصر", year: 2011 },
+  { id: 95, title: "أسرار الحديقة", author: "يوسف عادل", year: 2018 },
+  { id: 96, title: "طريق الحديقة", author: "سلوى رأفت", year: 1990 },
+  { id: 97, title: "مدينة الحديقة", author: "نجيب سالم", year: 1997 },
+  { id: 98, title: "نجوم الحديقة", author: "منى فهمي", year: 2004 },
+  { id: 99, title: "بحر الحديقة", author: "طارق شاكر", year: 2011 },
+  { id: 100, title: "شتا الحديقة", author: "ليلى عادل", year: 2018 }
+];
+</script>
+<script>
+  const PER = 20;
+  const q = document.getElementById('q');
+  // أ إ آ → ا، ة → ه، ى → ي، ومن غير تشكيل: «أحمد» و «احمد» يلاقوا نفس الكتب
+  const norm = s => s.normalize('NFKD').replace(/[ً-ٟ]/g, '')
+    .replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase().trim();
+
+  function state() {
+    const p = new URLSearchParams(location.search);
+    return { q: p.get('q') || '', page: parseInt(p.get('page'), 10) || 1 };
+  }
+  function url(s) {
+    const p = new URLSearchParams();
+    if (s.q) p.set('q', s.q);
+    if (s.page > 1) p.set('page', s.page);
+    return '?' + p.toString();
+  }
+
+  function render() {
+    const s = state();
+    const found = BOOKS.filter(b => norm(b.title + ' ' + b.author).includes(norm(s.q)));
+    const last = Math.max(1, Math.ceil(found.length / PER));
+    // ?page=99 → the last page, never an empty one
+    const page = Math.min(Math.max(1, s.page), last);
+    if (page !== s.page) history.replaceState(null, '', url({ q: s.q, page }));
+
+    document.getElementById('count').textContent = 'لقينا ' + found.length + ' كتاب' + (last > 1 ? '، صفحة ' + page + ' من ' + last : '');
+    const tbody = document.getElementById('rows');
+    tbody.innerHTML = '';
+    for (const b of found.slice((page - 1) * PER, page * PER)) {
+      const tr = tbody.insertRow();
+      tr.insertCell().textContent = b.title;
+      tr.insertCell().textContent = b.author;
+      const y = tr.insertCell(); y.textContent = b.year; y.className = 'num';
+    }
+
+    const ul = document.getElementById('pages');
+    ul.innerHTML = '';
+    const link = (text, n, label) => {
+      const a = document.createElement('a');
+      a.textContent = text;
+      a.href = url({ q: s.q, page: n });
+      if (label) a.setAttribute('aria-label', label);
+      if (n === page && !label) a.setAttribute('aria-current', 'page');
+      if (n < 1 || n > last) a.setAttribute('aria-disabled', 'true');
+      const li = document.createElement('li'); li.append(a); ul.append(li);
+    };
+    link('‹', page - 1, 'الصفحة اللي قبلها');
+    for (let n = 1; n <= last; n++) link(String(n), n);
+    link('›', page + 1, 'الصفحة اللي بعدها');
+    if (document.activeElement !== q) q.value = s.q;
+  }
+
+  // typing replaces the current URL (no history step per letter); Back leaves the search in one press
+  q.addEventListener('input', () => {
+    history.replaceState(null, '', url({ q: q.value.trim(), page: 1 }));
+    render();
+  });
+  // page links: a real step in history, without reloading
+  document.getElementById('pages').addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (!a || a.getAttribute('aria-disabled') === 'true') return;
+    e.preventDefault();
+    history.pushState(null, '', a.getAttribute('href'));
+    render();
+  });
+  window.addEventListener('popstate', render);
+  render();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خلفية كريمي، وحقل بحث، وتحته «لقينا 100 كتاب، صفحة 1 من 5»، وجدول بصف عناوين بني غامق، وتحت الجدول أزرار صفحات صغيرة (‹ 1 2 3 4 5 ›) والصفحة اللي انت فيها بني. اكتب «نجيب» والجدول بيتفلتر وانت بتكتب.
+
+**ليه كده:**
+- **البحث بـ [[replaceState]]:** كل حرف بيغيّر الـ URL من غير ما يزوّد خطوة في الـ history. لو استخدمت [[pushState]]، «نجيب» = ٤ خطوات، والمستخدم هيدوس Back ٤ مرات عشان يخرج.
+- **الصفحات بـ [[pushState]]:** تقليب الصفحات خطوة حقيقية، فـ Back بيرجّع الصفحة اللي قبلها. والأزرار لينكات [[<a href="?page=2">]] حقيقية (تتفتح في تاب جديد بالضغط الوسطاني)، والـ JavaScript بيمنع الـ reload بس.
+- **[[?page=99]]:** بنحسب آخر صفحة ونرجع لها، وبنصلّح الـ URL بـ [[replaceState]] عشان ميفضلش 99.
+- **بحث عربي سليم:** [[norm()]] بتشيل التشكيل وبتخلي [[أ إ آ]] = [[ا]] و [[ة]] = [[ه]] و [[ى]] = [[ي]]. الناس بتكتب «اسرار» من غير همزة، والكتاب اسمه «أسرار».
+- **[[URLSearchParams]]:** بيعمل encode للعربي لوحده ([[?q=%D9%86%D8%AC...]]) وبيرجّعه نص لما تقراه، فاللينك العربي بيشتغل لو اتبعت.
+- **العداد [[aria-live="polite"]]:** قارئ الشاشة بيقول «لقينا 25 كتاب» بعد ما تخلص كتابة.
+- **[[aria-current="page"]]** على رقم الصفحة الحالية، و [[aria-label]] على ‹ و › لأن السهم لوحده ملوش اسم.
+
+~~~text الناتج (Chrome)
+أول فتح                     لقينا 100 كتاب، صفحة 1 من 5   (7 لينكات: ‹ 1 2 3 4 5 ›)
+كتبت «نجيب» بالكيبورد        ?q=نجيب   لقينا 25 كتاب، صفحة 1 من 2   أول كتاب: ليالي البحر · نجيب سالم · 1990
+history.length              14 قبل الكتابة و 14 بعدها (مفيش خطوة لكل حرف)
+Back                        رجّعني للصفحة اللي قبل الكتالوج على طول
+?page=99                    الـ URL بقى ?page=5   لقينا 100 كتاب، صفحة 5 من 5   20 صف
+?q=اسرار (رابط متبعت)        لقينا 10 كتاب، أولهم «أسرار البحر»
+axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
+~~~` },
+        { lvl: 'كبير', dir: "shop-invoice", t: R`فاتورة ومخزن لمحل متخيل`, what: R`أداة لمحل أدوات منزلية متخيل: فورم بيزوّد صنف (الاسم، والكمية، والسعر) لجدول الفاتورة، والإجمالي والضريبة بيتحسبوا في الـ tfoot، وحذف صنف بزرار ليه [[aria-label]] باسم الصنف، والفاتورة بتتحفظ في localStorage وترجع بعد الـ refresh، ورقم الفاتورة بيزيد لوحده. وصفحة الطباعة: A4 بهامش 12mm، ورقم «صفحة ١ من ٢» تحت، والـ thead والـ tfoot بيتكرروا، والصف مبيتقطعش، والأزرار والفورم مخفيين، وشعار المحل ولون عنوان الجدول بيتطبعوا. يجمع الوحدة دي مع وحدة الفورم.`, done: R`بـ ٤٠ صنف الـ Save as PDF بيطلع أكتر من ورقة وكل ورقة فيها العناوين فوق والإجمالي تحت ورقمها، ومفيش زرار ولا حقل في الورق، والرقم الغلط (كمية 0 أو سعر سالب) بيترفض برسالة جنب الحقل، والـ refresh مبيضيّعش الفاتورة، والطباعة مرتين ورا بعض بتطلع نفس الـ PDF، و axe صفر violations على الشاشة.`, ext: R`زوّد تصدير CSV بزرار، وفلتر بالتاريخ، ونسخة «إيصال كاشير» بـ [[size: 80mm 200mm]]، وخلي الـ PDF يتعمل في السيرفر بـ Playwright ([[page.pdf]]) لما تتعلم Node.`, sol: R`~~~text
+shop-invoice/
+├── index.html   الهيدر والفورم والجدول
+├── style.css    الشاشة، والورق (@page و @media print)
+└── app.js       الحساب والحفظ والإضافة والحذف
+~~~
+
+**ترتيب البناء:** (١) الجدول بـ [[thead]] و [[tbody]] و [[tfoot]] وصفين مكتوبين بإيدك عشان تظبط الشكل. (٢) الـ CSS للشاشة. (٣) [[app.js]]: [[render()]] من مصفوفة، وبعدين الإضافة، وبعدين الحذف، وبعدين [[localStorage]]. (٤) آخر حاجة الطباعة: اضغط Ctrl+P وانت شغال، أو DevTools › Rendering › Emulate CSS media type › print.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فاتورة: أدوات البيت</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header class="shop">
+    <svg class="logo" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#b45309"/><path d="M10 28V16l10-7 10 7v12H24v-7h-8v7z" fill="white"/></svg>
+    <div>
+      <h1>أدوات البيت</h1>
+      <p>فاتورة رقم <b id="number"></b> · <span id="today"></span></p>
+    </div>
+  </header>
+
+  <form id="add" class="no-print" novalidate>
+    <div class="field name">
+      <label for="item">الصنف</label>
+      <input id="item" name="item" required maxlength="60" aria-describedby="item-err">
+      <span class="err" id="item-err"></span>
+    </div>
+    <div class="field">
+      <label for="qty">الكمية</label>
+      <input id="qty" name="qty" type="number" min="1" step="1" value="1" required aria-describedby="qty-err">
+      <span class="err" id="qty-err"></span>
+    </div>
+    <div class="field">
+      <label for="price">سعر الوحدة</label>
+      <input id="price" name="price" type="number" min="0.01" step="0.01" required aria-describedby="price-err">
+      <span class="err" id="price-err"></span>
+    </div>
+    <button>زوّد</button>
+  </form>
+
+  <table>
+    <caption>الأصناف</caption>
+    <thead>
+      <tr><th scope="col">#</th><th scope="col">الصنف</th><th scope="col" class="num">الكمية</th><th scope="col" class="num">السعر</th><th scope="col" class="num">المجموع</th><th scope="col" class="no-print"><span class="visually-hidden">حذف</span></th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+    <tfoot>
+      <tr><th scope="row" colspan="4">قبل الضريبة</th><td class="num" id="sub"></td><td class="no-print"></td></tr>
+      <tr><th scope="row" colspan="4">ضريبة ١٤٪</th><td class="num" id="vat"></td><td class="no-print"></td></tr>
+      <tr class="grand"><th scope="row" colspan="4">الإجمالي</th><td class="num" id="total"></td><td class="no-print"></td></tr>
+    </tfoot>
+  </table>
+  <p id="empty" class="empty">الفاتورة لسه فاضية. زوّد أول صنف من فوق.</p>
+
+  <div class="actions no-print">
+    <button type="button" id="print">اطبع</button>
+    <button type="button" id="fresh">فاتورة جديدة</button>
+  </div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 820px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
+
+.shop { display: flex; gap: 12px; align-items: center; margin-block-end: 16px; }
+.shop h1 { margin: 0; font-size: 22px; }
+.shop p { margin: 0; color: #57534e; }
+
+form { display: grid; grid-template-columns: 1fr; gap: 10px; align-items: start; margin-block-end: 16px; padding: 12px; border-radius: 12px; background: #fafaf9; }
+@media (min-width: 640px) { form { grid-template-columns: 2fr 1fr 1fr auto; } form button { margin-block-start: 26px; } }
+.field { display: grid; gap: 4px; min-width: 0; }
+label { font-weight: 600; }
+input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+.err { min-height: 1.2em; color: #b91c1c; font-size: 13px; }
+button { font: inherit; font-weight: 700; padding: 8px 16px; border: 0; border-radius: 8px; background: #b45309; color: white; cursor: pointer; }
+
+table { width: 100%; border-collapse: collapse; }
+caption { text-align: start; font-weight: 700; padding-block-end: 6px; }
+th, td { padding: 8px 10px; text-align: start; border-block-end: 1px solid #e7e5e4; }
+thead th { background: #b45309; color: white; }
+.num { text-align: end; font-variant-numeric: tabular-nums; }
+tfoot th { text-align: end; font-weight: 600; }
+.grand th, .grand td { font-size: 18px; font-weight: 800; border-block-start: 2px solid #1c1917; }
+.del { padding: 4px 10px; background: transparent; color: #b91c1c; border: 1px solid #fca5a5; }
+.empty { color: #78716c; }
+.actions { display: flex; gap: 8px; margin-block-start: 16px; }
+.actions #fresh { background: white; color: #b45309; border: 1px solid #b45309; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- the paper ---------- */
+@page {
+  size: A4;
+  margin: 12mm;
+  @bottom-center { content: "صفحة " counter(page) " من " counter(pages); font: 10px system-ui, sans-serif; color: #57534e; }
+}
+@media print {
+  body { padding: 0; background: white; }
+  main { max-width: none; padding: 0; border-radius: 0; }
+  .no-print, .empty { display: none !important; }
+  /* thead and tfoot repeat on every page by default (table-header-group / table-footer-group); a row never splits */
+  tr { break-inside: avoid; }
+  /* without this the browser drops background colors to save ink: the header row and the logo would print white */
+  thead th, .logo { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+~~~
+
+~~~js app.js
+const KEY = 'home-tools-invoice';
+const VAT = 0.14;
+const form = document.getElementById('add');
+const rows = document.getElementById('rows');
+const money = n => n.toLocaleString('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+// ---------- saved state: { number, items: [{ name, qty, price }] } ----------
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && Array.isArray(s.items) && Number.isInteger(s.number)) return s;
+  } catch {}
+  return { number: 1, items: [] };
+}
+let invoice = load();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(invoice)); } catch {} }
+
+// ---------- the table ----------
+function render() {
+  document.getElementById('number').textContent = String(invoice.number).padStart(4, '0');
+  document.getElementById('today').textContent = new Date().toLocaleDateString('ar-EG', { dateStyle: 'long' });
+  rows.innerHTML = '';
+  // money in piasters (whole numbers) so 0.1 + 0.2 never becomes 0.30000000000000004
+  let sub = 0;
+  invoice.items.forEach((it, i) => {
+    const line = Math.round(it.price * 100) * it.qty;
+    sub += line;
+    const tr = rows.insertRow();
+    tr.insertCell().textContent = i + 1;
+    tr.insertCell().textContent = it.name;
+    const q = tr.insertCell(); q.textContent = it.qty; q.className = 'num';
+    const p = tr.insertCell(); p.textContent = money(it.price); p.className = 'num';
+    const l = tr.insertCell(); l.textContent = money(line / 100); l.className = 'num';
+    const d = tr.insertCell(); d.className = 'no-print';
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'del'; b.textContent = 'احذف';
+    b.setAttribute('aria-label', 'احذف ' + it.name);
+    b.addEventListener('click', () => { invoice.items.splice(i, 1); save(); render(); });
+    d.append(b);
+  });
+  const vat = Math.round(sub * VAT);
+  document.getElementById('sub').textContent = money(sub / 100);
+  document.getElementById('vat').textContent = money(vat / 100);
+  document.getElementById('total').textContent = money((sub + vat) / 100);
+  document.getElementById('empty').hidden = invoice.items.length > 0;
+}
+
+// ---------- add an item, the error next to its field ----------
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  let first = null;
+  for (const f of form.elements) {
+    // the submit button is in form.elements too, and willValidate is true for it: only fields that have an error line
+    const err = document.getElementById(f.id + '-err');
+    if (!f.willValidate || !err) continue;
+    const ok = f.checkValidity();
+    f.setAttribute('aria-invalid', String(!ok));
+    err.textContent = ok ? '' : f.validationMessage;
+    if (!ok && !first) first = f;
+  }
+  if (first) { first.focus(); return; }
+  invoice.items.push({ name: form.item.value.trim(), qty: form.qty.valueAsNumber, price: form.price.valueAsNumber });
+  save();
+  render();
+  form.reset();
+  form.item.focus();
+});
+
+document.getElementById('print').addEventListener('click', () => print());
+document.getElementById('fresh').addEventListener('click', () => {
+  if (invoice.items.length && !confirm('تبدأ فاتورة جديدة؟ الحالية هتتمسح من الشاشة.')) return;
+  invoice = { number: invoice.number + 1, items: [] };
+  save();
+  render();
+});
+render();
+~~~
+
+~~~view 640 900 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فاتورة: أدوات البيت</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 820px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
+
+.shop { display: flex; gap: 12px; align-items: center; margin-block-end: 16px; }
+.shop h1 { margin: 0; font-size: 22px; }
+.shop p { margin: 0; color: #57534e; }
+
+form { display: grid; grid-template-columns: 1fr; gap: 10px; align-items: start; margin-block-end: 16px; padding: 12px; border-radius: 12px; background: #fafaf9; }
+@media (min-width: 640px) { form { grid-template-columns: 2fr 1fr 1fr auto; } form button { margin-block-start: 26px; } }
+.field { display: grid; gap: 4px; min-width: 0; }
+label { font-weight: 600; }
+input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+.err { min-height: 1.2em; color: #b91c1c; font-size: 13px; }
+button { font: inherit; font-weight: 700; padding: 8px 16px; border: 0; border-radius: 8px; background: #b45309; color: white; cursor: pointer; }
+
+table { width: 100%; border-collapse: collapse; }
+caption { text-align: start; font-weight: 700; padding-block-end: 6px; }
+th, td { padding: 8px 10px; text-align: start; border-block-end: 1px solid #e7e5e4; }
+thead th { background: #b45309; color: white; }
+.num { text-align: end; font-variant-numeric: tabular-nums; }
+tfoot th { text-align: end; font-weight: 600; }
+.grand th, .grand td { font-size: 18px; font-weight: 800; border-block-start: 2px solid #1c1917; }
+.del { padding: 4px 10px; background: transparent; color: #b91c1c; border: 1px solid #fca5a5; }
+.empty { color: #78716c; }
+.actions { display: flex; gap: 8px; margin-block-start: 16px; }
+.actions #fresh { background: white; color: #b45309; border: 1px solid #b45309; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- the paper ---------- */
+@page {
+  size: A4;
+  margin: 12mm;
+  @bottom-center { content: "صفحة " counter(page) " من " counter(pages); font: 10px system-ui, sans-serif; color: #57534e; }
+}
+@media print {
+  body { padding: 0; background: white; }
+  main { max-width: none; padding: 0; border-radius: 0; }
+  .no-print, .empty { display: none !important; }
+  /* thead and tfoot repeat on every page by default (table-header-group / table-footer-group); a row never splits */
+  tr { break-inside: avoid; }
+  /* without this the browser drops background colors to save ink: the header row and the logo would print white */
+  thead th, .logo { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header class="shop">
+    <svg class="logo" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#b45309"/><path d="M10 28V16l10-7 10 7v12H24v-7h-8v7z" fill="white"/></svg>
+    <div>
+      <h1>أدوات البيت</h1>
+      <p>فاتورة رقم <b id="number"></b> · <span id="today"></span></p>
+    </div>
+  </header>
+
+  <form id="add" class="no-print" novalidate>
+    <div class="field name">
+      <label for="item">الصنف</label>
+      <input id="item" name="item" required maxlength="60" aria-describedby="item-err">
+      <span class="err" id="item-err"></span>
+    </div>
+    <div class="field">
+      <label for="qty">الكمية</label>
+      <input id="qty" name="qty" type="number" min="1" step="1" value="1" required aria-describedby="qty-err">
+      <span class="err" id="qty-err"></span>
+    </div>
+    <div class="field">
+      <label for="price">سعر الوحدة</label>
+      <input id="price" name="price" type="number" min="0.01" step="0.01" required aria-describedby="price-err">
+      <span class="err" id="price-err"></span>
+    </div>
+    <button>زوّد</button>
+  </form>
+
+  <table>
+    <caption>الأصناف</caption>
+    <thead>
+      <tr><th scope="col">#</th><th scope="col">الصنف</th><th scope="col" class="num">الكمية</th><th scope="col" class="num">السعر</th><th scope="col" class="num">المجموع</th><th scope="col" class="no-print"><span class="visually-hidden">حذف</span></th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+    <tfoot>
+      <tr><th scope="row" colspan="4">قبل الضريبة</th><td class="num" id="sub"></td><td class="no-print"></td></tr>
+      <tr><th scope="row" colspan="4">ضريبة ١٤٪</th><td class="num" id="vat"></td><td class="no-print"></td></tr>
+      <tr class="grand"><th scope="row" colspan="4">الإجمالي</th><td class="num" id="total"></td><td class="no-print"></td></tr>
+    </tfoot>
+  </table>
+  <p id="empty" class="empty">الفاتورة لسه فاضية. زوّد أول صنف من فوق.</p>
+
+  <div class="actions no-print">
+    <button type="button" id="print">اطبع</button>
+    <button type="button" id="fresh">فاتورة جديدة</button>
+  </div>
+</main>
+<script>
+const KEY = 'home-tools-invoice';
+const VAT = 0.14;
+const form = document.getElementById('add');
+const rows = document.getElementById('rows');
+const money = n => n.toLocaleString('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+// ---------- saved state: { number, items: [{ name, qty, price }] } ----------
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && Array.isArray(s.items) && Number.isInteger(s.number)) return s;
+  } catch {}
+  return { number: 7, items: [{ name: "مقشة", qty: 2, price: 45 }, { name: "جردل", qty: 1, price: 60 }, { name: "ممسحة", qty: 1, price: 85.5 }, { name: "صابون سايل", qty: 3, price: 32.75 }] };
+}
+let invoice = load();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(invoice)); } catch {} }
+
+// ---------- the table ----------
+function render() {
+  document.getElementById('number').textContent = String(invoice.number).padStart(4, '0');
+  document.getElementById('today').textContent = new Date().toLocaleDateString('ar-EG', { dateStyle: 'long' });
+  rows.innerHTML = '';
+  // money in piasters (whole numbers) so 0.1 + 0.2 never becomes 0.30000000000000004
+  let sub = 0;
+  invoice.items.forEach((it, i) => {
+    const line = Math.round(it.price * 100) * it.qty;
+    sub += line;
+    const tr = rows.insertRow();
+    tr.insertCell().textContent = i + 1;
+    tr.insertCell().textContent = it.name;
+    const q = tr.insertCell(); q.textContent = it.qty; q.className = 'num';
+    const p = tr.insertCell(); p.textContent = money(it.price); p.className = 'num';
+    const l = tr.insertCell(); l.textContent = money(line / 100); l.className = 'num';
+    const d = tr.insertCell(); d.className = 'no-print';
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'del'; b.textContent = 'احذف';
+    b.setAttribute('aria-label', 'احذف ' + it.name);
+    b.addEventListener('click', () => { invoice.items.splice(i, 1); save(); render(); });
+    d.append(b);
+  });
+  const vat = Math.round(sub * VAT);
+  document.getElementById('sub').textContent = money(sub / 100);
+  document.getElementById('vat').textContent = money(vat / 100);
+  document.getElementById('total').textContent = money((sub + vat) / 100);
+  document.getElementById('empty').hidden = invoice.items.length > 0;
+}
+
+// ---------- add an item, the error next to its field ----------
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  let first = null;
+  for (const f of form.elements) {
+    // the submit button is in form.elements too, and willValidate is true for it: only fields that have an error line
+    const err = document.getElementById(f.id + '-err');
+    if (!f.willValidate || !err) continue;
+    const ok = f.checkValidity();
+    f.setAttribute('aria-invalid', String(!ok));
+    err.textContent = ok ? '' : f.validationMessage;
+    if (!ok && !first) first = f;
+  }
+  if (first) { first.focus(); return; }
+  invoice.items.push({ name: form.item.value.trim(), qty: form.qty.valueAsNumber, price: form.price.valueAsNumber });
+  save();
+  render();
+  form.reset();
+  form.item.focus();
+});
+
+document.getElementById('print').addEventListener('click', () => print());
+document.getElementById('fresh').addEventListener('click', () => {
+  if (invoice.items.length && !confirm('تبدأ فاتورة جديدة؟ الحالية هتتمسح من الشاشة.')) return;
+  invoice = { number: invoice.number + 1, items: [] };
+  save();
+  render();
+});
+render();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ورقة بيضا فيها لوجو بني صغير (بيت) واسم المحل ورقم الفاتورة والتاريخ، وتحتها فورم من ٣ حقول وزرار «زوّد»، وبعدين الجدول بصف عناوين بني والأصناف، وتحت: قبل الضريبة، والضريبة ١٤٪، والإجمالي بخط تقيل. (المعاينة فيها ٤ أصناف مثال. عندك هتبدأ فاضية.)
+
+**الحساب:**
+- **الفلوس بالقروش:** [[Math.round(price * 100) * qty]] وبنقسم على 100 في الآخر بس. لأن الكسور في JavaScript مش مظبوطة: [[0.1 + 0.2]] = [[0.30000000000000004]]، ومع فاتورة طويلة الفرق بيبان في آخر رقم.
+- **[[toLocaleString('ar-EG', { minimumFractionDigits: 2 })]]:** أرقام عربي و رقمين بعد العلامة دايمًا ([[٠٫٤٠]] مش [[٠٫٤]]).
+
+**الأخطاء جنب الحقل:** [[min="1"]] و [[step="1"]] للكمية، و [[min="0.01"]] للسعر، و [[novalidate]] على الفورم عشان رسالة كل حقل تظهر في السطر اللي تحته ([[aria-describedby]] بيربطهم) بدل فقاعة واحدة.
+
+**باج لقيته في حلي وانا بجرّب:** النسخة الأولى كانت بتلف على كل [[form.elements]] وتكتب الرسالة في [[document.getElementById(f.id + '-err')]]. زرار «زوّد» نفسه جوه [[form.elements]] و [[willValidate]] بتاعه [[true]]، وملوش id، فـ [[getElementById('-err')]] رجّع [[null]] والـ handler وقع بـ [[Cannot set properties of null]]. ولأن [[preventDefault()]] كان أول سطر، الصفحة مكانتش بتعمل أي حاجة ومفيش رسالة للمستخدم. الحل: اتأكد إن العنصر ليه سطر خطأ قبل ما تكتب فيه.
+
+**الحفظ:** الفاتورة كلها ([[{ number, items }]]) بتتحفظ بعد كل تغيير، وبترجع مع الـ refresh. و [[load()]] بتتأكد من الشكل ([[Array.isArray]] و [[Number.isInteger]]) قبل ما تصدّق البيانات، عشان لو حد عدّلها من DevTools بإيده الصفحة متقعش. و «فاتورة جديدة» بتزوّد الرقم.
+
+**الحذف:** كل زرار [[aria-label="احذف مقشة"]]، لأن «احذف» عشرين مرة في لستة الأزرار ملهاش معنى.
+
+**الورق:**
+- [[@page { size: A4; margin: 12mm; }]]، وجواها [[@bottom-center]] فيه [[counter(page)]] و [[counter(pages)]]: رقم الصفحة من عدد الصفحات تحت كل ورقة. (Chrome بيدعم مربعات هامش الصفحة دي من نسخة 131.)
+- [[thead]] و [[tfoot]] بيتكرروا في كل ورقة لوحدهم: ده سلوكهم الافتراضي في الطباعة ([[table-header-group]] و [[table-footer-group]]). يعني متكتبش [[display: block]] عليهم.
+- [[tr { break-inside: avoid; }]]: الصف ميتقسمش نصه في ورقة ونصه في اللي بعدها.
+- [[.no-print]]: الفورم والأزرار وعمود الحذف مالهمش لازمة في الورق.
+- [[print-color-adjust: exact]] على صف العناوين واللوجو: نافذة الطباعة في Chrome فيها خيار «Background graphics» مقفول من الأول، والمتصفح بيشيل الخلفيات عشان الحبر. الـ property دي بتقول للمتصفح إن اللون ده جزء من المعنى (من وثائق MDN). ملحوظة: في اختباري بـ [[--print-to-pdf]] (Chrome من غير شاشة) الخلفية اتطبعت في الحالتين، فجرّب انت من نافذة الطباعة الحقيقية.
+
+~~~text الناتج (Chrome)
+كمية 0 وسعر -5          Value must be greater than or equal to 1.   /   Value must be greater than or equal to 0.01.
+                        الـ focus راح لـ #qty، ومفيش صف اتزوّد
+الصنف فاضي              Please fill out this field.
+مقشة 2 × 0.1 + جردل 1 × 0.2
+                        قبل الضريبة ٠٫٤٠   الضريبة ٠٫٠٦   الإجمالي ٠٫٤٦
+زرار الحذف               aria-label="احذف مقشة"
+localStorage            {"number":1,"items":[{"name":"مقشة","qty":2,"price":0.1},{"name":"جردل","qty":1,"price":0.2}]}
+
+الطباعة بـ 40 صنف (--print-to-pdf مرتين):
+  ورقتين A4 (595 × 842 نقطة)
+  ورقة 1: «صفحة 1 من 2»، وفيها صف العناوين، وتحت: قبل الضريبة والضريبة والإجمالي
+  ورقة 2: «صفحة 2 من 2»، وأولها صف العناوين تاني، وفي الآخر الإجمالي تاني
+  الـ 40 صنف موجودين، و «احذف» و «زوّد» و «اطبع» و «فاتورة جديدة»: 0 مرة في الورق
+  الطبعتين: نفس النص بالظبط (الملفين بيختلفوا في CreationDate بس)
+axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
+~~~` },
+        { lvl: 'فكرة', dir: "my-tracker", t: R`جدول لحاجة بتتابعها انت`, what: R`مصاريفك، أو ماتشات فريقك، أو مذاكرتك: جدول بياناته حقيقية من عندك، بترتيب وبحث وصفحة طباعة. انت اللي تحدد الأعمدة.`, done: R`فيه ٣٠ صف حقيقي على الأقل، والترتيب والبحث في الـ URL، والطباعة نضيفة، وواحد صاحبك فتح اللينك وشاف نفس الترتيب.`, ext: R`زوّد رسم بياني بسيط بـ SVG أو CSS (أعمدة بـ [[height]] من متغير) جنب الجدول.`, sol: R`نسخة نموذجية: مصاريف شهر واحد (٣٠ بند، والأرقام متخيلة). انت هتحط بياناتك الحقيقية مكان [[DATA]].
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصاريفي في نوفمبر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #f0fdf4; color: #14532d; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  main { max-width: 720px; margin-inline: auto; }
+  h1 { margin: 0 0 4px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-block: 12px; }
+  .bar label { display: grid; gap: 2px; font-weight: 600; flex: 1 1 200px; }
+  input { font: inherit; padding: 8px 10px; border: 1px solid #86efac; border-radius: 8px; }
+  button { font: inherit; font-weight: 700; padding: 8px 14px; border: 1px solid #15803d; border-radius: 8px; background: white; color: #15803d; }
+  table { width: 100%; border-collapse: collapse; background: white; }
+  th, td { padding: 6px 10px; text-align: start; border-block-end: 1px solid #dcfce7; }
+  thead th { background: #15803d; color: white; }
+  thead button { all: unset; cursor: pointer; }
+  th[aria-sort="ascending"] button::after { content: " ▲"; }
+  th[aria-sort="descending"] button::after { content: " ▼"; }
+  .num { text-align: end; font-variant-numeric: tabular-nums; }
+  tfoot td, tfoot th { font-weight: 800; border-block-start: 2px solid #14532d; }
+  @page { size: A4; margin: 12mm; }
+  @media print {
+    body { background: white; padding: 0; }
+    .bar { display: none; }
+    thead th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    tr { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>مصاريفي في نوفمبر</h1>
+  <div class="bar">
+    <label>دوّر في البند أو القسم <input id="q" type="search" autocomplete="off"></label>
+    <button type="button" id="print">اطبع</button>
+  </div>
+  <table>
+    <thead><tr>
+      <th scope="col" data-key="day"><button type="button">اليوم</button></th>
+      <th scope="col" data-key="what"><button type="button">البند</button></th>
+      <th scope="col" data-key="kind"><button type="button">القسم</button></th>
+      <th scope="col" data-key="amount" class="num"><button type="button">المبلغ</button></th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+    <tfoot><tr><th scope="row" colspan="3" id="label">المجموع</th><td class="num" id="sum"></td></tr></tfoot>
+  </table>
+</main>
+<script>
+  // my real month, 30 lines (the amounts are made up for the example)
+  const DATA = [
+    [1,'مواصلات الشغل','مواصلات',45],[1,'فطار','أكل',35],[2,'شحن موبايل','فواتير',100],[3,'خضار وفاكهة','بيت',180],
+    [4,'مواصلات الشغل','مواصلات',45],[5,'غدا مع أصحابي','أكل',150],[6,'كتاب برمجة','تعليم',320],[7,'مواصلات الشغل','مواصلات',45],
+    [8,'فاتورة النت','فواتير',350],[9,'قهوة','أكل',40],[10,'جيم (شهر)','صحة',500],[11,'مواصلات الشغل','مواصلات',45],
+    [12,'هدية عيد ميلاد','هدايا',250],[13,'فطار','أكل',35],[14,'سوبر ماركت','بيت',420],[15,'كورس أونلاين','تعليم',600],
+    [16,'مواصلات الشغل','مواصلات',45],[17,'أدوية','صحة',210],[18,'عشا برّه','أكل',260],[19,'فاتورة الكهربا','فواتير',280],
+    [20,'مواصلات الشغل','مواصلات',45],[21,'قهوة','أكل',40],[22,'تصليح جزمة','بيت',60],[23,'سينما','خروج',180],
+    [24,'مواصلات الشغل','مواصلات',45],[25,'سوبر ماركت','بيت',390],[26,'فطار','أكل',35],[27,'تاكسي متأخر','مواصلات',120],
+    [28,'شحن موبايل','فواتير',100],[30,'خروجة آخر الشهر','خروج',300],
+  ].map(([day, what, kind, amount]) => ({ day, what, kind, amount }));
+  const heads = [...document.querySelectorAll('th[data-key]')];
+  const q = document.getElementById('q');
+
+  function state() {
+    const p = new URLSearchParams(location.search);
+    return { q: p.get('q') || '', sort: p.get('sort') || 'day', dir: p.get('dir') === 'desc' ? 'desc' : 'asc' };
+  }
+  function go(s, push) {
+    const p = new URLSearchParams();
+    if (s.q) p.set('q', s.q);
+    p.set('sort', s.sort); p.set('dir', s.dir);
+    history[push ? 'pushState' : 'replaceState'](null, '', '?' + p);
+    render();
+  }
+  function render() {
+    const s = state();
+    const list = DATA.filter(r => (r.what + ' ' + r.kind).includes(s.q))
+      .sort((a, b) => { const x = a[s.sort], y = b[s.sort]; const c = typeof x === 'number' ? x - y : x.localeCompare(y, 'ar'); return s.dir === 'asc' ? c : -c; });
+    const tb = document.getElementById('rows'); tb.innerHTML = '';
+    for (const r of list) {
+      const tr = tb.insertRow();
+      tr.insertCell().textContent = r.day + ' نوفمبر';
+      tr.insertCell().textContent = r.what;
+      tr.insertCell().textContent = r.kind;
+      const a = tr.insertCell(); a.textContent = r.amount.toLocaleString('ar-EG') + ' ج'; a.className = 'num';
+    }
+    document.getElementById('label').textContent = 'المجموع (' + list.length + ' بند)';
+    document.getElementById('sum').textContent = list.reduce((n, r) => n + r.amount, 0).toLocaleString('ar-EG') + ' ج';
+    for (const h of heads) h.dataset.key === s.sort ? h.setAttribute('aria-sort', s.dir === 'asc' ? 'ascending' : 'descending') : h.removeAttribute('aria-sort');
+    if (document.activeElement !== q) q.value = s.q;
+  }
+  for (const h of heads) h.querySelector('button').addEventListener('click', () => {
+    const s = state();
+    go({ ...s, sort: h.dataset.key, dir: s.sort === h.dataset.key && s.dir === 'asc' ? 'desc' : 'asc' }, true);
+  });
+  q.addEventListener('input', () => go({ ...state(), q: q.value.trim() }, false));
+  document.getElementById('print').addEventListener('click', () => print());
+  window.addEventListener('popstate', render);
+  render();
+</script>
+</body>
+</html>
+~~~
+
+~~~view 640 760 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصاريفي في نوفمبر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #f0fdf4; color: #14532d; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  main { max-width: 720px; margin-inline: auto; }
+  h1 { margin: 0 0 4px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-block: 12px; }
+  .bar label { display: grid; gap: 2px; font-weight: 600; flex: 1 1 200px; }
+  input { font: inherit; padding: 8px 10px; border: 1px solid #86efac; border-radius: 8px; }
+  button { font: inherit; font-weight: 700; padding: 8px 14px; border: 1px solid #15803d; border-radius: 8px; background: white; color: #15803d; }
+  table { width: 100%; border-collapse: collapse; background: white; }
+  th, td { padding: 6px 10px; text-align: start; border-block-end: 1px solid #dcfce7; }
+  thead th { background: #15803d; color: white; }
+  thead button { all: unset; cursor: pointer; }
+  th[aria-sort="ascending"] button::after { content: " ▲"; }
+  th[aria-sort="descending"] button::after { content: " ▼"; }
+  .num { text-align: end; font-variant-numeric: tabular-nums; }
+  tfoot td, tfoot th { font-weight: 800; border-block-start: 2px solid #14532d; }
+  @page { size: A4; margin: 12mm; }
+  @media print {
+    body { background: white; padding: 0; }
+    .bar { display: none; }
+    thead th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    tr { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>مصاريفي في نوفمبر</h1>
+  <div class="bar">
+    <label>دوّر في البند أو القسم <input id="q" type="search" autocomplete="off"></label>
+    <button type="button" id="print">اطبع</button>
+  </div>
+  <table>
+    <thead><tr>
+      <th scope="col" data-key="day"><button type="button">اليوم</button></th>
+      <th scope="col" data-key="what"><button type="button">البند</button></th>
+      <th scope="col" data-key="kind"><button type="button">القسم</button></th>
+      <th scope="col" data-key="amount" class="num"><button type="button">المبلغ</button></th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+    <tfoot><tr><th scope="row" colspan="3" id="label">المجموع</th><td class="num" id="sum"></td></tr></tfoot>
+  </table>
+</main>
+<script>
+  // my real month, 30 lines (the amounts are made up for the example)
+  const DATA = [
+    [1,'مواصلات الشغل','مواصلات',45],[1,'فطار','أكل',35],[2,'شحن موبايل','فواتير',100],[3,'خضار وفاكهة','بيت',180],
+    [4,'مواصلات الشغل','مواصلات',45],[5,'غدا مع أصحابي','أكل',150],[6,'كتاب برمجة','تعليم',320],[7,'مواصلات الشغل','مواصلات',45],
+    [8,'فاتورة النت','فواتير',350],[9,'قهوة','أكل',40],[10,'جيم (شهر)','صحة',500],[11,'مواصلات الشغل','مواصلات',45],
+    [12,'هدية عيد ميلاد','هدايا',250],[13,'فطار','أكل',35],[14,'سوبر ماركت','بيت',420],[15,'كورس أونلاين','تعليم',600],
+    [16,'مواصلات الشغل','مواصلات',45],[17,'أدوية','صحة',210],[18,'عشا برّه','أكل',260],[19,'فاتورة الكهربا','فواتير',280],
+    [20,'مواصلات الشغل','مواصلات',45],[21,'قهوة','أكل',40],[22,'تصليح جزمة','بيت',60],[23,'سينما','خروج',180],
+    [24,'مواصلات الشغل','مواصلات',45],[25,'سوبر ماركت','بيت',390],[26,'فطار','أكل',35],[27,'تاكسي متأخر','مواصلات',120],
+    [28,'شحن موبايل','فواتير',100],[30,'خروجة آخر الشهر','خروج',300],
+  ].map(([day, what, kind, amount]) => ({ day, what, kind, amount }));
+  const heads = [...document.querySelectorAll('th[data-key]')];
+  const q = document.getElementById('q');
+
+  function state() {
+    const p = new URLSearchParams(location.search);
+    return { q: p.get('q') || '', sort: p.get('sort') || 'day', dir: p.get('dir') === 'desc' ? 'desc' : 'asc' };
+  }
+  function go(s, push) {
+    const p = new URLSearchParams();
+    if (s.q) p.set('q', s.q);
+    p.set('sort', s.sort); p.set('dir', s.dir);
+    history[push ? 'pushState' : 'replaceState'](null, '', '?' + p);
+    render();
+  }
+  function render() {
+    const s = state();
+    const list = DATA.filter(r => (r.what + ' ' + r.kind).includes(s.q))
+      .sort((a, b) => { const x = a[s.sort], y = b[s.sort]; const c = typeof x === 'number' ? x - y : x.localeCompare(y, 'ar'); return s.dir === 'asc' ? c : -c; });
+    const tb = document.getElementById('rows'); tb.innerHTML = '';
+    for (const r of list) {
+      const tr = tb.insertRow();
+      tr.insertCell().textContent = r.day + ' نوفمبر';
+      tr.insertCell().textContent = r.what;
+      tr.insertCell().textContent = r.kind;
+      const a = tr.insertCell(); a.textContent = r.amount.toLocaleString('ar-EG') + ' ج'; a.className = 'num';
+    }
+    document.getElementById('label').textContent = 'المجموع (' + list.length + ' بند)';
+    document.getElementById('sum').textContent = list.reduce((n, r) => n + r.amount, 0).toLocaleString('ar-EG') + ' ج';
+    for (const h of heads) h.dataset.key === s.sort ? h.setAttribute('aria-sort', s.dir === 'asc' ? 'ascending' : 'descending') : h.removeAttribute('aria-sort');
+    if (document.activeElement !== q) q.value = s.q;
+  }
+  for (const h of heads) h.querySelector('button').addEventListener('click', () => {
+    const s = state();
+    go({ ...s, sort: h.dataset.key, dir: s.sort === h.dataset.key && s.dir === 'asc' ? 'desc' : 'asc' }, true);
+  });
+  q.addEventListener('input', () => go({ ...state(), q: q.value.trim() }, false));
+  document.getElementById('print').addEventListener('click', () => print());
+  window.addEventListener('popstate', render);
+  render();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خلفية خضرا فاتحة، وحقل بحث وزرار «اطبع»، وجدول بصف عناوين أخضر، وفي آخره سطر «المجموع (30 بند)» والرقم. دوس «المبلغ» مرتين والأغلى بيطلع فوق. اكتب «مواصلات» والمجموع بيتحسب للمواصلات بس.
+
+**ليه كده:**
+- **كل حاجة بتتغيّر بتتكتب في الـ URL:** البحث بـ [[replaceState]] والترتيب بـ [[pushState]]، والقراية من الـ URL بس ([[state()]]). فاللينك اللي تبعته لصاحبك بيفتح عنده بنفس البحث والترتيب.
+- **المجموع للي ظاهر بس:** بيتحسب من [[list]] بعد الفلتر، مش من كل البيانات. ده اللي بيخلي الجدول يجاوب على سؤال حقيقي: «صرفت كام على المواصلات؟».
+- **الطباعة:** البحث والزرار مخفيين، والعناوين بلونها، والصف ميتقسمش.
+- **ليه الشكل ده:** جدول واحد بيعمل حاجة واحدة كويس أحسن من dashboard كبير مش بتستخدمه. لو حسيت إنك محتاج رسم، ده الـ «خليه بتاعك».
+
+~~~text الناتج (Chrome)
+أول فتح                  30 صف، المجموع ٥٬٢٧٠ ج
+«المبلغ» مرتين            ?sort=amount&dir=desc   أول صف: 15 نوفمبر · كورس أونلاين · تعليم · ٦٠٠ ج
+كتبت «مواصلات»           ?q=مواصلات&sort=amount&dir=desc   المجموع (8 بند) = ٤٣٥ ج
+نفس اللينك في صفحة تانية   المجموع (8 بند)، وأول صف: 27 نوفمبر · تاكسي متأخر · مواصلات · ١٢٠ ج
+axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
+~~~` },
       ],
       l: 1,
       n: "جدول بيانات حقيقي: عناوين مربوطة بالخلايا، وبيتعرض على الموبايل، وبيترتب ويتقسم صفحات",

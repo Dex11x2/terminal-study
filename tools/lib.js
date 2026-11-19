@@ -41,6 +41,26 @@ function arrayElements(src, open){
   return {end, els};
 }
 
+// where the array of `key: [` opens directly inside the object that starts at 0 (depth 1), skipping strings,
+// template literals and comments; -1 if there is none
+function topLevelArray(src, key){
+  const re = new RegExp('^' + key + '\\s*:\\s*\\[');
+  let depth = 0;
+  for (let i = 0; i < src.length; i++){
+    const c = src[i];
+    if (c === '"' || c === "'" || c === '`'){ for (i++; i < src.length && src[i] !== c; i++) if (src[i] === '\\') i++; continue; }
+    if (c === '/' && src[i+1] === '/'){ i = src.indexOf('\n', i); if (i < 0) return -1; continue; }
+    if (c === '/' && src[i+1] === '*'){ i = src.indexOf('*/', i + 2) + 1; continue; }
+    if (c === '{' || c === '[' || c === '(') depth++;
+    else if (c === '}' || c === ']' || c === ')') depth--;
+    else if (depth === 1 && c === key[0] && !/[\w$]/.test(src[i-1] || '')){
+      const m = src.slice(i, i + key.length + 40).match(re);
+      if (m) return i + m[0].length - 1;
+    }
+  }
+  return -1;
+}
+
 // every lesson in a tab with where it is: [{cmd, cat, file, line, start, end}]
 function lessonsIn(files){
   const out = [];
@@ -53,9 +73,10 @@ function lessonsIn(files){
       const body = src.slice(cat.start, cat.end);
       const m = body.match(/^\s*\{\s*t:\s*(?:"((?:[^"\\]|\\.)*)"|R`([^`]*)`)/) || [];
       const t = m[1] !== undefined ? m[1] : m[2];
-      const im = body.match(/\bitems:\s*\[/);
-      if (!im) continue;
-      for (const it of arrayElements(body, im.index + im[0].length - 1).els){
+      // the unit's own items: key, not an «items: [» written inside a project's solution or a lesson's code
+      const iOpen = topLevelArray(body, 'items');
+      if (iOpen < 0) continue;
+      for (const it of arrayElements(body, iOpen).els){
         const s = cat.start + it.start, txt = src.slice(s, cat.start + it.end);
         // cmd is "..." or R`...` (raw, kept as written like the rest of the content)
         const q = txt.match(/\bcmd:\s*"((?:[^"\\]|\\.)*)"/), r = txt.match(/\bcmd:\s*R`([^`]*)`/);
