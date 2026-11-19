@@ -3,12 +3,1749 @@ MORE("css", [
     {
       t: "الوحدات والمتغيرات",
       projects: [
-        { lvl: 'صغير', t: R`مقياس خطوط بيكبر مع الشاشة`, what: R`صفحة فيها ٦ مستويات خط (h1 لحد الفقرة الصغيرة)، كل مستوى [[clamp()]] جواها جزء rem وجزء vw، ومتغيرات [[--step-0]] لحد [[--step-5]] على [[:root]]، وجنب كل مستوى رقم بيتحدّث بيقول حجمه الحالي بالبكسل ([[getComputedStyle]] مع [[resize]]). من دروس «rem و em» و «clamp()» و «CSS variables».`, done: R`على 375 و 768 و 1440 الأرقام بتتغيّر ومحدش فيهم نزل تحت حده الأدنى ولا عدّى الأقصى، ولما تكبّر خط المتصفح لـ Large كل المستويات بتكبر، والـ zoom لـ 200% بيكبّرهم كلهم.` },
-        { lvl: 'صغير', t: R`مكتبة أزرار بمتغيرين`, what: R`زرار واحد [[.btn]] بيقرا [[--bg]] و [[--fg]] و [[--pad]]، و ٥ variants (primary، و secondary، و ghost، و danger، و success) كل واحد بيغيّر المتغيرات بس، و ٣ أحجام (sm و md و lg) بتغيّر [[font-size]] والـ padding بـ [[em]] بيكبر لوحده، والـ hover بـ [[color-mix()]] من نفس اللون. من دروس «rem و em» و «CSS variables».`, done: R`كل variant سطر أو اتنين CSS بس، والـ hover مفيهوش ولا لون مكتوب بإيده، وتغيير [[--brand]] على [[:root]] من DevTools بيغيّر الـ primary والـ hover بتاعه مع بعض، والـ ١٥ تركيبة (٥×٣) ظاهرين في صفحة واحدة.` },
-        { lvl: 'متوسط', t: R`صفحة «style guide» لمتجر قهوة متخيل`, what: R`صفحة بتعرض كل الـ tokens بتاعة «بُن الصباح»: الألوان (مربع لكل لون واسمه وقيمته من [[getPropertyValue]])، والمسافات ([[--space-1]] لحد [[--space-6]] مرسومين كمستطيلات)، والتدوير، والظلال (٣ مستويات: صغير حاد وكبير ناعم فوق بعض)، والخطوط. وفوق ٣ أزرار بتبدّل البراند (قهوة، ونعناع، وتوت) بتغيير ٥ متغيرات بس على [[:root]]. من دروس الوحدة كلها.`, done: R`الضغط على براند بيغيّر الصفحة كلها من غير ما ولا قاعدة غير [[:root]] تتلمس، والأرقام المكتوبة جنب كل token بتتحدّث لوحدها، ومفيش ولا لون مكتوب بإيده برّه [[:root]] (اعمل بحث على [[#]] و [[rgb(]] و [[oklch(]] في باقي الملف).` },
-        { lvl: 'متوسط', t: R`هيرو بيملا الشاشة صح على الموبايل`, what: R`هيرو لنادي كتاب متخيل: [[min-height: 100svh]] (و [[100vh]] قبلها احتياطي)، وعنوان [[clamp()]] كبير، ومسافات [[padding-block]] بـ clamp، وزرار «انضم» لازم يبان من غير scroll، وخلفية هالة بـ radial-gradients ألوانها من متغيرات. وتحته [[.app-shell]] صغير بـ [[100dvh]] (هيدر وفوتر ثابتين). من دروس «dvh» و «clamp()» و «CSS variables».`, done: R`على موبايل حقيقي (أو DevTools بأبعاد 375×667 و 360×640) الزرار ظاهر من غير scroll، ومفيش [[100vw]] في الملف ولا scroll أفقي، وعنوان الهيرو مبيعدّيش سطرين على 320px.` },
-        { lvl: 'كبير', t: R`design system صغير لمتجر قهوة متخيل`, what: R`ملف [[tokens.css]] فيه طبقتين: ألوان خام ([[--coffee-700]] وأخواتها) وفوقها أسامي بالمعنى ([[--color-bg]] و [[--color-fg]] و [[--color-brand]] و [[--color-success-soft]] و [[--color-success-text]] وزيهم للتحذير والخطأ)، ومسافات، وتدوير، وظلال، و [[--z-header]] و [[--z-modal]] بدل أرقام z-index عشوائية، و [[--ease]] للحركة. وفوقهم مكوّنات بتقرا الأسامي بس: زرار بـ variants، وشارات حالة (soft و solid)، وكارت منتج، وحقل input بحلقة focus من متغير، وتنبيه. والثيم الغامق بيعيد تعريف الأسامي بس جوه [[ [data-theme="dark"] ]]، وزرار بيبدّل ويفتكر الاختيار. يجمع الوحدة دي مع وحدة «CSS: مين بيكسب» (الطبقات و BEM).`, done: R`المكوّنات مفيهاش ولا لون خام (بحث على [[--coffee-]] جوه ملف المكوّنات يرجّع صفر)، والثيم الغامق ٢٠ سطر أو أقل وكله [[--color-*]]، وتباين كل كلام على خلفيته 4.5:1 أو أكتر في الثيمين (DevTools color picker)، وتغيير البراند كله بيتعمل بتغيير ٣ متغيرات خام، والصفحة على 360 و 1280 من غير scroll أفقي، و Lighthouse Accessibility ٩٥+.`, ext: R`صدّر الـ tokens لملف JSON وولّد منه الـ CSS بسكربت Node صغير، وزوّد ثيم تالت «ورقي»، وصفحة بتقارن الثيمات جنب بعض.` },
-        { lvl: 'فكرة', t: R`هوية لمكان حقيقي حواليك`, what: R`اختار مكان تعرفه (قهوة، أو صيدلية، أو جيم في الحي) واعمله tokens: ٥ ألوان بالمعنى، وخطين، ومقياس مسافات، وصفحة واحدة بتستخدمهم. انت اللي تختار الألوان والسبب.`, done: R`كل لون ليه سبب مكتوب (ليه الأخضر للحجز مثلًا)، والتباين سليم، وتقدر تغيّر الهوية كلها من [[:root]] بس.`, ext: R`اعمل منها ٣ صفحات (رئيسية، ومنيو، وتواصل) بنفس الـ tokens، وورّيها لصاحب المكان.` },
+        { lvl: 'صغير', dir: "type-scale", t: R`مقياس خطوط بيكبر مع الشاشة`, what: R`صفحة فيها ٦ مستويات خط (h1 لحد الفقرة الصغيرة)، كل مستوى [[clamp()]] جواها جزء rem وجزء vw، ومتغيرات [[--step-0]] لحد [[--step-5]] على [[:root]]، وجنب كل مستوى رقم بيتحدّث بيقول حجمه الحالي بالبكسل ([[getComputedStyle]] مع [[resize]]). من دروس «rem و em» و «clamp()» و «CSS variables».`, done: R`على 375 و 768 و 1440 الأرقام بتتغيّر ومحدش فيهم نزل تحت حده الأدنى ولا عدّى الأقصى، ولما تكبّر خط المتصفح لـ Large كل المستويات بتكبر، والـ zoom لـ 200% بيكبّرهم كلهم.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مقياس خطوط بيكبر مع الشاشة</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <p class="now">عرض الشاشة دلوقتي: <output id="vw">؟</output> بكسل</p>
+  <div class="level"><h1>عنوان الصفحة</h1><output data-for="h1"></output></div>
+  <div class="level"><h2>عنوان جزء</h2><output data-for="h2"></output></div>
+  <div class="level"><h3>عنوان صغير</h3><output data-for="h3"></output></div>
+  <div class="level"><h4>عنوان فرعي</h4><output data-for="h4"></output></div>
+  <div class="level"><p class="body">فقرة عادية بتتقري براحة على أي شاشة.</p><output data-for=".body"></output></div>
+  <div class="level"><p class="small">ملاحظة صغيرة تحت الصورة.</p><output data-for=".small"></output></div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+/* each step: clamp(smallest, rem part + vw part, biggest).
+   the rem part follows the reader's font setting and zoom, the vw part follows the screen width.
+   numbers worked out for 320px (smallest) to 1440px (biggest) */
+:root {
+  --step-0: clamp(0.875rem, 0.857rem + 0.089vw, 0.938rem);  /* 14px → 15px */
+  --step-1: clamp(1.05rem, 0.993rem + 0.285vw, 1.25rem);    /* 16.8px → 20px */
+  --step-2: clamp(1.26rem, 1.144rem + 0.58vw, 1.666rem);    /* 20.2px → 26.7px */
+  --step-3: clamp(1.512rem, 1.31rem + 1.012vw, 2.221rem);   /* 24.2px → 35.5px */
+  --step-4: clamp(1.814rem, 1.487rem + 1.637vw, 2.96rem);   /* 29px → 47.4px */
+  --step-5: clamp(2.177rem, 1.672rem + 2.526vw, 3.946rem);  /* 34.8px → 63.1px */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.4; color: #0f172a; background: #f8fafc; }
+main { max-width: 60rem; margin-inline: auto; }
+
+h1 { font-size: var(--step-5); }
+h2 { font-size: var(--step-4); }
+h3 { font-size: var(--step-3); }
+h4 { font-size: var(--step-2); }
+.body { font-size: var(--step-1); }
+.small { font-size: var(--step-0); }
+
+.level { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-block: 0.5rem; border-block-end: 1px solid #e2e8f0; }
+.level > :first-child { margin: 0; }
+.level output { flex: none; font: 0.875rem/1 ui-monospace, Consolas, monospace; color: #475569; direction: ltr; }
+.now { color: #475569; }
+~~~
+
+~~~js app.js
+// next to each level: its size right now in px, updated whenever the window changes size
+const outs = document.querySelectorAll('output[data-for]');
+function show() {
+  document.getElementById('vw').textContent = innerWidth;
+  for (const o of outs) {
+    const px = parseFloat(getComputedStyle(document.querySelector(o.dataset.for)).fontSize);
+    o.textContent = px.toFixed(1) + 'px';
+  }
+}
+addEventListener('resize', show);
+show();
+~~~
+
+~~~view 520 640 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مقياس خطوط بيكبر مع الشاشة</title>
+<style>
+/* each step: clamp(smallest, rem part + vw part, biggest).
+   the rem part follows the reader's font setting and zoom, the vw part follows the screen width.
+   numbers worked out for 320px (smallest) to 1440px (biggest) */
+:root {
+  --step-0: clamp(0.875rem, 0.857rem + 0.089vw, 0.938rem);  /* 14px → 15px */
+  --step-1: clamp(1.05rem, 0.993rem + 0.285vw, 1.25rem);    /* 16.8px → 20px */
+  --step-2: clamp(1.26rem, 1.144rem + 0.58vw, 1.666rem);    /* 20.2px → 26.7px */
+  --step-3: clamp(1.512rem, 1.31rem + 1.012vw, 2.221rem);   /* 24.2px → 35.5px */
+  --step-4: clamp(1.814rem, 1.487rem + 1.637vw, 2.96rem);   /* 29px → 47.4px */
+  --step-5: clamp(2.177rem, 1.672rem + 2.526vw, 3.946rem);  /* 34.8px → 63.1px */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.4; color: #0f172a; background: #f8fafc; }
+main { max-width: 60rem; margin-inline: auto; }
+
+h1 { font-size: var(--step-5); }
+h2 { font-size: var(--step-4); }
+h3 { font-size: var(--step-3); }
+h4 { font-size: var(--step-2); }
+.body { font-size: var(--step-1); }
+.small { font-size: var(--step-0); }
+
+.level { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-block: 0.5rem; border-block-end: 1px solid #e2e8f0; }
+.level > :first-child { margin: 0; }
+.level output { flex: none; font: 0.875rem/1 ui-monospace, Consolas, monospace; color: #475569; direction: ltr; }
+.now { color: #475569; }
+</style>
+</head>
+<body>
+<main>
+  <p class="now">عرض الشاشة دلوقتي: <output id="vw">؟</output> بكسل</p>
+  <div class="level"><h1>عنوان الصفحة</h1><output data-for="h1"></output></div>
+  <div class="level"><h2>عنوان جزء</h2><output data-for="h2"></output></div>
+  <div class="level"><h3>عنوان صغير</h3><output data-for="h3"></output></div>
+  <div class="level"><h4>عنوان فرعي</h4><output data-for="h4"></output></div>
+  <div class="level"><p class="body">فقرة عادية بتتقري براحة على أي شاشة.</p><output data-for=".body"></output></div>
+  <div class="level"><p class="small">ملاحظة صغيرة تحت الصورة.</p><output data-for=".small"></output></div>
+</main>
+<script>
+// next to each level: its size right now in px, updated whenever the window changes size
+const outs = document.querySelectorAll('output[data-for]');
+function show() {
+  document.getElementById('vw').textContent = innerWidth;
+  for (const o of outs) {
+    const px = parseFloat(getComputedStyle(document.querySelector(o.dataset.for)).fontSize);
+    o.textContent = px.toFixed(1) + 'px';
+  }
+}
+addEventListener('resize', show);
+show();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٦ سطور، كل سطر بخط أصغر من اللي فوقه، وجنب كل واحد حجمه دلوقتي بالبكسل. صغّر الشباك وكبّره (أو غيّر عرض الجهاز في DevTools) والأرقام بتتغيّر قدامك، والعناوين الكبيرة بتتغيّر أكتر من الصغيرة.
+
+**[[clamp(أقل, المفضّل, أكتر)]]:** المتصفح بيحسب القيمة اللي في النص، ولو طلعت أقل من الأولى بياخد الأولى، ولو أكتر من التالتة بياخد التالتة.
+
+**القيمة اللي في النص: [[rem]] زائد [[vw]]:**
+- [[vw]] = 1% من عرض الشاشة، وده اللي بيخلّي الخط يكبر مع الشاشة.
+- [[rem]] = خط المتصفح الأساسي (16px لو محدش غيّره). ده اللي بيخلّي الخط يكبر لو القارئ كبّر خط المتصفح أو عمل zoom.
+- لو كتبت [[font-size: 4vw]] بس: الـ zoom مش هيكبّر الخط. لأن الـ zoom بيصغّر عرض الشاشة بالـ CSS pixels، فالـ vw بيصغر بنفس النسبة اللي الـ zoom بيكبّر بيها، والخط يفضل زي ما هو على الشاشة. وده بيخالف WCAG (لازم الكلام يكبر لـ 200%).
+
+**الأرقام اتحسبت إزاي:** عايز الخط 16.8px على شاشة 320 و 20px على 1440. الفرق 3.2px على 1120px عرض، يعني 0.00285 بكسل لكل بكسل عرض = 0.285vw. وعلى 320 الجزء ده بـ 0.9px، فالباقي 15.9px = 0.993rem. والأقل والأكتر هما 16.8 و 20 بالـ rem.
+
+**[[innerWidth]] مش [[clientWidth]]:** الـ vw بيتحسب من عرض الشباك كله **شامل** الـ scrollbar، و [[innerWidth]] هو اللي بيرجع الرقم ده. [[clientWidth]] من غير الـ scrollbar.
+
+~~~text الناتج (Chrome)
+عرض الشاشة   h1      h2      h3      h4      فقرة    صغير
+320          34.8    29.0    24.2    20.2    16.8    14.0   (الحد الأدنى بالظبط)
+375          36.2    29.9    24.8    20.5    17.0    14.0
+768          46.2    36.4    28.7    22.8    18.1    14.4
+1440         63.1    47.4    35.5    26.7    20.0    15.0   (الحد الأقصى بالظبط)
+1920         63.1    47.4    35.5    26.7    20.0    15.0   (وقف ومكبرش)
+
+zoom 200% على شاشة 1440 = الـ CSS بيشوف 720:  h1 = 44.9 CSS px × 2 = 89.8 بكسل على الشاشة (كان 63.1)   الصغير 14.4 × 2 = 28.8 (كان 15)
+خط المتصفح Large (20px)، Chrome headless بـ default_font_size 20 على شباك 1422:
+  16px:  62.7  47.1  35.4  26.6  19.9  15.0
+  20px:  69.4  53.0  40.6  31.1  23.9  18.4    (كلهم كبروا)
+scrollWidth = عرض الشاشة في كل العروض   axe: 0 violations   CSS validator: No Error Found
+~~~
+
+**جرّب «Large» بنفسك:** في Chrome افتح [[chrome://settings/fonts]] وغيّر Font size لـ Large، وارجع للصفحة: كل الأرقام هتكبر. رجّعها Medium بعد ما تخلص.` },
+        { lvl: 'صغير', dir: "btn-vars", t: R`مكتبة أزرار بمتغيرين`, what: R`زرار واحد [[.btn]] بيقرا [[--bg]] و [[--fg]] و [[--pad]]، و ٥ variants (primary، و secondary، و ghost، و danger، و success) كل واحد بيغيّر المتغيرات بس، و ٣ أحجام (sm و md و lg) بتغيّر [[font-size]] والـ padding بـ [[em]] بيكبر لوحده، والـ hover بـ [[color-mix()]] من نفس اللون. من دروس «rem و em» و «CSS variables».`, done: R`كل variant سطر أو اتنين CSS بس، والـ hover مفيهوش ولا لون مكتوب بإيده، وتغيير [[--brand]] على [[:root]] من DevTools بيغيّر الـ primary والـ hover بتاعه مع بعض، والـ ١٥ تركيبة (٥×٣) ظاهرين في صفحة واحدة.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة أزرار بمتغيرات</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>مكتبة أزرار: ٥ أنواع × ٣ أحجام</h1>
+    <h2>صغير (<code>.btn--sm</code>)</h2>
+    <div class="row">
+      <button type="button" class="btn btn--primary btn--sm">احجز</button>
+      <button type="button" class="btn btn--secondary btn--sm">التفاصيل</button>
+      <button type="button" class="btn btn--ghost btn--sm">إلغاء</button>
+      <button type="button" class="btn btn--danger btn--sm">احذف</button>
+      <button type="button" class="btn btn--success btn--sm">تمام</button>
+    </div>
+    <h2>متوسط (<code>.btn--md</code>)</h2>
+    <div class="row">
+      <button type="button" class="btn btn--primary btn--md">احجز</button>
+      <button type="button" class="btn btn--secondary btn--md">التفاصيل</button>
+      <button type="button" class="btn btn--ghost btn--md">إلغاء</button>
+      <button type="button" class="btn btn--danger btn--md">احذف</button>
+      <button type="button" class="btn btn--success btn--md">تمام</button>
+    </div>
+    <h2>كبير (<code>.btn--lg</code>)</h2>
+    <div class="row">
+      <button type="button" class="btn btn--primary btn--lg">احجز</button>
+      <button type="button" class="btn btn--secondary btn--lg">التفاصيل</button>
+      <button type="button" class="btn btn--ghost btn--lg">إلغاء</button>
+      <button type="button" class="btn btn--danger btn--lg">احذف</button>
+      <button type="button" class="btn btn--success btn--lg">تمام</button>
+    </div>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+:root {
+  --brand: #0e7490;
+  --danger: #b91c1c;
+  --success: #15803d;
+  --ink: #0f172a;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: var(--ink); background: white; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1rem; margin-block: 1.5rem 0.5rem; }
+.row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+
+/* ONE button. Everything that changes between variants is a variable with a default */
+.btn {
+  --bg: var(--brand);
+  --fg: white;
+  --line: transparent;
+  --pad: 0.6em 1.2em;           /* em: the padding grows with the button's own font-size */
+  padding: var(--pad);
+  border: 2px solid var(--line);
+  border-radius: 0.5em;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: var(--size, 1rem);
+  font-weight: 700;
+  cursor: pointer;
+}
+/* hover: the same colour mixed with 20% black, so no hover colour is written by hand */
+.btn:hover { background: color-mix(in srgb, var(--bg), black 20%); }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+/* variants: they only change variables */
+.btn--secondary { --bg: color-mix(in srgb, var(--brand), white 85%); --fg: color-mix(in srgb, var(--brand), black 30%); }
+.btn--ghost { --bg: white; --fg: var(--ink); --line: #cbd5e1; }
+.btn--danger { --bg: var(--danger); }
+.btn--success { --bg: var(--success); }
+
+/* sizes: only the font size. padding and radius follow because they are in em */
+.btn--sm { --size: 0.875rem; }
+.btn--md { --size: 1rem; }
+.btn--lg { --size: 1.25rem; }
+~~~
+
+~~~view 440 620 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة أزرار بمتغيرات</title>
+<style>
+:root {
+  --brand: #0e7490;
+  --danger: #b91c1c;
+  --success: #15803d;
+  --ink: #0f172a;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: var(--ink); background: white; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1rem; margin-block: 1.5rem 0.5rem; }
+.row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+
+/* ONE button. Everything that changes between variants is a variable with a default */
+.btn {
+  --bg: var(--brand);
+  --fg: white;
+  --line: transparent;
+  --pad: 0.6em 1.2em;           /* em: the padding grows with the button's own font-size */
+  padding: var(--pad);
+  border: 2px solid var(--line);
+  border-radius: 0.5em;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: var(--size, 1rem);
+  font-weight: 700;
+  cursor: pointer;
+}
+/* hover: the same colour mixed with 20% black, so no hover colour is written by hand */
+.btn:hover { background: color-mix(in srgb, var(--bg), black 20%); }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+/* variants: they only change variables */
+.btn--secondary { --bg: color-mix(in srgb, var(--brand), white 85%); --fg: color-mix(in srgb, var(--brand), black 30%); }
+.btn--ghost { --bg: white; --fg: var(--ink); --line: #cbd5e1; }
+.btn--danger { --bg: var(--danger); }
+.btn--success { --bg: var(--success); }
+
+/* sizes: only the font size. padding and radius follow because they are in em */
+.btn--sm { --size: 0.875rem; }
+.btn--md { --size: 1rem; }
+.btn--lg { --size: 1.25rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>مكتبة أزرار: ٥ أنواع × ٣ أحجام</h1>
+    <h2>صغير (<code>.btn--sm</code>)</h2>
+    <div class="row">
+      <button type="button" class="btn btn--primary btn--sm">احجز</button>
+      <button type="button" class="btn btn--secondary btn--sm">التفاصيل</button>
+      <button type="button" class="btn btn--ghost btn--sm">إلغاء</button>
+      <button type="button" class="btn btn--danger btn--sm">احذف</button>
+      <button type="button" class="btn btn--success btn--sm">تمام</button>
+    </div>
+    <h2>متوسط (<code>.btn--md</code>)</h2>
+    <div class="row">
+      <button type="button" class="btn btn--primary btn--md">احجز</button>
+      <button type="button" class="btn btn--secondary btn--md">التفاصيل</button>
+      <button type="button" class="btn btn--ghost btn--md">إلغاء</button>
+      <button type="button" class="btn btn--danger btn--md">احذف</button>
+      <button type="button" class="btn btn--success btn--md">تمام</button>
+    </div>
+    <h2>كبير (<code>.btn--lg</code>)</h2>
+    <div class="row">
+      <button type="button" class="btn btn--primary btn--lg">احجز</button>
+      <button type="button" class="btn btn--secondary btn--lg">التفاصيل</button>
+      <button type="button" class="btn btn--ghost btn--lg">إلغاء</button>
+      <button type="button" class="btn btn--danger btn--lg">احذف</button>
+      <button type="button" class="btn btn--success btn--lg">تمام</button>
+    </div>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٣ صفوف، في كل صف نفس الـ ٥ أزرار: «احجز» بترولي، و «التفاصيل» بترولي فاتح وكلامه غامق، و «إلغاء» أبيض بحد رمادي، و «احذف» أحمر، و «تمام» أخضر. الصف الأول صغير، والتاني متوسط، والتالت كبير. والماوس على أي زرار بيغمّق لونه.
+
+**الفكرة:** [[.btn]] هو الزرار الوحيد. كل حاجة بتختلف بين الأنواع متغيّر ليه قيمة افتراضية جوه [[.btn]] نفسه ([[--bg]] و [[--fg]] و [[--line]] و [[--pad]]). والـ variant بيغيّر المتغيرات بس، مش الخصايص. يعني [[.btn--danger]] سطر واحد: [[--bg: var(--danger)]].
+
+**ليه [[--bg]] جوه [[.btn]] مش على [[:root]]:** المتغيّر بيتورث لتحت. لو كان على [[:root]] وغيّرته في [[.btn--danger]]، التغيير هيوصل للزرار ده بس برضه. بس حطّه جوه [[.btn]] بيخلّي كل زرار يبدأ من نفس القيمة، ومفيش حاجة برّه الزراير تتأثر بيه.
+
+**الـ hover من غير ولا لون:** [[color-mix(in srgb, var(--bg), black 20%)]] بيخلط لون الزرار بـ 20% أسود. نفس السطر شغال للـ ٥ أنواع، ولو غيّرت [[--brand]] الـ hover بيتغيّر معاه.
+
+**الأحجام بـ em:** [[.btn--lg]] بيغيّر [[--size]] بس (الـ font-size). الـ padding [[0.6em 1.2em]] والتدوير [[0.5em]] بالـ em، يعني نسبة من خط الزرار نفسه. فلما الخط كبر، كبروا معاه لوحدهم.
+
+**[[.btn--secondary]]:** لونه هو كمان من [[--brand]]: فاتح ([[white 85%]]) وكلامه غامق ([[black 30%]]). غيّر البراند والتلاتة بيتغيّروا مع بعض.
+
+~~~text الناتج (Chrome)
+عدد الأزرار: 15
+الحجم   font-size   padding (فوق / جنب)   التدوير
+sm      14px        8.4px / 16.8px         7px
+md      16px        9.6px / 19.2px         8px
+lg      20px        12px / 24px            10px     (كله 0.6em و 1.2em و 0.5em من خط الزرار)
+
+«احذف» عادي        rgb(185, 28, 28)
+«احذف» والماوس عليه (hover فعلي)   color(srgb 0.580 0.088 0.088) = 148, 22, 22 (يعني 80% من كل لون)
+غيّرت --brand على :root لـ #7c3aed:
+  primary       rgb(124, 58, 237)
+  hover بتاعه   color(srgb 0.389 0.182 0.744) = 99, 46, 190
+  secondary     color(srgb 0.923 0.884 0.989) (البنفسجي الفاتح)
+axe: 0 violations   CSS validator: No Error Found
+~~~
+
+**خد بالك:** [[color-mix()]] بيرجّع اللون بصيغة [[color(srgb ...)]] مش [[rgb()]]. الأرقام فيه من 0 لـ 1 بدل 0 لـ 255. لو JavaScript بيقرا اللون ويقارنه بـ [[rgb(...)]] هيلاقيه مختلف.` },
+        { lvl: 'صغير', dir: "book-cq", t: R`كارت كتاب على قد مكانه بـ cqi`, what: R`كارت كتاب واحد بنفس الـ HTML والـ CSS، متحط مرتين: في عمود واسع وفي عمود جانبي ضيق. كل مقاساته (العنوان، والـ padding، والتدوير) بوحدة [[cqi]] (1% من عرض الصندوق اللي هو فيه) جوه [[clamp()]]، فالكارت بيتظبط على مكانه هو مش على الشاشة. من دروس «clamp()» و «الوحدات».`, done: R`على 1280 العنوان في الكارت الواسع أكبر بكتير من الضيق (والاتنين نفس الـ class)، وعلى 360 الاتنين نفس المقاس لأنهم بقوا نفس العرض، ولو بدّلت [[cqi]] بـ [[vw]] الكارتين بياخدوا نفس الحجم على أي شاشة، ومفيش scroll أفقي.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كارت كتاب على قد مكانه</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+  <main class="wide">
+    <h1>كتاب الشهر</h1>
+    <div class="slot">
+      <article class="book">
+        <p class="book__tag">اختيار النادي</p>
+        <h2 class="book__title">مدينة من ورق</h2>
+        <p class="book__meta">رواية، ٢٤٠ صفحة</p>
+        <a class="book__cta" href="#read">اقرا الفصل الأول</a>
+      </article>
+    </div>
+  </main>
+  <aside class="narrow">
+    <h2 class="side-title">في الجنب</h2>
+    <div class="slot">
+      <article class="book">
+        <p class="book__tag">اختيار النادي</p>
+        <h2 class="book__title">مدينة من ورق</h2>
+        <p class="book__meta">رواية، ٢٤٠ صفحة</p>
+        <a class="book__cta" href="#read">اقرا الفصل الأول</a>
+      </article>
+    </div>
+  </aside>
+</div>
+</body>
+</html>
+~~~
+
+~~~css style.css
+:root {
+  --ink: #1c1917;
+  --paper: #fafaf9;
+  --cover: #7c2d12;
+  --on-cover: #fff7ed;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 1rem; background: var(--paper); color: var(--ink); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+
+/* a wide column and a narrow one next to each other; one under the other on a phone */
+.layout { display: grid; gap: 1.5rem; grid-template-columns: 1fr; max-width: 70rem; margin-inline: auto; }
+@media (min-width: 48rem) { .layout { grid-template-columns: 3fr 1fr; } }
+.side-title { font-size: 1.1rem; }
+
+/* the box the card lives in: cqi below means «1% of THIS box's width» */
+.slot { container-type: inline-size; }
+
+/* the same card, the same CSS. Every size follows its own box, not the screen */
+.book {
+  display: grid;
+  gap: 2cqi;
+  padding: clamp(0.75rem, 6cqi, 3rem);
+  border-radius: clamp(0.5rem, 3cqi, 1.5rem);
+  background: linear-gradient(160deg, var(--cover), color-mix(in srgb, var(--cover), black 35%));
+  color: var(--on-cover);
+}
+.book > * { margin: 0; }
+.book__tag { font-size: clamp(0.75rem, 3.5cqi, 1rem); opacity: 0.85; }
+.book__title { font-size: clamp(1.25rem, 10cqi, 4rem); line-height: 1.1; }
+.book__meta { font-size: clamp(0.875rem, 4cqi, 1.25rem); }
+.book__cta { justify-self: start; padding: 0.5em 1.2em; border-radius: 999px; background: var(--on-cover); color: var(--cover); font-weight: 700; font-size: clamp(0.875rem, 4cqi, 1.125rem); text-decoration: none; }
+.book__cta:focus-visible { outline: 3px solid var(--on-cover); outline-offset: 3px; }
+~~~
+
+~~~view 560 900 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كارت كتاب على قد مكانه</title>
+<style>
+:root {
+  --ink: #1c1917;
+  --paper: #fafaf9;
+  --cover: #7c2d12;
+  --on-cover: #fff7ed;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 1rem; background: var(--paper); color: var(--ink); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+
+/* a wide column and a narrow one next to each other; one under the other on a phone */
+.layout { display: grid; gap: 1.5rem; grid-template-columns: 1fr; max-width: 70rem; margin-inline: auto; }
+@media (min-width: 48rem) { .layout { grid-template-columns: 3fr 1fr; } }
+.side-title { font-size: 1.1rem; }
+
+/* the box the card lives in: cqi below means «1% of THIS box's width» */
+.slot { container-type: inline-size; }
+
+/* the same card, the same CSS. Every size follows its own box, not the screen */
+.book {
+  display: grid;
+  gap: 2cqi;
+  padding: clamp(0.75rem, 6cqi, 3rem);
+  border-radius: clamp(0.5rem, 3cqi, 1.5rem);
+  background: linear-gradient(160deg, var(--cover), color-mix(in srgb, var(--cover), black 35%));
+  color: var(--on-cover);
+}
+.book > * { margin: 0; }
+.book__tag { font-size: clamp(0.75rem, 3.5cqi, 1rem); opacity: 0.85; }
+.book__title { font-size: clamp(1.25rem, 10cqi, 4rem); line-height: 1.1; }
+.book__meta { font-size: clamp(0.875rem, 4cqi, 1.25rem); }
+.book__cta { justify-self: start; padding: 0.5em 1.2em; border-radius: 999px; background: var(--on-cover); color: var(--cover); font-weight: 700; font-size: clamp(0.875rem, 4cqi, 1.125rem); text-decoration: none; }
+.book__cta:focus-visible { outline: 3px solid var(--on-cover); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <main class="wide">
+    <h1>كتاب الشهر</h1>
+    <div class="slot">
+      <article class="book">
+        <p class="book__tag">اختيار النادي</p>
+        <h2 class="book__title">مدينة من ورق</h2>
+        <p class="book__meta">رواية، ٢٤٠ صفحة</p>
+        <a class="book__cta" href="#read">اقرا الفصل الأول</a>
+      </article>
+    </div>
+  </main>
+  <aside class="narrow">
+    <h2 class="side-title">في الجنب</h2>
+    <div class="slot">
+      <article class="book">
+        <p class="book__tag">اختيار النادي</p>
+        <h2 class="book__title">مدينة من ورق</h2>
+        <p class="book__meta">رواية، ٢٤٠ صفحة</p>
+        <a class="book__cta" href="#read">اقرا الفصل الأول</a>
+      </article>
+    </div>
+  </aside>
+</div>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** على الكمبيوتر: عمود كبير فيه «كتاب الشهر» وكارت بني كبير عنوانه ضخم، وجنبه عمود ضيق فيه نفس الكارت بالظبط بس أصغر في كل حاجة (الخط والمسافات والتدوير). على الموبايل العمودين تحت بعض والكارتين شبه بعض.
+
+**[[container-type: inline-size]] على [[.slot]]:** بيقول «الصندوق ده container، وعرضه هو اللي العناصر اللي جواه هتقيس عليه». من غيره [[cqi]] بيقيس على أقرب container فوق، ولو مفيش بيقيس على الشاشة.
+
+**[[cqi]]:** 1% من عرض الـ container ([[i]] = inline، يعني اتجاه السطر). [[10cqi]] في صندوق 822px = 82px، وفي صندوق 274px = 27.4px.
+
+**ليه [[clamp()]] برضه:** [[10cqi]] لوحده في صندوق ضيق جدًا (150px) يطلع 15px، أصغر من اللي يتقري كعنوان. [[clamp(1.25rem, 10cqi, 4rem)]] بيقول ميقلّش عن 20px ومايزيدش عن 64px.
+
+**ليه مش [[vw]]:** الـ vw بيقيس الشاشة، والشاشة واحدة للكارتين. فالكارت اللي في العمود الضيق كان هياخد نفس حجم العنوان الكبير، والكلام هيتكسر لسطور كتير.
+
+**الـ CSS validator:** قال ٨ أخطاء، كلها على [[container-type]] و [[cqi]]: [[Property "container-type" doesn't exist]] و [[Unknown dimension 2cqi]]. الـ validator لسه مبيعرفهمش، بس Chrome و Firefox و Safari بيدعموهم من 2023 (Baseline). ده بيحصل مع أي خاصية جديدة: لو الـ validator قال «مش موجودة»، اتأكد من MDN قبل ما تشيلها.
+
+**غلطة شفتها في الصورة:** كنت كاتب «رواية · ٢٤٠ صفحة». النقطة اللي في النص ([[·]]) جنب أرقام عربي اتقرت كأنها صفر: «٢٤٠٠». لأن الصفر العربي ([[٠]]) نقطة. بقت «رواية، ٢٤٠ صفحة».
+
+~~~text الناتج (Chrome)
+على 1280:  الكارت الواسع: صندوقه 822   العنوان 64px (وصل للحد الأقصى، 10cqi = 82)   padding 48px
+           الكارت الضيق:  صندوقه 274   العنوان 27.4px                             padding 16.44px
+على 360:   الكارتين: صندوقهم 328   العنوان 32.8px   padding 19.68px
+نفس العنوان بـ clamp(1.25rem, 5vw, 4rem):   على 1280: 64px و 64px    على 360: 20px و 20px
+scrollWidth = عرض الشاشة على 360 و 1280
+axe: 0 violations   CSS validator: 8 errors، كلهم container-type و cqi (الـ validator متأخر عن المتصفحات)
+~~~` },
+        { lvl: 'متوسط', dir: "style-guide", t: R`صفحة «style guide» لمتجر قهوة متخيل`, what: R`صفحة بتعرض كل الـ tokens بتاعة «بُن الصباح»: الألوان (مربع لكل لون واسمه وقيمته من [[getPropertyValue]])، والمسافات ([[--space-1]] لحد [[--space-6]] مرسومين كمستطيلات)، والتدوير، والظلال (٣ مستويات: صغير حاد وكبير ناعم فوق بعض)، والخطوط. وفوق ٣ أزرار بتبدّل البراند (قهوة، ونعناع، وتوت) بتغيير ٥ متغيرات بس على [[:root]]. من دروس الوحدة كلها.`, done: R`الضغط على براند بيغيّر الصفحة كلها من غير ما ولا قاعدة غير [[:root]] تتلمس، والأرقام المكتوبة جنب كل token بتتحدّث لوحدها، ومفيش ولا لون مكتوب بإيده برّه [[:root]] (اعمل بحث على [[#]] و [[rgb(]] و [[oklch(]] في باقي الملف).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>style guide: بُن الصباح</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>«بُن الصباح»: الـ style guide</h1>
+  <div class="brands" role="group" aria-label="البراند">
+    <button type="button" data-brand="coffee" aria-pressed="true">قهوة</button>
+    <button type="button" data-brand="mint" aria-pressed="false">نعناع</button>
+    <button type="button" data-brand="berry" aria-pressed="false">توت</button>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>الألوان</h2>
+    <ul class="swatches">
+      <li><span class="chip" style="--c: var(--brand)"></span><b>--brand</b><code data-token="--brand"></code></li>
+      <li><span class="chip" style="--c: var(--brand-soft)"></span><b>--brand-soft</b><code data-token="--brand-soft"></code></li>
+      <li><span class="chip" style="--c: var(--accent)"></span><b>--accent</b><code data-token="--accent"></code></li>
+      <li><span class="chip" style="--c: var(--bg)"></span><b>--bg</b><code data-token="--bg"></code></li>
+      <li><span class="chip" style="--c: var(--ink)"></span><b>--ink</b><code data-token="--ink"></code></li>
+    </ul>
+  </section>
+  <section>
+    <h2>المسافات</h2>
+    <ul class="spaces">
+      <li><span class="bar" style="--w: var(--space-1)"></span><b>--space-1</b><code data-token="--space-1"></code></li>
+      <li><span class="bar" style="--w: var(--space-2)"></span><b>--space-2</b><code data-token="--space-2"></code></li>
+      <li><span class="bar" style="--w: var(--space-3)"></span><b>--space-3</b><code data-token="--space-3"></code></li>
+      <li><span class="bar" style="--w: var(--space-4)"></span><b>--space-4</b><code data-token="--space-4"></code></li>
+      <li><span class="bar" style="--w: var(--space-5)"></span><b>--space-5</b><code data-token="--space-5"></code></li>
+      <li><span class="bar" style="--w: var(--space-6)"></span><b>--space-6</b><code data-token="--space-6"></code></li>
+    </ul>
+  </section>
+  <section>
+    <h2>التدوير والظلال</h2>
+    <ul class="boxes">
+      <li class="box" style="--r: var(--radius-sm); --s: var(--shadow-1)"><b>--radius-sm</b> و <b>--shadow-1</b></li>
+      <li class="box" style="--r: var(--radius-md); --s: var(--shadow-2)"><b>--radius-md</b> و <b>--shadow-2</b></li>
+      <li class="box" style="--r: var(--radius-lg); --s: var(--shadow-3)"><b>--radius-lg</b> و <b>--shadow-3</b></li>
+    </ul>
+  </section>
+  <section>
+    <h2>الخطوط</h2>
+    <p class="font-head">العنوان: <code data-token="--font-head"></code></p>
+    <p class="font-body">الكلام: <code data-token="--font-body"></code></p>
+    <p><a class="btn" href="#menu">شوف المنيو</a></p>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+/* every colour, size and shadow lives here. Nothing below :root writes a colour by hand */
+:root {
+  /* the 5 brand variables: the buttons on top change only these */
+  --brand: #6f4e37;
+  --brand-soft: #f3e9e1;
+  --accent: #c2410c;
+  --bg: #fffaf5;
+  --ink: #2b1d14;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+
+  --radius-sm: 4px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+
+  /* each shadow: a small sharp one and a big soft one on top of each other */
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.12), 0 1px 3px rgb(0 0 0 / 0.08);
+  --shadow-2: 0 2px 4px rgb(0 0 0 / 0.1), 0 8px 16px rgb(0 0 0 / 0.08);
+  --shadow-3: 0 4px 8px rgb(0 0 0 / 0.08), 0 20px 40px rgb(0 0 0 / 0.14);
+
+  --font-head: Georgia, "Times New Roman", serif;
+  --font-body: system-ui, "Segoe UI", Tahoma, sans-serif;
+  --on-brand: white;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); line-height: 1.6; }
+h1, h2 { font-family: var(--font-head); }
+h2 { margin-block: var(--space-5) var(--space-3); color: var(--brand); }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); background: var(--brand-soft); }
+.top h1 { margin: 0; font-size: 1.4rem; }
+.brands { display: flex; gap: var(--space-2); }
+.brands button { padding: var(--space-2) var(--space-3); border: 2px solid var(--brand); border-radius: var(--radius-sm); background: var(--bg); color: var(--ink); font: inherit; cursor: pointer; }
+.brands button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+.brands button:focus-visible, .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+main { max-width: 56rem; margin-inline: auto; padding: 0 var(--space-4) var(--space-6); }
+ul { margin: 0; padding: 0; list-style: none; }
+code { font-family: ui-monospace, Consolas, monospace; font-size: 0.85em; direction: ltr; unicode-bidi: isolate; }
+
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: var(--space-3); }
+.swatches li { display: grid; gap: var(--space-1); }
+.chip { height: 4rem; border-radius: var(--radius-md); background: var(--c); box-shadow: var(--shadow-1); }
+
+.spaces li { display: flex; align-items: center; gap: var(--space-3); margin-block-end: var(--space-2); }
+.bar { flex: none; width: var(--w); height: 1rem; background: var(--accent); }
+
+.boxes { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: var(--space-4); }
+.box { padding: var(--space-4); border-radius: var(--r); background: var(--bg); box-shadow: var(--s); }
+
+.font-head { font-family: var(--font-head); font-size: 1.5rem; }
+.btn { display: inline-block; padding: var(--space-2) var(--space-4); border-radius: var(--radius-md); background: var(--brand); color: var(--on-brand); font-weight: 700; text-decoration: none; }
+~~~
+
+~~~js app.js
+// the three brands: the same 5 variables, other values
+const BRANDS = {
+  coffee: { '--brand': '#6f4e37', '--brand-soft': '#f3e9e1', '--accent': '#c2410c', '--bg': '#fffaf5', '--ink': '#2b1d14' },
+  mint:   { '--brand': '#0f766e', '--brand-soft': '#dcf5ef', '--accent': '#0369a1', '--bg': '#f7fdfb', '--ink': '#10302b' },
+  berry:  { '--brand': '#9d174d', '--brand-soft': '#fbe4ee', '--accent': '#6d28d9', '--bg': '#fffafc', '--ink': '#3b0a22' },
+};
+const root = document.documentElement;
+
+// the text next to every token is read from the page, so it is always the value in use
+function showValues() {
+  for (const el of document.querySelectorAll('[data-token]')) {
+    el.textContent = getComputedStyle(root).getPropertyValue(el.dataset.token).trim();
+  }
+}
+
+for (const btn of document.querySelectorAll('[data-brand]')) {
+  btn.addEventListener('click', () => {
+    // setProperty on <html> = on :root: no other rule is touched
+    for (const [name, value] of Object.entries(BRANDS[btn.dataset.brand])) root.style.setProperty(name, value);
+    for (const b of document.querySelectorAll('[data-brand]')) b.setAttribute('aria-pressed', String(b === btn));
+    showValues();
+  });
+}
+showValues();
+~~~
+
+~~~view 640 1500 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>style guide: بُن الصباح</title>
+<style>
+/* every colour, size and shadow lives here. Nothing below :root writes a colour by hand */
+:root {
+  /* the 5 brand variables: the buttons on top change only these */
+  --brand: #6f4e37;
+  --brand-soft: #f3e9e1;
+  --accent: #c2410c;
+  --bg: #fffaf5;
+  --ink: #2b1d14;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+
+  --radius-sm: 4px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+
+  /* each shadow: a small sharp one and a big soft one on top of each other */
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.12), 0 1px 3px rgb(0 0 0 / 0.08);
+  --shadow-2: 0 2px 4px rgb(0 0 0 / 0.1), 0 8px 16px rgb(0 0 0 / 0.08);
+  --shadow-3: 0 4px 8px rgb(0 0 0 / 0.08), 0 20px 40px rgb(0 0 0 / 0.14);
+
+  --font-head: Georgia, "Times New Roman", serif;
+  --font-body: system-ui, "Segoe UI", Tahoma, sans-serif;
+  --on-brand: white;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); line-height: 1.6; }
+h1, h2 { font-family: var(--font-head); }
+h2 { margin-block: var(--space-5) var(--space-3); color: var(--brand); }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); background: var(--brand-soft); }
+.top h1 { margin: 0; font-size: 1.4rem; }
+.brands { display: flex; gap: var(--space-2); }
+.brands button { padding: var(--space-2) var(--space-3); border: 2px solid var(--brand); border-radius: var(--radius-sm); background: var(--bg); color: var(--ink); font: inherit; cursor: pointer; }
+.brands button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+.brands button:focus-visible, .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+main { max-width: 56rem; margin-inline: auto; padding: 0 var(--space-4) var(--space-6); }
+ul { margin: 0; padding: 0; list-style: none; }
+code { font-family: ui-monospace, Consolas, monospace; font-size: 0.85em; direction: ltr; unicode-bidi: isolate; }
+
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: var(--space-3); }
+.swatches li { display: grid; gap: var(--space-1); }
+.chip { height: 4rem; border-radius: var(--radius-md); background: var(--c); box-shadow: var(--shadow-1); }
+
+.spaces li { display: flex; align-items: center; gap: var(--space-3); margin-block-end: var(--space-2); }
+.bar { flex: none; width: var(--w); height: 1rem; background: var(--accent); }
+
+.boxes { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: var(--space-4); }
+.box { padding: var(--space-4); border-radius: var(--r); background: var(--bg); box-shadow: var(--s); }
+
+.font-head { font-family: var(--font-head); font-size: 1.5rem; }
+.btn { display: inline-block; padding: var(--space-2) var(--space-4); border-radius: var(--radius-md); background: var(--brand); color: var(--on-brand); font-weight: 700; text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>«بُن الصباح»: الـ style guide</h1>
+  <div class="brands" role="group" aria-label="البراند">
+    <button type="button" data-brand="coffee" aria-pressed="true">قهوة</button>
+    <button type="button" data-brand="mint" aria-pressed="false">نعناع</button>
+    <button type="button" data-brand="berry" aria-pressed="false">توت</button>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>الألوان</h2>
+    <ul class="swatches">
+      <li><span class="chip" style="--c: var(--brand)"></span><b>--brand</b><code data-token="--brand"></code></li>
+      <li><span class="chip" style="--c: var(--brand-soft)"></span><b>--brand-soft</b><code data-token="--brand-soft"></code></li>
+      <li><span class="chip" style="--c: var(--accent)"></span><b>--accent</b><code data-token="--accent"></code></li>
+      <li><span class="chip" style="--c: var(--bg)"></span><b>--bg</b><code data-token="--bg"></code></li>
+      <li><span class="chip" style="--c: var(--ink)"></span><b>--ink</b><code data-token="--ink"></code></li>
+    </ul>
+  </section>
+  <section>
+    <h2>المسافات</h2>
+    <ul class="spaces">
+      <li><span class="bar" style="--w: var(--space-1)"></span><b>--space-1</b><code data-token="--space-1"></code></li>
+      <li><span class="bar" style="--w: var(--space-2)"></span><b>--space-2</b><code data-token="--space-2"></code></li>
+      <li><span class="bar" style="--w: var(--space-3)"></span><b>--space-3</b><code data-token="--space-3"></code></li>
+      <li><span class="bar" style="--w: var(--space-4)"></span><b>--space-4</b><code data-token="--space-4"></code></li>
+      <li><span class="bar" style="--w: var(--space-5)"></span><b>--space-5</b><code data-token="--space-5"></code></li>
+      <li><span class="bar" style="--w: var(--space-6)"></span><b>--space-6</b><code data-token="--space-6"></code></li>
+    </ul>
+  </section>
+  <section>
+    <h2>التدوير والظلال</h2>
+    <ul class="boxes">
+      <li class="box" style="--r: var(--radius-sm); --s: var(--shadow-1)"><b>--radius-sm</b> و <b>--shadow-1</b></li>
+      <li class="box" style="--r: var(--radius-md); --s: var(--shadow-2)"><b>--radius-md</b> و <b>--shadow-2</b></li>
+      <li class="box" style="--r: var(--radius-lg); --s: var(--shadow-3)"><b>--radius-lg</b> و <b>--shadow-3</b></li>
+    </ul>
+  </section>
+  <section>
+    <h2>الخطوط</h2>
+    <p class="font-head">العنوان: <code data-token="--font-head"></code></p>
+    <p class="font-body">الكلام: <code data-token="--font-body"></code></p>
+    <p><a class="btn" href="#menu">شوف المنيو</a></p>
+  </section>
+</main>
+<script>
+// the three brands: the same 5 variables, other values
+const BRANDS = {
+  coffee: { '--brand': '#6f4e37', '--brand-soft': '#f3e9e1', '--accent': '#c2410c', '--bg': '#fffaf5', '--ink': '#2b1d14' },
+  mint:   { '--brand': '#0f766e', '--brand-soft': '#dcf5ef', '--accent': '#0369a1', '--bg': '#f7fdfb', '--ink': '#10302b' },
+  berry:  { '--brand': '#9d174d', '--brand-soft': '#fbe4ee', '--accent': '#6d28d9', '--bg': '#fffafc', '--ink': '#3b0a22' },
+};
+const root = document.documentElement;
+
+// the text next to every token is read from the page, so it is always the value in use
+function showValues() {
+  for (const el of document.querySelectorAll('[data-token]')) {
+    el.textContent = getComputedStyle(root).getPropertyValue(el.dataset.token).trim();
+  }
+}
+
+for (const btn of document.querySelectorAll('[data-brand]')) {
+  btn.addEventListener('click', () => {
+    // setProperty on <html> = on :root: no other rule is touched
+    for (const [name, value] of Object.entries(BRANDS[btn.dataset.brand])) root.style.setProperty(name, value);
+    for (const b of document.querySelectorAll('[data-brand]')) b.setAttribute('aria-pressed', String(b === btn));
+    showValues();
+  });
+}
+showValues();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** فوق اسم المتجر و ٣ أزرار (قهوة، ونعناع، وتوت). تحت: ٥ مربعات ألوان وتحت كل واحد اسمه وقيمته، و ٦ شرايط مسافات بتطول، و ٣ كروت بتدوير وظل بيكبروا، وسطرين بالخطين، وزرار. دوس «توت»: الصفحة كلها تبقى بمبي وبنفسجي، والقيم المكتوبة تحت المربعات تتغيّر لوحدها.
+
+**ليه الصفحة كلها بتتغيّر:** كل قاعدة تحت [[:root]] بتقرا متغيّر ([[var(--brand)]] وأخواتها). والزرار بيعمل [[root.style.setProperty('--brand', ...)]] على [[<html>]]، وده هو [[:root]]. القيمة الجديدة بتتورث لكل عنصر في الصفحة، فمحتاجين نغيّر ٥ قيم بس.
+
+**[[style="--c: var(--brand)"]] في الـ HTML:** المربعات كلها نفس الـ class ([[.chip]] بيقرا [[--c]]). كل مربع بيقول لونه هو مين **باسم المتغيّر**، مش بقيمة. فلما البراند يتغيّر، المربعات بتتغيّر.
+
+**القيم المكتوبة:** [[getComputedStyle(root).getPropertyValue('--brand')]] بيرجّع قيمة المتغيّر زي ما هي مكتوبة ([[#6f4e37]])، مش متحولة لـ [[rgb]] زي الخصايص العادية. ولازم [[.trim()]] لأن القيمة ممكن تيجي بمسافة في أولها.
+
+**الظلال:** كل ظل اتنين فوق بعض بفاصلة: واحد صغير وحاد قريب من الكارت، وواحد كبير وناعم بعيد. الصغير بيدّي إحساس إن الكارت لازق في حاجة، والكبير بيدّي إحساس إنه مرفوع.
+
+**[[aria-pressed]]:** الأزرار التلاتة بتقول لقارئ الشاشة مين المختار. والـ CSS بيلوّن المختار من نفس الـ attribute ([[button[aria-pressed="true"]]])، فالشكل والمعنى مش ممكن يختلفوا.
+
+~~~text الناتج (Chrome)
+أول فتحة (قهوة)   #6f4e37 #f3e9e1 #c2410c #fffaf5 #2b1d14   لون h2: rgb(111, 78, 55)
+بعد «توت»          #9d174d #fbe4ee #6d28d9 #fffafc #3b0a22   لون h2: rgb(157, 23, 77)
+                   aria-pressed: false,false,true
+                   style على <html>: --brand: #9d174d; --brand-soft: #fbe4ee; --accent: #6d28d9; --bg: #fffafc; --ink: #3b0a22;
+بعد «نعناع»        #0f766e #dcf5ef #0369a1 #f7fdfb #10302b
+المسافات           0.25rem 0.5rem 1rem 1.5rem 2.5rem 4rem
+بحث على # و rgb( و oklch( في style.css بعد :root: ولا واحد
+axe في التلات براندات: 0 violations   CSS validator: No Error Found
+~~~` },
+        { lvl: 'متوسط', dir: "club-hero", t: R`هيرو بيملا الشاشة صح على الموبايل`, what: R`هيرو لنادي كتاب متخيل: [[min-height: 100svh]] (و [[100vh]] قبلها احتياطي)، وعنوان [[clamp()]] كبير، ومسافات [[padding-block]] بـ clamp، وزرار «انضم» لازم يبان من غير scroll، وخلفية هالة بـ radial-gradients ألوانها من متغيرات. وتحته [[.app-shell]] صغير بـ [[100dvh]] (هيدر وفوتر ثابتين). من دروس «dvh» و «clamp()» و «CSS variables».`, done: R`على موبايل حقيقي (أو DevTools بأبعاد 375×667 و 360×640) الزرار ظاهر من غير scroll، ومفيش [[100vw]] في الملف ولا scroll أفقي، وعنوان الهيرو مبيعدّيش سطرين على 320px.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نادي «صفحة» للقراءة</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<section class="hero">
+  <p class="hero__tag">نادي «صفحة» للقراءة</p>
+  <h1 class="hero__title">كتاب كل شهر، وقعدة كل خميس</h1>
+  <p class="hero__text">بنقرا نفس الكتاب ونتقابل نتكلم عنه. مفيش امتحانات ولا واجب.</p>
+  <a class="hero__cta" href="#join">انضم</a>
+</section>
+
+<section class="demo">
+  <h2>نفس الفكرة لشاشة تطبيق: <code>100dvh</code></h2>
+  <div class="app-shell">
+    <header class="app-shell__bar">الكتب</header>
+    <ul class="app-shell__list">
+      <li>رواية «الطريق للبحر»</li>
+      <li>«حكايات الحارة»</li>
+      <li>«دفتر السفر»</li>
+      <li>«شاي بالنعناع»</li>
+      <li>«مدينة من ورق»</li>
+      <li>«آخر قطر»</li>
+      <li>«الشباك اللي فوق»</li>
+      <li>«صندوق الجوابات»</li>
+    </ul>
+    <footer class="app-shell__bar">٨ كتب السنة دي</footer>
+  </div>
+</section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+:root {
+  --ink: #1e1b4b;
+  --paper: #fdfcff;
+  --glow-1: rgb(129 140 248 / 0.45);
+  --glow-2: rgb(244 114 182 / 0.35);
+  --glow-3: rgb(250 204 21 / 0.3);
+  --cta: #4338ca;
+  --space-hero: clamp(1.5rem, 1rem + 4vw, 5rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; color: var(--ink); background: var(--paper); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+
+.hero {
+  /* 100vh first: browsers that don't know svh keep it. svh = the screen with the browser bars SHOWING,
+     the smallest it gets, so the button is visible before any scroll */
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-block: var(--space-hero);
+  padding-inline: clamp(1rem, 5vw, 4rem);
+  background:
+    radial-gradient(circle at 20% 20%, var(--glow-1), transparent 45%),
+    radial-gradient(circle at 85% 40%, var(--glow-2), transparent 45%),
+    radial-gradient(circle at 40% 95%, var(--glow-3), transparent 50%),
+    var(--paper);
+}
+.hero__tag { margin: 0; font-weight: 700; color: var(--cta); }
+.hero__title { margin: 0; max-width: 18ch; font-size: clamp(1.75rem, 1rem + 4vw, 4.5rem); line-height: 1.15; }
+.hero__text { margin: 0; max-width: 40ch; font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem); }
+.hero__cta { padding: 0.8em 2em; border-radius: 999px; background: var(--cta); color: white; font-weight: 700; text-decoration: none; }
+.hero__cta:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+.demo { padding: 2rem clamp(1rem, 5vw, 4rem); }
+.demo h2 { font-size: 1.25rem; }
+
+/* a full-screen app layout: dvh follows the bars as they show and hide, so the footer is always at the bottom */
+.app-shell {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--ink);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.app-shell__bar { flex: none; padding: 0.75rem 1rem; background: var(--ink); color: white; font-weight: 700; }
+.app-shell__list { flex: 1; overflow-y: auto; margin: 0; padding: 0; list-style: none; }
+.app-shell__list li { padding: 1.25rem 1rem; border-block-end: 1px solid #e0e7ff; }
+~~~
+
+~~~view 560 640 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نادي «صفحة» للقراءة</title>
+<style>
+:root {
+  --ink: #1e1b4b;
+  --paper: #fdfcff;
+  --glow-1: rgb(129 140 248 / 0.45);
+  --glow-2: rgb(244 114 182 / 0.35);
+  --glow-3: rgb(250 204 21 / 0.3);
+  --cta: #4338ca;
+  --space-hero: clamp(1.5rem, 1rem + 4vw, 5rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; color: var(--ink); background: var(--paper); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+
+.hero {
+  /* 100vh first: browsers that don't know svh keep it. svh = the screen with the browser bars SHOWING,
+     the smallest it gets, so the button is visible before any scroll */
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-block: var(--space-hero);
+  padding-inline: clamp(1rem, 5vw, 4rem);
+  background:
+    radial-gradient(circle at 20% 20%, var(--glow-1), transparent 45%),
+    radial-gradient(circle at 85% 40%, var(--glow-2), transparent 45%),
+    radial-gradient(circle at 40% 95%, var(--glow-3), transparent 50%),
+    var(--paper);
+}
+.hero__tag { margin: 0; font-weight: 700; color: var(--cta); }
+.hero__title { margin: 0; max-width: 18ch; font-size: clamp(1.75rem, 1rem + 4vw, 4.5rem); line-height: 1.15; }
+.hero__text { margin: 0; max-width: 40ch; font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem); }
+.hero__cta { padding: 0.8em 2em; border-radius: 999px; background: var(--cta); color: white; font-weight: 700; text-decoration: none; }
+.hero__cta:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+.demo { padding: 2rem clamp(1rem, 5vw, 4rem); }
+.demo h2 { font-size: 1.25rem; }
+
+/* a full-screen app layout: dvh follows the bars as they show and hide, so the footer is always at the bottom */
+.app-shell {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--ink);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.app-shell__bar { flex: none; padding: 0.75rem 1rem; background: var(--ink); color: white; font-weight: 700; }
+.app-shell__list { flex: 1; overflow-y: auto; margin: 0; padding: 0; list-style: none; }
+.app-shell__list li { padding: 1.25rem 1rem; border-block-end: 1px solid #e0e7ff; }
+</style>
+</head>
+<body>
+<main>
+<section class="hero">
+  <p class="hero__tag">نادي «صفحة» للقراءة</p>
+  <h1 class="hero__title">كتاب كل شهر، وقعدة كل خميس</h1>
+  <p class="hero__text">بنقرا نفس الكتاب ونتقابل نتكلم عنه. مفيش امتحانات ولا واجب.</p>
+  <a class="hero__cta" href="#join">انضم</a>
+</section>
+
+<section class="demo">
+  <h2>نفس الفكرة لشاشة تطبيق: <code>100dvh</code></h2>
+  <div class="app-shell">
+    <header class="app-shell__bar">الكتب</header>
+    <ul class="app-shell__list">
+      <li>رواية «الطريق للبحر»</li>
+      <li>«حكايات الحارة»</li>
+      <li>«دفتر السفر»</li>
+      <li>«شاي بالنعناع»</li>
+      <li>«مدينة من ورق»</li>
+      <li>«آخر قطر»</li>
+      <li>«الشباك اللي فوق»</li>
+      <li>«صندوق الجوابات»</li>
+    </ul>
+    <footer class="app-shell__bar">٨ كتب السنة دي</footer>
+  </div>
+</section>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** شاشة كاملة فيها اسم النادي بلون نيلي، وعنوان كبير، وسطر وصف، وزرار «انضم» كبسولة، ووراهم ٣ بقع ألوان ناعمة (بنفسجي وبمبي وأصفر). انزل تحت: صندوق بحدود شكله شاشة تطبيق، شريط فوق وشريط تحت ثابتين، والكتب في النص بتعمل scroll لوحدها.
+
+**[[100vh]] ثم [[100svh]] (سطرين لنفس الخاصية):** المتصفح بياخد آخر سطر يفهمه. القديم مبيعرفش [[svh]]، فبيرمي السطر التاني ويفضل على [[100vh]].
+
+**ليه مش [[100vh]] بس:** على الموبايل [[vh]] بيتحسب كأن شريط العنوان مستخبي (الشاشة في أكبر حالاتها). فأول ما الصفحة تفتح والشريط ظاهر، آخر الهيرو بيبقى تحت الشاشة، والزرار ممكن يستخبى.
+
+**الـ ٣ وحدات:**
+- [[svh]] (small): الشاشة وأشرطة المتصفح **ظاهرة**، أصغر حالة. مناسبة للهيرو: اللي فيه دايمًا ظاهر من غير scroll.
+- [[lvh]] (large): والأشرطة **مستخبية**، أكبر حالة. هي نفس [[vh]] القديم.
+- [[dvh]] (dynamic): بتتغيّر وانت بتعمل scroll والأشرطة بتظهر وتستخبى. مناسبة لشاشة تطبيق ([[.app-shell]]) عشان الفوتر يفضل لازق تحت. بس مش للهيرو: الصفحة هتتهز وانت بتعمل scroll.
+
+**[[.app-shell]]:** [[flex-direction: column]]، والشريطين [[flex: none]] (مقاسهم ثابت)، والليستة [[flex: 1]] (تاخد الباقي) و [[overflow-y: auto]] (الـ scroll جواها هي).
+
+**مفيش [[100vw]]:** [[vw]] بيشمل عرض الـ scrollbar. على الكمبيوتر الصفحة اللي فيها scroll عرضها الحقيقي أقل من [[100vw]] بعرض الـ scrollbar (اتقاس في مشروع العيادة: 1280 شباك و 1265 صفحة). فعنصر [[width: 100vw]] بيعمل scroll أفقي 15px. الـ block بياخد العرض كله لوحده من غير ما تكتب حاجة.
+
+**[[max-width: 18ch]] على العنوان:** [[ch]] عرض حرف الصفر في الخط ده، فالسطر مبيطولش أوي على الشاشات الكبيرة. والعنوان مبيعدّيش سطرين على 320.
+
+**الغلطة اللي axe مسكها:** أول نسخة كانت [[<section>]] ورا بعض في [[<body>]] من غير [[<main>]]، و axe قال [[landmark-one-main]] و [[region]].
+
+~~~text الناتج (Chrome، DevTools بموبايل)
+375×667 (DPR 2)   الزرار تحته عند 449 والشاشة 667   العنوان 31px في سطرين   scrollWidth 375
+360×640 (DPR 3)   الزرار تحته عند 435 والشاشة 640   العنوان 30.4px في سطرين   scrollWidth 360
+320×568           الزرار تحته عند 397 والشاشة 568   العنوان 28.8px في سطرين   scrollWidth 320
+.app-shell        طوله = طول الشاشة (667 على 375×667)
+بحث على 100vw في style.css: مفيش
+axe: 0 violations (كانت landmark-one-main و region قبل <main>)   CSS validator: No Error Found
+~~~
+
+**حدود القياس:** DevTools مبيعملش شريط عنوان بيظهر ويستخبى، فـ [[svh]] و [[dvh]] و [[vh]] بيطلعوا نفس الرقم فيه. عشان تشوف الفرق افتح الصفحة على موبايل حقيقي: من نفس الـ Wi-Fi، شغّل [[npx serve]] على الكمبيوتر وافتح عنوانه من الموبايل.` },
+        { lvl: 'كبير', dir: "coffee-ds", t: R`design system صغير لمتجر قهوة متخيل`, what: R`ملف [[tokens.css]] فيه طبقتين: ألوان خام ([[--coffee-700]] وأخواتها) وفوقها أسامي بالمعنى ([[--color-bg]] و [[--color-fg]] و [[--color-brand]] و [[--color-success-soft]] و [[--color-success-text]] وزيهم للتحذير والخطأ)، ومسافات، وتدوير، وظلال، و [[--z-header]] و [[--z-modal]] بدل أرقام z-index عشوائية، و [[--ease]] للحركة. وفوقهم مكوّنات بتقرا الأسامي بس: زرار بـ variants، وشارات حالة (soft و solid)، وكارت منتج، وحقل input بحلقة focus من متغير، وتنبيه. والثيم الغامق بيعيد تعريف الأسامي بس جوه [[ [data-theme="dark"] ]]، وزرار بيبدّل ويفتكر الاختيار. يجمع الوحدة دي مع وحدة «CSS: مين بيكسب» (الطبقات و BEM).`, done: R`المكوّنات مفيهاش ولا لون خام (بحث على [[--coffee-]] جوه ملف المكوّنات يرجّع صفر)، والثيم الغامق ٢٠ سطر أو أقل وكله [[--color-*]]، وتباين كل كلام على خلفيته 4.5:1 أو أكتر في الثيمين (DevTools color picker، أو axe)، وتغيير البراند كله بيتعمل بتغيير ٣ متغيرات خام، والصفحة على 360 و 1280 من غير scroll أفقي، و axe صفر مشاكل في الثيمين.`, ext: R`صدّر الـ tokens لملف JSON وولّد منه الـ CSS بسكربت Node صغير، وزوّد ثيم تالت «ورقي»، وصفحة بتقارن الثيمات جنب بعض.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بُن الصباح: المكوّنات</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<script src="theme.js"></script>
+</head>
+<body>
+<header class="header">
+  <h1 class="header__logo">بُن الصباح</h1>
+  <button type="button" class="btn btn--ghost" id="theme" aria-pressed="false">الوضع الغامق</button>
+</header>
+<main class="page">
+  <section>
+    <h2>الأزرار</h2>
+    <div class="row">
+      <button type="button" class="btn">اطلب دلوقتي</button>
+      <button type="button" class="btn btn--soft">ضيف للسلة</button>
+      <button type="button" class="btn btn--ghost">التفاصيل</button>
+      <button type="button" class="btn btn--danger">شيل من السلة</button>
+    </div>
+  </section>
+  <section>
+    <h2>حالة الطلب</h2>
+    <div class="row">
+      <span class="badge badge--success">اتوصّل</span>
+      <span class="badge badge--warning">بيتجهّز</span>
+      <span class="badge badge--danger">اتلغى</span>
+      <span class="badge badge--solid badge--success">اتوصّل</span>
+      <span class="badge badge--solid badge--warning">بيتجهّز</span>
+      <span class="badge badge--solid badge--danger">اتلغى</span>
+    </div>
+  </section>
+  <section>
+    <h2>المنتجات</h2>
+    <ul class="cards">
+      <li class="card"><h3 class="card__title">بُن تركي محوّج</h3><p class="card__price">١٨٠ ج</p><p class="card__note">ربع كيلو، تحميص وسط</p><button type="button" class="btn">ضيف للسلة</button></li>
+      <li class="card"><h3 class="card__title">إسبريسو بلند</h3><p class="card__price">٢٤٠ ج</p><p class="card__note">ربع كيلو، تحميص غامق</p><button type="button" class="btn">ضيف للسلة</button></li>
+      <li class="card"><h3 class="card__title">قهوة فلتر</h3><p class="card__price">٢١٠ ج</p><p class="card__note">ربع كيلو، تحميص فاتح</p><button type="button" class="btn">ضيف للسلة</button></li>
+    </ul>
+  </section>
+  <section>
+    <h2>حقل</h2>
+    <div class="field">
+      <label for="phone">رقم الموبايل</label>
+      <input class="field__input" id="phone" type="tel" autocomplete="tel" inputmode="tel">
+      <p class="field__hint">هنكلمك عليه لما الطلب يخرج.</p>
+    </div>
+  </section>
+  <section>
+    <h2>تنبيه</h2>
+    <p class="alert alert--warning">التوصيل النهارده متأخر ساعة بسبب الزحمة.</p>
+    <p class="alert alert--success">الطلب اتسجّل. رقمه ٢٠٤٨.</p>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css tokens.css
+@layer tokens {
+  :root {
+    /* ---------- layer 1: raw colours (only this file knows them) ---------- */
+    /* the brand: change these 3 and the whole shop changes */
+    --coffee-100: #f5ebe0;
+    --coffee-700: #7a4a26;
+    --coffee-900: #3d2412;
+
+    --gray-0: #ffffff;
+    --gray-50: #faf8f6;
+    --gray-200: #e7e2dc;
+    --gray-600: #5f5650;
+    --gray-800: #2a2522;
+    --gray-900: #1a1715;
+    --green-100: #dcfce7;
+    --green-800: #166534;
+    --amber-100: #fef3c7;
+    --amber-300: #fcd34d;
+    --amber-800: #92400e;
+    --red-100: #fee2e2;
+    --red-800: #991b1b;
+
+    /* ---------- layer 2: names by meaning (the components read only these) ---------- */
+    --color-bg: var(--gray-50);
+    --color-surface: var(--gray-0);
+    --color-fg: var(--gray-900);
+    --color-muted: var(--gray-600);
+    --color-line: var(--gray-200);
+    --color-brand: var(--coffee-700);
+    --color-brand-soft: var(--coffee-100);
+    --color-brand-strong: var(--coffee-900);
+    --color-on-brand: var(--gray-0);
+    --color-success-soft: var(--green-100);
+    --color-success-text: var(--green-800);
+    --color-warning-soft: var(--amber-100);
+    --color-warning-text: var(--amber-800);
+    --color-danger-soft: var(--red-100);
+    --color-danger-text: var(--red-800);
+    --color-focus: var(--coffee-700);
+
+    /* ---------- sizes, shapes, layers, motion ---------- */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 1rem;
+    --space-4: 1.5rem;
+    --space-5: 2.5rem;
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-pill: 999px;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.1), 0 2px 6px rgb(0 0 0 / 0.06);
+    --shadow-2: 0 4px 8px rgb(0 0 0 / 0.08), 0 16px 32px rgb(0 0 0 / 0.12);
+    --z-header: 10;
+    --z-modal: 100;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --font: system-ui, "Segoe UI", Tahoma, sans-serif;
+  }
+
+  /* the dark theme: only the names by meaning change */
+  [data-theme="dark"] {
+    --color-bg: var(--gray-900);
+    --color-surface: var(--gray-800);
+    --color-fg: var(--gray-50);
+    --color-muted: var(--gray-200);
+    --color-line: var(--gray-600);
+    --color-brand: var(--coffee-100);
+    --color-brand-soft: var(--coffee-900);
+    --color-brand-strong: var(--coffee-100);
+    --color-on-brand: var(--gray-900);
+    --color-success-soft: var(--green-800);
+    --color-success-text: var(--green-100);
+    --color-warning-soft: var(--amber-800);
+    --color-warning-text: var(--amber-100);
+    --color-danger-soft: var(--red-800);
+    --color-danger-text: var(--red-100);
+    --color-focus: var(--amber-300);
+  }
+}
+~~~
+
+~~~css components.css
+@layer tokens, reset, components;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, h2, h3, p, ul { margin: 0; }
+}
+
+@layer components {
+  body { background: var(--color-bg); color: var(--color-fg); font: 1rem/1.6 var(--font); }
+
+  /* ---------- header ---------- */
+  .header { position: sticky; top: 0; z-index: var(--z-header); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); background: var(--color-surface); border-block-end: 1px solid var(--color-line); }
+  .header__logo { font-weight: 800; font-size: 1.25rem; color: var(--color-brand); }
+  .page { max-width: 64rem; margin-inline: auto; padding: var(--space-4); display: grid; gap: var(--space-5); }
+  .page h2 { font-size: 1.25rem; margin-block-end: var(--space-3); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+
+  /* ---------- button: one block, the variants change variables ---------- */
+  .btn { --bg: var(--color-brand); --fg: var(--color-on-brand); --line: transparent;
+    padding: 0.6em 1.3em; border: 2px solid var(--line); border-radius: var(--radius-md);
+    background: var(--bg); color: var(--fg); font: inherit; font-weight: 700; cursor: pointer;
+    transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease); }
+  .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); }
+  .btn--soft { --bg: var(--color-brand-soft); --fg: var(--color-brand-strong); }
+  .btn--ghost { --bg: transparent; --fg: var(--color-fg); --line: var(--color-line); }
+  .btn--danger { --bg: var(--color-danger-soft); --fg: var(--color-danger-text); }
+  .btn:focus-visible, .field__input:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+
+  /* ---------- status badges: soft and solid ---------- */
+  .badge { display: inline-block; padding: 0.15em 0.8em; border-radius: var(--radius-pill); font-size: 0.875rem; font-weight: 700;
+    background: var(--soft); color: var(--text); }
+  .badge--solid { background: var(--text); color: var(--soft); }
+  .badge--success { --soft: var(--color-success-soft); --text: var(--color-success-text); }
+  .badge--warning { --soft: var(--color-warning-soft); --text: var(--color-warning-text); }
+  .badge--danger { --soft: var(--color-danger-soft); --text: var(--color-danger-text); }
+
+  /* ---------- product card ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: var(--space-4); padding: 0; list-style: none; }
+  .card { display: grid; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-md); background: var(--color-surface); box-shadow: var(--shadow-1); }
+  .card__title { font-size: 1.125rem; }
+  .card__price { font-size: 1.5rem; font-weight: 800; color: var(--color-brand); }
+  .card__note { color: var(--color-muted); }
+
+  /* ---------- field ---------- */
+  .field { display: grid; gap: var(--space-1); max-width: 24rem; }
+  .field__input { padding: var(--space-2) var(--space-3); border: 2px solid var(--color-line); border-radius: var(--radius-sm);
+    background: var(--color-surface); color: var(--color-fg); font: inherit; }
+  .field__hint { color: var(--color-muted); font-size: 0.875rem; }
+
+  /* ---------- alert ---------- */
+  .alert { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); border-inline-start: 6px solid var(--text); background: var(--soft); color: var(--text); }
+  .alert + .alert { margin-block-start: var(--space-3); }
+  .alert--warning { --soft: var(--color-warning-soft); --text: var(--color-warning-text); }
+  .alert--success { --soft: var(--color-success-soft); --text: var(--color-success-text); }
+}
+~~~
+
+~~~js theme.js
+// runs in <head>, before anything is drawn: puts the saved theme on <html> so the page never flashes the wrong one
+try {
+  const saved = localStorage.getItem('bon-theme');
+  const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+} catch {
+  document.documentElement.dataset.theme = 'light';
+}
+
+// the button: switch, remember, and say which state it is in
+addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('theme');
+  const sync = () => btn.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'dark'));
+  btn.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('bon-theme', next); } catch {}
+    sync();
+  });
+  sync();
+});
+~~~
+
+~~~view 640 1600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بُن الصباح: المكوّنات</title>
+<style>
+@layer tokens {
+  :root {
+    /* ---------- layer 1: raw colours (only this file knows them) ---------- */
+    /* the brand: change these 3 and the whole shop changes */
+    --coffee-100: #f5ebe0;
+    --coffee-700: #7a4a26;
+    --coffee-900: #3d2412;
+
+    --gray-0: #ffffff;
+    --gray-50: #faf8f6;
+    --gray-200: #e7e2dc;
+    --gray-600: #5f5650;
+    --gray-800: #2a2522;
+    --gray-900: #1a1715;
+    --green-100: #dcfce7;
+    --green-800: #166534;
+    --amber-100: #fef3c7;
+    --amber-300: #fcd34d;
+    --amber-800: #92400e;
+    --red-100: #fee2e2;
+    --red-800: #991b1b;
+
+    /* ---------- layer 2: names by meaning (the components read only these) ---------- */
+    --color-bg: var(--gray-50);
+    --color-surface: var(--gray-0);
+    --color-fg: var(--gray-900);
+    --color-muted: var(--gray-600);
+    --color-line: var(--gray-200);
+    --color-brand: var(--coffee-700);
+    --color-brand-soft: var(--coffee-100);
+    --color-brand-strong: var(--coffee-900);
+    --color-on-brand: var(--gray-0);
+    --color-success-soft: var(--green-100);
+    --color-success-text: var(--green-800);
+    --color-warning-soft: var(--amber-100);
+    --color-warning-text: var(--amber-800);
+    --color-danger-soft: var(--red-100);
+    --color-danger-text: var(--red-800);
+    --color-focus: var(--coffee-700);
+
+    /* ---------- sizes, shapes, layers, motion ---------- */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 1rem;
+    --space-4: 1.5rem;
+    --space-5: 2.5rem;
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-pill: 999px;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.1), 0 2px 6px rgb(0 0 0 / 0.06);
+    --shadow-2: 0 4px 8px rgb(0 0 0 / 0.08), 0 16px 32px rgb(0 0 0 / 0.12);
+    --z-header: 10;
+    --z-modal: 100;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --font: system-ui, "Segoe UI", Tahoma, sans-serif;
+  }
+
+  /* the dark theme: only the names by meaning change */
+  [data-theme="dark"] {
+    --color-bg: var(--gray-900);
+    --color-surface: var(--gray-800);
+    --color-fg: var(--gray-50);
+    --color-muted: var(--gray-200);
+    --color-line: var(--gray-600);
+    --color-brand: var(--coffee-100);
+    --color-brand-soft: var(--coffee-900);
+    --color-brand-strong: var(--coffee-100);
+    --color-on-brand: var(--gray-900);
+    --color-success-soft: var(--green-800);
+    --color-success-text: var(--green-100);
+    --color-warning-soft: var(--amber-800);
+    --color-warning-text: var(--amber-100);
+    --color-danger-soft: var(--red-800);
+    --color-danger-text: var(--red-100);
+    --color-focus: var(--amber-300);
+  }
+}
+</style>
+<style>
+@layer tokens, reset, components;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, h2, h3, p, ul { margin: 0; }
+}
+
+@layer components {
+  body { background: var(--color-bg); color: var(--color-fg); font: 1rem/1.6 var(--font); }
+
+  /* ---------- header ---------- */
+  .header { position: sticky; top: 0; z-index: var(--z-header); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); background: var(--color-surface); border-block-end: 1px solid var(--color-line); }
+  .header__logo { font-weight: 800; font-size: 1.25rem; color: var(--color-brand); }
+  .page { max-width: 64rem; margin-inline: auto; padding: var(--space-4); display: grid; gap: var(--space-5); }
+  .page h2 { font-size: 1.25rem; margin-block-end: var(--space-3); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+
+  /* ---------- button: one block, the variants change variables ---------- */
+  .btn { --bg: var(--color-brand); --fg: var(--color-on-brand); --line: transparent;
+    padding: 0.6em 1.3em; border: 2px solid var(--line); border-radius: var(--radius-md);
+    background: var(--bg); color: var(--fg); font: inherit; font-weight: 700; cursor: pointer;
+    transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease); }
+  .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); }
+  .btn--soft { --bg: var(--color-brand-soft); --fg: var(--color-brand-strong); }
+  .btn--ghost { --bg: transparent; --fg: var(--color-fg); --line: var(--color-line); }
+  .btn--danger { --bg: var(--color-danger-soft); --fg: var(--color-danger-text); }
+  .btn:focus-visible, .field__input:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+
+  /* ---------- status badges: soft and solid ---------- */
+  .badge { display: inline-block; padding: 0.15em 0.8em; border-radius: var(--radius-pill); font-size: 0.875rem; font-weight: 700;
+    background: var(--soft); color: var(--text); }
+  .badge--solid { background: var(--text); color: var(--soft); }
+  .badge--success { --soft: var(--color-success-soft); --text: var(--color-success-text); }
+  .badge--warning { --soft: var(--color-warning-soft); --text: var(--color-warning-text); }
+  .badge--danger { --soft: var(--color-danger-soft); --text: var(--color-danger-text); }
+
+  /* ---------- product card ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: var(--space-4); padding: 0; list-style: none; }
+  .card { display: grid; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-md); background: var(--color-surface); box-shadow: var(--shadow-1); }
+  .card__title { font-size: 1.125rem; }
+  .card__price { font-size: 1.5rem; font-weight: 800; color: var(--color-brand); }
+  .card__note { color: var(--color-muted); }
+
+  /* ---------- field ---------- */
+  .field { display: grid; gap: var(--space-1); max-width: 24rem; }
+  .field__input { padding: var(--space-2) var(--space-3); border: 2px solid var(--color-line); border-radius: var(--radius-sm);
+    background: var(--color-surface); color: var(--color-fg); font: inherit; }
+  .field__hint { color: var(--color-muted); font-size: 0.875rem; }
+
+  /* ---------- alert ---------- */
+  .alert { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); border-inline-start: 6px solid var(--text); background: var(--soft); color: var(--text); }
+  .alert + .alert { margin-block-start: var(--space-3); }
+  .alert--warning { --soft: var(--color-warning-soft); --text: var(--color-warning-text); }
+  .alert--success { --soft: var(--color-success-soft); --text: var(--color-success-text); }
+}
+</style>
+<script>
+// runs in <head>, before anything is drawn: puts the saved theme on <html> so the page never flashes the wrong one
+try {
+  const saved = localStorage.getItem('bon-theme');
+  const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+} catch {
+  document.documentElement.dataset.theme = 'light';
+}
+
+// the button: switch, remember, and say which state it is in
+addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('theme');
+  const sync = () => btn.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'dark'));
+  btn.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('bon-theme', next); } catch {}
+    sync();
+  });
+  sync();
+});
+</script>
+</head>
+<body>
+<header class="header">
+  <h1 class="header__logo">بُن الصباح</h1>
+  <button type="button" class="btn btn--ghost" id="theme" aria-pressed="false">الوضع الغامق</button>
+</header>
+<main class="page">
+  <section>
+    <h2>الأزرار</h2>
+    <div class="row">
+      <button type="button" class="btn">اطلب دلوقتي</button>
+      <button type="button" class="btn btn--soft">ضيف للسلة</button>
+      <button type="button" class="btn btn--ghost">التفاصيل</button>
+      <button type="button" class="btn btn--danger">شيل من السلة</button>
+    </div>
+  </section>
+  <section>
+    <h2>حالة الطلب</h2>
+    <div class="row">
+      <span class="badge badge--success">اتوصّل</span>
+      <span class="badge badge--warning">بيتجهّز</span>
+      <span class="badge badge--danger">اتلغى</span>
+      <span class="badge badge--solid badge--success">اتوصّل</span>
+      <span class="badge badge--solid badge--warning">بيتجهّز</span>
+      <span class="badge badge--solid badge--danger">اتلغى</span>
+    </div>
+  </section>
+  <section>
+    <h2>المنتجات</h2>
+    <ul class="cards">
+      <li class="card"><h3 class="card__title">بُن تركي محوّج</h3><p class="card__price">١٨٠ ج</p><p class="card__note">ربع كيلو، تحميص وسط</p><button type="button" class="btn">ضيف للسلة</button></li>
+      <li class="card"><h3 class="card__title">إسبريسو بلند</h3><p class="card__price">٢٤٠ ج</p><p class="card__note">ربع كيلو، تحميص غامق</p><button type="button" class="btn">ضيف للسلة</button></li>
+      <li class="card"><h3 class="card__title">قهوة فلتر</h3><p class="card__price">٢١٠ ج</p><p class="card__note">ربع كيلو، تحميص فاتح</p><button type="button" class="btn">ضيف للسلة</button></li>
+    </ul>
+  </section>
+  <section>
+    <h2>حقل</h2>
+    <div class="field">
+      <label for="phone">رقم الموبايل</label>
+      <input class="field__input" id="phone" type="tel" autocomplete="tel" inputmode="tel">
+      <p class="field__hint">هنكلمك عليه لما الطلب يخرج.</p>
+    </div>
+  </section>
+  <section>
+    <h2>تنبيه</h2>
+    <p class="alert alert--warning">التوصيل النهارده متأخر ساعة بسبب الزحمة.</p>
+    <p class="alert alert--success">الطلب اتسجّل. رقمه ٢٠٤٨.</p>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر أبيض فيه «بُن الصباح» بني، وزرار «الوضع الغامق». تحته ٤ أزرار، و ٦ شارات حالة (٣ فاتحة و ٣ مليانة)، و ٣ كروت منتجات، وحقل رقم موبايل، وتنبيهين (أصفر وأخضر). دوس «الوضع الغامق»: الخلفية تبقى بني غامق جدًا، والكلام فاتح، والأزرار البني تبقى بيج وكلامها غامق.
+
+**الطبقتين في [[tokens.css]]:**
+1. **ألوان خام** ([[--coffee-700]] و [[--green-800]]): اسمها بيقول اللون ودرجته، ومحدش يستخدمها غير الملف ده.
+2. **أسامي بالمعنى** ([[--color-brand]] و [[--color-success-text]]): اسمها بيقول **الاستخدام**. المكوّنات بتقرا دي بس.
+
+**ليه طبقتين:** الثيم الغامق مبيغيّرش ولا مكوّن. بيقول بس إن [[--color-bg]] بقى [[--gray-900]] بدل [[--gray-50]] (١٦ سطر، كلهم [[--color-*]]). ولو عايز تغيّر البراند لأزرق، بتغيّر الـ ٣ ألوان الخام بتوع القهوة، وكل حاجة بتمشي وراهم، في الثيمين.
+
+**المكوّنات بتقرا متغيرات محلية:** [[.badge]] بيقرا [[--soft]] و [[--text]]، و [[.badge--success]] بيقول هم مين. و [[.badge--solid]] بيعكسهم (الخلفية بلون الكلام والكلام بلون الخلفية). كده ٣ حالات × شكلين بـ ٦ سطور.
+
+**[[--z-header]] و [[--z-modal]]:** بدل [[z-index: 9999]] في مكان و [[99999]] في مكان تاني. الأرقام متجمعة في مكان واحد، وتشوف ترتيب الطبقات من نظرة.
+
+**[[theme.js]] في الـ [[<head>]]:** بيتنفّذ قبل ما المتصفح يرسم الـ body، فبيحط [[data-theme]] على [[<html>]] من الأول ومفيش لمحة بالثيم الغلط. ولو مفيش اختيار محفوظ بياخد إعداد الجهاز ([[prefers-color-scheme]]): أول ما فتحت الصفحة جت غامقة، لأن ويندوز عندي على الوضع الغامق.
+
+**الزرار:** كلامه ثابت «الوضع الغامق»، و [[aria-pressed]] بيقول هو شغال ولا لأ. لو الكلام بيتغيّر («فاتح»/«غامق») مع [[aria-pressed]]، قارئ الشاشة هيقول «الوضع الفاتح، مضغوط»، ومحدش هيفهم.
+
+**الغلطة اللي axe مسكها:** [[page-has-heading-one]]: اسم المتجر كان [[<p>]]، وبقى [[<h1>]].
+
+~~~text الناتج (Chrome)
+أقل تباين في الصفحة: الفاتح 6.37:1   الغامق 6.37:1   (المطلوب 4.5)
+                 الزرار   soft    danger  شارات (نجاح/تحذير/خطأ)  السعر   ملاحظة الكارت  التنبيه
+  الفاتح         7.41     12.22   6.80    6.49 / 6.37 / 6.80       7.41    7.16           6.37
+  الغامق         15.16    12.22   6.80    6.49 / 6.37 / 6.80       12.87   11.77          6.37
+بحث على --coffee- و --gray- وأخواتها في components.css: 0      ألوان # فيه: 0
+الثيم الغامق: 16 سطر، كلهم --color-*
+غيّرت --coffee-100 و --coffee-700 و --coffee-900 بس (أزرق):
+  السعر rgb(29, 78, 216)   الزرار rgb(29, 78, 216)   soft rgb(219, 234, 254) وكلامه rgb(30, 58, 138)
+بعد «الوضع الغامق» و Refresh:   data-theme = dark   aria-pressed = true   localStorage bon-theme = dark
+scrollWidth = clientWidth على 360 (345) و 1280 (1265)
+axe في الثيمين: 0 violations (كانت page-has-heading-one قبل الـ h1)   CSS validator: No Error Found للملفين
+~~~` },
+        { lvl: 'فكرة', dir: "pharmacy-id", t: R`هوية لمكان حقيقي حواليك`, what: R`اختار مكان تعرفه (قهوة، أو صيدلية، أو جيم في الحي) واعمله tokens: ٥ ألوان بالمعنى، وخطين، ومقياس مسافات، وصفحة واحدة بتستخدمهم. انت اللي تختار الألوان والسبب.`, done: R`كل لون ليه سبب مكتوب (ليه الأخضر للحجز مثلًا)، والتباين سليم، وتقدر تغيّر الهوية كلها من [[:root]] بس.`, ext: R`اعمل منها ٣ صفحات (رئيسية، ومنيو، وتواصل) بنفس الـ tokens، وورّيها لصاحب المكان.`, sol: R`المكان اللي اخترته: صيدلية حي متخيلة اسمها «الشفا». ده مثال واحد، وانت اعمل لمكانك انت.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صيدلية «الشفا»: الهوية</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="bar">
+  <p class="bar__name">صيدلية «الشفا»</p>
+  <p class="bar__open">مفتوحة ٢٤ ساعة</p>
+</header>
+<main class="page">
+  <h1>الدوا يوصلك في نص ساعة</h1>
+  <p class="lead">ابعت صورة الروشتة، والصيدلي يكلمك يأكد الأصناف والسعر قبل ما الطلب يخرج.</p>
+  <p class="actions">
+    <a class="btn btn--main" href="#order">ابعت الروشتة</a>
+    <a class="btn btn--call" href="tel:+20225550133">كلّم الصيدلي</a>
+  </p>
+  <p class="notice">صنف «شراب الكحة للأطفال» ناقص النهارده، وهيوصل بكرة الصبح.</p>
+
+  <h2>ليه الألوان دي</h2>
+  <ul class="why">
+    <li><span class="dot dot--main"></span><b>أخضر غامق</b> للطلب: لون الصيدليات اللي الناس عارفاه من الشارع، وغامق كفاية للكلام الأبيض.</li>
+    <li><span class="dot dot--call"></span><b>أزرق</b> للتليفون: فعل تاني غير الطلب، فلونه مختلف عشان محدش يدوس غلط.</li>
+    <li><span class="dot dot--warn"></span><b>كهرماني</b> للتنبيهات: بيلفت النظر من غير ما يخض زي الأحمر.</li>
+    <li><span class="dot dot--bg"></span><b>أبيض مايل للأخضر</b> للخلفية: نضيف ومش باهت زي الرمادي.</li>
+    <li><span class="dot dot--ink"></span><b>كحلي غامق</b> للكلام: أريح للعين من الأسود الصافي.</li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+/* the whole identity: change these and the page is someone else's */
+:root {
+  /* 5 colours by meaning */
+  --color-main: #166534;     /* order: the green people know from pharmacy signs */
+  --color-call: #1d4ed8;     /* phone: a second action, a different colour */
+  --color-warn: #fef3c7;     /* notices: catches the eye without alarm */
+  --color-warn-text: #78350f;
+  --color-bg: #f6fbf8;       /* clean, a little green */
+  --color-ink: #0f1f2e;      /* softer than pure black */
+  --color-on-main: white;    /* text on the green and the blue */
+
+  /* 2 fonts: one for headings, one for text */
+  --font-head: "Segoe UI", Tahoma, sans-serif;
+  --font-body: system-ui, "Segoe UI", Tahoma, sans-serif;
+
+  /* spacing scale: every step 1.5 times the one before */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1.125rem;
+  --space-5: 1.75rem;
+  --space-6: 2.625rem;
+  --radius: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--color-bg); color: var(--color-ink); font: 1rem/1.7 var(--font-body); }
+h1, h2 { font-family: var(--font-head); line-height: 1.3; }
+h1 { font-size: clamp(1.75rem, 1.2rem + 2.5vw, 2.75rem); margin: 0 0 var(--space-3); }
+h2 { font-size: 1.25rem; margin: var(--space-6) 0 var(--space-3); }
+
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); padding: var(--space-3) var(--space-4); background: var(--color-main); color: var(--color-on-main); }
+.bar p { margin: 0; }
+.bar__name { font-weight: 800; }
+
+.page { max-width: 44rem; margin-inline: auto; padding: var(--space-5) var(--space-4) var(--space-6); }
+.lead { margin: 0 0 var(--space-4); font-size: 1.125rem; }
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0 0 var(--space-4); }
+
+.btn { padding: var(--space-3) var(--space-5); border-radius: var(--radius); color: var(--color-on-main); font-weight: 700; text-decoration: none; }
+.btn--main { background: var(--color-main); }
+.btn--call { background: var(--color-call); }
+.btn:focus-visible { outline: 3px solid var(--color-ink); outline-offset: 3px; }
+
+.notice { margin: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius); background: var(--color-warn); color: var(--color-warn-text); }
+
+.why { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-3); }
+.why li { display: flex; gap: var(--space-3); align-items: baseline; }
+.dot { flex: none; width: 1rem; height: 1rem; border-radius: 50%; border: 1px solid var(--color-ink); translate: 0 0.15em; }
+.dot--main { background: var(--color-main); }
+.dot--call { background: var(--color-call); }
+.dot--warn { background: var(--color-warn); }
+.dot--bg { background: var(--color-bg); }
+.dot--ink { background: var(--color-ink); }
+~~~
+
+~~~view 600 1000 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صيدلية «الشفا»: الهوية</title>
+<style>
+/* the whole identity: change these and the page is someone else's */
+:root {
+  /* 5 colours by meaning */
+  --color-main: #166534;     /* order: the green people know from pharmacy signs */
+  --color-call: #1d4ed8;     /* phone: a second action, a different colour */
+  --color-warn: #fef3c7;     /* notices: catches the eye without alarm */
+  --color-warn-text: #78350f;
+  --color-bg: #f6fbf8;       /* clean, a little green */
+  --color-ink: #0f1f2e;      /* softer than pure black */
+  --color-on-main: white;    /* text on the green and the blue */
+
+  /* 2 fonts: one for headings, one for text */
+  --font-head: "Segoe UI", Tahoma, sans-serif;
+  --font-body: system-ui, "Segoe UI", Tahoma, sans-serif;
+
+  /* spacing scale: every step 1.5 times the one before */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1.125rem;
+  --space-5: 1.75rem;
+  --space-6: 2.625rem;
+  --radius: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--color-bg); color: var(--color-ink); font: 1rem/1.7 var(--font-body); }
+h1, h2 { font-family: var(--font-head); line-height: 1.3; }
+h1 { font-size: clamp(1.75rem, 1.2rem + 2.5vw, 2.75rem); margin: 0 0 var(--space-3); }
+h2 { font-size: 1.25rem; margin: var(--space-6) 0 var(--space-3); }
+
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); padding: var(--space-3) var(--space-4); background: var(--color-main); color: var(--color-on-main); }
+.bar p { margin: 0; }
+.bar__name { font-weight: 800; }
+
+.page { max-width: 44rem; margin-inline: auto; padding: var(--space-5) var(--space-4) var(--space-6); }
+.lead { margin: 0 0 var(--space-4); font-size: 1.125rem; }
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0 0 var(--space-4); }
+
+.btn { padding: var(--space-3) var(--space-5); border-radius: var(--radius); color: var(--color-on-main); font-weight: 700; text-decoration: none; }
+.btn--main { background: var(--color-main); }
+.btn--call { background: var(--color-call); }
+.btn:focus-visible { outline: 3px solid var(--color-ink); outline-offset: 3px; }
+
+.notice { margin: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius); background: var(--color-warn); color: var(--color-warn-text); }
+
+.why { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-3); }
+.why li { display: flex; gap: var(--space-3); align-items: baseline; }
+.dot { flex: none; width: 1rem; height: 1rem; border-radius: 50%; border: 1px solid var(--color-ink); translate: 0 0.15em; }
+.dot--main { background: var(--color-main); }
+.dot--call { background: var(--color-call); }
+.dot--warn { background: var(--color-warn); }
+.dot--bg { background: var(--color-bg); }
+.dot--ink { background: var(--color-ink); }
+</style>
+</head>
+<body>
+<header class="bar">
+  <p class="bar__name">صيدلية «الشفا»</p>
+  <p class="bar__open">مفتوحة ٢٤ ساعة</p>
+</header>
+<main class="page">
+  <h1>الدوا يوصلك في نص ساعة</h1>
+  <p class="lead">ابعت صورة الروشتة، والصيدلي يكلمك يأكد الأصناف والسعر قبل ما الطلب يخرج.</p>
+  <p class="actions">
+    <a class="btn btn--main" href="#order">ابعت الروشتة</a>
+    <a class="btn btn--call" href="tel:+20225550133">كلّم الصيدلي</a>
+  </p>
+  <p class="notice">صنف «شراب الكحة للأطفال» ناقص النهارده، وهيوصل بكرة الصبح.</p>
+
+  <h2>ليه الألوان دي</h2>
+  <ul class="why">
+    <li><span class="dot dot--main"></span><b>أخضر غامق</b> للطلب: لون الصيدليات اللي الناس عارفاه من الشارع، وغامق كفاية للكلام الأبيض.</li>
+    <li><span class="dot dot--call"></span><b>أزرق</b> للتليفون: فعل تاني غير الطلب، فلونه مختلف عشان محدش يدوس غلط.</li>
+    <li><span class="dot dot--warn"></span><b>كهرماني</b> للتنبيهات: بيلفت النظر من غير ما يخض زي الأحمر.</li>
+    <li><span class="dot dot--bg"></span><b>أبيض مايل للأخضر</b> للخلفية: نضيف ومش باهت زي الرمادي.</li>
+    <li><span class="dot dot--ink"></span><b>كحلي غامق</b> للكلام: أريح للعين من الأسود الصافي.</li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** شريط أخضر غامق فوق فيه الاسم و «مفتوحة ٢٤ ساعة». عنوان كبير، وسطر شرح، وزرارين: «ابعت الروشتة» أخضر و «كلّم الصيدلي» أزرق. تحتهم تنبيه أصفر عن صنف ناقص، وفي الآخر لستة «ليه الألوان دي» وجنب كل سبب دايرة باللون.
+
+**الهوية كلها في [[:root]]:** ٥ ألوان بالمعنى (ومعاها لون الكلام اللي على التنبيه، ولون الكلام اللي على الأزرار)، وخطين، ومقياس مسافات كل خطوة فيه ١.٥ مرة اللي قبلها، والتدوير. باقي الملف مفيهوش ولا لون: كل حاجة [[var(--...)]].
+
+**الأسباب مكتوبة في مكانين:** كومنت جنب كل لون في الـ CSS (للي هيعدّل الكود بعدك)، ولستة في الصفحة (لصاحب المكان).
+
+**مقياس المسافات:** [[0.25rem]] وبعدها كل خطوة ×١.٥ تقريبًا. لما كل المسافات من نفس المقياس، الصفحة بتبان مترتبة حتى لو مش واخد بالك ليه.
+
+**التباين اتحسب لكل لون:** الأخضر الغامق والأزرق مختارين غامقين كفاية للكلام الأبيض. والتنبيه كلامه بني غامق على أصفر فاتح، مش أبيض على أصفر (ده تباينه قليل جدًا).
+
+~~~text الناتج (Chrome)
+التباين: زرار الطلب 7.13:1   زرار التليفون 6.70:1   التنبيه 8.15:1   الكلام على الخلفية 15.98:1   الشريط 7.13:1
+بحث على # و rgb( و white و black في الملف بعد :root: ولا واحد
+غيّرت --color-main و --color-call و --color-bg من DevTools بس:
+  الشريط rgb(124, 45, 18)   زرار التليفون rgb(67, 56, 202)   الخلفية rgb(255, 251, 235)   دايرة اللون rgb(124, 45, 18)
+axe: 0 violations   CSS validator: No Error Found
+~~~` },
       ],
       l: 1,
       n: "px ثابت، و rem بيحترم إعدادات المستخدم، و clamp بيكبّر مع الشاشة، والمتغيرات بتخلي التغيير في مكان واحد",
