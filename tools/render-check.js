@@ -15,7 +15,7 @@ function checkInPage(width) {
   // code, the lesson's name and title, and exercise code are shown as written, so look at prose only
   // text nodes joined with a space, so two table cells like «[ ]» and «]» don't read as «]]»
   const prose = el => {
-    const c = el.cloneNode(true); c.querySelectorAll('code,pre,.term,.name,.title,.chk-code').forEach(x => x.remove());
+    const c = el.cloneNode(true); c.querySelectorAll('code,pre,.term,.name,.title,.chk-code,textarea').forEach(x => x.remove()); // textarea: the code boxes of «حلّها هنا» and «عدّل وجرّب» hold code as written
     const w = document.createTreeWalker(c, NodeFilter.SHOW_TEXT), parts = [];
     while (w.nextNode()) parts.push(w.currentNode.textContent);
     return parts.join(' ');
