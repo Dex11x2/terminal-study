@@ -3,12 +3,1653 @@ MORE("css", [
     {
       t: "CSS: مين بيكسب ومساحة كل عنصر",
       projects: [
-        { lvl: 'صغير', t: R`كارت منيو بملف CSS خارجي`, what: R`خد كارت المطعم من مشروع الوحدة الأولى وزوّدله [[style.css]] واحد: خط ومسافة سطور للفقرات، وعنوان ملوّن، وزرار [[.btn]] بخلفية وزوايا مدورة، و [[box-sizing: border-box]] على كل حاجة. من دروس «مقدمة CSS» و «selectors» و «box model».`, done: R`الـ HTML متغيّرش ولا حرف (غير سطر الـ link)، والكارت عرضه 320px بالظبط شامل الـ padding والحدود (Computed)، ومفيش ولا [[style=""]] ولا id في الـ CSS.` },
-        { lvl: 'صغير', t: R`٦ أشكال بالـ CSS بس`, what: R`صفحة فيها ٦ أشكال من div فاضي من غير صور: دايرة، وكبسولة، ومثلث بالحدود، وفقاعة كلام (مستطيل مدور ومثلث صغير بـ [[::after]])، وتذكرة بخط متقطع ونص دايرتين على الجنبين، وشارة «جديد» مايلة على ركن كارت. من دروس «selectors» و «box model» و «display».`, done: R`كل شكل مقاسه زي ما قلت بالظبط ([[getBoundingClientRect]]: المثلث مثلًا 40×30 وعرضه وطوله صفر في الـ CSS)، والأشكال جنب بعض بتلف لسطر جديد على 360px من غير scroll أفقي، ومفيش ولا صورة في Network.` },
-        { lvl: 'متوسط', t: R`صفحة أسعار جيم بالـ BEM`, what: R`٣ كروت باقات لـ «جيم الأبطال» بـ [[.plan]] و [[.plan__price]] و [[.plan__features]] و [[.plan--featured]]: كل كارت فوقه شريط 4px بلون الباقة بـ [[::before]]، ولما الماوس ييجي عليه بيطلع لفوق 4px وظله بيكبر، والمميز حدوده ملونة وعليه شارة «الأشهر». الـ CSS مترتب في [[@layer reset, components, utilities]]. من دروس الوحدة كلها.`, done: R`مفيش ولا [[!important]] ولا id في الـ CSS، وكل selector وزنه (0,1,0) أو (0,2,0) (شوفه بالماوس في DevTools)، والـ hover مش بيزق الكروت اللي جنبه (الحركة بـ transform مش margin)، و utility زي [[.mt-0]] في طبقة utilities بتغلب margin الكارت من غير ما تكون أقوى في الـ specificity.` },
-        { lvl: 'متوسط', t: R`مكتبة خلفيات من غير صور`, what: R`صفحة فيها ٨ مربعات، كل واحد خلفية مختلفة بالـ gradients بس: نقط ([[radial-gradient]] و [[background-size]])، وشبكة خطوط (اتنين [[linear-gradient]])، وخطوط مايلة ([[repeating-linear-gradient]])، ومربعات شطرنج ([[conic-gradient]])، وهالة ناعمة (٣ [[radial-gradient]] فوق بعض بألوان شفافة)، وتدرّج لونين، وأمواج، وواحدة من اختيارك. وجنب كل مربع زرار «انسخ الـ CSS».`, done: R`كل خلفية بتتكرر صح لما تكبّر المربع (مفيش قطع في الحواف)، والصفحة كلها من غير ولا request صورة في Network، و ٨ قواعد CSS كل واحدة ٣ سطور أو أقل، والزرار بينسخ القاعدة بالظبط.` },
-        { lvl: 'كبير', t: R`صفحة العيادة بالتصميم الكامل`, what: R`خد صفحة هبوط العيادة المتخيلة من الوحدة الأولى (نفس الـ HTML) واكتبلها CSS كامل: ملف واحد مقسوم [[@layer reset, base, components, utilities]]، وأسامي BEM لكل جزء ([[.hero]] و [[.service-card]] و [[.doctor]] و [[.faq]])، وهيرو خلفيته هالة gradients، وكروت الخدمات بشريط لون وظل وحركة hover، وكارت «احجز ميعادك» شكله تذكرة بخط متقطع، والأجزاء ورا بعض بخلفيات فاتحة متبادلة، وشريط مايل بين جزئين من غير ما يعمل scroll أفقي. يجمع الوحدة دي مع وحدة HTML.`, done: R`على 360 و 800 و 1280 مفيش scroll أفقي ([[document.documentElement.scrollWidth]] = عرض الشاشة)، ومفيش [[!important]] ولا id ولا [[style=""]]، و Lighthouse Accessibility ٩٥+ (التباين سليم)، والـ HTML زي ما هو من الوحدة الأولى، ولو شلت ملف الـ CSS الصفحة لسه مقروءة ومرتبة.`, ext: R`لما توصل لوحدة «الوحدات والمتغيرات» حوّل كل الألوان والمسافات لـ tokens، ولوحدة Flexbox و Grid رتّب الكروت جنب بعض.` },
-        { lvl: 'فكرة', t: R`نفس الـ HTML بشكلين`, what: R`زي مسابقة CSS Zen Garden: صفحة HTML واحدة لمقال أو منيو، وملفين CSS مختلفين خالص (مثلًا «كلاسيك» و «مودرن»). انت اللي تختار الموضوع والشكلين.`, done: R`تبدّل بين الشكلين بتغيير سطر الـ link بس، والاتنين مقروءين ومفيش scroll أفقي، وواحد صاحبك قال الشكلين مختلفين فعلًا.`, ext: R`زوّد زرار بيبدّل بينهم من غير reload (يغيّر [[href]] بتاع الـ link) ويفتكر الاختيار.` },
+        { lvl: 'صغير', dir: "menu-card", t: R`كارت منيو بملف CSS خارجي`, what: R`خد كارت المطعم من مشروع الوحدة الأولى وزوّدله [[style.css]] واحد: خط ومسافة سطور للفقرات، وعنوان ملوّن، وزرار [[.btn]] بخلفية وزوايا مدورة، و [[box-sizing: border-box]] على كل حاجة. من دروس «مقدمة CSS» و «selectors» و «box model».`, done: R`الـ HTML زي ما هو (اللي اتزوّد سطر الـ link و class على الكارت والزرار بس)، والكارت عرضه 320px بالظبط شامل الـ padding والحدود (Computed)، ومفيش ولا [[style=""]] ولا id في الـ CSS.`, sol: R`ده نفس ملف [[index.html]] بتاع مشروع المطعم في الوحدة الأولى، واتزوّد عليه ٣ حاجات بس: سطر [[<link>]] في الـ head، و [[class="card"]] على [[<main>]]، و [[class="btn"]] على الزرار. وحط [[logo.svg]] بتاع المشروع ده جنبه زي ما هو.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مطعم الزيتونة: المنيو</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="card">
+  <h1>مطعم الزيتونة</h1>
+  <img src="logo.svg" alt="لوجو المطعم: زيتونة خضرا جوه دايرة" width="120" height="120">
+  <p>أكل بيتي كل يوم من ١٢ الضهر لـ ١٢ بالليل: فول وطعمية الصبح، ومحشي وملوخية على الغدا.</p>
+  <p>للطلب كلمنا على <a href="tel:+20225550147">0225550147</a></p>
+  <button type="button" class="btn">اطلب</button>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+/* the width you write is the whole box: content + padding + border */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px 16px;
+  background: #f5f1e8;
+  color: #1f2937;
+  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+}
+
+.card {
+  width: 320px;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 24px;
+  border: 2px solid #d6cfc0;
+  border-radius: 16px;
+  background: white;
+  text-align: center;
+}
+
+.card h1 { margin: 0 0 12px; font-size: 26px; color: #3f6212; }
+.card img { display: block; margin: 0 auto 12px; }
+.card p { margin: 0 0 12px; line-height: 1.7; }
+.card a { color: #3f6212; font-weight: 700; }
+
+.btn {
+  padding: 10px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #4d7c0f;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn:hover { background: #3f6212; }
+.btn:focus-visible { outline: 3px solid #1f2937; outline-offset: 3px; }
+~~~
+
+~~~view 520 560 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مطعم الزيتونة: المنيو</title>
+<style id="style">
+/* the width you write is the whole box: content + padding + border */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px 16px;
+  background: #f5f1e8;
+  color: #1f2937;
+  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+}
+
+.card {
+  width: 320px;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 24px;
+  border: 2px solid #d6cfc0;
+  border-radius: 16px;
+  background: white;
+  text-align: center;
+}
+
+.card h1 { margin: 0 0 12px; font-size: 26px; color: #3f6212; }
+.card img { display: block; margin: 0 auto 12px; }
+.card p { margin: 0 0 12px; line-height: 1.7; }
+.card a { color: #3f6212; font-weight: 700; }
+
+.btn {
+  padding: 10px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #4d7c0f;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn:hover { background: #3f6212; }
+.btn:focus-visible { outline: 3px solid #1f2937; outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main class="card">
+  <h1>مطعم الزيتونة</h1>
+  <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20120%20120%22%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2260%22%20r%3D%2256%22%20fill%3D%22%23557a2b%22%2F%3E%3Cellipse%20cx%3D%2260%22%20cy%3D%2260%22%20rx%3D%2222%22%20ry%3D%2234%22%20fill%3D%22%23a3c45a%22%2F%3E%3C%2Fsvg%3E" alt="لوجو المطعم: زيتونة خضرا جوه دايرة" width="120" height="120">
+  <p>أكل بيتي كل يوم من ١٢ الضهر لـ ١٢ بالليل: فول وطعمية الصبح، ومحشي وملوخية على الغدا.</p>
+  <p>للطلب كلمنا على <a href="tel:+20225550147">0225550147</a></p>
+  <button type="button" class="btn">اطلب</button>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارت أبيض في نص صفحة بيج، حوافه مدورة وحواليه حد رفيع، وجواه العنوان أخضر زيتوني، واللوجو، والفقرتين بمسافة سطور مريحة، وزرار «اطلب» أخضر شكله كبسولة. والماوس على الزرار بيغمّق لونه.
+
+**ليه كل سطر:**
+- **[[box-sizing: border-box]] على [[*]] و [[::before]] و [[::after]]:** من غيره [[width: 320px]] معناها عرض المحتوى بس، والـ padding (24 من كل ناحية) والحد (2 من كل ناحية) بيتزوّدوا عليه فالكارت يطلع 372. ومعاه الـ 320 هي الكارت كله، والمحتوى ياخد اللي فاضل (268).
+- **[[max-width: 100%]]:** على شاشة أضيق من 320 الكارت يصغر بدل ما يعمل scroll أفقي.
+- **[[margin-inline: auto]]:** بيقسم المسافة الفاضية على الجنبين فالكارت ييجي في النص. و [[inline]] معناها «ناحية السطر»، فبتشتغل صح في العربي والإنجليزي.
+- **[[.card h1]] و [[.card p]]:** selector من class وعنصر جواه، وزنه (0,1,1). كده الألوان دي للكارت بس، ولو حطيت [[<p>]] برّه الكارت مش هياخدها.
+- **[[font: inherit]] على الزرار:** الزراير مش بتورث خط الصفحة لوحدها (المتصفح بيدّيها خط النظام). السطر ده بيرجّعلها خط الصفحة.
+- **[[border-radius: 999px]]:** أي رقم أكبر من نص ارتفاع الزرار بيخلّي طرفيه نص دايرة.
+- **[[:focus-visible]]:** إطار واضح لما توصل للزرار بالـ Tab بس، مش لما تدوس عليه بالماوس.
+
+**مفيش id ولا [[style=""]]:** id وزنه (1,0,0)، يعني يغلب أي عدد من الـ classes، ولو حبيت تغيّر حاجة بعد كده هتضطر تكتب selector أتقل منه. والـ [[style=""]] أتقل من الاتنين.
+
+~~~text الناتج (Chrome)
+عرض الكارت (getBoundingClientRect)         320
+نفس الكارت بـ box-sizing: content-box       371.2 (= 320 + 24×2 + 1.6×2)
+الحد                                         1.6px (شاشتي زومها 125%، فالمتصفح بيقرّب الـ 2px لـ 1.6)
+نفس القياس بـ chrome --headless --force-device-scale-factor=1:   الحد 2px، والكارت 320، وبـ content-box 372
+على 360                                      الكارت 320، scrollWidth = 360 من 360
+عناصر عليها style=""                         0
+axe                                          0 violations
+~~~` },
+        { lvl: 'صغير', dir: "css-shapes", t: R`٦ أشكال بالـ CSS بس`, what: R`صفحة فيها ٦ أشكال من div فاضي من غير صور: دايرة، وكبسولة، ومثلث بالحدود، وفقاعة كلام (مستطيل مدور ومثلث صغير بـ [[::after]])، وتذكرة بخط متقطع ونص دايرتين على الجنبين، وشارة «جديد» مايلة على ركن كارت. من دروس «selectors» و «box model» و «display».`, done: R`كل شكل مقاسه زي ما قلت بالظبط ([[getBoundingClientRect]]: المثلث مثلًا 40×30 على شاشة زومها 100%، وعرضه وطوله صفر في الـ CSS)، والأشكال جنب بعض بتلف لسطر جديد على 360px من غير scroll أفقي، ومفيش ولا صورة في Network.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>٦ أشكال بالـ CSS بس</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>٦ أشكال من غير ولا صورة</h1>
+  <ul class="shapes">
+    <li><div class="circle"></div><p>دايرة</p></li>
+    <li><div class="pill">كبسولة</div><p>كبسولة</p></li>
+    <li><div class="triangle"></div><p>مثلث بالحدود</p></li>
+    <li><div class="bubble">أهلًا!</div><p>فقاعة كلام</p></li>
+    <li><div class="ticket">تذكرة دخول</div><p>تذكرة</p></li>
+    <li><div class="corner-card"><span class="ribbon">جديد</span></div><p>شارة على الركن</p></li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+h1 { font-size: 22px; margin: 0 0 16px; }
+
+/* the cells wrap to a new line instead of making the page scroll */
+.shapes { display: flex; flex-wrap: wrap; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.shapes li { width: 140px; min-height: 140px; padding: 12px; border-radius: 12px; background: white;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+.shapes p { margin: 8px 0 0; font-size: 14px; color: #475569; }
+
+/* 1. circle: a square with radius 50% */
+.circle { width: 80px; height: 80px; border-radius: 50%; background: #0ea5e9; }
+
+/* 2. pill: any radius bigger than half the height gives round ends */
+.pill { padding: 8px 20px; border-radius: 999px; background: #8b5cf6; color: white; font-weight: 700; }
+
+/* 3. triangle: no size at all, only borders. The bottom border is the triangle,
+      the two side borders are transparent and give it its width (20 + 20 = 40) */
+.triangle { width: 0; height: 0;
+  border-inline: 20px solid transparent;
+  border-block-end: 30px solid #f97316; }
+
+/* 4. speech bubble: a rounded box and a small triangle made by ::after under it */
+.bubble { position: relative; padding: 10px 16px; border-radius: 14px; background: #15803d; color: white; font-weight: 700; }
+.bubble::after { content: ""; position: absolute; top: 100%; inset-inline-start: 18px;
+  border-inline: 8px solid transparent; border-block-start: 10px solid #15803d; }
+
+/* 5. ticket: a dashed border inside, and two half circles cut out with the page colour */
+.ticket { position: relative; width: 120px; padding: 14px 10px; border-radius: 8px; background: #fde68a;
+  outline: 2px dashed #b45309; outline-offset: -6px; text-align: center; font-weight: 700; color: #78350f; }
+.ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 16px; height: 16px;
+  border-radius: 50%; background: white; transform: translateY(-50%); }
+.ticket::before { inset-inline-start: -8px; }
+.ticket::after { inset-inline-end: -8px; }
+
+/* 6. a ribbon across the corner: rotated, and the card hides what sticks out */
+.corner-card { position: relative; width: 110px; height: 80px; border-radius: 10px; background: #e2e8f0; overflow: hidden; }
+.ribbon { position: absolute; top: 18px; inset-inline-end: -28px; width: 110px; padding: 2px 0;
+  background: #dc2626; color: white; font-size: 13px; font-weight: 700; text-align: center;
+  transform: rotate(-45deg); }
+~~~
+
+~~~view 560 1000 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>٦ أشكال بالـ CSS بس</title>
+<style id="style">
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+h1 { font-size: 22px; margin: 0 0 16px; }
+
+/* the cells wrap to a new line instead of making the page scroll */
+.shapes { display: flex; flex-wrap: wrap; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.shapes li { width: 140px; min-height: 140px; padding: 12px; border-radius: 12px; background: white;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+.shapes p { margin: 8px 0 0; font-size: 14px; color: #475569; }
+
+/* 1. circle: a square with radius 50% */
+.circle { width: 80px; height: 80px; border-radius: 50%; background: #0ea5e9; }
+
+/* 2. pill: any radius bigger than half the height gives round ends */
+.pill { padding: 8px 20px; border-radius: 999px; background: #8b5cf6; color: white; font-weight: 700; }
+
+/* 3. triangle: no size at all, only borders. The bottom border is the triangle,
+      the two side borders are transparent and give it its width (20 + 20 = 40) */
+.triangle { width: 0; height: 0;
+  border-inline: 20px solid transparent;
+  border-block-end: 30px solid #f97316; }
+
+/* 4. speech bubble: a rounded box and a small triangle made by ::after under it */
+.bubble { position: relative; padding: 10px 16px; border-radius: 14px; background: #15803d; color: white; font-weight: 700; }
+.bubble::after { content: ""; position: absolute; top: 100%; inset-inline-start: 18px;
+  border-inline: 8px solid transparent; border-block-start: 10px solid #15803d; }
+
+/* 5. ticket: a dashed border inside, and two half circles cut out with the page colour */
+.ticket { position: relative; width: 120px; padding: 14px 10px; border-radius: 8px; background: #fde68a;
+  outline: 2px dashed #b45309; outline-offset: -6px; text-align: center; font-weight: 700; color: #78350f; }
+.ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 16px; height: 16px;
+  border-radius: 50%; background: white; transform: translateY(-50%); }
+.ticket::before { inset-inline-start: -8px; }
+.ticket::after { inset-inline-end: -8px; }
+
+/* 6. a ribbon across the corner: rotated, and the card hides what sticks out */
+.corner-card { position: relative; width: 110px; height: 80px; border-radius: 10px; background: #e2e8f0; overflow: hidden; }
+.ribbon { position: absolute; top: 18px; inset-inline-end: -28px; width: 110px; padding: 2px 0;
+  background: #dc2626; color: white; font-size: 13px; font-weight: 700; text-align: center;
+  transform: rotate(-45deg); }
+</style>
+</head>
+<body>
+<main>
+  <h1>٦ أشكال من غير ولا صورة</h1>
+  <ul class="shapes">
+    <li><div class="circle"></div><p>دايرة</p></li>
+    <li><div class="pill">كبسولة</div><p>كبسولة</p></li>
+    <li><div class="triangle"></div><p>مثلث بالحدود</p></li>
+    <li><div class="bubble">أهلًا!</div><p>فقاعة كلام</p></li>
+    <li><div class="ticket">تذكرة دخول</div><p>تذكرة</p></li>
+    <li><div class="corner-card"><span class="ribbon">جديد</span></div><p>شارة على الركن</p></li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٦ كروت بيضا جنب بعض، في كل واحد شكل واسمه تحته: دايرة زرقا، وكبسولة بنفسجي، ومثلث برتقاني، وفقاعة كلام خضرا بسنّة صغيرة تحتها، وتذكرة صفرا بخط متقطع وتجويفين على الجنبين، وكارت رمادي على ركنه شريط أحمر مايل مكتوب عليه «جديد». على موبايل كل كارتين في سطر.
+
+**إزاي كل شكل اتعمل:**
+- **الدايرة:** مربع (80×80) و [[border-radius: 50%]]. لو الطول غير العرض هتطلع بيضاوي.
+- **الكبسولة:** [[border-radius: 999px]]. أي رقم أكبر من نص الارتفاع بيدّي طرفين نص دايرة، أيًّا كان طول الكلام.
+- **المثلث:** عنصر [[width: 0]] و [[height: 0]]، وكل شكله من الحدود. الحدود الأربعة بتتقابل عند الأركان بخط مايل. فلو خلّيت الحد اللي تحت ملوّن (30px) والجنبين شفافين (20px كل واحد)، اللي بيبان مثلث عرضه 40 وطوله 30.
+- **الفقاعة:** مستطيل مدور، و [[::after]] مثلث صغير بنفس الطريقة. [[position: relative]] على الفقاعة عشان [[position: absolute]] بتاع المثلث يتحسب منها. و [[top: 100%]] يحطه تحتها على طول.
+- **التذكرة:** الخط المتقطع [[outline]] مش [[border]]، لأن [[outline-offset: -6px]] يدخّله لجوه. والتجويفين [[::before]] و [[::after]]: دايرتين بلون الكارت اللي ورا، نص كل واحدة برّه التذكرة ([[inset-inline-start: -8px]]). و [[top: 50%]] مع [[translateY(-50%)]] بيحطهم في النص بالظبط (تحت هتلاقي ليه).
+- **الشريط المايل:** [[rotate(-45deg)]]، والكارت عليه [[overflow: hidden]] فاللي طالع من الشريط برّه الكارت مبيبانش. [[inset-inline-end]] في صفحة عربي معناها الشمال.
+
+**[[top: 50%]] و [[translateY(-50%)]] مع بعض:** الـ 50% بتاعة [[top]] من طول الأب، فبتنزّل **أول** العنصر لنص الأب. والـ 50% بتاعة [[translate]] من طول العنصر **نفسه**، فبتطلّعه لفوق نص طوله. النتيجة: نص العنصر على نص الأب، أيًّا كانت المقاسات.
+
+**غلطتين مسكتهم وانا بحل:**
+- الفقاعة كانت خلفيتها [[#22c55e]]، و axe قال [[color-contrast]]: الكلام الأبيض عليها 2.27:1 بس، والمطلوب 4.5. غمّقتها لـ [[#15803d]].
+- الكروت كانت 150px، وعلى 360 بقى في كل سطر كارت واحد بس: 150 + 16 + 150 = 316، والمساحة 313. خليتهم 140.
+
+~~~text الناتج (Chrome، شاشة 360)
+المثلث                 40 × 30 على شاشة زومها 100% (DPR 1)
+                        40 × 29.6 على شاشة زومها 125% (DPR 1.25): المتصفح بيقرّب سُمك الحدود لبكسلات الشاشة الحقيقية
+getComputedStyle المثلث  width = 40px (مع border-box، العرض اللي بيرجع بيشمل الحدود حتى لو كاتب 0)
+الدايرة                 80 × 80
+عدد السطور على 360      3 (كل كارتين في سطر)      scrollWidth = 360 من 360
+صور في Network          0
+axe                     0 violations (كانت color-contrast على الفقاعة)
+~~~` },
+        { lvl: 'متوسط', dir: "gym-bem", t: R`صفحة أسعار جيم بالـ BEM`, what: R`٣ كروت باقات لـ «جيم الأبطال» بـ [[.plan]] و [[.plan__price]] و [[.plan__features]] و [[.plan--featured]]: كل كارت فوقه شريط 4px بلون الباقة بـ [[::before]]، ولما الماوس ييجي عليه بيطلع لفوق 4px وظله بيكبر، والمميز حدوده ملونة وعليه شارة «الأشهر». الـ CSS مترتب في [[@layer reset, components, utilities]]. من دروس الوحدة كلها.`, done: R`مفيش ولا [[!important]] ولا id في الـ CSS، وكل selector في طبقة components فيه class واحدة بس، ممكن معاها [[:hover]] أو [[::before]] (أتقل وزن (0,2,0))، والـ hover مش بيحرّك الكروت اللي جنبه (الحركة بـ transform مش margin)، و utility زي [[.mt-0]] في طبقة utilities بتغلب margin الكارت، حتى قدام selector أتقل منها في طبقة components.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات جيم الأبطال</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="page">
+  <h1 class="page__title">اختار باقتك</h1>
+  <div class="plans">
+    <article class="plan" style="--plan-color: #0ea5e9">
+      <h2 class="plan__name">شهري</h2>
+      <p class="plan__price">٥٠٠ <span class="plan__unit">ج / الشهر</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">الجيم كله من ٦ الصبح لـ ١٢ بالليل</li>
+        <li class="plan__feature">حصتين مع مدرب</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة الشهري">اشترك</a>
+    </article>
+    <article class="plan plan--featured" style="--plan-color: #f59e0b">
+      <p class="plan__badge">الأشهر</p>
+      <h2 class="plan__name">٣ شهور</h2>
+      <p class="plan__price">١٣٠٠ <span class="plan__unit">ج / ٣ شهور</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">كل اللي في الشهري</li>
+        <li class="plan__feature">٨ حصص مع مدرب</li>
+        <li class="plan__feature">الساونا</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في باقة ٣ شهور">اشترك</a>
+    </article>
+    <article class="plan mt-0" style="--plan-color: #22c55e">
+      <h2 class="plan__name">سنوي</h2>
+      <p class="plan__price">٤٥٠٠ <span class="plan__unit">ج / السنة</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">كل اللي في الـ ٣ شهور</li>
+        <li class="plan__feature">٤٠ حصة مع مدرب</li>
+        <li class="plan__feature">تجميد الاشتراك شهر</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة السنوي">اشترك</a>
+    </article>
+  </div>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+/* the order of the layers decides who wins, before specificity is even looked at:
+   a later layer beats an earlier one whatever its selectors weigh */
+@layer reset, components, utilities;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  h1, h2, p, ul { margin: 0; }
+  ul { padding: 0; list-style: none; }
+}
+
+@layer components {
+  .page { max-width: 960px; margin-inline: auto; padding: 24px 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; }
+  .page__title { margin-block-end: 20px; font-size: 26px; }
+
+  .plans { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+
+  .plan {
+    position: relative;
+    flex: 1 1 240px;
+    margin-block-start: 16px;
+    padding: 28px 20px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 2px 6px rgb(15 23 42 / 0.08);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  /* the 4px strip on top, in the plan's own colour */
+  .plan::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--plan-color); }
+  /* transform moves the card without moving its neighbours (margin would push them) */
+  .plan:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgb(15 23 42 / 0.14); }
+
+  .plan--featured { border-color: var(--plan-color); }
+
+  .plan__badge { position: absolute; top: 12px; inset-inline-end: 12px; padding: 2px 10px; border-radius: 999px;
+    background: #fef3c7; color: #78350f; font-size: 13px; font-weight: 700; }
+  .plan__name { font-size: 20px; }
+  .plan__price { margin-block: 8px 12px; font-size: 32px; font-weight: 800; }
+  .plan__unit { font-size: 14px; font-weight: 400; color: #475569; }
+  .plan__features { margin-block-end: 16px; line-height: 2; }
+  .plan__feature::before { content: "✓ "; color: #15803d; }
+  .plan__cta { display: block; padding: 10px; border-radius: 10px; background: #0f172a; color: white; text-align: center; text-decoration: none; font-weight: 700; }
+  .plan__cta:focus-visible { outline: 3px solid var(--plan-color); outline-offset: 3px; }
+}
+
+@layer utilities {
+  /* (0,1,0) beats .plan (also 0,1,0) and would even beat .page .plan (0,2,0): it is in a later layer */
+  .mt-0 { margin-block-start: 0; }
+}
+~~~
+
+~~~view 560 1160 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات جيم الأبطال</title>
+<style id="style">
+/* the order of the layers decides who wins, before specificity is even looked at:
+   a later layer beats an earlier one whatever its selectors weigh */
+@layer reset, components, utilities;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  h1, h2, p, ul { margin: 0; }
+  ul { padding: 0; list-style: none; }
+}
+
+@layer components {
+  .page { max-width: 960px; margin-inline: auto; padding: 24px 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; }
+  .page__title { margin-block-end: 20px; font-size: 26px; }
+
+  .plans { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+
+  .plan {
+    position: relative;
+    flex: 1 1 240px;
+    margin-block-start: 16px;
+    padding: 28px 20px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 2px 6px rgb(15 23 42 / 0.08);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  /* the 4px strip on top, in the plan's own colour */
+  .plan::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--plan-color); }
+  /* transform moves the card without moving its neighbours (margin would push them) */
+  .plan:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgb(15 23 42 / 0.14); }
+
+  .plan--featured { border-color: var(--plan-color); }
+
+  .plan__badge { position: absolute; top: 12px; inset-inline-end: 12px; padding: 2px 10px; border-radius: 999px;
+    background: #fef3c7; color: #78350f; font-size: 13px; font-weight: 700; }
+  .plan__name { font-size: 20px; }
+  .plan__price { margin-block: 8px 12px; font-size: 32px; font-weight: 800; }
+  .plan__unit { font-size: 14px; font-weight: 400; color: #475569; }
+  .plan__features { margin-block-end: 16px; line-height: 2; }
+  .plan__feature::before { content: "✓ "; color: #15803d; }
+  .plan__cta { display: block; padding: 10px; border-radius: 10px; background: #0f172a; color: white; text-align: center; text-decoration: none; font-weight: 700; }
+  .plan__cta:focus-visible { outline: 3px solid var(--plan-color); outline-offset: 3px; }
+}
+
+@layer utilities {
+  /* (0,1,0) beats .plan (also 0,1,0) and would even beat .page .plan (0,2,0): it is in a later layer */
+  .mt-0 { margin-block-start: 0; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1 class="page__title">اختار باقتك</h1>
+  <div class="plans">
+    <article class="plan" style="--plan-color: #0ea5e9">
+      <h2 class="plan__name">شهري</h2>
+      <p class="plan__price">٥٠٠ <span class="plan__unit">ج / الشهر</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">الجيم كله من ٦ الصبح لـ ١٢ بالليل</li>
+        <li class="plan__feature">حصتين مع مدرب</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة الشهري">اشترك</a>
+    </article>
+    <article class="plan plan--featured" style="--plan-color: #f59e0b">
+      <p class="plan__badge">الأشهر</p>
+      <h2 class="plan__name">٣ شهور</h2>
+      <p class="plan__price">١٣٠٠ <span class="plan__unit">ج / ٣ شهور</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">كل اللي في الشهري</li>
+        <li class="plan__feature">٨ حصص مع مدرب</li>
+        <li class="plan__feature">الساونا</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في باقة ٣ شهور">اشترك</a>
+    </article>
+    <article class="plan mt-0" style="--plan-color: #22c55e">
+      <h2 class="plan__name">سنوي</h2>
+      <p class="plan__price">٤٥٠٠ <span class="plan__unit">ج / السنة</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">كل اللي في الـ ٣ شهور</li>
+        <li class="plan__feature">٤٠ حصة مع مدرب</li>
+        <li class="plan__feature">تجميد الاشتراك شهر</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة السنوي">اشترك</a>
+    </article>
+  </div>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٣ كروت جنب بعض (وتحت بعض على الموبايل): «شهري» بشريط أزرق فوقه، و «٣ شهور» بشريط برتقاني وحدود برتقاني وشارة «الأشهر» في الركن، و «سنوي» بشريط أخضر. الكارت السنوي أعلى من التانيين بـ 16px (ده [[.mt-0]]). والماوس على أي كارت بيطلّعه لفوق شوية وظله يكبر.
+
+**الـ BEM في سطرين:** [[.plan]] هو الـ **Block** (الحاجة المستقلة). [[.plan__price]] **Element** جوه البلوك (اسم البلوك وشرطتين تحت). [[.plan--featured]] **Modifier** (اسم البلوك وشرطتين): نسخة مختلفة من نفس البلوك. الفايدة: كل selector class واحدة، فكلهم نفس الوزن تقريبًا، واللي بيكسب هو اللي مكتوب بعد. مفيش [[.plans .plan h2 span]].
+
+**الـ [[@layer]]:** السطر الأول [[@layer reset, components, utilities;]] بيحدد الترتيب. المتصفح بيبص على الطبقة **قبل** الـ specificity: أي قاعدة في طبقة متأخرة بتغلب أي قاعدة في طبقة قبلها، مهما كان وزن الـ selector.
+
+**اللون من الـ HTML:** [[style="--plan-color: #0ea5e9"]] مش بيحط شكل، بيحط متغيّر بس. والـ CSS هو اللي بيقرر يستخدمه فين ([[background: var(--plan-color)]] للشريط، والحد في المميز، وإطار الـ focus). كده لو زوّدت باقة رابعة مش محتاج تكتب CSS جديد.
+
+**ليه [[transform]] مش [[margin]] للـ hover:** الـ margin بيغيّر الـ layout، يعني المتصفح بيعيد حساب أماكن العناصر اللي حوالين الكارت. الـ [[transform]] بيحرّك الرسمة بس بعد ما الأماكن اتحسبت، فمحدش حواليه بيتحرك. وكمان [[transition]] عليه أنعم.
+
+**[[aria-label]] على اللينكات:** ٣ لينكات اسمهم «اشترك». لو حد بيستخدم قارئ شاشة وفتح لستة اللينكات هيلاقي «اشترك في باقة ٣ شهور» بدل «اشترك» ٣ مرات.
+
+~~~text الناتج (Chrome، 1280)
+selectors في الـ CSS: .page .page__title .plans .plan .plan::before .plan:hover .plan--featured .plan__badge
+  .plan__name .plan__price .plan__unit .plan__features .plan__feature::before .plan__cta .plan__cta:focus-visible .mt-0
+selectors فيها #        0           !important   0
+margin-block-start      شهري 16px   ٣ شهور 16px   سنوي 0px (.mt-0)
+
+تجربة الطبقات: زوّدت في طبقة components القاعدة .page .plan { margin-block-start: 16px } (وزنها 0,2,0)
+  الكارت السنوي      0px   (.mt-0 وزنها 0,1,0 بس في طبقة بعدها، فكسبت)
+نفس القاعدة برّه كل الطبقات
+  الكارت السنوي      16px  (أي CSS مش في طبقة بيغلب كل الطبقات)
+
+hover على «٣ شهور» (بالماوس فعلًا):
+  ٣ شهور   top 94 → 90   transform: matrix(1, 0, 0, 1, 0, -4)
+  شهري     left 805 top 94 زي ما هو       سنوي   left 176 top 78 زي ما هو
+axe: 0 violations   CSS validator: No Error Found
+~~~
+
+**خد بالك من التجربة التانية:** CSS مكتوب من غير [[@layer]] أقوى من أي طبقة. فلو ضفت مكتبة أو ملف قديم من غير طبقات، هيغلب الـ utilities بتاعتك. الحل: حطه هو كمان في طبقة ([[@import url(old.css) layer(legacy);]]).` },
+        { lvl: 'صغير', dir: "featured-plan", t: R`كارت الباقة المميزة أكبر من جيرانه وفوقه شارة سطرين`, what: R`صفحة باقات لأكاديمية سباحة متخيلة: ٣ كروت في سطر، والباقة المميزة أطول من جيرانها بحدود أتقل وظل، وفوقها شارة سطرين («الأكتر طلبًا» و «وفّر ٢٥٪») نصها فوق الكارت ونصها على الحد. الشارة [[::before]] من غير ولا عنصر زيادة في الـ HTML، وبتفضل في نص الحد بالظبط لو كبّرت خطها. من دروس «pseudo-elements» و «position» و «box model».`, done: R`الشارة سطرين ([[\A]] و [[white-space: pre]])، ونصها على الحد العلوي للكارت بالظبط، ولو غيّرت [[font-size]] بتاعها لـ 20px لسه في النص (الـ [[translateY]] بيتغيّر لوحده)، والكارت المميز أطول من جيرانه من غير ما يغطّي عليهم، وعلى 360 الكروت تحت بعض والشارة مش راكبة على الكارت اللي فوقها، ومفيش scroll أفقي.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات أكاديمية «موجة» للسباحة</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>باقات أكاديمية «موجة» للسباحة</h1>
+  <ul class="plans">
+    <li class="plan">
+      <h2>تجربة</h2>
+      <p class="price">٣٥٠ ج</p>
+      <p>٤ حصص في شهر واحد</p>
+    </li>
+    <li class="plan plan--featured">
+      <h2>الترم</h2>
+      <p class="price">٩٠٠ ج</p>
+      <p>١٢ حصة في ٣ شهور، ومايوه هدية</p>
+    </li>
+    <li class="plan">
+      <h2>السنة</h2>
+      <p class="price">٣٠٠٠ ج</p>
+      <p>٥٠ حصة، وتقدر تجمّد شهر</p>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 24px 16px; background: #ecfeff; color: #083344; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+h1 { margin: 0 0 40px; font-size: 24px; text-align: center; }
+
+/* row gap 40px: when the cards wrap on a phone, the ribbon (half of it above the card) needs room */
+.plans { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px 24px; margin: 0; padding: 0; list-style: none; }
+
+.plan { position: relative; width: 220px; padding: 24px 20px; border: 2px solid #a5f3fc; border-radius: 18px; background: white; text-align: center; }
+.plan h2 { margin: 0; font-size: 20px; }
+.plan p { margin: 8px 0 0; }
+.price { font-size: 30px; font-weight: 800; color: #0e7490; }
+
+/* bigger than its neighbours: real padding and border (it takes real space, nothing overlaps),
+   plus a deeper shadow. scale() would also enlarge it, but without taking space, so it would cover the gap */
+.plan--featured { padding-block: 44px 36px; border: 3px solid #0e7490; box-shadow: 0 16px 32px rgb(14 116 144 / 0.25); }
+
+/* the two-line ribbon: its middle sits exactly on the top border.
+   top: 0 puts its top on the border, translateY(-50%) lifts it by half of its OWN height,
+   so it stays centred on the border whatever the text and the font size */
+.plan--featured::before {
+  content: "الأكتر طلبًا\A وفّر ٢٥٪";
+  white-space: pre;
+  position: absolute; top: 0; inset-inline: 0; width: max-content; margin-inline: auto;
+  padding: 6px 18px; border-radius: 12px;
+  background: #0e7490; color: white; font-size: 14px; font-weight: 700; line-height: 1.4;
+  transform: translateY(-50%);
+}
+~~~
+
+~~~view 380 820 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات أكاديمية «موجة» للسباحة</title>
+<style id="style">
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 24px 16px; background: #ecfeff; color: #083344; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+h1 { margin: 0 0 40px; font-size: 24px; text-align: center; }
+
+/* row gap 40px: when the cards wrap on a phone, the ribbon (half of it above the card) needs room */
+.plans { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px 24px; margin: 0; padding: 0; list-style: none; }
+
+.plan { position: relative; width: 220px; padding: 24px 20px; border: 2px solid #a5f3fc; border-radius: 18px; background: white; text-align: center; }
+.plan h2 { margin: 0; font-size: 20px; }
+.plan p { margin: 8px 0 0; }
+.price { font-size: 30px; font-weight: 800; color: #0e7490; }
+
+/* bigger than its neighbours: real padding and border (it takes real space, nothing overlaps),
+   plus a deeper shadow. scale() would also enlarge it, but without taking space, so it would cover the gap */
+.plan--featured { padding-block: 44px 36px; border: 3px solid #0e7490; box-shadow: 0 16px 32px rgb(14 116 144 / 0.25); }
+
+/* the two-line ribbon: its middle sits exactly on the top border.
+   top: 0 puts its top on the border, translateY(-50%) lifts it by half of its OWN height,
+   so it stays centred on the border whatever the text and the font size */
+.plan--featured::before {
+  content: "الأكتر طلبًا\A وفّر ٢٥٪";
+  white-space: pre;
+  position: absolute; top: 0; inset-inline: 0; width: max-content; margin-inline: auto;
+  padding: 6px 18px; border-radius: 12px;
+  background: #0e7490; color: white; font-size: 14px; font-weight: 700; line-height: 1.4;
+  transform: translateY(-50%);
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>باقات أكاديمية «موجة» للسباحة</h1>
+  <ul class="plans">
+    <li class="plan">
+      <h2>تجربة</h2>
+      <p class="price">٣٥٠ ج</p>
+      <p>٤ حصص في شهر واحد</p>
+    </li>
+    <li class="plan plan--featured">
+      <h2>الترم</h2>
+      <p class="price">٩٠٠ ج</p>
+      <p>١٢ حصة في ٣ شهور، ومايوه هدية</p>
+    </li>
+    <li class="plan">
+      <h2>السنة</h2>
+      <p class="price">٣٠٠٠ ج</p>
+      <p>٥٠ حصة، وتقدر تجمّد شهر</p>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٣ كروت بيضا على خلفية لبني فاتح. الكارت اللي في النص («الترم») أطول، وحدوده أغمق وأتقل، وتحته ظل. وفوقه بالظبط شارة بترولي فيها سطرين، نصها طالع فوق الكارت ونصها نازل على الحد.
+
+**الشارة خطوة خطوة:**
+1. [[content: "الأكتر طلبًا\A وفّر ٢٥٪"]]: الكلام نفسه. [[\A]] هو كود سطر جديد في CSS، والمسافة اللي بعده بتقفل الكود ومش بتظهر.
+2. [[white-space: pre]]: من غيره المتصفح بيعامل السطر الجديد كأنه مسافة، والكلام يطلع سطر واحد.
+3. [[position: absolute]] و [[top: 0]]: أول الشارة على أول الكارت من جوه، يعني تحت الحد على طول (الكارت عليه [[position: relative]]).
+4. [[inset-inline: 0]] و [[width: max-content]] و [[margin-inline: auto]]: الشارة عرضها قد كلامها وفي نص الكارت.
+5. [[transform: translateY(-50%)]]: الـ 50% هنا من طول الشارة **نفسها**، مش طول الكارت. فبتطلع لفوق نص طولها، ونصها يبقى على الحد. ولو الخط كبر والشارة طولت، الإزاحة بتكبر معاها لوحدها.
+
+**ليه مش [[top: -25px]]:** هيبقى صح للخط ده بس. كبّر الخط أو زوّد سطر والشارة هتتزق.
+
+**ليه الكارت أكبر بالـ padding مش بـ [[scale()]]:** [[transform: scale(1.1)]] بيكبّر الرسمة بس، والمكان اللي الكارت حاجزه في الـ layout زي ما هو. يعني الكارت هيركب على الـ gap وممكن يغطّي على جيرانه. الـ padding الزيادة بيكبّر الكارت فعلًا، والكروت التانية بتتحرك عشانه. و [[align-items: center]] بيخلّي الكارتين الصغيرين في نص طوله.
+
+**مشكلة اتقاست وانا بحل:** على 360 الكروت بتنزل تحت بعض، والـ gap كان 24px، ونص الشارة طالع 25.6px فوق الكارت. فالشارة ركبت 1.6px على الكارت اللي فوقها. خليت الـ gap بين السطور 40px ([[gap: 40px 24px]]: الأول بين السطور والتاني بين الأعمدة).
+
+**الكلام في [[::before]]:** Chrome بيحطه في شجرة الـ accessibility فقارئ الشاشة بيقراه، بس مش بتعرف تعلّمه وتنسخه، وأدوات الترجمة ممكن متشوفوش. هنا الشارة زينة وتسويق. لو كانت معلومة مهمة (السعر مثلًا) لازم تبقى في الـ HTML.
+
+~~~text الناتج (Chrome)
+على 800: الكروت (top / bottom)       السنة 124 / 278    الترم 96 / 306    تجربة 124 / 278
+طول الشارة 51.2px      transform: matrix(1, 0, 0, 1, 0, -25.6)      أولها عند 73.4 (فوق الكارت بـ 22.6 وفي نص الحد)
+خط الشارة 20px:        طولها 68px      transform: matrix(1, 0, 0, 1, 0, -34)     لسه في النص
+على 360 (gap 24px):    الكارت الأول بيخلص عند 250، والشارة بتبدأ عند 248.8 (راكبة 1.2px)
+على 360 (gap 40px):    الكارت الأول بيخلص عند 250، والشارة بتبدأ عند 267.8
+scrollWidth = clientWidth على 360 و 800 و 1280
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'متوسط', dir: "bg-library", t: R`مكتبة خلفيات من غير صور`, what: R`صفحة فيها ٨ مربعات، كل واحد خلفية مختلفة بالـ gradients بس: نقط ([[radial-gradient]] و [[background-size]])، وشبكة خطوط (اتنين [[linear-gradient]])، وخطوط مايلة ([[repeating-linear-gradient]])، ومربعات شطرنج ([[conic-gradient]])، وهالة ناعمة (٣ [[radial-gradient]] فوق بعض بألوان شفافة)، وتدرّج لونين، وأمواج، وواحدة من اختيارك. وجنب كل مربع زرار «انسخ الـ CSS».`, done: R`كل خلفية بتتكرر صح لما تكبّر المربع (مفيش قطع في الحواف)، والصفحة كلها من غير ولا request صورة في Network، و ٨ قواعد CSS كل واحدة ٣ سطور أو أقل، والزرار بينسخ القاعدة بالظبط.`, sol: R`الـ ٨ خلفيات في ملف لوحدهم ([[patterns.css]]) عشان الـ JavaScript يقرا كل قاعدة زي ما هي مكتوبة ويعرضها جنب المربع بتاعها.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة خلفيات من غير صور</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="patterns.css">
+</head>
+<body>
+<main>
+  <h1>مكتبة خلفيات من غير صور</h1>
+  <p class="hint">كل مربع بيكبر ويصغر من ركنه التحتاني (اسحبه)، عشان تتأكد إن الخلفية بتتكرر من غير قطع.</p>
+  <div class="library">
+    <article class="item">
+      <div class="tile dots"></div>
+      <h2>نقط</h2>
+      <pre><code data-for=".dots"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile grid"></div>
+      <h2>شبكة خطوط</h2>
+      <pre><code data-for=".grid"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile stripes"></div>
+      <h2>خطوط مايلة</h2>
+      <pre><code data-for=".stripes"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile checker"></div>
+      <h2>شطرنج</h2>
+      <pre><code data-for=".checker"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile aurora"></div>
+      <h2>هالة ناعمة</h2>
+      <pre><code data-for=".aurora"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile duo"></div>
+      <h2>تدرّج لونين</h2>
+      <pre><code data-for=".duo"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile waves"></div>
+      <h2>أمواج</h2>
+      <pre><code data-for=".waves"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile plaid"></div>
+      <h2>قماش كاروهات</h2>
+      <pre><code data-for=".plaid"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+  </div>
+  <p class="status" role="status"></p>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 1000px; margin-inline: auto; }
+h1 { margin: 0 0 4px; font-size: 24px; }
+.hint { margin: 0 0 16px; color: #475569; }
+.library { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+.item { margin: 0; padding: 12px; border-radius: 14px; background: white; }
+/* resize: the reader can drag the corner and watch the pattern repeat */
+.tile { height: 140px; border-radius: 10px; resize: both; overflow: auto; max-width: 100%; }
+.item h2 { margin-block: 8px 4px; font-size: 17px; }
+pre { margin: 0 0 8px; padding: 8px; border-radius: 8px; background: #0f172a; color: #e2e8f0; font-size: 12px; white-space: pre-wrap; word-break: break-all; direction: ltr; text-align: left; }
+.copy { padding: 6px 12px; border: 0; border-radius: 8px; background: #2563eb; color: white; font: inherit; cursor: pointer; }
+.copy:focus-visible { outline: 3px solid #0f172a; outline-offset: 2px; }
+.status { min-height: 1.5em; font-weight: 700; color: #15803d; }
+~~~
+
+~~~css patterns.css
+.dots { background: radial-gradient(#334155 2px, transparent 2.5px) 0 0 / 20px 20px #f8fafc; }
+.grid { background: linear-gradient(#cbd5e1 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, #cbd5e1 1px, transparent 1px) 0 0 / 24px 24px white; }
+.stripes { background: repeating-linear-gradient(45deg, #fde68a 0 10px, #fbbf24 10px 20px); }
+.checker { background: conic-gradient(#cbd5e1 25%, white 0 50%, #cbd5e1 0 75%, white 0) 0 0 / 40px 40px; }
+.aurora { background: radial-gradient(at 20% 30%, rgb(56 189 248 / 0.6), transparent 50%), radial-gradient(at 80% 20%, rgb(168 85 247 / 0.55), transparent 50%), radial-gradient(at 50% 90%, rgb(34 197 94 / 0.5), transparent 55%) #0f172a; }
+.duo { background: linear-gradient(135deg, #6366f1, #ec4899); }
+.waves { background: radial-gradient(circle at 50% 0, transparent 8px, #0284c7 9px 11px, transparent 12px) 0 0 / 40px 20px, radial-gradient(circle at 50% 100%, transparent 8px, #0284c7 9px 11px, transparent 12px) 20px -10px / 40px 20px #e0f2fe; }
+.plaid { background: repeating-linear-gradient(90deg, rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px), repeating-linear-gradient(rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px) #fff7ed; }
+~~~
+
+~~~js app.js
+// each box shows the rule exactly as it is written in patterns.css, and the button copies that text.
+// fetch reads the file itself. If fetch can't (the page opened as file:// from the folder),
+// the browser's own copy of the rule (cssText) is used: same rule, but rewritten (#fff becomes rgb(255, 255, 255))
+async function readRules() {
+  const rules = {};
+  try {
+    const res = await fetch('patterns.css');
+    if (!res.ok) throw new Error(res.status);
+    for (const line of (await res.text()).split('\n')) {
+      const m = line.match(/^(\.[\w-]+) \{/);
+      if (m) rules[m[1]] = line;
+    }
+  } catch {
+    for (const sheet of document.styleSheets) {
+      if (!sheet.href || !sheet.href.endsWith('patterns.css')) continue;
+      for (const r of sheet.cssRules) rules[r.selectorText] = r.cssText;
+    }
+  }
+  return rules;
+}
+
+const status = document.querySelector('.status');
+readRules().then(rules => {
+  for (const item of document.querySelectorAll('.item')) {
+    const code = item.querySelector('code');
+    code.textContent = rules[code.dataset.for] || '';
+    item.querySelector('.copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        status.textContent = 'اتنسخ: ' + item.querySelector('h2').textContent;
+      } catch {
+        status.textContent = 'المتصفح منع النسخ. علّم الكود واعمل Ctrl+C.';
+      }
+    });
+  }
+});
+~~~
+
+~~~view 620 1700 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة خلفيات من غير صور</title>
+<style id="style">
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 1000px; margin-inline: auto; }
+h1 { margin: 0 0 4px; font-size: 24px; }
+.hint { margin: 0 0 16px; color: #475569; }
+.library { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+.item { margin: 0; padding: 12px; border-radius: 14px; background: white; }
+/* resize: the reader can drag the corner and watch the pattern repeat */
+.tile { height: 140px; border-radius: 10px; resize: both; overflow: auto; max-width: 100%; }
+.item h2 { margin-block: 8px 4px; font-size: 17px; }
+pre { margin: 0 0 8px; padding: 8px; border-radius: 8px; background: #0f172a; color: #e2e8f0; font-size: 12px; white-space: pre-wrap; word-break: break-all; direction: ltr; text-align: left; }
+.copy { padding: 6px 12px; border: 0; border-radius: 8px; background: #2563eb; color: white; font: inherit; cursor: pointer; }
+.copy:focus-visible { outline: 3px solid #0f172a; outline-offset: 2px; }
+.status { min-height: 1.5em; font-weight: 700; color: #15803d; }
+</style>
+<style id="patterns">
+.dots { background: radial-gradient(#334155 2px, transparent 2.5px) 0 0 / 20px 20px #f8fafc; }
+.grid { background: linear-gradient(#cbd5e1 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, #cbd5e1 1px, transparent 1px) 0 0 / 24px 24px white; }
+.stripes { background: repeating-linear-gradient(45deg, #fde68a 0 10px, #fbbf24 10px 20px); }
+.checker { background: conic-gradient(#cbd5e1 25%, white 0 50%, #cbd5e1 0 75%, white 0) 0 0 / 40px 40px; }
+.aurora { background: radial-gradient(at 20% 30%, rgb(56 189 248 / 0.6), transparent 50%), radial-gradient(at 80% 20%, rgb(168 85 247 / 0.55), transparent 50%), radial-gradient(at 50% 90%, rgb(34 197 94 / 0.5), transparent 55%) #0f172a; }
+.duo { background: linear-gradient(135deg, #6366f1, #ec4899); }
+.waves { background: radial-gradient(circle at 50% 0, transparent 8px, #0284c7 9px 11px, transparent 12px) 0 0 / 40px 20px, radial-gradient(circle at 50% 100%, transparent 8px, #0284c7 9px 11px, transparent 12px) 20px -10px / 40px 20px #e0f2fe; }
+.plaid { background: repeating-linear-gradient(90deg, rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px), repeating-linear-gradient(rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px) #fff7ed; }
+</style>
+</head>
+<body>
+<main>
+  <h1>مكتبة خلفيات من غير صور</h1>
+  <p class="hint">كل مربع بيكبر ويصغر من ركنه التحتاني (اسحبه)، عشان تتأكد إن الخلفية بتتكرر من غير قطع.</p>
+  <div class="library">
+    <article class="item">
+      <div class="tile dots"></div>
+      <h2>نقط</h2>
+      <pre><code data-for=".dots"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile grid"></div>
+      <h2>شبكة خطوط</h2>
+      <pre><code data-for=".grid"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile stripes"></div>
+      <h2>خطوط مايلة</h2>
+      <pre><code data-for=".stripes"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile checker"></div>
+      <h2>شطرنج</h2>
+      <pre><code data-for=".checker"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile aurora"></div>
+      <h2>هالة ناعمة</h2>
+      <pre><code data-for=".aurora"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile duo"></div>
+      <h2>تدرّج لونين</h2>
+      <pre><code data-for=".duo"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile waves"></div>
+      <h2>أمواج</h2>
+      <pre><code data-for=".waves"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile plaid"></div>
+      <h2>قماش كاروهات</h2>
+      <pre><code data-for=".plaid"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+  </div>
+  <p class="status" role="status"></p>
+</main>
+<script>
+// each box shows the rule exactly as it is written in patterns.css, and the button copies that text.
+// fetch reads the file itself. If fetch can't (the page opened as file:// from the folder),
+// the browser's own copy of the rule (cssText) is used: same rule, but rewritten (#fff becomes rgb(255, 255, 255))
+async function readRules() {
+  const rules = {};
+  try {
+    for (const line of document.getElementById('patterns').textContent.split('\n')) {
+      const m = line.match(/^(\.[\w-]+) \{/);
+      if (m) rules[m[1]] = line;
+    }
+  } catch {
+    for (const sheet of document.styleSheets) {
+      if (!sheet.href || !sheet.href.endsWith('patterns.css')) continue;
+      for (const r of sheet.cssRules) rules[r.selectorText] = r.cssText;
+    }
+  }
+  return rules;
+}
+
+const status = document.querySelector('.status');
+readRules().then(rules => {
+  for (const item of document.querySelectorAll('.item')) {
+    const code = item.querySelector('code');
+    code.textContent = rules[code.dataset.for] || '';
+    item.querySelector('.copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        status.textContent = 'اتنسخ: ' + item.querySelector('h2').textContent;
+      } catch {
+        status.textContent = 'المتصفح منع النسخ. علّم الكود واعمل Ctrl+C.';
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٨ كروت، في كل واحد مربع بخلفية، واسمها، والقاعدة بتاعتها في صندوق كود غامق، وزرار «انسخ الـ CSS». وكل مربع ليه علامة صغيرة في ركنه التحتاني: اسحبها والمربع يكبر ويصغر.
+
+**إزاي كل خلفية اتعملت:**
+- **النقط:** [[radial-gradient(#334155 2px, transparent 2.5px)]] بيرسم دايرة 2px في نص البلاطة. و [[/ 20px 20px]] (الـ [[background-size]]) بيقول البلاطة 20×20، والخلفية بتتكرر لوحدها ([[repeat]] هو الافتراضي). النص بكسل بين 2 و 2.5 بيخلي حافة الدايرة ناعمة.
+- **الشبكة:** خلفيتين فوق بعض بفاصلة: خط أفقي 1px ([[linear-gradient]] من فوق لتحت) وخط رأسي ([[90deg]]).
+- **الخطوط المايلة:** [[repeating-linear-gradient]] بيكرر ([[0 10px]] لون و [[10px 20px]] لون تاني) لحد آخر المربع، فمش محتاج [[background-size]].
+- **الشطرنج:** [[conic-gradient]] بيلف حوالين النص: ربع رمادي وربع أبيض ([[0 50%]] معناها «ابدأ من مكان ما اللي قبله خلص»). بلاطة 40×40 فيها ٤ مربعات.
+- **الهالة:** ٣ [[radial-gradient]] شفافين ([[rgb(56 189 248 / 0.6)]]) في أماكن مختلفة على خلفية غامقة. الشفافية هي اللي بتخلّي الألوان تدخل في بعض.
+- **الأمواج:** طبقتين، في كل واحدة حلقة رفيعة ([[transparent 8px, #0284c7 9px 11px, transparent 12px]]) مقصوصة نصين بالبلاطة: الأولى مركزها فوق البلاطة فبيبان نصها اللي تحت (∪)، والتانية مركزها تحت وإزاحتها 20px فبيبان نصها اللي فوق (∩). ورا بعض بيعملوا موجة متصلة.
+- **الكاروهات:** نفس الخطوط المكررة في الاتجاهين بلون شفاف، فمكان ما بيتقاطعوا بيغمق.
+
+**القاعدة اللي بتتنسخ:** النسخة الأولى كانت بتاخد القاعدة من [[sheet.cssRules]] ([[cssText]])، وطلع إن المتصفح بيعيد كتابتها بطريقته: [[#334155]] بقت [[rgb(51, 65, 85)]]، و [[0 0]] بقت [[0px 0px]]، و [[white 0 50%]] اتفكت لـ [[white 0deg, white 50%]]. نفس القاعدة بالظبط، بس مش زي ما انت كاتبها. فالنسخة النهائية بتقرا الملف نفسه بـ [[fetch('patterns.css')]] وتاخد كل سطر بيبدأ بـ [[.اسم {]]. ولو فتحت الصفحة من الفولدر على طول ([[file://]]) الـ fetch بيفشل، فبترجع للـ [[cssText]].
+
+**الغلطة اللي الـ validator مسكها:** أول نسخة كان كل كارت [[<figure>]] والاسم [[<figcaption>]] في النص، تحته الكود والزرار. الـ validator قال [[Element "pre" not allowed as child of element "figure" in this context]]. الـ [[<figcaption>]] لازم يبقى أول حاجة أو آخر حاجة جوه الـ [[<figure>]]. والكارت هنا مش صورة ليها تعليق أصلًا، فبقى [[<article>]] بعنوان [[<h2>]].
+
+**في المعاينة هنا:** النسخ ممكن ميشتغلش (المعاينة جوه iframe مقفول)، فهتظهر رسالة «علّم الكود واعمل Ctrl+C». على جهازك من [[npx serve]] أو Live Server بيشتغل.
+
+~~~text الناتج (Chrome، من سيرفر محلي)
+الطلبات             style.css  patterns.css  app.js  patterns.css (الـ fetch)   صور: 0
+patterns.css        8 قواعد، كل قاعدة سطر واحد
+الكود جوه المربع    .dots { background: radial-gradient(#334155 2px, transparent 2.5px) 0 0 / 20px 20px #f8fafc; }
+cssText لنفس القاعدة .dots { background: radial-gradient(rgb(51, 65, 85) 2px, transparent 2.5px) 0px 0px / 20px 20px rgb(248, 250, 252); }
+دوست «انسخ» في الشطرنج، و Get-Clipboard في PowerShell طلّع:
+  .checker { background: conic-gradient(#cbd5e1 25%, white 0 50%, #cbd5e1 0 75%, white 0) 0 0 / 40px 40px; }
+مربع الأمواج وصل 300px طول: الموجة متصلة من غير قطع
+axe: 0 violations   الـ validator: مفيش رسايل (بعد ما figure بقت article)   CSS validator: No Error Found
+~~~` },
+        { lvl: 'كبير', dir: "clinic-styled", t: R`صفحة العيادة بالتصميم الكامل`, what: R`خد صفحة هبوط العيادة المتخيلة من الوحدة الأولى (نفس الـ HTML) واكتبلها CSS كامل: ملف واحد مقسوم [[@layer reset, base, components, utilities]]، وأسامي BEM لكل جزء ([[.hero]] و [[.service-card]] و [[.doctor]] و [[.faq]])، وهيرو خلفيته هالة gradients، وكروت الخدمات بشريط لون وظل وحركة hover، وكارت «احجز ميعادك» شكله تذكرة بخط متقطع، والأجزاء ورا بعض بخلفيات فاتحة متبادلة، وشريط مايل بين جزئين من غير ما يعمل scroll أفقي. يجمع الوحدة دي مع وحدة HTML.`, done: R`على 360 و 800 و 1280 مفيش scroll أفقي ([[document.documentElement.scrollWidth]] = عرض الشاشة)، ومفيش [[!important]] ولا id ولا [[style=""]]، و axe (اللي جوه Lighthouse) صفر مشاكل (التباين سليم)، والـ HTML نفس عناصر وكلام الوحدة الأولى (اللي اتزوّد class بس، و div واحد من غير كلام حوالين كارت التواصل)، ولو شلت ملف الـ CSS الصفحة لسه مقروءة ومرتبة.`, ext: R`لما توصل لوحدة «الوحدات والمتغيرات» حوّل كل الألوان والمسافات لـ tokens، ولوحدة Flexbox و Grid رتّب الكروت جنب بعض.`, sol: R`ده نفس [[index.html]] بتاع العيادة من الوحدة الأولى، والصورتين [[img/hero.svg]] و [[img/doctor.svg]] زي ما هم. اللي اتغيّر في الـ HTML: سطر الـ [[<link>]]، و class على العناصر، و [[<div class="ticket">]] حوالين محتوى قسم التواصل (من غيره مفيش حاجة تتشكل تذكرة جوه القسم).
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة لطب الأسنان</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <p class="site-header__logo"><a href="#top">عيادة ابتسامة</a></p>
+  <nav aria-label="أجزاء الصفحة">
+    <ul class="site-header__links">
+      <li><a href="#services">الخدمات</a></li>
+      <li><a href="#steps">الخطوات</a></li>
+      <li><a href="#doctors">الأطبا</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#faq">الأسئلة</a></li>
+      <li><a href="#contact">التواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section id="top" class="hero">
+    <h1>سنانك في إيد أمينة</h1>
+    <p>كشف وتنضيف وتقويم في مكان واحد، ومن غير ما تستنى بالساعات.</p>
+    <img src="img/hero.svg" alt="رسم لسنة بيضا مبتسمة" width="800" height="400">
+    <p><a class="btn" href="#contact">احجز كشف</a></p>
+  </section>
+
+  <section id="services" class="section">
+    <h2>الخدمات</h2>
+    <ul class="services">
+      <li class="service-card">كشف وأشعة بانوراما</li>
+      <li class="service-card">تنضيف وتلميع</li>
+      <li class="service-card">حشو وعلاج عصب</li>
+      <li class="service-card">تقويم شفاف</li>
+    </ul>
+  </section>
+
+  <section id="steps" class="section section--alt">
+    <h2>الخطوات</h2>
+    <ol class="steps">
+      <li>احجز من الفورم أو بالتليفون.</li>
+      <li>الكشف والأشعة في نفس الزيارة.</li>
+      <li>خطة علاج مكتوبة بالسعر قبل ما نبدأ.</li>
+    </ol>
+  </section>
+
+  <section id="doctors" class="section">
+    <h2>الأطبا</h2>
+    <article class="doctor">
+      <h3 class="doctor__name">د. سلمى فؤاد</h3>
+      <img src="img/doctor.svg" alt="صورة د. سلمى فؤاد" width="200" height="200" loading="lazy">
+      <p>تقويم الأسنان، ١٢ سنة خبرة.</p>
+    </article>
+    <article class="doctor">
+      <h3 class="doctor__name">د. كريم ناجي</h3>
+      <img src="img/doctor.svg" alt="صورة د. كريم ناجي" width="200" height="200" loading="lazy">
+      <p>علاج العصب والحشو التجميلي.</p>
+    </article>
+    <figure class="quote">
+      <blockquote>
+        <p>أول مرة أروح لدكتور سنان ومخافش. شرحولي كل خطوة قبل ما يعملوها.</p>
+      </blockquote>
+      <figcaption>منى، من المرضى</figcaption>
+    </figure>
+  </section>
+
+  <section id="prices" class="section section--alt section--slanted">
+    <h2>الأسعار</h2>
+    <ul class="prices">
+      <li>الكشف والأشعة: ٣٠٠ جنيه</li>
+      <li>التنضيف: ٥٠٠ جنيه</li>
+      <li>الحشو: من ٦٠٠ جنيه</li>
+    </ul>
+  </section>
+
+  <section id="faq" class="section">
+    <h2>الأسئلة</h2>
+    <details class="faq">
+      <summary class="faq__q">الكشف بياخد قد إيه؟</summary>
+      <p>حوالي نص ساعة، بالأشعة.</p>
+    </details>
+    <details class="faq">
+      <summary class="faq__q">بتقبلوا التأمين؟</summary>
+      <p>أيوه، مع أغلب شركات التأمين الطبي.</p>
+    </details>
+  </section>
+
+  <section id="contact" class="section section--alt">
+    <div class="ticket">
+      <h2>التواصل</h2>
+      <p>التليفون: <a href="tel:+20225550199">0225550199</a></p>
+      <address>١٤ شارع النخيل، الدور التاني</address>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p><small>© ٢٠٢٦ عيادة ابتسامة (اسم متخيل)</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+~~~css style.css
+/* the order of the layers is the order of who wins: utilities beat components, components beat base */
+@layer reset, base, components, utilities;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
+  img { display: block; max-width: 100%; height: auto; }
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { background: white; color: #0f172a; font: 16px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.3; }
+  h2 { font-size: 26px; margin-block-end: 16px; }
+  a { color: #0e7490; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid #0e7490; outline-offset: 3px; }
+}
+
+@layer components {
+  /* ---------- header ---------- */
+  .site-header { padding: 12px 16px; border-block-end: 1px solid #e2e8f0; }
+  .site-header__logo a { font-weight: 800; font-size: 20px; text-decoration: none; color: #0f172a; }
+  .site-header__links { padding: 0; list-style: none; }
+  .site-header__links li { display: inline-block; margin-inline-end: 12px; }
+
+  /* ---------- hero: three soft halos on top of each other ---------- */
+  .hero {
+    padding: 48px 16px;
+    text-align: center;
+    background:
+      radial-gradient(circle at 15% 20%, rgb(14 165 233 / 0.25), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgb(45 212 191 / 0.25), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgb(250 204 21 / 0.2), transparent 50%),
+      #f0f9ff;
+  }
+  .hero p { max-width: 560px; margin: 12px auto; }
+  .hero img { margin: 16px auto; border-radius: 16px; }
+
+  .btn { display: inline-block; padding: 12px 28px; border-radius: 999px; background: #0e7490; color: white; font-weight: 700; text-decoration: none; }
+  .btn:hover { background: #155e75; }
+
+  /* ---------- sections, a light background every other one ---------- */
+  .section { padding: 40px 16px; }
+  .section > * { max-width: 760px; margin-inline: auto; }
+  .section--alt { background: #f8fafc; }
+
+  /* the slanted strip: a rotated bar wider than the screen. overflow: clip cuts what sticks out,
+     so it never makes the page scroll sideways (and unlike hidden, it does not make a scroll box) */
+  .section--slanted { position: relative; overflow: clip; padding-block-start: 72px; }
+  .section--slanted::before {
+    content: ""; position: absolute; top: 16px; inset-inline: -10%;
+    height: 24px; background: #0e7490; transform: rotate(-2deg);
+  }
+
+  /* ---------- service cards ---------- */
+  .services { padding: 0; list-style: none; }
+  .service-card {
+    position: relative; margin-block-end: 12px; padding: 16px 20px; padding-inline-start: 28px;
+    border-radius: 12px; background: white; box-shadow: 0 2px 8px rgb(15 23 42 / 0.08);
+    font-weight: 600; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .service-card::before { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 0; width: 6px; border-start-end-radius: 6px; border-end-end-radius: 6px; background: #0ea5e9; }
+  .service-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgb(15 23 42 / 0.12); }
+
+  .steps { padding-inline-start: 24px; }
+  .steps li { margin-block-end: 8px; }
+
+  /* ---------- doctors ---------- */
+  .doctor { margin-block-end: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 16px; }
+  .doctor__name { margin-block-end: 8px; }
+  .doctor img { border-radius: 50%; width: 120px; margin-block-end: 8px; }
+  .quote { padding: 16px 20px; border-inline-start: 4px solid #0ea5e9; background: #f0f9ff; border-radius: 8px; }
+  .quote figcaption { margin-block-start: 8px; color: #475569; }
+
+  .prices { padding: 0; list-style: none; }
+  .prices li { padding-block: 8px; border-block-end: 1px dashed #cbd5e1; }
+
+  /* ---------- FAQ ---------- */
+  .faq { margin-block-end: 8px; padding: 12px 16px; border-radius: 10px; background: #f8fafc; }
+  .faq__q { cursor: pointer; font-weight: 700; }
+  .faq[open] { background: #f0f9ff; }
+
+  /* ---------- contact card shaped like a ticket ---------- */
+  .ticket {
+    position: relative; max-width: 420px; padding: 24px 28px; border-radius: 16px;
+    background: #fef9c3; outline: 2px dashed #a16207; outline-offset: -10px;
+  }
+  .ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 24px; height: 24px; border-radius: 50%; background: #f8fafc; transform: translateY(-50%); }
+  .ticket::before { inset-inline-start: -12px; }
+  .ticket::after { inset-inline-end: -12px; }
+  .ticket a { color: #713f12; }
+
+  .site-footer { padding: 16px; text-align: center; color: #475569; }
+}
+
+@layer utilities {
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+~~~
+
+~~~view 700 2900 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة لطب الأسنان</title>
+<style id="style">
+/* the order of the layers is the order of who wins: utilities beat components, components beat base */
+@layer reset, base, components, utilities;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
+  img { display: block; max-width: 100%; height: auto; }
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { background: white; color: #0f172a; font: 16px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.3; }
+  h2 { font-size: 26px; margin-block-end: 16px; }
+  a { color: #0e7490; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid #0e7490; outline-offset: 3px; }
+}
+
+@layer components {
+  /* ---------- header ---------- */
+  .site-header { padding: 12px 16px; border-block-end: 1px solid #e2e8f0; }
+  .site-header__logo a { font-weight: 800; font-size: 20px; text-decoration: none; color: #0f172a; }
+  .site-header__links { padding: 0; list-style: none; }
+  .site-header__links li { display: inline-block; margin-inline-end: 12px; }
+
+  /* ---------- hero: three soft halos on top of each other ---------- */
+  .hero {
+    padding: 48px 16px;
+    text-align: center;
+    background:
+      radial-gradient(circle at 15% 20%, rgb(14 165 233 / 0.25), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgb(45 212 191 / 0.25), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgb(250 204 21 / 0.2), transparent 50%),
+      #f0f9ff;
+  }
+  .hero p { max-width: 560px; margin: 12px auto; }
+  .hero img { margin: 16px auto; border-radius: 16px; }
+
+  .btn { display: inline-block; padding: 12px 28px; border-radius: 999px; background: #0e7490; color: white; font-weight: 700; text-decoration: none; }
+  .btn:hover { background: #155e75; }
+
+  /* ---------- sections, a light background every other one ---------- */
+  .section { padding: 40px 16px; }
+  .section > * { max-width: 760px; margin-inline: auto; }
+  .section--alt { background: #f8fafc; }
+
+  /* the slanted strip: a rotated bar wider than the screen. overflow: clip cuts what sticks out,
+     so it never makes the page scroll sideways (and unlike hidden, it does not make a scroll box) */
+  .section--slanted { position: relative; overflow: clip; padding-block-start: 72px; }
+  .section--slanted::before {
+    content: ""; position: absolute; top: 16px; inset-inline: -10%;
+    height: 24px; background: #0e7490; transform: rotate(-2deg);
+  }
+
+  /* ---------- service cards ---------- */
+  .services { padding: 0; list-style: none; }
+  .service-card {
+    position: relative; margin-block-end: 12px; padding: 16px 20px; padding-inline-start: 28px;
+    border-radius: 12px; background: white; box-shadow: 0 2px 8px rgb(15 23 42 / 0.08);
+    font-weight: 600; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .service-card::before { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 0; width: 6px; border-start-end-radius: 6px; border-end-end-radius: 6px; background: #0ea5e9; }
+  .service-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgb(15 23 42 / 0.12); }
+
+  .steps { padding-inline-start: 24px; }
+  .steps li { margin-block-end: 8px; }
+
+  /* ---------- doctors ---------- */
+  .doctor { margin-block-end: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 16px; }
+  .doctor__name { margin-block-end: 8px; }
+  .doctor img { border-radius: 50%; width: 120px; margin-block-end: 8px; }
+  .quote { padding: 16px 20px; border-inline-start: 4px solid #0ea5e9; background: #f0f9ff; border-radius: 8px; }
+  .quote figcaption { margin-block-start: 8px; color: #475569; }
+
+  .prices { padding: 0; list-style: none; }
+  .prices li { padding-block: 8px; border-block-end: 1px dashed #cbd5e1; }
+
+  /* ---------- FAQ ---------- */
+  .faq { margin-block-end: 8px; padding: 12px 16px; border-radius: 10px; background: #f8fafc; }
+  .faq__q { cursor: pointer; font-weight: 700; }
+  .faq[open] { background: #f0f9ff; }
+
+  /* ---------- contact card shaped like a ticket ---------- */
+  .ticket {
+    position: relative; max-width: 420px; padding: 24px 28px; border-radius: 16px;
+    background: #fef9c3; outline: 2px dashed #a16207; outline-offset: -10px;
+  }
+  .ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 24px; height: 24px; border-radius: 50%; background: #f8fafc; transform: translateY(-50%); }
+  .ticket::before { inset-inline-start: -12px; }
+  .ticket::after { inset-inline-end: -12px; }
+  .ticket a { color: #713f12; }
+
+  .site-footer { padding: 16px; text-align: center; color: #475569; }
+}
+
+@layer utilities {
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <p class="site-header__logo"><a href="#top">عيادة ابتسامة</a></p>
+  <nav aria-label="أجزاء الصفحة">
+    <ul class="site-header__links">
+      <li><a href="#services">الخدمات</a></li>
+      <li><a href="#steps">الخطوات</a></li>
+      <li><a href="#doctors">الأطبا</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#faq">الأسئلة</a></li>
+      <li><a href="#contact">التواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section id="top" class="hero">
+    <h1>سنانك في إيد أمينة</h1>
+    <p>كشف وتنضيف وتقويم في مكان واحد، ومن غير ما تستنى بالساعات.</p>
+    <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%22400%22%20viewBox%3D%220%200%20800%20400%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23e0f2fe%22%2F%3E%3Cpath%20d%3D%22M340%20120c-40%200-60%2030-60%2070%200%2060%2030%20130%2050%20130s20-60%2040-60%2020%2060%2040%2060%2050-70%2050-130c0-40-20-70-60-70-20%200-30%2010-30%2010s-10-10-30-10z%22%20fill%3D%22%23fff%22%20stroke%3D%22%230369a1%22%20stroke-width%3D%228%22%2F%3E%3C%2Fsvg%3E" alt="رسم لسنة بيضا مبتسمة" width="800" height="400">
+    <p><a class="btn" href="#contact">احجز كشف</a></p>
+  </section>
+
+  <section id="services" class="section">
+    <h2>الخدمات</h2>
+    <ul class="services">
+      <li class="service-card">كشف وأشعة بانوراما</li>
+      <li class="service-card">تنضيف وتلميع</li>
+      <li class="service-card">حشو وعلاج عصب</li>
+      <li class="service-card">تقويم شفاف</li>
+    </ul>
+  </section>
+
+  <section id="steps" class="section section--alt">
+    <h2>الخطوات</h2>
+    <ol class="steps">
+      <li>احجز من الفورم أو بالتليفون.</li>
+      <li>الكشف والأشعة في نفس الزيارة.</li>
+      <li>خطة علاج مكتوبة بالسعر قبل ما نبدأ.</li>
+    </ol>
+  </section>
+
+  <section id="doctors" class="section">
+    <h2>الأطبا</h2>
+    <article class="doctor">
+      <h3 class="doctor__name">د. سلمى فؤاد</h3>
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f0fdfa%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%2399f6e4%22%2F%3E%3Cpath%20d%3D%22M30%20200c0-50%2030-75%2070-75s70%2025%2070%2075z%22%20fill%3D%22%2314b8a6%22%2F%3E%3C%2Fsvg%3E" alt="صورة د. سلمى فؤاد" width="200" height="200" loading="lazy">
+      <p>تقويم الأسنان، ١٢ سنة خبرة.</p>
+    </article>
+    <article class="doctor">
+      <h3 class="doctor__name">د. كريم ناجي</h3>
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f0fdfa%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%2399f6e4%22%2F%3E%3Cpath%20d%3D%22M30%20200c0-50%2030-75%2070-75s70%2025%2070%2075z%22%20fill%3D%22%2314b8a6%22%2F%3E%3C%2Fsvg%3E" alt="صورة د. كريم ناجي" width="200" height="200" loading="lazy">
+      <p>علاج العصب والحشو التجميلي.</p>
+    </article>
+    <figure class="quote">
+      <blockquote>
+        <p>أول مرة أروح لدكتور سنان ومخافش. شرحولي كل خطوة قبل ما يعملوها.</p>
+      </blockquote>
+      <figcaption>منى، من المرضى</figcaption>
+    </figure>
+  </section>
+
+  <section id="prices" class="section section--alt section--slanted">
+    <h2>الأسعار</h2>
+    <ul class="prices">
+      <li>الكشف والأشعة: ٣٠٠ جنيه</li>
+      <li>التنضيف: ٥٠٠ جنيه</li>
+      <li>الحشو: من ٦٠٠ جنيه</li>
+    </ul>
+  </section>
+
+  <section id="faq" class="section">
+    <h2>الأسئلة</h2>
+    <details class="faq">
+      <summary class="faq__q">الكشف بياخد قد إيه؟</summary>
+      <p>حوالي نص ساعة، بالأشعة.</p>
+    </details>
+    <details class="faq">
+      <summary class="faq__q">بتقبلوا التأمين؟</summary>
+      <p>أيوه، مع أغلب شركات التأمين الطبي.</p>
+    </details>
+  </section>
+
+  <section id="contact" class="section section--alt">
+    <div class="ticket">
+      <h2>التواصل</h2>
+      <p>التليفون: <a href="tel:+20225550199">0225550199</a></p>
+      <address>١٤ شارع النخيل، الدور التاني</address>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p><small>© ٢٠٢٦ عيادة ابتسامة (اسم متخيل)</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** فوق اسم العيادة واللينكات. بعدها هيرو لبني فاتح فيه ٣ بقع ألوان ناعمة (أزرق وفيروزي وأصفر)، والعنوان كبير وزرار «احجز كشف» كبسولة. الخدمات كروت بيضا بظل وشريط أزرق على اليمين، وبتطلع لفوق مع الماوس. الأقسام بالتبادل أبيض ورمادي فاتح جدًا. قبل «الأسعار» شريط أزرق مايل بعرض الشاشة. والأسئلة مربعات بتفتح، وفي الآخر «التواصل» كارت أصفر شكله تذكرة بخط متقطع وتجويفين.
+
+**الطبقات:** [[reset]] بيصفّر هوامش المتصفح. [[base]] للعناصر نفسها (الخط والعناوين واللينكات). [[components]] لكل جزء باسمه. [[utilities]] أدوات صغيرة. ولأن الترتيب محدد فوق، القاعدة اللي في [[components]] بتغلب اللي في [[base]] حتى لو [[base]] فيها selector أتقل.
+
+**أهم الحتت:**
+- **[[.section > *]]:** كل اللي جوه القسم عرضه 760 بالكتير وفي النص، والخلفية نفسها بعرض الشاشة. كده الألوان المتبادلة بتوصل للحافتين والكلام مش بيبقى سطر طويل على الشاشات الكبيرة.
+- **هالة الهيرو:** ٣ [[radial-gradient]] شفافين وتحتهم لون. أول واحد مكتوب هو اللي فوق.
+- **شريط الخدمات:** [[::before]] لازق على [[inset-inline-start]] (اليمين في العربي)، وزواياه [[border-start-end-radius]] و [[border-end-end-radius]]: أسامي logical معناها «الركن اللي ناحية آخر السطر». أول نسخة كانت [[border-radius: 0 6px 6px 0]] (physical)، فاتدوّر الطرف اللي لازق في الحافة بدل اللي جوه.
+- **الشريط المايل:** [[::before]] أعرض من الشاشة ([[inset-inline: -10%]]) ومايل [[rotate(-2deg)]]. الحتة اللي طالعة برّه الشاشة بتعمل scroll أفقي، و [[overflow: clip]] على القسم بيقصها.
+- **[[overflow: clip]] مش [[hidden]]:** الاتنين بيقصوا. بس [[hidden]] بيخلي القسم «صندوق scroll» (ممكن يتحرك بالكود أو بالـ focus جواه)، و [[clip]] بيقص بس.
+- **التذكرة:** نفس فكرة مشروع الأشكال، والتجويفين لونهم لون القسم ([[#f8fafc]]).
+
+**من غير الـ CSS:** الصفحة لسه مترتبة: عناوين، ولستات، ولينكات. بس صورة الهيرو هتعمل scroll أفقي على 800، لأن [[width="800"]] في الـ HTML. وده اللي [[img { max-width: 100%; height: auto; }]] في الـ reset بيصلّحه.
+
+~~~text الناتج (Chrome)
+scrollWidth / clientWidth (من غير الـ scrollbar)
+  360      342 / 342       800      782 / 782       1280     1262 / 1262
+الشريط المايل من غير overflow: clip على 360   scrollWidth 379 والشاشة 345 (scroll أفقي)
+بـ overflow: hidden                            345 / 345، بس القسم بقى scroll container (scrollWidth > clientWidth جواه)
+بـ overflow: clip                              345 / 345
+زوايا شريط الخدمة                               top-left 6px، bottom-left 6px، top-right 0 (الطرف اللي جوه)
+عناصر عليها style=""   0       selectors فيها #   0       !important   0
+من غير style.css: h1 = 32px (حجم المتصفح)، و scrollWidth 808 على 800 (صورة الهيرو 800px)
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'فكرة', dir: "zen-two", t: R`نفس الـ HTML بشكلين`, what: R`زي مسابقة CSS Zen Garden: صفحة HTML واحدة لمقال أو منيو، وملفين CSS مختلفين خالص (مثلًا «كلاسيك» و «مودرن»). انت اللي تختار الموضوع والشكلين.`, done: R`تبدّل بين الشكلين بتغيير سطر الـ link بس، والاتنين مقروءين ومفيش scroll أفقي، وواحد صاحبك قال الشكلين مختلفين فعلًا.`, ext: R`زوّد زرار بيبدّل بينهم من غير reload (يغيّر [[href]] بتاع الـ link) ويفتكر الاختيار.`, sol: R`الموضوع اللي اخترته: مقال قصير في مجلة متخيلة. ملف HTML واحد، وملفين CSS، وملف JavaScript صغير للمهمة الزيادة (زرار التبديل).
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إزاي تعمل كوباية شاي مظبوطة</title>
+<link rel="stylesheet" href="classic.css" id="theme">
+</head>
+<body>
+<header>
+  <p>مجلة «فنجان» (اسم متخيل)</p>
+  <button type="button" id="swap" hidden>بدّل الشكل</button>
+</header>
+<main>
+  <article>
+    <h1>إزاي تعمل كوباية شاي مظبوطة</h1>
+    <p>الشاي سهل، بس الفرق بين كوباية عادية وكوباية مظبوطة في تلات حاجات صغيرة: المية، والوقت، والكمية.</p>
+    <h2>١. المية</h2>
+    <p>المية تغلي وتسيبها نص دقيقة. المية اللي بتفور لسه بتحرق الورق وتطلّع طعم مر.</p>
+    <h2>٢. الوقت</h2>
+    <p>تلات لأربع دقايق للشاي الأسود. أكتر من كده بيطلع التانين والطعم بيقلب.</p>
+    <blockquote><p>الشاي الحلو مش محتاج سكر كتير، محتاج صبر شوية.</p></blockquote>
+    <h2>٣. الكمية</h2>
+    <ul>
+      <li>معلقة صغيرة لكل كوباية.</li>
+      <li>ولو هتحط لبن، زوّد نص معلقة.</li>
+    </ul>
+  </article>
+</main>
+<footer><p>© ٢٠٢٦ مجلة «فنجان»</p></footer>
+<script src="swap.js"></script>
+</body>
+</html>
+~~~
+
+~~~css classic.css
+/* «كلاسيك»: paper, a serif face, a narrow column, everything centred like a printed magazine */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #f5efe0; color: #3b2f22; font: 19px/1.9 "Amiri", "Traditional Arabic", "Times New Roman", serif; }
+header, footer { padding: 12px 16px; text-align: center; border-block: 3px double #8b6f47; }
+header p { margin: 0; font-size: 22px; letter-spacing: 0; font-weight: 700; }
+main { max-width: 620px; margin: 32px auto; padding-inline: 16px; }
+h1 { text-align: center; font-size: 34px; line-height: 1.4; border-block-end: 1px solid #8b6f47; padding-block-end: 12px; }
+h2 { font-size: 24px; color: #7c2d12; }
+blockquote { margin: 24px 0; padding: 8px 24px; border-inline: 1px solid #8b6f47; text-align: center; font-style: italic; }
+footer { font-size: 15px; }
+button { margin-block-start: 8px; padding: 4px 16px; border: 1px solid #3b2f22; background: transparent; color: inherit; font: inherit; font-size: 15px; cursor: pointer; }
+~~~
+
+~~~css modern.css
+/* «مودرن»: dark, a sans face, big bold headings with a coloured bar, cards with rounded corners */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #0b1120; color: #e2e8f0; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; background: #111827; }
+header p { margin: 0; font-weight: 800; color: #fbbf24; }
+main { max-width: 760px; margin: 24px auto; padding-inline: 16px; }
+article { padding: 24px; border-radius: 20px; background: #111827; }
+h1 { margin-block-start: 0; font-size: clamp(28px, 6vw, 44px); line-height: 1.2; background: linear-gradient(90deg, #fbbf24, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+h2 { font-size: 20px; padding-inline-start: 12px; border-inline-start: 4px solid #f472b6; }
+blockquote { margin: 20px 0; padding: 16px 20px; border-radius: 14px; background: #1f2937; font-size: 20px; font-weight: 700; color: #fbbf24; }
+blockquote p { margin: 0; }
+li::marker { color: #f472b6; }
+footer { padding: 16px; text-align: center; color: #94a3b8; }
+button { padding: 6px 14px; border: 0; border-radius: 999px; background: #fbbf24; color: #0b1120; font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid #f472b6; outline-offset: 2px; }
+~~~
+
+~~~js swap.js
+// the extra task: switch the stylesheet without a reload and remember the choice.
+// without JavaScript the button stays hidden and the page keeps the classic look.
+const link = document.getElementById('theme');
+const btn = document.getElementById('swap');
+const KEY = 'fingan-theme';
+
+function use(name) {
+  link.href = name + '.css';
+  btn.textContent = name === 'classic' ? 'جرّب الشكل المودرن' : 'ارجع للشكل الكلاسيك';
+}
+let saved = null;
+try { saved = localStorage.getItem(KEY); } catch {}
+use(saved === 'modern' ? 'modern' : 'classic');
+btn.hidden = false;
+
+btn.addEventListener('click', () => {
+  const next = link.href.endsWith('classic.css') ? 'modern' : 'classic';
+  use(next);
+  try { localStorage.setItem(KEY, next); } catch {}
+});
+~~~
+
+~~~view 560 1100 الشكل الكلاسيك
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إزاي تعمل كوباية شاي مظبوطة</title>
+<style id="classic">
+/* «كلاسيك»: paper, a serif face, a narrow column, everything centred like a printed magazine */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #f5efe0; color: #3b2f22; font: 19px/1.9 "Amiri", "Traditional Arabic", "Times New Roman", serif; }
+header, footer { padding: 12px 16px; text-align: center; border-block: 3px double #8b6f47; }
+header p { margin: 0; font-size: 22px; letter-spacing: 0; font-weight: 700; }
+main { max-width: 620px; margin: 32px auto; padding-inline: 16px; }
+h1 { text-align: center; font-size: 34px; line-height: 1.4; border-block-end: 1px solid #8b6f47; padding-block-end: 12px; }
+h2 { font-size: 24px; color: #7c2d12; }
+blockquote { margin: 24px 0; padding: 8px 24px; border-inline: 1px solid #8b6f47; text-align: center; font-style: italic; }
+footer { font-size: 15px; }
+button { margin-block-start: 8px; padding: 4px 16px; border: 1px solid #3b2f22; background: transparent; color: inherit; font: inherit; font-size: 15px; cursor: pointer; }
+</style>
+</head>
+<body>
+<header>
+  <p>مجلة «فنجان» (اسم متخيل)</p>
+  <button type="button" id="swap" hidden>بدّل الشكل</button>
+</header>
+<main>
+  <article>
+    <h1>إزاي تعمل كوباية شاي مظبوطة</h1>
+    <p>الشاي سهل، بس الفرق بين كوباية عادية وكوباية مظبوطة في تلات حاجات صغيرة: المية، والوقت، والكمية.</p>
+    <h2>١. المية</h2>
+    <p>المية تغلي وتسيبها نص دقيقة. المية اللي بتفور لسه بتحرق الورق وتطلّع طعم مر.</p>
+    <h2>٢. الوقت</h2>
+    <p>تلات لأربع دقايق للشاي الأسود. أكتر من كده بيطلع التانين والطعم بيقلب.</p>
+    <blockquote><p>الشاي الحلو مش محتاج سكر كتير، محتاج صبر شوية.</p></blockquote>
+    <h2>٣. الكمية</h2>
+    <ul>
+      <li>معلقة صغيرة لكل كوباية.</li>
+      <li>ولو هتحط لبن، زوّد نص معلقة.</li>
+    </ul>
+  </article>
+</main>
+<footer><p>© ٢٠٢٦ مجلة «فنجان»</p></footer>
+
+</body>
+</html>
+~~~
+
+~~~view 560 1100 نفس الـ HTML بالشكل المودرن
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إزاي تعمل كوباية شاي مظبوطة</title>
+<style id="classic">
+/* «مودرن»: dark, a sans face, big bold headings with a coloured bar, cards with rounded corners */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #0b1120; color: #e2e8f0; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; background: #111827; }
+header p { margin: 0; font-weight: 800; color: #fbbf24; }
+main { max-width: 760px; margin: 24px auto; padding-inline: 16px; }
+article { padding: 24px; border-radius: 20px; background: #111827; }
+h1 { margin-block-start: 0; font-size: clamp(28px, 6vw, 44px); line-height: 1.2; background: linear-gradient(90deg, #fbbf24, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+h2 { font-size: 20px; padding-inline-start: 12px; border-inline-start: 4px solid #f472b6; }
+blockquote { margin: 20px 0; padding: 16px 20px; border-radius: 14px; background: #1f2937; font-size: 20px; font-weight: 700; color: #fbbf24; }
+blockquote p { margin: 0; }
+li::marker { color: #f472b6; }
+footer { padding: 16px; text-align: center; color: #94a3b8; }
+button { padding: 6px 14px; border: 0; border-radius: 999px; background: #fbbf24; color: #0b1120; font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid #f472b6; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <p>مجلة «فنجان» (اسم متخيل)</p>
+  <button type="button" id="swap" hidden>بدّل الشكل</button>
+</header>
+<main>
+  <article>
+    <h1>إزاي تعمل كوباية شاي مظبوطة</h1>
+    <p>الشاي سهل، بس الفرق بين كوباية عادية وكوباية مظبوطة في تلات حاجات صغيرة: المية، والوقت، والكمية.</p>
+    <h2>١. المية</h2>
+    <p>المية تغلي وتسيبها نص دقيقة. المية اللي بتفور لسه بتحرق الورق وتطلّع طعم مر.</p>
+    <h2>٢. الوقت</h2>
+    <p>تلات لأربع دقايق للشاي الأسود. أكتر من كده بيطلع التانين والطعم بيقلب.</p>
+    <blockquote><p>الشاي الحلو مش محتاج سكر كتير، محتاج صبر شوية.</p></blockquote>
+    <h2>٣. الكمية</h2>
+    <ul>
+      <li>معلقة صغيرة لكل كوباية.</li>
+      <li>ولو هتحط لبن، زوّد نص معلقة.</li>
+    </ul>
+  </article>
+</main>
+<footer><p>© ٢٠٢٦ مجلة «فنجان»</p></footer>
+
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** نفس الكلام بالظبط مرتين. «كلاسيك»: ورق بيج، وخط serif، وعمود ضيق في النص، والاقتباس بين خطين زي المجلات المطبوعة. «مودرن»: خلفية كحلي، وخط sans، والعنوان بتدرّج من الأصفر للبمبي، والمقال جوه كارت مدور، والاقتباس كارت لوحده.
+
+**الفكرة:** الـ HTML بيقول **إيه** الكلام (عنوان، فقرة، اقتباس، لستة). والـ CSS بيقول **شكله** إيه. لو الـ HTML مكتوب صح (من غير [[<font>]] ولا [[style=""]] ولا [[<br>]] للمسافات)، تقدر تغيّر شكله كله من غير ما تلمسه. ده بالظبط اللي مسابقة CSS Zen Garden بتثبته.
+
+**التبديل يدوي:** غيّر [[href="classic.css"]] لـ [[href="modern.css"]] واعمل Refresh.
+
+**الزرار (المهمة الزيادة):**
+- الزرار عليه [[hidden]] في الـ HTML، والـ JavaScript هو اللي بيظهّره. كده لو الـ JS ما اشتغلش مش هيبقى في زرار مبيعملش حاجة.
+- [[link.href = name + '.css']] بيغيّر الملف، والمتصفح بيحمّل الجديد ويرسم على طول من غير reload.
+- الاختيار بيتحفظ في [[localStorage]] جوه [[try]]، لأن بعض المتصفحات (والـ iframe المقفول) بترمي error لما تلمسه.
+
+**حاجة اتقاست:** لما الاختيار المحفوظ «مودرن»، الصفحة بتطلب [[classic.css]] الأول (هو اللي مكتوب في الـ HTML)، وبعدين الـ JS بيبدّله. على نت بطيء ممكن تشوف لمحة من الكلاسيك قبل ما يتغيّر. الحل: سكربت صغير جوه الـ [[<head>]] قبل الـ link، بيقرا الاختيار ويكتب الـ href الصح قبل ما المتصفح يرسم. ده في كورس JavaScript.
+
+~~~text الناتج (Chrome)
+أول فتحة          href = classic.css   الخلفية rgb(245, 239, 224)   الخط Amiri       الزرار «جرّب الشكل المودرن»
+بعد الضغط         href = modern.css    الخلفية rgb(11, 17, 32)      الخط system-ui   الزرار «ارجع للشكل الكلاسيك»
+localStorage      fingan-theme = modern
+Refresh           href = modern.css، والطلبات بالترتيب: classic.css  swap.js  modern.css
+scrollWidth = clientWidth في الشكلين على 800
+axe: 0 violations في الشكلين   الـ validator: مفيش رسايل   CSS validator: No Error Found للملفين
+~~~` },
       ],
       l: 1,
       n: "الـ selector بيختار، والـ cascade بيقرر مين يكسب، والـ box model بيحسب المساحة",
