@@ -133,6 +133,14 @@
 - [ ] استبعاد مقترح: Column combinator `||` (مفيش متصفح)، و `<frequency>` و `<frequency-percentage>` و `Hz` و `kHz` (مفيش خاصية بتستخدمهم)، و `param()`. متعلّمين في صفوف جداول.
 - [ ] باقي المنهج (١٧٤ بند): البند ٧ (layout)، و ٨ (transforms والحركة)، و ٩ (Accessibility)، و ١٠ (SVG في CSS ومتفرقات)، وبعدهم ١١.
 
+**وقفة مؤقتة (١٩ نوفمبر، ٣ العصر) بطلب صاحب المشروع: «نكمل من وقت ما خلصنا مش نبدا من الاول».** الحالة بالظبط:
+- **المرفوع:** لحد commit `a4b627b`. الكورس ١٠٠٦ من ١١٨٠ (٨٥٪). الوحدات الجديدة المرفوعة: 22–32.
+- **مش مرفوع ومحفوظ على الجهاز:** `js/tabs/css/33.js` («CSS: الـ flow والمقاسات والـ overflow»، بيتحمّل بعد 07): **٧ دروس مكتوبين** (`normal flow و margin collapsing`، `float و clear`، `min-width و max-width`، `overflow`، `margin-block و inset-inline`، `place-items و align-self`، `flex-flow و grid-template`)، حوالي ٢٧٠٠ سطر، وبيعدّي `npm run check` و `work-check` (٣٢٤ تمرين). ومعاه تعديل `index.html` (سطر تحميل 33.js) و `js/meta.js` و `js/search-index.js`، كلهم مش متعملهم commit.
+- **فاضل في الوحدة 33** (من الـ brief بتاعها): `columns` (multi-column)، و `table-layout و caption-side`، و `content-visibility و will-change`، و `appearance` وتنسيق الفورم (مهارات ٣.٩.١–٣.٩.٥)، وفحص الـ CSS بالـ validator و DevTools (٣.١٠.٢–٣.١٠.٦ و ٢.٩.٣)، وجدول الـ scroll-snap longhands، وسلّمة المشاريع (طريق واحد لصفحة أخبار عربي متخيلة)، وبعدها خطوات «Finish» والتقرير والـ `at` mappings (ومنها `prop:--*` ← «CSS variables»).
+- **إزاي تكمّل:** agent واحد بـ Opus، يتقاله: الملف 33.js فيه ٧ دروس متكتبين، اقرا آخره وكمّل الباقي من غير ما تعيد كتابة حاجة، بنفس تعليمات `tools/syllabus-brief.md` (النموذج: `js/tabs/css/32.js`). وبعدها: وحدة transforms والحركة، ووحدة أساس الـ accessibility ومتفرقات SVG، وبعدهم البند ١١.
+- [ ] **فحص `lessons` على GitHub لسه أحمر في job الـ render:** «css › inherit و initial و revert — [[ أو ]] ظاهرين». استبعاد `textarea` من الفحص (a4b627b) محلّهاش، يعني العلامة ظاهرة في حتة تانية في الدرس ده (نص بيتعرض من غير ما يعدّي على `fmt`، أو كود جواه `]]` برّه `.term`). يتفتح الدرس في المتصفح ويتدوّر على text node فيه `[[` أو `]]` برّه code و pre و textarea. و `check` و `release` أخضر.
+- [ ] فشل عارض في `lessons`: «node › --cpu-prof و profiling» على windows و «diag › GOMEMLIMIT والـ CPU» على ubuntu (قياسات وقت): لو اتكرر يتراجع الـ `ci` بتاعهم.
+
 **ترتيب الكتابة (كل دفعة وحدة أو اتنين، بكل حاجة: شرح وتمارين بحلول حية وسلّمة مشاريع بحلول، وبعدها `node tools/syllabus.js css --write`):**
 
 1. **HTML: الكلام والقوايم واللينكات** (أكبر فجوة): ul و ol و dl، و strong و em و b و i و u و s و mark و small، و blockquote و q و cite، و abbr و dfn و address و time و data، و code و pre و kbd و samp و var، و sub و sup و del و ins، و ruby و bdo و wbr و br و hr، و entities، والمسارات (مطلق ونسبي) و download وقيم rel كلها، و figure و figcaption، و h1–h6 و hgroup و search و menu.
