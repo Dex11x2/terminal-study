@@ -1,6 +1,6 @@
-# منهج HTML و CSS (css): 1103 من 1180 بند متغطي (93٪)
+# منهج HTML و CSS (css): 1179 من 1180 بند متغطي (99٪)
 
-اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 207 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
+اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 217 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
 
 | النوع | في المنهج | متغطي | مذكور من غير شرح | ناقص خالص | مستبعد بسبب |
 |---|---|---|---|---|---|
@@ -8,70 +8,17 @@
 | attributes | 145 | 145 | 0 | 0 | 1 |
 | أنواع input | 22 | 22 | 0 | 0 | 0 |
 | قيم rel | 27 | 27 | 0 | 0 | 3 |
-| خصائص CSS | 422 | 382 | 11 | 29 | 251 |
+| خصائص CSS | 422 | 422 | 0 | 0 | 251 |
 | selectors | 88 | 88 | 0 | 0 | 56 |
-| at-rules | 16 | 15 | 1 | 0 | 3 |
-| دوال CSS | 93 | 70 | 7 | 16 | 14 |
+| at-rules | 16 | 16 | 0 | 0 | 3 |
+| دوال CSS | 93 | 92 | 0 | 1 | 14 |
 | وحدات | 62 | 62 | 0 | 0 | 0 |
-| أنواع القيم | 37 | 35 | 0 | 2 | 2 |
-| مهارات (MDN Curriculum) | 155 | 144 | 0 | 11 | 0 |
+| أنواع القيم | 37 | 37 | 0 | 0 | 2 |
+| مهارات (MDN Curriculum) | 155 | 155 | 0 | 0 | 0 |
 
-## خصائص CSS: ناقص 40
+## دوال CSS: ناقص 1
 
-- **CSS Animations** ناقص: `animation-composition`
-- **CSS Transforms** ناقص: `backface-visibility` `perspective` `perspective-origin` `transform-box` `transform-style`. مذكور من غير شرح: `transform-origin` (5)
-- **Scalable Vector Graphics** ناقص: `color-interpolation` `cx` `cy` `fill-opacity` `fill-rule` `marker-end` `marker-mid` `marker-start` `path-length` `rx` `ry` `shape-rendering` `stroke-miterlimit` `stroke-opacity` `text-anchor` `text-rendering`. مذكور من غير شرح: `paint-order` (1) `r` (3) `stroke-dasharray` (2) `stroke-dashoffset` (2) `stroke-linecap` (2) `stroke-linejoin` (2) `vector-effect` (1) `x` (7) `y` (5)
-- **Motion Path** ناقص: `offset-anchor` `offset-distance` `offset-path` `offset-position` `offset-rotate`. مذكور من غير شرح: `offset` (3)
-- **CSS Transitions** ناقص: `transition-timing-function`
-- **CSS View Transitions** ناقص: `view-transition-class`
-
-## at-rules: ناقص 1
-
-- **CSS Transitions** مذكور من غير شرح: `@starting-style` (3)
-
-## دوال CSS: ناقص 23
-
-- **CSS Easing Functions** ناقص: `linear()` `steps()`. مذكور من غير شرح: `cubic-bezier()` (2)
-- **CSS Transforms** ناقص: `matrix3d()` `perspective()` `rotate3d()` `rotateX()` `rotateY()` `rotateZ()` `scale3d()` `scaleZ()` `skew()` `skewX()` `skewY()` `translate3d()`. مذكور من غير شرح: `matrix()` (7) `rotate()` (9) `scaleX()` (3) `scaleY()` (2) `translate()` (1) `translateZ()` (2)
 - **CSS Values and Units** ناقص: `param()`
-- **Motion Path** ناقص: `ray()`
-
-## أنواع القيم: ناقص 2
-
-- **CSS Easing Functions** ناقص: `<easing-function>`
-- **CSS Transforms** ناقص: `<transform-function>`
-
-## مهارات (MDN Curriculum): ناقص 11
-
-**1. Transform & animate CSS › 0 الموديول كله**
-
-- `out:transform-and-animate-css/0.3` Common transforms — scaling, rotation, and translation. ← no lesson on transform: scale/rotate/translate (only translateY inside the transition lesson)
-- `out:transform-and-animate-css/0.4` 3D transforms, and how 3D positioning/perspective is handled on the web. ← 3D transforms, perspective, preserve-3d not taught
-
-**2. Semantic HTML › 2.2 Good document structure**
-
-- `out:semantic-html/2.2.4` SEO benefits: for example, keywords are boosted in headings. ← headings as an outline are taught in «h1 لحد h6» (SEO part from docs, §٦); confirm the SEO claim wording before mapping
-
-**7. Accessibility › 7.1 Accessibility basics**
-
-- `out:accessibility/7.1.1` Understand the point of accessibility — increased usability for everyone, better SEO, and a wider target audience. Also, be aware of the legal requirements. ← no lesson on why accessibility matters (audience, SEO, legal)
-- `out:accessibility/7.1.2` Understand that accessibility should be considered from the start of a project, and not bolted on at the end. ← accessibility-from-the-start principle not taught
-- `out:accessibility/7.1.5` Accessible best practices: (6 نقطة فرعية) ← alt/labels/tables taught in separate lessons; good link text and plain language absent
-
-**7. Accessibility › 7.2 Accessible styling**
-
-- `out:accessibility/7.2.1` Text sizing and layout: (3 نقطة فرعية) ← partly taught in «rem و em › لما المستخدم يكبّر الخط من الإعدادات»: needs a real section
-
-**7. Accessibility › 7.3 Accessible JavaScript**
-
-- `out:accessibility/7.3.1` Understand that there is such a thing as too much JavaScript. A simpler approach is usually more accessible, and often better for everyone. ← too much JavaScript concept not taught
-- `out:accessibility/7.3.2` Understand the value of unobtrusive JavaScript: (2 نقطة فرعية) ← unobtrusive JavaScript / progressive enhancement not taught
-- `out:accessibility/7.3.3` Use events sensibly so you don't lock out specific control types. For example, mouse-specific events such as mouseover and mouseout could lock out keyboard or touchscreen users. ← sensible event choice (mouseover vs keyboard/touch) not taught
-
-**7. Accessibility › 7.4 Assistive technology**
-
-- `out:accessibility/7.4.1` Screen readers and other assistive technology (AT) types: (12 نقطة فرعية) ← screen readers touched, but no overview of AT types (magnifiers, braille, voice, switch) or source order
-
 
 ## مستبعد أوتوماتيك (من حالة المرجع)
 

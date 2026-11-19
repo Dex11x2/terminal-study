@@ -4294,6 +4294,11 @@
   "date": "2026-11-18",
   "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
  },
+ "css|JavaScript مبيقفلش على حد": {
+  "hash": "b16b3c39b4e3",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
+ },
  "css|SVG": {
   "hash": "a9c294050f44",
   "date": "2026-11-04",
@@ -4484,10 +4489,20 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|cubic-bezier و steps و linear": {
+  "hash": "959cf75b596c",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
+ },
  "css|cva": {
   "hash": "3214dae43264",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|cx و cy و marker": {
+  "hash": "d637ec7bed58",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
  },
  "css|dark mode": {
   "hash": "f2c159da3a3a",
@@ -4804,6 +4819,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|offset-path": {
+  "hash": "80756010b518",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
+ },
  "css|outline و box-shadow": {
   "hash": "2d7b5efddd90",
   "date": "2026-11-19",
@@ -4813,6 +4833,11 @@
   "hash": "72585d99c0bd",
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
+ },
+ "css|perspective و rotateX": {
+  "hash": "4775d3d4a624",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
  },
  "css|picture": {
   "hash": "8fcd2ac8b80b",
@@ -4944,6 +4969,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|stroke-dasharray و fill-rule": {
+  "hash": "ec935f8ca614",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
+ },
  "css|strong و em": {
   "hash": "ff5cb76962a4",
   "date": "2026-11-18",
@@ -4998,6 +5028,16 @@
   "hash": "0fac6a925368",
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
+ },
+ "css|transform-origin و skew و matrix": {
+  "hash": "4307d4cfe8f5",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
+ },
+ "css|transform: translate و scale و rotate": {
+  "hash": "aa53d9c3611f",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
  },
  "css|transition و @keyframes": {
   "hash": "651e5a2621c4",
@@ -5099,6 +5139,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|تكبير الخط و prefers-reduced-motion": {
+  "hash": "d52b37769da2",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
+ },
  "css|توقّع الـ cascade": {
   "hash": "50d920e12cb5",
   "date": "2026-11-04",
@@ -5168,6 +5213,11 @@
   "hash": "84813c6a8428",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|ليه الـ accessibility": {
+  "hash": "007649656b7c",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
  },
  "css|مراحل الرسم": {
   "hash": "6ac90ba685a0",
