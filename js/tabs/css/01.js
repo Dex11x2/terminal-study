@@ -29,12 +29,903 @@ npm run dev`,
     {
       t: "HTML: هيكل الصفحة ومعناها",
       projects: [
-        { lvl: 'صغير', t: R`كارت منيو لمطعم متخيل`, what: R`صفحة واحدة لـ «مطعم الزيتونة» (اسم متخيل) بـ HTML بس من غير CSS: هيكل كامل ([[<!doctype html>]] و [[lang="ar" dir="rtl"]] و charset و viewport)، و h1 باسم المطعم، وفقرة، ولينك اتصال [[tel:]]، وصورة ليها [[alt]] بيوصفها، وزرار «اطلب». من دروس «مقدمة HTML» و «<!doctype html>» و «a و button».`, done: R`[[document.compatMode]] بيرجّع [[CSS1Compat]]، و [[document.characterSet]] بيرجّع [[UTF-8]]، والـ validator على validator.w3.org/nu مبيطلّعش ولا error، ولو غيّرت اسم ملف الصورة غلط الـ alt بيظهر مكانها.` },
-        { lvl: 'صغير', t: R`صفحة 404 لمتجر قهوة`, what: R`صفحة «الصفحة دي مش موجودة» لمتجر قهوة متخيل: عنوان، وجملة فيها كود الطلب بالإنجليزي جوه [[<bdi>]]، ولينك للرئيسية، ولينك للمنيو، وزرار [[type="button"]] «ارجع لورا» بيعمل [[history.back()]]. من دروس «lang و dir» و «a و button».`, done: R`بالكيبورد بس (Tab و Enter) توصل للتلاتة وتشغّلهم، والكود الإنجليزي بيتعرض بنفس ترتيب الحروف اللي كتبتها، وتاب Accessibility بيقول إن الزرار role [[button]] واللينكات role [[link]].` },
-        { lvl: 'متوسط', t: R`صفحة هبوط لعيادة أسنان متخيلة`, what: R`صفحة طويلة من ٧ أجزاء (الهيرو، والخدمات، والخطوات، والأطبا، والأسعار، والأسئلة، والتواصل)، كل جزء [[<section id="...">]] وجواه h2، و nav في الـ header فيه لينك لكل جزء بـ [[href="#prices"]]، وآراء العملا بـ [[<figure>]] و [[<blockquote>]] و [[<figcaption>]]، وصور بـ width و height و lazy للي تحت. ده نفس هيكل أي landing page حقيقية. من دروس الوحدة كلها.`, done: R`شجرة الـ accessibility فيها banner و navigation و main و contentinfo، و h1 واحد و ٧ h2 من غير ما تنط مستوى، وكل لينك في الـ nav بيودّي للجزء بتاعه، و axe DevTools بيطلّع صفر violations، و Network بيورّي إن الصور اللي تحت محمّلتش قبل ما تنزل لها.` },
-        { lvl: 'متوسط', t: R`صفحة تسجيل في جيم متخيل`, what: R`فورم اشتراك لـ «جيم الأبطال»: الاسم، والموبايل ([[type="tel"]] و [[autocomplete="tel"]] و [[dir="ltr"]])، والإيميل، وكلمة السر ([[new-password]] و minlength)، و checkbox الشروط، وزرار إرسال، وتحته لينك «عندك حساب؟ ادخل». كل حقل ليه label مربوط. من دروس «form و label» و «a و button».`, done: R`الضغط على أي label بيركّز في الحقل بتاعه، وإرسال الفورم فاضي بيوقف عند أول حقل برسالة المتصفح، ولما تملاه كله و [[method="get"]] الـ URL بيبان فيه كل [[name]] بقيمته ومفيهوش حقل من غير name، و Chrome بيعرض يملا الاسم والإيميل لوحده.` },
-        { lvl: 'كبير', t: R`موقع مكتبة متخيلة بـ HTML بس (٣ صفحات)`, what: R`موقع «مكتبة الحروف» (اسم متخيل): رئيسية (هيرو، وكتب مختارة كل كتاب [[<article>]]، وآراء القرّاء بـ figure و blockquote)، وصفحة كتاب (صورة الغلاف بـ srcset و sizes، وعنوان إنجليزي جوه [[<bdi>]]، وزرار «احجز نسخة»)، وصفحة تواصل (فورم بـ labels و autocomplete). نفس الـ header والـ nav والـ footer في التلاتة، والـ nav فيه [[aria-current="page"]] على الصفحة الحالية. يجمع الوحدة كلها، ومن غير ولا سطر CSS، عشان تشوف إن الهيكل لوحده بيشتغل.`, done: R`التلات صفحات صفر errors في الـ validator، و axe صفر violations، وتقدر تتنقل في الموقع كله وتبعت الفورم بالكيبورد بس، و Lighthouse Accessibility ٩٥ أو أكتر في كل صفحة، وعلى عرض 360 مفيش scroll أفقي، وصورة الغلاف بتحمّل ملف أصغر على الموبايل من الكمبيوتر (شوفه في Network).`, ext: R`لما توصل لوحدة CSS زوّد تصميم من غير ما تغيّر ولا عنصر في الـ HTML: لو احتجت تغيّر الهيكل عشان التصميم، يبقى الهيكل كان غلط.` },
-        { lvl: 'فكرة', t: R`صفحتك انت: بورتفوليو HTML`, what: R`صفحة عنك: مين انت، وشغلك (كل مشروع article بعنوان ولينك)، والمهارات في قايمة، وتواصل (إيميل بـ mailto وفورم صغير). انت اللي بتختار الأجزاء وترتيبها.`, done: R`الـ validator و axe نضاف، وفيه h1 واحد، وكل لينك خارجي عليه [[rel="noopener noreferrer"]]، وواحد صاحبك فتحها من الموبايل وقدر يبعتلك رسالة.`, ext: R`زوّد نسخة إنجليزي بـ [[lang="en" dir="ltr"]] ولينك بين النسختين بـ [[hreflang]]، وارفعها على GitHub Pages برابط حقيقي.` },
+        { lvl: 'صغير', dir: "zaytouna-menu", t: R`كارت منيو لمطعم متخيل`, what: R`صفحة واحدة لـ «مطعم الزيتونة» (اسم متخيل) بـ HTML بس من غير CSS: هيكل كامل ([[<!doctype html>]] و [[lang="ar" dir="rtl"]] و charset و viewport)، و h1 باسم المطعم، وفقرة، ولينك اتصال [[tel:]]، وصورة ليها [[alt]] بيوصفها، وزرار «اطلب». من دروس «مقدمة HTML» و «<!doctype html>» و «a و button».`, done: R`[[document.compatMode]] بيرجّع [[CSS1Compat]]، و [[document.characterSet]] بيرجّع [[UTF-8]]، والـ validator على validator.w3.org/nu مبيطلّعش ولا error، ولو غيّرت اسم ملف الصورة غلط الـ alt بيظهر مكانها.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مطعم الزيتونة: المنيو</title>
+</head>
+<body>
+<main>
+  <h1>مطعم الزيتونة</h1>
+  <img src="logo.svg" alt="لوجو المطعم: زيتونة خضرا جوه دايرة" width="120" height="120">
+  <p>أكل بيتي كل يوم من ١٢ الضهر لـ ١٢ بالليل: فول وطعمية الصبح، ومحشي وملوخية على الغدا.</p>
+  <p>للطلب كلمنا على <a href="tel:+20225550147">0225550147</a></p>
+  <button type="button">اطلب</button>
+</main>
+</body>
+</html>
+~~~
+
+واعمل جنب [[index.html]] ملف اسمه [[logo.svg]] (ملف SVG ده كود صورة، بيتفتح في VS Code زي أي ملف نص) وحط فيه:
+
+~~~xml logo.svg
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="#557a2b"/><ellipse cx="60" cy="60" rx="22" ry="34" fill="#a3c45a"/></svg>
+~~~
+
+~~~view 330 400 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مطعم الزيتونة: المنيو</title>
+</head>
+<body>
+<main>
+  <h1>مطعم الزيتونة</h1>
+  <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20120%20120%22%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2260%22%20r%3D%2256%22%20fill%3D%22%23557a2b%22%2F%3E%3Cellipse%20cx%3D%2260%22%20cy%3D%2260%22%20rx%3D%2222%22%20ry%3D%2234%22%20fill%3D%22%23a3c45a%22%2F%3E%3C%2Fsvg%3E" alt="لوجو المطعم: زيتونة خضرا جوه دايرة" width="120" height="120">
+  <p>أكل بيتي كل يوم من ١٢ الضهر لـ ١٢ بالليل: فول وطعمية الصبح، ومحشي وملوخية على الغدا.</p>
+  <p>للطلب كلمنا على <a href="tel:+20225550147">0225550147</a></p>
+  <button type="button">اطلب</button>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** صفحة بيضا من غير أي تنسيق: العنوان كبير وتقيل، وتحته دايرة خضرا جواها زيتونة فاتحة، وبعدها فقرتين، والرقم لينك أزرق عليه خط، وتحته زرار رمادي «اطلب». كله على اليمين لأن [[dir="rtl"]].
+
+**ليه كل سطر:**
+- [[<!doctype html>]] أول سطر: من غيره المتصفح بيشتغل في «quirks mode» (طريقة قديمة لصفحات التسعينات)، و [[document.compatMode]] بيبقى [[BackCompat]] بدل [[CSS1Compat]].
+- [[lang="ar"]] بيقول لقارئ الشاشة يقرا بصوت عربي، و [[dir="rtl"]] بيقلب اتجاه الصفحة كلها.
+- [[<meta charset="utf-8">]] لازم ييجي في أول الـ head: من غيره ممكن العربي يطلع رموز غريبة.
+- [[<meta name="viewport">]] عشان الموبايل يعرض الصفحة بعرضه الحقيقي بدل ما يصغّر صفحة عرضها 980px.
+- [[<main>]] حوالين المحتوى: ده المكان اللي قارئ الشاشة بينط له على طول.
+- [[width="120" height="120"]] على الصورة: المتصفح بيحجز مكانها قبل ما تحمّل، فالكلام اللي تحتها مبيتنططش.
+- [[href="tel:+20225550147"]]: على الموبايل بيفتح الاتصال بالرقم. الرقم في الـ href بالصيغة الدولية من غير مسافات، والمكتوب للناس زي ما تحب.
+- [[type="button"]]: زرار مش جوه فورم، فبنقول صراحة إنه مبيبعتش حاجة.
+
+**الغلطات اللي الـ validator و axe مسكوها وأنا بكتب الحل (اتشغّلوا فعلًا):**
+- النسخة الأولى كانت الصورة فيها كود الـ SVG مكتوب جوه الـ [[src]] على طول ([[data:image/svg+xml,<svg ...>]]). الـ validator قال: [[Illegal character after "ta:". "<" is not allowed.]] يعني علامة [[<]] ممنوعة جوه الرابط من غير ما تتحوّل لـ [[%3C]]. الحل الأبسط: الصورة في ملف لوحدها.
+- ومن غير [[<main>]]، axe طلّع [[landmark-one-main]] (الصفحة مفيهاش main) و [[region]] على ٤ عناصر (كلام برّه أي landmark). الـ validator ساكت عن ده لأنه مش غلط في الكتابة، ده غلط في المعنى.
+
+**جرّب الـ alt:** غيّر [[src="logo.svg"]] لـ [[src="logoo.svg"]] واعمل Refresh: مكان الدايرة هيظهر الكلام اللي في الـ alt. وده نفس اللي قارئ الشاشة بيقوله للي مش شايف الصورة.
+
+~~~text الناتج (Chrome، Console)
+document.compatMode       "CSS1Compat"
+document.characterSet     "UTF-8"
+أولاد الـ body             MAIN   وجواه: H1 IMG P P BUTTON
+logo.svg موجود             naturalWidth = 120
+logoo.svg (اسم غلط)         naturalWidth = 0، ومكانها اتكتب: لوجو المطعم: زيتونة خضرا جوه دايرة
+الـ validator               مفيش رسايل
+axe                        0 violations (كانوا 2 قبل <main>)
+~~~` },
+        { lvl: 'صغير', dir: "coffee-404", t: R`صفحة 404 لمتجر قهوة`, what: R`صفحة «الصفحة دي مش موجودة» لمتجر قهوة متخيل: عنوان، وجملة فيها كود الطلب بالإنجليزي جوه [[<bdi>]]، ولينك للرئيسية، ولينك للمنيو، وزرار [[type="button"]] «ارجع لورا» بيعمل [[history.back()]]. من دروس «lang و dir» و «a و button».`, done: R`بالكيبورد بس (Tab و Enter) توصل للتلاتة وتشغّلهم، والكود الإنجليزي بيتعرض بنفس ترتيب الحروف اللي كتبتها، وتاب Accessibility بيقول إن الزرار role [[button]] واللينكات role [[link]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصفحة مش موجودة: بُن الصباح</title>
+</head>
+<body>
+<main>
+  <h1>الصفحة دي مش موجودة</h1>
+  <p>دوّرنا على الطلب رقم <bdi>2048-B</bdi> ومالقيناهوش. يمكن الرابط اتكتب غلط، أو الطلب اتمسح.</p>
+  <p><a href="index.html">الرئيسية</a> · <a href="menu.html">المنيو</a></p>
+  <button type="button" id="back">ارجع لورا</button>
+</main>
+<script>
+  document.getElementById('back').addEventListener('click', () => history.back());
+</script>
+</body>
+</html>
+~~~
+
+~~~view 260 320 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصفحة مش موجودة: بُن الصباح</title>
+</head>
+<body>
+<main>
+  <h1>الصفحة دي مش موجودة</h1>
+  <p>دوّرنا على الطلب رقم <bdi>2048-B</bdi> ومالقيناهوش. يمكن الرابط اتكتب غلط، أو الطلب اتمسح.</p>
+  <p><a href="index.html">الرئيسية</a> · <a href="menu.html">المنيو</a></p>
+  <button type="button" id="back">ارجع لورا</button>
+</main>
+<script>
+  document.getElementById('back').addEventListener('click', () => history.back());
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** عنوان «الصفحة دي مش موجودة»، وتحته جملة فيها رقم الطلب [[2048-B]] مكتوب صح من الشمال لليمين، وسطر فيه لينكين بينهم نقطة، وزرار «ارجع لورا».
+
+**ليه** [[<bdi>]] **هنا بالذات:** الكلام العربي اتجاهه يمين لشمال، والكود الإنجليزي جواه شمال ليمين. المتصفح بيرتّب الحروف بقواعد اسمها bidi، والأرقام والشَرطة ملهمش اتجاه لوحدهم، فبياخدوا اتجاه اللي حواليهم. قسته في Chrome: نفس الجملة من غير [[<bdi>]] الكود بيظهر [[B-2048]]، ومعاه [[2048-B]]. وجرّبت أكواد تانية:
+
+| الكود | من غير bdi بيظهر | مع bdi |
+|---|---|---|
+| [[2048-B]] | [[B-2048]] | [[2048-B]] |
+| [[#2048]] | [[2048#]] | [[#2048]] |
+| [[ORD-2048!]] | [[!ORD-2048]] | [[ORD-2048!]] |
+| [[B-2048]] | [[B-2048]] | [[B-2048]] |
+
+يعني المشكلة بتظهر لما الكلام الإنجليزي يبدأ برقم أو يخلص بعلامة. ومش هتعرف الكود اللي جاي من قاعدة البيانات شكله إيه، فأي كلام جاي من برّه (اسم مستخدم، كود طلب، اسم ملف) حطه في [[<bdi>]].
+
+**الزرار:** [[history.back()]] بترجّعك للصفحة اللي كنت فيها، زي زرار الرجوع في المتصفح. والسكربت بيستخدم [[addEventListener]] مش [[onclick="..."]] جوه الـ HTML، عشان الكود يفضل في مكان واحد (ده هيتشرح في كورس JavaScript). و [[type="button"]] عشان ده زرار بيعمل حاجة، مش لينك بيودّي لصفحة.
+
+**الغلطة الشائعة:** تعمل «ارجع لورا» كـ [[<a href="#">]]. ده بيبان لقارئ الشاشة «link» وهو مش بيودّي لأي مكان، و Enter بس اللي بتشغّله (المسافة لأ).
+
+~~~text الناتج (Chrome)
+Tab 1   <a href="index.html">الرئيسية</a>
+Tab 2   <a href="menu.html">المنيو</a>
+Tab 3   <button type="button" id="back">ارجع لورا</button>
+ضغطة الزرار بعد ما جيت من صفحة المنيو    رجّعني لـ zaytouna-menu/index.html
+
+شجرة الـ accessibility:
+  main
+    heading "الصفحة دي مش موجودة" level=1
+    link "الرئيسية"   link "المنيو"
+    button "ارجع لورا"
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "smile-clinic", t: R`صفحة هبوط لعيادة أسنان متخيلة`, what: R`صفحة طويلة من ٧ أجزاء (الهيرو، والخدمات، والخطوات، والأطبا، والأسعار، والأسئلة، والتواصل)، كل جزء [[<section id="...">]] وجواه h2، و nav في الـ header فيه لينك لكل جزء بـ [[href="#prices"]]، وآراء العملا بـ [[<figure>]] و [[<blockquote>]] و [[<figcaption>]]، وصور بـ width و height و lazy للي تحت. ده نفس هيكل أي landing page حقيقية. من دروس الوحدة كلها.`, done: R`شجرة الـ accessibility فيها banner و navigation و main و contentinfo، و h1 واحد في الهيرو و h2 لكل جزء من الـ ٦ التانيين من غير ما تنط مستوى، وكل لينك في الـ nav بيودّي للجزء بتاعه، و axe DevTools بيطلّع صفر violations. وفي Network (و Disable cache متعلّم): صورة الهيرو بتتحمّل على طول، ولو حطيت مؤقتًا [[<div style="height: 3000px"></div>]] قبل قسم الأطبا صورهم مش بتتحمّل لحد ما تنزل لها.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة لطب الأسنان</title>
+</head>
+<body>
+<header>
+  <p><a href="#top">عيادة ابتسامة</a></p>
+  <nav aria-label="أجزاء الصفحة">
+    <ul>
+      <li><a href="#services">الخدمات</a></li>
+      <li><a href="#steps">الخطوات</a></li>
+      <li><a href="#doctors">الأطبا</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#faq">الأسئلة</a></li>
+      <li><a href="#contact">التواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section id="top">
+    <h1>سنانك في إيد أمينة</h1>
+    <p>كشف وتنضيف وتقويم في مكان واحد، ومن غير ما تستنى بالساعات.</p>
+    <img src="img/hero.svg" alt="رسم لسنة بيضا مبتسمة" width="800" height="400">
+    <p><a href="#contact">احجز كشف</a></p>
+  </section>
+
+  <section id="services">
+    <h2>الخدمات</h2>
+    <ul>
+      <li>كشف وأشعة بانوراما</li>
+      <li>تنضيف وتلميع</li>
+      <li>حشو وعلاج عصب</li>
+      <li>تقويم شفاف</li>
+    </ul>
+  </section>
+
+  <section id="steps">
+    <h2>الخطوات</h2>
+    <ol>
+      <li>احجز من الفورم أو بالتليفون.</li>
+      <li>الكشف والأشعة في نفس الزيارة.</li>
+      <li>خطة علاج مكتوبة بالسعر قبل ما نبدأ.</li>
+    </ol>
+  </section>
+
+  <section id="doctors">
+    <h2>الأطبا</h2>
+    <article>
+      <h3>د. سلمى فؤاد</h3>
+      <img src="img/doctor.svg" alt="صورة د. سلمى فؤاد" width="200" height="200" loading="lazy">
+      <p>تقويم الأسنان، ١٢ سنة خبرة.</p>
+    </article>
+    <article>
+      <h3>د. كريم ناجي</h3>
+      <img src="img/doctor.svg" alt="صورة د. كريم ناجي" width="200" height="200" loading="lazy">
+      <p>علاج العصب والحشو التجميلي.</p>
+    </article>
+    <figure>
+      <blockquote>
+        <p>أول مرة أروح لدكتور سنان ومخافش. شرحولي كل خطوة قبل ما يعملوها.</p>
+      </blockquote>
+      <figcaption>منى، من المرضى</figcaption>
+    </figure>
+  </section>
+
+  <section id="prices">
+    <h2>الأسعار</h2>
+    <ul>
+      <li>الكشف والأشعة: ٣٠٠ جنيه</li>
+      <li>التنضيف: ٥٠٠ جنيه</li>
+      <li>الحشو: من ٦٠٠ جنيه</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <h2>الأسئلة</h2>
+    <details>
+      <summary>الكشف بياخد قد إيه؟</summary>
+      <p>حوالي نص ساعة، بالأشعة.</p>
+    </details>
+    <details>
+      <summary>بتقبلوا التأمين؟</summary>
+      <p>أيوه، مع أغلب شركات التأمين الطبي.</p>
+    </details>
+  </section>
+
+  <section id="contact">
+    <h2>التواصل</h2>
+    <p>التليفون: <a href="tel:+20225550199">0225550199</a></p>
+    <address>١٤ شارع النخيل، الدور التاني</address>
+  </section>
+</main>
+
+<footer>
+  <p><small>© ٢٠٢٦ عيادة ابتسامة (اسم متخيل)</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+واعمل فولدر [[img]] جنب [[index.html]] وجواه ملفين SVG:
+
+~~~xml img/hero.svg
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400"><rect width="800" height="400" fill="#e0f2fe"/><path d="M340 120c-40 0-60 30-60 70 0 60 30 130 50 130s20-60 40-60 20 60 40 60 50-70 50-130c0-40-20-70-60-70-20 0-30 10-30 10s-10-10-30-10z" fill="#fff" stroke="#0369a1" stroke-width="8"/></svg>
+~~~
+
+~~~xml img/doctor.svg
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="#f0fdfa"/><circle cx="100" cy="80" r="40" fill="#99f6e4"/><path d="M30 200c0-50 30-75 70-75s70 25 70 75z" fill="#14b8a6"/></svg>
+~~~
+
+~~~view 600 700 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة لطب الأسنان</title>
+</head>
+<body>
+<header>
+  <p><a href="#top">عيادة ابتسامة</a></p>
+  <nav aria-label="أجزاء الصفحة">
+    <ul>
+      <li><a href="#services">الخدمات</a></li>
+      <li><a href="#steps">الخطوات</a></li>
+      <li><a href="#doctors">الأطبا</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#faq">الأسئلة</a></li>
+      <li><a href="#contact">التواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section id="top">
+    <h1>سنانك في إيد أمينة</h1>
+    <p>كشف وتنضيف وتقويم في مكان واحد، ومن غير ما تستنى بالساعات.</p>
+    <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%22400%22%20viewBox%3D%220%200%20800%20400%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23e0f2fe%22%2F%3E%3Cpath%20d%3D%22M340%20120c-40%200-60%2030-60%2070%200%2060%2030%20130%2050%20130s20-60%2040-60%2020%2060%2040%2060%2050-70%2050-130c0-40-20-70-60-70-20%200-30%2010-30%2010s-10-10-30-10z%22%20fill%3D%22%23fff%22%20stroke%3D%22%230369a1%22%20stroke-width%3D%228%22%2F%3E%3C%2Fsvg%3E" alt="رسم لسنة بيضا مبتسمة" width="800" height="400">
+    <p><a href="#contact">احجز كشف</a></p>
+  </section>
+
+  <section id="services">
+    <h2>الخدمات</h2>
+    <ul>
+      <li>كشف وأشعة بانوراما</li>
+      <li>تنضيف وتلميع</li>
+      <li>حشو وعلاج عصب</li>
+      <li>تقويم شفاف</li>
+    </ul>
+  </section>
+
+  <section id="steps">
+    <h2>الخطوات</h2>
+    <ol>
+      <li>احجز من الفورم أو بالتليفون.</li>
+      <li>الكشف والأشعة في نفس الزيارة.</li>
+      <li>خطة علاج مكتوبة بالسعر قبل ما نبدأ.</li>
+    </ol>
+  </section>
+
+  <section id="doctors">
+    <h2>الأطبا</h2>
+    <article>
+      <h3>د. سلمى فؤاد</h3>
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f0fdfa%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%2399f6e4%22%2F%3E%3Cpath%20d%3D%22M30%20200c0-50%2030-75%2070-75s70%2025%2070%2075z%22%20fill%3D%22%2314b8a6%22%2F%3E%3C%2Fsvg%3E" alt="صورة د. سلمى فؤاد" width="200" height="200" loading="lazy">
+      <p>تقويم الأسنان، ١٢ سنة خبرة.</p>
+    </article>
+    <article>
+      <h3>د. كريم ناجي</h3>
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f0fdfa%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%2399f6e4%22%2F%3E%3Cpath%20d%3D%22M30%20200c0-50%2030-75%2070-75s70%2025%2070%2075z%22%20fill%3D%22%2314b8a6%22%2F%3E%3C%2Fsvg%3E" alt="صورة د. كريم ناجي" width="200" height="200" loading="lazy">
+      <p>علاج العصب والحشو التجميلي.</p>
+    </article>
+    <figure>
+      <blockquote>
+        <p>أول مرة أروح لدكتور سنان ومخافش. شرحولي كل خطوة قبل ما يعملوها.</p>
+      </blockquote>
+      <figcaption>منى، من المرضى</figcaption>
+    </figure>
+  </section>
+
+  <section id="prices">
+    <h2>الأسعار</h2>
+    <ul>
+      <li>الكشف والأشعة: ٣٠٠ جنيه</li>
+      <li>التنضيف: ٥٠٠ جنيه</li>
+      <li>الحشو: من ٦٠٠ جنيه</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <h2>الأسئلة</h2>
+    <details>
+      <summary>الكشف بياخد قد إيه؟</summary>
+      <p>حوالي نص ساعة، بالأشعة.</p>
+    </details>
+    <details>
+      <summary>بتقبلوا التأمين؟</summary>
+      <p>أيوه، مع أغلب شركات التأمين الطبي.</p>
+    </details>
+  </section>
+
+  <section id="contact">
+    <h2>التواصل</h2>
+    <p>التليفون: <a href="tel:+20225550199">0225550199</a></p>
+    <address>١٤ شارع النخيل، الدور التاني</address>
+  </section>
+</main>
+
+<footer>
+  <p><small>© ٢٠٢٦ عيادة ابتسامة (اسم متخيل)</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** فوق اسم العيادة لينك، وتحته قايمة فيها ٦ لينكات. بعدها العنوان الكبير «سنانك في إيد أمينة» ورسمة سنة بيضا على خلفية لبني، وبعدين الأجزاء ورا بعض كل واحد بعنوان: الخدمات (نقط)، والخطوات (أرقام)، والأطبا بصورهم، والاقتباس مزحوح لجوه، والأسعار، والأسئلة بتتفتح بالضغط، والعنوان مايل. دوس على «الأسعار» فوق والصفحة هتنزل للجزء ده.
+
+**الهيكل:** [[<header>]] فيه الاسم والـ [[<nav>]]، وبعده [[<main>]] فيه ٧ [[<section>]] كل واحد ليه [[id]]، وفي الآخر [[<footer>]]. الهيرو فيه [[<h1>]] الوحيد، والـ ٦ التانيين كل واحد [[<h2>]]، وكل دكتور [[<article>]] بـ [[<h3>]]: المستويات ورا بعض من غير ما ننط. والـ nav عليه [[aria-label]] عشان لو الصفحة فيها أكتر من nav قارئ الشاشة يفرّق بينهم.
+
+**اللينك للجزء:** [[href="#prices"]] بيدوّر على العنصر اللي [[id="prices"]] وينزل له. والـ [[id]] لازم يبقى فريد في الصفحة.
+
+**الصور:** صورة الهيرو من غير [[loading="lazy"]] لأنها أول حاجة بتبان، ولو أجّلتها الصفحة هتظهر من غيرها. صور الأطبا عليها [[loading="lazy"]].
+
+**فخ قسته وانا بحل:** في Network هتلاقي [[doctor.svg]] اتحمّل على طول مع الصفحة، مش لما تنزل له. ده مش غلط: Chrome بيحمّل الصورة الـ lazy قبل ما توصلها بمسافة عشان تكون جاهزة. قست المسافة دي: صورة على بعد 1200px تحت الشاشة اتحمّلت على طول، و 1300px لأ (وثايق Chrome بتقول 1250px على النت السريع وأكتر على البطيء). صور الأطبا هنا على بعد 284px بس تحت الشاشة. عشان تشوف lazy شغال، حط مؤقتًا [[<div style="height: 3000px"></div>]] قبل قسم الأطبا: الصورة مش هتتحمّل لحد ما تنزل.
+
+**وفخ تاني:** لو فتحت الصفحة وبعدين عملت Refresh عادي، الصورة بتيجي من الذاكرة فهتبان «اتحمّلت» حتى مع الـ div الطويل. علّم على **Disable cache** في Network، أو افتح الصفحة في تاب جديد.
+
+~~~text الناتج (Chrome على 1280×800)
+h1: 1   h2: الخدمات، الخطوات، الأطبا، الأسعار، الأسئلة، التواصل (6)
+sections: top services steps doctors prices faq contact
+كل لينكات الـ nav ليها id موجود: 6 من 6
+landmarks: header nav main footer   axe: 0 violations   الـ validator: مفيش رسايل
+
+الصفحة زي ما هي:       hero.svg اتحمّل، doctor.svg اتحمّل (الصورة top = 1084، والشاشة 800)
+مع div طوله 3000px:    قبل النزول: hero.svg بس   بعد النزول للأطبا: الصورتين اتحمّلوا
+~~~` },
+        { lvl: 'متوسط', dir: "abtal-gym", t: R`صفحة تسجيل في جيم متخيل`, what: R`فورم اشتراك لـ «جيم الأبطال»: الاسم، والموبايل ([[type="tel"]] و [[autocomplete="tel"]] و [[dir="ltr"]])، والإيميل، وكلمة السر ([[new-password]] و minlength)، و checkbox الشروط، وزرار إرسال، وتحته لينك «عندك حساب؟ ادخل». كل حقل ليه label مربوط. من دروس «form و label» و «a و button».`, done: R`الضغط على أي label بيركّز في الحقل بتاعه، وإرسال الفورم فاضي بيوقف عند أول حقل برسالة المتصفح، ولما تملاه كله و [[method="get"]] الـ URL بيبان فيه كل [[name]] بقيمته ومفيهوش حقل من غير name، و Chrome بيعرض يملا الاسم والإيميل لوحده.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اشترك في جيم الأبطال</title>
+</head>
+<body>
+<main>
+  <h1>اشترك في جيم الأبطال</h1>
+  <form method="get">
+    <p>
+      <label for="name">الاسم بالكامل</label><br>
+      <input id="name" name="name" autocomplete="name" required>
+    </p>
+    <p>
+      <label for="phone">الموبايل</label><br>
+      <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required>
+    </p>
+    <p>
+      <label for="email">الإيميل</label><br>
+      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+    </p>
+    <p>
+      <label for="password">كلمة السر (٨ حروف على الأقل)</label><br>
+      <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+    </p>
+    <p>
+      <input id="terms" name="terms" type="checkbox" value="yes" required>
+      <label for="terms">موافق على شروط الاشتراك</label>
+    </p>
+    <button type="submit">اشترك</button>
+  </form>
+  <p>عندك حساب؟ <a href="login.html">ادخل</a></p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 470 520 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اشترك في جيم الأبطال</title>
+</head>
+<body>
+<main>
+  <h1>اشترك في جيم الأبطال</h1>
+  <form method="get">
+    <p>
+      <label for="name">الاسم بالكامل</label><br>
+      <input id="name" name="name" autocomplete="name" required>
+    </p>
+    <p>
+      <label for="phone">الموبايل</label><br>
+      <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required>
+    </p>
+    <p>
+      <label for="email">الإيميل</label><br>
+      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+    </p>
+    <p>
+      <label for="password">كلمة السر (٨ حروف على الأقل)</label><br>
+      <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+    </p>
+    <p>
+      <input id="terms" name="terms" type="checkbox" value="yes" required>
+      <label for="terms">موافق على شروط الاشتراك</label>
+    </p>
+    <button type="submit">اشترك</button>
+  </form>
+  <p>عندك حساب؟ <a href="login.html">ادخل</a></p>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** عنوان «اشترك في جيم الأبطال» وتحته الحقول ورا بعض، كل واحد فوقه اسمه. حقل الموبايل والإيميل الكلام فيهم بيبدأ من الشمال. وبعدين مربع «موافق على شروط الاشتراك» وزرار «اشترك»، وتحتهم «عندك حساب؟ ادخل».
+
+**ليه كده:**
+- كل [[<label for="x">]] مربوط بـ [[<input id="x">]]: الضغط على الكلمة بيركّز في الحقل، وقارئ الشاشة بيقرا الكلمة لما الحقل ياخد focus.
+- [[name]] على كل حقل: ده الاسم اللي بيتبعت. الحقل اللي ملوش name مبيتبعتش خالص، حتى لو مليان.
+- [[type="tel"]] بيفتح كيبورد أرقام على الموبايل، و [[type="email"]] بيفتح كيبورد فيه [[@]] وكمان بيرفض الإيميل اللي من غير [[@]].
+- [[autocomplete]] بيقول للمتصفح الحقل ده إيه، فيقدر يملاه لوحده. و [[new-password]] بيخلي المتصفح يقترح كلمة سر جديدة قوية بدل ما يملا القديمة.
+- [[dir="ltr"]] على الموبايل والإيميل لأنهم أرقام وحروف إنجليزي.
+- [[required]] على الـ checkbox: مش هيبعت الفورم لو مش متعلّم.
+- مفيش [[action]]، فالفورم بيتبعت لنفس الصفحة. كنت كاتب [[action=""]] والـ validator قال: [[Bad value "" for attribute "action" on element "form": Must be non-empty.]]. لو عاوز نفس الصفحة امسح الـ attribute خالص.
+
+**فخ قسته وانا بحل:** [[minlength="8"]] بيمسك اللي **المستخدم كتبه بإيده** بس. لما حطيت [[abc]] في الحقل من الـ Console بـ [[.value = 'abc']] الفورم كان شايفه سليم ورسالة الخطأ فاضية. ولما كتبت [[abc]] بالكيبورد ظهرت الرسالة. فجرّب [[minlength]] بالكتابة، مش من الكود.
+
+**وخلي بالك:** مع [[method="get"]] كلمة السر بتظهر في شريط العنوان. احنا عاملينها كده هنا عشان تشوف الـ names بعينك بس. في موقع حقيقي الفورم ده بيتبعت بـ [[method="post"]] لسيرفر على [[https]].
+
+~~~text الناتج (Chrome)
+الضغط على كلمة «الموبايل»                    focus راح لـ #phone
+الإرسال والفورم فاضي                         وقف عند #name: "Please fill out this field."
+الـ checkbox مش متعلّم                         "Please check this box if you want to proceed."
+كتبت abc بالكيبورد في كلمة السر               "Please lengthen this text to 8 characters or more (you are currently using 3 characters)."
+حطيت abc من الـ Console                       validationMessage = ""   (minlength مبيشتغلش هنا)
+حقول من غير name: 0      كل input ليه label: 5 من 5
+
+بعد الإرسال والفورم مليان:
+?name=سارة+علي&phone=01000000000&email=sara@example.com&password=abcd1234&terms=yes
+~~~` },
+        { lvl: 'كبير', dir: "huroof-library", t: R`موقع مكتبة متخيلة بـ HTML بس (٣ صفحات)`, what: R`موقع «مكتبة الحروف» (اسم متخيل): رئيسية (هيرو، وكتب مختارة كل كتاب [[<article>]]، وآراء القرّاء بـ figure و blockquote)، وصفحة كتاب (صورة الغلاف بـ srcset و sizes، وعنوان إنجليزي جوه [[<bdi>]]، وزرار «احجز نسخة»)، وصفحة تواصل (فورم بـ labels و autocomplete). نفس الـ header والـ nav والـ footer في التلاتة، والـ nav فيه [[aria-current="page"]] على الصفحة الحالية. يجمع الوحدة كلها، ومن غير ولا سطر CSS، عشان تشوف إن الهيكل لوحده بيشتغل.`, done: R`التلات صفحات صفر errors في الـ validator، و axe صفر violations، وتقدر تتنقل في الموقع كله وتبعت الفورم بالكيبورد بس، و [[aria-current]] على لينك الصفحة اللي انت فيها بس، وعلى عرض 360 مفيش scroll أفقي، وفي Network (Disable cache) الغلاف بيتحمّل [[cover-300.svg]] على كمبيوتر كثافته 1 و [[cover-600.svg]] على موبايل كثافته 3 من Device toolbar.`, ext: R`لما توصل لوحدة CSS زوّد تصميم من غير ما تغيّر ولا عنصر في الـ HTML: لو احتجت تغيّر الهيكل عشان التصميم، يبقى الهيكل كان غلط.`, sol: R`**شجرة الملفات:**
+
+~~~text
+huroof-library/
+├── index.html      الرئيسية
+├── book.html       صفحة الكتاب
+├── contact.html    التواصل
+└── img/
+    ├── cover-300.svg
+    └── cover-600.svg
+~~~
+
+**ترتيب البناء:** اكتب [[index.html]] الأول بالـ header والـ nav والـ footer، وبعدين انسخه لـ [[book.html]] و [[contact.html]] وغيّر الـ [[<title>]] ومكان [[aria-current]] واللي جوه [[<main>]] بس. كده الأجزاء المشتركة متطابقة في التلاتة.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة الحروف</title>
+</head>
+<body>
+<header>
+  <p><a href="index.html">مكتبة الحروف</a></p>
+  <nav aria-label="الموقع">
+    <ul>
+      <li><a href="index.html" aria-current="page">الرئيسية</a></li>
+      <li><a href="book.html">كتاب الشهر</a></li>
+      <li><a href="contact.html">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <h1>كتب تتقري، مش تتحط على الرف</h1>
+  <p>مكتبة صغيرة في الحي، فيها ألفين كتاب وركن للأطفال، والاستعارة ببلاش.</p>
+
+  <section>
+    <h2>اخترنالك الشهر ده</h2>
+    <article>
+      <h3>ليالي البحر</h3>
+      <p>رواية عن صياد بيرجع لقريته بعد عشرين سنة.</p>
+      <p><a href="book.html">تفاصيل الكتاب</a></p>
+    </article>
+    <article>
+      <h3>مطبخ ستي</h3>
+      <p>٨٠ وصفة بيتي مكتوبة زي ما الجدات بيحكوها.</p>
+    </article>
+    <article>
+      <h3>نجوم فوق السطوح</h3>
+      <p>كتاب فلك للصغيرين، بالرسومات.</p>
+    </article>
+  </section>
+
+  <section>
+    <h2>القرّاء بيقولوا</h2>
+    <figure>
+      <blockquote><p>بقيت أعدّي على المكتبة كل يوم بعد الشغل، الكتب نضيفة والمكان هادي.</p></blockquote>
+      <figcaption>حسن، عضو من سنة</figcaption>
+    </figure>
+  </section>
+</main>
+<footer>
+  <p><small>مكتبة الحروف (اسم متخيل) · مفتوحين كل يوم من ١٠ لـ ١٠</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+~~~html book.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ليالي البحر: مكتبة الحروف</title>
+</head>
+<body>
+<header>
+  <p><a href="index.html">مكتبة الحروف</a></p>
+  <nav aria-label="الموقع">
+    <ul>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li><a href="book.html" aria-current="page">كتاب الشهر</a></li>
+      <li><a href="contact.html">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <article>
+    <h1>ليالي البحر</h1>
+    <img src="img/cover-300.svg"
+         srcset="img/cover-300.svg 300w, img/cover-600.svg 600w"
+         sizes="300px"
+         width="300" height="450"
+         alt="غلاف رواية ليالي البحر: إطار دهبي على خلفية بني">
+    <p>الكاتب: يوسف عادل · ٢٤٠ صفحة</p>
+    <p>الرواية اتترجمت للإنجليزي باسم <bdi>Nights of the Sea</bdi> سنة ٢٠٢٤.</p>
+    <p>صياد بيرجع لقريته بعد عشرين سنة، ويلاقي البحر زي ما هو والناس اتغيرت.</p>
+    <button type="button">احجز نسخة</button>
+  </article>
+</main>
+<footer>
+  <p><small>مكتبة الحروف (اسم متخيل) · مفتوحين كل يوم من ١٠ لـ ١٠</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+~~~html contact.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تواصل: مكتبة الحروف</title>
+</head>
+<body>
+<header>
+  <p><a href="index.html">مكتبة الحروف</a></p>
+  <nav aria-label="الموقع">
+    <ul>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li><a href="book.html">كتاب الشهر</a></li>
+      <li><a href="contact.html" aria-current="page">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <h1>تواصل معانا</h1>
+  <form method="get">
+    <p>
+      <label for="name">اسمك</label><br>
+      <input id="name" name="name" autocomplete="name" required>
+    </p>
+    <p>
+      <label for="email">الإيميل</label><br>
+      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+    </p>
+    <p>
+      <label for="msg">رسالتك</label><br>
+      <textarea id="msg" name="msg" rows="4" required></textarea>
+    </p>
+    <button type="submit">ابعت</button>
+  </form>
+</main>
+<footer>
+  <p><small>مكتبة الحروف (اسم متخيل) · مفتوحين كل يوم من ١٠ لـ ١٠</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+وفي فولدر [[img]] الغلافين (نفس الرسمة بمقاسين، ومكتوب على كل واحد عرضه عشان تعرف المتصفح اختار أنهي واحد):
+
+~~~xml img/cover-300.svg
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450"><rect width="300" height="450" fill="#7c2d12"/><rect x="24" y="24" width="252" height="402" fill="none" stroke="#fcd34d" stroke-width="4"/><text x="150" y="225" font-size="28" fill="#fcd34d" text-anchor="middle" font-family="serif">300w</text></svg>
+~~~
+
+~~~xml img/cover-600.svg
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900"><rect width="600" height="900" fill="#7c2d12"/><rect x="48" y="48" width="504" height="804" fill="none" stroke="#fcd34d" stroke-width="8"/><text x="300" y="450" font-size="56" fill="#fcd34d" text-anchor="middle" font-family="serif">600w</text></svg>
+~~~
+
+~~~view 560 640 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة الحروف</title>
+</head>
+<body>
+<header>
+  <p><a href="index.html">مكتبة الحروف</a></p>
+  <nav aria-label="الموقع">
+    <ul>
+      <li><a href="index.html" aria-current="page">الرئيسية</a></li>
+      <li><a href="book.html">كتاب الشهر</a></li>
+      <li><a href="contact.html">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <h1>كتب تتقري، مش تتحط على الرف</h1>
+  <p>مكتبة صغيرة في الحي، فيها ألفين كتاب وركن للأطفال، والاستعارة ببلاش.</p>
+
+  <section>
+    <h2>اخترنالك الشهر ده</h2>
+    <article>
+      <h3>ليالي البحر</h3>
+      <p>رواية عن صياد بيرجع لقريته بعد عشرين سنة.</p>
+      <p><a href="book.html">تفاصيل الكتاب</a></p>
+    </article>
+    <article>
+      <h3>مطبخ ستي</h3>
+      <p>٨٠ وصفة بيتي مكتوبة زي ما الجدات بيحكوها.</p>
+    </article>
+    <article>
+      <h3>نجوم فوق السطوح</h3>
+      <p>كتاب فلك للصغيرين، بالرسومات.</p>
+    </article>
+  </section>
+
+  <section>
+    <h2>القرّاء بيقولوا</h2>
+    <figure>
+      <blockquote><p>بقيت أعدّي على المكتبة كل يوم بعد الشغل، الكتب نضيفة والمكان هادي.</p></blockquote>
+      <figcaption>حسن، عضو من سنة</figcaption>
+    </figure>
+  </section>
+</main>
+<footer>
+  <p><small>مكتبة الحروف (اسم متخيل) · مفتوحين كل يوم من ١٠ لـ ١٠</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** في التلات صفحات نفس الحتة اللي فوق (اسم المكتبة وتحته ٣ لينكات) ونفس السطر الصغير تحت. الرئيسية فيها عنوان وفقرة وتلات كتب كل واحد بعنوان صغير، واقتباس من قارئ. صفحة الكتاب فيها الغلاف البني بالإطار الدهبي، والاسم الإنجليزي [[Nights of the Sea]] مكتوب صح جوه الجملة العربي، وزرار «احجز نسخة». والتواصل فورم من ٣ حقول.
+
+**ليه كده:**
+- [[aria-current="page"]] على لينك الصفحة الحالية: قارئ الشاشة بيقول «current page»، وبعدين في CSS تقدر تلوّنه بـ selector بيدوّر على الـ attribute ده نفسه، من غير class زيادة (هتشوفه في وحدة الـ selectors).
+- كل كتاب [[<article>]] لأنه حتة كاملة لوحدها (تتنقل لصفحة تانية وتفضل مفهومة).
+- [[srcset="img/cover-300.svg 300w, img/cover-600.svg 600w"]] بيقول للمتصفح عندي نسختين وعرض كل واحدة، و [[sizes="300px"]] بيقول الصورة هتتعرض بعرض 300px. المتصفح بيضرب 300 في كثافة الشاشة ويختار أصغر ملف يكفي.
+- [[<bdi>]] حوالين الاسم الإنجليزي، زي مشروع صفحة 404.
+
+**فخ قسته وانا بحل (وصلّحت بيه المطلوب):** كنت متوقع إن الموبايل هياخد الملف الأصغر. اللي حصل في Chrome: موبايل عرضه 360 وكثافته 3 (زي أغلب الموبايلات) خد [[cover-600.svg]]، وكمبيوتر عرضه 1280 وكثافته 1 خد [[cover-300.svg]]. لأن الصورة بتتعرض 300px على الاتنين، والموبايل محتاج 900 بكسل حقيقي عشان تبان حادة. وكنت كاتب الأول [[sizes="(max-width: 600px) 50vw, 300px"]]، وده كان غلط: من غير CSS الصورة بتتعرض 300px دايمًا بسبب [[width="300"]]. خلّي [[sizes]] يقول الحقيقة، ولما تزوّد CSS يخلي الصورة أصغر على الموبايل غيّر [[sizes]] معاه.
+
+**جرّب Network صح:** في DevTools افتح Device toolbar واختار موبايل (DPR 3)، وعلّم Disable cache، واعمل Refresh: هتلاقي [[cover-600.svg]]. ارجع لعرض الكمبيوتر و Refresh: [[cover-300.svg]].
+
+~~~text الناتج (Chrome)
+                     aria-current    scroll أفقي على 360    axe     الـ validator
+index.html           الرئيسية         لأ                     0       مفيش رسايل
+book.html            كتاب الشهر       لأ                     0       مفيش رسايل
+contact.html         تواصل            لأ                     0       مفيش رسايل
+(contact.html كان فيها action="" والـ validator رفضها، واتشالت)
+
+غلاف book.html:
+  360 × DPR 3 (موبايل)     cover-600.svg   معروض 300px
+  1280 × DPR 1 (كمبيوتر)   cover-300.svg   معروض 300px
+landmarks في التلاتة: header nav main footer
+~~~` },
+        { lvl: 'فكرة', dir: "my-portfolio", t: R`صفحتك انت: بورتفوليو HTML`, what: R`صفحة عنك: مين انت، وشغلك (كل مشروع article بعنوان ولينك)، والمهارات في قايمة، وتواصل (إيميل بـ mailto وفورم صغير). انت اللي بتختار الأجزاء وترتيبها.`, done: R`الـ validator و axe نضاف، وفيه h1 واحد، وكل لينك خارجي عليه [[rel="noopener noreferrer"]]، وواحد صاحبك فتحها من الموبايل وقدر يبعتلك رسالة.`, ext: R`زوّد نسخة إنجليزي بـ [[lang="en" dir="ltr"]] ولينك بين النسختين بـ [[hreflang]]، وارفعها على GitHub Pages برابط حقيقي.`, sol: R`ده نسخة نموذجية لواحدة متخيلة اسمها «نور حسام» عشان تشوف شكل الحل. صفحتك انت هتبقى بكلامك وشغلك ولينكاتك.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نور حسام: مطوّرة واجهات</title>
+</head>
+<body>
+<header>
+  <nav aria-label="الصفحة">
+    <ul>
+      <li><a href="#work">شغلي</a></li>
+      <li><a href="#skills">المهارات</a></li>
+      <li><a href="#contact">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section>
+    <h1>نور حسام</h1>
+    <p>بعمل صفحات ويب سريعة وسهلة لأي حد، حتى اللي بيستخدم قارئ شاشة. بتعلّم HTML و CSS من ٣ شهور.</p>
+  </section>
+
+  <section id="work">
+    <h2>شغلي</h2>
+    <article>
+      <h3>منيو مطعم الزيتونة</h3>
+      <p>صفحة منيو بـ HTML بس، صفر errors في الـ validator.</p>
+      <p><a href="https://example.com/zaytouna" rel="noopener noreferrer" target="_blank">شوف الصفحة</a></p>
+    </article>
+    <article>
+      <h3>عيادة ابتسامة</h3>
+      <p>صفحة هبوط من ٧ أجزاء، و nav بيودّي لكل جزء.</p>
+      <p><a href="https://example.com/smile" rel="noopener noreferrer" target="_blank">شوف الصفحة</a></p>
+    </article>
+  </section>
+
+  <section id="skills">
+    <h2>المهارات</h2>
+    <ul>
+      <li>HTML بالمعنى الصح (landmarks و headings)</li>
+      <li>فورم بـ labels و validation المتصفح</li>
+      <li>الترمنال و Git</li>
+    </ul>
+  </section>
+
+  <section id="contact">
+    <h2>تواصل</h2>
+    <p>ابعتلي على <a href="mailto:nour@example.com">nour@example.com</a> أو من الفورم:</p>
+    <form action="mailto:nour@example.com" method="post" enctype="text/plain">
+      <p>
+        <label for="from">إيميلك</label><br>
+        <input id="from" name="from" type="email" autocomplete="email" dir="ltr" required>
+      </p>
+      <p>
+        <label for="msg">الرسالة</label><br>
+        <textarea id="msg" name="msg" rows="4" required></textarea>
+      </p>
+      <button type="submit">ابعت</button>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <p><small>© ٢٠٢٦ نور حسام (اسم متخيل)</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+~~~view 620 760 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نور حسام: مطوّرة واجهات</title>
+</head>
+<body>
+<header>
+  <nav aria-label="الصفحة">
+    <ul>
+      <li><a href="#work">شغلي</a></li>
+      <li><a href="#skills">المهارات</a></li>
+      <li><a href="#contact">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section>
+    <h1>نور حسام</h1>
+    <p>بعمل صفحات ويب سريعة وسهلة لأي حد، حتى اللي بيستخدم قارئ شاشة. بتعلّم HTML و CSS من ٣ شهور.</p>
+  </section>
+
+  <section id="work">
+    <h2>شغلي</h2>
+    <article>
+      <h3>منيو مطعم الزيتونة</h3>
+      <p>صفحة منيو بـ HTML بس، صفر errors في الـ validator.</p>
+      <p><a href="https://example.com/zaytouna" rel="noopener noreferrer" target="_blank">شوف الصفحة</a></p>
+    </article>
+    <article>
+      <h3>عيادة ابتسامة</h3>
+      <p>صفحة هبوط من ٧ أجزاء، و nav بيودّي لكل جزء.</p>
+      <p><a href="https://example.com/smile" rel="noopener noreferrer" target="_blank">شوف الصفحة</a></p>
+    </article>
+  </section>
+
+  <section id="skills">
+    <h2>المهارات</h2>
+    <ul>
+      <li>HTML بالمعنى الصح (landmarks و headings)</li>
+      <li>فورم بـ labels و validation المتصفح</li>
+      <li>الترمنال و Git</li>
+    </ul>
+  </section>
+
+  <section id="contact">
+    <h2>تواصل</h2>
+    <p>ابعتلي على <a href="mailto:nour@example.com">nour@example.com</a> أو من الفورم:</p>
+    <form action="mailto:nour@example.com" method="post" enctype="text/plain">
+      <p>
+        <label for="from">إيميلك</label><br>
+        <input id="from" name="from" type="email" autocomplete="email" dir="ltr" required>
+      </p>
+      <p>
+        <label for="msg">الرسالة</label><br>
+        <textarea id="msg" name="msg" rows="4" required></textarea>
+      </p>
+      <button type="submit">ابعت</button>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <p><small>© ٢٠٢٦ نور حسام (اسم متخيل)</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٣ لينكات فوق (شغلي، المهارات، تواصل)، وبعدين الاسم كبير وجملة عنها، وجزء «شغلي» فيه مشروعين كل واحد بعنوان صغير ولينك «شوف الصفحة»، والمهارات نقط، وفي الآخر إيميل لينك وفورم صغير.
+
+**ليه اخترت الترتيب ده:** اللي بيفتح بورتفوليو (حد بيدوّر على مطوّر) عاوز يعرف ٣ حاجات بسرعة: انت مين، وعملت إيه، وإزاي يكلّمك. فدول هما الـ ٣ أجزاء، والمشاريع قبل المهارات لأن الشغل اللي يتشاف بيقنع أكتر من لستة كلمات. و «شغلي» فيه المشاريع اللي عملتها في الوحدة دي فعلًا.
+
+**التفاصيل:**
+- كل مشروع [[<article>]] بـ [[<h3>]]، تحت [[<h2>]] «شغلي».
+- اللينكات اللي برّه الموقع عليها [[target="_blank"]] (تفتح في تاب جديد) و [[rel="noopener noreferrer"]]: [[noopener]] بيمنع الصفحة التانية تتحكم في التاب بتاعك من [[window.opener]]، و [[noreferrer]] مبيقولهاش انت جاي منين. المتصفحات الجديدة بتعمل noopener لوحدها مع [[_blank]]، بس كتابتها بتضمن ده في أي متصفح.
+- [[mailto:]] بيفتح برنامج الإيميل. والفورم [[action="mailto:..."]] أبسط حاجة من غير سيرفر، بس بيعتمد إن الزائر عنده برنامج إيميل متظبط على جهازه. في وحدة الفورم هتشوف إزاي تبعته لخدمة بدل كده.
+- الإيميل والدومين [[example.com]]: دومين محجوز للأمثلة. في صفحتك حط بتوعك.
+
+~~~text الناتج (Chrome)
+h1: 1   landmarks: header nav main footer
+اللينكات الخارجية: 2، الاتنين عليهم rel="noopener noreferrer"
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
       ],
       pre: [{ to: "start", why: R`لو أول مرة تفتح ترمنال أو تعمل فولدر وملف`}],
       l: 1,
