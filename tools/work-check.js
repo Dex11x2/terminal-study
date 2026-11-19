@@ -38,7 +38,7 @@ fs.writeFileSync(page, '<!doctype html><meta charset="utf-8"><pre id="out"></pre
   'const FR = CASES.map(c => ({ start: mk(c.start), sol: mk(c.sol) }));\n' +
   'addEventListener("load", () => { document.getElementById("out").textContent = encodeURIComponent(JSON.stringify(CASES.map((c, i) => ({ start: workEval(c.start, c.checks, FR[i].start.contentDocument), sol: workEval(c.sol, c.checks, FR[i].sol.contentDocument) })))); });</script>');
 let dom;
-try { dom = execFileSync(chrome, ['--headless=new', '--disable-gpu', '--virtual-time-budget=8000', '--dump-dom', 'file:///' + page.replace(/\\/g, '/')], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 180000 }); }
+try { dom = execFileSync(chrome, ['--headless=new', '--disable-gpu', '--virtual-time-budget=8000', '--dump-dom', 'file:///' + page.replace(/\\/g, '/')], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 180000, maxBuffer: 1 << 30 }); }
 finally { fs.rmSync(dir, { recursive: true, force: true }); }
 const m = dom.match(/<pre id="out">([^<]*)<\/pre>/);
 if (!m || !m[1]) { console.error('Chrome مرجّعش نتيجة'); process.exit(1); }

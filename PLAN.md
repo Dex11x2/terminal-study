@@ -133,13 +133,10 @@
 - [ ] استبعاد مقترح: Column combinator `||` (مفيش متصفح)، و `<frequency>` و `<frequency-percentage>` و `Hz` و `kHz` (مفيش خاصية بتستخدمهم)، و `param()`. متعلّمين في صفوف جداول.
 - [ ] باقي المنهج (١٧٤ بند): البند ٧ (layout)، و ٨ (transforms والحركة)، و ٩ (Accessibility)، و ١٠ (SVG في CSS ومتفرقات)، وبعدهم ١١.
 
-**وقفة مؤقتة (١٩ نوفمبر، ٣ العصر) بطلب صاحب المشروع: «نكمل من وقت ما خلصنا مش نبدا من الاول».** الحالة بالظبط:
-- **المرفوع:** لحد commit `a4b627b`. الكورس ١٠٠٦ من ١١٨٠ (٨٥٪). الوحدات الجديدة المرفوعة: 22–32.
-- **مش مرفوع ومحفوظ على الجهاز:** `js/tabs/css/33.js` («CSS: الـ flow والمقاسات والـ overflow»، بيتحمّل بعد 07): **٧ دروس مكتوبين** (`normal flow و margin collapsing`، `float و clear`، `min-width و max-width`، `overflow`، `margin-block و inset-inline`، `place-items و align-self`، `flex-flow و grid-template`)، حوالي ٢٧٠٠ سطر، وبيعدّي `npm run check` و `work-check` (٣٢٤ تمرين). ومعاه تعديل `index.html` (سطر تحميل 33.js) و `js/meta.js` و `js/search-index.js`، كلهم مش متعملهم commit.
-- **فاضل في الوحدة 33** (من الـ brief بتاعها): `columns` (multi-column)، و `table-layout و caption-side`، و `content-visibility و will-change`، و `appearance` وتنسيق الفورم (مهارات ٣.٩.١–٣.٩.٥)، وفحص الـ CSS بالـ validator و DevTools (٣.١٠.٢–٣.١٠.٦ و ٢.٩.٣)، وجدول الـ scroll-snap longhands، وسلّمة المشاريع (طريق واحد لصفحة أخبار عربي متخيلة)، وبعدها خطوات «Finish» والتقرير والـ `at` mappings (ومنها `prop:--*` ← «CSS variables»).
-- **إزاي تكمّل:** agent واحد بـ Opus، يتقاله: الملف 33.js فيه ٧ دروس متكتبين، اقرا آخره وكمّل الباقي من غير ما تعيد كتابة حاجة، بنفس تعليمات `tools/syllabus-brief.md` (النموذج: `js/tabs/css/32.js`). وبعدها: وحدة transforms والحركة، ووحدة أساس الـ accessibility ومتفرقات SVG، وبعدهم البند ١١.
-- [ ] **فحص `lessons` على GitHub لسه أحمر في job الـ render:** «css › inherit و initial و revert — [[ أو ]] ظاهرين». استبعاد `textarea` من الفحص (a4b627b) محلّهاش، يعني العلامة ظاهرة في حتة تانية في الدرس ده (نص بيتعرض من غير ما يعدّي على `fmt`، أو كود جواه `]]` برّه `.term`). يتفتح الدرس في المتصفح ويتدوّر على text node فيه `[[` أو `]]` برّه code و pre و textarea. و `check` و `release` أخضر.
-- [ ] فشل عارض في `lessons`: «node › --cpu-prof و profiling» على windows و «diag › GOMEMLIMIT والـ CPU» على ubuntu (قياسات وقت): لو اتكرر يتراجع الـ `ci` بتاعهم.
+**الدفعة ٨ (١٩ نوفمبر): ١١٠٣ من ١١٨٠ (٩٣٪). البند ٧ خلص.** «CSS: الـ flow والمقاسات والـ overflow» (`js/tabs/css/33.js` بعد 07: ١٢ درس، ٦٣ تمرين، ٦ مشاريع طريق واحد، حوالي ١١٠ عرض حي؛ Opus، واتوقفت في النص وكمّلت من نفس المكان). ومعاها: `work-check.js` بقى `maxBuffer` كبير (ناتج Chrome عدّى ١ ميجا فكان بيقع `ENOBUFS`)، وعناوين صناديق العرض الحي بتعدّي على `fmt` (ده كان سبب فشل render-check في «inherit و initial و revert»: عنوان fence فيه `[[all: unset]]`).
+- [ ] `flex-line-count`: خاصية تجريبية حقيقية (Chrome 157 بيطبقها مع `flex-wrap: balance`)، مشروحة «جديد في Chrome بس». تفضل ولا تتستبعد.
+- [ ] ملفات css كبرت جدًا (33.js = ٥٧٠٩ سطر، و 30 و 31 و 32 فوق ٦٠٠٠): `node tools/resplit.js css` لما مفيش agent شغال على التاب.
+- [ ] باقي المنهج (٧٧ بند): transforms والحركة و motion path (البند ٨)، وأساس الـ accessibility (البند ٩)، وخصائص SVG في CSS ومتفرقات (البند ١٠). وبعدهم البند ١١ (حلول مشاريع الوحدات القديمة و `dir` و `work` لتمارينها).
 
 **ترتيب الكتابة (كل دفعة وحدة أو اتنين، بكل حاجة: شرح وتمارين بحلول حية وسلّمة مشاريع بحلول، وبعدها `node tools/syllabus.js css --write`):**
 

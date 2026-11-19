@@ -4349,6 +4349,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|appearance وتنسيق الفورم": {
+  "hash": "11fac411b88c",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
+ },
  "css|arbitrary values": {
   "hash": "5a1b44594b97",
   "date": "2026-11-04",
@@ -4444,6 +4449,11 @@
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (local Node server with delays, CDP network and accessibility tree); docs: search engines, PWA install, screen readers, dns-prefetch, theme-color"
  },
+ "css|columns": {
+  "hash": "b0211b3c8740",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
+ },
  "css|container queries": {
   "hash": "bae13ad246af",
   "date": "2026-11-04",
@@ -4453,6 +4463,11 @@
   "hash": "e7d0deaa3246",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|content-visibility و will-change": {
+  "hash": "73f621fc56e8",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
  },
  "css|contenteditable و spellcheck": {
   "hash": "f104ad85be3f",
@@ -4534,6 +4549,11 @@
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
+ "css|flex-flow و grid-template": {
+  "hash": "a53292844fca",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
+ },
  "css|flex: 1": {
   "hash": "c5f9d48ab051",
   "date": "2026-11-04",
@@ -4543,6 +4563,11 @@
   "hash": "8be3fd9c18a4",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|float و clear": {
+  "hash": "40d879bd906d",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
  },
  "css|focus-visible": {
   "hash": "1518caa0977a",
@@ -4704,6 +4729,11 @@
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
  },
+ "css|margin-block و inset-inline": {
+  "hash": "958dbd28dbd4",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
+ },
  "css|mark و small و del و ins": {
   "hash": "6e1a7a31059c",
   "date": "2026-11-18",
@@ -4728,6 +4758,11 @@
   "hash": "4f1f71f47af3",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|min-width و max-width": {
+  "hash": "45cce0c078aa",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
  },
  "css|mix-blend-mode و clip-path": {
   "hash": "408b3bf27156",
@@ -4754,6 +4789,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|normal flow و margin collapsing": {
+  "hash": "782b2c393920",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
+ },
  "css|object و embed": {
   "hash": "04345563a0c1",
   "date": "2026-11-19",
@@ -4769,10 +4809,20 @@
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
+ "css|overflow": {
+  "hash": "72585d99c0bd",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
+ },
  "css|picture": {
   "hash": "8fcd2ac8b80b",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|place-items و align-self": {
+  "hash": "5ba58c5d0b16",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
  },
  "css|popover و popovertarget": {
   "hash": "2fee972c889d",
@@ -4913,6 +4963,11 @@
   "hash": "4c69476bf197",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|table-layout و caption-side": {
+  "hash": "30a893c31eff",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
  },
  "css|target و rel": {
   "hash": "8954fea22bc0",
@@ -5088,6 +5143,11 @@
   "hash": "f43d2e89386b",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|فحص الـ CSS: validator و DevTools": {
+  "hash": "8cb81f48f367",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
  },
  "css|فولدر لكل مشروع": {
   "hash": "4760d03429c1",
