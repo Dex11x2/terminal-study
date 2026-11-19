@@ -1,4 +1,4 @@
-# منهج HTML و CSS (css): 745 من 1180 بند متغطي (63٪)
+# منهج HTML و CSS (css): 748 من 1180 بند متغطي (63٪)
 
 اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 173 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
 
@@ -14,7 +14,7 @@
 | دوال CSS | 93 | 17 | 33 | 43 | 14 |
 | وحدات | 62 | 13 | 10 | 39 | 0 |
 | أنواع القيم | 37 | 13 | 2 | 22 | 2 |
-| مهارات (MDN Curriculum) | 155 | 117 | 0 | 38 | 0 |
+| مهارات (MDN Curriculum) | 155 | 120 | 0 | 35 | 0 |
 
 ## خصائص CSS: ناقص 200
 
@@ -96,7 +96,7 @@
 - **CSS Transforms** ناقص: `<transform-function>`
 - **CSS Color** مذكور من غير شرح: `<color>` (3)
 
-## مهارات (MDN Curriculum): ناقص 38
+## مهارات (MDN Curriculum): ناقص 35
 
 **1. Transform & animate CSS › 0 الموديول كله**
 
@@ -105,16 +105,7 @@
 
 **2. Semantic HTML › 2.2 Good document structure**
 
-- `out:semantic-html/2.2.2` Using semantic HTML rather than presentational HTML: (3 نقطة فرعية) ← only div-vs-structural-elements covered; deprecated big/font and repurposed b/i absent
 - `out:semantic-html/2.2.4` SEO benefits: for example, keywords are boosted in headings. ← headings as an outline are taught in «h1 لحد h6» (SEO part from docs, §٦); confirm the SEO claim wording before mapping
-
-**2. Semantic HTML › 2.5 Links**
-
-- `out:semantic-html/2.5.1` Understand why links are _the_ fundamental feature of the web. There is no web without links. ← no explanation of why links are fundamental
-
-**2. Semantic HTML › 2.8 HTML tables**
-
-- `out:semantic-html/2.8.2` What tables are not for — layout, or _anything else_. ← not taught that tables are not for layout
 
 **2. Semantic HTML › 2.9 Debugging HTML**
 

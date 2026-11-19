@@ -4379,6 +4379,11 @@
   "date": "2026-11-18",
   "on": "Chrome 157 headless on Windows 11; docs: screen reader speech, validator, Firefox/Safari"
  },
+ "css|colspan و rowspan و colgroup": {
+  "hash": "cc2ee80cab31",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (local Node server with delays, CDP network and accessibility tree); docs: search engines, PWA install, screen readers, dns-prefetch, theme-color"
+ },
  "css|container queries": {
   "hash": "bae13ad246af",
   "date": "2026-11-04",
@@ -4599,6 +4604,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|link rel: icon و manifest و canonical": {
+  "hash": "b9e7f7baeaa6",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (local Node server with delays, CDP network and accessibility tree); docs: search engines, PWA install, screen readers, dns-prefetch, theme-color"
+ },
  "css|list-style و ::marker": {
   "hash": "7505acb67488",
   "date": "2026-11-19",
@@ -4628,6 +4638,11 @@
   "hash": "dfaee1b3ced1",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|meta http-equiv و theme-color": {
+  "hash": "a4c161993985",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (local Node server with delays, CDP network and accessibility tree); docs: search engines, PWA install, screen readers, dns-prefetch, theme-color"
  },
  "css|meta و Open Graph": {
   "hash": "4f1f71f47af3",
@@ -4679,6 +4694,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|preload و preconnect و prefetch": {
+  "hash": "7503c3f09c3c",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (local Node server with delays, CDP network and accessibility tree); docs: search engines, PWA install, screen readers, dns-prefetch, theme-color"
+ },
  "css|progress و meter": {
   "hash": "9eb3b838f57d",
   "date": "2026-11-18",
@@ -4708,6 +4728,21 @@
   "hash": "e8ecd5160fd5",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|scope و headers و aside": {
+  "hash": "771801cbc99d",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (local Node server with delays, CDP network and accessibility tree); docs: search engines, PWA install, screen readers, dns-prefetch, theme-color"
+ },
+ "css|script async و defer": {
+  "hash": "a9c718e7b031",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (local Node server with delays, CDP network and accessibility tree); docs: search engines, PWA install, screen readers, dns-prefetch, theme-color"
+ },
+ "css|script type=module و integrity": {
+  "hash": "1afddefefefe",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (local Node server with delays, CDP network and accessibility tree); docs: search engines, PWA install, screen readers, dns-prefetch, theme-color"
  },
  "css|scroll-snap و scroll-margin": {
   "hash": "cd57b28e075e",
