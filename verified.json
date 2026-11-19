@@ -4184,20 +4184,45 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|::before و ::after": {
+  "hash": "bb813cf261fa",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
+ },
  "css|::first-letter و ::selection": {
   "hash": "53e12c9df080",
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (computed values, screenshots, local Node server for fonts); docs: :visited rendering, font block period, hyphens: auto, other browsers"
+ },
+ "css|:checked و :invalid": {
+  "hash": "fb8aba5c1e14",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|:has()": {
   "hash": "2f4f0f3524d3",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|:is و :where و :not": {
+  "hash": "7915964190e1",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
+ },
  "css|:link و :visited و :hover": {
   "hash": "33f0e5b6fbab",
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (computed values, screenshots, local Node server for fonts); docs: :visited rendering, font block period, hyphens: auto, other browsers"
+ },
+ "css|:nth-child و :first-child": {
+  "hash": "6a35059cdd0e",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
+ },
+ "css|:target و :focus-within": {
+  "hash": "018a4c9375cd",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|<!doctype html>": {
   "hash": "b033ddde8800",
@@ -4208,6 +4233,11 @@
   "hash": "617153efe599",
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (computed values, screenshots, local Node server for fonts); docs: :visited rendering, font block period, hyphens: auto, other browsers"
+ },
+ "css|@import و @charset": {
+  "hash": "36b1e818879e",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|@media print": {
   "hash": "20ad0b642cac",
@@ -4289,6 +4319,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|[attr] و combinators": {
+  "hash": "e7bddc1394c9",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
+ },
  "css|a و button": {
   "hash": "de86b7ae8193",
   "date": "2026-11-04",
@@ -4303,6 +4338,11 @@
   "hash": "874b77830b49",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|angle و time و ident": {
+  "hash": "56d056d8a80f",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|animation-timeline": {
   "hash": "2595222ffa8c",
@@ -4564,6 +4604,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|inherit و initial و revert": {
+  "hash": "dce2d3eb810f",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
+ },
  "css|itemscope و itemprop": {
   "hash": "70bc7e707eaa",
   "date": "2026-11-19",
@@ -4774,6 +4819,11 @@
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
+ "css|round() و sin() و pow()": {
+  "hash": "8b676afa5f8e",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
+ },
  "css|roving tabindex": {
   "hash": "e8ecd5160fd5",
   "date": "2026-11-04",
@@ -4939,6 +4989,11 @@
   "date": "2026-11-18",
   "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
  },
+ "css|أنواع القيم: length و percentage": {
+  "hash": "3e700a2c0178",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
+ },
  "css|إعلان تغيير الصفحة": {
   "hash": "507bbdbe1b4d",
   "date": "2026-11-04",
@@ -4958,6 +5013,11 @@
   "hash": "592663d90e6b",
   "date": "2026-11-18",
   "on": "Chrome 157 headless on Windows 11 (file:/// and local Node servers), nginx:alpine in Docker, validator.nu; docs: screen readers, SEO, mail/phone app launch, other browsers"
+ },
+ "css|الوحدات كلها": {
+  "hash": "3e579d57ccf8",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|بورتفوليو ١: الهيكل واللغتين و dir": {
   "hash": "d9102b5329c3",

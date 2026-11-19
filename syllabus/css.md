@@ -1,6 +1,6 @@
-# منهج HTML و CSS (css): 868 من 1180 بند متغطي (73٪)
+# منهج HTML و CSS (css): 1006 من 1180 بند متغطي (85٪)
 
-اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 183 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
+اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 195 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
 
 | النوع | في المنهج | متغطي | مذكور من غير شرح | ناقص خالص | مستبعد بسبب |
 |---|---|---|---|---|---|
@@ -8,26 +8,26 @@
 | attributes | 145 | 145 | 0 | 0 | 1 |
 | أنواع input | 22 | 22 | 0 | 0 | 0 |
 | قيم rel | 27 | 27 | 0 | 0 | 3 |
-| خصائص CSS | 422 | 300 | 44 | 78 | 251 |
-| selectors | 88 | 44 | 22 | 22 | 56 |
-| at-rules | 16 | 12 | 2 | 2 | 3 |
-| دوال CSS | 93 | 49 | 16 | 28 | 14 |
-| وحدات | 62 | 15 | 9 | 38 | 0 |
-| أنواع القيم | 37 | 19 | 1 | 17 | 2 |
-| مهارات (MDN Curriculum) | 155 | 122 | 0 | 33 | 0 |
+| خصائص CSS | 422 | 307 | 38 | 77 | 251 |
+| selectors | 88 | 88 | 0 | 0 | 56 |
+| at-rules | 16 | 15 | 1 | 0 | 3 |
+| دوال CSS | 93 | 68 | 8 | 17 | 14 |
+| وحدات | 62 | 62 | 0 | 0 | 0 |
+| أنواع القيم | 37 | 35 | 0 | 2 | 2 |
+| مهارات (MDN Curriculum) | 155 | 124 | 0 | 31 | 0 |
 
-## خصائص CSS: ناقص 122
+## خصائص CSS: ناقص 115
 
 - **CSS Custom Properties for Cascading Variables** ناقص: `--*`
 - **CSS Animations** ناقص: `animation-composition`
-- **CSS Transforms** ناقص: `backface-visibility` `perspective` `perspective-origin` `transform-box` `transform-style`. مذكور من غير شرح: `rotate` (9) `transform-origin` (5)
+- **CSS Transforms** ناقص: `backface-visibility` `perspective` `perspective-origin` `transform-box` `transform-style`. مذكور من غير شرح: `transform-origin` (5)
 - **CSS Table** ناقص: `caption-side` `empty-cells` `table-layout`
-- **Scalable Vector Graphics** ناقص: `color-interpolation` `cx` `cy` `fill-opacity` `fill-rule` `marker-end` `marker-mid` `marker-start` `path-length` `rx` `ry` `shape-rendering` `stroke-miterlimit` `stroke-opacity` `text-anchor` `text-rendering`. مذكور من غير شرح: `paint-order` (1) `r` (2) `stroke-dasharray` (2) `stroke-dashoffset` (2) `stroke-linecap` (2) `stroke-linejoin` (2) `vector-effect` (1) `x` (5) `y` (4)
+- **Scalable Vector Graphics** ناقص: `color-interpolation` `cx` `cy` `fill-opacity` `fill-rule` `marker-end` `marker-mid` `marker-start` `path-length` `rx` `ry` `shape-rendering` `stroke-miterlimit` `stroke-opacity` `text-anchor` `text-rendering`. مذكور من غير شرح: `paint-order` (1) `r` (3) `stroke-dasharray` (2) `stroke-dashoffset` (2) `stroke-linecap` (2) `stroke-linejoin` (2) `vector-effect` (1) `x` (7) `y` (5)
 - **CSS Multi-column Layout** ناقص: `column-count` `column-fill` `column-rule` `column-rule-width` `column-span`. مذكور من غير شرح: `column-rule-style` (1) `columns` (1)
-- **CSS Box Sizing** ناقص: `column-width` `contain-intrinsic-block-size` `contain-intrinsic-height` `contain-intrinsic-inline-size` `contain-intrinsic-size` `contain-intrinsic-width`. مذكور من غير شرح: `max-width` (61)
+- **CSS Box Sizing** ناقص: `column-width` `contain-intrinsic-block-size` `contain-intrinsic-height` `contain-intrinsic-inline-size` `contain-intrinsic-size` `contain-intrinsic-width`
 - **CSS Flexible Box Layout** ناقص: `flex-flow` `flex-line-count`
 - **CSS Grid Layout** ناقص: `grid-column-end` `grid-row-end` `grid-template`
-- **CSS Logical Properties and Values** ناقص: `max-block-size`. مذكور من غير شرح: `block-size` (25) `inline-size` (24) `inset-block` (3) `inset-block-end` (7) `inset-block-start` (8) `inset-inline` (9) `inset-inline-start` (22) `margin-block` (9) `margin-block-end` (22) `margin-block-start` (17) `max-inline-size` (7)
+- **CSS Logical Properties and Values** ناقص: `max-block-size`. مذكور من غير شرح: `block-size` (25) `inset-block` (3) `inset-block-end` (7) `inset-block-start` (8) `inset-inline` (9) `inset-inline-start` (22) `margin-block` (9) `margin-block-end` (23) `margin-block-start` (18) `max-inline-size` (7)
 - **Motion Path** ناقص: `offset-anchor` `offset-distance` `offset-path` `offset-position` `offset-rotate`. مذكور من غير شرح: `offset` (3)
 - **CSS Scroll Anchoring** ناقص: `overflow-anchor`
 - **CSS Overflow** ناقص: `overflow-block` `overflow-inline`. مذكور من غير شرح: `scrollbar-gutter` (1)
@@ -36,54 +36,33 @@
 - **CSS Scrollbars Styling** ناقص: `scrollbar-color` `scrollbar-width`
 - **CSS Shapes** ناقص: `shape-image-threshold` `shape-margin` `shape-outside`
 - **Pointer Events** ناقص: `touch-action`
-- **CSS Transitions** ناقص: `transition-property` `transition-timing-function`
+- **CSS Transitions** ناقص: `transition-timing-function`
 - **CSS View Transitions** ناقص: `view-transition-class`
-- **CSS Cascading and Inheritance** مذكور من غير شرح: `all` (1)
 - **CSS Basic User Interface** مذكور من غير شرح: `appearance` (4)
 - **CSS Fragmentation** مذكور من غير شرح: `break-after` (2) `break-before` (1)
 - **CSS Positioned Layout** مذكور من غير شرح: `clear` (2)
-- **CSS Containment** مذكور من غير شرح: `content-visibility` (2)
-- **CSS Display** مذكور من غير شرح: `order` (6)
-- **CSS Generated Content** مذكور من غير شرح: `quotes` (1)
+- **CSS Containment** مذكور من غير شرح: `content-visibility` (3)
 - **CSS Will Change** مذكور من غير شرح: `will-change` (3)
 - **CSS Viewport** مذكور من غير شرح: `zoom` (2)
 
-## selectors: ناقص 44
+## at-rules: ناقص 1
 
-- **basic & combinators** ناقص: `Subsequent-sibling combinator` `Column combinator` `Namespace separator`
-- **pseudo-classes** ناقص: `:active-view-transition` `:active-view-transition-type()` `:in-range` `:nth-last-of-type()` `:nth-of-type()` `:only-of-type` `:open` `:out-of-range` `:scope` `:state()`. مذكور من غير شرح: `:default` (1) `:defined` (1) `:empty` (4) `:first` (1) `:first-child` (10) `:first-of-type` (8) `:focus-within` (8) `:host` (2) `:host()` (2) `:indeterminate` (1) `:lang()` (10) `:last-child` (10) `:last-of-type` (2) `:nth-last-child()` (1) `:only-child` (1) `:placeholder-shown` (2) `:popover-open` (1) `:target` (1) `:user-valid` (1) `:valid` (1)
-- **pseudo-elements** ناقص: `::cue` `::cue()` `::file-selector-button` `::highlight()` `::part()` `::slotted()` `::target-text` `::view-transition` `::view-transition-image-pair()`. مذكور من غير شرح: `::details-content` (2) `::placeholder` (2)
-
-## at-rules: ناقص 4
-
-- **CSS Syntax** ناقص: `@charset`
-- **CSS Namespaces** ناقص: `@namespace`
-- **CSS Cascading and Inheritance** مذكور من غير شرح: `@import` (12)
 - **CSS Transitions** مذكور من غير شرح: `@starting-style` (3)
 
-## دوال CSS: ناقص 44
+## دوال CSS: ناقص 25
 
-- **CSS Values and Units** ناقص: `acos()` `asin()` `atan()` `exp()` `hypot()` `mod()` `param()` `pow()` `rem()` `sign()` `sqrt()` `tan()`. مذكور من غير شرح: `abs()` (7) `atan2()` (1) `cos()` (1) `log()` (63) `round()` (24) `sin()` (1)
 - **CSS Box Sizing** ناقص: `fit-content()`
 - **CSS Easing Functions** ناقص: `linear()` `steps()`. مذكور من غير شرح: `cubic-bezier()` (2)
 - **CSS Transforms** ناقص: `matrix3d()` `perspective()` `rotate3d()` `rotateX()` `rotateY()` `rotateZ()` `scale3d()` `scaleZ()` `skew()` `skewX()` `skewY()` `translate3d()`. مذكور من غير شرح: `matrix()` (6) `rotate()` (9) `scale()` (5) `scaleX()` (3) `scaleY()` (2) `translate()` (1) `translateZ()` (1)
+- **CSS Values and Units** ناقص: `param()`
 - **Motion Path** ناقص: `ray()`
-- **CSS Environment Variables** مذكور من غير شرح: `env()` (3)
-- **CSS Cascading and Inheritance** مذكور من غير شرح: `layer()` (2)
 
-## وحدات: ناقص 47
+## أنواع القيم: ناقص 2
 
-- **CSS Values and Units** ناقص: `cap` `cm` `dpcm` `dpi` `ex` `grad` `ic` `in` `kHz` `pc` `Q` `rad` `lh` `rcap` `rch` `rex` `ric` `rlh` `cqw` `cqh` `cqb` `cqmin` `cqmax` `lvw` `svw` `dvw` `svmax` `lvmax` `dvmax` `svmin` `lvmin` `dvmin` `svb` `lvb` `dvb` `svi` `lvi` `dvi`. مذكور من غير شرح: `ch` (5) `dppx` (1) `Hz` (2) `mm` (2) `vmax` (1) `vmin` (1) `vb` (1) `vi` (1) `cqi` (1)
-
-## أنواع القيم: ناقص 18
-
-- **CSS Types** ناقص: `<angle-percentage>` `<dashed-ident>` `<frequency>` `<frequency-percentage>` `<ident>` `<overflow>` `<ratio>` `<resolution>` `<string>` `<time-percentage>`. مذكور من غير شرح: `<integer>` (1)
-- **CSS Will Change** ناقص: `<custom-ident>`
-- **CSS Display** ناقص: `<display-box>` `<display-inside>` `<display-internal>` `<display-listitem>`
 - **CSS Easing Functions** ناقص: `<easing-function>`
 - **CSS Transforms** ناقص: `<transform-function>`
 
-## مهارات (MDN Curriculum): ناقص 33
+## مهارات (MDN Curriculum): ناقص 31
 
 **1. Transform & animate CSS › 0 الموديول كله**
 
@@ -97,14 +76,6 @@
 **2. Semantic HTML › 2.9 Debugging HTML**
 
 - `out:semantic-html/2.9.3` Using the DOM inspector in your browser DevTools to dive deeper into your markup: (2 نقطة فرعية) ← elements and attributes are inspected and edited in «View Source و validator › ٣. Elements»; adding/removing classes waits for the CSS units
-
-**3. CSS fundamentals › 3.1 Basic CSS syntax**
-
-- `out:css-fundamentals/3.1.3` Default browser styles — understand that the browser provides default CSS styling to HTML elements so that it is in some way usable even with no user-defined styles at all: (3 نقطة فرعية) ← browser default (user-agent) styles and resets not explained
-
-**3. CSS fundamentals › 3.5 Values and units**
-
-- `out:css-fundamentals/3.5.1` Understand that property values can take many different types, and what these types represent: (7 نقطة فرعية) ← no value-types overview; images, positions, strings absent
 
 **3. CSS fundamentals › 3.6 Sizing**
 
@@ -170,8 +141,8 @@
 - **الأحداث بتتكتب بـ addEventListener وبتتشرح في كورس JavaScript. هنا جملة واحدة: متكتبش onclick في الـ HTML وليه.** (1): `on* (event handler attributes)`
 - **مش في جدول Link types في مواصفة WHATWG (تجريبي أو microformat).** (3): `compression-dictionary` `me` `prerender`
 - **مش قياسي (prefix أو متصفح واحد).** (145): `-ms-accelerator` `-ms-block-progression` `-ms-content-zoom-chaining` `-ms-content-zoom-limit` `-ms-content-zoom-limit-max` `-ms-content-zoom-limit-min` `-ms-content-zoom-snap` `-ms-content-zoom-snap-points` `-ms-content-zoom-snap-type` `-ms-content-zooming` `-ms-filter` `-ms-flow-from` `-ms-flow-into` `-ms-grid-columns` `-ms-grid-rows` `-ms-high-contrast-adjust` `-ms-hyphenate-limit-chars` `-ms-hyphenate-limit-lines` `-ms-hyphenate-limit-zone` `-ms-ime-align` `-ms-overflow-style` `-ms-scroll-chaining` `-ms-scroll-limit` `-ms-scroll-limit-x-max` `-ms-scroll-limit-x-min` `-ms-scroll-limit-y-max` `-ms-scroll-limit-y-min` `-ms-scroll-rails` `-ms-scroll-snap-points-x` `-ms-scroll-snap-points-y` `-ms-scroll-snap-type` `-ms-scroll-snap-x` `-ms-scroll-snap-y` `-ms-scroll-translation` `-ms-scrollbar-3dlight-color` `-ms-scrollbar-arrow-color` `-ms-scrollbar-base-color` `-ms-scrollbar-darkshadow-color` `-ms-scrollbar-face-color` `-ms-scrollbar-highlight-color` `-ms-scrollbar-shadow-color` `-ms-scrollbar-track-color` `-ms-text-autospace` `-ms-touch-select` `-ms-user-select` `-ms-wrap-flow` `-ms-wrap-margin` `-ms-wrap-through` `-moz-appearance` `-moz-binding` `-moz-border-bottom-colors` `-moz-border-left-colors` `-moz-border-right-colors` `-moz-border-top-colors` `-moz-context-properties` `-moz-float-edge` `-moz-force-broken-image-icon` `-moz-orient` `-moz-outline-radius` `-moz-outline-radius-bottomleft` `-moz-outline-radius-bottomright` `-moz-outline-radius-topleft` `-moz-outline-radius-topright` `-moz-stack-sizing` `-moz-text-blink` `-moz-user-focus` `-moz-user-input` `-moz-user-modify` `-moz-window-dragging` `-moz-window-shadow` `-webkit-appearance` `-webkit-border-after` `-webkit-border-after-color` `-webkit-border-after-style` `-webkit-border-after-width` `-webkit-border-before` `-webkit-border-before-color` `-webkit-border-before-style` `-webkit-border-before-width` `-webkit-border-end` `-webkit-border-end-color` `-webkit-border-end-style` `-webkit-border-end-width` `-webkit-border-start` `-webkit-border-start-color` `-webkit-border-start-style` `-webkit-border-start-width` `-webkit-box-reflect` `-webkit-mask`✓ `-webkit-mask-attachment` `-webkit-mask-clip` `-webkit-mask-composite` `-webkit-mask-image`✓ `-webkit-mask-origin` `-webkit-mask-position` `-webkit-mask-position-x` `-webkit-mask-position-y` `-webkit-mask-repeat` `-webkit-mask-repeat-x` `-webkit-mask-repeat-y` `-webkit-mask-size` `-webkit-overflow-scrolling` `-webkit-tap-highlight-color` `-webkit-touch-callout` `-webkit-user-modify` `-webkit-user-select` `align-tracks` `box-align` `box-direction` `box-flex` `box-flex-group` `box-lines` `box-ordinal-group` `box-orient` `box-pack` `font-smooth` `justify-tracks` `masonry-auto-flow` `overflow-clip-box` `::-ms-browse` `::-ms-check` `::-ms-clear` `::-ms-expand` `::-ms-fill` `::-ms-fill-lower` `::-ms-fill-upper` `::-ms-reveal` `::-ms-thumb` `::-ms-ticks-after` `::-ms-ticks-before` `::-ms-tooltip` `::-ms-track` `::-ms-value` `::-moz-progress-bar` `::-moz-range-progress` `::-moz-range-thumb` `::-moz-range-track` `::-webkit-progress-bar` `::-webkit-progress-inner-value` `::-webkit-progress-value` `::-webkit-slider-runnable-track` `::-webkit-slider-thumb` `@document` `hsla()` `rgba()`
-- **مش Baseline: مش شغال في كل المتصفحات الأساسية لسه.** (165): `accent-color`✓ `anchor-name`✓ `anchor-scope` `animation-range`✓ `animation-range-end` `animation-range-start` `animation-timeline`✓ `animation-trigger` `baseline-source` `border-shape` `box-decoration-break` `caret-shape`✓ `column-height` `column-wrap` `corner-block-end-shape` `corner-block-start-shape` `corner-bottom-shape` `corner-bottom-left-shape` `corner-bottom-right-shape` `corner-end-end-shape` `corner-end-start-shape` `corner-inline-end-shape` `corner-inline-start-shape` `corner-left-shape` `corner-right-shape` `corner-shape`✓ `corner-start-start-shape` `corner-start-end-shape` `corner-top-shape` `corner-top-left-shape` `corner-top-right-shape` `d` `dynamic-range-limit` `field-sizing` `font-language-override` `font-synthesis-position` `font-variant-emoji`✓ `font-width` `forced-color-adjust` `frame-sizing` `hanging-punctuation` `hyphenate-limit-chars` `image-resolution` `initial-letter` `initial-letter-align` `interpolate-size` `interactivity` `interest-delay` `interest-delay-end` `interest-delay-start` `line-clamp`✓ `line-height-step` `link-parameters` `margin-trim` `mask-border`✓ `mask-border-outset`✓ `mask-border-repeat`✓ `mask-border-slice`✓ `mask-border-source`✓ `mask-border-width`✓ `mask-mode`✓ `math-shift` `max-lines` `object-view-box` `orphans` `overflow-clip-margin` `overlay` `overscroll-behavior` `overscroll-behavior-block` `overscroll-behavior-inline` `overscroll-behavior-x`✓ `overscroll-behavior-y` `position-anchor` `position-area` `position-try` `position-try-fallbacks` `position-try-order` `position-visibility` `reading-flow` `reading-order` `resize` `ruby-merge` `ruby-overhang` `scroll-axis-lock` `scroll-initial-target` `scroll-marker-group` `scroll-target-group` `scroll-timeline` `scroll-timeline-axis` `scroll-timeline-name` `speak-as`✓ `stroke-color` `text-decoration-skip` `text-fit` `text-justify` `text-size-adjust` `text-spacing-trim` `timeline-scope` `timeline-trigger` `timeline-trigger-activation-range` `timeline-trigger-activation-range-end` `timeline-trigger-activation-range-start` `timeline-trigger-active-range` `timeline-trigger-active-range-end` `timeline-trigger-active-range-start` `timeline-trigger-name` `timeline-trigger-source` `transition-behavior`✓ `trigger-scope` `user-select` `view-timeline` `view-timeline-axis` `view-timeline-inset` `view-timeline-name` `view-transition-scope` `widows` `window-drag` `:autofill` `:blank` `:buffering` `:current` `:fullscreen` `:future` `:has-slotted` `:host-context()` `:left` `:local-link` `:muted` `:past` `:paused` `:picture-in-picture` `:playing` `:right` `:seeking` `:stalled` `:target-current` `:target-within` `:volume-locked` `:xr-overlay` `::checkmark` `::cue-region` `::cue-region()` `::grammar-error` `::marker`✓ `::picker-icon` `::picker()` `::scroll-marker` `::scroll-marker-group` `::selection`✓ `::spelling-error` `@position-try` `@view-transition`✓ `anchor()` `anchor-size()` `calc-size()` `cross-fade()`✓ `element()`✓ `leader()` `paint()` `scroll()`✓ `target-counter()` `target-counters()` `target-text()` `view()`✓ `<text-edge>`
-- **اتشال من المواصفة.** (16): `clip` `font-stretch`✓ `grid-column-gap` `grid-gap` `grid-row-gap` `ime-mode` `page-break-after` `page-break-before` `page-break-inside` `scroll-snap-coordinate` `scroll-snap-destination` `scroll-snap-points-x` `scroll-snap-points-y` `scroll-snap-type-x` `scroll-snap-type-y` `<shape>`
+- **مش Baseline: مش شغال في كل المتصفحات الأساسية لسه.** (165): `accent-color`✓ `anchor-name`✓ `anchor-scope` `animation-range`✓ `animation-range-end` `animation-range-start` `animation-timeline`✓ `animation-trigger` `baseline-source` `border-shape` `box-decoration-break` `caret-shape`✓ `column-height` `column-wrap` `corner-block-end-shape` `corner-block-start-shape` `corner-bottom-shape` `corner-bottom-left-shape` `corner-bottom-right-shape` `corner-end-end-shape` `corner-end-start-shape` `corner-inline-end-shape` `corner-inline-start-shape` `corner-left-shape` `corner-right-shape` `corner-shape`✓ `corner-start-start-shape` `corner-start-end-shape` `corner-top-shape` `corner-top-left-shape` `corner-top-right-shape` `d`✓ `dynamic-range-limit` `field-sizing` `font-language-override` `font-synthesis-position` `font-variant-emoji`✓ `font-width` `forced-color-adjust` `frame-sizing` `hanging-punctuation` `hyphenate-limit-chars` `image-resolution` `initial-letter` `initial-letter-align` `interpolate-size` `interactivity` `interest-delay` `interest-delay-end` `interest-delay-start` `line-clamp`✓ `line-height-step` `link-parameters` `margin-trim` `mask-border`✓ `mask-border-outset`✓ `mask-border-repeat`✓ `mask-border-slice`✓ `mask-border-source`✓ `mask-border-width`✓ `mask-mode`✓ `math-shift` `max-lines` `object-view-box` `orphans` `overflow-clip-margin` `overlay` `overscroll-behavior` `overscroll-behavior-block` `overscroll-behavior-inline` `overscroll-behavior-x`✓ `overscroll-behavior-y` `position-anchor` `position-area` `position-try` `position-try-fallbacks` `position-try-order` `position-visibility` `reading-flow` `reading-order` `resize` `ruby-merge` `ruby-overhang` `scroll-axis-lock` `scroll-initial-target` `scroll-marker-group` `scroll-target-group` `scroll-timeline` `scroll-timeline-axis` `scroll-timeline-name` `speak-as`✓ `stroke-color` `text-decoration-skip` `text-fit` `text-justify` `text-size-adjust` `text-spacing-trim` `timeline-scope` `timeline-trigger` `timeline-trigger-activation-range` `timeline-trigger-activation-range-end` `timeline-trigger-activation-range-start` `timeline-trigger-active-range` `timeline-trigger-active-range-end` `timeline-trigger-active-range-start` `timeline-trigger-name` `timeline-trigger-source` `transition-behavior`✓ `trigger-scope` `user-select` `view-timeline` `view-timeline-axis` `view-timeline-inset` `view-timeline-name` `view-transition-scope` `widows` `window-drag` `:autofill`✓ `:blank` `:buffering` `:current` `:fullscreen`✓ `:future` `:has-slotted` `:host-context()`✓ `:left` `:local-link` `:muted` `:past` `:paused` `:picture-in-picture`✓ `:playing` `:right` `:seeking` `:stalled` `:target-current` `:target-within` `:volume-locked` `:xr-overlay` `::checkmark` `::cue-region` `::cue-region()` `::grammar-error` `::marker`✓ `::picker-icon` `::picker()` `::scroll-marker` `::scroll-marker-group` `::selection`✓ `::spelling-error` `@position-try` `@view-transition`✓ `anchor()` `anchor-size()` `calc-size()`✓ `cross-fade()`✓ `element()`✓ `leader()` `paint()` `scroll()`✓ `target-counter()` `target-counters()` `target-text()` `view()`✓ `<text-edge>`
+- **اتشال من المواصفة.** (16): `clip`✓ `font-stretch`✓ `grid-column-gap` `grid-gap` `grid-row-gap` `ime-mode` `page-break-after` `page-break-before` `page-break-inside` `scroll-snap-coordinate` `scroll-snap-destination` `scroll-snap-points-x` `scroll-snap-points-y` `scroll-snap-type-x` `scroll-snap-type-y` `<shape>`
 
 ✓ = مستبعد من المنهج بس مشروح في الكورس برضه.
 
