@@ -151,7 +151,7 @@ function mdHTML(t){
 const liveDoc = code => /<html[\s>]|<!doctype/i.test(code) ? code : '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>\n'+code+'\n</body></html>';
 /* what the preview iframe gets: the page plus one helper. A sandboxed srcdoc frame doesn't follow <a href="#id"> on its own,
    so the helper scrolls to the target the way a real page would (the code the reader sees stays exactly as written). */
-const LIVE_HASH = '<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^=\\"#\\"]");if(!a||e.defaultPrevented)return;var id=decodeURIComponent(a.getAttribute("href").slice(1));var t=id&&id!=="top"?document.getElementById(id):document.documentElement;if(!t)return;e.preventDefault();t.scrollIntoView();if(t.focus&&t.tabIndex>=0)t.focus()})</script>';
+const LIVE_HASH = '<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^=\\"#\\"]");if(!a||e.defaultPrevented)return;var id=decodeURIComponent(a.getAttribute("href").slice(1));var t=id&&id!=="top"?document.getElementById(id):document.documentElement;if(!t)return;e.preventDefault();t.scrollIntoView();if(t.focus&&t.tabIndex>=0)t.focus()})<\/script>';
 const liveFrame = code => liveDoc(code) + LIVE_HASH;
 /* «ابدأ إزاي»: the same six steps for every HTML project that names its folder (project field dir): make the folder and files in the terminal,
    open it in VS Code, write, see it in Chrome, inspect it, then compare with the solution. The file names come from the solution's fence titles. */
