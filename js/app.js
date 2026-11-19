@@ -227,13 +227,13 @@ function liveHTML(code, title, only){
   const m = title.match(/^(\d{2,4})(?:\s+(\d{2,4}))?\s*(.*)$/), h = m ? +m[1] : 240, hm = m && m[2] ? +m[2] : h, name = (m ? m[3] : title) || 'النتيجة في المتصفح';
   const doc = liveFrame(code);
   return (only ? '' : mdHTML('~~~html\n'+code+'\n~~~'))+
-    '<div class="live"><div class="live-bar"><span>'+esc(name)+'</span><span class="live-w">'+
+    '<div class="live"><div class="live-bar"><span>'+fmt(name)+'</span><span class="live-w">'+
     [['360', 'موبايل'], ['768', 'تابلت'], ['', 'كامل']].map(([w, l]) => '<button type="button" data-lw="'+w+'"'+(w ? '' : ' class="on"')+'>'+l+'</button>').join('')+
     // «عدّل وجرّب»: the code in a box the reader can change, and the page under it follows every key
     '<button type="button" class="live-edit" data-le="1">عدّل وجرّب</button></span></div>'+
     '<div class="live-ed" hidden><textarea dir="ltr" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="كود الصفحة، عدّله وشوف النتيجة تحته" rows="'+Math.min(18, code.split('\n').length + 1)+'">'+esc(code)+'</textarea>'+
     '<p>غيّر أي حاجة والنتيجة تحت بتتغيّر على طول. التعديل هنا للتجربة بس ومبيتحفظش. <button type="button" data-lr="1">رجّع الكود الأصلي</button></p></div>'+
-    '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="'+esc(name)+'" style="--h:'+h+'px;--hm:'+hm+'px" srcdoc="'+esc(doc)+'"></iframe></div></div>';
+    '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="'+esc(name.split('[[').join('').split(']]').join(''))+'" style="--h:'+h+'px;--hm:'+hm+'px" srcdoc="'+esc(doc)+'"></iframe></div></div>';
 }
 /* «قبل ما تبدأ»: the lessons (or whole courses) to review first, each a direct link (ROADMAP rule 2) */
 function preHTML(list){
