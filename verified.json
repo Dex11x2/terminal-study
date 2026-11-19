@@ -4339,10 +4339,25 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|background-color و background-image": {
+  "hash": "9ff29cc280f7",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
+ },
+ "css|background-size و background-position": {
+  "hash": "8575ca5eb922",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
+ },
  "css|blockquote و q و cite": {
   "hash": "5de6c4b632fd",
   "date": "2026-11-18",
   "on": "Chrome 157 headless on Windows 11; Nu Html Checker; docs: screen reader speech (W3C WAI, MDN)"
+ },
+ "css|border و border-radius": {
+  "hash": "2e4d04240625",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
  "css|box model": {
   "hash": "bac9082ad286",
@@ -4378,6 +4393,11 @@
   "hash": "0a8ff79d957b",
   "date": "2026-11-18",
   "on": "Chrome 157 headless on Windows 11; docs: screen reader speech, validator, Firefox/Safari"
+ },
+ "css|color-mix و currentColor": {
+  "hash": "73971be6acc6",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
  "css|colspan و rowspan و colgroup": {
   "hash": "cc2ee80cab31",
@@ -4468,6 +4488,11 @@
   "hash": "d30c3ae795c1",
   "date": "2026-11-18",
   "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
+ },
+ "css|filter و backdrop-filter": {
+  "hash": "ae41bf7426c5",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
  "css|flex: 1": {
   "hash": "c5f9d48ab051",
@@ -4604,6 +4629,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|linear-gradient و radial-gradient": {
+  "hash": "6f65a9fcb2c2",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
+ },
  "css|link rel: icon و manifest و canonical": {
   "hash": "b9e7f7baeaa6",
   "date": "2026-11-19",
@@ -4634,6 +4664,11 @@
   "date": "2026-11-18",
   "on": "Chrome 157 headless on Windows 11; docs: screen reader speech, validator, Firefox/Safari"
  },
+ "css|mask": {
+  "hash": "6cf9459e61d2",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
+ },
  "css|media queries": {
   "hash": "dfaee1b3ced1",
   "date": "2026-11-04",
@@ -4648,6 +4683,11 @@
   "hash": "4f1f71f47af3",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|mix-blend-mode و clip-path": {
+  "hash": "408b3bf27156",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
  "css|mkdir و ni و touch": {
   "hash": "998a5ca1819b",
@@ -4678,6 +4718,11 @@
   "hash": "6fd2926be086",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|outline و box-shadow": {
+  "hash": "2d7b5efddd90",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
  "css|picture": {
   "hash": "8fcd2ac8b80b",
@@ -4723,6 +4768,11 @@
   "hash": "59ffed754cf2",
   "date": "2026-11-19",
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
+ },
+ "css|rgb و hsl و oklch": {
+  "hash": "e4fd4a6a94ff",
+  "date": "2026-11-19",
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
  "css|roving tabindex": {
   "hash": "e8ecd5160fd5",
