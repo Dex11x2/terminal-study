@@ -887,3 +887,6 @@ body:not([data-shell="ps"]):not([data-shell="cmd"]):not([data-shell="zsh"]):not(
 /* the copy button keeps its one line, and a solution gets the width back on a phone */
 .copy{flex:none;white-space:nowrap}
 @media (max-width:520px){.psol-b{padding:8px 6px}.practice .projlist{padding-inline-start:0}.projlist>li{padding-inline:0}}
+/* «الشكل النهائي»: the finished page shown before the reader starts */
+.live.show{border-color:var(--accent)}
+.live.show .live-bar span:first-child{color:var(--accent);font-weight:600}

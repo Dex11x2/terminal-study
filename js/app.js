@@ -152,7 +152,47 @@ const liveDoc = code => /<html[\s>]|<!doctype/i.test(code) ? code : '<!doctype h
 /* what the preview iframe gets: the page plus one helper. A sandboxed srcdoc frame doesn't follow <a href="#id"> on its own,
    so the helper scrolls to the target the way a real page would (the code the reader sees stays exactly as written). */
 const LIVE_HASH = '<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^=\\"#\\"]");if(!a||e.defaultPrevented)return;var id=decodeURIComponent(a.getAttribute("href").slice(1));var t=id&&id!=="top"?document.getElementById(id):document.documentElement;if(!t)return;e.preventDefault();t.scrollIntoView();if(t.focus&&t.tabIndex>=0)t.focus()})<\/script>';
-const liveFrame = code => liveDoc(code) + LIVE_HASH;
+// the frame also reports its content height, so a preview whose height nobody measured (data-auto) can fit itself
+const LIVE_SIZE = '<script>(function(){function p(){var b=document.body,h=Math.max(document.documentElement.offsetHeight,b?b.offsetHeight+32:0);if(h>0)parent.postMessage({liveH:h},"*")}addEventListener("load",function(){p();setTimeout(p,400)});addEventListener("resize",p)})()<\/script>';
+const liveFrame = code => liveDoc(code) + LIVE_HASH + LIVE_SIZE;
+addEventListener('message', e => {
+  if (!e.data || typeof e.data.liveH !== 'number') return;
+  for (const f of document.querySelectorAll('iframe[data-auto]')) if (f.contentWindow === e.source){
+    const h = Math.max(60, Math.min(520, Math.ceil(e.data.liveH) + 2));
+    f.style.setProperty('--h', h+'px'); f.style.setProperty('--hm', h+'px');
+  }
+});
+/* «الشكل النهائي»: the finished page shown before the reader starts, result only and no code
+   (owner, 19 Nov: «عاوز ع كل مثال هيطلع شكله عامل ازاي… عشان الناس تتحمس تعمل المشاريع»).
+   Projects show the first ~~~view of their solution (or its index.html, or its first ~~~live); a drill solved in the page shows its reference solution;
+   a lesson's HTML example gets its page drawn under it. */
+function showHTML(code, name, h, hm, auto){
+  return '<div class="live show"><div class="live-bar"><span>'+esc(name)+'</span><span class="live-w">'+
+    [['360', 'موبايل'], ['768', 'تابلت'], ['', 'كامل']].map(([w, l]) => '<button type="button" data-lw="'+w+'"'+(w ? '' : ' class="on"')+'>'+l+'</button>').join('')+'</span></div>'+
+    '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="'+esc(name)+'"'+(auto ? ' data-auto="1"' : '')+' style="--h:'+h+'px;--hm:'+hm+'px" srcdoc="'+esc(liveFrame(code))+'"></iframe></div></div>';
+}
+const solFences = sol => [...String(sol || '').matchAll(/^~~~(live|view|html)[ \t]*([^\n]*)\n([\s\S]*?)^~~~[ \t]*$/gm)].map(m => ({lang: m[1], title: m[2].trim(), code: m[3].replace(/\n$/, '')}));
+const fenceH = (f, cap) => { const m = f.title.match(/^(\d{2,4})(?:\s+(\d{2,4}))?/), h = m ? +m[1] : 280; return [Math.min(h, cap), Math.min(m && m[2] ? +m[2] : h, cap)]; };
+function projShowHTML(p){
+  const fs = solFences(p.sol).filter(f => f.lang !== 'html');
+  const f = fs.find(f => f.lang === 'view') || fs.find(f => /(^|[\s/])index\.html$/.test(f.title)) || fs[0];
+  if (!f) return '';
+  const [h, hm] = fenceH(f, 440);
+  return showHTML(f.code, 'الشكل النهائي اللي هتبنيه', h, hm);
+}
+function drillShowHTML(p){
+  // a «predict» or «classify» drill would be given away by its answer; the rest show what the finished page looks like
+  if (!p.work || /^\*\*(اقرا وتوقّع|صنّف|توقّع)/.test(p.t)) return '';
+  const fs = solFences(p.sol), f = p.work.sol !== undefined ? {title: '', code: p.work.sol} : fs[p.work.solAt || 0];
+  if (!f) return '';
+  const h = p.work.h || fenceH(f, 360)[0];
+  return showHTML(f.code, 'الشكل المطلوب لما تخلّص', Math.min(h, 360), Math.min(h, 360));
+}
+function exShowHTML(ex){
+  if (shell !== 'css' || !/^\s*</.test(ex) || /className=|\{\{|=>|<\?php/.test(ex) || /\ssrc="(?!data:)/.test(ex)) return '';
+  if (!/<(p|h[1-6]|ul|ol|dl|table|form|a|button|img|input|div|section|article|main|nav|header|footer|figure|blockquote|details|dialog|audio|video|svg|span|strong|em|label|select|textarea|progress|meter|pre|address)[\s>]/.test(ex)) return ''; // head-only snippets have nothing to draw
+  return showHTML(ex, 'شكل المثال ده في المتصفح', 160, 160, true);
+}
 /* «ابدأ إزاي»: the same six steps for every HTML project that names its folder (project field dir): make the folder and files in the terminal,
    open it in VS Code, write, see it in Chrome, inspect it, then compare with the solution. The file names come from the solution's fence titles. */
 function projStartHTML(p){
@@ -329,7 +369,7 @@ function articleHTML(it){
   return '<article class="cmd'+(done?' is-done':'')+'" data-c="'+esc(c)+'">'+
     '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
     preHTML(typeof PRE !== 'undefined' && PRE[shell+'|'+c])+nameHTML(c)+(d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+useHTML(c)+osNote(c)+
-    (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
+    (ex ? termBlock(ex, c, flag)+exShowHTML(ex) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
     '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+labHint(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
     practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+refHTML(c)+reportHTML(c, t)+
@@ -416,7 +456,7 @@ function practiceHTML(c){
     const k = 'drill:'+shell+':'+c+':'+i, on = store.get(k) === '1';
     return '<li'+(on?' class="on"':'')+'>'+(p.lvl?'<em class="lv lv'+(DRILL_LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+ptHTML(p.t)+
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
-      workHTML(p.work, shell+':'+c+':'+i)+
+      drillShowHTML(p)+workHTML(p.work, shell+':'+c+':'+i)+
       // the solution stays closed until asked for: try first, then compare
       (p.sol?'<details class="psol"><summary>الحل والشرح (جرّب الأول)</summary><div class="psol-b">'+mdHTML(p.sol)+'</div></details>':'')+
       '<label class="ptick"><input type="checkbox" data-d="'+esc(k)+'"'+(on?' checked':'')+'> عملته</label></li>';
@@ -441,7 +481,7 @@ function unitFoot(cat, id){
   const projs = cat.projects ? cat.projects.slice().sort((a, b) => (LV[a.lvl] || 2) - (LV[b.lvl] || 2)) : [];
   const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته، من الصغير للكبير. و«فكرة» مشروع مفتوح: انت اللي بتقرر تفاصيله.</p><ol class="projlist">'+
     projs.map(p => '<li>'+(p.lvl?'<em class="lv lv'+(LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+(p.dir?'<b class="plbl">المطلوب:</b> ':'')+fmt(p.what)+'</span>':'')+
-      projStartHTML(p)+
+      projShowHTML(p)+projStartHTML(p)+
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
       (p.ext?'<span class="pdone"><b>خليه بتاعك:</b> '+fmt(p.ext)+'</span>':'')+
       (p.sol?'<details class="psol"><summary>الحل والشرح (ابنيه الأول)</summary><div class="psol-b">'+mdHTML(p.sol)+'</div></details>':'')+
