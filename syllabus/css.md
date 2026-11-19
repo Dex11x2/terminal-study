@@ -1,49 +1,32 @@
-# منهج HTML و CSS (css): 562 من 1180 بند متغطي (47٪)
+# منهج HTML و CSS (css): 628 من 1180 بند متغطي (53٪)
 
-اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 143 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
+اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 156 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
 
 | النوع | في المنهج | متغطي | مذكور من غير شرح | ناقص خالص | مستبعد بسبب |
 |---|---|---|---|---|---|
-| عناصر HTML | 113 | 99 | 9 | 5 | 20 |
-| attributes | 145 | 83 | 12 | 50 | 1 |
+| عناصر HTML | 113 | 110 | 3 | 0 | 20 |
+| attributes | 145 | 134 | 6 | 5 | 1 |
 | أنواع input | 22 | 22 | 0 | 0 | 0 |
 | قيم rel | 27 | 20 | 1 | 6 | 3 |
 | خصائص CSS | 422 | 148 | 73 | 201 | 251 |
-| selectors | 88 | 36 | 22 | 30 | 56 |
+| selectors | 88 | 38 | 24 | 26 | 56 |
 | at-rules | 16 | 9 | 2 | 5 | 3 |
 | دوال CSS | 93 | 13 | 34 | 46 | 14 |
 | وحدات | 62 | 13 | 10 | 39 | 0 |
 | أنواع القيم | 37 | 13 | 2 | 22 | 2 |
-| مهارات (MDN Curriculum) | 155 | 106 | 0 | 49 | 0 |
+| مهارات (MDN Curriculum) | 155 | 108 | 0 | 47 | 0 |
 
-## عناصر HTML: ناقص 14
+## عناصر HTML: ناقص 3
 
-- **image-maps** ناقص: `area` `map`
-- **iframe-embed-object** ناقص: `embed` `object`
-- **scripting** ناقص: `slot`. مذكور من غير شرح: `noscript` (1) `template` (2)
-- **sections** مذكور من غير شرح: `aside` (14)
-- **media** مذكور من غير شرح: `audio` (1) `track` (1)
-- **canvas** مذكور من غير شرح: `canvas` (2)
+- **sections** مذكور من غير شرح: `aside` (15)
 - **tables** مذكور من غير شرح: `col` (1) `colgroup` (1)
-- **embedded-content** مذكور من غير شرح: `source` (5)
 
-## attributes: ناقص 62
+## attributes: ناقص 11
 
 - **th** ناقص: `abbr`. مذكور من غير شرح: `scope` (8)
-- **global** ناقص: `accesskey` `autocapitalize` `autocorrect` `autofocus` `contenteditable` `draggable` `enterkeyhint` `headingoffset` `headingreset` `inert` `is` `itemid` `itemprop` `itemref` `itemscope` `itemtype` `nonce` `slot` `spellcheck` `writingsuggestions`. مذكور من غير شرح: `popover` (1)
-- **iframe** ناقص: `allowfullscreen` `sandbox` `srcdoc`. مذكور من غير شرح: `allow` (1)
-- **script** ناقص: `async` `nomodule`
 - **link** ناقص: `blocking` `integrity`. مذكور من غير شرح: `imagesizes` (1)
-- **dialog** ناقص: `closedby`
-- **button** ناقص: `command` `commandfor` `popovertarget` `popovertargetaction`
-- **area** ناقص: `coords` `shape`
-- **object** ناقص: `data`
-- **img** ناقص: `decoding` `ismap` `usemap`
-- **track** ناقص: `default`. مذكور من غير شرح: `kind` (1) `srclang` (1)
 - **meta** ناقص: `http-equiv`
-- **audio** ناقص: `loop` `muted`. مذكور من غير شرح: `controls` (1)
-- **video** ناقص: `playsinline`. مذكور من غير شرح: `poster` (1)
-- **template** ناقص: `shadowrootclonable` `shadowrootcustomelementregistry` `shadowrootdelegatesfocus` `shadowrootmode` `shadowrootserializable` `shadowrootslotassignment`
+- **script** ناقص: `nomodule`
 - **td** مذكور من غير شرح: `colspan` (3) `headers` (1) `rowspan` (1)
 - **col** مذكور من غير شرح: `span` (1)
 
@@ -55,7 +38,7 @@
 
 - **CSS Custom Properties for Cascading Variables** ناقص: `--*`
 - **WebKit Extensions** ناقص: `-webkit-text-fill-color` `-webkit-text-stroke` `-webkit-text-stroke-color` `-webkit-text-stroke-width`
-- **CSS Inline** ناقص: `alignment-baseline` `baseline-shift` `dominant-baseline` `text-box` `text-box-edge` `text-box-trim`. مذكور من غير شرح: `vertical-align` (7)
+- **CSS Inline** ناقص: `alignment-baseline` `baseline-shift` `dominant-baseline` `text-box` `text-box-edge` `text-box-trim`. مذكور من غير شرح: `vertical-align` (8)
 - **CSS Animations** ناقص: `animation-composition`
 - **CSS Transforms** ناقص: `backface-visibility` `perspective` `perspective-origin` `transform-box` `transform-style`. مذكور من غير شرح: `rotate` (9) `transform-origin` (5)
 - **CSS Backgrounds and Borders** ناقص: `background-attachment` `background-origin` `background-position-x` `background-position-y` `background-repeat` `border-bottom-color` `border-bottom-left-radius` `border-bottom-right-radius` `border-bottom-style` `border-image` `border-image-outset` `border-image-repeat` `border-image-slice` `border-image-source` `border-image-width` `border-left-color` `border-left-style` `border-left-width` `border-right` `border-right-color` `border-right-style` `border-right-width` `border-top-width`. مذكور من غير شرح: `border-bottom` (7) `border-bottom-width` (1) `border-left` (1) `border-top` (4) `border-top-color` (4) `border-top-style` (1)
@@ -67,7 +50,7 @@
 - **Scalable Vector Graphics** ناقص: `color-interpolation` `cx` `cy` `fill-opacity` `fill-rule` `marker` `marker-end` `marker-mid` `marker-start` `paint-order` `path-length` `rx` `ry` `shape-rendering` `stop-color` `stop-opacity` `stroke-miterlimit` `stroke-opacity` `text-anchor` `text-rendering`. مذكور من غير شرح: `r` (2) `stroke` (2) `stroke-dasharray` (2) `stroke-dashoffset` (2) `stroke-linecap` (2) `stroke-linejoin` (2) `vector-effect` (1) `x` (5) `y` (4)
 - **Filter Effects** ناقص: `color-interpolation-filters` `flood-color` `flood-opacity` `lighting-color`. مذكور من غير شرح: `filter` (2)
 - **CSS Multi-column Layout** ناقص: `column-count` `column-fill` `column-rule` `column-rule-color` `column-rule-style` `column-rule-width` `column-span`. مذكور من غير شرح: `columns` (1)
-- **CSS Box Sizing** ناقص: `column-width` `contain-intrinsic-block-size` `contain-intrinsic-height` `contain-intrinsic-inline-size` `contain-intrinsic-size` `contain-intrinsic-width`. مذكور من غير شرح: `max-width` (48)
+- **CSS Box Sizing** ناقص: `column-width` `contain-intrinsic-block-size` `contain-intrinsic-height` `contain-intrinsic-inline-size` `contain-intrinsic-size` `contain-intrinsic-width`. مذكور من غير شرح: `max-width` (49)
 - **CSS Lists and Counters** ناقص: `counter-increment` `counter-reset` `counter-set` `list-style-image` `list-style-position`
 - **CSS Flexible Box Layout** ناقص: `flex-flow` `flex-line-count`
 - **CSS Fonts** ناقص: `font-feature-settings` `font-kerning` `font-optical-sizing` `font-palette` `font-size-adjust` `font-synthesis` `font-synthesis-small-caps` `font-synthesis-style` `font-synthesis-weight` `font-variant` `font-variant-alternates` `font-variant-caps` `font-variant-east-asian` `font-variant-ligatures` `font-variant-position` `font-variation-settings`
@@ -92,17 +75,17 @@
 - **CSS Fragmentation** مذكور من غير شرح: `break-after` (2) `break-before` (1)
 - **CSS Positioned Layout** مذكور من غير شرح: `clear` (2) `float` (2)
 - **CSS Color** مذكور من غير شرح: `color-scheme` (5)
-- **CSS Containment** مذكور من غير شرح: `content-visibility` (1)
+- **CSS Containment** مذكور من غير شرح: `content-visibility` (2)
 - **CSS Display** مذكور من غير شرح: `order` (6)
 - **CSS Generated Content** مذكور من غير شرح: `quotes` (1)
 - **CSS Will Change** مذكور من غير شرح: `will-change` (3)
 - **CSS Viewport** مذكور من غير شرح: `zoom` (2)
 
-## selectors: ناقص 52
+## selectors: ناقص 50
 
 - **basic & combinators** ناقص: `Subsequent-sibling combinator` `Column combinator` `Namespace separator`
-- **pseudo-classes** ناقص: `:active-view-transition` `:active-view-transition-type()` `:any-link` `:defined` `:in-range` `:last-of-type` `:link` `:modal` `:nth-last-of-type()` `:nth-of-type()` `:only-of-type` `:open` `:out-of-range` `:popover-open` `:scope` `:state()`. مذكور من غير شرح: `:active` (1) `:default` (1) `:empty` (2) `:first` (1) `:first-child` (5) `:first-of-type` (3) `:focus-within` (8) `:host` (2) `:host()` (2) `:indeterminate` (1) `:lang()` (8) `:last-child` (9) `:nth-last-child()` (1) `:only-child` (1) `:placeholder-shown` (2) `:target` (1) `:user-valid` (1) `:valid` (1) `:visited` (1)
-- **pseudo-elements** ناقص: `::cue` `::cue()` `::file-selector-button` `::first-letter` `::first-line` `::highlight()` `::part()` `::slotted()` `::target-text` `::view-transition` `::view-transition-image-pair()`. مذكور من غير شرح: `::backdrop` (4) `::details-content` (2) `::placeholder` (2)
+- **pseudo-classes** ناقص: `:active-view-transition` `:active-view-transition-type()` `:any-link` `:in-range` `:link` `:nth-last-of-type()` `:nth-of-type()` `:only-of-type` `:open` `:out-of-range` `:scope` `:state()`. مذكور من غير شرح: `:active` (1) `:default` (1) `:defined` (1) `:empty` (3) `:first` (1) `:first-child` (7) `:first-of-type` (6) `:focus-within` (8) `:host` (2) `:host()` (2) `:indeterminate` (1) `:lang()` (8) `:last-child` (10) `:last-of-type` (2) `:nth-last-child()` (1) `:only-child` (1) `:placeholder-shown` (2) `:popover-open` (1) `:target` (1) `:user-valid` (1) `:valid` (1) `:visited` (1)
+- **pseudo-elements** ناقص: `::cue` `::cue()` `::file-selector-button` `::first-letter` `::first-line` `::highlight()` `::part()` `::slotted()` `::target-text` `::view-transition` `::view-transition-image-pair()`. مذكور من غير شرح: `::details-content` (2) `::placeholder` (2)
 
 ## at-rules: ناقص 7
 
@@ -146,7 +129,7 @@
 - **CSS Transforms** ناقص: `<transform-function>`
 - **CSS Color** مذكور من غير شرح: `<color>` (3)
 
-## مهارات (MDN Curriculum): ناقص 49
+## مهارات (MDN Curriculum): ناقص 47
 
 **1. Transform & animate CSS › 0 الموديول كله**
 
@@ -162,11 +145,6 @@
 
 - `out:semantic-html/2.5.1` Understand why links are _the_ fundamental feature of the web. There is no web without links. ← no explanation of why links are fundamental
 - `out:semantic-html/2.5.5` Link states and why they are important — :hover, :focus, :visited, and :active. ← hover/focus-visible taught, but :visited and :active absent
-
-**2. Semantic HTML › 2.6 Media**
-
-- `out:semantic-html/2.6.1` The term "replaced element" — what does it mean? ← replaced elements never defined
-- `out:semantic-html/2.6.3` Media assets and licensing: (3 نقطة فرعية) ← media licensing not covered
 
 **2. Semantic HTML › 2.8 HTML tables**
 

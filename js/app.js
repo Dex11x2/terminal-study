@@ -149,6 +149,10 @@ function mdHTML(t){
    (ROADMAP rule 3.4: an HTML/CSS solution shows what it looks like). ~~~view: the rendered page only, when the files were shown above one by one.
    A fragment gets a minimal Arabic RTL document around it. The page runs in a sandboxed iframe: its own origin, no access to this site. */
 const liveDoc = code => /<html[\s>]|<!doctype/i.test(code) ? code : '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>\n'+code+'\n</body></html>';
+/* what the preview iframe gets: the page plus one helper. A sandboxed srcdoc frame doesn't follow <a href="#id"> on its own,
+   so the helper scrolls to the target the way a real page would (the code the reader sees stays exactly as written). */
+const LIVE_HASH = '<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^=\\"#\\"]");if(!a||e.defaultPrevented)return;var id=decodeURIComponent(a.getAttribute("href").slice(1));var t=id&&id!=="top"?document.getElementById(id):document.documentElement;if(!t)return;e.preventDefault();t.scrollIntoView();if(t.focus&&t.tabIndex>=0)t.focus()})</script>';
+const liveFrame = code => liveDoc(code) + LIVE_HASH;
 /* «ابدأ إزاي»: the same six steps for every HTML project that names its folder (project field dir): make the folder and files in the terminal,
    open it in VS Code, write, see it in Chrome, inspect it, then compare with the solution. The file names come from the solution's fence titles. */
 function projStartHTML(p){
@@ -181,7 +185,7 @@ function projStartHTML(p){
 function liveHTML(code, title, only){
   // "~~~live 90 120 title": 90px tall at full width, 120px on a phone (and when the «موبايل» width is chosen); one number serves both
   const m = title.match(/^(\d{2,4})(?:\s+(\d{2,4}))?\s*(.*)$/), h = m ? +m[1] : 240, hm = m && m[2] ? +m[2] : h, name = (m ? m[3] : title) || 'النتيجة في المتصفح';
-  const doc = liveDoc(code);
+  const doc = liveFrame(code);
   return (only ? '' : mdHTML('~~~html\n'+code+'\n~~~'))+
     '<div class="live"><div class="live-bar"><span>'+esc(name)+'</span><span class="live-w">'+
     [['360', 'موبايل'], ['768', 'تابلت'], ['', 'كامل']].map(([w, l]) => '<button type="button" data-lw="'+w+'"'+(w ? '' : ' class="on"')+'>'+l+'</button>').join('')+
@@ -372,14 +376,14 @@ function workHTML(w, key){
     '<textarea class="work-orig" hidden>'+esc(start)+'</textarea>'+
     '<div class="live"><div class="live-bar"><span>صفحتك دلوقتي</span><span class="live-w">'+
     [['360', 'موبايل'], ['', 'كامل']].map(([x, l]) => '<button type="button" data-lw="'+x+'"'+(x ? '' : ' class="on"')+'>'+l+'</button>').join('')+'</span></div>'+
-    '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="صفحتك دلوقتي" style="--h:'+h+'px;--hm:'+h+'px" srcdoc="'+esc(liveDoc(code))+'"></iframe></div></div>'+
+    '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="صفحتك دلوقتي" style="--h:'+h+'px;--hm:'+h+'px" srcdoc="'+esc(liveFrame(code))+'"></iframe></div></div>'+
     '<ul class="work-checks">'+w.checks.map((c, i) => '<li class="'+(ok[i] ? 'ok' : 'no')+'">'+fmt(c.say)+'</li>').join('')+'</ul>'+
     '<p class="work-res" role="status">'+workMsg(ok)+'</p>'+
     '<button type="button" class="work-reset" data-wreset="1">ابدأ التمرين من الأول</button></div>';
 }
 function workUpdate(box){
   const code = box.querySelector('.work-code').value, ok = workEval(code, JSON.parse(box.dataset.checks));
-  box.querySelector('iframe').srcdoc = liveDoc(code);
+  box.querySelector('iframe').srcdoc = liveFrame(code);
   box.querySelectorAll('.work-checks li').forEach((li, i) => { li.className = ok[i] ? 'ok' : 'no'; });
   box.querySelector('.work-res').textContent = workMsg(ok);
   box.classList.toggle('done', ok.every(Boolean));
@@ -1097,7 +1101,7 @@ document.addEventListener('click', e => {
   const wr = e.target.closest('[data-wreset]');
   if (wr){ const box = wr.closest('.work'); box.querySelector('.work-code').value = box.querySelector('.work-orig').value; workUpdate(box); store.del ? store.del('work:'+box.dataset.wk) : store.set('work:'+box.dataset.wk, box.querySelector('.work-orig').value); return; }
   const lr = e.target.closest('[data-lr]');
-  if (lr){ const ta = lr.closest('.live-ed').querySelector('textarea'); ta.value = ta.defaultValue; lr.closest('.live').querySelector('iframe').srcdoc = liveDoc(ta.value); return; }
+  if (lr){ const ta = lr.closest('.live-ed').querySelector('textarea'); ta.value = ta.defaultValue; lr.closest('.live').querySelector('iframe').srcdoc = liveFrame(ta.value); return; }
   const lw = e.target.closest('[data-lw]');
   if (lw){ // a live preview at phone, tablet or full width
     const box = lw.closest('.live');
@@ -1189,7 +1193,7 @@ document.addEventListener('input', e => {
   const wc = e.target.closest('.work-code');
   if (wc){ workUpdate(wc.closest('.work')); return; } // a drill being solved in the page
   const led = e.target.closest('.live-ed textarea');
-  if (led){ led.closest('.live').querySelector('iframe').srcdoc = liveDoc(led.value); return; } // the edited code, rendered as you type
+  if (led){ led.closest('.live').querySelector('iframe').srcdoc = liveFrame(led.value); return; } // the edited code, rendered as you type
   const code = e.target.closest('.chk-code');
   if (code){ const box = code.closest('.chk'); store.set('code:'+box.dataset.t+':'+box.dataset.c, code.value); return; }
   const ta = e.target.closest('textarea[data-n]');

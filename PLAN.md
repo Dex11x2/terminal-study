@@ -104,6 +104,14 @@
 - [ ] جدول الـ pseudo-classes في درس «readonly و disabled و checked» خلّى `:disabled` و `:enabled` و `:read-only` و `:read-write` و `:required` و `:optional` و `:invalid` و `:focus` يتحسبوا «جدول» وهم متعرّفين بس: وحدة الـ selectors (البند ٦) تشرحهم بجد.
 - [ ] باقي البند ٢: `dialog` و `popover` و `command`/`commandfor` و `popovertarget*` والـ global attributes (وحدة جاية).
 
+**الدفعة ٤ اتكتبت (١٩ نوفمبر): 628 من ١١٨٠. البند ٢ خلص وأغلب البند ٣.** «HTML: عناصر تفاعلية و global attributes» (`js/tabs/css/27.js` بعد 26: ٦ دروس، ٣٥ تمرين منهم ٣٠ «حلّها هنا»، ٦ مشاريع) و «HTML: الصوت والفيديو والـ embed» (`js/tabs/css/28.js` بعد 08: ٧ دروس، ٣٥ تمرين منهم ٢٤ «حلّها هنا»، ٦ مشاريع). كله في Chrome 157 headless (ضغطات كيبورد وكليكات بـ DevTools Protocol، وسيرفر محلي للميديا والـ sandbox).
+- **اتصلح في الموقع:** لينكات `#id` مكانتش بتشتغل جوه العرض الحي (iframe sandboxed بـ srcdoc مبيتبعش الـ fragment؛ اتقاس: من غير المساعد مفيش scroll، ومعاه 1896px). `liveFrame` في app.js بيضيف سكربت صغير للـ iframe بس، والكود المعروض زي ما هو. ده كان مأثر على معاينات وحدة «اللينكات والعناوين».
+- [ ] باقي البند ٣: الـ `head` (`script` `async`/`defer`/`nomodule`/`integrity`، و `link` `blocking`/`imagesizes` وقيم rel: `dns-prefetch` `prefetch` `modulepreload` `manifest` `icon` `expect` `pingback`، و `meta http-equiv`، و `base` اتشرح)، وجداول: `col`/`colgroup`/`span` و `colspan`/`rowspan`/`headers`/`scope`/`abbr`، و `aside`.
+- [ ] `headingoffset`/`headingreset`: اتشرحوا في قسم «مش مدعوم لسه» (Chrome 157 بيتجاهلهم من غير flag). القرار: يفضلوا ولا يتستبعدوا. ونفس السؤال لـ `shadowrootslotassignment` و `shadowrootcustomelementregistry`.
+- [ ] درس «video و iframe» القديم: بيستخدم دومينات YouTube حقيقية (ضد قاعدة الأسماء المخترعة)، و `deep.how` بيقول autoplay بيشتغل «لو muted» وده للـ `<video>` بس (`<audio autoplay muted>` بيفضل واقف في Chrome 157).
+- [ ] `:modal` و `:popover-open` و `::backdrop` متسميين بس: وحدة الـ selectors.
+- [ ] معاينات بتشاور على ملفات مش موجودة (`media/ep3.mp3`...): بتطلع 404 في الـ console ومشغّل فاضي. الدروس اللي الصوت فيها مهم بتستخدم data URI؛ الباقي يتراجع.
+
 **ترتيب الكتابة (كل دفعة وحدة أو اتنين، بكل حاجة: شرح وتمارين بحلول حية وسلّمة مشاريع بحلول، وبعدها `node tools/syllabus.js css --write`):**
 
 1. **HTML: الكلام والقوايم واللينكات** (أكبر فجوة): ul و ol و dl، و strong و em و b و i و u و s و mark و small، و blockquote و q و cite، و abbr و dfn و address و time و data، و code و pre و kbd و samp و var، و sub و sup و del و ins، و ruby و bdo و wbr و br و hr، و entities، والمسارات (مطلق ونسبي) و download وقيم rel كلها، و figure و figcaption، و h1–h6 و hgroup و search و menu.
