@@ -3452,6 +3452,31 @@ offsetWidth = 40، و offsetHeight = 40
 }
 ~~~
 
+~~~view 120 120 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } .spin { width: 48px; height: 48px; box-sizing: border-box; border: 6px solid #e5e7eb; border-top-color: #6366f1; border-radius: 50%; }
+</style>
+<style>
+/* من الحل */
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: reduce) {
+  .spin { animation: none; }
+}
+</style>
+</head>
+<body>
+<div class="spin" role="status" aria-label="بيحمّل"></div><p>بيلف على طول، ولو «تقليل الحركة» شغال بيقف.</p>
+</body>
+</html>
+~~~
+
 ٣ مشاكل في سطر واحد:
 
 1. من غير [[infinite]] التكرار الافتراضي 1، فبيلف مرة ويقف.
@@ -3555,6 +3580,32 @@ gradient         10             2.0ms     20
     radial-gradient(circle 12px at 50% 0, #0000 98%, #000) top / 100% 51% no-repeat,
     radial-gradient(circle 12px at 50% 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
 }
+~~~
+
+~~~view 190 190 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; background: #f1f5f9; }
+</style>
+<style>
+/* من الحل */
+#boarding {
+  position: relative; width: 280px; height: 120px; background: #fde68a;
+  mask:
+    radial-gradient(circle 12px at 50% 0, #0000 98%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle 12px at 50% 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+}
+</style>
+</head>
+<body>
+<div id="boarding"></div><p>القطعين فوق وتحت في النص.</p>
+</body>
+</html>
 ~~~
 
 ~~~js السطر الجديد في الفحص الذاتي (قبل سطر النتيجة)
@@ -4998,6 +5049,39 @@ Escape: الـ dialog مفتوح؟ false
 }
 ~~~
 
+~~~view 120 150 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } .btn { border: 1px solid #2563eb; padding: 0.5rem 1rem; border-radius: 8px; font: inherit; }
+</style>
+<style>
+/* من الحل */
+@layer base, components, utilities;
+
+@layer components {
+  .btn { background: #2563eb; color: #fff; }
+  .btn-danger { background: #dc2626; }
+  .btn-ghost { background: transparent; color: #2563eb; }
+  .btn-link { background: none; }
+  .btn-warn { background: #b45309; }           /* variant جديد */
+}
+@layer utilities {
+  .error { color: #b91c1c; }
+}
+</style>
+</head>
+<body>
+<p><button class="btn">أساسي</button> <button class="btn btn-danger">امسح</button> <button class="btn btn-ghost">إلغاء</button> <button class="btn btn-link">لينك</button> <button class="btn btn-warn">تحذير</button></p>
+<p class="error">رسالة خطأ</p>
+</body>
+</html>
+~~~
+
 الـ variants كانوا كاتبين [[!important]] عشان يغلبوا [[.btn]]، و [[.btn]] كاتبها عشان يغلب حاجة قبله. لما كلهم [[!important]] المعركة بترجع لترتيب الملف، بس بشكل أوحش.
 
 ليه [[.btn-danger]] لسه بيكسب من غير [[!important]]؟ نفس الـ layer، ونفس الـ specificity (class واحدة)، فاللي مكتوب أخير بيكسب. يعني الترتيب في الملف هو القرار، وده مكتوب ومفهوم.
@@ -5412,6 +5496,31 @@ button { background: none; }
 ~~~css الحل التاني: @layer (أول سطر في الملف الرئيسي)
 @layer reset;
 @import url("reset.css") layer(reset);
+~~~
+
+~~~view 200 220 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } .link { color: blue; } .card { padding: 1rem; border: 1px solid #cbd5e1; border-radius: 10px; }
+</style>
+<style>
+/* من الحل */
+a { color: inherit; text-decoration: none; }
+button { background: none; }
+:where(.card) a { color: inherit; }
+</style>
+</head>
+<body>
+<p><a class="link" href="#">لينك برّه الكارت</a></p>
+<div class="card"><p>جوه الكارت: <a class="link" href="#">لينك جوه الكارت</a></p></div>
+<p>الاتنين أزرق: <code>:where(.card) a</code> وزنه (0,0,1) بس، فـ <code>.link</code> بيكسب.</p>
+</body>
+</html>
 ~~~
 
 [[.card a]] وزنها (0, 1, 1)، و [[.link]] وزنها (0, 1, 0)، فالـ reset بيكسب مع إنه المفروض أضعف حاجة. وانت مش عايز تلمس المكونات، ولا تزوّد [[!important]].
@@ -7130,6 +7239,30 @@ axe: 0
   .plans { grid-template-columns: repeat(3, 1fr); }
   .featured { grid-column: 2; grid-row: 1; }
 }
+~~~
+
+~~~view 200 510 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } .plan { padding: 1rem; border: 1px solid #cbd5e1; border-radius: 10px; } .featured { background: #0f172a; color: #fff; } .featured a { color: #fff; }
+</style>
+<style>
+/* من الحل */
+.plans { display: grid; gap: 16px; }
+.featured { order: -1; }
+@media (min-width: 720px) { .plans { grid-template-columns: repeat(3, 1fr); } .featured { order: 0; } }
+</style>
+</head>
+<body>
+<p>الطريقة ١ (order): على «موبايل» المميزة فوق، وعلى الكامل في النص. دوس Tab وشوف الترتيب.</p>
+<div class="plans"><article class="plan"><h2>أساسي</h2><a href="#">اختار</a></article><article class="plan featured"><h2>المميزة</h2><a href="#">اختار</a></article><article class="plan"><h2>فريق</h2><a href="#">اختار</a></article></div>
+</body>
+</html>
 ~~~
 
 [[order]] و [[grid-column]] بيغيّروا الشكل بس. ترتيب Tab وترتيب قارئ الشاشة بيفضلوا ترتيب الـ HTML. فأي مرة الشكل يختلف عن الـ HTML، مستخدم الكيبورد بيقفز بعينه.

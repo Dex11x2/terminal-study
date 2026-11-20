@@ -2767,6 +2767,27 @@ h1 { font-size: clamp(2rem, 1rem + 3vw, 3.5rem); }
 h1 { font-size: clamp(2rem, 2.5rem + 1vw, 5rem); }
 ~~~
 
+~~~view 360 500 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } h1 { margin: 0.5rem 0; line-height: 1.3; }
+</style>
+
+</head>
+<body>
+<p>نفس العنوان بالـ ٣ قيم (كبّر بـ Ctrl و + في الصفحة الكبيرة وشوف أنهي بيكبر):</p>
+<h1 style="font-size: clamp(2rem, 5vw, 3.5rem)">مشكلة: clamp(2rem, 5vw, 3.5rem)</h1>
+<h1 style="font-size: clamp(2rem, 1rem + 3vw, 3.5rem)">أحسن: clamp(2rem, 1rem + 3vw, 3.5rem)</h1>
+<h1 style="font-size: clamp(2rem, 2.5rem + 1vw, 5rem)">الأقرب للضعف: clamp(2rem, 2.5rem + 1vw, 5rem)</h1>
+</body>
+</html>
+~~~
+
 **إزاي بنقيس:** zoom 200% على شاشة 1280 معناها إن عرض الصفحة بالـ CSS بقى 640، وكل CSS px بيترسم 2 بكسل حقيقي. فالحجم على الشاشة = الـ font-size × 2.
 
 **ملحوظة:** جزء الـ rem لوحده مش كفاية: الصف التاني زاد 29% بس. كل ما جزء الـ rem يكبر قدام جزء الـ vw، الـ zoom يقرب من الضعف، زي الصف التالت. والـ MAX لازم يبقى واسع كفاية عشان ميوقفش الزيادة.

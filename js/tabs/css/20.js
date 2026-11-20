@@ -1058,6 +1058,33 @@ unicode-bidi بتاع bdi: isolate
 .lang  { margin-inline-start: 0.5rem; }
 ~~~
 
+~~~view 200 240 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } header { position: relative; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; margin-bottom: 0.75rem; border: 1px solid #cbd5e1; border-radius: 10px; }
+.skip { position: absolute; top: 0.25rem; padding: 0.25rem 0.5rem; background: #0f172a; color: #fff; border-radius: 6px; }
+.skip:not(:focus) { width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } .brand { font-weight: 800; }
+</style>
+<style>
+/* من الحل */
+.brand { margin-inline-end: auto; }
+.skip  { inset-inline-start: 1rem; }
+.lang  { margin-inline-start: 0.5rem; }
+</style>
+</head>
+<body>
+<header dir="rtl"><a class="skip" href="#">اتخطّى للمحتوى</a><a class="brand" href="#">البراند</a><a href="#">الشغل</a><a class="lang" href="#">English</a></header>
+<header dir="ltr"><a class="skip" href="#">Skip to content</a><a class="brand" href="#">Brand</a><a href="#">Work</a><a class="lang" href="#">عربي</a></header>
+<p>نفس الـ CSS في الاتجاهين: البراند في أول السطر واللينكات في آخره. دوس Tab: «اتخطّى» بيظهر في بداية السطر (يمين في العربي، شمال في الإنجليزي).</p>
+</body>
+</html>
+~~~
+
 بيبني على [[site.css]] في خطوة الهيكل. قبل ما تشغّل: [[margin-left: auto]] بياخد كل المساحة الفاضية على **شمال** العنصر.
 
 - في العربي الاسم على اليمين، والفراغ على شماله، فالكود شغال بالصدفة. وفي الإنجليزي الاسم أول السطر على الشمال، والـ auto margin بيزقه لليمين خالص، عكس المطلوب تمامًا.
@@ -1640,6 +1667,37 @@ D fixed: minmax(min(100%, 22rem)) 360 scrollWidth 360 / 360
 }
 .filters label { position: relative; cursor: pointer; }
 .filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+~~~
+
+~~~view 140 160 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+:root { --accent: #7c3aed; } body { font-family: system-ui, sans-serif; margin: 1rem; } .filters { display: flex; gap: 8px; border: 0; padding: 0; } .filters legend { margin-bottom: 0.5rem; }
+.filters label { padding: 6px 16px; border: 1px solid #cbd5e1; border-radius: 999px; } .filters label:has(:checked) { background: var(--accent); color: #fff; border-color: var(--accent); }
+</style>
+<style>
+/* من الحل */
+.filters input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 1px;
+  block-size: 1px;
+}
+.filters label { position: relative; cursor: pointer; }
+.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<fieldset class="filters"><legend>اعرض</legend>
+<label><input type="radio" name="f" checked> الكل</label><label><input type="radio" name="f"> مواقع</label><label><input type="radio" name="f"> تطبيقات</label></fieldset>
+<p>بالكيبورد: Tab للفلتر والأسهم بتبدّل، والإطار على الاختيار.</p>
+</body>
+</html>
 ~~~
 
 [[display: none]] بيشيل العنصر من الـ layout ومن الـ accessibility tree. فالـ radio مبياخدش focus، و Tab بيعدّي المجموعة، والأسهم مش بتشتغل، وقارئ الشاشة مبيعرفش إنها اختيارات. الماوس شغال لأن الضغط على الـ [[label]] بيحدد الـ input حتى لو مخفي.
@@ -3877,6 +3935,35 @@ test("round trip على ٣ حالات", () => {
     position: sticky; inset-inline-start: 0; background: var(--surface); z-index: 2;
   }
 }
+~~~
+
+~~~view 230 250 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+:root { --surface: #ffffff; } body { font-family: system-ui, sans-serif; margin: 1rem; } .members { border-collapse: collapse; width: 100%; } th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e2e8f0; text-align: start; white-space: nowrap; }
+</style>
+<style>
+/* من الحل */
+@media (max-width: 40rem) {
+  .table-wrap { overflow-x: auto; }
+  .members { min-inline-size: 40rem; }
+  .members th:first-child, .members td:first-child {
+    position: sticky; inset-inline-start: 0; background: var(--surface); z-index: 2;
+  }
+}
+</style>
+</head>
+<body>
+<p>على «موبايل» (360): الجدول بيعمل scroll جوه الإطار، وأول عمود ثابت.</p>
+<div class="table-wrap"><table class="members"><thead><tr><th>الاسم</th><th>الإيميل</th><th>الباقة</th><th>الحالة</th><th>آخر دخول</th></tr></thead>
+<tbody><tr><td>منى سامي</td><td>mona@example.com</td><td>سنوي</td><td>نشط</td><td>النهارده</td></tr><tr><td>كريم علي</td><td>karim@example.com</td><td>شهري</td><td>متوقف</td><td>من أسبوع</td></tr><tr><td>سلمى حسن</td><td>salma@example.com</td><td>شهري</td><td>نشط</td><td>امبارح</td></tr></tbody></table></div>
+</body>
+</html>
 ~~~
 
 الطريقتين بيحلوا نفس المشكلة: ٥ أعمدة مش بتتساع في 360.

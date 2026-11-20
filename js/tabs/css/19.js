@@ -5523,6 +5523,41 @@ a { color: inherit; }
 }
 ~~~
 
+~~~view 250 270 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="paper">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 0; padding: 1rem; background: var(--bg); color: var(--ink); } .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.25rem; }
+.muted { color: var(--muted); } .btn { display: inline-block; padding: 0.5rem 1rem; border-radius: 999px; background: var(--brand); color: var(--brand-ink); text-decoration: none; font-weight: 700; } .soft { padding: 0.2rem 0.6rem; border-radius: 999px; background: var(--brand-soft); }
+</style>
+<style>
+/* من الحل */
+/* الثيم التالت: light-dark فيها قيمتين بس، فبنعيد تعريف اللي بيتغيّر */
+:root[data-theme="paper"] {
+  color-scheme: light;
+  --bg: #f4ecd8;
+  --surface: #fbf5e6;
+  --alt: #ece2c9;
+  --ink: #3b2a1a;
+  --muted: #65523f;
+  --line: #d9caa8;
+  --brand: #8f4215;
+  --brand-ink: #ffffff;
+  --brand-soft: #f0dcc0;
+}
+</style>
+</head>
+<body>
+<main class="card"><h1>الثيم الورقي</h1><p>كلام عادي بلون --ink على --surface، و <span class="muted">كلام باهت بـ --muted</span>.</p>
+<p><a class="btn" href="#">زرار البراند</a> <span class="soft">شارة بـ --brand-soft</span></p></main>
+</body>
+</html>
+~~~
+
 ~~~js js/theme.js (السطر اللي بيقرا المحفوظ)
 if (t === "light" || t === "dark" || t === "paper") root.dataset.theme = t;
 ~~~
@@ -6600,6 +6635,32 @@ axe على القسم: 0
 .billing label:has(:focus-visible) { outline: 3px solid var(--brand); outline-offset: 2px; }
 ~~~
 
+~~~view 120 140 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+:root { --ink: #1f1712; --bg: #fbf7f2; --brand: #a3501f; } body { font-family: system-ui, sans-serif; margin: 1rem; } .billing { display: flex; gap: 4px; border: 1px solid #ccc; border-radius: 999px; padding: 4px; width: fit-content; } .billing legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } .billing label { padding: 6px 18px; border-radius: 999px; }
+</style>
+<style>
+/* من الحل */
+.billing label { position: relative; cursor: pointer; }
+.billing input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.billing label:has(:checked) { background: var(--ink); color: var(--bg); }
+.billing label:has(:focus-visible) { outline: 3px solid var(--brand); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<fieldset class="billing"><legend>طريقة الدفع</legend>
+<label><input type="radio" name="b" value="m" checked> شهري</label><label><input type="radio" name="b" value="y"> سنوي</label></fieldset>
+<p>دوس Tab لحد المجموعة، والأسهم بتبدّل، والإطار بيبان على الاختيار.</p>
+</body>
+</html>
+~~~
+
 اللي اتكسر بـ [[display: none]]:
 
 - **الكيبورد:** العنصر برا الـ layout، فـ Tab بيعدّي المجموعة كلها، والأسهم مبتوصلش. المستخدم مقدرش يختار سنوي.
@@ -7105,6 +7166,37 @@ axe: 0
   }
 }
 @keyframes reveal { from { opacity: 0; translate: 0 16px; } }
+~~~
+
+~~~view 600 650 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } .spacer { height: 70vh; } section { margin: 1rem 0; padding: 2rem; background: #e0e7ff; border-radius: 10px; }
+</style>
+<style>
+/* من الحل */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+@keyframes reveal { from { opacity: 0; translate: 0 16px; } }
+</style>
+</head>
+<body>
+<p>اعمل scroll جوه الإطار: كل كارت بيظهر وهو داخل (لو المتصفح بيدعم animation-timeline).</p>
+<div class="spacer"></div><section data-reveal>كارت ١</section><section data-reveal>كارت ٢</section><section data-reveal>كارت ٣</section><section data-reveal>كارت ٤</section><div class="spacer"></div>
+</body>
+</html>
 ~~~
 
 ~~~js tools/reveal-compare.mjs

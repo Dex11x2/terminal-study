@@ -2870,6 +2870,37 @@ h3           => rgb(0, 128, 0)  (أخضر: اشتغل)
 }
 ~~~
 
+~~~view 190 210 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } .nav { gap: 1rem; margin-bottom: 1rem; } .card { border: 1px solid #cbd5e1; border-radius: 10px; } .card__title { margin: 0 0 0.5rem; }
+</style>
+<style>
+/* من الحل */
+.card {
+  padding: 1rem;
+  &:hover { background: #eef2ff; }
+  @media (width >= 48rem) { padding: 2rem; }
+}
+.card__title { font-size: 1.25rem; }  /* كانت &__title: لازم تطلع برا */
+.nav {
+  display: flex;
+  a { color: #1d4ed8; }
+}
+</style>
+</head>
+<body>
+<nav class="nav"><a href="#">الرئيسية</a><a href="#">الكورسات</a><a href="#">تواصل</a></nav>
+<article class="card"><h2 class="card__title">كارت بالـ nesting</h2><p>مرّر الماوس على الكارت: الخلفية بتتغيّر. وعلى الشاشة الكبيرة الـ padding بيبقى 2rem.</p></article>
+</body>
+</html>
+~~~
+
 ~~~bash
 npm uninstall sass
 npm ls sass

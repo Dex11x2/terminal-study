@@ -2221,6 +2221,41 @@ $__lt/script>
 .btn  { background: var(--brand); color: var(--on-brand); }
 ~~~
 
+~~~view 150 150 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; background: var(--bg); color: #888; } :root.dark body { color: #cbd5e1; } :root:not(.dark) body { color: #0f172a; }
+.btn { border: 0; padding: 0.6rem 1.2rem; border-radius: 8px; font: inherit; font-weight: 700; }
+</style>
+<style>
+/* من الحل */
+:root {
+  --bg: #ffffff;
+  --brand: #0f766e;
+  --on-brand: #ffffff;
+}
+:root.dark {
+  --bg: #0b1120;
+  --brand: #2dd4bf;
+  --on-brand: #0b1120;
+}
+.link { color: var(--brand); }
+.btn  { background: var(--brand); color: var(--on-brand); }
+</style>
+</head>
+<body>
+<p><button type="button" onclick="document.documentElement.classList.toggle('dark')">بدّل الوضع الغامق</button></p>
+<p>كلام عادي فيه <a class="link" href="#">لينك بلون البراند</a> جوه الجملة.</p>
+<p><button class="btn" type="button">زرار بلون البراند</button></p>
+</body>
+</html>
+~~~
+
 **طريقة الحل:** الحساب بيقول إن اللون الواحد مش هينفع. [[#0d9488]] في المنطقة الوسط، فبيقع مع الأبيض من الناحيتين. فبنعمل حاجتين:
 
 - الفاتح: نغمّق البراند درجة ([[#0f766e]]). الكلام عليه أبيض.

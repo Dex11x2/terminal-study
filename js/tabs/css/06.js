@@ -4048,6 +4048,35 @@ grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
 }
 ~~~
 
+~~~view 210 210 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } .layout { gap: 8px; } .layout > * { padding: 1rem; background: #e0e7ff; border-radius: 8px; }
+.layout > header { grid-area: header; } .layout > main { grid-area: main; } .layout > aside { grid-area: aside; } .layout > footer { grid-area: footer; }
+</style>
+<style>
+/* من الحل */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "header header"
+    "main   aside"
+    "footer footer";
+}
+</style>
+</head>
+<body>
+<div class="layout"><header>header</header><main>main</main><aside>aside</aside><footer>footer</footer></div>
+</body>
+</html>
+~~~
+
 والفحص من الـ Console:
 
 ~~~js

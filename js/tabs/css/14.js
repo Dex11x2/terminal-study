@@ -3608,6 +3608,26 @@ h1 { font-size: 80px; }
 h1 { font-size: clamp(1.75rem, 8vw, 5rem); }
 ~~~
 
+~~~view 420 360 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } h1 { margin: 0.5rem 0; line-height: 1.2; }
+</style>
+
+</head>
+<body>
+<h1 style="font-size: 80px">(أ) ٨٠px: الاستضافةالمجانية</h1>
+<h1 style="font-size: clamp(1.75rem, 8vw, 5rem)">(ب) clamp: الاستضافةالمجانية</h1>
+<p>على «موبايل» (360) العنوان الأول بيطلع برّه الإطار، والتاني لأ.</p>
+</body>
+</html>
+~~~
+
 **ليه:** [[.swap]] [[nowrap]] وعرضها قد أطول كلمة. لو الخط 80px، العرض ده أكبر من الشاشة الصغيرة، والنص مش بيلف، فالصفحة كلها بتعمل scroll أفقي.
 
 [[clamp(min, ideal, max)]]: 8vw بيتبع عرض الشاشة، بحد أدنى 28px وأقصى 80px.

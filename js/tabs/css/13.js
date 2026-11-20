@@ -2809,6 +2809,35 @@ axe صفر ، وعلى 360 مفيش scroll أفقي
 }
 ~~~
 
+~~~view 130 150 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } .marquee { overflow: hidden; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.75rem 0; }
+.track { display: flex; gap: 2rem; width: max-content; animation: scroll 12s linear infinite; } .track a { padding: 0.25rem 0.75rem; background: #e0e7ff; border-radius: 6px; color: #1e3a8a; text-decoration: none; }
+@keyframes scroll { to { translate: 50% 0; } }
+</style>
+<style>
+/* من الحل */
+.marquee:hover .track,
+.marquee:focus-within .track { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .track { animation: none; }
+}
+</style>
+</head>
+<body>
+<p>مرّر الماوس على الشريط أو دوس Tab على لينك جواه: الحركة بتقف.</p>
+<div class="marquee"><div class="track"><a href="#">شركة ١</a><a href="#">شركة ٢</a><a href="#">شركة ٣</a><a href="#">شركة ٤</a><a href="#">شركة ٥</a><a href="#">شركة ٦</a></div></div>
+</body>
+</html>
+~~~
+
 **الغلطة الشائعة:** تعتمد على الوقوف بالـ hover بس. على الموبايل مفيش hover، فالزرار الظاهر هو اللي بيوفي البند.
 
 ~~~text الناتج
@@ -4223,6 +4252,30 @@ export function RouteFocus() {
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** بعد ما حطيت [[RouteFocus]] الديزاينر اشتكى من إطار حوالين العنوان، فحد كتب [[h1:focus { outline: none }]]. ده بيخفيه للكيبورد كمان. خلّي الإطار يختفي لو التنقّل بالماوس بس.`, done: R`استخدمت [[h1:focus:not(:focus-visible) { outline: none }]] (أو مبتكتبش حاجة)، واتقاس في Chrome 156: بعد ضغطة ماوس [[h1.matches(":focus-visible")]] = [[false]] والإطار مش باين، وبعد Enter من الكيبورد = [[true]] والإطار باين.`, sol: R`~~~css style.css
 /* الصح: متكتبش حاجة. أو لو حد لازم يكتب، اكتبها كده */
 h1:focus:not(:focus-visible) { outline: none; }
+~~~
+
+~~~view 170 210 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } h1:focus-visible { outline: 3px solid #b45309; outline-offset: 4px; }
+</style>
+<style>
+/* من الحل */
+/* الصح: متكتبش حاجة. أو لو حد لازم يكتب، اكتبها كده */
+h1:focus:not(:focus-visible) { outline: none; }
+</style>
+</head>
+<body>
+<button type="button" onclick="document.querySelector('h1').focus()">انقل الـ focus للعنوان (بالماوس)</button>
+<h1 tabindex="-1">عنوان الصفحة الجديدة</h1>
+<p>بالماوس: الـ focus بيروح للعنوان ومفيش إطار. دوس Tab ثم Shift+Tab (يعني بالكيبورد) والإطار بيظهر.</p>
+</body>
+</html>
 ~~~
 
 **ليه:** المتصفح أصلًا بيقرر: بعد ضغطة ماوس [[:focus-visible]] بيبقى [[false]] والإطار مش بيظهر، وبعد الكيبورد بيبقى [[true]] والإطار بيظهر. فالشكوى كانت على حاجة غير موجودة، أو على متصفح قديم.

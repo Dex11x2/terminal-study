@@ -3037,6 +3037,38 @@ fixed جوه transform:   618 ← 218    (مشي مع الصفحة)
 }
 ~~~
 
+~~~view 450 450 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } .nav a { display: inline-block; margin-inline-end: 1rem; } .grid > div { padding: 1.5rem; background: #e0e7ff; border-radius: 8px; text-align: center; }
+</style>
+<style>
+/* من الحل */
+.grid { display: grid; gap: 1rem; }
+.title { font-size: 1.5rem; }
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .nav { display: flex; }
+  .title { font-size: 3rem; }
+}
+@media (min-width: 1024px) {
+  .grid { grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+}
+</style>
+</head>
+<body>
+<nav class="nav"><a href="#">الرئيسية</a> <a href="#">المنتجات</a> <a href="#">تواصل</a></nav>
+<h1 class="title">عنوان mobile-first</h1>
+<div class="grid"><div>١</div><div>٢</div><div>٣</div><div>٤</div></div>
+</body>
+</html>
+~~~
+
 الفكرة: ابدأ بالقواعد اللي بتنطبق على أصغر شاشة، وكل [[min-width]] **بيزوّد** بس. في desktop-first كل شاشة أصغر بتلغي اللي فوقها، فالموبايل بيتحمل قيم وبعدين يلغيها.
 
 في النسخة الجديدة:
