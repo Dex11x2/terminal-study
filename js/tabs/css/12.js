@@ -5,12 +5,1809 @@ MORE("css", [
       l: 3,
       n: "الموقع لازم يشتغل بالكيبورد وقارئ الشاشة ولمن نظره ضعيف، ومعظم ده ببلاش لو الـ HTML صح",
       projects: [
-        { lvl: 'صغير', t: R`زراير أيقونات ليها اسم`, what: R`toolbar فيه ٦ زراير أيقونة بس (بحث، ومفضلة، وسلة، ومشاركة، وثيم، ولغة): كل واحد [[<button>]] حقيقي بـ [[aria-label]] عربي، والأيقونة [[aria-hidden]]، والمفضلة [[aria-pressed]]، والثيم [[role="switch"]] بـ [[aria-checked]]، و tooltip بيظهر مع [[:hover]] و [[:focus-visible]]. من درسين aria و focus-visible.`, done: R`DevTools › Accessibility بيدّي لكل زرار role و name عربي، والضغط بـ Space بيقلب [[aria-pressed]] و [[aria-checked]]، والـ tooltip بيظهر بالكيبورد زي الماوس، و axe صفر مشاكل.` },
-        { lvl: 'صغير', t: R`palette بتعدّي AA`, what: R`خد ألوان موقع (أو ٨ ألوان من عندك) واعمل جدول بكل تركيبة كلام على خلفية بتتستخدم فعلًا، مع النسبة، وعدّل اللي ساقط لأقرب درجة بتعدّي من نفس العيلة. من درس contrast ratio.`, done: R`كل تركيبة كلام عادي 4.5:1 أو أكتر، والحدود والأيقونات المهمة 3:1 أو أكتر، والجدول فيه النسبة قبل وبعد لكل تعديل.` },
-        { lvl: 'متوسط', t: R`مكتبة alerts و badges`, what: R`٤ حالات (نجاح، وتحذير، وخطر، ومعلومة) في شكلين: soft (خلفية فاتحة وكلام غامق من نفس اللون) و solid. كل حالة فيها أيقونة وكلمة مش لون بس، والـ alert اللي بيظهر بعد فعل بيتحط في منطقة [[role="status"]] (أو [[role="alert"]] للخطر) موجودة في الصفحة من الأول، وفي الثيمين. بيجمع الدروس التلاتة.`, done: R`الـ ١٦ تركيبة (٤ حالات × شكلين × ثيمين) كلامها 4.5:1 أو أكتر، والصفحة بالأبيض والأسود (Rendering › Emulate vision deficiencies › Achromatopsia) لسه مفهومة، و NVDA أو Narrator بيقرا الرسالة لما تظهر من غير ما الـ focus يتحرك.` },
-        { lvl: 'متوسط', t: R`navbar بالكيبورد بس`, what: R`navbar فيه لوجو، و mega menu بيفتح بـ [[:hover]] و [[:focus-within]] من غير JavaScript، وزرار منيو للموبايل بـ [[aria-expanded]] و [[aria-controls]]، و skip link، و [[aria-current="page"]]، و [[scroll-padding-top]] بارتفاع الهيدر الـ sticky عشان العنصر اللي عليه focus ميستخباش تحته.`, done: R`تقدر توصل لكل لينك في الـ mega menu بـ Tab والماوس بعيد، والمنيو بتتقفل بـ Escape والـ focus بيرجع للزرار، ومفيش عنصر عليه focus مستخبي تحت الهيدر (الـ top بتاعه أكبر من ارتفاع الهيدر)، والـ outline باين في الثيمين.` },
-        { lvl: 'كبير', t: R`صفحة حجز لعيادة أسنان متخيلة «ابتسامة» من غير عوائق`, what: R`صفحة فيها هيرو، وخدمات بكروت، وslider قبل وبعد (صورتين فوق بعض و [[<input type="range">]] شفاف فوقهم بيكتب [[--pos]] والصورة العليا [[clip-path: inset(0 0 0 var(--pos))]]، فالكيبورد وقارئ الشاشة شغالين ببلاش)، و FAQ، وفورم حجز بأخطاء مربوطة بـ [[aria-describedby]] و [[aria-invalid]]، و toast بعد الإرسال في [[role="status"]]، و dialog تأكيد بـ [[showModal()]] بيرجّع الـ focus. الألوان توكنز بثيمين (من وحدة الثيم).`, done: R`axe صفر مشاكل في الثيمين، وLighthouse Accessibility ‏100، والـ slider بيتحرك بالأسهم وقارئ الشاشة بيقول القيمة، والحجز كله يخلص بالكيبورد بس، و Escape بيقفل الـ dialog والـ focus بيرجع للزرار اللي فتحه (اتقاس: [[document.activeElement]] هو الزرار)، وكل كلام 4.5:1 أو أكتر.`, ext: R`زوّد [[prefers-contrast: more]] بألوان أغمق، وجرّب الصفحة بـ [[forced-colors: active]] (Windows High Contrast) وصلّح أي حاجة اختفت، واكتب صفحة «إعلان الـ accessibility» فيها اللي اتعمل واللي لسه.` },
-        { lvl: 'فكرة', t: R`صلّح موقع حقيقي (بإذن صاحبه)`, what: R`اختار موقع صغير لحد تعرفه (محل، أو جمعية، أو مشروع صاحبك) أو موقع قديم ليك، واعمل لستة بكل مشكلة accessibility فيه: أزرار من غير اسم، وتباين، و focus مختفي، ومنيو مبتتفتحش بالكيبورد. وصلّح أهم ٥ بـ pull request أو نسخة محلية.`, done: R`فيه لستة قبل وبعد بلقطة لكل مشكلة، وعدد مشاكل axe نزل، وكل تصليح مكتوب جنبه بند WCAG بتاعه.`, ext: R`حوّل اللستة لـ checklist تستخدمها في أي مشروع جاي، وشاركها مع صاحب الموقع كاقتراح.` },
+        { lvl: 'صغير', dir: "icon-toolbar", t: R`زراير أيقونات ليها اسم`, what: R`toolbar فيه ٦ زراير أيقونة بس (بحث، ومفضلة، وسلة، ومشاركة، وثيم، ولغة): كل واحد [[<button>]] حقيقي بـ [[aria-label]] عربي، والأيقونة [[aria-hidden]]، والمفضلة [[aria-pressed]]، والثيم [[role="switch"]] بـ [[aria-checked]]، و tooltip بيظهر مع [[:hover]] و [[:focus-visible]]. من درسين aria و focus-visible.`, done: R`DevTools › Accessibility بيدّي لكل زرار role و name عربي، والضغط بـ Space بيقلب [[aria-pressed]] و [[aria-checked]]، والـ tooltip بيظهر بالكيبورد زي الماوس، و axe صفر مشاكل.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>زراير أيقونات ليها اسم</title>
+<link rel="stylesheet" href="style.css">
+<script src="toolbar.js" defer></script>
+</head>
+<body>
+<main class="page">
+  <h1>متجر «ورقة»</h1>
+  <div class="toolbar" role="toolbar" aria-label="أدوات الصفحة">
+    <button type="button" class="tool" aria-label="بحث"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34"/> <circle cx="11" cy="11" r="8"/> </svg></button>
+    <button type="button" class="tool" aria-label="المفضّلة" aria-pressed="false" id="fav"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/> </svg></button>
+    <button type="button" class="tool" aria-label="السلة، ٣ منتجات"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="8" cy="21" r="1"/> <circle cx="19" cy="21" r="1"/> <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/> </svg><span class="count" aria-hidden="true">٣</span></button>
+    <button type="button" class="tool" aria-label="مشاركة"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="18" cy="5" r="3"/> <circle cx="6" cy="12" r="3"/> <circle cx="18" cy="19" r="3"/> <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/> <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/> </svg></button>
+    <button type="button" class="tool" role="switch" aria-label="الوضع الغامق" aria-checked="false" id="theme"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/> </svg></button>
+    <button type="button" class="tool" aria-label="English" lang="en"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m5 8 6 6"/> <path d="m4 14 6-6 2-3"/> <path d="M2 5h12"/> <path d="M7 2h1"/> <path d="m22 22-5-10-5 10"/> <path d="M14 18h6"/> </svg></button>
+  </div>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root { --bg: #f8fafc; --fg: #0f172a; --surface: #ffffff; --muted: #475569; --accent: #4338ca; --on-accent: #ffffff; --tip: #0f172a; --on-tip: #ffffff; }
+:root[data-theme="dark"] { --bg: #0b1120; --fg: #e5e7eb; --surface: #111827; --muted: #9ca3af; --accent: #a5b4fc; --on-accent: #0b1120; --tip: #e5e7eb; --on-tip: #0b1120; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+.page { max-width: 40rem; margin-inline: auto; padding: 1rem; }
+
+.toolbar { display: inline-flex; gap: 0.25rem; padding: 0.35rem; border-radius: 1rem; background: var(--surface); box-shadow: 0 4px 16px #0f172a1f; }
+.tool {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;            /* 44px: a comfortable target for a finger */
+  height: 2.75rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.tool:hover { color: var(--fg); background: color-mix(in oklab, var(--fg) 8%, transparent); }
+.tool:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.icon { width: 1.4rem; height: 1.4rem; }
+
+/* state you can SEE, from the same attributes the screen reader reads */
+.tool[aria-pressed="true"], .tool[aria-checked="true"] { background: var(--accent); color: var(--on-accent); }
+.tool[aria-pressed="true"] .icon { fill: currentColor; }
+
+.count { position: absolute; inset-block-start: 0.15rem; inset-inline-end: 0.15rem; min-width: 1.1rem; padding-inline: 0.25rem; border-radius: 999px; background: #b91c1c; color: #fff; font-size: 0.7rem; font-weight: 700; line-height: 1.1rem; }
+
+/* the tooltip shows the button's own name: what the screen reader says is what the eye sees */
+.tool::after {
+  content: attr(aria-label);
+  position: absolute;
+  inset-block-start: calc(100% + 0.5rem);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 1;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.4rem;
+  background: var(--tip);
+  color: var(--on-tip);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+.tool:hover::after, .tool:focus-visible::after { opacity: 1; visibility: visible; }
+~~~
+
+~~~js toolbar.js
+// a toggle button: aria-pressed. A switch (on/off setting): role="switch" + aria-checked. Space and Enter work because they are <button>s
+const fav = document.getElementById("fav");
+fav.addEventListener("click", () => fav.setAttribute("aria-pressed", String(fav.getAttribute("aria-pressed") !== "true")));
+
+const theme = document.getElementById("theme");
+theme.addEventListener("click", () => {
+  const on = theme.getAttribute("aria-checked") !== "true";
+  theme.setAttribute("aria-checked", String(on));
+  if (on) document.documentElement.dataset.theme = "dark"; else delete document.documentElement.dataset.theme;
+});
+~~~
+
+الأيقونات SVG من lucide (‏[[lucide-static@0.577.0]])، متحطة في الـ HTML. كل أيقونة [[aria-hidden="true"]] و [[focusable="false"]] لأن الاسم بييجي من الزرار أو من الكلام اللي جنبها.
+
+~~~view 300 300 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>زراير أيقونات ليها اسم</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root { --bg: #f8fafc; --fg: #0f172a; --surface: #ffffff; --muted: #475569; --accent: #4338ca; --on-accent: #ffffff; --tip: #0f172a; --on-tip: #ffffff; }
+:root[data-theme="dark"] { --bg: #0b1120; --fg: #e5e7eb; --surface: #111827; --muted: #9ca3af; --accent: #a5b4fc; --on-accent: #0b1120; --tip: #e5e7eb; --on-tip: #0b1120; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+.page { max-width: 40rem; margin-inline: auto; padding: 1rem; }
+
+.toolbar { display: inline-flex; gap: 0.25rem; padding: 0.35rem; border-radius: 1rem; background: var(--surface); box-shadow: 0 4px 16px #0f172a1f; }
+.tool {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;            /* 44px: a comfortable target for a finger */
+  height: 2.75rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.tool:hover { color: var(--fg); background: color-mix(in oklab, var(--fg) 8%, transparent); }
+.tool:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.icon { width: 1.4rem; height: 1.4rem; }
+
+/* state you can SEE, from the same attributes the screen reader reads */
+.tool[aria-pressed="true"], .tool[aria-checked="true"] { background: var(--accent); color: var(--on-accent); }
+.tool[aria-pressed="true"] .icon { fill: currentColor; }
+
+.count { position: absolute; inset-block-start: 0.15rem; inset-inline-end: 0.15rem; min-width: 1.1rem; padding-inline: 0.25rem; border-radius: 999px; background: #b91c1c; color: #fff; font-size: 0.7rem; font-weight: 700; line-height: 1.1rem; }
+
+/* the tooltip shows the button's own name: what the screen reader says is what the eye sees */
+.tool::after {
+  content: attr(aria-label);
+  position: absolute;
+  inset-block-start: calc(100% + 0.5rem);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 1;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.4rem;
+  background: var(--tip);
+  color: var(--on-tip);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+.tool:hover::after, .tool:focus-visible::after { opacity: 1; visibility: visible; }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>متجر «ورقة»</h1>
+  <div class="toolbar" role="toolbar" aria-label="أدوات الصفحة">
+    <button type="button" class="tool" aria-label="بحث"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34"/> <circle cx="11" cy="11" r="8"/> </svg></button>
+    <button type="button" class="tool" aria-label="المفضّلة" aria-pressed="false" id="fav"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/> </svg></button>
+    <button type="button" class="tool" aria-label="السلة، ٣ منتجات"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="8" cy="21" r="1"/> <circle cx="19" cy="21" r="1"/> <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/> </svg><span class="count" aria-hidden="true">٣</span></button>
+    <button type="button" class="tool" aria-label="مشاركة"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="18" cy="5" r="3"/> <circle cx="6" cy="12" r="3"/> <circle cx="18" cy="19" r="3"/> <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/> <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/> </svg></button>
+    <button type="button" class="tool" role="switch" aria-label="الوضع الغامق" aria-checked="false" id="theme"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/> </svg></button>
+    <button type="button" class="tool" aria-label="English" lang="en"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m5 8 6 6"/> <path d="m4 14 6-6 2-3"/> <path d="M2 5h12"/> <path d="M7 2h1"/> <path d="m22 22-5-10-5 10"/> <path d="M14 18h6"/> </svg></button>
+  </div>
+</main>
+<script>
+// a toggle button: aria-pressed. A switch (on/off setting): role="switch" + aria-checked. Space and Enter work because they are <button>s
+const fav = document.getElementById("fav");
+fav.addEventListener("click", () => fav.setAttribute("aria-pressed", String(fav.getAttribute("aria-pressed") !== "true")));
+
+const theme = document.getElementById("theme");
+theme.addEventListener("click", () => {
+  const on = theme.getAttribute("aria-checked") !== "true";
+  theme.setAttribute("aria-checked", String(on));
+  if (on) document.documentElement.dataset.theme = "dark"; else delete document.documentElement.dataset.theme;
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** «متجر ورقة» وشريط أبيض فيه ٦ أيقونات: بحث، وقلب، وسلة عليها «٣» حمرا، ومشاركة، وقمر، ولغات. الماوس أو الـ Tab على أي واحدة بيطلّع اسمها تحتها. القلب بيتملي ويتلوّن لما تدوس عليه، والقمر بيقلب الصفحة غامق.
+
+**كل زرار [[<button>]] حقيقي:** Tab بيوقف عليه، و Enter و Space بيدوسوه، وقارئ الشاشة بيقول «زرار». ولأن مفيش كلام جواه، الاسم من [[aria-label]]. والأيقونة [[aria-hidden]]، وإلا القارئ ممكن يحاول يقراها.
+
+**اسم السلة فيه العدد:** «السلة، ٣ منتجات». الرقم الأحمر نفسه [[aria-hidden]] لأنه موجود في الاسم خلاص، وإلا كان هيتقري مرتين.
+
+**زرار بيتشغّل ويتقفل نوعين:**
+- **المفضّلة:** [[aria-pressed]] (زرار مضغوط ولا لأ)، وقارئ الشاشة بيقول «زرار تبديل، مضغوط».
+- **الثيم:** [[role="switch"]] و [[aria-checked]] (إعداد شغال ولا مقفول)، وبيتقري «مفتاح، شغال».
+
+والشكل بيتبني من نفس الـ attribute ([[.tool[aria-pressed="true"]]])، فاللي بتشوفه هو اللي بيتقري.
+
+**الـ tooltip هو الاسم نفسه:** [[content: attr(aria-label)]]. مفيش نسخة تانية من الكلام ممكن تختلف عن اللي بيتقري. وبيظهر مع [[:hover]] و [[:focus-visible]] الاتنين.
+
+**[[role="toolbar"]] و [[aria-label]]:** بيقول لقارئ الشاشة إن دول مجموعة أدوات واحدة اسمها «أدوات الصفحة».
+
+~~~text الناتج (Playwright 1.64.1 بـ Chrome 157، شجرة الـ accessibility اللي قارئ الشاشة بيقرا منها)
+- toolbar "أدوات الصفحة":
+  - button "بحث"
+  - button "المفضّلة"
+  - button "السلة، ٣ منتجات"
+  - button "مشاركة"
+  - switch "الوضع الغامق"
+  - button "English"
+Space على المفضّلة: aria-pressed true | Space على الثيم: aria-checked true، والصفحة data-theme dark
+Shift+Tab لـ «مشاركة»: الـ tooltip "مشاركة" visible
+axe (فاتح وغامق): 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**DevTools › Accessibility** بيوريك نفس الشجرة لأي عنصر: اختار الزرار من Elements، وافتح تاب Accessibility، وشوف Name و Role. وقارئ الشاشة (NVDA أو Narrator) ماتجرّبش هنا: الشجرة اللي فوق هي اللي بيقرا منها.` },
+        { lvl: 'صغير', dir: "palette-aa", t: R`palette بتعدّي AA`, what: R`خد ألوان موقع (أو ٨ ألوان من عندك) واعمل جدول بكل تركيبة كلام على خلفية بتتستخدم فعلًا، مع النسبة، وعدّل اللي ساقط لأقرب درجة بتعدّي من نفس العيلة. من درس contrast ratio.`, done: R`كل تركيبة كلام عادي 4.5:1 أو أكتر، والحدود والأيقونات المهمة 3:1 أو أكتر، والجدول فيه النسبة قبل وبعد لكل تعديل.`, sol: R`المثال: ٨ ألوان لكافيه متخيل «بن الحارة»، و ٨ تركيبات بتتستخدم فعلًا في الموقع (كلام على خلفية، وحد خانة).
+
+~~~js palette.mjs
+// node palette.mjs : measures every text/background pair the site really uses, fixes the ones under the target
+// by moving ONLY the lightness in OKLCH (same hue and chroma = same colour family), and writes palette.json
+import fs from "node:fs";
+
+// the site's 8 colours (an invented coffee shop) and where each pair is used
+const colors = {
+  cream: "#fdf6ec", white: "#ffffff", espresso: "#3b2416", latte: "#a47551",
+  caramel: "#d4a056", mint: "#7fb8a4", berry: "#c0546b", stone: "#9c9590",
+};
+const pairs = [
+  ["espresso", "cream", "الكلام الأساسي على الخلفية", 4.5],
+  ["latte", "cream", "العناوين الصغيرة", 4.5],
+  ["stone", "white", "الكلام الهادي على الكروت", 4.5],
+  ["white", "caramel", "كلام الزرار الأساسي", 4.5],
+  ["white", "mint", "كلام شارة «متاح»", 4.5],
+  ["white", "berry", "كلام شارة «خلص»", 4.5],
+  ["latte", "white", "اللينكات على الكروت", 4.5],
+  ["stone", "cream", "حدود الخانات (مش كلام: 3:1)", 3],
+];
+
+// --- colour maths: hex <-> linear sRGB <-> OKLab <-> OKLCH (Björn Ottosson's formulas)
+const hexToRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255);
+const toLin = c => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+const toGamma = c => (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055);
+function rgbToOklch(hex) {
+  const [r, g, b] = hexToRgb(hex).map(toLin);
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+  const A = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const B = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  return [L, Math.hypot(A, B), Math.atan2(B, A)];
+}
+function oklchToHex([L, C, H]) {
+  const A = C * Math.cos(H), B = C * Math.sin(H);
+  const l = (L + 0.3963377774 * A + 0.2158037573 * B) ** 3;
+  const m = (L - 0.1055613458 * A - 0.0638541728 * B) ** 3;
+  const s = (L - 0.0894841775 * A - 1.291485548 * B) ** 3;
+  const rgb = [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s];
+  return "#" + rgb.map(c => Math.round(Math.min(1, Math.max(0, toGamma(c))) * 255).toString(16).padStart(2, "0")).join("");
+}
+const lum = hex => { const [r, g, b] = hexToRgb(hex).map(toLin); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+
+// move the lightness of $__bthex$__bt (darker if it is the text on a light background, lighter otherwise) in steps of 0.005 until it passes
+function fix(hex, other, target, darker) {
+  const [L, C, H] = rgbToOklch(hex);
+  for (let step = 0; step <= 200; step++) {
+    const candidate = oklchToHex([Math.min(1, Math.max(0, L + (darker ? -1 : 1) * step * 0.005)), C, H]);
+    if (ratio(candidate, other) >= target) return { hex: candidate, steps: step };
+  }
+  return null;
+}
+
+const rows = pairs.map(([fg, bg, use, target]) => {
+  const before = ratio(colors[fg], colors[bg]);
+  if (before >= target) return { fg, bg, use, target, before: +before.toFixed(2), after: null, changed: null };
+  // change the coloured one (not white/cream), towards the side that increases contrast
+  const changeFg = !["white", "cream"].includes(fg);
+  const which = changeFg ? fg : bg;
+  const other = changeFg ? colors[bg] : colors[fg];
+  const darker = lum(colors[which]) <= lum(other) || !changeFg;   // a brand background behind white text gets darker too
+  const res = fix(colors[which], other, target, darker);
+  const newFg = changeFg ? res.hex : colors[fg], newBg = changeFg ? colors[bg] : res.hex;
+  return { fg, bg, use, target, before: +before.toFixed(2), changed: which, from: colors[which], to: res.hex, steps: res.steps, after: +ratio(newFg, newBg).toFixed(2) };
+});
+fs.writeFileSync("palette.json", JSON.stringify({ colors, rows }, null, 2) + "\n");
+for (const r of rows) console.log((r.after === null ? "ok   " : "fixed") + " " + r.fg + " on " + r.bg + " (" + r.use + "): " + r.before + (r.after === null ? "" : " -> " + r.after + "  [" + r.changed + " " + r.from + " -> " + r.to + ", " + r.steps + " steps of L 0.005]"));
+
+// one value per colour: if a colour was fixed in two pairs, keep the fix that moved it the most, then check EVERY pair again
+const final = { ...colors };
+for (const r of rows.filter(r => r.changed)) {
+  const prev = rows.filter(x => x.changed === r.changed).sort((a, b) => b.steps - a.steps)[0];
+  final[r.changed] = prev.to;
+}
+const check = pairs.map(([fg, bg, use, target]) => ({ fg, bg, use, target, ratio: +ratio(final[fg], final[bg]).toFixed(2) }));
+fs.writeFileSync("palette.json", JSON.stringify({ colors, final, rows, check }, null, 2) + "\n");
+console.log("\nfinal palette:", JSON.stringify(final));
+for (const c of check) console.log((c.ratio >= c.target ? "pass" : "FAIL") + " " + c.fg + " on " + c.bg + ": " + c.ratio + " (target " + c.target + ")");
+~~~
+
+~~~js build-page.mjs
+// node build-page.mjs : turns palette.json into index.html (every pair: a live sample before and after, and the ratio)
+import fs from "node:fs";
+const { colors, final, rows, check } = JSON.parse(fs.readFileSync("palette.json", "utf8"));
+const sample = (fg, bg, text) => $__bt<span class="sample" style="color:$__{fg};background:$__{bg}">$__{text}</span>$__bt;
+const tr = rows.map((r, i) => {
+  const c = check[i];
+  const label = r.target === 3 ? "حد الخانة" : "نص تجربة";
+  return $__bt      <tr>
+        <th scope="row">$__{r.use}<br><code>$__{r.fg}</code> على <code>$__{r.bg}</code></th>
+        <td>$__{sample(colors[r.fg], colors[r.bg], label)} <span class="$__{r.before >= r.target ? "ok" : "bad"}">$__{r.before} $__{r.before >= r.target ? "✓" : "✗"}</span></td>
+        <td>$__{sample(final[r.fg], final[r.bg], label)} <span class="$__{c.ratio >= c.target ? "ok" : "bad"}">$__{c.ratio} $__{c.ratio >= c.target ? "✓" : "✗"}</span></td>
+        <td>$__{r.changed ? $__bt<code>$__{r.from}</code> ← <code>$__{final[r.changed]}</code>$__bt : "متغيّرش"}</td>
+      </tr>$__bt;
+}).join("\n");
+const html = $__bt<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ألوان «بن الحارة» قبل وبعد</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="page">
+  <h1>ألوان «بن الحارة»: كل تركيبة قبل وبعد</h1>
+  <p>المطلوب: كلام 4.5:1، وحدود الخانات 3:1. التعديل في الإضاءة بس (OKLCH)، فاللون بيفضل من نفس العيلة.</p>
+  <div class="scroll" tabindex="0" role="region" aria-label="جدول التباين">
+    <table>
+      <thead><tr><th scope="col">التركيبة</th><th scope="col">قبل</th><th scope="col">بعد</th><th scope="col">اللي اتغيّر</th></tr></thead>
+      <tbody>
+$__{tr}
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>
+$__bt;
+fs.writeFileSync("index.html", html);
+console.log("rows:", rows.length);
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #ffffff; color: #1c1917; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; }
+.page { max-width: 60rem; margin-inline: auto; padding: 1rem; }
+.scroll { overflow-x: auto; }
+.scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+table { width: 100%; min-width: 40rem; border-collapse: collapse; }
+th, td { padding: 0.6rem; text-align: start; vertical-align: middle; border-block-end: 1px solid #e7e5e4; }
+th[scope="row"] { font-weight: 600; font-size: 0.9rem; }
+.sample { display: inline-block; padding: 0.3rem 0.7rem; border-radius: 0.4rem; border: 1px solid #e7e5e4; font-weight: 700; }
+.ok { color: #166534; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bad { color: #b91c1c; font-weight: 700; font-variant-numeric: tabular-nums; }
+code { font-size: 0.85em; }
+~~~
+
+~~~bash الترمنال
+node palette.mjs
+node build-page.mjs
+~~~
+
+[[index.html]] بيطلع من [[build-page.mjs]]، فالأرقام اللي في الصفحة هي نفس اللي اتقاست.
+
+~~~view 760 990 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ألوان «بن الحارة» قبل وبعد</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #ffffff; color: #1c1917; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; }
+.page { max-width: 60rem; margin-inline: auto; padding: 1rem; }
+.scroll { overflow-x: auto; }
+.scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+table { width: 100%; min-width: 40rem; border-collapse: collapse; }
+th, td { padding: 0.6rem; text-align: start; vertical-align: middle; border-block-end: 1px solid #e7e5e4; }
+th[scope="row"] { font-weight: 600; font-size: 0.9rem; }
+.sample { display: inline-block; padding: 0.3rem 0.7rem; border-radius: 0.4rem; border: 1px solid #e7e5e4; font-weight: 700; }
+.ok { color: #166534; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bad { color: #b91c1c; font-weight: 700; font-variant-numeric: tabular-nums; }
+code { font-size: 0.85em; }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>ألوان «بن الحارة»: كل تركيبة قبل وبعد</h1>
+  <p>المطلوب: كلام 4.5:1، وحدود الخانات 3:1. التعديل في الإضاءة بس (OKLCH)، فاللون بيفضل من نفس العيلة.</p>
+  <div class="scroll" tabindex="0" role="region" aria-label="جدول التباين">
+    <table>
+      <thead><tr><th scope="col">التركيبة</th><th scope="col">قبل</th><th scope="col">بعد</th><th scope="col">اللي اتغيّر</th></tr></thead>
+      <tbody>
+      <tr>
+        <th scope="row">الكلام الأساسي على الخلفية<br><code>espresso</code> على <code>cream</code></th>
+        <td><span class="sample" style="color:#3b2416;background:#fdf6ec">نص تجربة</span> <span class="ok">13.5 ✓</span></td>
+        <td><span class="sample" style="color:#3b2416;background:#fdf6ec">نص تجربة</span> <span class="ok">13.5 ✓</span></td>
+        <td>متغيّرش</td>
+      </tr>
+      <tr>
+        <th scope="row">العناوين الصغيرة<br><code>latte</code> على <code>cream</code></th>
+        <td><span class="sample" style="color:#a47551;background:#fdf6ec">نص تجربة</span> <span class="bad">3.73 ✗</span></td>
+        <td><span class="sample" style="color:#946643;background:#fdf6ec">نص تجربة</span> <span class="ok">4.61 ✓</span></td>
+        <td><code>#a47551</code> ← <code>#946643</code></td>
+      </tr>
+      <tr>
+        <th scope="row">الكلام الهادي على الكروت<br><code>stone</code> على <code>white</code></th>
+        <td><span class="sample" style="color:#9c9590;background:#ffffff">نص تجربة</span> <span class="bad">2.95 ✗</span></td>
+        <td><span class="sample" style="color:#7b746f;background:#ffffff">نص تجربة</span> <span class="ok">4.6 ✓</span></td>
+        <td><code>#9c9590</code> ← <code>#7b746f</code></td>
+      </tr>
+      <tr>
+        <th scope="row">كلام الزرار الأساسي<br><code>white</code> على <code>caramel</code></th>
+        <td><span class="sample" style="color:#ffffff;background:#d4a056">نص تجربة</span> <span class="bad">2.34 ✗</span></td>
+        <td><span class="sample" style="color:#ffffff;background:#9d6c1b">نص تجربة</span> <span class="ok">4.57 ✓</span></td>
+        <td><code>#d4a056</code> ← <code>#9d6c1b</code></td>
+      </tr>
+      <tr>
+        <th scope="row">كلام شارة «متاح»<br><code>white</code> على <code>mint</code></th>
+        <td><span class="sample" style="color:#ffffff;background:#7fb8a4">نص تجربة</span> <span class="bad">2.26 ✗</span></td>
+        <td><span class="sample" style="color:#ffffff;background:#49816e">نص تجربة</span> <span class="ok">4.52 ✓</span></td>
+        <td><code>#7fb8a4</code> ← <code>#49816e</code></td>
+      </tr>
+      <tr>
+        <th scope="row">كلام شارة «خلص»<br><code>white</code> على <code>berry</code></th>
+        <td><span class="sample" style="color:#ffffff;background:#c0546b">نص تجربة</span> <span class="bad">4.45 ✗</span></td>
+        <td><span class="sample" style="color:#ffffff;background:#be526a">نص تجربة</span> <span class="ok">4.56 ✓</span></td>
+        <td><code>#c0546b</code> ← <code>#be526a</code></td>
+      </tr>
+      <tr>
+        <th scope="row">اللينكات على الكروت<br><code>latte</code> على <code>white</code></th>
+        <td><span class="sample" style="color:#a47551;background:#ffffff">نص تجربة</span> <span class="bad">4.01 ✗</span></td>
+        <td><span class="sample" style="color:#946643;background:#ffffff">نص تجربة</span> <span class="ok">4.95 ✓</span></td>
+        <td><code>#a47551</code> ← <code>#946643</code></td>
+      </tr>
+      <tr>
+        <th scope="row">حدود الخانات (مش كلام: 3:1)<br><code>stone</code> على <code>cream</code></th>
+        <td><span class="sample" style="color:#9c9590;background:#fdf6ec">حد الخانة</span> <span class="bad">2.75 ✗</span></td>
+        <td><span class="sample" style="color:#7b746f;background:#fdf6ec">حد الخانة</span> <span class="ok">4.28 ✓</span></td>
+        <td><code>#9c9590</code> ← <code>#7b746f</code></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** جدول ٨ صفوف: كل تركيبة (زي «كلام الزرار الأساسي: white على caramel») وجنبها عينة «قبل» بلونها ونسبتها بالأحمر ✗، وعينة «بعد» ونسبتها بالأخضر ✓، واللون اللي اتغيّر.
+
+**المطلوب:** كلام عادي 4.5:1 (WCAG 1.4.3)، وحدود الخانات والأيقونات المهمة 3:1 (1.4.11). 7 من 8 كانوا ساقطين، أسوأهم الأبيض على النعناع (2.26).
+
+**التصليح من نفس العيلة:** السكربت بيحوّل اللون لـ OKLCH (إضاءة، وتشبّع، ودرجة) ويحرّك **الإضاءة بس** خطوة 0.005 لحد ما النسبة تعدّي. الدرجة والتشبّع زي ما هم، فالكراميل فضل كراميل بس أغمق، مش اتحوّل بني تاني.
+
+**الفخ: لون واحد في تركيبتين:** latte اتصلح مرة لـ [[#946643]] (على الكريمي) ومرة لـ [[#9b6c48]] (على الأبيض). الموقع محتاج قيمة واحدة لكل لون، فالسكربت بياخد التصليح الأكبر لكل لون، وبعدين **يقيس كل التركيبات تاني** بالألوان النهائية. والعمود «بعد» في الصفحة من القياس التاني ده.
+
+**ليه الأرقام من السكربت مش من axe:** في مشروع «صلّح موقع» اتقاس إن axe ممكن ميفحصش كلام في صفحة خالص (قال عليه «inapplicable»). فاحسب التباين لكل تركيبة بنفسك، و axe يبقى فحص زيادة.
+
+~~~text node palette.mjs
+ok    espresso on cream (الكلام الأساسي على الخلفية): 13.5
+fixed latte on cream (العناوين الصغيرة): 3.73 -> 4.61  [latte #a47551 -> #946643, 10 steps of L 0.005]
+fixed stone on white (الكلام الهادي على الكروت): 2.95 -> 4.6  [stone #9c9590 -> #7b746f, 22 steps of L 0.005]
+fixed white on caramel (كلام الزرار الأساسي): 2.34 -> 4.57  [caramel #d4a056 -> #9d6c1b, 34 steps of L 0.005]
+fixed white on mint (كلام شارة «متاح»): 2.26 -> 4.52  [mint #7fb8a4 -> #49816e, 36 steps of L 0.005]
+fixed white on berry (كلام شارة «خلص»): 4.45 -> 4.56  [berry #c0546b -> #be526a, 1 steps of L 0.005]
+fixed latte on white (اللينكات على الكروت): 4.01 -> 4.53  [latte #a47551 -> #9b6c48, 6 steps of L 0.005]
+fixed stone on cream (حدود الخانات (مش كلام: 3:1)): 2.75 -> 3.05  [stone #9c9590 -> #948d88, 5 steps of L 0.005]
+
+final palette: {"cream":"#fdf6ec","white":"#ffffff","espresso":"#3b2416","latte":"#946643","caramel":"#9d6c1b","mint":"#49816e","berry":"#be526a","stone":"#7b746f"}
+pass espresso on cream: 13.5 (target 4.5)
+pass latte on cream: 4.61 (target 4.5)
+pass stone on white: 4.6 (target 4.5)
+pass white on caramel: 4.57 (target 4.5)
+pass white on mint: 4.52 (target 4.5)
+pass white on berry: 4.56 (target 4.5)
+pass latte on white: 4.95 (target 4.5)
+pass stone on cream: 4.28 (target 3)
+الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'متوسط', dir: "alerts-lib", t: R`مكتبة alerts و badges`, what: R`٤ حالات (نجاح، وتحذير، وخطر، ومعلومة) في شكلين: soft (خلفية فاتحة وكلام غامق من نفس اللون) و solid. كل حالة فيها أيقونة وكلمة مش لون بس، والـ alert اللي بيظهر بعد فعل بيتحط في منطقة [[role="status"]] (أو [[role="alert"]] للخطر) موجودة في الصفحة من الأول، وفي الثيمين. بيجمع الدروس التلاتة.`, done: R`الـ ١٦ تركيبة (٤ حالات × شكلين × ثيمين) كلامها 4.5:1 أو أكتر، والصفحة بالأبيض والأسود (Rendering › Emulate vision deficiencies › Achromatopsia) لسه مفهومة، و NVDA أو Narrator بيقرا الرسالة لما تظهر من غير ما الـ focus يتحرك.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تنبيهات وشارات</title>
+<link rel="stylesheet" href="style.css">
+<script src="alerts.js" defer></script>
+</head>
+<body>
+<main class="page">
+  <header class="top">
+    <h1>تنبيهات وشارات</h1>
+    <button type="button" id="theme" aria-pressed="false">الوضع الغامق</button>
+  </header>
+
+  <section aria-labelledby="h-soft"><h2 id="h-soft">فاتح (soft)</h2>
+    <div class="alert alert--success alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21.801 10A10 10 0 1 1 17 3.335"/> <path d="m9 11 3 3L22 4"/> </svg><p><strong>تمام:</strong> اتحفظ التعديل.</p></div>
+    <div class="alert alert--warning alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/> </svg><p><strong>تنبيه:</strong> باقي يومين على آخر ميعاد.</p></div>
+    <div class="alert alert--danger alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="m15 9-6 6"/> <path d="m9 9 6 6"/> </svg><p><strong>غلط:</strong> الدفع ما اتمّش.</p></div>
+    <div class="alert alert--info alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/> </svg><p><strong>معلومة:</strong> المكتب قافل الجمعة.</p></div>
+    <p class="badges"><span class="badge alert--success alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21.801 10A10 10 0 1 1 17 3.335"/> <path d="m9 11 3 3L22 4"/> </svg>تمام</span> <span class="badge alert--warning alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/> </svg>تنبيه</span> <span class="badge alert--danger alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="m15 9-6 6"/> <path d="m9 9 6 6"/> </svg>غلط</span> <span class="badge alert--info alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/> </svg>معلومة</span></p>
+  </section>
+  <section aria-labelledby="h-solid"><h2 id="h-solid">مليان (solid)</h2>
+    <div class="alert alert--success alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21.801 10A10 10 0 1 1 17 3.335"/> <path d="m9 11 3 3L22 4"/> </svg><p><strong>تمام:</strong> اتحفظ التعديل.</p></div>
+    <div class="alert alert--warning alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/> </svg><p><strong>تنبيه:</strong> باقي يومين على آخر ميعاد.</p></div>
+    <div class="alert alert--danger alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="m15 9-6 6"/> <path d="m9 9 6 6"/> </svg><p><strong>غلط:</strong> الدفع ما اتمّش.</p></div>
+    <div class="alert alert--info alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/> </svg><p><strong>معلومة:</strong> المكتب قافل الجمعة.</p></div>
+    <p class="badges"><span class="badge alert--success alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21.801 10A10 10 0 1 1 17 3.335"/> <path d="m9 11 3 3L22 4"/> </svg>تمام</span> <span class="badge alert--warning alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/> </svg>تنبيه</span> <span class="badge alert--danger alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="m15 9-6 6"/> <path d="m9 9 6 6"/> </svg>غلط</span> <span class="badge alert--info alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/> </svg>معلومة</span></p>
+  </section>
+
+  <section aria-labelledby="h-live"><h2 id="h-live">رسايل بتظهر بعد فعل</h2>
+    <div class="actions">
+      <button type="button" id="save">احفظ</button>
+      <button type="button" id="pay">ادفع (هيفشل)</button>
+    </div>
+    <!-- both regions are in the page from the start and EMPTY: screen readers watch them, then read what is added -->
+    <div id="status" role="status" class="live"></div>
+    <div id="error" role="alert" class="live"></div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --bg: #ffffff; --fg: #0f172a;
+  /* every status: a soft background, a dark text of the same colour, and a solid colour with white text */
+  --success-soft: #dcfce7; --success-ink: #14532d; --success: #15803d;
+  --warning-soft: #fef3c7; --warning-ink: #78350f; --warning: #a16207;
+  --danger-soft: #fee2e2;  --danger-ink: #7f1d1d;  --danger: #b91c1c;
+  --info-soft: #dbeafe;    --info-ink: #1e3a8a;    --info: #1d4ed8;
+  --on-solid: #ffffff;
+}
+:root[data-theme="dark"] {
+  --bg: #0b1120; --fg: #e5e7eb;
+  --success-soft: #052e16; --success-ink: #bbf7d0; --success: #4ade80;
+  --warning-soft: #422006; --warning-ink: #fde68a; --warning: #facc15;
+  --danger-soft: #450a0a;  --danger-ink: #fecaca;  --danger: #f87171;
+  --info-soft: #172554;    --info-ink: #bfdbfe;    --info: #60a5fa;
+  --on-solid: #0b1120;
+}
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+button { padding: 0.45rem 1rem; border: 1px solid currentColor; border-radius: 0.5rem; background: transparent; color: var(--fg); font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--info); outline-offset: 2px; }
+
+.alert { display: flex; align-items: flex-start; gap: 0.6rem; margin-block: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.6rem; }
+.alert p { margin: 0; }
+.icon { flex: none; width: 1.25rem; height: 1.25rem; margin-block-start: 0.15rem; }
+.badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.1rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; }
+.badge .icon { width: 1rem; height: 1rem; margin: 0; }
+
+/* soft: light background, dark text of the same colour. solid: the colour itself, with the page background colour as text */
+.alert--success.alert--soft { background: var(--success-soft); color: var(--success-ink); }
+.alert--warning.alert--soft { background: var(--warning-soft); color: var(--warning-ink); }
+.alert--danger.alert--soft  { background: var(--danger-soft);  color: var(--danger-ink); }
+.alert--info.alert--soft    { background: var(--info-soft);    color: var(--info-ink); }
+.alert--success.alert--solid { background: var(--success); color: var(--on-solid); }
+.alert--warning.alert--solid { background: var(--warning); color: var(--on-solid); }
+.alert--danger.alert--solid  { background: var(--danger);  color: var(--on-solid); }
+.alert--info.alert--solid    { background: var(--info);    color: var(--on-solid); }
+
+.actions { display: flex; gap: 0.75rem; }
+.live:empty { display: none; }   /* an empty region takes no space, but it is still in the page */
+~~~
+
+~~~js alerts.js
+// a message after an action goes INTO a live region that was already there. No focus move: the reader keeps working
+const status = document.getElementById("status");
+const error = document.getElementById("error");
+const say = (region, cls, title, text) => {
+  region.innerHTML = "";
+  const box = document.createElement("div");
+  box.className = "alert alert--soft " + cls;
+  box.innerHTML = "<p><strong></strong> </p>";
+  box.querySelector("strong").textContent = title + ":";
+  box.querySelector("p").append(text);
+  region.append(box);
+};
+document.getElementById("save").addEventListener("click", () => say(status, "alert--success", "تمام", "اتحفظ التعديل."));
+document.getElementById("pay").addEventListener("click", () => say(error, "alert--danger", "غلط", "الكارت مرفوض، جرّب كارت تاني."));
+
+const theme = document.getElementById("theme");
+theme.addEventListener("click", () => {
+  const dark = theme.getAttribute("aria-pressed") !== "true";
+  theme.setAttribute("aria-pressed", String(dark));
+  if (dark) document.documentElement.dataset.theme = "dark"; else delete document.documentElement.dataset.theme;
+});
+~~~
+
+الأيقونات SVG من lucide (‏[[lucide-static@0.577.0]])، متحطة في الـ HTML. كل أيقونة [[aria-hidden="true"]] و [[focusable="false"]] لأن الاسم بييجي من الزرار أو من الكلام اللي جنبها.
+
+~~~view 760 990 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تنبيهات وشارات</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --bg: #ffffff; --fg: #0f172a;
+  /* every status: a soft background, a dark text of the same colour, and a solid colour with white text */
+  --success-soft: #dcfce7; --success-ink: #14532d; --success: #15803d;
+  --warning-soft: #fef3c7; --warning-ink: #78350f; --warning: #a16207;
+  --danger-soft: #fee2e2;  --danger-ink: #7f1d1d;  --danger: #b91c1c;
+  --info-soft: #dbeafe;    --info-ink: #1e3a8a;    --info: #1d4ed8;
+  --on-solid: #ffffff;
+}
+:root[data-theme="dark"] {
+  --bg: #0b1120; --fg: #e5e7eb;
+  --success-soft: #052e16; --success-ink: #bbf7d0; --success: #4ade80;
+  --warning-soft: #422006; --warning-ink: #fde68a; --warning: #facc15;
+  --danger-soft: #450a0a;  --danger-ink: #fecaca;  --danger: #f87171;
+  --info-soft: #172554;    --info-ink: #bfdbfe;    --info: #60a5fa;
+  --on-solid: #0b1120;
+}
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+button { padding: 0.45rem 1rem; border: 1px solid currentColor; border-radius: 0.5rem; background: transparent; color: var(--fg); font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--info); outline-offset: 2px; }
+
+.alert { display: flex; align-items: flex-start; gap: 0.6rem; margin-block: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.6rem; }
+.alert p { margin: 0; }
+.icon { flex: none; width: 1.25rem; height: 1.25rem; margin-block-start: 0.15rem; }
+.badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.1rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; }
+.badge .icon { width: 1rem; height: 1rem; margin: 0; }
+
+/* soft: light background, dark text of the same colour. solid: the colour itself, with the page background colour as text */
+.alert--success.alert--soft { background: var(--success-soft); color: var(--success-ink); }
+.alert--warning.alert--soft { background: var(--warning-soft); color: var(--warning-ink); }
+.alert--danger.alert--soft  { background: var(--danger-soft);  color: var(--danger-ink); }
+.alert--info.alert--soft    { background: var(--info-soft);    color: var(--info-ink); }
+.alert--success.alert--solid { background: var(--success); color: var(--on-solid); }
+.alert--warning.alert--solid { background: var(--warning); color: var(--on-solid); }
+.alert--danger.alert--solid  { background: var(--danger);  color: var(--on-solid); }
+.alert--info.alert--solid    { background: var(--info);    color: var(--on-solid); }
+
+.actions { display: flex; gap: 0.75rem; }
+.live:empty { display: none; }   /* an empty region takes no space, but it is still in the page */
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="top">
+    <h1>تنبيهات وشارات</h1>
+    <button type="button" id="theme" aria-pressed="false">الوضع الغامق</button>
+  </header>
+
+  <section aria-labelledby="h-soft"><h2 id="h-soft">فاتح (soft)</h2>
+    <div class="alert alert--success alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21.801 10A10 10 0 1 1 17 3.335"/> <path d="m9 11 3 3L22 4"/> </svg><p><strong>تمام:</strong> اتحفظ التعديل.</p></div>
+    <div class="alert alert--warning alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/> </svg><p><strong>تنبيه:</strong> باقي يومين على آخر ميعاد.</p></div>
+    <div class="alert alert--danger alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="m15 9-6 6"/> <path d="m9 9 6 6"/> </svg><p><strong>غلط:</strong> الدفع ما اتمّش.</p></div>
+    <div class="alert alert--info alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/> </svg><p><strong>معلومة:</strong> المكتب قافل الجمعة.</p></div>
+    <p class="badges"><span class="badge alert--success alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21.801 10A10 10 0 1 1 17 3.335"/> <path d="m9 11 3 3L22 4"/> </svg>تمام</span> <span class="badge alert--warning alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/> </svg>تنبيه</span> <span class="badge alert--danger alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="m15 9-6 6"/> <path d="m9 9 6 6"/> </svg>غلط</span> <span class="badge alert--info alert--soft"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/> </svg>معلومة</span></p>
+  </section>
+  <section aria-labelledby="h-solid"><h2 id="h-solid">مليان (solid)</h2>
+    <div class="alert alert--success alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21.801 10A10 10 0 1 1 17 3.335"/> <path d="m9 11 3 3L22 4"/> </svg><p><strong>تمام:</strong> اتحفظ التعديل.</p></div>
+    <div class="alert alert--warning alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/> </svg><p><strong>تنبيه:</strong> باقي يومين على آخر ميعاد.</p></div>
+    <div class="alert alert--danger alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="m15 9-6 6"/> <path d="m9 9 6 6"/> </svg><p><strong>غلط:</strong> الدفع ما اتمّش.</p></div>
+    <div class="alert alert--info alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/> </svg><p><strong>معلومة:</strong> المكتب قافل الجمعة.</p></div>
+    <p class="badges"><span class="badge alert--success alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21.801 10A10 10 0 1 1 17 3.335"/> <path d="m9 11 3 3L22 4"/> </svg>تمام</span> <span class="badge alert--warning alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/> </svg>تنبيه</span> <span class="badge alert--danger alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="m15 9-6 6"/> <path d="m9 9 6 6"/> </svg>غلط</span> <span class="badge alert--info alert--solid"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/> </svg>معلومة</span></p>
+  </section>
+
+  <section aria-labelledby="h-live"><h2 id="h-live">رسايل بتظهر بعد فعل</h2>
+    <div class="actions">
+      <button type="button" id="save">احفظ</button>
+      <button type="button" id="pay">ادفع (هيفشل)</button>
+    </div>
+    <!-- both regions are in the page from the start and EMPTY: screen readers watch them, then read what is added -->
+    <div id="status" role="status" class="live"></div>
+    <div id="error" role="alert" class="live"></div>
+  </section>
+</main>
+<script>
+// a message after an action goes INTO a live region that was already there. No focus move: the reader keeps working
+const status = document.getElementById("status");
+const error = document.getElementById("error");
+const say = (region, cls, title, text) => {
+  region.innerHTML = "";
+  const box = document.createElement("div");
+  box.className = "alert alert--soft " + cls;
+  box.innerHTML = "<p><strong></strong> </p>";
+  box.querySelector("strong").textContent = title + ":";
+  box.querySelector("p").append(text);
+  region.append(box);
+};
+document.getElementById("save").addEventListener("click", () => say(status, "alert--success", "تمام", "اتحفظ التعديل."));
+document.getElementById("pay").addEventListener("click", () => say(error, "alert--danger", "غلط", "الكارت مرفوض، جرّب كارت تاني."));
+
+const theme = document.getElementById("theme");
+theme.addEventListener("click", () => {
+  const dark = theme.getAttribute("aria-pressed") !== "true";
+  theme.setAttribute("aria-pressed", String(dark));
+  if (dark) document.documentElement.dataset.theme = "dark"; else delete document.documentElement.dataset.theme;
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٤ تنبيهات فاتحة (تمام أخضر، وتنبيه أصفر، وغلط أحمر، ومعلومة أزرق)، وتحتهم نفس الأربعة مليانة، وتحت كل مجموعة شارات صغيرة. وتحت زرارين: «احفظ» بيطلّع «تمام: اتحفظ التعديل.»، و «ادفع» بيطلّع «غلط: الكارت مرفوض». وزرار فوق بيقلب الصفحة غامق.
+
+**اللون مش لوحده أبدًا:** كل حالة فيها أيقونة مختلفة (صح، ومثلث، و X، و i) وكلمة («تمام:» و «تنبيه:»…). اللي مبيفرّقش بين الأحمر والأخضر، أو بيستخدم شاشة أبيض وأسود، بيفهم من الشكل والكلمة (WCAG 1.4.1). اتجرّب بـ DevTools › Rendering › Emulate vision deficiencies › Achromatopsia (أبيض وأسود): كل تنبيه لسه مفهوم.
+
+**الألوان:** لكل حالة ٣ متغيرات: [[-soft]] (خلفية فاتحة)، و [[-ink]] (كلام غامق من نفس اللون)، واللون المليان. والغامق نفس الأسامي بقيم تانية، فالـ ١٦ تركيبة اتقاسوا في الثيمين.
+
+**الرسالة اللي بتظهر بعد فعل:** المنطقتين [[role="status"]] و [[role="alert"]] موجودين في الصفحة **من الأول وفاضيين**. قارئ الشاشة بيبدأ يراقب المنطقة لما الصفحة تفتح، فلو المنطقة نفسها اتضافت مع الرسالة، قارئات كتير مش هتقراها. و [[status]] مؤدب (بيستنى القارئ يخلّص جملته)، و [[alert]] للغلط بيقاطع. والـ focus مبيتحركش: اللي كان بيعمل حاجة بيكمل.
+
+**[[.live:empty { display: none }]]:** المنطقة الفاضية مبتاخدش مكان، بس لسه في الصفحة وقارئ الشاشة بيراقبها.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+التباين (soft ×4 ثم solid ×4):
+فاتح: 8.30 8.15 8.20 8.49 5.02 4.92 6.47 6.70
+غامق: 12.30 11.70 11.16 10.34 10.81 12.30 6.81 7.41      أقل رقم 4.92 (المطلوب 4.5)
+
+قبل أي ضغطة: status role=status فاضية | error role=alert فاضية
+Enter على «احفظ» وعلى «ادفع»: status = "تمام: اتحفظ التعديل." | alert = "غلط: الكارت مرفوض، جرّب كارت تاني." | الـ focus فضل على «ادفع»
+الشجرة:
+- status:
+  - paragraph: strong "تمام:" text: اتحفظ التعديل.
+- alert:
+  - paragraph: strong "غلط:" text: الكارت مرفوض، جرّب كارت تاني.
+Achromatopsia (CDP Emulation.setEmulatedVisionDeficiency): لقطة كاملة، الأربع حالات بتفرق بالأيقونة والكلمة
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**قارئ الشاشة نفسه (NVDA أو Narrator) ماتجرّبش هنا.** اللي اتقاس: المنطقتين موجودين ودورهم صح، والرسالة اتحطت جواهم، والـ focus ماتحركش. وسلوك القراية نفسه من وثائق MDN (ARIA live regions). جرّبه بـ NVDA على ويندوز: افتح الصفحة، ودوس «احفظ»، وهتسمع الرسالة.` },
+        { lvl: 'متوسط', dir: "kbd-navbar", t: R`navbar بالكيبورد بس`, what: R`navbar فيه لوجو، و mega menu بيفتح بـ [[:hover]] و [[:focus-within]] من غير JavaScript، وزرار منيو للموبايل بـ [[aria-expanded]] و [[aria-controls]]، و skip link، و [[aria-current="page"]]، و [[scroll-padding-top]] بارتفاع الهيدر الـ sticky عشان العنصر اللي عليه focus ميستخباش تحته.`, done: R`تقدر توصل لكل لينك في الـ mega menu بـ Tab والماوس بعيد، والمنيو بتتقفل بـ Escape والـ focus بيرجع للزرار، ومفيش عنصر عليه focus مستخبي تحت الهيدر (الـ top بتاعه أكبر من ارتفاع الهيدر)، والـ outline باين في الثيمين.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محل «فولت» للإلكترونيات</title>
+<link rel="stylesheet" href="style.css">
+<script src="nav.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">اتخطى للمحتوى</a>
+<header class="header">
+  <div class="bar">
+    <a class="logo" href="#main"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/> </svg><span>فولت</span></a>
+    <button type="button" class="menu-btn" aria-expanded="false" aria-controls="nav"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M4 5h16"/> <path d="M4 12h16"/> <path d="M4 19h16"/> </svg><span>القايمة</span></button>
+    <nav id="nav" class="nav" aria-label="الرئيسية">
+      <ul class="nav__list">
+        <li><a href="#main" aria-current="page">الرئيسية</a></li>
+        <li class="has-mega">
+          <a href="#phones">المنتجات <svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m6 9 6 6 6-6"/> </svg></a>
+          <div class="mega">
+            <ul>
+              <li><a href="#phones">موبايلات</a></li>
+              <li><a href="#laptops">لابتوبات</a></li>
+              <li><a href="#audio">سماعات</a></li>
+              <li><a href="#watches">ساعات</a></li>
+              <li><a href="#cables">شواحن وكابلات</a></li>
+              <li><a href="#offers">عروض الأسبوع</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="#branches">الفروع</a></li>
+        <li><a href="#support">الدعم</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+  <h1>كل الإلكترونيات في محل واحد</h1>
+  <section id="phones" aria-labelledby="h-phones"><h2 id="h-phones">موبايلات</h2><p>كلام عن موبايلات، وتحته لينك <a href="#phones-more">شوف كل موبايلات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="laptops" aria-labelledby="h-laptops"><h2 id="h-laptops">لابتوبات</h2><p>كلام عن لابتوبات، وتحته لينك <a href="#laptops-more">شوف كل لابتوبات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="audio" aria-labelledby="h-audio"><h2 id="h-audio">سماعات</h2><p>كلام عن سماعات، وتحته لينك <a href="#audio-more">شوف كل سماعات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="watches" aria-labelledby="h-watches"><h2 id="h-watches">ساعات</h2><p>كلام عن ساعات، وتحته لينك <a href="#watches-more">شوف كل ساعات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="cables" aria-labelledby="h-cables"><h2 id="h-cables">شواحن وكابلات</h2><p>كلام عن شواحن وكابلات، وتحته لينك <a href="#cables-more">شوف كل شواحن وكابلات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="offers" aria-labelledby="h-offers"><h2 id="h-offers">عروض الأسبوع</h2><p>كلام عن عروض الأسبوع، وتحته لينك <a href="#offers-more">شوف كل عروض الأسبوع</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="branches" aria-labelledby="h-branches"><h2 id="h-branches">الفروع</h2><p>كلام عن الفروع، وتحته لينك <a href="#branches-more">شوف كل الفروع</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="support" aria-labelledby="h-support"><h2 id="h-support">الدعم</h2><p>كلام عن الدعم، وتحته لينك <a href="#support-more">شوف كل الدعم</a> عشان الـ Tab يقف عليه.</p></section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root { --header-h: 4rem; --bg: #ffffff; --fg: #111827; --muted: #4b5563; --accent: #1d4ed8; --surface: #f3f4f6; --ring: #b45309; }
+:root[data-theme="dark"] { --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --accent: #93c5fd; --surface: #1f2937; --ring: #fbbf24; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme]) { --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --accent: #93c5fd; --surface: #1f2937; --ring: #fbbf24; } }
+
+/* a Tab or a jump to #id scrolls so the element sits BELOW the sticky header, never under it */
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.icon { width: 1.2rem; height: 1.2rem; flex: none; }
+
+/* skip link: off the screen until it gets focus */
+.skip { position: absolute; inset-inline-start: 1rem; top: -10rem; z-index: 30; padding: 0.5rem 1rem; background: var(--fg); color: var(--bg); }
+.skip:focus { top: 1rem; }
+
+.header { position: sticky; top: 0; z-index: 20; height: var(--header-h); background: var(--bg); border-block-end: 1px solid var(--surface); }
+.bar { display: flex; align-items: center; gap: 1rem; height: 100%; max-width: 64rem; margin-inline: auto; padding-inline: 1rem; }
+.logo { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--fg); font-weight: 800; text-decoration: none; }
+.nav { margin-inline-start: auto; }
+.nav__list { display: flex; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.nav__list > li > a { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem; color: var(--fg); text-decoration: none; }
+.nav__list > li > a:hover { background: var(--surface); }
+.nav a[aria-current="page"] { font-weight: 800; text-decoration: underline; text-underline-offset: 0.3em; }
+
+/* mega menu with NO JavaScript: open while the mouse is over it OR focus is anywhere inside it.
+   display: none (not visibility) and opened by :focus-within: when the trigger link has focus, the menu is already
+   shown, so the next Tab goes into its links. Leave the last link and it closes */
+.has-mega { position: relative; }
+.mega { display: none; position: absolute; inset-inline-end: 0; top: 100%; width: 22rem; padding: 0.75rem; border-radius: 0.75rem; background: var(--bg); box-shadow: 0 12px 30px #0003; }
+.has-mega:hover .mega, .has-mega:focus-within .mega { display: block; }
+.mega ul { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.mega a { display: block; padding: 0.5rem; border-radius: 0.5rem; text-decoration: none; }
+.mega a:hover { background: var(--surface); }
+
+.menu-btn { display: none; align-items: center; gap: 0.35rem; margin-inline-start: auto; padding: 0.4rem 0.8rem; border: 1px solid var(--muted); border-radius: 0.5rem; background: transparent; color: var(--fg); font: inherit; cursor: pointer; }
+
+main { max-width: 64rem; margin-inline: auto; padding: 1rem; }
+main:focus { outline: none; }
+section { min-height: 60vh; }
+
+/* phone: the links hide behind a button; the open state comes from aria-expanded (the same thing a screen reader hears) */
+@media (max-width: 47.98rem) {
+  .menu-btn { display: inline-flex; }
+  .nav { position: absolute; inset-inline: 0; top: var(--header-h); display: none; padding: 0.5rem 1rem 1rem; background: var(--bg); box-shadow: 0 12px 20px #0002; }
+  .menu-btn[aria-expanded="true"] + .nav { display: block; }
+  .nav__list { flex-direction: column; }
+  .mega { position: static; width: auto; display: block; box-shadow: none; padding: 0 1rem 0 0; }
+}
+~~~
+
+~~~js nav.js
+// the phone menu: the button says if it is open (aria-expanded), Escape closes it and gives focus back to the button
+const btn = document.querySelector(".menu-btn");
+const nav = document.getElementById("nav");
+function setOpen(open) { btn.setAttribute("aria-expanded", String(open)); }
+btn.addEventListener("click", () => setOpen(btn.getAttribute("aria-expanded") !== "true"));
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && btn.getAttribute("aria-expanded") === "true") { setOpen(false); btn.focus(); }
+});
+nav.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+~~~
+
+الأيقونات SVG من lucide (‏[[lucide-static@0.577.0]])، متحطة في الـ HTML. كل أيقونة [[aria-hidden="true"]] و [[focusable="false"]] لأن الاسم بييجي من الزرار أو من الكلام اللي جنبها.
+
+~~~view 560 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محل «فولت» للإلكترونيات</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root { --header-h: 4rem; --bg: #ffffff; --fg: #111827; --muted: #4b5563; --accent: #1d4ed8; --surface: #f3f4f6; --ring: #b45309; }
+:root[data-theme="dark"] { --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --accent: #93c5fd; --surface: #1f2937; --ring: #fbbf24; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme]) { --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --accent: #93c5fd; --surface: #1f2937; --ring: #fbbf24; } }
+
+/* a Tab or a jump to #id scrolls so the element sits BELOW the sticky header, never under it */
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.icon { width: 1.2rem; height: 1.2rem; flex: none; }
+
+/* skip link: off the screen until it gets focus */
+.skip { position: absolute; inset-inline-start: 1rem; top: -10rem; z-index: 30; padding: 0.5rem 1rem; background: var(--fg); color: var(--bg); }
+.skip:focus { top: 1rem; }
+
+.header { position: sticky; top: 0; z-index: 20; height: var(--header-h); background: var(--bg); border-block-end: 1px solid var(--surface); }
+.bar { display: flex; align-items: center; gap: 1rem; height: 100%; max-width: 64rem; margin-inline: auto; padding-inline: 1rem; }
+.logo { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--fg); font-weight: 800; text-decoration: none; }
+.nav { margin-inline-start: auto; }
+.nav__list { display: flex; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.nav__list > li > a { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem; color: var(--fg); text-decoration: none; }
+.nav__list > li > a:hover { background: var(--surface); }
+.nav a[aria-current="page"] { font-weight: 800; text-decoration: underline; text-underline-offset: 0.3em; }
+
+/* mega menu with NO JavaScript: open while the mouse is over it OR focus is anywhere inside it.
+   display: none (not visibility) and opened by :focus-within: when the trigger link has focus, the menu is already
+   shown, so the next Tab goes into its links. Leave the last link and it closes */
+.has-mega { position: relative; }
+.mega { display: none; position: absolute; inset-inline-end: 0; top: 100%; width: 22rem; padding: 0.75rem; border-radius: 0.75rem; background: var(--bg); box-shadow: 0 12px 30px #0003; }
+.has-mega:hover .mega, .has-mega:focus-within .mega { display: block; }
+.mega ul { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.mega a { display: block; padding: 0.5rem; border-radius: 0.5rem; text-decoration: none; }
+.mega a:hover { background: var(--surface); }
+
+.menu-btn { display: none; align-items: center; gap: 0.35rem; margin-inline-start: auto; padding: 0.4rem 0.8rem; border: 1px solid var(--muted); border-radius: 0.5rem; background: transparent; color: var(--fg); font: inherit; cursor: pointer; }
+
+main { max-width: 64rem; margin-inline: auto; padding: 1rem; }
+main:focus { outline: none; }
+section { min-height: 60vh; }
+
+/* phone: the links hide behind a button; the open state comes from aria-expanded (the same thing a screen reader hears) */
+@media (max-width: 47.98rem) {
+  .menu-btn { display: inline-flex; }
+  .nav { position: absolute; inset-inline: 0; top: var(--header-h); display: none; padding: 0.5rem 1rem 1rem; background: var(--bg); box-shadow: 0 12px 20px #0002; }
+  .menu-btn[aria-expanded="true"] + .nav { display: block; }
+  .nav__list { flex-direction: column; }
+  .mega { position: static; width: auto; display: block; box-shadow: none; padding: 0 1rem 0 0; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">اتخطى للمحتوى</a>
+<header class="header">
+  <div class="bar">
+    <a class="logo" href="#main"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/> </svg><span>فولت</span></a>
+    <button type="button" class="menu-btn" aria-expanded="false" aria-controls="nav"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M4 5h16"/> <path d="M4 12h16"/> <path d="M4 19h16"/> </svg><span>القايمة</span></button>
+    <nav id="nav" class="nav" aria-label="الرئيسية">
+      <ul class="nav__list">
+        <li><a href="#main" aria-current="page">الرئيسية</a></li>
+        <li class="has-mega">
+          <a href="#phones">المنتجات <svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m6 9 6 6 6-6"/> </svg></a>
+          <div class="mega">
+            <ul>
+              <li><a href="#phones">موبايلات</a></li>
+              <li><a href="#laptops">لابتوبات</a></li>
+              <li><a href="#audio">سماعات</a></li>
+              <li><a href="#watches">ساعات</a></li>
+              <li><a href="#cables">شواحن وكابلات</a></li>
+              <li><a href="#offers">عروض الأسبوع</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="#branches">الفروع</a></li>
+        <li><a href="#support">الدعم</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+  <h1>كل الإلكترونيات في محل واحد</h1>
+  <section id="phones" aria-labelledby="h-phones"><h2 id="h-phones">موبايلات</h2><p>كلام عن موبايلات، وتحته لينك <a href="#phones-more">شوف كل موبايلات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="laptops" aria-labelledby="h-laptops"><h2 id="h-laptops">لابتوبات</h2><p>كلام عن لابتوبات، وتحته لينك <a href="#laptops-more">شوف كل لابتوبات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="audio" aria-labelledby="h-audio"><h2 id="h-audio">سماعات</h2><p>كلام عن سماعات، وتحته لينك <a href="#audio-more">شوف كل سماعات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="watches" aria-labelledby="h-watches"><h2 id="h-watches">ساعات</h2><p>كلام عن ساعات، وتحته لينك <a href="#watches-more">شوف كل ساعات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="cables" aria-labelledby="h-cables"><h2 id="h-cables">شواحن وكابلات</h2><p>كلام عن شواحن وكابلات، وتحته لينك <a href="#cables-more">شوف كل شواحن وكابلات</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="offers" aria-labelledby="h-offers"><h2 id="h-offers">عروض الأسبوع</h2><p>كلام عن عروض الأسبوع، وتحته لينك <a href="#offers-more">شوف كل عروض الأسبوع</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="branches" aria-labelledby="h-branches"><h2 id="h-branches">الفروع</h2><p>كلام عن الفروع، وتحته لينك <a href="#branches-more">شوف كل الفروع</a> عشان الـ Tab يقف عليه.</p></section>
+  <section id="support" aria-labelledby="h-support"><h2 id="h-support">الدعم</h2><p>كلام عن الدعم، وتحته لينك <a href="#support-more">شوف كل الدعم</a> عشان الـ Tab يقف عليه.</p></section>
+</main>
+<script>
+// the phone menu: the button says if it is open (aria-expanded), Escape closes it and gives focus back to the button
+const btn = document.querySelector(".menu-btn");
+const nav = document.getElementById("nav");
+function setOpen(open) { btn.setAttribute("aria-expanded", String(open)); }
+btn.addEventListener("click", () => setOpen(btn.getAttribute("aria-expanded") !== "true"));
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && btn.getAttribute("aria-expanded") === "true") { setOpen(false); btn.focus(); }
+});
+nav.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر أبيض لازق فيه «فولت» والروابط (الرئيسية تحتها خط عشان هي الصفحة الحالية، والمنتجات بسهم). الماوس أو الـ Tab على «المنتجات» بيفتح منيو كبيرة فيها ٦ أقسام. على الموبايل الروابط مستخبية ورا زرار «القايمة».
+
+**الـ mega menu من غير JavaScript:** [[.has-mega:hover .mega, .has-mega:focus-within .mega { display: block }]]. لما «المنتجات» ياخد focus، الـ [[li]] اللي حواليه بيبقى [[:focus-within]]، فالمنيو بتظهر، والـ Tab الجاي بيدخل جواها. ولما تخرج من آخر لينك، [[:focus-within]] بيبطل والمنيو بتتقفل.
+
+**ليه [[display: none]] مش [[visibility: hidden]]:** الاتنين بيخفوا، والاتنين بيشيلوا العناصر من الـ Tab. الفرق في التوقيت: هنا المنيو بتظهر قبل ما الـ Tab يدور على العنصر الجاي، فالاتنين كانوا هيشتغلوا. المهم إنها **مش مستخبية بـ [[opacity: 0]] بس**: كده اللينكات كانت هتاخد focus وهي مش باينة.
+
+**skip link:** أول حاجة في الصفحة، برّه الشاشة لحد ما ياخد focus. بيودّي لـ [[<main tabindex="-1">]] على طول بدل ما تعدّي على الهيدر كله في كل صفحة.
+
+**[[aria-current="page"]]:** قارئ الشاشة بيقول «الصفحة الحالية» على «الرئيسية»، والـ CSS بيخط تحتها من نفس الـ attribute.
+
+**الهيدر اللازق مبيغطّيش حاجة:** [[html { scroll-padding-top: calc(var(--header-h) + 1rem) }]]. لما الـ Tab يوصل لعنصر تحت، المتصفح بيعمل scroll عشان يبان، والـ [[scroll-padding-top]] بيقوله «سيب المسافة دي فوق». من غيره العنصر اللي عليه focus بيقف تحت الهيدر بالظبط (WCAG 2.4.11).
+
+**الموبايل:** الزرار [[aria-expanded]] و [[aria-controls="nav"]]، والـ CSS بيفتح المنيو من [[.menu-btn[aria-expanded="true"] + .nav]]. و Escape بيقفلها ويرجّع الـ focus للزرار.
+
+~~~text الناتج (Playwright بـ Chrome 157، الماوس بعيد في الركن)
+Tab: اتخطى للمحتوى → فولت → الرئيسية → المنتجات → موبايلات(mega) → لابتوبات(mega) → سماعات(mega) → ساعات(mega) → شواحن وكابلات(mega) → عروض الأسبوع(mega) → الفروع → الدعم → شوف كل موبايلات → … → شوف كل الدعم
+لينكات المحتوى اللي وصلها الـ focus: 8، والـ top بتاعهم 241 و 679 و 380 و 380 و 380 و 380 و 379 و 379، والهيدر بيخلص عند 64
+الوحيد فوق 64: «اتخطى للمحتوى» (top 16)، وده مقصود: بيترسم فوق الهيدر (z-index 30)
+موبايل 375: Enter على «القايمة» ← aria-expanded true والمنيو ظاهرة | Tab مرتين ← «المنتجات» | Escape ← false والـ focus رجع للزرار
+axe (1280 و 375): 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'كبير', dir: "smile-booking", t: R`صفحة حجز لعيادة أسنان متخيلة «ابتسامة» من غير عوائق`, what: R`صفحة فيها هيرو، وخدمات بكروت، وslider قبل وبعد (صورتين فوق بعض و [[<input type="range">]] شفاف فوقهم بيكتب [[--pos]] والصورة العليا [[clip-path: inset(0 0 0 var(--pos))]]، فالكيبورد وقارئ الشاشة شغالين ببلاش)، و FAQ، وفورم حجز بأخطاء مربوطة بـ [[aria-describedby]] و [[aria-invalid]]، و toast بعد الإرسال في [[role="status"]]، و dialog تأكيد بـ [[showModal()]] بيرجّع الـ focus. الألوان توكنز بثيمين (من وحدة الثيم).`, done: R`axe صفر مشاكل في الثيمين، وLighthouse Accessibility ‏100، والـ slider بيتحرك بالأسهم وقارئ الشاشة بيقول القيمة، والحجز كله يخلص بالكيبورد بس، و Escape بيقفل الـ dialog والـ focus بيرجع للزرار اللي فتحه (اتقاس: [[document.activeElement]] هو الزرار)، وكل كلام 4.5:1 أو أكتر.`, ext: R`زوّد [[prefers-contrast: more]] بألوان أغمق، وجرّب الصفحة بـ [[forced-colors: active]] (Windows High Contrast) وصلّح أي حاجة اختفت، واكتب صفحة «إعلان الـ accessibility» فيها اللي اتعمل واللي لسه.`, sol: R`~~~text smile-booking/
+index.html  style.css  page.js
+img/logo.svg  img/before.svg  img/after.svg   (نفس صور عيادة الأسنان في وحدة position)
+~~~
+
+**ترتيب البناء:** (١) الـ HTML كله من غير CSS وجرّبه بالـ Tab. (٢) التوكنز بثيمين. (٣) الـ slider. (٤) الفورم والرسايل. (٥) الـ dialog والـ toast. (٦) axe و Lighthouse في الثيمين، وتجربة الحجز كله بالكيبورد.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة: احجز ميعادك</title>
+<link rel="stylesheet" href="style.css">
+<script src="page.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">اتخطى للمحتوى</a>
+<header class="header">
+  <div class="wrap bar">
+    <a class="logo" href="#main"><img src="img/logo.svg" alt="" width="32" height="32">عيادة ابتسامة</a>
+    <nav aria-label="أقسام الصفحة">
+      <ul class="links">
+        <li><a href="#services">الخدمات</a></li>
+        <li><a href="#results">قبل وبعد</a></li>
+        <li><a href="#faq">أسئلة</a></li>
+        <li><a href="#book">احجز</a></li>
+      </ul>
+    </nav>
+    <button type="button" class="theme" aria-pressed="false">الوضع الغامق</button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <section class="hero">
+    <div class="wrap">
+      <h1>ابتسامة مش هتتكسف منها</h1>
+      <p>كشف، وتنضيف، وتبييض، وتقويم. احجز ميعادك في دقيقة.</p>
+      <a class="btn" href="#book">احجز دلوقتي</a>
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="services">
+    <h2 id="services">الخدمات</h2>
+    <ul class="cards">
+      <li class="card"><h3>كشف</h3><p>كشف كامل وأشعة، ٣٠٠ ج.</p></li>
+      <li class="card"><h3>تنضيف</h3><p>إزالة الجير وتلميع، ٦٠٠ ج.</p></li>
+      <li class="card"><h3>تبييض</h3><p>من درجتين لأربعة أفتح، ٢٥٠٠ ج.</p></li>
+    </ul>
+  </section>
+
+  <section class="wrap section" aria-labelledby="results">
+    <h2 id="results">قبل وبعد التبييض</h2>
+    <!-- the comparison always reads left to right: "before" on the left, in any language -->
+    <div class="compare" dir="ltr" style="--pos: 50%">
+      <img src="img/before.svg" alt="الأسنان قبل التبييض: لونها أصفر" width="800" height="450">
+      <img class="compare__after" src="img/after.svg" alt="نفس الأسنان بعد التبييض: لونها أبيض" width="800" height="450">
+      <input class="compare__range" type="range" min="0" max="100" value="50" aria-label="الخط بين قبل وبعد" aria-valuetext="٥٠٪ قبل، ٥٠٪ بعد">
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="faq">
+    <h2 id="faq">أسئلة</h2>
+    <details><summary>التبييض بيوجع؟</summary><p>ممكن حساسية يوم أو اتنين، وبنستخدم جل مهدّي.</p></details>
+    <details><summary>بتشتغلوا الجمعة؟</summary><p>أيوه، من ٢ الضهر لـ ١٠ بالليل.</p></details>
+  </section>
+
+  <section class="wrap section" aria-labelledby="book">
+    <h2 id="book">احجز ميعادك</h2>
+    <form id="form" class="form" novalidate>
+      <p class="note" id="req-note">كل الخانات مطلوبة.</p>
+      <div class="field">
+        <label for="name">الاسم</label>
+        <input id="name" name="name" autocomplete="name" required aria-describedby="name-err">
+        <p class="err" id="name-err"></p>
+      </div>
+      <div class="field">
+        <label for="phone">الموبايل</label>
+        <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required pattern="01[0-9]{9}" aria-describedby="phone-hint phone-err">
+        <p class="hint" id="phone-hint">١١ رقم يبدأ بـ 01، مثلًا 01012345678.</p>
+        <p class="err" id="phone-err"></p>
+      </div>
+      <div class="field">
+        <label for="service">الخدمة</label>
+        <select id="service" name="service" required aria-describedby="service-err">
+          <option value="">اختار</option>
+          <option>كشف</option>
+          <option>تنضيف</option>
+          <option>تبييض</option>
+        </select>
+        <p class="err" id="service-err"></p>
+      </div>
+      <fieldset class="field" aria-describedby="time-err">
+        <legend>الميعاد</legend>
+        <label class="radio"><input type="radio" name="time" value="الصبح" required> الصبح (١٠ لـ ٢)</label>
+        <label class="radio"><input type="radio" name="time" value="بالليل"> بالليل (٦ لـ ١٠)</label>
+        <p class="err" id="time-err"></p>
+      </fieldset>
+      <button type="submit" class="btn" id="submit">احجز</button>
+    </form>
+  </section>
+</main>
+
+<dialog id="confirm" aria-labelledby="confirm-t">
+  <h2 id="confirm-t">تأكيد الحجز</h2>
+  <p id="confirm-text"></p>
+  <form method="dialog" class="dialog-actions">
+    <button value="yes" class="btn">أكّد</button>
+    <button value="no" class="btn btn--ghost">رجوع</button>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" role="status"></div>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --header-h: 4rem;
+  --bg: #f8fafc; --surface: #ffffff; --fg: #0f172a; --muted: #475569; --line: #94a3b8;
+  --brand: #155e75; --on-brand: #ffffff; --ring: #b45309;
+  --danger: #b91c1c; --danger-soft: #fee2e2; --ok-soft: #dcfce7; --ok-ink: #14532d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1120; --surface: #111827; --fg: #e5e7eb; --muted: #9ca3af; --line: #64748b;
+    --brand: #67e8f9; --on-brand: #0b1120; --ring: #fbbf24;
+    --danger: #fca5a5; --danger-soft: #450a0a; --ok-soft: #052e16; --ok-ink: #bbf7d0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1120; --surface: #111827; --fg: #e5e7eb; --muted: #9ca3af; --line: #64748b;
+  --brand: #67e8f9; --on-brand: #0b1120; --ring: #fbbf24;
+  --danger: #fca5a5; --danger-soft: #450a0a; --ok-soft: #052e16; --ok-ink: #bbf7d0;
+}
+
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
+a { color: var(--brand); }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+img { max-width: 100%; height: auto; }
+.wrap { max-width: 60rem; margin-inline: auto; padding-inline: 1rem; }
+.section { padding-block: 2.5rem; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -10rem; z-index: 30; padding: 0.5rem 1rem; background: var(--fg); color: var(--bg); }
+.skip:focus { top: 1rem; }
+
+.header { position: sticky; top: 0; z-index: 20; background: var(--surface); border-block-end: 1px solid var(--line); }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; min-height: var(--header-h); }
+.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--fg); font-weight: 800; text-decoration: none; }
+.links { display: flex; flex-wrap: wrap; gap: 0 0.75rem; margin: 0; padding: 0; list-style: none; }
+nav { margin-inline-start: auto; }
+.theme { padding: 0.35rem 0.8rem; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--fg); font: inherit; cursor: pointer; }
+.theme[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+
+.hero { padding-block: 4rem; background: linear-gradient(160deg, color-mix(in oklab, var(--brand) 18%, var(--bg)), var(--bg)); }
+.hero h1 { margin: 0 0 0.75rem; font-size: clamp(1.9rem, 1.2rem + 3vw, 3.2rem); }
+.hero p { margin: 0 0 1.5rem; color: var(--muted); font-size: 1.1rem; }
+.btn { display: inline-block; padding: 0.7rem 1.4rem; border: 0; border-radius: 999px; background: var(--brand); color: var(--on-brand); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+.btn--ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1.25rem; border-radius: 1rem; background: var(--surface); border: 1px solid var(--line); }
+.card h3 { margin: 0 0 0.25rem; }
+.card p { margin: 0; color: var(--muted); }
+
+/* before / after: the range is invisible and covers the picture, so the keyboard and screen readers get it for free */
+.compare { position: relative; display: grid; max-width: 50rem; border-radius: 1rem; overflow: hidden; }
+.compare > img { grid-area: 1 / 1; display: block; width: 100%; }
+.compare__after { clip-path: inset(0 0 0 var(--pos)); }
+.compare::after { content: ""; position: absolute; inset-block: 0; left: var(--pos); width: 3px; translate: -50% 0; background: #fff; box-shadow: 0 0 6px #0008; pointer-events: none; }
+.compare__range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
+.compare:has(.compare__range:focus-visible) { outline: 3px solid var(--ring); outline-offset: 3px; }
+
+details { margin-block-end: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--surface); border: 1px solid var(--line); }
+summary { font-weight: 700; cursor: pointer; }
+details p { margin: 0.5rem 0 0; color: var(--muted); }
+
+.form { display: grid; gap: 1rem; max-width: 30rem; }
+.note { margin: 0; color: var(--muted); }
+.field { display: grid; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
+.field label, .field legend { font-weight: 700; padding: 0; }
+.field input:not([type="radio"]), .field select { padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--surface); color: var(--fg); font: inherit; }
+.field [aria-invalid="true"] { border: 2px solid var(--danger); }
+.field .radio { display: flex; align-items: center; gap: 0.5rem; font-weight: 400; }   /* .field label is (0,1,1): this has to be at least that */
+.hint { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.err { margin: 0; color: var(--danger); font-weight: 700; font-size: 0.9rem; }
+.err:empty { display: none; }
+
+dialog { max-width: min(26rem, calc(100vw - 2rem)); padding: 1.5rem; border: 0; border-radius: 1rem; background: var(--surface); color: var(--fg); }
+dialog::backdrop { background: rgb(0 0 0 / 0.55); }
+dialog h2 { margin-top: 0; }
+.dialog-actions { display: flex; gap: 0.75rem; }
+
+.toast { position: fixed; inset-block-end: 1rem; inset-inline: 0; width: fit-content; margin-inline: auto; padding: 0.75rem 1.25rem; border-radius: 0.75rem; background: var(--ok-soft); color: var(--ok-ink); font-weight: 700; box-shadow: 0 8px 20px #0003; }
+.toast:empty { display: none; }
+~~~
+
+~~~js page.js
+// 1. theme
+const themeBtn = document.querySelector(".theme");
+themeBtn.addEventListener("click", () => {
+  const dark = themeBtn.getAttribute("aria-pressed") !== "true";
+  themeBtn.setAttribute("aria-pressed", String(dark));
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+});
+
+// 2. before / after: the range moves the line, and says it in words
+const compare = document.querySelector(".compare");
+const range = compare.querySelector(".compare__range");
+const ar = n => n.toLocaleString("ar-EG");
+range.addEventListener("input", () => {
+  compare.style.setProperty("--pos", range.value + "%");
+  range.setAttribute("aria-valuetext", ar(Number(range.value)) + "٪ قبل، " + ar(100 - range.value) + "٪ بعد");
+});
+
+// 3. the booking form: our own messages, tied to each field
+const form = document.getElementById("form");
+const messages = {
+  name: f => (f.validity.valueMissing ? "اكتب اسمك." : ""),
+  phone: f => (f.validity.valueMissing ? "اكتب رقم الموبايل." : f.validity.patternMismatch ? "الرقم لازم يكون ١١ رقم ويبدأ بـ 01." : ""),
+  service: f => (f.validity.valueMissing ? "اختار الخدمة." : ""),
+};
+function check(field) {
+  const msg = messages[field.id](field);
+  field.setAttribute("aria-invalid", msg ? "true" : "false");
+  document.getElementById(field.id + "-err").textContent = msg;
+  return !msg;
+}
+function checkTime() {
+  const chosen = form.querySelector('input[name="time"]:checked');
+  document.getElementById("time-err").textContent = chosen ? "" : "اختار الميعاد.";
+  form.querySelectorAll('input[name="time"]').forEach(r => r.setAttribute("aria-invalid", chosen ? "false" : "true"));
+  return !!chosen;
+}
+// a field is re-checked when the reader leaves it, so a fixed error disappears
+["name", "phone", "service"].forEach(id => document.getElementById(id).addEventListener("blur", e => { if (e.target.getAttribute("aria-invalid")) check(e.target); }));
+
+const dialog = document.getElementById("confirm");
+const toast = document.getElementById("toast");
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  const fields = ["name", "phone", "service"].map(id => document.getElementById(id));
+  const ok = fields.map(check);
+  const timeOk = checkTime();
+  const firstBad = fields.find((f, i) => !ok[i]) || (!timeOk && form.querySelector('input[name="time"]'));
+  if (firstBad) { firstBad.focus(); return; }          // focus the first problem: its error is read with it (aria-describedby)
+  const d = new FormData(form);
+  document.getElementById("confirm-text").textContent = d.get("name") + "، " + d.get("service") + "، " + d.get("time") + ". هنتصل على " + d.get("phone") + ".";
+  dialog.showModal();                                   // modal: focus goes in, Tab stays in, Escape closes, focus goes back to «احجز»
+});
+dialog.addEventListener("close", () => {
+  if (dialog.returnValue === "yes") {
+    toast.textContent = "اتحجز ميعادك. هنتصل بيك نأكد.";
+    form.reset();
+    form.querySelectorAll("[aria-invalid]").forEach(f => f.removeAttribute("aria-invalid"));
+  }
+});
+~~~
+
+~~~view 760 900 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة: احجز ميعادك</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --header-h: 4rem;
+  --bg: #f8fafc; --surface: #ffffff; --fg: #0f172a; --muted: #475569; --line: #94a3b8;
+  --brand: #155e75; --on-brand: #ffffff; --ring: #b45309;
+  --danger: #b91c1c; --danger-soft: #fee2e2; --ok-soft: #dcfce7; --ok-ink: #14532d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1120; --surface: #111827; --fg: #e5e7eb; --muted: #9ca3af; --line: #64748b;
+    --brand: #67e8f9; --on-brand: #0b1120; --ring: #fbbf24;
+    --danger: #fca5a5; --danger-soft: #450a0a; --ok-soft: #052e16; --ok-ink: #bbf7d0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1120; --surface: #111827; --fg: #e5e7eb; --muted: #9ca3af; --line: #64748b;
+  --brand: #67e8f9; --on-brand: #0b1120; --ring: #fbbf24;
+  --danger: #fca5a5; --danger-soft: #450a0a; --ok-soft: #052e16; --ok-ink: #bbf7d0;
+}
+
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
+a { color: var(--brand); }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+img { max-width: 100%; height: auto; }
+.wrap { max-width: 60rem; margin-inline: auto; padding-inline: 1rem; }
+.section { padding-block: 2.5rem; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -10rem; z-index: 30; padding: 0.5rem 1rem; background: var(--fg); color: var(--bg); }
+.skip:focus { top: 1rem; }
+
+.header { position: sticky; top: 0; z-index: 20; background: var(--surface); border-block-end: 1px solid var(--line); }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; min-height: var(--header-h); }
+.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--fg); font-weight: 800; text-decoration: none; }
+.links { display: flex; flex-wrap: wrap; gap: 0 0.75rem; margin: 0; padding: 0; list-style: none; }
+nav { margin-inline-start: auto; }
+.theme { padding: 0.35rem 0.8rem; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--fg); font: inherit; cursor: pointer; }
+.theme[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+
+.hero { padding-block: 4rem; background: linear-gradient(160deg, color-mix(in oklab, var(--brand) 18%, var(--bg)), var(--bg)); }
+.hero h1 { margin: 0 0 0.75rem; font-size: clamp(1.9rem, 1.2rem + 3vw, 3.2rem); }
+.hero p { margin: 0 0 1.5rem; color: var(--muted); font-size: 1.1rem; }
+.btn { display: inline-block; padding: 0.7rem 1.4rem; border: 0; border-radius: 999px; background: var(--brand); color: var(--on-brand); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+.btn--ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1.25rem; border-radius: 1rem; background: var(--surface); border: 1px solid var(--line); }
+.card h3 { margin: 0 0 0.25rem; }
+.card p { margin: 0; color: var(--muted); }
+
+/* before / after: the range is invisible and covers the picture, so the keyboard and screen readers get it for free */
+.compare { position: relative; display: grid; max-width: 50rem; border-radius: 1rem; overflow: hidden; }
+.compare > img { grid-area: 1 / 1; display: block; width: 100%; }
+.compare__after { clip-path: inset(0 0 0 var(--pos)); }
+.compare::after { content: ""; position: absolute; inset-block: 0; left: var(--pos); width: 3px; translate: -50% 0; background: #fff; box-shadow: 0 0 6px #0008; pointer-events: none; }
+.compare__range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
+.compare:has(.compare__range:focus-visible) { outline: 3px solid var(--ring); outline-offset: 3px; }
+
+details { margin-block-end: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--surface); border: 1px solid var(--line); }
+summary { font-weight: 700; cursor: pointer; }
+details p { margin: 0.5rem 0 0; color: var(--muted); }
+
+.form { display: grid; gap: 1rem; max-width: 30rem; }
+.note { margin: 0; color: var(--muted); }
+.field { display: grid; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
+.field label, .field legend { font-weight: 700; padding: 0; }
+.field input:not([type="radio"]), .field select { padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--surface); color: var(--fg); font: inherit; }
+.field [aria-invalid="true"] { border: 2px solid var(--danger); }
+.field .radio { display: flex; align-items: center; gap: 0.5rem; font-weight: 400; }   /* .field label is (0,1,1): this has to be at least that */
+.hint { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.err { margin: 0; color: var(--danger); font-weight: 700; font-size: 0.9rem; }
+.err:empty { display: none; }
+
+dialog { max-width: min(26rem, calc(100vw - 2rem)); padding: 1.5rem; border: 0; border-radius: 1rem; background: var(--surface); color: var(--fg); }
+dialog::backdrop { background: rgb(0 0 0 / 0.55); }
+dialog h2 { margin-top: 0; }
+.dialog-actions { display: flex; gap: 0.75rem; }
+
+.toast { position: fixed; inset-block-end: 1rem; inset-inline: 0; width: fit-content; margin-inline: auto; padding: 0.75rem 1.25rem; border-radius: 0.75rem; background: var(--ok-soft); color: var(--ok-ink); font-weight: 700; box-shadow: 0 8px 20px #0003; }
+.toast:empty { display: none; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">اتخطى للمحتوى</a>
+<header class="header">
+  <div class="wrap bar">
+    <a class="logo" href="#main"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iIzBlNzQ5MCIvPjxwYXRoIGQ9Ik0xMSAxMGMzLTIgNSAwIDcgMHM0LTIgNyAwYzIgMiAxIDctMSAxMGwtMSA3YzAgMi0yIDItMiAwbC0xLTVjMC0yLTMtMi0zIDBsLTEgNWMwIDItMiAyLTIgMGwtMS03Yy0yLTMtMy04LTEtMTBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+Cg==" alt="" width="32" height="32">عيادة ابتسامة</a>
+    <nav aria-label="أقسام الصفحة">
+      <ul class="links">
+        <li><a href="#services">الخدمات</a></li>
+        <li><a href="#results">قبل وبعد</a></li>
+        <li><a href="#faq">أسئلة</a></li>
+        <li><a href="#book">احجز</a></li>
+      </ul>
+    </nav>
+    <button type="button" class="theme" aria-pressed="false">الوضع الغامق</button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <section class="hero">
+    <div class="wrap">
+      <h1>ابتسامة مش هتتكسف منها</h1>
+      <p>كشف، وتنضيف، وتبييض، وتقويم. احجز ميعادك في دقيقة.</p>
+      <a class="btn" href="#book">احجز دلوقتي</a>
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="services">
+    <h2 id="services">الخدمات</h2>
+    <ul class="cards">
+      <li class="card"><h3>كشف</h3><p>كشف كامل وأشعة، ٣٠٠ ج.</p></li>
+      <li class="card"><h3>تنضيف</h3><p>إزالة الجير وتلميع، ٦٠٠ ج.</p></li>
+      <li class="card"><h3>تبييض</h3><p>من درجتين لأربعة أفتح، ٢٥٠٠ ج.</p></li>
+    </ul>
+  </section>
+
+  <section class="wrap section" aria-labelledby="results">
+    <h2 id="results">قبل وبعد التبييض</h2>
+    <!-- the comparison always reads left to right: "before" on the left, in any language -->
+    <div class="compare" dir="ltr" style="--pos: 50%">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDUwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiM5ZjEyMzkiLz48cmVjdCB4PSIwIiB5PSIxMjAiIHdpZHRoPSI4MDAiIGhlaWdodD0iMjEwIiBmaWxsPSIjNGMwNTE5Ii8+PHJlY3QgeD0iNDAiIHk9IjE0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTgiIGZpbGw9IiNlM2M3NzAiLz48cmVjdCB4PSI0MCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjEzMiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjEzMiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjIyNCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjIyNCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjMxNiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjMxNiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjQwOCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjQwOCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjUwMCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjUwMCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjU5MiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjU5MiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjY4NCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjY4NCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjwvc3ZnPgo=" alt="الأسنان قبل التبييض: لونها أصفر" width="800" height="450">
+      <img class="compare__after" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDUwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiM5ZjEyMzkiLz48cmVjdCB4PSIwIiB5PSIxMjAiIHdpZHRoPSI4MDAiIGhlaWdodD0iMjEwIiBmaWxsPSIjNGMwNTE5Ii8+PHJlY3QgeD0iNDAiIHk9IjE0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTgiIGZpbGw9IiNmYmZiZjciLz48cmVjdCB4PSI0MCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjEzMiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjEzMiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjIyNCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjIyNCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjMxNiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjMxNiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjQwOCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjQwOCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjUwMCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjUwMCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjU5MiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjU5MiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjY4NCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjY4NCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjwvc3ZnPgo=" alt="نفس الأسنان بعد التبييض: لونها أبيض" width="800" height="450">
+      <input class="compare__range" type="range" min="0" max="100" value="50" aria-label="الخط بين قبل وبعد" aria-valuetext="٥٠٪ قبل، ٥٠٪ بعد">
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="faq">
+    <h2 id="faq">أسئلة</h2>
+    <details><summary>التبييض بيوجع؟</summary><p>ممكن حساسية يوم أو اتنين، وبنستخدم جل مهدّي.</p></details>
+    <details><summary>بتشتغلوا الجمعة؟</summary><p>أيوه، من ٢ الضهر لـ ١٠ بالليل.</p></details>
+  </section>
+
+  <section class="wrap section" aria-labelledby="book">
+    <h2 id="book">احجز ميعادك</h2>
+    <form id="form" class="form" novalidate>
+      <p class="note" id="req-note">كل الخانات مطلوبة.</p>
+      <div class="field">
+        <label for="name">الاسم</label>
+        <input id="name" name="name" autocomplete="name" required aria-describedby="name-err">
+        <p class="err" id="name-err"></p>
+      </div>
+      <div class="field">
+        <label for="phone">الموبايل</label>
+        <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required pattern="01[0-9]{9}" aria-describedby="phone-hint phone-err">
+        <p class="hint" id="phone-hint">١١ رقم يبدأ بـ 01، مثلًا 01012345678.</p>
+        <p class="err" id="phone-err"></p>
+      </div>
+      <div class="field">
+        <label for="service">الخدمة</label>
+        <select id="service" name="service" required aria-describedby="service-err">
+          <option value="">اختار</option>
+          <option>كشف</option>
+          <option>تنضيف</option>
+          <option>تبييض</option>
+        </select>
+        <p class="err" id="service-err"></p>
+      </div>
+      <fieldset class="field" aria-describedby="time-err">
+        <legend>الميعاد</legend>
+        <label class="radio"><input type="radio" name="time" value="الصبح" required> الصبح (١٠ لـ ٢)</label>
+        <label class="radio"><input type="radio" name="time" value="بالليل"> بالليل (٦ لـ ١٠)</label>
+        <p class="err" id="time-err"></p>
+      </fieldset>
+      <button type="submit" class="btn" id="submit">احجز</button>
+    </form>
+  </section>
+</main>
+
+<dialog id="confirm" aria-labelledby="confirm-t">
+  <h2 id="confirm-t">تأكيد الحجز</h2>
+  <p id="confirm-text"></p>
+  <form method="dialog" class="dialog-actions">
+    <button value="yes" class="btn">أكّد</button>
+    <button value="no" class="btn btn--ghost">رجوع</button>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" role="status"></div>
+<script>
+// 1. theme
+const themeBtn = document.querySelector(".theme");
+themeBtn.addEventListener("click", () => {
+  const dark = themeBtn.getAttribute("aria-pressed") !== "true";
+  themeBtn.setAttribute("aria-pressed", String(dark));
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+});
+
+// 2. before / after: the range moves the line, and says it in words
+const compare = document.querySelector(".compare");
+const range = compare.querySelector(".compare__range");
+const ar = n => n.toLocaleString("ar-EG");
+range.addEventListener("input", () => {
+  compare.style.setProperty("--pos", range.value + "%");
+  range.setAttribute("aria-valuetext", ar(Number(range.value)) + "٪ قبل، " + ar(100 - range.value) + "٪ بعد");
+});
+
+// 3. the booking form: our own messages, tied to each field
+const form = document.getElementById("form");
+const messages = {
+  name: f => (f.validity.valueMissing ? "اكتب اسمك." : ""),
+  phone: f => (f.validity.valueMissing ? "اكتب رقم الموبايل." : f.validity.patternMismatch ? "الرقم لازم يكون ١١ رقم ويبدأ بـ 01." : ""),
+  service: f => (f.validity.valueMissing ? "اختار الخدمة." : ""),
+};
+function check(field) {
+  const msg = messages[field.id](field);
+  field.setAttribute("aria-invalid", msg ? "true" : "false");
+  document.getElementById(field.id + "-err").textContent = msg;
+  return !msg;
+}
+function checkTime() {
+  const chosen = form.querySelector('input[name="time"]:checked');
+  document.getElementById("time-err").textContent = chosen ? "" : "اختار الميعاد.";
+  form.querySelectorAll('input[name="time"]').forEach(r => r.setAttribute("aria-invalid", chosen ? "false" : "true"));
+  return !!chosen;
+}
+// a field is re-checked when the reader leaves it, so a fixed error disappears
+["name", "phone", "service"].forEach(id => document.getElementById(id).addEventListener("blur", e => { if (e.target.getAttribute("aria-invalid")) check(e.target); }));
+
+const dialog = document.getElementById("confirm");
+const toast = document.getElementById("toast");
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  const fields = ["name", "phone", "service"].map(id => document.getElementById(id));
+  const ok = fields.map(check);
+  const timeOk = checkTime();
+  const firstBad = fields.find((f, i) => !ok[i]) || (!timeOk && form.querySelector('input[name="time"]'));
+  if (firstBad) { firstBad.focus(); return; }          // focus the first problem: its error is read with it (aria-describedby)
+  const d = new FormData(form);
+  document.getElementById("confirm-text").textContent = d.get("name") + "، " + d.get("service") + "، " + d.get("time") + ". هنتصل على " + d.get("phone") + ".";
+  dialog.showModal();                                   // modal: focus goes in, Tab stays in, Escape closes, focus goes back to «احجز»
+});
+dialog.addEventListener("close", () => {
+  if (dialog.returnValue === "yes") {
+    toast.textContent = "اتحجز ميعادك. هنتصل بيك نأكد.";
+    form.reset();
+    form.querySelectorAll("[aria-invalid]").forEach(f => f.removeAttribute("aria-invalid"));
+  }
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر فيه «عيادة ابتسامة» والروابط وزرار الثيم. هيرو «ابتسامة مش هتتكسف منها»، و ٣ كروت خدمات، وصورة قبل وبعد بخط أبيض بتسحبه، وسؤالين، وفورم حجز (الاسم، والموبايل، والخدمة، والميعاد). لو بعت الفورم ناقص، كل خانة غلط بتتلوّن أحمر ويظهر تحتها السبب. لو كامل، بيظهر صندوق تأكيد، و «أكّد» بيطلّع رسالة تحت «اتحجز ميعادك».
+
+**الـ slider ببلاش:** [[<input type="range">]] شفاف فوق الصورتين. الكيبورد (الأسهم و Home و End) شغال لوحده، وقارئ الشاشة بيعرفه «slider». والـ JS بيكتب [[--pos]] للصورة و [[aria-valuetext]] بالكلام («١٠٠٪ قبل، ٠٪ بعد») بدل رقم لوحده.
+
+**الفورم:** [[novalidate]] عشان الرسايل تبقى بتاعتنا بالعامية بدل رسالة المتصفح، بس لسه بنستخدم [[validity]] بتاعه ([[valueMissing]] و [[patternMismatch]]). لكل خانة:
+- رسالة الغلط في [[<p id="phone-err">]]، والخانة [[aria-describedby="phone-hint phone-err"]]: قارئ الشاشة بيقرا التلميح والغلط مع الخانة.
+- [[aria-invalid="true"]] بيقول إنها غلط، والـ CSS بيلوّن الحد من نفس الـ attribute.
+- بعد الإرسال الغلط، الـ focus بيروح لأول خانة غلط، فالقارئ بيسمع اسمها وغلطها على طول.
+- الميعاد radios جوه [[<fieldset>]] و [[<legend>]]، فالقارئ بيقول «الميعاد» قبل الاختيارات.
+
+**الـ dialog:** [[dialog.showModal()]] بيعمل modal حقيقي ببلاش: الـ focus بيدخل، والـ Tab مبيخرجش منه، و Escape بيقفل، والـ focus بيرجع للزرار اللي كان عليه قبل ما يفتح. و [[<form method="dialog">]] بيقفله والـ [[returnValue]] بيقول أنهي زرار.
+
+**الـ toast:** [[role="status"]] موجود من الأول وفاضي، والرسالة بتتحط فيه بعد «أكّد»، زي مشروع التنبيهات.
+
+~~~text الناتج (Playwright بـ Chrome 157، كيبورد بس)
+slider: → → End ← value 100 | «١٠٠٪ قبل، ٠٪ بعد» | الشجرة: slider "الخط بين قبل وبعد": "100"
+الاسم «منى أحمد» والموبايل «0123» و Enter على «احجز»:
+  الـ focus على phone | aria-invalid true | «الرقم لازم يكون ١١ رقم ويبدأ بـ 01.» | aria-describedby "phone-hint phone-err"
+  الشجرة: textbox "الموبايل" [invalid]: "0123"
+  الغلطات: phone-err و service-err «اختار الخدمة.» و time-err «اختار الميعاد.»
+تصليح: الموبايل 01012345678، والخدمة بسهم تحت «كشف»، والميعاد بـ Space «الصبح»
+Enter على «احجز»: الـ dialog مفتوح، والـ focus جواه | «منى أحمد، كشف، الصبح. هنتصل على 01012345678.»
+3 Tabs جوه الـ modal: الـ focus لسه جواه
+Escape: الـ dialog اتقفل، والـ focus على submit («احجز»)
+Enter (فتح تاني) ثم Enter على «أكّد»: toast «اتحجز ميعادك. هنتصل بيك نأكد.» (role status)، والـ focus على «احجز»، والفورم فضي
+axe (فاتح وغامق): 0 violations
+Lighthouse 13.6.0 Accessibility: فاتح 100، غامق 100
+الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'فكرة', dir: "fix-a-site", t: R`صلّح موقع حقيقي (بإذن صاحبه)`, what: R`اختار موقع صغير لحد تعرفه (محل، أو جمعية، أو مشروع صاحبك) أو موقع قديم ليك، واعمل لستة بكل مشكلة accessibility فيه: أزرار من غير اسم، وتباين، و focus مختفي، ومنيو مبتتفتحش بالكيبورد. وصلّح أهم ٥ بـ pull request أو نسخة محلية.`, done: R`فيه لستة قبل وبعد بلقطة لكل مشكلة، وعدد مشاكل axe نزل، وكل تصليح مكتوب جنبه بند WCAG بتاعه.`, ext: R`حوّل اللستة لـ checklist تستخدمها في أي مشروع جاي، وشاركها مع صاحب الموقع كاقتراح.`, sol: R`المثال اللي عملته: موقع جمعية متخيلة «رفق» بيعرض حيوانات للتبنّي، بنفس المشاكل اللي بتظهر في مواقع صغيرة كتير. [[broken.html]] النسخة الأصلية، و [[index.html]] بعد التصليح. ولما تعمل ده على موقع حقيقي: خد إذن صاحبه، ومتنشرش مشاكله علني.
+
+~~~html broken.html
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جمعية رفق</title>
+<link rel="stylesheet" href="broken.css">
+<script src="broken.js" defer></script>
+</head>
+<body dir="rtl">
+<div class="header">
+  <span class="logo">جمعية رفق</span>
+  <div class="menu" id="menu">
+    <div class="menu__title">عن الجمعية</div>
+    <div class="menu__list"><a href="#about">مين إحنا</a><a href="#help">إزاي تساعد</a><a href="#adopt">تبنّى</a></div>
+  </div>
+  <button class="icon-btn"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg></button>
+  <button class="icon-btn"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /> </svg></button>
+</div>
+<div class="main">
+  <h1>بنلاقي بيوت للكلاب والقطط</h1>
+  <p class="soft">بنجمع الحيوانات من الشارع، ونعالجها، ونلاقيلها عيلة.</p>
+  <img src="img/dog.webp" width="600" height="360">
+  <h3>اشترك في النشرة</h3>
+  <form class="form">
+    <input type="email" placeholder="الإيميل">
+    <p class="hint">مرة في الشهر بس، ومفيش إعلانات.</p>
+    <button class="send">اشترك</button>
+  </form>
+</div>
+</body>
+</html>
+~~~
+
+~~~css broken.css
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, Tahoma, sans-serif; color: #222; background: #fff; }
+*:focus { outline: none; }                         /* «the blue box is ugly» */
+.header { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fef3c7; }
+.logo { font-weight: 800; margin-left: auto; }
+.menu { position: relative; }
+.menu__title { cursor: pointer; padding: 0.4rem; }
+.menu__list { display: none; position: absolute; top: 100%; right: 0; background: #fff; box-shadow: 0 6px 16px #0003; padding: 0.5rem; }
+.menu.open .menu__list, .menu:hover .menu__list { display: grid; }
+.icon-btn { border: 0; background: none; padding: 0.4rem; cursor: pointer; }
+.icon { width: 22px; height: 22px; }
+.main { max-width: 40rem; margin: 0 auto; padding: 1rem; }
+.soft { color: #aaa; }
+img { max-width: 100%; height: auto; }
+.form { display: grid; gap: 0.4rem; max-width: 20rem; }
+.form input { padding: 0.5rem; border: 1px solid #ddd; }
+.hint { margin: 0; color: #bbb; font-size: 0.85rem; }
+.send { padding: 0.5rem; border: 0; background: #f59e0b; color: #fff; font-weight: 700; }
+~~~
+
+~~~js broken.js
+// the menu opens with a click on a div: no keyboard, no role, no state
+document.querySelector(".menu__title").addEventListener("click", () => document.getElementById("menu").classList.toggle("open"));
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جمعية رفق</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+  <span class="logo">جمعية رفق</span>
+  <nav class="menu" aria-label="الرئيسية">
+    <details>
+      <summary>عن الجمعية</summary>
+      <ul class="menu__list"><li><a href="#about">مين إحنا</a></li><li><a href="#help">إزاي تساعد</a></li><li><a href="#adopt">تبنّى</a></li></ul>
+    </details>
+  </nav>
+  <button type="button" class="icon-btn" aria-label="بحث"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg></button>
+  <button type="button" class="icon-btn"  aria-label="المفضّلة"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /> </svg></button>
+</header>
+<main class="main">
+  <h1>بنلاقي بيوت للكلاب والقطط</h1>
+  <p class="soft">بنجمع الحيوانات من الشارع، ونعالجها، ونلاقيلها عيلة.</p>
+  <img src="img/dog.webp" width="600" height="360" alt="رسمة كلب بني بيبص للكاميرا">
+  <h2>اشترك في النشرة</h2>
+  <form class="form">
+    <label for="email">الإيميل</label>
+    <input id="email" type="email" autocomplete="email" aria-describedby="email-hint">
+    <p class="hint" id="email-hint">مرة في الشهر بس، ومفيش إعلانات.</p>
+    <button class="send">اشترك</button>
+  </form>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, Tahoma, sans-serif; color: #222; background: #fff; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }   /* the ring is back, only for the keyboard */
+.header { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fef3c7; }
+.logo { font-weight: 800; margin-inline-end: auto; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; padding: 0.4rem; }
+.menu__list { position: absolute; top: 100%; inset-inline-start: 0; display: grid; margin: 0; padding: 0.5rem; list-style: none; background: #fff; box-shadow: 0 6px 16px #0003; }
+.menu__list a { display: block; padding: 0.3rem 0.5rem; color: #1d4ed8; }
+.icon-btn { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border: 0; border-radius: 0.5rem; background: none; cursor: pointer; }
+.icon { width: 22px; height: 22px; }
+.main { max-width: 40rem; margin: 0 auto; padding: 1rem; }
+.soft { color: #57534e; }        /* was #aaa: 2.32:1 */
+img { max-width: 100%; height: auto; }
+.form { display: grid; gap: 0.4rem; max-width: 20rem; }
+.form label { font-weight: 700; }
+.form input { padding: 0.5rem; border: 1px solid #767676; }   /* the field's edge: 3:1 at least */
+.hint { margin: 0; color: #57534e; font-size: 0.85rem; }
+.send { padding: 0.5rem; border: 0; background: #b45309; color: #fff; font-weight: 700; }   /* was #f59e0b behind white: 2.15:1 */
+~~~
+
+~~~text FIXES.md
+# جمعية رفق: مشاكل الـ accessibility وتصليحها
+
+$__btbroken.html$__bt قبل، و $__btindex.html$__bt بعد. axe قبل: 6 قواعد (13 عنصر)، وبعد: 0.
+
+| # | المشكلة | بند WCAG | إزاي لقيتها | التصليح | بعد |
+|---|---|---|---|---|---|
+| ١ | زرارين أيقونة من غير اسم (بحث ومفضّلة) | 4.1.2 Name, Role, Value | axe $__btbutton-name: 2$__bt، والـ Tab بيقف على «BUTTON» من غير كلام | $__btaria-label$__bt عربي على الزرار، و $__btaria-hidden$__bt على الأيقونة | الـ Tab بيقول «بحث» و «المفضّلة» |
+| ٢ | قايمة «عن الجمعية» بتفتح بالماوس بس (div عليه click) | 2.1.1 Keyboard | الـ Tab بيعدّي عليها ومبيقفش | $__bt<details>$__bt و $__bt<summary>$__bt جوه $__bt<nav>$__bt: بيتفتح بـ Enter و Space لوحده | الـ Tab أول وقفة: «عن الجمعية» |
+| ٣ | مفيش حلقة focus ($__bt*:focus { outline: none }$__bt) | 2.4.7 Focus Visible | $__btoutline-style$__bt على العنصر اللي عليه focus: $__btnone$__bt | $__bt:focus-visible { outline: 3px solid }$__bt | $__btsolid$__bt |
+| ٤ | كلام رمادي فاتح وزرار أصفر بكلام أبيض | 1.4.3 Contrast (Minimum) | حساب التباين (axe معملش check للفقرات دي: «inapplicable») | $__bt#aaa$__bt ← $__bt#57534e$__bt، و $__bt#f59e0b$__bt ← $__bt#b45309$__bt | 2.32 ← 7.63، و 2.15 ← 5.02 |
+| ٥ | خانة الإيميل من غير label، والتلميح مش مربوط بيها | 1.3.1 Info and Relationships و 3.3.2 Labels | الـ placeholder بيختفي أول ما تكتب، والتلميح مش بيتقري مع الخانة | $__bt<label for>$__bt و $__btaria-describedby="email-hint"$__bt | الخانة اسمها «الإيميل» وبيتقري معاها التلميح |
+| ٦ | صورة من غير alt | 1.1.1 Non-text Content | axe $__btimage-alt: 1$__bt | $__btalt$__bt بيوصف الصورة | 0 |
+| ٧ | الصفحة من غير $__btlang$__bt، ومن غير $__bt<main>$__bt ولا $__bt<header>$__bt، والعنوان بينط من h1 لـ h3 | 3.1.1 و 1.3.1 | axe $__bthtml-has-lang$__bt و $__btlandmark-one-main$__bt و $__btregion: 8$__bt و $__btheading-order$__bt | $__btlang="ar"$__bt، و $__bt<header>$__bt و $__bt<main>$__bt، و h2 | 0 |
+
+وكمان: حد خانة الإيميل $__bt#ddd$__bt كان 1.36:1، بقى $__bt#767676$__bt = 4.54:1 (1.4.11 Non-text Contrast، المطلوب 3:1).
+~~~
+
+~~~view 700 700 بعد التصليح
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جمعية رفق</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, Tahoma, sans-serif; color: #222; background: #fff; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }   /* the ring is back, only for the keyboard */
+.header { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fef3c7; }
+.logo { font-weight: 800; margin-inline-end: auto; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; padding: 0.4rem; }
+.menu__list { position: absolute; top: 100%; inset-inline-start: 0; display: grid; margin: 0; padding: 0.5rem; list-style: none; background: #fff; box-shadow: 0 6px 16px #0003; }
+.menu__list a { display: block; padding: 0.3rem 0.5rem; color: #1d4ed8; }
+.icon-btn { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border: 0; border-radius: 0.5rem; background: none; cursor: pointer; }
+.icon { width: 22px; height: 22px; }
+.main { max-width: 40rem; margin: 0 auto; padding: 1rem; }
+.soft { color: #57534e; }        /* was #aaa: 2.32:1 */
+img { max-width: 100%; height: auto; }
+.form { display: grid; gap: 0.4rem; max-width: 20rem; }
+.form label { font-weight: 700; }
+.form input { padding: 0.5rem; border: 1px solid #767676; }   /* the field's edge: 3:1 at least */
+.hint { margin: 0; color: #57534e; font-size: 0.85rem; }
+.send { padding: 0.5rem; border: 0; background: #b45309; color: #fff; font-weight: 700; }   /* was #f59e0b behind white: 2.15:1 */
+</style>
+</head>
+<body>
+<header class="header">
+  <span class="logo">جمعية رفق</span>
+  <nav class="menu" aria-label="الرئيسية">
+    <details>
+      <summary>عن الجمعية</summary>
+      <ul class="menu__list"><li><a href="#about">مين إحنا</a></li><li><a href="#help">إزاي تساعد</a></li><li><a href="#adopt">تبنّى</a></li></ul>
+    </details>
+  </nav>
+  <button type="button" class="icon-btn" aria-label="بحث"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg></button>
+  <button type="button" class="icon-btn"  aria-label="المفضّلة"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /> </svg></button>
+</header>
+<main class="main">
+  <h1>بنلاقي بيوت للكلاب والقطط</h1>
+  <p class="soft">بنجمع الحيوانات من الشارع، ونعالجها، ونلاقيلها عيلة.</p>
+  <img src="data:image/webp;base64,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" width="600" height="360" alt="رسمة كلب بني بيبص للكاميرا">
+  <h2>اشترك في النشرة</h2>
+  <form class="form">
+    <label for="email">الإيميل</label>
+    <input id="email" type="email" autocomplete="email" aria-describedby="email-hint">
+    <p class="hint" id="email-hint">مرة في الشهر بس، ومفيش إعلانات.</p>
+    <button class="send">اشترك</button>
+  </form>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 660 660 قبل (النسخة البايظة)
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جمعية رفق</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, Tahoma, sans-serif; color: #222; background: #fff; }
+*:focus { outline: none; }                         /* «the blue box is ugly» */
+.header { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fef3c7; }
+.logo { font-weight: 800; margin-left: auto; }
+.menu { position: relative; }
+.menu__title { cursor: pointer; padding: 0.4rem; }
+.menu__list { display: none; position: absolute; top: 100%; right: 0; background: #fff; box-shadow: 0 6px 16px #0003; padding: 0.5rem; }
+.menu.open .menu__list, .menu:hover .menu__list { display: grid; }
+.icon-btn { border: 0; background: none; padding: 0.4rem; cursor: pointer; }
+.icon { width: 22px; height: 22px; }
+.main { max-width: 40rem; margin: 0 auto; padding: 1rem; }
+.soft { color: #aaa; }
+img { max-width: 100%; height: auto; }
+.form { display: grid; gap: 0.4rem; max-width: 20rem; }
+.form input { padding: 0.5rem; border: 1px solid #ddd; }
+.hint { margin: 0; color: #bbb; font-size: 0.85rem; }
+.send { padding: 0.5rem; border: 0; background: #f59e0b; color: #fff; font-weight: 700; }
+</style>
+</head>
+<body dir="rtl">
+<div class="header">
+  <span class="logo">جمعية رفق</span>
+  <div class="menu" id="menu">
+    <div class="menu__title">عن الجمعية</div>
+    <div class="menu__list"><a href="#about">مين إحنا</a><a href="#help">إزاي تساعد</a><a href="#adopt">تبنّى</a></div>
+  </div>
+  <button class="icon-btn"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg></button>
+  <button class="icon-btn"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /> </svg></button>
+</div>
+<div class="main">
+  <h1>بنلاقي بيوت للكلاب والقطط</h1>
+  <p class="soft">بنجمع الحيوانات من الشارع، ونعالجها، ونلاقيلها عيلة.</p>
+  <img src="data:image/webp;base64,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" width="600" height="360">
+  <h3>اشترك في النشرة</h3>
+  <form class="form">
+    <input type="email" placeholder="الإيميل">
+    <p class="hint">مرة في الشهر بس، ومفيش إعلانات.</p>
+    <button class="send">اشترك</button>
+  </form>
+</div>
+<script>
+// the menu opens with a click on a div: no keyboard, no role, no state
+document.querySelector(".menu__title").addEventListener("click", () => document.getElementById("menu").classList.toggle("open"));
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** الشكل قريب جدًا في النسختين: شريط أصفر فيه «جمعية رفق» و «عن الجمعية» وأيقونتين، ورسمة كلب، وفورم اشتراك. الفرق في اللي مش باين: في القديمة الـ Tab مبيوصلش للقايمة، والأيقونتين ملهمش اسم، ومفيش حلقة focus، والكلام الرمادي باهت.
+
+**طريقة الفحص (بالترتيب):** (١) axe عشان السريع. (٢) الـ Tab من أول الصفحة لآخرها وانت بتبص على كل وقفة. (٣) التباين لكل لون كلام. (٤) الـ validator. كل واحدة بتمسك حاجات التانية مبتمسكهاش.
+
+**axe مش بيشوف كل حاجة (اتقاس):** الكلام الرمادي [[#aaa]] على أبيض = 2.32:1، ساقط بوضوح. بس axe ماطلعهوش: قاعدة [[color-contrast]] قالت على الفقرة «inapplicable» وماقاستهاش، في القديمة والجديدة، حتى بعد [[lang]] و [[<main>]]. عشان كده التباين في الجدول من حساب بمعادلة WCAG، مش من axe. ولو اعتمدت على axe لوحده، كنت هتفتكر الكلام مقروء.
+
+**أهم ٧ تصليحات** في [[FIXES.md]] بالبند بتاعها. واتنين يستاهلوا شرح:
+- **القايمة:** [[div]] عليه click مبيوصلهوش Tab ومالوش دور. [[<details>]] و [[<summary>]] بيعملوا الفتح والقفل والكيبورد وحالة «مفتوح/مقفول» لقارئ الشاشة، من غير ولا سطر JS.
+- **الـ placeholder مش label:** بيختفي أول ما تكتب، ولونه فاتح. و التلميح «مرة في الشهر بس» كان مكتوب بس مش مربوط، فقارئ الشاشة مبيقراهوش مع الخانة. [[<label for>]] و [[aria-describedby]] صلّحوا الاتنين.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+broken.html  axe: 6 قواعد: button-name:2, heading-order:1, html-has-lang:1, image-alt:1, landmark-one-main:1, region:8
+  Tab: BUTTON → BUTTON → INPUT → اشترك → (رجع لأول الصفحة)     القايمة مش في الـ Tab | outline: none
+index.html   axe: 0
+  Tab: عن الجمعية → بحث → المفضّلة → INPUT → اشترك → …         outline: solid
+التباين (معادلة WCAG): الكلام 2.32 ← 7.63 | التلميح 1.92 ← 7.63 | الزرار 2.15 ← 5.02 | حد الخانة 1.36 ← 4.54
+axe color-contrast على الفقرة: inapplicable (ماقاسهاش)
+الـ validator: index.html مفيش رسايل | broken.html: img من غير alt، و h1 ← h3
+CSS validator: No Error Found (الملفين)
+~~~` },
       ],
       items: [
         {
