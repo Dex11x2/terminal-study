@@ -5,12 +5,2129 @@ MORE("css", [
       l: 3,
       n: "الأسئلة اللي بتتسأل في أي انترفيو frontend، بإجابة تقولها بصوتك في دقيقة",
       projects: [
-        { lvl: 'صغير', t: R`حاسبة specificity`, what: R`صفحة فيها input تكتب فيه selector وتطلع (a,b,c) بتاعته وشرح كل جزء اتحسب ليه، وبتقارن selectorين وتقول مين يكسب. بتتعامل مع ids و classes و attributes و pseudo-classes و pseudo-elements و [[:where()]] (صفر) و [[:is()]] و [[:not()]] (أتقل حاجة جواهم). من سؤال (id, class, type).`, done: R`[[#a .b]] = (1,1,0)، و [[ul li:not(.x)]] = (0,1,2)، و [[:is(#a, .b) p]] = (1,0,1)، و [[:where(nav) .link]] = (0,1,0)، و [[a::before]] = (0,0,2)، وفيه ١٠ اختبارات بتعدّي، و selector غلط بيطلّع رسالة مش crash.` },
-        { lvl: 'صغير', t: R`بطاقات مراجعة للانترفيو`, what: R`صفحة فيها الـ ١١ سؤال كـ [[<details>]]، كل واحد فيه إجابتك في دقيقة بكلامك ومثال كود صغير، وزرار «عرفتها» و«لسه» بيتحفظ في localStorage (جوه try/catch)، ووضع «سؤال عشوائي» بعدّاد ٦٠ ثانية.`, done: R`الإجابات بكلامك انت مش منسوخة، والتقدّم فاضل بعد refresh، والعدّاد بيتقري لقارئ الشاشة كل ١٥ ثانية مش كل ثانية، والصفحة بالكيبورد كلها.` },
-        { lvl: 'متوسط', t: R`أداة تشرح الـ box model`, what: R`sliders للـ width والـ padding والـ border والـ margin، وزرار بيبدّل [[box-sizing]]، وصندوق حي بيتغير، ورسمة زي اللي في DevTools بالأرقام، والعرض الكلي محسوب. ومعاه مثال margin collapse: عنصرين block فوق بعض والأب بيتبدّل بين block و flex. بيجمع أسئلة box model و position.`, done: R`الأرقام اللي في الرسمة نفس اللي في DevTools › Computed لكل تركيبة جرّبتها، والـ margin بين العنصرين بيبقى أكبر قيمة في block ومجموعهم في flex، وكل slider ليه label وقيمته بتتقري.` },
-        { lvl: 'متوسط', t: R`مستكشف الـ stacking context`, what: R`صفحة فيها عناصر جوه بعض بألوان، وجنب كل واحد checkboxes بتحط عليه [[opacity: .99]] أو [[transform]] أو [[isolation: isolate]] أو [[z-index]]، وسكربت بيطلّع لستة بالعناصر اللي عاملة stacking context وليه. ومعاها مثال الهيدر والمودال اللي في الإجابة. بيجمع أسئلة stacking context و reflow و repaint.`, done: R`لما تعلّم [[transform]] على الأب المودال بينزل تحت الهيدر قدامك، واللستة بتقول «main: transform»، ولما تشيله يرجع. وكل خاصية من الخمسة اللي في الإجابة متجرّبة ومكتوب جنبها اللي حصل.` },
-        { lvl: 'كبير', t: R`موقع «إجاباتي» للانترفيو`, what: R`موقع فيه صفحة لكل سؤال من الوحدة دي: الإجابة في دقيقة، و demo حي بيثبتها (حاسبة الـ specificity، وأداة الـ box model، والمستكشف، وصفحة CLS بتتنط وزرار بيصلّحها، وأنيميشن left مقابل transform بقياس الـ frames)، ولقطة من DevTools. بالعربي والإنجليزي (الإجابة الإنجليزي اللي هتقولها)، وثيمين، وكيبورد كامل، و reduced motion. بيجمع الوحدة دي مع كل الوحدات اللي قبلها.`, done: R`كل demo بيشتغل لوحده وبيثبت الرقم اللي في الإجابة، و Lighthouse ‏90 أو أكتر في الأربعة (Performance و Accessibility و Best Practices و SEO)، و axe صفر، وكل صفحة ليها title و description و OG، ومنشور برابط تقدر تبعته في CV.`, ext: R`زوّد وضع «انترفيو تجريبي»: سؤال عشوائي، وعدّاد، وتسجيل صوتك بـ MediaRecorder تسمعه بعدها، ولستة بالكلمات المهمة اللي المفروض تقولها تعلّم عليها.` },
-        { lvl: 'فكرة', t: R`سؤال بتاعك`, what: R`اختار سؤال frontend اتسألته (أو قريته) ومش موجود هنا: BEM مقابل CSS Modules، أو [[:focus]] مقابل [[:focus-visible]]، أو ليه [[100vh]] بايظ على الموبايل. اكتب إجابة في دقيقة و demo بيثبتها بنفس شكل الوحدة.`, done: R`زميل قرا إجابتك بصوت عالي في أقل من دقيقة وفهم، والـ demo بيثبت كل جملة فيها برقم أو لقطة.`, ext: R`اعمله درس كامل بنفس شكل دروس الموقع (desc و example و lines و practice)، وابعته كاقتراح.` },
+        { lvl: 'صغير', dir: "spec-calc", t: R`حاسبة specificity`, what: R`صفحة فيها input تكتب فيه selector وتطلع (a,b,c) بتاعته وشرح كل جزء اتحسب ليه، وبتقارن selectorين وتقول مين يكسب. بتتعامل مع ids و classes و attributes و pseudo-classes و pseudo-elements و [[:where()]] (صفر) و [[:is()]] و [[:not()]] (أتقل حاجة جواهم). من سؤال (id, class, type).`, done: R`[[#a .b]] = (1,1,0)، و [[ul li:not(.x)]] = (0,1,2)، و [[:is(#a, .b) p]] = (1,0,1)، و [[:where(nav) .link]] = (0,1,0)، و [[a::before]] = (0,0,2)، وفيه ١٠ اختبارات بتعدّي، و selector غلط بيطلّع رسالة مش crash.`, sol: R`~~~js specificity.js
+// specificity(selector) → { a, b, c, parts } for ONE complex selector (no commas)
+// a = ids, b = classes / attributes / pseudo-classes, c = types / pseudo-elements
+// :where() = 0; :is() :not() :has() = their heaviest argument; :nth-child(An+B of S) = 1 class + heaviest S
+const LEGACY_ELEMENTS = ["before", "after", "first-line", "first-letter"];   // written with one colon, still pseudo-elements
+
+export function specificity(sel) {
+  const s = sel.trim();
+  if (!s) throw new Error("اكتب selector");
+  if (/,/.test(stripParens(s))) throw new Error("ده selector list: احسب كل واحد بعد الفاصلة لوحده");
+  let a = 0, b = 0, c = 0, i = 0;
+  const parts = [];
+  const add = (abc, why) => { a += abc[0]; b += abc[1]; c += abc[2]; parts.push(why); };
+
+  while (i < s.length) {
+    const ch = s[i];
+    if (/[\s>+~]/.test(ch)) { i++; continue; }                          // combinators count nothing
+    if (ch === "*") { i++; parts.push("* = 0"); continue; }
+    if (ch === "#") { const n = ident(s, i + 1); add([1, 0, 0], "#" + n + " = id"); i += 1 + n.length; continue; }
+    if (ch === ".") { const n = ident(s, i + 1); add([0, 1, 0], "." + n + " = class"); i += 1 + n.length; continue; }
+    if (ch === "[") { const end = close(s, i, "[", "]"); add([0, 1, 0], s.slice(i, end + 1) + " = attribute"); i = end + 1; continue; }
+    if (ch === ":") {
+      const two = s[i + 1] === ":";
+      const n = ident(s, i + (two ? 2 : 1));
+      let j = i + (two ? 2 : 1) + n.length, arg = null;
+      if (s[j] === "(") { const end = close(s, j, "(", ")"); arg = s.slice(j + 1, end); j = end + 1; }
+      const name = n.toLowerCase(), text = s.slice(i, j);
+      if (two || LEGACY_ELEMENTS.includes(name)) add([0, 0, 1], text + " = pseudo-element");
+      else if (name === "where") parts.push(text + " = 0 (:where مبيحسبش)");
+      else if (["is", "not", "has"].includes(name)) { const m = heaviest(arg); add(m, text + " = أتقل حاجة جواه (" + m.join(",") + ")"); }
+      else if (/^nth-(last-)?child$/.test(name) && / of /.test(arg || "")) { const m = heaviest(arg.split(/ of /)[1]); add([m[0], m[1] + 1, m[2]], text + " = class + أتقل selector بعد of"); }
+      else add([0, 1, 0], text + " = pseudo-class");
+      i = j; continue;
+    }
+    if (/[a-zA-Z]/.test(ch)) { const n = ident(s, i); add([0, 0, 1], n + " = type"); i += n.length; continue; }
+    throw new Error("حرف مش متوقع «" + ch + "» في المكان " + (i + 1));
+  }
+  return { a, b, c, parts };
+}
+
+// the heaviest selector of a list, compared column by column
+function heaviest(list) {
+  if (!list || !list.trim()) throw new Error("القوس فاضي");
+  return splitTop(list).map(x => { const r = specificity(x); return [r.a, r.b, r.c]; }).reduce((m, v) => (compare(v, m) > 0 ? v : m));
+}
+export function compare(x, y) { for (let k = 0; k < 3; k++) if (x[k] !== y[k]) return x[k] - y[k]; return 0; }
+
+function ident(s, i) { const m = s.slice(i).match(/^-?[_a-zA-Z\u00a0-\uffff][-\w\u00a0-\uffff]*/); if (!m) throw new Error("اسم ناقص بعد «" + (s[i - 1] || "") + "»"); return m[0]; }
+function close(s, i, open, end) { let d = 0; for (let k = i; k < s.length; k++) { if (s[k] === open) d++; if (s[k] === end && --d === 0) return k; } throw new Error("«" + open + "» من غير «" + end + "»"); }
+function stripParens(s) { let d = 0, out = ""; for (const ch of s) { if (ch === "(" || ch === "[") d++; if (d === 0) out += ch; if (ch === ")" || ch === "]") d--; } return out; }
+function splitTop(s) { const out = []; let d = 0, cur = ""; for (const ch of s) { if (ch === "(" || ch === "[") d++; if (ch === ")" || ch === "]") d--; if (ch === "," && d === 0) { out.push(cur); cur = ""; } else cur += ch; } out.push(cur); return out; }
+~~~
+
+~~~js specificity.test.js
+// node --test spec-calc/specificity.test.js (the file, not the folder): the 5 cases from the project, 5 more, and errors that must be messages, not crashes
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { specificity, compare } from "./specificity.js";
+
+const abc = s => { const r = specificity(s); return [r.a, r.b, r.c]; };
+const cases = [
+  ["#a .b", [1, 1, 0]],
+  ["ul li:not(.x)", [0, 1, 2]],
+  [":is(#a, .b) p", [1, 0, 1]],
+  [":where(nav) .link", [0, 1, 0]],
+  ["a::before", [0, 0, 2]],
+  ["a:before", [0, 0, 2]],                                   // old one-colon pseudo-element
+  ["input[type=\"email\"]:focus-visible", [0, 2, 1]],
+  ["li:nth-child(2n of .done)", [0, 2, 1]],                  // 1 for :nth-child + .done
+  ["* > p + span ~ em", [0, 0, 3]],
+  ["main :has(> img, #hero) h2", [1, 0, 2]],
+];
+for (const [sel, want] of cases) test(sel + " = (" + want + ")", () => assert.deepEqual(abc(sel), want));
+
+test("مين يكسب: #a أتقل من ١٠ classes", () => assert.ok(compare(abc("#a"), abc(".a.b.c.d.e.f.g.h.i.j")) > 0));
+test("selector غلط = رسالة مش crash", () => {
+  assert.throws(() => specificity("a[href"), /«\[» من غير «\]»/);
+  assert.throws(() => specificity(":is()"), /القوس فاضي/);
+  assert.throws(() => specificity("a, b"), /selector list/);
+  assert.throws(() => specificity("a @ b"), /حرف مش متوقع/);
+});
+~~~
+
+~~~json package.json
+{"type":"module"}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حاسبة specificity</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
+  main { max-width: 44rem; margin: 0 auto; padding: 1.5rem 1rem; }
+  h1 { margin: 0 0 1rem; font-size: 1.5rem; }
+  .pair { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
+  .box { padding: 1rem; border-radius: 0.75rem; background: #fff; border: 1px solid #cbd5e1; }
+  label { display: block; font-weight: 700; }
+  input { width: 100%; margin-block: 0.25rem 0.5rem; padding: 0.5rem 0.7rem; border: 1px solid #64748b; border-radius: 0.5rem; font: 1rem/1.4 ui-monospace, Consolas, monospace; direction: ltr; }
+  :focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+  .abc { margin: 0; font: 700 1.6rem/1.3 ui-monospace, Consolas, monospace; direction: ltr; text-align: start; }
+  .abc.err { color: #b91c1c; font: 700 1rem/1.5 system-ui, sans-serif; direction: rtl; }
+  ul { margin: 0.25rem 0 0; padding-inline-start: 1.2rem; font-size: 0.9rem; color: #334155; }
+  code { direction: ltr; unicode-bidi: isolate; }
+  .winner { margin-block-start: 1rem; padding: 0.75rem 1rem; border-radius: 0.75rem; background: #e0e7ff; font-weight: 700; }
+</style>
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<main aria-label="التجربة">
+  <h1>حاسبة specificity</h1>
+  <div class="pair">
+    <section class="box" aria-labelledby="l1">
+      <label id="l1" for="s1">الـ selector الأول</label>
+      <input id="s1" value="#a .b" spellcheck="false" autocomplete="off">
+      <p class="abc" id="r1" aria-live="polite"></p>
+      <ul id="p1"></ul>
+    </section>
+    <section class="box" aria-labelledby="l2">
+      <label id="l2" for="s2">الـ selector التاني</label>
+      <input id="s2" value=":is(#a, .b) p" spellcheck="false" autocomplete="off">
+      <p class="abc" id="r2" aria-live="polite"></p>
+      <ul id="p2"></ul>
+    </section>
+  </div>
+  <p class="winner" id="win" aria-live="polite"></p>
+</main>
+</body>
+</html>
+~~~
+
+~~~js app.js
+import { specificity, compare } from "./specificity.js";
+
+function calc(n) {
+  const input = document.getElementById("s" + n), out = document.getElementById("r" + n), list = document.getElementById("p" + n);
+  list.replaceChildren();
+  out.classList.remove("err");
+  try {
+    const sel = input.value;
+    // the browser's own parser catches what ours lets through (an unknown pseudo-class, for example)
+    if (!CSS.supports("selector(" + sel + ")") && !/,/.test(sel)) throw new Error("المتصفح مش فاهم الـ selector ده");
+    const r = specificity(sel);
+    out.textContent = "(" + r.a + ", " + r.b + ", " + r.c + ")";
+    for (const p of r.parts) { const li = document.createElement("li"); const c = document.createElement("code"); c.textContent = p; li.append(c); list.append(li); }
+    input.removeAttribute("aria-invalid");
+    return [r.a, r.b, r.c];
+  } catch (e) {
+    out.classList.add("err");
+    out.textContent = e.message;
+    input.setAttribute("aria-invalid", "true");
+    return null;
+  }
+}
+
+function update() {
+  const x = calc(1), y = calc(2), win = document.getElementById("win");
+  if (!x || !y) { win.textContent = "صلّح الـ selector عشان نقارن."; return; }
+  const d = compare(x, y);
+  win.textContent = d === 0 ? "متساويين: اللي مكتوب بعد في الـ CSS هو اللي بيكسب." : (d > 0 ? "الأول" : "التاني") + " بيكسب، من أول عمود مختلف من الشمال.";
+}
+document.getElementById("s1").addEventListener("input", update);
+document.getElementById("s2").addEventListener("input", update);
+update();
+~~~
+
+~~~view 500 680 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حاسبة specificity</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
+  main { max-width: 44rem; margin: 0 auto; padding: 1.5rem 1rem; }
+  h1 { margin: 0 0 1rem; font-size: 1.5rem; }
+  .pair { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
+  .box { padding: 1rem; border-radius: 0.75rem; background: #fff; border: 1px solid #cbd5e1; }
+  label { display: block; font-weight: 700; }
+  input { width: 100%; margin-block: 0.25rem 0.5rem; padding: 0.5rem 0.7rem; border: 1px solid #64748b; border-radius: 0.5rem; font: 1rem/1.4 ui-monospace, Consolas, monospace; direction: ltr; }
+  :focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+  .abc { margin: 0; font: 700 1.6rem/1.3 ui-monospace, Consolas, monospace; direction: ltr; text-align: start; }
+  .abc.err { color: #b91c1c; font: 700 1rem/1.5 system-ui, sans-serif; direction: rtl; }
+  ul { margin: 0.25rem 0 0; padding-inline-start: 1.2rem; font-size: 0.9rem; color: #334155; }
+  code { direction: ltr; unicode-bidi: isolate; }
+  .winner { margin-block-start: 1rem; padding: 0.75rem 1rem; border-radius: 0.75rem; background: #e0e7ff; font-weight: 700; }
+</style>
+</head>
+<body>
+<main aria-label="التجربة">
+  <h1>حاسبة specificity</h1>
+  <div class="pair">
+    <section class="box" aria-labelledby="l1">
+      <label id="l1" for="s1">الـ selector الأول</label>
+      <input id="s1" value="#a .b" spellcheck="false" autocomplete="off">
+      <p class="abc" id="r1" aria-live="polite"></p>
+      <ul id="p1"></ul>
+    </section>
+    <section class="box" aria-labelledby="l2">
+      <label id="l2" for="s2">الـ selector التاني</label>
+      <input id="s2" value=":is(#a, .b) p" spellcheck="false" autocomplete="off">
+      <p class="abc" id="r2" aria-live="polite"></p>
+      <ul id="p2"></ul>
+    </section>
+  </div>
+  <p class="winner" id="win" aria-live="polite"></p>
+</main>
+<script type="module">
+// specificity(selector) → { a, b, c, parts } for ONE complex selector (no commas)
+// a = ids, b = classes / attributes / pseudo-classes, c = types / pseudo-elements
+// :where() = 0; :is() :not() :has() = their heaviest argument; :nth-child(An+B of S) = 1 class + heaviest S
+const LEGACY_ELEMENTS = ["before", "after", "first-line", "first-letter"];   // written with one colon, still pseudo-elements
+
+function specificity(sel) {
+  const s = sel.trim();
+  if (!s) throw new Error("اكتب selector");
+  if (/,/.test(stripParens(s))) throw new Error("ده selector list: احسب كل واحد بعد الفاصلة لوحده");
+  let a = 0, b = 0, c = 0, i = 0;
+  const parts = [];
+  const add = (abc, why) => { a += abc[0]; b += abc[1]; c += abc[2]; parts.push(why); };
+
+  while (i < s.length) {
+    const ch = s[i];
+    if (/[\s>+~]/.test(ch)) { i++; continue; }                          // combinators count nothing
+    if (ch === "*") { i++; parts.push("* = 0"); continue; }
+    if (ch === "#") { const n = ident(s, i + 1); add([1, 0, 0], "#" + n + " = id"); i += 1 + n.length; continue; }
+    if (ch === ".") { const n = ident(s, i + 1); add([0, 1, 0], "." + n + " = class"); i += 1 + n.length; continue; }
+    if (ch === "[") { const end = close(s, i, "[", "]"); add([0, 1, 0], s.slice(i, end + 1) + " = attribute"); i = end + 1; continue; }
+    if (ch === ":") {
+      const two = s[i + 1] === ":";
+      const n = ident(s, i + (two ? 2 : 1));
+      let j = i + (two ? 2 : 1) + n.length, arg = null;
+      if (s[j] === "(") { const end = close(s, j, "(", ")"); arg = s.slice(j + 1, end); j = end + 1; }
+      const name = n.toLowerCase(), text = s.slice(i, j);
+      if (two || LEGACY_ELEMENTS.includes(name)) add([0, 0, 1], text + " = pseudo-element");
+      else if (name === "where") parts.push(text + " = 0 (:where مبيحسبش)");
+      else if (["is", "not", "has"].includes(name)) { const m = heaviest(arg); add(m, text + " = أتقل حاجة جواه (" + m.join(",") + ")"); }
+      else if (/^nth-(last-)?child$/.test(name) && / of /.test(arg || "")) { const m = heaviest(arg.split(/ of /)[1]); add([m[0], m[1] + 1, m[2]], text + " = class + أتقل selector بعد of"); }
+      else add([0, 1, 0], text + " = pseudo-class");
+      i = j; continue;
+    }
+    if (/[a-zA-Z]/.test(ch)) { const n = ident(s, i); add([0, 0, 1], n + " = type"); i += n.length; continue; }
+    throw new Error("حرف مش متوقع «" + ch + "» في المكان " + (i + 1));
+  }
+  return { a, b, c, parts };
+}
+
+// the heaviest selector of a list, compared column by column
+function heaviest(list) {
+  if (!list || !list.trim()) throw new Error("القوس فاضي");
+  return splitTop(list).map(x => { const r = specificity(x); return [r.a, r.b, r.c]; }).reduce((m, v) => (compare(v, m) > 0 ? v : m));
+}
+function compare(x, y) { for (let k = 0; k < 3; k++) if (x[k] !== y[k]) return x[k] - y[k]; return 0; }
+
+function ident(s, i) { const m = s.slice(i).match(/^-?[_a-zA-Z\u00a0-\uffff][-\w\u00a0-\uffff]*/); if (!m) throw new Error("اسم ناقص بعد «" + (s[i - 1] || "") + "»"); return m[0]; }
+function close(s, i, open, end) { let d = 0; for (let k = i; k < s.length; k++) { if (s[k] === open) d++; if (s[k] === end && --d === 0) return k; } throw new Error("«" + open + "» من غير «" + end + "»"); }
+function stripParens(s) { let d = 0, out = ""; for (const ch of s) { if (ch === "(" || ch === "[") d++; if (d === 0) out += ch; if (ch === ")" || ch === "]") d--; } return out; }
+function splitTop(s) { const out = []; let d = 0, cur = ""; for (const ch of s) { if (ch === "(" || ch === "[") d++; if (ch === ")" || ch === "]") d--; if (ch === "," && d === 0) { out.push(cur); cur = ""; } else cur += ch; } out.push(cur); return out; }
+
+
+function calc(n) {
+  const input = document.getElementById("s" + n), out = document.getElementById("r" + n), list = document.getElementById("p" + n);
+  list.replaceChildren();
+  out.classList.remove("err");
+  try {
+    const sel = input.value;
+    // the browser's own parser catches what ours lets through (an unknown pseudo-class, for example)
+    if (!CSS.supports("selector(" + sel + ")") && !/,/.test(sel)) throw new Error("المتصفح مش فاهم الـ selector ده");
+    const r = specificity(sel);
+    out.textContent = "(" + r.a + ", " + r.b + ", " + r.c + ")";
+    for (const p of r.parts) { const li = document.createElement("li"); const c = document.createElement("code"); c.textContent = p; li.append(c); list.append(li); }
+    input.removeAttribute("aria-invalid");
+    return [r.a, r.b, r.c];
+  } catch (e) {
+    out.classList.add("err");
+    out.textContent = e.message;
+    input.setAttribute("aria-invalid", "true");
+    return null;
+  }
+}
+
+function update() {
+  const x = calc(1), y = calc(2), win = document.getElementById("win");
+  if (!x || !y) { win.textContent = "صلّح الـ selector عشان نقارن."; return; }
+  const d = compare(x, y);
+  win.textContent = d === 0 ? "متساويين: اللي مكتوب بعد في الـ CSS هو اللي بيكسب." : (d > 0 ? "الأول" : "التاني") + " بيكسب، من أول عمود مختلف من الشمال.";
+}
+document.getElementById("s1").addEventListener("input", update);
+document.getElementById("s2").addEventListener("input", update);
+update();
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خانتين فيهم [[#a .b]] و [[:is(#a, .b) p]]. تحت كل خانة الرقم بخط كبير [[(1, 1, 0)]] و [[(1, 0, 1)]]، ولستة بتقول كل جزء اتحسب إيه ([[#a = id]]، [[.b = class]]…). وتحت الاتنين سطر بنفسجي: «الأول بيكسب، من أول عمود مختلف من الشمال». غيّر أي خانة والرقم بيتغيّر وانت بتكتب.
+
+**الحساب في ملف لوحده من غير DOM:** [[specificity.js]] function صافية بتاخد نص وترجّع [[{ a, b, c, parts }]]. ده اللي خلّى الاختبارات تشتغل في Node من غير متصفح، والصفحة نفسها ([[app.js]]) بتستورد نفس الـ function.
+
+**القراية حرف حرف:** الـ loop بيبص على الحرف اللي قدامه: مسافة أو [[>]] أو [[+]] أو [[~]] (combinators) مبتتحسبش. [[#]] بعده اسم = id. [[.]] = class. [[[...]]] = attribute لحد القوس اللي بيقفله ([[close()]] بتعد الأقواس عشان [[[data-x="[a]"]]] ميتلخبطش). [[::]] = pseudo-element. وحرف عادي = type.
+
+**الـ pseudo-classes الخاصة:** [[:where()]] صفر مهما كان جواه. [[:is()]] و [[:not()]] و [[:has()]] بياخدوا أتقل selector جوه القوس (مش المجموع): [[:is(#a, .b)]] = (1,0,0) مش (1,1,0). و [[:nth-child(2n of .done)]] = class واحدة للـ nth-child نفسها + أتقل selector بعد [[of]]. والقديم [[a:before]] بنقطتين واحدة لسه pseudo-element (عشان كده لستة [[LEGACY_ELEMENTS]]).
+
+**المقارنة:** [[compare()]] بيقارن عمود عمود من الشمال: أول عمود مختلف هو اللي بيحكم. فـ id واحد بيكسب ١٠ classes، والاختبار [[مين يكسب]] بيثبت ده.
+
+**selector غلط = رسالة مش crash:** كل غلطة في [[specificity.js]] [[throw new Error]] برسالة عربي، و [[app.js]] بيمسكها في [[try/catch]] ويكتبها مكان الرقم ويحط [[aria-invalid]] على الخانة. وفيه حاجات القارئ بتاعنا مش هيعرف إنها غلط، زي [[p:hovr]]: شكلها pseudo-class عادية. فقبل الحساب [[CSS.supports("selector(...)")]] بيسأل المتصفح نفسه: لو مش فاهمه، رسالة.
+
+**الرقم بيتقري:** الـ [[<p>]] اللي فيه الرقم عليه [[aria-live="polite"]]، فقارئ الشاشة بيقول الرقم الجديد لما تبطّل كتابة.
+
+**غلطتين قابلوني:**
+- **حرف ممنوع في الـ HTML:** الـ regex بتاع الأسامي كان مكتوب فيه المدى من U+00A0 لـ U+FFFF بالحروف نفسها، مش بالـ escape. في ملف JS لوحده شغال، بس لما الـ JS اتحط جوه صفحة HTML الـ validator قال [[Forbidden code point U+ffff]]. بقى مكتوب بالـ escape (زي ما في [[specificity.js]] فوق): نفس المعنى، وكله حروف عادية.
+- شغّلت الاختبارات بـ [[node --test spec-calc]] (اسم الفولدر)، وطلع [[Error: Cannot find module '…/spec-calc']]. الـ [[--test]] بياخد ملفات (أو glob)، والفولدر بيتعامل معاه كأنه ملف. اسم الملف نفسه عدّى الـ ١٢.
+
+~~~text node --test spec-calc/specificity.test.js
+✔ #a .b = (1,1,0) (1.6371ms)
+✔ ul li:not(.x) = (0,1,2) (0.262ms)
+✔ :is(#a, .b) p = (1,0,1) (0.1695ms)
+✔ :where(nav) .link = (0,1,0) (0.1106ms)
+✔ a::before = (0,0,2) (0.097ms)
+✔ a:before = (0,0,2) (0.0878ms)
+✔ input[type="email"]:focus-visible = (0,2,1) (0.112ms)
+✔ li:nth-child(2n of .done) = (0,2,1) (0.1352ms)
+✔ * > p + span ~ em = (0,0,3) (0.1253ms)
+✔ main :has(> img, #hero) h2 = (1,0,2) (0.1842ms)
+✔ مين يكسب: #a أتقل من ١٠ classes (0.1812ms)
+✔ selector غلط = رسالة مش crash (0.4122ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 81.462
+~~~
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+البداية: (1, 1, 0) مقابل (1, 0, 1) ← الأول بيكسب، من أول عمود مختلف من الشمال.
+«ul li:not(.x)» و «:where(nav) .link»: (0, 1, 2) مقابل (0, 1, 0) ← الأول بيكسب، من أول عمود مختلف من الشمال.
+«a::before» و «a:hover»: (0, 0, 2) مقابل (0, 1, 1) ← التاني بيكسب، من أول عمود مختلف من الشمال.
+«a[href» و «p»: المتصفح مش فاهم الـ selector ده مقابل (0, 0, 1) ← صلّح الـ selector عشان نقارن.
+«p:hovr» و «p»: المتصفح مش فاهم الـ selector ده مقابل (0, 0, 1) ← صلّح الـ selector عشان نقارن.
+أجزاء :is(#a, .b) p: p = type
+errors: 0 | axe: 0
+~~~` },
+        { lvl: 'صغير', dir: "interview-cards", t: R`بطاقات مراجعة للانترفيو`, what: R`صفحة فيها الـ ١١ سؤال كـ [[<details>]]، كل واحد فيه إجابتك في دقيقة بكلامك ومثال كود صغير، وزرار «عرفتها» و«لسه» بيتحفظ في localStorage (جوه try/catch)، ووضع «سؤال عشوائي» بعدّاد ٦٠ ثانية.`, done: R`الإجابات بكلامك انت مش منسوخة، والتقدّم فاضل بعد refresh، والعدّاد بيتقري لقارئ الشاشة كل ١٥ ثانية مش كل ثانية، والصفحة بالكيبورد كلها.`, sol: R`~~~js cards.js
+// the 11 questions of the unit, each answered in my own words in under a minute, with one small code example
+export const cards = [
+  { id: "box", q: "اشرح الـ box model", a: "كل عنصر ٤ طبقات من جوه لبرّه: المحتوى، والـ padding، والـ border، والـ margin. الـ width بيتحسب على المحتوى بس في content-box، فالـ padding والـ border بيتزودوا عليه. border-box بيخلّي الـ width يشمل الـ padding والـ border، فاللي تكتبه هو اللي تشوفه. وبحطه على كل العناصر في أول ملف.", code: "*, *::before, *::after { box-sizing: border-box; }" },
+  { id: "spec", q: "المتصفح بيقرر أنهي قاعدة تكسب إزاي؟", a: "الأول الـ !important والـ layers، وبعدين الـ specificity كـ ٣ أرقام: ids، وبعدين classes و attributes و pseudo-classes، وبعدين types. بتتقارن من الشمال: id واحد يكسب أي عدد classes. ولو متساويين، اللي مكتوب بعد يكسب. و :where() صفر، فبستخدمه في الـ reset عشان أي قاعدة تقدر تغيّره.", code: "#nav a { }        /* (1,0,1) */\n.menu .link { }   /* (0,2,0) يخسر */" },
+  { id: "flexgrid", q: "إمتى flex وإمتى grid؟", a: "flex لصف أو عمود واحد والمحتوى هو اللي بيحدد المقاسات: navbar، أو زراير جنب بعض. grid لما أحتاج صفوف وأعمدة مع بعض، أو أحدد الشكل من الأب: صفحة كاملة، أو كروت بتلف. وكتير بيتجمعوا: grid للكروت، و flex جوه كل كارت.", code: ".cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }" },
+  { id: "position", q: "الفرق بين قيم position الخمسة", a: "static العادي ومبيتأثرش بـ top. relative بيتحرك من مكانه ومكانه محجوز، وبيبقى مرجع للـ absolute اللي جواه. absolute بيطلع من الترتيب ويتحسب من أقرب أب مش static. fixed بيتحسب من الشاشة، إلا لو أب عليه transform. sticky عادي لحد ما يوصل للحد اللي كتبته، وبعدين يلزق جوه أبوه.", code: ".header { position: sticky; top: 0; }" },
+  { id: "responsive", q: "هتعمل الموقع responsive إزاي؟", a: "mobile-first: الـ CSS الأساسي للموبايل، وأزوّد بـ min-width. بس الأول بحاول من غير breakpoints: grid بـ auto-fill و minmax، و clamp للخطوط، و flex-wrap. والـ components بـ container queries عشان تتأقلم مع مكانها مش الشاشة. وبقيس على ٣٢٠ لحد ١٤٤٠ وأتأكد إن مفيش scroll أفقي.", code: "font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem);" },
+  { id: "units", q: "الفرق بين px و em و rem", a: "px ثابت. em بالنسبة لخط العنصر نفسه، فبيتراكم لو متداخل. rem بالنسبة لخط الـ html بس، فثابت في كل حتة وبيكبر لو المستخدم كبّر الخط من المتصفح. بستخدم rem للخطوط والمسافات، و em للـ padding جوه الزرار عشان يكبر مع خطه، و px للحدود الرفيعة.", code: "button { font-size: 1rem; padding: 0.5em 1em; }" },
+  { id: "tailwind", q: "Tailwind بيشتغل إزاي من جوه؟ وعيوبه؟", a: "بيقرا ملفاتك ويدوّر على أسامي الـ classes كنص، ويطلّع CSS بالـ classes اللي لقاها بس. فالملف صغير. عشان كده class متركّب من متغير (bg-$__{color}) مبيتولّدش. العيوب: HTML طويل، والتصميم مكتوب في الـ markup، ومحتاج build. وبحط الألوان في @theme عشان متتكتبش أرقام في كل حتة.", code: "const cls = { red: \"bg-red-500\", blue: \"bg-blue-500\" }[color];" },
+  { id: "a11y", q: "أهم حاجات الـ accessibility", a: "HTML صح الأول: button للزرار، و label لكل خانة، وعناوين بالترتيب، و alt للصور. كل حاجة بالكيبورد وفيه focus باين. تباين ٤٫٥ للكلام. ومتعتمدش على اللون لوحده. وبقيس بـ axe وبجرّب بالكيبورد بنفسي، لأن الأدوات بتمسك ٣٠ لـ ٥٠٪ من المشاكل بس.", code: "<label for=\"email\">الإيميل</label>\n<input id=\"email\" type=\"email\" autocomplete=\"email\">" },
+  { id: "cls", q: "إيه هو CLS وإزاي تقلله؟", a: "مجموع الحاجات اللي بتتنطط وانت بتقرا من غير ما تلمس حاجة. أهم أسبابه: صور من غير مقاسات، وإعلانات وحاجات بتيجي متأخر، وخط بيتبدّل بعرض مختلف. الحل إنك تحجز المكان: width و height للصور، و min-height للإعلان، و aspect-ratio للفيديو، وخط احتياطي بـ size-adjust. والمطلوب أقل من ٠٫١.", code: "<img src=\"hero.webp\" width=\"1200\" height=\"675\" alt=\"…\">" },
+  { id: "reflow", q: "الفرق بين reflow و repaint", a: "reflow (layout) يعني المتصفح بيحسب مكان ومقاس العناصر من الأول، وده تقيل. repaint يعني بيلوّن تاني من غير ما المقاسات تتغير، زي تغيير اللون. وفيه حاجات ولا ده ولا ده: transform و opacity بيتعملوا على طبقة جاهزة. وأكبر غلطة: تقرا مقاس بعد ما تكتب style في loop، فالمتصفح يعمل layout كل لفة.", code: "el.style.transform = \"translateX(100px)\"; /* مش left */" },
+  { id: "zindex", q: "ليه z-index: 9999 مش بيطلّع العنصر فوق؟", a: "لأن z-index بيتقارن جوه نفس الـ stacking context بس. لو أب العنصر عامل context (transform، أو opacity أقل من ١، أو z-index مع position، أو isolation)، العنصر محبوس جواه مهما كان رقمه. الحل: أطلّعه برّه الأب (portal، أو top layer بـ dialog أو popover)، أو أشيل اللي عامل الـ context.", code: "dialog.showModal(); /* top layer: فوق كل حاجة */" },
+];
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مراجعة أسئلة الانترفيو</title>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<main class="wrap">
+  <h1>مراجعة أسئلة الانترفيو</h1>
+  <p class="progress" id="progress" aria-live="polite"></p>
+  <button type="button" class="random" id="random">سؤال عشوائي في دقيقة</button>
+
+  <section class="drill" id="drill" hidden aria-labelledby="drill-q">
+    <p class="drill-label">جاوب بصوت عالي قبل ما الوقت يخلص:</p>
+    <h2 id="drill-q"></h2>
+    <p class="clock" aria-hidden="true"><span id="secs">٦٠</span> ثانية</p>
+    <p class="sr-only" id="clock-say" aria-live="polite"></p>
+    <button type="button" id="drill-stop">وقّف وشوف الإجابة</button>
+  </section>
+
+  <div class="cards" id="cards"></div>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1e1b4b; background: #f5f3ff; }
+.wrap { max-width: 46rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h1 { margin: 0; font-size: 1.5rem; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+button { font: inherit; }
+.progress { color: #4c1d95; font-weight: 700; }
+.random, .drill button { padding: 0.5rem 1.2rem; border: 0; border-radius: 999px; background: #4c1d95; color: #fff; font-weight: 700; }
+
+.drill { margin-block: 1rem; padding: 1rem 1.25rem; border-radius: 1rem; background: #fff; border: 2px solid #4c1d95; }
+.drill h2 { margin: 0.25rem 0; font-size: 1.3rem; }
+.drill-label { margin: 0; color: #5b21b6; }
+.clock { margin: 0.5rem 0; font-size: 2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.cards { display: grid; gap: 0.75rem; margin-block-start: 1.5rem; }
+details { padding: 0.25rem 1rem; border-radius: 0.75rem; background: #fff; border: 1px solid #ddd6fe; }
+details.known { border-color: #059669; }
+summary { display: flex; justify-content: space-between; gap: 1rem; padding: 0.6rem 0; font-weight: 700; cursor: pointer; }
+.badge { flex: none; font-size: 0.8rem; font-weight: 700; color: #047857; }
+details p { margin: 0 0 0.75rem; }
+pre { margin: 0 0 0.75rem; padding: 0.75rem; overflow-x: auto; border-radius: 0.5rem; background: #1e1b4b; color: #ede9fe; direction: ltr; text-align: left; }
+.marks { display: flex; gap: 0.5rem; margin-block-end: 0.75rem; }
+.marks button { padding: 0.3rem 1rem; border: 1px solid #4c1d95; border-radius: 999px; background: #fff; color: #4c1d95; }
+.marks button[aria-pressed="true"] { background: #4c1d95; color: #fff; }
+~~~
+
+~~~js app.js
+import { cards } from "./cards.js";
+
+const KEY = "interview-progress";
+const ar = n => n.toLocaleString("ar-EG");
+// localStorage can throw (private mode, blocked storage): the page still works, it just doesn't remember
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+
+// ---- the cards ----
+const list = document.getElementById("cards");
+for (const c of cards) {
+  const d = document.createElement("details");
+  d.id = "card-" + c.id;
+  const s = document.createElement("summary");
+  const q = document.createElement("span"); q.textContent = c.q;
+  const badge = document.createElement("span"); badge.className = "badge";
+  s.append(q, badge);
+  const p = document.createElement("p"); p.textContent = c.a;
+  const pre = document.createElement("pre"); const code = document.createElement("code"); code.textContent = c.code; pre.append(code);
+  const marks = document.createElement("div"); marks.className = "marks"; marks.setAttribute("role", "group"); marks.setAttribute("aria-label", "قيّم نفسك");
+  for (const [val, label] of [["known", "عرفتها"], ["later", "لسه"]]) {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label; b.dataset.val = val;
+    b.addEventListener("click", () => { state[c.id] = state[c.id] === val ? undefined : val; save(); render(); });
+    marks.append(b);
+  }
+  d.append(s, p, pre, marks);
+  list.append(d);
+}
+
+function render() {
+  let known = 0;
+  for (const c of cards) {
+    const d = document.getElementById("card-" + c.id), v = state[c.id];
+    d.classList.toggle("known", v === "known");
+    d.querySelector(".badge").textContent = v === "known" ? "✓ عرفتها" : v === "later" ? "لسه" : "";
+    d.querySelectorAll(".marks button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.val === v)));
+    if (v === "known") known++;
+  }
+  document.getElementById("progress").textContent = "عرفت " + ar(known) + " من " + ar(cards.length);
+}
+render();
+
+// ---- random question with a 60-second clock ----
+const drill = document.getElementById("drill"), secs = document.getElementById("secs"), say = document.getElementById("clock-say");
+let timer = null, current = null;
+document.getElementById("random").addEventListener("click", () => {
+  const pool = cards.filter(c => state[c.id] !== "known");          // the ones not known yet first
+  current = (pool.length ? pool : cards)[Math.floor(Math.random() * (pool.length || cards.length))];
+  document.getElementById("drill-q").textContent = current.q;
+  drill.hidden = false;
+  document.getElementById("drill-q").setAttribute("tabindex", "-1");
+  document.getElementById("drill-q").focus();
+  let left = 60;
+  secs.textContent = ar(left); say.textContent = "معاك ٦٠ ثانية";
+  clearInterval(timer);
+  timer = setInterval(() => {
+    left--;
+    secs.textContent = ar(left);                                       // the eye sees every second (aria-hidden)
+    if (left % 15 === 0) say.textContent = left ? "فاضل " + ar(left) + " ثانية" : "الوقت خلص";   // the ear every 15
+    if (left === 0) stop();
+  }, 1000);
+});
+function stop() {
+  clearInterval(timer);
+  drill.hidden = true;
+  const d = document.getElementById("card-" + current.id);
+  d.open = true;
+  d.querySelector("summary").focus();
+}
+document.getElementById("drill-stop").addEventListener("click", stop);
+~~~
+
+~~~js measure.mjs
+import { browser } from "../lab.mjs";
+import AxeBuilder from "@axe-core/playwright";
+const U = "http://127.0.0.1:8819/flashcards/index.html";
+const b = await browser();
+let ctx = await b.newContext({ viewport: { width: 800, height: 900 } });
+let p = await ctx.newPage();
+await p.goto(U);
+// keyboard only: Tab to the first card, open it, Tab to «عرفتها», press it
+await p.keyboard.press("Tab"); await p.keyboard.press("Tab");
+console.log("Tab التاني على: «" + await p.evaluate(() => document.activeElement.textContent.trim().slice(0, 20)) + "»");
+await p.keyboard.press("Enter");
+await p.keyboard.press("Tab");
+console.log("Enter فتح الكارت، و Tab راح لـ: «" + await p.evaluate(() => document.activeElement.textContent) + "»");
+await p.keyboard.press("Space");
+console.log("بعد Space: " + await p.textContent("#progress") + " | aria-pressed=" + await p.evaluate(() => document.activeElement.getAttribute("aria-pressed")));
+await p.reload();
+console.log("بعد refresh: " + await p.textContent("#progress") + " | الكارت الأول: " + await p.$eval("#card-box .badge", e => e.textContent));
+console.log("axe: " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id).join(",") || "0"));
+await ctx.close();
+
+// storage blocked: every access throws
+ctx = await b.newContext();
+await ctx.addInitScript(() => Object.defineProperty(window, "localStorage", { get() { throw new DOMException("blocked", "SecurityError"); } }));
+p = await ctx.newPage(); const errs = []; p.on("pageerror", e => errs.push(e.message));
+await p.goto(U); await p.click("#card-box summary"); await p.click("#card-box .marks button");
+console.log("localStorage مقفول: " + await p.textContent("#progress") + " | errors: " + (errs.join(";") || "0"));
+await ctx.close();
+
+// the clock: fast-forward 60 seconds, count what the screen reader would hear
+ctx = await b.newContext(); p = await ctx.newPage();
+await p.clock.install();
+await p.goto(U);
+await p.evaluate(() => { window.__said = []; new MutationObserver(() => window.__said.push(document.getElementById("clock-say").textContent)).observe(document.getElementById("clock-say"), { childList: true, characterData: true, subtree: true }); });
+await p.click("#random");
+const seen = [];
+for (let s = 0; s < 60; s++) { await p.clock.runFor(1000); if (s % 10 === 9) seen.push(await p.textContent("#secs")); }
+console.log("الرقم اللي باين كل ١٠ ثواني: " + seen.join(" ") + " | اتقال لقارئ الشاشة " + (await p.evaluate(() => window.__said.length)) + " مرة: " + (await p.evaluate(() => window.__said.join(" | "))));
+console.log("بعد الدقيقة: السؤال اتفتح=" + await p.evaluate(() => [...document.querySelectorAll("details")].some(d => d.open)) + " | الـ focus على: " + await p.evaluate(() => document.activeElement.tagName));
+await b.close();
+~~~
+
+~~~view 720 720 اعمل scroll جوه
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مراجعة أسئلة الانترفيو</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1e1b4b; background: #f5f3ff; }
+.wrap { max-width: 46rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h1 { margin: 0; font-size: 1.5rem; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+button { font: inherit; }
+.progress { color: #4c1d95; font-weight: 700; }
+.random, .drill button { padding: 0.5rem 1.2rem; border: 0; border-radius: 999px; background: #4c1d95; color: #fff; font-weight: 700; }
+
+.drill { margin-block: 1rem; padding: 1rem 1.25rem; border-radius: 1rem; background: #fff; border: 2px solid #4c1d95; }
+.drill h2 { margin: 0.25rem 0; font-size: 1.3rem; }
+.drill-label { margin: 0; color: #5b21b6; }
+.clock { margin: 0.5rem 0; font-size: 2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.cards { display: grid; gap: 0.75rem; margin-block-start: 1.5rem; }
+details { padding: 0.25rem 1rem; border-radius: 0.75rem; background: #fff; border: 1px solid #ddd6fe; }
+details.known { border-color: #059669; }
+summary { display: flex; justify-content: space-between; gap: 1rem; padding: 0.6rem 0; font-weight: 700; cursor: pointer; }
+.badge { flex: none; font-size: 0.8rem; font-weight: 700; color: #047857; }
+details p { margin: 0 0 0.75rem; }
+pre { margin: 0 0 0.75rem; padding: 0.75rem; overflow-x: auto; border-radius: 0.5rem; background: #1e1b4b; color: #ede9fe; direction: ltr; text-align: left; }
+.marks { display: flex; gap: 0.5rem; margin-block-end: 0.75rem; }
+.marks button { padding: 0.3rem 1rem; border: 1px solid #4c1d95; border-radius: 999px; background: #fff; color: #4c1d95; }
+.marks button[aria-pressed="true"] { background: #4c1d95; color: #fff; }
+
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>مراجعة أسئلة الانترفيو</h1>
+  <p class="progress" id="progress" aria-live="polite"></p>
+  <button type="button" class="random" id="random">سؤال عشوائي في دقيقة</button>
+
+  <section class="drill" id="drill" hidden aria-labelledby="drill-q">
+    <p class="drill-label">جاوب بصوت عالي قبل ما الوقت يخلص:</p>
+    <h2 id="drill-q"></h2>
+    <p class="clock" aria-hidden="true"><span id="secs">٦٠</span> ثانية</p>
+    <p class="sr-only" id="clock-say" aria-live="polite"></p>
+    <button type="button" id="drill-stop">وقّف وشوف الإجابة</button>
+  </section>
+
+  <div class="cards" id="cards"></div>
+</main>
+<script type="module">
+// the 11 questions of the unit, each answered in my own words in under a minute, with one small code example
+const cards = [
+  { id: "box", q: "اشرح الـ box model", a: "كل عنصر ٤ طبقات من جوه لبرّه: المحتوى، والـ padding، والـ border، والـ margin. الـ width بيتحسب على المحتوى بس في content-box، فالـ padding والـ border بيتزودوا عليه. border-box بيخلّي الـ width يشمل الـ padding والـ border، فاللي تكتبه هو اللي تشوفه. وبحطه على كل العناصر في أول ملف.", code: "*, *::before, *::after { box-sizing: border-box; }" },
+  { id: "spec", q: "المتصفح بيقرر أنهي قاعدة تكسب إزاي؟", a: "الأول الـ !important والـ layers، وبعدين الـ specificity كـ ٣ أرقام: ids، وبعدين classes و attributes و pseudo-classes، وبعدين types. بتتقارن من الشمال: id واحد يكسب أي عدد classes. ولو متساويين، اللي مكتوب بعد يكسب. و :where() صفر، فبستخدمه في الـ reset عشان أي قاعدة تقدر تغيّره.", code: "#nav a { }        /* (1,0,1) */\n.menu .link { }   /* (0,2,0) يخسر */" },
+  { id: "flexgrid", q: "إمتى flex وإمتى grid؟", a: "flex لصف أو عمود واحد والمحتوى هو اللي بيحدد المقاسات: navbar، أو زراير جنب بعض. grid لما أحتاج صفوف وأعمدة مع بعض، أو أحدد الشكل من الأب: صفحة كاملة، أو كروت بتلف. وكتير بيتجمعوا: grid للكروت، و flex جوه كل كارت.", code: ".cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }" },
+  { id: "position", q: "الفرق بين قيم position الخمسة", a: "static العادي ومبيتأثرش بـ top. relative بيتحرك من مكانه ومكانه محجوز، وبيبقى مرجع للـ absolute اللي جواه. absolute بيطلع من الترتيب ويتحسب من أقرب أب مش static. fixed بيتحسب من الشاشة، إلا لو أب عليه transform. sticky عادي لحد ما يوصل للحد اللي كتبته، وبعدين يلزق جوه أبوه.", code: ".header { position: sticky; top: 0; }" },
+  { id: "responsive", q: "هتعمل الموقع responsive إزاي؟", a: "mobile-first: الـ CSS الأساسي للموبايل، وأزوّد بـ min-width. بس الأول بحاول من غير breakpoints: grid بـ auto-fill و minmax، و clamp للخطوط، و flex-wrap. والـ components بـ container queries عشان تتأقلم مع مكانها مش الشاشة. وبقيس على ٣٢٠ لحد ١٤٤٠ وأتأكد إن مفيش scroll أفقي.", code: "font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem);" },
+  { id: "units", q: "الفرق بين px و em و rem", a: "px ثابت. em بالنسبة لخط العنصر نفسه، فبيتراكم لو متداخل. rem بالنسبة لخط الـ html بس، فثابت في كل حتة وبيكبر لو المستخدم كبّر الخط من المتصفح. بستخدم rem للخطوط والمسافات، و em للـ padding جوه الزرار عشان يكبر مع خطه، و px للحدود الرفيعة.", code: "button { font-size: 1rem; padding: 0.5em 1em; }" },
+  { id: "tailwind", q: "Tailwind بيشتغل إزاي من جوه؟ وعيوبه؟", a: "بيقرا ملفاتك ويدوّر على أسامي الـ classes كنص، ويطلّع CSS بالـ classes اللي لقاها بس. فالملف صغير. عشان كده class متركّب من متغير (bg-$__{color}) مبيتولّدش. العيوب: HTML طويل، والتصميم مكتوب في الـ markup، ومحتاج build. وبحط الألوان في @theme عشان متتكتبش أرقام في كل حتة.", code: "const cls = { red: \"bg-red-500\", blue: \"bg-blue-500\" }[color];" },
+  { id: "a11y", q: "أهم حاجات الـ accessibility", a: "HTML صح الأول: button للزرار، و label لكل خانة، وعناوين بالترتيب، و alt للصور. كل حاجة بالكيبورد وفيه focus باين. تباين ٤٫٥ للكلام. ومتعتمدش على اللون لوحده. وبقيس بـ axe وبجرّب بالكيبورد بنفسي، لأن الأدوات بتمسك ٣٠ لـ ٥٠٪ من المشاكل بس.", code: "<label for=\"email\">الإيميل</label>\n<input id=\"email\" type=\"email\" autocomplete=\"email\">" },
+  { id: "cls", q: "إيه هو CLS وإزاي تقلله؟", a: "مجموع الحاجات اللي بتتنطط وانت بتقرا من غير ما تلمس حاجة. أهم أسبابه: صور من غير مقاسات، وإعلانات وحاجات بتيجي متأخر، وخط بيتبدّل بعرض مختلف. الحل إنك تحجز المكان: width و height للصور، و min-height للإعلان، و aspect-ratio للفيديو، وخط احتياطي بـ size-adjust. والمطلوب أقل من ٠٫١.", code: "<img src=\"hero.webp\" width=\"1200\" height=\"675\" alt=\"…\">" },
+  { id: "reflow", q: "الفرق بين reflow و repaint", a: "reflow (layout) يعني المتصفح بيحسب مكان ومقاس العناصر من الأول، وده تقيل. repaint يعني بيلوّن تاني من غير ما المقاسات تتغير، زي تغيير اللون. وفيه حاجات ولا ده ولا ده: transform و opacity بيتعملوا على طبقة جاهزة. وأكبر غلطة: تقرا مقاس بعد ما تكتب style في loop، فالمتصفح يعمل layout كل لفة.", code: "el.style.transform = \"translateX(100px)\"; /* مش left */" },
+  { id: "zindex", q: "ليه z-index: 9999 مش بيطلّع العنصر فوق؟", a: "لأن z-index بيتقارن جوه نفس الـ stacking context بس. لو أب العنصر عامل context (transform، أو opacity أقل من ١، أو z-index مع position، أو isolation)، العنصر محبوس جواه مهما كان رقمه. الحل: أطلّعه برّه الأب (portal، أو top layer بـ dialog أو popover)، أو أشيل اللي عامل الـ context.", code: "dialog.showModal(); /* top layer: فوق كل حاجة */" },
+];
+
+
+const KEY = "interview-progress";
+const ar = n => n.toLocaleString("ar-EG");
+// localStorage can throw (private mode, blocked storage): the page still works, it just doesn't remember
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+
+// ---- the cards ----
+const list = document.getElementById("cards");
+for (const c of cards) {
+  const d = document.createElement("details");
+  d.id = "card-" + c.id;
+  const s = document.createElement("summary");
+  const q = document.createElement("span"); q.textContent = c.q;
+  const badge = document.createElement("span"); badge.className = "badge";
+  s.append(q, badge);
+  const p = document.createElement("p"); p.textContent = c.a;
+  const pre = document.createElement("pre"); const code = document.createElement("code"); code.textContent = c.code; pre.append(code);
+  const marks = document.createElement("div"); marks.className = "marks"; marks.setAttribute("role", "group"); marks.setAttribute("aria-label", "قيّم نفسك");
+  for (const [val, label] of [["known", "عرفتها"], ["later", "لسه"]]) {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label; b.dataset.val = val;
+    b.addEventListener("click", () => { state[c.id] = state[c.id] === val ? undefined : val; save(); render(); });
+    marks.append(b);
+  }
+  d.append(s, p, pre, marks);
+  list.append(d);
+}
+
+function render() {
+  let known = 0;
+  for (const c of cards) {
+    const d = document.getElementById("card-" + c.id), v = state[c.id];
+    d.classList.toggle("known", v === "known");
+    d.querySelector(".badge").textContent = v === "known" ? "✓ عرفتها" : v === "later" ? "لسه" : "";
+    d.querySelectorAll(".marks button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.val === v)));
+    if (v === "known") known++;
+  }
+  document.getElementById("progress").textContent = "عرفت " + ar(known) + " من " + ar(cards.length);
+}
+render();
+
+// ---- random question with a 60-second clock ----
+const drill = document.getElementById("drill"), secs = document.getElementById("secs"), say = document.getElementById("clock-say");
+let timer = null, current = null;
+document.getElementById("random").addEventListener("click", () => {
+  const pool = cards.filter(c => state[c.id] !== "known");          // the ones not known yet first
+  current = (pool.length ? pool : cards)[Math.floor(Math.random() * (pool.length || cards.length))];
+  document.getElementById("drill-q").textContent = current.q;
+  drill.hidden = false;
+  document.getElementById("drill-q").setAttribute("tabindex", "-1");
+  document.getElementById("drill-q").focus();
+  let left = 60;
+  secs.textContent = ar(left); say.textContent = "معاك ٦٠ ثانية";
+  clearInterval(timer);
+  timer = setInterval(() => {
+    left--;
+    secs.textContent = ar(left);                                       // the eye sees every second (aria-hidden)
+    if (left % 15 === 0) say.textContent = left ? "فاضل " + ar(left) + " ثانية" : "الوقت خلص";   // the ear every 15
+    if (left === 0) stop();
+  }, 1000);
+});
+function stop() {
+  clearInterval(timer);
+  drill.hidden = true;
+  const d = document.getElementById("card-" + current.id);
+  d.open = true;
+  d.querySelector("summary").focus();
+}
+document.getElementById("drill-stop").addEventListener("click", stop);
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** عنوان «مراجعة أسئلة الانترفيو»، وتحته «عرفت ٠ من ١١»، وزرار «سؤال عشوائي في دقيقة»، وبعدين ١١ سؤال مقفولين. افتح أي واحد: الإجابة، ومثال كود صغير، وزرارين «عرفتها» و «لسه». اضغط «عرفتها» والسؤال بيتعلّم ✓ والعدد فوق بيزيد. (في الـ preview هنا الـ localStorage ممنوع، فالتقدّم مش هيفضل بعد refresh. ده نفس اللي بيحصل في وضع التصفح الخفي، والصفحة كملت عادي.)
+
+**الإجابات في ملف بيانات:** [[cards.js]] لستة [[{ id, q, a, code }]]. الإجابات مكتوبة بكلامي من درس كل سؤال، مش منسوخة، وكل واحدة تتقال في أقل من دقيقة. الملف ده هو نفسه اللي موقع «إجاباتي» (المشروع الكبير) بيستورده.
+
+**[[<details>]] بدل JS:** الفتح والقفل والكيبورد (Enter و Space على الـ summary) وإن قارئ الشاشة يقول «مطوي/مفتوح»: كله جاي من المتصفح. الـ JS بيبني الكروت بس.
+
+**الحفظ:** [[state]] = [[{ box: "known", spec: "later" }]]. القراية والكتابة في [[localStorage]] جوه [[try/catch]]: لو الـ storage مقفول (وضع خاص، أو مستخبي في iframe متقفّل) الصفحة بتشتغل من غير ما تفتكر، مش بتقع. الضغطة على نفس الزرار تاني بتشيل الاختيار.
+
+**الزرارين حالة مش أكشن:** عليهم [[aria-pressed]]، فقارئ الشاشة بيقول «عرفتها، زرار تبديل، مضغوط». ومش باللون بس: الكارت اللي اتعرف بيبقى عليه «✓ عرفتها» مكتوبة.
+
+**العدّاد للعين وللودن:** الرقم الكبير [[aria-hidden="true"]] وبيتغيّر كل ثانية. وفيه سطر تاني [[sr-only]] عليه [[aria-live="polite"]] مبيتغيّرش غير كل ١٥ ثانية ([[left % 15 === 0]]). لو الرقم الكبير هو اللي live، قارئ الشاشة كان هيقاطع اليوزر ٦٠ مرة وهو بيحاول يجاوب.
+
+**السؤال العشوائي:** من اللي لسه معرفتهاش الأول ([[pool]])، ولو كله اتعرف من الكل. بعد الدقيقة (أو «وقّف وشوف الإجابة») الكارت بتاعه بيتفتح والـ focus بيروح على الـ summary بتاعه، فاللي بيستخدم الكيبورد مبيتوهش.
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+Tab التاني على: «اشرح الـ box model»
+Enter فتح الكارت، و Tab راح لـ: «عرفتها»
+بعد Space: عرفت ١ من ١١ | aria-pressed=true
+بعد refresh: عرفت ١ من ١١ | الكارت الأول: ✓ عرفتها
+axe: 0
+localStorage مقفول: عرفت ١ من ١١ | errors: 0
+الرقم اللي باين كل ١٠ ثواني: ٥٠ ٤٠ ٣٠ ٢٠ ١٠ ٠ | اتقال لقارئ الشاشة 5 مرة: معاك ٦٠ ثانية | فاضل ٤٥ ثانية | فاضل ٣٠ ثانية | فاضل ١٥ ثانية | الوقت خلص
+بعد الدقيقة: السؤال اتفتح=true | الـ focus على: SUMMARY
+~~~` },
+        { lvl: 'متوسط', dir: "box-model-tool", t: R`أداة تشرح الـ box model`, what: R`sliders للـ width والـ padding والـ border والـ margin، وزرار بيبدّل [[box-sizing]]، وصندوق حي بيتغير، ورسمة زي اللي في DevTools بالأرقام، والعرض الكلي محسوب. ومعاه مثال margin collapse: عنصرين block فوق بعض والأب بيتبدّل بين block و flex. بيجمع أسئلة box model و position.`, done: R`الأرقام اللي في الرسمة نفس اللي في DevTools › Computed لكل تركيبة جرّبتها، والـ margin بين العنصرين بيبقى أكبر قيمة في block ومجموعهم في flex، وكل slider ليه label وقيمته بتتقري.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الـ box model قدامك</title>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<main aria-label="التجربة" class="wrap">
+  <h1>الـ box model قدامك</h1>
+
+  <section class="panel" aria-labelledby="c-title">
+    <h2 id="c-title">غيّر المقاسات</h2>
+    <div class="controls">
+      <label for="w">width</label><input id="w" type="range" min="80" max="300" step="10" value="200"><output for="w" id="w-out">200px</output>
+      <label for="pad">padding</label><input id="pad" type="range" min="0" max="40" step="2" value="20"><output for="pad" id="pad-out">20px</output>
+      <label for="bor">border</label><input id="bor" type="range" min="0" max="20" step="1" value="5"><output for="bor" id="bor-out">5px</output>
+      <label for="mar">margin</label><input id="mar" type="range" min="0" max="40" step="2" value="16"><output for="mar" id="mar-out">16px</output>
+    </div>
+    <label class="switch"><input type="checkbox" id="bb"> <span>box-sizing: border-box</span></label>
+  </section>
+
+  <section class="panel" aria-labelledby="b-title">
+    <h2 id="b-title">الصندوق</h2>
+    <div class="stage"><div class="box" id="box">المحتوى</div></div>
+    <p class="total" id="total" aria-live="polite"></p>
+  </section>
+
+  <section class="panel" aria-labelledby="d-title">
+    <h2 id="d-title">الرسمة (زي DevTools › Computed)</h2>
+    <div class="diagram" id="diagram" aria-describedby="total">
+      <div class="layer margin"><span class="tag">margin</span><span class="n t"></span><span class="n b"></span><span class="n s"></span><span class="n e"></span>
+        <div class="layer border"><span class="tag">border</span><span class="n t"></span><span class="n b"></span><span class="n s"></span><span class="n e"></span>
+          <div class="layer padding"><span class="tag">padding</span><span class="n t"></span><span class="n b"></span><span class="n s"></span><span class="n e"></span>
+            <div class="layer content"><span class="size"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="m-title">
+    <h2 id="m-title">margin collapse</h2>
+    <p>عنصرين فوق بعض: الأول <code>margin-bottom: 30px</code> والتاني <code>margin-top: 20px</code>.</p>
+    <label class="switch"><input type="checkbox" id="flex"> <span>الأب <code>display: flex; flex-direction: column</code></span></label>
+    <div class="collapse" id="collapse"><div class="one">الأول</div><div class="two">التاني</div></div>
+    <p class="total" id="gap" aria-live="polite"></p>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #0f172a; background: #f1f5f9; }
+.wrap { max-width: 44rem; margin: 0 auto; padding: 1.5rem 1rem; display: grid; gap: 1rem; }
+h1 { margin: 0; font-size: 1.5rem; }
+h2 { margin: 0 0 0.75rem; font-size: 1.1rem; }
+.panel { padding: 1rem; border-radius: 1rem; background: #fff; border: 1px solid #cbd5e1; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+code { direction: ltr; unicode-bidi: isolate; }
+
+.controls { display: grid; grid-template-columns: 5rem 1fr 4rem; gap: 0.5rem 0.75rem; align-items: center; }
+.controls label { font-family: ui-monospace, Consolas, monospace; }
+output { font-variant-numeric: tabular-nums; direction: ltr; text-align: end; }
+.switch { display: inline-flex; gap: 0.5rem; align-items: center; margin-block-start: 0.75rem; font-family: ui-monospace, Consolas, monospace; }
+
+/* the live box: the sliders write these four variables */
+.stage { overflow-x: auto; padding: 0.5rem; background: repeating-linear-gradient(45deg, #f8fafc 0 6px, #eef2f7 6px 12px); }
+.box { width: var(--w); padding: var(--pad); border: var(--bor) solid #f59e0b; margin: var(--mar); box-sizing: content-box; background: linear-gradient(#bfdbfe, #bfdbfe) content-box, #dcfce7 padding-box;   /* a color is only allowed in the last layer */ text-align: center; }
+.box.bb { box-sizing: border-box; }
+.total { margin: 0.75rem 0 0; font-weight: 700; }
+
+/* the diagram: the same colors DevTools uses */
+.diagram { direction: ltr; font: 0.8rem/1 ui-monospace, Consolas, monospace; }
+.layer { position: relative; padding: 1.6rem 2.4rem; border: 1px dashed #64748b; text-align: center; }
+.margin { background: #fde4c8; }
+.border { background: #fdf3b4; border-style: solid; border-color: #000; }
+.padding { background: #c3e3b5; }
+.content { padding: 0.6rem; background: #a5c8e4; }
+.tag { position: absolute; top: 0.2rem; left: 0.4rem; font-size: 0.7rem; }
+.n { position: absolute; }
+.n.t { top: 0.35rem; left: 50%; translate: -50% 0; }
+.n.b { bottom: 0.35rem; left: 50%; translate: -50% 0; }
+.n.s { left: 0.6rem; top: 50%; translate: 0 -50%; }
+.n.e { right: 0.6rem; top: 50%; translate: 0 -50%; }
+
+/* margin collapse */
+.collapse { display: block; padding: 0.5rem; margin-block-start: 0.75rem; background: #f8fafc; border: 1px solid #cbd5e1; }
+.collapse.flex { display: flex; flex-direction: column; }
+.one, .two { padding: 0.5rem; text-align: center; }
+.one { margin-bottom: 30px; background: #ddd6fe; }
+.two { margin-top: 20px; background: #fbcfe8; }
+~~~
+
+~~~js app.js
+const box = document.getElementById("box");
+const ids = ["w", "pad", "bor", "mar"];
+const px = v => Math.round(parseFloat(v) * 100) / 100;
+
+function update() {
+  for (const id of ids) {
+    const v = document.getElementById(id).value;
+    box.style.setProperty("--" + id, v + "px");
+    document.getElementById(id + "-out").value = v + "px";
+  }
+  box.classList.toggle("bb", document.getElementById("bb").checked);
+
+  // every number comes from getComputedStyle: the same values DevTools › Computed shows
+  const cs = getComputedStyle(box);
+  const side = p => ["top", "bottom", "left", "right"].map(s => px(cs.getPropertyValue(p === "border" ? "border-" + s + "-width" : p + "-" + s)));
+  const diagram = document.getElementById("diagram");
+  for (const [cls, prop] of [["margin", "margin"], ["border", "border"], ["padding", "padding"]]) {
+    const [t, b, l, r] = side(prop);
+    const layer = diagram.querySelector(".layer." + cls);
+    layer.querySelector(":scope > .n.t").textContent = t;
+    layer.querySelector(":scope > .n.b").textContent = b;
+    layer.querySelector(":scope > .n.s").textContent = l;
+    layer.querySelector(":scope > .n.e").textContent = r;
+  }
+  const cw = px(cs.width) - (cs.boxSizing === "border-box" ? side("padding")[2] * 2 + side("border")[2] * 2 : 0);
+  const ch = px(cs.height) - (cs.boxSizing === "border-box" ? side("padding")[0] * 2 + side("border")[0] * 2 : 0);
+  diagram.querySelector(".size").textContent = px(cw) + " × " + px(ch);
+
+  const r = box.getBoundingClientRect();                  // the border box: what the element really takes
+  const m = side("margin")[2];
+  document.getElementById("total").textContent =
+    "العرض اللي واخده: " + px(r.width) + "px (" + cs.boxSizing + ")، ومع الـ margin: " + px(r.width + 2 * m) + "px";
+}
+ids.forEach(id => document.getElementById(id).addEventListener("input", update));
+document.getElementById("bb").addEventListener("change", update);
+update();
+
+// margin collapse: measure the real gap between the two boxes
+function gap() {
+  const c = document.getElementById("collapse");
+  c.classList.toggle("flex", document.getElementById("flex").checked);
+  const one = c.querySelector(".one").getBoundingClientRect(), two = c.querySelector(".two").getBoundingClientRect();
+  document.getElementById("gap").textContent = "المسافة بينهم: " + px(two.top - one.bottom) + "px (" +
+    (document.getElementById("flex").checked ? "flex: الاتنين بيتجمعوا 30 + 20" : "block: الأكبر بس، 30") + ")";
+}
+document.getElementById("flex").addEventListener("change", gap);
+gap();
+~~~
+
+~~~js measure.mjs
+import { browser } from "../lab.mjs";
+import AxeBuilder from "@axe-core/playwright";
+const b = await browser();
+const ctx = await b.newContext({ viewport: { width: 900, height: 900 } });
+const p = await ctx.newPage();
+await p.goto("http://127.0.0.1:8819/box-model/index.html");
+const cdp = await ctx.newCDPSession(p);
+await cdp.send("DOM.enable"); await cdp.send("CSS.enable");
+// what DevTools › Computed shows, asked through the DevTools protocol itself
+async function devtools() {
+  const { root } = await cdp.send("DOM.getDocument");
+  const { nodeId } = await cdp.send("DOM.querySelector", { nodeId: root.nodeId, selector: "#box" });
+  const { computedStyle } = await cdp.send("CSS.getComputedStyleForNode", { nodeId });
+  const g = n => computedStyle.find(x => x.name === n).value;
+  return { width: g("width"), padding: g("padding-top"), border: g("border-top-width"), margin: g("margin-top"), sizing: g("box-sizing") };
+}
+async function set(w, pad, bor, mar, bb) {
+  await p.evaluate(([w, pad, bor, mar, bb]) => {
+    for (const [id, v] of [["w", w], ["pad", pad], ["bor", bor], ["mar", mar]]) { const i = document.getElementById(id); i.value = v; i.dispatchEvent(new Event("input")); }
+    const c = document.getElementById("bb"); if (c.checked !== bb) c.click();
+  }, [w, pad, bor, mar, bb]);
+}
+for (const combo of [[200, 20, 5, 16, false], [200, 20, 5, 16, true], [120, 40, 20, 0, false], [300, 0, 1, 40, true]]) {
+  await set(...combo);
+  const d = await devtools();
+  const shown = await p.evaluate(() => {
+    const t = s => document.querySelector(".layer." + s + " > .n.t").textContent;
+    return { margin: t("margin"), border: t("border"), padding: t("padding"), size: document.querySelector(".size").textContent, total: document.getElementById("total").textContent };
+  });
+  console.log("width " + combo[0] + " pad " + combo[1] + " border " + combo[2] + " margin " + combo[3] + " " + (combo[4] ? "border-box" : "content-box"));
+  console.log("   DevTools: width " + d.width + "، padding " + d.padding + "، border " + d.border + "، margin " + d.margin + " | الرسمة: content " + shown.size + "، padding " + shown.padding + "، border " + shown.border + "، margin " + shown.margin);
+  console.log("   " + shown.total);
+}
+await p.click("#flex"); const f = await p.textContent("#gap"); await p.click("#flex"); const bl = await p.textContent("#gap");
+console.log("margin collapse: " + bl + " | " + f);
+console.log("الشجرة:\n" + (await p.locator(".controls").ariaSnapshot()).split("\n").slice(0, 4).map(l => "  " + l).join("\n"));
+console.log("axe: " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id + ":" + v.nodes.length).join(",") || "0"));
+await b.close();
+~~~
+
+~~~view 720 720 اعمل scroll جوه
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الـ box model قدامك</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #0f172a; background: #f1f5f9; }
+.wrap { max-width: 44rem; margin: 0 auto; padding: 1.5rem 1rem; display: grid; gap: 1rem; }
+h1 { margin: 0; font-size: 1.5rem; }
+h2 { margin: 0 0 0.75rem; font-size: 1.1rem; }
+.panel { padding: 1rem; border-radius: 1rem; background: #fff; border: 1px solid #cbd5e1; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+code { direction: ltr; unicode-bidi: isolate; }
+
+.controls { display: grid; grid-template-columns: 5rem 1fr 4rem; gap: 0.5rem 0.75rem; align-items: center; }
+.controls label { font-family: ui-monospace, Consolas, monospace; }
+output { font-variant-numeric: tabular-nums; direction: ltr; text-align: end; }
+.switch { display: inline-flex; gap: 0.5rem; align-items: center; margin-block-start: 0.75rem; font-family: ui-monospace, Consolas, monospace; }
+
+/* the live box: the sliders write these four variables */
+.stage { overflow-x: auto; padding: 0.5rem; background: repeating-linear-gradient(45deg, #f8fafc 0 6px, #eef2f7 6px 12px); }
+.box { width: var(--w); padding: var(--pad); border: var(--bor) solid #f59e0b; margin: var(--mar); box-sizing: content-box; background: linear-gradient(#bfdbfe, #bfdbfe) content-box, #dcfce7 padding-box;   /* a color is only allowed in the last layer */ text-align: center; }
+.box.bb { box-sizing: border-box; }
+.total { margin: 0.75rem 0 0; font-weight: 700; }
+
+/* the diagram: the same colors DevTools uses */
+.diagram { direction: ltr; font: 0.8rem/1 ui-monospace, Consolas, monospace; }
+.layer { position: relative; padding: 1.6rem 2.4rem; border: 1px dashed #64748b; text-align: center; }
+.margin { background: #fde4c8; }
+.border { background: #fdf3b4; border-style: solid; border-color: #000; }
+.padding { background: #c3e3b5; }
+.content { padding: 0.6rem; background: #a5c8e4; }
+.tag { position: absolute; top: 0.2rem; left: 0.4rem; font-size: 0.7rem; }
+.n { position: absolute; }
+.n.t { top: 0.35rem; left: 50%; translate: -50% 0; }
+.n.b { bottom: 0.35rem; left: 50%; translate: -50% 0; }
+.n.s { left: 0.6rem; top: 50%; translate: 0 -50%; }
+.n.e { right: 0.6rem; top: 50%; translate: 0 -50%; }
+
+/* margin collapse */
+.collapse { display: block; padding: 0.5rem; margin-block-start: 0.75rem; background: #f8fafc; border: 1px solid #cbd5e1; }
+.collapse.flex { display: flex; flex-direction: column; }
+.one, .two { padding: 0.5rem; text-align: center; }
+.one { margin-bottom: 30px; background: #ddd6fe; }
+.two { margin-top: 20px; background: #fbcfe8; }
+
+</style>
+</head>
+<body>
+<main aria-label="التجربة" class="wrap">
+  <h1>الـ box model قدامك</h1>
+
+  <section class="panel" aria-labelledby="c-title">
+    <h2 id="c-title">غيّر المقاسات</h2>
+    <div class="controls">
+      <label for="w">width</label><input id="w" type="range" min="80" max="300" step="10" value="200"><output for="w" id="w-out">200px</output>
+      <label for="pad">padding</label><input id="pad" type="range" min="0" max="40" step="2" value="20"><output for="pad" id="pad-out">20px</output>
+      <label for="bor">border</label><input id="bor" type="range" min="0" max="20" step="1" value="5"><output for="bor" id="bor-out">5px</output>
+      <label for="mar">margin</label><input id="mar" type="range" min="0" max="40" step="2" value="16"><output for="mar" id="mar-out">16px</output>
+    </div>
+    <label class="switch"><input type="checkbox" id="bb"> <span>box-sizing: border-box</span></label>
+  </section>
+
+  <section class="panel" aria-labelledby="b-title">
+    <h2 id="b-title">الصندوق</h2>
+    <div class="stage"><div class="box" id="box">المحتوى</div></div>
+    <p class="total" id="total" aria-live="polite"></p>
+  </section>
+
+  <section class="panel" aria-labelledby="d-title">
+    <h2 id="d-title">الرسمة (زي DevTools › Computed)</h2>
+    <div class="diagram" id="diagram" aria-describedby="total">
+      <div class="layer margin"><span class="tag">margin</span><span class="n t"></span><span class="n b"></span><span class="n s"></span><span class="n e"></span>
+        <div class="layer border"><span class="tag">border</span><span class="n t"></span><span class="n b"></span><span class="n s"></span><span class="n e"></span>
+          <div class="layer padding"><span class="tag">padding</span><span class="n t"></span><span class="n b"></span><span class="n s"></span><span class="n e"></span>
+            <div class="layer content"><span class="size"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="m-title">
+    <h2 id="m-title">margin collapse</h2>
+    <p>عنصرين فوق بعض: الأول <code>margin-bottom: 30px</code> والتاني <code>margin-top: 20px</code>.</p>
+    <label class="switch"><input type="checkbox" id="flex"> <span>الأب <code>display: flex; flex-direction: column</code></span></label>
+    <div class="collapse" id="collapse"><div class="one">الأول</div><div class="two">التاني</div></div>
+    <p class="total" id="gap" aria-live="polite"></p>
+  </section>
+</main>
+<script type="module">
+const box = document.getElementById("box");
+const ids = ["w", "pad", "bor", "mar"];
+const px = v => Math.round(parseFloat(v) * 100) / 100;
+
+function update() {
+  for (const id of ids) {
+    const v = document.getElementById(id).value;
+    box.style.setProperty("--" + id, v + "px");
+    document.getElementById(id + "-out").value = v + "px";
+  }
+  box.classList.toggle("bb", document.getElementById("bb").checked);
+
+  // every number comes from getComputedStyle: the same values DevTools › Computed shows
+  const cs = getComputedStyle(box);
+  const side = p => ["top", "bottom", "left", "right"].map(s => px(cs.getPropertyValue(p === "border" ? "border-" + s + "-width" : p + "-" + s)));
+  const diagram = document.getElementById("diagram");
+  for (const [cls, prop] of [["margin", "margin"], ["border", "border"], ["padding", "padding"]]) {
+    const [t, b, l, r] = side(prop);
+    const layer = diagram.querySelector(".layer." + cls);
+    layer.querySelector(":scope > .n.t").textContent = t;
+    layer.querySelector(":scope > .n.b").textContent = b;
+    layer.querySelector(":scope > .n.s").textContent = l;
+    layer.querySelector(":scope > .n.e").textContent = r;
+  }
+  const cw = px(cs.width) - (cs.boxSizing === "border-box" ? side("padding")[2] * 2 + side("border")[2] * 2 : 0);
+  const ch = px(cs.height) - (cs.boxSizing === "border-box" ? side("padding")[0] * 2 + side("border")[0] * 2 : 0);
+  diagram.querySelector(".size").textContent = px(cw) + " × " + px(ch);
+
+  const r = box.getBoundingClientRect();                  // the border box: what the element really takes
+  const m = side("margin")[2];
+  document.getElementById("total").textContent =
+    "العرض اللي واخده: " + px(r.width) + "px (" + cs.boxSizing + ")، ومع الـ margin: " + px(r.width + 2 * m) + "px";
+}
+ids.forEach(id => document.getElementById(id).addEventListener("input", update));
+document.getElementById("bb").addEventListener("change", update);
+update();
+
+// margin collapse: measure the real gap between the two boxes
+function gap() {
+  const c = document.getElementById("collapse");
+  c.classList.toggle("flex", document.getElementById("flex").checked);
+  const one = c.querySelector(".one").getBoundingClientRect(), two = c.querySelector(".two").getBoundingClientRect();
+  document.getElementById("gap").textContent = "المسافة بينهم: " + px(two.top - one.bottom) + "px (" +
+    (document.getElementById("flex").checked ? "flex: الاتنين بيتجمعوا 30 + 20" : "block: الأكبر بس، 30") + ")";
+}
+document.getElementById("flex").addEventListener("change", gap);
+gap();
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٤ sliders (width و padding و border و margin) وجنب كل واحد قيمته، و checkbox [[box-sizing: border-box]]. تحتهم الصندوق نفسه بيتغيّر، وسطر «العرض اللي واخده: 250px (content-box)، ومع الـ margin: 282px». وبعدين رسمة طبقات زي اللي في DevTools › Computed: برتقاني فاتح للـ margin، وأصفر للـ border، وأخضر للـ padding، وأزرق للمحتوى، وعلى كل جنب رقمه. وآخر حاجة مثال الـ margin collapse بـ checkbox بيقلب الأب flex.
+
+**الأرقام من المتصفح مش من الـ sliders:** [[app.js]] بيحط القيم كـ custom properties ([[--w]] و [[--pad]]…)، وبعدين بيقرا كل رقم في الرسمة من [[getComputedStyle()]]. لو كان بيكتب قيمة الـ slider على طول، الرسمة كانت هتبقى صح حتى لو الـ CSS بايظ، ومش هتعلّم حاجة. المحتوى في [[border-box]] محسوب: العرض ناقص الـ padding والـ border من الناحيتين (200 − 2×20 − 2×5 = 150).
+
+**العرض اللي واخده:** [[getBoundingClientRect().width]] = الـ border box: اللي العنصر واخده بجد في الصفحة. ومع الـ margin من الناحيتين.
+
+**margin collapse:** عنصرين block فوق بعض، [[margin-bottom: 30px]] و [[margin-top: 20px]]. المسافة بتتقاس من الصفحة ([[two.top - one.bottom]]): ٣٠ في block (الأكبر بس)، و ٥٠ في flex (مفيش collapse جوه flex ولا grid).
+
+**القياس ضد DevTools نفسه:** [[measure.mjs]] بيجرّب ٤ تركيبات، ولكل واحدة بيسأل DevTools عن طريق CDP ([[CSS.getComputedStyleForNode]]: نفس المصدر اللي تاب Computed بيقرا منه) وبيحط جنبه أرقام الرسمة. الاتنين متطابقين في الأربعة.
+
+**غلطة قابلتني:** الـ validator قال إن [[background: #bfdbfe content-box, #dcfce7 padding-box]] مش صح، والمتصفح أكّد: [[background-color: rgba(0, 0, 0, 0)]] و [[image: none]]. في [[background]] بأكتر من طبقة، اللون مسموح في آخر طبقة بس، فالسطر كله اترمى والصندوق كان من غير خلفية من الأول. المحتوى بقى [[linear-gradient(#bfdbfe, #bfdbfe) content-box]] (صورة بلون واحد، فينفع في أي طبقة)، واللون الأخضر في الآخر بـ [[padding-box]].
+
+**كل slider ليه اسم وقيمة:** [[<label for>]] بيدّي الاسم («width»)، و [[<output for>]] جنبه بيعرض القيمة. والشجرة بتقول [[slider "width": "300"]].
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+width 200 pad 20 border 5 margin 16 content-box
+   DevTools: width 200px، padding 20px، border 5px، margin 16px | الرسمة: content 200 × 25.59، padding 20، border 5، margin 16
+   العرض اللي واخده: 250px (content-box)، ومع الـ margin: 282px
+width 200 pad 20 border 5 margin 16 border-box
+   DevTools: width 200px، padding 20px، border 5px، margin 16px | الرسمة: content 150 × 25.59، padding 20، border 5، margin 16
+   العرض اللي واخده: 200px (border-box)، ومع الـ margin: 232px
+width 120 pad 40 border 20 margin 0 content-box
+   DevTools: width 120px، padding 40px، border 20px، margin 0px | الرسمة: content 120 × 25.59، padding 40، border 20، margin 0
+   العرض اللي واخده: 240px (content-box)، ومع الـ margin: 240px
+width 300 pad 0 border 1 margin 40 border-box
+   DevTools: width 300px، padding 0px، border 1px، margin 40px | الرسمة: content 298 × 25.59، padding 0، border 1، margin 40
+   العرض اللي واخده: 300px (border-box)، ومع الـ margin: 380px
+margin collapse: المسافة بينهم: 30px (block: الأكبر بس، 30) | المسافة بينهم: 50px (flex: الاتنين بيتجمعوا 30 + 20)
+الشجرة:
+  - text: width
+  - slider "width": "300"
+  - status: 300px
+  - text: padding
+axe: 0
+~~~` },
+        { lvl: 'متوسط', dir: "stacking-explorer", t: R`مستكشف الـ stacking context`, what: R`صفحة فيها عناصر جوه بعض بألوان، وجنب كل واحد checkboxes بتحط عليه [[opacity: .99]] أو [[transform]] أو [[isolation: isolate]] أو [[z-index]]، وسكربت بيطلّع لستة بالعناصر اللي عاملة stacking context وليه. ومعاها مثال الهيدر والمودال اللي في الإجابة. بيجمع أسئلة stacking context و reflow و repaint.`, done: R`لما تعلّم [[transform]] على الأب المودال بينزل تحت الهيدر قدامك، واللستة بتقول «main: transform»، ولما تشيله يرجع. وكل خاصية من الخمسة اللي في الإجابة متجرّبة ومكتوب جنبها اللي حصل.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مستكشف الـ stacking context</title>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<header class="site-header" aria-label="هيدر التجربة"><b>الهيدر</b> <code>position: sticky; z-index: 10</code></header>
+
+<main aria-label="التجربة" id="main" class="main">
+  <h1>مستكشف الـ stacking context</h1>
+  <p>المودال اللي تحت جوه <code>main</code> وعليه <code>z-index: 9999</code>. علّم خاصية على <code>main</code> وشوف بيروح فين.</p>
+
+  <fieldset class="toggles">
+    <legend>على <code>main</code></legend>
+    <label><input type="checkbox" data-prop="zindex"> <code>position: relative; z-index: 1</code></label>
+    <label><input type="checkbox" data-prop="opacity"> <code>opacity: .99</code></label>
+    <label><input type="checkbox" data-prop="transform"> <code>transform: translateZ(0)</code></label>
+    <label><input type="checkbox" data-prop="filter"> <code>filter: blur(0)</code></label>
+    <label><input type="checkbox" data-prop="isolation"> <code>isolation: isolate</code></label>
+  </fieldset>
+
+  <p class="verdict" id="verdict" aria-live="polite"></p>
+  <h2>العناصر اللي عاملة stacking context دلوقتي</h2>
+  <ul id="contexts" class="contexts"></ul>
+
+  <h2>جرّب الخمسة واحدة واحدة</h2>
+  <button type="button" id="try-all">جرّب الخمسة</button>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">الخاصية على main</th><th scope="col">main بقى context؟</th><th scope="col">مين فوق عند الهيدر</th></tr></thead>
+      <tbody id="results"></tbody>
+    </table>
+  </div>
+
+  <div class="modal" id="modal" aria-hidden="true"><p>المودال <code>position: fixed; z-index: 9999</code></p></div>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
+code { direction: ltr; unicode-bidi: isolate; font-size: 0.9em; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+
+.site-header { position: sticky; top: 0; z-index: 10; display: flex; gap: 1rem; align-items: center; min-height: 3.5rem; padding: 0 1rem; background: #1e293b; color: #fff; }
+.main { max-width: 44rem; margin: 0 auto; padding: 1rem 1rem 3rem; }
+h1 { margin: 0.5rem 0; font-size: 1.4rem; }
+h2 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+
+/* the five properties, switched on main by the checkboxes */
+.main.zindex { position: relative; z-index: 1; }
+.main.opacity { opacity: 0.99; }
+.main.transform { transform: translateZ(0); }
+.main.filter { filter: blur(0); }
+.main.isolation { isolation: isolate; }
+
+.toggles { display: grid; gap: 0.25rem; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.75rem; background: #fff; }
+.verdict { padding: 0.75rem 1rem; border-radius: 0.75rem; background: #e0e7ff; font-weight: 700; }
+.contexts { margin: 0; padding-inline-start: 1.2rem; }
+button { padding: 0.45rem 1.2rem; border: 0; border-radius: 999px; background: #1e293b; color: #fff; font: inherit; font-weight: 700; }
+.table-wrap { overflow-x: auto; margin-block-start: 0.75rem; }
+table { width: 100%; border-collapse: collapse; background: #fff; font-size: 0.9rem; }
+th, td { padding: 0.45rem 0.6rem; border: 1px solid #cbd5e1; text-align: start; }
+
+/* the modal: a see-through red band over the top of the screen, so you see who covers whom */
+.modal { position: fixed; inset: 0 0 auto; z-index: 9999; height: 7rem; display: grid; place-items: end center; padding: 0.5rem; background: rgb(220 38 38 / 0.45); color: #450a0a; font-weight: 700; pointer-events: none; }
+.modal p { margin: 0; }
+~~~
+
+~~~js app.js
+const main = document.getElementById("main"), header = document.querySelector(".site-header"), modal = document.getElementById("modal");
+const boxes = [...document.querySelectorAll(".toggles input")];
+
+// why an element is a stacking context (the common reasons; the full list is on MDN «Stacking context»)
+function reasons(el) {
+  if (el === document.documentElement) return ["root"];
+  const cs = getComputedStyle(el), r = [];
+  if (cs.position !== "static" && cs.zIndex !== "auto") r.push("position: " + cs.position + " + z-index: " + cs.zIndex);
+  if (cs.position === "fixed" || cs.position === "sticky") r.push("position: " + cs.position);
+  if (parseFloat(cs.opacity) < 1) r.push("opacity: " + cs.opacity);
+  if (cs.transform !== "none") r.push("transform");
+  if (cs.filter !== "none") r.push("filter");
+  if (cs.isolation === "isolate") r.push("isolation: isolate");
+  if (cs.willChange !== "auto" && /transform|opacity|filter/.test(cs.willChange)) r.push("will-change: " + cs.willChange);
+  return [...new Set(r)];
+}
+
+// who is drawn on top at a point inside the header.
+// elementsFromPoint skips elements with pointer-events: none (the modal has it), so switch it on just for the check
+function topAtHeader() {
+  const h = header.getBoundingClientRect();
+  modal.style.pointerEvents = "auto";
+  const first = document.elementFromPoint(h.left + 20, h.top + h.height / 2);
+  modal.style.pointerEvents = "";
+  return first && modal.contains(first) ? "المودال" : "الهيدر";
+}
+
+function render() {
+  for (const b of boxes) main.classList.toggle(b.dataset.prop, b.checked);
+  const list = document.getElementById("contexts");
+  list.replaceChildren(...[document.documentElement, ...document.querySelectorAll("body *")]
+    .filter(e => !e.closest("#contexts, #results, table"))
+    .map(e => [e, reasons(e)]).filter(([, r]) => r.length)
+    .map(([e, r]) => {
+      const li = document.createElement("li");
+      li.textContent = (e.id ? e.tagName.toLowerCase() + "#" + e.id : e.tagName.toLowerCase() + (e.className ? "." + e.className.split(" ")[0] : "")) + ": " + r.join("، ");
+      return li;
+    }));
+  const top = topAtHeader();
+  document.getElementById("verdict").textContent = top === "المودال"
+    ? "المودال فوق الهيدر: main مش context، فالـ 9999 بيتقارن بالـ 10 على طول."
+    : "المودال تحت الهيدر: main بقى context، فالـ 9999 محبوس جواه، والمقارنة بقت main (auto أو 1) ضد الهيدر (10)، والهيدر بيكسب.";
+}
+boxes.forEach(b => b.addEventListener("change", render));
+render();
+
+// try each property alone and write what happened
+document.getElementById("try-all").addEventListener("click", () => {
+  const saved = boxes.map(b => b.checked), rows = [];
+  for (const b of boxes) {
+    boxes.forEach(x => (x.checked = x === b));
+    render();
+    rows.push([b.nextElementSibling.textContent, reasons(main).length ? "أيوه: " + reasons(main).join("، ") : "لأ", topAtHeader()]);
+  }
+  boxes.forEach((b, i) => (b.checked = saved[i]));
+  render();
+  document.getElementById("results").replaceChildren(...rows.map(r => {
+    const tr = document.createElement("tr");
+    for (const c of r) { const td = document.createElement("td"); td.textContent = c; tr.append(td); }
+    return tr;
+  }));
+});
+~~~
+
+~~~js measure.mjs
+import { browser } from "../lab.mjs";
+import AxeBuilder from "@axe-core/playwright";
+const b = await browser();
+const p = await (await b.newContext({ viewport: { width: 900, height: 800 } })).newPage();
+await p.goto("http://127.0.0.1:8819/stacking/index.html");
+const st = async () => (await p.textContent("#verdict")) + "\n   contexts: " + (await p.$$eval("#contexts li", l => l.map(x => x.textContent).join(" | ")));
+console.log("البداية: " + await st());
+await p.check('[data-prop="transform"]'); console.log("transform على main: " + await st());
+await p.uncheck('[data-prop="transform"]'); console.log("شلت transform: " + (await p.textContent("#verdict")));
+await p.click("#try-all");
+console.log("جرّب الخمسة:\n" + (await p.$$eval("#results tr", rs => rs.map(r => "   " + [...r.cells].map(c => c.textContent).join(" | ")).join("\n"))));
+// independent check: elementFromPoint without pointer-events none
+await p.check('[data-prop="opacity"]');
+console.log("تأكيد مستقل (opacity): " + await p.evaluate(() => { const m = document.getElementById("modal"); m.style.pointerEvents = "auto"; const e = document.elementFromPoint(40, 25); m.style.pointerEvents = ""; return e.closest("#modal") ? "المودال" : e.closest(".site-header") ? "الهيدر" : e.tagName; }));
+await p.uncheck('[data-prop="opacity"]');
+await p.screenshot({ path: "stacking/off.png", clip: { x: 0, y: 0, width: 900, height: 160 } });
+await p.check('[data-prop="transform"]'); await p.screenshot({ path: "stacking/on.png", clip: { x: 0, y: 0, width: 900, height: 160 } });
+console.log("axe: " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id + ":" + v.nodes.length).join(",") || "0"));
+await b.close();
+~~~
+
+~~~view 720 720 اعمل scroll جوه
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مستكشف الـ stacking context</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
+code { direction: ltr; unicode-bidi: isolate; font-size: 0.9em; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+
+.site-header { position: sticky; top: 0; z-index: 10; display: flex; gap: 1rem; align-items: center; min-height: 3.5rem; padding: 0 1rem; background: #1e293b; color: #fff; }
+.main { max-width: 44rem; margin: 0 auto; padding: 1rem 1rem 3rem; }
+h1 { margin: 0.5rem 0; font-size: 1.4rem; }
+h2 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+
+/* the five properties, switched on main by the checkboxes */
+.main.zindex { position: relative; z-index: 1; }
+.main.opacity { opacity: 0.99; }
+.main.transform { transform: translateZ(0); }
+.main.filter { filter: blur(0); }
+.main.isolation { isolation: isolate; }
+
+.toggles { display: grid; gap: 0.25rem; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.75rem; background: #fff; }
+.verdict { padding: 0.75rem 1rem; border-radius: 0.75rem; background: #e0e7ff; font-weight: 700; }
+.contexts { margin: 0; padding-inline-start: 1.2rem; }
+button { padding: 0.45rem 1.2rem; border: 0; border-radius: 999px; background: #1e293b; color: #fff; font: inherit; font-weight: 700; }
+.table-wrap { overflow-x: auto; margin-block-start: 0.75rem; }
+table { width: 100%; border-collapse: collapse; background: #fff; font-size: 0.9rem; }
+th, td { padding: 0.45rem 0.6rem; border: 1px solid #cbd5e1; text-align: start; }
+
+/* the modal: a see-through red band over the top of the screen, so you see who covers whom */
+.modal { position: fixed; inset: 0 0 auto; z-index: 9999; height: 7rem; display: grid; place-items: end center; padding: 0.5rem; background: rgb(220 38 38 / 0.45); color: #450a0a; font-weight: 700; pointer-events: none; }
+.modal p { margin: 0; }
+
+</style>
+</head>
+<body>
+<header class="site-header" aria-label="هيدر التجربة"><b>الهيدر</b> <code>position: sticky; z-index: 10</code></header>
+
+<main aria-label="التجربة" id="main" class="main">
+  <h1>مستكشف الـ stacking context</h1>
+  <p>المودال اللي تحت جوه <code>main</code> وعليه <code>z-index: 9999</code>. علّم خاصية على <code>main</code> وشوف بيروح فين.</p>
+
+  <fieldset class="toggles">
+    <legend>على <code>main</code></legend>
+    <label><input type="checkbox" data-prop="zindex"> <code>position: relative; z-index: 1</code></label>
+    <label><input type="checkbox" data-prop="opacity"> <code>opacity: .99</code></label>
+    <label><input type="checkbox" data-prop="transform"> <code>transform: translateZ(0)</code></label>
+    <label><input type="checkbox" data-prop="filter"> <code>filter: blur(0)</code></label>
+    <label><input type="checkbox" data-prop="isolation"> <code>isolation: isolate</code></label>
+  </fieldset>
+
+  <p class="verdict" id="verdict" aria-live="polite"></p>
+  <h2>العناصر اللي عاملة stacking context دلوقتي</h2>
+  <ul id="contexts" class="contexts"></ul>
+
+  <h2>جرّب الخمسة واحدة واحدة</h2>
+  <button type="button" id="try-all">جرّب الخمسة</button>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">الخاصية على main</th><th scope="col">main بقى context؟</th><th scope="col">مين فوق عند الهيدر</th></tr></thead>
+      <tbody id="results"></tbody>
+    </table>
+  </div>
+
+  <div class="modal" id="modal" aria-hidden="true"><p>المودال <code>position: fixed; z-index: 9999</code></p></div>
+</main>
+<script type="module">
+const main = document.getElementById("main"), header = document.querySelector(".site-header"), modal = document.getElementById("modal");
+const boxes = [...document.querySelectorAll(".toggles input")];
+
+// why an element is a stacking context (the common reasons; the full list is on MDN «Stacking context»)
+function reasons(el) {
+  if (el === document.documentElement) return ["root"];
+  const cs = getComputedStyle(el), r = [];
+  if (cs.position !== "static" && cs.zIndex !== "auto") r.push("position: " + cs.position + " + z-index: " + cs.zIndex);
+  if (cs.position === "fixed" || cs.position === "sticky") r.push("position: " + cs.position);
+  if (parseFloat(cs.opacity) < 1) r.push("opacity: " + cs.opacity);
+  if (cs.transform !== "none") r.push("transform");
+  if (cs.filter !== "none") r.push("filter");
+  if (cs.isolation === "isolate") r.push("isolation: isolate");
+  if (cs.willChange !== "auto" && /transform|opacity|filter/.test(cs.willChange)) r.push("will-change: " + cs.willChange);
+  return [...new Set(r)];
+}
+
+// who is drawn on top at a point inside the header.
+// elementsFromPoint skips elements with pointer-events: none (the modal has it), so switch it on just for the check
+function topAtHeader() {
+  const h = header.getBoundingClientRect();
+  modal.style.pointerEvents = "auto";
+  const first = document.elementFromPoint(h.left + 20, h.top + h.height / 2);
+  modal.style.pointerEvents = "";
+  return first && modal.contains(first) ? "المودال" : "الهيدر";
+}
+
+function render() {
+  for (const b of boxes) main.classList.toggle(b.dataset.prop, b.checked);
+  const list = document.getElementById("contexts");
+  list.replaceChildren(...[document.documentElement, ...document.querySelectorAll("body *")]
+    .filter(e => !e.closest("#contexts, #results, table"))
+    .map(e => [e, reasons(e)]).filter(([, r]) => r.length)
+    .map(([e, r]) => {
+      const li = document.createElement("li");
+      li.textContent = (e.id ? e.tagName.toLowerCase() + "#" + e.id : e.tagName.toLowerCase() + (e.className ? "." + e.className.split(" ")[0] : "")) + ": " + r.join("، ");
+      return li;
+    }));
+  const top = topAtHeader();
+  document.getElementById("verdict").textContent = top === "المودال"
+    ? "المودال فوق الهيدر: main مش context، فالـ 9999 بيتقارن بالـ 10 على طول."
+    : "المودال تحت الهيدر: main بقى context، فالـ 9999 محبوس جواه، والمقارنة بقت main (auto أو 1) ضد الهيدر (10)، والهيدر بيكسب.";
+}
+boxes.forEach(b => b.addEventListener("change", render));
+render();
+
+// try each property alone and write what happened
+document.getElementById("try-all").addEventListener("click", () => {
+  const saved = boxes.map(b => b.checked), rows = [];
+  for (const b of boxes) {
+    boxes.forEach(x => (x.checked = x === b));
+    render();
+    rows.push([b.nextElementSibling.textContent, reasons(main).length ? "أيوه: " + reasons(main).join("، ") : "لأ", topAtHeader()]);
+  }
+  boxes.forEach((b, i) => (b.checked = saved[i]));
+  render();
+  document.getElementById("results").replaceChildren(...rows.map(r => {
+    const tr = document.createElement("tr");
+    for (const c of r) { const td = document.createElement("td"); td.textContent = c; tr.append(td); }
+    return tr;
+  }));
+});
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر كحلي غامق لازق فوق ([[position: sticky; z-index: 10]])، وشريط أحمر شفاف هو «المودال» ([[position: fixed; z-index: 9999]]) نازل من فوق الشاشة وراكب على الهيدر، فشايف الاتنين ومين غطّى مين. ٥ checkboxes كل واحد بيحط خاصية على [[main]]. علّم [[transform: translateZ(0)]]: المودال بينزل تحت الهيدر قدامك، والسطر بيقول «المودال تحت الهيدر: main بقى context…»، واللستة بيظهر فيها «main#main: transform». شيله والمودال يرجع فوق. وزرار «جرّب الخمسة» بيملا جدول.
+
+**ليه 9999 بيخسر قدام 10:** الـ z-index بيتقارن جوه نفس الـ stacking context بس. لما [[main]] يبقى context، المودال محبوس جواه، والمقارنة بقت بين [[main]] (من غير z-index، يعني زي صفر) والهيدر (10). مهما كبّرت رقم المودال، [[main]] كله تحت الهيدر.
+
+**مين عامل context وليه:** [[reasons()]] بتقرا [[getComputedStyle]] لكل عنصر وبتطلّع الأسباب المشهورة: [[position]] مع z-index، و [[fixed]]/[[sticky]]، و [[opacity]] أقل من ١، و [[transform]]، و [[filter]]، و [[isolation: isolate]]، و [[will-change]]. اللستة الكاملة على MDN «Stacking context»، والصفحة بتقول الشائع بس.
+
+**مين فوق بجد:** [[document.elementFromPoint()]] عند نقطة جوه الهيدر بيرجّع العنصر اللي مرسوم فوق هناك. ده اللي بيكتب الحكم، مش افتراض من الـ checkboxes.
+
+**غلطة قابلتني:** أول قياس قال «المودال تحت الهيدر» في البداية، من غير أي خاصية متعلّمة، والعين شايفاه فوق. السبب: المودال عليه [[pointer-events: none]] (عشان ميمنعش الضغط على الصفحة)، و [[elementFromPoint]] بيتخطّى أي عنصر عليه [[pointer-events: none]]، فكان بيرجّع الهيدر دايمًا. الحل في [[topAtHeader()]]: [[pointer-events]] بتبقى [[auto]] للحظة الفحص بس، وبعدين ترجع. والـ measure بيأكد الحكم بطريقة تانية مستقلة (opacity).
+
+**الجدول:** «جرّب الخمسة» بيعلّم كل خاصية لوحدها، ويسجّل هل [[main]] بقى context ومين فوق، وبعدين يرجّع اللي كان متعلّم. الخمسة عملوا context، والهيدر كسب في الخمسة.
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+البداية: المودال فوق الهيدر: main مش context، فالـ 9999 بيتقارن بالـ 10 على طول.
+   contexts: html: root | header.site-header: position: sticky + z-index: 10، position: sticky | div#modal: position: fixed + z-index: 9999، position: fixed
+transform على main: المودال تحت الهيدر: main بقى context، فالـ 9999 محبوس جواه، والمقارنة بقت main (auto أو 1) ضد الهيدر (10)، والهيدر بيكسب.
+   contexts: html: root | header.site-header: position: sticky + z-index: 10، position: sticky | main#main: transform | div#modal: position: fixed + z-index: 9999، position: fixed
+شلت transform: المودال فوق الهيدر: main مش context، فالـ 9999 بيتقارن بالـ 10 على طول.
+جرّب الخمسة:
+   position: relative; z-index: 1 | أيوه: position: relative + z-index: 1 | الهيدر
+   opacity: .99 | أيوه: opacity: 0.99 | الهيدر
+   transform: translateZ(0) | أيوه: transform | الهيدر
+   filter: blur(0) | أيوه: filter | الهيدر
+   isolation: isolate | أيوه: isolation: isolate | الهيدر
+تأكيد مستقل (opacity): الهيدر
+axe: 0
+~~~` },
+        { lvl: 'كبير', dir: "answers-site", t: R`موقع «إجاباتي» للانترفيو`, what: R`موقع فيه صفحة لكل سؤال من الوحدة دي: الإجابة في دقيقة، و demo حي بيثبتها (حاسبة الـ specificity، وأداة الـ box model، والمستكشف، وصفحة CLS بتتنط وزرار بيصلّحها، وأنيميشن left مقابل transform بقياس الـ frames)، ولقطة من DevTools. بالعربي والإنجليزي (الإجابة الإنجليزي اللي هتقولها)، وثيمين، وكيبورد كامل، و reduced motion. بيجمع الوحدة دي مع كل الوحدات اللي قبلها.`, done: R`كل demo بيشتغل لوحده وبيثبت الرقم اللي في الإجابة، و Lighthouse ‏90 أو أكتر في الأربعة (Performance و Accessibility و Best Practices و SEO)، و axe صفر، وكل صفحة ليها title و description و OG، ومنشور برابط تقدر تبعته في CV.`, ext: R`زوّد وضع «انترفيو تجريبي»: سؤال عشوائي، وعدّاد، وتسجيل صوتك بـ MediaRecorder تسمعه بعدها، ولستة بالكلمات المهمة اللي المفروض تقولها تعلّم عليها.`, sol: R`~~~js questions.mjs
+// one entry per interview question: the Arabic answer (from the flashcards), the English one I would say,
+// and a demo: either a standalone tool (iframe) or a small inline demo that prints its own numbers
+import { cards } from "../flashcards/cards.js";
+const ar = Object.fromEntries(cards.map(c => [c.id, c]));
+
+export const questions = [
+  { id: "box", en: "Every box has four layers: content, padding, border, margin. With content-box, width is only the content, so padding and border are added on top. border-box makes width include them, so what you write is what you get. I set it on everything in the reset.",
+    demo: { iframe: "demos/box-model/index.html", title: "أداة الـ box model", h: 1500 } },
+  { id: "spec", en: "First importance and layers, then specificity as three numbers: ids, then classes, attributes and pseudo-classes, then types, compared left to right. One id beats any number of classes. On a tie, the later rule wins. :where() counts zero, which is why I use it in resets.",
+    demo: { iframe: "demos/spec-calc/index.html", title: "حاسبة specificity", h: 560 } },
+  { id: "flexgrid", en: "Flex is one dimension and lets the content decide the sizes: a navbar, a row of buttons. Grid is two dimensions, or when the parent should decide the layout: a page, a card grid. I often combine them: grid for the cards, flex inside each card.",
+    demo: { inline: "flexgrid" } },
+  { id: "position", en: "static is the default. relative moves from its own place and becomes the reference for absolute children. absolute leaves the flow and positions from the nearest non-static ancestor. fixed positions from the viewport, unless an ancestor has a transform. sticky behaves normally until it hits its threshold, then sticks inside its parent.",
+    demo: { inline: "position" } },
+  { id: "responsive", en: "Mobile-first, then min-width media queries. But I first try to avoid breakpoints: grid with auto-fill and minmax, clamp for type, flex-wrap. Components use container queries so they adapt to their slot, not the screen. I test from 320 to 1440 pixels and check there is no horizontal scroll.",
+    demo: { inline: "responsive" } },
+  { id: "units", en: "px is fixed. em is relative to the element's own font size, so it compounds when nested. rem is relative to the root only, so it is consistent and still grows when the user raises the browser font size. rem for type and spacing, em for padding inside buttons, px for hairlines.",
+    demo: { inline: "units" } },
+  { id: "tailwind", en: "It scans your files for class names as plain text and generates only the CSS for the classes it finds, so the output is small. That is why a class built from a variable, like bg-$__{color}, is never generated. The downsides: long class lists, design living in markup, and a build step.",
+    demo: { inline: "tailwind" } },
+  { id: "a11y", en: "Semantic HTML first: a button for buttons, a label for every field, headings in order, alt text. Everything works with the keyboard and focus is visible. Text contrast at least 4.5 to 1, and never color alone. I run axe, but I also test with the keyboard myself, because tools catch only part of the problems.",
+    demo: { iframe: "demos/focus-q/index.html", title: "focus و focus-visible", h: 700 } },
+  { id: "cls", en: "Cumulative Layout Shift adds up how much content moves while you read without doing anything. The usual causes: images without dimensions, late ads or embeds, and a web font with different widths. The fix is reserving space: width and height on images, min-height for slots, aspect-ratio for video, and a size-adjusted fallback font. Good is under 0.1.",
+    demo: { inline: "cls" } },
+  { id: "reflow", en: "Reflow, or layout, recalculates the size and position of elements, which is expensive. Repaint redraws pixels without changing geometry, like a color change. transform and opacity usually skip both and run on the compositor. The classic mistake is reading a size right after writing a style in a loop, which forces a layout every iteration.",
+    demo: { inline: "reflow" } },
+  { id: "zindex", en: "Because z-index only competes inside the same stacking context. If an ancestor creates one, with a transform, opacity below 1, z-index on a positioned element, filter, or isolation, the child is trapped inside it whatever its number. The fix is moving it out, to a portal or the top layer with dialog or popover, or removing what creates the context.",
+    demo: { iframe: "demos/stacking/index.html", title: "مستكشف الـ stacking context", h: 1100 } },
+].map(q => ({ ...q, q: ar[q.id].q, ar: ar[q.id].a, code: ar[q.id].code }));
+~~~
+
+~~~js build.mjs
+// node answers/build.mjs: the «إجاباتي» site, one page per question, from questions.mjs
+import fs from "node:fs";
+import { questions } from "./questions.mjs";
+
+const SITE = "https://answers.example";            // .example: a domain reserved for examples
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+const ar = n => n.toLocaleString("ar-EG");
+
+const head = ({ title, desc, path, depth }) => $__bt<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$__{esc(title)}</title>
+<meta name="description" content="$__{esc(desc)}">
+<link rel="canonical" href="$__{SITE}/$__{path}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="$__{esc(title)}">
+<meta property="og:description" content="$__{esc(desc)}">
+<meta property="og:url" content="$__{SITE}/$__{path}">
+<meta property="og:image" content="$__{SITE}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="$__{depth}icon.svg" type="image/svg+xml">
+<script src="$__{depth}theme.js"></script>
+<link rel="stylesheet" href="$__{depth}style.css">
+</head>
+<body>
+<header class="top wrap"><a class="logo" href="$__{depth}index.html">إجاباتي</a><button type="button" class="theme" aria-pressed="false">الوضع الغامق</button></header>
+<main class="wrap" id="main">$__bt;
+const foot = depth => $__bt</main>
+<script src="$__{depth}theme-switch.js"></script>
+</body>
+</html>
+$__bt;
+
+// the index
+fs.writeFileSync("answers/index.html", head({ title: "إجاباتي: ١١ سؤال انترفيو CSS بإجابة وتجربة", desc: "إجابة في دقيقة بالعربي والإنجليزي، وتجربة حية بتثبت كل رقم.", path: "", depth: "" }) + $__bt
+  <h1>١١ سؤال انترفيو CSS: إجابة في دقيقة وتجربة بتثبتها</h1>
+  <ul class="list">
+$__{questions.map(q => $__bt    <li><a href="q/$__{q.id}.html">$__{esc(q.q)}</a></li>$__bt).join("\n")}
+  </ul>
+$__bt + foot(""));
+
+// one page per question
+fs.mkdirSync("answers/q", { recursive: true });
+questions.forEach((q, i) => {
+  const prev = questions[i - 1], next = questions[i + 1];
+  const demo = q.demo.iframe
+    ? $__bt<iframe src="../$__{q.demo.iframe}" title="$__{esc(q.demo.title)}" height="$__{q.demo.h}" loading="lazy"></iframe>$__bt
+    : $__bt<section data-demo="$__{q.demo.inline}" aria-label="التجربة"></section>\n  <script src="../demos/inline.js" defer></script>$__bt;
+  fs.writeFileSync($__btanswers/q/$__{q.id}.html$__bt, head({ title: q.q + " | إجاباتي", desc: q.ar.slice(0, 150), path: "q/" + q.id + ".html", depth: "../" }) + $__bt
+  <p><a href="../index.html">كل الأسئلة</a> · سؤال $__{ar(i + 1)} من $__{ar(questions.length)}</p>
+  <h1>$__{esc(q.q)}</h1>
+  <h2>الإجابة في دقيقة</h2>
+  <div class="answer"><p>$__{esc(q.ar)}</p></div>
+  <h2>بالإنجليزي (اللي هتقوله في الانترفيو)</h2>
+  <div class="answer" lang="en"><p>$__{esc(q.en)}</p></div>
+  <h2>الكود</h2>
+  <pre><code>$__{esc(q.code)}</code></pre>
+  <h2>التجربة</h2>
+  $__{demo}
+  <nav class="nav-q" aria-label="الأسئلة">$__{prev ? $__bt<a href="$__{prev.id}.html">← $__{esc(prev.q)}</a>$__bt : "<span></span>"}$__{next ? $__bt<a href="$__{next.id}.html">$__{esc(next.q)} →</a>$__bt : ""}</nav>
+$__bt + foot("../"));
+});
+console.log("index + " + questions.length + " pages");
+~~~
+
+~~~js demos/inline.js
+// the small demos: each one builds itself in its box and prints numbers read from the page itself
+const box = document.querySelector("[data-demo]");
+const out = (text) => { const p = box.querySelector(".numbers"); p.textContent = text; };
+const px = n => Math.round(n) + "px";
+const build = html => { box.insertAdjacentHTML("afterbegin", html); };
+
+const demos = {
+  flexgrid() {
+    build($__bt<p>نفس ٥ كروت: فوق flex-wrap، وتحت grid بـ auto-fill. بص على آخر صف.</p>
+      <div class="d-flex">$__{"<span>كارت</span>".repeat(5)}</div><div class="d-grid">$__{"<span>كارت</span>".repeat(5)}</div><p class="numbers" aria-live="polite"></p>$__bt);
+    const show = () => {
+      const f = [...box.querySelectorAll(".d-flex span")].map(s => s.getBoundingClientRect().width);
+      const g = [...box.querySelectorAll(".d-grid span")].map(s => s.getBoundingClientRect().width);
+      out("flex: أول كارت " + px(f[0]) + " وآخر كارت " + px(f[4]) + " (اتمط) | grid: أول كارت " + px(g[0]) + " وآخر كارت " + px(g[4]) + " (نفس العمود)");
+    };
+    show(); new ResizeObserver(show).observe(box);
+  },
+  position() {
+    build($__bt<div class="d-scroll" tabindex="0" aria-label="صندوق بيعمل scroll"><div class="d-sticky">sticky: top 0</div><div class="d-rel">relative<span class="d-abs">absolute</span></div>$__{"<p>سطر بيعمل scroll جوه الصندوق.</p>".repeat(20)}</div><p class="numbers" aria-live="polite"></p>$__bt);
+    const s = box.querySelector(".d-scroll"), sticky = box.querySelector(".d-sticky"), abs = box.querySelector(".d-abs"), rel = box.querySelector(".d-rel");
+    const show = () => out("الـ sticky بعيد عن أول الصندوق " + px(sticky.getBoundingClientRect().top - s.getBoundingClientRect().top) + " وانت عامل scroll " + px(s.scrollTop) +
+      " | الـ absolute من أول الـ relative: top " + px(abs.getBoundingClientRect().top - rel.getBoundingClientRect().top));
+    s.addEventListener("scroll", show); show();
+  },
+  responsive() {
+    build($__bt<label for="d-w">عرض الصندوق</label> <input id="d-w" type="range" min="200" max="700" value="400">
+      <div class="d-cq"><p class="d-title">عنوان بيكبر مع مكانه</p></div><p class="numbers" aria-live="polite"></p>$__bt);
+    const r = box.querySelector("#d-w"), cq = box.querySelector(".d-cq"), t = box.querySelector(".d-title");
+    const show = () => { cq.style.inlineSize = r.value + "px"; out("الصندوق " + r.value + "px ← الخط " + getComputedStyle(t).fontSize + " (clamp(1rem, 6cqi, 2.25rem))"); };
+    r.addEventListener("input", show); show();
+  },
+  units() {
+    build($__bt<div class="d-units"><div class="em">em<div class="em">em<div class="em">em</div></div></div><div class="rem">rem<div class="rem">rem<div class="rem">rem</div></div></div></div><p class="numbers" aria-live="polite"></p>$__bt);
+    const sizes = sel => [...box.querySelectorAll(sel)].map(e => getComputedStyle(e).fontSize).join(" ← ");
+    out("1.25em متداخلة: " + sizes(".em") + " | 1.25rem متداخلة: " + sizes(".rem"));
+  },
+  tailwind() {
+    build($__bt<label for="d-src">كود فيه classes</label><textarea id="d-src" rows="4" dir="ltr">&lt;div class="p-4 bg-red-500"&gt;
+const color = "blue";
+el.className = "bg-" + color + "-500";</textarea><p class="numbers" aria-live="polite"></p>$__bt);
+    const ta = box.querySelector("#d-src");
+    // what the scanner does: take every token that looks like a class, as plain text; it never runs your code
+    const show = () => {
+      const found = [...new Set(ta.value.match(/[a-z][\w-]*-[\w-]+/g) || [])];
+      out("الـ scanner لقى: " + found.join("، ") + " | «bg-blue-500» موجودة؟ " + (found.includes("bg-blue-500") ? "أيوه" : "لأ، فمش هتتولّد"));
+    };
+    ta.addEventListener("input", show); show();
+  },
+  cls() {
+    build($__bt<button type="button" id="d-bad">صورة من غير مقاسات</button> <button type="button" id="d-good">نفس الصورة بـ width و height</button>
+      <div class="d-article"><div class="d-slot"></div>$__{"<p>الكلام ده بيتنطط لما الصورة توصل لو مكانها مش محجوز.</p>".repeat(6)}</div><p class="numbers" aria-live="polite"></p>$__bt);
+    const slot = box.querySelector(".d-slot");
+    let sum = 0;
+    new PerformanceObserver(l => { for (const e of l.getEntries()) if (!e.hadRecentInput) sum += e.value; }).observe({ type: "layout-shift" });
+    const svg = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300"><rect width="600" height="300" fill="#c4b5fd"/></svg>');
+    const run = sized => {
+      slot.replaceChildren(); sum = 0; out("الصورة جاية بعد ثانية…");
+      const img = new Image(); img.alt = "مستطيل بنفسجي"; img.style.cssText = "display:block;max-width:100%;height:auto";
+      if (sized) { img.width = 600; img.height = 300; }
+      slot.append(img);
+      // after 800ms: shifts within 500ms of a click don't count (hadRecentInput), so the demo waits on purpose
+      setTimeout(() => { img.src = svg; setTimeout(() => out("CLS في التجربة دي: " + sum.toFixed(3) + (sized ? " (المكان كان محجوز)" : " (كل الكلام اتزق لتحت)")), 600); }, 800);
+    };
+    box.querySelector("#d-bad").addEventListener("click", () => run(false));
+    box.querySelector("#d-good").addEventListener("click", () => run(true));
+  },
+  reflow() {
+    build($__bt<button type="button" id="d-busy">شغّل JavaScript تقيل ثانية ونص</button>
+      <div class="d-track"><span class="d-ball d-left">left</span></div><div class="d-track"><span class="d-ball d-tf">transform</span></div>
+      <p class="numbers">اضغط الزرار وبص: الكورة اللي بتتحرك بـ left بتقف، واللي بـ transform بتكمّل، لأن الـ compositor بيحرّكها من غير الـ main thread.</p>$__bt);
+    box.querySelector("#d-busy").addEventListener("click", () => { const t = performance.now(); while (performance.now() - t < 1500) {} });
+  },
+};
+demos[box.dataset.demo]?.();
+~~~
+
+~~~css style.css
+/* tokens: two themes, chosen by the system or by the switch (data-theme) */
+:root { color-scheme: light dark; --bg: light-dark(#f8fafc, #0b1120); --surface: light-dark(#fff, #111827); --fg: light-dark(#0f172a, #e5e7eb);
+  --muted: light-dark(#475569, #9ca3af); --line: light-dark(#cbd5e1, #334155); --brand: light-dark(#4338ca, #a5b4fc); --on-brand: light-dark(#fff, #111827); --ring: light-dark(#b45309, #fbbf24); }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: var(--fg); background: var(--bg); }
+a { color: var(--brand); }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+code, pre { direction: ltr; unicode-bidi: isolate; }
+.wrap { max-width: 50rem; margin: 0 auto; padding-inline: 1rem; }
+.top { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between; padding-block: 0.75rem; border-block-end: 1px solid var(--line); }
+.logo { font-weight: 800; color: var(--fg); text-decoration: none; }
+.theme { padding: 0.3rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--fg); font: inherit; }
+main { padding-block: 1.5rem 3rem; }
+h1 { margin: 0 0 1rem; font-size: clamp(1.5rem, 1.1rem + 2vw, 2.2rem); line-height: 1.35; text-wrap: balance; }
+h2 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; }
+.answer { padding: 1rem 1.25rem; border-radius: 1rem; background: var(--surface); border: 1px solid var(--line); }
+.answer p { margin: 0; }
+.answer[lang="en"] { direction: ltr; text-align: left; }
+pre { margin: 0; padding: 0.75rem 1rem; overflow-x: auto; border-radius: 0.75rem; background: #1e1b4b; color: #ede9fe; }
+.list { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; counter-reset: q; }
+.list a { display: block; padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--surface); border: 1px solid var(--line); text-decoration: none; color: var(--fg); counter-increment: q; }
+.list a::before { content: counter(q, arabic-indic) ". " / ""; color: var(--brand); font-weight: 800; }
+.nav-q { display: flex; justify-content: space-between; gap: 1rem; margin-block-start: 2rem; }
+iframe { display: block; width: 100%; border: 1px solid var(--line); border-radius: 1rem; background: #fff; }
+
+/* the inline demos */
+[data-demo] { padding: 1rem; border-radius: 1rem; background: var(--surface); border: 1px solid var(--line); }
+.numbers { margin: 0.75rem 0 0; font-weight: 700; color: var(--brand); }
+[data-demo] button { padding: 0.4rem 1rem; border: 0; border-radius: 999px; background: var(--brand); color: var(--on-brand); font: inherit; }
+[data-demo] textarea, [data-demo] input[type="range"] { width: 100%; font: inherit; }
+.d-flex { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-end: 0.75rem; }
+.d-flex span { flex: 1 1 9rem; }
+.d-grid { display: grid; gap: 0.5rem; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); }
+.d-flex span, .d-grid span { padding: 0.5rem; border-radius: 0.5rem; background: color-mix(in oklab, var(--brand) 20%, var(--surface)); text-align: center; }
+.d-scroll { height: 12rem; overflow: auto; padding: 0 0.75rem; border: 1px solid var(--line); border-radius: 0.5rem; }
+.d-sticky { position: sticky; top: 0; padding: 0.3rem; background: var(--brand); color: var(--on-brand); }
+.d-rel { position: relative; margin-block: 1rem; padding: 1.5rem 0.5rem 0.5rem; border: 1px dashed var(--line); }
+.d-abs { position: absolute; top: 4px; inset-inline-end: 4px; padding: 0 0.4rem; border-radius: 0.3rem; background: #f59e0b; color: #111827; font-size: 0.8rem; }
+.d-cq { container-type: inline-size; max-width: 100%; margin-block-start: 0.5rem; padding: 0.5rem; border: 1px dashed var(--line); }
+.d-title { margin: 0; font-size: clamp(1rem, 6cqi, 2.25rem); font-weight: 800; }
+.d-units .em { font-size: 1.25em; } .d-units .rem { font-size: 1.25rem; }
+.d-units > div { display: inline-block; vertical-align: top; width: 48%; }
+.d-slot { min-height: 0; }
+.d-article p { margin: 0.5rem 0 0; }
+.d-track { direction: ltr; position: relative; height: 2.4rem; margin-block-start: 0.5rem; border-radius: 999px; background: color-mix(in oklab, var(--line) 50%, transparent); overflow: hidden; }
+.d-ball { position: absolute; top: 0.2rem; left: 0; padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--brand); color: var(--on-brand); font-size: 0.8rem; direction: ltr; }
+.d-left { animation: by-left 2s ease-in-out infinite alternate; }
+.d-tf { animation: by-transform 2s ease-in-out infinite alternate; }
+@keyframes by-left { to { left: calc(100% - 6rem); } }
+@keyframes by-transform { to { transform: translateX(calc(min(40rem, 70vw))); } }
+@media (prefers-reduced-motion: reduce) { .d-left, .d-tf { animation: none; } }
+~~~
+
+~~~js theme.js
+// before the first paint: the saved choice (if storage works), otherwise the system decides
+try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+~~~
+
+~~~js theme-switch.js
+const btn = document.querySelector(".theme"), root = document.documentElement;
+const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+const sync = () => btn.setAttribute("aria-pressed", String(isDark()));
+btn.addEventListener("click", () => {
+  root.dataset.theme = isDark() ? "light" : "dark";
+  try { localStorage.setItem("theme", root.dataset.theme); } catch {}
+  sync();
+});
+sync();
+~~~
+
+~~~js measure.mjs
+// node answers/measure.mjs: every inline demo's numbers, left vs transform in a trace, axe on every page in both themes
+import { browser } from "../lab.mjs";
+import AxeBuilder from "@axe-core/playwright";
+import fs from "node:fs";
+const B = "http://127.0.0.1:8819/answers/";
+const b = await browser();
+const p = await (await b.newContext({ viewport: { width: 900, height: 900 } })).newPage();
+const errs = []; p.on("pageerror", e => errs.push(e.message));
+
+for (const id of ["flexgrid", "position", "responsive", "units", "tailwind"]) {
+  await p.goto(B + "q/" + id + ".html"); await p.waitForTimeout(300);
+  // a real wheel: setting scrollTop from code didn't fire a scroll event here
+  if (id === "position") { const r = await p.locator(".d-scroll").boundingBox(); await p.mouse.move(r.x + r.width / 2, r.y + r.height / 2); await p.mouse.wheel(0, 300); await p.waitForTimeout(400); }
+  if (id === "responsive") { await p.$eval("#d-w", r => { r.value = 700; r.dispatchEvent(new Event("input")); }); }
+  console.log(id.padEnd(10) + ": " + await p.textContent(".numbers"));
+}
+await p.goto(B + "q/cls.html");
+// the demo at the top of the screen: CLS only counts what moves inside the viewport
+await p.$eval("[data-demo]", e => e.scrollIntoView({ block: "start" })); await p.waitForTimeout(200);
+await p.click("#d-bad"); await p.waitForTimeout(1800); const bad = await p.textContent(".numbers");
+await p.click("#d-good"); await p.waitForTimeout(1800); const good = await p.textContent(".numbers");
+console.log("cls       : " + bad + " | " + good);
+
+// left vs transform: how many Layout events while each one runs for a second
+await p.goto(B + "q/reflow.html"); await p.waitForTimeout(500);
+for (const keep of [".d-left", ".d-tf"]) {
+  await p.evaluate(k => document.querySelectorAll(".d-ball").forEach(e => (e.style.display = e.matches(k) ? "" : "none")), keep);
+  await p.waitForTimeout(300);
+  await b.startTracing(p, { categories: ["devtools.timeline"] });
+  await p.waitForTimeout(1000);
+  const ev = JSON.parse((await b.stopTracing()).toString()).traceEvents;
+  console.log("reflow    : " + keep + " في ثانية: Layout " + ev.filter(e => e.name === "Layout").length + "، Paint " + ev.filter(e => e.name === "Paint").length);
+}
+console.log("errors: " + (errs.join(";") || "0"));
+
+// axe on all pages, light and dark
+const pages = ["index.html", ...fs.readdirSync("answers/q").map(f => "q/" + f)];
+for (const scheme of ["light", "dark"]) {
+  const c = await b.newContext({ viewport: { width: 1000, height: 900 }, colorScheme: scheme });
+  const q = await c.newPage(); const bad2 = [];
+  for (const u of pages) { await q.goto(B + u); await q.waitForTimeout(150); const v = (await new AxeBuilder({ page: q }).analyze()).violations; if (v.length) bad2.push(u + ":" + v.map(x => x.id).join("+")); }
+  console.log("axe " + scheme + " (" + pages.length + " صفحة): " + (bad2.join(" | ") || "0"));
+  await c.close();
+}
+// keyboard on one page: Tab stops
+await p.goto(B + "q/cls.html");
+const stops = []; for (let i = 0; i < 7; i++) { await p.keyboard.press("Tab"); stops.push(await p.evaluate(() => document.activeElement.textContent.trim().slice(0, 16) || document.activeElement.tagName)); }
+console.log("Tab في صفحة CLS: " + stops.join(" → "));
+await b.close();
+~~~
+
+~~~view 720 720 صفحة سؤال CLS (اعمل scroll جوه)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إيه هو CLS وإزاي تقلله؟ | إجاباتي</title>
+<meta name="description" content="مجموع الحاجات اللي بتتنطط وانت بتقرا من غير ما تلمس حاجة. أهم أسبابه: صور من غير مقاسات، وإعلانات وحاجات بتيجي متأخر، وخط بيتبدّل بعرض مختلف. الحل إنك">
+<link rel="canonical" href="https://answers.example/q/cls.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="إيه هو CLS وإزاي تقلله؟ | إجاباتي">
+<meta property="og:description" content="مجموع الحاجات اللي بتتنطط وانت بتقرا من غير ما تلمس حاجة. أهم أسبابه: صور من غير مقاسات، وإعلانات وحاجات بتيجي متأخر، وخط بيتبدّل بعرض مختلف. الحل إنك">
+<meta property="og:url" content="https://answers.example/q/cls.html">
+<meta property="og:image" content="https://answers.example/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<script>
+// before the first paint: the saved choice (if storage works), otherwise the system decides
+try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+
+</script>
+<style>
+/* tokens: two themes, chosen by the system or by the switch (data-theme) */
+:root { color-scheme: light dark; --bg: light-dark(#f8fafc, #0b1120); --surface: light-dark(#fff, #111827); --fg: light-dark(#0f172a, #e5e7eb);
+  --muted: light-dark(#475569, #9ca3af); --line: light-dark(#cbd5e1, #334155); --brand: light-dark(#4338ca, #a5b4fc); --on-brand: light-dark(#fff, #111827); --ring: light-dark(#b45309, #fbbf24); }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: var(--fg); background: var(--bg); }
+a { color: var(--brand); }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+code, pre { direction: ltr; unicode-bidi: isolate; }
+.wrap { max-width: 50rem; margin: 0 auto; padding-inline: 1rem; }
+.top { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between; padding-block: 0.75rem; border-block-end: 1px solid var(--line); }
+.logo { font-weight: 800; color: var(--fg); text-decoration: none; }
+.theme { padding: 0.3rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--fg); font: inherit; }
+main { padding-block: 1.5rem 3rem; }
+h1 { margin: 0 0 1rem; font-size: clamp(1.5rem, 1.1rem + 2vw, 2.2rem); line-height: 1.35; text-wrap: balance; }
+h2 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; }
+.answer { padding: 1rem 1.25rem; border-radius: 1rem; background: var(--surface); border: 1px solid var(--line); }
+.answer p { margin: 0; }
+.answer[lang="en"] { direction: ltr; text-align: left; }
+pre { margin: 0; padding: 0.75rem 1rem; overflow-x: auto; border-radius: 0.75rem; background: #1e1b4b; color: #ede9fe; }
+.list { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; counter-reset: q; }
+.list a { display: block; padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--surface); border: 1px solid var(--line); text-decoration: none; color: var(--fg); counter-increment: q; }
+.list a::before { content: counter(q, arabic-indic) ". " / ""; color: var(--brand); font-weight: 800; }
+.nav-q { display: flex; justify-content: space-between; gap: 1rem; margin-block-start: 2rem; }
+iframe { display: block; width: 100%; border: 1px solid var(--line); border-radius: 1rem; background: #fff; }
+
+/* the inline demos */
+[data-demo] { padding: 1rem; border-radius: 1rem; background: var(--surface); border: 1px solid var(--line); }
+.numbers { margin: 0.75rem 0 0; font-weight: 700; color: var(--brand); }
+[data-demo] button { padding: 0.4rem 1rem; border: 0; border-radius: 999px; background: var(--brand); color: var(--on-brand); font: inherit; }
+[data-demo] textarea, [data-demo] input[type="range"] { width: 100%; font: inherit; }
+.d-flex { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-end: 0.75rem; }
+.d-flex span { flex: 1 1 9rem; }
+.d-grid { display: grid; gap: 0.5rem; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); }
+.d-flex span, .d-grid span { padding: 0.5rem; border-radius: 0.5rem; background: color-mix(in oklab, var(--brand) 20%, var(--surface)); text-align: center; }
+.d-scroll { height: 12rem; overflow: auto; padding: 0 0.75rem; border: 1px solid var(--line); border-radius: 0.5rem; }
+.d-sticky { position: sticky; top: 0; padding: 0.3rem; background: var(--brand); color: var(--on-brand); }
+.d-rel { position: relative; margin-block: 1rem; padding: 1.5rem 0.5rem 0.5rem; border: 1px dashed var(--line); }
+.d-abs { position: absolute; top: 4px; inset-inline-end: 4px; padding: 0 0.4rem; border-radius: 0.3rem; background: #f59e0b; color: #111827; font-size: 0.8rem; }
+.d-cq { container-type: inline-size; max-width: 100%; margin-block-start: 0.5rem; padding: 0.5rem; border: 1px dashed var(--line); }
+.d-title { margin: 0; font-size: clamp(1rem, 6cqi, 2.25rem); font-weight: 800; }
+.d-units .em { font-size: 1.25em; } .d-units .rem { font-size: 1.25rem; }
+.d-units > div { display: inline-block; vertical-align: top; width: 48%; }
+.d-slot { min-height: 0; }
+.d-article p { margin: 0.5rem 0 0; }
+.d-track { direction: ltr; position: relative; height: 2.4rem; margin-block-start: 0.5rem; border-radius: 999px; background: color-mix(in oklab, var(--line) 50%, transparent); overflow: hidden; }
+.d-ball { position: absolute; top: 0.2rem; left: 0; padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--brand); color: var(--on-brand); font-size: 0.8rem; direction: ltr; }
+.d-left { animation: by-left 2s ease-in-out infinite alternate; }
+.d-tf { animation: by-transform 2s ease-in-out infinite alternate; }
+@keyframes by-left { to { left: calc(100% - 6rem); } }
+@keyframes by-transform { to { transform: translateX(calc(min(40rem, 70vw))); } }
+@media (prefers-reduced-motion: reduce) { .d-left, .d-tf { animation: none; } }
+
+</style>
+</head>
+<body>
+<header class="top wrap"><a class="logo" href="../index.html">إجاباتي</a><button type="button" class="theme" aria-pressed="false">الوضع الغامق</button></header>
+<main class="wrap" id="main">
+  <p><a href="../index.html">كل الأسئلة</a> · سؤال ٩ من ١١</p>
+  <h1>إيه هو CLS وإزاي تقلله؟</h1>
+  <h2>الإجابة في دقيقة</h2>
+  <div class="answer"><p>مجموع الحاجات اللي بتتنطط وانت بتقرا من غير ما تلمس حاجة. أهم أسبابه: صور من غير مقاسات، وإعلانات وحاجات بتيجي متأخر، وخط بيتبدّل بعرض مختلف. الحل إنك تحجز المكان: width و height للصور، و min-height للإعلان، و aspect-ratio للفيديو، وخط احتياطي بـ size-adjust. والمطلوب أقل من ٠٫١.</p></div>
+  <h2>بالإنجليزي (اللي هتقوله في الانترفيو)</h2>
+  <div class="answer" lang="en"><p>Cumulative Layout Shift adds up how much content moves while you read without doing anything. The usual causes: images without dimensions, late ads or embeds, and a web font with different widths. The fix is reserving space: width and height on images, min-height for slots, aspect-ratio for video, and a size-adjusted fallback font. Good is under 0.1.</p></div>
+  <h2>الكود</h2>
+  <pre><code>&lt;img src=&quot;hero.webp&quot; width=&quot;1200&quot; height=&quot;675&quot; alt=&quot;…&quot;></code></pre>
+  <h2>التجربة</h2>
+  <section data-demo="cls" aria-label="التجربة"></section>
+  
+  <nav class="nav-q" aria-label="الأسئلة"><a href="a11y.html">← أهم حاجات الـ accessibility</a><a href="reflow.html">الفرق بين reflow و repaint →</a></nav>
+</main>
+<script>
+const btn = document.querySelector(".theme"), root = document.documentElement;
+const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+const sync = () => btn.setAttribute("aria-pressed", String(isDark()));
+btn.addEventListener("click", () => {
+  root.dataset.theme = isDark() ? "light" : "dark";
+  try { localStorage.setItem("theme", root.dataset.theme); } catch {}
+  sync();
+});
+sync();
+
+</script>
+<script>
+// the small demos: each one builds itself in its box and prints numbers read from the page itself
+const box = document.querySelector("[data-demo]");
+const out = (text) => { const p = box.querySelector(".numbers"); p.textContent = text; };
+const px = n => Math.round(n) + "px";
+const build = html => { box.insertAdjacentHTML("afterbegin", html); };
+
+const demos = {
+  flexgrid() {
+    build($__bt<p>نفس ٥ كروت: فوق flex-wrap، وتحت grid بـ auto-fill. بص على آخر صف.</p>
+      <div class="d-flex">$__{"<span>كارت</span>".repeat(5)}</div><div class="d-grid">$__{"<span>كارت</span>".repeat(5)}</div><p class="numbers" aria-live="polite"></p>$__bt);
+    const show = () => {
+      const f = [...box.querySelectorAll(".d-flex span")].map(s => s.getBoundingClientRect().width);
+      const g = [...box.querySelectorAll(".d-grid span")].map(s => s.getBoundingClientRect().width);
+      out("flex: أول كارت " + px(f[0]) + " وآخر كارت " + px(f[4]) + " (اتمط) | grid: أول كارت " + px(g[0]) + " وآخر كارت " + px(g[4]) + " (نفس العمود)");
+    };
+    show(); new ResizeObserver(show).observe(box);
+  },
+  position() {
+    build($__bt<div class="d-scroll" tabindex="0" aria-label="صندوق بيعمل scroll"><div class="d-sticky">sticky: top 0</div><div class="d-rel">relative<span class="d-abs">absolute</span></div>$__{"<p>سطر بيعمل scroll جوه الصندوق.</p>".repeat(20)}</div><p class="numbers" aria-live="polite"></p>$__bt);
+    const s = box.querySelector(".d-scroll"), sticky = box.querySelector(".d-sticky"), abs = box.querySelector(".d-abs"), rel = box.querySelector(".d-rel");
+    const show = () => out("الـ sticky بعيد عن أول الصندوق " + px(sticky.getBoundingClientRect().top - s.getBoundingClientRect().top) + " وانت عامل scroll " + px(s.scrollTop) +
+      " | الـ absolute من أول الـ relative: top " + px(abs.getBoundingClientRect().top - rel.getBoundingClientRect().top));
+    s.addEventListener("scroll", show); show();
+  },
+  responsive() {
+    build($__bt<label for="d-w">عرض الصندوق</label> <input id="d-w" type="range" min="200" max="700" value="400">
+      <div class="d-cq"><p class="d-title">عنوان بيكبر مع مكانه</p></div><p class="numbers" aria-live="polite"></p>$__bt);
+    const r = box.querySelector("#d-w"), cq = box.querySelector(".d-cq"), t = box.querySelector(".d-title");
+    const show = () => { cq.style.inlineSize = r.value + "px"; out("الصندوق " + r.value + "px ← الخط " + getComputedStyle(t).fontSize + " (clamp(1rem, 6cqi, 2.25rem))"); };
+    r.addEventListener("input", show); show();
+  },
+  units() {
+    build($__bt<div class="d-units"><div class="em">em<div class="em">em<div class="em">em</div></div></div><div class="rem">rem<div class="rem">rem<div class="rem">rem</div></div></div></div><p class="numbers" aria-live="polite"></p>$__bt);
+    const sizes = sel => [...box.querySelectorAll(sel)].map(e => getComputedStyle(e).fontSize).join(" ← ");
+    out("1.25em متداخلة: " + sizes(".em") + " | 1.25rem متداخلة: " + sizes(".rem"));
+  },
+  tailwind() {
+    build($__bt<label for="d-src">كود فيه classes</label><textarea id="d-src" rows="4" dir="ltr">&lt;div class="p-4 bg-red-500"&gt;
+const color = "blue";
+el.className = "bg-" + color + "-500";</textarea><p class="numbers" aria-live="polite"></p>$__bt);
+    const ta = box.querySelector("#d-src");
+    // what the scanner does: take every token that looks like a class, as plain text; it never runs your code
+    const show = () => {
+      const found = [...new Set(ta.value.match(/[a-z][\w-]*-[\w-]+/g) || [])];
+      out("الـ scanner لقى: " + found.join("، ") + " | «bg-blue-500» موجودة؟ " + (found.includes("bg-blue-500") ? "أيوه" : "لأ، فمش هتتولّد"));
+    };
+    ta.addEventListener("input", show); show();
+  },
+  cls() {
+    build($__bt<button type="button" id="d-bad">صورة من غير مقاسات</button> <button type="button" id="d-good">نفس الصورة بـ width و height</button>
+      <div class="d-article"><div class="d-slot"></div>$__{"<p>الكلام ده بيتنطط لما الصورة توصل لو مكانها مش محجوز.</p>".repeat(6)}</div><p class="numbers" aria-live="polite"></p>$__bt);
+    const slot = box.querySelector(".d-slot");
+    let sum = 0;
+    new PerformanceObserver(l => { for (const e of l.getEntries()) if (!e.hadRecentInput) sum += e.value; }).observe({ type: "layout-shift" });
+    const svg = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300"><rect width="600" height="300" fill="#c4b5fd"/></svg>');
+    const run = sized => {
+      slot.replaceChildren(); sum = 0; out("الصورة جاية بعد ثانية…");
+      const img = new Image(); img.alt = "مستطيل بنفسجي"; img.style.cssText = "display:block;max-width:100%;height:auto";
+      if (sized) { img.width = 600; img.height = 300; }
+      slot.append(img);
+      // after 800ms: shifts within 500ms of a click don't count (hadRecentInput), so the demo waits on purpose
+      setTimeout(() => { img.src = svg; setTimeout(() => out("CLS في التجربة دي: " + sum.toFixed(3) + (sized ? " (المكان كان محجوز)" : " (كل الكلام اتزق لتحت)")), 600); }, 800);
+    };
+    box.querySelector("#d-bad").addEventListener("click", () => run(false));
+    box.querySelector("#d-good").addEventListener("click", () => run(true));
+  },
+  reflow() {
+    build($__bt<button type="button" id="d-busy">شغّل JavaScript تقيل ثانية ونص</button>
+      <div class="d-track"><span class="d-ball d-left">left</span></div><div class="d-track"><span class="d-ball d-tf">transform</span></div>
+      <p class="numbers">اضغط الزرار وبص: الكورة اللي بتتحرك بـ left بتقف، واللي بـ transform بتكمّل، لأن الـ compositor بيحرّكها من غير الـ main thread.</p>$__bt);
+    box.querySelector("#d-busy").addEventListener("click", () => { const t = performance.now(); while (performance.now() - t < 1500) {} });
+  },
+};
+demos[box.dataset.demo]?.();
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** صفحة السؤال «إيه هو CLS وإزاي تقلله؟»: لينك «كل الأسئلة · سؤال ٩ من ١١»، والإجابة في دقيقة بالعربي، وتحتها الإجابة الإنجليزي اللي هتقولها في الانترفيو، والكود، وبعدين التجربة: زرار «صورة من غير مقاس» بيجيب صورة بعد 800ms فكل الكلام بيتنط لتحت، والسطر بيقول CLS كام. وزرار تاني بنفس الصورة بس بـ [[width]] و [[height]]، والسطر بيقول ٠. فوق: زرار الوضع الغامق. الموقع كله: صفحة رئيسية فيها الـ ١١ سؤال، وصفحة لكل سؤال بنفس الشكل.
+
+**الصفحات بتتبني من بيانات:** [[questions.mjs]] بيستورد الـ ١١ كارت من مشروع البطاقات (نفس الإجابة العربي، مش نسخة تانية) وبيزوّد الإنجليزي والـ demo. و [[build.mjs]] بيكتب [[index.html]] و [[q/*.html]]. صلّحت إجابة؟ بتتصلّح في مكان واحد وتعيد الـ build.
+
+**كل صفحة ليها title و description و OG:** الـ [[head()]] بيحط [[canonical]] و [[og:title]] و [[og:description]] و [[og:image]] (صورة 1200×630 متعملة بنفس طريقة مشروع SEO) و [[twitter:card]]. الدومين [[answers.example]]: [[.example]] محجوز للأمثلة، استبدله بدومينك لما تنشر.
+
+**ليه الصورة بتستنى 800ms:** أي shift في خلال 500ms من ضغطة اليوزر مبيتحسبش في الـ CLS ([[hadRecentInput]])، لأن اليوزر متوقع إن الصفحة تتغيّر لما يدوس. لو الصورة جت على طول، الـ demo كان هيقول صفر وهو بايظ.
+
+**نوعين demos:** الأدوات اللي عملتها في المشاريع اللي فاتت (الحاسبة، والـ box model، والمستكشف، وسؤال الـ focus) بتتحط كـ [[<iframe>]] بعد ما اتنسخت في [[demos/]]. والصغيرة (flex و grid، و position، و container query، و em/rem، و Tailwind، و CLS، و reflow) في [[inline.js]]: كل واحدة بتبني نفسها في الصندوق بتاعها وبتطبع أرقام بتقراها من الصفحة نفسها.
+
+**left مقابل transform بالأرقام:** demo الـ reflow فيه كورتين بيتحركوا: واحدة بـ [[left]] وواحدة بـ [[transform]]. الـ measure بياخد trace من DevTools لكل واحدة لوحدها لمدة ثانية ويعد أحداث Layout و Paint: [[left]] 64 Layout و 128 Paint، و [[transform]] صفر وصفر.
+
+**الثيم من غير وميض:** [[theme.js]] في الـ head من غير defer بيقرا الاختيار المحفوظ قبل أول رسمة، والـ tokens بـ [[light-dark()]]. و [[theme-switch.js]] في الآخر بيشغّل الزرار.
+
+**الغلطات اللي قابلتني:**
+- **كورة الـ left واقفة:** القياس قال [[left=690.266px]] في كل frame والحركة شغالة. كنت مستخدم [[inset-inline-start]] للمكان و [[left]] في الحركة، وفي صفحة RTL دول ناحيتين مختلفتين، فالـ [[left]] اللي بيتحرك مكانش هو اللي بيحدد المكان. الحل: التراك [[direction: ltr]] والكورة [[left: 0]]، كله physical في الحتة دي.
+- **demo الـ position مبيتحدّثش:** في الاختبار حطيت [[scrollTop = 200]] من الكود، والـ scroll event مطلعش (اتعد 0 مرة) في Chrome الـ headless، فالرقم فضل على 0. الحل في الاختبار: [[mouse.wheel]] زي اليوزر بالظبط، والـ event طلع والرقم بقى 500.
+- **CLS طلع 0.008 مش 0.068:** الـ demo كان تحت في الصفحة، والـ CLS بيتحسب على الجزء اللي باين من الشاشة بس. الاختبار بقى يعمل scroll للـ demo لحد أول الشاشة الأول.
+- **axe: [[landmark-unique]]:** كل iframe جواه [[<main>]]، فبقى فيه أكتر من main من غير اسم يفرّق. الحل [[aria-label="التجربة"]] على main بتاع كل demo.
+- **Lighthouse Best Practices ‏96:** الـ console فيه 404 على [[favicon.ico]]. زوّدت [[icon.svg]] ولينك [[rel="icon"]] في كل صفحة، وبقى 100.
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+flexgrid  : flex: أول كارت 178px وآخر كارت 734px (اتمط) | grid: أول كارت 178px وآخر كارت 178px (نفس العمود)
+position  : الـ sticky بعيد عن أول الصندوق 1px وانت عامل scroll 300px | الـ absolute من أول الـ relative: top 5px
+responsive: الصندوق 700px ← الخط 36px (clamp(1rem, 6cqi, 2.25rem))
+units     : 1.25em متداخلة: 20px ← 25px ← 31.25px | 1.25rem متداخلة: 20px ← 20px ← 20px
+tailwind  : الـ scanner لقى: p-4، bg-red-500 | «bg-blue-500» موجودة؟ لأ، فمش هتتولّد
+cls       : CLS في التجربة دي: 0.068 (كل الكلام اتزق لتحت) | CLS في التجربة دي: 0.000 (المكان كان محجوز)
+reflow    : .d-left في ثانية: Layout 64، Paint 128
+reflow    : .d-tf في ثانية: Layout 0، Paint 0
+errors: 0
+axe light (12 صفحة): 0
+axe dark (12 صفحة): 0
+Tab في صفحة CLS: إجاباتي → الوضع الغامق → كل الأسئلة → صورة من غير مقاس → نفس الصورة بـ wi → ← أهم حاجات الـ  → الفرق بين reflow
+~~~
+
+~~~text Lighthouse 13.6.0 (الأربع فئات، قبل وبعد الأيقونة)
+قبل:
+index      | Performance 100 | Accessibility 100 | Best Practices 96 | SEO 100 | ناقص: errors-in-console, network-dependency-tree-insight
+box        | Performance 100 | Accessibility 100 | Best Practices 96 | SEO 100 | ناقص: first-contentful-paint, errors-in-console, network-dependency-tree-insight
+cls        | Performance 100 | Accessibility 100 | Best Practices 96 | SEO 100 | ناقص: max-potential-fid, errors-in-console, network-dependency-tree-insight
+reflow     | Performance 100 | Accessibility 100 | Best Practices 96 | SEO 100 | ناقص: errors-in-console, network-dependency-tree-insight
+بعد icon.svg:
+cls        | Performance 100 | Accessibility 100 | Best Practices 100 | SEO 100 | ناقص: network-dependency-tree-insight
+~~~
+
+**المنشور:** الموقع static (HTML و CSS و JS بس)، فأي استضافة static تنفع: GitHub Pages زي درس «انشر صفحتك». ابعت لينك الصفحة الرئيسية في الـ CV، ولينك سؤال بعينه لو حد سألك فيه.` },
+        { lvl: 'فكرة', dir: "focus-question", t: R`سؤال بتاعك`, what: R`اختار سؤال frontend اتسألته (أو قريته) ومش موجود هنا: BEM مقابل CSS Modules، أو [[:focus]] مقابل [[:focus-visible]]، أو ليه [[100vh]] بايظ على الموبايل. اكتب إجابة في دقيقة و demo بيثبتها بنفس شكل الوحدة.`, done: R`زميل قرا إجابتك بصوت عالي في أقل من دقيقة وفهم، والـ demo بيثبت كل جملة فيها برقم أو لقطة.`, ext: R`اعمله درس كامل بنفس شكل دروس الموقع (desc و example و lines و practice)، وابعته كاقتراح.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>:focus ولا :focus-visible؟</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
+  main { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem; }
+  h1 { margin: 0 0 0.5rem; font-size: 1.4rem; }
+  .answer { padding: 1rem 1.25rem; border-radius: 1rem; background: #fff; border: 1px solid #cbd5e1; }
+  .answer p { margin: 0 0 0.5rem; }
+  code { direction: ltr; unicode-bidi: isolate; }
+  .row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-block: 1rem; }
+  button, input { font: inherit; }
+  button { padding: 0.5rem 1.2rem; border: 0; border-radius: 999px; background: #1e293b; color: #fff; outline: none; }
+  input { padding: 0.45rem 0.7rem; border: 1px solid #64748b; border-radius: 0.5rem; outline: none; }
+  /* the two rules being compared: same ring, different trigger */
+  .on-focus:focus { box-shadow: 0 0 0 3px #f8fafc, 0 0 0 6px #dc2626; }
+  .on-visible:focus-visible { box-shadow: 0 0 0 3px #f8fafc, 0 0 0 6px #16a34a; }
+  table { width: 100%; border-collapse: collapse; background: #fff; font-size: 0.9rem; }
+  th, td { padding: 0.45rem 0.6rem; border: 1px solid #cbd5e1; text-align: start; }
+</style>
+<script src="demo.js" defer></script>
+</head>
+<body>
+<main aria-label="التجربة">
+  <h1><code>:focus</code> ولا <code>:focus-visible</code>؟</h1>
+  <div class="answer">
+    <p><b>الإجابة في دقيقة:</b> <code>:focus</code> بيطابق أي عنصر عليه focus، بالماوس أو بالكيبورد. <code>:focus-visible</code> بيطابق بس لما المتصفح يشوف إن المستخدم محتاج يشوف مكانه: بالكيبورد، أو في خانة كتابة حتى بالماوس. فبحط الحلقة على <code>:focus-visible</code>: اللي بيستخدم الكيبورد بيشوفها دايمًا، واللي داس بالماوس مبيشوفهاش على الزراير. ولو الكود نقل الـ focus، المتصفح بيمشي على آخر حاجة المستخدم عملها: بعد ماوس من غير حلقة، وبعد كيبورد بحلقة. ومبشيلش <code>outline</code> من <code>:focus</code> من غير بديل.</p>
+  </div>
+  <div class="row">
+    <button type="button" class="on-focus" id="b1">حلقة على :focus (أحمر)</button>
+    <button type="button" class="on-visible" id="b2">حلقة على :focus-visible (أخضر)</button>
+    <label for="t">خانة</label><input id="t" class="on-visible">
+    <button type="button" id="move">ودّي الـ focus للخانة من الكود</button>
+    <button type="button" id="move2">ودّي الـ focus للأخضر من الكود</button>
+  </div>
+  <p id="now" aria-live="polite"></p>
+</main>
+</body>
+</html>
+~~~
+
+~~~js demo.js
+// prints which of the two pseudo-classes match the focused element, every time focus moves
+const now = document.getElementById("now");
+document.addEventListener("focusin", e => {
+  const el = e.target;
+  now.textContent = (el.id || el.tagName) + ": :focus=" + el.matches(":focus") + " | :focus-visible=" + el.matches(":focus-visible");
+});
+document.getElementById("move").addEventListener("click", () => document.getElementById("t").focus());
+document.getElementById("move2").addEventListener("click", () => document.getElementById("b2").focus());
+~~~
+
+~~~js measure.mjs
+import { browser } from "../lab.mjs";
+import AxeBuilder from "@axe-core/playwright";
+const b = await browser();
+const p = await (await b.newContext({ viewport: { width: 900, height: 600 } })).newPage();
+await p.goto("http://127.0.0.1:8819/focus-q/index.html");
+const ring = id => p.$eval("#" + id, e => getComputedStyle(e).boxShadow === "none" ? "مفيش حلقة" : "فيه حلقة");
+const state = id => p.$eval("#" + id, e => ":focus=" + e.matches(":focus") + " :focus-visible=" + e.matches(":focus-visible"));
+await p.click("#b1"); console.log("ماوس على الأحمر:   " + await state("b1") + " ← " + await ring("b1"));
+await p.click("#b2"); console.log("ماوس على الأخضر:   " + await state("b2") + " ← " + await ring("b2"));
+await p.click("#t");  console.log("ماوس على الخانة:   " + await state("t") + " ← " + await ring("t"));
+await p.click("#move"); console.log("الكود بعد ضغطة ماوس: " + await state("t") + " ← " + await ring("t"));
+await p.click("h1"); await p.keyboard.press("Tab");
+console.log("Tab للأحمر:         " + await state("b1") + " ← " + await ring("b1"));
+await p.keyboard.press("Tab");
+console.log("Tab للأخضر:         " + await state("b2") + " ← " + await ring("b2"));
+await p.keyboard.press("Shift+Tab"); await p.keyboard.press("Tab"); await p.keyboard.press("Tab"); await p.keyboard.press("Tab");
+console.log("Tab لزرار «ودّي» ثم Enter:"); await p.keyboard.press("Enter");
+console.log("   الكود بعد كيبورد: " + await state("t") + " ← " + await ring("t"));
+await p.click("#move2"); console.log("الكود للأخضر بعد ضغطة ماوس: " + await state("b2") + " ← " + await ring("b2"));
+await p.focus("#move2"); await p.keyboard.press("Enter"); console.log("الكود للأخضر بعد Enter من الكيبورد: " + await state("b2") + " ← " + await ring("b2"));
+console.log("axe: " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id + ":" + v.nodes.length).join(",") || "0"));
+await b.close();
+~~~
+
+~~~view 560 720 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>:focus ولا :focus-visible؟</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
+  main { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem; }
+  h1 { margin: 0 0 0.5rem; font-size: 1.4rem; }
+  .answer { padding: 1rem 1.25rem; border-radius: 1rem; background: #fff; border: 1px solid #cbd5e1; }
+  .answer p { margin: 0 0 0.5rem; }
+  code { direction: ltr; unicode-bidi: isolate; }
+  .row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-block: 1rem; }
+  button, input { font: inherit; }
+  button { padding: 0.5rem 1.2rem; border: 0; border-radius: 999px; background: #1e293b; color: #fff; outline: none; }
+  input { padding: 0.45rem 0.7rem; border: 1px solid #64748b; border-radius: 0.5rem; outline: none; }
+  /* the two rules being compared: same ring, different trigger */
+  .on-focus:focus { box-shadow: 0 0 0 3px #f8fafc, 0 0 0 6px #dc2626; }
+  .on-visible:focus-visible { box-shadow: 0 0 0 3px #f8fafc, 0 0 0 6px #16a34a; }
+  table { width: 100%; border-collapse: collapse; background: #fff; font-size: 0.9rem; }
+  th, td { padding: 0.45rem 0.6rem; border: 1px solid #cbd5e1; text-align: start; }
+</style>
+
+</head>
+<body>
+<main aria-label="التجربة">
+  <h1><code>:focus</code> ولا <code>:focus-visible</code>؟</h1>
+  <div class="answer">
+    <p><b>الإجابة في دقيقة:</b> <code>:focus</code> بيطابق أي عنصر عليه focus، بالماوس أو بالكيبورد. <code>:focus-visible</code> بيطابق بس لما المتصفح يشوف إن المستخدم محتاج يشوف مكانه: بالكيبورد، أو في خانة كتابة حتى بالماوس. فبحط الحلقة على <code>:focus-visible</code>: اللي بيستخدم الكيبورد بيشوفها دايمًا، واللي داس بالماوس مبيشوفهاش على الزراير. ولو الكود نقل الـ focus، المتصفح بيمشي على آخر حاجة المستخدم عملها: بعد ماوس من غير حلقة، وبعد كيبورد بحلقة. ومبشيلش <code>outline</code> من <code>:focus</code> من غير بديل.</p>
+  </div>
+  <div class="row">
+    <button type="button" class="on-focus" id="b1">حلقة على :focus (أحمر)</button>
+    <button type="button" class="on-visible" id="b2">حلقة على :focus-visible (أخضر)</button>
+    <label for="t">خانة</label><input id="t" class="on-visible">
+    <button type="button" id="move">ودّي الـ focus للخانة من الكود</button>
+    <button type="button" id="move2">ودّي الـ focus للأخضر من الكود</button>
+  </div>
+  <p id="now" aria-live="polite"></p>
+</main>
+<script>
+// prints which of the two pseudo-classes match the focused element, every time focus moves
+const now = document.getElementById("now");
+document.addEventListener("focusin", e => {
+  const el = e.target;
+  now.textContent = (el.id || el.tagName) + ": :focus=" + el.matches(":focus") + " | :focus-visible=" + el.matches(":focus-visible");
+});
+document.getElementById("move").addEventListener("click", () => document.getElementById("t").focus());
+document.getElementById("move2").addEventListener("click", () => document.getElementById("b2").focus());
+
+</script>
+</body>
+</html>
+~~~
+
+**السؤال اللي اخترته:** «[[:focus]] ولا [[:focus-visible]]؟». بيتسأل كتير، ومعظم الناس بتقول «focus-visible للكيبورد بس» وتقف. الإجابة الكاملة فيها حالتين بيقعوا فيهم الناس: الخانة بالماوس، والـ focus اللي بيتنقل من الكود.
+
+**هتشوف إيه:** الإجابة في مربع أبيض، وتحتها ٥ عناصر: زرار حلقته على [[:focus]] (أحمر)، وزرار حلقته على [[:focus-visible]] (أخضر)، وخانة، وزرارين بينقلوا الـ focus من الكود. دوس بالماوس على الأحمر: بتطلع حلقة. على الأخضر: مفيش. على الخانة: فيه حلقة حتى بالماوس. وكل مرة السطر اللي تحت بيكتب [[:focus]] و [[:focus-visible]] بيطابقوا ولا لأ.
+
+**الإجابة 69 كلمة:** قريتها بصوت عالي في ٣٢ ثانية تقريبًا. كل جملة فيها اتثبتت بسطر من القياس:
+- «[[:focus]] بيطابق أي focus، بالماوس أو بالكيبورد» ← ماوس على الأحمر: حلقة.
+- «[[:focus-visible]] مبيطلعش على الزراير بالماوس» ← ماوس على الأخضر: مفيش.
+- «في خانة الكتابة بيطلع حتى بالماوس» ← ماوس على الخانة: [[:focus-visible=true]].
+- «الكود اللي بينقل الـ focus بيمشي ورا آخر حاجة عملها اليوزر» ← بعد ضغطة ماوس: من غير حلقة، وبعد Enter: بحلقة.
+
+**demo.js:** مع كل [[focusin]] بيسأل العنصر نفسه [[el.matches(":focus-visible")]]. ده نفس اللي المتصفح بيقرره، فالسطر مش رأيي.
+
+**غلطة قابلتني:** أول نسخة كان فيها زرار واحد بينقل الـ focus من الكود، وكان بينقله للخانة. والخانة [[:focus-visible]] بتاعتها [[true]] دايمًا (هي input)، فالتجربة قالت إن الكود دايمًا بيطلّع الحلقة. ده غلط. زوّدت زرار تاني بينقل الـ focus للزرار الأخضر، وهنا بان الفرق: بعد ماوس من غير حلقة، وبعد كيبورد بحلقة.
+
+**الزراير هنا [[outline: none]]:** عشان التجربة تبيّن الحلقة اللي جاية من القاعدتين بس. في موقع حقيقي متشيلش الـ outline من غير بديل.
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+ماوس على الأحمر:   :focus=true :focus-visible=false ← فيه حلقة
+ماوس على الأخضر:   :focus=true :focus-visible=false ← مفيش حلقة
+ماوس على الخانة:   :focus=true :focus-visible=true ← فيه حلقة
+الكود بعد ضغطة ماوس: :focus=true :focus-visible=true ← فيه حلقة
+Tab للأحمر:         :focus=true :focus-visible=true ← فيه حلقة
+Tab للأخضر:         :focus=true :focus-visible=true ← فيه حلقة
+Tab لزرار «ودّي» ثم Enter:
+   الكود بعد كيبورد: :focus=true :focus-visible=true ← فيه حلقة
+الكود للأخضر بعد ضغطة ماوس: :focus=true :focus-visible=false ← مفيش حلقة
+الكود للأخضر بعد Enter من الكيبورد: :focus=true :focus-visible=true ← فيه حلقة
+axe: 0
+~~~` },
       ],
       items: [
         {
