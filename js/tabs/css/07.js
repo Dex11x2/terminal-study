@@ -5,12 +5,2209 @@ MORE("css", [
       l: 1,
       n: "position بيطلّع العنصر من الترتيب العادي، و media queries بتغيّر الشكل حسب الشاشة",
       projects: [
-        { lvl: 'صغير', t: R`زرار تواصل عايم مبيغطّيش حاجة`, what: R`زرار [[fixed]] على [[inset-inline-end]] و [[bottom: calc(1rem + env(safe-area-inset-bottom))]]، والكلام جنبه يختفي تحت 640، ولو فيه شريط CTA تحت على الموبايل الزرار يطلع فوقه. من درس [[sticky و fixed]].`, done: R`في rtl و ltr الزرار في ركن النهاية تحت، وعلى 360 مش فوق زرار «احجز» (قيس الاتنين بـ [[getBoundingClientRect]] ومفيش تداخل)، وبعد scroll 2000 لسه في نفس المكان.` },
-        { lvl: 'صغير', t: R`كارت منتج بشارات ولينك واحد`, what: R`كارت فيه شارة خصم وشارة «جديد» وزرار مفضّلة كلهم absolute على أركان logical، والكارت كله لينك بـ [[::after]]. من درس [[position: absolute]].`, done: R`في rtl و ltr الشارات في الأركان الصح، و [[elementFromPoint]] فوق زرار المفضّلة بيرجّع BUTTON وفوق الباقي A، وقارئ الشاشة بيقرا لينك واحد بس.` },
-        { lvl: 'متوسط', t: R`navbar بحالتين و drawer للموبايل`, what: R`هيدر sticky شفاف فوق الهيرو وبيبقى مصمت بظل بعد أول 40px scroll (class بـ listener [[{ passive: true }]])، وتحت 768 زرار ☰ بيفتح drawer من ناحية النهاية فوق scrim، و z-index من توكنز. بيجمع [[sticky و fixed]] و [[z-index]] و [[media queries]].`, done: R`الـ drawer بيدخل من الناحية الصح في rtl و ltr، والـ scrim بيقفله، و Escape بيقفله، والـ toggle عليه [[aria-expanded]] صح، و [[elementFromPoint]] فوق الـ drawer بيرجّع الـ drawer مش الهيدر، ومفيش scroll أفقي وهو مقفول.` },
-        { lvl: 'متوسط', t: R`صفحة docs بفهرس لازق`, what: R`صفحة توثيق متخيلة: grid بعمودين، والفهرس [[sticky; top]] مع [[align-self: start]]، والعناوين [[scroll-margin-top]]، وتحت 1024 الفهرس يبقى [[<details>]] فوق المحتوى. من درس [[sticky و fixed]] و [[media queries]].`, done: R`على 1280 الفهرس فاضل ظاهر لحد آخر الصفحة، والضغط على أي لينك بيوصل للعنوان من غير ما يستخبى، وعلى 768 الفهرس مقفول فوق، ومفيش [[overflow: hidden]] على أي جد للفهرس.` },
-        { lvl: 'كبير', t: R`landing page لعيادة أسنان متخيلة`, what: R`أقسام بـ id وروابط (خدمات، وقبل وبعد، وأسعار، وأسئلة)، و nav زجاجي sticky، وهيرو بعنوان [[clamp()]]، وسلايدر قبل وبعد بـ range و [[clip-path]]، وأسئلة بـ [[<details>]]، وزرار حجز عايم بيختفي لما توصل لقسم الأسعار، و z-index من توكنز. واختبار المقاسات بسكربت درس [[مصفوفة مقاسات]] بالعربي والإنجليزي. بيجمع الوحدة دي مع وحدة Flexbox و Grid والوحدات والمتغيرات.`, done: R`[[node matrix.js]] بيطلّع [[all sizes OK]] على ١٥ عرض × لغتين، والسكربت بيخرج بـ 0، والسلايدر بيشتغل بالكيبورد، وكل لينك في الـ nav بيوصل لعنوانه ظاهر، و Lighthouse › Accessibility أكتر من 90، والصفحة اتشغّلت مرتين ورا بعض بنفس النتيجة.`, ext: R`زوّد quiz «محتاج إيه؟» بخطوات، ونسخة إنجليزي كاملة بزرار لغة، و dark mode، وحط [[matrix.js]] في GitHub Actions يفشل لو أي مقاس اتكسر.` },
-        { lvl: 'فكرة', t: R`صفحة إنقاذ: ٦ أعطال responsive`, what: R`اعمل صفحة فيها ٦ أعطال مقصودة: [[html, body { overflow-x: hidden }]] بيموّت الـ sticky، وعنصر مايل [[width: 106%]]، وأيقونة [[left]] في rtl، وقايمة [[z-index: 9999]] مستخبية، و meta viewport ناقص، وهيدر fixed مغطي العناوين. وبعدين صلّحهم واحد واحد.`, done: R`لكل عطل: سطر «العَرَض / إزاي لقيته / التصليح / إزاي اتأكدت» برقم متقاس (scrollWidth أو top أو elementFromPoint)، والمصفوفة بعد التصليح كلها OK.`, ext: R`ابعت الصفحة البايظة لزميل يحلّها وانت تراجع تشخيصه، وحوّل الفحص لسكربت CI بيفشل لو أي عطل رجع.` },
+        { lvl: 'صغير', dir: "float-contact", t: R`زرار تواصل عايم مبيغطّيش حاجة`, what: R`زرار [[fixed]] على [[inset-inline-end]] و [[bottom: calc(1rem + env(safe-area-inset-bottom))]]، والكلام جنبه يختفي تحت 640، ولو فيه شريط CTA تحت على الموبايل الزرار يطلع فوقه. من درس [[sticky و fixed]].`, done: R`في rtl و ltr الزرار في ركن النهاية تحت، وعلى 360 مش فوق زرار «احجز» (قيس الاتنين بـ [[getBoundingClientRect]] ومفيش تداخل)، وبعد scroll 2000 لسه في نفس المكان.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مركز ريشة للعلاج الطبيعي</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="page">
+  <h1>مركز ريشة للعلاج الطبيعي</h1>
+  <p>جلسات للضهر والركبة والرقبة، ومتابعة بعد العمليات. الصفحة طويلة عشان تجرّب الـ scroll: الزرار الأخضر فاضل في مكانه.</p>
+  <h2>الخدمات</h2>
+  <p>علاج آلام الضهر بالتمارين والأجهزة، وتأهيل الركبة بعد الإصابات، وجلسات للرقبة والكتف لأصحاب الشغل على الكمبيوتر.</p>
+  <h2>المواعيد</h2>
+  <p>كل يوم من ١٠ الصبح لـ ١٠ بالليل ما عدا الجمعة. الجلسة ٤٥ دقيقة.</p>
+  <h2>الأسعار</h2>
+  <p>الكشف ٣٠٠ جنيه، والجلسة ٢٥٠، وباقة ١٠ جلسات بـ ٢٠٠٠.</p>
+  <h2>العنوان</h2>
+  <p>٤ شارع النخيل، الدور التاني، فوق الصيدلية.</p>
+  <div class="spacer" aria-hidden="true"></div>
+  <p>آخر الصفحة. الزرار لسه في الركن، وشريط «احجز» على الموبايل مغطّاش الكلام ده لأن الـ body ليه مسافة تحت.</p>
+</main>
+
+<aside aria-label="تواصل سريع">
+<a class="contact" href="https://wa.me/201000000000">
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+  <span class="contact__text">كلّمنا واتساب</span>
+</a>
+
+<div class="cta-bar">
+  <a class="cta-bar__btn" href="#book">احجز جلسة</a>
+</div>
+</aside>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --safe-bottom: env(safe-area-inset-bottom, 0px);   /* the iPhone home bar; 0 everywhere else */
+  --cta-h: 0px;                                       /* the bottom bar's height, 0 while it is hidden */
+}
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #f8fafc; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 6rem; }
+.spacer { height: 250vh; }   /* empty filler so the page scrolls */
+
+/* the floating button: fixed to the end corner, above the bar if there is one */
+.contact {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: calc(1rem + var(--cta-h) + var(--safe-bottom));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.1rem;
+  border-radius: 999px;
+  background: #166534;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 18px #0003;
+}
+.contact:focus-visible, .cta-bar__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+.cta-bar { display: none; }
+
+@media (max-width: 39.98rem) {
+  :root { --cta-h: 4.5rem; }
+  /* phone: the text hides (still read by screen readers), only the icon stays */
+  .contact { padding: 0.8rem; }
+  .contact__text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  .cta-bar {
+    display: flex;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 10;
+    height: calc(var(--cta-h) + var(--safe-bottom));
+    padding: 0.75rem 1rem calc(0.75rem + var(--safe-bottom));
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+  }
+  .cta-bar__btn { flex: 1; display: grid; place-items: center; border-radius: 0.75rem; background: #1d4ed8; color: #fff; font-weight: 700; text-decoration: none; }
+  /* the bar covers the last part of the page, so the page gets that much space at the bottom */
+  body { padding-bottom: calc(var(--cta-h) + var(--safe-bottom)); }
+}
+~~~
+
+~~~view 560 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مركز ريشة للعلاج الطبيعي</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --safe-bottom: env(safe-area-inset-bottom, 0px);   /* the iPhone home bar; 0 everywhere else */
+  --cta-h: 0px;                                       /* the bottom bar's height, 0 while it is hidden */
+}
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #f8fafc; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 6rem; }
+.spacer { height: 250vh; }   /* empty filler so the page scrolls */
+
+/* the floating button: fixed to the end corner, above the bar if there is one */
+.contact {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: calc(1rem + var(--cta-h) + var(--safe-bottom));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.1rem;
+  border-radius: 999px;
+  background: #166534;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 18px #0003;
+}
+.contact:focus-visible, .cta-bar__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+.cta-bar { display: none; }
+
+@media (max-width: 39.98rem) {
+  :root { --cta-h: 4.5rem; }
+  /* phone: the text hides (still read by screen readers), only the icon stays */
+  .contact { padding: 0.8rem; }
+  .contact__text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  .cta-bar {
+    display: flex;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 10;
+    height: calc(var(--cta-h) + var(--safe-bottom));
+    padding: 0.75rem 1rem calc(0.75rem + var(--safe-bottom));
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+  }
+  .cta-bar__btn { flex: 1; display: grid; place-items: center; border-radius: 0.75rem; background: #1d4ed8; color: #fff; font-weight: 700; text-decoration: none; }
+  /* the bar covers the last part of the page, so the page gets that much space at the bottom */
+  body { padding-bottom: calc(var(--cta-h) + var(--safe-bottom)); }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>مركز ريشة للعلاج الطبيعي</h1>
+  <p>جلسات للضهر والركبة والرقبة، ومتابعة بعد العمليات. الصفحة طويلة عشان تجرّب الـ scroll: الزرار الأخضر فاضل في مكانه.</p>
+  <h2>الخدمات</h2>
+  <p>علاج آلام الضهر بالتمارين والأجهزة، وتأهيل الركبة بعد الإصابات، وجلسات للرقبة والكتف لأصحاب الشغل على الكمبيوتر.</p>
+  <h2>المواعيد</h2>
+  <p>كل يوم من ١٠ الصبح لـ ١٠ بالليل ما عدا الجمعة. الجلسة ٤٥ دقيقة.</p>
+  <h2>الأسعار</h2>
+  <p>الكشف ٣٠٠ جنيه، والجلسة ٢٥٠، وباقة ١٠ جلسات بـ ٢٠٠٠.</p>
+  <h2>العنوان</h2>
+  <p>٤ شارع النخيل، الدور التاني، فوق الصيدلية.</p>
+  <div class="spacer" aria-hidden="true"></div>
+  <p>آخر الصفحة. الزرار لسه في الركن، وشريط «احجز» على الموبايل مغطّاش الكلام ده لأن الـ body ليه مسافة تحت.</p>
+</main>
+
+<aside aria-label="تواصل سريع">
+<a class="contact" href="https://wa.me/201000000000">
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+  <span class="contact__text">كلّمنا واتساب</span>
+</a>
+
+<div class="cta-bar">
+  <a class="cta-bar__btn" href="#book">احجز جلسة</a>
+</div>
+</aside>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** صفحة مركز علاج طبيعي، وزرار أخضر «كلّمنا واتساب» في الركن تحت على الشمال (في العربي النهاية هي الشمال). انزل في الصفحة: الزرار مبيتحركش. على الموبايل الكلام بيستخبى والأيقونة بس اللي بتفضل، ويظهر تحت خالص شريط أبيض فيه زرار «احجز جلسة» أزرق، والزرار الأخضر بيطلع فوقه.
+
+**[[position: fixed]]:** الزرار بيتقاس من الشاشة نفسها مش من الصفحة، فالـ scroll مبيحركوش.
+- [[inset-inline-end: 1rem]]: ناحية نهاية الكلام. في العربي شمال، ولو قلبت [[dir="ltr"]] بيروح يمين لوحده.
+- [[bottom: calc(1rem + var(--cta-h) + var(--safe-bottom))]]: المسافة من تحت فيها ٣ حاجات: مسافة عادية، وطول شريط «احجز» لو موجود، ومنطقة شريط الـ home في iPhone.
+
+**[[env(safe-area-inset-bottom)]]:** في iPhone اللي من غير زرار home فيه شريط تحت الشاشة. [[env()]] بترجّع ارتفاعه، والـ [[0px]] بعد الفاصلة هي القيمة لو مش موجود. ومن غير [[viewport-fit=cover]] في الـ meta viewport، المتصفح بيحط الصفحة كلها فوق الشريط ده والقيمة بتطلع صفر. على الكمبيوتر وأندرويد قيمتها 0، فالسطر ده مش بيغيّر حاجة هناك.
+
+**الزرار والشريط مبيتداخلوش:** الاتنين [[fixed]] تحت، فالحل إن المسافة اللي تحت الزرار تشيل طول الشريط. [[--cta-h]] صفر برّه الـ media query (مفيش شريط)، و 4.5rem جواها، والزرار والشريط والـ [[padding-bottom]] بتاع الـ body بيقروا نفس المتغير. لو غيّرت طول الشريط، الـ ٣ بيتظبطوا.
+
+**[[padding-bottom]] على الـ body:** الشريط [[fixed]] مش بياخد مكان في الصفحة، فآخر سطر كان هيستخبى تحته. المسافة دي بتخلي آخر الصفحة يطلع فوقه.
+
+**الكلام اللي اتشال على الموبايل:** متشالش بـ [[display: none]]. اتشال بالطريقة اللي بتخفيه من العين بس، عشان قارئ الشاشة يفضل يقول «كلّمنا واتساب». من غيره اللينك كان هيبقى أيقونة من غير اسم.
+
+**غلطة اتصلحت:** axe قال [[region]] مرتين: الزرار والشريط برّه أي landmark. اتحطوا جوه [[<aside aria-label="تواصل سريع">]].
+
+~~~text الناتج (Chrome 157، [يسار، فوق، يمين، تحت])
+360 rtl:   الزرار 31,562,81,612   زرار «احجز» 31,641,344,688   تداخل: لأ (الزرار بيخلص 612 والشريط بيبدأ 641)
+360 ltr:   الزرار 279,562,329,612   زرار «احجز» 16,641,329,688   تداخل: لأ
+1280 rtl:  الزرار 31,731,184,784 (الكلام ظاهر، عرضه 85.9)، مفيش شريط
+1280 ltr:  الزرار 1096,731,1249,784
+بعد scrollTo(0, 2000): scrollY = 2000 والزرار في نفس المكان بالظبط (في الـ 4)
+scrollWidth = عرض الشاشة   axe: 0 violations (كان region ×2 قبل الـ aside)   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**الـ safe area اتجرّبتش هنا:** مفيش iPhone في التجربة. القيمة 0 على Chrome و Windows زي ما الوثائق بتقول، والجزء ده من MDN (env() و viewport-fit).` },
+        { lvl: 'صغير', dir: "badge-card", t: R`كارت منتج بشارات ولينك واحد`, what: R`كارت فيه شارة خصم وشارة «جديد» وزرار مفضّلة كلهم absolute على أركان logical، والكارت كله لينك بـ [[::after]]. من درس [[position: absolute]].`, done: R`في rtl و ltr الشارات في الأركان الصح، و [[elementFromPoint]] فوق زرار المفضّلة بيرجّع BUTTON وفوق الباقي A، وقارئ الشاشة بيقرا لينك واحد بس.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شنط مشغل خيط</title>
+<link rel="stylesheet" href="style.css">
+<script src="fav.js" defer></script>
+</head>
+<body>
+<main class="page">
+  <h1>شنط يدوي</h1>
+  <ul class="cards">
+    <li class="card">
+      <img class="card__img" src="img/bag.svg" alt="" width="400" height="300">
+      <p class="badges"><span class="badge badge--sale">خصم ٢٠٪</span><span class="badge badge--new">جديد</span></p>
+      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة الكروشيه للمفضّلة">♡</button>
+      <h2 class="card__title"><a class="card__link" href="#bag-1">شنطة كروشيه بيج</a></h2>
+      <p class="card__price"><del>٤٥٠ ج</del> ٣٦٠ ج</p>
+    </li>
+    <li class="card">
+      <img class="card__img" src="img/bag.svg" alt="" width="400" height="300">
+      <p class="badges"><span class="badge badge--new">جديد</span></p>
+      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة القماش للمفضّلة">♡</button>
+      <h2 class="card__title"><a class="card__link" href="#bag-2">شنطة قماش مطرّزة</a></h2>
+      <p class="card__price">٣٢٠ ج</p>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fdf8f3; color: #292524; }
+.page { max-width: 48rem; margin-inline: auto; padding: 1rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+
+/* the card is the reference box for everything absolute inside it */
+.card { position: relative; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e7e5e4; }
+.card__img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
+.card__title { margin: 0.75rem 0 0.25rem; font-size: 1.1rem; }
+.card__price { margin: 0; font-weight: 700; color: #9a3412; }
+.card__price del { color: #78716c; font-weight: 400; }
+
+/* the whole card is one link: the title's link stretches a layer over the card */
+.card__link { color: inherit; text-decoration: none; }
+.card__link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.card:has(.card__link:focus-visible) { outline: 3px solid #c2410c; outline-offset: 3px; }
+.card__link:focus-visible { outline: none; }
+
+/* badges: one box on the start corner, the badges inside it one under the other */
+.badges { position: absolute; inset-block-start: 1.25rem; inset-inline-start: 1.25rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; margin: 0; }
+.badge { padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; color: #fff; }
+.badge--sale { background: #b91c1c; }
+.badge--new { background: #1d4ed8; }
+
+/* the button on the end corner, ABOVE the link's layer, so a click on it is not a click on the card */
+.fav {
+  position: absolute;
+  inset-block-start: 1.25rem;
+  inset-inline-end: 1.25rem;
+  z-index: 1;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #b91c1c;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0002;
+}
+.fav[aria-pressed="true"] { background: #b91c1c; color: #fff; }
+.fav:focus-visible { outline: 3px solid #c2410c; outline-offset: 2px; }
+~~~
+
+~~~js fav.js
+document.querySelectorAll(".fav").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const on = btn.getAttribute("aria-pressed") !== "true";
+    btn.setAttribute("aria-pressed", String(on));
+    btn.textContent = on ? "♥" : "♡";
+  });
+});
+~~~
+
+~~~svg img/bag.svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#fde7d2"/>
+  <path d="M150 110a50 50 0 0 1 100 0" fill="none" stroke="#9a3412" stroke-width="10"/>
+  <rect x="110" y="110" width="180" height="140" rx="20" fill="#ea580c"/>
+  <rect x="110" y="150" width="180" height="12" fill="#fdba74"/>
+</svg>
+~~~
+
+~~~view 470 780 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شنط مشغل خيط</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fdf8f3; color: #292524; }
+.page { max-width: 48rem; margin-inline: auto; padding: 1rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+
+/* the card is the reference box for everything absolute inside it */
+.card { position: relative; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e7e5e4; }
+.card__img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
+.card__title { margin: 0.75rem 0 0.25rem; font-size: 1.1rem; }
+.card__price { margin: 0; font-weight: 700; color: #9a3412; }
+.card__price del { color: #78716c; font-weight: 400; }
+
+/* the whole card is one link: the title's link stretches a layer over the card */
+.card__link { color: inherit; text-decoration: none; }
+.card__link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.card:has(.card__link:focus-visible) { outline: 3px solid #c2410c; outline-offset: 3px; }
+.card__link:focus-visible { outline: none; }
+
+/* badges: one box on the start corner, the badges inside it one under the other */
+.badges { position: absolute; inset-block-start: 1.25rem; inset-inline-start: 1.25rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; margin: 0; }
+.badge { padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; color: #fff; }
+.badge--sale { background: #b91c1c; }
+.badge--new { background: #1d4ed8; }
+
+/* the button on the end corner, ABOVE the link's layer, so a click on it is not a click on the card */
+.fav {
+  position: absolute;
+  inset-block-start: 1.25rem;
+  inset-inline-end: 1.25rem;
+  z-index: 1;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #b91c1c;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0002;
+}
+.fav[aria-pressed="true"] { background: #b91c1c; color: #fff; }
+.fav:focus-visible { outline: 3px solid #c2410c; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>شنط يدوي</h1>
+  <ul class="cards">
+    <li class="card">
+      <img class="card__img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMzAwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCI+CiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZGU3ZDIiLz4KICA8cGF0aCBkPSJNMTUwIDExMGE1MCA1MCAwIDAgMSAxMDAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWEzNDEyIiBzdHJva2Utd2lkdGg9IjEwIi8+CiAgPHJlY3QgeD0iMTEwIiB5PSIxMTAiIHdpZHRoPSIxODAiIGhlaWdodD0iMTQwIiByeD0iMjAiIGZpbGw9IiNlYTU4MGMiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjE1MCIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxMiIgZmlsbD0iI2ZkYmE3NCIvPgo8L3N2Zz4=" alt="" width="400" height="300">
+      <p class="badges"><span class="badge badge--sale">خصم ٢٠٪</span><span class="badge badge--new">جديد</span></p>
+      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة الكروشيه للمفضّلة">♡</button>
+      <h2 class="card__title"><a class="card__link" href="#bag-1">شنطة كروشيه بيج</a></h2>
+      <p class="card__price"><del>٤٥٠ ج</del> ٣٦٠ ج</p>
+    </li>
+    <li class="card">
+      <img class="card__img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMzAwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCI+CiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZGU3ZDIiLz4KICA8cGF0aCBkPSJNMTUwIDExMGE1MCA1MCAwIDAgMSAxMDAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWEzNDEyIiBzdHJva2Utd2lkdGg9IjEwIi8+CiAgPHJlY3QgeD0iMTEwIiB5PSIxMTAiIHdpZHRoPSIxODAiIGhlaWdodD0iMTQwIiByeD0iMjAiIGZpbGw9IiNlYTU4MGMiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjE1MCIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxMiIgZmlsbD0iI2ZkYmE3NCIvPgo8L3N2Zz4=" alt="" width="400" height="300">
+      <p class="badges"><span class="badge badge--new">جديد</span></p>
+      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة القماش للمفضّلة">♡</button>
+      <h2 class="card__title"><a class="card__link" href="#bag-2">شنطة قماش مطرّزة</a></h2>
+      <p class="card__price">٣٢٠ ج</p>
+    </li>
+  </ul>
+</main>
+<script>
+document.querySelectorAll(".fav").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const on = btn.getAttribute("aria-pressed") !== "true";
+    btn.setAttribute("aria-pressed", String(on));
+    btn.textContent = on ? "♥" : "♡";
+  });
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارتين شنط. على الركن اليمين فوق شارة حمرا «خصم ٢٠٪» وتحتها زرقا «جديد»، وعلى الشمال فوق دايرة بيضا فيها ♡. الكارت كله بيفتح المنتج لو دوست في أي حتة فيه، ما عدا القلب: القلب بيتملي ♥ ومبيفتحش حاجة.
+
+**[[position: relative]] على الكارت:** أي ابن [[absolute]] بيتقاس من أقرب جد عليه position. من غيرها الشارات كانت هتتقاس من الصفحة كلها وتطلع في ركنها.
+
+**الشارات:** صندوق واحد [[.badges]] absolute على [[inset-inline-start]]، والشارات جواه flex عمودي. أول نسخة كانت كل شارة absolute لوحدها بـ [[top]] بتاعها، وده محتاج قواعد زيادة: لو مفيش خصم، «جديد» لازم تطلع مكانه. الصندوق الواحد حل ده: الشارات بترص نفسها، واللي مش موجودة مبتسيبش مكان.
+
+**الكارت كله لينك واحد:** اللينك على العنوان بس، و [[.card__link::after]] طبقة شفافة [[absolute; inset: 0]] بتغطي الكارت كله. يعني فيه لينك واحد بس في الكارت، وقارئ الشاشة بيقول «شنطة كروشيه بيج، لينك» مرة واحدة. لو كنت لفّيت الكارت كله بـ [[<a>]]، كان هيقرا الصورة والشارات والسعر كلهم جوه اسم اللينك، ومينفعش زرار جوه لينك أصلًا.
+
+**القلب فوق طبقة اللينك:** [[z-index: 1]] على [[.fav]] بيحطه فوق الـ [[::after]]، فالضغطة بتروحله هو. الشارات تحت الطبقة، فالضغط عليها بيفتح المنتج، وده المطلوب.
+
+**[[aria-pressed]]:** زرار بيتشغل ويتقفل. قارئ الشاشة بيقول «مضغوط» أو «مش مضغوط»، والـ JS بيغيّره مع شكل القلب.
+
+~~~text الناتج (Chrome 157، كارت عرضه 326)
+         القلب من حافة النهاية   الشارات من حافة البداية   تحت القلب   تحت الشارة   تحت الصورة   تحت السعر
+rtl      21                     21                         BUTTON      A            A             A
+ltr      21                     21                         BUTTON      A            A             A
+(elementFromPoint في نص كل حاجة)
+
+لينكات جوه الكارت: 1   بعد الضغط على القلب: aria-pressed = true
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**الـ focus على الكارت كله:** [[.card:has(.card__link:focus-visible)]] بيرسم الحلقة على الكارت لما اللينك ياخد focus من الكيبورد، عشان الحلقة حوالين العنوان بس كانت هتبان صغيرة ومش واضح إن الكارت كله لينك.` },
+        { lvl: 'صغير', dir: "watermark", t: R`علامة مائية «نسخة تجريبية» مبتمنعش الضغط`, what: R`صفحة عرض سعر لمطبعة متخيلة، وفوقها كلها علامة مائية «نسخة تجريبية» مايلة ومتكررة وباهتة. العلامة طبقة واحدة [[::after]] على الـ body بـ [[position: fixed; inset: 0]] وخلفية SVG متكررة، و [[pointer-events: none]] عشان الضغط والتحديد يعدّوا منها للي تحتها. من دروس [[sticky و fixed]] و [[z-index]].`, done: R`العلامة فوق الكارت الأبيض كمان (مش وراه)، والكلام تحتها مقروء، و [[elementFromPoint]] فوق زرار «وافق» بيرجّع الزرار والضغط بيشتغل، وتحديد كلام الجدول بيشتغل، ولو شلت [[pointer-events: none]] نفس الـ [[elementFromPoint]] بيرجّع الـ body.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عرض سعر: مطبعة سطور</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="draft">
+<main class="quote">
+  <h1>عرض سعر رقم ١٠٤</h1>
+  <p>لـ: كافيه الركن. صالح لحد آخر الشهر.</p>
+  <table>
+    <thead><tr><th scope="col">البند</th><th scope="col">الكمية</th><th scope="col">السعر</th></tr></thead>
+    <tbody>
+      <tr><td>منيو مقوّى A4</td><td>٥٠</td><td>١٬٢٥٠ ج</td></tr>
+      <tr><td>كروت بزنس</td><td>٥٠٠</td><td>٤٠٠ ج</td></tr>
+      <tr><td>ستيكر لوجو</td><td>٢٠٠</td><td>٣٠٠ ج</td></tr>
+    </tbody>
+    <tfoot><tr><th scope="row" colspan="2">الإجمالي</th><td>١٬٩٥٠ ج</td></tr></tfoot>
+  </table>
+  <p class="note">العرض ده مسودة لحد ما توافق عليه. العلامة المائية بتختفي في النسخة النهائية.</p>
+  <button class="approve" type="button">وافق على العرض</button>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding-inline: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #f5f5f4; }
+.quote { max-width: 40rem; margin: 1.5rem auto; padding: 1.5rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 20px #0001; }
+.quote h1 { margin-top: 0; font-size: 1.6rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.5rem; text-align: start; border-bottom: 1px solid #e7e5e4; }
+tfoot th, tfoot td { font-weight: 800; border-bottom: 0; }
+.note { color: #57534e; font-size: 0.95rem; }
+.approve { padding: 0.7rem 1.4rem; border: 0; border-radius: 0.5rem; background: #166534; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.approve:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+/* the watermark: one layer over the whole screen, repeated, faint, and transparent to the mouse */
+.draft::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;                       /* above the content, so it shows on top of the white paper too */
+  background: url("watermark.svg") repeat;
+  opacity: 0.12;                      /* faint: the text under it stays readable */
+  pointer-events: none;               /* clicks, hover and text selection go through it to what is under it */
+}
+
+/* printing keeps it: a draft on paper is still a draft */
+@media print {
+  body { background: #fff; }
+  .quote { box-shadow: none; margin: 0; }
+}
+~~~
+
+~~~svg watermark.svg
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="160" viewBox="0 0 260 160">
+  <text x="130" y="90" text-anchor="middle" transform="rotate(-25 130 80)" font-family="Tahoma, sans-serif" font-size="26" font-weight="700" fill="#7f1d1d">نسخة تجريبية</text>
+</svg>
+~~~
+
+~~~view 540 560 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عرض سعر: مطبعة سطور</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding-inline: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #f5f5f4; }
+.quote { max-width: 40rem; margin: 1.5rem auto; padding: 1.5rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 20px #0001; }
+.quote h1 { margin-top: 0; font-size: 1.6rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.5rem; text-align: start; border-bottom: 1px solid #e7e5e4; }
+tfoot th, tfoot td { font-weight: 800; border-bottom: 0; }
+.note { color: #57534e; font-size: 0.95rem; }
+.approve { padding: 0.7rem 1.4rem; border: 0; border-radius: 0.5rem; background: #166534; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.approve:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+/* the watermark: one layer over the whole screen, repeated, faint, and transparent to the mouse */
+.draft::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;                       /* above the content, so it shows on top of the white paper too */
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNjAiIGhlaWdodD0iMTYwIiB2aWV3Qm94PSIwIDAgMjYwIDE2MCI+CiAgPHRleHQgeD0iMTMwIiB5PSI5MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgdHJhbnNmb3JtPSJyb3RhdGUoLTI1IDEzMCA4MCkiIGZvbnQtZmFtaWx5PSJUYWhvbWEsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPtmG2LPYrtipINiq2KzYsdmK2KjZitipPC90ZXh0Pgo8L3N2Zz4=") repeat;
+  opacity: 0.12;                      /* faint: the text under it stays readable */
+  pointer-events: none;               /* clicks, hover and text selection go through it to what is under it */
+}
+
+/* printing keeps it: a draft on paper is still a draft */
+@media print {
+  body { background: #fff; }
+  .quote { box-shadow: none; margin: 0; }
+}
+</style>
+</head>
+<body class="draft">
+<main class="quote">
+  <h1>عرض سعر رقم ١٠٤</h1>
+  <p>لـ: كافيه الركن. صالح لحد آخر الشهر.</p>
+  <table>
+    <thead><tr><th scope="col">البند</th><th scope="col">الكمية</th><th scope="col">السعر</th></tr></thead>
+    <tbody>
+      <tr><td>منيو مقوّى A4</td><td>٥٠</td><td>١٬٢٥٠ ج</td></tr>
+      <tr><td>كروت بزنس</td><td>٥٠٠</td><td>٤٠٠ ج</td></tr>
+      <tr><td>ستيكر لوجو</td><td>٢٠٠</td><td>٣٠٠ ج</td></tr>
+    </tbody>
+    <tfoot><tr><th scope="row" colspan="2">الإجمالي</th><td>١٬٩٥٠ ج</td></tr></tfoot>
+  </table>
+  <p class="note">العرض ده مسودة لحد ما توافق عليه. العلامة المائية بتختفي في النسخة النهائية.</p>
+  <button class="approve" type="button">وافق على العرض</button>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** عرض سعر في كارت أبيض: جدول ٣ بنود وإجمالي وزرار أخضر «وافق على العرض». وفوق الصفحة كلها، حتى فوق الكارت، كلمة «نسخة تجريبية» مايلة ومكررة بلون أحمر باهت.
+
+**الطبقة:** [[.draft::after]] من غير ولا عنصر في الـ HTML. [[position: fixed; inset: 0]] بيخليها بمقاس الشاشة، فبتغطي أي حتة انت فيها وانت بتنزل. و [[z-index: 100]] بيحطها فوق الكارت، لأن العلامة اللي ورا الكارت الأبيض مبتبانش.
+
+**[[pointer-events: none]] أهم سطر:** الطبقة فوق كل حاجة، فمن غيره أي ضغطة كانت هتقع عليها هي: الزرار مبيدوسش، والكلام مبيتحددش. السطر ده بيخلي الماوس «يعدّي» منها كأنها مش موجودة. اتقاس: من غيره [[elementFromPoint]] فوق الزرار رجّع [[BODY]] (الـ [[::after]] تبع الـ body).
+
+**الكلام لسه مقروء:** [[opacity: 0.12]]. والـ SVG نفسه كلمة واحدة مايلة بـ [[rotate(-25)]] في مربع 260×160، و [[background: url(...) repeat]] بيكرره على الشاشة كلها.
+
+**الطباعة:** مفيش قاعدة بتخفي العلامة في [[@media print]]، فالمسودة المطبوعة عليها العلامة برضه.
+
+~~~text الناتج (Chrome 157، 600)
+::after:  position fixed، z-index 100، opacity 0.12، pointer-events none
+elementFromPoint في نص زرار «وافق»: approve، والضغط اشتغل (clicked = 1)
+تحديد أول خانة في الجدول: «منيو مقوّى A4»
+من غير pointer-events: none: نفس النقطة = BODY.draft
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'متوسط', dir: "nav-drawer", t: R`navbar بحالتين و drawer للموبايل`, what: R`هيدر sticky شفاف فوق الهيرو وبيبقى مصمت بظل بعد أول 40px scroll (class بـ listener [[{ passive: true }]])، وتحت 768 زرار ☰ بيفتح drawer من ناحية النهاية فوق scrim، و z-index من توكنز. بيجمع [[sticky و fixed]] و [[z-index]] و [[media queries]].`, done: R`الـ drawer بيدخل من الناحية الصح في rtl و ltr، والـ scrim بيقفله، و Escape بيقفله، والـ toggle عليه [[aria-expanded]] صح، و [[elementFromPoint]] فوق الـ drawer بيرجّع الـ drawer مش الهيدر، ومفيش scroll أفقي وهو مقفول.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رحلات وادي النجوم</title>
+<link rel="stylesheet" href="style.css">
+<script src="nav.js" defer></script>
+</head>
+<body>
+<header class="header" id="header">
+  <a class="header__logo" href="#top">وادي النجوم</a>
+  <button class="header__toggle" type="button" aria-expanded="false" aria-controls="drawer">☰ <span class="visually-hidden">القايمة</span></button>
+  <!-- the scrim lives INSIDE the header, next to the drawer: the header is its own layer (sticky + z-index),
+       so a z-index inside it only counts against things inside it too -->
+  <div class="scrim" id="scrim" hidden></div>
+  <nav class="drawer" id="drawer" aria-label="الرئيسية">
+    <ul>
+      <li><a href="#trips">الرحلات</a></li>
+      <li><a href="#camp">المخيم</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#contact">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>ليلة تحت النجوم في الصحرا</h1>
+    <p>رحلات مشي بالليل، ومخيم، وتلسكوب.</p>
+  </section>
+  <section class="content">
+    <h2 id="trips">الرحلات</h2>
+    <p>رحلة الويك إند: نطلع الخميس العصر ونرجع الجمعة الضهر. ٦ ساعات مشي على مراحل.</p>
+    <h2 id="camp">المخيم</h2>
+    <p>خيم لشخصين، وأكل، ونار، ومرشد بيشرح النجوم والكواكب.</p>
+    <h2 id="prices">الأسعار</h2>
+    <p>الفرد ١٢٠٠ جنيه شامل الأكل والمواصلات.</p>
+    <h2 id="contact">تواصل</h2>
+    <p>ابعتلنا على الواتساب أو كلّمنا من ٩ لـ ٩.</p>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  /* every layer has a name: no random 9999 */
+  --z-header: 10;
+  --z-scrim: 20;
+  --z-drawer: 30;
+  --header-h: 4rem;
+  --off: 100%;          /* where the drawer hides: past the end edge. In rtl the end is the left, so it goes the other way */
+}
+[dir="rtl"] { --off: -100%; }
+
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+a:focus-visible, button:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
+
+/* the header: sticky, transparent over the hero, then solid */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: var(--header-h);
+  padding-inline: 1rem;
+  color: #fff;
+  background: transparent;
+  transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.header.is-solid { background: #fff; color: #0f172a; box-shadow: 0 2px 12px #0002; }
+.header__logo { color: inherit; font-weight: 800; text-decoration: none; }
+.header__toggle { display: none; margin-inline-start: auto; padding: 0.3rem 0.7rem; border: 1px solid currentColor; border-radius: 0.5rem; background: transparent; color: inherit; font-size: 1.25rem; cursor: pointer; }
+
+.drawer { margin-inline-start: auto; }
+.drawer ul { display: flex; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
+.drawer a { color: inherit; text-decoration: none; font-weight: 600; }
+
+/* the hero goes UNDER the header: it starts at the top of the page */
+.hero { margin-top: calc(-1 * var(--header-h)); padding: calc(var(--header-h) + 4rem) 1rem 5rem; background: linear-gradient(160deg, #1e1b4b, #312e81 60%, #7c3aed); color: #fff; text-align: center; }
+.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 60vh; }
+.content h2 { scroll-margin-top: calc(var(--header-h) + 1rem); }
+
+/* ---------- phone: the links move into a drawer from the end side ---------- */
+@media (max-width: 47.98rem) {
+  .header__toggle { display: block; }
+  .drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-end: 0;
+    z-index: var(--z-drawer);
+    width: min(80vw, 18rem);
+    margin: 0;
+    padding: 4.5rem 1.25rem 1rem;
+    background: #fff;
+    color: #0f172a;
+    box-shadow: 0 0 24px #0004;
+    transform: translateX(var(--off));
+    visibility: hidden;           /* hidden for the keyboard and screen readers too, not only moved away */
+    transition: transform 0.25s, visibility 0s 0.25s;
+  }
+  .drawer.is-open { transform: none; visibility: visible; transition: transform 0.25s; }
+  .drawer ul { flex-direction: column; gap: 0; }
+  .drawer a { display: block; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; }
+
+  .scrim { position: fixed; inset: 0; z-index: var(--z-scrim); background: #0f172a99; }
+  .scrim[hidden] { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header, .drawer, .drawer.is-open { transition: none; }
+}
+~~~
+
+~~~js nav.js
+const header = document.getElementById("header");
+const toggle = document.querySelector(".header__toggle");
+const drawer = document.getElementById("drawer");
+const scrim = document.getElementById("scrim");
+
+// solid after the first 40px of scroll. passive: we never call preventDefault, so the browser can scroll without waiting for us
+function onScroll() { header.classList.toggle("is-solid", scrollY > 40); }
+addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+function setOpen(open) {
+  drawer.classList.toggle("is-open", open);
+  scrim.hidden = !open;
+  toggle.setAttribute("aria-expanded", String(open));
+  if (open) drawer.querySelector("a").focus();
+}
+toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+scrim.addEventListener("click", () => setOpen(false));
+drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+addEventListener("keydown", e => {
+  if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { setOpen(false); toggle.focus(); }
+});
+~~~
+
+~~~view 560 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رحلات وادي النجوم</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  /* every layer has a name: no random 9999 */
+  --z-header: 10;
+  --z-scrim: 20;
+  --z-drawer: 30;
+  --header-h: 4rem;
+  --off: 100%;          /* where the drawer hides: past the end edge. In rtl the end is the left, so it goes the other way */
+}
+[dir="rtl"] { --off: -100%; }
+
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+a:focus-visible, button:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
+
+/* the header: sticky, transparent over the hero, then solid */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: var(--header-h);
+  padding-inline: 1rem;
+  color: #fff;
+  background: transparent;
+  transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.header.is-solid { background: #fff; color: #0f172a; box-shadow: 0 2px 12px #0002; }
+.header__logo { color: inherit; font-weight: 800; text-decoration: none; }
+.header__toggle { display: none; margin-inline-start: auto; padding: 0.3rem 0.7rem; border: 1px solid currentColor; border-radius: 0.5rem; background: transparent; color: inherit; font-size: 1.25rem; cursor: pointer; }
+
+.drawer { margin-inline-start: auto; }
+.drawer ul { display: flex; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
+.drawer a { color: inherit; text-decoration: none; font-weight: 600; }
+
+/* the hero goes UNDER the header: it starts at the top of the page */
+.hero { margin-top: calc(-1 * var(--header-h)); padding: calc(var(--header-h) + 4rem) 1rem 5rem; background: linear-gradient(160deg, #1e1b4b, #312e81 60%, #7c3aed); color: #fff; text-align: center; }
+.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 60vh; }
+.content h2 { scroll-margin-top: calc(var(--header-h) + 1rem); }
+
+/* ---------- phone: the links move into a drawer from the end side ---------- */
+@media (max-width: 47.98rem) {
+  .header__toggle { display: block; }
+  .drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-end: 0;
+    z-index: var(--z-drawer);
+    width: min(80vw, 18rem);
+    margin: 0;
+    padding: 4.5rem 1.25rem 1rem;
+    background: #fff;
+    color: #0f172a;
+    box-shadow: 0 0 24px #0004;
+    transform: translateX(var(--off));
+    visibility: hidden;           /* hidden for the keyboard and screen readers too, not only moved away */
+    transition: transform 0.25s, visibility 0s 0.25s;
+  }
+  .drawer.is-open { transform: none; visibility: visible; transition: transform 0.25s; }
+  .drawer ul { flex-direction: column; gap: 0; }
+  .drawer a { display: block; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; }
+
+  .scrim { position: fixed; inset: 0; z-index: var(--z-scrim); background: #0f172a99; }
+  .scrim[hidden] { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header, .drawer, .drawer.is-open { transition: none; }
+}
+</style>
+</head>
+<body>
+<header class="header" id="header">
+  <a class="header__logo" href="#top">وادي النجوم</a>
+  <button class="header__toggle" type="button" aria-expanded="false" aria-controls="drawer">☰ <span class="visually-hidden">القايمة</span></button>
+  <!-- the scrim lives INSIDE the header, next to the drawer: the header is its own layer (sticky + z-index),
+       so a z-index inside it only counts against things inside it too -->
+  <div class="scrim" id="scrim" hidden></div>
+  <nav class="drawer" id="drawer" aria-label="الرئيسية">
+    <ul>
+      <li><a href="#trips">الرحلات</a></li>
+      <li><a href="#camp">المخيم</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#contact">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>ليلة تحت النجوم في الصحرا</h1>
+    <p>رحلات مشي بالليل، ومخيم، وتلسكوب.</p>
+  </section>
+  <section class="content">
+    <h2 id="trips">الرحلات</h2>
+    <p>رحلة الويك إند: نطلع الخميس العصر ونرجع الجمعة الضهر. ٦ ساعات مشي على مراحل.</p>
+    <h2 id="camp">المخيم</h2>
+    <p>خيم لشخصين، وأكل، ونار، ومرشد بيشرح النجوم والكواكب.</p>
+    <h2 id="prices">الأسعار</h2>
+    <p>الفرد ١٢٠٠ جنيه شامل الأكل والمواصلات.</p>
+    <h2 id="contact">تواصل</h2>
+    <p>ابعتلنا على الواتساب أو كلّمنا من ٩ لـ ٩.</p>
+  </section>
+</main>
+<script>
+const header = document.getElementById("header");
+const toggle = document.querySelector(".header__toggle");
+const drawer = document.getElementById("drawer");
+const scrim = document.getElementById("scrim");
+
+// solid after the first 40px of scroll. passive: we never call preventDefault, so the browser can scroll without waiting for us
+function onScroll() { header.classList.toggle("is-solid", scrollY > 40); }
+addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+function setOpen(open) {
+  drawer.classList.toggle("is-open", open);
+  scrim.hidden = !open;
+  toggle.setAttribute("aria-expanded", String(open));
+  if (open) drawer.querySelector("a").focus();
+}
+toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+scrim.addEventListener("click", () => setOpen(false));
+drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+addEventListener("keydown", e => {
+  if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { setOpen(false); toggle.focus(); }
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** فوق هيرو بنفسجي، والهيدر شفاف فوقه وكلامه أبيض. انزل شوية: الهيدر بيبقى أبيض بظل. على الموبايل فيه ☰، ولما تدوس عليه بيدخل درج أبيض من الشمال (النهاية في العربي) فيه الروابط، والصفحة وراه بتغمق.
+
+**الهيدر:** [[position: sticky; top: 0]]، والهيرو [[margin-top]] بالسالب بطول الهيدر عشان يبدأ من فوق الصفحة ويبان من ورا الهيدر الشفاف. الـ JS بيحط [[is-solid]] لما [[scrollY > 40]].
+
+**[[{ passive: true }]]:** بيقول للمتصفح «مش هعمل [[preventDefault]] على الـ scroll»، فالمتصفح بيحرّك الصفحة على طول من غير ما يستنى الدالة تخلص.
+
+**الدرج على الموبايل:** [[fixed]] على [[inset-inline-end: 0]] بطول الشاشة، ومستخبي بـ [[transform: translateX(var(--off))]].
+- [[translateX]] مش logical: 100% دايمًا يمين. عشان كده [[--off]] بـ 100% في ltr (النهاية يمين) و -100% في rtl (النهاية شمال).
+- [[visibility: hidden]] مع التحريك: من غيرها الروابط اللي برّه الشاشة كانت هتاخد focus بالـ Tab ويقراها قارئ الشاشة. و [[transition: visibility 0s 0.25s]] بيأخّر الإخفا لحد ما الحركة تخلص.
+
+**الـ z-index من توكنز:** [[--z-header]] و [[--z-scrim]] و [[--z-drawer]] (10 و 20 و 30) بدل أرقام عشوائية زي 9999.
+
+**الغلطة اللي القياس مسكها (stacking context):** أول نسخة كان الـ scrim (الغطا الغامق) برّه الهيدر، والدرج جوه الهيدر. الأرقام كانت صح على الورق: الدرج 30 والـ scrim 20. بس [[elementFromPoint]] في نص الدرج المفتوح رجّع [[DIV.scrim]]: الغطا كان فوق الدرج، ومينفعش تدوس على أي لينك.
+
+السبب: الهيدر [[sticky]] وعليه [[z-index: 10]]، وده بيعمل منه «طبقة» لوحدها (stacking context). كل اللي جواه بيترتب جوه الطبقة دي بس، فالـ 30 بتاع الدرج معناه «فوق اللي معايا جوه الهيدر». والهيدر كله (10) تحت الـ scrim (20). التصليح: الـ scrim جوه الهيدر جنب الدرج، فالاتنين بيتقارنوا في نفس الطبقة.
+
+**القفل:** الضغط على الـ scrim، أو Escape، أو اختيار لينك. ولما بيتقفل بـ Escape، الـ focus بيرجع لزرار ☰ عشان اللي بيستخدم الكيبورد ميتوهش.
+
+~~~text الناتج (Chrome 157، موبايل 360)
+                              rtl                     ltr
+الهيدر scrollY 0 / 41         شفاف / أبيض             شفاف / أبيض
+الدرج مقفول                   -273 لحد 15 (برّه يسار)   345 لحد 633 (برّه يمين)
+الدرج مفتوح                   15 لحد 303              57 لحد 345
+elementFromPoint نص الدرج     DIV.scrim (قبل التصليح)  DIV.scrim (قبل التصليح)
+                              NAV (بعد)               NAV (بعد)
+الضغط برّه الدرج              scrim ← aria-expanded = false
+Escape                        aria-expanded = false
+الـ focus بعد الفتح           «الرحلات»
+الـ focus بعد Escape          زرار ☰
+scrollWidth وهو مقفول         345 = العرض              345 = العرض
+1280: الـ ☰ مستخبي والروابط الـ 4 في سطر واحد (top 21)
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+في الـ rtl الدرج بيبدأ من 15 مش 0 لأن الـ scrollbar في الصفحات العربي على الشمال، والقياس كان جوه iframe فيه scrollbar.` },
+        { lvl: 'متوسط', dir: "docs-toc", t: R`صفحة docs بفهرس لازق`, what: R`صفحة توثيق متخيلة: grid بعمودين، والفهرس [[sticky; top]] مع [[align-self: start]]، والعناوين [[scroll-margin-top]]، وتحت 1024 الفهرس يبقى [[<details>]] فوق المحتوى. من درس [[sticky و fixed]] و [[media queries]].`, done: R`على 1280 الفهرس فاضل ظاهر لحد آخر الصفحة، والضغط على أي لينك بيوصل للعنوان من غير ما يستخبى، وعلى 768 الفهرس مقفول فوق، ومفيش [[overflow: hidden]] على أي جد للفهرس.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل مكتبة «رف»: التثبيت والاستخدام</title>
+<link rel="stylesheet" href="style.css">
+<script src="toc.js" defer></script>
+</head>
+<body>
+<header class="top"><a href="#intro">رف: التوثيق</a></header>
+<div class="layout">
+  <details class="toc" id="toc">
+    <summary>المحتويات</summary>
+    <nav aria-label="محتويات الصفحة">
+      <ol>
+        <li><a href="#intro">مقدمة</a></li>
+        <li><a href="#install">التثبيت</a></li>
+        <li><a href="#first">أول رف</a></li>
+        <li><a href="#options">الخيارات</a></li>
+        <li><a href="#themes">الثيمات</a></li>
+        <li><a href="#faq">أسئلة</a></li>
+      </ol>
+    </nav>
+  </details>
+  <main class="doc">
+    <h1 id="intro">مكتبة «رف»</h1>
+    <p>«رف» مكتبة متخيلة بتعرض كتب على رفوف في صفحة ويب. الصفحة دي بتشرح إزاي تثبتها وتستخدمها.</p>
+    <h2 id="install">التثبيت</h2>
+    <p>انسخ ملف المكتبة جنب صفحتك وحطه في آخر الـ body.</p>
+    <pre><code>&lt;script src="raf.js"&gt;&lt;/script&gt;</code></pre>
+    <h2 id="first">أول رف</h2>
+    <p>اعمل عنصر فاضي بـ id، وبعدين نادي الدالة باسمه وبقايمة الكتب.</p>
+    <pre><code>raf("#shelf", ["مدينة من ورق", "بيت على البحر"]);</code></pre>
+    <h2 id="options">الخيارات</h2>
+    <p>عدد الكتب في الرف، وحجم الغلاف، ولون الخشب، وهل الكتب تتقلب لما الماوس ييجي عليها.</p>
+    <h2 id="themes">الثيمات</h2>
+    <p>فيه ٣ ثيمات جاهزة: خشب فاتح، وخشب غامق، ومعدن. وتقدر تعمل ثيم بمتغيرات CSS.</p>
+    <h2 id="faq">أسئلة</h2>
+    <p>هل بتشتغل من غير إنترنت؟ أيوه، الملف كله عندك.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </main>
+</div>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root { --top-h: 3.5rem; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1e293b; background: #fff; }
+a { color: #1d4ed8; }
+a:focus-visible, summary:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+/* the site bar stays on top */
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; height: var(--top-h); padding-inline: 1rem; background: #0f172a; }
+.top a { color: #fff; font-weight: 800; text-decoration: none; }
+
+.layout { max-width: 70rem; margin-inline: auto; padding: 1rem; }
+.doc { min-width: 0; }
+.doc h1, .doc h2 { scroll-margin-top: calc(var(--top-h) + 1rem); }   /* a jump stops below the sticky bar, not under it */
+pre { overflow-x: auto; padding: 0.75rem; border-radius: 0.5rem; background: #f1f5f9; }
+.filler { height: 150vh; }
+
+/* phone and tablet: the table of contents is a closed box above the text */
+.toc { margin-bottom: 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
+.toc summary { padding: 0.5rem 0.75rem; font-weight: 700; cursor: pointer; }
+.toc ol { margin: 0; padding: 0 2rem 0.75rem; }
+
+/* computer: two columns, the table of contents sticks while the text scrolls */
+@media (min-width: 64rem) {
+  .layout { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 2.5rem; }
+  .toc {
+    position: sticky;
+    top: calc(var(--top-h) + 1rem);
+    align-self: start;   /* without it the grid stretches the box to the full row height, and a box as tall as its parent has nowhere to stick */
+    margin: 0;
+    border: 0;
+  }
+  .toc summary { display: none; }   /* always open here, toc.js sets open */
+  .toc ol { padding-inline-start: 1.25rem; }
+}
+~~~
+
+~~~js toc.js
+// a closed <details> hides its content whatever the CSS says, so on a big screen it has to be opened
+const toc = document.getElementById("toc");
+const wide = matchMedia("(min-width: 64rem)");
+function sync() { toc.open = wide.matches; }   // open on a computer, closed on smaller screens
+wide.addEventListener("change", sync);
+sync();
+~~~
+
+~~~view 560 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل مكتبة «رف»: التثبيت والاستخدام</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root { --top-h: 3.5rem; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1e293b; background: #fff; }
+a { color: #1d4ed8; }
+a:focus-visible, summary:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+/* the site bar stays on top */
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; height: var(--top-h); padding-inline: 1rem; background: #0f172a; }
+.top a { color: #fff; font-weight: 800; text-decoration: none; }
+
+.layout { max-width: 70rem; margin-inline: auto; padding: 1rem; }
+.doc { min-width: 0; }
+.doc h1, .doc h2 { scroll-margin-top: calc(var(--top-h) + 1rem); }   /* a jump stops below the sticky bar, not under it */
+pre { overflow-x: auto; padding: 0.75rem; border-radius: 0.5rem; background: #f1f5f9; }
+.filler { height: 150vh; }
+
+/* phone and tablet: the table of contents is a closed box above the text */
+.toc { margin-bottom: 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
+.toc summary { padding: 0.5rem 0.75rem; font-weight: 700; cursor: pointer; }
+.toc ol { margin: 0; padding: 0 2rem 0.75rem; }
+
+/* computer: two columns, the table of contents sticks while the text scrolls */
+@media (min-width: 64rem) {
+  .layout { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 2.5rem; }
+  .toc {
+    position: sticky;
+    top: calc(var(--top-h) + 1rem);
+    align-self: start;   /* without it the grid stretches the box to the full row height, and a box as tall as its parent has nowhere to stick */
+    margin: 0;
+    border: 0;
+  }
+  .toc summary { display: none; }   /* always open here, toc.js sets open */
+  .toc ol { padding-inline-start: 1.25rem; }
+}
+</style>
+</head>
+<body>
+<header class="top"><a href="#intro">رف: التوثيق</a></header>
+<div class="layout">
+  <details class="toc" id="toc">
+    <summary>المحتويات</summary>
+    <nav aria-label="محتويات الصفحة">
+      <ol>
+        <li><a href="#intro">مقدمة</a></li>
+        <li><a href="#install">التثبيت</a></li>
+        <li><a href="#first">أول رف</a></li>
+        <li><a href="#options">الخيارات</a></li>
+        <li><a href="#themes">الثيمات</a></li>
+        <li><a href="#faq">أسئلة</a></li>
+      </ol>
+    </nav>
+  </details>
+  <main class="doc">
+    <h1 id="intro">مكتبة «رف»</h1>
+    <p>«رف» مكتبة متخيلة بتعرض كتب على رفوف في صفحة ويب. الصفحة دي بتشرح إزاي تثبتها وتستخدمها.</p>
+    <h2 id="install">التثبيت</h2>
+    <p>انسخ ملف المكتبة جنب صفحتك وحطه في آخر الـ body.</p>
+    <pre><code>&lt;script src="raf.js"&gt;&lt;/script&gt;</code></pre>
+    <h2 id="first">أول رف</h2>
+    <p>اعمل عنصر فاضي بـ id، وبعدين نادي الدالة باسمه وبقايمة الكتب.</p>
+    <pre><code>raf("#shelf", ["مدينة من ورق", "بيت على البحر"]);</code></pre>
+    <h2 id="options">الخيارات</h2>
+    <p>عدد الكتب في الرف، وحجم الغلاف، ولون الخشب، وهل الكتب تتقلب لما الماوس ييجي عليها.</p>
+    <h2 id="themes">الثيمات</h2>
+    <p>فيه ٣ ثيمات جاهزة: خشب فاتح، وخشب غامق، ومعدن. وتقدر تعمل ثيم بمتغيرات CSS.</p>
+    <h2 id="faq">أسئلة</h2>
+    <p>هل بتشتغل من غير إنترنت؟ أيوه، الملف كله عندك.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </main>
+</div>
+<script>
+// a closed <details> hides its content whatever the CSS says, so on a big screen it has to be opened
+const toc = document.getElementById("toc");
+const wide = matchMedia("(min-width: 64rem)");
+function sync() { toc.open = wide.matches; }   // open on a computer, closed on smaller screens
+wide.addEventListener("change", sync);
+sync();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** شريط غامق فوق فيه «رف: التوثيق». على الشاشة الكبيرة فهرس على اليمين بـ ٦ روابط، والكلام على الشمال، ولما تنزل الفهرس بيفضل مكانه. على الشاشة الأصغر الفهرس صندوق مقفول فوق الكلام مكتوب عليه «المحتويات»، بيتفتح لما تدوس عليه.
+
+**الفهرس اللازق:** [[position: sticky; top: calc(var(--top-h) + 1rem)]]: بيقف تحت الشريط بمسافة. و [[align-self: start]] هو أهم سطر: من غيره الـ grid بيمط الفهرس لطول الصف كله (طول الكلام)، وصندوق طوله قد أبوه ملوش مكان يتحرك فيه، فالـ sticky مبيبانش إنه شغال.
+
+**الـ [[overflow]] على أي جد:** لو أي عنصر فوق الفهرس عليه [[overflow: hidden]] أو [[auto]]، الـ sticky بيلزق جوه العنصر ده بدل الصفحة، وغالبًا مبيلزقش خالص. اتقاس: مفيش ولا جد عليه overflow.
+
+**[[scroll-margin-top]] على العناوين:** لما تدوس لينك من الفهرس، المتصفح بيجيب العنوان لأول الشاشة، يعني تحت الشريط اللازق ومش باين. [[scroll-margin-top]] بيقوله «سيب المسافة دي فوقي»، فالعنوان بيقف تحت الشريط.
+
+**[[<details>]] تحت 1024:** نفس العنصر في الحالتين. على الشاشة الكبيرة [[toc.js]] بيفتحه و [[summary]] مستخبي، فبيبان فهرس عادي. ليه JS؟ لأن [[<details>]] المقفول بيخبّي اللي جواه مهما الـ CSS قال، فلازم يتفتح فعلًا. و [[matchMedia]] بيتابع لو الشاشة اتغيّرت (لفّيت التابلت مثلًا).
+
+~~~text الناتج (Chrome 157)
+1280: الفهرس مفتوح، وبعد scroll لآخر الصفحة (scrollY 1319) الفهرس top = 72 (لسه ظاهر)
+      الضغط على الـ 6 لينكات: كل عنوان top = 72، والشريط بيخلص عند 56 (العنوان تحته بـ 16)
+      جدود الفهرس اللي عليهم overflow غير visible: ولا واحد
+768:  الفهرس مقفول، فوق الكلام (الفهرس top 72، الكلام top 140)، والضغط على «المحتويات» بيفتحه
+      scrollWidth = العرض
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'متوسط', dir: "sticky-fix", t: R`صلّح ملخص طلب sticky مغطّي الشاشة`, what: R`**صلّح الكود البايظ:** صفحة باقات نت متخيلة فيها ملخص الطلب [[position: sticky; top: 0]] على كل الشاشات. على الموبايل الملخص بيغطي أغلب الشاشة والباقات بتعدّي من تحته، فالـ scroll بيحسّسك إن الصفحة واقفة. وعلى شاشة كمبيوتر قصيرة الملخص أطول من الشاشة، وزرار «كمّل الطلب» اللي في آخره مبيبانش. قيس العطلين، وصلّحهم من غير ما تشيل الـ sticky من الكمبيوتر. من درس [[sticky و fixed]] و [[media queries]].`, done: R`على 360×640: [[elementFromPoint]] في نص الشاشة بيرجّع باقة مش الملخص بعد scroll 300 و 600 و 900، وعلى 1280×400 بعد scroll 600 الملخص لسه ظاهر وزرار «كمّل الطلب» بتوصله بـ scroll جوه الملخص، و axe صفر مشاكل.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مقارنة باقات النت</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="layout">
+  <aside class="summary" aria-label="ملخص اختيارك">
+    <h2>اختيارك</h2>
+    <p>باقة ٢٠٠ جيجا</p>
+    <ul>
+      <li>سرعة لحد ١٠٠ ميجا</li>
+      <li>راوتر مجاني</li>
+      <li>تركيب خلال ٤٨ ساعة</li>
+      <li>دعم فني ٢٤ ساعة</li>
+      <li>مكالمات أرضي مجانًا</li>
+      <li>تجديد تلقائي كل شهر</li>
+      <li>إلغاء في أي وقت</li>
+      <li>خصم ١٠٪ لو دفعت سنة</li>
+    </ul>
+    <p class="summary__total">الإجمالي: ٤٥٠ ج / شهر</p>
+    <a class="summary__btn" href="#checkout">كمّل الطلب</a>
+  </aside>
+  <section class="plans">
+    <h1>اختار باقة النت</h1>
+    <article class="plan"><h2>١٠٠ جيجا</h2><p>٣٠٠ ج في الشهر. مناسبة لشخص واحد.</p></article>
+    <article class="plan"><h2>٢٠٠ جيجا</h2><p>٤٥٠ ج في الشهر. مناسبة لبيت صغير.</p></article>
+    <article class="plan"><h2>٤٠٠ جيجا</h2><p>٧٠٠ ج في الشهر. للبيت اللي فيه ألعاب وأفلام.</p></article>
+    <article class="plan"><h2>من غير حد</h2><p>١١٠٠ ج في الشهر. للشغل من البيت.</p></article>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css broken.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
+.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
+
+/* the order summary sticks at the top on EVERY screen: on a phone it covers 3/4 of it,
+   and on a short screen it is taller than the screen, so its bottom never shows */
+.summary { position: sticky; top: 0; z-index: 1; padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
+.summary h2 { margin-top: 0; }
+.summary__total { font-weight: 800; }
+.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
+
+.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
+
+@media (min-width: 48rem) {
+  .layout { flex-direction: row-reverse; align-items: flex-start; }
+  .summary { flex: 0 0 18rem; }
+  .plans { flex: 1; }
+}
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
+.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
+
+/* phone: the summary is a normal box at the top, it scrolls away like everything else */
+.summary { padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
+.summary h2 { margin-top: 0; }
+.summary__total { font-weight: 800; }
+.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
+.summary__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
+
+/* computer: a column beside the plans, sticky, and NEVER taller than the screen */
+@media (min-width: 48rem) {
+  .layout { flex-direction: row-reverse; align-items: flex-start; }
+  .plans { flex: 1; }
+  .summary {
+    flex: 0 0 18rem;
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100dvh - 2rem);   /* the screen minus the top gap and the same at the bottom */
+    overflow-y: auto;                  /* if the screen is short, the summary scrolls inside itself */
+  }
+}
+~~~
+
+[[broken.html]] هو نفس [[index.html]] بـ [[href="broken.css"]].
+
+~~~view 500 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مقارنة باقات النت</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
+.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
+
+/* phone: the summary is a normal box at the top, it scrolls away like everything else */
+.summary { padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
+.summary h2 { margin-top: 0; }
+.summary__total { font-weight: 800; }
+.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
+.summary__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
+
+/* computer: a column beside the plans, sticky, and NEVER taller than the screen */
+@media (min-width: 48rem) {
+  .layout { flex-direction: row-reverse; align-items: flex-start; }
+  .plans { flex: 1; }
+  .summary {
+    flex: 0 0 18rem;
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100dvh - 2rem);   /* the screen minus the top gap and the same at the bottom */
+    overflow-y: auto;                  /* if the screen is short, the summary scrolls inside itself */
+  }
+}
+</style>
+</head>
+<body>
+<main class="layout">
+  <aside class="summary" aria-label="ملخص اختيارك">
+    <h2>اختيارك</h2>
+    <p>باقة ٢٠٠ جيجا</p>
+    <ul>
+      <li>سرعة لحد ١٠٠ ميجا</li>
+      <li>راوتر مجاني</li>
+      <li>تركيب خلال ٤٨ ساعة</li>
+      <li>دعم فني ٢٤ ساعة</li>
+      <li>مكالمات أرضي مجانًا</li>
+      <li>تجديد تلقائي كل شهر</li>
+      <li>إلغاء في أي وقت</li>
+      <li>خصم ١٠٪ لو دفعت سنة</li>
+    </ul>
+    <p class="summary__total">الإجمالي: ٤٥٠ ج / شهر</p>
+    <a class="summary__btn" href="#checkout">كمّل الطلب</a>
+  </aside>
+  <section class="plans">
+    <h1>اختار باقة النت</h1>
+    <article class="plan"><h2>١٠٠ جيجا</h2><p>٣٠٠ ج في الشهر. مناسبة لشخص واحد.</p></article>
+    <article class="plan"><h2>٢٠٠ جيجا</h2><p>٤٥٠ ج في الشهر. مناسبة لبيت صغير.</p></article>
+    <article class="plan"><h2>٤٠٠ جيجا</h2><p>٧٠٠ ج في الشهر. للبيت اللي فيه ألعاب وأفلام.</p></article>
+    <article class="plan"><h2>من غير حد</h2><p>١١٠٠ ج في الشهر. للشغل من البيت.</p></article>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 500 600 النسخة البايظة (انزل فيها على الموبايل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مقارنة باقات النت (النسخة البايظة)</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
+.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
+
+/* the order summary sticks at the top on EVERY screen: on a phone it covers 3/4 of it,
+   and on a short screen it is taller than the screen, so its bottom never shows */
+.summary { position: sticky; top: 0; z-index: 1; padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
+.summary h2 { margin-top: 0; }
+.summary__total { font-weight: 800; }
+.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
+
+.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
+
+@media (min-width: 48rem) {
+  .layout { flex-direction: row-reverse; align-items: flex-start; }
+  .summary { flex: 0 0 18rem; }
+  .plans { flex: 1; }
+}
+</style>
+</head>
+<body>
+<main class="layout">
+  <aside class="summary" aria-label="ملخص اختيارك">
+    <h2>اختيارك</h2>
+    <p>باقة ٢٠٠ جيجا</p>
+    <ul>
+      <li>سرعة لحد ١٠٠ ميجا</li>
+      <li>راوتر مجاني</li>
+      <li>تركيب خلال ٤٨ ساعة</li>
+      <li>دعم فني ٢٤ ساعة</li>
+      <li>مكالمات أرضي مجانًا</li>
+      <li>تجديد تلقائي كل شهر</li>
+      <li>إلغاء في أي وقت</li>
+      <li>خصم ١٠٪ لو دفعت سنة</li>
+    </ul>
+    <p class="summary__total">الإجمالي: ٤٥٠ ج / شهر</p>
+    <a class="summary__btn" href="#checkout">كمّل الطلب</a>
+  </aside>
+  <section class="plans">
+    <h1>اختار باقة النت</h1>
+    <article class="plan"><h2>١٠٠ جيجا</h2><p>٣٠٠ ج في الشهر. مناسبة لشخص واحد.</p></article>
+    <article class="plan"><h2>٢٠٠ جيجا</h2><p>٤٥٠ ج في الشهر. مناسبة لبيت صغير.</p></article>
+    <article class="plan"><h2>٤٠٠ جيجا</h2><p>٧٠٠ ج في الشهر. للبيت اللي فيه ألعاب وأفلام.</p></article>
+    <article class="plan"><h2>من غير حد</h2><p>١١٠٠ ج في الشهر. للشغل من البيت.</p></article>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** على الموبايل: كارت «اختيارك» فوق، وبعده ٤ باقات. في البايظة الكارت بيلزق فوق وبياخد أغلب الشاشة، والباقات بتعدّي من تحته. في المصلّحة الكارت بيطلع لفوق مع الصفحة. على الكمبيوتر الكارت عمود على الشمال بيفضل ظاهر وانت بتنزل.
+
+**العطل الأول: sticky على الموبايل.** الملخص 482px والشاشة 640، فاللي فاضل للباقات 158px بس، وكل scroll بيحرّك حتة صغيرة ورا الملخص. اتقاس: نص الشاشة الملخص في كل مكان. على الموبايل الملخص مش محتاج يلزق أصلًا: بقى عادي بره الـ media query، والـ sticky جوه [[min-width: 48rem]] بس.
+
+**العطل التاني: sticky أطول من الشاشة.** الـ sticky بيلزق الحافة اللي فوق، فلو الصندوق أطول من الشاشة، اللي تحت مش هيبان غير لما أبوه يخلص. على 1280×400 زرار «كمّل الطلب» كان تحت الشاشة (409 لحد 460، والشاشة 400). التصليح: [[max-height: calc(100dvh - 2rem)]] و [[overflow-y: auto]]: الملخص مبيعدّيش الشاشة أبدًا، ولو مش مكفّي بيعمل scroll جواه.
+
+**[[dvh]] مش [[vh]]:** على الموبايل [[100vh]] أطول من الجزء الظاهر لما شريط العنوان يبقى ظاهر. هنا الـ sticky على الكمبيوتر بس، فالاتنين واحد، بس [[dvh]] أسلم لو القاعدة اتنقلت.
+
+**الكيبورد:** الملخص بقى بيتسكرول جواه، و axe بيطلب إن أي صندوق بيتسكرول يتوصله بالكيبورد. هنا جواه لينك «كمّل الطلب»، فالـ Tab بيوصله والمتصفح بيسكرول الصندوق للينك لوحده.
+
+~~~text الناتج (Chrome 157)
+360×640، نص الشاشة بعد scroll:        300        600        900
+  broken.html                           summary    summary    summary   (الملخص top = 0 وطوله 482)
+  index.html                            plan       plan       plan      (الملخص top = -284، -584، -884)
+
+1280×400، بعد scroll 600:
+  broken.html   الملخص -6 لحد 476 (طوله 482)، الزرار 409 لحد 460: برّه الشاشة
+  index.html    الملخص 16 لحد 384 (طوله 368)، الزرار 431 لحد 482 برّه، وبعد scroll جوه الملخص: 317 لحد 368 ظاهر
+  focus على «كمّل الطلب» (زي Tab): الملخص اتسكرول جواه 114px لوحده والزرار 317 لحد 368
+axe (360 و 1280): 0 violations   الـ validator: مفيش رسايل (النسختين)   CSS validator: No Error Found (الملفين)
+~~~` },
+        { lvl: 'كبير', dir: "dental-landing", t: R`landing page لعيادة أسنان متخيلة`, what: R`أقسام بـ id وروابط (خدمات، وقبل وبعد، وأسعار، وأسئلة)، و nav زجاجي sticky، وهيرو بعنوان [[clamp()]]، وسلايدر قبل وبعد بـ range و [[clip-path]]، وأسئلة بـ [[<details>]]، وزرار حجز عايم بيختفي لما توصل لقسم الأسعار، و z-index من توكنز. واختبار المقاسات بسكربت درس [[مصفوفة مقاسات]] بالعربي والإنجليزي. بيجمع الوحدة دي مع وحدة Flexbox و Grid والوحدات والمتغيرات.`, done: R`[[node matrix.js]] بيطلّع [[all sizes OK]] على ١٥ عرض × لغتين، والسكربت بيخرج بـ 0، والسلايدر بيشتغل بالكيبورد، وكل لينك في الـ nav بيوصل لعنوانه ظاهر، و axe صفر مشاكل بالعربي والإنجليزي، والصفحة اتشغّلت مرتين ورا بعض بنفس النتيجة.`, ext: R`زوّد quiz «محتاج إيه؟» بخطوات، ونسخة إنجليزي كاملة بزرار لغة، و dark mode، وحط [[matrix.js]] في GitHub Actions يفشل لو أي مقاس اتكسر.`, sol: R`**شجرة الملفات:**
+
+~~~text dental-landing/
+index.html     الصفحة (العربي جواها، والإنجليزي في data-en)
+style.css      التصميم
+lang.js        ?lang=en بيقلب الصفحة إنجليزي (في الـ head)
+page.js        طول الهيدر، والسلايدر، وزرار الحجز (defer)
+img/logo.svg  img/before.svg  img/after.svg
+matrix.js      اختبار المقاسات (درس «مصفوفة مقاسات»)
+shots/         بيتعمل لوحده: لقطة لكل مقاس
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة للأسنان</title>
+<link rel="stylesheet" href="style.css">
+<script src="lang.js"></script>
+<script src="page.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main" data-en="Skip to content">اتخطى للمحتوى</a>
+<header class="header" id="header">
+  <a class="brand" href="#main"><img class="logo" src="img/logo.svg" alt="" width="36" height="36"><span data-en="Ebtesama Dental">عيادة ابتسامة</span></a>
+  <a class="lang" href="?lang=en" data-en="عربي" data-en-href="?lang=ar" lang="en" data-en-lang="ar">EN</a>
+  <nav class="nav" aria-label="أقسام الصفحة" data-en-label="Page sections">
+    <a href="#services" data-en="Services">الخدمات</a>
+    <a href="#before-after" data-en="Before &amp; after">قبل وبعد</a>
+    <a href="#prices" data-en="Prices">الأسعار</a>
+    <a href="#faq" data-en="FAQ">أسئلة</a>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1">
+  <section class="hero">
+    <h1 data-en="A smile you are not shy of">ابتسامة مش هتتكسف منها</h1>
+    <p data-en="Cleaning, whitening, fillings and braces. Same-week appointments.">تنضيف وتبييض وحشو وتقويم، ومواعيد في نفس الأسبوع.</p>
+    <a class="btn" href="#prices" data-en="See prices">شوف الأسعار</a>
+  </section>
+
+  <section class="section" aria-labelledby="services">
+    <h2 id="services" data-en="Services">الخدمات</h2>
+    <ul class="cards">
+      <li class="card"><h3 data-en="Cleaning">تنضيف</h3><p data-en="Scaling and polishing in one 40-minute visit.">إزالة الجير وتلميع في زيارة واحدة ٤٠ دقيقة.</p></li>
+      <li class="card"><h3 data-en="Whitening">تبييض</h3><p data-en="Two to four shades lighter, checked with a colour guide.">من درجتين لأربعة أفتح، بنقيسها بدليل ألوان.</p></li>
+      <li class="card"><h3 data-en="Fillings">حشو</h3><p data-en="Tooth-coloured fillings that don't show.">حشو بلون السنة مبيبانش.</p></li>
+      <li class="card"><h3 data-en="Braces">تقويم</h3><p data-en="Clear aligners or metal braces, with monthly follow-up.">شفاف أو معدن، ومتابعة كل شهر.</p></li>
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="before-after">
+    <h2 id="before-after" data-en="Before &amp; after">قبل وبعد</h2>
+    <!-- the comparison always goes left to right (before on the left), in both languages -->
+    <figure class="compare" dir="ltr" style="--pos: 50%">
+      <div class="compare__pics">
+      <img src="img/before.svg" alt="الأسنان قبل التبييض: لونها أصفر" data-en-alt="Teeth before whitening: yellow" width="800" height="450">
+      <img class="compare__after" src="img/after.svg" alt="نفس الأسنان بعد التبييض: لونها أبيض" data-en-alt="The same teeth after whitening: white" width="800" height="450">
+      </div>
+      <figcaption>
+        <label for="pos" data-en="Drag to compare">اسحب عشان تقارن</label>
+        <input id="pos" type="range" min="0" max="100" value="50">
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="section" aria-labelledby="prices">
+    <h2 id="prices" data-en="Prices">الأسعار</h2>
+    <ul class="cards">
+      <li class="card price"><h3 data-en="Check-up">كشف</h3><p class="price__n" data-en="EGP 300">٣٠٠ ج</p></li>
+      <li class="card price"><h3 data-en="Cleaning">تنضيف</h3><p class="price__n" data-en="EGP 600">٦٠٠ ج</p></li>
+      <li class="card price"><h3 data-en="Whitening">تبييض</h3><p class="price__n" data-en="EGP 2,500">٢٬٥٠٠ ج</p></li>
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="faq">
+    <h2 id="faq" data-en="FAQ">أسئلة</h2>
+    <details><summary data-en="Does whitening hurt?">التبييض بيوجع؟</summary><p data-en="Some people feel sensitivity for a day or two. We use a calming gel.">ممكن حساسية يوم أو اتنين، وبنستخدم جل مهدّي.</p></details>
+    <details><summary data-en="Do you work on Fridays?">بتشتغلوا الجمعة؟</summary><p data-en="Yes, from 2 pm to 10 pm.">أيوه، من ٢ الضهر لـ ١٠ بالليل.</p></details>
+    <details><summary data-en="Can I pay in instalments?">ينفع أقسّط؟</summary><p data-en="Braces only, over 6 or 12 months.">التقويم بس، على ٦ أو ١٢ شهر.</p></details>
+  </section>
+</main>
+
+<footer class="footer"><p data-en="12 Garden St. · 0100 000 0000">١٢ شارع الجنينة، ٠١٠٠٠٠٠٠٠٠٠</p></footer>
+
+<a class="book" id="book" href="#prices" data-en="Book now">احجز دلوقتي</a>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --z-header: 10;
+  --z-book: 20;
+  --z-skip: 30;
+  --header-h: 4rem;              /* page.js writes the real height here */
+  --brand: #0e7490;
+  --brand-dark: #155e75;
+  --ink: #0f172a;
+  --muted: #475569;
+  --bg: #f0f9ff;
+  --surface: #ffffff;
+  --radius: 1rem;
+}
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--ink); background: var(--bg); }
+img { max-width: 100%; height: auto; }
+a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+h2, h1 { scroll-margin-top: calc(var(--header-h) + 1rem); }
+main:focus { outline: none; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: var(--z-skip); padding: 0.5rem 1rem; background: var(--ink); color: #fff; }
+.skip:focus { top: 1rem; }
+
+/* ---------- glass header: sticky, see-through, blurs what scrolls under it ---------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  padding: 0.5rem 1rem;
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #0e749033;
+}
+.brand { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); font-weight: 800; text-decoration: none; }
+.logo { display: block; width: 36px; height: 36px; }
+.nav { display: flex; flex-wrap: wrap; gap: 0 0.25rem; }
+.nav a { display: inline-block; padding: 0.4rem 0.6rem; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 600; text-decoration: none; }
+.nav a:hover { background: #0e74901a; }
+/* the language link sits next to the name; the section links take the second line on a small screen */
+.lang { padding: 0.3rem 0.6rem; border: 1px solid currentColor; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 700; text-decoration: none; }
+.nav { flex-basis: 100%; }
+@media (min-width: 56rem) {
+  .nav { flex-basis: auto; margin-inline-start: auto; }
+  .lang { order: 1; }   /* on a wide screen: name, links, then the language at the end */
+}
+
+/* ---------- hero ---------- */
+.hero { padding: clamp(2.5rem, 1rem + 6vw, 6rem) 1rem; text-align: center; background: radial-gradient(circle at 70% 20%, #cffafe, transparent 60%), var(--bg); }
+.hero h1 { margin: 0 auto 0.75rem; max-width: 18ch; font-size: clamp(1.9rem, 1.1rem + 4vw, 3.6rem); line-height: 1.2; }
+.hero p { margin: 0 auto 1.5rem; max-width: 40ch; color: var(--muted); font-size: 1.1rem; }
+.btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 999px; background: var(--brand-dark); color: #fff; font-weight: 700; text-decoration: none; }
+
+.section { max-width: 64rem; margin-inline: auto; padding: 2.5rem 1rem; }
+.section h2 { margin-top: 0; font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); }
+.cards { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
+.card { padding: 1.25rem; border-radius: var(--radius); background: var(--surface); box-shadow: 0 4px 16px #0e74901a; }
+.card h3 { margin: 0 0 0.25rem; }
+.card p { margin: 0; color: var(--muted); }
+.card .price__n { font-size: 1.6rem; font-weight: 800; color: var(--brand-dark); }   /* .card p is (0,1,1): this has to be at least that */
+
+/* ---------- before / after: both pictures in one cell, the "after" one clipped ---------- */
+.compare { margin: 0; max-width: 50rem; }
+.compare__pics { position: relative; display: grid; }
+.compare__pics > img { grid-area: 1 / 1; display: block; width: 100%; border-radius: var(--radius); }
+/* the "after" picture shows only from --pos to the right edge */
+.compare__after { clip-path: inset(0 0 0 var(--pos)); }
+/* the dividing line, at the same --pos */
+.compare__pics::after { content: ""; position: absolute; inset-block: 0; left: var(--pos); width: 3px; translate: -50% 0; background: #fff; box-shadow: 0 0 6px #0006; pointer-events: none; }
+.compare figcaption { display: flex; align-items: center; gap: 0.75rem; padding-top: 0.75rem; }
+.compare input { flex: 1; min-width: 0; accent-color: var(--brand-dark); height: 2rem; }
+
+/* ---------- FAQ ---------- */
+details { margin-bottom: 0.5rem; border-radius: 0.75rem; background: var(--surface); }
+summary { padding: 0.75rem 1rem; font-weight: 700; cursor: pointer; }
+details p { margin: 0; padding: 0 1rem 1rem; color: var(--muted); }
+
+.footer { padding: 2rem 1rem 6rem; text-align: center; background: var(--ink); color: #e2e8f0; }
+.footer p { margin: 0; }
+
+/* ---------- floating booking button: hides while the prices are on screen ---------- */
+.book {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: var(--z-book);
+  padding: 0.8rem 1.4rem;
+  border-radius: 999px;
+  background: #b45309;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 8px 20px #0004;
+  transition: opacity 0.2s, translate 0.2s, visibility 0s;
+}
+.book.is-hidden { opacity: 0; translate: 0 1rem; visibility: hidden; transition: opacity 0.2s, translate 0.2s, visibility 0s 0.2s; }
+@media (prefers-reduced-motion: reduce) { .book, .book.is-hidden { transition: none; } }
+~~~
+
+~~~js lang.js
+// ?lang=en switches the page to English before it is drawn (this file runs in <head>, so there is no Arabic flash)
+// every element with data-en has its English text in that attribute; data-en-alt, data-en-label and data-en-href likewise
+if (new URLSearchParams(location.search).get("lang") === "en") {
+  document.documentElement.lang = "en";
+  document.documentElement.dir = "ltr";
+  document.title = "Ebtesama Dental Clinic";
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const el of document.querySelectorAll("[data-en]")) el.textContent = el.dataset.en;
+    for (const el of document.querySelectorAll("[data-en-alt]")) el.alt = el.dataset.enAlt;
+    for (const el of document.querySelectorAll("[data-en-label]")) el.setAttribute("aria-label", el.dataset.enLabel);
+    for (const el of document.querySelectorAll("[data-en-href]")) el.setAttribute("href", el.dataset.enHref);
+    for (const el of document.querySelectorAll("[data-en-lang]")) el.lang = el.dataset.enLang;
+  });
+}
+~~~
+
+~~~js page.js
+// 1. the header's real height goes into --header-h (it gets taller when the links wrap on a small screen),
+//    and the headings use it in scroll-margin-top, so a jump never hides a heading under the header
+const header = document.getElementById("header");
+const setHeaderH = () => document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+// once right away, before the first jump: a ResizeObserver only reports at the next frame, and a link opened
+// as page.html#prices jumps before that. DOMContentLoaded, because lang.js swaps the English text then (its listener is first)
+document.addEventListener("DOMContentLoaded", setHeaderH);
+new ResizeObserver(setHeaderH).observe(header);   // and again whenever the header changes height (links wrap, font size)
+
+// 2. before / after: the range moves --pos, the CSS clips the "after" picture at that point
+const compare = document.querySelector(".compare");
+const range = document.getElementById("pos");
+range.addEventListener("input", () => compare.style.setProperty("--pos", range.value + "%"));
+
+// 3. the floating button hides while the prices are on screen (the booking info is right there)
+const book = document.getElementById("book");
+new IntersectionObserver(([entry]) => {
+  book.classList.toggle("is-hidden", entry.isIntersecting);
+}).observe(document.getElementById("prices").closest("section"));
+~~~
+
+~~~js matrix.js
+// node matrix.js : 15 widths × 2 languages. Exit code 0 only if every size is OK
+const { chromium } = require("playwright-core");
+const fs = require("fs");
+const BASE = "http://127.0.0.1:8931/";
+const widths = [320, 360, 375, 414, 600, 761, 768, 820, 900, 1000, 1024, 1100, 1280, 1440, 1920];
+fs.mkdirSync("shots", { recursive: true });
+
+(async () => {
+  const browser = await chromium.launch({ channel: "chrome" });
+  const page = await browser.newPage();
+  const bad = [];
+  for (const lang of ["ar", "en"]) {
+    for (const w of widths) {
+      await page.setViewportSize({ width: w, height: 800 });
+      await page.goto(BASE + "?lang=" + lang);
+      const r = await page.evaluate(async () => {
+        const iw = innerWidth, sw = document.documentElement.scrollWidth;
+        // anything sticking out of the screen sideways, by name
+        const out = [...document.querySelectorAll("body *")]
+          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.right > iw + 0.5 || b.left < -0.5); })
+          .map(e => e.className || e.tagName.toLowerCase());
+        // touch targets smaller than 24×24 (WCAG 2.5.8)
+        const small = [...document.querySelectorAll("a, button, summary, input")]
+          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.width < 24 || b.height < 24); })
+          .map(e => (e.className || e.tagName) + " " + Math.round(e.getBoundingClientRect().height) + "px");
+        const logo = Math.round(document.querySelector(".logo").getBoundingClientRect().height);
+        // every nav link: after the jump, the heading starts below the sticky header
+        const hidden = [];
+        for (const a of document.querySelectorAll(".nav a[href^='#']")) {
+          document.querySelector(a.getAttribute("href")).scrollIntoView();
+          await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+          const top = document.querySelector(a.getAttribute("href")).getBoundingClientRect().top;
+          const headerBottom = document.getElementById("header").getBoundingClientRect().bottom;
+          if (top < headerBottom) hidden.push(a.getAttribute("href") + " " + Math.round(top) + "<" + Math.round(headerBottom));
+        }
+        scrollTo(0, 0);
+        return { iw, sw, out: [...new Set(out)], small, logo, hidden };
+      });
+      await page.screenshot({ path: "shots/" + lang + "-" + w + ".png" });
+      const ok = r.sw <= r.iw && !r.out.length && !r.small.length && r.logo <= 40 && !r.hidden.length;
+      if (!ok) bad.push(lang + "-" + w);
+      console.log(lang, String(w).padStart(4), "scrollWidth=" + r.sw, ok ? "OK" : "BROKEN",
+        r.out.length ? "out: " + r.out.join(",") : "", r.small.length ? "small: " + r.small.join(",") : "", r.hidden.length ? "hidden: " + r.hidden.join(",") : "");
+    }
+  }
+  // the slider works from the keyboard: focus it, press → three times
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto(BASE);
+  await page.focus("#pos");
+  for (let i = 0; i < 3; i++) await page.keyboard.press("ArrowRight");
+  const pos = await page.$eval(".compare", e => e.style.getPropertyValue("--pos"));
+  const keyOk = pos === "53%";
+  console.log("slider after → ×3:", pos, keyOk ? "OK" : "BROKEN");
+  if (!keyOk) bad.push("slider");
+
+  console.log(bad.length ? "broken: " + bad.join(" ") : "all sizes OK");
+  await browser.close();
+  process.exitCode = bad.length ? 1 : 0;
+})();
+~~~
+
+~~~svg img/logo.svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="18" fill="#0e7490"/><path d="M11 10c3-2 5 0 7 0s4-2 7 0c2 2 1 7-1 10l-1 7c0 2-2 2-2 0l-1-5c0-2-3-2-3 0l-1 5c0 2-2 2-2 0l-1-7c-2-3-3-8-1-10Z" fill="#fff"/></svg>
+~~~
+
+[[before.svg]] و [[after.svg]]: نفس الرسمة (لثة غامقة و ١٦ سنة)، الأولى السنان لونها [[#e3c770]] (أصفر) والتانية [[#fbfbf7]] (أبيض). أو حط صورتين حقيقيتين بنفس المقاس.
+
+~~~view 640 640 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة للأسنان</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --z-header: 10;
+  --z-book: 20;
+  --z-skip: 30;
+  --header-h: 4rem;              /* page.js writes the real height here */
+  --brand: #0e7490;
+  --brand-dark: #155e75;
+  --ink: #0f172a;
+  --muted: #475569;
+  --bg: #f0f9ff;
+  --surface: #ffffff;
+  --radius: 1rem;
+}
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--ink); background: var(--bg); }
+img { max-width: 100%; height: auto; }
+a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+h2, h1 { scroll-margin-top: calc(var(--header-h) + 1rem); }
+main:focus { outline: none; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: var(--z-skip); padding: 0.5rem 1rem; background: var(--ink); color: #fff; }
+.skip:focus { top: 1rem; }
+
+/* ---------- glass header: sticky, see-through, blurs what scrolls under it ---------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  padding: 0.5rem 1rem;
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #0e749033;
+}
+.brand { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); font-weight: 800; text-decoration: none; }
+.logo { display: block; width: 36px; height: 36px; }
+.nav { display: flex; flex-wrap: wrap; gap: 0 0.25rem; }
+.nav a { display: inline-block; padding: 0.4rem 0.6rem; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 600; text-decoration: none; }
+.nav a:hover { background: #0e74901a; }
+/* the language link sits next to the name; the section links take the second line on a small screen */
+.lang { padding: 0.3rem 0.6rem; border: 1px solid currentColor; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 700; text-decoration: none; }
+.nav { flex-basis: 100%; }
+@media (min-width: 56rem) {
+  .nav { flex-basis: auto; margin-inline-start: auto; }
+  .lang { order: 1; }   /* on a wide screen: name, links, then the language at the end */
+}
+
+/* ---------- hero ---------- */
+.hero { padding: clamp(2.5rem, 1rem + 6vw, 6rem) 1rem; text-align: center; background: radial-gradient(circle at 70% 20%, #cffafe, transparent 60%), var(--bg); }
+.hero h1 { margin: 0 auto 0.75rem; max-width: 18ch; font-size: clamp(1.9rem, 1.1rem + 4vw, 3.6rem); line-height: 1.2; }
+.hero p { margin: 0 auto 1.5rem; max-width: 40ch; color: var(--muted); font-size: 1.1rem; }
+.btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 999px; background: var(--brand-dark); color: #fff; font-weight: 700; text-decoration: none; }
+
+.section { max-width: 64rem; margin-inline: auto; padding: 2.5rem 1rem; }
+.section h2 { margin-top: 0; font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); }
+.cards { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
+.card { padding: 1.25rem; border-radius: var(--radius); background: var(--surface); box-shadow: 0 4px 16px #0e74901a; }
+.card h3 { margin: 0 0 0.25rem; }
+.card p { margin: 0; color: var(--muted); }
+.card .price__n { font-size: 1.6rem; font-weight: 800; color: var(--brand-dark); }   /* .card p is (0,1,1): this has to be at least that */
+
+/* ---------- before / after: both pictures in one cell, the "after" one clipped ---------- */
+.compare { margin: 0; max-width: 50rem; }
+.compare__pics { position: relative; display: grid; }
+.compare__pics > img { grid-area: 1 / 1; display: block; width: 100%; border-radius: var(--radius); }
+/* the "after" picture shows only from --pos to the right edge */
+.compare__after { clip-path: inset(0 0 0 var(--pos)); }
+/* the dividing line, at the same --pos */
+.compare__pics::after { content: ""; position: absolute; inset-block: 0; left: var(--pos); width: 3px; translate: -50% 0; background: #fff; box-shadow: 0 0 6px #0006; pointer-events: none; }
+.compare figcaption { display: flex; align-items: center; gap: 0.75rem; padding-top: 0.75rem; }
+.compare input { flex: 1; min-width: 0; accent-color: var(--brand-dark); height: 2rem; }
+
+/* ---------- FAQ ---------- */
+details { margin-bottom: 0.5rem; border-radius: 0.75rem; background: var(--surface); }
+summary { padding: 0.75rem 1rem; font-weight: 700; cursor: pointer; }
+details p { margin: 0; padding: 0 1rem 1rem; color: var(--muted); }
+
+.footer { padding: 2rem 1rem 6rem; text-align: center; background: var(--ink); color: #e2e8f0; }
+.footer p { margin: 0; }
+
+/* ---------- floating booking button: hides while the prices are on screen ---------- */
+.book {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: var(--z-book);
+  padding: 0.8rem 1.4rem;
+  border-radius: 999px;
+  background: #b45309;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 8px 20px #0004;
+  transition: opacity 0.2s, translate 0.2s, visibility 0s;
+}
+.book.is-hidden { opacity: 0; translate: 0 1rem; visibility: hidden; transition: opacity 0.2s, translate 0.2s, visibility 0s 0.2s; }
+@media (prefers-reduced-motion: reduce) { .book, .book.is-hidden { transition: none; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-en="Skip to content">اتخطى للمحتوى</a>
+<header class="header" id="header">
+  <a class="brand" href="#main"><img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iIzBlNzQ5MCIvPjxwYXRoIGQ9Ik0xMSAxMGMzLTIgNSAwIDcgMHM0LTIgNyAwYzIgMiAxIDctMSAxMGwtMSA3YzAgMi0yIDItMiAwbC0xLTVjMC0yLTMtMi0zIDBsLTEgNWMwIDItMiAyLTIgMGwtMS03Yy0yLTMtMy04LTEtMTBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+" alt="" width="36" height="36"><span data-en="Ebtesama Dental">عيادة ابتسامة</span></a>
+  <a class="lang" href="?lang=en" data-en="عربي" data-en-href="?lang=ar" lang="en" data-en-lang="ar">EN</a>
+  <nav class="nav" aria-label="أقسام الصفحة" data-en-label="Page sections">
+    <a href="#services" data-en="Services">الخدمات</a>
+    <a href="#before-after" data-en="Before &amp; after">قبل وبعد</a>
+    <a href="#prices" data-en="Prices">الأسعار</a>
+    <a href="#faq" data-en="FAQ">أسئلة</a>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1">
+  <section class="hero">
+    <h1 data-en="A smile you are not shy of">ابتسامة مش هتتكسف منها</h1>
+    <p data-en="Cleaning, whitening, fillings and braces. Same-week appointments.">تنضيف وتبييض وحشو وتقويم، ومواعيد في نفس الأسبوع.</p>
+    <a class="btn" href="#prices" data-en="See prices">شوف الأسعار</a>
+  </section>
+
+  <section class="section" aria-labelledby="services">
+    <h2 id="services" data-en="Services">الخدمات</h2>
+    <ul class="cards">
+      <li class="card"><h3 data-en="Cleaning">تنضيف</h3><p data-en="Scaling and polishing in one 40-minute visit.">إزالة الجير وتلميع في زيارة واحدة ٤٠ دقيقة.</p></li>
+      <li class="card"><h3 data-en="Whitening">تبييض</h3><p data-en="Two to four shades lighter, checked with a colour guide.">من درجتين لأربعة أفتح، بنقيسها بدليل ألوان.</p></li>
+      <li class="card"><h3 data-en="Fillings">حشو</h3><p data-en="Tooth-coloured fillings that don't show.">حشو بلون السنة مبيبانش.</p></li>
+      <li class="card"><h3 data-en="Braces">تقويم</h3><p data-en="Clear aligners or metal braces, with monthly follow-up.">شفاف أو معدن، ومتابعة كل شهر.</p></li>
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="before-after">
+    <h2 id="before-after" data-en="Before &amp; after">قبل وبعد</h2>
+    <!-- the comparison always goes left to right (before on the left), in both languages -->
+    <figure class="compare" dir="ltr" style="--pos: 50%">
+      <div class="compare__pics">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDUwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiM5ZjEyMzkiLz48cmVjdCB4PSIwIiB5PSIxMjAiIHdpZHRoPSI4MDAiIGhlaWdodD0iMjEwIiBmaWxsPSIjNGMwNTE5Ii8+PHJlY3QgeD0iNDAiIHk9IjE0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTgiIGZpbGw9IiNlM2M3NzAiLz48cmVjdCB4PSI0MCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjEzMiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjEzMiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjIyNCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjIyNCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjMxNiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjMxNiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjQwOCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjQwOCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjUwMCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjUwMCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjU5MiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjU5MiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjY4NCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjY4NCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjwvc3ZnPg==" alt="الأسنان قبل التبييض: لونها أصفر" data-en-alt="Teeth before whitening: yellow" width="800" height="450">
+      <img class="compare__after" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDUwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiM5ZjEyMzkiLz48cmVjdCB4PSIwIiB5PSIxMjAiIHdpZHRoPSI4MDAiIGhlaWdodD0iMjEwIiBmaWxsPSIjNGMwNTE5Ii8+PHJlY3QgeD0iNDAiIHk9IjE0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTgiIGZpbGw9IiNmYmZiZjciLz48cmVjdCB4PSI0MCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjEzMiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjEzMiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjIyNCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjIyNCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjMxNiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjMxNiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjQwOCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjQwOCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjUwMCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjUwMCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjU5MiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjU5MiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjY4NCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjY4NCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjwvc3ZnPg==" alt="نفس الأسنان بعد التبييض: لونها أبيض" data-en-alt="The same teeth after whitening: white" width="800" height="450">
+      </div>
+      <figcaption>
+        <label for="pos" data-en="Drag to compare">اسحب عشان تقارن</label>
+        <input id="pos" type="range" min="0" max="100" value="50">
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="section" aria-labelledby="prices">
+    <h2 id="prices" data-en="Prices">الأسعار</h2>
+    <ul class="cards">
+      <li class="card price"><h3 data-en="Check-up">كشف</h3><p class="price__n" data-en="EGP 300">٣٠٠ ج</p></li>
+      <li class="card price"><h3 data-en="Cleaning">تنضيف</h3><p class="price__n" data-en="EGP 600">٦٠٠ ج</p></li>
+      <li class="card price"><h3 data-en="Whitening">تبييض</h3><p class="price__n" data-en="EGP 2,500">٢٬٥٠٠ ج</p></li>
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="faq">
+    <h2 id="faq" data-en="FAQ">أسئلة</h2>
+    <details><summary data-en="Does whitening hurt?">التبييض بيوجع؟</summary><p data-en="Some people feel sensitivity for a day or two. We use a calming gel.">ممكن حساسية يوم أو اتنين، وبنستخدم جل مهدّي.</p></details>
+    <details><summary data-en="Do you work on Fridays?">بتشتغلوا الجمعة؟</summary><p data-en="Yes, from 2 pm to 10 pm.">أيوه، من ٢ الضهر لـ ١٠ بالليل.</p></details>
+    <details><summary data-en="Can I pay in instalments?">ينفع أقسّط؟</summary><p data-en="Braces only, over 6 or 12 months.">التقويم بس، على ٦ أو ١٢ شهر.</p></details>
+  </section>
+</main>
+
+<footer class="footer"><p data-en="12 Garden St. · 0100 000 0000">١٢ شارع الجنينة، ٠١٠٠٠٠٠٠٠٠٠</p></footer>
+
+<a class="book" id="book" href="#prices" data-en="Book now">احجز دلوقتي</a>
+<script>
+// ?lang=en switches the page to English before it is drawn (this file runs in <head>, so there is no Arabic flash)
+// every element with data-en has its English text in that attribute; data-en-alt, data-en-label and data-en-href likewise
+if (new URLSearchParams(location.search).get("lang") === "en") {
+  document.documentElement.lang = "en";
+  document.documentElement.dir = "ltr";
+  document.title = "Ebtesama Dental Clinic";
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const el of document.querySelectorAll("[data-en]")) el.textContent = el.dataset.en;
+    for (const el of document.querySelectorAll("[data-en-alt]")) el.alt = el.dataset.enAlt;
+    for (const el of document.querySelectorAll("[data-en-label]")) el.setAttribute("aria-label", el.dataset.enLabel);
+    for (const el of document.querySelectorAll("[data-en-href]")) el.setAttribute("href", el.dataset.enHref);
+    for (const el of document.querySelectorAll("[data-en-lang]")) el.lang = el.dataset.enLang;
+  });
+}
+</script>
+<script>
+// 1. the header's real height goes into --header-h (it gets taller when the links wrap on a small screen),
+//    and the headings use it in scroll-margin-top, so a jump never hides a heading under the header
+const header = document.getElementById("header");
+const setHeaderH = () => document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+// once right away, before the first jump: a ResizeObserver only reports at the next frame, and a link opened
+// as page.html#prices jumps before that. DOMContentLoaded, because lang.js swaps the English text then (its listener is first)
+document.addEventListener("DOMContentLoaded", setHeaderH);
+new ResizeObserver(setHeaderH).observe(header);   // and again whenever the header changes height (links wrap, font size)
+
+// 2. before / after: the range moves --pos, the CSS clips the "after" picture at that point
+const compare = document.querySelector(".compare");
+const range = document.getElementById("pos");
+range.addEventListener("input", () => compare.style.setProperty("--pos", range.value + "%"));
+
+// 3. the floating button hides while the prices are on screen (the booking info is right there)
+const book = document.getElementById("book");
+new IntersectionObserver(([entry]) => {
+  book.classList.toggle("is-hidden", entry.isIntersecting);
+}).observe(document.getElementById("prices").closest("section"));
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر أبيض شبه شفاف فيه اسم العيادة واللوجو وزرار EN والروابط، والكلام اللي بيعدّي تحته بيبان مموّه. بعده عنوان كبير، و ٤ كروت خدمات، وصورة قبل وبعد عليها خط أبيض بتحركه بشريط تحتها، و ٣ أسعار، و ٣ أسئلة بتتفتح، وزرار برتقاني «احجز دلوقتي» عايم تحت بيختفي لما توصل للأسعار.
+
+**ترتيب البناء:** (١) الـ HTML بالعربي والأقسام بـ id. (٢) الهيدر sticky والـ scroll-margin. (٣) الأقسام والكروت بـ grid. (٤) السلايدر. (٥) زرار الحجز. (٦) الإنجليزي. (٧) [[matrix.js]] وصلّح اللي يطلع.
+
+**الهيدر الزجاجي:** [[background: #ffffffcc]] (أبيض 80%) و [[backdrop-filter: blur(10px)]]: بيموّه اللي وراه. خلي بالك: [[backdrop-filter]] بيخلي العنصر «مرجع» لأي ابن [[position: fixed]]، فأي حاجة fixed جوه الهيدر هتتقاس منه مش من الشاشة. عشان كده زرار الحجز برّه الهيدر.
+
+**الهيدر على الموبايل:** اسم العيادة و EN في سطر، والروابط في سطر تاني ([[.nav { flex-basis: 100% }]]). على 56rem وأكبر كله سطر واحد، و [[order: 1]] بيودّي EN للآخر. أول نسخة كان EN جوه الروابط، فعلى 320 الهيدر بقى ٣ سطور (138px، خُمس الشاشة).
+
+**طول الهيدر بيتغيّر، فالـ scroll-margin لازم يتغيّر معاه:** [[page.js]] بيكتب طوله الحقيقي في [[--header-h]]، والعناوين [[scroll-margin-top: calc(var(--header-h) + 1rem)]].
+
+**الغلطة اللي [[matrix.js]] مسكها:** أول نسخة كانت بتكتب الطول بـ [[ResizeObserver]] بس. المصفوفة قالت [[BROKEN]] على عرضين (ar-320 و en-414): أول عنوان طلع تحت الهيدر ([[#services 80<139]]). السبب إن [[ResizeObserver]] بيبلّغ في الفريم الجاي، وأول قفزة حصلت قبله والقيمة لسه الافتراضية (4rem = 64). ولو حد فتح [[index.html#prices]] كان هيحصل نفس الكلام. التصليح: قياس مرة على طول في [[DOMContentLoaded]]، والـ observer بعدها للتغييرات.
+
+**السلايدر:** الصورتين في نفس الخانة ([[grid-area: 1 / 1]])، و «بعد» عليها [[clip-path: inset(0 0 0 var(--pos))]]: بتتقص من الشمال لحد [[--pos]]. الـ range بيغيّر [[--pos]]، والخط الأبيض [[::after]] على نفس [[--pos]]. والسلايدر [[dir="ltr"]] في اللغتين: المقارنة صورة، و «قبل» على الشمال في أي لغة.
+
+**زرار الحجز:** [[IntersectionObserver]] بيقول إمتى قسم الأسعار على الشاشة، والزرار بياخد [[is-hidden]]: شفاف و [[visibility: hidden]] (عشان الكيبورد ميوصلوش وهو مش باين).
+
+**الإنجليزي:** [[lang.js]] في الـ head (من غير defer) بيقلب [[lang]] و [[dir]] قبل ما الصفحة تترسم، فمفيش ومضة عربي. والكلام بيتبدّل من [[data-en]] في [[DOMContentLoaded]].
+
+~~~text node matrix.js (مرتين ورا بعض، نفس الناتج)
+ar  320 scrollWidth=320 OK
+ar  360 scrollWidth=360 OK
+... (كل العروض)
+ar 1920 scrollWidth=1920 OK
+en  320 scrollWidth=320 OK
+... (كل العروض)
+en 1920 scrollWidth=1920 OK
+slider after → ×3: 53% OK
+all sizes OK
+(exit code 0)
+
+قبل تصليح DOMContentLoaded:
+ar  320 scrollWidth=320 BROKEN   hidden: #services 80<139
+en  414 scrollWidth=414 BROKEN   hidden: #services 80<99
+broken: ar-320 en-414   (exit code 1)
+~~~
+
+~~~text قياسات تانية (Chrome 157)
+فتح index.html#prices على موبايل 320: العنوان top = 154، والهيدر بيخلص 138
+زرار الحجز: ظاهر فوق، ومستخبي عند الأسعار (visibility: hidden)، بالعربي (على الشمال) والإنجليزي (على اليمين)
+الهيدر: rgba(255, 255, 255, 0.8) و blur(10px)
+عنصر fixed; bottom: 0 حطيته جوه الهيدر للتجربة: آخره 56 (آخر الهيدر) مش 800 (آخر الشاشة). من غير backdrop-filter: 800
+axe بالعربي والإنجليزي: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**تشغيله:** في فولدر المشروع [[npm i -D playwright-core@1.64.1]]، وسيرفر على 8931 ([[python -m http.server 8931]])، وبعدين [[node matrix.js]] في ترمنال تاني. شرح السكربت سطر سطر في درس «مصفوفة مقاسات».` },
+        { lvl: 'فكرة', dir: "rescue-page", t: R`صفحة إنقاذ: ٦ أعطال responsive`, what: R`اعمل صفحة فيها ٦ أعطال مقصودة: [[html, body { overflow-x: hidden }]] بيموّت الـ sticky، وعنصر مايل [[width: 106%]]، وأيقونة [[left]] في rtl، وقايمة [[z-index: 9999]] مستخبية، و meta viewport ناقص، وهيدر لازق فوق بيغطي العنوان لما تدوس على لينك. وبعدين صلّحهم واحد واحد.`, done: R`لكل عطل: سطر «العَرَض / إزاي لقيته / التصليح / إزاي اتأكدت» برقم متقاس (scrollWidth أو top أو elementFromPoint)، والمصفوفة بعد التصليح كلها OK.`, ext: R`ابعت الصفحة البايظة لزميل يحلّها وانت تراجع تشخيصه، وحوّل الفحص لسكربت CI بيفشل لو أي عطل رجع.`, sol: R`المثال اللي عملته: «نشرة الحي»، صفحة أخبار حي متخيل. ملف HTML واحد بنسختين ([[broken.html]] من غير meta viewport وبيقرا [[broken.css]]، و [[index.html]] بيقرا [[style.css]])، وجدول [[FIXES.md]].
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نشرة الحي</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+  <a class="header__name" href="#top">نشرة الحي</a>
+  <details class="menu">
+    <summary>الأقسام</summary>
+    <ul class="menu__list">
+      <li><a href="#news">أخبار</a></li>
+      <li><a href="#events">فعاليات</a></li>
+      <li><a href="#ads">إعلانات</a></li>
+    </ul>
+  </details>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>كل اللي بيحصل في الحي، في صفحة واحدة</h1>
+    <form class="search" role="search" action="#news">
+      <label class="visually-hidden" for="q">دوّر في النشرة</label>
+      <span class="search__icon" aria-hidden="true">⌕</span>
+      <input class="search__input" id="q" name="q" type="search" placeholder="دوّر في النشرة">
+    </form>
+  </section>
+  <div class="stripe-wrap"><p class="stripe">عدد جديد كل خميس</p></div>
+  <section class="content">
+    <h2 id="news">أخبار</h2>
+    <p>المكتبة العامة هتفتح يوم السبت كمان من الشهر الجاي.</p>
+    <h2 id="events">فعاليات</h2>
+    <p>دوري كورة للأطفال في الساحة، كل جمعة الساعة ٥.</p>
+    <h2 id="ads">إعلانات</h2>
+    <p>شقة للإيجار في العمارة ٧، الدور التالت.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css broken.css
+*, *::before, *::after { box-sizing: border-box; }
+/* عطل ١: hides the sideways scroll... and kills position: sticky (body becomes the scroll box) */
+html, body { overflow-x: hidden; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* the header stays on top while you scroll */
+.header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; padding-inline: 1rem; background: #7c2d12; color: #fff; }
+.header__name { color: inherit; font-weight: 800; text-decoration: none; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; font-weight: 700; }
+/* عطل ٤: a huge number that does nothing: the header's layer is 1, the hero's is 2 */
+.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: 9999; min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
+.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
+
+.hero { position: relative; z-index: 2; padding: 2rem 1rem 3rem; background: #fed7aa; }
+.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
+
+/* عطل ٣: the icon on the LEFT, in a right-to-left page: it sits on the end of the text */
+.search { position: relative; max-width: 28rem; }
+.search__icon { position: absolute; left: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
+.search__input { width: 100%; padding: 0.7rem 2.5rem 0.7rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
+
+/* عطل ٢: a tilted band, 6% wider than the page */
+.stripe-wrap { padding-block: 1.5rem; }
+.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
+
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+/* عطل ٦: nothing tells a jump about the header, so the heading lands under it */
+.filler { height: 120vh; }
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --header-h: 3.5rem;
+  --z-header: 10;    /* the header (and its menu) above everything in the page */
+  --z-menu: 1;       /* inside the header: only has to beat the header's own content */
+}
+/* تصليح ١: no overflow on html/body. The band that stuck out is clipped where it lives (تصليح ٢) */
+/* تصليح ٦: every jump stops below the header */
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.header { position: sticky; top: 0; z-index: var(--z-header); display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: 1rem; background: #7c2d12; color: #fff; }
+.header__name { color: inherit; font-weight: 800; text-decoration: none; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; font-weight: 700; }
+/* تصليح ٤: a small number from a token; it was the header that needed to be higher, not the list */
+.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: var(--z-menu); min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
+.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
+a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.hero { padding: 2rem 1rem 3rem; background: #fed7aa; }   /* no z-index: it never needed one */
+.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
+
+/* تصليح ٣: the start side, whatever the language */
+.search { position: relative; max-width: 28rem; }
+.search__icon { position: absolute; inset-inline-start: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
+.search__input { width: 100%; padding-block: 0.7rem; padding-inline: 2.5rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
+
+/* تصليح ٢: the band is clipped by its own wrapper. clip, not hidden: hidden would make the wrapper a scroll box */
+.stripe-wrap { padding-block: 1.5rem; overflow-x: clip; }
+.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
+
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.filler { height: 120vh; }
+~~~
+
+[[broken.html]] هو نفس [[index.html]] من غير سطر [[<meta name="viewport">]]، و [[href="broken.css"]] بدل [[style.css]].
+
+~~~view 560 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نشرة الحي</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --header-h: 3.5rem;
+  --z-header: 10;    /* the header (and its menu) above everything in the page */
+  --z-menu: 1;       /* inside the header: only has to beat the header's own content */
+}
+/* تصليح ١: no overflow on html/body. The band that stuck out is clipped where it lives (تصليح ٢) */
+/* تصليح ٦: every jump stops below the header */
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.header { position: sticky; top: 0; z-index: var(--z-header); display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: 1rem; background: #7c2d12; color: #fff; }
+.header__name { color: inherit; font-weight: 800; text-decoration: none; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; font-weight: 700; }
+/* تصليح ٤: a small number from a token; it was the header that needed to be higher, not the list */
+.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: var(--z-menu); min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
+.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
+a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.hero { padding: 2rem 1rem 3rem; background: #fed7aa; }   /* no z-index: it never needed one */
+.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
+
+/* تصليح ٣: the start side, whatever the language */
+.search { position: relative; max-width: 28rem; }
+.search__icon { position: absolute; inset-inline-start: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
+.search__input { width: 100%; padding-block: 0.7rem; padding-inline: 2.5rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
+
+/* تصليح ٢: the band is clipped by its own wrapper. clip, not hidden: hidden would make the wrapper a scroll box */
+.stripe-wrap { padding-block: 1.5rem; overflow-x: clip; }
+.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
+
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.filler { height: 120vh; }
+</style>
+</head>
+<body>
+<header class="header">
+  <a class="header__name" href="#top">نشرة الحي</a>
+  <details class="menu">
+    <summary>الأقسام</summary>
+    <ul class="menu__list">
+      <li><a href="#news">أخبار</a></li>
+      <li><a href="#events">فعاليات</a></li>
+      <li><a href="#ads">إعلانات</a></li>
+    </ul>
+  </details>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>كل اللي بيحصل في الحي، في صفحة واحدة</h1>
+    <form class="search" role="search" action="#news">
+      <label class="visually-hidden" for="q">دوّر في النشرة</label>
+      <span class="search__icon" aria-hidden="true">⌕</span>
+      <input class="search__input" id="q" name="q" type="search" placeholder="دوّر في النشرة">
+    </form>
+  </section>
+  <div class="stripe-wrap"><p class="stripe">عدد جديد كل خميس</p></div>
+  <section class="content">
+    <h2 id="news">أخبار</h2>
+    <p>المكتبة العامة هتفتح يوم السبت كمان من الشهر الجاي.</p>
+    <h2 id="events">فعاليات</h2>
+    <p>دوري كورة للأطفال في الساحة، كل جمعة الساعة ٥.</p>
+    <h2 id="ads">إعلانات</h2>
+    <p>شقة للإيجار في العمارة ٧، الدور التالت.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 560 600 النسخة البايظة (افتح «الأقسام»، وانزل، وجرّب العرض)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>نشرة الحي (النسخة البايظة)</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+/* عطل ١: hides the sideways scroll... and kills position: sticky (body becomes the scroll box) */
+html, body { overflow-x: hidden; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* the header stays on top while you scroll */
+.header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; padding-inline: 1rem; background: #7c2d12; color: #fff; }
+.header__name { color: inherit; font-weight: 800; text-decoration: none; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; font-weight: 700; }
+/* عطل ٤: a huge number that does nothing: the header's layer is 1, the hero's is 2 */
+.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: 9999; min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
+.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
+
+.hero { position: relative; z-index: 2; padding: 2rem 1rem 3rem; background: #fed7aa; }
+.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
+
+/* عطل ٣: the icon on the LEFT, in a right-to-left page: it sits on the end of the text */
+.search { position: relative; max-width: 28rem; }
+.search__icon { position: absolute; left: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
+.search__input { width: 100%; padding: 0.7rem 2.5rem 0.7rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
+
+/* عطل ٢: a tilted band, 6% wider than the page */
+.stripe-wrap { padding-block: 1.5rem; }
+.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
+
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+/* عطل ٦: nothing tells a jump about the header, so the heading lands under it */
+.filler { height: 120vh; }
+</style>
+</head>
+<body>
+<header class="header">
+  <a class="header__name" href="#top">نشرة الحي</a>
+  <details class="menu">
+    <summary>الأقسام</summary>
+    <ul class="menu__list">
+      <li><a href="#news">أخبار</a></li>
+      <li><a href="#events">فعاليات</a></li>
+      <li><a href="#ads">إعلانات</a></li>
+    </ul>
+  </details>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>كل اللي بيحصل في الحي، في صفحة واحدة</h1>
+    <form class="search" role="search" action="#news">
+      <label class="visually-hidden" for="q">دوّر في النشرة</label>
+      <span class="search__icon" aria-hidden="true">⌕</span>
+      <input class="search__input" id="q" name="q" type="search" placeholder="دوّر في النشرة">
+    </form>
+  </section>
+  <div class="stripe-wrap"><p class="stripe">عدد جديد كل خميس</p></div>
+  <section class="content">
+    <h2 id="news">أخبار</h2>
+    <p>المكتبة العامة هتفتح يوم السبت كمان من الشهر الجاي.</p>
+    <h2 id="events">فعاليات</h2>
+    <p>دوري كورة للأطفال في الساحة، كل جمعة الساعة ٥.</p>
+    <h2 id="ads">إعلانات</h2>
+    <p>شقة للإيجار في العمارة ٧، الدور التالت.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~text FIXES.md
+# نشرة الحي: ٦ أعطال وتصليحها
+
+الأرقام من Chrome على عرض 360 (الـ iframe فيه scrollbar، فالعرض المتاح 345). $__btbroken.html$__bt قبل، و $__btindex.html$__bt بعد.
+
+| # | العَرَض | إزاي لقيته | التصليح | إزاي اتأكدت |
+|---|---|---|---|---|
+| ١ | الهيدر بيمشي مع الصفحة رغم $__btsticky$__bt | بعد scroll 500: $__btheader.getBoundingClientRect().top$__bt = -500 | شلت $__btoverflow-x: hidden$__bt من $__bthtml, body$__bt | بعد scroll 500: top = 0 |
+| ٢ | شريط «عدد جديد» أعرض من الشاشة | العطل ١ كان مخبّيه (345 = 345). بعد ما شلت ١: $__btscrollWidth$__bt = 356 والعرض 345 | $__btoverflow-x: clip$__bt على $__bt.stripe-wrap$__bt بس | $__btscrollWidth$__bt = 345 |
+| ٣ | أيقونة البحث على الشمال فوق آخر الكلام | الأيقونة على بعد 12 من شمال الخانة، والـ padding الفاضي على اليمين | $__btinset-inline-start$__bt و $__btpadding-inline$__bt | الأيقونة على بعد 12 من يمين الخانة (بداية الكلام) |
+| ٤ | القايمة بتفتح ومحدش شايفها | $__btelementFromPoint$__bt فوق أول لينك فيها = $__btSECTION.hero$__bt | $__btz-index$__bt للهيدر من توكن (10)، وشلت $__btz-index: 2$__bt من الهيرو و 9999 من القايمة | $__btelementFromPoint$__bt = $__btA$__bt |
+| ٥ | الصفحة صغيرة جدًا على الموبايل | موبايل 360 (DevTools): $__btinnerWidth$__bt = 980، والصفحة متصغّرة لـ 0.367، والعنوان 15.3px على الشاشة | $__bt<meta name="viewport" content="width=device-width, initial-scale=1">$__bt | $__btinnerWidth$__bt = 360، و scale = 1، والعنوان 26.8px |
+| ٦ | لينك «فعاليات» بيودّي العنوان تحت الهيدر | بعد تصليح ١: العنوان top = 0 والهيدر لحد 56 | $__btscroll-padding-top$__bt على $__bthtml$__bt | العنوان top = 72 (تحت الهيدر بـ 16) |
+
+**الترتيب مهم:** العطل ١ كان مخبّي ٢ و ٦. الـ $__btoverflow-x: hidden$__bt بيخفي الـ scroll الأفقي، فمكنتش شايف إن فيه حاجة طالعة برّه. والهيدر ما كانش بيلزق أصلًا، فمكنش بيغطّي حاجة. اقفل العطل اللي بيخبّي غيره الأول، وبعدين قيس تاني.
+
+axe على النسخة المصلّحة: 0 violations.
+~~~
+
+**هتشوف إيه:** النسخة المصلّحة: هيدر بني بيفضل فوق، و «الأقسام» بتفتح قايمة بيضا فوق الهيرو، وخانة بحث الأيقونة على يمينها، وشريط مايل «عدد جديد كل خميس» مبيعملش scroll أفقي. والبايظة: الهيدر بيمشي مع الصفحة، والقايمة بتفتح ورا الهيرو، والأيقونة على الشمال.
+
+**ليه [[overflow-x: hidden]] على [[body]] بيموّت الـ sticky:** لما [[html]] و [[body]] الاتنين عليهم overflow، الـ body بيبقى «صندوق scroll» لوحده. الـ sticky بيلزق في أقرب صندوق scroll، يعني الـ body. والـ body نفسه مبيتحركش (الصفحة هي اللي بتتحرك)، فالهيدر بيمشي مع الصفحة. اتقاس: بعد scroll 500 الهيدر top = -500.
+
+**ليه [[clip]] مش [[hidden]] في التصليح ٢:** الاتنين بيقصوا اللي طالع برّه. بس [[hidden]] بيخلي العنصر صندوق scroll (نفس المشكلة اللي فوق لو فيه sticky جواه)، و [[clip]] بيقص وبس.
+
+**ليه 9999 مكانش بيعمل حاجة:** الهيدر [[z-index: 1]] والهيرو [[z-index: 2]]. القايمة جوه الهيدر، فالـ 9999 بتاعها بيتحسب جوه طبقة الهيدر بس، والهيدر كله تحت الهيرو. الحل إن الهيدر نفسه يعلى، والقايمة تاخد رقم صغير.
+
+**القاعدة اللي طلعت من المشروع:** عطل بيخبّي غيره. [[overflow-x: hidden]] كان مخبّي الشريط العريض (الـ scroll الأفقي مش باين)، والهيدر اللي مبيلزقش كان مخبّي إنه بيغطي العناوين. اقفل اللي بيخبّي الأول، وقيس تاني.
+
+~~~text الناتج (Chrome 157، 360)
+                                         broken.html          index.html
+١ الهيدر بعد scroll 500 (top)             -500                 0
+٢ scrollWidth / clientWidth               345 / 345 (مخبّي)    345 / 345
+  البايظة من غير عطل ١                    356 / 345
+٣ الأيقونة من حافة الخانة                  12 من الشمال         12 من اليمين
+٤ elementFromPoint فوق لينك القايمة        SECTION.hero         A
+٥ موبايل 360 (DevTools): innerWidth        980 (scale 0.367)    360 (scale 1)
+  العنوان على الشاشة                      15.3px               26.8px
+٦ «فعاليات» بعد القفزة (البايظة بعد ١)    top 0، الهيدر لحد 56   top 72
+axe على المصلّحة: 0 violations   الـ validator: مفيش رسايل (النسختين)   CSS validator: No Error Found (الملفين)
+~~~
+
+**العطل ٥ مبيظهرش جوه iframe ولا في شباك عادي:** الـ meta viewport بيأثّر على الموبايل بس. جرّبه في DevTools بـ Device toolbar (موبايل)، أو على موبايلك.` },
       ],
       items: [
         {
