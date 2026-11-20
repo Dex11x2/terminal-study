@@ -902,5 +902,11 @@ body:not([data-shell="ps"]):not([data-shell="cmd"]):not([data-shell="zsh"]):not(
 .show-open{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:8px 14px;border:2px solid var(--accent);border-radius:10px;background:transparent;color:var(--accent);font:inherit;font-weight:600;cursor:pointer}
 .show-open:hover{background:var(--accent);color:var(--bg)}
 .show-open:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+/* a preview not drawn yet (lazyShowHTML): a dashed frame with one button in the middle */
+.live.lazy{border-style:dashed}
+.show-draw{display:block;margin:14px auto;padding:10px 22px;border:2px solid var(--accent);border-radius:10px;background:transparent;color:var(--accent);font:inherit;font-weight:600;cursor:pointer}
+.show-draw:hover{background:var(--accent);color:var(--bg)}
+.show-draw:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.live-bar .hide-draw{margin-inline-start:6px;border-color:var(--accent);color:var(--accent);font-weight:600}
 .live.show{border-color:var(--accent)}
 .live.show .live-bar span:first-child{color:var(--accent);font-weight:600}

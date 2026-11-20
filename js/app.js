@@ -177,8 +177,20 @@ const solBox = (sol, first) => {
   if (!sol) return '';
   const files = [...String(sol).matchAll(/^~~~\w+[ \t]+([\w.-]+(?:\/[\w.-]+)*\.\w+)[ \t]*$/gm)].length;
   const what = files === 2 ? 'الكود الكامل (ملفين) والشرح خطوة بخطوة' : files > 2 ? 'الكود الكامل ('+files.toLocaleString('ar-EG')+' ملفات) والشرح خطوة بخطوة' : files === 1 ? 'الكود الكامل والشرح خطوة بخطوة' : 'الحل والشرح خطوة بخطوة';
-  return '<details class="psol psol--sol"><summary><span class="psol-t">'+what+'</span><span class="psol-h">'+first+'، وبعدين افتحه وقارن</span></summary><div class="psol-b">'+mdHTML(sol)+'</div></details>';
+  // the body is built the first time the box opens (fillSol): a closed solution used to carry all its code and
+  // previews into the course page, about 2 MB for the projects alone. tools/render-check.js sets EAGER_SOLS to read every one
+  const eager = typeof window !== 'undefined' && window.EAGER_SOLS;
+  if (!eager) SOLS.push(sol);
+  return '<details class="psol psol--sol"'+(eager ? '' : ' data-sol="'+(SOLS.length - 1)+'"')+'><summary><span class="psol-t">'+what+'</span><span class="psol-h">'+first+'، وبعدين افتحه وقارن</span></summary><div class="psol-b">'+(eager ? mdHTML(sol) : '')+'</div></details>';
 };
+const SOLS = [];
+// toggle doesn't bubble, so listen in the capture phase for every solution box on the page
+if (typeof document !== 'undefined') document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (!d.matches || !d.matches('details[data-sol]') || !d.open || d.dataset.filled) return;
+  d.querySelector('.psol-b').innerHTML = mdHTML(SOLS[+d.dataset.sol]);
+  d.dataset.filled = '1';
+}, true);
 const solFences = sol => [...String(sol || '').matchAll(/^~~~(live|view|html)[ \t]*([^\n]*)\n([\s\S]*?)^~~~[ \t]*$/gm)].map(m => ({lang: m[1], title: m[2].trim(), code: m[3].replace(/\n$/, '')}));
 const fenceH = (f, cap) => { const m = f.title.match(/^(\d{2,4})(?:\s+(\d{2,4}))?/), h = m ? +m[1] : 280; return [Math.min(h, cap), Math.min(m && m[2] ? +m[2] : h, cap)]; };
 /* A project's «الشكل النهائي» is a button that opens the page in its own tab. Drawing it here put dozens of full pages
@@ -225,12 +237,38 @@ function drillShowHTML(p){
   const fs = solFences(p.sol), f = p.work.sol !== undefined ? {title: '', code: p.work.sol} : fs[p.work.solAt || 0];
   if (!f) return '';
   const h = p.work.h || fenceH(f, 360)[0];
-  return showHTML(f.code, 'الشكل المطلوب لما تخلّص', Math.min(h, 360), Math.min(h, 360));
+  return lazyShowHTML(f.code, 'الشكل المطلوب لما تخلّص', Math.min(h, 360), Math.min(h, 360));
 }
 function exShowHTML(ex){
   if (shell !== 'css' || !/^\s*</.test(ex) || /className=|\{\{|=>|<\?php/.test(ex) || /\ssrc="(?!data:)/.test(ex)) return '';
   if (!/<(p|h[1-6]|ul|ol|dl|table|form|a|button|img|input|div|section|article|main|nav|header|footer|figure|blockquote|details|dialog|audio|video|svg|span|strong|em|label|select|textarea|progress|meter|pre|address)[\s>]/.test(ex)) return ''; // head-only snippets have nothing to draw
-  return showHTML(ex, 'شكل المثال ده في المتصفح', 160, 160, true);
+  return lazyShowHTML(ex, 'شكل المثال ده في المتصفح', 160, 160, true);
+}
+/* the same frame as showHTML, but empty until asked: a button where the page will be. The page is kept in DRAWS and
+   becomes an iframe on click, in place, so the example stays next to its explanation (owner, 20 Nov: the course page was slow) */
+const DRAWS = [];
+const lazyBox = i => '<div class="live show lazy"><div class="live-bar"><span>'+esc(DRAWS[i].name)+'</span></div>'+
+  '<button type="button" class="show-draw" data-draw="'+i+'">اعرض النتيجة</button></div>';
+function lazyShowHTML(code, name, h, hm, auto){
+  DRAWS.push({code, name, h, hm, auto});
+  return lazyBox(DRAWS.length - 1);
+}
+// drawn: the usual frame, plus «اخفي» in its bar that puts the empty box back (and drops the iframe)
+function drawShow(btn){
+  const i = +btn.dataset.draw, d = DRAWS[i];
+  if (!d) return;
+  const box = btn.closest('.live');
+  box.outerHTML = showHTML(d.code, d.name, d.h, d.hm, d.auto).replace('</span></div><div class="live-f">', '<button type="button" class="hide-draw" data-undraw="'+i+'">اخفي</button></span></div><div class="live-f">');
+  const hide = document.querySelector('[data-undraw="'+i+'"]');
+  if (hide) hide.focus();                                  // the clicked button is gone: keep the keyboard where the reader is
+}
+function undrawShow(btn){
+  const i = +btn.dataset.undraw;
+  if (!DRAWS[i]) return;
+  const box = btn.closest('.live');
+  box.outerHTML = lazyBox(i);
+  const show = document.querySelector('[data-draw="'+i+'"]');
+  if (show) show.focus();
 }
 /* «ابدأ إزاي»: the same six steps for every HTML project that names its folder (project field dir): make the folder and files in the terminal,
    open it in VS Code, write, see it in Chrome, inspect it, then compare with the solution. The file names come from the solution's fence titles. */
@@ -1203,6 +1241,10 @@ document.addEventListener('click', e => {
   if (lr){ const ta = lr.closest('.live-ed').querySelector('textarea'); ta.value = ta.defaultValue; lr.closest('.live').querySelector('iframe').srcdoc = liveFrame(ta.value); return; }
   const so = e.target.closest('[data-show]');
   if (so){ openShow(so); return; }
+  const dr = e.target.closest('[data-draw]');
+  if (dr){ drawShow(dr); return; }
+  const ud = e.target.closest('[data-undraw]');
+  if (ud){ undrawShow(ud); return; }
   const lw = e.target.closest('[data-lw]');
   if (lw){ // a live preview at phone, tablet or full width
     const box = lw.closest('.live');

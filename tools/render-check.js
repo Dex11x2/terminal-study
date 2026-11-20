@@ -6,6 +6,7 @@ const path = require('path'), fs = require('fs'), http = require('http');
 
 // runs inside the page: uses the site's own render functions on every lesson and unit
 function checkInPage(width) {
+  window.EAGER_SOLS = true;   // project solutions are built when opened (solBox in app.js); here every one is built and read
   const box = document.createElement('div');
   box.style.cssText = `position:absolute;left:0;top:0;width:${width}px;visibility:hidden`;
   document.body.appendChild(box);
