@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "Accessibility",
+      pre: [
+        { to: "css/semantic HTML", why: R`العنصر الصح قبل أي aria` },
+        { to: "css/a و button", why: R`الفرق بين اللينك والزرار للكيبورد` },
+      ],
       l: 3,
       n: "الموقع لازم يشتغل بالكيبورد وقارئ الشاشة ولمن نظره ضعيف، ومعظم ده ببلاش لو الـ HTML صح",
       projects: [
@@ -1812,6 +1816,13 @@ CSS validator: No Error Found (الملفين)
       items: [
         {
           cmd: "aria",
+          ref: [
+            { t: "MDN: ARIA", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA" },
+            { t: "WAI-ARIA APG: Read Me First", url: "https://www.w3.org/WAI/ARIA/apg/practices/read-me-first/" },
+            { t: "MDN: aria-expanded", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-expanded" },
+            { t: "MDN: aria-live", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           title: "لما HTML لوحده ميكفيش: قول لقارئ الشاشة الحالة",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الـ role والاسم، وهل بيتوصل بـ Tab، لكل واحد: [[<button aria-label="القايمة"><svg aria-hidden="true">…</svg></button>]]، و [[<div role="button">حفظ</div>]]، و [[<a>الأسعار</a>]] من غير href، و [[<img src="logo.png" alt="">]]. اكتب، وبعدين افتح DevTools › Elements › Accessibility لكل واحد.`, done: R`الأول button اسمه «القايمة» وبيتوصل، والتاني button اسمه «حفظ» بس مش بيتوصل بـ Tab ولا Enter بيشغّله، والتالت مش link أصلًا (generic) ومش بيتوصل، والرابع ignored (زخرفة). وفهمت ليه [[<button>]] أحسن من [[role="button"]].`, sol: R`~~~html test.html
@@ -2262,6 +2273,12 @@ status live="polite" atomic=true relevant="additions text"
         },
         {
           cmd: "focus-visible",
+          ref: [
+            { t: "MDN: :focus-visible", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:focus-visible" },
+            { t: "MDN: tabindex", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/tabindex" },
+            { t: "W3C: Understanding SC 2.4.7 Focus Visible", url: "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           title: "الموقع بيشتغل بالكيبورد لوحده؟",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:focus-visible]] هيطابق ولا لأ في الحالات دي: دوست على [[<button>]] بالماوس، ودوست على [[<input>]] بالماوس، ووصلت للزرار بـ Tab؟ اكتب، وبعدين جرّب بـ [[document.activeElement.matches(":focus-visible")]] في الكونسول.`, done: R`الزرار بالماوس [[false]]، والـ input بالماوس [[true]] (حقول الكتابة بتبيّن الـ focus دايمًا)، والزرار بـ Tab [[true]]. اتقاس كده في Chrome 156.`, sol: R`~~~html test.html
@@ -2697,6 +2714,14 @@ Tab:    activeElement = BUTTON#save
         },
         {
           cmd: "contrast ratio",
+          ref: [
+            { t: "W3C: Understanding SC 1.4.3 Contrast (Minimum)", url: "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" },
+            { t: "W3C: relative luminance (WCAG 2.2)", url: "https://www.w3.org/TR/WCAG22/#dfn-relative-luminance" },
+            { t: "axe: color-contrast rule", url: "https://dequeuniversity.com/rules/axe/4.10/color-contrast" },
+            { t: "MDN: var()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/var" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           title: "الكلام الرمادي الفاتح اللي محدش بيعرف يقراه",
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** احسب بالمعادلة بإيدك (أو في الكونسول) تباين [[#777777]] و [[#767676]] على الأبيض. الفرق بينهم درجة واحدة في كل قناة: الاتنين بيعدّوا AA؟`, done: R`[[#777777]] = 4.48:1 ساقط، و [[#767676]] = 4.54:1 ناجح. عرفت إن الحد بالظبط 4.5 مفيهوش تقريب، وإن «قريب من 4.5» مش كفاية.`, sol: R`~~~js console

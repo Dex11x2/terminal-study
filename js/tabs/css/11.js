@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "الثيم والعربي والخطوط والأيقونات",
+      pre: [
+        { to: "css/CSS variables", why: R`الثيم كله متغيرات` },
+        { to: "css/lang و dir", why: R`الاتجاه اللي الـ logical properties بتمشي وراه` },
+      ],
       l: 2,
       n: "dark mode من غير وميض، ومكونات بتتقلب لوحدها في العربي، وخط بيتحمّل صح، وأيقونات ليها اسم",
       projects: [
@@ -2028,6 +2032,12 @@ axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Er
       items: [
         {
           cmd: "dark mode",
+          ref: [
+            { t: "next-themes (GitHub)", url: "https://github.com/pacocoursey/next-themes" },
+            { t: "Tailwind CSS: Dark mode", url: "https://tailwindcss.com/docs/dark-mode" },
+            { t: "MDN: color-scheme", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme" },
+            { t: "MDN: prefers-color-scheme", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme" },
+          ],
           title: "وضع غامق بزرار ومن غير وميض",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** الجهاز على dark، و [[localStorage.theme]] فيه [[light]]، والـ CSS فيه [[@custom-variant dark (&:where(.dark, .dark *));]]. خلفية [[<body className="bg-white dark:bg-gray-950">]] هتبقى إيه؟ وهتبقى إيه لو مسحت سطر [[@custom-variant]]؟ اكتب الإجابتين، وبعدين جرّب من DevTools › Rendering › Emulate CSS media feature [[prefers-color-scheme]].`, done: R`كتبت أبيض في الأولى (الكلاس [[light]] اللي على html هو اللي بيحكم مش الجهاز)، وغامق في التانية (من غير السطر [[dark:]] بيرجع يسمع للجهاز ويتجاهل الزرار)، والتجربة طابقت الاتنين.`, sol: R`~~~css in.css
@@ -2522,6 +2532,13 @@ A tree hydrated but some attributes of the server rendered HTML didn't match the
         },
         {
           cmd: "logical properties",
+          ref: [
+            { t: "MDN: Basic concepts of logical properties and values", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Logical_properties_and_values/Basic_concepts" },
+            { t: "Tailwind CSS: Logical properties and RTL", url: "https://tailwindcss.com/docs/hover-focus-and-other-states#rtl-support" },
+            { t: "MDN: dir attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/dir" },
+            { t: "MDN: padding-left", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-left" },
+            { t: "MDN: padding-right", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-right" },
+          ],
           title: "مكون واحد يشتغل عربي وإنجليزي من غير rtl: في كل حتة",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]: [[.a { margin-inline-start: 2rem }]] و [[.b { translate: 20px 0 }]] و [[.c { background: linear-gradient(to right, red, blue) }]] و [[.d { border-start-start-radius: 1rem }]]. كل واحدة هتأثر على أنهي ناحية؟ اكتب، وبعدين اتأكد من Computed في DevTools.`, done: R`[[.a]] يمين، و [[.b]] يمين برضه (translate مش logical)، و [[.c]] الأحمر لسه شمال (الـ gradient مش بيتقلب)، و [[.d]] الركن اللي فوق على اليمين: Computed بيقول [[border-top-right-radius: 16px]] و [[border-top-left-radius: 0px]].`, sol: R`~~~html test.html
@@ -2949,6 +2966,12 @@ dir="ltr":     +20 100 000 0000
         },
         {
           cmd: "next/font",
+          ref: [
+            { t: "Next.js: Font optimization", url: "https://nextjs.org/docs/app/getting-started/fonts" },
+            { t: "Next.js: Font module API", url: "https://nextjs.org/docs/app/api-reference/components/font" },
+            { t: "MDN: font-display", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/font-display" },
+            { t: "MDN: size-adjust", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/size-adjust" },
+          ],
           title: "خط عربي بيتحمّل بسرعة ومن غير ما الصفحة تتنط",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** خط بيوصل بعد ٤ ثواني على نت بطيء. المستخدم هيشوف إيه في أول ٣ ثواني مع كل قيمة من [[font-display]]: [[block]] و [[swap]] و [[fallback]] و [[optional]]؟ وأنهي واحدة الخط ممكن ميظهرش خالص في أول زيارة؟ اكتب جدول، وبعدين جرّب بـ DevTools › Network › Slow 3G و Disable cache.`, done: R`الجدول: [[block]] كلام مخفي لحد ٣ ثواني تقريبًا وبعدين الاحتياطي، و [[swap]] الاحتياطي على طول، و [[fallback]] لحظة صغيرة مخفي وبعدين الاحتياطي ومبيبدّلش لو الخط اتأخر كتير، و [[optional]] الاحتياطي وغالبًا مبيبدّلش في أول زيارة. وفي التجربة شفت [[optional]] بيظهر الخط بس بعد refresh (من الـ cache).`, sol: R`~~~css fonts.css
@@ -3313,6 +3336,11 @@ next/font كتب 4 [[@font-face]]. ٣ لـ Cairo، كل واحد لجزء من �
         },
         {
           cmd: "lucide-react",
+          ref: [
+            { t: "Lucide: lucide-react", url: "https://lucide.dev/guide/react" },
+            { t: "Lucide: Accessibility", url: "https://lucide.dev/how-to/accessibility" },
+            { t: "Simple Icons", url: "https://simpleicons.org/" },
+          ],
           title: "أيقونات SVG كمكونات React",
           desc: R`في [[lucide-react]] كل أيقونة مكون: [[<Search />]] و [[<Menu />]] و [[<ChevronLeft />]]. بتستورد اللي محتاجه بس، والباقي مش بيدخل الـ bundle. الحجم بـ [[size-4]]، واللون بياخد [[currentColor]] فبيمشي مع [[text-*]].
 

@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "اختبار الـ accessibility",
+      pre: [
+        { to: "css/aria", why: R`اللي الأدوات بتفحصه` },
+        { to: "css/contrast ratio", why: R`أشهر حاجة axe بيمسكها` },
+      ],
       l: 3,
       n: "WCAG 2.2 AA هو المعيار، والأدوات الأوتوماتيك بتمسك جزء، والباقي بالكيبورد وقارئ الشاشة",
       projects: [
@@ -2612,6 +2616,16 @@ bookmarklet.txt: 6425 حرف، و new Function(decodeURIComponent(...)) بيقر
       items: [
         {
           cmd: "WCAG 2.2",
+          ref: [
+            { t: "W3C: WCAG 2.2", url: "https://www.w3.org/TR/WCAG22/" },
+            { t: "W3C: What's new in WCAG 2.2", url: "https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/" },
+            { t: "W3C: Understanding SC 2.5.8 Target Size (Minimum)", url: "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html" },
+            { t: "W3C: Understanding SC 2.4.11 Focus Not Obscured (Minimum)", url: "https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html" },
+            { t: "MDN: min-block-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-block-size" },
+            { t: "MDN: min-inline-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-inline-size" },
+            { t: "MDN: scroll-padding-top", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-padding-top" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           title: "WCAG 2.2 AA يعني إيه بالظبط؟",
           practice: [
             { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة «What's New in WCAG 2.2» على موقع W3C هات البنود الجديدة اللي مستواها A أو AA، وإيه البند اللي اتشال من 2.1.`, done: R`جدول ٦ صفوف (2.4.11 Focus Not Obscured، و 2.5.7 Dragging Movements، و 2.5.8 Target Size 24×24، و 3.2.6 Consistent Help، و 3.3.7 Redundant Entry، و 3.3.8 Accessible Authentication) وجنب كل واحد مثال من موقعك، وكتبت إن 4.1.1 Parsing اتشال.`, sol: R`**إجابة نموذجية من «What's New in WCAG 2.2» على موقع W3C:**
@@ -2955,6 +2969,13 @@ POUR مش checklist، هي طريقة تفكير: لكل مكون اسأل: حد
         },
         {
           cmd: "axe و Lighthouse",
+          ref: [
+            { t: "axe-core (GitHub)", url: "https://github.com/dequelabs/axe-core" },
+            { t: "axe-core: rule descriptions", url: "https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md" },
+            { t: "Playwright: Accessibility testing", url: "https://playwright.dev/docs/accessibility-testing" },
+            { t: "Chrome: Lighthouse accessibility scoring", url: "https://developer.chrome.com/docs/lighthouse/accessibility/scoring" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           title: "الفحص الأوتوماتيك: بيمسك إيه وبيفوّت إيه؟",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة من غير [[lang]]، فيها [[<img>]] من غير alt، و [[<input type="email">]] من غير label، وزرار جواه svg بس، وكلام لونه [[#aaa]] على أبيض، و [[<a href="/x"></a>]] فاضي، ومفيش [[h1]]. axe هيطلّع أنهي rules؟ اكتب لستة، وبعدين شغّله.`, done: R`axe-core 4.14 على Chrome 156 طلّع ٧: [[button-name]] و [[color-contrast]] و [[html-has-lang]] و [[image-alt]] و [[label]] و [[link-name]] و [[page-has-heading-one]]. ولما شغّلته بـ [[withTags(["wcag2a","wcag2aa"])]] الأخيرة اختفت لأنها best-practice مش بند WCAG.`, sol: R`~~~html page.html
@@ -3403,6 +3424,11 @@ Lighthouse 13.5 طلّع نفس النتيجة: score ‏75 للصفحة الع�
         },
         {
           cmd: "jsx-a11y و getByRole",
+          ref: [
+            { t: "eslint-plugin-jsx-a11y (GitHub)", url: "https://github.com/jsx-eslint/eslint-plugin-jsx-a11y" },
+            { t: "Testing Library: Which query should I use?", url: "https://testing-library.com/docs/queries/about/#priority" },
+            { t: "Testing Library: user-event", url: "https://testing-library.com/docs/user-event/intro/" },
+          ],
           title: "امسك غلط الـ accessibility وانت بتكتب وفي الاختبارات",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي سطر من دول jsx-a11y recommended هيعترض عليه، وبأنهي rule: [[<img src="a.png" />]]، و [[<div onClick={f}>x</div>]]، و [[<a href="#" onClick={f}>y</a>]]، و [[<button onClick={f}>z</button>]]، و [[<input autoFocus />]]؟`, done: R`eslint 9.39 و jsx-a11y 6.10 طلّعوا ٥ errors: [[alt-text]] للصورة، و [[click-events-have-key-events]] و [[no-static-element-interactions]] للـ div، و [[anchor-is-valid]] للينك («Anchor used as a button»)، و [[no-autofocus]]. والزرار مفيهوش حاجة.`, sol: R`~~~jsx Sample.jsx
@@ -3840,6 +3866,12 @@ Here are the accessible roles:
         },
         {
           cmd: "كيبورد وقارئ شاشة",
+          ref: [
+            { t: "WAI-ARIA APG: Keyboard interface", url: "https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/" },
+            { t: "NVDA User Guide", url: "https://download.nvaccess.org/documentation/userGuide.html" },
+            { t: "WebAIM: Keyboard accessibility", url: "https://webaim.org/techniques/keyboard/" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           title: "الـ checklist اليدوي: كيبورد بس، و NVDA و VoiceOver",
           practice: [
             { lvl: 'تطبيق', t: R`**محاكاة:** اعمل جولة الكيبورد على صفحة تسجيل من موقعك: الماوس بعيد، و snippet في الكونسول بيطبع كل عنصر بياخد focus ([[document.addEventListener("focusin", e => console.log(e.target))]]). خلّص التسجيل كله بالكيبورد.`, done: R`لستة بكل وقفة بالترتيب، وجنبها أي مشكلة (عنصر مخفي واخد focus، أو focus مختفي، أو ترتيب غريب، أو مكان مبتعرفش تخرج منه)، وعدد المشاكل قبل وبعد التصليح.`, sol: R`الصفحة التجريبية فيها مشكلتين متعمدين:
@@ -4145,6 +4177,11 @@ Shift+Tab:    رجع للـ checkbox
         },
         {
           cmd: "إعلان تغيير الصفحة",
+          ref: [
+            { t: "Next.js: Accessibility (route announcements)", url: "https://nextjs.org/docs/architecture/accessibility" },
+            { t: "W3C: Understanding SC 2.4.2 Page Titled", url: "https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html" },
+            { t: "MDN: document.title", url: "https://developer.mozilla.org/en-US/docs/Web/API/Document/title" },
+          ],
           title: "SPA بتغيّر الصفحة وقارئ الشاشة ساكت",
           practice: [
             { lvl: 'سريع', t: R`**قارن وقيس:** في SPA من غير [[RouteFocus]] دوس على لينك «المنتجات» بالكيبورد، واطبع [[document.activeElement]] و [[document.title]]. وبعدين حط المكوّن واعمل نفس الحاجة.`, done: R`من غيره الـ focus فاضل على اللينك (والـ title بيتغيّر من [[<title>]] اللي في الصفحة، مش من المكوّن)، ومعاه الـ focus على [[h1]] «المنتجات»، و Tab اللي بعدها بيروح لأول عنصر في الصفحة الجديدة مش اللي بعد اللينك.`, sol: R`~~~jsx RouteFocus.jsx

@@ -2,6 +2,11 @@
 MORE("css", [
     {
       t: "Tailwind CSS v4",
+      pre: [
+        { to: "css/cascade", why: R`Tailwind بيحط الـ CSS بتاعه في @layer` },
+        { to: "css/media queries", why: R`sm: و md: هما media queries` },
+        { to: "css/CSS variables", why: R`@theme بيعمل CSS variables` },
+      ],
       l: 2,
       n: "Tailwind بيقرا الكلاسات من ملفاتك ويطلّع CSS للي استخدمته بس، والتوكنز والإعداد كلهم في ملف CSS",
       projects: [
@@ -4192,6 +4197,12 @@ axe: 0 violations   الـ validator: مفيش رسايل
       items: [
         {
           cmd: "Tailwind v4",
+          ref: [
+            { t: "Tailwind CSS: Installing with Vite", url: "https://tailwindcss.com/docs/installation/using-vite" },
+            { t: "Tailwind CSS: Tailwind CLI", url: "https://tailwindcss.com/docs/installation/tailwind-cli" },
+            { t: "Tailwind CSS: Upgrade guide (v3 → v4)", url: "https://tailwindcss.com/docs/upgrade-guide" },
+            { t: "Tailwind CSS: Styling with utility classes", url: "https://tailwindcss.com/docs/styling-with-utility-classes" },
+          ],
           title: "إزاي كلاس زي p-4 بيبقى CSS",
           desc: R`Tailwind مش مكتبة مكونات. هو أداة بتقرا ملفات مشروعك، وتلاقي أسماء كلاسات زي [[flex]] و [[p-4]] و [[text-lg]]، وتطلّع ملف CSS فيه القواعد دي بس. فانت بتنسّق من جوه الـ HTML أو الـ JSX مباشرة.
 
@@ -4546,6 +4557,10 @@ export default { plugins: { "@tailwindcss/postcss": {} } };
         },
         {
           cmd: "@theme",
+          ref: [
+            { t: "Tailwind CSS: Theme variables", url: "https://tailwindcss.com/docs/theme" },
+            { t: "Tailwind CSS: Functions and directives", url: "https://tailwindcss.com/docs/functions-and-directives" },
+          ],
           title: "ألوانك وخطوطك تبقى كلاسات",
           desc: R`[[@theme]] في ملف الـ CSS بيعرّف الـ design tokens، وكل متغير بيطلّع كلاسات: [[--color-brand]] بيطلّع [[bg-brand]] و [[text-brand]] و [[border-brand]]، و [[--font-display]] بيطلّع [[font-display]]، و [[--breakpoint-3xl]] بيطلّع [[3xl:]].
 
@@ -4886,6 +4901,11 @@ grep '\[#' بعد التحويل: مفيش حاجة
         },
         {
           cmd: "variants",
+          ref: [
+            { t: "Tailwind CSS: Hover, focus, and other states", url: "https://tailwindcss.com/docs/hover-focus-and-other-states" },
+            { t: "Tailwind CSS: Responsive design", url: "https://tailwindcss.com/docs/responsive-design" },
+            { t: "Tailwind CSS: Dark mode", url: "https://tailwindcss.com/docs/dark-mode" },
+          ],
           title: "hover و focus و md و dark قدام أي كلاس",
           desc: R`أي كلاس في Tailwind تقدر تحط قدامه شرط: [[hover:bg-brand]] (عند الـ hover)، و [[focus-visible:outline-2]] (focus من الكيبورد)، و [[md:flex]] (من 768 وطالع)، و [[dark:bg-gray-900]] (في الوضع الغامق)، و [[disabled:opacity-50]]، و [[rtl:-scale-x-100]].
 
@@ -5320,6 +5340,10 @@ exit: 1
         },
         {
           cmd: "arbitrary values",
+          ref: [
+            { t: "Tailwind CSS: Adding custom styles", url: "https://tailwindcss.com/docs/adding-custom-styles" },
+            { t: "Tailwind CSS: Functions and directives", url: "https://tailwindcss.com/docs/functions-and-directives" },
+          ],
           title: "قيمة مش موجودة في الـ theme؟",
           desc: R`لو محتاج قيمة مرة واحدة: حطها بين أقواس مربعة [[w-[327px]]] و [[bg-[#1da1f2]]] و [[grid-cols-[240px_1fr]]] (الـ [[_]] = مسافة). ومتغير CSS بقوسين عاديين: [[bg-(--brand)]]. وخاصية مش موجودة خالص: [[[-webkit-tap-highlight-color:transparent]]].
 
@@ -5848,6 +5872,11 @@ check("good.css");`, expect: [R`bad.css: line 3: @utility inside @supports`, R`g
         },
         {
           cmd: "group و peer",
+          ref: [
+            { t: "Tailwind CSS: Styling based on parent state", url: "https://tailwindcss.com/docs/hover-focus-and-other-states#styling-based-on-parent-state" },
+            { t: "Tailwind CSS: Styling based on sibling state", url: "https://tailwindcss.com/docs/hover-focus-and-other-states#styling-based-on-sibling-state" },
+            { t: "MDN: :has()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has" },
+          ],
           title: "غيّر شكل ابن لما الأب أو الأخ يتغير",
           desc: R`[[group]] على الأب، و [[group-hover:]] على أي ابن: الابن يتغير لما الماوس ييجي على الأب. مثالي للكارت: السهم يتحرك والعنوان يتلوّن لما تقف على الكارت كله.
 

@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "مكونات بتتعاد: cn و cva و shadcn",
+      pre: [
+        { to: "css/variants", why: R`الـ classes اللي cn و cva بيركّبوها` },
+        { to: "react", why: R`الـ components و props و className` },
+      ],
       l: 2,
       n: "cn بيدمج الكلاسات، و cva بيعمل variants، و shadcn بينسخ مكونات accessible جاهزة في مشروعك",
       projects: [
@@ -1253,6 +1257,11 @@ axe والـ Dialog مفتوح: 0   مقفول: 0 (كانت heading-order:1 قب
       items: [
         {
           cmd: "cn()",
+          ref: [
+            { t: "clsx (GitHub)", url: "https://github.com/lukeed/clsx" },
+            { t: "tailwind-merge (GitHub)", url: "https://github.com/dcastil/tailwind-merge" },
+            { t: "shadcn/ui: Manual installation (lib/utils و cn)", url: "https://ui.shadcn.com/docs/installation/manual" },
+          ],
           title: "دمج الكلاسات من غير ما يتخانقوا",
           desc: R`[[cn()]] دالة صغيرة في كل مشروع shadcn: [[clsx]] بيجمّع الكلاسات ويشيل الشرطية اللي false، و [[twMerge]] بيحل التعارض: لو فيه [[px-4]] و [[px-6]] بيسيب الأخير بس.
 
@@ -1635,6 +1644,10 @@ console.log(cn("text-brand", "text-lg"));    // text-brand text-lg`
         },
         {
           cmd: "cva",
+          ref: [
+            { t: "cva: Variants", url: "https://cva.style/getting-started/variants/" },
+            { t: "cva: TypeScript (VariantProps)", url: "https://cva.style/getting-started/typescript/" },
+          ],
           title: "زرار بأشكال وأحجام من غير if كتير",
           desc: R`[[cva]] (من class-variance-authority) بتعرّف مكون بكلاسات أساسية، و variants بأسماء (نوع وحجم)، وقيم افتراضية. بترجع دالة تدّيها [[{ variant: "outline", size: "sm" }]] وترجعلك الكلاسات.
 
@@ -2120,6 +2133,12 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
         },
         {
           cmd: "shadcn/ui",
+          ref: [
+            { t: "shadcn/ui: Introduction", url: "https://ui.shadcn.com/docs" },
+            { t: "shadcn/ui: CLI", url: "https://ui.shadcn.com/docs/cli" },
+            { t: "shadcn/ui: components.json", url: "https://ui.shadcn.com/docs/components-json" },
+            { t: "shadcn/ui: Button", url: "https://ui.shadcn.com/docs/components/radix/button" },
+          ],
           title: "مكتبة مكونات بتنسخ الكود عندك بدل ما تسطّبه",
           desc: R`shadcn/ui مش package بتسطّبه وتستورد منه. هو CLI بينسخ كود المكون نفسه في مشروعك ([[components/ui/button.tsx]])، فالكود بقى بتاعك: تعدّله وتغيّر شكله براحتك.
 
@@ -2443,6 +2462,11 @@ className={cn(buttonVariants({ variant, size, className }))}
         },
         {
           cmd: "Dialog",
+          ref: [
+            { t: "Radix Primitives: Dialog", url: "https://www.radix-ui.com/primitives/docs/components/dialog" },
+            { t: "WAI-ARIA APG: Dialog (Modal) pattern", url: "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/" },
+            { t: "shadcn/ui: Dialog", url: "https://ui.shadcn.com/docs/components/radix/dialog" },
+          ],
           title: "مودال بيحترم الكيبورد وقارئ الشاشة من غير ما تكتبه",
           desc: R`الـ primitives (Radix أو Base UI) بتديك مكونات من غير شكل بس سلوكها كامل: الـ Dialog بيحبس الـ focus جواه، و Escape بيقفله، والـ focus بيرجع للزرار اللي فتحه، والصفحة اللي ورا مبتعملش scroll.
 
