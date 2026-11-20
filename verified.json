@@ -5175,14 +5175,14 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|صفحات بتفيض على 360": {
-  "hash": "c74190349b94",
-  "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+  "hash": "150095bd0104",
+  "date": "2026-11-20",
+  "on": "Chrome 157 بـ Playwright على Windows 11: الفحص الذاتي بسطر التوصيل جوه { } (PASS 4 الفرع)، وفحص الفيضان على الصفحة البايظة 0 من 8 والسليمة 8 من 8 بعد %20 في الـ data URI"
  },
  "css|صفحات من وصف": {
-  "hash": "26dcf3c40e94",
-  "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+  "hash": "fed99f67dd9e",
+  "date": "2026-11-20",
+  "on": "Chrome 157 بـ Playwright على Windows 11: الفحص الذاتي بسطر التوصيل جوه { } (PASS 4 الفرع)، وفحص الفيضان على الصفحة البايظة 0 من 8 والسليمة 8 من 8 بعد %20 في الـ data URI"
  },
  "css|صلّح الكود البايظ": {
   "hash": "f43d2e89386b",

@@ -19,13 +19,3104 @@ MORE("css", [
       },
       lab: R`mkdir bank-css && cd bank-css && code .   # ملف HTML لكل درس، افتحه في Chrome، و F12 ثم Console عشان تلزق الفحص الذاتي`,
       projects: [
-        { lvl: 'صغير', t: R`كتالوج أشكال CSS`, what: R`صفحة فيها الأشكال العشرة من درس «أشكال بالـ CSS»، كل شكل في كارت تحته اسمه وزرار «انسخ الـ CSS» بيحط الكود في الـ clipboard ([[navigator.clipboard.writeText]])، ومعاهم ٣ أشكال زيادة من عندك (سداسي بـ [[regularPolygon(6)]]، وبادج متعرّج، وسهم مزدوج). كل الألوان متغيرات في [[:root]].`, done: R`الفحص الذاتي بتاع الدرس بيطبع [[النتيجة: 12 من 12]]، وكل زرار نسخ بيطلّع رسالة «اتنسخ» بـ [[role="status"]]، ولما تغيّر لون واحد في [[:root]] كل الأشكال اللي بتستخدمه بتتغير، ومفيش ولا صورة في الصفحة (Network › Img فاضي).` },
-        { lvl: 'صغير', t: R`bookmarklet كاشف الفيضان`, what: R`حوّل فحص درس «صفحات بتفيض على 360» لـ bookmarklet: لينك [[javascript:]] تحطه في شريط العلامات، لما تدوس عليه على أي صفحة بيحط إطار أحمر حوالين كل عنصر طالع برا الشاشة، وبيكتب جنبه عرضه، وبيطبع اللستة في الـ Console.`, done: R`على صفحة الدرس البايظة على عرض 360 بيعلّم الـ ٨ أجزاء، وعلى النسخة السليمة مبيعلّمش حاجة، ولو دوست عليه مرتين الإطارات بتتشال مش بتتكرر.` },
-        { lvl: 'متوسط', t: R`مدقق ألوان الثيم`, what: R`صفحة بتاخد لستة ألوان الثيم (خلفيات وكلام) من textarea بصيغة [[--name: #hex]]، وبتعمل جدول بـ [[buildTable]] من درس «مسائل بالـ JS على الصفحة» فيه كل لون كلام على كل خلفية: النسبة بـ [[contrastRatio]]، و AA و AAA للكلام العادي والكبير، ومعاينة صغيرة للكلام نفسه بالعربي.`, done: R`[[#767676]] على أبيض بيطلع 4.54 و AA، و [[#a1a1aa]] على أبيض 2.56 وبيتعلّم أحمر، ولون مكتوب غلط بيطلّع رسالة تحت الـ textarea مش crash، والجدول نفسه بيعدّي الفحص الذاتي بتاع درس «accessibility: لحد axe صفر».` },
-        { lvl: 'متوسط', t: R`مكتبة layouts بـ container queries`, what: R`الـ layouts التمانية من درس «layouts بالـ flex والـ grid»، كل واحد في component بيعتمد على [[@container]] مش على عرض الشاشة، وصفحة عرض فيها slider بيغيّر عرض الحاوية من 280 لـ 1200px وتشوف كل layout بيتغير قدامك.`, done: R`الفحص الذاتي بتاع الدرس بيعدّي على 1200 و 360، ولما تحط نفس الـ component في سايدبار ضيق على شاشة عريضة بياخد شكل الموبايل لوحده، و [[@media]] مش موجود في ملف الـ layouts خالص.` },
-        { lvl: 'كبير', t: R`صفحة متجر متخيل كاملة من التمارين`, what: R`صفحة «متجر الياسمين» (اسم متخيل) متجمعة من الوحدة كلها: navbar عربي، وهيرو بـ [[min-height: 100dvh]]، وشبكة منتجات auto-fit فيها شارات في ركن النهاية، وباقات بزراير على خط واحد، واختيار توصيل بـ [[:has()]]، وفورم دخول، وتنبيه في الـ top layer، وجدول طلبات من [[buildTable]]. بالعربي والإنجليزي بنفس الـ CSS، وكل الحركة بتقف مع reduced motion.`, done: R`كل فحوص الوحدة الذاتية بتعدّي على 320 و 360 و 768 و 1200 و 1440، و axe صفر، والفحص بتاع التباين صفر (عشان axe بيسكت عن العربي)، والصفحة بتتصفح بالكيبورد بس، و Lighthouse Accessibility ١٠٠ و Performance فوق ٩٠، ومنشورة برابط.`, ext: R`زوّد ملف [[checks.js]] بيجمع كل الفحوص الذاتية ويشغّلها بـ Playwright على المقاسات الخمسة في GitHub Actions، والـ PR اللي بيكسر فحص بيقع.` },
-        { lvl: 'كبير', t: R`بنك تمارين CSS بيتصحح لوحده`, what: R`صفحة زي الموقع ده بالظبط بس للـ CSS: لكل تمرين وصف الهدف، و textarea للـ CSS بتاعك، و iframe بـ [[srcdoc]] بيعرض النتيجة، وزرار «افحص» بيشغّل الفحص الذاتي جوه الـ iframe ويعرض PASS و FAIL. ابدأ بتمارين الأشكال والـ layouts، والعرض بيتغير بأزرار 360 و 768 و 1200 بتغيّر عرض الـ iframe.`, done: R`الحل المرجعي لكل تمرين بيعدّي والحل الغلط بيقع بنفس الرسايل اللي في الدروس، والـ CSS بتاعك بيتحفظ في [[localStorage]] (جوه try/catch) وبيرجع بعد reload، و CSS فيه loop أو غلط مش بيوقّع الصفحة، والصفحة نفسها axe صفر.`, ext: R`زوّد وضع «تحدي اليوم» بتمرين عشوائي وعدّاد وقت، وصفحة إحصائيات بتقولك أنهي نوع تمارين بتقع فيه أكتر.` },
-        { lvl: 'فكرة', t: R`تمرين من موقع بتحبه`, what: R`اختار component من موقع بتستخدمه كل يوم (كارت منتج، أو شريط بحث، أو قايمة، أو تذكرة حجز)، وارسمه من الصفر، واكتب له وصف هدف بالأرقام وفحص ذاتي بنفس شكل الدروس (PASS و FAIL ورسالة بتقول الغلط فين).`, done: R`زميل حل تمرينك من الوصف بس من غير ما يشوف الأصل، والفحص بتاعك قال PASS على حله لما كان صح و FAIL برسالة مفهومة لما غيّرت فيه حاجة واحدة.`, ext: R`ابعته كاقتراح تمرين للبنك ده بنفس الحقول: الهدف، والحل المرجعي، والفحص، وناتجه على حل صح وحل غلط.` },
+        { lvl: 'صغير', dir: "shapes-catalog", t: R`كتالوج أشكال CSS`, what: R`صفحة فيها الأشكال العشرة من درس «أشكال بالـ CSS»، كل شكل في كارت تحته اسمه وزرار «انسخ الـ CSS» بيحط الكود في الـ clipboard ([[navigator.clipboard.writeText]])، ومعاهم ٣ أشكال زيادة من عندك (سداسي بـ [[regularPolygon(6)]]، وبادج متعرّج، وسهم مزدوج). كل الألوان متغيرات في [[:root]].`, done: R`الفحص الذاتي بتاع الدرس بيطبع [[النتيجة: 12 من 12]]، وكل زرار نسخ بيطلّع رسالة «اتنسخ» بـ [[role="status"]]، ولما تغيّر لون واحد في [[:root]] كل الأشكال اللي بتستخدمه بتتغير، ومفيش ولا صورة في الصفحة (Network › Img فاضي).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كتالوج أشكال CSS</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="shapes.css">
+<link rel="stylesheet" href="page.css">
+<script src="catalog.js" defer></script>
+</head>
+<body>
+<main>
+  <h1>كتالوج أشكال CSS</h1>
+  <p class="lead">١٣ شكل من غير ولا صورة. كل الألوان متغيرات في أول <code>shapes.css</code>.</p>
+  <ul class="grid" role="list">
+    <li class="card"><div class="stage"><div id="tri"></div></div><h2>مثلث</h2></li>
+    <li class="card"><div class="stage"><div id="circle"></div></div><h2>دايرة بإطار</h2></li>
+    <li class="card"><div class="stage"><div id="ticket"></div></div><h2>تذكرة</h2></li>
+    <li class="card"><div class="stage"><div id="bubble"></div></div><h2>فقاعة كلام</h2></li>
+    <li class="card"><div class="stage"><div id="heart"></div></div><h2>قلب</h2></li>
+    <li class="card"><div class="stage"><div id="loader" role="status" aria-label="بيحمّل"></div></div><h2>لودر</h2></li>
+    <li class="card"><div class="stage"><div id="chevron"></div></div><h2>سهم «التالي»</h2></li>
+    <li class="card"><div class="stage"><div id="star"></div></div><h2>نجمة</h2></li>
+    <li class="card"><div class="stage"><div id="flag"></div></div><h2>علم</h2></li>
+    <li class="card"><div class="stage"><div id="chess"></div></div><h2>شطرنج</h2></li>
+    <li class="card"><div class="stage"><div id="hexagon"><span>٧</span></div></div><h2>سداسي</h2></li>
+    <li class="card"><div class="stage"><div id="zigzag"><span>جديد</span></div></div><h2>بادج متعرّج</h2></li>
+    <li class="card"><div class="stage"><div id="double-arrow"></div></div><h2>سهم مزدوج</h2></li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+~~~css shapes.css
+/* الألوان كلها هنا: غيّر واحد، وكل شكل بيستخدمه يتغير */
+:root {
+  --rose: #e11d48;
+  --sky: #0ea5e9;
+  --sky-dark: #0c4a6e;
+  --sand: #fde68a;
+  --brown: #92400e;
+  --green: #22c55e;
+  --red: #ef4444;
+  --gray: #e5e7eb;
+  --indigo: #6366f1;
+  --ink: #0f172a;
+  --amber: #f59e0b;
+  --forest: #166534;
+  --white: #ffffff;
+  --yellow: #facc15;
+  --slate: #1e293b;
+  --snow: #f1f5f9;
+  --violet: #7c3aed;
+}
+
+/* ١٠ أشكال الدرس: نفس الحل المرجعي، والألوان بقت var() */
+/* content-box صريح: مشروع فيه reset بـ border-box كان هيخلّي العرض المحسوب 80px بدل 0 */
+#tri { box-sizing: content-box; width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid var(--rose); }
+#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: var(--sky); border: 4px solid var(--sky-dark); }
+#ticket { position: relative; width: 280px; height: 120px; background: var(--sand);
+  mask: radial-gradient(circle 12px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+        radial-gradient(circle 12px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat; }
+#ticket::after { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 200px; border-inline-start: 2px dashed var(--brown); }
+#bubble { position: relative; width: 220px; height: 80px; background: var(--green); border-radius: 16px; }
+#bubble::after { content: ""; position: absolute; top: 100%; left: 24px; border: 12px solid transparent; border-top-color: var(--green); border-bottom: 0; }
+#heart { position: relative; width: 60px; height: 60px; background: var(--red); rotate: 45deg; margin: 20px; }
+#heart::before, #heart::after { content: ""; position: absolute; width: 60px; height: 60px; border-radius: 50%; background: var(--red); }
+#heart::before { left: -30px; }
+#heart::after { top: -30px; }
+#loader { width: 48px; height: 48px; box-sizing: border-box; border: 6px solid var(--gray); border-top-color: var(--indigo); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { rotate: 1turn; } }
+@media (prefers-reduced-motion: reduce) { #loader { animation: none; } }
+#chevron { width: 24px; height: 24px; box-sizing: border-box; border-top: 4px solid var(--ink); border-left: 4px solid var(--ink); rotate: -45deg; }
+#star { width: 120px; height: 120px; background: var(--amber);
+  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }
+#flag { width: 240px; height: 160px;
+  background: radial-gradient(circle 20px, var(--yellow) 98%, #0000),
+              linear-gradient(var(--forest) 33.333%, var(--white) 0 66.666%, var(--forest) 0); }
+#chess { width: 240px; height: 240px; background: repeating-conic-gradient(var(--slate) 0 25%, var(--snow) 0 50%) 0 0 / 60px 60px; }
+
+/* ٣ أشكال زيادة */
+/* سداسي: regularPolygon(6) من الدرس */
+#hexagon { width: 100px; height: 100px; display: grid; place-items: center; background: var(--violet); color: var(--white); font: 800 2rem/1 system-ui, sans-serif;
+  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); }
+/* بادج متعرّج: starPolygon(12, 0.85) = ١٢ سنة قصيرة حوالين دايرة */
+#zigzag { width: 110px; height: 110px; display: grid; place-items: center; background: var(--amber); color: var(--ink); font: 800 1.1rem/1 system-ui, sans-serif;
+  clip-path: polygon(50% 0%, 61% 8.9%, 75% 6.7%, 80.1% 19.9%, 93.3% 25%, 91.1% 39%, 100% 50%, 91.1% 61%, 93.3% 75%, 80.1% 80.1%, 75% 93.3%, 61% 91.1%, 50% 100%, 39% 91.1%, 25% 93.3%, 19.9% 80.1%, 6.7% 75%, 8.9% 61%, 0% 50%, 8.9% 39%, 6.7% 25%, 19.9% 19.9%, 25% 6.7%, 39% 8.9%); }
+/* سهم مزدوج ↔: ١٠ نقط، راس في كل ناحية وجسم في النص */
+#double-arrow { width: 160px; height: 48px; background: var(--ink);
+  clip-path: polygon(0% 50%, 25% 0%, 25% 30%, 75% 30%, 75% 0%, 100% 50%, 75% 100%, 75% 70%, 25% 70%, 25% 100%); }
+~~~
+
+~~~css page.css
+/* شكل الصفحة نفسها (مش جزء من الأشكال اللي بتتنسخ) */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
+main { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h1 { margin: 0; font-size: 1.6rem; }
+.lead { color: #475569; }
+code, pre { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; }
+.grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); }
+.card { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; background: #fff; border: 1px solid #cbd5e1; border-radius: 1rem; }
+/* المسرح: مكان ثابت للشكل، والتذكرة (280px) بتعمل scroll جواه على الموبايل بدل ما الصفحة تفيض */
+.stage { display: grid; place-items: center; min-height: 270px; overflow-x: auto; background: #f1f5f9; border-radius: 0.75rem; }
+.card h2 { margin: 0; font-size: 1.1rem; }
+.copy { align-self: start; font: inherit; font-weight: 700; padding: 0.4rem 1rem; border: 0; border-radius: 999px; background: #1e293b; color: #fff; cursor: pointer; }
+.copy:focus-visible, details summary:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+.msg { margin: 0; min-height: 1.7em; font-weight: 700; color: #166534; }
+.msg.bad { color: #b91c1c; }
+details summary { cursor: pointer; color: #334155; }
+pre { margin: 0.5rem 0 0; padding: 0.75rem; overflow-x: auto; max-height: 14rem; border-radius: 0.5rem; background: #0f172a; color: #e2e8f0; font-size: 0.8rem; text-align: left; }
+~~~
+
+~~~js catalog.js
+// for each card: the CSS of its shape, read from the stylesheet itself (so the copied code is always what the page uses)
+const sheet = [...document.styleSheets].find(s => /shapes\.css$/.test(s.href || "")) || document.styleSheets[0];
+const rules = [...sheet.cssRules];
+const rootVars = getComputedStyle(document.documentElement);
+
+function cssFor(id) {
+  const re = new RegExp("#" + id + "(?![\\w-])");
+  const own = rules.filter(r => r.selectorText && re.test(r.selectorText));
+  const media = rules.filter(r => r.media && [...r.cssRules].some(x => re.test(x.selectorText || "")));
+  // the @keyframes its animation uses
+  const anim = own.map(r => r.style.animationName).filter(Boolean);
+  const frames = rules.filter(r => r.type === CSSRule.KEYFRAMES_RULE && anim.includes(r.name));
+  const body = [...own, ...frames, ...media].map(r => r.cssText);
+  // the colors it uses, with their values, so the copied code works alone
+  const vars = [...new Set(body.join("\n").match(/--[\w-]+/g) || [])];
+  const root = vars.length ? ":root { " + vars.map(v => v + ": " + rootVars.getPropertyValue(v).trim() + ";").join(" ") + " }\n" : "";
+  return root + body.join("\n");
+}
+
+for (const card of document.querySelectorAll(".card")) {
+  const shape = card.querySelector(".stage > [id]"), name = card.querySelector("h2").textContent;
+  const code = cssFor(shape.id);
+  const btn = document.createElement("button");
+  btn.type = "button"; btn.className = "copy"; btn.textContent = "انسخ الـ CSS";
+  btn.setAttribute("aria-label", "انسخ الـ CSS بتاع " + name);
+  const msg = document.createElement("p");
+  msg.className = "msg"; msg.setAttribute("role", "status");
+  const details = document.createElement("details");
+  const summary = document.createElement("summary"); summary.textContent = "الكود";
+  const pre = document.createElement("pre"); pre.textContent = code;
+  details.append(summary, pre);
+  let timer;
+  btn.addEventListener("click", async () => {
+    clearTimeout(timer);
+    msg.classList.remove("bad");
+    try {
+      await navigator.clipboard.writeText(code);
+      msg.textContent = "اتنسخ";
+    } catch {
+      // no clipboard (blocked iframe, old browser, page not focused): say so, and open the code to copy by hand
+      msg.classList.add("bad");
+      msg.textContent = "النسخ مش مسموح هنا، الكود مفتوح تحت";
+      details.open = true;
+    }
+    timer = setTimeout(() => { msg.textContent = ""; }, 3000);
+  });
+  card.append(btn, msg, details);
+}
+~~~
+
+~~~js measure.mjs
+// node shapes/measure.mjs: the lesson self-check, the copy buttons, one shared color, and no images
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+import fs from "node:fs";
+const check = fs.readFileSync(new URL("../src/shapes-check.js", import.meta.url), "utf8");
+const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+const ctx = await b.newContext({ viewport: { width: 1280, height: 900 }, permissions: ["clipboard-read", "clipboard-write"] });
+const p = await ctx.newPage();
+const imgs = [], errs = [];
+p.on("request", r => { if (r.resourceType() === "image") imgs.push(r.url()); });
+p.on("pageerror", e => errs.push(e.message));
+await p.goto("http://127.0.0.1:8840/shapes/index.html");
+
+// 1. the self-check from the lesson, pasted in the console
+const logs = [];
+p.on("console", m => logs.push(m.text()));
+await p.evaluate(check);
+console.log("الفحص الذاتي: " + logs.filter(l => /^(PASS|FAIL|النتيجة)/.test(l)).filter(l => /FAIL|النتيجة/.test(l)).join(" | "));
+
+// 2. the 3 extra shapes: the polygon is exactly what the lesson functions give
+const extra = await p.evaluate(() => ["hexagon", "zigzag", "double-arrow"].map(id => { const e = document.getElementById(id), s = getComputedStyle(e); return id + " " + e.offsetWidth + "×" + e.offsetHeight + " نقط " + s.clipPath.split(",").length; }));
+console.log("الزيادة: " + extra.join(" | "));
+
+// 3. copy: the clipboard really holds the code, and the status says so
+await p.getByRole("button", { name: "انسخ الـ CSS بتاع نجمة" }).click();
+const clip = await p.evaluate(() => navigator.clipboard.readText());
+console.log("بعد نسخ النجمة: الرسالة «" + await p.locator(".card:has(#star) [role=status]").textContent() + "» | الـ clipboard أوله: " + clip.split("\n")[0] + " | فيه #star و clip-path: " + (/#star/.test(clip) && /clip-path/.test(clip)));
+await p.getByRole("button", { name: "انسخ الـ CSS بتاع لودر" }).click();
+const clip2 = await p.evaluate(() => navigator.clipboard.readText());
+console.log("اللودر بيتنسخ معاه: @keyframes " + /@keyframes spin/.test(clip2) + "، و reduced motion " + /prefers-reduced-motion/.test(clip2));
+
+// 4. one color in :root changes every shape that uses it
+const before = await p.evaluate(() => ["star", "zigzag"].map(id => getComputedStyle(document.getElementById(id)).backgroundColor));
+await p.evaluate(() => document.documentElement.style.setProperty("--amber", "#0891b2"));
+const after = await p.evaluate(() => ["star", "zigzag"].map(id => getComputedStyle(document.getElementById(id)).backgroundColor));
+console.log("--amber: النجمة والبادج " + before.join(" و ") + " ← " + after.join(" و "));
+
+// 5. no clipboard (a sandboxed frame, for example): a message, not a crash
+const ctx2 = await b.newContext({ viewport: { width: 400, height: 800 } });
+const p2 = await ctx2.newPage();
+await p2.goto("http://127.0.0.1:8840/shapes/index.html");
+await p2.evaluate(() => { Object.defineProperty(navigator, "clipboard", { value: { writeText: () => Promise.reject(new Error("blocked")) } }); });
+await p2.getByRole("button", { name: "انسخ الـ CSS بتاع قلب" }).click();
+console.log("من غير clipboard: «" + await p2.locator(".card:has(#heart) [role=status]").textContent() + "» والكود مفتوح: " + await p2.locator(".card:has(#heart) details").evaluate(d => d.open));
+const sw = await p2.evaluate(() => document.documentElement.scrollWidth);
+console.log("على 400: عرض الصفحة " + sw);
+
+const axe = await new AxeBuilder({ page: p }).analyze();
+console.log("صور اتطلبت: " + imgs.length + " | errors: " + errs.length + " | axe: " + axe.violations.length + (axe.violations.length ? " " + axe.violations.map(v => v.id).join(" ") : ""));
+await b.close();
+~~~
+
+~~~view 720 720 اعمل scroll جوه
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كتالوج أشكال CSS</title>
+<link rel="icon" href="data:,">
+<style>
+/* الألوان كلها هنا: غيّر واحد، وكل شكل بيستخدمه يتغير */
+:root {
+  --rose: #e11d48;
+  --sky: #0ea5e9;
+  --sky-dark: #0c4a6e;
+  --sand: #fde68a;
+  --brown: #92400e;
+  --green: #22c55e;
+  --red: #ef4444;
+  --gray: #e5e7eb;
+  --indigo: #6366f1;
+  --ink: #0f172a;
+  --amber: #f59e0b;
+  --forest: #166534;
+  --white: #ffffff;
+  --yellow: #facc15;
+  --slate: #1e293b;
+  --snow: #f1f5f9;
+  --violet: #7c3aed;
+}
+
+/* ١٠ أشكال الدرس: نفس الحل المرجعي، والألوان بقت var() */
+/* content-box صريح: مشروع فيه reset بـ border-box كان هيخلّي العرض المحسوب 80px بدل 0 */
+#tri { box-sizing: content-box; width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid var(--rose); }
+#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: var(--sky); border: 4px solid var(--sky-dark); }
+#ticket { position: relative; width: 280px; height: 120px; background: var(--sand);
+  mask: radial-gradient(circle 12px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+        radial-gradient(circle 12px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat; }
+#ticket::after { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 200px; border-inline-start: 2px dashed var(--brown); }
+#bubble { position: relative; width: 220px; height: 80px; background: var(--green); border-radius: 16px; }
+#bubble::after { content: ""; position: absolute; top: 100%; left: 24px; border: 12px solid transparent; border-top-color: var(--green); border-bottom: 0; }
+#heart { position: relative; width: 60px; height: 60px; background: var(--red); rotate: 45deg; margin: 20px; }
+#heart::before, #heart::after { content: ""; position: absolute; width: 60px; height: 60px; border-radius: 50%; background: var(--red); }
+#heart::before { left: -30px; }
+#heart::after { top: -30px; }
+#loader { width: 48px; height: 48px; box-sizing: border-box; border: 6px solid var(--gray); border-top-color: var(--indigo); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { rotate: 1turn; } }
+@media (prefers-reduced-motion: reduce) { #loader { animation: none; } }
+#chevron { width: 24px; height: 24px; box-sizing: border-box; border-top: 4px solid var(--ink); border-left: 4px solid var(--ink); rotate: -45deg; }
+#star { width: 120px; height: 120px; background: var(--amber);
+  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }
+#flag { width: 240px; height: 160px;
+  background: radial-gradient(circle 20px, var(--yellow) 98%, #0000),
+              linear-gradient(var(--forest) 33.333%, var(--white) 0 66.666%, var(--forest) 0); }
+#chess { width: 240px; height: 240px; background: repeating-conic-gradient(var(--slate) 0 25%, var(--snow) 0 50%) 0 0 / 60px 60px; }
+
+/* ٣ أشكال زيادة */
+/* سداسي: regularPolygon(6) من الدرس */
+#hexagon { width: 100px; height: 100px; display: grid; place-items: center; background: var(--violet); color: var(--white); font: 800 2rem/1 system-ui, sans-serif;
+  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); }
+/* بادج متعرّج: starPolygon(12, 0.85) = ١٢ سنة قصيرة حوالين دايرة */
+#zigzag { width: 110px; height: 110px; display: grid; place-items: center; background: var(--amber); color: var(--ink); font: 800 1.1rem/1 system-ui, sans-serif;
+  clip-path: polygon(50% 0%, 61% 8.9%, 75% 6.7%, 80.1% 19.9%, 93.3% 25%, 91.1% 39%, 100% 50%, 91.1% 61%, 93.3% 75%, 80.1% 80.1%, 75% 93.3%, 61% 91.1%, 50% 100%, 39% 91.1%, 25% 93.3%, 19.9% 80.1%, 6.7% 75%, 8.9% 61%, 0% 50%, 8.9% 39%, 6.7% 25%, 19.9% 19.9%, 25% 6.7%, 39% 8.9%); }
+/* سهم مزدوج ↔: ١٠ نقط، راس في كل ناحية وجسم في النص */
+#double-arrow { width: 160px; height: 48px; background: var(--ink);
+  clip-path: polygon(0% 50%, 25% 0%, 25% 30%, 75% 30%, 75% 0%, 100% 50%, 75% 100%, 75% 70%, 25% 70%, 25% 100%); }
+
+</style>
+<style>
+/* شكل الصفحة نفسها (مش جزء من الأشكال اللي بتتنسخ) */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
+main { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h1 { margin: 0; font-size: 1.6rem; }
+.lead { color: #475569; }
+code, pre { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; }
+.grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); }
+.card { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; background: #fff; border: 1px solid #cbd5e1; border-radius: 1rem; }
+/* المسرح: مكان ثابت للشكل، والتذكرة (280px) بتعمل scroll جواه على الموبايل بدل ما الصفحة تفيض */
+.stage { display: grid; place-items: center; min-height: 270px; overflow-x: auto; background: #f1f5f9; border-radius: 0.75rem; }
+.card h2 { margin: 0; font-size: 1.1rem; }
+.copy { align-self: start; font: inherit; font-weight: 700; padding: 0.4rem 1rem; border: 0; border-radius: 999px; background: #1e293b; color: #fff; cursor: pointer; }
+.copy:focus-visible, details summary:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+.msg { margin: 0; min-height: 1.7em; font-weight: 700; color: #166534; }
+.msg.bad { color: #b91c1c; }
+details summary { cursor: pointer; color: #334155; }
+pre { margin: 0.5rem 0 0; padding: 0.75rem; overflow-x: auto; max-height: 14rem; border-radius: 0.5rem; background: #0f172a; color: #e2e8f0; font-size: 0.8rem; text-align: left; }
+
+</style>
+
+</head>
+<body>
+<main>
+  <h1>كتالوج أشكال CSS</h1>
+  <p class="lead">١٣ شكل من غير ولا صورة. كل الألوان متغيرات في أول <code>shapes.css</code>.</p>
+  <ul class="grid" role="list">
+    <li class="card"><div class="stage"><div id="tri"></div></div><h2>مثلث</h2></li>
+    <li class="card"><div class="stage"><div id="circle"></div></div><h2>دايرة بإطار</h2></li>
+    <li class="card"><div class="stage"><div id="ticket"></div></div><h2>تذكرة</h2></li>
+    <li class="card"><div class="stage"><div id="bubble"></div></div><h2>فقاعة كلام</h2></li>
+    <li class="card"><div class="stage"><div id="heart"></div></div><h2>قلب</h2></li>
+    <li class="card"><div class="stage"><div id="loader" role="status" aria-label="بيحمّل"></div></div><h2>لودر</h2></li>
+    <li class="card"><div class="stage"><div id="chevron"></div></div><h2>سهم «التالي»</h2></li>
+    <li class="card"><div class="stage"><div id="star"></div></div><h2>نجمة</h2></li>
+    <li class="card"><div class="stage"><div id="flag"></div></div><h2>علم</h2></li>
+    <li class="card"><div class="stage"><div id="chess"></div></div><h2>شطرنج</h2></li>
+    <li class="card"><div class="stage"><div id="hexagon"><span>٧</span></div></div><h2>سداسي</h2></li>
+    <li class="card"><div class="stage"><div id="zigzag"><span>جديد</span></div></div><h2>بادج متعرّج</h2></li>
+    <li class="card"><div class="stage"><div id="double-arrow"></div></div><h2>سهم مزدوج</h2></li>
+  </ul>
+</main>
+<script>
+// for each card: the CSS of its shape, read from the stylesheet itself (so the copied code is always what the page uses)
+const sheet = [...document.styleSheets].find(s => /shapes\.css$/.test(s.href || "")) || document.styleSheets[0];
+const rules = [...sheet.cssRules];
+const rootVars = getComputedStyle(document.documentElement);
+
+function cssFor(id) {
+  const re = new RegExp("#" + id + "(?![\\w-])");
+  const own = rules.filter(r => r.selectorText && re.test(r.selectorText));
+  const media = rules.filter(r => r.media && [...r.cssRules].some(x => re.test(x.selectorText || "")));
+  // the @keyframes its animation uses
+  const anim = own.map(r => r.style.animationName).filter(Boolean);
+  const frames = rules.filter(r => r.type === CSSRule.KEYFRAMES_RULE && anim.includes(r.name));
+  const body = [...own, ...frames, ...media].map(r => r.cssText);
+  // the colors it uses, with their values, so the copied code works alone
+  const vars = [...new Set(body.join("\n").match(/--[\w-]+/g) || [])];
+  const root = vars.length ? ":root { " + vars.map(v => v + ": " + rootVars.getPropertyValue(v).trim() + ";").join(" ") + " }\n" : "";
+  return root + body.join("\n");
+}
+
+for (const card of document.querySelectorAll(".card")) {
+  const shape = card.querySelector(".stage > [id]"), name = card.querySelector("h2").textContent;
+  const code = cssFor(shape.id);
+  const btn = document.createElement("button");
+  btn.type = "button"; btn.className = "copy"; btn.textContent = "انسخ الـ CSS";
+  btn.setAttribute("aria-label", "انسخ الـ CSS بتاع " + name);
+  const msg = document.createElement("p");
+  msg.className = "msg"; msg.setAttribute("role", "status");
+  const details = document.createElement("details");
+  const summary = document.createElement("summary"); summary.textContent = "الكود";
+  const pre = document.createElement("pre"); pre.textContent = code;
+  details.append(summary, pre);
+  let timer;
+  btn.addEventListener("click", async () => {
+    clearTimeout(timer);
+    msg.classList.remove("bad");
+    try {
+      await navigator.clipboard.writeText(code);
+      msg.textContent = "اتنسخ";
+    } catch {
+      // no clipboard (blocked iframe, old browser, page not focused): say so, and open the code to copy by hand
+      msg.classList.add("bad");
+      msg.textContent = "النسخ مش مسموح هنا، الكود مفتوح تحت";
+      details.open = true;
+    }
+    timer = setTimeout(() => { msg.textContent = ""; }, 3000);
+  });
+  card.append(btn, msg, details);
+}
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ١٣ كارت أبيض في شبكة. في كل كارت مسرح رمادي فاتح فيه الشكل، واسمه، وزرار «انسخ الـ CSS»، وتحته «الكود» بيتفتح. أول عشرة هما أشكال الدرس بالترتيب (مثلث أحمر، دايرة زرقا بإطار، تذكرة صفرا مخرومة…)، وآخر تلاتة: سداسي بنفسجي جواه «٧»، وبادج أصفر متعرّج مكتوب عليه «جديد»، وسهم كحلي بيشاور الناحيتين. دوس «انسخ»: كلمة «اتنسخ» خضرا بتظهر تحت الزرار وتختفي بعد ٣ ثواني. (هنا في الـ preview الـ clipboard ممنوع، فهتشوف «النسخ مش مسموح هنا، الكود مفتوح تحت» والكود بيتفتح لوحده: ده نفس اللي بيحصل في أي iframe متقفّل.)
+
+**الأشكال العشرة = الحل المرجعي بتاع الدرس:** نفس السطور بالظبط، والفرق الوحيد إن كل لون بقى [[var(--اسم)]] من [[:root]]. عشان كده الفحص الذاتي بتاع الدرس لسه ١٢ من ١٢.
+
+**الألوان المتشاركة:** النجمة والبادج المتعرّج الاتنين [[var(--amber)]]، والسهم «التالي» والسهم المزدوج الاتنين [[var(--ink)]]. غيّر [[--amber]] في [[:root]] والشكلين بيتغيروا مع بعض: ده اللي القياس عمله.
+
+**الأشكال التلاتة الزيادة:**
+- **السداسي:** [[clip-path]] هو ناتج [[regularPolygon(6)]] من الدرس بالظبط (٦ نقط على دايرة، أول نقطة فوق).
+- **البادج المتعرّج:** [[starPolygon(12, 0.85)]]: نجمة بـ ١٢ سنة قصيرة (النقط اللي جوه على ٨٥٪ من نص القطر)، فشكلها دايرة مسننة زي ختم.
+- **السهم المزدوج:** polygon بـ ١٠ نقط: راس في كل ناحية وجسم في النص. شكل متماثل، فمش محتاج يتقلب في RTL.
+
+**الكود اللي بيتنسخ بيتقرا من الـ CSS نفسه:** [[catalog.js]] بيلف على [[document.styleSheets]] ويجيب كل قاعدة الـ selector بتاعها فيه [[#id]] بتاع الشكل، والـ [[@keyframes]] اللي الـ animation بتاعته بتستخدمه، والـ [[@media]] اللي بتلمسه، وكل [[--متغير]] مكتوب فيه بقيمته. فالكود اللي بيتنسخ هو اللي الصفحة شغالة بيه فعلًا، ومش ممكن يبقى نسخة قديمة. واللودر بيتنسخ معاه [[@keyframes spin]] و [[prefers-reduced-motion]].
+
+**النسخ ممكن يتمنع:** [[navigator.clipboard.writeText]] بيرجّع Promise ممكن يترفض (iframe متقفّل، أو الصفحة مش عليها focus، أو متصفح قديم). الـ [[catch]] بيكتب رسالة ويفتح الكود، والرسالة في [[role="status"]] فقارئ الشاشة بيقولها.
+
+**التذكرة على الموبايل:** عرضها 280، والمسرح عليه [[overflow-x: auto]]، فعلى 400 الصفحة نفسها عرضها 400 (التذكرة بتعمل scroll جوه كارتها).
+
+**غلطة قابلتني:** أول تشغيل للفحص الذاتي طلّع ١١ من ١٢: «المثلث: المقاس 80×70 والمطلوب 80×70». المقاس صح والفحص وقع! الفحص بيشيّك [[width === '0px']] (المثلث بالـ borders عرضه صفر). وصفحتي فيها reset [[*, *::before, *::after { box-sizing: border-box; }]]، ومع [[border-box]]، الـ [[getComputedStyle().width]] بيرجّع عرض الصندوق كله بالـ border (80px) مش 0. ده هيحصل لأي حد ينسخ المثلث لمشروع فيه الـ reset ده (أغلب المشاريع). الحل جوه الشكل نفسه: [[box-sizing: content-box]] على [[#tri]]، فبيشتغل في أي مشروع.
+
+~~~text الفحص الذاتي قبل
+قبل (والـ reset بتاع الصفحة * { box-sizing: border-box } واصل للمثلث):
+FAIL 1 المثلث ← المقاس 80×70 والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط
+النتيجة: 11 من 12
+~~~
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+الفحص الذاتي: النتيجة: 12 من 12
+الزيادة: hexagon 100×100 نقط 6 | zigzag 110×110 نقط 24 | double-arrow 160×48 نقط 10
+بعد نسخ النجمة: الرسالة «اتنسخ» | الـ clipboard أوله: :root { --amber: #f59e0b; } | فيه #star و clip-path: true
+اللودر بيتنسخ معاه: @keyframes true، و reduced motion true
+--amber: النجمة والبادج rgb(245, 158, 11) و rgb(245, 158, 11) ← rgb(8, 145, 178) و rgb(8, 145, 178)
+من غير clipboard: «النسخ مش مسموح هنا، الكود مفتوح تحت» والكود مفتوح: true
+على 400: عرض الصفحة 400
+صور اتطلبت: 0 | errors: 0 | axe: 0
+~~~` },
+        { lvl: 'صغير', dir: "overflow-bookmarklet", t: R`bookmarklet كاشف الفيضان`, what: R`حوّل فحص درس «صفحات بتفيض على 360» لـ bookmarklet: لينك [[javascript:]] تحطه في شريط العلامات، لما تدوس عليه على أي صفحة بيحط إطار أحمر حوالين كل عنصر طالع برا الشاشة، وبيكتب جنبه عرضه، وبيطبع اللستة في الـ Console.`, done: R`على صفحة الدرس البايظة على عرض 360 بيعلّم الـ ٨ أجزاء، وعلى النسخة السليمة مبيعلّمش حاجة، ولو دوست عليه مرتين الإطارات بتتشال مش بتتكرر.`, sol: R`~~~js overflow.js
+// كاشف الفيضان: أحمر = طالع برا الشاشة، وبرتقاني متقطّع = جوه الشاشة بس طالع برا أبوه. دوسة تانية بتشيل العلامات.
+(() => {
+  const old = document.getElementById("ovf-layer");
+  if (old) { old.remove(); console.log("كاشف الفيضان: اتشال"); return; }   // the second click: clean up, don't stack
+
+  const W = document.documentElement.clientWidth;                         // without the scrollbar
+  const scroller = el => /auto|scroll|hidden|clip/.test(getComputedStyle(el).overflowX);
+  // inside a box that scrolls or clips on its own = not the page's problem
+  const contained = el => { for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) if (scroller(p)) return true; return false; };
+  const out = r => r.width > 0 && (r.right > W + 0.5 || r.left < -0.5);
+  const name = el => el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + (el.classList.length ? "." + [...el.classList].join(".") : "");
+
+  const found = [];
+  const isMarked = el => found.some(f => f.el.contains(el) && f.el !== el);  // only the outermost one of each subtree
+  for (const el of document.body.querySelectorAll("*")) {
+    if (el.closest("#ovf-layer") || contained(el) || isMarked(el)) continue;
+    const r = el.getBoundingClientRect();
+    if (out(r)) found.push({ el, r, what: name(el) });
+  }
+  // text is not an element: a long word can overflow a box that itself fits. A Range measures the letters.
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let t; (t = walk.nextNode());) {
+    const el = t.parentElement;
+    if (!t.data.trim() || !el || el.closest("#ovf-layer") || contained(el) || scroller(el) || found.some(f => f.el.contains(el))) continue;
+    const rg = document.createRange(); rg.selectNodeContents(t);
+    const r = rg.getBoundingClientRect();
+    if (out(r)) found.push({ el, r, what: "كلام في " + name(el) + ": «" + t.data.trim().slice(0, 20) + "…»" });
+  }
+
+  // level 2 (orange): still on screen, but out of its parent's content box (eating the padding).
+  // A 340px card in a 328px space starts 4px from the edge: no horizontal scroll yet, but the layout is already broken
+  const box = el => { const r = el.getBoundingClientRect(), s = getComputedStyle(el); return { left: r.left + parseFloat(s.borderLeftWidth) + parseFloat(s.paddingLeft), right: r.right - parseFloat(s.borderRightWidth) - parseFloat(s.paddingRight) }; };
+  for (const el of document.body.querySelectorAll("*")) {
+    const parent = el.parentElement;
+    if (!parent || parent === document.body || el.closest("#ovf-layer") || contained(el) || found.some(f => f.el === el || f.el.contains(el) || el.contains(f.el))) continue;
+    if (/absolute|fixed/.test(getComputedStyle(el).position)) continue;              // placed on purpose, outside the flow
+    const r = el.getBoundingClientRect(), c = box(parent);
+    if (r.width > 0 && (r.right > c.right + 0.5 || r.left < c.left - 0.5)) found.push({ el, r, what: name(el) + " (برا أبوه " + name(parent) + ")", soft: true });
+  }
+
+  // the marks: one layer on top of the page, so removing it removes everything
+  const layer = document.createElement("div");
+  layer.id = "ovf-layer";
+  layer.style.cssText = "position:absolute;inset:0 auto auto 0;width:0;height:0;z-index:2147483647;pointer-events:none;direction:ltr";
+  for (const f of found) {
+    const box = document.createElement("div"), x = f.r.left + scrollX, y = f.r.top + scrollY;
+    box.style.cssText = "position:absolute;box-sizing:border-box;outline:3px " + (f.soft ? "dashed #ea580c" : "solid #dc2626") + ";outline-offset:-3px;background:" + (f.soft ? "rgb(234 88 12/.08)" : "rgb(220 38 38/.08)") + ";left:" + x + "px;top:" + y + "px;width:" + f.r.width + "px;height:" + Math.max(f.r.height, 4) + "px";
+    const tag = document.createElement("span");
+    tag.textContent = Math.round(f.r.width) + "px" + (f.soft ? " (برا أبوه)" : "");
+    tag.style.cssText = "position:absolute;top:0;left:max(0px," + (-x) + "px);font:700 12px/1.6 system-ui,sans-serif;background:" + (f.soft ? "#9a3412" : "#b91c1c") + ";color:#fff;padding:0 6px";
+    box.append(tag);
+    layer.append(box);
+  }
+  document.body.append(layer);
+  console.log("كاشف الفيضان: عرض الشاشة " + W + "px، وعرض المحتوى " + document.documentElement.scrollWidth + "px، و " + found.length + " حاجة طالعة (" + found.filter(f => f.soft).length + " منهم جوه الشاشة بس برا أبوهم)");
+  if (found.length) console.table(found.map(f => ({ "العنصر": f.what, "العرض": Math.round(f.r.width), "من الشمال": Math.round(f.r.left), "لحد اليمين": Math.round(f.r.right) })));
+})();
+~~~
+
+~~~js build.mjs
+// node bookmarklet/build.mjs: overflow.js → one javascript: link, inside install.html
+import fs from "node:fs";
+const src = fs.readFileSync(new URL("overflow.js", import.meta.url), "utf8");
+// drop the comment lines and the indentation; the code itself stays as is (no minifier needed for 3KB)
+const code = src.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("//")).join("\n");
+// encodeURIComponent: newlines, spaces, % and quotes all become safe inside an href
+const href = "javascript:" + encodeURIComponent(code);
+const esc = s => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+fs.writeFileSync(new URL("install.html", import.meta.url), $__bt<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كاشف الفيضان: bookmarklet</title>
+<link rel="icon" href="data:,">
+<style>
+  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
+  main { max-width: 40rem; margin: 0 auto; padding: 1.5rem 1rem; }
+  .bm { display: inline-block; padding: 0.6rem 1.4rem; border-radius: 999px; background: #dc2626; color: #fff; font-weight: 700; text-decoration: none; }
+  .bm:focus-visible { outline: 3px solid #0f172a; outline-offset: 3px; }
+  ol { padding-inline-start: 1.4rem; }
+  kbd { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; background: #e2e8f0; padding: 0 0.3rem; border-radius: 0.25rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>كاشف الفيضان</h1>
+  <p>اسحب الزرار ده لشريط العلامات:</p>
+  <p><a class="bm" href="$__{esc(href)}">كاشف الفيضان</a></p>
+  <ol>
+    <li>لو شريط العلامات مش ظاهر: <kbd>Ctrl+Shift+B</kbd> (أو <kbd>Cmd+Shift+B</kbd> على الماك).</li>
+    <li>افتح أي صفحة، وصغّر الشاشة لـ 360 من DevTools (<kbd>Ctrl+Shift+M</kbd>).</li>
+    <li>دوس على «كاشف الفيضان» في الشريط: كل حاجة طالعة برا الشاشة عليها إطار أحمر وعرضها، واللستة في الـ Console.</li>
+    <li>دوس عليه تاني: العلامات بتتشال.</li>
+  </ol>
+  <p>الطول: $__{href.length} حرف.</p>
+</main>
+</body>
+</html>
+$__bt);
+console.log("install.html: الـ href " + href.length + " حرف");
+~~~
+
+~~~html lab/broken.html (صفحة الدرس من غير سطور التصليح)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر الورد</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; }
+section { padding: 16px; border-bottom: 1px solid #ddd; }
+td, th { padding: 8px 16px; white-space: nowrap; border: 1px solid #ccc; }
+.chips { display: flex; gap: 8px; }
+.chips button { padding: 8px 20px; }
+.hero { width: 100vw; padding: 40px 24px; background: #fce7f3; font-size: 28px; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; }
+.f { padding: 16px; background: #ecfccb; }
+pre { background: #0f172a; color: #e2e8f0; padding: 12px; }
+.row { display: flex; align-items: center; gap: 8px; }
+.name { font-weight: 600; }
+/* الصفحة البايظة: نفس السليمة من غير سطور التصليح التمانية */
+</style>
+</head>
+<body>
+<section id="s1"><h2>١ صورة المنتج</h2><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='300'%3E%3Crect%20width='600'%20height='300'%20fill='%2393c5fd'/%3E%3C/svg%3E" width="600" height="300" alt="كوباية قهوة على ترابيزة خشب"></section>
+<section id="s2"><h2>٢ إيميل الدعم</h2><p>ابعتلنا على customer.support.orders.team@flowershopexample.com وكود الخصم بتاعك WELCOMEFLOWERSHOPSPRING2026</p></section>
+<section id="s3"><h2>٣ جدول الطلبات</h2><div class="table-wrap"><table><tr><th>رقم الطلب</th><th>العميل</th><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الحالة</th></tr><tr><td>1042</td><td>سارة منير</td><td>بوكيه ورد بلدي</td><td>2</td><td>450 ج.م.</td><td>اتشحن</td></tr></table></div></section>
+<section id="s4"><h2>٤ أزرار الفلتر</h2><div class="chips"><button>الكل</button><button>ورد</button><button>نباتات</button><button>هدايا</button><button>عروض</button><button>جديد</button></div></section>
+<section id="s5"><h2>٥ الهيرو</h2><div class="hero">أحلى ورد في المدينة</div></section>
+<section id="s6"><h2>٦ كروت المميزات</h2><div class="features"><div class="f">توصيل في نفس اليوم</div><div class="f">تغليف هدايا</div><div class="f">دفع عند الاستلام</div></div></section>
+<section id="s7"><h2>٧ كود الـ API</h2><pre><code>fetch("https://flower-shop-example.com/api/v2/orders?status=shipped&amp;limit=50").then(r =&gt; r.json())</code></pre></section>
+<section id="s8"><h2>٨ صف المنتج</h2><div class="row"><span class="ico">🌹</span><span class="name">بوكيه_ورد_بلدي_أحمر_كبير_مع_كارت_إهداء_مكتوب_بخط_اليد</span><button>أضف</button></div></section>
+</body>
+</html>
+~~~
+
+~~~js measure.mjs
+// node bookmarklet/measure.mjs: run the link exactly as a bookmark would (its href, decoded) on the broken and the fixed page
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+const U = "http://127.0.0.1:8840/bookmarklet/";
+const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+const ctx = await b.newContext({ viewport: { width: 360, height: 800 } });
+const p = await ctx.newPage();
+await p.goto(U + "install.html");
+const href = await p.getAttribute(".bm", "href");
+const code = decodeURIComponent(href.slice("javascript:".length));
+console.log("الـ href: " + href.length + " حرف، والكود بعد الفك " + code.length);
+console.log("axe على صفحة التسطيب: " + (await new AxeBuilder({ page: p }).analyze()).violations.length);
+
+for (const page of ["broken", "fixed"]) {
+  const q = await ctx.newPage();
+  const logs = [];
+  q.on("console", async m => { if (m.type() === "log") logs.push(m.text()); });
+  await q.goto(U + "lab/" + page + ".html");
+  await q.evaluate(code);
+  const marks = await q.evaluate(() => {
+    const boxes = [...document.querySelectorAll("#ovf-layer > div")].map(d => d.getBoundingClientRect());
+    // which sections got a mark: the box's middle falls inside the section's height
+    const secs = [...document.querySelectorAll("section[id]")].filter(s => { const r = s.getBoundingClientRect(); return boxes.some(x => x.top + x.height / 2 > r.top && x.top + x.height / 2 < r.bottom); }).map(s => s.id);
+    return { n: boxes.length, secs, labels: [...document.querySelectorAll("#ovf-layer span")].map(s => s.textContent) };
+  });
+  console.log("== " + page + " على 360");
+  console.log("   " + logs[0]);
+  console.log("   علامات " + marks.n + " | الأجزاء اللي اتعلّمت: " + (marks.secs.join(" ") || "ولا جزء") + (marks.labels.length ? " | العروض: " + marks.labels.join(" ") : ""));
+  await q.evaluate(code);
+  console.log("   دوسة تانية: " + logs[1] + " | علامات فاضلة " + await q.locator("#ovf-layer").count());
+  await q.evaluate(code); await q.evaluate(code);
+  console.log("   ٤ دوسات: طبقات " + await q.locator("#ovf-layer").count() + " (مش متكررة)");
+  await q.close();
+}
+await b.close();
+~~~
+
+~~~view 640 720 صفحة الدرس البايظة بعد دوسة على الـ bookmarklet
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر الورد</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; }
+section { padding: 16px; border-bottom: 1px solid #ddd; }
+td, th { padding: 8px 16px; white-space: nowrap; border: 1px solid #ccc; }
+.chips { display: flex; gap: 8px; }
+.chips button { padding: 8px 20px; }
+.hero { width: 100vw; padding: 40px 24px; background: #fce7f3; font-size: 28px; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; }
+.f { padding: 16px; background: #ecfccb; }
+pre { background: #0f172a; color: #e2e8f0; padding: 12px; }
+.row { display: flex; align-items: center; gap: 8px; }
+.name { font-weight: 600; }
+/* الصفحة البايظة: نفس السليمة من غير سطور التصليح التمانية */
+</style>
+</head>
+<body>
+<section id="s1"><h2>١ صورة المنتج</h2><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='300'%3E%3Crect%20width='600'%20height='300'%20fill='%2393c5fd'/%3E%3C/svg%3E" width="600" height="300" alt="كوباية قهوة على ترابيزة خشب"></section>
+<section id="s2"><h2>٢ إيميل الدعم</h2><p>ابعتلنا على customer.support.orders.team@flowershopexample.com وكود الخصم بتاعك WELCOMEFLOWERSHOPSPRING2026</p></section>
+<section id="s3"><h2>٣ جدول الطلبات</h2><div class="table-wrap"><table><tr><th>رقم الطلب</th><th>العميل</th><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الحالة</th></tr><tr><td>1042</td><td>سارة منير</td><td>بوكيه ورد بلدي</td><td>2</td><td>450 ج.م.</td><td>اتشحن</td></tr></table></div></section>
+<section id="s4"><h2>٤ أزرار الفلتر</h2><div class="chips"><button>الكل</button><button>ورد</button><button>نباتات</button><button>هدايا</button><button>عروض</button><button>جديد</button></div></section>
+<section id="s5"><h2>٥ الهيرو</h2><div class="hero">أحلى ورد في المدينة</div></section>
+<section id="s6"><h2>٦ كروت المميزات</h2><div class="features"><div class="f">توصيل في نفس اليوم</div><div class="f">تغليف هدايا</div><div class="f">دفع عند الاستلام</div></div></section>
+<section id="s7"><h2>٧ كود الـ API</h2><pre><code>fetch("https://flower-shop-example.com/api/v2/orders?status=shipped&amp;limit=50").then(r =&gt; r.json())</code></pre></section>
+<section id="s8"><h2>٨ صف المنتج</h2><div class="row"><span class="ico">🌹</span><span class="name">بوكيه_ورد_بلدي_أحمر_كبير_مع_كارت_إهداء_مكتوب_بخط_اليد</span><button>أضف</button></div></section>
+<script>
+// كاشف الفيضان: أحمر = طالع برا الشاشة، وبرتقاني متقطّع = جوه الشاشة بس طالع برا أبوه. دوسة تانية بتشيل العلامات.
+(() => {
+  const old = document.getElementById("ovf-layer");
+  if (old) { old.remove(); console.log("كاشف الفيضان: اتشال"); return; }   // the second click: clean up, don't stack
+
+  const W = document.documentElement.clientWidth;                         // without the scrollbar
+  const scroller = el => /auto|scroll|hidden|clip/.test(getComputedStyle(el).overflowX);
+  // inside a box that scrolls or clips on its own = not the page's problem
+  const contained = el => { for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) if (scroller(p)) return true; return false; };
+  const out = r => r.width > 0 && (r.right > W + 0.5 || r.left < -0.5);
+  const name = el => el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + (el.classList.length ? "." + [...el.classList].join(".") : "");
+
+  const found = [];
+  const isMarked = el => found.some(f => f.el.contains(el) && f.el !== el);  // only the outermost one of each subtree
+  for (const el of document.body.querySelectorAll("*")) {
+    if (el.closest("#ovf-layer") || contained(el) || isMarked(el)) continue;
+    const r = el.getBoundingClientRect();
+    if (out(r)) found.push({ el, r, what: name(el) });
+  }
+  // text is not an element: a long word can overflow a box that itself fits. A Range measures the letters.
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let t; (t = walk.nextNode());) {
+    const el = t.parentElement;
+    if (!t.data.trim() || !el || el.closest("#ovf-layer") || contained(el) || scroller(el) || found.some(f => f.el.contains(el))) continue;
+    const rg = document.createRange(); rg.selectNodeContents(t);
+    const r = rg.getBoundingClientRect();
+    if (out(r)) found.push({ el, r, what: "كلام في " + name(el) + ": «" + t.data.trim().slice(0, 20) + "…»" });
+  }
+
+  // level 2 (orange): still on screen, but out of its parent's content box (eating the padding).
+  // A 340px card in a 328px space starts 4px from the edge: no horizontal scroll yet, but the layout is already broken
+  const box = el => { const r = el.getBoundingClientRect(), s = getComputedStyle(el); return { left: r.left + parseFloat(s.borderLeftWidth) + parseFloat(s.paddingLeft), right: r.right - parseFloat(s.borderRightWidth) - parseFloat(s.paddingRight) }; };
+  for (const el of document.body.querySelectorAll("*")) {
+    const parent = el.parentElement;
+    if (!parent || parent === document.body || el.closest("#ovf-layer") || contained(el) || found.some(f => f.el === el || f.el.contains(el) || el.contains(f.el))) continue;
+    if (/absolute|fixed/.test(getComputedStyle(el).position)) continue;              // placed on purpose, outside the flow
+    const r = el.getBoundingClientRect(), c = box(parent);
+    if (r.width > 0 && (r.right > c.right + 0.5 || r.left < c.left - 0.5)) found.push({ el, r, what: name(el) + " (برا أبوه " + name(parent) + ")", soft: true });
+  }
+
+  // the marks: one layer on top of the page, so removing it removes everything
+  const layer = document.createElement("div");
+  layer.id = "ovf-layer";
+  layer.style.cssText = "position:absolute;inset:0 auto auto 0;width:0;height:0;z-index:2147483647;pointer-events:none;direction:ltr";
+  for (const f of found) {
+    const box = document.createElement("div"), x = f.r.left + scrollX, y = f.r.top + scrollY;
+    box.style.cssText = "position:absolute;box-sizing:border-box;outline:3px " + (f.soft ? "dashed #ea580c" : "solid #dc2626") + ";outline-offset:-3px;background:" + (f.soft ? "rgb(234 88 12/.08)" : "rgb(220 38 38/.08)") + ";left:" + x + "px;top:" + y + "px;width:" + f.r.width + "px;height:" + Math.max(f.r.height, 4) + "px";
+    const tag = document.createElement("span");
+    tag.textContent = Math.round(f.r.width) + "px" + (f.soft ? " (برا أبوه)" : "");
+    tag.style.cssText = "position:absolute;top:0;left:max(0px," + (-x) + "px);font:700 12px/1.6 system-ui,sans-serif;background:" + (f.soft ? "#9a3412" : "#b91c1c") + ";color:#fff;padding:0 6px";
+    box.append(tag);
+    layer.append(box);
+  }
+  document.body.append(layer);
+  console.log("كاشف الفيضان: عرض الشاشة " + W + "px، وعرض المحتوى " + document.documentElement.scrollWidth + "px، و " + found.length + " حاجة طالعة (" + found.filter(f => f.soft).length + " منهم جوه الشاشة بس برا أبوهم)");
+  if (found.length) console.table(found.map(f => ({ "العنصر": f.what, "العرض": Math.round(f.r.width), "من الشمال": Math.round(f.r.left), "لحد اليمين": Math.round(f.r.right) })));
+})();
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** صفحة «متجر الورد» البايظة من الدرس، وعليها إطارات حمرا حوالين كل حاجة طالعة برا الشاشة، وجنب كل واحدة عرضها (600px، 765px…). وكروت المميزات عليها إطار برتقاني متقطّع مكتوب جنبه «340px (برا أبوه)». (الإطارات بتتحسب على عرض الـ preview نفسه.)
+
+**التسطيب:** [[node build.mjs]] بيعمل [[install.html]] فيها زرار أحمر «كاشف الفيضان». اسحبه لشريط العلامات ([[Ctrl+Shift+B]] لو مش ظاهر). الـ href بتاعه [[javascript:]] وبعده الكود كله بـ [[encodeURIComponent]]: المسافات والسطور الجديدة والـ [[%]] والعلامات كلها بتبقى آمنة جوه الـ href. الكود 3.8KB، والـ href بعد التشفير 6,482 حرف، وده أقل بكتير من حد المتصفحات.
+
+**الكود في ملف عادي:** [[overflow.js]] بتكتبه وتقراه زي أي JS، و [[build.mjs]] بيشيل التعليقات والمسافات اللي في أول السطور ويحوّله. لو كتبته في الـ href على طول، أي تعديل هيبقى صعب ومليان [[%20]].
+
+**بيعلّم إيه:**
+- **أحمر:** أي عنصر [[getBoundingClientRect()]] بتاعه [[right]] أكبر من عرض الشاشة أو [[left]] أقل من صفر. الاتنين لأن في RTL الحاجة بتفيض ناحية الشمال (s5: الهيرو بـ [[100vw]] بيطلع من الشمال).
+- **كلام:** إيميل أو كود طويل ممكن يطلع من صندوق هو نفسه سليم. الـ [[Range]] بيقيس الحروف نفسها (زي فحص الدرس)، وده اللي مسك s2.
+- **برتقاني:** عنصر لسه جوه الشاشة بس طالع برا مساحة المحتوى بتاعة أبوه (بياكل الـ padding).
+- **بيتخطّى:** أي حاجة جوه أب عامل [[overflow-x: auto]] أو [[hidden]] أو [[clip]] (الجدول جوه [[.table-wrap]]، والـ [[pre]]): دي مش مشكلة الصفحة. والعنصر جوه عنصر متعلّم مبيتعلّمش تاني، فالجدول بيتعلّم مرة مش ٢٠ خانة.
+
+**دوسة تانية = شيل:** كل العلامات جوه طبقة واحدة [[#ovf-layer]]. أول سطر في الكود: لو الطبقة موجودة، امسحها واخرج. فـ ٤ دوسات = طبقة واحدة اتعملت واتشالت مرتين، مش ٤ طبقات فوق بعض. والطبقة عليها [[pointer-events: none]]، فالصفحة لسه بتتداس وانت بتبص.
+
+**الـ Console:** سطر بالأرقام، وبعده [[console.table]] بكل عنصر وعرضه ومكانه.
+
+**غلطة قابلتني:** أول نسخة كانت بتقيس على الشاشة بس، وعلّمت ٧ أجزاء من ٨. s6 (كروت المميزات) مكانش متعلّم. قست الكارت: عرضه 340 من 4 لـ 344 على شاشة 360، يعني مبيطلعش برا الشاشة، بس طالع من الـ padding بتاع القسم (المكان 328). فحص الدرس بيقيس على مساحة المحتوى جوه كل قسم، فشايفه. زوّدت المستوى البرتقاني، وجرّبته على صفحة سليمة تانية (كتالوج الأشكال على 360 و 1280) عشان أتأكد إنه مش بيعلّم حاجات سليمة: صفر.
+
+~~~text أول نسخة
+أول نسخة (بتقيس على الشاشة بس):
+   كاشف الفيضان: عرض الشاشة 360px، وعرض المحتوى 793px، و 9 حاجة طالعة
+   علامات 9 | الأجزاء اللي اتعلّمت: s1 s2 s3 s4 s5 s7 s8 | العروض: 600px 584px 78px 63px 360px 765px 388px 41px 399px
+~~~
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+الـ href: 6482 حرف، والكود بعد الفك 3833
+axe على صفحة التسطيب: 0
+== broken على 360
+   كاشف الفيضان: عرض الشاشة 360px، وعرض المحتوى 793px، و 12 حاجة طالعة (3 منهم جوه الشاشة بس برا أبوهم)
+   علامات 12 | الأجزاء اللي اتعلّمت: s1 s2 s3 s4 s5 s6 s7 s8 | العروض: 600px 584px 78px 63px 360px 765px 388px 41px 399px 340px (برا أبوه) 340px (برا أبوه) 340px (برا أبوه)
+   دوسة تانية: كاشف الفيضان: اتشال | علامات فاضلة 0
+   ٤ دوسات: طبقات 0 (مش متكررة)
+== fixed على 360
+   كاشف الفيضان: عرض الشاشة 360px، وعرض المحتوى 360px، و 0 حاجة طالعة (0 منهم جوه الشاشة بس برا أبوهم)
+   علامات 0 | الأجزاء اللي اتعلّمت: ولا جزء
+   دوسة تانية: كاشف الفيضان: اتشال | علامات فاضلة 0
+   ٤ دوسات: طبقات 0 (مش متكررة)
+~~~` },
+        { lvl: 'متوسط', dir: "theme-contrast", t: R`مدقق ألوان الثيم`, what: R`صفحة بتاخد لستة ألوان الثيم (خلفيات وكلام) من textarea بصيغة [[--name: #hex]]، وبتعمل جدول بـ [[buildTable]] من درس «مسائل بالـ JS على الصفحة» فيه كل لون كلام على كل خلفية: النسبة بـ [[contrastRatio]]، و AA و AAA للكلام العادي والكبير، ومعاينة صغيرة للكلام نفسه بالعربي.`, done: R`[[#767676]] على أبيض بيطلع 4.54 و AA، و [[#a1a1aa]] على أبيض 2.56 وبيتعلّم أحمر، ولون مكتوب غلط بيطلّع رسالة تحت الـ textarea مش crash، والجدول نفسه بيعدّي الفحص الذاتي بتاع درس «accessibility: لحد axe صفر».`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مدقق ألوان الثيم</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<main>
+  <h1>مدقق ألوان الثيم</h1>
+  <p class="lead">كل سطر <code>--name: #hex</code>. الجدول بيحط كل لون كلام على كل خلفية، ويتحدّث وانت بتكتب.</p>
+  <div class="inputs">
+    <div class="field">
+      <label for="bgs">الخلفيات</label>
+      <textarea id="bgs" rows="5" spellcheck="false" dir="ltr" aria-describedby="bgs-err">--bg: #ffffff
+--surface: #f8fafc
+--brand-soft: #f7e3d6</textarea>
+      <p id="bgs-err" class="err" role="alert"></p>
+    </div>
+    <div class="field">
+      <label for="fgs">ألوان الكلام</label>
+      <textarea id="fgs" rows="5" spellcheck="false" dir="ltr" aria-describedby="fgs-err">--ink: #0f172a
+--muted: #767676
+--faint: #a1a1aa
+--brand: #a3501f</textarea>
+      <p id="fgs-err" class="err" role="alert"></p>
+    </div>
+  </div>
+  <p id="summary" class="summary" aria-live="polite"></p>
+  <div class="table-wrap" id="out" tabindex="0" role="region" aria-labelledby="summary"></div>
+  <p class="note">الكلام «كبير» = 24px أو أكبر، أو 18.66px (14pt) وعريض. AA: عادي 4.5 وكبير 3. AAA: عادي 7 وكبير 4.5.</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~js lesson.js
+// الحل المرجعي بتاع درس «مسائل بالـ JS على الصفحة» زي ما هو، بس كـ module
+export function escapeHtml(v) {
+  return String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+export function buildTable(rows, columns) {
+  const head = '<thead><tr>' + columns.map(c => '<th scope="col">' + escapeHtml(c.label) + '</th>').join('') + '</tr></thead>';
+  const body = rows.length
+    ? rows.map(r => '<tr>' + columns.map(c => '<td>' + escapeHtml(r[c.key] ?? '') + '</td>').join('') + '</tr>').join('')
+    : '<tr><td colspan="' + columns.length + '">مفيش بيانات</td></tr>';
+  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
+}
+export function hexToRgb(hex) {
+  let h = String(hex).trim().replace(/^#/, '');
+  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map(ch => ch + ch).join('');
+  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error('لون مش مفهوم: ' + hex);
+  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+}
+export function luminance(hex) {
+  const [r, g, b] = hexToRgb(hex).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+export function contrastRatio(a, b) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return Math.round((hi + 0.05) / (lo + 0.05) * 100) / 100;
+}
+export function passesAA(fg, bg, large = false) {
+  return contrastRatio(fg, bg) >= (large ? 3 : 4.5);
+}
+const trim4 = n => String(Number(n.toFixed(4)));
+export function pxToRem(css, base = 16) {
+  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => Number(n) === 0 ? '0' : trim4(n / base) + 'rem');
+}
+~~~
+
+~~~js app.js
+import { buildTable, contrastRatio } from "./lesson.js";
+
+const $ = id => document.getElementById(id);
+const ar = n => n.toLocaleString("ar-EG");
+
+// "--name: #hex" per line. A bad line is reported and skipped: the page never crashes on what you type
+export function parse(text) {
+  const colors = [], errors = [], seen = new Set();
+  text.split("\n").forEach((line, i) => {
+    const t = line.trim().replace(/;$/, "");
+    if (!t || t.startsWith("/*") || t.startsWith("//")) return;
+    const m = t.match(/^(--[\w-]+)\s*:\s*(#[0-9a-f]{3}|#[0-9a-f]{6})$/i);
+    if (!m) return errors.push("السطر " + ar(i + 1) + ": «" + t + "» مش بصيغة --name: #hex");
+    if (seen.has(m[1])) return errors.push("السطر " + ar(i + 1) + ": " + m[1] + " متكرر");
+    seen.add(m[1]);
+    colors.push({ name: m[1], hex: m[2].toLowerCase() });
+  });
+  return { colors, errors };
+}
+
+const yes = "✓ ناجح", no = "✗ واقع";
+const columns = [
+  { key: "fg", label: "الكلام" }, { key: "bg", label: "الخلفية" }, { key: "ratio", label: "النسبة" },
+  { key: "aa", label: "AA عادي" }, { key: "aaLarge", label: "AA كبير" }, { key: "aaa", label: "AAA عادي" }, { key: "aaaLarge", label: "AAA كبير" },
+  { key: "preview", label: "معاينة" },
+];
+
+function update() {
+  const bgs = parse($("bgs").value), fgs = parse($("fgs").value);
+  $("bgs-err").textContent = bgs.errors.join("، ");
+  $("fgs-err").textContent = fgs.errors.join("، ");
+  $("bgs").toggleAttribute("aria-invalid", bgs.errors.length > 0);
+  $("fgs").toggleAttribute("aria-invalid", fgs.errors.length > 0);
+
+  const pairs = [];
+  for (const f of fgs.colors) for (const b of bgs.colors) {
+    const r = contrastRatio(f.hex, b.hex);
+    pairs.push({ f, b, r, fg: f.name + " " + f.hex, bg: b.name + " " + b.hex, ratio: r.toFixed(2) + ":1",
+      aa: r >= 4.5 ? yes : no, aaLarge: r >= 3 ? yes : no, aaa: r >= 7 ? yes : no, aaaLarge: r >= 4.5 ? yes : no, preview: "" });
+  }
+  $("out").innerHTML = buildTable(pairs, columns);
+
+  // after the table: color the failing rows, and draw each preview (a picture of text, see below)
+  const rows = $("out").querySelectorAll("tbody tr");
+  pairs.forEach((p, i) => {
+    const tr = rows[i];
+    tr.classList.toggle("bad", p.r < 4.5);
+    tr.querySelectorAll("td").forEach(td => td.classList.toggle("no", td.textContent === no));
+    tr.lastElementChild.append(preview(p));
+  });
+  const bad = pairs.filter(p => p.r < 4.5).length;
+  $("summary").textContent = pairs.length
+    ? ar(pairs.length) + " زوج، منهم " + ar(bad) + " واقعين في AA للكلام العادي"
+    : "مفيش أزواج: محتاج لون كلام وخلفية على الأقل";
+}
+
+// the sample is an image of text (SVG with role="img"): it exists only to SHOW the colors, including the failing ones.
+// WCAG 1.4.3 does not apply to text that is part of a picture; the real information (ratio, pass/fail) is plain text next to it
+function preview(p) {
+  const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "0 0 150 34"); svg.setAttribute("width", "150"); svg.setAttribute("height", "34");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "شكل الكلام بلون " + p.f.name + " على " + p.b.name);
+  const rect = document.createElementNS(NS, "rect");
+  rect.setAttribute("width", "150"); rect.setAttribute("height", "34"); rect.setAttribute("rx", "6"); rect.setAttribute("fill", p.b.hex);
+  const text = document.createElementNS(NS, "text");
+  text.setAttribute("x", "75"); text.setAttribute("y", "22"); text.setAttribute("text-anchor", "middle"); text.setAttribute("fill", p.f.hex);
+  text.setAttribute("font-size", "15");
+  text.textContent = "أهلًا بيك في المتجر";
+  svg.append(rect, text);
+  return svg;
+}
+
+$("bgs").addEventListener("input", update);
+$("fgs").addEventListener("input", update);
+update();
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #ffffff; }
+main { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h1 { margin: 0; font-size: 1.6rem; }
+.lead, .note { color: #475569; }
+code, textarea { font-family: ui-monospace, Consolas, monospace; }
+code { direction: ltr; unicode-bidi: isolate; }
+.inputs { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+.field { display: grid; gap: 0.3rem; }
+label { font-weight: 700; }
+textarea { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #64748b; border-radius: 0.5rem; font-size: 0.95rem; line-height: 1.6; text-align: left; }
+textarea[aria-invalid] { border: 2px solid #b91c1c; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+.err { margin: 0; min-height: 1.5em; color: #b91c1c; font-weight: 700; }
+.summary { font-weight: 700; }
+.table-wrap { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 0.75rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.5rem 0.75rem; text-align: start; white-space: nowrap; border-bottom: 1px solid #e2e8f0; }
+th { background: #f1f5f9; }
+td:first-child, td:nth-child(2) { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; }
+td:last-child { line-height: 0; }
+/* a failing row: red on light red (8:1), and the ✗ cells bold, so it is not color alone */
+tr.bad td { background: #fef2f2; color: #991b1b; }
+td.no { font-weight: 800; }
+~~~
+
+~~~js measure.mjs
+// node contrast/measure.mjs: the two numbers from the done, a bad line, the lesson a11y self-check, axe
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+import fs from "node:fs";
+const check = fs.readFileSync(new URL("../src/a11y-check.js", import.meta.url), "utf8");
+const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+const p = await (await b.newContext({ viewport: { width: 1280, height: 900 } })).newPage();   // axe needs a page from a context
+const errs = [], logs = [];
+p.on("pageerror", e => errs.push(e.message));
+p.on("console", m => logs.push(m.text()));
+await p.goto("http://127.0.0.1:8840/contrast/index.html");
+const row = (fg, bg) => p.evaluate(([fg, bg]) => {
+  const tr = [...document.querySelectorAll("tbody tr")].find(r => r.cells[0].textContent.includes(fg) && r.cells[1].textContent.includes(bg));
+  return [...tr.cells].slice(0, 7).map(c => c.textContent).join(" | ") + (tr.classList.contains("bad") ? "  ← صف أحمر (" + getComputedStyle(tr.cells[0]).backgroundColor + ")" : "");
+}, [fg, bg]);
+console.log(await p.textContent("#summary"));
+console.log(await row("#767676", "#ffffff"));
+console.log(await row("#a1a1aa", "#ffffff"));
+
+// the lesson self-check, then axe
+await p.evaluate(check);
+console.log("الفحص الذاتي: " + logs.filter(l => /^(FAIL|النتيجة)/.test(l)).join(" | "));
+console.log("axe: " + (await new AxeBuilder({ page: p }).analyze()).violations.length);
+
+// a broken line and a typo: a message, the rest of the table still there
+await p.fill("#fgs", "--ink: #0f172a\n--oops: #12g\nnot a color\n--ink: #000");
+console.log("سطور غلط: «" + await p.textContent("#fgs-err") + "» | " + await p.textContent("#summary") + " | errors: " + errs.length);
+await p.fill("#bgs", "");
+console.log("من غير خلفيات: " + await p.textContent("#summary") + " | الجدول: " + await p.textContent("#out tbody"));
+
+// the same page with the preview as normal text in its own colors (the first version): what the checks say
+await p.reload();
+logs.length = 0;
+await p.evaluate(() => document.querySelectorAll("td svg").forEach(svg => {
+  const s = document.createElement("span");
+  s.textContent = "أهلًا بيك في المتجر";
+  s.style.cssText = "display:inline-block;padding:4px 10px;border-radius:6px;color:" + svg.querySelector("text").getAttribute("fill") + ";background:" + svg.querySelector("rect").getAttribute("fill");
+  svg.replaceWith(s);
+}));
+await p.evaluate(check);
+const axe2 = await new AxeBuilder({ page: p }).analyze();
+console.log("لو المعاينة كلام عادي: " + logs.filter(l => /^(FAIL 7|النتيجة)/.test(l)).map(l => l.slice(0, 120)).join(" | ") + " | axe: " + axe2.violations.map(v => v.id + " ×" + v.nodes.length).join(" "));
+await b.close();
+~~~
+
+~~~view 720 720 اعمل scroll جوه
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مدقق ألوان الثيم</title>
+<link rel="icon" href="data:,">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #ffffff; }
+main { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h1 { margin: 0; font-size: 1.6rem; }
+.lead, .note { color: #475569; }
+code, textarea { font-family: ui-monospace, Consolas, monospace; }
+code { direction: ltr; unicode-bidi: isolate; }
+.inputs { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+.field { display: grid; gap: 0.3rem; }
+label { font-weight: 700; }
+textarea { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #64748b; border-radius: 0.5rem; font-size: 0.95rem; line-height: 1.6; text-align: left; }
+textarea[aria-invalid] { border: 2px solid #b91c1c; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+.err { margin: 0; min-height: 1.5em; color: #b91c1c; font-weight: 700; }
+.summary { font-weight: 700; }
+.table-wrap { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 0.75rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.5rem 0.75rem; text-align: start; white-space: nowrap; border-bottom: 1px solid #e2e8f0; }
+th { background: #f1f5f9; }
+td:first-child, td:nth-child(2) { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; }
+td:last-child { line-height: 0; }
+/* a failing row: red on light red (8:1), and the ✗ cells bold, so it is not color alone */
+tr.bad td { background: #fef2f2; color: #991b1b; }
+td.no { font-weight: 800; }
+
+</style>
+</head>
+<body>
+<main>
+  <h1>مدقق ألوان الثيم</h1>
+  <p class="lead">كل سطر <code>--name: #hex</code>. الجدول بيحط كل لون كلام على كل خلفية، ويتحدّث وانت بتكتب.</p>
+  <div class="inputs">
+    <div class="field">
+      <label for="bgs">الخلفيات</label>
+      <textarea id="bgs" rows="5" spellcheck="false" dir="ltr" aria-describedby="bgs-err">--bg: #ffffff
+--surface: #f8fafc
+--brand-soft: #f7e3d6</textarea>
+      <p id="bgs-err" class="err" role="alert"></p>
+    </div>
+    <div class="field">
+      <label for="fgs">ألوان الكلام</label>
+      <textarea id="fgs" rows="5" spellcheck="false" dir="ltr" aria-describedby="fgs-err">--ink: #0f172a
+--muted: #767676
+--faint: #a1a1aa
+--brand: #a3501f</textarea>
+      <p id="fgs-err" class="err" role="alert"></p>
+    </div>
+  </div>
+  <p id="summary" class="summary" aria-live="polite"></p>
+  <div class="table-wrap" id="out" tabindex="0" role="region" aria-labelledby="summary"></div>
+  <p class="note">الكلام «كبير» = 24px أو أكبر، أو 18.66px (14pt) وعريض. AA: عادي 4.5 وكبير 3. AAA: عادي 7 وكبير 4.5.</p>
+</main>
+<script type="module">
+// الحل المرجعي بتاع درس «مسائل بالـ JS على الصفحة» زي ما هو، بس كـ module
+function escapeHtml(v) {
+  return String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+function buildTable(rows, columns) {
+  const head = '<thead><tr>' + columns.map(c => '<th scope="col">' + escapeHtml(c.label) + '</th>').join('') + '</tr></thead>';
+  const body = rows.length
+    ? rows.map(r => '<tr>' + columns.map(c => '<td>' + escapeHtml(r[c.key] ?? '') + '</td>').join('') + '</tr>').join('')
+    : '<tr><td colspan="' + columns.length + '">مفيش بيانات</td></tr>';
+  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
+}
+function hexToRgb(hex) {
+  let h = String(hex).trim().replace(/^#/, '');
+  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map(ch => ch + ch).join('');
+  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error('لون مش مفهوم: ' + hex);
+  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+}
+function luminance(hex) {
+  const [r, g, b] = hexToRgb(hex).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function contrastRatio(a, b) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return Math.round((hi + 0.05) / (lo + 0.05) * 100) / 100;
+}
+function passesAA(fg, bg, large = false) {
+  return contrastRatio(fg, bg) >= (large ? 3 : 4.5);
+}
+const trim4 = n => String(Number(n.toFixed(4)));
+function pxToRem(css, base = 16) {
+  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => Number(n) === 0 ? '0' : trim4(n / base) + 'rem');
+}
+
+
+const $ = id => document.getElementById(id);
+const ar = n => n.toLocaleString("ar-EG");
+
+// "--name: #hex" per line. A bad line is reported and skipped: the page never crashes on what you type
+function parse(text) {
+  const colors = [], errors = [], seen = new Set();
+  text.split("\n").forEach((line, i) => {
+    const t = line.trim().replace(/;$/, "");
+    if (!t || t.startsWith("/*") || t.startsWith("//")) return;
+    const m = t.match(/^(--[\w-]+)\s*:\s*(#[0-9a-f]{3}|#[0-9a-f]{6})$/i);
+    if (!m) return errors.push("السطر " + ar(i + 1) + ": «" + t + "» مش بصيغة --name: #hex");
+    if (seen.has(m[1])) return errors.push("السطر " + ar(i + 1) + ": " + m[1] + " متكرر");
+    seen.add(m[1]);
+    colors.push({ name: m[1], hex: m[2].toLowerCase() });
+  });
+  return { colors, errors };
+}
+
+const yes = "✓ ناجح", no = "✗ واقع";
+const columns = [
+  { key: "fg", label: "الكلام" }, { key: "bg", label: "الخلفية" }, { key: "ratio", label: "النسبة" },
+  { key: "aa", label: "AA عادي" }, { key: "aaLarge", label: "AA كبير" }, { key: "aaa", label: "AAA عادي" }, { key: "aaaLarge", label: "AAA كبير" },
+  { key: "preview", label: "معاينة" },
+];
+
+function update() {
+  const bgs = parse($("bgs").value), fgs = parse($("fgs").value);
+  $("bgs-err").textContent = bgs.errors.join("، ");
+  $("fgs-err").textContent = fgs.errors.join("، ");
+  $("bgs").toggleAttribute("aria-invalid", bgs.errors.length > 0);
+  $("fgs").toggleAttribute("aria-invalid", fgs.errors.length > 0);
+
+  const pairs = [];
+  for (const f of fgs.colors) for (const b of bgs.colors) {
+    const r = contrastRatio(f.hex, b.hex);
+    pairs.push({ f, b, r, fg: f.name + " " + f.hex, bg: b.name + " " + b.hex, ratio: r.toFixed(2) + ":1",
+      aa: r >= 4.5 ? yes : no, aaLarge: r >= 3 ? yes : no, aaa: r >= 7 ? yes : no, aaaLarge: r >= 4.5 ? yes : no, preview: "" });
+  }
+  $("out").innerHTML = buildTable(pairs, columns);
+
+  // after the table: color the failing rows, and draw each preview (a picture of text, see below)
+  const rows = $("out").querySelectorAll("tbody tr");
+  pairs.forEach((p, i) => {
+    const tr = rows[i];
+    tr.classList.toggle("bad", p.r < 4.5);
+    tr.querySelectorAll("td").forEach(td => td.classList.toggle("no", td.textContent === no));
+    tr.lastElementChild.append(preview(p));
+  });
+  const bad = pairs.filter(p => p.r < 4.5).length;
+  $("summary").textContent = pairs.length
+    ? ar(pairs.length) + " زوج، منهم " + ar(bad) + " واقعين في AA للكلام العادي"
+    : "مفيش أزواج: محتاج لون كلام وخلفية على الأقل";
+}
+
+// the sample is an image of text (SVG with role="img"): it exists only to SHOW the colors, including the failing ones.
+// WCAG 1.4.3 does not apply to text that is part of a picture; the real information (ratio, pass/fail) is plain text next to it
+function preview(p) {
+  const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "0 0 150 34"); svg.setAttribute("width", "150"); svg.setAttribute("height", "34");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "شكل الكلام بلون " + p.f.name + " على " + p.b.name);
+  const rect = document.createElementNS(NS, "rect");
+  rect.setAttribute("width", "150"); rect.setAttribute("height", "34"); rect.setAttribute("rx", "6"); rect.setAttribute("fill", p.b.hex);
+  const text = document.createElementNS(NS, "text");
+  text.setAttribute("x", "75"); text.setAttribute("y", "22"); text.setAttribute("text-anchor", "middle"); text.setAttribute("fill", p.f.hex);
+  text.setAttribute("font-size", "15");
+  text.textContent = "أهلًا بيك في المتجر";
+  svg.append(rect, text);
+  return svg;
+}
+
+$("bgs").addEventListener("input", update);
+$("fgs").addEventListener("input", update);
+update();
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خانتين جنب بعض: «الخلفيات» فيها ٣ ألوان، و «ألوان الكلام» فيها ٤. تحتهم سطر «١٢ زوج، منهم ٥ واقعين في AA للكلام العادي»، وجدول ١٢ صف: لون الكلام، والخلفية، والنسبة (زي [[4.54:1]])، وأربع خانات ✓ ناجح أو ✗ واقع (AA و AAA، عادي وكبير)، ومعاينة صغيرة «أهلًا بيك في المتجر» بالألوان نفسها. الصفوف الواقعة خلفيتها حمرا فاتحة والـ ✗ فيها عريض. غيّر أي لون والجدول بيتحدّث وانت بتكتب.
+
+**الحساب من الدرس زي ما هو:** [[lesson.js]] هو الحل المرجعي بتاع درس «مسائل بالـ JS على الصفحة»، و [[export]] بس قدام كل function. [[contrastRatio]] بيرجّع رقم بعلامتين عشريتين ([[#767676]] على أبيض = 4.54، و [[#a1a1aa]] = 2.56)، و [[buildTable]] بيعمل escape لكل قيمة، فالـ [[innerHTML]] آمن حتى لو كتبت [[<b>]] في اسم لون.
+
+**القراية من غير ما الصفحة تقع:** [[parse()]] بتمشي سطر سطر. سطر فاضي أو تعليق بيتساب. سطر مش [[--name: #hex]] (أو [[#abc]] بـ ٣ حروف) بيدخل لستة أخطاء برقمه، والاسم المكرر كمان. الأخطاء بتتكتب تحت الخانة بتاعتها في [[role="alert"]]، والخانة عليها [[aria-invalid]]، والجدول بيكمل بالسطور السليمة. ومن غير أي خلفية: صف واحد «مفيش بيانات» (ده من [[buildTable]] نفسها).
+
+**المعاينة صورة، مش كلام:** المطلوب إن المعاينة توري الألوان الواقعة كمان، وفي نفس الوقت الصفحة تعدّي فحص الـ accessibility بتاع الدرس، وده بيقيس تباين كل كلام في الصفحة. الحل: المعاينة [[<svg role="img">]] باسم بيوصفها («شكل الكلام بلون --muted على --bg»)، والكلام جوه [[<text>]] بـ [[fill]]. WCAG 1.4.3 مبيطبّقش على كلام جزء من صورة بيوري شكل، والمعلومة نفسها (النسبة و ✓ و ✗) مكتوبة كلام عادي جنبها. **قبل ما أقرر كده قست النسخة التانية:** لو المعاينة [[<span>]] بألوانها، فحص الدرس بيقول [[FAIL 7]] على ٣ ألوان (4.34 و 3.66 و 2.56)، و **axe مقالش ولا حاجة**: نفس اللي الدرس بيقوله، axe بيسكت عن الكلام العربي المتوصّل.
+
+**الأحمر مش باللون بس:** الصف الواقع خلفيته حمرا فاتحة وكلامه أحمر غامق (7.6:1)، و «✗ واقع» مكتوبة بالكلام وعريضة.
+
+**غلطة قابلتني:** أول تشغيل للقياس وقع بـ [[Error: Please use browser.newContext()]]. [[@axe-core/playwright]] محتاج صفحة من context ([[browser.newContext()]] ثم [[newPage()]])، مش [[browser.newPage()]] على طول.
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+١٢ زوج، منهم ٥ واقعين في AA للكلام العادي
+--muted #767676 | --bg #ffffff | 4.54:1 | ✓ ناجح | ✓ ناجح | ✗ واقع | ✓ ناجح
+--faint #a1a1aa | --bg #ffffff | 2.56:1 | ✗ واقع | ✗ واقع | ✗ واقع | ✗ واقع  ← صف أحمر (rgb(254, 242, 242))
+الفحص الذاتي: النتيجة: 10 من 10 (وبعدها شغّل axe، وجرّب بالكيبورد بس)
+axe: 0
+سطور غلط: «السطر ٢: «--oops: #12g» مش بصيغة --name: #hex، السطر ٣: «not a color» مش بصيغة --name: #hex، السطر ٤: --ink متكرر» | ٣ زوج، منهم ٠ واقعين في AA للكلام العادي | errors: 0
+من غير خلفيات: مفيش أزواج: محتاج لون كلام وخلفية على الأقل | الجدول: مفيش بيانات
+لو المعاينة كلام عادي: FAIL 7 تباين الكلام (axe بيسكت عن العربي المتوصل) ← أقل من 4.5:1 (أو 3:1 للكبير): span 4.34:1 ، span 3.66:1 ، span 2.56: | النتيجة: 9 من 10 (وبعدها شغّل axe، وجرّب بالكيبورد بس) | axe: 
+~~~` },
+        { lvl: 'متوسط', dir: "cq-layouts", t: R`مكتبة layouts بـ container queries`, what: R`الـ layouts التمانية من درس «layouts بالـ flex والـ grid»، كل واحد في component بيعتمد على [[@container]] مش على عرض الشاشة، وصفحة عرض فيها slider بيغيّر عرض الحاوية من 280 لـ 1200px وتشوف كل layout بيتغير قدامك.`, done: R`الفحص الذاتي بتاع الدرس بيعدّي على 1200 و 360، ولما تحط نفس الـ component في سايدبار ضيق على شاشة عريضة بياخد شكل الموبايل لوحده، و [[@media]] مش موجود في ملف الـ layouts خالص.`, sol: R`~~~css layouts.css
+/* ٨ layouts بتسأل عن عرض المكان اللي هي فيه (@container)، مش عن الشاشة. ولا media query واحدة في الملف ده.
+   كل layout جوه غلاف .cq: الـ query بتسأل عن أقرب container فوق العنصر، فالعنصر نفسه مينفعش يبقى الـ container بتاع نفسه */
+.cq { container-type: inline-size; }
+.cq-grail { container-name: grail; }
+.cq-bento { container-name: bento; }
+.cq-app { container-name: app; }
+
+#grail > *, #cards > *, .b, #app > *, #shell > *, .m { background: #e0e7ff; padding: 8px; }
+
+/* ١ holy grail: عمود واحد، و ٣ عواميد لما الغلاف يبقى 860 أو أكتر */
+#grail { display: grid; gap: 12px; grid-template-areas: "head" "nav" "main" "side" "foot"; }
+.g-head { grid-area: head; } .g-nav { grid-area: nav; } .g-main { grid-area: main; min-height: 160px; } .g-side { grid-area: side; } .g-foot { grid-area: foot; }
+@container grail (min-width: 860px) {
+  #grail { grid-template-columns: 200px 1fr 240px; grid-template-areas: "head head head" "nav main side" "foot foot foot"; }
+}
+
+/* ٢ شبكة الكروت: auto-fit بيحسب العواميد من المكان لوحده، مش محتاج query خالص */
+#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+
+/* ٣ bento: ٤ عواميد، و ٢ لما الغلاف أقل من 560 */
+#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }
+.b1 { grid-column: span 2; grid-row: span 2; }
+.b2 { grid-column: span 2; }
+@container bento (max-width: 559px) { #bento { grid-template-columns: repeat(2, 1fr); } }
+
+/* ٤ سايدبار: 260، ويقفل لـ 64 (أيقونات بس) لما الغلاف أقل من 720 */
+#app { display: grid; grid-template-columns: 260px 1fr; gap: 12px; min-height: 200px; }
+.side { display: flex; flex-direction: column; gap: 8px; }
+@container app (max-width: 719px) {
+  #app { grid-template-columns: 64px 1fr; }
+  .side .label { display: none; }
+}
+
+/* ٥ مودال: fixed على الشاشة كلها، فهو الوحيد اللي مالوش علاقة بالمكان */
+#overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgb(0 0 0 / .5); }
+#overlay[hidden] { display: none; }
+.modal { width: min(480px, 100% - 32px); background: #fff; padding: 24px; border-radius: 12px; }
+
+/* ٦ الفوتر تحت */
+#shell { min-height: 400px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; }
+
+/* ٧ masonry: columns بتحسب العدد من المكان، من غير query */
+#masonry { columns: 3 200px; column-gap: 16px; }
+.m { break-inside: avoid; margin-block-end: 16px; }
+
+/* ٨ navbar: flex-wrap بيلف لوحده، و margin-inline-start: auto بيزق الزرار للآخر في أي اتجاه */
+#topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 12px 16px; background: #0f172a; }
+#topnav a { color: #fff; }
+.links { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.cta { margin-inline-start: auto; }
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة layouts بـ container queries</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="layouts.css">
+<link rel="stylesheet" href="demo.css">
+<script src="demo.js" defer></script>
+</head>
+<body>
+<header class="bar">
+  <h1 id="page-title">مكتبة layouts</h1>
+  <label for="w">عرض الحاوية</label>
+  <input id="w" type="range" min="280" max="1200" step="10" value="1200">
+  <output id="w-out" for="w">1200px</output>
+  <button type="button" id="open">افتح المودال</button>
+  <a href="sidebar.html">نفس الـ layouts في سايدبار ضيق</a>
+</header>
+<main id="main" aria-labelledby="page-title">
+<div class="frame" id="frame">
+  <div class="cq cq-grail"><section id="grail">
+    <div class="g-head">الهيدر</div>
+    <div class="g-nav">القايمة</div>
+    <div class="g-main">المحتوى الأساسي</div>
+    <div class="g-side">جانبي</div>
+    <div class="g-foot">الفوتر</div>
+  </section></div>
+  <div class="cq"><section id="cards">
+    <article class="card">كارت ١</article><article class="card">كارت ٢</article><article class="card">كارت ٣</article><article class="card">كارت ٤</article>
+    <article class="card">كارت ٥</article><article class="card">كارت ٦</article><article class="card">كارت ٧</article>
+  </section></div>
+  <div class="cq cq-bento"><section id="bento">
+    <div class="b b1">كبير</div><div class="b b2">عريض</div><div class="b">٣</div><div class="b">٤</div><div class="b">٥</div><div class="b">٦</div>
+  </section></div>
+  <div class="cq cq-app"><section id="app">
+    <div class="side"><a href="#app">🏠 <span class="label">الرئيسية</span></a><a href="#app">📦 <span class="label">الطلبات</span></a><a href="#app">⚙ <span class="label">الإعدادات</span></a></div>
+    <div class="content">المحتوى</div>
+  </section></div>
+  <div class="cq"><section id="shell"><div class="s-head">هيدر</div><div class="s-main">صفحة قصيرة</div><div class="s-foot">فوتر</div></section></div>
+  <div class="cq"><section id="masonry">
+    <div class="m" style="height:90px">١</div><div class="m" style="height:160px">٢</div><div class="m" style="height:120px">٣</div>
+    <div class="m" style="height:200px">٤</div><div class="m" style="height:80px">٥</div><div class="m" style="height:140px">٦</div>
+    <div class="m" style="height:110px">٧</div><div class="m" style="height:170px">٨</div><div class="m" style="height:100px">٩</div>
+  </section></div>
+  <div class="cq"><nav id="topnav" aria-label="navbar التجربة"><a class="logo" href="#topnav">متجر الورد</a><ul class="links"><li><a href="#topnav">المنتجات</a></li><li><a href="#topnav">العروض</a></li><li><a href="#topnav">تواصل</a></li></ul><a class="cta" href="#topnav">اطلب دلوقتي</a></nav></div>
+</div>
+</main>
+<div id="overlay" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"><p id="m-title">متأكد إنك عايز تمسح الطلب؟</p><button type="button" id="close">اقفل</button></div></div>
+</body>
+</html>
+~~~
+
+~~~css demo.css
+/* صفحة العرض بس: الـ layouts نفسها في layouts.css */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #0f172a; }
+.bar { position: sticky; top: 0; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: -16px -16px 16px; padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid #cbd5e1; }
+.bar h1 { margin: 0; font-size: 1.2rem; }
+.bar input { inline-size: min(20rem, 100%); }
+.bar output { min-inline-size: 4.5em; font-variant-numeric: tabular-nums; font-weight: 700; }
+button { font: inherit; padding: 6px 14px; border: 0; border-radius: 999px; background: #1e293b; color: #fff; cursor: pointer; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+/* the frame the slider resizes: never wider than the page */
+.frame { inline-size: min(var(--w, 1200px), 100%); display: grid; gap: 24px; outline: 2px dashed #94a3b8; outline-offset: 6px; }
+~~~
+
+~~~js demo.js
+// the slider sets one custom property; every layout reacts through @container, no JS per layout
+const w = document.getElementById("w"), out = document.getElementById("w-out"), frame = document.getElementById("frame");
+const show = () => { frame.style.setProperty("--w", w.value + "px"); out.value = Math.round(frame.getBoundingClientRect().width) + "px"; };
+w.addEventListener("input", show);
+new ResizeObserver(show).observe(frame);          // the page itself may be narrower than the slider value
+show();
+
+// the modal: opens, closes with the button or Esc, and gives the focus back
+const overlay = document.getElementById("overlay"), open = document.getElementById("open"), close = document.getElementById("close");
+open.addEventListener("click", () => { overlay.hidden = false; close.focus(); });
+const shut = () => { overlay.hidden = true; open.focus(); };
+close.addEventListener("click", shut);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !overlay.hidden) shut(); });
+~~~
+
+~~~html sidebar.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نفس الـ layouts في سايدبار ضيق</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="layouts.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #0f172a; }
+  /* a wide page with a 320px column: the same components, the same CSS, in a narrow slot */
+  .page { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+  .main-col { min-height: 60vh; padding: 16px; background: #f8fafc; border-radius: 12px; }
+  .slot { display: grid; gap: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <main class="main-col"><h1>صفحة عريضة</h1><p>العمود اللي جنب ده عرضه 320px بس، والشاشة عريضة. الـ components اللي فيه نفس اللي في <a href="index.html">المكتبة</a> بالظبط.</p></main>
+  <aside class="slot" aria-label="السايدبار">
+    <div class="cq cq-grail"><section id="grail"><div class="g-head">الهيدر</div><div class="g-nav">القايمة</div><div class="g-main">المحتوى</div><div class="g-side">جانبي</div><div class="g-foot">الفوتر</div></section></div>
+    <div class="cq cq-bento"><section id="bento"><div class="b b1">كبير</div><div class="b b2">عريض</div><div class="b">٣</div><div class="b">٤</div></section></div>
+    <div class="cq cq-app"><section id="app"><div class="side"><a href="#app">🏠 <span class="label">الرئيسية</span></a><a href="#app">📦 <span class="label">الطلبات</span></a></div><div class="content">المحتوى</div></section></div>
+    <div class="cq"><section id="cards"><article class="card">كارت ١</article><article class="card">كارت ٢</article><article class="card">كارت ٣</article></section></div>
+  </aside>
+</div>
+</body>
+</html>
+~~~
+
+~~~js measure.mjs
+// node layouts/measure.mjs: the lesson self-check at 1200 and 360, the slider, the narrow sidebar on a wide screen, no @media
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+import fs from "node:fs";
+const check = fs.readFileSync(new URL("../src/layouts-check.js", import.meta.url), "utf8");
+const css = fs.readFileSync(new URL("layouts.css", import.meta.url), "utf8");
+const U = "http://127.0.0.1:8840/layouts/";
+const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+
+for (const w of [1200, 360]) {
+  const ctx = await b.newContext({ viewport: { width: w, height: 900 } });
+  const p = await ctx.newPage();
+  const logs = [];
+  p.on("console", m => logs.push(m.text()));
+  await p.goto(U + "index.html");
+  await p.evaluate(check);
+  console.log(w + ": " + logs.filter(l => /^(FAIL|النتيجة)/.test(l)).join(" | ") + " | axe " + (await new AxeBuilder({ page: p }).analyze()).violations.length);
+  await ctx.close();
+}
+
+// the slider on a 1280 screen: what each layout looks like at 4 frame widths
+const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } });
+const p = await ctx.newPage();
+await p.goto(U + "index.html");
+const state = () => p.evaluate(() => {
+  const R = s => document.querySelector(s).getBoundingClientRect();
+  const cols = sel => new Set([...document.querySelectorAll(sel)].map(e => Math.round(e.getBoundingClientRect().left))).size;
+  return "الحاوية " + Math.round(R("#frame").width) + ": grail " + (Math.round(R(".g-nav").top) === Math.round(R(".g-main").top) ? "٣ عواميد" : "عمود") +
+    " | كروت " + cols("#cards .card") + " | bento " + (Math.round(R(".b1").width) > R("#bento").width / 2 + 5 ? "٢ عمود" : "٤") +
+    " | سايدبار " + Math.round(R(".side").width) + " | masonry " + cols("#masonry .m");
+});
+for (const v of [1200, 800, 500, 280]) { await p.fill("#w", String(v)); console.log("   " + await state()); }
+
+// the same components in a 320px column of a 1280px page
+const p2 = await ctx.newPage();
+await p2.goto(U + "sidebar.html");
+console.log("سايدبار 320 على شاشة 1280: " + await p2.evaluate(() => {
+  const R = s => document.querySelector(s).getBoundingClientRect();
+  return "الغلاف " + Math.round(R(".cq-grail").width) + " | grail " + (Math.round(R(".g-nav").top) === Math.round(R(".g-main").top) ? "٣ عواميد" : "عمود") +
+    " | bento: الكبير " + Math.round(R(".b1").width) + " من " + Math.round(R("#bento").width) + " (عمودين) | سايدبار " + Math.round(R(".side").width) + " والكلام " + getComputedStyle(document.querySelector(".side .label")).display +
+    " | كروت في الصف " + new Set([...document.querySelectorAll("#cards .card")].map(e => Math.round(e.getBoundingClientRect().top))).size + " صف";
+}));
+console.log("@media في layouts.css: " + (css.match(/@media/g) || []).length + " | @container: " + (css.match(/@container/g) || []).length);
+await b.close();
+~~~
+
+~~~view 720 720 حرّك الـ slider (اعمل scroll جوه)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة layouts بـ container queries</title>
+<link rel="icon" href="data:,">
+<style>
+/* ٨ layouts بتسأل عن عرض المكان اللي هي فيه (@container)، مش عن الشاشة. ولا media query واحدة في الملف ده.
+   كل layout جوه غلاف .cq: الـ query بتسأل عن أقرب container فوق العنصر، فالعنصر نفسه مينفعش يبقى الـ container بتاع نفسه */
+.cq { container-type: inline-size; }
+.cq-grail { container-name: grail; }
+.cq-bento { container-name: bento; }
+.cq-app { container-name: app; }
+
+#grail > *, #cards > *, .b, #app > *, #shell > *, .m { background: #e0e7ff; padding: 8px; }
+
+/* ١ holy grail: عمود واحد، و ٣ عواميد لما الغلاف يبقى 860 أو أكتر */
+#grail { display: grid; gap: 12px; grid-template-areas: "head" "nav" "main" "side" "foot"; }
+.g-head { grid-area: head; } .g-nav { grid-area: nav; } .g-main { grid-area: main; min-height: 160px; } .g-side { grid-area: side; } .g-foot { grid-area: foot; }
+@container grail (min-width: 860px) {
+  #grail { grid-template-columns: 200px 1fr 240px; grid-template-areas: "head head head" "nav main side" "foot foot foot"; }
+}
+
+/* ٢ شبكة الكروت: auto-fit بيحسب العواميد من المكان لوحده، مش محتاج query خالص */
+#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+
+/* ٣ bento: ٤ عواميد، و ٢ لما الغلاف أقل من 560 */
+#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }
+.b1 { grid-column: span 2; grid-row: span 2; }
+.b2 { grid-column: span 2; }
+@container bento (max-width: 559px) { #bento { grid-template-columns: repeat(2, 1fr); } }
+
+/* ٤ سايدبار: 260، ويقفل لـ 64 (أيقونات بس) لما الغلاف أقل من 720 */
+#app { display: grid; grid-template-columns: 260px 1fr; gap: 12px; min-height: 200px; }
+.side { display: flex; flex-direction: column; gap: 8px; }
+@container app (max-width: 719px) {
+  #app { grid-template-columns: 64px 1fr; }
+  .side .label { display: none; }
+}
+
+/* ٥ مودال: fixed على الشاشة كلها، فهو الوحيد اللي مالوش علاقة بالمكان */
+#overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgb(0 0 0 / .5); }
+#overlay[hidden] { display: none; }
+.modal { width: min(480px, 100% - 32px); background: #fff; padding: 24px; border-radius: 12px; }
+
+/* ٦ الفوتر تحت */
+#shell { min-height: 400px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; }
+
+/* ٧ masonry: columns بتحسب العدد من المكان، من غير query */
+#masonry { columns: 3 200px; column-gap: 16px; }
+.m { break-inside: avoid; margin-block-end: 16px; }
+
+/* ٨ navbar: flex-wrap بيلف لوحده، و margin-inline-start: auto بيزق الزرار للآخر في أي اتجاه */
+#topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 12px 16px; background: #0f172a; }
+#topnav a { color: #fff; }
+.links { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.cta { margin-inline-start: auto; }
+
+</style>
+<style>
+/* صفحة العرض بس: الـ layouts نفسها في layouts.css */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #0f172a; }
+.bar { position: sticky; top: 0; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: -16px -16px 16px; padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid #cbd5e1; }
+.bar h1 { margin: 0; font-size: 1.2rem; }
+.bar input { inline-size: min(20rem, 100%); }
+.bar output { min-inline-size: 4.5em; font-variant-numeric: tabular-nums; font-weight: 700; }
+button { font: inherit; padding: 6px 14px; border: 0; border-radius: 999px; background: #1e293b; color: #fff; cursor: pointer; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+/* the frame the slider resizes: never wider than the page */
+.frame { inline-size: min(var(--w, 1200px), 100%); display: grid; gap: 24px; outline: 2px dashed #94a3b8; outline-offset: 6px; }
+
+</style>
+
+</head>
+<body>
+<header class="bar">
+  <h1 id="page-title">مكتبة layouts</h1>
+  <label for="w">عرض الحاوية</label>
+  <input id="w" type="range" min="280" max="1200" step="10" value="1200">
+  <output id="w-out" for="w">1200px</output>
+  <button type="button" id="open">افتح المودال</button>
+  <a href="sidebar.html">نفس الـ layouts في سايدبار ضيق</a>
+</header>
+<main id="main" aria-labelledby="page-title">
+<div class="frame" id="frame">
+  <div class="cq cq-grail"><section id="grail">
+    <div class="g-head">الهيدر</div>
+    <div class="g-nav">القايمة</div>
+    <div class="g-main">المحتوى الأساسي</div>
+    <div class="g-side">جانبي</div>
+    <div class="g-foot">الفوتر</div>
+  </section></div>
+  <div class="cq"><section id="cards">
+    <article class="card">كارت ١</article><article class="card">كارت ٢</article><article class="card">كارت ٣</article><article class="card">كارت ٤</article>
+    <article class="card">كارت ٥</article><article class="card">كارت ٦</article><article class="card">كارت ٧</article>
+  </section></div>
+  <div class="cq cq-bento"><section id="bento">
+    <div class="b b1">كبير</div><div class="b b2">عريض</div><div class="b">٣</div><div class="b">٤</div><div class="b">٥</div><div class="b">٦</div>
+  </section></div>
+  <div class="cq cq-app"><section id="app">
+    <div class="side"><a href="#app">🏠 <span class="label">الرئيسية</span></a><a href="#app">📦 <span class="label">الطلبات</span></a><a href="#app">⚙ <span class="label">الإعدادات</span></a></div>
+    <div class="content">المحتوى</div>
+  </section></div>
+  <div class="cq"><section id="shell"><div class="s-head">هيدر</div><div class="s-main">صفحة قصيرة</div><div class="s-foot">فوتر</div></section></div>
+  <div class="cq"><section id="masonry">
+    <div class="m" style="height:90px">١</div><div class="m" style="height:160px">٢</div><div class="m" style="height:120px">٣</div>
+    <div class="m" style="height:200px">٤</div><div class="m" style="height:80px">٥</div><div class="m" style="height:140px">٦</div>
+    <div class="m" style="height:110px">٧</div><div class="m" style="height:170px">٨</div><div class="m" style="height:100px">٩</div>
+  </section></div>
+  <div class="cq"><nav id="topnav" aria-label="navbar التجربة"><a class="logo" href="#topnav">متجر الورد</a><ul class="links"><li><a href="#topnav">المنتجات</a></li><li><a href="#topnav">العروض</a></li><li><a href="#topnav">تواصل</a></li></ul><a class="cta" href="#topnav">اطلب دلوقتي</a></nav></div>
+</div>
+</main>
+<div id="overlay" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"><p id="m-title">متأكد إنك عايز تمسح الطلب؟</p><button type="button" id="close">اقفل</button></div></div>
+<script>
+// the slider sets one custom property; every layout reacts through @container, no JS per layout
+const w = document.getElementById("w"), out = document.getElementById("w-out"), frame = document.getElementById("frame");
+const show = () => { frame.style.setProperty("--w", w.value + "px"); out.value = Math.round(frame.getBoundingClientRect().width) + "px"; };
+w.addEventListener("input", show);
+new ResizeObserver(show).observe(frame);          // the page itself may be narrower than the slider value
+show();
+
+// the modal: opens, closes with the button or Esc, and gives the focus back
+const overlay = document.getElementById("overlay"), open = document.getElementById("open"), close = document.getElementById("close");
+open.addEventListener("click", () => { overlay.hidden = false; close.focus(); });
+const shut = () => { overlay.hidden = true; open.focus(); };
+close.addEventListener("click", shut);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !overlay.hidden) shut(); });
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** شريط لازق فوق فيه slider «عرض الحاوية» ورقم بيتغيّر (1200px)، وزرار «افتح المودال»، ولينك للسايدبار. تحته الـ ٨ layouts جوه إطار متقطّع. حرّك الـ slider لحد 500: الـ holy grail بقى عمود واحد، والكروت بقت اتنين، والـ bento بقى عمودين، والسايدبار اتقفل لأيقونات بس (🏠 📦 ⚙)، والـ masonry بقى عمودين. وكل ده والشاشة نفسها ما اتغيّرتش.
+
+**[[@container]] بدل [[@media]]:** الـ media query بتسأل «الشاشة عرضها كام؟». الـ container query بتسأل «المكان اللي أنا فيه عرضه كام؟». الـ component بقى بيتصرف صح في أي مكان يتحط فيه: صفحة كاملة، أو عمود، أو كارت. والـ grep على [[@media]] في [[layouts.css]] بيطلّع صفر.
+
+**ليه كل layout جوه [[.cq]]:** [[container-type: inline-size]] بيخلّي العنصر container. والـ query بتسأل عن أقرب container **فوق** العنصر. لو [[#grail]] نفسه هو الـ container، القاعدة اللي جوه [[@container]] مش هتقدر تغيّر [[#grail]] نفسه (اتقاس في وحدة «widgets»). فالغلاف [[.cq-grail]] هو الـ container، و [[#grail]] جواه بيتغيّر. و [[container-name]] بيخلّي كل query تسأل عن غلافها هي بالظبط.
+
+**الأرقام اتغيرت:** في الدرس الأرقام كانت للشاشة (900 و 600 و 768). هنا للحاوية، والحاوية في الصفحة أصغر من الشاشة بالـ padding (16 من كل ناحية): 860 و 560 و 720. كده على شاشة 1200 الحاوية 1168 والشكل زي الدرس، والفحص الذاتي بتاعه بيعدّي.
+
+**٤ من التمانية مش محتاجين query خالص:** الكروت ([[auto-fit]] و [[minmax]])، والـ masonry ([[columns: 3 200px]])، والـ navbar ([[flex-wrap]])، والفوتر تحت ([[grid-template-rows: auto 1fr auto]]) بيتأقلموا من نفسهم. والمودال [[fixed]] على الشاشة كلها، فمالوش دعوة بالمكان.
+
+**السايدبار الضيق:** [[sidebar.html]] صفحة عريضة فيها عمود 320px، وجواه نفس الـ components ونفس الـ CSS. على شاشة 1280 خدوا شكل الموبايل: grail عمود، و bento عمودين، والسايدبار 64 والكلام مستخبي، والكروت تحت بعض.
+
+**الـ slider:** [[demo.js]] بيغيّر متغير واحد [[--w]] على الإطار، والإطار [[inline-size: min(var(--w), 100%)]] فمبيعديش الصفحة. ومفيش ولا سطر JS لأي layout: كله [[@container]].
+
+**غلطتين قابلوني:**
+- **[[@media]] = 1 في الـ grep:** كانت في التعليق اللي بيقول «مفيش @media». الـ grep مبيفرّقش بين كود وتعليق (نفس اللي حصل مع left في مشروع «قصتنا»). التعليق اتغيّر.
+- **axe طلّع ٣ مشاكل:** الأجزاء كانت [[<header>]] و [[<main>]] و [[<aside>]] و [[<footer>]] حقيقية جوه صفحة المكتبة، فبقى فيه أكتر من [[main]] ومحتوى برّه أي landmark. في صفحة حقيقية الـ holy grail بيستخدمهم مرة واحدة، بس هنا دي أجزاء معروضة. بقوا [[div]] بنفس الـ classes (الفحص بيدوّر بالـ class)، والصفحة كلها جوه [[<main>]] واحد.
+
+~~~text axe قبل
+قبل (الأجزاء كانت header و main و aside و footer حقيقية جوه صفحة المكتبة):
+landmark-no-duplicate-main x1 .g-main
+landmark-unique x1 .g-main
+region x9 .g-head, .g-side, .g-foot, .cq:nth-child(2), .cq-bento, .cq-app, #shell > header, .s-foot, .cq:nth-child(6)
+landmark-main-is-top-level x1 .g-main
+~~~
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+1200: النتيجة: 11 من 11 | axe 0
+360: النتيجة: 11 من 11 | axe 0
+   الحاوية 1200: grail ٣ عواميد | كروت 5 | bento ٤ | سايدبار 260 | masonry 3
+   الحاوية 800: grail عمود | كروت 3 | bento ٤ | سايدبار 260 | masonry 3
+   الحاوية 500: grail عمود | كروت 2 | bento ٢ عمود | سايدبار 64 | masonry 2
+   الحاوية 280: grail عمود | كروت 1 | bento ٢ عمود | سايدبار 64 | masonry 1
+سايدبار 320 على شاشة 1280: الغلاف 320 | grail عمود | bento: الكبير 320 من 320 (عمودين) | سايدبار 64 والكلام none | كروت في الصف 3 صف
+@media في layouts.css: 0 | @container: 4
+~~~` },
+        { lvl: 'كبير', dir: "jasmine-store", t: R`صفحة متجر متخيل كاملة من التمارين`, what: R`صفحة «متجر الياسمين» (اسم متخيل) متجمعة من الوحدة كلها: navbar عربي، وهيرو بـ [[min-height: 100dvh]]، وشبكة منتجات auto-fit فيها شارات في ركن النهاية، وباقات بزراير على خط واحد، واختيار توصيل بـ [[:has()]]، وفورم دخول، وتنبيه في الـ top layer، وجدول طلبات من [[buildTable]]. بالعربي والإنجليزي بنفس الـ CSS، وكل الحركة بتقف مع reduced motion.`, done: R`كل فحوص الوحدة الذاتية بتعدّي على 320 و 360 و 768 و 1200 و 1440، و axe صفر، والفحص بتاع التباين صفر (عشان axe بيسكت عن العربي)، والصفحة بتتصفح بالكيبورد بس، و Lighthouse Accessibility ١٠٠ و Performance فوق ٩٠، ومنشورة برابط.`, ext: R`زوّد ملف [[checks.js]] بيجمع كل الفحوص الذاتية ويشغّلها بـ Playwright على المقاسات الخمسة في GitHub Actions، والـ PR اللي بيكسر فحص بيقع.`, sol: R`~~~js build.mjs
+// node store/build.mjs: index.html (عربي) و en/index.html من template واحد، بنفس css/store.css و js/store.js
+import fs from "node:fs";
+const dir = new URL(".", import.meta.url);
+const w = (p, s) => { fs.mkdirSync(new URL(p.replace(/[^/]+$/, ""), dir), { recursive: true }); fs.writeFileSync(new URL(p, dir), s); };
+
+// the product pictures: small SVGs (a few hundred bytes each), with a fixed size so the page reserves their place
+const flower = (petal, center, bg) => $__bt<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="$__{bg}"/><g transform="translate(200 140)">$__{[0, 72, 144, 216, 288].map(a => $__bt<ellipse rx="34" ry="62" fill="$__{petal}" transform="rotate($__{a}) translate(0 -52)"/>$__bt).join("")}<circle r="30" fill="$__{center}"/></g><rect x="196" y="190" width="8" height="110" fill="#3f6212"/></svg>$__bt;
+const pics = [["jasmine", "#ffffff", "#facc15", "#ecfccb"], ["rose", "#e11d48", "#7f1d1d", "#ffe4e6"], ["sunflower", "#f59e0b", "#78350f", "#fef3c7"], ["violet", "#8b5cf6", "#facc15", "#ede9fe"]];
+for (const [n, ...c] of pics) w("img/" + n + ".svg", flower(...c));
+w("img/art.svg", $__bt<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><rect width="600" height="600" fill="#ede9fe"/>$__{[[150, 180, "#e11d48"], [420, 160, "#f59e0b"], [300, 330, "#ffffff"], [160, 460, "#8b5cf6"], [440, 450, "#e11d48"]].map(([x, y, f]) => $__bt<circle cx="$__{x}" cy="$__{y}" r="70" fill="$__{f}" opacity=".85"/>$__bt).join("")}</svg>$__bt);
+
+const T = {
+  ar: {
+    dir: "rtl", other: "en/", otherLang: "en", otherName: "English", root: "",
+    title: "متجر الياسمين: ورد طبيعي يوصل في نفس اليوم", desc: "ورد طبيعي من مزارع قريبة، تنسيق باليد، وتوصيل في نفس اليوم. (متجر متخيّل للتدريب)",
+    skip: "اتخطّى للمحتوى", logo: "الياسمين", home: "الرئيسية", nav: ["المنتجات", "الباقات", "التوصيل", "الدخول", "الطلبات"],
+    h1: "ورد طبيعي يوصلك النهارده", lead: "بننسّق كل بوكيه بالإيد الصبح، ويوصل لحد الباب في نفس اليوم في القاهرة والجيزة.", cta: "شوف الورد",
+    products: "المنتجات", add: "أضف للسلة", added: "اتضاف للسلة:", close: "اقفل", currency: n => n.toLocaleString("ar-EG") + " جنيه",
+    items: [["jasmine", "بوكيه ياسمين", 350, "جديد"], ["rose", "ورد بلدي أحمر", 420, "الأكتر طلبًا"], ["sunflower", "عباد شمس", 300, ""], ["violet", "بنفسج في أصيص", 280, "خصم ١٠٪"]],
+    plans: "الباقات", per: "/ شهر", choose: "اختار",
+    planList: [["مرة في الشهر", 380, ["بوكيه واحد", "توصيل مجاني"]], ["كل أسبوع", 1200, ["٤ بوكيهات", "توصيل مجاني", "كارت إهداء كل مرة", "تغيير المواعيد من حسابك"]], ["للمكاتب", 2400, ["٤ بوكيهات كبار", "فاتورة باسم الشركة"]]], featuredBadge: "الأوفر",
+    delivery: "التوصيل", how: "عايز الورد يوصلك إزاي؟", opts: [["home", "لحد البيت", "بكرة الصبح"], ["express", "سريع", "في خلال ٣ ساعات"], ["pickup", "استلام من الفرع", "ببلاش"]], branch: "الفرع", branches: ["الدقي", "مدينة نصر", "المعادي"],
+    login: "الدخول", email: "الإيميل", password: "كلمة السر", signin: "ادخل", artAlt: "", loginNote: "ده متجر متخيّل للتدريب: الفورم مش بيبعت حاجة.",
+    orders: "آخر طلباتك", cols: ["رقم الطلب", "المنتج", "المبلغ", "الحالة", "التاريخ"], ordersLabel: "جدول آخر الطلبات",
+    foot: "متجر الياسمين اسم متخيّل لمشروع تدريب.",
+  },
+  en: {
+    dir: "ltr", other: "../", otherLang: "ar", otherName: "عربي", root: "../",
+    title: "Jasmine Flowers: fresh flowers delivered today", desc: "Fresh flowers from nearby farms, arranged by hand and delivered the same day. (An imaginary shop for practice)",
+    skip: "Skip to content", logo: "Jasmine", home: "Home", nav: ["Products", "Plans", "Delivery", "Sign in", "Orders"],
+    h1: "Fresh flowers at your door today", lead: "We arrange every bouquet by hand in the morning and deliver it the same day in Cairo and Giza.", cta: "See the flowers",
+    products: "Products", add: "Add to cart", added: "Added to cart:", close: "Close", currency: n => "EGP " + n.toLocaleString("en"),
+    items: [["jasmine", "Jasmine bouquet", 350, "New"], ["rose", "Red roses", 420, "Best seller"], ["sunflower", "Sunflowers", 300, ""], ["violet", "Violets in a pot", 280, "10% off"]],
+    plans: "Plans", per: "/ month", choose: "Choose",
+    planList: [["Once a month", 380, ["One bouquet", "Free delivery"]], ["Every week", 1200, ["4 bouquets", "Free delivery", "A gift card each time", "Change dates from your account"]], ["For offices", 2400, ["4 large bouquets", "Company invoice"]]], featuredBadge: "Best value",
+    delivery: "Delivery", how: "How should the flowers reach you?", opts: [["home", "To your door", "Tomorrow morning"], ["express", "Express", "Within 3 hours"], ["pickup", "Pick up at a branch", "Free"]], branch: "Branch", branches: ["Dokki", "Nasr City", "Maadi"],
+    login: "Sign in", email: "Email", password: "Password", signin: "Sign in", artAlt: "", loginNote: "This is an imaginary shop for practice: the form sends nothing.",
+    orders: "Your latest orders", cols: ["Order", "Product", "Amount", "Status", "Date"], ordersLabel: "Latest orders table",
+    foot: "Jasmine Flowers is an imaginary name for a practice project.",
+  },
+};
+const ids = ["products", "plans", "delivery", "login", "orders"];
+const cart = $__bt<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg>$__bt;
+
+for (const [lang, t] of Object.entries(T)) {
+  const r = t.root;
+  const html = $__bt<!doctype html>
+<html lang="$__{lang}" dir="$__{t.dir}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$__{t.title}</title>
+<meta name="description" content="$__{t.desc}">
+<link rel="alternate" hreflang="ar" href="https://jasmine.example/">
+<link rel="alternate" hreflang="en" href="https://jasmine.example/en/">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="$__{r}css/store.css">
+<script type="module" src="$__{r}js/store.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">$__{t.skip}</a>
+<header class="top">
+  <div class="wrap top-row">
+    <a class="logo" href="#main" aria-label="$__{t.logo}، $__{t.home}">$__{t.logo}</a>
+    <nav aria-label="$__{t.home}"><ul class="links">$__{ids.map((id, i) => $__bt<li><a href="#$__{id}">$__{t.nav[i]}</a></li>$__bt).join("")}</ul></nav>
+    <a class="lang" href="$__{t.other}" hreflang="$__{t.otherLang}" lang="$__{t.otherLang}">$__{t.otherName}</a>
+  </div>
+</header>
+<main id="main">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap">
+    <h1 id="hero-title">$__{t.h1}</h1>
+    <p>$__{t.lead}</p>
+    <a class="btn" href="#products">$__{t.cta}</a>
+  </div>
+</section>
+<section id="products" aria-labelledby="products-title">
+  <div class="wrap">
+    <h2 id="products-title">$__{t.products}</h2>
+    <ul class="products" role="list">
+$__{t.items.map(([img, name, price, badge]) => $__bt      <li class="pcard">$__{badge ? $__bt<span class="badge">$__{badge}</span>$__bt : ""}<img src="$__{r}img/$__{img}.svg" width="400" height="300" alt="$__{name}" loading="lazy"><h3>$__{name}</h3><p class="price">$__{t.currency(price)}</p><button type="button" class="btn add" popovertarget="added" data-name="$__{name}">$__{cart}<span>$__{t.add}</span></button></li>$__bt).join("\n")}
+    </ul>
+  </div>
+</section>
+<section id="plans" aria-labelledby="plans-title">
+  <div class="wrap">
+    <h2 id="plans-title">$__{t.plans}</h2>
+    <div class="plans">
+$__{t.planList.map(([name, price, feats], i) => $__bt      <article class="plan$__{i === 1 ? " featured" : ""}">$__{i === 1 ? $__bt<p class="tag">$__{t.featuredBadge}</p>$__bt : ""}<h3>$__{name}</h3><p class="amount">$__{t.currency(price)} <small>$__{t.per}</small></p><ul>$__{feats.map(f => $__bt<li>$__{f}</li>$__bt).join("")}</ul><a class="btn plan-btn" href="#login">$__{t.choose} «$__{name}»</a></article>$__bt).join("\n")}
+    </div>
+  </div>
+</section>
+<section id="delivery" aria-labelledby="delivery-title">
+  <div class="wrap">
+    <h2 id="delivery-title">$__{t.delivery}</h2>
+    <fieldset id="picker">
+      <legend>$__{t.how}</legend>
+$__{t.opts.map(([v, name, note], i) => $__bt      <label class="opt"><input type="radio" name="d" value="$__{v}"$__{i === 0 ? " checked" : ""}> <span><b>$__{name}</b> · $__{note}</span></label>$__bt).join("\n")}
+      <div class="branch"><label for="branch">$__{t.branch}</label><select id="branch" name="branch">$__{t.branches.map(b => $__bt<option>$__{b}</option>$__bt).join("")}</select></div>
+    </fieldset>
+  </div>
+</section>
+<section id="login" aria-labelledby="login-title">
+  <div class="wrap">
+    <img class="art" src="$__{r}img/art.svg" width="600" height="600" alt="$__{t.artAlt}">
+    <form class="login-form" action="$__{r}login" method="post">
+      <h2 id="login-title">$__{t.login}</h2>
+      <label for="email">$__{t.email}</label>
+      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      <label for="password">$__{t.password}</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button class="btn" type="submit">$__{t.signin}</button>
+      <p class="note" id="login-note" role="status"></p>
+    </form>
+  </div>
+</section>
+<section id="orders" aria-labelledby="orders-title">
+  <div class="wrap">
+    <h2 id="orders-title">$__{t.orders}</h2>
+    <div class="table-wrap" id="orders-table" tabindex="0" role="region" aria-label="$__{t.ordersLabel}" data-cols="$__{t.cols.join("|")}" data-note="$__{t.loginNote}"></div>
+  </div>
+</section>
+</main>
+<footer class="foot"><div class="wrap">$__{t.foot}</div></footer>
+<div class="alert" id="added" popover role="status"><span id="added-text">$__{t.added}</span> <button type="button" popovertarget="added" popovertargetaction="hide">$__{t.close}</button></div>
+</body>
+</html>
+$__bt;
+  w(lang === "ar" ? "index.html" : "en/index.html", html);
+}
+console.log("index.html + en/index.html");
+~~~
+
+~~~css css/store.css
+/* متجر الياسمين (متخيل): نفس الملف للعربي والإنجليزي. كل اتجاه logical، فمفيش [dir] ولا left/right */
+:root {
+  --bg: #ffffff; --soft: #f5f3ff; --ink: #0f172a; --muted: #475569; --line: #cbd5e1;
+  --brand: #4f46e5; --brand-ink: #ffffff; --badge: #be123c; --ok: #166534;
+  --r: 14px; --gutter: clamp(16px, 4vw, 40px);
+  --font: system-ui, "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: var(--font); line-height: 1.7; color: var(--ink); background: var(--bg); }
+img { max-width: 100%; height: auto; display: block; }
+h1, h2, h3 { line-height: 1.3; margin: 0 0 0.5em; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+[id] { scroll-margin-top: 80px; }
+.wrap { max-width: 72rem; margin-inline: auto; padding-inline: var(--gutter); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip { position: absolute; inset-inline-start: 8px; top: 8px; z-index: 3; padding: 8px 14px; background: var(--ink); color: #fff; translate: 0 -200%; }
+.skip:focus { translate: 0 0; }
+
+/* الـ header: لازق فوق */
+.top { position: sticky; top: 0; z-index: 2; background: var(--bg); border-block-end: 1px solid var(--line); }
+.top-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; min-height: 64px; }
+.logo { font-weight: 800; font-size: 1.3rem; text-decoration: none; color: var(--brand); }
+.links { display: flex; flex-wrap: wrap; gap: 0 16px; list-style: none; margin: 0; padding: 0; }
+.links a, .lang { display: inline-block; padding-block: 10px; min-inline-size: 24px; text-decoration: none; }
+.lang { margin-inline-start: auto; font-weight: 700; }
+
+/* الهيرو: 100dvh = الجزء الظاهر فعلًا على الموبايل (100vh أطول منه لما شريط العنوان ظاهر). min-height مش height: المحتوى ميتقصّش */
+.hero { min-height: calc(100dvh - 65px); display: grid; align-content: center; padding-block: 48px; background: var(--soft); }
+.hero h1 { font-size: clamp(2rem, 1.2rem + 4vw, 3.4rem); max-width: 18ch; }
+.hero p { color: var(--muted); max-width: 40rem; font-size: 1.15rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero .wrap > * { animation: rise .6s ease-out both; }
+  .hero .wrap > :nth-child(2) { animation-delay: .1s; }
+  .hero .wrap > :nth-child(3) { animation-delay: .2s; }
+}
+@keyframes rise { from { opacity: 0; translate: 0 12px; } }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 20px; border: 0; border-radius: 999px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; background: var(--brand); color: var(--brand-ink); }
+.btn svg { flex: none; width: 18px; height: 18px; }
+
+section[id] { padding-block: clamp(40px, 7vw, 80px); }
+section[id]:nth-of-type(even) { background: var(--soft); }
+
+/* المنتجات: auto-fit، والشارة في ركن النهاية (يمين في الإنجليزي، شمال في العربي) */
+.products { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); list-style: none; margin: 0; padding: 0; }
+.pcard { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
+.pcard img { border-radius: 10px; }
+.pcard h3 { margin: 0; font-size: 1.05rem; }
+.pcard .price { margin: 0; font-weight: 800; }
+.pcard .btn { margin-block-start: auto; }
+.badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 2px 10px; border-radius: 999px; background: var(--badge); color: #fff; font-size: .85rem; font-weight: 700; }
+
+/* الباقات: على الموبايل عمود والمميزة الأول، وعلى 720 وأكتر ٣ جنب بعض بنفس الطول والزراير على خط واحد */
+.plans { display: grid; gap: 16px; }
+.featured { order: -1; }
+@media (min-width: 720px) {
+  .plans { grid-template-columns: repeat(3, 1fr); }
+  .featured { order: 0; }
+}
+.plan { display: flex; flex-direction: column; gap: 8px; padding: 24px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
+.plan ul { margin: 0; padding-inline-start: 1.2rem; }
+.plan .amount { margin: 0; font-size: 1.8rem; font-weight: 800; }
+.plan-btn { margin-block-start: auto; }
+.featured { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+.featured .plan-btn { background: #ffffff; color: #0f172a; }
+
+/* التوصيل: الكارت المختار عليه إطار بـ :has()، والفرع بيظهر مع الاستلام بس، من غير JS */
+#picker { display: grid; gap: 12px; border: 0; padding: 0; margin: 0; }
+#picker legend { font-weight: 700; margin-block-end: 8px; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 2px solid var(--line); border-radius: var(--r); background: var(--bg); cursor: pointer; }
+.opt input { flex: none; inline-size: 24px; block-size: 24px;   /* WCAG 2.2: target 24×24 at least */ margin: 0; accent-color: var(--brand); }
+.opt:has(:checked) { border-color: #4f46e5; }
+.opt:has(:focus-visible) { outline: 3px solid #b45309; outline-offset: 2px; }
+.branch { display: none; gap: 6px; }
+#picker:has([value="pickup"]:checked) .branch { display: grid; }
+select, input:not([type=radio], [type=checkbox]) { font: inherit; min-height: 44px; padding: 8px 12px; border: 1px solid #64748b; border-radius: 8px; background: var(--bg); color: var(--ink); }
+
+/* الدخول: نصين على 900 وأكتر (الصورة والفورم)، والصورة بتستخبى على الأصغر */
+#login .wrap { display: grid; align-items: center; gap: 24px; }
+.art { display: none; }
+@media (min-width: 900px) {
+  #login .wrap { grid-template-columns: 1fr 1fr; gap: 0; padding-inline: 0; max-width: none; }   /* the picture = exactly half the section */
+  .art { display: block; width: 100%; }   /* fill its half, not stop at the file width (600) */
+}
+.login-form { display: grid; gap: 12px; width: 100%; max-width: 400px; justify-self: center; padding: 0; }
+.login-form label { font-weight: 700; }
+.login-form input, .login-form button { width: 100%; }
+
+/* التنبيه: popover = top layer، فوق الهيدر اللازق مهما كان z-index بتاعه */
+.alert { inset: auto; inset-block-end: 16px; inset-inline-end: 16px; margin: 0; max-width: min(24rem, 100% - 32px); padding: 14px 18px; border: 0; border-radius: var(--r); background: var(--ok); color: #fff; font-weight: 700; box-shadow: 0 10px 30px -10px rgb(0 0 0 / .4); }
+.alert button { margin-inline-start: 12px; padding: 2px 10px; min-height: 32px; border: 1px solid #fff; border-radius: 999px; background: transparent; color: #fff; font: inherit; cursor: pointer; }
+@media (prefers-reduced-motion: no-preference) {
+  .alert { transition: opacity .2s, display .2s allow-discrete, overlay .2s allow-discrete; }
+  .alert:not(:popover-open) { opacity: 0; }
+  @starting-style { .alert:popover-open { opacity: 0; } }
+}
+
+/* جدول الطلبات: بيعمل scroll جوه حاويته، مش الصفحة */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 14px; text-align: start; white-space: nowrap; border-block-end: 1px solid var(--line); }
+th { background: #eef2ff; }
+
+.foot { padding-block: 32px; border-block-start: 1px solid var(--line); color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+~~~
+
+~~~js js/store.js
+import { buildTable } from "./lesson.js";
+const lang = document.documentElement.lang;
+
+// the orders table: buildTable from the lesson (every value escaped), numbers and dates in the page language
+const orders = [
+  { id: 1042, product: { ar: "بوكيه ياسمين", en: "Jasmine bouquet" }, amount: 350, status: { ar: "اتوصّل", en: "Delivered" }, date: "2026-11-12" },
+  { id: 1057, product: { ar: "ورد بلدي أحمر", en: "Red roses" }, amount: 840, status: { ar: "في الطريق", en: "On the way" }, date: "2026-11-18" },
+  { id: 1063, product: { ar: "بنفسج في أصيص", en: "Violets in a pot" }, amount: 252, status: { ar: "بيتجهّز", en: "Preparing" }, date: "2026-11-20" },
+];
+const box = document.getElementById("orders-table");
+const labels = box.dataset.cols.split("|");
+const num = new Intl.NumberFormat(lang === "ar" ? "ar-EG" : "en");
+const day = new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en", { day: "numeric", month: "long" });
+box.innerHTML = buildTable(orders.map(o => ({ id: num.format(o.id).replace(/[٬,]/g, ""), product: o.product[lang], amount: (lang === "ar" ? "" : "EGP ") + num.format(o.amount) + (lang === "ar" ? " جنيه" : ""), status: o.status[lang], date: day.format(new Date(o.date + "T00:00")) })),
+  ["id", "product", "amount", "status", "date"].map((key, i) => ({ key, label: labels[i] })));
+
+// "added to cart": the popover opens by itself (popovertarget); JS only writes which product
+const text = document.getElementById("added-text"), base = text.textContent;
+for (const b of document.querySelectorAll(".add")) b.addEventListener("click", () => { text.textContent = base + " " + b.dataset.name; });
+
+// the login form of an imaginary shop: say so instead of posting to nowhere
+document.querySelector(".login-form").addEventListener("submit", e => {
+  e.preventDefault();
+  document.getElementById("login-note").textContent = box.dataset.note;
+});
+~~~
+
+~~~js store-checks.js
+// البنود اللي بتنطبق على المتجر من فحص درس «صلّح الكود البايظ» (2 و 4 و 6 و 7 و 8 و 10)، بنفس طريقة القياس.
+// البنود 1 و 3 و 5 و 9 بتدوّر على عناصر صفحة الدرس البايظة (فهرس لازق، و #b3، و group-hover، وزرار مسح) ومش موجودة هنا.
+(() => {
+  const q = s => document.querySelector(s), R = el => el.getBoundingClientRect(), cs = el => getComputedStyle(el);
+  const near = (a, b) => Math.abs(a - b) <= 1.5;
+  const rules = []; for (const sh of document.styleSheets) { try { rules.push(...[...sh.cssRules].filter(r => r.selectorText)); } catch (e) {} }
+  const rulesFor = (el, clean) => rules.filter(r => { try { return el.matches(clean ? r.selectorText.replace(/:focus(-visible|-within)?/g, '') : r.selectorText); } catch (e) { return false; } });
+  let pass = 0, all = 0;
+  const ok = (name, cond, why) => { all++; if (cond) pass++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (cond ? '' : ' ← ' + why)); };
+  const rtl = cs(document.documentElement).direction === 'rtl';
+  const wrong = [...document.querySelectorAll('.pcard')].filter(c => c.querySelector('.badge')).filter(c => { const b = R(c.querySelector('.badge')), r = R(c); return rtl ? !near(b.left, r.left + 8) : !near(b.right, r.right - 8); });
+  ok('2 الشارة في ركن النهاية', !wrong.length, wrong.length + ' شارة مش على بعد 8px من ركن ' + (rtl ? 'الشمال' : 'اليمين'));
+  const al = q('.alert'), open = al.matches(':popover-open');
+  if (!open) al.showPopover();
+  const ar = R(al), hit = document.elementFromPoint(ar.left + ar.width / 2, ar.top + 4);
+  ok('4 التنبيه فوق الهيدر', hit && al.contains(hit), 'في النقطة دي ظاهر «' + (hit ? hit.className || hit.tagName : '؟') + '» مش التنبيه');
+  if (!open) al.hidePopover();
+  const hero = q('.hero'), vh = rulesFor(hero).filter(r => /(^|[^d])100vh/.test(r.style.cssText) && /height/.test(r.style.cssText));
+  ok('6 الهيرو: المحتوى مش مقصوص', hero.scrollHeight <= hero.clientHeight + 1, 'المحتوى ' + hero.scrollHeight + 'px والهيرو ' + hero.clientHeight + 'px');
+  ok('6 الهيرو: مش 100vh', !vh.length, vh.map(r => r.selectorText).join(' '));
+  const bp = q('.btn'), killed = rulesFor(bp, true).some(r => /:focus\b/.test(r.selectorText) && /outline: (none|0)/.test(r.style.cssText));
+  const ring = rulesFor(bp, true).some(r => /:focus-visible/.test(r.selectorText) && /outline: [^n0]|box-shadow/.test(r.style.cssText));
+  ok('7 الـ focus باين بالكيبورد', !killed || ring, 'فيه outline: none على :focus ومفيش بديل');
+  const ls = [...document.querySelectorAll('body *')].filter(el => /[؀-ۿ]/.test(el.textContent) && (el.closest('[lang]') || document.documentElement).lang.startsWith('ar') && !['normal', '0px'].includes(cs(el).letterSpacing));
+  ok('8 مفيش letter-spacing على العربي', !ls.length, ls.map(el => el.tagName.toLowerCase() + '.' + el.className).join(' و '));
+  const imgs = [...document.querySelectorAll('img')].filter(i => cs(i).aspectRatio === 'auto');
+  ok('10 الصور حاجزة مكانها', !imgs.length, imgs.length + ' صورة من غير width و height');
+  console.log('النتيجة: ' + pass + ' من ' + all);
+})();
+~~~
+
+~~~js measure.mjs
+// node store/measure.mjs: the unit's self-checks on both languages at 5 widths, axe, the keyboard, reduced motion
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+import fs from "node:fs";
+const read = f => fs.readFileSync(new URL(f, import.meta.url), "utf8");
+const checks = { "الفيضان": read("../src/overflow-check.js"), "accessibility": read("../src/a11y-check.js"), "صفحات من وصف": read("../src/desc-check-full.js"), "صلّح الكود (6 بنود)": read("store-checks.js") };
+const U = "http://127.0.0.1:8840/store/";
+const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+let bad = 0;
+for (const page of ["", "en/"]) for (const w of [320, 360, 768, 1200, 1440]) {
+  const ctx = await b.newContext({ viewport: { width: w, height: 800 } });
+  const p = await ctx.newPage();
+  const logs = [], errs = [];
+  p.on("console", m => logs.push(m.text()));
+  p.on("pageerror", e => errs.push(e.message));
+  await p.goto(U + page, { waitUntil: "load" });
+  await p.evaluate(() => Promise.all(document.getAnimations().map(a => a.finished)));   // a check in the middle of the hero fade reads half-transparent text
+  const line = [];
+  for (const [name, code] of Object.entries(checks)) {
+    logs.length = 0;
+    await p.evaluate(code);
+    const res = logs.find(l => l.startsWith("النتيجة")) || "?", fails = logs.filter(l => l.startsWith("FAIL"));
+    line.push(name + " " + res.match(/\d+ من \d+/)[0]);
+    if (fails.length) { bad += fails.length; line.push("   " + fails.join(" | ")); }
+  }
+  const axe = await new AxeBuilder({ page: p }).analyze();
+  bad += axe.violations.length + errs.length;
+  console.log((page ? "en " : "ar ") + String(w).padEnd(5) + line.join(" · ") + " · axe " + axe.violations.length + (axe.violations.length ? " " + axe.violations.map(v => v.id).join(" ") : "") + (errs.length ? " · errors " + errs.join(" ") : ""));
+  await ctx.close();
+}
+
+// keyboard only: Tab through the Arabic page at 1280, add to cart with Enter, close with Esc, pick delivery with arrows
+const ctx = await b.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
+const p = await ctx.newPage();
+await p.goto(U);
+const stops = [];
+for (let i = 0; i < 60; i++) {
+  await p.keyboard.press("Tab");
+  const f = await p.evaluate(() => { const el = document.activeElement; if (!el || el === document.body) return null; const s = getComputedStyle(el); return { n: (el.textContent || el.value || el.name || el.tagName).trim().slice(0, 18), ring: s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0 || !!el.closest(".opt") }; });
+  if (!f || (stops.length && f.n === stops[0].n)) break;
+  stops.push(f);
+}
+console.log("الكيبورد: " + stops.length + " وقفة، من غير حلقة: " + stops.filter(s => !s.ring).length);
+await p.focus(".add");
+await p.keyboard.press("Enter");
+console.log("Enter على «أضف للسلة»: التنبيه مفتوح " + await p.locator("#added").evaluate(e => e.matches(":popover-open")) + " | «" + (await p.textContent("#added-text")) + "»");
+await p.keyboard.press("Escape");
+console.log("Esc: التنبيه مفتوح " + await p.locator("#added").evaluate(e => e.matches(":popover-open")));
+await p.focus('#picker input[value="home"]');
+await p.keyboard.press("ArrowLeft"); await p.keyboard.press("ArrowLeft");
+console.log("سهمين في التوصيل: المختار " + await p.$eval('#picker input:checked', r => r.value) + " والفرع ظاهر " + await p.isVisible(".branch"));
+console.log("reduce: animations شغالة " + await p.evaluate(() => document.getAnimations().length));
+await ctx.close();
+console.log(bad ? bad + " مشكلة" : "كله نضيف");
+await b.close();
+~~~
+
+~~~view 720 720 النسخة العربي (اعمل scroll جوه)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر الياسمين: ورد طبيعي يوصل في نفس اليوم</title>
+<meta name="description" content="ورد طبيعي من مزارع قريبة، تنسيق باليد، وتوصيل في نفس اليوم. (متجر متخيّل للتدريب)">
+<link rel="alternate" hreflang="ar" href="https://jasmine.example/">
+<link rel="alternate" hreflang="en" href="https://jasmine.example/en/">
+<link rel="icon" href="data:,">
+<style>
+/* متجر الياسمين (متخيل): نفس الملف للعربي والإنجليزي. كل اتجاه logical، فمفيش [dir] ولا left/right */
+:root {
+  --bg: #ffffff; --soft: #f5f3ff; --ink: #0f172a; --muted: #475569; --line: #cbd5e1;
+  --brand: #4f46e5; --brand-ink: #ffffff; --badge: #be123c; --ok: #166534;
+  --r: 14px; --gutter: clamp(16px, 4vw, 40px);
+  --font: system-ui, "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: var(--font); line-height: 1.7; color: var(--ink); background: var(--bg); }
+img { max-width: 100%; height: auto; display: block; }
+h1, h2, h3 { line-height: 1.3; margin: 0 0 0.5em; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+[id] { scroll-margin-top: 80px; }
+.wrap { max-width: 72rem; margin-inline: auto; padding-inline: var(--gutter); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip { position: absolute; inset-inline-start: 8px; top: 8px; z-index: 3; padding: 8px 14px; background: var(--ink); color: #fff; translate: 0 -200%; }
+.skip:focus { translate: 0 0; }
+
+/* الـ header: لازق فوق */
+.top { position: sticky; top: 0; z-index: 2; background: var(--bg); border-block-end: 1px solid var(--line); }
+.top-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; min-height: 64px; }
+.logo { font-weight: 800; font-size: 1.3rem; text-decoration: none; color: var(--brand); }
+.links { display: flex; flex-wrap: wrap; gap: 0 16px; list-style: none; margin: 0; padding: 0; }
+.links a, .lang { display: inline-block; padding-block: 10px; min-inline-size: 24px; text-decoration: none; }
+.lang { margin-inline-start: auto; font-weight: 700; }
+
+/* الهيرو: 100dvh = الجزء الظاهر فعلًا على الموبايل (100vh أطول منه لما شريط العنوان ظاهر). min-height مش height: المحتوى ميتقصّش */
+.hero { min-height: calc(100dvh - 65px); display: grid; align-content: center; padding-block: 48px; background: var(--soft); }
+.hero h1 { font-size: clamp(2rem, 1.2rem + 4vw, 3.4rem); max-width: 18ch; }
+.hero p { color: var(--muted); max-width: 40rem; font-size: 1.15rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero .wrap > * { animation: rise .6s ease-out both; }
+  .hero .wrap > :nth-child(2) { animation-delay: .1s; }
+  .hero .wrap > :nth-child(3) { animation-delay: .2s; }
+}
+@keyframes rise { from { opacity: 0; translate: 0 12px; } }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 20px; border: 0; border-radius: 999px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; background: var(--brand); color: var(--brand-ink); }
+.btn svg { flex: none; width: 18px; height: 18px; }
+
+section[id] { padding-block: clamp(40px, 7vw, 80px); }
+section[id]:nth-of-type(even) { background: var(--soft); }
+
+/* المنتجات: auto-fit، والشارة في ركن النهاية (يمين في الإنجليزي، شمال في العربي) */
+.products { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); list-style: none; margin: 0; padding: 0; }
+.pcard { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
+.pcard img { border-radius: 10px; }
+.pcard h3 { margin: 0; font-size: 1.05rem; }
+.pcard .price { margin: 0; font-weight: 800; }
+.pcard .btn { margin-block-start: auto; }
+.badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 2px 10px; border-radius: 999px; background: var(--badge); color: #fff; font-size: .85rem; font-weight: 700; }
+
+/* الباقات: على الموبايل عمود والمميزة الأول، وعلى 720 وأكتر ٣ جنب بعض بنفس الطول والزراير على خط واحد */
+.plans { display: grid; gap: 16px; }
+.featured { order: -1; }
+@media (min-width: 720px) {
+  .plans { grid-template-columns: repeat(3, 1fr); }
+  .featured { order: 0; }
+}
+.plan { display: flex; flex-direction: column; gap: 8px; padding: 24px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
+.plan ul { margin: 0; padding-inline-start: 1.2rem; }
+.plan .amount { margin: 0; font-size: 1.8rem; font-weight: 800; }
+.plan-btn { margin-block-start: auto; }
+.featured { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+.featured .plan-btn { background: #ffffff; color: #0f172a; }
+
+/* التوصيل: الكارت المختار عليه إطار بـ :has()، والفرع بيظهر مع الاستلام بس، من غير JS */
+#picker { display: grid; gap: 12px; border: 0; padding: 0; margin: 0; }
+#picker legend { font-weight: 700; margin-block-end: 8px; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 2px solid var(--line); border-radius: var(--r); background: var(--bg); cursor: pointer; }
+.opt input { flex: none; inline-size: 24px; block-size: 24px;   /* WCAG 2.2: target 24×24 at least */ margin: 0; accent-color: var(--brand); }
+.opt:has(:checked) { border-color: #4f46e5; }
+.opt:has(:focus-visible) { outline: 3px solid #b45309; outline-offset: 2px; }
+.branch { display: none; gap: 6px; }
+#picker:has([value="pickup"]:checked) .branch { display: grid; }
+select, input:not([type=radio], [type=checkbox]) { font: inherit; min-height: 44px; padding: 8px 12px; border: 1px solid #64748b; border-radius: 8px; background: var(--bg); color: var(--ink); }
+
+/* الدخول: نصين على 900 وأكتر (الصورة والفورم)، والصورة بتستخبى على الأصغر */
+#login .wrap { display: grid; align-items: center; gap: 24px; }
+.art { display: none; }
+@media (min-width: 900px) {
+  #login .wrap { grid-template-columns: 1fr 1fr; gap: 0; padding-inline: 0; max-width: none; }   /* the picture = exactly half the section */
+  .art { display: block; width: 100%; }   /* fill its half, not stop at the file width (600) */
+}
+.login-form { display: grid; gap: 12px; width: 100%; max-width: 400px; justify-self: center; padding: 0; }
+.login-form label { font-weight: 700; }
+.login-form input, .login-form button { width: 100%; }
+
+/* التنبيه: popover = top layer، فوق الهيدر اللازق مهما كان z-index بتاعه */
+.alert { inset: auto; inset-block-end: 16px; inset-inline-end: 16px; margin: 0; max-width: min(24rem, 100% - 32px); padding: 14px 18px; border: 0; border-radius: var(--r); background: var(--ok); color: #fff; font-weight: 700; box-shadow: 0 10px 30px -10px rgb(0 0 0 / .4); }
+.alert button { margin-inline-start: 12px; padding: 2px 10px; min-height: 32px; border: 1px solid #fff; border-radius: 999px; background: transparent; color: #fff; font: inherit; cursor: pointer; }
+@media (prefers-reduced-motion: no-preference) {
+  .alert { transition: opacity .2s, display .2s allow-discrete, overlay .2s allow-discrete; }
+  .alert:not(:popover-open) { opacity: 0; }
+  @starting-style { .alert:popover-open { opacity: 0; } }
+}
+
+/* جدول الطلبات: بيعمل scroll جوه حاويته، مش الصفحة */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 14px; text-align: start; white-space: nowrap; border-block-end: 1px solid var(--line); }
+th { background: #eef2ff; }
+
+.foot { padding-block: 32px; border-block-start: 1px solid var(--line); color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+</style>
+</head>
+<body>
+<a class="skip" href="#main">اتخطّى للمحتوى</a>
+<header class="top">
+  <div class="wrap top-row">
+    <a class="logo" href="#main" aria-label="الياسمين، الرئيسية">الياسمين</a>
+    <nav aria-label="الرئيسية"><ul class="links"><li><a href="#products">المنتجات</a></li><li><a href="#plans">الباقات</a></li><li><a href="#delivery">التوصيل</a></li><li><a href="#login">الدخول</a></li><li><a href="#orders">الطلبات</a></li></ul></nav>
+    <a class="lang" href="en/" hreflang="en" lang="en">English</a>
+  </div>
+</header>
+<main id="main">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap">
+    <h1 id="hero-title">ورد طبيعي يوصلك النهارده</h1>
+    <p>بننسّق كل بوكيه بالإيد الصبح، ويوصل لحد الباب في نفس اليوم في القاهرة والجيزة.</p>
+    <a class="btn" href="#products">شوف الورد</a>
+  </div>
+</section>
+<section id="products" aria-labelledby="products-title">
+  <div class="wrap">
+    <h2 id="products-title">المنتجات</h2>
+    <ul class="products" role="list">
+      <li class="pcard"><span class="badge">جديد</span><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNlY2ZjY2IiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDAgMTQwKSI+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNmZmZmZmYiIHRyYW5zZm9ybT0icm90YXRlKDApIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2ZmZmZmZiIgdHJhbnNmb3JtPSJyb3RhdGUoNzIpIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2ZmZmZmZiIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSB0cmFuc2xhdGUoMCAtNTIpIi8+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNmZmZmZmYiIHRyYW5zZm9ybT0icm90YXRlKDIxNikgdHJhbnNsYXRlKDAgLTUyKSIvPjxlbGxpcHNlIHJ4PSIzNCIgcnk9IjYyIiBmaWxsPSIjZmZmZmZmIiB0cmFuc2Zvcm09InJvdGF0ZSgyODgpIHRyYW5zbGF0ZSgwIC01MikiLz48Y2lyY2xlIHI9IjMwIiBmaWxsPSIjZmFjYzE1Ii8+PC9nPjxyZWN0IHg9IjE5NiIgeT0iMTkwIiB3aWR0aD0iOCIgaGVpZ2h0PSIxMTAiIGZpbGw9IiMzZjYyMTIiLz48L3N2Zz4=" width="400" height="300" alt="بوكيه ياسمين" loading="lazy"><h3>بوكيه ياسمين</h3><p class="price">٣٥٠ جنيه</p><button type="button" class="btn add" popovertarget="added" data-name="بوكيه ياسمين"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg><span>أضف للسلة</span></button></li>
+      <li class="pcard"><span class="badge">الأكتر طلبًا</span><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZmU0ZTYiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDAgMTQwKSI+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNlMTFkNDgiIHRyYW5zZm9ybT0icm90YXRlKDApIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2UxMWQ0OCIgdHJhbnNmb3JtPSJyb3RhdGUoNzIpIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2UxMWQ0OCIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSB0cmFuc2xhdGUoMCAtNTIpIi8+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNlMTFkNDgiIHRyYW5zZm9ybT0icm90YXRlKDIxNikgdHJhbnNsYXRlKDAgLTUyKSIvPjxlbGxpcHNlIHJ4PSIzNCIgcnk9IjYyIiBmaWxsPSIjZTExZDQ4IiB0cmFuc2Zvcm09InJvdGF0ZSgyODgpIHRyYW5zbGF0ZSgwIC01MikiLz48Y2lyY2xlIHI9IjMwIiBmaWxsPSIjN2YxZDFkIi8+PC9nPjxyZWN0IHg9IjE5NiIgeT0iMTkwIiB3aWR0aD0iOCIgaGVpZ2h0PSIxMTAiIGZpbGw9IiMzZjYyMTIiLz48L3N2Zz4=" width="400" height="300" alt="ورد بلدي أحمر" loading="lazy"><h3>ورد بلدي أحمر</h3><p class="price">٤٢٠ جنيه</p><button type="button" class="btn add" popovertarget="added" data-name="ورد بلدي أحمر"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg><span>أضف للسلة</span></button></li>
+      <li class="pcard"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZWYzYzciLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDAgMTQwKSI+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNmNTllMGIiIHRyYW5zZm9ybT0icm90YXRlKDApIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2Y1OWUwYiIgdHJhbnNmb3JtPSJyb3RhdGUoNzIpIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2Y1OWUwYiIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSB0cmFuc2xhdGUoMCAtNTIpIi8+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNmNTllMGIiIHRyYW5zZm9ybT0icm90YXRlKDIxNikgdHJhbnNsYXRlKDAgLTUyKSIvPjxlbGxpcHNlIHJ4PSIzNCIgcnk9IjYyIiBmaWxsPSIjZjU5ZTBiIiB0cmFuc2Zvcm09InJvdGF0ZSgyODgpIHRyYW5zbGF0ZSgwIC01MikiLz48Y2lyY2xlIHI9IjMwIiBmaWxsPSIjNzgzNTBmIi8+PC9nPjxyZWN0IHg9IjE5NiIgeT0iMTkwIiB3aWR0aD0iOCIgaGVpZ2h0PSIxMTAiIGZpbGw9IiMzZjYyMTIiLz48L3N2Zz4=" width="400" height="300" alt="عباد شمس" loading="lazy"><h3>عباد شمس</h3><p class="price">٣٠٠ جنيه</p><button type="button" class="btn add" popovertarget="added" data-name="عباد شمس"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg><span>أضف للسلة</span></button></li>
+      <li class="pcard"><span class="badge">خصم ١٠٪</span><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNlZGU5ZmUiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDAgMTQwKSI+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiM4YjVjZjYiIHRyYW5zZm9ybT0icm90YXRlKDApIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iIzhiNWNmNiIgdHJhbnNmb3JtPSJyb3RhdGUoNzIpIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iIzhiNWNmNiIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSB0cmFuc2xhdGUoMCAtNTIpIi8+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiM4YjVjZjYiIHRyYW5zZm9ybT0icm90YXRlKDIxNikgdHJhbnNsYXRlKDAgLTUyKSIvPjxlbGxpcHNlIHJ4PSIzNCIgcnk9IjYyIiBmaWxsPSIjOGI1Y2Y2IiB0cmFuc2Zvcm09InJvdGF0ZSgyODgpIHRyYW5zbGF0ZSgwIC01MikiLz48Y2lyY2xlIHI9IjMwIiBmaWxsPSIjZmFjYzE1Ii8+PC9nPjxyZWN0IHg9IjE5NiIgeT0iMTkwIiB3aWR0aD0iOCIgaGVpZ2h0PSIxMTAiIGZpbGw9IiMzZjYyMTIiLz48L3N2Zz4=" width="400" height="300" alt="بنفسج في أصيص" loading="lazy"><h3>بنفسج في أصيص</h3><p class="price">٢٨٠ جنيه</p><button type="button" class="btn add" popovertarget="added" data-name="بنفسج في أصيص"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg><span>أضف للسلة</span></button></li>
+    </ul>
+  </div>
+</section>
+<section id="plans" aria-labelledby="plans-title">
+  <div class="wrap">
+    <h2 id="plans-title">الباقات</h2>
+    <div class="plans">
+      <article class="plan"><h3>مرة في الشهر</h3><p class="amount">٣٨٠ جنيه <small>/ شهر</small></p><ul><li>بوكيه واحد</li><li>توصيل مجاني</li></ul><a class="btn plan-btn" href="#login">اختار «مرة في الشهر»</a></article>
+      <article class="plan featured"><p class="tag">الأوفر</p><h3>كل أسبوع</h3><p class="amount">١٬٢٠٠ جنيه <small>/ شهر</small></p><ul><li>٤ بوكيهات</li><li>توصيل مجاني</li><li>كارت إهداء كل مرة</li><li>تغيير المواعيد من حسابك</li></ul><a class="btn plan-btn" href="#login">اختار «كل أسبوع»</a></article>
+      <article class="plan"><h3>للمكاتب</h3><p class="amount">٢٬٤٠٠ جنيه <small>/ شهر</small></p><ul><li>٤ بوكيهات كبار</li><li>فاتورة باسم الشركة</li></ul><a class="btn plan-btn" href="#login">اختار «للمكاتب»</a></article>
+    </div>
+  </div>
+</section>
+<section id="delivery" aria-labelledby="delivery-title">
+  <div class="wrap">
+    <h2 id="delivery-title">التوصيل</h2>
+    <fieldset id="picker">
+      <legend>عايز الورد يوصلك إزاي؟</legend>
+      <label class="opt"><input type="radio" name="d" value="home" checked> <span><b>لحد البيت</b> · بكرة الصبح</span></label>
+      <label class="opt"><input type="radio" name="d" value="express"> <span><b>سريع</b> · في خلال ٣ ساعات</span></label>
+      <label class="opt"><input type="radio" name="d" value="pickup"> <span><b>استلام من الفرع</b> · ببلاش</span></label>
+      <div class="branch"><label for="branch">الفرع</label><select id="branch" name="branch"><option>الدقي</option><option>مدينة نصر</option><option>المعادي</option></select></div>
+    </fieldset>
+  </div>
+</section>
+<section id="login" aria-labelledby="login-title">
+  <div class="wrap">
+    <img class="art" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNjAwIDYwMCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNlZGU5ZmUiLz48Y2lyY2xlIGN4PSIxNTAiIGN5PSIxODAiIHI9IjcwIiBmaWxsPSIjZTExZDQ4IiBvcGFjaXR5PSIuODUiLz48Y2lyY2xlIGN4PSI0MjAiIGN5PSIxNjAiIHI9IjcwIiBmaWxsPSIjZjU5ZTBiIiBvcGFjaXR5PSIuODUiLz48Y2lyY2xlIGN4PSIzMDAiIGN5PSIzMzAiIHI9IjcwIiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIuODUiLz48Y2lyY2xlIGN4PSIxNjAiIGN5PSI0NjAiIHI9IjcwIiBmaWxsPSIjOGI1Y2Y2IiBvcGFjaXR5PSIuODUiLz48Y2lyY2xlIGN4PSI0NDAiIGN5PSI0NTAiIHI9IjcwIiBmaWxsPSIjZTExZDQ4IiBvcGFjaXR5PSIuODUiLz48L3N2Zz4=" width="600" height="600" alt="">
+    <form class="login-form" action="login" method="post">
+      <h2 id="login-title">الدخول</h2>
+      <label for="email">الإيميل</label>
+      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      <label for="password">كلمة السر</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button class="btn" type="submit">ادخل</button>
+      <p class="note" id="login-note" role="status"></p>
+    </form>
+  </div>
+</section>
+<section id="orders" aria-labelledby="orders-title">
+  <div class="wrap">
+    <h2 id="orders-title">آخر طلباتك</h2>
+    <div class="table-wrap" id="orders-table" tabindex="0" role="region" aria-label="جدول آخر الطلبات" data-cols="رقم الطلب|المنتج|المبلغ|الحالة|التاريخ" data-note="ده متجر متخيّل للتدريب: الفورم مش بيبعت حاجة."></div>
+  </div>
+</section>
+</main>
+<footer class="foot"><div class="wrap">متجر الياسمين اسم متخيّل لمشروع تدريب.</div></footer>
+<div class="alert" id="added" popover role="status"><span id="added-text">اتضاف للسلة:</span> <button type="button" popovertarget="added" popovertargetaction="hide">اقفل</button></div>
+<script type="module">
+// الحل المرجعي بتاع درس «مسائل بالـ JS على الصفحة» زي ما هو، بس كـ module
+function escapeHtml(v) {
+  return String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+function buildTable(rows, columns) {
+  const head = '<thead><tr>' + columns.map(c => '<th scope="col">' + escapeHtml(c.label) + '</th>').join('') + '</tr></thead>';
+  const body = rows.length
+    ? rows.map(r => '<tr>' + columns.map(c => '<td>' + escapeHtml(r[c.key] ?? '') + '</td>').join('') + '</tr>').join('')
+    : '<tr><td colspan="' + columns.length + '">مفيش بيانات</td></tr>';
+  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
+}
+function hexToRgb(hex) {
+  let h = String(hex).trim().replace(/^#/, '');
+  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map(ch => ch + ch).join('');
+  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error('لون مش مفهوم: ' + hex);
+  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+}
+function luminance(hex) {
+  const [r, g, b] = hexToRgb(hex).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function contrastRatio(a, b) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return Math.round((hi + 0.05) / (lo + 0.05) * 100) / 100;
+}
+function passesAA(fg, bg, large = false) {
+  return contrastRatio(fg, bg) >= (large ? 3 : 4.5);
+}
+const trim4 = n => String(Number(n.toFixed(4)));
+function pxToRem(css, base = 16) {
+  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => Number(n) === 0 ? '0' : trim4(n / base) + 'rem');
+}
+
+const lang = document.documentElement.lang;
+
+// the orders table: buildTable from the lesson (every value escaped), numbers and dates in the page language
+const orders = [
+  { id: 1042, product: { ar: "بوكيه ياسمين", en: "Jasmine bouquet" }, amount: 350, status: { ar: "اتوصّل", en: "Delivered" }, date: "2026-11-12" },
+  { id: 1057, product: { ar: "ورد بلدي أحمر", en: "Red roses" }, amount: 840, status: { ar: "في الطريق", en: "On the way" }, date: "2026-11-18" },
+  { id: 1063, product: { ar: "بنفسج في أصيص", en: "Violets in a pot" }, amount: 252, status: { ar: "بيتجهّز", en: "Preparing" }, date: "2026-11-20" },
+];
+const box = document.getElementById("orders-table");
+const labels = box.dataset.cols.split("|");
+const num = new Intl.NumberFormat(lang === "ar" ? "ar-EG" : "en");
+const day = new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en", { day: "numeric", month: "long" });
+box.innerHTML = buildTable(orders.map(o => ({ id: num.format(o.id).replace(/[٬,]/g, ""), product: o.product[lang], amount: (lang === "ar" ? "" : "EGP ") + num.format(o.amount) + (lang === "ar" ? " جنيه" : ""), status: o.status[lang], date: day.format(new Date(o.date + "T00:00")) })),
+  ["id", "product", "amount", "status", "date"].map((key, i) => ({ key, label: labels[i] })));
+
+// "added to cart": the popover opens by itself (popovertarget); JS only writes which product
+const text = document.getElementById("added-text"), base = text.textContent;
+for (const b of document.querySelectorAll(".add")) b.addEventListener("click", () => { text.textContent = base + " " + b.dataset.name; });
+
+// the login form of an imaginary shop: say so instead of posting to nowhere
+document.querySelector(".login-form").addEventListener("submit", e => {
+  e.preventDefault();
+  document.getElementById("login-note").textContent = box.dataset.note;
+});
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر أبيض لازق فيه «الياسمين» ولينكات الأقسام و «English». هيرو بنفسجي فاتح مالي الشاشة: «ورد طبيعي يوصلك النهارده» وزرار. بعده:
+- ٤ كروت منتجات بصور ورد، على كل واحد شارة حمرا في الركن الشمال («جديد»، «الأكتر طلبًا»…) وزرار «أضف للسلة» بأيقونة سلة.
+- ٣ باقات، المميزة («كل أسبوع») كحلي وكلامها أبيض، والزراير على خط واحد تحت.
+- ٣ اختيارات توصيل بإطار بنفسجي على المختار. اختار «استلام من الفرع» ولستة الفروع بتظهر.
+- فورم دخول جنبه رسمة على الشاشة العريضة.
+- جدول آخر طلباتك.
+اضغط «أضف للسلة» وشريط أخضر بيطلع تحت «اتضاف للسلة: بوكيه ياسمين».
+
+**الصفحة متجمعة من تمارين الوحدة، بنفس الـ classes:** [[.plan]] و [[.featured]] و [[.plan-btn]] من «صفحات من وصف»، و [[#picker]] و [[.opt]] و [[.branch]] من تمرين التوصيل، و [[.login-form]] و [[.art]] من صفحة الدخول، و [[.pcard .badge]] و [[.alert]] و [[.hero]] من «صلّح الكود البايظ»، و [[buildTable]] من «مسائل بالـ JS». عشان كده فحوص الدروس بتشتغل عليها زي ما هي.
+
+**عربي وإنجليزي من template واحد:** [[build.mjs]] فيه الصفحة مرة واحدة، و [[T.ar]] و [[T.en]] فيهم الكلام والأسعار ([[toLocaleString("ar-EG")]] أو [[("en")]]). النسختين بنفس [[store.css]]، ومفيش ولا [[[dir]]] ولا [[left]] ولا [[right]] فيه: الشارة [[inset-inline-end: 8px]] بتروح الشمال في العربي واليمين في الإنجليزي لوحدها.
+
+**الهيرو:** [[min-height: calc(100dvh - 65px)]]. [[dvh]] = الجزء الظاهر فعلًا على الموبايل ([[100vh]] أطول منه لما شريط العنوان ظاهر). و [[min-height]] مش [[height]] عشان لو الكلام كبر الهيرو يطول، ومتحصلش قصة الدرس (محتوى مقصوص).
+
+**الباقات:** عمود واحد على الموبايل، و [[order: -1]] على المميزة فبتطلع الأول. وعلى 720 وأكتر ٣ عواميد، و [[order: 0]] بيرجّعها مكانها في النص. الكارت [[flex-direction: column]] والزرار [[margin-block-start: auto]] فبينزل لآخر الكارت، والزراير على خط واحد مهما كانت المميزات أطول.
+
+**التوصيل من غير JS:** [[.opt:has(:checked)]] بيلوّن الكارت المختار، و [[#picker:has([value="pickup"]:checked) .branch]] بيظهر الفروع. والـ radio ظاهر (مش [[display: none]])، فالأسهم والـ Tab شغالين.
+
+**التنبيه في الـ top layer:** [[popover]] على [[.alert]]، والزرار [[popovertarget="added"]] بيفتحه من غير JS. الـ top layer فوق أي z-index، فمفيش احتمال الهيدر اللازق يغطيه (بند ٤ في فحص الدرس). Esc بيقفله لوحده. والـ JS بيكتب اسم المنتج بس.
+
+**الحركة:** دخول الهيرو والتنبيه جوه [[@media (prefers-reduced-motion: no-preference)]]، فمع reduce [[document.getAnimations()]] = صفر.
+
+**الفحوص (الأربعة على النسختين، على 320 و 360 و 768 و 1200 و 1440):**
+- فحص الفيضان، وفحص الـ accessibility، وفحص «صفحات من وصف» ومعاه سطر التوصيل: زي ما هم في الدروس.
+- فحص «صلّح الكود البايظ» مكتوب لصفحته البايظة: بنود الفهرس اللازق (1)، و [[#b3]] (3)، و group-hover (5)، وزرار المسح (9) بتدوّر على عناصر مش في المتجر. [[store-checks.js]] فيه الستة الباقيين بنفس طريقة القياس.
+
+**الغلطات اللي قابلتني:**
+- **فحص الدرس نفسه كان فيه bug:** «السطر الجديد في الفحص» بتاع تمرين التوصيل بيعرّف [[const radios]]، والفحص الأصلي معرّفها قبله. لما لزقته جواه: [[SyntaxError: Identifier 'radios' has already been declared]]، والفحص كله مبيشتغلش. صلّحت الدرس: السطور جوه [[{ }]] (scope جديد)، ومعاها جملة بتقول ليه.
+- **صورة الدخول 600 بس على 1440:** الفحص عايزها نص [[#login]] بالظبط. على 1200 عدّت بالصدفة لأن 600 = 1200 ÷ 2. الصورة كانت بتقف عند عرض الملف بتاعها، و [[width: 100%]] بيخليها تملا نصها. وقبلها [[.wrap]] كان عليه [[max-width]]، فاتشال في الحتة دي.
+- **الـ radio 20×20:** فحص الـ accessibility (WCAG 2.2) بيطلب 24×24. بقى 24، وبعدها على الإنجليزي 320 بس واحد طلع 21×24: الـ radio جوه [[.opt]] اللي هو flex، والكلام الإنجليزي أطول، فالـ [[flex-shrink]] الافتراضي (1) صغّره. [[flex: none]] على الـ radio.
+- **axe طلّع color-contrast على الإنجليزي بس، ومرة واحدة:** الفحص اتشغّل والهيرو لسه بيظهر (opacity بين 0 و 1)، فالكلام اتقاس باهت. عند 0 axe بيتجاهله، وعند 1 سليم، والنتيجة على حسب اللحظة. والعربي معداش عليه ده، لأن axe بيسكت عن العربي المتوصّل أصلًا. القياس بقى يستنى [[Promise.all(document.getAnimations().map(a => a.finished))]] قبل أي فحص.
+
+~~~text قبل التصليحات
+قبل التصليحات (أول قياس):
+SyntaxError: Identifier 'radios' has already been declared   ← سطر التوصيل من الدرس اتلزق جوه الفحص من غير { }
+ar 1440 صفحات من وصف 8 من 9: FAIL 2 الدخول: نصين، والفورم في نص نصه ← الصورة 600px من 1440px، والفورم 400px (أقصاه 400)
+ar/en: accessibility 9 من 10: FAIL 10 الأهداف ٢٤×٢٤ على الأقل (WCAG 2.2) ← صغيرة على الصباع: input ، input ، input
+en: axe 1 color-contrast (والفحص بيجري والهيرو لسه بيظهر)
+بعد ما الـ radio بقى 24px، على en 320 بس: home 21×24 | express 24×24 | pickup 24×24  ← الـ flex صغّره
+~~~
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+ar 320  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 8 من 8 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+ar 360  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 8 من 8 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+ar 768  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+ar 1200 الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+ar 1440 الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+en 320  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 8 من 8 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+en 360  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 8 من 8 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+en 768  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+en 1200 الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+en 1440 الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
+الكيبورد: 21 وقفة، من غير حلقة: 0
+Enter على «أضف للسلة»: التنبيه مفتوح true | «اتضاف للسلة: بوكيه ياسمين»
+Esc: التنبيه مفتوح false
+سهمين في التوصيل: المختار pickup والفرع ظاهر true
+reduce: animations شغالة 0
+كله نضيف
+~~~
+
+~~~text Lighthouse 13.6.0 (موبايل، الأربع فئات)
+store-ar   | Performance 100 | Accessibility 100 | Best Practices 100 | SEO 100 | ناقص: max-potential-fid, network-dependency-tree-insight
+store-en   | Performance 100 | Accessibility 100 | Best Practices 100 | SEO 100 | ناقص: network-dependency-tree-insight
+~~~
+
+**النشر:** الصفحة static (HTML و CSS و JS وصور SVG)، فـ GitHub Pages زي درس «انشر صفحتك»: [[node build.mjs]]، وارفع [[index.html]] و [[en/]] و [[css/]] و [[js/]] و [[img/]]. الدومين في الـ hreflang ([[jasmine.example]]) متخيّل: حط بتاعك. ([[js/lesson.js]] نفس الملف اللي في مشروع «مدقق ألوان الثيم».)` },
+        { lvl: 'كبير', dir: "css-bank", t: R`بنك تمارين CSS بيتصحح لوحده`, what: R`صفحة زي الموقع ده بالظبط بس للـ CSS: لكل تمرين وصف الهدف، و textarea للـ CSS بتاعك، و iframe بـ [[srcdoc]] بيعرض النتيجة، وزرار «افحص» بيشغّل الفحص الذاتي جوه الـ iframe ويعرض PASS و FAIL. ابدأ بتمارين الأشكال والـ layouts، والعرض بيتغير بأزرار 360 و 768 و 1200 بتغيّر عرض الـ iframe.`, done: R`الحل المرجعي لكل تمرين بيعدّي والحل الغلط بيقع بنفس الرسايل اللي في الدروس، والـ CSS بتاعك بيتحفظ في [[localStorage]] (جوه try/catch) وبيرجع بعد reload، و CSS فيه loop أو غلط مش بيوقّع الصفحة، والصفحة نفسها axe صفر.`, ext: R`زوّد وضع «تحدي اليوم» بتمرين عشوائي وعدّاد وقت، وصفحة إحصائيات بتقولك أنهي نوع تمارين بتقع فيه أكتر.`, sol: R`~~~js make-exercises.mjs
+// node bank/make-exercises.mjs: exercises.js from the lessons' own self-checks (same lines, same messages)
+import fs from "node:fs";
+const src = f => fs.readFileSync(new URL("../src/" + f, import.meta.url), "utf8").split("\n");
+const shapes = src("shapes-check.js"), layouts = src("layouts-check.js");
+// one shape: the "if ((el = get('id'))) { ... }" block, up to its closing line
+const block = id => { const i = shapes.findIndex(l => l.includes("get('" + id + "')")); const j = shapes.findIndex((l, k) => k > i && l === "  }"); return shapes.slice(i, j + 1).join("\n"); };
+// up to the line that ENDS the ok(...) statement: in the layouts check an ok() runs over two lines
+const lines = (from, to) => { const i = layouts.findIndex(l => l.includes(from)); let j = layouts.findIndex(l => l.includes(to)); while (!/\);\s*$/.test(layouts[j])) j++; return layouts.slice(i, j + 1).join("\n"); };
+
+const ex = [
+  { id: "tri", group: "أشكال", title: "مثلث لفوق", goal: "عنصر #tri مثلث لونه #e11d48 بقاعدة 80px وارتفاع 70px، من غير صورة.",
+    html: '<div id="tri"></div>', start: "#tri {\n  \n}",
+    solution: "#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
+    wrong: "#tri { width: 80px; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
+    check: block("tri") },
+  { id: "circle", group: "أشكال", title: "دايرة بإطار", goal: "#circle دايرة 96×96 بالإطار، خلفيتها #0ea5e9 وإطارها 4px لونه #0c4a6e.",
+    html: '<div id="circle"></div>', start: "#circle {\n  \n}",
+    solution: "#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
+    wrong: "#circle { width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
+    check: block("circle") },
+  { id: "star", group: "أشكال", title: "نجمة خماسية", goal: "#star نجمة خماسية 120×120 لونها #f59e0b بـ clip-path (١٠ نقط).",
+    html: '<div id="star"></div>', start: "#star {\n  \n}",
+    solution: "#star { width: 120px; height: 120px; background: #f59e0b;\n  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }",
+    wrong: "#star { width: 120px; height: 120px; background: #f59e0b; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }",
+    check: block("star") },
+  { id: "chess", group: "أشكال", title: "رقعة شطرنج", goal: "#chess رقعة 240×240 مربعاتها 30px (٨×٨)، من غير ولا عنصر جواها.",
+    html: '<div id="chess"></div>', start: "#chess {\n  \n}",
+    solution: "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 60px 60px; }",
+    wrong: "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 30px 30px; }",
+    check: block("chess") },
+  { id: "cards", group: "layouts", title: "شبكة كروت", goal: "#cards: الكروت أقل عرض ليها 220px والمسافة 16px، والعدد في الصف على حسب المكان، ومفيش كارت يطلع برا على أي عرض.",
+    html: '<section id="cards">' + Array.from({ length: 7 }, (_, i) => '<article class="card">كارت ' + (i + 1).toLocaleString("ar-EG") + "</article>").join("") + "</section>",
+    start: "#cards {\n  \n}\n.card { background: #e0e7ff; padding: 8px; }",
+    solution: "#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
+    wrong: "#cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
+    check: lines("const cards", "ok('2 شبكة الكروت'") },
+  { id: "bento", group: "layouts", title: "bento", goal: "#bento: ٤ عواميد (عمودين تحت 600px) وصفوف 120px ومسافة 12px. .b1 عمودين × صفين، و .b2 عمودين × صف.",
+    html: '<section id="bento"><div class="b b1">كبير</div><div class="b b2">عريض</div><div class="b">٣</div><div class="b">٤</div><div class="b">٥</div><div class="b">٦</div></section>',
+    start: "#bento {\n  \n}\n.b { background: #e0e7ff; padding: 8px; }",
+    solution: "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; grid-row: span 2; }\n.b2 { grid-column: span 2; }\n@media (max-width: 599px) { #bento { grid-template-columns: repeat(2, 1fr); } }\n.b { background: #e0e7ff; padding: 8px; }",
+    wrong: "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; }\n.b2 { grid-column: span 2; }\n.b { background: #e0e7ff; padding: 8px; }",
+    check: lines("const bento", "ok('3 bento'") },
+];
+fs.writeFileSync(new URL("exercises.js", import.meta.url),
+  "// اتعمل بـ make-exercises.mjs: الهدف والحل المرجعي، وسطور الفحص منسوخة من فحص الدرس زي ما هي\nexport const exercises = " + JSON.stringify(ex, null, 1) + ";\n");
+console.log("exercises.js: " + ex.length + " تمارين");
+~~~
+
+~~~js exercises.js (الناتج)
+// اتعمل بـ make-exercises.mjs: الهدف والحل المرجعي، وسطور الفحص منسوخة من فحص الدرس زي ما هي
+export const exercises = [
+ {
+  "id": "tri",
+  "group": "أشكال",
+  "title": "مثلث لفوق",
+  "goal": "عنصر #tri مثلث لونه #e11d48 بقاعدة 80px وارتفاع 70px، من غير صورة.",
+  "html": "<div id=\"tri\"></div>",
+  "start": "#tri {\n  \n}",
+  "solution": "#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
+  "wrong": "#tri { width: 80px; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
+  "check": "  if ((el = get('tri'))) {\n    const s = cs(el), borders = s.width === '0px' && s.borderBottomColor === rgb('#e11d48') && s.borderLeftColor === 'rgba(0, 0, 0, 0)';\n    const clip = s.clipPath.startsWith('polygon') && s.clipPath.split(',').length === 3 && s.backgroundColor === rgb('#e11d48');\n    ok('1 المثلث', size(el, 80, 70) && (borders || clip), 'المقاس ' + sz(el) + ' والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط');\n  }"
+ },
+ {
+  "id": "circle",
+  "group": "أشكال",
+  "title": "دايرة بإطار",
+  "goal": "#circle دايرة 96×96 بالإطار، خلفيتها #0ea5e9 وإطارها 4px لونه #0c4a6e.",
+  "html": "<div id=\"circle\"></div>",
+  "start": "#circle {\n  \n}",
+  "solution": "#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
+  "wrong": "#circle { width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
+  "check": "  if ((el = get('circle'))) {\n    const s = cs(el);\n    ok('2 الدايرة', size(el, 96, 96) && round(el) && s.borderTopWidth === '4px' && s.backgroundColor === rgb('#0ea5e9'), 'المقاس ' + sz(el) + ' (المطلوب 96×96 بالـ border)، والـ radius ' + s.borderTopLeftRadius);\n  }"
+ },
+ {
+  "id": "star",
+  "group": "أشكال",
+  "title": "نجمة خماسية",
+  "goal": "#star نجمة خماسية 120×120 لونها #f59e0b بـ clip-path (١٠ نقط).",
+  "html": "<div id=\"star\"></div>",
+  "start": "#star {\n  \n}",
+  "solution": "#star { width: 120px; height: 120px; background: #f59e0b;\n  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }",
+  "wrong": "#star { width: 120px; height: 120px; background: #f59e0b; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }",
+  "check": "  if ((el = get('star'))) {\n    const s = cs(el), n = s.clipPath.startsWith('polygon') ? s.clipPath.split(',').length : 0;\n    ok('8 النجمة', size(el, 120, 120) && n === 10 && s.backgroundColor === rgb('#f59e0b'), 'الـ polygon فيه ' + n + ' نقطة، والنجمة الخماسية ١٠ (٥ أطراف و ٥ جوه)');\n  }"
+ },
+ {
+  "id": "chess",
+  "group": "أشكال",
+  "title": "رقعة شطرنج",
+  "goal": "#chess رقعة 240×240 مربعاتها 30px (٨×٨)، من غير ولا عنصر جواها.",
+  "html": "<div id=\"chess\"></div>",
+  "start": "#chess {\n  \n}",
+  "solution": "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 60px 60px; }",
+  "wrong": "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 30px 30px; }",
+  "check": "  if ((el = get('chess'))) {\n    const s = cs(el);\n    ok('10 الشطرنج', size(el, 240, 240) && el.childElementCount === 0 && /gradient/.test(s.backgroundImage) && s.backgroundSize === '60px 60px', 'من غير عناصر جوه (فيه ' + el.childElementCount + ')، و background-size لازم 60px 60px (مربعين × مربعين)، والموجود ' + s.backgroundSize);\n  }"
+ },
+ {
+  "id": "cards",
+  "group": "layouts",
+  "title": "شبكة كروت",
+  "goal": "#cards: الكروت أقل عرض ليها 220px والمسافة 16px، والعدد في الصف على حسب المكان، ومفيش كارت يطلع برا على أي عرض.",
+  "html": "<section id=\"cards\"><article class=\"card\">كارت ١</article><article class=\"card\">كارت ٢</article><article class=\"card\">كارت ٣</article><article class=\"card\">كارت ٤</article><article class=\"card\">كارت ٥</article><article class=\"card\">كارت ٦</article><article class=\"card\">كارت ٧</article></section>",
+  "start": "#cards {\n  \n}\n.card { background: #e0e7ff; padding: 8px; }",
+  "solution": "#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
+  "wrong": "#cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
+  "check": "  const cards = [...document.querySelectorAll('#cards .card')], cw = inner(q('#cards'));\n  const want = Math.max(1, Math.floor((cw + 16) / (220 + 16))), cols = new Set(cards.map(c => Math.round(R(c).top))).size ? cards.filter(c => near(R(c).top, R(cards[0]).top)).length : 0;\n  ok('2 شبكة الكروت', cols === Math.min(want, cards.length) && cards.every(c => R(c).right <= R(q('#cards')).right + 1 && R(c).left >= R(q('#cards')).left - 1),\n    'الصف الأول فيه ' + cols + ' كروت، والمتوقع ' + want + ' على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا');"
+ },
+ {
+  "id": "bento",
+  "group": "layouts",
+  "title": "bento",
+  "goal": "#bento: ٤ عواميد (عمودين تحت 600px) وصفوف 120px ومسافة 12px. .b1 عمودين × صفين، و .b2 عمودين × صف.",
+  "html": "<section id=\"bento\"><div class=\"b b1\">كبير</div><div class=\"b b2\">عريض</div><div class=\"b\">٣</div><div class=\"b\">٤</div><div class=\"b\">٥</div><div class=\"b\">٦</div></section>",
+  "start": "#bento {\n  \n}\n.b { background: #e0e7ff; padding: 8px; }",
+  "solution": "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; grid-row: span 2; }\n.b2 { grid-column: span 2; }\n@media (max-width: 599px) { #bento { grid-template-columns: repeat(2, 1fr); } }\n.b { background: #e0e7ff; padding: 8px; }",
+  "wrong": "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; }\n.b2 { grid-column: span 2; }\n.b { background: #e0e7ff; padding: 8px; }",
+  "check": "  const bento = q('#bento'), bw = inner(bento), n = W >= 600 ? 4 : 2, col = (bw - (n - 1) * 12) / n, b1 = R(q('.b1')), b2 = R(q('.b2'));\n  ok('3 bento', near(b1.width, 2 * col + 12) && near(b1.height, 252) && near(b2.width, 2 * col + 12) && near(b2.height, 120) && near(R(q('#bento .b:nth-child(3)')).width, col),\n    'الكبير لازم عمودين × صفين (' + px(2 * col + 12) + ' × 252px) والعريض عمودين × صف، والموجود ' + px(b1.width) + ' × ' + px(b1.height));"
+ }
+];
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بنك تمارين CSS</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="bank.css">
+<script type="module" src="bank.js"></script>
+</head>
+<body>
+<header class="top"><h1>بنك تمارين CSS</h1><p>اكتب الـ CSS، شوف النتيجة، ودوس «افحص».</p></header>
+<div class="layout">
+  <nav aria-label="التمارين"><ul id="list" class="list"></ul></nav>
+  <main id="main">
+    <h2 id="ex-title"></h2>
+    <p id="ex-goal" class="goal"></p>
+    <label for="css">الـ CSS بتاعك</label>
+    <textarea id="css" rows="9" spellcheck="false" dir="ltr"></textarea>
+    <div class="row">
+      <button type="button" id="run" class="primary">افحص</button>
+      <button type="button" id="reset">ابدأ من الأول</button>
+      <span class="sizes" role="group" aria-label="عرض النتيجة">
+        <button type="button" data-w="360" aria-pressed="false">360</button>
+        <button type="button" data-w="768" aria-pressed="false">768</button>
+        <button type="button" data-w="1200" aria-pressed="true">1200</button>
+      </span>
+    </div>
+    <p id="verdict" class="verdict" role="status"></p>
+    <ul id="results" class="results"></ul>
+    <div class="stage" tabindex="0" role="region" aria-label="مكان النتيجة (بيعمل scroll لو العرض أكبر من الشاشة)"><iframe id="view" title="النتيجة" sandbox="allow-scripts" style="width: 1200px"></iframe></div>
+  </main>
+</div>
+</body>
+</html>
+~~~
+
+~~~js bank.js
+import { exercises } from "./exercises.js";
+
+const $ = id => document.getElementById(id);
+const KEY = "css-bank:";
+const load = id => { try { return localStorage.getItem(KEY + id); } catch { return null; } };     // storage can be blocked
+const save = (id, css) => { try { localStorage.setItem(KEY + id, css); } catch {} };
+
+// the helpers both lesson checks use (shapes: cs, rgb, size…; layouts: W, q, R, near…). ok() collects instead of console.log
+const PRELUDE = $__bt
+const results = [];
+const cs = (el, p) => getComputedStyle(el, p || null);
+const rgb = c => { const i = document.createElement('i'); i.style.color = c; document.body.append(i); const v = cs(i).color; i.remove(); return v; };
+const round = el => { const r = cs(el).borderTopLeftRadius; return r === '50%' || parseFloat(r) >= el.offsetWidth / 2; };
+const ok = (name, cond, why) => results.push({ name, pass: !!cond, why: cond ? '' : why });
+const size = (el, w, h) => el.offsetWidth === w && el.offsetHeight === h;
+const sz = el => el.offsetWidth + '×' + el.offsetHeight;
+const get = id => document.getElementById(id) || (results.push({ name: '#' + id, pass: false, why: 'مفيش عنصر بالـ id ده' }), null);
+const W = innerWidth, q = s => document.querySelector(s), R = el => el.getBoundingClientRect();
+const near = (a, b) => Math.abs(a - b) <= 1.5;
+const inner = el => { const s = getComputedStyle(el); return el.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight); };
+const px = v => Math.round(v) + 'px';
+let el;$__bt;
+
+// "<" can't do anything useful in CSS, but "</style><script>" would end the style and run a script: \\3c is the same "<" as a CSS escape
+const safeCss = css => css.replace(/</g, "\\3c ");
+
+function frameDoc(ex, css, run, token) {
+  return $__bt<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>body{margin:0;padding:16px;font-family:system-ui,sans-serif}\n$__{safeCss(css)}</style></head><body>$__{ex.html}$__bt +
+    (run ? $__bt<script>addEventListener('load', () => { let out; try { $__{PRELUDE}\n$__{ex.check}\n out = results; } catch (e) { out = [{ name: 'الفحص', pass: false, why: 'الفحص وقع: ' + e.message }]; } parent.postMessage({ token: $__{JSON.stringify(token)}, out }, '*'); });<\/script>$__bt : "") + "</body></html>";
+}
+
+const list = $("list"), view = $("view");
+let current = null, timer = null, waiting = null;
+
+function show(ex) {
+  current = ex;
+  for (const b of list.querySelectorAll("button")) b.setAttribute("aria-current", String(b.dataset.id === ex.id));
+  $("ex-title").textContent = ex.title;
+  $("ex-goal").textContent = ex.goal;
+  $("css").value = load(ex.id) ?? ex.start;
+  $("results").replaceChildren();
+  $("verdict").textContent = "";
+  render(false);
+}
+function render(run) {
+  const token = Math.random().toString(36).slice(2);
+  view.srcdoc = frameDoc(current, $("css").value, run, token);
+  return token;
+}
+
+// the check runs INSIDE the frame (its own origin, sandboxed) and sends the results back
+function check() {
+  clearTimeout(waiting);
+  const token = render(true);
+  $("verdict").textContent = "بيفحص…";
+  const onMsg = e => {
+    if (e.source !== view.contentWindow || !e.data || e.data.token !== token) return;   // only our frame, only this run
+    removeEventListener("message", onMsg); clearTimeout(waiting);
+    const out = e.data.out, pass = out.filter(r => r.pass).length;
+    $("results").replaceChildren(...out.map(r => { const li = document.createElement("li"); li.className = r.pass ? "pass" : "fail"; li.textContent = (r.pass ? "PASS " : "FAIL ") + r.name + (r.why ? " ← " + r.why : ""); return li; }));
+    $("verdict").textContent = "النتيجة: " + pass + " من " + out.length;
+  };
+  addEventListener("message", onMsg);
+  waiting = setTimeout(() => { removeEventListener("message", onMsg); $("verdict").textContent = "الفحص مرجعش في ٣ ثواني: راجع الـ CSS أو جرّب تاني"; }, 3000);
+}
+
+for (const ex of exercises) {
+  const li = document.createElement("li"), b = document.createElement("button");
+  b.type = "button"; b.dataset.id = ex.id; b.textContent = ex.group + ": " + ex.title;
+  b.addEventListener("click", () => show(ex));
+  li.append(b); list.append(li);
+}
+$("css").addEventListener("input", () => { save(current.id, $("css").value); clearTimeout(timer); timer = setTimeout(() => render(false), 250); });
+$("run").addEventListener("click", check);
+$("reset").addEventListener("click", () => { $("css").value = current.start; save(current.id, current.start); render(false); });
+for (const b of document.querySelectorAll("[data-w]")) b.addEventListener("click", () => {
+  view.style.width = b.dataset.w + "px";
+  for (const x of document.querySelectorAll("[data-w]")) x.setAttribute("aria-pressed", String(x === b));
+});
+show(exercises[0]);
+~~~
+
+~~~css bank.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
+.top { padding: 1rem; background: #0f172a; color: #fff; }
+.top h1 { margin: 0; font-size: 1.4rem; }
+.top p { margin: 0; color: #cbd5e1; }
+.layout { display: grid; gap: 1rem; padding: 1rem; }
+@media (min-width: 800px) { .layout { grid-template-columns: 14rem 1fr; } }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.list button { width: 100%; text-align: start; }
+.list button[aria-current="true"] { background: #4338ca; color: #fff; border-color: #4338ca; }
+main { min-width: 0; }
+h2 { margin: 0; }
+.goal { color: #334155; }
+label { display: block; font-weight: 700; }
+textarea { width: 100%; padding: 0.75rem; border: 1px solid #64748b; border-radius: 0.5rem; font: 0.9rem/1.6 ui-monospace, Consolas, monospace; text-align: left; }
+button { font: inherit; min-height: 40px; padding: 4px 14px; border: 1px solid #94a3b8; border-radius: 0.5rem; background: #fff; color: #0f172a; cursor: pointer; }
+button.primary { background: #4338ca; border-color: #4338ca; color: #fff; font-weight: 700; }
+.sizes button[aria-pressed="true"] { background: #0f172a; color: #fff; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-block: 0.75rem; }
+.sizes { display: inline-flex; gap: 4px; margin-inline-start: auto; }
+.verdict { font-weight: 800; min-height: 1.7em; margin: 0; }
+.results { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 4px; }
+.results li { padding: 6px 10px; border-radius: 0.4rem; }
+.results .pass { background: #dcfce7; color: #14532d; }
+.results .fail { background: #fee2e2; color: #7f1d1d; }
+/* the frame keeps the width you picked; the box scrolls, not the page */
+.stage { overflow-x: auto; border: 1px dashed #94a3b8; border-radius: 0.5rem; background: #fff; }
+.stage iframe { display: block; height: 420px; border: 0; max-width: none; }
+~~~
+
+~~~js measure.mjs
+// node bank/measure.mjs: every reference solution passes and every wrong one fails with the lesson's message,
+// the CSS survives a reload, blocked storage, broken CSS and a "</style><script>" trick, and axe on the page
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+import { exercises } from "./exercises.js";
+const U = "http://127.0.0.1:8840/bank/index.html";
+const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+const ctx = await b.newContext({ viewport: { width: 1400, height: 900 } });
+const p = await ctx.newPage();
+const errs = [];
+p.on("pageerror", e => errs.push(e.message));
+await p.goto(U);
+const run = async (css, w = "1200") => {
+  await p.click($__bt[data-w="$__{w}"]$__bt);
+  await p.fill("#css", css);
+  await p.click("#run");
+  await p.waitForFunction(() => /^النتيجة|مرجعش/.test(document.getElementById("verdict").textContent));
+  return { verdict: await p.textContent("#verdict"), fails: await p.$$eval("#results .fail", l => l.map(x => x.textContent)) };
+};
+for (const ex of exercises) {
+  await p.click($__bt#list [data-id="$__{ex.id}"]$__bt);
+  const widths = ex.group === "layouts" ? ["1200", "768", "360"] : ["1200"];
+  for (const w of widths) {
+    const good = await run(ex.solution, w), bad = await run(ex.wrong, w);
+    console.log(ex.id.padEnd(7) + w.padEnd(5) + "الصح: " + good.verdict + " | الغلط: " + bad.verdict + (bad.fails.length ? " ← " + bad.fails[0].slice(0, 150) : ""));
+  }
+}
+
+// your CSS is saved and comes back after a reload
+await p.click('#list [data-id="tri"]');
+await p.fill("#css", "#tri { width: 0; /* لسه بكتب */ }");
+await p.dispatchEvent("#css", "input");
+await p.reload();
+console.log("بعد reload: «" + (await p.inputValue("#css")) + "»");
+
+// broken CSS and a check that crashes: a message, not a dead page
+const broken = await run("#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48");
+console.log("CSS من غير قوس آخر: " + broken.verdict);
+const cheat = await run("#tri {}</style><script>while (true) {}</script>");
+console.log("CSS فيه </style><script>while(true): " + cheat.verdict + " | الصفحة لسه بترد: " + await p.evaluate(() => 1 + 1));
+const fake = await run("#tri {}</style><script>parent.postMessage({ token: 'x', out: [{ name: 'غش', pass: true }] }, '*')</script>");
+console.log("CSS بيحاول يبعت PASS مزيّف: " + fake.verdict + " | " + (fake.fails[0] || ""));
+console.log("axe: " + (await new AxeBuilder({ page: p }).analyze()).violations.length + " | errors: " + errs.length);
+
+// storage blocked (private mode, sandboxed embed): the page still works
+const ctx2 = await b.newContext();
+await ctx2.addInitScript(() => Object.defineProperty(window, "localStorage", { get() { throw new DOMException("blocked", "SecurityError"); } }));
+const p2 = await ctx2.newPage();
+const errs2 = [];
+p2.on("pageerror", e => errs2.push(e.message));
+await p2.goto(U);
+await p2.fill("#css", "#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }");
+await p2.click("#run");
+await p2.waitForFunction(() => /^النتيجة/.test(document.getElementById("verdict").textContent));
+console.log("localStorage ممنوع: " + await p2.textContent("#verdict") + " | errors: " + errs2.length);
+await b.close();
+~~~
+
+~~~js inject-test.mjs
+// node bank/inject-test.mjs: the same "CSS" with and without the \3c escape, in the same sandboxed srcdoc frame
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+const p = await b.newPage();
+const css = "#tri {}</style><script>parent.postMessage({ out: [{ name: 'غش', pass: true }] }, '*')</script>";
+for (const [label, c] of [["من غير escape", css], ["بـ \\3c", css.replace(/</g, "\\3c ")]]) {
+  await p.setContent('<iframe sandbox="allow-scripts"></iframe>');
+  const got = await p.evaluate(doc => new Promise(res => {
+    addEventListener("message", e => res(JSON.stringify(e.data.out)));
+    document.querySelector("iframe").srcdoc = doc;
+    setTimeout(() => res("مفيش رسالة"), 1500);
+  }), "<style>" + c + "</style><div id=tri></div>");
+  console.log(label + ": " + got);
+}
+await b.close();
+~~~
+
+~~~view 720 720 اكتب واضغط «افحص» (اعمل scroll جوه)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بنك تمارين CSS</title>
+<link rel="icon" href="data:,">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
+.top { padding: 1rem; background: #0f172a; color: #fff; }
+.top h1 { margin: 0; font-size: 1.4rem; }
+.top p { margin: 0; color: #cbd5e1; }
+.layout { display: grid; gap: 1rem; padding: 1rem; }
+@media (min-width: 800px) { .layout { grid-template-columns: 14rem 1fr; } }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.list button { width: 100%; text-align: start; }
+.list button[aria-current="true"] { background: #4338ca; color: #fff; border-color: #4338ca; }
+main { min-width: 0; }
+h2 { margin: 0; }
+.goal { color: #334155; }
+label { display: block; font-weight: 700; }
+textarea { width: 100%; padding: 0.75rem; border: 1px solid #64748b; border-radius: 0.5rem; font: 0.9rem/1.6 ui-monospace, Consolas, monospace; text-align: left; }
+button { font: inherit; min-height: 40px; padding: 4px 14px; border: 1px solid #94a3b8; border-radius: 0.5rem; background: #fff; color: #0f172a; cursor: pointer; }
+button.primary { background: #4338ca; border-color: #4338ca; color: #fff; font-weight: 700; }
+.sizes button[aria-pressed="true"] { background: #0f172a; color: #fff; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-block: 0.75rem; }
+.sizes { display: inline-flex; gap: 4px; margin-inline-start: auto; }
+.verdict { font-weight: 800; min-height: 1.7em; margin: 0; }
+.results { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 4px; }
+.results li { padding: 6px 10px; border-radius: 0.4rem; }
+.results .pass { background: #dcfce7; color: #14532d; }
+.results .fail { background: #fee2e2; color: #7f1d1d; }
+/* the frame keeps the width you picked; the box scrolls, not the page */
+.stage { overflow-x: auto; border: 1px dashed #94a3b8; border-radius: 0.5rem; background: #fff; }
+.stage iframe { display: block; height: 420px; border: 0; max-width: none; }
+
+</style>
+</head>
+<body>
+<header class="top"><h1>بنك تمارين CSS</h1><p>اكتب الـ CSS، شوف النتيجة، ودوس «افحص».</p></header>
+<div class="layout">
+  <nav aria-label="التمارين"><ul id="list" class="list"></ul></nav>
+  <main id="main">
+    <h2 id="ex-title"></h2>
+    <p id="ex-goal" class="goal"></p>
+    <label for="css">الـ CSS بتاعك</label>
+    <textarea id="css" rows="9" spellcheck="false" dir="ltr"></textarea>
+    <div class="row">
+      <button type="button" id="run" class="primary">افحص</button>
+      <button type="button" id="reset">ابدأ من الأول</button>
+      <span class="sizes" role="group" aria-label="عرض النتيجة">
+        <button type="button" data-w="360" aria-pressed="false">360</button>
+        <button type="button" data-w="768" aria-pressed="false">768</button>
+        <button type="button" data-w="1200" aria-pressed="true">1200</button>
+      </span>
+    </div>
+    <p id="verdict" class="verdict" role="status"></p>
+    <ul id="results" class="results"></ul>
+    <div class="stage" tabindex="0" role="region" aria-label="مكان النتيجة (بيعمل scroll لو العرض أكبر من الشاشة)"><iframe id="view" title="النتيجة" sandbox="allow-scripts" style="width: 1200px"></iframe></div>
+  </main>
+</div>
+<script type="module">
+// اتعمل بـ make-exercises.mjs: الهدف والحل المرجعي، وسطور الفحص منسوخة من فحص الدرس زي ما هي
+const exercises = [
+ {
+  "id": "tri",
+  "group": "أشكال",
+  "title": "مثلث لفوق",
+  "goal": "عنصر #tri مثلث لونه #e11d48 بقاعدة 80px وارتفاع 70px، من غير صورة.",
+  "html": "<div id=\"tri\"></div>",
+  "start": "#tri {\n  \n}",
+  "solution": "#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
+  "wrong": "#tri { width: 80px; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
+  "check": "  if ((el = get('tri'))) {\n    const s = cs(el), borders = s.width === '0px' && s.borderBottomColor === rgb('#e11d48') && s.borderLeftColor === 'rgba(0, 0, 0, 0)';\n    const clip = s.clipPath.startsWith('polygon') && s.clipPath.split(',').length === 3 && s.backgroundColor === rgb('#e11d48');\n    ok('1 المثلث', size(el, 80, 70) && (borders || clip), 'المقاس ' + sz(el) + ' والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط');\n  }"
+ },
+ {
+  "id": "circle",
+  "group": "أشكال",
+  "title": "دايرة بإطار",
+  "goal": "#circle دايرة 96×96 بالإطار، خلفيتها #0ea5e9 وإطارها 4px لونه #0c4a6e.",
+  "html": "<div id=\"circle\"></div>",
+  "start": "#circle {\n  \n}",
+  "solution": "#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
+  "wrong": "#circle { width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
+  "check": "  if ((el = get('circle'))) {\n    const s = cs(el);\n    ok('2 الدايرة', size(el, 96, 96) && round(el) && s.borderTopWidth === '4px' && s.backgroundColor === rgb('#0ea5e9'), 'المقاس ' + sz(el) + ' (المطلوب 96×96 بالـ border)، والـ radius ' + s.borderTopLeftRadius);\n  }"
+ },
+ {
+  "id": "star",
+  "group": "أشكال",
+  "title": "نجمة خماسية",
+  "goal": "#star نجمة خماسية 120×120 لونها #f59e0b بـ clip-path (١٠ نقط).",
+  "html": "<div id=\"star\"></div>",
+  "start": "#star {\n  \n}",
+  "solution": "#star { width: 120px; height: 120px; background: #f59e0b;\n  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }",
+  "wrong": "#star { width: 120px; height: 120px; background: #f59e0b; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }",
+  "check": "  if ((el = get('star'))) {\n    const s = cs(el), n = s.clipPath.startsWith('polygon') ? s.clipPath.split(',').length : 0;\n    ok('8 النجمة', size(el, 120, 120) && n === 10 && s.backgroundColor === rgb('#f59e0b'), 'الـ polygon فيه ' + n + ' نقطة، والنجمة الخماسية ١٠ (٥ أطراف و ٥ جوه)');\n  }"
+ },
+ {
+  "id": "chess",
+  "group": "أشكال",
+  "title": "رقعة شطرنج",
+  "goal": "#chess رقعة 240×240 مربعاتها 30px (٨×٨)، من غير ولا عنصر جواها.",
+  "html": "<div id=\"chess\"></div>",
+  "start": "#chess {\n  \n}",
+  "solution": "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 60px 60px; }",
+  "wrong": "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 30px 30px; }",
+  "check": "  if ((el = get('chess'))) {\n    const s = cs(el);\n    ok('10 الشطرنج', size(el, 240, 240) && el.childElementCount === 0 && /gradient/.test(s.backgroundImage) && s.backgroundSize === '60px 60px', 'من غير عناصر جوه (فيه ' + el.childElementCount + ')، و background-size لازم 60px 60px (مربعين × مربعين)، والموجود ' + s.backgroundSize);\n  }"
+ },
+ {
+  "id": "cards",
+  "group": "layouts",
+  "title": "شبكة كروت",
+  "goal": "#cards: الكروت أقل عرض ليها 220px والمسافة 16px، والعدد في الصف على حسب المكان، ومفيش كارت يطلع برا على أي عرض.",
+  "html": "<section id=\"cards\"><article class=\"card\">كارت ١</article><article class=\"card\">كارت ٢</article><article class=\"card\">كارت ٣</article><article class=\"card\">كارت ٤</article><article class=\"card\">كارت ٥</article><article class=\"card\">كارت ٦</article><article class=\"card\">كارت ٧</article></section>",
+  "start": "#cards {\n  \n}\n.card { background: #e0e7ff; padding: 8px; }",
+  "solution": "#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
+  "wrong": "#cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
+  "check": "  const cards = [...document.querySelectorAll('#cards .card')], cw = inner(q('#cards'));\n  const want = Math.max(1, Math.floor((cw + 16) / (220 + 16))), cols = new Set(cards.map(c => Math.round(R(c).top))).size ? cards.filter(c => near(R(c).top, R(cards[0]).top)).length : 0;\n  ok('2 شبكة الكروت', cols === Math.min(want, cards.length) && cards.every(c => R(c).right <= R(q('#cards')).right + 1 && R(c).left >= R(q('#cards')).left - 1),\n    'الصف الأول فيه ' + cols + ' كروت، والمتوقع ' + want + ' على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا');"
+ },
+ {
+  "id": "bento",
+  "group": "layouts",
+  "title": "bento",
+  "goal": "#bento: ٤ عواميد (عمودين تحت 600px) وصفوف 120px ومسافة 12px. .b1 عمودين × صفين، و .b2 عمودين × صف.",
+  "html": "<section id=\"bento\"><div class=\"b b1\">كبير</div><div class=\"b b2\">عريض</div><div class=\"b\">٣</div><div class=\"b\">٤</div><div class=\"b\">٥</div><div class=\"b\">٦</div></section>",
+  "start": "#bento {\n  \n}\n.b { background: #e0e7ff; padding: 8px; }",
+  "solution": "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; grid-row: span 2; }\n.b2 { grid-column: span 2; }\n@media (max-width: 599px) { #bento { grid-template-columns: repeat(2, 1fr); } }\n.b { background: #e0e7ff; padding: 8px; }",
+  "wrong": "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; }\n.b2 { grid-column: span 2; }\n.b { background: #e0e7ff; padding: 8px; }",
+  "check": "  const bento = q('#bento'), bw = inner(bento), n = W >= 600 ? 4 : 2, col = (bw - (n - 1) * 12) / n, b1 = R(q('.b1')), b2 = R(q('.b2'));\n  ok('3 bento', near(b1.width, 2 * col + 12) && near(b1.height, 252) && near(b2.width, 2 * col + 12) && near(b2.height, 120) && near(R(q('#bento .b:nth-child(3)')).width, col),\n    'الكبير لازم عمودين × صفين (' + px(2 * col + 12) + ' × 252px) والعريض عمودين × صف، والموجود ' + px(b1.width) + ' × ' + px(b1.height));"
+ }
+];
+
+
+const $ = id => document.getElementById(id);
+const KEY = "css-bank:";
+const load = id => { try { return localStorage.getItem(KEY + id); } catch { return null; } };     // storage can be blocked
+const save = (id, css) => { try { localStorage.setItem(KEY + id, css); } catch {} };
+
+// the helpers both lesson checks use (shapes: cs, rgb, size…; layouts: W, q, R, near…). ok() collects instead of console.log
+const PRELUDE = $__bt
+const results = [];
+const cs = (el, p) => getComputedStyle(el, p || null);
+const rgb = c => { const i = document.createElement('i'); i.style.color = c; document.body.append(i); const v = cs(i).color; i.remove(); return v; };
+const round = el => { const r = cs(el).borderTopLeftRadius; return r === '50%' || parseFloat(r) >= el.offsetWidth / 2; };
+const ok = (name, cond, why) => results.push({ name, pass: !!cond, why: cond ? '' : why });
+const size = (el, w, h) => el.offsetWidth === w && el.offsetHeight === h;
+const sz = el => el.offsetWidth + '×' + el.offsetHeight;
+const get = id => document.getElementById(id) || (results.push({ name: '#' + id, pass: false, why: 'مفيش عنصر بالـ id ده' }), null);
+const W = innerWidth, q = s => document.querySelector(s), R = el => el.getBoundingClientRect();
+const near = (a, b) => Math.abs(a - b) <= 1.5;
+const inner = el => { const s = getComputedStyle(el); return el.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight); };
+const px = v => Math.round(v) + 'px';
+let el;$__bt;
+
+// "<" can't do anything useful in CSS, but "</style><script>" would end the style and run a script: \\3c is the same "<" as a CSS escape
+const safeCss = css => css.replace(/</g, "\\3c ");
+
+function frameDoc(ex, css, run, token) {
+  return $__bt<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>body{margin:0;padding:16px;font-family:system-ui,sans-serif}\n$__{safeCss(css)}</style></head><body>$__{ex.html}$__bt +
+    (run ? $__bt<script>addEventListener('load', () => { let out; try { $__{PRELUDE}\n$__{ex.check}\n out = results; } catch (e) { out = [{ name: 'الفحص', pass: false, why: 'الفحص وقع: ' + e.message }]; } parent.postMessage({ token: $__{JSON.stringify(token)}, out }, '*'); });<\/script>$__bt : "") + "</body></html>";
+}
+
+const list = $("list"), view = $("view");
+let current = null, timer = null, waiting = null;
+
+function show(ex) {
+  current = ex;
+  for (const b of list.querySelectorAll("button")) b.setAttribute("aria-current", String(b.dataset.id === ex.id));
+  $("ex-title").textContent = ex.title;
+  $("ex-goal").textContent = ex.goal;
+  $("css").value = load(ex.id) ?? ex.start;
+  $("results").replaceChildren();
+  $("verdict").textContent = "";
+  render(false);
+}
+function render(run) {
+  const token = Math.random().toString(36).slice(2);
+  view.srcdoc = frameDoc(current, $("css").value, run, token);
+  return token;
+}
+
+// the check runs INSIDE the frame (its own origin, sandboxed) and sends the results back
+function check() {
+  clearTimeout(waiting);
+  const token = render(true);
+  $("verdict").textContent = "بيفحص…";
+  const onMsg = e => {
+    if (e.source !== view.contentWindow || !e.data || e.data.token !== token) return;   // only our frame, only this run
+    removeEventListener("message", onMsg); clearTimeout(waiting);
+    const out = e.data.out, pass = out.filter(r => r.pass).length;
+    $("results").replaceChildren(...out.map(r => { const li = document.createElement("li"); li.className = r.pass ? "pass" : "fail"; li.textContent = (r.pass ? "PASS " : "FAIL ") + r.name + (r.why ? " ← " + r.why : ""); return li; }));
+    $("verdict").textContent = "النتيجة: " + pass + " من " + out.length;
+  };
+  addEventListener("message", onMsg);
+  waiting = setTimeout(() => { removeEventListener("message", onMsg); $("verdict").textContent = "الفحص مرجعش في ٣ ثواني: راجع الـ CSS أو جرّب تاني"; }, 3000);
+}
+
+for (const ex of exercises) {
+  const li = document.createElement("li"), b = document.createElement("button");
+  b.type = "button"; b.dataset.id = ex.id; b.textContent = ex.group + ": " + ex.title;
+  b.addEventListener("click", () => show(ex));
+  li.append(b); list.append(li);
+}
+$("css").addEventListener("input", () => { save(current.id, $("css").value); clearTimeout(timer); timer = setTimeout(() => render(false), 250); });
+$("run").addEventListener("click", check);
+$("reset").addEventListener("click", () => { $("css").value = current.start; save(current.id, current.start); render(false); });
+for (const b of document.querySelectorAll("[data-w]")) b.addEventListener("click", () => {
+  view.style.width = b.dataset.w + "px";
+  for (const x of document.querySelectorAll("[data-w]")) x.setAttribute("aria-pressed", String(x === b));
+});
+show(exercises[0]);
+
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر كحلي «بنك تمارين CSS»، وعلى الجنب ٦ تمارين («أشكال: مثلث لفوق»… «layouts: bento»)، والمختار بنفسجي. التمرين: عنوانه، وهدفه بالأرقام، وخانة CSS فيها [[#tri { }]] فاضي، وزراير «افحص» و «ابدأ من الأول» و 360 و 768 و 1200، وتحتهم iframe بيرسم الـ CSS بتاعك وانت بتكتب. اكتب الحل واضغط «افحص»: «النتيجة: 1 من 1» وسطر أخضر PASS، أو سطر أحمر FAIL فيه الرسالة.
+
+**التمارين والرسايل من الدروس، مش مكتوبة تاني:** [[make-exercises.mjs]] بيقرا فحص درس الأشكال وفحص درس الـ layouts، ويقطّع منهم البلوك بتاع كل تمرين زي ما هو. فالرسالة اللي بتطلع هنا هي نفس رسالة الدرس بالحرف («المقاس 160×70 والمطلوب 80×70…»). ولو الفحص في الدرس اتصلّح، [[node make-exercises.mjs]] تاني والبنك اتصلّح.
+
+**الفحص بيتشغّل جوه الـ iframe:** [[frameDoc()]] بيبني صفحة فيها الـ HTML الثابت بتاع التمرين، والـ CSS بتاعك، وسكربت فيه الأدوات اللي الفحصين بيستخدموها ([[cs]] و [[rgb]] و [[size]]… و [[W]] و [[R]] و [[near]]…) وبعدها سطور الفحص. [[ok()]] هنا بتجمّع النتايج بدل ما تطبع، وفي الآخر [[parent.postMessage]]. الـ iframe [[sandbox="allow-scripts"]] من غير [[allow-same-origin]]، فالسكربت اللي جواه مالوش وصول للصفحة ولا للـ localStorage بتاعها.
+
+**الرسالة اللي بنصدّقها:** [[e.source === view.contentWindow]] (من الـ iframe بتاعنا بس) و [[token]] عشوائي جديد كل «افحص» (من التشغيل ده بس، مش تشغيل قديم اتأخر).
+
+**العرض:** الزراير بتغيّر عرض الـ iframe نفسه، فـ [[innerWidth]] جوه = 360 أو 768 أو 1200، وفحوص الـ layouts بتتوقع حسبه. والصندوق اللي حواليه [[overflow-x: auto]]، فالـ 1200 على شاشة صغيرة بيعمل scroll جواه.
+
+**الحفظ:** كل حرف بتكتبه بيتحفظ في [[localStorage]] بمفتاح للتمرين. القراية والكتابة جوه [[try/catch]]، فلو الـ storage ممنوع (وضع خاص) الصفحة بتشتغل وبتفحص عادي من غير ما تفتكر.
+
+**CSS بايظ مش بيوقّع حاجة:**
+- CSS ناقص قوس في الآخر: المتصفح بيقفله لوحده (ده من مواصفة CSS)، والفحص اشتغل عادي.
+- لو سطور الفحص نفسها وقعت (عنصر مش موجود مثلًا): [[try/catch]] جوه الـ iframe بيبعت FAIL برسالة «الفحص وقع».
+- لو مفيش رد خالص في ٣ ثواني: رسالة «الفحص مرجعش»، والزرار شغال تاني.
+- **[[</style><script>]]:** ده الخطر الحقيقي. CSS زي [[#tri {}</style><script>…</script>]] بيقفل الـ style ويشغّل سكربت جوه الـ iframe، يعني ممكن يعمل حلقة لا نهائية أو يبعت PASS مزيّف. [[safeCss()]] بيحوّل كل [[<]] لـ [[\3c ]]: نفس الحرف بس كـ escape جوه CSS، والـ HTML parser مبيشوفش [[</style>]]. [[inject-test.mjs]] بيثبتها: نفس الـ «CSS» من غير escape بعت [[pass: true]]، وبالـ escape مفيش رسالة خالص.
+
+**ليه الحل الغلط بيتجرّب على أكتر من عرض:** حل الكروت الغلط [[repeat(3, 1fr)]] **عدّى على 768**: على العرض ده auto-fit بيطلّع ٣ عواميد بالظبط. ووقع على 1200 (المتوقع ٥) وعلى 360 (المتوقع ١). عشان كده البنك فيه ٣ عروض، والقياس بيجرّب الـ layouts على التلاتة.
+
+**غلطتين قابلوني:**
+- **تمارين الـ layouts مكانتش بترجع (مرجعش في ٣ ثواني):** [[make-exercises.mjs]] كان بيقطع لحد السطر اللي فيه [[ok('2 …]]، وفي فحص الـ layouts الـ [[ok()]] بيكمل في السطر اللي بعده. الكود وصل الـ iframe مقطوع، وطلع SyntaxError جواها، والصفحة الكبيرة سجّلت ١٢ error. التقطيع بقى لحد السطر اللي آخره [[);]].
+- **axe: [[scrollable-region-focusable]]:** الصندوق اللي بيعمل scroll مكانش بيتوصل بالكيبورد. بقى [[tabindex="0"]] و [[role="region"]] باسم.
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+tri    1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 1 المثلث ← المقاس 160×70 والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط
+circle 1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 2 الدايرة ← المقاس 104×104 (المطلوب 96×96 بالـ border)، والـ radius 50%
+star   1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 8 النجمة ← الـ polygon فيه 5 نقطة، والنجمة الخماسية ١٠ (٥ أطراف و ٥ جوه)
+chess  1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 10 الشطرنج ← من غير عناصر جوه (فيه 0)، و background-size لازم 60px 60px (مربعين × مربعين)، والموجود 30px 30px
+cards  1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 2 شبكة الكروت ← الصف الأول فيه 3 كروت، والمتوقع 5 على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا
+cards  768  الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 1 من 1
+cards  360  الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 2 شبكة الكروت ← الصف الأول فيه 3 كروت، والمتوقع 1 على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا
+bento  1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 3 bento ← الكبير لازم عمودين × صفين (578px × 252px) والعريض عمودين × صف، والموجود 578px × 120px
+bento  768  الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 3 bento ← الكبير لازم عمودين × صفين (362px × 252px) والعريض عمودين × صف، والموجود 362px × 120px
+bento  360  الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 3 bento ← الكبير لازم عمودين × صفين (328px × 252px) والعريض عمودين × صف، والموجود 158px × 120px
+بعد reload: «#tri { width: 0; /* لسه بكتب */ }»
+CSS من غير قوس آخر: النتيجة: 1 من 1
+CSS فيه </style><script>while(true): النتيجة: 0 من 1 | الصفحة لسه بترد: 2
+CSS بيحاول يبعت PASS مزيّف: النتيجة: 0 من 1 | FAIL 1 المثلث ← المقاس 1168×0 والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط
+axe: 0 | errors: 0
+localStorage ممنوع: النتيجة: 1 من 1 | errors: 0
+~~~
+
+~~~text node inject-test.mjs
+من غير escape: [{"name":"غش","pass":true}]
+بـ \3c: مفيش رسالة
+~~~` },
+        { lvl: 'فكرة', dir: "train-ticket", t: R`تمرين من موقع بتحبه`, what: R`اختار component من موقع بتستخدمه كل يوم (كارت منتج، أو شريط بحث، أو قايمة، أو تذكرة حجز)، وارسمه من الصفر، واكتب له وصف هدف بالأرقام وفحص ذاتي بنفس شكل الدروس (PASS و FAIL ورسالة بتقول الغلط فين).`, done: R`زميل حل تمرينك من الوصف بس من غير ما يشوف الأصل، والفحص بتاعك قال PASS على حله لما كان صح و FAIL برسالة مفهومة لما غيّرت فيه حاجة واحدة.`, ext: R`ابعته كاقتراح تمرين للبنك ده بنفس الحقول: الهدف، والحل المرجعي، والفحص، وناتجه على حل صح وحل غلط.`, sol: R`~~~md README.md
+# تمرين: تذكرة قطر
+
+ارسم التذكرة من الوصف ده بس. الـ HTML جاهز في $__btindex.html$__bt (متغيّرهوش)، وانت بتكتب $__btticket.css$__bt.
+
+## الهدف بالأرقام
+
+1. $__bt.ticket$__bt مقاسها 340×140 بالظبط، وزواياها 12px.
+2. جزءين: $__bt.main$__bt عرضه 240، و $__bt.stub$__bt عرضه 100، جنب بعض. $__bt.main$__bt في **البداية** (يمين في العربي).
+3. بين الجزءين خط متقطّع ($__btdashed$__bt) 2px على حرف $__bt.stub$__bt اللي ناحية $__bt.main$__bt.
+4. خرمين نص دايرة نصف قطرهم 10px، واحد فوق وواحد تحت، مركزهم على الخط بالظبط (240px من البداية). بـ $__btmask$__bt، مش عناصر زيادة.
+5. $__bt.from$__bt و $__bt.to$__bt على نفس السطر، و $__bt.from$__bt في البداية. بينهم $__bt.arrow$__bt بيشاور على النهاية (شمال في العربي).
+6. $__bt.time$__bt أرقامه بعرض ثابت ($__bttabular-nums$__bt)، عشان 11:11 و 08:08 ياخدوا نفس المسافة.
+7. $__bt.class-badge$__bt في ركن النهاية فوق، على بعد 8px من الحرفين.
+8. مفيش ولا صورة، وتباين كل الكلام 4.5:1 على الأقل.
+
+## الفحص
+
+افتح الصفحة، و F12 ← Console، والزق $__btcheck.js$__bt. لازم يطبع $__btالنتيجة: 8 من 8$__bt.
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تذكرة قطر</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="ticket.css">
+</head>
+<body>
+<main>
+  <h1>تمرين: تذكرة قطر</h1>
+  <article class="ticket" aria-label="تذكرة من القاهرة لأسوان">
+    <div class="main">
+      <p class="route"><span class="from">القاهرة</span> <span class="arrow" aria-hidden="true"></span> <span class="to">أسوان</span></p>
+      <p class="time"><span class="sr-only">القيام </span>08:15 ← 21:40</p>
+      <p class="meta">عربية ٣ · كرسي ٢٤</p>
+      <span class="class-badge">درجة أولى</span>
+    </div>
+    <div class="stub"><p class="code">QR-1042</p><p class="meta">٢٠ نوفمبر</p></div>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+~~~css ticket.css (الحل المرجعي)
+/* الحل المرجعي */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 24px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; background: #e2e8f0; }
+h1 { font-size: 1.2rem; margin: 0 0 16px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* 1 و 2: صندوق واحد فيه جزءين جنب بعض */
+.ticket { display: flex; width: 340px; height: 140px; border-radius: 12px; background: #ffffff;
+  /* 4: خرمين على بعد 240px من البداية. في RTL البداية يمين، فالمركز = العرض - 240 = 100px من الشمال */
+  --cut: 100px;
+  mask: radial-gradient(circle 10px at var(--cut) 0, #0000 98%, #000) top / 100% 51% no-repeat,
+        radial-gradient(circle 10px at var(--cut) 100%, #0000 98%, #000) bottom / 100% 51% no-repeat; }
+.ticket:dir(ltr) { --cut: 240px; }
+.main { position: relative; flex: none; width: 240px; padding: 14px 16px; }
+/* 3: الخط على حرف الـ stub اللي ناحية الـ main = البداية بتاعته */
+.stub { flex: none; width: 100px; padding: 14px 10px; border-inline-start: 2px dashed #64748b; display: grid; align-content: center; text-align: center; }
+p { margin: 0; }
+
+/* 5: نفس السطر، والسهم بيشاور على النهاية: شمال في العربي ويمين في الإنجليزي */
+.route { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05rem; }
+.arrow { width: 10px; height: 10px; border-top: 2px solid #0f172a; border-left: 2px solid #0f172a; rotate: -45deg; }
+.arrow:dir(ltr) { rotate: 135deg; }
+
+/* 6: أرقام بعرض ثابت */
+.time { margin-block: 6px; font-variant-numeric: tabular-nums; direction: ltr; text-align: end; font-size: 1.1rem; }
+.meta { font-size: .85rem; color: #475569; }
+.code { font-family: ui-monospace, Consolas, monospace; font-weight: 700; direction: ltr; }
+
+/* 7: ركن النهاية فوق، 8px */
+.class-badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 0 8px; border-radius: 999px; background: #1e3a8a; color: #ffffff; font-size: .75rem; font-weight: 700; }
+~~~
+
+~~~js check.js
+// الفحص الذاتي: تذكرة قطر. الزقه في الـ Console. كل بند PASS أو FAIL ورسالة بتقول الغلط فين
+(() => {
+  const q = s => document.querySelector(s), R = el => el.getBoundingClientRect(), cs = (el, p) => getComputedStyle(el, p || null);
+  const near = (a, b, d = 1.5) => Math.abs(a - b) <= d, px = v => Math.round(v) + 'px';
+  let pass = 0, all = 0;
+  const ok = (name, cond, why) => { all++; if (cond) pass++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (cond ? '' : ' ← ' + why)); };
+  const t = q('.ticket'), main = q('.main'), stub = q('.stub'), T = R(t), rtl = cs(t).direction === 'rtl';
+  const fromStart = x => rtl ? T.right - x : x - T.left;             // distance from the start edge, in both directions
+  ok('1 المقاس والزوايا', near(T.width, 340) && near(T.height, 140) && cs(t).borderTopLeftRadius === '12px', 'المقاس ' + px(T.width) + '×' + px(T.height) + ' والمطلوب 340×140، والزوايا ' + cs(t).borderTopLeftRadius + ' والمطلوب 12px');
+  const M = R(main), S = R(stub);
+  ok('2 الجزءين', near(M.width, 240) && near(S.width, 100) && near(M.top, S.top) && near(fromStart(rtl ? M.right : M.left), 0), '.main ' + px(M.width) + ' (المطلوب 240) و .stub ' + px(S.width) + ' (المطلوب 100)، و .main لازم في البداية ' + (rtl ? '(يمين)' : '(شمال)'));
+  const sideStart = rtl ? 'Right' : 'Left', st = cs(stub);
+  ok('3 الخط المتقطّع', st['border' + sideStart + 'Style'] === 'dashed' && st['border' + sideStart + 'Width'] === '2px', 'حرف .stub اللي ناحية .main: ' + st['border' + sideStart + 'Style'] + ' ' + st['border' + sideStart + 'Width'] + '، والمطلوب dashed 2px');
+  // the holes: read the computed mask itself. (elementFromPoint can't see them: a mask changes the pixels, not hit testing)
+  const m = cs(t).maskImage || cs(t).webkitMaskImage || '', want = rtl ? T.width - 240 : 240;
+  const circles = [...m.matchAll(/radial-gradient\(([\d.]+)px at ([\d.]+)px (\S+?),/g)].map(g => ({ r: +g[1], x: +g[2], y: g[3] }));
+  const onLine = circles.filter(c => near(c.r, 10) && near(c.x, want));
+  const holes = onLine.some(c => c.y === '0px' || c.y === '0%') && onLine.some(c => c.y === '100%');
+  ok('4 الخرمين على الخط', holes && t.querySelectorAll('*').length === main.querySelectorAll('*').length + stub.querySelectorAll('*').length + 2, 'الـ mask فيه ' + (circles.map(c => 'دايرة ' + c.r + 'px عند ' + px(rtl ? T.width - c.x : c.x) + ' من البداية').join(' و ') || 'مفيش radial-gradient') + '، والمطلوب دايرتين 10px عند 240px من البداية (فوق وتحت)، من غير عناصر زيادة');
+  const f = R(q('.from')), to = R(q('.to')), a = q('.arrow'), A = R(a);
+  const toward = rtl ? A.left - to.right : to.left - A.right;
+  const ac = cs(a), deg = parseFloat(ac.rotate) || 0, w = k => parseFloat(ac['border' + k + 'Width']) > 0;
+  const x0 = w('Left') && !w('Right') ? -1 : w('Right') ? 1 : 0, y0 = w('Top') && !w('Bottom') ? -1 : w('Bottom') ? 1 : 0, r = deg * Math.PI / 180;
+  const tx = x0 * Math.cos(r) - y0 * Math.sin(r), points = Math.abs(tx) > 0.7 ? (tx < 0 ? 'شمال' : 'يمين') : 'مش أفقي';
+  ok('5 من وإلى', near(f.top + f.height / 2, to.top + to.height / 2, 3) && (rtl ? f.left > to.right : f.right < to.left) && points === (rtl ? 'شمال' : 'يمين'), '.from لازم في البداية و .to بعده على نفس السطر، والسهم بيشاور ' + points + ' والمطلوب ' + (rtl ? 'شمال' : 'يمين'));
+  ok('6 أرقام بعرض ثابت', /tabular-nums/.test(cs(q('.time')).fontVariantNumeric), 'font-variant-numeric = ' + cs(q('.time')).fontVariantNumeric);
+  const B = R(q('.class-badge')), endGap = rtl ? B.left - M.left : M.right - B.right;
+  ok('7 الشارة في ركن النهاية', near(B.top - M.top, 8) && near(endGap, 8), 'من فوق ' + px(B.top - M.top) + ' ومن حرف النهاية ' + px(endGap) + '، والمطلوب 8 و 8');
+  const lum = c => { const v = c.match(/[\d.]+/g).slice(0, 3).map(x => x / 255).map(x => x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+  const bgOf = el => { for (let p = el; p; p = p.parentElement) { const b = cs(p).backgroundColor, n = b.match(/[\d.]+/g); if (n && (n.length < 4 || +n[3] === 1)) return b; } return 'rgb(255, 255, 255)'; };
+  const low = [...t.querySelectorAll('*')].filter(el => [...el.childNodes].some(n => n.nodeType === 3 && n.data.trim()) && el.getClientRects().length).map(el => { const L1 = lum(cs(el).color), L2 = lum(bgOf(el)); const k = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05); return k < 4.5 ? el.className + ' ' + k.toFixed(2) : null; }).filter(Boolean);
+  ok('8 مفيش صور، والتباين 4.5', !document.images.length && !/url\(/.test(cs(t).backgroundImage) && !low.length, (document.images.length ? document.images.length + ' صورة، ' : '') + (low.length ? 'تباين واطي: ' + low.join(' و ') : ''));
+  console.log('النتيجة: ' + pass + ' من ' + all);
+})();
+~~~
+
+~~~js measure.mjs
+// node ticket/measure.mjs: the check on the reference, then on 4 copies that each change ONE thing
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+import fs from "node:fs";
+const check = fs.readFileSync(new URL("check.js", import.meta.url), "utf8");
+const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+const cases = [
+  ["الحل المرجعي", ""],
+  ["الخرم عند 200 بدل 240", ".ticket { --cut: 140px; }"],
+  ["الشارة في البداية", ".class-badge { inset-inline-end: auto; inset-inline-start: 8px; }"],
+  ["السهم بيشاور يمين", ".arrow { rotate: 135deg; }"],
+  ["من غير tabular-nums", ".time { font-variant-numeric: normal; }"],
+  ["الخط solid", ".stub { border-inline-start-style: solid; }"],
+];
+for (const [name, extra] of cases) {
+  const ctx = await b.newContext({ viewport: { width: 800, height: 600 } });
+  const p = await ctx.newPage();
+  const logs = [];
+  p.on("console", m => logs.push(m.text()));
+  await p.goto("http://127.0.0.1:8840/ticket/index.html");
+  if (extra) await p.addStyleTag({ content: extra });
+  await p.evaluate(check);
+  console.log("== " + name + ": " + logs.find(l => l.startsWith("النتيجة")) + (logs.filter(l => l.startsWith("FAIL")).length ? "\n   " + logs.filter(l => l.startsWith("FAIL")).join("\n   ") : ""));
+  if (!extra) console.log("   axe: " + (await new AxeBuilder({ page: p }).analyze()).violations.length);
+  await ctx.close();
+}
+await b.close();
+~~~
+
+~~~view 300 340 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تذكرة قطر</title>
+<link rel="icon" href="data:,">
+<style>
+/* الحل المرجعي */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 24px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; background: #e2e8f0; }
+h1 { font-size: 1.2rem; margin: 0 0 16px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* 1 و 2: صندوق واحد فيه جزءين جنب بعض */
+.ticket { display: flex; width: 340px; height: 140px; border-radius: 12px; background: #ffffff;
+  /* 4: خرمين على بعد 240px من البداية. في RTL البداية يمين، فالمركز = العرض - 240 = 100px من الشمال */
+  --cut: 100px;
+  mask: radial-gradient(circle 10px at var(--cut) 0, #0000 98%, #000) top / 100% 51% no-repeat,
+        radial-gradient(circle 10px at var(--cut) 100%, #0000 98%, #000) bottom / 100% 51% no-repeat; }
+.ticket:dir(ltr) { --cut: 240px; }
+.main { position: relative; flex: none; width: 240px; padding: 14px 16px; }
+/* 3: الخط على حرف الـ stub اللي ناحية الـ main = البداية بتاعته */
+.stub { flex: none; width: 100px; padding: 14px 10px; border-inline-start: 2px dashed #64748b; display: grid; align-content: center; text-align: center; }
+p { margin: 0; }
+
+/* 5: نفس السطر، والسهم بيشاور على النهاية: شمال في العربي ويمين في الإنجليزي */
+.route { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05rem; }
+.arrow { width: 10px; height: 10px; border-top: 2px solid #0f172a; border-left: 2px solid #0f172a; rotate: -45deg; }
+.arrow:dir(ltr) { rotate: 135deg; }
+
+/* 6: أرقام بعرض ثابت */
+.time { margin-block: 6px; font-variant-numeric: tabular-nums; direction: ltr; text-align: end; font-size: 1.1rem; }
+.meta { font-size: .85rem; color: #475569; }
+.code { font-family: ui-monospace, Consolas, monospace; font-weight: 700; direction: ltr; }
+
+/* 7: ركن النهاية فوق، 8px */
+.class-badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 0 8px; border-radius: 999px; background: #1e3a8a; color: #ffffff; font-size: .75rem; font-weight: 700; }
+
+</style>
+</head>
+<body>
+<main>
+  <h1>تمرين: تذكرة قطر</h1>
+  <article class="ticket" aria-label="تذكرة من القاهرة لأسوان">
+    <div class="main">
+      <p class="route"><span class="from">القاهرة</span> <span class="arrow" aria-hidden="true"></span> <span class="to">أسوان</span></p>
+      <p class="time"><span class="sr-only">القيام </span>08:15 ← 21:40</p>
+      <p class="meta">عربية ٣ · كرسي ٢٤</p>
+      <span class="class-badge">درجة أولى</span>
+    </div>
+    <div class="stub"><p class="code">QR-1042</p><p class="meta">٢٠ نوفمبر</p></div>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+**اخترت إيه:** تذكرة قطر زي اللي في مواقع وتطبيقات الحجز، بأسماء متخيّلة. فيها حاجات بتتعب: خرمين نص دايرة على خط القطع (بـ [[mask]])، وخط متقطّع، وسهم لازم يشاور على النهاية في RTL، وأرقام بعرض ثابت، وشارة في ركن النهاية.
+
+**هتشوف إيه:** تذكرة بيضا على خلفية رمادي. اليمين (الجزء الرئيسي): «القاهرة ← أسوان»، والمواعيد 08:15 ← 21:40، و «عربية ٣ · كرسي ٢٤»، وشارة كحلي «درجة أولى» في ركنه الشمال. وبعد خط رمادي متقطّع الجزء الصغير: «QR-1042» والتاريخ. وفوق وتحت الخط خرم نص دايرة بيبان منه الرمادي.
+
+**الوصف (README) بالأرقام بس:** ٨ بنود، كل بند ليه رقم يتقاس (340×140، و 240 و 100، و 10px عند 240 من البداية، و 8px من الركن). مفيش «تقريبًا» ولا «زي الصورة»، فاللي بيحل مش محتاج يشوف الأصل.
+
+**الفحص بنفس شكل الدروس:** [[ok(اسم، شرط، رسالة)]]، وكل رسالة فيها الرقم اللي اتقاس والمطلوب. والاتجاه بيتحسب: [[fromStart()]] بتقيس من اليمين في العربي ومن الشمال في الإنجليزي، فنفس الفحص ينفع للاتنين.
+
+**الخرمين بيتقروا من الـ mask نفسه:** [[getComputedStyle(t).maskImage]] بيرجّع [[radial-gradient(10px at 100px 0px, …)]]. الفحص بيطلّع نص القطر ومكان المركز من النص ده، ويشيّك إن فيه دايرتين 10px عند 240 من البداية، واحدة [[0px]] (فوق) وواحدة [[100%]] (تحت). (في RTL الـ mask بيتحسب من الشمال: 340 − 240 = 100px، وعشان كده [[--cut]] بيتغيّر بـ [[:dir(ltr)]].)
+
+**السهم:** نفس طريقة فحص سهم «التالي» في درس الأشكال: الـ border اللي ظاهر بيحدد اتجاه، وبعدين يلف بزاوية [[rotate]] ويشوف بقى بيشاور فين.
+
+**غلطة قابلتني:** أول نسخة من البند ٤ كانت بتدوّس بـ [[elementFromPoint]] في مكان الخرم: لو الخلفية بتبان يبقى فيه خرم. الحل المرجعي نفسه وقع ٧ من ٨. قست الاتنين: البكسل في مكان الخرم لون الخلفية ([[226,232,240]])، يعني الخرم مرسوم، و [[elementFromPoint]] في نفس النقطة رجّع [[.main]]. الـ [[mask]] بيغيّر الرسم بس، والضغط والـ hit testing بيفضلوا على الصندوق كله (عكس [[clip-path]]). البند بقى يقرا الـ mask المحسوب.
+
+**الفحص اتجرّب صح وغلط:** الحل المرجعي ٨ من ٨، وبعدين ٥ نسخ كل واحدة متغيّر فيها حاجة واحدة بس. كل واحدة وقعت في البند بتاعها لوحده، برسالة بتقول اللي اتقاس (الخرم «عند 200px»، والشارة «من حرف النهاية 166px»، والسهم «بيشاور يمين»).
+
+**الزميل:** الـ done بيطلب إن حد تاني يحل من الـ README بس من غير ما يشوف الأصل. ده لازم تعمله انت مع حد بجد: ابعتله [[README.md]] و [[index.html]] و [[check.js]] من غير [[ticket.css]].
+
+~~~text أول نسخة من البند ٤
+أول نسخة من البند ٤ (بتدوّس بـ elementFromPoint في مكان الخرم):
+== الحل المرجعي: النتيجة: 7 من 8
+   FAIL 4 الخرمين على الخط ← عند 240px من البداية (فوق وتحت) لازم الخلفية تبان من الخرم، وبعيد عنه 30px لأ
+التأكيد: عند الخرم elementFromPoint = main
+بكسل الخرم فوق (100,2): 226,232,240 | بعيد عنه (130,2): 255,255,255 | الخرم تحت (100,137): 226,232,240
+~~~
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+== الحل المرجعي: النتيجة: 8 من 8
+   axe: 0
+== الخرم عند 200 بدل 240: النتيجة: 7 من 8
+   FAIL 4 الخرمين على الخط ← الـ mask فيه دايرة 10px عند 200px من البداية و دايرة 10px عند 200px من البداية، والمطلوب دايرتين 10px عند 240px من البداية (فوق وتحت)، من غير عناصر زيادة
+== الشارة في البداية: النتيجة: 7 من 8
+   FAIL 7 الشارة في ركن النهاية ← من فوق 8px ومن حرف النهاية 166px، والمطلوب 8 و 8
+== السهم بيشاور يمين: النتيجة: 7 من 8
+   FAIL 5 من وإلى ← .from لازم في البداية و .to بعده على نفس السطر، والسهم بيشاور يمين والمطلوب شمال
+== من غير tabular-nums: النتيجة: 7 من 8
+   FAIL 6 أرقام بعرض ثابت ← font-variant-numeric = normal
+== الخط solid: النتيجة: 7 من 8
+   FAIL 3 الخط المتقطّع ← حرف .stub اللي ناحية .main: solid 2px، والمطلوب dashed 2px
+~~~` },
       ],
       n: R`هنا مفيش أداة جديدة: هنا بتستخدم كل اللي اتعلمته في تمارين ليها هدف متقاس. ٨ دروس، فيهم ٦٧ تمرين: أشكال، و layouts، وصفحات بتفيض، وأخطاء حقيقية تصلّحها، وتوقّع الـ cascade، و accessibility، ومسائل JS، وصفحات من وصف. ٤ دروس فيهم تمرين بيتصحح لوحده هنا في الصفحة، والباقي ليه فحص ذاتي تلزقه في الـ Console. كل فحص اتشغّل على حل صح وحل غلط في Chrome بـ Playwright على ويندوز ١١ بـ Node 24.22.1، والنواتج اللي في الدروس منسوخة من التشغيل ده`,
       items: [
@@ -1581,7 +4672,7 @@ pre { overflow-x: auto; }
 </style>
 </head>
 <body>
-<section id="s1"><h2>١ صورة المنتج</h2><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300'%3E%3Crect width='600' height='300' fill='%2393c5fd'/%3E%3C/svg%3E" width="600" height="300" alt="كوباية قهوة على ترابيزة خشب"></section>
+<section id="s1"><h2>١ صورة المنتج</h2><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='300'%3E%3Crect%20width='600'%20height='300'%20fill='%2393c5fd'/%3E%3C/svg%3E" width="600" height="300" alt="كوباية قهوة على ترابيزة خشب"></section>
 <section id="s2"><h2>٢ إيميل الدعم</h2><p>ابعتلنا على customer.support.orders.team@flowershopexample.com وكود الخصم بتاعك WELCOMEFLOWERSHOPSPRING2026</p></section>
 <section id="s3"><h2>٣ جدول الطلبات</h2><div class="table-wrap"><table><tr><th>رقم الطلب</th><th>العميل</th><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الحالة</th></tr><tr><td>1042</td><td>سارة منير</td><td>بوكيه ورد بلدي</td><td>2</td><td>450 ج.م.</td><td>اتشحن</td></tr></table></div></section>
 <section id="s4"><h2>٤ أزرار الفلتر</h2><div class="chips"><button>الكل</button><button>ورد</button><button>نباتات</button><button>هدايا</button><button>عروض</button><button>جديد</button></div></section>
@@ -4036,7 +7127,8 @@ HTML على 1200:      شكل بداية، محترف، شركات  ← Tab مح
 </body></html>
 ~~~
 
-~~~js السطر الجديد في الفحص
+~~~js السطر الجديد في الفحص (قبل سطر النتيجة، وجوه { } لأن الفحص فيه radios قبله)
+{
 const radios = [...document.querySelectorAll('#picker input[name=d]')];
 const branch = document.querySelector('#picker .branch');
 const start = radios.find((r) => r.checked);
@@ -4048,7 +7140,10 @@ for (const r of radios) {
 }
 start.click();
 ok('4 الفرع بيظهر مع الاستلام بس', !wrong.length, 'الاختيار اللي فشل: ' + wrong.join(' و '));
+}
 ~~~
+
+**ليه القوسين:** الفحص الأصلي معرّف [[const radios]] لأسئلة الاختيار. لو لزقت السطور دي جواه من غير [[{ }]]، المتصفح بيرفض الفحص كله: [[SyntaxError: Identifier 'radios' has already been declared]]. القوسين بيعملوا scope جديد، فالـ [[radios]] اللي جوه غير اللي برّه.
 
 قاعدة الـ CSS كلها سطر: «في [[#picker]] لو الاختيار المحدد [[pickup]]، اعرض [[.branch]]». [[#picker:has(...)]] بيبص لتحت، ثم [[.branch]] مكانه تحت الأب نفسه.
 
