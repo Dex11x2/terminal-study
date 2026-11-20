@@ -1150,7 +1150,7 @@ Chrome ← [[F12]] ← تاب **Performance** ← زرار «Load profile» (ا�
           },
           sol: R`[[slowUnique]]: حوالي 928ms، و [[top.mjs]] طلّعها ٩٥.١٪ (806 من 847ms). [[fastUnique]]: حوالي 4ms، والـ profile الكلي 41ms وأوله [[(program)]]. و [[--prof-process]] في Docker طلّع [[Builtin: ArrayIncludesSmiOrObject]] ٨٨٪ تحتها [[*slowUnique]].
 
-وعلى ماك (Apple Silicon) في GitHub Actions نفس السكربت طلّع أتقل نقطة [[(anonymous)]] عند [[app.mjs:1:1]] (الكود اللي بينادي [[slowUnique]])، و [[slowUnique]] نفسها ٠٫٠٢ بس. أول تخمين كان إن V8 دمج الدالة جوه اللي ناداها (inlining)، فقفلنا الدمج في الـ compilerين ([[--no-turbo-inlining]] و [[--no-maglev-inlining]]): نفس النتيجة، يعني مش ده. ولما شلنا [[includes()]] (دالة مبنية جوه V8، builtin) وحطينا مكانها loop عادي، نصيب [[slowUnique]] بقى ٠٫٤٥ لـ ٠٫٥٥ في تشغيلات مختلفة، قصاد ٠٫٠٢ مع [[includes()]]. (مرة من دول [[(anonymous)]] فضلت الأتقل برضه، فالمقارنة بين النصيبين هي اللي ثابتة، مش «مين الأتقل».) يعني الـ profiler على ARM وهو جوه الـ builtin بيضيّع الدالة اللي نادته، فالوقت بيتحسب على اللي فوقها. لو اسم دالتك مش ظاهر على ماك، بص على السطر اللي الـ profile بيشاور عليه واللي بيناديه، أو اعمل الـ profile على لينكس.
+وعلى ماك (Apple Silicon) في GitHub Actions نفس السكربت طلّع أتقل نقطة [[(anonymous)]] عند [[app.mjs:1:1]] (الكود اللي بينادي [[slowUnique]])، و [[slowUnique]] نفسها ٠٫٠٢ بس. أول تخمين كان إن V8 دمج الدالة جوه اللي ناداها (inlining)، فقفلنا الدمج في الـ compilerين ([[--no-turbo-inlining]] و [[--no-maglev-inlining]]): نفس النتيجة، يعني مش ده. ولما شلنا [[includes()]] (دالة مبنية جوه V8، builtin) وحطينا مكانها loop عادي، نصيب [[slowUnique]] بقى بين ٠٫٤٥ و ٠٫٦٢ في ٣ تشغيلات، قصاد ٠٫٠٢ مع [[includes()]]. (مرة من دول [[(anonymous)]] فضلت الأتقل برضه، فالمقارنة بين النصيبين هي اللي ثابتة، مش «مين الأتقل».) يعني الـ profiler على ARM وهو جوه الـ builtin بيضيّع الدالة اللي نادته، فالوقت بيتحسب على اللي فوقها. لو اسم دالتك مش ظاهر على ماك، بص على السطر اللي الـ profile بيشاور عليه واللي بيناديه، أو اعمل الـ profile على لينكس.
 
 وعلى جهاز بطيء (ويندوز في GitHub Actions) [[slowUnique]] طلعت ٠٫٣٨ من **كل** العيّنات، لأن الـ profiler حط جزء كبير في [[(program)]] (وقت مش JavaScript). عشان كده الفحص بيقسم على عيّنات JS بس.`,
           ci: [
@@ -1177,7 +1177,7 @@ console.log("top self time:", [...self].sort((a, b) => b[1] - a[1]).slice(0, 3).
 console.log("slowUnique share: of all " + (inSlow / total).toFixed(2) + ", of JS " + (inSlow / js).toFixed(2));
 console.log("slowUnique holds most of the JS time:", inSlow / js > 0.5);`, expect: [R`unique: 15000`, R`slowUnique holds most of the JS time: true`] },
             { os: [R`macos`], sh: R`node`, run: R`// الماك (Apple Silicon في GitHub Actions، ٢٠ نوفمبر): مع includes() أتقل نقطة (anonymous)@app.mjs:1:1 و slowUnique 0.01 أو 0.02،
-// حتى مع --no-turbo-inlining و --no-maglev-inlining (مش inlining). من غير includes() (loop عادي) نصيب slowUnique بيطلع ٠٫٤٥ لـ ٠٫٥٥: الـ profiler بيضيّع اسمها جوه الـ builtin.
+// حتى مع --no-turbo-inlining و --no-maglev-inlining (مش inlining). من غير includes() (loop عادي) نصيب slowUnique بيطلع بين ٠٫٤٥ و ٠٫٦٢ (٣ تشغيلات): الـ profiler بيضيّع اسمها جوه الـ builtin.
 // الفحص بيقارن النصيبين (loop قصاد includes)، مش «مين الأتقل»: مرة على نفس الـ runner الأتقل طلع (anonymous) و slowUnique 0.45، فالأتقل رقم حدّي.
 import { writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";

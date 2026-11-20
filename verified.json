@@ -11565,9 +11565,9 @@
   "on": "docker ubuntu-24.04 + nginx 1.24.0"
  },
  "node|--cpu-prof و profiling": {
-  "hash": "8dcdd425cbe1",
+  "hash": "3d1d79c6ab56",
   "date": "2026-11-20",
-  "on": "Windows 11 (Node 24.22.1) + GitHub Actions ubuntu-latest و windows-latest و macos-latest (فحص ci، ٢٠ نوفمبر)"
+  "on": "Windows 11 pwsh (Node 24.22) + GitHub Actions ubuntu و windows و macos (Apple Silicon) ٢٠ نوفمبر: فحص الماك بيقارن نصيب slowUnique في loop عادي (٠٫٤٥–٠٫٦٢) بنصيبها مع includes() (٠٫٠١–٠٫٠٢)"
  },
  "node|--host و Network URL": {
   "hash": "7c2188637606",
