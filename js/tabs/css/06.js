@@ -4265,6 +4265,46 @@ axe: 0 violations
 </html>
 ~~~
 
+~~~view 150 180 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصفحة</title>
+<style>
+.page {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 8px;
+  grid-template-areas:
+    "head head"
+    "side body"
+    "foot foot";
+}
+.head { grid-area: head; }
+.side { grid-area: side; }
+.body { grid-area: body; }
+.foot { grid-area: foot; }
+@media (max-width: 600px) {
+  .page {
+    grid-template-columns: 1fr;
+    grid-template-areas: "head" "side" "body" "foot";
+  }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="head">الراس</header>
+  <aside class="side" aria-label="جانبي">الجانب</aside>
+  <main class="body"><h1>المحتوى</h1></main>
+  <footer class="foot">الآخر</footer>
+</div>
+</body>
+</html>
+~~~
+
 **ليه أوضح:** الرسمة شكلها زي الصفحة نفسها، فأي حد يقراها يفهم الـ layout من غير حساب خطوط. وفي الموبايل كنا بنكرر ٤ عناصر عشان نلغي الأرقام، دلوقتي رسمة واحدة.
 
 **الغلطة الشائعة:** تنسى [[grid-template-columns]] في الـ media query، فالرسمة بعمود واحد والأعمدة لسه اتنين، والعمود التاني يفضل فاضي.

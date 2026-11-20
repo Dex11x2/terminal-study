@@ -2397,7 +2397,7 @@ Ctrl+F على كلمة في إجابة مقفولة: في Chrome و Edge الـ 
 End       ← الأمان
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كل الـ tabs عليها [[tabindex="0"]]، فـ Tab بيعدّي على الـ ٦ tabs قبل ما يوصل للمحتوى. وواحد فيهم [[aria-controls]] بتاعه بيشاور على id مش موجود، فالاختيار بيوقع بـ «Cannot set properties of null (setting 'hidden')».`, done: R`Tab بيوقف مرة واحدة على الـ tab المختار وبعده على طول المحتوى، وكل [[aria-controls]] ليه لوحة موجودة، ومفيش errors في الكونسول.`,
-              sol: R`~~~html السطور اللي اتغيرت
+              sol: R`~~~live 120 120 السطور اللي اتغيرت
 <!-- كان كل tab من غير tabindex، و t3 بيشاور على p9 -->
 <button role="tab" id="t1" aria-controls="p1" aria-selected="true">البيانات</button>
 <button role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">الطلبات</button>

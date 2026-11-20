@@ -1751,6 +1751,52 @@ body {
 }
 ~~~
 
+~~~view 340 340 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بُن الصباح</title>
+<style>
+body {
+  font-family: system-ui;
+  background: #faf7f2;
+  margin: 16px;
+}
+.card {
+  max-width: 320px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+}
+.card h2 { color: #4a2c17; margin-block-start: 0; }
+.card p { color: #52525b; line-height: 1.6; }
+.card .price { color: #18181b; font-weight: 700; }
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  background: #4a2c17;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>منتجاتنا</h1>
+  <article class="card">
+    <h2>بن يمني</h2>
+    <p>تحميص وسط وطعم فواكه خفيف، مناسب للفلتر والإسبريسو.</p>
+    <p class="price">٣٢٠ جنيه</p>
+    <a class="btn" href="#buy">اشتري</a>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
 **ليه ملف منفصل:** الملف بيتحمّل مرة ويتخزّن، وكل الصفحات تستخدمه، وتعديل واحد يغيّر الكل. و [[style=""]] جوه الـ HTML بيتكرر في كل عنصر، وبيبقى صعب تغطيه.
 
 - [[line-height: 1.6]] من غير وحدة: المسافة بتتحسب من حجم خط العنصر نفسه.
@@ -1827,6 +1873,27 @@ overflow على 360: 0px   axe: 0 violations
 
 ~~~css ext.css
 .o1 { color: blue; }
+~~~
+
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الألوان</title>
+<style>
+.o1 { color: blue; }
+</style>
+<style>
+  .o1 { color: green; }
+</style>
+</head>
+<body>
+<button id="a" class="o1">الأول</button>
+<button id="b" class="o1" style="color: red">التاني</button>
+</body>
+</html>
 ~~~
 
 **الإجابة:**
@@ -2548,6 +2615,26 @@ footer .btn { background: #166534 !important; }
 </html>
 ~~~
 
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأزرار</title>
+<style>
+.btn { background: #1d4ed8; color: #fff; padding: 8px 16px; }
+.btn:hover { background: #1e3a8a; }
+.btn--footer { background: #166534; }
+</style>
+</head>
+<body>
+<main><button id="m" class="btn">عادي</button></main>
+<footer><button id="f" class="btn btn--footer">في الفوتر</button></footer>
+</body>
+</html>
+~~~
+
 **إزاي شلناهم:**
 
 - مفيش خناقة أصلًا بين [[.btn]] و [[.btn:hover]]: الـ hover أقوى بطبيعته (0,2,0) ضد (0,1,0).
@@ -2860,6 +2947,25 @@ button, input, select, textarea {
 </html>
 ~~~
 
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأزرار</title>
+<style>
+@import url("lib.css") layer(vendor);
+
+.btn { padding: 4px; }
+</style>
+</head>
+<body>
+<button class="btn">زرار</button>
+</body>
+</html>
+~~~
+
 **ليه ده بيحل المشكلة:** قبل كده الاتنين في نفس المكانة، ونفس الوزن، فاللي آخر كسب. الـ [[layer(vendor)]] بيحط كل المكتبة في طبقة. والقاعدة: **أي CSS برّه الطبقات بيغلب أي CSS جوه طبقة**، مهما كان الوزن ومهما كان الترتيب.
 
 [[@import]] لازم يبقى أول سطر في الملف، قبل أي قاعدة، وإلا المتصفح بيتجاهله.
@@ -3008,6 +3114,32 @@ revert   block
 ~~~css vendor.css
 .btn { padding: 8px; color: black; background: gray; border: 0; }
 .btn:hover { background: darkgray; }
+~~~
+
+~~~view 130 130 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر</title>
+<style>
+.btn { padding: 8px; color: black; background: gray; border: 0; }
+.btn:hover { background: darkgray; }
+</style>
+<style>
+  .btn { padding: 12px 24px; }
+  .product .btn { color: white; }
+  .btn-buy { background: green !important; }
+</style>
+</head>
+<body>
+<main class="product">
+  <h1>المنتج</h1>
+  <button class="btn btn-buy">اشتري</button>
+</main>
+</body>
+</html>
 ~~~
 
 **الخطوات في DevTools:** كليك يمين على الزرار، ثم Inspect. في Styles عدّ القواعد واللي متشطّب عليه. وفي Computed دوّر على [[color]] واضغط السهم: هيوديك للقاعدة الكسبانة والملف بتاعها.

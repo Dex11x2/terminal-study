@@ -6562,6 +6562,21 @@ auto-fill: عرض الكارت 200، و gridTemplateColumns: 200px 200px 200px 2
 .block:has([value="yearly"]:checked) .saving .s-y { display: inline; }
 ~~~
 
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+.saving { text-align: center; color: var(--muted); margin-block: 12px 0; }
+.saving .s-y { display: none; }
+.block:has([value="yearly"]:checked) .saving .s-m { display: none; }
+.block:has([value="yearly"]:checked) .saving .s-y { display: inline; }
+</style>
+<p class="saving">
+  <span class="s-m">السنوي بيوفّرلك شهرين في كل باقة.</span>
+  <span class="s-y">السنوي بيوفّرلك ٤٨٠ جنيه في باقة تجربة، و ٨٨٠ في البيت، و ١٦٤٠ في المكتب.</span>
+</p>
+</body></html>
+~~~
+
 بيبني على قسم الأسعار. نفس طريقة [[.price .m]] و [[.price .y]] بالظبط: الجملتين في الـ HTML، و [[.block:has([value="yearly"]:checked)]] بيسأل عن الـ radio من فوق، فبيقدر يوصل لأي حاجة جوه القسم.
 
 الأرقام: التوفير = سعر شهرين، لأن السنوي = ١٠ شهور. ‏240 × 2 = 480، و 440 × 2 = 880، و 820 × 2 = 1640. مكتوبة في الـ HTML مش محسوبة، لأن الفكرة من غير JS.
@@ -6616,6 +6631,21 @@ Tab من «شهري» قبله   اختار تجربة     radio monthly
 
 ~~~css css/site.css (امسح قواعد .m و .y)
 .billing[hidden] { display: none; }
+~~~
+
+~~~view 130 130 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+.billing[hidden] { display: none; }
+</style>
+<fieldset class="billing" hidden> <!-- الـ legend والـ radios زي ما هم --> </fieldset>
+
+<article data-reveal class="plan" data-monthly="240">
+  <h3>تجربة</h3><p class="plan-sub">كيس ٢٥٠ جرام</p>
+  <p class="price"><span class="amount">٢٤٠</span> جنيه <small class="per">/ شهر</small></p>
+  <!-- باقي الباقة زي ما هو -->
+</article>
+</body></html>
 ~~~
 
 ~~~js js/site.js (مكان القواعد القديمة)
@@ -7763,7 +7793,7 @@ mona@site    typeMismatch = false
 example.com  typeMismatch = true
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** خانة «تأكيد كلمة السر» بتتحقق إنها زي الأولى بـ [[setCustomValidity]] ورسالة عربي، ومتظهرش غلط قبل ما اليوزر يخرج منها، وتتحدث لو غيّر الأولى بعدها.`, done: R`[[form-test.mjs]] فيه ٣ حالات جديدة PASS: مختلفة = «كلمتين السر مش زي بعض»، ومتطابقة = صح، وتغيير الأولى بعد ما التانية صح بيرجّع الغلط على التانية، و axe صفر.`,
-              sol: R`~~~html index.html (بعد حقل كلمة السر)
+              sol: R`~~~live 120 120 index.html (بعد حقل كلمة السر)
 <div class="field">
   <label for="password2">أكّد كلمة السر</label>
   <input id="password2" name="password2" type="password" autocomplete="new-password" required aria-describedby="password2-err">

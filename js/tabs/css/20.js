@@ -978,7 +978,7 @@ en CLS 0.0000 FCP 272 LCP 272 (median of 3)
               lvl: R`سريع`,
               t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]، الكلمات دي هتتعرض إزاي؟ [[<p>السعر 250+</p>]]، و [[<p>اتعلمت C++</p>]]، و [[<p>الإصدار (v2)</p>]]. اكتب توقّعك وبعدين افتحهم.`,
               done: R`اتوقعت إن الـ [[+]] في الأول والتاني بيروح على الشمال من الرقم أو الكلمة، والقوس في التالت بيتلخبط، وشفت ده فعلًا، وصلّحت التلاتة بـ [[<span dir="ltr">]] حوالين الحتة الإنجليزي بس.`,
-              sol: R`~~~html bidi.html
+              sol: R`~~~live 290 290 bidi.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>bidi</title></head>
@@ -1016,7 +1016,7 @@ C++ بـ dir             العلامة على يمين C
               lvl: R`سريع`,
               t: R`**دوّر بنفسك:** من صفحة [[<bdi>]] على MDN اعرف الفرق بينه وبين [[<span dir="ltr">]]، وإمتى كل واحد أنسب. جاوب بمثال من الـ dashboard: اسم عضو ممكن يبقى عربي أو إنجليزي.`,
               done: R`كتبت إن [[<bdi>]] بيحدد اتجاهه من محتواه (زي [[dir="auto"]]) فمناسب للنص اللي مش عارف اتجاهه زي أسماء الأعضاء، و [[dir="ltr"]] لما انت متأكد إنه إنجليزي (إيميل، رقم بعلامة).`,
-              sol: R`~~~html bdi-table.html
+              sol: R`~~~live 190 190 bdi-table.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>bdi</title></head>
@@ -1076,7 +1076,7 @@ margin-inline-end: auto:  brand x = 48
               lvl: R`تطبيق`,
               t: R`**ابني:** زوّد لغة تالتة (فرنساوي مثلًا، [[dir="ltr"]]) في [[dict]]، وخلي الزرار [[<select>]] بـ label بدل زرار تبديل، وكل اختيار مكتوب بلغته هو ([[lang]] على كل [[<option>]]).`,
               done: R`الـ select بيقلب الصفحة للغات التلاتة، و [[keys.mjs]] (بعد ما تخليه يفحص [[fr]] كمان) بيقول [[none]]، والـ refresh بيفتكر الاختيار، و axe صفر في التلات لغات.`,
-              sol: R`~~~html portfolio/index.html (مكان زرار اللغة)
+              sol: R`~~~live 120 120 portfolio/index.html (مكان زرار اللغة)
 <label class="lang-pick">
   <span class="sr-only">اللغة</span>
   <select id="lang">
@@ -1534,7 +1534,7 @@ D fixed: minmax(min(100%, 22rem)) 360 scrollWidth 360 / 360
               lvl: R`سريع`,
               t: R`**اقرا وتوقّع:** كارت عليه [[data-tags="webgl design"]] وانت اخترت «مواقع» ([[web]]). هيظهر مع [[~=]]؟ ومع [[*=]]؟ ومع [[|=]]؟ اكتب الإجابة وبعدين جرّب في Console بـ [[querySelectorAll]].`,
               done: R`[[~=]] لأ (مفيش كلمة [[web]] كاملة)، و [[*=]] أيوه (النص فيه [[web]])، و [[|=]] لأ ([[|=]] = القيمة كلها [[web]] أو بتبدأ بـ [[web-]])، والأرقام في Console مطابقة.`,
-              sol: R`~~~html attr.html
+              sol: R`~~~live 120 120 attr.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>attribute selectors</title></head>
@@ -1595,6 +1595,20 @@ D fixed: minmax(min(100%, 22rem)) 360 scrollWidth 360 / 360
 ~~~css portfolio/css/site.css
 .empty { display: none; color: var(--muted); }
 .work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty { display: block; }
+~~~
+
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+.empty { display: none; color: var(--muted); }
+.work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty { display: block; }
+</style>
+<!-- مع باقي الـ radios -->
+<label><input type="radio" name="f" value="mobile"> <span>موبايل</span></label>
+
+<!-- بعد ul.cards -->
+<p class="empty">مفيش مشاريع من النوع ده لسه.</p>
+</body></html>
 ~~~
 
 القاعدة بتتقرا كده: «في [[.work]] لو الفلتر المختار موبايل، و **مفيش** جواها كارت عليه تاج موبايل، اعرض الرسالة». [[:not(:has(...))]] هو «مفيش».
@@ -2152,7 +2166,7 @@ Unexpected duplicate view-transition-name: card
               lvl: R`تطبيق`,
               t: R`**ابني:** فاتورة لمحل متخيل بتتطبع A4: جدول أصناف بـ [[thead { display: table-header-group }]] (العناوين بتتكرر في كل صفحة)، و [[tr { break-inside: avoid }]]، و [[print-color-adjust: exact]] عشان لون الهيدر يتطبع، و ٤٠ صنف عشان تطلع صفحتين.`,
               done: R`[[page.pdf()]] بيطلّع صفحتين، والعناوين في أول كل صفحة، ومفيش صف متقطع، ولون الهيدر ظاهر في الـ PDF، ومن غير [[print-color-adjust]] اللون بيختفي (جرّبته).`,
-              sol: R`~~~html invoice.html
+              sol: R`~~~live 600 720 invoice.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>فاتورة</title>
@@ -3087,7 +3101,7 @@ node --test: pass 3، fail 0
               lvl: R`تحدي`,
               t: R`**قارن وقيس:** ارسم نفس الـ sparkline بـ Chart.js (من CDN) في صفحة تجربة، وقارن بالـ SVG: حجم اللي اتحمّل (Network)، و LCP (بـ [[vitals.mjs]])، وهل قارئ الشاشة بيقرا حاجة (Accessibility tree).`,
               done: R`عندك جدول ٣ صفوف بالأرقام للطريقتين، وفرق الحجم بالكيلو، وكتبت إن الـ canvas ملوش محتوى في الـ accessibility tree غير لو كتبت [[aria-label]] بإيدك، وإمتى المكتبة تستاهل.`,
-              sol: R`~~~html spark-chart.html (نسخة Chart.js)
+              sol: R`~~~live 170 170 spark-chart.html (نسخة Chart.js)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>sparkline</title>
@@ -3106,7 +3120,7 @@ node --test: pass 3، fail 0
 </body></html>
 ~~~
 
-~~~html spark-svg.html (نسخة SVG)
+~~~live 180 180 spark-svg.html (نسخة SVG)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>sparkline</title></head>
@@ -3757,7 +3771,7 @@ all نفسها بعد sort: 3 1 2 4
               lvl: R`تطبيق`,
               t: R`**ابني:** زرار «نزّل CSV» بيصدّر كل الصفوف اللي بتطابق الفلتر (مش الصفحة بس) بـ [[view(all, { ...state, page: 1, size: Infinity })]]، وفيه [[\uFEFF]] في الأول عشان Excel يقرا العربي، والخلية اللي فيها فاصلة أو علامة تنصيص بتتحط بين [[""]].`,
               done: R`مع [[?status=frozen]] الملف ٦ سطور (عناوين و ٥)، و Excel بيفتح العربي سليم، واسم فيه [[,]] متقسمش لعمودين، واسم الملف فيه الفلتر.`,
-              sol: R`~~~html dashboard/index.html (جنب #add)
+              sol: R`~~~live 120 120 dashboard/index.html (جنب #add)
 <button class="btn ghost" id="csv" type="button">نزّل CSV</button>
 ~~~
 
@@ -4265,7 +4279,7 @@ OUTSIDE
               lvl: R`سريع`,
               t: R`**دوّر بنفسك:** من صفحة [[<dialog>]] على MDN اعرف الفرق بين [[close()]] و [[requestClose()]]، وأنهي واحد بيبعت حدث [[cancel]] اللي ممكن تلغيه (عشان تسأل «متأكد؟ فيه كلام متكتب»).`,
               done: R`كتبت إن [[requestClose()]] بيبعت [[cancel]] الأول (وتقدر [[preventDefault()]])، و [[close()]] بيقفل على طول، وإن Esc بيبعت [[cancel]] كمان، وجرّبت تمنع القفل لو الحقل فيه كلام.`,
-              sol: R`~~~html request-close.html
+              sol: R`~~~live 120 120 request-close.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>requestClose</title></head>
@@ -4358,6 +4372,27 @@ openDialog(dlg, v => {
   .day-list { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; gap: 0.5rem; }
   .day-list li { padding: 0.75rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
 }
+~~~
+
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+.agenda { display: none; }
+@media (max-width: 47.99rem) {
+  .week-wrap { display: none; }
+  .agenda { display: block; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
+  .days button { min-block-size: 44px; font: inherit; font-size: 0.75rem; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .days button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); }
+  .day-list { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; gap: 0.5rem; }
+  .day-list li { padding: 0.75rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+}
+</style>
+<div class="agenda" id="agenda">
+  <div class="days" id="days" role="group" aria-label="اختار اليوم"></div>
+  <ol class="day-list" id="day-list"></ol>
+</div>
+</body></html>
 ~~~
 
 ~~~js dashboard/js/schedule.js (آخر الملف)
@@ -4487,7 +4522,7 @@ node --test: pass 3، fail 0
               lvl: R`تحدي`,
               t: R`**قارن وقيس:** اعمل نفس الـ modal بـ [[<div role="dialog" aria-modal="true">]] و JS بإيدك (فوكس أول حقل، و Tab متحبس جواه، و Esc، ورجوع الفوكس، والخلفية inert). عدّ السطور، وشغّل [[check-dashboard.mjs]] على الاتنين، وشوف axe.`,
               done: R`عندك رقمين للسطور (الـ div أكتر بكتير)، والفحوصات بتعدّي على الاتنين أو مكتوب أنهي وقع وليه، وعرفت إن [[<dialog>]] اداك الـ top layer كمان (مفيش z-index بيتغلب عليه).`,
-              sol: R`~~~html modal-div.html (بإيدك)
+              sol: R`~~~live 120 120 modal-div.html (بإيدك)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>modal بإيدك</title>
@@ -4535,7 +4570,7 @@ node --test: pass 3، fail 0
 </body></html>
 ~~~
 
-~~~html modal-dialog.html (نفس الوظيفة)
+~~~live 120 120 modal-dialog.html (نفس الوظيفة)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>dialog</title></head>

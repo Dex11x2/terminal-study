@@ -2998,6 +2998,39 @@ calc(var(--gap) * 1px) مع 20 → padding = 20px
 </html>
 ~~~
 
+~~~view 310 310 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الألوان</title>
+<style>
+:root {
+  --brand: #2563eb;
+  --radius: 12px;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / .2);
+  --shadow: 0 4px 8px rgb(0 0 0 / .2);
+  --shadow-lg: 0 16px 32px rgb(0 0 0 / .25);
+}
+.btn { background: var(--brand); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+.link { color: var(--brand); }
+.card { border: 1px solid var(--brand); border-radius: var(--radius); box-shadow: var(--shadow); }
+.badge { background: var(--brand); border-radius: var(--radius); }
+.modal { border-radius: var(--radius); box-shadow: var(--shadow-lg); }
+</style>
+<style>div, button, a { display: block; margin: 16px; padding: 12px; }</style>
+</head>
+<body>
+<button class="btn">زرار</button>
+<a class="link" href="#x">لينك</a>
+<div class="card">كارت</div>
+<div class="badge">شارة</div>
+<div class="modal">مودال</div>
+</body>
+</html>
+~~~
+
 **الترتيب في الشغل:** ابحث عن كل قيمة متكررة، وادّيها اسم بالمعنى مش باللون. [[--brand]] مش [[--blue]]، لأن لما اللون يتغيّر الاسم يفضل صحيح. والظلال الثلاثة كانوا مختلفين عن قصد، فبقوا ٣ مستويات باسم.
 
 **الغلطة الشائعة:** تعمل [[--blue-500]] وتكتبها في كل مكان. ده hex باسم أطول. والـ tokens في اللي بتتكرر فعلًا، مش كل قيمة ظهرت مرة.

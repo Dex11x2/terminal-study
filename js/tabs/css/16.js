@@ -3226,7 +3226,7 @@ background-image = none
 لو الحد مش باين خالص: اتأكد إن [[--surface]] و [[--brand]] متعرّفين (من غيرهم الخلفية بتتلغي كلها)، وإن الـ [[border]] شفاف مش [[none]]. ولو الحركة مش شغالة رغم التسجيل، دوّر على [[initial-value]]: من غيرها التسجيل بيتجاهل من غير error.`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[@keyframes m { to { --x: 100px } }]] على عنصر [[--x: 0px]] في ٤ ثواني. قيمة [[--x]] كام عند ثانية وعند ٢.٥ ثانية لو المتغير مش مسجّل؟ وكام لو مسجّل بـ [[<length>]]؟ اكتب، وبعدين وقّف الحركة بـ [[el.getAnimations()[0].pause()]] و [[currentTime]] واقرا القيمة.`, done: R`مش مسجّل: [[0px]] ثم [[100px]] (قفزة عند ٢ ثانية). مسجّل: [[25px]] ثم [[62.5px]]. والقراية من [[getComputedStyle]] طابقت.`,
-              sol: R`~~~html prop-math.html
+              sol: R`~~~live 130 130 prop-math.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>@property توقّع</title>

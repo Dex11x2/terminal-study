@@ -2009,6 +2009,21 @@ $__lt/script>
 #ad { min-height: 200px; }
 ~~~
 
+~~~view 240 240 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+#ad { min-height: 200px; }
+</style>
+<div id="ad"></div>
+<main id="content">…</main>
+<script>
+  setTimeout(() => {
+    document.getElementById("ad").innerHTML = '<div style="height: 200px">إعلان</div>';
+  }, 500);
+</script>
+</body></html>
+~~~
+
 **ليه [[attribution]]:** الرقم لوحده بيقولك إن فيه مشكلة، و [[attribution]] بيقولك مين. [[largestShiftTarget]] selector لأكبر عنصر اتحرك.
 
 **لاحظ:** العنصر المذكور [[#content]]، مش [[#ad]]. اللي اتحرك هو الضحية، والسبب هو اللي قبله. دوّر فوق العنصر.
@@ -2240,7 +2255,7 @@ inline + print    0.7 s ، 0.7 s
 لقطة قبل وبعد وصول الـ CSS الكامل: متطابقين byte بـ byte
 link.media بعد التحميل: all
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صورة الهيرو عليها [[loading="lazy"]] «عشان الأداء». قيس LCP، وبعدين شيل الـ lazy وزوّد [[fetchpriority="high"]] (أو preload بـ [[imagesrcset]] لو الصورة background).`, done: R`LCP قبل وبعد من Lighthouse، وفي Network الصورة بقت أولويتها High وبتبدأ بدري في الـ waterfall، وباقي الصور اللي تحت لسه lazy.`, sol: R`~~~html hero.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صورة الهيرو عليها [[loading="lazy"]] «عشان الأداء». قيس LCP، وبعدين شيل الـ lazy وزوّد [[fetchpriority="high"]] (أو preload بـ [[imagesrcset]] لو الصورة background).`, done: R`LCP قبل وبعد من Lighthouse، وفي Network الصورة بقت أولويتها High وبتبدأ بدري في الـ waterfall، وباقي الصور اللي تحت لسه lazy.`, sol: R`~~~live 120 120 hero.html
 <!-- الهيرو -->
 <img src="/hero.jpg" width="1600" height="1000" alt="رفوف قهوة" fetchpriority="high">
 

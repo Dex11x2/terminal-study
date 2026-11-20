@@ -2362,7 +2362,7 @@ ariaSnapshot للصفحة:
           try: R`حوّل صورة لـ AVIF و WebP (من squoosh.app أو [[npx sharp-cli]])، واعمل الـ picture. افتح DevTools › Network وفلتر على Img: شوف أنهي ملف اتحمّل على عرض كبير، وبعدين وضع الموبايل واعمل refresh. وقارن أحجام الملفات التلاتة.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** نفس الـ picture بتاع المثال بس الـ sources العامة (من غير [[media]]) جت **قبل** بتاعة الموبايل. على موبايل 390 أنهي ملف هيتحمّل؟ وبعدين شوف Network.`, done: R`اتحمّل [[hero-1600.avif]] أو [[hero-800.avif]] (صورة الديسكتوب العريضة) مش [[hero-mobile.avif]]، لأن المتصفح بياخد أول source ينفع، والعام بينفع دايمًا. ورجّعت الترتيب الصح.`, sol: R`~~~html wrong.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** نفس الـ picture بتاع المثال بس الـ sources العامة (من غير [[media]]) جت **قبل** بتاعة الموبايل. على موبايل 390 أنهي ملف هيتحمّل؟ وبعدين شوف Network.`, done: R`اتحمّل [[hero-1600.avif]] أو [[hero-800.avif]] (صورة الديسكتوب العريضة) مش [[hero-mobile.avif]]، لأن المتصفح بياخد أول source ينفع، والعام بينفع دايمًا. ورجّعت الترتيب الصح.`, sol: R`~~~live 120 120 wrong.html
 <picture>
   <!-- العام الأول: غلط -->
   <source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
@@ -2419,7 +2419,7 @@ ariaSnapshot للصفحة:
 390  × 3 → /c-1600.jpg   الصورة على الشاشة 390 × 243.75
 390  × 1 → /c-400.jpg    الصورة على الشاشة 390 × 243.75
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<picture><source type="image/avif" src="/hero.avif"><img src="/hero.jpg" alt="..."></picture>]]. الـ AVIF مبيتحمّلش أبدًا حتى في Chrome. ليه؟`, done: R`الـ [[<source>]] جوه picture بيقرا [[srcset]] بس، و [[src]] عليه بيتجاهل، فالمتصفح بيروح للـ img. بعد [[srcset="/hero.avif"]] الـ Network بيوري [[hero.avif]] بس.`, sol: R`~~~html fixed.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<picture><source type="image/avif" src="/hero.avif"><img src="/hero.jpg" alt="..."></picture>]]. الـ AVIF مبيتحمّلش أبدًا حتى في Chrome. ليه؟`, done: R`الـ [[<source>]] جوه picture بيقرا [[srcset]] بس، و [[src]] عليه بيتجاهل، فالمتصفح بيروح للـ img. بعد [[srcset="/hero.avif"]] الـ Network بيوري [[hero.avif]] بس.`, sol: R`~~~live 120 120 fixed.html
 <picture>
   <source type="image/avif" srcset="/hero.avif">
   <img src="/hero.jpg" alt="عرض الصيف">
@@ -2663,7 +2663,7 @@ AVIF بقت مدعومة في كل المتصفحات الحديثة، بس ال
           try: R`حط iframe يوتيوب عادي في صفحة، وافتح Network واعمل refresh: عدّ الـ requests والحجم. وبعدين بدّله بزرار الـ facade واكتب السكربت اللي لما تدوس عليه يحط الـ iframe مكانه ويشغّله، وقارن الـ Network تاني قبل الضغط.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** فيديو هيرو [[<video autoplay loop src="/hero.mp4">]] مبيشتغلش، ومفيش ولا error. صلّحه، واكتب الـ attributes الناقصة ليه.`, done: R`قبل: [[video.paused]] = [[true]] بعد التحميل. بعد [[muted]] و [[playsinline]] (و [[poster]] و [[aria-hidden="true"]] لأنه زينة): [[paused]] = [[false]]، وكتبت إن Chrome بيمنع autoplay بصوت في سكوت.`, sol: R`~~~html fixed.html
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** فيديو هيرو [[<video autoplay loop src="/hero.mp4">]] مبيشتغلش، ومفيش ولا error. صلّحه، واكتب الـ attributes الناقصة ليه.`, done: R`قبل: [[video.paused]] = [[true]] بعد التحميل. بعد [[muted]] و [[playsinline]] (و [[poster]] و [[aria-hidden="true"]] لأنه زينة): [[paused]] = [[false]]، وكتبت إن Chrome بيمنع autoplay بصوت في سكوت.`, sol: R`~~~live 170 170 fixed.html
 <video autoplay muted loop playsinline poster="/poster.jpg" aria-hidden="true" src="/hero.mp4"></video>
 ~~~
 
@@ -3065,7 +3065,7 @@ WEBVTT
           try: R`صدّر أيقونة من Figma (أو خد أي SVG) وشغّل [[npx svgo icon.svg -o icon.min.svg]] وقارن الملفين. وبعدين حط نفس الأيقونة مرة كـ [[<img>]] ومرة inline جوه زرار عليه [[color: red]]: أنهي واحدة اتلوّنت؟`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[<svg width="48" height="48"><circle cx="12" cy="12" r="10"/></svg>]] اترسمت صغيرة في ركن الـ 48 بدل ما تملاها. صلّحها بخاصية واحدة.`, done: R`قبل: عرض الدايرة 20px. بعد [[viewBox="0 0 24 24"]]: عرضها 40px، لأن الرسمة بقت متحسوبة على لوحة 24 بتتمطّ على الـ 48.`, sol: R`~~~html fixed.html
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[<svg width="48" height="48"><circle cx="12" cy="12" r="10"/></svg>]] اترسمت صغيرة في ركن الـ 48 بدل ما تملاها. صلّحها بخاصية واحدة.`, done: R`قبل: عرض الدايرة 20px. بعد [[viewBox="0 0 24 24"]]: عرضها 40px، لأن الرسمة بقت متحسوبة على لوحة 24 بتتمطّ على الـ 48.`, sol: R`~~~live 120 120 fixed.html
 <svg width="48" height="48" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
 ~~~
 

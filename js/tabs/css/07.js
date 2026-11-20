@@ -3572,6 +3572,26 @@ console.table(Object.entries(count).sort((a, b) => b[0] - a[0]));
 </html>
 ~~~
 
+~~~view 150 250 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>التحويل</title>
+<style>
+.g { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 481px) { .g { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 769px) { .g { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1025px) { .g { grid-template-columns: repeat(4, 1fr); } }
+</style>
+</head>
+<body>
+<main class="g"><h1>أ</h1><p>ب</p><p>ج</p><p>د</p></main>
+</body>
+</html>
+~~~
+
 **إزاي بنختصر:** ناخد القيم الأكتر استخدامًا (768 و 1024) ونسيب 480. أما 320 فعرض قليل جدًا، و 600 قريب من 480 و 768، فالقواعد بتاعتهم تتدمج في الأقرب.
 
 **ليه** [[481]] **مش** [[480]]**:** [[max-width: 480px]] بتشمل 480، فأول عرض «فوقها» 481. لو كتبت 480 هيبقى فيه عرض واحد بقاعدة مختلفة عن القديم.

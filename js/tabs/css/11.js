@@ -2650,6 +2650,22 @@ axe صفر في الاتجاهين.
 <h1 class="text-start">…</h1>
 ~~~
 
+~~~view 210 210 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+.row { display: flex; gap: 1rem; }
+.title { text-align: start; }
+</style>
+<!-- قبل -->
+<div class="flex space-x-4">…</div>
+<h1 class="text-left">…</h1>
+
+<!-- بعد -->
+<div class="flex gap-4">…</div>
+<h1 class="text-start">…</h1>
+</body></html>
+~~~
+
 ~~~bash
 grep -c "dir=rtl" style.css
 grep -c "!important" style.css
