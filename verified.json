@@ -4245,9 +4245,9 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|@property": {
-  "hash": "f6806fdabc13",
-  "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+  "hash": "47492ec8ca01",
+  "date": "2026-11-20",
+  "on": "Windows: Chrome 157 + Playwright 1.64.1: getComputedStyle backgroundImage على a بـ href وجوه منه (واقف) مقابل a من غير href و button (بيلف)، ولقطتين بعد 300ms متطابقين"
  },
  "css|@theme": {
   "hash": "8ad06ab8ded1",
