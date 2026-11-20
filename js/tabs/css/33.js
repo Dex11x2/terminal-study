@@ -3487,6 +3487,491 @@ build :5503/en/        FCP 1176 LCP 1176ms P.lead | FCP 1224 LCP 1224ms P.lead |
           what: R`خد هيكل الـ dashboard (shell و KPI و جدول بحالته في الرابط و جدول مواعيد و dialog و toasts و dark mode) وابنيه لحاجة انت عارف تفاصيلها: عيادة، أو مدرسة سواقة، أو ملعب، أو مكتبة، أو كورس أونلاين. الأرقام اللي في الكروت انت اللي بتختار ليه هي اللي مهمة لصاحب المكان.`,
           done: R`صاحب المكان (أو حد بيشتغل فيه) استخدمها ١٠ دقايق من موبايله من غير ما تشرحله، وقال أنهي رقم بيبص عليه الأول، والـ matrix و axe و CLS زي الوحدة دي.`,
           ext: R`ارفعها برابط، واكتب README فيه «ليه الأدوات دي» واللقطات على ٣ مقاسات، وحطها في الـ portfolio اللي بنيته هنا كدراسة حالة.`,
+          dir: R`pd-lab`,
+          cont: true,
+          sol: R`**ده مشروع «فكرة»:** الحل هنا مثال كامل اتعمل فعلًا لمكان متخيّل، مدرسة سواقة اسمها «الطريق»، عشان تشوف الطريقة من أولها لآخرها. مشروعك انت لمكان بتعرفه بجد. والجزء الأخير من المطلوب (صاحب المكان يستخدمها ١٠ دقايق) محدش يقدر يعمله غيرك، فآخر الحل بيقولك تعمله إزاي وتكتب إيه.
+
+**الخطوة ١: الأرقام قبل الكود.** قبل أي سطر، اقعد مع صاحب المكان (أو تخيّل يومه لو انت عارفه كويس) واسأله ٥ أسئلة، واكتب الإجابات بكلامه هو:
+
+1. أول ما بتفتح الصبح، بتبص على إيه؟
+2. إيه الرقم اللي لو زاد أو قلّ بتقلق؟
+3. مين الناس اللي بتتابعهم (عملاء، طلبة، مرضى)، وحالاتهم إيه (بيتعلم، مستني، خلص…)؟
+4. إيه اللي بيتحجز (حصة، كشف، ملعب) وفيه كام مكان؟
+5. بتعرف الحاجات دي النهارده إزاي (ورقة، واتساب، Excel)؟
+
+في المثال، الإجابات طلعت كده، وكل إجابة بقت جزء في اللوحة:
+
+| السؤال | في المدرسة | بقى إيه في اللوحة |
+|---|---|---|
+| بيبص على إيه الصبح | «فيه كام حصة النهارده» | كارت «حصص النهارده» وخط آخر ١٤ يوم |
+| الرقم اللي بيقلقه | «كام واحد بينجح من أول مرة» (اللي بيسقط بيرجع ياخد حصص ببلاش) | الدايرة «نجحوا من أول مرة» بدل «التجديد» |
+| مين وحالاتهم | طلبة: بيتعلم، جاهز للامتحان، نجح | جدول الطلبة والفلتر بالحالة |
+| إيه اللي بيتحجز | حصة نظري (قاعة ١٦–٢٣ كرسي) وحصة عملي (عربية واحدة، طالب واحد) | جدول الأسبوع: العملي مكانه واحد، فيا فاضي يا كامل |
+| بيعرف إزاي | دفتر وواتساب | ده اللي اللوحة بتبدّله |
+
+**ليه الأرقام دي بالذات مش غيرها:** «بيتعلموا دلوقتي» هو الشغل اللي في إيده، و «حصص النهارده» هو يومه، والإيراد هو الفلوس، و «نجحوا من أول مرة» هو سمعته. مفيش كارت لـ «عدد الزوار» أو «إجمالي الطلبة من أول ما فتح»، لأن مفيش قرار بيتاخد بيهم.
+
+**الخطوة ٢: نفس الهيكل، والمحتوى بس اللي بيتغير.** هيكل الـ dashboard (الـ shell، والكروت، والجدول بحالته في الرابط، وجدول الأسبوع، والـ dialog، والتنبيهات، والوضع الداكن) شغال ومتقاس من الوحدة. فاللي بيتغير: الكلام، والحالات، والباقات، وألوان الحالات، والداتا. وأسماء الحقول في الداتا ([[plan]] و [[status]] و [[lastVisit]] و [[visits]]) فضلت زي ما هي، والعنوان اللي بيظهر بقى «آخر حصة» و «حصص الشهر». كده الكود اللي بيرتّب ويفلتر ويقسّم صفحات مالمسناهوش، وكل الفحوص بتاعة الوحدة بتشتغل عليه. (في مشروع حقيقي طويل، تغيّر الأسماء نفسها لـ [[lastLesson]] و [[lessons]] عشان اللي ييجي بعدك ميتلخبطش؛ هنا خليناها عشان الفرق يبقى في المحتوى بس.)
+
+~~~js gen-school.mjs
+// node gen-school.mjs: invented students and lessons for «مدرسة سواقة الطريق»; same seed = same data every run
+import fs from "node:fs";
+let seed = 7;
+const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+const pick = a => a[Math.floor(rnd() * a.length)];
+const first = ["مريم", "يوسف", "سلمى", "عمر", "هنا", "كريم", "ليلى", "آدم", "نور", "زياد", "فرح", "مالك", "جنى", "سيف", "رنا", "تامر"];
+const last = ["الشاذلي", "منصور", "عبد الحميد", "رشدي", "الجمّال", "سالم", "فهمي", "النجار", "شوقي", "البنا"];
+const day = n => new Date(Date.UTC(2026, 10, 19) - n * 864e5).toISOString().slice(0, 10);
+const students = Array.from({ length: 64 }, (_, i) => {
+  const r = rnd(), status = r < 0.6 ? "learning" : r < 0.8 ? "ready" : "passed";
+  return { id: 2001 + i, name: pick(first) + " " + pick(last), plan: pick(["p10", "p20", "p20", "p30"]), status,
+    joined: day(10 + Math.floor(rnd() * 120)), lastVisit: day(Math.floor(rnd() * (status === "passed" ? 60 : 10))),
+    visits: status === "learning" ? 2 + Math.floor(rnd() * 12) : status === "ready" ? 1 + Math.floor(rnd() * 5) : 0 };
+});
+// theory: a room with seats; road: one student in one car
+const theory = [["نظري: إشارات المرور", "أ. هالة"], ["نظري: الأولوية في التقاطعات", "أ. هالة"]];
+const road = [["عملي: الركن الموازي", "كابتن سامح"], ["عملي: المطالع والمنحدرات", "كابتن سامح"], ["عملي: الطريق السريع", "كابتن وليد"], ["تجهيز للامتحان", "كابتن وليد"]];
+const lessons = [];
+let id = 1;
+for (let d = 0; d < 6; d++) {                                    // Saturday to Thursday; Friday off
+  for (const [s, e] of [["09:00", "10:30"], ["11:00", "12:30"], ["16:00", "17:30"], ["18:00", "19:30"]]) {
+    if (rnd() < 0.35) continue;
+    const isTheory = s === "18:00" && rnd() < 0.7;
+    const [t, c] = pick(isTheory ? theory : road);
+    const spots = isTheory ? 16 + Math.floor(rnd() * 8) : 1;
+    lessons.push({ id: id++, title: t, coach: c, day: d, start: s, end: e, spots, booked: isTheory ? Math.floor(rnd() * (spots + 1)) : (rnd() < 0.6 ? 1 : 0) });
+  }
+}
+const perDay = Array.from({ length: 14 }, () => 9 + Math.floor(rnd() * 14));
+fs.mkdirSync("dashboard/data", { recursive: true });
+fs.writeFileSync("dashboard/data/members.json", JSON.stringify(students, null, 1));
+fs.writeFileSync("dashboard/data/classes.json", JSON.stringify(lessons, null, 1));
+fs.writeFileSync("dashboard/data/kpi.json", JSON.stringify({ active: students.filter(m => m.status === "learning").length, checkins: perDay, revenue: 248500, revenuePrev: 263000, renewal: 64 }, null, 1));
+console.log(students.length, "students,", lessons.length, "lessons (" + lessons.filter(l => l.spots > 1).length + " theory), lessons per day:", perDay.join(" "));
+console.log("status:", ["learning", "ready", "passed"].map(s => s + "=" + students.filter(m => m.status === s).length).join(" "));
+~~~
+
+~~~js dashboard/js/state.js (الحالات والباقات)
+const STATUS = ["learning", "ready", "passed"];
+const PLANS = ["p10", "p20", "p30"];
+~~~
+
+~~~js dashboard/js/table.js (الكلام اللي بيظهر)
+const PLAN = { p10: "10 حصص", p20: "20 حصة", p30: "30 حصة" };
+const STATUS = { learning: "بيتعلم", ready: "جاهز للامتحان", passed: "نجح" };
+const COLS = ["الاسم", "الباقة", "الحالة", "آخر حصة", "حصص الشهر"];
+~~~
+
+في نفس الملف «عضو» بقت «طالب» في سطر العدد، و «الأعضاء» بقت «الطلبة» في رسالتين الفاضي والخطأ.
+
+~~~html dashboard/index.html (الكروت والفلتر)
+          <li class="kpi"><p class="k-label">بيتعلموا دلوقتي</p><p class="k-num" id="k-active">—</p><p class="k-sub">من <span id="k-total">—</span> مسجّل</p></li>
+          <li class="kpi"><p class="k-label">حصص النهارده</p><p class="k-num" id="k-in">—</p>
+            <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" role="img" aria-labelledby="spark-t"><title id="spark-t">حصص آخر ١٤ يوم</title><polyline id="spark" points=""/></svg></li>
+          <li class="kpi ring-card"><p class="k-label">نجحوا من أول مرة</p>
+            <svg class="ring" viewBox="0 0 36 36" role="img" aria-labelledby="ring-t"><title id="ring-t">نسبة النجاح من أول مرة</title>
+            <select name="status"><option value="all">الكل</option><option value="learning">بيتعلم</option><option value="ready">جاهز للامتحان</option><option value="passed">نجح</option></select></label>
+~~~
+
+وباقي الكلام في [[index.html]]: العنوان «مدرسة سواقة الطريق»، و «طالب جديد»، و «الطلبة»، وعناوين الأعمدة، والباقات في الفلتر وفي الـ dialog ([[p10]] و [[p20]] و [[p30]]).
+
+~~~css dashboard/css/app.css (ألوان الحالات)
+.badge.learning { background: var(--brand-soft); color: var(--brand); }
+.badge.ready { background: var(--warn-soft); color: var(--warn); }
+.badge.passed { background: var(--ok-soft); color: var(--ok); }
+~~~
+
+**الألوان معناها حاجة:** في الجيم كان «نشط» أخضر و «منتهي» أحمر. هنا «بيتعلم» هو الحالة العادية، فلونه أزرق البراند (مش تنبيه)، و «جاهز للامتحان» كهرماني (فيه حاجة مستنية: يتحجزله امتحان)، و «نجح» أخضر. ومفيش أحمر، لأن مفيش حالة سيئة. اللون بيشد عين صاحب المكان على اللي محتاج منه حاجة. وكل الألوان من الـ tokens، فالداكن جاهز لوحده.
+
+~~~view 720 720 لوحة «مدرسة سواقة الطريق» (المثال): جرّب فلتر «جاهز للامتحان»
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>لوحة مدرسة سواقة الطريق</title>
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 28 14 6l6 12 3-5 5 15z' fill='%231f6f8b'/%3E%3C/svg%3E">
+  <script>/* للـ preview بس: الصفحة جوه srcdoc مالهاش عنوان، فـ pushState و replaceState بيرموا error. السطر ده بيخليهم يتجاهلوا، والفلاتر تشتغل */
+for (const k of ["replaceState", "pushState"]) { const f = history[k].bind(history); history[k] = (...a) => { try { f(...a); } catch {} }; }
+</script>
+  <script>/* للـ preview بس: الصفحة هنا ملهاش عنوان، فملفات data/*.json جوه الصفحة، و fetch بيرجّعها بدل ما يطلبها من السيرفر */
+const LAB_DATA = {"classes.json":[{"id":1,"title":"عملي: الطريق السريع","coach":"كابتن وليد","day":0,"start":"09:00","end":"10:30","spots":1,"booked":1},{"id":2,"title":"عملي: الركن الموازي","coach":"كابتن سامح","day":0,"start":"11:00","end":"12:30","spots":1,"booked":1},{"id":3,"title":"تجهيز للامتحان","coach":"كابتن وليد","day":0,"start":"16:00","end":"17:30","spots":1,"booked":1},{"id":4,"title":"عملي: الطريق السريع","coach":"كابتن وليد","day":1,"start":"11:00","end":"12:30","spots":1,"booked":1},{"id":5,"title":"تجهيز للامتحان","coach":"كابتن وليد","day":1,"start":"16:00","end":"17:30","spots":1,"booked":0},{"id":6,"title":"نظري: إشارات المرور","coach":"أ. هالة","day":1,"start":"18:00","end":"19:30","spots":17,"booked":16},{"id":7,"title":"عملي: المطالع والمنحدرات","coach":"كابتن سامح","day":2,"start":"09:00","end":"10:30","spots":1,"booked":1},{"id":8,"title":"تجهيز للامتحان","coach":"كابتن وليد","day":2,"start":"16:00","end":"17:30","spots":1,"booked":1},{"id":9,"title":"عملي: المطالع والمنحدرات","coach":"كابتن سامح","day":2,"start":"18:00","end":"19:30","spots":1,"booked":0},{"id":10,"title":"عملي: المطالع والمنحدرات","coach":"كابتن سامح","day":3,"start":"09:00","end":"10:30","spots":1,"booked":1},{"id":11,"title":"عملي: المطالع والمنحدرات","coach":"كابتن سامح","day":3,"start":"16:00","end":"17:30","spots":1,"booked":0},{"id":12,"title":"نظري: إشارات المرور","coach":"أ. هالة","day":3,"start":"18:00","end":"19:30","spots":19,"booked":0},{"id":13,"title":"نظري: إشارات المرور","coach":"أ. هالة","day":4,"start":"18:00","end":"19:30","spots":20,"booked":3},{"id":14,"title":"تجهيز للامتحان","coach":"كابتن وليد","day":5,"start":"09:00","end":"10:30","spots":1,"booked":0},{"id":15,"title":"عملي: المطالع والمنحدرات","coach":"كابتن سامح","day":5,"start":"11:00","end":"12:30","spots":1,"booked":0},{"id":16,"title":"عملي: الطريق السريع","coach":"كابتن وليد","day":5,"start":"16:00","end":"17:30","spots":1,"booked":0},{"id":17,"title":"نظري: إشارات المرور","coach":"أ. هالة","day":5,"start":"18:00","end":"19:30","spots":16,"booked":6}],"kpi.json":{"active":37,"checkins":[12,22,13,21,21,14,18,11,13,21,19,16,17,16],"revenue":248500,"revenuePrev":263000,"renewal":64},"members.json":[{"id":2001,"name":"هنا سالم","plan":"p30","status":"learning","joined":"2026-08-21","lastVisit":"2026-11-14","visits":12},{"id":2002,"name":"يوسف البنا","plan":"p10","status":"passed","joined":"2026-10-17","lastVisit":"2026-09-21","visits":0},{"id":2003,"name":"ليلى الشاذلي","plan":"p10","status":"learning","joined":"2026-08-21","lastVisit":"2026-11-10","visits":11},{"id":2004,"name":"يوسف فهمي","plan":"p20","status":"ready","joined":"2026-10-16","lastVisit":"2026-11-11","visits":1},{"id":2005,"name":"سلمى الشاذلي","plan":"p20","status":"passed","joined":"2026-08-13","lastVisit":"2026-09-29","visits":0},{"id":2006,"name":"سيف النجار","plan":"p10","status":"passed","joined":"2026-09-30","lastVisit":"2026-11-10","visits":0},{"id":2007,"name":"ليلى عبد الحميد","plan":"p30","status":"ready","joined":"2026-10-03","lastVisit":"2026-11-11","visits":3},{"id":2008,"name":"آدم سالم","plan":"p20","status":"learning","joined":"2026-10-05","lastVisit":"2026-11-11","visits":9},{"id":2009,"name":"مالك سالم","plan":"p20","status":"learning","joined":"2026-09-02","lastVisit":"2026-11-17","visits":3},{"id":2010,"name":"نور الجمّال","plan":"p20","status":"learning","joined":"2026-09-16","lastVisit":"2026-11-19","visits":11},{"id":2011,"name":"يوسف شوقي","plan":"p20","status":"learning","joined":"2026-08-27","lastVisit":"2026-11-10","visits":4},{"id":2012,"name":"ليلى فهمي","plan":"p20","status":"learning","joined":"2026-10-13","lastVisit":"2026-11-18","visits":9},{"id":2013,"name":"هنا النجار","plan":"p30","status":"learning","joined":"2026-09-19","lastVisit":"2026-11-16","visits":8},{"id":2014,"name":"هنا شوقي","plan":"p20","status":"learning","joined":"2026-08-30","lastVisit":"2026-11-19","visits":12},{"id":2015,"name":"آدم منصور","plan":"p30","status":"ready","joined":"2026-10-06","lastVisit":"2026-11-17","visits":3},{"id":2016,"name":"كريم الشاذلي","plan":"p20","status":"ready","joined":"2026-10-27","lastVisit":"2026-11-10","visits":2},{"id":2017,"name":"زياد شوقي","plan":"p20","status":"learning","joined":"2026-07-16","lastVisit":"2026-11-17","visits":4},{"id":2018,"name":"ليلى النجار","plan":"p20","status":"learning","joined":"2026-07-19","lastVisit":"2026-11-12","visits":8},{"id":2019,"name":"ليلى سالم","plan":"p30","status":"passed","joined":"2026-09-15","lastVisit":"2026-10-30","visits":0},{"id":2020,"name":"رنا شوقي","plan":"p10","status":"ready","joined":"2026-10-11","lastVisit":"2026-11-16","visits":1},{"id":2021,"name":"فرح شوقي","plan":"p10","status":"learning","joined":"2026-09-04","lastVisit":"2026-11-17","visits":4},{"id":2022,"name":"فرح البنا","plan":"p30","status":"ready","joined":"2026-10-11","lastVisit":"2026-11-13","visits":1},{"id":2023,"name":"كريم رشدي","plan":"p20","status":"passed","joined":"2026-10-27","lastVisit":"2026-09-30","visits":0},{"id":2024,"name":"هنا فهمي","plan":"p20","status":"learning","joined":"2026-09-04","lastVisit":"2026-11-10","visits":7},{"id":2025,"name":"يوسف سالم","plan":"p20","status":"passed","joined":"2026-10-21","lastVisit":"2026-10-14","visits":0},{"id":2026,"name":"زياد الشاذلي","plan":"p30","status":"ready","joined":"2026-09-13","lastVisit":"2026-11-15","visits":5},{"id":2027,"name":"سلمى شوقي","plan":"p20","status":"ready","joined":"2026-10-29","lastVisit":"2026-11-17","visits":1},{"id":2028,"name":"جنى سالم","plan":"p10","status":"ready","joined":"2026-09-22","lastVisit":"2026-11-11","visits":3},{"id":2029,"name":"عمر منصور","plan":"p20","status":"learning","joined":"2026-09-01","lastVisit":"2026-11-16","visits":9},{"id":2030,"name":"سيف منصور","plan":"p30","status":"learning","joined":"2026-10-24","lastVisit":"2026-11-17","visits":3},{"id":2031,"name":"ليلى فهمي","plan":"p10","status":"ready","joined":"2026-11-02","lastVisit":"2026-11-19","visits":1},{"id":2032,"name":"مريم البنا","plan":"p20","status":"learning","joined":"2026-10-22","lastVisit":"2026-11-17","visits":5},{"id":2033,"name":"نور البنا","plan":"p20","status":"learning","joined":"2026-08-30","lastVisit":"2026-11-18","visits":5},{"id":2034,"name":"جنى الجمّال","plan":"p10","status":"ready","joined":"2026-08-14","lastVisit":"2026-11-12","visits":1},{"id":2035,"name":"كريم عبد الحميد","plan":"p20","status":"learning","joined":"2026-08-25","lastVisit":"2026-11-14","visits":12},{"id":2036,"name":"سيف سالم","plan":"p10","status":"learning","joined":"2026-08-24","lastVisit":"2026-11-14","visits":8},{"id":2037,"name":"تامر فهمي","plan":"p20","status":"ready","joined":"2026-07-27","lastVisit":"2026-11-16","visits":5},{"id":2038,"name":"رنا البنا","plan":"p30","status":"learning","joined":"2026-07-29","lastVisit":"2026-11-14","visits":2},{"id":2039,"name":"يوسف فهمي","plan":"p10","status":"ready","joined":"2026-07-18","lastVisit":"2026-11-19","visits":5},{"id":2040,"name":"مريم الجمّال","plan":"p10","status":"passed","joined":"2026-09-09","lastVisit":"2026-11-16","visits":0},{"id":2041,"name":"عمر الجمّال","plan":"p30","status":"learning","joined":"2026-08-08","lastVisit":"2026-11-10","visits":6},{"id":2042,"name":"نور سالم","plan":"p10","status":"passed","joined":"2026-09-02","lastVisit":"2026-10-19","visits":0},{"id":2043,"name":"هنا الشاذلي","plan":"p10","status":"learning","joined":"2026-10-02","lastVisit":"2026-11-16","visits":8},{"id":2044,"name":"نور سالم","plan":"p30","status":"passed","joined":"2026-07-21","lastVisit":"2026-09-25","visits":0},{"id":2045,"name":"مالك الشاذلي","plan":"p10","status":"learning","joined":"2026-09-14","lastVisit":"2026-11-10","visits":9},{"id":2046,"name":"عمر النجار","plan":"p30","status":"learning","joined":"2026-08-14","lastVisit":"2026-11-12","visits":6},{"id":2047,"name":"عمر فهمي","plan":"p20","status":"learning","joined":"2026-09-17","lastVisit":"2026-11-13","visits":4},{"id":2048,"name":"مريم شوقي","plan":"p30","status":"learning","joined":"2026-10-29","lastVisit":"2026-11-16","visits":6},{"id":2049,"name":"رنا منصور","plan":"p10","status":"ready","joined":"2026-10-27","lastVisit":"2026-11-13","visits":2},{"id":2050,"name":"تامر عبد الحميد","plan":"p20","status":"learning","joined":"2026-07-14","lastVisit":"2026-11-10","visits":9},{"id":2051,"name":"زياد شوقي","plan":"p20","status":"ready","joined":"2026-09-05","lastVisit":"2026-11-12","visits":3},{"id":2052,"name":"هنا البنا","plan":"p30","status":"learning","joined":"2026-07-13","lastVisit":"2026-11-13","visits":3},{"id":2053,"name":"هنا البنا","plan":"p20","status":"ready","joined":"2026-10-17","lastVisit":"2026-11-10","visits":3},{"id":2054,"name":"جنى الشاذلي","plan":"p10","status":"learning","joined":"2026-09-27","lastVisit":"2026-11-13","visits":11},{"id":2055,"name":"زياد فهمي","plan":"p20","status":"learning","joined":"2026-10-22","lastVisit":"2026-11-15","visits":6},{"id":2056,"name":"فرح عبد الحميد","plan":"p10","status":"learning","joined":"2026-10-28","lastVisit":"2026-11-11","visits":8},{"id":2057,"name":"رنا البنا","plan":"p10","status":"passed","joined":"2026-07-17","lastVisit":"2026-11-08","visits":0},{"id":2058,"name":"هنا سالم","plan":"p10","status":"learning","joined":"2026-10-30","lastVisit":"2026-11-15","visits":4},{"id":2059,"name":"فرح فهمي","plan":"p10","status":"passed","joined":"2026-08-29","lastVisit":"2026-10-23","visits":0},{"id":2060,"name":"سلمى فهمي","plan":"p10","status":"learning","joined":"2026-08-29","lastVisit":"2026-11-11","visits":9},{"id":2061,"name":"سلمى عبد الحميد","plan":"p10","status":"learning","joined":"2026-10-28","lastVisit":"2026-11-19","visits":2},{"id":2062,"name":"يوسف الجمّال","plan":"p10","status":"learning","joined":"2026-07-24","lastVisit":"2026-11-18","visits":6},{"id":2063,"name":"تامر النجار","plan":"p10","status":"learning","joined":"2026-09-17","lastVisit":"2026-11-11","visits":4},{"id":2064,"name":"رنا البنا","plan":"p20","status":"learning","joined":"2026-08-10","lastVisit":"2026-11-13","visits":11}]};
+const realFetch = window.fetch;
+window.fetch = (u, o) => { const m = String(u).match(/data\/([\w-]+\.json)/); return m && LAB_DATA[m[1]] ? Promise.resolve(new Response(JSON.stringify(LAB_DATA[m[1]]), { headers: { "content-type": "application/json" } })) : realFetch(u, o); };
+</script>
+  <script>
+// before the first paint: saved theme and saved sidebar state, so nothing flips after the page shows
+try {
+  const t = localStorage.getItem("theme");
+  if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+  if (localStorage.getItem("side") === "collapsed") document.documentElement.dataset.side = "collapsed";
+} catch {}
+</script>
+  <style>
+/* ---------- tokens: light, then dark (system default or the saved choice) ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f3f5f7; --surface: #ffffff; --ink: #17202a; --muted: #56606b; --line: #d9dee4;
+  --brand: #1f6f8b; --brand-ink: #ffffff; --brand-soft: #dceef4;
+  --ok: #156c2f; --ok-soft: #dcf3e3; --warn: #8a5a00; --warn-soft: #fbefd5; --bad: #b42318; --bad-soft: #fde4e1;
+  --skel: #e6eaee; --skel-hi: #f5f7f9;
+  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --r: 12px; --side-w: 15rem; --top-h: 4rem;
+  --shadow: 0 1px 2px rgb(16 24 32 / 0.06), 0 4px 16px rgb(16 24 32 / 0.06);
+  --z-top: 20; --z-drawer: 40; --z-toast: 60;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  color-scheme: dark;
+  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
+  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
+  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
+  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+} }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
+  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
+  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
+  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font: 1rem/1.6 var(--font); color: var(--ink); background: var(--bg); }
+h1, h2 { line-height: 1.3; margin: 0; }
+h1 { font-size: 1.15rem; }
+h2 { font-size: 1.3rem; margin-block-end: 1rem; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: 100; padding: 0.5rem 1rem; background: var(--ink); color: var(--bg); }
+.skip:focus { top: 1rem; }
+.sprite { position: absolute; }
+svg { width: 1.4rem; height: 1.4rem; fill: currentColor; flex: none; }
+.btn { --b: var(--brand); --f: var(--brand-ink); min-height: 44px; padding: 0.4rem 1.1rem; border: 2px solid var(--b); border-radius: 10px; background: var(--b); color: var(--f); font: inherit; font-weight: 600; cursor: pointer; }
+.btn.ghost { --b: transparent; --f: var(--brand); border-color: var(--line); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.icon-btn { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.icon-btn[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); }
+
+/* ---------- app shell: grid areas ---------- */
+.shell {
+  display: grid; min-height: 100dvh;
+  grid-template-columns: var(--side-w) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "side top" "side main";
+  transition: grid-template-columns 0.2s ease;
+}
+.shell[data-collapsed] { --side-w: 4.75rem; }
+.side { grid-area: side; position: sticky; top: 0; height: 100dvh; overflow-y: auto; background: var(--surface); border-inline-end: 1px solid var(--line); padding: 0.75rem; }
+.side-head { display: flex; align-items: center; gap: 0.5rem; min-height: 44px; margin-block-end: 1rem; font-weight: 700; }
+.logo { color: var(--brand); font-size: 1.4rem; width: 2rem; text-align: center; }
+.collapse { margin-inline-start: auto; }
+.side nav { display: grid; gap: 0.25rem; }
+.side nav a { display: flex; align-items: center; gap: 0.75rem; min-height: 44px; padding: 0.4rem 0.75rem; border-radius: 10px; color: var(--ink); text-decoration: none; }
+.side nav a:hover { background: var(--bg); }
+.side nav a[aria-current="page"] { background: var(--brand-soft); color: var(--ink); font-weight: 600; }
+.shell[data-collapsed] .side .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.shell[data-collapsed] .side-head { flex-direction: column; }
+.shell[data-collapsed] .collapse { margin: 0; }
+.shell[data-collapsed] .collapse svg { transform: scaleX(-1); }
+
+.topbar { grid-area: top; position: sticky; top: 0; z-index: var(--z-top); display: flex; align-items: center; gap: 0.75rem; min-height: var(--top-h); padding: 0.5rem 1.25rem; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(8px); border-block-end: 1px solid var(--line); }
+.topbar h1 { margin-inline-end: auto; }
+.menu { display: none; }
+main { grid-area: main; min-width: 0; padding: 1.25rem; display: grid; gap: 2rem; align-content: start; }
+main section { scroll-margin-top: calc(var(--top-h) + 1rem); min-width: 0; }   /* a grid item never shrinks below its content without this */
+.scrim { position: fixed; inset: 0; background: rgb(10 14 20 / 0.5); z-index: calc(var(--z-drawer) - 1); }
+
+/* ---------- KPI cards ---------- */
+.kpis { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); min-height: 8.5rem; display: grid; align-content: start; gap: 0.25rem; }
+.kpi p { margin: 0; }
+.k-label { color: var(--muted); font-size: 0.9rem; }
+.k-num { font-size: 1.8rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; min-height: 1.2em; }
+.k-sub { color: var(--muted); font-size: 0.9rem; }
+.delta { font-weight: 600; display: inline-block; min-width: 5em; }   /* "—" then "▲ +8.8%": same box, so the words after it stay put */
+.delta.up { color: var(--ok); } .delta.down { color: var(--bad); }
+.spark { width: 100%; height: 2.25rem; }
+.spark polyline { fill: none; stroke: var(--brand); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.ring-card { grid-template-columns: auto 1fr; align-items: center; column-gap: 1rem; }
+.ring-card .k-label { grid-column: 1 / -1; }
+.ring { width: 4.5rem; height: 4.5rem; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 3.5; }
+.ring-bg { stroke: var(--line); }
+.ring-fg { stroke: var(--brand); stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+
+/* ---------- filters + table ---------- */
+.filters { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem 1rem; margin-block-end: 0.75rem; }
+.filters label { display: grid; gap: 0.25rem; color: var(--muted); font-size: 0.9rem; }
+input, select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-height: 44px; padding: 0.3rem 0.6rem; }
+.count { margin: 0 0 0.5rem; color: var(--muted); min-height: 1.6em; }
+.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.members { width: 100%; border-collapse: collapse; }
+.members th, .members td { padding: 0 0.9rem; height: 3rem; text-align: start; border-block-end: 1px solid var(--line); white-space: nowrap; }
+.members thead th { position: sticky; top: var(--top-h); z-index: 1; background: var(--surface); box-shadow: 0 1px 0 var(--line); }
+.members th button { all: unset; cursor: pointer; font-weight: 600; display: inline-flex; gap: 0.3rem; align-items: center; min-height: 44px; }
+.members th button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+.members th button::after { content: "▲" / ""; font-size: 0.7em; color: var(--brand); visibility: hidden; }   /* the space is there before sorting, so nothing moves */
+.members th[aria-sort] button::after { visibility: visible; }
+.members th[aria-sort="descending"] button::after { content: "▼" / ""; }
+.members td.num { font-variant-numeric: tabular-nums; }
+.members tbody tr:last-child td { border-block-end: 0; }
+.badge { display: inline-block; padding: 0.05rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+.badge.learning { background: var(--brand-soft); color: var(--brand); }
+.badge.ready { background: var(--warn-soft); color: var(--warn); }
+.badge.passed { background: var(--ok-soft); color: var(--ok); }
+.skel span { display: block; height: 0.9em; border-radius: 6px; background: linear-gradient(90deg, var(--skel) 25%, var(--skel-hi) 50%, var(--skel) 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.state-row td { height: auto; padding: 2rem 1rem; text-align: center; white-space: normal; }
+.state-row.error td { color: var(--bad); }
+.pager { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-start: 0.75rem; }
+.pager button { min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; font-variant-numeric: tabular-nums; }
+.pager button[aria-current="page"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.pager button:disabled { opacity: 0.5; cursor: default; }
+
+/* ---------- schedule: 7 days x 30 half-hours ---------- */
+.hint { margin: -0.5rem 0 0.75rem; color: var(--muted); }
+.week-wrap { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline-start: 4.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.week {
+  display: grid; grid-template-columns: 4.5rem repeat(7, minmax(9rem, 1fr)); grid-template-rows: 2.5rem repeat(30, 1.75rem);
+  background: repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 3.5rem) 0 2.5rem / 100% calc(100% - 2.5rem) no-repeat;
+}
+.day { grid-row: 1; grid-column: calc(var(--col) + 2); display: grid; place-items: center; font-weight: 600; border-block-end: 1px solid var(--line); scroll-snap-align: start; }
+.hour { white-space: nowrap; grid-column: 1; grid-row: calc(var(--row) + 1) / span 2; position: sticky; inset-inline-start: 0; z-index: 1; background: var(--surface); color: var(--muted); font-size: 0.8rem; padding-inline: 0.5rem; font-variant-numeric: tabular-nums; border-inline-end: 1px solid var(--line); }
+.slot {
+  grid-column: calc(var(--col) + 2); grid-row: calc(var(--row) + 1) / span var(--span);
+  margin: 2px 4px; padding: 0.25rem 0.5rem; border: 1px solid var(--brand); border-radius: 8px; text-align: start; font: inherit; font-size: 0.85rem; line-height: 1.3; color: var(--ink); cursor: pointer; overflow: hidden;
+  background: linear-gradient(to left, var(--brand-soft) var(--fill), var(--surface) 0);
+}
+:dir(ltr) .slot { background: linear-gradient(to right, var(--brand-soft) var(--fill), var(--surface) 0); }
+.slot b { display: block; }
+.slot.full { border-style: dashed; border-color: var(--muted); }
+
+/* ---------- dialog + toasts ---------- */
+dialog { border: 0; border-radius: var(--r); padding: 0; width: min(28rem, calc(100% - 2rem)); background: var(--surface); color: var(--ink); box-shadow: 0 20px 50px rgb(0 0 0 / 0.3);
+  opacity: 0; translate: 0 12px; transition: opacity 0.2s, translate 0.2s, overlay 0.2s allow-discrete, display 0.2s allow-discrete; }
+dialog[open] { opacity: 1; translate: 0 0; }
+@starting-style { dialog[open] { opacity: 0; translate: 0 12px; } }
+dialog::backdrop { background: rgb(10 14 20 / 0.55); }
+dialog form { display: grid; gap: 1rem; padding: 1.5rem; }   /* padding on the form, so a click on the dialog itself = the backdrop */
+dialog label { display: grid; gap: 0.3rem; }
+.dlg-actions { display: flex; gap: 0.75rem; }
+.toasts { position: fixed; inset-block-end: 1rem; inset-inline-end: 1rem; z-index: var(--z-toast); display: grid; gap: 0.5rem; width: min(22rem, calc(100% - 2rem)); }
+.toast { padding: 0.75rem 1rem; border-radius: 10px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); animation: toast-in 0.25s ease; }
+@keyframes toast-in { from { opacity: 0; translate: 0 12px; } }
+
+/* ---------- under 64rem: sidebar becomes a drawer ---------- */
+@media (max-width: 63.99rem) {
+  .shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "main"; }
+  .side { --out: -100%; position: fixed; inset-block: 0; inset-inline-start: 0; z-index: var(--z-drawer); width: min(17rem, 85vw);
+    transform: translateX(var(--out)); visibility: hidden; transition: transform 0.25s ease, visibility 0s 0.25s; }
+  [dir="rtl"] .side { --out: 100%; }
+  .shell[data-open] .side { transform: none; visibility: visible; transition: transform 0.25s ease; }
+  .collapse { display: none; }
+  .menu { display: inline-grid; }
+  .shell[data-collapsed] .side .label { position: static; width: auto; height: auto; clip-path: none; }
+}
+
+/* ---------- under 40rem: rows become cards ---------- */
+@media (max-width: 40rem) {
+  .topbar { padding-inline: 0.75rem; gap: 0.5rem; }
+  .topbar h1 { font-size: 1rem; }
+  main { padding: 0.75rem; }
+  .filters label, .filters input, .filters select { width: 100%; }
+  .table-wrap { background: none; border: 0; }
+  .members thead tr { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 0.75rem; }
+  .members thead th { position: static; height: auto; padding: 0 0.6rem; border: 1px solid var(--line); border-radius: 999px; box-shadow: none; }
+  .members tbody, .members tr, .members td { display: block; }
+  .members tbody tr { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 0.5rem 0.9rem; margin-block-end: 0.75rem; }
+  .members td { height: auto; padding: 0.3rem 0; border: 0; display: grid; grid-template-columns: 7.5rem 1fr; white-space: normal; }
+  .members td::before { content: attr(data-label); color: var(--muted); }
+  .members td > .badge { justify-self: start; }   /* a grid item stretches by default */
+  .members .state-row td, .members .skel td { display: block; }
+  .members .skel td::before, .members .state-row td::before { content: none; }
+  .members .skel td { height: calc(1.6em + 0.6rem); display: flex; align-items: center; }   /* same height as a real card line */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+  <svg width="0" height="0" class="sprite" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M1 21c0-4 4-7 8-7s8 3 8 7zM16 4a4 4 0 0 1 0 8m3 9c0-3-1-5-3-6 3 0 7 2 7 6z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><path d="M4 5h16v16H4zM4 9h16M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-side" viewBox="0 0 24 24"><path d="M3 4h18v16H3zM9 4v16" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15A8 8 0 1 1 9 4a7 7 0 0 0 11 11z"/></symbol>
+  </svg>
+  <a class="skip" href="#main">اتخطّى للمحتوى</a>
+  <div class="shell" id="shell">
+    <aside class="side" id="side" aria-label="القايمة الرئيسية">
+      <div class="side-head">
+        <span class="logo" aria-hidden="true">▲</span><span class="label">الطريق</span>
+        <button class="icon-btn collapse" id="collapse" type="button" aria-expanded="true" aria-controls="side" aria-label="القايمة الجانبية">
+          <svg aria-hidden="true"><use href="#i-side"/></svg>
+        </button>
+      </div>
+      <nav>
+        <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg><span class="label">نظرة عامة</span></a>
+        <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg><span class="label">الطلبة</span></a>
+        <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg><span class="label">جدول الحصص</span></a>
+      </nav>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+
+    <header class="topbar">
+      <button class="icon-btn menu" id="menu" type="button" aria-expanded="false" aria-controls="side" aria-label="افتح القايمة">
+        <svg aria-hidden="true"><use href="#i-side"/></svg>
+      </button>
+      <h1>مدرسة سواقة الطريق</h1>
+      <button class="icon-btn" id="theme" type="button" aria-pressed="false" aria-label="الوضع الداكن"><svg aria-hidden="true"><use href="#i-moon"/></svg></button>
+      <button class="btn" id="add" type="button">طالب جديد</button>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section id="overview" aria-labelledby="ov-h">
+        <h2 id="ov-h">نظرة عامة</h2>
+        <ul class="kpis" role="list">
+          <li class="kpi"><p class="k-label">بيتعلموا دلوقتي</p><p class="k-num" id="k-active">—</p><p class="k-sub">من <span id="k-total">—</span> مسجّل</p></li>
+          <li class="kpi"><p class="k-label">حصص النهارده</p><p class="k-num" id="k-in">—</p>
+            <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" role="img" aria-labelledby="spark-t"><title id="spark-t">حصص آخر ١٤ يوم</title><polyline id="spark" points=""/></svg></li>
+          <li class="kpi"><p class="k-label">إيراد الشهر</p><p class="k-num" id="k-rev">—</p><p class="k-sub"><span class="delta" id="k-delta">—</span> عن الشهر اللي فات</p></li>
+          <li class="kpi ring-card"><p class="k-label">نجحوا من أول مرة</p>
+            <svg class="ring" viewBox="0 0 36 36" role="img" aria-labelledby="ring-t"><title id="ring-t">نسبة النجاح من أول مرة</title>
+              <circle class="ring-bg" cx="18" cy="18" r="15.9" pathLength="100"/><circle class="ring-fg" id="ring" cx="18" cy="18" r="15.9" pathLength="100"/></svg>
+            <p class="k-num ring-num" id="k-ren">—</p></li>
+        </ul>
+      </section>
+
+      <section id="members" aria-labelledby="mem-h">
+        <h2 id="mem-h">الطلبة</h2>
+        <form class="filters" id="filters" role="search" aria-label="فلترة الطلبة">
+          <label>دوّر بالاسم أو الرقم <input type="search" name="q" autocomplete="off"></label>
+          <label>الحالة
+            <select name="status"><option value="all">الكل</option><option value="learning">بيتعلم</option><option value="ready">جاهز للامتحان</option><option value="passed">نجح</option></select></label>
+          <label>الباقة
+            <select name="plan"><option value="all">الكل</option><option value="p10">10 حصص</option><option value="p20">20 حصة</option><option value="p30">30 حصة</option></select></label>
+          <button class="btn ghost" type="reset">امسح الفلاتر</button>
+        </form>
+        <p class="count" id="count" aria-live="polite"></p>
+        <div class="table-wrap">
+          <table class="members" id="table" aria-labelledby="mem-h" aria-busy="true">
+            <thead><tr>
+              <th scope="col" data-sort="name"><button type="button">الاسم</button></th>
+              <th scope="col" data-sort="plan"><button type="button">الباقة</button></th>
+              <th scope="col" data-sort="status"><button type="button">الحالة</button></th>
+              <th scope="col" data-sort="lastVisit"><button type="button">آخر حصة</button></th>
+              <th scope="col" data-sort="visits"><button type="button">حصص الشهر</button></th>
+            </tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <nav class="pager" id="pager" aria-label="صفحات الطلبة"></nav>
+      </section>
+
+      <section id="schedule" aria-labelledby="sch-h">
+        <h2 id="sch-h">جدول الحصص</h2>
+        <p class="hint">اضغط على حصة عشان تشوف تفاصيلها وتحجز مكان.</p>
+        <div class="week-wrap" tabindex="0" role="region" aria-label="جدول الأسبوع، بيتسكرول بالعرض">
+          <div class="week" id="week"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="dlg-member" aria-labelledby="dm-h">
+    <form method="dialog" id="member-form">
+      <h2 id="dm-h">طالب جديد</h2>
+      <label>الاسم <input name="name" required minlength="3" autocomplete="off" autofocus></label>
+      <label>الباقة <select name="plan"><option value="p10">10 حصص</option><option value="p20">20 حصة</option><option value="p30">30 حصة</option></select></label>
+      <div class="dlg-actions">
+        <button class="btn" value="save">ضيف</button>
+        <button class="btn ghost" value="cancel" formnovalidate>إلغاء</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-class" aria-labelledby="dc-h">
+    <form method="dialog">
+      <h2 id="dc-h"></h2>
+      <p id="dc-body"></p>
+      <div class="dlg-actions">
+        <button class="btn" value="book" id="dc-book">احجز مكان</button>
+        <button class="btn ghost" value="cancel">اقفل</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  <script type="importmap">{"imports":{"lab/app.js":"data:text/javascript;charset=utf-8,%2F%2F%20entry%3A%20shell%20first%20(so%20the%20menu%20works%20while%20data%20loads)%2C%20then%20the%20three%20data%20parts%20in%20parallel%0Aimport%20%22lab%2Fshell.js%22%3B%0Aimport%20%7B%20loadMembers%2C%20addMember%2C%20nextId%20%7D%20from%20%22lab%2Ftable.js%22%3B%0Aimport%20%7B%20loadKpis%20%7D%20from%20%22lab%2Fkpi.js%22%3B%0Aimport%20%7B%20loadSchedule%20%7D%20from%20%22lab%2Fschedule.js%22%3B%0Aimport%20%7B%20openDialog%2C%20toast%20%7D%20from%20%22lab%2Fui.js%22%3B%0A%0Aconst%20members%20%3D%20loadMembers()%3B%0Amembers.then(m%20%3D%3E%20loadKpis(m)).catch(()%20%3D%3E%20toast(%22%D8%A7%D9%84%D8%A3%D8%B1%D9%82%D8%A7%D9%85%20%D9%85%D8%B4%20%D9%85%D8%AA%D8%A7%D8%AD%D8%A9%20%D8%AF%D9%84%D9%88%D9%82%D8%AA%D9%8A%22))%3B%0AloadSchedule().catch(()%20%3D%3E%20toast(%22%D8%A7%D9%84%D8%AC%D8%AF%D9%88%D9%84%20%D9%85%D8%B4%20%D9%85%D8%AA%D8%A7%D8%AD%20%D8%AF%D9%84%D9%88%D9%82%D8%AA%D9%8A%22))%3B%0A%0Aconst%20dlg%20%3D%20document.getElementById(%22dlg-member%22)%2C%20form%20%3D%20document.getElementById(%22member-form%22)%3B%0Aconst%20nameIn%20%3D%20form.elements.name%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20form.elements%3A%20form.name%20is%20also%20the%20form's%20own%20name%20attribute%0AnameIn.addEventListener(%22input%22%2C%20()%20%3D%3E%20nameIn.setCustomValidity(%22%22))%3B%0AnameIn.addEventListener(%22invalid%22%2C%20()%20%3D%3E%20nameIn.setCustomValidity(nameIn.validity.valueMissing%20%3F%20%22%D8%A7%D9%83%D8%AA%D8%A8%20%D8%A7%D8%B3%D9%85%20%D8%A7%D9%84%D8%B7%D8%A7%D9%84%D8%A8%22%20%3A%20%22%D8%A7%D9%84%D8%A7%D8%B3%D9%85%20%D9%84%D8%A7%D8%B2%D9%85%20%D9%A3%20%D8%AD%D8%B1%D9%88%D9%81%20%D8%B9%D9%84%D9%89%20%D8%A7%D9%84%D8%A3%D9%82%D9%84%22))%3B%0Adocument.getElementById(%22add%22).addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20form.reset()%3B%0A%20%20openDialog(dlg%2C%20v%20%3D%3E%20%7B%0A%20%20%20%20if%20(v%20!%3D%3D%20%22save%22)%20return%3B%0A%20%20%20%20const%20name%20%3D%20nameIn.value.trim()%3B%0A%20%20%20%20addMember(%7B%20id%3A%20nextId()%2C%20name%2C%20plan%3A%20form.elements.plan.value%2C%20status%3A%20%22learning%22%2C%20joined%3A%20%222026-10-31%22%2C%20lastVisit%3A%20%222026-10-31%22%2C%20visits%3A%200%20%7D)%3B%0A%20%20%20%20toast(%60%D8%A7%D8%AA%D8%B6%D8%A7%D9%81%20%C2%AB%24%7Bname%7D%C2%BB%60)%3B%0A%20%20%7D)%3B%0A%7D)%3B%0A","lab/kpi.js":"data:text/javascript;charset=utf-8,%2F%2F%20KPI%20cards%3A%20numbers%2C%20sparkline%2C%20ring.%20The%20cards%20keep%20their%20size%20while%20loading%2C%20so%20nothing%20jumps.%0Aimport%20%7B%20sparkPoints%2C%20ringOffset%2C%20num%2C%20money%2C%20delta%20%7D%20from%20%22lab%2Flib.js%22%3B%0Aexport%20async%20function%20loadKpis(members)%20%7B%0A%20%20const%20k%20%3D%20await%20(await%20fetch(%22data%2Fkpi.json%22)).json()%3B%0A%20%20document.getElementById(%22k-active%22).textContent%20%3D%20num.format(k.active)%3B%0A%20%20document.getElementById(%22k-total%22).textContent%20%3D%20num.format(members.length)%3B%0A%20%20document.getElementById(%22k-in%22).textContent%20%3D%20num.format(k.checkins.at(-1))%3B%0A%20%20document.getElementById(%22spark%22).setAttribute(%22points%22%2C%20sparkPoints(k.checkins))%3B%0A%20%20document.getElementById(%22spark-t%22).textContent%20%3D%20%22%D8%AD%D8%B5%D8%B5%20%D8%A2%D8%AE%D8%B1%20%D9%A1%D9%A4%20%D9%8A%D9%88%D9%85%3A%20%D9%85%D9%86%20%22%20%2B%20Math.min(...k.checkins)%20%2B%20%22%20%D9%84%D9%80%20%22%20%2B%20Math.max(...k.checkins)%20%2B%20%22%D8%8C%20%D9%88%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%B1%D8%AF%D9%87%20%22%20%2B%20k.checkins.at(-1)%3B%0A%20%20document.getElementById(%22k-rev%22).textContent%20%3D%20money.format(k.revenue)%3B%0A%20%20const%20d%20%3D%20delta(k.revenue%2C%20k.revenuePrev)%2C%20el%20%3D%20document.getElementById(%22k-delta%22)%3B%0A%20%20el.textContent%20%3D%20(d.up%20%3F%20%22%E2%96%B2%20%2B%22%20%3A%20%22%E2%96%BC%20%22)%20%2B%20d.pct%20%2B%20%22%25%22%3B%0A%20%20el.className%20%3D%20%22delta%20%22%20%2B%20(d.up%20%3F%20%22up%22%20%3A%20%22down%22)%3B%0A%20%20document.getElementById(%22k-ren%22).textContent%20%3D%20k.renewal%20%2B%20%22%25%22%3B%0A%20%20document.getElementById(%22ring-t%22).textContent%20%3D%20%22%D9%86%D8%B3%D8%A8%D8%A9%20%D8%A7%D9%84%D9%86%D8%AC%D8%A7%D8%AD%20%D9%85%D9%86%20%D8%A3%D9%88%D9%84%20%D9%85%D8%B1%D8%A9%20%22%20%2B%20k.renewal%20%2B%20%22%25%22%3B%0A%20%20requestAnimationFrame(()%20%3D%3E%20(document.getElementById(%22ring%22).style.strokeDashoffset%20%3D%20ringOffset(k.renewal)))%3B%0A%7D%0A","lab/lib.js":"data:text/javascript;charset=utf-8,%2F%2F%20small%20pure%20helpers%3A%20sparkline%20points%2C%20ring%20offset%2C%20schedule%20rows%2C%20number%20formats.%20No%20DOM%2C%20Node%20can%20test%20them.%0Aexport%20function%20sparkPoints(values%2C%20w%20%3D%20100%2C%20h%20%3D%2032%2C%20pad%20%3D%202)%20%7B%0A%20%20if%20(!values.length)%20return%20%22%22%3B%0A%20%20const%20min%20%3D%20Math.min(...values)%2C%20max%20%3D%20Math.max(...values)%2C%20span%20%3D%20max%20-%20min%3B%0A%20%20const%20step%20%3D%20values.length%20%3E%201%20%3F%20(w%20-%20pad%20*%202)%20%2F%20(values.length%20-%201)%20%3A%200%3B%0A%20%20return%20values.map((v%2C%20i)%20%3D%3E%20%7B%0A%20%20%20%20const%20x%20%3D%20pad%20%2B%20i%20*%20step%3B%0A%20%20%20%20const%20y%20%3D%20span%20%3F%20h%20-%20pad%20-%20((v%20-%20min)%20%2F%20span)%20*%20(h%20-%20pad%20*%202)%20%3A%20h%20%2F%202%3B%20%20%20%2F%2F%20SVG%20y%20grows%20downward%3B%20a%20flat%20line%20sits%20in%20the%20middle%0A%20%20%20%20return%20%2Bx.toFixed(1)%20%2B%20%22%2C%22%20%2B%20%2By.toFixed(1)%3B%0A%20%20%7D).join(%22%20%22)%3B%0A%7D%0A%0Aexport%20const%20ringOffset%20%3D%20pct%20%3D%3E%20100%20-%20Math.min(100%2C%20Math.max(0%2C%20pct))%3B%20%20%20%2F%2F%20with%20pathLength%3D%22100%22%20the%20dash%20is%20just%20the%20percent%0A%0Aexport%20const%20DAY0%20%3D%207%20*%2060%2C%20SLOT%20%3D%2030%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20the%20grid%20starts%20at%2007%3A00%2C%20one%20row%20%3D%2030%20minutes%0Aexport%20const%20toMin%20%3D%20hhmm%20%3D%3E%20%7B%20const%20%5Bh%2C%20m%5D%20%3D%20hhmm.split(%22%3A%22).map(Number)%3B%20return%20h%20*%2060%20%2B%20m%3B%20%7D%3B%0Aexport%20function%20gridRow(start%2C%20end)%20%7B%0A%20%20const%20row%20%3D%20(toMin(start)%20-%20DAY0)%20%2F%20SLOT%20%2B%201%3B%0A%20%20const%20span%20%3D%20Math.ceil((toMin(end)%20-%20toMin(start))%20%2F%20SLOT)%3B%0A%20%20return%20%7B%20row%2C%20span%20%7D%3B%0A%7D%0Aexport%20function%20overlaps(a%2C%20b)%20%7B%20return%20a.day%20%3D%3D%3D%20b.day%20%26%26%20toMin(a.start)%20%3C%20toMin(b.end)%20%26%26%20toMin(b.start)%20%3C%20toMin(a.end)%3B%20%7D%0A%0Aexport%20const%20num%20%3D%20new%20Intl.NumberFormat(%22ar-EG%22%2C%20%7B%20numberingSystem%3A%20%22latn%22%20%7D)%3B%0Aexport%20const%20money%20%3D%20new%20Intl.NumberFormat(%22ar-EG%22%2C%20%7B%20style%3A%20%22currency%22%2C%20currency%3A%20%22EGP%22%2C%20maximumFractionDigits%3A%200%2C%20numberingSystem%3A%20%22latn%22%20%7D)%3B%0Aexport%20const%20shortDate%20%3D%20new%20Intl.DateTimeFormat(%22ar-EG%22%2C%20%7B%20day%3A%20%22numeric%22%2C%20month%3A%20%22short%22%2C%20timeZone%3A%20%22UTC%22%2C%20numberingSystem%3A%20%22latn%22%20%7D)%3B%0Aexport%20function%20delta(now%2C%20prev)%20%7B%0A%20%20const%20pct%20%3D%20prev%20%3F%20((now%20-%20prev)%20%2F%20prev)%20*%20100%20%3A%200%3B%0A%20%20return%20%7B%20pct%3A%20Math.round(pct%20*%2010)%20%2F%2010%2C%20up%3A%20pct%20%3E%3D%200%20%7D%3B%0A%7D%0A","lab/schedule.js":"data:text/javascript;charset=utf-8,%2F%2F%20weekly%20schedule%3A%20each%20class%20is%20a%20button%20placed%20on%20the%20grid%20by%20custom%20properties%20(day%20%3D%20column%2C%20time%20%3D%20rows)%0Aimport%20%7B%20gridRow%2C%20toMin%20%7D%20from%20%22lab%2Flib.js%22%3B%0Aimport%20%7B%20openDialog%2C%20toast%20%7D%20from%20%22lab%2Fui.js%22%3B%0Aconst%20DAYS%20%3D%20%5B%22%D8%A7%D9%84%D8%B3%D8%A8%D8%AA%22%2C%20%22%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%22%2C%20%22%D8%A7%D9%84%D8%A7%D8%AA%D9%86%D9%8A%D9%86%22%2C%20%22%D8%A7%D9%84%D8%AA%D9%84%D8%A7%D8%AA%22%2C%20%22%D8%A7%D9%84%D8%A3%D8%B1%D8%A8%D8%B9%22%2C%20%22%D8%A7%D9%84%D8%AE%D9%85%D9%8A%D8%B3%22%2C%20%22%D8%A7%D9%84%D8%AC%D9%85%D8%B9%D8%A9%22%5D%3B%0Aconst%20week%20%3D%20document.getElementById(%22week%22)%2C%20dlg%20%3D%20document.getElementById(%22dlg-class%22)%3B%0Aconst%20ampm%20%3D%20hhmm%20%3D%3E%20%7B%20const%20m%20%3D%20toMin(hhmm)%2C%20h%20%3D%20Math.floor(m%20%2F%2060)%20%25%2012%20%7C%7C%2012%3B%20return%20h%20%2B%20%22%3A%22%20%2B%20String(m%20%25%2060).padStart(2%2C%20%220%22)%20%2B%20(m%20%3C%20720%20%3F%20%22%20%D8%B5%22%20%3A%20%22%20%D9%85%22)%3B%20%7D%3B%0A%0Afunction%20cell(cls%2C%20text%2C%20vars)%20%7B%0A%20%20const%20el%20%3D%20document.createElement(cls%20%3D%3D%3D%20%22slot%22%20%3F%20%22button%22%20%3A%20%22div%22)%3B%0A%20%20el.className%20%3D%20cls%3B%0A%20%20el.textContent%20%3D%20text%3B%0A%20%20for%20(const%20%5Bk%2C%20v%5D%20of%20Object.entries(vars))%20el.style.setProperty(%22--%22%20%2B%20k%2C%20v)%3B%0A%20%20return%20el%3B%0A%7D%0A%0Afunction%20slot(c)%20%7B%0A%20%20const%20%7B%20row%2C%20span%20%7D%20%3D%20gridRow(c.start%2C%20c.end)%3B%0A%20%20const%20b%20%3D%20cell(%22slot%22%2C%20%22%22%2C%20%7B%20col%3A%20c.day%2C%20row%2C%20span%2C%20fill%3A%20Math.round((c.booked%20%2F%20c.spots)%20*%20100)%20%2B%20%22%25%22%20%7D)%3B%0A%20%20b.type%20%3D%20%22button%22%3B%0A%20%20b.classList.toggle(%22full%22%2C%20c.booked%20%3E%3D%20c.spots)%3B%0A%20%20const%20title%20%3D%20document.createElement(%22b%22)%3B%0A%20%20title.textContent%20%3D%20c.title%3B%0A%20%20b.append(title%2C%20%60%24%7Bampm(c.start)%7D%20%C2%B7%20%24%7Bc.booked%7D%2F%24%7Bc.spots%7D%60)%3B%0A%20%20b.setAttribute(%22aria-label%22%2C%20%60%24%7Bc.title%7D%D8%8C%20%24%7BDAYS%5Bc.day%5D%7D%20%24%7Bampm(c.start)%7D%20%D9%84%D9%80%20%24%7Bampm(c.end)%7D%D8%8C%20%24%7Bc.booked%7D%20%D9%85%D9%86%20%24%7Bc.spots%7D%20%D9%85%D8%AD%D8%AC%D9%88%D8%B2%60)%3B%0A%20%20b.onclick%20%3D%20()%20%3D%3E%20%7B%0A%20%20%20%20document.getElementById(%22dc-h%22).textContent%20%3D%20c.title%3B%0A%20%20%20%20document.getElementById(%22dc-body%22).textContent%20%3D%20%60%24%7BDAYS%5Bc.day%5D%7D%D8%8C%20%D9%85%D9%86%20%24%7Bampm(c.start)%7D%20%D9%84%D9%80%20%24%7Bampm(c.end)%7D%20%D9%85%D8%B9%20%24%7Bc.coach%7D.%20%D9%85%D8%AD%D8%AC%D9%88%D8%B2%20%24%7Bc.booked%7D%20%D9%85%D9%86%20%24%7Bc.spots%7D.%60%3B%0A%20%20%20%20const%20book%20%3D%20document.getElementById(%22dc-book%22)%3B%0A%20%20%20%20book.disabled%20%3D%20c.booked%20%3E%3D%20c.spots%3B%0A%20%20%20%20book.textContent%20%3D%20book.disabled%20%3F%20%22%D8%A7%D9%84%D8%AD%D8%B5%D8%A9%20%D9%83%D8%A7%D9%85%D9%84%D8%A9%22%20%3A%20%22%D8%A7%D8%AD%D8%AC%D8%B2%20%D9%85%D9%83%D8%A7%D9%86%22%3B%0A%20%20%20%20openDialog(dlg%2C%20v%20%3D%3E%20%7B%0A%20%20%20%20%20%20if%20(v%20!%3D%3D%20%22book%22)%20return%3B%0A%20%20%20%20%20%20c.booked%2B%2B%3B%0A%20%20%20%20%20%20b.replaceWith(slot(c))%3B%0A%20%20%20%20%20%20toast(%60%D8%A7%D8%AA%D8%AD%D8%AC%D8%B2%20%D9%85%D9%83%D8%A7%D9%86%20%D9%81%D9%8A%20%C2%AB%24%7Bc.title%7D%C2%BB%20%D9%8A%D9%88%D9%85%20%24%7BDAYS%5Bc.day%5D%7D%60)%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D%3B%0A%20%20return%20b%3B%0A%7D%0A%0Aexport%20async%20function%20loadSchedule()%20%7B%0A%20%20const%20classes%20%3D%20await%20(await%20fetch(%22data%2Fclasses.json%22)).json()%3B%0A%20%20const%20parts%20%3D%20DAYS.map((d%2C%20i)%20%3D%3E%20cell(%22day%22%2C%20d%2C%20%7B%20col%3A%20i%20%7D))%3B%0A%20%20for%20(let%20h%20%3D%207%3B%20h%20%3C%2022%3B%20h%2B%2B)%20parts.push(cell(%22hour%22%2C%20ampm(String(h).padStart(2%2C%20%220%22)%20%2B%20%22%3A00%22)%2C%20%7B%20row%3A%20(h%20-%207)%20*%202%20%2B%201%20%7D))%3B%0A%20%20week.replaceChildren(...parts%2C%20...classes.map(slot))%3B%0A%7D%0A","lab/shell.js":"data:text/javascript;charset=utf-8,%2F%2F%20sidebar%3A%20collapses%20on%20wide%20screens%2C%20becomes%20a%20drawer%20on%20narrow%20ones%3B%20plus%20the%20theme%20switch%0Aconst%20shell%20%3D%20document.getElementById(%22shell%22)%2C%20side%20%3D%20document.getElementById(%22side%22)%3B%0Aconst%20menu%20%3D%20document.getElementById(%22menu%22)%2C%20collapse%20%3D%20document.getElementById(%22collapse%22)%2C%20scrim%20%3D%20document.getElementById(%22scrim%22)%3B%0Aconst%20narrow%20%3D%20matchMedia(%22(max-width%3A%2063.99rem)%22)%3B%0Aconst%20behind%20%3D%20%5Bdocument.querySelector(%22.topbar%22)%2C%20document.getElementById(%22main%22)%5D%3B%0A%0Afunction%20setCollapsed(on)%20%7B%0A%20%20shell.toggleAttribute(%22data-collapsed%22%2C%20on)%3B%0A%20%20collapse.setAttribute(%22aria-expanded%22%2C%20String(!on))%3B%0A%20%20try%20%7B%20localStorage.setItem(%22side%22%2C%20on%20%3F%20%22collapsed%22%20%3A%20%22open%22)%3B%20%7D%20catch%20%7B%7D%0A%7D%0Aif%20(document.documentElement.dataset.side%20%3D%3D%3D%20%22collapsed%22)%20setCollapsed(true)%3B%0Acollapse.addEventListener(%22click%22%2C%20()%20%3D%3E%20setCollapsed(!shell.hasAttribute(%22data-collapsed%22)))%3B%0A%0Afunction%20setDrawer(open)%20%7B%0A%20%20shell.toggleAttribute(%22data-open%22%2C%20open)%3B%0A%20%20menu.setAttribute(%22aria-expanded%22%2C%20String(open))%3B%0A%20%20menu.setAttribute(%22aria-label%22%2C%20open%20%3F%20%22%D8%A7%D9%82%D9%81%D9%84%20%D8%A7%D9%84%D9%82%D8%A7%D9%8A%D9%85%D8%A9%22%20%3A%20%22%D8%A7%D9%81%D8%AA%D8%AD%20%D8%A7%D9%84%D9%82%D8%A7%D9%8A%D9%85%D8%A9%22)%3B%0A%20%20scrim.hidden%20%3D%20!open%3B%0A%20%20behind.forEach(el%20%3D%3E%20(el.inert%20%3D%20open))%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20while%20the%20drawer%20is%20open%2C%20Tab%20can't%20wander%20behind%20it%0A%20%20if%20(open)%20side.querySelector(%22a%22).focus()%3B%0A%20%20else%20if%20(side.contains(document.activeElement)%20%7C%7C%20document.activeElement%20%3D%3D%3D%20document.body)%20menu.focus()%3B%0A%7D%0Amenu.addEventListener(%22click%22%2C%20()%20%3D%3E%20setDrawer(true))%3B%0Ascrim.addEventListener(%22click%22%2C%20()%20%3D%3E%20setDrawer(false))%3B%0Adocument.addEventListener(%22keydown%22%2C%20e%20%3D%3E%20%7B%20if%20(e.key%20%3D%3D%3D%20%22Escape%22%20%26%26%20shell.hasAttribute(%22data-open%22))%20setDrawer(false)%3B%20%7D)%3B%0Aside.addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%0A%20%20const%20a%20%3D%20e.target.closest(%22a%22)%3B%0A%20%20if%20(!a)%20return%3B%0A%20%20side.querySelectorAll(%22a%22).forEach(x%20%3D%3E%20x.toggleAttribute(%22aria-current%22%2C%20x%20%3D%3D%3D%20a))%3B%0A%20%20if%20(a.hasAttribute(%22aria-current%22))%20a.setAttribute(%22aria-current%22%2C%20%22page%22)%3B%0A%20%20if%20(narrow.matches)%20setDrawer(false)%3B%0A%7D)%3B%0Anarrow.addEventListener(%22change%22%2C%20()%20%3D%3E%20setDrawer(false))%3B%20%2F%2F%20rotate%20or%20resize%20to%20wide%3A%20never%20leave%20the%20page%20inert%0A%0Aconst%20theme%20%3D%20document.getElementById(%22theme%22)%3B%0Aconst%20isDark%20%3D%20()%20%3D%3E%20document.documentElement.dataset.theme%20%3D%3D%3D%20%22dark%22%20%7C%7C%20(!document.documentElement.dataset.theme%20%26%26%20matchMedia(%22(prefers-color-scheme%3A%20dark)%22).matches)%3B%0Atheme.setAttribute(%22aria-pressed%22%2C%20String(isDark()))%3B%0Atheme.addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20const%20next%20%3D%20isDark()%20%3F%20%22light%22%20%3A%20%22dark%22%3B%0A%20%20document.documentElement.dataset.theme%20%3D%20next%3B%0A%20%20theme.setAttribute(%22aria-pressed%22%2C%20String(next%20%3D%3D%3D%20%22dark%22))%3B%0A%20%20try%20%7B%20localStorage.setItem(%22theme%22%2C%20next)%3B%20%7D%20catch%20%7B%7D%0A%7D)%3B%0A","lab/state.js":"data:text/javascript;charset=utf-8,%2F%2F%20table%20state%20%3C-%3E%20URL%2C%20plus%20filter%2Fsort%2Fpage.%20No%20DOM%20here%2C%20so%20Node%20can%20test%20it.%0Aexport%20const%20DEFAULTS%20%3D%20%7B%20q%3A%20%22%22%2C%20status%3A%20%22all%22%2C%20plan%3A%20%22all%22%2C%20sort%3A%20%22name%22%2C%20dir%3A%20%22asc%22%2C%20page%3A%201%2C%20size%3A%2010%20%7D%3B%0Aconst%20STATUS%20%3D%20%5B%22learning%22%2C%20%22ready%22%2C%20%22passed%22%5D%3B%0Aconst%20PLANS%20%3D%20%5B%22p10%22%2C%20%22p20%22%2C%20%22p30%22%5D%3B%0Aconst%20SORTS%20%3D%20%5B%22name%22%2C%20%22plan%22%2C%20%22status%22%2C%20%22lastVisit%22%2C%20%22visits%22%5D%3B%0Aconst%20ORDER%20%3D%20%7B%20plan%3A%20PLANS%2C%20status%3A%20STATUS%20%7D%3B%0A%0Aexport%20function%20parseState(search)%20%7B%0A%20%20const%20p%20%3D%20new%20URLSearchParams(search)%3B%0A%20%20const%20s%20%3D%20%7B%20...DEFAULTS%20%7D%3B%0A%20%20s.q%20%3D%20(p.get(%22q%22)%20%7C%7C%20%22%22).trim().slice(0%2C%2050)%3B%0A%20%20if%20(STATUS.includes(p.get(%22status%22)))%20s.status%20%3D%20p.get(%22status%22)%3B%0A%20%20if%20(PLANS.includes(p.get(%22plan%22)))%20s.plan%20%3D%20p.get(%22plan%22)%3B%0A%20%20if%20(SORTS.includes(p.get(%22sort%22)))%20s.sort%20%3D%20p.get(%22sort%22)%3B%0A%20%20if%20(p.get(%22dir%22)%20%3D%3D%3D%20%22desc%22)%20s.dir%20%3D%20%22desc%22%3B%0A%20%20const%20page%20%3D%20Number.parseInt(p.get(%22page%22)%2C%2010)%3B%0A%20%20if%20(page%20%3E%3D%201)%20s.page%20%3D%20page%3B%0A%20%20return%20s%3B%0A%7D%0A%0Aexport%20function%20toQuery(s)%20%7B%0A%20%20const%20p%20%3D%20new%20URLSearchParams()%3B%0A%20%20for%20(const%20k%20of%20%5B%22q%22%2C%20%22status%22%2C%20%22plan%22%2C%20%22sort%22%2C%20%22dir%22%2C%20%22page%22%5D)%20if%20(s%5Bk%5D%20!%3D%3D%20DEFAULTS%5Bk%5D%20%26%26%20s%5Bk%5D%20!%3D%3D%20%22%22)%20p.set(k%2C%20s%5Bk%5D)%3B%0A%20%20const%20q%20%3D%20p.toString()%3B%0A%20%20return%20q%20%3F%20%22%3F%22%20%2B%20q%20%3A%20%22%22%3B%0A%7D%0A%0A%2F%2F%20Arabic%20search%3A%20%C2%AB%D8%A7%D8%AD%D9%85%D8%AF%C2%BB%20should%20find%20%C2%AB%D8%A3%D8%AD%D9%85%D8%AF%C2%BB%2C%20and%20%C2%AB%D9%87%D9%86%D8%A7%C2%BB%20should%20find%20%C2%AB%D9%87%D9%86%D8%A7%C2%BB%2F%C2%AB%D9%87%D9%86%D8%A7%D8%A1%C2%BB%20typed%20with%20%D8%A9%20or%20%D9%89%0Aexport%20const%20norm%20%3D%20t%20%3D%3E%20t.toLowerCase().replace(%2F%5B%D8%A3%D8%A5%D8%A2%5D%2Fg%2C%20%22%D8%A7%22).replace(%2F%D8%A9%2Fg%2C%20%22%D9%87%22).replace(%2F%D9%89%2Fg%2C%20%22%D9%8A%22).replace(%2F%5B%5Cu064B-%5Cu0652%5D%2Fg%2C%20%22%22)%3B%0Aconst%20coll%20%3D%20new%20Intl.Collator(%22ar%22)%3B%0A%0Afunction%20compare(k%2C%20a%2C%20b)%20%7B%0A%20%20if%20(ORDER%5Bk%5D)%20return%20ORDER%5Bk%5D.indexOf(a%5Bk%5D)%20-%20ORDER%5Bk%5D.indexOf(b%5Bk%5D)%3B%0A%20%20if%20(typeof%20a%5Bk%5D%20%3D%3D%3D%20%22number%22)%20return%20a%5Bk%5D%20-%20b%5Bk%5D%3B%0A%20%20if%20(k%20%3D%3D%3D%20%22name%22)%20return%20coll.compare(a%5Bk%5D%2C%20b%5Bk%5D)%3B%0A%20%20return%20a%5Bk%5D%20%3C%20b%5Bk%5D%20%3F%20-1%20%3A%20a%5Bk%5D%20%3E%20b%5Bk%5D%20%3F%201%20%3A%200%3B%20%20%20%20%20%20%20%20%20%20%2F%2F%20ISO%20dates%20sort%20as%20text%0A%7D%0A%0Aexport%20function%20view(rows%2C%20s)%20%7B%0A%20%20const%20q%20%3D%20norm(s.q)%3B%0A%20%20const%20hit%20%3D%20m%20%3D%3E%20(s.status%20%3D%3D%3D%20%22all%22%20%7C%7C%20m.status%20%3D%3D%3D%20s.status)%20%26%26%20(s.plan%20%3D%3D%3D%20%22all%22%20%7C%7C%20m.plan%20%3D%3D%3D%20s.plan)%0A%20%20%20%20%26%26%20(!q%20%7C%7C%20norm(m.name).includes(q)%20%7C%7C%20String(m.id)%20%3D%3D%3D%20q)%3B%0A%20%20const%20d%20%3D%20s.dir%20%3D%3D%3D%20%22desc%22%20%3F%20-1%20%3A%201%3B%0A%20%20const%20sorted%20%3D%20rows.filter(hit).sort((a%2C%20b)%20%3D%3E%20d%20*%20compare(s.sort%2C%20a%2C%20b)%20%7C%7C%20a.id%20-%20b.id)%3B%0A%20%20const%20pages%20%3D%20Math.max(1%2C%20Math.ceil(sorted.length%20%2F%20s.size))%3B%0A%20%20const%20page%20%3D%20Math.min(s.page%2C%20pages)%3B%0A%20%20return%20%7B%20total%3A%20sorted.length%2C%20pages%2C%20page%2C%20rows%3A%20sorted.slice((page%20-%201)%20*%20s.size%2C%20page%20*%20s.size)%20%7D%3B%0A%7D%0A","lab/table.js":"data:text/javascript;charset=utf-8,%2F%2F%20members%20table%3A%20the%20URL%20is%20the%20state.%20Read%20it%2C%20draw%2C%20and%20write%20it%20back%20on%20every%20change.%0Aimport%20%7B%20parseState%2C%20toQuery%2C%20view%2C%20DEFAULTS%20%7D%20from%20%22lab%2Fstate.js%22%3B%0Aimport%20%7B%20num%2C%20shortDate%20%7D%20from%20%22lab%2Flib.js%22%3B%0A%0Aconst%20PLAN%20%3D%20%7B%20p10%3A%20%2210%20%D8%AD%D8%B5%D8%B5%22%2C%20p20%3A%20%2220%20%D8%AD%D8%B5%D8%A9%22%2C%20p30%3A%20%2230%20%D8%AD%D8%B5%D8%A9%22%20%7D%3B%0Aconst%20STATUS%20%3D%20%7B%20learning%3A%20%22%D8%A8%D9%8A%D8%AA%D8%B9%D9%84%D9%85%22%2C%20ready%3A%20%22%D8%AC%D8%A7%D9%87%D8%B2%20%D9%84%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%22%2C%20passed%3A%20%22%D9%86%D8%AC%D8%AD%22%20%7D%3B%0Aconst%20COLS%20%3D%20%5B%22%D8%A7%D9%84%D8%A7%D8%B3%D9%85%22%2C%20%22%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%22%2C%20%22%D8%A7%D9%84%D8%AD%D8%A7%D9%84%D8%A9%22%2C%20%22%D8%A2%D8%AE%D8%B1%20%D8%AD%D8%B5%D8%A9%22%2C%20%22%D8%AD%D8%B5%D8%B5%20%D8%A7%D9%84%D8%B4%D9%87%D8%B1%22%5D%3B%0Aconst%20table%20%3D%20document.getElementById(%22table%22)%2C%20tbody%20%3D%20document.getElementById(%22rows%22)%3B%0Aconst%20form%20%3D%20document.getElementById(%22filters%22)%2C%20pager%20%3D%20document.getElementById(%22pager%22)%2C%20count%20%3D%20document.getElementById(%22count%22)%3B%0Alet%20all%20%3D%20%5B%5D%2C%20state%20%3D%20parseState(location.search)%3B%0A%0Aconst%20lab%20%3D%20new%20URLSearchParams(location.search)%3B%20%20%20%20%20%20%20%20%20%20%2F%2F%20lab%20only%3A%20%3Fdelay%3D1500%20slows%20the%20data%2C%20%3Ffail%3D1%20breaks%20the%20first%20try%0Alet%20labDelay%20%3D%20lab.get(%22delay%22)%2C%20labFail%20%3D%20lab.get(%22fail%22)%20%3D%3D%3D%20%221%22%3B%0A%0Afunction%20td(text%2C%20label%2C%20cls)%20%7B%0A%20%20const%20c%20%3D%20document.createElement(%22td%22)%3B%0A%20%20c.dataset.label%20%3D%20label%3B%0A%20%20if%20(cls)%20c.className%20%3D%20cls%3B%0A%20%20if%20(text%20instanceof%20Node)%20c.append(text)%3B%20else%20c.textContent%20%3D%20text%3B%0A%20%20return%20c%3B%0A%7D%0A%0Afunction%20stateRow(kind%2C%20text%2C%20button)%20%7B%0A%20%20const%20tr%20%3D%20document.createElement(%22tr%22)%2C%20c%20%3D%20document.createElement(%22td%22)%3B%0A%20%20tr.className%20%3D%20%22state-row%20%22%20%2B%20kind%3B%0A%20%20c.colSpan%20%3D%20COLS.length%3B%0A%20%20c.append(text)%3B%0A%20%20if%20(button)%20%7B%20c.append(%22%20%22)%3B%20c.append(button)%3B%20%7D%0A%20%20tr.append(c)%3B%0A%20%20tbody.replaceChildren(tr)%3B%0A%7D%0A%0Aexport%20function%20skeleton(n%20%3D%20DEFAULTS.size)%20%7B%0A%20%20table.setAttribute(%22aria-busy%22%2C%20%22true%22)%3B%0A%20%20tbody.replaceChildren(...Array.from(%7B%20length%3A%20n%20%7D%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20tr%20%3D%20document.createElement(%22tr%22)%3B%0A%20%20%20%20tr.className%20%3D%20%22skel%22%3B%0A%20%20%20%20tr.innerHTML%20%3D%20%22%3Ctd%3E%3Cspan%3E%3C%2Fspan%3E%3C%2Ftd%3E%22.repeat(COLS.length)%3B%0A%20%20%20%20return%20tr%3B%0A%20%20%7D))%3B%0A%7D%0A%0Afunction%20render()%20%7B%0A%20%20const%20v%20%3D%20view(all%2C%20state)%3B%0A%20%20if%20(v.page%20!%3D%3D%20state.page)%20%7B%20state.page%20%3D%20v.page%3B%20history.replaceState(null%2C%20%22%22%2C%20toQuery(state)%20%7C%7C%20location.pathname)%3B%20%7D%0A%20%20table.setAttribute(%22aria-busy%22%2C%20%22false%22)%3B%0A%20%20for%20(const%20th%20of%20table.querySelectorAll(%22th%5Bdata-sort%5D%22))%20%7B%0A%20%20%20%20if%20(th.dataset.sort%20%3D%3D%3D%20state.sort)%20th.setAttribute(%22aria-sort%22%2C%20state.dir%20%3D%3D%3D%20%22asc%22%20%3F%20%22ascending%22%20%3A%20%22descending%22)%3B%0A%20%20%20%20else%20th.removeAttribute(%22aria-sort%22)%3B%0A%20%20%7D%0A%20%20count.textContent%20%3D%20v.total%20%3F%20%60%24%7Bnum.format(v.total)%7D%20%D8%B7%D8%A7%D9%84%D8%A8%D8%8C%20%D8%B5%D9%81%D8%AD%D8%A9%20%24%7Bnum.format(v.page)%7D%20%D9%85%D9%86%20%24%7Bnum.format(v.pages)%7D%60%20%3A%20%22%D9%85%D9%81%D9%8A%D8%B4%20%D9%86%D8%AA%D8%A7%D9%8A%D8%AC%22%3B%0A%20%20if%20(!v.total)%20%7B%0A%20%20%20%20const%20clear%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20clear.type%20%3D%20%22button%22%3B%20clear.className%20%3D%20%22btn%20ghost%22%3B%20clear.textContent%20%3D%20%22%D8%A7%D9%85%D8%B3%D8%AD%20%D8%A7%D9%84%D9%81%D9%84%D8%A7%D8%AA%D8%B1%22%3B%0A%20%20%20%20clear.onclick%20%3D%20()%20%3D%3E%20form.reset()%3B%0A%20%20%20%20stateRow(%22empty%22%2C%20%22%D9%85%D9%81%D9%8A%D8%B4%20%D8%B7%D9%84%D8%A8%D8%A9%20%D8%A8%D8%A7%D9%84%D9%81%D9%84%D8%AA%D8%B1%20%D8%AF%D9%87.%22%2C%20clear)%3B%0A%20%20%7D%20else%20%7B%0A%20%20%20%20tbody.replaceChildren(...v.rows.map(m%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20tr%20%3D%20document.createElement(%22tr%22)%3B%0A%20%20%20%20%20%20const%20b%20%3D%20document.createElement(%22span%22)%3B%0A%20%20%20%20%20%20b.className%20%3D%20%22badge%20%22%20%2B%20m.status%3B%20b.textContent%20%3D%20STATUS%5Bm.status%5D%3B%0A%20%20%20%20%20%20tr.append(td(m.name%2C%20COLS%5B0%5D)%2C%20td(PLAN%5Bm.plan%5D%2C%20COLS%5B1%5D)%2C%20td(b%2C%20COLS%5B2%5D)%2C%0A%20%20%20%20%20%20%20%20td(shortDate.format(new%20Date(m.lastVisit))%2C%20COLS%5B3%5D)%2C%20td(num.format(m.visits)%2C%20COLS%5B4%5D%2C%20%22num%22))%3B%0A%20%20%20%20%20%20return%20tr%3B%0A%20%20%20%20%7D))%3B%0A%20%20%7D%0A%20%20pager.replaceChildren()%3B%0A%20%20const%20btn%20%3D%20(label%2C%20page%2C%20extra%20%3D%20%7B%7D)%20%3D%3E%20%7B%0A%20%20%20%20const%20b%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20b.type%20%3D%20%22button%22%3B%20b.textContent%20%3D%20label%3B%20b.dataset.page%20%3D%20page%3B%0A%20%20%20%20Object.assign(b%2C%20extra)%3B%0A%20%20%20%20if%20(page%20%3D%3D%3D%20v.page%20%26%26%20!extra.ariaLabel)%20b.setAttribute(%22aria-current%22%2C%20%22page%22)%3B%0A%20%20%20%20pager.append(b)%3B%0A%20%20%7D%3B%0A%20%20btn(%22%E2%80%B9%22%2C%20v.page%20-%201%2C%20%7B%20ariaLabel%3A%20%22%D8%A7%D9%84%D8%B5%D9%81%D8%AD%D8%A9%20%D8%A7%D9%84%D9%84%D9%8A%20%D9%81%D8%A7%D8%AA%D8%AA%22%2C%20disabled%3A%20v.page%20%3D%3D%3D%201%20%7D)%3B%0A%20%20for%20(let%20p%20%3D%201%3B%20p%20%3C%3D%20v.pages%3B%20p%2B%2B)%20btn(num.format(p)%2C%20p)%3B%0A%20%20btn(%22%E2%80%BA%22%2C%20v.page%20%2B%201%2C%20%7B%20ariaLabel%3A%20%22%D8%A7%D9%84%D8%B5%D9%81%D8%AD%D8%A9%20%D8%A7%D9%84%D8%AC%D8%A7%D9%8A%D8%A9%22%2C%20disabled%3A%20v.page%20%3D%3D%3D%20v.pages%20%7D)%3B%0A%7D%0A%0Afunction%20update(patch%2C%20mode%20%3D%20%22push%22)%20%7B%0A%20%20state%20%3D%20%7B%20...state%2C%20...patch%20%7D%3B%0A%20%20const%20url%20%3D%20toQuery(state)%20%7C%7C%20location.pathname%3B%0A%20%20if%20(mode%20%3D%3D%3D%20%22push%22)%20history.pushState(null%2C%20%22%22%2C%20url)%3B%20else%20history.replaceState(null%2C%20%22%22%2C%20url)%3B%0A%20%20render()%3B%0A%7D%0A%0Afunction%20syncForm()%20%7B%0A%20%20form.q.value%20%3D%20state.q%3B%20form.status.value%20%3D%20state.status%3B%20form.plan.value%20%3D%20state.plan%3B%0A%7D%0A%0Alet%20timer%3B%0Aform.addEventListener(%22input%22%2C%20e%20%3D%3E%20%7B%0A%20%20clearTimeout(timer)%3B%0A%20%20const%20patch%20%3D%20%7B%20%5Be.target.name%5D%3A%20e.target.value%2C%20page%3A%201%20%7D%3B%0A%20%20if%20(e.target.name%20%3D%3D%3D%20%22q%22)%20timer%20%3D%20setTimeout(()%20%3D%3E%20update(%7B%20...patch%2C%20q%3A%20e.target.value.trim()%20%7D%2C%20%22replace%22)%2C%20250)%3B%0A%20%20else%20update(patch%2C%20%22push%22)%3B%0A%7D)%3B%0Aform.addEventListener(%22reset%22%2C%20()%20%3D%3E%20setTimeout(()%20%3D%3E%20update(%7B%20q%3A%20%22%22%2C%20status%3A%20%22all%22%2C%20plan%3A%20%22all%22%2C%20page%3A%201%20%7D%2C%20%22push%22)))%3B%0Aform.addEventListener(%22submit%22%2C%20e%20%3D%3E%20e.preventDefault())%3B%0Atable.querySelector(%22thead%22).addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%0A%20%20const%20th%20%3D%20e.target.closest(%22th%5Bdata-sort%5D%22)%3B%0A%20%20if%20(!th)%20return%3B%0A%20%20const%20k%20%3D%20th.dataset.sort%3B%0A%20%20update(%7B%20sort%3A%20k%2C%20dir%3A%20state.sort%20%3D%3D%3D%20k%20%26%26%20state.dir%20%3D%3D%3D%20%22asc%22%20%3F%20%22desc%22%20%3A%20%22asc%22%2C%20page%3A%201%20%7D)%3B%0A%7D)%3B%0Apager.addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%0A%20%20const%20b%20%3D%20e.target.closest(%22button%5Bdata-page%5D%22)%3B%0A%20%20if%20(!b%20%7C%7C%20b.disabled)%20return%3B%0A%20%20update(%7B%20page%3A%20Number(b.dataset.page)%20%7D)%3B%0A%20%20document.getElementById(%22mem-h%22).scrollIntoView(%7B%20block%3A%20%22start%22%20%7D)%3B%0A%7D)%3B%0AaddEventListener(%22popstate%22%2C%20()%20%3D%3E%20%7B%20state%20%3D%20parseState(location.search)%3B%20syncForm()%3B%20render()%3B%20%7D)%3B%0A%0Aexport%20async%20function%20loadMembers()%20%7B%0A%20%20syncForm()%3B%0A%20%20skeleton()%3B%0A%20%20count.textContent%20%3D%20%22%D8%A8%D9%8A%D8%AD%D9%85%D9%91%D9%84%E2%80%A6%22%3B%0A%20%20try%20%7B%0A%20%20%20%20const%20q%20%3D%20labDelay%20%3F%20%22%3Fdelay%3D%22%20%2B%20labDelay%20%2B%20(labFail%20%3F%20%22%26fail%3D1%22%20%3A%20%22%22)%20%3A%20labFail%20%3F%20%22%3Ffail%3D1%22%20%3A%20%22%22%3B%0A%20%20%20%20const%20res%20%3D%20await%20fetch(%22data%2Fmembers.json%22%20%2B%20q)%3B%0A%20%20%20%20if%20(!res.ok)%20throw%20new%20Error(%22HTTP%20%22%20%2B%20res.status)%3B%0A%20%20%20%20all%20%3D%20await%20res.json()%3B%0A%20%20%20%20render()%3B%0A%20%20%20%20return%20all%3B%0A%20%20%7D%20catch%20(err)%20%7B%0A%20%20%20%20labFail%20%3D%20false%3B%20labDelay%20%3D%20null%3B%0A%20%20%20%20table.setAttribute(%22aria-busy%22%2C%20%22false%22)%3B%0A%20%20%20%20count.textContent%20%3D%20%22%D8%AD%D8%B5%D9%84%20%D8%AE%D8%B7%D8%A3%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AA%D8%AD%D9%85%D9%8A%D9%84%22%3B%0A%20%20%20%20const%20retry%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20retry.type%20%3D%20%22button%22%3B%20retry.className%20%3D%20%22btn%22%3B%20retry.textContent%20%3D%20%22%D8%AC%D8%B1%D9%91%D8%A8%20%D8%AA%D8%A7%D9%86%D9%8A%22%3B%0A%20%20%20%20retry.onclick%20%3D%20()%20%3D%3E%20loadMembers()%3B%0A%20%20%20%20stateRow(%22error%22%2C%20%22%D9%85%D9%82%D8%AF%D8%B1%D9%86%D8%A7%D8%B4%20%D9%86%D8%AC%D9%8A%D8%A8%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8%D8%A9%20(%22%20%2B%20err.message%20%2B%20%22).%22%2C%20retry)%3B%0A%20%20%20%20retry.focus()%3B%0A%20%20%20%20return%20%5B%5D%3B%0A%20%20%7D%0A%7D%0A%0Aexport%20function%20addMember(m)%20%7B%20all.push(m)%3B%20render()%3B%20%7D%0Aexport%20const%20nextId%20%3D%20()%20%3D%3E%20Math.max(1000%2C%20...all.map(m%20%3D%3E%20m.id))%20%2B%201%3B%0A","lab/ui.js":"data:text/javascript;charset=utf-8,%2F%2F%20toasts%20in%20one%20live%20region%20that%20exists%20from%20the%20start%2C%20and%20a%20helper%20for%20native%20%3Cdialog%3E%0Aconst%20box%20%3D%20document.getElementById(%22toasts%22)%3B%0Aexport%20function%20toast(text%2C%20ms%20%3D%204000)%20%7B%0A%20%20const%20el%20%3D%20document.createElement(%22p%22)%3B%0A%20%20el.className%20%3D%20%22toast%22%3B%0A%20%20el.textContent%20%3D%20text%3B%0A%20%20box.append(el)%3B%0A%20%20setTimeout(()%20%3D%3E%20el.remove()%2C%20ms)%3B%0A%7D%0A%0Aexport%20function%20openDialog(dlg%2C%20onClose)%20%7B%0A%20%20dlg.returnValue%20%3D%20%22%22%3B%0A%20%20dlg.showModal()%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20modal%3A%20focus%20moves%20in%2C%20Esc%20closes%2C%20the%20rest%20of%20the%20page%20is%20inert%0A%20%20dlg.addEventListener(%22close%22%2C%20()%20%3D%3E%20onClose%3F.(dlg.returnValue)%2C%20%7B%20once%3A%20true%20%7D)%3B%0A%7D%0A%2F%2F%20a%20click%20on%20the%20backdrop%20lands%20on%20the%20%3Cdialog%3E%20itself%20(the%20form%20inside%20covers%20the%20box)%0Adocument.addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%20if%20(e.target%20instanceof%20HTMLDialogElement)%20e.target.close(%22cancel%22)%3B%20%7D)%3B%0A"}}</script>
+  <script type="module">import "lab/app.js";</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** نفس شكل لوحة الجيم بالظبط، بس الكلام كله عن مدرسة سواقة. فوق ٤ كروت: «بيتعلموا دلوقتي 37 من 64 مسجّل»، و «حصص النهارده 16» وتحتها خط آخر ١٤ يوم، و «إيراد الشهر» وجنبه سهم أحمر لتحت ([[-5.5%]])، ودايرة «نجحوا من أول مرة 64%». تحتهم جدول الطلبة بـ ٣ ألوان للحالة (أزرق، وكهرماني، وأخضر). وتحت جدول الأسبوع: حصص العملي مكانها واحد، والنظري قاعة.
+
+**الخطوة ٣: القياس نفسه بتاع الوحدة.** [[check-dashboard.mjs]] و [[audit-dashboard.mjs]] اتشغّلوا على اللوحة دي (العنوان اتغير لـ [[http://127.0.0.1:5507/]]، والحالة اللي الفحص بيختارها من [["frozen"]] لـ [["ready"]]):
+
+~~~text اتشغّل فعلًا (Chrome 156، axe-core 4.14.0؛ أهم السطور)
+count: 64 طالب، صفحة 1 من 7
+kpi: 37 | 16 | ‏248,500 ج.م.‏ | 64% | delta: ▼ -5.5%
+after status=ready: /?status=ready | 16 طالب، صفحة 1 من 2
+open ?page=99 -> /?page=7 | 64 طالب، صفحة 7 من 7
+search ادم: /?q=ادم | rows: آدم سالم, آدم منصور | history grew by 0
+empty state: مفيش طلبة بالفلتر ده. امسح الفلاتر
+error: مقدرناش نجيب الطلبة (HTTP 500). جرّب تاني | focus on: جرّب تاني
+saved -> open: false | focus back on: add | toast: اتضاف «سارة الجندي» | count: 65 طالب، صفحة 1 من 7
+slots: 17 | first slot --row / grid-row-start / end / column: 5 / 6 / span 3 / 2
+axe light 1280 violations: 0
+axe light 390  violations: 0
+axe dark  1280 violations: 0
+axe dark  390  violations: 0
+matrix: 360 ok(week scrolls) | 390 ok(week scrolls) | 768 ok(week scrolls) | 1024 ok(week scrolls) | 1280 ok(week scrolls) | 1440 ok
+vitals fast data    CLS 0.0000 LCP 1152ms H1
+vitals ?delay=1200  CLS 0.0000 LCP 1200ms H1
+~~~
+
+**فحص زيادة عشان غيّرنا الألوان:** axe بيفحص اللي ظاهر في الصفحة الحالية بس، فلو حالة مش موجودة في أول ١٠ صفوف، لونها مش هيتفحص. [[badge-contrast.mjs]] بيعمل الـ ٣ badges ويحسب التباين من الألوان اللي Chrome حسبها فعلًا، في الثيمين:
+
+~~~js badge-contrast.mjs
+// node badge-contrast.mjs: the three status badges, text on their own background, light and dark, from the computed colours in Chrome
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ channel: "chrome" });
+for (const scheme of ["light", "dark"]) {
+  const p = await (await b.newContext({ colorScheme: scheme })).newPage();
+  await p.goto("http://127.0.0.1:5507/"); await p.waitForSelector("#rows tr:not(.skel)");
+  console.log(scheme, await p.evaluate(() => {
+    const lum = c => { const [r, g, bl] = c.match(/\d+/g).slice(0, 3).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * bl; };
+    return ["learning", "ready", "passed"].map(s => { const e = document.createElement("span"); e.className = "badge " + s; e.textContent = "x"; document.body.append(e);
+      const cs = getComputedStyle(e), a = lum(cs.color), z = lum(cs.backgroundColor), r = (Math.max(a, z) + 0.05) / (Math.min(a, z) + 0.05); e.remove();
+      return s + " " + r.toFixed(2) + (r >= 4.5 ? " AA" : " FAIL"); }).join(" | ");
+  }));
+}
+await b.close();
+~~~
+
+~~~text node badge-contrast.mjs
+light learning 4.74 AA | ready 5.20 AA | passed 5.59 AA
+dark learning 6.75 AA | ready 8.36 AA | passed 7.31 AA
+~~~
+
+[[learning]] على الفاتح 4.74، قريب من الحد (4.5). لو غيّرت درجة [[--brand]] بعدين، الفحص ده أول حاجة تشغّلها.
+
+**الخطوة ٤: اختبار الـ ١٠ دقايق (ده بتاعك).** المطلوب بيقول: صاحب المكان يستخدمها من موبايله من غير ما تشرحله. دي الطريقة:
+
+1. افتحها له على موبايله هو (مش موبايلك)، برابط. لو مرفوعة على GitHub Pages أو أي مكان، أحسن.
+2. قوله جملة واحدة: «دي لوحة للمكان، جرّبها كأنك فاتح الصبح». ومتشرحش أي حاجة بعد كده.
+3. اسكت واتفرّج، واكتب: أول حاجة داس عليها، وأول رقم قراه بصوت عالي، وأي حاجة قال عليها «ده إيه؟»، وأي مكان وقف فيه أكتر من ٥ ثواني.
+4. بعد ١٠ دقايق اسأل ٣ أسئلة: «أنهي رقم بتبص عليه الأول؟»، و «فيه حاجة ناقصة كنت عايز تعرفها؟»، و «فيه حاجة ملهاش لازمة؟».
+5. اكتب الإجابات بكلامه في README، وغيّر حاجة واحدة بس (أهم واحدة)، وجرّب تاني.
+
+اللي بيطلع عادة: الكلمة اللي انت كاتبها مش هي اللي هو بيستخدمها («طلبة» ولا «متدربين»؟)، والرقم اللي انت حاطه في الأول مش هو اللي بيبص عليه. ده سبب إن الخطوة ١ أسئلة، مش تخمين.
+
+**وبعدها (الـ ext):** ارفعها برابط، واكتب README فيه جدول «ليه الأدوات دي» (زي خريطة الوحدة)، ولقطات على ٣ مقاسات (390 و 768 و 1280)، وحطها في الـ portfolio اللي عملته في الوحدة كدراسة حالة تانية، بنفس طريقة صفحة Tide Notes: المشكلة، والقرارات، والأرقام (هنا: إيه اللي صاحب المكان قاله قبل وبعد).`,
         },
       ],
       items: [
