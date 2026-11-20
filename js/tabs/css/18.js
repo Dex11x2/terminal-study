@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "أسئلة انترفيو",
+      pre: [
+        { to: "css/specificity", why: R`سؤال مين بيكسب قايم عليه` },
+        { to: "css/z-index", why: R`سؤال الـ stacking context` },
+      ],
       l: 3,
       n: "الأسئلة اللي بتتسأل في أي انترفيو frontend، بإجابة تقولها بصوتك في دقيقة",
       projects: [
@@ -2132,6 +2136,11 @@ axe: 0
       items: [
         {
           cmd: "4 طبقات و box-sizing",
+          ref: [
+            { t: "MDN: Introduction to the CSS basic box model", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Introduction" },
+            { t: "MDN: box-sizing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/box-sizing" },
+            { t: "MDN: Mastering margin collapsing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Margin_collapsing" },
+          ],
           title: "اشرح الـ box model (Explain the CSS box model)",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين block فوق بعض، الأول [[margin-bottom: 30px]] والتاني [[margin-top: 20px]]. المسافة بينهم كام؟ وكام لو الأب بقى [[display: flex; flex-direction: column]]؟ اكتب، وبعدين قيس بـ [[getBoundingClientRect()]].`, done: R`30px في الـ block (الـ margins بتتلم وبياخد الأكبر)، و 50px في الـ flex (مفيش collapse)، والقياس طابق.`,
@@ -2342,6 +2351,12 @@ clientWidth:    190
         },
         {
           cmd: "(id, class, type)",
+          ref: [
+            { t: "MDN: Specificity", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity" },
+            { t: "MDN: :is()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:is" },
+            { t: "MDN: :where()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:where" },
+            { t: "MDN: :not()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:not" },
+          ],
           title: "إزاي المتصفح بيقرر أنهي قاعدة تكسب؟ (How does CSS specificity work?)",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** احسب specificity دول: [[#a .b]]، و [[.a.b.c.d]]، و [[ul li:not(.x)]]، و [[:is(#a, .b) p]]، و [[a::before]]. ورتّبهم من الأقوى.`, done: R`(1,1,0) و (0,4,0) و (0,1,2) و (1,0,1) و (0,0,2). الترتيب: [[#a .b]] ثم [[:is(#a, .b) p]] ثم [[.a.b.c.d]] ثم [[ul li:not(.x)]] ثم [[a::before]]. واتأكدت بالـ hover على الـ selector في DevTools › Styles (بيطلّع الـ specificity).`,
@@ -2536,6 +2551,11 @@ C  أنواع العناصر والـ pseudo-elements    nav  a  ::after
         },
         {
           cmd: "بُعد واحد وبُعدين",
+          ref: [
+            { t: "MDN: Basic concepts of flexbox", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Flexible_box_layout/Basic_concepts" },
+            { t: "MDN: Relationship of grid layout to other layout methods", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Grid_layout/Relationship_with_other_layout_methods" },
+            { t: "MDN: Subgrid", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Grid_layout/Subgrid" },
+          ],
           title: "إمتى تستخدم flex وإمتى grid؟ (Flexbox vs Grid)",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** حاوية 700px و ٥ كروت من غير gap. مرة [[display: flex; flex-wrap: wrap]] والكروت [[flex: 1 1 200px]]، ومرة [[grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))]]. عرض كروت الصف التاني كام في كل واحدة؟`, done: R`flex: الصف الأول ٣ كروت 233.3px والتاني كارتين 350px (بيتمدّوا يملوا الصف). grid: الصفين أعمدتهم 233.3px والكارتين اللي تحت نفس عرض اللي فوق. وقست بـ DevTools.`,
@@ -2768,6 +2788,10 @@ grid for the page shell, flex inside each component.
         },
         {
           cmd: "containing block",
+          ref: [
+            { t: "MDN: Layout and the containing block", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Display/Containing_block" },
+            { t: "MDN: position", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position" },
+          ],
           title: "إيه الفرق بين قيم position الخمسة؟",
           practice: [
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** sidebar عليه [[position: sticky; top: 1rem]] ومبيلزقش. جد ليه في النص عليه [[overflow: hidden]] (اتحط زمان عشان يقص ظل). لاقيه من DevTools وصلّحه من غير ما الظل يبوظ.`, done: R`لقيت الجد في Computed، وغيّرته لـ [[overflow: clip]] (مش بيعمل scroll container فالـ sticky بيشتغل) أو شلته، والـ sidebar بقى بيلزق، والظل لسه مقصوص.`,
@@ -2979,6 +3003,10 @@ fixed جوه transform:   618 ← 218    (مشي مع الصفحة)
         },
         {
           cmd: "mobile-first",
+          ref: [
+            { t: "MDN: Responsive design", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design" },
+            { t: "MDN: Using media queries", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Using" },
+          ],
           title: "هتعمل الموقع responsive إزاي؟ (Responsive strategy)",
           practice: [
             { lvl: 'تطبيق', t: R`**refactor:** ملف CSS مكتوب desktop-first بـ [[max-width]] media queries (الشكل الكبير برا، وكل شاشة أصغر بتلغي). حوّله mobile-first بـ [[min-width]].`, done: R`عدد القواعد نقص (رقم قبل وبعد)، والصفحة شكلها نفس الشكل على 360 و 768 و 1280 (لقطات قبل وبعد)، ومفيش قيمة بتتكتب وتتلغي في نفس الشاشة.`,
@@ -3218,6 +3246,10 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
         },
         {
           cmd: "rem من الـ root",
+          ref: [
+            { t: "MDN: Numeric data types (em و rem)", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Values_and_units/Numeric_data_types" },
+            { t: "MDN: font-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-size" },
+          ],
           title: "إيه الفرق بين px و em و rem؟ (px vs em vs rem)",
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** html ‏16px، و [[ul { font-size: 0.9em }]]، وفيه ٣ قوايم جوه بعض. الخط في التالتة كام؟ وكام لو [[0.9rem]]؟`, done: R`em: ‏16 × 0.9 × 0.9 × 0.9 = 11.66px (بيصغر كل مستوى). rem: ‏14.4px في الـ ٣. واتأكدت من Computed.`,
@@ -3421,6 +3453,10 @@ px is fine for things that shouldn't scale, like a 1 pixel border.
         },
         {
           cmd: "توليد on-demand",
+          ref: [
+            { t: "Tailwind CSS: Detecting classes in source files", url: "https://tailwindcss.com/docs/detecting-classes-in-source-files" },
+            { t: "Tailwind CSS: Functions and directives", url: "https://tailwindcss.com/docs/functions-and-directives" },
+          ],
           title: "Tailwind بيشتغل إزاي من جوه؟ وإيه عيوبه؟",
           practice: [
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** badge لونه جاي من البيانات: [[className={$__bt bg-$__{status.color}-100 text-$__{status.color}-700 $__bt}]]، واللون مبيظهرش. صلّحه.`, done: R`عملت map فيه الكلاسات كاملة ([[{ success: "bg-green-100 text-green-700", ... }]])، والألوان ظهرت، والكلاسات موجودة في ملف الـ CSS بعد الـ build (دوّرت عليها بـ Ctrl+F).`,
@@ -3643,6 +3679,11 @@ px-5           أيوه  (رغم إنها في تعليق!)
         },
         {
           cmd: "semantic HTML أولًا",
+          ref: [
+            { t: "MDN: HTML, a good basis for accessibility", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML" },
+            { t: "W3C: Using ARIA, first rule", url: "https://www.w3.org/TR/using-aria/#rule1" },
+            { t: "MDN: <button>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button" },
+          ],
           title: "إيه أهم حاجات الـ accessibility في الفرونت إند؟",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الـ role والاسم في الـ accessibility tree لـ: [[<div onclick="save()">حفظ</div>]]، و [[<button>حفظ</button>]]، و [[<a href="/p">التفاصيل</a>]]، و [[<button><svg aria-hidden="true">…</svg></button>]]؟`, done: R`generic من غير اسم مفيد ومش focusable، و button «حفظ»، و link «التفاصيل»، و button من غير اسم (axe بيطلّع [[button-name]]). واتأكدت من DevTools › Accessibility.`,
@@ -3865,6 +3906,11 @@ and I try a real screen reader on the main flows.
         },
         {
           cmd: "احجز المكان",
+          ref: [
+            { t: "web.dev: Optimize Cumulative Layout Shift", url: "https://web.dev/articles/optimize-cls" },
+            { t: "MDN: aspect-ratio", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/aspect-ratio" },
+            { t: "MDN: size-adjust", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/size-adjust" },
+          ],
           title: "إيه هو CLS وإزاي تقلله؟",
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** بانر ارتفاعه ربع الشاشة اتحط فوق الصفحة فزق كل المحتوى (اللي كان مالي الشاشة) ربع الشاشة لتحت. قيمة الـ shift تقريبًا كام؟`, done: R`المساحة المتأثرة 1 (المحتوى مالي الشاشة قبل وبعد)، والمسافة 0.25، فالـ shift ≈ 0.25، يعني بانر واحد مرتين ونص حد «Good» (0.1).`,
@@ -4089,6 +4135,11 @@ img { max-width: 100%; height: auto; }
         },
         {
           cmd: "مراحل الرسم",
+          ref: [
+            { t: "web.dev: Rendering performance", url: "https://web.dev/articles/rendering-performance" },
+            { t: "web.dev: Stick to compositor-only properties", url: "https://web.dev/articles/stick-to-compositor-only-properties-and-manage-layer-count" },
+            { t: "MDN: will-change", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/will-change" },
+          ],
           title: "إيه الفرق بين reflow و repaint؟",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** صنّف تغيير كل خاصية: [[width]]، و [[color]]، و [[transform]]، و [[opacity]]، و [[box-shadow]]، و [[top]] على عنصر relative، و [[visibility]]. أنهي layout، وأنهي paint بس، وأنهي composite بس؟`, done: R`layout: width و top. paint بس: color و box-shadow و visibility. composite غالبًا: transform و opacity. واتأكدت بـ Paint flashing (الـ paint بينوّر) و Performance.`,
@@ -4296,6 +4347,11 @@ items.forEach((it, i) => it.style.width = (ws[i] + 1) + 'px');
         },
         {
           cmd: "stacking context",
+          ref: [
+            { t: "MDN: Stacking context", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Positioned_layout/Stacking_context" },
+            { t: "MDN: isolation", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/isolation" },
+            { t: "MDN: z-index", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/z-index" },
+          ],
           title: "ليه z-index: 9999 مش بيطلّع العنصر فوق؟",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** هيدر [[position: sticky; z-index: 10]]، و [[main]] عليه [[transform: translateZ(0)]]، وجوه main مودال [[position: fixed; z-index: 9999]]. مين فوق مين؟ وإيه اللي يحصل لو شلت الـ transform؟`, done: R`الهيدر فوق المودال، لأن main بقى context بـ [[z-index: auto]] قدام الهيدر. ولما الـ transform اتشال المودال طلع فوق (وغطّى الشاشة كلها كمان). واتأكدت بـ [[document.elementFromPoint()]] على نقطة في الهيدر.`,

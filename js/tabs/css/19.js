@@ -2,6 +2,11 @@
 MORE("css", [
     {
       t: "مشروع كامل: landing page وفورم تسجيل",
+      pre: [
+        { to: "css/flexbox", why: R`الـ header والكروت` },
+        { to: "css/form و label", why: R`فورم التسجيل` },
+        { to: "css/contrast ratio", why: R`الثيم والوضع الغامق` },
+      ],
       l: 3,
       time: R`حوالي ١٠ ساعات على كذا يوم: ساعة للصورة الكبيرة والمعمل، وساعة لكل قسم من الأقسام، وساعتين للفورم، وساعتين للفحوصات والنشر`,
       goal: [
@@ -4517,6 +4522,11 @@ FCP 492ms  LCP 492ms P   CLS 0.0000
       items: [
         {
           cmd: "landing page: الصورة الكبيرة",
+          ref: [
+            { t: "MDN: Structuring documents", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents" },
+            { t: "MDN: aria-labelledby", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-labelledby" },
+            { t: "Node.js: HTTP", url: "https://nodejs.org/api/http.html" },
+          ],
           title: "صفحة هبوط لمحمصة بن من فولدر فاضي: بتعمل إيه، وأقسامها، وملفاتها، وليه HTML و CSS من غير framework",
           learn: R`تشوف المشروع كله قبل ما تكتب سطر: الصفحة بتخدم مين، وأقسامها بالترتيب، وكل ملف شغلته، وليه كل أداة اتختارت.`,
           out: R`فولدر فيه سيرفر صغير، وهيكل [[index.html]] بالأقسام السبعة اللي الـ lint بيقول عليه [[0 problems]]، وأدوات القياس متسطّبة.`,
@@ -5095,6 +5105,12 @@ console.log("nav links: " + links.length + ", broken: " + links.filter((l) => !i
         },
         {
           cmd: "landing page: الألوان والثيم والعربي",
+          ref: [
+            { t: "MDN: light-dark()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/light-dark" },
+            { t: "MDN: color-scheme", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme" },
+            { t: "W3C: Understanding SC 1.4.3 Contrast (Minimum)", url: "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" },
+            { t: "MDN: localStorage", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" },
+          ],
           title: "tokens بـ light-dark()، ووضع غامق بيمشي ورا الجهاز ومن غير وميض، وطباعة عربي سليمة: وكل لون متقاس تباينه",
           learn: R`تعمل كل ألوان الصفحة ومسافاتها في ملف واحد، والوضع الغامق في نفس السطر، وتمنع وميض الثيم، وتقيس التباين بسكربت بدل العين.`,
           out: R`[[tokens.css]] و [[theme.js]] وأول جزء من [[site.css]]، و [[contrast.mjs]] بيقول إن ٢٦ زوج ألوان كلهم من ٤٫٥٤ لـ ١٦٫٥٥.`,
@@ -5718,6 +5734,11 @@ for (const [label, fg, bg] of rows) { const r = ratio(fg, bg); console.log(label
         },
         {
           cmd: "landing page: الـ header والـ hero",
+          ref: [
+            { t: "WAI-ARIA APG: Disclosure pattern", url: "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/" },
+            { t: "MDN: aria-expanded", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-expanded" },
+            { t: "MDN: Responsive images", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Responsive_images" },
+          ],
           title: "header لازق وزجاجي ليه fallback، وقايمة موبايل بـ aria-expanded و Esc، و hero بصورة مبتعملش layout shift",
           learn: R`تبني أول شاشة يشوفها الزائر: header فوق دايمًا وشفاف وبيتقري في الوضعين، وقايمة موبايل بتتفتح وتتقفل صح بالكيبورد، و hero عنوانه بيكبر مع الشاشة وصورته محجوز مكانها.`,
           out: R`الـ header والـ hero في [[index.html]]، والأجزاء ٢ و ٣ و ٤ و ١٠ من [[site.css]]، والجزء ٢ من [[site.js]]. والقياس: القايمة مقفولة على ٣٦٠ لحد ما تتضغط، و CLS صفر والصور متأخرة ١٫٥ ثانية.`,
@@ -6230,6 +6251,11 @@ for (const [name, tag] of Object.entries(imgs)) {
         },
         {
           cmd: "landing page: المميزات والآراء والأسعار",
+          ref: [
+            { t: "MDN: :has()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has" },
+            { t: "MDN: repeat() (auto-fit و auto-fill)", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/repeat" },
+            { t: "MDN: <blockquote>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/blockquote" },
+          ],
           title: "bento بـ grid، وآراء بـ figure و blockquote، وأسعار بتبديل شهري وسنوي بـ :has() من غير JS، والباقة المميزة مقلوبة الألوان",
           learn: R`تبني نص الصفحة اللي بيقنع: شبكة مميزات بأحجام مختلفة من غير ما تكسر الموبايل، وآراء بـ HTML صح، وجدول أسعار بيتبدّل بالكيبورد والماوس من غير ولا سطر JS.`,
           out: R`أقسام المميزات والآراء والأسعار في [[index.html]]، والجزء ٥ و ٦ من [[site.css]]، والجزء ٣ من [[site.js]]. والقياس: السهم في RTL بيبدّل لـ «سنوي» والـ ٣ أسعار اتغيّروا، ومفيش overflow على ٣٢٠.`,
@@ -6711,6 +6737,12 @@ console.log("minmax " + need + "px on a 320 phone with " + room + "px: " + (need
         },
         {
           cmd: "landing page: الأسئلة والـ CTA والـ footer والحركة",
+          ref: [
+            { t: "MDN: <details>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/details" },
+            { t: "MDN: pointer-events", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/pointer-events" },
+            { t: "MDN: Document.elementFromPoint()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint" },
+            { t: "MDN: Scroll-driven animations", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll-driven_animations" },
+          ],
           title: "أسئلة بـ details name واحد بس مفتوح من غير JS، و CTA، و footer باسم المحمصة عملاق، وظهور مع السكرول ميخبيش المحتوى لو الـ JS وقع",
           learn: R`تكمّل الصفحة لآخرها: أسئلة بتتفتح بالكيبورد من غير كود، وشريط CTA، و footer، وحركة ظهور بتحترم «حركة أقل» وبتفضل الصفحة مقروءة لو أي سكربت فشل.`,
           out: R`أقسام الأسئلة والـ CTA والـ footer في [[index.html]]، والأجزاء ٧ و ٨ و ٩ من [[site.css]]، والجزء ٤ من [[site.js]]. والقياس: صفر عناصر مستخبية لو الـ JS وقع (كانوا ١٠)، والـ footer لينكاته بتتضغط.`,
@@ -7185,6 +7217,12 @@ console.log("hidden without .js guard: " + unsafe.length);`, expect: [R`details:
         },
         {
           cmd: "landing page: فورم تسجيل accessible",
+          ref: [
+            { t: "MDN: Constraint validation", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Constraint_validation" },
+            { t: "MDN: aria-describedby", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-describedby" },
+            { t: "MDN: autocomplete attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete" },
+            { t: "W3C WAI: Forms tutorial", url: "https://www.w3.org/WAI/tutorials/forms/" },
+          ],
           title: "فورم تسجيل accessible: label لكل خانة، ورسايل غلط بالعربي مربوطة بـ aria-describedby، وملخص بـ role=alert، وموبايل بيقبل الأرقام العربي، وزرار مبيبعتش مرتين",
           learn: R`تبني فورم الشخص اللي بيستخدم الكيبورد أو قارئ الشاشة أو موبايل بكيبورد عربي يقدر يملاه ويفهم غلطه ويصلّحه، والمتصفح بيقول نوع الغلط وانت بتكتب الرسالة.`,
           out: R`الفورم في [[index.html]]، و [[form.css]]، و [[digits.js]] (دوال صافية بتتختبر في Node)، و [[form.js]]، و [[form-test.mjs]] بيطبع ٨ PASS، و axe صفر والفورم فيه ٦ أخطاء ظاهرة في الوضعين.`,
@@ -7939,6 +7977,12 @@ for (const pw of ["abcdefgh", "bunn2026", "قهوة٢٠٢٦xx", "1234567"]) cons
         },
         {
           cmd: "landing page: مصفوفة المقاسات والأداء",
+          ref: [
+            { t: "web.dev: Largest Contentful Paint", url: "https://web.dev/articles/lcp" },
+            { t: "web.dev: Cumulative Layout Shift", url: "https://web.dev/articles/cls" },
+            { t: "MDN: Element.scrollWidth", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollWidth" },
+            { t: "Playwright: Emulation", url: "https://playwright.dev/docs/emulation" },
+          ],
           title: "مصفوفة ٦ مقاسات من ٣٢٠ لـ ١٤٤٠ من غير scroll أفقي، و FCP و LCP و CLS ووميض الثيم بـ Chrome على شبكة بطيئة، وتجارب «تحسين» مفرقتش",
           learn: R`تحوّل «شغالة على الموبايل؟» و «سريعة؟» لسكربتين بيطبعوا أرقام ويخرجوا بـ 1 لو فيه مشكلة، وتعرف تقرا الأرقام دي وتفرّق بين تحسين حقيقي وصدفة.`,
           out: R`[[matrix.mjs]] (٦ مقاسات، والعناصر الخارجة باسمها) و [[perf.mjs]] (شبكة ١٥٠ms و 1.6Mbps و CPU أبطأ ٤ مرات). النهائي: ٦ [[OK]]، و LCP حوالي ١٫١ ثانية، و CLS صفر حتى والصور بطيئة، والثيم قبل أول رسمة، والصفحة ٤٤ كيلو على ٣٦٠.`,
@@ -8381,6 +8425,11 @@ console.log("merge css: noise " + Math.max(span(runs.before), span(runs.after)) 
         },
         {
           cmd: "landing page: فحص accessibility والنشر والغلطات",
+          ref: [
+            { t: "Playwright: Accessibility testing", url: "https://playwright.dev/docs/accessibility-testing" },
+            { t: "axe-core: rule descriptions", url: "https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md" },
+            { t: "GitHub Pages", url: "https://docs.github.com/en/pages" },
+          ],
           title: "axe صفر في ٣ حالات، ومشي بالكيبورد بس على ٣١ وقفة، وفحص HTML من غير متصفح للـ CI، والنشر على GitHub Pages تحت مسار فرعي، وكل الغلطات اللي حصلت",
           learn: R`تثبت إن الصفحة شغالة لكل الناس بأرقام، وتنشرها من غير ما المسارات تقع، وتراجع كل غلطة حصلت في المشروع كطريقة تفكير تنفع في أي مشروع جاي.`,
           out: R`[[a11y.mjs]] بيطبع صفر violations في الفاتح والغامق والموبايل والقايمة مفتوحة، و ٣١ وقفة كيبورد كلها بحلقة ومش مستخبية، و [[lint.mjs]] بيطبع [[0 problems]]، والصفحة بتتحمّل كاملة تحت [[/habba-landing/]] بصفر طلبات فاشلة.`,

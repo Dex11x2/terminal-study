@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: R`مشروع كامل: portfolio و dashboard`,
+      pre: [
+        { to: "css/landing page: الصورة الكبيرة", why: R`نفس طريقة الشغل والأدوات: serve و lint و contrast` },
+        { to: "css/table", why: R`جدول الأعضاء والحصص` },
+      ],
       l: 3,
       time: R`حوالي ١٠ ساعات على كذا يوم: ساعة للخريطة والمعمل، وحوالي ٤ ساعات للـ portfolio (٣ خطوات)، و ٤ للـ dashboard (٣ خطوات)، وساعة للمراجعة النهائية والنشر. والتمارين والمشاريع فوق كده`,
       goal: [
@@ -72,6 +76,11 @@ node serve.mjs`,
       items: [
         {
           cmd: R`مشروع portfolio و dashboard: الخريطة`,
+          ref: [
+            { t: "MDN: URL", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL" },
+            { t: "MDN: dir attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/dir" },
+            { t: "Playwright: Library", url: "https://playwright.dev/docs/library" },
+          ],
           title: R`بنبني إيه ولمين، وشكل الأجزاء، وليه HTML و CSS و JS من غير framework، والمعمل اللي هنقيس بيه كل خطوة`,
           learn: R`تبدأ مشروع واجهة صح من أول ساعة: تعرف بتبني إيه ولمين، وترسم الأجزاء، وتختار كل أداة بسبب مكتوب، وتعمل معمل (سيرفر صغير وسكربتات قياس بـ Chrome الحقيقي) قبل ما تكتب أول سطر CSS.`,
           out: R`فولدر [[pd-lab/]] فيه [[serve.mjs]] شغال على بورتين، و [[contrast.mjs]] بيطبع نسبة التباين لكل زوج ألوان ويقول AA ولا FAIL.`,
@@ -541,6 +550,11 @@ console.log("failing pairs: " + fail);`,
         },
         {
           cmd: R`بورتفوليو ١: الهيكل واللغتين و dir`,
+          ref: [
+            { t: "W3C i18n: Structural markup and right-to-left text", url: "https://www.w3.org/International/questions/qa-html-dir" },
+            { t: "MDN: lang attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/lang" },
+            { t: "MDN: data-* attributes", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/data-*" },
+          ],
           title: R`صفحة رئيسية بالعربي والإنجليزي: زرار بيقلب lang و dir، و tokens، وخطوط النظام، ونص إنجليزي جوه العربي من غير ما يتلخبط، ومن غير ما الصفحة تتنطط`,
           learn: R`تبني هيكل صفحة بلغتين صح: [[lang]] و [[dir]] على [[<html>]]، و logical properties عشان الـ CSS ميتغيرش لما الاتجاه يتقلب، و dictionary بيبدّل النصوص والـ [[aria-label]] و [[<title>]]، واختيار اللغة بيتحفظ ويتطبق قبل الرسم، والأرقام والإنجليزي جوه سطر عربي بيتعرضوا صح.`,
           out: R`[[index.html]] و [[tokens.css]] و [[boot.js]] و [[i18n.js]]: الزرار بيقلب الصفحة كلها، والـ refresh بيفتكر اللغة، و CLS بالإنجليزي صفر، و [[keys.mjs]] بيقول [[missing in en: none]] للتلات صفحات.`,
@@ -1240,6 +1254,11 @@ process.exitCode = missing.length ? 1 : 0;`,
         },
         {
           cmd: R`بورتفوليو ٢: الكروت والفلتر والظهور بالسكرول`,
+          ref: [
+            { t: "MDN: Intersection Observer API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API" },
+            { t: "MDN: :has()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has" },
+            { t: "MDN: prefers-reduced-motion", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion" },
+          ],
           title: R`شبكة كروت بتتظبط لوحدها، وفلتر بـ :has() من غير ولا سطر JS، وكارت كله لينك، وظهور بالسكرول بيحترم reduced motion وبيشتغل من غير JS ومش بيأخر الـ LCP`,
           learn: R`تبني الـ CSS كله للصفحة: header زجاجي sticky، وأزرار بمتغيرات، و grid بـ [[auto-fill]] و [[minmax(min(100%, …))]]، وفلتر بـ radios و [[:has()]]، وكارت كله قابل للضغط من غير ما تلف الكارت في [[<a>]]، وظهور بالسكرول بـ IntersectionObserver بيتلغي مع reduced motion ومن غير JS.`,
           out: R`[[site.css]] و [[reveal.js]]: كل فلتر بيعرض عدد الكروت الصح (5 و 3 و 2 و 1 و 1)، والكروت بتظهر بالسكرول، ومن غير JS أو مع reduced motion كلها ظاهرة من الأول، و LCP مش متأخر.`,
@@ -1719,6 +1738,13 @@ console.log("filters without a card: " + (filters.filter(f => !tags.has(f)).join
         },
         {
           cmd: R`بورتفوليو ٣: دراسة الحالة والطباعة و OG`,
+          ref: [
+            { t: "MDN: Printing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Printing" },
+            { t: "MDN: @page", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@page" },
+            { t: "The Open Graph protocol", url: "https://ogp.me/" },
+            { t: "MDN: View Transition API", url: "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API" },
+            { t: "Playwright: page.pdf()", url: "https://playwright.dev/docs/api/class-page#page-pdf" },
+          ],
           title: R`صفحة دراسة حالة بانتقال View Transition من الكارت، و CV بيتطبع صفحة A4 واحدة بـ @media print و @page، وصورة مشاركة 1200×630 بيعملها Chrome، و Open Graph صح`,
           learn: R`تكمّل الـ portfolio: صفحة دراسة حالة (المشكلة والقرارات والنتيجة بجدول)، وانتقال بين الصفحتين بـ [[@view-transition]] و [[view-transition-name]] بيتلغي مع reduced motion، و CV شكله سليم على الشاشة وبيطلع صفحة واحدة على الورق، وصورة [[og.png]] من HTML، و meta tags بتخلي اللينك يبان بكارت لما يتبعت.`,
           out: R`[[work/tide-notes.html]] و [[case.css]] و [[cv.html]] و [[cv.css]] و [[print.js]] و [[make-og.mjs]]: [[pagereveal]] بيقول إن فيه انتقال، والـ CV = صفحة PDF واحدة من غير header، و [[og.png]] مقاسه 1200×630.`,
@@ -2350,6 +2376,11 @@ process.exitCode = problems.length ? 1 : 0;`,
         },
         {
           cmd: R`داشبورد ١: الـ shell والـ sidebar والأرقام`,
+          ref: [
+            { t: "MDN: inert", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inert" },
+            { t: "MDN: visibility", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/visibility" },
+            { t: "MDN: <dialog>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog" },
+          ],
           title: R`App shell بـ grid-template-areas، و sidebar بيصغر لأيقونات على الكمبيوتر ويبقى drawer على الموبايل بـ inert ورجوع الفوكس، وكروت أرقام فيها sparkline و progress ring بـ SVG من غير مكتبة`,
           learn: R`تبني هيكل أي لوحة تحكم: sidebar و topbar و main بـ grid areas، و sidebar بيتقفل لأيقونات (والأسامي لسه بتتقري) وبيتحول drawer تحت 64rem بـ [[visibility]] و [[inert]] و Esc، وكروت KPI بأرقام [[Intl]] و sparkline بـ [[<polyline>]] و ring بـ [[pathLength="100"]]، ومن غير ما الكروت تتنطط لما الأرقام توصل.`,
           out: R`[[index.html]] و [[boot.js]] و [[shell.js]] و [[kpi.js]] و [[lib.js]] وأول نص [[app.css]]: الـ sidebar بيبقى 76px وأسامي اللينكات لسه موجودة، والـ drawer بيفتح والفوكس جواه و [[main.inert = true]]، و Esc بيرجّع الفوكس لزرار القايمة، والكروت فيها 44 و 73 و 186,400 ج.م. و 78%.`,
@@ -3145,6 +3176,12 @@ console.log("delta: " + (d.up ? "+" : "") + d.pct + "% | from zero: " + delta(5,
         },
         {
           cmd: R`داشبورد ٢: جدول الأعضاء والحالة في الرابط`,
+          ref: [
+            { t: "MDN: URLSearchParams", url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams" },
+            { t: "MDN: History.pushState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/pushState" },
+            { t: "MDN: popstate event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event" },
+            { t: "MDN: aria-sort", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-sort" },
+          ],
           title: R`جدول أعضاء بعناوين sticky وترتيب بـ aria-sort وبحث عربي وفلاتر وصفحات محفوظين في الرابط (Back شغال)، وكروت على الموبايل، وحالات التحميل والخطأ والفاضي من غير ما الصفحة تتنطط`,
           learn: R`تبني جدول بيانات حقيقي: الحالة كلها في [[location.search]] (تتبعت وتتحفظ وتترجع بـ Back)، ودوال نقية بتفلتر وترتب وتقسّم صفحات وبتتختبر في Node، وبحث بيلاقي «آدم» لو كتبت «ادم»، و [[pushState]] للأفعال و [[replaceState]] للكتابة، وعناوين sticky متكسرهاش [[overflow]]، و skeleton بنفس مقاس الصف، ورسالة خطأ بزرار «جرّب تاني» بياخد الفوكس، وكروت بـ [[data-label]] تحت 40rem.`,
           out: R`[[gen-data.mjs]] و [[state.js]] و [[table.js]] وجزء الجدول في [[app.css]]: [[?status=frozen&sort=visits&dir=desc]] بيفتح على نفس الجدول في أي تاب، و Back بيرجّع الترتيب، و [[?page=99]] بيبقى [[?page=6]]، والبحث مبيزوّدش الـ history، و CLS صفر على 390 والبيانات متأخرة 1.2 ثانية.`,
@@ -3920,6 +3957,12 @@ console.log("round trip: " + toQuery(parseState("?dir=desc&sort=visits&status=ac
         },
         {
           cmd: R`داشبورد ٣: جدول الحصص و dialog والتنبيهات`,
+          ref: [
+            { t: "MDN: <dialog>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog" },
+            { t: "MDN: HTMLDialogElement.requestClose()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/requestClose" },
+            { t: "MDN: HTMLDialogElement cancel event", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/cancel_event" },
+            { t: "MDN: setCustomValidity()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setCustomValidity" },
+          ],
           title: R`جدول حصص أسبوعي بـ CSS Grid (اليوم عمود والوقت صفوف) بيتسكرول بالعرض على الموبايل، و <dialog> للإضافة والحجز برسايل تحقق عربي، و toasts بتتقري، و dark mode من غير وميض`,
           learn: R`تبني جدول مواعيد على grid: كل حصة زرار مكانه من custom properties ([[--col]] و [[--row]] و [[--span]])، وعمود الوقت sticky والأيام بـ scroll-snap؛ و [[<dialog>]] بـ [[showModal()]] و [[method="dialog"]] و [[returnValue]] وقفل بالضغط على الخلفية، ورسايل [[setCustomValidity]] بالعربي؛ و toasts في live region موجودة من الأول؛ وثيم داكن بـ tokens بيتحفظ.`,
           out: R`[[schedule.js]] و [[ui.js]] و [[app.js]] وآخر جزء في [[app.css]]: ١٥ حصة في مكانها، والحجز بيكتب toast «اتحجز مكان في …»، والـ dialog بيرجّع الفوكس للزرار اللي فتحه، و Esc بيقفل، والضغط على padding الـ dialog مبيقفلوش، والصفحة من غير scroll أفقي من 360 لـ 1440 والجدول هو اللي بيتسكرول.`,
@@ -4561,6 +4604,12 @@ console.log("ampm: " + ["07:00", "12:30", "00:15", "20:30"].map(ampm).join(" | "
         },
         {
           cmd: R`المراجعة النهائية: مقاسات و a11y وأداء ونشر`,
+          ref: [
+            { t: "Playwright: Accessibility testing", url: "https://playwright.dev/docs/accessibility-testing" },
+            { t: "Playwright: page.addInitScript()", url: "https://playwright.dev/docs/api/class-page#page-add-init-script" },
+            { t: "Google Search: canonical URLs", url: "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls" },
+            { t: "GitHub Pages", url: "https://docs.github.com/en/pages" },
+          ],
           title: R`قبل ما تسلّم: مصفوفة مقاسات من 360 لـ 1440، و axe في الثيمين واللغتين (وليه axe سكت عن كلمة «نشط»)، ومشي بالكيبورد، و CLS و LCP على موبايل بطيء، والنشر على GitHub Pages تحت /repo/، وكل الغلطات في جدول`,
           learn: R`تعمل مراجعة تسليم كاملة بسكربتات بتتعاد في ثواني: overflow على ٦ مقاسات لكل صفحة، و axe على كل صفحة × ثيمين × لغتين ومع الـ dialog والـ drawer مفتوحين، وترتيب الـ Tab، و CLS و LCP بالوسط بتاع ٣، وتعرف حدود axe (بيعدّي كلمات عربي من غير ما يفحصها)، وتنشر صح تحت مسار فرعي، وتعرف المشروع بيكبر إزاي وبيتكلف كام.`,
           out: R`٤ سكربتات بتطبع: صفر overflow في ٢٤ خانة، و صفر violations في ٢٠ فحص axe، و CLS = 0 في كل الصفحات، و LCP حوالي 220–320ms (موبايل و CPU ×4)، و [[0]] طلبات 404 تحت [[/nadine-site/]]، وجدول بالـ ٣٠ غلطة وتجربة.`,

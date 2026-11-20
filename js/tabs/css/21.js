@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "بنك تمارين HTML و CSS",
+      pre: [
+        { to: "css/box model", why: R`المقاسات اللي كل تمرين بيقيسها` },
+        { to: "css/grid", why: R`تمارين الـ layouts` },
+      ],
       l: 2,
       time: R`حوالي ١٠ ساعات لو حليت كل حاجة بإيدك: ساعة ونص لكل درس، ونص ساعة للفحص في كل درس`,
       goal: [
@@ -3122,6 +3126,12 @@ p { margin: 0; }
       items: [
         {
           cmd: "أشكال بالـ CSS",
+          ref: [
+            { t: "MDN: Overview of CSS shapes", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Shapes/Overview" },
+            { t: "MDN: clip-path", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/clip-path" },
+            { t: "MDN: mask", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/mask" },
+            { t: "MDN: radial-gradient()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/gradient/radial-gradient" },
+          ],
           title: "ارسم ١٠ أشكال بالـ CSS بس: مثلث ودايرة وتذكرة وقلب ونجمة وشطرنج",
           learn: R`تحوّل أي شكل لسؤالين: مقاسه من برا كام، وأنهي أداة CSS بترسمه (border ولا radius ولا gradient ولا clip-path ولا pseudo-element).`,
           out: R`صفحة فيها ١٠ أشكال بتعدّي الفحص الذاتي ١٢ من ١٢، ودالتين بيولّدوا [[clip-path]] لأي مضلّع أو نجمة وبيعدّوا ١٠ اختبارات.`,
@@ -3711,6 +3721,11 @@ console.log("top+right 135: " + tip(["top", "right"], 135));`, expect: [R`star p
         },
         {
           cmd: "layouts بالـ flex والـ grid",
+          ref: [
+            { t: "MDN: Realizing common layouts using grids", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Grid_layout/Common_grid_layouts" },
+            { t: "MDN: grid-template-areas", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-areas" },
+            { t: "MDN: Basic concepts of flexbox", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Flexible_box_layout/Basic_concepts" },
+          ],
           title: "ابني ٨ layouts بتتطلب في كل شغل وأثبت إنها سليمة على 1200 و 360",
           learn: R`ترسم أي layout كصناديق على عرضين قبل الكود، وتختار flex لصف واحد و grid للصفوف والعواميد مع بعض، وتقيس النتيجة بأرقام.`,
           out: R`صفحة فيها ٨ layouts بتعدّي فحص ذاتي ١١ من ١١ على 1200 وعلى 360، وتلات دوال بتحسب الـ auto-fit والـ span قبل ما المتصفح يحسبهم.`,
@@ -4265,6 +4280,11 @@ console.log("bento big tile: " + spanWidth(2, col, 12) + "x" + spanWidth(2, 120,
         },
         {
           cmd: "صفحات بتفيض على 360",
+          ref: [
+            { t: "MDN: Overflowing content", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Overflow" },
+            { t: "MDN: overflow-wrap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-wrap" },
+            { t: "MDN: min-width", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-width" },
+          ],
           title: "صفحة بتعمل scroll أفقي على الموبايل: لاقي العنصر وصلّحه (٨ حالات)",
           learn: R`تلاقي العنصر اللي مسبب الـ scroll الأفقي في دقيقة بكود في الـ Console بدل ما تشيل CSS واحدة واحدة، وتصلّح السبب نفسه مش العَرَض.`,
           out: R`صفحة فيها ٨ أسباب حقيقية للفيضان بتعدّي من [[0 من 8]] لـ [[8 من 8]]، وفحص بيكشف الحيلة بتاعة [[overflow-x: hidden]] على الـ body.`,
@@ -4706,6 +4726,12 @@ for (const f of ["bad.css", "good.css"]) { const r = risks(fs.readFileSync(f, "u
         },
         {
           cmd: "صلّح الكود البايظ",
+          ref: [
+            { t: "MDN: position (sticky)", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position" },
+            { t: "MDN: Stacking context", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Positioned_layout/Stacking_context" },
+            { t: "MDN: Popover API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API" },
+            { t: "Tailwind CSS: Styling based on parent state", url: "https://tailwindcss.com/docs/hover-focus-and-other-states#styling-based-on-parent-state" },
+          ],
           title: "١٠ أخطاء CSS حقيقية: الـ sticky والمودال تحت الهيدر و 100vh و margin-left في العربي",
           learn: R`تمشي من العَرَض («الفهرس مش بيلزق») للقاعدة اللي عاملاه بترتيب ثابت في DevTools، وتصلّح السبب بأقل تغيير، وتثبت إنه اتصلّح بالقياس.`,
           out: R`صفحة فيها ١٠ أخطاء بتعدّي من [[0 من 11]] لـ [[11 من 11]] على 360 وعلى 1200، ومعاها linter صغير بـ Node بيلقط ٧ منهم من ملف الـ CSS قبل ما تفتح المتصفح.`,
@@ -5134,6 +5160,12 @@ for (const f of ["bad.css", "good.css"]) { const r = lint(fs.readFileSync(f, "ut
         },
         {
           cmd: "توقّع الـ cascade",
+          ref: [
+            { t: "MDN: Cascade layers", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Cascade_layers" },
+            { t: "MDN: Specificity", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity" },
+            { t: "MDN: @scope", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@scope" },
+            { t: "MDN: revert-layer", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/revert-layer" },
+          ],
           title: "مين يكسب؟ ١٤ لغز بـ :is() و :where() و :has() و @layer و !important",
           learn: R`تحسب مين يكسب في أي تعارض بأربع أسئلة بالترتيب (important؟ وأنهي layer؟ والـ specificity كام؟ ومين الأخير؟) قبل ما تفتح DevTools.`,
           out: R`١٤ لغز تتوقعهم على ورقة وفحص بيقارن توقعك باللي Chrome حسبه، ودالة [[specificity()]] بتحسب (a, b, c) لأي selector وبتعدّي ١٥ اختبار.`,
@@ -5717,6 +5749,11 @@ console.log("id vs 9 classes: " + compareSpecificity(specificity("#a"), specific
         },
         {
           cmd: "accessibility: لحد axe صفر",
+          ref: [
+            { t: "axe-core: rule descriptions", url: "https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md" },
+            { t: "axe: button-name rule", url: "https://dequeuniversity.com/rules/axe/4.10/button-name" },
+            { t: "MDN: ARIA", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA" },
+          ],
           title: "صلّح فورم اشتراك وأزرار أيقونات لحد ما axe يقول صفر، وبعدين لاقي اللي axe مش شايفه",
           learn: R`تشغّل axe من الـ Console على أي صفحة وتقرا كل violation (القاعدة والعنصر والتصليح)، وتعرف إن «axe صفر» بداية مش نهاية: فيه حاجات بتتقاس بفحص تاني وبالكيبورد بإيدك.`,
           out: R`صفحة بتعدّي من ٨ violations لصفر في axe 4.14، ومن [[0 من 10]] لـ [[10 من 10]] في فحص ذاتي بيلقط ٣ حاجات axe سكت عنها: placeholder مكان label، و div بيتداس عليه، وتباين الكلام العربي.`,
@@ -6185,6 +6222,11 @@ console.log("inputs " + inputs + ", labelled " + ids.filter(id => fors.includes(
         },
         {
           cmd: "مسائل بالـ JS على الصفحة",
+          ref: [
+            { t: "W3C: relative luminance (WCAG 2.2)", url: "https://www.w3.org/TR/WCAG22/#dfn-relative-luminance" },
+            { t: "MDN: Element.innerHTML (security)", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML" },
+            { t: "MDN: clamp()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp" },
+          ],
           title: "٤ مسائل بتتصحح لوحدها: جدول من بيانات، ونسبة التباين، و px لـ rem، و clamp() من مقاسين",
           learn: R`تكتب منطق الصفحة كدوال صافية (pure functions) بتاخد بيانات وترجّع نص أو رقم، وتختبرها من غير متصفح، وبعدين توصّلها بالـ DOM في سطر واحد.`,
           out: R`٥ دوال ([[buildTable]] و [[contrastRatio]] و [[passesAA]] و [[pxToRem]] و [[fluidClamp]]) بتعدّي ١٥ اختبار هنا في الصفحة، ومستخدمة في صفحة حقيقية اتقاست في Chrome على ٤ عروض.`,
@@ -6752,6 +6794,11 @@ console.log(fluidClamp(16, 32, 360, 1200));`, expect: [R`<td>&lt;b&gt;`, R`<td>0
         },
         {
           cmd: "صفحات من وصف",
+          ref: [
+            { t: "MDN: Aligning items in a flex container", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Flexible_box_layout/Aligning_items" },
+            { t: "MDN: order", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/order" },
+            { t: "MDN: :has()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has" },
+          ],
           title: "ابني ٣ أجزاء من وصف مكتوب بس: باقات أسعار، وشاشة دخول، واختيار توصيل بـ :has()",
           learn: R`تحوّل وصف مكتوب (من عميل أو مدير منتج) لأرقام وحالات، وتبني الـ HTML الأول من غير CSS، وبعدين الموبايل، وبعدين الشاشة العريضة، وبعدين الحالات (اختيار وفوكس)، وتثبت كل جملة في الوصف بسطر في الفحص.`,
           out: R`٣ أجزاء بتعدّي فحص ذاتي [[8 من 8]] على 1200 و [[7 من 7]] على 360، والحل الغلط اللي «شكله قريب» بيقع في [[1 من 8]].`,
