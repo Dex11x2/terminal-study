@@ -1045,12 +1045,988 @@ axe mobile dark en violations 0  | No projects of this type yet. / Mobile
           t: R`صفحة دراسة حالة تانية بـ View Transition`,
           what: R`اعمل [[work/bus-board.html]] لمشروع لوحة الأتوبيس بنفس هيكل [[tide-notes.html]]، و [[view-transition-name]] مختلف للصورة، وحوّل كارتها في الرئيسية للينك. وزوّد في [[i18n.js]] الكلمات الإنجليزي بتاعتها، وفي [[check-portfolio.mjs]] الصفحة الجديدة في الـ matrix و axe. من دروس «بورتفوليو ٢» و «بورتفوليو ٣».`,
           done: R`الضغط على الكارت بيعمل انتقال (المتغير [[__vt]] = yes)، والاسم مش متكرر في نفس الصفحة (لو اتكرر الانتقال بيتلغي)، والـ matrix صفر overflow، و axe صفر في اللغتين.`,
+          dir: R`pd-lab`,
+          cont: true,
+          sol: R`**الملفات:** صفحة جديدة [[portfolio/work/bus-board.html]]، وسطرين في [[portfolio/css/site.css]]، واللينك في كارت الرئيسية، والكلمات الإنجليزي في [[portfolio/js/i18n.js]]، والصفحة في سكربتين القياس ([[check-portfolio.mjs]] و [[keys.mjs]]). [[case.css]] زي ما هو: الصفحة الجديدة بتلبس نفس الهيكل بالظبط.
+
+~~~html portfolio/work/bus-board.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="tBus">دراسة حالة لوحة الأتوبيس | نادين فؤاد</title>
+  <meta name="description" content="شاشة مواعيد في محطة أتوبيس: بتتحدّث لوحدها، ومقروءة من ٥ متر، ومبتقفش لما النت يقع.">
+  <link rel="canonical" href="https://nadine.example/work/bus-board.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="دراسة حالة: لوحة مواعيد الأتوبيس">
+  <meta property="og:description" content="شاشة محطة مقروءة من ٥ متر، والشكاوى من ١٤ في الشهر لـ ١.">
+  <meta property="og:url" content="https://nadine.example/work/bus-board.html">
+  <meta property="og:image" content="https://nadine.example/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="../img/icon.svg" type="image/svg+xml">
+  <script src="../js/boot.js"></script>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/site.css">
+  <link rel="stylesheet" href="../css/case.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
+  <header class="top">
+    <a class="brand" href="../" data-i18n="name">نادين فؤاد</a>
+    <nav aria-label="الأقسام" data-i18n-label="navLabel">
+      <a href="../#work" data-i18n="navWork">الشغل</a>
+      <a href="../#contact" data-i18n="navContact">تواصل</a>
+    </nav>
+    <button class="lang" type="button" id="lang" lang="en">English</button>
+  </header>
+
+  <main id="main">
+    <article class="case">
+      <header class="case-head">
+        <p class="eyebrow" data-i18n="busKind">دراسة حالة · ٢٠٢٤</p>
+        <h1 data-i18n="busTitle">لوحة مواعيد الأتوبيس: شاشة بتتقري من بعيد</h1>
+        <div class="thumb t2" aria-hidden="true"></div>
+      </header>
+      <dl class="meta">
+        <div><dt data-i18n="mRole">دوري</dt><dd data-i18n="bRoleV">الشاشة كلها والتحديث اللحظي</dd></div>
+        <div><dt data-i18n="mTime">المدة</dt><dd data-i18n="bTimeV">٦ أسابيع</dd></div>
+        <div><dt data-i18n="mStack">الأدوات</dt><dd dir="ltr">HTML · CSS Grid · Server-Sent Events</dd></div>
+      </dl>
+      <h2 data-i18n="cProblem">المشكلة</h2>
+      <p data-i18n="bProblemT">الشاشة القديمة كانت بتحدّث الصفحة كلها كل دقيقة، فبتفضى ثانيتين، والخط صغير ميتقريش غير من قريب، ولما النت يقع بتفضل واقفة على مواعيد قديمة من غير ما حد يعرف.</p>
+      <h2 data-i18n="cDecisions">القرارات</h2>
+      <ol>
+        <li data-i18n="bd1">السيرفر بيبعت التغيير بس بـ Server-Sent Events، والصف اللي اتغير هو اللي بيتحدّث.</li>
+        <li data-i18n="bd2">جدول بـ CSS Grid بـ ٣ أعمدة بس (الخط، والاتجاه، والدقايق) وخط بيكبر مع عرض الشاشة.</li>
+        <li data-i18n="bd3">لو مفيش تحديث من ٩٠ ثانية، شريط بيقول «المواعيد ممكن تكون اتأخرت».</li>
+      </ol>
+      <h2 data-i18n="cResults">النتيجة</h2>
+      <table class="results">
+        <caption data-i18n="bCap">قبل وبعد (أول شهرين)</caption>
+        <thead><tr><th scope="col" data-i18n="rMetric">المقياس</th><th scope="col" data-i18n="rBefore">قبل</th><th scope="col" data-i18n="rAfter">بعد</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" data-i18n="br1">أبعد مسافة الشاشة بتتقري منها</th><td dir="ltr">2 m</td><td dir="ltr">5 m</td></tr>
+          <tr><th scope="row" data-i18n="br2">شكاوى «الشاشة واقفة» في الشهر</th><td>14</td><td>1</td></tr>
+        </tbody>
+      </table>
+      <p><a href="../#work" data-i18n="back">ارجع للمشاريع</a></p>
+    </article>
+  </main>
+  <footer class="foot"><p><span data-i18n="rights">كل الحقوق محفوظة</span> © 2026</p></footer>
+  <script src="../js/i18n.js"></script>
+</body>
+</html>
+~~~
+
+~~~css portfolio/css/site.css (السطرين اللي اتغيروا)
+.t2 { --a: #2f4b7c; --b: #6b8fd1; view-transition-name: bus-thumb; }
+…
+::view-transition-group(tide-thumb), ::view-transition-group(bus-thumb) { animation-duration: 0.35s; animation-timing-function: var(--ease); }
+~~~
+
+~~~html portfolio/index.html (عنوان الكارت التاني بقى لينك)
+          <h3><a href="work/bus-board.html" data-i18n="p2">لوحة مواعيد الأتوبيس</a></h3>
+~~~
+
+~~~js portfolio/js/i18n.js (في dict.en، قبل r1)
+    tBus: "Bus departures board case study | Nadine Fouad", busKind: "Case study · 2024", busTitle: "Bus departures board: a screen you can read from afar",
+    bRoleV: "The whole screen and the live updates", bTimeV: "6 weeks",
+    bProblemT: "The old screen reloaded the whole page every minute, so it went blank for two seconds, the text was too small to read unless you stood close, and when the connection dropped it kept showing old times without anyone knowing.",
+    bd1: "The server sends only what changed over Server-Sent Events, and only that row updates.",
+    bd2: "A CSS Grid table with just 3 columns (route, direction, minutes) and text that grows with the screen width.",
+    bd3: "If no update arrives for 90 seconds, a bar says the times may be out of date.",
+    bCap: "Before and after (first two months)", br1: "Furthest distance the screen can be read from", br2: "«Screen is stuck» complaints per month",
+~~~
+
+~~~js check-portfolio.mjs (اللي اتغير)
+// the page in every list of pages (axe, matrix, vitals): 3 places
+for (const p of ["", "work/tide-notes.html", "work/bus-board.html", "cv.html"]) {
+// and under the Tide Notes transition test:
+await page.goto(B);
+await page.click('a[href="work/bus-board.html"]');
+await page.waitForLoadState("load");
+console.log("view transition on the bus page: ", await page.evaluate(() => window.__vt));
+~~~
+
+~~~js keys.mjs (لستة الصفحات)
+for (const f of ["index.html", "work/tide-notes.html", "work/bus-board.html", "cv.html"]) {
+~~~
+
+~~~view 720 720 صفحة دراسة الحالة الجديدة (الانتقال نفسه بيحصل بين صفحتين، فهنا الشكل بس)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="tBus">دراسة حالة لوحة الأتوبيس | نادين فؤاد</title>
+  <meta name="description" content="شاشة مواعيد في محطة أتوبيس: بتتحدّث لوحدها، ومقروءة من ٥ متر، ومبتقفش لما النت يقع.">
+  <link rel="canonical" href="https://nadine.example/work/bus-board.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="دراسة حالة: لوحة مواعيد الأتوبيس">
+  <meta property="og:description" content="شاشة محطة مقروءة من ٥ متر، والشكاوى من ١٤ في الشهر لـ ١.">
+  <meta property="og:url" content="https://nadine.example/work/bus-board.html">
+  <meta property="og:image" content="https://nadine.example/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
+  <script>
+// runs in <head> before the first paint: language and theme from last visit, so the page never flips after it shows
+try {
+  const lang = localStorage.getItem("lang");
+  if (lang === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
+  const theme = localStorage.getItem("theme");
+  if (theme) document.documentElement.dataset.theme = theme;
+} catch {}
+document.documentElement.classList.add("js");
+</script>
+  <style>
+/* every colour, size and curve the site uses lives here; the rest of the CSS only reads var(--x) */
+:root {
+  color-scheme: light dark;
+  --paper: #f7f5f0;
+  --surface: #ffffff;
+  --ink: #1c2230;
+  --muted: #535b6b;
+  --line: #dcd8cf;
+  --accent: #0d6b63;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefec;
+  --warm: #9c4f12;
+  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --step-3: clamp(2rem, 1.4rem + 3vw, 3.6rem);
+  --gutter: clamp(16px, 4vw, 48px);
+  --r: 14px;
+  --r-sm: 8px;
+  --shadow: 0 1px 2px rgb(20 24 33 / 0.06), 0 8px 24px rgb(20 24 33 / 0.08);
+  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+    --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+  --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+}
+</style>
+  <style>
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 5rem; -webkit-text-size-adjust: 100%; }
+body { margin: 0; font: var(--step-0)/1.7 var(--font); color: var(--ink); background: var(--paper); }
+:lang(en) body, body:lang(en) { line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: var(--accent); text-underline-offset: 0.2em; }
+img, svg { max-width: 100%; height: auto; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+main > section { padding: clamp(48px, 8vw, 96px) var(--gutter); max-width: 72rem; margin-inline: auto; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; padding: 0.5rem 1rem; background: var(--ink); color: var(--paper); z-index: 100; }
+.skip:focus { top: 1rem; }
+.sr-status { min-height: 1.7em; color: var(--muted); }
+
+/* ---------- header: sticky glass ---------- */
+.top {
+  position: sticky; top: 0; z-index: var(--z-header);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem;
+  padding: 0.75rem var(--gutter);
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border-block-end: 1px solid var(--line);
+}
+.brand { font-weight: 700; color: var(--ink); text-decoration: none; margin-inline-end: auto; }
+.top nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
+.top nav a { color: var(--ink); text-decoration: none; padding-block: 0.5rem; }
+.top nav a:hover { color: var(--accent); }
+.lang { font: inherit; padding: 0.4rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); cursor: pointer; min-height: 44px; }
+
+/* ---------- hero ---------- */
+.hero { padding-block-start: clamp(56px, 12vw, 140px); }
+.eyebrow { color: var(--warm); font-weight: 600; margin: 0; }
+.hero h1 { font-size: var(--step-3); margin: 0.25em 0 0.4em; max-width: 18ch; }
+:lang(en) .hero h1 { letter-spacing: -0.02em; }
+.lead { font-size: var(--step-1); color: var(--muted); max-width: 46ch; margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 2rem; }
+.btn {
+  --bg: var(--accent); --fg: var(--accent-ink);
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.25rem;
+  border: 2px solid var(--bg); border-radius: 999px; background: var(--bg); color: var(--fg);
+  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.btn.ghost { --bg: transparent; --fg: var(--accent); border-color: var(--accent); }
+
+/* ---------- work: cards + :has() filter ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; border: 0; padding: 0; margin: 0 0 1.5rem; }
+.filters legend { width: 100%; margin-block-end: 0.5rem; color: var(--muted); }
+.filters label {
+  display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0.25rem 0.9rem;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer;
+}
+.filters input { accent-color: var(--accent); }
+.filters label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.card { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); }
+.card h3 { font-size: var(--step-1); margin: 0.75rem 0 0.25rem; }
+.card h3 a { color: var(--ink); }
+.card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r); }
+.card:has(a:hover) { border-color: var(--accent); }
+.card p { margin: 0 0 0.75rem; color: var(--muted); }
+.thumb { aspect-ratio: 16 / 9; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--a, #0d6b63), var(--b, #9c4f12)); }
+.t1 { --a: #0d6b63; --b: #4aa79d; view-transition-name: tide-thumb; }
+.t2 { --a: #2f4b7c; --b: #6b8fd1; view-transition-name: bus-thumb; }
+.t3 { --a: #7a3e65; --b: #c97fa9; }
+.t4 { --a: #6b5b1d; --b: #c2a64a; }
+.t5 { --a: #3c3c3c; --b: #9a9a9a; }
+.tags { list-style: none; padding: 0; margin: auto 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tags li { font-size: 0.85rem; padding: 0.1rem 0.6rem; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); direction: ltr; }
+
+.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),
+.work:has(input[value="a11y"]:checked) .card:not([data-tags~="a11y"]),
+.work:has(input[value="api"]:checked) .card:not([data-tags~="api"]),
+.work:has(input[value="design"]:checked) .card:not([data-tags~="design"]) { display: none; }
+
+/* ---------- scroll reveal (only when JS runs) ---------- */
+.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease) var(--d, 0s), transform 0.6s var(--ease) var(--d, 0s); }
+.js [data-reveal].in { opacity: 1; transform: none; }
+
+/* ---------- about + contact ---------- */
+.about p, .contact p { max-width: 60ch; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1rem; margin: 2rem 0 0; }
+.facts div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-size: var(--step-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+.contact p:has(.btn) { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.foot { padding: 2rem var(--gutter); border-block-start: 1px solid var(--line); color: var(--muted); text-align: center; }
+
+/* ---------- page to page: View Transitions (Chrome/Edge 126+, Safari 18.2+; others just navigate) ---------- */
+@view-transition { navigation: auto; }
+::view-transition-group(tide-thumb), ::view-transition-group(bus-thumb) { animation-duration: 0.35s; animation-timing-function: var(--ease); }
+
+/* ---------- reduced motion: no reveal, no page animation ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; transform: none; transition: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* ---------- print: any page prints as plain document ---------- */
+@media print {
+  .top, .skip, .actions, .filters, .lang, #copy, .foot, .thumb { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  main > section { padding: 0 0 12pt; max-width: none; }
+  .card { box-shadow: none; break-inside: avoid; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+  a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: 0.85em; color: #333; }
+}
+</style>
+  <style>
+/* case study page: one readable column, the same thumbnail as the card (it morphs between the pages) */
+.case { max-width: 46rem; margin-inline: auto; padding: clamp(32px, 6vw, 72px) var(--gutter); }
+.case-head h1 { font-size: var(--step-3); margin: 0.2em 0 0.6em; }
+.case-head .thumb { margin-block-end: 2rem; }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1rem; margin: 0 0 2rem; }
+.meta dt { color: var(--muted); font-size: 0.9rem; }
+.meta dd { margin: 0; font-weight: 600; }
+.results { width: 100%; border-collapse: collapse; margin-block: 1rem 2rem; }
+.results caption { text-align: start; color: var(--muted); padding-block-end: 0.5rem; }
+.results th, .results td { padding: 0.6rem; border-block-end: 1px solid var(--line); text-align: start; }
+.results td { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
+  <header class="top">
+    <a class="brand" href="../" data-i18n="name">نادين فؤاد</a>
+    <nav aria-label="الأقسام" data-i18n-label="navLabel">
+      <a href="../#work" data-i18n="navWork">الشغل</a>
+      <a href="../#contact" data-i18n="navContact">تواصل</a>
+    </nav>
+    <button class="lang" type="button" id="lang" lang="en">English</button>
+  </header>
+
+  <main id="main">
+    <article class="case">
+      <header class="case-head">
+        <p class="eyebrow" data-i18n="busKind">دراسة حالة · ٢٠٢٤</p>
+        <h1 data-i18n="busTitle">لوحة مواعيد الأتوبيس: شاشة بتتقري من بعيد</h1>
+        <div class="thumb t2" aria-hidden="true"></div>
+      </header>
+      <dl class="meta">
+        <div><dt data-i18n="mRole">دوري</dt><dd data-i18n="bRoleV">الشاشة كلها والتحديث اللحظي</dd></div>
+        <div><dt data-i18n="mTime">المدة</dt><dd data-i18n="bTimeV">٦ أسابيع</dd></div>
+        <div><dt data-i18n="mStack">الأدوات</dt><dd dir="ltr">HTML · CSS Grid · Server-Sent Events</dd></div>
+      </dl>
+      <h2 data-i18n="cProblem">المشكلة</h2>
+      <p data-i18n="bProblemT">الشاشة القديمة كانت بتحدّث الصفحة كلها كل دقيقة، فبتفضى ثانيتين، والخط صغير ميتقريش غير من قريب، ولما النت يقع بتفضل واقفة على مواعيد قديمة من غير ما حد يعرف.</p>
+      <h2 data-i18n="cDecisions">القرارات</h2>
+      <ol>
+        <li data-i18n="bd1">السيرفر بيبعت التغيير بس بـ Server-Sent Events، والصف اللي اتغير هو اللي بيتحدّث.</li>
+        <li data-i18n="bd2">جدول بـ CSS Grid بـ ٣ أعمدة بس (الخط، والاتجاه، والدقايق) وخط بيكبر مع عرض الشاشة.</li>
+        <li data-i18n="bd3">لو مفيش تحديث من ٩٠ ثانية، شريط بيقول «المواعيد ممكن تكون اتأخرت».</li>
+      </ol>
+      <h2 data-i18n="cResults">النتيجة</h2>
+      <table class="results">
+        <caption data-i18n="bCap">قبل وبعد (أول شهرين)</caption>
+        <thead><tr><th scope="col" data-i18n="rMetric">المقياس</th><th scope="col" data-i18n="rBefore">قبل</th><th scope="col" data-i18n="rAfter">بعد</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" data-i18n="br1">أبعد مسافة الشاشة بتتقري منها</th><td dir="ltr">2 m</td><td dir="ltr">5 m</td></tr>
+          <tr><th scope="row" data-i18n="br2">شكاوى «الشاشة واقفة» في الشهر</th><td>14</td><td>1</td></tr>
+        </tbody>
+      </table>
+      <p><a href="../#work" data-i18n="back">ارجع للمشاريع</a></p>
+    </article>
+  </main>
+  <footer class="foot"><p><span data-i18n="rights">كل الحقوق محفوظة</span> © 2026</p></footer>
+  <script>
+// dictionary + switch: every [data-i18n] gets its text from the current language, and <html> gets lang and dir
+const dict = {
+  en: {
+    tHome: "Nadine Fouad | Front-end developer", tCase: "Tide Notes case study | Nadine Fouad", tCv: "CV | Nadine Fouad",
+    skip: "Skip to content", name: "Nadine Fouad", navLabel: "Sections", navWork: "Work", navAbout: "About", navContact: "Contact", navCv: "CV",
+    role: "Front-end developer", heroTitle: "I build fast websites anyone can use.",
+    heroLead: "6 years writing HTML, CSS and JavaScript for Arabic and English sites, with a focus on performance and accessibility.",
+    ctaWork: "See the work", ctaContact: "Get in touch", workTitle: "Selected projects", filterBy: "Filter by type",
+    fAll: "All", fWeb: "Websites", fA11y: "Accessibility", fApi: "API", fDesign: "Design",
+    p1: "Tide Notes: notes without internet", p1d: "A notes app that works offline and syncs when the connection is back.",
+    p2: "Bus departures board", p2d: "A station screen that refreshes every 30 seconds, readable from 5 metres.",
+    p3: "Clinic booking form", p3d: "7 steps became 3, and errors are announced to screen readers.",
+    p4: "Recipes API", p4d: "Search by ingredient, pagination, and a 60-second cache.",
+    p5: "Design tokens library", p5d: "Colours, spacing and type for 3 sites from one file.",
+    aboutTitle: "About", aboutText: "I started with sites for small shops, and now I work with product teams on interfaces thousands of people use every day. I like code you can read, and pages that open in under a second.",
+    f1t: "Years of experience", f2t: "Projects shipped", f3t: "Lighthouse a11y",
+    contactTitle: "Work together?", contactText: "Send me the idea and the deadline, and I'll reply within two working days.",
+    copy: "Copy email", copied: "Email copied", rights: "All rights reserved",
+    caseKind: "Case study · 2025", caseTitle: "Tide Notes: notes that work without internet",
+    mRole: "My role", mRoleV: "The whole front end and offline", mTime: "Duration", mTimeV: "10 weeks", mStack: "Stack",
+    cProblem: "The problem", cProblemT: "The sales team writes visit notes in places with weak signal, so a note is lost if the page closes before it is sent.",
+    cDecisions: "Decisions", d1: "Every note is saved to IndexedDB first, and sent in the background.",
+    d2: "A Service Worker caches the page itself, so it opens offline.", d3: "A clear mark on each note: sent or not yet.",
+    cResults: "Results", rCap: "Before and after (3-week average)", rMetric: "Metric", rBefore: "Before", rAfter: "After",
+    tBus: "Bus departures board case study | Nadine Fouad", busKind: "Case study · 2024", busTitle: "Bus departures board: a screen you can read from afar",
+    bRoleV: "The whole screen and the live updates", bTimeV: "6 weeks",
+    bProblemT: "The old screen reloaded the whole page every minute, so it went blank for two seconds, the text was too small to read unless you stood close, and when the connection dropped it kept showing old times without anyone knowing.",
+    bd1: "The server sends only what changed over Server-Sent Events, and only that row updates.",
+    bd2: "A CSS Grid table with just 3 columns (route, direction, minutes) and text that grows with the screen width.",
+    bd3: "If no update arrives for 90 seconds, a bar says the times may be out of date.",
+    bCap: "Before and after (first two months)", br1: "Furthest distance the screen can be read from", br2: "«Screen is stuck» complaints per month",
+    r1: "Page open time on 3G", r2: "Notes lost per week", back: "Back to projects",
+    print: "Print or save PDF", exp: "Experience", skills: "Skills",
+    j1: "Senior front-end developer · Trips platform company", j1a: "Cut search page LCP on mobile from 3.2 to 1.4 seconds.", j1b: "Built a shared component library for 3 teams.",
+    j2: "Front-end developer · Small design agency", j2a: "25 sites for shops and clinics, all in Arabic and English.", j2b: "Ran the agency's first accessibility audit; it became a step in every delivery.",
+  },
+};
+const ar = {};                                   // Arabic is what the HTML already says: read it once, so it isn't written twice
+document.querySelectorAll("[data-i18n]").forEach(el => (ar[el.dataset.i18n] = el.textContent));
+document.querySelectorAll("[data-i18n-label]").forEach(el => (ar[el.dataset.i18nLabel] = el.getAttribute("aria-label")));
+ar.copied = "الإيميل اتنسخ";
+dict.ar = ar;
+
+function t(key) { return dict[document.documentElement.lang]?.[key] ?? ar[key] ?? key; }
+
+function apply(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll("[data-i18n-label]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nLabel)));
+  const btn = document.getElementById("lang");
+  if (btn) { btn.textContent = lang === "ar" ? "English" : "عربي"; btn.lang = lang === "ar" ? "en" : "ar"; }
+  try { localStorage.setItem("lang", lang); } catch {}
+}
+
+if (document.documentElement.lang === "en") apply("en");   // boot.js set it from the last visit; now fill the texts
+document.getElementById("lang")?.addEventListener("click", () => apply(document.documentElement.lang === "ar" ? "en" : "ar"));
+
+const copy = document.getElementById("copy");
+copy?.addEventListener("click", async () => {
+  const status = document.getElementById("status");
+  try { await navigator.clipboard.writeText("hello@nadine.example"); status.textContent = t("copied"); }
+  catch { status.textContent = "hello@nadine.example"; }
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** في الرئيسية، كارت «لوحة مواعيد الأتوبيس» بقى بيتداس عليه زي كارت Tide Notes. لما تدوس، المستطيل الأزرق اللي فوق الكارت بيكبر ويتحرك لمكانه فوق في الصفحة الجديدة في حوالي ثلث ثانية، وباقي الصفحة بيعمل fade. الصفحة نفسها: «دراسة حالة · ٢٠٢٤» بالبرتقاني، والعنوان الكبير، والمستطيل الأزرق، وبعدين الدور والمدة والأدوات، والمشكلة، و ٣ قرارات، وجدول قبل وبعد. وبـ English كل الكلام بيتقلب، والصفحة بتبقى من الشمال لليمين.
+
+**الهيكل منسوخ، والمحتوى بس اللي جديد:** نفس الـ [[<head>]] (بـ [[canonical]] و OG للصفحة دي)، ونفس الـ header، ونفس [[<article class="case">]]. ده اللي بيخلي [[case.css]] يشتغل من غير تعديل، ولو غيّرت شكل دراسات الحالة بعدين، بتغيّره في مكان واحد.
+
+**المفاتيح:** الكلام المشترك بين صفحتين دراسة الحالة (المشكلة، والقرارات، والنتيجة، ودوري، والمدة، والأدوات، وارجع للمشاريع) بياخد نفس المفاتيح بتاعة Tide Notes ([[cProblem]] و [[mRole]]…)، فمحتاجش ترجمة جديدة. اللي خاص بالأتوبيس بياخد مفاتيح جديدة ([[busTitle]] و [[bd1]]…). العربي بيتقري من الـ HTML نفسه (زي ما [[i18n.js]] بيعمل من الوحدة)، فالإنجليزي بس هو اللي بيتكتب.
+
+**الانتقال:** [[@view-transition { navigation: auto; }]] موجود من الوحدة، وده بيشغّل الانتقال بين أي صفحتين من نفس الموقع. اللي بيخلي **المستطيل** يتحرك من مكانه في الكارت لمكانه في الصفحة الجديدة، بدل ما الصفحة كلها تعمل fade بس، هو إن العنصر في الصفحتين ليه نفس [[view-transition-name]]. الاسم متحطوط على الكلاس [[.t2]]، والكلاس ده موجود على المستطيل في الكارت وعلى المستطيل في الصفحة الجديدة، فسطر واحد غطّى الاتنين. والمدة والـ easing بتوع [[tide-thumb]] اتطبقوا على [[bus-thumb]] بنفس القاعدة.
+
+**ليه اسم مختلف (مش [[tide-thumb]] تاني):** الاسم لازم يبقى **متفرّد في الصفحة**. الرئيسية فيها الكارتين مع بعض، فلو الاتنين اسمهم [[tide-thumb]]، المتصفح ميعرفش يحرّك مين لفين. ده مش كلام نظري، اتجرّب (تحت).
+
+**الكارت كله بيتداس:** [[<a>]] جوه [[<h3>]]، و [[.card h3 a::after]] من الوحدة بيمد الـ [[::after]] على الكارت كله ([[position: absolute; inset: 0]] والكارت [[position: relative]]). فالمساحة اللي بتتداس هي الكارت، بس قارئ الشاشة بيقرا لينك واحد اسمه عنوان المشروع، مش الكارت كله بكلامه.
+
+**تجربة متعمّدة: نفس الاسم على الكارتين.** [[vt-names.mjs]] بيدوس على الكارت وبيسأل الانتقال بيحرّك أنهي مجموعات (groups)، ومعاه [[dup]] بيحط [[view-transition-name: tide-thumb]] على [[.t2]] كمان:
+
+~~~js vt-names.mjs
+// node vt-names.mjs [dup]: click the bus card and list what the View Transition animates (which named groups), and any console error
+// dup = an experiment: the same view-transition-name on two cards of one page
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ channel: "chrome" });
+const p = await b.newPage({ viewport: { width: 1280, height: 800 } });
+const msgs = []; p.on("console", m => (m.type() === "error" || m.type() === "warning") && msgs.push(m.text()));
+await p.addInitScript(() => addEventListener("pagereveal", async e => {
+  window.__vt = e.viewTransition ? "yes" : "no";
+  if (!e.viewTransition) return;
+  try { await e.viewTransition.ready; window.__groups = [...new Set(document.getAnimations().map(a => a.effect.pseudoElement).filter(x => x?.startsWith("::view-transition-group")))].join(" "); }
+  catch (err) { window.__groups = "skipped: " + err.name; }
+}));
+await p.goto("http://127.0.0.1:5501/");
+if (process.argv[2] === "dup") await p.addStyleTag({ content: ".t2 { view-transition-name: tide-thumb; }" });
+await p.click('a[href="work/bus-board.html"]');
+await p.waitForLoadState("load"); await p.waitForTimeout(400);
+console.log("vt:", await p.evaluate(() => window.__vt), "| groups:", await p.evaluate(() => window.__groups));
+console.log("console:", msgs.join(" | ") || "none");
+await b.close();
+~~~
+
+[[pagereveal]] بيتبعت للصفحة الجديدة أول ما تبقى جاهزة تترسم، و [[e.viewTransition]] بيبقى موجود لو فيه انتقال. بعد [[ready]]، كل حركة شغالة ليها [[pseudoElement]] باسم المجموعة، فالسكربت بيعرف المستطيل اتحرك لوحده ولا الصفحة عملت fade بس.
+
+~~~text node vt-names.mjs ، وبعدين node vt-names.mjs dup (اتشغّل فعلًا، Chrome 156)
+vt: yes | groups: ::view-transition-group(root) ::view-transition-group(bus-thumb)
+console: none
+
+vt: no | groups: undefined
+console: Unexpected duplicate view-transition-name: tide-thumb
+~~~
+
+السطر الأول: الانتقال بيحرّك مجموعتين، [[root]] (الصفحة كلها) و [[bus-thumb]] (المستطيل لوحده). السطر التاني: الاسم المتكرر لغى الانتقال **كله** (مش المستطيل بس)، والصفحة فتحت فجأة، و Chrome كتب السبب في الـ console. فلو الانتقال وقف فجأة بعد ما زوّدت كارت، أول حاجة تدوّر عليها: اسم متكرر.
+
+**غلطة (كانت هتحصل): الصفحة الجديدة برّه فحص الترجمة.** [[keys.mjs]] بتاع الوحدة فيه لستة صفحات مكتوبة بالإيد. من غير ما تزوّد الصفحة فيها، الفحص بيطلع أخضر وهو مبصّش عليها أصلًا. اتجرّب بإني غيّرت اسم [[bd3]] في [[dict.en]] بالقصد:
+
+~~~text cd portfolio && node ../keys.mjs (الصفحة في اللستة، و bd3 ناقص بالقصد)
+index.html             39 keys, missing in en: none
+work/tide-notes.html   28 keys, missing in en: none
+work/bus-board.html    28 keys, missing in en: bd3
+cv.html                14 keys, missing in en: none
+~~~
+
+وخرج بـ exit code 1، فلو الفحص ده في CI هيوقف الرفع. بعد ما رجّعت [[bd3]]: [[missing in en: none]] للأربع صفحات، و exit 0. نفس الكلام لـ [[check-portfolio.mjs]]: الصفحة لازم تتضاف في التلات لستات (axe، والـ matrix، والـ vitals)، وإلا هيقول صفر violations على صفحة مفحصهاش.
+
+**القياس (الأربع صفحات، اتشغّل فعلًا):**
+
+~~~text node check-portfolio.mjs (السطور المهمة)
+view transition on the case page: yes
+view transition on the bus page:  yes
+axe work/bus-board.html  light ar violations: 0
+axe work/bus-board.html  light en violations: 0
+axe work/bus-board.html  dark  ar violations: 0
+axe work/bus-board.html  dark  en violations: 0
+matrix work/bus-board.html  360 ok | 390 ok | 768 ok | 1024 ok | 1280 ok | 1440 ok
+vitals work/bus-board.html  CLS 0.0000 LCP 84ms P.
+page errors: none
+~~~
+
+وباقي الصفحات زي ما كانت: axe صفر في الـ ١٦ حالة (٤ صفحات × ثيمين × لغتين)، والـ matrix نضيف، و CLS صفر. وبالإنجليزي: [[document.title]] بقى «Bus departures board case study | Nadine Fouad» والصفحة [[dir="ltr"]].`,
         },
         {
           lvl: R`متوسط`,
           t: R`تصدير الأعضاء CSV من نفس الفلتر`,
           what: R`زرار «نزّل CSV» فوق جدول الأعضاء بيصدّر **كل** الصفوف اللي بتطابق الفلتر الحالي (مش الصفحة الحالية بس) من [[view()]] بـ [[size: Infinity]]، ومعاه BOM عشان Excel يقرا العربي. من درس «داشبورد ٢».`,
           done: R`مع [[?status=frozen]] الملف فيه ٥ صفوف وسطر عناوين، وبيتفتح في Excel بالعربي سليم، واسم الملف فيه الفلتر والتاريخ، واختبار Node بيتأكد إن الفاصلة جوه اسم بتتحط بين علامتين تنصيص.`,
+          dir: R`pd-lab`,
+          cont: true,
+          sol: R`**الملفات:** ملف جديد [[dashboard/js/csv.js]] (من غير DOM، فبيتختبر في Node)، وزرار في [[dashboard/index.html]]، وسطر import و handler في [[dashboard/js/table.js]]، واختبار [[csv.test.mjs]]. [[state.js]] زي ما هو: [[view()]] بتاعه بيعرف يرجّع كل الصفوف من غير تعديل.
+
+~~~js dashboard/js/csv.js
+// CSV for Excel: text only, no DOM, so Node can test it
+const BOM = "\uFEFF";   // tells Excel the file is UTF-8; without it Arabic opens as gibberish
+
+// one cell: quotes around it when it has a comma, a quote or a line break, and every " inside becomes ""
+// a cell that starts with = + - @ gets a ' first, so Excel shows it as text instead of running it as a formula
+export function cell(v) {
+  let s = String(v ?? "");
+  if (/^[=+\-@]/.test(s)) s = "'" + s;
+  return /[",\r\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+}
+
+export const toCSV = (head, rows) => BOM + [head, ...rows].map(r => r.map(cell).join(",")).join("\r\n") + "\r\n";
+
+// members-frozen-2026-11-20.csv: the filters that are on, then the date
+export function fileName(s, day) {
+  const parts = ["members"];
+  if (s.status !== "all") parts.push(s.status);
+  if (s.plan !== "all") parts.push(s.plan);
+  if (s.q) parts.push("search");
+  return parts.join("-") + "-" + day + ".csv";
+}
+~~~
+
+~~~js dashboard/js/table.js (سطر تحت الـ imports، والـ handler قبل addMember)
+import { toCSV, fileName } from "./csv.js";
+…
+// CSV: every row that matches the filters now (all pages, not just this one), sorted like the table
+document.getElementById("csv").addEventListener("click", () => {
+  const v = view(all, { ...state, page: 1, size: Infinity });
+  const head = ["الرقم", ...COLS];
+  const rows = v.rows.map(m => [m.id, m.name, PLAN[m.plan], STATUS[m.status], m.lastVisit, m.visits]);
+  const blob = new Blob([toCSV(head, rows)], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = fileName(state, new Date().toLocaleDateString("en-CA"));   // en-CA writes the date as 2026-11-20
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+  count.textContent = count.textContent.split(" · ")[0] + " · اتنزّل ملف فيه " + num.format(rows.length) + " عضو";   // aria-live: a screen reader hears it
+});
+~~~
+
+~~~html dashboard/index.html (جوه فورم الفلاتر، بعد «امسح الفلاتر»)
+          <button class="btn ghost" type="reset">امسح الفلاتر</button>
+          <button class="btn ghost" type="button" id="csv">نزّل CSV</button>
+~~~
+
+~~~js csv.test.mjs
+// node --test csv.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { cell, toCSV, fileName } from "./dashboard/js/csv.js";
+
+test("a comma inside a name goes between quotes", () => {
+  assert.equal(cell("فهمي، ليلى"), "فهمي، ليلى");                 // the Arabic comma ، is not a separator
+  assert.equal(cell("Fahmy, Laila"), '"Fahmy, Laila"');
+});
+test("a quote is doubled, and a line break keeps the cell in one piece", () => {
+  assert.equal(cell('نور "الكابتن" البنا'), '"نور ""الكابتن"" البنا"');
+  assert.equal(cell("سطر\nتاني"), '"سطر\nتاني"');
+});
+test("a cell that looks like a formula becomes text", () => {
+  assert.equal(cell("=HYPERLINK(1)"), "'=HYPERLINK(1)");
+  assert.equal(cell("-5"), "'-5");
+  assert.equal(cell(12), "12");
+});
+test("the file starts with the BOM and every line ends with CRLF", () => {
+  const t = toCSV(["الاسم", "الزيارات"], [["Fahmy, Laila", 3]]);
+  assert.equal(t.charCodeAt(0), 0xfeff);
+  assert.equal(t, "\uFEFFالاسم,الزيارات\r\n\"Fahmy, Laila\",3\r\n");
+});
+test("the file name carries the filters and the day", () => {
+  assert.equal(fileName({ status: "frozen", plan: "all", q: "" }, "2026-11-20"), "members-frozen-2026-11-20.csv");
+  assert.equal(fileName({ status: "all", plan: "yearly", q: "نور" }, "2026-11-20"), "members-yearly-search-2026-11-20.csv");
+});
+~~~
+
+~~~view 720 720 الـ dashboard بالزرار: «نزّل CSV» جنب «امسح الفلاتر»
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>لوحة صالة الصخرة للتسلق</title>
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 28 14 6l6 12 3-5 5 15z' fill='%231f6f8b'/%3E%3C/svg%3E">
+  <script>/* للـ preview بس: الصفحة هنا ملهاش عنوان، فملفات data/*.json جوه الصفحة، و fetch بيرجّعها بدل ما يطلبها من السيرفر */
+const LAB_DATA = {"classes.json":[{"id":1,"title":"أطفال 8–12","coach":"شادي","day":0,"start":"17:00","end":"18:30","spots":14,"booked":12},{"id":2,"title":"قوة الأصابع","coach":"رحاب","day":0,"start":"19:00","end":"20:00","spots":12,"booked":11},{"id":3,"title":"بولدرينج للمبتدئين","coach":"رحاب","day":0,"start":"20:30","end":"22:00","spots":15,"booked":15},{"id":4,"title":"بولدرينج للمبتدئين","coach":"رحاب","day":1,"start":"17:00","end":"18:30","spots":10,"booked":3},{"id":5,"title":"قوة الأصابع","coach":"رحاب","day":2,"start":"17:00","end":"18:30","spots":9,"booked":3},{"id":6,"title":"مرونة ويوجا","coach":"دينا","day":2,"start":"19:00","end":"20:00","spots":13,"booked":13},{"id":7,"title":"بولدرينج للمبتدئين","coach":"رحاب","day":2,"start":"20:30","end":"22:00","spots":15,"booked":12},{"id":8,"title":"تقنية متقدمة","coach":"مهاب","day":3,"start":"07:00","end":"08:00","spots":14,"booked":8},{"id":9,"title":"مرونة ويوجا","coach":"دينا","day":3,"start":"17:00","end":"18:30","spots":9,"booked":1},{"id":10,"title":"قوة الأصابع","coach":"رحاب","day":3,"start":"20:30","end":"22:00","spots":10,"booked":10},{"id":11,"title":"مرونة ويوجا","coach":"دينا","day":4,"start":"17:00","end":"18:30","spots":11,"booked":6},{"id":12,"title":"تسلّق بالحبل","coach":"شادي","day":4,"start":"20:30","end":"22:00","spots":11,"booked":0},{"id":13,"title":"قوة الأصابع","coach":"رحاب","day":5,"start":"07:00","end":"08:00","spots":9,"booked":1},{"id":14,"title":"تسلّق بالحبل","coach":"شادي","day":5,"start":"17:00","end":"18:30","spots":9,"booked":0},{"id":15,"title":"تقنية متقدمة","coach":"مهاب","day":5,"start":"19:00","end":"20:00","spots":8,"booked":2}],"kpi.json":{"active":44,"checkins":[59,77,60,73,74,51,81,77,74,64,68,63,79,73],"revenue":186400,"revenuePrev":171250,"renewal":78},"members.json":[{"id":1001,"name":"نور البنا","plan":"yearly","status":"active","joined":"2025-04-22","lastVisit":"2026-10-25","visits":12},{"id":1002,"name":"مريم عبد الحميد","plan":"quarterly","status":"active","joined":"2024-11-03","lastVisit":"2026-10-25","visits":15},{"id":1003,"name":"هنا منصور","plan":"pass10","status":"active","joined":"2025-02-14","lastVisit":"2026-10-24","visits":11},{"id":1004,"name":"سيف الشاذلي","plan":"pass10","status":"active","joined":"2024-11-26","lastVisit":"2026-10-24","visits":4},{"id":1005,"name":"فرح الشاذلي","plan":"quarterly","status":"active","joined":"2025-10-13","lastVisit":"2026-10-25","visits":7},{"id":1006,"name":"مريم سالم","plan":"yearly","status":"active","joined":"2025-07-02","lastVisit":"2026-10-25","visits":19},{"id":1007,"name":"سيف الجمّال","plan":"pass10","status":"frozen","joined":"2026-06-26","lastVisit":"2026-08-16","visits":0},{"id":1008,"name":"آدم الشاذلي","plan":"monthly","status":"active","joined":"2024-12-15","lastVisit":"2026-10-29","visits":8},{"id":1009,"name":"مالك سالم","plan":"pass10","status":"active","joined":"2025-08-02","lastVisit":"2026-10-26","visits":3},{"id":1010,"name":"يوسف البنا","plan":"pass10","status":"active","joined":"2026-04-17","lastVisit":"2026-10-24","visits":6},{"id":1011,"name":"يوسف الشاذلي","plan":"monthly","status":"active","joined":"2026-01-26","lastVisit":"2026-10-27","visits":21},{"id":1012,"name":"ليلى رشدي","plan":"yearly","status":"active","joined":"2025-12-15","lastVisit":"2026-10-31","visits":17},{"id":1013,"name":"سيف منصور","plan":"yearly","status":"active","joined":"2025-09-26","lastVisit":"2026-10-25","visits":14},{"id":1014,"name":"ليلى عبد الحميد","plan":"monthly","status":"active","joined":"2026-02-13","lastVisit":"2026-10-27","visits":7},{"id":1015,"name":"زياد الشاذلي","plan":"pass10","status":"expired","joined":"2025-08-18","lastVisit":"2026-09-08","visits":0},{"id":1016,"name":"سيف فهمي","plan":"quarterly","status":"active","joined":"2025-04-03","lastVisit":"2026-10-26","visits":19},{"id":1017,"name":"سلمى الجمّال","plan":"monthly","status":"active","joined":"2025-01-06","lastVisit":"2026-10-28","visits":16},{"id":1018,"name":"يوسف الشاذلي","plan":"yearly","status":"active","joined":"2025-11-22","lastVisit":"2026-10-23","visits":2},{"id":1019,"name":"زياد فهمي","plan":"yearly","status":"expired","joined":"2025-11-13","lastVisit":"2026-09-15","visits":0},{"id":1020,"name":"يوسف رشدي","plan":"pass10","status":"active","joined":"2025-07-14","lastVisit":"2026-10-29","visits":16},{"id":1021,"name":"مالك شوقي","plan":"quarterly","status":"active","joined":"2026-08-18","lastVisit":"2026-10-27","visits":17},{"id":1022,"name":"عمر النجار","plan":"pass10","status":"active","joined":"2026-06-04","lastVisit":"2026-10-31","visits":6},{"id":1023,"name":"آدم عبد الحميد","plan":"pass10","status":"active","joined":"2026-04-01","lastVisit":"2026-10-31","visits":5},{"id":1024,"name":"مريم شوقي","plan":"monthly","status":"active","joined":"2025-01-28","lastVisit":"2026-10-31","visits":16},{"id":1025,"name":"جنى رشدي","plan":"quarterly","status":"active","joined":"2025-09-12","lastVisit":"2026-10-28","visits":15},{"id":1026,"name":"ليلى رشدي","plan":"yearly","status":"expired","joined":"2025-03-26","lastVisit":"2026-08-10","visits":1},{"id":1027,"name":"يوسف شوقي","plan":"yearly","status":"active","joined":"2025-08-27","lastVisit":"2026-10-23","visits":18},{"id":1028,"name":"مريم رشدي","plan":"quarterly","status":"expired","joined":"2026-09-06","lastVisit":"2026-09-19","visits":2},{"id":1029,"name":"سيف فهمي","plan":"yearly","status":"active","joined":"2026-09-15","lastVisit":"2026-10-24","visits":13},{"id":1030,"name":"سلمى منصور","plan":"monthly","status":"active","joined":"2026-05-24","lastVisit":"2026-10-25","visits":3},{"id":1031,"name":"فرح منصور","plan":"monthly","status":"active","joined":"2026-09-29","lastVisit":"2026-10-30","visits":18},{"id":1032,"name":"ليلى فهمي","plan":"quarterly","status":"frozen","joined":"2025-07-20","lastVisit":"2026-08-18","visits":1},{"id":1033,"name":"مريم الشاذلي","plan":"monthly","status":"active","joined":"2026-01-27","lastVisit":"2026-10-27","visits":5},{"id":1034,"name":"ليلى الشاذلي","plan":"quarterly","status":"expired","joined":"2025-12-12","lastVisit":"2026-08-28","visits":0},{"id":1035,"name":"سيف الجمّال","plan":"pass10","status":"active","joined":"2026-07-06","lastVisit":"2026-10-25","visits":4},{"id":1036,"name":"مالك رشدي","plan":"yearly","status":"expired","joined":"2025-05-26","lastVisit":"2026-08-06","visits":0},{"id":1037,"name":"نور رشدي","plan":"quarterly","status":"active","joined":"2026-05-17","lastVisit":"2026-10-26","visits":5},{"id":1038,"name":"زياد الجمّال","plan":"monthly","status":"active","joined":"2025-11-11","lastVisit":"2026-10-27","visits":4},{"id":1039,"name":"مالك شوقي","plan":"monthly","status":"active","joined":"2025-02-06","lastVisit":"2026-10-24","visits":16},{"id":1040,"name":"ليلى الشاذلي","plan":"pass10","status":"active","joined":"2025-07-21","lastVisit":"2026-10-23","visits":7},{"id":1041,"name":"ليلى البنا","plan":"pass10","status":"active","joined":"2025-07-26","lastVisit":"2026-10-31","visits":14},{"id":1042,"name":"سلمى فهمي","plan":"monthly","status":"frozen","joined":"2024-12-21","lastVisit":"2026-10-08","visits":1},{"id":1043,"name":"فرح سالم","plan":"monthly","status":"active","joined":"2026-05-22","lastVisit":"2026-10-26","visits":13},{"id":1044,"name":"مالك النجار","plan":"pass10","status":"active","joined":"2024-11-30","lastVisit":"2026-10-30","visits":20},{"id":1045,"name":"تامر منصور","plan":"pass10","status":"active","joined":"2025-12-28","lastVisit":"2026-10-29","visits":2},{"id":1046,"name":"نور البنا","plan":"quarterly","status":"active","joined":"2026-02-01","lastVisit":"2026-10-29","visits":10},{"id":1047,"name":"مريم الجمّال","plan":"quarterly","status":"active","joined":"2025-05-08","lastVisit":"2026-10-25","visits":20},{"id":1048,"name":"هنا عبد الحميد","plan":"monthly","status":"active","joined":"2025-02-17","lastVisit":"2026-10-30","visits":7},{"id":1049,"name":"ليلى شوقي","plan":"yearly","status":"frozen","joined":"2026-01-19","lastVisit":"2026-09-08","visits":2},{"id":1050,"name":"فرح منصور","plan":"pass10","status":"active","joined":"2025-08-25","lastVisit":"2026-10-31","visits":18},{"id":1051,"name":"سلمى شوقي","plan":"pass10","status":"active","joined":"2026-07-26","lastVisit":"2026-10-23","visits":8},{"id":1052,"name":"زياد رشدي","plan":"quarterly","status":"active","joined":"2025-11-18","lastVisit":"2026-10-30","visits":20},{"id":1053,"name":"زياد رشدي","plan":"monthly","status":"frozen","joined":"2025-04-28","lastVisit":"2026-10-01","visits":1},{"id":1054,"name":"فرح البنا","plan":"pass10","status":"expired","joined":"2025-10-20","lastVisit":"2026-08-13","visits":0},{"id":1055,"name":"كريم رشدي","plan":"quarterly","status":"active","joined":"2026-08-09","lastVisit":"2026-10-25","visits":11},{"id":1056,"name":"جنى شوقي","plan":"monthly","status":"expired","joined":"2026-02-10","lastVisit":"2026-08-07","visits":2},{"id":1057,"name":"رنا الجمّال","plan":"quarterly","status":"active","joined":"2025-12-13","lastVisit":"2026-10-31","visits":14}]};
+const realFetch = window.fetch;
+window.fetch = (u, o) => { const m = String(u).match(/data\/([\w-]+\.json)/); return m && LAB_DATA[m[1]] ? Promise.resolve(new Response(JSON.stringify(LAB_DATA[m[1]]), { headers: { "content-type": "application/json" } })) : realFetch(u, o); };
+</script>
+  <script>
+// before the first paint: saved theme and saved sidebar state, so nothing flips after the page shows
+try {
+  const t = localStorage.getItem("theme");
+  if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+  if (localStorage.getItem("side") === "collapsed") document.documentElement.dataset.side = "collapsed";
+} catch {}
+</script>
+  <style>
+/* ---------- tokens: light, then dark (system default or the saved choice) ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f3f5f7; --surface: #ffffff; --ink: #17202a; --muted: #56606b; --line: #d9dee4;
+  --brand: #1f6f8b; --brand-ink: #ffffff; --brand-soft: #dceef4;
+  --ok: #156c2f; --ok-soft: #dcf3e3; --warn: #8a5a00; --warn-soft: #fbefd5; --bad: #b42318; --bad-soft: #fde4e1;
+  --skel: #e6eaee; --skel-hi: #f5f7f9;
+  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --r: 12px; --side-w: 15rem; --top-h: 4rem;
+  --shadow: 0 1px 2px rgb(16 24 32 / 0.06), 0 4px 16px rgb(16 24 32 / 0.06);
+  --z-top: 20; --z-drawer: 40; --z-toast: 60;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  color-scheme: dark;
+  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
+  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
+  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
+  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+} }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
+  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
+  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
+  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font: 1rem/1.6 var(--font); color: var(--ink); background: var(--bg); }
+h1, h2 { line-height: 1.3; margin: 0; }
+h1 { font-size: 1.15rem; }
+h2 { font-size: 1.3rem; margin-block-end: 1rem; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: 100; padding: 0.5rem 1rem; background: var(--ink); color: var(--bg); }
+.skip:focus { top: 1rem; }
+.sprite { position: absolute; }
+svg { width: 1.4rem; height: 1.4rem; fill: currentColor; flex: none; }
+.btn { --b: var(--brand); --f: var(--brand-ink); min-height: 44px; padding: 0.4rem 1.1rem; border: 2px solid var(--b); border-radius: 10px; background: var(--b); color: var(--f); font: inherit; font-weight: 600; cursor: pointer; }
+.btn.ghost { --b: transparent; --f: var(--brand); border-color: var(--line); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.icon-btn { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.icon-btn[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); }
+
+/* ---------- app shell: grid areas ---------- */
+.shell {
+  display: grid; min-height: 100dvh;
+  grid-template-columns: var(--side-w) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "side top" "side main";
+  transition: grid-template-columns 0.2s ease;
+}
+.shell[data-collapsed] { --side-w: 4.75rem; }
+.side { grid-area: side; position: sticky; top: 0; height: 100dvh; overflow-y: auto; background: var(--surface); border-inline-end: 1px solid var(--line); padding: 0.75rem; }
+.side-head { display: flex; align-items: center; gap: 0.5rem; min-height: 44px; margin-block-end: 1rem; font-weight: 700; }
+.logo { color: var(--brand); font-size: 1.4rem; width: 2rem; text-align: center; }
+.collapse { margin-inline-start: auto; }
+.side nav { display: grid; gap: 0.25rem; }
+.side nav a { display: flex; align-items: center; gap: 0.75rem; min-height: 44px; padding: 0.4rem 0.75rem; border-radius: 10px; color: var(--ink); text-decoration: none; }
+.side nav a:hover { background: var(--bg); }
+.side nav a[aria-current="page"] { background: var(--brand-soft); color: var(--ink); font-weight: 600; }
+.shell[data-collapsed] .side .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.shell[data-collapsed] .side-head { flex-direction: column; }
+.shell[data-collapsed] .collapse { margin: 0; }
+.shell[data-collapsed] .collapse svg { transform: scaleX(-1); }
+
+.topbar { grid-area: top; position: sticky; top: 0; z-index: var(--z-top); display: flex; align-items: center; gap: 0.75rem; min-height: var(--top-h); padding: 0.5rem 1.25rem; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(8px); border-block-end: 1px solid var(--line); }
+.topbar h1 { margin-inline-end: auto; }
+.menu { display: none; }
+main { grid-area: main; min-width: 0; padding: 1.25rem; display: grid; gap: 2rem; align-content: start; }
+main section { scroll-margin-top: calc(var(--top-h) + 1rem); min-width: 0; }   /* a grid item never shrinks below its content without this */
+.scrim { position: fixed; inset: 0; background: rgb(10 14 20 / 0.5); z-index: calc(var(--z-drawer) - 1); }
+
+/* ---------- KPI cards ---------- */
+.kpis { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); min-height: 8.5rem; display: grid; align-content: start; gap: 0.25rem; }
+.kpi p { margin: 0; }
+.k-label { color: var(--muted); font-size: 0.9rem; }
+.k-num { font-size: 1.8rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; min-height: 1.2em; }
+.k-sub { color: var(--muted); font-size: 0.9rem; }
+.delta { font-weight: 600; display: inline-block; min-width: 5em; }   /* "—" then "▲ +8.8%": same box, so the words after it stay put */
+.delta.up { color: var(--ok); } .delta.down { color: var(--bad); }
+.spark { width: 100%; height: 2.25rem; }
+.spark polyline { fill: none; stroke: var(--brand); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.ring-card { grid-template-columns: auto 1fr; align-items: center; column-gap: 1rem; }
+.ring-card .k-label { grid-column: 1 / -1; }
+.ring { width: 4.5rem; height: 4.5rem; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 3.5; }
+.ring-bg { stroke: var(--line); }
+.ring-fg { stroke: var(--brand); stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+
+/* ---------- filters + table ---------- */
+.filters { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem 1rem; margin-block-end: 0.75rem; }
+.filters label { display: grid; gap: 0.25rem; color: var(--muted); font-size: 0.9rem; }
+input, select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-height: 44px; padding: 0.3rem 0.6rem; }
+.count { margin: 0 0 0.5rem; color: var(--muted); min-height: 1.6em; }
+.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.members { width: 100%; border-collapse: collapse; }
+.members th, .members td { padding: 0 0.9rem; height: 3rem; text-align: start; border-block-end: 1px solid var(--line); white-space: nowrap; }
+.members thead th { position: sticky; top: var(--top-h); z-index: 1; background: var(--surface); box-shadow: 0 1px 0 var(--line); }
+.members th button { all: unset; cursor: pointer; font-weight: 600; display: inline-flex; gap: 0.3rem; align-items: center; min-height: 44px; }
+.members th button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+.members th button::after { content: "▲" / ""; font-size: 0.7em; color: var(--brand); visibility: hidden; }   /* the space is there before sorting, so nothing moves */
+.members th[aria-sort] button::after { visibility: visible; }
+.members th[aria-sort="descending"] button::after { content: "▼" / ""; }
+.members td.num { font-variant-numeric: tabular-nums; }
+.members tbody tr:last-child td { border-block-end: 0; }
+.badge { display: inline-block; padding: 0.05rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+.badge.active { background: var(--ok-soft); color: var(--ok); }
+.badge.frozen { background: var(--warn-soft); color: var(--warn); }
+.badge.expired { background: var(--bad-soft); color: var(--bad); }
+.skel span { display: block; height: 0.9em; border-radius: 6px; background: linear-gradient(90deg, var(--skel) 25%, var(--skel-hi) 50%, var(--skel) 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.state-row td { height: auto; padding: 2rem 1rem; text-align: center; white-space: normal; }
+.state-row.error td { color: var(--bad); }
+.pager { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-start: 0.75rem; }
+.pager button { min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; font-variant-numeric: tabular-nums; }
+.pager button[aria-current="page"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.pager button:disabled { opacity: 0.5; cursor: default; }
+
+/* ---------- schedule: 7 days x 30 half-hours ---------- */
+.hint { margin: -0.5rem 0 0.75rem; color: var(--muted); }
+.week-wrap { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline-start: 4.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.week {
+  display: grid; grid-template-columns: 4.5rem repeat(7, minmax(9rem, 1fr)); grid-template-rows: 2.5rem repeat(30, 1.75rem);
+  background: repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 3.5rem) 0 2.5rem / 100% calc(100% - 2.5rem) no-repeat;
+}
+.day { grid-row: 1; grid-column: calc(var(--col) + 2); display: grid; place-items: center; font-weight: 600; border-block-end: 1px solid var(--line); scroll-snap-align: start; }
+.hour { white-space: nowrap; grid-column: 1; grid-row: calc(var(--row) + 1) / span 2; position: sticky; inset-inline-start: 0; z-index: 1; background: var(--surface); color: var(--muted); font-size: 0.8rem; padding-inline: 0.5rem; font-variant-numeric: tabular-nums; border-inline-end: 1px solid var(--line); }
+.slot {
+  grid-column: calc(var(--col) + 2); grid-row: calc(var(--row) + 1) / span var(--span);
+  margin: 2px 4px; padding: 0.25rem 0.5rem; border: 1px solid var(--brand); border-radius: 8px; text-align: start; font: inherit; font-size: 0.85rem; line-height: 1.3; color: var(--ink); cursor: pointer; overflow: hidden;
+  background: linear-gradient(to left, var(--brand-soft) var(--fill), var(--surface) 0);
+}
+:dir(ltr) .slot { background: linear-gradient(to right, var(--brand-soft) var(--fill), var(--surface) 0); }
+.slot b { display: block; }
+.slot.full { border-style: dashed; border-color: var(--muted); }
+
+/* ---------- dialog + toasts ---------- */
+dialog { border: 0; border-radius: var(--r); padding: 0; width: min(28rem, calc(100% - 2rem)); background: var(--surface); color: var(--ink); box-shadow: 0 20px 50px rgb(0 0 0 / 0.3);
+  opacity: 0; translate: 0 12px; transition: opacity 0.2s, translate 0.2s, overlay 0.2s allow-discrete, display 0.2s allow-discrete; }
+dialog[open] { opacity: 1; translate: 0 0; }
+@starting-style { dialog[open] { opacity: 0; translate: 0 12px; } }
+dialog::backdrop { background: rgb(10 14 20 / 0.55); }
+dialog form { display: grid; gap: 1rem; padding: 1.5rem; }   /* padding on the form, so a click on the dialog itself = the backdrop */
+dialog label { display: grid; gap: 0.3rem; }
+.dlg-actions { display: flex; gap: 0.75rem; }
+.toasts { position: fixed; inset-block-end: 1rem; inset-inline-end: 1rem; z-index: var(--z-toast); display: grid; gap: 0.5rem; width: min(22rem, calc(100% - 2rem)); }
+.toast { padding: 0.75rem 1rem; border-radius: 10px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); animation: toast-in 0.25s ease; }
+@keyframes toast-in { from { opacity: 0; translate: 0 12px; } }
+
+/* ---------- under 64rem: sidebar becomes a drawer ---------- */
+@media (max-width: 63.99rem) {
+  .shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "main"; }
+  .side { --out: -100%; position: fixed; inset-block: 0; inset-inline-start: 0; z-index: var(--z-drawer); width: min(17rem, 85vw);
+    transform: translateX(var(--out)); visibility: hidden; transition: transform 0.25s ease, visibility 0s 0.25s; }
+  [dir="rtl"] .side { --out: 100%; }
+  .shell[data-open] .side { transform: none; visibility: visible; transition: transform 0.25s ease; }
+  .collapse { display: none; }
+  .menu { display: inline-grid; }
+  .shell[data-collapsed] .side .label { position: static; width: auto; height: auto; clip-path: none; }
+}
+
+/* ---------- under 40rem: rows become cards ---------- */
+@media (max-width: 40rem) {
+  .topbar { padding-inline: 0.75rem; gap: 0.5rem; }
+  .topbar h1 { font-size: 1rem; }
+  main { padding: 0.75rem; }
+  .filters label, .filters input, .filters select { width: 100%; }
+  .table-wrap { background: none; border: 0; }
+  .members thead tr { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 0.75rem; }
+  .members thead th { position: static; height: auto; padding: 0 0.6rem; border: 1px solid var(--line); border-radius: 999px; box-shadow: none; }
+  .members tbody, .members tr, .members td { display: block; }
+  .members tbody tr { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 0.5rem 0.9rem; margin-block-end: 0.75rem; }
+  .members td { height: auto; padding: 0.3rem 0; border: 0; display: grid; grid-template-columns: 7.5rem 1fr; white-space: normal; }
+  .members td::before { content: attr(data-label); color: var(--muted); }
+  .members td > .badge { justify-self: start; }   /* a grid item stretches by default */
+  .members .state-row td, .members .skel td { display: block; }
+  .members .skel td::before, .members .state-row td::before { content: none; }
+  .members .skel td { height: calc(1.6em + 0.6rem); display: flex; align-items: center; }   /* same height as a real card line */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+  <svg width="0" height="0" class="sprite" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M1 21c0-4 4-7 8-7s8 3 8 7zM16 4a4 4 0 0 1 0 8m3 9c0-3-1-5-3-6 3 0 7 2 7 6z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><path d="M4 5h16v16H4zM4 9h16M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-side" viewBox="0 0 24 24"><path d="M3 4h18v16H3zM9 4v16" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15A8 8 0 1 1 9 4a7 7 0 0 0 11 11z"/></symbol>
+  </svg>
+  <a class="skip" href="#main">اتخطّى للمحتوى</a>
+  <div class="shell" id="shell">
+    <aside class="side" id="side" aria-label="القايمة الرئيسية">
+      <div class="side-head">
+        <span class="logo" aria-hidden="true">▲</span><span class="label">الصخرة</span>
+        <button class="icon-btn collapse" id="collapse" type="button" aria-expanded="true" aria-controls="side" aria-label="القايمة الجانبية">
+          <svg aria-hidden="true"><use href="#i-side"/></svg>
+        </button>
+      </div>
+      <nav>
+        <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg><span class="label">نظرة عامة</span></a>
+        <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg><span class="label">الأعضاء</span></a>
+        <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg><span class="label">جدول الحصص</span></a>
+      </nav>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+
+    <header class="topbar">
+      <button class="icon-btn menu" id="menu" type="button" aria-expanded="false" aria-controls="side" aria-label="افتح القايمة">
+        <svg aria-hidden="true"><use href="#i-side"/></svg>
+      </button>
+      <h1>صالة الصخرة للتسلق</h1>
+      <button class="icon-btn" id="theme" type="button" aria-pressed="false" aria-label="الوضع الداكن"><svg aria-hidden="true"><use href="#i-moon"/></svg></button>
+      <button class="btn" id="add" type="button">عضو جديد</button>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section id="overview" aria-labelledby="ov-h">
+        <h2 id="ov-h">نظرة عامة</h2>
+        <ul class="kpis" role="list">
+          <li class="kpi"><p class="k-label">أعضاء نشطين</p><p class="k-num" id="k-active">—</p><p class="k-sub">من <span id="k-total">—</span> مسجّل</p></li>
+          <li class="kpi"><p class="k-label">دخول النهارده</p><p class="k-num" id="k-in">—</p>
+            <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" role="img" aria-labelledby="spark-t"><title id="spark-t">دخول آخر ١٤ يوم</title><polyline id="spark" points=""/></svg></li>
+          <li class="kpi"><p class="k-label">إيراد الشهر</p><p class="k-num" id="k-rev">—</p><p class="k-sub"><span class="delta" id="k-delta">—</span> عن الشهر اللي فات</p></li>
+          <li class="kpi ring-card"><p class="k-label">نسبة التجديد</p>
+            <svg class="ring" viewBox="0 0 36 36" role="img" aria-labelledby="ring-t"><title id="ring-t">نسبة التجديد</title>
+              <circle class="ring-bg" cx="18" cy="18" r="15.9" pathLength="100"/><circle class="ring-fg" id="ring" cx="18" cy="18" r="15.9" pathLength="100"/></svg>
+            <p class="k-num ring-num" id="k-ren">—</p></li>
+        </ul>
+      </section>
+
+      <section id="members" aria-labelledby="mem-h">
+        <h2 id="mem-h">الأعضاء</h2>
+        <form class="filters" id="filters" role="search" aria-label="فلترة الأعضاء">
+          <label>دوّر بالاسم أو الرقم <input type="search" name="q" autocomplete="off"></label>
+          <label>الحالة
+            <select name="status"><option value="all">الكل</option><option value="active">نشط</option><option value="frozen">متجمّد</option><option value="expired">منتهي</option></select></label>
+          <label>الباقة
+            <select name="plan"><option value="all">الكل</option><option value="monthly">شهري</option><option value="quarterly">3 شهور</option><option value="yearly">سنوي</option><option value="pass10">10 زيارات</option></select></label>
+          <button class="btn ghost" type="reset">امسح الفلاتر</button>
+          <button class="btn ghost" type="button" id="csv">نزّل CSV</button>
+        </form>
+        <p class="count" id="count" aria-live="polite"></p>
+        <div class="table-wrap">
+          <table class="members" id="table" aria-labelledby="mem-h" aria-busy="true">
+            <thead><tr>
+              <th scope="col" data-sort="name"><button type="button">الاسم</button></th>
+              <th scope="col" data-sort="plan"><button type="button">الباقة</button></th>
+              <th scope="col" data-sort="status"><button type="button">الحالة</button></th>
+              <th scope="col" data-sort="lastVisit"><button type="button">آخر زيارة</button></th>
+              <th scope="col" data-sort="visits"><button type="button">زيارات الشهر</button></th>
+            </tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <nav class="pager" id="pager" aria-label="صفحات الأعضاء"></nav>
+      </section>
+
+      <section id="schedule" aria-labelledby="sch-h">
+        <h2 id="sch-h">جدول الحصص</h2>
+        <p class="hint">اضغط على حصة عشان تشوف تفاصيلها وتحجز مكان.</p>
+        <div class="week-wrap" tabindex="0" role="region" aria-label="جدول الأسبوع، بيتسكرول بالعرض">
+          <div class="week" id="week"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="dlg-member" aria-labelledby="dm-h">
+    <form method="dialog" id="member-form">
+      <h2 id="dm-h">عضو جديد</h2>
+      <label>الاسم <input name="name" required minlength="3" autocomplete="off" autofocus></label>
+      <label>الباقة <select name="plan"><option value="monthly">شهري</option><option value="quarterly">3 شهور</option><option value="yearly">سنوي</option><option value="pass10">10 زيارات</option></select></label>
+      <div class="dlg-actions">
+        <button class="btn" value="save">ضيف</button>
+        <button class="btn ghost" value="cancel" formnovalidate>إلغاء</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-class" aria-labelledby="dc-h">
+    <form method="dialog">
+      <h2 id="dc-h"></h2>
+      <p id="dc-body"></p>
+      <div class="dlg-actions">
+        <button class="btn" value="book" id="dc-book">احجز مكان</button>
+        <button class="btn ghost" value="cancel">اقفل</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  <script type="importmap">{"imports":{"lab/app.js":"data:text/javascript;charset=utf-8,%2F%2F%20entry%3A%20shell%20first%20(so%20the%20menu%20works%20while%20data%20loads)%2C%20then%20the%20three%20data%20parts%20in%20parallel%0Aimport%20%22lab%2Fshell.js%22%3B%0Aimport%20%7B%20loadMembers%2C%20addMember%2C%20nextId%20%7D%20from%20%22lab%2Ftable.js%22%3B%0Aimport%20%7B%20loadKpis%20%7D%20from%20%22lab%2Fkpi.js%22%3B%0Aimport%20%7B%20loadSchedule%20%7D%20from%20%22lab%2Fschedule.js%22%3B%0Aimport%20%7B%20openDialog%2C%20toast%20%7D%20from%20%22lab%2Fui.js%22%3B%0A%0Aconst%20members%20%3D%20loadMembers()%3B%0Amembers.then(m%20%3D%3E%20loadKpis(m)).catch(()%20%3D%3E%20toast(%22%D8%A7%D9%84%D8%A3%D8%B1%D9%82%D8%A7%D9%85%20%D9%85%D8%B4%20%D9%85%D8%AA%D8%A7%D8%AD%D8%A9%20%D8%AF%D9%84%D9%88%D9%82%D8%AA%D9%8A%22))%3B%0AloadSchedule().catch(()%20%3D%3E%20toast(%22%D8%A7%D9%84%D8%AC%D8%AF%D9%88%D9%84%20%D9%85%D8%B4%20%D9%85%D8%AA%D8%A7%D8%AD%20%D8%AF%D9%84%D9%88%D9%82%D8%AA%D9%8A%22))%3B%0A%0Aconst%20dlg%20%3D%20document.getElementById(%22dlg-member%22)%2C%20form%20%3D%20document.getElementById(%22member-form%22)%3B%0Aconst%20nameIn%20%3D%20form.elements.name%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20form.elements%3A%20form.name%20is%20also%20the%20form's%20own%20name%20attribute%0AnameIn.addEventListener(%22input%22%2C%20()%20%3D%3E%20nameIn.setCustomValidity(%22%22))%3B%0AnameIn.addEventListener(%22invalid%22%2C%20()%20%3D%3E%20nameIn.setCustomValidity(nameIn.validity.valueMissing%20%3F%20%22%D8%A7%D9%83%D8%AA%D8%A8%20%D8%A7%D8%B3%D9%85%20%D8%A7%D9%84%D8%B9%D8%B6%D9%88%22%20%3A%20%22%D8%A7%D9%84%D8%A7%D8%B3%D9%85%20%D9%84%D8%A7%D8%B2%D9%85%20%D9%A3%20%D8%AD%D8%B1%D9%88%D9%81%20%D8%B9%D9%84%D9%89%20%D8%A7%D9%84%D8%A3%D9%82%D9%84%22))%3B%0Adocument.getElementById(%22add%22).addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20form.reset()%3B%0A%20%20openDialog(dlg%2C%20v%20%3D%3E%20%7B%0A%20%20%20%20if%20(v%20!%3D%3D%20%22save%22)%20return%3B%0A%20%20%20%20const%20name%20%3D%20nameIn.value.trim()%3B%0A%20%20%20%20addMember(%7B%20id%3A%20nextId()%2C%20name%2C%20plan%3A%20form.elements.plan.value%2C%20status%3A%20%22active%22%2C%20joined%3A%20%222026-10-31%22%2C%20lastVisit%3A%20%222026-10-31%22%2C%20visits%3A%200%20%7D)%3B%0A%20%20%20%20toast(%60%D8%A7%D8%AA%D8%B6%D8%A7%D9%81%20%C2%AB%24%7Bname%7D%C2%BB%60)%3B%0A%20%20%7D)%3B%0A%7D)%3B%0A","lab/csv.js":"data:text/javascript;charset=utf-8,%2F%2F%20CSV%20for%20Excel%3A%20text%20only%2C%20no%20DOM%2C%20so%20Node%20can%20test%20it%0Aconst%20BOM%20%3D%20%22%5CuFEFF%22%3B%20%20%20%2F%2F%20tells%20Excel%20the%20file%20is%20UTF-8%3B%20without%20it%20Arabic%20opens%20as%20gibberish%0A%0A%2F%2F%20one%20cell%3A%20quotes%20around%20it%20when%20it%20has%20a%20comma%2C%20a%20quote%20or%20a%20line%20break%2C%20and%20every%20%22%20inside%20becomes%20%22%22%0A%2F%2F%20a%20cell%20that%20starts%20with%20%3D%20%2B%20-%20%40%20gets%20a%20'%20first%2C%20so%20Excel%20shows%20it%20as%20text%20instead%20of%20running%20it%20as%20a%20formula%0Aexport%20function%20cell(v)%20%7B%0A%20%20let%20s%20%3D%20String(v%20%3F%3F%20%22%22)%3B%0A%20%20if%20(%2F%5E%5B%3D%2B%5C-%40%5D%2F.test(s))%20s%20%3D%20%22'%22%20%2B%20s%3B%0A%20%20return%20%2F%5B%22%2C%5Cr%5Cn%5D%2F.test(s)%20%3F%20'%22'%20%2B%20s.replaceAll('%22'%2C%20'%22%22')%20%2B%20'%22'%20%3A%20s%3B%0A%7D%0A%0Aexport%20const%20toCSV%20%3D%20(head%2C%20rows)%20%3D%3E%20BOM%20%2B%20%5Bhead%2C%20...rows%5D.map(r%20%3D%3E%20r.map(cell).join(%22%2C%22)).join(%22%5Cr%5Cn%22)%20%2B%20%22%5Cr%5Cn%22%3B%0A%0A%2F%2F%20members-frozen-2026-11-20.csv%3A%20the%20filters%20that%20are%20on%2C%20then%20the%20date%0Aexport%20function%20fileName(s%2C%20day)%20%7B%0A%20%20const%20parts%20%3D%20%5B%22members%22%5D%3B%0A%20%20if%20(s.status%20!%3D%3D%20%22all%22)%20parts.push(s.status)%3B%0A%20%20if%20(s.plan%20!%3D%3D%20%22all%22)%20parts.push(s.plan)%3B%0A%20%20if%20(s.q)%20parts.push(%22search%22)%3B%0A%20%20return%20parts.join(%22-%22)%20%2B%20%22-%22%20%2B%20day%20%2B%20%22.csv%22%3B%0A%7D%0A","lab/kpi.js":"data:text/javascript;charset=utf-8,%2F%2F%20KPI%20cards%3A%20numbers%2C%20sparkline%2C%20ring.%20The%20cards%20keep%20their%20size%20while%20loading%2C%20so%20nothing%20jumps.%0Aimport%20%7B%20sparkPoints%2C%20ringOffset%2C%20num%2C%20money%2C%20delta%20%7D%20from%20%22lab%2Flib.js%22%3B%0Aexport%20async%20function%20loadKpis(members)%20%7B%0A%20%20const%20k%20%3D%20await%20(await%20fetch(%22data%2Fkpi.json%22)).json()%3B%0A%20%20document.getElementById(%22k-active%22).textContent%20%3D%20num.format(k.active)%3B%0A%20%20document.getElementById(%22k-total%22).textContent%20%3D%20num.format(members.length)%3B%0A%20%20document.getElementById(%22k-in%22).textContent%20%3D%20num.format(k.checkins.at(-1))%3B%0A%20%20document.getElementById(%22spark%22).setAttribute(%22points%22%2C%20sparkPoints(k.checkins))%3B%0A%20%20document.getElementById(%22spark-t%22).textContent%20%3D%20%22%D8%AF%D8%AE%D9%88%D9%84%20%D8%A2%D8%AE%D8%B1%20%D9%A1%D9%A4%20%D9%8A%D9%88%D9%85%3A%20%D9%85%D9%86%20%22%20%2B%20Math.min(...k.checkins)%20%2B%20%22%20%D9%84%D9%80%20%22%20%2B%20Math.max(...k.checkins)%20%2B%20%22%D8%8C%20%D9%88%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%B1%D8%AF%D9%87%20%22%20%2B%20k.checkins.at(-1)%3B%0A%20%20document.getElementById(%22k-rev%22).textContent%20%3D%20money.format(k.revenue)%3B%0A%20%20const%20d%20%3D%20delta(k.revenue%2C%20k.revenuePrev)%2C%20el%20%3D%20document.getElementById(%22k-delta%22)%3B%0A%20%20el.textContent%20%3D%20(d.up%20%3F%20%22%E2%96%B2%20%2B%22%20%3A%20%22%E2%96%BC%20%22)%20%2B%20d.pct%20%2B%20%22%25%22%3B%0A%20%20el.className%20%3D%20%22delta%20%22%20%2B%20(d.up%20%3F%20%22up%22%20%3A%20%22down%22)%3B%0A%20%20document.getElementById(%22k-ren%22).textContent%20%3D%20k.renewal%20%2B%20%22%25%22%3B%0A%20%20document.getElementById(%22ring-t%22).textContent%20%3D%20%22%D9%86%D8%B3%D8%A8%D8%A9%20%D8%A7%D9%84%D8%AA%D8%AC%D8%AF%D9%8A%D8%AF%20%22%20%2B%20k.renewal%20%2B%20%22%25%22%3B%0A%20%20requestAnimationFrame(()%20%3D%3E%20(document.getElementById(%22ring%22).style.strokeDashoffset%20%3D%20ringOffset(k.renewal)))%3B%0A%7D%0A","lab/lib.js":"data:text/javascript;charset=utf-8,%2F%2F%20small%20pure%20helpers%3A%20sparkline%20points%2C%20ring%20offset%2C%20schedule%20rows%2C%20number%20formats.%20No%20DOM%2C%20Node%20can%20test%20them.%0Aexport%20function%20sparkPoints(values%2C%20w%20%3D%20100%2C%20h%20%3D%2032%2C%20pad%20%3D%202)%20%7B%0A%20%20if%20(!values.length)%20return%20%22%22%3B%0A%20%20const%20min%20%3D%20Math.min(...values)%2C%20max%20%3D%20Math.max(...values)%2C%20span%20%3D%20max%20-%20min%3B%0A%20%20const%20step%20%3D%20values.length%20%3E%201%20%3F%20(w%20-%20pad%20*%202)%20%2F%20(values.length%20-%201)%20%3A%200%3B%0A%20%20return%20values.map((v%2C%20i)%20%3D%3E%20%7B%0A%20%20%20%20const%20x%20%3D%20pad%20%2B%20i%20*%20step%3B%0A%20%20%20%20const%20y%20%3D%20span%20%3F%20h%20-%20pad%20-%20((v%20-%20min)%20%2F%20span)%20*%20(h%20-%20pad%20*%202)%20%3A%20h%20%2F%202%3B%20%20%20%2F%2F%20SVG%20y%20grows%20downward%3B%20a%20flat%20line%20sits%20in%20the%20middle%0A%20%20%20%20return%20%2Bx.toFixed(1)%20%2B%20%22%2C%22%20%2B%20%2By.toFixed(1)%3B%0A%20%20%7D).join(%22%20%22)%3B%0A%7D%0A%0Aexport%20const%20ringOffset%20%3D%20pct%20%3D%3E%20100%20-%20Math.min(100%2C%20Math.max(0%2C%20pct))%3B%20%20%20%2F%2F%20with%20pathLength%3D%22100%22%20the%20dash%20is%20just%20the%20percent%0A%0Aexport%20const%20DAY0%20%3D%207%20*%2060%2C%20SLOT%20%3D%2030%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20the%20grid%20starts%20at%2007%3A00%2C%20one%20row%20%3D%2030%20minutes%0Aexport%20const%20toMin%20%3D%20hhmm%20%3D%3E%20%7B%20const%20%5Bh%2C%20m%5D%20%3D%20hhmm.split(%22%3A%22).map(Number)%3B%20return%20h%20*%2060%20%2B%20m%3B%20%7D%3B%0Aexport%20function%20gridRow(start%2C%20end)%20%7B%0A%20%20const%20row%20%3D%20(toMin(start)%20-%20DAY0)%20%2F%20SLOT%20%2B%201%3B%0A%20%20const%20span%20%3D%20Math.ceil((toMin(end)%20-%20toMin(start))%20%2F%20SLOT)%3B%0A%20%20return%20%7B%20row%2C%20span%20%7D%3B%0A%7D%0Aexport%20function%20overlaps(a%2C%20b)%20%7B%20return%20a.day%20%3D%3D%3D%20b.day%20%26%26%20toMin(a.start)%20%3C%20toMin(b.end)%20%26%26%20toMin(b.start)%20%3C%20toMin(a.end)%3B%20%7D%0A%0Aexport%20const%20num%20%3D%20new%20Intl.NumberFormat(%22ar-EG%22%2C%20%7B%20numberingSystem%3A%20%22latn%22%20%7D)%3B%0Aexport%20const%20money%20%3D%20new%20Intl.NumberFormat(%22ar-EG%22%2C%20%7B%20style%3A%20%22currency%22%2C%20currency%3A%20%22EGP%22%2C%20maximumFractionDigits%3A%200%2C%20numberingSystem%3A%20%22latn%22%20%7D)%3B%0Aexport%20const%20shortDate%20%3D%20new%20Intl.DateTimeFormat(%22ar-EG%22%2C%20%7B%20day%3A%20%22numeric%22%2C%20month%3A%20%22short%22%2C%20timeZone%3A%20%22UTC%22%2C%20numberingSystem%3A%20%22latn%22%20%7D)%3B%0Aexport%20function%20delta(now%2C%20prev)%20%7B%0A%20%20const%20pct%20%3D%20prev%20%3F%20((now%20-%20prev)%20%2F%20prev)%20*%20100%20%3A%200%3B%0A%20%20return%20%7B%20pct%3A%20Math.round(pct%20*%2010)%20%2F%2010%2C%20up%3A%20pct%20%3E%3D%200%20%7D%3B%0A%7D%0A","lab/schedule.js":"data:text/javascript;charset=utf-8,%2F%2F%20weekly%20schedule%3A%20each%20class%20is%20a%20button%20placed%20on%20the%20grid%20by%20custom%20properties%20(day%20%3D%20column%2C%20time%20%3D%20rows)%0Aimport%20%7B%20gridRow%2C%20toMin%20%7D%20from%20%22lab%2Flib.js%22%3B%0Aimport%20%7B%20openDialog%2C%20toast%20%7D%20from%20%22lab%2Fui.js%22%3B%0Aconst%20DAYS%20%3D%20%5B%22%D8%A7%D9%84%D8%B3%D8%A8%D8%AA%22%2C%20%22%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%22%2C%20%22%D8%A7%D9%84%D8%A7%D8%AA%D9%86%D9%8A%D9%86%22%2C%20%22%D8%A7%D9%84%D8%AA%D9%84%D8%A7%D8%AA%22%2C%20%22%D8%A7%D9%84%D8%A3%D8%B1%D8%A8%D8%B9%22%2C%20%22%D8%A7%D9%84%D8%AE%D9%85%D9%8A%D8%B3%22%2C%20%22%D8%A7%D9%84%D8%AC%D9%85%D8%B9%D8%A9%22%5D%3B%0Aconst%20week%20%3D%20document.getElementById(%22week%22)%2C%20dlg%20%3D%20document.getElementById(%22dlg-class%22)%3B%0Aconst%20ampm%20%3D%20hhmm%20%3D%3E%20%7B%20const%20m%20%3D%20toMin(hhmm)%2C%20h%20%3D%20Math.floor(m%20%2F%2060)%20%25%2012%20%7C%7C%2012%3B%20return%20h%20%2B%20%22%3A%22%20%2B%20String(m%20%25%2060).padStart(2%2C%20%220%22)%20%2B%20(m%20%3C%20720%20%3F%20%22%20%D8%B5%22%20%3A%20%22%20%D9%85%22)%3B%20%7D%3B%0A%0Afunction%20cell(cls%2C%20text%2C%20vars)%20%7B%0A%20%20const%20el%20%3D%20document.createElement(cls%20%3D%3D%3D%20%22slot%22%20%3F%20%22button%22%20%3A%20%22div%22)%3B%0A%20%20el.className%20%3D%20cls%3B%0A%20%20el.textContent%20%3D%20text%3B%0A%20%20for%20(const%20%5Bk%2C%20v%5D%20of%20Object.entries(vars))%20el.style.setProperty(%22--%22%20%2B%20k%2C%20v)%3B%0A%20%20return%20el%3B%0A%7D%0A%0Afunction%20slot(c)%20%7B%0A%20%20const%20%7B%20row%2C%20span%20%7D%20%3D%20gridRow(c.start%2C%20c.end)%3B%0A%20%20const%20b%20%3D%20cell(%22slot%22%2C%20%22%22%2C%20%7B%20col%3A%20c.day%2C%20row%2C%20span%2C%20fill%3A%20Math.round((c.booked%20%2F%20c.spots)%20*%20100)%20%2B%20%22%25%22%20%7D)%3B%0A%20%20b.type%20%3D%20%22button%22%3B%0A%20%20b.classList.toggle(%22full%22%2C%20c.booked%20%3E%3D%20c.spots)%3B%0A%20%20const%20title%20%3D%20document.createElement(%22b%22)%3B%0A%20%20title.textContent%20%3D%20c.title%3B%0A%20%20b.append(title%2C%20%60%24%7Bampm(c.start)%7D%20%C2%B7%20%24%7Bc.booked%7D%2F%24%7Bc.spots%7D%60)%3B%0A%20%20b.setAttribute(%22aria-label%22%2C%20%60%24%7Bc.title%7D%D8%8C%20%24%7BDAYS%5Bc.day%5D%7D%20%24%7Bampm(c.start)%7D%20%D9%84%D9%80%20%24%7Bampm(c.end)%7D%D8%8C%20%24%7Bc.booked%7D%20%D9%85%D9%86%20%24%7Bc.spots%7D%20%D9%85%D8%AD%D8%AC%D9%88%D8%B2%60)%3B%0A%20%20b.onclick%20%3D%20()%20%3D%3E%20%7B%0A%20%20%20%20document.getElementById(%22dc-h%22).textContent%20%3D%20c.title%3B%0A%20%20%20%20document.getElementById(%22dc-body%22).textContent%20%3D%20%60%24%7BDAYS%5Bc.day%5D%7D%D8%8C%20%D9%85%D9%86%20%24%7Bampm(c.start)%7D%20%D9%84%D9%80%20%24%7Bampm(c.end)%7D%20%D9%85%D8%B9%20%D8%A7%D9%84%D9%83%D9%88%D8%AA%D8%B4%20%24%7Bc.coach%7D.%20%D9%85%D8%AD%D8%AC%D9%88%D8%B2%20%24%7Bc.booked%7D%20%D9%85%D9%86%20%24%7Bc.spots%7D.%60%3B%0A%20%20%20%20const%20book%20%3D%20document.getElementById(%22dc-book%22)%3B%0A%20%20%20%20book.disabled%20%3D%20c.booked%20%3E%3D%20c.spots%3B%0A%20%20%20%20book.textContent%20%3D%20book.disabled%20%3F%20%22%D8%A7%D9%84%D8%AD%D8%B5%D8%A9%20%D9%83%D8%A7%D9%85%D9%84%D8%A9%22%20%3A%20%22%D8%A7%D8%AD%D8%AC%D8%B2%20%D9%85%D9%83%D8%A7%D9%86%22%3B%0A%20%20%20%20openDialog(dlg%2C%20v%20%3D%3E%20%7B%0A%20%20%20%20%20%20if%20(v%20!%3D%3D%20%22book%22)%20return%3B%0A%20%20%20%20%20%20c.booked%2B%2B%3B%0A%20%20%20%20%20%20b.replaceWith(slot(c))%3B%0A%20%20%20%20%20%20toast(%60%D8%A7%D8%AA%D8%AD%D8%AC%D8%B2%20%D9%85%D9%83%D8%A7%D9%86%20%D9%81%D9%8A%20%C2%AB%24%7Bc.title%7D%C2%BB%20%D9%8A%D9%88%D9%85%20%24%7BDAYS%5Bc.day%5D%7D%60)%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D%3B%0A%20%20return%20b%3B%0A%7D%0A%0Aexport%20async%20function%20loadSchedule()%20%7B%0A%20%20const%20classes%20%3D%20await%20(await%20fetch(%22data%2Fclasses.json%22)).json()%3B%0A%20%20const%20parts%20%3D%20DAYS.map((d%2C%20i)%20%3D%3E%20cell(%22day%22%2C%20d%2C%20%7B%20col%3A%20i%20%7D))%3B%0A%20%20for%20(let%20h%20%3D%207%3B%20h%20%3C%2022%3B%20h%2B%2B)%20parts.push(cell(%22hour%22%2C%20ampm(String(h).padStart(2%2C%20%220%22)%20%2B%20%22%3A00%22)%2C%20%7B%20row%3A%20(h%20-%207)%20*%202%20%2B%201%20%7D))%3B%0A%20%20week.replaceChildren(...parts%2C%20...classes.map(slot))%3B%0A%7D%0A","lab/shell.js":"data:text/javascript;charset=utf-8,%2F%2F%20sidebar%3A%20collapses%20on%20wide%20screens%2C%20becomes%20a%20drawer%20on%20narrow%20ones%3B%20plus%20the%20theme%20switch%0Aconst%20shell%20%3D%20document.getElementById(%22shell%22)%2C%20side%20%3D%20document.getElementById(%22side%22)%3B%0Aconst%20menu%20%3D%20document.getElementById(%22menu%22)%2C%20collapse%20%3D%20document.getElementById(%22collapse%22)%2C%20scrim%20%3D%20document.getElementById(%22scrim%22)%3B%0Aconst%20narrow%20%3D%20matchMedia(%22(max-width%3A%2063.99rem)%22)%3B%0Aconst%20behind%20%3D%20%5Bdocument.querySelector(%22.topbar%22)%2C%20document.getElementById(%22main%22)%5D%3B%0A%0Afunction%20setCollapsed(on)%20%7B%0A%20%20shell.toggleAttribute(%22data-collapsed%22%2C%20on)%3B%0A%20%20collapse.setAttribute(%22aria-expanded%22%2C%20String(!on))%3B%0A%20%20try%20%7B%20localStorage.setItem(%22side%22%2C%20on%20%3F%20%22collapsed%22%20%3A%20%22open%22)%3B%20%7D%20catch%20%7B%7D%0A%7D%0Aif%20(document.documentElement.dataset.side%20%3D%3D%3D%20%22collapsed%22)%20setCollapsed(true)%3B%0Acollapse.addEventListener(%22click%22%2C%20()%20%3D%3E%20setCollapsed(!shell.hasAttribute(%22data-collapsed%22)))%3B%0A%0Afunction%20setDrawer(open)%20%7B%0A%20%20shell.toggleAttribute(%22data-open%22%2C%20open)%3B%0A%20%20menu.setAttribute(%22aria-expanded%22%2C%20String(open))%3B%0A%20%20menu.setAttribute(%22aria-label%22%2C%20open%20%3F%20%22%D8%A7%D9%82%D9%81%D9%84%20%D8%A7%D9%84%D9%82%D8%A7%D9%8A%D9%85%D8%A9%22%20%3A%20%22%D8%A7%D9%81%D8%AA%D8%AD%20%D8%A7%D9%84%D9%82%D8%A7%D9%8A%D9%85%D8%A9%22)%3B%0A%20%20scrim.hidden%20%3D%20!open%3B%0A%20%20behind.forEach(el%20%3D%3E%20(el.inert%20%3D%20open))%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20while%20the%20drawer%20is%20open%2C%20Tab%20can't%20wander%20behind%20it%0A%20%20if%20(open)%20side.querySelector(%22a%22).focus()%3B%0A%20%20else%20if%20(side.contains(document.activeElement)%20%7C%7C%20document.activeElement%20%3D%3D%3D%20document.body)%20menu.focus()%3B%0A%7D%0Amenu.addEventListener(%22click%22%2C%20()%20%3D%3E%20setDrawer(true))%3B%0Ascrim.addEventListener(%22click%22%2C%20()%20%3D%3E%20setDrawer(false))%3B%0Adocument.addEventListener(%22keydown%22%2C%20e%20%3D%3E%20%7B%20if%20(e.key%20%3D%3D%3D%20%22Escape%22%20%26%26%20shell.hasAttribute(%22data-open%22))%20setDrawer(false)%3B%20%7D)%3B%0Aside.addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%0A%20%20const%20a%20%3D%20e.target.closest(%22a%22)%3B%0A%20%20if%20(!a)%20return%3B%0A%20%20side.querySelectorAll(%22a%22).forEach(x%20%3D%3E%20x.toggleAttribute(%22aria-current%22%2C%20x%20%3D%3D%3D%20a))%3B%0A%20%20if%20(a.hasAttribute(%22aria-current%22))%20a.setAttribute(%22aria-current%22%2C%20%22page%22)%3B%0A%20%20if%20(narrow.matches)%20setDrawer(false)%3B%0A%7D)%3B%0Anarrow.addEventListener(%22change%22%2C%20()%20%3D%3E%20setDrawer(false))%3B%20%2F%2F%20rotate%20or%20resize%20to%20wide%3A%20never%20leave%20the%20page%20inert%0A%0Aconst%20theme%20%3D%20document.getElementById(%22theme%22)%3B%0Aconst%20isDark%20%3D%20()%20%3D%3E%20document.documentElement.dataset.theme%20%3D%3D%3D%20%22dark%22%20%7C%7C%20(!document.documentElement.dataset.theme%20%26%26%20matchMedia(%22(prefers-color-scheme%3A%20dark)%22).matches)%3B%0Atheme.setAttribute(%22aria-pressed%22%2C%20String(isDark()))%3B%0Atheme.addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20const%20next%20%3D%20isDark()%20%3F%20%22light%22%20%3A%20%22dark%22%3B%0A%20%20document.documentElement.dataset.theme%20%3D%20next%3B%0A%20%20theme.setAttribute(%22aria-pressed%22%2C%20String(next%20%3D%3D%3D%20%22dark%22))%3B%0A%20%20try%20%7B%20localStorage.setItem(%22theme%22%2C%20next)%3B%20%7D%20catch%20%7B%7D%0A%7D)%3B%0A","lab/state.js":"data:text/javascript;charset=utf-8,%2F%2F%20table%20state%20%3C-%3E%20URL%2C%20plus%20filter%2Fsort%2Fpage.%20No%20DOM%20here%2C%20so%20Node%20can%20test%20it.%0Aexport%20const%20DEFAULTS%20%3D%20%7B%20q%3A%20%22%22%2C%20status%3A%20%22all%22%2C%20plan%3A%20%22all%22%2C%20sort%3A%20%22name%22%2C%20dir%3A%20%22asc%22%2C%20page%3A%201%2C%20size%3A%2010%20%7D%3B%0Aconst%20STATUS%20%3D%20%5B%22active%22%2C%20%22frozen%22%2C%20%22expired%22%5D%3B%0Aconst%20PLANS%20%3D%20%5B%22monthly%22%2C%20%22quarterly%22%2C%20%22yearly%22%2C%20%22pass10%22%5D%3B%0Aconst%20SORTS%20%3D%20%5B%22name%22%2C%20%22plan%22%2C%20%22status%22%2C%20%22lastVisit%22%2C%20%22visits%22%5D%3B%0Aconst%20ORDER%20%3D%20%7B%20plan%3A%20PLANS%2C%20status%3A%20STATUS%20%7D%3B%0A%0Aexport%20function%20parseState(search)%20%7B%0A%20%20const%20p%20%3D%20new%20URLSearchParams(search)%3B%0A%20%20const%20s%20%3D%20%7B%20...DEFAULTS%20%7D%3B%0A%20%20s.q%20%3D%20(p.get(%22q%22)%20%7C%7C%20%22%22).trim().slice(0%2C%2050)%3B%0A%20%20if%20(STATUS.includes(p.get(%22status%22)))%20s.status%20%3D%20p.get(%22status%22)%3B%0A%20%20if%20(PLANS.includes(p.get(%22plan%22)))%20s.plan%20%3D%20p.get(%22plan%22)%3B%0A%20%20if%20(SORTS.includes(p.get(%22sort%22)))%20s.sort%20%3D%20p.get(%22sort%22)%3B%0A%20%20if%20(p.get(%22dir%22)%20%3D%3D%3D%20%22desc%22)%20s.dir%20%3D%20%22desc%22%3B%0A%20%20const%20page%20%3D%20Number.parseInt(p.get(%22page%22)%2C%2010)%3B%0A%20%20if%20(page%20%3E%3D%201)%20s.page%20%3D%20page%3B%0A%20%20return%20s%3B%0A%7D%0A%0Aexport%20function%20toQuery(s)%20%7B%0A%20%20const%20p%20%3D%20new%20URLSearchParams()%3B%0A%20%20for%20(const%20k%20of%20%5B%22q%22%2C%20%22status%22%2C%20%22plan%22%2C%20%22sort%22%2C%20%22dir%22%2C%20%22page%22%5D)%20if%20(s%5Bk%5D%20!%3D%3D%20DEFAULTS%5Bk%5D%20%26%26%20s%5Bk%5D%20!%3D%3D%20%22%22)%20p.set(k%2C%20s%5Bk%5D)%3B%0A%20%20const%20q%20%3D%20p.toString()%3B%0A%20%20return%20q%20%3F%20%22%3F%22%20%2B%20q%20%3A%20%22%22%3B%0A%7D%0A%0A%2F%2F%20Arabic%20search%3A%20%C2%AB%D8%A7%D8%AD%D9%85%D8%AF%C2%BB%20should%20find%20%C2%AB%D8%A3%D8%AD%D9%85%D8%AF%C2%BB%2C%20and%20%C2%AB%D9%87%D9%86%D8%A7%C2%BB%20should%20find%20%C2%AB%D9%87%D9%86%D8%A7%C2%BB%2F%C2%AB%D9%87%D9%86%D8%A7%D8%A1%C2%BB%20typed%20with%20%D8%A9%20or%20%D9%89%0Aexport%20const%20norm%20%3D%20t%20%3D%3E%20t.toLowerCase().replace(%2F%5B%D8%A3%D8%A5%D8%A2%5D%2Fg%2C%20%22%D8%A7%22).replace(%2F%D8%A9%2Fg%2C%20%22%D9%87%22).replace(%2F%D9%89%2Fg%2C%20%22%D9%8A%22).replace(%2F%5B%5Cu064B-%5Cu0652%5D%2Fg%2C%20%22%22)%3B%0Aconst%20coll%20%3D%20new%20Intl.Collator(%22ar%22)%3B%0A%0Afunction%20compare(k%2C%20a%2C%20b)%20%7B%0A%20%20if%20(ORDER%5Bk%5D)%20return%20ORDER%5Bk%5D.indexOf(a%5Bk%5D)%20-%20ORDER%5Bk%5D.indexOf(b%5Bk%5D)%3B%0A%20%20if%20(typeof%20a%5Bk%5D%20%3D%3D%3D%20%22number%22)%20return%20a%5Bk%5D%20-%20b%5Bk%5D%3B%0A%20%20if%20(k%20%3D%3D%3D%20%22name%22)%20return%20coll.compare(a%5Bk%5D%2C%20b%5Bk%5D)%3B%0A%20%20return%20a%5Bk%5D%20%3C%20b%5Bk%5D%20%3F%20-1%20%3A%20a%5Bk%5D%20%3E%20b%5Bk%5D%20%3F%201%20%3A%200%3B%20%20%20%20%20%20%20%20%20%20%2F%2F%20ISO%20dates%20sort%20as%20text%0A%7D%0A%0Aexport%20function%20view(rows%2C%20s)%20%7B%0A%20%20const%20q%20%3D%20norm(s.q)%3B%0A%20%20const%20hit%20%3D%20m%20%3D%3E%20(s.status%20%3D%3D%3D%20%22all%22%20%7C%7C%20m.status%20%3D%3D%3D%20s.status)%20%26%26%20(s.plan%20%3D%3D%3D%20%22all%22%20%7C%7C%20m.plan%20%3D%3D%3D%20s.plan)%0A%20%20%20%20%26%26%20(!q%20%7C%7C%20norm(m.name).includes(q)%20%7C%7C%20String(m.id)%20%3D%3D%3D%20q)%3B%0A%20%20const%20d%20%3D%20s.dir%20%3D%3D%3D%20%22desc%22%20%3F%20-1%20%3A%201%3B%0A%20%20const%20sorted%20%3D%20rows.filter(hit).sort((a%2C%20b)%20%3D%3E%20d%20*%20compare(s.sort%2C%20a%2C%20b)%20%7C%7C%20a.id%20-%20b.id)%3B%0A%20%20const%20pages%20%3D%20Math.max(1%2C%20Math.ceil(sorted.length%20%2F%20s.size))%3B%0A%20%20const%20page%20%3D%20Math.min(s.page%2C%20pages)%3B%0A%20%20return%20%7B%20total%3A%20sorted.length%2C%20pages%2C%20page%2C%20rows%3A%20sorted.slice((page%20-%201)%20*%20s.size%2C%20page%20*%20s.size)%20%7D%3B%0A%7D%0A","lab/table.js":"data:text/javascript;charset=utf-8,%2F%2F%20members%20table%3A%20the%20URL%20is%20the%20state.%20Read%20it%2C%20draw%2C%20and%20write%20it%20back%20on%20every%20change.%0Aimport%20%7B%20parseState%2C%20toQuery%2C%20view%2C%20DEFAULTS%20%7D%20from%20%22lab%2Fstate.js%22%3B%0Aimport%20%7B%20num%2C%20shortDate%20%7D%20from%20%22lab%2Flib.js%22%3B%0Aimport%20%7B%20toCSV%2C%20fileName%20%7D%20from%20%22lab%2Fcsv.js%22%3B%0A%0Aconst%20PLAN%20%3D%20%7B%20monthly%3A%20%22%D8%B4%D9%87%D8%B1%D9%8A%22%2C%20quarterly%3A%20%223%20%D8%B4%D9%87%D9%88%D8%B1%22%2C%20yearly%3A%20%22%D8%B3%D9%86%D9%88%D9%8A%22%2C%20pass10%3A%20%2210%20%D8%B2%D9%8A%D8%A7%D8%B1%D8%A7%D8%AA%22%20%7D%3B%0Aconst%20STATUS%20%3D%20%7B%20active%3A%20%22%D9%86%D8%B4%D8%B7%22%2C%20frozen%3A%20%22%D9%85%D8%AA%D8%AC%D9%85%D9%91%D8%AF%22%2C%20expired%3A%20%22%D9%85%D9%86%D8%AA%D9%87%D9%8A%22%20%7D%3B%0Aconst%20COLS%20%3D%20%5B%22%D8%A7%D9%84%D8%A7%D8%B3%D9%85%22%2C%20%22%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%22%2C%20%22%D8%A7%D9%84%D8%AD%D8%A7%D9%84%D8%A9%22%2C%20%22%D8%A2%D8%AE%D8%B1%20%D8%B2%D9%8A%D8%A7%D8%B1%D8%A9%22%2C%20%22%D8%B2%D9%8A%D8%A7%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B4%D9%87%D8%B1%22%5D%3B%0Aconst%20table%20%3D%20document.getElementById(%22table%22)%2C%20tbody%20%3D%20document.getElementById(%22rows%22)%3B%0Aconst%20form%20%3D%20document.getElementById(%22filters%22)%2C%20pager%20%3D%20document.getElementById(%22pager%22)%2C%20count%20%3D%20document.getElementById(%22count%22)%3B%0Alet%20all%20%3D%20%5B%5D%2C%20state%20%3D%20parseState(location.search)%3B%0A%0Aconst%20lab%20%3D%20new%20URLSearchParams(location.search)%3B%20%20%20%20%20%20%20%20%20%20%2F%2F%20lab%20only%3A%20%3Fdelay%3D1500%20slows%20the%20data%2C%20%3Ffail%3D1%20breaks%20the%20first%20try%0Alet%20labDelay%20%3D%20lab.get(%22delay%22)%2C%20labFail%20%3D%20lab.get(%22fail%22)%20%3D%3D%3D%20%221%22%3B%0A%0Afunction%20td(text%2C%20label%2C%20cls)%20%7B%0A%20%20const%20c%20%3D%20document.createElement(%22td%22)%3B%0A%20%20c.dataset.label%20%3D%20label%3B%0A%20%20if%20(cls)%20c.className%20%3D%20cls%3B%0A%20%20if%20(text%20instanceof%20Node)%20c.append(text)%3B%20else%20c.textContent%20%3D%20text%3B%0A%20%20return%20c%3B%0A%7D%0A%0Afunction%20stateRow(kind%2C%20text%2C%20button)%20%7B%0A%20%20const%20tr%20%3D%20document.createElement(%22tr%22)%2C%20c%20%3D%20document.createElement(%22td%22)%3B%0A%20%20tr.className%20%3D%20%22state-row%20%22%20%2B%20kind%3B%0A%20%20c.colSpan%20%3D%20COLS.length%3B%0A%20%20c.append(text)%3B%0A%20%20if%20(button)%20%7B%20c.append(%22%20%22)%3B%20c.append(button)%3B%20%7D%0A%20%20tr.append(c)%3B%0A%20%20tbody.replaceChildren(tr)%3B%0A%7D%0A%0Aexport%20function%20skeleton(n%20%3D%20DEFAULTS.size)%20%7B%0A%20%20table.setAttribute(%22aria-busy%22%2C%20%22true%22)%3B%0A%20%20tbody.replaceChildren(...Array.from(%7B%20length%3A%20n%20%7D%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20tr%20%3D%20document.createElement(%22tr%22)%3B%0A%20%20%20%20tr.className%20%3D%20%22skel%22%3B%0A%20%20%20%20tr.innerHTML%20%3D%20%22%3Ctd%3E%3Cspan%3E%3C%2Fspan%3E%3C%2Ftd%3E%22.repeat(COLS.length)%3B%0A%20%20%20%20return%20tr%3B%0A%20%20%7D))%3B%0A%7D%0A%0Afunction%20render()%20%7B%0A%20%20const%20v%20%3D%20view(all%2C%20state)%3B%0A%20%20if%20(v.page%20!%3D%3D%20state.page)%20%7B%20state.page%20%3D%20v.page%3B%20history.replaceState(null%2C%20%22%22%2C%20toQuery(state)%20%7C%7C%20location.pathname)%3B%20%7D%0A%20%20table.setAttribute(%22aria-busy%22%2C%20%22false%22)%3B%0A%20%20for%20(const%20th%20of%20table.querySelectorAll(%22th%5Bdata-sort%5D%22))%20%7B%0A%20%20%20%20if%20(th.dataset.sort%20%3D%3D%3D%20state.sort)%20th.setAttribute(%22aria-sort%22%2C%20state.dir%20%3D%3D%3D%20%22asc%22%20%3F%20%22ascending%22%20%3A%20%22descending%22)%3B%0A%20%20%20%20else%20th.removeAttribute(%22aria-sort%22)%3B%0A%20%20%7D%0A%20%20count.textContent%20%3D%20v.total%20%3F%20%60%24%7Bnum.format(v.total)%7D%20%D8%B9%D8%B6%D9%88%D8%8C%20%D8%B5%D9%81%D8%AD%D8%A9%20%24%7Bnum.format(v.page)%7D%20%D9%85%D9%86%20%24%7Bnum.format(v.pages)%7D%60%20%3A%20%22%D9%85%D9%81%D9%8A%D8%B4%20%D9%86%D8%AA%D8%A7%D9%8A%D8%AC%22%3B%0A%20%20if%20(!v.total)%20%7B%0A%20%20%20%20const%20clear%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20clear.type%20%3D%20%22button%22%3B%20clear.className%20%3D%20%22btn%20ghost%22%3B%20clear.textContent%20%3D%20%22%D8%A7%D9%85%D8%B3%D8%AD%20%D8%A7%D9%84%D9%81%D9%84%D8%A7%D8%AA%D8%B1%22%3B%0A%20%20%20%20clear.onclick%20%3D%20()%20%3D%3E%20form.reset()%3B%0A%20%20%20%20stateRow(%22empty%22%2C%20%22%D9%85%D9%81%D9%8A%D8%B4%20%D8%A3%D8%B9%D8%B6%D8%A7%D8%A1%20%D8%A8%D8%A7%D9%84%D9%81%D9%84%D8%AA%D8%B1%20%D8%AF%D9%87.%22%2C%20clear)%3B%0A%20%20%7D%20else%20%7B%0A%20%20%20%20tbody.replaceChildren(...v.rows.map(m%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20tr%20%3D%20document.createElement(%22tr%22)%3B%0A%20%20%20%20%20%20const%20b%20%3D%20document.createElement(%22span%22)%3B%0A%20%20%20%20%20%20b.className%20%3D%20%22badge%20%22%20%2B%20m.status%3B%20b.textContent%20%3D%20STATUS%5Bm.status%5D%3B%0A%20%20%20%20%20%20tr.append(td(m.name%2C%20COLS%5B0%5D)%2C%20td(PLAN%5Bm.plan%5D%2C%20COLS%5B1%5D)%2C%20td(b%2C%20COLS%5B2%5D)%2C%0A%20%20%20%20%20%20%20%20td(shortDate.format(new%20Date(m.lastVisit))%2C%20COLS%5B3%5D)%2C%20td(num.format(m.visits)%2C%20COLS%5B4%5D%2C%20%22num%22))%3B%0A%20%20%20%20%20%20return%20tr%3B%0A%20%20%20%20%7D))%3B%0A%20%20%7D%0A%20%20pager.replaceChildren()%3B%0A%20%20const%20btn%20%3D%20(label%2C%20page%2C%20extra%20%3D%20%7B%7D)%20%3D%3E%20%7B%0A%20%20%20%20const%20b%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20b.type%20%3D%20%22button%22%3B%20b.textContent%20%3D%20label%3B%20b.dataset.page%20%3D%20page%3B%0A%20%20%20%20Object.assign(b%2C%20extra)%3B%0A%20%20%20%20if%20(page%20%3D%3D%3D%20v.page%20%26%26%20!extra.ariaLabel)%20b.setAttribute(%22aria-current%22%2C%20%22page%22)%3B%0A%20%20%20%20pager.append(b)%3B%0A%20%20%7D%3B%0A%20%20btn(%22%E2%80%B9%22%2C%20v.page%20-%201%2C%20%7B%20ariaLabel%3A%20%22%D8%A7%D9%84%D8%B5%D9%81%D8%AD%D8%A9%20%D8%A7%D9%84%D9%84%D9%8A%20%D9%81%D8%A7%D8%AA%D8%AA%22%2C%20disabled%3A%20v.page%20%3D%3D%3D%201%20%7D)%3B%0A%20%20for%20(let%20p%20%3D%201%3B%20p%20%3C%3D%20v.pages%3B%20p%2B%2B)%20btn(num.format(p)%2C%20p)%3B%0A%20%20btn(%22%E2%80%BA%22%2C%20v.page%20%2B%201%2C%20%7B%20ariaLabel%3A%20%22%D8%A7%D9%84%D8%B5%D9%81%D8%AD%D8%A9%20%D8%A7%D9%84%D8%AC%D8%A7%D9%8A%D8%A9%22%2C%20disabled%3A%20v.page%20%3D%3D%3D%20v.pages%20%7D)%3B%0A%7D%0A%0Afunction%20update(patch%2C%20mode%20%3D%20%22push%22)%20%7B%0A%20%20state%20%3D%20%7B%20...state%2C%20...patch%20%7D%3B%0A%20%20const%20url%20%3D%20toQuery(state)%20%7C%7C%20location.pathname%3B%0A%20%20if%20(mode%20%3D%3D%3D%20%22push%22)%20history.pushState(null%2C%20%22%22%2C%20url)%3B%20else%20history.replaceState(null%2C%20%22%22%2C%20url)%3B%0A%20%20render()%3B%0A%7D%0A%0Afunction%20syncForm()%20%7B%0A%20%20form.q.value%20%3D%20state.q%3B%20form.status.value%20%3D%20state.status%3B%20form.plan.value%20%3D%20state.plan%3B%0A%7D%0A%0Alet%20timer%3B%0Aform.addEventListener(%22input%22%2C%20e%20%3D%3E%20%7B%0A%20%20clearTimeout(timer)%3B%0A%20%20const%20patch%20%3D%20%7B%20%5Be.target.name%5D%3A%20e.target.value%2C%20page%3A%201%20%7D%3B%0A%20%20if%20(e.target.name%20%3D%3D%3D%20%22q%22)%20timer%20%3D%20setTimeout(()%20%3D%3E%20update(%7B%20...patch%2C%20q%3A%20e.target.value.trim()%20%7D%2C%20%22replace%22)%2C%20250)%3B%0A%20%20else%20update(patch%2C%20%22push%22)%3B%0A%7D)%3B%0Aform.addEventListener(%22reset%22%2C%20()%20%3D%3E%20setTimeout(()%20%3D%3E%20update(%7B%20q%3A%20%22%22%2C%20status%3A%20%22all%22%2C%20plan%3A%20%22all%22%2C%20page%3A%201%20%7D%2C%20%22push%22)))%3B%0Aform.addEventListener(%22submit%22%2C%20e%20%3D%3E%20e.preventDefault())%3B%0Atable.querySelector(%22thead%22).addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%0A%20%20const%20th%20%3D%20e.target.closest(%22th%5Bdata-sort%5D%22)%3B%0A%20%20if%20(!th)%20return%3B%0A%20%20const%20k%20%3D%20th.dataset.sort%3B%0A%20%20update(%7B%20sort%3A%20k%2C%20dir%3A%20state.sort%20%3D%3D%3D%20k%20%26%26%20state.dir%20%3D%3D%3D%20%22asc%22%20%3F%20%22desc%22%20%3A%20%22asc%22%2C%20page%3A%201%20%7D)%3B%0A%7D)%3B%0Apager.addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%0A%20%20const%20b%20%3D%20e.target.closest(%22button%5Bdata-page%5D%22)%3B%0A%20%20if%20(!b%20%7C%7C%20b.disabled)%20return%3B%0A%20%20update(%7B%20page%3A%20Number(b.dataset.page)%20%7D)%3B%0A%20%20document.getElementById(%22mem-h%22).scrollIntoView(%7B%20block%3A%20%22start%22%20%7D)%3B%0A%7D)%3B%0AaddEventListener(%22popstate%22%2C%20()%20%3D%3E%20%7B%20state%20%3D%20parseState(location.search)%3B%20syncForm()%3B%20render()%3B%20%7D)%3B%0A%0Aexport%20async%20function%20loadMembers()%20%7B%0A%20%20syncForm()%3B%0A%20%20skeleton()%3B%0A%20%20count.textContent%20%3D%20%22%D8%A8%D9%8A%D8%AD%D9%85%D9%91%D9%84%E2%80%A6%22%3B%0A%20%20try%20%7B%0A%20%20%20%20const%20q%20%3D%20labDelay%20%3F%20%22%3Fdelay%3D%22%20%2B%20labDelay%20%2B%20(labFail%20%3F%20%22%26fail%3D1%22%20%3A%20%22%22)%20%3A%20labFail%20%3F%20%22%3Ffail%3D1%22%20%3A%20%22%22%3B%0A%20%20%20%20const%20res%20%3D%20await%20fetch(%22data%2Fmembers.json%22%20%2B%20q)%3B%0A%20%20%20%20if%20(!res.ok)%20throw%20new%20Error(%22HTTP%20%22%20%2B%20res.status)%3B%0A%20%20%20%20all%20%3D%20await%20res.json()%3B%0A%20%20%20%20render()%3B%0A%20%20%20%20return%20all%3B%0A%20%20%7D%20catch%20(err)%20%7B%0A%20%20%20%20labFail%20%3D%20false%3B%20labDelay%20%3D%20null%3B%0A%20%20%20%20table.setAttribute(%22aria-busy%22%2C%20%22false%22)%3B%0A%20%20%20%20count.textContent%20%3D%20%22%D8%AD%D8%B5%D9%84%20%D8%AE%D8%B7%D8%A3%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AA%D8%AD%D9%85%D9%8A%D9%84%22%3B%0A%20%20%20%20const%20retry%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20retry.type%20%3D%20%22button%22%3B%20retry.className%20%3D%20%22btn%22%3B%20retry.textContent%20%3D%20%22%D8%AC%D8%B1%D9%91%D8%A8%20%D8%AA%D8%A7%D9%86%D9%8A%22%3B%0A%20%20%20%20retry.onclick%20%3D%20()%20%3D%3E%20loadMembers()%3B%0A%20%20%20%20stateRow(%22error%22%2C%20%22%D9%85%D9%82%D8%AF%D8%B1%D9%86%D8%A7%D8%B4%20%D9%86%D8%AC%D9%8A%D8%A8%20%D8%A7%D9%84%D8%A3%D8%B9%D8%B6%D8%A7%D8%A1%20(%22%20%2B%20err.message%20%2B%20%22).%22%2C%20retry)%3B%0A%20%20%20%20retry.focus()%3B%0A%20%20%20%20return%20%5B%5D%3B%0A%20%20%7D%0A%7D%0A%0A%2F%2F%20CSV%3A%20every%20row%20that%20matches%20the%20filters%20now%20(all%20pages%2C%20not%20just%20this%20one)%2C%20sorted%20like%20the%20table%0Adocument.getElementById(%22csv%22).addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20const%20v%20%3D%20view(all%2C%20%7B%20...state%2C%20page%3A%201%2C%20size%3A%20Infinity%20%7D)%3B%0A%20%20const%20head%20%3D%20%5B%22%D8%A7%D9%84%D8%B1%D9%82%D9%85%22%2C%20...COLS%5D%3B%0A%20%20const%20rows%20%3D%20v.rows.map(m%20%3D%3E%20%5Bm.id%2C%20m.name%2C%20PLAN%5Bm.plan%5D%2C%20STATUS%5Bm.status%5D%2C%20m.lastVisit%2C%20m.visits%5D)%3B%0A%20%20const%20blob%20%3D%20new%20Blob(%5BtoCSV(head%2C%20rows)%5D%2C%20%7B%20type%3A%20%22text%2Fcsv%3Bcharset%3Dutf-8%22%20%7D)%3B%0A%20%20const%20a%20%3D%20document.createElement(%22a%22)%3B%0A%20%20a.href%20%3D%20URL.createObjectURL(blob)%3B%0A%20%20a.download%20%3D%20fileName(state%2C%20new%20Date().toLocaleDateString(%22en-CA%22))%3B%20%20%20%2F%2F%20en-CA%20writes%20the%20date%20as%202026-11-20%0A%20%20a.click()%3B%0A%20%20setTimeout(()%20%3D%3E%20URL.revokeObjectURL(a.href)%2C%200)%3B%0A%20%20count.textContent%20%3D%20count.textContent.split(%22%20%C2%B7%20%22)%5B0%5D%20%2B%20%22%20%C2%B7%20%D8%A7%D8%AA%D9%86%D8%B2%D9%91%D9%84%20%D9%85%D9%84%D9%81%20%D9%81%D9%8A%D9%87%20%22%20%2B%20num.format(rows.length)%20%2B%20%22%20%D8%B9%D8%B6%D9%88%22%3B%20%20%20%2F%2F%20aria-live%3A%20a%20screen%20reader%20hears%20it%0A%7D)%3B%0A%0Aexport%20function%20addMember(m)%20%7B%20all.push(m)%3B%20render()%3B%20%7D%0Aexport%20const%20nextId%20%3D%20()%20%3D%3E%20Math.max(1000%2C%20...all.map(m%20%3D%3E%20m.id))%20%2B%201%3B%0A","lab/ui.js":"data:text/javascript;charset=utf-8,%2F%2F%20toasts%20in%20one%20live%20region%20that%20exists%20from%20the%20start%2C%20and%20a%20helper%20for%20native%20%3Cdialog%3E%0Aconst%20box%20%3D%20document.getElementById(%22toasts%22)%3B%0Aexport%20function%20toast(text%2C%20ms%20%3D%204000)%20%7B%0A%20%20const%20el%20%3D%20document.createElement(%22p%22)%3B%0A%20%20el.className%20%3D%20%22toast%22%3B%0A%20%20el.textContent%20%3D%20text%3B%0A%20%20box.append(el)%3B%0A%20%20setTimeout(()%20%3D%3E%20el.remove()%2C%20ms)%3B%0A%7D%0A%0Aexport%20function%20openDialog(dlg%2C%20onClose)%20%7B%0A%20%20dlg.returnValue%20%3D%20%22%22%3B%0A%20%20dlg.showModal()%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20modal%3A%20focus%20moves%20in%2C%20Esc%20closes%2C%20the%20rest%20of%20the%20page%20is%20inert%0A%20%20dlg.addEventListener(%22close%22%2C%20()%20%3D%3E%20onClose%3F.(dlg.returnValue)%2C%20%7B%20once%3A%20true%20%7D)%3B%0A%7D%0A%2F%2F%20a%20click%20on%20the%20backdrop%20lands%20on%20the%20%3Cdialog%3E%20itself%20(the%20form%20inside%20covers%20the%20box)%0Adocument.addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%20if%20(e.target%20instanceof%20HTMLDialogElement)%20e.target.close(%22cancel%22)%3B%20%7D)%3B%0A"}}</script>
+  <script type="module">import "lab/app.js";</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** في صف الفلاتر فوق جدول الأعضاء، جنب «امسح الفلاتر»، زرار بنفس الشكل «نزّل CSV». اختار «متجمّد» من الحالة ودوس عليه: المتصفح بينزّل [[members-frozen-2026-11-20.csv]] (بتاريخ النهارده)، والسطر الرمادي اللي فوق الجدول بيبقى «5 عضو، صفحة 1 من 1 · اتنزّل ملف فيه 5 عضو». جوه صندوق العرض هنا التنزيل نفسه مقفول (الصندوق معزول ومسموحلوش ينزّل ملفات)، بس السطر بيتغير. افتح الملف في Excel: ٦ أعمدة بالعربي، أولهم «الرقم».
+
+**كل الصفوف، مش الصفحة دي بس:** الجدول بيعرض ١٠ في الصفحة، و [[view(all, state)]] بيرجّع الـ ١٠ دول بس. لو صدّرت [[v.rows]] بتاعة الجدول، اللي فلتر «الكل» هيلاقي ١٠ أعضاء من ٥٧ في الملف ومش هياخد باله. الحل نفس الدالة بحالة تانية: [[{ ...state, page: 1, size: Infinity }]]. نفس الفلتر والبحث والترتيب (فالملف مترتب زي الجدول بالظبط)، بس صفحة واحدة مالهاش آخر. ومفيش كود فلترة جديد، فمستحيل الملف يطلع مختلف عن الجدول.
+
+**[[0 * Infinity]] بـ [[NaN]]، وده لسه شغال:** جوه [[view()]] السطر [[rows.slice((page - 1) * s.size, page * s.size)]] بيبقى [[slice(0 * Infinity, Infinity)]]، و [[0 * Infinity]] في JavaScript [[NaN]]. اتجرّب في Node:
+
+~~~text node (اتشغّل فعلًا، Node 24.22)
+0 * Infinity = NaN | [1,2,3].slice(NaN, Infinity) = [1,2,3]
+frozen, size Infinity: total 5 pages 1 page 1 rows 5
+all, size Infinity: rows 57 of 57
+~~~
+
+[[slice]] بيحوّل الـ [[NaN]] لـ [[0]] (المواصفة بتقول كده: ToIntegerOrInfinity)، فبيبدأ من الأول. ده سلوك مكتوب ومضمون، مش صدفة، بس لو حد غيّر [[view()]] يوم ما لـ حاجة زي [[Array.from({ length: … })]] هيقع. عشان كده التجربة اللي فوق متسجلة في القياس.
+
+**الـ CSV نفسه (الدالة [[cell]]):** الفاصلة بتفصل بين الخانات، فلو اسم فيه [[,]] لازم الخانة كلها بين [[""]]. ولو جوه الخانة [["]] بيتكتب [[""]] (ده اللي بيقوله RFC 4180، وهو اللي Excel بيقراه). الفاصلة العربي [[،]] حرف تاني خالص، مش فاصل، فمحتاجش تنصيص، والاختبار الأول بيتأكد من الاتنين.
+
+**أمان: خانة بتبدأ بـ [[=]].** Excel بيعتبر أي خانة بتبدأ بـ [[=]] أو [[+]] أو [[-]] أو [[@]] معادلة وبيشغّلها. اسم عضو زي [[=HYPERLINK("http://…","اضغط")]] اتكتب في فورم التسجيل هيبقى لينك في ملف المدير. ده اسمه CSV injection (أو formula injection). الحل المعروف: [[']] قبل الخانة، فـ Excel بيعرضها نص. الثمن إن رقم سالب زي [[-5]] بيبقى [['-5]]، ومفيش أرقام سالبة في الجدول ده.
+
+**الـ BOM:** أول ٣ بايتات في الملف [[EF BB BF]]، وده الحرف [[U+FEFF]] مكتوب بـ UTF-8. Excel على ويندوز بيبص عليهم عشان يعرف إن الملف UTF-8. من غيرهم بيقراه بترميز الويندوز القديم، والعربي بيطلع رموز. (Excel مش متسطب في المعمل، فاللي اتقاس هو البايتات نفسها، تحت؛ وقرايته للـ BOM من وثائق Microsoft.) و [[\r\n]] في آخر كل سطر هو اللي RFC 4180 بيقول عليه.
+
+**التنزيل من غير سيرفر:** [[new Blob([...], { type: "text/csv;charset=utf-8" })]] بيعمل الملف في الذاكرة، و [[URL.createObjectURL]] بيديله عنوان مؤقت ([[blob:…]])، و [[<a download="الاسم">]] بيقول للمتصفح «نزّل، متفتحش». و [[revokeObjectURL]] بيمسح العنوان بعدها عشان الذاكرة متفضلش محجوزة. [[setTimeout(…, 0)]] بيستنى لحد ما الضغطة تبدأ التنزيل.
+
+**[[toLocaleDateString("en-CA")]]:** كندا بتكتب التاريخ [[2026-11-20]]، وده الشكل اللي بيترتب صح كاسم ملف. [[toISOString().slice(0, 10)]] كان هيبقى أقصر، بس بيرجّع تاريخ UTC، يعني اللي بيصدّر الساعة ١ بالليل في القاهرة هياخد تاريخ امبارح.
+
+**قارئ الشاشة:** التنزيل مبيعملش أي حاجة باينة غير شريط المتصفح. [[#count]] أصلًا [[aria-live="polite"]] من الوحدة، فالسطر الجديد بيتقري: «اتنزّل ملف فيه ٥ عضو». و [[split(" · ")[0]]] بيشيل الإعلان القديم قبل ما يزوّد الجديد، فالدوسة التانية متكررهوش.
+
+~~~text node --test csv.test.mjs (اتشغّل فعلًا)
+✔ a comma inside a name goes between quotes
+✔ a quote is doubled, and a line break keeps the cell in one piece
+✔ a cell that looks like a formula becomes text
+✔ the file starts with the BOM and every line ends with CRLF
+✔ the file name carries the filters and the day
+ℹ tests 5
+ℹ pass 5
+ℹ fail 0
+~~~
+
+[[node --test]] بياخد **ملف** (أو أكتر)، مش فولدر.
+
+~~~js csv-check.mjs
+// node csv-check.mjs "<query>": press «نزّل CSV» on the dashboard with that URL, save the real download, print what is in it
+import { chromium } from "playwright-core";
+import fs from "node:fs";
+const q = process.argv[2] || "";
+const b = await chromium.launch({ channel: "chrome" });
+const p = await b.newPage({ acceptDownloads: true, viewport: { width: 1280, height: 800 } });
+const errs = []; p.on("pageerror", e => errs.push(e.message));
+await p.goto("http://127.0.0.1:5502/" + q);
+await p.waitForSelector("#rows tr:not(.skel)");
+const shown = await p.$$eval("#rows tr", t => t.length);
+const [dl] = await Promise.all([p.waitForEvent("download"), p.click("#csv")]);
+const file = "dl-" + dl.suggestedFilename(); await dl.saveAs(file);
+const buf = fs.readFileSync(file), text = buf.toString("utf8"), lines = text.split("\r\n").filter(Boolean);
+console.log($__bt$__{q || "(no filter)"} | table shows $__{shown} rows | file $__{dl.suggestedFilename()} | $__{lines.length} lines (1 header + $__{lines.length - 1}) | first bytes $__{[...buf.subarray(0, 3)].map(x => x.toString(16)).join(" ")}$__bt);
+console.log("  " + lines.slice(0, 3).join("\n  ").replace(/^\uFEFF/, "[BOM]"));
+console.log("  count now: " + await p.textContent("#count") + " | url still: " + new URL(p.url()).search + " | errors: " + (errs.join(" | ") || "none"));
+await b.close();
+~~~
+
+[[Promise.all([p.waitForEvent("download"), p.click("#csv")])]]: الاستنى بيبدأ **قبل** الضغطة، وإلا ممكن التنزيل يخلص قبل ما السكربت يبتدي يستنى. و [[saveAs]] بيحفظ الملف الحقيقي اللي Chrome نزّله، فاللي بنعدّه هو اللي المدير هيفتحه.
+
+~~~text node csv-check.mjs (٤ روابط، اتشغّل فعلًا، Chrome 156)
+?status=frozen | table shows 5 rows | file members-frozen-2026-11-20.csv | 6 lines (1 header + 5) | first bytes ef bb bf
+  [BOM]الرقم,الاسم,الباقة,الحالة,آخر زيارة,زيارات الشهر
+  1053,زياد رشدي,شهري,متجمّد,2026-10-01,1
+  1042,سلمى فهمي,شهري,متجمّد,2026-10-08,1
+  count now: 5 عضو، صفحة 1 من 1 · اتنزّل ملف فيه 5 عضو | url still: ?status=frozen | errors: none
+?status=frozen&page=3 | table shows 5 rows | file members-frozen-2026-11-20.csv | 6 lines (1 header + 5) | first bytes ef bb bf
+(no filter) | table shows 10 rows | file members-2026-11-20.csv | 58 lines (1 header + 57) | first bytes ef bb bf
+?q=ادم&sort=visits&dir=desc | table shows 2 rows | file members-search-2026-11-20.csv | 3 lines (1 header + 2) | first bytes ef bb bf
+~~~
+
+التالت هو اللي بيثبت «كل الصفوف»: الجدول بيعرض ١٠ والملف فيه ٥٧. والرابط فضل زي ما هو، يعني التصدير مبيلمسش حالة الجدول.
+
+**باقي القياس:** [[check-dashboard.mjs]] و [[audit-dashboard.mjs]] بتوع الوحدة لسه بيعدّوا كلهم: axe صفر (فاتح وداكن، 1280 و 390)، والـ matrix من غير scroll أفقي من 360 لـ 1440، والخطأ الوحيد في الـ console هو الـ 500 المقصود في تجربة «البيانات فشلت». وترتيب الـ Tab: [[… → امسح الفلاتر → نزّل CSV → الاسم → …]]، والزرار 95×44 على 360.`,
         },
         {
           lvl: R`كبير`,
