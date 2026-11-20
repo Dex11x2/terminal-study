@@ -11565,9 +11565,9 @@
   "on": "docker ubuntu-24.04 + nginx 1.24.0"
  },
  "node|--cpu-prof و profiling": {
-  "hash": "cf9f883c55d8",
-  "date": "2026-11-03",
-  "on": "ci made order-safe / limited to ubuntu+windows; --no-turbo-inlining flag checked on Node 24"
+  "hash": "8dcdd425cbe1",
+  "date": "2026-11-20",
+  "on": "Windows 11 (Node 24.22.1) + GitHub Actions ubuntu-latest و windows-latest و macos-latest (فحص ci، ٢٠ نوفمبر)"
  },
  "node|--host و Network URL": {
   "hash": "7c2188637606",
