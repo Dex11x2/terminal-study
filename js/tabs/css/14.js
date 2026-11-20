@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "الحركة",
+      pre: [
+        { to: "css/display", why: R`opacity و visibility اللي الحركة بتلعب بيهم` },
+        { to: "css/z-index", why: R`transform و translateY` },
+      ],
       l: 3,
       n: "حركة سريعة وخفيفة على transform و opacity، وبتتلغي للي طالب كده",
       projects: [
@@ -2361,6 +2365,17 @@ axe (والـ dialog مفتوح): 0   الـ validator: مفيش رسايل   CS
       items: [
         {
           cmd: "transition و @keyframes",
+          ref: [
+            { t: "MDN: Using CSS transitions", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Transitions/Using" },
+            { t: "MDN: Using CSS animations", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Animations/Using" },
+            { t: "MDN: transition", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/transition" },
+            { t: "MDN: @keyframes", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@keyframes" },
+            { t: "MDN: <time>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/time" },
+            { t: "MDN: transition-delay", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/transition-delay" },
+            { t: "MDN: transition-property", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/transition-property" },
+            { t: "MDN Curriculum: Transform & animate CSS", url: "https://developer.mozilla.org/en-US/curriculum/extensions/transform-and-animate-css/" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           title: "حركة ناعمة بالـ CSS بس",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** مع [[transition: all 300ms]]، أنهي تغيير من دول هيتحرك بنعومة وأنهي هيقفز: [[opacity: 0 → 1]]، و [[transform: scale(.9) → none]]، و [[background-color]]، و [[display: none → block]]، و [[height: 0 → auto]]، و [[visibility: hidden → visible]]؟ اكتب، وجرّب كل واحد بكلاس بيتضاف.`, done: R`opacity و transform و background-color ناعمين، و display و [[height: auto]] بيقفزوا (محتاجين [[@starting-style]] و [[transition-behavior: allow-discrete]] و [[interpolate-size]] في درس لاحق)، و visibility بيتقلب مرة واحدة في أول أو آخر الـ transition. وفهمت ليه [[transition: all]] خطر: بيحرّك حاجات مكنتش قاصدها.`, sol: R`~~~html test.html
@@ -2890,6 +2905,12 @@ transition-duration: 1e-05s
         },
         {
           cmd: "motion",
+          ref: [
+            { t: "Motion for React", url: "https://motion.dev/docs/react" },
+            { t: "Motion: AnimatePresence", url: "https://motion.dev/docs/react-animate-presence" },
+            { t: "Motion: Layout animations", url: "https://motion.dev/docs/react-layout-animations" },
+            { t: "MDN: prefers-reduced-motion", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion" },
+          ],
           title: "حركة مربوطة بالـ state، ودخول وخروج العناصر",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** في المثال، لو شلت [[<AnimatePresence>]] حركة الخروج هتحصل؟ ولو شلت [[key="panel"]]؟ ولو المستخدم مفعّل reduce و [[reducedMotion="user"]]، إيه اللي لسه بيتحرك؟`, done: R`من غير AnimatePresence العنصر بيختفي على طول من غير exit، ومن غير key الـ exit ممكن ميشتغلش صح لما العنصر يتبدّل بغيره، ومع reduce الـ [[y]] والـ [[layoutId]] اتلغوا والـ opacity بس فضلت. واتأكدت بـ DevTools › Rendering.`, sol: R`~~~jsx M0.jsx
@@ -3292,6 +3313,11 @@ x=1088  transform: matrix(0.994, 0, 0, 1, 4.2, 0)
         },
         {
           cmd: "كلمة بتتبدّل في عنوان",
+          ref: [
+            { t: "MDN: prefers-reduced-motion", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion" },
+            { t: "MDN: aria-hidden", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-hidden" },
+            { t: "MDN: grid-area", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-area" },
+          ],
           title: "كلمة بتتغيّر جوه العنوان («بنعمل متاجر / مواقع / تطبيقات») من غير ما السطر يتهز أو يتكسر",
           desc: R`العنوان فيه كلمة بتتبدّل كل كام ثانية. لو غيّرت نص [[<span>]] بس، الكلمات اللي بعدها بتتحرك مع كل تبديل (الكلمة الأطول بتزقّها)، وعلى الموبايل السطر بيتكسر ويرجع. ولو حطيت الكلمات [[position: absolute]] فوق بعض (زي مكوّنات «GooeyText»)، مبتاخدش مكان خالص فبتركب على الكلام اللي بعدها وتخرج برا الشاشة.
 

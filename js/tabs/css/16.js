@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "CSS الحديث و SEO",
+      pre: [
+        { to: "css/media queries", why: R`container queries نفس الفكرة بس على الحاوية` },
+        { to: "css/transition و @keyframes", why: R`@property و animation-timeline بيكمّلوا عليهم` },
+      ],
       l: 3,
       n: "مكونات بتتأقلم مع مكانها، و selectors بتبص لتحت، ومتغيرات بتتحرك، وحركة ماشية مع الـ scroll، و HTML جوجل وواتساب فاهمينه",
       projects: [
@@ -2054,6 +2058,12 @@ axe: 0 على الـ ٥   الـ validator (vnu) بيقول «Property field-siz
       items: [
         {
           cmd: "container queries",
+          ref: [
+            { t: "MDN: CSS container queries", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Containment/Container_queries" },
+            { t: "MDN: container", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/container" },
+            { t: "MDN: @container", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@container" },
+            { t: "MDN: container-name", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/container-name" },
+          ],
           title: "مكون يغيّر شكله حسب المكان اللي هو فيه",
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** [[.t { font-size: clamp(1rem, 4cqi, 1.5rem) }]] جوه containers عرضها 600 و 350 و 500px. الخط هيبقى كام في كل واحدة؟ وكام لو مفيش container خالص والشاشة 1280؟`, done: R`24 و 16 و 20px (‏4% من 600 = 24، ومن 350 = 14 فبيترفع لـ 16، ومن 500 = 20)، ومن غير container الـ [[cqi]] بيرجع لعرض الشاشة (4% من 1280 = 51) فبيتقص لـ 24. اتقاس كده في Chrome 156.`,
@@ -2373,6 +2383,11 @@ container 300px:  display=block  h3=16px   (4% = 12 → اترفع لـ 16)
         },
         {
           cmd: ":has()",
+          ref: [
+            { t: "MDN: :has()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has" },
+            { t: "MDN: margin-bottom", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/margin-bottom" },
+            { t: "MDN: padding-top", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-top" },
+          ],
           title: "نسّق الأب حسب اللي جواه",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** كارت جواه [[<figure><img></figure>]]: [[.card:has(img)]] بيطابق؟ و [[.card:has(> img)]]؟ و [[h2:has(+ p)]] على h2 بعده div ثم p؟ و [[.list:not(:has(li))]] على [[<ul class="list">]] فيها تعليق HTML بس؟`, done: R`الأول آه (أي عمق)، والتاني لأ (ابن مباشر بس)، والتالت لأ (لازم p بعده على طول)، والرابع آه (التعليق مش عنصر). واتأكدت بـ [[element.matches()]] في الكونسول.`,
@@ -2758,6 +2773,10 @@ h2 بعده div:  32px
         },
         {
           cmd: "CSS nesting",
+          ref: [
+            { t: "MDN: Using CSS nesting", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Nesting/Using" },
+            { t: "MDN: Nesting selector", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Nesting_selector" },
+          ],
           title: "قواعد جوه قواعد من غير Sass",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** جوه [[.card { }]] كتبنا [[&-title { color: red }]] (زي Sass) و [[h3 { color: green }]] من غير [[&]]. أنهي واحد هيشتغل؟`, done: R`[[h3]] اشتغلت (أخضر، يعني [[.card h3]])، و [[&-title]] مشتغلتش و [[.card-title]] فضل أسود: الـ nesting بتاع المتصفح مش بيلزّق نص زي Sass. اتقاس في Chrome 156.`,
@@ -3007,6 +3026,18 @@ box-shadow = rgba(0, 0, 0, 0.1) 0px 4px 6px 0px
         },
         {
           cmd: "@property",
+          ref: [
+            { t: "MDN: @property", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@property" },
+            { t: "MDN: <angle>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/angle" },
+            { t: "MDN: animation", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation" },
+            { t: "MDN: deg", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Values_and_units/Numeric_data_types" },
+            { t: "MDN: animation-delay", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-delay" },
+            { t: "MDN: animation-direction", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-direction" },
+            { t: "MDN: animation-fill-mode", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-fill-mode" },
+            { t: "MDN: animation-iteration-count", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-iteration-count" },
+            { t: "MDN: animation-name", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-name" },
+            { t: "MDN: animation-play-state", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-play-state" },
+          ],
           title: "متغير CSS بيتحرك: حد بيلف، ودايرة تقدّم بتتملي",
           desc: R`[[@property --angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }]] بيسجّل المتغير بنوع. من غيره المتصفح شايف [[--angle]] كلام، فمبيعرفش يحسب قيمة بين [[0deg]] و [[360deg]]: الحركة بتقفز مرة واحدة في نص المدة. مع التسجيل بقى زاوية، فـ [[transition]] و [[@keyframes]] بيحرّكوه بنعومة، وأي حاجة بتقرا [[var(--angle)]] (زي [[conic-gradient]]) بتتحرك معاه.
 
@@ -3431,6 +3462,13 @@ rotate      2106          18.5ms
         },
         {
           cmd: "animation-timeline",
+          ref: [
+            { t: "MDN: Scroll-driven animations", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll-driven_animations" },
+            { t: "MDN: animation-timeline", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-timeline" },
+            { t: "MDN: animation-range", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-range" },
+            { t: "MDN: scroll()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-timeline/scroll" },
+            { t: "MDN: view()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-timeline/view" },
+          ],
           title: "حركة ماشية مع الـ scroll: شريط القراية وكروت بتظهر، من غير JavaScript",
           desc: R`الحركة العادية ماشية بالوقت: 500ms وتخلص. [[animation-timeline]] بيربطها بالـ scroll بدل الوقت: [[scroll()]] = الصفحة (أو أي حاوية) نزلت قد إيه من 0% لـ 100%، و [[view()]] = العنصر ده فين في الشاشة: لسه داخل، ولا في النص، ولا خارج. فشريط «قريت قد إيه» فوق المقال، وكروت بتظهر وانت نازل، و parallax، كلهم CSS بس.
 
@@ -3831,6 +3869,13 @@ axe: 0
         },
         {
           cmd: "meta و Open Graph",
+          ref: [
+            { t: "The Open Graph protocol", url: "https://ogp.me/" },
+            { t: "Google Search: canonical URLs", url: "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls" },
+            { t: "Google Search: robots meta tag", url: "https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag" },
+            { t: "Google Search: localized versions (hreflang)", url: "https://developers.google.com/search/docs/specialty/international/localized-versions" },
+            { t: "Next.js: generateMetadata", url: "https://nextjs.org/docs/app/api-reference/functions/generate-metadata" },
+          ],
           title: "شكل صفحتك في جوجل وفي واتساب",
           practice: [
             { lvl: 'تطبيق', t: R`**بيانات حقيقية:** سكربت Node بياخد URL لصفحة من موقعك، ويجيب الـ HTML بـ [[fetch]]، ويطلّع title و description و canonical وكل [[og:*]]، ويطبع تحذير لو title أطول من 60 حرف أو description أطول من 160 أو [[og:image]] مش URL كامل.`, done: R`على صفحتك بيطبع جدول بالقيم والتحذيرات، وعلى صفحة من غير tags بيقول «ناقص» لكل واحد، و URL غلط بيطبع رسالة مفهومة.`,

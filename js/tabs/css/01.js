@@ -28,6 +28,9 @@ npm run dev`,
   categories: [
     {
       t: "HTML: هيكل الصفحة ومعناها",
+      pre: [
+
+      ],
       projects: [
         { lvl: 'صغير', dir: "zaytouna-menu", t: R`كارت منيو لمطعم متخيل`, what: R`صفحة واحدة لـ «مطعم الزيتونة» (اسم متخيل) بـ HTML بس من غير CSS: هيكل كامل ([[<!doctype html>]] و [[lang="ar" dir="rtl"]] و charset و viewport)، و h1 باسم المطعم، وفقرة، ولينك اتصال [[tel:]]، وصورة ليها [[alt]] بيوصفها، وزرار «اطلب». من دروس «مقدمة HTML» و «<!doctype html>» و «a و button».`, done: R`[[document.compatMode]] بيرجّع [[CSS1Compat]]، و [[document.characterSet]] بيرجّع [[UTF-8]]، والـ validator على validator.w3.org/nu مبيطلّعش ولا error، ولو غيّرت اسم ملف الصورة غلط الـ alt بيظهر مكانها.`, sol: R`~~~html index.html
 <!doctype html>
@@ -933,6 +936,18 @@ axe: 0 violations   الـ validator: مفيش رسايل
       items: [
         {
           cmd: "مقدمة HTML والـ Tags",
+          ref: [
+            { t: "MDN: Basic HTML syntax", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax" },
+            { t: "WHATWG: the p element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-p-element" },
+            { t: "MDN: <p>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/p" },
+            { t: "WHATWG: alt attribute", url: "https://html.spec.whatwg.org/multipage/image-maps.html#attr-area-alt" },
+            { t: "WHATWG: charset attribute", url: "https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-charset" },
+            { t: "WHATWG: href attribute", url: "https://html.spec.whatwg.org/multipage/links.html#attr-hyperlink-href" },
+            { t: "WHATWG: placeholder attribute", url: "https://html.spec.whatwg.org/multipage/input.html#attr-input-placeholder" },
+            { t: "WHATWG: src attribute", url: "https://html.spec.whatwg.org/multipage/media.html#attr-media-src" },
+            { t: "MDN: <input type=\"button\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/button" },
+            { t: "MDN: <input type=\"text\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/text" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** السطر ده القفلات فيه متلخبطة: [[<p>أهلًا <b>يا <i>صاحبي</b></i> وبس</p>]]. قبل ما تفتحه اكتب الشجرة اللي تتوقّع المتصفح يبنيها، وبعدين افتحه وقارن بناتج [[document.querySelector('p').innerHTML]] في الـ Console.`, done: R`Chrome رجّع [[أهلًا <b>يا <i>صاحبي</i></b> وبس]]: صلّحها لوحده وقفل الـ i جوه الـ b من غير أي error. وفهمت إن «شكلها سليم» مش معناه «الكود سليم».`, sol: R`احفظ السطر ده في [[predict.html]] وافتحه:
 
@@ -1253,6 +1268,18 @@ img.childNodes.length = 0
         },
         {
           cmd: "<!doctype html>",
+          ref: [
+            { t: "WHATWG: The DOCTYPE", url: "https://html.spec.whatwg.org/multipage/syntax.html#the-doctype" },
+            { t: "MDN: Viewport meta tag", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/viewport" },
+            { t: "WHATWG: the html element", url: "https://html.spec.whatwg.org/multipage/semantics.html#the-html-element" },
+            { t: "MDN: <html>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/html" },
+            { t: "WHATWG: the body element", url: "https://html.spec.whatwg.org/multipage/sections.html#the-body-element" },
+            { t: "MDN: <body>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/body" },
+            { t: "WHATWG: the head element", url: "https://html.spec.whatwg.org/multipage/semantics.html#the-head-element" },
+            { t: "MDN: <head>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/head" },
+            { t: "WHATWG: the title element", url: "https://html.spec.whatwg.org/multipage/semantics.html#the-title-element" },
+            { t: "MDN: <title>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/title" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها [[<div><img src="x.png" width="100" height="100"></div>]] بس. ارتفاع الـ div هيبقى كام لو الصفحة من غير [[<!doctype html>]]؟ وكام لو بيه؟ قيسه بـ [[getBoundingClientRect().height]].`, done: R`في Chrome من غير doctype ([[BackCompat]]) طلع 100 بالظبط، وبالـ doctype ([[CSS1Compat]]) طلع 104: في الوضع العادي الصورة inline فبتقف على خط الكلام وتحتها مسافة الحروف اللي بتنزل تحت الخط. نفس الكود بمقاس مختلف عشان سطر واحد.`, sol: R`ملفين فرقهم سطر واحد:
 
@@ -1589,6 +1616,16 @@ interactive h1=true
         },
         {
           cmd: "lang و dir",
+          ref: [
+            { t: "WHATWG: the dir element", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dir" },
+            { t: "WHATWG: lang attribute", url: "https://html.spec.whatwg.org/multipage/dom.html#attr-lang" },
+            { t: "WHATWG: the bdi element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-bdi-element" },
+            { t: "MDN: <bdi>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/bdi" },
+            { t: "WHATWG: the span element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-span-element" },
+            { t: "MDN: <span>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/span" },
+            { t: "MDN: <input type=\"email\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/email" },
+            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]] فيه فقرتين عرضهم 300px: واحدة [[text-align: start]] وواحدة [[text-align: left]]. لو غيّرت الصفحة لـ [[dir="ltr"]]، أنهي فقرة هتغيّر مكان الكلام؟`, done: R`اللي [[start]] بس: كانت يمين وبقت شمال لأن «البداية» بتمشي مع الاتجاه، واللي [[left]] فضلت شمال في الحالتين. وده سبب إن الكود اللي بيشتغل عربي وإنجليزي بيكتب start و end مش left و right.`, sol: R`~~~html
 <!doctype html>
@@ -1909,6 +1946,13 @@ hyphens: auto: ارتفاع الفقرة بـ lang = 18px ومن غيره 18px (
         },
         {
           cmd: "semantic HTML",
+          ref: [
+            { t: "MDN: HTML, a good basis for accessibility", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML" },
+            { t: "WHATWG: the section element", url: "https://html.spec.whatwg.org/multipage/sections.html#the-section-element" },
+            { t: "MDN: <section>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/section" },
+            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           practice: [
             { lvl: 'تطبيق', t: R`**ابني:** صفحة هبوط لـ «عيادة الابتسامة» (اسم متخيل) من ٧ أجزاء: الهيرو، والخدمات، والخطوات، والأطبا، والأسعار، والأسئلة، والتواصل. كل جزء [[<section id="...">]] وجواه h2، والـ header فيه nav بلينك لكل جزء، والفوتر برّه الـ main.`, done: R`تاب Accessibility (أو ARIA snapshot) بيورّي banner و navigation و main و contentinfo، وفيه h1 واحد وتحته ٧ h2، والضغط على أي لينك في الـ nav بينزل للجزء بتاعه والـ URL بيبقى فيه [[#الاسم]].`, sol: R`~~~html
 <!doctype html>
@@ -2414,6 +2458,15 @@ region "الأكثر مبيعًا"
         },
         {
           cmd: "a و button",
+          ref: [
+            { t: "WHATWG: the a element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-a-element" },
+            { t: "MDN: <a>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a" },
+            { t: "WHATWG: the button element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-button-element" },
+            { t: "MDN: <button>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button" },
+            { t: "MDN: <input type=\"submit\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/submit" },
+            { t: "WHATWG: noopener", url: "https://html.spec.whatwg.org/multipage/links.html#linkTypes" },
+            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
+          ],
           practice: [
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** متجر فيه [[<a href="#" onclick="addToCart()">أضف للسلة</a>]] و [[<div class="btn" onclick="openMenu()">القايمة</div>]]. جرّبهم بالكيبورد بس وصلّحهم.`, done: R`الـ div مكانش بيتوصله بـ Tab، واللينك كان بيزوّد [[#]] في الـ URL ويطلع الصفحة لفوق. بعد ما الاتنين بقوا [[<button type="button">]]: الاتنين بيتوصلهم بـ Tab ويشتغلوا بـ Enter و Space، والـ URL مبيتغيّرش.`, sol: R`~~~html
 <!doctype html>
@@ -2803,6 +2856,18 @@ generic
         },
         {
           cmd: "form و label",
+          ref: [
+            { t: "WHATWG: the form element", url: "https://html.spec.whatwg.org/multipage/forms.html#the-form-element" },
+            { t: "MDN: <form>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/form" },
+            { t: "WHATWG: the label element", url: "https://html.spec.whatwg.org/multipage/forms.html#the-label-element" },
+            { t: "MDN: <label>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label" },
+            { t: "WHATWG: action attribute", url: "https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#attr-fs-action" },
+            { t: "WHATWG: for attribute", url: "https://html.spec.whatwg.org/multipage/forms.html#attr-label-for" },
+            { t: "WHATWG: method attribute", url: "https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#attr-fs-method" },
+            { t: "WHATWG: required attribute", url: "https://html.spec.whatwg.org/multipage/input.html#attr-input-required" },
+            { t: "MDN: <input type=\"password\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/password" },
+            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
+          ],
           practice: [
             { lvl: 'تطبيق', t: R`**ابني:** فورم حجز حصة تجريبية في «جيم الأبطال»: الاسم، والموبايل بـ [[pattern="01[0125][0-9]{8}"]] و [[title]] بيشرح الشكل، والإيميل، والفرع ([[<select>]])، و checkbox الموافقة. كل حقل ليه label مربوط و autocomplete مناسب.`, done: R`إرسال فاضي بيقف عند الاسم، و [[0123]] في الموبايل بيطلّع رسالة فيها كلام الـ title، و [[01012345678]] بيعدّي، و [[form.checkValidity()]] بيرجّع [[true]] بس لما كله سليم.`, sol: R`~~~html
 <!doctype html>
@@ -3297,6 +3362,18 @@ application/x-www-form-urlencoded
         },
         {
           cmd: "img",
+          ref: [
+            { t: "MDN: Responsive images", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Responsive_images" },
+            { t: "WHATWG: the img element", url: "https://html.spec.whatwg.org/multipage/embedded-content.html#the-img-element" },
+            { t: "MDN: <img>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img" },
+            { t: "WHATWG: fetchpriority attribute", url: "https://html.spec.whatwg.org/multipage/embedded-content.html#attr-img-fetchpriority" },
+            { t: "WHATWG: height attribute", url: "https://html.spec.whatwg.org/multipage/canvas.html#attr-canvas-height" },
+            { t: "WHATWG: loading attribute", url: "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#attr-iframe-loading" },
+            { t: "WHATWG: sizes attribute", url: "https://html.spec.whatwg.org/multipage/semantics.html#attr-link-sizes" },
+            { t: "WHATWG: srcset attribute", url: "https://html.spec.whatwg.org/multipage/embedded-content.html#attr-img-srcset" },
+            { t: "WHATWG: width attribute", url: "https://html.spec.whatwg.org/multipage/canvas.html#attr-canvas-width" },
+            { t: "MDN: px", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Values_and_units/Numeric_data_types" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** صورة الهيرو اللي في المثال ([[400w]] و [[800w]] و [[1600w]] و [[sizes="(min-width: 768px) 50vw, 100vw"]]). احسب بإيدك أنهي ملف المتصفح هيختار على: موبايل عرضه 400 و DPR 2، وموبايل 360 و DPR 3، وكمبيوتر 1280 و DPR 1. وبعدين اتأكد من [[img.currentSrc]] في وضع الموبايل.`, done: R`الحساب: 400×2 = 800 → [[800w]]، و 360×3 = 1080 → [[1600w]] (أول ملف أكبر من المطلوب)، و 1280×0.5 = 640 → [[800w]]. و Chrome اختار نفس التلاتة.`, sol: R`~~~html
 <!doctype html>

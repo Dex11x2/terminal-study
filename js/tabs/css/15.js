@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "الأداء",
+      pre: [
+        { to: "css/img", why: R`width و height والصور اللي بتعمل CLS` },
+        { to: "css/<!doctype html>", why: R`الـ head اللي بيحمّل الـ CSS والخطوط` },
+      ],
       l: 3,
       n: "الصفحة تظهر بسرعة ومتتنطش، والـ JavaScript ميجبرش المتصفح يعيد الحساب على الفاضي",
       projects: [
@@ -1733,6 +1737,13 @@ axe: 0 (بعد ما اللوجو بقى h1: «page-has-heading-one»)   الـ v
       items: [
         {
           cmd: "CLS",
+          ref: [
+            { t: "web.dev: Cumulative Layout Shift (CLS)", url: "https://web.dev/articles/cls" },
+            { t: "web-vitals (GitHub)", url: "https://github.com/GoogleChrome/web-vitals" },
+            { t: "MDN: aspect-ratio", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/aspect-ratio" },
+            { t: "WHATWG: the style element", url: "https://html.spec.whatwg.org/multipage/semantics.html#the-style-element" },
+            { t: "MDN: <style>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/style" },
+          ],
           title: "الصفحة بتتنط وانت بتقرا",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي تغيير من دول بيعمل layout shift: عنصر [[position: relative]] الـ [[top]] بتاعه اتغير من 0 لـ 40px، وعنصر عليه [[transform: translateY(40px)]]، و div ارتفاعه 80px اتحط في أول الـ body؟ اكتب، وبعدين جرّب بـ [[new PerformanceObserver(l => console.log(l.getEntries())).observe({ type: "layout-shift", buffered: true })]].`, done: R`[[top]] طلّع entry، و transform مطلّعش حاجة، والـ div اللي اتحط فوق طلّع entry قيمته أكبر (قسناها 0.022 في Chrome 156) لأنه زق كل اللي تحته. فالحركة بـ transform مبتأثرش على CLS.`, sol: R`~~~html test.html
@@ -2149,6 +2160,12 @@ img, video { max-width: 100%; height: auto; }
         },
         {
           cmd: "critical CSS",
+          ref: [
+            { t: "web.dev: Extract critical CSS", url: "https://web.dev/articles/extract-critical-css" },
+            { t: "MDN: rel=preload", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/preload" },
+            { t: "MDN: rel=preconnect", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/preconnect" },
+            { t: "MDN: svh", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length" },
+          ],
           title: "ليه الصفحة بيضا ثانيتين قبل ما تظهر؟",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي واحد من دول بيوقّف أول رسم: [[<link rel="stylesheet" media="print">]]، و [[<link rel="stylesheet" media="(min-width: 2000px)">]] على شاشة 1280، و [[<script src>]] في الـ head من غير defer، و [[<script defer>]]، و [[<script type="module">]]، و [[@import]] جوه ملف CSS؟`, done: R`بيوقّف: السكربت العادي (بيوقف قراية الـ HTML)، و [[@import]] (سلسلة طلبات قبل الرسم). مش بيوقّف: print، والـ media اللي مش متطابقة (بتتحمّل بأولوية قليلة)، و defer، و module. واتأكدت من عمود Priority في Network و Lighthouse «Render-blocking resources».`, sol: R`**الإجابة:**
@@ -2437,6 +2454,12 @@ app.js اتنفذ:    1092
         },
         {
           cmd: "layout thrashing",
+          ref: [
+            { t: "web.dev: Avoid large, complex layouts and layout thrashing", url: "https://web.dev/articles/avoid-large-complex-layouts-and-layout-thrashing" },
+            { t: "MDN: requestAnimationFrame()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame" },
+            { t: "What forces layout / reflow (Paul Irish)", url: "https://gist.github.com/paulirish/5d52fb081b3570c81e3a" },
+            { t: "MDN: addEventListener() passive", url: "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener" },
+          ],
           title: "JavaScript بيخلي المتصفح يعيد حساب الصفحة مية مرة",
           practice: [
             { lvl: 'سريع', t: R`**قارن وقيس:** اعمل ١٠٠٠ [[.card]] وجرّب الطريقتين اللي في المثال، وحوّط كل واحدة بـ [[performance.now()]].`, done: R`رقمين: في Chrome 156 قسناهم 274.8ms للقراية والكتابة بالتبادل و 7.6ms للقراية كلها ثم الكتابة. وجهازك أرقامه مختلفة بس الفرق بنفس الحجم تقريبًا.`, sol: R`~~~js console

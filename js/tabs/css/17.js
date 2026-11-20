@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "widgets و scroll وميزات جديدة",
+      pre: [
+        { to: "css/aria", why: R`الأدوار و aria-expanded اللي الـ widgets محتاجاها` },
+        { to: "css/focus-visible", why: R`الـ focus اللي الـ widgets بتنقله` },
+      ],
       l: 3,
       n: "accordion و tabs من غير مكتبة، و scroll مظبوط، وحركة بين الصفحات، وإزاي تعرف الميزة الجديدة تنفع ولا لسه",
       projects: [
@@ -1989,6 +1993,14 @@ axe: 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
       items: [
         {
           cmd: "details و summary",
+          ref: [
+            { t: "WHATWG: the details element", url: "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-details-element" },
+            { t: "MDN: <details>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/details" },
+            { t: "WHATWG: the summary element", url: "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-summary-element" },
+            { t: "MDN: <summary>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/summary" },
+            { t: "MDN: border-block-end", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/border-block-end" },
+            { t: "MDN: cursor", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/cursor" },
+          ],
           title: "accordion و FAQ من غير ولا سطر JavaScript",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** سؤالين [[<details name="f">]] والأول [[open]]. دوست على الـ summary بتاع التاني: الأول هيبقى إيه؟ وبعدين من الكونسول عملت [[a.open = true]] للأول: التاني هيبقى إيه؟`, done: R`بعد الضغطة: الأول اتقفل والتاني اتفتح. وبعد [[a.open = true]]: الأول اتفتح والتاني اتقفل لوحده، يعني الـ [[name]] بيشتغل حتى من JavaScript. اتقاس في Chrome 156.`,
@@ -2312,6 +2324,12 @@ Ctrl+F على كلمة في إجابة مقفولة: في Chrome و Edge الـ 
         },
         {
           cmd: "roving tabindex",
+          ref: [
+            { t: "WAI-ARIA APG: roving tabindex", url: "https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_roving_tabindex" },
+            { t: "WHATWG: tabindex attribute", url: "https://html.spec.whatwg.org/multipage/interaction.html#attr-tabindex" },
+            { t: "WHATWG: step attribute", url: "https://html.spec.whatwg.org/multipage/input.html#attr-input-step" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           title: "tabs بتتحرك بالأسهم زي البرامج الحقيقية",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٤ tabs في صفحة RTL، والـ focus على الأول (اللي على اليمين خالص). دوست سهم شمال: هيروح فين؟ وسهم يمين؟ و End؟`, done: R`سهم شمال = التاني (اللي بعده في القراية)، وسهم يمين = الرابع (لف من الأول للآخر)، و End = الرابع. وكل مرة المحتوى اتغير و [[aria-selected]] اتنقل. واتأكدت بالكيبورد.`,
@@ -2758,6 +2776,15 @@ function select(tab) {
         },
         {
           cmd: "scroll-snap و scroll-margin",
+          ref: [
+            { t: "MDN: Basic concepts of scroll snap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll_snap/Basic_concepts" },
+            { t: "MDN: scroll-margin", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-margin" },
+            { t: "MDN: scroll-behavior", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-behavior" },
+            { t: "MDN: scroll-margin-top", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-margin-top" },
+            { t: "MDN: scroll-snap-align", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-align" },
+            { t: "MDN: overscroll-behavior-x", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overscroll-behavior-x" },
+            { t: "MDN: scroll-snap-type", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-type" },
+          ],
           title: "carousel من CSS بس، وعنوان ميستخباش تحت الـ header",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** carousel في صفحة [[dir="rtl"]]. [[scrollLeft]] بيبدأ بكام؟ ولو عملت [[scrollBy({ left: -100 })]] بيبقى كام؟ وإيه اللي ده بيعنيه لزرار «اللي بعده»؟`, done: R`بيبدأ 0 وبعد الـ scrollBy بقى -100 (اتقاس في Chrome 156): في RTL الـ scroll للشمال بالسالب. فزرار «اللي بعده» في العربي لازم [[scrollBy({ left: -width })]]، والأحسن تضرب في [[dir === "rtl" ? -1 : 1]].`,
@@ -3104,6 +3131,16 @@ h2[id] { scroll-margin-top: 6rem; }
         },
         {
           cmd: "View Transitions",
+          ref: [
+            { t: "MDN: View Transition API", url: "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API" },
+            { t: "Chrome: Cross-document view transitions", url: "https://developer.chrome.com/docs/web-platform/view-transitions/cross-document" },
+            { t: "MDN: animation-duration", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-duration" },
+            { t: "MDN: view-transition-name", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/view-transition-name" },
+            { t: "MDN: ::view-transition-group()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::view-transition-group" },
+            { t: "MDN: ::view-transition-new()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::view-transition-new" },
+            { t: "MDN: ::view-transition-old()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::view-transition-old" },
+            { t: "MDN: @view-transition", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@view-transition" },
+          ],
           title: "حركة ناعمة بين حالتين أو صفحتين",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين في الصفحة عليهم نفس [[view-transition-name: product-42]] في نفس الوقت، وبدأت [[document.startViewTransition()]]. هيحصل إيه؟`, done: R`مفيش حركة خالص: الكونسول طلّع «Unexpected duplicate view-transition-name: product-42»، و [[transition.ready]] اترفض بـ «InvalidStateError: Transition was aborted because of invalid state. Snapshot capture failed» (Chrome 156). الاسم لازم يبقى فريد في كل لحظة.`,
@@ -3399,6 +3436,11 @@ ready ← InvalidStateError
         },
         {
           cmd: "text-wrap",
+          ref: [
+            { t: "MDN: text-wrap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-wrap" },
+            { t: "MDN: line-clamp", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/line-clamp" },
+            { t: "MDN: text-wrap-style", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-wrap-style" },
+          ],
           title: "عنوان سطره الأخير كلمة لوحدها",
           practice: [
             { lvl: 'تطبيق', t: R`**قارن وقيس:** عنوان عربي طويل في كارت عرضه 260 و 300 و 340px، مرة من غير [[text-wrap]] ومرة بـ [[balance]]. قيس عرض كل سطر بـ [[Range.getClientRects()]] (أو بعينك من DevTools).`, done: R`جدول بعرض كل سطر في الحالات الست. ولاحظت إن في مقاسات العنوان أصلًا متوازن فمفيش فرق، وفي مقاسات تانية السطر الأخير بقى أطول بكتير مع [[balance]]، فالخاصية بتفرق في حالات معينة مش كلها.`,
@@ -3680,6 +3722,13 @@ CSS.supports('text-wrap', 'balance')   → true
         },
         {
           cmd: "Baseline و @supports",
+          ref: [
+            { t: "web.dev: Baseline", url: "https://web.dev/baseline" },
+            { t: "web-features (GitHub)", url: "https://github.com/web-platform-dx/web-features" },
+            { t: "MDN: CSS.supports()", url: "https://developer.mozilla.org/en-US/docs/Web/API/CSS/supports_static" },
+            { t: "MDN: @supports", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@supports" },
+            { t: "MDN: anchor-name", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/anchor-name" },
+          ],
           title: "الميزة دي أستخدمها ولا لسه؟ Baseline و caniuse و @supports",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[CSS.supports("(:has(a))")]] و [[CSS.supports("selector(:has(a))")]]: كل واحد بيرجّع إيه في Chrome 156؟ وليه؟`, done: R`الأول [[false]] والتاني [[true]] (اتقاس). الـ selectors لازم تتسأل بـ [[selector()]]، و [[@supports (:has(a))]] من غيرها دايمًا false فالـ fallback بيشتغل حتى في المتصفح اللي بيدعم.`,
