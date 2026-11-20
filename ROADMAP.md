@@ -71,5 +71,6 @@
     5. ✓ `npm run check` و CI (check و lessons و release و pages) أخضر.
     **البنود الخمسة متحققين: **الكورس خلص.** اللي بعده: JavaScript في شات جديد (القاعدة ٤).**
 - [ ] الرئيسية كمسارات، وعلامة «مرجع» على الباقي.
-- [ ] JavaScript (منهج، ثم الناقص، ثم حلول ٦٩١ تمرين و ١٩٩ مشروع).
+- [ ] JavaScript (منهج ✓ ٢٠ نوفمبر، ثم الناقص، ثم حلول ٦٩١ تمرين و ١٩٩ مشروع).
+  - المنهج: `syllabus/js.json` (١٣٩٤ بند: ٩٣٤ في المنهج و ٤٦٠ مستبعد بسبب)، من مرجع MDN و ECMAScript و browser-compat-data و web-features و MDN Curriculum. القياس: `node tools/syllabus.js js`. **نقطة البداية: ٣٥٢ من ٩٣٤ (٣٧٪).** قايمة الناقص: `syllabus/js.md`، وترتيب الكتابة في `PLAN.md` «كورس JavaScript».
 - [ ] Git، ثم React، ثم Node، ثم «ابدأ من هنا».

@@ -33,7 +33,16 @@ function lessonPlaces(item) {
 
 // matcher(item, ELS) -> { cmd(text), named(text): heading or table cell, mention(wholeLessonText) }
 // element names that are also a CSS unit, property or function (em, s, q…): a lesson name can't tell which one it means
-let AMBIG = new Set();
+let AMBIG = new Set(), SHARED = new Map();
+const CAT_OWNER = { 'المصفوفات': 'Array', 'المتغيرات والنصوص': 'String', 'الـ objects': 'Object', 'async: الـ Promises و await': 'Promise', 'التواريخ والوقت': 'Date', 'regex': 'RegExp', 'this': 'Function' };
+// a JavaScript object as a lesson names it: Array lessons say «array», a typed array lesson names Uint8Array
+const LOWER = new Set(['Array', 'String', 'Number', 'Object', 'Promise', 'Function', 'Boolean', 'Date', 'Symbol', 'Error', 'Iterator', 'Generator', 'BigInt', 'RegExp']);
+function ownerRe(o) {
+  if (o === 'TypedArray') return /TypedArray|(Big)?(Ui|I)nt\d+(Clamped)?Array|Float\d+Array|typed array/;
+  if (o === 'RegExp') return /RegExp|regex/i;
+  if (/^Async/.test(o)) return new RegExp(o + '|async (generator|iterator)', 'i');
+  return new RegExp('(?<![\\w$])(' + esc(o.replace(/^Intl\./, '')) + ')(?![\\w$])', LOWER.has(o) ? 'i' : '');
+}
 function matcher(it, ELS) {
   const n = it.name, inSpan = (t, re) => spans(t).some(s => re.test(s)), exact = t => spans(t).some(s => s.trim() === n) || t.replace(/\[\[|\]\]/g, '').trim() === n;
   switch (it.kind) {
@@ -72,6 +81,37 @@ function matcher(it, ELS) {
       return { cmd: t => tok(n).test(t), named: t => inSpan(t, num) || exact(t), mention: t => num.test(t) };
     }
     case 'type': { const f = t => t.includes(n); return { cmd: f, named: f, mention: f }; }
+    // ---- JavaScript (syllabus/js.json)
+    case 'builtin': { const re = new RegExp('(?<![\\w$.])' + esc(n.replace(/\(\)$/, '')) + '(?![\\w$])'); return { cmd: t => re.test(t), named: t => re.test(t), mention: t => re.test(t) }; }
+    case 'member': {
+      if (it.static || it.name.startsWith(it.owner + '.' + it.short.split('.')[0]) && !it.name.includes('.prototype')) {
+        // Object.keys, Math.max, Symbol.iterator: the full name or nothing
+        const re = new RegExp('(?<![\\w$])' + esc(it.name.replace(/\(\)$/, '')) + '(?![\\w$])');
+        return { cmd: t => re.test(t), named: t => re.test(t), mention: t => re.test(t) };
+      }
+      // arr.map(): the method's name, in a lesson that is about its owner (map in an Array lesson, not in a Map one)
+      const short = it.short.startsWith('Symbol.') ? '[' + it.short + ']' : it.short;
+      const re = new RegExp((short.startsWith('[') ? '' : '(?<![\\w$#-])') + esc(short) + '(?![\\w$-])');
+      // a name only one object has (call, matchAll, flags) is enough; a shared one (toString, size, entries) needs its object named
+      // in the heading or cell itself, the lesson's name, or its category
+      const own = ownerRe(it.owner), alone = it.owner !== 'TypedArray' && (SHARED.get(it.short) || new Set()).size === 1;
+      const about = (t, l) => alone || !l || own.test(t) || own.test(l.cmd) || own.test(l.cat) || CAT_OWNER[l.cat] === it.owner;
+      return { cmd: (t, l) => re.test(t) && about(t, l), named: (t, h, l) => re.test(t) && about(t, l), mention: t => own.test(t) && new RegExp('\\.' + esc(short) + '\\b').test(t) };
+    }
+    case 'operator': case 'statement': case 'syntax': case 'regex': case 'concept': {
+      let re;
+      if (it.alias) re = new RegExp(it.alias, 'i');
+      else if (it.symbol && it.kind === 'operator') {
+        // a + b: the symbol standing alone between spaces; -x, x++: stuck to its operand; ?. is always stuck
+        const s = esc(it.symbol), alone = `(?:^|\\s)${s}(?=\\s|$)`;
+        const r = it.symbol === '?.' ? new RegExp(s)
+          : /^(Unary|Logical NOT|Bitwise NOT|Increment|Decrement)/.test(n) ? new RegExp(`${/^Unary/.test(n) ? '(?!)' : alone}|(?:^|[\\s(])${s}(?=[\\w$(])|[\\w$)]${s}(?=\\s|$|[);,])`)
+          : new RegExp(alone);
+        re = { test: t => r.test(t.replace(/\[\[|\]\]/g, ' ')) };
+      } else if (/^[a-z][\w.*()]*$/.test(n)) re = new RegExp('(?<![\\w$."-])' + esc(n.replace(/\(\)$/, '')) + '(?![\\w$"-])'); // "in-stock" is not the in operator
+      else re = new RegExp(esc(n.replace(/ \([^)]*\)$/, '')), 'i');
+      return { cmd: t => re.test(t), named: t => re.test(t), mention: t => re.test(t) };
+    }
     default: return { cmd: () => false, named: () => false, mention: () => false };
   }
 }
@@ -82,6 +122,8 @@ function measure(tab) {
   const lessons = raw.map(r => ({ cat: r.cat, ...lessonPlaces(r.item) }));
   const byCmd = new Map(lessons.map(l => [l.cmd, l]));
   const ELS = new Set(syl.items.filter(i => i.kind === 'element').map(i => i.name));
+  SHARED = new Map();
+  for (const i of syl.items) if (i.kind === 'member' && !i.static && i.owner !== 'TypedArray') { if (!SHARED.has(i.short)) SHARED.set(i.short, new Set()); SHARED.get(i.short).add(i.owner); }
   AMBIG = new Set(syl.items.filter(i => /^(unit|property|function)$/.test(i.kind)).map(i => i.name.replace(/\(\)$/, '')));
   const res = new Map(), bad = [];
   const find = it => {
@@ -93,9 +135,9 @@ function measure(tab) {
       else return { how: 'يدوي', where: it.at };
     }
     const m = matcher(it, ELS);
-    for (const l of lessons) if (m.cmd(l.cmd)) return { how: 'درس', where: l.cmd };
-    for (const l of lessons) { const h = l.heads.find(h => m.named(h)); if (h) return { how: 'قسم', where: l.cmd + ' › ' + h }; }
-    for (const l of lessons) { const c = l.cells.find(c => m.named(c.c, c.h)); if (c) return { how: 'جدول', where: l.cmd + ' › صف ' + c.c }; }
+    for (const l of lessons) if (m.cmd(l.cmd, l)) return { how: 'درس', where: l.cmd };
+    for (const l of lessons) { const h = l.heads.find(h => m.named(h, undefined, l)); if (h) return { how: 'قسم', where: l.cmd + ' › ' + h }; }
+    for (const l of lessons) { const c = l.cells.find(c => m.named(c.c, c.h, l)); if (c) return { how: 'جدول', where: l.cmd + ' › صف ' + c.c }; }
     const n = lessons.filter(l => m.mention(l.all));
     return { how: null, mentions: n.length, first: n[0] && n[0].cmd };
   };
@@ -123,7 +165,7 @@ function summary(tab) {
   return { syl, res, bad, lessons, kinds };
 }
 
-const KIND = { element: 'عناصر HTML', attribute: 'attributes', 'input-type': 'أنواع input', rel: 'قيم rel', property: 'خصائص CSS', selector: 'selectors', 'at-rule': 'at-rules', function: 'دوال CSS', unit: 'وحدات', type: 'أنواع القيم', outcome: 'مهارات (MDN Curriculum)' };
+const KIND = { builtin: 'objects جاهزة (built-ins)', member: 'methods و properties', operator: 'operators و expressions', statement: 'statements', syntax: 'syntax (دوال و classes و grammar)', regex: 'regex syntax', concept: 'مفاهيم (MDN Guide)', error: 'رسايل الأخطاء', element: 'عناصر HTML', attribute: 'attributes', 'input-type': 'أنواع input', rel: 'قيم rel', property: 'خصائص CSS', selector: 'selectors', 'at-rule': 'at-rules', function: 'دوال CSS', unit: 'وحدات', type: 'أنواع القيم', outcome: 'مهارات (MDN Curriculum)' };
 
 function report(tab, all) {
   const { syl, res, bad, lessons, kinds } = summary(tab);
