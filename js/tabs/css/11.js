@@ -5,12 +5,2025 @@ MORE("css", [
       l: 2,
       n: "dark mode من غير وميض، ومكونات بتتقلب لوحدها في العربي، وخط بيتحمّل صح، وأيقونات ليها اسم",
       projects: [
-        { lvl: 'صغير', t: R`زرار ثيم بتلات اختيارات`, what: R`segmented control فيه فاتح وغامق و«زي الجهاز»، معمول من ٣ [[<input type="radio">]] متنسّقين (مش div)، والاختيار بيتحط [[data-theme]] على html بسكربت inline في الـ head قبل الرسم، ويتحفظ في localStorage جوه [[try/catch]]، و [[color-scheme]] بيتغير معاه. من درس dark mode.`, done: R`refresh على كل اختيار من التلاتة من غير ولا frame غلط (Performance › Screenshots)، و«زي الجهاز» بيتقلب لوحده لو غيّرت ثيم الجهاز والصفحة مفتوحة، والأسهم بتتنقل بين الاختيارات (ده شغل الـ radio ببلاش)، و axe صفر مشاكل.` },
-        { lvl: 'صغير', t: R`كارت تعليق بلغتين`, what: R`كارت فيه صورة ودايرة حالة واسم ووقت وزرار «رد» بسهم و badge «جديد» في الركن، مكتوب بـ logical properties بس (CSS عادي أو Tailwind)، وزرار فوق بيقلب [[dir]] و [[lang]] على html. من درس logical properties و lucide-react.`, done: R`ملف الـ CSS مفيهوش ولا [[left]] ولا [[right]] ولا [[[dir=rtl]]]، والسهم بس عليه [[rtl:-scale-x-100]]، ولقطة RTL مراية للقطة LTR، واسم إنجليزي فيه رموز في آخره بيظهر صح جوه الجملة العربي.` },
-        { lvl: 'متوسط', t: R`منيو مطعم «الركن الأخضر» بلغتين`, what: R`صفحة منيو (مطعم متخيل) فيها أقسام وأطباق وأسعار. النصوص في dictionary بـ [[data-i18n="key"]]، وزرار اللغة بيغيّر [[lang]] و [[dir]] والنصوص من غير reload ويفتكر الاختيار. الأسعار بـ [[Intl.NumberFormat]] (‏[[ar-EG]] و [[en-US]] بعملة [[EGP]]) وعمودها [[font-variant-numeric: tabular-nums]]، وخط لكل لغة بـ [[:lang(ar)]] و [[:lang(en)]]، والخطوط woff2 من الموقع بـ [[unicode-range]]. بيجمع الدروس التلاتة الأولى.`, done: R`تبديل اللغة بيغيّر الاتجاه والنصوص وشكل الأسعار في نفس اللحظة، وأرقام عمود الأسعار متصفّة تحت بعض، والاختيار فاضل بعد refresh، وصفحة عربي بس بتنزّل ملف الخط العربي بس (Network › Font)، ومفيش ولا [[[dir=rtl]]] في الـ CSS.` },
-        { lvl: 'متوسط', t: R`استوديو الألوان`, what: R`صفحة فيها slider لدرجة اللون (hue من 0 لـ 360) بيولّد من لون واحد كل التوكنز: [[--brand]] بـ [[oklch()]]، و [[--brand-soft]] و [[--ring]] بـ [[color-mix(in oklab, var(--brand) 20%, transparent)]]، ونسخة للغامق أفتح شوية. تحت الـ slider عينات: زرار، و badge، ولينك، وحقل بـ focus، و alert نجاح وخطر (الألوان الوظيفية ثابتة مش بتتغير مع البراند). من dark mode، ومتغيرات CSS في الوحدة اللي فاتت.`, done: R`تحريك الـ slider بيغيّر كل العينات في الثيمين من غير ما تلمس غير متغير واحد، و alerts النجاح والخطر لونها مبيتغيرش، وفيه ٣ درجات hue موثّقة في الصفحة إن كلامها 4.5:1 أو أكتر في الوضعين (من DevTools).` },
-        { lvl: 'كبير', t: R`landing ثنائية اللغة لاستوديو تصوير متخيل «عدسة»`, what: R`صفحة كاملة (هيرو، وخدمات، وأعمال، وأسعار، وFAQ، وفوتر) بالعربي والإنجليزي على [[/ar]] و [[/en]]. توكنز طبقتين (خام ثم [[@theme]] دلالي)، و ٣ ثيمات من غير وميض، و RTL و LTR بالـ logical properties بس، وخطين woff2 من الموقع بـ [[unicode-range]] و [[swap]] و preload لخط العناوين بس، وضبط العربي ([[line-height: 1.85]] للفقرات و [[letter-spacing: 0]] لـ [[:lang(ar)]] وعناوين بـ [[clamp()]])، وأيقونات lucide بـ [[aria-hidden]] أو اسم. وفيها من تأثيرات المشاريع الحقيقية: navbar زجاجي sticky ([[backdrop-filter]] ومعاه [[@supports not]] بخلفية شبه مصمتة)، وهيرو بـ ٣ [[radial-gradient]] وطبقة noise خفيفة من SVG [[feTurbulence]] في data URI بـ [[pointer-events: none]]. بيجمع الوحدة دي مع الوحدات والمتغيرات و Tailwind.`, done: R`Lighthouse (Mobile) في اللغتين والثيمين: Accessibility ‏100 و Performance ‏90 أو أكتر و CLS أقل من 0.05. صفر طلبات خطوط لدومين تاني. الصفحة شغالة والـ JavaScript مقفول (الثيم من [[prefers-color-scheme]] واللغة من الـ URL). لقطة RTL مراية LTR. وفيه README بجدول: كل توكن واستخدامه.`, ext: R`زوّد ثيم [[prefers-contrast: more]] و [[forced-colors]] (Windows High Contrast)، واعمل صفحة style guide بتعرض التوكنز كلها، وانشرها على GitHub Pages برابط.` },
-        { lvl: 'فكرة', t: R`هوية بصرية لمشروعك انت`, what: R`اختار مشروع عايز تعمله (أو موقعك الشخصي)، وقرر هويته: palette بـ oklch بثيمين، وخطين (عربي ولاتيني) بأسباب الاختيار، ومقياس مسافات و radius وظلال (ظل صغير حاد + ظل كبير ناعم)، وطبقات [[z-index]] بأسامي ([[--z-header]] و [[--z-modal]])، ومدد وحركة ([[--ease]]). واعمل صفحة واحدة بتعرضهم كلهم في الثيمين والاتجاهين.`, done: R`أي مكوّن جديد في المشروع بيتبني من التوكنز من غير ولا قيمة hard-coded، والصفحة فيها كل توكن بمثال حي وبتباينه.`, ext: R`صدّر التوكنز كـ JSON، وولّد منه [[@theme]] بتاع Tailwind ومتغيرات CSS عادية بسكربت صغير، فالتعديل بيبقى في مكان واحد.` },
+        { lvl: 'صغير', dir: "theme-switch", t: R`زرار ثيم بتلات اختيارات`, what: R`segmented control فيه فاتح وغامق و«زي الجهاز»، معمول من ٣ [[<input type="radio">]] متنسّقين (مش div)، والاختيار بيتحط [[data-theme]] على html بسكربت inline في الـ head قبل الرسم، ويتحفظ في localStorage جوه [[try/catch]]، و [[color-scheme]] بيتغير معاه. من درس dark mode.`, done: R`refresh على كل اختيار من التلاتة من غير ولا frame غلط (Performance › Screenshots)، و«زي الجهاز» بيتقلب لوحده لو غيّرت ثيم الجهاز والصفحة مفتوحة، والأسهم بتتنقل بين الاختيارات (ده شغل الـ radio ببلاش)، و axe صفر مشاكل.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ثيم بتلات اختيارات</title>
+<!-- inline and BEFORE the stylesheet: it runs before the first paint, so there is no flash of the wrong theme -->
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") {
+      document.documentElement.dataset.theme = t;
+      document.documentElement.style.colorScheme = t;
+    }
+  })();
+</script>
+<link rel="stylesheet" href="style.css">
+<script src="theme.js" defer></script>
+</head>
+<body>
+<main class="page">
+  <h1>مدونة «سطر»</h1>
+  <fieldset class="seg">
+    <legend>الثيم</legend>
+    <label><input type="radio" name="theme" value="light"> فاتح</label>
+    <label><input type="radio" name="theme" value="dark"> غامق</label>
+    <label><input type="radio" name="theme" value="system"> زي الجهاز</label>
+  </fieldset>
+  <article class="card">
+    <h2>إزاي تكتب كل يوم</h2>
+    <p>عشر دقايق الصبح أحسن من ساعتين آخر الأسبوع.</p>
+    <a href="#more">كمّل القراية</a>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+
+/* light by default */
+:root {
+  color-scheme: light dark;     /* "system": the browser may use either; scrollbars and form controls follow */
+  --bg: #f8fafc; --fg: #0f172a; --muted: #475569; --card: #ffffff; --line: #cbd5e1; --brand: #4338ca; --on-brand: #ffffff;
+}
+/* "system" (no data-theme): follow the device, live */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
+  }
+}
+/* a choice the reader made wins over the device */
+:root[data-theme="dark"] {
+  --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
+}
+
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+.page { max-width: 40rem; margin-inline: auto; padding: 1rem; }
+a { color: var(--brand); }
+
+/* the segmented control: real radios, styled through their labels */
+.seg { display: inline-flex; gap: 0.25rem; margin: 0 0 1.5rem; padding: 0.25rem; border: 1px solid var(--line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.seg label { padding: 0.4rem 1rem; border-radius: 999px; cursor: pointer; }
+.seg input { position: absolute; opacity: 0; }                 /* hidden from the eye, still focusable and still a radio */
+.seg label:has(input:checked) { background: var(--brand); color: var(--on-brand); font-weight: 700; }
+.seg label:has(input:focus-visible) { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.card { padding: 1.25rem; border-radius: 1rem; background: var(--card); border: 1px solid var(--line); }
+.card h2 { margin-top: 0; }
+.card p { color: var(--muted); }
+~~~
+
+~~~js theme.js
+// the radios: show the saved choice, save a new one, apply it
+const root = document.documentElement;
+let saved = "system";
+try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
+const radios = document.querySelectorAll('input[name="theme"]');
+radios.forEach(r => { r.checked = r.value === saved; });
+
+function apply(value) {
+  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
+  else { root.dataset.theme = value; root.style.colorScheme = value; }
+  try { localStorage.setItem("theme", value); } catch (e) {}
+}
+radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
+~~~
+
+~~~view 360 380 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ثيم بتلات اختيارات</title>
+<!-- inline and BEFORE the stylesheet: it runs before the first paint, so there is no flash of the wrong theme -->
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") {
+      document.documentElement.dataset.theme = t;
+      document.documentElement.style.colorScheme = t;
+    }
+  })();
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+/* light by default */
+:root {
+  color-scheme: light dark;     /* "system": the browser may use either; scrollbars and form controls follow */
+  --bg: #f8fafc; --fg: #0f172a; --muted: #475569; --card: #ffffff; --line: #cbd5e1; --brand: #4338ca; --on-brand: #ffffff;
+}
+/* "system" (no data-theme): follow the device, live */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
+  }
+}
+/* a choice the reader made wins over the device */
+:root[data-theme="dark"] {
+  --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
+}
+
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+.page { max-width: 40rem; margin-inline: auto; padding: 1rem; }
+a { color: var(--brand); }
+
+/* the segmented control: real radios, styled through their labels */
+.seg { display: inline-flex; gap: 0.25rem; margin: 0 0 1.5rem; padding: 0.25rem; border: 1px solid var(--line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.seg label { padding: 0.4rem 1rem; border-radius: 999px; cursor: pointer; }
+.seg input { position: absolute; opacity: 0; }                 /* hidden from the eye, still focusable and still a radio */
+.seg label:has(input:checked) { background: var(--brand); color: var(--on-brand); font-weight: 700; }
+.seg label:has(input:focus-visible) { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.card { padding: 1.25rem; border-radius: 1rem; background: var(--card); border: 1px solid var(--line); }
+.card h2 { margin-top: 0; }
+.card p { color: var(--muted); }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>مدونة «سطر»</h1>
+  <fieldset class="seg">
+    <legend>الثيم</legend>
+    <label><input type="radio" name="theme" value="light"> فاتح</label>
+    <label><input type="radio" name="theme" value="dark"> غامق</label>
+    <label><input type="radio" name="theme" value="system"> زي الجهاز</label>
+  </fieldset>
+  <article class="card">
+    <h2>إزاي تكتب كل يوم</h2>
+    <p>عشر دقايق الصبح أحسن من ساعتين آخر الأسبوع.</p>
+    <a href="#more">كمّل القراية</a>
+  </article>
+</main>
+<script>
+// the radios: show the saved choice, save a new one, apply it
+const root = document.documentElement;
+let saved = "system";
+try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
+const radios = document.querySelectorAll('input[name="theme"]');
+radios.forEach(r => { r.checked = r.value === saved; });
+
+function apply(value) {
+  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
+  else { root.dataset.theme = value; root.style.colorScheme = value; }
+  try { localStorage.setItem("theme", value); } catch (e) {}
+}
+radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** «مدونة سطر»، وتحتها كبسولة فيها ٣ اختيارات (فاتح، وغامق، وزي الجهاز)، وكارت مقال. الاختيار بيقلب ألوان الصفحة كلها، وبيفضل بعد الـ refresh.
+
+**ليه radio مش div:** ٣ اختيارات واحد بس منهم شغال = radio group. الـ [[<input type="radio">]] بيدّيك ببلاش: الأسهم بتنقل بينهم، و Tab بيدخل المجموعة مرة واحدة، وقارئ الشاشة بيقول «فاتح، زرار راديو، ١ من ٣». الـ input مستخبي بـ [[opacity: 0]] بس (مش [[display: none]]، كده كان هيختفي من الكيبورد)، والشكل على الـ label بـ [[:has(input:checked)]].
+
+**الوميض وإزاي اتمنع:** المتصفح بيرسم أول ما يقرا الـ CSS. لو السكربت اللي بيحط الثيم المحفوظ اشتغل بعد كده، أول frame بيطلع بالثيم الغلط وبعدين يتقلب. عشان كده السكربت ده inline في الـ [[<head>]]، قبل الـ [[<link>]]، ومش في ملف [[defer]]: بيتنفّذ قبل أول رسم. وباقي الشغل (الأزرار) في [[theme.js]] بـ [[defer]] عادي.
+
+**«زي الجهاز» بيتقلب لوحده:** لما الاختيار «زي الجهاز»، الـ html مفيهوش [[data-theme]]، فقاعدة [[@media (prefers-color-scheme: dark)]] على [[:root:not([data-theme])]] هي اللي بتشتغل. لو غيّرت ثيم الجهاز والصفحة مفتوحة، المتصفح بيعيد حساب الـ media query لوحده، من غير ولا سطر JS.
+
+**[[color-scheme]]:** بيقول للمتصفح يلوّن حاجاته هو (الـ scrollbar، والـ checkbox، وخلفية الـ input) بالثيم. «زي الجهاز» = [[light dark]]، والاختيار الثابت = [[light]] أو [[dark]].
+
+**[[localStorage]] جوه [[try/catch]]:** في شباك خاص أو موقع ممنوع من التخزين بيرمي error. من غير [[try]] السكربت كان هيقف والثيم ميتحطش.
+
+~~~text الناتج (Playwright بـ Chrome 157، الجهاز غامق والمحفوظ «فاتح»، والسكربتات متأخرة 500ms زي شبكة بطيئة)
+السكربت inline في الـ head:   اشتغل 47ms، أول رسم 164ms ← قبل الرسم، وأول frame «light»
+نفس الكود في ملف defer:       اشتغل 542ms، أول رسم 56ms  ← بعد الرسم، وأول frame من غير ثيم (غامق زي الجهاز) وبعدين اتقلب
+
+«زي الجهاز» والجهاز فاتح: rgb(248, 250, 252)، والجهاز اتقلب غامق والصفحة مفتوحة: rgb(11, 17, 32)
+اختيار «فاتح»: rgb(248, 250, 252)، و localStorage = light
+السهم الشمال من «فاتح» (rtl = اللي بعده): «غامق»
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**جرّب الوميض بنفسك:** في DevTools › Network اختار «Slow 4G»، وانقل السكربت من الـ head لملف بـ [[defer]]، واعمل refresh على صفحة ثيمها المحفوظ عكس ثيم جهازك.` },
+        { lvl: 'صغير', dir: "comment-card", t: R`كارت تعليق بلغتين`, what: R`كارت فيه صورة ودايرة حالة واسم ووقت وزرار «رد» بسهم و badge «جديد» في الركن، مكتوب بـ logical properties بس (CSS عادي أو Tailwind)، وزرار فوق بيقلب [[dir]] و [[lang]] على html. من درس logical properties و lucide-react.`, done: R`ملف الـ CSS مفيهوش ولا [[left]] ولا [[right]] ولا [[[dir=rtl]]]، والسهم بس عليه [[rtl:-scale-x-100]]، ولقطة RTL مراية للقطة LTR، واسم إنجليزي فيه رموز في آخره بيظهر صح جوه الجملة العربي.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كارت تعليق بلغتين</title>
+<link rel="stylesheet" href="style.css">
+<script src="dir.js" defer></script>
+</head>
+<body>
+<main class="page">
+  <h1 class="title" data-ar="آخر التعليقات" data-en="Latest comments">آخر التعليقات</h1>
+  <button type="button" class="switch" id="switch" lang="en">English</button>
+  <article class="comment">
+    <span class="new" data-ar="جديد" data-en="New">جديد</span>
+    <div class="who">
+      <span class="avatar"><img src="img/avatar.webp" alt="" width="48" height="48"><span class="online" title="متصل" data-ar-title="متصل" data-en-title="Online"></span></span>
+      <p class="name"><bdi>Sara (UX)!</bdi></p>
+      <time class="when" datetime="2026-11-20T09:30" data-ar="من ٥ دقايق" data-en="5 minutes ago">من ٥ دقايق</time>
+    </div>
+    <p class="text" data-ar="الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة." data-en="This saved me an hour. The logical properties part was the clearest.">الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة.</p>
+    <button type="button" class="reply"><svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /> <path d="m9 17-5-5 5-5" /></svg><span data-ar="رد" data-en="Reply">رد</span></button>
+  </article>
+  <p class="demo">من غير bdi: كتبت <span class="name-raw">Sara (UX)!</span> تعليق.</p>
+  <p class="demo">بـ bdi: كتبت <bdi class="name-bdi">Sara (UX)!</bdi> تعليق.</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.7; }
+.page { max-width: 34rem; margin-inline: auto; padding: 1rem; }
+.title { margin-block: 0 0.75rem; font-size: 1.4rem; }
+
+/* logical only: start/end, block/inline. The same file works in Arabic and in English */
+.switch { margin-block-end: 1rem; padding-block: 0.4rem; padding-inline: 1rem; border: 1px solid #94a3b8; border-radius: 999px; background: #fff; font: inherit; cursor: pointer; }
+.comment { position: relative; padding: 1.25rem; padding-inline-end: 4.5rem; border-radius: 1rem; background: #fff; box-shadow: 0 2px 10px #0f172a14; }
+.new { position: absolute; inset-block-start: 0.75rem; inset-inline-end: 0.75rem; padding-inline: 0.6rem; border-radius: 999px; background: #4338ca; color: #fff; font-size: 0.8rem; font-weight: 700; }
+.who { display: flex; align-items: center; gap: 0.75rem; }
+.avatar { position: relative; flex: none; }
+.avatar img { display: block; border-radius: 50%; }
+.online { position: absolute; inset-block-end: 0; inset-inline-end: 0; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: #16a34a; border: 2px solid #fff; }
+.name { margin: 0; font-weight: 700; }
+.when { margin-inline-start: auto; color: #475569; font-size: 0.85rem; }
+.text { margin-block: 0.75rem; }
+.reply { display: inline-flex; align-items: center; gap: 0.4rem; padding-block: 0.35rem; padding-inline: 0.8rem; border: 0; border-radius: 0.5rem; background: #e0e7ff; color: #3730a3; font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+.icon { width: 1.1rem; height: 1.1rem; }
+/* the ONE thing logical properties can't do: an arrow drawn pointing one way */
+.icon-flip:dir(rtl) { scale: -1 1; }
+.demo { color: #475569; }
+~~~
+
+~~~js dir.js
+// flips the page between Arabic (rtl) and English (ltr): only lang, dir and the texts change; the CSS stays as it is
+const html = document.documentElement;
+const btn = document.getElementById("switch");
+btn.addEventListener("click", () => {
+  const en = html.lang === "ar";
+  html.lang = en ? "en" : "ar";
+  html.dir = en ? "ltr" : "rtl";
+  btn.textContent = en ? "عربي" : "English";
+  btn.lang = en ? "ar" : "en";
+  for (const el of document.querySelectorAll("[data-ar]")) el.textContent = en ? el.dataset.en : el.dataset.ar;
+  for (const el of document.querySelectorAll("[data-ar-title]")) el.title = en ? el.dataset.enTitle : el.dataset.arTitle;
+});
+~~~
+
+الأيقونة SVG [[reply]] من lucide (‏[[lucide-static@0.577.0]]، نفس نسخة [[lucide-react]] في الدرس)، متحطة في الـ HTML بـ [[aria-hidden="true"]] لأن كلمة «رد» جنبها. والصورة [[img/avatar.webp]] أي صورة مربعة 96×96.
+
+~~~view 460 460 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كارت تعليق بلغتين</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.7; }
+.page { max-width: 34rem; margin-inline: auto; padding: 1rem; }
+.title { margin-block: 0 0.75rem; font-size: 1.4rem; }
+
+/* logical only: start/end, block/inline. The same file works in Arabic and in English */
+.switch { margin-block-end: 1rem; padding-block: 0.4rem; padding-inline: 1rem; border: 1px solid #94a3b8; border-radius: 999px; background: #fff; font: inherit; cursor: pointer; }
+.comment { position: relative; padding: 1.25rem; padding-inline-end: 4.5rem; border-radius: 1rem; background: #fff; box-shadow: 0 2px 10px #0f172a14; }
+.new { position: absolute; inset-block-start: 0.75rem; inset-inline-end: 0.75rem; padding-inline: 0.6rem; border-radius: 999px; background: #4338ca; color: #fff; font-size: 0.8rem; font-weight: 700; }
+.who { display: flex; align-items: center; gap: 0.75rem; }
+.avatar { position: relative; flex: none; }
+.avatar img { display: block; border-radius: 50%; }
+.online { position: absolute; inset-block-end: 0; inset-inline-end: 0; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: #16a34a; border: 2px solid #fff; }
+.name { margin: 0; font-weight: 700; }
+.when { margin-inline-start: auto; color: #475569; font-size: 0.85rem; }
+.text { margin-block: 0.75rem; }
+.reply { display: inline-flex; align-items: center; gap: 0.4rem; padding-block: 0.35rem; padding-inline: 0.8rem; border: 0; border-radius: 0.5rem; background: #e0e7ff; color: #3730a3; font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+.icon { width: 1.1rem; height: 1.1rem; }
+/* the ONE thing logical properties can't do: an arrow drawn pointing one way */
+.icon-flip:dir(rtl) { scale: -1 1; }
+.demo { color: #475569; }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1 class="title" data-ar="آخر التعليقات" data-en="Latest comments">آخر التعليقات</h1>
+  <button type="button" class="switch" id="switch" lang="en">English</button>
+  <article class="comment">
+    <span class="new" data-ar="جديد" data-en="New">جديد</span>
+    <div class="who">
+      <span class="avatar"><img src="data:image/webp;base64,UklGRuIBAABXRUJQVlA4INYBAAAwDACdASpgAGAAPtFgqE2oJiQiLVVYwQAaCUAaeYRqwG2AbKgxQb4GkCZF3apJ0MQfWhGDYv9+Oh/RcGxLdTMNsJ+OZ5XTBuOcmz7koUfKMuqxW2JzF8Rcvg8foqMoKrlSYca+2V5lfhwAAP7vrFfVd14AGBw7pTCGkhbWRMPTWLFnfua2PKDxxy1CpgB/ElMTxsW2UZj6Vz3RL/OPFkTRkxys+bJ1l24vDwWepTpEWVoOpl3LsQrF3gKUSjFnrku4OIEbMa5pIw4ypWgsQQ4YlBXZVi3NigVWnY8+jTPUK8J/j+6ydlDaEE1Drgd+bDjKaTvEen8PieiujmmRfSGwM3y5bK1pjQYUq/8ywEzjRVpJizLAI49jouR5WMLde8CbRiMLcdFKb5L/oDPRQVCGjOW200L6Gr7Oix9OqATM5EJEaFD9ktlIY4qQnHWFJEa+h6kVLHeJdbmOmpack9jagk/Fp8ElLXlKOcraIHRVYbWKJe606WpOKUyiiIwaasKX6P9Kuz5Z2HGYM2h2TQ+Ka1TFwACwQij7SM2LJdBpF/3Mn2HBzopmdgYcIBBHEjY21BeOapMq4M7MSnMR1MhDLGhkWGzOI/aZYuStWY9eVFZ6FgAAAA==" alt="" width="48" height="48"><span class="online" title="متصل" data-ar-title="متصل" data-en-title="Online"></span></span>
+      <p class="name"><bdi>Sara (UX)!</bdi></p>
+      <time class="when" datetime="2026-11-20T09:30" data-ar="من ٥ دقايق" data-en="5 minutes ago">من ٥ دقايق</time>
+    </div>
+    <p class="text" data-ar="الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة." data-en="This saved me an hour. The logical properties part was the clearest.">الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة.</p>
+    <button type="button" class="reply"><svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /> <path d="m9 17-5-5 5-5" /></svg><span data-ar="رد" data-en="Reply">رد</span></button>
+  </article>
+  <p class="demo">من غير bdi: كتبت <span class="name-raw">Sara (UX)!</span> تعليق.</p>
+  <p class="demo">بـ bdi: كتبت <bdi class="name-bdi">Sara (UX)!</bdi> تعليق.</p>
+</main>
+<script>
+// flips the page between Arabic (rtl) and English (ltr): only lang, dir and the texts change; the CSS stays as it is
+const html = document.documentElement;
+const btn = document.getElementById("switch");
+btn.addEventListener("click", () => {
+  const en = html.lang === "ar";
+  html.lang = en ? "en" : "ar";
+  html.dir = en ? "ltr" : "rtl";
+  btn.textContent = en ? "عربي" : "English";
+  btn.lang = en ? "ar" : "en";
+  for (const el of document.querySelectorAll("[data-ar]")) el.textContent = en ? el.dataset.en : el.dataset.ar;
+  for (const el of document.querySelectorAll("[data-ar-title]")) el.title = en ? el.dataset.enTitle : el.dataset.arTitle;
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارت تعليق: صورة دايرية عليها نقطة خضرا (متصل)، والاسم «Sara (UX)!»، و «من ٥ دقايق» على الجنب التاني، والتعليق، وزرار «رد» بسهم، وفي الركن شارة «جديد». وزرار «English» فوق بيقلب الكارت كله إنجليزي من الشمال لليمين. وتحت سطرين بيوروا مشكلة الاسم.
+
+**logical properties بس:** [[inset-inline-end]] للشارة، و [[padding-inline-end]] للمسافة اللي تحتها، و [[margin-inline-start: auto]] للوقت، و [[border-block-end]]… مفيش ولا [[left]] ولا [[right]] ولا [[[dir=rtl]]] في الملف (grep: 0). فنفس الـ CSS بيطلع مراية في الإنجليزي.
+
+**السهم هو الاستثناء الوحيد:** logical properties بتقلب الأماكن، مش الرسومات. السهم مرسوم لناحية معيّنة، فبيتقلب بـ [[.icon-flip:dir(rtl) { scale: -1 1 }]]. و [[:dir(rtl)]] بيقرا الاتجاه الفعلي حتى لو [[dir]] متحط على جد بعيد.
+
+**الاسم الإنجليزي جوه جملة عربي:** «كتبت Sara (UX)! تعليق». المتصفح بيرتّب الحروف بقواعد اتجاه (bidi)، والـ «!» ملهاش اتجاه، فبتاخد اتجاه الجملة العربي وتطير لأول الاسم. اتقاس: من غير [[<bdi>]] الـ «!» عند x = 368 والـ S عند 373 (قبله)، وبـ [[<bdi>]] الـ «!» عند 471 بعد «)» عند 466. [[<bdi>]] بيقول «ده اتجاهه لوحده»، وده مهم في أي اسم جاي من المستخدمين.
+
+**زرار اللغة:** بيغيّر [[lang]] و [[dir]] على الـ html والكلام من [[data-ar]] و [[data-en]] بس. والـ CSS زي ما هو.
+
+**غلطة مسكها axe:** [[page-has-heading-one]]: الصفحة كانت من غير [[<h1>]]، فاتزوّد «آخر التعليقات».
+
+~~~text الناتج (Playwright بـ Chrome 157، كارت عرضه 552، [من الشمال، من اليمين])
+rtl: الشارة [12, 456]   الصورة [444, 20]   الوقت [72, 377]   الرد [429, 20]   السهم scale -1 1
+ltr: الشارة [454, 12]   الصورة [20, 444]   الوقت [354, 72]   الرد [20, 401]   السهم none
+(كل رقم من اليمين في rtl هو نفس الرقم من الشمال في ltr: مراية)
+
+x للـ S و ! و ) :
+من غير bdi: S 373، ! 368، ) 433   ← الـ ! طارت لأول الاسم
+بـ bdi:     S 406، ! 471، ) 466   ← في آخره
+axe: 0 violations (كانت page-has-heading-one قبل الـ h1)   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'متوسط', dir: "menu-i18n", t: R`منيو مطعم «الركن الأخضر» بلغتين`, what: R`صفحة منيو (مطعم متخيل) فيها أقسام وأطباق وأسعار. النصوص في dictionary بـ [[data-i18n="key"]]، وزرار اللغة بيغيّر [[lang]] و [[dir]] والنصوص من غير reload ويفتكر الاختيار. الأسعار بـ [[Intl.NumberFormat]] (‏[[ar-EG]] و [[en-US]] بعملة [[EGP]]) وعمودها [[font-variant-numeric: tabular-nums]]، وخط لكل لغة بـ [[:lang(ar)]] و [[:lang(en)]]، والخطوط woff2 من الموقع بـ [[unicode-range]]. بيجمع الدروس التلاتة الأولى.`, done: R`تبديل اللغة بيغيّر الاتجاه والنصوص وشكل الأسعار في نفس اللحظة، وأرقام عمود الأسعار متصفّة تحت بعض، والاختيار فاضل بعد refresh، وصفحة عربي بس بتنزّل ملف الخط العربي بس (Network › Font)، ومفيش ولا [[[dir=rtl]]] في الـ CSS.`, sol: R`~~~text menu-i18n/
+index.html  style.css  i18n.js
+fonts/cairo-arabic-400-normal.woff2  fonts/cairo-arabic-700-normal.woff2
+fonts/inter-latin-400-normal.woff2   fonts/inter-latin-700-normal.woff2
+fonts/Cairo-OFL.txt  fonts/Inter-OFL.txt   (رخصة الخطين: OFL، لازم تتنقل معاهم)
+~~~
+
+~~~bash الخطوط من npm (fontsource)، وبعدين بتتنسخ جنب الموقع
+npm i @fontsource/cairo@5.3.0 @fontsource/inter@5.3.0
+cp node_modules/@fontsource/cairo/files/cairo-arabic-{400,700}-normal.woff2 fonts/
+cp node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.woff2 fonts/
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>منيو الركن الأخضر</title>
+<script>
+  // the saved language before the first paint: no flash of the other direction
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("lang"); } catch (e) {}
+    if (l === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
+  })();
+</script>
+<link rel="stylesheet" href="style.css">
+<script src="i18n.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <h1 data-i18n="title">منيو الركن الأخضر</h1>
+  <button type="button" id="lang" class="lang" lang="en">English</button>
+</header>
+<main class="menu">
+  <section aria-labelledby="s-main">
+    <h2 id="s-main" data-i18n="mains">الأطباق الرئيسية</h2>
+    <ul class="dishes">
+      <li><span data-i18n="koshari">كشري بالدقة</span><span class="price" data-price="65"></span></li>
+      <li><span data-i18n="molokhia">ملوخية بالفراخ</span><span class="price" data-price="180"></span></li>
+      <li><span data-i18n="grill">مشويات مشكّلة (لفردين)</span><span class="price" data-price="1250"></span></li>
+    </ul>
+  </section>
+  <section aria-labelledby="s-drinks">
+    <h2 id="s-drinks" data-i18n="drinks">المشروبات</h2>
+    <ul class="dishes">
+      <li><span data-i18n="tea">شاي بالنعناع</span><span class="price" data-price="25"></span></li>
+      <li><span data-i18n="mango">عصير مانجا</span><span class="price" data-price="55"></span></li>
+      <li><span data-i18n="sobia">سوبيا</span><span class="price" data-price="40.5"></span></li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+/* fonts from our own site. unicode-range: the browser downloads a file only if the page has characters in its range */
+@font-face {
+  font-family: "Cairo";
+  src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-latin-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #f0fdf4; color: #14532d; }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; max-width: 40rem; margin-inline: auto; padding: 1rem; }
+.top h1 { margin: 0; font-size: 1.6rem; }
+.lang { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid #15803d; border-radius: 999px; background: #fff; color: #14532d; font: inherit; font-weight: 700; cursor: pointer; }
+.lang:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.menu { max-width: 40rem; margin-inline: auto; padding: 0 1rem 2rem; }
+.menu h2 { margin-block: 1.5rem 0.5rem; font-size: 1.2rem; }
+.dishes { margin: 0; padding: 0; list-style: none; }
+.dishes li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.6rem; border-block-end: 1px dashed #86efac; }
+/* every digit the same width: the prices line up under each other */
+.price { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+~~~
+
+~~~js i18n.js
+// every text that changes lives here, by key. The HTML says which key: data-i18n="koshari"
+const dict = {
+  ar: { title: "منيو الركن الأخضر", mains: "الأطباق الرئيسية", drinks: "المشروبات", koshari: "كشري بالدقة", molokhia: "ملوخية بالفراخ", grill: "مشويات مشكّلة (لفردين)", tea: "شاي بالنعناع", mango: "عصير مانجا", sobia: "سوبيا", button: "English" },
+  en: { title: "Green Corner Menu", mains: "Main dishes", drinks: "Drinks", koshari: "Koshari with garlic sauce", molokhia: "Molokhia with chicken", grill: "Mixed grill (for two)", tea: "Mint tea", mango: "Mango juice", sobia: "Sobia", button: "عربي" },
+};
+const locale = { ar: "ar-EG", en: "en-US" };
+
+function render(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === "ar" ? "rtl" : "ltr";
+  document.title = dict[lang].title;
+  for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = dict[lang][el.dataset.i18n];
+  // the same number, written the way each language writes money
+  const money = new Intl.NumberFormat(locale[lang], { style: "currency", currency: "EGP" });
+  for (const el of document.querySelectorAll("[data-price]")) el.textContent = money.format(Number(el.dataset.price));
+  const btn = document.getElementById("lang");
+  btn.textContent = dict[lang].button;
+  btn.lang = lang === "ar" ? "en" : "ar";       // the button's word is in the OTHER language
+}
+
+document.getElementById("lang").addEventListener("click", () => {
+  const next = document.documentElement.lang === "ar" ? "en" : "ar";
+  try { localStorage.setItem("lang", next); } catch (e) {}
+  render(next);
+});
+render(document.documentElement.lang);
+~~~
+
+~~~view 560 560 الشكل النهائي (المعاينة بخط الجهاز (ملفات الخطوط مش جوه المعاينة))
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>منيو الركن الأخضر</title>
+<script>
+  // the saved language before the first paint: no flash of the other direction
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("lang"); } catch (e) {}
+    if (l === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
+  })();
+</script>
+<style>
+/* fonts from our own site. unicode-range: the browser downloads a file only if the page has characters in its range */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #f0fdf4; color: #14532d; }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; max-width: 40rem; margin-inline: auto; padding: 1rem; }
+.top h1 { margin: 0; font-size: 1.6rem; }
+.lang { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid #15803d; border-radius: 999px; background: #fff; color: #14532d; font: inherit; font-weight: 700; cursor: pointer; }
+.lang:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.menu { max-width: 40rem; margin-inline: auto; padding: 0 1rem 2rem; }
+.menu h2 { margin-block: 1.5rem 0.5rem; font-size: 1.2rem; }
+.dishes { margin: 0; padding: 0; list-style: none; }
+.dishes li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.6rem; border-block-end: 1px dashed #86efac; }
+/* every digit the same width: the prices line up under each other */
+.price { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1 data-i18n="title">منيو الركن الأخضر</h1>
+  <button type="button" id="lang" class="lang" lang="en">English</button>
+</header>
+<main class="menu">
+  <section aria-labelledby="s-main">
+    <h2 id="s-main" data-i18n="mains">الأطباق الرئيسية</h2>
+    <ul class="dishes">
+      <li><span data-i18n="koshari">كشري بالدقة</span><span class="price" data-price="65"></span></li>
+      <li><span data-i18n="molokhia">ملوخية بالفراخ</span><span class="price" data-price="180"></span></li>
+      <li><span data-i18n="grill">مشويات مشكّلة (لفردين)</span><span class="price" data-price="1250"></span></li>
+    </ul>
+  </section>
+  <section aria-labelledby="s-drinks">
+    <h2 id="s-drinks" data-i18n="drinks">المشروبات</h2>
+    <ul class="dishes">
+      <li><span data-i18n="tea">شاي بالنعناع</span><span class="price" data-price="25"></span></li>
+      <li><span data-i18n="mango">عصير مانجا</span><span class="price" data-price="55"></span></li>
+      <li><span data-i18n="sobia">سوبيا</span><span class="price" data-price="40.5"></span></li>
+    </ul>
+  </section>
+</main>
+<script>
+// every text that changes lives here, by key. The HTML says which key: data-i18n="koshari"
+const dict = {
+  ar: { title: "منيو الركن الأخضر", mains: "الأطباق الرئيسية", drinks: "المشروبات", koshari: "كشري بالدقة", molokhia: "ملوخية بالفراخ", grill: "مشويات مشكّلة (لفردين)", tea: "شاي بالنعناع", mango: "عصير مانجا", sobia: "سوبيا", button: "English" },
+  en: { title: "Green Corner Menu", mains: "Main dishes", drinks: "Drinks", koshari: "Koshari with garlic sauce", molokhia: "Molokhia with chicken", grill: "Mixed grill (for two)", tea: "Mint tea", mango: "Mango juice", sobia: "Sobia", button: "عربي" },
+};
+const locale = { ar: "ar-EG", en: "en-US" };
+
+function render(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === "ar" ? "rtl" : "ltr";
+  document.title = dict[lang].title;
+  for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = dict[lang][el.dataset.i18n];
+  // the same number, written the way each language writes money
+  const money = new Intl.NumberFormat(locale[lang], { style: "currency", currency: "EGP" });
+  for (const el of document.querySelectorAll("[data-price]")) el.textContent = money.format(Number(el.dataset.price));
+  const btn = document.getElementById("lang");
+  btn.textContent = dict[lang].button;
+  btn.lang = lang === "ar" ? "en" : "ar";       // the button's word is in the OTHER language
+}
+
+document.getElementById("lang").addEventListener("click", () => {
+  const next = document.documentElement.lang === "ar" ? "en" : "ar";
+  try { localStorage.setItem("lang", next); } catch (e) {}
+  render(next);
+});
+render(document.documentElement.lang);
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** «منيو الركن الأخضر» وزرار «English»، وقسمين أطباق ومشروبات، وكل طبق جنبه سعره بالأرقام العربي «٦٥٫٠٠ ج.م.». الزرار بيقلب الصفحة كلها إنجليزي من الشمال لليمين والأسعار «EGP 65.00»، والاختيار بيفضل بعد الـ refresh.
+
+**الكلام من dictionary:** كل كلام بيتغيّر عليه [[data-i18n="koshari"]]، و [[dict.ar]] و [[dict.en]] فيهم نفس المفاتيح. [[render(lang)]] بيغيّر [[lang]] و [[dir]] والعنوان وكل الكلام والأسعار مرة واحدة، من غير reload.
+
+**الأسعار بـ [[Intl.NumberFormat]]:** نفس الرقم [[65]]، و [[ar-EG]] بيكتبه «٦٥٫٠٠ ج.م.» (أرقام عربي، وفاصلة عشرية عربي، والعملة بالعربي)، و [[en-US]] بيكتبه «EGP 65.00». مفيش ولا سعر مكتوب بإيدك في الـ HTML: [[data-price]] بس.
+
+**[[tabular-nums]]:** الأرقام في الخط العادي عروضها مختلفة (الـ ١ أضيق)، فعمود الأسعار بيتعوّج. [[tabular-nums]] بيخلي كل رقم نفس العرض. اتقاس: حافة كل الأسعار على نفس الـ x (46 في العربي، و 654 في الإنجليزي).
+
+**خط لكل لغة، والصفحة بتنزّل اللي محتاجاه بس:** [[:root:lang(ar)]] بـ Cairo، و [[:root:lang(en)]] بـ Inter. وكل [[@font-face]] عليه [[unicode-range]]: Cairo للحروف العربي بس، و Inter للاتيني بس. المتصفح بينزّل ملف خط بس لو الصفحة فيها حرف من المدى ده **وبيتكتب بالخط ده**. اتقاس: الصفحة العربي نزّلت ملفين Cairo بس، والإنجليزي ملفين Inter بس.
+
+**زرار «English» في الصفحة العربي:** عليه [[lang="en"]] (قارئ الشاشة ينطقه إنجليزي)، و [[font: inherit]] بياخد Cairo من الأب. Cairo مفيهوش حروف لاتيني في المدى بتاعه، فالكلمة بتتكتب بخط الجهاز، وملف Inter كله (24KB) مبيتنزّلش عشان كلمة واحدة.
+
+**[[font-display: swap]]:** الكلام بيبان على طول بخط الجهاز، وبيتبدّل للخط لما يحمّل، بدل ما يفضل مستخبي.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+ar: rtl | ‏٦٥٫٠٠ ج.م.‏ | ‏١٨٠٫٠٠ ج.م.‏ | ‏١٬٢٥٠٫٠٠ ج.م.‏ | ‏٢٥٫٠٠ ج.م.‏ | ‏٥٥٫٠٠ ج.م.‏ | ‏٤٠٫٥٠ ج.م.‏
+    حافة الأسعار: 46,46,46,46,46,46 | الخطوط: cairo-arabic-700-normal.woff2, cairo-arabic-400-normal.woff2
+en: ltr | EGP 65.00 | EGP 180.00 | EGP 1,250.00 | EGP 25.00 | EGP 55.00 | EGP 40.50
+    حافة الأسعار: 654 ×6 | الخطوط: inter-latin-700-normal.woff2, inter-latin-400-normal.woff2
+ضغطة الزرار: en ltr «Green Corner Menu» | بعد refresh: en
+grep على الـ CSS لـ [dir=rtl]: 0
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**غلطة اتصلحت (في المشروع الكبير الأول):** أول نسخة كانت [[:lang(ar) { line-height: 1.85 }]] من غير [[:root]]. [[:lang(ar)]] بيمسك **كل** عنصر في الصفحة العربي، ووزنه (0,1,0) أكبر من [[h1]] (0,0,1)، فالعناوين أخدت 1.85 بدل 1.25 (عنوان 64px سطره 118px). على [[:root]] الإعداد بيتورّث بس، والعنوان يقدر يغيّره. شوف مشروع «عدسة».` },
+        { lvl: 'متوسط', dir: "color-studio", t: R`استوديو الألوان`, what: R`صفحة فيها slider لدرجة اللون (hue من 0 لـ 360) بيولّد من لون واحد كل التوكنز: [[--brand]] بـ [[oklch()]]، و [[--brand-soft]] و [[--ring]] بـ [[color-mix(in oklab, var(--brand) 20%, transparent)]]، ونسخة للغامق أفتح شوية. تحت الـ slider عينات: زرار، و badge، ولينك، وحقل بـ focus، و alert نجاح وخطر (الألوان الوظيفية ثابتة مش بتتغير مع البراند). من dark mode، ومتغيرات CSS في الوحدة اللي فاتت.`, done: R`تحريك الـ slider بيغيّر كل العينات في الثيمين من غير ما تلمس غير متغير واحد، و alerts النجاح والخطر لونها مبيتغيرش، وفيه ٣ درجات hue موثّقة في الصفحة إن كلامها 4.5:1 أو أكتر في الوضعين (من DevTools).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>استوديو الألوان</title>
+<link rel="stylesheet" href="style.css">
+<script src="studio.js" defer></script>
+</head>
+<body>
+<main class="page">
+  <h1>استوديو الألوان</h1>
+  <p class="lead">حرّك درجة اللون: كل لون في الصفحة بيتولّد من رقم واحد.</p>
+  <div class="controls">
+    <label for="hue">درجة اللون (hue):</label> <output id="hue-out" for="hue">270</output>
+    <input id="hue" type="range" min="0" max="360" value="270">
+    <button type="button" id="mode" aria-pressed="false">الوضع الغامق</button>
+  </div>
+
+  <section class="samples" aria-label="عينات">
+    <button type="button" class="btn">احجز دلوقتي</button>
+    <span class="badge">جديد</span>
+    <a href="#more">لينك عادي</a>
+    <label class="field">خانة فيها focus <input value="اضغط هنا" aria-label="خانة تجربة"></label>
+    <p class="alert alert--ok">اتحفظ. (لون النجاح ثابت مهما البراند اتغيّر)</p>
+    <p class="alert alert--danger">فيه غلطة. (لون الخطر ثابت)</p>
+  </section>
+
+  <section class="tested">
+    <h2>درجات اتقاس تباينها</h2>
+    <p>الأرقام من قياس حقيقي في Chrome (نسبة التباين، والمطلوب 4.5 أو أكتر):</p>
+    <div class="tbl" tabindex="0" role="region" aria-label="جدول التباين">
+    <table>
+      <thead><tr><th scope="col">hue</th><th scope="col">فاتح: كلام على البراند</th><th scope="col">فاتح: لينك على الخلفية</th><th scope="col">غامق: كلام على البراند</th><th scope="col">غامق: لينك على الخلفية</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">30</th><td>7.17</td><td>8.13</td><td>8.98</td><td>9.57</td></tr>
+        <tr><th scope="row">150</th><td>5.82</td><td>6.57</td><td>9.85</td><td>10.58</td></tr>
+        <tr><th scope="row">270</th><td>6.80</td><td>7.82</td><td>9.19</td><td>9.83</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>وأقل رقم في كل الدرجات من 0 لـ 360: 5.35 (hue 195، فاتح).</p>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --hue: 270;                                        /* the ONE number. Everything brand-coloured comes from it */
+  --bg: #ffffff;
+  --fg: #111827;
+  --brand: oklch(0.48 0.17 var(--hue));              /* dark enough for white text on it */
+  --on-brand: #ffffff;
+  --brand-text: oklch(0.45 0.17 var(--hue));         /* brand colour used as TEXT on the page background */
+  --brand-soft: color-mix(in oklab, var(--brand) 20%, transparent);
+  --ring: color-mix(in oklab, var(--brand) 55%, transparent);
+  /* functional colours: fixed, they must not change with the brand */
+  --ok-bg: #dcfce7; --ok-fg: #14532d;
+  --danger-bg: #fee2e2; --danger-fg: #7f1d1d;
+}
+:root[data-mode="dark"] {
+  --bg: #0b1120;
+  --fg: #e5e7eb;
+  --brand: oklch(0.78 0.12 var(--hue));              /* lighter in the dark mode */
+  --on-brand: #0b1120;
+  --brand-text: oklch(0.80 0.12 var(--hue));
+  --ok-bg: #052e16; --ok-fg: #bbf7d0;
+  --danger-bg: #450a0a; --danger-fg: #fecaca;
+}
+
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-block: 1rem; }
+.controls input { flex: 1; min-width: 12rem; accent-color: var(--brand); }
+button { font: inherit; cursor: pointer; }
+#mode { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid var(--fg); border-radius: 999px; background: transparent; color: var(--fg); }
+
+.samples { display: grid; gap: 1rem; justify-items: start; padding: 1.25rem; border-radius: 1rem; border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); }
+.btn { padding-block: 0.6rem; padding-inline: 1.2rem; border: 0; border-radius: 0.6rem; background: var(--brand); color: var(--on-brand); font-weight: 700; }
+.badge { padding-inline: 0.7rem; border-radius: 999px; background: var(--brand-soft); color: var(--brand-text); font-weight: 700; }
+a { color: var(--brand-text); }
+.field { display: grid; gap: 0.25rem; }
+.field input { padding: 0.5rem 0.75rem; border: 1px solid color-mix(in oklab, var(--fg) 45%, transparent); border-radius: 0.5rem; background: var(--bg); color: var(--fg); font: inherit; }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.field input:focus-visible { outline: 3px solid var(--ring); box-shadow: 0 0 0 6px var(--brand-soft); }
+.alert { margin: 0; padding: 0.6rem 1rem; border-radius: 0.6rem; }
+.alert--ok { background: var(--ok-bg); color: var(--ok-fg); }
+.alert--danger { background: var(--danger-bg); color: var(--danger-fg); }
+
+.tested table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tested th, .tested td { padding: 0.4rem 0.6rem; border-block-end: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); text-align: start; }
+.tbl { overflow-x: auto; }
+~~~
+
+~~~js studio.js
+const root = document.documentElement;
+const hue = document.getElementById("hue");
+const out = document.getElementById("hue-out");
+hue.addEventListener("input", () => {
+  root.style.setProperty("--hue", hue.value);       // one variable changes, everything follows
+  out.value = hue.value;
+});
+const mode = document.getElementById("mode");
+mode.addEventListener("click", () => {
+  const dark = root.dataset.mode !== "dark";
+  if (dark) root.dataset.mode = "dark"; else delete root.dataset.mode;
+  mode.setAttribute("aria-pressed", String(dark));
+});
+~~~
+
+~~~js color-check.js (القياس بـ playwright-core)
+// for every hue 0..360 (step 15), in both modes: contrast of (text on brand) and (brand text on page)
+const { chromium } = require("playwright-core");
+(async () => {
+  const browser = await chromium.launch({ channel: "chrome" });
+  const p = await browser.newPage();
+  await p.goto("http://127.0.0.1:8765/color-studio/index.html");
+  const rows = await p.evaluate(() => {
+    const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+    const rgb = css => { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); };
+    const L = c => { const v = c.map(x => x / 255).map(x => x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+    const cr = (a, b) => { const x = [L(a), L(b)].sort((m, n) => n - m); return (x[0] + 0.05) / (x[1] + 0.05); };
+    const get = (el, prop) => getComputedStyle(el)[prop];
+    const btn = document.querySelector(".btn"), link = document.querySelector("a"), ok = document.querySelector(".alert--ok");
+    const out = [];
+    for (const mode of ["light", "dark"]) {
+      if (mode === "dark") document.documentElement.dataset.mode = "dark"; else delete document.documentElement.dataset.mode;
+      for (let h = 0; h <= 360; h += 15) {
+        document.documentElement.style.setProperty("--hue", h);
+        const onBrand = cr(rgb(get(btn, "color")), rgb(get(btn, "backgroundColor")));
+        const textOnPage = cr(rgb(get(link, "color")), rgb(get(document.body, "backgroundColor")));
+        out.push({ mode, h, onBrand: +onBrand.toFixed(2), textOnPage: +textOnPage.toFixed(2), okBg: get(ok, "backgroundColor") });
+      }
+    }
+    return out;
+  });
+  for (const mode of ["light", "dark"]) {
+    const r = rows.filter(x => x.mode === mode);
+    console.log(mode, "min on-brand", Math.min(...r.map(x => x.onBrand)), "at hue", r.find(x => x.onBrand === Math.min(...r.map(y => y.onBrand))).h,
+      "| min brand-text", Math.min(...r.map(x => x.textOnPage)), "at hue", r.find(x => x.textOnPage === Math.min(...r.map(y => y.textOnPage))).h,
+      "| ok-bg values:", [...new Set(r.map(x => x.okBg))].join(" "));
+  }
+  for (const h of [30, 150, 270]) console.log("hue", h, JSON.stringify(rows.filter(x => x.h === h).map(x => x.mode + ": text on brand " + x.onBrand + ", brand text " + x.textOnPage)));
+  console.log("below 4.5:", JSON.stringify(rows.filter(x => x.onBrand < 4.5 || x.textOnPage < 4.5).map(x => x.mode + " " + x.h + " (" + x.onBrand + "/" + x.textOnPage + ")")));
+  await browser.close();
+})();
+~~~
+
+~~~view 820 1000 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>استوديو الألوان</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --hue: 270;                                        /* the ONE number. Everything brand-coloured comes from it */
+  --bg: #ffffff;
+  --fg: #111827;
+  --brand: oklch(0.48 0.17 var(--hue));              /* dark enough for white text on it */
+  --on-brand: #ffffff;
+  --brand-text: oklch(0.45 0.17 var(--hue));         /* brand colour used as TEXT on the page background */
+  --brand-soft: color-mix(in oklab, var(--brand) 20%, transparent);
+  --ring: color-mix(in oklab, var(--brand) 55%, transparent);
+  /* functional colours: fixed, they must not change with the brand */
+  --ok-bg: #dcfce7; --ok-fg: #14532d;
+  --danger-bg: #fee2e2; --danger-fg: #7f1d1d;
+}
+:root[data-mode="dark"] {
+  --bg: #0b1120;
+  --fg: #e5e7eb;
+  --brand: oklch(0.78 0.12 var(--hue));              /* lighter in the dark mode */
+  --on-brand: #0b1120;
+  --brand-text: oklch(0.80 0.12 var(--hue));
+  --ok-bg: #052e16; --ok-fg: #bbf7d0;
+  --danger-bg: #450a0a; --danger-fg: #fecaca;
+}
+
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-block: 1rem; }
+.controls input { flex: 1; min-width: 12rem; accent-color: var(--brand); }
+button { font: inherit; cursor: pointer; }
+#mode { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid var(--fg); border-radius: 999px; background: transparent; color: var(--fg); }
+
+.samples { display: grid; gap: 1rem; justify-items: start; padding: 1.25rem; border-radius: 1rem; border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); }
+.btn { padding-block: 0.6rem; padding-inline: 1.2rem; border: 0; border-radius: 0.6rem; background: var(--brand); color: var(--on-brand); font-weight: 700; }
+.badge { padding-inline: 0.7rem; border-radius: 999px; background: var(--brand-soft); color: var(--brand-text); font-weight: 700; }
+a { color: var(--brand-text); }
+.field { display: grid; gap: 0.25rem; }
+.field input { padding: 0.5rem 0.75rem; border: 1px solid color-mix(in oklab, var(--fg) 45%, transparent); border-radius: 0.5rem; background: var(--bg); color: var(--fg); font: inherit; }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.field input:focus-visible { outline: 3px solid var(--ring); box-shadow: 0 0 0 6px var(--brand-soft); }
+.alert { margin: 0; padding: 0.6rem 1rem; border-radius: 0.6rem; }
+.alert--ok { background: var(--ok-bg); color: var(--ok-fg); }
+.alert--danger { background: var(--danger-bg); color: var(--danger-fg); }
+
+.tested table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tested th, .tested td { padding: 0.4rem 0.6rem; border-block-end: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); text-align: start; }
+.tbl { overflow-x: auto; }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>استوديو الألوان</h1>
+  <p class="lead">حرّك درجة اللون: كل لون في الصفحة بيتولّد من رقم واحد.</p>
+  <div class="controls">
+    <label for="hue">درجة اللون (hue):</label> <output id="hue-out" for="hue">270</output>
+    <input id="hue" type="range" min="0" max="360" value="270">
+    <button type="button" id="mode" aria-pressed="false">الوضع الغامق</button>
+  </div>
+
+  <section class="samples" aria-label="عينات">
+    <button type="button" class="btn">احجز دلوقتي</button>
+    <span class="badge">جديد</span>
+    <a href="#more">لينك عادي</a>
+    <label class="field">خانة فيها focus <input value="اضغط هنا" aria-label="خانة تجربة"></label>
+    <p class="alert alert--ok">اتحفظ. (لون النجاح ثابت مهما البراند اتغيّر)</p>
+    <p class="alert alert--danger">فيه غلطة. (لون الخطر ثابت)</p>
+  </section>
+
+  <section class="tested">
+    <h2>درجات اتقاس تباينها</h2>
+    <p>الأرقام من قياس حقيقي في Chrome (نسبة التباين، والمطلوب 4.5 أو أكتر):</p>
+    <div class="tbl" tabindex="0" role="region" aria-label="جدول التباين">
+    <table>
+      <thead><tr><th scope="col">hue</th><th scope="col">فاتح: كلام على البراند</th><th scope="col">فاتح: لينك على الخلفية</th><th scope="col">غامق: كلام على البراند</th><th scope="col">غامق: لينك على الخلفية</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">30</th><td>7.17</td><td>8.13</td><td>8.98</td><td>9.57</td></tr>
+        <tr><th scope="row">150</th><td>5.82</td><td>6.57</td><td>9.85</td><td>10.58</td></tr>
+        <tr><th scope="row">270</th><td>6.80</td><td>7.82</td><td>9.19</td><td>9.83</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>وأقل رقم في كل الدرجات من 0 لـ 360: 5.35 (hue 195، فاتح).</p>
+  </section>
+</main>
+<script>
+const root = document.documentElement;
+const hue = document.getElementById("hue");
+const out = document.getElementById("hue-out");
+hue.addEventListener("input", () => {
+  root.style.setProperty("--hue", hue.value);       // one variable changes, everything follows
+  out.value = hue.value;
+});
+const mode = document.getElementById("mode");
+mode.addEventListener("click", () => {
+  const dark = root.dataset.mode !== "dark";
+  if (dark) root.dataset.mode = "dark"; else delete root.dataset.mode;
+  mode.setAttribute("aria-pressed", String(dark));
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** slider لدرجة اللون، وتحته زرار مليان، وشارة فاتحة، ولينك، وخانة، وتنبيهين (نجاح أخضر وخطر أحمر)، وجدول تباين. حرّك الـ slider: الزرار والشارة واللينك وحلقة الـ focus بيتلوّنوا بنفس الدرجة، والتنبيهين مبيتغيّروش.
+
+**رقم واحد بيولّد كله:** [[--hue]] على [[:root]]، و [[--brand: oklch(0.48 0.17 var(--hue))]]. [[oklch]] = إضاءة، وتشبّع، ودرجة. الإضاءة والتشبّع ثابتين، فأي درجة بتطلع بنفس الغمق تقريبًا، والتباين بيفضل مضمون. في [[hsl]] الأصفر والأزرق بنفس الأرقام ليهم إضاءة مختلفة خالص.
+
+**الألوان المشتقة بـ [[color-mix]]:** [[--brand-soft]] = البراند 20% مع شفاف (خلفية الشارة)، و [[--ring]] = 55% (حلقة الـ focus). بتتغيّر مع البراند لوحدها.
+
+**الألوان الوظيفية ثابتة:** النجاح والخطر قيم مكتوبة، مش من [[--hue]]: لو البراند بقى أحمر، «الخطر» لازم يفضل أحمر ومعناه واضح. اتقاس: خلفية تنبيه النجاح نفس القيمة في الـ ٢٥ درجة.
+
+**الوضع الغامق:** نفس [[--hue]]، بإضاءة أعلى ([[0.78]]) وكلام غامق على البراند.
+
+**التباين اتقاس لكل درجة:** السكربت بيلف على الدرجات من 0 لـ 360 كل 15، وفي الوضعين بيقيس الكلام على الزرار واللينك على الخلفية. المتصفح بيرجّع اللون [[oklch(...)]]، فالسكربت بيرسمه في بكسل على [[canvas]] ويقرا الـ RGB، وبيحسب التباين بمعادلة WCAG. أقل رقم في كل الدرجات 5.35 (hue 195، فاتح)، يعني الـ slider كله آمن.
+
+**غلطة مسكها الـ validator:** أول نسخة كان الرقم [[<output>]] جوه [[<label for="hue">]]. أي عنصر ليه label جوه [[label]] لازم يكون هو اللي الـ [[for]] بيشاور عليه، فالـ [[output]] اتنقل برّه الـ label.
+
+~~~text node color-check.js
+light min on-brand 5.35 at hue 195 | min brand-text 6.05 at hue 195 | ok-bg values: rgb(220, 252, 231)
+dark min on-brand 8.88 at hue 345 | min brand-text 9.52 at hue 15 | ok-bg values: rgb(5, 46, 22)
+hue 30  ["light: text on brand 7.17, brand text 8.13","dark: text on brand 8.98, brand text 9.57"]
+hue 150 ["light: text on brand 5.82, brand text 6.57","dark: text on brand 9.85, brand text 10.58"]
+hue 270 ["light: text on brand 6.8, brand text 7.82","dark: text on brand 9.19, brand text 9.83"]
+below 4.5: []
+
+الـ slider من 270 لـ 30: الزرار oklch(0.78 0.12 270) ← oklch(0.78 0.12 30)
+axe (360 و 1280، فاتح وغامق): 0 violations   الـ validator: مفيش رسايل (بعد نقل output)   CSS validator: No Error Found
+~~~` },
+        { lvl: 'كبير', dir: "adasa", t: R`landing ثنائية اللغة لاستوديو تصوير متخيل «عدسة»`, what: R`صفحة كاملة (هيرو، وخدمات، وأعمال، وأسعار، وFAQ، وفوتر) بالعربي والإنجليزي على [[/ar]] و [[/en]]. توكنز طبقتين (خام ثم أسامي بالمعنى)، و ٣ ثيمات من غير وميض، و RTL و LTR بالـ logical properties بس، وخطين woff2 من الموقع بـ [[unicode-range]] و [[swap]] و preload لخط العناوين بس، وضبط العربي ([[line-height: 1.85]] للفقرات و [[letter-spacing: 0]] لـ [[:lang(ar)]] وعناوين بـ [[clamp()]])، وأيقونات lucide بـ [[aria-hidden]] أو اسم. وفيها من تأثيرات المشاريع الحقيقية: navbar زجاجي sticky ([[backdrop-filter]] ومعاه [[@supports not]] بخلفية شبه مصمتة)، وهيرو بـ ٣ [[radial-gradient]] وطبقة noise خفيفة من SVG [[feTurbulence]] في data URI بـ [[pointer-events: none]]. بيجمع الوحدة دي مع الوحدات والمتغيرات و Tailwind.`, done: R`Lighthouse (Mobile) في اللغتين والثيمين: Accessibility ‏100 و Performance ‏90 أو أكتر و CLS أقل من 0.05. صفر طلبات خطوط لدومين تاني. الصفحة شغالة والـ JavaScript مقفول (الثيم من [[prefers-color-scheme]] واللغة من الـ URL). لقطة RTL مراية LTR. وفيه README بجدول: كل توكن واستخدامه.`, ext: R`زوّد ثيم [[prefers-contrast: more]] و [[forced-colors]] (Windows High Contrast)، واعمل صفحة style guide بتعرض التوكنز كلها، وانشرها على GitHub Pages برابط.`, sol: R`~~~text adasa/
+ar/index.html  en/index.html  styleguide.html (المشروع الجاي)  README.md
+assets/tokens.css  assets/style.css  assets/theme.js
+assets/fonts/  (Cairo عربي 400 و 700، و Inter لاتيني 400 و 700، ورخصهم)
+assets/img/work-1..4.webp
+~~~
+
+**ترتيب البناء:** (١) [[tokens.css]]: خام، وبعدين أسامي بالمعنى للفاتح والغامق. (٢) الخطوط بـ [[unicode-range]]. (٣) الصفحة العربي بالـ logical properties. (٤) الإنجليزي نسخة بنفس الـ HTML والكلام مترجم. (٥) Lighthouse في اللغتين والثيمين.
+
+~~~css assets/tokens.css
+/* layer 1: raw values. Nothing on the page uses these names directly */
+:root {
+  --raw-ink-950: #0c0a09;
+  --raw-ink-900: #1c1917;
+  --raw-ink-700: #44403c;
+  --raw-ink-500: #78716c;
+  --raw-ink-300: #a8a29e;
+  --raw-sand-50: #fafaf9;
+  --raw-sand-100: #f5f5f4;
+  --raw-sand-200: #e7e5e4;
+  --raw-amber-300: #fcd34d;
+  --raw-amber-700: #b45309;
+  --raw-amber-800: #92400e;
+  --raw-teal-300: #5eead4;
+  --raw-teal-800: #115e59;
+  --white: #ffffff;
+}
+
+/* layer 2: names by meaning. The page uses ONLY these. A theme = a different mapping.
+   [data-theme] works on ANY element, not only <html>: a section can show the other theme (the style guide does) */
+:root, [data-theme="light"] {
+  --color-bg: var(--raw-sand-50);
+  --color-surface: var(--white);
+  --color-fg: var(--raw-ink-900);
+  --color-muted: var(--raw-ink-700);
+  --color-line: var(--raw-sand-200);
+  --color-accent: var(--raw-amber-800);
+  --color-on-accent: var(--white);
+  --color-glow-1: #fde68a;
+  --color-glow-2: #99f6e4;
+  --color-glass: rgb(250 250 249 / 0.72);
+  --color-glass-solid: rgb(250 250 249 / 0.96);
+
+  --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
+  --radius: 1rem;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.35);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: var(--raw-ink-950);
+    --color-surface: var(--raw-ink-900);
+    --color-fg: var(--raw-sand-100);
+    --color-muted: var(--raw-ink-300);
+    --color-line: var(--raw-ink-700);
+    --color-accent: var(--raw-amber-300);
+    --color-on-accent: var(--raw-ink-950);
+    --color-glow-1: #78350f;
+    --color-glow-2: #134e4a;
+    --color-glass: rgb(12 10 9 / 0.7);
+    --color-glass-solid: rgb(12 10 9 / 0.96);
+  }
+}
+[data-theme="dark"] {
+  --color-bg: var(--raw-ink-950);
+  --color-surface: var(--raw-ink-900);
+  --color-fg: var(--raw-sand-100);
+  --color-muted: var(--raw-ink-300);
+  --color-line: var(--raw-ink-700);
+  --color-accent: var(--raw-amber-300);
+  --color-on-accent: var(--raw-ink-950);
+  --color-glow-1: #78350f;
+  --color-glow-2: #134e4a;
+  --color-glass: rgb(12 10 9 / 0.7);
+  --color-glass-solid: rgb(12 10 9 / 0.96);
+}
+~~~
+
+~~~css assets/style.css
+/* fonts from this site only. unicode-range: a page downloads only the file whose letters it has */
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: "Inter"; src: url("fonts/inter-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122; }
+@font-face { font-family: "Inter"; src: url("fonts/inter-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122; }
+
+*, *::before, *::after { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); margin: 0 0 var(--space-3); }
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--color-accent); }
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+.wrap { max-width: 68rem; margin-inline: auto; padding-inline: var(--space-2); }
+.section { padding-block: var(--space-5); }
+.icon { flex: none; width: 1.5rem; height: 1.5rem; }
+.icon-flip:dir(rtl) { scale: -1 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* glass header: blurred where supported, almost solid where not */
+.header { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-glass); backdrop-filter: blur(12px); border-block-end: 1px solid var(--color-line); }
+@supports not (backdrop-filter: blur(1px)) {
+  .header { background: var(--color-glass-solid); }
+}
+.header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding-block: 0.6rem; }
+.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-fg); font-weight: 700; text-decoration: none; }
+.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin-inline-start: auto; }
+.nav a { color: var(--color-fg); text-decoration: none; }
+.nav a:hover { color: var(--color-accent); }
+.tools { display: flex; align-items: center; gap: 0.5rem; }
+/* the other-language link: system font, so one English word does not download a whole font on the Arabic page */
+.lang { font-family: system-ui, sans-serif; padding: 0.25rem 0.75rem; border: 1px solid var(--color-line); border-radius: 999px; color: var(--color-fg); text-decoration: none; font-weight: 700; }
+.seg { display: inline-flex; margin: 0; padding: 0.15rem; border: 1px solid var(--color-line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.seg label { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; color: var(--color-muted); }
+.seg input { position: absolute; opacity: 0; }
+.seg label:has(input:checked) { background: var(--color-accent); color: var(--color-on-accent); }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.seg .icon { width: 1.1rem; height: 1.1rem; }
+
+/* hero: three soft lights, and a very light noise on top that the mouse goes through */
+.hero { position: relative; isolation: isolate; overflow: clip; padding-block: clamp(4rem, 2rem + 10vw, 9rem);
+  background:
+    radial-gradient(40rem 22rem at 15% 20%, var(--color-glow-1), transparent 70%),
+    radial-gradient(36rem 20rem at 85% 30%, var(--color-glow-2), transparent 70%),
+    radial-gradient(50rem 18rem at 50% 110%, var(--color-glow-1), transparent 70%),
+    var(--color-bg); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"); }
+.hero h1 { margin: 0 0 var(--space-2); font-size: clamp(2rem, 1.2rem + 4vw, 4rem); max-width: 16ch; }
+.hero p { margin: 0 0 var(--space-3); max-width: 42ch; font-size: 1.15rem; color: var(--color-muted); }
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-lg); }
+
+.cards { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); box-shadow: var(--shadow-sm); }
+.card h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; font-size: 1.15rem; }
+.card h3 .icon { color: var(--color-accent); }
+.card p { margin: 0; color: var(--color-muted); }
+
+.works { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.works figure { margin: 0; }
+.works img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); }
+.works figcaption { padding-block-start: 0.4rem; color: var(--color-muted); }
+
+.price { display: grid; gap: 0.5rem; }
+.price .amount { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-fg); }
+
+details { margin-block-end: var(--space-1); padding: var(--space-2); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+summary { cursor: pointer; font-weight: 700; }
+details p { margin: var(--space-1) 0 0; color: var(--color-muted); }
+
+.footer { padding-block: var(--space-4); border-block-start: 1px solid var(--color-line); color: var(--color-muted); }
+~~~
+
+~~~html ar/index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عدسة: استوديو تصوير</title>
+<meta name="description" content="تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.">
+<link rel="alternate" hreflang="en" href="../en/">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  })();
+</script>
+<link rel="preload" href="../assets/fonts/cairo-arabic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/theme.js" defer></script>
+</head>
+<body>
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="./"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m14.31 8 5.74 9.94" /> <path d="M9.69 8h11.48" /> <path d="m7.38 12 5.74-9.94" /> <path d="M9.69 16 3.95 6.06" /> <path d="M14.31 16H2.83" /> <path d="m16.62 12-5.74 9.94" /> </svg><span>عدسة</span></a>
+    <nav class="nav" aria-label="أقسام الصفحة">
+      <a href="#services">الخدمات</a>
+      <a href="#work">أعمالنا</a>
+      <a href="#prices">الأسعار</a>
+      <a href="#faq">أسئلة</a>
+    </nav>
+    <div class="tools">
+      <fieldset class="seg">
+        <legend>الثيم</legend>
+        <label title="فاتح"><input type="radio" name="theme" value="light" aria-label="فاتح"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></label>
+        <label title="غامق"><input type="radio" name="theme" value="dark" aria-label="غامق"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></label>
+        <label title="زي الجهاز"><input type="radio" name="theme" value="system" aria-label="زي الجهاز" checked><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="3" rx="2" /> <line x1="8" x2="16" y1="21" y2="21" /> <line x1="12" x2="12" y1="17" y2="21" /> </svg></label>
+      </fieldset>
+      <a class="lang" href="../en/" lang="en" hreflang="en">English</a>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>صور بتحكي الحكاية زي ما حصلت</h1>
+      <p>تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.</p>
+      <a class="btn" href="#prices">احجز جلسة<svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
+    </div>
+  </section>
+  <section class="section" id="services" aria-labelledby="h-services">
+    <div class="wrap">
+      <h2 id="h-services">الخدمات</h2>
+      <ul class="cards">
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg>منتجات</h3><p>خلفية بيضا أو مشهد، و ٢٠ صورة متعدّلة.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg>بورتريه</h3><p>ساعة في الاستوديو بإضاءة ناعمة.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5.8 11.3 2 22l10.7-3.79" /> <path d="M4 3h.01" /> <path d="M22 8h.01" /> <path d="M15 2h.01" /> <path d="M22 20h.01" /> <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /> <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /> <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /> <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /> </svg>مناسبات</h3><p>خطوبة أو عيد ميلاد، لحد ٤ ساعات.</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="work" aria-labelledby="h-work">
+    <div class="wrap">
+      <h2 id="h-work">أعمالنا</h2>
+      <ul class="works">
+        <li><figure><img src="../assets/img/work-1.webp" alt="صورة من شغلنا: منيو مطعم" width="600" height="400" loading="lazy"><figcaption>منيو مطعم</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-2.webp" alt="صورة من شغلنا: بورتريه عيلة" width="600" height="400" loading="lazy"><figcaption>بورتريه عيلة</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-3.webp" alt="صورة من شغلنا: منتجات يدوية" width="600" height="400" loading="lazy"><figcaption>منتجات يدوية</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-4.webp" alt="صورة من شغلنا: خطوبة في جنينة" width="600" height="400" loading="lazy"><figcaption>خطوبة في جنينة</figcaption></figure></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="prices" aria-labelledby="h-prices">
+    <div class="wrap">
+      <h2 id="h-prices">الأسعار</h2>
+      <ul class="cards">
+        <li class="card price"><h3>جلسة قصيرة</h3><p>تبدأ من</p><p class="amount">‏١٬٥٠٠ ج.م.‏</p></li>
+        <li class="card price"><h3>يوم منتجات</h3><p>تبدأ من</p><p class="amount">‏٤٬٥٠٠ ج.م.‏</p></li>
+        <li class="card price"><h3>مناسبة</h3><p>تبدأ من</p><p class="amount">‏٦٬٠٠٠ ج.م.‏</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="faq" aria-labelledby="h-faq">
+    <div class="wrap">
+      <h2 id="h-faq">أسئلة</h2>
+      <details><summary>بتسلّموا الصور إمتى؟</summary><p>خلال ٥ أيام شغل.</p></details>
+      <details><summary>ينفع تيجوا عندي؟</summary><p>أيوه، في القاهرة والجيزة.</p></details>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap"><p>عدسة، ١٢ شارع الفن، وسط البلد</p></div></footer>
+</body>
+</html>
+~~~
+
+~~~html en/index.html
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adasa: photo studio</title>
+<meta name="description" content="Products, portraits and small events, in the studio or at your place.">
+<link rel="alternate" hreflang="ar" href="../ar/">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  })();
+</script>
+<link rel="preload" href="../assets/fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/theme.js" defer></script>
+</head>
+<body>
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="./"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m14.31 8 5.74 9.94" /> <path d="M9.69 8h11.48" /> <path d="m7.38 12 5.74-9.94" /> <path d="M9.69 16 3.95 6.06" /> <path d="M14.31 16H2.83" /> <path d="m16.62 12-5.74 9.94" /> </svg><span>Adasa</span></a>
+    <nav class="nav" aria-label="Page sections">
+      <a href="#services">Services</a>
+      <a href="#work">Work</a>
+      <a href="#prices">Prices</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="tools">
+      <fieldset class="seg">
+        <legend>Theme</legend>
+        <label title="Light"><input type="radio" name="theme" value="light" aria-label="Light"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></label>
+        <label title="Dark"><input type="radio" name="theme" value="dark" aria-label="Dark"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></label>
+        <label title="Device"><input type="radio" name="theme" value="system" aria-label="Device" checked><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="3" rx="2" /> <line x1="8" x2="16" y1="21" y2="21" /> <line x1="12" x2="12" y1="17" y2="21" /> </svg></label>
+      </fieldset>
+      <a class="lang" href="../ar/" lang="ar" hreflang="ar">عربي</a>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>Photos that tell the story the way it happened</h1>
+      <p>Products, portraits and small events, in the studio or at your place.</p>
+      <a class="btn" href="#prices">Book a session<svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
+    </div>
+  </section>
+  <section class="section" id="services" aria-labelledby="h-services">
+    <div class="wrap">
+      <h2 id="h-services">Services</h2>
+      <ul class="cards">
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg>Products</h3><p>White background or a scene, 20 edited photos.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg>Portraits</h3><p>One hour in the studio with soft light.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5.8 11.3 2 22l10.7-3.79" /> <path d="M4 3h.01" /> <path d="M22 8h.01" /> <path d="M15 2h.01" /> <path d="M22 20h.01" /> <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /> <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /> <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /> <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /> </svg>Events</h3><p>Engagements or birthdays, up to 4 hours.</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="work" aria-labelledby="h-work">
+    <div class="wrap">
+      <h2 id="h-work">Our work</h2>
+      <ul class="works">
+        <li><figure><img src="../assets/img/work-1.webp" alt="A photo from our work: Restaurant menu" width="600" height="400" loading="lazy"><figcaption>Restaurant menu</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-2.webp" alt="A photo from our work: Family portrait" width="600" height="400" loading="lazy"><figcaption>Family portrait</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-3.webp" alt="A photo from our work: Handmade products" width="600" height="400" loading="lazy"><figcaption>Handmade products</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-4.webp" alt="A photo from our work: Garden engagement" width="600" height="400" loading="lazy"><figcaption>Garden engagement</figcaption></figure></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="prices" aria-labelledby="h-prices">
+    <div class="wrap">
+      <h2 id="h-prices">Prices</h2>
+      <ul class="cards">
+        <li class="card price"><h3>Short session</h3><p>From</p><p class="amount">EGP 1,500</p></li>
+        <li class="card price"><h3>Products day</h3><p>From</p><p class="amount">EGP 4,500</p></li>
+        <li class="card price"><h3>Event</h3><p>From</p><p class="amount">EGP 6,000</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="faq" aria-labelledby="h-faq">
+    <div class="wrap">
+      <h2 id="h-faq">FAQ</h2>
+      <details><summary>When do we get the photos?</summary><p>Within 5 working days.</p></details>
+      <details><summary>Can you come to us?</summary><p>Yes, in Cairo and Giza.</p></details>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap"><p>Adasa, 12 Art Street, Downtown</p></div></footer>
+</body>
+</html>
+~~~
+
+~~~js assets/theme.js
+// the radios: show the saved choice, save a new one, apply it
+const root = document.documentElement;
+let saved = "system";
+try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
+const radios = document.querySelectorAll('input[name="theme"]');
+radios.forEach(r => { r.checked = r.value === saved; });
+
+function apply(value) {
+  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
+  else { root.dataset.theme = value; root.style.colorScheme = value; }
+  try { localStorage.setItem("theme", value); } catch (e) {}
+}
+radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
+~~~
+
+~~~text README.md
+# عدسة: صفحة الاستوديو
+
+$__btar/$__bt و $__bten/$__bt نفس الصفحة بلغتين. الـ CSS والخطوط والصور في $__btassets/$__bt. دليل الهوية: $__btstyleguide.html$__bt.
+
+## التوكنز
+
+| التوكن | فاتح | غامق | بيتستخدم في |
+|---|---|---|---|
+| $__bt--color-bg$__bt | $__bt--raw-sand-50$__bt | $__bt--raw-ink-950$__bt | خلفية الصفحة |
+| $__bt--color-surface$__bt | $__bt#ffffff$__bt | $__bt--raw-ink-900$__bt | الكروت والأسئلة |
+| $__bt--color-fg$__bt | $__bt--raw-ink-900$__bt | $__bt--raw-sand-100$__bt | الكلام |
+| $__bt--color-muted$__bt | $__bt--raw-ink-700$__bt | $__bt--raw-ink-300$__bt | الكلام الهادي والوصف |
+| $__bt--color-line$__bt | $__bt--raw-sand-200$__bt | $__bt--raw-ink-700$__bt | الحدود والخطوط |
+| $__bt--color-accent$__bt | $__bt--raw-amber-800$__bt | $__bt--raw-amber-300$__bt | اللينكات والزرار والـ focus |
+| $__bt--color-on-accent$__bt | $__bt#ffffff$__bt | $__bt--raw-ink-950$__bt | الكلام على الزرار |
+| $__bt--color-glow-1$__bt و $__bt--color-glow-2$__bt | دهبي وتركواز فاتحين | نفس الألوان غامقة | أضواء الهيرو |
+| $__bt--color-glass$__bt | أبيض 72% | أسود 70% | الهيدر الزجاجي |
+| $__bt--color-glass-solid$__bt | أبيض 96% | أسود 96% | الهيدر لو المتصفح مبيدعمش $__btbackdrop-filter$__bt |
+| $__bt--space-1$__bt لحد $__bt--space-5$__bt | 0.5 و 1 و 1.5 و 2.5 و 4 rem | نفسها | المسافات |
+| $__bt--radius$__bt | 1rem | نفسها | تدوير الكروت والصور |
+| $__bt--shadow-sm$__bt و $__bt--shadow-lg$__bt | ظل صغير حاد، وكبير ناعم | نفسها | الكروت، والزرار |
+| $__bt--z-header$__bt | 10 | نفسها | الهيدر اللازق |
+
+## القواعد
+
+- الصفحة مبتستخدمش $__bt--raw-*$__bt خالص: الأسامي بالمعنى بس.
+- مفيش $__btleft$__bt ولا $__btright$__bt ولا $__bt[dir=rtl]$__bt في الـ CSS. السهم بس بيتقلب بـ $__bt:dir(rtl)$__bt.
+- الخطوط من الموقع نفسه، و $__btunicode-range$__bt بيخلي الصفحة العربي تنزّل Cairo بس، والإنجليزي Inter بس.
+~~~
+
+~~~view 760 900 الشكل النهائي (المعاينة بخط الجهاز (ملفات الخطوط مش جوه المعاينة)، وصور صغيرة)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عدسة: استوديو تصوير</title>
+<meta name="description" content="تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.">
+<link rel="alternate" hreflang="en" href="../en/">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  })();
+</script>
+<style>
+/* layer 1: raw values. Nothing on the page uses these names directly */
+:root {
+  --raw-ink-950: #0c0a09;
+  --raw-ink-900: #1c1917;
+  --raw-ink-700: #44403c;
+  --raw-ink-500: #78716c;
+  --raw-ink-300: #a8a29e;
+  --raw-sand-50: #fafaf9;
+  --raw-sand-100: #f5f5f4;
+  --raw-sand-200: #e7e5e4;
+  --raw-amber-300: #fcd34d;
+  --raw-amber-700: #b45309;
+  --raw-amber-800: #92400e;
+  --raw-teal-300: #5eead4;
+  --raw-teal-800: #115e59;
+  --white: #ffffff;
+}
+
+/* layer 2: names by meaning. The page uses ONLY these. A theme = a different mapping.
+   [data-theme] works on ANY element, not only <html>: a section can show the other theme (the style guide does) */
+:root, [data-theme="light"] {
+  --color-bg: var(--raw-sand-50);
+  --color-surface: var(--white);
+  --color-fg: var(--raw-ink-900);
+  --color-muted: var(--raw-ink-700);
+  --color-line: var(--raw-sand-200);
+  --color-accent: var(--raw-amber-800);
+  --color-on-accent: var(--white);
+  --color-glow-1: #fde68a;
+  --color-glow-2: #99f6e4;
+  --color-glass: rgb(250 250 249 / 0.72);
+  --color-glass-solid: rgb(250 250 249 / 0.96);
+
+  --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
+  --radius: 1rem;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.35);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: var(--raw-ink-950);
+    --color-surface: var(--raw-ink-900);
+    --color-fg: var(--raw-sand-100);
+    --color-muted: var(--raw-ink-300);
+    --color-line: var(--raw-ink-700);
+    --color-accent: var(--raw-amber-300);
+    --color-on-accent: var(--raw-ink-950);
+    --color-glow-1: #78350f;
+    --color-glow-2: #134e4a;
+    --color-glass: rgb(12 10 9 / 0.7);
+    --color-glass-solid: rgb(12 10 9 / 0.96);
+  }
+}
+[data-theme="dark"] {
+  --color-bg: var(--raw-ink-950);
+  --color-surface: var(--raw-ink-900);
+  --color-fg: var(--raw-sand-100);
+  --color-muted: var(--raw-ink-300);
+  --color-line: var(--raw-ink-700);
+  --color-accent: var(--raw-amber-300);
+  --color-on-accent: var(--raw-ink-950);
+  --color-glow-1: #78350f;
+  --color-glow-2: #134e4a;
+  --color-glass: rgb(12 10 9 / 0.7);
+  --color-glass-solid: rgb(12 10 9 / 0.96);
+}
+</style>
+<style>
+/* fonts from this site only. unicode-range: a page downloads only the file whose letters it has */
+
+*, *::before, *::after { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); margin: 0 0 var(--space-3); }
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--color-accent); }
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+.wrap { max-width: 68rem; margin-inline: auto; padding-inline: var(--space-2); }
+.section { padding-block: var(--space-5); }
+.icon { flex: none; width: 1.5rem; height: 1.5rem; }
+.icon-flip:dir(rtl) { scale: -1 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* glass header: blurred where supported, almost solid where not */
+.header { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-glass); backdrop-filter: blur(12px); border-block-end: 1px solid var(--color-line); }
+@supports not (backdrop-filter: blur(1px)) {
+  .header { background: var(--color-glass-solid); }
+}
+.header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding-block: 0.6rem; }
+.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-fg); font-weight: 700; text-decoration: none; }
+.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin-inline-start: auto; }
+.nav a { color: var(--color-fg); text-decoration: none; }
+.nav a:hover { color: var(--color-accent); }
+.tools { display: flex; align-items: center; gap: 0.5rem; }
+/* the other-language link: system font, so one English word does not download a whole font on the Arabic page */
+.lang { font-family: system-ui, sans-serif; padding: 0.25rem 0.75rem; border: 1px solid var(--color-line); border-radius: 999px; color: var(--color-fg); text-decoration: none; font-weight: 700; }
+.seg { display: inline-flex; margin: 0; padding: 0.15rem; border: 1px solid var(--color-line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.seg label { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; color: var(--color-muted); }
+.seg input { position: absolute; opacity: 0; }
+.seg label:has(input:checked) { background: var(--color-accent); color: var(--color-on-accent); }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.seg .icon { width: 1.1rem; height: 1.1rem; }
+
+/* hero: three soft lights, and a very light noise on top that the mouse goes through */
+.hero { position: relative; isolation: isolate; overflow: clip; padding-block: clamp(4rem, 2rem + 10vw, 9rem);
+  background:
+    radial-gradient(40rem 22rem at 15% 20%, var(--color-glow-1), transparent 70%),
+    radial-gradient(36rem 20rem at 85% 30%, var(--color-glow-2), transparent 70%),
+    radial-gradient(50rem 18rem at 50% 110%, var(--color-glow-1), transparent 70%),
+    var(--color-bg); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"); }
+.hero h1 { margin: 0 0 var(--space-2); font-size: clamp(2rem, 1.2rem + 4vw, 4rem); max-width: 16ch; }
+.hero p { margin: 0 0 var(--space-3); max-width: 42ch; font-size: 1.15rem; color: var(--color-muted); }
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-lg); }
+
+.cards { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); box-shadow: var(--shadow-sm); }
+.card h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; font-size: 1.15rem; }
+.card h3 .icon { color: var(--color-accent); }
+.card p { margin: 0; color: var(--color-muted); }
+
+.works { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.works figure { margin: 0; }
+.works img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); }
+.works figcaption { padding-block-start: 0.4rem; color: var(--color-muted); }
+
+.price { display: grid; gap: 0.5rem; }
+.price .amount { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-fg); }
+
+details { margin-block-end: var(--space-1); padding: var(--space-2); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+summary { cursor: pointer; font-weight: 700; }
+details p { margin: var(--space-1) 0 0; color: var(--color-muted); }
+
+.footer { padding-block: var(--space-4); border-block-start: 1px solid var(--color-line); color: var(--color-muted); }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="./"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m14.31 8 5.74 9.94" /> <path d="M9.69 8h11.48" /> <path d="m7.38 12 5.74-9.94" /> <path d="M9.69 16 3.95 6.06" /> <path d="M14.31 16H2.83" /> <path d="m16.62 12-5.74 9.94" /> </svg><span>عدسة</span></a>
+    <nav class="nav" aria-label="أقسام الصفحة">
+      <a href="#services">الخدمات</a>
+      <a href="#work">أعمالنا</a>
+      <a href="#prices">الأسعار</a>
+      <a href="#faq">أسئلة</a>
+    </nav>
+    <div class="tools">
+      <fieldset class="seg">
+        <legend>الثيم</legend>
+        <label title="فاتح"><input type="radio" name="theme" value="light" aria-label="فاتح"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></label>
+        <label title="غامق"><input type="radio" name="theme" value="dark" aria-label="غامق"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></label>
+        <label title="زي الجهاز"><input type="radio" name="theme" value="system" aria-label="زي الجهاز" checked><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="3" rx="2" /> <line x1="8" x2="16" y1="21" y2="21" /> <line x1="12" x2="12" y1="17" y2="21" /> </svg></label>
+      </fieldset>
+      <a class="lang" href="../en/" lang="en" hreflang="en">English</a>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>صور بتحكي الحكاية زي ما حصلت</h1>
+      <p>تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.</p>
+      <a class="btn" href="#prices">احجز جلسة<svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
+    </div>
+  </section>
+  <section class="section" id="services" aria-labelledby="h-services">
+    <div class="wrap">
+      <h2 id="h-services">الخدمات</h2>
+      <ul class="cards">
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg>منتجات</h3><p>خلفية بيضا أو مشهد، و ٢٠ صورة متعدّلة.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg>بورتريه</h3><p>ساعة في الاستوديو بإضاءة ناعمة.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5.8 11.3 2 22l10.7-3.79" /> <path d="M4 3h.01" /> <path d="M22 8h.01" /> <path d="M15 2h.01" /> <path d="M22 20h.01" /> <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /> <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /> <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /> <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /> </svg>مناسبات</h3><p>خطوبة أو عيد ميلاد، لحد ٤ ساعات.</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="work" aria-labelledby="h-work">
+    <div class="wrap">
+      <h2 id="h-work">أعمالنا</h2>
+      <ul class="works">
+        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: منيو مطعم" width="600" height="400" loading="lazy"><figcaption>منيو مطعم</figcaption></figure></li>
+        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: بورتريه عيلة" width="600" height="400" loading="lazy"><figcaption>بورتريه عيلة</figcaption></figure></li>
+        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: منتجات يدوية" width="600" height="400" loading="lazy"><figcaption>منتجات يدوية</figcaption></figure></li>
+        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: خطوبة في جنينة" width="600" height="400" loading="lazy"><figcaption>خطوبة في جنينة</figcaption></figure></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="prices" aria-labelledby="h-prices">
+    <div class="wrap">
+      <h2 id="h-prices">الأسعار</h2>
+      <ul class="cards">
+        <li class="card price"><h3>جلسة قصيرة</h3><p>تبدأ من</p><p class="amount">‏١٬٥٠٠ ج.م.‏</p></li>
+        <li class="card price"><h3>يوم منتجات</h3><p>تبدأ من</p><p class="amount">‏٤٬٥٠٠ ج.م.‏</p></li>
+        <li class="card price"><h3>مناسبة</h3><p>تبدأ من</p><p class="amount">‏٦٬٠٠٠ ج.م.‏</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="faq" aria-labelledby="h-faq">
+    <div class="wrap">
+      <h2 id="h-faq">أسئلة</h2>
+      <details><summary>بتسلّموا الصور إمتى؟</summary><p>خلال ٥ أيام شغل.</p></details>
+      <details><summary>ينفع تيجوا عندي؟</summary><p>أيوه، في القاهرة والجيزة.</p></details>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap"><p>عدسة، ١٢ شارع الفن، وسط البلد</p></div></footer>
+<script>
+// the radios: show the saved choice, save a new one, apply it
+const root = document.documentElement;
+let saved = "system";
+try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
+const radios = document.querySelectorAll('input[name="theme"]');
+radios.forEach(r => { r.checked = r.value === saved; });
+
+function apply(value) {
+  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
+  else { root.dataset.theme = value; root.style.colorScheme = value; }
+  try { localStorage.setItem("theme", value); } catch (e) {}
+}
+radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر زجاجي فيه «عدسة» والروابط و ٣ أيقونات ثيم (شمس، وقمر، وشاشة) و «English». تحته هيرو فيه أضواء دهبي وتركواز ناعمة وحبيبات خفيفة جدًا، وعنوان كبير وزرار «احجز جلسة ←». بعده ٣ كروت خدمات بأيقونات، و ٤ صور أعمال، و ٣ أسعار، وسؤالين بيتفتحوا.
+
+**التوكنز طبقتين:** [[--raw-amber-800]] وأخواتها قيم خام، محدش في الصفحة بيستخدمها. فوقها أسامي بالمعنى ([[--color-accent]] و [[--color-surface]]…)، وهي اللي في كل قاعدة. الثيم الغامق = نفس الأسامي بتشاور على خام تاني. والـ [[[data-theme="dark"]]] شغال على أي عنصر (مش [[:root]] بس)، عشان قسم يقدر ياخد ثيم تاني (صفحة الهوية بتستخدم ده).
+
+**من غير JavaScript:** الثيم: لو مفيش اختيار محفوظ، [[prefers-color-scheme]] بيقرر. اللغة: من الرابط نفسه ([[/ar/]] و [[/en/]])، مش من سكربت، و [[<a href="../en/" hreflang="en">]] لينك عادي. والأسئلة [[<details>]] بتتفتح لوحدها. اتقاس والـ JS مقفول: العربي rtl والإنجليزي ltr، والثيم من الجهاز في الحالتين.
+
+**الخطوط:** [[preload]] لخط العناوين (700) بس، لأنه في الهيرو اللي بيبان الأول. والـ 400 بيحمّل لما الصفحة تطلبه. والصفحة العربي بتنزّل Cairo بس، والإنجليزي Inter بس (زي مشروع المنيو). ولينك «English» في الصفحة العربي بخط الجهاز، عشان كلمة واحدة متنزّلش ملف Inter كله.
+
+**الهيدر الزجاجي:** [[backdrop-filter: blur(12px)]] على خلفية 72%. المتصفح اللي مبيدعموش هيعرض الكلام فوق الصور شفاف ومش مقروء، فـ [[@supports not (backdrop-filter: blur(1px))]] بيدّيه خلفية 96%.
+
+**الهيرو:** ٣ [[radial-gradient]] بأماكن ومقاسات مختلفة فوق لون الخلفية. والحبيبات [[::after]] صورة SVG فيها [[feTurbulence]] (فلتر بيعمل noise) في data URI، بـ [[opacity: 0.18]] و [[pointer-events: none]] (عشان الضغط يعدّي للزرار). و [[z-index: -1]] جوه [[isolation: isolate]]: الحبيبات ورا الكلام بس، مش ورا الصفحة كلها.
+
+**غلطة شفتها في اللقطة:** أول نسخة كانت [[:lang(ar) { line-height: 1.85 }]]، والعنوان الكبير السطرين بتوعه بعاد عن بعض. [[:lang(ar)]] بيمسك كل عنصر، ووزنه أكبر من [[h1]]، فالعنوان اتقاس: خط 64px وسطره 118.4px (1.85). بقت [[:root:lang(ar), [lang="ar"]]]: الإعداد على الـ html والعناصر اللي عليها [[lang]] بس، والباقي بيورثه، والعنوان رجع 80px (1.25).
+
+~~~text Lighthouse 13.6.0 موبايل (Chrome بـ --blink-settings=preferredColorScheme=1 للفاتح و 0 للغامق)
+ar light  perf 100  a11y 100  LCP 0.9 s  CLS 0  | الخطوط من: 127.0.0.1:8765 بس (cairo-arabic-700 و cairo-arabic-400)
+ar dark   perf 100  a11y 100  LCP 0.9 s  CLS 0
+en light  perf 100  a11y 100  LCP 0.9 s  CLS 0  | (inter-latin-700 و inter-latin-400)
+en dark   perf 100  a11y 100  LCP 0.9 s  CLS 0
+~~~
+
+~~~text Playwright (Chrome 157)
+JavaScript مقفول: light ar rtl rgb(250, 250, 249) | light en ltr | dark ar rtl rgb(12, 10, 9) | dark en ltr، والأسئلة شغالة
+1280، [من الشمال، من اليمين]:
+ar: logo [1095, 112]  card1 [827, 112]  cta [1017, 112]
+en: logo [112, 1088]  card1 [112, 827]  cta [112, 974]       ← مراية
+السهم في العربي scale -1 1 | الحبيبات pointer-events none، opacity 0.18 | الهيدر blur(12px) على rgba(250, 250, 249, 0.72)
+اختيار «غامق» وبعدين refresh: dark rgb(12, 10, 9)، والزرار المختار dark
+h1 قبل التصليح: 64px و line-height 118.4px (1.85)   بعده: 80px (1.25)، والفقرة لسه 1.85
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**إزاي Chrome اتقال «الجهاز فاتح» في الاختبار:** ويندوز هنا على الوضع الغامق، والـ headless بياخده. اتقاس: من غير flag و [[--force-dark-mode]] الاتنين غامق، و [[--blink-settings=preferredColorScheme=1]] بس اللي طلّع فاتح (و [[0]] غامق).` },
+        { lvl: 'فكرة', dir: "adasa-identity", t: R`هوية بصرية لمشروعك انت`, what: R`اختار مشروع عايز تعمله (أو موقعك الشخصي)، وقرر هويته: palette بـ oklch بثيمين، وخطين (عربي ولاتيني) بأسباب الاختيار، ومقياس مسافات و radius وظلال (ظل صغير حاد + ظل كبير ناعم)، وطبقات [[z-index]] بأسامي ([[--z-header]] و [[--z-modal]])، ومدد وحركة ([[--ease]]). واعمل صفحة واحدة بتعرضهم كلهم في الثيمين والاتجاهين.`, done: R`أي مكوّن جديد في المشروع بيتبني من التوكنز من غير ولا قيمة hard-coded، والصفحة فيها كل توكن بمثال حي وبتباينه.`, ext: R`صدّر التوكنز كـ JSON، وولّد منه [[@theme]] بتاع Tailwind ومتغيرات CSS عادية بسكربت صغير، فالتعديل بيبقى في مكان واحد.`, sol: R`المثال اللي عملته: هوية «عدسة» نفسها (المشروع اللي فات)، وصفحة [[styleguide.html]] بتعرض كل توكن في الثيمين والاتجاهين. التوكنز والـ CSS والخطوط هما نفس ملفات [[assets/]] بتاعة «عدسة».
+
+~~~html styleguide.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عدسة: دليل الهوية</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/styleguide.css">
+<script src="assets/styleguide.js" defer></script>
+</head>
+<body>
+<main class="wrap sg">
+  <h1>«عدسة»: دليل الهوية</h1>
+  <p class="sg-note">كل حاجة هنا جاية من <code>assets/tokens.css</code>. الأرقام بتتحسب في الصفحة نفسها من الألوان الحقيقية.</p>
+
+  <section aria-labelledby="sg-colors">
+    <h2 id="sg-colors">الألوان (الأسامي بالمعنى)</h2>
+    <div class="sg-themes">
+      <div data-theme="light" class="sg-panel"><h3>فاتح</h3><ul class="sg-swatches" data-swatches></ul></div>
+      <div data-theme="dark" class="sg-panel"><h3>غامق</h3><ul class="sg-swatches" data-swatches></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-type">
+    <h2 id="sg-type">الخطوط</h2>
+    <div class="sg-themes">
+      <div class="sg-panel"><p class="sg-tag">Cairo، عربي، line-height 1.85</p><p class="sg-h">عنوان كبير بالعربي</p><p>فقرة عادية بالعربي: المسافة بين السطور أكبر عشان النقط والحروف اللي تحت السطر.</p></div>
+      <div class="sg-panel" lang="en" dir="ltr"><p class="sg-tag">Inter, Latin, line-height 1.6</p><p class="sg-h">A big English heading</p><p>A normal paragraph in English, with a shorter line height.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-scale">
+    <h2 id="sg-scale">المسافات والتدوير والظلال والطبقات</h2>
+    <ul class="sg-space">
+      <li><span style="inline-size: var(--space-1)"></span><code>--space-1</code></li>
+      <li><span style="inline-size: var(--space-2)"></span><code>--space-2</code></li>
+      <li><span style="inline-size: var(--space-3)"></span><code>--space-3</code></li>
+      <li><span style="inline-size: var(--space-4)"></span><code>--space-4</code></li>
+      <li><span style="inline-size: var(--space-5)"></span><code>--space-5</code></li>
+    </ul>
+    <div class="sg-boxes">
+      <div class="sg-box" style="box-shadow: var(--shadow-sm)"><code>--shadow-sm</code> و <code>--radius</code></div>
+      <div class="sg-box" style="box-shadow: var(--shadow-lg)"><code>--shadow-lg</code></div>
+      <div class="sg-box"><code>--z-header</code> = <span data-var="--z-header"></span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-components">
+    <h2 id="sg-components">المكونات في الثيمين والاتجاهين</h2>
+    <div class="sg-grid4">
+      <div data-theme="light" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
+      <div data-theme="dark" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
+      <div data-theme="light" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
+      <div data-theme="dark" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
+    </div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css assets/styleguide.css
+/* the style guide page only. Every value still comes from the tokens */
+.sg { padding-block: var(--space-4); }
+.sg h2 { margin-block-start: var(--space-4); }
+.sg-note { color: var(--color-muted); }
+.sg-themes { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
+.sg-grid4 { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); }
+.sg-panel { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-3); border-radius: var(--radius); background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-line); }
+.sg-panel h3 { margin: 0; }
+.sg-swatches { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.sg-swatches li { display: grid; grid-template-columns: 2.25rem 1fr auto; align-items: center; gap: var(--space-1); }
+.sg-chip { inline-size: 2.25rem; block-size: 2.25rem; border-radius: 0.5rem; border: 1px solid var(--color-line); }
+.sg-swatches code { font-size: 0.85rem; }
+.sg-ratio { font-variant-numeric: tabular-nums; font-size: 0.85rem; color: var(--color-muted); }
+.sg-tag { margin: 0; color: var(--color-muted); font-size: 0.85rem; }
+.sg-h { margin: 0; font-size: 1.6rem; font-weight: 700; }
+.sg-space { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.sg-space li { display: flex; align-items: center; gap: var(--space-2); }
+.sg-space span { display: block; block-size: 1rem; border-radius: 0.25rem; background: var(--color-accent); }
+.sg-boxes { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-3); }
+.sg-box { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+~~~
+
+~~~js assets/styleguide.js
+// fills every swatch list with the colour tokens, their real value in that theme, and their contrast
+const tokens = [
+  ["--color-fg", "الكلام", "--color-bg"],
+  ["--color-muted", "الكلام الهادي", "--color-bg"],
+  ["--color-accent", "اللينكات والزرار", "--color-bg"],
+  ["--color-on-accent", "كلام على الزرار", "--color-accent"],
+  ["--color-fg", "الكلام على الكروت", "--color-surface"],
+  ["--color-bg", "الخلفية", null],
+  ["--color-surface", "الكروت", null],
+  ["--color-line", "الخطوط والحدود", null],
+];
+// any CSS colour -> [r, g, b] by painting one pixel
+const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+function rgb(css) { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); }
+function lum(c) { const v = c.map(x => x / 255).map(x => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; }
+function ratio(a, b) { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); }
+
+for (const list of document.querySelectorAll("[data-swatches]")) {
+  const style = getComputedStyle(list);
+  for (const [name, use, against] of tokens) {
+    const value = style.getPropertyValue(name).trim();
+    const li = document.createElement("li");
+    const chip = document.createElement("span");
+    chip.className = "sg-chip";
+    chip.style.background = "var(" + name + ")";
+    li.append(chip);
+    const label = document.createElement("span");
+    label.innerHTML = "<code></code> " + use;
+    label.querySelector("code").textContent = name;
+    li.append(label);
+    const r = document.createElement("span");
+    r.className = "sg-ratio";
+    if (against) {
+      const n = ratio(rgb(value), rgb(style.getPropertyValue(against).trim()));
+      r.textContent = n.toFixed(2) + (n >= 4.5 ? " ✓" : " ✗");
+      r.title = "التباين مع " + against;
+    } else r.textContent = value;
+    li.append(r);
+    list.append(li);
+  }
+}
+for (const el of document.querySelectorAll("[data-var]")) el.textContent = getComputedStyle(document.documentElement).getPropertyValue(el.dataset.var).trim();
+~~~
+
+~~~view 760 900 الشكل النهائي (المعاينة بخط الجهاز (ملفات الخطوط مش جوه المعاينة))
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عدسة: دليل الهوية</title>
+<style>
+/* layer 1: raw values. Nothing on the page uses these names directly */
+:root {
+  --raw-ink-950: #0c0a09;
+  --raw-ink-900: #1c1917;
+  --raw-ink-700: #44403c;
+  --raw-ink-500: #78716c;
+  --raw-ink-300: #a8a29e;
+  --raw-sand-50: #fafaf9;
+  --raw-sand-100: #f5f5f4;
+  --raw-sand-200: #e7e5e4;
+  --raw-amber-300: #fcd34d;
+  --raw-amber-700: #b45309;
+  --raw-amber-800: #92400e;
+  --raw-teal-300: #5eead4;
+  --raw-teal-800: #115e59;
+  --white: #ffffff;
+}
+
+/* layer 2: names by meaning. The page uses ONLY these. A theme = a different mapping.
+   [data-theme] works on ANY element, not only <html>: a section can show the other theme (the style guide does) */
+:root, [data-theme="light"] {
+  --color-bg: var(--raw-sand-50);
+  --color-surface: var(--white);
+  --color-fg: var(--raw-ink-900);
+  --color-muted: var(--raw-ink-700);
+  --color-line: var(--raw-sand-200);
+  --color-accent: var(--raw-amber-800);
+  --color-on-accent: var(--white);
+  --color-glow-1: #fde68a;
+  --color-glow-2: #99f6e4;
+  --color-glass: rgb(250 250 249 / 0.72);
+  --color-glass-solid: rgb(250 250 249 / 0.96);
+
+  --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
+  --radius: 1rem;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.35);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: var(--raw-ink-950);
+    --color-surface: var(--raw-ink-900);
+    --color-fg: var(--raw-sand-100);
+    --color-muted: var(--raw-ink-300);
+    --color-line: var(--raw-ink-700);
+    --color-accent: var(--raw-amber-300);
+    --color-on-accent: var(--raw-ink-950);
+    --color-glow-1: #78350f;
+    --color-glow-2: #134e4a;
+    --color-glass: rgb(12 10 9 / 0.7);
+    --color-glass-solid: rgb(12 10 9 / 0.96);
+  }
+}
+[data-theme="dark"] {
+  --color-bg: var(--raw-ink-950);
+  --color-surface: var(--raw-ink-900);
+  --color-fg: var(--raw-sand-100);
+  --color-muted: var(--raw-ink-300);
+  --color-line: var(--raw-ink-700);
+  --color-accent: var(--raw-amber-300);
+  --color-on-accent: var(--raw-ink-950);
+  --color-glow-1: #78350f;
+  --color-glow-2: #134e4a;
+  --color-glass: rgb(12 10 9 / 0.7);
+  --color-glass-solid: rgb(12 10 9 / 0.96);
+}
+</style>
+<style>
+/* fonts from this site only. unicode-range: a page downloads only the file whose letters it has */
+
+*, *::before, *::after { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); margin: 0 0 var(--space-3); }
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--color-accent); }
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+.wrap { max-width: 68rem; margin-inline: auto; padding-inline: var(--space-2); }
+.section { padding-block: var(--space-5); }
+.icon { flex: none; width: 1.5rem; height: 1.5rem; }
+.icon-flip:dir(rtl) { scale: -1 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* glass header: blurred where supported, almost solid where not */
+.header { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-glass); backdrop-filter: blur(12px); border-block-end: 1px solid var(--color-line); }
+@supports not (backdrop-filter: blur(1px)) {
+  .header { background: var(--color-glass-solid); }
+}
+.header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding-block: 0.6rem; }
+.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-fg); font-weight: 700; text-decoration: none; }
+.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin-inline-start: auto; }
+.nav a { color: var(--color-fg); text-decoration: none; }
+.nav a:hover { color: var(--color-accent); }
+.tools { display: flex; align-items: center; gap: 0.5rem; }
+/* the other-language link: system font, so one English word does not download a whole font on the Arabic page */
+.lang { font-family: system-ui, sans-serif; padding: 0.25rem 0.75rem; border: 1px solid var(--color-line); border-radius: 999px; color: var(--color-fg); text-decoration: none; font-weight: 700; }
+.seg { display: inline-flex; margin: 0; padding: 0.15rem; border: 1px solid var(--color-line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.seg label { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; color: var(--color-muted); }
+.seg input { position: absolute; opacity: 0; }
+.seg label:has(input:checked) { background: var(--color-accent); color: var(--color-on-accent); }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.seg .icon { width: 1.1rem; height: 1.1rem; }
+
+/* hero: three soft lights, and a very light noise on top that the mouse goes through */
+.hero { position: relative; isolation: isolate; overflow: clip; padding-block: clamp(4rem, 2rem + 10vw, 9rem);
+  background:
+    radial-gradient(40rem 22rem at 15% 20%, var(--color-glow-1), transparent 70%),
+    radial-gradient(36rem 20rem at 85% 30%, var(--color-glow-2), transparent 70%),
+    radial-gradient(50rem 18rem at 50% 110%, var(--color-glow-1), transparent 70%),
+    var(--color-bg); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"); }
+.hero h1 { margin: 0 0 var(--space-2); font-size: clamp(2rem, 1.2rem + 4vw, 4rem); max-width: 16ch; }
+.hero p { margin: 0 0 var(--space-3); max-width: 42ch; font-size: 1.15rem; color: var(--color-muted); }
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-lg); }
+
+.cards { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); box-shadow: var(--shadow-sm); }
+.card h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; font-size: 1.15rem; }
+.card h3 .icon { color: var(--color-accent); }
+.card p { margin: 0; color: var(--color-muted); }
+
+.works { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.works figure { margin: 0; }
+.works img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); }
+.works figcaption { padding-block-start: 0.4rem; color: var(--color-muted); }
+
+.price { display: grid; gap: 0.5rem; }
+.price .amount { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-fg); }
+
+details { margin-block-end: var(--space-1); padding: var(--space-2); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+summary { cursor: pointer; font-weight: 700; }
+details p { margin: var(--space-1) 0 0; color: var(--color-muted); }
+
+.footer { padding-block: var(--space-4); border-block-start: 1px solid var(--color-line); color: var(--color-muted); }
+</style>
+<style>
+/* the style guide page only. Every value still comes from the tokens */
+.sg { padding-block: var(--space-4); }
+.sg h2 { margin-block-start: var(--space-4); }
+.sg-note { color: var(--color-muted); }
+.sg-themes { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
+.sg-grid4 { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); }
+.sg-panel { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-3); border-radius: var(--radius); background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-line); }
+.sg-panel h3 { margin: 0; }
+.sg-swatches { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.sg-swatches li { display: grid; grid-template-columns: 2.25rem 1fr auto; align-items: center; gap: var(--space-1); }
+.sg-chip { inline-size: 2.25rem; block-size: 2.25rem; border-radius: 0.5rem; border: 1px solid var(--color-line); }
+.sg-swatches code { font-size: 0.85rem; }
+.sg-ratio { font-variant-numeric: tabular-nums; font-size: 0.85rem; color: var(--color-muted); }
+.sg-tag { margin: 0; color: var(--color-muted); font-size: 0.85rem; }
+.sg-h { margin: 0; font-size: 1.6rem; font-weight: 700; }
+.sg-space { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.sg-space li { display: flex; align-items: center; gap: var(--space-2); }
+.sg-space span { display: block; block-size: 1rem; border-radius: 0.25rem; background: var(--color-accent); }
+.sg-boxes { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-3); }
+.sg-box { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+</style>
+</head>
+<body>
+<main class="wrap sg">
+  <h1>«عدسة»: دليل الهوية</h1>
+  <p class="sg-note">كل حاجة هنا جاية من <code>assets/tokens.css</code>. الأرقام بتتحسب في الصفحة نفسها من الألوان الحقيقية.</p>
+
+  <section aria-labelledby="sg-colors">
+    <h2 id="sg-colors">الألوان (الأسامي بالمعنى)</h2>
+    <div class="sg-themes">
+      <div data-theme="light" class="sg-panel"><h3>فاتح</h3><ul class="sg-swatches" data-swatches></ul></div>
+      <div data-theme="dark" class="sg-panel"><h3>غامق</h3><ul class="sg-swatches" data-swatches></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-type">
+    <h2 id="sg-type">الخطوط</h2>
+    <div class="sg-themes">
+      <div class="sg-panel"><p class="sg-tag">Cairo، عربي، line-height 1.85</p><p class="sg-h">عنوان كبير بالعربي</p><p>فقرة عادية بالعربي: المسافة بين السطور أكبر عشان النقط والحروف اللي تحت السطر.</p></div>
+      <div class="sg-panel" lang="en" dir="ltr"><p class="sg-tag">Inter, Latin, line-height 1.6</p><p class="sg-h">A big English heading</p><p>A normal paragraph in English, with a shorter line height.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-scale">
+    <h2 id="sg-scale">المسافات والتدوير والظلال والطبقات</h2>
+    <ul class="sg-space">
+      <li><span style="inline-size: var(--space-1)"></span><code>--space-1</code></li>
+      <li><span style="inline-size: var(--space-2)"></span><code>--space-2</code></li>
+      <li><span style="inline-size: var(--space-3)"></span><code>--space-3</code></li>
+      <li><span style="inline-size: var(--space-4)"></span><code>--space-4</code></li>
+      <li><span style="inline-size: var(--space-5)"></span><code>--space-5</code></li>
+    </ul>
+    <div class="sg-boxes">
+      <div class="sg-box" style="box-shadow: var(--shadow-sm)"><code>--shadow-sm</code> و <code>--radius</code></div>
+      <div class="sg-box" style="box-shadow: var(--shadow-lg)"><code>--shadow-lg</code></div>
+      <div class="sg-box"><code>--z-header</code> = <span data-var="--z-header"></span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-components">
+    <h2 id="sg-components">المكونات في الثيمين والاتجاهين</h2>
+    <div class="sg-grid4">
+      <div data-theme="light" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
+      <div data-theme="dark" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
+      <div data-theme="light" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
+      <div data-theme="dark" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
+    </div>
+  </section>
+</main>
+<script>
+// fills every swatch list with the colour tokens, their real value in that theme, and their contrast
+const tokens = [
+  ["--color-fg", "الكلام", "--color-bg"],
+  ["--color-muted", "الكلام الهادي", "--color-bg"],
+  ["--color-accent", "اللينكات والزرار", "--color-bg"],
+  ["--color-on-accent", "كلام على الزرار", "--color-accent"],
+  ["--color-fg", "الكلام على الكروت", "--color-surface"],
+  ["--color-bg", "الخلفية", null],
+  ["--color-surface", "الكروت", null],
+  ["--color-line", "الخطوط والحدود", null],
+];
+// any CSS colour -> [r, g, b] by painting one pixel
+const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+function rgb(css) { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); }
+function lum(c) { const v = c.map(x => x / 255).map(x => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; }
+function ratio(a, b) { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); }
+
+for (const list of document.querySelectorAll("[data-swatches]")) {
+  const style = getComputedStyle(list);
+  for (const [name, use, against] of tokens) {
+    const value = style.getPropertyValue(name).trim();
+    const li = document.createElement("li");
+    const chip = document.createElement("span");
+    chip.className = "sg-chip";
+    chip.style.background = "var(" + name + ")";
+    li.append(chip);
+    const label = document.createElement("span");
+    label.innerHTML = "<code></code> " + use;
+    label.querySelector("code").textContent = name;
+    li.append(label);
+    const r = document.createElement("span");
+    r.className = "sg-ratio";
+    if (against) {
+      const n = ratio(rgb(value), rgb(style.getPropertyValue(against).trim()));
+      r.textContent = n.toFixed(2) + (n >= 4.5 ? " ✓" : " ✗");
+      r.title = "التباين مع " + against;
+    } else r.textContent = value;
+    li.append(r);
+    list.append(li);
+  }
+}
+for (const el of document.querySelectorAll("[data-var]")) el.textContent = getComputedStyle(document.documentElement).getPropertyValue(el.dataset.var).trim();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** صفحة «دليل الهوية»: لوحتين ألوان (فاتح وغامق) جنب بعض، كل لون بمربعه واسمه واستخدامه ونسبة تباينه بـ ✓. بعدها الخطين بمثال عربي وإنجليزي، ومقياس المسافات مرسوم، والظلال والتدوير، وكارت وزرار في ٤ نسخ (فاتح وغامق × عربي وإنجليزي).
+
+**قرارات الهوية (والسبب):**
+- **الألوان:** رمادي دافي (sand و ink) بدل الرمادي الأزرق، عشان صور التصوير هي اللي تلفت. ولون واحد مميز: كهرماني غامق في الفاتح وفاتح في الغامق.
+- **الخطين:** Cairo للعربي (حروف واضحة في الأحجام الصغيرة)، و Inter للاتيني (مصمم للشاشات). الاتنين OFL ببلاش ومن الموقع نفسه.
+- **المسافات:** مقياس ٥ خطوات (0.5 لـ 4rem) بدل أرقام عشوائية.
+- **الظلال:** صغير حاد للكروت، وكبير ناعم للزرار المهم.
+- **الطبقات:** [[--z-header]] بالاسم.
+
+**الثيمين في نفس الصفحة:** [[<div data-theme="dark">]] جوه صفحة فاتحة. ده شغال لأن التوكنز [[[data-theme="dark"]]] على أي عنصر مش [[:root]] بس.
+
+**التباين بيتحسب في الصفحة:** [[styleguide.js]] بيقرا قيمة كل توكن من [[getComputedStyle]] جوه اللوحة (فاتح أو غامق)، ويحوّله لـ RGB بـ canvas، ويحسب التباين مع الخلفية اللي بيتحط عليها. لو حد غيّر توكن بكرة، الرقم بيتغيّر لوحده، و ✗ بيبان لو نزل تحت 4.5.
+
+**القاعدة اللي بتحمي الهوية:** أي مكون جديد بيتبني من الأسامي بالمعنى بس. الـ README بتاع «عدسة» فيه جدول كل توكن واستخدامه.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+light: --color-fg=16.74 ✓, --color-muted=9.84 ✓, --color-accent=6.79 ✓, --color-on-accent=7.09 ✓, --color-fg=17.49 ✓, --color-bg=#fafaf9, --color-surface=#ffffff, --color-line=#e7e5e4
+dark:  --color-fg=18.11 ✓, --color-muted=7.83 ✓, --color-accent=13.70 ✓, --color-on-accent=13.70 ✓, --color-fg=16.03 ✓, --color-bg=#0c0a09, --color-surface=#1c1917, --color-line=#44403c
+اللوحات الـ 4: light/rtl rgb(250, 250, 249) زرار rgb(146, 64, 14) | dark/rtl rgb(12, 10, 9) زرار rgb(252, 211, 77) | light/ltr | dark/ltr (نفس الألوان)
+الخطوط: Cairo 400 و 700، و Inter 400 و 700 (الصفحة فيها اللغتين)
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+صفحتين «عدسة» بعد ما التوكنز بقت [data-theme] على أي عنصر: axe 0، و Lighthouse ar dark: perf 100 و a11y 100
+~~~` },
       ],
       items: [
         {
