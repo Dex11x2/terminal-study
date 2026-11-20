@@ -1,1236 +1,47 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "بنك تمارين HTML و CSS",
+      t: "Tailwind CSS v4",
       pre: [
-        { to: "css/box model", why: R`المقاسات اللي كل تمرين بيقيسها` },
-        { to: "css/grid", why: R`تمارين الـ layouts` },
+        { to: "css/cascade", why: R`Tailwind بيحط الـ CSS بتاعه في @layer` },
+        { to: "css/media queries", why: R`sm: و md: هما media queries` },
+        { to: "css/CSS variables", why: R`@theme بيعمل CSS variables` },
       ],
       l: 2,
-      time: R`حوالي ١٠ ساعات لو حليت كل حاجة بإيدك: ساعة ونص لكل درس، ونص ساعة للفحص في كل درس`,
-      goal: [
-        R`تحل أي تمرين CSS بنفس الخطوات: المقاس من برا الأول، وبعدين أنهي أداة بترسمه، وبعدين تقيس النتيجة برقم بدل ما تقول «شكله تمام».`,
-        R`ترسم بالـ CSS بس ١٠ أشكال (مثلث، ودايرة، وتذكرة، وفقاعة كلام، وقلب، ولودر، وسهم، ونجمة، وعلم، وشطرنج) من غير ولا صورة.`,
-        R`تبني ٨ layouts بتتكرر في كل شغل (holy grail، وشبكة كروت، و bento، وسايدبار بيتقفل، ومودال، وفوتر تحت، و masonry، و navbar عربي) وتثبت إنها سليمة على 1200 و 360.`,
-        R`تلاقي وتصلّح أشهر أخطاء الـ CSS الحقيقية: الصفحة اللي بتفيض على الموبايل، والـ sticky اللي مش بيلزق، والمودال اللي تحت الهيدر، و [[100vh]]، و [[margin-left]] في صفحة عربي، و [[!important]].`,
-        R`تتوقع مين يكسب في الـ cascade قبل ما تشغّل ([[:is()]] و [[:where()]] و [[:has()]] و [[@layer]] و [[!important]])، وتكتب دالة بتحسب الـ specificity وتعدّي ١٥ اختبار.`,
-        R`توصّل فورم لـ axe صفر، وتعرف الحاجات اللي axe مش بيشوفها (منها التباين في الكلام العربي المتوصل)، وتكتب فحص ذاتي يلقطها.`,
-      ],
-      use: {
-        prog: R`كل درس قبل كده علّمك أداة. هنا الأدوات بتشتغل مع بعض في تمرين ليه هدف متقاس: «المثلث 80×70»، «٥ عواميد على 1168px»، «مفيش scroll أفقي على 360». والفحص بيقولك عدّيت ولا لأ من غير ما تخمّن.`,
-        work: R`نص شغل الـ frontend الحقيقي «الصفحة دي باظت على الموبايل» و «الزرار ده مش بيبان» و «المودال تحت الهيدر». التمارين هنا متجمعة من أخطاء اتكررت في مواقع حقيقية (بأسماء متخيلة)، والطريقة اللي بتحلها بيها هي هي اللي هتستخدمها في أي تيكت.`,
-        cs: R`ورا كل تمرين فكرة حسابية: الـ auto-fit قسمة صحيحة، و clip-path نقط على دايرة بالـ sin و cos، والسهم دوران متجه بمصفوفة، والـ specificity مقارنة lexicographic لـ ٣ أرقام، والتباين معادلة luminance من WCAG.`,
-      },
-      lab: R`mkdir bank-css && cd bank-css && code .   # ملف HTML لكل درس، افتحه في Chrome، و F12 ثم Console عشان تلزق الفحص الذاتي`,
+      n: "Tailwind بيقرا الكلاسات من ملفاتك ويطلّع CSS للي استخدمته بس، والتوكنز والإعداد كلهم في ملف CSS",
       projects: [
-        { lvl: 'صغير', dir: "shapes-catalog", t: R`كتالوج أشكال CSS`, what: R`صفحة فيها الأشكال العشرة من درس «أشكال بالـ CSS»، كل شكل في كارت تحته اسمه وزرار «انسخ الـ CSS» بيحط الكود في الـ clipboard ([[navigator.clipboard.writeText]])، ومعاهم ٣ أشكال زيادة من عندك (سداسي بـ [[regularPolygon(6)]]، وبادج متعرّج، وسهم مزدوج). كل الألوان متغيرات في [[:root]].`, done: R`الفحص الذاتي بتاع الدرس بيطبع [[النتيجة: 12 من 12]]، وكل زرار نسخ بيطلّع رسالة «اتنسخ» بـ [[role="status"]]، ولما تغيّر لون واحد في [[:root]] كل الأشكال اللي بتستخدمه بتتغير، ومفيش ولا صورة في الصفحة (Network › Img فاضي).`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كتالوج أشكال CSS</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="shapes.css">
-<link rel="stylesheet" href="page.css">
-<script src="catalog.js" defer></script>
-</head>
-<body>
-<main>
-  <h1>كتالوج أشكال CSS</h1>
-  <p class="lead">١٣ شكل من غير ولا صورة. كل الألوان متغيرات في أول <code>shapes.css</code>.</p>
-  <ul class="grid" role="list">
-    <li class="card"><div class="stage"><div id="tri"></div></div><h2>مثلث</h2></li>
-    <li class="card"><div class="stage"><div id="circle"></div></div><h2>دايرة بإطار</h2></li>
-    <li class="card"><div class="stage"><div id="ticket"></div></div><h2>تذكرة</h2></li>
-    <li class="card"><div class="stage"><div id="bubble"></div></div><h2>فقاعة كلام</h2></li>
-    <li class="card"><div class="stage"><div id="heart"></div></div><h2>قلب</h2></li>
-    <li class="card"><div class="stage"><div id="loader" role="status" aria-label="بيحمّل"></div></div><h2>لودر</h2></li>
-    <li class="card"><div class="stage"><div id="chevron"></div></div><h2>سهم «التالي»</h2></li>
-    <li class="card"><div class="stage"><div id="star"></div></div><h2>نجمة</h2></li>
-    <li class="card"><div class="stage"><div id="flag"></div></div><h2>علم</h2></li>
-    <li class="card"><div class="stage"><div id="chess"></div></div><h2>شطرنج</h2></li>
-    <li class="card"><div class="stage"><div id="hexagon"><span>٧</span></div></div><h2>سداسي</h2></li>
-    <li class="card"><div class="stage"><div id="zigzag"><span>جديد</span></div></div><h2>بادج متعرّج</h2></li>
-    <li class="card"><div class="stage"><div id="double-arrow"></div></div><h2>سهم مزدوج</h2></li>
-  </ul>
-</main>
-</body>
-</html>
+        { lvl: 'صغير', dir: "tw-badges", t: R`زراير و badges بالتوكنز`, what: R`[[@theme]] فيه لون البراند و ٤ ألوان حالات (نجاح وتحذير وخطر ومحايد) بنسخة [[-soft]] لكل واحد، وصفحة فيها زراير و badges بكل الحالات. من درس [[@theme]].`, done: R`مفيش ولا [[#hex]] ولا [[[...]]] في الـ HTML، وتغيير لون في [[@theme]] بيغيّر كل حاجة بتستخدمه، والكلام على كل badge مقري (درس [[contrast ratio]]).`, sol: R`~~~bash الترمنال
+npm i -D tailwindcss@4.3.4 @tailwindcss/cli@4.3.4
+npx @tailwindcss/cli -i in.css -o out.css
 ~~~
 
-~~~css shapes.css
-/* الألوان كلها هنا: غيّر واحد، وكل شكل بيستخدمه يتغير */
-:root {
-  --rose: #e11d48;
-  --sky: #0ea5e9;
-  --sky-dark: #0c4a6e;
-  --sand: #fde68a;
-  --brown: #92400e;
-  --green: #22c55e;
-  --red: #ef4444;
-  --gray: #e5e7eb;
-  --indigo: #6366f1;
-  --ink: #0f172a;
-  --amber: #f59e0b;
-  --forest: #166534;
-  --white: #ffffff;
-  --yellow: #facc15;
-  --slate: #1e293b;
-  --snow: #f1f5f9;
-  --violet: #7c3aed;
+~~~css in.css
+@import "tailwindcss";
+
+/* every colour the page uses, by meaning. bg-brand, text-ok-ink, border-danger… come from these names */
+@theme {
+  --color-brand: #0f766e;
+  --color-brand-soft: #ccfbf1;
+  --color-brand-ink: #134e4a;
+
+  --color-ok: #15803d;
+  --color-ok-soft: #dcfce7;
+  --color-ok-ink: #14532d;
+
+  --color-warn: #b45309;
+  --color-warn-soft: #fef3c7;
+  --color-warn-ink: #78350f;
+
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fee2e2;
+  --color-danger-ink: #7f1d1d;
+
+  --color-neutral: #475569;
+  --color-neutral-soft: #f1f5f9;
+  --color-neutral-ink: #1e293b;
+
+  --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
 }
-
-/* ١٠ أشكال الدرس: نفس الحل المرجعي، والألوان بقت var() */
-/* content-box صريح: مشروع فيه reset بـ border-box كان هيخلّي العرض المحسوب 80px بدل 0 */
-#tri { box-sizing: content-box; width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid var(--rose); }
-#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: var(--sky); border: 4px solid var(--sky-dark); }
-#ticket { position: relative; width: 280px; height: 120px; background: var(--sand);
-  mask: radial-gradient(circle 12px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
-        radial-gradient(circle 12px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat; }
-#ticket::after { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 200px; border-inline-start: 2px dashed var(--brown); }
-#bubble { position: relative; width: 220px; height: 80px; background: var(--green); border-radius: 16px; }
-#bubble::after { content: ""; position: absolute; top: 100%; left: 24px; border: 12px solid transparent; border-top-color: var(--green); border-bottom: 0; }
-#heart { position: relative; width: 60px; height: 60px; background: var(--red); rotate: 45deg; margin: 20px; }
-#heart::before, #heart::after { content: ""; position: absolute; width: 60px; height: 60px; border-radius: 50%; background: var(--red); }
-#heart::before { left: -30px; }
-#heart::after { top: -30px; }
-#loader { width: 48px; height: 48px; box-sizing: border-box; border: 6px solid var(--gray); border-top-color: var(--indigo); border-radius: 50%; animation: spin .8s linear infinite; }
-@keyframes spin { to { rotate: 1turn; } }
-@media (prefers-reduced-motion: reduce) { #loader { animation: none; } }
-#chevron { width: 24px; height: 24px; box-sizing: border-box; border-top: 4px solid var(--ink); border-left: 4px solid var(--ink); rotate: -45deg; }
-#star { width: 120px; height: 120px; background: var(--amber);
-  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }
-#flag { width: 240px; height: 160px;
-  background: radial-gradient(circle 20px, var(--yellow) 98%, #0000),
-              linear-gradient(var(--forest) 33.333%, var(--white) 0 66.666%, var(--forest) 0); }
-#chess { width: 240px; height: 240px; background: repeating-conic-gradient(var(--slate) 0 25%, var(--snow) 0 50%) 0 0 / 60px 60px; }
-
-/* ٣ أشكال زيادة */
-/* سداسي: regularPolygon(6) من الدرس */
-#hexagon { width: 100px; height: 100px; display: grid; place-items: center; background: var(--violet); color: var(--white); font: 800 2rem/1 system-ui, sans-serif;
-  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); }
-/* بادج متعرّج: starPolygon(12, 0.85) = ١٢ سنة قصيرة حوالين دايرة */
-#zigzag { width: 110px; height: 110px; display: grid; place-items: center; background: var(--amber); color: var(--ink); font: 800 1.1rem/1 system-ui, sans-serif;
-  clip-path: polygon(50% 0%, 61% 8.9%, 75% 6.7%, 80.1% 19.9%, 93.3% 25%, 91.1% 39%, 100% 50%, 91.1% 61%, 93.3% 75%, 80.1% 80.1%, 75% 93.3%, 61% 91.1%, 50% 100%, 39% 91.1%, 25% 93.3%, 19.9% 80.1%, 6.7% 75%, 8.9% 61%, 0% 50%, 8.9% 39%, 6.7% 25%, 19.9% 19.9%, 25% 6.7%, 39% 8.9%); }
-/* سهم مزدوج ↔: ١٠ نقط، راس في كل ناحية وجسم في النص */
-#double-arrow { width: 160px; height: 48px; background: var(--ink);
-  clip-path: polygon(0% 50%, 25% 0%, 25% 30%, 75% 30%, 75% 0%, 100% 50%, 75% 100%, 75% 70%, 25% 70%, 25% 100%); }
-~~~
-
-~~~css page.css
-/* شكل الصفحة نفسها (مش جزء من الأشكال اللي بتتنسخ) */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
-main { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
-h1 { margin: 0; font-size: 1.6rem; }
-.lead { color: #475569; }
-code, pre { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; }
-.grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); }
-.card { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; background: #fff; border: 1px solid #cbd5e1; border-radius: 1rem; }
-/* المسرح: مكان ثابت للشكل، والتذكرة (280px) بتعمل scroll جواه على الموبايل بدل ما الصفحة تفيض */
-.stage { display: grid; place-items: center; min-height: 270px; overflow-x: auto; background: #f1f5f9; border-radius: 0.75rem; }
-.card h2 { margin: 0; font-size: 1.1rem; }
-.copy { align-self: start; font: inherit; font-weight: 700; padding: 0.4rem 1rem; border: 0; border-radius: 999px; background: #1e293b; color: #fff; cursor: pointer; }
-.copy:focus-visible, details summary:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-.msg { margin: 0; min-height: 1.7em; font-weight: 700; color: #166534; }
-.msg.bad { color: #b91c1c; }
-details summary { cursor: pointer; color: #334155; }
-pre { margin: 0.5rem 0 0; padding: 0.75rem; overflow-x: auto; max-height: 14rem; border-radius: 0.5rem; background: #0f172a; color: #e2e8f0; font-size: 0.8rem; text-align: left; }
-~~~
-
-~~~js catalog.js
-// for each card: the CSS of its shape, read from the stylesheet itself (so the copied code is always what the page uses)
-const sheet = [...document.styleSheets].find(s => /shapes\.css$/.test(s.href || "")) || document.styleSheets[0];
-const rules = [...sheet.cssRules];
-const rootVars = getComputedStyle(document.documentElement);
-
-function cssFor(id) {
-  const re = new RegExp("#" + id + "(?![\\w-])");
-  const own = rules.filter(r => r.selectorText && re.test(r.selectorText));
-  const media = rules.filter(r => r.media && [...r.cssRules].some(x => re.test(x.selectorText || "")));
-  // the @keyframes its animation uses
-  const anim = own.map(r => r.style.animationName).filter(Boolean);
-  const frames = rules.filter(r => r.type === CSSRule.KEYFRAMES_RULE && anim.includes(r.name));
-  const body = [...own, ...frames, ...media].map(r => r.cssText);
-  // the colors it uses, with their values, so the copied code works alone
-  const vars = [...new Set(body.join("\n").match(/--[\w-]+/g) || [])];
-  const root = vars.length ? ":root { " + vars.map(v => v + ": " + rootVars.getPropertyValue(v).trim() + ";").join(" ") + " }\n" : "";
-  return root + body.join("\n");
-}
-
-for (const card of document.querySelectorAll(".card")) {
-  const shape = card.querySelector(".stage > [id]"), name = card.querySelector("h2").textContent;
-  const code = cssFor(shape.id);
-  const btn = document.createElement("button");
-  btn.type = "button"; btn.className = "copy"; btn.textContent = "انسخ الـ CSS";
-  btn.setAttribute("aria-label", "انسخ الـ CSS بتاع " + name);
-  const msg = document.createElement("p");
-  msg.className = "msg"; msg.setAttribute("role", "status");
-  const details = document.createElement("details");
-  const summary = document.createElement("summary"); summary.textContent = "الكود";
-  const pre = document.createElement("pre"); pre.textContent = code;
-  details.append(summary, pre);
-  let timer;
-  btn.addEventListener("click", async () => {
-    clearTimeout(timer);
-    msg.classList.remove("bad");
-    try {
-      await navigator.clipboard.writeText(code);
-      msg.textContent = "اتنسخ";
-    } catch {
-      // no clipboard (blocked iframe, old browser, page not focused): say so, and open the code to copy by hand
-      msg.classList.add("bad");
-      msg.textContent = "النسخ مش مسموح هنا، الكود مفتوح تحت";
-      details.open = true;
-    }
-    timer = setTimeout(() => { msg.textContent = ""; }, 3000);
-  });
-  card.append(btn, msg, details);
-}
-~~~
-
-~~~js measure.mjs
-// node shapes/measure.mjs: the lesson self-check, the copy buttons, one shared color, and no images
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-import fs from "node:fs";
-const check = fs.readFileSync(new URL("../src/shapes-check.js", import.meta.url), "utf8");
-const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
-const ctx = await b.newContext({ viewport: { width: 1280, height: 900 }, permissions: ["clipboard-read", "clipboard-write"] });
-const p = await ctx.newPage();
-const imgs = [], errs = [];
-p.on("request", r => { if (r.resourceType() === "image") imgs.push(r.url()); });
-p.on("pageerror", e => errs.push(e.message));
-await p.goto("http://127.0.0.1:8840/shapes/index.html");
-
-// 1. the self-check from the lesson, pasted in the console
-const logs = [];
-p.on("console", m => logs.push(m.text()));
-await p.evaluate(check);
-console.log("الفحص الذاتي: " + logs.filter(l => /^(PASS|FAIL|النتيجة)/.test(l)).filter(l => /FAIL|النتيجة/.test(l)).join(" | "));
-
-// 2. the 3 extra shapes: the polygon is exactly what the lesson functions give
-const extra = await p.evaluate(() => ["hexagon", "zigzag", "double-arrow"].map(id => { const e = document.getElementById(id), s = getComputedStyle(e); return id + " " + e.offsetWidth + "×" + e.offsetHeight + " نقط " + s.clipPath.split(",").length; }));
-console.log("الزيادة: " + extra.join(" | "));
-
-// 3. copy: the clipboard really holds the code, and the status says so
-await p.getByRole("button", { name: "انسخ الـ CSS بتاع نجمة" }).click();
-const clip = await p.evaluate(() => navigator.clipboard.readText());
-console.log("بعد نسخ النجمة: الرسالة «" + await p.locator(".card:has(#star) [role=status]").textContent() + "» | الـ clipboard أوله: " + clip.split("\n")[0] + " | فيه #star و clip-path: " + (/#star/.test(clip) && /clip-path/.test(clip)));
-await p.getByRole("button", { name: "انسخ الـ CSS بتاع لودر" }).click();
-const clip2 = await p.evaluate(() => navigator.clipboard.readText());
-console.log("اللودر بيتنسخ معاه: @keyframes " + /@keyframes spin/.test(clip2) + "، و reduced motion " + /prefers-reduced-motion/.test(clip2));
-
-// 4. one color in :root changes every shape that uses it
-const before = await p.evaluate(() => ["star", "zigzag"].map(id => getComputedStyle(document.getElementById(id)).backgroundColor));
-await p.evaluate(() => document.documentElement.style.setProperty("--amber", "#0891b2"));
-const after = await p.evaluate(() => ["star", "zigzag"].map(id => getComputedStyle(document.getElementById(id)).backgroundColor));
-console.log("--amber: النجمة والبادج " + before.join(" و ") + " ← " + after.join(" و "));
-
-// 5. no clipboard (a sandboxed frame, for example): a message, not a crash
-const ctx2 = await b.newContext({ viewport: { width: 400, height: 800 } });
-const p2 = await ctx2.newPage();
-await p2.goto("http://127.0.0.1:8840/shapes/index.html");
-await p2.evaluate(() => { Object.defineProperty(navigator, "clipboard", { value: { writeText: () => Promise.reject(new Error("blocked")) } }); });
-await p2.getByRole("button", { name: "انسخ الـ CSS بتاع قلب" }).click();
-console.log("من غير clipboard: «" + await p2.locator(".card:has(#heart) [role=status]").textContent() + "» والكود مفتوح: " + await p2.locator(".card:has(#heart) details").evaluate(d => d.open));
-const sw = await p2.evaluate(() => document.documentElement.scrollWidth);
-console.log("على 400: عرض الصفحة " + sw);
-
-const axe = await new AxeBuilder({ page: p }).analyze();
-console.log("صور اتطلبت: " + imgs.length + " | errors: " + errs.length + " | axe: " + axe.violations.length + (axe.violations.length ? " " + axe.violations.map(v => v.id).join(" ") : ""));
-await b.close();
-~~~
-
-~~~view 720 720 اعمل scroll جوه
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كتالوج أشكال CSS</title>
-<link rel="icon" href="data:,">
-<style>
-/* الألوان كلها هنا: غيّر واحد، وكل شكل بيستخدمه يتغير */
-:root {
-  --rose: #e11d48;
-  --sky: #0ea5e9;
-  --sky-dark: #0c4a6e;
-  --sand: #fde68a;
-  --brown: #92400e;
-  --green: #22c55e;
-  --red: #ef4444;
-  --gray: #e5e7eb;
-  --indigo: #6366f1;
-  --ink: #0f172a;
-  --amber: #f59e0b;
-  --forest: #166534;
-  --white: #ffffff;
-  --yellow: #facc15;
-  --slate: #1e293b;
-  --snow: #f1f5f9;
-  --violet: #7c3aed;
-}
-
-/* ١٠ أشكال الدرس: نفس الحل المرجعي، والألوان بقت var() */
-/* content-box صريح: مشروع فيه reset بـ border-box كان هيخلّي العرض المحسوب 80px بدل 0 */
-#tri { box-sizing: content-box; width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid var(--rose); }
-#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: var(--sky); border: 4px solid var(--sky-dark); }
-#ticket { position: relative; width: 280px; height: 120px; background: var(--sand);
-  mask: radial-gradient(circle 12px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
-        radial-gradient(circle 12px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat; }
-#ticket::after { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 200px; border-inline-start: 2px dashed var(--brown); }
-#bubble { position: relative; width: 220px; height: 80px; background: var(--green); border-radius: 16px; }
-#bubble::after { content: ""; position: absolute; top: 100%; left: 24px; border: 12px solid transparent; border-top-color: var(--green); border-bottom: 0; }
-#heart { position: relative; width: 60px; height: 60px; background: var(--red); rotate: 45deg; margin: 20px; }
-#heart::before, #heart::after { content: ""; position: absolute; width: 60px; height: 60px; border-radius: 50%; background: var(--red); }
-#heart::before { left: -30px; }
-#heart::after { top: -30px; }
-#loader { width: 48px; height: 48px; box-sizing: border-box; border: 6px solid var(--gray); border-top-color: var(--indigo); border-radius: 50%; animation: spin .8s linear infinite; }
-@keyframes spin { to { rotate: 1turn; } }
-@media (prefers-reduced-motion: reduce) { #loader { animation: none; } }
-#chevron { width: 24px; height: 24px; box-sizing: border-box; border-top: 4px solid var(--ink); border-left: 4px solid var(--ink); rotate: -45deg; }
-#star { width: 120px; height: 120px; background: var(--amber);
-  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }
-#flag { width: 240px; height: 160px;
-  background: radial-gradient(circle 20px, var(--yellow) 98%, #0000),
-              linear-gradient(var(--forest) 33.333%, var(--white) 0 66.666%, var(--forest) 0); }
-#chess { width: 240px; height: 240px; background: repeating-conic-gradient(var(--slate) 0 25%, var(--snow) 0 50%) 0 0 / 60px 60px; }
-
-/* ٣ أشكال زيادة */
-/* سداسي: regularPolygon(6) من الدرس */
-#hexagon { width: 100px; height: 100px; display: grid; place-items: center; background: var(--violet); color: var(--white); font: 800 2rem/1 system-ui, sans-serif;
-  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); }
-/* بادج متعرّج: starPolygon(12, 0.85) = ١٢ سنة قصيرة حوالين دايرة */
-#zigzag { width: 110px; height: 110px; display: grid; place-items: center; background: var(--amber); color: var(--ink); font: 800 1.1rem/1 system-ui, sans-serif;
-  clip-path: polygon(50% 0%, 61% 8.9%, 75% 6.7%, 80.1% 19.9%, 93.3% 25%, 91.1% 39%, 100% 50%, 91.1% 61%, 93.3% 75%, 80.1% 80.1%, 75% 93.3%, 61% 91.1%, 50% 100%, 39% 91.1%, 25% 93.3%, 19.9% 80.1%, 6.7% 75%, 8.9% 61%, 0% 50%, 8.9% 39%, 6.7% 25%, 19.9% 19.9%, 25% 6.7%, 39% 8.9%); }
-/* سهم مزدوج ↔: ١٠ نقط، راس في كل ناحية وجسم في النص */
-#double-arrow { width: 160px; height: 48px; background: var(--ink);
-  clip-path: polygon(0% 50%, 25% 0%, 25% 30%, 75% 30%, 75% 0%, 100% 50%, 75% 100%, 75% 70%, 25% 70%, 25% 100%); }
-
-</style>
-<style>
-/* شكل الصفحة نفسها (مش جزء من الأشكال اللي بتتنسخ) */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
-main { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
-h1 { margin: 0; font-size: 1.6rem; }
-.lead { color: #475569; }
-code, pre { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; }
-.grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); }
-.card { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; background: #fff; border: 1px solid #cbd5e1; border-radius: 1rem; }
-/* المسرح: مكان ثابت للشكل، والتذكرة (280px) بتعمل scroll جواه على الموبايل بدل ما الصفحة تفيض */
-.stage { display: grid; place-items: center; min-height: 270px; overflow-x: auto; background: #f1f5f9; border-radius: 0.75rem; }
-.card h2 { margin: 0; font-size: 1.1rem; }
-.copy { align-self: start; font: inherit; font-weight: 700; padding: 0.4rem 1rem; border: 0; border-radius: 999px; background: #1e293b; color: #fff; cursor: pointer; }
-.copy:focus-visible, details summary:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-.msg { margin: 0; min-height: 1.7em; font-weight: 700; color: #166534; }
-.msg.bad { color: #b91c1c; }
-details summary { cursor: pointer; color: #334155; }
-pre { margin: 0.5rem 0 0; padding: 0.75rem; overflow-x: auto; max-height: 14rem; border-radius: 0.5rem; background: #0f172a; color: #e2e8f0; font-size: 0.8rem; text-align: left; }
-
-</style>
-
-</head>
-<body>
-<main>
-  <h1>كتالوج أشكال CSS</h1>
-  <p class="lead">١٣ شكل من غير ولا صورة. كل الألوان متغيرات في أول <code>shapes.css</code>.</p>
-  <ul class="grid" role="list">
-    <li class="card"><div class="stage"><div id="tri"></div></div><h2>مثلث</h2></li>
-    <li class="card"><div class="stage"><div id="circle"></div></div><h2>دايرة بإطار</h2></li>
-    <li class="card"><div class="stage"><div id="ticket"></div></div><h2>تذكرة</h2></li>
-    <li class="card"><div class="stage"><div id="bubble"></div></div><h2>فقاعة كلام</h2></li>
-    <li class="card"><div class="stage"><div id="heart"></div></div><h2>قلب</h2></li>
-    <li class="card"><div class="stage"><div id="loader" role="status" aria-label="بيحمّل"></div></div><h2>لودر</h2></li>
-    <li class="card"><div class="stage"><div id="chevron"></div></div><h2>سهم «التالي»</h2></li>
-    <li class="card"><div class="stage"><div id="star"></div></div><h2>نجمة</h2></li>
-    <li class="card"><div class="stage"><div id="flag"></div></div><h2>علم</h2></li>
-    <li class="card"><div class="stage"><div id="chess"></div></div><h2>شطرنج</h2></li>
-    <li class="card"><div class="stage"><div id="hexagon"><span>٧</span></div></div><h2>سداسي</h2></li>
-    <li class="card"><div class="stage"><div id="zigzag"><span>جديد</span></div></div><h2>بادج متعرّج</h2></li>
-    <li class="card"><div class="stage"><div id="double-arrow"></div></div><h2>سهم مزدوج</h2></li>
-  </ul>
-</main>
-<script>
-// for each card: the CSS of its shape, read from the stylesheet itself (so the copied code is always what the page uses)
-const sheet = [...document.styleSheets].find(s => /shapes\.css$/.test(s.href || "")) || document.styleSheets[0];
-const rules = [...sheet.cssRules];
-const rootVars = getComputedStyle(document.documentElement);
-
-function cssFor(id) {
-  const re = new RegExp("#" + id + "(?![\\w-])");
-  const own = rules.filter(r => r.selectorText && re.test(r.selectorText));
-  const media = rules.filter(r => r.media && [...r.cssRules].some(x => re.test(x.selectorText || "")));
-  // the @keyframes its animation uses
-  const anim = own.map(r => r.style.animationName).filter(Boolean);
-  const frames = rules.filter(r => r.type === CSSRule.KEYFRAMES_RULE && anim.includes(r.name));
-  const body = [...own, ...frames, ...media].map(r => r.cssText);
-  // the colors it uses, with their values, so the copied code works alone
-  const vars = [...new Set(body.join("\n").match(/--[\w-]+/g) || [])];
-  const root = vars.length ? ":root { " + vars.map(v => v + ": " + rootVars.getPropertyValue(v).trim() + ";").join(" ") + " }\n" : "";
-  return root + body.join("\n");
-}
-
-for (const card of document.querySelectorAll(".card")) {
-  const shape = card.querySelector(".stage > [id]"), name = card.querySelector("h2").textContent;
-  const code = cssFor(shape.id);
-  const btn = document.createElement("button");
-  btn.type = "button"; btn.className = "copy"; btn.textContent = "انسخ الـ CSS";
-  btn.setAttribute("aria-label", "انسخ الـ CSS بتاع " + name);
-  const msg = document.createElement("p");
-  msg.className = "msg"; msg.setAttribute("role", "status");
-  const details = document.createElement("details");
-  const summary = document.createElement("summary"); summary.textContent = "الكود";
-  const pre = document.createElement("pre"); pre.textContent = code;
-  details.append(summary, pre);
-  let timer;
-  btn.addEventListener("click", async () => {
-    clearTimeout(timer);
-    msg.classList.remove("bad");
-    try {
-      await navigator.clipboard.writeText(code);
-      msg.textContent = "اتنسخ";
-    } catch {
-      // no clipboard (blocked iframe, old browser, page not focused): say so, and open the code to copy by hand
-      msg.classList.add("bad");
-      msg.textContent = "النسخ مش مسموح هنا، الكود مفتوح تحت";
-      details.open = true;
-    }
-    timer = setTimeout(() => { msg.textContent = ""; }, 3000);
-  });
-  card.append(btn, msg, details);
-}
-
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** ١٣ كارت أبيض في شبكة. في كل كارت مسرح رمادي فاتح فيه الشكل، واسمه، وزرار «انسخ الـ CSS»، وتحته «الكود» بيتفتح. أول عشرة هما أشكال الدرس بالترتيب (مثلث أحمر، دايرة زرقا بإطار، تذكرة صفرا مخرومة…)، وآخر تلاتة: سداسي بنفسجي جواه «٧»، وبادج أصفر متعرّج مكتوب عليه «جديد»، وسهم كحلي بيشاور الناحيتين. دوس «انسخ»: كلمة «اتنسخ» خضرا بتظهر تحت الزرار وتختفي بعد ٣ ثواني. (هنا في الـ preview الـ clipboard ممنوع، فهتشوف «النسخ مش مسموح هنا، الكود مفتوح تحت» والكود بيتفتح لوحده: ده نفس اللي بيحصل في أي iframe متقفّل.)
-
-**الأشكال العشرة = الحل المرجعي بتاع الدرس:** نفس السطور بالظبط، والفرق الوحيد إن كل لون بقى [[var(--اسم)]] من [[:root]]. عشان كده الفحص الذاتي بتاع الدرس لسه ١٢ من ١٢.
-
-**الألوان المتشاركة:** النجمة والبادج المتعرّج الاتنين [[var(--amber)]]، والسهم «التالي» والسهم المزدوج الاتنين [[var(--ink)]]. غيّر [[--amber]] في [[:root]] والشكلين بيتغيروا مع بعض: ده اللي القياس عمله.
-
-**الأشكال التلاتة الزيادة:**
-- **السداسي:** [[clip-path]] هو ناتج [[regularPolygon(6)]] من الدرس بالظبط (٦ نقط على دايرة، أول نقطة فوق).
-- **البادج المتعرّج:** [[starPolygon(12, 0.85)]]: نجمة بـ ١٢ سنة قصيرة (النقط اللي جوه على ٨٥٪ من نص القطر)، فشكلها دايرة مسننة زي ختم.
-- **السهم المزدوج:** polygon بـ ١٠ نقط: راس في كل ناحية وجسم في النص. شكل متماثل، فمش محتاج يتقلب في RTL.
-
-**الكود اللي بيتنسخ بيتقرا من الـ CSS نفسه:** [[catalog.js]] بيلف على [[document.styleSheets]] ويجيب كل قاعدة الـ selector بتاعها فيه [[#id]] بتاع الشكل، والـ [[@keyframes]] اللي الـ animation بتاعته بتستخدمه، والـ [[@media]] اللي بتلمسه، وكل [[--متغير]] مكتوب فيه بقيمته. فالكود اللي بيتنسخ هو اللي الصفحة شغالة بيه فعلًا، ومش ممكن يبقى نسخة قديمة. واللودر بيتنسخ معاه [[@keyframes spin]] و [[prefers-reduced-motion]].
-
-**النسخ ممكن يتمنع:** [[navigator.clipboard.writeText]] بيرجّع Promise ممكن يترفض (iframe متقفّل، أو الصفحة مش عليها focus، أو متصفح قديم). الـ [[catch]] بيكتب رسالة ويفتح الكود، والرسالة في [[role="status"]] فقارئ الشاشة بيقولها.
-
-**التذكرة على الموبايل:** عرضها 280، والمسرح عليه [[overflow-x: auto]]، فعلى 400 الصفحة نفسها عرضها 400 (التذكرة بتعمل scroll جوه كارتها).
-
-**غلطة قابلتني:** أول تشغيل للفحص الذاتي طلّع ١١ من ١٢: «المثلث: المقاس 80×70 والمطلوب 80×70». المقاس صح والفحص وقع! الفحص بيشيّك [[width === '0px']] (المثلث بالـ borders عرضه صفر). وصفحتي فيها reset [[*, *::before, *::after { box-sizing: border-box; }]]، ومع [[border-box]]، الـ [[getComputedStyle().width]] بيرجّع عرض الصندوق كله بالـ border (80px) مش 0. ده هيحصل لأي حد ينسخ المثلث لمشروع فيه الـ reset ده (أغلب المشاريع). الحل جوه الشكل نفسه: [[box-sizing: content-box]] على [[#tri]]، فبيشتغل في أي مشروع.
-
-~~~text الفحص الذاتي قبل
-قبل (والـ reset بتاع الصفحة * { box-sizing: border-box } واصل للمثلث):
-FAIL 1 المثلث ← المقاس 80×70 والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط
-النتيجة: 11 من 12
-~~~
-
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-الفحص الذاتي: النتيجة: 12 من 12
-الزيادة: hexagon 100×100 نقط 6 | zigzag 110×110 نقط 24 | double-arrow 160×48 نقط 10
-بعد نسخ النجمة: الرسالة «اتنسخ» | الـ clipboard أوله: :root { --amber: #f59e0b; } | فيه #star و clip-path: true
-اللودر بيتنسخ معاه: @keyframes true، و reduced motion true
---amber: النجمة والبادج rgb(245, 158, 11) و rgb(245, 158, 11) ← rgb(8, 145, 178) و rgb(8, 145, 178)
-من غير clipboard: «النسخ مش مسموح هنا، الكود مفتوح تحت» والكود مفتوح: true
-على 400: عرض الصفحة 400
-صور اتطلبت: 0 | errors: 0 | axe: 0
-~~~` },
-        { lvl: 'صغير', dir: "overflow-bookmarklet", t: R`bookmarklet كاشف الفيضان`, what: R`حوّل فحص درس «صفحات بتفيض على 360» لـ bookmarklet: لينك [[javascript:]] تحطه في شريط العلامات، لما تدوس عليه على أي صفحة بيحط إطار أحمر حوالين كل عنصر طالع برا الشاشة، وبيكتب جنبه عرضه، وبيطبع اللستة في الـ Console.`, done: R`على صفحة الدرس البايظة على عرض 360 بيعلّم الـ ٨ أجزاء، وعلى النسخة السليمة مبيعلّمش حاجة، ولو دوست عليه مرتين الإطارات بتتشال مش بتتكرر.`, sol: R`~~~js overflow.js
-// كاشف الفيضان: أحمر = طالع برا الشاشة، وبرتقاني متقطّع = جوه الشاشة بس طالع برا أبوه. دوسة تانية بتشيل العلامات.
-(() => {
-  const old = document.getElementById("ovf-layer");
-  if (old) { old.remove(); console.log("كاشف الفيضان: اتشال"); return; }   // the second click: clean up, don't stack
-
-  const W = document.documentElement.clientWidth;                         // without the scrollbar
-  const scroller = el => /auto|scroll|hidden|clip/.test(getComputedStyle(el).overflowX);
-  // inside a box that scrolls or clips on its own = not the page's problem
-  const contained = el => { for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) if (scroller(p)) return true; return false; };
-  const out = r => r.width > 0 && (r.right > W + 0.5 || r.left < -0.5);
-  const name = el => el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + (el.classList.length ? "." + [...el.classList].join(".") : "");
-
-  const found = [];
-  const isMarked = el => found.some(f => f.el.contains(el) && f.el !== el);  // only the outermost one of each subtree
-  for (const el of document.body.querySelectorAll("*")) {
-    if (el.closest("#ovf-layer") || contained(el) || isMarked(el)) continue;
-    const r = el.getBoundingClientRect();
-    if (out(r)) found.push({ el, r, what: name(el) });
-  }
-  // text is not an element: a long word can overflow a box that itself fits. A Range measures the letters.
-  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-  for (let t; (t = walk.nextNode());) {
-    const el = t.parentElement;
-    if (!t.data.trim() || !el || el.closest("#ovf-layer") || contained(el) || scroller(el) || found.some(f => f.el.contains(el))) continue;
-    const rg = document.createRange(); rg.selectNodeContents(t);
-    const r = rg.getBoundingClientRect();
-    if (out(r)) found.push({ el, r, what: "كلام في " + name(el) + ": «" + t.data.trim().slice(0, 20) + "…»" });
-  }
-
-  // level 2 (orange): still on screen, but out of its parent's content box (eating the padding).
-  // A 340px card in a 328px space starts 4px from the edge: no horizontal scroll yet, but the layout is already broken
-  const box = el => { const r = el.getBoundingClientRect(), s = getComputedStyle(el); return { left: r.left + parseFloat(s.borderLeftWidth) + parseFloat(s.paddingLeft), right: r.right - parseFloat(s.borderRightWidth) - parseFloat(s.paddingRight) }; };
-  for (const el of document.body.querySelectorAll("*")) {
-    const parent = el.parentElement;
-    if (!parent || parent === document.body || el.closest("#ovf-layer") || contained(el) || found.some(f => f.el === el || f.el.contains(el) || el.contains(f.el))) continue;
-    if (/absolute|fixed/.test(getComputedStyle(el).position)) continue;              // placed on purpose, outside the flow
-    const r = el.getBoundingClientRect(), c = box(parent);
-    if (r.width > 0 && (r.right > c.right + 0.5 || r.left < c.left - 0.5)) found.push({ el, r, what: name(el) + " (برا أبوه " + name(parent) + ")", soft: true });
-  }
-
-  // the marks: one layer on top of the page, so removing it removes everything
-  const layer = document.createElement("div");
-  layer.id = "ovf-layer";
-  layer.style.cssText = "position:absolute;inset:0 auto auto 0;width:0;height:0;z-index:2147483647;pointer-events:none;direction:ltr";
-  for (const f of found) {
-    const box = document.createElement("div"), x = f.r.left + scrollX, y = f.r.top + scrollY;
-    box.style.cssText = "position:absolute;box-sizing:border-box;outline:3px " + (f.soft ? "dashed #ea580c" : "solid #dc2626") + ";outline-offset:-3px;background:" + (f.soft ? "rgb(234 88 12/.08)" : "rgb(220 38 38/.08)") + ";left:" + x + "px;top:" + y + "px;width:" + f.r.width + "px;height:" + Math.max(f.r.height, 4) + "px";
-    const tag = document.createElement("span");
-    tag.textContent = Math.round(f.r.width) + "px" + (f.soft ? " (برا أبوه)" : "");
-    tag.style.cssText = "position:absolute;top:0;left:max(0px," + (-x) + "px);font:700 12px/1.6 system-ui,sans-serif;background:" + (f.soft ? "#9a3412" : "#b91c1c") + ";color:#fff;padding:0 6px";
-    box.append(tag);
-    layer.append(box);
-  }
-  document.body.append(layer);
-  console.log("كاشف الفيضان: عرض الشاشة " + W + "px، وعرض المحتوى " + document.documentElement.scrollWidth + "px، و " + found.length + " حاجة طالعة (" + found.filter(f => f.soft).length + " منهم جوه الشاشة بس برا أبوهم)");
-  if (found.length) console.table(found.map(f => ({ "العنصر": f.what, "العرض": Math.round(f.r.width), "من الشمال": Math.round(f.r.left), "لحد اليمين": Math.round(f.r.right) })));
-})();
-~~~
-
-~~~js build.mjs
-// node bookmarklet/build.mjs: overflow.js → one javascript: link, inside install.html
-import fs from "node:fs";
-const src = fs.readFileSync(new URL("overflow.js", import.meta.url), "utf8");
-// drop the comment lines and the indentation; the code itself stays as is (no minifier needed for 3KB)
-const code = src.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("//")).join("\n");
-// encodeURIComponent: newlines, spaces, % and quotes all become safe inside an href
-const href = "javascript:" + encodeURIComponent(code);
-const esc = s => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-fs.writeFileSync(new URL("install.html", import.meta.url), $__bt<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كاشف الفيضان: bookmarklet</title>
-<link rel="icon" href="data:,">
-<style>
-  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
-  main { max-width: 40rem; margin: 0 auto; padding: 1.5rem 1rem; }
-  .bm { display: inline-block; padding: 0.6rem 1.4rem; border-radius: 999px; background: #dc2626; color: #fff; font-weight: 700; text-decoration: none; }
-  .bm:focus-visible { outline: 3px solid #0f172a; outline-offset: 3px; }
-  ol { padding-inline-start: 1.4rem; }
-  kbd { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; background: #e2e8f0; padding: 0 0.3rem; border-radius: 0.25rem; }
-</style>
-</head>
-<body>
-<main>
-  <h1>كاشف الفيضان</h1>
-  <p>اسحب الزرار ده لشريط العلامات:</p>
-  <p><a class="bm" href="$__{esc(href)}">كاشف الفيضان</a></p>
-  <ol>
-    <li>لو شريط العلامات مش ظاهر: <kbd>Ctrl+Shift+B</kbd> (أو <kbd>Cmd+Shift+B</kbd> على الماك).</li>
-    <li>افتح أي صفحة، وصغّر الشاشة لـ 360 من DevTools (<kbd>Ctrl+Shift+M</kbd>).</li>
-    <li>دوس على «كاشف الفيضان» في الشريط: كل حاجة طالعة برا الشاشة عليها إطار أحمر وعرضها، واللستة في الـ Console.</li>
-    <li>دوس عليه تاني: العلامات بتتشال.</li>
-  </ol>
-  <p>الطول: $__{href.length} حرف.</p>
-</main>
-</body>
-</html>
-$__bt);
-console.log("install.html: الـ href " + href.length + " حرف");
-~~~
-
-~~~html lab/broken.html (صفحة الدرس من غير سطور التصليح)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متجر الورد</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, sans-serif; }
-section { padding: 16px; border-bottom: 1px solid #ddd; }
-td, th { padding: 8px 16px; white-space: nowrap; border: 1px solid #ccc; }
-.chips { display: flex; gap: 8px; }
-.chips button { padding: 8px 20px; }
-.hero { width: 100vw; padding: 40px 24px; background: #fce7f3; font-size: 28px; }
-.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; }
-.f { padding: 16px; background: #ecfccb; }
-pre { background: #0f172a; color: #e2e8f0; padding: 12px; }
-.row { display: flex; align-items: center; gap: 8px; }
-.name { font-weight: 600; }
-/* الصفحة البايظة: نفس السليمة من غير سطور التصليح التمانية */
-</style>
-</head>
-<body>
-<section id="s1"><h2>١ صورة المنتج</h2><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='300'%3E%3Crect%20width='600'%20height='300'%20fill='%2393c5fd'/%3E%3C/svg%3E" width="600" height="300" alt="كوباية قهوة على ترابيزة خشب"></section>
-<section id="s2"><h2>٢ إيميل الدعم</h2><p>ابعتلنا على customer.support.orders.team@flowershopexample.com وكود الخصم بتاعك WELCOMEFLOWERSHOPSPRING2026</p></section>
-<section id="s3"><h2>٣ جدول الطلبات</h2><div class="table-wrap"><table><tr><th>رقم الطلب</th><th>العميل</th><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الحالة</th></tr><tr><td>1042</td><td>سارة منير</td><td>بوكيه ورد بلدي</td><td>2</td><td>450 ج.م.</td><td>اتشحن</td></tr></table></div></section>
-<section id="s4"><h2>٤ أزرار الفلتر</h2><div class="chips"><button>الكل</button><button>ورد</button><button>نباتات</button><button>هدايا</button><button>عروض</button><button>جديد</button></div></section>
-<section id="s5"><h2>٥ الهيرو</h2><div class="hero">أحلى ورد في المدينة</div></section>
-<section id="s6"><h2>٦ كروت المميزات</h2><div class="features"><div class="f">توصيل في نفس اليوم</div><div class="f">تغليف هدايا</div><div class="f">دفع عند الاستلام</div></div></section>
-<section id="s7"><h2>٧ كود الـ API</h2><pre><code>fetch("https://flower-shop-example.com/api/v2/orders?status=shipped&amp;limit=50").then(r =&gt; r.json())</code></pre></section>
-<section id="s8"><h2>٨ صف المنتج</h2><div class="row"><span class="ico">🌹</span><span class="name">بوكيه_ورد_بلدي_أحمر_كبير_مع_كارت_إهداء_مكتوب_بخط_اليد</span><button>أضف</button></div></section>
-</body>
-</html>
-~~~
-
-~~~js measure.mjs
-// node bookmarklet/measure.mjs: run the link exactly as a bookmark would (its href, decoded) on the broken and the fixed page
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-const U = "http://127.0.0.1:8840/bookmarklet/";
-const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
-const ctx = await b.newContext({ viewport: { width: 360, height: 800 } });
-const p = await ctx.newPage();
-await p.goto(U + "install.html");
-const href = await p.getAttribute(".bm", "href");
-const code = decodeURIComponent(href.slice("javascript:".length));
-console.log("الـ href: " + href.length + " حرف، والكود بعد الفك " + code.length);
-console.log("axe على صفحة التسطيب: " + (await new AxeBuilder({ page: p }).analyze()).violations.length);
-
-for (const page of ["broken", "fixed"]) {
-  const q = await ctx.newPage();
-  const logs = [];
-  q.on("console", async m => { if (m.type() === "log") logs.push(m.text()); });
-  await q.goto(U + "lab/" + page + ".html");
-  await q.evaluate(code);
-  const marks = await q.evaluate(() => {
-    const boxes = [...document.querySelectorAll("#ovf-layer > div")].map(d => d.getBoundingClientRect());
-    // which sections got a mark: the box's middle falls inside the section's height
-    const secs = [...document.querySelectorAll("section[id]")].filter(s => { const r = s.getBoundingClientRect(); return boxes.some(x => x.top + x.height / 2 > r.top && x.top + x.height / 2 < r.bottom); }).map(s => s.id);
-    return { n: boxes.length, secs, labels: [...document.querySelectorAll("#ovf-layer span")].map(s => s.textContent) };
-  });
-  console.log("== " + page + " على 360");
-  console.log("   " + logs[0]);
-  console.log("   علامات " + marks.n + " | الأجزاء اللي اتعلّمت: " + (marks.secs.join(" ") || "ولا جزء") + (marks.labels.length ? " | العروض: " + marks.labels.join(" ") : ""));
-  await q.evaluate(code);
-  console.log("   دوسة تانية: " + logs[1] + " | علامات فاضلة " + await q.locator("#ovf-layer").count());
-  await q.evaluate(code); await q.evaluate(code);
-  console.log("   ٤ دوسات: طبقات " + await q.locator("#ovf-layer").count() + " (مش متكررة)");
-  await q.close();
-}
-await b.close();
-~~~
-
-~~~view 640 720 صفحة الدرس البايظة بعد دوسة على الـ bookmarklet
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متجر الورد</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, sans-serif; }
-section { padding: 16px; border-bottom: 1px solid #ddd; }
-td, th { padding: 8px 16px; white-space: nowrap; border: 1px solid #ccc; }
-.chips { display: flex; gap: 8px; }
-.chips button { padding: 8px 20px; }
-.hero { width: 100vw; padding: 40px 24px; background: #fce7f3; font-size: 28px; }
-.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; }
-.f { padding: 16px; background: #ecfccb; }
-pre { background: #0f172a; color: #e2e8f0; padding: 12px; }
-.row { display: flex; align-items: center; gap: 8px; }
-.name { font-weight: 600; }
-/* الصفحة البايظة: نفس السليمة من غير سطور التصليح التمانية */
-</style>
-</head>
-<body>
-<section id="s1"><h2>١ صورة المنتج</h2><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='300'%3E%3Crect%20width='600'%20height='300'%20fill='%2393c5fd'/%3E%3C/svg%3E" width="600" height="300" alt="كوباية قهوة على ترابيزة خشب"></section>
-<section id="s2"><h2>٢ إيميل الدعم</h2><p>ابعتلنا على customer.support.orders.team@flowershopexample.com وكود الخصم بتاعك WELCOMEFLOWERSHOPSPRING2026</p></section>
-<section id="s3"><h2>٣ جدول الطلبات</h2><div class="table-wrap"><table><tr><th>رقم الطلب</th><th>العميل</th><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الحالة</th></tr><tr><td>1042</td><td>سارة منير</td><td>بوكيه ورد بلدي</td><td>2</td><td>450 ج.م.</td><td>اتشحن</td></tr></table></div></section>
-<section id="s4"><h2>٤ أزرار الفلتر</h2><div class="chips"><button>الكل</button><button>ورد</button><button>نباتات</button><button>هدايا</button><button>عروض</button><button>جديد</button></div></section>
-<section id="s5"><h2>٥ الهيرو</h2><div class="hero">أحلى ورد في المدينة</div></section>
-<section id="s6"><h2>٦ كروت المميزات</h2><div class="features"><div class="f">توصيل في نفس اليوم</div><div class="f">تغليف هدايا</div><div class="f">دفع عند الاستلام</div></div></section>
-<section id="s7"><h2>٧ كود الـ API</h2><pre><code>fetch("https://flower-shop-example.com/api/v2/orders?status=shipped&amp;limit=50").then(r =&gt; r.json())</code></pre></section>
-<section id="s8"><h2>٨ صف المنتج</h2><div class="row"><span class="ico">🌹</span><span class="name">بوكيه_ورد_بلدي_أحمر_كبير_مع_كارت_إهداء_مكتوب_بخط_اليد</span><button>أضف</button></div></section>
-<script>
-// كاشف الفيضان: أحمر = طالع برا الشاشة، وبرتقاني متقطّع = جوه الشاشة بس طالع برا أبوه. دوسة تانية بتشيل العلامات.
-(() => {
-  const old = document.getElementById("ovf-layer");
-  if (old) { old.remove(); console.log("كاشف الفيضان: اتشال"); return; }   // the second click: clean up, don't stack
-
-  const W = document.documentElement.clientWidth;                         // without the scrollbar
-  const scroller = el => /auto|scroll|hidden|clip/.test(getComputedStyle(el).overflowX);
-  // inside a box that scrolls or clips on its own = not the page's problem
-  const contained = el => { for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) if (scroller(p)) return true; return false; };
-  const out = r => r.width > 0 && (r.right > W + 0.5 || r.left < -0.5);
-  const name = el => el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + (el.classList.length ? "." + [...el.classList].join(".") : "");
-
-  const found = [];
-  const isMarked = el => found.some(f => f.el.contains(el) && f.el !== el);  // only the outermost one of each subtree
-  for (const el of document.body.querySelectorAll("*")) {
-    if (el.closest("#ovf-layer") || contained(el) || isMarked(el)) continue;
-    const r = el.getBoundingClientRect();
-    if (out(r)) found.push({ el, r, what: name(el) });
-  }
-  // text is not an element: a long word can overflow a box that itself fits. A Range measures the letters.
-  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-  for (let t; (t = walk.nextNode());) {
-    const el = t.parentElement;
-    if (!t.data.trim() || !el || el.closest("#ovf-layer") || contained(el) || scroller(el) || found.some(f => f.el.contains(el))) continue;
-    const rg = document.createRange(); rg.selectNodeContents(t);
-    const r = rg.getBoundingClientRect();
-    if (out(r)) found.push({ el, r, what: "كلام في " + name(el) + ": «" + t.data.trim().slice(0, 20) + "…»" });
-  }
-
-  // level 2 (orange): still on screen, but out of its parent's content box (eating the padding).
-  // A 340px card in a 328px space starts 4px from the edge: no horizontal scroll yet, but the layout is already broken
-  const box = el => { const r = el.getBoundingClientRect(), s = getComputedStyle(el); return { left: r.left + parseFloat(s.borderLeftWidth) + parseFloat(s.paddingLeft), right: r.right - parseFloat(s.borderRightWidth) - parseFloat(s.paddingRight) }; };
-  for (const el of document.body.querySelectorAll("*")) {
-    const parent = el.parentElement;
-    if (!parent || parent === document.body || el.closest("#ovf-layer") || contained(el) || found.some(f => f.el === el || f.el.contains(el) || el.contains(f.el))) continue;
-    if (/absolute|fixed/.test(getComputedStyle(el).position)) continue;              // placed on purpose, outside the flow
-    const r = el.getBoundingClientRect(), c = box(parent);
-    if (r.width > 0 && (r.right > c.right + 0.5 || r.left < c.left - 0.5)) found.push({ el, r, what: name(el) + " (برا أبوه " + name(parent) + ")", soft: true });
-  }
-
-  // the marks: one layer on top of the page, so removing it removes everything
-  const layer = document.createElement("div");
-  layer.id = "ovf-layer";
-  layer.style.cssText = "position:absolute;inset:0 auto auto 0;width:0;height:0;z-index:2147483647;pointer-events:none;direction:ltr";
-  for (const f of found) {
-    const box = document.createElement("div"), x = f.r.left + scrollX, y = f.r.top + scrollY;
-    box.style.cssText = "position:absolute;box-sizing:border-box;outline:3px " + (f.soft ? "dashed #ea580c" : "solid #dc2626") + ";outline-offset:-3px;background:" + (f.soft ? "rgb(234 88 12/.08)" : "rgb(220 38 38/.08)") + ";left:" + x + "px;top:" + y + "px;width:" + f.r.width + "px;height:" + Math.max(f.r.height, 4) + "px";
-    const tag = document.createElement("span");
-    tag.textContent = Math.round(f.r.width) + "px" + (f.soft ? " (برا أبوه)" : "");
-    tag.style.cssText = "position:absolute;top:0;left:max(0px," + (-x) + "px);font:700 12px/1.6 system-ui,sans-serif;background:" + (f.soft ? "#9a3412" : "#b91c1c") + ";color:#fff;padding:0 6px";
-    box.append(tag);
-    layer.append(box);
-  }
-  document.body.append(layer);
-  console.log("كاشف الفيضان: عرض الشاشة " + W + "px، وعرض المحتوى " + document.documentElement.scrollWidth + "px، و " + found.length + " حاجة طالعة (" + found.filter(f => f.soft).length + " منهم جوه الشاشة بس برا أبوهم)");
-  if (found.length) console.table(found.map(f => ({ "العنصر": f.what, "العرض": Math.round(f.r.width), "من الشمال": Math.round(f.r.left), "لحد اليمين": Math.round(f.r.right) })));
-})();
-
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** صفحة «متجر الورد» البايظة من الدرس، وعليها إطارات حمرا حوالين كل حاجة طالعة برا الشاشة، وجنب كل واحدة عرضها (600px، 765px…). وكروت المميزات عليها إطار برتقاني متقطّع مكتوب جنبه «340px (برا أبوه)». (الإطارات بتتحسب على عرض الـ preview نفسه.)
-
-**التسطيب:** [[node build.mjs]] بيعمل [[install.html]] فيها زرار أحمر «كاشف الفيضان». اسحبه لشريط العلامات ([[Ctrl+Shift+B]] لو مش ظاهر). الـ href بتاعه [[javascript:]] وبعده الكود كله بـ [[encodeURIComponent]]: المسافات والسطور الجديدة والـ [[%]] والعلامات كلها بتبقى آمنة جوه الـ href. الكود 3.8KB، والـ href بعد التشفير 6,482 حرف، وده أقل بكتير من حد المتصفحات.
-
-**الكود في ملف عادي:** [[overflow.js]] بتكتبه وتقراه زي أي JS، و [[build.mjs]] بيشيل التعليقات والمسافات اللي في أول السطور ويحوّله. لو كتبته في الـ href على طول، أي تعديل هيبقى صعب ومليان [[%20]].
-
-**بيعلّم إيه:**
-- **أحمر:** أي عنصر [[getBoundingClientRect()]] بتاعه [[right]] أكبر من عرض الشاشة أو [[left]] أقل من صفر. الاتنين لأن في RTL الحاجة بتفيض ناحية الشمال (s5: الهيرو بـ [[100vw]] بيطلع من الشمال).
-- **كلام:** إيميل أو كود طويل ممكن يطلع من صندوق هو نفسه سليم. الـ [[Range]] بيقيس الحروف نفسها (زي فحص الدرس)، وده اللي مسك s2.
-- **برتقاني:** عنصر لسه جوه الشاشة بس طالع برا مساحة المحتوى بتاعة أبوه (بياكل الـ padding).
-- **بيتخطّى:** أي حاجة جوه أب عامل [[overflow-x: auto]] أو [[hidden]] أو [[clip]] (الجدول جوه [[.table-wrap]]، والـ [[pre]]): دي مش مشكلة الصفحة. والعنصر جوه عنصر متعلّم مبيتعلّمش تاني، فالجدول بيتعلّم مرة مش ٢٠ خانة.
-
-**دوسة تانية = شيل:** كل العلامات جوه طبقة واحدة [[#ovf-layer]]. أول سطر في الكود: لو الطبقة موجودة، امسحها واخرج. فـ ٤ دوسات = طبقة واحدة اتعملت واتشالت مرتين، مش ٤ طبقات فوق بعض. والطبقة عليها [[pointer-events: none]]، فالصفحة لسه بتتداس وانت بتبص.
-
-**الـ Console:** سطر بالأرقام، وبعده [[console.table]] بكل عنصر وعرضه ومكانه.
-
-**غلطة قابلتني:** أول نسخة كانت بتقيس على الشاشة بس، وعلّمت ٧ أجزاء من ٨. s6 (كروت المميزات) مكانش متعلّم. قست الكارت: عرضه 340 من 4 لـ 344 على شاشة 360، يعني مبيطلعش برا الشاشة، بس طالع من الـ padding بتاع القسم (المكان 328). فحص الدرس بيقيس على مساحة المحتوى جوه كل قسم، فشايفه. زوّدت المستوى البرتقاني، وجرّبته على صفحة سليمة تانية (كتالوج الأشكال على 360 و 1280) عشان أتأكد إنه مش بيعلّم حاجات سليمة: صفر.
-
-~~~text أول نسخة
-أول نسخة (بتقيس على الشاشة بس):
-   كاشف الفيضان: عرض الشاشة 360px، وعرض المحتوى 793px، و 9 حاجة طالعة
-   علامات 9 | الأجزاء اللي اتعلّمت: s1 s2 s3 s4 s5 s7 s8 | العروض: 600px 584px 78px 63px 360px 765px 388px 41px 399px
-~~~
-
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-الـ href: 6482 حرف، والكود بعد الفك 3833
-axe على صفحة التسطيب: 0
-== broken على 360
-   كاشف الفيضان: عرض الشاشة 360px، وعرض المحتوى 793px، و 12 حاجة طالعة (3 منهم جوه الشاشة بس برا أبوهم)
-   علامات 12 | الأجزاء اللي اتعلّمت: s1 s2 s3 s4 s5 s6 s7 s8 | العروض: 600px 584px 78px 63px 360px 765px 388px 41px 399px 340px (برا أبوه) 340px (برا أبوه) 340px (برا أبوه)
-   دوسة تانية: كاشف الفيضان: اتشال | علامات فاضلة 0
-   ٤ دوسات: طبقات 0 (مش متكررة)
-== fixed على 360
-   كاشف الفيضان: عرض الشاشة 360px، وعرض المحتوى 360px، و 0 حاجة طالعة (0 منهم جوه الشاشة بس برا أبوهم)
-   علامات 0 | الأجزاء اللي اتعلّمت: ولا جزء
-   دوسة تانية: كاشف الفيضان: اتشال | علامات فاضلة 0
-   ٤ دوسات: طبقات 0 (مش متكررة)
-~~~` },
-        { lvl: 'متوسط', dir: "theme-contrast", t: R`مدقق ألوان الثيم`, what: R`صفحة بتاخد لستة ألوان الثيم (خلفيات وكلام) من textarea بصيغة [[--name: #hex]]، وبتعمل جدول بـ [[buildTable]] من درس «مسائل بالـ JS على الصفحة» فيه كل لون كلام على كل خلفية: النسبة بـ [[contrastRatio]]، و AA و AAA للكلام العادي والكبير، ومعاينة صغيرة للكلام نفسه بالعربي.`, done: R`[[#767676]] على أبيض بيطلع 4.54 و AA، و [[#a1a1aa]] على أبيض 2.56 وبيتعلّم أحمر، ولون مكتوب غلط بيطلّع رسالة تحت الـ textarea مش crash، والجدول نفسه بيعدّي الفحص الذاتي بتاع درس «accessibility: لحد axe صفر».`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مدقق ألوان الثيم</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css">
-<script type="module" src="app.js"></script>
-</head>
-<body>
-<main>
-  <h1>مدقق ألوان الثيم</h1>
-  <p class="lead">كل سطر <code>--name: #hex</code>. الجدول بيحط كل لون كلام على كل خلفية، ويتحدّث وانت بتكتب.</p>
-  <div class="inputs">
-    <div class="field">
-      <label for="bgs">الخلفيات</label>
-      <textarea id="bgs" rows="5" spellcheck="false" dir="ltr" aria-describedby="bgs-err">--bg: #ffffff
---surface: #f8fafc
---brand-soft: #f7e3d6</textarea>
-      <p id="bgs-err" class="err" role="alert"></p>
-    </div>
-    <div class="field">
-      <label for="fgs">ألوان الكلام</label>
-      <textarea id="fgs" rows="5" spellcheck="false" dir="ltr" aria-describedby="fgs-err">--ink: #0f172a
---muted: #767676
---faint: #a1a1aa
---brand: #a3501f</textarea>
-      <p id="fgs-err" class="err" role="alert"></p>
-    </div>
-  </div>
-  <p id="summary" class="summary" aria-live="polite"></p>
-  <div class="table-wrap" id="out" tabindex="0" role="region" aria-labelledby="summary"></div>
-  <p class="note">الكلام «كبير» = 24px أو أكبر، أو 18.66px (14pt) وعريض. AA: عادي 4.5 وكبير 3. AAA: عادي 7 وكبير 4.5.</p>
-</main>
-</body>
-</html>
-~~~
-
-~~~js lesson.js
-// الحل المرجعي بتاع درس «مسائل بالـ JS على الصفحة» زي ما هو، بس كـ module
-export function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-}
-export function buildTable(rows, columns) {
-  const head = '<thead><tr>' + columns.map(c => '<th scope="col">' + escapeHtml(c.label) + '</th>').join('') + '</tr></thead>';
-  const body = rows.length
-    ? rows.map(r => '<tr>' + columns.map(c => '<td>' + escapeHtml(r[c.key] ?? '') + '</td>').join('') + '</tr>').join('')
-    : '<tr><td colspan="' + columns.length + '">مفيش بيانات</td></tr>';
-  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
-}
-export function hexToRgb(hex) {
-  let h = String(hex).trim().replace(/^#/, '');
-  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map(ch => ch + ch).join('');
-  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error('لون مش مفهوم: ' + hex);
-  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
-}
-export function luminance(hex) {
-  const [r, g, b] = hexToRgb(hex).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-export function contrastRatio(a, b) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return Math.round((hi + 0.05) / (lo + 0.05) * 100) / 100;
-}
-export function passesAA(fg, bg, large = false) {
-  return contrastRatio(fg, bg) >= (large ? 3 : 4.5);
-}
-const trim4 = n => String(Number(n.toFixed(4)));
-export function pxToRem(css, base = 16) {
-  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => Number(n) === 0 ? '0' : trim4(n / base) + 'rem');
-}
-~~~
-
-~~~js app.js
-import { buildTable, contrastRatio } from "./lesson.js";
-
-const $ = id => document.getElementById(id);
-const ar = n => n.toLocaleString("ar-EG");
-
-// "--name: #hex" per line. A bad line is reported and skipped: the page never crashes on what you type
-export function parse(text) {
-  const colors = [], errors = [], seen = new Set();
-  text.split("\n").forEach((line, i) => {
-    const t = line.trim().replace(/;$/, "");
-    if (!t || t.startsWith("/*") || t.startsWith("//")) return;
-    const m = t.match(/^(--[\w-]+)\s*:\s*(#[0-9a-f]{3}|#[0-9a-f]{6})$/i);
-    if (!m) return errors.push("السطر " + ar(i + 1) + ": «" + t + "» مش بصيغة --name: #hex");
-    if (seen.has(m[1])) return errors.push("السطر " + ar(i + 1) + ": " + m[1] + " متكرر");
-    seen.add(m[1]);
-    colors.push({ name: m[1], hex: m[2].toLowerCase() });
-  });
-  return { colors, errors };
-}
-
-const yes = "✓ ناجح", no = "✗ واقع";
-const columns = [
-  { key: "fg", label: "الكلام" }, { key: "bg", label: "الخلفية" }, { key: "ratio", label: "النسبة" },
-  { key: "aa", label: "AA عادي" }, { key: "aaLarge", label: "AA كبير" }, { key: "aaa", label: "AAA عادي" }, { key: "aaaLarge", label: "AAA كبير" },
-  { key: "preview", label: "معاينة" },
-];
-
-function update() {
-  const bgs = parse($("bgs").value), fgs = parse($("fgs").value);
-  $("bgs-err").textContent = bgs.errors.join("، ");
-  $("fgs-err").textContent = fgs.errors.join("، ");
-  $("bgs").toggleAttribute("aria-invalid", bgs.errors.length > 0);
-  $("fgs").toggleAttribute("aria-invalid", fgs.errors.length > 0);
-
-  const pairs = [];
-  for (const f of fgs.colors) for (const b of bgs.colors) {
-    const r = contrastRatio(f.hex, b.hex);
-    pairs.push({ f, b, r, fg: f.name + " " + f.hex, bg: b.name + " " + b.hex, ratio: r.toFixed(2) + ":1",
-      aa: r >= 4.5 ? yes : no, aaLarge: r >= 3 ? yes : no, aaa: r >= 7 ? yes : no, aaaLarge: r >= 4.5 ? yes : no, preview: "" });
-  }
-  $("out").innerHTML = buildTable(pairs, columns);
-
-  // after the table: color the failing rows, and draw each preview (a picture of text, see below)
-  const rows = $("out").querySelectorAll("tbody tr");
-  pairs.forEach((p, i) => {
-    const tr = rows[i];
-    tr.classList.toggle("bad", p.r < 4.5);
-    tr.querySelectorAll("td").forEach(td => td.classList.toggle("no", td.textContent === no));
-    tr.lastElementChild.append(preview(p));
-  });
-  const bad = pairs.filter(p => p.r < 4.5).length;
-  $("summary").textContent = pairs.length
-    ? ar(pairs.length) + " زوج، منهم " + ar(bad) + " واقعين في AA للكلام العادي"
-    : "مفيش أزواج: محتاج لون كلام وخلفية على الأقل";
-}
-
-// the sample is an image of text (SVG with role="img"): it exists only to SHOW the colors, including the failing ones.
-// WCAG 1.4.3 does not apply to text that is part of a picture; the real information (ratio, pass/fail) is plain text next to it
-function preview(p) {
-  const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("viewBox", "0 0 150 34"); svg.setAttribute("width", "150"); svg.setAttribute("height", "34");
-  svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", "شكل الكلام بلون " + p.f.name + " على " + p.b.name);
-  const rect = document.createElementNS(NS, "rect");
-  rect.setAttribute("width", "150"); rect.setAttribute("height", "34"); rect.setAttribute("rx", "6"); rect.setAttribute("fill", p.b.hex);
-  const text = document.createElementNS(NS, "text");
-  text.setAttribute("x", "75"); text.setAttribute("y", "22"); text.setAttribute("text-anchor", "middle"); text.setAttribute("fill", p.f.hex);
-  text.setAttribute("font-size", "15");
-  text.textContent = "أهلًا بيك في المتجر";
-  svg.append(rect, text);
-  return svg;
-}
-
-$("bgs").addEventListener("input", update);
-$("fgs").addEventListener("input", update);
-update();
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #ffffff; }
-main { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
-h1 { margin: 0; font-size: 1.6rem; }
-.lead, .note { color: #475569; }
-code, textarea { font-family: ui-monospace, Consolas, monospace; }
-code { direction: ltr; unicode-bidi: isolate; }
-.inputs { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
-.field { display: grid; gap: 0.3rem; }
-label { font-weight: 700; }
-textarea { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #64748b; border-radius: 0.5rem; font-size: 0.95rem; line-height: 1.6; text-align: left; }
-textarea[aria-invalid] { border: 2px solid #b91c1c; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-.err { margin: 0; min-height: 1.5em; color: #b91c1c; font-weight: 700; }
-.summary { font-weight: 700; }
-.table-wrap { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 0.75rem; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 0.5rem 0.75rem; text-align: start; white-space: nowrap; border-bottom: 1px solid #e2e8f0; }
-th { background: #f1f5f9; }
-td:first-child, td:nth-child(2) { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; }
-td:last-child { line-height: 0; }
-/* a failing row: red on light red (8:1), and the ✗ cells bold, so it is not color alone */
-tr.bad td { background: #fef2f2; color: #991b1b; }
-td.no { font-weight: 800; }
-~~~
-
-~~~js measure.mjs
-// node contrast/measure.mjs: the two numbers from the done, a bad line, the lesson a11y self-check, axe
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-import fs from "node:fs";
-const check = fs.readFileSync(new URL("../src/a11y-check.js", import.meta.url), "utf8");
-const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
-const p = await (await b.newContext({ viewport: { width: 1280, height: 900 } })).newPage();   // axe needs a page from a context
-const errs = [], logs = [];
-p.on("pageerror", e => errs.push(e.message));
-p.on("console", m => logs.push(m.text()));
-await p.goto("http://127.0.0.1:8840/contrast/index.html");
-const row = (fg, bg) => p.evaluate(([fg, bg]) => {
-  const tr = [...document.querySelectorAll("tbody tr")].find(r => r.cells[0].textContent.includes(fg) && r.cells[1].textContent.includes(bg));
-  return [...tr.cells].slice(0, 7).map(c => c.textContent).join(" | ") + (tr.classList.contains("bad") ? "  ← صف أحمر (" + getComputedStyle(tr.cells[0]).backgroundColor + ")" : "");
-}, [fg, bg]);
-console.log(await p.textContent("#summary"));
-console.log(await row("#767676", "#ffffff"));
-console.log(await row("#a1a1aa", "#ffffff"));
-
-// the lesson self-check, then axe
-await p.evaluate(check);
-console.log("الفحص الذاتي: " + logs.filter(l => /^(FAIL|النتيجة)/.test(l)).join(" | "));
-console.log("axe: " + (await new AxeBuilder({ page: p }).analyze()).violations.length);
-
-// a broken line and a typo: a message, the rest of the table still there
-await p.fill("#fgs", "--ink: #0f172a\n--oops: #12g\nnot a color\n--ink: #000");
-console.log("سطور غلط: «" + await p.textContent("#fgs-err") + "» | " + await p.textContent("#summary") + " | errors: " + errs.length);
-await p.fill("#bgs", "");
-console.log("من غير خلفيات: " + await p.textContent("#summary") + " | الجدول: " + await p.textContent("#out tbody"));
-
-// the same page with the preview as normal text in its own colors (the first version): what the checks say
-await p.reload();
-logs.length = 0;
-await p.evaluate(() => document.querySelectorAll("td svg").forEach(svg => {
-  const s = document.createElement("span");
-  s.textContent = "أهلًا بيك في المتجر";
-  s.style.cssText = "display:inline-block;padding:4px 10px;border-radius:6px;color:" + svg.querySelector("text").getAttribute("fill") + ";background:" + svg.querySelector("rect").getAttribute("fill");
-  svg.replaceWith(s);
-}));
-await p.evaluate(check);
-const axe2 = await new AxeBuilder({ page: p }).analyze();
-console.log("لو المعاينة كلام عادي: " + logs.filter(l => /^(FAIL 7|النتيجة)/.test(l)).map(l => l.slice(0, 120)).join(" | ") + " | axe: " + axe2.violations.map(v => v.id + " ×" + v.nodes.length).join(" "));
-await b.close();
-~~~
-
-~~~view 720 720 اعمل scroll جوه
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مدقق ألوان الثيم</title>
-<link rel="icon" href="data:,">
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #ffffff; }
-main { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
-h1 { margin: 0; font-size: 1.6rem; }
-.lead, .note { color: #475569; }
-code, textarea { font-family: ui-monospace, Consolas, monospace; }
-code { direction: ltr; unicode-bidi: isolate; }
-.inputs { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
-.field { display: grid; gap: 0.3rem; }
-label { font-weight: 700; }
-textarea { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #64748b; border-radius: 0.5rem; font-size: 0.95rem; line-height: 1.6; text-align: left; }
-textarea[aria-invalid] { border: 2px solid #b91c1c; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-.err { margin: 0; min-height: 1.5em; color: #b91c1c; font-weight: 700; }
-.summary { font-weight: 700; }
-.table-wrap { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 0.75rem; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 0.5rem 0.75rem; text-align: start; white-space: nowrap; border-bottom: 1px solid #e2e8f0; }
-th { background: #f1f5f9; }
-td:first-child, td:nth-child(2) { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; }
-td:last-child { line-height: 0; }
-/* a failing row: red on light red (8:1), and the ✗ cells bold, so it is not color alone */
-tr.bad td { background: #fef2f2; color: #991b1b; }
-td.no { font-weight: 800; }
-
-</style>
-</head>
-<body>
-<main>
-  <h1>مدقق ألوان الثيم</h1>
-  <p class="lead">كل سطر <code>--name: #hex</code>. الجدول بيحط كل لون كلام على كل خلفية، ويتحدّث وانت بتكتب.</p>
-  <div class="inputs">
-    <div class="field">
-      <label for="bgs">الخلفيات</label>
-      <textarea id="bgs" rows="5" spellcheck="false" dir="ltr" aria-describedby="bgs-err">--bg: #ffffff
---surface: #f8fafc
---brand-soft: #f7e3d6</textarea>
-      <p id="bgs-err" class="err" role="alert"></p>
-    </div>
-    <div class="field">
-      <label for="fgs">ألوان الكلام</label>
-      <textarea id="fgs" rows="5" spellcheck="false" dir="ltr" aria-describedby="fgs-err">--ink: #0f172a
---muted: #767676
---faint: #a1a1aa
---brand: #a3501f</textarea>
-      <p id="fgs-err" class="err" role="alert"></p>
-    </div>
-  </div>
-  <p id="summary" class="summary" aria-live="polite"></p>
-  <div class="table-wrap" id="out" tabindex="0" role="region" aria-labelledby="summary"></div>
-  <p class="note">الكلام «كبير» = 24px أو أكبر، أو 18.66px (14pt) وعريض. AA: عادي 4.5 وكبير 3. AAA: عادي 7 وكبير 4.5.</p>
-</main>
-<script type="module">
-// الحل المرجعي بتاع درس «مسائل بالـ JS على الصفحة» زي ما هو، بس كـ module
-function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-}
-function buildTable(rows, columns) {
-  const head = '<thead><tr>' + columns.map(c => '<th scope="col">' + escapeHtml(c.label) + '</th>').join('') + '</tr></thead>';
-  const body = rows.length
-    ? rows.map(r => '<tr>' + columns.map(c => '<td>' + escapeHtml(r[c.key] ?? '') + '</td>').join('') + '</tr>').join('')
-    : '<tr><td colspan="' + columns.length + '">مفيش بيانات</td></tr>';
-  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
-}
-function hexToRgb(hex) {
-  let h = String(hex).trim().replace(/^#/, '');
-  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map(ch => ch + ch).join('');
-  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error('لون مش مفهوم: ' + hex);
-  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
-}
-function luminance(hex) {
-  const [r, g, b] = hexToRgb(hex).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-function contrastRatio(a, b) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return Math.round((hi + 0.05) / (lo + 0.05) * 100) / 100;
-}
-function passesAA(fg, bg, large = false) {
-  return contrastRatio(fg, bg) >= (large ? 3 : 4.5);
-}
-const trim4 = n => String(Number(n.toFixed(4)));
-function pxToRem(css, base = 16) {
-  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => Number(n) === 0 ? '0' : trim4(n / base) + 'rem');
-}
-
-
-const $ = id => document.getElementById(id);
-const ar = n => n.toLocaleString("ar-EG");
-
-// "--name: #hex" per line. A bad line is reported and skipped: the page never crashes on what you type
-function parse(text) {
-  const colors = [], errors = [], seen = new Set();
-  text.split("\n").forEach((line, i) => {
-    const t = line.trim().replace(/;$/, "");
-    if (!t || t.startsWith("/*") || t.startsWith("//")) return;
-    const m = t.match(/^(--[\w-]+)\s*:\s*(#[0-9a-f]{3}|#[0-9a-f]{6})$/i);
-    if (!m) return errors.push("السطر " + ar(i + 1) + ": «" + t + "» مش بصيغة --name: #hex");
-    if (seen.has(m[1])) return errors.push("السطر " + ar(i + 1) + ": " + m[1] + " متكرر");
-    seen.add(m[1]);
-    colors.push({ name: m[1], hex: m[2].toLowerCase() });
-  });
-  return { colors, errors };
-}
-
-const yes = "✓ ناجح", no = "✗ واقع";
-const columns = [
-  { key: "fg", label: "الكلام" }, { key: "bg", label: "الخلفية" }, { key: "ratio", label: "النسبة" },
-  { key: "aa", label: "AA عادي" }, { key: "aaLarge", label: "AA كبير" }, { key: "aaa", label: "AAA عادي" }, { key: "aaaLarge", label: "AAA كبير" },
-  { key: "preview", label: "معاينة" },
-];
-
-function update() {
-  const bgs = parse($("bgs").value), fgs = parse($("fgs").value);
-  $("bgs-err").textContent = bgs.errors.join("، ");
-  $("fgs-err").textContent = fgs.errors.join("، ");
-  $("bgs").toggleAttribute("aria-invalid", bgs.errors.length > 0);
-  $("fgs").toggleAttribute("aria-invalid", fgs.errors.length > 0);
-
-  const pairs = [];
-  for (const f of fgs.colors) for (const b of bgs.colors) {
-    const r = contrastRatio(f.hex, b.hex);
-    pairs.push({ f, b, r, fg: f.name + " " + f.hex, bg: b.name + " " + b.hex, ratio: r.toFixed(2) + ":1",
-      aa: r >= 4.5 ? yes : no, aaLarge: r >= 3 ? yes : no, aaa: r >= 7 ? yes : no, aaaLarge: r >= 4.5 ? yes : no, preview: "" });
-  }
-  $("out").innerHTML = buildTable(pairs, columns);
-
-  // after the table: color the failing rows, and draw each preview (a picture of text, see below)
-  const rows = $("out").querySelectorAll("tbody tr");
-  pairs.forEach((p, i) => {
-    const tr = rows[i];
-    tr.classList.toggle("bad", p.r < 4.5);
-    tr.querySelectorAll("td").forEach(td => td.classList.toggle("no", td.textContent === no));
-    tr.lastElementChild.append(preview(p));
-  });
-  const bad = pairs.filter(p => p.r < 4.5).length;
-  $("summary").textContent = pairs.length
-    ? ar(pairs.length) + " زوج، منهم " + ar(bad) + " واقعين في AA للكلام العادي"
-    : "مفيش أزواج: محتاج لون كلام وخلفية على الأقل";
-}
-
-// the sample is an image of text (SVG with role="img"): it exists only to SHOW the colors, including the failing ones.
-// WCAG 1.4.3 does not apply to text that is part of a picture; the real information (ratio, pass/fail) is plain text next to it
-function preview(p) {
-  const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("viewBox", "0 0 150 34"); svg.setAttribute("width", "150"); svg.setAttribute("height", "34");
-  svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", "شكل الكلام بلون " + p.f.name + " على " + p.b.name);
-  const rect = document.createElementNS(NS, "rect");
-  rect.setAttribute("width", "150"); rect.setAttribute("height", "34"); rect.setAttribute("rx", "6"); rect.setAttribute("fill", p.b.hex);
-  const text = document.createElementNS(NS, "text");
-  text.setAttribute("x", "75"); text.setAttribute("y", "22"); text.setAttribute("text-anchor", "middle"); text.setAttribute("fill", p.f.hex);
-  text.setAttribute("font-size", "15");
-  text.textContent = "أهلًا بيك في المتجر";
-  svg.append(rect, text);
-  return svg;
-}
-
-$("bgs").addEventListener("input", update);
-$("fgs").addEventListener("input", update);
-update();
-
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** خانتين جنب بعض: «الخلفيات» فيها ٣ ألوان، و «ألوان الكلام» فيها ٤. تحتهم سطر «١٢ زوج، منهم ٥ واقعين في AA للكلام العادي»، وجدول ١٢ صف: لون الكلام، والخلفية، والنسبة (زي [[4.54:1]])، وأربع خانات ✓ ناجح أو ✗ واقع (AA و AAA، عادي وكبير)، ومعاينة صغيرة «أهلًا بيك في المتجر» بالألوان نفسها. الصفوف الواقعة خلفيتها حمرا فاتحة والـ ✗ فيها عريض. غيّر أي لون والجدول بيتحدّث وانت بتكتب.
-
-**الحساب من الدرس زي ما هو:** [[lesson.js]] هو الحل المرجعي بتاع درس «مسائل بالـ JS على الصفحة»، و [[export]] بس قدام كل function. [[contrastRatio]] بيرجّع رقم بعلامتين عشريتين ([[#767676]] على أبيض = 4.54، و [[#a1a1aa]] = 2.56)، و [[buildTable]] بيعمل escape لكل قيمة، فالـ [[innerHTML]] آمن حتى لو كتبت [[<b>]] في اسم لون.
-
-**القراية من غير ما الصفحة تقع:** [[parse()]] بتمشي سطر سطر. سطر فاضي أو تعليق بيتساب. سطر مش [[--name: #hex]] (أو [[#abc]] بـ ٣ حروف) بيدخل لستة أخطاء برقمه، والاسم المكرر كمان. الأخطاء بتتكتب تحت الخانة بتاعتها في [[role="alert"]]، والخانة عليها [[aria-invalid]]، والجدول بيكمل بالسطور السليمة. ومن غير أي خلفية: صف واحد «مفيش بيانات» (ده من [[buildTable]] نفسها).
-
-**المعاينة صورة، مش كلام:** المطلوب إن المعاينة توري الألوان الواقعة كمان، وفي نفس الوقت الصفحة تعدّي فحص الـ accessibility بتاع الدرس، وده بيقيس تباين كل كلام في الصفحة. الحل: المعاينة [[<svg role="img">]] باسم بيوصفها («شكل الكلام بلون --muted على --bg»)، والكلام جوه [[<text>]] بـ [[fill]]. WCAG 1.4.3 مبيطبّقش على كلام جزء من صورة بيوري شكل، والمعلومة نفسها (النسبة و ✓ و ✗) مكتوبة كلام عادي جنبها. **قبل ما أقرر كده قست النسخة التانية:** لو المعاينة [[<span>]] بألوانها، فحص الدرس بيقول [[FAIL 7]] على ٣ ألوان (4.34 و 3.66 و 2.56)، و **axe مقالش ولا حاجة**: نفس اللي الدرس بيقوله، axe بيسكت عن الكلام العربي المتوصّل.
-
-**الأحمر مش باللون بس:** الصف الواقع خلفيته حمرا فاتحة وكلامه أحمر غامق (7.6:1)، و «✗ واقع» مكتوبة بالكلام وعريضة.
-
-**غلطة قابلتني:** أول تشغيل للقياس وقع بـ [[Error: Please use browser.newContext()]]. [[@axe-core/playwright]] محتاج صفحة من context ([[browser.newContext()]] ثم [[newPage()]])، مش [[browser.newPage()]] على طول.
-
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-١٢ زوج، منهم ٥ واقعين في AA للكلام العادي
---muted #767676 | --bg #ffffff | 4.54:1 | ✓ ناجح | ✓ ناجح | ✗ واقع | ✓ ناجح
---faint #a1a1aa | --bg #ffffff | 2.56:1 | ✗ واقع | ✗ واقع | ✗ واقع | ✗ واقع  ← صف أحمر (rgb(254, 242, 242))
-الفحص الذاتي: النتيجة: 10 من 10 (وبعدها شغّل axe، وجرّب بالكيبورد بس)
-axe: 0
-سطور غلط: «السطر ٢: «--oops: #12g» مش بصيغة --name: #hex، السطر ٣: «not a color» مش بصيغة --name: #hex، السطر ٤: --ink متكرر» | ٣ زوج، منهم ٠ واقعين في AA للكلام العادي | errors: 0
-من غير خلفيات: مفيش أزواج: محتاج لون كلام وخلفية على الأقل | الجدول: مفيش بيانات
-لو المعاينة كلام عادي: FAIL 7 تباين الكلام (axe بيسكت عن العربي المتوصل) ← أقل من 4.5:1 (أو 3:1 للكبير): span 4.34:1 ، span 3.66:1 ، span 2.56: | النتيجة: 9 من 10 (وبعدها شغّل axe، وجرّب بالكيبورد بس) | axe: 
-~~~` },
-        { lvl: 'متوسط', dir: "cq-layouts", t: R`مكتبة layouts بـ container queries`, what: R`الـ layouts التمانية من درس «layouts بالـ flex والـ grid»، كل واحد في component بيعتمد على [[@container]] مش على عرض الشاشة، وصفحة عرض فيها slider بيغيّر عرض الحاوية من 280 لـ 1200px وتشوف كل layout بيتغير قدامك.`, done: R`الفحص الذاتي بتاع الدرس بيعدّي على 1200 و 360، ولما تحط نفس الـ component في سايدبار ضيق على شاشة عريضة بياخد شكل الموبايل لوحده، و [[@media]] مش موجود في ملف الـ layouts خالص.`, sol: R`~~~css layouts.css
-/* ٨ layouts بتسأل عن عرض المكان اللي هي فيه (@container)، مش عن الشاشة. ولا media query واحدة في الملف ده.
-   كل layout جوه غلاف .cq: الـ query بتسأل عن أقرب container فوق العنصر، فالعنصر نفسه مينفعش يبقى الـ container بتاع نفسه */
-.cq { container-type: inline-size; }
-.cq-grail { container-name: grail; }
-.cq-bento { container-name: bento; }
-.cq-app { container-name: app; }
-
-#grail > *, #cards > *, .b, #app > *, #shell > *, .m { background: #e0e7ff; padding: 8px; }
-
-/* ١ holy grail: عمود واحد، و ٣ عواميد لما الغلاف يبقى 860 أو أكتر */
-#grail { display: grid; gap: 12px; grid-template-areas: "head" "nav" "main" "side" "foot"; }
-.g-head { grid-area: head; } .g-nav { grid-area: nav; } .g-main { grid-area: main; min-height: 160px; } .g-side { grid-area: side; } .g-foot { grid-area: foot; }
-@container grail (min-width: 860px) {
-  #grail { grid-template-columns: 200px 1fr 240px; grid-template-areas: "head head head" "nav main side" "foot foot foot"; }
-}
-
-/* ٢ شبكة الكروت: auto-fit بيحسب العواميد من المكان لوحده، مش محتاج query خالص */
-#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }
-
-/* ٣ bento: ٤ عواميد، و ٢ لما الغلاف أقل من 560 */
-#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }
-.b1 { grid-column: span 2; grid-row: span 2; }
-.b2 { grid-column: span 2; }
-@container bento (max-width: 559px) { #bento { grid-template-columns: repeat(2, 1fr); } }
-
-/* ٤ سايدبار: 260، ويقفل لـ 64 (أيقونات بس) لما الغلاف أقل من 720 */
-#app { display: grid; grid-template-columns: 260px 1fr; gap: 12px; min-height: 200px; }
-.side { display: flex; flex-direction: column; gap: 8px; }
-@container app (max-width: 719px) {
-  #app { grid-template-columns: 64px 1fr; }
-  .side .label { display: none; }
-}
-
-/* ٥ مودال: fixed على الشاشة كلها، فهو الوحيد اللي مالوش علاقة بالمكان */
-#overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgb(0 0 0 / .5); }
-#overlay[hidden] { display: none; }
-.modal { width: min(480px, 100% - 32px); background: #fff; padding: 24px; border-radius: 12px; }
-
-/* ٦ الفوتر تحت */
-#shell { min-height: 400px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; }
-
-/* ٧ masonry: columns بتحسب العدد من المكان، من غير query */
-#masonry { columns: 3 200px; column-gap: 16px; }
-.m { break-inside: avoid; margin-block-end: 16px; }
-
-/* ٨ navbar: flex-wrap بيلف لوحده، و margin-inline-start: auto بيزق الزرار للآخر في أي اتجاه */
-#topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 12px 16px; background: #0f172a; }
-#topnav a { color: #fff; }
-.links { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; }
-.cta { margin-inline-start: auto; }
 ~~~
 
 ~~~html index.html
@@ -1239,6234 +50,6657 @@ axe: 0
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مكتبة layouts بـ container queries</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="layouts.css">
-<link rel="stylesheet" href="demo.css">
-<script src="demo.js" defer></script>
+<title>زراير وشارات بالتوكنز</title>
+<link rel="stylesheet" href="out.css">
 </head>
-<body>
-<header class="bar">
-  <h1 id="page-title">مكتبة layouts</h1>
-  <label for="w">عرض الحاوية</label>
-  <input id="w" type="range" min="280" max="1200" step="10" value="1200">
-  <output id="w-out" for="w">1200px</output>
-  <button type="button" id="open">افتح المودال</button>
-  <a href="sidebar.html">نفس الـ layouts في سايدبار ضيق</a>
-</header>
-<main id="main" aria-labelledby="page-title">
-<div class="frame" id="frame">
-  <div class="cq cq-grail"><section id="grail">
-    <div class="g-head">الهيدر</div>
-    <div class="g-nav">القايمة</div>
-    <div class="g-main">المحتوى الأساسي</div>
-    <div class="g-side">جانبي</div>
-    <div class="g-foot">الفوتر</div>
-  </section></div>
-  <div class="cq"><section id="cards">
-    <article class="card">كارت ١</article><article class="card">كارت ٢</article><article class="card">كارت ٣</article><article class="card">كارت ٤</article>
-    <article class="card">كارت ٥</article><article class="card">كارت ٦</article><article class="card">كارت ٧</article>
-  </section></div>
-  <div class="cq cq-bento"><section id="bento">
-    <div class="b b1">كبير</div><div class="b b2">عريض</div><div class="b">٣</div><div class="b">٤</div><div class="b">٥</div><div class="b">٦</div>
-  </section></div>
-  <div class="cq cq-app"><section id="app">
-    <div class="side"><a href="#app">🏠 <span class="label">الرئيسية</span></a><a href="#app">📦 <span class="label">الطلبات</span></a><a href="#app">⚙ <span class="label">الإعدادات</span></a></div>
-    <div class="content">المحتوى</div>
-  </section></div>
-  <div class="cq"><section id="shell"><div class="s-head">هيدر</div><div class="s-main">صفحة قصيرة</div><div class="s-foot">فوتر</div></section></div>
-  <div class="cq"><section id="masonry">
-    <div class="m" style="height:90px">١</div><div class="m" style="height:160px">٢</div><div class="m" style="height:120px">٣</div>
-    <div class="m" style="height:200px">٤</div><div class="m" style="height:80px">٥</div><div class="m" style="height:140px">٦</div>
-    <div class="m" style="height:110px">٧</div><div class="m" style="height:170px">٨</div><div class="m" style="height:100px">٩</div>
-  </section></div>
-  <div class="cq"><nav id="topnav" aria-label="navbar التجربة"><a class="logo" href="#topnav">متجر الورد</a><ul class="links"><li><a href="#topnav">المنتجات</a></li><li><a href="#topnav">العروض</a></li><li><a href="#topnav">تواصل</a></li></ul><a class="cta" href="#topnav">اطلب دلوقتي</a></nav></div>
-</div>
-</main>
-<div id="overlay" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"><p id="m-title">متأكد إنك عايز تمسح الطلب؟</p><button type="button" id="close">اقفل</button></div></div>
-</body>
-</html>
-~~~
+<body class="bg-neutral-soft font-sans text-neutral-ink">
+<main class="mx-auto max-w-3xl space-y-8 p-4">
+  <h1 class="text-2xl font-bold">زراير وشارات «مكتب الشحن»</h1>
 
-~~~css demo.css
-/* صفحة العرض بس: الـ layouts نفسها في layouts.css */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #0f172a; }
-.bar { position: sticky; top: 0; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: -16px -16px 16px; padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid #cbd5e1; }
-.bar h1 { margin: 0; font-size: 1.2rem; }
-.bar input { inline-size: min(20rem, 100%); }
-.bar output { min-inline-size: 4.5em; font-variant-numeric: tabular-nums; font-weight: 700; }
-button { font: inherit; padding: 6px 14px; border: 0; border-radius: 999px; background: #1e293b; color: #fff; cursor: pointer; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-/* the frame the slider resizes: never wider than the page */
-.frame { inline-size: min(var(--w, 1200px), 100%); display: grid; gap: 24px; outline: 2px dashed #94a3b8; outline-offset: 6px; }
-~~~
+  <section class="space-y-3">
+    <h2 class="text-lg font-semibold">الزراير</h2>
+    <div class="flex flex-wrap gap-3">
+      <button type="button" class="rounded-lg bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-ink focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">اشحن طرد</button>
+      <button type="button" class="rounded-lg bg-ok px-4 py-2 font-semibold text-white hover:bg-ok-ink focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">أكّد الاستلام</button>
+      <button type="button" class="rounded-lg bg-danger px-4 py-2 font-semibold text-white hover:bg-danger-ink focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">ألغي الشحنة</button>
+      <button type="button" class="rounded-lg border border-neutral bg-white px-4 py-2 font-semibold text-neutral-ink hover:bg-neutral-soft focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">رجوع</button>
+    </div>
+  </section>
 
-~~~js demo.js
-// the slider sets one custom property; every layout reacts through @container, no JS per layout
-const w = document.getElementById("w"), out = document.getElementById("w-out"), frame = document.getElementById("frame");
-const show = () => { frame.style.setProperty("--w", w.value + "px"); out.value = Math.round(frame.getBoundingClientRect().width) + "px"; };
-w.addEventListener("input", show);
-new ResizeObserver(show).observe(frame);          // the page itself may be narrower than the slider value
-show();
-
-// the modal: opens, closes with the button or Esc, and gives the focus back
-const overlay = document.getElementById("overlay"), open = document.getElementById("open"), close = document.getElementById("close");
-open.addEventListener("click", () => { overlay.hidden = false; close.focus(); });
-const shut = () => { overlay.hidden = true; open.focus(); };
-close.addEventListener("click", shut);
-document.addEventListener("keydown", e => { if (e.key === "Escape" && !overlay.hidden) shut(); });
-~~~
-
-~~~html sidebar.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>نفس الـ layouts في سايدبار ضيق</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="layouts.css">
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #0f172a; }
-  /* a wide page with a 320px column: the same components, the same CSS, in a narrow slot */
-  .page { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
-  .main-col { min-height: 60vh; padding: 16px; background: #f8fafc; border-radius: 12px; }
-  .slot { display: grid; gap: 16px; }
-</style>
-</head>
-<body>
-<div class="page">
-  <main class="main-col"><h1>صفحة عريضة</h1><p>العمود اللي جنب ده عرضه 320px بس، والشاشة عريضة. الـ components اللي فيه نفس اللي في <a href="index.html">المكتبة</a> بالظبط.</p></main>
-  <aside class="slot" aria-label="السايدبار">
-    <div class="cq cq-grail"><section id="grail"><div class="g-head">الهيدر</div><div class="g-nav">القايمة</div><div class="g-main">المحتوى</div><div class="g-side">جانبي</div><div class="g-foot">الفوتر</div></section></div>
-    <div class="cq cq-bento"><section id="bento"><div class="b b1">كبير</div><div class="b b2">عريض</div><div class="b">٣</div><div class="b">٤</div></section></div>
-    <div class="cq cq-app"><section id="app"><div class="side"><a href="#app">🏠 <span class="label">الرئيسية</span></a><a href="#app">📦 <span class="label">الطلبات</span></a></div><div class="content">المحتوى</div></section></div>
-    <div class="cq"><section id="cards"><article class="card">كارت ١</article><article class="card">كارت ٢</article><article class="card">كارت ٣</article></section></div>
-  </aside>
-</div>
-</body>
-</html>
-~~~
-
-~~~js measure.mjs
-// node layouts/measure.mjs: the lesson self-check at 1200 and 360, the slider, the narrow sidebar on a wide screen, no @media
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-import fs from "node:fs";
-const check = fs.readFileSync(new URL("../src/layouts-check.js", import.meta.url), "utf8");
-const css = fs.readFileSync(new URL("layouts.css", import.meta.url), "utf8");
-const U = "http://127.0.0.1:8840/layouts/";
-const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
-
-for (const w of [1200, 360]) {
-  const ctx = await b.newContext({ viewport: { width: w, height: 900 } });
-  const p = await ctx.newPage();
-  const logs = [];
-  p.on("console", m => logs.push(m.text()));
-  await p.goto(U + "index.html");
-  await p.evaluate(check);
-  console.log(w + ": " + logs.filter(l => /^(FAIL|النتيجة)/.test(l)).join(" | ") + " | axe " + (await new AxeBuilder({ page: p }).analyze()).violations.length);
-  await ctx.close();
-}
-
-// the slider on a 1280 screen: what each layout looks like at 4 frame widths
-const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } });
-const p = await ctx.newPage();
-await p.goto(U + "index.html");
-const state = () => p.evaluate(() => {
-  const R = s => document.querySelector(s).getBoundingClientRect();
-  const cols = sel => new Set([...document.querySelectorAll(sel)].map(e => Math.round(e.getBoundingClientRect().left))).size;
-  return "الحاوية " + Math.round(R("#frame").width) + ": grail " + (Math.round(R(".g-nav").top) === Math.round(R(".g-main").top) ? "٣ عواميد" : "عمود") +
-    " | كروت " + cols("#cards .card") + " | bento " + (Math.round(R(".b1").width) > R("#bento").width / 2 + 5 ? "٢ عمود" : "٤") +
-    " | سايدبار " + Math.round(R(".side").width) + " | masonry " + cols("#masonry .m");
-});
-for (const v of [1200, 800, 500, 280]) { await p.fill("#w", String(v)); console.log("   " + await state()); }
-
-// the same components in a 320px column of a 1280px page
-const p2 = await ctx.newPage();
-await p2.goto(U + "sidebar.html");
-console.log("سايدبار 320 على شاشة 1280: " + await p2.evaluate(() => {
-  const R = s => document.querySelector(s).getBoundingClientRect();
-  return "الغلاف " + Math.round(R(".cq-grail").width) + " | grail " + (Math.round(R(".g-nav").top) === Math.round(R(".g-main").top) ? "٣ عواميد" : "عمود") +
-    " | bento: الكبير " + Math.round(R(".b1").width) + " من " + Math.round(R("#bento").width) + " (عمودين) | سايدبار " + Math.round(R(".side").width) + " والكلام " + getComputedStyle(document.querySelector(".side .label")).display +
-    " | كروت في الصف " + new Set([...document.querySelectorAll("#cards .card")].map(e => Math.round(e.getBoundingClientRect().top))).size + " صف";
-}));
-console.log("@media في layouts.css: " + (css.match(/@media/g) || []).length + " | @container: " + (css.match(/@container/g) || []).length);
-await b.close();
-~~~
-
-~~~view 720 720 حرّك الـ slider (اعمل scroll جوه)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مكتبة layouts بـ container queries</title>
-<link rel="icon" href="data:,">
-<style>
-/* ٨ layouts بتسأل عن عرض المكان اللي هي فيه (@container)، مش عن الشاشة. ولا media query واحدة في الملف ده.
-   كل layout جوه غلاف .cq: الـ query بتسأل عن أقرب container فوق العنصر، فالعنصر نفسه مينفعش يبقى الـ container بتاع نفسه */
-.cq { container-type: inline-size; }
-.cq-grail { container-name: grail; }
-.cq-bento { container-name: bento; }
-.cq-app { container-name: app; }
-
-#grail > *, #cards > *, .b, #app > *, #shell > *, .m { background: #e0e7ff; padding: 8px; }
-
-/* ١ holy grail: عمود واحد، و ٣ عواميد لما الغلاف يبقى 860 أو أكتر */
-#grail { display: grid; gap: 12px; grid-template-areas: "head" "nav" "main" "side" "foot"; }
-.g-head { grid-area: head; } .g-nav { grid-area: nav; } .g-main { grid-area: main; min-height: 160px; } .g-side { grid-area: side; } .g-foot { grid-area: foot; }
-@container grail (min-width: 860px) {
-  #grail { grid-template-columns: 200px 1fr 240px; grid-template-areas: "head head head" "nav main side" "foot foot foot"; }
-}
-
-/* ٢ شبكة الكروت: auto-fit بيحسب العواميد من المكان لوحده، مش محتاج query خالص */
-#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }
-
-/* ٣ bento: ٤ عواميد، و ٢ لما الغلاف أقل من 560 */
-#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }
-.b1 { grid-column: span 2; grid-row: span 2; }
-.b2 { grid-column: span 2; }
-@container bento (max-width: 559px) { #bento { grid-template-columns: repeat(2, 1fr); } }
-
-/* ٤ سايدبار: 260، ويقفل لـ 64 (أيقونات بس) لما الغلاف أقل من 720 */
-#app { display: grid; grid-template-columns: 260px 1fr; gap: 12px; min-height: 200px; }
-.side { display: flex; flex-direction: column; gap: 8px; }
-@container app (max-width: 719px) {
-  #app { grid-template-columns: 64px 1fr; }
-  .side .label { display: none; }
-}
-
-/* ٥ مودال: fixed على الشاشة كلها، فهو الوحيد اللي مالوش علاقة بالمكان */
-#overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgb(0 0 0 / .5); }
-#overlay[hidden] { display: none; }
-.modal { width: min(480px, 100% - 32px); background: #fff; padding: 24px; border-radius: 12px; }
-
-/* ٦ الفوتر تحت */
-#shell { min-height: 400px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; }
-
-/* ٧ masonry: columns بتحسب العدد من المكان، من غير query */
-#masonry { columns: 3 200px; column-gap: 16px; }
-.m { break-inside: avoid; margin-block-end: 16px; }
-
-/* ٨ navbar: flex-wrap بيلف لوحده، و margin-inline-start: auto بيزق الزرار للآخر في أي اتجاه */
-#topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 12px 16px; background: #0f172a; }
-#topnav a { color: #fff; }
-.links { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; }
-.cta { margin-inline-start: auto; }
-
-</style>
-<style>
-/* صفحة العرض بس: الـ layouts نفسها في layouts.css */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #0f172a; }
-.bar { position: sticky; top: 0; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: -16px -16px 16px; padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid #cbd5e1; }
-.bar h1 { margin: 0; font-size: 1.2rem; }
-.bar input { inline-size: min(20rem, 100%); }
-.bar output { min-inline-size: 4.5em; font-variant-numeric: tabular-nums; font-weight: 700; }
-button { font: inherit; padding: 6px 14px; border: 0; border-radius: 999px; background: #1e293b; color: #fff; cursor: pointer; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-/* the frame the slider resizes: never wider than the page */
-.frame { inline-size: min(var(--w, 1200px), 100%); display: grid; gap: 24px; outline: 2px dashed #94a3b8; outline-offset: 6px; }
-
-</style>
-
-</head>
-<body>
-<header class="bar">
-  <h1 id="page-title">مكتبة layouts</h1>
-  <label for="w">عرض الحاوية</label>
-  <input id="w" type="range" min="280" max="1200" step="10" value="1200">
-  <output id="w-out" for="w">1200px</output>
-  <button type="button" id="open">افتح المودال</button>
-  <a href="sidebar.html">نفس الـ layouts في سايدبار ضيق</a>
-</header>
-<main id="main" aria-labelledby="page-title">
-<div class="frame" id="frame">
-  <div class="cq cq-grail"><section id="grail">
-    <div class="g-head">الهيدر</div>
-    <div class="g-nav">القايمة</div>
-    <div class="g-main">المحتوى الأساسي</div>
-    <div class="g-side">جانبي</div>
-    <div class="g-foot">الفوتر</div>
-  </section></div>
-  <div class="cq"><section id="cards">
-    <article class="card">كارت ١</article><article class="card">كارت ٢</article><article class="card">كارت ٣</article><article class="card">كارت ٤</article>
-    <article class="card">كارت ٥</article><article class="card">كارت ٦</article><article class="card">كارت ٧</article>
-  </section></div>
-  <div class="cq cq-bento"><section id="bento">
-    <div class="b b1">كبير</div><div class="b b2">عريض</div><div class="b">٣</div><div class="b">٤</div><div class="b">٥</div><div class="b">٦</div>
-  </section></div>
-  <div class="cq cq-app"><section id="app">
-    <div class="side"><a href="#app">🏠 <span class="label">الرئيسية</span></a><a href="#app">📦 <span class="label">الطلبات</span></a><a href="#app">⚙ <span class="label">الإعدادات</span></a></div>
-    <div class="content">المحتوى</div>
-  </section></div>
-  <div class="cq"><section id="shell"><div class="s-head">هيدر</div><div class="s-main">صفحة قصيرة</div><div class="s-foot">فوتر</div></section></div>
-  <div class="cq"><section id="masonry">
-    <div class="m" style="height:90px">١</div><div class="m" style="height:160px">٢</div><div class="m" style="height:120px">٣</div>
-    <div class="m" style="height:200px">٤</div><div class="m" style="height:80px">٥</div><div class="m" style="height:140px">٦</div>
-    <div class="m" style="height:110px">٧</div><div class="m" style="height:170px">٨</div><div class="m" style="height:100px">٩</div>
-  </section></div>
-  <div class="cq"><nav id="topnav" aria-label="navbar التجربة"><a class="logo" href="#topnav">متجر الورد</a><ul class="links"><li><a href="#topnav">المنتجات</a></li><li><a href="#topnav">العروض</a></li><li><a href="#topnav">تواصل</a></li></ul><a class="cta" href="#topnav">اطلب دلوقتي</a></nav></div>
-</div>
-</main>
-<div id="overlay" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"><p id="m-title">متأكد إنك عايز تمسح الطلب؟</p><button type="button" id="close">اقفل</button></div></div>
-<script>
-// the slider sets one custom property; every layout reacts through @container, no JS per layout
-const w = document.getElementById("w"), out = document.getElementById("w-out"), frame = document.getElementById("frame");
-const show = () => { frame.style.setProperty("--w", w.value + "px"); out.value = Math.round(frame.getBoundingClientRect().width) + "px"; };
-w.addEventListener("input", show);
-new ResizeObserver(show).observe(frame);          // the page itself may be narrower than the slider value
-show();
-
-// the modal: opens, closes with the button or Esc, and gives the focus back
-const overlay = document.getElementById("overlay"), open = document.getElementById("open"), close = document.getElementById("close");
-open.addEventListener("click", () => { overlay.hidden = false; close.focus(); });
-const shut = () => { overlay.hidden = true; open.focus(); };
-close.addEventListener("click", shut);
-document.addEventListener("keydown", e => { if (e.key === "Escape" && !overlay.hidden) shut(); });
-
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** شريط لازق فوق فيه slider «عرض الحاوية» ورقم بيتغيّر (1200px)، وزرار «افتح المودال»، ولينك للسايدبار. تحته الـ ٨ layouts جوه إطار متقطّع. حرّك الـ slider لحد 500: الـ holy grail بقى عمود واحد، والكروت بقت اتنين، والـ bento بقى عمودين، والسايدبار اتقفل لأيقونات بس (🏠 📦 ⚙)، والـ masonry بقى عمودين. وكل ده والشاشة نفسها ما اتغيّرتش.
-
-**[[@container]] بدل [[@media]]:** الـ media query بتسأل «الشاشة عرضها كام؟». الـ container query بتسأل «المكان اللي أنا فيه عرضه كام؟». الـ component بقى بيتصرف صح في أي مكان يتحط فيه: صفحة كاملة، أو عمود، أو كارت. والـ grep على [[@media]] في [[layouts.css]] بيطلّع صفر.
-
-**ليه كل layout جوه [[.cq]]:** [[container-type: inline-size]] بيخلّي العنصر container. والـ query بتسأل عن أقرب container **فوق** العنصر. لو [[#grail]] نفسه هو الـ container، القاعدة اللي جوه [[@container]] مش هتقدر تغيّر [[#grail]] نفسه (اتقاس في وحدة «widgets»). فالغلاف [[.cq-grail]] هو الـ container، و [[#grail]] جواه بيتغيّر. و [[container-name]] بيخلّي كل query تسأل عن غلافها هي بالظبط.
-
-**الأرقام اتغيرت:** في الدرس الأرقام كانت للشاشة (900 و 600 و 768). هنا للحاوية، والحاوية في الصفحة أصغر من الشاشة بالـ padding (16 من كل ناحية): 860 و 560 و 720. كده على شاشة 1200 الحاوية 1168 والشكل زي الدرس، والفحص الذاتي بتاعه بيعدّي.
-
-**٤ من التمانية مش محتاجين query خالص:** الكروت ([[auto-fit]] و [[minmax]])، والـ masonry ([[columns: 3 200px]])، والـ navbar ([[flex-wrap]])، والفوتر تحت ([[grid-template-rows: auto 1fr auto]]) بيتأقلموا من نفسهم. والمودال [[fixed]] على الشاشة كلها، فمالوش دعوة بالمكان.
-
-**السايدبار الضيق:** [[sidebar.html]] صفحة عريضة فيها عمود 320px، وجواه نفس الـ components ونفس الـ CSS. على شاشة 1280 خدوا شكل الموبايل: grail عمود، و bento عمودين، والسايدبار 64 والكلام مستخبي، والكروت تحت بعض.
-
-**الـ slider:** [[demo.js]] بيغيّر متغير واحد [[--w]] على الإطار، والإطار [[inline-size: min(var(--w), 100%)]] فمبيعديش الصفحة. ومفيش ولا سطر JS لأي layout: كله [[@container]].
-
-**غلطتين قابلوني:**
-- **[[@media]] = 1 في الـ grep:** كانت في التعليق اللي بيقول «مفيش @media». الـ grep مبيفرّقش بين كود وتعليق (نفس اللي حصل مع left في مشروع «قصتنا»). التعليق اتغيّر.
-- **axe طلّع ٣ مشاكل:** الأجزاء كانت [[<header>]] و [[<main>]] و [[<aside>]] و [[<footer>]] حقيقية جوه صفحة المكتبة، فبقى فيه أكتر من [[main]] ومحتوى برّه أي landmark. في صفحة حقيقية الـ holy grail بيستخدمهم مرة واحدة، بس هنا دي أجزاء معروضة. بقوا [[div]] بنفس الـ classes (الفحص بيدوّر بالـ class)، والصفحة كلها جوه [[<main>]] واحد.
-
-~~~text axe قبل
-قبل (الأجزاء كانت header و main و aside و footer حقيقية جوه صفحة المكتبة):
-landmark-no-duplicate-main x1 .g-main
-landmark-unique x1 .g-main
-region x9 .g-head, .g-side, .g-foot, .cq:nth-child(2), .cq-bento, .cq-app, #shell > header, .s-foot, .cq:nth-child(6)
-landmark-main-is-top-level x1 .g-main
-~~~
-
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-1200: النتيجة: 11 من 11 | axe 0
-360: النتيجة: 11 من 11 | axe 0
-   الحاوية 1200: grail ٣ عواميد | كروت 5 | bento ٤ | سايدبار 260 | masonry 3
-   الحاوية 800: grail عمود | كروت 3 | bento ٤ | سايدبار 260 | masonry 3
-   الحاوية 500: grail عمود | كروت 2 | bento ٢ عمود | سايدبار 64 | masonry 2
-   الحاوية 280: grail عمود | كروت 1 | bento ٢ عمود | سايدبار 64 | masonry 1
-سايدبار 320 على شاشة 1280: الغلاف 320 | grail عمود | bento: الكبير 320 من 320 (عمودين) | سايدبار 64 والكلام none | كروت في الصف 3 صف
-@media في layouts.css: 0 | @container: 4
-~~~` },
-        { lvl: 'كبير', dir: "jasmine-store", t: R`صفحة متجر متخيل كاملة من التمارين`, what: R`صفحة «متجر الياسمين» (اسم متخيل) متجمعة من الوحدة كلها: navbar عربي، وهيرو بـ [[min-height: 100dvh]]، وشبكة منتجات auto-fit فيها شارات في ركن النهاية، وباقات بزراير على خط واحد، واختيار توصيل بـ [[:has()]]، وفورم دخول، وتنبيه في الـ top layer، وجدول طلبات من [[buildTable]]. بالعربي والإنجليزي بنفس الـ CSS، وكل الحركة بتقف مع reduced motion.`, done: R`كل فحوص الوحدة الذاتية بتعدّي على 320 و 360 و 768 و 1200 و 1440، و axe صفر، والفحص بتاع التباين صفر (عشان axe بيسكت عن العربي)، والصفحة بتتصفح بالكيبورد بس، و Lighthouse Accessibility ١٠٠ و Performance فوق ٩٠، ومنشورة برابط.`, ext: R`زوّد ملف [[checks.js]] بيجمع كل الفحوص الذاتية ويشغّلها بـ Playwright على المقاسات الخمسة في GitHub Actions، والـ PR اللي بيكسر فحص بيقع.`, sol: R`~~~js build.mjs
-// node store/build.mjs: index.html (عربي) و en/index.html من template واحد، بنفس css/store.css و js/store.js
-import fs from "node:fs";
-const dir = new URL(".", import.meta.url);
-const w = (p, s) => { fs.mkdirSync(new URL(p.replace(/[^/]+$/, ""), dir), { recursive: true }); fs.writeFileSync(new URL(p, dir), s); };
-
-// the product pictures: small SVGs (a few hundred bytes each), with a fixed size so the page reserves their place
-const flower = (petal, center, bg) => $__bt<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="$__{bg}"/><g transform="translate(200 140)">$__{[0, 72, 144, 216, 288].map(a => $__bt<ellipse rx="34" ry="62" fill="$__{petal}" transform="rotate($__{a}) translate(0 -52)"/>$__bt).join("")}<circle r="30" fill="$__{center}"/></g><rect x="196" y="190" width="8" height="110" fill="#3f6212"/></svg>$__bt;
-const pics = [["jasmine", "#ffffff", "#facc15", "#ecfccb"], ["rose", "#e11d48", "#7f1d1d", "#ffe4e6"], ["sunflower", "#f59e0b", "#78350f", "#fef3c7"], ["violet", "#8b5cf6", "#facc15", "#ede9fe"]];
-for (const [n, ...c] of pics) w("img/" + n + ".svg", flower(...c));
-w("img/art.svg", $__bt<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><rect width="600" height="600" fill="#ede9fe"/>$__{[[150, 180, "#e11d48"], [420, 160, "#f59e0b"], [300, 330, "#ffffff"], [160, 460, "#8b5cf6"], [440, 450, "#e11d48"]].map(([x, y, f]) => $__bt<circle cx="$__{x}" cy="$__{y}" r="70" fill="$__{f}" opacity=".85"/>$__bt).join("")}</svg>$__bt);
-
-const T = {
-  ar: {
-    dir: "rtl", other: "en/", otherLang: "en", otherName: "English", root: "",
-    title: "متجر الياسمين: ورد طبيعي يوصل في نفس اليوم", desc: "ورد طبيعي من مزارع قريبة، تنسيق باليد، وتوصيل في نفس اليوم. (متجر متخيّل للتدريب)",
-    skip: "اتخطّى للمحتوى", logo: "الياسمين", home: "الرئيسية", nav: ["المنتجات", "الباقات", "التوصيل", "الدخول", "الطلبات"],
-    h1: "ورد طبيعي يوصلك النهارده", lead: "بننسّق كل بوكيه بالإيد الصبح، ويوصل لحد الباب في نفس اليوم في القاهرة والجيزة.", cta: "شوف الورد",
-    products: "المنتجات", add: "أضف للسلة", added: "اتضاف للسلة:", close: "اقفل", currency: n => n.toLocaleString("ar-EG") + " جنيه",
-    items: [["jasmine", "بوكيه ياسمين", 350, "جديد"], ["rose", "ورد بلدي أحمر", 420, "الأكتر طلبًا"], ["sunflower", "عباد شمس", 300, ""], ["violet", "بنفسج في أصيص", 280, "خصم ١٠٪"]],
-    plans: "الباقات", per: "/ شهر", choose: "اختار",
-    planList: [["مرة في الشهر", 380, ["بوكيه واحد", "توصيل مجاني"]], ["كل أسبوع", 1200, ["٤ بوكيهات", "توصيل مجاني", "كارت إهداء كل مرة", "تغيير المواعيد من حسابك"]], ["للمكاتب", 2400, ["٤ بوكيهات كبار", "فاتورة باسم الشركة"]]], featuredBadge: "الأوفر",
-    delivery: "التوصيل", how: "عايز الورد يوصلك إزاي؟", opts: [["home", "لحد البيت", "بكرة الصبح"], ["express", "سريع", "في خلال ٣ ساعات"], ["pickup", "استلام من الفرع", "ببلاش"]], branch: "الفرع", branches: ["الدقي", "مدينة نصر", "المعادي"],
-    login: "الدخول", email: "الإيميل", password: "كلمة السر", signin: "ادخل", artAlt: "", loginNote: "ده متجر متخيّل للتدريب: الفورم مش بيبعت حاجة.",
-    orders: "آخر طلباتك", cols: ["رقم الطلب", "المنتج", "المبلغ", "الحالة", "التاريخ"], ordersLabel: "جدول آخر الطلبات",
-    foot: "متجر الياسمين اسم متخيّل لمشروع تدريب.",
-  },
-  en: {
-    dir: "ltr", other: "../", otherLang: "ar", otherName: "عربي", root: "../",
-    title: "Jasmine Flowers: fresh flowers delivered today", desc: "Fresh flowers from nearby farms, arranged by hand and delivered the same day. (An imaginary shop for practice)",
-    skip: "Skip to content", logo: "Jasmine", home: "Home", nav: ["Products", "Plans", "Delivery", "Sign in", "Orders"],
-    h1: "Fresh flowers at your door today", lead: "We arrange every bouquet by hand in the morning and deliver it the same day in Cairo and Giza.", cta: "See the flowers",
-    products: "Products", add: "Add to cart", added: "Added to cart:", close: "Close", currency: n => "EGP " + n.toLocaleString("en"),
-    items: [["jasmine", "Jasmine bouquet", 350, "New"], ["rose", "Red roses", 420, "Best seller"], ["sunflower", "Sunflowers", 300, ""], ["violet", "Violets in a pot", 280, "10% off"]],
-    plans: "Plans", per: "/ month", choose: "Choose",
-    planList: [["Once a month", 380, ["One bouquet", "Free delivery"]], ["Every week", 1200, ["4 bouquets", "Free delivery", "A gift card each time", "Change dates from your account"]], ["For offices", 2400, ["4 large bouquets", "Company invoice"]]], featuredBadge: "Best value",
-    delivery: "Delivery", how: "How should the flowers reach you?", opts: [["home", "To your door", "Tomorrow morning"], ["express", "Express", "Within 3 hours"], ["pickup", "Pick up at a branch", "Free"]], branch: "Branch", branches: ["Dokki", "Nasr City", "Maadi"],
-    login: "Sign in", email: "Email", password: "Password", signin: "Sign in", artAlt: "", loginNote: "This is an imaginary shop for practice: the form sends nothing.",
-    orders: "Your latest orders", cols: ["Order", "Product", "Amount", "Status", "Date"], ordersLabel: "Latest orders table",
-    foot: "Jasmine Flowers is an imaginary name for a practice project.",
-  },
-};
-const ids = ["products", "plans", "delivery", "login", "orders"];
-const cart = $__bt<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg>$__bt;
-
-for (const [lang, t] of Object.entries(T)) {
-  const r = t.root;
-  const html = $__bt<!doctype html>
-<html lang="$__{lang}" dir="$__{t.dir}">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>$__{t.title}</title>
-<meta name="description" content="$__{t.desc}">
-<link rel="alternate" hreflang="ar" href="https://jasmine.example/">
-<link rel="alternate" hreflang="en" href="https://jasmine.example/en/">
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="$__{r}css/store.css">
-<script type="module" src="$__{r}js/store.js"></script>
-</head>
-<body>
-<a class="skip" href="#main">$__{t.skip}</a>
-<header class="top">
-  <div class="wrap top-row">
-    <a class="logo" href="#main" aria-label="$__{t.logo}، $__{t.home}">$__{t.logo}</a>
-    <nav aria-label="$__{t.home}"><ul class="links">$__{ids.map((id, i) => $__bt<li><a href="#$__{id}">$__{t.nav[i]}</a></li>$__bt).join("")}</ul></nav>
-    <a class="lang" href="$__{t.other}" hreflang="$__{t.otherLang}" lang="$__{t.otherLang}">$__{t.otherName}</a>
-  </div>
-</header>
-<main id="main">
-<section class="hero" aria-labelledby="hero-title">
-  <div class="wrap">
-    <h1 id="hero-title">$__{t.h1}</h1>
-    <p>$__{t.lead}</p>
-    <a class="btn" href="#products">$__{t.cta}</a>
-  </div>
-</section>
-<section id="products" aria-labelledby="products-title">
-  <div class="wrap">
-    <h2 id="products-title">$__{t.products}</h2>
-    <ul class="products" role="list">
-$__{t.items.map(([img, name, price, badge]) => $__bt      <li class="pcard">$__{badge ? $__bt<span class="badge">$__{badge}</span>$__bt : ""}<img src="$__{r}img/$__{img}.svg" width="400" height="300" alt="$__{name}" loading="lazy"><h3>$__{name}</h3><p class="price">$__{t.currency(price)}</p><button type="button" class="btn add" popovertarget="added" data-name="$__{name}">$__{cart}<span>$__{t.add}</span></button></li>$__bt).join("\n")}
+  <section class="space-y-3">
+    <h2 class="text-lg font-semibold">حالة الشحنة</h2>
+    <ul class="flex flex-wrap gap-2">
+      <li class="rounded-full bg-ok-soft px-3 py-1 text-sm font-semibold text-ok-ink">اتسلّمت</li>
+      <li class="rounded-full bg-warn-soft px-3 py-1 text-sm font-semibold text-warn-ink">في الطريق</li>
+      <li class="rounded-full bg-danger-soft px-3 py-1 text-sm font-semibold text-danger-ink">متأخرة</li>
+      <li class="rounded-full bg-neutral-soft px-3 py-1 text-sm font-semibold text-neutral-ink ring-1 ring-neutral">مستنية</li>
+      <li class="rounded-full bg-brand-soft px-3 py-1 text-sm font-semibold text-brand-ink">جديدة</li>
     </ul>
-  </div>
-</section>
-<section id="plans" aria-labelledby="plans-title">
-  <div class="wrap">
-    <h2 id="plans-title">$__{t.plans}</h2>
-    <div class="plans">
-$__{t.planList.map(([name, price, feats], i) => $__bt      <article class="plan$__{i === 1 ? " featured" : ""}">$__{i === 1 ? $__bt<p class="tag">$__{t.featuredBadge}</p>$__bt : ""}<h3>$__{name}</h3><p class="amount">$__{t.currency(price)} <small>$__{t.per}</small></p><ul>$__{feats.map(f => $__bt<li>$__{f}</li>$__bt).join("")}</ul><a class="btn plan-btn" href="#login">$__{t.choose} «$__{name}»</a></article>$__bt).join("\n")}
-    </div>
-  </div>
-</section>
-<section id="delivery" aria-labelledby="delivery-title">
-  <div class="wrap">
-    <h2 id="delivery-title">$__{t.delivery}</h2>
-    <fieldset id="picker">
-      <legend>$__{t.how}</legend>
-$__{t.opts.map(([v, name, note], i) => $__bt      <label class="opt"><input type="radio" name="d" value="$__{v}"$__{i === 0 ? " checked" : ""}> <span><b>$__{name}</b> · $__{note}</span></label>$__bt).join("\n")}
-      <div class="branch"><label for="branch">$__{t.branch}</label><select id="branch" name="branch">$__{t.branches.map(b => $__bt<option>$__{b}</option>$__bt).join("")}</select></div>
-    </fieldset>
-  </div>
-</section>
-<section id="login" aria-labelledby="login-title">
-  <div class="wrap">
-    <img class="art" src="$__{r}img/art.svg" width="600" height="600" alt="$__{t.artAlt}">
-    <form class="login-form" action="$__{r}login" method="post">
-      <h2 id="login-title">$__{t.login}</h2>
-      <label for="email">$__{t.email}</label>
-      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
-      <label for="password">$__{t.password}</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" required>
-      <button class="btn" type="submit">$__{t.signin}</button>
-      <p class="note" id="login-note" role="status"></p>
-    </form>
-  </div>
-</section>
-<section id="orders" aria-labelledby="orders-title">
-  <div class="wrap">
-    <h2 id="orders-title">$__{t.orders}</h2>
-    <div class="table-wrap" id="orders-table" tabindex="0" role="region" aria-label="$__{t.ordersLabel}" data-cols="$__{t.cols.join("|")}" data-note="$__{t.loginNote}"></div>
-  </div>
-</section>
+    <ul class="flex flex-wrap gap-2">
+      <li class="rounded-full bg-ok px-3 py-1 text-sm font-semibold text-white">اتسلّمت</li>
+      <li class="rounded-full bg-warn px-3 py-1 text-sm font-semibold text-white">في الطريق</li>
+      <li class="rounded-full bg-danger px-3 py-1 text-sm font-semibold text-white">متأخرة</li>
+      <li class="rounded-full bg-neutral px-3 py-1 text-sm font-semibold text-white">مستنية</li>
+      <li class="rounded-full bg-brand px-3 py-1 text-sm font-semibold text-white">جديدة</li>
+    </ul>
+  </section>
 </main>
-<footer class="foot"><div class="wrap">$__{t.foot}</div></footer>
-<div class="alert" id="added" popover role="status"><span id="added-text">$__{t.added}</span> <button type="button" popovertarget="added" popovertargetaction="hide">$__{t.close}</button></div>
 </body>
 </html>
-$__bt;
-  w(lang === "ar" ? "index.html" : "en/index.html", html);
-}
-console.log("index.html + en/index.html");
 ~~~
 
-~~~css css/store.css
-/* متجر الياسمين (متخيل): نفس الملف للعربي والإنجليزي. كل اتجاه logical، فمفيش [dir] ولا left/right */
-:root {
-  --bg: #ffffff; --soft: #f5f3ff; --ink: #0f172a; --muted: #475569; --line: #cbd5e1;
-  --brand: #4f46e5; --brand-ink: #ffffff; --badge: #be123c; --ok: #166534;
-  --r: 14px; --gutter: clamp(16px, 4vw, 40px);
-  --font: system-ui, "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
-}
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; font-family: var(--font); line-height: 1.7; color: var(--ink); background: var(--bg); }
-img { max-width: 100%; height: auto; display: block; }
-h1, h2, h3 { line-height: 1.3; margin: 0 0 0.5em; }
-a { color: inherit; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-[id] { scroll-margin-top: 80px; }
-.wrap { max-width: 72rem; margin-inline: auto; padding-inline: var(--gutter); }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.skip { position: absolute; inset-inline-start: 8px; top: 8px; z-index: 3; padding: 8px 14px; background: var(--ink); color: #fff; translate: 0 -200%; }
-.skip:focus { translate: 0 0; }
+[[out.css]] الملف اللي Tailwind بيطلّعه (11.7KB)، مبيتكتبش بالإيد ومبيتعدّلش.
 
-/* الـ header: لازق فوق */
-.top { position: sticky; top: 0; z-index: 2; background: var(--bg); border-block-end: 1px solid var(--line); }
-.top-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; min-height: 64px; }
-.logo { font-weight: 800; font-size: 1.3rem; text-decoration: none; color: var(--brand); }
-.links { display: flex; flex-wrap: wrap; gap: 0 16px; list-style: none; margin: 0; padding: 0; }
-.links a, .lang { display: inline-block; padding-block: 10px; min-inline-size: 24px; text-decoration: none; }
-.lang { margin-inline-start: auto; font-weight: 700; }
-
-/* الهيرو: 100dvh = الجزء الظاهر فعلًا على الموبايل (100vh أطول منه لما شريط العنوان ظاهر). min-height مش height: المحتوى ميتقصّش */
-.hero { min-height: calc(100dvh - 65px); display: grid; align-content: center; padding-block: 48px; background: var(--soft); }
-.hero h1 { font-size: clamp(2rem, 1.2rem + 4vw, 3.4rem); max-width: 18ch; }
-.hero p { color: var(--muted); max-width: 40rem; font-size: 1.15rem; }
-@media (prefers-reduced-motion: no-preference) {
-  .hero .wrap > * { animation: rise .6s ease-out both; }
-  .hero .wrap > :nth-child(2) { animation-delay: .1s; }
-  .hero .wrap > :nth-child(3) { animation-delay: .2s; }
-}
-@keyframes rise { from { opacity: 0; translate: 0 12px; } }
-
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 20px; border: 0; border-radius: 999px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; background: var(--brand); color: var(--brand-ink); }
-.btn svg { flex: none; width: 18px; height: 18px; }
-
-section[id] { padding-block: clamp(40px, 7vw, 80px); }
-section[id]:nth-of-type(even) { background: var(--soft); }
-
-/* المنتجات: auto-fit، والشارة في ركن النهاية (يمين في الإنجليزي، شمال في العربي) */
-.products { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); list-style: none; margin: 0; padding: 0; }
-.pcard { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
-.pcard img { border-radius: 10px; }
-.pcard h3 { margin: 0; font-size: 1.05rem; }
-.pcard .price { margin: 0; font-weight: 800; }
-.pcard .btn { margin-block-start: auto; }
-.badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 2px 10px; border-radius: 999px; background: var(--badge); color: #fff; font-size: .85rem; font-weight: 700; }
-
-/* الباقات: على الموبايل عمود والمميزة الأول، وعلى 720 وأكتر ٣ جنب بعض بنفس الطول والزراير على خط واحد */
-.plans { display: grid; gap: 16px; }
-.featured { order: -1; }
-@media (min-width: 720px) {
-  .plans { grid-template-columns: repeat(3, 1fr); }
-  .featured { order: 0; }
-}
-.plan { display: flex; flex-direction: column; gap: 8px; padding: 24px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
-.plan ul { margin: 0; padding-inline-start: 1.2rem; }
-.plan .amount { margin: 0; font-size: 1.8rem; font-weight: 800; }
-.plan-btn { margin-block-start: auto; }
-.featured { background: #0f172a; color: #ffffff; border-color: #0f172a; }
-.featured .plan-btn { background: #ffffff; color: #0f172a; }
-
-/* التوصيل: الكارت المختار عليه إطار بـ :has()، والفرع بيظهر مع الاستلام بس، من غير JS */
-#picker { display: grid; gap: 12px; border: 0; padding: 0; margin: 0; }
-#picker legend { font-weight: 700; margin-block-end: 8px; }
-.opt { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 2px solid var(--line); border-radius: var(--r); background: var(--bg); cursor: pointer; }
-.opt input { flex: none; inline-size: 24px; block-size: 24px;   /* WCAG 2.2: target 24×24 at least */ margin: 0; accent-color: var(--brand); }
-.opt:has(:checked) { border-color: #4f46e5; }
-.opt:has(:focus-visible) { outline: 3px solid #b45309; outline-offset: 2px; }
-.branch { display: none; gap: 6px; }
-#picker:has([value="pickup"]:checked) .branch { display: grid; }
-select, input:not([type=radio], [type=checkbox]) { font: inherit; min-height: 44px; padding: 8px 12px; border: 1px solid #64748b; border-radius: 8px; background: var(--bg); color: var(--ink); }
-
-/* الدخول: نصين على 900 وأكتر (الصورة والفورم)، والصورة بتستخبى على الأصغر */
-#login .wrap { display: grid; align-items: center; gap: 24px; }
-.art { display: none; }
-@media (min-width: 900px) {
-  #login .wrap { grid-template-columns: 1fr 1fr; gap: 0; padding-inline: 0; max-width: none; }   /* the picture = exactly half the section */
-  .art { display: block; width: 100%; }   /* fill its half, not stop at the file width (600) */
-}
-.login-form { display: grid; gap: 12px; width: 100%; max-width: 400px; justify-self: center; padding: 0; }
-.login-form label { font-weight: 700; }
-.login-form input, .login-form button { width: 100%; }
-
-/* التنبيه: popover = top layer، فوق الهيدر اللازق مهما كان z-index بتاعه */
-.alert { inset: auto; inset-block-end: 16px; inset-inline-end: 16px; margin: 0; max-width: min(24rem, 100% - 32px); padding: 14px 18px; border: 0; border-radius: var(--r); background: var(--ok); color: #fff; font-weight: 700; box-shadow: 0 10px 30px -10px rgb(0 0 0 / .4); }
-.alert button { margin-inline-start: 12px; padding: 2px 10px; min-height: 32px; border: 1px solid #fff; border-radius: 999px; background: transparent; color: #fff; font: inherit; cursor: pointer; }
-@media (prefers-reduced-motion: no-preference) {
-  .alert { transition: opacity .2s, display .2s allow-discrete, overlay .2s allow-discrete; }
-  .alert:not(:popover-open) { opacity: 0; }
-  @starting-style { .alert:popover-open { opacity: 0; } }
-}
-
-/* جدول الطلبات: بيعمل scroll جوه حاويته، مش الصفحة */
-.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 10px 14px; text-align: start; white-space: nowrap; border-block-end: 1px solid var(--line); }
-th { background: #eef2ff; }
-
-.foot { padding-block: 32px; border-block-start: 1px solid var(--line); color: var(--muted); }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-~~~
-
-~~~js js/store.js
-import { buildTable } from "./lesson.js";
-const lang = document.documentElement.lang;
-
-// the orders table: buildTable from the lesson (every value escaped), numbers and dates in the page language
-const orders = [
-  { id: 1042, product: { ar: "بوكيه ياسمين", en: "Jasmine bouquet" }, amount: 350, status: { ar: "اتوصّل", en: "Delivered" }, date: "2026-11-12" },
-  { id: 1057, product: { ar: "ورد بلدي أحمر", en: "Red roses" }, amount: 840, status: { ar: "في الطريق", en: "On the way" }, date: "2026-11-18" },
-  { id: 1063, product: { ar: "بنفسج في أصيص", en: "Violets in a pot" }, amount: 252, status: { ar: "بيتجهّز", en: "Preparing" }, date: "2026-11-20" },
-];
-const box = document.getElementById("orders-table");
-const labels = box.dataset.cols.split("|");
-const num = new Intl.NumberFormat(lang === "ar" ? "ar-EG" : "en");
-const day = new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en", { day: "numeric", month: "long" });
-box.innerHTML = buildTable(orders.map(o => ({ id: num.format(o.id).replace(/[٬,]/g, ""), product: o.product[lang], amount: (lang === "ar" ? "" : "EGP ") + num.format(o.amount) + (lang === "ar" ? " جنيه" : ""), status: o.status[lang], date: day.format(new Date(o.date + "T00:00")) })),
-  ["id", "product", "amount", "status", "date"].map((key, i) => ({ key, label: labels[i] })));
-
-// "added to cart": the popover opens by itself (popovertarget); JS only writes which product
-const text = document.getElementById("added-text"), base = text.textContent;
-for (const b of document.querySelectorAll(".add")) b.addEventListener("click", () => { text.textContent = base + " " + b.dataset.name; });
-
-// the login form of an imaginary shop: say so instead of posting to nowhere
-document.querySelector(".login-form").addEventListener("submit", e => {
-  e.preventDefault();
-  document.getElementById("login-note").textContent = box.dataset.note;
-});
-~~~
-
-~~~js store-checks.js
-// البنود اللي بتنطبق على المتجر من فحص درس «صلّح الكود البايظ» (2 و 4 و 6 و 7 و 8 و 10)، بنفس طريقة القياس.
-// البنود 1 و 3 و 5 و 9 بتدوّر على عناصر صفحة الدرس البايظة (فهرس لازق، و #b3، و group-hover، وزرار مسح) ومش موجودة هنا.
-(() => {
-  const q = s => document.querySelector(s), R = el => el.getBoundingClientRect(), cs = el => getComputedStyle(el);
-  const near = (a, b) => Math.abs(a - b) <= 1.5;
-  const rules = []; for (const sh of document.styleSheets) { try { rules.push(...[...sh.cssRules].filter(r => r.selectorText)); } catch (e) {} }
-  const rulesFor = (el, clean) => rules.filter(r => { try { return el.matches(clean ? r.selectorText.replace(/:focus(-visible|-within)?/g, '') : r.selectorText); } catch (e) { return false; } });
-  let pass = 0, all = 0;
-  const ok = (name, cond, why) => { all++; if (cond) pass++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (cond ? '' : ' ← ' + why)); };
-  const rtl = cs(document.documentElement).direction === 'rtl';
-  const wrong = [...document.querySelectorAll('.pcard')].filter(c => c.querySelector('.badge')).filter(c => { const b = R(c.querySelector('.badge')), r = R(c); return rtl ? !near(b.left, r.left + 8) : !near(b.right, r.right - 8); });
-  ok('2 الشارة في ركن النهاية', !wrong.length, wrong.length + ' شارة مش على بعد 8px من ركن ' + (rtl ? 'الشمال' : 'اليمين'));
-  const al = q('.alert'), open = al.matches(':popover-open');
-  if (!open) al.showPopover();
-  const ar = R(al), hit = document.elementFromPoint(ar.left + ar.width / 2, ar.top + 4);
-  ok('4 التنبيه فوق الهيدر', hit && al.contains(hit), 'في النقطة دي ظاهر «' + (hit ? hit.className || hit.tagName : '؟') + '» مش التنبيه');
-  if (!open) al.hidePopover();
-  const hero = q('.hero'), vh = rulesFor(hero).filter(r => /(^|[^d])100vh/.test(r.style.cssText) && /height/.test(r.style.cssText));
-  ok('6 الهيرو: المحتوى مش مقصوص', hero.scrollHeight <= hero.clientHeight + 1, 'المحتوى ' + hero.scrollHeight + 'px والهيرو ' + hero.clientHeight + 'px');
-  ok('6 الهيرو: مش 100vh', !vh.length, vh.map(r => r.selectorText).join(' '));
-  const bp = q('.btn'), killed = rulesFor(bp, true).some(r => /:focus\b/.test(r.selectorText) && /outline: (none|0)/.test(r.style.cssText));
-  const ring = rulesFor(bp, true).some(r => /:focus-visible/.test(r.selectorText) && /outline: [^n0]|box-shadow/.test(r.style.cssText));
-  ok('7 الـ focus باين بالكيبورد', !killed || ring, 'فيه outline: none على :focus ومفيش بديل');
-  const ls = [...document.querySelectorAll('body *')].filter(el => /[؀-ۿ]/.test(el.textContent) && (el.closest('[lang]') || document.documentElement).lang.startsWith('ar') && !['normal', '0px'].includes(cs(el).letterSpacing));
-  ok('8 مفيش letter-spacing على العربي', !ls.length, ls.map(el => el.tagName.toLowerCase() + '.' + el.className).join(' و '));
-  const imgs = [...document.querySelectorAll('img')].filter(i => cs(i).aspectRatio === 'auto');
-  ok('10 الصور حاجزة مكانها', !imgs.length, imgs.length + ' صورة من غير width و height');
-  console.log('النتيجة: ' + pass + ' من ' + all);
-})();
-~~~
-
-~~~js measure.mjs
-// node store/measure.mjs: the unit's self-checks on both languages at 5 widths, axe, the keyboard, reduced motion
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-import fs from "node:fs";
-const read = f => fs.readFileSync(new URL(f, import.meta.url), "utf8");
-const checks = { "الفيضان": read("../src/overflow-check.js"), "accessibility": read("../src/a11y-check.js"), "صفحات من وصف": read("../src/desc-check-full.js"), "صلّح الكود (6 بنود)": read("store-checks.js") };
-const U = "http://127.0.0.1:8840/store/";
-const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
-let bad = 0;
-for (const page of ["", "en/"]) for (const w of [320, 360, 768, 1200, 1440]) {
-  const ctx = await b.newContext({ viewport: { width: w, height: 800 } });
-  const p = await ctx.newPage();
-  const logs = [], errs = [];
-  p.on("console", m => logs.push(m.text()));
-  p.on("pageerror", e => errs.push(e.message));
-  await p.goto(U + page, { waitUntil: "load" });
-  await p.evaluate(() => Promise.all(document.getAnimations().map(a => a.finished)));   // a check in the middle of the hero fade reads half-transparent text
-  const line = [];
-  for (const [name, code] of Object.entries(checks)) {
-    logs.length = 0;
-    await p.evaluate(code);
-    const res = logs.find(l => l.startsWith("النتيجة")) || "?", fails = logs.filter(l => l.startsWith("FAIL"));
-    line.push(name + " " + res.match(/\d+ من \d+/)[0]);
-    if (fails.length) { bad += fails.length; line.push("   " + fails.join(" | ")); }
-  }
-  const axe = await new AxeBuilder({ page: p }).analyze();
-  bad += axe.violations.length + errs.length;
-  console.log((page ? "en " : "ar ") + String(w).padEnd(5) + line.join(" · ") + " · axe " + axe.violations.length + (axe.violations.length ? " " + axe.violations.map(v => v.id).join(" ") : "") + (errs.length ? " · errors " + errs.join(" ") : ""));
-  await ctx.close();
-}
-
-// keyboard only: Tab through the Arabic page at 1280, add to cart with Enter, close with Esc, pick delivery with arrows
-const ctx = await b.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
-const p = await ctx.newPage();
-await p.goto(U);
-const stops = [];
-for (let i = 0; i < 60; i++) {
-  await p.keyboard.press("Tab");
-  const f = await p.evaluate(() => { const el = document.activeElement; if (!el || el === document.body) return null; const s = getComputedStyle(el); return { n: (el.textContent || el.value || el.name || el.tagName).trim().slice(0, 18), ring: s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0 || !!el.closest(".opt") }; });
-  if (!f || (stops.length && f.n === stops[0].n)) break;
-  stops.push(f);
-}
-console.log("الكيبورد: " + stops.length + " وقفة، من غير حلقة: " + stops.filter(s => !s.ring).length);
-await p.focus(".add");
-await p.keyboard.press("Enter");
-console.log("Enter على «أضف للسلة»: التنبيه مفتوح " + await p.locator("#added").evaluate(e => e.matches(":popover-open")) + " | «" + (await p.textContent("#added-text")) + "»");
-await p.keyboard.press("Escape");
-console.log("Esc: التنبيه مفتوح " + await p.locator("#added").evaluate(e => e.matches(":popover-open")));
-await p.focus('#picker input[value="home"]');
-await p.keyboard.press("ArrowLeft"); await p.keyboard.press("ArrowLeft");
-console.log("سهمين في التوصيل: المختار " + await p.$eval('#picker input:checked', r => r.value) + " والفرع ظاهر " + await p.isVisible(".branch"));
-console.log("reduce: animations شغالة " + await p.evaluate(() => document.getAnimations().length));
-await ctx.close();
-console.log(bad ? bad + " مشكلة" : "كله نضيف");
-await b.close();
-~~~
-
-~~~view 720 720 النسخة العربي (اعمل scroll جوه)
+~~~view 330 460 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متجر الياسمين: ورد طبيعي يوصل في نفس اليوم</title>
-<meta name="description" content="ورد طبيعي من مزارع قريبة، تنسيق باليد، وتوصيل في نفس اليوم. (متجر متخيّل للتدريب)">
-<link rel="alternate" hreflang="ar" href="https://jasmine.example/">
-<link rel="alternate" hreflang="en" href="https://jasmine.example/en/">
-<link rel="icon" href="data:,">
+<title>زراير وشارات بالتوكنز</title>
 <style>
-/* متجر الياسمين (متخيل): نفس الملف للعربي والإنجليزي. كل اتجاه logical، فمفيش [dir] ولا left/right */
-:root {
-  --bg: #ffffff; --soft: #f5f3ff; --ink: #0f172a; --muted: #475569; --line: #cbd5e1;
-  --brand: #4f46e5; --brand-ink: #ffffff; --badge: #be123c; --ok: #166534;
-  --r: 14px; --gutter: clamp(16px, 4vw, 40px);
-  --font: system-ui, "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties;
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --color-white: #fff;
+    --spacing: 0.25rem;
+    --container-3xl: 48rem;
+    --text-sm: 0.875rem;
+    --text-sm--line-height: calc(1.25 / 0.875);
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --radius-lg: 0.5rem;
+    --default-font-family: var(--font-sans);
+    --default-mono-font-family: var(--font-mono);
+    --color-brand: #0f766e;
+    --color-brand-soft: #ccfbf1;
+    --color-brand-ink: #134e4a;
+    --color-ok: #15803d;
+    --color-ok-soft: #dcfce7;
+    --color-ok-ink: #14532d;
+    --color-warn: #b45309;
+    --color-warn-soft: #fef3c7;
+    --color-warn-ink: #78350f;
+    --color-danger: #b91c1c;
+    --color-danger-soft: #fee2e2;
+    --color-danger-ink: #7f1d1d;
+    --color-neutral: #475569;
+    --color-neutral-soft: #f1f5f9;
+    --color-neutral-ink: #1e293b;
+  }
 }
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; font-family: var(--font); line-height: 1.7; color: var(--ink); background: var(--bg); }
-img { max-width: 100%; height: auto; display: block; }
-h1, h2, h3 { line-height: 1.3; margin: 0 0 0.5em; }
-a { color: inherit; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-[id] { scroll-margin-top: 80px; }
-.wrap { max-width: 72rem; margin-inline: auto; padding-inline: var(--gutter); }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.skip { position: absolute; inset-inline-start: 8px; top: 8px; z-index: 3; padding: 8px 14px; background: var(--ink); color: #fff; translate: 0 -200%; }
-.skip:focus { translate: 0 0; }
-
-/* الـ header: لازق فوق */
-.top { position: sticky; top: 0; z-index: 2; background: var(--bg); border-block-end: 1px solid var(--line); }
-.top-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; min-height: 64px; }
-.logo { font-weight: 800; font-size: 1.3rem; text-decoration: none; color: var(--brand); }
-.links { display: flex; flex-wrap: wrap; gap: 0 16px; list-style: none; margin: 0; padding: 0; }
-.links a, .lang { display: inline-block; padding-block: 10px; min-inline-size: 24px; text-decoration: none; }
-.lang { margin-inline-start: auto; font-weight: 700; }
-
-/* الهيرو: 100dvh = الجزء الظاهر فعلًا على الموبايل (100vh أطول منه لما شريط العنوان ظاهر). min-height مش height: المحتوى ميتقصّش */
-.hero { min-height: calc(100dvh - 65px); display: grid; align-content: center; padding-block: 48px; background: var(--soft); }
-.hero h1 { font-size: clamp(2rem, 1.2rem + 4vw, 3.4rem); max-width: 18ch; }
-.hero p { color: var(--muted); max-width: 40rem; font-size: 1.15rem; }
-@media (prefers-reduced-motion: no-preference) {
-  .hero .wrap > * { animation: rise .6s ease-out both; }
-  .hero .wrap > :nth-child(2) { animation-delay: .1s; }
-  .hero .wrap > :nth-child(3) { animation-delay: .2s; }
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring:where(:not(iframe)) {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
 }
-@keyframes rise { from { opacity: 0; translate: 0 12px; } }
-
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 20px; border: 0; border-radius: 999px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; background: var(--brand); color: var(--brand-ink); }
-.btn svg { flex: none; width: 18px; height: 18px; }
-
-section[id] { padding-block: clamp(40px, 7vw, 80px); }
-section[id]:nth-of-type(even) { background: var(--soft); }
-
-/* المنتجات: auto-fit، والشارة في ركن النهاية (يمين في الإنجليزي، شمال في العربي) */
-.products { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); list-style: none; margin: 0; padding: 0; }
-.pcard { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
-.pcard img { border-radius: 10px; }
-.pcard h3 { margin: 0; font-size: 1.05rem; }
-.pcard .price { margin: 0; font-weight: 800; }
-.pcard .btn { margin-block-start: auto; }
-.badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 2px 10px; border-radius: 999px; background: var(--badge); color: #fff; font-size: .85rem; font-weight: 700; }
-
-/* الباقات: على الموبايل عمود والمميزة الأول، وعلى 720 وأكتر ٣ جنب بعض بنفس الطول والزراير على خط واحد */
-.plans { display: grid; gap: 16px; }
-.featured { order: -1; }
-@media (min-width: 720px) {
-  .plans { grid-template-columns: repeat(3, 1fr); }
-  .featured { order: 0; }
+@layer utilities {
+  .mx-auto {
+    margin-inline: auto;
+  }
+  .flex {
+    display: flex;
+  }
+  .max-w-3xl {
+    max-width: var(--container-3xl);
+  }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  .gap-2 {
+    gap: calc(var(--spacing) * 2);
+  }
+  .gap-3 {
+    gap: calc(var(--spacing) * 3);
+  }
+  :where(.space-y-3 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  :where(.space-y-8 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 8) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 8) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  .rounded-full {
+    border-radius: calc(infinity * 1px);
+  }
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-neutral {
+    border-color: var(--color-neutral);
+  }
+  .bg-brand {
+    background-color: var(--color-brand);
+  }
+  .bg-brand-soft {
+    background-color: var(--color-brand-soft);
+  }
+  .bg-danger {
+    background-color: var(--color-danger);
+  }
+  .bg-danger-soft {
+    background-color: var(--color-danger-soft);
+  }
+  .bg-neutral {
+    background-color: var(--color-neutral);
+  }
+  .bg-neutral-soft {
+    background-color: var(--color-neutral-soft);
+  }
+  .bg-ok {
+    background-color: var(--color-ok);
+  }
+  .bg-ok-soft {
+    background-color: var(--color-ok-soft);
+  }
+  .bg-warn {
+    background-color: var(--color-warn);
+  }
+  .bg-warn-soft {
+    background-color: var(--color-warn-soft);
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .px-3 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .px-4 {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+  .py-1 {
+    padding-block: var(--spacing);
+  }
+  .py-2 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+  .text-sm {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .text-brand-ink {
+    color: var(--color-brand-ink);
+  }
+  .text-danger-ink {
+    color: var(--color-danger-ink);
+  }
+  .text-neutral-ink {
+    color: var(--color-neutral-ink);
+  }
+  .text-ok-ink {
+    color: var(--color-ok-ink);
+  }
+  .text-warn-ink {
+    color: var(--color-warn-ink);
+  }
+  .text-white {
+    color: var(--color-white);
+  }
+  .ring-1 {
+    --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .ring-neutral {
+    --tw-ring-color: var(--color-neutral);
+  }
+  @media (hover: hover) {
+    .hover\:bg-brand-ink:hover {
+      background-color: var(--color-brand-ink);
+    }
+    .hover\:bg-danger-ink:hover {
+      background-color: var(--color-danger-ink);
+    }
+    .hover\:bg-neutral-soft:hover {
+      background-color: var(--color-neutral-soft);
+    }
+    .hover\:bg-ok-ink:hover {
+      background-color: var(--color-ok-ink);
+    }
+  }
+  .focus-visible\:outline-3:focus-visible {
+    outline-style: var(--tw-outline-style);
+    outline-width: 3px;
+  }
+  .focus-visible\:outline-offset-2:focus-visible {
+    outline-offset: 2px;
+  }
+  .focus-visible\:outline-warn:focus-visible {
+    outline-color: var(--color-warn);
+  }
 }
-.plan { display: flex; flex-direction: column; gap: 8px; padding: 24px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
-.plan ul { margin: 0; padding-inline-start: 1.2rem; }
-.plan .amount { margin: 0; font-size: 1.8rem; font-weight: 800; }
-.plan-btn { margin-block-start: auto; }
-.featured { background: #0f172a; color: #ffffff; border-color: #0f172a; }
-.featured .plan-btn { background: #ffffff; color: #0f172a; }
-
-/* التوصيل: الكارت المختار عليه إطار بـ :has()، والفرع بيظهر مع الاستلام بس، من غير JS */
-#picker { display: grid; gap: 12px; border: 0; padding: 0; margin: 0; }
-#picker legend { font-weight: 700; margin-block-end: 8px; }
-.opt { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 2px solid var(--line); border-radius: var(--r); background: var(--bg); cursor: pointer; }
-.opt input { flex: none; inline-size: 24px; block-size: 24px;   /* WCAG 2.2: target 24×24 at least */ margin: 0; accent-color: var(--brand); }
-.opt:has(:checked) { border-color: #4f46e5; }
-.opt:has(:focus-visible) { outline: 3px solid #b45309; outline-offset: 2px; }
-.branch { display: none; gap: 6px; }
-#picker:has([value="pickup"]:checked) .branch { display: grid; }
-select, input:not([type=radio], [type=checkbox]) { font: inherit; min-height: 44px; padding: 8px 12px; border: 1px solid #64748b; border-radius: 8px; background: var(--bg); color: var(--ink); }
-
-/* الدخول: نصين على 900 وأكتر (الصورة والفورم)، والصورة بتستخبى على الأصغر */
-#login .wrap { display: grid; align-items: center; gap: 24px; }
-.art { display: none; }
-@media (min-width: 900px) {
-  #login .wrap { grid-template-columns: 1fr 1fr; gap: 0; padding-inline: 0; max-width: none; }   /* the picture = exactly half the section */
-  .art { display: block; width: 100%; }   /* fill its half, not stop at the file width (600) */
+@property --tw-space-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
 }
-.login-form { display: grid; gap: 12px; width: 100%; max-width: 400px; justify-self: center; padding: 0; }
-.login-form label { font-weight: 700; }
-.login-form input, .login-form button { width: 100%; }
-
-/* التنبيه: popover = top layer، فوق الهيدر اللازق مهما كان z-index بتاعه */
-.alert { inset: auto; inset-block-end: 16px; inset-inline-end: 16px; margin: 0; max-width: min(24rem, 100% - 32px); padding: 14px 18px; border: 0; border-radius: var(--r); background: var(--ok); color: #fff; font-weight: 700; box-shadow: 0 10px 30px -10px rgb(0 0 0 / .4); }
-.alert button { margin-inline-start: 12px; padding: 2px 10px; min-height: 32px; border: 1px solid #fff; border-radius: 999px; background: transparent; color: #fff; font: inherit; cursor: pointer; }
-@media (prefers-reduced-motion: no-preference) {
-  .alert { transition: opacity .2s, display .2s allow-discrete, overlay .2s allow-discrete; }
-  .alert:not(:popover-open) { opacity: 0; }
-  @starting-style { .alert:popover-open { opacity: 0; } }
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
 }
-
-/* جدول الطلبات: بيعمل scroll جوه حاويته، مش الصفحة */
-.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 10px 14px; text-align: start; white-space: nowrap; border-block-end: 1px solid var(--line); }
-th { background: #eef2ff; }
-
-.foot { padding-block: 32px; border-block-start: 1px solid var(--line); color: var(--muted); }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: block))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-space-y-reverse: 0;
+      --tw-border-style: solid;
+      --tw-font-weight: initial;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-outline-style: solid;
+    }
+  }
+}
 </style>
 </head>
-<body>
-<a class="skip" href="#main">اتخطّى للمحتوى</a>
-<header class="top">
-  <div class="wrap top-row">
-    <a class="logo" href="#main" aria-label="الياسمين، الرئيسية">الياسمين</a>
-    <nav aria-label="الرئيسية"><ul class="links"><li><a href="#products">المنتجات</a></li><li><a href="#plans">الباقات</a></li><li><a href="#delivery">التوصيل</a></li><li><a href="#login">الدخول</a></li><li><a href="#orders">الطلبات</a></li></ul></nav>
-    <a class="lang" href="en/" hreflang="en" lang="en">English</a>
+<body class="bg-neutral-soft font-sans text-neutral-ink">
+<main class="mx-auto max-w-3xl space-y-8 p-4">
+  <h1 class="text-2xl font-bold">زراير وشارات «مكتب الشحن»</h1>
+
+  <section class="space-y-3">
+    <h2 class="text-lg font-semibold">الزراير</h2>
+    <div class="flex flex-wrap gap-3">
+      <button type="button" class="rounded-lg bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-ink focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">اشحن طرد</button>
+      <button type="button" class="rounded-lg bg-ok px-4 py-2 font-semibold text-white hover:bg-ok-ink focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">أكّد الاستلام</button>
+      <button type="button" class="rounded-lg bg-danger px-4 py-2 font-semibold text-white hover:bg-danger-ink focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">ألغي الشحنة</button>
+      <button type="button" class="rounded-lg border border-neutral bg-white px-4 py-2 font-semibold text-neutral-ink hover:bg-neutral-soft focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">رجوع</button>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-lg font-semibold">حالة الشحنة</h2>
+    <ul class="flex flex-wrap gap-2">
+      <li class="rounded-full bg-ok-soft px-3 py-1 text-sm font-semibold text-ok-ink">اتسلّمت</li>
+      <li class="rounded-full bg-warn-soft px-3 py-1 text-sm font-semibold text-warn-ink">في الطريق</li>
+      <li class="rounded-full bg-danger-soft px-3 py-1 text-sm font-semibold text-danger-ink">متأخرة</li>
+      <li class="rounded-full bg-neutral-soft px-3 py-1 text-sm font-semibold text-neutral-ink ring-1 ring-neutral">مستنية</li>
+      <li class="rounded-full bg-brand-soft px-3 py-1 text-sm font-semibold text-brand-ink">جديدة</li>
+    </ul>
+    <ul class="flex flex-wrap gap-2">
+      <li class="rounded-full bg-ok px-3 py-1 text-sm font-semibold text-white">اتسلّمت</li>
+      <li class="rounded-full bg-warn px-3 py-1 text-sm font-semibold text-white">في الطريق</li>
+      <li class="rounded-full bg-danger px-3 py-1 text-sm font-semibold text-white">متأخرة</li>
+      <li class="rounded-full bg-neutral px-3 py-1 text-sm font-semibold text-white">مستنية</li>
+      <li class="rounded-full bg-brand px-3 py-1 text-sm font-semibold text-white">جديدة</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٤ زراير (اشحن طرد أخضر مزرق، وأكّد الاستلام أخضر، وألغي الشحنة أحمر، ورجوع أبيض بحد)، وتحتهم سطرين شارات بالـ ٥ حالات: سطر فاتح كلامه غامق، وسطر مليان كلامه أبيض.
+
+**[[@theme]] بيعمل utilities:** كل متغير اسمه [[--color-...]] بيبقى لون Tailwind بيعرفه. [[--color-ok-soft]] بيعمل [[bg-ok-soft]] و [[text-ok-soft]] و [[border-ok-soft]] وكل حاجة بتاخد لون. واتقاس في [[out.css]]: [[.bg-ok-soft { background-color: var(--color-ok-soft) }]]. يعني الـ utility بتشاور على المتغير، مش نسخة من اللون.
+
+**الأسماء بالمعنى:** [[ok]] و [[warn]] و [[danger]] و [[neutral]] و [[brand]]، ولكل واحد ٣: اللون نفسه، و [[-soft]] (خلفية فاتحة)، و [[-ink]] (كلام غامق يتقري على الـ soft). مش [[green-700]]: لو البراند غيّر «النجاح» لأزرق، الاسم [[ok]] لسه صح، و [[green]] بقى كدب.
+
+**مفيش ولا [[#hex]] ولا [[[...]]] في الـ HTML:** اتعدّت بـ grep: 0. كل لون من التوكنز. فتغيير سطر في [[@theme]] بيغيّر كل حاجة بتستخدمه: اتقاس بتغيير [[--color-ok]] لأزرق في الصفحة، والشارة والزرار الاتنين اتغيّروا.
+
+**الكلام مقري:** كل [[-ink]] على [[-soft]] بتاعه، والأبيض على اللون المليان. axe: 0 مشاكل تباين.
+
+**الـ focus:** [[focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn]]: حلقة بلون التحذير لما الكيبورد يوصل للزرار بس، مش مع الماوس.
+
+~~~text الناتج (Chrome 157)
+npx @tailwindcss/cli -i in.css -o out.css
+≈ tailwindcss v4.3.4
+Done in 42ms
+
+out.css: 11,711 بايت، فيه 40 متغير --color-*
+grep على index.html لـ #hex أو [ : 0
+bg-ok قبل: rgb(21, 128, 61)   بعد --color-ok: #0369a1 ← rgb(3, 105, 161) (الشارة والزرار)
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'صغير', dir: "tw-course-card", t: R`كارت كورس بيتفاعل كله`, what: R`كارت لينك عليه [[group]]: العنوان يتلوّن، والسهم يتحرك (بـ [[rtl:]] عشان يتعكس)، والصورة تكبر جوه حدودها بـ [[overflow-hidden]]. من درس [[group و peer]].`, done: R`الحركة بتحصل بالماوس وبالـ Tab (زوّد [[group-focus-visible:]])، والسهم بيتحرك ناحية القراية في العربي والإنجليزي، ومع reduce الحركة بتقف بـ [[motion-safe:]].`, sol: R`~~~bash الترمنال
+npm i -D tailwindcss@4.3.4 @tailwindcss/cli@4.3.4
+npx @tailwindcss/cli -i in.css -o out.css
+~~~
+
+~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #6d28d9;
+  --color-brand-ink: #4c1d95;
+  --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كورسات أكاديمية سطر</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="bg-slate-100 font-sans text-slate-900">
+<main class="mx-auto grid max-w-4xl gap-4 p-4 sm:grid-cols-2">
+  <h1 class="text-2xl font-bold sm:col-span-2">كورسات الشهر ده</h1>
+
+  <!-- the whole card is ONE link with "group": everything inside reacts when the card is hovered or focused -->
+  <a href="#css" class="group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-brand">
+    <div class="overflow-hidden">
+      <img src="img/course.webp" alt="" width="800" height="450" class="aspect-video w-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-105 motion-safe:group-focus-visible:scale-105">
+    </div>
+    <div class="space-y-2 p-4">
+      <h2 class="text-lg font-bold transition-colors group-hover:text-brand group-focus-visible:text-brand">CSS من الصفر للمشاريع</h2>
+      <p class="text-slate-600">٢٤ درس و ٦ مشاريع بحلولها.</p>
+      <p class="flex items-center gap-2 font-semibold text-brand-ink">
+        ابدأ الكورس
+        <span aria-hidden="true" class="inline-block motion-safe:transition-transform rtl:rotate-180 motion-safe:group-hover:translate-x-1 motion-safe:group-focus-visible:translate-x-1 motion-safe:rtl:group-hover:-translate-x-1 motion-safe:rtl:group-focus-visible:-translate-x-1">→</span>
+      </p>
+    </div>
+  </a>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 420 400 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كورسات أكاديمية سطر</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties;
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --color-slate-100: oklch(96.8% 0.007 247.896);
+    --color-slate-200: oklch(92.9% 0.013 255.508);
+    --color-slate-600: oklch(44.6% 0.043 257.281);
+    --color-slate-900: oklch(20.8% 0.042 265.755);
+    --color-white: #fff;
+    --spacing: 0.25rem;
+    --container-4xl: 56rem;
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --radius-2xl: 1rem;
+    --aspect-video: 16 / 9;
+    --default-transition-duration: 150ms;
+    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    --default-font-family: var(--font-sans);
+    --default-mono-font-family: var(--font-mono);
+    --color-brand: #6d28d9;
+    --color-brand-ink: #4c1d95;
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring:where(:not(iframe)) {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .mx-auto {
+    margin-inline: auto;
+  }
+  .block {
+    display: block;
+  }
+  .flex {
+    display: flex;
+  }
+  .grid {
+    display: grid;
+  }
+  .inline-block {
+    display: inline-block;
+  }
+  .aspect-video {
+    aspect-ratio: var(--aspect-video);
+  }
+  .w-full {
+    width: 100%;
+  }
+  .max-w-4xl {
+    max-width: var(--container-4xl);
+  }
+  .items-center {
+    align-items: center;
+  }
+  .gap-2 {
+    gap: calc(var(--spacing) * 2);
+  }
+  .gap-4 {
+    gap: calc(var(--spacing) * 4);
+  }
+  :where(.space-y-2 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  .overflow-hidden {
+    overflow: hidden;
+  }
+  .rounded-2xl {
+    border-radius: var(--radius-2xl);
+  }
+  .bg-slate-100 {
+    background-color: var(--color-slate-100);
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .object-cover {
+    object-fit: cover;
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .text-brand-ink {
+    color: var(--color-brand-ink);
+  }
+  .text-slate-600 {
+    color: var(--color-slate-600);
+  }
+  .text-slate-900 {
+    color: var(--color-slate-900);
+  }
+  .shadow-sm {
+    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .ring-1 {
+    --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .ring-slate-200 {
+    --tw-ring-color: var(--color-slate-200);
+  }
+  .transition-colors {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  @media (hover: hover) {
+    :is(:where(.group):hover .group-hover\:text-brand) {
+      color: var(--color-brand);
+    }
+  }
+  :is(:where(.group):focus-visible .group-focus-visible\:text-brand) {
+    color: var(--color-brand);
+  }
+  .focus-visible\:outline-3:focus-visible {
+    outline-style: var(--tw-outline-style);
+    outline-width: 3px;
+  }
+  .focus-visible\:outline-offset-4:focus-visible {
+    outline-offset: 4px;
+  }
+  .focus-visible\:outline-brand:focus-visible {
+    outline-color: var(--color-brand);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .motion-safe\:transition-transform {
+      transition-property: transform, translate, scale, rotate;
+      transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+      transition-duration: var(--tw-duration, var(--default-transition-duration));
+    }
+    .motion-safe\:duration-300 {
+      --tw-duration: 300ms;
+      transition-duration: 300ms;
+    }
+    @media (hover: hover) {
+      :is(:where(.group):hover .motion-safe\:group-hover\:translate-x-1) {
+        --tw-translate-x: var(--spacing);
+        translate: var(--tw-translate-x) var(--tw-translate-y);
+      }
+      :is(:where(.group):hover .motion-safe\:group-hover\:scale-105) {
+        --tw-scale-x: 105%;
+        --tw-scale-y: 105%;
+        --tw-scale-z: 105%;
+        scale: var(--tw-scale-x) var(--tw-scale-y);
+      }
+    }
+    :is(:where(.group):focus-visible .motion-safe\:group-focus-visible\:translate-x-1) {
+      --tw-translate-x: var(--spacing);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+    :is(:where(.group):focus-visible .motion-safe\:group-focus-visible\:scale-105) {
+      --tw-scale-x: 105%;
+      --tw-scale-y: 105%;
+      --tw-scale-z: 105%;
+      scale: var(--tw-scale-x) var(--tw-scale-y);
+    }
+  }
+  @media (width >= 40rem) {
+    .sm\:col-span-2 {
+      grid-column: span 2 / span 2;
+    }
+    .sm\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .rtl\:rotate-180:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+    rotate: 180deg;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    @media (hover: hover) {
+      :is(:where(.group):hover .motion-safe\:rtl\:group-hover\:-translate-x-1:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *)) {
+        --tw-translate-x: calc(var(--spacing) * -1);
+        translate: var(--tw-translate-x) var(--tw-translate-y);
+      }
+    }
+    :is(:where(.group):focus-visible .motion-safe\:rtl\:group-focus-visible\:-translate-x-1:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *)) {
+      --tw-translate-x: calc(var(--spacing) * -1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+}
+@property --tw-space-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-duration {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-translate-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-scale-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+@property --tw-scale-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+@property --tw-scale-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: block))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-space-y-reverse: 0;
+      --tw-font-weight: initial;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-outline-style: solid;
+      --tw-duration: initial;
+      --tw-translate-x: 0;
+      --tw-translate-y: 0;
+      --tw-translate-z: 0;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      --tw-scale-z: 1;
+    }
+  }
+}
+</style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-900">
+<main class="mx-auto grid max-w-4xl gap-4 p-4 sm:grid-cols-2">
+  <h1 class="text-2xl font-bold sm:col-span-2">كورسات الشهر ده</h1>
+
+  <!-- the whole card is ONE link with "group": everything inside reacts when the card is hovered or focused -->
+  <a href="#css" class="group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-brand">
+    <div class="overflow-hidden">
+      <img src="data:image/webp;base64,UklGRpBBAABXRUJQVlA4IIRBAAAwJwGdASogA8IBPnk8mEiko6KhKFQJwJAPCU3fhRL9CARQwRup0JFiv+F/sH7x+XV5r139+/I34Dbf/xf8F5yvD7t3zTvLf1f9Ie0T/Rf93/S/4P4JfqX2Av6D/O/17/2HwQ/437T+5n/C+gT+yf6n90//r8MH/B/Zf///Dj+4eoB/Yf81////t7zn/M////0+DH0A/556LX/a/dv///K7/cf+z+8///+QX+/f6z////zt/elH6N/z39SP8r/TP+R9aPpf7T/aP65/Y/1R7P72bltflH5Q9/d9ZanHyn6Kfof8l+6/8j9vP4v/KP3C/hvsD/ZeIp+Zfwn/KfbN9HjQ3MC95vgn+W/Yv9k/l59F/g32AfAviAfoV/x/+561/4P/Tf3D+zf///7+iB6gH8C/xH6W/3n4Z/0//0/3D/Efuz7PvzT/S/vx8DH86/s3/6/xX/R7mPoAC7D2Ay2Ntzk5vGbc5Obxm3OTm8Ztzk5vGbc5QP/kwnrValOkwnrValOkwnrValOkwnrValOkwnrValOkwnrValOkwnrVZ5nCsnlwrJ5cKyeXCsnlwrJ5cKyeXCsnlwrJ5cKyeXCsUrhWTy4Vk8uFZPLhWTy4Vk8uFZPLhWTy4Vk8uFZPLhWKVwrJ5cKyeXCsnlwrJ5cKyeXCsnlwrJ5cKyeXCsnlwrFK4Vk8uFZPLhWTy4Vk8tJSG9QQW3OCnX1qu2agK69L+D7twf2owKtN2Q7BRBuUKY4W0WMZCUPayK/hNTR6s1aM1Yq6M2PBcsVaEuK/csVaEuK/b9jCJeuEj26airePLmoH9vY4UnRNUZyQP3AlVLBbe7gNF8u3gGV1BHIiHhC3l3JQPnXFDGLlk/4zbnJzeM25yc1Ym950l+f7TKTr/Mn5YH007tNXexzmonucuaw6USDDLC7mZe/0BOpf0wlmJny9nT9/FnzDNQjbc5Obxm3OTm8ZmrW5xW87zbtop2C/rWd0Nq2LhQqVVmE4Uvp4omw+oWatV8mTg+ZnXbkwOya8Cfl9hIlfukSvdAtBxD7HFJNMTNbQjPohJUdzrCsWGphzi9GPGxnYUaqHFG0rCII/zaWOkNkQUvAAtBLuOZsbg8Cez9yiM/qQVNLwZ2kIC+GuOYMX2m1cWvD8u5YB/KwjRwfmkFoOIfY4pJpiZraEaM/F7/LWWFLYWgoydCF5WWjPjwnIRrKBnhLgptQ/AL3FxfjHvnbiHuadkAZ3cwqGmT8eeUeNs3XYh2Fu3x81fRAuuMIsuZtr1uUicnN4zbnJzeM2nfyPbFeqIROppTAfRmnk6wxP/iMtojYGgwPU/IClap6cNcYbuuVL1QkYjqpsMkFNVKug+YLgvHCCeF33AGUlGBkGZ91tZLJnO/3wKlnaJ+M2ifjNon4zZvC617G+dbDMRj1kQpARCrf8V7I5+QFK1QqYEs7uijEpyKfBrrM8Rw0+feXDFs2vwJrcR73xc7lXM5Li+HS6KgBk9uWVOdwkpHkuLrZdobzaf8Ztyf90l0SBm3pa/nA/362WCCiTCXw2ug4AU3vm/m612cYh+P082SR7Ws0gAmSznsH82h8an62XOEPoRumYU41MVs+Pl4vVWtFN1auhi31HlqtSnSYT1qtSnSH8Cu+2wMlkHBLy8IsDtSJYTkmhD5IE/0HQl/Eu5+UYZS8X7XffX7IgQP55ZqpBd4qwCeJH0ljs3k4Jemv0eQR5Wqi/Nyd0iEGEBwECsxfZ7EqSS0JcV+5Yq0JcV+4E55wPQuMCJPARgGJnmDf5/CRyIL6uLfD6wpLbN39ElIweCEBZnei+mKWxc4RZ6UU6W3OJmngQvEYtTN7dKoVR1tZsQARqT2phpwzH/fPUpInBhAWJaXx1rxYuwSkSwaP6re6z9BMQDI+uU+3dawMR09oRuDjqv7N5WcgjwSiuQHaxeCHnwNrW0Z+A10nohI9JP25QK2x/8Cu5vTXcov1J/qEnTboIdOdokwX61uHWbBgEWT36N0L5e7NPOJqGRq0URVPUkroAmWE732WiJraA8B91cjBlICN7jrvXVR7DlJG1Q0c5sjn75Crv1/ovXTAIwLcplcjblIYHp/tXj3UZYLOLQ1xJ7Fz+qgcepIbLCk6YH1b0OEpF44+5k3gaAXQ12iW3i6PJypAjUWwgwY9DCq4h3qgJwcWvpjo4h1AtWupCBF7S/uH2gVIh8hbv0klqXzGDsa6GFFnnwUPuYQtkgzBpc5CAflgbDbhbZGh3bPu4fO4UnCU7QCLw7VZisk7qOZtP5g5VlVUCXkbKiArk6mnpWNcyk6o7nmOabt0bIACKd2rxwL/qbbLnN1hKwJxabKxIV4IkV5AmsFLCQSkD3lLQ3Eh5fo59lD0T5GWVqrS9cesdEjEpm6YVLAaie2cfThTiNrAV/Q0pjfXUIZTbYvim9QN7QNvvI22ptrBTeV82Z/3LuZiSxUM+usD14yIYDLvVZhp8MESOZCHE/Wk4WvgB6P+S2zO1Yk5+w6uKC5y35zQ6ZDWvR7u/oNe1Gp4+fw8h0SZCd6k73tzjM5LWfz4Jr/F7rl/uMuMzPDBfGX5sJZAJk7+WZaRp+Ttk3VKgXGQ0FeRSDsjqURYhoHcI0subrnbJnvREOuGKrXD75L7gyih6wpWTQZ2BpzREOeEuGE4sMNOi5ri8axG5x8bl7L0GCzdiAGGJlmXUvMoTGVImKR98fkfho2oz04sunTF8pOMNGkD/2JQ0K5UBAu0CWKVONQJBy+VqRF/OfRmvsoQfHmjczztZhoPEgvd1rAjbhKQeAoYB/LvuFY5A3KIfMYQ62DdrOIbACKl4HoCDfTjM/jYQWeAwar9aZVD7T/jtLI60z+Zj360uBXCpRI+zMDDqnoYElycDCsVioQwSdUZyKrRO9teF8qXx2waflnLH93F6DEo3ngpjbc5Obxm3OTm8ZuhJSWVlsc4asGYrGL0JyOJw0nAVapxdZtzgLE19xEM2n/Gbc5Obxm3OTm8ZtzgQk6K0bbhSiWgUtjbc5KCtxUkYgCnMy2Ntzk5u61rhHz2rsy2Ntzkp9/rqZxHZ6s/20t/IQ6CzhNjxm3OTjPhkpjlP9TKYVz+4dLs6yWxtucAKFPKU5uhOcnN4zbnKV4M6jtWtGzQBogyhH9pVlsbbnJzeUyPNp/xm3OTmoAAA/vzyZdVE1Xiip2MVckwCDdgAAAAAAAAAAAAD+uaVbgA5LRESIGSgYYOLFg0IMoGGDixYNCDKBhg4sWDQgygYYOLFg0IMoGGDjSuI1nmI0xWk6JrNGW88xGGK0nRNZoy3nmIwxWk6JrNGW88xGGK0nRNZoy3nmIwyJ2oIA8xNjDGXNMxCVDiXXuaZiEqHEuvc0zEJUOJde5pmISocS69zTMQlQ4l17mmYhhgpQAAAAAAAAAAAAAAAADi9NIs1ezXvB4jUVPkwnN7vUsLM44Vs6ETCc3u9SwszjhWzoRMJze71LCzOOFbOhEwnN7vUsLM0XB9oq32PL3nsA87LNiUIJlfq3/OXM1dyT6iDDoAmgcUFw2e8LcR7P/XV06pEDV3biMPtHWUJSfVN6GHgRFU9Mz0mKzHR7LsQLvwvgBLGD3SvBFvsEIpPwNlSXqH6E+h/IQJGkuj6qvTQE0iYrLuAADL1QvIcloN64TXDIJ8PKuA3GDtoYyX0RfvlNQfuLlca6EQBhj92CD45splXqIVjimEGdbo7kQz4JvrKAWJRK1SCVy2JQKa+kDWVr6QNZWz+G41CeVHnVqBvrtIjDCVDUn9Ts1mGvxUhksWmWqwFHGAxqwtuwqkJE692EGlOwA0lJjelf6+5XwO452cQAAWc8iGbHVh5+l7CZDIFK2DyQA9w9UMRdDxKcahK0nRK5aH4wfk05coS2OX+7JxKCbZvyFcPMKb04z5Qgbzs3C0nz6zPl7ublJQxiReUqVkC8BU/Vxc8jPP50TvCKugqgs2BDTJO4da8CuJwkVSamcVsa51HpEkW4oI2hfhVGCYZI/mPdEX2Ipgsp3hH6LogrAxlBXAPmHRAITFFIEKpfoMzWfqkNgfz8dDaX8L25Mclgq3Iu2XgJLZwe4xqumaIYMK1ypljjhlceeFbt71sGa7aS4a/cDMBSwhEwHufYf+/1fkkXTn1CPtD6lYC7RkHwTJa1buey0mwCTu3MZUZV33a3xC2uwnkiwh/9KQdFEwrUg8vng8tfygaCHCsJDuqSc9kyxlqlky9gZUZPQnpuDynt29HRy+ocCNVGFASRkmNRrzjDWqFGazNZzepIRh232D8LXhe/fHIkJNHCko+bvLVl8sRlAWGFNPj1WJyUDH1zhH44AAO6QlNEPwOKwoMbE1tpRXkPF+wUlFMqpXXTYWYaYsekr5OscLZ5vropRR3KVNrRXE1Q+HhK4ORbzahgcsMIuh7pPnns27i/kK4eYU3pxnyXFllvr7UHsisitxS6fY/3yN/gpoijabOOGljjBhN1Z+tkBHLK+JWclDZtcXnOLOem9QtvDE551ldyQDh8lHC/d3YjRKYTDS17Iw7r5PuNsdjDOADYDpt+YzauuCIJ01nC/aqwN3eYI/Nv3JpXwpnS9oMTZuZLkd+XiEWvrVMgmgCeMXUq6zPpfd73lObtdiOPP+OAiTKT6jnI4WYy4T7ZX/Nyw9Dm9oPlEYhFU4I83Bo7rt2IVu9qElMySKlAZk0lWYGzzPhTOmg7dBnmOn1AwoglHhyCur+Pe0DrV65pNm4y/r4JjwMBWHQAih62pDFTJzPXO7WgGeCAREi0Cb2lHoPTU3KfNIbLed5U1b4VNDlRkr0Jq0X50WOqS9SgJOdYsbMUjM75/8JyhQJnyD+oVtInvkjk9B1rIwMgULOt2Qfs4T+o5Rmvtw2ykNiT2Pw7kYzor7bBTp/nU3qWFUb+zeJGsMmwCpB33b/iy5DtueAfKAAAAAACYA8rPl5vUf8VGRvAyDl88omQf3G7XkKoiC35aI/XoMgMoqAHnaNH3CEjzYeLsy69oLWlcynWysmJnCHMJJdm/MRpUCMDdlHWrtlQLDE7hbsHUAQK7Yo3kFEf1cW8bwCVECmP7I+rcej/89mOTDspj+abslkHlRZLIUOnDDqQw0oz1E7kS9neWJmPREC69QHX5eSDM4swWk5GCUw8etcmmQVJ9alhaRFVuU5RSDmq74ge/OblJHaJF5Sod3DQuBYKdAbHGDCbqz9bICOWV8Ss5KGza4vOcWc9N6hbeGK42O5oTWSh+uI5RovkWp+/NGjrcSXGqs/WyAjllfErREb5cx5h/J5acLX63GaXPq+ZWjOoPcCHqctwiX7vymimxVT0oxSAPGvjKlSWNwN2HdRhrCKVnoBQYQFbCZjX37GZIaXi6/YRTmBShR696q5jzjgIkyZ9iiO8xWR7fD9PZtRoryTRrrzkG9AUuNboKrhUev1VHllQQpdHkqwvfEhpPqtXs8JvdRYfDjchIf4W8IewP4E59R5CMNNmLRmvtw2zkXF6aVPA31fMm3df4Qh4YS20ckz4xC7U1RBGa+3DbfwKYsdDj4FRbSaC4dggvrsmp0/zqb1LCp58xk2lGqIQNLCfoJg6OtEPEWrnX1HBaHNWa7CJW92gTURUhs1ZrsIlb3aBNRFSGzVmuwiVvdoE1EcB937vq+6F+Surl5S1MHQ+nJRlBUjtxEMlF0XLIWQH9RjqOqCQIPyeP8GmzOkOLt0tRYxa/drFWTSZXCIqpZNKm+//iNF8PK0ZbyncMGqeZ+pCa6/yQ1ptQEitjZYl6ELmNwwBWrkX+YtXIvbr9Gg//7RQ4V3uZaQE21+zODg4+065HYxanLNH/2lu+daUqGinQJfbUh0l3rCJ2YJh/7A7pzH2FrErmZ05l4PDmKb6GcKwyzne9h9Cn9XE37lqNF+xqQsO8fCQsomFZCud9KbpzmCKh8y2s0DBumbbbzvjLH0zKjHOHQlHxVJbXkZHJKTugebA1lVCnlQa4MjoMSIrN8tLhNmZ2/lSLXi9Ty5B4Ndqvn3Pq0m5dGxl7xHHBnDSqH9+/X72wbP/Z9V+chsqDml615AF0q9vvIvPW8s3U+WoO+J93BMw8VkJ0ivPKtJ2Un3L0s0G/2toSMi5360llVY8VN+xQy2sdA+BTFEVFvKkWuqQ0oyh5R9ZSBI3+QgPPMzJsQRUzHXnH7MAadYRDyrvll9kqt3WC4RiNDOqwnxBuS9P2hTFCMnIfPm6sjUc1ThDsFcHjLw8ZPLw62bdZtIv8EnoXoM6Uz7ZlqftwmHObK6Ss7vVmjaCKHSBO8EdDNL/K00Mf43MoseWoKkK/TKFzfT7gmPnpSzHsBSw894Uhn9ueUJ4a3QVXCo8qHFGpMqbco9qFlslwoGA7GxWHxm4WywhODodGjS7pJnyyFnqDl3BWZsz0hAA5t6LeE0WVPPq2npw0gfR+aGFFnTbQzBUqYCercSw8WysX2TOHCfigSPz4lpnzLvqkmAxHgIFf+9+j0H8AEtaAUvH5CAZZLLKUoyuQf9twfuLdBjhi76pJgMR0twQnCcf8uQom4PdnKgrwq+OVeMrzGPa2LTXggAtlmd/Dt0TYgX1eoyB+30oVDR51V3Ym+KL0Ecok+p6a4AbYTxr8m4AAAAAAFx8G3aidRjCt5Nv8jqxhaxnLd+q7vODaCFDgbzMsyoL/Xqbs+0Q7U3nCdbCvMv7lBPDWEUu0V4JWd3qzNqr8/JDrwtM1zgiICAud7AMe5Uq+gec6IXEfAsT95qMgO9hoFhTokSkrHLfSFgzNVMuGXQ7W7wGaRxAgzZTyGWJumwCysF44uAnz+JyFu3abcK7Ov3xs0rhlbACoVNvmJnXhZMGCDsaGiPsSMl/PGg4kKq9kBgESzt5SrAN9SmRFFSbjJ5jEWawwkLv9+z3tNF1EslIDWy8CEQBkc7rUSpv2PZK4xeEupTbUP6ZpZSeauO050gspVWXnPdCq6PT7rPilRnwD8iKWeX9ExtjnDoSj4qmELB/axxX+XAflXdLDb/L08SVS6Z+IKYU6ENIPNrrJahHt/NrYEjbkWQA2E/cZrQcl62wCVYnmwtQobNri85xZ6wWJQVRAuMqW1hueThJ3vJOWcFdldsSu/wMrD46VN/kIGYjXVP6fus9dsveZjl9mrbbNp1sZanau55d/P/OXz9OuZcRxtbmxSNtOAez23bsJDZqWNs3gM5qzj02Beq4JnJrXIfPm4f78Bn3/49JEv6u0KZeTTto5qsO9vWc1MO76yBMMhX6gn4hB1ijFMg7QCC9ltF00XK3lNSLh8/aZIe3lqg55BXOjS2GAiMeYVVT4FvQUOD7efUosW+qKLW8jPOM3WKXJpfMa3cNc3e0o7T/D83Vpz1l+idvFZJr2GoBWbSJ75I5PQdeE+yXitqpUzJc9G79X0r96DnDOVBXhWYUzjExSKmwZs8SVtbIz6NBQ55Wp5GNsJhqlkzHkKg0p5LX/+1bPBPhlBGt8s+MKm0LNqyL6ZzVT2pHfE7pgGL9MHVQp5UN+a4dzfL3QX8SqLTgU7Hw7T4Fp33Fdo3lBPe+q4vRcmCO3VhybSjnaDDhNW2fk/KV5A4xyhCF1fSK6hoFRLilDQKiXFKGgVEuKdUvfHhhjSbqNlbFMOAHj2/KHsiHiOU0LNp0AzJjRrvD9Bmx4I/k5537JumFSmwlZk/6M6baWBWKrvShDdnSa5mapoqmO6cCik1FvFuGSkLh/tsLG8A8lM+JcgsvyKWmxfqN6X6hrnMd8eu4WIUkS0RlhEwzi5+6E3QGvRRs5i3xut+L2I3EIAteEQxPkO4/+PBJTfqbHlAc+bdTVvpynfV6D3hLdb4MPkMp8g6QUDh6YTT+s6+/P5qSDaqWkZw31JqU+NEwXs5psS255KzR3d8d//oE8lER9g/TbyU0zPsL+cvvZuvS098S1hhIOggaqfwCerQd4N9Hyee+ATwmba9RAhoJL1A/kFcSmJL0kuZdoVzvpTdOdYQcQh75f5pvJnDEFhzglx17pMUNKjP/A+n1TGJE4mhB+zhP6od14VNZPmvIr+/d4u6WG3+Xp4kql03lgB40g3+Nt60C/id8tYyEPDlC04MEt+QiYI/0lsoLN6eeArrt6pnW4PMZnkqEiMSSbgnZlpcJs66MpDUonCP8cj/WhRv0oD0p95+DIOaJVe4r42bAOtjLU7V3PKeYkFSjP6BpPocpzD7Pt+meVQkaArdR5AF0q9vvIomf7540n0Px6vYSO4w/k8tOFr9bjEmxbLQWtea63esSyEQj10XCWbi14PhaggZZKiBwbVh8ZuFssITg6HRo0u6SZ8sgtNwn5Iq/PHvVRjVmXlBZLKdUVnYjbLcqCQewoC2LxT6BNh5a4BKS0SYXInxows2lN6t7FoSR825i9MVyxAdS+5Oix1SXqT/lWY7zsTcIfhuT3xJ1OrmSOAGeJyf8ZxQvoroEfimyW3XCzK5ssrz4oW88JJMhKoK9Ed6X35ETzM/mvqrKWgwwePtpfqWpseLkbeWT0SnDUe9jIrSTwFVFiW5cKJtikomghgOwMSEpFPTeDP+lpPTaVPY40WiJ2XdA2d2x/0sPxGt7ie/SDDBmVwlNkvFbVj4RUr37icOfaG8lZ88MB2hLDlxsgId/EjZy2lb2uowh3zM3D1uik2v4/ky4mgNr+2fI8YKRr4o9AmR8WxTSN3Z5uaSxFqXCZdqXCZdqXCuMtC2ZNYxuHnFddc5tKGL6vZ9pEvx4JKb9TYy/s81D3JQnqqIL/2Nwuank6DJH9b6hU55gLnetPKA7L3daZcKGbE65+WK/pIDvYZvz9SNHnjHtJEktdMZhISZwC1S5AdmpAUFzo+R8hXCY9uqtga7eQBXdJf0FICIj9slFNIWC4dBfDIURKYcK4pX7/6BPJREfXbyBjrHq+HHE3vFf+cOQ90S8usiTzVx2nOkFpD7cRKQeqZWRILzhaJthlZzgyUTiw5s359Iot7wqzR7BoOQV52WtrS/+BQCqsRwh5VMX+oUuTZI9FSB+Vd0sNv8vTxJVLpnlIHEH3J/AL0sTZX4N5FP2n4DT5vN1AY/90LnfrSWQeVFktrwWvUzTQKW18e65uMN9AJ6Gi4Bxgz4qkGEZ3Rys8jNyn34GP+2jnRAAy3D/vvl6Ns56Orw7R4a38oVpYy92URZI3WuQvQfSJEZ881N3UTOMKB5jRjxASxapHOzRMRNttaeNGuon/4QkyaZBUn1qWH1aqb9qrA8BCor7GPrhEEcsJO+/GXOfxwWVM72UkWmTyALpV7feRRM/3zxpPoiJEK41Sj/nTh6vEbWmZR2tY62QDoow12wGktq8uYbuuEOY/RdEFYGMnwcQwHLq5kt0/eEQxH0bmOtbTMDkzdDBZYm3XSMrnaB1hjeTxfjnIbR3x4Yc+7B65iJFaCKM36EcZ8yt4gwlTEPUqXnqp4k3oMSlLox7ULLZLhQMB2NhD26DPMdPqCmMKxS4wmP4X9rPS4O7EbXtFB8zdPo+K2KHS+9aNWDF07rkwSqmymh1LzUCBX/vfo9B+qwJsxP0wBjI+kF5Hc6IZ9Cw23IITL39PUwvf+p25JxE+uo6rkY/k2/fD64s5DmhHKUyoKgjGMGR/a9TLmA5LeoF06243dH7cJgtr8kLM2uImJj86Tqig9QzWkjtWv7SJ75I5PQd+Ngqn3rI/lU4DKb91Vl5z3KU5IK0Te5MLehNG0zVwEXGbT6S97Mv0ZPdsppjqc1EjB1R6B9YQQ+N7sfV0MVEtj01XT7BYrfmb3pSGSFEwsDJlxPZ5vaEj2psSHiC8EOuV2BXh3hv4a7Arw+t2Yot90H6WwQX6jV1VX6od/qUfFmMnlsb2xyg/Ch1QXjcoAqea9JtKP0zKMbJWkjWfffXYPGLCCgl8PULaCBO1cVlpAp5vrBal/MtQDnwO9Rr3ljwI9KCNB+XE+dm07wTEd5JsTWnXuaN8cEWzPg2GB8J0pA/1//n1X36X1ztn5gK988e48cvIZ/6Q+09/Yh6na1jsgJUtg8fr3HUzm16pPsl4rayc6f1I74nd0w8PTQWQu6WG4D4Q3AYELg+UfSNX+jiaOqKaO7vjv7/QsStbzdqasuW0+2duCqvRrAE77omDI+6VLSDLePn/nYmEX95TsQXm9bMyibJFE/PWMm6qmh7kjeg0PdPj3uMMzkVBe6r6bDX0VsMLwFZPbI8EIArYIbAiRQOgJwxI4CGRsCJ/SiwzZ3lTpFeeXNNxhnpRu8MVjHNeMq9GZNA2E/cZrQcl62QEcsr4laLhUhVT36Jq89N6hbeGkGiNz2HndFAoIiJhFvhTOmOzU9X7UowW0dzVnQImWQwi3hYYkaYgB9xJjUqKU8IcOnYZ2tAsD9oeckBdOkKKBc305Gy96xgWU9E6jGKBsC9i8+BMt+znHXKsVOUoikjUgUzJIqUBmTSVZgbPaQqUStzxj7TEp+85Con8dWhTLacGicMQrV6KXuuf9mOZQgE/HZmzwm91FiQzOcppkVTU+JnYbVsJ6uFrkpHNHhP+SuWcqCvCswpnGJilgDzmTbyg/PXxDwrQqJ7KKu7lXQ5pun5uanWMQAdMzbTXrP4BNMqxl55Yeo1M1WFBghLwmNq/mZC3bL24uGD008kI6kY+tIoHuHno2USHYg8tfygYRB0zFP+j9UgrWbZE1HPjmMytI/EE27hHtnPG7wLHjfc9jWyHdo3lBPe+q4vQ/0oAf05lABTr9RzjeMpQA7KQ0TGRcnlRqLlvMeO0lw2FU0d8LEBlJjtrVPWvwqkQN3+2YSYkh3AJsP8u7BT/XJDcsys3N0JL55hPWnCvASsphRfOJqRHjSYnnEHNrCUsMJQxYEAcAKWHok0mRnC8Qaj/PLVrkUMaN4zklKr0MRVxWet3LUv0GZn3h9d8BPofWPvwPkjlI4lm5GwuGTFrqyQqJ/pG+GiwBLyVUnqnrL9ZLKXBJd6CrtYYPQvyW9mHhLnEU5uzmjh7Bf2Xqb32KJ+oCfdjoWPECDSLqRyVkAJg8vVDgtJgegqRi+QKF1YqsrPoV/f3zlF6/MYBfv9Sj4sxk56mx5kHOTdDDf+W1eF+wuocT3cZ+TnkGrvNjj8Ndgd05j7C1iVzM6c3BvOFttghd0TjhI5nIlJyEyeud0Z/hZ4Z113Hmsma4CxiHwCDGZxLPyXNK1Ztt6GtlRjmIc4SuKUp9196lzGXHTJXxaoiEQC9yXgcNfbht2+0A/LEFlUY7H922k0Lg9qcC1f6OJo6opo7u+O7QQsjWjH6gwkd3C0fYH0hs3F90TFVeRGSFjnIi1JqHPAZmbP16/wmRsQ3bNTYnl8Iof7+41jcwqfhSJQBq0GkujzoCZM7qCgBUiEeRpl7wk/VQd4UdyToDVgR4en5r8kuitSbDAPioPbINFmxbwojLwhrfhvIP6QI0dYeJaToCeQI1mvBDTszStwfoYM/kOxnJVG4pAcd9R+b6gNr+OOOvnvgqlW5cADPit7OsxqHLBacRjIoyG0v4XtyY2tq6hJCMlRfjnIbR3x4Yc+7B65iM7nDBpgd8GwL2Lz4Ey37OcdcqxU5SiKSNSbmjPRvWjPVPqUMgVz7pfIfAAOuCI+RqHusoo01xyHuGgfRLtjuPOxxWMoaqKBPBq9NZZYecWr4P26C/g6Wfp2zwgfIuQOmnUSkwmjJbdcCjiX4Pf2fn1W/F/myh6PfrfkRUN3Z3zs+TEU6ebCYWcrxnaS/uoALNIqrg0EHuBIGQhyRqYuCynI0Hd3MlGkQIiFr51I7r0a8qDnBFyOIY4feXIUTcHuzlQV4VgYOg+YE8NGk3ge3hSyWmy7A4vsAAOMG6YC/s3iRrDJ8vaCj+oBE8y/3HGerB0Y2fv51BhjwgKwIw997DsuDxexqnw/ml399U4mjG64WWOcs8j34tcqFLAWiW5as1hgf0WTEuiPHy1jGGI6bAsX30g8X+lgxDjwuJeHDSdNlDf24ILWnoUAAAduokaIhqOV5NceG2K42VyQ/AswulJPYkO82Zr9/ynWSu7bw9g9H4zKS+p0HKfJ4HSZgqUyrDfOt4tz5e3tAvbshwc1z5/BAm1vPYr5jLKkUTMMTLJAJbr877pw5bDy9dNYCL0Vr8hImGOl5swMutUzjRv3e9B2Nir9QnsiX9biTEU1QmsjFKZdtkr7Zb1/QMEKPJewq5xS1t3yT5Of5i1u+VdIo3Y73nfizGUO+Zmjt6lBIkmvKCyQHh1vgw+QynyDpBO4y9QEIV3Coqy8R0y8ArKQwhO/S95NVsFvKpy9GvK4WcJVhCexxA2nWQMm8cyb945xhofuz3ndt0xuG8W7Ze3FHY7/Ge68rqA75JVw04vHTruoa6MVffgzPilRnwD8iKWeX9rZLkc4dCUfFUjmMEHmvIr/A9R0frjHY/u20mhcHxQtOTKgvQtZlY1tVryfK5Vip92bsM5ahDPK7SLr9QfPNTd1Ezjl1NApcyVRkO6610wjg46GC4RiNtd18zOTOi9KHd+2JifCrioh63ElxqrP1sgI5ZXxKzov+IjbmH8nlpwtfrcRDn9Wyu5IBP3ktj38bYXO/WksqrHipv2KGWyuE1/PDu7o3rOtB7rAlp2sYGoPX80Wp/g6s59k2IIfzYkqBaiO4hxqHmY5fZq22yXvRwAmRGPbhcl4WthP3Ga0HJetsAlWJ5sLf5NhI7jD9ta8bM6gfh9aPAtR4ROAo8at/qruBlxnurWWY4TtVCAlsbYLOQ94AalRKaUZpBQvFXuz8s8umZsVVz0FvMtLvM/EjlcFuANgxySQewoOzy3t3Rx8YE1wCUo4No8Wy8AVx3rciEFsnAE/yntdq6hqDB7PRz9Rr23TiT5I5ODux9XQcjp34luU09yDT/4xdYTZlwq9OoQlStfXkzU6xiADluB+T4Z3yOYybSjVE8C7o/bhL6UChHw30eorpfM0NvCDIaBiRRVaSWjVluJFEbD7AqWNBWfkuaVqzbbz9gbRJM+Uo2TC84tvxi8YZUwh1OalEshr1DFaULtJpbNkMsCBoMdcxqJNZcLGaudHLwPObP86m9SwqYt/JwzMn4xwySoazpHxTwv748Zl83gseUrm19Nik1QaRn6pEwCpxhBFD5edlwfQG3TKeLaBfZVO+OJXN0CSBzW1TCaNvnfhD42MRCmpcPjbX7FrYHIwt4T0Iwv17TbtVx7CGEyYFKxHx+n3OTL/9mh8L7PzoA/QpfEBl+YfBq0RQj3+RQ7+PDmH//PIBbLPYv26NfF8VDPYoSyvBbzktDm6Lom24BCxLJZ9cfWqIb9m9V/kummUN6/Pf+7xNoyU/Gue6isg7VkX0zmq+JRep6ahgox5+yUwmbwBG+HNsmP05SWso1VcV1GSGnqYX1OxZJTI+htU6mhAuX27Br9kkcUIy50fTsdVIaGPfkbedJSdpFD5gARlvzJNiBAJs/BwWjPNa+YZcthiDfWdKdcr18uQom4P3MTjDN2jnZgdgla5sS+xi6Y+OtwXbMM8N/adALl3q7XqHOC/kCJnCHMAEGu6i5eRRqstHNHr5FsTWDkvIim7VeWnsZen6xyTxKDl2aBP3hMEWMEHmt4IuKzFCngVO9VBqCuTZNVXTz75ojZLReMJwKI7AerKKKLfgU0MdXIa4TQoU/u/PB5wGqlzQFYz0MPIRBFIl9TlRACwGpgDZ9x3UIWuTyyrmS3kXmvIK6m4FrCd2bFoQl+Ib8zVmay92m0HmVXhF0ICJMvA2FRpRguTvyoFp/kk4odtUmyMT1noyIdK/KDHCKTeRexeAmICY72fMXeViRg2bkt+w4VyOnUXg0WFV1VMBzUvxvjUphzua7fvcb9FONezk5/mLW75V0XpApwjpNVQozShfQJWyU7T+s65sEtaSTerVcWtibzo8nhzNyt8numDrQxOEew17EYcudVIWbjqZ0sWvZ8zBw88/mpIc6ZEUVJt9kLXNL8duqW3t/H0/OUDRO9bwutjLU7V3PKeX8IdAimnUHs/MpPR8HT+Vmc1BOg0GXRUq30Y45q4M6pe96Z9JcAbBQr/g64Zf7QdgRCB7Q1DWEUrPQCgwgK2E0gdKR+zwBNrpP/elpSUuKkXM0jtEOBmTSVZgbPM+FM6aDt0GeY6fUDCiCUeHHZ132sj8+qTtLbi08d9iPFAbLfeEQEyqlOfpo6y7D6zoif2XMUCypXN3tKLIw4KTpKn6JVg6+AQynbIkyanQpL1J/yfImltEDtqjkq6BBM8J/yWJPW6KSNsPHAzqNMxmK7BcC4V16STyxVglfomxAvq9h2rp1Od2EiD/KRG4FetDQx78jbzpKTtIofJ4JIQaGxV0k5iY/Ok6oxNSqgV8g8dJPhaNWDF07rkviVaD6ixF68LHrfwVtjpYgOpfu6p8oPe5w7b1EQiAXoAY19uG2X4HOz4PvMU4oc84FdEKMV5LeFdymeaJQe2vlPt2fPeXFH62+d+ghAl+zSPS2blf+78zTbPmXGGeP0qCxppktug+e4MTaIkwJo7CrVYxbplPFtAwOv3x3p1EbbT/XJDXywGrKG/uCh5HP0f3U//3PLH7e8ITS461XNn4N75A4K1lBIKUx8xVKdBGhuPWJzb0qXAckLX4KGUfvOotit86d1p38GwAPqBREWA7AiN3qz87RgBD8/KMc+ekcP1OvINn9BCfCF6ArwyncWp4HnHyMW0w9eZidmtEOoStetaDk3GPd9QWw9wwYbmGfsx400b4Vpbb2w/V169JvIEVvHemo2WWKG0wou03hQOr+4T3lKEiU23yCMxFzDMxKB3I3npOi/Zny3N/zsxhNik3aM9ekUJbwoDK066fm91Fhcg44rjX9RqZf9UkwGJ6lMpzrIvpnNXQbo+0B9a2ZK1T7Z9Eqm638M7Qr08oPe5vrdQpcmyIZ1GOTiD4hnrCflsl9j2XF2+1kJLPJVfzGTaUaons5Gw7HeAxC/xOzSaktHY++xHVl3TP2Jyf3gFfWY7Fww0+hzI/lU3QR8/SGQHQmjveiuRRdpvCgdX9lvpHVK8YzbgJnoNiw+8reDzKrzP2/b0s3PEzbKpBI2b7DTK5g8/JELktk79QnsJifsxYIpy+/t8wNmrx+bpkCmUvQcXHlWO2Tg/+kZ6D1k4kvjuv6nQcp8ngE3Z//gN+IO+ja3Ay9mjOb4A3H3kIeH5EQCWPgaUCCvsxsXBARJlkvLvqQpmA5bD9b1FmCtwZC455AuAREINoobOf4FM40b9Sv1Cewueu+aj7d87fUh778bn1Lw35qACv3+pR8WYybDLtq6saD3cbbuLFDV3FR7JrJwComH6pNBUJR5L0xsERN2UduYAxXkwnbVSdNOI6jok+ZeLydg1hR0RuZnP4qKuU+b0dyfwC9LE2V+DeKtoOmtUiJVYoK2FoQL4Dkk0gMnXhrPJs8HA7ORAJGb1doTvSAIhJw3B5jRjxASuLl8/TqT3yv9ry0aWxG/vvNBeLKuKbuFOgQpGv82XwAwbyCWg0PdPj3uMNN8MXJq6bFx4PreVHrhhBew0PbZxeFAyxNHNU4Q7BXB4y8PGbLlk0XuM7Wh2Xpq7TzNWJeY6PthC1ZkHVnrmo/2ZUDQ9fR7jRdKTBOo6Z6U1uBGrC9JgVo7g3/W0ie+SOT0HXgbQIJXoAFh9wyCn+iU9mTo7vjM7YRaiGahgoyaMcqIi8zJLSkgOb4IzyhFNKGRvPSdGLxY8b7nsbpm2OpeeWGMmEGhsRfz05RayDy+eDy1/KBiEmaPNrNAwk/Hej2Gq86YvV1nq2K5YgOpgCr7rMpvhGfQIJXoAT9AwQea6Z07j96N7+sgnjSkXrIEpJiWSXvfVLBmAdhzRInnMZ/t+sqv5hRsMH+Lry9FaSU/Vdd2vfnDP1jARC3IntYn/eUNzPuHNV60PIq18Sk8bSfxjVmXvOuQMsnA4FV1XI2z6OpM1aEgusxt6Nyv3SCliEEmkNluaIIkwJo7CrVYxbplPFtAwOv3x3p1EbbT/XJDXywGrKG/txWX3YZjbreYTweUDO5bYRp1N/DfRSNqtTPZpI1LrutaY5oLYacksmDADDjVVfQyM7EzlAdwQ7u+Udlu7ePYrgjt4e8Rq2jg8LAMQ/EQpP+mbNFqmTwUYYbKGurD3hkfIee22z+bYqrEcIeSphFqvIBZhniCHmZTCD1h2Ikpdr5jMfTbuep5aXsxEMHZKwuNqe9GPnnVAkmpEMGLM0p1hlpAsHUi0TlqNWW4kUed/xnHJLPdxalm+8SV8wnYY+ThsVbqwNcfch2O/Ri6FGtKdcA1+0cpEbliNGSTEwP+CUdTAugw42Nkd19lZzP6cmCoDolFiyMxwvEXFRjeABnhBUA/+j4KjOlx1DB7SozO/pTaNWRfTOavziFLyT39rhKLYfSAxI6W2/hjYjEokE7U1DBRn34ypude0JYh7+LdbAAhMPDXjaAkC2PChXyOrGFqnOO7lJnglkhbXXg5tZHkafq3PLvQ9dn8H0znE/4g/rfMDZq8fm6ZApn6kwnA9nAxRb34hE2cmms8+Pd/AQA1XdRfV7PtHS8E3OF4asVuP41hhllaSNXdLNp0Ay/eS8maWoTG8kSWKPcGN5o4Zyi/VI/VlO4YJYvnQF/vS6kWuFf9NTXAtW/SObSftU9P23fJPkkvp0c+gNQOyTw8fKm1v08BtSCx2eb71dxAW80Lc1CbwxpNMdAwWcpcZbyD0Q0cdbFSXTbeXWRJ5q46kBl66h6ncCiuo6I3Mzn8VFXKfNu16Ma0i5Mfy6TmWlwmza/Hd3FpxnEyFGu3Q3zA0pvhX0gRo62e6KaK5Hc5/V7iwW36EDZjjfKa8FnGnvLUbQEri5fP06pXQJtcsYXUy42taNnALGqQkNfAf+jhCd2aeY79KkjsQVbymxP445BxDAcurmS3T94RDEfRuULvrz+cLRwwWWJt10ir6ItQzP7wjkvGHLS/RNedHBNezaK6BH3yBErhs5Zv3yHaUi2UX4XRaWgSkt9yJtL7LklchozPp5dw1Td/Boal5z3QqvOEmqdvZbDjS/n+A+/SDC/jbBuTSfcX4Hz1yTDH+UiNwK9aGhj35G2nXU3W5iCHsW+OinQkCVzg7XR5JngmY+AY8oOhY8w9NAcyWZNW+b6hiFuRPaxP+8obmfcOar1oeRWoHScAcy951yBlk8tgob6NwsWPZM2EV4dhIVNujoex5g9tFLb+vsRkNnjL+pYKG8yljqN3cxEtshVOonHBs+glRM3SIHBXWGBLHV99X/nvSXlLYzzVae3jZUpeh5Z1A2THJWpuRFEEZlLME9LMV7+nidZsse0paMvE78ayDE7jFFNvoN4KkIIBFM5/e1gfEK+QjUctOKT2J8TkWbPIX4Sizi1pjmgthpySyUkPiYjqnv4AC7KQGFKLVLF2IogzlCUhMFh7IyshjzcMR/RDriItOBToxNaqhMFWOnfiXCRqZqsKDDDJtEYOqPlYxMv5QhfTZ8/oHgewrRSVikeJPkIBSpVOlcD/M6tLKPEoY2xBNpz/FToxNaqhMGjK/3aN5AFamV8sQVRIcFdN8sTgxzdFEtoPH0jnOgDbQeeDyGplxLRjcPmIM/sBncpZCrn2cj8WusdUR43PtjlI7r0TW5U2WWKGtMn0OZH8qm+cc4dCUe0lc62uVafA4XPzlWRizVFSUlrT4NLGCovycRMq2Z7pBes7sP4CkzVfDsWa62mIfKoKecwotsURyDQF/fRkLM9sxksjwd8gItNMPpGgXe329G4hLDLc8wtYzlu/VeneCY4ClVlSO3ndcihsc2eTmXu2fpsNSuM5JWjPZlt0pUIDiuz2UTDKxfmyZ3FwryWjtqI1vapX75B4tmz17COGdqkyKg1xMeM5PLj/NvjQ4ICJMvA2FRpGzT5zWzBW/XEoyucgvq75S9sKOwZQh06iifsZ2d5ySYPBnS3hNgDUZ22Jk9zEqII45o/eUicrW567uRPMH0aUHxSn2IAwc0R9PwqnGBTzaxCyjAsvSixeYxFmsMJB0EDVT+ATAVmVVklFiwUAF4/Dbxm5itqaJ4/gHmhQ85EHwxm5c0fsuYh9FnARgWec2vYbe3o1AVTkXUsnjHuXx8duqW3vL5OBMaK8IvGAfNB2jIYpbXqZpoZiClvhap6A/pAjR1s5ZfjSGFhMjYhu2amxPLDl3XqA7APwh/v7jWNzCp+FIhn5qo5RjcByFJcNuXg0BI4ZT4gWuACexrTn5ikJZ3dIX4CoX4OEt3+CMxqVFIS8tEcLC5Qov8EnoXoM6VebYr2nWmWpdUiunRzu/aRJ5MnrMJvZNLyPUol+i4WWvZVNOSbdsGzNsZ3ec+7B65iM75/AH15MP4eFSgMqgsHD18XtQdB2mFxbwCGKTijtGsfLiQ7EHlr+UDQQistJdTq4XEZFtOAXNDxB8WfCM8MaVkB31I91O0vLYfodB4u+EeXdhMzUzO3a5HyJ4daW0BFu2Xs601n57fnUOgR5fPB5a/lAw/My7qMpRQShw9jWFeQj2/YOujoRcZnbCS13KJ/vugixsUm7RnbvFW4IlDmrxaHctPHPA0l1lzuNFKxEFgf4uvL0VpKQh8HN2/JPHeJwGdVd7qpHxwPqnEaIQDy/Vn47wgmUB8dI2ZpHfy9DG3Y910s72FAil1/wC8ECyPJNM0NIpVLHOWeqKxFrlQpYC0hSkpZx8Ex3lTCy4Dkh5YPfPcnxEvkFReQapw5ocoWHjd3ZwLiGrXqU9ZBkSTuw2eSxF16TFbdp1Fy2x1nm8L5vzQJXXDxATNu7rc1N/CfL1+x9E7scJTsiNh9r4n7nZNoljEjBQbJ0R+f40MWwrDiHAMoi6Z8mS8aqDPHPU68g2f0EJ8IXoCvDLxim9t/c+O1QMmDUOfh8zTDV7KVCFUbJECDBYPqGB/cUqfkB8uJhl1fB+Xk89rDQYQ5FbcGslePOZ04eq/1BllszEnvifods+ASf8amlNAyfDSumewIbCID3Q8y+VOWezywUEm9QKMrkIg0DEbJE4+vp6mF856/yzzIbxYEOh5VITFFJ2RWXyf1AE3sj88KMBrOhjHZ19aabejo5fUPyljNbbYHnaorFufpaHOHTZJgU9uk12WzZOv9kyY+kUD3DsJX8oq1QzuaHRrNItBxmBpxWzWZTe/ts77ZoS7N4/gEPZ+EBfLZWdksqBQYHQE/NhTuZsXaG2wj1sNHycfJfJpMDmgSr9cj0WpZv9X056nOmQg3nyxOVjr7FLzvhFRfrt5Xi1fQJN6b6eIEGkXUjh0xHxqtBdQOkB2vKXpnOwAUgEufUQHQcHeI3S1xI3Ds4RF5c0A1Ywda7U6DlPk8CuI+CpTKqXZZTatzRmS/5faiPBIPvp0AzGPfn4vZNZUBHGrel+n/qfOSv+WYl+zV4oJVzI88SILZlH79Zw9tVQKDOJhlYqFbsqxoJP3+yAF2qb3IDEZimiOcbowHhoIRAtY9W3wBloAIAk3Ulc8ds3ZkY6QYvMI4RDbB0XlK545YfW5w6JRdOPsE4MWmHFCkjqvoc2n7SeR2O8EizAA/2IrjTJ72PmZtDCKlVnErBArnfSm6c6wg5yn5f5px28hjok7S8CZc4sq/u1uLEY4XWismHmOxiF2pqrlYu6TI0EEqzDO+nXz8c7ekDzFifluOgEMUa9QEMkdxSDgT1EoDBRi9oKNgnoZIIEuMRXC03SQR1sZanau55Ty/hDoEU06g9n5lQ9ijsDeORIvKVJ12xegPZGfdUkw7gDnI1XffQsdfv5Ui11SGlGUPKGudR6RJF+SyeoGkFACpEI8jSwOZOJRn9A0nz6zTfDFyaum/lPjrlLHGDCbqz9bICOWV8StPuNLlhZP6UWGed5lqCJylg2eEZaC1rzXW71iV/18i84SGzQzQxhaq1TPiXHEzbIEm/13Clh57wpDP7e85Hz9pjF050xWrujUmVvxoz0bFpmoJwIlIqXeZ90LloFN0MO/To5QZf62TZNlX7NLBtHi2Vi+yZw4T8UCR+fEtd2/3cbtDlRkr0JmIE9TFthj+wgE9RPltUYA//QjV4evScbC8yK48pebkN7Kdv7Cnuq1Mzt2uSluS3qBdOtpoEdpFD5JICrFnrGy9b2F5GVHhrkGGN5iEL99bKsuTpyRsL1zq/mELUzynO8uQom4PdnKgrwq85SA+JTWmDqiJK9HLmFf5KIj3McgRM4Q5eEm3iefzk2QIX5FpkMH+Lry9FaSkIfBzdvz8TeLLtGiyi4PF7GqfD+aXf31U0bsPAyWQHfiD6BqzGZkURzAiAJtfS/28R8RtI+1hd1htMHQPQpZ+v6zyI60WSTbPpPHeBPZ1M88HkNIENnFRBuSARtGyKFrKV7vpoZSP9Gg83Au1RSVyJcNkGVpCyZK3ZCpt359ErxqN7W9f96uK211wH/Iiin0wJE9TwPOQ0otoQxr9p2KfTm2GG4KSwwNu3aWxOgNKiVF5ZZLaNd8S1i+C18uHjKV3BgLmJtH5Q0H2PZcRkHk6T4htndd3eTuvQSYeGbQr2viEtEQN//3Ewyn4AOMG6aFxWCkyv/aybEC+r2HykVj30Fb80NN7jD9pYjtVRK1rjoOiAuBBCUqV1dhOZHZe+LDoIDPA3MQ2xO6YADkcWHVUg7BqQ8poXawRI/zxkhCNJYBKKKhpOzmKQGHhKnzX9NWdHn0RQ98K+v/X8dOtUlr2e6Rosq5kt5F5ryCupuBqYnP4t4bvwaYVCHB1JcSVLIgJjvZ8xYGIyLJi6+e10KUa31Kftu+SfJJfTo59AagUtSjmRfK6Czbm4MP4hDVp2cH9sMQ+aYi6Wm0Tekpk53vqnJ964xqXX91LGzxT8Kb4yUnmrjtOdILJ9ZCiy6CLfulz1wKXiyN4/xHgp2Avmi7gQc9lRm4vfPCu2iMgwBx2vfcpwkszY7S1kw2VHIC0vAulTkO+uXhJe0OkJHD2rGxtmdpE7iu4ewFz5IxRH/pYguiUAN/VDwes0YXMD+FYy8WpfPowFDLM09pBSiLspYp08Z+xgKTLJjMDnRKuXEFSFfplC5vpyNl71jAwVa7YClh57wpDP7c8oTw1ugquFR5UOKNSZVfC+qrlOCBlkqIHBtWHxm4WywhODodGja7GLsZZBabhPyRV+kOKibGBZPQJxX7YRsxEb3opezYzWJ+UsetMbyLRUkWVLwFcKjb0zdJBPUZyf2BItojzX9j1XlFKmrsMaFLk0NEvtfiMe6IUwDiIzO2ESjGrnP01XLlE/33QRY2KTdoz3mdjeR4mZzYQg0NiN+SjYgxHoRJ+K8BJ7m8MaJlWp7PfVbaUt5p5+OXrJR0y921CXRD1H9iQgbZPAAAD5vs9uQYADKOWIFoCVz3n8z+EvEiTBIg1J0R1Tc5ztkb9zgK5gdpumJbgn7oZkPqCyB2BCly20xZswLTwlQckZPwwNW3SnP7e3bhkSdboh9saBa0iyXi6gi60hg0wQ3xJI5PRGiJyzlBoN6B96phQm88GtziFa6QqKL+mIOS7gCj8WU/1jg3BAzS1x/apSCWXiH4K+shaacjeiNs/wUQXAQGUFPyXfl61L8iZNINqvZS9QonUY8IqFJrwKQxffRWR+AIwXoJo7xH1sJ8TXzBMjyejk+Wx/Wf167kwxtHwN6AAR7K8gRBwUfE93Z7M4ZNT7qsNjhvc1lZERCgHWs2I/GZRsn7oPMtegAAAAAAAAHVNznO2Hy+/XdjiRGANvdHAieHjA53Tz7gMDQbaWAkI45utd0o4OkEc9x720Ab4M2RqXBN46GDYzHtUK38ChrAf0wLZSO2lX8MoTO78Mca2osrH4pKDVCH2wgBDBpgzxEDVRePrwwC9K36JYwAGjunOLF99FZH4E+U/W9Atsm6o4vp/y5sMt5mvdhF2+Dv/3hdaUJneZ/xqJfo2a6ZVtRZWPfk00ifBsmnqXLrAyQEjk8BZ8xWfBe+S2bsDAAAAAAAAAAAAAAADWB4cTlCSQCr8VH0AEWZd/ApRgAor/vRWR+AEWNRrh/KVS1Negw505MqvQAAAAAAAAK1IZ4V5LzOgyloKmEEuposxDJwhgJU5bd+AAANzPbmFCy4TTzYp1mPSUDChSoxOhfpHfVdmo+wYAACXdqadudy9A420VqpahXWd4w2PJk/89zeRAAAA0hDb8j4ULvA9Z1WxHrseJgLcSC6mT3EXtpxXeUGCp8k5a4rlLEN/dkFoNyVbCmyPTUy1tRZWQVAAfOkMdN8Q26x3bcXDkQPvgfMUFgH47iwC8NquYNxZYrIh+jAAOmZPyXXxErPp3DHLt64QR/7gjhQzjXppzJUuwD5zaXhguo3tDhydAvQAFFas/onzOvZGvhpBaegGjcZIO6D4qKxrqDLYW1vPIAAAD5iqNNGAAAAIFbiQXUye4i9tOHzAP/YUXrM4I3qDPHzZicAAAAAAAAAAAAA==" alt="" width="800" height="450" class="aspect-video w-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-105 motion-safe:group-focus-visible:scale-105">
+    </div>
+    <div class="space-y-2 p-4">
+      <h2 class="text-lg font-bold transition-colors group-hover:text-brand group-focus-visible:text-brand">CSS من الصفر للمشاريع</h2>
+      <p class="text-slate-600">٢٤ درس و ٦ مشاريع بحلولها.</p>
+      <p class="flex items-center gap-2 font-semibold text-brand-ink">
+        ابدأ الكورس
+        <span aria-hidden="true" class="inline-block motion-safe:transition-transform rtl:rotate-180 motion-safe:group-hover:translate-x-1 motion-safe:group-focus-visible:translate-x-1 motion-safe:rtl:group-hover:-translate-x-1 motion-safe:rtl:group-focus-visible:-translate-x-1">→</span>
+      </p>
+    </div>
+  </a>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارت كورس أبيض فيه صورة وعنوان «CSS من الصفر للمشاريع» وتحته «ابدأ الكورس ←». الماوس على أي حتة في الكارت: الصورة بتكبر شوية جوه حدودها، والعنوان بيبقى بنفسجي، والسهم بيتحرك خطوة لقدام. ونفس الكلام لما توصل للكارت بـ Tab.
+
+**[[group]] على اللينك:** أي عنصر جواه يقدر يقول «لما الأب ده يبقى hover»: [[group-hover:text-brand]] على العنوان. و [[group-focus-visible:]] نفس الكلام مع الكيبورد. من غيرهم الكارت بيتفاعل للماوس بس.
+
+**الصورة بتكبر جوه حدودها:** [[motion-safe:group-hover:scale-105]] على الصورة، و [[overflow-hidden]] على الصندوق اللي حواليها: الجزء اللي بيكبر برّه الصندوق بيتقص، فالكارت مبيكبرش.
+
+**السهم في الاتجاهين:** السهم «→» مرسوم ناحية اليمين. في العربي القراية ناحية الشمال، فـ [[rtl:rotate-180]] بيقلبه. والحركة: [[group-hover:translate-x-1]] (يمين) للإنجليزي، و [[rtl:group-hover:-translate-x-1]] (شمال) للعربي. اتقاس: في rtl الـ translate = -4px والسهم اتحرك من 959 لـ 955، وفي ltr = 4px من 307 لـ 311.
+
+**[[motion-safe:]]:** الحركة (التكبير والسهم) بتحصل بس لو المستخدم مش مختار «حركة أقل». تغيير لون العنوان مش حركة، فهو من غير [[motion-safe:]]. اتقاس بـ Playwright و [[reducedMotion: "reduce"]]: الصورة scale none والسهم translate none، والعنوان اتلوّن.
+
+**فخ في القياس:** لما بدّلت الصفحة من rtl لـ ltr وقست على طول، السهم كان لسه [[rotate: 180deg]]. الـ [[transition]] بيحرّك الـ rotate كمان، والقياس كان في نص الحركة. بعد 400ms: [[none]].
+
+~~~text الناتج (Playwright بـ Chrome 157)
+rtl  rest:  translate none, rotate 180deg, x 959   hover: translate -4px, x 955   العنوان rgb(109, 40, 217)، الصورة scale 1.05
+ltr  hover: translate 4px, rotate none, x 311 (كان 307)
+Tab (الكيبورد): نفس ألوان وحركة الـ hover
+reduce + hover: الصورة none، السهم none، العنوان rgb(109, 40, 217)
+ltr right after switching: 180deg   بعد 400ms: none
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "tw-drawer", t: R`navbar و drawer بـ Tailwind بس`, what: R`الـ navbar بتاع وحدة position بس بـ Tailwind: [[sticky top-0]] و [[backdrop-blur]] و [[hidden md:flex]]، و drawer من ناحية النهاية بـ [[translate-x-full rtl:-translate-x-full]] و [[aria-expanded:]] و [[data-[state=open]:]]. بيجمع [[variants]] و [[arbitrary values]].`, done: R`على 360 و 768 و 1280 مفيش scroll أفقي، والـ drawer بيدخل من الناحية الصح في الاتجاهين، و JavaScript بيغيّر attributes بس (مفيش [[classList.add]]).`, sol: R`~~~bash الترمنال
+npm i -D tailwindcss@4.3.4 @tailwindcss/cli@4.3.4
+npx @tailwindcss/cli -i in.css -o out.css
+~~~
+
+~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #be123c;
+  --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+  /* layers by name instead of random numbers: z-header, z-scrim, z-drawer */
+  --z-index-header: 10;
+  --z-index-scrim: 20;
+  --z-index-drawer: 30;
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مطعم الجنينة</title>
+<link rel="stylesheet" href="out.css">
+<script src="nav.js" defer></script>
+</head>
+<body class="bg-rose-50 font-sans text-slate-900">
+<header class="sticky top-0 z-header flex items-center gap-4 bg-white/75 px-4 py-3 backdrop-blur border-b border-rose-100">
+  <a href="#top" class="font-extrabold text-brand">مطعم الجنينة</a>
+  <nav aria-label="الرئيسية" class="ms-auto hidden md:flex">
+    <ul class="flex gap-5 font-semibold">
+      <li><a href="#menu" class="hover:text-brand">المنيو</a></li>
+      <li><a href="#branches" class="hover:text-brand">الفروع</a></li>
+      <li><a href="#book" class="hover:text-brand">احجز</a></li>
+    </ul>
+  </nav>
+  <button id="toggle" type="button" aria-expanded="false" aria-controls="drawer"
+    class="ms-auto rounded-lg border border-rose-200 px-3 py-1 text-xl md:hidden aria-expanded:bg-rose-100">☰<span class="sr-only">القايمة</span></button>
+</header>
+
+<!-- the scrim and the drawer are OUTSIDE the header: backdrop-blur makes the header the box that fixed children measure from -->
+<div id="scrim" data-state="closed" class="fixed inset-0 z-scrim bg-slate-900/50 data-[state=closed]:hidden md:hidden"></div>
+<nav id="drawer" data-state="closed" aria-label="القايمة"
+  class="fixed inset-y-0 end-0 z-drawer w-72 max-w-[80vw] bg-white p-6 pt-16 shadow-2xl transition-transform md:hidden
+         data-[state=closed]:invisible data-[state=closed]:translate-x-full rtl:data-[state=closed]:-translate-x-full motion-reduce:transition-none">
+  <ul class="space-y-1 text-lg font-semibold">
+    <li><a href="#menu" class="block rounded-lg px-3 py-2 hover:bg-rose-50">المنيو</a></li>
+    <li><a href="#branches" class="block rounded-lg px-3 py-2 hover:bg-rose-50">الفروع</a></li>
+    <li><a href="#book" class="block rounded-lg px-3 py-2 hover:bg-rose-50">احجز</a></li>
+  </ul>
+</nav>
+
+<main id="top" class="mx-auto max-w-3xl space-y-6 p-4">
+  <h1 class="pt-8 text-3xl font-bold">أكل بيتي في جنينة</h1>
+  <h2 id="menu" class="text-xl font-bold">المنيو</h2><p>مشويات، وطواجن، وسلطات من الجنينة.</p>
+  <h2 id="branches" class="text-xl font-bold">الفروع</h2><p>فرعين: المعادي ومدينة نصر.</p>
+  <h2 id="book" class="text-xl font-bold">احجز</h2><p>كلّمنا أو ابعت رسالة.</p>
+  <div class="h-[120vh]" aria-hidden="true"></div>
+</main>
+</body>
+</html>
+~~~
+
+~~~js nav.js
+// the script only changes attributes; Tailwind's aria-expanded: and data-[state=…]: variants do the styling
+const toggle = document.getElementById("toggle");
+const drawer = document.getElementById("drawer");
+const scrim = document.getElementById("scrim");
+
+function setOpen(open) {
+  const state = open ? "open" : "closed";
+  drawer.dataset.state = state;
+  scrim.dataset.state = state;
+  toggle.setAttribute("aria-expanded", String(open));
+  if (open) drawer.querySelector("a").focus();
+}
+toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+scrim.addEventListener("click", () => setOpen(false));
+drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+addEventListener("keydown", e => {
+  if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { setOpen(false); toggle.focus(); }
+});
+~~~
+
+~~~view 560 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مطعم الجنينة</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties;
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --color-rose-50: oklch(96.9% 0.015 12.422);
+    --color-rose-100: oklch(94.1% 0.03 12.58);
+    --color-rose-200: oklch(89.2% 0.058 10.001);
+    --color-slate-900: oklch(20.8% 0.042 265.755);
+    --color-white: #fff;
+    --spacing: 0.25rem;
+    --container-3xl: 48rem;
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
+    --text-xl: 1.25rem;
+    --text-xl--line-height: calc(1.75 / 1.25);
+    --text-3xl: 1.875rem;
+    --text-3xl--line-height: calc(2.25 / 1.875);
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    --radius-lg: 0.5rem;
+    --default-transition-duration: 150ms;
+    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    --default-font-family: var(--font-sans);
+    --default-mono-font-family: var(--font-mono);
+    --color-brand: #be123c;
+    --z-index-header: 10;
+    --z-index-scrim: 20;
+    --z-index-drawer: 30;
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring:where(:not(iframe)) {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  .fixed {
+    position: fixed;
+  }
+  .sticky {
+    position: sticky;
+  }
+  .inset-0 {
+    inset: 0px;
+  }
+  .inset-y-0 {
+    inset-block: 0px;
+  }
+  .end-0 {
+    inset-inline-end: calc(var(--spacing) * 0);
+  }
+  .top-0 {
+    top: 0px;
+  }
+  .z-drawer {
+    z-index: var(--z-index-drawer);
+  }
+  .z-header {
+    z-index: var(--z-index-header);
+  }
+  .z-scrim {
+    z-index: var(--z-index-scrim);
+  }
+  .mx-auto {
+    margin-inline: auto;
+  }
+  .ms-auto {
+    margin-inline-start: auto;
+  }
+  .block {
+    display: block;
+  }
+  .flex {
+    display: flex;
+  }
+  .hidden {
+    display: none;
+  }
+  .h-\[120vh\] {
+    height: 120vh;
+  }
+  .w-72 {
+    width: calc(var(--spacing) * 72);
+  }
+  .max-w-3xl {
+    max-width: var(--container-3xl);
+  }
+  .max-w-\[80vw\] {
+    max-width: 80vw;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .gap-4 {
+    gap: calc(var(--spacing) * 4);
+  }
+  .gap-5 {
+    gap: calc(var(--spacing) * 5);
+  }
+  :where(.space-y-1 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(var(--spacing) * var(--tw-space-y-reverse));
+    margin-block-end: calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  :where(.space-y-6 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+  }
+  .border-rose-100 {
+    border-color: var(--color-rose-100);
+  }
+  .border-rose-200 {
+    border-color: var(--color-rose-200);
+  }
+  .bg-rose-50 {
+    background-color: var(--color-rose-50);
+  }
+  .bg-slate-900\/50 {
+    background-color: color-mix(in srgb, oklch(20.8% 0.042 265.755) 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-slate-900) 50%, transparent);
+    }
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .bg-white\/75 {
+    background-color: color-mix(in srgb, #fff 75%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-white) 75%, transparent);
+    }
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .p-6 {
+    padding: calc(var(--spacing) * 6);
+  }
+  .px-3 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .px-4 {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+  .py-1 {
+    padding-block: var(--spacing);
+  }
+  .py-2 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .py-3 {
+    padding-block: calc(var(--spacing) * 3);
+  }
+  .pt-8 {
+    padding-top: calc(var(--spacing) * 8);
+  }
+  .pt-16 {
+    padding-top: calc(var(--spacing) * 16);
+  }
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+  .text-3xl {
+    font-size: var(--text-3xl);
+    line-height: var(--tw-leading, var(--text-3xl--line-height));
+  }
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+  .text-xl {
+    font-size: var(--text-xl);
+    line-height: var(--tw-leading, var(--text-xl--line-height));
+  }
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+  .font-extrabold {
+    --tw-font-weight: var(--font-weight-extrabold);
+    font-weight: var(--font-weight-extrabold);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .text-brand {
+    color: var(--color-brand);
+  }
+  .text-slate-900 {
+    color: var(--color-slate-900);
+  }
+  .shadow-2xl {
+    --tw-shadow: 0 25px 50px -12px var(--tw-shadow-color, rgb(0 0 0 / 0.25));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .backdrop-blur {
+    --tw-backdrop-blur: blur(8px);
+    -webkit-backdrop-filter: var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );
+    backdrop-filter: var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );
+  }
+  .transition-transform {
+    transition-property: transform, translate, scale, rotate;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  @media (hover: hover) {
+    .hover\:bg-rose-50:hover {
+      background-color: var(--color-rose-50);
+    }
+    .hover\:text-brand:hover {
+      color: var(--color-brand);
+    }
+  }
+  .aria-expanded\:bg-rose-100[aria-expanded="true"] {
+    background-color: var(--color-rose-100);
+  }
+  .data-\[state\=closed\]\:invisible[data-state="closed"] {
+    visibility: hidden;
+  }
+  .data-\[state\=closed\]\:hidden[data-state="closed"] {
+    display: none;
+  }
+  .data-\[state\=closed\]\:translate-x-full[data-state="closed"] {
+    --tw-translate-x: 100%;
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .motion-reduce\:transition-none {
+      transition-property: none;
+    }
+  }
+  @media (width >= 48rem) {
+    .md\:flex {
+      display: flex;
+    }
+    .md\:hidden {
+      display: none;
+    }
+  }
+  .rtl\:data-\[state\=closed\]\:-translate-x-full:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *)[data-state="closed"] {
+    --tw-translate-x: -100%;
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+}
+@property --tw-space-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-backdrop-blur {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-brightness {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-contrast {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-grayscale {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-hue-rotate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-invert {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-opacity {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-saturate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-sepia {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-translate-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: block))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-space-y-reverse: 0;
+      --tw-border-style: solid;
+      --tw-font-weight: initial;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-backdrop-blur: initial;
+      --tw-backdrop-brightness: initial;
+      --tw-backdrop-contrast: initial;
+      --tw-backdrop-grayscale: initial;
+      --tw-backdrop-hue-rotate: initial;
+      --tw-backdrop-invert: initial;
+      --tw-backdrop-opacity: initial;
+      --tw-backdrop-saturate: initial;
+      --tw-backdrop-sepia: initial;
+      --tw-translate-x: 0;
+      --tw-translate-y: 0;
+      --tw-translate-z: 0;
+    }
+  }
+}
+</style>
+</head>
+<body class="bg-rose-50 font-sans text-slate-900">
+<header class="sticky top-0 z-header flex items-center gap-4 bg-white/75 px-4 py-3 backdrop-blur border-b border-rose-100">
+  <a href="#top" class="font-extrabold text-brand">مطعم الجنينة</a>
+  <nav aria-label="الرئيسية" class="ms-auto hidden md:flex">
+    <ul class="flex gap-5 font-semibold">
+      <li><a href="#menu" class="hover:text-brand">المنيو</a></li>
+      <li><a href="#branches" class="hover:text-brand">الفروع</a></li>
+      <li><a href="#book" class="hover:text-brand">احجز</a></li>
+    </ul>
+  </nav>
+  <button id="toggle" type="button" aria-expanded="false" aria-controls="drawer"
+    class="ms-auto rounded-lg border border-rose-200 px-3 py-1 text-xl md:hidden aria-expanded:bg-rose-100">☰<span class="sr-only">القايمة</span></button>
+</header>
+
+<!-- the scrim and the drawer are OUTSIDE the header: backdrop-blur makes the header the box that fixed children measure from -->
+<div id="scrim" data-state="closed" class="fixed inset-0 z-scrim bg-slate-900/50 data-[state=closed]:hidden md:hidden"></div>
+<nav id="drawer" data-state="closed" aria-label="القايمة"
+  class="fixed inset-y-0 end-0 z-drawer w-72 max-w-[80vw] bg-white p-6 pt-16 shadow-2xl transition-transform md:hidden
+         data-[state=closed]:invisible data-[state=closed]:translate-x-full rtl:data-[state=closed]:-translate-x-full motion-reduce:transition-none">
+  <ul class="space-y-1 text-lg font-semibold">
+    <li><a href="#menu" class="block rounded-lg px-3 py-2 hover:bg-rose-50">المنيو</a></li>
+    <li><a href="#branches" class="block rounded-lg px-3 py-2 hover:bg-rose-50">الفروع</a></li>
+    <li><a href="#book" class="block rounded-lg px-3 py-2 hover:bg-rose-50">احجز</a></li>
+  </ul>
+</nav>
+
+<main id="top" class="mx-auto max-w-3xl space-y-6 p-4">
+  <h1 class="pt-8 text-3xl font-bold">أكل بيتي في جنينة</h1>
+  <h2 id="menu" class="text-xl font-bold">المنيو</h2><p>مشويات، وطواجن، وسلطات من الجنينة.</p>
+  <h2 id="branches" class="text-xl font-bold">الفروع</h2><p>فرعين: المعادي ومدينة نصر.</p>
+  <h2 id="book" class="text-xl font-bold">احجز</h2><p>كلّمنا أو ابعت رسالة.</p>
+  <div class="h-[120vh]" aria-hidden="true"></div>
+</main>
+<script>
+// the script only changes attributes; Tailwind's aria-expanded: and data-[state=…]: variants do the styling
+const toggle = document.getElementById("toggle");
+const drawer = document.getElementById("drawer");
+const scrim = document.getElementById("scrim");
+
+function setOpen(open) {
+  const state = open ? "open" : "closed";
+  drawer.dataset.state = state;
+  scrim.dataset.state = state;
+  toggle.setAttribute("aria-expanded", String(open));
+  if (open) drawer.querySelector("a").focus();
+}
+toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+scrim.addEventListener("click", () => setOpen(false));
+drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+addEventListener("keydown", e => {
+  if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { setOpen(false); toggle.focus(); }
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر أبيض شبه شفاف فيه «مطعم الجنينة»، وعلى الكمبيوتر ٣ روابط. على الموبايل مكانهم ☰، ولما تدوس عليه بيدخل درج أبيض من الشمال (النهاية في العربي) والصفحة وراه بتغمق.
+
+**الهيدر:** [[sticky top-0]]، و [[bg-white/75]] (أبيض 75%)، و [[backdrop-blur]] (بيموّه اللي وراه). و [[hidden md:flex]] على الروابط: مستخبية، ومن 48rem بتبان. و [[md:hidden]] على ☰ العكس.
+
+**الدرج برّه الهيدر، وده مقصود:** [[backdrop-blur]] بيخلي الهيدر «مرجع» لأي عنصر [[fixed]] جواه (اتقاس في مشروع عيادة الأسنان في وحدة position: عنصر [[fixed bottom-0]] جوه هيدر فيه blur وقف عند آخر الهيدر مش آخر الشاشة). فالدرج والـ scrim في الـ body جنب الهيدر، والـ z-index بتاعهم من توكنز: [[--z-index-header]] و [[--z-index-scrim]] و [[--z-index-drawer]] بيعملوا [[z-header]] و [[z-scrim]] و [[z-drawer]].
+
+**الدرج بيتحرك بالـ attributes:** [[data-[state=closed]:translate-x-full]] بيبعده يمين، و [[rtl:data-[state=closed]:-translate-x-full]] يبعده شمال في العربي. و [[data-[state=closed]:invisible]] بيخفيه عن الكيبورد وقارئ الشاشة. و [[end-0]] بيحطه على النهاية في الاتجاهين.
+
+**الـ JavaScript بيغيّر attributes بس:** [[data-state]] و [[aria-expanded]]. مفيش ولا [[classList]] (grep: 0). الشكل كله في الـ HTML من الـ variants: [[aria-expanded:bg-rose-100]] على ☰. كده الحالة اللي قارئ الشاشة بيقراها هي نفسها اللي الشكل بيتبني عليها.
+
+**القفل:** الضغط على الـ scrim، أو Escape (والـ focus بيرجع لـ ☰)، أو اختيار لينك.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+360 rtl:  scrollWidth 360، الدرج مقفول -288 لحد 0 (hidden)، مفتوح 0 لحد 288، aria-expanded true، data-state open
+          elementFromPoint في نص الدرج: الدرج، والـ focus على «المنيو»
+          Escape: aria-expanded false، والـ focus على ☰
+360 ltr:  مقفول 360 لحد 648، مفتوح 72 لحد 360
+768 و 1280: ☰ مستخبي، الروابط ظاهرة، scrollWidth = العرض
+nav.js: classList = 0
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "tw-themes", t: R`ثيمات بـ 3 ألوان من نفس الكلاسات`, what: R`[[@theme inline]] بيربط [[--color-bg]] و [[--color-fg]] و [[--color-brand]] بمتغيرات خام، و [[:root]] و [[[data-theme="dark"]]] و [[[data-theme="paper"]]] بيغيّروهم، وزرار بيبدّل [[data-theme]] على الـ html. من درس [[@theme]].`, done: R`الـ HTML مفيهوش ولا [[dark:]]، والتلات ثيمات شغالين، وsection جوه الصفحة ممكن ياخد ثيم مختلف عن الباقي (ده بيثبت إن inline شغال)، والاختيار متحفوظ بعد refresh (localStorage جوه try/catch).`, sol: R`~~~bash الترمنال
+npm i -D tailwindcss@4.3.4 @tailwindcss/cli@4.3.4
+npx @tailwindcss/cli -i in.css -o out.css
+~~~
+
+~~~css in.css
+@import "tailwindcss";
+
+/* inline: the utility gets var(--bg) itself, not a copy of today's value.
+   so a theme that changes --bg anywhere (even on one section) changes bg-bg there */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
+  --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+}
+
+/* the raw values of each theme */
+:root, [data-theme="light"] {
+  --bg: #f8fafc; --fg: #0f172a; --muted: #475569; --card: #ffffff; --brand: #0369a1; --on-brand: #ffffff;
+}
+[data-theme="dark"] {
+  --bg: #0b1120; --fg: #e2e8f0; --muted: #94a3b8; --card: #1e293b; --brand: #38bdf8; --on-brand: #0b1120;
+}
+[data-theme="paper"] {
+  --bg: #f5f0e6; --fg: #3b2f20; --muted: #6b5a43; --card: #fffaf0; --brand: #9a3412; --on-brand: #fffaf0;
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مدونة حروف: ٣ ثيمات</title>
+<link rel="stylesheet" href="out.css">
+<script src="theme.js"></script>
+</head>
+<body class="bg-bg font-sans text-fg">
+<main class="mx-auto max-w-3xl space-y-6 p-4">
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-2xl font-bold">مدونة حروف</h1>
+    <div class="flex gap-2" role="group" aria-label="الثيم">
+      <button type="button" data-set="light" class="rounded-full border border-muted px-3 py-1 aria-pressed:bg-brand aria-pressed:text-on-brand">فاتح</button>
+      <button type="button" data-set="dark" class="rounded-full border border-muted px-3 py-1 aria-pressed:bg-brand aria-pressed:text-on-brand">غامق</button>
+      <button type="button" data-set="paper" class="rounded-full border border-muted px-3 py-1 aria-pressed:bg-brand aria-pressed:text-on-brand">ورقي</button>
+    </div>
+  </header>
+
+  <article class="space-y-2 rounded-2xl bg-card p-5 shadow-sm">
+    <h2 class="text-xl font-bold">ليه بنكتب بخط إيدنا لسه؟</h2>
+    <p class="text-muted">مقال عن الكراسة والقلم في زمن الموبايل.</p>
+    <a href="#read" class="inline-block rounded-lg bg-brand px-4 py-2 font-semibold text-on-brand">اقرا المقال</a>
+  </article>
+
+  <!-- the same classes, but this section always uses the dark theme: inline makes that work -->
+  <section data-theme="dark" class="space-y-2 rounded-2xl bg-bg p-5 text-fg">
+    <h2 class="text-xl font-bold">ركن الليل</h2>
+    <p class="text-muted">القسم ده غامق دايمًا، مهما كان ثيم الصفحة.</p>
+    <a href="#night" class="inline-block rounded-lg bg-brand px-4 py-2 font-semibold text-on-brand">مقالات بالليل</a>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~js theme.js
+// runs in <head>: put the saved theme on <html> before the page is painted (no flash of the wrong theme)
+(function () {
+  let saved = null;
+  try { saved = localStorage.getItem("theme"); } catch (e) { /* private window or storage blocked */ }
+  if (saved) document.documentElement.dataset.theme = saved;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const buttons = document.querySelectorAll("[data-set]");
+    const mark = () => buttons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.set === document.documentElement.dataset.theme)));
+    buttons.forEach(b => b.addEventListener("click", () => {
+      document.documentElement.dataset.theme = b.dataset.set;
+      try { localStorage.setItem("theme", b.dataset.set); } catch (e) {}
+      mark();
+    }));
+    mark();
+  });
+})();
+~~~
+
+~~~view 430 430 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مدونة حروف: ٣ ثيمات</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties;
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --spacing: 0.25rem;
+    --container-3xl: 48rem;
+    --text-xl: 1.25rem;
+    --text-xl--line-height: calc(1.75 / 1.25);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --radius-lg: 0.5rem;
+    --radius-2xl: 1rem;
+    --default-font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+    --default-mono-font-family: var(--font-mono);
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring:where(:not(iframe)) {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .mx-auto {
+    margin-inline: auto;
+  }
+  .flex {
+    display: flex;
+  }
+  .inline {
+    display: inline;
+  }
+  .inline-block {
+    display: inline-block;
+  }
+  .max-w-3xl {
+    max-width: var(--container-3xl);
+  }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .justify-between {
+    justify-content: space-between;
+  }
+  .gap-2 {
+    gap: calc(var(--spacing) * 2);
+  }
+  .gap-3 {
+    gap: calc(var(--spacing) * 3);
+  }
+  :where(.space-y-2 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  :where(.space-y-6 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  .rounded-2xl {
+    border-radius: var(--radius-2xl);
+  }
+  .rounded-full {
+    border-radius: calc(infinity * 1px);
+  }
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-muted {
+    border-color: var(--muted);
+  }
+  .bg-bg {
+    background-color: var(--bg);
+  }
+  .bg-brand {
+    background-color: var(--brand);
+  }
+  .bg-card {
+    background-color: var(--card);
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .p-5 {
+    padding: calc(var(--spacing) * 5);
+  }
+  .px-3 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .px-4 {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+  .py-1 {
+    padding-block: var(--spacing);
+  }
+  .py-2 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .font-sans {
+    font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+  }
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+  .text-xl {
+    font-size: var(--text-xl);
+    line-height: var(--tw-leading, var(--text-xl--line-height));
+  }
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .text-fg {
+    color: var(--fg);
+  }
+  .text-muted {
+    color: var(--muted);
+  }
+  .text-on-brand {
+    color: var(--on-brand);
+  }
+  .shadow-sm {
+    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .aria-pressed\:bg-brand[aria-pressed="true"] {
+    background-color: var(--brand);
+  }
+  .aria-pressed\:text-on-brand[aria-pressed="true"] {
+    color: var(--on-brand);
+  }
+}
+:root, [data-theme="light"] {
+  --bg: #f8fafc;
+  --fg: #0f172a;
+  --muted: #475569;
+  --card: #ffffff;
+  --brand: #0369a1;
+  --on-brand: #ffffff;
+}
+[data-theme="dark"] {
+  --bg: #0b1120;
+  --fg: #e2e8f0;
+  --muted: #94a3b8;
+  --card: #1e293b;
+  --brand: #38bdf8;
+  --on-brand: #0b1120;
+}
+[data-theme="paper"] {
+  --bg: #f5f0e6;
+  --fg: #3b2f20;
+  --muted: #6b5a43;
+  --card: #fffaf0;
+  --brand: #9a3412;
+  --on-brand: #fffaf0;
+}
+@property --tw-space-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: block))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-space-y-reverse: 0;
+      --tw-border-style: solid;
+      --tw-font-weight: initial;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+    }
+  }
+}
+</style>
+</head>
+<body class="bg-bg font-sans text-fg">
+<main class="mx-auto max-w-3xl space-y-6 p-4">
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-2xl font-bold">مدونة حروف</h1>
+    <div class="flex gap-2" role="group" aria-label="الثيم">
+      <button type="button" data-set="light" class="rounded-full border border-muted px-3 py-1 aria-pressed:bg-brand aria-pressed:text-on-brand">فاتح</button>
+      <button type="button" data-set="dark" class="rounded-full border border-muted px-3 py-1 aria-pressed:bg-brand aria-pressed:text-on-brand">غامق</button>
+      <button type="button" data-set="paper" class="rounded-full border border-muted px-3 py-1 aria-pressed:bg-brand aria-pressed:text-on-brand">ورقي</button>
+    </div>
+  </header>
+
+  <article class="space-y-2 rounded-2xl bg-card p-5 shadow-sm">
+    <h2 class="text-xl font-bold">ليه بنكتب بخط إيدنا لسه؟</h2>
+    <p class="text-muted">مقال عن الكراسة والقلم في زمن الموبايل.</p>
+    <a href="#read" class="inline-block rounded-lg bg-brand px-4 py-2 font-semibold text-on-brand">اقرا المقال</a>
+  </article>
+
+  <!-- the same classes, but this section always uses the dark theme: inline makes that work -->
+  <section data-theme="dark" class="space-y-2 rounded-2xl bg-bg p-5 text-fg">
+    <h2 class="text-xl font-bold">ركن الليل</h2>
+    <p class="text-muted">القسم ده غامق دايمًا، مهما كان ثيم الصفحة.</p>
+    <a href="#night" class="inline-block rounded-lg bg-brand px-4 py-2 font-semibold text-on-brand">مقالات بالليل</a>
+  </section>
+</main>
+<script>
+// runs in <head>: put the saved theme on <html> before the page is painted (no flash of the wrong theme)
+(function () {
+  let saved = null;
+  try { saved = localStorage.getItem("theme"); } catch (e) { /* private window or storage blocked */ }
+  if (saved) document.documentElement.dataset.theme = saved;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const buttons = document.querySelectorAll("[data-set]");
+    const mark = () => buttons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.set === document.documentElement.dataset.theme)));
+    buttons.forEach(b => b.addEventListener("click", () => {
+      document.documentElement.dataset.theme = b.dataset.set;
+      try { localStorage.setItem("theme", b.dataset.set); } catch (e) {}
+      mark();
+    }));
+    mark();
+  });
+})();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** مدونة فيها ٣ أزرار: فاتح، وغامق، وورقي. الضغط على أي واحد بيغيّر ألوان الصفحة كلها. وتحت قسم «ركن الليل» غامق دايمًا، حتى لو الصفحة فاتحة أو ورقي. ولو عملت refresh الاختيار بيفضل.
+
+**الفكرة:** الكلاسات في الـ HTML نفسها في الـ ٣ ثيمات: [[bg-bg]] و [[text-fg]] و [[bg-brand]]. اللي بيتغيّر هو قيم المتغيرات الخام ([[--bg]] و [[--fg]]…) تحت [[[data-theme="dark"]]] وأخواته. مفيش ولا [[dark:]] في الـ HTML.
+
+**ليه [[@theme inline]]:** من غير [[inline]]، Tailwind بيطلّع [[.bg-bg { background-color: var(--color-bg) }]]، و [[--color-bg: var(--bg)]] بيتحسب مرة واحدة على [[:root]] بقيمة [[--bg]] اللي هناك. فالقسم اللي عليه [[data-theme="dark"]] بيغيّر [[--bg]] عنده، بس [[--color-bg]] جاي جاهز من فوق ومش بيتغيّر. مع [[inline]] الـ utility نفسها [[var(--bg)]]، فبتقرا [[--bg]] من مكان العنصر.
+
+اتقاس: نسخة من نفس الصفحة من غير [[inline]] والصفحة على «ورقي»: «ركن الليل» طلع [[rgb(245, 240, 230)]] (ورقي زي الصفحة). بـ [[inline]]: [[rgb(11, 17, 32)]] (غامق) في الـ ٣ ثيمات.
+
+**الحفظ:** [[localStorage]] جوه [[try/catch]]: في شباك خاص أو لو الموقع ممنوع من التخزين، [[localStorage]] بيرمي error، والصفحة تكمّل عادي من غير حفظ. اتجرّب: [[localStorage]] بيرمي error، والضغط على «غامق» اشتغل، و 0 errors في الصفحة. و [[theme.js]] في الـ [[head]] من غير [[defer]] عشان الثيم يتحط قبل ما الصفحة تترسم، فمفيش ومضة بالثيم الغلط.
+
+**الأزرار:** [[aria-pressed]] على اللي شغال، والشكل من [[aria-pressed:bg-brand]].
+
+~~~text الناتج (Playwright بـ Chrome 157)
+البداية:  html light، الصفحة rgb(248, 250, 252)، ركن الليل rgb(11, 17, 32)
+dark:     الصفحة rgb(11, 17, 32)
+paper:    الصفحة rgb(245, 240, 230)، ركن الليل rgb(11, 17, 32)
+بعد refresh (كان paper): paper، والزرار المضغوط paper
+من غير inline: ركن الليل rgb(245, 240, 230) = لون الصفحة
+localStorage ممنوع: الثيم اتغيّر لـ dark، page errors 0
+axe (فاتح وغامق وورقي): 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "tw-admin", t: R`لوحة طلبات RTL بشارات حالة`, what: R`لوحة أدمن لمتجر ورد متخيل بـ Tailwind: ٤ كروت أرقام بـ auto-fit، وجدول آخر الطلبات فيه شارة لكل حالة (اتدفع، مستني الدفع، في الطريق، اتلغى). الشارة كلاس واحد [[badge]] من [[@utility]]، والحالة في الـ HTML [[data-status="paid"]] مش لون، والجدول بيعمل scroll جوه صندوقه على الموبايل. من دروس [[@theme]] و [[arbitrary values]] (والجداول من وحدة HTML).`, done: R`الـ HTML بيقول الحالة ([[data-status]]) والـ CSS بيقرر اللون، والجدول فيه [[th scope="col"]]، وعلى 360 الصفحة [[scrollWidth]] = العرض والجدول بس اللي بيتسحب، و axe صفر مشاكل (ولا [[landmark-unique]]).`, sol: R`~~~bash الترمنال
+npm i -D tailwindcss@4.3.4 @tailwindcss/cli@4.3.4
+npx @tailwindcss/cli -i in.css -o out.css
+~~~
+
+~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #4338ca;
+  --color-ok: #15803d;     --color-ok-soft: #dcfce7;     --color-ok-ink: #14532d;
+  --color-warn: #b45309;   --color-warn-soft: #fef3c7;   --color-warn-ink: #78350f;
+  --color-danger: #b91c1c; --color-danger-soft: #fee2e2; --color-danger-ink: #7f1d1d;
+  --color-info-soft: #e0e7ff; --color-info-ink: #312e81;
+  --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+}
+
+/* one status badge, four looks: the HTML says what the status IS (data-status), the CSS decides how it looks */
+@utility badge {
+  display: inline-block;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+@layer components {
+  .badge[data-status="paid"]      { background: var(--color-ok-soft);     color: var(--color-ok-ink); }
+  .badge[data-status="pending"]   { background: var(--color-warn-soft);   color: var(--color-warn-ink); }
+  .badge[data-status="cancelled"] { background: var(--color-danger-soft); color: var(--color-danger-ink); }
+  .badge[data-status="shipped"]   { background: var(--color-info-soft);   color: var(--color-info-ink); }
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة متجر ورد: الطلبات</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="bg-slate-100 font-sans text-slate-900">
+<main class="mx-auto max-w-6xl space-y-6 p-4">
+  <h1 class="text-2xl font-bold">الطلبات النهارده</h1>
+
+  <ul class="grid grid-cols-[repeat(auto-fit,minmax(min(12rem,100%),1fr))] gap-4">
+    <li class="rounded-xl bg-white p-4 shadow-sm"><p class="text-slate-600">طلبات جديدة</p><p class="text-3xl font-extrabold">٣٢</p></li>
+    <li class="rounded-xl bg-white p-4 shadow-sm"><p class="text-slate-600">اتدفعت</p><p class="text-3xl font-extrabold text-ok">٢٤</p></li>
+    <li class="rounded-xl bg-white p-4 shadow-sm"><p class="text-slate-600">مستنية الدفع</p><p class="text-3xl font-extrabold text-warn">٦</p></li>
+    <li class="rounded-xl bg-white p-4 shadow-sm"><p class="text-slate-600">اتلغت</p><p class="text-3xl font-extrabold text-danger">٢</p></li>
+  </ul>
+
+  <section aria-labelledby="orders-t" class="rounded-xl bg-white shadow-sm">
+    <h2 id="orders-t" class="p-4 text-lg font-bold">آخر الطلبات</h2>
+    <!-- the table scrolls inside its own box on a phone; the page does not -->
+    <div class="overflow-x-auto focus-visible:outline-3 focus-visible:outline-brand" tabindex="0" role="region" aria-label="جدول الطلبات، بيتسحب بالعرض">
+      <table class="w-full min-w-[36rem] text-start">
+        <thead class="bg-slate-50 text-slate-600">
+          <tr>
+            <th scope="col" class="px-4 py-2 text-start font-semibold">الطلب</th>
+            <th scope="col" class="px-4 py-2 text-start font-semibold">العميل</th>
+            <th scope="col" class="px-4 py-2 text-start font-semibold">المبلغ</th>
+            <th scope="col" class="px-4 py-2 text-start font-semibold">الحالة</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr><td class="px-4 py-3 tabular-nums">#١٠٤١</td><td class="px-4 py-3">هالة سمير</td><td class="px-4 py-3 tabular-nums">٤٥٠ ج</td><td class="px-4 py-3"><span class="badge" data-status="paid">اتدفع</span></td></tr>
+          <tr><td class="px-4 py-3 tabular-nums">#١٠٤٢</td><td class="px-4 py-3">مروان فتحي</td><td class="px-4 py-3 tabular-nums">١٢٠ ج</td><td class="px-4 py-3"><span class="badge" data-status="pending">مستني الدفع</span></td></tr>
+          <tr><td class="px-4 py-3 tabular-nums">#١٠٤٣</td><td class="px-4 py-3">نادية عادل</td><td class="px-4 py-3 tabular-nums">٨٠٠ ج</td><td class="px-4 py-3"><span class="badge" data-status="shipped">في الطريق</span></td></tr>
+          <tr><td class="px-4 py-3 tabular-nums">#١٠٤٤</td><td class="px-4 py-3">طارق منير</td><td class="px-4 py-3 tabular-nums">٢٥٠ ج</td><td class="px-4 py-3"><span class="badge" data-status="cancelled">اتلغى</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 620 840 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة متجر ورد: الطلبات</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties;
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --color-slate-50: oklch(98.4% 0.003 247.858);
+    --color-slate-100: oklch(96.8% 0.007 247.896);
+    --color-slate-600: oklch(44.6% 0.043 257.281);
+    --color-slate-900: oklch(20.8% 0.042 265.755);
+    --color-white: #fff;
+    --spacing: 0.25rem;
+    --container-6xl: 72rem;
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
+    --text-3xl: 1.875rem;
+    --text-3xl--line-height: calc(2.25 / 1.875);
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    --radius-xl: 0.75rem;
+    --default-font-family: var(--font-sans);
+    --default-mono-font-family: var(--font-mono);
+    --color-brand: #4338ca;
+    --color-ok: #15803d;
+    --color-ok-soft: #dcfce7;
+    --color-ok-ink: #14532d;
+    --color-warn: #b45309;
+    --color-warn-soft: #fef3c7;
+    --color-warn-ink: #78350f;
+    --color-danger: #b91c1c;
+    --color-danger-soft: #fee2e2;
+    --color-danger-ink: #7f1d1d;
+    --color-info-soft: #e0e7ff;
+    --color-info-ink: #312e81;
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring:where(:not(iframe)) {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .mx-auto {
+    margin-inline: auto;
+  }
+  .badge {
+    display: inline-block;
+    border-radius: 9999px;
+    padding: 0.125rem 0.625rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .grid {
+    display: grid;
+  }
+  .table {
+    display: table;
+  }
+  .w-full {
+    width: 100%;
+  }
+  .max-w-6xl {
+    max-width: var(--container-6xl);
+  }
+  .min-w-\[36rem\] {
+    min-width: 36rem;
+  }
+  .grid-cols-\[repeat\(auto-fit\,minmax\(min\(12rem\,100\%\)\,1fr\)\)\] {
+    grid-template-columns: repeat(auto-fit,minmax(min(12rem, 100%),1fr));
+  }
+  .gap-4 {
+    gap: calc(var(--spacing) * 4);
+  }
+  :where(.space-y-6 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  :where(.divide-y > :not(:last-child)) {
+    --tw-divide-y-reverse: 0;
+    border-bottom-style: var(--tw-border-style);
+    border-top-style: var(--tw-border-style);
+    border-top-width: calc(1px * var(--tw-divide-y-reverse));
+    border-bottom-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+  }
+  :where(.divide-slate-100 > :not(:last-child)) {
+    border-color: var(--color-slate-100);
+  }
+  .overflow-x-auto {
+    overflow-x: auto;
+  }
+  .rounded-xl {
+    border-radius: var(--radius-xl);
+  }
+  .bg-slate-50 {
+    background-color: var(--color-slate-50);
+  }
+  .bg-slate-100 {
+    background-color: var(--color-slate-100);
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .px-4 {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+  .py-2 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .py-3 {
+    padding-block: calc(var(--spacing) * 3);
+  }
+  .text-start {
+    text-align: start;
+  }
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+  .text-3xl {
+    font-size: var(--text-3xl);
+    line-height: var(--tw-leading, var(--text-3xl--line-height));
+  }
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+  .font-extrabold {
+    --tw-font-weight: var(--font-weight-extrabold);
+    font-weight: var(--font-weight-extrabold);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .text-danger {
+    color: var(--color-danger);
+  }
+  .text-ok {
+    color: var(--color-ok);
+  }
+  .text-slate-600 {
+    color: var(--color-slate-600);
+  }
+  .text-slate-900 {
+    color: var(--color-slate-900);
+  }
+  .text-warn {
+    color: var(--color-warn);
+  }
+  .tabular-nums {
+    --tw-numeric-spacing: tabular-nums;
+    font-variant-numeric: var(--tw-ordinal, ) var(--tw-slashed-zero, ) var(--tw-numeric-figure, ) var(--tw-numeric-spacing, ) var(--tw-numeric-fraction, );
+  }
+  .shadow-sm {
+    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .focus-visible\:outline-3:focus-visible {
+    outline-style: var(--tw-outline-style);
+    outline-width: 3px;
+  }
+  .focus-visible\:outline-brand:focus-visible {
+    outline-color: var(--color-brand);
+  }
+}
+@layer components {
+  .badge[data-status="paid"] {
+    background: var(--color-ok-soft);
+    color: var(--color-ok-ink);
+  }
+  .badge[data-status="pending"] {
+    background: var(--color-warn-soft);
+    color: var(--color-warn-ink);
+  }
+  .badge[data-status="cancelled"] {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-ink);
+  }
+  .badge[data-status="shipped"] {
+    background: var(--color-info-soft);
+    color: var(--color-info-ink);
+  }
+}
+@property --tw-space-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-divide-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ordinal {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-slashed-zero {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-numeric-figure {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-numeric-spacing {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-numeric-fraction {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: block))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-space-y-reverse: 0;
+      --tw-divide-y-reverse: 0;
+      --tw-border-style: solid;
+      --tw-font-weight: initial;
+      --tw-ordinal: initial;
+      --tw-slashed-zero: initial;
+      --tw-numeric-figure: initial;
+      --tw-numeric-spacing: initial;
+      --tw-numeric-fraction: initial;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-outline-style: solid;
+    }
+  }
+}
+</style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-900">
+<main class="mx-auto max-w-6xl space-y-6 p-4">
+  <h1 class="text-2xl font-bold">الطلبات النهارده</h1>
+
+  <ul class="grid grid-cols-[repeat(auto-fit,minmax(min(12rem,100%),1fr))] gap-4">
+    <li class="rounded-xl bg-white p-4 shadow-sm"><p class="text-slate-600">طلبات جديدة</p><p class="text-3xl font-extrabold">٣٢</p></li>
+    <li class="rounded-xl bg-white p-4 shadow-sm"><p class="text-slate-600">اتدفعت</p><p class="text-3xl font-extrabold text-ok">٢٤</p></li>
+    <li class="rounded-xl bg-white p-4 shadow-sm"><p class="text-slate-600">مستنية الدفع</p><p class="text-3xl font-extrabold text-warn">٦</p></li>
+    <li class="rounded-xl bg-white p-4 shadow-sm"><p class="text-slate-600">اتلغت</p><p class="text-3xl font-extrabold text-danger">٢</p></li>
+  </ul>
+
+  <section aria-labelledby="orders-t" class="rounded-xl bg-white shadow-sm">
+    <h2 id="orders-t" class="p-4 text-lg font-bold">آخر الطلبات</h2>
+    <!-- the table scrolls inside its own box on a phone; the page does not -->
+    <div class="overflow-x-auto focus-visible:outline-3 focus-visible:outline-brand" tabindex="0" role="region" aria-label="جدول الطلبات، بيتسحب بالعرض">
+      <table class="w-full min-w-[36rem] text-start">
+        <thead class="bg-slate-50 text-slate-600">
+          <tr>
+            <th scope="col" class="px-4 py-2 text-start font-semibold">الطلب</th>
+            <th scope="col" class="px-4 py-2 text-start font-semibold">العميل</th>
+            <th scope="col" class="px-4 py-2 text-start font-semibold">المبلغ</th>
+            <th scope="col" class="px-4 py-2 text-start font-semibold">الحالة</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr><td class="px-4 py-3 tabular-nums">#١٠٤١</td><td class="px-4 py-3">هالة سمير</td><td class="px-4 py-3 tabular-nums">٤٥٠ ج</td><td class="px-4 py-3"><span class="badge" data-status="paid">اتدفع</span></td></tr>
+          <tr><td class="px-4 py-3 tabular-nums">#١٠٤٢</td><td class="px-4 py-3">مروان فتحي</td><td class="px-4 py-3 tabular-nums">١٢٠ ج</td><td class="px-4 py-3"><span class="badge" data-status="pending">مستني الدفع</span></td></tr>
+          <tr><td class="px-4 py-3 tabular-nums">#١٠٤٣</td><td class="px-4 py-3">نادية عادل</td><td class="px-4 py-3 tabular-nums">٨٠٠ ج</td><td class="px-4 py-3"><span class="badge" data-status="shipped">في الطريق</span></td></tr>
+          <tr><td class="px-4 py-3 tabular-nums">#١٠٤٤</td><td class="px-4 py-3">طارق منير</td><td class="px-4 py-3 tabular-nums">٢٥٠ ج</td><td class="px-4 py-3"><span class="badge" data-status="cancelled">اتلغى</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** «الطلبات النهارده»، و ٤ كروت (٣٢ جديد، و ٢٤ اتدفعت بالأخضر، و ٦ مستنية بالبرتقاني، و ٢ اتلغت بالأحمر)، وتحتهم جدول ٤ طلبات، وفي آخر كل سطر شارة ملونة بالحالة.
+
+**الشارة: [[@utility]] و [[data-status]]:** [[@utility badge]] بيعمل كلاس [[badge]] (الشكل: كبسولة، وخط صغير تقيل). واللون من [[data-status]]: [[.badge[data-status="paid"]]] أخضر فاتح، وهكذا. ليه مش [[bg-ok-soft text-ok-ink]] على كل شارة؟ لأن الحالة جاية من البيانات: السيرفر أو الـ JS بيكتب [[data-status="paid"]] وبس، ومحدش محتاج يفتكر أنهي لون لأنهي حالة. والقواعد دي في [[@layer components]] عشان أي utility في الـ HTML تقدر تغلبها.
+
+**الكروت:** [[grid-cols-[repeat(auto-fit,minmax(min(12rem,100%),1fr))]]]: قيمة [[[...]]] واحدة لأن Tailwind معندوش utility جاهزة لـ auto-fit. والأرقام [[tabular-nums]] (كل الأرقام نفس العرض، فالعمود بيتصف).
+
+**الجدول على الموبايل:** [[overflow-x-auto]] على صندوق حواليه، و [[min-w-[36rem]]] على الجدول، فبيتسحب جوه الصندوق والصفحة لأ. والصندوق [[tabindex="0"]] و [[role="region"]] عشان الكيبورد يقدر يسحبه.
+
+**الغلطة اللي axe مسكها:** أول نسخة الصندوق كان [[aria-labelledby="orders-t"]]، والـ [[<section>]] اللي فوقه [[aria-labelledby="orders-t"]] برضه. الاتنين بقوا region بنفس الاسم «آخر الطلبات»، و axe قال [[landmark-unique]]: قارئ الشاشة بيعرض اتنين بنفس الاسم ومش هتعرف الفرق. التصليح: الصندوق [[aria-label="جدول الطلبات، بيتسحب بالعرض"]].
+
+~~~text الناتج (Playwright بـ Chrome 157)
+360:  الصفحة scrollWidth 360 / 360 | صندوق الجدول 576 / 328 (بيتسحب جواه)
+1280: الصفحة 1280 / 1280 | الصندوق 1120 / 1120
+.badge[data-status="paid"] { background: var(--color-ok-soft); color: var(--color-ok-ink); }
+axe: 0 violations (كانت landmark-unique:1 قبل aria-label)   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'كبير', dir: "tw-landing", t: R`landing ثنائية اللغة بـ Tailwind v4`, what: R`أعد بناء landing وحدة position (أو صفحة الاستوديو بتاعة وحدة Grid) بـ Tailwind v4 بس: [[@utility container-app]]، وتوكنز في [[@theme]]، و bento بـ [[grid-cols-12]] و [[col-span-*]]، وأسعار بـ [[grid-rows-subgrid]] وtoggle بـ [[has-checked:]]، وأسئلة بـ [[aria-expanded:]]، وعربي وإنجليزي بـ utilities منطقية ([[ms-*]] و [[ps-*]] و [[start-*]]) و [[rtl:]] للي مش منطقي (الأسهم و translate). بيجمع الوحدة دي مع وحدات Grid و position والصور.`, done: R`[[matrix.js]] (درس [[مصفوفة مقاسات]]) بيطلّع [[all sizes OK]] بالعربي والإنجليزي، و grep على المشروع مفيهوش [[ml-]] ولا [[mr-]] ولا [[pl-]] ولا [[pr-]] ولا [[left-]] ولا [[right-]]، و [[out.css]] بـ [[--minify]] أقل من 30KB، وكل قيمة [[[...]]] اتكتبت مرة واحدة أو اتحوّلت لتوكن.`, ext: R`زوّد dark mode بـ [[@custom-variant]] وثيم تالت، وقسّم الأقسام لـ components في React، واعمل build في CI يفشل لو [[out.css]] عدّى 30KB.`, sol: R`أعدت بناء صفحة عيادة الأسنان (مشروع وحدة position) بـ Tailwind v4 بس. [[lang.js]] و [[img/logo.svg]] زي ما هم من هناك.
+
+~~~text tw-landing/
+in.css  index.html  page.js  lang.js  img/logo.svg  matrix.js
+out.css   (بيتعمل بالأمر، مبيتكتبش)
+~~~
+
+~~~bash الترمنال
+npm i -D tailwindcss@4.3.4 @tailwindcss/cli@4.3.4 playwright-core@1.64.1
+npx @tailwindcss/cli -i in.css -o out.css --minify
+python -m http.server 8932      # في ترمنال تاني
+node matrix.js
+~~~
+
+~~~css in.css
+@import "tailwindcss";
+
+/* the identity: colours, font, radius by meaning */
+@theme {
+  --color-brand: #0e7490;
+  --color-brand-ink: #155e75;
+  --color-brand-soft: #cffafe;
+  --color-accent: #b45309;
+  --color-page: #f0f9ff;
+  --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+  --radius-card: 1rem;
+  --z-index-header: 10;
+  --z-index-book: 20;
+}
+
+/* one class for the page width, used by every section */
+@utility container-app {
+  margin-inline: auto;
+  max-width: 64rem;
+  padding-inline: 1rem;
+}
+
+/* jumps to a section stop under the sticky header (its height is written by page.js) */
+@layer base {
+  :root { --header-h: 4rem; }
+  h1, h2 { scroll-margin-top: calc(var(--header-h) + 1rem); }
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة للأسنان</title>
+<link rel="stylesheet" href="out.css">
+<script src="lang.js"></script>
+<script src="page.js" defer></script>
+</head>
+<body class="bg-page font-sans text-slate-900">
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-4 focus:z-book focus:bg-slate-900 focus:px-4 focus:py-2 focus:text-white" data-en="Skip to content">اتخطى للمحتوى</a>
+
+<header id="header" class="sticky top-0 z-header border-b border-brand/20 bg-white/80 backdrop-blur">
+  <div class="container-app flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2">
+    <a href="#main" class="flex items-center gap-2 font-extrabold"><img class="logo size-9" src="img/logo.svg" alt="" width="36" height="36"><span data-en="Ebtesama Dental">عيادة ابتسامة</span></a>
+    <a href="?lang=en" lang="en" data-en="عربي" data-en-href="?lang=ar" data-en-lang="ar" class="rounded-lg border border-brand-ink px-3 py-1 font-bold text-brand-ink md:order-1">EN</a>
+    <nav class="nav basis-full md:ms-auto md:basis-auto" aria-label="أقسام الصفحة" data-en-label="Page sections">
+      <ul class="flex flex-wrap gap-x-1">
+        <li><a href="#services" class="inline-block rounded-lg px-2 py-1.5 font-semibold text-brand-ink hover:bg-brand/10" data-en="Services">الخدمات</a></li>
+        <li><a href="#prices" class="inline-block rounded-lg px-2 py-1.5 font-semibold text-brand-ink hover:bg-brand/10" data-en="Prices">الأسعار</a></li>
+        <li><a href="#faq" class="inline-block rounded-lg px-2 py-1.5 font-semibold text-brand-ink hover:bg-brand/10" data-en="FAQ">أسئلة</a></li>
+      </ul>
+    </nav>
   </div>
 </header>
-<main id="main">
-<section class="hero" aria-labelledby="hero-title">
-  <div class="wrap">
-    <h1 id="hero-title">ورد طبيعي يوصلك النهارده</h1>
-    <p>بننسّق كل بوكيه بالإيد الصبح، ويوصل لحد الباب في نفس اليوم في القاهرة والجيزة.</p>
-    <a class="btn" href="#products">شوف الورد</a>
-  </div>
-</section>
-<section id="products" aria-labelledby="products-title">
-  <div class="wrap">
-    <h2 id="products-title">المنتجات</h2>
-    <ul class="products" role="list">
-      <li class="pcard"><span class="badge">جديد</span><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNlY2ZjY2IiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDAgMTQwKSI+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNmZmZmZmYiIHRyYW5zZm9ybT0icm90YXRlKDApIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2ZmZmZmZiIgdHJhbnNmb3JtPSJyb3RhdGUoNzIpIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2ZmZmZmZiIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSB0cmFuc2xhdGUoMCAtNTIpIi8+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNmZmZmZmYiIHRyYW5zZm9ybT0icm90YXRlKDIxNikgdHJhbnNsYXRlKDAgLTUyKSIvPjxlbGxpcHNlIHJ4PSIzNCIgcnk9IjYyIiBmaWxsPSIjZmZmZmZmIiB0cmFuc2Zvcm09InJvdGF0ZSgyODgpIHRyYW5zbGF0ZSgwIC01MikiLz48Y2lyY2xlIHI9IjMwIiBmaWxsPSIjZmFjYzE1Ii8+PC9nPjxyZWN0IHg9IjE5NiIgeT0iMTkwIiB3aWR0aD0iOCIgaGVpZ2h0PSIxMTAiIGZpbGw9IiMzZjYyMTIiLz48L3N2Zz4=" width="400" height="300" alt="بوكيه ياسمين" loading="lazy"><h3>بوكيه ياسمين</h3><p class="price">٣٥٠ جنيه</p><button type="button" class="btn add" popovertarget="added" data-name="بوكيه ياسمين"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg><span>أضف للسلة</span></button></li>
-      <li class="pcard"><span class="badge">الأكتر طلبًا</span><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZmU0ZTYiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDAgMTQwKSI+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNlMTFkNDgiIHRyYW5zZm9ybT0icm90YXRlKDApIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2UxMWQ0OCIgdHJhbnNmb3JtPSJyb3RhdGUoNzIpIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2UxMWQ0OCIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSB0cmFuc2xhdGUoMCAtNTIpIi8+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNlMTFkNDgiIHRyYW5zZm9ybT0icm90YXRlKDIxNikgdHJhbnNsYXRlKDAgLTUyKSIvPjxlbGxpcHNlIHJ4PSIzNCIgcnk9IjYyIiBmaWxsPSIjZTExZDQ4IiB0cmFuc2Zvcm09InJvdGF0ZSgyODgpIHRyYW5zbGF0ZSgwIC01MikiLz48Y2lyY2xlIHI9IjMwIiBmaWxsPSIjN2YxZDFkIi8+PC9nPjxyZWN0IHg9IjE5NiIgeT0iMTkwIiB3aWR0aD0iOCIgaGVpZ2h0PSIxMTAiIGZpbGw9IiMzZjYyMTIiLz48L3N2Zz4=" width="400" height="300" alt="ورد بلدي أحمر" loading="lazy"><h3>ورد بلدي أحمر</h3><p class="price">٤٢٠ جنيه</p><button type="button" class="btn add" popovertarget="added" data-name="ورد بلدي أحمر"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg><span>أضف للسلة</span></button></li>
-      <li class="pcard"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZWYzYzciLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDAgMTQwKSI+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNmNTllMGIiIHRyYW5zZm9ybT0icm90YXRlKDApIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2Y1OWUwYiIgdHJhbnNmb3JtPSJyb3RhdGUoNzIpIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iI2Y1OWUwYiIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSB0cmFuc2xhdGUoMCAtNTIpIi8+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiNmNTllMGIiIHRyYW5zZm9ybT0icm90YXRlKDIxNikgdHJhbnNsYXRlKDAgLTUyKSIvPjxlbGxpcHNlIHJ4PSIzNCIgcnk9IjYyIiBmaWxsPSIjZjU5ZTBiIiB0cmFuc2Zvcm09InJvdGF0ZSgyODgpIHRyYW5zbGF0ZSgwIC01MikiLz48Y2lyY2xlIHI9IjMwIiBmaWxsPSIjNzgzNTBmIi8+PC9nPjxyZWN0IHg9IjE5NiIgeT0iMTkwIiB3aWR0aD0iOCIgaGVpZ2h0PSIxMTAiIGZpbGw9IiMzZjYyMTIiLz48L3N2Zz4=" width="400" height="300" alt="عباد شمس" loading="lazy"><h3>عباد شمس</h3><p class="price">٣٠٠ جنيه</p><button type="button" class="btn add" popovertarget="added" data-name="عباد شمس"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg><span>أضف للسلة</span></button></li>
-      <li class="pcard"><span class="badge">خصم ١٠٪</span><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNlZGU5ZmUiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDAgMTQwKSI+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiM4YjVjZjYiIHRyYW5zZm9ybT0icm90YXRlKDApIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iIzhiNWNmNiIgdHJhbnNmb3JtPSJyb3RhdGUoNzIpIHRyYW5zbGF0ZSgwIC01MikiLz48ZWxsaXBzZSByeD0iMzQiIHJ5PSI2MiIgZmlsbD0iIzhiNWNmNiIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSB0cmFuc2xhdGUoMCAtNTIpIi8+PGVsbGlwc2Ugcng9IjM0IiByeT0iNjIiIGZpbGw9IiM4YjVjZjYiIHRyYW5zZm9ybT0icm90YXRlKDIxNikgdHJhbnNsYXRlKDAgLTUyKSIvPjxlbGxpcHNlIHJ4PSIzNCIgcnk9IjYyIiBmaWxsPSIjOGI1Y2Y2IiB0cmFuc2Zvcm09InJvdGF0ZSgyODgpIHRyYW5zbGF0ZSgwIC01MikiLz48Y2lyY2xlIHI9IjMwIiBmaWxsPSIjZmFjYzE1Ii8+PC9nPjxyZWN0IHg9IjE5NiIgeT0iMTkwIiB3aWR0aD0iOCIgaGVpZ2h0PSIxMTAiIGZpbGw9IiMzZjYyMTIiLz48L3N2Zz4=" width="400" height="300" alt="بنفسج في أصيص" loading="lazy"><h3>بنفسج في أصيص</h3><p class="price">٢٨٠ جنيه</p><button type="button" class="btn add" popovertarget="added" data-name="بنفسج في أصيص"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11h11L21 7H6.2M9 20h.01M18 20h.01"/></svg><span>أضف للسلة</span></button></li>
+
+<main id="main" tabindex="-1" class="focus:outline-none">
+  <section class="container-app py-12 text-center md:py-20">
+    <h1 class="mx-auto max-w-[18ch] text-4xl font-extrabold leading-tight md:text-6xl" data-en="A smile you are not shy of">ابتسامة مش هتتكسف منها</h1>
+    <p class="mx-auto mt-4 max-w-prose text-lg text-slate-600" data-en="Cleaning, whitening, fillings and braces. Same-week appointments.">تنضيف وتبييض وحشو وتقويم، ومواعيد في نفس الأسبوع.</p>
+    <a href="#prices" class="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-ink px-6 py-3 font-bold text-white">
+      <span data-en="See prices">شوف الأسعار</span><span aria-hidden="true" class="rtl:rotate-180">→</span>
+    </a>
+  </section>
+
+  <!-- bento: 12 columns, cards of different widths -->
+  <section class="container-app py-10" aria-labelledby="services">
+    <h2 id="services" class="mb-6 text-3xl font-bold" data-en="Services">الخدمات</h2>
+    <ul class="grid grid-cols-12 gap-4">
+      <li class="col-span-12 rounded-card bg-brand-ink p-6 text-white md:col-span-7 md:row-span-2">
+        <h3 class="text-2xl font-bold" data-en="Braces">تقويم</h3>
+        <p class="mt-2 text-brand-soft" data-en="Clear aligners or metal braces, with a follow-up every month and a plan you can see from the first visit.">شفاف أو معدن، ومتابعة كل شهر، وخطة تشوفها من أول زيارة.</p>
+      </li>
+      <li class="col-span-12 rounded-card bg-white p-6 shadow-sm sm:col-span-6 md:col-span-5">
+        <h3 class="text-xl font-bold" data-en="Cleaning">تنضيف</h3>
+        <p class="mt-1 text-slate-600" data-en="Scaling and polishing in one 40-minute visit.">إزالة الجير وتلميع في زيارة ٤٠ دقيقة.</p>
+      </li>
+      <li class="col-span-12 rounded-card bg-white p-6 shadow-sm sm:col-span-6 md:col-span-5">
+        <h3 class="text-xl font-bold" data-en="Whitening">تبييض</h3>
+        <p class="mt-1 text-slate-600" data-en="Two to four shades lighter.">من درجتين لأربعة أفتح.</p>
+      </li>
+      <li class="col-span-12 rounded-card bg-brand-soft p-6 md:col-span-12">
+        <h3 class="text-xl font-bold" data-en="Fillings">حشو</h3>
+        <p class="mt-1 text-slate-700" data-en="Tooth-coloured fillings that don't show.">حشو بلون السنة مبيبانش.</p>
+      </li>
     </ul>
-  </div>
-</section>
-<section id="plans" aria-labelledby="plans-title">
-  <div class="wrap">
-    <h2 id="plans-title">الباقات</h2>
-    <div class="plans">
-      <article class="plan"><h3>مرة في الشهر</h3><p class="amount">٣٨٠ جنيه <small>/ شهر</small></p><ul><li>بوكيه واحد</li><li>توصيل مجاني</li></ul><a class="btn plan-btn" href="#login">اختار «مرة في الشهر»</a></article>
-      <article class="plan featured"><p class="tag">الأوفر</p><h3>كل أسبوع</h3><p class="amount">١٬٢٠٠ جنيه <small>/ شهر</small></p><ul><li>٤ بوكيهات</li><li>توصيل مجاني</li><li>كارت إهداء كل مرة</li><li>تغيير المواعيد من حسابك</li></ul><a class="btn plan-btn" href="#login">اختار «كل أسبوع»</a></article>
-      <article class="plan"><h3>للمكاتب</h3><p class="amount">٢٬٤٠٠ جنيه <small>/ شهر</small></p><ul><li>٤ بوكيهات كبار</li><li>فاتورة باسم الشركة</li></ul><a class="btn plan-btn" href="#login">اختار «للمكاتب»</a></article>
+  </section>
+
+  <!-- prices: the checkbox switches monthly / yearly with has-checked:, no JavaScript -->
+  <section class="group container-app py-10" aria-labelledby="prices">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <h2 id="prices" class="text-3xl font-bold" data-en="Care plans">باقات المتابعة</h2>
+      <label class="flex cursor-pointer items-center gap-3 font-semibold">
+        <span data-en="Monthly">شهري</span>
+        <input type="checkbox" class="peer sr-only" id="yearly">
+        <span aria-hidden="true" class="relative h-7 w-12 rounded-full bg-slate-300 transition-colors peer-checked:bg-brand-ink peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent
+                     after:absolute after:start-1 after:top-1 after:size-5 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-5 rtl:peer-checked:after:-translate-x-5"></span>
+        <span data-en="Yearly (save 20%)">سنوي (وفّر ٢٠٪)</span>
+      </label>
     </div>
-  </div>
-</section>
-<section id="delivery" aria-labelledby="delivery-title">
-  <div class="wrap">
-    <h2 id="delivery-title">التوصيل</h2>
-    <fieldset id="picker">
-      <legend>عايز الورد يوصلك إزاي؟</legend>
-      <label class="opt"><input type="radio" name="d" value="home" checked> <span><b>لحد البيت</b> · بكرة الصبح</span></label>
-      <label class="opt"><input type="radio" name="d" value="express"> <span><b>سريع</b> · في خلال ٣ ساعات</span></label>
-      <label class="opt"><input type="radio" name="d" value="pickup"> <span><b>استلام من الفرع</b> · ببلاش</span></label>
-      <div class="branch"><label for="branch">الفرع</label><select id="branch" name="branch"><option>الدقي</option><option>مدينة نصر</option><option>المعادي</option></select></div>
-    </fieldset>
-  </div>
-</section>
-<section id="login" aria-labelledby="login-title">
-  <div class="wrap">
-    <img class="art" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNjAwIDYwMCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNlZGU5ZmUiLz48Y2lyY2xlIGN4PSIxNTAiIGN5PSIxODAiIHI9IjcwIiBmaWxsPSIjZTExZDQ4IiBvcGFjaXR5PSIuODUiLz48Y2lyY2xlIGN4PSI0MjAiIGN5PSIxNjAiIHI9IjcwIiBmaWxsPSIjZjU5ZTBiIiBvcGFjaXR5PSIuODUiLz48Y2lyY2xlIGN4PSIzMDAiIGN5PSIzMzAiIHI9IjcwIiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIuODUiLz48Y2lyY2xlIGN4PSIxNjAiIGN5PSI0NjAiIHI9IjcwIiBmaWxsPSIjOGI1Y2Y2IiBvcGFjaXR5PSIuODUiLz48Y2lyY2xlIGN4PSI0NDAiIGN5PSI0NTAiIHI9IjcwIiBmaWxsPSIjZTExZDQ4IiBvcGFjaXR5PSIuODUiLz48L3N2Zz4=" width="600" height="600" alt="">
-    <form class="login-form" action="login" method="post">
-      <h2 id="login-title">الدخول</h2>
-      <label for="email">الإيميل</label>
-      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
-      <label for="password">كلمة السر</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" required>
-      <button class="btn" type="submit">ادخل</button>
-      <p class="note" id="login-note" role="status"></p>
-    </form>
-  </div>
-</section>
-<section id="orders" aria-labelledby="orders-title">
-  <div class="wrap">
-    <h2 id="orders-title">آخر طلباتك</h2>
-    <div class="table-wrap" id="orders-table" tabindex="0" role="region" aria-label="جدول آخر الطلبات" data-cols="رقم الطلب|المنتج|المبلغ|الحالة|التاريخ" data-note="ده متجر متخيّل للتدريب: الفورم مش بيبعت حاجة."></div>
-  </div>
-</section>
+    <ul class="grid gap-4 md:grid-cols-3">
+      <li class="row-span-4 grid grid-rows-subgrid gap-2 rounded-card bg-white p-6 shadow-sm">
+        <h3 class="text-xl font-bold" data-en="Basic">أساسي</h3>
+        <p class="text-3xl font-extrabold text-brand-ink"><span class="group-has-checked:hidden" data-en="EGP 150 / month">١٥٠ ج / شهر</span><span class="hidden group-has-checked:inline" data-en="EGP 1,440 / year">١٬٤٤٠ ج / سنة</span></p>
+        <p class="text-slate-600" data-en="Two cleanings a year.">تنضيفين في السنة.</p>
+        <a href="#book" class="self-end rounded-lg bg-brand-ink px-4 py-2 text-center font-bold text-white" data-en="Choose Basic" aria-label="اختار أساسي" data-en-label="Choose Basic">اختار</a>
+      </li>
+      <li class="row-span-4 grid grid-rows-subgrid gap-2 rounded-card bg-white p-6 shadow-sm ring-2 ring-brand-ink">
+        <h3 class="text-xl font-bold" data-en="Family">عيلة</h3>
+        <p class="text-3xl font-extrabold text-brand-ink"><span class="group-has-checked:hidden" data-en="EGP 400 / month">٤٠٠ ج / شهر</span><span class="hidden group-has-checked:inline" data-en="EGP 3,840 / year">٣٬٨٤٠ ج / سنة</span></p>
+        <p class="text-slate-600" data-en="Four people, cleanings and check-ups, 15% off any treatment.">٤ أفراد، تنضيف وكشف، وخصم ١٥٪ على أي علاج.</p>
+        <a href="#book" class="self-end rounded-lg bg-brand-ink px-4 py-2 text-center font-bold text-white" data-en="Choose Family" aria-label="اختار عيلة" data-en-label="Choose Family">اختار</a>
+      </li>
+      <li class="row-span-4 grid grid-rows-subgrid gap-2 rounded-card bg-white p-6 shadow-sm">
+        <h3 class="text-xl font-bold" data-en="Braces">تقويم</h3>
+        <p class="text-3xl font-extrabold text-brand-ink"><span class="group-has-checked:hidden" data-en="EGP 900 / month">٩٠٠ ج / شهر</span><span class="hidden group-has-checked:inline" data-en="EGP 8,640 / year">٨٬٦٤٠ ج / سنة</span></p>
+        <p class="text-slate-600" data-en="Monthly follow-up.">متابعة كل شهر.</p>
+        <a href="#book" class="self-end rounded-lg bg-brand-ink px-4 py-2 text-center font-bold text-white" data-en="Choose Braces" aria-label="اختار تقويم" data-en-label="Choose Braces">اختار</a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- FAQ: buttons with aria-expanded; the icon turns with aria-expanded: -->
+  <section class="container-app py-10" aria-labelledby="faq">
+    <h2 id="faq" class="mb-6 text-3xl font-bold" data-en="FAQ">أسئلة</h2>
+    <div class="space-y-2">
+      <div class="rounded-xl bg-white">
+        <h3><button type="button" aria-expanded="false" aria-controls="a1" class="flex w-full items-center justify-between gap-4 px-4 py-3 text-start font-bold">
+          <span data-en="Does whitening hurt?">التبييض بيوجع؟</span><span aria-hidden="true" class="transition-transform in-aria-expanded:rotate-180">▾</span></button></h3>
+        <p id="a1" hidden class="px-4 pb-4 text-slate-600" data-en="Some people feel sensitivity for a day or two.">ممكن حساسية يوم أو اتنين.</p>
+      </div>
+      <div class="rounded-xl bg-white">
+        <h3><button type="button" aria-expanded="false" aria-controls="a2" class="flex w-full items-center justify-between gap-4 px-4 py-3 text-start font-bold">
+          <span data-en="Do you work on Fridays?">بتشتغلوا الجمعة؟</span><span aria-hidden="true" class="transition-transform in-aria-expanded:rotate-180">▾</span></button></h3>
+        <p id="a2" hidden class="px-4 pb-4 text-slate-600" data-en="Yes, from 2 pm to 10 pm.">أيوه، من ٢ الضهر لـ ١٠ بالليل.</p>
+      </div>
+    </div>
+  </section>
 </main>
-<footer class="foot"><div class="wrap">متجر الياسمين اسم متخيّل لمشروع تدريب.</div></footer>
-<div class="alert" id="added" popover role="status"><span id="added-text">اتضاف للسلة:</span> <button type="button" popovertarget="added" popovertargetaction="hide">اقفل</button></div>
-<script type="module">
-// الحل المرجعي بتاع درس «مسائل بالـ JS على الصفحة» زي ما هو، بس كـ module
-function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-}
-function buildTable(rows, columns) {
-  const head = '<thead><tr>' + columns.map(c => '<th scope="col">' + escapeHtml(c.label) + '</th>').join('') + '</tr></thead>';
-  const body = rows.length
-    ? rows.map(r => '<tr>' + columns.map(c => '<td>' + escapeHtml(r[c.key] ?? '') + '</td>').join('') + '</tr>').join('')
-    : '<tr><td colspan="' + columns.length + '">مفيش بيانات</td></tr>';
-  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
-}
-function hexToRgb(hex) {
-  let h = String(hex).trim().replace(/^#/, '');
-  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map(ch => ch + ch).join('');
-  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error('لون مش مفهوم: ' + hex);
-  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
-}
-function luminance(hex) {
-  const [r, g, b] = hexToRgb(hex).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-function contrastRatio(a, b) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return Math.round((hi + 0.05) / (lo + 0.05) * 100) / 100;
-}
-function passesAA(fg, bg, large = false) {
-  return contrastRatio(fg, bg) >= (large ? 3 : 4.5);
-}
-const trim4 = n => String(Number(n.toFixed(4)));
-function pxToRem(css, base = 16) {
-  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => Number(n) === 0 ? '0' : trim4(n / base) + 'rem');
-}
 
-const lang = document.documentElement.lang;
+<footer class="bg-slate-900 py-10 pb-24 text-center text-slate-200"><p data-en="12 Garden St. · 0100 000 0000">١٢ شارع الجنينة، ٠١٠٠٠٠٠٠٠٠٠</p></footer>
 
-// the orders table: buildTable from the lesson (every value escaped), numbers and dates in the page language
-const orders = [
-  { id: 1042, product: { ar: "بوكيه ياسمين", en: "Jasmine bouquet" }, amount: 350, status: { ar: "اتوصّل", en: "Delivered" }, date: "2026-11-12" },
-  { id: 1057, product: { ar: "ورد بلدي أحمر", en: "Red roses" }, amount: 840, status: { ar: "في الطريق", en: "On the way" }, date: "2026-11-18" },
-  { id: 1063, product: { ar: "بنفسج في أصيص", en: "Violets in a pot" }, amount: 252, status: { ar: "بيتجهّز", en: "Preparing" }, date: "2026-11-20" },
-];
-const box = document.getElementById("orders-table");
-const labels = box.dataset.cols.split("|");
-const num = new Intl.NumberFormat(lang === "ar" ? "ar-EG" : "en");
-const day = new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en", { day: "numeric", month: "long" });
-box.innerHTML = buildTable(orders.map(o => ({ id: num.format(o.id).replace(/[٬,]/g, ""), product: o.product[lang], amount: (lang === "ar" ? "" : "EGP ") + num.format(o.amount) + (lang === "ar" ? " جنيه" : ""), status: o.status[lang], date: day.format(new Date(o.date + "T00:00")) })),
-  ["id", "product", "amount", "status", "date"].map((key, i) => ({ key, label: labels[i] })));
-
-// "added to cart": the popover opens by itself (popovertarget); JS only writes which product
-const text = document.getElementById("added-text"), base = text.textContent;
-for (const b of document.querySelectorAll(".add")) b.addEventListener("click", () => { text.textContent = base + " " + b.dataset.name; });
-
-// the login form of an imaginary shop: say so instead of posting to nowhere
-document.querySelector(".login-form").addEventListener("submit", e => {
-  e.preventDefault();
-  document.getElementById("login-note").textContent = box.dataset.note;
-});
-
-</script>
+<a id="book" href="#prices" class="fixed bottom-4 end-4 z-book rounded-full bg-accent px-6 py-3 font-extrabold text-white shadow-xl" data-en="Book now">احجز دلوقتي</a>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** هيدر أبيض لازق فيه «الياسمين» ولينكات الأقسام و «English». هيرو بنفسجي فاتح مالي الشاشة: «ورد طبيعي يوصلك النهارده» وزرار. بعده:
-- ٤ كروت منتجات بصور ورد، على كل واحد شارة حمرا في الركن الشمال («جديد»، «الأكتر طلبًا»…) وزرار «أضف للسلة» بأيقونة سلة.
-- ٣ باقات، المميزة («كل أسبوع») كحلي وكلامها أبيض، والزراير على خط واحد تحت.
-- ٣ اختيارات توصيل بإطار بنفسجي على المختار. اختار «استلام من الفرع» ولستة الفروع بتظهر.
-- فورم دخول جنبه رسمة على الشاشة العريضة.
-- جدول آخر طلباتك.
-اضغط «أضف للسلة» وشريط أخضر بيطلع تحت «اتضاف للسلة: بوكيه ياسمين».
+~~~js page.js
+// 1. the sticky header's real height, for scroll-margin-top (measured now and whenever it changes)
+const header = document.getElementById("header");
+const setHeaderH = () => document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+document.addEventListener("DOMContentLoaded", setHeaderH);
+new ResizeObserver(setHeaderH).observe(header);
 
-**الصفحة متجمعة من تمارين الوحدة، بنفس الـ classes:** [[.plan]] و [[.featured]] و [[.plan-btn]] من «صفحات من وصف»، و [[#picker]] و [[.opt]] و [[.branch]] من تمرين التوصيل، و [[.login-form]] و [[.art]] من صفحة الدخول، و [[.pcard .badge]] و [[.alert]] و [[.hero]] من «صلّح الكود البايظ»، و [[buildTable]] من «مسائل بالـ JS». عشان كده فحوص الدروس بتشتغل عليها زي ما هي.
-
-**عربي وإنجليزي من template واحد:** [[build.mjs]] فيه الصفحة مرة واحدة، و [[T.ar]] و [[T.en]] فيهم الكلام والأسعار ([[toLocaleString("ar-EG")]] أو [[("en")]]). النسختين بنفس [[store.css]]، ومفيش ولا [[[dir]]] ولا [[left]] ولا [[right]] فيه: الشارة [[inset-inline-end: 8px]] بتروح الشمال في العربي واليمين في الإنجليزي لوحدها.
-
-**الهيرو:** [[min-height: calc(100dvh - 65px)]]. [[dvh]] = الجزء الظاهر فعلًا على الموبايل ([[100vh]] أطول منه لما شريط العنوان ظاهر). و [[min-height]] مش [[height]] عشان لو الكلام كبر الهيرو يطول، ومتحصلش قصة الدرس (محتوى مقصوص).
-
-**الباقات:** عمود واحد على الموبايل، و [[order: -1]] على المميزة فبتطلع الأول. وعلى 720 وأكتر ٣ عواميد، و [[order: 0]] بيرجّعها مكانها في النص. الكارت [[flex-direction: column]] والزرار [[margin-block-start: auto]] فبينزل لآخر الكارت، والزراير على خط واحد مهما كانت المميزات أطول.
-
-**التوصيل من غير JS:** [[.opt:has(:checked)]] بيلوّن الكارت المختار، و [[#picker:has([value="pickup"]:checked) .branch]] بيظهر الفروع. والـ radio ظاهر (مش [[display: none]])، فالأسهم والـ Tab شغالين.
-
-**التنبيه في الـ top layer:** [[popover]] على [[.alert]]، والزرار [[popovertarget="added"]] بيفتحه من غير JS. الـ top layer فوق أي z-index، فمفيش احتمال الهيدر اللازق يغطيه (بند ٤ في فحص الدرس). Esc بيقفله لوحده. والـ JS بيكتب اسم المنتج بس.
-
-**الحركة:** دخول الهيرو والتنبيه جوه [[@media (prefers-reduced-motion: no-preference)]]، فمع reduce [[document.getAnimations()]] = صفر.
-
-**الفحوص (الأربعة على النسختين، على 320 و 360 و 768 و 1200 و 1440):**
-- فحص الفيضان، وفحص الـ accessibility، وفحص «صفحات من وصف» ومعاه سطر التوصيل: زي ما هم في الدروس.
-- فحص «صلّح الكود البايظ» مكتوب لصفحته البايظة: بنود الفهرس اللازق (1)، و [[#b3]] (3)، و group-hover (5)، وزرار المسح (9) بتدوّر على عناصر مش في المتجر. [[store-checks.js]] فيه الستة الباقيين بنفس طريقة القياس.
-
-**الغلطات اللي قابلتني:**
-- **فحص الدرس نفسه كان فيه bug:** «السطر الجديد في الفحص» بتاع تمرين التوصيل بيعرّف [[const radios]]، والفحص الأصلي معرّفها قبله. لما لزقته جواه: [[SyntaxError: Identifier 'radios' has already been declared]]، والفحص كله مبيشتغلش. صلّحت الدرس: السطور جوه [[{ }]] (scope جديد)، ومعاها جملة بتقول ليه.
-- **صورة الدخول 600 بس على 1440:** الفحص عايزها نص [[#login]] بالظبط. على 1200 عدّت بالصدفة لأن 600 = 1200 ÷ 2. الصورة كانت بتقف عند عرض الملف بتاعها، و [[width: 100%]] بيخليها تملا نصها. وقبلها [[.wrap]] كان عليه [[max-width]]، فاتشال في الحتة دي.
-- **الـ radio 20×20:** فحص الـ accessibility (WCAG 2.2) بيطلب 24×24. بقى 24، وبعدها على الإنجليزي 320 بس واحد طلع 21×24: الـ radio جوه [[.opt]] اللي هو flex، والكلام الإنجليزي أطول، فالـ [[flex-shrink]] الافتراضي (1) صغّره. [[flex: none]] على الـ radio.
-- **axe طلّع color-contrast على الإنجليزي بس، ومرة واحدة:** الفحص اتشغّل والهيرو لسه بيظهر (opacity بين 0 و 1)، فالكلام اتقاس باهت. عند 0 axe بيتجاهله، وعند 1 سليم، والنتيجة على حسب اللحظة. والعربي معداش عليه ده، لأن axe بيسكت عن العربي المتوصّل أصلًا. القياس بقى يستنى [[Promise.all(document.getAnimations().map(a => a.finished))]] قبل أي فحص.
-
-~~~text قبل التصليحات
-قبل التصليحات (أول قياس):
-SyntaxError: Identifier 'radios' has already been declared   ← سطر التوصيل من الدرس اتلزق جوه الفحص من غير { }
-ar 1440 صفحات من وصف 8 من 9: FAIL 2 الدخول: نصين، والفورم في نص نصه ← الصورة 600px من 1440px، والفورم 400px (أقصاه 400)
-ar/en: accessibility 9 من 10: FAIL 10 الأهداف ٢٤×٢٤ على الأقل (WCAG 2.2) ← صغيرة على الصباع: input ، input ، input
-en: axe 1 color-contrast (والفحص بيجري والهيرو لسه بيظهر)
-بعد ما الـ radio بقى 24px، على en 320 بس: home 21×24 | express 24×24 | pickup 24×24  ← الـ flex صغّره
-~~~
-
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-ar 320  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 8 من 8 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-ar 360  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 8 من 8 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-ar 768  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-ar 1200 الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-ar 1440 الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-en 320  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 8 من 8 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-en 360  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 8 من 8 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-en 768  الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-en 1200 الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-en 1440 الفيضان 5 من 5 · accessibility 10 من 10 · صفحات من وصف 9 من 9 · صلّح الكود (6 بنود) 7 من 7 · axe 0
-الكيبورد: 21 وقفة، من غير حلقة: 0
-Enter على «أضف للسلة»: التنبيه مفتوح true | «اتضاف للسلة: بوكيه ياسمين»
-Esc: التنبيه مفتوح false
-سهمين في التوصيل: المختار pickup والفرع ظاهر true
-reduce: animations شغالة 0
-كله نضيف
-~~~
-
-~~~text Lighthouse 13.6.0 (موبايل، الأربع فئات)
-store-ar   | Performance 100 | Accessibility 100 | Best Practices 100 | SEO 100 | ناقص: max-potential-fid, network-dependency-tree-insight
-store-en   | Performance 100 | Accessibility 100 | Best Practices 100 | SEO 100 | ناقص: network-dependency-tree-insight
-~~~
-
-**النشر:** الصفحة static (HTML و CSS و JS وصور SVG)، فـ GitHub Pages زي درس «انشر صفحتك»: [[node build.mjs]]، وارفع [[index.html]] و [[en/]] و [[css/]] و [[js/]] و [[img/]]. الدومين في الـ hreflang ([[jasmine.example]]) متخيّل: حط بتاعك. ([[js/lesson.js]] نفس الملف اللي في مشروع «مدقق ألوان الثيم».)` },
-        { lvl: 'كبير', dir: "css-bank", t: R`بنك تمارين CSS بيتصحح لوحده`, what: R`صفحة زي الموقع ده بالظبط بس للـ CSS: لكل تمرين وصف الهدف، و textarea للـ CSS بتاعك، و iframe بـ [[srcdoc]] بيعرض النتيجة، وزرار «افحص» بيشغّل الفحص الذاتي جوه الـ iframe ويعرض PASS و FAIL. ابدأ بتمارين الأشكال والـ layouts، والعرض بيتغير بأزرار 360 و 768 و 1200 بتغيّر عرض الـ iframe.`, done: R`الحل المرجعي لكل تمرين بيعدّي والحل الغلط بيقع بنفس الرسايل اللي في الدروس، والـ CSS بتاعك بيتحفظ في [[localStorage]] (جوه try/catch) وبيرجع بعد reload، و CSS فيه loop أو غلط مش بيوقّع الصفحة، والصفحة نفسها axe صفر.`, ext: R`زوّد وضع «تحدي اليوم» بتمرين عشوائي وعدّاد وقت، وصفحة إحصائيات بتقولك أنهي نوع تمارين بتقع فيه أكتر.`, sol: R`~~~js make-exercises.mjs
-// node bank/make-exercises.mjs: exercises.js from the lessons' own self-checks (same lines, same messages)
-import fs from "node:fs";
-const src = f => fs.readFileSync(new URL("../src/" + f, import.meta.url), "utf8").split("\n");
-const shapes = src("shapes-check.js"), layouts = src("layouts-check.js");
-// one shape: the "if ((el = get('id'))) { ... }" block, up to its closing line
-const block = id => { const i = shapes.findIndex(l => l.includes("get('" + id + "')")); const j = shapes.findIndex((l, k) => k > i && l === "  }"); return shapes.slice(i, j + 1).join("\n"); };
-// up to the line that ENDS the ok(...) statement: in the layouts check an ok() runs over two lines
-const lines = (from, to) => { const i = layouts.findIndex(l => l.includes(from)); let j = layouts.findIndex(l => l.includes(to)); while (!/\);\s*$/.test(layouts[j])) j++; return layouts.slice(i, j + 1).join("\n"); };
-
-const ex = [
-  { id: "tri", group: "أشكال", title: "مثلث لفوق", goal: "عنصر #tri مثلث لونه #e11d48 بقاعدة 80px وارتفاع 70px، من غير صورة.",
-    html: '<div id="tri"></div>', start: "#tri {\n  \n}",
-    solution: "#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
-    wrong: "#tri { width: 80px; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
-    check: block("tri") },
-  { id: "circle", group: "أشكال", title: "دايرة بإطار", goal: "#circle دايرة 96×96 بالإطار، خلفيتها #0ea5e9 وإطارها 4px لونه #0c4a6e.",
-    html: '<div id="circle"></div>', start: "#circle {\n  \n}",
-    solution: "#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
-    wrong: "#circle { width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
-    check: block("circle") },
-  { id: "star", group: "أشكال", title: "نجمة خماسية", goal: "#star نجمة خماسية 120×120 لونها #f59e0b بـ clip-path (١٠ نقط).",
-    html: '<div id="star"></div>', start: "#star {\n  \n}",
-    solution: "#star { width: 120px; height: 120px; background: #f59e0b;\n  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }",
-    wrong: "#star { width: 120px; height: 120px; background: #f59e0b; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }",
-    check: block("star") },
-  { id: "chess", group: "أشكال", title: "رقعة شطرنج", goal: "#chess رقعة 240×240 مربعاتها 30px (٨×٨)، من غير ولا عنصر جواها.",
-    html: '<div id="chess"></div>', start: "#chess {\n  \n}",
-    solution: "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 60px 60px; }",
-    wrong: "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 30px 30px; }",
-    check: block("chess") },
-  { id: "cards", group: "layouts", title: "شبكة كروت", goal: "#cards: الكروت أقل عرض ليها 220px والمسافة 16px، والعدد في الصف على حسب المكان، ومفيش كارت يطلع برا على أي عرض.",
-    html: '<section id="cards">' + Array.from({ length: 7 }, (_, i) => '<article class="card">كارت ' + (i + 1).toLocaleString("ar-EG") + "</article>").join("") + "</section>",
-    start: "#cards {\n  \n}\n.card { background: #e0e7ff; padding: 8px; }",
-    solution: "#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
-    wrong: "#cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
-    check: lines("const cards", "ok('2 شبكة الكروت'") },
-  { id: "bento", group: "layouts", title: "bento", goal: "#bento: ٤ عواميد (عمودين تحت 600px) وصفوف 120px ومسافة 12px. .b1 عمودين × صفين، و .b2 عمودين × صف.",
-    html: '<section id="bento"><div class="b b1">كبير</div><div class="b b2">عريض</div><div class="b">٣</div><div class="b">٤</div><div class="b">٥</div><div class="b">٦</div></section>',
-    start: "#bento {\n  \n}\n.b { background: #e0e7ff; padding: 8px; }",
-    solution: "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; grid-row: span 2; }\n.b2 { grid-column: span 2; }\n@media (max-width: 599px) { #bento { grid-template-columns: repeat(2, 1fr); } }\n.b { background: #e0e7ff; padding: 8px; }",
-    wrong: "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; }\n.b2 { grid-column: span 2; }\n.b { background: #e0e7ff; padding: 8px; }",
-    check: lines("const bento", "ok('3 bento'") },
-];
-fs.writeFileSync(new URL("exercises.js", import.meta.url),
-  "// اتعمل بـ make-exercises.mjs: الهدف والحل المرجعي، وسطور الفحص منسوخة من فحص الدرس زي ما هي\nexport const exercises = " + JSON.stringify(ex, null, 1) + ";\n");
-console.log("exercises.js: " + ex.length + " تمارين");
-~~~
-
-~~~js exercises.js (الناتج)
-// اتعمل بـ make-exercises.mjs: الهدف والحل المرجعي، وسطور الفحص منسوخة من فحص الدرس زي ما هي
-export const exercises = [
- {
-  "id": "tri",
-  "group": "أشكال",
-  "title": "مثلث لفوق",
-  "goal": "عنصر #tri مثلث لونه #e11d48 بقاعدة 80px وارتفاع 70px، من غير صورة.",
-  "html": "<div id=\"tri\"></div>",
-  "start": "#tri {\n  \n}",
-  "solution": "#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
-  "wrong": "#tri { width: 80px; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
-  "check": "  if ((el = get('tri'))) {\n    const s = cs(el), borders = s.width === '0px' && s.borderBottomColor === rgb('#e11d48') && s.borderLeftColor === 'rgba(0, 0, 0, 0)';\n    const clip = s.clipPath.startsWith('polygon') && s.clipPath.split(',').length === 3 && s.backgroundColor === rgb('#e11d48');\n    ok('1 المثلث', size(el, 80, 70) && (borders || clip), 'المقاس ' + sz(el) + ' والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط');\n  }"
- },
- {
-  "id": "circle",
-  "group": "أشكال",
-  "title": "دايرة بإطار",
-  "goal": "#circle دايرة 96×96 بالإطار، خلفيتها #0ea5e9 وإطارها 4px لونه #0c4a6e.",
-  "html": "<div id=\"circle\"></div>",
-  "start": "#circle {\n  \n}",
-  "solution": "#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
-  "wrong": "#circle { width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
-  "check": "  if ((el = get('circle'))) {\n    const s = cs(el);\n    ok('2 الدايرة', size(el, 96, 96) && round(el) && s.borderTopWidth === '4px' && s.backgroundColor === rgb('#0ea5e9'), 'المقاس ' + sz(el) + ' (المطلوب 96×96 بالـ border)، والـ radius ' + s.borderTopLeftRadius);\n  }"
- },
- {
-  "id": "star",
-  "group": "أشكال",
-  "title": "نجمة خماسية",
-  "goal": "#star نجمة خماسية 120×120 لونها #f59e0b بـ clip-path (١٠ نقط).",
-  "html": "<div id=\"star\"></div>",
-  "start": "#star {\n  \n}",
-  "solution": "#star { width: 120px; height: 120px; background: #f59e0b;\n  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }",
-  "wrong": "#star { width: 120px; height: 120px; background: #f59e0b; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }",
-  "check": "  if ((el = get('star'))) {\n    const s = cs(el), n = s.clipPath.startsWith('polygon') ? s.clipPath.split(',').length : 0;\n    ok('8 النجمة', size(el, 120, 120) && n === 10 && s.backgroundColor === rgb('#f59e0b'), 'الـ polygon فيه ' + n + ' نقطة، والنجمة الخماسية ١٠ (٥ أطراف و ٥ جوه)');\n  }"
- },
- {
-  "id": "chess",
-  "group": "أشكال",
-  "title": "رقعة شطرنج",
-  "goal": "#chess رقعة 240×240 مربعاتها 30px (٨×٨)، من غير ولا عنصر جواها.",
-  "html": "<div id=\"chess\"></div>",
-  "start": "#chess {\n  \n}",
-  "solution": "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 60px 60px; }",
-  "wrong": "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 30px 30px; }",
-  "check": "  if ((el = get('chess'))) {\n    const s = cs(el);\n    ok('10 الشطرنج', size(el, 240, 240) && el.childElementCount === 0 && /gradient/.test(s.backgroundImage) && s.backgroundSize === '60px 60px', 'من غير عناصر جوه (فيه ' + el.childElementCount + ')، و background-size لازم 60px 60px (مربعين × مربعين)، والموجود ' + s.backgroundSize);\n  }"
- },
- {
-  "id": "cards",
-  "group": "layouts",
-  "title": "شبكة كروت",
-  "goal": "#cards: الكروت أقل عرض ليها 220px والمسافة 16px، والعدد في الصف على حسب المكان، ومفيش كارت يطلع برا على أي عرض.",
-  "html": "<section id=\"cards\"><article class=\"card\">كارت ١</article><article class=\"card\">كارت ٢</article><article class=\"card\">كارت ٣</article><article class=\"card\">كارت ٤</article><article class=\"card\">كارت ٥</article><article class=\"card\">كارت ٦</article><article class=\"card\">كارت ٧</article></section>",
-  "start": "#cards {\n  \n}\n.card { background: #e0e7ff; padding: 8px; }",
-  "solution": "#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
-  "wrong": "#cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
-  "check": "  const cards = [...document.querySelectorAll('#cards .card')], cw = inner(q('#cards'));\n  const want = Math.max(1, Math.floor((cw + 16) / (220 + 16))), cols = new Set(cards.map(c => Math.round(R(c).top))).size ? cards.filter(c => near(R(c).top, R(cards[0]).top)).length : 0;\n  ok('2 شبكة الكروت', cols === Math.min(want, cards.length) && cards.every(c => R(c).right <= R(q('#cards')).right + 1 && R(c).left >= R(q('#cards')).left - 1),\n    'الصف الأول فيه ' + cols + ' كروت، والمتوقع ' + want + ' على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا');"
- },
- {
-  "id": "bento",
-  "group": "layouts",
-  "title": "bento",
-  "goal": "#bento: ٤ عواميد (عمودين تحت 600px) وصفوف 120px ومسافة 12px. .b1 عمودين × صفين، و .b2 عمودين × صف.",
-  "html": "<section id=\"bento\"><div class=\"b b1\">كبير</div><div class=\"b b2\">عريض</div><div class=\"b\">٣</div><div class=\"b\">٤</div><div class=\"b\">٥</div><div class=\"b\">٦</div></section>",
-  "start": "#bento {\n  \n}\n.b { background: #e0e7ff; padding: 8px; }",
-  "solution": "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; grid-row: span 2; }\n.b2 { grid-column: span 2; }\n@media (max-width: 599px) { #bento { grid-template-columns: repeat(2, 1fr); } }\n.b { background: #e0e7ff; padding: 8px; }",
-  "wrong": "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; }\n.b2 { grid-column: span 2; }\n.b { background: #e0e7ff; padding: 8px; }",
-  "check": "  const bento = q('#bento'), bw = inner(bento), n = W >= 600 ? 4 : 2, col = (bw - (n - 1) * 12) / n, b1 = R(q('.b1')), b2 = R(q('.b2'));\n  ok('3 bento', near(b1.width, 2 * col + 12) && near(b1.height, 252) && near(b2.width, 2 * col + 12) && near(b2.height, 120) && near(R(q('#bento .b:nth-child(3)')).width, col),\n    'الكبير لازم عمودين × صفين (' + px(2 * col + 12) + ' × 252px) والعريض عمودين × صف، والموجود ' + px(b1.width) + ' × ' + px(b1.height));"
- }
-];
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بنك تمارين CSS</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="bank.css">
-<script type="module" src="bank.js"></script>
-</head>
-<body>
-<header class="top"><h1>بنك تمارين CSS</h1><p>اكتب الـ CSS، شوف النتيجة، ودوس «افحص».</p></header>
-<div class="layout">
-  <nav aria-label="التمارين"><ul id="list" class="list"></ul></nav>
-  <main id="main">
-    <h2 id="ex-title"></h2>
-    <p id="ex-goal" class="goal"></p>
-    <label for="css">الـ CSS بتاعك</label>
-    <textarea id="css" rows="9" spellcheck="false" dir="ltr"></textarea>
-    <div class="row">
-      <button type="button" id="run" class="primary">افحص</button>
-      <button type="button" id="reset">ابدأ من الأول</button>
-      <span class="sizes" role="group" aria-label="عرض النتيجة">
-        <button type="button" data-w="360" aria-pressed="false">360</button>
-        <button type="button" data-w="768" aria-pressed="false">768</button>
-        <button type="button" data-w="1200" aria-pressed="true">1200</button>
-      </span>
-    </div>
-    <p id="verdict" class="verdict" role="status"></p>
-    <ul id="results" class="results"></ul>
-    <div class="stage" tabindex="0" role="region" aria-label="مكان النتيجة (بيعمل scroll لو العرض أكبر من الشاشة)"><iframe id="view" title="النتيجة" sandbox="allow-scripts" style="width: 1200px"></iframe></div>
-  </main>
-</div>
-</body>
-</html>
-~~~
-
-~~~js bank.js
-import { exercises } from "./exercises.js";
-
-const $ = id => document.getElementById(id);
-const KEY = "css-bank:";
-const load = id => { try { return localStorage.getItem(KEY + id); } catch { return null; } };     // storage can be blocked
-const save = (id, css) => { try { localStorage.setItem(KEY + id, css); } catch {} };
-
-// the helpers both lesson checks use (shapes: cs, rgb, size…; layouts: W, q, R, near…). ok() collects instead of console.log
-const PRELUDE = $__bt
-const results = [];
-const cs = (el, p) => getComputedStyle(el, p || null);
-const rgb = c => { const i = document.createElement('i'); i.style.color = c; document.body.append(i); const v = cs(i).color; i.remove(); return v; };
-const round = el => { const r = cs(el).borderTopLeftRadius; return r === '50%' || parseFloat(r) >= el.offsetWidth / 2; };
-const ok = (name, cond, why) => results.push({ name, pass: !!cond, why: cond ? '' : why });
-const size = (el, w, h) => el.offsetWidth === w && el.offsetHeight === h;
-const sz = el => el.offsetWidth + '×' + el.offsetHeight;
-const get = id => document.getElementById(id) || (results.push({ name: '#' + id, pass: false, why: 'مفيش عنصر بالـ id ده' }), null);
-const W = innerWidth, q = s => document.querySelector(s), R = el => el.getBoundingClientRect();
-const near = (a, b) => Math.abs(a - b) <= 1.5;
-const inner = el => { const s = getComputedStyle(el); return el.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight); };
-const px = v => Math.round(v) + 'px';
-let el;$__bt;
-
-// "<" can't do anything useful in CSS, but "</style><script>" would end the style and run a script: \\3c is the same "<" as a CSS escape
-const safeCss = css => css.replace(/</g, "\\3c ");
-
-function frameDoc(ex, css, run, token) {
-  return $__bt<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>body{margin:0;padding:16px;font-family:system-ui,sans-serif}\n$__{safeCss(css)}</style></head><body>$__{ex.html}$__bt +
-    (run ? $__bt<script>addEventListener('load', () => { let out; try { $__{PRELUDE}\n$__{ex.check}\n out = results; } catch (e) { out = [{ name: 'الفحص', pass: false, why: 'الفحص وقع: ' + e.message }]; } parent.postMessage({ token: $__{JSON.stringify(token)}, out }, '*'); });<\/script>$__bt : "") + "</body></html>";
+// 2. FAQ: a button opens and closes its answer; only attributes change, Tailwind styles from them
+for (const btn of document.querySelectorAll("button[aria-controls]")) {
+  btn.addEventListener("click", () => {
+    const open = btn.getAttribute("aria-expanded") !== "true";
+    btn.setAttribute("aria-expanded", String(open));
+    document.getElementById(btn.getAttribute("aria-controls")).hidden = !open;
+  });
 }
-
-const list = $("list"), view = $("view");
-let current = null, timer = null, waiting = null;
-
-function show(ex) {
-  current = ex;
-  for (const b of list.querySelectorAll("button")) b.setAttribute("aria-current", String(b.dataset.id === ex.id));
-  $("ex-title").textContent = ex.title;
-  $("ex-goal").textContent = ex.goal;
-  $("css").value = load(ex.id) ?? ex.start;
-  $("results").replaceChildren();
-  $("verdict").textContent = "";
-  render(false);
-}
-function render(run) {
-  const token = Math.random().toString(36).slice(2);
-  view.srcdoc = frameDoc(current, $("css").value, run, token);
-  return token;
-}
-
-// the check runs INSIDE the frame (its own origin, sandboxed) and sends the results back
-function check() {
-  clearTimeout(waiting);
-  const token = render(true);
-  $("verdict").textContent = "بيفحص…";
-  const onMsg = e => {
-    if (e.source !== view.contentWindow || !e.data || e.data.token !== token) return;   // only our frame, only this run
-    removeEventListener("message", onMsg); clearTimeout(waiting);
-    const out = e.data.out, pass = out.filter(r => r.pass).length;
-    $("results").replaceChildren(...out.map(r => { const li = document.createElement("li"); li.className = r.pass ? "pass" : "fail"; li.textContent = (r.pass ? "PASS " : "FAIL ") + r.name + (r.why ? " ← " + r.why : ""); return li; }));
-    $("verdict").textContent = "النتيجة: " + pass + " من " + out.length;
-  };
-  addEventListener("message", onMsg);
-  waiting = setTimeout(() => { removeEventListener("message", onMsg); $("verdict").textContent = "الفحص مرجعش في ٣ ثواني: راجع الـ CSS أو جرّب تاني"; }, 3000);
-}
-
-for (const ex of exercises) {
-  const li = document.createElement("li"), b = document.createElement("button");
-  b.type = "button"; b.dataset.id = ex.id; b.textContent = ex.group + ": " + ex.title;
-  b.addEventListener("click", () => show(ex));
-  li.append(b); list.append(li);
-}
-$("css").addEventListener("input", () => { save(current.id, $("css").value); clearTimeout(timer); timer = setTimeout(() => render(false), 250); });
-$("run").addEventListener("click", check);
-$("reset").addEventListener("click", () => { $("css").value = current.start; save(current.id, current.start); render(false); });
-for (const b of document.querySelectorAll("[data-w]")) b.addEventListener("click", () => {
-  view.style.width = b.dataset.w + "px";
-  for (const x of document.querySelectorAll("[data-w]")) x.setAttribute("aria-pressed", String(x === b));
-});
-show(exercises[0]);
 ~~~
 
-~~~css bank.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
-.top { padding: 1rem; background: #0f172a; color: #fff; }
-.top h1 { margin: 0; font-size: 1.4rem; }
-.top p { margin: 0; color: #cbd5e1; }
-.layout { display: grid; gap: 1rem; padding: 1rem; }
-@media (min-width: 800px) { .layout { grid-template-columns: 14rem 1fr; } }
-.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.list button { width: 100%; text-align: start; }
-.list button[aria-current="true"] { background: #4338ca; color: #fff; border-color: #4338ca; }
-main { min-width: 0; }
-h2 { margin: 0; }
-.goal { color: #334155; }
-label { display: block; font-weight: 700; }
-textarea { width: 100%; padding: 0.75rem; border: 1px solid #64748b; border-radius: 0.5rem; font: 0.9rem/1.6 ui-monospace, Consolas, monospace; text-align: left; }
-button { font: inherit; min-height: 40px; padding: 4px 14px; border: 1px solid #94a3b8; border-radius: 0.5rem; background: #fff; color: #0f172a; cursor: pointer; }
-button.primary { background: #4338ca; border-color: #4338ca; color: #fff; font-weight: 700; }
-.sizes button[aria-pressed="true"] { background: #0f172a; color: #fff; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-block: 0.75rem; }
-.sizes { display: inline-flex; gap: 4px; margin-inline-start: auto; }
-.verdict { font-weight: 800; min-height: 1.7em; margin: 0; }
-.results { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 4px; }
-.results li { padding: 6px 10px; border-radius: 0.4rem; }
-.results .pass { background: #dcfce7; color: #14532d; }
-.results .fail { background: #fee2e2; color: #7f1d1d; }
-/* the frame keeps the width you picked; the box scrolls, not the page */
-.stage { overflow-x: auto; border: 1px dashed #94a3b8; border-radius: 0.5rem; background: #fff; }
-.stage iframe { display: block; height: 420px; border: 0; max-width: none; }
-~~~
+~~~js matrix.js
+// node matrix.js : 15 widths × 2 languages, then the keyboard. Exit code 0 only if everything is OK
+const { chromium } = require("playwright-core");
+const fs = require("fs");
+const BASE = "http://127.0.0.1:8932/";
+const widths = [320, 360, 375, 414, 600, 761, 768, 820, 900, 1000, 1024, 1100, 1280, 1440, 1920];
+fs.mkdirSync("shots", { recursive: true });
 
-~~~js measure.mjs
-// node bank/measure.mjs: every reference solution passes and every wrong one fails with the lesson's message,
-// the CSS survives a reload, blocked storage, broken CSS and a "</style><script>" trick, and axe on the page
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-import { exercises } from "./exercises.js";
-const U = "http://127.0.0.1:8840/bank/index.html";
-const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
-const ctx = await b.newContext({ viewport: { width: 1400, height: 900 } });
-const p = await ctx.newPage();
-const errs = [];
-p.on("pageerror", e => errs.push(e.message));
-await p.goto(U);
-const run = async (css, w = "1200") => {
-  await p.click($__bt[data-w="$__{w}"]$__bt);
-  await p.fill("#css", css);
-  await p.click("#run");
-  await p.waitForFunction(() => /^النتيجة|مرجعش/.test(document.getElementById("verdict").textContent));
-  return { verdict: await p.textContent("#verdict"), fails: await p.$$eval("#results .fail", l => l.map(x => x.textContent)) };
-};
-for (const ex of exercises) {
-  await p.click($__bt#list [data-id="$__{ex.id}"]$__bt);
-  const widths = ex.group === "layouts" ? ["1200", "768", "360"] : ["1200"];
-  for (const w of widths) {
-    const good = await run(ex.solution, w), bad = await run(ex.wrong, w);
-    console.log(ex.id.padEnd(7) + w.padEnd(5) + "الصح: " + good.verdict + " | الغلط: " + bad.verdict + (bad.fails.length ? " ← " + bad.fails[0].slice(0, 150) : ""));
+(async () => {
+  const browser = await chromium.launch({ channel: "chrome" });
+  const page = await browser.newPage();
+  const bad = [];
+  for (const lang of ["ar", "en"]) {
+    for (const w of widths) {
+      await page.setViewportSize({ width: w, height: 800 });
+      await page.goto(BASE + "?lang=" + lang);
+      const r = await page.evaluate(async () => {
+        const iw = innerWidth, sw = document.documentElement.scrollWidth;
+        // sr-only elements (hidden from the eye, read by screen readers) are 1px and sit at -1px on purpose: skip them
+        const hidden = e => getComputedStyle(e).clipPath === "inset(50%)";
+        // anything sticking out of the screen sideways, by name
+        const out = [...document.querySelectorAll("body *")]
+          .filter(e => { const b = e.getBoundingClientRect(); return !hidden(e) && b.width && (b.right > iw + 0.5 || b.left < -0.5); })
+          .map(e => e.className || e.tagName.toLowerCase());
+        // touch targets smaller than 24×24 (WCAG 2.5.8)
+        const small = [...document.querySelectorAll("a, button, summary, input")]
+          .filter(e => { const b = e.getBoundingClientRect(); return !hidden(e) && b.width && (b.width < 24 || b.height < 24); })
+          .map(e => (e.className || e.tagName) + " " + Math.round(e.getBoundingClientRect().height) + "px");
+        const logo = Math.round(document.querySelector(".logo").getBoundingClientRect().height);
+        // every nav link: after the jump, the heading starts below the sticky header
+        const covered = [];
+        for (const a of document.querySelectorAll(".nav a[href^='#']")) {
+          document.querySelector(a.getAttribute("href")).scrollIntoView();
+          await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+          const top = document.querySelector(a.getAttribute("href")).getBoundingClientRect().top;
+          const headerBottom = document.getElementById("header").getBoundingClientRect().bottom;
+          if (top < headerBottom) covered.push(a.getAttribute("href") + " " + Math.round(top) + "<" + Math.round(headerBottom));
+        }
+        scrollTo(0, 0);
+        return { iw, sw, out: [...new Set(out)], small, logo, covered };
+      });
+      await page.screenshot({ path: "shots/" + lang + "-" + w + ".png" });
+      const ok = r.sw <= r.iw && !r.out.length && !r.small.length && r.logo <= 40 && !r.covered.length;
+      if (!ok) bad.push(lang + "-" + w);
+      console.log(lang, String(w).padStart(4), "scrollWidth=" + r.sw, ok ? "OK" : "BROKEN",
+        r.out.length ? "out: " + r.out.join(",") : "", r.small.length ? "small: " + r.small.join(",") : "", r.covered.length ? "under the header: " + r.covered.join(",") : "");
+    }
   }
-}
+  // the yearly switch and an FAQ answer work from the keyboard (Space / Enter)
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto(BASE);
+  await page.focus("#yearly");
+  await page.keyboard.press("Space");
+  const yearly = await page.$eval("[class~=\"group-has-checked:inline\"]", e => getComputedStyle(e).display);
+  await page.focus("button[aria-controls=a1]");
+  await page.keyboard.press("Enter");
+  const faq = await page.$eval("#a1", e => !e.hidden);
+  const keyOk = yearly === "inline" && faq;
+  console.log("yearly prices after Space:", yearly, "| FAQ open after Enter:", faq, keyOk ? "OK" : "BROKEN");
+  if (!keyOk) bad.push("keyboard");
 
-// your CSS is saved and comes back after a reload
-await p.click('#list [data-id="tri"]');
-await p.fill("#css", "#tri { width: 0; /* لسه بكتب */ }");
-await p.dispatchEvent("#css", "input");
-await p.reload();
-console.log("بعد reload: «" + (await p.inputValue("#css")) + "»");
-
-// broken CSS and a check that crashes: a message, not a dead page
-const broken = await run("#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48");
-console.log("CSS من غير قوس آخر: " + broken.verdict);
-const cheat = await run("#tri {}</style><script>while (true) {}</script>");
-console.log("CSS فيه </style><script>while(true): " + cheat.verdict + " | الصفحة لسه بترد: " + await p.evaluate(() => 1 + 1));
-const fake = await run("#tri {}</style><script>parent.postMessage({ token: 'x', out: [{ name: 'غش', pass: true }] }, '*')</script>");
-console.log("CSS بيحاول يبعت PASS مزيّف: " + fake.verdict + " | " + (fake.fails[0] || ""));
-console.log("axe: " + (await new AxeBuilder({ page: p }).analyze()).violations.length + " | errors: " + errs.length);
-
-// storage blocked (private mode, sandboxed embed): the page still works
-const ctx2 = await b.newContext();
-await ctx2.addInitScript(() => Object.defineProperty(window, "localStorage", { get() { throw new DOMException("blocked", "SecurityError"); } }));
-const p2 = await ctx2.newPage();
-const errs2 = [];
-p2.on("pageerror", e => errs2.push(e.message));
-await p2.goto(U);
-await p2.fill("#css", "#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }");
-await p2.click("#run");
-await p2.waitForFunction(() => /^النتيجة/.test(document.getElementById("verdict").textContent));
-console.log("localStorage ممنوع: " + await p2.textContent("#verdict") + " | errors: " + errs2.length);
-await b.close();
-~~~
-
-~~~js inject-test.mjs
-// node bank/inject-test.mjs: the same "CSS" with and without the \3c escape, in the same sandboxed srcdoc frame
-import { chromium } from "playwright-core";
-const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
-const p = await b.newPage();
-const css = "#tri {}</style><script>parent.postMessage({ out: [{ name: 'غش', pass: true }] }, '*')</script>";
-for (const [label, c] of [["من غير escape", css], ["بـ \\3c", css.replace(/</g, "\\3c ")]]) {
-  await p.setContent('<iframe sandbox="allow-scripts"></iframe>');
-  const got = await p.evaluate(doc => new Promise(res => {
-    addEventListener("message", e => res(JSON.stringify(e.data.out)));
-    document.querySelector("iframe").srcdoc = doc;
-    setTimeout(() => res("مفيش رسالة"), 1500);
-  }), "<style>" + c + "</style><div id=tri></div>");
-  console.log(label + ": " + got);
-}
-await b.close();
-~~~
-
-~~~view 720 720 اكتب واضغط «افحص» (اعمل scroll جوه)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بنك تمارين CSS</title>
-<link rel="icon" href="data:,">
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f8fafc; }
-.top { padding: 1rem; background: #0f172a; color: #fff; }
-.top h1 { margin: 0; font-size: 1.4rem; }
-.top p { margin: 0; color: #cbd5e1; }
-.layout { display: grid; gap: 1rem; padding: 1rem; }
-@media (min-width: 800px) { .layout { grid-template-columns: 14rem 1fr; } }
-.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.list button { width: 100%; text-align: start; }
-.list button[aria-current="true"] { background: #4338ca; color: #fff; border-color: #4338ca; }
-main { min-width: 0; }
-h2 { margin: 0; }
-.goal { color: #334155; }
-label { display: block; font-weight: 700; }
-textarea { width: 100%; padding: 0.75rem; border: 1px solid #64748b; border-radius: 0.5rem; font: 0.9rem/1.6 ui-monospace, Consolas, monospace; text-align: left; }
-button { font: inherit; min-height: 40px; padding: 4px 14px; border: 1px solid #94a3b8; border-radius: 0.5rem; background: #fff; color: #0f172a; cursor: pointer; }
-button.primary { background: #4338ca; border-color: #4338ca; color: #fff; font-weight: 700; }
-.sizes button[aria-pressed="true"] { background: #0f172a; color: #fff; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-block: 0.75rem; }
-.sizes { display: inline-flex; gap: 4px; margin-inline-start: auto; }
-.verdict { font-weight: 800; min-height: 1.7em; margin: 0; }
-.results { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 4px; }
-.results li { padding: 6px 10px; border-radius: 0.4rem; }
-.results .pass { background: #dcfce7; color: #14532d; }
-.results .fail { background: #fee2e2; color: #7f1d1d; }
-/* the frame keeps the width you picked; the box scrolls, not the page */
-.stage { overflow-x: auto; border: 1px dashed #94a3b8; border-radius: 0.5rem; background: #fff; }
-.stage iframe { display: block; height: 420px; border: 0; max-width: none; }
-
-</style>
-</head>
-<body>
-<header class="top"><h1>بنك تمارين CSS</h1><p>اكتب الـ CSS، شوف النتيجة، ودوس «افحص».</p></header>
-<div class="layout">
-  <nav aria-label="التمارين"><ul id="list" class="list"></ul></nav>
-  <main id="main">
-    <h2 id="ex-title"></h2>
-    <p id="ex-goal" class="goal"></p>
-    <label for="css">الـ CSS بتاعك</label>
-    <textarea id="css" rows="9" spellcheck="false" dir="ltr"></textarea>
-    <div class="row">
-      <button type="button" id="run" class="primary">افحص</button>
-      <button type="button" id="reset">ابدأ من الأول</button>
-      <span class="sizes" role="group" aria-label="عرض النتيجة">
-        <button type="button" data-w="360" aria-pressed="false">360</button>
-        <button type="button" data-w="768" aria-pressed="false">768</button>
-        <button type="button" data-w="1200" aria-pressed="true">1200</button>
-      </span>
-    </div>
-    <p id="verdict" class="verdict" role="status"></p>
-    <ul id="results" class="results"></ul>
-    <div class="stage" tabindex="0" role="region" aria-label="مكان النتيجة (بيعمل scroll لو العرض أكبر من الشاشة)"><iframe id="view" title="النتيجة" sandbox="allow-scripts" style="width: 1200px"></iframe></div>
-  </main>
-</div>
-<script type="module">
-// اتعمل بـ make-exercises.mjs: الهدف والحل المرجعي، وسطور الفحص منسوخة من فحص الدرس زي ما هي
-const exercises = [
- {
-  "id": "tri",
-  "group": "أشكال",
-  "title": "مثلث لفوق",
-  "goal": "عنصر #tri مثلث لونه #e11d48 بقاعدة 80px وارتفاع 70px، من غير صورة.",
-  "html": "<div id=\"tri\"></div>",
-  "start": "#tri {\n  \n}",
-  "solution": "#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
-  "wrong": "#tri { width: 80px; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }",
-  "check": "  if ((el = get('tri'))) {\n    const s = cs(el), borders = s.width === '0px' && s.borderBottomColor === rgb('#e11d48') && s.borderLeftColor === 'rgba(0, 0, 0, 0)';\n    const clip = s.clipPath.startsWith('polygon') && s.clipPath.split(',').length === 3 && s.backgroundColor === rgb('#e11d48');\n    ok('1 المثلث', size(el, 80, 70) && (borders || clip), 'المقاس ' + sz(el) + ' والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط');\n  }"
- },
- {
-  "id": "circle",
-  "group": "أشكال",
-  "title": "دايرة بإطار",
-  "goal": "#circle دايرة 96×96 بالإطار، خلفيتها #0ea5e9 وإطارها 4px لونه #0c4a6e.",
-  "html": "<div id=\"circle\"></div>",
-  "start": "#circle {\n  \n}",
-  "solution": "#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
-  "wrong": "#circle { width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }",
-  "check": "  if ((el = get('circle'))) {\n    const s = cs(el);\n    ok('2 الدايرة', size(el, 96, 96) && round(el) && s.borderTopWidth === '4px' && s.backgroundColor === rgb('#0ea5e9'), 'المقاس ' + sz(el) + ' (المطلوب 96×96 بالـ border)، والـ radius ' + s.borderTopLeftRadius);\n  }"
- },
- {
-  "id": "star",
-  "group": "أشكال",
-  "title": "نجمة خماسية",
-  "goal": "#star نجمة خماسية 120×120 لونها #f59e0b بـ clip-path (١٠ نقط).",
-  "html": "<div id=\"star\"></div>",
-  "start": "#star {\n  \n}",
-  "solution": "#star { width: 120px; height: 120px; background: #f59e0b;\n  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }",
-  "wrong": "#star { width: 120px; height: 120px; background: #f59e0b; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }",
-  "check": "  if ((el = get('star'))) {\n    const s = cs(el), n = s.clipPath.startsWith('polygon') ? s.clipPath.split(',').length : 0;\n    ok('8 النجمة', size(el, 120, 120) && n === 10 && s.backgroundColor === rgb('#f59e0b'), 'الـ polygon فيه ' + n + ' نقطة، والنجمة الخماسية ١٠ (٥ أطراف و ٥ جوه)');\n  }"
- },
- {
-  "id": "chess",
-  "group": "أشكال",
-  "title": "رقعة شطرنج",
-  "goal": "#chess رقعة 240×240 مربعاتها 30px (٨×٨)، من غير ولا عنصر جواها.",
-  "html": "<div id=\"chess\"></div>",
-  "start": "#chess {\n  \n}",
-  "solution": "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 60px 60px; }",
-  "wrong": "#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 30px 30px; }",
-  "check": "  if ((el = get('chess'))) {\n    const s = cs(el);\n    ok('10 الشطرنج', size(el, 240, 240) && el.childElementCount === 0 && /gradient/.test(s.backgroundImage) && s.backgroundSize === '60px 60px', 'من غير عناصر جوه (فيه ' + el.childElementCount + ')، و background-size لازم 60px 60px (مربعين × مربعين)، والموجود ' + s.backgroundSize);\n  }"
- },
- {
-  "id": "cards",
-  "group": "layouts",
-  "title": "شبكة كروت",
-  "goal": "#cards: الكروت أقل عرض ليها 220px والمسافة 16px، والعدد في الصف على حسب المكان، ومفيش كارت يطلع برا على أي عرض.",
-  "html": "<section id=\"cards\"><article class=\"card\">كارت ١</article><article class=\"card\">كارت ٢</article><article class=\"card\">كارت ٣</article><article class=\"card\">كارت ٤</article><article class=\"card\">كارت ٥</article><article class=\"card\">كارت ٦</article><article class=\"card\">كارت ٧</article></section>",
-  "start": "#cards {\n  \n}\n.card { background: #e0e7ff; padding: 8px; }",
-  "solution": "#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
-  "wrong": "#cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }\n.card { background: #e0e7ff; padding: 8px; }",
-  "check": "  const cards = [...document.querySelectorAll('#cards .card')], cw = inner(q('#cards'));\n  const want = Math.max(1, Math.floor((cw + 16) / (220 + 16))), cols = new Set(cards.map(c => Math.round(R(c).top))).size ? cards.filter(c => near(R(c).top, R(cards[0]).top)).length : 0;\n  ok('2 شبكة الكروت', cols === Math.min(want, cards.length) && cards.every(c => R(c).right <= R(q('#cards')).right + 1 && R(c).left >= R(q('#cards')).left - 1),\n    'الصف الأول فيه ' + cols + ' كروت، والمتوقع ' + want + ' على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا');"
- },
- {
-  "id": "bento",
-  "group": "layouts",
-  "title": "bento",
-  "goal": "#bento: ٤ عواميد (عمودين تحت 600px) وصفوف 120px ومسافة 12px. .b1 عمودين × صفين، و .b2 عمودين × صف.",
-  "html": "<section id=\"bento\"><div class=\"b b1\">كبير</div><div class=\"b b2\">عريض</div><div class=\"b\">٣</div><div class=\"b\">٤</div><div class=\"b\">٥</div><div class=\"b\">٦</div></section>",
-  "start": "#bento {\n  \n}\n.b { background: #e0e7ff; padding: 8px; }",
-  "solution": "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; grid-row: span 2; }\n.b2 { grid-column: span 2; }\n@media (max-width: 599px) { #bento { grid-template-columns: repeat(2, 1fr); } }\n.b { background: #e0e7ff; padding: 8px; }",
-  "wrong": "#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }\n.b1 { grid-column: span 2; }\n.b2 { grid-column: span 2; }\n.b { background: #e0e7ff; padding: 8px; }",
-  "check": "  const bento = q('#bento'), bw = inner(bento), n = W >= 600 ? 4 : 2, col = (bw - (n - 1) * 12) / n, b1 = R(q('.b1')), b2 = R(q('.b2'));\n  ok('3 bento', near(b1.width, 2 * col + 12) && near(b1.height, 252) && near(b2.width, 2 * col + 12) && near(b2.height, 120) && near(R(q('#bento .b:nth-child(3)')).width, col),\n    'الكبير لازم عمودين × صفين (' + px(2 * col + 12) + ' × 252px) والعريض عمودين × صف، والموجود ' + px(b1.width) + ' × ' + px(b1.height));"
- }
-];
-
-
-const $ = id => document.getElementById(id);
-const KEY = "css-bank:";
-const load = id => { try { return localStorage.getItem(KEY + id); } catch { return null; } };     // storage can be blocked
-const save = (id, css) => { try { localStorage.setItem(KEY + id, css); } catch {} };
-
-// the helpers both lesson checks use (shapes: cs, rgb, size…; layouts: W, q, R, near…). ok() collects instead of console.log
-const PRELUDE = $__bt
-const results = [];
-const cs = (el, p) => getComputedStyle(el, p || null);
-const rgb = c => { const i = document.createElement('i'); i.style.color = c; document.body.append(i); const v = cs(i).color; i.remove(); return v; };
-const round = el => { const r = cs(el).borderTopLeftRadius; return r === '50%' || parseFloat(r) >= el.offsetWidth / 2; };
-const ok = (name, cond, why) => results.push({ name, pass: !!cond, why: cond ? '' : why });
-const size = (el, w, h) => el.offsetWidth === w && el.offsetHeight === h;
-const sz = el => el.offsetWidth + '×' + el.offsetHeight;
-const get = id => document.getElementById(id) || (results.push({ name: '#' + id, pass: false, why: 'مفيش عنصر بالـ id ده' }), null);
-const W = innerWidth, q = s => document.querySelector(s), R = el => el.getBoundingClientRect();
-const near = (a, b) => Math.abs(a - b) <= 1.5;
-const inner = el => { const s = getComputedStyle(el); return el.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight); };
-const px = v => Math.round(v) + 'px';
-let el;$__bt;
-
-// "<" can't do anything useful in CSS, but "</style><script>" would end the style and run a script: \\3c is the same "<" as a CSS escape
-const safeCss = css => css.replace(/</g, "\\3c ");
-
-function frameDoc(ex, css, run, token) {
-  return $__bt<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>body{margin:0;padding:16px;font-family:system-ui,sans-serif}\n$__{safeCss(css)}</style></head><body>$__{ex.html}$__bt +
-    (run ? $__bt<script>addEventListener('load', () => { let out; try { $__{PRELUDE}\n$__{ex.check}\n out = results; } catch (e) { out = [{ name: 'الفحص', pass: false, why: 'الفحص وقع: ' + e.message }]; } parent.postMessage({ token: $__{JSON.stringify(token)}, out }, '*'); });<\/script>$__bt : "") + "</body></html>";
-}
-
-const list = $("list"), view = $("view");
-let current = null, timer = null, waiting = null;
-
-function show(ex) {
-  current = ex;
-  for (const b of list.querySelectorAll("button")) b.setAttribute("aria-current", String(b.dataset.id === ex.id));
-  $("ex-title").textContent = ex.title;
-  $("ex-goal").textContent = ex.goal;
-  $("css").value = load(ex.id) ?? ex.start;
-  $("results").replaceChildren();
-  $("verdict").textContent = "";
-  render(false);
-}
-function render(run) {
-  const token = Math.random().toString(36).slice(2);
-  view.srcdoc = frameDoc(current, $("css").value, run, token);
-  return token;
-}
-
-// the check runs INSIDE the frame (its own origin, sandboxed) and sends the results back
-function check() {
-  clearTimeout(waiting);
-  const token = render(true);
-  $("verdict").textContent = "بيفحص…";
-  const onMsg = e => {
-    if (e.source !== view.contentWindow || !e.data || e.data.token !== token) return;   // only our frame, only this run
-    removeEventListener("message", onMsg); clearTimeout(waiting);
-    const out = e.data.out, pass = out.filter(r => r.pass).length;
-    $("results").replaceChildren(...out.map(r => { const li = document.createElement("li"); li.className = r.pass ? "pass" : "fail"; li.textContent = (r.pass ? "PASS " : "FAIL ") + r.name + (r.why ? " ← " + r.why : ""); return li; }));
-    $("verdict").textContent = "النتيجة: " + pass + " من " + out.length;
-  };
-  addEventListener("message", onMsg);
-  waiting = setTimeout(() => { removeEventListener("message", onMsg); $("verdict").textContent = "الفحص مرجعش في ٣ ثواني: راجع الـ CSS أو جرّب تاني"; }, 3000);
-}
-
-for (const ex of exercises) {
-  const li = document.createElement("li"), b = document.createElement("button");
-  b.type = "button"; b.dataset.id = ex.id; b.textContent = ex.group + ": " + ex.title;
-  b.addEventListener("click", () => show(ex));
-  li.append(b); list.append(li);
-}
-$("css").addEventListener("input", () => { save(current.id, $("css").value); clearTimeout(timer); timer = setTimeout(() => render(false), 250); });
-$("run").addEventListener("click", check);
-$("reset").addEventListener("click", () => { $("css").value = current.start; save(current.id, current.start); render(false); });
-for (const b of document.querySelectorAll("[data-w]")) b.addEventListener("click", () => {
-  view.style.width = b.dataset.w + "px";
-  for (const x of document.querySelectorAll("[data-w]")) x.setAttribute("aria-pressed", String(x === b));
-});
-show(exercises[0]);
-
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** هيدر كحلي «بنك تمارين CSS»، وعلى الجنب ٦ تمارين («أشكال: مثلث لفوق»… «layouts: bento»)، والمختار بنفسجي. التمرين: عنوانه، وهدفه بالأرقام، وخانة CSS فيها [[#tri { }]] فاضي، وزراير «افحص» و «ابدأ من الأول» و 360 و 768 و 1200، وتحتهم iframe بيرسم الـ CSS بتاعك وانت بتكتب. اكتب الحل واضغط «افحص»: «النتيجة: 1 من 1» وسطر أخضر PASS، أو سطر أحمر FAIL فيه الرسالة.
-
-**التمارين والرسايل من الدروس، مش مكتوبة تاني:** [[make-exercises.mjs]] بيقرا فحص درس الأشكال وفحص درس الـ layouts، ويقطّع منهم البلوك بتاع كل تمرين زي ما هو. فالرسالة اللي بتطلع هنا هي نفس رسالة الدرس بالحرف («المقاس 160×70 والمطلوب 80×70…»). ولو الفحص في الدرس اتصلّح، [[node make-exercises.mjs]] تاني والبنك اتصلّح.
-
-**الفحص بيتشغّل جوه الـ iframe:** [[frameDoc()]] بيبني صفحة فيها الـ HTML الثابت بتاع التمرين، والـ CSS بتاعك، وسكربت فيه الأدوات اللي الفحصين بيستخدموها ([[cs]] و [[rgb]] و [[size]]… و [[W]] و [[R]] و [[near]]…) وبعدها سطور الفحص. [[ok()]] هنا بتجمّع النتايج بدل ما تطبع، وفي الآخر [[parent.postMessage]]. الـ iframe [[sandbox="allow-scripts"]] من غير [[allow-same-origin]]، فالسكربت اللي جواه مالوش وصول للصفحة ولا للـ localStorage بتاعها.
-
-**الرسالة اللي بنصدّقها:** [[e.source === view.contentWindow]] (من الـ iframe بتاعنا بس) و [[token]] عشوائي جديد كل «افحص» (من التشغيل ده بس، مش تشغيل قديم اتأخر).
-
-**العرض:** الزراير بتغيّر عرض الـ iframe نفسه، فـ [[innerWidth]] جوه = 360 أو 768 أو 1200، وفحوص الـ layouts بتتوقع حسبه. والصندوق اللي حواليه [[overflow-x: auto]]، فالـ 1200 على شاشة صغيرة بيعمل scroll جواه.
-
-**الحفظ:** كل حرف بتكتبه بيتحفظ في [[localStorage]] بمفتاح للتمرين. القراية والكتابة جوه [[try/catch]]، فلو الـ storage ممنوع (وضع خاص) الصفحة بتشتغل وبتفحص عادي من غير ما تفتكر.
-
-**CSS بايظ مش بيوقّع حاجة:**
-- CSS ناقص قوس في الآخر: المتصفح بيقفله لوحده (ده من مواصفة CSS)، والفحص اشتغل عادي.
-- لو سطور الفحص نفسها وقعت (عنصر مش موجود مثلًا): [[try/catch]] جوه الـ iframe بيبعت FAIL برسالة «الفحص وقع».
-- لو مفيش رد خالص في ٣ ثواني: رسالة «الفحص مرجعش»، والزرار شغال تاني.
-- **[[</style><script>]]:** ده الخطر الحقيقي. CSS زي [[#tri {}</style><script>…</script>]] بيقفل الـ style ويشغّل سكربت جوه الـ iframe، يعني ممكن يعمل حلقة لا نهائية أو يبعت PASS مزيّف. [[safeCss()]] بيحوّل كل [[<]] لـ [[\3c ]]: نفس الحرف بس كـ escape جوه CSS، والـ HTML parser مبيشوفش [[</style>]]. [[inject-test.mjs]] بيثبتها: نفس الـ «CSS» من غير escape بعت [[pass: true]]، وبالـ escape مفيش رسالة خالص.
-
-**ليه الحل الغلط بيتجرّب على أكتر من عرض:** حل الكروت الغلط [[repeat(3, 1fr)]] **عدّى على 768**: على العرض ده auto-fit بيطلّع ٣ عواميد بالظبط. ووقع على 1200 (المتوقع ٥) وعلى 360 (المتوقع ١). عشان كده البنك فيه ٣ عروض، والقياس بيجرّب الـ layouts على التلاتة.
-
-**غلطتين قابلوني:**
-- **تمارين الـ layouts مكانتش بترجع (مرجعش في ٣ ثواني):** [[make-exercises.mjs]] كان بيقطع لحد السطر اللي فيه [[ok('2 …]]، وفي فحص الـ layouts الـ [[ok()]] بيكمل في السطر اللي بعده. الكود وصل الـ iframe مقطوع، وطلع SyntaxError جواها، والصفحة الكبيرة سجّلت ١٢ error. التقطيع بقى لحد السطر اللي آخره [[);]].
-- **axe: [[scrollable-region-focusable]]:** الصندوق اللي بيعمل scroll مكانش بيتوصل بالكيبورد. بقى [[tabindex="0"]] و [[role="region"]] باسم.
-
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-tri    1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 1 المثلث ← المقاس 160×70 والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط
-circle 1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 2 الدايرة ← المقاس 104×104 (المطلوب 96×96 بالـ border)، والـ radius 50%
-star   1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 8 النجمة ← الـ polygon فيه 5 نقطة، والنجمة الخماسية ١٠ (٥ أطراف و ٥ جوه)
-chess  1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 10 الشطرنج ← من غير عناصر جوه (فيه 0)، و background-size لازم 60px 60px (مربعين × مربعين)، والموجود 30px 30px
-cards  1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 2 شبكة الكروت ← الصف الأول فيه 3 كروت، والمتوقع 5 على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا
-cards  768  الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 1 من 1
-cards  360  الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 2 شبكة الكروت ← الصف الأول فيه 3 كروت، والمتوقع 1 على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا
-bento  1200 الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 3 bento ← الكبير لازم عمودين × صفين (578px × 252px) والعريض عمودين × صف، والموجود 578px × 120px
-bento  768  الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 3 bento ← الكبير لازم عمودين × صفين (362px × 252px) والعريض عمودين × صف، والموجود 362px × 120px
-bento  360  الصح: النتيجة: 1 من 1 | الغلط: النتيجة: 0 من 1 ← FAIL 3 bento ← الكبير لازم عمودين × صفين (328px × 252px) والعريض عمودين × صف، والموجود 158px × 120px
-بعد reload: «#tri { width: 0; /* لسه بكتب */ }»
-CSS من غير قوس آخر: النتيجة: 1 من 1
-CSS فيه </style><script>while(true): النتيجة: 0 من 1 | الصفحة لسه بترد: 2
-CSS بيحاول يبعت PASS مزيّف: النتيجة: 0 من 1 | FAIL 1 المثلث ← المقاس 1168×0 والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط
-axe: 0 | errors: 0
-localStorage ممنوع: النتيجة: 1 من 1 | errors: 0
-~~~
-
-~~~text node inject-test.mjs
-من غير escape: [{"name":"غش","pass":true}]
-بـ \3c: مفيش رسالة
-~~~` },
-        { lvl: 'فكرة', dir: "train-ticket", t: R`تمرين من موقع بتحبه`, what: R`اختار component من موقع بتستخدمه كل يوم (كارت منتج، أو شريط بحث، أو قايمة، أو تذكرة حجز)، وارسمه من الصفر، واكتب له وصف هدف بالأرقام وفحص ذاتي بنفس شكل الدروس (PASS و FAIL ورسالة بتقول الغلط فين).`, done: R`زميل حل تمرينك من الوصف بس من غير ما يشوف الأصل، والفحص بتاعك قال PASS على حله لما كان صح و FAIL برسالة مفهومة لما غيّرت فيه حاجة واحدة.`, ext: R`ابعته كاقتراح تمرين للبنك ده بنفس الحقول: الهدف، والحل المرجعي، والفحص، وناتجه على حل صح وحل غلط.`, sol: R`~~~md README.md
-# تمرين: تذكرة قطر
-
-ارسم التذكرة من الوصف ده بس. الـ HTML جاهز في $__btindex.html$__bt (متغيّرهوش)، وانت بتكتب $__btticket.css$__bt.
-
-## الهدف بالأرقام
-
-1. $__bt.ticket$__bt مقاسها 340×140 بالظبط، وزواياها 12px.
-2. جزءين: $__bt.main$__bt عرضه 240، و $__bt.stub$__bt عرضه 100، جنب بعض. $__bt.main$__bt في **البداية** (يمين في العربي).
-3. بين الجزءين خط متقطّع ($__btdashed$__bt) 2px على حرف $__bt.stub$__bt اللي ناحية $__bt.main$__bt.
-4. خرمين نص دايرة نصف قطرهم 10px، واحد فوق وواحد تحت، مركزهم على الخط بالظبط (240px من البداية). بـ $__btmask$__bt، مش عناصر زيادة.
-5. $__bt.from$__bt و $__bt.to$__bt على نفس السطر، و $__bt.from$__bt في البداية. بينهم $__bt.arrow$__bt بيشاور على النهاية (شمال في العربي).
-6. $__bt.time$__bt أرقامه بعرض ثابت ($__bttabular-nums$__bt)، عشان 11:11 و 08:08 ياخدوا نفس المسافة.
-7. $__bt.class-badge$__bt في ركن النهاية فوق، على بعد 8px من الحرفين.
-8. مفيش ولا صورة، وتباين كل الكلام 4.5:1 على الأقل.
-
-## الفحص
-
-افتح الصفحة، و F12 ← Console، والزق $__btcheck.js$__bt. لازم يطبع $__btالنتيجة: 8 من 8$__bt.
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تذكرة قطر</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="ticket.css">
-</head>
-<body>
-<main>
-  <h1>تمرين: تذكرة قطر</h1>
-  <article class="ticket" aria-label="تذكرة من القاهرة لأسوان">
-    <div class="main">
-      <p class="route"><span class="from">القاهرة</span> <span class="arrow" aria-hidden="true"></span> <span class="to">أسوان</span></p>
-      <p class="time"><span class="sr-only">القيام </span>08:15 ← 21:40</p>
-      <p class="meta">عربية ٣ · كرسي ٢٤</p>
-      <span class="class-badge">درجة أولى</span>
-    </div>
-    <div class="stub"><p class="code">QR-1042</p><p class="meta">٢٠ نوفمبر</p></div>
-  </article>
-</main>
-</body>
-</html>
-~~~
-
-~~~css ticket.css (الحل المرجعي)
-/* الحل المرجعي */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 24px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; background: #e2e8f0; }
-h1 { font-size: 1.2rem; margin: 0 0 16px; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* 1 و 2: صندوق واحد فيه جزءين جنب بعض */
-.ticket { display: flex; width: 340px; height: 140px; border-radius: 12px; background: #ffffff;
-  /* 4: خرمين على بعد 240px من البداية. في RTL البداية يمين، فالمركز = العرض - 240 = 100px من الشمال */
-  --cut: 100px;
-  mask: radial-gradient(circle 10px at var(--cut) 0, #0000 98%, #000) top / 100% 51% no-repeat,
-        radial-gradient(circle 10px at var(--cut) 100%, #0000 98%, #000) bottom / 100% 51% no-repeat; }
-.ticket:dir(ltr) { --cut: 240px; }
-.main { position: relative; flex: none; width: 240px; padding: 14px 16px; }
-/* 3: الخط على حرف الـ stub اللي ناحية الـ main = البداية بتاعته */
-.stub { flex: none; width: 100px; padding: 14px 10px; border-inline-start: 2px dashed #64748b; display: grid; align-content: center; text-align: center; }
-p { margin: 0; }
-
-/* 5: نفس السطر، والسهم بيشاور على النهاية: شمال في العربي ويمين في الإنجليزي */
-.route { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05rem; }
-.arrow { width: 10px; height: 10px; border-top: 2px solid #0f172a; border-left: 2px solid #0f172a; rotate: -45deg; }
-.arrow:dir(ltr) { rotate: 135deg; }
-
-/* 6: أرقام بعرض ثابت */
-.time { margin-block: 6px; font-variant-numeric: tabular-nums; direction: ltr; text-align: end; font-size: 1.1rem; }
-.meta { font-size: .85rem; color: #475569; }
-.code { font-family: ui-monospace, Consolas, monospace; font-weight: 700; direction: ltr; }
-
-/* 7: ركن النهاية فوق، 8px */
-.class-badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 0 8px; border-radius: 999px; background: #1e3a8a; color: #ffffff; font-size: .75rem; font-weight: 700; }
-~~~
-
-~~~js check.js
-// الفحص الذاتي: تذكرة قطر. الزقه في الـ Console. كل بند PASS أو FAIL ورسالة بتقول الغلط فين
-(() => {
-  const q = s => document.querySelector(s), R = el => el.getBoundingClientRect(), cs = (el, p) => getComputedStyle(el, p || null);
-  const near = (a, b, d = 1.5) => Math.abs(a - b) <= d, px = v => Math.round(v) + 'px';
-  let pass = 0, all = 0;
-  const ok = (name, cond, why) => { all++; if (cond) pass++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (cond ? '' : ' ← ' + why)); };
-  const t = q('.ticket'), main = q('.main'), stub = q('.stub'), T = R(t), rtl = cs(t).direction === 'rtl';
-  const fromStart = x => rtl ? T.right - x : x - T.left;             // distance from the start edge, in both directions
-  ok('1 المقاس والزوايا', near(T.width, 340) && near(T.height, 140) && cs(t).borderTopLeftRadius === '12px', 'المقاس ' + px(T.width) + '×' + px(T.height) + ' والمطلوب 340×140، والزوايا ' + cs(t).borderTopLeftRadius + ' والمطلوب 12px');
-  const M = R(main), S = R(stub);
-  ok('2 الجزءين', near(M.width, 240) && near(S.width, 100) && near(M.top, S.top) && near(fromStart(rtl ? M.right : M.left), 0), '.main ' + px(M.width) + ' (المطلوب 240) و .stub ' + px(S.width) + ' (المطلوب 100)، و .main لازم في البداية ' + (rtl ? '(يمين)' : '(شمال)'));
-  const sideStart = rtl ? 'Right' : 'Left', st = cs(stub);
-  ok('3 الخط المتقطّع', st['border' + sideStart + 'Style'] === 'dashed' && st['border' + sideStart + 'Width'] === '2px', 'حرف .stub اللي ناحية .main: ' + st['border' + sideStart + 'Style'] + ' ' + st['border' + sideStart + 'Width'] + '، والمطلوب dashed 2px');
-  // the holes: read the computed mask itself. (elementFromPoint can't see them: a mask changes the pixels, not hit testing)
-  const m = cs(t).maskImage || cs(t).webkitMaskImage || '', want = rtl ? T.width - 240 : 240;
-  const circles = [...m.matchAll(/radial-gradient\(([\d.]+)px at ([\d.]+)px (\S+?),/g)].map(g => ({ r: +g[1], x: +g[2], y: g[3] }));
-  const onLine = circles.filter(c => near(c.r, 10) && near(c.x, want));
-  const holes = onLine.some(c => c.y === '0px' || c.y === '0%') && onLine.some(c => c.y === '100%');
-  ok('4 الخرمين على الخط', holes && t.querySelectorAll('*').length === main.querySelectorAll('*').length + stub.querySelectorAll('*').length + 2, 'الـ mask فيه ' + (circles.map(c => 'دايرة ' + c.r + 'px عند ' + px(rtl ? T.width - c.x : c.x) + ' من البداية').join(' و ') || 'مفيش radial-gradient') + '، والمطلوب دايرتين 10px عند 240px من البداية (فوق وتحت)، من غير عناصر زيادة');
-  const f = R(q('.from')), to = R(q('.to')), a = q('.arrow'), A = R(a);
-  const toward = rtl ? A.left - to.right : to.left - A.right;
-  const ac = cs(a), deg = parseFloat(ac.rotate) || 0, w = k => parseFloat(ac['border' + k + 'Width']) > 0;
-  const x0 = w('Left') && !w('Right') ? -1 : w('Right') ? 1 : 0, y0 = w('Top') && !w('Bottom') ? -1 : w('Bottom') ? 1 : 0, r = deg * Math.PI / 180;
-  const tx = x0 * Math.cos(r) - y0 * Math.sin(r), points = Math.abs(tx) > 0.7 ? (tx < 0 ? 'شمال' : 'يمين') : 'مش أفقي';
-  ok('5 من وإلى', near(f.top + f.height / 2, to.top + to.height / 2, 3) && (rtl ? f.left > to.right : f.right < to.left) && points === (rtl ? 'شمال' : 'يمين'), '.from لازم في البداية و .to بعده على نفس السطر، والسهم بيشاور ' + points + ' والمطلوب ' + (rtl ? 'شمال' : 'يمين'));
-  ok('6 أرقام بعرض ثابت', /tabular-nums/.test(cs(q('.time')).fontVariantNumeric), 'font-variant-numeric = ' + cs(q('.time')).fontVariantNumeric);
-  const B = R(q('.class-badge')), endGap = rtl ? B.left - M.left : M.right - B.right;
-  ok('7 الشارة في ركن النهاية', near(B.top - M.top, 8) && near(endGap, 8), 'من فوق ' + px(B.top - M.top) + ' ومن حرف النهاية ' + px(endGap) + '، والمطلوب 8 و 8');
-  const lum = c => { const v = c.match(/[\d.]+/g).slice(0, 3).map(x => x / 255).map(x => x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
-  const bgOf = el => { for (let p = el; p; p = p.parentElement) { const b = cs(p).backgroundColor, n = b.match(/[\d.]+/g); if (n && (n.length < 4 || +n[3] === 1)) return b; } return 'rgb(255, 255, 255)'; };
-  const low = [...t.querySelectorAll('*')].filter(el => [...el.childNodes].some(n => n.nodeType === 3 && n.data.trim()) && el.getClientRects().length).map(el => { const L1 = lum(cs(el).color), L2 = lum(bgOf(el)); const k = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05); return k < 4.5 ? el.className + ' ' + k.toFixed(2) : null; }).filter(Boolean);
-  ok('8 مفيش صور، والتباين 4.5', !document.images.length && !/url\(/.test(cs(t).backgroundImage) && !low.length, (document.images.length ? document.images.length + ' صورة، ' : '') + (low.length ? 'تباين واطي: ' + low.join(' و ') : ''));
-  console.log('النتيجة: ' + pass + ' من ' + all);
+  console.log(bad.length ? "broken: " + bad.join(" ") : "all sizes OK");
+  await browser.close();
+  process.exitCode = bad.length ? 1 : 0;
 })();
 ~~~
 
-~~~js measure.mjs
-// node ticket/measure.mjs: the check on the reference, then on 4 copies that each change ONE thing
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-import fs from "node:fs";
-const check = fs.readFileSync(new URL("check.js", import.meta.url), "utf8");
-const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
-const cases = [
-  ["الحل المرجعي", ""],
-  ["الخرم عند 200 بدل 240", ".ticket { --cut: 140px; }"],
-  ["الشارة في البداية", ".class-badge { inset-inline-end: auto; inset-inline-start: 8px; }"],
-  ["السهم بيشاور يمين", ".arrow { rotate: 135deg; }"],
-  ["من غير tabular-nums", ".time { font-variant-numeric: normal; }"],
-  ["الخط solid", ".stub { border-inline-start-style: solid; }"],
-];
-for (const [name, extra] of cases) {
-  const ctx = await b.newContext({ viewport: { width: 800, height: 600 } });
-  const p = await ctx.newPage();
-  const logs = [];
-  p.on("console", m => logs.push(m.text()));
-  await p.goto("http://127.0.0.1:8840/ticket/index.html");
-  if (extra) await p.addStyleTag({ content: extra });
-  await p.evaluate(check);
-  console.log("== " + name + ": " + logs.find(l => l.startsWith("النتيجة")) + (logs.filter(l => l.startsWith("FAIL")).length ? "\n   " + logs.filter(l => l.startsWith("FAIL")).join("\n   ") : ""));
-  if (!extra) console.log("   axe: " + (await new AxeBuilder({ page: p }).analyze()).violations.length);
-  await ctx.close();
-}
-await b.close();
-~~~
-
-~~~view 300 340 الشكل النهائي
+~~~view 760 900 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تذكرة قطر</title>
-<link rel="icon" href="data:,">
+<title>عيادة ابتسامة للأسنان</title>
 <style>
-/* الحل المرجعي */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 24px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; background: #e2e8f0; }
-h1 { font-size: 1.2rem; margin: 0 0 16px; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* 1 و 2: صندوق واحد فيه جزءين جنب بعض */
-.ticket { display: flex; width: 340px; height: 140px; border-radius: 12px; background: #ffffff;
-  /* 4: خرمين على بعد 240px من البداية. في RTL البداية يمين، فالمركز = العرض - 240 = 100px من الشمال */
-  --cut: 100px;
-  mask: radial-gradient(circle 10px at var(--cut) 0, #0000 98%, #000) top / 100% 51% no-repeat,
-        radial-gradient(circle 10px at var(--cut) 100%, #0000 98%, #000) bottom / 100% 51% no-repeat; }
-.ticket:dir(ltr) { --cut: 240px; }
-.main { position: relative; flex: none; width: 240px; padding: 14px 16px; }
-/* 3: الخط على حرف الـ stub اللي ناحية الـ main = البداية بتاعته */
-.stub { flex: none; width: 100px; padding: 14px 10px; border-inline-start: 2px dashed #64748b; display: grid; align-content: center; text-align: center; }
-p { margin: 0; }
-
-/* 5: نفس السطر، والسهم بيشاور على النهاية: شمال في العربي ويمين في الإنجليزي */
-.route { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05rem; }
-.arrow { width: 10px; height: 10px; border-top: 2px solid #0f172a; border-left: 2px solid #0f172a; rotate: -45deg; }
-.arrow:dir(ltr) { rotate: 135deg; }
-
-/* 6: أرقام بعرض ثابت */
-.time { margin-block: 6px; font-variant-numeric: tabular-nums; direction: ltr; text-align: end; font-size: 1.1rem; }
-.meta { font-size: .85rem; color: #475569; }
-.code { font-family: ui-monospace, Consolas, monospace; font-weight: 700; direction: ltr; }
-
-/* 7: ركن النهاية فوق، 8px */
-.class-badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 0 8px; border-radius: 999px; background: #1e3a8a; color: #ffffff; font-size: .75rem; font-weight: 700; }
-
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-space-y-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-outline-style:solid;--tw-content:"";--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-slate-200:oklch(92.9% .013 255.508);--color-slate-300:oklch(86.9% .022 252.894);--color-slate-600:oklch(44.6% .043 257.281);--color-slate-700:oklch(37.2% .044 257.287);--color-slate-900:oklch(20.8% .042 265.755);--color-white:#fff;--spacing:.25rem;--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--text-3xl:1.875rem;--text-3xl--line-height:calc(2.25 / 1.875);--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--text-6xl:3.75rem;--text-6xl--line-height:1;--font-weight-semibold:600;--font-weight-bold:700;--font-weight-extrabold:800;--leading-tight:1.25;--radius-lg:.5rem;--radius-xl:.75rem;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-brand:#0e7490;--color-brand-ink:#155e75;--color-brand-soft:#cffafe;--color-accent:#b45309;--color-page:#f0f9ff;--radius-card:1rem;--z-index-header:10;--z-index-book:20}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}:root{--header-h:4rem}h1,h2{scroll-margin-top:calc(var(--header-h) + 1rem)}}@layer components;@layer utilities{.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.fixed{position:fixed}.relative{position:relative}.sticky{position:sticky}.end-4{inset-inline-end:calc(var(--spacing) * 4)}.top-0{top:0}.bottom-4{bottom:calc(var(--spacing) * 4)}.z-book{z-index:var(--z-index-book)}.z-header{z-index:var(--z-index-header)}.col-span-12{grid-column:span 12/span 12}.row-span-4{grid-row:span 4/span 4}.container-app{max-width:64rem;margin-inline:auto;padding-inline:1rem}.mx-auto{margin-inline:auto}.mt-1{margin-top:var(--spacing)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-4{margin-top:calc(var(--spacing) * 4)}.mt-6{margin-top:calc(var(--spacing) * 6)}.mb-6{margin-bottom:calc(var(--spacing) * 6)}.flex{display:flex}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.size-9{width:calc(var(--spacing) * 9);height:calc(var(--spacing) * 9)}.h-7{height:calc(var(--spacing) * 7)}.w-12{width:calc(var(--spacing) * 12)}.w-full{width:100%}.max-w-\[18ch\]{max-width:18ch}.max-w-prose{max-width:65ch}.basis-full{flex-basis:100%}.cursor-pointer{cursor:pointer}.grid-cols-12{grid-template-columns:repeat(12,minmax(0,1fr))}.grid-rows-subgrid{grid-template-rows:subgrid}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}.gap-x-1{column-gap:var(--spacing)}.gap-x-4{column-gap:calc(var(--spacing) * 4)}.gap-y-1{row-gap:var(--spacing)}.self-end{align-self:flex-end}.rounded-card{border-radius:var(--radius-card)}.rounded-full{border-radius:2147483647px}.rounded-lg{border-radius:var(--radius-lg)}.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-brand-ink{border-color:var(--color-brand-ink)}.border-brand\/20{border-color:#0e749033}@supports (color:color-mix(in lab, red, red)){.border-brand\/20{border-color:color-mix(in oklab, var(--color-brand) 20%, transparent)}}.bg-accent{background-color:var(--color-accent)}.bg-brand-ink{background-color:var(--color-brand-ink)}.bg-brand-soft{background-color:var(--color-brand-soft)}.bg-page{background-color:var(--color-page)}.bg-slate-300{background-color:var(--color-slate-300)}.bg-slate-900{background-color:var(--color-slate-900)}.bg-white{background-color:var(--color-white)}.bg-white\/80{background-color:#fffc}@supports (color:color-mix(in lab, red, red)){.bg-white\/80{background-color:color-mix(in oklab, var(--color-white) 80%, transparent)}}.p-6{padding:calc(var(--spacing) * 6)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-1{padding-block:var(--spacing)}.py-1\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-3{padding-block:calc(var(--spacing) * 3)}.py-10{padding-block:calc(var(--spacing) * 10)}.py-12{padding-block:calc(var(--spacing) * 12)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.pb-24{padding-bottom:calc(var(--spacing) * 24)}.text-center{text-align:center}.text-start{text-align:start}.font-sans{font-family:var(--font-sans)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-3xl{font-size:var(--text-3xl);line-height:var(--tw-leading,var(--text-3xl--line-height))}.text-4xl{font-size:var(--text-4xl);line-height:var(--tw-leading,var(--text-4xl--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.leading-tight{--tw-leading:var(--leading-tight);line-height:var(--leading-tight)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-extrabold{--tw-font-weight:var(--font-weight-extrabold);font-weight:var(--font-weight-extrabold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-brand-ink{color:var(--color-brand-ink)}.text-brand-soft{color:var(--color-brand-soft)}.text-slate-200{color:var(--color-slate-200)}.text-slate-600{color:var(--color-slate-600)}.text-slate-700{color:var(--color-slate-700)}.text-slate-900{color:var(--color-slate-900)}.text-white{color:var(--color-white)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-2{--tw-ring-shadow:var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-brand-ink{--tw-ring-color:var(--color-brand-ink)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );backdrop-filter:var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, )}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}:is(:where(.group):has(:checked) .group-has-checked\:hidden){display:none}:is(:where(.group):has(:checked) .group-has-checked\:inline){display:inline}:is(:where(.peer):checked~.peer-checked\:bg-brand-ink){background-color:var(--color-brand-ink)}:is(:where(.peer):focus-visible~.peer-focus-visible\:outline-3){outline-style:var(--tw-outline-style);outline-width:3px}:is(:where(.peer):focus-visible~.peer-focus-visible\:outline-offset-2){outline-offset:2px}:is(:where(.peer):focus-visible~.peer-focus-visible\:outline-accent){outline-color:var(--color-accent)}.after\:absolute:after{content:var(--tw-content);position:absolute}.after\:start-1:after{content:var(--tw-content);inset-inline-start:calc(var(--spacing) * 1)}.after\:top-1:after{content:var(--tw-content);top:var(--spacing)}.after\:size-5:after{content:var(--tw-content);width:calc(var(--spacing) * 5);height:calc(var(--spacing) * 5)}.after\:rounded-full:after{content:var(--tw-content);border-radius:2147483647px}.after\:bg-white:after{content:var(--tw-content);background-color:var(--color-white)}.after\:transition-transform:after{content:var(--tw-content);transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}:is(:where(.peer):checked~.peer-checked\:after\:translate-x-5):after{content:var(--tw-content);--tw-translate-x:calc(var(--spacing) * 5);translate:var(--tw-translate-x) var(--tw-translate-y)}@media (hover:hover){.hover\:bg-brand\/10:hover{background-color:#0e74901a}@supports (color:color-mix(in lab, red, red)){.hover\:bg-brand\/10:hover{background-color:color-mix(in oklab, var(--color-brand) 10%, transparent)}}}.focus\:not-sr-only:focus{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.focus\:absolute:focus{position:absolute}.focus\:start-4:focus{inset-inline-start:calc(var(--spacing) * 4)}.focus\:top-4:focus{top:calc(var(--spacing) * 4)}.focus\:z-book:focus{z-index:var(--z-index-book)}.focus\:bg-slate-900:focus{background-color:var(--color-slate-900)}.focus\:px-4:focus{padding-inline:calc(var(--spacing) * 4)}.focus\:py-2:focus{padding-block:calc(var(--spacing) * 2)}.focus\:text-white:focus{color:var(--color-white)}.focus\:outline-none:focus{--tw-outline-style:none;outline-style:none}:where([aria-expanded=true]) .in-aria-expanded\:rotate-180{rotate:180deg}@media (min-width:40rem){.sm\:col-span-6{grid-column:span 6/span 6}}@media (min-width:48rem){.md\:order-1{order:1}.md\:col-span-5{grid-column:span 5/span 5}.md\:col-span-7{grid-column:span 7/span 7}.md\:col-span-12{grid-column:span 12/span 12}.md\:row-span-2{grid-row:span 2/span 2}.md\:ms-auto{margin-inline-start:auto}.md\:basis-auto{flex-basis:auto}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:py-20{padding-block:calc(var(--spacing) * 20)}.md\:text-6xl{font-size:var(--text-6xl);line-height:var(--tw-leading,var(--text-6xl--line-height))}}.rtl\:rotate-180:where(:dir(rtl),[dir=rtl],[dir=rtl] *){rotate:180deg}:is(:where(.peer):checked~.rtl\:peer-checked\:after\:-translate-x-5:where(:dir(rtl),[dir=rtl],[dir=rtl] *)):after{content:var(--tw-content);--tw-translate-x:calc(var(--spacing) * -5);translate:var(--tw-translate-x) var(--tw-translate-y)}}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-content{syntax:"*";inherits:false;initial-value:""}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}
 </style>
 </head>
-<body>
-<main>
-  <h1>تمرين: تذكرة قطر</h1>
-  <article class="ticket" aria-label="تذكرة من القاهرة لأسوان">
-    <div class="main">
-      <p class="route"><span class="from">القاهرة</span> <span class="arrow" aria-hidden="true"></span> <span class="to">أسوان</span></p>
-      <p class="time"><span class="sr-only">القيام </span>08:15 ← 21:40</p>
-      <p class="meta">عربية ٣ · كرسي ٢٤</p>
-      <span class="class-badge">درجة أولى</span>
+<body class="bg-page font-sans text-slate-900">
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-4 focus:z-book focus:bg-slate-900 focus:px-4 focus:py-2 focus:text-white" data-en="Skip to content">اتخطى للمحتوى</a>
+
+<header id="header" class="sticky top-0 z-header border-b border-brand/20 bg-white/80 backdrop-blur">
+  <div class="container-app flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2">
+    <a href="#main" class="flex items-center gap-2 font-extrabold"><img class="logo size-9" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iIzBlNzQ5MCIvPjxwYXRoIGQ9Ik0xMSAxMGMzLTIgNSAwIDcgMHM0LTIgNyAwYzIgMiAxIDctMSAxMGwtMSA3YzAgMi0yIDItMiAwbC0xLTVjMC0yLTMtMi0zIDBsLTEgNWMwIDItMiAyLTIgMGwtMS03Yy0yLTMtMy04LTEtMTBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+Cg==" alt="" width="36" height="36"><span data-en="Ebtesama Dental">عيادة ابتسامة</span></a>
+    <a href="?lang=en" lang="en" data-en="عربي" data-en-href="?lang=ar" data-en-lang="ar" class="rounded-lg border border-brand-ink px-3 py-1 font-bold text-brand-ink md:order-1">EN</a>
+    <nav class="nav basis-full md:ms-auto md:basis-auto" aria-label="أقسام الصفحة" data-en-label="Page sections">
+      <ul class="flex flex-wrap gap-x-1">
+        <li><a href="#services" class="inline-block rounded-lg px-2 py-1.5 font-semibold text-brand-ink hover:bg-brand/10" data-en="Services">الخدمات</a></li>
+        <li><a href="#prices" class="inline-block rounded-lg px-2 py-1.5 font-semibold text-brand-ink hover:bg-brand/10" data-en="Prices">الأسعار</a></li>
+        <li><a href="#faq" class="inline-block rounded-lg px-2 py-1.5 font-semibold text-brand-ink hover:bg-brand/10" data-en="FAQ">أسئلة</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1" class="focus:outline-none">
+  <section class="container-app py-12 text-center md:py-20">
+    <h1 class="mx-auto max-w-[18ch] text-4xl font-extrabold leading-tight md:text-6xl" data-en="A smile you are not shy of">ابتسامة مش هتتكسف منها</h1>
+    <p class="mx-auto mt-4 max-w-prose text-lg text-slate-600" data-en="Cleaning, whitening, fillings and braces. Same-week appointments.">تنضيف وتبييض وحشو وتقويم، ومواعيد في نفس الأسبوع.</p>
+    <a href="#prices" class="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-ink px-6 py-3 font-bold text-white">
+      <span data-en="See prices">شوف الأسعار</span><span aria-hidden="true" class="rtl:rotate-180">→</span>
+    </a>
+  </section>
+
+  <!-- bento: 12 columns, cards of different widths -->
+  <section class="container-app py-10" aria-labelledby="services">
+    <h2 id="services" class="mb-6 text-3xl font-bold" data-en="Services">الخدمات</h2>
+    <ul class="grid grid-cols-12 gap-4">
+      <li class="col-span-12 rounded-card bg-brand-ink p-6 text-white md:col-span-7 md:row-span-2">
+        <h3 class="text-2xl font-bold" data-en="Braces">تقويم</h3>
+        <p class="mt-2 text-brand-soft" data-en="Clear aligners or metal braces, with a follow-up every month and a plan you can see from the first visit.">شفاف أو معدن، ومتابعة كل شهر، وخطة تشوفها من أول زيارة.</p>
+      </li>
+      <li class="col-span-12 rounded-card bg-white p-6 shadow-sm sm:col-span-6 md:col-span-5">
+        <h3 class="text-xl font-bold" data-en="Cleaning">تنضيف</h3>
+        <p class="mt-1 text-slate-600" data-en="Scaling and polishing in one 40-minute visit.">إزالة الجير وتلميع في زيارة ٤٠ دقيقة.</p>
+      </li>
+      <li class="col-span-12 rounded-card bg-white p-6 shadow-sm sm:col-span-6 md:col-span-5">
+        <h3 class="text-xl font-bold" data-en="Whitening">تبييض</h3>
+        <p class="mt-1 text-slate-600" data-en="Two to four shades lighter.">من درجتين لأربعة أفتح.</p>
+      </li>
+      <li class="col-span-12 rounded-card bg-brand-soft p-6 md:col-span-12">
+        <h3 class="text-xl font-bold" data-en="Fillings">حشو</h3>
+        <p class="mt-1 text-slate-700" data-en="Tooth-coloured fillings that don't show.">حشو بلون السنة مبيبانش.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- prices: the checkbox switches monthly / yearly with has-checked:, no JavaScript -->
+  <section class="group container-app py-10" aria-labelledby="prices">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <h2 id="prices" class="text-3xl font-bold" data-en="Care plans">باقات المتابعة</h2>
+      <label class="flex cursor-pointer items-center gap-3 font-semibold">
+        <span data-en="Monthly">شهري</span>
+        <input type="checkbox" class="peer sr-only" id="yearly">
+        <span aria-hidden="true" class="relative h-7 w-12 rounded-full bg-slate-300 transition-colors peer-checked:bg-brand-ink peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent
+                     after:absolute after:start-1 after:top-1 after:size-5 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-5 rtl:peer-checked:after:-translate-x-5"></span>
+        <span data-en="Yearly (save 20%)">سنوي (وفّر ٢٠٪)</span>
+      </label>
     </div>
-    <div class="stub"><p class="code">QR-1042</p><p class="meta">٢٠ نوفمبر</p></div>
-  </article>
+    <ul class="grid gap-4 md:grid-cols-3">
+      <li class="row-span-4 grid grid-rows-subgrid gap-2 rounded-card bg-white p-6 shadow-sm">
+        <h3 class="text-xl font-bold" data-en="Basic">أساسي</h3>
+        <p class="text-3xl font-extrabold text-brand-ink"><span class="group-has-checked:hidden" data-en="EGP 150 / month">١٥٠ ج / شهر</span><span class="hidden group-has-checked:inline" data-en="EGP 1,440 / year">١٬٤٤٠ ج / سنة</span></p>
+        <p class="text-slate-600" data-en="Two cleanings a year.">تنضيفين في السنة.</p>
+        <a href="#book" class="self-end rounded-lg bg-brand-ink px-4 py-2 text-center font-bold text-white" data-en="Choose Basic" aria-label="اختار أساسي" data-en-label="Choose Basic">اختار</a>
+      </li>
+      <li class="row-span-4 grid grid-rows-subgrid gap-2 rounded-card bg-white p-6 shadow-sm ring-2 ring-brand-ink">
+        <h3 class="text-xl font-bold" data-en="Family">عيلة</h3>
+        <p class="text-3xl font-extrabold text-brand-ink"><span class="group-has-checked:hidden" data-en="EGP 400 / month">٤٠٠ ج / شهر</span><span class="hidden group-has-checked:inline" data-en="EGP 3,840 / year">٣٬٨٤٠ ج / سنة</span></p>
+        <p class="text-slate-600" data-en="Four people, cleanings and check-ups, 15% off any treatment.">٤ أفراد، تنضيف وكشف، وخصم ١٥٪ على أي علاج.</p>
+        <a href="#book" class="self-end rounded-lg bg-brand-ink px-4 py-2 text-center font-bold text-white" data-en="Choose Family" aria-label="اختار عيلة" data-en-label="Choose Family">اختار</a>
+      </li>
+      <li class="row-span-4 grid grid-rows-subgrid gap-2 rounded-card bg-white p-6 shadow-sm">
+        <h3 class="text-xl font-bold" data-en="Braces">تقويم</h3>
+        <p class="text-3xl font-extrabold text-brand-ink"><span class="group-has-checked:hidden" data-en="EGP 900 / month">٩٠٠ ج / شهر</span><span class="hidden group-has-checked:inline" data-en="EGP 8,640 / year">٨٬٦٤٠ ج / سنة</span></p>
+        <p class="text-slate-600" data-en="Monthly follow-up.">متابعة كل شهر.</p>
+        <a href="#book" class="self-end rounded-lg bg-brand-ink px-4 py-2 text-center font-bold text-white" data-en="Choose Braces" aria-label="اختار تقويم" data-en-label="Choose Braces">اختار</a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- FAQ: buttons with aria-expanded; the icon turns with aria-expanded: -->
+  <section class="container-app py-10" aria-labelledby="faq">
+    <h2 id="faq" class="mb-6 text-3xl font-bold" data-en="FAQ">أسئلة</h2>
+    <div class="space-y-2">
+      <div class="rounded-xl bg-white">
+        <h3><button type="button" aria-expanded="false" aria-controls="a1" class="flex w-full items-center justify-between gap-4 px-4 py-3 text-start font-bold">
+          <span data-en="Does whitening hurt?">التبييض بيوجع؟</span><span aria-hidden="true" class="transition-transform in-aria-expanded:rotate-180">▾</span></button></h3>
+        <p id="a1" hidden class="px-4 pb-4 text-slate-600" data-en="Some people feel sensitivity for a day or two.">ممكن حساسية يوم أو اتنين.</p>
+      </div>
+      <div class="rounded-xl bg-white">
+        <h3><button type="button" aria-expanded="false" aria-controls="a2" class="flex w-full items-center justify-between gap-4 px-4 py-3 text-start font-bold">
+          <span data-en="Do you work on Fridays?">بتشتغلوا الجمعة؟</span><span aria-hidden="true" class="transition-transform in-aria-expanded:rotate-180">▾</span></button></h3>
+        <p id="a2" hidden class="px-4 pb-4 text-slate-600" data-en="Yes, from 2 pm to 10 pm.">أيوه، من ٢ الضهر لـ ١٠ بالليل.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-slate-900 py-10 pb-24 text-center text-slate-200"><p data-en="12 Garden St. · 0100 000 0000">١٢ شارع الجنينة، ٠١٠٠٠٠٠٠٠٠٠</p></footer>
+
+<a id="book" href="#prices" class="fixed bottom-4 end-4 z-book rounded-full bg-accent px-6 py-3 font-extrabold text-white shadow-xl" data-en="Book now">احجز دلوقتي</a>
+<script>
+// ?lang=en switches the page to English before it is drawn (this file runs in <head>, so there is no Arabic flash)
+// every element with data-en has its English text in that attribute; data-en-alt, data-en-label and data-en-href likewise
+if (new URLSearchParams(location.search).get("lang") === "en") {
+  document.documentElement.lang = "en";
+  document.documentElement.dir = "ltr";
+  document.title = "Ebtesama Dental Clinic";
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const el of document.querySelectorAll("[data-en]")) el.textContent = el.dataset.en;
+    for (const el of document.querySelectorAll("[data-en-alt]")) el.alt = el.dataset.enAlt;
+    for (const el of document.querySelectorAll("[data-en-label]")) el.setAttribute("aria-label", el.dataset.enLabel);
+    for (const el of document.querySelectorAll("[data-en-href]")) el.setAttribute("href", el.dataset.enHref);
+    for (const el of document.querySelectorAll("[data-en-lang]")) el.lang = el.dataset.enLang;
+  });
+}
+</script>
+<script>
+// 1. the sticky header's real height, for scroll-margin-top (measured now and whenever it changes)
+const header = document.getElementById("header");
+const setHeaderH = () => document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+document.addEventListener("DOMContentLoaded", setHeaderH);
+new ResizeObserver(setHeaderH).observe(header);
+
+// 2. FAQ: a button opens and closes its answer; only attributes change, Tailwind styles from them
+for (const btn of document.querySelectorAll("button[aria-controls]")) {
+  btn.addEventListener("click", () => {
+    const open = btn.getAttribute("aria-expanded") !== "true";
+    btn.setAttribute("aria-expanded", String(open));
+    document.getElementById(btn.getAttribute("aria-controls")).hidden = !open;
+  });
+}
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** نفس صفحة العيادة: هيدر زجاجي، وعنوان كبير، وخدمات bento (التقويم كارت كبير غامق)، وباقات بـ ٣ أسعار وفوقها مفتاح «شهري / سنوي»، وأسئلة بتتفتح، وزرار «احجز» عايم. وبـ [[?lang=en]] كلها إنجليزي من الشمال لليمين.
+
+**[[@utility container-app]]:** كلاس بتاعك بيدخل Tailwind زي أي utility (بيتطلّع بس لو اتستخدم، وبيشتغل مع [[md:]] وغيره). عرض الصفحة في مكان واحد.
+
+**Bento:** [[grid grid-cols-12]]، والكروت [[col-span-12 md:col-span-7 md:row-span-2]] وأخواتها: على الموبايل كله 12 (تحت بعض)، ومن md التقسيمة.
+
+**الأسعار بـ subgrid:** كل باقة [[row-span-4 grid grid-rows-subgrid]]، فالاسم والسعر والوصف والزرار على نفس الخطوط في الـ ٣ باقات (زي مشروع الاستوديو في وحدة Grid).
+
+**«شهري / سنوي» من غير JavaScript:** checkbox [[peer sr-only]] (مستخبي بس الكيبورد بيوصله)، والمفتاح المرسوم جنبه بـ [[peer-checked:bg-brand-ink]] و [[peer-checked:after:translate-x-5]]. والقسم كله [[group]]، والأسعار: [[group-has-checked:hidden]] على الشهري و [[hidden group-has-checked:inline]] على السنوي. [[has-checked]] = «جوايا checkbox متعلّم».
+
+**الأسئلة:** زرار بـ [[aria-expanded]] والإجابة [[hidden]]، والـ JS بيغيّر الاتنين بس. السهم [[in-aria-expanded:rotate-180]]: [[in-*]] = «لو أي جد ليا عليه الحالة دي».
+
+**لغتين من غير ولا [[ml-]] ولا [[left-]]:** [[ms-auto]] (margin-inline-start)، و [[start-4]]، و [[end-4]]، و [[text-start]]: بتتقلب لوحدها مع [[dir]]. و [[rtl:]] بس للحاجات اللي مش منطقية: السهم ([[rtl:rotate-180]]) والـ translate في المفتاح ([[rtl:peer-checked:after:-translate-x-5]]). اتعدّى بـ grep: [[ml-]] و [[mr-]] و [[pl-]] و [[pr-]] و [[left-]] و [[right-]] = 0.
+
+**قيم [[[...]]]:** واحدة بس: [[max-w-[18ch]]] للعنوان. أي قيمة بتتكرر تبقى توكن.
+
+**غلطة في الاختبار مش في الصفحة:** أول تشغيل لـ [[matrix.js]] قال BROKEN في الـ 30 مقاس: «out» و «small» على [[sr-only]]. الـ [[sr-only]] بتاع Tailwind عرضه 1px و [[margin: -1px]] عن قصد (مستخبي من العين ومقروء لقارئ الشاشة). اللينك ده بيبان لما الكيبورد يوصله، والـ checkbox بيتداس من الـ label بتاعه. فالسكربت بقى بيتخطى أي عنصر عليه [[clip-path: inset(50%)]]. ولما الأداة تقول «غلط»، اتأكد هي بتقيس صح قبل ما تصلّح الصفحة.
+
+~~~text node matrix.js (مرتين ورا بعض، نفس الناتج)
+ar  320 scrollWidth=320 OK
+ar  360 scrollWidth=360 OK
+... (كل العروض باللغتين)
+en 1920 scrollWidth=1920 OK
+yearly prices after Space: inline | FAQ open after Enter: true OK
+all sizes OK
+(exit code 0)
+
+قبل تخطّي sr-only:
+ar  320 scrollWidth=320 BROKEN out: sr-only focus:not-sr-only ... small: ... 1px,peer sr-only 1px
+~~~
+
+~~~text مقاسات تانية
+npx @tailwindcss/cli -i in.css -o out.css --minify  →  out.css = 18,416 بايت (الحد 30KB)
+grep على index.html لـ ml- mr- pl- pr- left- right-: 0
+قيم [...]: max-w-[18ch] مرة واحدة
+axe بالعربي والإنجليزي: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'فكرة', dir: "tw-rebrand", t: R`تحدّي الـ rebrand`, what: R`خد صفحة Tailwind جاهزة عملتها، وغيّر هويتها كلها (ألوان وخطوط وتدوير وظلال) من [[@theme]] بس، من غير ما تفتح ولا ملف HTML.`, done: R`[[git diff --stat]] بيوري ملف CSS واحد بس اتغيّر، والصفحة شكلها مختلف تمامًا في لقطتين قبل وبعد، ولو فيه حاجة متغيرتش اكتب ليه (غالبًا لون مكتوب [[[#...]]] أو اسم palette زي [[indigo-600]] بدل توكن بالمعنى).`, ext: R`اعمل ٣ هويات لنفس الصفحة وزرار بيبدّل بينهم، وحط اختبار بيفشل لو ظهر [[#hex]] في أي ملف HTML أو JSX.`, sol: R`المثال اللي عملته: صفحة الزراير والشارات (أول مشروع في الوحدة). الـ HTML زي ما هو بالظبط، والهوية الجديدة كلها في [[in.css]].
+
+~~~bash الترمنال
+git init
+git add -A
+git commit -m "badges page, first identity"
+# ... غيّرت @theme في in.css بس ...
+npx @tailwindcss/cli -i in.css -o out.css
+git status --short
+git diff --stat
+~~~
+
+~~~text .gitignore
+out.css
+node_modules/
+~~~
+
+~~~css in.css (بعد)
+@import "tailwindcss";
+
+/* the new identity: night blue and gold, sharper corners, a different font. Not one HTML file opened */
+@theme {
+  --color-brand: #1e3a8a;
+  --color-brand-soft: #dbeafe;
+  --color-brand-ink: #172554;
+
+  --color-ok: #047857;
+  --color-ok-soft: #d1fae5;
+  --color-ok-ink: #064e3b;
+
+  --color-warn: #a16207;
+  --color-warn-soft: #fef9c3;
+  --color-warn-ink: #713f12;
+
+  --color-danger: #9f1239;
+  --color-danger-soft: #ffe4e6;
+  --color-danger-ink: #881337;
+
+  --color-neutral: #57534e;
+  --color-neutral-soft: #fafaf9;
+  --color-neutral-ink: #1c1917;
+
+  /* Tailwind's own scales can be changed too: every rounded-lg and every font-sans follows */
+  --radius-lg: 0.125rem;
+  --font-sans: Georgia, "Times New Roman", serif;
+}
+~~~
+
+~~~view 330 380 بعد الـ rebrand (قبله: الشكل النهائي بتاع مشروع «زراير و badges بالتوكنز»)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>زراير وشارات بالتوكنز</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties;
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: Georgia, "Times New Roman", serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --color-white: #fff;
+    --spacing: 0.25rem;
+    --container-3xl: 48rem;
+    --text-sm: 0.875rem;
+    --text-sm--line-height: calc(1.25 / 0.875);
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --radius-lg: 0.125rem;
+    --default-font-family: var(--font-sans);
+    --default-mono-font-family: var(--font-mono);
+    --color-brand: #1e3a8a;
+    --color-brand-soft: #dbeafe;
+    --color-brand-ink: #172554;
+    --color-ok: #047857;
+    --color-ok-soft: #d1fae5;
+    --color-ok-ink: #064e3b;
+    --color-warn: #a16207;
+    --color-warn-soft: #fef9c3;
+    --color-warn-ink: #713f12;
+    --color-danger: #9f1239;
+    --color-danger-soft: #ffe4e6;
+    --color-danger-ink: #881337;
+    --color-neutral: #57534e;
+    --color-neutral-soft: #fafaf9;
+    --color-neutral-ink: #1c1917;
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring:where(:not(iframe)) {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .mx-auto {
+    margin-inline: auto;
+  }
+  .flex {
+    display: flex;
+  }
+  .max-w-3xl {
+    max-width: var(--container-3xl);
+  }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  .gap-2 {
+    gap: calc(var(--spacing) * 2);
+  }
+  .gap-3 {
+    gap: calc(var(--spacing) * 3);
+  }
+  :where(.space-y-3 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  :where(.space-y-8 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 8) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 8) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  .rounded-full {
+    border-radius: calc(infinity * 1px);
+  }
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-neutral {
+    border-color: var(--color-neutral);
+  }
+  .bg-brand {
+    background-color: var(--color-brand);
+  }
+  .bg-brand-soft {
+    background-color: var(--color-brand-soft);
+  }
+  .bg-danger {
+    background-color: var(--color-danger);
+  }
+  .bg-danger-soft {
+    background-color: var(--color-danger-soft);
+  }
+  .bg-neutral {
+    background-color: var(--color-neutral);
+  }
+  .bg-neutral-soft {
+    background-color: var(--color-neutral-soft);
+  }
+  .bg-ok {
+    background-color: var(--color-ok);
+  }
+  .bg-ok-soft {
+    background-color: var(--color-ok-soft);
+  }
+  .bg-warn {
+    background-color: var(--color-warn);
+  }
+  .bg-warn-soft {
+    background-color: var(--color-warn-soft);
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .px-3 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .px-4 {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+  .py-1 {
+    padding-block: var(--spacing);
+  }
+  .py-2 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+  .text-sm {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .text-brand-ink {
+    color: var(--color-brand-ink);
+  }
+  .text-danger-ink {
+    color: var(--color-danger-ink);
+  }
+  .text-neutral-ink {
+    color: var(--color-neutral-ink);
+  }
+  .text-ok-ink {
+    color: var(--color-ok-ink);
+  }
+  .text-warn-ink {
+    color: var(--color-warn-ink);
+  }
+  .text-white {
+    color: var(--color-white);
+  }
+  .ring-1 {
+    --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .ring-neutral {
+    --tw-ring-color: var(--color-neutral);
+  }
+  @media (hover: hover) {
+    .hover\:bg-brand-ink:hover {
+      background-color: var(--color-brand-ink);
+    }
+    .hover\:bg-danger-ink:hover {
+      background-color: var(--color-danger-ink);
+    }
+    .hover\:bg-neutral-soft:hover {
+      background-color: var(--color-neutral-soft);
+    }
+    .hover\:bg-ok-ink:hover {
+      background-color: var(--color-ok-ink);
+    }
+  }
+  .focus-visible\:outline-3:focus-visible {
+    outline-style: var(--tw-outline-style);
+    outline-width: 3px;
+  }
+  .focus-visible\:outline-offset-2:focus-visible {
+    outline-offset: 2px;
+  }
+  .focus-visible\:outline-warn:focus-visible {
+    outline-color: var(--color-warn);
+  }
+}
+@property --tw-space-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: block))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-space-y-reverse: 0;
+      --tw-border-style: solid;
+      --tw-font-weight: initial;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-outline-style: solid;
+    }
+  }
+}
+</style>
+</head>
+<body class="bg-neutral-soft font-sans text-neutral-ink">
+<main class="mx-auto max-w-3xl space-y-8 p-4">
+  <h1 class="text-2xl font-bold">زراير وشارات «مكتب الشحن»</h1>
+
+  <section class="space-y-3">
+    <h2 class="text-lg font-semibold">الزراير</h2>
+    <div class="flex flex-wrap gap-3">
+      <button type="button" class="rounded-lg bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-ink focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">اشحن طرد</button>
+      <button type="button" class="rounded-lg bg-ok px-4 py-2 font-semibold text-white hover:bg-ok-ink focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">أكّد الاستلام</button>
+      <button type="button" class="rounded-lg bg-danger px-4 py-2 font-semibold text-white hover:bg-danger-ink focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">ألغي الشحنة</button>
+      <button type="button" class="rounded-lg border border-neutral bg-white px-4 py-2 font-semibold text-neutral-ink hover:bg-neutral-soft focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-warn">رجوع</button>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-lg font-semibold">حالة الشحنة</h2>
+    <ul class="flex flex-wrap gap-2">
+      <li class="rounded-full bg-ok-soft px-3 py-1 text-sm font-semibold text-ok-ink">اتسلّمت</li>
+      <li class="rounded-full bg-warn-soft px-3 py-1 text-sm font-semibold text-warn-ink">في الطريق</li>
+      <li class="rounded-full bg-danger-soft px-3 py-1 text-sm font-semibold text-danger-ink">متأخرة</li>
+      <li class="rounded-full bg-neutral-soft px-3 py-1 text-sm font-semibold text-neutral-ink ring-1 ring-neutral">مستنية</li>
+      <li class="rounded-full bg-brand-soft px-3 py-1 text-sm font-semibold text-brand-ink">جديدة</li>
+    </ul>
+    <ul class="flex flex-wrap gap-2">
+      <li class="rounded-full bg-ok px-3 py-1 text-sm font-semibold text-white">اتسلّمت</li>
+      <li class="rounded-full bg-warn px-3 py-1 text-sm font-semibold text-white">في الطريق</li>
+      <li class="rounded-full bg-danger px-3 py-1 text-sm font-semibold text-white">متأخرة</li>
+      <li class="rounded-full bg-neutral px-3 py-1 text-sm font-semibold text-white">مستنية</li>
+      <li class="rounded-full bg-brand px-3 py-1 text-sm font-semibold text-white">جديدة</li>
+    </ul>
+  </section>
 </main>
 </body>
 </html>
 ~~~
 
-**اخترت إيه:** تذكرة قطر زي اللي في مواقع وتطبيقات الحجز، بأسماء متخيّلة. فيها حاجات بتتعب: خرمين نص دايرة على خط القطع (بـ [[mask]])، وخط متقطّع، وسهم لازم يشاور على النهاية في RTL، وأرقام بعرض ثابت، وشارة في ركن النهاية.
+**قبل وبعد:** قبل: أخضر مزرق، وزوايا مدورة، وخط النظام. بعد: كحلي ودهبي، وزوايا شبه حادة، وخط Georgia. والـ HTML ما اتفتحش.
 
-**هتشوف إيه:** تذكرة بيضا على خلفية رمادي. اليمين (الجزء الرئيسي): «القاهرة ← أسوان»، والمواعيد 08:15 ← 21:40، و «عربية ٣ · كرسي ٢٤»، وشارة كحلي «درجة أولى» في ركنه الشمال. وبعد خط رمادي متقطّع الجزء الصغير: «QR-1042» والتاريخ. وفوق وتحت الخط خرم نص دايرة بيبان منه الرمادي.
+**ليه الزوايا والخط اتغيّروا كمان:** [[@theme]] مش لألوانك بس. Tailwind نفسه بيقرا [[--radius-lg]] لـ [[rounded-lg]] و [[--font-sans]] لـ [[font-sans]]. فـ [[--radius-lg: 0.125rem]] غيّرت كل زرار [[rounded-lg]] (اتقاس: 2px)، و [[--font-sans]] غيّرت الخط كله.
 
-**الوصف (README) بالأرقام بس:** ٨ بنود، كل بند ليه رقم يتقاس (340×140، و 240 و 100، و 10px عند 240 من البداية، و 8px من الركن). مفيش «تقريبًا» ولا «زي الصورة»، فاللي بيحل مش محتاج يشوف الأصل.
+**[[git diff --stat]] بيثبت:** ملف واحد اتغيّر ([[in.css]]). و [[out.css]] في [[.gitignore]] لأنه بيتعمل من [[in.css]]: لو اتحفظ في git، كل تغيير هيظهر في ملفين.
 
-**الفحص بنفس شكل الدروس:** [[ok(اسم، شرط، رسالة)]]، وكل رسالة فيها الرقم اللي اتقاس والمطلوب. والاتجاه بيتحسب: [[fromStart()]] بتقيس من اليمين في العربي ومن الشمال في الإنجليزي، فنفس الفحص ينفع للاتنين.
+**اللي متغيّرش:** الكلام الأبيض على الزراير ([[text-white]] ×8) والزرار الأبيض ([[bg-white]] ×1). دول أسامي من palette Tailwind مش توكنز بالمعنى، فالـ rebrand مبيوصلهمش. لو عايزهم يتغيّروا: توكن [[--color-on-brand]] و [[--color-surface]] واستخدمهم بدل [[white]].
 
-**الخرمين بيتقروا من الـ mask نفسه:** [[getComputedStyle(t).maskImage]] بيرجّع [[radial-gradient(10px at 100px 0px, …)]]. الفحص بيطلّع نص القطر ومكان المركز من النص ده، ويشيّك إن فيه دايرتين 10px عند 240 من البداية، واحدة [[0px]] (فوق) وواحدة [[100%]] (تحت). (في RTL الـ mask بيتحسب من الشمال: 340 − 240 = 100px، وعشان كده [[--cut]] بيتغيّر بـ [[:dir(ltr)]].)
+~~~text الناتج
+git status --short
+ M in.css
 
-**السهم:** نفس طريقة فحص سهم «التالي» في درس الأشكال: الـ border اللي ظاهر بيحدد اتجاه، وبعدين يلف بزاوية [[rotate]] ويشوف بقى بيشاور فين.
+git diff --stat
+ in.css | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
-**غلطة قابلتني:** أول نسخة من البند ٤ كانت بتدوّس بـ [[elementFromPoint]] في مكان الخرم: لو الخلفية بتبان يبقى فيه خرم. الحل المرجعي نفسه وقع ٧ من ٨. قست الاتنين: البكسل في مكان الخرم لون الخلفية ([[226,232,240]])، يعني الخرم مرسوم، و [[elementFromPoint]] في نفس النقطة رجّع [[.main]]. الـ [[mask]] بيغيّر الرسم بس، والضغط والـ hit testing بيفضلوا على الصندوق كله (عكس [[clip-path]]). البند بقى يقرا الـ mask المحسوب.
-
-**الفحص اتجرّب صح وغلط:** الحل المرجعي ٨ من ٨، وبعدين ٥ نسخ كل واحدة متغيّر فيها حاجة واحدة بس. كل واحدة وقعت في البند بتاعها لوحده، برسالة بتقول اللي اتقاس (الخرم «عند 200px»، والشارة «من حرف النهاية 166px»، والسهم «بيشاور يمين»).
-
-**الزميل:** الـ done بيطلب إن حد تاني يحل من الـ README بس من غير ما يشوف الأصل. ده لازم تعمله انت مع حد بجد: ابعتله [[README.md]] و [[index.html]] و [[check.js]] من غير [[ticket.css]].
-
-~~~text أول نسخة من البند ٤
-أول نسخة من البند ٤ (بتدوّس بـ elementFromPoint في مكان الخرم):
-== الحل المرجعي: النتيجة: 7 من 8
-   FAIL 4 الخرمين على الخط ← عند 240px من البداية (فوق وتحت) لازم الخلفية تبان من الخرم، وبعيد عنه 30px لأ
-التأكيد: عند الخرم elementFromPoint = main
-بكسل الخرم فوق (100,2): 226,232,240 | بعيد عنه (130,2): 255,255,255 | الخرم تحت (100,137): 226,232,240
+grep على index.html لأسامي palette: text-white 8، bg-white 1
+بعد: font Georgia, "Times New Roman", serif، و border-radius الزرار 2px
+axe: 0 violations   الـ validator: مفيش رسايل
 ~~~
 
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-== الحل المرجعي: النتيجة: 8 من 8
-   axe: 0
-== الخرم عند 200 بدل 240: النتيجة: 7 من 8
-   FAIL 4 الخرمين على الخط ← الـ mask فيه دايرة 10px عند 200px من البداية و دايرة 10px عند 200px من البداية، والمطلوب دايرتين 10px عند 240px من البداية (فوق وتحت)، من غير عناصر زيادة
-== الشارة في البداية: النتيجة: 7 من 8
-   FAIL 7 الشارة في ركن النهاية ← من فوق 8px ومن حرف النهاية 166px، والمطلوب 8 و 8
-== السهم بيشاور يمين: النتيجة: 7 من 8
-   FAIL 5 من وإلى ← .from لازم في البداية و .to بعده على نفس السطر، والسهم بيشاور يمين والمطلوب شمال
-== من غير tabular-nums: النتيجة: 7 من 8
-   FAIL 6 أرقام بعرض ثابت ← font-variant-numeric = normal
-== الخط solid: النتيجة: 7 من 8
-   FAIL 3 الخط المتقطّع ← حرف .stub اللي ناحية .main: solid 2px، والمطلوب dashed 2px
-~~~` },
+**الصورتين:** اتصوّروا بـ Playwright ([[page.screenshot]]) على 900×520: [[rebrand-before.png]] من صفحة المشروع الأول، و [[rebrand-after.png]] من هنا.` },
       ],
-      n: R`هنا مفيش أداة جديدة: هنا بتستخدم كل اللي اتعلمته في تمارين ليها هدف متقاس. ٨ دروس، فيهم ٦٧ تمرين: أشكال، و layouts، وصفحات بتفيض، وأخطاء حقيقية تصلّحها، وتوقّع الـ cascade، و accessibility، ومسائل JS، وصفحات من وصف. ٤ دروس فيهم تمرين بيتصحح لوحده هنا في الصفحة، والباقي ليه فحص ذاتي تلزقه في الـ Console. كل فحص اتشغّل على حل صح وحل غلط في Chrome بـ Playwright على ويندوز ١١ بـ Node 24.22.1، والنواتج اللي في الدروس منسوخة من التشغيل ده`,
       items: [
         {
-          cmd: "أشكال بالـ CSS",
+          cmd: "Tailwind v4",
           ref: [
-            { t: "MDN: Overview of CSS shapes", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Shapes/Overview" },
-            { t: "MDN: clip-path", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/clip-path" },
-            { t: "MDN: mask", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/mask" },
-            { t: "MDN: radial-gradient()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/gradient/radial-gradient" },
+            { t: "Tailwind CSS: Installing with Vite", url: "https://tailwindcss.com/docs/installation/using-vite" },
+            { t: "Tailwind CSS: Tailwind CLI", url: "https://tailwindcss.com/docs/installation/tailwind-cli" },
+            { t: "Tailwind CSS: Upgrade guide (v3 → v4)", url: "https://tailwindcss.com/docs/upgrade-guide" },
+            { t: "Tailwind CSS: Styling with utility classes", url: "https://tailwindcss.com/docs/styling-with-utility-classes" },
           ],
-          title: "ارسم ١٠ أشكال بالـ CSS بس: مثلث ودايرة وتذكرة وقلب ونجمة وشطرنج",
-          learn: R`تحوّل أي شكل لسؤالين: مقاسه من برا كام، وأنهي أداة CSS بترسمه (border ولا radius ولا gradient ولا clip-path ولا pseudo-element).`,
-          out: R`صفحة فيها ١٠ أشكال بتعدّي الفحص الذاتي ١٢ من ١٢، ودالتين بيولّدوا [[clip-path]] لأي مضلّع أو نجمة وبيعدّوا ١٠ اختبارات.`,
-          use: {
-            prog: R`الأشكال أسرع طريقة تفهم بيها الـ box model والـ borders والـ gradients بجد: الغلطة بتبان بعينك على طول، والفحص بيقولك بكام بكسل.`,
-            work: R`الأشكال دي موجودة في كل موقع: سهم «التالي» في السلايدر، ولودر وقت التحميل، وفقاعة الشات، وشارة «جديد»، وتذكرة حجز بقطعين على الجنب، وخلفية مربعات. رسمها بالـ CSS بدل صورة يعني ملف أقل، ولون بيتغير من متغير واحد، وشكل حاد على أي شاشة.`,
-            cs: R`المثلث بالـ borders هو إن الـ border بيتقابل مع اللي جنبه في خط مايل (الركن بيتقسم نصين). والنجمة نقط على دايرتين بالـ sin والـ cos. والسهم متجه بيلف بمصفوفة الدوران. والشطرنج دالة دورية بتتكرر كل 60px.`,
-          },
-          desc: R`كل تمرين هنا هدفه مكتوب بالأرقام (المقاس واللون والاتجاه)، وانت بتختار الأداة. الأدوات خمسة بس، وكل شكل بيتعمل بواحدة منهم أو اتنين مع بعض.
+          title: "إزاي كلاس زي p-4 بيبقى CSS",
+          desc: R`Tailwind مش مكتبة مكونات. هو أداة بتقرا ملفات مشروعك، وتلاقي أسماء كلاسات زي [[flex]] و [[p-4]] و [[text-lg]]، وتطلّع ملف CSS فيه القواعد دي بس. فانت بتنسّق من جوه الـ HTML أو الـ JSX مباشرة.
 
-• **border**: لما العنصر يبقى [[width: 0; height: 0]]، الـ borders بتتقابل في النص، وكل واحد بيبقى مثلث. خلي ٣ منهم شفافين يفضل مثلث واحد.
-• **border-radius**: [[50%]] على مربع بيعمل دايرة، وعلى مستطيل بيعمل بيضاوي.
-• **gradient**: [[linear-gradient]] بحدود حادة بيعمل خطوط (علم)، و [[radial-gradient]] بيعمل دواير (القطع في التذكرة)، و [[repeating-conic-gradient]] بيعمل مربعات (شطرنج).
-• **clip-path**: بيقص العنصر على شكل [[polygon()]] من نقط بالنسبة المئوية: نجمة، سداسي، سهم.
-• **::before و ::after**: عنصرين زيادة ببلاش من غير HTML، للديل في الفقاعة ونصين القلب والخط المتقطع في التذكرة.
-
-وفي الآخر الفحص الذاتي: كود صغير تلزقه في الـ Console بيقيس كل شكل بـ [[getComputedStyle]] و [[offsetWidth]] ويطبع [[PASS]] أو [[FAIL]] ومعاه السبب. ده تطبيق على دروس «box model» و «display» و «SVG» و «transition و @keyframes» في التاب ده.`,
-          example: R`<div class="tri"></div>
-<div class="dot"></div>
-<style>
-.tri {
-  width: 0;
-  height: 0;
-  border-inline: 40px solid transparent;
-  border-bottom: 70px solid #e11d48;
-}
-.dot {
-  box-sizing: border-box;
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: #0ea5e9;
-  border: 4px solid #0c4a6e;
-}
-</style>`,
-          lines: [
-            R`عنصر فاضي هيبقى المثلث. مفيش جواه كلام، والشكل كله جاي من الـ borders بتاعته.`,
-            R`عنصر فاضي تاني هيبقى الدايرة، وهنا الشكل جاي من [[border-radius]].`,
-            R`بنكتب الـ CSS في نفس الملف عشان التمرين يبقى ملف واحد تفتحه في المتصفح على طول.`,
-            R`بداية قواعد المثلث. اسم الـ class [[tri]] اختصار triangle.`,
-            R`العرض صفر: كده مفيش مساحة محتوى، والـ borders الأربعة بيتقابلوا في نقطة واحدة في النص.`,
-            R`الارتفاع صفر كمان، فالـ border اللي تحت بيبان كمثلث كامل مش شبه منحرف.`,
-            R`[[border-inline]] بيحط border على الجنبين (اليمين والشمال) بـ 40px شفاف. الاتنين مع بعض 80px وده عرض قاعدة المثلث، وشفافيتهم هي اللي بتقص الجنبين مايل.`,
-            R`الـ border اللي تحت 70px باللون، وده ارتفاع المثلث. ولأن مفيش border فوق، رأس المثلث بيشاور لفوق.`,
-            R`قفلة قواعد المثلث. المقاس من برا بقى 80 × 70 مع إن الـ width صفر.`,
-            R`بداية قواعد الدايرة، واسم الـ class [[dot]] يعني نقطة.`,
-            R`[[border-box]] يعني الـ width بيشمل الـ border. من غيره الدايرة هتبقى 96 + 4 + 4 = 104px مش 96.`,
-            R`العرض 96px وده قطر الدايرة كلها شامل الإطار.`,
-            R`نفس الارتفاع، لأن الدايرة لازم مربع الأول. لو الارتفاع اختلف هتطلع بيضاوي.`,
-            R`[[50%]] نص العرض لكل ركن، فالأركان الأربعة بيتقابلوا ويعملوا دايرة كاملة.`,
-            R`لون الدايرة من جوه (سماوي).`,
-            R`الإطار 4px بلون كحلي، وبيلف مع الـ radius لوحده.`,
-            R`قفلة قواعد الدايرة.`,
-            R`قفلة الـ style. افتح الملف في Chrome وقيس بالفحص اللي في الشرح.`,
-          ],
-          teach: R`## الفكرة في سطر
-
-قبل ما تكتب أي CSS، اكتب **المقاس من برا** و **الأداة**. المثلث «80 × 70 بالـ borders»، والدايرة «96 × 96 بالـ radius». وبعد ما تخلص، متقولش «شكله تمام»: لزّق الفحص الذاتي واقرا الأرقام. كل اللي تحت اتشغّل في Chrome بـ Playwright على ويندوز ١١، والنواتج منسوخة زي ما طلعت.
-
----
-
-## إزاي تحل أي تمرين شكل
-
-1. **اقرا الهدف كأرقام:** العرض والطول من برا، واللون بالـ hex، والاتجاه.
-2. **اختار الأداة** من الجدول تحت. لو الشكل جزئين (فقاعة وديل) يبقى عنصر وواحد من [[::before]] أو [[::after]].
-3. **ابني على صفحة فاضية** فيها العنصر لوحده، وخلي [[outline: 1px dashed]] مؤقت عشان تشوف حدود الصندوق.
-4. **قيس:** الفحص الذاتي بيقرا [[offsetWidth]] (المقاس من غير الدوران) و [[getComputedStyle]] (القيمة اللي المتصفح حسبها فعلًا).
-
-| الشكل | الأداة | ليه دي بالذات |
-|---|---|---|
-| مثلث، وديل الفقاعة | [[border]] على عنصر [[width: 0]] | الـ borders بتتقابل مايل، وده أقدم وأخف طريقة، وشغالة في كل متصفح |
-| دايرة، ولودر | [[border-radius: 50%]] | ركن مدوّر بنص العرض بيقفل الدايرة |
-| تذكرة بقطعين | [[mask]] بـ [[radial-gradient]] | الـ mask بيخرّم الخلفية نفسها، فالقطع شفاف فعلًا مش لون أبيض فوقها |
-| علم، وشطرنج | [[linear-gradient]] و [[repeating-conic-gradient]] | الخطوط والمربعات بتتكرر، فبتترسم من غير ولا عنصر |
-| نجمة، وسداسي | [[clip-path: polygon()]] | نقط بالنسبة المئوية فالشكل بيكبر ويصغر مع العنصر |
-| قلب | مربع متلف و [[::before]] و [[::after]] دواير | ٣ أشكال بسيطة جنب بعض بيعملوا شكل معقد |
-
----
-
-## التمارين العشرة
-
-الصفحة: [[<html lang="ar" dir="rtl">]]، وكل شكل [[<div id="...">]] فاضي بالـ id اللي جنب اسمه. الفحص بيدوّر عليهم بالـ id ده.
-
-### ١. مثلث [[#tri]]
-بيشاور لفوق، قاعدته 80px وارتفاعه 70px، لونه [[#e11d48]]. ينفع بالـ borders أو بـ [[clip-path]] بـ ٣ نقط، والفحص بيقبل الاتنين.
-
-### ٢. دايرة [[#circle]]
-قطرها **96px شامل الإطار**، لونها [[#0ea5e9]]، وإطار 4px [[#0c4a6e]]. الفخ: من غير [[box-sizing: border-box]] بتطلع 104.
-
-### ٣. تذكرة [[#ticket]]
-280 × 120، لونها [[#fde68a]]، فيها قطعين نص دايرة (نص قطرهم 12px) على الجنبين في النص، وخط رأسي متقطع 2px على بعد 200px من البداية، من [[::after]].
-
-~~~css التذكرة: الـ mask بيخرّم دايرتين
-.ticket {
-  mask: radial-gradient(circle 12px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
-        radial-gradient(circle 12px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
-}
-~~~
-
-كل [[radial-gradient]] فيه دايرة شفافة ([[#0000]]) والباقي أسود ([[#000]] يعني «يبان»). الأولى مركزها على الحرف الشمال والتانية على اليمين، وكل واحدة بتغطي نص العرض بس ([[51%]] عشان ميبقاش فيه خط فاضي في النص).
-
-### ٤. فقاعة كلام [[#bubble]]
-220 × 80 من غير الديل، لونها [[#22c55e]]، أركانها 16px. والديل مثلث من [[::after]] بـ [[position: absolute; top: 100%]] (يعني تحت الفقاعة على طول) بنفس لونها.
-
-### ٥. قلب [[#heart]]
-لونه [[#ef4444]]: مربع 60px متلف 45 درجة، و [[::before]] و [[::after]] دواير 60px واحدة مزقوقة لليمين ([[left: -30px]]) وواحدة لفوق ([[top: -30px]]).
-
-### ٦. لودر [[#loader]]
-دايرة 48px بإطار 6px [[#e5e7eb]] وجزء واحد ([[border-top-color]]) [[#6366f1]]، بتلف لفة كاملة كل [[0.8s]] على طول ([[infinite]])، **وبتقف** لو اليوزر مفعّل تقليل الحركة: [[@media (prefers-reduced-motion: reduce) { #loader { animation: none } }]].
-
-### ٧. سهم «التالي» [[#chevron]]
-24 × 24 بخط 4px [[#0f172a]]. الصفحة عربي، فـ «التالي» بيشاور **شمال**. الطريقة: مربع ليه border على ناحيتين جنب بعض بس (الركن بينهم هو راس السهم)، وبعدين [[rotate]] لحد ما الراس يبص شمال.
-
-> الفحص هنا بيحسب الاتجاه بالرياضة: الركن اللي بين الـ borders متجه زي (-1, -1) لـ top و left، والدوران بزاوية θ بيحوّله لـ (x cosθ − y sinθ، x sinθ + y cosθ). لو الناتج (−1.41، 0) يبقى بيشاور شمال. يعني أي تركيبة borders ودوران بتوصل لنفس الاتجاه بتعدّي، مش طريقة واحدة بس.
-
-### ٨. نجمة [[#star]]
-خماسية 120 × 120، لونها [[#f59e0b]]، بـ [[clip-path: polygon()]] بـ **١٠ نقط** (٥ أطراف و ٥ زوايا جوه). النقط نفسها بتطلع من [[starPolygon(5, 0.382)]] في التمرين اللي بيتصحح لوحده تحت.
-
-### ٩. علم «جمهورية الواحة» (متخيل) [[#flag]]
-240 × 160: ٣ خطوط أفقية متساوية [[#166534]] ثم [[#ffffff]] ثم [[#166534]] **بحدود حادة** (مش متدرجة)، ودايرة صفرا [[#facc15]] قطرها 40px في النص. كله [[background]] واحد بطبقتين:
-
-~~~css خلفيتين: الدايرة فوق والخطوط تحت
-.flag {
-  background: radial-gradient(circle 20px, #facc15 98%, #0000),
-              linear-gradient(#166534 33.333%, #ffffff 0 66.666%, #166534 0);
-}
-~~~
-
-الحد الحاد: [[#ffffff 0 66.666%]] معناها «الأبيض يبدأ من 0» (يعني من مكان ما اللي قبله خلص بالظبط) لحد الثلثين. ولما تكتب [[linear-gradient(#166534, #ffffff, #166534)]] من غير مواقع بتطلع ألوان سايحة في بعض، والفحص بيقع.
-
-### ١٠. شطرنج [[#chess]]
-240 × 240، ٨ × ٨ مربعات كل واحد 30px، **من غير ولا عنصر جوه**:
-
-~~~css مربعين × مربعين بيتكرروا
-.chess { background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 60px 60px; }
-~~~
-
-الـ conic بيلف حوالين النقطة: ربع غامق، وربع فاتح، ويتكرر، فالبلاطة الـ 60px فيها ٤ مربعات 30px متبادلين. و [[/ 60px 60px]] هي [[background-size]]: البلاطة بتتكرر ٤ مرات في كل اتجاه.
-
----
-
-## الفحص الذاتي
-
-افتح صفحتك في Chrome، و F12، وتاب Console، والصق الكود ده و Enter. أول مرة Chrome بيحذّرك من اللزق ويطلب تكتب [[allow pasting]] (ده حماية من حد يقولك «الصق الكود ده» على موقع بنك)، فاكتبها مرة واحدة بس على صفحتك انت.
-
-~~~js الفحص الذاتي: الأشكال
-(() => {
-  const cs = (el, p) => getComputedStyle(el, p || null);
-  const rgb = c => { const i = document.createElement('i'); i.style.color = c; document.body.append(i); const v = cs(i).color; i.remove(); return v; };
-  const round = el => { const r = cs(el).borderTopLeftRadius; return r === '50%' || parseFloat(r) >= el.offsetWidth / 2; };
-  let pass = 0, all = 0;
-  const ok = (name, cond, why) => { all++; if (cond) pass++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (cond ? '' : ' ← ' + why)); };
-  const size = (el, w, h) => el.offsetWidth === w && el.offsetHeight === h;
-  const sz = el => el.offsetWidth + '×' + el.offsetHeight;
-  const get = id => document.getElementById(id) || (console.log('FAIL #' + id + ' ← مفيش عنصر بالـ id ده'), all++, null);
-  let el;
-  if ((el = get('tri'))) {
-    const s = cs(el), borders = s.width === '0px' && s.borderBottomColor === rgb('#e11d48') && s.borderLeftColor === 'rgba(0, 0, 0, 0)';
-    const clip = s.clipPath.startsWith('polygon') && s.clipPath.split(',').length === 3 && s.backgroundColor === rgb('#e11d48');
-    ok('1 المثلث', size(el, 80, 70) && (borders || clip), 'المقاس ' + sz(el) + ' والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط');
-  }
-  if ((el = get('circle'))) {
-    const s = cs(el);
-    ok('2 الدايرة', size(el, 96, 96) && round(el) && s.borderTopWidth === '4px' && s.backgroundColor === rgb('#0ea5e9'), 'المقاس ' + sz(el) + ' (المطلوب 96×96 بالـ border)، والـ radius ' + s.borderTopLeftRadius);
-  }
-  if ((el = get('ticket'))) {
-    const s = cs(el), a = cs(el, '::after'), mask = s.maskImage || s.webkitMaskImage || '';
-    ok('3 التذكرة', size(el, 280, 120) && /radial-gradient/.test(mask) && a.content !== 'none' && (a.borderLeftStyle === 'dashed' || a.borderRightStyle === 'dashed'), 'لازم 280×120 و mask فيه radial-gradient للقطعين و ::after بخط dashed (المقاس ' + sz(el) + ')');
-  }
-  if ((el = get('bubble'))) {
-    const s = cs(el), a = cs(el, '::after');
-    const tail = a.content !== 'none' && a.position === 'absolute' && parseFloat(a.top) >= el.offsetHeight - 1 && (a.borderTopColor === s.backgroundColor || a.backgroundColor === s.backgroundColor);
-    ok('4 فقاعة الكلام', size(el, 220, 80) && s.borderTopLeftRadius === '16px' && tail, 'الديل لازم ::after بـ position: absolute تحت الفقاعة (top: 100%) وبنفس لونها');
-  }
-  if ((el = get('heart'))) {
-    const s = cs(el), b = cs(el, '::before'), a = cs(el, '::after'), red = rgb('#ef4444');
-    const parts = [b, a].every(p => p.content !== 'none' && (p.borderTopLeftRadius === '50%' || parseFloat(p.borderTopLeftRadius) >= el.offsetWidth / 2) && p.backgroundColor === red);
-    ok('5 القلب', s.backgroundColor === red && parts && (s.rotate !== 'none' || s.transform !== 'none'), 'مربع متلف 45 درجة و ::before و ::after دواير بنفس اللون');
-  }
-  if ((el = get('loader'))) {
-    const s = cs(el);
-    const rm = [...document.styleSheets].some(sh => { try { return [...sh.cssRules].some(r => r.media && /prefers-reduced-motion:\s*reduce/.test(r.media.mediaText) && [...r.cssRules].some(x => x.selectorText && el.matches(x.selectorText))); } catch (e) { return false; } });
-    ok('6 اللودر: الشكل', size(el, 48, 48) && round(el) && s.borderTopColor === rgb('#6366f1') && s.borderRightColor === rgb('#e5e7eb'), 'دايرة 48 بحد رمادي وجزء واحد (top) بنفسجي');
-    ok('6 اللودر: الحركة', s.animationName !== 'none' && s.animationDuration === '0.8s' && s.animationIterationCount === 'infinite', 'المدة ' + s.animationDuration + ' والتكرار ' + s.animationIterationCount + '، والمطلوب 0.8s و infinite');
-    ok('6 اللودر: reduced motion', rm, 'مفيش @media (prefers-reduced-motion: reduce) بيوقّف الحركة على العنصر ده');
-  }
-  if ((el = get('chevron'))) {
-    const s = cs(el), w = k => parseFloat(s['border' + k + 'Width']) > 0;
-    const x = w('Left') && !w('Right') ? -1 : w('Right') && !w('Left') ? 1 : 0, y = w('Top') && !w('Bottom') ? -1 : w('Bottom') && !w('Top') ? 1 : 0;
-    const unit = { deg: 1, turn: 360, rad: 180 / Math.PI, grad: 0.9 };
-    const m = /(-?[\d.]+)(deg|turn|rad|grad)/.exec(s.rotate) || [0, 0, 'deg'];
-    let deg = m[1] * unit[m[2]];
-    const mx = /matrix\(([^,]+), ([^,]+)/.exec(s.transform);
-    if (mx) deg += Math.atan2(+mx[2], +mx[1]) * 180 / Math.PI;
-    const r = deg * Math.PI / 180, tx = x * Math.cos(r) - y * Math.sin(r), ty = x * Math.sin(r) + y * Math.cos(r);
-    const dir = !x || !y ? 'مش واضح (لازم borderين جنب بعض بس)' : Math.abs(ty) < 0.3 ? (tx < 0 ? 'شمال' : 'يمين') : Math.abs(tx) < 0.3 ? (ty < 0 ? 'فوق' : 'تحت') : 'مايل';
-    ok('7 سهم «التالي» في صفحة عربي', size(el, 24, 24) && dir === 'شمال', 'السهم بيشاور ' + dir + '، والمطلوب شمال');
-  }
-  if ((el = get('star'))) {
-    const s = cs(el), n = s.clipPath.startsWith('polygon') ? s.clipPath.split(',').length : 0;
-    ok('8 النجمة', size(el, 120, 120) && n === 10 && s.backgroundColor === rgb('#f59e0b'), 'الـ polygon فيه ' + n + ' نقطة، والنجمة الخماسية ١٠ (٥ أطراف و ٥ جوه)');
-  }
-  if ((el = get('flag'))) {
-    const bg = cs(el).backgroundImage, lin = (bg.match(/linear-gradient\(.*\)/) || [''])[0];
-    const pos = [...lin.matchAll(/(-?[\d.]+)(%|px)/g)].map(m => m[2] === '%' ? +m[1] : m[1] / el.offsetHeight * 100);
-    const at = v => pos.some(p => Math.abs(p - v) < 0.5);
-    const colors = ['#166534', '#ffffff', '#facc15'].every(c => bg.includes(rgb(c)));
-    ok('9 العلم', size(el, 240, 160) && colors && /radial-gradient/.test(bg) && at(100 / 3) && at(200 / 3), 'لازم ٣ خطوط متساوية بحدود حادة عند الثلث والثلثين، ودايرة radial-gradient صفرا في النص');
-  }
-  if ((el = get('chess'))) {
-    const s = cs(el);
-    ok('10 الشطرنج', size(el, 240, 240) && el.childElementCount === 0 && /gradient/.test(s.backgroundImage) && s.backgroundSize === '60px 60px', 'من غير عناصر جوه (فيه ' + el.childElementCount + ')، و background-size لازم 60px 60px (مربعين × مربعين)، والموجود ' + s.backgroundSize);
-  }
-  console.log('النتيجة: ' + pass + ' من ' + all);
-})();
-~~~
-
-حاجات في الفحص تستاهل تفهمها لأنك هتكتب زيها:
-
-- [[offsetWidth]] بيرجّع المقاس **من غير** [[rotate]] و [[transform]]. لو قست القلب المتلف بـ [[getBoundingClientRect()]] هتلاقي 85 مش 60، لأن ده الصندوق اللي حوالين الشكل بعد الدوران.
-- [[rgb('#e11d48')]] بيحوّل الـ hex للصيغة اللي [[getComputedStyle]] بيرجّعها ([[rgb(225, 29, 72)]])، عشان المقارنة تبقى نص بنص.
-- [[getComputedStyle(el, '::after')]] بيقرا الـ pseudo-element، وده الطريقة الوحيدة توصله من JS لأنه مش في الـ DOM.
-- اللودر: الفحص بيلف على [[document.styleSheets]] ويدوّر على [[@media (prefers-reduced-motion: reduce)]] فيه قاعدة بتطابق العنصر. يعني بيتأكد من الكود نفسه مش من إعدادات جهازك.
-
-### الناتج على حل غلط
-
-الحل الغلط فيه أشهر ١٠ غلطات: المثلث بـ [[width: 80px]] مع الـ borders، والدايرة من غير [[border-box]]، والتذكرة من غير mask، والفقاعة من غير ديل، والقلب من غير الدوايرتين، واللودر بـ [[2s]] من غير [[infinite]]، والسهم مقلوب، والنجمة ٣ نقط، والعلم متدرج، والشطرنج من ٤ عناصر.
-
-~~~text Chrome، الحل الغلط
-FAIL 1 المثلث ← المقاس 160×140 والمطلوب 80×70، بـ borders (width: 0) أو clip-path بـ ٣ نقط
-FAIL 2 الدايرة ← المقاس 104×104 (المطلوب 96×96 بالـ border)، والـ radius 50%
-FAIL 3 التذكرة ← لازم 280×120 و mask فيه radial-gradient للقطعين و ::after بخط dashed (المقاس 280×120)
-FAIL 4 فقاعة الكلام ← الديل لازم ::after بـ position: absolute تحت الفقاعة (top: 100%) وبنفس لونها
-FAIL 5 القلب ← مربع متلف 45 درجة و ::before و ::after دواير بنفس اللون
-FAIL 6 اللودر: الشكل ← دايرة 48 بحد رمادي وجزء واحد (top) بنفسجي
-FAIL 6 اللودر: الحركة ← المدة 2s والتكرار 1، والمطلوب 0.8s و infinite
-FAIL 6 اللودر: reduced motion ← مفيش @media (prefers-reduced-motion: reduce) بيوقّف الحركة على العنصر ده
-FAIL 7 سهم «التالي» في صفحة عربي ← السهم بيشاور يمين، والمطلوب شمال
-FAIL 8 النجمة ← الـ polygon فيه 3 نقطة، والنجمة الخماسية ١٠ (٥ أطراف و ٥ جوه)
-FAIL 9 العلم ← لازم ٣ خطوط متساوية بحدود حادة عند الثلث والثلثين، ودايرة radial-gradient صفرا في النص
-FAIL 10 الشطرنج ← من غير عناصر جوه (فيه 4)، و background-size لازم 60px 60px (مربعين × مربعين)، والموجود auto
-النتيجة: 0 من 12
-~~~
-
-لاحظ المثلث: 160×140 مش 80×70، لأن الـ width الـ 80 اتزاد عليه 40 + 40 borders، والارتفاع 70 اتزاد عليه 70 border. وده نفس سبب الدايرة 104: الـ borders بتتزاد على الـ width في [[content-box]].
-
-### الناتج على الحل المرجعي
-
-~~~text Chrome، الحل اللي في «الحل» تحت
-PASS 1 المثلث
-PASS 2 الدايرة
-PASS 3 التذكرة
-PASS 4 فقاعة الكلام
-PASS 5 القلب
-PASS 6 اللودر: الشكل
-PASS 6 اللودر: الحركة
-PASS 6 اللودر: reduced motion
-PASS 7 سهم «التالي» في صفحة عربي
-PASS 8 النجمة
-PASS 9 العلم
-PASS 10 الشطرنج
-النتيجة: 12 من 12
-~~~
-
----
-
-## التمرين اللي بيتصحح لوحده: مولّد clip-path
-
-النجمة والسداسي محتاجين نقط محسوبة. اكتب دالتين بيرجّعوا نص [[polygon(...)]] جاهز:
-
-- [[regularPolygon(n)]]: مضلّع منتظم بـ n ضلع، أول نقطة فوق في النص ([[50% 0%]]) والباقي مع عقارب الساعة.
-- [[starPolygon(n, inner)]]: نجمة بـ n طرف. النقط بتتبادل بين دايرة نص قطرها 50% ودايرة جوه نص قطرها [[50% × inner]].
-
-المعادلة: النقطة رقم i زاويتها [[-90 + i × 360 / n]] درجة للمضلّع ([[i × 180 / n]] للنجمة لأن النقط ضعف العدد)، و [[x = 50 + r × cos(a)]] و [[y = 50 + r × sin(a)]]. الـ -90 عشان أول نقطة تبقى فوق، لأن الزاوية صفر بتبص يمين. وكل رقم بيتقرّب لرقم عشري واحد بـ [[Number(v.toFixed(1))]]، وده بيشيل [[50.0]] ويحوّل [[-0]] لـ [[0]].
-
-## خلاصة
-
-- المقاس من برا الأول، والأداة تاني، والفحص في الآخر.
-- [[width: 0]] و borders = مثلثات. و [[border-box]] = المقاس اللي كتبته هو اللي بيطلع.
-- الـ gradient بحدود حادة = خطوط ومربعات من غير عناصر، والـ mask بيخرّم بجد.
-- [[clip-path]] نقط بالنسبة المئوية، والنقط دي رياضة (sin و cos) تتكتب مرة في دالة.
-- الحركة ليها دايمًا [[prefers-reduced-motion]]، والسهم في العربي بيشاور عكس الإنجليزي.`,
-          try: R`اعمل ملف [[shapes.html]] فيه العشر عناصر بالـ ids اللي في الشرح، وارسمهم واحد واحد، والصق الفحص الذاتي بعد كل شكل. مش لازم تبدأ بالترتيب: ابدأ بالدايرة والمثلث، وسيب القلب والتذكرة للآخر. وبعدها اكتب [[regularPolygon]] و [[starPolygon]] في المربع اللي تحت ودوس «شغّل واختبر».`,
+في v4 الإعداد كله في CSS: سطر [[@import "tailwindcss";]] في ملف الـ CSS الرئيسي، و plugin لأداة الـ build (Vite، أو PostCSS في Next). مفيش [[tailwind.config.js]] إلا لو عايزه.`,
+          example: R`npm install tailwindcss @tailwindcss/vite
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+export default defineConfig({ plugins: [react(), tailwindcss()] });
+// src/index.css
+@import "tailwindcss";
+// src/App.tsx
+<button className="rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500">حفظ</button>
+// في Next.js بدل plugin الـ Vite: npm i -D tailwindcss @tailwindcss/postcss
+// postcss.config.mjs
+export default { plugins: { "@tailwindcss/postcss": {} } };`,
+          try: R`نفّذ الإعداد في مشروع الـ lab وحط الزرار في App.tsx. افتح DevTools › Sources وافتح ملف الـ CSS: هتلاقي [[.px-4]] موجودة و [[.px-5]] مش موجودة لأنك مكتبتهاش. اكتب [[px-5]] واحفظ وشوفها اتضافت.`,
+          flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصر [[width: 0; height: 0; border: 20px solid; border-color: red green blue orange]]. قبل ما تفتحه ارسم على ورقة اللي هيظهر، واكتب [[offsetWidth]] هيبقى كام. وبعدين افتحه وقيس في الـ Console.`, done: R`رسمت مربع 40 × 40 متقسم ٤ مثلثات بتتقابل في النص (أحمر فوق، وأخضر يمين، وأزرق تحت، وبرتقاني شمال)، و [[offsetWidth]] طلع 40، وفهمت إن المثلث في التمرين الأول هو ده بالظبط بس ٣ منهم شفافين.`,
-              sol: R`~~~live 130 130 borders.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في component: [[const c = "red"; el.className = $__btbg-$__{c}-500$__bt]]. الخلفية هتبقى حمرا؟ ابني وشوف [[out.css]].`, done: R`مفيش [[.bg-red-500]] في الـ CSS (grep مبيلاقيهاش)، فمفيش خلفية: Tailwind بيدوّر على **نص الكلاس كامل** في الملفات ومبيشغّلش الكود. والحل map فيه الأسماء كاملة: [[{ red: "bg-red-500", green: "bg-green-500" }]].`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>border</title>
-<style>
-  #b { width: 0; height: 0; border: 20px solid; border-color: red green blue orange; }
-</style></head>
+<head><meta charset="utf-8"><title>كلاس ديناميكي</title><link rel="stylesheet" href="out.css"></head>
 <body>
-  <main><h1>المربع</h1><div id="b"></div></main>
-  <script>console.log(document.getElementById("b").offsetWidth);$__lt/script>
-</body></html>
-~~~
-
-عنصر عرضه وطوله صفر، و border سمكه 20 من كل ناحية. المحتوى اختفى، فالـ borders الأربعة بيتقابلوا في نقطة واحدة في النص. وكل ركن بين حدّين بيتقص بخط مايل (miter)، فكل حد بيبقى مثلث:
-
-- فوق أحمر، ويمين أخضر، وتحت أزرق، وشمال برتقاني (ترتيب [[border-color]]: فوق ثم يمين ثم تحت ثم شمال، زي الساعة).
-- [[offsetWidth]] = المحتوى 0 + 20 + 20 = 40.
-
-ده بالظبط سر المثلث في التمرين الأول: نفس الحكاية، بس ٣ حدود [[transparent]].
-
-الغلطة الشائعة: تتوقع مربع بـ ٤ ألوان متداخلة، أو [[offsetWidth]] = 0. الـ [[offsetWidth]] بيشمل الـ border.
-
-~~~text الناتج (Chrome 156)
-offsetWidth = 40، و offsetHeight = 40
-لون النقطة فوق: 255,0,0، ويمين: 0,128,0، وتحت: 0,0,255، وشمال: 255,165,0
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** اللودر ده بيلف مرة وبيقف، ولو اليوزر مفعّل «تقليل الحركة» في ويندوز (Settings › Accessibility › Visual effects › Animation effects) لسه بيلف: [[.spin { animation: spin 2s linear; }]]. صلّحه، واتأكد من reduced motion من DevTools › Rendering › Emulate CSS media feature prefers-reduced-motion.`, done: R`زوّدت [[infinite]] وغيّرت المدة لـ [[0.8s]]، وزوّدت [[@media (prefers-reduced-motion: reduce)]] بيحط [[animation: none]]، ولما فعّلت المحاكاة في Rendering وقف، وفحص اللودر بيطبع الـ ٣ سطور PASS.`,
-              sol: R`~~~css بعد التصليح
-.spin { animation: spin 0.8s linear infinite; }
-@keyframes spin { to { rotate: 360deg; } }
-@media (prefers-reduced-motion: reduce) {
-  .spin { animation: none; }
-}
-~~~
-
-~~~view 120 120 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-body { font-family: system-ui, sans-serif; margin: 1rem; } .spin { width: 48px; height: 48px; box-sizing: border-box; border: 6px solid #e5e7eb; border-top-color: #6366f1; border-radius: 50%; }
-</style>
-<style>
-/* من الحل */
-.spin { animation: spin 0.8s linear infinite; }
-@keyframes spin { to { rotate: 360deg; } }
-@media (prefers-reduced-motion: reduce) {
-  .spin { animation: none; }
-}
-</style>
-</head>
-<body>
-<div class="spin" role="status" aria-label="بيحمّل"></div><p>بيلف على طول، ولو «تقليل الحركة» شغال بيقف.</p>
-</body>
-</html>
-~~~
-
-٣ مشاكل في سطر واحد:
-
-1. من غير [[infinite]] التكرار الافتراضي 1، فبيلف مرة ويقف.
-2. [[2s]] بطيء: لودر بالسرعة دي شكله واقف. [[0.8s]] هي المدة في المواصفة بتاعة التمرين.
-3. مفيش [[prefers-reduced-motion]]: المستخدم اللي مفعّل تقليل الحركة في ويندوز لسه شايف حركة لا تتوقف.
-
-[[linear]] لازم للدوران: أي easing تاني بيبطّأ ويسرّع، فالدايرة شكلها بيتخبط.
-
-الغلطة الشائعة: تستخدم [[animation-duration: 0s]] مع reduce. [[none]] أوضح وبيخلي الفحص يعرف إنها متوقفة. والأحسن كمان لودر بكلمة «بيحمّل» جنبها، عشان اللي وقفوا الحركة يعرفوا إن فيه حاجة شغالة.
-
-~~~text الناتج (Chrome 156، فحص الأشكال من الدرس، قسم اللودر)
-PASS 6 اللودر: الشكل
-PASS 6 اللودر: الحركة
-PASS 6 اللودر: reduced motion
-مع reduce: animationName = none
-قبل التصليح: FAIL 6 اللودر: الحركة ← المدة 2s والتكرار 1، والمطلوب 0.8s و infinite
-FAIL 6 اللودر: reduced motion ← مفيش @media (prefers-reduced-motion: reduce) بيوقّف الحركة على العنصر ده
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شارة سداسية 100 × 100 لونها [[#7c3aed]] جواها رقم «٧» أبيض في النص بالظبط، بـ [[clip-path]] من [[regularPolygon(6)]] و [[display: grid; place-items: center]]. وبعدين خليها تلف ببطء ٦٠ درجة بس لما الماوس يقف عليها.`, done: R`الـ clip-path في Computed هو [[polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)]]، والرقم في النص (الفرق بين مركز الرقم ومركز الشارة صفر بـ [[getBoundingClientRect]])، والدوران على [[:hover]] بـ [[transition]] وبيرجع لما الماوس يمشي.`,
-              sol: R`~~~live 190 190 badge.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>شارة</title>
-<style>
-  .hex {
-    width: 100px; height: 100px;
-    display: grid; place-items: center;
-    background: #7c3aed; color: #fff; font-size: 2rem; font-weight: 700;
-    clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);
-    transition: rotate .4s;
-  }
-  .hex:hover { rotate: 60deg; }
-  @media (prefers-reduced-motion: reduce) { .hex { transition: none; } }
-</style></head>
-<body>
-  <main><h1>الشارة</h1><div class="hex" id="h"><span id="n">٧</span></div></main>
-</body></html>
-~~~
-
-[[regularPolygon(6)]] من الدرس بيحسب الأركان على دايرة: كل ركن = زاوية 60° زيادة، والبداية من فوق. الزوايا بتدّي 6.7% و 93.3% (0.5 ± cos(30°) × 0.5)، وده اللي مكتوب في [[polygon()]].
-
-- [[display: grid; place-items: center]] بيحط الرقم في النص أفقي ورأسي بسطر واحد.
-- [[transition: rotate .4s]] على العنصر نفسه مش على [[:hover]]، عشان يرجع بنفس الحركة لما الماوس يمشي.
-- [[rotate: 60deg]] خاصية منفصلة عن [[transform]]، فمبتمسحش أي [[transform]] تاني.
-
-والرقم بيلف مع الشارة لأنه جواها. لو عايزه ثابت، لف عنصر داخلي بزاوية سالبة.
-
-الغلطة الشائعة: تحط الـ [[transition]] جوه [[:hover]] بس، فبيلف بنعومة ويرجع مرة واحدة.
-
-~~~text الناتج (Chrome 156)
-clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)
-الفرق بين مركز الرقم ومركز الشارة: x 0، و y 0
-rotate عند hover: 60deg
-rotate بعد ما الماوس مشي: none
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** ارسم الشطرنج مرتين: مرة بـ ٦٤ [[<div>]] جوه grid، ومرة بـ gradient واحد. في كل مرة اطبع [[document.querySelectorAll('*').length]]، وسجّل Performance في DevTools وانت بتغيّر حجم الشاشة ٥ ثواني، وقارن وقت Layout.`, done: R`عندك رقمين لعدد العناصر (الفرق ٦٤ بالظبط) ورقمين لوقت Layout من تاب Performance، ومكتوب جنبهم أنهي أسرع وبكام. ولو الفرق صغير جدًا مكتوب كده بصراحة: ٦٤ عنصر قليلين، والفرق بيبان في جدول فيه آلاف الخانات.`,
-              sol: R`~~~live 570 440 chess-divs.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>شطرنج</title>
-<style>
-  .b { display: grid; grid-template-columns: repeat(8, 1fr); width: min(100%, 480px); aspect-ratio: 1; }
-  .b i:nth-child(16n+1), .b i:nth-child(16n+3), .b i:nth-child(16n+5), .b i:nth-child(16n+7),
-  .b i:nth-child(16n+10), .b i:nth-child(16n+12), .b i:nth-child(16n+14), .b i:nth-child(16n+16) { background: #1f2937; }
-</style></head>
-<body>
-  <main><h1>رقعة</h1><div class="b" id="b"></div></main>
-  <script>
-    document.getElementById("b").innerHTML = "<i></i>".repeat(64);
-    console.log(document.querySelectorAll("*").length);
-  $__lt/script>
-</body></html>
-~~~
-
-~~~css نسخة الـ gradient (عنصر واحد)
-.b {
-  width: min(100%, 480px); aspect-ratio: 1;
-  background: conic-gradient(#1f2937 25%, #fff 0 50%, #1f2937 0 75%, #fff 0) 0 0 / 25% 25%;
-}
-~~~
-
-[[conic-gradient]] بأربع أرباع بيعمل مربعين × مربعين، و [[/ 25% 25%]] بيخليهم يتكرروا ٤ مرات في كل اتجاه، يعني ٨ خانات. عنصر واحد بدل ٦٤.
-
-عدّ العناصر فرق ثابت 64 بالظبط. وقت الـ Layout في قياسنا صغير في الحالتين، لأن ٦٤ عنصر رقم قليل على المتصفح، والرقم بيتأثر بتفاوت التشغيل، فمتبنيش قرار عليه. الفرق بيبان في جدول فيه آلاف الخانات.
-
-القرار الحقيقي مش الأداء هنا: لو كل خانة محتاجة قطعة أو ضغطة، يبقى عناصر. لو خلفية بس، gradient.
-
-الغلطة الشائعة: تكتب «gradient أسرع ٥ مرات» من تشغيلة واحدة. الفرق هنا ملي ثواني قليلة.
-
-~~~text الناتج (Chrome 156، trace وانت بتغيّر الشاشة 20 مرة)
-                 عدد العناصر    وقت Layout    عدد Layout
-٦٤ div           74             2.4ms     20
-gradient         10             2.0ms     20
-الفرق في العناصر: 64
-~~~` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** زوّد على الفحص الذاتي سطر لشكل جديد: تذكرة «صعود» زي التمرين ٣ بس القطعين فوق وتحت (مش يمين وشمال). اكتب الشكل، واكتب الـ [[ok(...)]] بتاعه، وخليه يقع على التذكرة القديمة وينجح على الجديدة.`, done: R`الفحص الجديد بيقرا [[maskImage]] ويتأكد إن مراكز الدواير [[50% 0px]] و [[50% 100%]]، وبيطبع FAIL برسالة مفهومة على تذكرة التمرين ٣ و PASS على الجديدة، والفحوص القديمة لسه ١٢ من ١٢.`,
-              sol: R`~~~css التذكرة الجديدة: القطعين فوق وتحت
-#boarding {
-  position: relative; width: 280px; height: 120px; background: #fde68a;
-  mask:
-    radial-gradient(circle 12px at 50% 0, #0000 98%, #000) top / 100% 51% no-repeat,
-    radial-gradient(circle 12px at 50% 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
-}
-~~~
-
-~~~view 190 190 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-body { font-family: system-ui, sans-serif; margin: 1rem; background: #f1f5f9; }
-</style>
-<style>
-/* من الحل */
-#boarding {
-  position: relative; width: 280px; height: 120px; background: #fde68a;
-  mask:
-    radial-gradient(circle 12px at 50% 0, #0000 98%, #000) top / 100% 51% no-repeat,
-    radial-gradient(circle 12px at 50% 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
-}
-</style>
-</head>
-<body>
-<div id="boarding"></div><p>القطعين فوق وتحت في النص.</p>
-</body>
-</html>
-~~~
-
-~~~js السطر الجديد في الفحص الذاتي (قبل سطر النتيجة)
-if ((el = get('boarding'))) {
-  const mask = cs(el).maskImage || cs(el).webkitMaskImage || '';
-  const top = /at 50% 0(px)?\b/.test(mask), bottom = /at 50% 100%/.test(mask);
-  ok('13 تذكرة الصعود', size(el, 280, 120) && top && bottom, 'مراكز الدواير لازم فوق وتحت: at 50% 0 و at 50% 100%، والـ mask: ' + mask.slice(0, 70));
-}
-~~~
-
-بيبني على فحص «الأشكال». الـ mask طبقتين كل واحدة في نص الكارت: فوق وتحت بدل يمين وشمال، و [[100% 51%]] عشان يتداخلوا سطر رفيع ومفيش خط بيبان في النص.
-
-الفحص بيقرا [[maskImage]] من Computed. Chrome بيكتب [[0]] كـ [[0px]]، فالـ regex [[0(px)?\b]] بيقبل الاتنين. لو قارنت بنص ثابت هيقع على متصفح تاني.
-
-الفحص لازم يقع على القديمة وينجح على الجديدة، وعشان نجرّبه طبّقناه مرة على [[#ticket]] (مراكزها [[0 50%]] و [[100% 50%]]) ومرة على [[#boarding]].
-
-الغلطة الشائعة: تختبر إن [[mask]] فيه [[radial-gradient]] بس، فأي تذكرة تعدّي.
-
-~~~text الناتج (Chrome 156)
-على تذكرة التمرين ٣: FAIL 13 تذكرة الصعود ← مراكز الدواير لازم فوق وتحت: at 50% 0 و at 50% 100%، والـ mask: radial-gradient(12px at 0px 50%, 
-على التذكرة الجديدة: PASS 13 تذكرة الصعود
-maskImage المقروء: radial-gradient(12px at 50% 0px, rgba(0, 0, 0, 0) 98%, rgb(0, 0, 0)), radial-gradient(12px at 50% 100%, rgba(0, 0, 0, 0) 98%, rgb(0, 0, 0))
-الفحوص القديمة: النتيجة: 12 من 12
-~~~` },
-          ],
-          deep: {
-            why: R`الأشكال مش رفاهية: كل سهم ولودر وشارة في موقع حقيقي يا إما صورة يا إما CSS. الـ CSS بيتغير لونه من متغير واحد في [[:root]]، ومبيضربش على شاشة 3x، ومش محتاج طلب شبكة. والأهم إن التمرين ده بيعلّمك تقرا الـ box model بالأرقام: المثلث 160 × 140 بدل 80 × 70 هو نفس الغلطة اللي بتخلي كارت أعرض من مكانه في أي layout.`,
-            how: R`كل شكل بيترسم من واحدة من خمس حاجات المتصفح بيعملها لوحده. الـ borders بتتقابل في الأركان بخط مايل، فلما المحتوى صفر بيفضل ٤ مثلثات. والـ [[border-radius]] بيقص الركن بقوس، و [[50%]] بيخلي الأقواس تقفل دايرة. والـ gradients صور بيرسمها المتصفح وقت الرسم (paint)، فبتتكرر بـ [[background-size]] من غير عناصر. و [[clip-path]] و [[mask]] بيحصلوا في آخر خطوة: العنصر بيترسم كامل، وبعدين اللي برا الشكل بيتشال، فالـ layout مش بيتأثر (العنصر واخد مكانه المستطيل كامل). والفحص بيقرا القيم بعد ما المتصفح حسبها ([[getComputedStyle]] بيرجّع الألوان [[rgb()]] والمقاسات px)، فبيقارن بالنتيجة مش بالكود اللي كتبته، وعشان كده بيقبل أكتر من طريقة لنفس الشكل.`,
-            when: R`الـ borders للمثلثات الصغيرة (ديل، وسهم dropdown). و [[clip-path]] لأي مضلّع أو لما الشكل لازم يتحرك أو يكبر. والـ gradients للخلفيات والأنماط المتكررة. والـ mask للتخريم الحقيقي (التذكرة على خلفية فيها صورة). ولو الشكل معقد (لوجو، أيقونة فيها منحنيات كتير) استخدم SVG، شوف درس «SVG» في التاب ده. والقاعدة: لو محتاج أكتر من ٣ عناصر زيادة عشان شكل، يبقى SVG أحسن.`,
-            mistakes: R`تحط [[width]] على المثلث فيطلع شبه منحرف. أو تنسى [[box-sizing: border-box]] فكل شكل بإطار يكبر. أو تكتب [[border-color: transparent]] قبل [[border-bottom]] وتستغرب إن اللون اختفى (الترتيب في الـ cascade). أو تكتب [[content]] ناقص في [[::after]] فالـ pseudo-element مش بيتعمل خالص (من غير [[content: ""]] مفيش عنصر). أو تقيس شكل متلف بـ [[getBoundingClientRect]] وتلاقي رقم أكبر وتفتكر إنه غلط. أو تعمل السهم بـ [[right]] و [[rotate(45deg)]] وتنسى إن الصفحة عربي. أو تعمل لودر بيلف على طول من غير [[prefers-reduced-motion]]، ودي مشكلة حقيقية لناس عندهم دوخة من الحركة.`,
-          },
-          sol: R`الحل المرجعي كامل تحت، وده بالظبط اللي طلّع [[النتيجة: 12 من 12]] في Chrome بـ Playwright. الأرقام اللي تستاهل تفتكرها: المثلث [[border-inline: 40px]] و [[border-bottom: 70px]]، والدايرة [[border-box]]، والنجمة نقطها من [[starPolygon(5, 0.382)]] (الـ 0.382 بتطلّع نجمة منتظمة: أضلاعها على خطوط مستقيمة).
-
-وحل المربع اللي بيتصحح لوحده: [[regularPolygon]] و [[starPolygon]] في نفس الكود تحت. لو اختبار «مفيش -0%» وقع، يبقى بتطبع الرقم بـ [[toFixed(1)]] بس من غير [[Number()]]، فبيطلع [[50.0%]] أو [[-0.0%]].`,
-          solCode: R`<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أشكال</title>
-<style>
-body { font-family: system-ui, sans-serif; display: flex; flex-wrap: wrap; gap: 32px; padding: 24px; align-items: flex-start; }
-#tri { width: 0; height: 0; border-inline: 40px solid transparent; border-bottom: 70px solid #e11d48; }
-#circle { box-sizing: border-box; width: 96px; height: 96px; border-radius: 50%; background: #0ea5e9; border: 4px solid #0c4a6e; }
-#ticket { position: relative; width: 280px; height: 120px; background: #fde68a;
-  mask: radial-gradient(circle 12px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
-        radial-gradient(circle 12px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat; }
-#ticket::after { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 200px; border-inline-start: 2px dashed #92400e; }
-#bubble { position: relative; width: 220px; height: 80px; background: #22c55e; border-radius: 16px; }
-#bubble::after { content: ""; position: absolute; top: 100%; left: 24px; border: 12px solid transparent; border-top-color: #22c55e; border-bottom: 0; }
-#heart { position: relative; width: 60px; height: 60px; background: #ef4444; rotate: 45deg; margin: 20px; }
-#heart::before, #heart::after { content: ""; position: absolute; width: 60px; height: 60px; border-radius: 50%; background: #ef4444; }
-#heart::before { left: -30px; }
-#heart::after { top: -30px; }
-#loader { width: 48px; height: 48px; box-sizing: border-box; border: 6px solid #e5e7eb; border-top-color: #6366f1; border-radius: 50%; animation: spin .8s linear infinite; }
-@keyframes spin { to { rotate: 1turn; } }
-@media (prefers-reduced-motion: reduce) { #loader { animation: none; } }
-#chevron { width: 24px; height: 24px; box-sizing: border-box; border-top: 4px solid #0f172a; border-left: 4px solid #0f172a; rotate: -45deg; }
-#star { width: 120px; height: 120px; background: #f59e0b;
-  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%); }
-#flag { width: 240px; height: 160px;
-  background: radial-gradient(circle 20px, #facc15 98%, #0000),
-              linear-gradient(#166534 33.333%, #ffffff 0 66.666%, #166534 0); }
-#chess { width: 240px; height: 240px; background: repeating-conic-gradient(#1e293b 0 25%, #f1f5f9 0 50%) 0 0 / 60px 60px; }
-</style>
-</head>
-<body>
-<div id="tri"></div>
-<div id="circle"></div>
-<div id="ticket"></div>
-<div id="bubble"></div>
-<div id="heart"></div>
-<div id="loader" role="status" aria-label="بيحمّل"></div>
-<div id="chevron"></div>
-<div id="star"></div>
-<div id="flag"></div>
-<div id="chess"></div>
+<div id="el" class="p-4">كارت</div>
 <script>
-// حل التمرين اللي بيتصحح لوحده
-const f = v => Number(v.toFixed(1)) + '%';
-function regularPolygon(n) {
-  if (!Number.isInteger(n) || n < 3) throw new RangeError('n لازم رقم صحيح 3 أو أكتر');
-  const pts = [];
-  for (let i = 0; i < n; i++) {
-    const a = (-90 + i * 360 / n) * Math.PI / 180;
-    pts.push(f(50 + 50 * Math.cos(a)) + ' ' + f(50 + 50 * Math.sin(a)));
-  }
-  return 'polygon(' + pts.join(', ') + ')';
-}
-function starPolygon(n, inner) {
-  if (!Number.isInteger(n) || n < 3) throw new RangeError('n لازم رقم صحيح 3 أو أكتر');
-  if (!(inner > 0 && inner < 1)) throw new RangeError('inner لازم بين 0 و 1');
-  const pts = [];
-  for (let i = 0; i < 2 * n; i++) {
-    const a = (-90 + i * 180 / n) * Math.PI / 180, r = i % 2 ? 50 * inner : 50;
-    pts.push(f(50 + r * Math.cos(a)) + ' ' + f(50 + r * Math.sin(a)));
-  }
-  return 'polygon(' + pts.join(', ') + ')';
-}
+  const c = "red";
+  document.getElementById("el").className = $__btbg-$__{c}-500$__bt;
+$__lt/script>
+</body>
+</html>
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+grep -c "bg-red-500" out.css
+~~~
+
+الخلفية مش هتبقى حمرا. والتصليح map فيه أسماء الكلاسات كاملة:
+
+~~~html fixed.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>كلاس كامل</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<div id="el" class="p-4">كارت</div>
+<script>
+  const colors = { red: "bg-red-500", green: "bg-green-500" };
+  const c = "red";
+  document.getElementById("el").className = colors[c];
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه:** Tailwind مبيشغّلش الكود بتاعك. هو بيقرا ملفاتك كنص عادي، ويدوّر على أي كلمة شكلها كلاس، ويولّد CSS للي لقاه بس. النص [[bg-$__{c}-500]] مفيهوش الكلمة [[bg-red-500]]، فمحدش ولّدها. في المتصفح الـ class بيتحط صح، بس مفيش قاعدة CSS بالاسم ده.
+
+والـ map بينجح لأن الكلمتين [["bg-red-500"]] و [["bg-green-500"]] مكتوبين بالحرف في الملف.
+
+**الغلطة الشائعة:** تفحص Elements وتشوف [[class="bg-red-500"]] فتفتكر إن المشكلة في الـ CSS order. افحص [[out.css]] الأول: لو الكلاس مش فيه، يبقى Tailwind ماشافوش.
+
+~~~text الناتج
+قبل:  grep على out.css مبيلاقيش .bg-red-500
+      backgroundColor = rgba(0, 0, 0, 0) (شفاف)
+بعد:  .bg-red-500 و .bg-green-500 الاتنين موجودين
+      backgroundColor = oklch(0.637 0.237 25.331) (أحمر)
+~~~
+
+~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>كلاس ديناميكي</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--spacing:.25rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.p-4{padding:calc(var(--spacing) * 4)}}
+</style></head>
+<body>
+<div id="el" class="p-4">كارت</div>
+<script>
+  const c = "red";
+  document.getElementById("el").className = $__btbg-$__{c}-500$__bt;
 </script>
 </body>
-</html>`,
-          flag: "script",
-          check: {
-            lang: "js",
-            starter: R`// كل دالة بترجّع نص زي "polygon(50% 0%, 100% 50%, ...)"
-// النقطة: x = 50 + r * cos(a) و y = 50 + r * sin(a)، والزاوية بالراديان = درجة * Math.PI / 180
-// كل رقم برقم عشري واحد: Number(v.toFixed(1))، وأول نقطة فوق في النص (زاوية -90)
-function regularPolygon(n) {}
-function starPolygon(n, inner) {}`,
-            tests: R`test("regularPolygon(4) معيّن", () => expect(regularPolygon(4)).toBe("polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)"));
-test("regularPolygon(3) مثلث", () => expect(regularPolygon(3)).toBe("polygon(50% 0%, 93.3% 75%, 6.7% 75%)"));
-test("regularPolygon(6) سداسي", () => expect(regularPolygon(6)).toBe("polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)"));
-test("starPolygon(5, 0.382): ١٠ نقط", () => expect(starPolygon(5, 0.382).split(",").length).toBe(10));
-test("starPolygon(5, 0.382): أول ٣ نقط", () => expect(starPolygon(5, 0.382).startsWith("polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%,")).toBe(true));
-test("starPolygon(4, 0.5)", () => expect(starPolygon(4, 0.5)).toBe("polygon(50% 0%, 67.7% 32.3%, 100% 50%, 67.7% 67.7%, 50% 100%, 32.3% 67.7%, 0% 50%, 32.3% 32.3%)"));
-test("مفيش -0% ولا 50.0%", () => expect(/-0%|\.0%/.test(regularPolygon(8) + starPolygon(6, 0.5))).toBe(false));
-test("n أقل من 3 بيرمي RangeError", () => expect(() => regularPolygon(2)).toThrow("n لازم"));
-test("n مش رقم صحيح بيرمي", () => expect(() => starPolygon(4.5, 0.5)).toThrow("n لازم"));
-test("inner برا (0, 1) بيرمي", () => expect(() => starPolygon(5, 1.2)).toThrow("inner"));`,
-            solution: R`const f = v => Number(v.toFixed(1)) + '%';
-function regularPolygon(n) {
-  if (!Number.isInteger(n) || n < 3) throw new RangeError('n لازم رقم صحيح 3 أو أكتر');
-  const pts = [];
-  for (let i = 0; i < n; i++) {
-    const a = (-90 + i * 360 / n) * Math.PI / 180;
-    pts.push(f(50 + 50 * Math.cos(a)) + ' ' + f(50 + 50 * Math.sin(a)));
-  }
-  return 'polygon(' + pts.join(', ') + ')';
-}
-function starPolygon(n, inner) {
-  if (!Number.isInteger(n) || n < 3) throw new RangeError('n لازم رقم صحيح 3 أو أكتر');
-  if (!(inner > 0 && inner < 1)) throw new RangeError('inner لازم بين 0 و 1');
-  const pts = [];
-  for (let i = 0; i < 2 * n; i++) {
-    const a = (-90 + i * 180 / n) * Math.PI / 180, r = i % 2 ? 50 * inner : 50;
-    pts.push(f(50 + r * Math.cos(a)) + ' ' + f(50 + r * Math.sin(a)));
-  }
-  return 'polygon(' + pts.join(', ') + ')';
-}`
-          },
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const f = v => Number(v.toFixed(1)) + "%";
-function starPolygon(n, inner) {
-  const pts = [];
-  for (let i = 0; i < 2 * n; i++) {
-    const a = (-90 + i * 180 / n) * Math.PI / 180, r = i % 2 ? 50 * inner : 50;
-    pts.push(f(50 + r * Math.cos(a)) + " " + f(50 + r * Math.sin(a)));
-  }
-  return "polygon(" + pts.join(", ") + ")";
-}
-function tip(sides, deg) {
-  const x = sides.includes("left") ? -1 : sides.includes("right") ? 1 : 0;
-  const y = sides.includes("top") ? -1 : sides.includes("bottom") ? 1 : 0;
-  const r = deg * Math.PI / 180, tx = x * Math.cos(r) - y * Math.sin(r), ty = x * Math.sin(r) + y * Math.cos(r);
-  return Math.abs(ty) < 0.3 ? (tx < 0 ? "left" : "right") : Math.abs(tx) < 0.3 ? (ty < 0 ? "up" : "down") : "diagonal";
-}
-console.log("star points: " + starPolygon(5, 0.382).split(",").length);
-console.log("first: " + starPolygon(5, 0.382).slice(0, 26));
-console.log("top+left -45: " + tip(["top", "left"], -45));
-console.log("top+right 45: " + tip(["top", "right"], 45));
-console.log("top+right 135: " + tip(["top", "right"], 135));`, expect: [R`star points: 10`, R`first: polygon(50% 0%, 61.2% 34.5`, R`top+left -45: left`, R`top+right 45: right`, R`top+right 135: down`] },
-          ],
-        },
-        {
-          cmd: "layouts بالـ flex والـ grid",
-          ref: [
-            { t: "MDN: Realizing common layouts using grids", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Grid_layout/Common_grid_layouts" },
-            { t: "MDN: grid-template-areas", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-areas" },
-            { t: "MDN: Basic concepts of flexbox", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Flexible_box_layout/Basic_concepts" },
-          ],
-          title: "ابني ٨ layouts بتتطلب في كل شغل وأثبت إنها سليمة على 1200 و 360",
-          learn: R`ترسم أي layout كصناديق على عرضين قبل الكود، وتختار flex لصف واحد و grid للصفوف والعواميد مع بعض، وتقيس النتيجة بأرقام.`,
-          out: R`صفحة فيها ٨ layouts بتعدّي فحص ذاتي ١١ من ١١ على 1200 وعلى 360، وتلات دوال بتحسب الـ auto-fit والـ span قبل ما المتصفح يحسبهم.`,
-          use: {
-            prog: R`الـ layout هو أول حاجة بتتكسر في أي صفحة. لو عرفت تحسب «كام عمود هيطلع» و «الكارت ده عرضه كام» قبل ما تفتح المتصفح، يبقى انت مش بتجرب لحد ما يزبط.`,
-            work: R`الثمانية دول هم ٩٠٪ من صفحات أي شغل: لوحة تحكم (سايدبار بيتقفل)، ومتجر (شبكة كروت)، وصفحة هبوط (bento)، وتأكيد مسح (مودال)، وصفحة فاضية لسه فوترها في النص (الفوتر تحت)، ومعرض صور (masonry)، و navbar عربي.`,
-            cs: R`[[repeat(auto-fit, minmax(220px, 1fr))]] قسمة صحيحة: [[floor((W + gap) / (min + gap))]]. والـ span جمع: عمودين = عمودين + gap واحد. وده نفس تفكير توزيع عناصر على عدد ثابت من الخانات (bin packing البسيط).`,
-          },
-          desc: R`كل layout هنا ليه هدف بالأرقام على عرضين: الشاشة العريضة (1200) والموبايل (360). وانت بتختار الأداة، والفحص بيقيس.
-
-• **flex** لما العناصر في صف واحد (أو عمود واحد) وكل واحد حجمه من محتواه: navbar، وصف أزرار، وجوه الكارت.
-• **grid** لما فيه صفوف وعواميد مع بعض لازم يتصفّوا: holy grail، والكروت، و bento، والسايدبار مع المحتوى.
-• **[[grid-template-areas]]** بيخليك ترسم الـ layout بالكلام، وتغيّر الرسمة بس في الـ media query.
-• **[[auto-fit]] و [[minmax()]]** بيخلي عدد العواميد يتحسب لوحده من العرض، من غير media query خالص.
-• **CSS columns** للـ masonry: العناصر بتنزل عمود عمود بأطوال مختلفة.
-• **logical properties** ([[margin-inline-start]] مش [[margin-left]]) عشان الصفحة العربي تبقى صح من غير ما تقلب حاجة بإيدك.
-
-ده تطبيق على دروس «flexbox» و «grid» و «auto-fit و minmax» و «grid-template-areas» و «media queries» و «logical properties» في التاب ده.`,
-          example: R`.page {
-  display: grid;
-  gap: 12px;
-  grid-template-areas: "head" "nav" "main" "side" "foot";
-}
-@media (min-width: 900px) {
-  .page {
-    grid-template-columns: 200px 1fr 240px;
-    grid-template-areas:
-      "head head head"
-      "nav  main side"
-      "foot foot foot";
-  }
-}
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
-  gap: 16px;
-}`,
-          lines: [
-            R`بداية الـ holy grail: الصفحة كلها grid واحد فيه هيدر وقايمة ومحتوى وجانبي وفوتر.`,
-            R`[[display: grid]] بيخلي الأولاد الخمسة خانات في شبكة بدل ما يبقوا فوق بعض بالـ block العادي.`,
-            R`مسافة 12px بين كل خانة واللي جنبها أو تحتها، من غير margin على أي عنصر.`,
-            R`على الموبايل (من غير media query) خمس صفوف بالترتيب: كل كلمة بين علامتين صف، والعمود واحد بس.`,
-            R`قفلة قواعد الموبايل. ده الأساس (mobile first)، والشاشة العريضة بتتزاد عليه.`,
-            R`من 900px وطالع: الشاشة بقت عريضة كفاية لـ ٣ عواميد جنب بعض.`,
-            R`نفس العنصر، بقواعد زيادة بتغلب اللي فوق لأنها بعدها في الملف وبنفس الـ specificity.`,
-            R`٣ عواميد: القايمة 200px ثابت، والمحتوى [[1fr]] (الباقي كله)، والجانبي 240px. وفي صفحة [[dir="rtl"]] العمود الأول بيبقى على اليمين لوحده.`,
-            R`الرسمة الجديدة بتبدأ هنا: كل سطر تحت صف، وكل كلمة اسم خانة.`,
-            R`الصف الأول: الهيدر واخد التلات عواميد. لما الاسم يتكرر جنب بعض الخانة بتتمد.`,
-            R`الصف الأوسط: القايمة والمحتوى والجانبي، كل واحد في عمود. المسافات الزيادة بعد [[nav]] للترتيب بس ومالهاش معنى.`,
-            R`الصف الأخير: الفوتر بعرض الصفحة كلها.`,
-            R`قفلة قواعد [[.page]] جوه الـ media query.`,
-            R`قفلة الـ media query نفسها.`,
-            R`بداية شبكة الكروت: عدد العواميد هنا مش مكتوب، المتصفح بيحسبه.`,
-            R`grid تاني للكروت، ومالوش علاقة بالـ grid بتاع الصفحة.`,
-            R`[[auto-fit]] يعني «حط أكتر عدد عواميد يكفي»، و [[minmax(..., 1fr)]] يعني كل عمود مش أقل من الحد ويكبر يملا الباقي. و [[min(220px, 100%)]] عشان على شاشة أضيق من 220 العمود ياخد العرض المتاح بدل ما يطلع برا.`,
-            R`مسافة 16px بين الكروت، وهي بتدخل في حساب عدد العواميد (شوف [[autoFitColumns]] تحت).`,
-            R`قفلة قواعد الكروت. الشبكة دي شغالة على أي عرض من غير ولا media query.`,
-          ],
-          teach: R`## الفكرة في سطر
-
-ارسم الـ layout **صناديق على ورقة مرتين**: مرة على 1200 ومرة على 360. لو الصناديق في صف واحد يبقى flex، ولو صفوف وعواميد لازم يتصفوا يبقى grid. اكتب الموبايل الأول، وزوّد الشاشة العريضة في media query، وفي الآخر قيس على العرضين. كل الأرقام تحت من Chrome بـ Playwright على ويندوز ١١.
-
----
-
-## إزاي تقيس على عرضين
-
-في DevTools دوس Ctrl+Shift+M (Device Toolbar)، واختار Responsive، واكتب العرض 1200 مرة و 360 مرة، والصق الفحص الذاتي في كل مرة. الفحص بيقرا [[innerWidth]] ويختار الهدف المناسب للعرض ده. وأهم دالة فيه [[getBoundingClientRect()]]: بترجّع [[left]] و [[right]] و [[top]] و [[width]] لأي عنصر بالبكسل من أول الشاشة، فتقدر تقول «القايمة على اليمين خالص» بالأرقام.
-
----
-
-## التمارين التمانية
-
-الصفحة [[dir="rtl"]] و [[box-sizing: border-box]] على كل حاجة، وفيها ٨ أجزاء بالـ ids والـ classes اللي تحت.
-
-### ١. holy grail [[#grail]]
-هيدر، و [[.g-nav]] و [[.g-main]] و [[.g-side]]، وفوتر. **من 900px:** القايمة على اليمين (أول عمود في العربي) بعرض 200، والجانبي على الشمال بعرض 240، والتلاتة في نفس الصف. **أقل من 900:** كل جزء بعرض الصفحة وتحت اللي قبله بنفس ترتيب الـ HTML.
-
-### ٢. شبكة كروت [[#cards]]
-٧ كروت، كل كارت **مش أقل من 220px** وبيكبر يملا، و gap 16. على 1200 (العرض المتاح 1168) لازم ٥ في الصف الأول، وعلى 360 كارت واحد. ومفيش كارت يطلع برا الحاوية.
-
-### ٣. bento [[#bento]]
-٤ عواميد، وكل صف 120px، و gap 12. [[.b1]] عمودين × صفين، و [[.b2]] عمودين × صف، والباقي خانة خانة. **أقل من 600:** عمودين بس، و [[.b1]] بياخد العرض كله.
-
-### ٤. سايدبار بيتقفل [[#app]]
-سايدبار 260px والمحتوى الباقي. **أقل من 768:** السايدبار 64px وكلام اللينكات ([[.label]]) مستخبي والأيقونات بس اللي فاضلة.
-
-### ٥. مودال في النص [[#overlay]]
-[[<div id="overlay" hidden>]] بيغطي الشاشة كلها بلون شفاف، وجواه [[.modal]] **في نص الشاشة بالظبط** وعرضه [[min(480px, 100% - 32px)]]. والفخ الحقيقي هنا: لو كتبت [[display: grid]] على الـ overlay، الـ [[hidden]] بيبطل يخفيه، لأن [[hidden]] نفسه مجرد [[display: none]] في CSS المتصفح، وأي قاعدة بتاعتك بتغلبه. الحل سطر زيادة: [[#overlay[hidden] { display: none; }]].
-
-### ٦. الفوتر تحت [[#shell]]
-هيدر و [[.s-main]] و [[.s-foot]] جوه حاوية [[min-height: 400px]] (مكان الشاشة في التمرين). المحتوى قصير؟ الفوتر يلزق في آخر الـ 400. المحتوى طويل؟ الفوتر ينزل تحته من غير ما يغطيه. الحل: [[grid-template-rows: auto 1fr auto]].
-
-### ٧. masonry [[#masonry]]
-٩ عناصر بأطوال مختلفة في ٣ عواميد (كل عمود مش أقل من 200px، و gap 16)، **ومفيش عنصر يتقسم** نصه في عمود ونصه في اللي بعده. الحل [[columns: 3 200px]] و [[break-inside: avoid]].
-
-> الفحص بيعرف إن العنصر اتقسم من [[el.getClientRects().length]]: العنصر العادي ليه مستطيل واحد، واللي اتقسم بين عمودين ليه اتنين.
-
-### ٨. navbar عربي [[#topnav]]
-لوجو، وروابط، وزرار «اطلب دلوقتي». اللوجو في البداية (يمين خالص)، والزرار في الآخر (شمال خالص)، ومن غير ولا [[left]] أو [[right]] أو [[margin-left]] أو [[padding-left]] في القواعد بتاعته. وعلى 360 مفيش حاجة طالعة برا.
-
----
-
-## الفحص الذاتي
-
-~~~js الفحص الذاتي: layouts
-(() => {
-  const W = innerWidth, q = s => document.querySelector(s), R = el => el.getBoundingClientRect();
-  const near = (a, b) => Math.abs(a - b) <= 1.5;
-  const inner = el => { const s = getComputedStyle(el); return el.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight); };
-  let pass = 0, all = 0;
-  const ok = (name, cond, why) => { all++; if (cond) pass++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (cond ? '' : ' ← ' + why)); };
-  const px = v => Math.round(v) + 'px';
-  console.log('عرض الشاشة ' + W + 'px: جرّب تاني على 1200 و 360 (Device Toolbar)');
-  const g = q('#grail'), nav = q('.g-nav'), main = q('.g-main'), side = q('.g-side'), gr = R(g);
-  if (W >= 900) ok('1 holy grail (عريض)', near(R(nav).right, gr.right) && near(R(nav).width, 200) && near(R(side).width, 240) && near(R(side).left, gr.left) && near(R(nav).top, R(main).top) && near(R(side).top, R(main).top),
-    'القايمة لازم على اليمين بعرض 200 والجانبي على الشمال بعرض 240 وفي نفس الصف (القايمة ' + px(R(nav).width) + ' والجانبي ' + px(R(side).width) + ')');
-  else ok('1 holy grail (ضيق)', [q('.g-head'), nav, main, side, q('.g-foot')].every((el, i, a) => near(R(el).width, gr.width) && (!i || R(el).top >= R(a[i - 1]).bottom)),
-    'على الموبايل كل جزء بعرض الصفحة وتحت اللي قبله بالترتيب');
-  const cards = [...document.querySelectorAll('#cards .card')], cw = inner(q('#cards'));
-  const want = Math.max(1, Math.floor((cw + 16) / (220 + 16))), cols = new Set(cards.map(c => Math.round(R(c).top))).size ? cards.filter(c => near(R(c).top, R(cards[0]).top)).length : 0;
-  ok('2 شبكة الكروت', cols === Math.min(want, cards.length) && cards.every(c => R(c).right <= R(q('#cards')).right + 1 && R(c).left >= R(q('#cards')).left - 1),
-    'الصف الأول فيه ' + cols + ' كروت، والمتوقع ' + want + ' على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا');
-  const bento = q('#bento'), bw = inner(bento), n = W >= 600 ? 4 : 2, col = (bw - (n - 1) * 12) / n, b1 = R(q('.b1')), b2 = R(q('.b2'));
-  ok('3 bento', near(b1.width, 2 * col + 12) && near(b1.height, 252) && near(b2.width, 2 * col + 12) && near(b2.height, 120) && near(R(q('#bento .b:nth-child(3)')).width, col),
-    'الكبير لازم عمودين × صفين (' + px(2 * col + 12) + ' × 252px) والعريض عمودين × صف، والموجود ' + px(b1.width) + ' × ' + px(b1.height));
-  const sd = R(q('.side')), labels = [...document.querySelectorAll('.side .label')];
-  if (W >= 768) ok('4 السايدبار (عريض)', near(sd.width, 260) && labels.every(l => l.offsetWidth > 0), 'عرضه ' + px(sd.width) + ' والمطلوب 260 والكلام ظاهر');
-  else ok('4 السايدبار (ضيق)', near(sd.width, 64) && labels.every(l => getComputedStyle(l).display === 'none'), 'على أقل من 768 عرضه لازم 64 والكلام مستخبي، والموجود ' + px(sd.width));
-  const ov = q('#overlay');
-  const hiddenOk = ov.hidden && getComputedStyle(ov).display === 'none';
-  ov.hidden = false;
-  const m = R(q('.modal')), center = near(m.left + m.width / 2, innerWidth / 2) && near(m.top + m.height / 2, innerHeight / 2), mw = Math.min(480, document.documentElement.clientWidth - 32);
-  ov.hidden = true;
-  ok('5 المودال: hidden بيخفيه', hiddenOk, 'العنصر عليه hidden بس ظاهر: display في الـ CSS بيغلب [hidden] بتاع المتصفح');
-  ok('5 المودال: في النص وعرضه مظبوط', center && near(m.width, mw), 'نص المودال لازم في نص الشاشة وعرضه ' + px(mw) + '، والموجود عرض ' + px(m.width) + ' ونصه عند ' + px(m.left + m.width / 2) + ' من ' + px(innerWidth / 2));
-  const shell = q('#shell'), foot = q('.s-foot'), sm = q('.s-main');
-  const short = near(R(foot).bottom, R(shell).bottom) && near(R(shell).height, 400);
-  const extra = document.createElement('div'); extra.style.height = '700px'; sm.append(extra);
-  const long = R(foot).top >= R(sm).bottom - 1 && near(R(foot).bottom, R(shell).bottom);
-  extra.remove();
-  ok('6 الفوتر تحت', short && long, 'مع محتوى قصير الفوتر لازم يلزق في آخر الـ 400px، ومع محتوى طويل ينزل تحته من غير ما يغطيه');
-  const ms = [...document.querySelectorAll('#masonry .m')], mcw = inner(q('#masonry'));
-  const mwant = Math.max(1, Math.min(3, Math.floor((mcw + 16) / (200 + 16)))), lefts = new Set(ms.map(x => Math.round(R(x).left))).size;
-  const split = ms.filter(x => x.getClientRects().length > 1).length;
-  ok('7 masonry', lefts === mwant && split === 0, lefts + ' عواميد والمتوقع ' + mwant + '، و ' + split + ' عنصر متقسم بين عمودين (break-inside)');
-  const tn = q('#topnav'), ts = getComputedStyle(tn), nr = R(tn), logo = R(q('.logo')), cta = R(q('.cta'));
-  const pad = parseFloat(ts.paddingLeft);
-  ok('8 navbar عربي: اللوجو في البداية والزرار في الآخر', near(logo.right, nr.right - pad) && near(cta.left, nr.left + pad), 'في العربي اللوجو يمين خالص والزرار شمال خالص، والزرار دلوقتي على بعد ' + px(cta.left - nr.left - pad) + ' من الشمال');
-  ok('8 navbar عربي: مفيش حاجة طالعة', tn.scrollWidth <= tn.clientWidth, 'الـ nav عرض محتواه ' + tn.scrollWidth + ' وهو ' + tn.clientWidth);
-  const phys = [];
-  for (const sh of document.styleSheets) { let rules; try { rules = [...sh.cssRules]; } catch (e) { continue; }
-    for (const r of rules) if (r.style && r.selectorText && /#topnav|\.logo|\.links|\.cta/.test(r.selectorText))
-      for (const m of r.style.cssText.matchAll(/(?:^|;\s*)((?:margin|padding)-(?:left|right)|left|right|float)\s*:/g)) phys.push(r.selectorText + ' { ' + m[1] + ' }'); }
-  ok('8 navbar عربي: logical properties بس', !phys.length, 'لقيت ' + phys.join(' و '));
-  console.log('النتيجة: ' + pass + ' من ' + all);
-})();
-~~~
-
-ليه الفحص بيدوّر في [[r.style.cssText]] مش [[getPropertyValue('margin-left')]]؟ لأن [[padding: 12px 16px]] بيتفرد جوه المتصفح لـ [[padding-left]] و [[padding-right]]، فالطريقة التانية كانت هتقول «لقيت padding-left» على كود سليم. أول نسخة من الفحص ده عملت كده فعلًا وطلّعت FAIL على الحل الصح، و [[cssText]] بيرجّع اللي انت كتبته ([[padding: 12px 16px;]]) فالـ regex بيلقط بس اللي اتكتب بالاسم.
-
-### الحل الغلط على 1200 و 360
-
-الحل الغلط بالأساليب اللي بتتشاف كتير: holy grail بـ flex و widths ثابتة، وكروت [[repeat(3, 1fr)]]، و bento من غير span، وسايدبار مبيتقفلش، ومودال بـ [[top: 50%; left: 50%]] من غير translate، وفوتر من غير grid، و masonry من غير [[break-inside]]، و [[margin-left: auto]] على الزرار (منقول من موقع إنجليزي).
-
-~~~text Chrome على 1200، الحل الغلط
-FAIL 1 holy grail (عريض) ← القايمة لازم على اليمين بعرض 200 والجانبي على الشمال بعرض 240 وفي نفس الصف (القايمة 216px والجانبي 256px)
-FAIL 2 شبكة الكروت ← الصف الأول فيه 3 كروت، والمتوقع 5 على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا
-FAIL 3 bento ← الكبير لازم عمودين × صفين (578px × 252px) والعريض عمودين × صف، والموجود 283px × 120px
-PASS 4 السايدبار (عريض)
-FAIL 5 المودال: hidden بيخفيه ← العنصر عليه hidden بس ظاهر: display في الـ CSS بيغلب [hidden] بتاع المتصفح
-FAIL 5 المودال: في النص وعرضه مظبوط ← نص المودال لازم في نص الشاشة وعرضه 480px، والموجود عرض 528px ونصه عند 864px من 600px
-FAIL 6 الفوتر تحت ← مع محتوى قصير الفوتر لازم يلزق في آخر الـ 400px، ومع محتوى طويل ينزل تحته من غير ما يغطيه
-FAIL 7 masonry ← 3 عواميد والمتوقع 3، و 1 عنصر متقسم بين عمودين (break-inside)
-FAIL 8 navbar عربي: اللوجو في البداية والزرار في الآخر ← في العربي اللوجو يمين خالص والزرار شمال خالص، والزرار دلوقتي على بعد 745px من الشمال
-PASS 8 navbar عربي: مفيش حاجة طالعة
-FAIL 8 navbar عربي: logical properties بس ← لقيت .cta { margin-left }
-النتيجة: 2 من 11
-~~~
-
-اقرا الأرقام: القايمة 216 مش 200 لأن الحل الغلط مفيهوش [[box-sizing: border-box]] والـ padding 8 + 8 اتزاد. والمودال 528 لنفس السبب (480 + 24 + 24)، ونصه عند 864 لأن [[left: 50%]] بيحط **أول** المودال في النص مش نصه. والزرار على بعد 745px من الشمال: [[margin-left: auto]] في صفحة عربي بيحط المسافة الفاضية **بين** الزرار والحافة الشمال، فالزرار فضل لازق في الروابط.
-
-~~~text Chrome على 360، الحل الغلط
-FAIL 1 holy grail (ضيق) ← على الموبايل كل جزء بعرض الصفحة وتحت اللي قبله بالترتيب
-FAIL 2 شبكة الكروت ← الصف الأول فيه 3 كروت، والمتوقع 1 على العرض ده (auto-fit و minmax 220px)، ومفيش كارت يطلع برا
-FAIL 3 bento ← الكبير لازم عمودين × صفين (328px × 252px) والعريض عمودين × صف، والموجود 73px × 120px
-FAIL 4 السايدبار (ضيق) ← على أقل من 768 عرضه لازم 64 والكلام مستخبي، والموجود 260px
-FAIL 5 المودال: hidden بيخفيه ← العنصر عليه hidden بس ظاهر: display في الـ CSS بيغلب [hidden] بتاع المتصفح
-FAIL 5 المودال: في النص وعرضه مظبوط ← نص المودال لازم في نص الشاشة وعرضه 328px، والموجود عرض 528px ونصه عند 444px من 180px
-FAIL 6 الفوتر تحت ← مع محتوى قصير الفوتر لازم يلزق في آخر الـ 400px، ومع محتوى طويل ينزل تحته من غير ما يغطيه
-PASS 7 masonry
-FAIL 8 navbar عربي: اللوجو في البداية والزرار في الآخر ← في العربي اللوجو يمين خالص والزرار شمال خالص، والزرار دلوقتي على بعد -18px من الشمال
-FAIL 8 navbar عربي: مفيش حاجة طالعة ← الـ nav عرض محتواه 330 وهو 328
-FAIL 8 navbar عربي: logical properties بس ← لقيت .cta { margin-left }
-النتيجة: 1 من 11
-~~~
-
-الـ masonry عدّى على 360 مع إنه غلط: عمود واحد مفيهوش حاجة تتقسم. وده سبب إن **لازم تفحص على عرضين**: غلطة بتبان على عرض وتستخبى على التاني.
-
-### الحل المرجعي
-
-~~~text Chrome على 1200 وعلى 360، الحل اللي في «الحل»
-عرض الشاشة 1200px: جرّب تاني على 1200 و 360 (Device Toolbar)
-PASS 1 holy grail (عريض)
-PASS 2 شبكة الكروت
-PASS 3 bento
-PASS 4 السايدبار (عريض)
-PASS 5 المودال: hidden بيخفيه
-PASS 5 المودال: في النص وعرضه مظبوط
-PASS 6 الفوتر تحت
-PASS 7 masonry
-PASS 8 navbar عربي: اللوجو في البداية والزرار في الآخر
-PASS 8 navbar عربي: مفيش حاجة طالعة
-PASS 8 navbar عربي: logical properties بس
-النتيجة: 11 من 11
-~~~
-
-وعلى 360 نفس الـ ١١ سطر PASS بس السطور ١ و ٤ مكتوب فيها «(ضيق)».
-
----
-
-## التمرين اللي بيتصحح لوحده: احسب قبل المتصفح
-
-| الدالة | بترجّع | المعادلة |
-|---|---|---|
-| [[autoFitColumns(width, min, gap)]] | عدد العواميد اللي [[repeat(auto-fit, minmax(min, 1fr))]] هيعملها | [[floor((width + gap) / (min + gap))]] ومش أقل من 1 |
-| [[trackWidth(width, min, gap)]] | عرض العمود بعد ما الـ [[1fr]] يملا، برقم عشري واحد | [[(width − gap × (n − 1)) / n]] |
-| [[spanSize(span, track, gap)]] | عرض (أو طول) خانة واخدة كذا عمود | [[span × track + (span − 1) × gap]] |
-
-ليه [[width + gap]]؟ لأن n عمود فيهم n − 1 gap بس، فلو زوّدت gap واحد للعرض بقى عندك n مجموعة «عمود + gap» بالظبط. واتأكدت في Chrome: حاوية 1164px بتطلّع ٥ عواميد عرضهم 220، و 1163px بتطلّع ٤ عرضهم 278.75، يعني بكسل واحد بيفرق عمود.
-
-## خلاصة
-
-- صناديق على ورقة على عرضين قبل أي كود.
-- flex لصف، و grid لصفوف وعواميد، و [[grid-template-areas]] لما الترتيب بيتغير.
-- [[minmax(min(220px, 100%), 1fr)]] مش [[minmax(220px, 1fr)]]، عشان الشاشة الضيقة.
-- [[hidden]] بيبطل مع أي [[display]] بتاعك، فزوّد [[[hidden] { display: none }]].
-- في العربي: [[margin-inline-start: auto]] مش [[margin-left: auto]]، والعمود الأول في الـ grid على اليمين لوحده.
-- افحص على 1200 و 360: كل عرض بيخبي غلطات.`,
-          try: R`اعمل [[layouts.html]] فيه الأجزاء التمانية بنفس الـ ids والـ classes (الهيكل كله في الحل)، وابني layout واحد كل مرة والصق الفحص على 1200 وعلى 360 من Device Toolbar. وبعدها اكتب [[autoFitColumns]] و [[trackWidth]] و [[spanSize]] في المربع اللي تحت ودوس «شغّل واختبر».`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** حاوية عرضها 700px، و [[grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px]]. هيطلع كام عمود وعرض كل واحد كام؟ احسب بالمعادلة على ورقة، وبعدين افتحه وقيس بـ [[getBoundingClientRect().width]].`, done: R`حسبت [[floor(716 / 236) = 3]] عواميد، وكل واحد [[(700 − 32) / 3 = 222.67]]، والمتصفح طلّع 3 عواميد و [[222.65625]] (الفرق من تقريب البكسل لـ 1/64).`,
-              sol: R`~~~live 140 140 autofit.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>auto-fit</title>
-<style>
-  .g { inline-size: 700px; display: grid; gap: 16px;
-       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-  .g > * { background: #bfdbfe; }
-</style></head>
-<body>
-  <main><h1>أعمدة</h1><div class="g" id="g"><div>١</div><div>٢</div><div>٣</div><div>٤</div></div></main>
-</body></html>
-~~~
-
-المعادلة: كل عمود بياخد 220 + gap 16، بس آخر عمود مفيش بعده gap، فبنضيف gap واحد للبسط:
-
-- عدد الأعمدة = [[floor((700 + 16) / (220 + 16))]] = [[floor(716 / 236)]] = 3.
-- عرض كل عمود = ‏(700 − 2 × 16) ÷ 3 = 668 ÷ 3 = 222.67.
-
-الفرق البسيط عن رقم المتصفح لأن Chrome بيقرّب الـ layout لوحدة 1/64 من البكسل، فـ [[222.65625]] هي أقرب قيمة.
-
-الغلطة الشائعة: [[floor(700 / 220)]] = 3 بالصدفة هنا، وعلى عرض تاني هيدّيك رقم غلط لأنك نسيت الـ gap.
-
-~~~text الناتج (Chrome 156)
-عدد الأعمدة: 3
-العرض: 222.65625
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مودال [[.overlay { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; }]] و [[<div class="overlay" hidden>]]، والصفحة كلها متغطية رمادي من أول ما تفتح. لاقي السبب من Elements › Computed › display، وصلّحه بسطر واحد من غير ما تشيل [[display: flex]].`, done: R`Computed قال [[display: flex]] مع إن العنصر عليه [[hidden]]، وفهمت إن [[hidden]] مجرد [[display: none]] بأقل specificity، وزوّدت [[.overlay[hidden] { display: none; }]]، وفحص المودال بقى PASS في الحالتين.`,
-              sol: R`~~~live 120 120 modal-hidden.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>overlay</title>
-<style>
-  .overlay { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; background: rgb(0 0 0 / .5); }
-  .overlay[hidden] { display: none; }
-</style></head>
-<body>
-  <main><h1>صفحة</h1><button id="o">افتح</button></main>
-  <div class="overlay" id="m" hidden><div role="dialog" aria-label="رسالة">رسالة</div></div>
-  <script>document.getElementById("o").onclick = () => { document.getElementById("m").hidden = false; };$__lt/script>
-</body></html>
-~~~
-
-[[hidden]] مش سحر: في ستايل المتصفح الافتراضي قاعدة [[[hidden] { display: none }]]. أي قاعدة بتكتبها في الصفحة أقوى منها، فـ [[.overlay { display: flex }]] بيلغيها، و Computed بيقول [[flex]] والعنصر عليه [[hidden]].
-
-السطر [[.overlay[hidden] { display: none; }]] selector فيه class و attribute، فبيغلب [[.overlay]]، وبيرجّع المعنى. لو الـ attribute اتشال القاعدة بتقف، و [[display: flex]] بترجع.
-
-الغلطة الشائعة: تستبدل [[hidden]] بكلاس [[.is-open]]، أو تحط [[display: none]] inline من JavaScript. [[hidden]] أوضح: قارئ الشاشة والـ CSS والكود كلهم بيقروا نفس الحالة.
-
-~~~text الناتج (Chrome 156)
-قبل التصليح، مقفول: display = flex، ومغطي الصفحة: 1280×800
-بعد التصليح، مقفول: display = none
-بعد التصليح، مفتوح: display = flex
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** dashboard: هيدر فوق، وسايدبار، و ٤ كروت أرقام (KPI) في صف بيبقى ٢ × ٢ على التابلت وواحد تحت التاني على الموبايل، وتحتهم جدول بياخد العرض كله. كله بـ grid واحد و [[grid-template-areas]] بتتغير في media query.`, done: R`على 1200 الكروت ٤ في صف، وعلى 768 اتنين في صف، وعلى 360 واحد، والجدول تحتهم بعرض المحتوى في التلاتة، والـ HTML نفسه متغيرش بين العروض (الترتيب كله من الـ CSS)، وفحص الـ overflow بتاع الدرس اللي بعده بيقول [[مفيش scroll أفقي]].`,
-              sol: R`~~~live 420 550 dashboard.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>داشبورد</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, sans-serif; }
-  .app {
-    display: grid; gap: 12px; padding: 12px;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "head" "k1" "k2" "k3" "k4" "table";
-  }
-  header { grid-area: head; } aside { display: none; grid-area: side; }
-  .k1 { grid-area: k1; } .k2 { grid-area: k2; } .k3 { grid-area: k3; } .k4 { grid-area: k4; }
-  .tbl { grid-area: table; overflow-x: auto; }
-  table { inline-size: 100%; border-collapse: collapse; }
-  th, td { padding: .5rem; text-align: start; }
-  .kpi, header, aside, .tbl { background: #f3f4f6; padding: 1rem; border-radius: 8px; }
-
-  @media (min-width: 600px) {
-    .app {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-areas: "head head" "k1 k2" "k3 k4" "table table";
-    }
-  }
-  @media (min-width: 1000px) {
-    aside { display: block; }
-    .app {
-      grid-template-columns: 200px repeat(4, minmax(0, 1fr));
-      grid-template-areas: "head head head head head" "side k1 k2 k3 k4" "side table table table table";
-    }
-  }
-</style></head>
-<body>
-  <div class="app">
-    <header><h1>الداشبورد</h1></header>
-    <aside aria-label="القايمة">القايمة</aside>
-    <section class="kpi k1" aria-label="المبيعات">١٢ ألف</section>
-    <section class="kpi k2" aria-label="الطلبات">٣٤٠</section>
-    <section class="kpi k3" aria-label="العملا">٩٢</section>
-    <section class="kpi k4" aria-label="المرتجعات">٤</section>
-    <main class="tbl"><table><caption>آخر الطلبات</caption><thead><tr><th>الرقم</th><th>العميل</th><th>المبلغ</th></tr></thead><tbody><tr><td>1042</td><td>منى</td><td>٣٢٠</td></tr></tbody></table></main>
-  </div>
-</body></html>
-~~~
-
-الشكل كله في [[grid-template-areas]]، والـ HTML مبيتغيرش. كل سطر في القيمة صف، وكل كلمة خانة، فبتقرا الـ layout كأنه رسمة.
-
-- موبايل: عمود واحد، و [[aside]] مخفي لأنه بقى في مكان تاني في المشروع الحقيقي.
-- تابلت: عمودين، فـ [[k1 k2]] و [[k3 k4]].
-- كمبيوتر: سايدبار و ٤ كروت في صف، والجدول تحتهم بعرض الكروت.
-
-[[minmax(0, 1fr)]] مش [[1fr]]: الـ [[1fr]] حده الأدنى [[auto]]، فمحتوى عريض بيوسّع العمود ويعمل فيضان. والجدول جوه [[overflow-x: auto]] عشان عرضه ميكسرش الصفحة.
-
-الغلطة الشائعة: تعيد ترتيب الـ HTML لكل عرض، أو تكتب [[grid-column]] لكل عنصر، فالتعديل يبقى صعب.
-
-~~~text الناتج (Chrome 156)
-عرض 1200: أعمدة الكروت 4، وعرض الجدول 964
-عرض 768:  أعمدة الكروت 2، وعرض الجدول 744
-عرض 360:  أعمدة الكروت 1، وعرض الجدول 336
-scroll أفقي على التلاتة: 0 و 0 و 0
-axe: 0
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل نفس شبكة الكروت مرة بـ [[auto-fit]] ومرة بـ [[auto-fill]]، بـ ٣ كروت بس، على 1200. إيه الفرق في عرض الكارت؟ وامتى تختار دي ودي؟`, done: R`مع [[auto-fit]] الـ ٣ كروت بيتمدوا يملوا الصف (حوالي 379px كل واحد)، ومع [[auto-fill]] فضلوا قريب من 220 وفيه خانات فاضية في الآخر، والقياس مكتوب بالأرقام، ومكتوب إن auto-fill أحسن لما عايز الكروت متتمددش لما يبقوا قليلين.`,
-              sol: R`~~~live 250 510 fit-fill-1200.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>auto-fit و auto-fill</title>
-<style>
-  body { margin: 0; padding: 16px; }
-  .g { display: grid; gap: 16px; margin-block-end: 16px; }
-  .fit  { grid-template-columns: repeat(auto-fit,  minmax(220px, 1fr)); }
-  .fill { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-  .g > * { background: #bfdbfe; padding: 1rem; }
-</style></head>
-<body>
-  <main><h1>٣ كروت</h1>
-    <div class="g fit" id="a"><div>١</div><div>٢</div><div>٣</div></div>
-    <div class="g fill" id="b"><div>١</div><div>٢</div><div>٣</div></div>
-  </main>
-</body></html>
-~~~
-
-الحساب: المتاح 1168، و [[floor((1168 + 16) / 236)]] = 5 مسارات في الاتنين.
-
-- [[auto-fit]]: بيطوي المسارات الفاضية لصفر، والكروت التلاتة بيقسموا المساحة: 378.67px.
-- [[auto-fill]]: بيسيب المسارات الفاضية محجوزة، فالكروت 220.8px وباقي الصف فاضي.
-
-إمتى كل واحدة؟ [[auto-fit]] لما الصف لازم يبان مليان. [[auto-fill]] لما الكروت لازم تفضل بنفس المقاس مهما قل عددها، زي نتايج بحث: كارت واحد متمدد على عرض الصفحة شكله غريب.
-
-الغلطة الشائعة: تجرّب بعدد كروت يملا الصف، فالاتنين بيدّوا نفس الشكل، وتستنتج إن مفيش فرق.
-
-~~~text الناتج (Chrome 156، عرض 1200)
-auto-fit:  عرض الكارت 378.66، والمسارات 378.656px 378.672px 378.656px 0px 0px
-auto-fill: عرض الكارت 220.80، والمسارات 220.797px 220.797px 220.797px 220.797px 220.797px
-~~~` },
-            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميل في ٣ سطور ليه [[margin-left: auto]] بيحط زرار الـ navbar في آخره في صفحة إنجليزي ومش في صفحة عربي، والحل اللي بيشتغل في الاتنين.`, done: R`الشرح بيقول إن الـ auto margin بياخد المسافة الفاضية في الناحية اللي هو فيها، وفي الإنجليزي الشمال هي «قبل» الزرار وفي العربي هي «بعده»، وإن [[margin-inline-start: auto]] معناها «قبل» في اللغتين، وزميلك طبّقها على navbar بلغتين ونجحت.`,
-              sol: R`~~~text رسالة لزميل
-الـ auto margin بياخد كل المساحة الفاضية في ناحيته. في الإنجليزي الشمال هو «قبل» الزرار، فبيتزق لآخر السطر.
-في العربي الشمال هو «بعد» الزرار، فالمساحة بتروح ناحية نهاية السطر، والزرار بيفضل في مكانه.
-margin-inline-start: auto معناها «قبل» في اللغتين، فبتشتغل من غير أي شرط على اللغة.
-~~~
-
-~~~live 120 120 nav.html: جرّبها على navbar بلغتين
-<!doctype html>
-<html lang="en" dir="ltr">
-<head><meta charset="utf-8"><title>nav</title>
-<style>
-  nav { display: flex; inline-size: 600px; background: #eee; }
-  .btn { margin-inline-start: auto; }
-</style></head>
-<body><main><h1>x</h1><nav aria-label="main"><a href="#a">logo</a><a class="btn" href="#b">زرار</a></nav></main></body>
 </html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** من غير Vite: فولدر فيه [[index.html]] و [[in.css]] (سطر [[@import "tailwindcss";]] بس)، وشغّل [[npx @tailwindcss/cli -i in.css -o out.css --watch]]، واعمل كارت سعر كامل بالكلاسات بس.`, done: R`كل ما تحفظ الـ HTML الـ CLI بيطبع [[Done in ...ms]] و [[out.css]] بيتحدث، والكارت شكله كامل، و grep على [[out.css]] بيلاقي الكلاسات اللي استخدمتها بس (مثلًا [[.p-6]] موجودة و [[.p-7]] لأ لو مكتبتهاش).`, sol: R`~~~css in.css
+@import "tailwindcss";
 ~~~
 
-في flex الـ margin [[auto]] بيمتص كل الفراغ المتبقي في الاتجاه ده، وعشان كده بيزق العنصر. المشكلة إن [[left]] و [[right]] أماكن ثابتة، والسطر نفسه بينعكس في RTL. فـ [[margin-left: auto]] في العربي بيخلي الفراغ بعد الزرار، يعني الزرار بيفضل في أوله.
-
-[[margin-inline-start]] مبني على اتجاه الكتابة: «قبل العنصر» في أي لغة.
-
-الغلطة الشائعة: تكتب [[[dir="rtl"] .btn { margin-right: auto; margin-left: 0 }]]. سطر واحد logical بيغني عن الكلام ده.
-
-~~~text الناتج (Chrome 156، nav عرضه 600: موقع الزرار، و 0 يعني أول السطر)
-margin-left: auto في en: البعد عن نهاية السطر 0px
-margin-left: auto في ar: البعد عن نهاية السطر 545px
-margin-inline-start: auto في en: 0px
-margin-inline-start: auto في ar: 0px
-~~~` },
-          ],
-          deep: {
-            why: R`أغلب باجات الـ CSS اللي بتتبلّغ في الشغل layout: «الكارت ده أعرض من التاني»، و «الزرار مش في مكانه في العربي»، و «المودال مش في النص على الآيفون». والـ layouts التمانية دول بيتكرروا في كل مشروع، فلو كل واحد منهم بقى عندك وصفة مجرّبة ومتقاسة، بتكتب أي صفحة جديدة من القطع دي من غير تجربة وتخمين.`,
-            how: R`الـ grid بيحسب العواميد الأول: الثابت ([[200px]]) بياخد حقه، والباقي بيتقسم على الـ [[fr]]. ومع [[auto-fit]] المتصفح بيجرب أكبر عدد عواميد بحجم الـ min يدخل، وبعدين الـ [[1fr]] بيوزع الباقي، وده بالظبط [[floor((W + gap) / (min + gap))]]. و [[grid-template-areas]] بيحط كل عنصر في الخانة اللي اسمها زي [[grid-area]] بتاعه، فترتيب الـ HTML بيفضل منطقي لقارئ الشاشة والشكل بيتغير. والـ flex بيحسب كل عنصر من محتواه، وأي [[auto]] margin بياكل المسافة الفاضية في اتجاهه. والاتجاه نفسه ([[dir="rtl"]]) بيقلب «البداية» و «النهاية» لوحده لـ grid و flex والـ logical properties، بس [[left]] و [[right]] بيفضلوا ثابتين. والـ CSS columns بيصب العناصر في العمود الأول لحد ما يتملا (الطول متوازن)، و [[break-inside: avoid]] بيمنع العنصر يتقسم بين عمودين.`,
-            when: R`grid لأي حاجة ليها صفوف وعواميد لازم يتصفوا (صفحة، شبكة، فورم بعمودين). flex لصف واحد بيتوزع حسب المحتوى (navbar، أزرار، جوه الكارت). CSS columns للـ masonry لما الترتيب من فوق لتحت مقبول، ولو لازم الترتيب يبقى بالصف يبقى JavaScript أو [[grid-template-rows: masonry]] لما يبقى Baseline (لسه مش في كل المتصفحات وقت كتابة الدرس، شوف درس «Baseline و @supports»). و container queries بدل media queries لما الـ component بيتحط في أماكن بعروض مختلفة.`,
-            mistakes: R`[[minmax(220px, 1fr)]] من غير [[min(..., 100%)]] فعلى 200px الكارت بيطلع برا. و [[left: 50%; top: 50%]] من غير [[translate: -50% -50%]] فأول المودال في النص مش نصه (والأسهل [[display: grid; place-items: center]] على الـ overlay). و [[margin-left: auto]] في صفحة عربي. و [[display]] على عنصر عليه [[hidden]]. و [[height: 100vh]] على الصفحة عشان الفوتر ينزل، فالمحتوى الطويل بيتقص (الصح [[min-height]] و [[1fr]]). و [[position: sticky]] على عنصر في grid من غير [[align-self: start]] فبيتمد بطول الصف ومبيلزقش. و قياس على عرض واحد بس.`,
-          },
-          sol: R`الحل المرجعي كامل تحت (الـ CSS والـ HTML)، وده اللي طلّع ١١ من ١١ على 1200 وعلى 360. أهم ٥ سطور فيه: [[grid-template-areas]] بتتغير في [[@media (min-width: 900px)]]، و [[minmax(min(220px, 100%), 1fr)]]، و [[#overlay[hidden] { display: none; }]]، و [[grid-template-rows: auto 1fr auto]]، و [[.cta { margin-inline-start: auto; }]].
-
-وحل المربع اللي بيتصحح لوحده في آخر الكود. لو اختبار «1164 = ٥ و 1163 = ٤» وقع، يبقى نسيت تزوّد gap على العرض قبل القسمة.`,
-          solCode: R`<!doctype html>
+~~~html index.html
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>layouts</title>
+<title>باقة شهرية</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="grid min-h-dvh place-items-center bg-gray-100 p-4 text-gray-900">
+<main class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-lg">
+  <h1 class="text-lg font-bold">الباقة الاحترافية</h1>
+  <p class="mt-2 text-sm text-gray-600">لفريق صغير بيبني منتج حقيقي.</p>
+  <p class="mt-4 text-4xl font-extrabold">499 <span class="text-base font-medium text-gray-600">جنيه في الشهر</span></p>
+  <ul class="mt-4 space-y-2 text-sm">
+    <li>١٠ مشاريع</li>
+    <li>٥٠ جيجا مساحة</li>
+    <li>دعم في نفس اليوم</li>
+  </ul>
+  <a href="#signup" class="mt-6 block rounded-lg bg-teal-700 px-4 py-3 text-center font-semibold text-white hover:bg-teal-800">ابدأ دلوقتي</a>
+</main>
+</body>
+</html>
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css --watch
+~~~
+
+**بيحصل إيه:** [[-i]] الملف اللي بتكتبه، و [[-o]] الملف اللي المتصفح بيقراه، و [[--watch]] يفضل صاحي ويعيد الـ build مع كل حفظ. الصفحة بتربط [[out.css]] مش [[in.css]]، لأن [[in.css]] لسه فيه [[@import "tailwindcss"]] اللي المتصفح مبيفهموش.
+
+الكارت كله كلاسات: [[grid min-h-dvh place-items-center]] بتوسّطه، و [[max-w-sm]] بيحد عرضه، و [[w-full]] بيخليه ياخد المتاح على الموبايل، و [[space-y-2]] مسافة بين عناصر اللستة.
+
+**الغلطة الشائعة:** تعدّل الـ HTML والـ CLI مش شغال، فالكلاس الجديد ميطلعش وتفتكر إنه غلط. لازم [[--watch]] شغال في ترمنال، أو تعيد الـ build.
+
+~~~text الناتج
+≈ tailwindcss v4.3.4
+
+Done in 75ms
+Done in 6ms      (بعد ما حفظت الـ HTML)
+
+grep على out.css: .p-6 موجودة ، .p-7 مش موجودة
+ولما زوّدت عنصر class="p-7" وحفظت: .p-7 ظهرت من غير ما أعمل حاجة
+حجم out.css: 10,300 byte
+
+على 360: الكارت 328 × 325 ، scrollWidth = clientWidth ، axe صفر
+~~~
+
+~~~view 360 360 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقة شهرية</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; font-family: system-ui, sans-serif; }
-section > *, .b, .m, .card { background: #e0e7ff; padding: 8px; }
-#grail { display: grid; gap: 12px; grid-template-areas: "head" "nav" "main" "side" "foot"; }
-.g-head { grid-area: head; } .g-nav { grid-area: nav; } .g-main { grid-area: main; min-height: 160px; } .g-side { grid-area: side; } .g-foot { grid-area: foot; }
-@media (min-width: 900px) {
-  #grail { grid-template-columns: 200px 1fr 240px; grid-template-areas: "head head head" "nav main side" "foot foot foot"; }
-}
-#cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }
-#bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 12px; }
-.b1 { grid-column: span 2; grid-row: span 2; }
-.b2 { grid-column: span 2; }
-@media (max-width: 599px) { #bento { grid-template-columns: repeat(2, 1fr); } }
-#app { display: grid; grid-template-columns: 260px 1fr; gap: 12px; min-height: 200px; }
-.side { display: flex; flex-direction: column; gap: 8px; }
-@media (max-width: 767px) {
-  #app { grid-template-columns: 64px 1fr; }
-  .side .label { display: none; }
-}
-#overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgb(0 0 0 / .5); }
-#overlay[hidden] { display: none; }
-.modal { width: min(480px, 100% - 32px); background: #fff; padding: 24px; border-radius: 12px; }
-#shell { min-height: 400px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; }
-#masonry { columns: 3 200px; column-gap: 16px; }
-.m { break-inside: avoid; margin-block-end: 16px; }
-#topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 12px 16px; background: #0f172a; }
-#topnav a { color: #fff; }
-.links { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; }
-.cta { margin-inline-start: auto; }
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-space-y-reverse:0;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-teal-700:oklch(51.1% .096 186.391);--color-teal-800:oklch(43.7% .078 188.216);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-900:oklch(21% .034 264.665);--color-white:#fff;--spacing:.25rem;--container-sm:24rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--font-weight-extrabold:800;--radius-lg:.5rem;--radius-2xl:1rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-4{margin-top:calc(var(--spacing) * 4)}.mt-6{margin-top:calc(var(--spacing) * 6)}.block{display:block}.grid{display:grid}.min-h-dvh{min-height:100dvh}.w-full{width:100%}.max-w-sm{max-width:var(--container-sm)}.place-items-center{place-items:center}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}.rounded-2xl{border-radius:var(--radius-2xl)}.rounded-lg{border-radius:var(--radius-lg)}.bg-gray-100{background-color:var(--color-gray-100)}.bg-teal-700{background-color:var(--color-teal-700)}.bg-white{background-color:var(--color-white)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.px-4{padding-inline:calc(var(--spacing) * 4)}.py-3{padding-block:calc(var(--spacing) * 3)}.text-center{text-align:center}.text-4xl{font-size:var(--text-4xl);line-height:var(--tw-leading,var(--text-4xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-extrabold{--tw-font-weight:var(--font-weight-extrabold);font-weight:var(--font-weight-extrabold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-gray-600{color:var(--color-gray-600)}.text-gray-900{color:var(--color-gray-900)}.text-white{color:var(--color-white)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}@media (hover:hover){.hover\:bg-teal-800:hover{background-color:var(--color-teal-800)}}}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}
 </style>
 </head>
-<body>
-<section id="grail">
-  <header class="g-head">الهيدر</header>
-  <nav class="g-nav">القايمة</nav>
-  <main class="g-main">المحتوى الأساسي</main>
-  <aside class="g-side">جانبي</aside>
-  <footer class="g-foot">الفوتر</footer>
-</section>
-<section id="cards">
-  <article class="card">كارت ١</article><article class="card">كارت ٢</article><article class="card">كارت ٣</article><article class="card">كارت ٤</article>
-  <article class="card">كارت ٥</article><article class="card">كارت ٦</article><article class="card">كارت ٧</article>
-</section>
-<section id="bento">
-  <div class="b b1">كبير</div><div class="b b2">عريض</div><div class="b">٣</div><div class="b">٤</div><div class="b">٥</div><div class="b">٦</div>
-</section>
-<section id="app">
-  <aside class="side"><a href="#">🏠 <span class="label">الرئيسية</span></a><a href="#">📦 <span class="label">الطلبات</span></a><a href="#">⚙ <span class="label">الإعدادات</span></a></aside>
-  <div class="content">المحتوى</div>
-</section>
-<div id="overlay" hidden><div class="modal" role="dialog" aria-label="تأكيد">متأكد إنك عايز تمسح الطلب؟</div></div>
-<section id="shell"><header>هيدر</header><main class="s-main">صفحة قصيرة</main><footer class="s-foot">فوتر</footer></section>
-<section id="masonry">
-  <div class="m" style="height:90px">١</div><div class="m" style="height:160px">٢</div><div class="m" style="height:120px">٣</div>
-  <div class="m" style="height:200px">٤</div><div class="m" style="height:80px">٥</div><div class="m" style="height:140px">٦</div>
-  <div class="m" style="height:110px">٧</div><div class="m" style="height:170px">٨</div><div class="m" style="height:100px">٩</div>
-</section>
-<nav id="topnav"><a class="logo" href="#">متجر الورد</a><ul class="links"><li><a href="#">المنتجات</a></li><li><a href="#">العروض</a></li><li><a href="#">تواصل</a></li></ul><a class="cta" href="#">اطلب دلوقتي</a></nav>
-<script>
-// حل التمرين اللي بيتصحح لوحده
-function autoFitColumns(width, min, gap) {
-  if (width <= 0 || min <= 0 || gap < 0) throw new RangeError('الأرقام لازم موجبة');
-  return Math.max(1, Math.floor((width + gap) / (min + gap)));
-}
-function trackWidth(width, min, gap) {
-  const n = autoFitColumns(width, min, gap);
-  return Math.round((width - gap * (n - 1)) / n * 10) / 10;
-}
-function spanSize(span, track, gap) {
-  return span * track + (span - 1) * gap;
-}
-</script>
+<body class="grid min-h-dvh place-items-center bg-gray-100 p-4 text-gray-900">
+<main class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-lg">
+  <h1 class="text-lg font-bold">الباقة الاحترافية</h1>
+  <p class="mt-2 text-sm text-gray-600">لفريق صغير بيبني منتج حقيقي.</p>
+  <p class="mt-4 text-4xl font-extrabold">499 <span class="text-base font-medium text-gray-600">جنيه في الشهر</span></p>
+  <ul class="mt-4 space-y-2 text-sm">
+    <li>١٠ مشاريع</li>
+    <li>٥٠ جيجا مساحة</li>
+    <li>دعم في نفس اليوم</li>
+  </ul>
+  <a href="#signup" class="mt-6 block rounded-lg bg-teal-700 px-4 py-3 text-center font-semibold text-white hover:bg-teal-800">ابدأ دلوقتي</a>
+</main>
 </body>
-</html>`,
-          flag: "script",
-          check: {
-            lang: "js",
-            starter: R`// repeat(auto-fit, minmax(min, 1fr)) مع gap: كام عمود؟ وعرض كل عمود كام؟
-function autoFitColumns(width, min, gap) {}
-function trackWidth(width, min, gap) {}
-function spanSize(span, track, gap) {}`,
-            tests: R`test("1168px و min 220 و gap 16: ٥ عواميد", () => expect(autoFitColumns(1168, 220, 16)).toBe(5));
-test("الـ gap بيتحسب: 700px بـ gap 16 = ٣ مش ٢", () => expect(autoFitColumns(700, 220, 16)).toBe(3));
-test("بالظبط على الحد: 5×220 + 4×16 = 1164px = ٥", () => expect([autoFitColumns(1164, 220, 16), autoFitColumns(1163, 220, 16)]).toEqual([5, 4]));
-test("أضيق من الـ min: عمود واحد مش صفر", () => expect(autoFitColumns(328, 340, 12)).toBe(1));
-test("gap صفر", () => expect(autoFitColumns(900, 300, 0)).toBe(3));
-test("أرقام سالبة بترمي RangeError", () => expect(() => autoFitColumns(-1, 220, 16)).toThrow("موجبة"));
-test("trackWidth: العمود بيكبر عشان يملا (1fr)", () => expect(trackWidth(1168, 220, 16)).toBe(220.8));
-test("trackWidth: عمود واحد بياخد العرض كله", () => expect(trackWidth(328, 340, 12)).toBe(328));
-test("spanSize: كارت عمودين = عمودين + gap واحد", () => expect(spanSize(2, 283, 12)).toBe(578));
-test("spanSize: صفين بارتفاع 120 = 252", () => expect(spanSize(2, 120, 12)).toBe(252));`,
-            solution: R`function autoFitColumns(width, min, gap) {
-  if (width <= 0 || min <= 0 || gap < 0) throw new RangeError('الأرقام لازم موجبة');
-  return Math.max(1, Math.floor((width + gap) / (min + gap)));
-}
-function trackWidth(width, min, gap) {
-  const n = autoFitColumns(width, min, gap);
-  return Math.round((width - gap * (n - 1)) / n * 10) / 10;
-}
-function spanSize(span, track, gap) {
-  return span * track + (span - 1) * gap;
-}`
-          },
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const autoFitColumns = (width, min, gap) => Math.max(1, Math.floor((width + gap) / (min + gap)));
-const trackWidth = (width, min, gap) => { const n = autoFitColumns(width, min, gap); return (width - gap * (n - 1)) / n; };
-const spanWidth = (span, col, gap) => span * col + (span - 1) * gap;
-for (const w of [1168, 700, 328]) console.log(w + "px: " + autoFitColumns(w, 220, 16) + " columns of " + trackWidth(w, 220, 16).toFixed(1) + "px");
-const col = (1168 - 3 * 12) / 4;
-console.log("bento big tile: " + spanWidth(2, col, 12) + "x" + spanWidth(2, 120, 12));`, expect: [R`1168px: 5 columns of 220.8px`, R`700px: 3 columns of 222.7px`, R`328px: 1 columns of 328.0px`, R`bento big tile: 578x252`] },
-          ],
-        },
-        {
-          cmd: "صفحات بتفيض على 360",
-          ref: [
-            { t: "MDN: Overflowing content", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Overflow" },
-            { t: "MDN: overflow-wrap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-wrap" },
-            { t: "MDN: min-width", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-width" },
-          ],
-          title: "صفحة بتعمل scroll أفقي على الموبايل: لاقي العنصر وصلّحه (٨ حالات)",
-          learn: R`تلاقي العنصر اللي مسبب الـ scroll الأفقي في دقيقة بكود في الـ Console بدل ما تشيل CSS واحدة واحدة، وتصلّح السبب نفسه مش العَرَض.`,
-          out: R`صفحة فيها ٨ أسباب حقيقية للفيضان بتعدّي من [[0 من 8]] لـ [[8 من 8]]، وفحص بيكشف الحيلة بتاعة [[overflow-x: hidden]] على الـ body.`,
-          use: {
-            prog: R`الفيضان الأفقي أشهر باج responsive: سطر CSS واحد في أي حتة في الصفحة بيخلي الصفحة كلها تتهز يمين وشمال على الموبايل.`,
-            work: R`دي أكتر تيكت بتيجي من صاحب الشغل بعد ما يفتح الموقع من موبايله: «الصفحة بتتحرك لما أسحب». ولو صلّحتها بـ [[overflow-x: hidden]] على الـ body هتكسر الـ sticky header وهتخبي محتوى بجد، والفحص هنا بيقولك ده.`,
-            cs: R`الفحص بيلف على كل عنصر في الشجرة ويقارن مستطيله بحدود الأب: ده traversal على شجرة الـ DOM بـ O(n). والكلام بيتقاس بـ [[Range]] لأن النص مش عنصر وملوش [[getBoundingClientRect]] لوحده.`,
-          },
-          desc: R`الصفحة بتفيض لما عنصر واحد بس يبقى أعرض من الشاشة. والطريقة: **لاقي العنصر الأول، وبعدين صلّح السبب**. فيه ٨ أسباب بيتكرروا في كل موقع:
-
-• صورة بعرض ثابت ([[width="600"]]) من غير [[max-width: 100%]].
-• كلمة طويلة من غير مسافات (إيميل، أو كود خصم، أو لينك) من غير [[overflow-wrap: anywhere]].
-• جدول عريض من غير حاوية بـ [[overflow-x: auto]].
-• صف أزرار flex من غير [[flex-wrap: wrap]].
-• [[width: 100vw]]، وده أعرض من الصفحة بعرض شريط الـ scroll على ويندوز.
-• grid بـ [[minmax(340px, 1fr)]] على شاشة مكانها 328.
-• [[<pre>]] فيه سطر كود طويل.
-• عنصر flex فيه كلمة طويلة: الـ [[min-width: auto]] الافتراضي بيمنعه يصغر عن الكلمة.
-
-وفي صفحة عربي الفيضان بيبقى **ناحية الشمال** (أرقام [[left]] بالسالب)، فلو دوّرت على [[right > innerWidth]] بس مش هتلاقي حاجة. ده تطبيق على دروس «media queries» و «مصفوفة مقاسات» و «auto-fit و minmax» و «جدول responsive» في التاب ده.`,
-          example: R`const W = document.documentElement.clientWidth;
-const out = [...document.querySelectorAll('body *')].filter(el => {
-  const r = el.getBoundingClientRect();
-  return r.width && (r.right > W + 0.5 || r.left < -0.5);
-});
-console.log('الصفحة ' + document.documentElement.scrollWidth + 'px والشاشة ' + W + 'px، و ' + out.length + ' عنصر طالع برا');
-out.forEach(el => el.style.outline = '2px solid red');
-out.slice(0, 6).forEach(el => console.log(el.tagName.toLowerCase() + (el.className ? '.' + el.className : '') + ' ' + Math.round(el.getBoundingClientRect().left) + ' → ' + Math.round(el.getBoundingClientRect().right)));`,
-          lines: [
-            R`عرض الشاشة من غير شريط الـ scroll. [[clientWidth]] بتاع [[<html>]] هو المساحة اللي المحتوى المفروض يفضل جواها، وده أدق من [[innerWidth]] اللي بيشمل الشريط.`,
-            R`بنلف على كل عنصر جوه الـ body ونخلي اللي طالع برا بس. [[[...]]] بيحوّل الـ NodeList لـ array عشان [[filter]] تشتغل عليها.`,
-            R`مستطيل العنصر بالبكسل من أول الشاشة: [[left]] و [[right]] و [[width]].`,
-            R`العنصر طالع لو آخره بعد حافة الشاشة اليمين، **أو** أوله قبل حافتها الشمال (وده اللي بيحصل في العربي). و [[r.width]] بيستبعد العناصر المستخبية اللي عرضها صفر، و 0.5 سماح لكسور البكسل.`,
-            R`قفلة الـ filter. لحد هنا [[out]] فيها كل عنصر حدوده برا الشاشة.`,
-            R`بنطبع عرض الصفحة كلها ([[scrollWidth]]) جنب عرض الشاشة. لو الاتنين متساويين يبقى مفيش scroll أفقي، ولو الأول أكبر يبقى فيه.`,
-            R`بنحط إطار أحمر على كل عنصر طالع عشان تشوفه بعينك. [[outline]] مش بياخد مكان، فمش بيغيّر الـ layout اللي بتقيسه.`,
-            R`بنطبع أول ٦ عناصر باسمهم ومن فين لفين. أول واحد في اللستة غالبًا هو السبب، واللي بعده أولاده.`,
-          ],
-          teach: R`## الفكرة في سطر
-
-**متشيلش CSS واحدة واحدة.** لاقي العنصر الطالع بكود، واسأل «ليه ده أعرض من مكانه؟»، وصلّح السبب ده بالذات. وبعدين افحص تاني. كل الأرقام تحت من Chrome بـ Playwright على عرض 360 × 640 على ويندوز ١١.
-
----
-
-## الخطوة ١: الكود اللي في المثال، وحدوده
-
-على الصفحة البايظة (الأجزاء التمانية تحت):
-
-~~~text الكود اللي في المثال، الصفحة البايظة على 360
-الصفحة 793px والشاشة 360px، و 17 عنصر طالع برا
-img -256 → 344
-table -240 → 344
-tbody -238 → 342
-tr -238 → 342
-th -67 → 7
-th -159 → -69
-~~~
-
-لاحظ: كل الأرقام [[left]] بالسالب و [[right]] جوه الشاشة (344). الصفحة [[dir="rtl"]]، فالعنصر بيبدأ من اليمين ويفيض شمال. ولو كنت بدوّر على [[right > W]] بس، كنت هتلاقي صفر.
-
-وعلى الصفحة **بعد التصليح**:
-
-~~~text نفس الكود، الصفحة السليمة على 360
-الصفحة 360px والشاشة 360px، و 11 عنصر طالع برا
-table -240 → 344
-tbody -238 → 342
-tr -238 → 342
-th -67 → 7
-th -159 → -69
-th -238 → -161
-~~~
-
-الصفحة مبقاش فيها scroll (360 = 360)، بس الكود لسه بيقول ١١ عنصر! دول الجدول وأولاده جوه [[.table-wrap]] اللي عليها [[overflow-x: auto]]: الجدول أعرض من الشاشة **عن قصد** والحاوية بتعمل scroll لوحدها. يعني الكود البسيط بيدي إنذار كاذب، وعشان كده الفحص الذاتي تحت بيتخطى أي عنصر جوه scroll container.
-
----
-
-## الخطوة ٢: الأسباب التمانية وتصليحها
-
-الصفحة: «متجر الورد» (متخيل)، [[<html lang="ar" dir="rtl">]]، و [[section { padding: 16px }]]، فالمكان المتاح جوه كل جزء على 360 هو **328px**. كل جزء [[<section id="s1">]] لحد [[s8]].
-
-| الجزء | اللي بيفيض | ليه | التصليح |
-|---|---|---|---|
-| [[s1]] صورة المنتج | [[<img width="600">]] | الـ attribute بيدي الصورة عرض 600 ثابت | [[img { max-width: 100%; height: auto; }]]، والـ [[height: auto]] عشان النسبة متبوظش |
-| [[s2]] إيميل الدعم | [[customer.support.orders.team@...]] | المتصفح بيكسر السطر عند المسافات بس، والإيميل كلمة واحدة | [[overflow-wrap: anywhere]] بيسمح يكسر جوه الكلمة لما مفيش حل تاني |
-| [[s3]] جدول الطلبات | [[<table>]] فيه ٦ عواميد [[nowrap]] | الجدول مبيصغرش عن محتوى خلاياه | حاوية [[.table-wrap { overflow-x: auto }]]: الجدول يعمل scroll جواها والصفحة لأ |
-| [[s4]] أزرار الفلتر | ٦ أزرار في [[display: flex]] | الـ flex الافتراضي [[nowrap]]: صف واحد مهما حصل | [[flex-wrap: wrap]] |
-| [[s5]] الهيرو | [[width: 100vw]] | 100vw = الشاشة كلها، والـ section فيه padding 16، فالهيرو طالع 16px | امسح الـ width (الـ block بياخد عرض أبوه لوحده) |
-| [[s6]] كروت المميزات | [[minmax(340px, 1fr)]] | أقل عرض للعمود 340 والمكان 328 | [[minmax(min(340px, 100%), 1fr)]] |
-| [[s7]] كود الـ API | [[<pre>]] بسطر 765px | الـ pre مبيكسرش السطور (وده صح للكود) | [[pre { overflow-x: auto; }]] |
-| [[s8]] صف المنتج | [[span.name]] في flex | عنصر الـ flex [[min-width: auto]]، يعني مبيصغرش عن أطول كلمة جواه | [[.name { min-width: 0; overflow-wrap: anywhere; }]] |
-
-> **[[100vw]] على ويندوز:** شغّلت صفحة فيها [[width: 100vw]] بس ومفيش padding، في Chrome عادي (مش headless) على ويندوز ١١: [[innerWidth]] 1200، و [[clientWidth]] 1185 (شريط الـ scroll 15px)، والعنصر 1200، يعني scroll أفقي 15px على أي كمبيوتر ويندوز. ونفس الصفحة في Chrome **headless** طلّعت 1200 و 1200 ومفيش مشكلة، لأن headless شريطه مش بياخد مكان. يعني اختبار آلي بس ممكن يعدّي الباج ده.
-
----
-
-## الخطوة ٣: الفحص الذاتي
-
-بيقيس كل [[section[id]]] لوحده: كل عنصر جواه لازم يفضل جوه مساحة المحتوى (من غير الـ padding)، وكل كلام لازم يفضل جواها برضه. الكلام بيتقاس بـ [[document.createRange()]] لأن النص مش عنصر: الـ Range بيحوط الحروف نفسها ويرجّع مستطيلها. وأي حاجة جوه أب عليه [[overflow-x]] غير [[visible]] بتتخطى، لأنها بتعمل scroll جواه مش في الصفحة.
-
-~~~js الفحص الذاتي: الفيضان
-(() => {
-  const W = document.documentElement.clientWidth, de = document.documentElement;
-  const scroller = el => /auto|scroll|hidden|clip/.test(getComputedStyle(el).overflowX);
-  const insideScroller = (el, sec) => { for (let p = el.parentElement; p && p !== sec; p = p.parentElement) if (scroller(p)) return true; return false; };
-  const name = el => el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (el.classList.length ? '.' + [...el.classList].join('.') : '');
-  let pass = 0, all = 0;
-  console.log('الصفحة: عرض الشاشة ' + W + ' وعرض المحتوى ' + de.scrollWidth + (de.scrollWidth > W ? ' ← فيه scroll أفقي' : ' ← مفيش scroll أفقي'));
-  for (const sec of document.querySelectorAll('section[id]')) {
-    const s = getComputedStyle(sec), r0 = sec.getBoundingClientRect();
-    const left = r0.left + parseFloat(s.paddingLeft) + parseFloat(s.borderLeftWidth), right = r0.right - parseFloat(s.paddingRight) - parseFloat(s.borderRightWidth);
-    const bad = [];
-    for (const el of sec.querySelectorAll('*')) {
-      if (insideScroller(el, sec)) continue;
-      const r = el.getBoundingClientRect();
-      if (!r.width) continue;
-      if (r.right > right + 0.5 || r.left < left - 0.5) bad.push(name(el) + ' عرضه ' + Math.round(r.width) + 'px والمكان ' + Math.round(right - left) + 'px');
-    }
-    const walk = document.createTreeWalker(sec, NodeFilter.SHOW_TEXT);
-    for (let t; (t = walk.nextNode());) {
-      if (!t.data.trim() || insideScroller(t.parentElement, sec) || scroller(t.parentElement) && t.parentElement !== sec) continue;
-      const rg = document.createRange(); rg.selectNodeContents(t);
-      const r = rg.getBoundingClientRect();
-      if (r.right > right + 0.5 || r.left < left - 0.5) bad.push('كلام في ' + name(t.parentElement) + ' عرضه ' + Math.round(r.width) + 'px: «' + t.data.trim().slice(0, 18) + '…»');
-    }
-    all++; if (!bad.length) pass++;
-    console.log((bad.length ? 'FAIL ' : 'PASS ') + sec.id + ' ' + sec.querySelector('h2').textContent + (bad.length ? ' ← ' + bad.slice(0, 2).join('، و ') : ''));
-  }
-  console.log('النتيجة: ' + pass + ' من ' + all + (de.scrollWidth > W ? '، والصفحة لسه بتفيض' : ''));
-})();
-~~~
-
-### على الصفحة البايظة
-
-~~~text Chrome على 360، قبل التصليح
-الصفحة: عرض الشاشة 360 وعرض المحتوى 793 ← فيه scroll أفقي
-FAIL s1 ١ صورة المنتج ← img عرضه 600px والمكان 328px
-FAIL s2 ٢ إيميل الدعم ← كلام في p عرضه 399px: «ابعتلنا على custom…»
-FAIL s3 ٣ جدول الطلبات ← table عرضه 584px والمكان 328px، و tbody عرضه 580px والمكان 328px
-FAIL s4 ٤ أزرار الفلتر ← button عرضه 78px والمكان 328px، و button عرضه 63px والمكان 328px
-FAIL s5 ٥ الهيرو ← div.hero عرضه 360px والمكان 328px
-FAIL s6 ٦ كروت المميزات ← div.f عرضه 340px والمكان 328px، و div.f عرضه 340px والمكان 328px
-FAIL s7 ٧ كود الـ API ← code عرضه 765px والمكان 328px، و كلام في code عرضه 765px: «fetch("https://flo…»
-FAIL s8 ٨ صف المنتج ← span.name عرضه 388px والمكان 328px، و button عرضه 41px والمكان 328px
-النتيجة: 0 من 8، والصفحة لسه بتفيض
-~~~
-
-في [[s4]] الزرار عرضه 78px بس وطالع: العيب مش في عرضه، في إن الصف كله مبيلفّش. وفي [[s8]] الزرار «أضف» (41px) طالع لأن [[span.name]] اللي قبله زقه برا. يعني أول عنصر في الرسالة هو السبب، والتاني ضحيته.
-
-### الحيلة اللي بتخبي المشكلة
-
-لو حطيت [[html, body { overflow-x: hidden; }]] على الصفحة البايظة من غير ما تصلّح حاجة:
-
-~~~text Chrome على 360، الصفحة البايظة + overflow-x: hidden على الـ body
-الصفحة: عرض الشاشة 360 وعرض المحتوى 360 ← مفيش scroll أفقي
-...
-النتيجة: 0 من 8
-~~~
-
-الـ scroll اختفى فعلًا، بس الـ ٨ أجزاء لسه بايظين: الصورة مقصوصة، والإيميل نصه مش باين، وآخر عمود في الجدول اختفى. والـ [[overflow]] على الـ body كمان بيخلي الـ body scroll container، فأي [[position: sticky]] جواه بيبطل يلزق في الشاشة (التمرين الأول في الدرس اللي بعده). الفحص مش بيتضحك عليه لأنه بيقيس كل جزء على حدوده هو، مش الصفحة كلها.
-
-### بعد التصليح
-
-~~~text Chrome على 360 (وعلى 1200 نفس النتيجة)
-الصفحة: عرض الشاشة 360 وعرض المحتوى 360 ← مفيش scroll أفقي
-PASS s1 ١ صورة المنتج
-PASS s2 ٢ إيميل الدعم
-PASS s3 ٣ جدول الطلبات
-PASS s4 ٤ أزرار الفلتر
-PASS s5 ٥ الهيرو
-PASS s6 ٦ كروت المميزات
-PASS s7 ٧ كود الـ API
-PASS s8 ٨ صف المنتج
-النتيجة: 8 من 8
-~~~
-
----
-
-## الخطوات اللي بتحل بيها أي صفحة بتفيض
-
-| الخطوة | بتعمل إيه |
-|---|---|
-| Device Toolbar على 360 (و 320 لو عايز تتأكد) | الموبايلات الصغيرة لسه موجودة، وعرض 320 بيكشف حاجات 360 بيعدّيها |
-| الكود اللي في المثال | بيديك أول عنصر طالع في ثانية، ومعاه إطار أحمر تشوفه |
-| اسأل «ليه أعرض من مكانه؟» | عرض ثابت؟ كلمة طويلة؟ nowrap؟ min-width بتاع flex؟ minmax؟ |
-| صلّح العنصر ده بس | مش [[overflow: hidden]] على الأب اللي فوقه |
-| الفحص الذاتي | بيتأكد إن الجزء كله سليم، وإن الحيلة مش مستخبية |
-| جرّب على ويندوز بشريط scroll عادي | عشان [[100vw]] اللي headless مبيشوفهوش |
-
-## خلاصة
-
-- في العربي الفيضان ناحية الشمال: دوّر على [[left < 0]] كمان.
-- [[max-width: 100%]] للصور، و [[overflow-wrap: anywhere]] للكلام الطويل، و [[overflow-x: auto]] للجداول والكود، و [[flex-wrap]] للصفوف، و [[min(…, 100%)]] جوه [[minmax]]، و [[min-width: 0]] لعناصر الـ flex.
-- [[100vw]] مش عرض الصفحة: فيه شريط الـ scroll.
-- [[overflow-x: hidden]] على الـ body بيخبي المشكلة وبيكسر الـ sticky. لو مضطر استخدم [[overflow-x: clip]] على الجزء نفسه بس.`,
-          try: R`انسخ الصفحة البايظة من «الحل» (الجزء اللي قبل التصليح)، وافتحها على 360 في Device Toolbar، وشغّل الكود اللي في المثال وبعده الفحص الذاتي. صلّح الأجزاء التمانية واحد واحد، وبعد كل تصليح شغّل الفحص تاني لحد ما يطلع [[النتيجة: 8 من 8]] والصفحة 360 = 360. وجرّب حيلة [[overflow-x: hidden]] مرة عشان تشوف الفحص بيكشفها.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة [[dir="rtl"]] فيها صورة [[width="600"]] على شاشة 360. الكود ده هيلاقيها؟ [[[...document.querySelectorAll('*')].filter(el => el.getBoundingClientRect().right > innerWidth)]]. اكتب إجابتك وبعدين جرّب.`, done: R`كتبت «لأ» قبل التجربة لأن في RTL الصورة بتبدأ من اليمين وآخرها جوه الشاشة وأولها بالسالب، والكود رجّع array فاضية فعلًا، ولما زوّدت [[|| r.left < 0]] لقاها.`,
-              sol: R`~~~live 390 390 rtl-image.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>صورة</title>
-<style>body { margin: 0; }</style></head>
-<body>
-  <main><h1>منتج</h1><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" width="600" height="300" alt="منتج"></main>
-</body></html>
-~~~
-
-الإجابة: **لأ**، الـ array فاضية. الصفحة RTL، فالصورة بتبدأ من اليمين: حافتها اليمين عند 360، وأولها عند [[-240]]. الفيضان رايح شمال، و [[right > innerWidth]] مبيتحققش.
-
-عشان كده أي كود بيدوّر على الفيضان لازم يسأل عن الناحيتين: [[r.right > innerWidth || r.left < 0]].
-
-والفرق ده اتكلم عنه درس المصفوفة: كود منسوخ من موقع إنجليزي بيدّيك «مفيش مشاكل»، والـ scroll لسه موجود.
-
-الغلطة الشائعة: تعتبر الـ array الفاضية دليل إن مفيش فيضان. شوف كمان [[scrollWidth]] مقابل [[clientWidth]].
-
-~~~text الناتج (Chrome 156، عرض 360)
-الفلتر right بس: 0 عنصر
-بعد || r.left < 0: IMG
-scrollWidth − clientWidth: 240
-حدود الصورة: left -240، و right 360
+</html>
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كارت فيه [[display: flex]]: أيقونة، و [[<h3>]] فيه اسم ملف طويل من غير مسافات ([[تقرير_المبيعات_الشهري_النهائي_بعد_التعديل.xlsx]])، وزرار «تحميل». على 360 الزرار طالع برا. صلّحه من غير ما تخلي الاسم يتقص بـ [[...]].`, done: R`الفحص الذاتي على الكارت PASS، والاسم بيتكسر على سطرين جوه الكارت، والزرار جوه الشاشة. والتصليح [[min-width: 0]] على الـ h3 (أو على الـ wrapper بتاعه) و [[overflow-wrap: anywhere]]، ومكتوب ليه [[min-width: 0]] لوحدها مش كفاية (الكلمة لسه مبتتكسرش).`,
-              sol: R`~~~live 130 150 file-card.html
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس المشروع بـ build عادي وبـ [[--minify]]. قيس الحجم في الحالتين، وبعدين زوّد ٢٠ كلاس جديد وقيس تاني.`, done: R`عندك ٤ أرقام بالـ byte (في معمل صغير طلع 17,900 من غير minify و 14,729 بيه)، والحجم بيزيد على قد الكلاسات الجديدة بس مش بالآلاف، وكتبت ليه (Tailwind بيطلّع اللي استخدمته بس).`, sol: R`~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+wc -c out.css
+npx @tailwindcss/cli -i in.css -o out.css --minify
+wc -c out.css
+# زوّد 20 كلاس جديد في الـ HTML (p-1 و m-2 و underline و flex و border-2 ...) وكرر
+~~~
+
+**ليه الزيادة صغيرة:** كل كلاس جديد بيضيف قاعدته بس، حوالي 50 إلى 70 byte، مش مكتبة جديدة. والحجم الأساسي (الـ reset والمتغيرات والـ theme المستخدم) ثابت.
+
+**[[--minify]]** بيشيل المسافات والأسطر الجديدة. الفرق هنا حوالي 15٪ قبل الضغط. ولما السيرفر يعمل gzip أو brotli الفرق بيقل، بس لسه مفيد.
+
+**الغلطة الشائعة:** تفتكر إن الزيادة بالآلاف زي Bootstrap لما تضيف component. هنا الكلاس المكرر ١٠٠ مرة في الـ HTML قاعدته في الـ CSS مرة واحدة.
+
+~~~text الناتج
+                  من غير minify    بـ --minify
+كارت السعر        10,300           8,742
+بعد 20 كلاس       11,659           9,771
+الزيادة           1,359            1,029
+
+يعني حوالي 68 byte للكلاس من غير minify، و 51 byte بيه.
+~~~
+
+(الأرقام بتتغيّر مع نسخة Tailwind وعدد كلاساتك.)` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة 404 لموقع متخيل بـ Tailwind بس: رقم كبير ورسالة وزرارين في نص الشاشة ([[grid place-items-center min-h-dvh]])، وألوان للوضع الغامق بـ [[dark:]].`, done: R`الصفحة متوسّطة على 360 و 1280، ومن DevTools › Rendering مع [[prefers-color-scheme: dark]] الألوان بتتقلب، ومفيش ولا سطر CSS بتاعك غير الـ [[@import]].`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ملف</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, sans-serif; }
-  section { padding: 16px; }
-  .card { display: flex; align-items: center; gap: 8px; }
-  .card h3 { margin: 0; flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 1rem; }
-  .card button { flex: none; }
-</style></head>
-<body>
-  <main><section id="s1"><h2>الملفات</h2>
-    <div class="card">
-      <span aria-hidden="true">📄</span>
-      <h3>تقرير_المبيعات_الشهري_النهائي_بعد_التعديل.xlsx</h3>
-      <button>تحميل</button>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصفحة مش موجودة</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+<main class="grid min-h-dvh place-items-center p-6 text-center">
+  <div>
+    <p class="text-8xl font-black text-teal-700 dark:text-teal-300">404</p>
+    <h1 class="mt-4 text-2xl font-bold">الصفحة دي مش موجودة</h1>
+    <p class="mt-2 text-gray-600 dark:text-gray-400">يمكن الرابط اتغيّر أو اتكتب غلط.</p>
+    <div class="mt-6 flex flex-wrap justify-center gap-3">
+      <a href="/" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 dark:bg-teal-300 dark:text-gray-950 dark:hover:bg-teal-200">الرئيسية</a>
+      <a href="/contact" class="rounded-lg border border-gray-300 px-5 py-3 font-semibold hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">كلّمنا</a>
     </div>
-  </section></main>
-</body></html>
-~~~
-
-مشكلتين مش واحدة، وكل سطر بيحل واحدة:
-
-- [[min-width: 0]]: أبناء flex حدهم الأدنى [[min-width: auto]]، يعني مبيصغروش عن أطول كلمة. الاسم كلمة واحدة، فالـ h3 بيفضل عريض ويزق الزرار. الصفر بيسمحله يصغر.
-- [[overflow-wrap: anywhere]]: دلوقتي الـ h3 صغير، بس الكلمة مبتتكسرش، فالنص يطلع برا. السطر ده بيقول «اكسر الكلمة لو لزم».
-
-[[min-width: 0]] لوحدها مش كفاية، و [[overflow-wrap]] لوحدها كمان: الأولى بتدّي المساحة والتانية بتستخدمها.
-
-و [[flex: none]] على الزرار عشان ميتضغطش. ومفيش [[text-overflow: ellipsis]]، لأن المطلوب الاسم كامل.
-
-الغلطة الشائعة: [[word-break: break-all]]: بيكسر كل الكلام، حتى الكلمات اللي مش محتاجة.
-
-~~~text الناتج (Chrome 156، عرض 360)
-قبل: زرار «تحميل» من -58 لـ -16 (خارج الشاشة)
-بـ min-width: 0 بس: عرض h3 248، وعرض النص 322 (النص طالع)
-النهائي: زرار من 16 لـ 58، وعدد سطور الاسم 2
-الفحص الذاتي: PASS s1 الملفات
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** حوّل الكود اللي في المثال لـ bookmarklet: لينك [[javascript:]] في شريط العلامات بيحط الإطار الأحمر، ولو دوست تاني بيشيله.`, done: R`على الصفحة البايظة بيعلّم الصورة والجدول والأزرار، وعلى السليمة مبيعلّمش حاجة برا [[.table-wrap]]، والدوسة التانية بترجّع كل [[outline]] زي ما كان (مش بتشيل outline العنصر الأصلي لو كان ليه).`,
-              sol: R`~~~text الـ bookmarklet (سطر واحد، يتحط في URL علامة جديدة)
-javascript:(()=>{const K='data-of-old';const on=document.querySelectorAll('['+K+']');if(on.length){on.forEach(e=>{e.style.outline=e.getAttribute(K);e.removeAttribute(K)});return}const W=document.documentElement.clientWidth;const sc=e=>/auto|scroll|hidden|clip/.test(getComputedStyle(e).overflowX);const inside=e=>{for(let p=e.parentElement;p;p=p.parentElement)if(sc(p))return true;return false};const bad=[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width&&(r.right>W+.5||r.left<-.5)&&!inside(e)});bad.forEach(e=>{e.setAttribute(K,e.style.outline);e.style.outline='2px solid red'});alert(bad.length+' عنصر طالع برا')})();
-~~~
-
-الـ bookmarklet رابط [[javascript:]] بيتنفذ في الصفحة الحالية. اعمل علامة في شريط العلامات، والـ URL بتاعها السطر ده، ودوس عليها على أي صفحة.
-
-- أول ما يتنفذ بيسأل: فيه عناصر معلّمة قبل كده؟ لو أيوه يبقى ده الضغط التاني، فبيرجّع وينهي.
-- [[data-of-old]] attribute بيحفظ قيمة [[outline]] الأصلية للعنصر. وده اللي بيحقق شرط التمرين: عنصر كان ليه outline أصلي، بيرجع زي ما كان، مش بيتمسح.
-- [[inside()]] بيعدّي أي عنصر جوه أب بيعمل scroll، زي [[.table-wrap]]: ده مش فيضان، ده scroll مقصود.
-
-الغلطة الشائعة: [[el.style.outline = ""]] في الضغط التاني، فبتمسح أي outline كان موجود.
-
-~~~text الناتج (Chrome 156، على 360: نسخة الكود من غير alert)
-الصفحة البايظة (من الدرس): علّم 17 عنصر: img table tbody tr th td button div code span
-الصفحة السليمة: علّم 0 عنصر
-عنصر ليه outline: 3px dashed blue قبل: blue dashed 3px، وبعد الضغطتين: blue dashed 3px
-~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[overflow: hidden]] و [[overflow: clip]]: أنهي واحد بيعمل scroll container؟ وأنهي واحد بيسمح بـ [[overflow-clip-margin]]؟ وجرّب الاتنين على أب جواه [[position: sticky]].`, done: R`مكتوب إن [[hidden]] بيعمل scroll container (الـ sticky بيلزق جواه ومش في الشاشة، والعنصر لسه بيتعمله scroll بـ JS)، و [[clip]] مش بيعمل (الـ sticky شغال)، وإن [[overflow-clip-margin]] مع [[clip]] بس، والتجربة على الـ sticky طلّعت نفس الكلام.`,
-              sol: R`~~~live 600 720 clip-vs-hidden.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>clip</title>
-<style>
-  body { margin: 0; }
-  .box { overflow-x: hidden; }
-  .bar { position: sticky; top: 0; block-size: 40px; background: #1f2937; color: #fff; }
-  .long { block-size: 2000px; }
-</style></head>
-<body><div class="box" id="b"><header class="bar" id="s">شريط</header><main><h1>x</h1><div class="long"></div></main></div></body>
+  </div>
+</main>
+</body>
 </html>
 ~~~
 
-الإجابة من MDN صفحة [[overflow]]:
+و [[in.css]] سطر واحد: [[@import "tailwindcss";]].
 
-- [[hidden]]: بيقص، بس العنصر لسه **scroll container**. يقدر يتعمله scroll من JavaScript ([[scrollTop]])، والـ sticky جواه بيلزق فيه هو مش في الشاشة، و [[overflow-y]] بيتحول [[auto]] لوحده.
-- [[clip]]: بيقص من غير scroll container. مفيش scroll خالص، حتى من JS، والـ sticky بيعدّيه ويلزق في الشاشة. و [[overflow-y]] بيفضل [[visible]].
-- [[overflow-clip-margin]]: بيوسّع منطقة القص شوية. بيشتغل مع [[clip]] بس، لأن [[hidden]] معناه scrollport كامل.
+**ليه شغال:**
 
-الغلطة الشائعة: [[overflow-x: hidden]] عشان «يمنع scroll أفقي»، فالـ sticky يقف من غير ما تفهم ليه.
+- [[grid min-h-dvh place-items-center]]: grid بخلية واحدة، ارتفاعها الشاشة كلها، والمحتوى في نصها. [[dvh]] بدل [[vh]] عشان شريط المتصفح على الموبايل.
+- [[dark:]] افتراضيًا بيتحول لـ [[@media (prefers-color-scheme: dark)]]، فالصفحة بتسمع لإعداد الجهاز من غير JavaScript.
+- لون الرقم والزرار اتغيّر في الغامق كمان ([[teal-700]] لـ [[teal-300]])، لأن اللون الغامق على خلفية غامقة بيضيع.
+- [[flex-wrap]] على الزرارين عشان ينزلوا تحت بعض لو الشاشة صغيرة بدل ما يطلعوا برا.
 
-~~~text الناتج (Chrome 156، بعد scrollTo(0, 500))
-                      overflow-x: hidden    overflow-x: clip
-overflow-y المحسوب     auto                  visible
-sticky top             -500                  0
-scrollTop بعد 100 من JS 100                  0
-overflow-clip-margin: 20px مقروء: 20px
+**الغلطة الشائعة:** تقلب الخلفية بس وتنسى لون النص الباهت والزرار، فالصفحة تبقى غامقة بس مقروءة بالعافية. جرّب الوضعين ومعاهم axe.
+
+~~~text الناتج
+                   360 light         360 dark          1280
+مركز المحتوى      (180, 400)        (180, 400)        (640, 400)
+خلفية body         rgb(255,255,255)  oklch(0.13 ...)   نفس الاتنين
+لون الرقم 404      oklch(0.511 ...)  oklch(0.855 ...)
+scrollWidth        360               360               1280
+axe                صفر               صفر               صفر
+
+في CSS مكتوب سطر واحد بتاعك: @import.
+~~~
+
+~~~view 300 300 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصفحة مش موجودة</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid;--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-teal-200:oklch(91% .096 180.426);--color-teal-300:oklch(85.5% .138 181.071);--color-teal-700:oklch(51.1% .096 186.391);--color-teal-800:oklch(43.7% .078 188.216);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-300:oklch(87.2% .01 258.338);--color-gray-400:oklch(70.7% .022 261.325);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-700:oklch(37.3% .034 259.733);--color-gray-800:oklch(27.8% .033 256.848);--color-gray-900:oklch(21% .034 264.665);--color-gray-950:oklch(13% .028 261.692);--color-white:#fff;--spacing:.25rem;--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--text-8xl:6rem;--text-8xl--line-height:1;--font-weight-semibold:600;--font-weight-bold:700;--font-weight-black:900;--radius-lg:.5rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-4{margin-top:calc(var(--spacing) * 4)}.mt-6{margin-top:calc(var(--spacing) * 6)}.flex{display:flex}.grid{display:grid}.min-h-dvh{min-height:100dvh}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.justify-center{justify-content:center}.gap-3{gap:calc(var(--spacing) * 3)}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-gray-300{border-color:var(--color-gray-300)}.bg-teal-700{background-color:var(--color-teal-700)}.bg-white{background-color:var(--color-white)}.p-6{padding:calc(var(--spacing) * 6)}.px-5{padding-inline:calc(var(--spacing) * 5)}.py-3{padding-block:calc(var(--spacing) * 3)}.text-center{text-align:center}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-8xl{font-size:var(--text-8xl);line-height:var(--tw-leading,var(--text-8xl--line-height))}.font-black{--tw-font-weight:var(--font-weight-black);font-weight:var(--font-weight-black)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-gray-600{color:var(--color-gray-600)}.text-gray-900{color:var(--color-gray-900)}.text-teal-700{color:var(--color-teal-700)}.text-white{color:var(--color-white)}@media (hover:hover){.hover\:bg-gray-100:hover{background-color:var(--color-gray-100)}.hover\:bg-teal-800:hover{background-color:var(--color-teal-800)}}@media (prefers-color-scheme:dark){.dark\:border-gray-700{border-color:var(--color-gray-700)}.dark\:bg-gray-950{background-color:var(--color-gray-950)}.dark\:bg-teal-300{background-color:var(--color-teal-300)}.dark\:text-gray-100{color:var(--color-gray-100)}.dark\:text-gray-400{color:var(--color-gray-400)}.dark\:text-gray-950{color:var(--color-gray-950)}.dark\:text-teal-300{color:var(--color-teal-300)}@media (hover:hover){.dark\:hover\:bg-gray-800:hover{background-color:var(--color-gray-800)}.dark\:hover\:bg-teal-200:hover{background-color:var(--color-teal-200)}}}}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}
+</style>
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+<main class="grid min-h-dvh place-items-center p-6 text-center">
+  <div>
+    <p class="text-8xl font-black text-teal-700 dark:text-teal-300">404</p>
+    <h1 class="mt-4 text-2xl font-bold">الصفحة دي مش موجودة</h1>
+    <p class="mt-2 text-gray-600 dark:text-gray-400">يمكن الرابط اتغيّر أو اتكتب غلط.</p>
+    <div class="mt-6 flex flex-wrap justify-center gap-3">
+      <a href="/" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 dark:bg-teal-300 dark:text-gray-950 dark:hover:bg-teal-200">الرئيسية</a>
+      <a href="/contact" class="rounded-lg border border-gray-300 px-5 py-3 font-semibold hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">كلّمنا</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>
 ~~~` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** شغّل الفحص الذاتي بـ Playwright على 320 و 360 و 414 و 768 و 1024 و 1440، واطبع جدول: العرض، وعدد الأجزاء اللي عدّت، و [[scrollWidth]]. ويقع (exit code 1) لو أي عرض فيه FAIL.`, done: R`[[node matrix.mjs]] على الصفحة السليمة بيطبع ٦ صفوف كلها [[8 من 8]] وبيخرج بـ 0، وعلى البايظة بيطبع الأرقام الحقيقية وبيخرج بـ 1، ومكتوب جنبه إن headless مش بيشوف باج [[100vw]] وإزاي تتأكد منه (Chrome عادي على ويندوز).`,
-              sol: R`~~~js matrix.mjs
-import { chromium } from "playwright-core";
-import fs from "node:fs";
-const url = process.argv[2];
-const check = fs.readFileSync("self-check.js", "utf8");       // الفحص الذاتي من الدرس زي ما هو
-const browser = await chromium.launch({ channel: "chrome" });
-let bad = 0;
-console.log("العرض  الأجزاء  scrollWidth");
-for (const width of [320, 360, 414, 768, 1024, 1440]) {
-  const page = await browser.newPage({ viewport: { width, height: 800 } });
-  const logs = [];
-  page.on("console", (m) => logs.push(m.text()));
-  await page.goto(url);
-  await page.evaluate(check);
-  await page.waitForTimeout(50);
-  const result = logs.find((l) => l.startsWith("النتيجة")) ?? "";
-  const [, pass, all] = result.match(/(\d+) من (\d+)/) ?? [];
-  const sw = await page.evaluate(() => document.documentElement.scrollWidth);
-  console.log(String(width).padEnd(6), $__bt$__{pass} من $__{all}$__bt.padEnd(8), sw);
-  if (pass !== all || sw > width) bad++;
-  await page.close();
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Tailwind (صفحة «Detecting classes in source files»): إزاي تخلي Tailwind يقرا فولدر برا المشروع، وإزاي تمنعه من فولدر جواه؟ جرّب الاتنين.`, done: R`لقيت [[@source "../shared";]] و [[@source not "../legacy";]] (المسار من مكان ملف الـ CSS)، وأثبت بـ grep: كلاس موجود في shared بس ظهر في [[out.css]]، وكلاس موجود في legacy بس مظهرش.`, sol: R`~~~text شكل الفولدرات
+v4-4/
+  shared/card.html       فيه p-72
+  app/
+    src/in.css
+    src/index.html       فيه p-1
+    legacy/old.html      فيه p-71
+~~~
+
+~~~css app/src/in.css
+@import "tailwindcss";
+@source "../../shared";
+@source not "../legacy";
+~~~
+
+~~~bash
+cd app/src
+npx @tailwindcss/cli -i in.css -o out.css
+grep -c "p-72" out.css
+grep -c "p-71" out.css
+~~~
+
+**الإجابة من صفحة «Detecting classes in source files»:** [[@source]] بيضيف مسار يتفحص، و [[@source not]] بيستبعد مسار. والمسار دايمًا محسوب من مكان ملف الـ CSS، مش من مكان تشغيل الأمر. عشان كده [[../../shared]] من [[app/src]] بيوصل لـ [[shared]].
+
+**إمتى تحتاجهم:** الأول لو عندك monorepo والمكونات في package برا المشروع. والتاني لو فيه كود قديم أو ملفات كبيرة فيها كلمات شبه الكلاسات بتكبّر الـ CSS على الفاضي.
+
+**الغلطة الشائعة:** تكتب المسار من جذر المشروع زي [[@source "shared"]]، فمحدش بيقولك إن المسار غلط، والكلاسات بس مبتطلعش. تأكد بـ grep دايمًا.
+
+~~~text الناتج
+Done in 42ms
+.p-72 (في shared فقط)   موجودة في out.css
+.p-71 (في legacy فقط)   مش موجودة
+.p-1  (في src)          موجودة
+~~~` },
+          ],
+          deep: {
+            why: R`في CSS العادي بتقعد تخترع أسماء ([[.card-header-title-wrapper]])، وتتنقّل بين ملفين، والملف بيكبر للأبد لأن محدش بيجرؤ يمسح قاعدة مش عارف مين بيستخدمها. Tailwind بيحط التنسيق جنب العنصر، والـ CSS النهائي فيه اللي مستخدم بس، فبيفضل صغير مهما المشروع كبر.`,
+            how: R`محرّك v4 (Oxide) أسرع بكتير: الأجزاء التقيلة زي اللف على الملفات مكتوبة بـ Rust، والباقي TypeScript. وقت الـ dev والـ build بيعمل كده:
+
+1) بيلف على ملفات المشروع لوحده (automatic source detection)، وبيتجاهل اللي في [[.gitignore]] (زي node_modules) والملفات الـ binary. ولو فيه فولدر برا المشروع (باكدج UI في monorepo) بتضيفه بـ [[@source "../packages/ui";]].
+
+2) بيقسّم كل ملف لكلمات ويشوف مين فيهم اسم utility صالح ([[p-4]] و [[md:flex]]). هو مش بيفهم JavaScript، بيدوّر على نصوص، عشان كده الكلاس لازم يبقى مكتوب كامل في الكود.
+
+3) بيطلّع CSS للكلمات دي بس، مترتّب في cascade layers: [[theme]] (المتغيرات)، و [[base]] (الـ Preflight: reset بيشيل الـ margins الافتراضية ويحط [[box-sizing: border-box]] على كل حاجة)، و [[components]]، و [[utilities]].
+
+والقيم بقت متغيرات: [[p-4]] بقت [[padding: calc(var(--spacing) * 4)]]، فأي رقم بيشتغل ([[p-13]] و [[h-17]]) من غير إعداد.
+
+في Vite الـ plugin بيشتغل جوه الـ bundler. وفي Next الـ plugin بتاع PostCSS، و [[@import "tailwindcss"]] في [[app/globals.css]] المستورد في الـ root layout.`,
+            when: R`أي مشروع React أو Next جديد. ولو المشروع v3 فيه [[tailwind.config.js]] و [[@tailwind base]]، فيه أداة ترقية رسمية: [[npx @tailwindcss/upgrade]].`,
+            mistakes: R`تبني اسم الكلاس بـ string: [[bg-$__{color}-500]]، و Tailwind مش هيشوفه ومش هيطلّعه. اكتب الأسماء كاملة في object: [[{ red: "bg-red-500", green: "bg-green-500" }]]. وتستخدم أسماء v3 في v4: [[shadow-sm]] بتاعة v3 اسمها دلوقتي [[shadow-xs]]، و [[shadow-sm]] في v4 بقت أكبر (هي [[shadow]] القديمة)، و [[outline-none]] بقت [[outline-hidden]]، و [[ring]] بقى 1px، ولون الـ border الافتراضي بقى [[currentColor]] مش رمادي. وتكتب [[@tailwind base;]] بتاعة v3 في مشروع v4.`
+          },
+          teach: R`## من كلمة في className لقاعدة CSS
+
+نفّذنا المثال حرفيًا: مشروع Vite + React فيه الإعداد ده بالظبط (Tailwind 4.3.3 و Vite 8)، وعملنا [[npx vite build]]، وقرينا ملف الـ CSS اللي طلع، وفتحنا الصفحة في Chrome وقسنا الزرار.
+
+---
+
+## ١. التسطيب
+
+~~~bash
+npm install tailwindcss @tailwindcss/vite
+~~~
+
+باكدجين: [[tailwindcss]] نفسه (المحرك)، و [[@tailwindcss/vite]] الـ plugin اللي بيشغّله جوه Vite. الـ [[@]] في أول الاسم معناه إن الباكدج جوه «scope» اسمه tailwindcss على npm.
+
+## ٢. [[vite.config.ts]]
+
+~~~text vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+export default defineConfig({ plugins: [react(), tailwindcss()] });
+~~~
+
+- [[import ... from "..."]]: هات حاجة من باكدج.
+- [[defineConfig({...})]]: دالة من Vite بتاخد الإعداد (وبتخلي المحرر يكمّلك الخصائص).
+- [[plugins: [react(), tailwindcss()]]]: قايمة plugins. كل واحد دالة بتتنده بـ [[()]] وبترجع plugin. [[react()]] بيفهّم Vite الـ JSX، و [[tailwindcss()]] بيولّد الـ CSS.
+- [[export default]]: ده اللي الملف بيطلّعه، و Vite بيقراه.
+
+## ٣. [[src/index.css]]
+
+~~~text src/index.css
+@import "tailwindcss";
+~~~
+
+السطر ده بيجيب ٣ حاجات: الـ theme (المتغيرات زي الألوان والمسافات)، و Preflight (reset)، والـ utilities. والملف ده لازم يتعمله import في [[main.tsx]] ([[import "./index.css";]]).
+
+## ٤. الزرار
+
+~~~text src/App.tsx
+<button className="rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500">حفظ</button>
+~~~
+
+[[className]] هو [[class]] في JSX. وكل كلمة جواه utility:
+
+| الكلاس | القاعدة اللي طلعت في الـ CSS | القيمة المتقاسة على الزرار |
+|---|---|---|
+| [[rounded-lg]] | [[border-radius: var(--radius-lg)]] و [[--radius-lg: .5rem]] | 8px |
+| [[bg-indigo-600]] | [[background-color: var(--color-indigo-600)]] | oklch(0.511 0.262 276.966) |
+| [[px-4]] | [[padding-inline: calc(var(--spacing) * 4)]] و [[--spacing: .25rem]] | 16px يمين وشمال |
+| [[py-2]] | نفس الفكرة × 2 | 8px فوق وتحت |
+| [[text-white]] | لون الكلام أبيض | rgb(255, 255, 255) |
+| [[hover:bg-indigo-500]] | جوه [[@media (hover:hover)]] | oklch(0.585 0.233 277.117) وقت الـ hover |
+
+- [[px]] = padding على المحور x (يمين وشمال)، و [[py]] على y (فوق وتحت).
+- [[padding-inline]] = الجنبين حسب اتجاه الكلام. و [[calc(var(--spacing) * 4)]] = 0.25rem × 4 = 1rem = 16px.
+- قاعدة الـ hover نفسها في الملف كانت كده:
+
+~~~text من الـ CSS الناتج
+@media (hover:hover){.hover\:bg-indigo-500:hover{background-color:var(--color-indigo-500)}}
+~~~
+
+الـ [[\:]] لأن [[:]] جوه اسم كلاس لازم يتعمله escape، و [[@media (hover:hover)]] = على الأجهزة اللي فيها ماوس بس.
+
+الزرار طلع 62.73 × 40، والـ CSS كله 4668 byte (1.6 KB بعد gzip).
+
+### Preflight اشتغل كمان
+
+على نفس الصفحة: [[margin]] بتاع الـ body بقى 0px، و [[box-sizing]] على الزرار [[border-box]]، والـ border بقى [[0px solid]]. ده الـ reset اللي بيجي مع [[@import "tailwindcss"]].
+
+## ٥. التجربة: [[px-5]] بدل [[px-4]]
+
+| | في الـ CSS | padding الجنبين | عرض الزرار |
+|---|---|---|---|
+| [[px-4]] | [[.px-4]] بس | 16px | 62.73 |
+| [[px-5]] | [[.px-5]] بس، و [[.px-4]] اختفت | 20px | 70.73 |
+
+وحاجة اتعلمناها بالغلط: أول مرة المشروع مكانش فيه [[.gitignore]]، فـ Tailwind قرا فولدر [[dist]] القديم ولقى فيه [[px-4]]، فطلّع الاتنين. لما ضفنا [[.gitignore]] فيه [[dist]] و [[node_modules]] طلع اللي مستخدم بس. ده لأن Tailwind بيلف على ملفات المشروع كلها وبيتجاهل اللي في [[.gitignore]].
+
+## ٦. Next.js (من الـ docs الرسمية، متجرّبش هنا)
+
+~~~bash
+npm i -D tailwindcss @tailwindcss/postcss
+~~~
+
+~~~text postcss.config.mjs
+export default { plugins: { "@tailwindcss/postcss": {} } };
+~~~
+
+[[-D]] = devDependency (أداة build مش كود بيتبعت للمتصفح). Next بيستخدم PostCSS، فالـ plugin بتاعه هنا بدل plugin الـ Vite، و [[@import "tailwindcss";]] في [[app/globals.css]].
+
+## الخلاصة
+
+- الإعداد: باكدج + plugin + سطر [[@import "tailwindcss";]].
+- Tailwind بيقرا ملفاتك كنص ويطلّع قاعدة لكل كلاس لقاه بس، فالكلاس لازم يتكتب كامل.
+- القيم متغيرات: [[px-4]] = [[--spacing]] × 4، والألوان [[--color-*]].
+- [[hover:]] ملفوف في [[@media (hover:hover)]].`,
+          lines: [
+            "سطّب Tailwind والـ plugin بتاع Vite (في مشروع الـ lab).",
+            R`[[defineConfig]] من Vite: دالة بتلف الإعداد عشان المحرر يكمّلك أسماء الخيارات.`,
+            R`plugin الـ React: بيخلي Vite يفهم ملفات JSX ويعمل تحديث سريع وانت بتعدّل.`,
+            R`plugin الـ Tailwind الرسمي لـ Vite: بيقرا ملفاتك ويطلّع الـ CSS وقت الـ dev والـ build.`,
+            "ضيفه جنب React، وده كل الإعداد في Vite.",
+            "السطر الوحيد في ملف الـ CSS: بيجيب الـ theme والـ reset (Preflight) والـ utilities.",
+            "زرار كامل من غير ولا سطر CSS: تدوير، وخلفية، ومسافات، ولون كلام، ولون عند الـ hover.",
+            R`في Next.js: PostCSS بالـ plugin بتاعه، و [[@import]] نفسه في globals.css.`
+          ],
+          sol: R`الزرار بيظهر بنفسجي غامق (indigo-600) والكلام أبيض ومدوّر، ولما تقف عليه بالماوس بيفتح شوية (indigo-500). في Sources (أو في Elements › Styles على الزرار) هتلاقي CSS متولد فيه قواعد زي دي بالظبط (من Tailwind v4.3):
+
+[[.px-4 { padding-inline: calc(var(--spacing) * 4); }]] و [[--spacing: 0.25rem]] متعرّف على [[:root]]، يعني 1rem. ومش هتلاقي [[.px-5]] خالص. اكتب [[px-5]] بدل [[px-4]] واحفظ: الـ Vite بيحدّث الصفحة من غير refresh، والقاعدة [[.px-5]] ظهرت في الملف، و [[.px-4]] اختفت لو مبقتش مستخدمة في أي حتة. وقاعدة الـ hover هتلاقيها ملفوفة جوه [[@media (hover: hover)]]، فعلى الموبايل بالـ touch مش بتعلق.
+
+لو مفيش أي ستايل اتطبق: اتأكد إن [[tailwindcss()]] في plugins بتاعة vite.config، وإن [[@import "tailwindcss";]] في أول ملف CSS، وإن الملف ده متعمله import في [[main.tsx]]. ولو الملف فيه كلاسات كتير مش كاتبها، ده الـ preflight (reset) والـ theme، وده طبيعي.`
+        },
+        {
+          cmd: "@theme",
+          ref: [
+            { t: "Tailwind CSS: Theme variables", url: "https://tailwindcss.com/docs/theme" },
+            { t: "Tailwind CSS: Functions and directives", url: "https://tailwindcss.com/docs/functions-and-directives" },
+          ],
+          title: "ألوانك وخطوطك تبقى كلاسات",
+          desc: R`[[@theme]] في ملف الـ CSS بيعرّف الـ design tokens، وكل متغير بيطلّع كلاسات: [[--color-brand]] بيطلّع [[bg-brand]] و [[text-brand]] و [[border-brand]]، و [[--font-display]] بيطلّع [[font-display]]، و [[--breakpoint-3xl]] بيطلّع [[3xl:]].
+
+و [[@theme inline]] لما التوكن نفسه بيشاور على متغير تاني (زي خط من next/font، أو لون بيتغير مع الثيم).`,
+          example: R`@import "tailwindcss";
+@theme {
+  --color-brand: oklch(0.55 0.2 265);
+  --color-brand-soft: oklch(0.95 0.03 265);
+  --font-display: "Cairo", system-ui, sans-serif;
+  --radius-card: 1.25rem;
+  --breakpoint-3xl: 120rem;
 }
-await browser.close();
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+}
+:root { --bg: white; --fg: oklch(0.21 0.03 265); }`,
+          try: R`ضيف [[--color-brand]] واستخدم [[bg-brand text-white]] على زرار. وبعدين افتح الـ CSS الناتج ودوّر على [[--color-brand]]: هتلاقيه على [[:root]] كمتغير عادي، يعني تقدر تستخدمه في CSS عادي بـ [[var(--color-brand)]] كمان.`,
+          flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[@theme { --fonts-display: "Cairo", sans-serif; }]] و [[<h1 class="font-display">]]، والخط مش بيتغيّر. لاقي الغلطة.`, done: R`الاسم [[--fonts-]] مش namespace بيعرفه Tailwind، فمفيش [[.font-display]] ولا المتغير نفسه في [[out.css]] (grep فاضي). بعد [[--font-display]] الكلاس اتولّد والخط اتغيّر.`, sol: R`~~~css in.css
+@import "tailwindcss";
+@theme { --font-display: "Cairo", sans-serif; }
+~~~
+
+الغلطة حرف [[s]] زيادة: [[--fonts-display]] لازم تبقى [[--font-display]].
+
+**ليه:** [[@theme]] مش متغيرات CSS عادية، ده تعريف لـ design tokens. أول جزء من الاسم (الـ namespace) هو اللي بيقول لـ Tailwind يعمل كلاس إيه: [[--font-*]] بيعمل [[font-*]]، و [[--color-*]] بيعمل [[bg-*]] و [[text-*]]، و [[--radius-*]] بيعمل [[rounded-*]]. [[--fonts-]] مش namespace معروف، فمفيش كلاس. والمتغير نفسه بيتمسح من الناتج كمان لأن محدش بيستخدمه.
+
+**الغلطة الشائعة:** تدوّر في الخطوط ومسارها و [[@font-face]]، والمشكلة في اسم التوكن. أول خطوة: grep على [[out.css]]. وتخيل برضه إن مفيش أي error من الـ CLI، الـ build بيطبع Done عادي.
+
+~~~text الناتج
+بـ --fonts-display:  .font-display مش موجودة ، --fonts-display مش موجود
+بـ --font-display:   .font-display موجودة ، --font-display موجود
+font-family بتاع h1: Cairo, sans-serif
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** توكنز لمحل شاي متخيل في [[@theme]]: [[--color-brand]] و [[--color-brand-soft]] و [[--radius-card]] و [[--font-display]] و [[--shadow-card]]، وصفحة منتجات بتستخدمهم ([[bg-brand/20]] و [[rounded-card]] و [[shadow-card]]).`, done: R`grep على [[out.css]] بيلاقي [[--color-brand]] في [[:root]] و [[.bg-brand\/20]] جواها [[color-mix]]، ولما تغيّر لون واحد في الـ [[@theme]] كل الصفحة بتتغيّر، ومفيش ولا [[#hex]] في الـ HTML.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #0f766e;
+  --color-brand-soft: #ccfbf1;
+  --radius-card: 1.25rem;
+  --font-display: "Cairo", system-ui, sans-serif;
+  --shadow-card: 0 8px 24px rgb(0 0 0 / 0.08);
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محل شاي النيل</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="bg-brand-soft p-6 text-gray-900">
+<main class="mx-auto max-w-3xl">
+  <h1 class="font-display text-3xl font-bold text-brand">محل شاي النيل</h1>
+  <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+    <li class="rounded-card bg-white p-6 shadow-card">
+      <h2 class="font-display text-xl font-bold">شاي أسواني</h2>
+      <p class="mt-2 inline-block rounded-full bg-brand/20 px-3 py-1 text-sm">80 جنيه</p>
+    </li>
+    <li class="rounded-card bg-white p-6 shadow-card">
+      <h2 class="font-display text-xl font-bold">نعناع مجفف</h2>
+      <p class="mt-2 inline-block rounded-full bg-brand/20 px-3 py-1 text-sm">45 جنيه</p>
+    </li>
+  </ul>
+  <a href="#order" class="mt-6 inline-block rounded-card bg-brand px-6 py-3 font-bold text-white">اطلب دلوقتي</a>
+</main>
+</body>
+</html>
+~~~
+
+**ليه شغال:** كل سطر في [[@theme]] بيعمل حاجتين: متغير CSS في [[:root]]، وكلاسات. [[--color-brand]] بيدّيك [[bg-brand]] و [[text-brand]]، و [[--radius-card]] بيدّيك [[rounded-card]]، و [[--shadow-card]] بيدّيك [[shadow-card]].
+
+و [[bg-brand/20]] معناها اللون ده بشفافية 20٪. Tailwind بيعملها بـ [[color-mix()]] عشان تشتغل مع أي لون، حتى لو متغير.
+
+الألوان كلها جاية من مكان واحد، فتغيير البراند بقى سطر واحد.
+
+**الغلطة الشائعة:** تكتب [[--brand: #0f766e]] من غير [[--color-]]. ده متغير عادي، ومفيش [[bg-brand]] هيتولّد.
+
+~~~text الناتج
+out.css:
+:root فيه --color-brand: #0f766e
+
+.bg-brand\/20 {
+  background-color: color-mix(in srgb, #0f766e 20%, transparent);
+  @supports (color: color-mix(in lab, red, red)) {
+    background-color: color-mix(in oklab, var(--color-brand) ...
+
+مفيش ولا hex في index.html
+على 360: scrollWidth = clientWidth ، axe صفر
+~~~
+
+~~~view 300 420 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محل شاي النيل</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-900:oklch(21% .034 264.665);--color-white:#fff;--spacing:.25rem;--container-3xl:48rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-3xl:1.875rem;--text-3xl--line-height:calc(2.25 / 1.875);--font-weight-bold:700;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-brand:#0f766e;--color-brand-soft:#ccfbf1;--radius-card:1.25rem;--font-display:"Cairo", system-ui, sans-serif}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mx-auto{margin-inline:auto}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-6{margin-top:calc(var(--spacing) * 6)}.grid{display:grid}.inline-block{display:inline-block}.max-w-3xl{max-width:var(--container-3xl)}.gap-4{gap:calc(var(--spacing) * 4)}.rounded-card{border-radius:var(--radius-card)}.rounded-full{border-radius:2147483647px}.bg-brand{background-color:var(--color-brand)}.bg-brand-soft{background-color:var(--color-brand-soft)}.bg-brand\/20{background-color:#0f766e33}@supports (color:color-mix(in lab, red, red)){.bg-brand\/20{background-color:color-mix(in oklab, var(--color-brand) 20%, transparent)}}.bg-white{background-color:var(--color-white)}.p-6{padding:calc(var(--spacing) * 6)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-1{padding-block:var(--spacing)}.py-3{padding-block:calc(var(--spacing) * 3)}.font-display{font-family:var(--font-display)}.text-3xl{font-size:var(--text-3xl);line-height:var(--tw-leading,var(--text-3xl--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.text-brand{color:var(--color-brand)}.text-gray-900{color:var(--color-gray-900)}.text-white{color:var(--color-white)}.shadow-card{--tw-shadow:0 8px 24px var(--tw-shadow-color,#00000014);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}@media (min-width:40rem){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}
+</style>
+</head>
+<body class="bg-brand-soft p-6 text-gray-900">
+<main class="mx-auto max-w-3xl">
+  <h1 class="font-display text-3xl font-bold text-brand">محل شاي النيل</h1>
+  <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+    <li class="rounded-card bg-white p-6 shadow-card">
+      <h2 class="font-display text-xl font-bold">شاي أسواني</h2>
+      <p class="mt-2 inline-block rounded-full bg-brand/20 px-3 py-1 text-sm">80 جنيه</p>
+    </li>
+    <li class="rounded-card bg-white p-6 shadow-card">
+      <h2 class="font-display text-xl font-bold">نعناع مجفف</h2>
+      <p class="mt-2 inline-block rounded-full bg-brand/20 px-3 py-1 text-sm">45 جنيه</p>
+    </li>
+  </ul>
+  <a href="#order" class="mt-6 inline-block rounded-card bg-brand px-6 py-3 font-bold text-white">اطلب دلوقتي</a>
+</main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[@theme { --color-bg: var(--bg); }]] ضد [[@theme inline { --color-bg: var(--bg); }]]، وجوه الصفحة section عليه [[data-theme="dark"]] بيغيّر [[--bg]] لأسود. خلفية [[bg-bg]] جوه الـ section هتبقى إيه في الحالتين؟`, done: R`من غير inline: [[.bg-bg]] بتقرا [[var(--color-bg)]]، والمتغير ده اتحسب مرة واحدة على [[:root]] (أبيض) واتورث كده، فالخلفية فضلت [[rgb(255, 255, 255)]] جوه الـ section. مع inline: الكلاس فيه [[var(--bg)]] نفسه، فبقت سودا.`, sol: R`~~~css in.css (النسخة من غير inline)
+@import "tailwindcss";
+:root { --bg: #fff; }
+[data-theme="dark"] { --bg: #000; }
+@theme { --color-bg: var(--bg); }
+~~~
+
+~~~css in.css (النسخة بـ inline)
+@import "tailwindcss";
+:root { --bg: #fff; }
+[data-theme="dark"] { --bg: #000; }
+@theme inline { --color-bg: var(--bg); }
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>inline</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<section data-theme="dark"><div id="box" class="bg-bg p-8">كلام</div></section>
+</body>
+</html>
+~~~
+
+**الفرق في سطر واحد من [[out.css]]:**
+
+- من غير [[inline]]: [[.bg-bg { background-color: var(--color-bg); }]]، و [[--color-bg]] متعرّف على [[:root]] بقيمة [[var(--bg)]].
+- مع [[inline]]: [[.bg-bg { background-color: var(--bg); }]]، يعني الكلاس بيقرا المتغير الأصلي مباشرة.
+
+**ليه ده بيغيّر النتيجة:** متغيرات CSS بتتحسب عند العنصر اللي اتعرّفت عليه، وبعدين القيمة المحسوبة هي اللي بتتورث. [[--color-bg]] اتحسب على [[:root]] بأبيض، والـ section ورث الأبيض ده. تغيير [[--bg]] تحت مش بيرجع يعيد حساب حاجة فوق. أما مع inline الكلاس نفسه بيقرا [[--bg]] عند العنصر، فبيلاقي الأسود.
+
+**القاعدة:** لو توكن Tailwind بيشاور على متغير بيتغيّر حسب الثيم، استخدم [[@theme inline]].
+
+**الغلطة الشائعة:** تجرّب الثيم على [[<html>]] فيشتغل، وتفتكر إنه سليم. المشكلة بتظهر بس لما الثيم يتغيّر على عنصر جوه الصفحة.
+
+~~~text الناتج
+من غير inline:  backgroundColor = rgb(255, 255, 255)
+مع inline:      backgroundColor = rgb(0, 0, 0)
+~~~
+
+~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>inline</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--spacing:.25rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.inline{display:inline}.bg-bg{background-color:var(--bg)}.p-8{padding:calc(var(--spacing) * 8)}}:root{--bg:#fff}[data-theme=dark]{--bg:#000}
+</style></head>
+<body>
+<section data-theme="dark"><div id="box" class="bg-bg p-8">كلام</div></section>
+</body>
+</html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** animation في [[@theme]]: [[--animate-float]] ومعاه [[@keyframes float]] جوه نفس البلوك، واستخدمه بـ [[motion-safe:animate-float]] على أيقونة.`, done: R`[[out.css]] فيه [[@keyframes float]] و [[.motion-safe\:animate-float]] جوه [[@media (prefers-reduced-motion: no-preference)]]، ولو عرّفت keyframes تانية ومستخدمتهاش مش بتطلع في الملف. ومع reduce في Rendering الأيقونة واقفة.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --animate-float: float 3s ease-in-out infinite;
+  @keyframes float {
+    0%, 100% { translate: 0 0; }
+    50%      { translate: 0 -8px; }
+  }
+
+  --animate-wobble: wobble 1s linear infinite;
+  @keyframes wobble {
+    50% { rotate: 6deg; }
+  }
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>float</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-8">
+<main><h1 class="text-xl font-bold">شحن مجاني</h1>
+<svg id="icon" class="mt-4 size-12 text-teal-700 motion-safe:animate-float" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></svg></main>
+</body>
+</html>
+~~~
+
+**ليه شغال:** [[--animate-float]] بيعمل كلاس [[animate-float]]. و [[@keyframes]] جوه [[@theme]] بيتربط بالتوكن: لو الكلاس اتستخدم الـ keyframes تطلع، ولو لأ متطلعش. عشان كده [[wobble]] اختفت من الملف خالص.
+
+[[motion-safe:]] بيلف القاعدة في [[@media (prefers-reduced-motion: no-preference)]]، فمن طلب حركة أقل مبيشوفش الحركة خالص.
+
+**الغلطة الشائعة:** تكتب [[@keyframes]] برا [[@theme]] في آخر الملف. هيشتغل، بس هتفضل في [[out.css]] حتى لو محدش بيستخدمها، وكمان تكتب [[animate-float]] من غير [[motion-safe:]] فتنسى اللي عنده دوخة من الحركة.
+
+~~~text الناتج
+out.css:
+@keyframes float موجودة ، wobble مش موجودة (مش مستخدمة)
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion-safe\:animate-float {
+    animation: var(--animate-float);
+  }
+}
+
+document.getAnimations().length: عادي 1 ، مع reduce 0
+animationName = float
+~~~
+
+~~~view 160 160 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>float</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-teal-700:oklch(51.1% .096 186.391);--spacing:.25rem;--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-bold:700;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--animate-float:float 3s ease-in-out infinite}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mt-4{margin-top:calc(var(--spacing) * 4)}.size-12{width:calc(var(--spacing) * 12);height:calc(var(--spacing) * 12)}.p-8{padding:calc(var(--spacing) * 8)}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.text-teal-700{color:var(--color-teal-700)}@media (prefers-reduced-motion:no-preference){.motion-safe\:animate-float{animation:var(--animate-float)}}}@property --tw-font-weight{syntax:"*";inherits:false}@keyframes float{0%,to{translate:0}50%{translate:0 -8px}}
+</style></head>
+<body class="p-8">
+<main><h1 class="text-xl font-bold">شحن مجاني</h1>
+<svg id="icon" class="mt-4 size-12 text-teal-700 motion-safe:animate-float" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></svg></main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تحدي', t: R`**refactor:** صفحة فيها [[bg-[#6d28d9]]] و [[text-[#6d28d9]]] و [[border-[#6d28d9]]] متكررين ١٢ مرة. حوّلها لتوكن واحد من غير ما الشكل يتغيّر.`, done: R`grep على الـ HTML بـ [[\[#]] مبيلاقيش حاجة، والتوكن [[--color-brand]] متعرّف مرة في [[@theme]]، ولقطتين قبل وبعد (screenshot) شبه بعض، وتغيير اللون بقى سطر واحد.`, sol: R`قبل:
+
+~~~html before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>قبل</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-6">
+<main>
+  <h1 class="text-[#6d28d9] text-2xl font-bold">العرض</h1>
+  <a href="#a" class="mt-4 inline-block bg-[#6d28d9] px-4 py-2 text-white">اشتري</a>
+  <p class="mt-4 border-2 border-[#6d28d9] p-4">تفاصيل</p>
+</main>
+</body>
+</html>
+~~~
+
+التوكن:
+
+~~~css in.css
+@import "tailwindcss";
+@theme { --color-brand: #6d28d9; }
+~~~
+
+والتحويل كله أمر واحد على الفولدر، وبعدين اتأكد:
+
+~~~bash
+sed -E -i 's/(text|bg|border)-\[#6d28d9\]/\1-brand/g' index.html
+grep -c '\[#' index.html     # المفروض 0
+~~~
+
+**ليه التوكن أحسن:** اللون اتكتب ١٢ مرة، فتغييره يعني ١٢ تعديل ومكان تنساه. دلوقتي [[--color-brand]] سطر واحد، و [[bg-brand]] و [[text-brand]] و [[border-brand]] كلهم بيقروا منه. والاسم كمان بيقول المعنى: ده لون البراند، مش مجرد بنفسجي.
+
+**ازاي تتأكد إن الشكل متغيرش:** متعتمدش على عينك. خد screenshot قبل وبعد وقارن الملفين.
+
+**الغلطة الشائعة:** تحط التوكن وتنسى تعمل build تاني قبل المقارنة، أو تسمي التوكن [[--color-purple]]. لو البراند بقى أخضر بكره الاسم هيكدب.
+
+~~~text الناتج
+color بتاع h1 قبل وبعد: rgb(109, 40, 217)
+screenshot قبل وبعد: متطابقين byte بـ byte
+grep '\[#' بعد التحويل: مفيش حاجة
+
+تغيير سطر واحد لـ --color-brand: #be123c
+خلفية الزرار بقت: rgb(190, 18, 60)
+~~~
+
+~~~view 220 220 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>قبل</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid;--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-white:#fff;--spacing:.25rem;--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-bold:700;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mt-4{margin-top:calc(var(--spacing) * 4)}.inline-block{display:inline-block}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-\[\#6d28d9\]{border-color:#6d28d9}.bg-\[\#6d28d9\]{background-color:#6d28d9}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.px-4{padding-inline:calc(var(--spacing) * 4)}.py-2{padding-block:calc(var(--spacing) * 2)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.text-\[\#6d28d9\]{color:#6d28d9}.text-white{color:var(--color-white)}}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}
+</style></head>
+<body class="p-6">
+<main>
+  <h1 class="text-[#6d28d9] text-2xl font-bold">العرض</h1>
+  <a href="#a" class="mt-4 inline-block bg-[#6d28d9] px-4 py-2 text-white">اشتري</a>
+  <p class="mt-4 border-2 border-[#6d28d9] p-4">تفاصيل</p>
+</main>
+</body>
+</html>
+~~~` },
+          ],
+          deep: {
+            why: R`بدل ما تكتب [[bg-[#4f46e5]]] في مية مكان، بتدّي اللون اسم في مكان واحد. والتصميم كله بيبقى من مجموعة قيم محددة (ألوان، وخطوط، ومسافات، وتدوير)، ولو اللون اتغير بيتغير في سطر.`,
+            how: R`كل متغير في [[@theme]] ليه namespace بيحدد الكلاسات: [[--color-*]] للألوان، و [[--font-*]] للخطوط، و [[--text-*]] لأحجام الخط، و [[--radius-*]] للتدوير، و [[--shadow-*]] للظلال، و [[--breakpoint-*]] للـ breakpoints، و [[--spacing]] للمسافات. وبيطلعوا كمان كمتغيرات CSS عادية على [[:root]] (اللي مستخدم بس، إلا لو كتبت [[@theme static]]).
+
+الفرق بين [[@theme]] و [[:root]]: الاتنين متغيرات، بس اللي في [[@theme]] بس هو اللي بيعمل كلاسات. متغير من غير كلاسات حطه في [[:root]].
+
+ليه [[inline]]؟ من غيرها، [[bg-bg]] بتطلع [[background-color: var(--color-bg)]]، و [[--color-bg]] متعرّف على [[:root]] بقيمة [[var(--bg)]]. المتغير اللي قيمته [[var()]] بيتحسب في المكان اللي اتعرّف فيه، فـ [[--color-bg]] بيتحسب مرة واحدة على [[:root]]. لو غيّرت [[--bg]] على عنصر جوه الصفحة ([[<section class="dark">]])، الكلاس مش هيحس. مع [[inline]] الكلاس بيطلع [[background-color: var(--bg)]] مباشرة، فبيقرا القيمة في مكان العنصر نفسه.
+
+ولو عايز تشيل ألوان Tailwind الافتراضية كلها وتفضل ألوانك بس: [[--color-*: initial;]] في أول الـ [[@theme]].`,
+            when: R`أول ما تبدأ مشروع: ألوان البراند، والخط، والتدوير. وكل لون بيتغير مع الثيم يبقى متغير عادي في [[:root]] وتوكن في [[@theme inline]].`,
+            mistakes: R`توكن بيشاور على [[var()]] من غير [[inline]]، فالثيم يشتغل على الصفحة كلها بس مش على جزء منها. في مشروع حقيقي كل الألوان كانت في [[@theme]] عادي بـ [[var(--bg)]]، وده شغال طول ما الثيم بيتغير على [[<html>]] بس، لكن أول ما حد يعمل section غامقة لوحدها هيتفاجئ. واسم التوكن غلط ([[--colors-brand]] بـ s) فمفيش كلاسات بتتعمل ومفيش error.`
+          },
+          teach: R`## متغير في [[@theme]] = كلاسات جديدة
+
+[[@theme]] بلوك في ملف الـ CSS بتكتب فيه متغيرات، و Tailwind بيقرا **اسم** كل متغير ويعرف منه هيعمل أنهي كلاسات. حطينا المثال في [[src/index.css]] بتاع مشروع Vite (Tailwind 4.3.3)، واستخدمنا الكلاسات في [[App.tsx]]، وعملنا build، وقرينا الـ CSS الناتج، وقسنا العناصر في Chrome.
+
+---
+
+## ١. البلوك الأول
+
+~~~text src/index.css
+@import "tailwindcss";
+@theme {
+  --color-brand: oklch(0.55 0.2 265);
+  --color-brand-soft: oklch(0.95 0.03 265);
+  --font-display: "Cairo", system-ui, sans-serif;
+  --radius-card: 1.25rem;
+  --breakpoint-3xl: 120rem;
+}
+~~~
+
+[[@theme]] لازم ييجي بعد [[@import "tailwindcss";]]. والجزء الأول من الاسم (اسمه namespace) بيحدد نوع الكلاسات، والباقي اسم الكلاس:
+
+| المتغير | الـ namespace | الكلاس اللي استخدمناه | القاعدة في الـ CSS الناتج | المتقاس |
+|---|---|---|---|---|
+| [[--color-brand]] | [[--color-]] | [[bg-brand]] | [[background-color: var(--color-brand)]] | oklch(0.55 0.2 265) |
+| [[--font-display]] | [[--font-]] | [[font-display]] | [[font-family: var(--font-display)]] | Cairo, system-ui, sans-serif |
+| [[--radius-card]] | [[--radius-]] | [[rounded-card]] | [[border-radius: var(--radius-card)]] | 20px |
+| [[--breakpoint-3xl]] | [[--breakpoint-]] | [[3xl:grid-cols-6]] | جوه [[@media (width>=120rem)]] | 6 أعمدة على 1920، و none على 1200 |
+
+- [[--color-brand]] بيعمل كمان [[text-brand]] و [[border-brand]] و [[ring-brand]] وغيرهم: أي utility بتاخد لون.
+- [[--font-display]] قيمته قايمة خطوط: [[Cairo]]، ولو مش موجود [[system-ui]] (خط النظام)، وبعدين [[sans-serif]].
+- [[1.25rem]] = 20px، و [[120rem]] = 1920px.
+
+### المتغير نفسه موجود في الصفحة
+
+قرينا [[getComputedStyle(document.documentElement).getPropertyValue("--color-brand")]] (قيمة المتغير على [[<html>]]):
+
+~~~text الناتج
+--color-brand:       oklch(55% .2 265)
+--color-brand-soft:  (فاضي)
+~~~
+
+[[55%]] هي نفسها [[0.55]] مكتوبة بشكل تاني. و [[--color-brand-soft]] مش موجود خالص، لأن مفيش ولا كلاس استخدمه، و Tailwind بيطلّع المتغيرات المستخدمة بس. لما غيّرنا [[@theme]] لـ [[@theme static]] الاتنين ظهروا في الـ CSS.
+
+## ٢. [[@theme inline]] و [[:root]]
+
+~~~text src/index.css
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+}
+:root { --bg: white; --fg: oklch(0.21 0.03 265); }
+~~~
+
+هنا التوكن قيمته متغير تاني ([[var(--bg)]])، و [[--bg]] متعرّف في [[:root]] عادي (ده مش بيعمل كلاسات). عشان نشوف فايدة [[inline]] عملنا توكن تالت بنفس القيمة في [[@theme]] عادي، وحطينا قاعدة [[.dark { --bg: oklch(0.17 0.03 265); }]]:
+
+~~~text الكلاسات اللي طلعت
+.bg-bg  {background-color:var(--bg)}          (من @theme inline)
+.bg-bg2 {background-color:var(--color-bg2)}   (من @theme عادي)
+~~~
+
+| العنصر | الخلفية المتقاسة |
+|---|---|
+| [[<section class="bg-bg">]] | rgb(255, 255, 255) |
+| [[<section class="dark bg-bg">]] | oklch(0.17 0.03 265) (غمقت) |
+| [[<section class="dark bg-bg2">]] | rgb(255, 255, 255) (فضلت بيضا) |
+
+ليه؟ [[inline]] بيحط [[var(--bg)]] جوه الكلاس نفسه، فبيقرا [[--bg]] من العنصر اللي عليه الكلاس (اللي [[.dark]] غيّرته). من غير inline الكلاس بيقرا [[--color-bg2]]، وده اتحسب مرة واحدة على [[:root]] لما [[--bg]] كانت لسه white.
+
+## الخلاصة
+
+| | بيعمل كلاسات؟ | يستخدم إمتى |
+|---|---|---|
+| [[@theme]] | آه | قيم ثابتة: ألوان البراند والخطوط والتدوير |
+| [[@theme inline]] | آه | التوكن بيشاور على متغير بيتغير (ثيم) |
+| [[:root]] | لأ | متغيرات عادية |
+
+- اسم المتغير لازم يبدأ بالـ namespace الصح ([[--color-]] مش [[--colors-]])، وإلا مفيش كلاسات.
+- [[@theme static]] لو عايز كل المتغيرات تطلع حتى اللي مش مستخدمة.`,
+          lines: [
+            R`[[@import]] بيجيب Tailwind كله (theme و Preflight و utilities) قبل ما نضيف توكنز بتاعتنا.`,
+            R`بداية [[@theme]]: كل متغير جواه بيطلّع كلاسات حسب أول اسمه ([[--color-]] و [[--font-]]...).`,
+            R`[[bg-brand]] و [[text-brand]] و [[ring-brand]]... وكمان [[bg-brand/50]] بشفافية.`,
+            R`نسخة فاتحة من نفس اللون للخلفيات: [[bg-brand-soft]] وأي utility لون تاني.`,
+            R`خط للعناوين: بيطلّع كلاس [[font-display]]، والخطوط اللي بعد Cairo احتياطي لو متحمّلش.`,
+            R`تدوير خاص بالكروت: بيطلّع [[rounded-card]] بـ 20px بدل ما تكتب الرقم في كل حتة.`,
+            R`breakpoint جديد من 1920px (120 × 16): [[3xl:grid-cols-6]] بقى شغال زي [[md:]] بالظبط.`,
+            R`قفلة [[@theme]] الأول، والتاني اللي عليه [[inline]] جاي بعده.`,
+            "توكنز بتشاور على متغيرات تانية.",
+            R`[[bg-bg]] بتاخد [[var(--bg)]] نفسه، فلما [[--bg]] يتغير في الـ dark mode الكلاس يتغير.`,
+            R`لون الكلام بنفس الطريقة: [[text-fg]] بيقرا [[var(--fg)]] مباشرة جوه الكلاس.`,
+            R`قفلة [[@theme inline]]، والقيم الحقيقية جاية في السطر اللي بعده.`,
+            "القيم الحقيقية، ودي اللي الثيم بيغيّرها."
+          ],
+          sol: R`الزرار بقى بلون الـ brand (أزرق بنفسجي) والكلام أبيض. في الـ CSS الناتج هتلاقي جوه [[@layer theme]] قاعدة [[:root, :host { ... --color-brand: oklch(0.55 0.2 265); }]]، والكلاس [[.bg-brand { background-color: var(--color-brand); }]]. يعني الكلاس نفسه بيقرا المتغير، فلو كتبت في CSS عادي [[border-color: var(--color-brand)]] هيشتغل، ولو غيّرت المتغير على [[:root]] من DevTools كل حاجة بتتغير معاه.
+
+حاجة هتلاحظها: [[--color-brand-soft]] مش موجود في الناتج، لأنك مستخدمتش [[bg-brand-soft]] ولا أي كلاس بيقراه. Tailwind v4 بيطلّع متغيرات الـ theme المستخدمة بس. لو عايزها كلها تطلع دايمًا عشان تستخدمها في CSS عادي أو JavaScript، اكتب [[@theme static]] بدل [[@theme]] (جرّبتها ولقيت الاتنين بقوا موجودين).
+
+ولو الكلاس [[bg-brand]] ملوش أي تأثير، غالبًا كتبت الاسم [[--brand]] من غير [[--color-]] في الأول، فـ Tailwind مش عارف إنه لون.`
+        },
+        {
+          cmd: "variants",
+          ref: [
+            { t: "Tailwind CSS: Hover, focus, and other states", url: "https://tailwindcss.com/docs/hover-focus-and-other-states" },
+            { t: "Tailwind CSS: Responsive design", url: "https://tailwindcss.com/docs/responsive-design" },
+            { t: "Tailwind CSS: Dark mode", url: "https://tailwindcss.com/docs/dark-mode" },
+          ],
+          title: "hover و focus و md و dark قدام أي كلاس",
+          desc: R`أي كلاس في Tailwind تقدر تحط قدامه شرط: [[hover:bg-brand]] (عند الـ hover)، و [[focus-visible:outline-2]] (focus من الكيبورد)، و [[md:flex]] (من 768 وطالع)، و [[dark:bg-gray-900]] (في الوضع الغامق)، و [[disabled:opacity-50]]، و [[rtl:-scale-x-100]].
+
+وتقدر تجمعهم: [[md:hover:bg-brand]] = على شاشة md وطالع وعند الـ hover بس.`,
+          example: R`<nav className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
+  <a className="rounded-md px-3 py-2 text-gray-700 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-brand dark:text-gray-200 dark:hover:bg-gray-800" href="/pricing">
+    الأسعار
+  </a>
+  <button className="hidden md:inline-flex disabled:cursor-not-allowed disabled:opacity-50" disabled>
+    ابدأ
+  </button>
+  <ul className="*:border-b *:py-2 *:last:border-0">...</ul>
+</nav>`,
+          try: R`اعمل اللينك ده واتنقل له بـ Tab: الـ outline هيظهر. دوس عليه بالماوس: مش هيظهر. وبعدين صغّر الشاشة وشوف الـ nav بقى عمود والزرار اختفى.`,
+          flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٣ عناصر: [[sm:hidden]] و [[hidden sm:block]] و [[max-sm:hidden]]. مين ظاهر على 360 ومين على 768؟`, done: R`على 360: الأول ظاهر، والتاني مستخبي، والتالت مستخبي. على 768: الأول مستخبي، والتاني ظاهر، والتالت ظاهر. وعرفت إن الكلاس من غير prefix هو الموبايل، و [[sm:]] = من 640 وطالع.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>variants</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<div id="a" class="sm:hidden">الأول</div>
+<div id="b" class="hidden sm:block">التاني</div>
+<div id="c" class="max-sm:hidden">التالت</div>
+</body>
+</html>
+~~~
+
+**القاعدة:** Tailwind mobile-first. الكلاس من غير prefix بيشتغل على كل المقاسات. [[sm:]] معناها «من 640px وطالع». و [[max-sm:]] معناها «أقل من 640px».
+
+- [[sm:hidden]]: مفيش حاجة تحت 640، فظاهر. ومن 640 وطالع مخفي.
+- [[hidden sm:block]]: مخفي عادي، ومن 640 وطالع block.
+- [[max-sm:hidden]]: مخفي تحت 640، وفوقها ظاهر.
+
+**الغلطة الشائعة:** تقرا [[sm:]] على إنها «الشاشات الصغيرة». هي عكس كده: الحد الأدنى، مش الأقصى. عشان تستهدف الموبايل بس، اكتب الكلاس من غير prefix وارجعه بـ [[sm:]]، أو استخدم [[max-sm:]].
+
+~~~text الناتج
+          sm:hidden    hidden sm:block    max-sm:hidden
+360       ظاهر         مخفي               مخفي
+768       مخفي         ظاهر               ظاهر
+~~~
+
+~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>variants</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.hidden{display:none}@media not all and (min-width:40rem){.max-sm\:hidden{display:none}}@media (min-width:40rem){.sm\:block{display:block}.sm\:hidden{display:none}}}
+</style></head>
+<body>
+<div id="a" class="sm:hidden">الأول</div>
+<div id="b" class="hidden sm:block">التاني</div>
+<div id="c" class="max-sm:hidden">التالت</div>
+</body>
+</html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** navbar بـ Tailwind بس: الروابط [[hidden md:flex]]، وزرار ☰ [[md:hidden]] عليه [[aria-expanded]] والأيقونة [[aria-expanded:rotate-90]]، والقايمة على الموبايل [[max-md:]] بتظهر لما الزرار يتضغط (سطرين JavaScript بيقلبوا [[aria-expanded]] و [[hidden]]).`, done: R`على 360 و 768 و 1280 الشكل صح ومفيش scroll أفقي، والأيقونة بتلف لما القايمة تفتح من غير ولا class في JavaScript غير [[aria-expanded]]، و Tab بيوصل للزرار.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>navbar</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body>
+<header class="border-b border-gray-200">
+  <nav aria-label="الرئيسية" class="mx-auto flex max-w-5xl items-center justify-between p-4">
+    <a href="/" class="font-bold">متجر النور</a>
+    <button id="menu-btn" type="button" aria-label="القايمة" aria-expanded="false" aria-controls="menu"
+            class="grid size-11 place-items-center text-2xl transition-transform aria-expanded:rotate-90 md:hidden">☰</button>
+    <ul id="menu" class="hidden gap-6 md:flex max-md:absolute max-md:inset-x-0 max-md:top-[4.8rem] max-md:bg-white max-md:p-4 max-md:shadow-lg">
+      <li><a href="/products" class="block py-2">المنتجات</a></li>
+      <li><a href="/offers" class="block py-2">العروض</a></li>
+      <li><a href="/contact" class="block py-2">كلّمنا</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="p-4"><h1 class="text-2xl font-bold">أهلًا بيك</h1></main>
+<script>
+  const btn = document.getElementById("menu-btn");
+  const menu = document.getElementById("menu");
+  btn.addEventListener("click", () => {
+    const open = btn.getAttribute("aria-expanded") === "true";
+    btn.setAttribute("aria-expanded", String(!open));
+    menu.classList.toggle("hidden", open);
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[hidden md:flex]] على القايمة: مخفية على الموبايل، و flex من 768.
+- [[md:hidden]] على الزرار: موجود تحت 768 بس.
+- [[max-md:absolute]] وأخواتها: شكل القايمة لما تفتح على الموبايل، ومبيأثروش على الديسكتوب.
+- [[aria-expanded:rotate-90]] بيتحول لـ [[&[aria-expanded="true"]]]. يعني الشكل نفسه راكب على حالة الـ accessibility، فلو نسيت تحدّث الـ attribute الشكل هيفضحك.
+
+الـ JavaScript بيقلب حاجتين بس: [[aria-expanded]] و [[hidden]].
+
+**الغلطة الشائعة:** تعمل كلاس [[rotated]] في JavaScript. كده عندك مصدرين للحالة، ولما يختلفوا قارئ الشاشة يقول مقفول والسهم مفتوح. خلي الـ attribute هو المصدر الوحيد.
+
+~~~text الناتج
+360 مقفول:   الزرار grid ، القايمة none ، rotate none ، aria-expanded false
+Tab Tab:     focus على menu-btn
+Enter:       القايمة block ، rotate 90deg ، aria-expanded true
+768:         الزرار none ، القايمة flex
+1280:        الزرار none ، القايمة flex
+
+scrollWidth = clientWidth في التلاتة ، axe صفر
+~~~
+
+~~~view 150 150 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>navbar</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-200:oklch(92.8% .006 264.531);--color-white:#fff;--spacing:.25rem;--container-5xl:64rem;--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-bold:700;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mx-auto{margin-inline:auto}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.size-11{width:calc(var(--spacing) * 11);height:calc(var(--spacing) * 11)}.max-w-5xl{max-width:var(--container-5xl)}.place-items-center{place-items:center}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-6{gap:calc(var(--spacing) * 6)}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-gray-200{border-color:var(--color-gray-200)}.p-4{padding:calc(var(--spacing) * 4)}.py-2{padding-block:calc(var(--spacing) * 2)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.aria-expanded\:rotate-90[aria-expanded=true]{rotate:90deg}@media not all and (min-width:48rem){.max-md\:absolute{position:absolute}.max-md\:inset-x-0{inset-inline:0}.max-md\:top-\[4\.8rem\]{top:4.8rem}.max-md\:bg-white{background-color:var(--color-white)}.max-md\:p-4{padding:calc(var(--spacing) * 4)}.max-md\:shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}}@media (min-width:48rem){.md\:flex{display:flex}.md\:hidden{display:none}}}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}
+</style>
+</head>
+<body>
+<header class="border-b border-gray-200">
+  <nav aria-label="الرئيسية" class="mx-auto flex max-w-5xl items-center justify-between p-4">
+    <a href="/" class="font-bold">متجر النور</a>
+    <button id="menu-btn" type="button" aria-label="القايمة" aria-expanded="false" aria-controls="menu"
+            class="grid size-11 place-items-center text-2xl transition-transform aria-expanded:rotate-90 md:hidden">☰</button>
+    <ul id="menu" class="hidden gap-6 md:flex max-md:absolute max-md:inset-x-0 max-md:top-[4.8rem] max-md:bg-white max-md:p-4 max-md:shadow-lg">
+      <li><a href="/products" class="block py-2">المنتجات</a></li>
+      <li><a href="/offers" class="block py-2">العروض</a></li>
+      <li><a href="/contact" class="block py-2">كلّمنا</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="p-4"><h1 class="text-2xl font-bold">أهلًا بيك</h1></main>
+<script>
+  const btn = document.getElementById("menu-btn");
+  const menu = document.getElementById("menu");
+  btn.addEventListener("click", () => {
+    const open = btn.getAttribute("aria-expanded") === "true";
+    btn.setAttribute("aria-expanded", String(!open));
+    menu.classList.toggle("hidden", open);
+  });
+</script>
+</body>
+</html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زراير عليها [[focus:outline-none]] عشان «الـ outline وحش لما بدوس بالماوس». مستخدم الكيبورد مش عارف هو فين. صلّحها من غير ما الماوس يشوف outline.`, done: R`بعد [[focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand]]: الضغط بالماوس مبيطلّعش outline، و Tab بيطلّعه واضح على كل زرار.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>focus</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-8">
+<main class="flex gap-3">
+  <button id="one" class="rounded-lg bg-gray-100 px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">حفظ</button>
+  <button id="two" class="rounded-lg bg-gray-100 px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">إلغاء</button>
+</main>
+</body>
+</html>
+~~~
+
+**الفرق:** [[focus]] بيطابق أي focus، بالماوس أو الكيبورد. [[focus-visible]] بيطابق بس لما المتصفح يشوف إن المستخدم محتاج يعرف هو فين، يعني جاي بالكيبورد.
+
+ومفيش داعي نكتب [[focus:outline-none]] أصلًا: Chrome مبيرسمش outline للزرار بعد ضغطة ماوس. فاللي كان بيضايق الديزاينر مش موجود، والسطر ده كان بيشيل الإطار من الكيبورد بس.
+
+- [[focus-visible:outline-2]] سُمك 2px.
+- [[focus-visible:outline-offset-2]] مسافة عن الزرار عشان يبان على أي خلفية.
+- [[focus-visible:outline-brand]] من توكن البراند.
+
+**الغلطة الشائعة:** تستبدل [[focus:outline-none]] بـ [[focus:ring-2]]. ده بيظهر مع الماوس كمان، وهي دي الشكوى الأصلية.
+
+~~~text الناتج
+ضغطة ماوس على «حفظ»:
+outline-style = none
+
+Tab لـ «إلغاء»:
+outline-style = solid ، width 2px ، offset 2px ، color rgb(15, 118, 110)
+~~~
+
+~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>focus</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-100:oklch(96.7% .003 264.542);--spacing:.25rem;--radius-lg:.5rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-brand:#0f766e}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.flex{display:flex}.gap-3{gap:calc(var(--spacing) * 3)}.rounded-lg{border-radius:var(--radius-lg)}.bg-gray-100{background-color:var(--color-gray-100)}.p-8{padding:calc(var(--spacing) * 8)}.px-4{padding-inline:calc(var(--spacing) * 4)}.py-2{padding-block:calc(var(--spacing) * 2)}.focus-visible\:outline-2:focus-visible{outline-style:var(--tw-outline-style);outline-width:2px}.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}.focus-visible\:outline-brand:focus-visible{outline-color:var(--color-brand)}}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}
+</style></head>
+<body class="p-8">
+<main class="flex gap-3">
+  <button id="one" class="rounded-lg bg-gray-100 px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">حفظ</button>
+  <button id="two" class="rounded-lg bg-gray-100 px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">إلغاء</button>
+</main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** toggle شهري/سنوي لصفحة أسعار من غير JavaScript: radio اتنين جوه wrapper عليه [[group]]، والأسعار [[group-has-[#yearly:checked]:hidden]] و [[hidden group-has-[#yearly:checked]:block]].`, done: R`اختيار «سنوي» بيبدّل كل الأسعار في نفس اللحظة، والأسهم بين الـ radios بتبدّل من الكيبورد، و grep على الـ JS مفيهوش أي حاجة للأسعار.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأسعار</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-6">
+<main class="group mx-auto max-w-2xl">
+  <h1 class="text-2xl font-bold">الأسعار</h1>
+  <fieldset class="mt-4 flex gap-4">
+    <legend class="sr-only">مدة الاشتراك</legend>
+    <label class="flex items-center gap-2"><input type="radio" name="period" id="monthly" checked> شهري</label>
+    <label class="flex items-center gap-2"><input type="radio" name="period" id="yearly"> سنوي (وفّر شهرين)</label>
+  </fieldset>
+  <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+    <li class="rounded-xl border border-gray-300 p-6">
+      <h2 class="font-bold">الأساسية</h2>
+      <p class="mt-2 text-3xl group-has-[#yearly:checked]:hidden">99 جنيه / شهر</p>
+      <p class="mt-2 hidden text-3xl group-has-[#yearly:checked]:block">990 جنيه / سنة</p>
+    </li>
+    <li class="rounded-xl border border-gray-300 p-6">
+      <h2 class="font-bold">الاحترافية</h2>
+      <p class="mt-2 text-3xl group-has-[#yearly:checked]:hidden">299 جنيه / شهر</p>
+      <p class="mt-2 hidden text-3xl group-has-[#yearly:checked]:block">2990 جنيه / سنة</p>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+**ليه شغال:** [[group]] على [[<main>]]، و [[group-has-[#yearly:checked]:hidden]] بتتحول لقاعدة معناها «لو الجد اللي اسمه group جواه [[#yearly]] متعلّم، اخفي العنصر ده». يعني [[:has()]] بيقرا حالة الـ radio، والـ CSS كله بيتغيّر من غير ولا سطر JavaScript.
+
+كل سعر مكتوب مرتين، عنصر شهري وعنصر سنوي، وواحد بس ظاهر.
+
+**الكيبورد ببلاش:** دول radio حقيقيين بنفس الـ [[name]]، فالأسهم بتتنقل بينهم وقارئ الشاشة بيقول «١ من ٢». و [[fieldset]] و [[legend]] بيدّوا المجموعة اسم.
+
+**الغلطة الشائعة:** تعمل الزرارين [[<button>]] بشكل tabs. كده هتحتاج JavaScript و ARIA عشان توصل لنفس السلوك اللي الـ radio بيديهولك.
+
+~~~text الناتج
+شهري:         «99 جنيه / شهر» و «299 جنيه / شهر»
+سنوي:         «990 جنيه / سنة» و «2990 جنيه / سنة»  (في نفس اللحظة)
+السهم يمين:   رجع شهري ، input:checked = monthly
+
+scripts في الصفحة: 0
+على 360: scrollWidth = clientWidth ، axe صفر
+~~~
+
+~~~view 270 400 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأسعار</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid;--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-300:oklch(87.2% .01 258.338);--spacing:.25rem;--container-2xl:42rem;--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--text-3xl:1.875rem;--text-3xl--line-height:calc(2.25 / 1.875);--font-weight-bold:700;--radius-xl:.75rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.mx-auto{margin-inline:auto}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-4{margin-top:calc(var(--spacing) * 4)}.mt-6{margin-top:calc(var(--spacing) * 6)}.flex{display:flex}.grid{display:grid}.hidden{display:none}.max-w-2xl{max-width:var(--container-2xl)}.items-center{align-items:center}.gap-2{gap:calc(var(--spacing) * 2)}.gap-4{gap:calc(var(--spacing) * 4)}.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-gray-300{border-color:var(--color-gray-300)}.p-6{padding:calc(var(--spacing) * 6)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-3xl{font-size:var(--text-3xl);line-height:var(--tw-leading,var(--text-3xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}:is(:where(.group):has(#yearly:checked) .group-has-\[\#yearly\:checked\]\:block){display:block}:is(:where(.group):has(#yearly:checked) .group-has-\[\#yearly\:checked\]\:hidden){display:none}@media (min-width:40rem){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}
+</style>
+</head>
+<body class="p-6">
+<main class="group mx-auto max-w-2xl">
+  <h1 class="text-2xl font-bold">الأسعار</h1>
+  <fieldset class="mt-4 flex gap-4">
+    <legend class="sr-only">مدة الاشتراك</legend>
+    <label class="flex items-center gap-2"><input type="radio" name="period" id="monthly" checked> شهري</label>
+    <label class="flex items-center gap-2"><input type="radio" name="period" id="yearly"> سنوي (وفّر شهرين)</label>
+  </fieldset>
+  <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+    <li class="rounded-xl border border-gray-300 p-6">
+      <h2 class="font-bold">الأساسية</h2>
+      <p class="mt-2 text-3xl group-has-[#yearly:checked]:hidden">99 جنيه / شهر</p>
+      <p class="mt-2 hidden text-3xl group-has-[#yearly:checked]:block">990 جنيه / سنة</p>
+    </li>
+    <li class="rounded-xl border border-gray-300 p-6">
+      <h2 class="font-bold">الاحترافية</h2>
+      <p class="mt-2 text-3xl group-has-[#yearly:checked]:hidden">299 جنيه / شهر</p>
+      <p class="mt-2 hidden text-3xl group-has-[#yearly:checked]:block">2990 جنيه / سنة</p>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** أسئلة شائعة بزراير [[aria-expanded]]، والسهم جوه الزرار [[group-aria-expanded:rotate-180]] (والزرار عليه [[group]])، والإجابة [[data-[state=open]:block hidden]]، وفاصل بين الأسئلة بـ [[not-last:border-b]] على الأب بـ [[*:]].`, done: R`فتح سؤال بيلف سهمه بس، وآخر سؤال مفيش تحته خط، و grep على [[out.css]] بيلاقي [[[aria-expanded="true"]]] و [[:not(:last-child)]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أسئلة شائعة</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-6">
+<main class="mx-auto max-w-xl">
+  <h1 class="text-2xl font-bold">أسئلة شائعة</h1>
+  <div id="faq" class="mt-4 *:not-last:border-b *:not-last:border-gray-300">
+    <div>
+      <h2><button type="button" aria-expanded="false" aria-controls="a1" class="group flex w-full items-center justify-between py-3 font-semibold">
+        التوصيل بياخد قد إيه؟ <span aria-hidden="true" class="transition-transform group-aria-expanded:rotate-180">▼</span>
+      </button></h2>
+      <p id="a1" data-state="closed" class="hidden pb-3 data-[state=open]:block">يومين شغل جوه القاهرة.</p>
+    </div>
+    <div>
+      <h2><button type="button" aria-expanded="false" aria-controls="a2" class="group flex w-full items-center justify-between py-3 font-semibold">
+        أرجّع المنتج إزاي؟ <span aria-hidden="true" class="transition-transform group-aria-expanded:rotate-180">▼</span>
+      </button></h2>
+      <p id="a2" data-state="closed" class="hidden pb-3 data-[state=open]:block">خلال ١٤ يوم من الاستلام.</p>
+    </div>
+    <div>
+      <h2><button type="button" aria-expanded="false" aria-controls="a3" class="group flex w-full items-center justify-between py-3 font-semibold">
+        بتقبلوا الدفع عند الاستلام؟ <span aria-hidden="true" class="transition-transform group-aria-expanded:rotate-180">▼</span>
+      </button></h2>
+      <p id="a3" data-state="closed" class="hidden pb-3 data-[state=open]:block">أيوه، في كل المحافظات.</p>
+    </div>
+  </div>
+</main>
+<script>
+  document.querySelectorAll("#faq button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const open = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!open));
+      document.getElementById(btn.getAttribute("aria-controls")).dataset.state = open ? "closed" : "open";
+    });
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[group-aria-expanded:rotate-180]] على السهم: الـ [[aria-expanded]] موجود على الزرار، والسهم جواه. [[aria-expanded:]] لوحدها بتبص على العنصر نفسه، فمش هتشتغل على السهم. فبنحط [[group]] على الزرار، والسهم يبص على الأب.
+- [[data-[state=open]:block]] مع [[hidden]]: قاعدة الـ variant بتيجي بعد في الـ CSS فبتكسب، فالإجابة بتظهر لما [[data-state]] يبقى [[open]].
+- [[*:not-last:border-b]] على الأب: [[*:]] بتطبّق على الأولاد المباشرين، و [[not-last:]] بتستثني آخر واحد. كده الفاصل كله في مكان واحد.
+
+**الغلطة الشائعة:** تحط [[aria-expanded:rotate-180]] على السهم. الـ build بيعدّي والكلاس موجود، بس عمره ما بيتفعّل لأن السهم نفسه مفيهوش الـ attribute.
+
+~~~text الناتج
+قبل أي ضغطة:
+border-bottom: 1px ، 1px ، 0px   (آخر سؤال مفيش تحته خط)
+
+بعد فتح السؤال الأول:
+rotate: 180deg ، none ، none
+الإجابة ظاهرة للأول بس
+
+grep على out.css: [aria-expanded="true"] موجود ، :not(:last-child) موجود
+على 360: scrollWidth = clientWidth ، axe صفر
+~~~
+
+~~~view 250 250 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أسئلة شائعة</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-font-weight:initial;--tw-border-style:solid}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-300:oklch(87.2% .01 258.338);--spacing:.25rem;--container-xl:36rem;--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-semibold:600;--font-weight-bold:700;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mx-auto{margin-inline:auto}.mt-4{margin-top:calc(var(--spacing) * 4)}.flex{display:flex}.hidden{display:none}.w-full{width:100%}.max-w-xl{max-width:var(--container-xl)}.items-center{align-items:center}.justify-between{justify-content:space-between}.p-6{padding:calc(var(--spacing) * 6)}.py-3{padding-block:calc(var(--spacing) * 3)}.pb-3{padding-bottom:calc(var(--spacing) * 3)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}:is(.\*\:not-last\:border-b>*):not(:last-child){border-bottom-style:var(--tw-border-style);border-bottom-width:1px}:is(.\*\:not-last\:border-gray-300>*):not(:last-child){border-color:var(--color-gray-300)}:is(:where(.group)[aria-expanded=true] .group-aria-expanded\:rotate-180){rotate:180deg}.data-\[state\=open\]\:block[data-state=open]{display:block}}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}
+</style>
+</head>
+<body class="p-6">
+<main class="mx-auto max-w-xl">
+  <h1 class="text-2xl font-bold">أسئلة شائعة</h1>
+  <div id="faq" class="mt-4 *:not-last:border-b *:not-last:border-gray-300">
+    <div>
+      <h2><button type="button" aria-expanded="false" aria-controls="a1" class="group flex w-full items-center justify-between py-3 font-semibold">
+        التوصيل بياخد قد إيه؟ <span aria-hidden="true" class="transition-transform group-aria-expanded:rotate-180">▼</span>
+      </button></h2>
+      <p id="a1" data-state="closed" class="hidden pb-3 data-[state=open]:block">يومين شغل جوه القاهرة.</p>
+    </div>
+    <div>
+      <h2><button type="button" aria-expanded="false" aria-controls="a2" class="group flex w-full items-center justify-between py-3 font-semibold">
+        أرجّع المنتج إزاي؟ <span aria-hidden="true" class="transition-transform group-aria-expanded:rotate-180">▼</span>
+      </button></h2>
+      <p id="a2" data-state="closed" class="hidden pb-3 data-[state=open]:block">خلال ١٤ يوم من الاستلام.</p>
+    </div>
+    <div>
+      <h2><button type="button" aria-expanded="false" aria-controls="a3" class="group flex w-full items-center justify-between py-3 font-semibold">
+        بتقبلوا الدفع عند الاستلام؟ <span aria-hidden="true" class="transition-transform group-aria-expanded:rotate-180">▼</span>
+      </button></h2>
+      <p id="a3" data-state="closed" class="hidden pb-3 data-[state=open]:block">أيوه، في كل المحافظات.</p>
+    </div>
+  </div>
+</main>
+<script>
+  document.querySelectorAll("#faq button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const open = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!open));
+      document.getElementById(btn.getAttribute("aria-controls")).dataset.state = open ? "closed" : "open";
+    });
+  });
+</script>
+</body>
+</html>
+~~~` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** [[check-variants.mjs]]: بيعمل build لملف HTML فيه [[md:flex]] و [[hover:bg-brand]] و [[dark:bg-black]]، ويتأكد من [[out.css]] إن [[md:flex]] جوه [[@media (width >= 48rem)]]، و [[hover:]] جوه [[@media (hover: hover)]]. ويخرج بـ 1 لو حاجة ناقصة.`, done: R`السكربت بيخرج 0 على الإعداد العادي، ولما تزوّد [[@custom-variant dark (&:where(.dark, .dark *));]] الاختبار بتاع dark بيفشل لو لسه بيدوّر على [[prefers-color-scheme]] (يعني بيمسك التغيير).`, sol: R`~~~js check-variants.mjs
+import { execSync } from "node:child_process";
+import { readFileSync, writeFileSync } from "node:fs";
+
+writeFileSync("page.html", '<div class="md:flex hover:bg-brand dark:bg-black"></div>');
+execSync("npx @tailwindcss/cli -i in.css -o out.css", { stdio: "pipe" });
+const css = readFileSync("out.css", "utf8");
+
+// Tailwind بيحط الـ at-rule قبل الكلاس، فبندوّر لورا ونتأكد إن البلوك لسه مفتوح
+function inside(atRule, cls) {
+  const end = css.indexOf(cls);
+  const start = css.lastIndexOf(atRule, end);
+  if (end === -1 || start === -1) return false;
+  const between = css.slice(start, end);
+  const opened = (between.match(/{/g) ?? []).length;
+  const closed = (between.match(/}/g) ?? []).length;
+  return opened > closed;
+}
+
+const checks = [
+  ["md:flex جوه @media (width >= 48rem)", inside("@media (width >= 48rem)", ".md\\:flex")],
+  ["hover: جوه @media (hover: hover)", inside("@media (hover: hover)", ".hover\\:bg-brand")],
+  ["dark: جوه prefers-color-scheme", inside("prefers-color-scheme: dark", ".dark\\:bg-black")],
+];
+
+let failed = 0;
+for (const [name, ok] of checks) {
+  console.log((ok ? "ok   " : "FAIL ") + name);
+  if (!ok) failed++;
+}
+process.exit(failed ? 1 : 0);
+~~~
+
+~~~css in.css
+@import "tailwindcss";
+@theme { --color-brand: #0f766e; }
+~~~
+
+~~~bash
+node check-variants.mjs
+echo "exit: $?"
+~~~
+
+**ليه الدالة بتدوّر لورا:** Tailwind بيكتب [[@media (width >= 48rem) { .md\:flex { ... } }]]، يعني الـ at-rule قبل الكلاس. فبناخد مكان الكلاس، ونرجع لآخر مرة ظهر فيها الـ at-rule، ونعدّ الأقواس بينهم. لو الأقواس المفتوحة أكتر من المقفولة، البلوك لسه مفتوح والكلاس جواه فعلًا.
+
+مجرد [[css.includes(...)]] مش كفاية: الـ at-rule ممكن يكون موجود في مكان تاني والكلاس برا منه.
+
+**ليه الاختبار مفيد:** لما حد يزوّد [[@custom-variant dark]]، معنى [[dark:]] بيتغيّر من إعداد الجهاز لكلاس على html. الاختبار بيقع ويقولك إن فيه قرار اتغيّر، وتحدّثه عن قصد.
+
+**الغلطة الشائعة:** تدوّر على الكلاس بعد الـ at-rule بمسافة ثابتة. عند أي تغيير في شكل الناتج الاختبار هيكدب.
+
+~~~text الناتج
+الإعداد العادي:
+ok   md:flex جوه @media (width >= 48rem)
+ok   hover: جوه @media (hover: hover)
+ok   dark: جوه prefers-color-scheme
+exit: 0
+
+بعد @custom-variant dark (&:where(.dark, .dark *));
+ok   md:flex جوه @media (width >= 48rem)
+ok   hover: جوه @media (hover: hover)
+FAIL dark: جوه prefers-color-scheme
+exit: 1
+~~~` },
+          ],
+          deep: {
+            why: "في CSS العادي، الـ hover والـ media query والـ dark mode كل واحد قاعدة لوحدها في مكان تاني. الـ variants بتخلي كل حالات العنصر مكتوبة عليه، فتشوف سلوكه كله في سطر.",
+            how: R`كل variant بيلف الـ utility في selector أو at-rule: [[hover:bg-x]] بتطلع قاعدة فيها [[:hover]] جوه [[@media (hover: hover)]]. و [[md:flex]] جوه [[@media (width >= 48rem)]]. و [[dark:]] افتراضيًا جوه [[@media (prefers-color-scheme: dark)]] (وتقدر تخليه كلاس، درس الـ dark mode).
+
+في v4 الـ variants المتراكبة بتتقري من الشمال لليمين: [[*:last:border-0]] = على الأولاد، لما يكون الابن آخر واحد (في v3 كانت بالعكس).
+
+فيه variants كتير جاهزة: [[focus-visible:]] و [[active:]] و [[disabled:]] و [[first:]] و [[last:]] و [[odd:]] و [[placeholder:]] و [[aria-expanded:]] و [[data-[state=open]:]] (مهمة مع Radix) و [[motion-reduce:]] و [[print:]] و [[max-md:]] (أقل من md) و [[rtl:]] و [[ltr:]].
+
+وترتيب الكلاسات في الـ className نفسه مش هو اللي بيحسم التعارض: الترتيب في ملف الـ CSS الناتج هو اللي بيحكم، والـ variants بتيجي بعد الكلاس العادي، فـ [[hover:bg-x]] بتكسب [[bg-y]] وقت الـ hover.`,
+            when: R`كل حالة ليها شكل مختلف. [[focus-visible:]] على كل عنصر بيتضغط (accessibility). وابدأ بالموبايل: الكلاس العادي للموبايل و [[md:]] للأكبر.`,
+            mistakes: R`[[sm:text-sm]] وانت فاكر إنه للموبايل: هو من 640 وطالع. [[focus:]] بدل [[focus-visible:]] فالـ outline يظهر مع كل ضغطة ماوس، فتزهق وتشيله خالص وتبوّظ الكيبورد. و [[hover:]] بس على حاجة مهمة، فاللي على الموبايل ميشوفهاش (v4 مبيطبّقش hover على اللمس أصلًا).`
+          },
+          teach: R`## الشرط قبل الـ [[:]]، والكلاس بعدها
+
+[[md:flex-row]] تتقري: «لو الشرط [[md]] متحقق، طبّق [[flex-row]]». حطينا المثال في [[App.tsx]] بتاع مشروع Vite (Tailwind 4.3.3، ومعاه [[--color-brand]] من درس [[@theme]])، وعملنا build، وقرينا القواعد في الـ CSS الناتج، وجربنا في Chrome بالكيبورد والماوس وعلى عرض 400 و 1000 وبثيم فاتح وغامق.
+
+---
+
+## ١. الـ nav
+
+~~~text App.tsx
+<nav className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
+~~~
+
+| الكلاس | في الـ CSS | على 400 | على 1000 |
+|---|---|---|---|
+| [[flex flex-col gap-2]] | من غير شرط | column، gap 8px | (اتغطّى) |
+| [[md:flex-row md:items-center md:gap-6]] | جوه [[@media (width>=48rem)]] | مش شغال | row، gap 24px |
+
+[[48rem]] = 768px. والكلاس العادي للموبايل، و [[md:]] بيضيف من 768 وطالع.
+
+## ٢. اللينك
+
+~~~text App.tsx
+<a className="rounded-md px-3 py-2 text-gray-700 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-brand dark:text-gray-200 dark:hover:bg-gray-800" href="/pricing">
+~~~
+
+القواعد زي ما طلعت في الملف:
+
+~~~text من الـ CSS الناتج
+@media (hover:hover){.hover\:bg-gray-100:hover{background-color:var(--color-gray-100)}}
+.focus-visible\:outline-2:focus-visible{outline-style:var(--tw-outline-style);outline-width:2px}
+.focus-visible\:outline-brand:focus-visible{outline-color:var(--color-brand)}
+@media (prefers-color-scheme:dark){.dark\:text-gray-200{color:var(--color-gray-200)}@media (hover:hover){.dark\:hover\:bg-gray-800:hover{...}}}
+~~~
+
+- [[hover:]] = [[:hover]] جوه [[@media (hover:hover)]].
+- [[focus-visible:]] = [[:focus-visible]]: العنصر عليه focus **والمتصفح شايف إن لازم يبان** (زي لما توصله بـ Tab).
+- [[outline-2]] = خط حوالين العنصر 2px، و [[outline-brand]] لونه.
+- [[dark:]] = جوه [[@media (prefers-color-scheme:dark)]]، يعني ثيم الجهاز. و [[dark:hover:]] الاتنين مع بعض.
+
+### Tab ضد ضغطة الماوس (على 1000)
+
+| الحالة | [[:focus]] | [[:focus-visible]] | الـ outline |
+|---|---|---|---|
+| الصفحة لسه فاتحة | false | false | none |
+| بعد Tab | true | true | solid 2px oklch(0.55 0.2 265) |
+| بعد ضغطة ماوس | true | false | none |
+
+في الحالتين الـ focus على اللينك، بس الـ outline ظهر مع الكيبورد بس. ولما الماوس وقف عليه الخلفية بقت [[oklch(0.967 0.003 264.542)]] (gray-100).
+
+### الثيم الغامق
+
+فتحنا الصفحة بثيم جهاز dark: لون اللينك بقى [[oklch(0.928 0.006 264.531)]] (gray-200) بدل [[oklch(0.373 0.034 259.733)]] (gray-700)، وخلفية الـ hover [[oklch(0.278 0.033 256.848)]] (gray-800).
+
+## ٣. الزرار
+
+~~~text App.tsx
+<button className="hidden md:inline-flex disabled:cursor-not-allowed disabled:opacity-50" disabled>
+~~~
+
+- [[hidden]] = [[display: none]]، و [[md:inline-flex]] بيرجّعه من 768.
+- [[disabled]] attribute = الزرار مقفول. و [[disabled:]] variant = [[:disabled]].
+
+| العرض | display | opacity | cursor |
+|---|---|---|---|
+| 400 | none | 0.5 | not-allowed |
+| 1000 | flex | 0.5 | not-allowed |
+
+ليه flex مش inline-flex؟ الزرار ابن جوه flex، والمتصفح بيحوّل أي ابن flex لـ block (inline-flex تبقى flex)، والشكل واحد.
+
+## ٤. [[*:]] على القايمة
+
+~~~text App.tsx
+<ul className="*:border-b *:py-2 *:last:border-0">...</ul>
+~~~
+
+[[*:]] = «على كل ابن مباشر». وفي v4 الـ variants بتتقري من الشمال لليمين: [[*:last:border-0]] = على الأولاد، اللي منهم آخر واحد. القاعدة طلعت كده:
+
+~~~text من الـ CSS الناتج
+:is(.\*\:last\:border-0>*):last-child{border-style:var(--tw-border-style);border-width:0}
+~~~
+
+حطينا ٣ [[<li>]]: الـ border تحت كل واحد طلع 1px و 1px و **0px**.
+
+## الخلاصة
+
+| الـ variant | بيتحول لـ | يعني |
+|---|---|---|
+| [[hover:]] | [[:hover]] جوه [[@media (hover:hover)]] | الماوس فوقه، وعلى أجهزة فيها ماوس بس |
+| [[focus-visible:]] | [[:focus-visible]] | focus جه من الكيبورد مش من ضغطة ماوس |
+| [[md:]] | [[@media (width>=48rem)]] | الشاشة 768 أو أعرض |
+| [[dark:]] | [[@media (prefers-color-scheme:dark)]] | نظام التشغيل على الوضع الغامق |
+| [[disabled:]] | [[:disabled]] | العنصر عليه attribute اسمه disabled |
+| [[*:]] | الأولاد المباشرين | القاعدة على كل ابن مباشر مش على العنصر نفسه |
+
+- الكلاس من غير prefix للموبايل، و [[md:]] من 768 وطالع.
+- [[focus-visible:]] مش [[focus:]] عشان الـ outline يظهر مع الكيبورد بس.`,
+          lines: [
+            "على الموبايل عمود، ومن md صف متوسّط بمسافات أكبر.",
+            "لينك: لون عادي، وخلفية عند الـ hover، و outline لما ياخد focus من الكيبورد، وألوان تانية في الوضع الغامق.",
+            R`كلمة «الأسعار» نفسها، وكل الـ variants اللي على اللينك بتتطبق عليها.`,
+            R`قفلة اللينك، وبعده زرار عليه variants تانية خالص.`,
+            "مستخبي على الموبايل وبيظهر من md. ولما يبقى disabled: شفاف والماوس ممنوع.",
+            R`كلمة «ابدأ» على الزرار، وهي مستخبية على الموبايل مع الزرار كله.`,
+            R`قفلة الزرار، وبعده لستة بتستخدم الـ variant [[*:]].`,
+            R`[[*:]] = على كل الأولاد المباشرين: خط تحت كل واحد، إلا الأخير.`,
+            R`قفلة الـ nav، وكده المثال خلص.`
+          ],
+          sol: R`لما تدوس Tab من أول الصفحة: الـ focus بيروح للينك «الأسعار» وحواليه outline بعرض 2px بلون الـ brand. لما تدوس عليه بالماوس: الـ focus عليه برضه بس مفيش outline، لأن المتصفح بيعتبر إن الضغط بالماوس مش محتاج مؤشر، فـ [[:focus-visible]] مش متحققة. ده بالظبط الفرق بين [[focus:]] (هيظهر في الحالتين) و [[focus-visible:]].
+
+لما تصغّر الشاشة تحت 768px ([[md]] = 48rem): الـ nav بقى عمود ([[flex-direction: column]]) والزرار «ابدأ» اختفى ([[display: none]]). فوق 768 رجع صف والزرار ظاهر [[inline-flex]] ونصه باهت لأنه [[disabled]].
+
+الغلط الشائع إنك تكتب [[md:hidden]] وتتوقعه يخفي على الموبايل: md معناها «من 768 وأكبر»، مش «على الموبايل». الإخفاء على الموبايل بس = [[max-md:hidden]] أو [[hidden md:block]] زي المثال.`
+        },
+        {
+          cmd: "arbitrary values",
+          ref: [
+            { t: "Tailwind CSS: Adding custom styles", url: "https://tailwindcss.com/docs/adding-custom-styles" },
+            { t: "Tailwind CSS: Functions and directives", url: "https://tailwindcss.com/docs/functions-and-directives" },
+          ],
+          title: "قيمة مش موجودة في الـ theme؟",
+          desc: R`لو محتاج قيمة مرة واحدة: حطها بين أقواس مربعة [[w-[327px]]] و [[bg-[#1da1f2]]] و [[grid-cols-[240px_1fr]]] (الـ [[_]] = مسافة). ومتغير CSS بقوسين عاديين: [[bg-(--brand)]]. وخاصية مش موجودة خالص: [[[-webkit-tap-highlight-color:transparent]]].
+
+ولو هتكررها، اعملها utility باسم بـ [[@utility]] في ملف الـ CSS.`,
+          example: R`<div className="grid grid-cols-[240px_1fr] gap-6">
+  <aside className="sticky top-[calc(4rem+1px)] h-[calc(100dvh-4rem)]">...</aside>
+  <main className="max-w-[72ch] text-[clamp(1rem,0.9rem+0.5vw,1.125rem)]">...</main>
+</div>
+<span className="bg-(--brand) [-webkit-tap-highlight-color:transparent]">...</span>
+// globals.css
+@utility container-app {
+  width: 100%;
+  max-width: 75rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}`,
+          try: R`جرّب [[bg-[#ff0]]] على عنصر وشوف القاعدة في الـ CSS الناتج. وبعدين اعمل [[container-app]] بـ [[@utility]] واستخدمها مع [[md:]] وشوفها شغالة زي أي كلاس.`,
+          flag: "script",
+          deep: {
+            why: "الـ theme بيغطي أغلب اللي محتاجه، بس دايمًا فيه قيمة من الديزاين مش على الـ scale (ارتفاع هيدر 72، أو عرض عمود 240). بدل ما تسيب Tailwind وتكتب CSS منفصل، بتكتبها في نفس المكان.",
+            how: R`Tailwind بيشوف [[w-[327px]]] في الكود ويطلّع قاعدة [[width: 327px]]. القيمة بتتحط زي ما هي، فلازم تبقى CSS صالح ومن غير مسافات (المسافة بتقسم الكلاس لاتنين)، عشان كده [[_]] بتتحول لمسافة.
+
+لو القيمة ممكن تتفهم أكتر من طريقة ([[text-(--x)]] لون ولا حجم؟) تقدر تحدد النوع: [[text-(length:--x)]] أو [[text-(color:--x)]].
+
+[[bg-(--brand)]] هو الشكل المختصر في v4 لـ [[bg-[var(--brand)]]]. ودي أحسن طريقة لقيم جاية من JavaScript: تبعت المتغير في [[style]] وتستخدمه في الكلاس، فالكلاس يفضل ثابت ومكتوب كامل و Tailwind يشوفه.
+
+[[@utility]] بتعمل كلاس حقيقي جوه layer الـ utilities، فبيتعامل زي أي utility: بيقبل variants، وبيترتب صح. ودا بديل [[@layer components { .btn {...} }]] بتاعة v3 للحاجات الصغيرة.`,
+            when: R`arbitrary لقيمة مرة واحدة. لو القيمة اتكررت 3 مرات، خليها توكن في [[@theme]] أو [[@utility]].`,
+            mistakes: R`مشروع كله arbitrary values ([[text-[17px]]] و [[mt-[13px]]] في كل حتة): رجعت لـ CSS عادي بس أصعب في القراية، والتصميم بيفقد الاتساق. ومسافة جوه الأقواس فالكلاس يتقسم. و [[bg-[--brand]]] (شكل v3) في v4: اكتب [[bg-(--brand)]]. و [[@utility]] جوه [[@supports]] أو [[@media]] أو [[@layer]]: [[cannot be nested]] وكل الصفحات 500؛ الشرط يتحط **جوه** الـ [[@utility]].`
+          },
+          teach: R`## القيمة بين الأقواس بتتنسخ زي ما هي
+
+[[w-[327px]]] معناها: utility العرض، بس القيمة مش من الـ theme، خدها من بين الأقواس المربعة. حطينا المثال في [[App.tsx]] بتاع مشروع Vite (Tailwind 4.3.3)، و [[@utility]] في [[src/index.css]]، وعملنا build وقرينا القواعد اللي طلعت، وقسنا في Chrome على شاشة 1200 × 800.
+
+---
+
+## ١. [[grid-cols-[240px_1fr]]]
+
+~~~text من الـ CSS الناتج
+.grid-cols-\[240px_1fr\]{grid-template-columns:240px 1fr}
+~~~
+
+الـ [[_]] اتحولت مسافة. ليه مكتبناش مسافة على طول؟ لأن الـ className بيتقسم كلاسات عند المسافات. و [[\[]] في اسم الكلاس escape عشان الأقواس ليها معنى في الـ CSS. على 1200: الأعمدة [[240px 936px]] (1200 - 240 - 24 gap).
+
+## ٢. الـ aside
+
+~~~text App.tsx
+<aside className="sticky top-[calc(4rem+1px)] h-[calc(100dvh-4rem)]">...</aside>
+~~~
+
+~~~text من الـ CSS الناتج
+.top-\[calc\(4rem\+1px\)\]{top:calc(4rem + 1px)}
+.h-\[calc\(100dvh-4rem\)\]{height:calc(100dvh - 4rem)}
+~~~
+
+Tailwind حط المسافات حوالين [[+]] و [[-]] لوحده (calc لازم مسافات حوالين الجمع والطرح). والمتقاس: [[top: 65px]] (64 + 1، تحت هيدر 64 وخط 1)، و [[height: 736px]] (800 - 64).
+
+## ٣. الـ main
+
+~~~text App.tsx
+<main className="max-w-[72ch] text-[clamp(1rem,0.9rem+0.5vw,1.125rem)]">...</main>
+~~~
+
+- [[ch]] وحدة = عرض حرف الصفر في الخط الحالي، فـ [[72ch]] حوالي 72 حرف في السطر.
+- [[text-[clamp(...)]]]: Tailwind فهم إن القيمة طول، فعملها [[font-size]].
+
+| العرض | font-size | max-width (72ch) |
+|---|---|---|
+| 600 | 17.4px (14.4 + 3) | 675.34px |
+| 1200 | 18px (الـ MAX) | 698.63px |
+
+لاحظ إن [[72ch]] بتكبر مع الخط: نفس الـ 72 حرف.
+
+## ٤. [[bg-(--brand)]] و property كاملة
+
+~~~text App.tsx
+<span className="bg-(--brand) [-webkit-tap-highlight-color:transparent]">...</span>
+~~~
+
+~~~text من الـ CSS الناتج
+.bg-\(--brand\){background-color:var(--brand)}
+.\[-webkit-tap-highlight-color\:transparent\]{-webkit-tap-highlight-color:transparent}
+~~~
+
+- [[bg-(--brand)]]: القوسين العاديين = اسم متغير، فبقت [[var(--brand)]]. عرّفنا [[--brand]] في [[:root]]، والخلفية المتقاسة [[oklch(0.55 0.2 265)]].
+- [[[خاصية:قيمة]]]: كلاس كله بين أقواس مربعة = سطر CSS كامل. [[-webkit-tap-highlight-color]] لون الومضة اللي بتظهر لما تلمس لينك على الموبايل، و [[transparent]] بتلغيها.
+
+## ٥. [[@utility]]
+
+~~~text globals.css
+@utility container-app {
+  width: 100%;
+  max-width: 75rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+~~~
+
+بيعمل كلاس اسمه [[container-app]] بيتعامل زي أي utility. استخدمناه بـ [[md:container-app]] بس، فطلع كده:
+
+~~~text من الـ CSS الناتج
+@media (width>=48rem){.md\:container-app{width:100%;max-width:75rem;margin-inline:auto;padding-inline:1.25rem}}
+~~~
+
+| العرض | عرض العنصر | left | padding |
+|---|---|---|---|
+| 600 | 600 | 0 | 0px (الشرط مش متحقق) |
+| 1200 | 1200 | 0 | 20px |
+| 2000 | 1200 (= 75rem) | 400 | 20px |
+
+---
+
+## التجربة: [[bg-[#ff0]]] ومسافة غلط
+
+~~~text من الـ CSS الناتج
+.bg-\[\#ff0\]{background-color:#ff0}
+~~~
+
+الخلفية المتقاسة [[rgb(255, 255, 0)]] (أصفر). وجربنا [[w-[calc(4rem + 1px)]]] بمسافات: مطلعش ليها **ولا قاعدة** في الـ CSS، والعنصر فضل بعرض الصفحة كلها. المسافة قسمت الكلاس لـ ٣ كلمات مش مفهومين.
+
+## فخ: [[@utility]] جوه [[@supports]] = كل الصفحات 500
+
+### العَرَض
+
+عايز كلاس [[glass]] (خلفية شفافة مع blur) يشتغل بس في المتصفحات اللي بتدعم [[backdrop-filter]]، فكتبت في [[globals.css]]:
+
+~~~css globals.css (بايظ)
+@supports (backdrop-filter: blur(4px)) {
+  @utility glass {
+    backdrop-filter: blur(12px);
+    background-color: rgb(255 255 255 / 0.6);
+  }
+}
+~~~
+
+وحفظت. [[curl]] على أي صفحة:
+
+~~~text curl -s -o /dev/null -w "HTTP: %{http_code}\n" http://localhost:4311/ar
+HTTP: 500
+~~~
+
+**كل** الصفحات، مش اللي فيها [[glass]] بس، لأن [[globals.css]] متستورد في [[layout.tsx]] اللي بيلف كل حاجة.
+
+### التشخيص: اللوج مش المتصفح
+
+~~~text sed 's/\x1b\[[0-9;]*m//g' dev.log | tail -50   (Next 16.4.4 و Tailwind 4.3.4 على ويندوز)
+⨯ ./app/globals.css
+Error: Error evaluating Node.js code
+Error: $__bt@utility$__bt cannot be nested.
+    [at C:\...\node_modules\tailwindcss\dist\lib.js:32:3317]
+    ...
+    [at async E (C:\...\node_modules\@tailwindcss\turbopack\dist\index.js:1:2599)]
+
+ GET /ar 500 in 22ms (next.js: 12ms, application-code: 10ms)
+~~~
+
+- [[./app/globals.css]]: الملف اللي فيه المشكلة.
+- [[$__bt@utility$__bt cannot be nested.]]: الرسالة نفسها، من Tailwind ([[tailwindcss\dist\lib.js]]).
+- [[@tailwindcss\turbopack]]: الحتة اللي بتشغّل Tailwind جوه Next 16.4 (القالب الجديد بتاع [[create-next-app]] بيستخدم [[@tailwindcss/turbopack]] في [[next.config.ts]]).
+
+ونفس الملف من غير Next خالص، بـ CLI بتاع Tailwind في [[docker run node:22-slim]]:
+
+~~~text npx @tailwindcss/cli -i in.css -o out.css
+≈ tailwindcss v4.3.4
+
+Error:
+│ Error: $__bt@utility$__bt cannot be nested.
+~~~
+
+ورقم الخروج [[1]]. يعني المشكلة في Tailwind مش في Next. وجربنا نفس الحكاية جوه [[@media (min-width: 40rem)]] وجوه [[@layer components]]: نفس الخطأ بالظبط. و [[@utility .glass]] (بنقطة) طلّع خطأ تاني: [[$__bt@utility .glass$__bt defines an invalid utility name. Utilities should be alphanumeric and start with a lowercase letter.]]
+
+### السبب
+
+[[@utility]] مش CSS. ده تعليمة لـ Tailwind: «سجّل كلاس اسمه [[glass]]، وطلّعه في layer الـ utilities، وطلّع منه نسخ للـ variants ([[md:glass]] و [[hover:glass]])». عشان يعمل ده لازم يبقى في **أعلى مستوى** في الملف. لو جوه [[@supports]]، Tailwind مش هيعرف يحط [[md:glass]] فين (جوه الـ [[@supports]]؟ ولا [[@media]] جوه [[@supports]]؟)، فبيرفض.
+
+### الحل: اقلبها، [[@supports]] جوه [[@utility]]
+
+~~~css globals.css (سليم)
+@utility glass {
+  background-color: rgb(255 255 255 / 0.9);
+  @supports (backdrop-filter: blur(4px)) {
+    backdrop-filter: blur(12px);
+    background-color: rgb(255 255 255 / 0.6);
+  }
+}
+~~~
+
+- برا الـ [[@supports]]: الشكل لأي متصفح (أبيض شبه مصمت عشان الكلام يتقري من غير blur).
+- جوه: لو المتصفح بيدعم، blur وشفافية أكتر.
+
+~~~text curl -s -o /dev/null -w "HTTP: %{http_code}\n" http://localhost:4311/ar
+HTTP: 200
+~~~
+
+والـ CSS اللي اتولّد (من ملف الـ CSS اللي الصفحة بتطلبه):
+
+~~~text الناتج
+  .glass {
+    background-color: #ffffffe6;
+  }
+
+  @supports ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
+    .glass {
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      background-color: #fff9;
+    }
+  }
+~~~
+
+Tailwind (بـ Lightning CSS) زوّد نسخة [[-webkit-]] للشرط وللخاصية (Safari القديم)، وحوّل [[rgb(255 255 255 / 0.9)]] لـ [[#ffffffe6]] (نفس اللون: [[e6]] = 230 من 255 = 0.9). واستخدمنا [[md:glass]] كمان: طلع [[.md\:glass]] جوه [[@media]] وجواه نفس الـ [[@supports]]. ده اللي مكنش هيحصل لو كتبتها [[.glass]] عادي جوه [[@supports]].
+
+### البدايل
+
+| البديل | امتى | العيب |
+|---|---|---|
+| [[@supports]] جوه [[@utility]] | كلاس هيتكرر وعايزه بـ variants | مفيش، ده الشكل الصح في v4 |
+| [[supports-[backdrop-filter]:backdrop-blur-md]] في الـ HTML | مرة أو اتنين | الكلاسات بتطول. وجربناه: طلّع [[@supports (backdrop-filter: var(--tw))]] |
+| [[.glass]] CSS عادي جوه [[@supports]] | مشروع من غير Tailwind | [[md:glass]] و [[hover:glass]] مش هيشتغلوا، وترتيبه مع الـ utilities مش مضمون |
+| [[@layer components { ... }]] | شكل v3 | جوه [[@layer]] نفس الخطأ لو حطيت [[@utility]] |
+
+### إزاي متتكررش
+
+- بعد أي تعديل في [[globals.css]]: [[curl -w "%{http_code}"]] على صفحة واحدة (درس «التعديل وصل؟ curl و grep» في تاب web).
+- [[grep -n "@utility" app/globals.css]]: كل سطر لازم يبدأ من أول العمود (مفيش مسافات قبله). مسافة قبل [[@utility]] = غالبًا جوه حاجة.
+- القاعدة: [[@utility]] في أعلى الملف، وأي شرط ([[@supports]] و [[@media]]) **جواه**.
+
+## الخلاصة
+
+| الكتابة | المعنى |
+|---|---|
+| [[w-[327px]]] | قيمة مباشرة بتتنسخ زي ما هي |
+| [[grid-cols-[240px_1fr]]] | [[_]] بتتحوّل مسافة في الـ CSS |
+| [[bg-(--brand)]] | بيبقى [[var(--brand)]]: متغير CSS |
+| [[[خاصية:قيمة]]] | خاصية مش موجودة في Tailwind |
+| [[@utility اسم {...}]] | كلاس جديد بيقبل variants |
+
+- مفيش مسافات جوه الأقواس أبدًا. والقيمة اللي بتتكرر خليها توكن أو [[@utility]].`,
+          lines: [
+            R`عمودين: 240 ثابت والباقي. [[_]] مكان المسافة لأن الكلاس مينفعش فيه مسافة.`,
+            "sticky تحت هيدر 64px، وارتفاعه الشاشة ناقص الهيدر.",
+            "عرض مريح للقراية (حوالي 72 حرف)، وخط fluid بـ clamp.",
+            R`قفلة الـ grid اللي فيه العمودين ([[aside]] و [[main]]).`,
+            "لون من متغير CSS بالقوسين العاديين، وخاصية كاملة مش موجودة في Tailwind بين أقواس مربعة.",
+            R`utility جديدة باسم، بتتعامل زي أي كلاس: [[md:container-app]] شغالة.`,
+            R`العرض كله المتاح ([[100%]]) على الشاشات الصغيرة...`,
+            R`...بس مايزيدش عن [[75rem]] (1200px لو الخط 16) على الشاشات الكبيرة.`,
+            R`[[margin-inline: auto]] يقسم المسافة الفاضية بين الجنبين، فالمحتوى يبقى في النص.`,
+            "مسافة من الجنبين (بتتقلب مع RTL).",
+            "قفلة."
+          ],
+          sol: R`[[bg-[#ff0]]] بيدّي خلفية صفرا، وفي الـ CSS الناتج هتلاقي القاعدة بالشكل ده: [[.bg-\[\#ff0\] { background-color: #ff0; }]]. الأقواس و الـ [[#]] اتعمل لهم escape بـ backslash عشان يبقوا selector صحيح.
+
+الـ [[@utility container-app]] بيطلع كلاس عادي في layer الـ utilities، ولما تستخدم [[md:container-app]] Tailwind بيولّد نسخة تانية جوه [[@media (width >= 48rem)]] بنفس الخصائص، زي أي كلاس جاهز. على الشاشة: المحتوى بقى في النص وعرضه أقصى 75rem وحواليه padding.
+
+لو القيمة الـ arbitrary ملهاش أي تأثير: غالبًا فيه مسافة جوه الأقواس ([[bg-[#ff 0]]] أو [[calc(4rem + 1px)]])، والمسافة بتقسم الكلاس لكلاسين. استخدم [[_]] مكان المسافة. ولو [[@utility]] رفض يشتغل، اتأكد إن الاسم مفيهوش [[.]] قبله وإنه مش جوه [[@layer]].
+
+لو كل الصفحات بقت 500 بعد تعديل [[globals.css]]: [[tail -50 dev.log]] غالبًا فيه [[$__bt@utility$__bt cannot be nested.]]، يعني [[@utility]] جوه [[@supports]] أو [[@media]] أو [[@layer]]. اقلبها: [[@utility glass { ... @supports (...) { ... } }]]، والصفحة ترجع [[200]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه اللي هيحصل لكل واحد؟ (١) [[@media (min-width: 40rem) { @utility card { padding: 2rem; } }]] (٢) [[@utility card { padding: 1rem; @media (min-width: 40rem) { padding: 2rem; } }]] (٣) [[@utility .card { padding: 1rem; }]]. اكتب التلاتة وبعدين جرّب بـ [[npx @tailwindcss/cli -i in.css -o out.css]].`, done: R`(١) [[cannot be nested]]، و (٢) نجح وفي [[out.css]] قاعدة [[.card]] وجواها [[@media]]، و (٣) [[defines an invalid utility name]]. وكل واحد طابق توقعك أو كاتب ليه لأ.`, sol: R`~~~css one.css
+@import "tailwindcss";
+@media (min-width: 40rem) { @utility card { padding: 2rem; } }
+~~~
+
+~~~css two.css
+@import "tailwindcss";
+@utility card { padding: 1rem; @media (min-width: 40rem) { padding: 2rem; } }
+~~~
+
+~~~css three.css
+@import "tailwindcss";
+@utility .card { padding: 1rem; }
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i one.css -o out.css
+npx @tailwindcss/cli -i two.css -o out.css
+npx @tailwindcss/cli -i three.css -o out.css
+~~~
+
+**(١) بيفشل:** [[@utility]] لازم يبقى في أعلى مستوى في الملف. Tailwind محتاج يقراه كتعريف كلاس، عشان يقدر يركّب عليه [[md:]] و [[hover:]]، فميقدرش يبقى جوه شرط.
+
+**(٢) بينجح:** نفس الفكرة بالعكس: الـ [[@media]] جوه الـ utility. الكلاس واحد، والشرط جزء من محتواه.
+
+**(٣) بيفشل:** الاسم بيتكتب من غير نقطة، زي ما بتكتبه في الـ HTML. [[@utility card]] مش [[@utility .card]].
+
+**الغلطة الشائعة:** تنقل عادتك من CSS العادي، فتحط القاعدة جوه [[@media]] أو تكتب النقطة. الرسالتين واضحين، فاقراهم بدل ما تجرّب حاجات.
+
+~~~text الناتج
+(١) Error: $__bt@utility$__bt cannot be nested.
+(٢) Done in 51ms
+    .card {
+      padding: 1rem;
+      @media (min-width: 40rem) {
+        padding: 2rem;
+      }
+    }
+(٣) Error: $__bt@utility .card$__bt defines an invalid utility name.
+    Utilities should be alphanumeric and start with a lowercase letter.
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صلّح الملف ده من غير ما تغيّر الشكل النهائي: [[@supports (backdrop-filter: blur(4px)) { @utility glass { backdrop-filter: blur(12px); } }]]، واستخدم [[glass]] و [[md:glass]] في صفحة. أثبت بـ [[curl]] إن الصفحة [[200]]، وبـ [[grep]] على ملف الـ CSS إن [[backdrop-filter]] موجود جوه [[@supports]] للاتنين.`, done: R`[[curl -w "%{http_code}"]] بيطبع [[200]]، و [[grep -c "backdrop-filter: blur(12px)"]] على الـ CSS أكبر من أو يساوي ٢ (للكلاسين)، وفيه [[.md\:glass]].`, sol: R`البايظ:
+
+~~~css bad.css
+@import "tailwindcss";
+@supports (backdrop-filter: blur(4px)) { @utility glass { backdrop-filter: blur(12px); } }
+~~~
+
+المصلّح:
+
+~~~css in.css
+@import "tailwindcss";
+
+@utility glass {
+  @supports (backdrop-filter: blur(4px)) {
+    backdrop-filter: blur(12px);
+  }
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>glass</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<main>
+  <h1 class="glass p-4">زجاج دايمًا</h1>
+  <p class="md:glass p-4">زجاج من 768 وطالع</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+npx serve . -l 4000
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4000/
+grep -c "backdrop-filter: blur(12px)" out.css
+grep -F ".md\:glass" out.css
+~~~
+
+**التصليح:** قلب الترتيب. [[@utility]] برا، و [[@supports]] جواه. الشكل النهائي واحد، بس Tailwind دلوقتي يقدر يولّد الكلاس ويركّب عليه [[md:]].
+
+**ليه الـ CSS فيها الاتنين جوه [[@supports]]:** كل كلاس بتاخد نسخة خاصة بيها، و [[.md\:glass]] جوه [[@media]] وجواها [[@supports]].
+
+**الغلطة الشائعة:** في مشروع Next ده بيطلّع صفحة 500 على كل الموقع، مش على الصفحة اللي فيها الكلاس، لأن ملف الـ CSS كله فشل. لو كل الصفحات وقعت مرة واحدة، أول مكان تبص فيه هو لوج السيرفر.
+
+~~~text الناتج
+الملف البايظ:  Error: $__bt@utility$__bt cannot be nested.
+
+بعد التصليح:
+Done in 48ms
+curl:  200
+grep -c "backdrop-filter: blur(12px)":  2
+@supports (backdrop-filter: blur(4px)) ظهرت مرتين
+.md\:glass موجودة جوه @media (width >= 48rem)
+~~~
+
+~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>glass</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--spacing:.25rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.p-4{padding:calc(var(--spacing) * 4)}@supports ((-webkit-backdrop-filter:blur(4px)) or (backdrop-filter:blur(4px))){.glass{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}}@media (min-width:48rem){@supports ((-webkit-backdrop-filter:blur(4px)) or (backdrop-filter:blur(4px))){.md\:glass{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}}}}
+</style></head>
+<body>
+<main>
+  <h1 class="glass p-4">زجاج دايمًا</h1>
+  <p class="md:glass p-4">زجاج من 768 وطالع</p>
+</main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** بطاقة «زجاج» فوق صورة خلفية بـ [[@utility glass]] (اللي في الدرس)، وافتحها في Chrome، وبعدين جرّب حالة متصفح مش بيدعمه: في نسخة من الـ CSS غيّر الشرط لقيمة غلط زي [[@supports (backdrop-filter: nope(1px))]] وابني تاني. الكلام لازم يفضل مقري في الحالتين.`, done: R`صورتين: واحدة فيها blur، وواحدة من غيره والخلفية شبه مصمتة ([[0.9]])، والكلام واضح في الاتنين.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@utility glass {
+  background-color: rgb(255 255 255 / 0.9);
+  @supports (backdrop-filter: blur(4px)) {
+    backdrop-filter: blur(12px);
+    background-color: rgb(255 255 255 / 0.6);
+  }
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بطاقة زجاج</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="grid min-h-dvh place-items-center bg-[linear-gradient(135deg,#0f172a,#0f766e_50%,#f59e0b)] p-6">
+<main id="card" class="glass max-w-sm rounded-2xl p-6 text-gray-950">
+  <h1 class="text-2xl font-bold">عرض الصيف</h1>
+  <p class="mt-2">خصم 30% على كل السماعات لحد آخر الشهر.</p>
+</main>
+</body>
+</html>
+~~~
+
+ولحالة «متصفح مش بيدعمه»، غيّر شرط [[@supports]] لقيمة غلط وابني تاني:
+
+~~~css nosupport.css
+@import "tailwindcss";
+
+@utility glass {
+  background-color: rgb(255 255 255 / 0.9);
+  @supports (backdrop-filter: nope(1px)) {
+    backdrop-filter: blur(12px);
+    background-color: rgb(255 255 255 / 0.6);
+  }
+}
+~~~
+
+**ليه شغال:** القيمة برا [[@supports]] هي الأساس: أبيض 0.9 تقريبًا مصمت، بيتقري على أي خلفية. لو المتصفح بيدعم الـ blur، بننزّل الشفافية لـ 0.6 لأن الـ blur هو اللي بيحمي الكلام.
+
+الترتيب ده هو الـ progressive enhancement: الأساس سليم للكل، والتحسين لمين يقدر.
+
+حسبت التباين على أغمق وأفتح لون في الخلفية، لأن الزجاج فوق تدرّج مش لون واحد.
+
+**الغلطة الشائعة:** تكتب [[rgb(255 255 255 / 0.2)]] برا [[@supports]] عشان الشكل حلو عندك. أي متصفح من غير blur هيطلع كلام فوق صورة مكشوفة.
+
+~~~text الناتج
+                    Chrome الحالي       الشرط غلط
+background-color    rgba(255,255,255,0.6)   rgba(255,255,255,0.9)
+backdrop-filter     blur(12px)          none
+
+تباين الكلام (#030712) بعد خلط الأبيض مع لون الخلفية:
+                    0.6       0.9
+على الأغمق          7.88      16.42
+على التيل           11.07     17.50
+على الكهرماني       14.78     18.63
+
+على 360: scrollWidth = clientWidth
+~~~
+
+~~~view 160 190 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بطاقة زجاج</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-950:oklch(13% .028 261.692);--spacing:.25rem;--container-sm:24rem;--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-bold:700;--radius-2xl:1rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mt-2{margin-top:calc(var(--spacing) * 2)}.grid{display:grid}.min-h-dvh{min-height:100dvh}.max-w-sm{max-width:var(--container-sm)}.place-items-center{place-items:center}.rounded-2xl{border-radius:var(--radius-2xl)}.glass{background-color:#ffffffe6}@supports ((-webkit-backdrop-filter:blur(4px)) or (backdrop-filter:blur(4px))){.glass{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);background-color:#fff9}}.bg-\[linear-gradient\(135deg\,\#0f172a\,\#0f766e_50\%\,\#f59e0b\)\]{background-image:linear-gradient(135deg,#0f172a,#0f766e 50%,#f59e0b)}.p-6{padding:calc(var(--spacing) * 6)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.text-gray-950{color:var(--color-gray-950)}}@property --tw-font-weight{syntax:"*";inherits:false}
+</style>
+</head>
+<body class="grid min-h-dvh place-items-center bg-[linear-gradient(135deg,#0f172a,#0f766e_50%,#f59e0b)] p-6">
+<main id="card" class="glass max-w-sm rounded-2xl p-6 text-gray-950">
+  <h1 class="text-2xl font-bold">عرض الصيف</h1>
+  <p class="mt-2">خصم 30% على كل السماعات لحد آخر الشهر.</p>
+</main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** [[check-utility.mjs]]: بيقرا ملف CSS ويعدّ عمق الأقواس [[{ }]] سطر سطر، ولو لقى [[@utility]] والعمق مش صفر يطبع رقم السطر والـ at-rule اللي حواليه ويخرج بـ 1. جرّبه على الملف البايظ والسليم.`, done: R`على البايظ بيطبع حاجة زي [[line 2: @utility inside @supports]] ويخرج 1، وعلى السليم ميطبعش حاجة ويخرج 0 (زي فحص الـ ci في الدرس).`, sol: R`~~~js check-utility.mjs
+import { readFileSync } from "node:fs";
+
+const file = process.argv[2];
+const lines = readFileSync(file, "utf8").split("\n");
+const stack = [];   // الـ at-rules اللي احنا جواها دلوقتي
+let bad = 0;
+
+lines.forEach((line, i) => {
+  const text = line.replace(/\/\*.*?\*\//g, "");
+  const util = text.match(/@utility\b/);
+  if (util && stack.length) {
+    const around = stack.findLast((s) => s.startsWith("@")) ?? stack.at(-1);
+    console.log($__btline $__{i + 1}: @utility inside $__{around}$__bt);
+    bad++;
+  }
+  for (const m of text.matchAll(/[^{}]*[{}]/g)) {
+    if (m[0].endsWith("{")) stack.push(m[0].slice(0, -1).trim().split(/[\s(]/)[0] || "{");
+    else stack.pop();
+  }
+});
+
 process.exit(bad ? 1 : 0);
 ~~~
 
-بيبني على الفحص الذاتي بتاع الدرس: نفس الكود بيتحقن في الصفحة على كل عرض، و [[page.on("console")]] بيلقط اللي بيطبعه، فمحتاجش تغيّره. وبعدين [[process.exit]] بيخلي الفشل يوصل لـ CI.
+~~~css bad.css
+@import "tailwindcss";
+@supports (backdrop-filter: blur(4px)) {
+  @utility glass { backdrop-filter: blur(12px); }
+}
+~~~
 
-[[self-check.js]] هو كود «الفحص الذاتي: الفيضان» محفوظ في ملف.
+~~~css good.css
+@import "tailwindcss";
+@utility glass {
+  @supports (backdrop-filter: blur(4px)) { backdrop-filter: blur(12px); }
+}
+~~~
 
-حدود headless: زرار [[100vw]] بيتكسر مع scrollbar الكلاسيك على ويندوز، و headless بيخفي الـ scrollbars، فـ [[100vw]] بيساوي عرض الصفحة. يعني الباج ده مش هيظهر هنا. عشان تتأكد: افتح Chrome عادي على ويندوز، أو شغّل بـ [[ignoreDefaultArgs: ["--hide-scrollbars"]]].
+~~~bash
+node check-utility.mjs bad.css;  echo "exit: $?"
+node check-utility.mjs good.css; echo "exit: $?"
+~~~
 
-الغلطة الشائعة: تفحص على 360 بس. الـ grid بيقفز عند حدود، فلازم عروض قبلها وبعدها.
+**ليه stack مش عدّاد:** العمق لوحده بيقولك إنك جوه حاجة، و stack بيقولك جوه إيه، فالرسالة تبقى [[@utility inside @supports]].
 
-~~~text الناتج (node matrix.mjs)
-الصفحة السليمة:
-العرض  الأجزاء  scrollWidth
-320    8 من 8   320
-360    8 من 8   360
-414    8 من 8   414
-768    8 من 8   768
-1024   8 من 8   1024
-1440   8 من 8   1440
-exit 0
+لكل سطر: بنشوف الأول فيه [[@utility]] والـ stack مش فاضي ولا لأ، وبعدين نمشي على الأقواس. [[text.matchAll]] بياخد كل حتة بتنتهي بـ [[{]] أو [[}]]، فسطر فيه قوسين بيتحسب صح زي [[a { b { c } }]].
 
-الصفحة البايظة:
-العرض  الأجزاء  scrollWidth
-320    0 من 8   793
-360    0 من 8   793
-414    1 من 8   793
-768    6 من 8   793
-1024   7 من 8   1040
-1440   7 من 8   1456
-exit 1
+[[.replace]] اللي في الأول بيشيل التعليقات، عشان قوس جوه تعليق ميلخبطش العد.
+
+**الغلطة الشائعة:** تعدّ الأقواس بعد فحص [[@utility]]. في [[@utility glass {]] نفس السطر فيه القوس، فلو عدّيته الأول هتشوف العمق 1 وتطلّع خطأ على ملف سليم.
+
+~~~text الناتج
+$ node check-utility.mjs bad.css
+line 3: @utility inside @supports
+exit: 1
+
+$ node check-utility.mjs good.css
+exit: 0
+~~~` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[<div class="grid grid-cols-[240px 1fr]">]] والـ div طالع عمود واحد بعرض الصفحة كلها. ابني واعمل grep على [[out.css]] بـ [[grid-cols-]].`, done: R`مفيش أي قاعدة لـ [[grid-cols-[240px]]: المسافة قسمت الكلاس لاتنين ([[grid-cols-[240px]] و [[1fr]]])، والاتنين مش كلاسات صح. بعد [[grid-cols-[240px_1fr]]] القاعدة اتولّدت و [[gridTemplateColumns]] بقت [[240px 1040px]] على 1280.`, sol: R`الكود المصلّح:
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>اعمدة</title><link rel="stylesheet" href="out.css"></head>
+<body class="m-0">
+<div id="g" class="grid grid-cols-[240px_1fr]"><aside>جنب</aside><main>النص</main></div>
+</body>
+</html>
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+grep -o "grid-cols-[^ {]*" out.css
+~~~
+
+**ليه:** الـ HTML بيقسم [[class]] عند المسافات، و Tailwind كمان. فـ [[grid-cols-[240px 1fr]]] مش كلاس واحد، ده كلمتين: [[grid-cols-[240px]] و [[1fr]]]، والاتنين مش كلاسات معروفة. وعشان كده في قيم arbitrary بتكتب [[_]] مكان المسافة، و Tailwind بيرجّعها مسافة في الـ CSS.
+
+**الغلطة الشائعة:** تستنى error من الـ build. مفيش، الكلمات اللي مش فاهمها بيتجاهلها في سكوت. grep على الناتج هو اللي بيكشف.
+
+~~~text الناتج
+قبل:  grep مبيطلّعش أي grid-cols
+      gridTemplateColumns = 1280px (عمود واحد)
+بعد:  grid-cols-\[240px_1fr\]
+      gridTemplateColumns = 240px 1040px على 1280
+~~~
+
+~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>اعمدة</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.m-0{margin:0}.grid{display:grid}.grid-cols-\[240px_1fr\]{grid-template-columns:240px 1fr}}
+</style></head>
+<body class="m-0">
+<div id="g" class="grid grid-cols-[240px_1fr]"><aside>جنب</aside><main>النص</main></div>
+</body>
+</html>
 ~~~` },
           ],
-          deep: {
-            why: R`الموبايل أغلب الزيارات في أي موقع عربي، والـ scroll الأفقي أول حاجة اليوزر بيحسها: الصفحة بتتحرك تحت صباعه وكأنها «مكسورة». وحلها بالتخمين (شيل CSS لحد ما يتصلح) بياخد ساعة ويكسر حاجات تانية، وحلها بالقياس بياخد دقيقة.`,
-            how: R`أي box بياخد عرضه من واحد من تلاتة: عرض أبوه (الـ block العادي)، أو قيمة ثابتة كتبتها (أو attribute زي [[width="600"]])، أو أقل عرض لمحتواه (min-content). الفيضان بيحصل لما التاني أو التالت أكبر من الأول. الكلام بيتكسر عند فرص الكسر بس (المسافات، وبعد [[-]] في بعض الحالات)، فكلمة طويلة من غير فرص min-content بتاعها عرضها كلها، و [[overflow-wrap: anywhere]] بيضيف فرص كسر في أي حرف ويخلي الـ min-content صغير. عناصر الـ flex والـ grid عندها [[min-width: auto]] يعني «مش أقل من min-content»، فـ [[min-width: 0]] بيلغي الحد ده. والجداول بتحسب عرضها من خلاياها ومبتصغرش، فالحل الوحيد حاوية بتعمل scroll. والصفحة في الآخر بتعمل scroll أفقي لما [[scrollWidth]] بتاع [[<html>]] يبقى أكبر من [[clientWidth]].`,
-            when: R`افحص على 360 بعد أي section جديد، وقبل أي نشر، وكل ما تضيف محتوى من برا (إيميلات، ولينكات، وأسماء ملفات، وجداول من API). ولما المحتوى جاي من يوزر (تعليقات، وأسماء) خلي [[overflow-wrap: anywhere]] على حاوية الكلام من الأول. و [[overflow-x: clip]] على جزء معين بس لما يكون فيه ديكور مقصود يطلع برا (دواير خلفية مثلًا)، مش على الـ body.`,
-            mistakes: R`[[overflow-x: hidden]] على [[html, body]] كحل نهائي. أو تدوّر على [[right > innerWidth]] بس في صفحة عربي. أو تستخدم [[word-break: break-all]] على كل الكلام فيتكسر الكلام العربي والإنجليزي العادي في نص الكلمة (الـ [[overflow-wrap: anywhere]] بيكسر لما يضطر بس). أو [[width: 100vw]] عشان «الهيرو ياخد الشاشة كلها». أو تختبر في headless بس فتفوتك مشكلة الـ scrollbar. أو تحط [[max-width: 100%]] على الصورة وتنسى [[height: auto]] فالصورة تتمط بالطول. أو تقيس على 1200 وتفتكر إن «الموبايل هيبقى زيه».`,
-          },
-          sol: R`تحت الصفحة البايظة كاملة، وبعدها سطور التصليح التمانية. الصفحة البايظة طلّعت [[0 من 8]] وعرض محتوى 793px على 360، ونفس الصفحة بعد ما زوّدت السطور التمانية في آخر الـ [[<style>]] طلّعت [[8 من 8]] و 360 = 360 على 360 وعلى 1200.
-
-السطور التمانية بالترتيب: [[img { max-width: 100%; height: auto; }]]، و [[p { overflow-wrap: anywhere; }]]، و [[.table-wrap { overflow-x: auto; }]]، و [[.chips { flex-wrap: wrap; }]]، و [[.hero { width: auto; }]]، و [[.features { grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); }]]، و [[pre { overflow-x: auto; }]]، و [[.name { min-width: 0; overflow-wrap: anywhere; }]].`,
-          solCode: R`<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متجر الورد</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, sans-serif; }
-section { padding: 16px; border-bottom: 1px solid #ddd; }
-td, th { padding: 8px 16px; white-space: nowrap; border: 1px solid #ccc; }
-.chips { display: flex; gap: 8px; }
-.chips button { padding: 8px 20px; }
-.hero { width: 100vw; padding: 40px 24px; background: #fce7f3; font-size: 28px; }
-.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; }
-.f { padding: 16px; background: #ecfccb; }
-pre { background: #0f172a; color: #e2e8f0; padding: 12px; }
-.row { display: flex; align-items: center; gap: 8px; }
-.name { font-weight: 600; }
-/* التصليح: السطور دي بتتزاد في الآخر، والصفحة من غيرها هي البايظة */
-img { max-width: 100%; height: auto; }
-p { overflow-wrap: anywhere; }
-.table-wrap { overflow-x: auto; }
-.chips { flex-wrap: wrap; }
-.hero { width: auto; }
-.features { grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); }
-pre { overflow-x: auto; }
-.name { min-width: 0; overflow-wrap: anywhere; }
-</style>
-</head>
-<body>
-<section id="s1"><h2>١ صورة المنتج</h2><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='300'%3E%3Crect%20width='600'%20height='300'%20fill='%2393c5fd'/%3E%3C/svg%3E" width="600" height="300" alt="كوباية قهوة على ترابيزة خشب"></section>
-<section id="s2"><h2>٢ إيميل الدعم</h2><p>ابعتلنا على customer.support.orders.team@flowershopexample.com وكود الخصم بتاعك WELCOMEFLOWERSHOPSPRING2026</p></section>
-<section id="s3"><h2>٣ جدول الطلبات</h2><div class="table-wrap"><table><tr><th>رقم الطلب</th><th>العميل</th><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الحالة</th></tr><tr><td>1042</td><td>سارة منير</td><td>بوكيه ورد بلدي</td><td>2</td><td>450 ج.م.</td><td>اتشحن</td></tr></table></div></section>
-<section id="s4"><h2>٤ أزرار الفلتر</h2><div class="chips"><button>الكل</button><button>ورد</button><button>نباتات</button><button>هدايا</button><button>عروض</button><button>جديد</button></div></section>
-<section id="s5"><h2>٥ الهيرو</h2><div class="hero">أحلى ورد في المدينة</div></section>
-<section id="s6"><h2>٦ كروت المميزات</h2><div class="features"><div class="f">توصيل في نفس اليوم</div><div class="f">تغليف هدايا</div><div class="f">دفع عند الاستلام</div></div></section>
-<section id="s7"><h2>٧ كود الـ API</h2><pre><code>fetch("https://flower-shop-example.com/api/v2/orders?status=shipped&amp;limit=50").then(r =&gt; r.json())</code></pre></section>
-<section id="s8"><h2>٨ صف المنتج</h2><div class="row"><span class="ico">🌹</span><span class="name">بوكيه_ورد_بلدي_أحمر_كبير_مع_كارت_إهداء_مكتوب_بخط_اليد</span><button>أضف</button></div></section>
-</body>
-</html>`,
-          flag: "script",
           ci: [
             { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import fs from "node:fs";
-fs.writeFileSync("bad.css", ".hero { width: 100vw; }\n.chips { display: flex; gap: 8px; }\n.features { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }\n.box { width: 600px; }\ntd { white-space: nowrap; }\n");
-fs.writeFileSync("good.css", ".hero { width: auto; }\n.chips { display: flex; flex-wrap: wrap; }\n.features { grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); }\n.box { width: min(600px, 100%); }\n.table-wrap { overflow-x: auto; }\n");
-const PHONE = 360;
-function risks(css) {
-  const out = [];
-  css.split("\n").forEach((line, i) => {
-    const at = "line " + (i + 1) + ": ";
-    if (/\b100vw\b/.test(line)) out.push(at + "100vw is wider than the page when a scrollbar exists");
-    const w = /(?:^|[\s;{])(?:min-)?width:\s*(\d+)px/.exec(line);
-    if (w && +w[1] > PHONE) out.push(at + "fixed width " + w[1] + "px > " + PHONE);
-    const mm = /minmax\((\d+)px/.exec(line);
-    if (mm && +mm[1] > PHONE - 32) out.push(at + "minmax(" + mm[1] + "px) without min(): one column still overflows");
-    if (/white-space:\s*nowrap/.test(line)) out.push(at + "nowrap: make sure the parent scrolls (overflow-x: auto)");
+fs.writeFileSync("bad.css", '@import "tailwindcss";\n@supports (backdrop-filter: blur(4px)) {\n  @utility glass {\n    backdrop-filter: blur(12px);\n  }\n}\n');
+fs.writeFileSync("good.css", '@import "tailwindcss";\n@utility glass {\n  background-color: rgb(255 255 255 / 0.9);\n  @supports (backdrop-filter: blur(4px)) {\n    backdrop-filter: blur(12px);\n  }\n}\n');
+function check(file) {
+  const stack = []; const found = [];
+  fs.readFileSync(file, "utf8").split("\n").forEach((line, i) => {
+    const at = (line.match(/@[\w-]+/) || [""])[0];
+    if (at === "@utility" && stack.length) found.push("line " + (i + 1) + ": @utility inside " + stack[stack.length - 1]);
+    for (const ch of line) { if (ch === "{") stack.push(at || "block"); if (ch === "}") stack.pop(); }
   });
-  return out;
+  console.log(file + ": " + (found.length ? found.join("; ") : "ok"));
 }
-for (const f of ["bad.css", "good.css"]) { const r = risks(fs.readFileSync(f, "utf8")); console.log(f + ": " + r.length + " risks"); r.forEach(x => console.log("  " + x)); }`, expect: [R`bad.css: 4 risks`, R`line 1: 100vw is wider than the page when a scrollbar exists`, R`line 3: minmax(340px) without min(): one column still overflows`, R`line 4: fixed width 600px > 360`, R`good.css: 0 risks`] },
+check("bad.css");
+check("good.css");`, expect: [R`bad.css: line 3: @utility inside @supports`, R`good.css: ok`] },
           ],
         },
         {
-          cmd: "صلّح الكود البايظ",
+          cmd: "group و peer",
           ref: [
-            { t: "MDN: position (sticky)", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position" },
-            { t: "MDN: Stacking context", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Positioned_layout/Stacking_context" },
-            { t: "MDN: Popover API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API" },
             { t: "Tailwind CSS: Styling based on parent state", url: "https://tailwindcss.com/docs/hover-focus-and-other-states#styling-based-on-parent-state" },
-          ],
-          title: "١٠ أخطاء CSS حقيقية: الـ sticky والمودال تحت الهيدر و 100vh و margin-left في العربي",
-          learn: R`تمشي من العَرَض («الفهرس مش بيلزق») للقاعدة اللي عاملاه بترتيب ثابت في DevTools، وتصلّح السبب بأقل تغيير، وتثبت إنه اتصلّح بالقياس.`,
-          out: R`صفحة فيها ١٠ أخطاء بتعدّي من [[0 من 11]] لـ [[11 من 11]] على 360 وعلى 1200، ومعاها linter صغير بـ Node بيلقط ٧ منهم من ملف الـ CSS قبل ما تفتح المتصفح.`,
-          use: {
-            prog: R`الأخطاء دي مش أخطاء كتابة: الكود «شغال» ومفيش error في أي حتة. العيب في فهم قاعدة من قواعد CSS (scroll container، و stacking context، و logical direction)، وعشان كده بتتكرر لحد ما تفهم القاعدة.`,
-            work: R`كل واحد من العشرة اتلقى في مواقع حقيقية اتبنت بـ HTML و CSS أو Tailwind (والأسماء هنا متخيلة): [[overflow-x: hidden]] على الـ body كسر الـ sticky header، ومودال ورا الهيدر رغم [[z-index: 9999]]، و [[group-hover]] من غير [[group]]، و [[!important]] بالمئات، وعنوان عربي متقطع بـ [[letter-spacing]].`,
-            cs: R`الـ stacking context شجرة: العنصر مبيتقارنش بالـ z-index بتاعه غير مع إخواته جوه نفس الـ context، فـ 9999 جوه context قيمته 0 أقل من 10 برا. والـ sticky بيلزق في أقرب scroll container فوقه، وده بحث لفوق في الشجرة (ancestor walk).`,
-          },
-          desc: R`كل خطأ هنا ليه **عَرَض** بتشوفه، و **سبب** في قاعدة واحدة، و **تصليح** بسطر أو اتنين. والمهم الترتيب اللي بتدوّر بيه، مش إنك تحفظ العشرة:
-
-1. شوف العَرَض بعينك، وقيسه برقم (الفحص الذاتي بيعمل ده).
-2. افتح Elements › Styles على العنصر: القواعد المشطوبة هي اللي خسرت، واللي فوقها هي اللي كسبت.
-3. افتح Computed: القيمة النهائية، ودوس على السهم جنبها يوديك للقاعدة.
-4. لو العيب في العلاقة بين عنصرين (sticky، أو z-index، أو group-hover) اطلع لفوق في الشجرة ودوّر على الأب اللي بيغيّر القاعدة.
-5. صلّح السبب، وقيس تاني.
-
-الأخطاء العشرة: sticky مات بسبب [[overflow]] على أب، وشارة بـ [[right]] في صفحة بلغتين، ومسافة أيقونة بـ [[margin-left]]، وتنبيه تحت الهيدر بسبب [[transform]] من أنيميشن، و [[group-hover]] من غير [[group]]، وهيرو [[height: 100vh]]، و [[outline: none]] من غير بديل، و [[letter-spacing]] سالب على العربي، و [[!important]] بيمنع زرار المسح يبقى أحمر، وصورة من غير [[width]] و [[height]]. ده تطبيق على دروس «sticky و fixed» و «z-index» و «logical properties» و «group و peer» و «dvh» و «focus-visible» و «CLS» في التاب ده.`,
-          example: R`.layout { overflow-x: hidden; }
-.badge { right: 8px; }
-.btn svg { margin-left: 8px; }
-.hero { height: 100vh; }
-.btn-plain:focus { outline: none; }
-.title { letter-spacing: -0.03em; }
-.btn { background: #2563eb !important; }
-.btn-danger { background: #dc2626; }`,
-          lines: [
-            R`حد حطه عشان «يمنع scroll أفقي». بس [[overflow]] بأي قيمة غير [[visible]] و [[clip]] بيخلي العنصر scroll container، والفهرس الـ sticky جواه بقى بيلزق في [[.layout]] مش في الشاشة.`,
-            R`الشارة في الركن اليمين دايمًا. في الكارت الإنجليزي ده «النهاية» صح، وفي العربي «النهاية» هي الشمال، فالشارة بقت في البداية غلط.`,
-            R`المسافة على شمال الأيقونة. في العربي الأيقونة يمين والكلام شمالها فالمسافة في مكانها، وفي الإنجليزي الأيقونة شمال فالمسافة بقت برا والكلام لازق فيها.`,
-            R`ارتفاع ثابت بطول الشاشة. على الموبايل [[100vh]] أطول من الجزء الظاهر (شريط العنوان)، ولما الكلام يكتر بيتقص لأن الارتفاع ثابت.`,
-            R`شال حلقة الـ focus عشان «شكلها وحش» لما تدوس بالماوس، ومحطش بديل لـ [[:focus-visible]]، فاللي بيتنقل بـ Tab مش عارف هو فين.`,
-            R`تباعد سالب بين الحروف عشان العنوان «يبقى شيك» زي التصميم الإنجليزي. في العربي الحروف متوصلة، والتباعد بيقطع الوصلة بينهم.`,
-            R`لون الزرار الأساسي بـ [[!important]]، فأي قاعدة بعده (حتى لو أتقل) مش هتغيّر الخلفية إلا بـ [[!important]] تاني.`,
-            R`زرار المسح المفروض أحمر، والقاعدة صح ومكتوبة بعد اللي فوقها، بس بتخسر قصاد الـ [[!important]] فالزرار فاضل أزرق.`,
-          ],
-          teach: R`## الفكرة في سطر
-
-**العَرَض مش السبب.** «الفهرس مش بيلزق» عَرَض، و «أب عليه [[overflow]]» سبب. دوّر بالترتيب: قيس، و Styles، و Computed، واطلع في الشجرة لفوق. وكل الأرقام تحت من Chrome بـ Playwright على ويندوز ١١ على 360 × 640 و 1200.
-
----
-
-## الأخطاء العشرة: العَرَض والسبب والتصليح
-
-الصفحة: «متجر الورد» (متخيل)، [[lang="ar" dir="rtl"]]، كل خطأ في [[<section id="b1">]] لحد [[b10]]. الـ CSS البايظ هو اللي في المثال فوق، وفي HTML تلات حاجات بايظة كمان: اللينك [[.card-link]] من غير [[group]]، والتنبيه [[.alert]] جوه [[.page]] المتحرك، والصورة [[.banner]] من غير [[width]] و [[height]].
-
-| # | العَرَض | بتدوّر فين | السبب | التصليح | اللي رفضناه وليه |
-|---|---|---|---|---|---|
-| ١ | الفهرس بيطلع مع الـ scroll | اطلع من [[.toc]] لفوق في Elements، وشوف Computed › overflow لكل أب | [[.layout { overflow-x: hidden }]] عامل scroll container | [[overflow-x: clip]] (بيقص من غير scroll container) | شيل الـ overflow خالص: لو كان حاطه عشان عنصر بيفيض، الفيضان هيرجع |
-| ٢ | شارة «جديد» في الركن الغلط في العربي | Computed › right على الشارة في الكارتين | [[right]] اتجاه فيزيائي ثابت | [[inset-inline-end: 8px]] | [[[dir=rtl] .badge { left: 8px; right: auto }]]: قاعدتين لكل حاجة، وأول ما تنسى واحدة تبوظ |
-| ٣ | «Save» لازقة في الأيقونة | Box model بتاع الـ svg في الزرار الإنجليزي | [[margin-left]] على الـ svg | [[gap: 8px]] على الزرار (هو [[inline-flex]] أصلًا) | [[margin-inline-end]]: سليم برضه، بس [[gap]] بيشتغل لو الأيقونة اتنقلت بعد الكلام |
-| ٤ | التنبيه ورا الهيدر رغم [[z-index: 9999]] | اطلع من [[.alert]] لفوق ودوّر على transform أو opacity أو filter | أنيميشن [[rise]] بـ [[both]] ساب [[transform]] على [[.page]]، فبقى stacking context قيمته صفر | التنبيه في الـ top layer: [[popover="manual"]] و [[showPopover()]] | [[z-index: 99999]] على التنبيه: مش هيفرق، هو محبوس جوه [[.page]] |
-| ٥ | السهم مبيتحركش مع الـ hover | ابحث في Elements (Ctrl+F) عن [[group]] في آباء السهم | [[.group:hover .group-hover\:...]] محتاج أب عليه [[class="group"]] | زوّد [[group]] على [[.card-link]] | تكتب [[.card-link:hover .arrow]] بإيدك: بتلف حوالين الأداة بدل ما تستخدمها صح |
-| ٦ | الكلام في الهيرو مقصوص على الموبايل | Computed › height على [[.hero]] مقابل [[scrollHeight]] | [[height: 100vh]] ثابت، و [[100vh]] على الموبايل أطول من الظاهر | [[min-height: 100dvh]] | [[height: 100dvh]]: الطول الصح بس لسه بيقص الكلام الكتير |
-| ٧ | مش باين انت فين لما تدوس Tab | Styles على الزرار وفعّل [[:focus-visible]] من زرار [[:hov]] | [[outline: none]] على [[:focus]] من غير بديل | سيبها، وزوّد [[:focus-visible { outline: 3px solid }]] | تشيل [[outline: none]] خالص: الحلقة هتظهر مع الماوس كمان، والتصميم ممكن يرفضها |
-| ٨ | العنوان العربي حروفه منفصلة | Computed › letter-spacing على [[.title]] | [[letter-spacing: -0.03em]] على كل اللغات | [[.title:lang(en) { letter-spacing: -0.03em }]] | [[!important]] بصفر للعربي: حرب تانية |
-| ٩ | زرار المسح أزرق | Styles على [[.btn-danger]]: قاعدته مشطوبة | [[.btn { background: ... !important }]] | امسح الـ [[!important]] (الترتيب لوحده كفاية) | [[.btn-danger { background: red !important }]]: كده كل variant جديد محتاج [[!important]] |
-| ١٠ | الصفحة بتتزق لتحت لما الصورة تحمّل | Performance › Layout Shifts، أو Computed › aspect-ratio | [[<img>]] من غير [[width]] و [[height]]: المتصفح مش عارف طولها | [[width="800" height="400"]] على الصورة | [[height: 400px]] في CSS: بيبوظ الصورة على الموبايل (الصح [[height: auto]] مع الـ attributes) |
-
-> **١٠٠vh على الموبايل:** إن [[100vh]] بيتحسب على أكبر ارتفاع للشاشة (لما شريط العنوان يختفي)، فبيبقى أطول من اللي ظاهر أول ما الصفحة تفتح، ده من الوثائق (web.dev و MDN في صفحات [[dvh]] و [[svh]]). محاكاة الموبايل في Chrome DevTools مش بتعرض شريط عنوان، فـ [[100vh]] و [[100dvh]] بيطلعوا نفس الرقم هناك، والفرق بيبان على موبايل حقيقي بس. عشان كده الفحص بيقيس حاجتين: الكلام مقصوص ولا لأ (ده بيتقاس في أي مكان)، والقاعدة فيها [[100vh]] ولا لأ.
-
-> **ليه ٤ بالذات صعب:** [[z-index]] بيتقارن جوه الـ stacking context بس. والـ context بيتعمل من حاجات مالهاش علاقة بالـ z-index: [[transform]] غير [[none]]، و [[opacity]] أقل من 1، و [[filter]]، و [[isolation: isolate]]، و [[position]] مع [[z-index]] رقم. الأنيميشن هنا [[animation: rise .3s both]]: الـ [[both]] بيسيب آخر frame ([[translateY(0)]]) متطبق على طول، و [[translateY(0)]] لسه [[transform]] غير [[none]].
-
----
-
-## الفحص الذاتي
-
-الفحص بيعمل حاجتين ممكن تستغربهم: بيعمل [[scrollTo]] للصفحة عشان يجرّب الـ sticky بجد ويرجّعها مكانها، وبيستخدم [[document.elementFromPoint(x, y)]] عشان يسأل المتصفح «مين ظاهر فوق في النقطة دي؟»، وده نفس اللي إيدك هتدوس عليه.
-
-~~~js الفحص الذاتي: الأخطاء العشرة
-(() => {
-  const q = s => document.querySelector(s), R = el => el.getBoundingClientRect(), cs = el => getComputedStyle(el);
-  const near = (a, b) => Math.abs(a - b) <= 1.5;
-  const rules = []; for (const sh of document.styleSheets) { try { rules.push(...[...sh.cssRules].filter(r => r.selectorText)); } catch (e) {} }
-  const rulesFor = (el, clean) => rules.filter(r => { try { return el.matches(clean ? r.selectorText.replace(/:focus(-visible|-within)?/g, '') : r.selectorText); } catch (e) { return false; } });
-  let pass = 0, all = 0;
-  const ok = (name, cond, why) => { all++; if (cond) pass++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (cond ? '' : ' ← ' + why)); };
-  const y0 = scrollY, toc = q('.toc'), lay = q('.layout');
-  scrollTo(0, lay.offsetTop + 300);
-  const stuck = near(R(toc).top, 0);
-  let culprit = ''; for (let p = toc.parentElement; p; p = p.parentElement) if (/hidden|auto|scroll/.test(cs(p).overflowX + cs(p).overflowY)) { culprit = p.className || p.tagName; break; }
-  scrollTo(0, y0);
-  ok('1 الفهرس بيلزق فوق', stuck, 'بعد scroll الفهرس مش عند top: 0' + (culprit ? '، وفيه أب عامل overflow: «' + culprit + '» (ده بيبقى scroll container والـ sticky بيلزق جواه)' : ''));
-  const [rc, lc] = document.querySelectorAll('.pcard'), rb = R(rc.querySelector('.badge')), lb = R(lc.querySelector('.badge'));
-  ok('2 الشارة في ركن النهاية في اللغتين', near(rb.left, R(rc).left + 8) && near(lb.right, R(lc).right - 8), 'في العربي لازم شمال وفي الإنجليزي يمين: right ثابتة مبتتقلبش، استخدم inset-inline-end');
-  const gaps = [...document.querySelectorAll('#b3 .btn')].map(b => { const i = R(b.querySelector('svg')), t = R(b.querySelector('span')); return Math.round(i.left > t.left ? i.left - t.right : t.left - i.right); });
-  ok('3 مسافة الأيقونة 8px في اللغتين', gaps.every(g => g >= 7 && g <= 9), 'المسافة بين الأيقونة والكلام: ' + gaps.join(' و ') + 'px (عربي ثم إنجليزي)');
-  const al = q('.alert'); al.scrollIntoView({ block: 'center' });
-  const ar = R(al), hit = document.elementFromPoint(ar.left + ar.width / 2, ar.top + 4);
-  let ctx = ''; for (let p = al.parentElement; p; p = p.parentElement) { const s = cs(p); const why = s.transform !== 'none' ? 'transform' : s.filter !== 'none' ? 'filter' : +s.opacity < 1 ? 'opacity' : s.zIndex !== 'auto' && s.position !== 'static' ? 'z-index' : ''; if (why) { ctx = (p.className || p.tagName) + ' (عليه ' + why + ')'; break; } }
-  ok('4 التنبيه فوق الهيدر', hit && al.contains(hit), 'في النقطة دي ظاهر «' + (hit ? hit.className || hit.tagName : '؟') + '» مش التنبيه' + (ctx ? '، والتنبيه محبوس في stacking context بتاع ' + ctx : ''));
-  scrollTo(0, y0);
-  const orphans = [...document.querySelectorAll('[class*="group-hover:"]')].filter(el => !el.parentElement.closest('.group'));
-  ok('5 group-hover ليه group', !orphans.length, orphans.length + ' عنصر عليه group-hover: ومفيش أب عليه class="group"، فالـ selector عمره ما بيتطابق');
-  const hero = q('.hero'), vh = rulesFor(hero).filter(r => /(^|[^d])100vh/.test(r.style.cssText) && /height/.test(r.style.cssText));
-  ok('6 الهيرو: المحتوى مش مقصوص', hero.scrollHeight <= hero.clientHeight + 1, 'المحتوى ' + hero.scrollHeight + 'px والهيرو ' + hero.clientHeight + 'px: height ثابت بيقص، استخدم min-height');
-  ok('6 الهيرو: مش 100vh', !vh.length, vh.map(r => r.selectorText + ' { ' + r.style.cssText + ' }').join(' ') + ': على الموبايل 100vh أطول من الجزء الظاهر، استخدم 100dvh أو 100svh');
-  const bp = q('.btn-plain'), killed = rulesFor(bp, true).some(r => /:focus\b/.test(r.selectorText) && /outline: (none|0)/.test(r.style.cssText));
-  const ring = rulesFor(bp, true).some(r => /:focus-visible/.test(r.selectorText) && /outline: [^n0]|box-shadow/.test(r.style.cssText));
-  ok('7 الـ focus باين بالكيبورد', !killed || ring, 'فيه outline: none على :focus ومفيش بديل على :focus-visible، فاللي بيستخدم Tab مش شايف هو فين');
-  const ls = [...document.querySelectorAll('body *')].filter(el => /[؀-ۿ]/.test(el.textContent) && el.closest('[lang]').lang.startsWith('ar') && !['normal', '0px'].includes(cs(el).letterSpacing));
-  ok('8 مفيش letter-spacing على العربي', !ls.length, ls.map(el => el.tagName.toLowerCase() + '.' + el.className + ' = ' + cs(el).letterSpacing).join(' و ') + ': التباعد بيقطع وصل الحروف العربي');
-  const d = q('.btn-danger'), imp = rulesFor(d).filter(r => /!important/.test(r.style.cssText)).map(r => r.selectorText);
-  ok('9 زرار المسح أحمر', cs(d).backgroundColor === 'rgb(220, 38, 38)', 'لونه ' + cs(d).backgroundColor + (imp.length ? '، لأن ' + imp.join(' و ') + ' فيه !important' : ''));
-  const imgs = [...document.querySelectorAll('img')].filter(i => cs(i).aspectRatio === 'auto');
-  ok('10 الصور حاجزة مكانها', !imgs.length, imgs.length + ' صورة من غير width و height (ولا aspect-ratio)، فالمتصفح مش عارف ارتفاعها لحد ما تحمّل والصفحة بتتزق (CLS)');
-  console.log('النتيجة: ' + pass + ' من ' + all);
-})();
-~~~
-
-### على الصفحة البايظة (360 × 640)
-
-~~~text Chrome على 360، قبل التصليح
-FAIL 1 الفهرس بيلزق فوق ← بعد scroll الفهرس مش عند top: 0، وفيه أب عامل overflow: «layout» (ده بيبقى scroll container والـ sticky بيلزق جواه)
-FAIL 2 الشارة في ركن النهاية في اللغتين ← في العربي لازم شمال وفي الإنجليزي يمين: right ثابتة مبتتقلبش، استخدم inset-inline-end
-FAIL 3 مسافة الأيقونة 8px في اللغتين ← المسافة بين الأيقونة والكلام: 8 و 0px (عربي ثم إنجليزي)
-FAIL 4 التنبيه فوق الهيدر ← في النقطة دي ظاهر «site-head» مش التنبيه، والتنبيه محبوس في stacking context بتاع page (عليه transform)
-FAIL 5 group-hover ليه group ← 1 عنصر عليه group-hover: ومفيش أب عليه class="group"، فالـ selector عمره ما بيتطابق
-FAIL 6 الهيرو: المحتوى مش مقصوص ← المحتوى 814px والهيرو 640px: height ثابت بيقص، استخدم min-height
-FAIL 6 الهيرو: مش 100vh ← .hero { height: 100vh; }: على الموبايل 100vh أطول من الجزء الظاهر، استخدم 100dvh أو 100svh
-FAIL 7 الـ focus باين بالكيبورد ← فيه outline: none على :focus ومفيش بديل على :focus-visible، فاللي بيستخدم Tab مش شايف هو فين
-FAIL 8 مفيش letter-spacing على العربي ← h1.title = -1.2px: التباعد بيقطع وصل الحروف العربي
-FAIL 9 زرار المسح أحمر ← لونه rgb(37, 99, 235)، لأن .btn فيه !important
-FAIL 10 الصور حاجزة مكانها ← 1 صورة من غير width و height (ولا aspect-ratio)، فالمتصفح مش عارف ارتفاعها لحد ما تحمّل والصفحة بتتزق (CLS)
-النتيجة: 0 من 11
-~~~
-
-وعلى 1200 نفس الصفحة البايظة طلّعت [[1 من 11]]: «الهيرو: المحتوى مش مقصوص» عدّى، لأن الشاشة العريضة الكلام فيها بياخد سطور أقل وبيدخل في الـ 800px. يعني الغلطة دي **مش بتبان غير على الموبايل**، والـ [[-1.2px]] في ٨ هي [[-0.03em]] × 40px (حجم الخط).
-
-### بعد التصليح
-
-~~~text Chrome على 360 وعلى 1200، الحل اللي في «الحل»
-PASS 1 الفهرس بيلزق فوق
-PASS 2 الشارة في ركن النهاية في اللغتين
-PASS 3 مسافة الأيقونة 8px في اللغتين
-PASS 4 التنبيه فوق الهيدر
-PASS 5 group-hover ليه group
-PASS 6 الهيرو: المحتوى مش مقصوص
-PASS 6 الهيرو: مش 100vh
-PASS 7 الـ focus باين بالكيبورد
-PASS 8 مفيش letter-spacing على العربي
-PASS 9 زرار المسح أحمر
-PASS 10 الصور حاجزة مكانها
-النتيجة: 11 من 11
-~~~
-
-> **غلطة حصلت وانا بكتب الفحص:** أول تصليح لـ ٤ كان [[animation-fill-mode: backwards]] بدل [[both]]: بعد ما الأنيميشن يخلص الـ transform بيتشال والـ context بيختفي. والفحص طلّع FAIL برضه، لأنه اشتغل والأنيميشن لسه شغال (الـ transform كان لسه [[translateY(5.3px)]]). يعني التصليح ده بيصلّح «بعد ثانية» بس، والتنبيه ممكن يظهر في أول ثانية بالظبط. الـ top layer ([[popover]]) بيصلّح في كل لحظة، وده اللي في الحل.
-
----
-
-## linter صغير قبل المتصفح
-
-٧ من العشرة بيبانوا من ملف الـ CSS لوحده من غير ما تفتح المتصفح. الـ [[ci]] بتاع الدرس ده بيشغّل linter صغير بـ Node على الـ CSS البايظ والسليم:
-
-~~~text node lint.mjs، Node 24.22.1
-bad.css: 7 problems
-  line 1: overflow makes a scroll container: a sticky child sticks inside it (try clip)
-  line 2: physical side: flips wrong between Arabic and English (use inline-start/end)
-  line 3: physical side: flips wrong between Arabic and English (use inline-start/end)
-  line 4: height: 100vh cuts content and is taller than a phone screen (min-height: 100dvh)
-  line 7: !important: the next rule can't win without another !important
-  outline removed on :focus with no :focus-visible ring
-  negative letter-spacing that also hits Arabic text
-good.css: 0 problems
-~~~
-
-والتلاتة الباقيين (التنبيه، و group، والصورة) محتاجين HTML أو حساب المتصفح، فمبيبانوش غير بالفحص الذاتي. وفي مشروع حقيقي الـ linter ده اسمه Stylelint، و [[stylelint-use-logical]] بيلقط ٢ و ٣.
-
-## خلاصة
-
-- قيس العَرَض، و Styles، و Computed، واطلع في الشجرة لفوق. بالترتيب ده.
-- [[overflow]] غير [[visible]] و [[clip]] = scroll container، والـ sticky بيلزق جواه.
-- [[z-index]] محبوس جوه الـ stacking context، و [[transform]] و [[opacity]] و [[filter]] بيعملوا context. التنبيهات والمودالات مكانها الـ top layer ([[popover]] و [[<dialog>]]).
-- في صفحة بلغتين: [[inset-inline-end]] و [[gap]] و [[margin-inline]]، مش [[left]] و [[right]].
-- [[min-height: 100dvh]] مش [[height: 100vh]]، و [[:focus-visible]] بدل ما تشيل الـ outline، و [[letter-spacing]] للإنجليزي بس.
-- [[!important]] بيكسب النهارده ويخسّرك بكرة. والصور ليها [[width]] و [[height]] دايمًا.`,
-          try: R`انسخ الحل من «الحل»، وارجّعه بايظ: حط الـ CSS اللي في المثال في آخر الـ [[<style>]] مكان سطور التصليح، وشيل [[group]] من [[.card-link]] و [[popover]] من [[.alert]] و [[width]] و [[height]] من [[.banner]]. شغّل الفحص على 360 (لازم [[0 من 11]])، وصلّح خطأ خطأ بالترتيب اللي في الشرح، وقبل كل تصليح اكتب السبب في سطر قبل ما تبص في الجدول.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<header style="position: sticky; top: 0">]] جوه [[<div style="overflow: auto; height: 300px">]] جوه صفحة طويلة. لما تعمل scroll للصفحة كلها (مش الـ div) الهيدر هيلزق في الشاشة؟ اكتب، وبعدين جرّب.`, done: R`كتبت «لأ» قبل التجربة، والهيدر مشي مع الصفحة فعلًا، وفهمت إنه بيلزق جوه الـ div بس لما الـ div نفسه يعمل scroll، لأن الـ div بقى أقرب scroll container ليه.`,
-              sol: R`~~~live 600 720 sticky-inner.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>sticky</title></head>
-<body style="margin: 0">
-  <main><h1>صفحة طويلة</h1>
-    <div id="box" style="overflow: auto; height: 300px">
-      <header id="h" style="position: sticky; top: 0; background: #1f2937; color: #fff">هيدر</header>
-      <div style="height: 900px"></div>
-    </div>
-    <div style="height: 2000px"></div>
-  </main>
-</body></html>
-~~~
-
-**لأ**، مش هيلزق في الشاشة. الـ sticky بيلزق في أقرب scroll container، وأقرب واحد هنا هو الـ [[div]] بسبب [[overflow: auto]]. لما تعمل scroll للصفحة، الـ div نفسه بيطلع لفوق ومعاه الهيدر، لأن الهيدر مش متحرك جوه الـ div.
-
-لما تعمل scroll جوه الـ div، الهيدر بيلزق فوق الـ div: ده الاستخدام الصح.
-
-الغلطة الشائعة: تفتكر [[top: 0]] معناها أول الشاشة. معناها أول الـ scrollport بتاع أقرب scroll container.
-
-~~~text الناتج (Chrome 156)
-scroll الصفحة 500: top = -420 (مشي مع الصفحة)
-scroll جوه الـ div 200: top بالنسبة للـ div = 0 (لزق)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مودال [[position: fixed; inset: 0; z-index: 1000]] جوه [[<main class="fade-in">]]، و [[.fade-in { animation: fade .4s forwards }]] بيغيّر [[opacity]] من 0 لـ 1، والهيدر [[position: sticky; z-index: 50]]. المودال بيظهر تحت الهيدر. لاقي السبب بـ [[getComputedStyle]] على آباء المودال، وصلّحه بـ [[<dialog>]] و [[showModal()]].`, done: R`[[getComputedStyle(main).opacity]] طلع [[1]] بعد ثانية ونص والمودال لسه تحت الهيدر، و [[document.getAnimations().length]] طلع 1: الأنيميشن بـ [[forwards]] لسه «شغال» (ماسك آخر frame)، وأنيميشن على [[opacity]] بيفضل عامل stacking context طول ما هو شغال حتى لو القيمة 1. والتصليح بـ [[<dialog>]]: [[elementFromPoint]] على مكان الهيدر رجّع الـ dialog من أول لحظة، و Escape بيقفله لوحده.`,
-              sol: R`~~~live 170 170 modal-fade.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>مودال</title>
-<style>
-  body { margin: 0; }
-  header { position: sticky; top: 0; z-index: 50; block-size: 60px; background: #1f2937; color: #fff; }
-  .fade-in { animation: fade .4s forwards; }
-  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-  dialog::backdrop { background: rgb(0 0 0 / .5); }
-</style></head>
-<body>
-  <header>هيدر</header>
-  <main class="fade-in"><h1>الصفحة</h1><button id="o">افتح</button>
-    <dialog id="d" aria-label="رسالة"><p>رسالة</p><button id="c">قفل</button></dialog>
-  </main>
-  <script>
-    document.getElementById("o").onclick = () => document.getElementById("d").showModal();
-    document.getElementById("c").onclick = () => document.getElementById("d").close();
-  $__lt/script>
-</body></html>
-~~~
-
-السبب مستخبي: [[getComputedStyle(main).opacity]] بيقول [[1]]، فتفتكر إن مفيش stacking context. لكن [[forwards]] بيخلي الأنيميشن «ماسك» آخر frame، و [[document.getAnimations().length]] بيقول 1. وأي أنيميشن شغال على [[opacity]] بيعمل stacking context طول ما هو موجود، حتى لو القيمة 1. فالمودال [[z-index: 1000]] محبوس جوه [[main]]، و [[main]] تحت الهيدر [[z-index: 50]].
-
-[[<dialog>]] بـ [[showModal()]] بيطلع في الـ top layer: طبقة فوق الصفحة كلها، مش محكومة بأي context، حتى لو العنصر نفسه جوه [[main]]. و Escape والـ focus من غير كود.
-
-حل تاني: [[animation-fill-mode: backwards]] بدل [[forwards]]، بس الأصل إن المودال ميتوقفش على ده.
-
-الغلطة الشائعة: تجرب [[z-index: 99999]]. الرقم بيتقارن جوه الـ context بس.
-
-~~~text الناتج (Chrome 156، بعد 1.5 ثانية)
-getComputedStyle(main).opacity = 1
-document.getAnimations().length = 1
-النسخة بـ div z-index: 1000: اللي على نقطة الهيدر = HEADER
-نسخة <dialog>: اللي على نقطة الهيدر = DIALOG
-Escape: الـ dialog مفتوح؟ false
-~~~` },
-            { lvl: 'تطبيق', t: R`**refactor:** خد ملف CSS فيه ٥ قواعد بـ [[!important]] (زرار أساسي وتلات variants ورسالة خطأ)، وشيل كل الـ [[!important]] من غير ما ولا لون يتغير، باستخدام [[@layer base, components, utilities]].`, done: R`مفيش ولا [[!important]] في الملف، والفحص الذاتي بيقرا نفس [[backgroundColor]] لكل زرار قبل وبعد (اطبعهم في جدول)، و variant جديد بيتكتب في [[@layer components]] من غير أي حيلة ويكسب.`,
-              sol: R`~~~css قبل
-.btn { background: #2563eb !important; color: #fff !important; }
-.btn-danger { background: #dc2626 !important; }
-.btn-ghost { background: transparent !important; color: #2563eb !important; }
-.btn-link { background: none !important; }
-.error { color: #b91c1c !important; }
-~~~
-
-~~~css بعد
-@layer base, components, utilities;
-
-@layer components {
-  .btn { background: #2563eb; color: #fff; }
-  .btn-danger { background: #dc2626; }
-  .btn-ghost { background: transparent; color: #2563eb; }
-  .btn-link { background: none; }
-  .btn-warn { background: #b45309; }           /* variant جديد */
-}
-@layer utilities {
-  .error { color: #b91c1c; }
-}
-~~~
-
-~~~view 120 150 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-body { font-family: system-ui, sans-serif; margin: 1rem; } .btn { border: 1px solid #2563eb; padding: 0.5rem 1rem; border-radius: 8px; font: inherit; }
-</style>
-<style>
-/* من الحل */
-@layer base, components, utilities;
-
-@layer components {
-  .btn { background: #2563eb; color: #fff; }
-  .btn-danger { background: #dc2626; }
-  .btn-ghost { background: transparent; color: #2563eb; }
-  .btn-link { background: none; }
-  .btn-warn { background: #b45309; }           /* variant جديد */
-}
-@layer utilities {
-  .error { color: #b91c1c; }
-}
-</style>
-</head>
-<body>
-<p><button class="btn">أساسي</button> <button class="btn btn-danger">امسح</button> <button class="btn btn-ghost">إلغاء</button> <button class="btn btn-link">لينك</button> <button class="btn btn-warn">تحذير</button></p>
-<p class="error">رسالة خطأ</p>
-</body>
-</html>
-~~~
-
-الـ variants كانوا كاتبين [[!important]] عشان يغلبوا [[.btn]]، و [[.btn]] كاتبها عشان يغلب حاجة قبله. لما كلهم [[!important]] المعركة بترجع لترتيب الملف، بس بشكل أوحش.
-
-ليه [[.btn-danger]] لسه بيكسب من غير [[!important]]؟ نفس الـ layer، ونفس الـ specificity (class واحدة)، فاللي مكتوب أخير بيكسب. يعني الترتيب في الملف هو القرار، وده مكتوب ومفهوم.
-
-و [[.error]] في [[utilities]] بيغلب أي مكوّن من غير ما يزوّد specificity.
-
-الغلطة الشائعة: تشيل [[!important]] من نص الملف، فالقواعد الباقية تكسب كل حاجة. لازم تشيلهم مع بعض.
-
-~~~text الناتج (Chrome 156: backgroundColor قبل وبعد)
-.btn             rgb(37, 99, 235) ← rgb(37, 99, 235)  نفس اللون
-.btn-danger      rgb(220, 38, 38) ← rgb(220, 38, 38)  نفس اللون
-.btn-ghost       rgba(0, 0, 0, 0) ← rgba(0, 0, 0, 0)  نفس اللون
-.btn-link        rgba(0, 0, 0, 0) ← rgba(0, 0, 0, 0)  نفس اللون
-.error (color)   rgb(185, 28, 28) ← rgb(185, 28, 28)  نفس اللون
-variant جديد .btn-warn: rgb(180, 83, 9)
-عدد !important: قبل 7، وبعد 0
-~~~` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** زوّد على الفحص الذاتي خطأ ١١: «الـ sticky في grid من غير [[align-self: start]]». ابني الحالة الأول (sticky بيتمد بطول الصف فمبيلزقش)، واكتب الـ [[ok(...)]] اللي يلقطها برسالة بتقول السبب.`, done: R`الفحص الجديد بيقيس إن ارتفاع الـ sticky بيساوي ارتفاع أبوه (وده معناه إنه متمد ومش هيتحرك)، وبيطبع FAIL برسالة فيها [[align-self]] على الحالة البايظة و PASS بعد ما تزوّد [[align-self: start]]، والـ ١١ القديمين لسه PASS.`,
-              sol: R`~~~live 600 720 sticky-grid.html: الحالة نفسها
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>sticky في grid</title>
-<style>
-  body { margin: 0; }
-  .wrap { display: grid; grid-template-columns: 200px 1fr; }
-  .toc2 { position: sticky; top: 0; background: #dbeafe; }
-  article { block-size: 2000px; }
-</style></head>
-<body><main><h1>x</h1><div class="wrap"><aside class="toc2" aria-label="الفهرس">الفهرس</aside><article>مقال</article></div></main></body>
-</html>
-~~~
-
-~~~js السطر الجديد في الفحص (قبل سطر النتيجة)
-const tc = q('.toc2');
-if (tc) {
-  const box = tc.parentElement;
-  const stretched = near(R(tc).height, R(box).height);
-  ok('11 الـ sticky في grid مش متمد', !stretched, 'ارتفاعه ' + Math.round(R(tc).height) + 'px زي أبوه، فمفيش مساحة يتحرك فيها: زوّد align-self: start');
-}
-~~~
-
-عنصر الـ grid الافتراضي [[align-self: stretch]]، فالـ aside بياخد ارتفاع الصف كله. الـ sticky بيتحرك جوه أبوه، ولو ارتفاعه زي أبوه مفيش مكان يتحرك فيه، فمبيتحركش ومن غير أي خطأ.
-
-الفحص بيقيس الحقيقة دي: ارتفاع الـ sticky = ارتفاع الأب؟ يبقى متمد. والرسالة بتقول السبب والحل، لأن الفحص اللي بيقول FAIL بس مش بيعلّم حد.
-
-الغلطة الشائعة: تفحص [[getComputedStyle(el).alignSelf]] بدل القياس. القيمة ممكن تيجي من [[align-items]] على الأب، فالقياس أضمن.
-
-~~~text الناتج (Chrome 156)
-الحالة البايظة: FAIL 11 الـ sticky في grid مش متمد ← ارتفاعه 2000px زي أبوه، فمفيش مساحة يتحرك فيها: زوّد align-self: start
-بعد align-self: start: PASS 11 الـ sticky في grid مش متمد
-بعد scroll 500: top = 0
-الفحوص القديمة على الحل المرجعي: النتيجة: 11 من 11
-~~~` },
-            { lvl: 'تحدي', t: R`**اشرحها:** اكتب ٣ سطور لزميل بيقول «حطيت z-index: 99999 ولسه تحت»: ليه الرقم مش بيفرق، وإزاي يلاقي الأب اللي حابسه في DevTools، والحل اللي مش بيعتمد على أرقام.`, done: R`الشرح فيه إن الـ z-index بيتقارن جوه الـ context بس، وإن الأب اللي عليه [[transform]] أو [[opacity]] أو [[filter]] أو [[isolation]] بيعمل context، وإنه يلاقيه من Elements › Computed على كل أب (أو Layers panel)، وإن الحل [[<dialog>]] أو [[popover]] (الـ top layer). وزميلك صلّح بيه مودال حقيقي.`,
-              sol: R`~~~text رسالة لزميل
-الـ z-index بيتقارن جوه نفس الـ stacking context بس، فلو أب عليه transform أو opacity أو filter أو isolation، رقمك محبوس جواه، و 99999 هناك مش بيعدّي للي برا.
-عشان تلاقيه: Elements › دوس على كل أب لفوق، وبص في Computed على الخواص دي، أو افتح Layers panel.
-الحل اللي مش بيعتمد على أرقام: <dialog> بـ showModal() أو popover، بيطلعوا في الـ top layer فوق كل حاجة.
-~~~
-
-المشكلة في السؤال نفسه: «ليه الرقم مش بيفرق؟» لأن الرقم مش في سباق مع كل الصفحة. كل stacking context طبقة مقفولة، والأب هو اللي بيتقارن برا، بقيمة الأب، مش بقيمتك.
-
-الـ [[top layer]] طبقة خاصة في المتصفح: مش جزء من أي context، ومحدش يغطيها إلا عنصر تاني فيها. وعشان كده المودال بيشتغل حتى لو جوه كارت عليه [[transform]].
-
-الغلطة الشائعة: تشيل [[transform]] من الأب عشان «يعدّي»، وتكسر حركة تانية. أو تحرك الـ HTML. الـ top layer أبسط.
-
-~~~text الناتج (تأكيد في Chrome 156: أب عليه transform و z-index: 1، وعنصر تاني z-index: 2)
-ابن z-index: 99999 جوه الأب: اللي فوق = t
-نفس الابن <dialog> بـ showModal(): اللي فوق = k
-نفس الابن popover: اللي فوق = k
-~~~` },
-          ],
-          deep: {
-            why: R`الأخطاء دي مبتطلّعش error ولا warning، والصفحة بتشتغل على جهازك، والمشكلة بتظهر عند يوزر تاني: على موبايل، أو بالكيبورد، أو بالإنجليزي، أو بعد scroll. وكل واحد منهم بيتصلّح غلط بنفس الطريقة كل مرة ([[z-index]] أكبر، و [[!important]] زيادة، و [[overflow: hidden]] على الـ body)، والتصليح الغلط بيعمل خطأ جديد. لو فهمت القاعدة اللي ورا كل واحد بتصلّحه مرة واحدة.`,
-            how: R`الـ sticky بيدوّر على أقرب أب «بيعمل scroll» (أي [[overflow]] غير [[visible]] و [[clip]])، وبيلزق في حدوده هو مش الشاشة، حتى لو الأب ده عمره ما عمل scroll فعلًا. والـ stacking context شجرة: المتصفح بيرسم كل context كوحدة واحدة، وجواه بيرتب الأولاد بالـ z-index، فعنصر جوه context بـ z-index صفر مبيعدّيش عنصر برا بـ 10 مهما كان رقمه. والـ top layer ([[<dialog>]] و [[popover]] و fullscreen) طبقة فوق كل الـ contexts، والمتصفح بيرسمها في الآخر. و [[right]] و [[left]] اتجاهات شاشة، و [[inline-start]] و [[inline-end]] اتجاهات كتابة بتتقلب مع [[dir]]. و [[!important]] بيعمل طبقة أعلى في الـ cascade، فالـ specificity والترتيب مبقوش يفرقوا قصاده. والصورة من غير أبعاد مقاسها صفر لحد ما الملف يوصل، والـ [[width]] و [[height]] بيدوا المتصفح النسبة ([[aspect-ratio: auto 800 / 400]] في Computed) فيحجز المكان من الأول.`,
-            when: R`استخدم الترتيب ده (قيس، و Styles، و Computed، والشجرة) مع أي «الـ CSS مش شغال». وشغّل الـ linter (أو Stylelint بالـ plugins دي) في الـ CI عشان ٢ و ٣ و ٦ و ٩ ميرجعوش. والـ top layer لأي حاجة لازم تبان فوق كل حاجة: مودال، و toast، وقايمة منسدلة جوه جدول عليه [[overflow]]. و [[overflow-x: clip]] لما محتاج تقص من غير ما تكسر الـ sticky.`,
-            mistakes: R`تزوّد [[z-index]] بدل ما تدوّر على الـ context. أو تصلّح الـ sticky بإنك تشيله وتعمله [[position: fixed]] فيغطي المحتوى. أو تحط [[[dir=rtl]]] overrides لكل [[left]] و [[right]] في المشروع بدل logical properties. أو تكتب [[group-hover]] في Tailwind وتنسى [[group]]، أو تحط [[group]] على أب بعيد فكل الكروت بتتحرك مع بعض. أو تحط [[height: 100dvh]] بدل [[min-height]] فالكلام لسه بيتقص. أو تشيل [[outline]] عشان «المصمم عايز كده». أو تصلّح بـ [[animation-fill-mode]] وتختبر بعد ما الأنيميشن يخلص فتفتكر إنه اتصلّح.`,
-          },
-          sol: R`الحل المرجعي تحت: الصفحة السليمة كاملة. سطور التصليح في آخر الـ [[<style>]] (من [[.layout { overflow-x: clip; }]] لحد [[.btn-danger]])، والتلات تغييرات في HTML: [[class="card-link group"]]، و [[popover="manual"]] على التنبيه مع [[showPopover()]] في آخر الصفحة، و [[width="800" height="400"]] على الصورة. الصفحة دي طلّعت [[11 من 11]] على 360 وعلى 1200.
-
-ولاحظ إن [[.btn-plain:focus { outline: none; }]] لسه موجودة في الحل: الشيل مع الماوس مقبول، الغلط إنه ميبقاش فيه [[:focus-visible]]. وإن [[.alert[popover]]] محتاج [[inset: auto]] و [[margin: 0]] عشان المتصفح بيحط الـ popover في نص الشاشة افتراضيًا.`,
-          solCode: R`<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متجر الورد</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, sans-serif; }
-section { padding: 16px; border-bottom: 1px solid #ddd; }
-.layout { display: grid; grid-template-columns: 160px 1fr; gap: 16px; }
-.toc { position: sticky; top: 0; align-self: start; background: #e0f2fe; padding: 8px; }
-.long { height: 1500px; background: #f8fafc; }
-.cards { display: flex; gap: 16px; }
-.pcard { position: relative; width: 200px; height: 120px; padding: 40px 12px 0; background: #fef3c7; }
-.badge { position: absolute; top: 8px; background: #be123c; color: #fff; padding: 2px 8px; }
-.btn { display: inline-flex; align-items: center; padding: 8px 14px; background: #2563eb; color: #fff; border: 0; }
-.site-head { position: relative; z-index: 10; height: 60px; background: #0f172a; color: #fff; padding: 16px; }
-.page { position: relative; animation: rise .3s both; }
-@keyframes rise { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-.alert { position: absolute; top: -40px; inset-inline-start: 16px; z-index: 9999; background: #16a34a; color: #fff; padding: 8px 12px; }
-.arrow { display: inline-block; transition: translate .2s; }
-.group:hover .group-hover\:translate-x-1 { translate: -4px; }
-.hero { background: #fce7f3; padding: 24px; overflow: hidden; }
-.title { font-size: 40px; }
-.banner { display: block; width: 100%; }
-.layout { overflow-x: clip; }
-.badge { inset-inline-end: 8px; }
-.btn { gap: 8px; }
-.alert[popover] { position: fixed; inset: auto; top: 8px; inset-inline-start: 16px; margin: 0; border: 0; }
-.hero { min-height: 100dvh; }
-.btn-plain:focus { outline: none; }
-.btn-plain:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
-.title:lang(en) { letter-spacing: -0.03em; }
-.btn-danger { background: #dc2626; }
-</style></head>
-<body>
-<section id="b1"><h2>١ الفهرس الـ sticky</h2>
-  <div class="layout"><aside class="toc">الفهرس: المقدمة · الأسعار · الأسئلة</aside><article class="long">مقال طويل عن تنسيق الورد…</article></div></section>
-<section id="b2"><h2>٢ شارة «جديد» في الركن</h2>
-  <div class="cards"><div class="pcard" dir="rtl"><span class="badge">جديد</span>بوكيه ورد</div><div class="pcard" dir="ltr" lang="en"><span class="badge">New</span>Flower box</div></div></section>
-<section id="b3"><h2>٣ مسافة الأيقونة في الزرار</h2>
-  <button class="btn" dir="rtl"><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7"/></svg><span>حفظ</span></button>
-  <button class="btn" dir="ltr" lang="en"><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7"/></svg><span>Save</span></button></section>
-<section id="b4"><h2>٤ التنبيه تحت الهيدر</h2>
-  <header class="site-head">هيدر الموقع</header>
-  <div class="page"><div class="alert" role="alert" popover="manual">الطلب اتأكد</div><p>محتوى الصفحة</p></div></section>
-<section id="b5"><h2>٥ السهم مش بيتحرك مع الـ hover</h2>
-  <a href="#" class="card-link group">شوف كل العروض <span class="arrow group-hover:translate-x-1">←</span></a></section>
-<section id="b6"><h2>٦ الهيرو على الموبايل</h2>
-  <div class="hero"><h3>ورد طازة كل يوم</h3><p>نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل. نص طويل عن المتجر بيتكرر عشان يبان على الموبايل.</p><a href="#" class="btn">اطلب</a></div></section>
-<section id="b7"><h2>٧ الـ focus اختفى</h2><button class="btn-plain">اشترك</button></section>
-<section id="b8"><h2>٨ العنوان العربي متقطّع</h2><h1 class="title">عروض الربيع</h1></section>
-<section id="b9"><h2>٩ زرار المسح لونه غلط</h2><button class="btn btn-danger">امسح الطلب</button></section>
-<section id="b10"><h2>١٠ الصورة بتزق الصفحة</h2><img class="banner" width="800" height="400" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect width='800' height='400' fill='%23fbcfe8'/%3E%3C/svg%3E" alt="بوكيه ورد أحمر على ترابيزة"></section>
-<div style="height:1200px"></div>
-<script>document.querySelector(".alert").showPopover();</script></body>
-</html>`,
-          flag: "script",
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import fs from "node:fs";
-fs.writeFileSync("bad.css", ".layout { overflow-x: hidden; }\n.badge { right: 8px; }\n.btn svg { margin-left: 8px; }\n.hero { height: 100vh; }\n.btn-plain:focus { outline: none; }\n.title { letter-spacing: -0.03em; }\n.btn { background: #2563eb !important; }\n");
-fs.writeFileSync("good.css", ".layout { overflow-x: clip; }\n.badge { inset-inline-end: 8px; }\n.btn { gap: 8px; }\n.hero { min-height: 100dvh; }\n.btn-plain:focus { outline: none; }\n.btn-plain:focus-visible { outline: 3px solid #2563eb; }\n.title:lang(en) { letter-spacing: -0.03em; }\n");
-const RULES = [
-  [/overflow(-x|-y)?:\s*(hidden|auto|scroll)/, "overflow makes a scroll container: a sticky child sticks inside it (try clip)"],
-  [/(?:^|[\s;{])(left|right|margin-left|margin-right|padding-left|padding-right):/, "physical side: flips wrong between Arabic and English (use inline-start/end)"],
-  [/(?:^|[\s;{])height:\s*100vh/, "height: 100vh cuts content and is taller than a phone screen (min-height: 100dvh)"],
-  [/!important/, "!important: the next rule can't win without another !important"],
-];
-function lint(css) {
-  const out = [];
-  css.split("\n").forEach((line, i) => RULES.forEach(([re, msg]) => { if (re.test(line)) out.push("line " + (i + 1) + ": " + msg); }));
-  if (/:focus\s*\{[^}]*outline:\s*(none|0)/.test(css) && !/:focus-visible\s*\{[^}]*(outline:\s*[1-9]|box-shadow)/.test(css)) out.push("outline removed on :focus with no :focus-visible ring");
-  if (/letter-spacing:\s*-/.test(css.replace(/[^{}]*:lang\(en\)[^{]*\{[^}]*\}/g, ""))) out.push("negative letter-spacing that also hits Arabic text");
-  return out;
-}
-for (const f of ["bad.css", "good.css"]) { const r = lint(fs.readFileSync(f, "utf8")); console.log(f + ": " + r.length + " problems"); r.forEach(x => console.log("  " + x)); }`, expect: [R`bad.css: 7 problems`, R`line 1: overflow makes a scroll container`, R`line 4: height: 100vh cuts content`, R`outline removed on :focus with no :focus-visible ring`, R`negative letter-spacing that also hits Arabic text`, R`good.css: 0 problems`] },
-          ],
-        },
-        {
-          cmd: "توقّع الـ cascade",
-          ref: [
-            { t: "MDN: Cascade layers", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Cascade_layers" },
-            { t: "MDN: Specificity", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity" },
-            { t: "MDN: @scope", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@scope" },
-            { t: "MDN: revert-layer", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/revert-layer" },
-          ],
-          title: "مين يكسب؟ ١٤ لغز بـ :is() و :where() و :has() و @layer و !important",
-          learn: R`تحسب مين يكسب في أي تعارض بأربع أسئلة بالترتيب (important؟ وأنهي layer؟ والـ specificity كام؟ ومين الأخير؟) قبل ما تفتح DevTools.`,
-          out: R`١٤ لغز تتوقعهم على ورقة وفحص بيقارن توقعك باللي Chrome حسبه، ودالة [[specificity()]] بتحسب (a, b, c) لأي selector وبتعدّي ١٥ اختبار.`,
-          use: {
-            prog: R`نص أسئلة «الـ CSS ده مش شغال» إجابتها «فيه قاعدة تانية بتكسب». لو عرفت تحسب مين يكسب من غير تجربة، بتعرف تكتب CSS بيكسب من أول مرة من غير [[!important]].`,
-            work: R`مكتبات المكونات (shadcn و Tailwind و Bootstrap) كلها مبنية على القواعد دي: Tailwind v4 حاطط كل حاجة في [[@layer]]، و [[:where()]] بيتستخدم عشان الـ reset ميغلبش الـ classes بتاعتك. وسؤال «specificity بتاع ده كام؟» من أشهر أسئلة انترفيو الـ frontend.`,
-            cs: R`الـ specificity رقم من ٣ خانات بيتقارن lexicographic زي الكلمات في القاموس: الخانة الأولى الأول، ولو اتساوت التانية. فـ (1, 0, 0) أكبر من (0, 99, 99). والـ parser اللي هتكتبه مثال صغير على tokenizer بيمشي على النص حرف حرف ويتعامل مع الأقواس المتداخلة.`,
-          },
-          desc: R`لما قاعدتين بيحطوا قيمة لنفس الخاصية على نفس العنصر، المتصفح بيسأل ٤ أسئلة **بالترتيب**، وأول سؤال فيه فرق بيحسم:
-
-1. **important؟** القاعدة اللي عليها [[!important]] بتكسب العادية. (وجوه الـ important، ترتيب الـ layers بيتقلب.)
-2. **أنهي layer؟** القواعد اللي برا أي [[@layer]] بتكسب اللي جوه. وجوه الـ layers، الـ layer اللي اتعرّف **آخر** بيكسب.
-3. **الـ specificity:** (a, b, c) = عدد الـ ids، وعدد الـ classes والـ attributes والـ pseudo-classes، وعدد الـ types والـ pseudo-elements. [[:where()]] بصفر، و [[:is()]] و [[:not()]] و [[:has()]] بياخدوا أتقل حاجة جواهم.
-4. **الترتيب:** لو كله متساوي، اللي مكتوب بعد في الملف بيكسب.
-
-وقبل الأربعة دول: الـ [[style=""]] اللي على العنصر بيكسب أي قاعدة عادية، والقيمة الموروثة من الأب بتخسر قصاد أي قاعدة على العنصر نفسه حتى [[*]]. ده تطبيق على دروس «selectors» و «specificity» و «cascade» و «:has()» في التاب ده، وسؤال «(id, class, type)» في وحدة الانترفيو.`,
-          example: R`p { color: red; }
-.note { color: blue; }
-:where(.box) .note { color: green; }
-:is(.box, .x) p { color: orange; }
-@layer base, theme;
-@layer base { p.note { color: purple; } }
-@layer theme { p { color: teal; } }`,
-          lines: [
-            R`specificity (0, 0, 1): type واحد. القاعدة دي أضعف واحدة من الأربعة اللي برا الـ layers.`,
-            R`(0, 1, 0): class واحدة، أتقل من الـ type، فبتغلب الأحمر.`,
-            R`[[:where()]] مالوش وزن، فدي (0, 1, 0) زي اللي قبلها بالظبط، ولأنها بعدها في الملف بتغلبها: الأزرق خسر قصاد الأخضر بالترتيب بس.`,
-            R`[[:is(.box, .x)]] بياخد وزن أتقل واحد جواه (class)، وبعده [[p]]، فدي (0, 1, 1): أتقل من الأخضر، والبرتقاني بيكسب لحد هنا.`,
-            R`بنعرّف ترتيب الـ layers: [[base]] الأول وبعده [[theme]]. الترتيب ده بيحسم بين الـ layers نفسهم.`,
-            R`[[p.note]] (0, 1, 1) جوه [[base]]. نفس وزن البرتقاني، بس أي قاعدة جوه layer بتخسر قصاد أي قاعدة برا الـ layers مهما كان وزنها.`,
-            R`[[p]] جوه [[theme]]. [[theme]] بيكسب [[base]] لأنه اتعرّف بعده، بس الاتنين بيخسروا قصاد البرتقاني اللي برا. والنتيجة في Chrome على [[<div class="box"><p class="note">]]: [[rgb(255, 165, 0)]] يعني برتقاني.`,
-          ],
-          teach: R`## الفكرة في سطر
-
-متخمّنش ومتفتحش DevTools الأول: اسأل الأسئلة الأربعة بالترتيب، واكتب إجابتك على ورقة، وبعدين خلي الفحص يقارن. اللي بيوقع الناس دايمًا: [[:where()]] بصفر، و [[:is()]] بياخد الأتقل، والقواعد اللي برا الـ layers بتكسب، و [[!important]] بيقلب ترتيب الـ layers، والوراثة بتخسر قصاد أي حاجة.
-
----
-
-## الأسئلة الأربعة كجدول
-
-| السؤال | اللي بيكسب | مثال |
-|---|---|---|
-| ٠. فيه [[style=""]] على العنصر؟ | الـ inline style يكسب أي قاعدة عادية في ملفات CSS | [[<p style="color: red">]] يغلب [[#id.class p]] |
-| ١. فيه [[!important]]؟ | القاعدة الـ important تكسب العادية، حتى الـ inline style العادي | [[p { color: green !important }]] يغلب [[style="color: red"]] |
-| ٢. أنهي layer؟ (عادي) | برا الـ layers يكسب، وبعدين الـ layer الأخير في الترتيب | [[@layer x { #t {...} }]] يخسر قصاد [[p {...}]] برا |
-| ٢. أنهي layer؟ (important) | بالعكس: الـ layer **الأول** يكسب | [[base]] الـ important يغلب [[theme]] الـ important |
-| ٣. الـ specificity | (a, b, c) الأكبر من الشمال لليمين | (1, 0, 0) يغلب (0, 9, 9) |
-| ٤. الترتيب | الأخير في الملف | [[.a]] بعدها [[.b]]: [[class="b a"]] بياخد [[.b]] |
-
-ليه الـ important بيتقلب؟ عشان الـ layer الأساسي (reset، أو مكتبة) يقدر يقول «القيمة دي مهمة ومحدش يغيّرها»، والـ layers اللي بعده متقدرش تغلبها حتى بـ [[!important]]. وده من مواصفات CSS Cascade Level 5، واللغز ٨ تحت بيثبته في Chrome.
-
-### الـ specificity حتة حتة
-
-| الحتة | بتتعد في | ملاحظة |
-|---|---|---|
-| [[#id]] | a | id واحد أتقل من أي عدد classes |
-| [[.class]] و [[[type="email"]]] و [[:hover]] و [[:focus]] | b | الـ attribute والـ pseudo-class زي الـ class بالظبط |
-| [[p]] و [[::before]] (و [[:before]] القديمة) | c | الـ pseudo-element زي الـ type |
-| [[*]] و [[>]] و [[+]] و [[~]] والمسافة | ولا حاجة | العلامات بتربط بس، مالهاش وزن |
-| [[:where(...)]] | صفر | مهما كان جواه |
-| [[:is(...)]] و [[:not(...)]] و [[:has(...)]] | أتقل حاجة جواه | [[:is(#a, .x)]] = (1, 0, 0) حتى لو العنصر طابق [[.x]] بس |
-| [[:nth-child(2n of .on)]] | b + أتقل حاجة بعد [[of]] | دي (0, 2, 0) |
-
----
-
-## الألغاز الـ ١٤
-
-كل لغز CSS و HTML صغيرين. في ١ لحد ١٢: العنصر اللي [[id="t"]] لونه إيه؟ وفي ١٣ و ١٤: الـ selector بيطابق كام عنصر؟ اكتب كل الإجابات على ورقة **قبل** ما تشغّل حاجة.
-
-~~~text الألغاز
-1   p { color: red } .note { color: blue }
-    <p class="note" id="t">
-
-2   #a p { color: red } .box .note { color: green }
-    <div id="a" class="box"><p class="note" id="t">
-
-3   :where(#a) p { color: red } p.note { color: green }
-    <div id="a"><p class="note" id="t">
-
-4   :is(#a, .x) p { color: red } .box p.note { color: green }
-    <div id="a" class="box"><p class="note" id="t">
-
-5   .note { color: red !important } #t { color: green }
-    <p class="note" id="t">
-
-6   @layer base, theme;
-    @layer theme { p { color: green } }
-    @layer base { #t.note { color: red } }
-    <p class="note" id="t">
-
-7   @layer x { #t { color: red } } p { color: green }
-    <p id="t">
-
-8   @layer base, theme;
-    @layer base { p { color: red !important } }
-    @layer theme { p { color: green !important } }
-    <p id="t">
-
-9   .card:has(img) { color: red } .card { color: green }
-    <div class="card" id="t"><img alt="">
-
-10  #a { color: red } p { color: green }
-    <div id="a"><p id="t">
-
-11  .a { color: red } .b { color: green }
-    <p class="b a" id="t">
-
-12  p { color: green !important }
-    <p id="t" style="color: red">
-
-13  كام عنصر بيطابق  li:not(.off)
-    <ul><li>١</li><li class="off">٢</li><li>٣</li><li class="off">٤</li><li>٥</li></ul>
-
-14  كام عنصر بيطابق  label:has(+ input:invalid)
-    <label>الاسم</label><input required>
-    <label>الإيميل</label><input type="email" value="sara@example.com">
-    <label>الموبايل</label><input pattern="01[0-9]{9}" value="123">
-~~~
-
----
-
-## الفحص: توقعك مقابل Chrome
-
-اكتب توقعاتك في [[guess]] (اسم اللون بالإنجليزي، أو العدد)، والصق الكود في Console أي صفحة (حتى [[about:blank]]). لكل لغز بيعمل [[<iframe>]] مستخبي بـ [[srcdoc]] فيه الـ CSS والـ HTML بتوعه بس، عشان الألغاز متأثرش في بعض ولا في صفحتك، ويقرا اللون بـ [[getComputedStyle]] أو العدد بـ [[querySelectorAll(...).length]].
-
-~~~js الفحص: توقّع الـ cascade
-(async () => {
-  // اكتب توقعك لكل لغز: اسم لون بالإنجليزي (red أو green أو blue) أو عدد العناصر
-  const guess = { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '', 11: '', 12: '', 13: 0, 14: 0 };
-  const P = {
-    1: ['p { color: red } .note { color: blue }', '<p class="note" id="t">؟</p>'],
-    2: ['#a p { color: red } .box .note { color: green }', '<div id="a" class="box"><p class="note" id="t">؟</p></div>'],
-    3: [':where(#a) p { color: red } p.note { color: green }', '<div id="a"><p class="note" id="t">؟</p></div>'],
-    4: [':is(#a, .x) p { color: red } .box p.note { color: green }', '<div id="a" class="box"><p class="note" id="t">؟</p></div>'],
-    5: ['.note { color: red !important } #t { color: green }', '<p class="note" id="t">؟</p>'],
-    6: ['@layer base, theme; @layer theme { p { color: green } } @layer base { #t.note { color: red } }', '<p class="note" id="t">؟</p>'],
-    7: ['@layer x { #t { color: red } } p { color: green }', '<p id="t">؟</p>'],
-    8: ['@layer base, theme; @layer base { p { color: red !important } } @layer theme { p { color: green !important } }', '<p id="t">؟</p>'],
-    9: ['.card:has(img) { color: red } .card { color: green }', '<div class="card" id="t"><img alt="">؟</div>'],
-    10: ['#a { color: red } p { color: green }', '<div id="a"><p id="t">؟</p></div>'],
-    11: ['.a { color: red } .b { color: green }', '<p class="b a" id="t">؟</p>'],
-    12: ['p { color: green !important }', '<p id="t" style="color: red">؟</p>'],
-    13: ['li:not(.off) { color: red }', '<ul><li>١</li><li class="off">٢</li><li>٣</li><li class="off">٤</li><li>٥</li></ul>', 'li:not(.off)'],
-    14: ['label:has(+ input:invalid) { color: red }', '<form><label>الاسم</label><input required><label>الإيميل</label><input type="email" value="sara@example.com"><label>الموبايل</label><input pattern="01[0-9]{9}" value="123"></form>', 'label:has(+ input:invalid)'],
-  };
-  const named = c => { const i = document.createElement('i'); i.style.color = c; document.body.append(i); const v = getComputedStyle(i).color; i.remove(); return v; };
-  let pass = 0;
-  for (const n of Object.keys(P)) {
-    const [css, html, sel] = P[n], f = document.createElement('iframe');
-    f.style.cssText = 'position:absolute;width:10px;height:10px;opacity:0';
-    f.srcdoc = '<style>' + css + '</style>' + html;
-    await new Promise(r => { f.onload = r; document.body.append(f); });
-    const d = f.contentDocument;
-    const got = sel ? d.querySelectorAll(sel).length : getComputedStyle(d.getElementById('t')).color;
-    const want = sel ? guess[n] : named(guess[n] || 'transparent');
-    const right = got === want; if (right) pass++;
-    console.log((right ? 'PASS ' : 'FAIL ') + n + ': ' + (sel ? 'عدد العناصر ' + got : 'اللون ' + got) + (right ? '' : ' ← انت قلت ' + guess[n]));
-    f.remove();
-  }
-  console.log('النتيجة: ' + pass + ' من ' + Object.keys(P).length);
-})();
-~~~
-
-- [[named(c)]] بيحوّل اسم اللون اللي كتبته ([[red]]) للصيغة اللي المتصفح بيرجّعها ([[rgb(255, 0, 0)]]) عن طريق عنصر مؤقت، عشان المقارنة تبقى نص بنص. ولاحظ إن [[green]] في CSS هو [[rgb(0, 128, 0)]] مش [[rgb(0, 255, 0)]] (ده [[lime]]).
-- [[await new Promise(r => { f.onload = r; ... })]] بيستنى الـ iframe يحمّل قبل ما يقرا، ولولاها كنت هتقرا من document فاضي.
-- الناتج الحقيقي على توقعات صح وتوقعات غلط موجود في «الحل»، عشان متشوفش الإجابات قبل ما تحل.
-
----
-
-## التمرين اللي بيتصحح لوحده: احسب الـ specificity بنفسك
-
-اكتب [[specificity(selector)]] بترجّع [[[a, b, c]]] لـ selector واحد (من غير فواصل على المستوى الأول)، و [[compareSpecificity(x, y)]] بترجّع 1 لو x أتقل و -1 لو أخف و 0 لو متساويين. الطريقة: امشي على النص حرف حرف بـ index:
-
-| الحرف | تعمل إيه |
-|---|---|
-| [[#]] | اقرا الاسم اللي بعده، و a + 1 |
-| [[.]] | اقرا الاسم، و b + 1 |
-| [[[]] | اقفز لحد [[]]] اللي بيقفل (واتخطى أي [[]]] جوه علامات تنصيص)، و b + 1 |
-| [[::]] | اقرا الاسم، و c + 1 |
-| [[:]] | اقرا الاسم. لو [[before]] أو [[after]] أو [[first-line]] أو [[first-letter]] يبقى c + 1. لو بعده [[(]] اقرا لحد القوس اللي بيقفله (عدّ الأقواس المتداخلة) وقرر حسب الاسم: [[where]] صفر، و [[is]] و [[not]] و [[has]] أتقل حاجة جوه، و [[nth-child(... of S)]] b + 1 + أتقل S. وغير كده b + 1 |
-| حرف أو [[-]] | اسم type: اقرا الاسم، و c + 1 |
-| أي حاجة تانية | مسافة أو [[>]] أو [[+]] أو [[~]] أو [[*]]: اتخطاها |
-
-و «أتقل حاجة جوه» يعني قسّم الكلام على الفواصل **اللي برا أي قوس** ([[:is(.a, :not(.b, .c))]] فيها فاصلة واحدة على المستوى ده)، واحسب كل جزء بنفس الدالة (recursion)، وخد الأكبر بـ [[compareSpecificity]].
-
-## خلاصة
-
-- الترتيب: inline style، و important، و layer، و specificity، و الترتيب في الملف. وأول فرق بيحسم.
-- [[:where()]] بصفر (للـ resets والمكتبات)، و [[:is()]] و [[:not()]] و [[:has()]] بالأتقل جواهم.
-- برا الـ layers بيكسب جوه، والـ layer الأخير بيكسب، وفي الـ important بالعكس.
-- الوراثة بتخسر قصاد أي قاعدة على العنصر نفسه.
-- ترتيب الـ classes في [[class=""]] ملوش أي لازمة، المهم ترتيبهم في ملف الـ CSS.`,
-          try: R`حل الألغاز الـ ١٤ على ورقة من غير ما تشغّل حاجة، واكتبهم في [[guess]] في الفحص، والصقه في Console. لكل لغز وقعت فيه، ارجع للجدول وقول أنهي سؤال من الأربعة كان هيحسمه. وبعدين اكتب [[specificity]] و [[compareSpecificity]] في المربع اللي تحت ودوس «شغّل واختبر».`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** احسب specificity للأربعة دول من غير كود: [[nav ul li a:hover]] و [[#menu .item]] و [[:where(#menu) .item.active]] و [[input:not([type="checkbox"]):focus-visible]]. رتّبهم من الأتقل للأخف.`, done: R`(0, 1, 4) و (1, 1, 0) و (0, 2, 0) و (0, 2, 1) (الـ [[:not([type])]] بياخد وزن الـ attribute اللي جواه، يعني class واحدة)، والترتيب [[#menu .item]] ثم [[input:not(...):focus-visible]] ثم [[:where(#menu) .item.active]] ثم [[nav ul li a:hover]]، ودالتك في المربع طلّعت نفس الأرقام.`,
-              sol: R`~~~text الإجابة
-nav ul li a:hover                      (0, 1, 4)   ٤ عناصر + :hover
-#menu .item                            (1, 1, 0)   id + class
-:where(#menu) .item.active             (0, 2, 0)   :where وزنه صفر + classين
-input:not([type="checkbox"]):focus-visible  (0, 2, 1)   عنصر + [type] جوه :not + :focus-visible
-
-الترتيب: #menu .item ثم input:not(...):focus-visible ثم :where(#menu) .item.active ثم nav ul li a:hover
-~~~
-
-~~~js specificity.js (دالة المربع، بتتأكد من الأرقام)
-function specificity(sel) {
-  let s = sel.replace(/:where\((?:[^()]|\([^()]*\))*\)/g, "");
-  const inner = [];
-  s = s.replace(/:(?:is|not|has)\(((?:[^()]|\([^()]*\))*)\)/g, (m, a) => {
-    const best = a.split(",").map((x) => specificity(x.trim())).sort((p, q) => q[0] - p[0] || q[1] - p[1] || q[2] - p[2])[0];
-    inner.push(best);
-    return "";
-  });
-  const ids = (s.match(/#[\w-]+/g) ?? []).length;
-  const cls = (s.match(/\.[\w-]+|\[[^\]]+\]|:(?!:)[\w-]+/g) ?? []).length;
-  const typ = (s.match(/(?:^|[\s>+~])[a-zA-Z][\w-]*|::[\w-]+/g) ?? []).length;
-  return inner.reduce((t, x) => t.map((v, i) => v + x[i]), [ids, cls, typ]);
-}
-~~~
-
-٣ قواعد بتحل الأربعة:
-
-- [[:where()]] صفر دايمًا، أي selector جواه ملوش وزن. عشان كده بينفع في الـ resets.
-- [[:not()]] و [[:is()]] و [[:has()]] نفسهم صفر، بس بياخدوا وزن أتقل حاجة جواهم. فـ [[:not([type="checkbox"])]] = attribute = class واحدة.
-- الخانة الشمال بتغلب كل اللي يمينها: id واحد أتقل من ١٠٠ class.
-
-ودالة المربع بتشيل [[:where]] الأول، وبعدين تحسب كل [[:is]] و [[:not]] بأتقل عنصر جواه، وبعدين تعدّ الباقي.
-
-الغلطة الشائعة: تعتبر [[:not()]] نفسها class. لو جواها [[#id]] يبقى id كامل.
-
-~~~text الناتج (الدالة، Node 24)
-nav ul li a:hover                            (0, 1, 4)
-#menu .item                                  (1, 1, 0)
-:where(#menu) .item.active                   (0, 2, 0)
-input:not([type="checkbox"]):focus-visible   (0, 2, 1)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف reset فيه [[a { color: inherit; text-decoration: none; }]] و [[button { background: none; }]]، والمكونات بتاعتك [[.link { color: blue; }]] شغالة، بس [[.card a { color: inherit; }]] من reset تاني بتغلب [[.link]] جوه الكروت. صلّح من غير ما تلمس المكونات ولا تزوّد [[!important]].`, done: R`لفّيت الـ reset في [[:where()]] ([[:where(.card) a]]) أو في [[@layer reset]] متعرّف قبل باقي الملف، و [[.link]] جوه الكارت بقى أزرق، والفحص بـ [[getComputedStyle]] طلّع [[rgb(0, 0, 255)]]، ومكتوب ليه كل حل من الاتنين اشتغل.`,
-              sol: R`~~~css الحل الأول: :where (في ملف الـ reset)
-a { color: inherit; text-decoration: none; }
-button { background: none; }
-:where(.card) a { color: inherit; }
-~~~
-
-~~~css الحل التاني: @layer (أول سطر في الملف الرئيسي)
-@layer reset;
-@import url("reset.css") layer(reset);
-~~~
-
-~~~view 200 220 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-body { font-family: system-ui, sans-serif; margin: 1rem; } .link { color: blue; } .card { padding: 1rem; border: 1px solid #cbd5e1; border-radius: 10px; }
-</style>
-<style>
-/* من الحل */
-a { color: inherit; text-decoration: none; }
-button { background: none; }
-:where(.card) a { color: inherit; }
-</style>
-</head>
-<body>
-<p><a class="link" href="#">لينك برّه الكارت</a></p>
-<div class="card"><p>جوه الكارت: <a class="link" href="#">لينك جوه الكارت</a></p></div>
-<p>الاتنين أزرق: <code>:where(.card) a</code> وزنه (0,0,1) بس، فـ <code>.link</code> بيكسب.</p>
-</body>
-</html>
-~~~
-
-[[.card a]] وزنها (0, 1, 1)، و [[.link]] وزنها (0, 1, 0)، فالـ reset بيكسب مع إنه المفروض أضعف حاجة. وانت مش عايز تلمس المكونات، ولا تزوّد [[!important]].
-
-- **[[:where(.card) a]]:** الوزن بقى (0, 0, 1)، زي عنصر واحد، فأي class تغلبه.
-- **[[@layer reset]]:** أي قاعدة برا layer أقوى من أي قاعدة جوه layer، مهما كان الوزن. فلو الـ reset كله في layer، المكونات بتكسب تلقائيًا، حتى لو الـ reset أتقل. و [[@layer reset;]] لازم تتكتب قبل أي استخدام.
-
-القاعدة: الـ reset لازم يبقى أضعف من أي حاجة، و [[:where]] أو layer بيخلوه كده.
-
-الغلطة الشائعة: تزوّد [[.card .link]]، فتبدأ حرب specificity جديدة.
-
-~~~text الناتج (Chrome 156، لون .link جوه .card)
-قبل:             rgb(0, 0, 0)
-:where:          rgb(0, 0, 255)
-@layer reset:    rgb(0, 0, 255)
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة فيها ٣ layers بالترتيب [[@layer reset, components, utilities]]، وزرار ليه [[.btn]] في components و [[.mt-4]] و [[.bg-red]] في utilities. اثبت إن الـ utility بيكسب الـ component حتى لو الـ component selector أتقل ([[.card .btn]]).`, done: R`[[getComputedStyle]] على الزرار طلّع خلفية [[.bg-red]] مع إن [[.card .btn]] (0, 2, 0) أتقل من [[.bg-red]] (0, 1, 0)، ولما شيلت سطر [[@layer reset, components, utilities]] من فوق والترتيب بقى حسب أول ظهور، النتيجة اتغيرت أو فضلت، ومكتوب ليه.`,
-              sol: R`~~~live 130 130 layers.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>layers</title>
-<style>
-  @layer reset, components, utilities;
-  @layer utilities {
-    .mt-4 { margin-block-start: 1rem; }
-    .bg-red { background: red; }
-  }
-  @layer components {
-    .btn { background: blue; }
-    .card .btn { background: navy; }
-  }
-  @layer reset {
-    button { background: none; border: 0; }
-  }
-</style></head>
-<body>
-  <main class="card"><h1>x</h1><button id="b" class="btn mt-4 bg-red">زرار</button></main>
-</body></html>
-~~~
-
-الـ selector الأتقل [[.card .btn]] (0, 2, 0) في [[components]]، و [[.bg-red]] (0, 1, 0) في [[utilities]]. الـ utility بتكسب، لأن المتصفح بيقارن الـ layers قبل الـ specificity: أول خطوة فيها فرق بتقرر.
-
-ولما تشيل سطر [[@layer reset, components, utilities;]]: الترتيب بقى حسب أول ظهور في الملف. [[utilities]] ظهرت **الأول** فبقت الأضعف، و [[reset]] ظهرت آخر واحدة فبقت **الأقوى**. فالنتيجة اتقلبت خالص: [[button { background: none }]] من الـ reset غلب كل حاجة، والزرار بقى شفاف. وده اللي السطر ده موجود عشانه: الترتيب بيتثبت في مكان واحد، بغض النظر عن ترتيب الملفات.
-
-الغلطة الشائعة: تقرا الـ layer من مكان كتابته تحت. اللي بيحدد الترتيب أول ذكر للاسم.
-
-~~~text الناتج (Chrome 156)
-بالسطر: خلفية الزرار = rgb(255, 0, 0)
-من غير السطر: خلفية الزرار = rgba(0, 0, 0, 0)
-~~~` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** زوّد ٣ ألغاز على الفحص (رقم ١٥ و ١٦ و ١٧) من عندك: واحد فيه [[@scope]]، وواحد فيه nesting ([[.card { & p { ... } }]])، وواحد فيه [[revert-layer]]. توقّع الأول، وبعدين شغّل.`, done: R`الألغاز التلاتة شغالة في الفحص بنفس الشكل، ولكل واحد مكتوب توقعك واللي Chrome قاله وليه، ولو اتفاجئت في واحد مكتوب أنهي قاعدة من MDN فسّرته.`,
-              sol: R`~~~js الألغاز التلاتة (تتضاف على P في الفحص)
-15: ['@scope (.card) to (.footer) { p { color: red } } p { color: green }',
-     '<div class="card"><div class="footer"><p id="t">؟</p></div></div>'],
-16: ['.card { & p { color: red } } .card p { color: green }',
-     '<div class="card"><p id="t">؟</p></div>'],
-17: ['@layer a, b; @layer a { #t { color: red } } @layer b { #t { color: green } #t { color: revert-layer } }',
-     '<p id="t">؟</p>'],
-~~~
-
-التوقع والنتيجة والسبب:
-
-- **15 ([[@scope]]):** توقعت أخضر. [[to (.footer)]] حد سفلي: اللي جوه [[.footer]] برا الـ scope، فالقاعدة الحمرا مبتوصلش الفقرة، و [[p]] العادية بتكسب.
-- **16 (nesting):** توقعت أخضر. القاعدتين نفس الـ specificity (0, 1, 1) لأن [[& p]] = [[.card p]]، فاللي مكتوب أخير بيكسب.
-- **17 ([[revert-layer]]):** توقعت أحمر. [[revert-layer]] بيلغي قيم الـ layer الحالي، ويرجع للي قبله، فـ [[@layer a]] بيكسب. ده مكتوب في MDN صفحة [[revert-layer]].
-
-لغز 15 بيفاجئ لأن [[@scope]] فيها حد من تحت كمان، مش من فوق بس.
-
-الغلطة الشائعة: تتوقع إن [[@scope]] بتزوّد specificity. هي بتحدد مكان الانطباق، والقرب من الجذر بيفرق بعد الـ specificity.
-
-~~~text الناتج (Chrome 156)
-15: rgb(0, 128, 0)
-16: rgb(0, 128, 0)
-17: rgb(255, 0, 0)
-~~~` },
-            { lvl: 'تحدي', t: R`**اشرحها:** اشرح لزميل في ٣ سطور ليه Tailwind v4 حاطط الـ utilities في [[@layer utilities]] مش برا الـ layers، وإيه اللي بيحصل لو كتبت CSS عادي برا أي layer في نفس المشروع.`, done: R`الشرح بيقول إن الـ layers بتخلي الترتيب ثابت مهما كانت الـ specificity، وإن الـ CSS اللي برا أي layer بيكسب كل الـ utilities (حتى [[p]] لوحدها تغلب [[.text-red-500]])، وإن ده سبب شائع لـ «الـ class بتاعة Tailwind مش شغالة»، وجربته في صفحة وطلع كده.`,
-              sol: R`~~~text رسالة لزميل
-Tailwind حاطط الـ utilities في @layer utilities عشان الترتيب يبقى ثابت مهما كانت الـ specificity: أي utility بتغلب أي component من غير ما تتقل.
-بس الـ CSS اللي برا أي layer بيكسب كل الـ layers، حتى p { color: blue } لوحدها بتغلب .text-red-500.
-وده سبب شائع لـ «الـ class بتاعة Tailwind مش شغالة»: حط الـ CSS بتاعك في @layer base أو @layer components.
-~~~
-
-~~~live 170 170 tw-sim.html: نفس الموقف من غير Tailwind
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>layers و Tailwind</title>
-<style>
-  @layer theme, base, components, utilities;
-  @layer utilities { .text-red-500 { color: rgb(239, 68, 68); } }
-  p { color: blue; }
-  @layer base { h2 { color: green; } }
-</style></head>
-<body>
-  <main><h1>x</h1>
-    <p id="a" class="text-red-500">برا layer</p>
-    <h2 id="b" class="text-red-500">جوه layer</h2>
-  </main>
-</body></html>
-~~~
-
-القاعدة في الـ cascade: اللي برا أي layer بيتعامل كأنه layer أخير ضمني، يعني الأقوى. ده متعمد، عشان أي CSS قديم في مشروع يفضل شغال لما تضيف layers.
-
-بس ده بالظبط اللي بيعمل المفاجأة في Tailwind: [[p]] (0, 0, 1) بتغلب [[.text-red-500]] (0, 1, 0). الـ specificity مش بتدخل، لأن القرار اتاخد في خطوة الـ layers.
-
-الحل: كل CSS بتكتبه يروح جوه layer. وفي v4 الملف بتاعك ترتيبه [[theme, base, components, utilities]].
-
-الغلطة الشائعة: تزوّد [[!important]] في الكلاس. جوه layers بينعكس الترتيب، فتتلخبط أكتر.
-
-~~~text الناتج (Chrome 156)
-<p class="text-red-500"> مع p برا layer:   rgb(0, 0, 255) (الأزرق كسب)
-<h2 class="text-red-500"> مع h2 جوه base:  rgb(239, 68, 68) (الأحمر كسب)
-~~~` },
-          ],
-          deep: {
-            why: R`أغلب [[!important]] في أي مشروع اتكتب لأن حد مكنش عارف ليه قاعدته بتخسر. لو عرفت الأسئلة الأربعة، بتعرف تخلي قاعدتك تكسب بأقل وزن ممكن، وتسيب مكان للي بعدك. والألغاز دي بالظبط شكل أسئلة الانترفيو، والإجابة اللي بتقولها هي «هسأل الأربعة بالترتيب».`,
-            how: R`المتصفح بيجمع كل القواعد اللي بتطابق العنصر لكل خاصية، وبيرتبهم بالترتيب ده: الأصل (المتصفح ولا الموقع) مع الـ importance، وبعدين الـ layer، وبعدين الـ specificity، وبعدين ترتيب الظهور، وياخد الأول. الـ inline style بيتعامل كأنه specificity أعلى من أي selector. والـ specificity بتتحسب لكل selector في اللستة لوحده: [[a, #b]] قاعدة بوزنين، وكل عنصر بياخد وزن الـ selector اللي طابقه. أما [[:is(a, #b)]] فوزن واحد للكل (الأتقل)، وده الفرق بينهم. والوراثة مش «قاعدة ضعيفة»: هي قيمة بتتاخد بس لو مفيش ولا قاعدة على العنصر نفسه للخاصية دي. والـ [[:has()]] بيتحسب زي [[:is()]]، وده اللي بيخلي [[.card:has(img)]] يغلب [[.card]].`,
-            when: R`استخدم [[:where()]] في أي CSS هيتعاد استخدامه وعايزه يتغلب بسهولة (reset، ومكتبة، وقواعد افتراضية). واستخدم [[@layer]] لما المشروع فيه مصادر CSS كتير (reset ومكتبة ومكوناتك و utilities) عشان الترتيب يتحدد مرة في أول سطر. و [[:is()]] لتقصير selectors طويلة بس خلي بالك إنه بياخد الأتقل. و [[!important]] للـ utilities اللي لازم تكسب دايمًا ([[.visually-hidden]]) ولحاجات اليوزر (accessibility overrides)، مش لحل خناقة.`,
-            mistakes: R`تفتكر إن [[:where(#a)]] ليه وزن id. أو إن [[:is(#a, .x) p]] وزنه class لما العنصر طابق [[.x]]. أو إن ترتيب الـ classes في الـ HTML بيفرق. أو إن [[!important]] في layer متأخر هيغلب [[!important]] في layer قبله. أو إنك تكتب CSS برا الـ layers في مشروع Tailwind v4 وتستغرب إن الـ utilities مش شغالة. أو إن القيمة الموروثة من [[#a]] أتقل من [[p]] لأن «الأب عليه id». أو تعد [[::before]] كـ class. أو تنسى إن [[green]] في CSS مش أخضر فاقع.`,
-          },
-          sol: R`**توقعات صح** (اللي في السطر ده) طلّعت ١٤ من ١٤ في Chrome بـ Playwright:
-
-[[{ 1: 'blue', 2: 'red', 3: 'green', 4: 'red', 5: 'red', 6: 'green', 7: 'green', 8: 'red', 9: 'red', 10: 'green', 11: 'green', 12: 'green', 13: 3, 14: 2 }]]
-
-~~~text Chrome، توقعات صح
-PASS 1: اللون rgb(0, 0, 255)
-PASS 2: اللون rgb(255, 0, 0)
-PASS 3: اللون rgb(0, 128, 0)
-PASS 4: اللون rgb(255, 0, 0)
-PASS 5: اللون rgb(255, 0, 0)
-PASS 6: اللون rgb(0, 128, 0)
-PASS 7: اللون rgb(0, 128, 0)
-PASS 8: اللون rgb(255, 0, 0)
-PASS 9: اللون rgb(255, 0, 0)
-PASS 10: اللون rgb(0, 128, 0)
-PASS 11: اللون rgb(0, 128, 0)
-PASS 12: اللون rgb(0, 128, 0)
-PASS 13: عدد العناصر 3
-PASS 14: عدد العناصر 2
-النتيجة: 14 من 14
-~~~
-
-و**توقعات غلط** (عكس كل واحدة) طلّعت كده، والسطر بيقولك اللي Chrome حسبه واللي انت قلته:
-
-~~~text Chrome، توقعات غلط
-FAIL 1: اللون rgb(0, 0, 255) ← انت قلت red
-FAIL 2: اللون rgb(255, 0, 0) ← انت قلت green
-FAIL 3: اللون rgb(0, 128, 0) ← انت قلت red
-FAIL 4: اللون rgb(255, 0, 0) ← انت قلت green
-FAIL 5: اللون rgb(255, 0, 0) ← انت قلت green
-FAIL 6: اللون rgb(0, 128, 0) ← انت قلت red
-FAIL 7: اللون rgb(0, 128, 0) ← انت قلت red
-FAIL 8: اللون rgb(255, 0, 0) ← انت قلت green
-FAIL 9: اللون rgb(255, 0, 0) ← انت قلت green
-FAIL 10: اللون rgb(0, 128, 0) ← انت قلت red
-FAIL 11: اللون rgb(0, 128, 0) ← انت قلت red
-FAIL 12: اللون rgb(0, 128, 0) ← انت قلت red
-FAIL 13: عدد العناصر 3 ← انت قلت 2
-FAIL 14: عدد العناصر 2 ← انت قلت 1
-النتيجة: 0 من 14
-~~~
-
-ليه كل واحدة: ١ class تغلب type. ٢ (1, 0, 1) تغلب (0, 2, 0). ٣ [[:where]] صفر فـ (0, 0, 1) قصاد (0, 1, 1). ٤ [[:is]] بياخد [[#a]] فـ (1, 0, 1) قصاد (0, 2, 1). ٥ important يغلب id. ٦ [[theme]] اتعرّف بعد [[base]] فبيكسب رغم الـ id. ٧ برا الـ layers يغلب جوه رغم الـ id. ٨ في الـ important الـ layer الأول يكسب. ٩ [[:has(img)]] بيزوّد (0, 0, 1). ١٠ الوراثة من [[#a]] بتخسر قصاد [[p]]. ١١ [[.b]] متكتبة بعد في الملف. ١٢ important من الملف يغلب inline عادي. ١٣ تلاتة من خمسة مش [[.off]]. ١٤ الاسم فاضي و [[required]] فـ invalid، والإيميل سليم، والموبايل [[123]] مش طالع على الـ pattern فـ invalid.
-
-وحل [[specificity]] تحت: tokenizer بيمشي حرف حرف، وبيستدعي نفسه للي جوه [[:is()]] و [[:not()]] و [[:has()]].`,
-          solCode: R`function specificity(selector) {
-  const s = selector.trim();
-  let a = 0, b = 0, c = 0, i = 0;
-  const ident = () => { const m = /^-?[\w-]+/.exec(s.slice(i)); i += m ? m[0].length : 0; return m ? m[0].toLowerCase() : ''; };
-  const group = () => {
-    let depth = 1, j = i + 1, q = '';
-    for (; j < s.length && depth; j++) {
-      const ch = s[j];
-      if (q) { if (ch === q) q = ''; } else if (ch === '"' || ch === "'") q = ch; else if (ch === '(') depth++; else if (ch === ')') depth--;
-    }
-    const inside = s.slice(i + 1, j - 1); i = j; return inside;
-  };
-  const split = list => { const out = []; let depth = 0, q = '', cur = '';
-    for (const ch of list) {
-      if (q) { if (ch === q) q = ''; } else if (ch === '"' || ch === "'") q = ch; else if (ch === '(') depth++; else if (ch === ')') depth--;
-      if (ch === ',' && !depth && !q) { out.push(cur); cur = ''; } else cur += ch;
-    }
-    return out.concat(cur).filter(x => x.trim()); };
-  const most = list => split(list).map(specificity).reduce((m, x) => compareSpecificity(x, m) > 0 ? x : m, [0, 0, 0]);
-  const add = x => { a += x[0]; b += x[1]; c += x[2]; };
-  while (i < s.length) {
-    const ch = s[i];
-    if (ch === '#') { i++; ident(); a++; }
-    else if (ch === '.') { i++; ident(); b++; }
-    else if (ch === '[') { let q = ''; for (i++; i < s.length; i++) { const x = s[i]; if (q) { if (x === q) q = ''; } else if (x === '"' || x === "'") q = x; else if (x === ']') break; } i++; b++; }
-    else if (ch === ':' && s[i + 1] === ':') { i += 2; ident(); if (s[i] === '(') group(); c++; }
-    else if (ch === ':') {
-      i++; const name = ident();
-      if (['before', 'after', 'first-line', 'first-letter'].includes(name)) c++;
-      else if (s[i] !== '(') b++;
-      else {
-        const arg = group();
-        if (name === 'where') {}
-        else if (['is', 'not', 'has', 'matches', '-webkit-any'].includes(name)) add(most(arg));
-        else if (/^nth-(last-)?child$/.test(name) && / of /.test(arg)) { b++; add(most(arg.slice(arg.indexOf(' of ') + 4))); }
-        else b++;
-      }
-    }
-    else if (/[\w-]/.test(ch)) { ident(); c++; }
-    else i++;
-  }
-  return [a, b, c];
-}
-function compareSpecificity(x, y) {
-  for (let k = 0; k < 3; k++) if (x[k] !== y[k]) return x[k] > y[k] ? 1 : -1;
-  return 0;
-}`,
-          flag: "script",
-          check: {
-            lang: "js",
-            starter: R`// specificity("#a .b p") => [1, 1, 1]
-// :where() = صفر، و :is() و :not() و :has() = أتقل selector جواهم، و ::before = c
-function specificity(selector) {}
-// 1 لو x أتقل، و -1 لو أخف، و 0 لو متساويين
-function compareSpecificity(x, y) {}`,
-            tests: R`test("p = (0,0,1)", () => expect(specificity("p")).toEqual([0, 0, 1]));
-test(".note = (0,1,0)", () => expect(specificity(".note")).toEqual([0, 1, 0]));
-test("#a p = (1,0,1)", () => expect(specificity("#a p")).toEqual([1, 0, 1]));
-test("ul li.active a:hover = (0,2,3)", () => expect(specificity("ul li.active a:hover")).toEqual([0, 2, 3]));
-test("attribute و pseudo-class بيتعدّوا زي class", () => expect(specificity('input[type="email"]:focus')).toEqual([0, 2, 1]));
-test("pseudo-element بيتعد زي type", () => expect(specificity("a::before")).toEqual([0, 0, 2]));
-test("الشكل القديم :after لسه pseudo-element", () => expect(specificity("p:after")).toEqual([0, 0, 2]));
-test(":where() بصفر", () => expect(specificity(":where(#a, .x) p")).toEqual([0, 0, 1]));
-test(":is() بياخد أتقل واحد جواه", () => expect(specificity(":is(#a, .x) p")).toEqual([1, 0, 1]));
-test(":not() زي :is()", () => expect(specificity("li:not(.off, #x)")).toEqual([1, 0, 1]));
-test(":has() زي :is()", () => expect(specificity(".card:has(> img)")).toEqual([0, 1, 1]));
-test("* والـ combinators بصفر", () => expect([specificity("*"), specificity("* > *"), specificity("h1 + p ~ span")]).toEqual([[0, 0, 0], [0, 0, 0], [0, 0, 3]]));
-test(":nth-child(... of S) = class + أتقل S", () => expect(specificity("li:nth-child(2n+1 of .on)")).toEqual([0, 2, 1]));
-test("] جوه علامات تنصيص مش بتقفل الـ attribute", () => expect(specificity('a[title="x]y"].on')).toEqual([0, 2, 1]));
-test("compareSpecificity: id واحد يغلب ٩ classes", () => expect([compareSpecificity([1, 0, 0], [0, 9, 9]), compareSpecificity([0, 1, 0], [0, 1, 0]), compareSpecificity([0, 0, 1], [0, 1, 0])]).toEqual([1, 0, -1]));`,
-            solution: R`function specificity(selector) {
-  const s = selector.trim();
-  let a = 0, b = 0, c = 0, i = 0;
-  const ident = () => { const m = /^-?[\w-]+/.exec(s.slice(i)); i += m ? m[0].length : 0; return m ? m[0].toLowerCase() : ''; };
-  const group = () => {
-    let depth = 1, j = i + 1, q = '';
-    for (; j < s.length && depth; j++) {
-      const ch = s[j];
-      if (q) { if (ch === q) q = ''; } else if (ch === '"' || ch === "'") q = ch; else if (ch === '(') depth++; else if (ch === ')') depth--;
-    }
-    const inside = s.slice(i + 1, j - 1); i = j; return inside;
-  };
-  const split = list => { const out = []; let depth = 0, q = '', cur = '';
-    for (const ch of list) {
-      if (q) { if (ch === q) q = ''; } else if (ch === '"' || ch === "'") q = ch; else if (ch === '(') depth++; else if (ch === ')') depth--;
-      if (ch === ',' && !depth && !q) { out.push(cur); cur = ''; } else cur += ch;
-    }
-    return out.concat(cur).filter(x => x.trim()); };
-  const most = list => split(list).map(specificity).reduce((m, x) => compareSpecificity(x, m) > 0 ? x : m, [0, 0, 0]);
-  const add = x => { a += x[0]; b += x[1]; c += x[2]; };
-  while (i < s.length) {
-    const ch = s[i];
-    if (ch === '#') { i++; ident(); a++; }
-    else if (ch === '.') { i++; ident(); b++; }
-    else if (ch === '[') { let q = ''; for (i++; i < s.length; i++) { const x = s[i]; if (q) { if (x === q) q = ''; } else if (x === '"' || x === "'") q = x; else if (x === ']') break; } i++; b++; }
-    else if (ch === ':' && s[i + 1] === ':') { i += 2; ident(); if (s[i] === '(') group(); c++; }
-    else if (ch === ':') {
-      i++; const name = ident();
-      if (['before', 'after', 'first-line', 'first-letter'].includes(name)) c++;
-      else if (s[i] !== '(') b++;
-      else {
-        const arg = group();
-        if (name === 'where') {}
-        else if (['is', 'not', 'has', 'matches', '-webkit-any'].includes(name)) add(most(arg));
-        else if (/^nth-(last-)?child$/.test(name) && / of /.test(arg)) { b++; add(most(arg.slice(arg.indexOf(' of ') + 4))); }
-        else b++;
-      }
-    }
-    else if (/[\w-]/.test(ch)) { ident(); c++; }
-    else i++;
-  }
-  return [a, b, c];
-}
-function compareSpecificity(x, y) {
-  for (let k = 0; k < 3; k++) if (x[k] !== y[k]) return x[k] > y[k] ? 1 : -1;
-  return 0;
-}`
-          },
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`function specificity(selector) {
-  const s = selector.trim();
-  let a = 0, b = 0, c = 0, i = 0;
-  const ident = () => { const m = /^-?[\w-]+/.exec(s.slice(i)); i += m ? m[0].length : 0; return m ? m[0].toLowerCase() : ''; };
-  const group = () => {
-    let depth = 1, j = i + 1, q = '';
-    for (; j < s.length && depth; j++) {
-      const ch = s[j];
-      if (q) { if (ch === q) q = ''; } else if (ch === '"' || ch === "'") q = ch; else if (ch === '(') depth++; else if (ch === ')') depth--;
-    }
-    const inside = s.slice(i + 1, j - 1); i = j; return inside;
-  };
-  const split = list => { const out = []; let depth = 0, q = '', cur = '';
-    for (const ch of list) {
-      if (q) { if (ch === q) q = ''; } else if (ch === '"' || ch === "'") q = ch; else if (ch === '(') depth++; else if (ch === ')') depth--;
-      if (ch === ',' && !depth && !q) { out.push(cur); cur = ''; } else cur += ch;
-    }
-    return out.concat(cur).filter(x => x.trim()); };
-  const most = list => split(list).map(specificity).reduce((m, x) => compareSpecificity(x, m) > 0 ? x : m, [0, 0, 0]);
-  const add = x => { a += x[0]; b += x[1]; c += x[2]; };
-  while (i < s.length) {
-    const ch = s[i];
-    if (ch === '#') { i++; ident(); a++; }
-    else if (ch === '.') { i++; ident(); b++; }
-    else if (ch === '[') { let q = ''; for (i++; i < s.length; i++) { const x = s[i]; if (q) { if (x === q) q = ''; } else if (x === '"' || x === "'") q = x; else if (x === ']') break; } i++; b++; }
-    else if (ch === ':' && s[i + 1] === ':') { i += 2; ident(); if (s[i] === '(') group(); c++; }
-    else if (ch === ':') {
-      i++; const name = ident();
-      if (['before', 'after', 'first-line', 'first-letter'].includes(name)) c++;
-      else if (s[i] !== '(') b++;
-      else {
-        const arg = group();
-        if (name === 'where') {}
-        else if (['is', 'not', 'has', 'matches', '-webkit-any'].includes(name)) add(most(arg));
-        else if (/^nth-(last-)?child$/.test(name) && / of /.test(arg)) { b++; add(most(arg.slice(arg.indexOf(' of ') + 4))); }
-        else b++;
-      }
-    }
-    else if (/[\w-]/.test(ch)) { ident(); c++; }
-    else i++;
-  }
-  return [a, b, c];
-}
-function compareSpecificity(x, y) {
-  for (let k = 0; k < 3; k++) if (x[k] !== y[k]) return x[k] > y[k] ? 1 : -1;
-  return 0;
-}
-const cases = ["p", "#a p", ":where(#a) p", ":is(#a, .x) p", "ul li.active a:hover", "a::before", ".card:has(> img)", "li:nth-child(2n+1 of .on)", 'a[title="x]y"].on'];
-for (const c of cases) console.log(c + " = (" + specificity(c).join(",") + ")");
-console.log("id vs 9 classes: " + compareSpecificity(specificity("#a"), specificity(".a.b.c.d.e.f.g.h.i")));`, expect: [R`p = (0,0,1)`, R`#a p = (1,0,1)`, R`:where(#a) p = (0,0,1)`, R`:is(#a, .x) p = (1,0,1)`, R`ul li.active a:hover = (0,2,3)`, R`.card:has(> img) = (0,1,1)`, R`li:nth-child(2n+1 of .on) = (0,2,1)`, R`a[title="x]y"].on = (0,2,1)`, R`id vs 9 classes: 1`] },
-          ],
-        },
-        {
-          cmd: "accessibility: لحد axe صفر",
-          ref: [
-            { t: "axe-core: rule descriptions", url: "https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md" },
-            { t: "axe: button-name rule", url: "https://dequeuniversity.com/rules/axe/4.10/button-name" },
-            { t: "MDN: ARIA", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA" },
-          ],
-          title: "صلّح فورم اشتراك وأزرار أيقونات لحد ما axe يقول صفر، وبعدين لاقي اللي axe مش شايفه",
-          learn: R`تشغّل axe من الـ Console على أي صفحة وتقرا كل violation (القاعدة والعنصر والتصليح)، وتعرف إن «axe صفر» بداية مش نهاية: فيه حاجات بتتقاس بفحص تاني وبالكيبورد بإيدك.`,
-          out: R`صفحة بتعدّي من ٨ violations لصفر في axe 4.14، ومن [[0 من 10]] لـ [[10 من 10]] في فحص ذاتي بيلقط ٣ حاجات axe سكت عنها: placeholder مكان label، و div بيتداس عليه، وتباين الكلام العربي.`,
-          use: {
-            prog: R`الـ accessibility في الكود معناها إن العنصر بيقول هو إيه (button ولا لينك ولا حقل) واسمه إيه، وإن الكيبورد بيوصله، وإن الكلام مقري. وكل ده بيتقاس، مش «إحساس».`,
-            work: R`مواقع كتير مطلوب منها WCAG 2.2 AA بالقانون (في أوروبا من ٢٠٢٥ بقانون European Accessibility Act)، وأي عميل كبير بيشغّل axe أو Lighthouse على شغلك قبل ما يستلمه. والأخطاء هنا بالظبط اللي بتتلقى في صفحات الهبوط: أزرار أيقونات من غير اسم، و placeholder مكان label، وكلام رمادي فاتح على أبيض.`,
-            cs: R`التباين معادلة من WCAG: كل لون بيتحوّل لـ luminance (إضاءة نسبية) بعد ما يتشال منه الـ gamma بتاع sRGB، والنسبة [[(L1 + 0.05) / (L2 + 0.05)]]. والاسم المتاح (accessible name) خوارزمية من مواصفة اسمها accname: [[aria-labelledby]] الأول، وبعدين [[aria-label]]، وبعدين الـ label، وبعدين المحتوى.`,
-          },
-          desc: R`الطريقة ٣ خطوات، بالترتيب ده:
-
-1. **axe:** مكتبة بتفحص الصفحة بـ ٩٠ قاعدة تقريبًا في ثانية، وكل violation بيقولك اسم القاعدة ([[button-name]]) والعنصر ([[button.menu-btn]]) وإزاي تصلّح. بتشغّلها من الـ Console (الكود في الشرح) أو من إضافة axe DevTools أو Lighthouse.
-2. **الفحص الذاتي:** ١٠ أسئلة axe مش بيسألها أو بيسكت عنها. أهمهم: الـ placeholder لوحده مش label (axe بيقبله كاسم)، والـ [[<div onclick>]] مش بيوصله Tab (axe مبيعرفش إنه بيتداس عليه)، و **تباين الكلام العربي المتوصل** (axe 4.14 بيتخطاه، والسبب في الشرح).
-3. **الكيبورد بإيدك:** Tab لكل حاجة بالترتيب، و Enter و Space بيشغّلوا، و Escape بيقفل، والـ focus باين دايمًا.
-
-الصفحة اللي هتصلّحها: فورم اشتراك في «نادي القراءة» (متخيل) فيه ١٠ أخطاء: من غير [[lang]]، ولوجو من غير [[alt]]، وزرار قايمة أيقونة من غير اسم وعليه [[aria-expanded="yes"]]، ولينك سلة أيقونة من غير اسم، وعنوان [[h4]] بعد [[h1]] على طول، وحقول بـ placeholder بس، و select من غير label، وكلام [[#a1a1aa]] على أبيض، وزرار «اشترك» [[<div>]]، وقايمة [[<ul>]] جواها [[<div>]]. ده تطبيق على دروس «aria» و «focus-visible» و «contrast ratio» و «WCAG 2.2» و «axe و Lighthouse» و «كيبورد وقارئ شاشة» في التاب ده.`,
-          example: R`<label for="email">الإيميل</label>
-<input id="email" type="email" autocomplete="email" dir="ltr" required aria-describedby="email-hint">
-<p class="hint" id="email-hint">هنبعتلك كتاب كل شهر</p>
-<button class="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="القايمة">
-  <svg width="20" height="20" aria-hidden="true"><path d="M2 5h16M2 10h16M2 15h16" stroke="#000"/></svg>
-</button>
-<a href="/cart" aria-label="السلة"><svg width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg></a>
-<button class="btn" type="submit">اشترك</button>`,
-          lines: [
-            R`label ظاهر، و [[for="email"]] بيربطه بالحقل اللي [[id]] بتاعه [[email]]: الضغط على الكلمة بيركّز في الحقل، وقارئ الشاشة بيقول «الإيميل» لما توصله.`,
-            R`الحقل نفسه: [[type="email"]] بيجيب كيبورد الإيميل على الموبايل، و [[autocomplete]] بيخلي المتصفح يملاه، و [[dir="ltr"]] عشان الإيميل يتكتب من الشمال، و [[aria-describedby]] بيربط جملة المساعدة اللي تحته فقارئ الشاشة بيقراها بعد الاسم.`,
-            R`جملة المساعدة بلون [[#52525b]] (تباين 7.73 على أبيض) بدل [[#a1a1aa]] (2.56)، و [[id]] بتاعها هو اللي الحقل بيشاور عليه.`,
-            R`زرار القايمة: [[aria-expanded="false"]] (القيمة لازم true أو false مش yes)، و [[aria-controls]] بيقول القايمة اللي بيفتحها، و [[aria-label]] بيديله اسم لأن مفيش كلام جواه.`,
-            R`الأيقونة نفسها [[aria-hidden="true"]] عشان قارئ الشاشة ميقولش «صورة» أو يقرا الـ path. الاسم جاي من الزرار.`,
-            R`قفلة الزرار. لو كان [[<div>]] كان لازم [[tabindex]] و [[role]] و key handlers، و [[<button>]] بيجيب ده كله ببلاش.`,
-            R`لينك السلة: نفس فكرة زرار القايمة، [[aria-label="السلة"]] على اللينك، والـ svg مستخبي عن قارئ الشاشة.`,
-            R`زرار الإرسال الحقيقي بدل [[<div onclick>]]: بيوصله Tab، و Enter و Space بيشغّلوه، و [[type="submit"]] بيبعت الفورم من غير JavaScript.`,
-          ],
-          teach: R`## الفكرة في سطر
-
-**axe الأول، والفحص الذاتي تاني، والكيبورد بإيدك في الآخر.** axe بيلقط أغلب الأخطاء اللي ليها قاعدة واضحة، بس فيه حاجات بيسكت عنها، وأخطرها في موقع عربي إنه **بيتخطى تباين الكلام العربي المتوصل**. كل الأرقام تحت من Chrome بـ Playwright على ويندوز ١١ و axe-core 4.14.0.
-
----
-
-## الصفحة البايظة
-
-~~~html نادي القراءة: قبل التصليح
-<!doctype html>
-<html dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اشترك في نادي القراءة</title>
-<style>
-body { font-family: system-ui, sans-serif; padding: 16px; }
-.hint { color: #a1a1aa; }
-.menu-btn { width: 40px; height: 40px; }
-.fake-btn { display: inline-block; padding: 8px 16px; background: #4f46e5; color: #fff; cursor: pointer; }
-</style>
-</head>
-<body>
-<header>
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'/%3E" width="40" height="40">
-  <button class="menu-btn" aria-expanded="yes"><svg width="20" height="20"><path d="M2 5h16M2 10h16M2 15h16" stroke="#000"/></svg></button>
-  <a href="/cart"><svg width="20" height="20"><circle cx="10" cy="10" r="8"/></svg></a>
-</header>
-<main>
-  <h1>اشترك في نادي القراءة</h1>
-  <h4>بياناتك</h4>
-  <form>
-    <input type="text" placeholder="الاسم">
-    <input type="email" placeholder="الإيميل">
-    <select><option>القاهرة</option><option>الإسكندرية</option></select>
-    <p class="hint">هنبعتلك كتاب كل شهر</p>
-    <div class="fake-btn" onclick="this.closest('form').requestSubmit()">اشترك</div>
-  </form>
-  <ul class="perks"><div>شحن مجاني</div><li>خصم ١٠٪</li></ul>
-</main>
-</body>
-</html>
-~~~
-
----
-
-## الخطوة ١: axe من الـ Console
-
-الكود ده بيحمّل axe من jsDelivr (لو مش محمّل)، ويشغّله على الصفحة كلها، ويطبع كل violation. شغّال على ملف مفتوح من جهازك (file://) وعلى localhost. وعلى مواقع عليها Content Security Policy بتمنع scripts من برا هيطبع «axe محملش»، وساعتها استخدم إضافة axe DevTools أو Lighthouse.
-
-~~~js axe من الـ Console
-(async () => {
-  if (!window.axe) await new Promise((done, fail) => {
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/axe-core@4.14.0/axe.min.js';
-    s.onload = done; s.onerror = () => fail(new Error('axe محملش: النت أو CSP بتاع الصفحة'));
-    document.head.append(s);
-  });
-  const r = await axe.run();
-  console.log('axe ' + axe.version + ': ' + r.violations.length + ' violations');
-  r.violations.forEach(v => console.log('FAIL ' + v.id + ' (' + v.nodes.length + '): ' + v.help + ' ← ' + v.nodes[0].target.join(' ')));
-})();
-~~~
-
-~~~text Chrome، الصفحة البايظة
-axe 4.14.0: 8 violations
-FAIL aria-valid-attr-value (1): ARIA attributes must conform to valid values ← button
-FAIL button-name (1): Buttons must have discernible text ← button
-FAIL heading-order (1): Heading levels should only increase by one ← h4
-FAIL html-has-lang (1): <html> element must have a lang attribute ← html
-FAIL image-alt (1): Images must have alternative text ← img
-FAIL link-name (1): Links must have discernible text ← a
-FAIL list (1): <ul> and <ol> must only directly contain <li>, <script> or <template> elements ← ul
-FAIL select-name (1): Select element must have an accessible name ← select
-~~~
-
-| قاعدة axe | المعنى | التصليح في الحل |
-|---|---|---|
-| [[html-has-lang]] | قارئ الشاشة مش عارف ينطق بأنهي لغة، فممكن يقرا العربي بنطق إنجليزي | [[<html lang="ar" dir="rtl">]] |
-| [[image-alt]] | الصورة ملهاش بديل نصي، فقارئ الشاشة بيقرا اسم الملف أو يسكت | [[alt="نادي القراءة"]] (والديكور [[alt=""]]) |
-| [[button-name]] | زرار أيقونة من غير كلام، فبيتقري «زرار» وبس | [[aria-label="القايمة"]] و [[aria-hidden]] على الـ svg |
-| [[aria-valid-attr-value]] | [[aria-expanded="yes"]]: القيم المسموحة [[true]] و [[false]] بس | [[aria-expanded="false"]] وبتتقلب بـ JS لما القايمة تفتح |
-| [[link-name]] | لينك أيقونة من غير اسم | [[aria-label="السلة"]] |
-| [[heading-order]] | [[h1]] وبعده [[h4]] على طول: قارئ الشاشة بيتنقل بالعناوين وبيتوه | [[h2]] (لو عايز الحجم أصغر غيّره بالـ CSS مش بالمستوى) |
-| [[select-name]] | الـ select ملوش label | [[<label for="city">المدينة</label>]] |
-| [[list]] | [[<ul>]] جواها [[<div>]]: قارئ الشاشة بيقول «قايمة من عنصر واحد» | كل عنصر [[<li>]] |
-
-وبعد التصليح:
-
-~~~text Chrome، الحل المرجعي
-axe 4.14.0: 0 violations
-~~~
-
----
-
-## الخطوة ٢: اللي axe مسكتش عنه في الصفحة دي
-
-ارجع للصفحة البايظة: فيها ٣ أخطاء كمان axe مقالش عليهم ولا كلمة:
-
-1. **الحقول بـ placeholder بس.** axe 4.14 عدّى [[label]] على الحقلين لأنه بيحسب الـ placeholder اسم. بس الـ placeholder بيختفي أول ما تكتب حرف، فاللي نسي الحقل ده بتاع إيه مش هيعرف، وده ضد WCAG 3.3.2 (Labels or Instructions).
-2. **«اشترك» [[<div onclick>]].** axe مبيعرفش إن فيه event listener، فمش بيقول حاجة. بس Tab مش بيوصله، يعني اللي بيستخدم كيبورد بس مش هيعرف يشترك خالص.
-3. **[[.hint]] لونه [[#a1a1aa]] على أبيض: التباين 2.56:1** والمطلوب 4.5. وده axe مقالش عليه.
-
-### ليه axe سكت عن التباين؟
-
-جرّبت صفحة فيها ٤ فقرات بنفس اللون [[#a1a1aa]] على أبيض، وشغّلت قاعدة [[color-contrast]] بس:
-
-~~~text axe 4.14.0، color-contrast على ٤ فقرات بنفس اللون (السطور مختصرة)
-p:nth-child(2) Element has insufficient color contrast of 2.56 ...   ← «ا د ر ز و» (حروف منفصلة)
-p:nth-child(3) Element has insufficient color contrast of 2.56 ...   ← «كتاب hello» (فيها إنجليزي)
-p:nth-child(4) Element has insufficient color contrast of 2.56 ...   ← «١٢٣٤٥»
-~~~
-
-الفقرة الأولى «هنبعتلك كتاب كل شهر» (عربي متوصل بس) **مش في اللستة**. ولما سألت axe نفسه بـ [[axe.commons.text.isIconLigature()]] على كل فقرة:
-
-~~~text axe.commons.text.isIconLigature
-هنبعتلك كتاب كل شهر → true
-ا د ر ز و → false
-كتاب hello → false
-١٢٣٤٥ → false
-~~~
-
-axe بيحاول يعرف «الكلام ده أيقونة؟» (زي خطوط الأيقونات اللي كلمة [[home]] فيها بتترسم بيت)، وبيرسم الكلام ويقارن شكله. الحروف العربي المتوصلة شكلها بيتغير لما تتوصل (ligatures)، فـ axe بيفتكرها أيقونة وبيتخطاها. يعني على أي صفحة عربي، **axe صفر في التباين مالوش معنى**، وأي فحص تباين لازم تعمله بنفسك (الفحص الذاتي تحت، أو الـ color picker في DevTools، أو [[contrastRatio]] من الدرس اللي بعده).
-
----
-
-## الخطوة ٣: الفحص الذاتي
-
-~~~js الفحص الذاتي: accessibility
-(() => {
-  let pass = 0, all = 0;
-  const ok = (name, bad, why) => { all++; if (!bad.length) pass++; console.log((bad.length ? 'FAIL ' : 'PASS ') + name + (bad.length ? ' ← ' + why + ': ' + bad.slice(0, 3).join(' ، ') : '')); };
-  const tag = el => el.tagName.toLowerCase() + (el.id ? '#' + el.id : el.classList.length ? '.' + el.classList[0] : '');
-  const all$ = s => [...document.querySelectorAll(s)];
-  const named = el => (el.getAttribute('aria-label') || '').trim() || (el.getAttribute('aria-labelledby') || '').split(' ').some(id => document.getElementById(id)) || el.textContent.trim() || [...el.querySelectorAll('img[alt]')].some(i => i.alt.trim());
-  ok('1 الصفحة ليها lang', document.documentElement.lang ? [] : ['<html>'], 'قارئ الشاشة مش عارف ينطق بأنهي لغة');
-  ok('2 كل صورة ليها alt', all$('img:not([alt])').map(tag), 'صورة من غير alt خالص (الديكور ياخد alt="")');
-  ok('3 كل حقل ليه label ظاهر', all$('input:not([type=hidden],[type=submit],[type=button]), select, textarea').filter(el => !el.labels.length && !el.getAttribute('aria-labelledby')).map(el => tag(el) + (el.placeholder ? ' (placeholder بس)' : '')), 'الـ placeholder بيختفي أول ما تكتب ومش label');
-  ok('4 كل زرار ولينك ليه اسم', all$('button, a[href], [role=button]').filter(el => !named(el)).map(tag), 'قارئ الشاشة هيقول «زرار» وبس');
-  ok('5 قيم ARIA سليمة', all$('[aria-expanded], [aria-pressed], [aria-checked]').filter(el => ['aria-expanded', 'aria-pressed', 'aria-checked'].some(a => el.hasAttribute(a) && !['true', 'false', 'mixed'].includes(el.getAttribute(a)))).map(tag), 'القيمة لازم true أو false');
-  ok('6 اللي بيتداس عليه بيتوصل بالكيبورد', all$('[onclick]').filter(el => !el.matches('a[href], button, input, select, textarea, summary') && !(el.tabIndex >= 0 && el.getAttribute('role'))).map(tag), 'عنصر عليه onclick و Tab مش بيوصله، استخدم button');
-  const lum = c => { const v = c.match(/[\d.]+/g).slice(0, 3).map(x => x / 255).map(x => x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
-  const bgOf = el => { for (let p = el; p; p = p.parentElement) { const b = getComputedStyle(p).backgroundColor, a = b.match(/[\d.]+/g); if (a && (a.length < 4 || +a[3] === 1)) return b; } return 'rgb(255, 255, 255)'; };
-  const low = all$('body *').filter(el => [...el.childNodes].some(n => n.nodeType === 3 && n.data.trim()) && el.getClientRects().length).map(el => {
-    const s = getComputedStyle(el), L1 = lum(s.color), L2 = lum(bgOf(el)), r = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
-    const big = parseFloat(s.fontSize) >= 24 || parseFloat(s.fontSize) >= 18.66 && +s.fontWeight >= 700;
-    return r < (big ? 3 : 4.5) ? tag(el) + ' ' + r.toFixed(2) + ':1' : null; }).filter(Boolean);
-  ok('7 تباين الكلام (axe بيسكت عن العربي المتوصل)', low, 'أقل من 4.5:1 (أو 3:1 للكبير)');
-  const hs = all$('h1, h2, h3, h4, h5, h6').map(h => +h.tagName[1]), jumps = hs.filter((h, i) => i && h > hs[i - 1] + 1).map(h => 'h' + h);
-  ok('8 العناوين مبتنطش مستوى', jumps, 'عنوان نط مستوى');
-  ok('9 القوايم جواها li بس', all$('ul > :not(li, script, template), ol > :not(li, script, template)').map(tag), 'قارئ الشاشة بيعدّ العناصر غلط');
-  ok('10 الأهداف ٢٤×٢٤ على الأقل (WCAG 2.2)', all$('button, a[href], input, select').filter(el => { const r = el.getBoundingClientRect(); return r.width && (r.width < 24 || r.height < 24) && getComputedStyle(el).display !== 'inline'; }).map(tag), 'صغيرة على الصباع');
-  console.log('النتيجة: ' + pass + ' من ' + all + ' (وبعدها شغّل axe، وجرّب بالكيبورد بس)');
-})();
-~~~
-
-~~~text Chrome، الصفحة البايظة
-FAIL 1 الصفحة ليها lang ← قارئ الشاشة مش عارف ينطق بأنهي لغة: <html>
-FAIL 2 كل صورة ليها alt ← صورة من غير alt خالص (الديكور ياخد alt=""): img
-FAIL 3 كل حقل ليه label ظاهر ← الـ placeholder بيختفي أول ما تكتب ومش label: input (placeholder بس) ، input (placeholder بس) ، select
-FAIL 4 كل زرار ولينك ليه اسم ← قارئ الشاشة هيقول «زرار» وبس: button.menu-btn ، a
-FAIL 5 قيم ARIA سليمة ← القيمة لازم true أو false: button.menu-btn
-FAIL 6 اللي بيتداس عليه بيتوصل بالكيبورد ← عنصر عليه onclick و Tab مش بيوصله، استخدم button: div.fake-btn
-FAIL 7 تباين الكلام (axe بيسكت عن العربي المتوصل) ← أقل من 4.5:1 (أو 3:1 للكبير): p.hint 2.56:1
-FAIL 8 العناوين مبتنطش مستوى ← عنوان نط مستوى: h4
-FAIL 9 القوايم جواها li بس ← قارئ الشاشة بيعدّ العناصر غلط: div
-FAIL 10 الأهداف ٢٤×٢٤ على الأقل (WCAG 2.2) ← صغيرة على الصباع: input ، input ، select
-النتيجة: 0 من 10 (وبعدها شغّل axe، وجرّب بالكيبورد بس)
-~~~
-
-وأول ما شغّلته على الحل المرجعي طلّع [[9 من 10]]: الحقول الافتراضية في Chrome ارتفاعها حوالي 21px، يعني أقل من 24 (WCAG 2.2 2.5.8 Target Size Minimum). زوّدت [[input, select, .btn { min-height: 44px; }]] (44 هو اللي Apple و WCAG AAA بيقولوا عليه) وبقى:
-
-~~~text Chrome، الحل المرجعي
-PASS 1 الصفحة ليها lang
-PASS 2 كل صورة ليها alt
-PASS 3 كل حقل ليه label ظاهر
-PASS 4 كل زرار ولينك ليه اسم
-PASS 5 قيم ARIA سليمة
-PASS 6 اللي بيتداس عليه بيتوصل بالكيبورد
-PASS 7 تباين الكلام (axe بيسكت عن العربي المتوصل)
-PASS 8 العناوين مبتنطش مستوى
-PASS 9 القوايم جواها li بس
-PASS 10 الأهداف ٢٤×٢٤ على الأقل (WCAG 2.2)
-النتيجة: 10 من 10 (وبعدها شغّل axe، وجرّب بالكيبورد بس)
-~~~
-
-إزاي الفحص بيحسب التباين: لكل عنصر فيه كلام مباشر، بياخد لون الكلام، ويطلع لفوق في الآباء لحد أول خلفية مش شفافة (ولو ملقاش يفترض أبيض)، ويحسب الـ luminance للاتنين بمعادلة WCAG، والنسبة. والكلام الكبير (24px، أو 18.66px و bold) حده 3 بدل 4.5. وده تبسيط: مش بيحسب الخلفيات الصور ولا الـ gradients ولا الشفافية بين طبقتين، فلو الخلفية صورة قيس بالـ color picker في DevTools.
-
----
-
-## الخطوة ٤: الكيبورد بإيدك (٢ دقيقة)
-
-| جرّب | المفروض يحصل |
-|---|---|
-| Tab من أول الصفحة | اللوجو مش بيوصله (مش لينك)، وبعدين زرار القايمة، ولينك السلة، والحقول بالترتيب، و «اشترك» |
-| كل Tab | فيه إطار واضح حوالين العنصر (لو مفيش، ارجع لـ [[:focus-visible]]) |
-| Enter على «اشترك» وانت في آخر حقل | الفورم بيتبعت، والحقل الفاضي اللي [[required]] بيوقفه برسالة |
-| Space على زرار القايمة | [[aria-expanded]] بيتقلب [[true]] والقايمة بتظهر (ده محتاج JS صغير) |
-| Shift+Tab | بيرجع بنفس الترتيب بالعكس |
-
-ولو عايز تسمع الصفحة: NVDA على ويندوز (مجاني) أو Narrator (Ctrl+Win+Enter)، وشوف درس «كيبورد وقارئ شاشة» في التاب ده.
-
-## خلاصة
-
-- axe بيلقط الأخطاء اللي ليها قاعدة: [[lang]] و [[alt]] والأسماء وقيم ARIA والعناوين والقوايم.
-- axe صفر مش معناه accessible: placeholder مكان label، و [[<div onclick>]]، والتباين في العربي المتوصل لازم يتقاسوا بفحص تاني.
-- كل عنصر بيتداس عليه = [[<button>]] أو [[<a href>]]. والأيقونة = [[aria-label]] على الزرار و [[aria-hidden]] على الـ svg.
-- الحقول والأزرار مش أقل من 24 × 24، والأحسن 44.
-- الكيبورد بإيدك في الآخر دايمًا.`,
-          try: R`انسخ الصفحة البايظة من الشرح لملف، وافتحه في Chrome، وشغّل كود axe (لازم 8 violations) والفحص الذاتي (لازم [[0 من 10]]). صلّح خطأ خطأ لحد ما الاتنين يبقوا نضاف، وفي الآخر اعمل جدول الكيبورد بإيدك من غير ماوس خالص.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<button><img src="trash.svg" alt=""></button>]]. الزرار ده اسمه إيه لقارئ الشاشة؟ وaxe هيقول إيه؟ وبعدين: نفس الزرار بس [[alt="امسح الطلب"]]؟`, done: R`كتبت إن الأول ملوش اسم (الـ alt الفاضي بيقول «الصورة ديكور») و axe هيطلّع [[button-name]]، والتاني اسمه «امسح الطلب» من الـ alt. شغّلت axe على الاتنين وطلع كده، وشفت الاسم في DevTools › Accessibility › Name.`,
-              sol: R`~~~live 120 120 buttons.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>اسم الزرار</title></head>
-<body>
-  <main><h1>الطلبات</h1>
-    <button id="a"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt=""></button>
-    <button id="b"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="امسح الطلب"></button>
-  </main>
-</body></html>
-~~~
-
-الاسم بتاع الزرار بيتحسب من محتواه. الزرار الأول محتواه صورة [[alt=""]]، وده معناه «الصورة دي ديكور، اتجاهلها»، فمفيش نص، والاسم فاضي. قارئ الشاشة بيقول «زرار» وبس، و axe بيطلّع [[button-name]].
-
-الزرار التاني الـ [[alt]] بقى نص، فالاسم «امسح الطلب». وده اللي يتكتب: الفعل مش شكل الصورة، يعني مش «سلة زبالة».
-
-القاعدة: [[alt=""]] صح لصورة ديكور، وغلط لصورة هي المعنى الوحيد.
-
-الغلطة الشائعة: تشيل [[alt]] خالص، فقارئ الشاشة ممكن ينطق اسم الملف.
-
-~~~text الناتج (axe 4.14.0، و CDP Accessibility في Chrome 156)
-الأول: name = ""
-التاني: name = "امسح الطلب"
-axe: button-name:1
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** قايمة منسدلة [[<div class="dropdown" onclick="toggle()">الحساب ▾</div>]] وتحتها [[<div class="menu" style="display:none">]] فيها ٣ لينكات. حوّلها لحاجة بتشتغل بالكيبورد وقارئ الشاشة: [[<button aria-expanded aria-controls>]]، و Escape بيقفل ويرجّع الـ focus للزرار.`, done: R`Tab بيوصل للزرار، و Enter و Space بيفتحوا، و [[aria-expanded]] بيتقلب [[true]] و [[false]] (شفته في Elements وهو بيتغير)، و Escape بيقفل والـ focus بيرجع للزرار، والفحص الذاتي بند ٦ PASS، و axe صفر.`,
-              sol: R`~~~live 120 120 dropdown.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>قايمة</title>
-<style>.menu[hidden] { display: none; }</style></head>
-<body>
-  <main><h1>حسابك</h1>
-    <div class="dropdown">
-      <button id="btn" type="button" aria-expanded="false" aria-controls="menu">الحساب <span aria-hidden="true">▾</span></button>
-      <ul class="menu" id="menu" hidden>
-        <li><a href="#a">بياناتي</a></li>
-        <li><a href="#b">الطلبات</a></li>
-        <li><a href="#c">خروج</a></li>
-      </ul>
-    </div>
-  </main>
-  <script>
-    const btn = document.getElementById("btn"), menu = document.getElementById("menu");
-    const set = (on) => { menu.hidden = !on; btn.setAttribute("aria-expanded", String(on)); };
-    btn.addEventListener("click", () => set(menu.hidden));
-    document.querySelector(".dropdown").addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !menu.hidden) { set(false); btn.focus(); }
-    });
-  $__lt/script>
-</body></html>
-~~~
-
-[[<button>]] بيدّيك Tab و Enter و Space ببلاش، وده اللي الـ [[div]] مفيهوش.
-
-- [[aria-expanded]] بيقول الحالة لقارئ الشاشة، ولازم [[String(on)]]، لأن الـ attribute نص [[true]] أو [[false]].
-- [[aria-controls]] بيربط الزرار باللستة.
-- [[hidden]] بدل [[style="display:none"]]، و [[.menu[hidden]]] يحميها لو حد حط [[display]] عليها.
-- Escape على الأب [[.dropdown]]، عشان يشتغل والـ focus على لينك جوه. و [[btn.focus()]] لازم، وإلا الـ focus بيقع مع اللينك المستخبي.
-- ▾ عليها [[aria-hidden]] عشان متتقراش.
-
-الغلطة الشائعة: [[role="menu"]] على لستة لينكات. ده وعد بكيبورد مختلف، زي ما شرحنا في درس الـ header.
-
-~~~text الناتج (Chrome 156)
-Tab: btn
-Enter: aria-expanded = true
-Tab للينك، وبعدين Escape: aria-expanded = false، والـ focus على btn
-Space: aria-expanded = true
-الفحص الذاتي بند ٦: PASS 6 اللي بيتداس عليه بيتوصل بالكيبورد
-axe: 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** خد ألوان الثيم بتاع أي مشروع عندك (أو اعمل ٦ ألوان متخيلة: كلام عادي، وكلام باهت، ولينك، وزرار، وخطأ، ونجاح) واحسب تباين كل لون كلام على الخلفية بتاعته. اعمل جدول، وصلّح أي واحد تحت 4.5 بأقل تغيير في اللون.`, done: R`الجدول فيه كل زوج والنسبة برقمين عشريين، والأرقام نفس اللي بيطلعها الـ color picker في DevTools، وكل لون اتصلّح مكتوب قبله وبعده والنسبة الجديدة (فوق 4.5)، واللون الجديد قريب من القديم بالعين.`,
-              sol: R`~~~js theme-audit.mjs (ألوان متخيلة)
-const lum = (hex) => {
-  const c = hex.match(/\w\w/g).map((h) => parseInt(h, 16) / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
-};
-const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
-const darken = (hex, t) => "#" + hex.match(/\w\w/g).map((h) => Math.round(parseInt(h, 16) * (1 - t)).toString(16).padStart(2, "0")).join("");
-const fix = (fg, bg) => { for (let t = 0; t < 1; t += 0.01) { const c = darken(fg, t); if (ratio(c, bg) >= 4.5) return c; } };
-
-const pairs = [
-  ["كلام عادي", "#1f2937", "#ffffff"],
-  ["كلام باهت", "#9ca3af", "#ffffff"],
-  ["لينك", "#3b82f6", "#ffffff"],
-  ["زرار", "#ffffff", "#4f46e5"],
-  ["خطأ", "#ef4444", "#ffffff"],
-  ["نجاح", "#22c55e", "#ffffff"],
-];
-for (const [name, fg, bg] of pairs) {
-  const r = ratio(fg, bg);
-  if (r >= 4.5) { console.log(name.padEnd(10), fg, "على", bg, r.toFixed(2), "OK"); continue; }
-  const c = fix(fg, bg);
-  console.log(name.padEnd(10), fg, "على", bg, r.toFixed(2), "← ", c, ratio(c, bg).toFixed(2));
-}
-~~~
-
-الألوان دي متخيلة، بس هي ألوان Tailwind الافتراضية، فالناس بتستخدمها كتير، وبتشوف بنفسك إن لون شكله كويس ممكن يقع.
-
-- [[ratio]] معادلة WCAG، وهي نفس اللي بيطلع في color picker بتاع DevTools.
-- [[fix]] بيغمّق ١٪ كل مرة، وأول لون يعدّي بيرجع، فالتغيير أقل حاجة ممكنة.
-- الأصفر والأخضر الفاتح أوحش حالات: إضاءتهم عالية، فبيحتاجوا تغميق كبير.
-
-الغلطة الشائعة: تتحقق على اللون الأصلي مرة وتنسى الوضع الغامق، أو تقرّب النسبة: 4.47 مش 4.5، والحد صارم.
-
-~~~text الناتج (Node 24)
-كلام عادي  #1f2937 على #ffffff 14.68 OK
-كلام باهت  #9ca3af على #ffffff 2.54 ←  #727780 4.50
-لينك       #3b82f6 على #ffffff 3.68 ←  #3472d8 4.62
-زرار       #ffffff على #4f46e5 6.29 OK
-خطأ        #ef4444 على #ffffff 3.76 ←  #d73d3d 4.54
-نجاح       #22c55e على #ffffff 2.28 ←  #178841 4.53
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل axe و Lighthouse (Accessibility) والفحص الذاتي على نفس الصفحة البايظة. اعمل جدول: كل خطأ من العشرة، وأنهي أداة لقطته.`, done: R`الجدول فيه ١٠ صفوف و ٣ عواميد، ومكتوب إن placeholder والـ div والتباين العربي اتلقطوا بالفحص الذاتي بس (أو مكتوب لو Lighthouse لقط حاجة منهم)، ومكتوب رقم Lighthouse قبل وبعد التصليح.`,
-              sol: R`~~~bash
-npx lighthouse http://127.0.0.1:5310/broken.html --only-categories=accessibility --output=json --output-path=lh.json --chrome-flags="--headless=new" --quiet
-~~~
-
-الأدوات التلاتة مش بديل لبعض، وكل واحدة بتسأل سؤال تاني. axe و Lighthouse (جواه axe) بيقروا الـ DOM بقواعد ثابتة. الفحص الذاتي مكتوب للصفحة دي، وبيعرف إن الـ placeholder مش label، وإن [[<div onclick>]] زرار مزيف.
-
-الجدول تحت من تشغيل حقيقي على صفحة «نادي القراءة» البايظة. لاحظ الفرق بين درجة Lighthouse وعدد الأخطاء الحقيقية، وده الدرس: الرقم مش معناه إن الصفحة تمام.
-
-الغلطة الشائعة: تعتبر 90 في Lighthouse كويس. لو الزرار الأساسي مش بيتوصل بالكيبورد، الصفحة مش شغالة لناس كتير، مهما كان الرقم.
-
-~~~text الناتج (Chrome 156: مين لقط إيه، على الصفحة البايظة)
-الخطأ                                axe    Lighthouse    الفحص الذاتي
-lang                   آه     آه           آه
-img alt                آه     آه           آه
-label (placeholder)    لأ     لأ           آه
-اسم زرار ولينك         آه     آه           آه
-قيمة ARIA              آه     آه           آه
-div onclick            لأ     لأ           آه
-التباين                لأ     لأ           آه
-ترتيب العناوين         آه     آه           آه
-ul فيها div            آه     آه           آه
-أهداف ٢٤×٢٤            لأ     لأ           آه
-درجة Lighthouse: قبل 60، وبعد التصليح 100
-~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق axe-core على GitHub (ملف [[doc/API.md]])، اعرف إزاي تشغّل قاعدة واحدة بس ([[runOnly]])، وإزاي تقصر الفحص على جزء من الصفحة (context)، وإزاي تقفل قاعدة. وشغّل [[color-contrast]] لوحدها على [[form]] بس.`, done: R`عندك سطر [[axe.run('form', { runOnly: ['color-contrast'] })]] شغال وبيطبع النتيجة، ومكتوب إزاي تقفل قاعدة ([[rules: { 'heading-order': { enabled: false } }]])، وإن قفل قاعدة عشان «تطلع صفر» مش تصليح.`,
-              sol: R`~~~js من الكونسول (بعد تحميل axe زي الدرس)
-const r = await axe.run("form", { runOnly: ["color-contrast"] });
-console.log(r.violations.length, r.violations.map((v) => v.nodes.length));
-
-// قفل قاعدة واحدة
-await axe.run(document, { rules: { "heading-order": { enabled: false } } });
-~~~
-
-من [[doc/API.md]] في ريبو axe-core، [[axe.run(context, options)]] بياخد حاجتين:
-
-- **context:** الجزء اللي هيتفحص: selector زي [[form]]، أو [[{ include: [...], exclude: [...] }]].
-- **options:** [[runOnly]] لقاعدة أو tag معين، و [[rules]] لتشغيل أو قفل قاعدة.
-
-القصر مفيد وانت بتصلّح جزء، و [[runOnly]] أسرع ومفيهوش ضوضاء. قفل قاعدة مش تصليح: لو قفلتها عشان «تطلع صفر» المشكلة لسه موجودة، والفحص سكت. الاستثناء الوحيد موقف موثّق، زي قطعة منتج خارجي، وتكتب السبب.
-
-الغلطة الشائعة: تقفل [[color-contrast]] لأنها بتزعج. القاعدة دي من أكتر اللي بتلقط مشاكل حقيقية.
-
-صفر في السطر الأول مش معناه إن التباين سليم: [[.hint]] في الفورم لونها [[#a1a1aa]] على أبيض، و axe سكت لأن النص عربي قصير، زي ما شرحنا في درس الـ color-contrast. ده نفس الفخ، وبيأكد إن الرقم لوحده مش كفاية.
-
-~~~text الناتج (axe 4.14.0 على صفحة «نادي القراءة» البايظة)
-axe.run("form", { runOnly: ["color-contrast"] }): 0 قاعدة، و 0 عنصر
-نفس الأمر على document كله: 0 قاعدة، و 0 عنصر
-كل الصفحة: 8 قاعدة واقعة
-كل الصفحة مع قفل heading-order: 7 قاعدة
-~~~` },
-          ],
-          deep: {
-            why: R`حوالي ١٦٪ من الناس عندهم إعاقة من نوع ما (رقم منظمة الصحة العالمية في ٢٠٢٣، من موقعهم)، ومعاهم أي حد إيده مشغولة، أو شاشته فيها شمس، أو بيستخدم كيبورد بس. والأخطاء العشرة دي بتمنع حد يشترك أصلًا (الزرار اللي Tab مش بيوصله)، أو بتخليه يتوه (الحقل اللي اسمه اختفى). وفي الشغل: مناقصات وعقود كتير بتطلب WCAG AA مكتوب، و axe أو Lighthouse بيتشغّلوا في الاستلام.`,
-            how: R`المتصفح بيبني من الـ DOM شجرة تانية اسمها accessibility tree: كل عنصر فيها ليه role (button، و link، و textbox) و name و state ([[expanded]]). قارئ الشاشة بيقرا الشجرة دي مش الـ HTML. و [[<button>]] بياخد role و focus و Enter و Space ببلاش، و [[<div>]] بياخد ولا حاجة. والاسم بيتحسب بالترتيب: [[aria-labelledby]]، وبعدين [[aria-label]]، وبعدين [[<label>]] المربوط، وبعدين المحتوى (والـ [[alt]] جواه)، وبعدين [[title]] أو [[placeholder]]. وعشان كده axe بيقبل الـ placeholder: هو فعلًا آخر مصدر في الخوارزمية. و axe نفسه script بيمشي على الـ DOM ويطبّق قواعد ليها إجابة أكيدة، وأي حاجة محتاجة حكم (هل الـ alt ده وصف كويس؟ هل الترتيب منطقي؟) بيحطها في incomplete أو مبيفحصهاش.`,
-            when: R`شغّل axe بعد أي component جديد (ثانية واحدة من الـ Console)، وفي الـ CI بـ [[@axe-core/playwright]] على الصفحات المهمة. والفحص الذاتي والكيبورد قبل أي تسليم. وقارئ الشاشة الحقيقي (NVDA) قبل الإطلاق على الفورمات والمودالات والقوايم المنسدلة، لأنها أكتر حاجات بتبوظ.`,
-            mistakes: R`تقفل قاعدة في axe عشان الرقم يبقى صفر. أو تحط [[aria-label]] على [[<div>]] وتفتكره بقى زرار (لسه مفيش role ولا focus). أو [[role="button"]] من غير [[tabindex="0"]] ومن غير Enter و Space. أو [[aria-hidden="true"]] على عنصر بيتداس عليه، فبيختفي من قارئ الشاشة ويفضل في Tab. أو تعتمد على axe في التباين في صفحة عربي. أو [[alt]] بيكرر الكلام اللي جنب الصورة («صورة كتاب» تحت عنوان الكتاب). أو تختار المستوى بتاع العنوان عشان حجمه ([[h4]] عشان «صغير»).`,
-          },
-          sol: R`الحل المرجعي الصفحة كاملة تحت. axe 4.14.0 عليها [[0 violations]]، والفحص الذاتي [[10 من 10]]، و Tab بيمشي على زرار القايمة ثم السلة ثم الاسم والإيميل والمدينة و «اشترك».
-
-الفرق عن البايظة: [[lang="ar"]]، و [[alt]] على اللوجو، و [[aria-label]] و [[aria-expanded="false"]] و [[aria-controls]] على زرار القايمة، و [[aria-label]] على لينك السلة، و [[aria-hidden]] على الأيقونات، و [[h2]] بدل [[h4]]، وكل حقل في [[.field]] بـ [[<label for>]]، و [[aria-describedby]] للجملة اللي تحت الإيميل، ولونها [[#52525b]]، و [[<button type="submit">]] بدل الـ div، و [[<li>]] بدل الـ div في القايمة، و [[min-height: 44px]] للحقول والزرار.`,
-          solCode: R`<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اشترك في نادي القراءة</title>
-<style>
-body { font-family: system-ui, sans-serif; padding: 16px; }
-.hint { color: #52525b; }
-.menu-btn { width: 44px; height: 44px; }
-.btn { padding: 8px 16px; background: #4f46e5; color: #fff; border: 0; }
-.field { display: grid; gap: 4px; margin-block-end: 12px; }
-input, select, .btn { min-height: 44px; font: inherit; }
-</style>
-</head>
-<body>
-<header>
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'/%3E" width="40" height="40" alt="نادي القراءة">
-  <button class="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="القايمة"><svg width="20" height="20" aria-hidden="true"><path d="M2 5h16M2 10h16M2 15h16" stroke="#000"/></svg></button>
-  <nav id="menu" hidden><a href="/books">الكتب</a></nav>
-  <a href="/cart" aria-label="السلة"><svg width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg></a>
-</header>
-<main>
-  <h1>اشترك في نادي القراءة</h1>
-  <h2>بياناتك</h2>
-  <form>
-    <div class="field"><label for="name">الاسم</label><input id="name" type="text" autocomplete="name" required></div>
-    <div class="field"><label for="email">الإيميل</label><input id="email" type="email" autocomplete="email" dir="ltr" required aria-describedby="email-hint"><p class="hint" id="email-hint">هنبعتلك كتاب كل شهر</p></div>
-    <div class="field"><label for="city">المدينة</label><select id="city"><option>القاهرة</option><option>الإسكندرية</option></select></div>
-    <button class="btn" type="submit">اشترك</button>
-  </form>
-  <ul class="perks"><li>شحن مجاني</li><li>خصم ١٠٪</li></ul>
-</main>
-</body>
-</html>`,
-          flag: "script",
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const lum = hex => { const h = hex.replace("#", ""); const v = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(x => x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
-const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
-for (const [fg, bg] of [["#a1a1aa", "#ffffff"], ["#52525b", "#ffffff"], ["#ffffff", "#4f46e5"]]) console.log(fg + " on " + bg + ": " + ratio(fg, bg).toFixed(2) + ":1 " + (ratio(fg, bg) >= 4.5 ? "AA" : "FAIL"));
-const html = '<label for="name">الاسم</label><input id="name"><input type="email" placeholder="الإيميل"><label for="phone">الموبايل</label><input id="tel">';
-const ids = [...html.matchAll(/<input[^>]*\bid="([^"]+)"/g)].map(m => m[1]);
-const fors = [...html.matchAll(/<label[^>]*\bfor="([^"]+)"/g)].map(m => m[1]);
-const inputs = [...html.matchAll(/<input[^>]*>/g)].length;
-console.log("inputs " + inputs + ", labelled " + ids.filter(id => fors.includes(id)).length + ", label for nothing: " + fors.filter(f => !ids.includes(f)).join(" "));`, expect: [R`#a1a1aa on #ffffff: 2.56:1 FAIL`, R`#52525b on #ffffff: 7.73:1 AA`, R`#ffffff on #4f46e5: 6.29:1 AA`, R`inputs 3, labelled 1, label for nothing: phone`] },
-          ],
-        },
-        {
-          cmd: "مسائل بالـ JS على الصفحة",
-          ref: [
-            { t: "W3C: relative luminance (WCAG 2.2)", url: "https://www.w3.org/TR/WCAG22/#dfn-relative-luminance" },
-            { t: "MDN: Element.innerHTML (security)", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML" },
-            { t: "MDN: clamp()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp" },
-          ],
-          title: "٤ مسائل بتتصحح لوحدها: جدول من بيانات، ونسبة التباين، و px لـ rem، و clamp() من مقاسين",
-          learn: R`تكتب منطق الصفحة كدوال صافية (pure functions) بتاخد بيانات وترجّع نص أو رقم، وتختبرها من غير متصفح، وبعدين توصّلها بالـ DOM في سطر واحد.`,
-          out: R`٥ دوال ([[buildTable]] و [[contrastRatio]] و [[passesAA]] و [[pxToRem]] و [[fluidClamp]]) بتعدّي ١٥ اختبار هنا في الصفحة، ومستخدمة في صفحة حقيقية اتقاست في Chrome على ٤ عروض.`,
-          use: {
-            prog: R`الفصل بين «حساب» و «عرض» هو أهم عادة في الـ frontend: الحساب بيتختبر في ملّي ثانية من غير متصفح، والعرض سطر [[innerHTML]] أو [[textContent]]. والمربع اللي بيصحح هنا نفسه بيشغّل الكود في Web Worker مفيهوش [[document]] خالص، فلازم الدوال تبقى صافية.`,
-            work: R`الأربعة دول أدوات بتتعمل فعلًا في كل design system: جدول من JSON جاي من API (ومن غير XSS)، ومدقق ألوان الثيم، وتحويل تصميم px لـ rem عشان حجم الخط بتاع اليوزر يشتغل، و fluid typography بـ [[clamp()]] بدل ٥ media queries.`,
-            cs: R`الـ escape هو أول دفاع ضد XSS: أي نص جاي من برا بيتحوّل لـ entities قبل ما يدخل HTML. والـ luminance فيها تحويل من gamma لخطي (linearization). و [[clamp()]] معادلة خط مستقيم y = mx + b بين نقطتين، وده كل الـ fluid typography.`,
-          },
-          desc: R`كل مسألة هنا دالة بتاخد مدخل بسيط وترجّع نص أو رقم، وليها حالات طرفية محددة. الاختبارات اللي في المربع تحت بتتشغل على كودك وتقولك كل حالة عدّت ولا لأ.
-
-• **[[buildTable(rows, columns)]]**: بترجّع نص HTML لجدول فيه [[<thead>]] و [[<th scope="col">]] و [[<tbody>]]. وأي قيمة بتتعمل escape ([[<]] تبقى [[&lt;]])، والصفر بيظهر [[0]] مش فاضي، والمفتاح الناقص خانة فاضية، ولو مفيش صفوف صف واحد «مفيش بيانات» بـ [[colspan]].
-• **[[contrastRatio(a, b)]]**: نسبة التباين بين لونين hex بمعادلة WCAG برقمين عشريين، و [[#000]] على [[#fff]] = 21. و [[passesAA(fg, bg, large)]] بتقول بيعدّي 4.5 (أو 3 للكلام الكبير).
-• **[[pxToRem(css, base)]]**: بتحوّل كل [[Npx]] في نص CSS لـ rem (16 افتراضي)، و [[0px]] بتبقى [[0]]، ومبتلمسش اسم class زي [[.px-4]].
-• **[[fluidClamp(minPx, maxPx, minVw, maxVw)]]**: بترجّع [[clamp(1rem, 0.5714rem + 1.9048vw, 2rem)]] اللي بيخلي الخط 16px على 360 و 32px على 1200 وبيكبر بينهم على خط مستقيم.
-
-ده تطبيق على دروس «rem و em» و «clamp()» و «contrast ratio» و «table» في التاب ده، ودروس الـ strings والـ regex في تاب JavaScript.`,
-          example: R`const rows = [{ name: 'سارة', total: 450 }, { name: '<b>علي</b>', total: 0 }];
-const cols = [{ key: 'name', label: 'العميل' }, { key: 'total', label: 'الإجمالي' }];
-document.querySelector('#out').innerHTML = buildTable(rows, cols);
-document.querySelector('h1').style.fontSize = fluidClamp(16, 32, 360, 1200);
-console.log(getComputedStyle(document.querySelector('h1')).fontSize, contrastRatio('#767676', '#ffffff'));`,
-          lines: [
-            R`البيانات: صفين، والتاني اسمه فيه HTML ([[<b>علي</b>]]) عشان نجرّب إن الـ escape شغال، والإجمالي صفر عشان نجرّب إنه بيظهر.`,
-            R`العواميد: كل عمود [[key]] بيقول ياخد القيمة منين في الصف، و [[label]] الكلام اللي في الـ [[<th>]]. الترتيب هنا هو ترتيب العواميد في الجدول.`,
-            R`بنحط ناتج [[buildTable]] في الصفحة بـ [[innerHTML]]. ده آمن هنا **بس** لأن الدالة عاملة escape لكل قيمة. والخانة التانية هتعرض [[<b>علي</b>]] ككلام زي ما هو، مش كلمة bold.`,
-            R`بنحط الـ [[clamp()]] اللي الدالة طلّعته كحجم خط للعنوان مباشرة من JavaScript. في مشروع حقيقي بتطلّعه مرة وتحطه في ملف الـ CSS.`,
-            R`بنقرا حجم الخط اللي المتصفح حسبه فعلًا على العرض الحالي، ونسبة تباين الرمادي [[#767676]] على أبيض. في Chrome على 360 طلع [[16px 4.54]]، وعلى 1200 طلع [[32px 4.54]].`,
-          ],
-          teach: R`## الفكرة في سطر
-
-**الحساب في دالة صافية، والعرض سطر واحد.** الدالة الصافية بتاخد مدخل وترجّع ناتج من غير ما تلمس [[document]] ولا [[window]] ولا متغير برّاها، فبتتختبر في أي مكان: هنا في المربع (Web Worker مفيهوش DOM)، وفي Node، وفي المتصفح. كل الأرقام تحت اتشغّلت في Node 24.22.1 وفي Chrome بـ Playwright على ويندوز ١١.
-
----
-
-## إزاي تحل أي مسألة من دول
-
-1. **جدول مدخل ومخرج قبل الكود:** ٣ حالات عادية و ٣ طرفية (فاضي، صفر، سالب، كلام فيه رموز).
-2. **أبسط حل يعدّي الحالة الأولى**، وبعدين الحالات الطرفية واحدة واحدة.
-3. **شغّل الاختبارات** بعد كل تغيير (Ctrl+Enter في المربع).
-4. **وصّلها بالصفحة** في الآخر، واتأكد بعينك مرة واحدة.
-
----
-
-## المسألة ١: [[buildTable(rows, columns)]]
-
-| المدخل | المخرج (الجزء المهم) | ليه الحالة دي |
-|---|---|---|
-| [[[{ name: "سارة", total: 450 }]]] | [[<tr><td>سارة</td><td>450</td></tr>]] | الحالة العادية: صف لكل object وخانة لكل عمود بنفس ترتيب [[columns]] |
-| اسم فيه [[<img src=x onerror="alert(1)">]] | [[<td>&lt;img src=x onerror=&quot;alert(1)&quot;&gt;</td>]] | من غير escape الصورة بتتعمل والـ [[onerror]] بيشغّل JavaScript |
-| [[{ name: "علي", total: 0 }]] | [[<td>0</td>]] مش [[<td></td>]] | الصفر قيمة حقيقية، و [[||]] بيمسحها لأنها falsy |
-| [[{ name: "منى" }]] (من غير total) | [[<td></td>]] مش [[<td>undefined</td>]] | المفتاح الناقص خانة فاضية، مش كلمة [[undefined]] قدام العميل |
-| [[[]]] (مفيش صفوف) | [[<tr><td colspan="2">مفيش بيانات</td></tr>]] | جدول فاضي من غير رسالة بيبان كأنه لسه بيحمّل |
-
-الـ escape: ٥ حروف بس بيتغيروا: [[&]] لـ [[&amp;]] (لازم الأول، وإلا هتعمل escape للـ escape)، و [[<]] و [[>]]، و [["]] لـ [[&quot;]]، و [[']] لـ [[&#39;]]. ومن غيره، أي يوزر اسمه فيه [[<img onerror>]] بيشغّل JavaScript في صفحة كل اللي بيشوفوا الجدول، وده XSS (شوف تاب الأمان).
-
-والصفر: [[r.total || '']] بيرجّع [[""]] لما القيمة صفر، لأن الصفر falsy. الصح [[r.total ?? '']]: الـ [[??]] بيبدّل [[null]] و [[undefined]] بس.
-
----
-
-## المسألة ٢: [[contrastRatio(a, b)]] و [[passesAA]]
-
-المعادلة من WCAG 2.2 بالخطوات:
-
-1. hex لـ ٣ أرقام من 0 لـ 255. و [[#rgb]] المختصر كل حرف بيتكرر: [[#777]] = [[#777777]].
-2. كل رقم ÷ 255، وبعدين نشيل الـ gamma: لو ≤ 0.04045 يبقى ÷ 12.92، وإلا [[((v + 0.055) / 1.055) ** 2.4]].
-3. الـ luminance: [[0.2126 R + 0.7152 G + 0.0722 B]]. الأخضر أكبر معامل لأن العين أحس بيه.
-4. النسبة: [[(الأفتح + 0.05) / (الأغمق + 0.05)]]، ومن غير ما يفرق مين الكلام ومين الخلفية.
-
-| الألوان | النسبة | AA كلام عادي (4.5) | AA كلام كبير (3) |
-|---|---|---|---|
-| [[#000]] على [[#fff]] | 21 | ✓ | ✓ |
-| [[#767676]] على [[#fff]] | 4.54 | ✓ (أفتح رمادي بيعدّي) | ✓ |
-| [[#777777]] على [[#fff]] | 4.48 | ✗ (درجة واحدة فرقت) | ✓ |
-| [[#a1a1aa]] على [[#fff]] | 2.56 | ✗ | ✗ |
-
-ودي نفس المعادلة اللي في الفحص الذاتي بتاع الدرس اللي قبله، اللي لقطت التباين العربي اللي axe سكت عنه.
-
----
-
-## المسألة ٣: [[pxToRem(css, base = 16)]]
-
-| المدخل | المخرج | ليه الحالة دي |
-|---|---|---|
-| [[a{padding:24px 12px;margin:-8px 0px}]] | [[a{padding:1.5rem 0.75rem;margin:-0.5rem 0}]] | أكتر من رقم في نفس السطر، وسالب، وصفر بيتكتب [[0]] من غير وحدة |
-| [[.px-4{gap:8px}]] | [[.px-4{gap:0.5rem}]] | اسم الـ class فيه [[px]] ولازم يفضل زي ما هو |
-| [[@media (min-width: 768px){}]] | [[@media (min-width: 48rem){}]] | الـ media queries بالـ rem بتتحرك مع حجم خط اليوزر |
-| [[h1{font-size:2.5px}]] | [[h1{font-size:0.1563rem}]] | كسر، والناتج ٤ أرقام عشرية بالكتير |
-| [[a{gap:20px}]] و [[base = 10]] | [[a{gap:2rem}]] | مشاريع قديمة كانت بتخلي الـ html 10px |
-
-الـ regex: [[/(-?\d*\.?\d+)px\b/g]]: سالب اختياري، وأرقام وكسر اختياري، وبعدهم [[px]] وبعدها حد كلمة ([[\b]]). و [[.px-4]] مش بيتطابق لأن قبل [[px]] نقطة مش رقم. وكل رقم بيتقرّب بـ [[Number((n / base).toFixed(4))]]، و [[Number()]] بتشيل الأصفار اللي في الآخر ([[1.5000]] تبقى [[1.5]]).
-
-ليه rem أصلًا؟ لأن اليوزر اللي مكبّر الخط في إعدادات المتصفح (Settings › Appearance › Font size) الـ px بتاعك بيتجاهله، والـ rem بيكبر معاه. شوف درس «rem و em».
-
----
-
-## المسألة ٤: [[fluidClamp(minPx, maxPx, minVw, maxVw)]]
-
-عايز العنوان 16px على 360 و 32px على 1200 وبينهم خط مستقيم:
-
-| الخطوة | الحساب | الرقم |
-|---|---|---|
-| الميل (slope) | [[(32 − 16) / (1200 − 360)]] | 0.019048 px لكل px من العرض |
-| بالـ vw | [[slope × 100]] (لأن 1vw = 1% من العرض) | 1.9048vw |
-| نقطة البداية | [[16 − 0.019048 × 360]] | 9.1429px = 0.5714rem |
-| النتيجة | [[clamp(min, start + slope vw, max)]] | [[clamp(1rem, 0.5714rem + 1.9048vw, 2rem)]] |
-
-وحطيت الناتج في صفحة وقست في Chrome:
-
-~~~text Chrome، getComputedStyle(h1).fontSize
-360: h1 = 16px
-780: h1 = 23.9998px
-1200: h1 = 32px
-1600: h1 = 32px
-~~~
-
-على 780 (في النص بالظبط) المفروض 24، وطلع 23.9998 لأن الأرقام اتقربت لـ ٤ أرقام عشرية. وعلى 1600 فضل 32 لأن [[clamp]] قافل على الـ max. ولو [[maxVw]] أصغر من [[minVw]] الدالة بترمي [[RangeError]]، لأن الميل هيطلع بالسالب والخط هيصغر وانت بتكبّر الشاشة.
-
----
-
-## الصفحة اللي بتجمعهم
-
-بعد ما المربع يقول ✓، حط الدوال في [[<script>]] في صفحة فيها [[<h1>]] و [[<div id="out">]] وشغّل المثال. قست كده في Chrome:
-
-~~~text Chrome، صفحة فيها الدوال والمثال
-360: h1 = 16px، الخلايا: 2، فيه <b>؟ false، النص: <b>سارة</b>
-1200: h1 = 32px، الخلايا: 2، فيه <b>؟ false، النص: <b>سارة</b>
-~~~
-
-«فيه [[<b>]]؟ false» يعني مفيش عنصر [[<b>]] اتعمل في الجدول، والكلام ظاهر بالحروف زي ما هو. ده الـ escape شغال في المتصفح الحقيقي، مش في الاختبار بس. (الصفحة دي كان الاسم فيها [[<b>سارة</b>]]، والمثال فيه [[<b>علي</b>]]، ونفس الفكرة.)
-
-## خلاصة
-
-- الدالة الصافية بترجّع، والـ DOM في سطر واحد برّاها.
-- escape لأي نص قبل HTML، و [[&]] الأول. و [[??]] مش [[||]] عشان الصفر.
-- التباين: hex، وبعدين ÷ 255 وشيل الـ gamma، وبعدين luminance، وبعدين النسبة. ورمادي [[#767676]] أفتح لون بيعدّي على أبيض.
-- [[px ÷ 16 = rem]]، والـ regex بيتأكد إن قبل [[px]] رقم.
-- [[clamp()]] = خط مستقيم بين نقطتين، والميل بالـ vw = الميل × 100.`,
-          try: R`اكتب الخمس دوال في المربع اللي تحت ودوس «شغّل واختبر» (أو Ctrl+Enter). ابدأ بـ [[contrastRatio]] لأنها معادلة بس، وبعدين [[pxToRem]]، وسيب [[buildTable]] للآخر عشان الـ escape. لما الـ ١٥ يعدّوا، حطهم في صفحة وشغّل المثال على 360 و 1200.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[pxToRem("border: 1px solid; width: calc(100% - 32px)")]] هيرجّع إيه؟ وهل [[1px]] لازم يتحوّل؟ اكتب، وبعدين شغّل.`, done: R`كتبت [[border: 0.0625rem solid; width: calc(100% - 2rem)]] قبل التشغيل وطلع كده، وكتبت رأيك: الـ border الـ 1px الأحسن يفضل px (عشان الخط ميختفيش أو يتخن مع تكبير الخط)، وزوّدت خيار [[keep1px]] على الدالة واختبار ليه.`,
-              sol: R`~~~js pxToRem.mjs
-const trim4 = (n) => String(Number(n.toFixed(4)));
-export function pxToRem(css, base = 16, { keep1px = false } = {}) {
-  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => {
-    if (Number(n) === 0) return "0";
-    if (keep1px && Math.abs(Number(n)) === 1) return m;
-    return trim4(n / base) + "rem";
-  });
-}
-~~~
-
-~~~js pxToRem.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { pxToRem } from "./pxToRem.mjs";
-
-const s = "border: 1px solid; width: calc(100% - 32px)";
-test("من غير خيار", () => assert.equal(pxToRem(s), "border: 0.0625rem solid; width: calc(100% - 2rem)"));
-test("keep1px بيسيب الـ 1px", () => assert.equal(pxToRem(s, 16, { keep1px: true }), "border: 1px solid; width: calc(100% - 2rem)"));
-~~~
-
-الدالة بتغيّر أي رقم بعده [[px]]: ‏1 ÷ 16 = 0.0625، و 32 ÷ 16 = 2. فالناتج [[border: 0.0625rem solid; width: calc(100% - 2rem)]].
-
-هل [[1px]] لازم يتحوّل؟ رأيي لأ. الـ border الرفيع معناه «خط واحد»، ولو خط المتصفح صغير [[0.0625rem]] ممكن يبقى أقل من بكسل، والخط يختفي أو يتخن بشكل مش منتظم. وكبّر الخط مش محتاج يتخن الحدود. فالخيار [[keep1px]] بيسيبه.
-
-- [[{ keep1px = false } = {}]]: معامل options افتراضي، فالنداء القديم بيفضل شغال.
-- [[Math.abs]]: عشان [[-1px]] كمان.
-- [[\b]] بعد [[px]]: عشان [[pxx]] متتحولش.
-
-الغلطة الشائعة: تضيف معامل جديد في النص، فتكسر أي كود بينادي الدالة بالقديم.
-
-~~~text الناتج (Node 24)
-border: 0.0625rem solid; width: calc(100% - 2rem)
-border: 1px solid; width: calc(100% - 2rem)
-node --test: pass 2، fail 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة «مدقق الألوان»: خانتين [[<input type="color">]] للكلام والخلفية، ومعاينة لجملة عربي بالألوان دي، والنسبة بـ [[contrastRatio]]، وتلات علامات AA و AAA و «كبير»، وبتتحدّث مع كل تغيير ([[input]] event).`, done: R`أسود على أبيض بيطلع 21 والتلاتة ✓، و [[#777777]] بيطلع 4.48 و AA ✗ و «كبير» ✓، والنتيجة بتتقري لقارئ الشاشة ([[aria-live="polite"]])، والصفحة نفسها بتعدّي الفحص الذاتي بتاع درس «accessibility: لحد axe صفر».`,
-              sol: R`~~~live 300 320 contrast-tool.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>مدقق الألوان</title>
-<style>
-  body { font-family: system-ui, sans-serif; margin: 1.5rem; color: #1f2937; }
-  label { display: block; margin-block-end: .5rem; }
-  #preview { padding: 1.5rem; border: 1px solid #9ca3af; border-radius: 8px; margin-block: 1rem; }
-  ul { list-style: none; padding: 0; display: flex; gap: 1rem; }
-</style></head>
-<body>
-  <main><h1>مدقق الألوان</h1>
-    <label>لون الكلام <input type="color" id="fg" value="#000000"></label>
-    <label>لون الخلفية <input type="color" id="bg" value="#ffffff"></label>
-    <p id="preview">النص العربي ده بيوريك الألوان على الطبيعة.</p>
-    <p id="status" aria-live="polite">
-      النسبة <strong id="r"></strong>
-      <span id="marks"></span>
-    </p>
-  </main>
-  <script>
-    function hexToRgb(hex) {
-      const h = hex.replace("#", "");
-      return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
-    }
-    function luminance(hex) {
-      const [r, g, b] = hexToRgb(hex).map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    }
-    function contrastRatio(a, b) {
-      const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-      return Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
-    }
-    const $ = (id) => document.getElementById(id);
-    function update() {
-      const fg = $("fg").value, bg = $("bg").value, v = contrastRatio(fg, bg);
-      $("preview").style.color = fg;
-      $("preview").style.background = bg;
-      $("r").textContent = v;
-      const mark = (name, ok) => $__bt$__{name} $__{ok ? "✓" : "✗"}$__bt;
-      $("marks").textContent = [mark("AA", v >= 4.5), mark("AAA", v >= 7), mark("كبير", v >= 3)].join("  ");
-    }
-    $("fg").addEventListener("input", update);
-    $("bg").addEventListener("input", update);
-    update();
-  $__lt/script>
-</body></html>
-~~~
-
-الدوال من درس «مسائل بالـ JS»، والصفحة بس بتوصّلها بالخانات.
-
-- [[input]] مش [[change]]: [[input]] بيتبعت مع كل حركة في منتقي اللون، فالنتيجة بتتحدّث حية.
-- [[aria-live="polite"]]: قارئ الشاشة بيقرا التغيير لما يخلص كلامه، مش مقاطعة.
-- العلامات نص [[✓]] و [[✗]] مش لون، عشان متعتمدش على اللون.
-- الحدود: 4.5 للعادي، و 7 لـ AAA، و 3 للكبير.
-- التقريب برقمين، فـ [[#777777]] بيطلع 4.48: أقل من 4.5، يعني AA واقع.
-
-الغلطة الشائعة: تقرّب لرقم عشري واحد، فـ 4.48 يبقى 4.5 ويعدّي بالغلط.
-
-~~~text الناتج (Chrome 156)
-أسود على أبيض: 21  AA ✓  AAA ✓  كبير ✓
-#777777 على أبيض: 4.48  AA ✗  AAA ✗  كبير ✓
-aria-live = polite
-الفحص الذاتي على الألوان الافتراضية: النتيجة: 10 من 10 (وبعدها شغّل axe، وجرّب بالكيبورد بس) 
-axe: 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ملف JSON فيه ٢٠ طلب متخيل (رقم، وعميل، ومبلغ، وحالة، وتاريخ) منهم واحد العميل فيه [[<script>]] وواحد المبلغ صفر وواحد من غير حالة. اعرضه بـ [[buildTable]]، وزوّد عمود فيه المبلغ متنسّق بـ [[Intl.NumberFormat('ar-EG')]].`, done: R`الجدول فيه ٢٠ صف، والـ [[<script>]] ظاهر كلام مش بيشتغل (Elements فيه [[&lt;script&gt;]])، والصفر ظاهر [[٠]]، والحالة الناقصة خانة فاضية، والمبالغ بالأرقام العربي، والجدول بيعدّي فحص الفيضان على 360 جوه [[.table-wrap]].`,
-              sol: R`~~~json orders.json (عيّنة: الملف ٢٠ طلب بنفس الشكل)
-[
-  { "id": 1001, "customer": "منى عادل", "amount": 320, "status": "paid", "date": "2026-10-01" },
-  { "id": 1002, "customer": "<script>alert(1)$__lt/script>", "amount": 150, "status": "paid", "date": "2026-10-02" },
-  { "id": 1003, "customer": "كريم سامي", "amount": 0, "status": "refunded", "date": "2026-10-03" },
-  { "id": 1004, "customer": "هدى علي", "amount": 90, "date": "2026-10-04" }
-]
-~~~
-
-~~~html orders.html (buildTable من الدرس)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>الطلبات</title>
-<style>
-  .table-wrap { overflow-x: auto; }
-  table { border-collapse: collapse; }
-  th, td { padding: .5rem 1rem; white-space: nowrap; text-align: start; }
-  section { padding: 16px; }
-</style></head>
-<body>
-  <main><h1>لوحة الطلبات</h1><section id="s"><h2>الطلبات</h2><div class="table-wrap" id="out" tabindex="0" role="region" aria-label="جدول الطلبات"></div></section></main>
-  <script>
-    function escapeHtml(v) {
-      return String(v).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
-    }
-    function buildTable(rows, columns) {
-      const head = "<thead><tr>" + columns.map((c) => '<th scope="col">' + escapeHtml(c.label) + "</th>").join("") + "</tr></thead>";
-      const body = rows.map((r) => "<tr>" + columns.map((c) => "<td>" + escapeHtml(r[c.key] ?? "") + "</td>").join("") + "</tr>").join("");
-      return "<table>" + head + "<tbody>" + body + "</tbody></table>";
-    }
-    const fmt = new Intl.NumberFormat("ar-EG");
-    async function show() {
-      const orders = await (await fetch("orders.json")).json();
-      const rows = orders.map((o) => ({ ...o, money: fmt.format(o.amount) }));
-      document.getElementById("out").innerHTML = buildTable(rows, [
-        { key: "id", label: "الرقم" }, { key: "customer", label: "العميل" },
-        { key: "money", label: "المبلغ" }, { key: "status", label: "الحالة" }, { key: "date", label: "التاريخ" },
-      ]);
-    }
-    show();
-  $__lt/script>
-</body></html>
-~~~
-
-البيانات الخبيثة هي التمرين: اسم عميل فيه [[<script>]]. [[escapeHtml]] بيحوّل [[<]] لـ [[&lt;]]، فالمتصفح بيعرضه كلام ومش بينفذه. وده لازم يتطبق على كل خلية، حتى اللي شكلها آمن.
-
-- [[r[c.key] ?? ""]]: الحالة الناقصة [[undefined]]، و [[??]] بيحولها خانة فاضية. لو استخدمت [[||]]، الصفر [[0]] هيتحول لفاضي، وده اللي الدرس بيحذر منه.
-- [[fmt.format(0)]]: بيطلع [[٠]]، مش فاضي، و [[Intl.NumberFormat("ar-EG")]] بيدّي الأرقام العربي.
-- [[.table-wrap]]: [[overflow-x: auto]]، و [[tabindex="0"]] عشان الكيبورد يقدر يعمل scroll.
-
-الغلطة الشائعة: [[innerHTML]] من غير escape، فالصفحة تنفذ سكربت من البيانات. جرّبها، هتشوف [[alert]].
-
-~~~text الناتج (Chrome 156، ٢٠ طلب، عرض 360)
-عدد الصفوف: 20
-خلية الـ script في Elements: &lt;script&gt;alert(1)&lt;/script&gt;
-عدد الـ alert: 0
-المبلغ صفر: ٠
-الحالة الناقصة: ""
-أول مبلغ: ٣٢٠
-الفحص الذاتي للفيضان: الصفحة: عرض الشاشة 360 وعرض المحتوى 360 ← مفيش scroll أفقي / PASS s الطلبات
-axe: 0
-~~~
-
-~~~view 360 360 الشكل في المتصفح (الحل نفسه، وسطور للـ preview بس)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<script>/* للـ preview بس: orders.json (العيّنة اللي في الحل) جوه الصفحة، و fetch بيرجّعه بدل ما يطلب ملف */
-const ORDERS = [{"id":1001,"customer":"منى عادل","amount":320,"status":"paid","date":"2026-10-01"},{"id":1002,"customer":"\u003cscript>alert(1)\u003c/script>","amount":150,"status":"paid","date":"2026-10-02"},{"id":1003,"customer":"كريم سامي","amount":0,"status":"refunded","date":"2026-10-03"},{"id":1004,"customer":"هدى علي","amount":90,"date":"2026-10-04"}];
-const realFetch = window.fetch;
-window.fetch = (u, o) => /orders\.json$/.test(String(u)) ? Promise.resolve(new Response(JSON.stringify(ORDERS), { headers: { "content-type": "application/json" } })) : realFetch(u, o);
-</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>الطلبات</title>
-<style>
-  .table-wrap { overflow-x: auto; }
-  table { border-collapse: collapse; }
-  th, td { padding: .5rem 1rem; white-space: nowrap; text-align: start; }
-  section { padding: 16px; }
-</style></head>
-<body>
-  <main><h1>لوحة الطلبات</h1><section id="s"><h2>الطلبات</h2><div class="table-wrap" id="out" tabindex="0" role="region" aria-label="جدول الطلبات"></div></section></main>
-  <script>
-    function escapeHtml(v) {
-      return String(v).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
-    }
-    function buildTable(rows, columns) {
-      const head = "<thead><tr>" + columns.map((c) => '<th scope="col">' + escapeHtml(c.label) + "</th>").join("") + "</tr></thead>";
-      const body = rows.map((r) => "<tr>" + columns.map((c) => "<td>" + escapeHtml(r[c.key] ?? "") + "</td>").join("") + "</tr>").join("");
-      return "<table>" + head + "<tbody>" + body + "</tbody></table>";
-    }
-    const fmt = new Intl.NumberFormat("ar-EG");
-    async function show() {
-      const orders = await (await fetch("orders.json")).json();
-      const rows = orders.map((o) => ({ ...o, money: fmt.format(o.amount) }));
-      document.getElementById("out").innerHTML = buildTable(rows, [
-        { key: "id", label: "الرقم" }, { key: "customer", label: "العميل" },
-        { key: "money", label: "المبلغ" }, { key: "status", label: "الحالة" }, { key: "date", label: "التاريخ" },
-      ]);
-    }
-    show();
-  </script>
-</body></html>
-~~~` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** زوّد ٥ اختبارات من عندك على [[fluidClamp]] و [[contrastRatio]]: مقاسين متساويين ([[fluidClamp(16, 16, 360, 1200)]])، و [[minPx]] أكبر من [[maxPx]] (خط بيصغر)، و hex بحروف كابيتال، و hex بـ ٨ حروف (فيه alpha)، ومسافات قبل وبعد اللون. قرر السلوك الصح لكل واحد واكتبه في اسم الاختبار.`, done: R`الخمس اختبارات شغالين في المربع جنب الـ ١٥ الأصليين، وكل واحد اسمه بيقول السلوك اللي اخترته (مثلًا «alpha مش مدعوم وبيرمي error»)، والدوال اتعدّلت لحد ما الـ ٢٠ عدّوا.`,
-              sol: R`~~~js color.mjs (الدوال بعد القرارات)
-export function hexToRgb(hex) {
-  let h = String(hex).trim().replace(/^#/, "");
-  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split("").map((c) => c + c).join("");
-  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error("لون مش مفهوم: " + hex);
-  return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
-}
-export function luminance(hex) {
-  const [r, g, b] = hexToRgb(hex).map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-export function contrastRatio(a, b) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
-}
-const trim4 = (n) => String(Number(n.toFixed(4)));
-export function fluidClamp(minPx, maxPx, minVw, maxVw, base = 16) {
-  if (maxVw <= minVw) throw new RangeError("maxVw لازم أكبر من minVw");
-  if (minPx === maxPx) return trim4(minPx / base) + "rem";
-  const slope = (maxPx - minPx) / (maxVw - minVw), start = minPx - slope * minVw;
-  const [lo, hi] = [minPx, maxPx].sort((a, b) => a - b);
-  return "clamp(" + trim4(lo / base) + "rem, " + trim4(start / base) + "rem + " + trim4(slope * 100) + "vw, " + trim4(hi / base) + "rem)";
-}
-~~~
-
-~~~js color.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { contrastRatio, fluidClamp } from "./color.mjs";
-
-test("مقاسين متساويين: قيمة ثابتة من غير clamp", () => {
-  assert.equal(fluidClamp(16, 16, 360, 1200), "1rem");
-});
-test("خط بيصغر: clamp بيرتب الحدين", () => {
-  assert.equal(fluidClamp(32, 16, 360, 1200), "clamp(1rem, 2.4286rem + -1.9048vw, 2rem)");
-});
-test("hex بحروف كابيتال زي الصغيرة", () => {
-  assert.equal(contrastRatio("#FFFFFF", "#000000"), contrastRatio("#ffffff", "#000000"));
-});
-test("alpha مش مدعوم وبيرمي error", () => {
-  assert.throws(() => contrastRatio("#00000080", "#ffffff"), /لون مش مفهوم/);
-});
-test("مسافات قبل وبعد اللون بتتقبل", () => {
-  assert.equal(contrastRatio("  #000000  ", "#ffffff"), 21);
-});
-~~~
-
-كل اختبار هو قرار، واسمه بيقول القرار:
-
-1. **[[fluidClamp(16, 16, ...)]]:** الميل صفر، و [[clamp]] هنا كلام زيادة، فبترجع القيمة نفسها.
-2. **خط بيصغر:** [[clamp(min, ..., max)]] لازم الأول أصغر، وإلا المتصفح بياخد الأول دايمًا والخط ثابت. فـ [[sort]] بيرتب الحدين، والميل بيفضل سالب.
-3. **كابيتال:** الـ regex فيه [[i]] و [[parseInt]] بيقبل الاتنين، فمش محتاج كود.
-4. **alpha:** التباين لون فوق لون، والشفاف محتاج يعرف الخلفية، فالرفض أصدق من نتيجة غلط. لو عايزها، اعمل دالة تانية تمزج الأول.
-5. **مسافات:** [[.trim()]] بيقبلها، لأن القيم بتيجي من copy-paste.
-
-الغلطة الشائعة: تقرر السلوك بعد ما تشوف الناتج. اكتب القرار في الاسم الأول. وأول مرة كتبنا الرقم المتوقع بإيدنا غلط (2.5714)، والاختبار وقع وطلّع القيمة الصح: ‏(32 + 0.019048 × 360) ÷ 16 = 2.4286. الحساب على ورقة الأول، مش نسخ الناتج.
-
-~~~text الناتج (node --test: الـ 5 الجداد)
-pass 5، fail 0
-~~~` },
-            { lvl: 'تحدي', t: R`**refactor:** الدالة دي شغالة بس بتكتب في الـ DOM من جواها فمبتتختبرش من غير متصفح: [[function render(rows) { const t = document.createElement('table'); rows.forEach(r => { t.innerHTML += '<tr><td>' + r.name + '</td></tr>'; }); document.body.append(t); }]]. قسّمها لدالة صافية ترجّع نص (بالـ escape) وسطر واحد يحطه، وقارن الوقت على ٥٠٠٠ صف.`, done: R`عندك [[buildRows(rows)]] صافية بتعدّي اختبار escape في Node، وسطر [[out.innerHTML = buildRows(rows)]]، ورقمين من [[performance.now()]] على ٥٠٠٠ صف: الـ [[+=]] على [[innerHTML]] جوه loop أبطأ بكتير (كل مرة بيعيد بناء الجدول كله)، والفرق مكتوب برقم.`,
-              sol: R`~~~js rows.mjs
-const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
-export function buildRows(rows) {
-  return "<table>" + rows.map((r) => "<tr><td>" + esc(r.name) + "</td></tr>").join("") + "</table>";
-}
-~~~
-
-~~~js في الصفحة
-out.innerHTML = buildRows(rows);
-~~~
-
-~~~js rows.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { buildRows } from "./rows.mjs";
-
-test("بيعمل escape", () => {
-  assert.equal(buildRows([{ name: "<b>" }]), "<table><tr><td>&lt;b&gt;</td></tr></table>");
-});
-~~~
-
-القديم فيه مشكلتين، والـ refactor حل الاتنين:
-
-- **مبيتختبرش:** الدالة بتمسك [[document]] من جواها. الدالة الجديدة تاخد بيانات وترجّع نص، فـ Node يختبرها.
-- **بطيء جدًا:** [[t.innerHTML += ...]] مش بيزوّد سطر. بيقرا الـ HTML كله، يضيف، ويعيد بناء كل العناصر في كل لفة، فالوقت بيكبر مع مربع عدد الصفوف. الـ [[join]] بيبني النص مرة، والمتصفح يبني الـ DOM مرة.
-
-وكمان القديم مفيهوش escape، والتمرين السابق بيوريك ده معناه إيه. وفي النهاية سطر واحد بيلمس الصفحة.
-
-الغلطة الشائعة: تحل البطء بـ [[requestAnimationFrame]] أو تقسيم الشغل، والحل أبسط: ابني مرة واحدة.
-
-~~~text الناتج (Chrome 156، 5000 صف)
-innerHTML += في loop: 62359.7ms
-buildRows ثم innerHTML مرة: 17.8ms
-الفرق: 3503 مرة
-اختبار الـ escape في Node: pass 1، fail 0
-~~~` },
-          ],
-          deep: {
-            why: R`أغلب باجات الـ frontend اللي بتوصل للمستخدم جاية من منطق مختلط بالعرض: دالة بتحسب وبتكتب في الـ DOM وبتقرا من [[window]] في نفس الوقت، فمحدش بيختبرها لأن اختبارها محتاج متصفح. ولما تفصلهم، الحساب بيبقى ١٥ اختبار في ملّي ثانية، والعرض سطر مش محتاج اختبار. والمسائل الأربعة مش تمارين وخلاص: هي أدوات بتتكتب فعلًا في كل design system.`,
-            how: R`المربع اللي في الصفحة بيبني Web Worker من نص الكود بتاعك والاختبارات، والـ Worker ده thread منفصل مفيهوش [[document]] ولا [[window]]، فأي دالة بتلمس الـ DOM بتقع بـ [[ReferenceError]]. وبعد ٣ ثواني لو مخلصش بيتقفل (loop مبتخلصش). والدوال الصافية بتشتغل هناك زي ما بتشتغل في Node بالظبط. وفي الصفحة الحقيقية [[innerHTML]] بيعمل parse للنص كـ HTML، فلو النص فيه [[<]] حقيقي هيبقى tag، وعشان كده الـ escape بيحوّله لـ [[&lt;]] اللي المتصفح بيعرضه كحرف. والـ [[clamp()]] بيتحسب كل ما الشاشة تتغير: [[0.5714rem + 1.9048vw]] على 780 = 9.14 + 14.86 = 24px تقريبًا.`,
-            when: R`أي حساب في الصفحة (سعر، وتاريخ، وفلترة، وتحويل وحدات، وتوليد HTML من بيانات) يبقى دالة صافية في ملف لوحده، واختبرها بـ Vitest (درس «اختبار JS بـ Vitest» في تاب JavaScript). و [[buildTable]] بالـ escape لما الجدول بسيط ومش محتاج تفاعل، ولو محتاج ترتيب وفلترة بقى component في React أو Vue (الـ JSX بيعمل escape لوحده). و [[fluidClamp]] للعناوين والمسافات الكبيرة، مش للكلام العادي (خليه [[1rem]] ثابت عشان القراية).`,
-            mistakes: R`[[r[c.key] || '']] فالصفر يختفي. أو escape لـ [[<]] و [[>]] بس ونسيان [["]] (بيكسر attribute). أو escape لـ [[&]] في الآخر فتطلع [[&amp;lt;]]. أو [[toFixed(4)]] من غير [[Number()]] فتطلع [[1.5000rem]]. أو regex [[/(\d+)px/]] يحوّل [[.px-4]] أو ينسى السالب والكسور. أو معادلة التباين من غير شيل الـ gamma (النسبة تطلع غلط بكتير). أو [[clamp]] بالـ px بس ([[9.14px + 1.9vw]]) فمبيكبرش مع حجم خط اليوزر. أو [[document.querySelector]] جوه الدالة اللي بتتصحح فتقع في الـ Worker.`,
-          },
-          sol: R`الحل تحت هو اللي عدّى الـ ١٥ اختبار في Node 24.22.1 (نفس الاختبارات اللي في المربع). حل غلط (جدول من غير thead ولا escape، والتباين صفر، و [[replace(/px/g, 'rem')]]) عدّى صفر من ١٥، وأول ٦ رسايل من نفس محرك الاختبارات اللي في الصفحة كانوا كده:
-
-~~~text حل غلط في المربع
-✗ buildTable: صف واحد: المتوقع "<table><thead><tr><th scope=\"col\">العميل</th><th scope=\"col\">الإجمالي</th></tr></thead><tbody><tr><td>سارة</td><td>450</td></tr></tbody></table>" بس طلع "<table><tr><td>سارة</td><td>450</td></tr></table>"
-✗ buildTable: الكلام بيتعمله escape (مفيش XSS): المتوقع true بس طلع false
-✗ buildTable: الصفر بيظهر، والخانة الناقصة فاضية: المتوقع true بس طلع false
-✗ buildTable: مفيش صفوف: المتوقع true بس طلع false
-✗ contrastRatio: أسود على أبيض = 21: المتوقع 21 بس طلع 0
-✗ contrastRatio: #767676 على أبيض = 4.54، والترتيب مش فارق: المتوقع [4.54,4.54] بس طلع [0,0]
-~~~
-
-النقط اللي بتوقع الناس: الـ [[&]] أول حرف في الـ escape، و [[??]] مش [[||]]، و [[\b]] بعد [[px]] في الـ regex، و [[Number()]] حوالين [[toFixed(4)]]، والترتيب في [[contrastRatio]] بـ [[sort]] عشان النسبة متطلعش أقل من 1.`,
-          solCode: R`function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-}
-function buildTable(rows, columns) {
-  const head = '<thead><tr>' + columns.map(c => '<th scope="col">' + escapeHtml(c.label) + '</th>').join('') + '</tr></thead>';
-  const body = rows.length
-    ? rows.map(r => '<tr>' + columns.map(c => '<td>' + escapeHtml(r[c.key] ?? '') + '</td>').join('') + '</tr>').join('')
-    : '<tr><td colspan="' + columns.length + '">مفيش بيانات</td></tr>';
-  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
-}
-function hexToRgb(hex) {
-  let h = String(hex).trim().replace(/^#/, '');
-  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map(ch => ch + ch).join('');
-  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error('لون مش مفهوم: ' + hex);
-  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
-}
-function luminance(hex) {
-  const [r, g, b] = hexToRgb(hex).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-function contrastRatio(a, b) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return Math.round((hi + 0.05) / (lo + 0.05) * 100) / 100;
-}
-function passesAA(fg, bg, large = false) {
-  return contrastRatio(fg, bg) >= (large ? 3 : 4.5);
-}
-const trim4 = n => String(Number(n.toFixed(4)));
-function pxToRem(css, base = 16) {
-  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => Number(n) === 0 ? '0' : trim4(n / base) + 'rem');
-}
-function fluidClamp(minPx, maxPx, minVw, maxVw, base = 16) {
-  if (maxVw <= minVw) throw new RangeError('maxVw لازم أكبر من minVw');
-  const slope = (maxPx - minPx) / (maxVw - minVw), start = minPx - slope * minVw;
-  return 'clamp(' + trim4(minPx / base) + 'rem, ' + trim4(start / base) + 'rem + ' + trim4(slope * 100) + 'vw, ' + trim4(maxPx / base) + 'rem)';
-}`,
-          flag: "script",
-          check: {
-            lang: "js",
-            starter: R`// كل دالة بترجّع نص أو رقم، ومن غير document (الكود بيتشغل في Worker)
-function buildTable(rows, columns) {}
-function contrastRatio(a, b) {}
-function passesAA(fg, bg, large = false) {}
-function pxToRem(css, base = 16) {}
-function fluidClamp(minPx, maxPx, minVw, maxVw, base = 16) {}`,
-            tests: R`const cols = [{ key: "name", label: "العميل" }, { key: "total", label: "الإجمالي" }];
-test("buildTable: صف واحد", () => expect(buildTable([{ name: "سارة", total: 450 }], cols)).toBe('<table><thead><tr><th scope="col">العميل</th><th scope="col">الإجمالي</th></tr></thead><tbody><tr><td>سارة</td><td>450</td></tr></tbody></table>'));
-test("buildTable: الكلام بيتعمله escape (مفيش XSS)", () => expect(buildTable([{ name: '<img src=x onerror="alert(1)">', total: "A&B" }], cols).includes('<td>&lt;img src=x onerror=&quot;alert(1)&quot;&gt;</td><td>A&amp;B</td>')).toBe(true));
-test("buildTable: الصفر بيظهر، والخانة الناقصة فاضية", () => expect(buildTable([{ name: "علي", total: 0 }, { name: "منى" }], cols).includes("<tr><td>علي</td><td>0</td></tr><tr><td>منى</td><td></td></tr>")).toBe(true));
-test("buildTable: مفيش صفوف", () => expect(buildTable([], cols).includes('<tbody><tr><td colspan="2">مفيش بيانات</td></tr></tbody>')).toBe(true));
-test("contrastRatio: أسود على أبيض = 21", () => expect(contrastRatio("#000", "#fff")).toBe(21));
-test("contrastRatio: #767676 على أبيض = 4.54، والترتيب مش فارق", () => expect([contrastRatio("#767676", "#ffffff"), contrastRatio("#ffffff", "#767676")]).toEqual([4.54, 4.54]));
-test("contrastRatio: نفس اللون = 1", () => expect(contrastRatio("#4f46e5", "#4F46E5")).toBe(1));
-test("passesAA: #777 بيقع في الكلام العادي وينجح في الكبير", () => expect([passesAA("#777777", "#ffffff"), passesAA("#777777", "#ffffff", true)]).toEqual([false, true]));
-test("contrastRatio: لون مش hex بيرمي error", () => expect(() => contrastRatio("red", "#fff")).toThrow("لون مش مفهوم"));
-test("pxToRem: أرقام عادية وسالبة وصفر", () => expect(pxToRem("a{padding:24px 12px;margin:-8px 0px}")).toBe("a{padding:1.5rem 0.75rem;margin:-0.5rem 0}"));
-test("pxToRem: مبيلمسش اسم class فيه px", () => expect(pxToRem(".px-4{gap:8px}")).toBe(".px-4{gap:0.5rem}"));
-test("pxToRem: media query وكسور و base تاني", () => expect([pxToRem("@media (min-width: 768px){}"), pxToRem("h1{font-size:2.5px}"), pxToRem("a{gap:20px}", 10)]).toEqual(["@media (min-width: 48rem){}", "h1{font-size:0.1563rem}", "a{gap:2rem}"]));
-test("fluidClamp: 16px على 360 لحد 32px على 1200", () => expect(fluidClamp(16, 32, 360, 1200)).toBe("clamp(1rem, 0.5714rem + 1.9048vw, 2rem)"));
-test("fluidClamp: أرقام بتطلع مدوّرة", () => expect(fluidClamp(24, 48, 320, 1280)).toBe("clamp(1.5rem, 1rem + 2.5vw, 3rem)"));
-test("fluidClamp: المقاسات بالعكس بترمي RangeError", () => expect(() => fluidClamp(16, 32, 1200, 360)).toThrow("maxVw"));`,
-            solution: R`function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-}
-function buildTable(rows, columns) {
-  const head = '<thead><tr>' + columns.map(c => '<th scope="col">' + escapeHtml(c.label) + '</th>').join('') + '</tr></thead>';
-  const body = rows.length
-    ? rows.map(r => '<tr>' + columns.map(c => '<td>' + escapeHtml(r[c.key] ?? '') + '</td>').join('') + '</tr>').join('')
-    : '<tr><td colspan="' + columns.length + '">مفيش بيانات</td></tr>';
-  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
-}
-function hexToRgb(hex) {
-  let h = String(hex).trim().replace(/^#/, '');
-  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map(ch => ch + ch).join('');
-  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error('لون مش مفهوم: ' + hex);
-  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
-}
-function luminance(hex) {
-  const [r, g, b] = hexToRgb(hex).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-function contrastRatio(a, b) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return Math.round((hi + 0.05) / (lo + 0.05) * 100) / 100;
-}
-function passesAA(fg, bg, large = false) {
-  return contrastRatio(fg, bg) >= (large ? 3 : 4.5);
-}
-const trim4 = n => String(Number(n.toFixed(4)));
-function pxToRem(css, base = 16) {
-  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => Number(n) === 0 ? '0' : trim4(n / base) + 'rem');
-}
-function fluidClamp(minPx, maxPx, minVw, maxVw, base = 16) {
-  if (maxVw <= minVw) throw new RangeError('maxVw لازم أكبر من minVw');
-  const slope = (maxPx - minPx) / (maxVw - minVw), start = minPx - slope * minVw;
-  return 'clamp(' + trim4(minPx / base) + 'rem, ' + trim4(start / base) + 'rem + ' + trim4(slope * 100) + 'vw, ' + trim4(maxPx / base) + 'rem)';
-}`
-          },
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-}
-function buildTable(rows, columns) {
-  const head = '<thead><tr>' + columns.map(c => '<th scope="col">' + escapeHtml(c.label) + '</th>').join('') + '</tr></thead>';
-  const body = rows.length
-    ? rows.map(r => '<tr>' + columns.map(c => '<td>' + escapeHtml(r[c.key] ?? '') + '</td>').join('') + '</tr>').join('')
-    : '<tr><td colspan="' + columns.length + '">مفيش بيانات</td></tr>';
-  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
-}
-function hexToRgb(hex) {
-  let h = String(hex).trim().replace(/^#/, '');
-  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map(ch => ch + ch).join('');
-  if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error('لون مش مفهوم: ' + hex);
-  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
-}
-function luminance(hex) {
-  const [r, g, b] = hexToRgb(hex).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-function contrastRatio(a, b) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return Math.round((hi + 0.05) / (lo + 0.05) * 100) / 100;
-}
-function passesAA(fg, bg, large = false) {
-  return contrastRatio(fg, bg) >= (large ? 3 : 4.5);
-}
-const trim4 = n => String(Number(n.toFixed(4)));
-function pxToRem(css, base = 16) {
-  return css.replace(/(-?\d*\.?\d+)px\b/g, (m, n) => Number(n) === 0 ? '0' : trim4(n / base) + 'rem');
-}
-function fluidClamp(minPx, maxPx, minVw, maxVw, base = 16) {
-  if (maxVw <= minVw) throw new RangeError('maxVw لازم أكبر من minVw');
-  const slope = (maxPx - minPx) / (maxVw - minVw), start = minPx - slope * minVw;
-  return 'clamp(' + trim4(minPx / base) + 'rem, ' + trim4(start / base) + 'rem + ' + trim4(slope * 100) + 'vw, ' + trim4(maxPx / base) + 'rem)';
-}
-console.log(buildTable([{ name: "<b>سارة</b>", total: 0 }], [{ key: "name", label: "العميل" }, { key: "total", label: "الإجمالي" }]));
-console.log("contrast " + contrastRatio("#767676", "#fff") + " AA " + passesAA("#777777", "#ffffff"));
-console.log(pxToRem(".px-4{padding:24px 12px;margin:-8px 0px}"));
-console.log(fluidClamp(16, 32, 360, 1200));`, expect: [R`<td>&lt;b&gt;`, R`<td>0</td>`, R`contrast 4.54 AA false`, R`.px-4{padding:1.5rem 0.75rem;margin:-0.5rem 0}`, R`clamp(1rem, 0.5714rem + 1.9048vw, 2rem)`] },
-          ],
-        },
-        {
-          cmd: "صفحات من وصف",
-          ref: [
-            { t: "MDN: Aligning items in a flex container", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Flexible_box_layout/Aligning_items" },
-            { t: "MDN: order", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/order" },
+            { t: "Tailwind CSS: Styling based on sibling state", url: "https://tailwindcss.com/docs/hover-focus-and-other-states#styling-based-on-sibling-state" },
             { t: "MDN: :has()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has" },
           ],
-          title: "ابني ٣ أجزاء من وصف مكتوب بس: باقات أسعار، وشاشة دخول، واختيار توصيل بـ :has()",
-          learn: R`تحوّل وصف مكتوب (من عميل أو مدير منتج) لأرقام وحالات، وتبني الـ HTML الأول من غير CSS، وبعدين الموبايل، وبعدين الشاشة العريضة، وبعدين الحالات (اختيار وفوكس)، وتثبت كل جملة في الوصف بسطر في الفحص.`,
-          out: R`٣ أجزاء بتعدّي فحص ذاتي [[8 من 8]] على 1200 و [[7 من 7]] على 360، والحل الغلط اللي «شكله قريب» بيقع في [[1 من 8]].`,
-          use: {
-            prog: R`أصعب حاجة في الـ CSS مش الخصائص، هي إنك تقرا «الزراير على خط واحد تحت» وتعرف إنها [[flex-direction: column]] و [[margin-block-start: auto]]. التمرين ده بيعلّمك تترجم الجملة لقاعدة.`,
-            work: R`ده شكل شغلك الحقيقي: محدش هيديك Figma لكل حاجة. هيقولك «عايز ٣ باقات والوسطانية مميزة، وعلى الموبايل المميزة الأول»، وانت تبني وتثبت. والتلات أجزاء دول موجودين في أي SaaS أو متجر: الأسعار، والدخول، والاختيار في الـ checkout.`,
-            cs: R`[[:has()]] أول selector في CSS بيبص على الأولاد عشان يقرر للأب («parent selector»)، والمتصفح بيعيد حسابه كل ما حالة أي ولد تتغير. والفحص بيعمل اختبار حالة (state test): يغيّر الاختيار ويقيس، ويرجّعه زي ما كان.`,
-          },
-          desc: R`كل جزء ليه وصف بالكلام زي ما العميل بيكتبه، وكل جملة فيه بتتحول لرقم أو حالة بيتقاس:
+          title: "غيّر شكل ابن لما الأب أو الأخ يتغير",
+          desc: R`[[group]] على الأب، و [[group-hover:]] على أي ابن: الابن يتغير لما الماوس ييجي على الأب. مثالي للكارت: السهم يتحرك والعنوان يتلوّن لما تقف على الكارت كله.
 
-• **الباقات:** ٣ باقات جنب بعض بنفس العرض والطول، والزراير على خط واحد تحت مهما كان طول الكلام، والوسطانية «مميزة» بألوان معكوسة ([[#0f172a]] وكلام أبيض)، وعلى الموبايل عمود واحد **والمميزة الأول**، والزراير مش أقل من 44px.
-• **الدخول:** على الشاشة العريضة نصين (صورة ديكور وفورم)، والفورم مش أعرض من 400px في نص نصه. على الموبايل الصورة مش موجودة والفورم بعرض الشاشة. الحقول والزرار بعرض الفورم وطولهم 44.
-• **اختيار التوصيل:** ٣ كروت radio، المختار عليه إطار 2px [[#4f46e5]] وخلفية [[#eef2ff]] **من غير JavaScript**، والـ radio نفسه لسه بيوصله Tab، والـ focus باين على الكارت كله.
-
-والطريقة واحدة للتلاتة: HTML سليم الأول ([[<article>]] و [[<label for>]] و [[<fieldset>]] و [[<legend>]])، وبعدين الموبايل، وبعدين [[@media (min-width: ...)]]، وبعدين الحالات بـ [[:has()]] و [[:focus-visible]]. ده تطبيق على دروس «:has()» و «fieldset و radio» و «flexbox» و «grid» و «focus-visible» في التاب ده، وعلى الوحدة دي كلها.`,
-          example: R`.plan { display: flex; flex-direction: column; gap: 8px; }
-.plan-btn { margin-block-start: auto; min-height: 44px; }
-.featured { background: #0f172a; color: #fff; order: -1; }
-@media (min-width: 720px) { .plans { grid-template-columns: repeat(3, 1fr); } .featured { order: 0; } }
-.opt:has(input:checked) { border: 2px solid #4f46e5; background: #eef2ff; }
-.opt:has(input:focus-visible) { outline: 3px solid #4f46e5; outline-offset: 2px; }`,
-          lines: [
-            R`كل باقة عمود flex: العنوان والسعر والمميزات والزرار فوق بعض، و 8px بينهم. وده اللي هيخلي الزرار يقدر يتزق لتحت.`,
-            R`[[margin-block-start: auto]] على الزرار بياكل كل المسافة الفاضية **فوقه** في العمود، فبيتزق لآخر الكارت. ولأن الـ grid بيخلي الكروت الـ ٣ بنفس الطول، الزراير بتقف على خط واحد. و 44px أقل طول مريح للصباع.`,
-            R`الباقة المميزة: الألوان معكوسة، و [[order: -1]] بيطلّعها الأول في العمود على الموبايل (الافتراضي [[order: 0]] لكل الباقي).`,
-            R`من 720px: ٣ عواميد متساوية بـ [[repeat(3, 1fr)]]، و [[order: 0]] بيرجّع المميزة لمكانها في النص زي الـ HTML.`,
-            R`الكارت اللي **جواه** radio مختار بياخد الإطار والخلفية. [[:has(input:checked)]] بيتحسب تاني كل ما الاختيار يتغير، من غير ولا سطر JavaScript.`,
-            R`لما الـ radio ياخد focus بالكيبورد، الإطار بيظهر على الكارت كله مش على الدايرة الصغيرة بس، فاللي بيستخدم Tab والأسهم شايف هو فين.`,
-          ],
-          teach: R`## الفكرة في سطر
-
-**كل جملة في الوصف = سطر في الفحص.** «الزراير على خط واحد» يعني [[bottom]] بتاع الـ ٣ زراير متساوي. «المميزة الأول على الموبايل» يعني [[top]] بتاعها أصغر واحد. ولو جملة مش قادر تقيسها، اسأل صاحب الوصف قبل ما تبني. كل الأرقام تحت من Chrome بـ Playwright على ويندوز ١١.
-
----
-
-## الخطوات من الوصف للصفحة
-
-1. **طلّع الأرقام والحالات:** اكتب جدول «الجملة ← الرقم اللي بيتقاس».
-2. **HTML من غير CSS:** لو الصفحة مش مفهومة من غير CSS (عناوين، و labels، وترتيب منطقي)، الهيكل غلط.
-3. **الموبايل الأول:** عمود واحد، وده غالبًا نص الشغل.
-4. **الشاشة العريضة** في [[@media (min-width: ...)]].
-5. **الحالات:** مختار، و focus، و hover، و disabled.
-6. **الفحص** على 1200 و 360، وبالكيبورد.
-
----
-
-## الجزء ١: الباقات [[#pricing]]
-
-| الجملة في الوصف | بتتقاس إزاي | القاعدة |
-|---|---|---|
-| ٣ جنب بعض بنفس العرض | [[width]] الـ ٣ متساوي و [[top]] متساوي | [[grid-template-columns: repeat(3, 1fr)]] |
-| بنفس الطول | [[height]] متساوي | الـ grid بيمد الخانات لطول أطول واحدة ([[align-items: stretch]] افتراضي) |
-| الزراير على خط واحد تحت | [[bottom]] الزراير متساوي | الكارت [[flex column]] والزرار [[margin-block-start: auto]] |
-| الوسطانية معكوسة | [[backgroundColor]] = [[rgb(15, 23, 42)]] و [[color]] أبيض | [[.featured]] |
-| على الموبايل المميزة الأول | [[top]] بتاعها أصغر واحد | [[order: -1]] تحت 720 |
-| الزراير ٤٤ | [[height]] ≥ 44 | [[min-height: 44px]] |
-
-> **[[order]] والكيبورد:** [[order]] بيغيّر الشكل بس، وترتيب Tab بيفضل ترتيب الـ HTML. يعني على الموبايل الباقة المميزة فوق، بس Tab بيوصل زرار «بداية» الأول. WCAG (1.3.2 و 2.4.3) بيطلب الترتيب يبقى منطقي، وهنا الفرق باقة واحدة فمقبول. لو الفرق أكبر من كده، رتّب الـ HTML بالترتيب الأهم، وحرّك على الشاشة العريضة بـ [[grid-column]] بدل [[order]].
-
-## الجزء ٢: شاشة الدخول [[#login]]
-
-| الجملة | بتتقاس إزاي | القاعدة |
-|---|---|---|
-| نصين على العريضة | عرض [[.art]] = نص عرض [[#login]] | [[grid-template-columns: 1fr 1fr]] من 900 |
-| الفورم مش أعرض من 400 في نص نصه | عرض الفورم ≤ 400 | [[max-width: 400px; margin-inline: auto]] |
-| الصورة مش موجودة على الموبايل | [[display]] = [[none]] | [[.art { display: none }]] وبترجع من 900 |
-| الحقول بعرض الفورم وطولها 44 | عرض كل حقل = عرض محتوى الفورم، والطول ≥ 44 | الفورم [[flex column]] و [[min-height: 44px]] |
-
-## الجزء ٣: اختيار التوصيل [[#picker]]
-
-| الجملة | بتتقاس إزاي | القاعدة |
-|---|---|---|
-| المختار بإطار بنفسجي من غير JS | الفحص بيدوس على الاختيار التاني ويقرا [[borderTopWidth]] و [[borderTopColor]] للتلاتة | [[.opt:has(input:checked)]] |
-| الـ radio لسه بيوصله Tab | [[display]] مش [[none]] و [[visibility]] مش [[hidden]] | [[accent-color]] بدل ما تخفيه وترسم واحد مزيف |
-| الـ focus على الكارت كله | (بالكيبورد بإيدك) | [[.opt:has(input:focus-visible)]] |
-
-ليه مش [[display: none]] على الـ radio وترسم دايرة بـ [[::before]]؟ لأن [[display: none]] بيشيل العنصر من شجرة الـ accessibility ومن Tab، فالاختيار بيبقى بالماوس بس. ولو لازم شكل مخصص، استخبى بصريًا بس ([[opacity: 0; position: absolute]]) أو استخدم [[appearance: none]] وارسم على الـ input نفسه.
-
----
-
-## الفحص الذاتي
-
-الفحص بيعمل اختبار حالة في الجزء ٣: بيعمل [[click()]] على الـ radio التاني، ويقرا الإطار على التلات كروت، ويرجّع الاختيار الأصلي. ده بيثبت إن الـ CSS بيتفاعل مع الحالة فعلًا مش مكتوب على كارت واحد ثابت.
-
-~~~js الفحص الذاتي: صفحات من وصف
-(() => {
-  const W = innerWidth, R = el => el.getBoundingClientRect(), cs = el => getComputedStyle(el);
-  const near = (a, b) => Math.abs(a - b) <= 1.5, px = v => Math.round(v) + 'px';
-  let pass = 0, all = 0;
-  const ok = (name, cond, why) => { all++; if (cond) pass++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (cond ? '' : ' ← ' + why)); };
-  console.log('عرض الشاشة ' + W + 'px: جرّب على 1200 و 360');
-  const plans = [...document.querySelectorAll('.plan')], rs = plans.map(R), feat = document.querySelector('.featured'), btns = plans.map(p => R(p.querySelector('.plan-btn')));
-  if (W >= 720) {
-    ok('1 الباقات: ٣ جنب بعض بنفس العرض والطول', rs.every(r => near(r.top, rs[0].top) && near(r.height, rs[0].height) && near(r.width, rs[0].width)), 'الأطوال ' + rs.map(r => px(r.height)).join(' و ') + ' والعروض ' + rs.map(r => px(r.width)).join(' و '));
-    ok('1 الباقات: الزراير على خط واحد تحت', btns.every(b => near(b.bottom, btns[0].bottom)), 'آخر الزراير عند ' + btns.map(b => px(b.bottom)).join(' و ') + ': خلي الكارت flex column والزرار margin-block-start: auto');
-  } else {
-    ok('1 الباقات: عمود واحد والمميزة الأول', rs.every(r => near(r.width, R(document.querySelector('.plans')).width)) && R(feat).top === Math.min(...rs.map(r => r.top)), 'على الموبايل كل باقة بعرض الصفحة، والمميزة فوق الكل');
-  }
-  ok('1 الباقة المميزة لونها معكوس', cs(feat).backgroundColor === 'rgb(15, 23, 42)' && cs(feat).color === 'rgb(255, 255, 255)', 'الخلفية ' + cs(feat).backgroundColor + ' والمطلوب #0f172a بكلام أبيض');
-  ok('1 الزراير ٤٤px على الأقل', btns.every(b => b.height >= 44), 'الطول ' + btns.map(b => px(b.height)).join(' و '));
-  const art = document.querySelector('.art'), form = document.querySelector('.login-form'), fields = [...form.querySelectorAll('input, button')];
-  if (W >= 900) ok('2 الدخول: نصين، والفورم في نص نصه', art.offsetWidth > 0 && near(R(art).width, R(document.querySelector('#login')).width / 2) && R(form).width <= 401, 'الصورة ' + px(R(art).width) + ' من ' + px(R(document.querySelector('#login')).width) + '، والفورم ' + px(R(form).width) + ' (أقصاه 400)');
-  else ok('2 الدخول: الصورة مستخبية والفورم بعرض الشاشة', cs(art).display === 'none' && R(form).right <= W && R(form).left >= 0, 'على الموبايل الصورة لازم display: none والفورم مايطلعش برا (الفورم من ' + px(R(form).left) + ' لـ ' + px(R(form).right) + ')');
-  ok('2 الحقول والزرار بعرض الفورم وطولهم ٤٤', fields.every(f => near(R(f).width, R(form).width - parseFloat(cs(form).paddingLeft) - parseFloat(cs(form).paddingRight)) && R(f).height >= 44), fields.map(f => px(R(f).width) + '×' + px(R(f).height)).join(' و '));
-  const opts = [...document.querySelectorAll('.opt')], radios = opts.map(o => o.querySelector('input'));
-  const border = o => cs(o).borderTopWidth + ' ' + cs(o).borderTopColor;
-  const on = '2px rgb(79, 70, 229)', before = radios.findIndex(r => r.checked);
-  const first = opts.map(border);
-  radios[1].click();
-  const second = opts.map(border);
-  radios[before].click();
-  ok('3 الاختيار: الكارت المختار بس عليه إطار بنفسجي', first[before] === on && second[1] === on && second.filter(b => b === on).length === 1, 'قبل الضغط: ' + first.join(' / ') + '، وبعد اختيار التاني: ' + second.join(' / ') + ' (من غير JS: .opt:has(input:checked))');
-  ok('3 الاختيار: الـ radio لسه بيتوصل بالكيبورد', radios.every(r => cs(r).display !== 'none' && cs(r).visibility !== 'hidden'), 'display: none على الـ input بيشيله من الـ Tab ومن قارئ الشاشة');
-  console.log('النتيجة: ' + pass + ' من ' + all);
-})();
-~~~
-
-### الحل الغلط
-
-الحل الغلط «شكله قريب» في لقطة شاشة: باقات [[inline-block]] بعرض [[30%]]، وصورة الدخول [[width: 50%]] على طول، وفورم [[width: 400px]] ثابت، و radio بـ [[display: none]] والإطار على [[.opt.checked]] (class المفروض JavaScript يحطها ومحدش بيحطها).
-
-~~~text Chrome على 1200، الحل الغلط
-عرض الشاشة 1200px: جرّب على 1200 و 360
-FAIL 1 الباقات: ٣ جنب بعض بنفس العرض والطول ← الأطوال 223px و 265px و 244px والعروض 350px و 350px و 350px
-FAIL 1 الباقات: الزراير على خط واحد تحت ← آخر الزراير عند 298px و 340px و 319px: خلي الكارت flex column والزرار margin-block-start: auto
-FAIL 1 الباقة المميزة لونها معكوس ← الخلفية rgba(0, 0, 0, 0) والمطلوب #0f172a بكلام أبيض
-PASS 1 الزراير ٤٤px على الأقل
-FAIL 2 الدخول: نصين، والفورم في نص نصه ← الصورة 584px من 1200px، والفورم 400px (أقصاه 400)
-FAIL 2 الحقول والزرار بعرض الفورم وطولهم ٤٤ ← 187px×33px و 187px×33px و 36px×17px
-FAIL 3 الاختيار: الكارت المختار بس عليه إطار بنفسجي ← قبل الضغط: 1px rgb(203, 213, 225) / 1px rgb(203, 213, 225) / 1px rgb(203, 213, 225)، وبعد اختيار التاني: 1px rgb(203, 213, 225) / 1px rgb(203, 213, 225) / 1px rgb(203, 213, 225) (من غير JS: .opt:has(input:checked))
-FAIL 3 الاختيار: الـ radio لسه بيوصله بالكيبورد ← display: none على الـ input بيشيله من الـ Tab ومن قارئ الشاشة
-النتيجة: 1 من 8
-~~~
-
-اقرا الأرقام: الصورة 584 من 1200 مش 600 لأن [[#login]] فيه padding 16 من كل ناحية، يعني «نص» بالـ [[%]] نص المحتوى مش نص الشاشة. والحقول 187px لأن [[<input>]] عرضه الافتراضي من الـ [[size]] بتاعه (حوالي ٢٠ حرف) مش من أبوه. والزرار 36 × 17: زرار «دخول» من غير padding ولا [[min-height]].
-
-~~~text Chrome على 360، الحل الغلط
-عرض الشاشة 360px: جرّب على 1200 و 360
-FAIL 1 الباقات: عمود واحد والمميزة الأول ← على الموبايل كل باقة بعرض الصفحة، والمميزة فوق الكل
-FAIL 1 الباقة المميزة لونها معكوس ← الخلفية rgba(0, 0, 0, 0) والمطلوب #0f172a بكلام أبيض
-PASS 1 الزراير ٤٤px على الأقل
-FAIL 2 الدخول: الصورة مستخبية والفورم بعرض الشاشة ← على الموبايل الصورة لازم display: none والفورم مايطلعش برا (الفورم من 16px لـ 255px)
-FAIL 2 الحقول والزرار بعرض الفورم وطولهم ٤٤ ← 187px×33px و 187px×33px و 36px×17px
-FAIL 3 الاختيار: الكارت المختار بس عليه إطار بنفسجي ← قبل الضغط: 1px rgb(203, 213, 225) / 1px rgb(203, 213, 225) / 1px rgb(203, 213, 225)، وبعد اختيار التاني: 1px rgb(203, 213, 225) / 1px rgb(203, 213, 225) / 1px rgb(203, 213, 225) (من غير JS: .opt:has(input:checked))
-FAIL 3 الاختيار: الـ radio لسه بيوصله بالكيبورد ← display: none على الـ input بيشيله من الـ Tab ومن قارئ الشاشة
-النتيجة: 1 من 7
-~~~
-
-الفورم «من 16px لـ 255px» على 360: الـ [[width: 400px]] اتجاهل لأن الفورم عنصر flex جنب الصورة، و [[flex-shrink: 1]] الافتراضي صغّره لحد ما الاتنين دخلوا. يعني [[width]] في flex «اقتراح» مش أمر.
-
-### الحل المرجعي
-
-~~~text Chrome على 1200
-عرض الشاشة 1200px: جرّب على 1200 و 360
-PASS 1 الباقات: ٣ جنب بعض بنفس العرض والطول
-PASS 1 الباقات: الزراير على خط واحد تحت
-PASS 1 الباقة المميزة لونها معكوس
-PASS 1 الزراير ٤٤px على الأقل
-PASS 2 الدخول: نصين، والفورم في نص نصه
-PASS 2 الحقول والزرار بعرض الفورم وطولهم ٤٤
-PASS 3 الاختيار: الكارت المختار بس عليه إطار بنفسجي
-PASS 3 الاختيار: الـ radio لسه بيوصله بالكيبورد
-النتيجة: 8 من 8
-~~~
-
-وعلى 360 السبعة PASS ([[7 من 7]]): سطر الباقات بقى «عمود واحد والمميزة الأول»، وسطر الدخول بقى «الصورة مستخبية». والباقات على 1200 عرض كل واحدة [[378.66]] تقريبًا، يعني [[(1168 − 2 × 16) / 3]] بالظبط.
-
-## خلاصة
-
-- كل جملة في الوصف = رقم بيتقاس = سطر في الفحص.
-- HTML سليم الأول، وبعدين الموبايل، وبعدين العريض، وبعدين الحالات.
-- «الزراير على خط واحد» = كروت بنفس الطول (grid) + كارت flex column + [[margin-block-start: auto]].
-- [[width]] في flex بيتصغّر لوحده، و [[<input>]] عرضه مش من أبوه.
-- [[:has(input:checked)]] بدل class من JavaScript، والـ radio الحقيقي يفضل موجود.
-- [[order]] بيغيّر الشكل مش ترتيب Tab.`,
-          try: R`خد الـ HTML من «الحل» من غير الـ CSS، وابني التلات أجزاء من الجداول اللي في الشرح بس (متبصش على الحل). الصق الفحص على 1200 وعلى 360 لحد ما يبقى [[8 من 8]] و [[7 من 7]]، وبعدين اتنقل في الصفحة كلها بـ Tab والأسهم بس.`,
+و [[peer]] على عنصر، و [[peer-user-invalid:]] أو [[peer-checked:]] على أخ جاي بعده: رسالة خطأ تظهر لما الحقل اللي قبلها غلط، من غير ولا سطر JavaScript.`,
+          example: R`<a href="/courses/1" className="group block rounded-xl border p-5 hover:border-brand">
+  <h3 className="font-bold group-hover:text-brand">كورس React</h3>
+  <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
+</a>
+<label className="grid gap-1">
+  <span>الإيميل</span>
+  <input type="email" required className="peer rounded border px-3 py-2" />
+  <span className="invisible text-sm text-red-600 peer-user-invalid:visible">إيميل مش صحيح</span>
+</label>`,
+          try: R`اعمل الكارت ده وقف عليه بالماوس. وبعدين اكتب إيميل غلط واخرج من الحقل: الرسالة هتظهر. جرّب [[peer-invalid:]] بدل [[peer-user-invalid:]] وشوف الفرق: الرسالة هتظهر من أول ما الصفحة تفتح.`,
+          flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٣ كروت في [[display: flex]] (مش grid)، كل كارت [[flex: 1]] وطول الكلام فيهم مختلف. الكروت هتبقى بنفس الطول؟ والزراير على خط واحد من غير [[margin-block-start: auto]]؟`, done: R`كتبت إن الطول هيتساوى (الـ flex row بيمد الأولاد بـ [[align-items: stretch]] زي الـ grid) بس الزراير لأ (كل زرار بعد الكلام بتاعه على طول)، وجربت وقست [[bottom]] الزراير وطلع مختلف، ولما زوّدت [[margin-block-start: auto]] اتساووا.`,
-              sol: R`~~~live 230 320 flex-cards.html
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** شبكة ٦ كروت «مشاكل وحلول»، كل كارت جواه دايرة زينة [[group-hover:scale-150]]، ومفيش حاجة بتتحرك أبدًا. الـ CSS اتولّد (grep بيلاقي [[group-hover\:scale-150]]). لاقي الناقص.`, done: R`الكارت ناقصه كلاس [[group]]، والقاعدة اللي اتولّدت [[:where(.group):hover .group-hover\:scale-150]] مستنية جد اسمه group. بعد ما زوّدته على الـ article الدايرة بتكبر.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>flex</title>
-<style>
-  .row { display: flex; gap: 12px; }
-  .card { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid #9ca3af; }
-  .card button { margin-block-start: auto; }
-</style></head>
-<body>
-  <main><h1>كروت</h1>
-    <div class="row">
-      <article class="card"><p>سطر</p><button>زرار</button></article>
-      <article class="card"><p>كلام أطول شوية بيقع على أكتر من سطر في العرض ده عشان نشوف الفرق بين الكروت في الطول</p><button>زرار</button></article>
-      <article class="card"><p>كلام متوسط الطول</p><button>زرار</button></article>
-    </div>
-  </main>
-</body></html>
-~~~
-
-- **الطول هيتساوى؟** آه. الـ flex row افتراضيًا [[align-items: stretch]]، فكل الأولاد بياخدوا ارتفاع أطول واحد، زي الـ grid.
-- **الزراير على خط واحد؟** لأ. الكارت طويل، بس الزرار بييجي بعد كلامه على طول، فكل واحد في مكان.
-
-[[display: flex; flex-direction: column]] على الكارت، و [[margin-block-start: auto]] على الزرار: الـ margin بيمتص كل الفراغ فوق الزرار، فبيقع في الآخر. وكلمة [[block-start]] logical، فمبتفرقش في اتجاه الكتابة.
-
-الغلطة الشائعة: تحط [[height]] ثابت للكلام. أي نص أطول يبوظ. الـ auto margin مبيعتمدش على طول الكلام.
-
-~~~text الناتج (Chrome 156: bottom لكل زرار، وارتفاع كل كارت)
-من غير auto margin: الكروت 141 / 141 / 141، والأزرار 172 / 208 / 172
-بـ auto margin:     الكروت 141 / 141 / 141، والأزرار 208 / 208 / 208
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني من وصف:** «كارت منتج: صورة نسبتها 4:5 فوق، والاسم سطرين بالكتير وبعدهم [[…]]، والسعر، وزرار "أضف للسلة" تحت خالص. ٤ كروت في الصف على الكمبيوتر، و ٢ على الموبايل. وعلى الكارت اللي الماوس عليه (أو الـ focus جواه) الصورة تكبر 5٪ من غير ما تطلع برا الكارت». اكتب جدول «الجملة ← القياس» الأول، وبعدين ابني، وبعدين اكتب فحص.`, done: R`الجدول فيه ٧ جمل على الأقل، والفحص بيقيس نسبة الصورة ([[width / height]] = 0.8)، وإن الاسم مش أكتر من سطرين ([[-webkit-line-clamp: 2]] وارتفاعه ≤ سطرين)، وإن الزراير على خط واحد، وعدد العواميد على 1200 و 360. و [[:focus-within]] بيكبّر الصورة بالكيبورد كمان.`,
-              sol: R`~~~text جدول «الجملة ← القياس»
-صورة نسبتها 4:5         ← width / height = 0.8
-فوق                     ← img.top < name.top
-اسم سطرين بالكتير       ← ارتفاع الاسم ≤ سطرين، و -webkit-line-clamp: 2
-وبعدهم …                ← overflow: hidden مع clamp
-زرار تحت خالص           ← كل bottom الزراير متساوي
-٤ في الصف على الكمبيوتر ← 4 كروت بنفس top على 1200
-٢ على الموبايل          ← 2 كروت بنفس top على 360
-الصورة تكبر 5٪          ← transform: scale(1.05) عند hover و focus-within
-من غير ما تطلع برا      ← overflow: hidden على غلاف الصورة
-~~~
-
-~~~live 600 720 product-grid.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>منتجات</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, sans-serif; }
-  .grid { display: grid; gap: 12px; padding: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  @media (min-width: 800px) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .card { display: flex; flex-direction: column; gap: 8px; }
-  .pic { aspect-ratio: 4 / 5; overflow: hidden; border-radius: 8px; }
-  .pic img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; transition: transform .25s; background: #c7d2fe; }
-  .card:hover img, .card:focus-within img { transform: scale(1.05); }
-  .name { margin: 0; font-size: 1rem; line-height: 1.5;
-          display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-  .price { margin: 0; font-weight: 700; }
-  .add { margin-block-start: auto; min-block-size: 44px; font: inherit; }
-  @media (prefers-reduced-motion: reduce) { .pic img { transition: none; } }
-</style></head>
-<body>
-  <main class="grid" id="g"><h1 style="grid-column: 1 / -1; margin: 0">المنتجات</h1></main>
-  <script>
-    const names = ["كوب", "سماعة لاسلكية بعزل ضوضاء وبطارية طويلة تدوم أربعين ساعة ومعاها شاحن سريع وعلبة", "مصباح مكتب", "كرسي"];
-    document.getElementById("g").insertAdjacentHTML("beforeend", names.map((n) => $__bt
-      <article class="card">
-        <div class="pic"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="$__{n}" width="400" height="500"></div>
-        <h2 class="name">$__{n}</h2><p class="price">٢٥٠ جنيه</p>
-        <button class="add" type="button">أضف للسلة</button>
-      </article>$__bt).join(""));
-  $__lt/script>
-</body></html>
-~~~
-
-الجدول بيتكتب الأول، لأنه بيحوّل الوصف لأسئلة بأرقام. كل جملة ليها قياس، فلو الفحص عدّى يبقى الوصف اتنفذ.
-
-- [[aspect-ratio: 4 / 5]] على [[.pic]] بيحجز المكان، و [[overflow: hidden]] هو اللي بيمنع الصورة تطلع لما تكبر.
-- [[object-fit: cover]] بيملا الخانة من غير ما يغيّر نسبة الصورة.
-- [[-webkit-line-clamp: 2]] مع [[display: -webkit-box]] و [[overflow: hidden]]: الأربعة مع بعض.
-- [[margin-block-start: auto]] زرار تحت خالص.
-- [[.card:focus-within img]]: الكيبورد بياخد نفس الأثر لما يوصل للزرار.
-
-الغلطة الشائعة: [[transform: scale]] على [[.pic]] بدل [[img]]: الغلاف نفسه هيكبر، والكروت تتداخل.
-
-~~~text الناتج (Chrome 156)
-نسبة الصورة: 0.800
-الاسم: ارتفاعه 48، وطوله الحقيقي 72 (سطرين: 48)
-الزراير: bottom = 560 / 560 / 560 / 560
-أعمدة على 1200: 4، وعلى 360: 2
-scale عند focus-within: matrix(1.05, 0, 0, 1.05, 0, 0)
-axe: 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** اختيار باقات بـ [[<div class="opt" onclick="select(this)">]] و JavaScript بيحط [[.active]]، والـ radio مستخبي بـ [[display: none]]. حوّله لـ [[<label>]] و [[<input type="radio">]] حقيقي و [[:has()]] بس، وامسح الـ JavaScript كله.`, done: R`مفيش [[<script>]] في الصفحة، والأسهم في الكيبورد بتنقل الاختيار بين الكروت (ده سلوك الـ radio الطبيعي)، والفحص بند ٣ الاتنين PASS، والفورم لما يتبعت [[FormData]] فيه القيمة المختارة.`,
-              sol: R`~~~live 310 310 plans-radio.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>اختيار الباقة</title>
-<style>
-  body { font-family: system-ui, sans-serif; margin: 1rem; }
-  .options { border: 0; padding: 0; display: grid; gap: 8px; max-inline-size: 24rem; }
-  .opt { display: flex; gap: .5rem; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; cursor: pointer; }
-  .opt input { accent-color: #4f46e5; }
-  .opt:has(input:checked) { border: 2px solid #4f46e5; background: #eef2ff; }
-  .opt:has(input:focus-visible) { outline: 3px solid #4f46e5; outline-offset: 2px; }
-</style></head>
-<body>
-  <main><h1>اختار باقة</h1>
-    <form id="f">
-      <fieldset class="options">
-        <legend>الباقة</legend>
-        <label class="opt"><input type="radio" name="plan" value="basic" checked> بداية</label>
-        <label class="opt"><input type="radio" name="plan" value="pro"> محترف</label>
-        <label class="opt"><input type="radio" name="plan" value="team"> شركات</label>
-      </fieldset>
-      <button>تأكيد</button>
-    </form>
-  </main>
-</body></html>
-~~~
-
-الـ JavaScript القديم كان بيعيد كتابة حاجة موجودة في المتصفح: حالة الاختيار، والأسهم، وقيمة الفورم. [[<input type="radio">]] بيدّيهم، و [[:has()]] بيخلي الكارت يقرا الحالة من غير سطر.
-
-- [[<label>]] حوالين الـ input: الكارت كله بيتداس.
-- نفس [[name]]: واحد بس يتحدد، والأسهم بتنقل بينهم.
-- [[.opt:has(input:checked)]] الشكل، و [[:has(input:focus-visible)]] حلقة الكيبورد.
-- الدايرة ظاهرة هنا، فمفيش حاجة مخفية، وده أبسط.
-- [[FormData]]: القيمة بتروح مع الفورم لوحدها. ده اللي كان ناقص في الـ [[div]].
-
-الغلطة الشائعة: تسيب [[.active]] جنب [[:has()]] «للاحتياط»، فيبقى فيه حالتين يتزامنوا.
-
-~~~text الناتج (Chrome 156)
-script في الصفحة: 0
-سهم شمال: اتحدد pro، وحد الكارت rgb(79, 70, 229)
-FormData: {"plan":"pro"}
-الفحص الذاتي: على الحل المرجعي: PASS 3 الاختيار: الكارت المختار بس علي / PASS 3 الاختيار: الـ radio لسه بيتوصل 
-axe: 0
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** على الموبايل، اعمل الباقة المميزة الأول مرة بـ [[order: -1]] ومرة بإنك تحطها أول في الـ HTML وتحركها على العريضة بـ [[grid-column: 2; grid-row: 1]]. في الحالتين، اكتب ترتيب Tab على 360 وعلى 1200.`, done: R`عندك جدول فيه ٤ ترتيبات Tab (طريقتين × عرضين)، ومكتوب أنهي طريقة بتخلي ترتيب Tab زي الشكل على الموبايل وأنهي على الكمبيوتر، وقرارك أنهي أحسن للصفحة دي وليه.`,
-              sol: R`~~~css الطريقة ١: order
-.plans { display: grid; gap: 16px; }
-.featured { order: -1; }
-@media (min-width: 720px) { .plans { grid-template-columns: repeat(3, 1fr); } .featured { order: 0; } }
-~~~
-
-~~~css الطريقة ٢: المميزة أول في الـ HTML، وبتتحرك على العريضة
-.plans { display: grid; gap: 16px; }
-@media (min-width: 720px) {
-  .plans { grid-template-columns: repeat(3, 1fr); }
-  .featured { grid-column: 2; grid-row: 1; }
-}
-~~~
-
-~~~view 200 510 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-body { font-family: system-ui, sans-serif; margin: 1rem; } .plan { padding: 1rem; border: 1px solid #cbd5e1; border-radius: 10px; } .featured { background: #0f172a; color: #fff; } .featured a { color: #fff; }
-</style>
-<style>
-/* من الحل */
-.plans { display: grid; gap: 16px; }
-.featured { order: -1; }
-@media (min-width: 720px) { .plans { grid-template-columns: repeat(3, 1fr); } .featured { order: 0; } }
-</style>
-</head>
-<body>
-<p>الطريقة ١ (order): على «موبايل» المميزة فوق، وعلى الكامل في النص. دوس Tab وشوف الترتيب.</p>
-<div class="plans"><article class="plan"><h2>أساسي</h2><a href="#">اختار</a></article><article class="plan featured"><h2>المميزة</h2><a href="#">اختار</a></article><article class="plan"><h2>فريق</h2><a href="#">اختار</a></article></div>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>group</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-6">
+<main class="grid gap-4 sm:grid-cols-3">
+  <article id="card" class="group relative overflow-hidden rounded-xl border border-gray-300 p-6">
+    <span id="dot" aria-hidden="true" class="absolute -end-4 -top-4 size-16 rounded-full bg-teal-200 transition-transform group-hover:scale-150"></span>
+    <h2 class="relative font-bold">المشكلة</h2>
+    <p class="relative mt-2 text-gray-600">العملا مش لاقيين المنتج.</p>
+  </article>
+</main>
 </body>
 </html>
 ~~~
 
-[[order]] و [[grid-column]] بيغيّروا الشكل بس. ترتيب Tab وترتيب قارئ الشاشة بيفضلوا ترتيب الـ HTML. فأي مرة الشكل يختلف عن الـ HTML، مستخدم الكيبورد بيقفز بعينه.
+الناقص كلمة واحدة: [[group]] على الـ [[<article>]].
 
-- **order:** على الموبايل الشكل [محترف، بداية، شركات]، و Tab [بداية، محترف، شركات]: مختلفين. على الكمبيوتر متطابقين.
-- **HTML + grid-column:** على الموبايل الشكل زي الـ HTML. على الكمبيوتر الشكل [بداية، محترف، شركات] و Tab [محترف، بداية، شركات]: مختلفين.
+**ليه:** [[group-hover:scale-150]] مش معناها «لما تقف على العنصر ده»، معناها «لما تقف على أب اسمه group». القاعدة اللي اتولّدت بتقول [[:where(.group):hover .group-hover\:scale-150]]، يعني الـ selector محتاج جد عليه كلاس [[group]].
 
-القرار: الطريقة ٢ للصفحة دي لو أغلب الزوار موبايل، لأن الموبايل بيبقى سليم، وهي أهم لأن Tab على الكمبيوتر بيقفز في صف واحد قريب. ولو عايز الاتنين سليم، خلي الباقة المميزة في النص في الاتنين.
+عشان كده grep لاقى الكلاس، والـ CSS سليم، ومفيش error، والحركة مبتحصلش.
 
-الغلطة الشائعة: تعتبر ترتيب Tab «بيمشي مع الشكل». WCAG 2.4.3 بيقول لازم يبقى منطقي.
+**الغلطة الشائعة:** تدوّر في ملف الـ CSS أو تعيد الـ build. الـ CSS مولود سليم، الناقص في الـ HTML.
 
-~~~text الناتج (Chrome 156: ترتيب الشكل مقابل ترتيب Tab)
-order على 360:      شكل محترف، بداية، شركات  ← Tab بداية، محترف، شركات  (مختلف)
-order على 1200:     شكل بداية، محترف، شركات  ← Tab بداية، محترف، شركات  (متطابق)
-HTML على 360:       شكل محترف، بداية، شركات  ← Tab محترف، بداية، شركات  (متطابق)
-HTML على 1200:      شكل بداية، محترف، شركات  ← Tab محترف، بداية، شركات  (مختلف)
-~~~` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** زوّد على الفحص بند لجملة جديدة في الوصف: «لما اليوزر يختار "استلام من الفرع"، يظهر تحت الكروت حقل "اختار الفرع"، ويختفي مع الاختيارين التانيين، من غير JavaScript». ابنيه بـ [[:has()]] على الـ [[fieldset]] أو الـ section، واكتب الـ [[ok(...)]] اللي يختبره بالـ [[click()]].`, done: R`الحقل بيظهر ويختفي بـ [[#picker:has(input[value="pickup"]:checked) .branch { display: block }]]، والفحص بيدوس على التلاتة واحد واحد ويقيس [[display]] بتاع الحقل في كل مرة ويرجّع الاختيار الأصلي، وبيطبع PASS، ولو شيلت القاعدة بيطبع FAIL برسالة فيها الاختيار اللي فشل.`,
-              sol: R`~~~live 150 150 delivery.html
+~~~text الناتج
+عرض الدايرة وقوف عادي:            64px
+hover على الكارت (فيه group):      96px
+hover من غير كلاس group:           64px (متغيرتش)
+~~~
+
+~~~view 160 160 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>التوصيل</title>
-<style>
-  .branch { display: none; }
-  #picker:has(input[value="pickup"]:checked) .branch { display: block; }
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>group</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid;--tw-font-weight:initial;--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-teal-200:oklch(91% .096 180.426);--color-gray-300:oklch(87.2% .01 258.338);--color-gray-600:oklch(44.6% .03 256.802);--spacing:.25rem;--font-weight-bold:700;--radius-xl:.75rem;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.absolute{position:absolute}.relative{position:relative}.-end-4{inset-inline-end:calc(var(--spacing) * -4)}.-top-4{top:calc(var(--spacing) * -4)}.mt-2{margin-top:calc(var(--spacing) * 2)}.grid{display:grid}.size-16{width:calc(var(--spacing) * 16);height:calc(var(--spacing) * 16)}.gap-4{gap:calc(var(--spacing) * 4)}.overflow-hidden{overflow:hidden}.rounded-full{border-radius:2147483647px}.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-gray-300{border-color:var(--color-gray-300)}.bg-teal-200{background-color:var(--color-teal-200)}.p-6{padding:calc(var(--spacing) * 6)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.text-gray-600{color:var(--color-gray-600)}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){:is(:where(.group):hover .group-hover\:scale-150){--tw-scale-x:150%;--tw-scale-y:150%;--tw-scale-z:150%;scale:var(--tw-scale-x) var(--tw-scale-y)}}@media (min-width:40rem){.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}
 </style></head>
-<body>
-  <main><h1>الاستلام</h1>
-    <section id="picker">
-      <fieldset class="options">
-        <legend>طريقة الاستلام</legend>
-        <label class="opt"><input type="radio" name="d" value="home" checked> توصيل للبيت</label>
-        <label class="opt"><input type="radio" name="d" value="office"> توصيل للشغل</label>
-        <label class="opt"><input type="radio" name="d" value="pickup"> استلام من الفرع</label>
-      </fieldset>
-      <div class="branch">
-        <label for="b">اختار الفرع</label>
-        <select id="b"><option>المعادي</option><option>مدينة نصر</option></select>
-      </div>
-    </section>
-  </main>
-</body></html>
-~~~
-
-~~~js السطر الجديد في الفحص (قبل سطر النتيجة، وجوه { } لأن الفحص فيه radios قبله)
-{
-const radios = [...document.querySelectorAll('#picker input[name=d]')];
-const branch = document.querySelector('#picker .branch');
-const start = radios.find((r) => r.checked);
-const wrong = [];
-for (const r of radios) {
-  r.click();
-  const shown = getComputedStyle(branch).display !== 'none';
-  if (shown !== (r.value === 'pickup')) wrong.push(r.value + (shown ? ' (ظهر وهو المفروض يختفي)' : ' (اختفى وهو المفروض يظهر)'));
-}
-start.click();
-ok('4 الفرع بيظهر مع الاستلام بس', !wrong.length, 'الاختيار اللي فشل: ' + wrong.join(' و '));
-}
-~~~
-
-**ليه القوسين:** الفحص الأصلي معرّف [[const radios]] لأسئلة الاختيار. لو لزقت السطور دي جواه من غير [[{ }]]، المتصفح بيرفض الفحص كله: [[SyntaxError: Identifier 'radios' has already been declared]]. القوسين بيعملوا scope جديد، فالـ [[radios]] اللي جوه غير اللي برّه.
-
-قاعدة الـ CSS كلها سطر: «في [[#picker]] لو الاختيار المحدد [[pickup]]، اعرض [[.branch]]». [[#picker:has(...)]] بيبص لتحت، ثم [[.branch]] مكانه تحت الأب نفسه.
-
-الفحص بيدوس كل اختيار بـ [[click()]] زي مستخدم، ويقيس [[display]]، وآخر حاجة بيرجّع الاختيار الأصلي عشان ميسيبش الصفحة متغيرة. والرسالة فيها الاختيار اللي فشل بالاسم.
-
-الغلطة الشائعة: تختبر حالة واحدة بس (الاستلام يظهر)، وتنسى إن الباقي لازم يخفي. و [[display: none]] بيشيل الـ [[select]] من Tab كمان، وده المطلوب.
-
-~~~text الناتج (Chrome 156)
-بالقاعدة: PASS 4 الفرع بيظهر مع الاستلام بس
-الاختيار رجع لـ: home
-من غير القاعدة: FAIL 4 الفرع بيظهر مع الاستلام بس ← الاختيار اللي فشل: pickup (اختفى وهو المفروض يظهر)
+<body class="p-6">
+<main class="grid gap-4 sm:grid-cols-3">
+  <article id="card" class="group relative overflow-hidden rounded-xl border border-gray-300 p-6">
+    <span id="dot" aria-hidden="true" class="absolute -end-4 -top-4 size-16 rounded-full bg-teal-200 transition-transform group-hover:scale-150"></span>
+    <h2 class="relative font-bold">المشكلة</h2>
+    <p class="relative mt-2 text-gray-600">العملا مش لاقيين المنتج.</p>
+  </article>
+</main>
+</body>
+</html>
 ~~~` },
-          ],
-          deep: {
-            why: R`الوصف المكتوب هو أكتر شكل للمتطلبات في الشغل، وأكتر مصدر للخلاف: «قلتلك الزراير على خط واحد» و «ما هي على خط واحد عندي». لما كل جملة تبقى سطر في فحص، الخلاف بيتحسم برقم، والتسليم بيبقى «الفحص بيقول ٨ من ٨ على العرضين» مش «بص كده كويس».`,
-            how: R`الـ grid بيحسب طول كل صف من أطول خانة فيه، وبيمد الخانات التانية ([[align-items: stretch]])، فالكروت الـ ٣ بنفس الطول. وجوه كل كارت الـ flex column بيوزّع العناصر من فوق لتحت، والـ [[auto]] margin بياكل كل المسافة الفاضية في اتجاهه، فالزرار بينزل لآخر الكارت. و [[order]] بيغيّر مكان الرسم بس، وشجرة الـ DOM (اللي Tab وقارئ الشاشة بيمشوا عليها) زي ما هي. و [[:has(input:checked)]] بيتطابق على الأب لما أي ولد يطابق [[input:checked]]، والمتصفح بيعيد حساب الـ selector ده لما حالة الـ input تتغير، من غير ما انت تعمل حاجة. و [[<input>]] عنصر replaced عرضه الافتراضي من [[size]] (٢٠ حرف تقريبًا)، فـ [[width: 100%]] أو flex column بيخليه ياخد عرض أبوه.`,
-            when: R`أي وقت المتطلبات جاية كلام: اعمل جدول «الجملة ← القياس» قبل الكود، وابعته لصاحب الوصف يوافق عليه (كده انت بتلقط الجمل المبهمة بدري). و [[:has()]] لأي حالة الأب بيتغير فيها بسبب ولد (كارت مختار، و فورم فيه خطأ، و قايمة مفتوحة)، وهو Baseline في كل المتصفحات من ديسمبر ٢٠٢٣. و JavaScript لما الحالة محتاجة بيانات (السعر بيتحسب) مش شكل بس.`,
-            mistakes: R`تبني الشاشة العريضة الأول وبعدين «تصغّرها». أو تعمل الزراير على خط واحد بـ [[height]] ثابت للكروت فالكلام الطويل يطلع برا. أو [[display: none]] على الـ radio. أو class من JavaScript لحالة الـ CSS يعرفها لوحده. أو [[order]] كبير بيقلب الصفحة كلها والكيبورد ماشي بترتيب تاني خالص. أو [[width: 400px]] على عنصر flex وتستغرب إنه 239. أو [[width: 50%]] وتفتكر إنه نص الشاشة وهو نص المحتوى بعد الـ padding. أو تقيس على عرض واحد.`,
-          },
-          sol: R`الحل المرجعي الصفحة كاملة تحت، وده اللي طلّع [[8 من 8]] على 1200 و [[7 من 7]] على 360. الـ HTML هو نفسه في الحل الغلط والصح: الفرق كله في الـ CSS. أهم السطور: [[.plan { display: flex; flex-direction: column }]] و [[.plan-btn { margin-block-start: auto }]]، و [[.featured { order: -1 }]] ترجع [[0]] من 720، و [[#login]] grid بيبقى عمودين من 900 والصورة [[display: none]] تحت كده، والفورم [[max-width: 400px; margin-inline: auto]]، و [[.opt:has(input:checked)]].
-
-وحطيت الـ CSS البايظ في تعليق في آخر الـ [[<style>]] عشان تجربه: امسح سطور الحل وحط دول مكانهم.`,
-          solCode: R`<!doctype html>
+            { lvl: 'تطبيق', t: R`**ابني:** حقل بـ floating label: [[<input placeholder=" " class="peer">]] وبعده [[<label>]] بيتحرك فوق بـ [[peer-focus:]] و [[peer-not-placeholder-shown:]].`, done: R`الـ label جوه الحقل وهو فاضي، وبيطلع فوق لما تدوس أو تكتب، وبيفضل فوق لو فيه كلام وخرجت، و Tab بيعمل نفس الحركة، ومفيش JavaScript.`, sol: R`~~~html index.html
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>صفحات</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, sans-serif; }
-section { padding: 24px 16px; }
-.plan { border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; }
-.plan-btn { background: #4f46e5; color: #fff; text-align: center; padding: 12px; text-decoration: none; border-radius: 8px; }
-.login-form input { border: 1px solid #94a3b8; padding: 8px; }
-.login-btn { background: #4f46e5; color: #fff; border: 0; }
-.art { background: linear-gradient(135deg, #c7d2fe, #fbcfe8); }
-.options { border: 0; padding: 0; display: grid; gap: 8px; }
-.opt { border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; }
-.plans { display: grid; gap: 16px; }
-.plan { display: flex; flex-direction: column; gap: 8px; }
-.plan-btn { margin-block-start: auto; min-height: 44px; }
-.featured { background: #0f172a; color: #fff; order: -1; }
-@media (min-width: 720px) { .plans { grid-template-columns: repeat(3, 1fr); } .featured { order: 0; } }
-#login { display: grid; min-height: 480px; }
-.art { display: none; }
-.login-form { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 400px; margin-inline: auto; align-self: center; }
-.login-form input, .login-btn { min-height: 44px; font: inherit; }
-@media (min-width: 900px) { #login { grid-template-columns: 1fr 1fr; padding: 0; } .art { display: block; } }
-.opt:has(input:checked) { border: 2px solid #4f46e5; background: #eef2ff; }
-.opt:has(input:focus-visible) { outline: 3px solid #4f46e5; outline-offset: 2px; }
-.opt input { accent-color: #4f46e5; }
-/* الحل الغلط اللي اتجرّب: امسح السطور من .plans لحد .opt input اللي فوق، وحط دول مكانها:
-.plan { display: inline-block; width: 30%; vertical-align: top; }
-.plan-btn { display: block; }
-#login { display: flex; }
-.art { width: 50%; min-height: 480px; }
-.login-form { width: 400px; padding: 24px; }
-.opt input { display: none; }
-.opt.checked { border: 2px solid #4f46e5; background: #eef2ff; }
-*/
-</style></head>
-<body>
-<section id="pricing" aria-labelledby="p-title">
-  <h2 id="p-title">الباقات</h2>
-  <div class="plans">
-    <article class="plan"><h3>بداية</h3><p class="price">٩٩ ج.م.</p><ul><li>١٠ طلبات</li></ul><a class="plan-btn" href="#">اختار</a></article>
-    <article class="plan featured"><h3>محترف</h3><p class="price">١٩٩ ج.م.</p><ul><li>طلبات من غير حد</li><li>دعم سريع</li><li>تقارير</li></ul><a class="plan-btn" href="#">اختار</a></article>
-    <article class="plan"><h3>شركات</h3><p class="price">٤٩٩ ج.م.</p><ul><li>كل حاجة</li><li>مدير حساب</li></ul><a class="plan-btn" href="#">كلّمنا</a></article>
+<title>floating label</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-8">
+<main class="max-w-sm">
+  <h1 class="mb-6 text-2xl font-bold">تسجيل</h1>
+  <div class="relative">
+    <input id="email" type="email" placeholder=" "
+           class="peer w-full rounded-lg border border-gray-400 px-3 pt-6 pb-2 focus:border-teal-700 focus:outline-2 focus:outline-teal-700">
+    <label for="email"
+           class="pointer-events-none absolute start-3 top-4 text-gray-600 transition-all peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-teal-700 peer-not-placeholder-shown:top-1.5 peer-not-placeholder-shown:text-xs">الإيميل</label>
   </div>
-</section>
-<section id="login">
-  <div class="art" aria-hidden="true"></div>
-  <form class="login-form">
-    <h2>ادخل حسابك</h2>
-    <label for="l-email">الإيميل</label><input id="l-email" type="email" autocomplete="email" dir="ltr">
-    <label for="l-pass">كلمة السر</label><input id="l-pass" type="password" autocomplete="current-password">
-    <button class="login-btn">دخول</button>
-  </form>
-</section>
-<section id="picker">
-  <h2>اختار طريقة التوصيل</h2>
-  <fieldset class="options"><legend>التوصيل</legend>
-    <label class="opt"><input type="radio" name="ship" value="normal" checked> عادي (٣ أيام)</label>
-    <label class="opt"><input type="radio" name="ship" value="fast"> سريع (يوم)</label>
-    <label class="opt"><input type="radio" name="ship" value="pickup"> استلام من الفرع</label>
-  </fieldset>
-</section>
+  <a href="#next" class="mt-4 inline-block py-2">الخطوة الجاية</a>
+</main>
 </body>
-</html>`,
-          flag: "script",
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const css = ".opt input { display: none; }\n.opt.checked { border: 2px solid #4f46e5; }\n.opt:has(input:checked) { border: 2px solid #4f46e5; }\n.plan-btn { margin-block-start: auto; }\n";
-const problems = [];
-css.split("\n").forEach((l, i) => {
-  if (/(input|\[type=radio\]|\[type=checkbox\])[^{]*\{[^}]*display:\s*none/.test(l)) problems.push("line " + (i + 1) + ": hidden radio can't get keyboard focus");
-  if (/\.(checked|active|selected)\b/.test(l) && !/:has\(/.test(l)) problems.push("line " + (i + 1) + ": state class needs JS; :has(input:checked) doesn't");
-});
-console.log(problems.length + " problems"); problems.forEach(p => console.log("  " + p));
-const equal = (w, gap, n) => ((w - gap * (n - 1)) / n).toFixed(1);
-console.log("3 plans in 1168px with gap 16: " + equal(1168, 16, 3) + "px each");`, expect: [R`2 problems`, R`line 1: hidden radio can't get keyboard focus`, R`line 2: state class needs JS; :has(input:checked) doesn't`, R`3 plans in 1168px with gap 16: 378.7px each`] },
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[placeholder=" "]] مسافة واحدة، مش فاضي. ده بيدّينا [[:placeholder-shown]] كحالة «الحقل فاضي». من غيره الـ selector مش هيشتغل خالص.
+- [[peer]] على الـ input، والـ label بعده في الـ HTML، فالـ label يقدر يقرا حالته.
+- [[peer-focus:]] لما الحقل عليه focus، و [[peer-not-placeholder-shown:]] لما فيه كلام. الاتنين بيرفعوا الـ label، فبيفضل فوق لو كتبت وخرجت.
+- [[pointer-events-none]]: الضغط على الـ label يعدّي للحقل.
+
+الـ [[<label for="email">]] حقيقي، فالاسم وصل لقارئ الشاشة، مش placeholder.
+
+**الغلطة الشائعة:** تحط الـ label قبل الـ input عشان ده ترتيب القراية. [[peer-*]] مبتشوفش غير اللي بعدها.
+
+~~~text الناتج
+                       top     font-size
+فاضي من غير focus      16px    16px
+Tab (focus)            6px     12px
+كتبت وعملت Tab برا     6px     12px
+مسحت الكلام وخرجت      16px    16px
+
+عدد الـ scripts: 0
+على 360: scrollWidth = clientWidth ، axe صفر
+~~~
+
+~~~view 240 240 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>floating label</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid;--tw-font-weight:initial;--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-teal-700:oklch(51.1% .096 186.391);--color-gray-400:oklch(70.7% .022 261.325);--color-gray-600:oklch(44.6% .03 256.802);--spacing:.25rem;--container-sm:24rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-bold:700;--radius-lg:.5rem;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.absolute{position:absolute}.relative{position:relative}.start-3{inset-inline-start:calc(var(--spacing) * 3)}.top-4{top:calc(var(--spacing) * 4)}.mt-4{margin-top:calc(var(--spacing) * 4)}.mb-6{margin-bottom:calc(var(--spacing) * 6)}.inline-block{display:inline-block}.w-full{width:100%}.max-w-sm{max-width:var(--container-sm)}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-gray-400{border-color:var(--color-gray-400)}.p-8{padding:calc(var(--spacing) * 8)}.px-3{padding-inline:calc(var(--spacing) * 3)}.py-2{padding-block:calc(var(--spacing) * 2)}.pt-6{padding-top:calc(var(--spacing) * 6)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.text-gray-600{color:var(--color-gray-600)}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}:is(:where(.peer):not(:placeholder-shown)~.peer-not-placeholder-shown\:top-1\.5){top:calc(var(--spacing) * 1.5)}:is(:where(.peer):not(:placeholder-shown)~.peer-not-placeholder-shown\:text-xs){font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}:is(:where(.peer):focus~.peer-focus\:top-1\.5){top:calc(var(--spacing) * 1.5)}:is(:where(.peer):focus~.peer-focus\:text-xs){font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}:is(:where(.peer):focus~.peer-focus\:text-teal-700){color:var(--color-teal-700)}.focus\:border-teal-700:focus{border-color:var(--color-teal-700)}.focus\:outline-2:focus{outline-style:var(--tw-outline-style);outline-width:2px}.focus\:outline-teal-700:focus{outline-color:var(--color-teal-700)}}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}
+</style>
+</head>
+<body class="p-8">
+<main class="max-w-sm">
+  <h1 class="mb-6 text-2xl font-bold">تسجيل</h1>
+  <div class="relative">
+    <input id="email" type="email" placeholder=" "
+           class="peer w-full rounded-lg border border-gray-400 px-3 pt-6 pb-2 focus:border-teal-700 focus:outline-2 focus:outline-teal-700">
+    <label for="email"
+           class="pointer-events-none absolute start-3 top-4 text-gray-600 transition-all peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-teal-700 peer-not-placeholder-shown:top-1.5 peer-not-placeholder-shown:text-xs">الإيميل</label>
+  </div>
+  <a href="#next" class="mt-4 inline-block py-2">الخطوة الجاية</a>
+</main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[<span class="peer-invalid:visible invisible">خطأ</span><input class="peer" required>]] (الرسالة **قبل** الحقل). هتظهر؟ ليه؟`, done: R`مش هتظهر أبدًا: [[peer-*]] بيتحول لـ [[~]] في CSS، والـ [[~]] بيختار الإخوات اللي **بعد** العنصر بس. بعد ما نقلت الرسالة بعد الـ input اشتغلت.`, sol: R`~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>peer</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-8">
+<main>
+<div>
+  <span id="before" class="peer-invalid:visible invisible">خطأ</span>
+  <input class="peer border" required aria-label="قبل">
+</div>
+<div>
+  <input class="peer border" required aria-label="بعد">
+  <span id="after" class="peer-invalid:visible invisible">خطأ</span>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+**الإجابة:** مش هتظهر أبدًا لو الرسالة قبل الحقل.
+
+**ليه:** [[peer-invalid:visible]] بيتحول لـ selector فيه [[~]]، يعني «عنصر [[.peer]] غير صالح وبعده الأخ ده». و [[~]] في CSS بيمشي لقدام بس، مفيش طريقة يرجع بيها لأخ قبله.
+
+الصفحة فيها الحالتين، والحقلين فاضيين و [[required]]، يعني الاتنين [[:invalid]] من الأول.
+
+**وملحوظة:** الرسالة هنا بتبان من أول ما الصفحة تفتح لأن الحقل الفاضي invalid. في الشغل الحقيقي استخدم [[user-invalid:]] عشان تظهر بعد ما المستخدم يتعامل مع الحقل.
+
+**الغلطة الشائعة:** تزوّد [[peer]] تاني أو تغيّر اسمه. المشكلة في الترتيب مش في الاسم. ولو لازم الرسالة تبان فوق الحقل، خليها بعده في الـ HTML وارفعها بـ [[order]] أو grid، أو استخدم [[:has()]] على الأب.
+
+~~~text الناتج
+الرسالة قبل الحقل:  visibility = hidden
+الرسالة بعد الحقل:  visibility = visible
+~~~
+
+~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>peer</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--spacing:.25rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.invisible{visibility:hidden}.border{border-style:var(--tw-border-style);border-width:1px}.p-8{padding:calc(var(--spacing) * 8)}:is(:where(.peer):invalid~.peer-invalid\:visible){visibility:visible}}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}
+</style></head>
+<body class="p-8">
+<main>
+<div>
+  <span id="before" class="peer-invalid:visible invisible">خطأ</span>
+  <input class="peer border" required aria-label="قبل">
+</div>
+<div>
+  <input class="peer border" required aria-label="بعد">
+  <span id="after" class="peer-invalid:visible invisible">خطأ</span>
+</div>
+</main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** section عليه [[group/section]] وجواه كروت عليها [[group/card]]: لما تقف على الـ section الكروت كلها تفتح شوية، ولما تقف على كارت عنوانه هو بس يتلوّن، بـ [[group-hover/section:]] و [[group-hover/card:]].`, done: R`الحالتين شغالين مع بعض من غير تداخل، و grep على [[out.css]] بيلاقي [[.group\/card]] و [[.group\/section]] في الـ selectors.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مجموعات متداخلة</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-6">
+<main>
+  <h1 class="text-2xl font-bold">خدماتنا</h1>
+  <section id="sec" class="group/section mt-4 grid gap-4 rounded-2xl bg-gray-100 p-4 sm:grid-cols-2">
+    <article id="c1" class="group/card rounded-xl bg-white p-4 transition-transform group-hover/section:-translate-y-1">
+      <h2 class="font-bold transition-colors group-hover/card:text-teal-700">التصميم</h2>
+      <p>من الفكرة للشكل.</p>
+    </article>
+    <article id="c2" class="group/card rounded-xl bg-white p-4 transition-transform group-hover/section:-translate-y-1">
+      <h2 class="font-bold transition-colors group-hover/card:text-teal-700">البرمجة</h2>
+      <p>من الشكل للتشغيل.</p>
+    </article>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**ليه الأسماء:** لو الاتنين [[group]] من غير اسم، [[group-hover:]] هيتفعّل لما تقف على أي جد عليه group. فالكارت كله هيتلوّن مع الـ section. [[group/card]] و [[group/section]] بيدّوا كل مستوى اسم، و [[group-hover/card:]] بيبص على المستوى ده بس.
+
+- [[group-hover/section:-translate-y-1]] على الكارت: لما الماوس يدخل الـ section، الكروت كلها تطلع 4px.
+- [[group-hover/card:text-teal-700]] على العنوان: عنوان الكارت اللي تحت الماوس بس يتلوّن.
+
+**الغلطة الشائعة:** تستخدم [[group]] واحد وتتوقع إن الأقرب هو اللي يتحسب. CSS مبيعرفش «الأقرب»، أي جد مطابق كفاية.
+
+~~~text الناتج
+الماوس برا:          translate none ، none       عناوين rgb(0, 0, 0)
+على الـ section:     translate 0px -4px للاتنين   عناوين rgb(0, 0, 0)
+على الكارت الأول:    translate 0px -4px للاتنين
+                     عنوان الأول oklch(0.511 ...) ، التاني rgb(0, 0, 0)
+
+grep: .group\/card و .group\/section موجودين
+axe صفر ، مفيش scroll أفقي
+~~~
+
+~~~view 210 310 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مجموعات متداخلة</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-font-weight:initial;--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-teal-700:oklch(51.1% .096 186.391);--color-gray-100:oklch(96.7% .003 264.542);--color-white:#fff;--spacing:.25rem;--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-bold:700;--radius-xl:.75rem;--radius-2xl:1rem;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mt-4{margin-top:calc(var(--spacing) * 4)}.grid{display:grid}.gap-4{gap:calc(var(--spacing) * 4)}.rounded-2xl{border-radius:var(--radius-2xl)}.rounded-xl{border-radius:var(--radius-xl)}.bg-gray-100{background-color:var(--color-gray-100)}.bg-white{background-color:var(--color-white)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){:is(:where(.group\/card):hover .group-hover\/card\:text-teal-700){color:var(--color-teal-700)}:is(:where(.group\/section):hover .group-hover\/section\:-translate-y-1){--tw-translate-y:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}}@media (min-width:40rem){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}
+</style>
+</head>
+<body class="p-6">
+<main>
+  <h1 class="text-2xl font-bold">خدماتنا</h1>
+  <section id="sec" class="group/section mt-4 grid gap-4 rounded-2xl bg-gray-100 p-4 sm:grid-cols-2">
+    <article id="c1" class="group/card rounded-xl bg-white p-4 transition-transform group-hover/section:-translate-y-1">
+      <h2 class="font-bold transition-colors group-hover/card:text-teal-700">التصميم</h2>
+      <p>من الفكرة للشكل.</p>
+    </article>
+    <article id="c2" class="group/card rounded-xl bg-white p-4 transition-transform group-hover/section:-translate-y-1">
+      <h2 class="font-bold transition-colors group-hover/card:text-teal-700">البرمجة</h2>
+      <p>من الشكل للتشغيل.</p>
+    </article>
+  </section>
+</main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اختيار باقة بـ radio cards: مرة بـ [[peer-checked:]] (الـ input قبل الكارت) ومرة بـ [[has-checked:]] على الـ label نفسه (الـ input جواه). أنهي واحدة بتشتغل لو الـ input في آخر الكارت؟`, done: R`[[has-checked:]] شغالة في أي مكان جوه الـ label لأنها [[:has(:checked)]]، و [[peer-checked:]] شغالة بس على اللي بعد الـ input. وكتبت إن [[:has()]] مدعومة في المتصفحات الحديثة كلها (Baseline 2023، من MDN).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختيار باقة</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-6">
+<main class="mx-auto grid max-w-md gap-6">
+  <h1 class="text-2xl font-bold">اختار باقتك</h1>
+
+  <!-- ١) peer-checked: الـ input قبل الكارت، والكارت أخوه -->
+  <div>
+    <input id="p1" class="peer sr-only" type="radio" name="a">
+    <label for="p1" class="block rounded-xl border-2 border-gray-300 p-4 peer-checked:border-teal-700">peer: الـ input الأول</label>
+  </div>
+
+  <!-- ٢) peer-checked: الـ input في آخر الكارت، والكلام قبله -->
+  <label class="block rounded-xl border-2 border-gray-300 p-4">
+    <span id="p2t" class="peer-checked:text-teal-700">peer: الـ input الأخير</span>
+    <input id="p2" class="peer" type="radio" name="a">
+  </label>
+
+  <!-- ٣) has-checked: الـ input في أي مكان جوه الـ label -->
+  <label id="h1l" class="block rounded-xl border-2 border-gray-300 p-4 has-checked:border-teal-700">
+    has: الـ input الأخير
+    <input id="h1" type="radio" name="a">
+  </label>
+</main>
+</body>
+</html>
+~~~
+
+**الإجابة:** [[has-checked:]] بتشتغل والـ input في أي مكان، و [[peer-checked:]] لأ.
+
+- [[peer-checked:]] بتتحول لـ [[~]]، فمحتاجة الـ input **قبل** العنصر، وكإخوات.
+- [[has-checked:]] بتتحول لـ [[:has(:checked)]] على الـ label نفسه، فبتسأل «جوايا input متعلّم؟» من غير ما يهم مكانه.
+
+وعشان كده [[has-checked:]] بتبسّط الـ HTML: مفيش [[sr-only]] ولا [[id]] ولا [[for]]، الـ input جوه الـ label خلاص.
+
+و [[:has()]] من MDN: Baseline 2023، يعني في كل المتصفحات الحديثة. (دي معلومة من الوثائق، والتجربة هنا في Chrome بس.)
+
+**الغلطة الشائعة:** تحط [[peer]] و [[peer-checked:]] والـ input في آخر الكارت، فالكود يبان سليم والشكل مبيتغيرش.
+
+~~~text الناتج
+                         لون الحد أو الكلام بعد الاختيار
+peer والـ input الأول    اتغيّر للتيل oklch(0.511 ...)
+peer والـ input الأخير   فضل rgb(0, 0, 0)  (مبيشتغلش)
+has والـ input الأخير    اتغيّر للتيل oklch(0.511 ...)
+axe صفر
+~~~
+
+~~~view 340 340 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختيار باقة</title>
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid;--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-teal-700:oklch(51.1% .096 186.391);--color-gray-300:oklch(87.2% .01 258.338);--spacing:.25rem;--container-md:28rem;--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-bold:700;--radius-xl:.75rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.mx-auto{margin-inline:auto}.block{display:block}.grid{display:grid}.max-w-md{max-width:var(--container-md)}.gap-6{gap:calc(var(--spacing) * 6)}.rounded-xl{border-radius:var(--radius-xl)}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-gray-300{border-color:var(--color-gray-300)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}:is(:where(.peer):checked~.peer-checked\:border-teal-700){border-color:var(--color-teal-700)}:is(:where(.peer):checked~.peer-checked\:text-teal-700){color:var(--color-teal-700)}.has-checked\:border-teal-700:has(:checked){border-color:var(--color-teal-700)}}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}
+</style>
+</head>
+<body class="p-6">
+<main class="mx-auto grid max-w-md gap-6">
+  <h1 class="text-2xl font-bold">اختار باقتك</h1>
+
+  <!-- ١) peer-checked: الـ input قبل الكارت، والكارت أخوه -->
+  <div>
+    <input id="p1" class="peer sr-only" type="radio" name="a">
+    <label for="p1" class="block rounded-xl border-2 border-gray-300 p-4 peer-checked:border-teal-700">peer: الـ input الأول</label>
+  </div>
+
+  <!-- ٢) peer-checked: الـ input في آخر الكارت، والكلام قبله -->
+  <label class="block rounded-xl border-2 border-gray-300 p-4">
+    <span id="p2t" class="peer-checked:text-teal-700">peer: الـ input الأخير</span>
+    <input id="p2" class="peer" type="radio" name="a">
+  </label>
+
+  <!-- ٣) has-checked: الـ input في أي مكان جوه الـ label -->
+  <label id="h1l" class="block rounded-xl border-2 border-gray-300 p-4 has-checked:border-teal-700">
+    has: الـ input الأخير
+    <input id="h1" type="radio" name="a">
+  </label>
+</main>
+</body>
+</html>
+~~~` },
           ],
-        },
+          deep: {
+            why: R`حالات زي «لما تقف على الكارت السهم يتحرك» كانت محتاجة CSS منفصل بـ selector زي [[.card:hover .arrow]]، أو state في React. group و peer بيعملوها بكلاسات على العناصر نفسها.`,
+            how: R`[[group]] مش بيعمل أي CSS لوحده، هو علامة. و [[group-hover:text-brand]] بيطلع selector معناه «لو فيه جد عليه group وعليه hover».
+
+لو فيه groups جوه بعض (كارت جوه قايمة كلها hover)، سمّيهم: [[group/card]] على الأب و [[group-hover/card:]] على الابن.
+
+[[peer]] بيستخدم الـ sibling combinator [[~]] في CSS، ودا بيشتغل على الإخوات اللي بعده بس. عشان كده لازم الـ peer ييجي الأول في الـ HTML، ومينفعش label قبل input يتغير حسب الـ input بـ peer (هنا [[:has()]] بيحل: [[has-[:user-invalid]:text-red-600]] على الأب، درس في المستوى التالت).
+
+[[:invalid]] بتتطبق من أول ما الصفحة تفتح (الحقل الفاضي اللي عليه required يعتبر invalid). [[:user-invalid]] بتستنى لحد ما المستخدم يعدّل ويخرج أو يحاول يبعت، ودي اللي عايزها للرسايل (variant [[user-invalid:]] موجود من Tailwind v4.1).`,
+            when: "كروت ولينكات كبيرة فيها أجزاء بتتفاعل. رسايل الـ validation وتنسيق الحقول، و checkbox و toggle مخصصين بالـ CSS بس.",
+            mistakes: R`الـ peer بعد العنصر اللي عايزه يتغير فمش بيشتغل ومفيش error. groups جوه بعض من غير أسماء فالابن يتفاعل مع الجد الغلط. و [[peer-invalid:]] فالحقول كلها حمرا أول ما الصفحة تفتح.`
+          },
+          teach: R`## عنصر بيتغير بسبب حالة عنصر تاني
+
+العادي إن [[hover:]] بيغيّر العنصر اللي الماوس فوقه بس. [[group]] و [[peer]] بيخلّوا عنصر يتغير بحالة **أبوه** أو **أخوه اللي قبله**. حطينا المثال في [[App.tsx]] بتاع مشروع Vite (Tailwind 4.3.3، والصفحة [[dir="rtl"]] وعرضها 800)، والسهم بدل [[ArrowLeft]] بتاع lucide حطينا component صغير بيرسم SVG سهم بنفس الـ className (lucide بيعمل نفس الحاجة). وجربنا بالماوس والكيبورد في Chrome.
+
+---
+
+## ١. الكارت: [[group]]
+
+~~~text App.tsx
+<a href="/courses/1" className="group block rounded-xl border p-5 hover:border-brand">
+  <h3 className="font-bold group-hover:text-brand">كورس React</h3>
+  <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
+</a>
+~~~
+
+- [[group]] على اللينك: مش بيطلّع أي CSS لوحده. هو علامة بتقول «أنا الأب اللي الأولاد هيسألوا عنه».
+- [[block]] = [[display: block]]، عشان اللينك ياخد عرض السطر ويبقى كارت. [[border]] و [[p-5]] (20px padding) و [[rounded-xl]].
+- [[hover:border-brand]]: الـ border نفسه يتلوّن لما الماوس على اللينك.
+- [[group-hover:text-brand]]: العنوان يتلوّن لما الماوس على **الأب** اللي عليه group.
+- [[size-4]] = عرض وارتفاع 16px. [[transition-transform]] = التحريك يحصل بنعومة. [[-translate-x-1]] = حرّك 4px ناحية الشمال (السالب على محور x).
+
+القاعدة اللي طلعت:
+
+~~~text من الـ CSS الناتج
+@media (hover:hover){.group-hover\:text-brand:is(:where(.group):hover *){color:var(--color-brand)}}
+~~~
+
+[[:where(.group):hover *]] = «أي عنصر جوه حد عليه [[.group]] والماوس فوقه». والمسافة قبل [[*]] معناها «جوه، في أي عمق».
+
+وقفنا بالماوس على الركن التحتاني للكارت، بعيد عن العنوان والسهم:
+
+| | قبل | وقت الـ hover |
+|---|---|---|
+| لون العنوان | rgb(0, 0, 0) | oklch(0.55 0.2 265) |
+| لون الـ border | rgb(0, 0, 0) | oklch(0.55 0.2 265) |
+| [[translate]] السهم | none | -4px |
+| مكان السهم (left) | 763 | 759 |
+
+في الصفحة العربي السهم على الشمال، و 4px لناحية الشمال = لقدام.
+
+## ٢. الإيميل: [[peer]]
+
+~~~text App.tsx
+<label className="grid gap-1">
+  <span>الإيميل</span>
+  <input type="email" required className="peer rounded border px-3 py-2" />
+  <span className="invisible text-sm text-red-600 peer-user-invalid:visible">إيميل مش صحيح</span>
+</label>
+~~~
+
+- [[<label>]] حوالين الحقل = الكلام اللي جواه اسم الحقل. و [[grid gap-1]] = فوق بعض بمسافة 4px.
+- [[type="email"]] و [[required]]: المتصفح نفسه بيفحص إن فيه إيميل صالح.
+- [[peer]] على الـ input: علامة زي group، بس للإخوات.
+- [[invisible]] = [[visibility: hidden]]: مستخبية بس مكانها محجوز، فالصفحة متتنطش لما تظهر.
+- [[peer-user-invalid:visible]] = تظهر لما الأخ اللي عليه peer يبقى [[:user-invalid]].
+
+~~~text من الـ CSS الناتج
+.peer-user-invalid\:visible:is(:where(.peer):user-invalid~*){visibility:visible}
+~~~
+
+[[~]] في CSS = «أخ جاي بعده». عشان كده الـ peer لازم ييجي قبل الرسالة في الـ HTML.
+
+## ٣. التجربة: [[peer-invalid:]] ضد [[peer-user-invalid:]]
+
+حطينا رسالتين تحت نفس الحقل، واحدة بكل variant، وقرينا [[visibility]] لكل واحدة:
+
+| الخطوة | [[:invalid]] | [[:user-invalid]] | الرسالة بـ [[peer-user-invalid:]] | الرسالة بـ [[peer-invalid:]] |
+|---|---|---|---|---|
+| الصفحة لسه فاتحة | true | false | hidden | **visible** |
+| بتكتب [[ahmed]] | true | false | hidden | visible |
+| خرجت بـ Tab | true | true | **visible** | visible |
+| كتبت [[ahmed@example.com]] وخرجت | false | false | hidden | hidden |
+
+- [[:invalid]] شغالة من أول ما الصفحة تفتح: الحقل فاضي وعليه required، فالرسالة ظاهرة قبل ما المستخدم يعمل أي حاجة.
+- [[:user-invalid]] بتستنى لحد ما المستخدم يعدّل ويخرج من الحقل.
+
+## الخلاصة
+
+| على المصدر | على اللي بيتغير | بيشتغل لما |
+|---|---|---|
+| [[group]] | [[group-hover:]] | الماوس على الأب (أو أي جد عليه group) |
+| [[peer]] | [[peer-user-invalid:]] | الأخ اللي قبله غلط بعد ما المستخدم اتعامل معاه |
+
+- الـ peer لازم ييجي **قبل** العنصر اللي بيتغير، ويكونوا إخوات.
+- للرسايل استخدم [[user-invalid]] مش [[invalid]].`,
+          lines: [
+            R`الكارت كله لينك، و [[group]] بيعلّمه كأب.`,
+            "العنوان يتلوّن لما الماوس ييجي على أي حتة في الكارت.",
+            R`السهم (من lucide) يتحرك لقدام شوية. في صفحة عربي «لقدام» = شمال.`,
+            R`قفلة الكارت اللي عليه [[group]]: أي ابن جواه يقدر يسأل عن حالته.`,
+            "label حوالين الحقل والرسالة.",
+            R`اسم الحقل «الإيميل»، وهو جوه الـ label فمش محتاج [[for]] ولا [[id]].`,
+            R`[[peer]]: الإخوات اللي بعد الحقل ده يقدروا يسألوا عن حالته.`,
+            "مخفية، وتظهر لما الحقل يبقى غلط بعد ما المستخدم يتعامل معاه.",
+            R`قفلة الـ label: الحقل والرسالة إخوات جواه، والرسالة **بعد** الحقل، ودا شرط [[peer]].`
+          ],
+          sol: R`لما تقف على الكارت في أي حتة (مش على العنوان بس): العنوان بيتلوّن بلون الـ brand والسهم بيتحرك 4px (شمال في المثال). ده لأن الـ hover على الأب اللي عليه [[group]]، والأبناء بيسمعوا له.
+
+الإيميل: الصفحة بتفتح والرسالة مستخبية. اكتب [[ahmed]]: وانت بتكتب الرسالة لسه مستخبية. اخرج من الحقل بـ Tab: «إيميل مش صحيح» ظهرت، لأن [[:user-invalid]] بيتحقق بس بعد ما المستخدم يتعامل مع الحقل ويخرج منه. مع [[peer-invalid:]]: الرسالة ظاهرة من أول ما الصفحة تفتح والحقل فاضي، لأن الحقل [[required]] وفاضي فهو [[:invalid]] من الأول.
+
+لو الرسالة مش بتظهر خالص: اتأكد إن الـ span جاي بعد الـ input في الـ HTML وإنهم إخوات (نفس الأب)، لأن [[peer]] بيشتغل بـ [[~]] اللي بيشوف الإخوات اللي بعده بس.`
+        }
       ]
     }
 ]);

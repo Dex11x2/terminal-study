@@ -1,391 +1,12 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "الثيم والعربي والخطوط والأيقونات",
+      t: "CSS: مين بيكسب ومساحة كل عنصر",
       pre: [
-        { to: "css/CSS variables", why: R`الثيم كله متغيرات` },
-        { to: "css/lang و dir", why: R`الاتجاه اللي الـ logical properties بتمشي وراه` },
+        { to: "css/<!doctype html>", why: R`ملف الـ CSS بيتربط من الـ head بـ link` },
       ],
-      l: 2,
-      n: "dark mode من غير وميض، ومكونات بتتقلب لوحدها في العربي، وخط بيتحمّل صح، وأيقونات ليها اسم",
       projects: [
-        { lvl: 'صغير', dir: "theme-switch", t: R`زرار ثيم بتلات اختيارات`, what: R`segmented control فيه فاتح وغامق و«زي الجهاز»، معمول من ٣ [[<input type="radio">]] متنسّقين (مش div)، والاختيار بيتحط [[data-theme]] على html بسكربت inline في الـ head قبل الرسم، ويتحفظ في localStorage جوه [[try/catch]]، و [[color-scheme]] بيتغير معاه. من درس dark mode.`, done: R`refresh على كل اختيار من التلاتة من غير ولا frame غلط (Performance › Screenshots)، و«زي الجهاز» بيتقلب لوحده لو غيّرت ثيم الجهاز والصفحة مفتوحة، والأسهم بتتنقل بين الاختيارات (ده شغل الـ radio ببلاش)، و axe صفر مشاكل.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ثيم بتلات اختيارات</title>
-<!-- inline and BEFORE the stylesheet: it runs before the first paint, so there is no flash of the wrong theme -->
-<script>
-  (function () {
-    var t = null;
-    try { t = localStorage.getItem("theme"); } catch (e) {}
-    if (t === "light" || t === "dark") {
-      document.documentElement.dataset.theme = t;
-      document.documentElement.style.colorScheme = t;
-    }
-  })();
-</script>
-<link rel="stylesheet" href="style.css">
-<script src="theme.js" defer></script>
-</head>
-<body>
-<main class="page">
-  <h1>مدونة «سطر»</h1>
-  <fieldset class="seg">
-    <legend>الثيم</legend>
-    <label><input type="radio" name="theme" value="light"> فاتح</label>
-    <label><input type="radio" name="theme" value="dark"> غامق</label>
-    <label><input type="radio" name="theme" value="system"> زي الجهاز</label>
-  </fieldset>
-  <article class="card">
-    <h2>إزاي تكتب كل يوم</h2>
-    <p>عشر دقايق الصبح أحسن من ساعتين آخر الأسبوع.</p>
-    <a href="#more">كمّل القراية</a>
-  </article>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-
-/* light by default */
-:root {
-  color-scheme: light dark;     /* "system": the browser may use either; scrollbars and form controls follow */
-  --bg: #f8fafc; --fg: #0f172a; --muted: #475569; --card: #ffffff; --line: #cbd5e1; --brand: #4338ca; --on-brand: #ffffff;
-}
-/* "system" (no data-theme): follow the device, live */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
-  }
-}
-/* a choice the reader made wins over the device */
-:root[data-theme="dark"] {
-  --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
-}
-
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
-.page { max-width: 40rem; margin-inline: auto; padding: 1rem; }
-a { color: var(--brand); }
-
-/* the segmented control: real radios, styled through their labels */
-.seg { display: inline-flex; gap: 0.25rem; margin: 0 0 1.5rem; padding: 0.25rem; border: 1px solid var(--line); border-radius: 999px; }
-.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.seg label { padding: 0.4rem 1rem; border-radius: 999px; cursor: pointer; }
-.seg input { position: absolute; opacity: 0; }                 /* hidden from the eye, still focusable and still a radio */
-.seg label:has(input:checked) { background: var(--brand); color: var(--on-brand); font-weight: 700; }
-.seg label:has(input:focus-visible) { outline: 3px solid #f59e0b; outline-offset: 2px; }
-
-.card { padding: 1.25rem; border-radius: 1rem; background: var(--card); border: 1px solid var(--line); }
-.card h2 { margin-top: 0; }
-.card p { color: var(--muted); }
-~~~
-
-~~~js theme.js
-// the radios: show the saved choice, save a new one, apply it
-const root = document.documentElement;
-let saved = "system";
-try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
-const radios = document.querySelectorAll('input[name="theme"]');
-radios.forEach(r => { r.checked = r.value === saved; });
-
-function apply(value) {
-  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
-  else { root.dataset.theme = value; root.style.colorScheme = value; }
-  try { localStorage.setItem("theme", value); } catch (e) {}
-}
-radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
-~~~
-
-~~~view 360 380 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ثيم بتلات اختيارات</title>
-<!-- inline and BEFORE the stylesheet: it runs before the first paint, so there is no flash of the wrong theme -->
-<script>
-  (function () {
-    var t = null;
-    try { t = localStorage.getItem("theme"); } catch (e) {}
-    if (t === "light" || t === "dark") {
-      document.documentElement.dataset.theme = t;
-      document.documentElement.style.colorScheme = t;
-    }
-  })();
-</script>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-
-/* light by default */
-:root {
-  color-scheme: light dark;     /* "system": the browser may use either; scrollbars and form controls follow */
-  --bg: #f8fafc; --fg: #0f172a; --muted: #475569; --card: #ffffff; --line: #cbd5e1; --brand: #4338ca; --on-brand: #ffffff;
-}
-/* "system" (no data-theme): follow the device, live */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
-  }
-}
-/* a choice the reader made wins over the device */
-:root[data-theme="dark"] {
-  --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
-}
-
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
-.page { max-width: 40rem; margin-inline: auto; padding: 1rem; }
-a { color: var(--brand); }
-
-/* the segmented control: real radios, styled through their labels */
-.seg { display: inline-flex; gap: 0.25rem; margin: 0 0 1.5rem; padding: 0.25rem; border: 1px solid var(--line); border-radius: 999px; }
-.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.seg label { padding: 0.4rem 1rem; border-radius: 999px; cursor: pointer; }
-.seg input { position: absolute; opacity: 0; }                 /* hidden from the eye, still focusable and still a radio */
-.seg label:has(input:checked) { background: var(--brand); color: var(--on-brand); font-weight: 700; }
-.seg label:has(input:focus-visible) { outline: 3px solid #f59e0b; outline-offset: 2px; }
-
-.card { padding: 1.25rem; border-radius: 1rem; background: var(--card); border: 1px solid var(--line); }
-.card h2 { margin-top: 0; }
-.card p { color: var(--muted); }
-</style>
-</head>
-<body>
-<main class="page">
-  <h1>مدونة «سطر»</h1>
-  <fieldset class="seg">
-    <legend>الثيم</legend>
-    <label><input type="radio" name="theme" value="light"> فاتح</label>
-    <label><input type="radio" name="theme" value="dark"> غامق</label>
-    <label><input type="radio" name="theme" value="system"> زي الجهاز</label>
-  </fieldset>
-  <article class="card">
-    <h2>إزاي تكتب كل يوم</h2>
-    <p>عشر دقايق الصبح أحسن من ساعتين آخر الأسبوع.</p>
-    <a href="#more">كمّل القراية</a>
-  </article>
-</main>
-<script>
-// the radios: show the saved choice, save a new one, apply it
-const root = document.documentElement;
-let saved = "system";
-try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
-const radios = document.querySelectorAll('input[name="theme"]');
-radios.forEach(r => { r.checked = r.value === saved; });
-
-function apply(value) {
-  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
-  else { root.dataset.theme = value; root.style.colorScheme = value; }
-  try { localStorage.setItem("theme", value); } catch (e) {}
-}
-radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** «مدونة سطر»، وتحتها كبسولة فيها ٣ اختيارات (فاتح، وغامق، وزي الجهاز)، وكارت مقال. الاختيار بيقلب ألوان الصفحة كلها، وبيفضل بعد الـ refresh.
-
-**ليه radio مش div:** ٣ اختيارات واحد بس منهم شغال = radio group. الـ [[<input type="radio">]] بيدّيك ببلاش: الأسهم بتنقل بينهم، و Tab بيدخل المجموعة مرة واحدة، وقارئ الشاشة بيقول «فاتح، زرار راديو، ١ من ٣». الـ input مستخبي بـ [[opacity: 0]] بس (مش [[display: none]]، كده كان هيختفي من الكيبورد)، والشكل على الـ label بـ [[:has(input:checked)]].
-
-**الوميض وإزاي اتمنع:** المتصفح بيرسم أول ما يقرا الـ CSS. لو السكربت اللي بيحط الثيم المحفوظ اشتغل بعد كده، أول frame بيطلع بالثيم الغلط وبعدين يتقلب. عشان كده السكربت ده inline في الـ [[<head>]]، قبل الـ [[<link>]]، ومش في ملف [[defer]]: بيتنفّذ قبل أول رسم. وباقي الشغل (الأزرار) في [[theme.js]] بـ [[defer]] عادي.
-
-**«زي الجهاز» بيتقلب لوحده:** لما الاختيار «زي الجهاز»، الـ html مفيهوش [[data-theme]]، فقاعدة [[@media (prefers-color-scheme: dark)]] على [[:root:not([data-theme])]] هي اللي بتشتغل. لو غيّرت ثيم الجهاز والصفحة مفتوحة، المتصفح بيعيد حساب الـ media query لوحده، من غير ولا سطر JS.
-
-**[[color-scheme]]:** بيقول للمتصفح يلوّن حاجاته هو (الـ scrollbar، والـ checkbox، وخلفية الـ input) بالثيم. «زي الجهاز» = [[light dark]]، والاختيار الثابت = [[light]] أو [[dark]].
-
-**[[localStorage]] جوه [[try/catch]]:** في شباك خاص أو موقع ممنوع من التخزين بيرمي error. من غير [[try]] السكربت كان هيقف والثيم ميتحطش.
-
-~~~text الناتج (Playwright بـ Chrome 157، الجهاز غامق والمحفوظ «فاتح»، والسكربتات متأخرة 500ms زي شبكة بطيئة)
-السكربت inline في الـ head:   اشتغل 47ms، أول رسم 164ms ← قبل الرسم، وأول frame «light»
-نفس الكود في ملف defer:       اشتغل 542ms، أول رسم 56ms  ← بعد الرسم، وأول frame من غير ثيم (غامق زي الجهاز) وبعدين اتقلب
-
-«زي الجهاز» والجهاز فاتح: rgb(248, 250, 252)، والجهاز اتقلب غامق والصفحة مفتوحة: rgb(11, 17, 32)
-اختيار «فاتح»: rgb(248, 250, 252)، و localStorage = light
-السهم الشمال من «فاتح» (rtl = اللي بعده): «غامق»
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**جرّب الوميض بنفسك:** في DevTools › Network اختار «Slow 4G»، وانقل السكربت من الـ head لملف بـ [[defer]]، واعمل refresh على صفحة ثيمها المحفوظ عكس ثيم جهازك.` },
-        { lvl: 'صغير', dir: "comment-card", t: R`كارت تعليق بلغتين`, what: R`كارت فيه صورة ودايرة حالة واسم ووقت وزرار «رد» بسهم و badge «جديد» في الركن، مكتوب بـ logical properties بس (CSS عادي أو Tailwind)، وزرار فوق بيقلب [[dir]] و [[lang]] على html. من درس logical properties و lucide-react.`, done: R`ملف الـ CSS مفيهوش ولا [[left]] ولا [[right]] ولا [[[dir=rtl]]]، والسهم بس عليه [[rtl:-scale-x-100]]، ولقطة RTL مراية للقطة LTR، واسم إنجليزي فيه رموز في آخره بيظهر صح جوه الجملة العربي.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كارت تعليق بلغتين</title>
-<link rel="stylesheet" href="style.css">
-<script src="dir.js" defer></script>
-</head>
-<body>
-<main class="page">
-  <h1 class="title" data-ar="آخر التعليقات" data-en="Latest comments">آخر التعليقات</h1>
-  <button type="button" class="switch" id="switch" lang="en">English</button>
-  <article class="comment">
-    <span class="new" data-ar="جديد" data-en="New">جديد</span>
-    <div class="who">
-      <span class="avatar"><img src="img/avatar.webp" alt="" width="48" height="48"><span class="online" title="متصل" data-ar-title="متصل" data-en-title="Online"></span></span>
-      <p class="name"><bdi>Sara (UX)!</bdi></p>
-      <time class="when" datetime="2026-11-20T09:30" data-ar="من ٥ دقايق" data-en="5 minutes ago">من ٥ دقايق</time>
-    </div>
-    <p class="text" data-ar="الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة." data-en="This saved me an hour. The logical properties part was the clearest.">الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة.</p>
-    <button type="button" class="reply"><svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /> <path d="m9 17-5-5 5-5" /></svg><span data-ar="رد" data-en="Reply">رد</span></button>
-  </article>
-  <p class="demo">من غير bdi: كتبت <span class="name-raw">Sara (UX)!</span> تعليق.</p>
-  <p class="demo">بـ bdi: كتبت <bdi class="name-bdi">Sara (UX)!</bdi> تعليق.</p>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.7; }
-.page { max-width: 34rem; margin-inline: auto; padding: 1rem; }
-.title { margin-block: 0 0.75rem; font-size: 1.4rem; }
-
-/* logical only: start/end, block/inline. The same file works in Arabic and in English */
-.switch { margin-block-end: 1rem; padding-block: 0.4rem; padding-inline: 1rem; border: 1px solid #94a3b8; border-radius: 999px; background: #fff; font: inherit; cursor: pointer; }
-.comment { position: relative; padding: 1.25rem; padding-inline-end: 4.5rem; border-radius: 1rem; background: #fff; box-shadow: 0 2px 10px #0f172a14; }
-.new { position: absolute; inset-block-start: 0.75rem; inset-inline-end: 0.75rem; padding-inline: 0.6rem; border-radius: 999px; background: #4338ca; color: #fff; font-size: 0.8rem; font-weight: 700; }
-.who { display: flex; align-items: center; gap: 0.75rem; }
-.avatar { position: relative; flex: none; }
-.avatar img { display: block; border-radius: 50%; }
-.online { position: absolute; inset-block-end: 0; inset-inline-end: 0; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: #16a34a; border: 2px solid #fff; }
-.name { margin: 0; font-weight: 700; }
-.when { margin-inline-start: auto; color: #475569; font-size: 0.85rem; }
-.text { margin-block: 0.75rem; }
-.reply { display: inline-flex; align-items: center; gap: 0.4rem; padding-block: 0.35rem; padding-inline: 0.8rem; border: 0; border-radius: 0.5rem; background: #e0e7ff; color: #3730a3; font: inherit; font-weight: 700; cursor: pointer; }
-button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-.icon { width: 1.1rem; height: 1.1rem; }
-/* the ONE thing logical properties can't do: an arrow drawn pointing one way */
-.icon-flip:dir(rtl) { scale: -1 1; }
-.demo { color: #475569; }
-~~~
-
-~~~js dir.js
-// flips the page between Arabic (rtl) and English (ltr): only lang, dir and the texts change; the CSS stays as it is
-const html = document.documentElement;
-const btn = document.getElementById("switch");
-btn.addEventListener("click", () => {
-  const en = html.lang === "ar";
-  html.lang = en ? "en" : "ar";
-  html.dir = en ? "ltr" : "rtl";
-  btn.textContent = en ? "عربي" : "English";
-  btn.lang = en ? "ar" : "en";
-  for (const el of document.querySelectorAll("[data-ar]")) el.textContent = en ? el.dataset.en : el.dataset.ar;
-  for (const el of document.querySelectorAll("[data-ar-title]")) el.title = en ? el.dataset.enTitle : el.dataset.arTitle;
-});
-~~~
-
-الأيقونة SVG [[reply]] من lucide (‏[[lucide-static@0.577.0]]، نفس نسخة [[lucide-react]] في الدرس)، متحطة في الـ HTML بـ [[aria-hidden="true"]] لأن كلمة «رد» جنبها. والصورة [[img/avatar.webp]] أي صورة مربعة 96×96.
-
-~~~view 460 460 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كارت تعليق بلغتين</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.7; }
-.page { max-width: 34rem; margin-inline: auto; padding: 1rem; }
-.title { margin-block: 0 0.75rem; font-size: 1.4rem; }
-
-/* logical only: start/end, block/inline. The same file works in Arabic and in English */
-.switch { margin-block-end: 1rem; padding-block: 0.4rem; padding-inline: 1rem; border: 1px solid #94a3b8; border-radius: 999px; background: #fff; font: inherit; cursor: pointer; }
-.comment { position: relative; padding: 1.25rem; padding-inline-end: 4.5rem; border-radius: 1rem; background: #fff; box-shadow: 0 2px 10px #0f172a14; }
-.new { position: absolute; inset-block-start: 0.75rem; inset-inline-end: 0.75rem; padding-inline: 0.6rem; border-radius: 999px; background: #4338ca; color: #fff; font-size: 0.8rem; font-weight: 700; }
-.who { display: flex; align-items: center; gap: 0.75rem; }
-.avatar { position: relative; flex: none; }
-.avatar img { display: block; border-radius: 50%; }
-.online { position: absolute; inset-block-end: 0; inset-inline-end: 0; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: #16a34a; border: 2px solid #fff; }
-.name { margin: 0; font-weight: 700; }
-.when { margin-inline-start: auto; color: #475569; font-size: 0.85rem; }
-.text { margin-block: 0.75rem; }
-.reply { display: inline-flex; align-items: center; gap: 0.4rem; padding-block: 0.35rem; padding-inline: 0.8rem; border: 0; border-radius: 0.5rem; background: #e0e7ff; color: #3730a3; font: inherit; font-weight: 700; cursor: pointer; }
-button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-.icon { width: 1.1rem; height: 1.1rem; }
-/* the ONE thing logical properties can't do: an arrow drawn pointing one way */
-.icon-flip:dir(rtl) { scale: -1 1; }
-.demo { color: #475569; }
-</style>
-</head>
-<body>
-<main class="page">
-  <h1 class="title" data-ar="آخر التعليقات" data-en="Latest comments">آخر التعليقات</h1>
-  <button type="button" class="switch" id="switch" lang="en">English</button>
-  <article class="comment">
-    <span class="new" data-ar="جديد" data-en="New">جديد</span>
-    <div class="who">
-      <span class="avatar"><img src="data:image/webp;base64,UklGRuIBAABXRUJQVlA4INYBAAAwDACdASpgAGAAPtFgqE2oJiQiLVVYwQAaCUAaeYRqwG2AbKgxQb4GkCZF3apJ0MQfWhGDYv9+Oh/RcGxLdTMNsJ+OZ5XTBuOcmz7koUfKMuqxW2JzF8Rcvg8foqMoKrlSYca+2V5lfhwAAP7vrFfVd14AGBw7pTCGkhbWRMPTWLFnfua2PKDxxy1CpgB/ElMTxsW2UZj6Vz3RL/OPFkTRkxys+bJ1l24vDwWepTpEWVoOpl3LsQrF3gKUSjFnrku4OIEbMa5pIw4ypWgsQQ4YlBXZVi3NigVWnY8+jTPUK8J/j+6ydlDaEE1Drgd+bDjKaTvEen8PieiujmmRfSGwM3y5bK1pjQYUq/8ywEzjRVpJizLAI49jouR5WMLde8CbRiMLcdFKb5L/oDPRQVCGjOW200L6Gr7Oix9OqATM5EJEaFD9ktlIY4qQnHWFJEa+h6kVLHeJdbmOmpack9jagk/Fp8ElLXlKOcraIHRVYbWKJe606WpOKUyiiIwaasKX6P9Kuz5Z2HGYM2h2TQ+Ka1TFwACwQij7SM2LJdBpF/3Mn2HBzopmdgYcIBBHEjY21BeOapMq4M7MSnMR1MhDLGhkWGzOI/aZYuStWY9eVFZ6FgAAAA==" alt="" width="48" height="48"><span class="online" title="متصل" data-ar-title="متصل" data-en-title="Online"></span></span>
-      <p class="name"><bdi>Sara (UX)!</bdi></p>
-      <time class="when" datetime="2026-11-20T09:30" data-ar="من ٥ دقايق" data-en="5 minutes ago">من ٥ دقايق</time>
-    </div>
-    <p class="text" data-ar="الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة." data-en="This saved me an hour. The logical properties part was the clearest.">الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة.</p>
-    <button type="button" class="reply"><svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /> <path d="m9 17-5-5 5-5" /></svg><span data-ar="رد" data-en="Reply">رد</span></button>
-  </article>
-  <p class="demo">من غير bdi: كتبت <span class="name-raw">Sara (UX)!</span> تعليق.</p>
-  <p class="demo">بـ bdi: كتبت <bdi class="name-bdi">Sara (UX)!</bdi> تعليق.</p>
-</main>
-<script>
-// flips the page between Arabic (rtl) and English (ltr): only lang, dir and the texts change; the CSS stays as it is
-const html = document.documentElement;
-const btn = document.getElementById("switch");
-btn.addEventListener("click", () => {
-  const en = html.lang === "ar";
-  html.lang = en ? "en" : "ar";
-  html.dir = en ? "ltr" : "rtl";
-  btn.textContent = en ? "عربي" : "English";
-  btn.lang = en ? "ar" : "en";
-  for (const el of document.querySelectorAll("[data-ar]")) el.textContent = en ? el.dataset.en : el.dataset.ar;
-  for (const el of document.querySelectorAll("[data-ar-title]")) el.title = en ? el.dataset.enTitle : el.dataset.arTitle;
-});
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** كارت تعليق: صورة دايرية عليها نقطة خضرا (متصل)، والاسم «Sara (UX)!»، و «من ٥ دقايق» على الجنب التاني، والتعليق، وزرار «رد» بسهم، وفي الركن شارة «جديد». وزرار «English» فوق بيقلب الكارت كله إنجليزي من الشمال لليمين. وتحت سطرين بيوروا مشكلة الاسم.
-
-**logical properties بس:** [[inset-inline-end]] للشارة، و [[padding-inline-end]] للمسافة اللي تحتها، و [[margin-inline-start: auto]] للوقت، و [[border-block-end]]… مفيش ولا [[left]] ولا [[right]] ولا [[[dir=rtl]]] في الملف (grep: 0). فنفس الـ CSS بيطلع مراية في الإنجليزي.
-
-**السهم هو الاستثناء الوحيد:** logical properties بتقلب الأماكن، مش الرسومات. السهم مرسوم لناحية معيّنة، فبيتقلب بـ [[.icon-flip:dir(rtl) { scale: -1 1 }]]. و [[:dir(rtl)]] بيقرا الاتجاه الفعلي حتى لو [[dir]] متحط على جد بعيد.
-
-**الاسم الإنجليزي جوه جملة عربي:** «كتبت Sara (UX)! تعليق». المتصفح بيرتّب الحروف بقواعد اتجاه (bidi)، والـ «!» ملهاش اتجاه، فبتاخد اتجاه الجملة العربي وتطير لأول الاسم. اتقاس: من غير [[<bdi>]] الـ «!» عند x = 368 والـ S عند 373 (قبله)، وبـ [[<bdi>]] الـ «!» عند 471 بعد «)» عند 466. [[<bdi>]] بيقول «ده اتجاهه لوحده»، وده مهم في أي اسم جاي من المستخدمين.
-
-**زرار اللغة:** بيغيّر [[lang]] و [[dir]] على الـ html والكلام من [[data-ar]] و [[data-en]] بس. والـ CSS زي ما هو.
-
-**غلطة مسكها axe:** [[page-has-heading-one]]: الصفحة كانت من غير [[<h1>]]، فاتزوّد «آخر التعليقات».
-
-~~~text الناتج (Playwright بـ Chrome 157، كارت عرضه 552، [من الشمال، من اليمين])
-rtl: الشارة [12, 456]   الصورة [444, 20]   الوقت [72, 377]   الرد [429, 20]   السهم scale -1 1
-ltr: الشارة [454, 12]   الصورة [20, 444]   الوقت [354, 72]   الرد [20, 401]   السهم none
-(كل رقم من اليمين في rtl هو نفس الرقم من الشمال في ltr: مراية)
-
-x للـ S و ! و ) :
-من غير bdi: S 373، ! 368، ) 433   ← الـ ! طارت لأول الاسم
-بـ bdi:     S 406، ! 471، ) 466   ← في آخره
-axe: 0 violations (كانت page-has-heading-one قبل الـ h1)   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~` },
-        { lvl: 'متوسط', dir: "menu-i18n", t: R`منيو مطعم «الركن الأخضر» بلغتين`, what: R`صفحة منيو (مطعم متخيل) فيها أقسام وأطباق وأسعار. النصوص في dictionary بـ [[data-i18n="key"]]، وزرار اللغة بيغيّر [[lang]] و [[dir]] والنصوص من غير reload ويفتكر الاختيار. الأسعار بـ [[Intl.NumberFormat]] (‏[[ar-EG]] و [[en-US]] بعملة [[EGP]]) وعمودها [[font-variant-numeric: tabular-nums]]، وخط لكل لغة بـ [[:lang(ar)]] و [[:lang(en)]]، والخطوط woff2 من الموقع بـ [[unicode-range]]. بيجمع الدروس التلاتة الأولى.`, done: R`تبديل اللغة بيغيّر الاتجاه والنصوص وشكل الأسعار في نفس اللحظة، وأرقام عمود الأسعار متصفّة تحت بعض، والاختيار فاضل بعد refresh، وصفحة عربي بس بتنزّل ملف الخط العربي بس (Network › Font)، ومفيش ولا [[[dir=rtl]]] في الـ CSS.`, sol: R`~~~text menu-i18n/
-index.html  style.css  i18n.js
-fonts/cairo-arabic-400-normal.woff2  fonts/cairo-arabic-700-normal.woff2
-fonts/inter-latin-400-normal.woff2   fonts/inter-latin-700-normal.woff2
-fonts/Cairo-OFL.txt  fonts/Inter-OFL.txt   (رخصة الخطين: OFL، لازم تتنقل معاهم)
-~~~
-
-~~~bash الخطوط من npm (fontsource)، وبعدين بتتنسخ جنب الموقع
-npm i @fontsource/cairo@5.3.0 @fontsource/inter@5.3.0
-cp node_modules/@fontsource/cairo/files/cairo-arabic-{400,700}-normal.woff2 fonts/
-cp node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.woff2 fonts/
-~~~
+        { lvl: 'صغير', dir: "menu-card", t: R`كارت منيو بملف CSS خارجي`, what: R`خد كارت المطعم من مشروع الوحدة الأولى وزوّدله [[style.css]] واحد: خط ومسافة سطور للفقرات، وعنوان ملوّن، وزرار [[.btn]] بخلفية وزوايا مدورة، و [[box-sizing: border-box]] على كل حاجة. من دروس «مقدمة CSS» و «selectors» و «box model».`, done: R`الـ HTML زي ما هو (اللي اتزوّد سطر الـ link و class على الكارت والزرار بس)، والكارت عرضه 320px بالظبط شامل الـ padding والحدود (Computed)، ومفيش ولا [[style=""]] ولا id في الـ CSS.`, sol: R`ده نفس ملف [[index.html]] بتاع مشروع المطعم في الوحدة الأولى، واتزوّد عليه ٣ حاجات بس: سطر [[<link>]] في الـ head، و [[class="card"]] على [[<main>]]، و [[class="btn"]] على الزرار. وحط [[logo.svg]] بتاع المشروع ده جنبه زي ما هو.
 
 ~~~html index.html
 <!doctype html>
@@ -393,3546 +14,4662 @@ cp node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.woff2 fonts
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>منيو الركن الأخضر</title>
-<script>
-  // the saved language before the first paint: no flash of the other direction
-  (function () {
-    var l = null;
-    try { l = localStorage.getItem("lang"); } catch (e) {}
-    if (l === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
-  })();
-</script>
+<title>مطعم الزيتونة: المنيو</title>
 <link rel="stylesheet" href="style.css">
-<script src="i18n.js" defer></script>
 </head>
 <body>
-<header class="top">
-  <h1 data-i18n="title">منيو الركن الأخضر</h1>
-  <button type="button" id="lang" class="lang" lang="en">English</button>
-</header>
-<main class="menu">
-  <section aria-labelledby="s-main">
-    <h2 id="s-main" data-i18n="mains">الأطباق الرئيسية</h2>
-    <ul class="dishes">
-      <li><span data-i18n="koshari">كشري بالدقة</span><span class="price" data-price="65"></span></li>
-      <li><span data-i18n="molokhia">ملوخية بالفراخ</span><span class="price" data-price="180"></span></li>
-      <li><span data-i18n="grill">مشويات مشكّلة (لفردين)</span><span class="price" data-price="1250"></span></li>
-    </ul>
-  </section>
-  <section aria-labelledby="s-drinks">
-    <h2 id="s-drinks" data-i18n="drinks">المشروبات</h2>
-    <ul class="dishes">
-      <li><span data-i18n="tea">شاي بالنعناع</span><span class="price" data-price="25"></span></li>
-      <li><span data-i18n="mango">عصير مانجا</span><span class="price" data-price="55"></span></li>
-      <li><span data-i18n="sobia">سوبيا</span><span class="price" data-price="40.5"></span></li>
-    </ul>
-  </section>
+<main class="card">
+  <h1>مطعم الزيتونة</h1>
+  <img src="logo.svg" alt="لوجو المطعم: زيتونة خضرا جوه دايرة" width="120" height="120">
+  <p>أكل بيتي كل يوم من ١٢ الضهر لـ ١٢ بالليل: فول وطعمية الصبح، ومحشي وملوخية على الغدا.</p>
+  <p>للطلب كلمنا على <a href="tel:+20225550147">0225550147</a></p>
+  <button type="button" class="btn">اطلب</button>
 </main>
 </body>
 </html>
 ~~~
 
 ~~~css style.css
-/* fonts from our own site. unicode-range: the browser downloads a file only if the page has characters in its range */
-@font-face {
-  font-family: "Cairo";
-  src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
-  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF;
-}
-@font-face {
-  font-family: "Cairo";
-  src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2");
-  font-weight: 700;
-  font-display: swap;
-  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF;
-}
-@font-face {
-  font-family: "Inter";
-  src: url("fonts/inter-latin-400-normal.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122;
-}
-@font-face {
-  font-family: "Inter";
-  src: url("fonts/inter-latin-700-normal.woff2") format("woff2");
-  font-weight: 700;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122;
-}
-
+/* the width you write is the whole box: content + padding + border */
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; background: #f0fdf4; color: #14532d; }
-/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
-   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
-:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
-:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
 
-.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; max-width: 40rem; margin-inline: auto; padding: 1rem; }
-.top h1 { margin: 0; font-size: 1.6rem; }
-.lang { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid #15803d; border-radius: 999px; background: #fff; color: #14532d; font: inherit; font-weight: 700; cursor: pointer; }
-.lang:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-
-.menu { max-width: 40rem; margin-inline: auto; padding: 0 1rem 2rem; }
-.menu h2 { margin-block: 1.5rem 0.5rem; font-size: 1.2rem; }
-.dishes { margin: 0; padding: 0; list-style: none; }
-.dishes li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.6rem; border-block-end: 1px dashed #86efac; }
-/* every digit the same width: the prices line up under each other */
-.price { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-~~~
-
-~~~js i18n.js
-// every text that changes lives here, by key. The HTML says which key: data-i18n="koshari"
-const dict = {
-  ar: { title: "منيو الركن الأخضر", mains: "الأطباق الرئيسية", drinks: "المشروبات", koshari: "كشري بالدقة", molokhia: "ملوخية بالفراخ", grill: "مشويات مشكّلة (لفردين)", tea: "شاي بالنعناع", mango: "عصير مانجا", sobia: "سوبيا", button: "English" },
-  en: { title: "Green Corner Menu", mains: "Main dishes", drinks: "Drinks", koshari: "Koshari with garlic sauce", molokhia: "Molokhia with chicken", grill: "Mixed grill (for two)", tea: "Mint tea", mango: "Mango juice", sobia: "Sobia", button: "عربي" },
-};
-const locale = { ar: "ar-EG", en: "en-US" };
-
-function render(lang) {
-  const html = document.documentElement;
-  html.lang = lang;
-  html.dir = lang === "ar" ? "rtl" : "ltr";
-  document.title = dict[lang].title;
-  for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = dict[lang][el.dataset.i18n];
-  // the same number, written the way each language writes money
-  const money = new Intl.NumberFormat(locale[lang], { style: "currency", currency: "EGP" });
-  for (const el of document.querySelectorAll("[data-price]")) el.textContent = money.format(Number(el.dataset.price));
-  const btn = document.getElementById("lang");
-  btn.textContent = dict[lang].button;
-  btn.lang = lang === "ar" ? "en" : "ar";       // the button's word is in the OTHER language
+body {
+  margin: 0;
+  padding: 24px 16px;
+  background: #f5f1e8;
+  color: #1f2937;
+  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
 }
 
-document.getElementById("lang").addEventListener("click", () => {
-  const next = document.documentElement.lang === "ar" ? "en" : "ar";
-  try { localStorage.setItem("lang", next); } catch (e) {}
-  render(next);
-});
-render(document.documentElement.lang);
+.card {
+  width: 320px;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 24px;
+  border: 2px solid #d6cfc0;
+  border-radius: 16px;
+  background: white;
+  text-align: center;
+}
+
+.card h1 { margin: 0 0 12px; font-size: 26px; color: #3f6212; }
+.card img { display: block; margin: 0 auto 12px; }
+.card p { margin: 0 0 12px; line-height: 1.7; }
+.card a { color: #3f6212; font-weight: 700; }
+
+.btn {
+  padding: 10px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #4d7c0f;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn:hover { background: #3f6212; }
+.btn:focus-visible { outline: 3px solid #1f2937; outline-offset: 3px; }
 ~~~
 
-~~~view 560 560 الشكل النهائي (المعاينة بخط الجهاز (ملفات الخطوط مش جوه المعاينة))
+~~~view 520 560 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>منيو الركن الأخضر</title>
-<script>
-  // the saved language before the first paint: no flash of the other direction
-  (function () {
-    var l = null;
-    try { l = localStorage.getItem("lang"); } catch (e) {}
-    if (l === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
-  })();
-</script>
-<style>
-/* fonts from our own site. unicode-range: the browser downloads a file only if the page has characters in its range */
-
+<title>مطعم الزيتونة: المنيو</title>
+<style id="style">
+/* the width you write is the whole box: content + padding + border */
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; background: #f0fdf4; color: #14532d; }
-/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
-   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
-:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
-:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
 
-.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; max-width: 40rem; margin-inline: auto; padding: 1rem; }
-.top h1 { margin: 0; font-size: 1.6rem; }
-.lang { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid #15803d; border-radius: 999px; background: #fff; color: #14532d; font: inherit; font-weight: 700; cursor: pointer; }
-.lang:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+body {
+  margin: 0;
+  padding: 24px 16px;
+  background: #f5f1e8;
+  color: #1f2937;
+  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+}
 
-.menu { max-width: 40rem; margin-inline: auto; padding: 0 1rem 2rem; }
-.menu h2 { margin-block: 1.5rem 0.5rem; font-size: 1.2rem; }
-.dishes { margin: 0; padding: 0; list-style: none; }
-.dishes li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.6rem; border-block-end: 1px dashed #86efac; }
-/* every digit the same width: the prices line up under each other */
-.price { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.card {
+  width: 320px;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 24px;
+  border: 2px solid #d6cfc0;
+  border-radius: 16px;
+  background: white;
+  text-align: center;
+}
+
+.card h1 { margin: 0 0 12px; font-size: 26px; color: #3f6212; }
+.card img { display: block; margin: 0 auto 12px; }
+.card p { margin: 0 0 12px; line-height: 1.7; }
+.card a { color: #3f6212; font-weight: 700; }
+
+.btn {
+  padding: 10px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #4d7c0f;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn:hover { background: #3f6212; }
+.btn:focus-visible { outline: 3px solid #1f2937; outline-offset: 3px; }
 </style>
 </head>
 <body>
-<header class="top">
-  <h1 data-i18n="title">منيو الركن الأخضر</h1>
-  <button type="button" id="lang" class="lang" lang="en">English</button>
-</header>
-<main class="menu">
-  <section aria-labelledby="s-main">
-    <h2 id="s-main" data-i18n="mains">الأطباق الرئيسية</h2>
-    <ul class="dishes">
-      <li><span data-i18n="koshari">كشري بالدقة</span><span class="price" data-price="65"></span></li>
-      <li><span data-i18n="molokhia">ملوخية بالفراخ</span><span class="price" data-price="180"></span></li>
-      <li><span data-i18n="grill">مشويات مشكّلة (لفردين)</span><span class="price" data-price="1250"></span></li>
-    </ul>
-  </section>
-  <section aria-labelledby="s-drinks">
-    <h2 id="s-drinks" data-i18n="drinks">المشروبات</h2>
-    <ul class="dishes">
-      <li><span data-i18n="tea">شاي بالنعناع</span><span class="price" data-price="25"></span></li>
-      <li><span data-i18n="mango">عصير مانجا</span><span class="price" data-price="55"></span></li>
-      <li><span data-i18n="sobia">سوبيا</span><span class="price" data-price="40.5"></span></li>
-    </ul>
-  </section>
-</main>
-<script>
-// every text that changes lives here, by key. The HTML says which key: data-i18n="koshari"
-const dict = {
-  ar: { title: "منيو الركن الأخضر", mains: "الأطباق الرئيسية", drinks: "المشروبات", koshari: "كشري بالدقة", molokhia: "ملوخية بالفراخ", grill: "مشويات مشكّلة (لفردين)", tea: "شاي بالنعناع", mango: "عصير مانجا", sobia: "سوبيا", button: "English" },
-  en: { title: "Green Corner Menu", mains: "Main dishes", drinks: "Drinks", koshari: "Koshari with garlic sauce", molokhia: "Molokhia with chicken", grill: "Mixed grill (for two)", tea: "Mint tea", mango: "Mango juice", sobia: "Sobia", button: "عربي" },
-};
-const locale = { ar: "ar-EG", en: "en-US" };
-
-function render(lang) {
-  const html = document.documentElement;
-  html.lang = lang;
-  html.dir = lang === "ar" ? "rtl" : "ltr";
-  document.title = dict[lang].title;
-  for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = dict[lang][el.dataset.i18n];
-  // the same number, written the way each language writes money
-  const money = new Intl.NumberFormat(locale[lang], { style: "currency", currency: "EGP" });
-  for (const el of document.querySelectorAll("[data-price]")) el.textContent = money.format(Number(el.dataset.price));
-  const btn = document.getElementById("lang");
-  btn.textContent = dict[lang].button;
-  btn.lang = lang === "ar" ? "en" : "ar";       // the button's word is in the OTHER language
-}
-
-document.getElementById("lang").addEventListener("click", () => {
-  const next = document.documentElement.lang === "ar" ? "en" : "ar";
-  try { localStorage.setItem("lang", next); } catch (e) {}
-  render(next);
-});
-render(document.documentElement.lang);
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** «منيو الركن الأخضر» وزرار «English»، وقسمين أطباق ومشروبات، وكل طبق جنبه سعره بالأرقام العربي «٦٥٫٠٠ ج.م.». الزرار بيقلب الصفحة كلها إنجليزي من الشمال لليمين والأسعار «EGP 65.00»، والاختيار بيفضل بعد الـ refresh.
-
-**الكلام من dictionary:** كل كلام بيتغيّر عليه [[data-i18n="koshari"]]، و [[dict.ar]] و [[dict.en]] فيهم نفس المفاتيح. [[render(lang)]] بيغيّر [[lang]] و [[dir]] والعنوان وكل الكلام والأسعار مرة واحدة، من غير reload.
-
-**الأسعار بـ [[Intl.NumberFormat]]:** نفس الرقم [[65]]، و [[ar-EG]] بيكتبه «٦٥٫٠٠ ج.م.» (أرقام عربي، وفاصلة عشرية عربي، والعملة بالعربي)، و [[en-US]] بيكتبه «EGP 65.00». مفيش ولا سعر مكتوب بإيدك في الـ HTML: [[data-price]] بس.
-
-**[[tabular-nums]]:** الأرقام في الخط العادي عروضها مختلفة (الـ ١ أضيق)، فعمود الأسعار بيتعوّج. [[tabular-nums]] بيخلي كل رقم نفس العرض. اتقاس: حافة كل الأسعار على نفس الـ x (46 في العربي، و 654 في الإنجليزي).
-
-**خط لكل لغة، والصفحة بتنزّل اللي محتاجاه بس:** [[:root:lang(ar)]] بـ Cairo، و [[:root:lang(en)]] بـ Inter. وكل [[@font-face]] عليه [[unicode-range]]: Cairo للحروف العربي بس، و Inter للاتيني بس. المتصفح بينزّل ملف خط بس لو الصفحة فيها حرف من المدى ده **وبيتكتب بالخط ده**. اتقاس: الصفحة العربي نزّلت ملفين Cairo بس، والإنجليزي ملفين Inter بس.
-
-**زرار «English» في الصفحة العربي:** عليه [[lang="en"]] (قارئ الشاشة ينطقه إنجليزي)، و [[font: inherit]] بياخد Cairo من الأب. Cairo مفيهوش حروف لاتيني في المدى بتاعه، فالكلمة بتتكتب بخط الجهاز، وملف Inter كله (24KB) مبيتنزّلش عشان كلمة واحدة.
-
-**[[font-display: swap]]:** الكلام بيبان على طول بخط الجهاز، وبيتبدّل للخط لما يحمّل، بدل ما يفضل مستخبي.
-
-~~~text الناتج (Playwright بـ Chrome 157)
-ar: rtl | ‏٦٥٫٠٠ ج.م.‏ | ‏١٨٠٫٠٠ ج.م.‏ | ‏١٬٢٥٠٫٠٠ ج.م.‏ | ‏٢٥٫٠٠ ج.م.‏ | ‏٥٥٫٠٠ ج.م.‏ | ‏٤٠٫٥٠ ج.م.‏
-    حافة الأسعار: 46,46,46,46,46,46 | الخطوط: cairo-arabic-700-normal.woff2, cairo-arabic-400-normal.woff2
-en: ltr | EGP 65.00 | EGP 180.00 | EGP 1,250.00 | EGP 25.00 | EGP 55.00 | EGP 40.50
-    حافة الأسعار: 654 ×6 | الخطوط: inter-latin-700-normal.woff2, inter-latin-400-normal.woff2
-ضغطة الزرار: en ltr «Green Corner Menu» | بعد refresh: en
-grep على الـ CSS لـ [dir=rtl]: 0
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**غلطة اتصلحت (في المشروع الكبير الأول):** أول نسخة كانت [[:lang(ar) { line-height: 1.85 }]] من غير [[:root]]. [[:lang(ar)]] بيمسك **كل** عنصر في الصفحة العربي، ووزنه (0,1,0) أكبر من [[h1]] (0,0,1)، فالعناوين أخدت 1.85 بدل 1.25 (عنوان 64px سطره 118px). على [[:root]] الإعداد بيتورّث بس، والعنوان يقدر يغيّره. شوف مشروع «عدسة».` },
-        { lvl: 'متوسط', dir: "color-studio", t: R`استوديو الألوان`, what: R`صفحة فيها slider لدرجة اللون (hue من 0 لـ 360) بيولّد من لون واحد كل التوكنز: [[--brand]] بـ [[oklch()]]، و [[--brand-soft]] و [[--ring]] بـ [[color-mix(in oklab, var(--brand) 20%, transparent)]]، ونسخة للغامق أفتح شوية. تحت الـ slider عينات: زرار، و badge، ولينك، وحقل بـ focus، و alert نجاح وخطر (الألوان الوظيفية ثابتة مش بتتغير مع البراند). من dark mode، ومتغيرات CSS في الوحدة اللي فاتت.`, done: R`تحريك الـ slider بيغيّر كل العينات في الثيمين من غير ما تلمس غير متغير واحد، و alerts النجاح والخطر لونها مبيتغيرش، وفيه ٣ درجات hue موثّقة في الصفحة إن كلامها 4.5:1 أو أكتر في الوضعين (من DevTools).`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>استوديو الألوان</title>
-<link rel="stylesheet" href="style.css">
-<script src="studio.js" defer></script>
-</head>
-<body>
-<main class="page">
-  <h1>استوديو الألوان</h1>
-  <p class="lead">حرّك درجة اللون: كل لون في الصفحة بيتولّد من رقم واحد.</p>
-  <div class="controls">
-    <label for="hue">درجة اللون (hue):</label> <output id="hue-out" for="hue">270</output>
-    <input id="hue" type="range" min="0" max="360" value="270">
-    <button type="button" id="mode" aria-pressed="false">الوضع الغامق</button>
-  </div>
-
-  <section class="samples" aria-label="عينات">
-    <button type="button" class="btn">احجز دلوقتي</button>
-    <span class="badge">جديد</span>
-    <a href="#more">لينك عادي</a>
-    <label class="field">خانة فيها focus <input value="اضغط هنا" aria-label="خانة تجربة"></label>
-    <p class="alert alert--ok">اتحفظ. (لون النجاح ثابت مهما البراند اتغيّر)</p>
-    <p class="alert alert--danger">فيه غلطة. (لون الخطر ثابت)</p>
-  </section>
-
-  <section class="tested">
-    <h2>درجات اتقاس تباينها</h2>
-    <p>الأرقام من قياس حقيقي في Chrome (نسبة التباين، والمطلوب 4.5 أو أكتر):</p>
-    <div class="tbl" tabindex="0" role="region" aria-label="جدول التباين">
-    <table>
-      <thead><tr><th scope="col">hue</th><th scope="col">فاتح: كلام على البراند</th><th scope="col">فاتح: لينك على الخلفية</th><th scope="col">غامق: كلام على البراند</th><th scope="col">غامق: لينك على الخلفية</th></tr></thead>
-      <tbody>
-        <tr><th scope="row">30</th><td>7.17</td><td>8.13</td><td>8.98</td><td>9.57</td></tr>
-        <tr><th scope="row">150</th><td>5.82</td><td>6.57</td><td>9.85</td><td>10.58</td></tr>
-        <tr><th scope="row">270</th><td>6.80</td><td>7.82</td><td>9.19</td><td>9.83</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <p>وأقل رقم في كل الدرجات من 0 لـ 360: 5.35 (hue 195، فاتح).</p>
-  </section>
+<main class="card">
+  <h1>مطعم الزيتونة</h1>
+  <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20120%20120%22%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2260%22%20r%3D%2256%22%20fill%3D%22%23557a2b%22%2F%3E%3Cellipse%20cx%3D%2260%22%20cy%3D%2260%22%20rx%3D%2222%22%20ry%3D%2234%22%20fill%3D%22%23a3c45a%22%2F%3E%3C%2Fsvg%3E" alt="لوجو المطعم: زيتونة خضرا جوه دايرة" width="120" height="120">
+  <p>أكل بيتي كل يوم من ١٢ الضهر لـ ١٢ بالليل: فول وطعمية الصبح، ومحشي وملوخية على الغدا.</p>
+  <p>للطلب كلمنا على <a href="tel:+20225550147">0225550147</a></p>
+  <button type="button" class="btn">اطلب</button>
 </main>
 </body>
 </html>
 ~~~
 
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
+**هتشوف إيه:** كارت أبيض في نص صفحة بيج، حوافه مدورة وحواليه حد رفيع، وجواه العنوان أخضر زيتوني، واللوجو، والفقرتين بمسافة سطور مريحة، وزرار «اطلب» أخضر شكله كبسولة. والماوس على الزرار بيغمّق لونه.
 
-:root {
-  --hue: 270;                                        /* the ONE number. Everything brand-coloured comes from it */
-  --bg: #ffffff;
-  --fg: #111827;
-  --brand: oklch(0.48 0.17 var(--hue));              /* dark enough for white text on it */
-  --on-brand: #ffffff;
-  --brand-text: oklch(0.45 0.17 var(--hue));         /* brand colour used as TEXT on the page background */
-  --brand-soft: color-mix(in oklab, var(--brand) 20%, transparent);
-  --ring: color-mix(in oklab, var(--brand) 55%, transparent);
-  /* functional colours: fixed, they must not change with the brand */
-  --ok-bg: #dcfce7; --ok-fg: #14532d;
-  --danger-bg: #fee2e2; --danger-fg: #7f1d1d;
-}
-:root[data-mode="dark"] {
-  --bg: #0b1120;
-  --fg: #e5e7eb;
-  --brand: oklch(0.78 0.12 var(--hue));              /* lighter in the dark mode */
-  --on-brand: #0b1120;
-  --brand-text: oklch(0.80 0.12 var(--hue));
-  --ok-bg: #052e16; --ok-fg: #bbf7d0;
-  --danger-bg: #450a0a; --danger-fg: #fecaca;
-}
+**ليه كل سطر:**
+- **[[box-sizing: border-box]] على [[*]] و [[::before]] و [[::after]]:** من غيره [[width: 320px]] معناها عرض المحتوى بس، والـ padding (24 من كل ناحية) والحد (2 من كل ناحية) بيتزوّدوا عليه فالكارت يطلع 372. ومعاه الـ 320 هي الكارت كله، والمحتوى ياخد اللي فاضل (268).
+- **[[max-width: 100%]]:** على شاشة أضيق من 320 الكارت يصغر بدل ما يعمل scroll أفقي.
+- **[[margin-inline: auto]]:** بيقسم المسافة الفاضية على الجنبين فالكارت ييجي في النص. و [[inline]] معناها «ناحية السطر»، فبتشتغل صح في العربي والإنجليزي.
+- **[[.card h1]] و [[.card p]]:** selector من class وعنصر جواه، وزنه (0,1,1). كده الألوان دي للكارت بس، ولو حطيت [[<p>]] برّه الكارت مش هياخدها.
+- **[[font: inherit]] على الزرار:** الزراير مش بتورث خط الصفحة لوحدها (المتصفح بيدّيها خط النظام). السطر ده بيرجّعلها خط الصفحة.
+- **[[border-radius: 999px]]:** أي رقم أكبر من نص ارتفاع الزرار بيخلّي طرفيه نص دايرة.
+- **[[:focus-visible]]:** إطار واضح لما توصل للزرار بالـ Tab بس، مش لما تدوس عليه بالماوس.
 
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
-.page { max-width: 44rem; margin-inline: auto; padding: 1rem; }
-.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-block: 1rem; }
-.controls input { flex: 1; min-width: 12rem; accent-color: var(--brand); }
-button { font: inherit; cursor: pointer; }
-#mode { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid var(--fg); border-radius: 999px; background: transparent; color: var(--fg); }
+**مفيش id ولا [[style=""]]:** id وزنه (1,0,0)، يعني يغلب أي عدد من الـ classes، ولو حبيت تغيّر حاجة بعد كده هتضطر تكتب selector أتقل منه. والـ [[style=""]] أتقل من الاتنين.
 
-.samples { display: grid; gap: 1rem; justify-items: start; padding: 1.25rem; border-radius: 1rem; border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); }
-.btn { padding-block: 0.6rem; padding-inline: 1.2rem; border: 0; border-radius: 0.6rem; background: var(--brand); color: var(--on-brand); font-weight: 700; }
-.badge { padding-inline: 0.7rem; border-radius: 999px; background: var(--brand-soft); color: var(--brand-text); font-weight: 700; }
-a { color: var(--brand-text); }
-.field { display: grid; gap: 0.25rem; }
-.field input { padding: 0.5rem 0.75rem; border: 1px solid color-mix(in oklab, var(--fg) 45%, transparent); border-radius: 0.5rem; background: var(--bg); color: var(--fg); font: inherit; }
-:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
-.field input:focus-visible { outline: 3px solid var(--ring); box-shadow: 0 0 0 6px var(--brand-soft); }
-.alert { margin: 0; padding: 0.6rem 1rem; border-radius: 0.6rem; }
-.alert--ok { background: var(--ok-bg); color: var(--ok-fg); }
-.alert--danger { background: var(--danger-bg); color: var(--danger-fg); }
-
-.tested table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.tested th, .tested td { padding: 0.4rem 0.6rem; border-block-end: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); text-align: start; }
-.tbl { overflow-x: auto; }
-~~~
-
-~~~js studio.js
-const root = document.documentElement;
-const hue = document.getElementById("hue");
-const out = document.getElementById("hue-out");
-hue.addEventListener("input", () => {
-  root.style.setProperty("--hue", hue.value);       // one variable changes, everything follows
-  out.value = hue.value;
-});
-const mode = document.getElementById("mode");
-mode.addEventListener("click", () => {
-  const dark = root.dataset.mode !== "dark";
-  if (dark) root.dataset.mode = "dark"; else delete root.dataset.mode;
-  mode.setAttribute("aria-pressed", String(dark));
-});
-~~~
-
-~~~js color-check.js (القياس بـ playwright-core)
-// for every hue 0..360 (step 15), in both modes: contrast of (text on brand) and (brand text on page)
-const { chromium } = require("playwright-core");
-(async () => {
-  const browser = await chromium.launch({ channel: "chrome" });
-  const p = await browser.newPage();
-  await p.goto("http://127.0.0.1:8765/color-studio/index.html");
-  const rows = await p.evaluate(() => {
-    const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
-    const rgb = css => { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); };
-    const L = c => { const v = c.map(x => x / 255).map(x => x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
-    const cr = (a, b) => { const x = [L(a), L(b)].sort((m, n) => n - m); return (x[0] + 0.05) / (x[1] + 0.05); };
-    const get = (el, prop) => getComputedStyle(el)[prop];
-    const btn = document.querySelector(".btn"), link = document.querySelector("a"), ok = document.querySelector(".alert--ok");
-    const out = [];
-    for (const mode of ["light", "dark"]) {
-      if (mode === "dark") document.documentElement.dataset.mode = "dark"; else delete document.documentElement.dataset.mode;
-      for (let h = 0; h <= 360; h += 15) {
-        document.documentElement.style.setProperty("--hue", h);
-        const onBrand = cr(rgb(get(btn, "color")), rgb(get(btn, "backgroundColor")));
-        const textOnPage = cr(rgb(get(link, "color")), rgb(get(document.body, "backgroundColor")));
-        out.push({ mode, h, onBrand: +onBrand.toFixed(2), textOnPage: +textOnPage.toFixed(2), okBg: get(ok, "backgroundColor") });
-      }
-    }
-    return out;
-  });
-  for (const mode of ["light", "dark"]) {
-    const r = rows.filter(x => x.mode === mode);
-    console.log(mode, "min on-brand", Math.min(...r.map(x => x.onBrand)), "at hue", r.find(x => x.onBrand === Math.min(...r.map(y => y.onBrand))).h,
-      "| min brand-text", Math.min(...r.map(x => x.textOnPage)), "at hue", r.find(x => x.textOnPage === Math.min(...r.map(y => y.textOnPage))).h,
-      "| ok-bg values:", [...new Set(r.map(x => x.okBg))].join(" "));
-  }
-  for (const h of [30, 150, 270]) console.log("hue", h, JSON.stringify(rows.filter(x => x.h === h).map(x => x.mode + ": text on brand " + x.onBrand + ", brand text " + x.textOnPage)));
-  console.log("below 4.5:", JSON.stringify(rows.filter(x => x.onBrand < 4.5 || x.textOnPage < 4.5).map(x => x.mode + " " + x.h + " (" + x.onBrand + "/" + x.textOnPage + ")")));
-  await browser.close();
-})();
-~~~
-
-~~~view 820 1000 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>استوديو الألوان</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-
-:root {
-  --hue: 270;                                        /* the ONE number. Everything brand-coloured comes from it */
-  --bg: #ffffff;
-  --fg: #111827;
-  --brand: oklch(0.48 0.17 var(--hue));              /* dark enough for white text on it */
-  --on-brand: #ffffff;
-  --brand-text: oklch(0.45 0.17 var(--hue));         /* brand colour used as TEXT on the page background */
-  --brand-soft: color-mix(in oklab, var(--brand) 20%, transparent);
-  --ring: color-mix(in oklab, var(--brand) 55%, transparent);
-  /* functional colours: fixed, they must not change with the brand */
-  --ok-bg: #dcfce7; --ok-fg: #14532d;
-  --danger-bg: #fee2e2; --danger-fg: #7f1d1d;
-}
-:root[data-mode="dark"] {
-  --bg: #0b1120;
-  --fg: #e5e7eb;
-  --brand: oklch(0.78 0.12 var(--hue));              /* lighter in the dark mode */
-  --on-brand: #0b1120;
-  --brand-text: oklch(0.80 0.12 var(--hue));
-  --ok-bg: #052e16; --ok-fg: #bbf7d0;
-  --danger-bg: #450a0a; --danger-fg: #fecaca;
-}
-
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
-.page { max-width: 44rem; margin-inline: auto; padding: 1rem; }
-.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-block: 1rem; }
-.controls input { flex: 1; min-width: 12rem; accent-color: var(--brand); }
-button { font: inherit; cursor: pointer; }
-#mode { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid var(--fg); border-radius: 999px; background: transparent; color: var(--fg); }
-
-.samples { display: grid; gap: 1rem; justify-items: start; padding: 1.25rem; border-radius: 1rem; border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); }
-.btn { padding-block: 0.6rem; padding-inline: 1.2rem; border: 0; border-radius: 0.6rem; background: var(--brand); color: var(--on-brand); font-weight: 700; }
-.badge { padding-inline: 0.7rem; border-radius: 999px; background: var(--brand-soft); color: var(--brand-text); font-weight: 700; }
-a { color: var(--brand-text); }
-.field { display: grid; gap: 0.25rem; }
-.field input { padding: 0.5rem 0.75rem; border: 1px solid color-mix(in oklab, var(--fg) 45%, transparent); border-radius: 0.5rem; background: var(--bg); color: var(--fg); font: inherit; }
-:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
-.field input:focus-visible { outline: 3px solid var(--ring); box-shadow: 0 0 0 6px var(--brand-soft); }
-.alert { margin: 0; padding: 0.6rem 1rem; border-radius: 0.6rem; }
-.alert--ok { background: var(--ok-bg); color: var(--ok-fg); }
-.alert--danger { background: var(--danger-bg); color: var(--danger-fg); }
-
-.tested table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.tested th, .tested td { padding: 0.4rem 0.6rem; border-block-end: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); text-align: start; }
-.tbl { overflow-x: auto; }
-</style>
-</head>
-<body>
-<main class="page">
-  <h1>استوديو الألوان</h1>
-  <p class="lead">حرّك درجة اللون: كل لون في الصفحة بيتولّد من رقم واحد.</p>
-  <div class="controls">
-    <label for="hue">درجة اللون (hue):</label> <output id="hue-out" for="hue">270</output>
-    <input id="hue" type="range" min="0" max="360" value="270">
-    <button type="button" id="mode" aria-pressed="false">الوضع الغامق</button>
-  </div>
-
-  <section class="samples" aria-label="عينات">
-    <button type="button" class="btn">احجز دلوقتي</button>
-    <span class="badge">جديد</span>
-    <a href="#more">لينك عادي</a>
-    <label class="field">خانة فيها focus <input value="اضغط هنا" aria-label="خانة تجربة"></label>
-    <p class="alert alert--ok">اتحفظ. (لون النجاح ثابت مهما البراند اتغيّر)</p>
-    <p class="alert alert--danger">فيه غلطة. (لون الخطر ثابت)</p>
-  </section>
-
-  <section class="tested">
-    <h2>درجات اتقاس تباينها</h2>
-    <p>الأرقام من قياس حقيقي في Chrome (نسبة التباين، والمطلوب 4.5 أو أكتر):</p>
-    <div class="tbl" tabindex="0" role="region" aria-label="جدول التباين">
-    <table>
-      <thead><tr><th scope="col">hue</th><th scope="col">فاتح: كلام على البراند</th><th scope="col">فاتح: لينك على الخلفية</th><th scope="col">غامق: كلام على البراند</th><th scope="col">غامق: لينك على الخلفية</th></tr></thead>
-      <tbody>
-        <tr><th scope="row">30</th><td>7.17</td><td>8.13</td><td>8.98</td><td>9.57</td></tr>
-        <tr><th scope="row">150</th><td>5.82</td><td>6.57</td><td>9.85</td><td>10.58</td></tr>
-        <tr><th scope="row">270</th><td>6.80</td><td>7.82</td><td>9.19</td><td>9.83</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <p>وأقل رقم في كل الدرجات من 0 لـ 360: 5.35 (hue 195، فاتح).</p>
-  </section>
-</main>
-<script>
-const root = document.documentElement;
-const hue = document.getElementById("hue");
-const out = document.getElementById("hue-out");
-hue.addEventListener("input", () => {
-  root.style.setProperty("--hue", hue.value);       // one variable changes, everything follows
-  out.value = hue.value;
-});
-const mode = document.getElementById("mode");
-mode.addEventListener("click", () => {
-  const dark = root.dataset.mode !== "dark";
-  if (dark) root.dataset.mode = "dark"; else delete root.dataset.mode;
-  mode.setAttribute("aria-pressed", String(dark));
-});
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** slider لدرجة اللون، وتحته زرار مليان، وشارة فاتحة، ولينك، وخانة، وتنبيهين (نجاح أخضر وخطر أحمر)، وجدول تباين. حرّك الـ slider: الزرار والشارة واللينك وحلقة الـ focus بيتلوّنوا بنفس الدرجة، والتنبيهين مبيتغيّروش.
-
-**رقم واحد بيولّد كله:** [[--hue]] على [[:root]]، و [[--brand: oklch(0.48 0.17 var(--hue))]]. [[oklch]] = إضاءة، وتشبّع، ودرجة. الإضاءة والتشبّع ثابتين، فأي درجة بتطلع بنفس الغمق تقريبًا، والتباين بيفضل مضمون. في [[hsl]] الأصفر والأزرق بنفس الأرقام ليهم إضاءة مختلفة خالص.
-
-**الألوان المشتقة بـ [[color-mix]]:** [[--brand-soft]] = البراند 20% مع شفاف (خلفية الشارة)، و [[--ring]] = 55% (حلقة الـ focus). بتتغيّر مع البراند لوحدها.
-
-**الألوان الوظيفية ثابتة:** النجاح والخطر قيم مكتوبة، مش من [[--hue]]: لو البراند بقى أحمر، «الخطر» لازم يفضل أحمر ومعناه واضح. اتقاس: خلفية تنبيه النجاح نفس القيمة في الـ ٢٥ درجة.
-
-**الوضع الغامق:** نفس [[--hue]]، بإضاءة أعلى ([[0.78]]) وكلام غامق على البراند.
-
-**التباين اتقاس لكل درجة:** السكربت بيلف على الدرجات من 0 لـ 360 كل 15، وفي الوضعين بيقيس الكلام على الزرار واللينك على الخلفية. المتصفح بيرجّع اللون [[oklch(...)]]، فالسكربت بيرسمه في بكسل على [[canvas]] ويقرا الـ RGB، وبيحسب التباين بمعادلة WCAG. أقل رقم في كل الدرجات 5.35 (hue 195، فاتح)، يعني الـ slider كله آمن.
-
-**غلطة مسكها الـ validator:** أول نسخة كان الرقم [[<output>]] جوه [[<label for="hue">]]. أي عنصر ليه label جوه [[label]] لازم يكون هو اللي الـ [[for]] بيشاور عليه، فالـ [[output]] اتنقل برّه الـ label.
-
-~~~text node color-check.js
-light min on-brand 5.35 at hue 195 | min brand-text 6.05 at hue 195 | ok-bg values: rgb(220, 252, 231)
-dark min on-brand 8.88 at hue 345 | min brand-text 9.52 at hue 15 | ok-bg values: rgb(5, 46, 22)
-hue 30  ["light: text on brand 7.17, brand text 8.13","dark: text on brand 8.98, brand text 9.57"]
-hue 150 ["light: text on brand 5.82, brand text 6.57","dark: text on brand 9.85, brand text 10.58"]
-hue 270 ["light: text on brand 6.8, brand text 7.82","dark: text on brand 9.19, brand text 9.83"]
-below 4.5: []
-
-الـ slider من 270 لـ 30: الزرار oklch(0.78 0.12 270) ← oklch(0.78 0.12 30)
-axe (360 و 1280، فاتح وغامق): 0 violations   الـ validator: مفيش رسايل (بعد نقل output)   CSS validator: No Error Found
+~~~text الناتج (Chrome)
+عرض الكارت (getBoundingClientRect)         320
+نفس الكارت بـ box-sizing: content-box       371.2 (= 320 + 24×2 + 1.6×2)
+الحد                                         1.6px (شاشتي زومها 125%، فالمتصفح بيقرّب الـ 2px لـ 1.6)
+نفس القياس بـ chrome --headless --force-device-scale-factor=1:   الحد 2px، والكارت 320، وبـ content-box 372
+على 360                                      الكارت 320، scrollWidth = 360 من 360
+عناصر عليها style=""                         0
+axe                                          0 violations
 ~~~` },
-        { lvl: 'كبير', dir: "adasa", t: R`landing ثنائية اللغة لاستوديو تصوير متخيل «عدسة»`, what: R`صفحة كاملة (هيرو، وخدمات، وأعمال، وأسعار، وFAQ، وفوتر) بالعربي والإنجليزي على [[/ar]] و [[/en]]. توكنز طبقتين (خام ثم أسامي بالمعنى)، و ٣ ثيمات من غير وميض، و RTL و LTR بالـ logical properties بس، وخطين woff2 من الموقع بـ [[unicode-range]] و [[swap]] و preload لخط العناوين بس، وضبط العربي ([[line-height: 1.85]] للفقرات و [[letter-spacing: 0]] لـ [[:lang(ar)]] وعناوين بـ [[clamp()]])، وأيقونات lucide بـ [[aria-hidden]] أو اسم. وفيها من تأثيرات المشاريع الحقيقية: navbar زجاجي sticky ([[backdrop-filter]] ومعاه [[@supports not]] بخلفية شبه مصمتة)، وهيرو بـ ٣ [[radial-gradient]] وطبقة noise خفيفة من SVG [[feTurbulence]] في data URI بـ [[pointer-events: none]]. بيجمع الوحدة دي مع الوحدات والمتغيرات و Tailwind.`, done: R`Lighthouse (Mobile) في اللغتين والثيمين: Accessibility ‏100 و Performance ‏90 أو أكتر و CLS أقل من 0.05. صفر طلبات خطوط لدومين تاني. الصفحة شغالة والـ JavaScript مقفول (الثيم من [[prefers-color-scheme]] واللغة من الـ URL). لقطة RTL مراية LTR. وفيه README بجدول: كل توكن واستخدامه.`, ext: R`زوّد ثيم [[prefers-contrast: more]] و [[forced-colors]] (Windows High Contrast)، واعمل صفحة style guide بتعرض التوكنز كلها، وانشرها على GitHub Pages برابط.`, sol: R`~~~text adasa/
-ar/index.html  en/index.html  styleguide.html (المشروع الجاي)  README.md
-assets/tokens.css  assets/style.css  assets/theme.js
-assets/fonts/  (Cairo عربي 400 و 700، و Inter لاتيني 400 و 700، ورخصهم)
-assets/img/work-1..4.webp
-~~~
-
-**ترتيب البناء:** (١) [[tokens.css]]: خام، وبعدين أسامي بالمعنى للفاتح والغامق. (٢) الخطوط بـ [[unicode-range]]. (٣) الصفحة العربي بالـ logical properties. (٤) الإنجليزي نسخة بنفس الـ HTML والكلام مترجم. (٥) Lighthouse في اللغتين والثيمين.
-
-~~~css assets/tokens.css
-/* layer 1: raw values. Nothing on the page uses these names directly */
-:root {
-  --raw-ink-950: #0c0a09;
-  --raw-ink-900: #1c1917;
-  --raw-ink-700: #44403c;
-  --raw-ink-500: #78716c;
-  --raw-ink-300: #a8a29e;
-  --raw-sand-50: #fafaf9;
-  --raw-sand-100: #f5f5f4;
-  --raw-sand-200: #e7e5e4;
-  --raw-amber-300: #fcd34d;
-  --raw-amber-700: #b45309;
-  --raw-amber-800: #92400e;
-  --raw-teal-300: #5eead4;
-  --raw-teal-800: #115e59;
-  --white: #ffffff;
-}
-
-/* layer 2: names by meaning. The page uses ONLY these. A theme = a different mapping.
-   [data-theme] works on ANY element, not only <html>: a section can show the other theme (the style guide does) */
-:root, [data-theme="light"] {
-  --color-bg: var(--raw-sand-50);
-  --color-surface: var(--white);
-  --color-fg: var(--raw-ink-900);
-  --color-muted: var(--raw-ink-700);
-  --color-line: var(--raw-sand-200);
-  --color-accent: var(--raw-amber-800);
-  --color-on-accent: var(--white);
-  --color-glow-1: #fde68a;
-  --color-glow-2: #99f6e4;
-  --color-glass: rgb(250 250 249 / 0.72);
-  --color-glass-solid: rgb(250 250 249 / 0.96);
-
-  --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
-  --radius: 1rem;
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
-  --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.35);
-  --z-header: 10;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --color-bg: var(--raw-ink-950);
-    --color-surface: var(--raw-ink-900);
-    --color-fg: var(--raw-sand-100);
-    --color-muted: var(--raw-ink-300);
-    --color-line: var(--raw-ink-700);
-    --color-accent: var(--raw-amber-300);
-    --color-on-accent: var(--raw-ink-950);
-    --color-glow-1: #78350f;
-    --color-glow-2: #134e4a;
-    --color-glass: rgb(12 10 9 / 0.7);
-    --color-glass-solid: rgb(12 10 9 / 0.96);
-  }
-}
-[data-theme="dark"] {
-  --color-bg: var(--raw-ink-950);
-  --color-surface: var(--raw-ink-900);
-  --color-fg: var(--raw-sand-100);
-  --color-muted: var(--raw-ink-300);
-  --color-line: var(--raw-ink-700);
-  --color-accent: var(--raw-amber-300);
-  --color-on-accent: var(--raw-ink-950);
-  --color-glow-1: #78350f;
-  --color-glow-2: #134e4a;
-  --color-glass: rgb(12 10 9 / 0.7);
-  --color-glass-solid: rgb(12 10 9 / 0.96);
-}
-~~~
-
-~~~css assets/style.css
-/* fonts from this site only. unicode-range: a page downloads only the file whose letters it has */
-@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF; }
-@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF; }
-@font-face { font-family: "Inter"; src: url("fonts/inter-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122; }
-@font-face { font-family: "Inter"; src: url("fonts/inter-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122; }
-
-*, *::before, *::after { box-sizing: border-box; }
-:root { color-scheme: light dark; }
-[data-theme="light"] { color-scheme: light; }
-[data-theme="dark"] { color-scheme: dark; }
-body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
-/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
-   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
-:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
-:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
-h1, h2, h3 { line-height: 1.25; }
-h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); margin: 0 0 var(--space-3); }
-img { display: block; max-width: 100%; height: auto; }
-a { color: var(--color-accent); }
-:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
-.wrap { max-width: 68rem; margin-inline: auto; padding-inline: var(--space-2); }
-.section { padding-block: var(--space-5); }
-.icon { flex: none; width: 1.5rem; height: 1.5rem; }
-.icon-flip:dir(rtl) { scale: -1 1; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* glass header: blurred where supported, almost solid where not */
-.header { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-glass); backdrop-filter: blur(12px); border-block-end: 1px solid var(--color-line); }
-@supports not (backdrop-filter: blur(1px)) {
-  .header { background: var(--color-glass-solid); }
-}
-.header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding-block: 0.6rem; }
-.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-fg); font-weight: 700; text-decoration: none; }
-.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin-inline-start: auto; }
-.nav a { color: var(--color-fg); text-decoration: none; }
-.nav a:hover { color: var(--color-accent); }
-.tools { display: flex; align-items: center; gap: 0.5rem; }
-/* the other-language link: system font, so one English word does not download a whole font on the Arabic page */
-.lang { font-family: system-ui, sans-serif; padding: 0.25rem 0.75rem; border: 1px solid var(--color-line); border-radius: 999px; color: var(--color-fg); text-decoration: none; font-weight: 700; }
-.seg { display: inline-flex; margin: 0; padding: 0.15rem; border: 1px solid var(--color-line); border-radius: 999px; }
-.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.seg label { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; color: var(--color-muted); }
-.seg input { position: absolute; opacity: 0; }
-.seg label:has(input:checked) { background: var(--color-accent); color: var(--color-on-accent); }
-.seg label:has(input:focus-visible) { outline: 3px solid var(--color-accent); outline-offset: 2px; }
-.seg .icon { width: 1.1rem; height: 1.1rem; }
-
-/* hero: three soft lights, and a very light noise on top that the mouse goes through */
-.hero { position: relative; isolation: isolate; overflow: clip; padding-block: clamp(4rem, 2rem + 10vw, 9rem);
-  background:
-    radial-gradient(40rem 22rem at 15% 20%, var(--color-glow-1), transparent 70%),
-    radial-gradient(36rem 20rem at 85% 30%, var(--color-glow-2), transparent 70%),
-    radial-gradient(50rem 18rem at 50% 110%, var(--color-glow-1), transparent 70%),
-    var(--color-bg); }
-.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.18;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"); }
-.hero h1 { margin: 0 0 var(--space-2); font-size: clamp(2rem, 1.2rem + 4vw, 4rem); max-width: 16ch; }
-.hero p { margin: 0 0 var(--space-3); max-width: 42ch; font-size: 1.15rem; color: var(--color-muted); }
-.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-lg); }
-
-.cards { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-.card { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); box-shadow: var(--shadow-sm); }
-.card h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; font-size: 1.15rem; }
-.card h3 .icon { color: var(--color-accent); }
-.card p { margin: 0; color: var(--color-muted); }
-
-.works { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-.works figure { margin: 0; }
-.works img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); }
-.works figcaption { padding-block-start: 0.4rem; color: var(--color-muted); }
-
-.price { display: grid; gap: 0.5rem; }
-.price .amount { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-fg); }
-
-details { margin-block-end: var(--space-1); padding: var(--space-2); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
-summary { cursor: pointer; font-weight: 700; }
-details p { margin: var(--space-1) 0 0; color: var(--color-muted); }
-
-.footer { padding-block: var(--space-4); border-block-start: 1px solid var(--color-line); color: var(--color-muted); }
-~~~
-
-~~~html ar/index.html
+        { lvl: 'صغير', dir: "css-shapes", t: R`٦ أشكال بالـ CSS بس`, what: R`صفحة فيها ٦ أشكال من div فاضي من غير صور: دايرة، وكبسولة، ومثلث بالحدود، وفقاعة كلام (مستطيل مدور ومثلث صغير بـ [[::after]])، وتذكرة بخط متقطع ونص دايرتين على الجنبين، وشارة «جديد» مايلة على ركن كارت. من دروس «selectors» و «box model» و «display».`, done: R`كل شكل مقاسه زي ما قلت بالظبط ([[getBoundingClientRect]]: المثلث مثلًا 40×30 على شاشة زومها 100%، وعرضه وطوله صفر في الـ CSS)، والأشكال جنب بعض بتلف لسطر جديد على 360px من غير scroll أفقي، ومفيش ولا صورة في Network.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عدسة: استوديو تصوير</title>
-<meta name="description" content="تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.">
-<link rel="alternate" hreflang="en" href="../en/">
-<script>
-  (function () {
-    var t = null;
-    try { t = localStorage.getItem("theme"); } catch (e) {}
-    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
-  })();
-</script>
-<link rel="preload" href="../assets/fonts/cairo-arabic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/tokens.css">
-<link rel="stylesheet" href="../assets/style.css">
-<script src="../assets/theme.js" defer></script>
+<title>٦ أشكال بالـ CSS بس</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="header">
-  <div class="wrap">
-    <a class="logo" href="./"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m14.31 8 5.74 9.94" /> <path d="M9.69 8h11.48" /> <path d="m7.38 12 5.74-9.94" /> <path d="M9.69 16 3.95 6.06" /> <path d="M14.31 16H2.83" /> <path d="m16.62 12-5.74 9.94" /> </svg><span>عدسة</span></a>
-    <nav class="nav" aria-label="أقسام الصفحة">
-      <a href="#services">الخدمات</a>
-      <a href="#work">أعمالنا</a>
-      <a href="#prices">الأسعار</a>
-      <a href="#faq">أسئلة</a>
-    </nav>
-    <div class="tools">
-      <fieldset class="seg">
-        <legend>الثيم</legend>
-        <label title="فاتح"><input type="radio" name="theme" value="light" aria-label="فاتح"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></label>
-        <label title="غامق"><input type="radio" name="theme" value="dark" aria-label="غامق"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></label>
-        <label title="زي الجهاز"><input type="radio" name="theme" value="system" aria-label="زي الجهاز" checked><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="3" rx="2" /> <line x1="8" x2="16" y1="21" y2="21" /> <line x1="12" x2="12" y1="17" y2="21" /> </svg></label>
-      </fieldset>
-      <a class="lang" href="../en/" lang="en" hreflang="en">English</a>
-    </div>
-  </div>
-</header>
 <main>
-  <section class="hero">
-    <div class="wrap">
-      <h1>صور بتحكي الحكاية زي ما حصلت</h1>
-      <p>تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.</p>
-      <a class="btn" href="#prices">احجز جلسة<svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
-    </div>
-  </section>
-  <section class="section" id="services" aria-labelledby="h-services">
-    <div class="wrap">
-      <h2 id="h-services">الخدمات</h2>
-      <ul class="cards">
-        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg>منتجات</h3><p>خلفية بيضا أو مشهد، و ٢٠ صورة متعدّلة.</p></li>
-        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg>بورتريه</h3><p>ساعة في الاستوديو بإضاءة ناعمة.</p></li>
-        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5.8 11.3 2 22l10.7-3.79" /> <path d="M4 3h.01" /> <path d="M22 8h.01" /> <path d="M15 2h.01" /> <path d="M22 20h.01" /> <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /> <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /> <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /> <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /> </svg>مناسبات</h3><p>خطوبة أو عيد ميلاد، لحد ٤ ساعات.</p></li>
-      </ul>
-    </div>
-  </section>
-  <section class="section" id="work" aria-labelledby="h-work">
-    <div class="wrap">
-      <h2 id="h-work">أعمالنا</h2>
-      <ul class="works">
-        <li><figure><img src="../assets/img/work-1.webp" alt="صورة من شغلنا: منيو مطعم" width="600" height="400" loading="lazy"><figcaption>منيو مطعم</figcaption></figure></li>
-        <li><figure><img src="../assets/img/work-2.webp" alt="صورة من شغلنا: بورتريه عيلة" width="600" height="400" loading="lazy"><figcaption>بورتريه عيلة</figcaption></figure></li>
-        <li><figure><img src="../assets/img/work-3.webp" alt="صورة من شغلنا: منتجات يدوية" width="600" height="400" loading="lazy"><figcaption>منتجات يدوية</figcaption></figure></li>
-        <li><figure><img src="../assets/img/work-4.webp" alt="صورة من شغلنا: خطوبة في جنينة" width="600" height="400" loading="lazy"><figcaption>خطوبة في جنينة</figcaption></figure></li>
-      </ul>
-    </div>
-  </section>
-  <section class="section" id="prices" aria-labelledby="h-prices">
-    <div class="wrap">
-      <h2 id="h-prices">الأسعار</h2>
-      <ul class="cards">
-        <li class="card price"><h3>جلسة قصيرة</h3><p>تبدأ من</p><p class="amount">‏١٬٥٠٠ ج.م.‏</p></li>
-        <li class="card price"><h3>يوم منتجات</h3><p>تبدأ من</p><p class="amount">‏٤٬٥٠٠ ج.م.‏</p></li>
-        <li class="card price"><h3>مناسبة</h3><p>تبدأ من</p><p class="amount">‏٦٬٠٠٠ ج.م.‏</p></li>
-      </ul>
-    </div>
-  </section>
-  <section class="section" id="faq" aria-labelledby="h-faq">
-    <div class="wrap">
-      <h2 id="h-faq">أسئلة</h2>
-      <details><summary>بتسلّموا الصور إمتى؟</summary><p>خلال ٥ أيام شغل.</p></details>
-      <details><summary>ينفع تيجوا عندي؟</summary><p>أيوه، في القاهرة والجيزة.</p></details>
-    </div>
-  </section>
+  <h1>٦ أشكال من غير ولا صورة</h1>
+  <ul class="shapes">
+    <li><div class="circle"></div><p>دايرة</p></li>
+    <li><div class="pill">كبسولة</div><p>كبسولة</p></li>
+    <li><div class="triangle"></div><p>مثلث بالحدود</p></li>
+    <li><div class="bubble">أهلًا!</div><p>فقاعة كلام</p></li>
+    <li><div class="ticket">تذكرة دخول</div><p>تذكرة</p></li>
+    <li><div class="corner-card"><span class="ribbon">جديد</span></div><p>شارة على الركن</p></li>
+  </ul>
 </main>
-<footer class="footer"><div class="wrap"><p>عدسة، ١٢ شارع الفن، وسط البلد</p></div></footer>
 </body>
 </html>
 ~~~
 
-~~~html en/index.html
-<!doctype html>
-<html lang="en" dir="ltr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Adasa: photo studio</title>
-<meta name="description" content="Products, portraits and small events, in the studio or at your place.">
-<link rel="alternate" hreflang="ar" href="../ar/">
-<script>
-  (function () {
-    var t = null;
-    try { t = localStorage.getItem("theme"); } catch (e) {}
-    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
-  })();
-</script>
-<link rel="preload" href="../assets/fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/tokens.css">
-<link rel="stylesheet" href="../assets/style.css">
-<script src="../assets/theme.js" defer></script>
-</head>
-<body>
-<header class="header">
-  <div class="wrap">
-    <a class="logo" href="./"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m14.31 8 5.74 9.94" /> <path d="M9.69 8h11.48" /> <path d="m7.38 12 5.74-9.94" /> <path d="M9.69 16 3.95 6.06" /> <path d="M14.31 16H2.83" /> <path d="m16.62 12-5.74 9.94" /> </svg><span>Adasa</span></a>
-    <nav class="nav" aria-label="Page sections">
-      <a href="#services">Services</a>
-      <a href="#work">Work</a>
-      <a href="#prices">Prices</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-    <div class="tools">
-      <fieldset class="seg">
-        <legend>Theme</legend>
-        <label title="Light"><input type="radio" name="theme" value="light" aria-label="Light"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></label>
-        <label title="Dark"><input type="radio" name="theme" value="dark" aria-label="Dark"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></label>
-        <label title="Device"><input type="radio" name="theme" value="system" aria-label="Device" checked><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="3" rx="2" /> <line x1="8" x2="16" y1="21" y2="21" /> <line x1="12" x2="12" y1="17" y2="21" /> </svg></label>
-      </fieldset>
-      <a class="lang" href="../ar/" lang="ar" hreflang="ar">عربي</a>
-    </div>
-  </div>
-</header>
-<main>
-  <section class="hero">
-    <div class="wrap">
-      <h1>Photos that tell the story the way it happened</h1>
-      <p>Products, portraits and small events, in the studio or at your place.</p>
-      <a class="btn" href="#prices">Book a session<svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
-    </div>
-  </section>
-  <section class="section" id="services" aria-labelledby="h-services">
-    <div class="wrap">
-      <h2 id="h-services">Services</h2>
-      <ul class="cards">
-        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg>Products</h3><p>White background or a scene, 20 edited photos.</p></li>
-        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg>Portraits</h3><p>One hour in the studio with soft light.</p></li>
-        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5.8 11.3 2 22l10.7-3.79" /> <path d="M4 3h.01" /> <path d="M22 8h.01" /> <path d="M15 2h.01" /> <path d="M22 20h.01" /> <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /> <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /> <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /> <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /> </svg>Events</h3><p>Engagements or birthdays, up to 4 hours.</p></li>
-      </ul>
-    </div>
-  </section>
-  <section class="section" id="work" aria-labelledby="h-work">
-    <div class="wrap">
-      <h2 id="h-work">Our work</h2>
-      <ul class="works">
-        <li><figure><img src="../assets/img/work-1.webp" alt="A photo from our work: Restaurant menu" width="600" height="400" loading="lazy"><figcaption>Restaurant menu</figcaption></figure></li>
-        <li><figure><img src="../assets/img/work-2.webp" alt="A photo from our work: Family portrait" width="600" height="400" loading="lazy"><figcaption>Family portrait</figcaption></figure></li>
-        <li><figure><img src="../assets/img/work-3.webp" alt="A photo from our work: Handmade products" width="600" height="400" loading="lazy"><figcaption>Handmade products</figcaption></figure></li>
-        <li><figure><img src="../assets/img/work-4.webp" alt="A photo from our work: Garden engagement" width="600" height="400" loading="lazy"><figcaption>Garden engagement</figcaption></figure></li>
-      </ul>
-    </div>
-  </section>
-  <section class="section" id="prices" aria-labelledby="h-prices">
-    <div class="wrap">
-      <h2 id="h-prices">Prices</h2>
-      <ul class="cards">
-        <li class="card price"><h3>Short session</h3><p>From</p><p class="amount">EGP 1,500</p></li>
-        <li class="card price"><h3>Products day</h3><p>From</p><p class="amount">EGP 4,500</p></li>
-        <li class="card price"><h3>Event</h3><p>From</p><p class="amount">EGP 6,000</p></li>
-      </ul>
-    </div>
-  </section>
-  <section class="section" id="faq" aria-labelledby="h-faq">
-    <div class="wrap">
-      <h2 id="h-faq">FAQ</h2>
-      <details><summary>When do we get the photos?</summary><p>Within 5 working days.</p></details>
-      <details><summary>Can you come to us?</summary><p>Yes, in Cairo and Giza.</p></details>
-    </div>
-  </section>
-</main>
-<footer class="footer"><div class="wrap"><p>Adasa, 12 Art Street, Downtown</p></div></footer>
-</body>
-</html>
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+h1 { font-size: 22px; margin: 0 0 16px; }
+
+/* the cells wrap to a new line instead of making the page scroll */
+.shapes { display: flex; flex-wrap: wrap; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.shapes li { width: 140px; min-height: 140px; padding: 12px; border-radius: 12px; background: white;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+.shapes p { margin: 8px 0 0; font-size: 14px; color: #475569; }
+
+/* 1. circle: a square with radius 50% */
+.circle { width: 80px; height: 80px; border-radius: 50%; background: #0ea5e9; }
+
+/* 2. pill: any radius bigger than half the height gives round ends */
+.pill { padding: 8px 20px; border-radius: 999px; background: #8b5cf6; color: white; font-weight: 700; }
+
+/* 3. triangle: no size at all, only borders. The bottom border is the triangle,
+      the two side borders are transparent and give it its width (20 + 20 = 40) */
+.triangle { width: 0; height: 0;
+  border-inline: 20px solid transparent;
+  border-block-end: 30px solid #f97316; }
+
+/* 4. speech bubble: a rounded box and a small triangle made by ::after under it */
+.bubble { position: relative; padding: 10px 16px; border-radius: 14px; background: #15803d; color: white; font-weight: 700; }
+.bubble::after { content: ""; position: absolute; top: 100%; inset-inline-start: 18px;
+  border-inline: 8px solid transparent; border-block-start: 10px solid #15803d; }
+
+/* 5. ticket: a dashed border inside, and two half circles cut out with the page colour */
+.ticket { position: relative; width: 120px; padding: 14px 10px; border-radius: 8px; background: #fde68a;
+  outline: 2px dashed #b45309; outline-offset: -6px; text-align: center; font-weight: 700; color: #78350f; }
+.ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 16px; height: 16px;
+  border-radius: 50%; background: white; transform: translateY(-50%); }
+.ticket::before { inset-inline-start: -8px; }
+.ticket::after { inset-inline-end: -8px; }
+
+/* 6. a ribbon across the corner: rotated, and the card hides what sticks out */
+.corner-card { position: relative; width: 110px; height: 80px; border-radius: 10px; background: #e2e8f0; overflow: hidden; }
+.ribbon { position: absolute; top: 18px; inset-inline-end: -28px; width: 110px; padding: 2px 0;
+  background: #dc2626; color: white; font-size: 13px; font-weight: 700; text-align: center;
+  transform: rotate(-45deg); }
 ~~~
 
-~~~js assets/theme.js
-// the radios: show the saved choice, save a new one, apply it
-const root = document.documentElement;
-let saved = "system";
-try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
-const radios = document.querySelectorAll('input[name="theme"]');
-radios.forEach(r => { r.checked = r.value === saved; });
-
-function apply(value) {
-  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
-  else { root.dataset.theme = value; root.style.colorScheme = value; }
-  try { localStorage.setItem("theme", value); } catch (e) {}
-}
-radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
-~~~
-
-~~~text README.md
-# عدسة: صفحة الاستوديو
-
-$__btar/$__bt و $__bten/$__bt نفس الصفحة بلغتين. الـ CSS والخطوط والصور في $__btassets/$__bt. دليل الهوية: $__btstyleguide.html$__bt.
-
-## التوكنز
-
-| التوكن | فاتح | غامق | بيتستخدم في |
-|---|---|---|---|
-| $__bt--color-bg$__bt | $__bt--raw-sand-50$__bt | $__bt--raw-ink-950$__bt | خلفية الصفحة |
-| $__bt--color-surface$__bt | $__bt#ffffff$__bt | $__bt--raw-ink-900$__bt | الكروت والأسئلة |
-| $__bt--color-fg$__bt | $__bt--raw-ink-900$__bt | $__bt--raw-sand-100$__bt | الكلام |
-| $__bt--color-muted$__bt | $__bt--raw-ink-700$__bt | $__bt--raw-ink-300$__bt | الكلام الهادي والوصف |
-| $__bt--color-line$__bt | $__bt--raw-sand-200$__bt | $__bt--raw-ink-700$__bt | الحدود والخطوط |
-| $__bt--color-accent$__bt | $__bt--raw-amber-800$__bt | $__bt--raw-amber-300$__bt | اللينكات والزرار والـ focus |
-| $__bt--color-on-accent$__bt | $__bt#ffffff$__bt | $__bt--raw-ink-950$__bt | الكلام على الزرار |
-| $__bt--color-glow-1$__bt و $__bt--color-glow-2$__bt | دهبي وتركواز فاتحين | نفس الألوان غامقة | أضواء الهيرو |
-| $__bt--color-glass$__bt | أبيض 72% | أسود 70% | الهيدر الزجاجي |
-| $__bt--color-glass-solid$__bt | أبيض 96% | أسود 96% | الهيدر لو المتصفح مبيدعمش $__btbackdrop-filter$__bt |
-| $__bt--space-1$__bt لحد $__bt--space-5$__bt | 0.5 و 1 و 1.5 و 2.5 و 4 rem | نفسها | المسافات |
-| $__bt--radius$__bt | 1rem | نفسها | تدوير الكروت والصور |
-| $__bt--shadow-sm$__bt و $__bt--shadow-lg$__bt | ظل صغير حاد، وكبير ناعم | نفسها | الكروت، والزرار |
-| $__bt--z-header$__bt | 10 | نفسها | الهيدر اللازق |
-
-## القواعد
-
-- الصفحة مبتستخدمش $__bt--raw-*$__bt خالص: الأسامي بالمعنى بس.
-- مفيش $__btleft$__bt ولا $__btright$__bt ولا $__bt[dir=rtl]$__bt في الـ CSS. السهم بس بيتقلب بـ $__bt:dir(rtl)$__bt.
-- الخطوط من الموقع نفسه، و $__btunicode-range$__bt بيخلي الصفحة العربي تنزّل Cairo بس، والإنجليزي Inter بس.
-~~~
-
-~~~view 760 900 الشكل النهائي (المعاينة بخط الجهاز (ملفات الخطوط مش جوه المعاينة)، وصور صغيرة)
+~~~view 560 1000 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عدسة: استوديو تصوير</title>
-<meta name="description" content="تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.">
-<link rel="alternate" hreflang="en" href="../en/">
-<script>
-  (function () {
-    var t = null;
-    try { t = localStorage.getItem("theme"); } catch (e) {}
-    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
-  })();
-</script>
-<style>
-/* layer 1: raw values. Nothing on the page uses these names directly */
-:root {
-  --raw-ink-950: #0c0a09;
-  --raw-ink-900: #1c1917;
-  --raw-ink-700: #44403c;
-  --raw-ink-500: #78716c;
-  --raw-ink-300: #a8a29e;
-  --raw-sand-50: #fafaf9;
-  --raw-sand-100: #f5f5f4;
-  --raw-sand-200: #e7e5e4;
-  --raw-amber-300: #fcd34d;
-  --raw-amber-700: #b45309;
-  --raw-amber-800: #92400e;
-  --raw-teal-300: #5eead4;
-  --raw-teal-800: #115e59;
-  --white: #ffffff;
-}
-
-/* layer 2: names by meaning. The page uses ONLY these. A theme = a different mapping.
-   [data-theme] works on ANY element, not only <html>: a section can show the other theme (the style guide does) */
-:root, [data-theme="light"] {
-  --color-bg: var(--raw-sand-50);
-  --color-surface: var(--white);
-  --color-fg: var(--raw-ink-900);
-  --color-muted: var(--raw-ink-700);
-  --color-line: var(--raw-sand-200);
-  --color-accent: var(--raw-amber-800);
-  --color-on-accent: var(--white);
-  --color-glow-1: #fde68a;
-  --color-glow-2: #99f6e4;
-  --color-glass: rgb(250 250 249 / 0.72);
-  --color-glass-solid: rgb(250 250 249 / 0.96);
-
-  --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
-  --radius: 1rem;
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
-  --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.35);
-  --z-header: 10;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --color-bg: var(--raw-ink-950);
-    --color-surface: var(--raw-ink-900);
-    --color-fg: var(--raw-sand-100);
-    --color-muted: var(--raw-ink-300);
-    --color-line: var(--raw-ink-700);
-    --color-accent: var(--raw-amber-300);
-    --color-on-accent: var(--raw-ink-950);
-    --color-glow-1: #78350f;
-    --color-glow-2: #134e4a;
-    --color-glass: rgb(12 10 9 / 0.7);
-    --color-glass-solid: rgb(12 10 9 / 0.96);
-  }
-}
-[data-theme="dark"] {
-  --color-bg: var(--raw-ink-950);
-  --color-surface: var(--raw-ink-900);
-  --color-fg: var(--raw-sand-100);
-  --color-muted: var(--raw-ink-300);
-  --color-line: var(--raw-ink-700);
-  --color-accent: var(--raw-amber-300);
-  --color-on-accent: var(--raw-ink-950);
-  --color-glow-1: #78350f;
-  --color-glow-2: #134e4a;
-  --color-glass: rgb(12 10 9 / 0.7);
-  --color-glass-solid: rgb(12 10 9 / 0.96);
-}
-</style>
-<style>
-/* fonts from this site only. unicode-range: a page downloads only the file whose letters it has */
-
+<title>٦ أشكال بالـ CSS بس</title>
+<style id="style">
 *, *::before, *::after { box-sizing: border-box; }
-:root { color-scheme: light dark; }
-[data-theme="light"] { color-scheme: light; }
-[data-theme="dark"] { color-scheme: dark; }
-body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
-/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
-   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
-:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
-:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
-h1, h2, h3 { line-height: 1.25; }
-h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); margin: 0 0 var(--space-3); }
-img { display: block; max-width: 100%; height: auto; }
-a { color: var(--color-accent); }
-:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
-.wrap { max-width: 68rem; margin-inline: auto; padding-inline: var(--space-2); }
-.section { padding-block: var(--space-5); }
-.icon { flex: none; width: 1.5rem; height: 1.5rem; }
-.icon-flip:dir(rtl) { scale: -1 1; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+h1 { font-size: 22px; margin: 0 0 16px; }
 
-/* glass header: blurred where supported, almost solid where not */
-.header { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-glass); backdrop-filter: blur(12px); border-block-end: 1px solid var(--color-line); }
-@supports not (backdrop-filter: blur(1px)) {
-  .header { background: var(--color-glass-solid); }
-}
-.header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding-block: 0.6rem; }
-.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-fg); font-weight: 700; text-decoration: none; }
-.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin-inline-start: auto; }
-.nav a { color: var(--color-fg); text-decoration: none; }
-.nav a:hover { color: var(--color-accent); }
-.tools { display: flex; align-items: center; gap: 0.5rem; }
-/* the other-language link: system font, so one English word does not download a whole font on the Arabic page */
-.lang { font-family: system-ui, sans-serif; padding: 0.25rem 0.75rem; border: 1px solid var(--color-line); border-radius: 999px; color: var(--color-fg); text-decoration: none; font-weight: 700; }
-.seg { display: inline-flex; margin: 0; padding: 0.15rem; border: 1px solid var(--color-line); border-radius: 999px; }
-.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.seg label { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; color: var(--color-muted); }
-.seg input { position: absolute; opacity: 0; }
-.seg label:has(input:checked) { background: var(--color-accent); color: var(--color-on-accent); }
-.seg label:has(input:focus-visible) { outline: 3px solid var(--color-accent); outline-offset: 2px; }
-.seg .icon { width: 1.1rem; height: 1.1rem; }
+/* the cells wrap to a new line instead of making the page scroll */
+.shapes { display: flex; flex-wrap: wrap; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.shapes li { width: 140px; min-height: 140px; padding: 12px; border-radius: 12px; background: white;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+.shapes p { margin: 8px 0 0; font-size: 14px; color: #475569; }
 
-/* hero: three soft lights, and a very light noise on top that the mouse goes through */
-.hero { position: relative; isolation: isolate; overflow: clip; padding-block: clamp(4rem, 2rem + 10vw, 9rem);
-  background:
-    radial-gradient(40rem 22rem at 15% 20%, var(--color-glow-1), transparent 70%),
-    radial-gradient(36rem 20rem at 85% 30%, var(--color-glow-2), transparent 70%),
-    radial-gradient(50rem 18rem at 50% 110%, var(--color-glow-1), transparent 70%),
-    var(--color-bg); }
-.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.18;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"); }
-.hero h1 { margin: 0 0 var(--space-2); font-size: clamp(2rem, 1.2rem + 4vw, 4rem); max-width: 16ch; }
-.hero p { margin: 0 0 var(--space-3); max-width: 42ch; font-size: 1.15rem; color: var(--color-muted); }
-.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-lg); }
+/* 1. circle: a square with radius 50% */
+.circle { width: 80px; height: 80px; border-radius: 50%; background: #0ea5e9; }
 
-.cards { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-.card { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); box-shadow: var(--shadow-sm); }
-.card h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; font-size: 1.15rem; }
-.card h3 .icon { color: var(--color-accent); }
-.card p { margin: 0; color: var(--color-muted); }
+/* 2. pill: any radius bigger than half the height gives round ends */
+.pill { padding: 8px 20px; border-radius: 999px; background: #8b5cf6; color: white; font-weight: 700; }
 
-.works { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-.works figure { margin: 0; }
-.works img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); }
-.works figcaption { padding-block-start: 0.4rem; color: var(--color-muted); }
+/* 3. triangle: no size at all, only borders. The bottom border is the triangle,
+      the two side borders are transparent and give it its width (20 + 20 = 40) */
+.triangle { width: 0; height: 0;
+  border-inline: 20px solid transparent;
+  border-block-end: 30px solid #f97316; }
 
-.price { display: grid; gap: 0.5rem; }
-.price .amount { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-fg); }
+/* 4. speech bubble: a rounded box and a small triangle made by ::after under it */
+.bubble { position: relative; padding: 10px 16px; border-radius: 14px; background: #15803d; color: white; font-weight: 700; }
+.bubble::after { content: ""; position: absolute; top: 100%; inset-inline-start: 18px;
+  border-inline: 8px solid transparent; border-block-start: 10px solid #15803d; }
 
-details { margin-block-end: var(--space-1); padding: var(--space-2); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
-summary { cursor: pointer; font-weight: 700; }
-details p { margin: var(--space-1) 0 0; color: var(--color-muted); }
+/* 5. ticket: a dashed border inside, and two half circles cut out with the page colour */
+.ticket { position: relative; width: 120px; padding: 14px 10px; border-radius: 8px; background: #fde68a;
+  outline: 2px dashed #b45309; outline-offset: -6px; text-align: center; font-weight: 700; color: #78350f; }
+.ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 16px; height: 16px;
+  border-radius: 50%; background: white; transform: translateY(-50%); }
+.ticket::before { inset-inline-start: -8px; }
+.ticket::after { inset-inline-end: -8px; }
 
-.footer { padding-block: var(--space-4); border-block-start: 1px solid var(--color-line); color: var(--color-muted); }
+/* 6. a ribbon across the corner: rotated, and the card hides what sticks out */
+.corner-card { position: relative; width: 110px; height: 80px; border-radius: 10px; background: #e2e8f0; overflow: hidden; }
+.ribbon { position: absolute; top: 18px; inset-inline-end: -28px; width: 110px; padding: 2px 0;
+  background: #dc2626; color: white; font-size: 13px; font-weight: 700; text-align: center;
+  transform: rotate(-45deg); }
 </style>
 </head>
 <body>
-<header class="header">
-  <div class="wrap">
-    <a class="logo" href="./"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m14.31 8 5.74 9.94" /> <path d="M9.69 8h11.48" /> <path d="m7.38 12 5.74-9.94" /> <path d="M9.69 16 3.95 6.06" /> <path d="M14.31 16H2.83" /> <path d="m16.62 12-5.74 9.94" /> </svg><span>عدسة</span></a>
-    <nav class="nav" aria-label="أقسام الصفحة">
-      <a href="#services">الخدمات</a>
-      <a href="#work">أعمالنا</a>
-      <a href="#prices">الأسعار</a>
-      <a href="#faq">أسئلة</a>
-    </nav>
-    <div class="tools">
-      <fieldset class="seg">
-        <legend>الثيم</legend>
-        <label title="فاتح"><input type="radio" name="theme" value="light" aria-label="فاتح"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></label>
-        <label title="غامق"><input type="radio" name="theme" value="dark" aria-label="غامق"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></label>
-        <label title="زي الجهاز"><input type="radio" name="theme" value="system" aria-label="زي الجهاز" checked><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="3" rx="2" /> <line x1="8" x2="16" y1="21" y2="21" /> <line x1="12" x2="12" y1="17" y2="21" /> </svg></label>
-      </fieldset>
-      <a class="lang" href="../en/" lang="en" hreflang="en">English</a>
-    </div>
-  </div>
-</header>
 <main>
-  <section class="hero">
-    <div class="wrap">
-      <h1>صور بتحكي الحكاية زي ما حصلت</h1>
-      <p>تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.</p>
-      <a class="btn" href="#prices">احجز جلسة<svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
-    </div>
-  </section>
-  <section class="section" id="services" aria-labelledby="h-services">
-    <div class="wrap">
-      <h2 id="h-services">الخدمات</h2>
-      <ul class="cards">
-        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg>منتجات</h3><p>خلفية بيضا أو مشهد، و ٢٠ صورة متعدّلة.</p></li>
-        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg>بورتريه</h3><p>ساعة في الاستوديو بإضاءة ناعمة.</p></li>
-        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5.8 11.3 2 22l10.7-3.79" /> <path d="M4 3h.01" /> <path d="M22 8h.01" /> <path d="M15 2h.01" /> <path d="M22 20h.01" /> <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /> <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /> <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /> <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /> </svg>مناسبات</h3><p>خطوبة أو عيد ميلاد، لحد ٤ ساعات.</p></li>
-      </ul>
-    </div>
-  </section>
-  <section class="section" id="work" aria-labelledby="h-work">
-    <div class="wrap">
-      <h2 id="h-work">أعمالنا</h2>
-      <ul class="works">
-        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: منيو مطعم" width="600" height="400" loading="lazy"><figcaption>منيو مطعم</figcaption></figure></li>
-        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: بورتريه عيلة" width="600" height="400" loading="lazy"><figcaption>بورتريه عيلة</figcaption></figure></li>
-        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: منتجات يدوية" width="600" height="400" loading="lazy"><figcaption>منتجات يدوية</figcaption></figure></li>
-        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: خطوبة في جنينة" width="600" height="400" loading="lazy"><figcaption>خطوبة في جنينة</figcaption></figure></li>
-      </ul>
-    </div>
-  </section>
-  <section class="section" id="prices" aria-labelledby="h-prices">
-    <div class="wrap">
-      <h2 id="h-prices">الأسعار</h2>
-      <ul class="cards">
-        <li class="card price"><h3>جلسة قصيرة</h3><p>تبدأ من</p><p class="amount">‏١٬٥٠٠ ج.م.‏</p></li>
-        <li class="card price"><h3>يوم منتجات</h3><p>تبدأ من</p><p class="amount">‏٤٬٥٠٠ ج.م.‏</p></li>
-        <li class="card price"><h3>مناسبة</h3><p>تبدأ من</p><p class="amount">‏٦٬٠٠٠ ج.م.‏</p></li>
-      </ul>
-    </div>
-  </section>
-  <section class="section" id="faq" aria-labelledby="h-faq">
-    <div class="wrap">
-      <h2 id="h-faq">أسئلة</h2>
-      <details><summary>بتسلّموا الصور إمتى؟</summary><p>خلال ٥ أيام شغل.</p></details>
-      <details><summary>ينفع تيجوا عندي؟</summary><p>أيوه، في القاهرة والجيزة.</p></details>
-    </div>
-  </section>
+  <h1>٦ أشكال من غير ولا صورة</h1>
+  <ul class="shapes">
+    <li><div class="circle"></div><p>دايرة</p></li>
+    <li><div class="pill">كبسولة</div><p>كبسولة</p></li>
+    <li><div class="triangle"></div><p>مثلث بالحدود</p></li>
+    <li><div class="bubble">أهلًا!</div><p>فقاعة كلام</p></li>
+    <li><div class="ticket">تذكرة دخول</div><p>تذكرة</p></li>
+    <li><div class="corner-card"><span class="ribbon">جديد</span></div><p>شارة على الركن</p></li>
+  </ul>
 </main>
-<footer class="footer"><div class="wrap"><p>عدسة، ١٢ شارع الفن، وسط البلد</p></div></footer>
-<script>
-// the radios: show the saved choice, save a new one, apply it
-const root = document.documentElement;
-let saved = "system";
-try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
-const radios = document.querySelectorAll('input[name="theme"]');
-radios.forEach(r => { r.checked = r.value === saved; });
-
-function apply(value) {
-  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
-  else { root.dataset.theme = value; root.style.colorScheme = value; }
-  try { localStorage.setItem("theme", value); } catch (e) {}
-}
-radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
-</script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** هيدر زجاجي فيه «عدسة» والروابط و ٣ أيقونات ثيم (شمس، وقمر، وشاشة) و «English». تحته هيرو فيه أضواء دهبي وتركواز ناعمة وحبيبات خفيفة جدًا، وعنوان كبير وزرار «احجز جلسة ←». بعده ٣ كروت خدمات بأيقونات، و ٤ صور أعمال، و ٣ أسعار، وسؤالين بيتفتحوا.
+**هتشوف إيه:** ٦ كروت بيضا جنب بعض، في كل واحد شكل واسمه تحته: دايرة زرقا، وكبسولة بنفسجي، ومثلث برتقاني، وفقاعة كلام خضرا بسنّة صغيرة تحتها، وتذكرة صفرا بخط متقطع وتجويفين على الجنبين، وكارت رمادي على ركنه شريط أحمر مايل مكتوب عليه «جديد». على موبايل كل كارتين في سطر.
 
-**التوكنز طبقتين:** [[--raw-amber-800]] وأخواتها قيم خام، محدش في الصفحة بيستخدمها. فوقها أسامي بالمعنى ([[--color-accent]] و [[--color-surface]]…)، وهي اللي في كل قاعدة. الثيم الغامق = نفس الأسامي بتشاور على خام تاني. والـ [[[data-theme="dark"]]] شغال على أي عنصر (مش [[:root]] بس)، عشان قسم يقدر ياخد ثيم تاني (صفحة الهوية بتستخدم ده).
+**إزاي كل شكل اتعمل:**
+- **الدايرة:** مربع (80×80) و [[border-radius: 50%]]. لو الطول غير العرض هتطلع بيضاوي.
+- **الكبسولة:** [[border-radius: 999px]]. أي رقم أكبر من نص الارتفاع بيدّي طرفين نص دايرة، أيًّا كان طول الكلام.
+- **المثلث:** عنصر [[width: 0]] و [[height: 0]]، وكل شكله من الحدود. الحدود الأربعة بتتقابل عند الأركان بخط مايل. فلو خلّيت الحد اللي تحت ملوّن (30px) والجنبين شفافين (20px كل واحد)، اللي بيبان مثلث عرضه 40 وطوله 30.
+- **الفقاعة:** مستطيل مدور، و [[::after]] مثلث صغير بنفس الطريقة. [[position: relative]] على الفقاعة عشان [[position: absolute]] بتاع المثلث يتحسب منها. و [[top: 100%]] يحطه تحتها على طول.
+- **التذكرة:** الخط المتقطع [[outline]] مش [[border]]، لأن [[outline-offset: -6px]] يدخّله لجوه. والتجويفين [[::before]] و [[::after]]: دايرتين بلون الكارت اللي ورا، نص كل واحدة برّه التذكرة ([[inset-inline-start: -8px]]). و [[top: 50%]] مع [[translateY(-50%)]] بيحطهم في النص بالظبط (تحت هتلاقي ليه).
+- **الشريط المايل:** [[rotate(-45deg)]]، والكارت عليه [[overflow: hidden]] فاللي طالع من الشريط برّه الكارت مبيبانش. [[inset-inline-end]] في صفحة عربي معناها الشمال.
 
-**من غير JavaScript:** الثيم: لو مفيش اختيار محفوظ، [[prefers-color-scheme]] بيقرر. اللغة: من الرابط نفسه ([[/ar/]] و [[/en/]])، مش من سكربت، و [[<a href="../en/" hreflang="en">]] لينك عادي. والأسئلة [[<details>]] بتتفتح لوحدها. اتقاس والـ JS مقفول: العربي rtl والإنجليزي ltr، والثيم من الجهاز في الحالتين.
+**[[top: 50%]] و [[translateY(-50%)]] مع بعض:** الـ 50% بتاعة [[top]] من طول الأب، فبتنزّل **أول** العنصر لنص الأب. والـ 50% بتاعة [[translate]] من طول العنصر **نفسه**، فبتطلّعه لفوق نص طوله. النتيجة: نص العنصر على نص الأب، أيًّا كانت المقاسات.
 
-**الخطوط:** [[preload]] لخط العناوين (700) بس، لأنه في الهيرو اللي بيبان الأول. والـ 400 بيحمّل لما الصفحة تطلبه. والصفحة العربي بتنزّل Cairo بس، والإنجليزي Inter بس (زي مشروع المنيو). ولينك «English» في الصفحة العربي بخط الجهاز، عشان كلمة واحدة متنزّلش ملف Inter كله.
+**غلطتين مسكتهم وانا بحل:**
+- الفقاعة كانت خلفيتها [[#22c55e]]، و axe قال [[color-contrast]]: الكلام الأبيض عليها 2.27:1 بس، والمطلوب 4.5. غمّقتها لـ [[#15803d]].
+- الكروت كانت 150px، وعلى 360 بقى في كل سطر كارت واحد بس: 150 + 16 + 150 = 316، والمساحة 313. خليتهم 140.
 
-**الهيدر الزجاجي:** [[backdrop-filter: blur(12px)]] على خلفية 72%. المتصفح اللي مبيدعموش هيعرض الكلام فوق الصور شفاف ومش مقروء، فـ [[@supports not (backdrop-filter: blur(1px))]] بيدّيه خلفية 96%.
-
-**الهيرو:** ٣ [[radial-gradient]] بأماكن ومقاسات مختلفة فوق لون الخلفية. والحبيبات [[::after]] صورة SVG فيها [[feTurbulence]] (فلتر بيعمل noise) في data URI، بـ [[opacity: 0.18]] و [[pointer-events: none]] (عشان الضغط يعدّي للزرار). و [[z-index: -1]] جوه [[isolation: isolate]]: الحبيبات ورا الكلام بس، مش ورا الصفحة كلها.
-
-**غلطة شفتها في اللقطة:** أول نسخة كانت [[:lang(ar) { line-height: 1.85 }]]، والعنوان الكبير السطرين بتوعه بعاد عن بعض. [[:lang(ar)]] بيمسك كل عنصر، ووزنه أكبر من [[h1]]، فالعنوان اتقاس: خط 64px وسطره 118.4px (1.85). بقت [[:root:lang(ar), [lang="ar"]]]: الإعداد على الـ html والعناصر اللي عليها [[lang]] بس، والباقي بيورثه، والعنوان رجع 80px (1.25).
-
-~~~text Lighthouse 13.6.0 موبايل (Chrome بـ --blink-settings=preferredColorScheme=1 للفاتح و 0 للغامق)
-ar light  perf 100  a11y 100  LCP 0.9 s  CLS 0  | الخطوط من: 127.0.0.1:8765 بس (cairo-arabic-700 و cairo-arabic-400)
-ar dark   perf 100  a11y 100  LCP 0.9 s  CLS 0
-en light  perf 100  a11y 100  LCP 0.9 s  CLS 0  | (inter-latin-700 و inter-latin-400)
-en dark   perf 100  a11y 100  LCP 0.9 s  CLS 0
+~~~text الناتج (Chrome، شاشة 360)
+المثلث                 40 × 30 على شاشة زومها 100% (DPR 1)
+                        40 × 29.6 على شاشة زومها 125% (DPR 1.25): المتصفح بيقرّب سُمك الحدود لبكسلات الشاشة الحقيقية
+getComputedStyle المثلث  width = 40px (مع border-box، العرض اللي بيرجع بيشمل الحدود حتى لو كاتب 0)
+الدايرة                 80 × 80
+عدد السطور على 360      3 (كل كارتين في سطر)      scrollWidth = 360 من 360
+صور في Network          0
+axe                     0 violations (كانت color-contrast على الفقاعة)
+~~~` },
+        { lvl: 'متوسط', dir: "gym-bem", t: R`صفحة أسعار جيم بالـ BEM`, what: R`٣ كروت باقات لـ «جيم الأبطال» بـ [[.plan]] و [[.plan__price]] و [[.plan__features]] و [[.plan--featured]]: كل كارت فوقه شريط 4px بلون الباقة بـ [[::before]]، ولما الماوس ييجي عليه بيطلع لفوق 4px وظله بيكبر، والمميز حدوده ملونة وعليه شارة «الأشهر». الـ CSS مترتب في [[@layer reset, components, utilities]]. من دروس الوحدة كلها.`, done: R`مفيش ولا [[!important]] ولا id في الـ CSS، وكل selector في طبقة components فيه class واحدة بس، ممكن معاها [[:hover]] أو [[::before]] (أتقل وزن (0,2,0))، والـ hover مش بيحرّك الكروت اللي جنبه (الحركة بـ transform مش margin)، و utility زي [[.mt-0]] في طبقة utilities بتغلب margin الكارت، حتى قدام selector أتقل منها في طبقة components.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات جيم الأبطال</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="page">
+  <h1 class="page__title">اختار باقتك</h1>
+  <div class="plans">
+    <article class="plan" style="--plan-color: #0ea5e9">
+      <h2 class="plan__name">شهري</h2>
+      <p class="plan__price">٥٠٠ <span class="plan__unit">ج / الشهر</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">الجيم كله من ٦ الصبح لـ ١٢ بالليل</li>
+        <li class="plan__feature">حصتين مع مدرب</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة الشهري">اشترك</a>
+    </article>
+    <article class="plan plan--featured" style="--plan-color: #f59e0b">
+      <p class="plan__badge">الأشهر</p>
+      <h2 class="plan__name">٣ شهور</h2>
+      <p class="plan__price">١٣٠٠ <span class="plan__unit">ج / ٣ شهور</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">كل اللي في الشهري</li>
+        <li class="plan__feature">٨ حصص مع مدرب</li>
+        <li class="plan__feature">الساونا</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في باقة ٣ شهور">اشترك</a>
+    </article>
+    <article class="plan mt-0" style="--plan-color: #22c55e">
+      <h2 class="plan__name">سنوي</h2>
+      <p class="plan__price">٤٥٠٠ <span class="plan__unit">ج / السنة</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">كل اللي في الـ ٣ شهور</li>
+        <li class="plan__feature">٤٠ حصة مع مدرب</li>
+        <li class="plan__feature">تجميد الاشتراك شهر</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة السنوي">اشترك</a>
+    </article>
+  </div>
+</main>
+</body>
+</html>
 ~~~
 
-~~~text Playwright (Chrome 157)
-JavaScript مقفول: light ar rtl rgb(250, 250, 249) | light en ltr | dark ar rtl rgb(12, 10, 9) | dark en ltr، والأسئلة شغالة
-1280، [من الشمال، من اليمين]:
-ar: logo [1095, 112]  card1 [827, 112]  cta [1017, 112]
-en: logo [112, 1088]  card1 [112, 827]  cta [112, 974]       ← مراية
-السهم في العربي scale -1 1 | الحبيبات pointer-events none، opacity 0.18 | الهيدر blur(12px) على rgba(250, 250, 249, 0.72)
-اختيار «غامق» وبعدين refresh: dark rgb(12, 10, 9)، والزرار المختار dark
-h1 قبل التصليح: 64px و line-height 118.4px (1.85)   بعده: 80px (1.25)، والفقرة لسه 1.85
+~~~css style.css
+/* the order of the layers decides who wins, before specificity is even looked at:
+   a later layer beats an earlier one whatever its selectors weigh */
+@layer reset, components, utilities;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  h1, h2, p, ul { margin: 0; }
+  ul { padding: 0; list-style: none; }
+}
+
+@layer components {
+  .page { max-width: 960px; margin-inline: auto; padding: 24px 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; }
+  .page__title { margin-block-end: 20px; font-size: 26px; }
+
+  .plans { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+
+  .plan {
+    position: relative;
+    flex: 1 1 240px;
+    margin-block-start: 16px;
+    padding: 28px 20px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 2px 6px rgb(15 23 42 / 0.08);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  /* the 4px strip on top, in the plan's own colour */
+  .plan::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--plan-color); }
+  /* transform moves the card without moving its neighbours (margin would push them) */
+  .plan:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgb(15 23 42 / 0.14); }
+
+  .plan--featured { border-color: var(--plan-color); }
+
+  .plan__badge { position: absolute; top: 12px; inset-inline-end: 12px; padding: 2px 10px; border-radius: 999px;
+    background: #fef3c7; color: #78350f; font-size: 13px; font-weight: 700; }
+  .plan__name { font-size: 20px; }
+  .plan__price { margin-block: 8px 12px; font-size: 32px; font-weight: 800; }
+  .plan__unit { font-size: 14px; font-weight: 400; color: #475569; }
+  .plan__features { margin-block-end: 16px; line-height: 2; }
+  .plan__feature::before { content: "✓ "; color: #15803d; }
+  .plan__cta { display: block; padding: 10px; border-radius: 10px; background: #0f172a; color: white; text-align: center; text-decoration: none; font-weight: 700; }
+  .plan__cta:focus-visible { outline: 3px solid var(--plan-color); outline-offset: 3px; }
+}
+
+@layer utilities {
+  /* (0,1,0) beats .plan (also 0,1,0) and would even beat .page .plan (0,2,0): it is in a later layer */
+  .mt-0 { margin-block-start: 0; }
+}
+~~~
+
+~~~view 560 1160 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات جيم الأبطال</title>
+<style id="style">
+/* the order of the layers decides who wins, before specificity is even looked at:
+   a later layer beats an earlier one whatever its selectors weigh */
+@layer reset, components, utilities;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  h1, h2, p, ul { margin: 0; }
+  ul { padding: 0; list-style: none; }
+}
+
+@layer components {
+  .page { max-width: 960px; margin-inline: auto; padding: 24px 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; }
+  .page__title { margin-block-end: 20px; font-size: 26px; }
+
+  .plans { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+
+  .plan {
+    position: relative;
+    flex: 1 1 240px;
+    margin-block-start: 16px;
+    padding: 28px 20px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 2px 6px rgb(15 23 42 / 0.08);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  /* the 4px strip on top, in the plan's own colour */
+  .plan::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--plan-color); }
+  /* transform moves the card without moving its neighbours (margin would push them) */
+  .plan:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgb(15 23 42 / 0.14); }
+
+  .plan--featured { border-color: var(--plan-color); }
+
+  .plan__badge { position: absolute; top: 12px; inset-inline-end: 12px; padding: 2px 10px; border-radius: 999px;
+    background: #fef3c7; color: #78350f; font-size: 13px; font-weight: 700; }
+  .plan__name { font-size: 20px; }
+  .plan__price { margin-block: 8px 12px; font-size: 32px; font-weight: 800; }
+  .plan__unit { font-size: 14px; font-weight: 400; color: #475569; }
+  .plan__features { margin-block-end: 16px; line-height: 2; }
+  .plan__feature::before { content: "✓ "; color: #15803d; }
+  .plan__cta { display: block; padding: 10px; border-radius: 10px; background: #0f172a; color: white; text-align: center; text-decoration: none; font-weight: 700; }
+  .plan__cta:focus-visible { outline: 3px solid var(--plan-color); outline-offset: 3px; }
+}
+
+@layer utilities {
+  /* (0,1,0) beats .plan (also 0,1,0) and would even beat .page .plan (0,2,0): it is in a later layer */
+  .mt-0 { margin-block-start: 0; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1 class="page__title">اختار باقتك</h1>
+  <div class="plans">
+    <article class="plan" style="--plan-color: #0ea5e9">
+      <h2 class="plan__name">شهري</h2>
+      <p class="plan__price">٥٠٠ <span class="plan__unit">ج / الشهر</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">الجيم كله من ٦ الصبح لـ ١٢ بالليل</li>
+        <li class="plan__feature">حصتين مع مدرب</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة الشهري">اشترك</a>
+    </article>
+    <article class="plan plan--featured" style="--plan-color: #f59e0b">
+      <p class="plan__badge">الأشهر</p>
+      <h2 class="plan__name">٣ شهور</h2>
+      <p class="plan__price">١٣٠٠ <span class="plan__unit">ج / ٣ شهور</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">كل اللي في الشهري</li>
+        <li class="plan__feature">٨ حصص مع مدرب</li>
+        <li class="plan__feature">الساونا</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في باقة ٣ شهور">اشترك</a>
+    </article>
+    <article class="plan mt-0" style="--plan-color: #22c55e">
+      <h2 class="plan__name">سنوي</h2>
+      <p class="plan__price">٤٥٠٠ <span class="plan__unit">ج / السنة</span></p>
+      <ul class="plan__features">
+        <li class="plan__feature">كل اللي في الـ ٣ شهور</li>
+        <li class="plan__feature">٤٠ حصة مع مدرب</li>
+        <li class="plan__feature">تجميد الاشتراك شهر</li>
+      </ul>
+      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة السنوي">اشترك</a>
+    </article>
+  </div>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٣ كروت جنب بعض (وتحت بعض على الموبايل): «شهري» بشريط أزرق فوقه، و «٣ شهور» بشريط برتقاني وحدود برتقاني وشارة «الأشهر» في الركن، و «سنوي» بشريط أخضر. الكارت السنوي أعلى من التانيين بـ 16px (ده [[.mt-0]]). والماوس على أي كارت بيطلّعه لفوق شوية وظله يكبر.
+
+**الـ BEM في سطرين:** [[.plan]] هو الـ **Block** (الحاجة المستقلة). [[.plan__price]] **Element** جوه البلوك (اسم البلوك وشرطتين تحت). [[.plan--featured]] **Modifier** (اسم البلوك وشرطتين): نسخة مختلفة من نفس البلوك. الفايدة: كل selector class واحدة، فكلهم نفس الوزن تقريبًا، واللي بيكسب هو اللي مكتوب بعد. مفيش [[.plans .plan h2 span]].
+
+**الـ [[@layer]]:** السطر الأول [[@layer reset, components, utilities;]] بيحدد الترتيب. المتصفح بيبص على الطبقة **قبل** الـ specificity: أي قاعدة في طبقة متأخرة بتغلب أي قاعدة في طبقة قبلها، مهما كان وزن الـ selector.
+
+**اللون من الـ HTML:** [[style="--plan-color: #0ea5e9"]] مش بيحط شكل، بيحط متغيّر بس. والـ CSS هو اللي بيقرر يستخدمه فين ([[background: var(--plan-color)]] للشريط، والحد في المميز، وإطار الـ focus). كده لو زوّدت باقة رابعة مش محتاج تكتب CSS جديد.
+
+**ليه [[transform]] مش [[margin]] للـ hover:** الـ margin بيغيّر الـ layout، يعني المتصفح بيعيد حساب أماكن العناصر اللي حوالين الكارت. الـ [[transform]] بيحرّك الرسمة بس بعد ما الأماكن اتحسبت، فمحدش حواليه بيتحرك. وكمان [[transition]] عليه أنعم.
+
+**[[aria-label]] على اللينكات:** ٣ لينكات اسمهم «اشترك». لو حد بيستخدم قارئ شاشة وفتح لستة اللينكات هيلاقي «اشترك في باقة ٣ شهور» بدل «اشترك» ٣ مرات.
+
+~~~text الناتج (Chrome، 1280)
+selectors في الـ CSS: .page .page__title .plans .plan .plan::before .plan:hover .plan--featured .plan__badge
+  .plan__name .plan__price .plan__unit .plan__features .plan__feature::before .plan__cta .plan__cta:focus-visible .mt-0
+selectors فيها #        0           !important   0
+margin-block-start      شهري 16px   ٣ شهور 16px   سنوي 0px (.mt-0)
+
+تجربة الطبقات: زوّدت في طبقة components القاعدة .page .plan { margin-block-start: 16px } (وزنها 0,2,0)
+  الكارت السنوي      0px   (.mt-0 وزنها 0,1,0 بس في طبقة بعدها، فكسبت)
+نفس القاعدة برّه كل الطبقات
+  الكارت السنوي      16px  (أي CSS مش في طبقة بيغلب كل الطبقات)
+
+hover على «٣ شهور» (بالماوس فعلًا):
+  ٣ شهور   top 94 → 90   transform: matrix(1, 0, 0, 1, 0, -4)
+  شهري     left 805 top 94 زي ما هو       سنوي   left 176 top 78 زي ما هو
 axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
 ~~~
 
-**إزاي Chrome اتقال «الجهاز فاتح» في الاختبار:** ويندوز هنا على الوضع الغامق، والـ headless بياخده. اتقاس: من غير flag و [[--force-dark-mode]] الاتنين غامق، و [[--blink-settings=preferredColorScheme=1]] بس اللي طلّع فاتح (و [[0]] غامق).` },
-        { lvl: 'فكرة', dir: "adasa-identity", t: R`هوية بصرية لمشروعك انت`, what: R`اختار مشروع عايز تعمله (أو موقعك الشخصي)، وقرر هويته: palette بـ oklch بثيمين، وخطين (عربي ولاتيني) بأسباب الاختيار، ومقياس مسافات و radius وظلال (ظل صغير حاد + ظل كبير ناعم)، وطبقات [[z-index]] بأسامي ([[--z-header]] و [[--z-modal]])، ومدد وحركة ([[--ease]]). واعمل صفحة واحدة بتعرضهم كلهم في الثيمين والاتجاهين.`, done: R`أي مكوّن جديد في المشروع بيتبني من التوكنز من غير ولا قيمة hard-coded، والصفحة فيها كل توكن بمثال حي وبتباينه.`, ext: R`صدّر التوكنز كـ JSON، وولّد منه [[@theme]] بتاع Tailwind ومتغيرات CSS عادية بسكربت صغير، فالتعديل بيبقى في مكان واحد.`, sol: R`المثال اللي عملته: هوية «عدسة» نفسها (المشروع اللي فات)، وصفحة [[styleguide.html]] بتعرض كل توكن في الثيمين والاتجاهين. التوكنز والـ CSS والخطوط هما نفس ملفات [[assets/]] بتاعة «عدسة».
-
-~~~html styleguide.html
+**خد بالك من التجربة التانية:** CSS مكتوب من غير [[@layer]] أقوى من أي طبقة. فلو ضفت مكتبة أو ملف قديم من غير طبقات، هيغلب الـ utilities بتاعتك. الحل: حطه هو كمان في طبقة ([[@import url(old.css) layer(legacy);]]).` },
+        { lvl: 'صغير', dir: "featured-plan", t: R`كارت الباقة المميزة أكبر من جيرانه وفوقه شارة سطرين`, what: R`صفحة باقات لأكاديمية سباحة متخيلة: ٣ كروت في سطر، والباقة المميزة أطول من جيرانها بحدود أتقل وظل، وفوقها شارة سطرين («الأكتر طلبًا» و «وفّر ٢٥٪») نصها فوق الكارت ونصها على الحد. الشارة [[::before]] من غير ولا عنصر زيادة في الـ HTML، وبتفضل في نص الحد بالظبط لو كبّرت خطها. من دروس «pseudo-elements» و «position» و «box model».`, done: R`الشارة سطرين ([[\A]] و [[white-space: pre]])، ونصها على الحد العلوي للكارت بالظبط، ولو غيّرت [[font-size]] بتاعها لـ 20px لسه في النص (الـ [[translateY]] بيتغيّر لوحده)، والكارت المميز أطول من جيرانه من غير ما يغطّي عليهم، وعلى 360 الكروت تحت بعض والشارة مش راكبة على الكارت اللي فوقها، ومفيش scroll أفقي.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عدسة: دليل الهوية</title>
-<link rel="stylesheet" href="assets/tokens.css">
-<link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/styleguide.css">
-<script src="assets/styleguide.js" defer></script>
+<title>باقات أكاديمية «موجة» للسباحة</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="wrap sg">
-  <h1>«عدسة»: دليل الهوية</h1>
-  <p class="sg-note">كل حاجة هنا جاية من <code>assets/tokens.css</code>. الأرقام بتتحسب في الصفحة نفسها من الألوان الحقيقية.</p>
-
-  <section aria-labelledby="sg-colors">
-    <h2 id="sg-colors">الألوان (الأسامي بالمعنى)</h2>
-    <div class="sg-themes">
-      <div data-theme="light" class="sg-panel"><h3>فاتح</h3><ul class="sg-swatches" data-swatches></ul></div>
-      <div data-theme="dark" class="sg-panel"><h3>غامق</h3><ul class="sg-swatches" data-swatches></ul></div>
-    </div>
-  </section>
-
-  <section aria-labelledby="sg-type">
-    <h2 id="sg-type">الخطوط</h2>
-    <div class="sg-themes">
-      <div class="sg-panel"><p class="sg-tag">Cairo، عربي، line-height 1.85</p><p class="sg-h">عنوان كبير بالعربي</p><p>فقرة عادية بالعربي: المسافة بين السطور أكبر عشان النقط والحروف اللي تحت السطر.</p></div>
-      <div class="sg-panel" lang="en" dir="ltr"><p class="sg-tag">Inter, Latin, line-height 1.6</p><p class="sg-h">A big English heading</p><p>A normal paragraph in English, with a shorter line height.</p></div>
-    </div>
-  </section>
-
-  <section aria-labelledby="sg-scale">
-    <h2 id="sg-scale">المسافات والتدوير والظلال والطبقات</h2>
-    <ul class="sg-space">
-      <li><span style="inline-size: var(--space-1)"></span><code>--space-1</code></li>
-      <li><span style="inline-size: var(--space-2)"></span><code>--space-2</code></li>
-      <li><span style="inline-size: var(--space-3)"></span><code>--space-3</code></li>
-      <li><span style="inline-size: var(--space-4)"></span><code>--space-4</code></li>
-      <li><span style="inline-size: var(--space-5)"></span><code>--space-5</code></li>
-    </ul>
-    <div class="sg-boxes">
-      <div class="sg-box" style="box-shadow: var(--shadow-sm)"><code>--shadow-sm</code> و <code>--radius</code></div>
-      <div class="sg-box" style="box-shadow: var(--shadow-lg)"><code>--shadow-lg</code></div>
-      <div class="sg-box"><code>--z-header</code> = <span data-var="--z-header"></span></div>
-    </div>
-  </section>
-
-  <section aria-labelledby="sg-components">
-    <h2 id="sg-components">المكونات في الثيمين والاتجاهين</h2>
-    <div class="sg-grid4">
-      <div data-theme="light" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
-      <div data-theme="dark" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
-      <div data-theme="light" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
-      <div data-theme="dark" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
-    </div>
-  </section>
+<main>
+  <h1>باقات أكاديمية «موجة» للسباحة</h1>
+  <ul class="plans">
+    <li class="plan">
+      <h2>تجربة</h2>
+      <p class="price">٣٥٠ ج</p>
+      <p>٤ حصص في شهر واحد</p>
+    </li>
+    <li class="plan plan--featured">
+      <h2>الترم</h2>
+      <p class="price">٩٠٠ ج</p>
+      <p>١٢ حصة في ٣ شهور، ومايوه هدية</p>
+    </li>
+    <li class="plan">
+      <h2>السنة</h2>
+      <p class="price">٣٠٠٠ ج</p>
+      <p>٥٠ حصة، وتقدر تجمّد شهر</p>
+    </li>
+  </ul>
 </main>
 </body>
 </html>
 ~~~
 
-~~~css assets/styleguide.css
-/* the style guide page only. Every value still comes from the tokens */
-.sg { padding-block: var(--space-4); }
-.sg h2 { margin-block-start: var(--space-4); }
-.sg-note { color: var(--color-muted); }
-.sg-themes { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
-.sg-grid4 { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); }
-.sg-panel { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-3); border-radius: var(--radius); background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-line); }
-.sg-panel h3 { margin: 0; }
-.sg-swatches { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
-.sg-swatches li { display: grid; grid-template-columns: 2.25rem 1fr auto; align-items: center; gap: var(--space-1); }
-.sg-chip { inline-size: 2.25rem; block-size: 2.25rem; border-radius: 0.5rem; border: 1px solid var(--color-line); }
-.sg-swatches code { font-size: 0.85rem; }
-.sg-ratio { font-variant-numeric: tabular-nums; font-size: 0.85rem; color: var(--color-muted); }
-.sg-tag { margin: 0; color: var(--color-muted); font-size: 0.85rem; }
-.sg-h { margin: 0; font-size: 1.6rem; font-weight: 700; }
-.sg-space { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
-.sg-space li { display: flex; align-items: center; gap: var(--space-2); }
-.sg-space span { display: block; block-size: 1rem; border-radius: 0.25rem; background: var(--color-accent); }
-.sg-boxes { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-3); }
-.sg-box { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
-~~~
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 24px 16px; background: #ecfeff; color: #083344; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+h1 { margin: 0 0 40px; font-size: 24px; text-align: center; }
 
-~~~js assets/styleguide.js
-// fills every swatch list with the colour tokens, their real value in that theme, and their contrast
-const tokens = [
-  ["--color-fg", "الكلام", "--color-bg"],
-  ["--color-muted", "الكلام الهادي", "--color-bg"],
-  ["--color-accent", "اللينكات والزرار", "--color-bg"],
-  ["--color-on-accent", "كلام على الزرار", "--color-accent"],
-  ["--color-fg", "الكلام على الكروت", "--color-surface"],
-  ["--color-bg", "الخلفية", null],
-  ["--color-surface", "الكروت", null],
-  ["--color-line", "الخطوط والحدود", null],
-];
-// any CSS colour -> [r, g, b] by painting one pixel
-const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
-function rgb(css) { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); }
-function lum(c) { const v = c.map(x => x / 255).map(x => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; }
-function ratio(a, b) { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); }
+/* row gap 40px: when the cards wrap on a phone, the ribbon (half of it above the card) needs room */
+.plans { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px 24px; margin: 0; padding: 0; list-style: none; }
 
-for (const list of document.querySelectorAll("[data-swatches]")) {
-  const style = getComputedStyle(list);
-  for (const [name, use, against] of tokens) {
-    const value = style.getPropertyValue(name).trim();
-    const li = document.createElement("li");
-    const chip = document.createElement("span");
-    chip.className = "sg-chip";
-    chip.style.background = "var(" + name + ")";
-    li.append(chip);
-    const label = document.createElement("span");
-    label.innerHTML = "<code></code> " + use;
-    label.querySelector("code").textContent = name;
-    li.append(label);
-    const r = document.createElement("span");
-    r.className = "sg-ratio";
-    if (against) {
-      const n = ratio(rgb(value), rgb(style.getPropertyValue(against).trim()));
-      r.textContent = n.toFixed(2) + (n >= 4.5 ? " ✓" : " ✗");
-      r.title = "التباين مع " + against;
-    } else r.textContent = value;
-    li.append(r);
-    list.append(li);
-  }
+.plan { position: relative; width: 220px; padding: 24px 20px; border: 2px solid #a5f3fc; border-radius: 18px; background: white; text-align: center; }
+.plan h2 { margin: 0; font-size: 20px; }
+.plan p { margin: 8px 0 0; }
+.price { font-size: 30px; font-weight: 800; color: #0e7490; }
+
+/* bigger than its neighbours: real padding and border (it takes real space, nothing overlaps),
+   plus a deeper shadow. scale() would also enlarge it, but without taking space, so it would cover the gap */
+.plan--featured { padding-block: 44px 36px; border: 3px solid #0e7490; box-shadow: 0 16px 32px rgb(14 116 144 / 0.25); }
+
+/* the two-line ribbon: its middle sits exactly on the top border.
+   top: 0 puts its top on the border, translateY(-50%) lifts it by half of its OWN height,
+   so it stays centred on the border whatever the text and the font size */
+.plan--featured::before {
+  content: "الأكتر طلبًا\A وفّر ٢٥٪";
+  white-space: pre;
+  position: absolute; top: 0; inset-inline: 0; width: max-content; margin-inline: auto;
+  padding: 6px 18px; border-radius: 12px;
+  background: #0e7490; color: white; font-size: 14px; font-weight: 700; line-height: 1.4;
+  transform: translateY(-50%);
 }
-for (const el of document.querySelectorAll("[data-var]")) el.textContent = getComputedStyle(document.documentElement).getPropertyValue(el.dataset.var).trim();
 ~~~
 
-~~~view 760 900 الشكل النهائي (المعاينة بخط الجهاز (ملفات الخطوط مش جوه المعاينة))
+~~~view 380 820 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عدسة: دليل الهوية</title>
-<style>
-/* layer 1: raw values. Nothing on the page uses these names directly */
-:root {
-  --raw-ink-950: #0c0a09;
-  --raw-ink-900: #1c1917;
-  --raw-ink-700: #44403c;
-  --raw-ink-500: #78716c;
-  --raw-ink-300: #a8a29e;
-  --raw-sand-50: #fafaf9;
-  --raw-sand-100: #f5f5f4;
-  --raw-sand-200: #e7e5e4;
-  --raw-amber-300: #fcd34d;
-  --raw-amber-700: #b45309;
-  --raw-amber-800: #92400e;
-  --raw-teal-300: #5eead4;
-  --raw-teal-800: #115e59;
-  --white: #ffffff;
-}
-
-/* layer 2: names by meaning. The page uses ONLY these. A theme = a different mapping.
-   [data-theme] works on ANY element, not only <html>: a section can show the other theme (the style guide does) */
-:root, [data-theme="light"] {
-  --color-bg: var(--raw-sand-50);
-  --color-surface: var(--white);
-  --color-fg: var(--raw-ink-900);
-  --color-muted: var(--raw-ink-700);
-  --color-line: var(--raw-sand-200);
-  --color-accent: var(--raw-amber-800);
-  --color-on-accent: var(--white);
-  --color-glow-1: #fde68a;
-  --color-glow-2: #99f6e4;
-  --color-glass: rgb(250 250 249 / 0.72);
-  --color-glass-solid: rgb(250 250 249 / 0.96);
-
-  --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
-  --radius: 1rem;
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
-  --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.35);
-  --z-header: 10;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --color-bg: var(--raw-ink-950);
-    --color-surface: var(--raw-ink-900);
-    --color-fg: var(--raw-sand-100);
-    --color-muted: var(--raw-ink-300);
-    --color-line: var(--raw-ink-700);
-    --color-accent: var(--raw-amber-300);
-    --color-on-accent: var(--raw-ink-950);
-    --color-glow-1: #78350f;
-    --color-glow-2: #134e4a;
-    --color-glass: rgb(12 10 9 / 0.7);
-    --color-glass-solid: rgb(12 10 9 / 0.96);
-  }
-}
-[data-theme="dark"] {
-  --color-bg: var(--raw-ink-950);
-  --color-surface: var(--raw-ink-900);
-  --color-fg: var(--raw-sand-100);
-  --color-muted: var(--raw-ink-300);
-  --color-line: var(--raw-ink-700);
-  --color-accent: var(--raw-amber-300);
-  --color-on-accent: var(--raw-ink-950);
-  --color-glow-1: #78350f;
-  --color-glow-2: #134e4a;
-  --color-glass: rgb(12 10 9 / 0.7);
-  --color-glass-solid: rgb(12 10 9 / 0.96);
-}
-</style>
-<style>
-/* fonts from this site only. unicode-range: a page downloads only the file whose letters it has */
-
+<title>باقات أكاديمية «موجة» للسباحة</title>
+<style id="style">
 *, *::before, *::after { box-sizing: border-box; }
-:root { color-scheme: light dark; }
-[data-theme="light"] { color-scheme: light; }
-[data-theme="dark"] { color-scheme: dark; }
-body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
-/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
-   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
-:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
-:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
-h1, h2, h3 { line-height: 1.25; }
-h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); margin: 0 0 var(--space-3); }
-img { display: block; max-width: 100%; height: auto; }
-a { color: var(--color-accent); }
-:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
-.wrap { max-width: 68rem; margin-inline: auto; padding-inline: var(--space-2); }
-.section { padding-block: var(--space-5); }
-.icon { flex: none; width: 1.5rem; height: 1.5rem; }
-.icon-flip:dir(rtl) { scale: -1 1; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+body { margin: 0; padding: 24px 16px; background: #ecfeff; color: #083344; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+h1 { margin: 0 0 40px; font-size: 24px; text-align: center; }
 
-/* glass header: blurred where supported, almost solid where not */
-.header { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-glass); backdrop-filter: blur(12px); border-block-end: 1px solid var(--color-line); }
-@supports not (backdrop-filter: blur(1px)) {
-  .header { background: var(--color-glass-solid); }
+/* row gap 40px: when the cards wrap on a phone, the ribbon (half of it above the card) needs room */
+.plans { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px 24px; margin: 0; padding: 0; list-style: none; }
+
+.plan { position: relative; width: 220px; padding: 24px 20px; border: 2px solid #a5f3fc; border-radius: 18px; background: white; text-align: center; }
+.plan h2 { margin: 0; font-size: 20px; }
+.plan p { margin: 8px 0 0; }
+.price { font-size: 30px; font-weight: 800; color: #0e7490; }
+
+/* bigger than its neighbours: real padding and border (it takes real space, nothing overlaps),
+   plus a deeper shadow. scale() would also enlarge it, but without taking space, so it would cover the gap */
+.plan--featured { padding-block: 44px 36px; border: 3px solid #0e7490; box-shadow: 0 16px 32px rgb(14 116 144 / 0.25); }
+
+/* the two-line ribbon: its middle sits exactly on the top border.
+   top: 0 puts its top on the border, translateY(-50%) lifts it by half of its OWN height,
+   so it stays centred on the border whatever the text and the font size */
+.plan--featured::before {
+  content: "الأكتر طلبًا\A وفّر ٢٥٪";
+  white-space: pre;
+  position: absolute; top: 0; inset-inline: 0; width: max-content; margin-inline: auto;
+  padding: 6px 18px; border-radius: 12px;
+  background: #0e7490; color: white; font-size: 14px; font-weight: 700; line-height: 1.4;
+  transform: translateY(-50%);
 }
-.header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding-block: 0.6rem; }
-.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-fg); font-weight: 700; text-decoration: none; }
-.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin-inline-start: auto; }
-.nav a { color: var(--color-fg); text-decoration: none; }
-.nav a:hover { color: var(--color-accent); }
-.tools { display: flex; align-items: center; gap: 0.5rem; }
-/* the other-language link: system font, so one English word does not download a whole font on the Arabic page */
-.lang { font-family: system-ui, sans-serif; padding: 0.25rem 0.75rem; border: 1px solid var(--color-line); border-radius: 999px; color: var(--color-fg); text-decoration: none; font-weight: 700; }
-.seg { display: inline-flex; margin: 0; padding: 0.15rem; border: 1px solid var(--color-line); border-radius: 999px; }
-.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.seg label { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; color: var(--color-muted); }
-.seg input { position: absolute; opacity: 0; }
-.seg label:has(input:checked) { background: var(--color-accent); color: var(--color-on-accent); }
-.seg label:has(input:focus-visible) { outline: 3px solid var(--color-accent); outline-offset: 2px; }
-.seg .icon { width: 1.1rem; height: 1.1rem; }
-
-/* hero: three soft lights, and a very light noise on top that the mouse goes through */
-.hero { position: relative; isolation: isolate; overflow: clip; padding-block: clamp(4rem, 2rem + 10vw, 9rem);
-  background:
-    radial-gradient(40rem 22rem at 15% 20%, var(--color-glow-1), transparent 70%),
-    radial-gradient(36rem 20rem at 85% 30%, var(--color-glow-2), transparent 70%),
-    radial-gradient(50rem 18rem at 50% 110%, var(--color-glow-1), transparent 70%),
-    var(--color-bg); }
-.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.18;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"); }
-.hero h1 { margin: 0 0 var(--space-2); font-size: clamp(2rem, 1.2rem + 4vw, 4rem); max-width: 16ch; }
-.hero p { margin: 0 0 var(--space-3); max-width: 42ch; font-size: 1.15rem; color: var(--color-muted); }
-.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-lg); }
-
-.cards { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-.card { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); box-shadow: var(--shadow-sm); }
-.card h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; font-size: 1.15rem; }
-.card h3 .icon { color: var(--color-accent); }
-.card p { margin: 0; color: var(--color-muted); }
-
-.works { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-.works figure { margin: 0; }
-.works img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); }
-.works figcaption { padding-block-start: 0.4rem; color: var(--color-muted); }
-
-.price { display: grid; gap: 0.5rem; }
-.price .amount { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-fg); }
-
-details { margin-block-end: var(--space-1); padding: var(--space-2); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
-summary { cursor: pointer; font-weight: 700; }
-details p { margin: var(--space-1) 0 0; color: var(--color-muted); }
-
-.footer { padding-block: var(--space-4); border-block-start: 1px solid var(--color-line); color: var(--color-muted); }
-</style>
-<style>
-/* the style guide page only. Every value still comes from the tokens */
-.sg { padding-block: var(--space-4); }
-.sg h2 { margin-block-start: var(--space-4); }
-.sg-note { color: var(--color-muted); }
-.sg-themes { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
-.sg-grid4 { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); }
-.sg-panel { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-3); border-radius: var(--radius); background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-line); }
-.sg-panel h3 { margin: 0; }
-.sg-swatches { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
-.sg-swatches li { display: grid; grid-template-columns: 2.25rem 1fr auto; align-items: center; gap: var(--space-1); }
-.sg-chip { inline-size: 2.25rem; block-size: 2.25rem; border-radius: 0.5rem; border: 1px solid var(--color-line); }
-.sg-swatches code { font-size: 0.85rem; }
-.sg-ratio { font-variant-numeric: tabular-nums; font-size: 0.85rem; color: var(--color-muted); }
-.sg-tag { margin: 0; color: var(--color-muted); font-size: 0.85rem; }
-.sg-h { margin: 0; font-size: 1.6rem; font-weight: 700; }
-.sg-space { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
-.sg-space li { display: flex; align-items: center; gap: var(--space-2); }
-.sg-space span { display: block; block-size: 1rem; border-radius: 0.25rem; background: var(--color-accent); }
-.sg-boxes { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-3); }
-.sg-box { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
 </style>
 </head>
 <body>
-<main class="wrap sg">
-  <h1>«عدسة»: دليل الهوية</h1>
-  <p class="sg-note">كل حاجة هنا جاية من <code>assets/tokens.css</code>. الأرقام بتتحسب في الصفحة نفسها من الألوان الحقيقية.</p>
+<main>
+  <h1>باقات أكاديمية «موجة» للسباحة</h1>
+  <ul class="plans">
+    <li class="plan">
+      <h2>تجربة</h2>
+      <p class="price">٣٥٠ ج</p>
+      <p>٤ حصص في شهر واحد</p>
+    </li>
+    <li class="plan plan--featured">
+      <h2>الترم</h2>
+      <p class="price">٩٠٠ ج</p>
+      <p>١٢ حصة في ٣ شهور، ومايوه هدية</p>
+    </li>
+    <li class="plan">
+      <h2>السنة</h2>
+      <p class="price">٣٠٠٠ ج</p>
+      <p>٥٠ حصة، وتقدر تجمّد شهر</p>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
 
-  <section aria-labelledby="sg-colors">
-    <h2 id="sg-colors">الألوان (الأسامي بالمعنى)</h2>
-    <div class="sg-themes">
-      <div data-theme="light" class="sg-panel"><h3>فاتح</h3><ul class="sg-swatches" data-swatches></ul></div>
-      <div data-theme="dark" class="sg-panel"><h3>غامق</h3><ul class="sg-swatches" data-swatches></ul></div>
-    </div>
-  </section>
+**هتشوف إيه:** ٣ كروت بيضا على خلفية لبني فاتح. الكارت اللي في النص («الترم») أطول، وحدوده أغمق وأتقل، وتحته ظل. وفوقه بالظبط شارة بترولي فيها سطرين، نصها طالع فوق الكارت ونصها نازل على الحد.
 
-  <section aria-labelledby="sg-type">
-    <h2 id="sg-type">الخطوط</h2>
-    <div class="sg-themes">
-      <div class="sg-panel"><p class="sg-tag">Cairo، عربي، line-height 1.85</p><p class="sg-h">عنوان كبير بالعربي</p><p>فقرة عادية بالعربي: المسافة بين السطور أكبر عشان النقط والحروف اللي تحت السطر.</p></div>
-      <div class="sg-panel" lang="en" dir="ltr"><p class="sg-tag">Inter, Latin, line-height 1.6</p><p class="sg-h">A big English heading</p><p>A normal paragraph in English, with a shorter line height.</p></div>
-    </div>
-  </section>
+**الشارة خطوة خطوة:**
+1. [[content: "الأكتر طلبًا\A وفّر ٢٥٪"]]: الكلام نفسه. [[\A]] هو كود سطر جديد في CSS، والمسافة اللي بعده بتقفل الكود ومش بتظهر.
+2. [[white-space: pre]]: من غيره المتصفح بيعامل السطر الجديد كأنه مسافة، والكلام يطلع سطر واحد.
+3. [[position: absolute]] و [[top: 0]]: أول الشارة على أول الكارت من جوه، يعني تحت الحد على طول (الكارت عليه [[position: relative]]).
+4. [[inset-inline: 0]] و [[width: max-content]] و [[margin-inline: auto]]: الشارة عرضها قد كلامها وفي نص الكارت.
+5. [[transform: translateY(-50%)]]: الـ 50% هنا من طول الشارة **نفسها**، مش طول الكارت. فبتطلع لفوق نص طولها، ونصها يبقى على الحد. ولو الخط كبر والشارة طولت، الإزاحة بتكبر معاها لوحدها.
 
-  <section aria-labelledby="sg-scale">
-    <h2 id="sg-scale">المسافات والتدوير والظلال والطبقات</h2>
-    <ul class="sg-space">
-      <li><span style="inline-size: var(--space-1)"></span><code>--space-1</code></li>
-      <li><span style="inline-size: var(--space-2)"></span><code>--space-2</code></li>
-      <li><span style="inline-size: var(--space-3)"></span><code>--space-3</code></li>
-      <li><span style="inline-size: var(--space-4)"></span><code>--space-4</code></li>
-      <li><span style="inline-size: var(--space-5)"></span><code>--space-5</code></li>
-    </ul>
-    <div class="sg-boxes">
-      <div class="sg-box" style="box-shadow: var(--shadow-sm)"><code>--shadow-sm</code> و <code>--radius</code></div>
-      <div class="sg-box" style="box-shadow: var(--shadow-lg)"><code>--shadow-lg</code></div>
-      <div class="sg-box"><code>--z-header</code> = <span data-var="--z-header"></span></div>
-    </div>
-  </section>
+**ليه مش [[top: -25px]]:** هيبقى صح للخط ده بس. كبّر الخط أو زوّد سطر والشارة هتتزق.
 
-  <section aria-labelledby="sg-components">
-    <h2 id="sg-components">المكونات في الثيمين والاتجاهين</h2>
-    <div class="sg-grid4">
-      <div data-theme="light" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
-      <div data-theme="dark" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
-      <div data-theme="light" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
-      <div data-theme="dark" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
-    </div>
-  </section>
+**ليه الكارت أكبر بالـ padding مش بـ [[scale()]]:** [[transform: scale(1.1)]] بيكبّر الرسمة بس، والمكان اللي الكارت حاجزه في الـ layout زي ما هو. يعني الكارت هيركب على الـ gap وممكن يغطّي على جيرانه. الـ padding الزيادة بيكبّر الكارت فعلًا، والكروت التانية بتتحرك عشانه. و [[align-items: center]] بيخلّي الكارتين الصغيرين في نص طوله.
+
+**مشكلة اتقاست وانا بحل:** على 360 الكروت بتنزل تحت بعض، والـ gap كان 24px، ونص الشارة طالع 25.6px فوق الكارت. فالشارة ركبت 1.6px على الكارت اللي فوقها. خليت الـ gap بين السطور 40px ([[gap: 40px 24px]]: الأول بين السطور والتاني بين الأعمدة).
+
+**الكلام في [[::before]]:** Chrome بيحطه في شجرة الـ accessibility فقارئ الشاشة بيقراه، بس مش بتعرف تعلّمه وتنسخه، وأدوات الترجمة ممكن متشوفوش. هنا الشارة زينة وتسويق. لو كانت معلومة مهمة (السعر مثلًا) لازم تبقى في الـ HTML.
+
+~~~text الناتج (Chrome)
+على 800: الكروت (top / bottom)       السنة 124 / 278    الترم 96 / 306    تجربة 124 / 278
+طول الشارة 51.2px      transform: matrix(1, 0, 0, 1, 0, -25.6)      أولها عند 73.4 (فوق الكارت بـ 22.6 وفي نص الحد)
+خط الشارة 20px:        طولها 68px      transform: matrix(1, 0, 0, 1, 0, -34)     لسه في النص
+على 360 (gap 24px):    الكارت الأول بيخلص عند 250، والشارة بتبدأ عند 248.8 (راكبة 1.2px)
+على 360 (gap 40px):    الكارت الأول بيخلص عند 250، والشارة بتبدأ عند 267.8
+scrollWidth = clientWidth على 360 و 800 و 1280
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'متوسط', dir: "bg-library", t: R`مكتبة خلفيات من غير صور`, what: R`صفحة فيها ٨ مربعات، كل واحد خلفية مختلفة بالـ gradients بس: نقط ([[radial-gradient]] و [[background-size]])، وشبكة خطوط (اتنين [[linear-gradient]])، وخطوط مايلة ([[repeating-linear-gradient]])، ومربعات شطرنج ([[conic-gradient]])، وهالة ناعمة (٣ [[radial-gradient]] فوق بعض بألوان شفافة)، وتدرّج لونين، وأمواج، وواحدة من اختيارك. وجنب كل مربع زرار «انسخ الـ CSS».`, done: R`كل خلفية بتتكرر صح لما تكبّر المربع (مفيش قطع في الحواف)، والصفحة كلها من غير ولا request صورة في Network، و ٨ قواعد CSS كل واحدة ٣ سطور أو أقل، والزرار بينسخ القاعدة بالظبط.`, sol: R`الـ ٨ خلفيات في ملف لوحدهم ([[patterns.css]]) عشان الـ JavaScript يقرا كل قاعدة زي ما هي مكتوبة ويعرضها جنب المربع بتاعها.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة خلفيات من غير صور</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="patterns.css">
+</head>
+<body>
+<main>
+  <h1>مكتبة خلفيات من غير صور</h1>
+  <p class="hint">كل مربع بيكبر ويصغر من ركنه التحتاني (اسحبه)، عشان تتأكد إن الخلفية بتتكرر من غير قطع.</p>
+  <div class="library">
+    <article class="item">
+      <div class="tile dots"></div>
+      <h2>نقط</h2>
+      <pre><code data-for=".dots"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile grid"></div>
+      <h2>شبكة خطوط</h2>
+      <pre><code data-for=".grid"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile stripes"></div>
+      <h2>خطوط مايلة</h2>
+      <pre><code data-for=".stripes"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile checker"></div>
+      <h2>شطرنج</h2>
+      <pre><code data-for=".checker"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile aurora"></div>
+      <h2>هالة ناعمة</h2>
+      <pre><code data-for=".aurora"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile duo"></div>
+      <h2>تدرّج لونين</h2>
+      <pre><code data-for=".duo"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile waves"></div>
+      <h2>أمواج</h2>
+      <pre><code data-for=".waves"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile plaid"></div>
+      <h2>قماش كاروهات</h2>
+      <pre><code data-for=".plaid"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+  </div>
+  <p class="status" role="status"></p>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 1000px; margin-inline: auto; }
+h1 { margin: 0 0 4px; font-size: 24px; }
+.hint { margin: 0 0 16px; color: #475569; }
+.library { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+.item { margin: 0; padding: 12px; border-radius: 14px; background: white; }
+/* resize: the reader can drag the corner and watch the pattern repeat */
+.tile { height: 140px; border-radius: 10px; resize: both; overflow: auto; max-width: 100%; }
+.item h2 { margin-block: 8px 4px; font-size: 17px; }
+pre { margin: 0 0 8px; padding: 8px; border-radius: 8px; background: #0f172a; color: #e2e8f0; font-size: 12px; white-space: pre-wrap; word-break: break-all; direction: ltr; text-align: left; }
+.copy { padding: 6px 12px; border: 0; border-radius: 8px; background: #2563eb; color: white; font: inherit; cursor: pointer; }
+.copy:focus-visible { outline: 3px solid #0f172a; outline-offset: 2px; }
+.status { min-height: 1.5em; font-weight: 700; color: #15803d; }
+~~~
+
+~~~css patterns.css
+.dots { background: radial-gradient(#334155 2px, transparent 2.5px) 0 0 / 20px 20px #f8fafc; }
+.grid { background: linear-gradient(#cbd5e1 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, #cbd5e1 1px, transparent 1px) 0 0 / 24px 24px white; }
+.stripes { background: repeating-linear-gradient(45deg, #fde68a 0 10px, #fbbf24 10px 20px); }
+.checker { background: conic-gradient(#cbd5e1 25%, white 0 50%, #cbd5e1 0 75%, white 0) 0 0 / 40px 40px; }
+.aurora { background: radial-gradient(at 20% 30%, rgb(56 189 248 / 0.6), transparent 50%), radial-gradient(at 80% 20%, rgb(168 85 247 / 0.55), transparent 50%), radial-gradient(at 50% 90%, rgb(34 197 94 / 0.5), transparent 55%) #0f172a; }
+.duo { background: linear-gradient(135deg, #6366f1, #ec4899); }
+.waves { background: radial-gradient(circle at 50% 0, transparent 8px, #0284c7 9px 11px, transparent 12px) 0 0 / 40px 20px, radial-gradient(circle at 50% 100%, transparent 8px, #0284c7 9px 11px, transparent 12px) 20px -10px / 40px 20px #e0f2fe; }
+.plaid { background: repeating-linear-gradient(90deg, rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px), repeating-linear-gradient(rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px) #fff7ed; }
+~~~
+
+~~~js app.js
+// each box shows the rule exactly as it is written in patterns.css, and the button copies that text.
+// fetch reads the file itself. If fetch can't (the page opened as file:// from the folder),
+// the browser's own copy of the rule (cssText) is used: same rule, but rewritten (#fff becomes rgb(255, 255, 255))
+async function readRules() {
+  const rules = {};
+  try {
+    const res = await fetch('patterns.css');
+    if (!res.ok) throw new Error(res.status);
+    for (const line of (await res.text()).split('\n')) {
+      const m = line.match(/^(\.[\w-]+) \{/);
+      if (m) rules[m[1]] = line;
+    }
+  } catch {
+    for (const sheet of document.styleSheets) {
+      if (!sheet.href || !sheet.href.endsWith('patterns.css')) continue;
+      for (const r of sheet.cssRules) rules[r.selectorText] = r.cssText;
+    }
+  }
+  return rules;
+}
+
+const status = document.querySelector('.status');
+readRules().then(rules => {
+  for (const item of document.querySelectorAll('.item')) {
+    const code = item.querySelector('code');
+    code.textContent = rules[code.dataset.for] || '';
+    item.querySelector('.copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        status.textContent = 'اتنسخ: ' + item.querySelector('h2').textContent;
+      } catch {
+        status.textContent = 'المتصفح منع النسخ. علّم الكود واعمل Ctrl+C.';
+      }
+    });
+  }
+});
+~~~
+
+~~~view 620 1700 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة خلفيات من غير صور</title>
+<style id="style">
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 1000px; margin-inline: auto; }
+h1 { margin: 0 0 4px; font-size: 24px; }
+.hint { margin: 0 0 16px; color: #475569; }
+.library { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+.item { margin: 0; padding: 12px; border-radius: 14px; background: white; }
+/* resize: the reader can drag the corner and watch the pattern repeat */
+.tile { height: 140px; border-radius: 10px; resize: both; overflow: auto; max-width: 100%; }
+.item h2 { margin-block: 8px 4px; font-size: 17px; }
+pre { margin: 0 0 8px; padding: 8px; border-radius: 8px; background: #0f172a; color: #e2e8f0; font-size: 12px; white-space: pre-wrap; word-break: break-all; direction: ltr; text-align: left; }
+.copy { padding: 6px 12px; border: 0; border-radius: 8px; background: #2563eb; color: white; font: inherit; cursor: pointer; }
+.copy:focus-visible { outline: 3px solid #0f172a; outline-offset: 2px; }
+.status { min-height: 1.5em; font-weight: 700; color: #15803d; }
+</style>
+<style id="patterns">
+.dots { background: radial-gradient(#334155 2px, transparent 2.5px) 0 0 / 20px 20px #f8fafc; }
+.grid { background: linear-gradient(#cbd5e1 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, #cbd5e1 1px, transparent 1px) 0 0 / 24px 24px white; }
+.stripes { background: repeating-linear-gradient(45deg, #fde68a 0 10px, #fbbf24 10px 20px); }
+.checker { background: conic-gradient(#cbd5e1 25%, white 0 50%, #cbd5e1 0 75%, white 0) 0 0 / 40px 40px; }
+.aurora { background: radial-gradient(at 20% 30%, rgb(56 189 248 / 0.6), transparent 50%), radial-gradient(at 80% 20%, rgb(168 85 247 / 0.55), transparent 50%), radial-gradient(at 50% 90%, rgb(34 197 94 / 0.5), transparent 55%) #0f172a; }
+.duo { background: linear-gradient(135deg, #6366f1, #ec4899); }
+.waves { background: radial-gradient(circle at 50% 0, transparent 8px, #0284c7 9px 11px, transparent 12px) 0 0 / 40px 20px, radial-gradient(circle at 50% 100%, transparent 8px, #0284c7 9px 11px, transparent 12px) 20px -10px / 40px 20px #e0f2fe; }
+.plaid { background: repeating-linear-gradient(90deg, rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px), repeating-linear-gradient(rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px) #fff7ed; }
+</style>
+</head>
+<body>
+<main>
+  <h1>مكتبة خلفيات من غير صور</h1>
+  <p class="hint">كل مربع بيكبر ويصغر من ركنه التحتاني (اسحبه)، عشان تتأكد إن الخلفية بتتكرر من غير قطع.</p>
+  <div class="library">
+    <article class="item">
+      <div class="tile dots"></div>
+      <h2>نقط</h2>
+      <pre><code data-for=".dots"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile grid"></div>
+      <h2>شبكة خطوط</h2>
+      <pre><code data-for=".grid"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile stripes"></div>
+      <h2>خطوط مايلة</h2>
+      <pre><code data-for=".stripes"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile checker"></div>
+      <h2>شطرنج</h2>
+      <pre><code data-for=".checker"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile aurora"></div>
+      <h2>هالة ناعمة</h2>
+      <pre><code data-for=".aurora"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile duo"></div>
+      <h2>تدرّج لونين</h2>
+      <pre><code data-for=".duo"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile waves"></div>
+      <h2>أمواج</h2>
+      <pre><code data-for=".waves"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+    <article class="item">
+      <div class="tile plaid"></div>
+      <h2>قماش كاروهات</h2>
+      <pre><code data-for=".plaid"></code></pre>
+      <button type="button" class="copy">انسخ الـ CSS</button>
+    </article>
+  </div>
+  <p class="status" role="status"></p>
 </main>
 <script>
-// fills every swatch list with the colour tokens, their real value in that theme, and their contrast
-const tokens = [
-  ["--color-fg", "الكلام", "--color-bg"],
-  ["--color-muted", "الكلام الهادي", "--color-bg"],
-  ["--color-accent", "اللينكات والزرار", "--color-bg"],
-  ["--color-on-accent", "كلام على الزرار", "--color-accent"],
-  ["--color-fg", "الكلام على الكروت", "--color-surface"],
-  ["--color-bg", "الخلفية", null],
-  ["--color-surface", "الكروت", null],
-  ["--color-line", "الخطوط والحدود", null],
-];
-// any CSS colour -> [r, g, b] by painting one pixel
-const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
-function rgb(css) { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); }
-function lum(c) { const v = c.map(x => x / 255).map(x => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; }
-function ratio(a, b) { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); }
-
-for (const list of document.querySelectorAll("[data-swatches]")) {
-  const style = getComputedStyle(list);
-  for (const [name, use, against] of tokens) {
-    const value = style.getPropertyValue(name).trim();
-    const li = document.createElement("li");
-    const chip = document.createElement("span");
-    chip.className = "sg-chip";
-    chip.style.background = "var(" + name + ")";
-    li.append(chip);
-    const label = document.createElement("span");
-    label.innerHTML = "<code></code> " + use;
-    label.querySelector("code").textContent = name;
-    li.append(label);
-    const r = document.createElement("span");
-    r.className = "sg-ratio";
-    if (against) {
-      const n = ratio(rgb(value), rgb(style.getPropertyValue(against).trim()));
-      r.textContent = n.toFixed(2) + (n >= 4.5 ? " ✓" : " ✗");
-      r.title = "التباين مع " + against;
-    } else r.textContent = value;
-    li.append(r);
-    list.append(li);
+// each box shows the rule exactly as it is written in patterns.css, and the button copies that text.
+// fetch reads the file itself. If fetch can't (the page opened as file:// from the folder),
+// the browser's own copy of the rule (cssText) is used: same rule, but rewritten (#fff becomes rgb(255, 255, 255))
+async function readRules() {
+  const rules = {};
+  try {
+    for (const line of document.getElementById('patterns').textContent.split('\n')) {
+      const m = line.match(/^(\.[\w-]+) \{/);
+      if (m) rules[m[1]] = line;
+    }
+  } catch {
+    for (const sheet of document.styleSheets) {
+      if (!sheet.href || !sheet.href.endsWith('patterns.css')) continue;
+      for (const r of sheet.cssRules) rules[r.selectorText] = r.cssText;
+    }
   }
+  return rules;
 }
-for (const el of document.querySelectorAll("[data-var]")) el.textContent = getComputedStyle(document.documentElement).getPropertyValue(el.dataset.var).trim();
+
+const status = document.querySelector('.status');
+readRules().then(rules => {
+  for (const item of document.querySelectorAll('.item')) {
+    const code = item.querySelector('code');
+    code.textContent = rules[code.dataset.for] || '';
+    item.querySelector('.copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        status.textContent = 'اتنسخ: ' + item.querySelector('h2').textContent;
+      } catch {
+        status.textContent = 'المتصفح منع النسخ. علّم الكود واعمل Ctrl+C.';
+      }
+    });
+  }
+});
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** صفحة «دليل الهوية»: لوحتين ألوان (فاتح وغامق) جنب بعض، كل لون بمربعه واسمه واستخدامه ونسبة تباينه بـ ✓. بعدها الخطين بمثال عربي وإنجليزي، ومقياس المسافات مرسوم، والظلال والتدوير، وكارت وزرار في ٤ نسخ (فاتح وغامق × عربي وإنجليزي).
+**هتشوف إيه:** ٨ كروت، في كل واحد مربع بخلفية، واسمها، والقاعدة بتاعتها في صندوق كود غامق، وزرار «انسخ الـ CSS». وكل مربع ليه علامة صغيرة في ركنه التحتاني: اسحبها والمربع يكبر ويصغر.
 
-**قرارات الهوية (والسبب):**
-- **الألوان:** رمادي دافي (sand و ink) بدل الرمادي الأزرق، عشان صور التصوير هي اللي تلفت. ولون واحد مميز: كهرماني غامق في الفاتح وفاتح في الغامق.
-- **الخطين:** Cairo للعربي (حروف واضحة في الأحجام الصغيرة)، و Inter للاتيني (مصمم للشاشات). الاتنين OFL ببلاش ومن الموقع نفسه.
-- **المسافات:** مقياس ٥ خطوات (0.5 لـ 4rem) بدل أرقام عشوائية.
-- **الظلال:** صغير حاد للكروت، وكبير ناعم للزرار المهم.
-- **الطبقات:** [[--z-header]] بالاسم.
+**إزاي كل خلفية اتعملت:**
+- **النقط:** [[radial-gradient(#334155 2px, transparent 2.5px)]] بيرسم دايرة 2px في نص البلاطة. و [[/ 20px 20px]] (الـ [[background-size]]) بيقول البلاطة 20×20، والخلفية بتتكرر لوحدها ([[repeat]] هو الافتراضي). النص بكسل بين 2 و 2.5 بيخلي حافة الدايرة ناعمة.
+- **الشبكة:** خلفيتين فوق بعض بفاصلة: خط أفقي 1px ([[linear-gradient]] من فوق لتحت) وخط رأسي ([[90deg]]).
+- **الخطوط المايلة:** [[repeating-linear-gradient]] بيكرر ([[0 10px]] لون و [[10px 20px]] لون تاني) لحد آخر المربع، فمش محتاج [[background-size]].
+- **الشطرنج:** [[conic-gradient]] بيلف حوالين النص: ربع رمادي وربع أبيض ([[0 50%]] معناها «ابدأ من مكان ما اللي قبله خلص»). بلاطة 40×40 فيها ٤ مربعات.
+- **الهالة:** ٣ [[radial-gradient]] شفافين ([[rgb(56 189 248 / 0.6)]]) في أماكن مختلفة على خلفية غامقة. الشفافية هي اللي بتخلّي الألوان تدخل في بعض.
+- **الأمواج:** طبقتين، في كل واحدة حلقة رفيعة ([[transparent 8px, #0284c7 9px 11px, transparent 12px]]) مقصوصة نصين بالبلاطة: الأولى مركزها فوق البلاطة فبيبان نصها اللي تحت (∪)، والتانية مركزها تحت وإزاحتها 20px فبيبان نصها اللي فوق (∩). ورا بعض بيعملوا موجة متصلة.
+- **الكاروهات:** نفس الخطوط المكررة في الاتجاهين بلون شفاف، فمكان ما بيتقاطعوا بيغمق.
 
-**الثيمين في نفس الصفحة:** [[<div data-theme="dark">]] جوه صفحة فاتحة. ده شغال لأن التوكنز [[[data-theme="dark"]]] على أي عنصر مش [[:root]] بس.
+**القاعدة اللي بتتنسخ:** النسخة الأولى كانت بتاخد القاعدة من [[sheet.cssRules]] ([[cssText]])، وطلع إن المتصفح بيعيد كتابتها بطريقته: [[#334155]] بقت [[rgb(51, 65, 85)]]، و [[0 0]] بقت [[0px 0px]]، و [[white 0 50%]] اتفكت لـ [[white 0deg, white 50%]]. نفس القاعدة بالظبط، بس مش زي ما انت كاتبها. فالنسخة النهائية بتقرا الملف نفسه بـ [[fetch('patterns.css')]] وتاخد كل سطر بيبدأ بـ [[.اسم {]]. ولو فتحت الصفحة من الفولدر على طول ([[file://]]) الـ fetch بيفشل، فبترجع للـ [[cssText]].
 
-**التباين بيتحسب في الصفحة:** [[styleguide.js]] بيقرا قيمة كل توكن من [[getComputedStyle]] جوه اللوحة (فاتح أو غامق)، ويحوّله لـ RGB بـ canvas، ويحسب التباين مع الخلفية اللي بيتحط عليها. لو حد غيّر توكن بكرة، الرقم بيتغيّر لوحده، و ✗ بيبان لو نزل تحت 4.5.
+**الغلطة اللي الـ validator مسكها:** أول نسخة كان كل كارت [[<figure>]] والاسم [[<figcaption>]] في النص، تحته الكود والزرار. الـ validator قال [[Element "pre" not allowed as child of element "figure" in this context]]. الـ [[<figcaption>]] لازم يبقى أول حاجة أو آخر حاجة جوه الـ [[<figure>]]. والكارت هنا مش صورة ليها تعليق أصلًا، فبقى [[<article>]] بعنوان [[<h2>]].
 
-**القاعدة اللي بتحمي الهوية:** أي مكون جديد بيتبني من الأسامي بالمعنى بس. الـ README بتاع «عدسة» فيه جدول كل توكن واستخدامه.
+**في المعاينة هنا:** النسخ ممكن ميشتغلش (المعاينة جوه iframe مقفول)، فهتظهر رسالة «علّم الكود واعمل Ctrl+C». على جهازك من [[npx serve]] أو Live Server بيشتغل.
 
-~~~text الناتج (Playwright بـ Chrome 157)
-light: --color-fg=16.74 ✓, --color-muted=9.84 ✓, --color-accent=6.79 ✓, --color-on-accent=7.09 ✓, --color-fg=17.49 ✓, --color-bg=#fafaf9, --color-surface=#ffffff, --color-line=#e7e5e4
-dark:  --color-fg=18.11 ✓, --color-muted=7.83 ✓, --color-accent=13.70 ✓, --color-on-accent=13.70 ✓, --color-fg=16.03 ✓, --color-bg=#0c0a09, --color-surface=#1c1917, --color-line=#44403c
-اللوحات الـ 4: light/rtl rgb(250, 250, 249) زرار rgb(146, 64, 14) | dark/rtl rgb(12, 10, 9) زرار rgb(252, 211, 77) | light/ltr | dark/ltr (نفس الألوان)
-الخطوط: Cairo 400 و 700، و Inter 400 و 700 (الصفحة فيها اللغتين)
+~~~text الناتج (Chrome، من سيرفر محلي)
+الطلبات             style.css  patterns.css  app.js  patterns.css (الـ fetch)   صور: 0
+patterns.css        8 قواعد، كل قاعدة سطر واحد
+الكود جوه المربع    .dots { background: radial-gradient(#334155 2px, transparent 2.5px) 0 0 / 20px 20px #f8fafc; }
+cssText لنفس القاعدة .dots { background: radial-gradient(rgb(51, 65, 85) 2px, transparent 2.5px) 0px 0px / 20px 20px rgb(248, 250, 252); }
+دوست «انسخ» في الشطرنج، و Get-Clipboard في PowerShell طلّع:
+  .checker { background: conic-gradient(#cbd5e1 25%, white 0 50%, #cbd5e1 0 75%, white 0) 0 0 / 40px 40px; }
+مربع الأمواج وصل 300px طول: الموجة متصلة من غير قطع
+axe: 0 violations   الـ validator: مفيش رسايل (بعد ما figure بقت article)   CSS validator: No Error Found
+~~~` },
+        { lvl: 'كبير', dir: "clinic-styled", t: R`صفحة العيادة بالتصميم الكامل`, what: R`خد صفحة هبوط العيادة المتخيلة من الوحدة الأولى (نفس الـ HTML) واكتبلها CSS كامل: ملف واحد مقسوم [[@layer reset, base, components, utilities]]، وأسامي BEM لكل جزء ([[.hero]] و [[.service-card]] و [[.doctor]] و [[.faq]])، وهيرو خلفيته هالة gradients، وكروت الخدمات بشريط لون وظل وحركة hover، وكارت «احجز ميعادك» شكله تذكرة بخط متقطع، والأجزاء ورا بعض بخلفيات فاتحة متبادلة، وشريط مايل بين جزئين من غير ما يعمل scroll أفقي. يجمع الوحدة دي مع وحدة HTML.`, done: R`على 360 و 800 و 1280 مفيش scroll أفقي ([[document.documentElement.scrollWidth]] = عرض الشاشة)، ومفيش [[!important]] ولا id ولا [[style=""]]، و axe (اللي جوه Lighthouse) صفر مشاكل (التباين سليم)، والـ HTML نفس عناصر وكلام الوحدة الأولى (اللي اتزوّد class بس، و div واحد من غير كلام حوالين كارت التواصل)، ولو شلت ملف الـ CSS الصفحة لسه مقروءة ومرتبة.`, ext: R`لما توصل لوحدة «الوحدات والمتغيرات» حوّل كل الألوان والمسافات لـ tokens، ولوحدة Flexbox و Grid رتّب الكروت جنب بعض.`, sol: R`ده نفس [[index.html]] بتاع العيادة من الوحدة الأولى، والصورتين [[img/hero.svg]] و [[img/doctor.svg]] زي ما هم. اللي اتغيّر في الـ HTML: سطر الـ [[<link>]]، و class على العناصر، و [[<div class="ticket">]] حوالين محتوى قسم التواصل (من غيره مفيش حاجة تتشكل تذكرة جوه القسم).
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة لطب الأسنان</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <p class="site-header__logo"><a href="#top">عيادة ابتسامة</a></p>
+  <nav aria-label="أجزاء الصفحة">
+    <ul class="site-header__links">
+      <li><a href="#services">الخدمات</a></li>
+      <li><a href="#steps">الخطوات</a></li>
+      <li><a href="#doctors">الأطبا</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#faq">الأسئلة</a></li>
+      <li><a href="#contact">التواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section id="top" class="hero">
+    <h1>سنانك في إيد أمينة</h1>
+    <p>كشف وتنضيف وتقويم في مكان واحد، ومن غير ما تستنى بالساعات.</p>
+    <img src="img/hero.svg" alt="رسم لسنة بيضا مبتسمة" width="800" height="400">
+    <p><a class="btn" href="#contact">احجز كشف</a></p>
+  </section>
+
+  <section id="services" class="section">
+    <h2>الخدمات</h2>
+    <ul class="services">
+      <li class="service-card">كشف وأشعة بانوراما</li>
+      <li class="service-card">تنضيف وتلميع</li>
+      <li class="service-card">حشو وعلاج عصب</li>
+      <li class="service-card">تقويم شفاف</li>
+    </ul>
+  </section>
+
+  <section id="steps" class="section section--alt">
+    <h2>الخطوات</h2>
+    <ol class="steps">
+      <li>احجز من الفورم أو بالتليفون.</li>
+      <li>الكشف والأشعة في نفس الزيارة.</li>
+      <li>خطة علاج مكتوبة بالسعر قبل ما نبدأ.</li>
+    </ol>
+  </section>
+
+  <section id="doctors" class="section">
+    <h2>الأطبا</h2>
+    <article class="doctor">
+      <h3 class="doctor__name">د. سلمى فؤاد</h3>
+      <img src="img/doctor.svg" alt="صورة د. سلمى فؤاد" width="200" height="200" loading="lazy">
+      <p>تقويم الأسنان، ١٢ سنة خبرة.</p>
+    </article>
+    <article class="doctor">
+      <h3 class="doctor__name">د. كريم ناجي</h3>
+      <img src="img/doctor.svg" alt="صورة د. كريم ناجي" width="200" height="200" loading="lazy">
+      <p>علاج العصب والحشو التجميلي.</p>
+    </article>
+    <figure class="quote">
+      <blockquote>
+        <p>أول مرة أروح لدكتور سنان ومخافش. شرحولي كل خطوة قبل ما يعملوها.</p>
+      </blockquote>
+      <figcaption>منى، من المرضى</figcaption>
+    </figure>
+  </section>
+
+  <section id="prices" class="section section--alt section--slanted">
+    <h2>الأسعار</h2>
+    <ul class="prices">
+      <li>الكشف والأشعة: ٣٠٠ جنيه</li>
+      <li>التنضيف: ٥٠٠ جنيه</li>
+      <li>الحشو: من ٦٠٠ جنيه</li>
+    </ul>
+  </section>
+
+  <section id="faq" class="section">
+    <h2>الأسئلة</h2>
+    <details class="faq">
+      <summary class="faq__q">الكشف بياخد قد إيه؟</summary>
+      <p>حوالي نص ساعة، بالأشعة.</p>
+    </details>
+    <details class="faq">
+      <summary class="faq__q">بتقبلوا التأمين؟</summary>
+      <p>أيوه، مع أغلب شركات التأمين الطبي.</p>
+    </details>
+  </section>
+
+  <section id="contact" class="section section--alt">
+    <div class="ticket">
+      <h2>التواصل</h2>
+      <p>التليفون: <a href="tel:+20225550199">0225550199</a></p>
+      <address>١٤ شارع النخيل، الدور التاني</address>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p><small>© ٢٠٢٦ عيادة ابتسامة (اسم متخيل)</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+~~~css style.css
+/* the order of the layers is the order of who wins: utilities beat components, components beat base */
+@layer reset, base, components, utilities;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
+  img { display: block; max-width: 100%; height: auto; }
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { background: white; color: #0f172a; font: 16px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.3; }
+  h2 { font-size: 26px; margin-block-end: 16px; }
+  a { color: #0e7490; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid #0e7490; outline-offset: 3px; }
+}
+
+@layer components {
+  /* ---------- header ---------- */
+  .site-header { padding: 12px 16px; border-block-end: 1px solid #e2e8f0; }
+  .site-header__logo a { font-weight: 800; font-size: 20px; text-decoration: none; color: #0f172a; }
+  .site-header__links { padding: 0; list-style: none; }
+  .site-header__links li { display: inline-block; margin-inline-end: 12px; }
+
+  /* ---------- hero: three soft halos on top of each other ---------- */
+  .hero {
+    padding: 48px 16px;
+    text-align: center;
+    background:
+      radial-gradient(circle at 15% 20%, rgb(14 165 233 / 0.25), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgb(45 212 191 / 0.25), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgb(250 204 21 / 0.2), transparent 50%),
+      #f0f9ff;
+  }
+  .hero p { max-width: 560px; margin: 12px auto; }
+  .hero img { margin: 16px auto; border-radius: 16px; }
+
+  .btn { display: inline-block; padding: 12px 28px; border-radius: 999px; background: #0e7490; color: white; font-weight: 700; text-decoration: none; }
+  .btn:hover { background: #155e75; }
+
+  /* ---------- sections, a light background every other one ---------- */
+  .section { padding: 40px 16px; }
+  .section > * { max-width: 760px; margin-inline: auto; }
+  .section--alt { background: #f8fafc; }
+
+  /* the slanted strip: a rotated bar wider than the screen. overflow: clip cuts what sticks out,
+     so it never makes the page scroll sideways (and unlike hidden, it does not make a scroll box) */
+  .section--slanted { position: relative; overflow: clip; padding-block-start: 72px; }
+  .section--slanted::before {
+    content: ""; position: absolute; top: 16px; inset-inline: -10%;
+    height: 24px; background: #0e7490; transform: rotate(-2deg);
+  }
+
+  /* ---------- service cards ---------- */
+  .services { padding: 0; list-style: none; }
+  .service-card {
+    position: relative; margin-block-end: 12px; padding: 16px 20px; padding-inline-start: 28px;
+    border-radius: 12px; background: white; box-shadow: 0 2px 8px rgb(15 23 42 / 0.08);
+    font-weight: 600; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .service-card::before { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 0; width: 6px; border-start-end-radius: 6px; border-end-end-radius: 6px; background: #0ea5e9; }
+  .service-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgb(15 23 42 / 0.12); }
+
+  .steps { padding-inline-start: 24px; }
+  .steps li { margin-block-end: 8px; }
+
+  /* ---------- doctors ---------- */
+  .doctor { margin-block-end: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 16px; }
+  .doctor__name { margin-block-end: 8px; }
+  .doctor img { border-radius: 50%; width: 120px; margin-block-end: 8px; }
+  .quote { padding: 16px 20px; border-inline-start: 4px solid #0ea5e9; background: #f0f9ff; border-radius: 8px; }
+  .quote figcaption { margin-block-start: 8px; color: #475569; }
+
+  .prices { padding: 0; list-style: none; }
+  .prices li { padding-block: 8px; border-block-end: 1px dashed #cbd5e1; }
+
+  /* ---------- FAQ ---------- */
+  .faq { margin-block-end: 8px; padding: 12px 16px; border-radius: 10px; background: #f8fafc; }
+  .faq__q { cursor: pointer; font-weight: 700; }
+  .faq[open] { background: #f0f9ff; }
+
+  /* ---------- contact card shaped like a ticket ---------- */
+  .ticket {
+    position: relative; max-width: 420px; padding: 24px 28px; border-radius: 16px;
+    background: #fef9c3; outline: 2px dashed #a16207; outline-offset: -10px;
+  }
+  .ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 24px; height: 24px; border-radius: 50%; background: #f8fafc; transform: translateY(-50%); }
+  .ticket::before { inset-inline-start: -12px; }
+  .ticket::after { inset-inline-end: -12px; }
+  .ticket a { color: #713f12; }
+
+  .site-footer { padding: 16px; text-align: center; color: #475569; }
+}
+
+@layer utilities {
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+~~~
+
+~~~view 700 2900 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة ابتسامة لطب الأسنان</title>
+<style id="style">
+/* the order of the layers is the order of who wins: utilities beat components, components beat base */
+@layer reset, base, components, utilities;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
+  img { display: block; max-width: 100%; height: auto; }
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { background: white; color: #0f172a; font: 16px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.3; }
+  h2 { font-size: 26px; margin-block-end: 16px; }
+  a { color: #0e7490; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid #0e7490; outline-offset: 3px; }
+}
+
+@layer components {
+  /* ---------- header ---------- */
+  .site-header { padding: 12px 16px; border-block-end: 1px solid #e2e8f0; }
+  .site-header__logo a { font-weight: 800; font-size: 20px; text-decoration: none; color: #0f172a; }
+  .site-header__links { padding: 0; list-style: none; }
+  .site-header__links li { display: inline-block; margin-inline-end: 12px; }
+
+  /* ---------- hero: three soft halos on top of each other ---------- */
+  .hero {
+    padding: 48px 16px;
+    text-align: center;
+    background:
+      radial-gradient(circle at 15% 20%, rgb(14 165 233 / 0.25), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgb(45 212 191 / 0.25), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgb(250 204 21 / 0.2), transparent 50%),
+      #f0f9ff;
+  }
+  .hero p { max-width: 560px; margin: 12px auto; }
+  .hero img { margin: 16px auto; border-radius: 16px; }
+
+  .btn { display: inline-block; padding: 12px 28px; border-radius: 999px; background: #0e7490; color: white; font-weight: 700; text-decoration: none; }
+  .btn:hover { background: #155e75; }
+
+  /* ---------- sections, a light background every other one ---------- */
+  .section { padding: 40px 16px; }
+  .section > * { max-width: 760px; margin-inline: auto; }
+  .section--alt { background: #f8fafc; }
+
+  /* the slanted strip: a rotated bar wider than the screen. overflow: clip cuts what sticks out,
+     so it never makes the page scroll sideways (and unlike hidden, it does not make a scroll box) */
+  .section--slanted { position: relative; overflow: clip; padding-block-start: 72px; }
+  .section--slanted::before {
+    content: ""; position: absolute; top: 16px; inset-inline: -10%;
+    height: 24px; background: #0e7490; transform: rotate(-2deg);
+  }
+
+  /* ---------- service cards ---------- */
+  .services { padding: 0; list-style: none; }
+  .service-card {
+    position: relative; margin-block-end: 12px; padding: 16px 20px; padding-inline-start: 28px;
+    border-radius: 12px; background: white; box-shadow: 0 2px 8px rgb(15 23 42 / 0.08);
+    font-weight: 600; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .service-card::before { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 0; width: 6px; border-start-end-radius: 6px; border-end-end-radius: 6px; background: #0ea5e9; }
+  .service-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgb(15 23 42 / 0.12); }
+
+  .steps { padding-inline-start: 24px; }
+  .steps li { margin-block-end: 8px; }
+
+  /* ---------- doctors ---------- */
+  .doctor { margin-block-end: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 16px; }
+  .doctor__name { margin-block-end: 8px; }
+  .doctor img { border-radius: 50%; width: 120px; margin-block-end: 8px; }
+  .quote { padding: 16px 20px; border-inline-start: 4px solid #0ea5e9; background: #f0f9ff; border-radius: 8px; }
+  .quote figcaption { margin-block-start: 8px; color: #475569; }
+
+  .prices { padding: 0; list-style: none; }
+  .prices li { padding-block: 8px; border-block-end: 1px dashed #cbd5e1; }
+
+  /* ---------- FAQ ---------- */
+  .faq { margin-block-end: 8px; padding: 12px 16px; border-radius: 10px; background: #f8fafc; }
+  .faq__q { cursor: pointer; font-weight: 700; }
+  .faq[open] { background: #f0f9ff; }
+
+  /* ---------- contact card shaped like a ticket ---------- */
+  .ticket {
+    position: relative; max-width: 420px; padding: 24px 28px; border-radius: 16px;
+    background: #fef9c3; outline: 2px dashed #a16207; outline-offset: -10px;
+  }
+  .ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 24px; height: 24px; border-radius: 50%; background: #f8fafc; transform: translateY(-50%); }
+  .ticket::before { inset-inline-start: -12px; }
+  .ticket::after { inset-inline-end: -12px; }
+  .ticket a { color: #713f12; }
+
+  .site-footer { padding: 16px; text-align: center; color: #475569; }
+}
+
+@layer utilities {
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <p class="site-header__logo"><a href="#top">عيادة ابتسامة</a></p>
+  <nav aria-label="أجزاء الصفحة">
+    <ul class="site-header__links">
+      <li><a href="#services">الخدمات</a></li>
+      <li><a href="#steps">الخطوات</a></li>
+      <li><a href="#doctors">الأطبا</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#faq">الأسئلة</a></li>
+      <li><a href="#contact">التواصل</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section id="top" class="hero">
+    <h1>سنانك في إيد أمينة</h1>
+    <p>كشف وتنضيف وتقويم في مكان واحد، ومن غير ما تستنى بالساعات.</p>
+    <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%22400%22%20viewBox%3D%220%200%20800%20400%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23e0f2fe%22%2F%3E%3Cpath%20d%3D%22M340%20120c-40%200-60%2030-60%2070%200%2060%2030%20130%2050%20130s20-60%2040-60%2020%2060%2040%2060%2050-70%2050-130c0-40-20-70-60-70-20%200-30%2010-30%2010s-10-10-30-10z%22%20fill%3D%22%23fff%22%20stroke%3D%22%230369a1%22%20stroke-width%3D%228%22%2F%3E%3C%2Fsvg%3E" alt="رسم لسنة بيضا مبتسمة" width="800" height="400">
+    <p><a class="btn" href="#contact">احجز كشف</a></p>
+  </section>
+
+  <section id="services" class="section">
+    <h2>الخدمات</h2>
+    <ul class="services">
+      <li class="service-card">كشف وأشعة بانوراما</li>
+      <li class="service-card">تنضيف وتلميع</li>
+      <li class="service-card">حشو وعلاج عصب</li>
+      <li class="service-card">تقويم شفاف</li>
+    </ul>
+  </section>
+
+  <section id="steps" class="section section--alt">
+    <h2>الخطوات</h2>
+    <ol class="steps">
+      <li>احجز من الفورم أو بالتليفون.</li>
+      <li>الكشف والأشعة في نفس الزيارة.</li>
+      <li>خطة علاج مكتوبة بالسعر قبل ما نبدأ.</li>
+    </ol>
+  </section>
+
+  <section id="doctors" class="section">
+    <h2>الأطبا</h2>
+    <article class="doctor">
+      <h3 class="doctor__name">د. سلمى فؤاد</h3>
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f0fdfa%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%2399f6e4%22%2F%3E%3Cpath%20d%3D%22M30%20200c0-50%2030-75%2070-75s70%2025%2070%2075z%22%20fill%3D%22%2314b8a6%22%2F%3E%3C%2Fsvg%3E" alt="صورة د. سلمى فؤاد" width="200" height="200" loading="lazy">
+      <p>تقويم الأسنان، ١٢ سنة خبرة.</p>
+    </article>
+    <article class="doctor">
+      <h3 class="doctor__name">د. كريم ناجي</h3>
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f0fdfa%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%2399f6e4%22%2F%3E%3Cpath%20d%3D%22M30%20200c0-50%2030-75%2070-75s70%2025%2070%2075z%22%20fill%3D%22%2314b8a6%22%2F%3E%3C%2Fsvg%3E" alt="صورة د. كريم ناجي" width="200" height="200" loading="lazy">
+      <p>علاج العصب والحشو التجميلي.</p>
+    </article>
+    <figure class="quote">
+      <blockquote>
+        <p>أول مرة أروح لدكتور سنان ومخافش. شرحولي كل خطوة قبل ما يعملوها.</p>
+      </blockquote>
+      <figcaption>منى، من المرضى</figcaption>
+    </figure>
+  </section>
+
+  <section id="prices" class="section section--alt section--slanted">
+    <h2>الأسعار</h2>
+    <ul class="prices">
+      <li>الكشف والأشعة: ٣٠٠ جنيه</li>
+      <li>التنضيف: ٥٠٠ جنيه</li>
+      <li>الحشو: من ٦٠٠ جنيه</li>
+    </ul>
+  </section>
+
+  <section id="faq" class="section">
+    <h2>الأسئلة</h2>
+    <details class="faq">
+      <summary class="faq__q">الكشف بياخد قد إيه؟</summary>
+      <p>حوالي نص ساعة، بالأشعة.</p>
+    </details>
+    <details class="faq">
+      <summary class="faq__q">بتقبلوا التأمين؟</summary>
+      <p>أيوه، مع أغلب شركات التأمين الطبي.</p>
+    </details>
+  </section>
+
+  <section id="contact" class="section section--alt">
+    <div class="ticket">
+      <h2>التواصل</h2>
+      <p>التليفون: <a href="tel:+20225550199">0225550199</a></p>
+      <address>١٤ شارع النخيل، الدور التاني</address>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p><small>© ٢٠٢٦ عيادة ابتسامة (اسم متخيل)</small></p>
+</footer>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** فوق اسم العيادة واللينكات. بعدها هيرو لبني فاتح فيه ٣ بقع ألوان ناعمة (أزرق وفيروزي وأصفر)، والعنوان كبير وزرار «احجز كشف» كبسولة. الخدمات كروت بيضا بظل وشريط أزرق على اليمين، وبتطلع لفوق مع الماوس. الأقسام بالتبادل أبيض ورمادي فاتح جدًا. قبل «الأسعار» شريط أزرق مايل بعرض الشاشة. والأسئلة مربعات بتفتح، وفي الآخر «التواصل» كارت أصفر شكله تذكرة بخط متقطع وتجويفين.
+
+**الطبقات:** [[reset]] بيصفّر هوامش المتصفح. [[base]] للعناصر نفسها (الخط والعناوين واللينكات). [[components]] لكل جزء باسمه. [[utilities]] أدوات صغيرة. ولأن الترتيب محدد فوق، القاعدة اللي في [[components]] بتغلب اللي في [[base]] حتى لو [[base]] فيها selector أتقل.
+
+**أهم الحتت:**
+- **[[.section > *]]:** كل اللي جوه القسم عرضه 760 بالكتير وفي النص، والخلفية نفسها بعرض الشاشة. كده الألوان المتبادلة بتوصل للحافتين والكلام مش بيبقى سطر طويل على الشاشات الكبيرة.
+- **هالة الهيرو:** ٣ [[radial-gradient]] شفافين وتحتهم لون. أول واحد مكتوب هو اللي فوق.
+- **شريط الخدمات:** [[::before]] لازق على [[inset-inline-start]] (اليمين في العربي)، وزواياه [[border-start-end-radius]] و [[border-end-end-radius]]: أسامي logical معناها «الركن اللي ناحية آخر السطر». أول نسخة كانت [[border-radius: 0 6px 6px 0]] (physical)، فاتدوّر الطرف اللي لازق في الحافة بدل اللي جوه.
+- **الشريط المايل:** [[::before]] أعرض من الشاشة ([[inset-inline: -10%]]) ومايل [[rotate(-2deg)]]. الحتة اللي طالعة برّه الشاشة بتعمل scroll أفقي، و [[overflow: clip]] على القسم بيقصها.
+- **[[overflow: clip]] مش [[hidden]]:** الاتنين بيقصوا. بس [[hidden]] بيخلي القسم «صندوق scroll» (ممكن يتحرك بالكود أو بالـ focus جواه)، و [[clip]] بيقص بس.
+- **التذكرة:** نفس فكرة مشروع الأشكال، والتجويفين لونهم لون القسم ([[#f8fafc]]).
+
+**من غير الـ CSS:** الصفحة لسه مترتبة: عناوين، ولستات، ولينكات. بس صورة الهيرو هتعمل scroll أفقي على 800، لأن [[width="800"]] في الـ HTML. وده اللي [[img { max-width: 100%; height: auto; }]] في الـ reset بيصلّحه.
+
+~~~text الناتج (Chrome)
+scrollWidth / clientWidth (من غير الـ scrollbar)
+  360      342 / 342       800      782 / 782       1280     1262 / 1262
+الشريط المايل من غير overflow: clip على 360   scrollWidth 379 والشاشة 345 (scroll أفقي)
+بـ overflow: hidden                            345 / 345، بس القسم بقى scroll container (scrollWidth > clientWidth جواه)
+بـ overflow: clip                              345 / 345
+زوايا شريط الخدمة                               top-left 6px، bottom-left 6px، top-right 0 (الطرف اللي جوه)
+عناصر عليها style=""   0       selectors فيها #   0       !important   0
+من غير style.css: h1 = 32px (حجم المتصفح)، و scrollWidth 808 على 800 (صورة الهيرو 800px)
 axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-صفحتين «عدسة» بعد ما التوكنز بقت [data-theme] على أي عنصر: axe 0، و Lighthouse ar dark: perf 100 و a11y 100
+~~~` },
+        { lvl: 'فكرة', dir: "zen-two", t: R`نفس الـ HTML بشكلين`, what: R`زي مسابقة CSS Zen Garden: صفحة HTML واحدة لمقال أو منيو، وملفين CSS مختلفين خالص (مثلًا «كلاسيك» و «مودرن»). انت اللي تختار الموضوع والشكلين.`, done: R`تبدّل بين الشكلين بتغيير سطر الـ link بس، والاتنين مقروءين ومفيش scroll أفقي، وواحد صاحبك قال الشكلين مختلفين فعلًا.`, ext: R`زوّد زرار بيبدّل بينهم من غير reload (يغيّر [[href]] بتاع الـ link) ويفتكر الاختيار.`, sol: R`الموضوع اللي اخترته: مقال قصير في مجلة متخيلة. ملف HTML واحد، وملفين CSS، وملف JavaScript صغير للمهمة الزيادة (زرار التبديل).
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إزاي تعمل كوباية شاي مظبوطة</title>
+<link rel="stylesheet" href="classic.css" id="theme">
+</head>
+<body>
+<header>
+  <p>مجلة «فنجان» (اسم متخيل)</p>
+  <button type="button" id="swap" hidden>بدّل الشكل</button>
+</header>
+<main>
+  <article>
+    <h1>إزاي تعمل كوباية شاي مظبوطة</h1>
+    <p>الشاي سهل، بس الفرق بين كوباية عادية وكوباية مظبوطة في تلات حاجات صغيرة: المية، والوقت، والكمية.</p>
+    <h2>١. المية</h2>
+    <p>المية تغلي وتسيبها نص دقيقة. المية اللي بتفور لسه بتحرق الورق وتطلّع طعم مر.</p>
+    <h2>٢. الوقت</h2>
+    <p>تلات لأربع دقايق للشاي الأسود. أكتر من كده بيطلع التانين والطعم بيقلب.</p>
+    <blockquote><p>الشاي الحلو مش محتاج سكر كتير، محتاج صبر شوية.</p></blockquote>
+    <h2>٣. الكمية</h2>
+    <ul>
+      <li>معلقة صغيرة لكل كوباية.</li>
+      <li>ولو هتحط لبن، زوّد نص معلقة.</li>
+    </ul>
+  </article>
+</main>
+<footer><p>© ٢٠٢٦ مجلة «فنجان»</p></footer>
+<script src="swap.js"></script>
+</body>
+</html>
+~~~
+
+~~~css classic.css
+/* «كلاسيك»: paper, a serif face, a narrow column, everything centred like a printed magazine */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #f5efe0; color: #3b2f22; font: 19px/1.9 "Amiri", "Traditional Arabic", "Times New Roman", serif; }
+header, footer { padding: 12px 16px; text-align: center; border-block: 3px double #8b6f47; }
+header p { margin: 0; font-size: 22px; letter-spacing: 0; font-weight: 700; }
+main { max-width: 620px; margin: 32px auto; padding-inline: 16px; }
+h1 { text-align: center; font-size: 34px; line-height: 1.4; border-block-end: 1px solid #8b6f47; padding-block-end: 12px; }
+h2 { font-size: 24px; color: #7c2d12; }
+blockquote { margin: 24px 0; padding: 8px 24px; border-inline: 1px solid #8b6f47; text-align: center; font-style: italic; }
+footer { font-size: 15px; }
+button { margin-block-start: 8px; padding: 4px 16px; border: 1px solid #3b2f22; background: transparent; color: inherit; font: inherit; font-size: 15px; cursor: pointer; }
+~~~
+
+~~~css modern.css
+/* «مودرن»: dark, a sans face, big bold headings with a coloured bar, cards with rounded corners */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #0b1120; color: #e2e8f0; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; background: #111827; }
+header p { margin: 0; font-weight: 800; color: #fbbf24; }
+main { max-width: 760px; margin: 24px auto; padding-inline: 16px; }
+article { padding: 24px; border-radius: 20px; background: #111827; }
+h1 { margin-block-start: 0; font-size: clamp(28px, 6vw, 44px); line-height: 1.2; background: linear-gradient(90deg, #fbbf24, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+h2 { font-size: 20px; padding-inline-start: 12px; border-inline-start: 4px solid #f472b6; }
+blockquote { margin: 20px 0; padding: 16px 20px; border-radius: 14px; background: #1f2937; font-size: 20px; font-weight: 700; color: #fbbf24; }
+blockquote p { margin: 0; }
+li::marker { color: #f472b6; }
+footer { padding: 16px; text-align: center; color: #94a3b8; }
+button { padding: 6px 14px; border: 0; border-radius: 999px; background: #fbbf24; color: #0b1120; font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid #f472b6; outline-offset: 2px; }
+~~~
+
+~~~js swap.js
+// the extra task: switch the stylesheet without a reload and remember the choice.
+// without JavaScript the button stays hidden and the page keeps the classic look.
+const link = document.getElementById('theme');
+const btn = document.getElementById('swap');
+const KEY = 'fingan-theme';
+
+function use(name) {
+  link.href = name + '.css';
+  btn.textContent = name === 'classic' ? 'جرّب الشكل المودرن' : 'ارجع للشكل الكلاسيك';
+}
+let saved = null;
+try { saved = localStorage.getItem(KEY); } catch {}
+use(saved === 'modern' ? 'modern' : 'classic');
+btn.hidden = false;
+
+btn.addEventListener('click', () => {
+  const next = link.href.endsWith('classic.css') ? 'modern' : 'classic';
+  use(next);
+  try { localStorage.setItem(KEY, next); } catch {}
+});
+~~~
+
+~~~view 560 1100 الشكل الكلاسيك
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إزاي تعمل كوباية شاي مظبوطة</title>
+<style id="classic">
+/* «كلاسيك»: paper, a serif face, a narrow column, everything centred like a printed magazine */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #f5efe0; color: #3b2f22; font: 19px/1.9 "Amiri", "Traditional Arabic", "Times New Roman", serif; }
+header, footer { padding: 12px 16px; text-align: center; border-block: 3px double #8b6f47; }
+header p { margin: 0; font-size: 22px; letter-spacing: 0; font-weight: 700; }
+main { max-width: 620px; margin: 32px auto; padding-inline: 16px; }
+h1 { text-align: center; font-size: 34px; line-height: 1.4; border-block-end: 1px solid #8b6f47; padding-block-end: 12px; }
+h2 { font-size: 24px; color: #7c2d12; }
+blockquote { margin: 24px 0; padding: 8px 24px; border-inline: 1px solid #8b6f47; text-align: center; font-style: italic; }
+footer { font-size: 15px; }
+button { margin-block-start: 8px; padding: 4px 16px; border: 1px solid #3b2f22; background: transparent; color: inherit; font: inherit; font-size: 15px; cursor: pointer; }
+</style>
+</head>
+<body>
+<header>
+  <p>مجلة «فنجان» (اسم متخيل)</p>
+  <button type="button" id="swap" hidden>بدّل الشكل</button>
+</header>
+<main>
+  <article>
+    <h1>إزاي تعمل كوباية شاي مظبوطة</h1>
+    <p>الشاي سهل، بس الفرق بين كوباية عادية وكوباية مظبوطة في تلات حاجات صغيرة: المية، والوقت، والكمية.</p>
+    <h2>١. المية</h2>
+    <p>المية تغلي وتسيبها نص دقيقة. المية اللي بتفور لسه بتحرق الورق وتطلّع طعم مر.</p>
+    <h2>٢. الوقت</h2>
+    <p>تلات لأربع دقايق للشاي الأسود. أكتر من كده بيطلع التانين والطعم بيقلب.</p>
+    <blockquote><p>الشاي الحلو مش محتاج سكر كتير، محتاج صبر شوية.</p></blockquote>
+    <h2>٣. الكمية</h2>
+    <ul>
+      <li>معلقة صغيرة لكل كوباية.</li>
+      <li>ولو هتحط لبن، زوّد نص معلقة.</li>
+    </ul>
+  </article>
+</main>
+<footer><p>© ٢٠٢٦ مجلة «فنجان»</p></footer>
+
+</body>
+</html>
+~~~
+
+~~~view 560 1100 نفس الـ HTML بالشكل المودرن
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إزاي تعمل كوباية شاي مظبوطة</title>
+<style id="classic">
+/* «مودرن»: dark, a sans face, big bold headings with a coloured bar, cards with rounded corners */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #0b1120; color: #e2e8f0; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; background: #111827; }
+header p { margin: 0; font-weight: 800; color: #fbbf24; }
+main { max-width: 760px; margin: 24px auto; padding-inline: 16px; }
+article { padding: 24px; border-radius: 20px; background: #111827; }
+h1 { margin-block-start: 0; font-size: clamp(28px, 6vw, 44px); line-height: 1.2; background: linear-gradient(90deg, #fbbf24, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+h2 { font-size: 20px; padding-inline-start: 12px; border-inline-start: 4px solid #f472b6; }
+blockquote { margin: 20px 0; padding: 16px 20px; border-radius: 14px; background: #1f2937; font-size: 20px; font-weight: 700; color: #fbbf24; }
+blockquote p { margin: 0; }
+li::marker { color: #f472b6; }
+footer { padding: 16px; text-align: center; color: #94a3b8; }
+button { padding: 6px 14px; border: 0; border-radius: 999px; background: #fbbf24; color: #0b1120; font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid #f472b6; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <p>مجلة «فنجان» (اسم متخيل)</p>
+  <button type="button" id="swap" hidden>بدّل الشكل</button>
+</header>
+<main>
+  <article>
+    <h1>إزاي تعمل كوباية شاي مظبوطة</h1>
+    <p>الشاي سهل، بس الفرق بين كوباية عادية وكوباية مظبوطة في تلات حاجات صغيرة: المية، والوقت، والكمية.</p>
+    <h2>١. المية</h2>
+    <p>المية تغلي وتسيبها نص دقيقة. المية اللي بتفور لسه بتحرق الورق وتطلّع طعم مر.</p>
+    <h2>٢. الوقت</h2>
+    <p>تلات لأربع دقايق للشاي الأسود. أكتر من كده بيطلع التانين والطعم بيقلب.</p>
+    <blockquote><p>الشاي الحلو مش محتاج سكر كتير، محتاج صبر شوية.</p></blockquote>
+    <h2>٣. الكمية</h2>
+    <ul>
+      <li>معلقة صغيرة لكل كوباية.</li>
+      <li>ولو هتحط لبن، زوّد نص معلقة.</li>
+    </ul>
+  </article>
+</main>
+<footer><p>© ٢٠٢٦ مجلة «فنجان»</p></footer>
+
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** نفس الكلام بالظبط مرتين. «كلاسيك»: ورق بيج، وخط serif، وعمود ضيق في النص، والاقتباس بين خطين زي المجلات المطبوعة. «مودرن»: خلفية كحلي، وخط sans، والعنوان بتدرّج من الأصفر للبمبي، والمقال جوه كارت مدور، والاقتباس كارت لوحده.
+
+**الفكرة:** الـ HTML بيقول **إيه** الكلام (عنوان، فقرة، اقتباس، لستة). والـ CSS بيقول **شكله** إيه. لو الـ HTML مكتوب صح (من غير [[<font>]] ولا [[style=""]] ولا [[<br>]] للمسافات)، تقدر تغيّر شكله كله من غير ما تلمسه. ده بالظبط اللي مسابقة CSS Zen Garden بتثبته.
+
+**التبديل يدوي:** غيّر [[href="classic.css"]] لـ [[href="modern.css"]] واعمل Refresh.
+
+**الزرار (المهمة الزيادة):**
+- الزرار عليه [[hidden]] في الـ HTML، والـ JavaScript هو اللي بيظهّره. كده لو الـ JS ما اشتغلش مش هيبقى في زرار مبيعملش حاجة.
+- [[link.href = name + '.css']] بيغيّر الملف، والمتصفح بيحمّل الجديد ويرسم على طول من غير reload.
+- الاختيار بيتحفظ في [[localStorage]] جوه [[try]]، لأن بعض المتصفحات (والـ iframe المقفول) بترمي error لما تلمسه.
+
+**حاجة اتقاست:** لما الاختيار المحفوظ «مودرن»، الصفحة بتطلب [[classic.css]] الأول (هو اللي مكتوب في الـ HTML)، وبعدين الـ JS بيبدّله. على نت بطيء ممكن تشوف لمحة من الكلاسيك قبل ما يتغيّر. الحل: سكربت صغير جوه الـ [[<head>]] قبل الـ link، بيقرا الاختيار ويكتب الـ href الصح قبل ما المتصفح يرسم. ده في كورس JavaScript.
+
+~~~text الناتج (Chrome)
+أول فتحة          href = classic.css   الخلفية rgb(245, 239, 224)   الخط Amiri       الزرار «جرّب الشكل المودرن»
+بعد الضغط         href = modern.css    الخلفية rgb(11, 17, 32)      الخط system-ui   الزرار «ارجع للشكل الكلاسيك»
+localStorage      fingan-theme = modern
+Refresh           href = modern.css، والطلبات بالترتيب: classic.css  swap.js  modern.css
+scrollWidth = clientWidth في الشكلين على 800
+axe: 0 violations في الشكلين   الـ validator: مفيش رسايل   CSS validator: No Error Found للملفين
 ~~~` },
       ],
+      l: 1,
+      n: "الـ selector بيختار، والـ cascade بيقرر مين يكسب، والـ box model بيحسب المساحة",
       items: [
         {
-          cmd: "dark mode",
+          cmd: "مقدمة CSS وتنسيق العناصر",
           ref: [
-            { t: "next-themes (GitHub)", url: "https://github.com/pacocoursey/next-themes" },
-            { t: "Tailwind CSS: Dark mode", url: "https://tailwindcss.com/docs/dark-mode" },
-            { t: "MDN: color-scheme", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme" },
-            { t: "MDN: prefers-color-scheme", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme" },
+            { t: "MDN: CSS syntax", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Syntax/Introduction" },
+            { t: "MDN: <number>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/number" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+            { t: "MDN Curriculum: CSS text styling", url: "https://developer.mozilla.org/en-US/curriculum/core/css-text-styling/" },
           ],
-          title: "وضع غامق بزرار ومن غير وميض",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الجهاز على dark، و [[localStorage.theme]] فيه [[light]]، والـ CSS فيه [[@custom-variant dark (&:where(.dark, .dark *));]]. خلفية [[<body className="bg-white dark:bg-gray-950">]] هتبقى إيه؟ وهتبقى إيه لو مسحت سطر [[@custom-variant]]؟ اكتب الإجابتين، وبعدين جرّب من DevTools › Rendering › Emulate CSS media feature [[prefers-color-scheme]].`, done: R`كتبت أبيض في الأولى (الكلاس [[light]] اللي على html هو اللي بيحكم مش الجهاز)، وغامق في التانية (من غير السطر [[dark:]] بيرجع يسمع للجهاز ويتجاهل الزرار)، والتجربة طابقت الاتنين.`, sol: R`~~~css in.css
-@import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl" class="light">
-<head><meta charset="utf-8"><title>مين بيحكم؟</title><link rel="stylesheet" href="out.css"></head>
-<body class="bg-white dark:bg-gray-950">الخلفية</body>
-</html>
-~~~
-
-**الحالة الأولى (السطر موجود):** [[@custom-variant dark]] بيغيّر معنى [[dark:]] من «إعداد الجهاز» لـ «فيه كلاس [[.dark]] على العنصر أو على أب ليه». الـ html عليه [[light]] مش [[dark]]، فالقاعدة مبتتطبقش، والخلفية بيضا رغم إن الجهاز غامق.
-
-**الحالة التانية (السطر ممسوح):** [[dark:]] بترجع للافتراضي: [[@media (prefers-color-scheme: dark)]]. الجهاز غامق، فالخلفية غامقة، والكلاس [[light]] ملوش أي تأثير. يعني زرار الثيم بقى ملوش لازمة.
-
-**الغلطة الشائعة:** تعمل زرار ثيم، وتجرّب على جهاز فاتح فيبان شغال، لأنك بتقلب ناحية واحدة بس. جرّب والجهاز غامق والاختيار فاتح.
-
-~~~text الناتج
-الجهاز dark ، و html عليه class="light"
-
-بـ @custom-variant:   rgb(255, 255, 255)           أبيض
-من غيره:              oklch(0.13 0.028 261.692)    غامق
-~~~
-
-~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
-<!doctype html>
-<html lang="ar" dir="rtl" class="light">
-<head><meta charset="utf-8"><title>مين بيحكم؟</title><style>
-/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
-@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-950:oklch(13% .028 261.692);--color-white:#fff;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.bg-white{background-color:var(--color-white)}.dark\:bg-gray-950:where(.dark,.dark *){background-color:var(--color-gray-950)}}
-</style></head>
-<body class="bg-white dark:bg-gray-950">الخلفية</body>
-</html>
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة HTML عادية من غير Tailwind ولا React: كل الألوان توكنز في [[:root]] ([[--bg]] و [[--surface]] و [[--fg]] و [[--muted]] و [[--brand]] و [[--line]])، و [[:root[data-theme="dark"]]] بيعيد تعريفهم هما بس، ومعاهم [[color-scheme]] في الاتنين. زرار [[role="switch"]] بـ [[aria-checked]] بيبدّل ويحفظ في localStorage جوه [[try/catch]].`, done: R`مفيش ولا لون (hex أو [[rgb(]] أو [[oklch(]]) برا بلوكات التوكنز، والزرار بيقلب الصفحة كلها ومعاها الـ scrollbar وحقل input، وقارئ الشاشة (أو Accessibility pane في DevTools) بيقول switch و on/off. ولو فتحتها في نافذة Incognito والكوكيز متقفلة (localStorage بيرمي error) الصفحة لسه بتشتغل والزرار بيقلب، بس مش بيفتكر.`, sol: R`~~~live 600 620 index.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الـ CSS سطرين: [[colr: red;]] (حرف ناقص) و [[font-size: big;]] (قيمة مش موجودة). العنوان هيتغيّر؟ والسطور التانية اللي في نفس القاعدة هتشتغل؟`, done: R`السطرين اتجاهلوا والعنوان فضل بلونه وحجمه، والسطور التانية في نفس القاعدة اشتغلت عادي. في DevTools › Styles هتلاقي السطرين متشطّب عليهم وجنبهم علامة تحذير. المتصفح بيرمي السطر الغلط بس، مش القاعدة كلها.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>توكنز الثيم</title>
+<title>توقّع</title>
 <style>
-  :root {
-    color-scheme: light;
-    --bg: #f8fafc;
-    --surface: #ffffff;
-    --fg: #0f172a;
-    --muted: #475569;
-    --brand: #0f766e;
-    --line: #cbd5e1;
+  h1 {
+    colr: red;
+    font-size: big;
+    background: lightyellow;
+    letter-spacing: 2px;
   }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --bg: #0b1120;
-    --surface: #1e293b;
-    --fg: #f1f5f9;
-    --muted: #94a3b8;
-    --brand: #2dd4bf;
-    --line: #475569;
-  }
-  body { margin: 0; padding: 1.5rem; font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); }
-  .card { max-width: 28rem; margin-block-start: 1rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--surface); }
-  .card p { color: var(--muted); }
-  .card a { color: var(--brand); }
-  input { display: block; width: 100%; box-sizing: border-box; padding: .5rem; }
-  #theme { min-block-size: 2.75rem; padding-inline: 1rem; border: 1px solid var(--line); border-radius: .5rem; background: var(--surface); color: var(--fg); font: inherit; }
+</style>
+</head>
+<body>
+<h1>العنوان</h1>
+</body>
+</html>
+~~~
+
+**الإجابة:** العنوان لونه وحجمه مش هيتغيّروا، والسطرين التانيين هيشتغلوا.
+
+CSS مبيقفش عند الغلط زي JavaScript. لما يلاقي خاصية مش معروفة زي [[colr]] أو قيمة مش معروفة زي [[big]]، بيرمي السطر ده بس ويكمّل. وده مقصود: الموقع القديم ميقعش لما الـ CSS يكبر، والمتصفح القديم يتجاهل الخاصية الجديدة بس.
+
+**إزاي تلاقي الغلط:** مفيش أي رسالة في الـ Console. افتح DevTools، ثم Styles: السطر الغلط متشطّب عليه وجنبه علامة تحذير.
+
+**الغلطة الشائعة:** تدوّر على الغلط في الـ Console وتلاقيه نضيف، فتقول «الكود سليم». أخطاء CSS مبتظهرش هناك خالص.
+
+~~~text الناتج
+color = rgb(0, 0, 0)      (أسود الافتراضي، colr اتجاهلت)
+font-size = 32px  (حجم h1 الافتراضي، big اتجاهلت)
+background-color = rgb(255, 255, 224)   اشتغل
+letter-spacing = 2px     اشتغل
+رسايل في الـ Console: 0
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت «بُن الصباح» (متجر قهوة متخيل): عنوان h2 لونه بني غامق، وفقرة رمادي بمسافة سطور 1.6، وسعر تقيل، وزرار [[.btn]] بخلفية وكلام أبيض وزوايا 8px. كل ده في [[style.css]] لوحده.`, done: R`الصفحة من غير الـ CSS لسه مفهومة، ومعاه شكلها كارت، والـ Computed بتاع الزرار بيقول [[border-radius: 8px]]، ومفيش أي CSS جوه الـ HTML.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بُن الصباح</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>منتجاتنا</h1>
+  <article class="card">
+    <h2>بن يمني</h2>
+    <p>تحميص وسط وطعم فواكه خفيف، مناسب للفلتر والإسبريسو.</p>
+    <p class="price">٣٢٠ جنيه</p>
+    <a class="btn" href="#buy">اشتري</a>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+body {
+  font-family: system-ui;
+  background: #faf7f2;
+  margin: 16px;
+}
+.card {
+  max-width: 320px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+}
+.card h2 { color: #4a2c17; margin-block-start: 0; }
+.card p { color: #52525b; line-height: 1.6; }
+.card .price { color: #18181b; font-weight: 700; }
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  background: #4a2c17;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+}
+~~~
+
+~~~view 340 340 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بُن الصباح</title>
+<style>
+body {
+  font-family: system-ui;
+  background: #faf7f2;
+  margin: 16px;
+}
+.card {
+  max-width: 320px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+}
+.card h2 { color: #4a2c17; margin-block-start: 0; }
+.card p { color: #52525b; line-height: 1.6; }
+.card .price { color: #18181b; font-weight: 700; }
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  background: #4a2c17;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+}
 </style>
 </head>
 <body>
 <main>
-  <h1>الإعدادات</h1>
-  <button id="theme" type="button" role="switch" aria-checked="false">الوضع الغامق</button>
-  <section class="card">
-    <h2>حسابك</h2>
-    <p>غيّر بياناتك من هنا.</p>
-    <label for="name">الاسم</label>
-    <input id="name" value="سارة">
-    <p><a href="#help">محتاج مساعدة؟</a></p>
-  </section>
-  <div style="height: 150vh"></div>
+  <h1>منتجاتنا</h1>
+  <article class="card">
+    <h2>بن يمني</h2>
+    <p>تحميص وسط وطعم فواكه خفيف، مناسب للفلتر والإسبريسو.</p>
+    <p class="price">٣٢٠ جنيه</p>
+    <a class="btn" href="#buy">اشتري</a>
+  </article>
 </main>
+</body>
+</html>
+~~~
+
+**ليه ملف منفصل:** الملف بيتحمّل مرة ويتخزّن، وكل الصفحات تستخدمه، وتعديل واحد يغيّر الكل. و [[style=""]] جوه الـ HTML بيتكرر في كل عنصر، وبيبقى صعب تغطيه.
+
+- [[line-height: 1.6]] من غير وحدة: المسافة بتتحسب من حجم خط العنصر نفسه.
+- [[.card .price]] وزنها (0,2,0) أكبر من [[.card p]] (0,1,1)، فالسعر بياخد اللون الغامق رغم إنه فقرة.
+- [[display: inline-block]] على اللينك عشان الـ padding يزق اللي حواليه.
+
+**الغلطة الشائعة:** تكتب الألوان في [[style=""]] جوه الـ HTML. تغيير لون واحد هيبقى في كل صفحة، بدل سطر واحد في [[style.css]].
+
+~~~text الناتج
+border-radius الزرار = 8px
+لون h2 = rgb(74, 44, 23)   line-height الفقرة = 25.6px   وزن السعر = 700
+تباين كلام الزرار على خلفيته = 12.62:1
+عدد style="" و <style> في الـ HTML = 0
+من غير الـ CSS: ترتيب القراءة: h2 ثم p ثم p ثم a
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** ٣ أشكال من div فاضي: دايرة 80px، وكبسولة 160×40، ومثلث بالحدود بس: [[width: 0; height: 0; border-inline: 20px solid transparent; border-bottom: 30px solid black;]].`, done: R`الدايرة مدورة بالظبط ([[border-radius: 50%]])، والكبسولة جنابها نص دايرة ([[999px]])، والمثلث [[getBoundingClientRect]] بتاعه 40×30 رغم إن width و height صفر: الحدود هي اللي رسمته، والشفافين قصّوا الجنبين.`, sol: R`~~~live 200 200
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أشكال</title>
+<style>
+  .circle { width: 80px; height: 80px; border-radius: 50%; background: #0f766e; }
+  .pill { width: 160px; height: 40px; border-radius: 999px; background: #1d4ed8; margin-block: 16px; }
+  .triangle {
+    width: 0;
+    height: 0;
+    border-inline: 20px solid transparent;
+    border-bottom: 30px solid black;
+  }
+</style>
+</head>
+<body>
+<div class="circle"></div>
+<div class="pill"></div>
+<div class="triangle"></div>
+</body>
+</html>
+~~~
+
+**إزاي المثلث بيتكوّن:** الحدود الأربعة بتتقابل عند الزوايا بخط مايل. لما العنصر مقاسه صفر، الحدود بتبقى هي الشكل كله. عندك ٣ حدود: اليمين والشمال 20px شفافين، والتحتاني 30px أسود. فالمساحة السودا هي مثلث قاعدته 40 وطوله 30.
+
+- [[border-inline]] اختصار لحدود الجنبين، و [[transparent]] بيخليهم يقصّوا الجنبين.
+- [[border-radius: 50%]]: نص العرض ونص الطول، فمع مربع بتبقى دايرة.
+- [[999px]]: رقم كبير، والمتصفح بيصغّره لنص الارتفاع، فالجنبين نص دايرة. لو كتبت [[50%]] على الكبسولة هتطلع بيضاوي.
+
+**الغلطة الشائعة:** تكتب [[height: auto]] أو تسيب نص جوه المثلث، فالقاعدة تعرض وتبوّظ الشكل.
+
+~~~text الناتج
+الدايرة 80×80   border-radius = 50%
+الكبسولة 160×40
+المثلث 40×30   رغم إن width = 0px و height = 0px
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** زرار [[class="o1"]] عليه ٣ قواعد: في [[ext.css]] (مربوط الأول) [[.o1 { color: blue; }]]، وفي [[<style>]] بعده [[.o1 { color: green; }]]، وعلى زرار تاني نفس الـ class ومعاه [[style="color: red"]]. لون كل زرار إيه؟`, done: R`الأول أخضر ([[rgb(0, 128, 0)]]): نفس الوزن فاللي بعد يكسب، والملف الخارجي مش أقوى ولا أضعف من [[<style>]]. والتاني أحمر: الـ [[style=""]] أقوى من الاتنين. اتقاس في Chrome.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الألوان</title>
+<link rel="stylesheet" href="ext.css">
+<style>
+  .o1 { color: green; }
+</style>
+</head>
+<body>
+<button id="a" class="o1">الأول</button>
+<button id="b" class="o1" style="color: red">التاني</button>
+</body>
+</html>
+~~~
+
+~~~css ext.css
+.o1 { color: blue; }
+~~~
+
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الألوان</title>
+<style>
+.o1 { color: blue; }
+</style>
+<style>
+  .o1 { color: green; }
+</style>
+</head>
+<body>
+<button id="a" class="o1">الأول</button>
+<button id="b" class="o1" style="color: red">التاني</button>
+</body>
+</html>
+~~~
+
+**الإجابة:**
+
+- الزرار الأول: الملف الخارجي و [[<style>]] ليهم نفس المكانة. الاتنين author CSS. نفس الوزن، فاللي **بعد** في الصفحة يكسب، و [[<style>]] مكتوب بعد الـ link.
+- الزرار التاني: [[style=""]] على العنصر أقوى من أي selector عادي.
+
+**جرّب تبدّل:** لو حطيت [[<style>]] قبل [[<link>]] الأزرق هو اللي هيكسب. فالمسألة ترتيب مش مكان.
+
+**الغلطة الشائعة:** تفتكر إن الملف الخارجي أضعف أو أقوى من [[<style>]]. مفيش فرق خالص بينهم.
+
+~~~text الناتج
+الأول  = rgb(0, 128, 0)  (أخضر)
+التاني = rgb(255, 0, 0)  (أحمر)
+لو <style> قبل <link>: الأول = rgb(0, 0, 255)  (أزرق)
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة [[<color>]] على MDN اكتب نفس الأزرق بـ ٣ طرق: [[#2563eb]] و [[hsl(221 83% 53%)]] و [[oklch(0.55 0.2 260)]]، واقرا [[getComputedStyle(el).color]] لكل واحد.`, done: R`الـ hex رجع [[rgb(37, 99, 235)]] والـ hsl رجع [[rgb(36, 99, 235)]] (قريب جدًا بس مش نفسه: التقريب بيفرق)، والـ oklch رجع زي ما هو [[oklch(0.55 0.2 260)]] من غير ما يتحول لـ rgb في Chrome 156.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أزرق</title>
+<style>
+  .a { color: #2563eb; }
+  .b { color: hsl(221 83% 53%); }
+  .c { color: oklch(0.55 0.2 260); }
+</style>
+</head>
+<body>
+<p class="a">hex</p>
+<p class="b">hsl</p>
+<p class="c">oklch</p>
+</body>
+</html>
+~~~
+
+| الصيغة | معناها |
+|---|---|
+| [[#2563eb]] | أحمر وأخضر وأزرق بالـ hex، كل لون رقمين |
+| [[hsl(221 83% 53%)]] | درجة اللون ثم التشبع ثم الإضاءة |
+| [[oklch(0.55 0.2 260)]] | إضاءة ثم قوة اللون ثم درجته، بطريقة أقرب لعين الإنسان |
+
+**ليه الـ hsl طلع مختلف بدرجة:** الـ hex القيمة بالظبط، أما hsl مكتوب بأرقام صحيحة، فالتقريب غيّر رقم الأحمر من 37 لـ 36. الفرق مبيتشافش، بس لو بتقارن ألوان في اختبار، خد بالك.
+
+**ليه oklch فضلت زي ما هي:** ده لون ممكن يكون أوسع من sRGB، فالمتصفح مبيحوّلهوش عشان ميخسرش.
+
+**الغلطة الشائعة:** تكتب اختبار بيقارن [[getComputedStyle]] بـ [[rgb(...)]] على لون oklch. هيفشل، لأن القيمة راجعة بنفس الصيغة.
+
+~~~text الناتج
+hex    → rgb(37, 99, 235)
+hsl    → rgb(36, 99, 235)
+oklch  → oklch(0.55 0.2 260)
+~~~` },
+          ],
+          title: "CSS بيتربط بالصفحة إزاي، والقاعدة بتتكتب إزاي؟",
+          desc: R`[[CSS]] اختصار Cascading Style Sheets. الـ HTML بيقول «ده عنوان»، والـ CSS بيقول «العنوان ده لونه أزرق وحجمه كذا ومكانه فين». الألوان والخطوط والمسافات وترتيب العناصر على الشاشة كلها CSS. من غيره المتصفح بيعرض الصفحة بتنسيقه الافتراضي: خط أسود على خلفية بيضا ولينكات زرقا.
+
+فيه ٣ طرق تحط بيها CSS على صفحة:
+• ملف لوحده (الأحسن): تعمل [[style.css]] وتربطه من الـ HTML بـ [[<link rel="stylesheet" href="style.css">]]. نفس الملف ينفع لكل صفحات الموقع، والمتصفح بيحفظه (cache) فمش بيحمّله تاني مع كل صفحة.
+• جوه الصفحة: بين [[<style>]] و [[</style>]]. مناسب لتجربة سريعة أو صفحة واحدة.
+• على العنصر نفسه: [[style="color: red"]]. اتجنبه غير لو مضطر، لأنه بيغلب أغلب القواعد التانية وصعب تلاقيه بعدين.
+
+القاعدة (rule) شكلها كده: [[h1 { color: blue; }]]
+• الـ selector: الجزء اللي قبل القوس، وبيقول القاعدة دي على مين. [[h1]] معناها كل عناصر h1، و [[.btn]] (بنقطة في الأول) معناها أي عنصر عليه [[class="btn"]].
+• القوسين [[{ }]]: جواهم التنسيق كله.
+• كل سطر جوه اسمه declaration: اسم الخاصية، وبعده [[:]]، وبعده القيمة، وبعده [[;]] تقفل السطر.
+
+الدروس الجاية في القسم ده بتكمّل: «selectors» (كل طرق الاختيار)، و «specificity» و «cascade» (لو قاعدتين على نفس العنصر مين يكسب)، و «box model» (المسافات بتتحسب إزاي).`,
+          example: R`h1 {
+  color: #2563eb;
+  font-size: 28px;
+  text-align: center;
+}
+p {
+  color: #374151;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.btn {
+  background-color: #10b981;
+  color: white;
+  border-radius: 6px;
+}`,
+          try: R`في نفس الفولدر بتاع [[index.html]] (من درس «مقدمة HTML والـ Tags») اعمل ملف [[style.css]] وحط فيه القواعد دي. في [[index.html]] ضيف السطر ده تحت سطر الـ meta: [[<link rel="stylesheet" href="style.css">]]، وغيّر الزرار لـ [[<button type="button" class="btn">بحث</button>]]. احفظ الاتنين واعمل refresh. بعدين امسح الـ [[;]] من آخر سطر [[color: #2563eb;]] واعمل refresh تاني، وشوف إيه اللي اتغير في العنوان.`,
+          flag: "script",
+          deep: {
+            why: R`فصل الهيكل (HTML) عن الشكل (CSS) معناه إنك تقدر تغيّر شكل الموقع كله من ملف واحد من غير ما تلمس ولا صفحة HTML. وأي أداة هتشتغل بيها بعد كده (Tailwind أو CSS Modules أو shadcn) في الآخر بتطلّع قواعد CSS بنفس الشكل ده.`,
+            how: R`المتصفح بيبني شجرة الـ DOM من الـ HTML، ويقرا الـ CSS، ويشوف كل قاعدة بتنطبق على أنهي عناصر. بعدين يحسب مكان ومقاس كل عنصر (layout)، وبعدين يرسم الألوان والخطوط (paint).
+
+الألوان هنا مكتوبة hex: [[#]] وبعدها ٦ حروف/أرقام، كل اتنين منهم كمية أحمر وأخضر وأزرق. تقدر تكتب أسامي ألوان زي [[white]] كمان. و [[px]] وحدة بيكسل، و [[line-height: 1.6]] من غير وحدة معناها «١.٦ ضعف حجم الخط».
+
+كلمة Cascading معناها إن فيه قواعد كتير ممكن تنطبق على نفس العنصر (منك، ومن مكتبة، ومن تنسيق المتصفح الافتراضي)، والمتصفح عنده ترتيب ثابت يحدد مين يكسب. ده موضوع درسي «specificity» و «cascade».`,
+            when: "أي صفحة محتاجة شكل. ابدأ بملف CSS منفصل، ولما تدخل React هتقابل Tailwind (المستوى التاني)، بس فهم القاعدة دي هو اللي هيخليك تعرف Tailwind بيعمل إيه.",
+            mistakes: R`تنسى [[;]] في آخر السطر: المتصفح بيقرا السطر ده واللي بعده كأنهم قيمة واحدة غلط، فبيتجاهل الاتنين ويكمل عادي بعدهم. وتنسى النقطة قبل اسم الـ class ([[btn]] بدل [[.btn]]) فالقاعدة تدوّر على عنصر اسمه btn مش موجود. وتحط كل التنسيق في [[style=""]] جوه الـ HTML فيبقى صعب تعدّله.`
+          },
+          teach: R`## الفكرة في سطرين
+
+3 قواعد: واحدة للعناوين، وواحدة للفقرات، وواحدة لأي عنصر عليه [[class="btn"]]. ربطتهم بصفحة درس «مقدمة HTML والـ Tags» (بعد ما زوّدت [[class="btn"]] على الزرار) وفتحتها في Chrome (headless)، وقريت التنسيق النهائي لكل عنصر بـ [[getComputedStyle()]]:
+
+~~~text index.html
+<meta charset="utf-8">
+<link rel="stylesheet" href="style.css">
+<h1>متجري</h1>
+...
+<button type="button" class="btn">بحث</button>
+~~~
+
+---
+
+## ١. تشريح قاعدة
+
+~~~text style.css
+h1 {
+  color: #2563eb;
+}
+~~~
+
+~~~text الأجزاء
+h1        { color  :  #2563eb  ;  }
+│         │ │      │  │        │  │
+│         │ │      │  │        │  └─ قفلة القاعدة
+│         │ │      │  │        └──── آخر الـ declaration
+│         │ │      │  └───────────── القيمة
+│         │ │      └──────────────── بين الخاصية والقيمة
+│         │ └─────────────────────── الخاصية (property)
+│         └───────────────────────── بداية التنسيق
+└─────────────────────────────────── الـ selector: على مين
+~~~
+
+السطر [[color: #2563eb;]] كله اسمه declaration (خاصية وقيمة).
+
+---
+
+## ٢. قاعدة الـ [[h1]]
+
+| السطر | معناه | اتقاس |
+|---|---|---|
+| [[color: #2563eb;]] | لون الكلام | [[rgb(37, 99, 235)]] |
+| [[font-size: 28px;]] | حجم الخط | [[28px]] (كان 32 من غيرها) |
+| [[text-align: center;]] | الكلام في نص السطر | [[center]] |
+
+### الـ hex بيتقري إزاي؟
+
+[[#2563eb]] بعد الـ [[#]] 6 خانات، كل اتنين منهم رقم بالنظام الست عشري (hexadecimal: أرقام من 0 لـ 9 وبعدها a لـ f، يعني 16 رمز):
+
+| الخانتين | اللون | بالعشري |
+|---|---|---|
+| [[25]] | أحمر | 2×16 + 5 = 37 |
+| [[63]] | أخضر | 6×16 + 3 = 99 |
+| [[eb]] | أزرق | 14×16 + 11 = 235 |
+
+وده بالظبط اللي المتصفح رجّعه: [[rgb(37, 99, 235)]]. كل لون من 0 لـ 255، والأزرق هنا أكترهم فاللون أزرق.
+
+---
+
+## ٣. قاعدة الـ [[p]]
+
+| السطر | اتقاس |
+|---|---|
+| [[color: #374151;]] | [[rgb(55, 65, 81)]]: رمادي غامق (الـ 3 قريبين من بعض وصغيرين) |
+| [[font-size: 16px;]] | [[16px]] |
+| [[line-height: 1.6;]] | [[25.6px]] |
+
+[[line-height]] هو ارتفاع السطر. الرقم من غير وحدة معناه «مضروب في حجم الخط»: 16 × 1.6 = 25.6.
+
+---
+
+## ٤. قاعدة الـ [[.btn]]
+
+النقطة قبل الاسم = class. فدي بتمسك أي عنصر عليه [[class="btn"]]، مهما كان نوعه.
+
+| السطر | اتقاس | من غير القاعدة |
+|---|---|---|
+| [[background-color: #10b981;]] | [[rgb(16, 185, 129)]] أخضر | [[rgb(240, 240, 240)]] رمادي فاتح |
+| [[color: white;]] | [[rgb(255, 255, 255)]] | أسود |
+| [[border-radius: 6px;]] | [[6px]] | [[0px]] |
+
+[[white]] اسم لون جاهز. و [[border-radius]] نص قطر الزوايا المدورة.
+
+اللينك محدش لمسه: لونه فضل [[rgb(0, 0, 238)]] الأزرق الافتراضي.
+
+---
+
+## ٥. لو نسيت [[;]]
+
+مسحت الـ [[;]] بعد [[#2563eb]]. المتصفح بيعرض القاعدة اللي فهمها في [[document.styleSheets]]:
+
+~~~text القاعدة زي ما المتصفح فهمها
+قبل:  h1 { color: rgb(37, 99, 235); font-size: 28px; text-align: center; }
+بعد:  h1 { text-align: center; }
+~~~
+
+اللون والحجم الاتنين اختفوا. المتصفح قرا [[color: #2563eb font-size: 28px]] كقيمة واحدة للـ color، ودي قيمة مش مفهومة، فرماها كلها لحد الـ [[;]] اللي بعدها. والنتيجة: الـ h1 بقى أسود و 32px، والـ [[text-align]] اشتغل عادي. يعني الغلطة بتبوّظ سطرين مش واحد، والباقي بيكمّل.
+
+---
+
+## ٦. لو اسم الملف غلط
+
+كتبت [[href="styles.css"]] (بـ s زيادة): السيرفر رد 404، والـ Console فيه «Failed to load resource: the server responded with a status of 404»، وكل العناصر رجعت لتنسيق المتصفح: الـ h1 أسود و 32 ومش في النص، والـ p [[line-height: normal]]، والزرار رمادي.
+
+---
+
+## الخلاصة
+
+| الحتة | مثال |
+|---|---|
+| selector بالنوع | [[h1]] |
+| selector بالـ class | [[.btn]] |
+| declaration | [[color: #2563eb;]] |
+| hex | [[#RRGGBB]]، كل خانتين لون من 0 لـ 255 |
+| رقم من غير وحدة في [[line-height]] | مضروب في حجم الخط |
+
+- الملف بيتربط بـ [[<link rel="stylesheet" href="style.css">]].
+- [[;]] ناقصة = السطر ده واللي بعده بيضيعوا.`,
+          lines: [
+            R`القاعدة دي على كل عناصر [[h1]]، وبعدها [[{]] بداية التنسيق.`,
+            R`لون الكلام: أزرق، مكتوب hex.`,
+            R`حجم الخط ٢٨ بيكسل.`,
+            R`الكلام في نص السطر.`,
+            R`[[}]] قفلة قاعدة الـ h1.`,
+            R`قاعدة لكل الفقرات [[p]].`,
+            R`رمادي غامق بدل الأسود.`,
+            R`حجم الخط ١٦ بيكسل (ده حجم المتصفح الافتراضي أصلًا).`,
+            R`المسافة بين السطور ١.٦ ضعف حجم الخط، فالكلام أريح في القراية.`,
+            R`قفلة قاعدة الـ p.`,
+            R`النقطة معناها class: أي عنصر عليه [[class="btn"]].`,
+            R`لون خلفية الزرار: [[#10b981]] أخضر. [[background-color]] بيلوّن مساحة الصندوق كله (المحتوى والـ padding)، مش الكلام بس.`,
+            R`لون الكلام جوه الزرار أبيض عشان يتقري على الأخضر. أي لون خلفية لازم يتكتب معاه لون الكلام، عشان التباين يفضل مضمون.`,
+            R`زوايا مدورة بنص قطر ٦ بيكسل.`,
+            R`قفلة قاعدة الـ btn.`
+          ],
+          sol: R`بعد الـ refresh: «متجري» بقى أزرق وفي نص الصفحة وحجمه 28px (أصغر شوية من حجم h1 الافتراضي اللي هو 32px). الفقرة بقت رمادي غامق والسطور فيها مسافة أوسع. الزرار بقى خلفيته خضرا وكلامه أبيض وزواياه مدورة. اللينك والحقل محدش لمسهم فهيفضلوا زي ما هم.
+
+لو مفيش أي حاجة اتغيرت: غالبًا اسم الملف في [[href]] مش مطابق لاسمه الحقيقي، أو الملفين مش في نفس الفولدر. افتح DevTools › Console هتلاقي غلطة 404 أو [[ERR_FILE_NOT_FOUND]].
+
+ولما تمسح [[;]] بعد اللون: العنوان بيرجع أسود وبحجم الـ h1 الافتراضي، بس لسه في النص. السبب إن المتصفح قرا [[color: #2563eb font-size: 28px]] كقيمة واحدة للـ color، ودي قيمة غلط فاتجاهلها، فضاع اللون والحجم مع بعض، و [[text-align]] اللي بعدهم اشتغل عادي. في DevTools › Styles هتلاقي السطر متشطّب وجنبه علامة تحذير.`
+        },
+        {
+          cmd: "selectors",
+          ref: [
+            { t: "MDN: Type selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Type_selectors" },
+            { t: "MDN: Class selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Class_selectors" },
+            { t: "MDN: Attribute selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Attribute_selectors" },
+            { t: "MDN: Child combinator", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Child_combinator" },
+            { t: "MDN: Descendant combinator", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Descendant_combinator" },
+            { t: "MDN: Pseudo-classes", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Pseudo-classes" },
+            { t: "MDN: Pseudo-elements", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Pseudo-elements" },
+            { t: "MDN: :focus-visible", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:focus-visible" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<ul class="menu">]] فيه ٣ [[li]]، وأول li جواه [[ul]] تاني فيه ٢ [[li]]. كام عنصر بيرجع من [[.menu > li]]؟ ومن [[.menu li]]؟ ومن [[.menu li:nth-child(odd)]]؟ وبعدين اسأل [[querySelectorAll]].`, done: R`٣ و ٥ و ٣: الـ [[>]] الأولاد المباشرين بس، والمسافة كل الأحفاد، والـ odd اختار الأول والتالت في القايمة الكبيرة والأول في الصغيرة (كل li بيتعدّ وسط إخواته هو بس).`, sol: R`~~~live 130 130
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>selectors</title>
+</head>
+<body>
+<ul class="menu">
+  <li>أول
+    <ul>
+      <li>فرعي ١</li>
+      <li>فرعي ٢</li>
+    </ul>
+  </li>
+  <li>تاني</li>
+  <li>تالت</li>
+</ul>
+</body>
+</html>
+~~~
+
+| الـ selector | العدد | ليه |
+|---|---|---|
+| [[.menu > li]] | ٣ | الأولاد المباشرين بس |
+| [[.menu li]] | ٥ | أي li تحت [[.menu]] في أي عمق |
+| [[.menu li:nth-child(odd)]] | ٣ | الأول والتالت في الكبيرة، والأول في الصغيرة |
+
+**الفكرة في** [[nth-child]]**:** العد بيتحسب وسط إخوات العنصر نفسه، مش في الصفحة كلها. فـ «فرعي ١» رقم 1 في قايمته الصغيرة، مش رقم 2.
+
+**الغلطة الشائعة:** تكتب [[.menu li]] وانت عايز القايمة الأولى بس، فالتنسيق ينزل على القايمة الفرعية. لو عايز المستوى الأول استخدم [[>]].
+
+~~~text الناتج
+.menu > li                  → 3
+.menu li                    → 5
+.menu li:nth-child(odd)     → 3   (أول ، فرعي ١ ، تالت)
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكارت فيه h3 وبعده p، والـ CSS [[.card p:first-child { color: red; }]] مش شغال على الفقرة.`, done: R`عرفت إن [[:first-child]] معناها «أول ابن خالص» والـ h3 هو الأول، فالـ p مش first-child. بعد [[:first-of-type]] (أول p وسط إخواته) القاعدة اشتغلت.`, sol: R`~~~live 130 130
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكارت</title>
+<style>
+  .card p:first-of-type { color: red; }
+</style>
+</head>
+<body>
+<article class="card">
+  <h3>العنوان</h3>
+  <p>الفقرة الأولى</p>
+  <p>الفقرة التانية</p>
+</article>
+</body>
+</html>
+~~~
+
+**السبب:** [[p:first-child]] معناها «عنصر هو p **و** هو أول ابن في أبوه». وأول ابن هنا [[h3]]، فمفيش p يحقق الشرطين.
+
+أما [[p:first-of-type]] فمعناها «أول p وسط إخواته»، ومش مهم فيه إيه قبله.
+
+| الـ selector | بيعدّ إيه |
+|---|---|
+| [[:first-child]] | كل الإخوات من أي نوع |
+| [[:first-of-type]] | الإخوات من نفس النوع بس |
+
+**الغلطة الشائعة:** تقرا [[.card p:first-child]] كأنها «أول p في الكارت». الـ selector مش بيعمل فلتر بالترتيب ده. وتذكّر إن [[type]] هنا نوع العنصر، مش الـ class: [[.x:first-of-type]] مش معناها «أول عنصر عليه x».
+
+~~~text الناتج
+قبل (first-child): لون الفقرة الأولى = rgb(0, 0, 0)
+بعد (first-of-type): لون الفقرة الأولى = rgb(255, 0, 0)
+                     لون الفقرة التانية = rgb(0, 0, 0)
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** تذكرة حفلة متخيلة: كارت فيه خط متقطع ([[border-top: 2px dashed]]) بيفصل الجزء اللي بيتقطع، ونص دايرة على كل جنب عند الخط ده ([[::before]] و [[::after]] دواير بلون خلفية الصفحة)، ورقم المقعد بخط كبير.`, done: R`التذكرة شكلها مقطوعة من الجنبين عند الخط المتقطع بالظبط، والدايرتين من غير أي عنصر زيادة في الـ HTML (اتنين pseudo-elements بس)، والتذكرة على 360px مش طالعة برّه الشاشة.`, sol: R`~~~live 410 410
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تذكرة</title>
+<style>
+  :root { --page: #e7e5e4; }
+  body { background: var(--page); font-family: system-ui; margin: 16px; }
+  .ticket { max-width: 320px; margin-inline: auto; background: #fff; border-radius: 12px; }
+  .ticket__main { padding: 20px; }
+  .ticket__stub {
+    position: relative;
+    padding: 20px;
+    border-top: 2px dashed #a1a1aa;
+    text-align: center;
+  }
+  .ticket__stub::before,
+  .ticket__stub::after {
+    content: "";
+    position: absolute;
+    top: -13px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--page);
+  }
+  .ticket__stub::before { inset-inline-start: -12px; }
+  .ticket__stub::after { inset-inline-end: -12px; }
+  .seat { font-size: 2.5rem; font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+<article class="ticket">
+  <div class="ticket__main">
+    <h1>حفلة الربيع</h1>
+    <p>١٥ أبريل، الساعة ٨ مساءً</p>
+  </div>
+  <div class="ticket__stub">
+    <p>المقعد</p>
+    <p class="seat">B12</p>
+  </div>
+</article>
+</main>
+</body>
+</html>
+~~~
+
+**الخدعة:** الدايرتين مش مقصوصين من التذكرة فعلًا. هما دايرتين بنفس لون خلفية الصفحة، قاعدين فوق حافة الكارت، فالعين بتشوفها قطعة ناقصة.
+
+- [[content: ""]] لازم موجود، وإلا الـ pseudo-element مش هيترسم.
+- [[position: relative]] على الأب، عشان [[absolute]] يتحسب منه.
+- [[top: -13px]]: نص الدايرة 12 + نص الخط 1، فمركزها بالظبط على الخط.
+- [[inset-inline-start]] بدل [[left]]: الشكل يشتغل في RTL و LTR.
+- [[--page]] متغير: لو غيّرت لون الصفحة الدايرتين يمشوا معاها.
+
+**الغلطة الشائعة:** تكتب لون الصفحة بإيدك في الدايرتين، وبعدين تغيّر خلفية الصفحة فالدواير تبان. والخدعة دي مش هتنفع لو الخلفية صورة، ووقتها استخدم [[mask]].
+
+~~~text الناتج
+مركز الدايرة y = 179.875   ومركز الخط y = 179.875
+الدايرة اليمين مركزها على حافة التذكرة: يمين التذكرة 340، وأقصى يمين الدايرة 352 جوه الشاشة
+عناصر زيادة في الـ HTML للدواير: 0 (اتنين pseudo-elements)
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** قايمة تنقل لموقع مكتبة متخيلة: اللينك الحالي عليه [[aria-current="page"]] وبيتلوّن بـ [[a[aria-current="page"] ]] (مش class)، و [[a:hover]] بيعمل خط تحت، و [[a:focus-visible]] حلقة 3px.`, done: R`لما تغيّر الصفحة الحالية بتغيّر الـ attribute بس والتنسيق بيمشي وراه، والحلقة بتظهر بالكيبورد بس مش بالماوس، وقارئ الشاشة بيعرف إنه الصفحة الحالية من الـ attribute نفسه مش من اللون.`, sol: R`~~~live 130 130
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكتب</title>
+<style>
+  nav { display: flex; gap: 8px; font-family: system-ui; }
+  nav a { padding: 8px 12px; color: #1e3a8a; text-decoration: none; border-radius: 6px; }
+  a[aria-current="page"] { background: #1e3a8a; color: #fff; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <nav aria-label="الرئيسية">
+    <a href="#home">الرئيسية</a>
+    <a href="#books" aria-current="page">الكتب</a>
+    <a href="#contact">تواصل</a>
+  </nav>
+</header>
+<main><h1>الكتب</h1></main>
+</body>
+</html>
+~~~
+
+**ليه attribute مش class:** [[aria-current="page"]] بتعمل حاجتين في سطر واحد: قارئ الشاشة بيقول «الصفحة الحالية»، والـ CSS بيلوّنها. لو استخدمت [[.active]] لازم تكتب الاتنين وتفتكر تحافظ عليهم. كده مصدر واحد مستحيل يختلف.
+
+- [[a[aria-current="page"]]]: selector بيختار بالـ attribute، ومش محتاج أي class.
+- [[:focus-visible]]: المتصفح بيقرر، الحلقة تظهر للكيبورد، ومبتظهرش لضغطة الماوس على اللينك.
+- [[outline-offset]]: مسافة بين الحلقة والعنصر.
+
+**الغلطة الشائعة:** تكتب [[a:focus { outline: none; }]] عشان الحلقة «وحشة». كده اللي بيستخدم الكيبورد ضاع.
+
+~~~text الناتج
+الصفحة الحالية: الخلفية = rgb(30, 58, 138)
+بعد نقل aria-current للرئيسية: الرئيسية = rgb(30, 58, 138)   والكتب = rgba(0, 0, 0, 0)
+hover: text-decoration = underline
+بالكيبورد: outline = 3px solid rgb(180, 83, 9)
+بالماوس:   outline-style = none
+اسم اللينك: - link "الكتب":
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**مسألة:** على لستة ١٠ كروت اكتب selector لكل واحدة: كل تالت كارت من التاني (٢ و ٥ و ٨)، وآخر كارتين، وكل الكروت ما عدا الأخير، والكارت الوحيد لو اللستة فيها كارت واحد بس.`, done: R`[[:nth-child(3n+2)]] رجّع ٣، و [[:nth-last-child(-n+2)]] رجّع ٢، و [[:not(:last-child)]] رجّع ٩، و [[:only-child]] رجّع صفر على العشرة وواحد لما سبت كارت واحد. واتأكدت من كل رقم بـ [[querySelectorAll().length]].`, sol: R`~~~live 200 200
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكروت</title>
+</head>
+<body>
+<section id="list"></section>
 <script>
-  const root = document.documentElement;
-  const btn = document.getElementById("theme");
-
-  function read() {
-    try { return localStorage.getItem("theme"); } catch { return null; }
+  for (let i = 1; i <= 10; i++) {
+    const card = document.createElement('article');
+    card.textContent = 'كارت ' + i;
+    document.querySelector('#list').append(card);
   }
-  function save(value) {
-    try { localStorage.setItem("theme", value); } catch { /* مفيش تخزين: الزرار يشتغل برضه */ }
-  }
-  function apply(dark) {
-    root.dataset.theme = dark ? "dark" : "light";
-    btn.setAttribute("aria-checked", String(dark));
-  }
-
-  apply(read() === "dark");
-  btn.addEventListener("click", () => {
-    const dark = btn.getAttribute("aria-checked") !== "true";
-    apply(dark);
-    save(dark ? "dark" : "light");
-  });
 $__lt/script>
 </body>
 </html>
 ~~~
 
-**ليه شغال:**
+~~~js
+const c = (s) => document.querySelectorAll('#list > ' + s).length;
+c(':nth-child(3n+2)');
+c(':nth-last-child(-n+2)');
+c(':not(:last-child)');
+c(':only-child');
+~~~
 
-- كل لون متعرّف مرتين بس: في [[:root]] و [[:root[data-theme="dark"]]]. باقي الـ CSS بيقول [[var(--bg)]] ومبيعرفش فيه كام ثيم.
-- [[color-scheme]] بيقول للمتصفح يرسم حاجاته هو بالثيم ده: الـ scrollbar وحقول الـ input والـ checkbox. من غيره تبقى صفحة غامقة وفيها input أبيض.
-- [[role="switch"]] مع [[aria-checked]]: القارئ بيقول «switch، on». والزرار الحقيقي بيجيب Tab و Enter و Space ببلاش.
-- [[try/catch]] حوالين كل وصول لـ localStorage: في بعض إعدادات الخصوصية مجرد قراية [[localStorage]] بترمي [[SecurityError]]، ومن غيره السكربت كله يقف والزرار يموت.
+**قراءة كل واحد:**
 
-**الغلطة الشائعة:** تقرا [[localStorage]] من غير [[try]]، لأنه مبيقعش عندك أبدًا. جرّبها بإنك تعرّف [[localStorage]] يرمي error قبل سكربت الصفحة.
+- [[:nth-child(3n+2)]]: n بتبدأ من صفر: 2 ثم 5 ثم 8. الـ 3 هي الخطوة، والـ 2 نقطة البداية.
+- [[:nth-last-child(-n+2)]]: العد من الآخر. [[-n+2]] بتدّي 2 و 1 و 0، فآخر اتنين بس.
+- [[:not(:last-child)]]: مفيدة جدًا لحط فاصل بين العناصر من غير ما يبقى بعد الأخير.
+- [[:only-child]]: الأول والأخير في نفس الوقت.
+
+**الغلطة الشائعة:** تكتب [[:nth-child(2 + 3n)]] أو تتوقع إن n بتبدأ من 1. والصيغة الصحيحة [[an+b]] بالترتيب ده، ومن غير مسافات حوالين n.
 
 ~~~text الناتج
-فاتح:  data-theme=light ، background rgb(248, 250, 252) ، color-scheme light
-       input rgb(255, 255, 255) ، aria-checked false
-
-بعد الضغط:
-غامق:  data-theme=dark ، background rgb(11, 17, 32) ، color-scheme dark
-       input rgb(59, 59, 59) (اتغيّر من color-scheme لوحده)
-
-بعد reload: لسه dark
-ariaSnapshot:  - switch "الوضع الغامق" [checked]
-grep على ألوان برا بلوكات التوكنز: صفر
-axe: صفر في الوضعين ، وعلى 360 مفيش scroll أفقي
-
-localStorage بيرمي SecurityError:
-الزرار قلب لـ dark ، وبعد reload رجع light (بيشتغل بس مش بيفتكر)
+:nth-child(3n+2)        → 3 كروت: 2 و 5 و 8
+:nth-last-child(-n+2)   → 2: 9 و 10
+:not(:last-child)       → 9
+:only-child             → 0 على العشرة
+بعد ما سبت كارت واحد   → 1
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الثيم بيتحط في [[useEffect]] بعد ما الصفحة تترسم: [[document.documentElement.classList.toggle("dark", localStorage.theme === "dark")]]. اختار dark واعمل refresh: الصفحة بتفتح بيضا لحظة وبعدين تغمق. صلّحه من غير next-themes: سكربت inline صغير في أول الـ [[<head>]] بيعمل نفس السطر قبل الرسم، وبيرجع لـ [[matchMedia("(prefers-color-scheme: dark)")]] لو مفيش اختيار.`, done: R`في DevTools › Performance مع CPU 4x slowdown و Screenshots شغالة، أول frame فيه محتوى غامق ومفيش ولا frame أبيض. وفي View Source السكربت قبل أي [[<link rel="stylesheet">]].`, sol: R`~~~live 150 150 index.html
+          ],
+          title: "تختار العناصر اللي عايز تنسّقها",
+          desc: R`الـ selector هو الجزء اللي قبل [[{]]: بيقول القاعدة دي على مين. بالنوع [[p]]، أو بالـ class [[.card]]، أو بالـ attribute [[[type="email"]]]، أو بالمكان: [[.card p]] (أي p جوه card) و [[.menu > li]] (الأولاد المباشرين بس).
+
+وفيه pseudo-classes لحالة العنصر: [[:hover]] و [[:focus-visible]] و [[:first-child]] و [[:nth-child(odd)]]، و pseudo-elements بتعمل حتة مش موجودة في الـ HTML: [[::before]] و [[::after]] و [[::placeholder]].`,
+          example: R`p { line-height: 1.7; }
+.card { padding: 1rem; }
+.card p { color: gray; }
+.menu > li { display: inline-block; }
+input[type="email"] { direction: ltr; }
+a:hover { text-decoration: underline; }
+button:focus-visible { outline: 2px solid blue; }
+li:nth-child(odd) { background: whitesmoke; }
+.required::after { content: " *"; color: red; }`,
+          try: R`في DevTools › Console جرّب [[document.querySelectorAll(".card p")]] بنفس الـ selectors، وشوف رجّعلك كام عنصر. نفس اللغة بالظبط بتاعة الـ CSS.`,
+          flag: "script",
+          deep: {
+            why: R`كل CSS بيبدأ بسؤال: القاعدة دي على مين؟ لو الـ selector واسع قوي هتبوّظ حاجات مش قصدك، ولو ضيق قوي هتكتب نفس القاعدة عشر مرات. ونفس اللغة دي بتستخدمها في JavaScript ([[querySelector]]) وفي اختبارات المتصفح (Playwright).`,
+            how: R`المتصفح بيقرا الـ selector من اليمين للشمال. [[.card p]] معناها: هات كل p، وبعدين شوف مين فيهم ليه جد عليه card. عشان كده الجزء اللي على اليمين هو اللي بيحدد التكلفة. في الواقع المتصفحات سريعة جدًا والفرق مش محسوس غير في صفحات ضخمة.
+
+الـ combinators: المسافة (أي حفيد)، و [[>]] (ابن مباشر)، و [[+]] (الأخ اللي بعده على طول)، و [[~]] (أي أخ بعده).
+
+[[:hover]] و [[:focus]] حالات. [[:focus-visible]] ذكية: بتظهر لما المستخدم بيستخدم الكيبورد، ومش بتظهر لما يضغط بالماوس، فتقدر تحط outline واضح من غير ما يضايق حد.
+
+[[::before]] و [[::after]] محتاجين [[content]] (حتى لو فاضي [[""]]) وإلا مش بيظهروا. وبيتحطوا كأنهم أول وآخر ابن جوه العنصر، عشان كده مش بيشتغلوا على [[<img>]] و [[<input>]] (ملهمش أولاد).`,
+            when: R`class لكل حاجة بتنسّقها (أسهل في الـ specificity). والـ attributes والـ pseudo-classes للحالات. ومع Tailwind أغلب الكلام ده بيبقى variants زي [[hover:]] و [[focus-visible:]] (المستوى التاني).`,
+            mistakes: R`selectors طويلة زي [[.page .main .content .card .title]] بتربط التنسيق بشكل الـ HTML، وأول ما الهيكل يتغير يبوظ. و id في الـ CSS بيعمل specificity عالية صعب تغلبها (الدرس الجاي). و [[::after]] من غير [[content]].`
+          },
+          teach: R`## الفكرة في سطرين
+
+9 قواعد، كل واحدة بتختار عناصر بطريقة مختلفة: بالنوع، بالـ class، بالمكان، بالـ attribute، بالحالة، أو حتة مش موجودة في الـ HTML. حطيتهم على صفحة الحل (كارتين، وفقرة برا، ومنيو جواها منيو، وحقلين) وزوّدت لينك وزرار، وفتحتها في Chrome (headless). عدّيت كل selector بـ [[querySelectorAll]] وقريت التنسيق اللي اتطبق:
+
+~~~text index.html
+<div class="card"><p>وصف</p><p class="required">الاسم</p></div>
+<div class="card"><h3>عنوان</h3><div><p>جوه div جوه الكارت</p></div></div>
+<p>برا أي كارت</p>
+<ul class="menu"><li>أ</li><li>ب<ul><li>ج</li></ul></li><li>د</li></ul>
+<input type="email"><input type="text">
+~~~
+
+---
+
+## ١. بالنوع وبالـ class
+
+| السطر | بيختار | عدد | اتقاس |
+|---|---|---|---|
+| [[p { line-height: 1.7; }]] | كل [[<p>]] | 4 | [[line-height]] = 27.2px (16 × 1.7) |
+| [[.card { padding: 1rem; }]] | كل عنصر عليه [[class="card"]] | 2 | [[padding]] = 16px |
+
+[[1rem]] = حجم خط الصفحة، 16px افتراضيًا.
+
+---
+
+## ٢. بالمكان: المسافة و [[>]]
+
+الرموز اللي بين الـ selectors اسمها combinators:
+
+| الـ selector | معناه | عدد | مين |
+|---|---|---|---|
+| [[.card p]] | أي p **جوه** card مهما كان عميق | 3 | وصف، الاسم، جوه div جوه الكارت |
+| [[.card > p]] | p ابن **مباشر** لـ card | 2 | وصف، الاسم |
+| [[.menu > li]] | li ابن مباشر لـ menu | 3 | أ، ب، د |
+| [[.menu li]] | أي li جوه menu | 4 | أ، ب، ج، د |
+
+- المسافة = descendant (أي حفيد). الفقرة «جوه div جوه الكارت» حفيدة، فـ [[.card p]] مسكها و [[.card > p]] لأ.
+- [[>]] = child (ابن مباشر بس). الـ «ج» جوه [[ul]] تاني، فهي حفيدة لـ menu مش ابنها.
+
+واتقاس أثرهم: [[.card p]] لونها [[rgb(128, 128, 128)]] (ده [[gray]])، والفقرة اللي برا [[rgb(0, 0, 0)]]. و [[.menu > li { display: inline-block; }]]: أ و ب و د بقوا [[inline-block]]، و «ج» فضلت [[list-item]] (عرض الـ li الافتراضي).
+
+---
+
+## ٣. بالـ attribute: [[input[type="email"]]]
+
+الأقواس المربعة [[[ ]]] = attribute بقيمة معيّنة. ولزقها في [[input]] من غير مسافة يعني «input **و** عليه الـ attribute ده». عدد: 1. واتقاس: حقل الإيميل [[direction: ltr]]، وحقل الـ text فضل [[rtl]] زي الصفحة.
+
+---
+
+## ٤. بالحالة: pseudo-classes
+
+بتبدأ بـ [[:]] واحدة، وبتوصف حالة العنصر دلوقتي.
+
+### [[a:hover]]
+
+الماوس فوق اللينك. في الـ Console طلعت 0 (مفيش ماوس فوق حاجة). حرّكت الماوس المتقلّد فوق اللينك فبقت 1. واللينك أصلًا عليه خط من المتصفح، فالقاعدة دي بتفرق لو انت شايل الخط في مكان تاني.
+
+### [[button:focus-visible]]
+
+الزرار واخد focus والمتصفح شايف إن المستخدم محتاج يشوفه:
+
+| إزاي الزرار اخد الـ focus | [[:focus]] | [[:focus-visible]] | الـ outline |
+|---|---|---|---|
+| ضغطة ماوس | أيوه | لأ | [[none]] |
+| Tab من الكيبورد | أيوه | أيوه | [[rgb(0, 0, 255) solid 2px]] |
+
+ده بالظبط الفرق بينها وبين [[:focus]]: الحلقة الزرقا بتظهر للي بيستخدم الكيبورد بس.
+
+### [[li:nth-child(odd)]]
+
+[[nth-child]] = العنصر رقم كذا بين إخواته، و [[odd]] = الفردي (1، 3، 5...). عدد: 3، وهم أ و ج و د. ليه «ج»؟ لأنها الابن **الأول** في الـ ul بتاعها، فهي فردية بين إخواتها. والـ «ب» التاني فخلفيتها فضلت شفافة، والباقي [[rgb(245, 245, 245)]] ([[whitesmoke]]).
+
+---
+
+## ٥. حتة مش موجودة: [[::before]] و [[::after]]
+
+بتبدأ بـ [[::]] اتنين، واسمها pseudo-elements.
+
+~~~text style.css
+.required::after { content: " *"; color: red; }
+~~~
+
+- [[::after]]: حتة جديدة كأنها آخر ابن جوه العنصر.
+- [[content: " *"]]: الكلام اللي فيها. من غير [[content]] مش بتظهر خالص.
+
+[[querySelectorAll(".required::after")]] رجعت 0، لأن الحتة دي مش عنصر في الـ DOM. بس [[getComputedStyle(el, "::after")]] بيقراها: [[content]] = [[" *"]] واللون [[rgb(255, 0, 0)]].
+
+---
+
+## الخلاصة
+
+| النوع | مثال | معناه |
+|---|---|---|
+| type | [[p]] | كل p |
+| class | [[.card]] | عليه [[class="card"]] |
+| descendant | [[.card p]] | أي حفيد |
+| child | [[.menu > li]] | ابن مباشر |
+| attribute | [[[type="email"]]] | attribute بقيمة |
+| pseudo-class | [[:hover]] و [[:focus-visible]] و [[:nth-child(odd)]] | حالة |
+| pseudo-element | [[::after]] | حتة جديدة، محتاجة [[content]] |`,
+          lines: [
+            R`بالنوع: كل [[<p>]] في الصفحة من غير استثنا، فالمسافة بين السطور بقت 1.7 في كل الفقرات.`,
+            R`أي عنصر عليه [[class="card"]].`,
+            "أي p جوه card مهما كان عميق (المسافة = أي حفيد).",
+            "الـ li اللي أولاد مباشرين لـ menu بس، مش الأحفاد.",
+            "بالـ attribute: حقول الإيميل بس.",
+            "لما الماوس ييجي على اللينك.",
+            "لما الزرار ياخد focus من الكيبورد (مش من ضغطة ماوس).",
+            "الصفوف الفردية: 1 و 3 و 5...",
+            "حتة مش موجودة في الـ HTML بتتضاف بعد الكلام: نجمة الحقل المطلوب."
+          ],
+          sol: R`على الصفحة اللي في الحل تحت (كارتين وفقرة برا ومنيو فيها منيو جوه منيو)، الـ Console بيرجع: [[querySelectorAll("p")]] ‏4، و [[".card p"]] ‏3 (بما فيهم الـ p اللي جوه div جوه الكارت، لأن المسافة معناها «أي حفيد»)، و [[".card > p"]] ‏2 بس (أولاد مباشرين). و [[".menu > li"]] ‏3 بينما [[".menu li"]] ‏4 لأن الـ li اللي في المنيو الداخلية حفيد مش ابن. و [[li:nth-child(odd)]] ‏3، و [[input[type="email"]]] ‏1.
+
+فيه اتنين هيطلعولك 0 وده صح: [[a:hover]] لأن مفيش حاجة الماوس واقف عليها وانت بتكتب في الـ Console، و [[.required::after]] لأن الـ pseudo-element مش عنصر في الـ DOM أصلًا، بيتشاف بس في Styles. لو رقم طلع أكبر من المتوقع، غالبًا نسيت الفرق بين المسافة و [[>]].`,
+          solCode: R`<div class="card"><p>وصف</p><p class="required">الاسم</p></div>
+<div class="card"><h3>عنوان</h3><div><p>جوه div جوه الكارت</p></div></div>
+<p>برا أي كارت</p>
+<ul class="menu"><li>أ</li><li>ب<ul><li>ج</li></ul></li><li>د</li></ul>
+<input type="email"><input type="text">
+<!-- في الـ Console -->
+document.querySelectorAll(".card p").length   // 3
+document.querySelectorAll(".card > p").length // 2
+document.querySelectorAll(".menu > li").length // 3
+document.querySelectorAll(".menu li").length   // 4`
+        },
+        {
+          cmd: "specificity",
+          ref: [
+            { t: "MDN: Specificity", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity" },
+            { t: "MDN: ID selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/ID_selectors" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+          ],
+          practice: [
+            { lvl: 'تطبيق', t: R`**مسألة:** رتّب الـ selectors دي من الأضعف للأقوى، واكتب وزن كل واحد: [[ul li a]] و [[.nav a:hover]] و [[#main .btn]] و [[a[href^="http"] ]] و [[:is(#a, .b) p]] و [[:where(#a) p]]. وبعدين اتأكد بالماوس في DevTools.`, done: R`[[:where(#a) p]] (0,0,1)، و [[ul li a]] (0,0,3)، و [[a[href^="http"] ]] (0,1,1)، و [[.nav a:hover]] (0,2,1)، و [[:is(#a, .b) p]] (1,0,1) لأن is بتاخد وزن أقوى حاجة جواها، و [[#main .btn]] (1,1,0). والـ tooltip في DevTools قال نفس الأرقام.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<script>
-  (function () {
-    let stored = null;
-    try { stored = localStorage.getItem("theme"); } catch {}
-    const dark = stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.classList.toggle("dark", dark);
-  })();
-$__lt/script>
-<title>بعد</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الوزن</title>
 <style>
-  body { margin: 0; min-height: 100vh; background: #fff; color: #111; font: 2rem system-ui; }
-  .dark body { background: #0b1120; color: #f1f5f9; }
+  ul li a { color: black; }
+  .nav a:hover { color: red; }
+  #main .btn { color: blue; }
+  a[href^="http"] { color: green; }
+  :is(#a, .b) p { color: teal; }
+  :where(#a) p { color: orange; }
+</style>
+</head>
+<body>
+<div id="main">
+  <nav class="nav"><ul><li><a class="btn" href="https://example.com">لينك</a></li></ul></nav>
+</div>
+<div id="a"><p>فقرة</p></div>
+</body>
+</html>
+~~~
+
+**العد:** ٣ خانات (ids, classes, elements). الـ class والـ attribute والـ pseudo-class خانة الوسط، والعنصر الخانة الأخيرة. والمقارنة خانة خانة من الشمال، مش جمع.
+
+**الاستثناءين هنا:**
+
+- [[:is(#a, .b)]] بتاخد وزن **أقوى** حاجة جواها، فـ id كامل حتى لو العنصر اختير بالـ class.
+- [[:where()]] وزنها صفر دايمًا، مهما كان جواها.
+
+**الغلطة الشائعة:** تحسب [[:is(#a, .b) p]] على أساس [[.b]] لو ده اللي طابق. الوزن ثابت، مش بيعتمد على اللي طابق فعلًا.
+
+~~~text الناتج
+الترتيب من الأضعف للأقوى، والأرقام من Chrome نفسه:
+(0,0,1)  :where(#a) p
+(0,0,3)  ul li a
+(0,1,1)  a[href^="http"]
+(0,2,1)  .nav a:hover
+(1,0,1)  :is(#a, .b) p
+(1,1,0)  #main .btn
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف فيه ٣ قواعد للزرار كلهم [[!important]] (واحدة للون، وواحدة في الـ hover، وواحدة جوه الـ footer)، وكل واحد زوّد [[!important]] عشان يغلب اللي قبله. شيلهم كلهم من غير ما الشكل يتغيّر.`, done: R`[[grep -c "!important"]] على الملف بقى صفر، والزرار في التلات حالات نفس الشكل (screenshot قبل وبعد)، والحل كان ترتيب القواعد أو modifier واحد زي [[.btn--footer]] بدل selector أطول.`, sol: R`قبل:
+
+~~~css before.css
+.btn { background: #1d4ed8 !important; color: #fff !important; padding: 8px 16px; }
+.btn:hover { background: #1e3a8a !important; }
+footer .btn { background: #166534 !important; }
+~~~
+
+بعد:
+
+~~~css after.css
+.btn { background: #1d4ed8; color: #fff; padding: 8px 16px; }
+.btn:hover { background: #1e3a8a; }
+.btn--footer { background: #166534; }
+~~~
+
+والصفحة، ومعاها التغيير الوحيد في الـ HTML:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأزرار</title>
+<link rel="stylesheet" href="after.css">
+</head>
+<body>
+<main><button id="m" class="btn">عادي</button></main>
+<footer><button id="f" class="btn btn--footer">في الفوتر</button></footer>
+</body>
+</html>
+~~~
+
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأزرار</title>
+<style>
+.btn { background: #1d4ed8; color: #fff; padding: 8px 16px; }
+.btn:hover { background: #1e3a8a; }
+.btn--footer { background: #166534; }
+</style>
+</head>
+<body>
+<main><button id="m" class="btn">عادي</button></main>
+<footer><button id="f" class="btn btn--footer">في الفوتر</button></footer>
+</body>
+</html>
+~~~
+
+**إزاي شلناهم:**
+
+- مفيش خناقة أصلًا بين [[.btn]] و [[.btn:hover]]: الـ hover أقوى بطبيعته (0,2,0) ضد (0,1,0).
+- [[footer .btn]] كانت بتعتمد على مكان الزرار. [[.btn--footer]] بتقول المعنى صراحة، وبنفس وزن [[.btn]]، وهي مكتوبة بعدها فتكسب بالترتيب.
+- في الفوتر الـ hover لسه كسبان (0,2,0) ضد (0,1,0)، زي ما كان قبل.
+
+**الغلطة الشائعة:** تستبدل [[!important]] بـ selector أطول زي [[footer .wrapper .btn.btn]]. دي نفس المشكلة بشكل تاني، والقاعدة الجاية هتحتاج أطول.
+
+~~~text الناتج
+grep -c "!important" before.css → 3
+grep -c "!important" after.css  → 0
+
+مقارنة الـ screenshot قبل وبعد، بايت ببايت:
+من غير hover (الزرارين ظاهرين)  متطابق
+hover على الزرار العادي          متطابق
+hover على زرار الفوتر            متطابق
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p style="color: red">]] وفي الـ CSS [[p.imp { color: blue !important; }]]. مين بيكسب: الـ inline ولا الـ important؟`, done: R`الأزرق ([[rgb(0, 0, 255)]] في Chrome): [[!important]] أقوى من الـ [[style=""]] العادي. ده سبب إن الـ important مشكلة: حتى الـ inline اللي JavaScript بيحطه مبقاش يقدر يغيّر اللون.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مين يكسب</title>
+<style>
+  p.imp { color: blue !important; }
+</style>
+</head>
+<body>
+<p class="imp" style="color: red">كلام</p>
+</body>
+</html>
+~~~
+
+**الإجابة:** الأزرق. [[!important]] بيقلب الترتيب: بيتحسب في طبقة فوق كل حاجة عادية، بما فيها [[style=""]].
+
+وعشان كده هو مشكلة: JavaScript بيغيّر الألوان بـ [[el.style.color = ...]]، وده مش هيأثر:
+
+~~~js
+const p = document.querySelector('p');
+p.style.color = 'green';
+getComputedStyle(p).color;
+~~~
+
+والوحيد اللي يغلبه من الـ inline: [[el.style.setProperty('color', 'green', 'important')]]، يعني important تانية.
+
+**الغلطة الشائعة:** تشغّل كود بيغيّر اللون وتلاقيه ماتغيّرش، وتدوّر على باج في الـ JavaScript، والسبب سطر CSS بعيد. افتح Computed وشوف مين كسب.
+
+~~~text الناتج
+اللون = rgb(0, 0, 255)  (أزرق)
+بعد p.style.color = 'green': rgb(0, 0, 255)  (لسه أزرق)
+بعد setProperty(..., 'important'): rgb(0, 128, 0)
+~~~` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** نفس العنصر عليه [[id="main"]]. قارن وزن [[#main]] بوزن [[ [id="main"] ]]. وبعدين جرّب الاتنين ضد [[.nav .btn.primary]].`, done: R`[[#main]] (1,0,0) و [[ [id="main"] ]] (0,1,0) مع إنهم بيختاروا نفس العنصر: الـ attribute وزنه زي class. فـ [[.nav .btn.primary]] (0,3,0) غلب [[ [id="main"] ]] وخسر قدام [[#main]].`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>id</title>
+<style>
+  .nav .btn.primary { color: green; }
+</style>
+</head>
+<body>
+<nav class="nav"><button id="main" class="btn primary">اضغط</button></nav>
+</body>
+</html>
+~~~
+
+جرّب تضيف كل مرة سطر واحد من دول، **قبل** [[.nav .btn.primary]]:
+
+~~~css
+#main { color: red; }
+[id="main"] { color: red; }
+~~~
+
+| الـ selector | الوزن | بيختار نفس العنصر؟ |
+|---|---|---|
+| [[#main]] | (1,0,0) | أيوه |
+| [[[id="main"]]] | (0,1,0) | أيوه |
+| [[.nav .btn.primary]] | (0,3,0) | أيوه |
+
+**الفكرة:** الوزن من شكل الـ selector، مش من العنصر اللي بيختاره. ووزن id واحد بيغلب أي عدد من الـ classes، لأن المقارنة خانة خانة.
+
+**إمتى ده مفيد:** لو مضطر تختار عنصر بالـ id، بس عايز وزن قليل (مثلًا عنصر من مكتبة)، اكتبه [[[id="main"]]].
+
+**الغلطة الشائعة:** تعتقد إن كتير من الـ classes ممكن يغلبوا id. المقارنة خانة خانة، ومفيش جمع.
+
+~~~text الناتج
+#main ضد .nav .btn.primary          → rgb(255, 0, 0)  (أحمر، id كسب)
+[id="main"] ضد .nav .btn.primary    → rgb(0, 128, 0)  (أخضر، attribute خسر)
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** ليه ملفات الـ reset والمكتبات الحديثة بتكتب قواعدها جوه [[:where()]]؟ ٣ سطور لزميل.`, done: R`الشرح فيه: [[:where()]] وزنها صفر، فأي قاعدة يكتبها صاحب الموقع (حتى [[p]] لوحدها) بتغلبها من غير ما يكبّر الـ selector أو يستخدم important، والمكتبة كده بتدّي شكل افتراضي بس.`, sol: R`**الرد النموذجي لزميلك:**
+
+~~~text الشرح
+:where() وزنها صفر مهما كان جواها، فأي قاعدة صاحب الموقع يكتبها، حتى p لوحدها، بتغلب قاعدة المكتبة.
+كده المكتبة بتدّي شكل افتراضي بس، ومش بتتخانق مع اللي بيستخدمها.
+ومن غيرها كان هيضطر يكبّر الـ selector أو يستخدم !important عشان يغيّر حاجة بسيطة.
+~~~
+
+~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>where</title>
+<style>
+  /* المكتبة */
+  :where(.prose) p { color: gray; }
+  .prose2 p { color: gray; }
+  /* صاحب الموقع */
+  p { color: black; }
+</style>
+</head>
+<body>
+<div class="prose"><p id="a">بـ where</p></div>
+<div class="prose2"><p id="b">من غير where</p></div>
+</body>
+</html>
+~~~
+
+**الغلطة الشائعة:** تستخدم [[:where()]] في كود الموقع نفسه لأي حاجة. دي مناسبة للي **المفروض** يتكسر بسهولة زي reset أو مكتبة، مش لقواعد عايزها تثبت.
+
+~~~text الناتج
+:where(.prose) p  ضد  p  → rgb(0, 0, 0)  (p كسبت)
+.prose2 p         ضد  p  → rgb(128, 128, 128)  (المكتبة كسبت)
+~~~` },
+          ],
+          title: "ليه القاعدة بتاعتي مش بتتطبق؟",
+          desc: R`لما قاعدتين بيختاروا نفس العنصر ويغيّروا نفس الخاصية، المتصفح بيدّي كل selector وزن من 3 خانات: (id، class، نوع). الأعلى يكسب، ولو اتساووا اللي مكتوب آخر يكسب.
+
+id واحد أقوى من أي عدد classes. و [[style=""]] في الـ HTML أقوى منهم كلهم، و [[!important]] بيقلب اللعبة كلها (ودا سبب إنه مشكلة).`,
+          example: R`button { color: black; }
+.btn { color: blue; }
+.nav .btn { color: green; }
+nav .btn:hover { color: orange; }
+.btn.primary { color: white; }
+:where(.nav) .btn { color: purple; }
+nav#main .btn { color: red; }`,
+          try: R`اعمل زرار عليه [[class="btn primary"]] جوه [[<nav class="nav" id="main">]] وحط القواعد دي. افتح DevTools › Elements › Styles: هتلاقي القواعد اللي خسرت متشطّب عليها. وقف بالماوس على أي selector وهيقولك الـ specificity بتاعته.`,
+          flag: "script",
+          deep: {
+            why: R`أشهر مشكلة CSS: كتبت قاعدة ومش بتتطبق، فتحط [[!important]]، وبعدين قاعدة تانية محتاجة تغلبها فتحط [[!important]] تاني، لحد ما الملف يبقى حرب. لو فهمت الوزن هتعرف ليه قاعدة خسرت وتصلّحها صح.`,
+            how: R`الوزن بيتحسب كده: A = عدد الـ ids. B = عدد الـ classes والـ attributes ([[[type]]]) والـ pseudo-classes ([[:hover]]). C = عدد أنواع العناصر ([[div]]) والـ pseudo-elements ([[::before]]). المقارنة خانة خانة من الشمال: A الأول، ولو اتساوت B، ولو اتساوت C. عشان كده 11 class مش بيغلبوا id واحد، مفيش «تحويل» بين الخانات.
+
+حاجات ملهاش وزن: [[*]]، والـ combinators ([[>]] و [[+]] والمسافة)، و [[:where()]]. و [[:is()]] و [[:not()]] و [[:has()]] وزنهم = وزن أتقل حاجة جواهم.
+
+الـ specificity بتتقارن بس بين قواعد في نفس المستوى من الـ cascade. قبلها فيه حاجات أهم: [[!important]] والـ cascade layers (الدرس الجاي). والوراثة ملهاش specificity خالص: أي قاعدة مباشرة على العنصر، حتى [[*]]، بتغلب قيمة جاية بالوراثة من الأب.
+
+[[style="..."]] في الـ HTML بيكسب أي selector، و [[!important]] في ملف CSS بيكسب الـ inline.`,
+            when: "كل مرة قاعدة مش بتتطبق: افتح Styles في DevTools وشوف مين كسب وليه، قبل ما تلمس !important.",
+            mistakes: R`تحل كل حاجة بـ [[!important]]. تستخدم id في التنسيق. وفي مشروع حقيقي كان فيه قواعد للعربي مكتوبة [[html[lang="ar"] .hero-title { font-size: ... !important }]] عشان تغلب utility بتاعة Tailwind: الأنضف إنها تبقى variant زي [[rtl:]]، أو CSS variable قيمته بتتغير حسب اللغة.`
+          },
+          teach: R`## الفكرة في سطرين
+
+7 قواعد كلهم بيمسكوا نفس الزرار وكلهم بيغيّروا [[color]]. واحدة بس هتكسب، والمتصفح بيقرر بالـ specificity (وزن الـ selector). جرّبتهم في Chrome (headless) على [[<nav class="nav" id="main"><button class="btn primary">]]، وخدت الوزن اللي Chrome نفسه حسبه لكل selector (من [[CSS.getMatchedStylesForNode]] في DevTools Protocol، نفس الرقم اللي بيظهر لما تقف على الـ selector في Styles).
+
+---
+
+## ١. الوزن 3 خانات (A, B, C)
+
+| الخانة | بتعد إيه |
+|---|---|
+| A | الـ ids: [[#main]] |
+| B | الـ classes [[.btn]]، والـ attributes [[[type]]]، والـ pseudo-classes [[:hover]] |
+| C | أنواع العناصر [[button]]، والـ pseudo-elements [[::after]] |
+
+المقارنة خانة خانة من الشمال، زي ما بتقارن أرقام تليفون: اللي A بتاعه أكبر كسب على طول، ولو اتساووا بص على B، وبعدين C.
+
+---
+
+## ٢. السطور واحد واحد
+
+ده اللي Chrome حسبه (كل الـ 7 بيمسكوا الزرار، و [[:hover]] بس لما الماوس عليه):
+
+| السطر | الحسبة | الوزن |
+|---|---|---|
+| [[button]] | نوع واحد | (0,0,1) |
+| [[.btn]] | class واحدة | (0,1,0) |
+| [[.nav .btn]] | 2 class، والمسافة ملهاش وزن | (0,2,0) |
+| [[nav .btn:hover]] | نوع + class + pseudo-class | (0,2,1) |
+| [[.btn.primary]] | 2 class لازقين = عنصر عليه الاتنين | (0,2,0) |
+| [[:where(.nav) .btn]] | [[:where()]] وزنها صفر مهما كان جواها، فاللي فاضل [[.btn]] | (0,1,0) |
+| [[nav#main .btn]] | نوع + id + class | (1,1,1) |
+
+Chrome فك [[:where(.nav) .btn]] وحسب حتة واحدة بس: [[.btn]].
+
+---
+
+## ٣. مين كسب؟
+
+| الحالة | اللون اللي اتقاس | الكسبان |
+|---|---|---|
+| الكود زي ما هو | [[rgb(255, 0, 0)]] أحمر | [[nav#main .btn]] (1,1,1) |
+| نفس الكلام والماوس عليه | [[rgb(255, 0, 0)]] أحمر | لسه هو: (0,2,1) أقل من (1,1,1) |
+| شلت سطر الـ id | [[rgb(255, 255, 255)]] أبيض | [[.btn.primary]] |
+| من غير الـ id والماوس عليه | [[rgb(255, 165, 0)]] برتقاني | [[nav .btn:hover]] (0,2,1) |
+
+### ليه الأبيض كسب الأخضر؟
+
+[[.nav .btn]] و [[.btn.primary]] الاتنين (0,2,0). لما الوزن يتساوى، اللي **مكتوب آخر** في الملف يكسب، و [[.btn.primary]] بعدها.
+
+---
+
+## ٤. تجارب زيادة
+
+| التجربة | اللون | ليه |
+|---|---|---|
+| [[.a.a.a.a.a.a.a.a.a.a.a]] (11 class) ضد [[#x]] | أحمر بتاع الـ id | (0,11,0) ضد (1,0,0): A الأول، ومفيش «تحويل» بين الخانات |
+| [[style="color:green"]] ضد [[#x]] | أخضر | الـ inline style أقوى من أي selector |
+| [[p { color: blue !important }]] ضد inline و id | أزرق | [[!important]] بيقلب الترتيب كله |
+
+---
+
+## الخلاصة
+
+- الوزن (ids، classes، types) والمقارنة من الشمال.
+- id واحد أقوى من أي عدد classes.
+- [[:where()]] وزنها صفر، والمسافة و [[>]] ملهمش وزن.
+- لو اتساووا: الأخير في الملف يكسب.
+- [[style=""]] أقوى من الـ selectors، و [[!important]] أقوى من الكل. استخدم classes بس، وارجع لـ DevTools › Styles تشوف مين كسب قبل ما تفكر في [[!important]].`,
+          lines: [
+            "(0,0,1): نوع عنصر بس. أضعف حاجة.",
+            "(0,1,0): class واحدة تغلب أي عدد أنواع.",
+            R`(0,2,0): اتنين class ([[.nav]] و [[.btn]])، فبتغلب [[.btn]] لوحدها اللي (0,1,0)، والزرار بقى أخضر.`,
+            R`(0,2,1): class و pseudo-class ([[:hover]] وزنها زي class) ونوع.`,
+            R`(0,2,0): زي [[.nav .btn]] بالظبط، فاللي مكتوبة آخر تكسب، ودي هي.`,
+            R`(0,1,0): [[:where()]] وزنها صفر مهما كان جواها، فدي وزنها وزن [[.btn]] بس.`,
+            "(1,1,1): فيها id، فتغلب كل اللي فوق حتى لو فيهم عشر classes."
+          ],
+          sol: R`الزرار هيطلع أحمر، وهيفضل أحمر حتى لما تقف عليه بالماوس. في Styles هتلاقي [[nav#main .btn]] فوق ومش متشطّب، وكل اللي تحته ([[.btn.primary]] و [[.nav .btn]] و [[:where(.nav) .btn]] و [[.btn]] و [[button]]) الـ color بتاعهم متشطّب.
+
+الأرقام اللي هتظهر لما تقف على كل selector: [[nav#main .btn]] ‏(1,1,1)، و [[nav .btn:hover]] ‏(0,2,1)، و [[.nav .btn]] و [[.btn.primary]] ‏(0,2,0) (متعادلين، والأخير في الملف كسب بينهم)، و [[:where(.nav) .btn]] ‏(0,1,0) لأن [[:where]] بيصفّر اللي جواه، و [[.btn]] ‏(0,1,0)، و [[button]] ‏(0,0,1). الـ id لوحده بيغلب أي عدد من الكلاسات.
+
+الغلط الشائع: تتوقع الـ hover يطلّع برتقاني لأنه «أحدث». (0,2,1) أقل من (1,1,1) فبيخسر. ولو امسحت سطر [[nav#main .btn]] هيبقى أبيض، ومع الـ hover برتقاني لأن (0,2,1) أكبر من (0,2,0).`
+        },
+        {
+          cmd: "cascade",
+          ref: [
+            { t: "MDN: Introduction to the CSS cascade", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Introduction" },
+            { t: "MDN: Inheritance", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Inheritance" },
+            { t: "MDN: color", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color" },
+            { t: "MDN: @layer", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@layer" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ body عليه [[font-family: "Times New Roman"]]. زرار [[<button>]] جوه الصفحة خطه هيبقى إيه؟ ورث من الـ body؟`, done: R`لأ: في Chrome على ويندوز الزرار طلع [[Arial]] وحجمه [[13.3333px]]، لأن المتصفح بيدّي الأزرار والحقول خط من عنده بيغلب الوراثة. الحل اللي في كل reset: [[button, input, select, textarea { font: inherit; }]].`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخط</title>
+<style>
+  body { font-family: "Times New Roman"; }
+</style>
+</head>
+<body>
+<p>فقرة</p>
+<button>زرار</button>
+<input value="حقل">
+</body>
+</html>
+~~~
+
+**الإجابة:** لأ، الزرار مش بيورث. [[font-family]] خاصية بتتورّث فعلًا، بس الوراثة أضعف حاجة في الـ cascade: أي قاعدة على العنصر نفسه تغلبها. والمتصفح عنده ملف CSS داخلي بيدّي الأزرار والحقول خط وحجم من عنده، وده بيغلب الوراثة.
+
+**الحل اللي في كل reset:**
+
+~~~css
+button, input, select, textarea {
+  font: inherit;
+}
+~~~
+
+[[inherit]] بتقول «خد قيمة أبوك» صراحة، فبقت قاعدة على العنصر نفسه.
+
+**الغلطة الشائعة:** تعمل خط عربي جميل على الـ body، والأزرار تفضل Arial، وتزوّد الخط على كل زرار لوحده.
+
+~~~text الناتج
+                   font-family            font-size
+الفقرة             "Times New Roman"        16px
+الزرار قبل         Arial                  13.3333px
+الزرار بعد inherit "Times New Roman"        16px
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقعك فيه [[.btn { padding: 4px; }]] ومكتبة جاهزة (مربوطة بعدك) فيها [[.btn { padding: 20px; }]]، فأزرارك كلها اتغيّرت. حطها في طبقة: [[@import url("lib.css") layer(vendor);]] في أول ملفك.`, done: R`الـ padding رجع [[4px]] في Computed مع إن المكتبة لسه موجودة: قواعدك اللي برّه أي طبقة بتغلب أي طبقة، مهما كان ترتيب الملفات أو الـ specificity جوه المكتبة.`, sol: R`~~~css style.css
+@import url("lib.css") layer(vendor);
+
+.btn { padding: 4px; }
+~~~
+
+~~~css lib.css
+.btn { padding: 20px; }
+~~~
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأزرار</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<button class="btn">زرار</button>
+</body>
+</html>
+~~~
+
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأزرار</title>
+<style>
+@import url("lib.css") layer(vendor);
+
+.btn { padding: 4px; }
+</style>
+</head>
+<body>
+<button class="btn">زرار</button>
+</body>
+</html>
+~~~
+
+**ليه ده بيحل المشكلة:** قبل كده الاتنين في نفس المكانة، ونفس الوزن، فاللي آخر كسب. الـ [[layer(vendor)]] بيحط كل المكتبة في طبقة. والقاعدة: **أي CSS برّه الطبقات بيغلب أي CSS جوه طبقة**، مهما كان الوزن ومهما كان الترتيب.
+
+[[@import]] لازم يبقى أول سطر في الملف، قبل أي قاعدة، وإلا المتصفح بيتجاهله.
+
+**الغلطة الشائعة:** تظن إن الحل تحويل قواعدك لـ [[#id]] أو [[!important]]. وفي الـ layers الـ [[!important]] بيتقلب: important في طبقة بيغلب important برّه الطبقات، فمتستخدمهوش كحل هنا.
+
+~~~text الناتج
+قبل (lib.css مربوط بعد ملفك): padding = 20px
+بعد (layer):                  padding = 4px
+حتى لو المكتبة فيها #x .btn { padding: 20px }: 4px
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** ملف CSS واحد بـ [[@layer reset, components, utilities;]]: reset فيه box-sizing و [[font: inherit]] و margin صفر، و components فيه [[.card]] بـ [[display: grid]] و [[margin-block-end: 24px]]، و utilities فيه [[.mt-0 { margin-block-start: 0; }]] و [[.hidden { display: none; }]].`, done: R`[[<div class="card hidden">]] مختفي رغم إن الاتنين class واحدة، لأن utilities آخر طبقة. ولو بدّلت ترتيب الطبقات في أول سطر بس (من غير ما تحرّك القواعد) الكارت بيرجع يظهر.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الطبقات</title>
+<style>
+  @layer reset, components, utilities;
+
+  @layer reset {
+    *, *::before, *::after { box-sizing: border-box; }
+    body, h1, p { margin: 0; }
+    button, input { font: inherit; }
+  }
+
+  @layer components {
+    .card {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      margin-block-end: 24px;
+      border: 1px solid #d4d4d8;
+    }
+  }
+
+  @layer utilities {
+    .mt-0 { margin-block-start: 0; }
+    .hidden { display: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>الكروت</h1>
+  <div id="a" class="card">كارت عادي</div>
+  <div id="b" class="card hidden">كارت مخفي</div>
+</main>
+</body>
+</html>
+~~~
+
+**السطر الأول هو كل الحكاية:** [[@layer reset, components, utilities;]] بيحدد الترتيب من الأضعف للأقوى، مهما كان مكان القواعد نفسها في الملف.
+
+[[.card]] و [[.hidden]] نفس الوزن (0,1,0). لكن الطبقات بتتقارن **قبل** الوزن، و [[utilities]] آخر طبقة فتكسب. فتقدر تطمن إن [[.hidden]] هتشتغل دايمًا، من غير [[!important]].
+
+**الغلطة الشائعة:** تسيب قواعد برّه أي طبقة وهي المفروض تبقى جوه. أي قاعدة برّه بتغلب كل الطبقات، حتى [[utilities]]، فـ [[.hidden]] هتخسر قدامها.
+
+~~~text الناتج
+.card hidden: display = none  (مخفي)
+بعد تبديل أول سطر لـ utilities, reset, components:
+.card hidden: display = grid  (ظهر، من غير ما نحرّك ولا قاعدة)
+box-sizing للكارت = border-box
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[inherit]] و [[initial]] و [[unset]] و [[revert]]، وجرّب الأربعة على [[color]] لـ p جوه div أحمر، وعلى [[display]] لـ div.`, done: R`على color: inherit و unset أحمر (color بيتورّث)، و initial أسود، و revert كمان أحمر (المتصفح مالوش لون خاص بالـ p، فرجع للوراثة). وعلى display: initial و unset بقوا [[inline]] (مش block!)، و revert رجّع [[block]]. فعرفت إن initial مش «بتاع المتصفح».`, sol: R`~~~live 200 200
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>القيم</title>
+<style>
+  .red { color: red; }
+  .i1 { color: inherit; }
+  .i2 { color: initial; }
+  .i3 { color: unset; }
+  .i4 { color: revert; }
+  .d1 { display: initial; }
+  .d2 { display: unset; }
+  .d3 { display: revert; }
+</style>
+</head>
+<body>
+<div class="red">
+  <p class="i1">inherit</p>
+  <p class="i2">initial</p>
+  <p class="i3">unset</p>
+  <p class="i4">revert</p>
+</div>
+<div class="d1">a</div>
+<div class="d2">b</div>
+<div class="d3">c</div>
+</body>
+</html>
+~~~
+
+| الكلمة | معناها |
+|---|---|
+| [[inherit]] | خد قيمة الأب، حتى لو الخاصية مبتتورّثش |
+| [[initial]] | القيمة الأولية من مواصفة CSS، مش بتاعة المتصفح |
+| [[unset]] | لو الخاصية بتتورّث يبقى inherit، ولو لأ يبقى initial |
+| [[revert]] | ارجع لشكل المتصفح الافتراضي لو فيه، وبعدها الوراثة |
+
+**ليه** [[display: initial]] **طلع inline:** القيمة الأولية لـ [[display]] في المواصفة هي [[inline]] لكل العناصر. إن div يبقى block ده قاعدة في ملف المتصفح، مش في المواصفة. عشان كده [[revert]] رجّعته block.
+
+**الغلطة الشائعة:** تكتب [[display: initial]] عشان «ترجّع» عنصر مخفي. الـ div هيرجع inline وشكله هيتكسر. اكتب [[revert]].
+
+~~~text الناتج
+color لـ p جوه div أحمر:
+inherit  rgb(255, 0, 0)
+initial  rgb(0, 0, 0)
+unset    rgb(255, 0, 0)
+revert   rgb(255, 0, 0)
+
+display لـ div:
+initial  inline
+unset    inline
+revert   block
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** افتح أي صفحة كبيرة (موقع أخبار أو متجر)، واختار زرار، وفي DevTools › Styles عدّ: كام قاعدة بتطبّق عليه؟ كام واحدة متشطّب عليها؟ وكام [[!important]]؟ وفي Computed اضغط السهم جنب [[color]] تعرف مين كسب.`, done: R`كتبت الأرقام التلاتة لزرار واحد، وعرفت القاعدة اللي كسبت في color و padding واسم الملف بتاعها، وكتبت جملة: الكسب كان بسبب الطبقة ولا الـ specificity ولا الترتيب.`, sol: R`التمرين على موقع حقيقي من اختيارك، فالأرقام هتختلف. عشان تشوف شكل الإجابة، ده معمل بيقلّد موقع متجر متخيل، بنفس طريقة القراءة:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر</title>
+<link rel="stylesheet" href="vendor.css">
+<style>
+  .btn { padding: 12px 24px; }
+  .product .btn { color: white; }
+  .btn-buy { background: green !important; }
+</style>
+</head>
+<body>
+<main class="product">
+  <h1>المنتج</h1>
+  <button class="btn btn-buy">اشتري</button>
+</main>
+</body>
+</html>
+~~~
+
+~~~css vendor.css
+.btn { padding: 8px; color: black; background: gray; border: 0; }
+.btn:hover { background: darkgray; }
+~~~
+
+~~~view 130 130 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر</title>
+<style>
+.btn { padding: 8px; color: black; background: gray; border: 0; }
+.btn:hover { background: darkgray; }
+</style>
+<style>
+  .btn { padding: 12px 24px; }
+  .product .btn { color: white; }
+  .btn-buy { background: green !important; }
+</style>
+</head>
+<body>
+<main class="product">
+  <h1>المنتج</h1>
+  <button class="btn btn-buy">اشتري</button>
+</main>
+</body>
+</html>
+~~~
+
+**الخطوات في DevTools:** كليك يمين على الزرار، ثم Inspect. في Styles عدّ القواعد واللي متشطّب عليه. وفي Computed دوّر على [[color]] واضغط السهم: هيوديك للقاعدة الكسبانة والملف بتاعها.
+
+**الغلطة الشائعة:** تعد القواعد من غير ما تفرق بين اللي جاي من «user agent stylesheet» وقواعد الموقع. والموقع الكبير غالبًا CSS بتاعه متجمّع في ملف واحد، فاسم الملف مش هيوضّح المصدر.
+
+**إجابة نموذجية على المعمل:**
+
+~~~text الناتج
+القواعد اللي بتطبّق (من غير بتاعة المتصفح): 4
+  .btn
+  .btn
+  .btn-buy
+  .product .btn
+
+السطور المتشطّب عليها: 3  (.btn → padding ، .btn → color ، .btn → background)
+عدد !important: 1
+
+color = rgb(255, 255, 255): كسبت .product .btn من ملف <style>
+       السبب: الـ specificity (0,2,0) أكبر من .btn في vendor.css (0,1,0)
+padding = 12px 24px: كسبت .btn من ملف <style>
+       السبب: الترتيب، نفس الوزن واللي بعد يكسب
+background = rgb(0, 128, 0): كسبت .btn-buy
+       السبب: !important
+~~~` },
+          ],
+          title: "قاعدتين بيتخانقوا: الترتيب الكامل للي بيكسب",
+          desc: R`الـ cascade هو الخوارزمية اللي بتقرر القيمة النهائية لكل خاصية. بالترتيب: [[!important]] الأول، وبعدين الـ inline style، وبعدين الـ layer ([[@layer]])، وبعدين الـ specificity، وآخر حاجة الترتيب في الملف (الآخر يكسب).
+
+ولو مفيش ولا قاعدة على العنصر، بعض الخصائص بتتورث من الأب (زي [[color]] و [[font-family]] و [[line-height]])، وبعضها لأ (زي [[padding]] و [[border]] و [[background]]).`,
+          example: R`@layer base, components;
+@layer base {
+  a { color: blue; }
+}
+@layer components {
+  .link { color: green; }
+}
+a { color: red; }
+body { color: black; font-family: system-ui; }
+.card { border: inherit; }`,
+          try: R`حط الكود ده في صفحة فيها [[<a class="link">]] وشوف لونه أحمر. امسح سطر [[a { color: red; }]] يبقى أخضر. وبعدين في DevTools › Elements › Computed دوّر على color واضغط على السهم يوديك للقاعدة اللي كسبت.`,
+          flag: "script",
+          deep: {
+            why: "الـ CSS اسمه Cascading Style Sheets، والـ cascade هو قلبه. أي تنسيق فيه أكتر من مصدر (ملفك، ومكتبة، و Tailwind، والمتصفح نفسه) هيبقى فيه تعارض، ولازم قاعدة واضحة تحسمه.",
+            how: R`الترتيب الكامل من الأقوى: 1) الـ origin والـ importance: [[!important]] بتاعة المستخدم والمتصفح، وبعدين [[!important]] بتاعتك، وبعدين العادي بتاعك، وبعدين تنسيق المتصفح الافتراضي. 2) الـ inline style. 3) الـ layers: في الكلام العادي اللي برا أي layer أقوى، وبين الـ layers اللي اتعلنت آخر أقوى (وفي [[!important]] الترتيب بيتعكس). 4) الـ specificity. 5) الترتيب في الكود.
+
+ودا مهم جدًا مع Tailwind v4: هو بيحط كل حاجة في layers حقيقية ([[theme]] و [[base]] و [[components]] و [[utilities]]). فأي CSS تكتبه في globals.css برا layer بيغلب كل الـ utilities، حتى لو الـ specificity بتاعته أقل. عايز قاعدة تتغلب بـ utility؟ حطها في [[@layer base]] أو [[@layer components]].
+
+الوراثة: خصائص الكلام (color و font و line-height و direction و visibility) بتتورث، لأن منطقي إن الكلام جوه كارت ياخد خط الكارت. خصائص الصندوق (margin و padding و border و background و width) مش بتتورث. وعندك كلمات خاصة لأي خاصية: [[inherit]] (خد من الأب)، و [[initial]] (القيمة الافتراضية للخاصية)، و [[unset]] (inherit لو بتتورث و initial لو لأ).`,
+            when: "لما تكتب CSS جنب مكتبة (Tailwind أو Bootstrap)، وعايز تتحكم مين يغلب مين من غير !important.",
+            mistakes: R`تكتب CSS عادي في globals.css جنب Tailwind v4 وتستغرب إن [[p-4]] مش شغال على العنصر: قاعدتك برا layer فبتكسب. وتفتكر إن [[!important]] حل: بيحل مرة ويعمل مشكلة كل مرة بعدها. وتستنى إن [[padding]] يتورث من الأب.`
+          },
+          teach: R`## الفكرة في سطرين
+
+3 قواعد بيلوّنوا اللينك بـ 3 ألوان، والـ cascade هو اللي بيقرر مين يكسب. والفكرة الجديدة هنا الـ layers ([[@layer]]): طبقات بتحدد الأولوية **قبل** ما الـ specificity تتحسب أصلًا. وآخر سطرين عن الوراثة. جرّبت الكود في Chrome (headless) على الصفحة دي، وقريت [[getComputedStyle]]:
+
+~~~text index.html
+<a class="link" href="#">لينك</a>
+<a href="#">لينك عادي</a>
+<section style="border: 3px dashed green; padding: 4px">
+  <div class="card">كارت</div>
+  <div class="plain">عادي</div>
+</section>
+~~~
+
+---
+
+## ١. [[@layer base, components;]]
+
+[[@]] في CSS معناها at-rule: أمر للمتصفح مش قاعدة تنسيق. السطر ده بيعلن أسامي الطبقات **وترتيبها**: اللي مكتوبة آخر أقوى. فـ [[components]] أقوى من [[base]].
+
+---
+
+## ٢. القواعد جوه الطبقات
+
+~~~text style.css
+@layer base {
+  a { color: blue; }
+}
+@layer components {
+  .link { color: green; }
+}
+~~~
+
+[[@layer base { ... }]] = القواعد اللي جوه القوسين دول تبع طبقة base. لاحظ إن [[a]] وزنه (0,0,1) و [[.link]] وزنه (0,1,0)، بس ده مش هيفرق، الطبقة هي اللي بتحسم.
+
+---
+
+## ٣. قاعدة برا أي طبقة
+
+~~~text style.css
+a { color: red; }
+~~~
+
+القواعد اللي برا الطبقات أقوى من أي طبقة. والنتايج:
+
+| الكود | [[.link]] | اللينك العادي |
+|---|---|---|
+| زي ما هو | [[rgb(255, 0, 0)]] أحمر | أحمر |
+| من غير [[a { color: red; }]] | [[rgb(0, 128, 0)]] أخضر | [[rgb(0, 0, 255)]] أزرق |
+| ومعاه قلبت الترتيب لـ [[@layer components, base;]] | [[rgb(0, 0, 255)]] أزرق | أزرق |
+| من غير أي CSS | [[rgb(0, 0, 238)]] | [[rgb(0, 0, 238)]] |
+
+اقرا الجدول:
+
+1. السطر الأول: [[a]] (أضعف selector) غلب [[.link]] لأنه برا الطبقات.
+2. التاني: [[.link]] أخضر لأن components بعد base. واللينك العادي أزرق لأن [[.link]] مش بتمسكه.
+3. التالت: لما base بقت الأخيرة، [[a]] كسب [[.link]] رغم إن وزنه أقل. ده الدليل إن الطبقة بتتحسب قبل الـ specificity.
+4. الرابع: [[rgb(0, 0, 238)]] لون اللينك من تنسيق المتصفح نفسه.
+
+### و [[!important]]؟
+
+جرّبت نفس الـ 3 قواعد بس كلهم [[!important]]: اللون بقى **أزرق** (بتاع base). مع [[!important]] الترتيب بيتعكس: الطبقة الأولى أقوى، والقواعد اللي برا الطبقات أضعف.
+
+---
+
+## ٤. الوراثة: [[body { color: black; font-family: system-ui; }]]
+
+- [[font-family]]: الخط. [[system-ui]] = خط نظام التشغيل.
+- لو عنصر ملوش قاعدة لخاصية بتتورث، بياخد قيمة أبوه.
+
+اللي اتقاس على اللينك:
+
+| الخاصية | قيمتها على اللينك | ليه |
+|---|---|---|
+| [[font-family]] | [[system-ui]] | بتتورث، واللينك ملوش قاعدة font. (من غير CSS كانت [[Times New Roman]]) |
+| [[color]] | أحمر مش أسود | الـ color بيتورث، بس اللينك عليه قاعدة مباشرة (منك أو من المتصفح نفسه) والوراثة بتخسر قدام أي قاعدة مباشرة |
+| [[padding]] | [[0px]] | مش بيتورث أصلًا |
+
+حتى في حالة «من غير أي CSS» الـ body أسود واللينك فضل [[rgb(0, 0, 238)]]: قاعدة المتصفح للينكات مباشرة على الـ a، فغلبت الوراثة.
+
+---
+
+## ٥. [[.card { border: inherit; }]]
+
+[[border]] مش بيتورث لوحده. [[inherit]] كلمة بتجبر الخاصية تاخد قيمة الأب:
+
+| العنصر | [[border]] |
+|---|---|
+| [[.card]] | [[3px dashed rgb(0, 128, 0)]] (نفس الـ section) |
+| [[.plain]] | [[0px none]] |
+
+[[dashed]] = خط متقطّع.
+
+---
+
+## الخلاصة
+
+الترتيب من الأقوى للأضعف (للقواعد العادية من غير [[!important]]):
+
+| الخطوة | السؤال |
+|---|---|
+| ١ | inline style؟ |
+| ٢ | برا الطبقات ولا جوه؟ (برا أقوى، وبين الطبقات الأخيرة أقوى) |
+| ٣ | الـ specificity |
+| ٤ | الأخير في الملف |
+| ٥ | مفيش ولا قاعدة؟ وراثة من الأب (لو الخاصية بتتورث) |
+
+- Tailwind v4 بيحط الـ utilities في طبقة، فأي CSS برا الطبقات بيغلبها.
+- خصائص الكلام بتتورث (color و font)، وخصائص الصندوق لأ (padding و border و background).`,
+          lines: [
+            "بنعلن ترتيب الـ layers: اللي بعد أقوى. components تغلب base مهما كانت الـ specificity.",
+            "بداية layer اسمها base.",
+            R`كل اللينكات أزرق، بس جوه أضعف طبقة: أي قاعدة في components أو برا الطبقات هتغلبها.`,
+            "قفلة الـ layer.",
+            R`بداية طبقة components: أقوى من base عشان اتكتبت بعدها في سطر [[@layer base, components;]]، مش عشان مكانها في الملف.`,
+            R`[[.link]] أخضر، وبتغلب اللي في base.`,
+            "قفلة.",
+            R`قاعدة برا أي layer: بتغلب كل الـ layers، فكل اللينكات هتبقى حمرا حتى [[.link]].`,
+            R`[[color]] و [[font-family]] بيتورّثوا: كل اللي جوه body هياخدهم لو ملوش قاعدة.`,
+            R`[[border]] مش بيتورّث، بس [[inherit]] بيجبره ياخد قيمة الأب.`
+          ],
+          sol: R`بالكود زي ما هو: اللينك أحمر. الـ [[a { color: red; }]] برا أي layer، والقواعد اللي برا الـ layers بتكسب أي قاعدة جوه layer مهما كانت الـ specificity، فحتى [[.link]] (كلاس) خسر قدام [[a]] (عنصر).
+
+بعد ما تمسح السطر: أخضر، لأن [[components]] متعرّف بعد [[base]] في أول سطر، فهو الأقوى بين الطبقتين، مش عشان [[.link]] specificity أعلى. (لو قلبت الترتيب لـ [[@layer components, base;]] هيبقى أزرق رغم إن [[a]] أضعف.) في Computed › color السهم بيوديك لـ [[.link]] جوه [[@layer components]]، وتحتها القواعد اللي خسرت.
+
+والـ [[font-family]] اللي على body هتلاقيها في Computed على اللينك كمان لأنها بتتورث، لكن [[border]] مش بيتورث لوحده، عشان كده محتاج [[inherit]] صريح. لو اللينك طلع أزرق من الأول يبقى غالبًا الـ CSS متحطّش خالص وده لون المتصفح الافتراضي للينكات.`
+        },
+        {
+          cmd: "box model",
+          ref: [
+            { t: "MDN: Introduction to the CSS basic box model", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Introduction" },
+            { t: "MDN: box-sizing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/box-sizing" },
+            { t: "MDN: Mastering margin collapsing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Margin_collapsing" },
+            { t: "MDN: Universal selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Universal_selectors" },
+            { t: "MDN: Selector list", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Selector_list" },
+            { t: "MDN: Next-sibling combinator", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Next-sibling_combinator" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**مسألة:** [[width: 300px; padding: 20px; border: 5px solid; margin: 10px]]. احسب العرض اللي العنصر بياخده على الشاشة (من الحد للحد) والمساحة اللي بيحجزها شامل الـ margin، مرة بـ [[content-box]] ومرة بـ [[border-box]].`, done: R`content-box: الصندوق 350 (300 + 40 + 10) والمحجوز 370، والمحتوى 300. border-box: الصندوق 300 والمحجوز 320 والمحتوى 250. والرسمة في Computed قالت نفس الأرقام.`, sol: R`~~~live 170 170
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصندوق</title>
+<style>
+  .box { width: 300px; padding: 20px; border: 5px solid; margin: 10px; }
+  .a { box-sizing: content-box; }
+  .b { box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div class="box a">content-box</div>
+<div class="box b">border-box</div>
+</body>
+</html>
+~~~
+
+**الحساب بالأرقام:**
+
+| | content-box | border-box |
+|---|---|---|
+| المحتوى | 300 | 300 − 40 − 10 = 250 |
+| الصندوق من الحد للحد | 300 + 40 + 10 = 350 | 300 |
+| المساحة المحجوزة بالـ margin | 350 + 20 = 370 | 300 + 20 = 320 |
+
+**الفكرة:** [[width]] في [[content-box]] معناها عرض المحتوى، فالـ padding والـ border بيزيدوا عليه. وفي [[border-box]] معناها الصندوق كله، فهم بياكلوا من المحتوى.
+
+والـ margin برّه الصندوق في الحالتين، و [[getBoundingClientRect]] مبيحسبهوش.
+
+**الغلطة الشائعة:** تعتبر [[width: 300px]] معناها إن العنصر 300 على الشاشة، فتتفاجئ بـ 350. عشان كده كل reset حديث بيحط [[box-sizing: border-box]].
+
+~~~text الناتج
+                       الصندوق    المحتوى    بالـ margin
+content-box            350      300      370
+border-box             300      250      320
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين ورا بعض: الأول [[margin-bottom: 24px]] والتاني [[margin-top: 16px]]. المسافة بينهم كام؟ وبعدين حطهم جوه أب عليه [[display: flex; flex-direction: column]] وقيس تاني.`, done: R`عادي المسافة 24 (الـ margins بيتداخلوا وياخد الأكبر)، وجوه flex بقت 40 (الـ flex مفيهوش margin collapse). ودا سبب إن [[gap]] أريح من الـ margins في الـ layouts.`, sol: R`~~~live 240 240
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>margin</title>
+<style>
+  .a { margin-bottom: 24px; height: 40px; background: #bfdbfe; }
+  .b { margin-top: 16px; height: 40px; background: #bbf7d0; }
+  .flex { display: flex; flex-direction: column; }
+</style>
+</head>
+<body>
+<section id="n">
+  <div class="a"></div>
+  <div class="b"></div>
+</section>
+<section id="f" class="flex">
+  <div class="a"></div>
+  <div class="b"></div>
+</section>
+</body>
+</html>
+~~~
+
+**الإجابة:** في الوضع العادي 24، وجوه flex بقت 40.
+
+في الـ block العادي الـ margins الرأسية اللي بتتقابل بتتداخل، ده اسمه margin collapse، والمسافة بتبقى **أكبر** الاتنين مش مجموعهم. دي كانت فكرة قديمة للنصوص: مسافة بعد العنوان ومسافة قبل الفقرة ميتجمعوش.
+
+جوه flex و grid مفيش collapse، فالاتنين بيتجمعوا.
+
+**ليه** [[gap]] **أريح:** بتحط المسافة في الأب مرة واحدة، فمفيش حساب، ومفيش margin زيادة بعد آخر عنصر.
+
+**الغلطة الشائعة:** تزوّد margin على عنصر ومتلاقيش المسافة زادت، لأن العنصر اللي جنبه margin بتاعه أكبر. وفيه حالات تانية للـ collapse، زي margin أول ابن مع أبوه.
+
+~~~text الناتج
+عادي: المسافة = 24px  (الأكبر)
+flex: المسافة = 40px  (المجموع)
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كارت باقة عليه [[width: 100%; padding: 24px; border: 2px solid]] جوه صندوق على موبايل 360، وطالع برّه الشاشة من الشمال وعامل scroll أفقي.`, done: R`قبل: الكارت 364 جوه صندوق 312 (اتقاس في Chrome)، يعني طالع 52px. بعد [[box-sizing: border-box]] الكارت بقى 312 بالظبط ومفيش scroll أفقي.`, sol: R`~~~live 210 210
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الباقة</title>
+<style>
+  body { margin: 0; font-family: system-ui; }
+  .box { padding: 24px; }
+  .plan {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 24px;
+    border: 2px solid #0f766e;
+  }
+</style>
+</head>
+<body>
+<main class="box">
+  <h1>الباقة</h1>
+  <article class="plan">٣ شهور، ١٣٠٠ جنيه</article>
+</main>
+</body>
+</html>
+~~~
+
+**السبب:** [[width: 100%]] يعني عرض الصندوق الأب، 312 هنا. ومن غير [[border-box]] الـ padding والـ border بيتزوّدوا فوقها: 312 + 48 + 4 = 364.
+
+ولأن الصفحة RTL، العنصر بيبدأ من اليمين، فالزيادة بتطلع من **الشمال**.
+
+**الحل على الموقع كله:** مش كارت كارت، سطر واحد في الـ reset:
+
+~~~css
+*, *::before, *::after { box-sizing: border-box; }
+~~~
+
+**الغلطة الشائعة:** تعالجها بـ [[width: calc(100% - 52px)]]. هتشتغل، بس كل ما الـ padding يتغيّر الرقم هيتغيّر.
+
+~~~text الناتج
+على 360:
+             الأب    الكارت    طالع     overflow الصفحة
+قبل          312     364     52px     28px
+بعد          312     312     0px      0px
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شريط مايل بين جزئين في الصفحة: [[width: 106%; transform: rotate(-1.4deg)]]، وعامل scroll أفقي على الموبايل. حد اقترح [[html, body { overflow-x: hidden }]].`, done: R`قبل: [[scrollWidth]] كان 382 على شاشة 360. بعد [[overflow-x: clip]] على الـ section اللي فيه الشريط بس بقى 360، من غير ما تلمس الـ body (عشان الـ sticky يفضل شغال، شوف تمرين «جدول responsive»).`, sol: R`~~~live 180 180
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الشريط</title>
+<style>
+  body { margin: 0; font-family: system-ui; }
+  .band { overflow-x: clip; padding-block: 24px; }
+  .strip {
+    box-sizing: border-box;
+    width: 106%;
+    margin-inline-start: -3%;
+    padding: 12px;
+    background: #0f766e;
+    color: #fff;
+    text-align: center;
+    transform: rotate(-1.4deg);
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>العروض</h1>
+  <section class="band">
+    <div class="strip">خصم ٢٠٪ النهارده بس</div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**ليه مش** [[html, body]]**:** [[overflow-x: hidden]] على الصفحة بيحل الشكل، بس بيكسر أي [[position: sticky]] فيها، زي تمرين «جدول responsive». وهو كمان حل واسع لمشكلة في مكان واحد.
+
+**الحل المحدود:** [[overflow-x: clip]] على الـ section اللي فيه الشريط بس. [[clip]] بيقص من غير ما يعمل منطقة scroll.
+
+و [[padding-block]] عشان الشريط المايل ميتقصّش من فوق وتحت، لأن [[overflow-x: clip]] بيقص أفقي بس، بس لو كتبت [[overflow: clip]] هيقص الاتنين.
+
+و [[margin-inline-start: -3%]] زيادة صغيرة: بتوسّط الشريط، فالـ 6% الزيادة تطلع من الناحيتين بالتساوي.
+
+**الغلطة الشائعة:** تخلي الشريط [[width: 100%]] عشان تتجنب المشكلة. الزوايا المايلة هتبان فاضية في الجناب، وده سبب الـ 106%.
+
+~~~text الناتج
+على 360:
+scrollWidth قبل (من غير clip): 382
+scrollWidth بعد:               360
+sticky في نفس الصفحة بيشتغل: top = 0 بعد النزول
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** ٤ كروت حالة لجدول تمارين متخيل (مكتمل، ناقص، تحذير، راحة): فوق كل كارت شريط 4px بلون الحالة بـ [[::before]]، وخلفية الكارت نفس اللون فاتح جدًا، ولما الماوس ييجي عليه [[transform: translateY(-4px)]] وظل أكبر.`, done: R`الشريط جوه الكارت مش زايد عليه (الكارت ارتفاعه ثابت قبل وبعد الشريط، أو محسوب)، والـ hover مش بيحرّك الكروت اللي جنبه (اتأكد إن مكانهم ثابت)، والحالة مكتوبة كلام كمان مش لون بس.`, sol: R`~~~live 250 410
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جدول التمارين</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; max-width: 760px; margin-inline: auto; }
+  .status {
+    --c: #15803d;
+    --soft: #f0fdf4;
+    position: relative;
+    overflow: hidden;
+    padding: 20px 16px 16px;
+    background: var(--soft);
+    border-radius: 8px;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .status::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: 4px;
+    background: var(--c);
+  }
+  .status:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgb(0 0 0 / .15);
+  }
+  .status--miss { --c: #b91c1c; --soft: #fef2f2; }
+  .status--warn { --c: #a16207; --soft: #fefce8; }
+  .status--rest { --c: #1d4ed8; --soft: #eff6ff; }
+</style>
+</head>
+<body>
+<main>
+<h1>تمارين الأسبوع</h1>
+<div class="grid">
+  <article class="status"><h2>السبت</h2><p>مكتمل</p></article>
+  <article class="status status--miss"><h2>الأحد</h2><p>ناقص</p></article>
+  <article class="status status--warn"><h2>الاتنين</h2><p>تحذير</p></article>
+  <article class="status status--rest"><h2>التلات</h2><p>راحة</p></article>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+**اللي يفرق هنا:**
+
+- [[position: absolute]] على الشريط: مش بياخد مكان، فالكارت ارتفاعه مبيتغيّرش.
+- [[overflow: hidden]]: عشان الشريط ياخد انحناء الزوايا بتاع الكارت.
+- [[--c]] و [[--soft]]: كل modifier بيغيّر متغيرين بس.
+- [[transform]]: بيحرّك العنصر في الرسم، من غير ما يغيّر الـ layout، فالجيران مبيتحركوش. لو استخدمت [[margin-top: -4px]] الصف كله هيتهز.
+
+**الغلطة الشائعة:** الشريط بـ [[border-top: 4px solid]]. الحدود بتزوّد ارتفاع الكارت، والزوايا المدورة بتخلي طرفها رفيع.
+
+~~~text الناتج
+ارتفاع الكارت بالشريط 144.81px، ومن غير الشريط 144.81px
+مكان الكارت اللي جنبه قبل hover x=646 y=85.88، وبعده x=646 y=85.88
+الكارت نفسه طلع 4px
+أقل تباين لكلام الحالة: 19.2:1
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** لينك عليه [[:hover { border: 4px solid }]] ولينك تاني [[:hover { outline: 4px solid }]]، وبعد كل واحد كلمة. حط الماوس على كل واحد وقيس الكلمة اللي بعده اتحركت كام.`, done: R`مع border الكلمة اتحركت 8px (4 من كل ناحية) فالسطر بيترعش، ومع outline اتحركت صفر لأن الـ outline مش جزء من الـ box model. فالـ focus ring والـ hover اللي بيرسم حدود يبقوا outline أو [[box-shadow]].`, sol: R`~~~live 150 150
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الحدود</title>
+<style>
+  a { color: #1d4ed8; }
+  #a:hover { border: 4px solid; }
+  #b:hover { outline: 4px solid; }
+  .x { display: inline-block; }
+</style>
+</head>
+<body>
+<main>
+<h1>الفرق</h1>
+<p><a id="a" href="#one">لينك بحدود</a> <span class="x" id="ax">كلمة</span></p>
+<p><a id="b" href="#two">لينك بـ outline</a> <span class="x" id="bx">كلمة</span></p>
+</main>
+</body>
+</html>
+~~~
+
+**ليه الفرق:** الـ [[border]] جزء من الـ box model، فظهوره بيزوّد العرض 4 من كل ناحية، و الكلمة اللي بعده بتتزق. والـ [[outline]] بيترسم فوق الصفحة، برّه الحسابات خالص، فمحدش بيتحرك.
+
+**لو عايز حدود حقيقية من غير رعشة:** حط [[border: 4px solid transparent]] من الأول، وغيّر اللون بس في الـ hover. أو استخدم [[box-shadow: 0 0 0 4px]].
+
+**الغلطة الشائعة:** حلقة الـ focus بـ [[border]]. كل ما المستخدم يتنقل بـ Tab، الصفحة تتهز.
+
+~~~text الناتج
+الكلمة بعد اللينك بـ border: اتحركت 8px
+الكلمة بعد اللينك بـ outline: اتحركت 0px
+ارتفاع الفقرة قبل وبعد: 18 و 18 (اللينك inline فالحدود الرأسية مبتزقّش)
+~~~` },
+          ],
+          title: "كل عنصر صندوق: المساحة بتتحسب إزاي",
+          desc: R`كل عنصر في الصفحة صندوق من 4 طبقات من جوه لبرا: [[content]] (المحتوى)، و [[padding]] (مسافة جوه الحدود)، و [[border]] (الحدود)، و [[margin]] (مسافة برا بينه وبين اللي جنبه).
+
+الافتراضي [[box-sizing: content-box]]: الـ [[width]] للمحتوى بس، والـ padding والـ border بيتزودوا عليه. عشان كده كل مشروع بيبدأ بـ [[box-sizing: border-box]]، فالـ width يبقى العرض الكامل شامل الـ padding والـ border.`,
+          example: R`*, *::before, *::after {
+  box-sizing: border-box;
+}
+.card {
+  width: 300px;
+  padding: 16px;
+  border: 1px solid lightgray;
+  margin: 0 auto 24px;
+}
+.stack > * + * {
+  margin-top: 16px;
+}`,
+          try: R`اعمل div بـ [[width: 300px; padding: 20px; border: 5px solid]] وافتح DevTools › Computed: هتلاقي رسمة الصندوق بالأرقام، والعرض 350. ضيف [[box-sizing: border-box]] وشوفه بقى 300 والمحتوى صغر لـ 250.`,
+          flag: "script",
+          deep: {
+            why: "لو مش فاهم الصندوق، كل تصميم هيطلع بكسلات زيادة: عمودين كل واحد 50% ومعاهم padding مش هيقفوا جنب بعض. و border-box بيخلي الحساب زي ما دماغك بتفكر: العرض اللي كتبته هو العرض اللي هتشوفه.",
+            how: R`مع [[content-box]]: العرض الظاهر = width + الـ padding يمين وشمال + الـ border يمين وشمال. مع [[border-box]]: العرض الظاهر = width، والمحتوى هو اللي بيصغر. والـ margin برا الحساب في الحالتين.
+
+Margin collapse: الـ margin الرأسي بين عنصرين block فوق بعض مش بيتجمع، الأكبر بس اللي بيفضل. فقرة تحتها 24 واللي بعدها فوقها 16، المسافة 24 مش 40. وكمان الـ margin-top بتاع أول ابن ممكن «يخرج» من الأب لو الأب ملوش padding ولا border. ده مش بيحصل جوه flex أو grid، ولا في الـ margin الأفقي.
+
+[[margin: auto]] الأفقي على عنصر block ليه عرض بيقسّم المساحة الفاضية بالتساوي، فيتوسّط. و [[padding]] بالنسبة المئوية بيتحسب من عرض الأب، حتى الـ padding الرأسي.
+
+Tailwind بيحط [[box-sizing: border-box]] على كل حاجة في الـ Preflight بتاعه، عشان كده مش بتفكر فيه. و [[space-y-4]] في Tailwind نفس فكرة [[.stack]]، و [[gap]] في flex و grid أحسن من الاتنين.`,
+            when: "أول سطر في أي CSS بتكتبه من الصفر. وكل ما تلاقي حاجة أعرض من المتوقع أو مسافة غريبة، افتح رسمة الصندوق في DevTools.",
+            mistakes: R`تنسى إن الـ margin الرأسي بيعمل collapse فتفضل تزوّده وهو مش بيتغير. تحط [[width: 100%]] مع padding من غير border-box فيظهر scroll أفقي. وتستخدم margin للمسافات بين عناصر flex أو grid بدل [[gap]].`
+          },
+          teach: R`## الفكرة في سطرين
+
+كل عنصر صندوق من 4 طبقات، والـ CSS ده بيقول 3 حاجات: احسب العرض شامل الحشو والحدود، واعمل كارت عرضه 300 في النص، وحط مسافة 16 بين العناصر اللي جوه [[.stack]]. جرّبته في Chrome (headless) في نافذة عرضها 800 (والـ body من غير margin عشان الأرقام تبقى سهلة) على كارتين و 3 عناصر جوه stack.
+
+---
+
+## ١. الطبقات الأربعة
+
+~~~text الصندوق من برا لجوه
+┌──────────── margin ────────────┐
+│ ┌────────── border ──────────┐ │
+│ │ ┌──────── padding ───────┐ │ │
+│ │ │        content         │ │ │
+│ │ └────────────────────────┘ │ │
+│ └────────────────────────────┘ │
+└────────────────────────────────┘
+~~~
+
+| الطبقة | معناها | بتاخد لون الخلفية؟ |
+|---|---|---|
+| content | الكلام أو الأولاد | أيوه |
+| padding | مسافة جوه الحدود | أيوه |
+| border | الحدود نفسها | لونها هي |
+| margin | مسافة برا، بينه وبين اللي جنبه | لأ، شفافة دايمًا |
+
+---
+
+## ٢. [[*, *::before, *::after { box-sizing: border-box; }]]
+
+- [[*]]: كل العناصر. والفاصلة: «و». فالقاعدة على كل عنصر وكل [[::before]] و [[::after]].
+- [[box-sizing]]: الـ [[width]] بيقيس إيه بالظبط.
+
+قست الكارت (عرضه 300 و padding 16 و border 1):
+
+| | [[box-sizing]] | العرض على الشاشة | عرض المحتوى |
+|---|---|---|---|
+| مع السطر ده | [[border-box]] | 300 | 266 |
+| من غيره | [[content-box]] (الافتراضي) | 334 | 300 |
+
+- [[content-box]]: الـ 300 للمحتوى بس، والباقي بيتزوّد: 300 + 16×2 + 1×2 = 334.
+- [[border-box]]: الـ 300 هي العرض كله، والمحتوى بيصغر: 300 − 32 − 2 = 266.
+
+---
+
+## ٣. الكارت
+
+~~~text style.css
+.card {
+  width: 300px;
+  padding: 16px;
+  border: 1px solid lightgray;
+  margin: 0 auto 24px;
+}
+~~~
+
+### [[border: 1px solid lightgray]]
+
+اختصار لـ 3 قيم: التخانة، والشكل ([[solid]] خط متصل)، واللون.
+
+### [[margin: 0 auto 24px]]
+
+3 قيم معناها: فوق، والجنبين، وتحت.
+
+| الجزء | القيمة | اتقاس |
+|---|---|---|
+| فوق | 0 | الكارت الأول عند y = 0 |
+| يمين وشمال | [[auto]] | [[250px]] من كل ناحية |
+| تحت | 24px | المسافة بين الكارتين 24 |
+
+[[auto]] في الـ margin الأفقي بيقسم الفاضي بالتساوي: (800 − 300) ÷ 2 = 250، فالكارت بقى في النص. ومن غير border-box الكارت 334، فالـ margin بقى 233 من كل ناحية.
+
+---
+
+## ٤. [[.stack > * + *]]
+
+اقراه من اليمين للشمال:
+
+1. [[*]] الأخيرة: أي عنصر...
+2. [[+ *]]: ...قبله على طول أخ (عنصر تاني على نفس المستوى)...
+3. [[.stack >]]: ...وهو ابن مباشر لـ stack.
+
+يعني كل الأولاد **ما عدا الأول**. حطيت 3 divs جوه stack:
+
+| | margin-top للأولاد | المسافات بينهم |
+|---|---|---|
+| مع القاعدة | 0، 16، 16 | 16، 16 |
+| من غيرها | 0، 0، 0 | 0، 0 |
+
+الأول مخدش margin، فمفيش مسافة زيادة فوق الـ stack.
+
+---
+
+## ٥. الـ margin الرأسي بيتداخل (margin collapse)
+
+جرّبت عنصرين فوق بعض: الأول [[margin-bottom: 24px]] والتاني [[margin-top: 16px]]:
+
+| المكان | المسافة اللي اتقاست |
+|---|---|
+| جوه block عادي | 24 (الأكبر بس، مش 40) |
+| جوه [[display: flex]] | 40 (اتجمعوا) |
+
+وجرّبت [[<p style="margin-top: 30px">]] أول ابن جوه div ملوش padding ولا border: الـ p طلع لازق في أول الـ div (المسافة 0)، والـ 30 «خرجت» وبقت فوق الـ div نفسه. ده برضه margin collapse.
+
+---
+
+## ٦. التجربة اللي في «جرّب»
+
+[[width: 300px; padding: 20px; border: 5px solid]]:
+
+| [[box-sizing]] | [[offsetWidth]] | المحتوى |
+|---|---|---|
+| [[content-box]] | 350 | 300 |
+| [[border-box]] | 300 | 250 |
+
+[[offsetWidth]] = العرض شامل الـ padding والـ border (من غير الـ margin).
+
+---
+
+## الخلاصة
+
+| | العرض الظاهر |
+|---|---|
+| [[content-box]] | width + padding × 2 + border × 2 |
+| [[border-box]] | width بالظبط |
+
+- الـ margin برا الحساب دايمًا.
+- [[margin: 0 auto]] بيوسّط عنصر block ليه عرض.
+- الـ margin الرأسي بين عنصرين block بياخد الأكبر، وجوه flex أو grid بيتجمع. وفي flex و grid استخدم [[gap]].`,
+          lines: [
+            "على كل العناصر وكل before و after.",
+            "الـ width والـ height يشملوا الـ padding والـ border.",
+            "قفلة.",
+            R`قاعدة الكارت: أي عنصر عليه [[class="card"]].`,
+            "العرض الكلي 300 بالظبط (بسبب border-box). من غيرها كان هيبقى 334.",
+            "مسافة جوه الكارت من الـ 4 نواحي.",
+            R`حدود من كل ناحية: سُمكها [[1px]] وشكلها [[solid]] (خط متصل) ولونها رمادي فاتح، وبتتحسب جوه الـ 300 بسبب border-box.`,
+            R`فوق صفر، والجنبين [[auto]] (يتوسّط أفقي)، وتحت 24.`,
+            "قفلة.",
+            "أي عنصر جوه stack وقبله أخ: المسافة بين العناصر بس، مش قبل الأول.",
+            "16 بكسل فوق كل عنصر من التاني ورايح.",
+            "قفلة."
+          ],
+          sol: R`في Computed هتلاقي رسمة الصندوق: المحتوى 300 × (ارتفاع السطر)، والـ padding 20 من كل ناحية، والـ border 5، والـ margin 0. العرض اللي بيتشاف على الشاشة ([[offsetWidth]]) = 300 + 20×2 + 5×2 = [[350]].
+
+بعد [[box-sizing: border-box]]: [[offsetWidth]] بقى [[300]]، والمحتوى جوه الرسمة بقى 250 (300 − 40 − 10). يعني الـ width بقت تحسب الـ padding والـ border جواها بدل ما تزودهم.
+
+لو مشفتش فرق، اتأكد إن مفيش reset عندك (زي Tailwind أو الكود اللي في المثال) عامل border-box على كل حاجة أصلًا، فانت كده شايف 300 من الأول. ولو العرض طلع أكبر من 350، يبقى فيه scrollbar أو margin داخل في حسابك؛ الـ margin برا الصندوق ومش بيتحسب في العرض.`
+        },
+        {
+          cmd: "display",
+          ref: [
+            { t: "MDN: display", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/display" },
+            { t: "MDN: <display-legacy>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/display-legacy" },
+            { t: "MDN: <display-outside>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/display-outside" },
+            { t: "MDN: opacity", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/opacity" },
+            { t: "MDN: pointer-events", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/pointer-events" },
+            { t: "MDN: visibility", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/visibility" },
+            { t: "MDN: inset()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/basic-shape/inset" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** لينك جوه فقرة عليه [[padding: 10px; margin-top: 20px; margin-bottom: 20px]]. الفقرة هتطول؟ والفقرة اللي تحتها هتنزل؟`, done: R`لأ: ارتفاع الفقرة فضل 18 ومكان الفقرة اللي تحتها فضل زي ما هو، رغم إن Computed بيقول [[margin-top: 20px]]. الـ inline بيتجاهل الـ margin الرأسي، والـ padding بيترسم (خلفية اللينك كبرت) بس مش بيزق السطور فممكن يغطي على السطر اللي فوقه.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>inline</title>
+<style>
+  a { padding: 10px; margin-top: 20px; margin-bottom: 20px; background: #fde68a; }
+</style>
+</head>
+<body>
+<p id="p1">فقرة فيها <a href="#x">لينك</a> عادي.</p>
+<p id="p2">الفقرة اللي تحتها.</p>
+</body>
+</html>
+~~~
+
+**الإجابة:** لأ، الفقرة مش هتطول، واللي تحتها مش هتنزل.
+
+عناصر الـ inline بتتحط جوه خط الكلام. ارتفاع السطر بييجي من [[line-height]]، مش من مقاس العنصر. فـ:
+
+- الـ margin الرأسي: محسوب في Computed بس مالوش أي تأثير.
+- الـ padding الرأسي: بيترسم، والخلفية بتكبر، بس مبيزقّش حاجة. ولو كبر كفاية بيغطي السطر اللي فوقه.
+- الـ padding والـ margin **الأفقيين** بيشتغلوا عادي.
+
+**الحل:** [[display: inline-block]]: العنصر يفضل في السطر، بس يتعامل كصندوق كامل.
+
+**الغلطة الشائعة:** تزوّد margin-top للينك عشان ينزل، وتتحيّر ليه مبيتحركش.
+
+~~~text الناتج
+                       ارتفاع الفقرة     مكان الفقرة التانية
+inline (الافتراضي)      18             50
+من غير padding/margin   18             50
+inline-block            78             110
+
+margin-top في Computed: 20px   ومع كده مالوش أثر
+ارتفاع خلفية اللينك: 37px
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شيل سطر [[.modal[hidden] { display: none; }]] من المثال وخلي [[.modal { display: flex; }]]. المودال عليه [[hidden]] ولسه ظاهر!`, done: R`[[getComputedStyle(modal).display]] رجّع [[flex]]: الـ [[hidden]] شغله [[display: none]] من المتصفح نفسه بأضعف وزن، فأي [[display]] منك بيغلبه. رجّعت السطر (أو [[ [hidden] { display: none !important; }]] في الـ reset زي مكتبات كتير) والمودال اختفى.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>المودال</title>
+<style>
+  .modal { display: flex; position: fixed; inset: 0; background: rgb(0 0 0 / .5); }
+  .modal[hidden] { display: none; }
 </style>
 </head>
 <body>
 <main><h1>الصفحة</h1></main>
+<div class="modal" hidden><p>أهلًا</p></div>
 </body>
 </html>
 ~~~
 
-**ليه الوميض بيحصل:** [[useEffect]] بيشتغل بعد أول رسم. المتصفح بيرسم الصفحة بيضا، وبعدين الكود يحط [[.dark]]. وأي صفحة جاية من السيرفر هتعمل كده، لأن السيرفر مش عارف اختيار المستخدم.
+**السبب:** [[hidden]] مش سحر. المتصفح بيترجمه لقاعدة في ملفه الداخلي: [[[hidden] { display: none }]]. وملف المتصفح أضعف مكان في الـ cascade، فأي [[display]] تكتبه انت، حتى class واحدة، بيغلبها.
 
-**التصليح:** سكربت inline في أول [[<head>]]. السكربتات اللي من غير [[defer]] بتوقّف قراية الـ HTML، فالمتصفح مبيرسمش حاجة لحد ما يخلص. السكربت لازم يبقى inline: لو ملف خارجي، هتستنى الشبكة قبل أول رسم.
+**الحلين:**
 
-**المنطق:** لو فيه اختيار محفوظ خده، ولو مفيش اسأل [[matchMedia]].
+- [[.modal[hidden] { display: none; }]]: وزنها (0,2,0)، أكبر من [[.modal]].
+- سطر عام في الـ reset، وده بيغطي كل العناصر:
 
-**في React:** ضيف [[suppressHydrationWarning]] على [[<html>]]، لأن الكلاس اتغيّر قبل hydration.
-
-**الغلطة الشائعة:** تحط السكربت في آخر [[<body>]] أو تعمله [[defer]]، فيرجع الوميض. وتنسى [[try/catch]]، فخطأ في localStorage يوقّف الصفحة.
-
-~~~text الناتج
-ألوان الـ frames بعد الفتح (localStorage.theme = dark ، CPU 4x):
-
-قبل:  أحمر (الصفحة القديمة) ← 255,255,255 (أبيض) ← 11,17,32 (غامق)
-بعد:  أحمر (الصفحة القديمة) ← 11,17,32 (غامق)
-
-من غير اختيار محفوظ والجهاز dark: html عليه class="dark"
-~~~` },
-            { lvl: 'تطبيق', t: R`**مسألة:** لون البراند [[#0d9488]] كلام على الأبيض تباينه 3.74:1، والكلام الأبيض على زرار بنفس اللون برضه 3.74:1، والاتنين ساقطين. اعمل توكنين [[--brand]] و [[--on-brand]] (لون الكلام اللي فوق البراند) بقيمة للفاتح وقيمة للغامق [[#0b1120]]، من نفس عيلة اللون، بحيث الأربع حالات (براند على الخلفية، وكلام على الزرار، في الوضعين) كلها 4.5:1 أو أكتر.`, done: R`الأربع أرقام من مربع اللون في DevTools فوق 4.5. حل واحد اتقاس: [[#0f766e]] للفاتح (5.47 على الأبيض، و 5.47 للأبيض عليه)، و [[#2dd4bf]] للغامق بكلام [[#0b1120]] على الزرار (10.12 في الاتجاهين). والغامق مش «نفس اللون مقلوب»: البراند فيه أفتح.`, sol: R`~~~css tokens.css
-:root {
-  --bg: #ffffff;
-  --brand: #0f766e;
-  --on-brand: #ffffff;
-}
-:root.dark {
-  --bg: #0b1120;
-  --brand: #2dd4bf;
-  --on-brand: #0b1120;
-}
-.link { color: var(--brand); }
-.btn  { background: var(--brand); color: var(--on-brand); }
+~~~css
+[hidden] { display: none !important; }
 ~~~
 
-~~~view 150 150 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+ده من الأماكن القليلة اللي [[!important]] فيها معقولة، لأن [[hidden]] معناه واضح ومفيش سبب تغلبه.
+
+**الغلطة الشائعة:** تعمل [[modal.hidden = true]] من JavaScript، والمودال يفضل ظاهر، فتفتكر إن فيه باج في الكود. افتح Computed وشوف الـ [[display]].
+
+~~~text الناتج
+من غير السطر: display = flex   (ظاهر رغم hidden)
+مع .modal[hidden]: display = none
+بديل reset [hidden]: display = none
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صندوق عرضه 300px جواه ٣ [[span]] عليهم [[display: inline-block; width: 100px]] ومكتوبين في الـ HTML بمسافة بينهم. هيقفوا جنب بعض في سطر واحد؟`, done: R`لأ: التالت نزل سطر جديد (اتقاس: أول اتنين top واحد والتالت تحتهم)، لأن المسافات اللي بين الـ spans في الـ HTML بقت مسافات كلام حقيقية جنب الـ inline-block فالمجموع زاد عن 300. وده من أسباب إن الـ layouts بقت flex و grid.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصف</title>
 <style>
-/* صفحة التجربة بس */
-body { font-family: system-ui, sans-serif; margin: 1rem; background: var(--bg); color: #888; } :root.dark body { color: #cbd5e1; } :root:not(.dark) body { color: #0f172a; }
-.btn { border: 0; padding: 0.6rem 1.2rem; border-radius: 8px; font: inherit; font-weight: 700; }
-</style>
-<style>
-/* من الحل */
-:root {
-  --bg: #ffffff;
-  --brand: #0f766e;
-  --on-brand: #ffffff;
-}
-:root.dark {
-  --bg: #0b1120;
-  --brand: #2dd4bf;
-  --on-brand: #0b1120;
-}
-.link { color: var(--brand); }
-.btn  { background: var(--brand); color: var(--on-brand); }
+  .row { width: 300px; background: #f4f4f5; }
+  .row span { display: inline-block; width: 100px; background: #bfdbfe; }
 </style>
 </head>
 <body>
-<p><button type="button" onclick="document.documentElement.classList.toggle('dark')">بدّل الوضع الغامق</button></p>
-<p>كلام عادي فيه <a class="link" href="#">لينك بلون البراند</a> جوه الجملة.</p>
-<p><button class="btn" type="button">زرار بلون البراند</button></p>
-</body>
-</html>
-~~~
-
-**طريقة الحل:** الحساب بيقول إن اللون الواحد مش هينفع. [[#0d9488]] في المنطقة الوسط، فبيقع مع الأبيض من الناحيتين. فبنعمل حاجتين:
-
-- الفاتح: نغمّق البراند درجة ([[#0f766e]]). الكلام عليه أبيض.
-- الغامق: البراند لازم يبقى **أفتح** عشان يتشاف على خلفية غامقة ([[#2dd4bf]]). وبما إنه بقى فاتح، الكلام عليه لازم يبقى غامق. وعشان كده [[--on-brand]] توكن لوحده، مش أبيض ثابت.
-
-ونفس العيلة (teal)، فالهوية مش بتتغيّر.
-
-**الغلطة الشائعة:** تثبّت [[color: white]] على الزرار في الوضعين، فالزرار في الغامق يبقى أبيض على فاتح. أو تقلب اللون رياضيًا بدل ما تقيسه.
-
-~~~text الناتج
-الأصلي #0d9488 مع الأبيض:   3.74:1 ساقط
-
-                         التباين
-فاتح: براند على أبيض     5.47:1
-فاتح: أبيض على البراند   5.47:1
-غامق: براند على #0b1120  10.12:1
-غامق: #0b1120 على البراند 10.12:1
-~~~` },
-            { lvl: 'تطبيق', t: R`**refactor:** كارت فيه [[bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-800]] ومتكرر في ١٢ مكوّن. حوّله لطبقتين: متغيرات خام في [[:root]] و [[.dark]]، وبعدين [[@theme inline]] فيه [[--color-bg: var(--bg)]] وأخواتها، فالكلاس يبقى [[bg-bg text-fg border-line]] من غير ولا [[dark:]].`, done: R`[[grep -rc "dark:" src/components]] بيطلع صفر (أو بس للحاجات اللي فعلًا مختلفة، زي صورة ليها نسخة غامقة)، ولقطة الشاشة قبل وبعد في الوضعين متطابقة، وإضافة لون جديد بقت سطرين في ملف واحد.`, sol: R`~~~css in.css
-@import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
-
-:root {
-  --bg: var(--color-white);
-  --fg: var(--color-gray-900);
-  --line: var(--color-gray-200);
-}
-.dark {
-  --bg: var(--color-gray-950);
-  --fg: var(--color-gray-100);
-  --line: var(--color-gray-800);
-}
-
-@theme inline {
-  --color-bg: var(--bg);
-  --color-fg: var(--fg);
-  --color-line: var(--line);
-}
-~~~
-
-~~~html بعد
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>كارت</title><link rel="stylesheet" href="out.css"></head>
-<body class="p-6">
-<main>
-  <article class="rounded-xl border bg-bg p-6 text-fg border-line">
-    <h1 class="text-xl font-bold">كارت</h1>
-  </article>
-</main>
-</body>
-</html>
-~~~
-
-**الطبقتين:**
-
-1. **المتغيرات الخام** في [[:root]] و [[.dark]]: هي اللي بتتغيّر مع الثيم.
-2. **[[@theme inline]]**: بتعرّف Tailwind عليها. [[inline]] مهمة: من غيرها القيمة بتتحسب مرة على [[:root]] والكلاس [[.dark]] تحت مش بيأثر، زي ما شفنا في درس [[@theme]].
-
-الكلاس [[bg-bg text-fg border-line]] بقى بيقول معنى، والـ [[dark:]] اختفت. إضافة لون: سطر في [[:root]] وسطر في [[.dark]] وسطر في [[@theme inline]].
-
-**امتى تسيب [[dark:]]:** لما الحاجة مختلفة فعلًا، زي صورة ليها نسخة غامقة.
-
-**الغلطة الشائعة:** تعمل [[@theme]] من غير [[inline]]، فالوضع الفاتح يبان سليم والغامق مبيتغيرش.
-
-~~~text الناتج
-لقطة قبل وبعد في الوضع الفاتح: متطابقة byte بـ byte
-لقطة قبل وبعد في الوضع الغامق: متطابقة byte بـ byte
-grep -c "dark:" في الـ HTML بعد التحويل: 0
-~~~
-
-~~~view 130 130 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>كارت</title><style>
-/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
-@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid;--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-800:oklch(27.8% .033 256.848);--color-gray-900:oklch(21% .034 264.665);--color-gray-950:oklch(13% .028 261.692);--color-white:#fff;--spacing:.25rem;--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-bold:700;--radius-xl:.75rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-line{border-color:var(--line)}.bg-bg{background-color:var(--bg)}.p-6{padding:calc(var(--spacing) * 6)}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.text-fg{color:var(--fg)}}:root{--bg:var(--color-white);--fg:var(--color-gray-900);--line:var(--color-gray-200)}.dark{--bg:var(--color-gray-950);--fg:var(--color-gray-100);--line:var(--color-gray-800)}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}
-</style></head>
-<body class="p-6">
-<main>
-  <article class="rounded-xl border bg-bg p-6 text-fg border-line">
-    <h1 class="text-xl font-bold">كارت</h1>
-  </article>
-</main>
-</body>
-</html>
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** حط [[* { transition: background-color .4s, color .4s }]] ودوس زرار الثيم: كل عنصر بيتلوّن لوحده والصفحة «بتسيح». اعمل نسخة تانية فيها كلاس [[theme-switching]] على html بيقفل الـ transitions ([[.theme-switching * { transition: none !important }]])، يتحط قبل التبديل ويتشال بعد [[requestAnimationFrame]] مرتين. وقيس الفرق بـ [[document.getAnimations().length]] في الكونسول على طول بعد الضغطة.`, done: R`النسخة الأولى بتطلّع رقم أكبر من صفر (في صفحة فيها body و ٤ عناصر اتقاس 5 transitions شغالين مع بعض)، والتانية صفر والتبديل بيبان في frame واحد. وفهمت إن ده نفس اللي [[disableTransitionOnChange]] بيعمله في next-themes.`, sol: R`~~~live 230 230 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>تبديل نضيف</title>
-<style>
-  :root { --bg: #fff; --fg: #111; }
-  :root.dark { --bg: #0b1120; --fg: #f1f5f9; }
-  * { transition: background-color .4s, color .4s; }
-  .theme-switching * { transition: none !important; }
-  body { background: var(--bg); color: var(--fg); font-family: system-ui, sans-serif; }
-  .card { padding: 1rem; background: var(--bg); }
-</style>
-</head>
-<body>
-<main>
-  <h1>الثيم</h1>
-  <div class="card">واحد</div>
-  <div class="card">اتنين</div>
-  <button id="plain" type="button">تبديل عادي</button>
-  <button id="clean" type="button">تبديل نضيف</button>
-</main>
-<script>
-  const root = document.documentElement;
-  document.getElementById("plain").onclick = () => root.classList.toggle("dark");
-  document.getElementById("clean").onclick = () => {
-    root.classList.add("theme-switching");
-    root.classList.toggle("dark");
-    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theme-switching")));
-  };
-$__lt/script>
-</body>
-</html>
-~~~
-
-في الكونسول:
-
-~~~js console
-document.getElementById("plain").click(); document.getAnimations().length;
-document.getElementById("clean").click(); document.getAnimations().length;
-~~~
-
-**ليه «بتسيح»:** [[* { transition }]] معناها كل عنصر بيبدأ حركته لوحده. والعناصر اللي بتورث لونها بتتحرك كمان، فالنص ممكن يوصل بعد الخلفية بلحظة.
-
-**التصليح:** كلاس [[theme-switching]] بيقفل الـ transitions لحظة التبديل بس. بنشيله بعد [[requestAnimationFrame]] مرتين: الأولى قبل الرسم، والتانية بعد ما الرسم الجديد خلص. لو شيلته على طول، المتصفح هيدمج التغييرين ويبدأ الـ transition عادي.
-
-ده نفس اللي [[disableTransitionOnChange]] بيعمله في next-themes.
-
-**الغلطة الشائعة:** تستخدم [[setTimeout(…, 0)]] بدل الـ frames، أو تنسى تشيل الكلاس، فكل hover في الموقع يتجمد.
-
-~~~text الناتج
-تبديل عادي:  document.getAnimations().length = 8
-تبديل نضيف:  document.getAnimations().length = 0
-بعد الضغطة الكلاس اتشال: html class=""
-
-(صفحتك رقمها حسب عدد عناصرها.)
-~~~` },
-          ],
-          desc: R`في Tailwind v4 الـ [[dark:]] افتراضيًا بيتبع نظام التشغيل. عشان تخليه بزرار، غيّر الـ variant يبقى على كلاس: [[@custom-variant dark (&:where(.dark, .dark *));]]، وبعدين [[<html class="dark">]] يقلب كل حاجة.
-
-و [[next-themes]] في Next.js بيعمل الباقي: بيحط الكلاس، ويحفظ الاختيار في localStorage، ويتبع النظام لو المستخدم مختارش، ويشغّل script صغير قبل الرسم فمفيش وميض أبيض.`,
-          example: R`// globals.css
-@custom-variant dark (&:where(.dark, .dark *));
-// app/layout.tsx
-import { ThemeProvider } from "next-themes";
-<html lang="ar" dir="rtl" suppressHydrationWarning>
-  <body className="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-      {children}
-    </ThemeProvider>
-  </body>
-</html>
-// theme-toggle.tsx ("use client")
-const { resolvedTheme, setTheme } = useTheme();
-<button onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}>غيّر الثيم</button>`,
-          try: R`طبّق ده في مشروع Next، واختار dark واعمل refresh: مفيش وميض أبيض. وفي DevTools › Application › Local Storage شوف مفتاح [[theme]]. وبعدين امسح [[suppressHydrationWarning]] وشوف التحذير في الكونسول.`,
-          flag: "script",
-          deep: {
-            why: "المستخدمين متوقعين dark mode، وأي موقع بيفتح أبيض ثانية وبعدين يغمق بيبان مكسور. المشكلة إن السيرفر مش عارف اختيار المستخدم (محفوظ في المتصفح)، فلازم حاجة تحط الكلاس قبل ما الصفحة تترسم.",
-            how: R`[[@custom-variant dark (&:where(.dark, .dark *))]] بيغيّر معنى [[dark:bg-x]] لـ «لو العنصر نفسه أو جد ليه عليه [[.dark]]». و [[:where]] عشان الـ variant ميزودش specificity، فـ [[dark:bg-x]] يفضل بنفس وزن أي utility (كلاس واحد). ولو بتستخدم attribute: [[&:where([data-theme=dark], [data-theme=dark] *)]].
-
-next-themes بيحقن [[<script>]] صغير في أول الصفحة بيتنفذ قبل الرسم: بيقرا localStorage (أو [[prefers-color-scheme]] لو system) ويحط الكلاس على html، وكمان [[color-scheme]] عشان الـ scrollbars وحقول الفورم تغمق هي كمان. بس السيرفر رسم html من غير الكلاس، فـ React هيلاقي فرق وقت الـ hydration، و [[suppressHydrationWarning]] بيسكّت التحذير ده على العنصر ده بس.
-
-أي حاجة شكلها بيعتمد على الثيم في JavaScript (أيقونة شمس أو قمر) مش معروفة على السيرفر. فالمكون لازم يستنى لحد ما يتعمل mount: [[useEffect(() => setMounted(true), [])]]، وقبلها يعرض placeholder بنفس المقاس.
-
-الطريقة الأنضف من [[dark:]] على كل عنصر: متغيرات. [[:root { --bg: white }]] و [[.dark { --bg: black }]] وتوكن [[--color-bg]] في [[@theme inline]]، فتكتب [[bg-bg]] بس وهو يتغير لوحده، ودا اللي shadcn بيعمله.
-
-وفيه حل من غير script خالص: cookie فيها الثيم، والسيرفر يحط الكلاس في الـ HTML نفسه. في مشروع حقيقي كان كده: الـ layout بيقرا الـ cookie ويحط [[data-theme]] على html، فمفيش وميض ولا فرق hydration.`,
-            when: R`أي موقع أو داشبورد. ولو الموقع landing بسيط، [[dark:]] الافتراضي اللي بيتبع النظام ممكن يكفي من غير زرار.`,
-            mistakes: R`تنسى [[suppressHydrationWarning]]. تعرض أيقونة الثيم من غير mounted فتظهر غلط وبعدين تتقلب. تكتب [[darkMode: "class"]] في tailwind.config.js في مشروع v4 ومفيش حاجة بتحصل: v4 مش بيقرا الملف ده غير بـ [[@config]]. و [[dark:]] على كل عنصر في المشروع بدل متغيرات، فأي لون جديد يتنسي في وضع من الاتنين.`
-          },
-          teach: R`## كلاس على [[<html>]] بيقلب الصفحة كلها
-
-الفكرة كلها: [[dark:]] يشتغل لما يبقى فيه كلاس [[dark]] فوق، و next-themes هو اللي بيحط الكلاس ده ويشيله ويفتكره. حطينا المثال في مشروع Next.js 16.4 (Tailwind 4.3.3، و next-themes 0.4.6)، وعملنا build وفتحناه في Chrome مرة والجهاز light ومرة dark (Playwright بيحاكي إعداد النظام).
-
----
-
-## ١. [[globals.css]]: [[@custom-variant dark (&:where(.dark, .dark *));]]
-
-- [[@custom-variant]]: أمر Tailwind v4 بيعرّف variant جديد (أو يغيّر واحد موجود). اسمه هنا [[dark]].
-- [[&]]: العنصر اللي عليه الكلاس نفسه.
-- [[:where(.dark, .dark *)]]: «العنصر لو عليه [[.dark]]، أو لو جوه حد عليه [[.dark]]». والمسافة قبل [[*]] = «جوه، في أي عمق».
-- [[:where()]] specificity بتاعها صفر، فالكلاس يفضل بوزن كلاس واحد زي أي utility.
-
-القاعدة اللي طلعت في الـ CSS:
-
-~~~text من الـ CSS الناتج
-.dark\:bg-gray-950:where(.dark,.dark *){background-color:var(--color-gray-950)}
-~~~
-
-ومن غير السطر ده، [[dark:]] في v4 بيتبع [[prefers-color-scheme]] بتاع الجهاز، والزرار مش هيأثر.
-
-## ٢. [[app/layout.tsx]]
-
-### [[import { ThemeProvider } from "next-themes";]]
-
-package بيدير الثيم: يحط الكلاس، ويحفظ الاختيار، ويقرا إعداد الجهاز.
-
-### [[<html lang="ar" dir="rtl" suppressHydrationWarning>]]
-
-[[lang]] و [[dir]] للعربي. و [[suppressHydrationWarning]] هنتكلم عنه في الخطوة ٥.
-
-### [[<body className="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">]]
-
-لونين لكل حاجة: [[bg-white]] و [[text-gray-900]] في العادي، و [[dark:bg-gray-950]] و [[dark:text-gray-100]] لما [[.dark]] تبقى على html.
-
-### [[<ThemeProvider ...>]]
-
-| الـ prop | يعني |
-|---|---|
-| [[attribute="class"]] | حط الثيم ككلاس على html ([[class="dark"]]). البديل [[data-theme]] |
-| [[defaultTheme="system"]] | لو المستخدم لسه مختارش، امشي على الجهاز |
-| [[enableSystem]] | اسمح بـ [[system]] كاختيار |
-| [[disableTransitionOnChange]] | وقف كل الـ transitions لحظة التبديل، عشان كل لون ميتحركش لوحده |
-
-و [[{children}]] = الصفحة نفسها.
-
-## ٣. [[theme-toggle.tsx]]
-
-الملف لازم يبدأ بـ [["use client"]] لأن الزرار فيه [[onClick]] و hook، ودول بيشتغلوا في المتصفح بس.
-
-- [[const { resolvedTheme, setTheme } = useTheme();]]: [[useTheme]] hook بيرجّع object، والـ [[{ }]] بتطلّع منه اتنين بأساميهم.
-- [[resolvedTheme]]: الثيم الفعلي، [[light]] أو [[dark]]. حتى لو الاختيار [[system]]، ده بيقولك النتيجة.
-- [[setTheme("dark")]]: يغيّر الثيم ويحفظه.
-- [[resolvedTheme === "dark" ? "light" : "dark"]]: الـ [[? :]] اسمه ternary: «لو dark خليه light، وإلا خليه dark».
-
----
-
-## ٤. اللي حصل في المتصفح
-
-### الجهاز light، أول مرة
-
-~~~text الناتج
-html class   = "...variable light"
-html style   = "color-scheme: light;"
-localStorage theme = null
-body background    = rgb(255, 255, 255)
-~~~
-
-([[...variable]] ده كلاس الخط من درس next/font، ملوش علاقة.) ومفيش [[theme]] في localStorage لأن المستخدم لسه مختارش، فالثيم جاي من الجهاز.
-
-### ضغطنا الزرار
-
-~~~text الناتج
-html class   = "...variable dark"
-html style   = "color-scheme: dark;"
-localStorage theme = "dark"
-body background    = lab(1.90334 0.278696 -5.48866)    ← gray-950
-~~~
-
-[[color-scheme: dark]] بيقول للمتصفح يغمّق حاجاته هو كمان: الـ scrollbar وحقول الفورم.
-
-### refresh
-
-الكلاس كان [[dark]] و [[color-scheme: dark]] **قبل** ما الصفحة تخلص تحميل (قسناه لحظة [[readyState = "interactive"]]، قبل ما React يشتغل). يعني مفيش لحظة بيضا.
-
-### الجهاز dark، أول مرة
-
-فتح [[dark]] لوحده من غير ما نضغط حاجة. ضغطنا الزرار: بقى [[light]] واتحفظ، ومع إن الجهاز لسه dark الخلفية بيضا. ده بالظبط شغل [[@custom-variant]]: [[dark:]] بقى بيسمع للكلاس مش للجهاز.
-
-### إزاي مفيش وميض؟
-
-الـ HTML اللي جاي من السيرفر:
-
-~~~text الناتج
-<html lang="ar" dir="rtl" class="pW5XIG_variable">
-<body class="..."><div hidden=""></div><script>(...)("class","theme","system",null,["light","dark"],null,true,true)</script>
-~~~
-
-السيرفر مش عارف اختيارك، فبعت html **من غير** dark. بس أول حاجة في الـ body [[<script>]] صغير بيتنفّذ قبل ما أي حاجة تترسم: بيقرا [[localStorage.getItem("theme")]]، ولو مفيش أو [[system]] بيسأل [[matchMedia("(prefers-color-scheme: dark)")]]، ويحط الكلاس والـ [[color-scheme]] على html.
-
-## ٥. [[suppressHydrationWarning]]
-
-React لما بيشتغل في المتصفح (hydration) بيقارن الـ HTML اللي جه من السيرفر باللي هو كان هيرسمه. والـ script غيّر html قبله. شلنا الـ prop وشغّلنا [[next dev]] والجهاز dark:
-
-~~~text الـ Console
-A tree hydrated but some attributes of the server rendered HTML didn't match the client properties.
-  <html
-    lang="ar"
-    dir="rtl"
-+   className="cairo_..._variable"
--   className="cairo_..._variable dark"
--   style={{color-scheme:"dark"}}
-  >
-~~~
-
-[[+]] = اللي React متوقعه، و [[-]] = اللي لقاه فعلًا. الفرق في [[className]] و [[style]] بتوع html بس، ودول متوقعين. رجّعنا الـ prop: الخطأ اختفى. وهو بيسكّت html نفسه بس، مش اللي جواه.
-
-## الخلاصة
-
-| الحتة | شغلتها |
-|---|---|
-| [[@custom-variant dark (...)]] | [[dark:]] يسمع للكلاس مش للجهاز |
-| [[attribute="class"]] | next-themes يحط [[class="dark"]] على html |
-| [[defaultTheme="system"]] + [[enableSystem]] | من غير اختيار: زي الجهاز |
-| الـ script في أول الـ body | يحط الكلاس قبل الرسم، فمفيش وميض |
-| [[localStorage.theme]] | الاختيار المحفوظ |
-| [[suppressHydrationWarning]] | يسكّت فرق html المتوقع |
-| [[resolvedTheme]] | الثيم الفعلي للزرار |`,
-          lines: [
-            R`[[dark:]] يشتغل لما [[.dark]] تبقى على العنصر أو أي جد ليه، بدل ما يتبع النظام.`,
-            R`بنستورد [[ThemeProvider]] من next-themes: المكوّن اللي بيحط الكلاس على html ويحفظ الاختيار ويقرا إعداد الجهاز.`,
-            R`[[suppressHydrationWarning]] لأن next-themes هيحط كلاس على html قبل React، فالسيرفر والمتصفح هيختلفوا في الحتة دي بس.`,
-            R`لونين لكل حاجة: أبيض وكلام غامق في العادي، و [[dark:bg-gray-950]] و [[dark:text-gray-100]] لما [[.dark]] تبقى فوق.`,
-            R`[[attribute="class"]] يحط [[.dark]]، والافتراضي النظام، و [[disableTransitionOnChange]] يمنع كل الـ transitions تشتغل مع بعض وقت التبديل.`,
-            R`الصفحة كلها جوه الـ provider، فأي مكوّن تحت يقدر ينادي [[useTheme()]] ويعرف الثيم.`,
-            R`قفلة الـ provider: أي حاجة برّاه متقدرش تستخدم [[useTheme]] وهترجع قيم فاضية.`,
-            R`قفلة الـ body اللي عليه ألوان الوضعين.`,
-            R`قفلة الـ html اللي عليه الكلاس اللي بيتغيّر.`,
-            R`[[resolvedTheme]] = الثيم الفعلي (لو system بيقولك light ولا dark).`,
-            R`الزرار بيبص على الثيم الفعلي ويحط عكسه بـ [[setTheme]]، و next-themes بيحفظه في localStorage.`
-          ],
-          sol: R`بعد ما تختار dark وتعمل refresh: الصفحة بتفتح غامقة من أول frame، من غير ولا لمحة بيضا. لو فتحت Elements هتلاقي على [[<html>]] ‏[[class="dark"]] ومعاها [[style="color-scheme: dark;"]]، ودول اتحطوا بـ script صغير next-themes بيحطه قبل ما الصفحة تترسم. وفي Application › Local Storage هتلاقي مفتاح [[theme]] وقيمته [[dark]] (أو [[light]]، ولو لسه مختارتش هتلاقيه مش موجود أو [[system]]).
-
-لما تمسح [[suppressHydrationWarning]] وتعمل refresh وانت على dark: في الـ Console خطأ hydration من React بيقول إن attributes الـ HTML اللي جاي من السيرفر مش زي اللي على العميل، وهتلاقي فيه [[class]] و [[style]] بتوع الـ html. ده لأن السيرفر بعت html من غير class، والـ script غيّرها قبل React. الـ prop ده بيسكّت التحذير للعنصر ده بس، مش لأولاده.
-
-لو لسه فيه وميض أبيض: اتأكد إن [[@custom-variant dark]] مكتوب (من غيره [[dark:]] بيشتغل على ثيم الجهاز مش على الكلاس)، وإن [[attribute="class"]] على الـ provider. ولو الزرار مش بيعمل حاجة أول مرة، غالبًا بتقرا [[theme]] (اللي ممكن يبقى [[system]]) بدل [[resolvedTheme]].`
-        },
-        {
-          cmd: "logical properties",
-          ref: [
-            { t: "MDN: Basic concepts of logical properties and values", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Logical_properties_and_values/Basic_concepts" },
-            { t: "Tailwind CSS: Logical properties and RTL", url: "https://tailwindcss.com/docs/hover-focus-and-other-states#rtl-support" },
-            { t: "MDN: dir attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/dir" },
-            { t: "MDN: padding-left", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-left" },
-            { t: "MDN: padding-right", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-right" },
-          ],
-          title: "مكون واحد يشتغل عربي وإنجليزي من غير rtl: في كل حتة",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]: [[.a { margin-inline-start: 2rem }]] و [[.b { translate: 20px 0 }]] و [[.c { background: linear-gradient(to right, red, blue) }]] و [[.d { border-start-start-radius: 1rem }]]. كل واحدة هتأثر على أنهي ناحية؟ اكتب، وبعدين اتأكد من Computed في DevTools.`, done: R`[[.a]] يمين، و [[.b]] يمين برضه (translate مش logical)، و [[.c]] الأحمر لسه شمال (الـ gradient مش بيتقلب)، و [[.d]] الركن اللي فوق على اليمين: Computed بيقول [[border-top-right-radius: 16px]] و [[border-top-left-radius: 0px]].`, sol: R`~~~live 120 120 test.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>logical</title>
-<style>
-  body { margin: 0; width: 400px; }
-  .a { margin-inline-start: 2rem; }
-  .b { translate: 20px 0; }
-  .c { background: linear-gradient(to right, red, blue); height: 2rem; }
-  .d { border-start-start-radius: 1rem; }
-</style>
-</head>
-<body>
-<div class="a">a</div>
-<div class="b">b</div>
-<div class="c">c</div>
-<div class="d">d</div>
-</body>
-</html>
-~~~
-
-**القاعدة:** الـ logical بتتقلب مع [[dir]]، والفيزيائية لأ.
-
-- [[.a]]: [[margin-inline-start]] هو بداية السطر. في rtl البداية يمين.
-- [[.b]]: [[translate]] إحداثيات شاشة، فالموجب يمين في أي لغة. يعني في rtl مش بيتقلب.
-- [[.c]]: [[to right]] اتجاه فيزيائي، فالأحمر شمال في أي لغة.
-- [[.d]]: [[border-start-start-radius]] يعني بداية البلوك مع بداية السطر، وده الركن اللي فوق على اليمين في rtl.
-
-**الغلطة الشائعة:** تفتكر إن rtl بيقلب كل حاجة. هو بيقلب ترتيب المحتوى والخصائص الـ logical. الـ transform والـ gradient والأيقونات لأ.
-
-~~~text الناتج
-.a   margin-right: 32px ، margin-left: 0px
-.b   اتحرك يمين 20px (زي ltr بالظبط)
-.c   linear-gradient(to right, rgb(255, 0, 0), rgb(0, 0, 255))
-.d   border-top-right-radius: 16px ، border-top-left-radius: 0px
-~~~` },
-            { lvl: 'تطبيق', t: R`**refactor:** كارت تعليق مكتوب بـ [[padding-left]] و [[border-left]] و [[text-align: left]] و [[float: right]] لزرار الرد، و badge بـ [[position: absolute; right: 8px]]. حوّل كل خاصية لـ logical (أو Tailwind: [[ps-*]] و [[border-s]] و [[text-start]] و [[inset-e-*]]) واقلب [[dir]] على html.`, done: R`مفيش ولا [[left]] ولا [[right]] في الـ CSS، ولقطة الشاشة في RTL مراية للقطة LTR بالظبط (البادج في الركن التاني، والخط على الناحية التانية)، من غير ولا سطر [[[dir=rtl]]].`, sol: R`~~~live 200 200 comment.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تعليق</title>
-<style>
-  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; }
-  .comment { position: relative; max-width: 24rem; padding-inline-start: 1rem; border-inline-start: 4px solid #0f766e; text-align: start; }
-  .comment h2 { margin: 0; font-size: 1rem; }
-  .reply { float: inline-end; }
-  .badge { position: absolute; inset-block-start: 0; inset-inline-end: 8px; padding-inline: .5rem; background: #0f766e; color: #fff; border-radius: 1rem; font-size: .75rem; }
-</style>
-</head>
-<body>
-<main>
-  <h1>التعليقات</h1>
-  <article class="comment">
-    <span class="badge">جديد</span>
-    <h2>سارة</h2>
-    <p>الدرس ده حلو جدًا.</p>
-    <button class="reply" type="button">رد</button>
-  </article>
-</main>
-</body>
-</html>
-~~~
-
-| قبل | بعد |
-|---|---|
-| [[padding-left]] | [[padding-inline-start]] |
-| [[border-left]] | [[border-inline-start]] |
-| [[text-align: left]] | [[text-align: start]] |
-| [[float: right]] | [[float: inline-end]] |
-| [[right: 8px]] | [[inset-inline-end: 8px]] |
-| [[top: 0]] | [[inset-block-start: 0]] |
-
-وفي Tailwind: [[ps-4]] و [[border-s-4]] و [[text-start]] و [[float-end]] و [[inset-e-2]].
-
-**ليه:** كل خاصية بقت بتوصف علاقتها بالنص مش بالشاشة، فمفيش حاجة تتكتب مرتين.
-
-**الغلطة الشائعة:** تحوّل [[left]] لـ [[inset-inline-end]] بالغلط. [[left]] في ltr بداية، فبيبقى [[start]]. فكّر في الاتجاه الأصلي للكود.
-
-~~~text الناتج
-عدد كلمة left أو right في الصفحة: 0
-
-         الحد               البادج عن الكارت      زرار الرد
-rtl      يمين 4px           8px من الشمال         على الشمال
-ltr      شمال 4px           8px من اليمين         على اليمين
-
-المسافات متطابقة مراية: 280.95 و 8 ، و 300.98 و 0.
-axe صفر في الاتجاهين.
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقع فيه [[[dir=rtl] .space-x-4 > :not(:last-child) { margin-right: 0; margin-left: 1rem }]] و [[html[dir=rtl] .text-left { text-align: right !important }]] عشان يعكس Tailwind بإيده. امسح الـ overrides دي كلها واستخدم اللي بيتقلب لوحده.`, done: R`[[grep -c "dir=rtl"]] على ملف الـ CSS بيطلع صفر، وعدد [[!important]] نقص، و [[space-x-4]] بقت [[gap-4]] و [[text-left]] بقت [[text-start]]، والصفحة في اللغتين زي ما كانت.`, sol: R`امسح الـ overrides كلها، وخلي الـ CSS كده:
-
-~~~css style.css
-.row { display: flex; gap: 1rem; }
-.title { text-align: start; }
-~~~
-
-~~~html قبل وبعد
-<!-- قبل -->
-<div class="flex space-x-4">…</div>
-<h1 class="text-left">…</h1>
-
-<!-- بعد -->
-<div class="flex gap-4">…</div>
-<h1 class="text-start">…</h1>
-~~~
-
-~~~view 210 210 الشكل في المتصفح (من ملفات الحل)
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
-<style>
-.row { display: flex; gap: 1rem; }
-.title { text-align: start; }
-</style>
-<!-- قبل -->
-<div class="flex space-x-4">…</div>
-<h1 class="text-left">…</h1>
-
-<!-- بعد -->
-<div class="flex gap-4">…</div>
-<h1 class="text-start">…</h1>
-</body></html>
-~~~
-
-~~~bash
-grep -c "dir=rtl" style.css
-grep -c "!important" style.css
-~~~
-
-**ليه:** [[gap]] مسافة بين العناصر، مش margin على ناحية، فملوش اتجاه أصلًا. و [[text-start]] بيتبع [[dir]].
-
-كل override من دول كان بيصلّح نتيجة، والـ logical بيشيل السبب. و [[!important]] كان لازم بس عشان يكسب الكلاس الأصلي.
-
-**الغلطة الشائعة:** تسيب [[space-x-4]] وتضيف [[rtl:space-x-reverse]]. دي كانت حلول قديمة، و [[gap]] أبسط في flex و grid.
-
-~~~text الناتج
-grep -c "dir=rtl" style.css     0
-grep -c "!important" style.css  0
-
-(CSS الملف ده سطرين، والشكل في اللغتين بيطلع نفس اللي اتقاس في التمرين اللي قبله.)
-~~~` },
-            { lvl: 'تطبيق', t: R`**مسألة:** في صفحة عربي اكتب الجملتين دول: «المستخدم Sara_99! كسب» و «كلمني على +20 100 000 0000». شوف الـ ! بتظهر فين والرقم بيتقري إزاي، وصلّحهم بـ [[<bdi>]] للاسم و [[dir="ltr"]] للرقم.`, done: R`قبل التصليح الـ ! ظهرت شمال الاسم «!Sara_99» والرقم اتلخبط («100» بقت شمال «+20»)، وبعده الاسم بقى «Sara_99!» والرقم بالترتيب. اتأكدنا بمكان كل حرف من [[Range.getBoundingClientRect()]] في Chrome 156: الـ ! كانت شمال الـ S وبقت يمين الـ 9.`, sol: R`~~~live 300 300 bidi.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>اتجاه مختلط</title>
-<style>body { font: 1.25rem system-ui; }</style>
-</head>
-<body>
-<main>
-  <h1>اتجاه مختلط</h1>
-  <p id="a">المستخدم Sara_99! كسب</p>
-  <p id="b">المستخدم <bdi>Sara_99!</bdi> كسب</p>
-  <p id="c">كلمني على +20 100 000 0000</p>
-  <p id="d">كلمني على <span dir="ltr">+20 100 000 0000</span></p>
-</main>
-</body>
-</html>
-~~~
-
-**بيحصل إيه:** خوارزمية الـ bidi بتقسم السطر لحتت حسب اتجاه كل حرف. الحروف اللاتيني اتجاهها قوي (LTR)، والعربي قوي (RTL)، بس الـ [[!]] والمسافة والـ [[+]] محايدين، فبياخدوا اتجاه اللي حواليهم.
-
-- [[Sara_99!]]: الـ [[!]] جت بين لاتيني وعربي، فاتحسبت على العربي واتنقلت لشمال الاسم.
-- [[<bdi>]] بيعزل الاسم، فالـ [[!]] تفضل جزء منه. استخدمه مع أي كلام جاي من المستخدم، لأنك مش عارف لغته.
-- التليفون: الأرقام «ضعيفة»، والمسافات بينها محايدة، فالمجموعات اتعكس ترتيبها. [[dir="ltr"]] بيثبّت الاتجاه.
-
-**الغلطة الشائعة:** تصلّحها بـ [[text-align]]. ده بيحرّك السطر، مش ترتيب الحروف جواه.
-
-~~~text الناتج
-مكان الحروف (left بالـ px من Range.getBoundingClientRect):
-
-                  !          S          آخر 9
-قبل               1112.9     1118.6     1175.6    (الـ ! شمال الـ S)
-بعد bdi           1180.7     1112.9     1169.9    (الـ ! يمين الـ 9)
-
-                  +          أول 1      آخر 0
-قبل               1160.5     1101.1     1047      (+20 يمين و 100 شماله)
-بعد dir="ltr"     1014.7     1055.4     1163.4    (بالترتيب من الشمال)
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** drawer بيطلع من ناحية النهاية: [[inset-inline-end: 0]]، ومقفول بـ [[translate]] برا الشاشة. الـ translate مش logical، فاستخدم متغير [[--dir]] (‏1 في LTR و -1 في RTL بـ [[:dir(rtl)]]) و [[translate: calc(100% * var(--dir)) 0]].`, done: R`في الإنجليزي بيطلع من اليمين وفي العربي من الشمال، والصفحة وهو مقفول مفيهاش scroll أفقي ([[document.documentElement.scrollWidth === document.documentElement.clientWidth]] بيرجّع [[true]] في الاتجاهين)، و Escape بيقفله.`, sol: R`~~~live 120 120 drawer.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>درج</title>
-<style>
-  :root { --dir: 1; }
-  :root:dir(rtl) { --dir: -1; }
-  body { margin: 0; font-family: system-ui, sans-serif; }
-  .drawer { position: fixed; inset-block: 0; inset-inline-end: 0; inline-size: min(20rem, 85vw); padding: 1rem; box-sizing: border-box;
-            background: #fff; box-shadow: 0 0 1rem #0005; transition: translate .25s, visibility 0s .25s;
-            translate: calc(100% * var(--dir)) 0; visibility: hidden; }
-  .drawer.open { translate: 0 0; visibility: visible; transition: translate .25s, visibility 0s; }
-  @media (prefers-reduced-motion: reduce) { .drawer { transition: none; } }
-</style>
-</head>
-<body>
-<main>
-  <h1>الرئيسية</h1>
-  <button id="open" type="button" aria-expanded="false" aria-controls="drawer">القايمة</button>
-</main>
-<aside id="drawer" class="drawer" aria-label="القايمة">
-  <button id="close" type="button">قفل</button>
-  <p><a href="#a">المنتجات</a></p>
-</aside>
-<script>
-  const drawer = document.getElementById("drawer");
-  const open = document.getElementById("open");
-  const close = document.getElementById("close");
-  function set(isOpen) {
-    drawer.classList.toggle("open", isOpen);
-    open.setAttribute("aria-expanded", String(isOpen));
-    (isOpen ? close : open).focus();
-  }
-  open.addEventListener("click", () => set(true));
-  close.addEventListener("click", () => set(false));
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && drawer.classList.contains("open")) set(false);
-  });
-$__lt/script>
-</body>
-</html>
-~~~
-
-**ليه [[--dir]]:** [[inset-inline-end]] بيحط الدرج صح في اللغتين، بس [[translate]] إحداثيات شاشة. فمحتاجين نضرب في إشارة: 1 في ltr، و -1 في rtl. [[:root:dir(rtl)]] بيقرا الاتجاه الفعلي، حتى لو اتغيّر بـ [[dir]] من JavaScript.
-
-**[[visibility: hidden]]:** مقفول بس لسه في الصفحة، فمن غيرها Tab هيدخل جواه. والـ transition بتاعها مختلف في الاتجاهين:
-
-- الفتح [[visibility 0s]]: يبان فورًا، عشان [[close.focus()]] يشتغل. أول تجربة كتبت [[visibility .25s]] في الاتجاهين، والـ focus مرحش للزرار.
-- القفل [[visibility 0s .25s]]: يستخبى بعد ما الحركة تخلص.
-
-**ليه مفيش scroll أفقي:** الدرج [[position: fixed]]، والعناصر الـ fixed برا الشاشة مبتزوّدش [[scrollWidth]] هنا.
-
-**الغلطة الشائعة:** تستخدم [[transform: translateX(100%)]] ثابتة، فالدرج في العربي يطلع يمين الشاشة فوق المحتوى.
-
-~~~text الناتج
-          مفتوح (left - right)   مقفول left     الـ focus مفتوح/مقفول
-rtl       0 - 306                -306           close / open
-ltr       54 - 360               360            close / open
-
-scrollWidth === clientWidth: true في الاتجاهين ، مفتوح ومقفول
-Escape بيقفل ، axe صفر
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN صفحة «CSS logical properties and values» هات الاسم الـ logical لـ [[width]] و [[height]] و [[border-top-left-radius]] و [[top]] و [[float: left]] و [[text-align: right]]، وشوف في وثائق Tailwind v4 فيه كلاس لكل واحد ولا لأ.`, done: R`جدول ٦ صفوف: [[inline-size]] و [[block-size]] و [[border-start-start-radius]] و [[inset-block-start]] و [[float: inline-start]] و [[text-align: end]]، وجنب كل واحد كلاس Tailwind أو «مفيش، استخدم arbitrary value».`, sol: R`**الإجابة من MDN، والكلاسات اتبنت بـ Tailwind 4.3.4 واتأكدت من [[out.css]]:**
-
-| الفيزيائي | الـ logical | Tailwind |
-|---|---|---|
-| [[width]] | [[inline-size]] | [[inline-1]] |
-| [[height]] | [[block-size]] | [[block-1]] |
-| [[border-top-left-radius]] | [[border-start-start-radius]] | [[rounded-ss-lg]] |
-| [[top]] | [[inset-block-start]] | [[inset-bs-0]] |
-| [[float: left]] | [[float: inline-start]] | [[float-start]] |
-| [[text-align: right]] | [[text-align: end]] | [[text-end]] |
-
-الأتنين الأخيرين بنفترض صفحة ltr: [[left]] بداية و [[right]] نهاية.
-
-**ليه ده مهم مش بس للعربي:** [[inline-size]] هو «عرض» في الكتابة الأفقية، و«ارتفاع» في الكتابة الرأسية. الاسم بيوصف اتجاه النص.
-
-**الغلطة الشائعة:** تفتكر إن [[start-0]] و [[inset-s-0]] واحد في كل حاجة. الاتنين [[inset-inline-start]]، بس القيمة الأولى من [[--spacing]] والتانية [[0px]] مباشرة. والشكل واحد لما تبقى صفر.
-
-~~~text الناتج
-.inline-1      inline-size: var(--spacing)
-.block-1       block-size: var(--spacing)
-.rounded-ss-lg border-start-start-radius: var(--radius-lg)
-.inset-bs-0    inset-block-start: 0px
-.float-start   float: inline-start
-.text-end      text-align: end
-~~~` },
-          ],
-          desc: R`بدل [[left]] و [[right]] استخدم start و end: [[ms-4]] (margin-inline-start) بدل [[ml-4]]، و [[pe-2]] بدل [[pr-2]]، و [[text-start]] بدل [[text-left]]، و [[inset-s-0]] بدل [[left-0]]، و [[rounded-s-lg]] و [[border-e]]. دول بيتقلبوا لوحدهم مع [[dir]].
-
-والحاجات اللي ليها اتجاه (سهم «التالي»، أيقونة رجوع) اقلبها بـ [[rtl:-scale-x-100]]. أما أيقونة زي البحث أو الساعة فسيبها.`,
-          example: R`<div className="flex items-center gap-3 ps-4 pe-2">
-  <img className="size-10 rounded-full" src="/u.jpg" alt="" />
-  <p className="text-start">محمد</p>
-  <span className="ms-auto">من 5 دقايق</span>
+<div class="row" id="a">
+  <span>١</span>
+  <span>٢</span>
+  <span>٣</span>
 </div>
-<button className="inline-flex items-center gap-2">
-  التالي <ArrowRight className="size-4 rtl:-scale-x-100" />
-</button>
-<aside className="border-e ps-6">...</aside>
-<span className="absolute top-2 inset-e-2">جديد</span>
-<span dir="ltr">+20 100 000 0000</span>`,
-          try: R`اعمل المكون ده وقلّب [[dir]] على html بين rtl و ltr: كل حاجة هتتقلب صح. بعدين غيّر [[ms-auto]] لـ [[ml-auto]] وشوف الوقت لزق في الناحية الغلط في العربي.`,
-          flag: "script",
-          deep: {
-            why: R`موقع عربي وإنجليزي بـ left و right معناه نسختين من كل مكون، أو [[rtl:]] على كل عنصر. الـ logical properties بتخلي الكود يوصف «البداية والنهاية» مش «الشمال واليمين»، والمتصفح يحوّلهم حسب اتجاه الصفحة.`,
-            how: R`في CSS: [[margin-inline-start]] و [[padding-inline-end]] و [[inset-inline-start]] و [[border-inline-end]] و [[text-align: start]]. الـ inline = اتجاه الكتابة (أفقي في العربي والإنجليزي)، والـ block = الاتجاه العمودي عليه (فوق وتحت). فـ [[margin-block]] = فوق وتحت، و [[padding-inline]] = الجنبين.
-
-في Tailwind: [[ms-*]] و [[me-*]] و [[ps-*]] و [[pe-*]] و [[inset-s-*]] و [[inset-e-*]] و [[rounded-s-*]] و [[rounded-e-*]] و [[border-s]] و [[border-e]] و [[text-start]] و [[text-end]]. و [[mx-*]] و [[px-*]] أصلًا متماثلين فمش فارقين. ([[start-*]] و [[end-*]] للـ position بقوا deprecated من v4.2 لصالح [[inset-s-*]] و [[inset-e-*]].)
-
-اللي مش بيتقلب لوحده: [[translate-x]] (الرقم الموجب دايمًا يمين)، و [[rotate]]، والـ gradients ([[bg-linear-to-r]])، والظل اللي ليه إزاحة أفقية، و [[background-position]]. دول محتاجين [[rtl:]]: [[rtl:-translate-x-1]] أو [[rtl:bg-linear-to-l]].
-
-الأيقونات: اللي معناها اتجاه (أسهم التالي والسابق، ورجوع، وإرسال، والـ chevrons في الـ breadcrumb) بتتقلب. واللي بتمثل حاجة حقيقية (ساعة، وبحث، و play في مشغل فيديو، وعلامة صح) متتقلبش. في مشروع حقيقي أيقونات الأسهم كلها كانت [[rtl:-scale-x-100]]، والحركة عند الـ hover [[rtl:group-hover:-translate-x-1]]، والأرقام والأوقات عليها [[dir="ltr"]]. و shadcn فيه [[--rtl]] بيحوّل مكوناته لـ logical لوحده.`,
-            when: "أي مشروع ممكن يبقى فيه عربي، حتى لو دلوقتي إنجليزي بس. عوّد إيدك على ms و pe من الأول، مفيش أي تكلفة.",
-            mistakes: R`[[ml-2]] للمسافة بين أيقونة وكلام، وفي العربي الأيقونة تلزق في الكلام والمسافة تروح الناحية التانية (أحسن [[gap-2]] على الأب). تقلب كل الأيقونات فالساعة تلف بالعكس. و [[translate-x]] في animation أو toggle من غير [[rtl:]]. وساعات الحل المقبول [[dir="ltr"]] على العنصر ده بس، لو شكله مش مرتبط باللغة.`
-          },
-          teach: R`## «البداية» و «النهاية» بدل «شمال» و «يمين»
-
-كل كلاس في المثال بيقول «من ناحية البداية» أو «من ناحية النهاية»، والمتصفح بيعرف البداية فين من [[dir]]: في [[rtl]] البداية يمين، وفي [[ltr]] شمال. حطينا المثال في صفحة Vite (Tailwind 4.3.3) جوه صندوق عرضه 600 و [[relative]]، و [[ArrowRight]] من lucide-react، وقسنا كل حاجة في Chrome مرة بـ [[dir="rtl"]] على html ومرة [[ltr]]. الأرقام تحت مكان العنصر من الطرف الشمال للصندوق (من - لـ).
-
----
-
-## ١. الكلاسات بتطلّع إيه في CSS
-
-~~~text من الـ CSS الناتج
-.ps-4{padding-inline-start:calc(var(--spacing) * 4)}
-.pe-2{padding-inline-end:calc(var(--spacing) * 2)}
-.ms-auto{margin-inline-start:auto}
-.ml-auto{margin-left:auto}
-.text-start{text-align:start}
-.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}
-.inset-e-2{inset-inline-end:calc(var(--spacing) * 2)}
-~~~
-
-- **inline** = اتجاه السطر (الجنبين). و **block** = فوق وتحت.
-- [[s]] = start (البداية)، و [[e]] = end (النهاية).
-- [[ml-auto]] الوحيد اللي فيه [[left]] صريحة، فمش بيتقلب.
-
-## ٢. الصف: [[<div className="flex items-center gap-3 ps-4 pe-2">]]
-
-- [[flex items-center]]: العناصر جنب بعض ومتوسّطين رأسيًا. والـ flex نفسه بيمشي مع [[dir]]: أول عنصر عند البداية.
-- [[gap-3]]: 12px بين كل عنصرين، من غير ما تحدد ناحية.
-- [[ps-4]] و [[pe-2]]: 16px من البداية و 8px من النهاية.
-
-| | [[rtl]] | [[ltr]] |
-|---|---|---|
-| [[padding-right]] | 16px | 8px |
-| [[padding-left]] | 8px | 16px |
-
-## ٣. الصورة والاسم والوقت
-
-~~~text App.tsx
-<img className="size-10 rounded-full" src="/u.jpg" alt="" />
-<p className="text-start">محمد</p>
-<span className="ms-auto">من 5 دقايق</span>
-~~~
-
-- [[size-10]]: 40×40px. و [[rounded-full]]: دايرة. و [[alt=""]]: صورة للزينة، قارئ الشاشة يتجاهلها.
-- [[text-start]]: الكلام على ناحية البداية. القيمة المحسوبة فضلت [[start]] في الحالتين، والمتصفح بيترجمها.
-- [[ms-auto]]: margin من ناحية البداية بـ [[auto]]. في الـ flex الـ [[auto]] بياكل كل المساحة الفاضية، فبيزق العنصر لآخر الصف.
-
-| العنصر | [[rtl]] | [[ltr]] |
-|---|---|---|
-| الصورة | 543 - 583 (يمين) | 17 - 57 (شمال) |
-| «محمد» | 495 - 531 | 69 - 105 |
-| الوقت بـ [[ms-auto]] | **9 - 84** (أقصى الشمال) | 516 - 591 (أقصى اليمين) |
-| الوقت بـ [[ml-auto]] | **460 - 535** (لازق في الاسم) | 516 - 591 |
-
-السطر الأخير هو الغلطة: [[ml-auto]] في [[ltr]] بيدّي نفس النتيجة بالظبط، فاللي بيجرّب بالإنجليزي بس مش هيشوف المشكلة. في [[rtl]] الـ margin الشمال زق الوقت يمين ناحية الاسم.
-
-## ٤. زرار التالي: [[rtl:-scale-x-100]]
-
-~~~text App.tsx
-<button className="inline-flex items-center gap-2">
-  التالي <ArrowRight className="size-4 rtl:-scale-x-100" />
-</button>
-~~~
-
-- [[ArrowRight]]: سهم بيشاور يمين، يعني «لقدام» في الإنجليزي.
-- [[-scale-x-100]]: [[scale-x]] = تكبير على المحور الأفقي، و [[100]] = 100٪، والسالب = اعكسه مراية.
-- [[rtl:]]: بس لما الصفحة RTL.
-
-| | [[rtl]] | [[ltr]] |
-|---|---|---|
-| [[scale]] المحسوب | [[-1 1]] (معكوس، بيشاور شمال) | [[none]] |
-
-والـ selector اللي طلع في Tailwind 4.3.3:
-
-~~~text من الـ CSS الناتج
-.rtl\:-scale-x-100:where(:is(:lang(ar),:lang(he),:lang(fa),...),[dir=rtl],[dir=rtl] *){...}
-~~~
-
-يعني [[rtl:]] بيشتغل لو العنصر جوه [[dir="rtl"]] **أو** جوه [[lang]] لغة بتتكتب من اليمين (عربي، عبري، فارسي...). عشان كده خلي [[lang]] و [[dir]] على html متفقين.
-
-## ٥. [[<aside className="border-e ps-6">]]
-
-خط فاصل على ناحية النهاية، و 24px padding من البداية:
-
-| | [[rtl]] | [[ltr]] |
-|---|---|---|
-| border شمال / يمين | 1px / 0 | 0 / 1px |
-| padding شمال / يمين | 0 / 24px | 24px / 0 |
-
-## ٦. الشارة: [[absolute top-2 inset-e-2]]
-
-- [[absolute]]: مكانها محسوب من أقرب أب [[relative]] (الصندوق).
-- [[top-2]]: 8px من فوق.
-- [[inset-e-2]]: 8px من ناحية النهاية ([[inset-inline-end]]).
-
-| | [[rtl]] | [[ltr]] |
-|---|---|---|
-| مكانها | 9 - 40 (الركن الشمال) | 560 - 591 (الركن اليمين) |
-| [[left]] المحسوب | 8px | 559.266px |
-| [[right]] المحسوب | 559.266px | 8px |
-
-## ٧. [[<span dir="ltr">+20 100 000 0000</span>]]
-
-جربنا نفس الرقم جوه سطر عربي مرتين، وقرينا ترتيب الحروف على الشاشة من الشمال لليمين:
-
-~~~text الناتج
-من غير dir:    0000 000 100 20+
-dir="ltr":     +20 100 000 0000
-~~~
-
-من غير [[dir]]، المتصفح اعتبر كل مجموعة أرقام حتة لوحدها في سطر RTL، فرتّبهم من اليمين للشمال والـ [[+]] راحت للآخر. [[dir="ltr"]] على العنصر ده بس بيخليه يتكتب شمال ليمين صح.
-
-## الخلاصة
-
-| بدل | استخدم | CSS |
-|---|---|---|
-| [[ml-*]] / [[mr-*]] | [[ms-*]] / [[me-*]] | [[margin-inline-start/end]] |
-| [[pl-*]] / [[pr-*]] | [[ps-*]] / [[pe-*]] | [[padding-inline-start/end]] |
-| [[left-*]] / [[right-*]] | [[inset-s-*]] / [[inset-e-*]] | [[inset-inline-start/end]] |
-| [[border-l]] / [[border-r]] | [[border-s]] / [[border-e]] | [[border-inline-start/end]] |
-| [[text-left]] / [[text-right]] | [[text-start]] / [[text-end]] | [[text-align: start/end]] |
-
-- الأيقونات اللي معناها اتجاه: [[rtl:-scale-x-100]].
-- جرّب دايمًا في الاتجاهين، لأن الغلط مش بيبان في [[ltr]].`,
-          lines: [
-            "padding من البداية 16 ومن النهاية 8. في العربي البداية يمين.",
-            R`صورة البروفايل: مقاس ثابت ودايرة، ومالهاش أي اتجاه فمش محتاجة logical.`,
-            "الكلام محاذي للبداية مهما كانت اللغة.",
-            R`[[ms-auto]] يزق الوقت لآخر الصف: شمال في العربي، يمين في الإنجليزي.`,
-            R`قفلة الصف؛ الـ [[gap-3]] اللي عليه أصلًا مالوش اتجاه فبيشتغل في اللغتين.`,
-            R`زرار «التالي»: [[inline-flex]] و [[gap-2]] بين الكلمة والسهم، من غير margin على ناحية معينة.`,
-            R`السهم لليمين في الإنجليزي، و [[rtl:-scale-x-100]] يقلبه مراية في العربي.`,
-            R`قفلة الزرار؛ ترتيب الكلمة والسهم بيتقلب لوحده مع [[dir]] لأنه flex.`,
-            "خط فاصل على ناحية النهاية، و padding من البداية.",
-            R`شارة في ركن النهاية فوق. [[inset-e-2]] من v4.2 بدل [[end-2]].`,
-            "رقم التليفون LTR جوه صفحة عربي."
-          ],
-          sol: R`مع [[dir="rtl"]]: الصورة على اليمين وجنبها «محمد»، و «من 5 دقايق» لازقة في أقصى الشمال، والـ padding الأكبر (16px) ناحية اليمين، وسهم «التالي» معكوس بيشاور شمال، والـ border بتاع الـ aside على الشمال، والشارة «جديد» في الركن الشمال فوق. قلّب لـ [[ltr]]: كل ده اتعكس (الصورة شمال، والوقت أقصى اليمين، والسهم يمين)، من غير ولا [[rtl:]] ولا سطر زيادة. رقم التليفون بيفضل [[+20 100 000 0000]] في الحالتين.
-
-بعد ما تغيّر [[ms-auto]] لـ [[ml-auto]] في العربي: «من 5 دقايق» بقت لازقة في «محمد» والفراغ كله راح على الطرف الشمال. قست ده في صفحة عرضها 600: مع [[ms-auto]] الوقت كان من 8 لـ 82px (أقصى الشمال)، ومع [[ml-auto]] بقى من 409 لـ 483 جنب الاسم. لأن [[ml-auto]] = [[margin-left]] دايمًا، والوقت في rtl آخر عنصر وعلى الشمال أصلًا، فالـ margin زقّه لليمين ناحية الاسم. في الـ ltr التغيير مش هيبان لأن start = left، وده بالظبط ليه الغلط ده بيعدّي على اللي بيجرّب بالإنجليزي بس.`
-        },
-        {
-          cmd: "next/font",
-          ref: [
-            { t: "Next.js: Font optimization", url: "https://nextjs.org/docs/app/getting-started/fonts" },
-            { t: "Next.js: Font module API", url: "https://nextjs.org/docs/app/api-reference/components/font" },
-            { t: "MDN: font-display", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/font-display" },
-            { t: "MDN: size-adjust", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/size-adjust" },
-          ],
-          title: "خط عربي بيتحمّل بسرعة ومن غير ما الصفحة تتنط",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** خط بيوصل بعد ٤ ثواني على نت بطيء. المستخدم هيشوف إيه في أول ٣ ثواني مع كل قيمة من [[font-display]]: [[block]] و [[swap]] و [[fallback]] و [[optional]]؟ وأنهي واحدة الخط ممكن ميظهرش خالص في أول زيارة؟ اكتب جدول، وبعدين جرّب بـ DevTools › Network › Slow 3G و Disable cache.`, done: R`الجدول: [[block]] كلام مخفي لحد ٣ ثواني تقريبًا وبعدين الاحتياطي، و [[swap]] الاحتياطي على طول، و [[fallback]] لحظة صغيرة مخفي وبعدين الاحتياطي ومبيبدّلش لو الخط اتأخر كتير، و [[optional]] الاحتياطي وغالبًا مبيبدّلش في أول زيارة. وفي التجربة شفت [[optional]] بيظهر الخط بس بعد refresh (من الـ cache).`, sol: R`~~~css fonts.css
-/* غيّر font-display بين block و swap و fallback و optional */
-@font-face {
-  font-family: Cairo;
-  src: url(/cairo-ar.woff2) format("woff2");
-  font-display: swap;
-}
-body { font-family: Cairo, Arial, sans-serif; }
-~~~
-
-**الجدول:**
-
-| القيمة | أول ٣ ثواني | لو الخط جه بعد ٤ ثواني |
-|---|---|---|
-| [[block]] | كلام مخفي | بيبدّل للخط |
-| [[swap]] | الاحتياطي على طول | بيبدّل للخط |
-| [[fallback]] | لحظة صغيرة مخفي، وبعدين الاحتياطي | مبيبدّلش |
-| [[optional]] | لحظة صغيرة مخفي، وبعدين الاحتياطي | مبيبدّلش، والخط بيتخزن للزيارة الجاية |
-
-**الفكرة:** كل قيمة عبارة عن فترتين: فترة block (مخفي)، وفترة swap (مسموح يبدّل). [[optional]] مفيهاش swap تقريبًا، فلو الخط مجاش في أول لحظة خلاص. الخط الأساسي في موقع عربي بياخد [[swap]]، و [[optional]] لو الثبات أهم من شكل الخط.
-
-**الغلطة الشائعة:** تستخدم [[block]] لخط النص، فالموبايل البطيء يشوف صفحة فاضية ٣ ثواني. وفي تجربة [[optional]] لازم تعمل reload من غير ما تقفل الكاش.
-
-~~~text الناتج
-الخط اتأخر 4 ثواني (Chrome 156). نص = عدد بكسلات غامقة في اللقطة:
-
-           500ms     2000ms    3700ms     5500ms     7500ms
-block      مخفي      مخفي      692        1041       1041
-swap       692       692       692        1041       1041
-fallback   692       692       692        692        692
-optional   692       692       692        692        692
-
-692 = الاحتياطي ، 1041 = الخط الحقيقي.
-في الزيارة التانية بكاش مع optional: عرض الجملة 201.2 ← 241.8 (الخط ظهر)
-~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس صفحة مقال عربي ٣ مرات: (أ) [[@import url(...)]] لخط من Google جوه ملف الـ CSS، و (ب) [[<link>]] في الـ head ومعاه [[preconnect]]، و (ج) ملف woff2 من موقعك و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] و [[font-display: swap]]. قيس بـ Lighthouse (Mobile) و Network.`, done: R`جدول ٣ صفوف فيه FCP و LCP وعدد الطلبات لدومين تاني. في (أ) الـ waterfall فيه سلسلة ٣ خطوات (CSS بتاعك ← CSS جوجل ← الخط)، وفي (ج) صفر طلبات برا الموقع والخط بيبدأ يتحمّل مع الـ HTML.`, sol: R`~~~css a.css
-@import url("https://fonts.googleapis.com/css2?family=Cairo&display=swap");
-body { font-family: Cairo, sans-serif; }
-~~~
-
-~~~html (ب) في الـ head
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo&display=swap">
-~~~
-
-~~~html (ج) في الـ head
-<link rel="preload" href="/cairo-ar.woff2" as="font" type="font/woff2" crossorigin>
-<style>
-  @font-face {
-    font-family: Cairo;
-    src: url(/cairo-ar.woff2) format("woff2");
-    font-display: swap;
-    unicode-range: U+0600-06FF;
-  }
-  body { font-family: Cairo, sans-serif; }
-</style>
-~~~
-
-~~~bash
-npx lighthouse http://localhost:4000/c --quiet --only-categories=performance --throttling-method=devtools --output=json --output-path=c.json
-~~~
-
-**ليه (ج) الأسرع:**
-
-- (أ): المتصفح لازم يحمّل [[a.css]]، يلاقي [[@import]]، يطلب CSS جوجل، يلاقي الخط، يطلبه. ٣ خطوات متسلسلة ودومينين جداد.
-- (ب): بنشيل خطوة، و [[preconnect]] بيفتح الاتصال بدري، بس لسه فيه دومينين.
-- (ج): كله من نفس الدومين والاتصال مفتوح، و [[preload]] بيبدأ الخط مع الـ HTML.
-
-و [[crossorigin]] لازم على preload الخط حتى لو من نفس الموقع: الخطوط بتتطلب بوضع CORS، ومن غيره المتصفح بيحمّله مرتين.
-
-**الغلطة الشائعة:** تحط [[@import]] في أول CSS عشان أسهل. وده اللي next/font بيحله: بيحمّل الخط وقت الـ build ويقدّمه من موقعك.
-
-~~~text الناتج
-Lighthouse 13.6 ، مرتين لكل طريقة:
-
-                    FCP و LCP          طلبات برا الموقع
-(أ) @import         2.2 s ، 3.1 s      3 (googleapis و gstatic)
-(ب) link            2.5 s ، 2.3 s      3 (googleapis و gstatic)
-(ج) من موقعك        1.2 s ، 1.0 s      0
-
-الصفحة خفيفة، فالـ LCP = الـ FCP في كل تشغيلة. والفرق بين (أ) و (ب) هنا
-جوه تذبذب الشبكة، أما (ج) فأسرع بوضوح.
-~~~` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** عرّفنا خطين بنفس الاسم: ملف عربي بـ [[unicode-range: U+0600-06FF]] وملف لاتيني بـ [[unicode-range: U+0000-00FF]]. صفحة فيها كلام عربي بس: المتصفح هينزّل كام ملف؟ اكتب، وبعدين افتح Network › Font.`, done: R`نزّل الاتنين، مش العربي بس! السبب المسافة: [[U+0020]] جوه الـ range اللاتيني، وأي صفحة فيها مسافة. ولما غيّرنا اللاتيني لـ [[U+0041-005A, U+0061-007A]] (حروف بس) نزل العربي لوحده. اتقاس في Chrome 156 بعدّ طلبات الخطوط.`, sol: R`~~~live 120 120 test.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>unicode-range</title>
-<style>
-  @font-face { font-family: C; src: url(/ar.woff2) format("woff2"); unicode-range: U+0600-06FF; }
-  @font-face { font-family: C; src: url(/lat.woff2) format("woff2"); unicode-range: U+0000-00FF; }
-  body { font-family: C, sans-serif; }
-</style>
-</head>
-<body><p>كلام عربي بس</p></body>
+</body>
 </html>
 ~~~
 
-**الإجابة:** ملفين، مش واحد.
+**الإجابة:** لأ، التالت هينزل. السطر الجديد والمسافات بين الـ spans في الـ HTML بقت مسافة كلام واحدة. والـ inline-block بيقف في السطر زي الحروف، فالمسافة بتتحسب. والمجموع: 100 + مسافة + 100 + مسافة + 100، وده أكبر من 300.
 
-**ليه:** المتصفح بينزّل الملف لو الصفحة فيها حرف جوه الـ range بتاعه. [[U+0000-00FF]] فيها [[U+0020]]، وده المسافة. وأي صفحة عربي فيها مسافات.
+**الحلول القديمة** كانت [[font-size: 0]] على الأب، أو تلزق الـ tags. كلها ترقيعات.
 
-**التصليح:** ضيّق الـ range للحروف بس: [[U+0041-005A, U+0061-007A]]. وهتحتاج تفكر في الأرقام و [[@]] لو عايزهم من الخط اللاتيني.
+**الحل الحديث:**
 
-**الغلطة الشائعة:** تفتكر إن [[unicode-range]] زي [[lang]]، فالصفحة العربي تجيب العربي. هو بيقارن بالحروف الموجودة فعليًا.
+~~~css
+.row { display: flex; }
+.row span { width: 100px; }
+~~~
+
+**الغلطة الشائعة:** تعمل [[width: 33%]] فوق بعض وتتفاجئ بنفس المشكلة. وعرض المسافة نفسه بيعتمد على الخط، فالرقم هيتغيّر من صفحة للتانية.
 
 ~~~text الناتج
-U+0000-00FF:                 /ar.woff2 و /lat.woff2
-U+0041-005A, U+0061-007A:    /ar.woff2 بس
+inline-block:
+top للتلاتة: 8 , 8 , 26   التالت نزل سطر
+عرض المسافة: 4px
+
+flex:
+top للتلاتة: 8 , 8 , 8   في سطر واحد
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[html[dir=rtl] * { font-family: "Cairo" !important }]]، فبلوكات الكود في صفحة الشرح طلعت بخط Cairo مش mono. وفيه label بـ [[text-transform: uppercase; letter-spacing: .18em]] متطبّق على العربي والإنجليزي. صلّح الاتنين: الخط متغير على [[body]] بيتورّث، والـ label بقاعدة [[:lang(ar)]] بتصفّر الـ letter-spacing.`, done: R`Computed font-family بتاع [[<code>]] بيبدأ بخط mono، و [[!important]] اتمسحت، والـ label العربي letter-spacing بتاعه [[normal]]. ملاحظة اتقاست: Chrome 156 أصلًا مش بيطبّق letter-spacing على العربي (عرض «مبرمجين» فضل 114.3px بيه ومن غيره، و «Coders» زاد من 96.9 لـ 135.3)، بس متصفحات تانية أو نسخ قديمة ممكن تقطّع الحروف، فالتصفير لسه صح.`, sol: R`~~~live 160 160 index.html
+            { lvl: 'تطبيق', t: R`**أشكال:** شريط خطوات طلب (١ اتطلب، ٢ بيتحضّر، ٣ في الطريق، ٤ وصل): كل خطوة دايرة 32px فيها الرقم ([[display: inline-grid; place-items: center]])، وبينهم خط 40×2px [[inline-block]]، والخطوات اللي خلصت لونها مختلف.`, done: R`الدواير والخطوط على نفس الخط بالظبط (الـ top واحد أو [[vertical-align: middle]])، والرقم في نص الدايرة، والشريط كله في سطر واحد على 360px (لو مش كفاية: الخطوط تقصر)، والخطوة الحالية عليها [[aria-current="step"]].`, sol: R`~~~live 140 140
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>خطوط</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متابعة الطلب</title>
 <style>
-  :root { --font-sans: "Cairo", system-ui, sans-serif; --font-mono: ui-monospace, Consolas, monospace; }
-  body { font-family: var(--font-sans); }
-  code, pre { font-family: var(--font-mono); }
-  .label { text-transform: uppercase; letter-spacing: .18em; }
-  .label:lang(ar) { letter-spacing: normal; }
+  body { font-family: system-ui; margin: 16px; }
+  ol { list-style: none; padding: 0; margin: 0; white-space: nowrap; text-align: center; }
+  li { display: inline; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .step {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e4e4e7;
+    color: #18181b;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+  .line {
+    display: inline-block;
+    width: clamp(12px, 8vw, 40px);
+    height: 2px;
+    background: #d4d4d8;
+    vertical-align: middle;
+  }
+  .done .step { background: #0f766e; color: #fff; }
+  .done .line { background: #0f766e; }
+  [aria-current="step"] .step { outline: 3px solid #0f766e; outline-offset: 2px; }
 </style>
 </head>
 <body>
 <main>
-  <h1>الشرح</h1>
-  <p>استخدم <code>npm install</code> وبعدين شغّل.</p>
-  <span id="ar" class="label">مبرمجين</span>
-  <span id="en" class="label" lang="en">Coders</span>
+<h1>طلبك</h1>
+<ol aria-label="حالة الطلب">
+  <li class="done"><span class="step">١</span><span class="sr">اتطلب</span><span class="line"></span></li>
+  <li class="done"><span class="step">٢</span><span class="sr">بيتحضّر</span><span class="line"></span></li>
+  <li aria-current="step"><span class="step">٣</span><span class="sr">في الطريق</span><span class="line"></span></li>
+  <li><span class="step">٤</span><span class="sr">وصل</span></li>
+</ol>
 </main>
 </body>
 </html>
 ~~~
 
-**التصليح الأول:** [[html[dir=rtl] * { font-family: "Cairo" !important }]] بيضرب كل عنصر مباشرة، فبيغلب الوراثة وأي قاعدة تانية. لما المتغير يتحط على [[body]]، العناصر بتورثه، و [[code]] يقدر يكتب خطه عادي.
+**اللي بيخلّيه يقف على خط واحد:**
 
-**التصليح التاني:** [[.label:lang(ar)]] بيطابق أي عنصر لغته عربي، حتى لو اللغة جاية من [[<html lang="ar">]]. و [[lang="en"]] على الـ span بيخرجه منها. فالإنجليزي بياخد 0.18em، والعربي [[normal]].
+- [[display: inline-grid]]: الدايرة بتقف في السطر، وجواها grid يوسّط الرقم.
+- [[vertical-align: middle]] على الاتنين: بدونها الخط 2px يقف على خط الكلام تحت، مش في نص الدايرة.
+- [[clamp(12px, 8vw, 40px)]]: على الموبايل الخطوط بتقصر، والشريط يفضل في سطر واحد.
+- [[white-space: nowrap]]: ممنوع النزول سطر.
+- [[aria-current="step"]]: قارئ الشاشة يعرف الخطوة الحالية، وبرضه بنستخدمها في الـ CSS.
+- [[.sr]]: اسم الخطوة نص حقيقي مخفي بالشكل بس، فقارئ الشاشة يقراه.
 
-**ليه:** الحروف العربي موصولة، والمسافات بينها بتقطّع الوصلة في المتصفحات اللي بتطبّقها. وزي ما اتقاس في Chrome 156 المتصفح نفسه بيتجاهلها، بس مش كل المتصفحات كده.
-
-**الغلطة الشائعة:** تكتب [[:lang(ar) .label]]. ده معناه «label جوه أي عنصر عربي»، و [[<html>]] عربي، فالإنجليزي كمان يتصفّر. جرّبتها في الأول وطلعت كده: [[letter-spacing]] بتاع الإنجليزي بقى [[normal]].
+**الغلطة الشائعة:** تعتمد على اللون بس في «الخطوات اللي خلصت». الحلقة حوالين الحالية والأرقام نفسها بيخلوا المعنى واضح من غير لون.
 
 ~~~text الناتج
-font-family بتاع code: ui-monospace, Consolas, monospace
-letter-spacing للعربي: normal
-letter-spacing للإنجليزي: 2.88px (0.18em من 16px)
-axe صفر
+مركز الدواير y: 102
+مركز الخطوط y: 102
+مركز الرقم في الدايرة الأولى: دايرة (278, 102) ورقم (278, 102)
+عرض الشريط على 360: 228px من 328px  وفي سطر واحد: true
+عرض الخط على 360: 28.8px  وعلى 1280: 40px
+overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** من غير Next، اعمل خط احتياطي مظبوط بإيدك: [[@font-face { font-family: "Cairo Fallback"; src: local("Arial"); size-adjust: ...; ascent-override: ... }]] وحطه تاني واحد في الـ stack. جرّب قيم لحد ما الفقرة بالخطين ليها نفس الارتفاع تقريبًا.`, done: R`ارتفاع الفقرة بالاحتياطي وبالخط الحقيقي ([[offsetHeight]]) الفرق بينهم أقل من 2%، وفي Performance › Layout Shifts مفيش shift وقت ما الخط يوصل، ومن غير الاحتياطي المظبوط فيه shift. وعرفت إن ده بالظبط اللي next/font بيعمله لوحده.`, sol: R`~~~css fallback.css
-@font-face {
-  font-family: Cairo;
-  src: url(/cairo-ar.woff2) format("woff2");
-  font-display: swap;
-}
-@font-face {
-  font-family: "Cairo Fallback";
-  src: local("Arial");
-  size-adjust: 118%;
-  ascent-override: 110.4%;
-  descent-override: 48.4%;
-  line-gap-override: 0%;
-}
-body { font-family: Cairo, "Cairo Fallback", sans-serif; }
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف [[display: contents]] و [[display: flow-root]]. جرّب [[flow-root]] على أب فيه ابن عليه [[margin-top: 30px]].`, done: R`من غير flow-root الـ margin بتاع الابن طلع برّه الأب (الأب نزل 30 كله)، ومعاه الـ margin بقى جوه الأب. وعرفت إن [[contents]] بيشيل صندوق العنصر نفسه وبيسيب أولاده، وإنه زمان كان بيضيّع الـ role بتاع العنصر في بعض المتصفحات.`, sol: R`~~~live 160 160
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>flow-root</title>
+<style>
+  body { margin: 0; }
+  .parent { background: #bfdbfe; }
+  .child { margin-top: 30px; background: #fde68a; height: 40px; }
+  .fix { display: flow-root; }
+  .list { display: flex; gap: 8px; }
+  .group { display: contents; }
+</style>
+</head>
+<body>
+<div class="parent" id="a"><div class="child"></div></div>
+<div class="parent fix" id="b"><div class="child"></div></div>
+<div class="list"><div class="group"><span id="s1">١</span><span id="s2">٢</span></div></div>
+</body>
+</html>
 ~~~
 
-**الحساب:** ارتفاع سطر Cairo كبير: ascent 1.303 و descent 0.571 من حجم الخط. Arial أقل بكتير، فالفقرة بتطول لما الخط يوصل.
+**[[flow-root]]:** بيعمل block formatting context، يعني عالم مقفول: الـ margin بتاع الابن ميخرجش من الأب، والـ float مبيطلعش برّه. من غيره، الـ margin العلوي للابن بيتداخل مع أبوه، والأب كله بينزل 30 بدل ما الابن ينزل جواه.
 
-1. [[ascent-override]] و [[descent-override]] بيدّوا Arial نفس ارتفاع السطر.
-2. [[size-adjust]] بيغيّر عرض الحروف، فالسطر يتكسر في نفس المكان تقريبًا. وبما إنه بيضرب كل المقاييس، قسمنا: 130.3 ÷ 1.18 = 110.4.
-3. جرّبت من 84٪ لـ 136٪. من 112 لـ 124 عدد السطور مطابق، فاخترت النص.
+**[[contents]]:** العنصر نفسه بيختفي من الـ layout، وأولاده بيبقوا كأنهم أولاد جدهم. فـ [[.group]] مبقاش ليه صندوق، و [[١]] و [[٢]] بقوا flex items في [[.list]] مباشرة. والـ [[gap]] بيشتغل بينهم.
 
-**الغلطة الشائعة:** تظبط على فقرة واحدة وعرض واحد وتفتكر إنها متطابقة دايمًا. عدد السطور بيتغيّر مع النص والعرض، بس الفرق بيبقى صغير. وده بالظبط اللي next/font بيحسبه لوحده.
+**الفخ التاريخي:** [[display: contents]] كان بيضيّع الـ role بتاع العنصر في بعض المتصفحات، زي [[button]] أو [[table]]. متستخدمهوش على عناصر ليها معنى من غير ما تختبر. الجزء ده من MDN.
+
+**الغلطة الشائعة:** تحط [[padding-top: 1px]] أو [[overflow: hidden]] على الأب عشان توقف الـ collapse. [[flow-root]] معمول لكده، ومن غير آثار جانبية.
 
 ~~~text الناتج
-ارتفاع الفقرة (عرض 600 ، خط 18px):
-Cairo                297
-Arial عادي           168
-Cairo Fallback       297    الفرق 0٪
+من غير flow-root:
+top الأب = 30   ارتفاعه = 40   (الـ margin طلع برّه، فالأب نزل كله)
 
-الخط اتأخر 800ms:
-                  الارتفاع قبل ← بعد     CLS
-Arial عادي        168 ← 297              0.0739
-Cairo Fallback    297 ← 297              0
+بـ flow-root:
+top الأب = 0   ارتفاعه = 70   (الـ margin بقى جوه)
+
+display: contents: المسافة بين ١ و ٢ = 8px   (الـ gap شغال عليهم)
 ~~~` },
           ],
-          desc: R`[[next/font/google]] بينزّل الخط وقت الـ build ويخدمه من موقعك (مفيش request لجوجل)، وبيعمل خط احتياطي مقاساته مظبوطة فالكلام ميتنطش لما الخط الحقيقي يوصل. و [[variable]] بيطلّعه كمتغير CSS تربطه بـ Tailwind.
+          title: "بلوك ولا جوه السطر؟ وإخفاء العناصر",
+          desc: R`[[block]] بياخد سطر كامل وتقدر تحدد عرضه وطوله ([[div]] و [[p]] و [[h1]]). [[inline]] بيمشي جوه السطر مع الكلام وبيتجاهل [[width]] و [[height]] والـ margin الرأسي ([[span]] و [[a]] و [[strong]]). [[inline-block]] في النص: جوه السطر بس بيقبل مقاسات.
 
-برا Next بتكتب [[@font-face]] بنفسك: ملف [[woff2]] من موقعك، و [[font-display: swap]] عشان الكلام يظهر بخط النظام لحد ما خطك يتحمّل.`,
-          example: R`// app/layout.tsx
-import { Cairo } from "next/font/google";
-const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-cairo", display: "swap" });
-<html lang="ar" dir="rtl" className={cairo.variable}>
-// globals.css
-@theme inline {
-  --font-sans: var(--font-cairo), system-ui, sans-serif;
-}
-// من غير Next
-@font-face {
-  font-family: "Cairo";
-  src: url("/fonts/cairo-var.woff2") format("woff2");
-  font-weight: 200 1000;
-  font-display: swap;
+و [[display: none]] بيشيل العنصر خالص من الصفحة، و [[visibility: hidden]] بيخفيه ومكانه يفضل فاضي، و [[opacity: 0]] بيخفيه وهو لسه بيتضغط.`,
+          example: R`.badge { display: inline-block; padding: 2px 8px; }
+.menu a { display: block; }
+.modal[hidden] { display: none; }
+.ghost { visibility: hidden; }
+.fade { opacity: 0; pointer-events: none; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }`,
-          try: R`حط Cairo بـ next/font، وافتح Network وفلتر على Font: هتلاقي ملف woff2 جاي من [[/_next/static/media]] مش من جوجل. وبعدين بطّأ النت (Slow 4G) واعمل refresh وشوف الكلام بيظهر بخط النظام وبعدين يتبدّل.`,
+          try: R`اعمل 3 [[<span>]] وادّيهم width و height: مش هيتأثروا. غيّر لـ [[inline-block]] وبعدين [[block]] وشوف الفرق. وجرّب none و visibility و opacity على زرار، وحاول توصله بـ Tab في كل حالة.`,
           flag: "script",
           deep: {
-            why: "الخط تقل خفي: ملف أو اتنين، وكل واحد عشرات الـ KB، ولو جاي من سيرفر تاني بعد ما الـ CSS يتحمّل بيتأخر أكتر. والصفحة يا إما تفضل من غير كلام، يا إما الكلام يظهر بخط وبعدين يتبدّل ويتنط لأن المقاسات مختلفة (CLS).",
-            how: R`[[font-display]] بيحدد المتصفح يعمل إيه لحد ما الخط يوصل: [[block]] يخفي الكلام شوية، و [[swap]] يعرضه بالخط الاحتياطي على طول ويبدّل أول ما يوصل، و [[optional]] يستنى لحظة، ولو الخط موصلش يكمّل بالاحتياطي في الصفحة دي (مفيش تبديل خالص). next/font الافتراضي swap.
+            why: R`نص مشاكل التنسيق للمبتدئ من هنا: «ليه الـ width مش شغال على الـ span؟» و «ليه اللينك مش واخد السطر؟». وكمان الإخفاء: فيه فرق كبير بين إنك تخفي حاجة عن العين بس، أو عن الكل، أو تسيبها بتتضغط وهي مش باينة.`,
+            how: R`[[display]] ليه وشّين: برّاني بيحدد العنصر نفسه بيتصرف إزاي مع اللي جنبه (block أو inline)، وجوّاني بيحدد أولاده بيترصّوا إزاي (عادي، أو flex، أو grid). [[display: flex]] = block من برا و flex من جوه، و [[inline-flex]] = inline من برا و flex من جوه.
 
-مشكلة swap: الخط الاحتياطي (Arial مثلًا) عرض حروفه وارتفاع سطوره مختلف، فلما يتبدّل الفقرات بتطول أو تقصر والصفحة تتنط. next/font بيحل ده بـ [[adjustFontFallback]] (شغال افتراضيًا): بيعمل [[@font-face]] للخط الاحتياطي بـ [[size-adjust]] وقيم محسوبة، بحيث يبقى قد خطك تقريبًا.
+العناصر الـ inline بتتحط على سطر كلام، وارتفاعها من [[line-height]] والخط، مش من [[height]]. عشان كده الـ padding الرأسي على [[<a>]] بيترسم بس مش بيزق السطور اللي فوق وتحت. و [[<img>]] أصلًا inline، ودا سبب المسافة الصغيرة الغريبة تحت الصور (مكان ديل حروف زي g و y). الحل [[display: block]] للصورة، و Preflight بتاع Tailwind بيعملها لوحده.
 
-[[subsets]] بيحدد أنهي subsets يتعملها preload. الباقي بيتخدم من موقعك برضه، والمتصفح بيحمّله بس لو الصفحة فيها حروف منه (unicode-range). والـ variable fonts ملف واحد لكل الأوزان بدل ملف لكل وزن. و [[--font-sans]] في Tailwind هو الخط الافتراضي للصفحة كلها (الـ Preflight بيحطه على html)، فتغييره بيغيّر الموقع كله.
-
-و [[@import url(...)]] لخط من سيرفر خارجي جوه ملف الـ CSS أسوأ حالة: المتصفح لازم يحمّل الـ CSS بتاعك، ويلاقي الـ import، ويحمّل CSS الخط، ويلاقي ملف الخط، ويحمّله. سلسلة requests واحد ورا التاني.`,
-            when: R`في Next دايمًا next/font. في Vite أو PHP: [[@font-face]] بملفات woff2 عندك، و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للخط الأساسي بس.`,
-            mistakes: R`في مشروع حقيقي كان globals.css بيبدأ بـ [[@import url("https://fonts.example.com/...")]] لخط لاتيني جنب خطوط next/font: request خارجي بيوقف الرسم، وكان ممكن يتنقل لـ [[next/font/local]]. وتحمّل 6 أوزان وانت بتستخدم 2. وتنسى subset الـ [[arabic]] فملف العربي ميتعملوش preload: الكلام يظهر بخط النظام الأول ويتبدّل متأخر (الملف بيتحمّل من موقعك برضه، بس بعد ما المتصفح يكتشف إنه محتاجه).`
+الإخفاء: [[display: none]] بيشيله من الـ layout ومن شجرة الـ accessibility. [[visibility: hidden]] بيسيب المكان ويشيله من الـ accessibility. [[opacity: 0]] بيسيبه في كل حاجة: مكانه، وبيتضغط، وبياخد focus، وقارئ الشاشة بيقراه. و [[.sr-only]] (موجودة في Tailwind بنفس الاسم) العكس: مخفي عن العين ومقروء لقارئ الشاشة، مثالية لـ label حقل بحث أو اسم زرار أيقونة.`,
+            when: R`[[hidden]] أو display none للحاجات المقفولة (مودال، منيو). visibility لو عايز المكان يفضل ثابت. opacity للحركة (بتتعمل لها transition، و display لأ). و sr-only للكلام اللي لازم يتقري ومش لازم يظهر.`,
+            mistakes: R`تخفي منيو بـ [[opacity: 0]] بس، فاللينكات اللي جواها لسه بتاخد focus بـ Tab وبتتضغط وهي مش باينة. مسافة تحت الصورة ومش عارف منين (هي inline). وتحط width على span وتستغرب.`
           },
-          teach: R`## الخط بقى ملف من موقعك
+          teach: R`## الفكرة في سطرين
 
-[[next/font]] بينزّل الخط من Google **وقت الـ build**، ويحطه جوه مشروعك، ويكتب الـ [[@font-face]] لوحده. والمستخدم بياخد الخط من سيرفرك انت. حطينا الجزء الأول في مشروع Next.js 16.4 (Tailwind 4.3.3) وعملنا build وفتحناه في Chrome، والجزء التاني ([[@font-face]] بإيدك) في صفحة Vite.
+[[display]] بيقول العنصر بيقف لوحده في سطر ولا جوه السطر مع الكلام، والسطور الباقية 4 طرق مختلفة لإخفاء حاجة. جرّبت كل سطر في Chrome (headless): قست المقاسات بـ [[getBoundingClientRect()]]، ودوست Tab و Enter، وطلّعت شجرة الـ accessibility.
 
 ---
 
-## ١. [[import { Cairo } from "next/font/google";]]
+## ١. block و inline و inline-block
 
-كل خط في Google Fonts ليه function بنفس اسمه. ولو الاسم فيه مسافة بتبقى [[_]]: [[Noto_Kufi_Arabic]].
+حطيت 3 [[<span>]] عليهم [[width: 100px; height: 50px]] وغيّرت الـ display:
 
-## ٢. [[const cairo = Cairo({ ... });]]
+| [[display]] | مقاس كل span | مكانهم |
+|---|---|---|
+| [[inline]] (الافتراضي للـ span) | على قد الحرف: عرض 3 لـ 11، وارتفاع 17 | جنب بعض |
+| [[inline-block]] | 100 × 50 | جنب بعض، وبين كل واحد والتاني 4px |
+| [[block]] | 100 × 50 | تحت بعض: y = 0 ثم 50 ثم 100 |
 
-| الخيار | يعني |
+- [[inline]] تجاهل الـ width والـ height خالص، وارتفاعه جه من الخط.
+- [[inline-block]] قبل المقاسات وفضل في السطر. والـ 4px دي مش margin: دي المسافة (الـ Enter بين الـ tags في الـ HTML) اللي بتتعرض كمسافة كلام.
+- [[block]] قبل المقاسات وكل واحد خد سطر.
+
+---
+
+## ٢. السطور الأولى في المثال
+
+| السطر | اتقاس |
 |---|---|
-| [[subsets: ["arabic", "latin"]]] | أنهي أجزاء من الخط يتعملها preload (تحت) |
-| [[variable: "--font-cairo"]] | اعمل متغير CSS بالاسم ده فيه اسم الخط |
-| [[display: "swap"]] | [[font-display: swap]]: اعرض الكلام فورًا بخط احتياطي وبدّل لما الخط يوصل |
+| [[.badge { display: inline-block; padding: 2px 8px; }]] | الشارة جوه الفقرة في نفس السطر، و 39 × 22 بالـ padding |
+| [[.menu a { display: block; }]] | اللينك عرضه 784 (السطر كله)، فالضغط شغال على العرض كله مش على الكلمة بس |
 
-Cairo خط **variable**: ملف واحد فيه كل الأوزان، فمش محتاج [[weight]]. وده باين في الـ CSS اللي اتولّد: [[font-weight:200 1000]].
-
-## ٣. [[<html lang="ar" dir="rtl" className={cairo.variable}>]]
-
-[[cairo.variable]] اسم كلاس اتولّد وقت الـ build. في الـ HTML طلع [[class="pW5XIG_variable"]]، والـ CSS بتاعه:
-
-~~~text من الـ CSS الناتج
-.pW5XIG_variable{--font-cairo:"Cairo", "Cairo Fallback"}
-~~~
-
-يعني الكلاس ده بس بيعرّف المتغير على html، ومش بيغيّر أي خط لوحده.
-
-## ٤. [[globals.css]]: [[@theme inline]]
-
-~~~text globals.css
-@theme inline {
-  --font-sans: var(--font-cairo), system-ui, sans-serif;
-}
-~~~
-
-- [[--font-sans]] هو الخط الافتراضي في Tailwind، والـ Preflight بيحطه على [[html]]، فالموقع كله بياخده.
-- [[var(--font-cairo)]]: هات قيمة المتغير اللي next/font عمله.
-- [[system-ui, sans-serif]]: لو مفيش، خط النظام.
-- [[inline]]: Tailwind يحط القيمة نفسها مكان ما بتتستخدم بدل [[var(--font-sans)]]. في الـ CSS الناتج لقينا [[--default-font-family:var(--font-cairo), system-ui, sans-serif]]، ومفيش [[--font-sans]] خالص. ده المطلوب لما قيمة في الـ theme بتشاور على متغير تاني: المتغير يتقري في مكان الاستخدام.
-
-والنتيجة المحسوبة على الفقرة:
-
-~~~text getComputedStyle
-font-family: Cairo, "Cairo Fallback", system-ui, sans-serif
-~~~
-
-## ٥. اللي حصل وقت الـ build
-
-next/font كتب 4 [[@font-face]]. ٣ لـ Cairo، كل واحد لجزء من الحروف، وواحد للخط الاحتياطي:
-
-| الملف | الحروف ([[unicode-range]]) | preload |
-|---|---|---|
-| [[9ff27b8a0a8f3dc0-s.p....woff2]] | العربي ([[U+6??]]...) | أيوه |
-| [[d41831e24743a3c1-s.p....woff2]] | اللاتيني الأساسي ([[U+??]]...) | أيوه |
-| [[a5b03b231ce290a0-s....woff2]] | latin-ext (حروف أوروبية زيادة) | لأ |
-
-- [[unicode-range]]: المتصفح بيحمّل الملف بس لو الصفحة فيها حروف من المدى ده.
-- الـ [[.p.]] في الاسم = عليه [[<link rel="preload">]] في الـ head. اللي في [[subsets]] بس هما اللي اتعملهم preload.
-
-والخط الاحتياطي:
-
-~~~text من الـ CSS الناتج
-@font-face{font-family:Cairo Fallback;src:local(Arial);ascent-override:137.65%;descent-override:60.32%;line-gap-override:0.0%;size-adjust:94.66%}
-~~~
-
-ده Arial اللي على الجهاز ([[local(Arial)]])، بس متعدّل: [[size-adjust:94.66%]] بيصغّر حروفه، و [[ascent-override]] و [[descent-override]] بيظبطوا ارتفاع السطر، عشان مقاساته تبقى قريبة من Cairo. فلما Cairo يوصل ويتبدّل، الكلام ميتنطش.
-
-## ٦. في Chrome
-
-~~~text الـ Network (نوع font)
-/_next/static/media/9ff27b8a0a8f3dc0-s.p.40_3w74kn95bo.woff2
-/_next/static/media/d41831e24743a3c1-s.p.08tn9snzkmifr.woff2
-~~~
-
-- ملفين بس اتحمّلوا: العربي واللاتيني، لأن الصفحة فيها عربي وكلمة Hello. الـ latin-ext متحمّلش.
-- الاتنين من [[localhost]]، ومفيش ولا request لـ [[fonts.googleapis.com]] أو [[fonts.gstatic.com]].
-- في الـ head لقينا [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للملفين دول.
-- Chrome قال إن الكلام اترسم فعلًا بخط [[Cairo]] (custom).
+و [[padding: 2px 8px]] قيمتين: فوق وتحت 2، والجنبين 8.
 
 ---
 
-## ٧. من غير Next: [[@font-face]] بإيدك
+## ٣. 4 طرق إخفاء
 
-~~~text globals.css
-@font-face {
-  font-family: "Cairo";
-  src: url("/fonts/cairo-var.woff2") format("woff2");
-  font-weight: 200 1000;
-  font-display: swap;
+حطيت 5 أزرار: «قبل»، وبعده واحد بكل طريقة، وبعدهم «بعد».
+
+### [[.modal[hidden] { display: none; }]]
+
+[[.modal[hidden]]]: عنصر عليه class [[modal]] **و** عليه attribute [[hidden]]. و [[display: none]] بيشيله من الصفحة خالص: المقاس اتقاس 0 × 0.
+
+### [[.ghost { visibility: hidden; }]]
+
+مستخبي بس مكانه محجوز: اتقاس 62 × 21 في مكانه.
+
+### [[.fade { opacity: 0; pointer-events: none; }]]
+
+[[opacity]] الشفافية من 0 (مش باين) لـ 1. و [[pointer-events: none]] يعني الماوس بيعدّي من خلاله. اتقاس 58 × 21 في مكانه، ولما ضغطت بالماوس على مكانه الضغطة راحت للي وراه.
+
+### اللي حصل بالكيبورد وقارئ الشاشة
+
+~~~text Tab من زرار «قبل»
+قبل  →  opacity  →  بعد
+~~~
+
+| الطريقة | مكانه | Tab بيوصله | في شجرة الـ accessibility | الماوس |
+|---|---|---|---|---|
+| [[display: none]] | لأ | لأ | لأ | لأ |
+| [[visibility: hidden]] | أيوه | لأ | لأ | لأ |
+| [[opacity: 0]] + [[pointer-events: none]] | أيوه | **أيوه** | **أيوه** ([[button "opacity"]]) | لأ |
+
+والأخطر: وقفت على زرار الـ opacity (مش باين) ودوست Enter، والـ [[onclick]] بتاعه اشتغل. [[pointer-events]] بيمنع الماوس بس، مش الكيبورد.
+
+---
+
+## ٤. [[.sr-only]]: مخفي عن العين بس
+
+~~~text style.css
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
 ~~~
 
-- [[font-family: "Cairo"]]: الاسم اللي هتكتبه بعدين في [[font-family]]. انت اللي بتختاره.
-- [[src: url(...) format("woff2")]]: الملف من موقعك، و [[woff2]] أصغر صيغة خطوط.
-- [[font-weight: 200 1000]]: الملف ده بيغطي كل الأوزان من 200 لـ 1000 (variable).
-- [[font-display: swap]]: نفس الكلام اللي فوق.
+[[sr]] اختصار screen reader. كل سطر:
 
-جربناه في صفحة Vite، وأخّرنا ملف الخط ثانيتين عمدًا:
+| الخاصية | بتعمل إيه |
+|---|---|
+| [[position: absolute]] | تطلّعه من ترتيب الصفحة فميزقّش حاجة |
+| [[width: 1px; height: 1px]] | يصغر لبكسل (مش 0، عشان بعض قارئات الشاشة بتتجاهل الصفر) |
+| [[overflow: hidden]] | أي حاجة أكبر من البكسل متتعرضش |
+| [[clip-path: inset(50%)]] | يقص من كل ناحية 50%، فمفيش ولا بكسل باين |
+| [[white-space: nowrap]] | الكلام ميتكسرش لسطور (قارئ الشاشة كان ممكن يقرا الكلمات لازقة) |
 
-| الوقت | الخط اللي اترسم بيه الكلام | حالة الخط |
-|---|---|---|
-| 208ms | Segoe UI (خط ويندوز) | [[loading]] |
-| 2340ms | Cairo | [[loaded]] |
+جرّبته على زرار فيه أيقونة SVG بس و [[<span class="sr-only">بحث</span>]]: الـ span اتقاس 1 × 1، والزرار في شجرة الـ accessibility اسمه [[button "بحث"]].
 
-يعني الكلام ظهر على طول بخط النظام، واتبدّل لما Cairo وصل. ده [[swap]]. بس هنا مفيش [[Cairo Fallback]] متظبط، فلو المقاسات مختلفة الكلام ممكن يتنط وقت التبديل، وده اللي next/font بيحله لوحده.
+---
+
+## ٥. المسافة اللي تحت الصورة
+
+[[<img>]] أصلًا inline، فبيقف على خط الكلام، وتحته مكان لديل الحروف (زي g و y). صورة 100 × 100 جوه div:
+
+| | ارتفاع الـ div |
+|---|---|
+| الصورة inline (الافتراضي) | 104 |
+| [[img { display: block; }]] | 100 |
+
+---
 
 ## الخلاصة
 
-| | next/font | [[@font-face]] بإيدك |
+| | سطر لوحده | بيقبل width و height |
 |---|---|---|
-| الملف | بينزل وقت الـ build ويتخدم من موقعك | انت بتحطه في [[public/fonts]] |
-| preload | لوحده للـ [[subsets]] | [[<link rel="preload">]] بإيدك |
-| خط احتياطي متظبط | لوحده ([[size-adjust]]) | مش موجود إلا لو كتبته |
-| الربط بـ Tailwind | [[variable]] + [[--font-sans]] | [[--font-sans: "Cairo", ...]] |
+| [[block]] | أيوه | أيوه |
+| [[inline]] | لأ | لأ |
+| [[inline-block]] | لأ | أيوه |
 
-- متنساش [[arabic]] في [[subsets]]، وإلا ملف العربي ميتعملوش preload.
-- مفيش [[<link>]] لـ Google Fonts ولا [[@import url(...)]].`,
+| الإخفاء | المكان | الكيبورد وقارئ الشاشة |
+|---|---|---|
+| [[display: none]] / [[hidden]] | بيتشال | مش شايفينه |
+| [[visibility: hidden]] | محجوز | مش شايفينه |
+| [[opacity: 0]] | محجوز | **لسه شايفينه** |
+| [[.sr-only]] | بكسل | شايفينه، والعين لأ |`,
           lines: [
-            R`أي خط من Google Fonts كـ function (المسافة في الاسم بتبقى [[_]]).`,
-            R`الـ subsets اللي هيتعملها preload (العربي واللاتيني)، والباقي بيتخدم من موقعك برضه بس مش بيتحمّل غير لو اتستخدم. ومتغير CSS اسمه [[--font-cairo]]. Cairo خط variable فمش محتاج weights.`,
-            "الكلاس بيعرّف المتغير على html.",
-            R`بلوك Tailwind بيعرّف توكنز، والسطر اللي جواه بيخلّي [[font-sans]] (الخط الافتراضي للصفحة) يبقى Cairo.`,
-            "Cairo الأول، ولو محمّلش خط النظام.",
-            R`قفلة. [[inline]] لأنه بيشاور على متغير.`,
-            "برا Next: تعريف الخط بإيدك.",
-            R`الاسم اللي هتستخدمه في [[font-family]].`,
-            "ملف woff2 من موقعك (أصغر صيغة).",
-            "ملف variable واحد فيه كل الأوزان من 200 لـ 1000.",
-            "اعرض الكلام فورًا بخط احتياطي وبدّل لما الخط يوصل.",
+            "شارة جوه السطر، بس الـ padding بتاعها بيحجز مكان.",
+            "لينكات المنيو تاخد السطر كله، فالضغط يشتغل على العرض كله.",
+            R`العنصر اللي عليه [[hidden]]: شيله خالص، مش بياخد مكان ولا بيتقري.`,
+            "مستخبي بس مكانه محجوز، ومش بيتضغط ولا بيتقري.",
+            R`شفاف: مكانه محجوز وهيفضل بيتضغط، عشان كده [[pointer-events: none]] معاه.`,
+            "كلاس لإخفاء حاجة عن العين بس، وقارئ الشاشة لسه بيقراها.",
+            "بيطلّعه من الترتيب العادي ويصغّره لبكسل.",
+            "بيقصّ أي حاجة ظاهرة وميكسرش السطر.",
             "قفلة."
           ],
-          sol: R`في Network بفلتر Font: هتلاقي ملف أو اتنين [[.woff2]] بأسماء فيها hash زي [[/_next/static/media/xxxxxxxx-s.p.woff2]]، والدومين هو دومين موقعك (localhost:3000)، ومفيش ولا request لـ [[fonts.googleapis.com]] ولا [[fonts.gstatic.com]]. Next نزّل الخط وقت الـ build وبيقدّمه من عندك. والـ [[.p.]] في الاسم معناها إن عليه preload في الـ head.
+          sol: R`الـ [[<span>]] العادي ([[inline]]): الـ width و الـ height ملهمش أي تأثير، والصندوق على قد الكلام بس. [[inline-block]]: بياخدوا 100×50 وبيفضلوا جنب بعض في نفس السطر (وهتلاقي فراغ صغير بينهم حوالي 4px سببه الـ enter أو المسافة اللي بينهم في الـ HTML). [[block]]: نفس المقاس بس كل واحد في سطر لوحده تحت اللي قبله.
 
-مع Slow 4G وrefresh: الكلام بيظهر الأول بخط النظام وبعد ثانية أو اتنين بيتبدّل لـ Cairo (ده الـ [[swap]]). والنطّة وقت التبديل صغيرة جدًا، لأن next/font بيعمل خط fallback اسمه زي [[Cairo Fallback]] معدّل بـ [[size-adjust]] عشان مقاساته تبقى قريبة من Cairo. هتلاقيه في Computed › font-family.
+مع Tab على الزرار: [[display: none]] و [[visibility: hidden]] الـ focus بيعدّي من فوقهم للعنصر اللي بعدهم، لأنهم مش موجودين بالنسبة للكيبورد وقارئ الشاشة. أما [[opacity: 0]] مع [[pointer-events: none]]: الـ focus بيقف على زرار مش باين، ولو دوست Enter هيشتغل. الـ [[pointer-events]] بيمنع الماوس بس.
 
-لو لقيت request لجوجل، يبقى فيه [[<link>]] لـ Google Fonts لسه في الـ layout أو [[@import url(...)]] في الـ CSS، امسحهم. ولو الخط متطبقش خالص، غالبًا [[--font-sans]] مش بيقرا [[var(--font-cairo)]] أو الـ [[className={cairo.variable}]] مش على [[<html>]].`
+دي أخطر نتيجة في التجربة: مودال أو منيو مخفي بـ opacity بيفضل ياخد Tab ويتقري لقارئ الشاشة. لو عايز تخفيه بحركة fade، ضيف [[visibility: hidden]] أو [[inert]] بعد ما الحركة تخلص.`
         },
         {
-          cmd: "lucide-react",
+          cmd: "BEM و CSS Modules",
           ref: [
-            { t: "Lucide: lucide-react", url: "https://lucide.dev/guide/react" },
-            { t: "Lucide: Accessibility", url: "https://lucide.dev/how-to/accessibility" },
-            { t: "Simple Icons", url: "https://simpleicons.org/" },
+            { t: "BEM: Methodology", url: "https://en.bem.info/methodology/" },
+            { t: "CSS Modules (GitHub)", url: "https://github.com/css-modules/css-modules" },
+            { t: "MDN: @scope", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@scope" },
           ],
-          title: "أيقونات SVG كمكونات React",
-          desc: R`في [[lucide-react]] كل أيقونة مكون: [[<Search />]] و [[<Menu />]] و [[<ChevronLeft />]]. بتستورد اللي محتاجه بس، والباقي مش بيدخل الـ bundle. الحجم بـ [[size-4]]، واللون بياخد [[currentColor]] فبيمشي مع [[text-*]].
+          title: "تنظيم الـ CSS: أسماء classes مبتتخانقش (BEM و CSS Modules و @scope)",
+          desc: R`كل الـ CSS في الصفحة عالمي: أي [[.title]] في أي ملف بيطبّق على أي عنصر عليه [[class="title"]] في الموقع كله. فلما ملف الهيدر وملف الكارت الاتنين فيهم [[.title]]، اللي اتحمّل آخر بيكسب والتاني بيبوظ. ده سبب أغلب «قاعدتي مش شغالة» و [[!important]] اللي بيتكتب في كل حتة.
 
-ومن v1 الأيقونات عليها [[aria-hidden]] افتراضيًا، فلو الزرار أيقونة بس، لازم تدّي الزرار نفسه اسم بـ [[aria-label]].`,
-          example: R`import { Search, Menu, ChevronLeft, LoaderCircle } from "lucide-react";
-<button className="inline-flex items-center gap-2 text-brand">
-  <Search className="size-4" /> بحث
-</button>
-<button aria-label="افتح القايمة" className="md:hidden">
-  <Menu className="size-6" strokeWidth={1.5} />
-</button>
-<ChevronLeft className="size-4 shrink-0 ltr:rotate-180" />
-<LoaderCircle className="size-4 animate-spin motion-reduce:hidden" />`,
-          try: R`اعمل زرار أيقونة بس من غير [[aria-label]] وافتح DevTools › Elements › Accessibility: اسمه فاضي. ضيف الـ label وشوف الاسم ظهر. وبعدين غيّر [[text-brand]] لـ [[text-red-600]] وشوف الأيقونة اتغيرت معاه.`,
+فيه ٣ حلول بيستخدمهم الشغل الحقيقي:
+• **BEM** (Block, Element, Modifier): اتفاق على الأسماء بس. الكارت [[.card]]، وأي حتة جواه [[.card__title]]، وأي نسخة مختلفة منه [[.card--featured]]. الأسماء مستحيل تتكرر، وكل selector وزنه class واحدة.
+• **CSS Modules**: ملف اسمه [[card.module.css]] بتكتب فيه [[.title]] عادي، والأداة (Vite أو Next.js) بتغيّر الاسم لاسم فريد زي [[_title_1wc96_1]]، وانت بتستخدمه من JavaScript بـ [[styles.title]].
+• **[[@scope]]**: من المتصفح نفسه، بيحدد إن القواعد دي جوه [[.card]] بس.
+
+وتقدر تجمعهم مع [[@layer]] من درس «cascade» عشان ترتّب الملفات نفسها: reset، وبعدين components، وبعدين utilities.`,
+          example: R`<article class="card card--featured">
+  <h3 class="card__title">باقة سنوية</h3>
+  <p class="card__price">3,600 ج</p>
+  <a class="card__cta" href="/join">اشترك</a>
+</article>
+// card.css (BEM: block__element--modifier)
+.card { padding: 16px; border: 1px solid #ddd; border-radius: 12px; }
+.card__title { font-size: 1.25rem; margin: 0; }
+.card__price { font-weight: 700; }
+.card--featured { border-color: #2563eb; }
+.card--featured .card__cta { background: #2563eb; color: white; }
+// card.module.css (CSS Modules: Vite و Next.js بيدعموها من غير إعداد)
+.title { font-size: 1.25rem; color: #2563eb; }
+// main.js
+import styles from './card.module.css';
+document.querySelector('#plan-title').className = styles.title;`,
+          try: R`اعمل صفحة فيها [[<h1 class="title">]] في الهيدر، وملفين CSS: [[header.css]] فيه [[.title { font-size: 2rem; }]] و [[card.css]] فيه [[.title { font-size: 1.25rem; }]]، واربط الاتنين بالترتيب ده. قيس حجم الـ h1 من Computed. بعدين سمّي قاعدة الكارت [[.card__title]] بالـ BEM وقيس تاني. ولو معاك Vite: سمّي ملف الكارت [[card.module.css]] واستورده في [[main.js]]، واطبع [[styles]] في الـ Console.`,
           flag: "script",
           deep: {
-            why: "الأيقونات كصور PNG بتتشوّه لما تكبر ومش بتاخد لون الكلام. وكـ font icons بتحمّل الخط كله عشان 10 أيقونات، وقارئ الشاشة ساعات يقرا حروف غريبة. SVG inline كمكون بيحل الاتنين: حاد في أي حجم، ولونه [[currentColor]]، وبتحمّل اللي بتستخدمه بس.",
-            how: R`كل مكون بيرسم [[<svg>]] بـ [[viewBox="0 0 24 24"]] و [[stroke="currentColor"]] و [[fill="none"]]. [[currentColor]] معناها «لون الكلام بتاع العنصر»، فـ [[text-*]] على الأيقونة أو أي أب ليها بيلوّنها. والحجم الافتراضي 24، و [[size-4]] بيغلبه من الـ CSS.
+            why: R`الموقع الصغير بملف CSS واحد بيمشي. أول ما الملفات تبقى ١٠ والصفحات ٢٠ واتنين بيكتبوا CSS، الأسماء بتتكرر من غير ما حد ياخد باله: [[.card]] في صفحة المنتجات و [[.card]] في صفحة المدونة، و [[.title]] في كل حتة. والحل اللي الناس بتلجأ له ([[!important]] أو selector أطول) بيعمل حرب: القاعدة الجاية لازم تبقى أقوى من اللي قبلها. التنظيم بيمنع الحرب من الأول.`,
+            how: R`**BEM** مالوش أي سحر: المتصفح شايف classes عادية. الفايدة إن كل selector بقى class واحدة، فالـ specificity كلها (0,1,0) والترتيب في الملف بس هو اللي بيفرق، ومفيش اسم بيتكرر لأن اسم الـ block جزء من كل اسم. الاستثنا الوحيد المقبول [[.card--featured .card__cta]] (0,2,0): modifier على الـ block بيغيّر element جواه.
 
-[[strokeWidth]] بيغيّر سُمك الخط، وبيكبر مع الأيقونة. و [[absoluteStrokeWidth]] بيخليه ثابت بالبكسل مهما الأيقونة كبرت.
+**CSS Modules**: وقت الـ build، Vite بيقرا أي ملف اسمه [[*.module.css]]، ويغيّر كل class فيه لاسم فريد (في Vite 8.3 [[.title]] بقت [[._title_1wc96_1]] في ملف الـ CSS النهائي)، ويرجّع لـ JavaScript object فيه الاسم القديم والجديد: [[{"title":"_title_1wc96_1"}]]. فـ [[.title]] بتاع الهيدر (ملف عادي) فضل [[.title]] ومحدش لمسه، والاتنين عايشين في نفس الصفحة.
 
-Tree-shaking: [[import { Search } from "lucide-react"]] مع bundler حديث بيدخّل Search بس. بس لو عملت [[import * as Icons]] واخترت بالاسم وقت التشغيل، الـ bundler مش هيعرف ويدخّل الكل (آلاف الأيقونات).
-
-lucide v1 (2026): شال أيقونات البراندات (GitHub وفيسبوك وغيرهم)، وشال أسماء قديمة كانت متسابة كـ aliases (فلو import مش لاقي أيقونة دوّر على اسمها الجديد)، وبقى بيحط [[aria-hidden="true"]] على الأيقونات لوحده. ولو محتاج شعارات: Simple Icons أو SVG من البراند نفسه.`,
-            when: "أي أيقونة UI في React. و shadcn بيستخدمه افتراضيًا.",
-            mistakes: R`زرار أيقونة من غير اسم: قارئ الشاشة يقول «button» وخلاص. [[<Menu />]] من غير حجم جنب كلام صغير فيبان ضخم. وفي مشروع حقيقي زرار المنيو على الموبايل كان عليه [[aria-label="Toggle menu"]] كويس، بس ناقصه [[aria-expanded]] فقارئ الشاشة مش عارف القايمة مفتوحة ولا مقفولة (درس aria). و [[npm i lucide-react@latest]] من غير ما تقرا الـ changelog: من 0.x لـ 1.x أيقونات البراندات اتشالت والصفحة بقت 500 بـ [[Export Github doesn't exist in target module]].`
+**[[@scope (.promo) to (.promo__content)]]**: المتصفح بيطبّق القواعد على العناصر اللي جوه [[.promo]] بس، ويقف عند [[.promo__content]] (حدود من تحت). اتجرّب في Chrome 156: صورة جوه promo بقت مدورة، وصورة جوه promo__content فضلت زي ما هي. Chrome بيدعمه من 118؛ شوف درس «Baseline و @supports» قبل ما تعتمد عليه في كل المتصفحات.`,
+            when: R`موقع HTML و CSS عادي (landing page، أو موقع شركة): BEM أو prefix لكل صفحة ([[.pricing-]] و [[.blog-]]). مشروع React أو Vue بـ Vite أو Next.js: CSS Modules لكل component، أو Tailwind (وحدة Tailwind قدام) اللي بيحل نفس المشكلة بطريقة تانية. و [[@scope]] لما تحط CSS لحتة جوه صفحة مش بتاعتك (widget جوه موقع حد تاني) أو عايز تحدد «لحد هنا».`,
+            mistakes: R`تكتب الـ modifier لوحده: [[<article class="card--featured">]] من غير [[card]]، فالكارت بيخسر كل تنسيقه الأساسي (اتقاس: الـ padding بقى 0 والحدود اختفت). أو تعمل element جوه element: [[.card__title__icon]] (الصح [[.card__icon]]، الـ BEM مسطّح). أو تكتب اسم غلط في CSS Modules: [[styles.titel]] بترجّع [[undefined]] والـ class بيبقى حرفيًا [[class="undefined"]] من غير أي error. أو تسمّي الملف [[card.css]] وتستغرب إن الأسماء متغيّرتش (لازم [[.module.css]]). أو تخلط BEM مع selectors زي [[.card h3]]، فترجع الأسماء تتخانق تاني.`
           },
-          teach: R`## كل أيقونة component بيرسم [[<svg>]]
+          teach: R`## الفكرة في سطرين
 
-[[<Search />]] مش صورة بتتحمّل: ده component بيرسم [[<svg>]] جوه الصفحة نفسها. حطينا المثال في صفحة Vite ([[lucide-react]] 1.52، و Tailwind 4.3.3، و [[--color-brand]] متعرّف) وقسنا في Chrome، وزودنا زرار تالت فيه [[<Menu />]] من غير [[aria-label]] للمقارنة.
+الـ CSS مفيهوش «ملف خاص»: كل class بتشتغل على الصفحة كلها. فلازم يا إما أسماء مستحيل تتكرر (BEM)، يا إما أداة تغيّر الأسماء لوحدها (CSS Modules)، يا إما حدود من المتصفح ([[@scope]]). الأرقام هنا من Chrome 156 و Vite 8.3.5.
 
 ---
 
-## ١. [[import { Search, Menu, ChevronLeft, LoaderCircle } from "lucide-react";]]
+## ١. المشكلة بالأرقام
 
-بتستورد كل أيقونة باسمها. والأسامي PascalCase (كل كلمة أولها كابيتال) لأنها components.
+صفحة فيها هيدر بـ [[<h1 class="title">]] وكارت، وملفين اتربطوا بالترتيب ده:
 
-وده بيفرق في الحجم. عملنا build لـ ٣ صفحات صغيرة بـ Vite وقارنّا ملف الـ JavaScript:
+~~~css الملفين
+/* header.css */ .title { font-size: 2rem; }
+/* card.css */   .title { font-size: 1.25rem; }
+~~~
 
-| الصفحة | حجم الـ JS |
+الـ h1 بتاع الهيدر طلع [[20px]] بدل [[32px]]: الاتنين نفس الوزن (0,1,0)، فاللي اتكتب آخر كسب (درس «cascade»). صاحب ملف الكارت مكانش يعرف إن فيه [[.title]] تانية أصلًا.
+
+---
+
+## ٢. BEM: اسم الـ block في كل اسم
+
+~~~text شكل الاسم
+card            ← block: الحاجة اللي لوحدها ليها معنى
+card__title     ← element: حتة جوه الـ block (شرطتين تحت)
+card--featured  ← modifier: نسخة مختلفة من الـ block (شرطتين)
+~~~
+
+### الـ HTML
+
+- [[class="card card--featured"]]: الـ block **والـ** modifier مع بعض. الـ modifier بيزوّد على الأساسي مش بيحل محله.
+- [[card__title]] و [[card__price]] و [[card__cta]]: كل حتة جوه الكارت ليها اسم بيبدأ بـ [[card__]]. ومفيش [[card__title__text]]: لو فيه حتة جوه العنوان تبقى [[card__text]] على طول.
+
+### الـ CSS
+
+| القاعدة | الوزن | ليه |
+|---|---|---|
+| [[.card]] | (0,1,0) | الشكل الأساسي لأي كارت |
+| [[.card__title]] | (0,1,0) | العنوان بس، ومستحيل يلمس [[.title]] بتاع الهيدر |
+| [[.card--featured]] | (0,1,0) | لون الحدود بس اتغيّر، والباقي من [[.card]] |
+| [[.card--featured .card__cta]] | (0,2,0) | الـ modifier بيغيّر element جواه: الزرار بقى أزرق في الكارت المميز بس |
+
+اتقاس: الكارت المميز حدوده [[rgb(37, 99, 235)]] و padding بتاعه 16px، والزرار خلفيته نفس الأزرق.
+
+### الفخ: الـ modifier لوحده
+
+[[<article class="card--featured">]] من غير [[card]]: الـ padding طلع [[0px]] والحدود [[none 0px]]. الـ modifier مكتوب فيه لون الحدود بس، والحدود نفسها في [[.card]] اللي مش موجودة.
+
+---
+
+## ٣. CSS Modules: الأداة بتغيّر الأسماء
+
+~~~css card.module.css
+.title { font-size: 1.25rem; color: #2563eb; }
+~~~
+
+~~~js main.js
+import styles from './card.module.css';
+document.querySelector('#plan-title').className = styles.title;
+~~~
+
+- [[.module.css]] في آخر الاسم هي اللي بتقول لـ Vite «غيّر الأسماء في الملف ده». ملف [[header.css]] العادي محدش بيلمسه.
+- [[import styles]]: [[styles]] object، و [[console.log]] طبعه [[{"title":"_title_1wc96_1"}]].
+- [[styles.title]]: الاسم الجديد. الـ h3 بقى [[class="_title_1wc96_1"]] وحجمه 20px، والـ h1 بتاع الهيدر فضل 32px.
+
+ده ملف الـ CSS اللي [[vite build]] طلّعه (الاتنين مع بعض):
+
+~~~css dist/assets/index.css
+.title{font-size:2rem}._title_1wc96_1{color:#2563eb;font-size:1.25rem}
+~~~
+
+### الفخ: اسم غلط
+
+[[bad.className = styles.titel]] (حرفين متبدلين): مفيش error في الـ build ولا في الـ Console، والعنصر بقى [[class="undefined"]]. لو شغال TypeScript بيقولك، من غيره لازم تبص بعينك.
+
+وفي React بتكتبها [[className={styles.title}]]، وفي Next.js نفس الفكرة بالظبط.
+
+---
+
+## ٤. [[@scope]]: حدود من المتصفح
+
+~~~css @scope
+@scope (.promo) to (.promo__content) {
+  img { border-radius: 50%; }
+}
+~~~
+
+صورة جوه [[.promo]] طلعت [[50%]]، وصورة جوه [[.promo__content]] (اللي جوه promo) طلعت [[0px]]. يعني القاعدة شغالة من [[.promo]] لحد ما توصل لـ [[.promo__content]] وتقف.
+
+---
+
+## ٥. تختار إيه؟
+
+| المشروع | الأنسب |
 |---|---|
-| React بس، من غير أيقونات | 219.53 kB |
-| [[import { Search, Menu }]] | 222.99 kB: زيادة 3.5 kB بس |
-| [[import * as Icons]] واختيار الأيقونة بالاسم وقت التشغيل | **984.15 kB**: كل الأيقونات دخلت |
+| موقع HTML و CSS من غير build | BEM، أو prefix لكل صفحة زي [[.pricing-card]] |
+| React أو Vue أو Next.js | CSS Modules لكل component، أو Tailwind (وحدة قدام) |
+| CSS لحتة جوه صفحة حد تاني | [[@scope]]، أو prefix طويل مستحيل يتكرر |
+| ترتيب الملفات نفسها | [[@layer reset, components, utilities;]] فوق أي طريقة منهم |
 
-الاستيراد بالاسم زوّد 3.5 kB بس. لكن [[import * as Icons]] مع [[Icons[name]]] دخّل كل الأيقونات، لأن الـ bundler مش عارف وقت الـ build انت هتختار أنهي واحدة. ده اسمه tree-shaking: الـ bundler بيشيل الكود اللي محدش استخدمه، بس لازم يقدر يشوف ده من الكود.
-
-## ٢. الـ SVG اللي بيطلع
-
-ده اللي [[<Search className="size-4" />]] رسمه:
-
-~~~text الناتج
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-     class="lucide lucide-search size-4" aria-hidden="true">
-  <path d="m21 21-4.34-4.34"></path>
-  <circle cx="11" cy="11" r="8"></circle>
-</svg>
-~~~
-
-| الـ attribute | يعني |
-|---|---|
-| [[width="24" height="24"]] | الحجم الافتراضي 24px |
-| [[viewBox="0 0 24 24"]] | الرسمة مرسومة على شبكة 24×24، وبتكبر وتصغر من غير ما تبوظ |
-| [[fill="none"]] | مفيش تلوين جوه الأشكال، خطوط بس |
-| [[stroke="currentColor"]] | لون الخط = لون الكلام ([[color]]) بتاع العنصر |
-| [[stroke-width="2"]] | تخانة الخط 2 من 24 |
-| [[aria-hidden="true"]] | قارئ الشاشة يتجاهلها. lucide v1 بيحطه لوحده |
-
-و [[className]] بتاعك اتضاف جنب [[lucide lucide-search]].
-
-## ٣. الزرار الأول: أيقونة وكلام
-
-~~~text App.tsx
-<button className="inline-flex items-center gap-2 text-brand">
-  <Search className="size-4" /> بحث
-</button>
-~~~
-
-- [[inline-flex items-center gap-2]]: الأيقونة والكلمة جنب بعض، في النص رأسيًا، و 8px بينهم.
-- [[text-brand]] على الزرار: لون الكلام. والأيقونة جوه الزرار، فـ [[currentColor]] بتاعها بياخد نفس اللون.
-- [[size-4]]: 16×16. الـ CSS بيغلب [[width="24"]] اللي على الـ svg.
-
-القياس: الأيقونة 16px و [[stroke]] بتاعها [[oklch(0.55 0.2 265)]]، نفس لون الـ brand. غيّرنا [[text-brand]] لـ [[text-red-600]]: الكلام والأيقونة الاتنين بقوا [[oklch(0.577 0.245 27.325)]].
-
-## ٤. الزرار التاني: أيقونة بس
-
-~~~text App.tsx
-<button aria-label="افتح القايمة" className="md:hidden">
-  <Menu className="size-6" strokeWidth={1.5} />
-</button>
-~~~
-
-- [[aria-label]]: اسم الزرار لقارئ الشاشة، لأن مفيش كلام جواه والأيقونة [[aria-hidden]].
-- [[md:hidden]]: مستخبي من 768px وطالع. على عرض 800 الزرار كان [[display: none]]، وعلى 375 ظهر 24×24.
-- [[size-6]] = 24px. و [[strokeWidth={1.5}]] = خط أرفع من الافتراضي، وطلع على الـ svg [[stroke-width="1.5"]].
-
-الـ Accessibility tree على عرض 375:
-
-~~~text الناتج
-- button "بحث"
-- button "افتح القايمة"
-- button
-~~~
-
-التالت هو اللي زودناه من غير [[aria-label]]: [[button]] من غير اسم. قارئ الشاشة هيقول «button» وخلاص.
-
-## ٥. [[<ChevronLeft className="size-4 shrink-0 ltr:rotate-180" />]]
-
-- [[ChevronLeft]]: سهم صغير بيشاور شمال، يعني «التالي» في صفحة عربي.
-- [[shrink-0]]: في flex ميتصغرش لو الكلام اللي جنبه طويل.
-- [[ltr:rotate-180]]: في صفحة إنجليزي لفّه نص لفة فيشاور يمين.
-
-| [[lang]] و [[dir]] على html | [[rotate]] المحسوب |
-|---|---|
-| [[ar]] و [[rtl]] | [[none]]: السهم زي ما هو بيشاور شمال |
-| [[en]] و [[ltr]] | [[180deg]]: اتلف نص لفة فبيشاور يمين |
-
-## ٦. [[<LoaderCircle className="size-4 animate-spin motion-reduce:hidden" />]]
-
-- [[animate-spin]]: animation اسمها [[spin]] مدتها 1s، بتلف على طول.
-- [[motion-reduce:hidden]]: لو المستخدم مفعّل «حركة أقل» في نظامه ([[prefers-reduced-motion: reduce]])، اخفيها.
-
-حاكينا الإعداد ده في Chrome: الأيقونة بقت [[display: none]] ومقاسها 0×0.
+---
 
 ## الخلاصة
 
-| عايز | اكتب |
-|---|---|
-| الحجم | [[size-4]] أو [[size-6]] |
-| اللون | [[text-*]] على الأيقونة أو أي أب |
-| تخانة الخط | [[strokeWidth={1.5}]] |
-| زرار أيقونة بس | [[aria-label]] على الزرار |
-| حجم bundle صغير | [[import { Name }]] مش [[import *]] |
-
-- الأيقونة [[aria-hidden]] لوحدها، فالاسم لازم ييجي من الزرار.
-- متلوّنهاش بـ [[fill-*]]: دي خطوط، لونها [[stroke]].
-
----
-
-## فخ: ترقية major شالت أيقونة GitHub والصفحة بقت 500
-
-### العَرَض
-
-مشروع Next 16.4.4 فيه footer بأيقونة GitHub من [[lucide-react@0.577.0]] (آخر نسخة 0.x). حد عمل [[npm i lucide-react@latest]] (عشان أيقونة جديدة)، وفجأة **كل** الصفحات اللي فيها الـ footer:
-
-~~~text curl -s -o /dev/null -w "HTTP: %{http_code}\n" http://localhost:4311/ar
-HTTP: 500
-~~~
-
-~~~text sed 's/\x1b\[[0-9;]*m//g' dev.log | tail -20
-⨯ ./app/components/Footer.tsx:1:1
-Error: Export Github doesn't exist in target module
-> 1 | import { Github, Mail } from "lucide-react";
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The export Github was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.mjs [app-rsc] (ecmascript).
-Did you mean to import Gift?
-All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
-
-Import trace:
-  Server Component:
-    ./app/components/Footer.tsx
-    ./app/[lang]/page.tsx
-
- GET /ar 500 in 1345ms (next.js: 1187ms, application-code: 158ms)
-~~~
-
-- [[Export Github doesn't exist]]: الاسم مش موجود في الباكدج.
-- [[Did you mean to import Gift?]]: Turbopack بيقترح أقرب اسم بالحروف. **متصدّقوش**: Gift أيقونة هدية، ملهاش علاقة.
-- [[Import trace]]: مين استورد الملف ده، لحد الصفحة.
-
-و TypeScript بيقول نفس الكلام من غير ما تشغّل حاجة:
-
-~~~text npx tsc --noEmit
-app/components/Footer.tsx(1,10): error TS2305: Module '"lucide-react"' has no exported member 'Github'.
-~~~
-
-ورقم الخروج [[2]]. يعني لو [[tsc --noEmit]] أو [[next build]] في الـ CI، كان اتمسك قبل ما يوصل لحد.
-
-### التشخيص بالترتيب
-
-١. **إيه اللي اتغيّر في [[package.json]]؟**
-
-~~~text grep lucide package.json   (قبل ← بعد)
-    "lucide-react": "^0.577.0",
-    "lucide-react": "^1.67.0",
-~~~
-
-نسخة **major** جديدة (0 ← 1). والـ major معناها «فيه حاجات اتشالت أو اتغيّرت».
-
-٢. **النسخ المتاحة، والمتسطبة فعلًا:**
-
-~~~text npm view lucide-react versions --json | tail -5
-  "1.64.0",
-  "1.65.0",
-  "1.66.0",
-  "1.67.0"
-]
-~~~
-
-~~~text head -5 node_modules/lucide-react/package.json
-{
-  "name": "lucide-react",
-  "description": "A Lucide icon library package for React applications.",
-  "version": "1.67.0",
-~~~
-
-٣. **الأيقونة موجودة في الباكدج الجديد؟**
-
-~~~text grep -ciE "github" node_modules/lucide-react/dist/lucide-react.d.ts
-0
-~~~
-
-ولا مرة. وعدد الأيقونات:
-
-~~~text ls node_modules/lucide-react/dist/esm/icons | grep -c '\.mjs$'
-2296
-~~~
-
-يعني الأيقونات **زادت** (في 0.577.0 كانوا 1951 ملف)، بس GitHub مش منهم.
-
-٤. **إيه اللي اتشال بالظبط؟** من غير ما تسطّب القديمة، نزّل الباكدج كملف واقرا منه:
-
-~~~bash
-npm pack lucide-react@0.577.0
-tar -xzf lucide-react-0.577.0.tgz package/dist/lucide-react.d.ts
-grep -oE "declare const (Github|Gitlab|Facebook|Instagram|Linkedin|Twitter|Youtube|Figma|Slack)\b" package/dist/lucide-react.d.ts | sort -u
-~~~
-
-[[npm pack]] بينزّل الـ [[.tgz]] بتاع النسخة دي بس (مش بيسطّب)، و [[tar -xzf ... مسار]] بيطلّع الملف ده بس. وقارنّا قايمة أكبر بين النسختين: اتشالوا [[Codepen]] و [[Codesandbox]] و [[Dribbble]] و [[Facebook]] و [[Figma]] و [[Framer]] و [[Github]] و [[Gitlab]] و [[Instagram]] و [[Linkedin]] و [[Pocket]] و [[Slack]] و [[Trello]] و [[Twitch]] و [[Twitter]] و [[Youtube]]، وفضل [[Rss]]. يعني v1 شال **أيقونات البراندات** كلها.
-
-### ازاي حصل القفز ده؟ [[^]] على 0.x
-
-[[^0.577.0]] معناها «أي 0.577.x»: في نسخ 0.x الـ caret بيقفل الرقم التاني كمان. اتأكدنا:
-
-~~~text npm outdated lucide-react
-Package       Current   Wanted  Latest  Location                   Depended by
-lucide-react  0.577.0  0.577.0  1.67.0  node_modules/lucide-react  shop2
-~~~
-
-~~~text npm update lucide-react
-up to date in 764ms
-~~~
-
-[[Wanted]] (أعلى نسخة الـ range بيسمح بيها) = 0.577.0، و [[npm update]] مغيّرش حاجة. القفز لـ 1.x محتاج حد يطلبه صريح: [[npm i lucide-react@latest]] أو [[npm i lucide-react]] من غير رقم (اللي بيكتب [[^1.67.0]])، أو أداة بتعمل كده.
-
-### الحل (اختار واحد)
-
-**(أ) ارجع واقفل النسخة بالظبط:**
-
-~~~text npm i --save-exact lucide-react@0.577.0 && grep lucide package.json
-    "lucide-react": "0.577.0",
-~~~
-
-[[--save-exact]] بيكتب الرقم من غير [[^]]، فمحدش هيرقّي غير لما يغيّر الرقم بإيده. سريع، بس انت كده فضلت على نسخة مش هتاخد أيقونات وتصليحات جديدة.
-
-**(ب) خليك على 1.x، والبراند SVG من مصدر للبراندات:** [[simple-icons]] (16.36.0) فيه path البراندات الرسمية:
-
-~~~tsx app/components/BrandIcon.tsx
-import type { SimpleIcon } from "simple-icons";
-
-export function BrandIcon({ icon, className }: { icon: SimpleIcon; className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
-      <path d={icon.path} />
-    </svg>
-  );
-}
-~~~
-
-~~~tsx app/components/Footer.tsx
-import { Mail } from "lucide-react";
-import { siGithub } from "simple-icons";
-import { BrandIcon } from "./BrandIcon";
-...
-<a href="https://github.com/acme" aria-label="GitHub"><BrandIcon icon={siGithub} className="size-5" /></a>
-~~~
-
-- [[fill="currentColor"]] مش [[stroke]]: أيقونات البراندات **مليانة**، عكس lucide (خطوط).
-- [[siGithub.path]]: الـ [[d]] بتاع الشعار، و [[siGithub.hex]] لونه الرسمي ([[181717]]) لو احتجته.
-- [[aria-hidden]] على الـ SVG و [[aria-label]] على اللينك (نفس قاعدة lucide).
-
-بعدها: [[HTTP: 200]]، و [[npx tsc --noEmit]] خرج [[0]]. والـ footer server component، فالـ SVG بيتبعت HTML ومفيش JavaScript زيادة للمتصفح.
-
-**ليه مش البدايل دي؟**
-
-| البديل | ليه لأ |
-|---|---|
-| تصدّق [[Did you mean Gift?]] | أيقونة تانية خالص |
-| تنسخ ملف الأيقونة من 0.577.0 جوه مشروعك | شغّال، بس انت كده بتصون نسخة من مكتبة. لو هتنسخ SVG، انسخه من مصدر للبراندات |
-| تفضل على 0.x للأبد | مفيش أيقونات جديدة ولا تصليحات. اختار (أ) وانت عارف إنه مؤقت |
-| تشيل الأيقونة وتحط كلمة «GitHub» | بيحل الـ 500، بس الديزاين اتغيّر من غير ما حد يقرر |
-
-### إزاي متتكررش
-
-- قبل أي ترقية major: اقرا الـ changelog أو صفحة الـ releases بتاعة المكتبة، ودوّر على «removed» أو «breaking».
-- [[npm outdated]] بيوريك [[Latest]] أكبر من [[Wanted]] بـ major = محتاجة قرار، مش [[npm update]].
-- [[npm i --save-exact]]، أو مرة واحدة للمشروع [[.npmrc]] فيه [[save-exact=true]] (جربنا: [[npm config get save-exact]] طلّع [[true]] جوه الفولدر).
-- [[npx tsc --noEmit]] أو [[next build]] في الـ CI: كان هيقف بـ [[TS2305]] قبل الـ merge.`,
+- كل class عالمية، والتكرار بيبوّظ صفحات تانية من غير ما تحس.
+- BEM: [[block__element--modifier]]، وزن واحد لكل حاجة، والـ modifier دايمًا مع الـ block.
+- CSS Modules: [[*.module.css]] و [[styles.name]]، والاسم الغلط بيبقى [[undefined]] ساكت.
+- [[@scope]] بيحدد مكان القواعد من المتصفح نفسه.`,
           lines: [
-            "استورد الأيقونات بالاسم. اللي مش مستورد مش بيدخل الـ bundle.",
-            R`زرار فيه أيقونة وكلام: اللون من [[text-brand]] بيوصل للأيقونة.`,
-            "16px، والكلام اللي جنبها هو اسم الزرار.",
-            R`قفلة الزرار الأول: الأيقونة والكلمة جواه، فالكلمة هي اسمه.`,
-            R`زرار أيقونة بس: [[aria-label]] هو اسمه لقارئ الشاشة.`,
-            "الأيقونة نفسها مخفية عن قارئ الشاشة، وخطها أرفع من الافتراضي (2).",
-            R`قفلة الزرار التاني: مفيهوش كلام، فاسمه جاي من [[aria-label]] بس.`,
-            R`سهم «التالي» في صفحة عربي بيشاور شمال، وفي الإنجليزي بيلف لليمين. و [[shrink-0]] عشان ميتزنقش جنب كلام طويل.`,
-            "loader بيلف، ويختفي عند اللي طالبين حركة أقل."
+            R`الـ block: [[card]] الكارت الأساسي، و [[card--featured]] modifier بيقول «النسخة المميزة». الاتنين لازم مع بعض.`,
+            R`element جوه الـ block: [[card__title]] (شرطتين تحت) يعني «العنوان بتاع الكارت»، فمستحيل يتخانق مع [[.title]] تانية.`,
+            R`element تاني: السعر. كل حتة جوه الكارت اسمها بيبدأ بـ [[card__]].`,
+            R`element تالت: زرار «اشترك» (لينك لأنه بيودّي صفحة تانية)، واسمه [[card__cta]] (CTA = call to action).`,
+            R`نهاية الـ block: كل اللي جواه اسمه بيبدأ بـ [[card__]]، وأي كارت تاني في الصفحة بنفس الأسامي مش هيتأثر غير بالـ modifier بتاعه.`,
+            R`الشكل الأساسي لأي كارت: مسافة جوه، وحدود رمادي، وزوايا مدورة. وزنها class واحدة (0,1,0).`,
+            R`العنوان جوه الكارت بس: حجم 1.25rem ومن غير margin. ميأثرش على أي عنوان تاني في الموقع.`,
+            R`السعر تقيل (700 = bold).`,
+            R`الـ modifier بيغيّر لون الحدود بس. باقي الشكل جاي من [[.card]]، وعشان كده الاتنين لازم على نفس العنصر.`,
+            R`الاستثنا الوحيد: الـ modifier بيغيّر element جواه، فالزرار أزرق في الكارت المميز بس. وزنها (0,2,0).`,
+            R`في CSS Modules بتكتب اسم قصير عادي [[.title]]، والأداة هي اللي هتغيّره لاسم فريد وقت الـ build.`,
+            R`[[import]] بيرجّع object: المفتاح الاسم اللي كتبته ([[title]])، والقيمة الاسم الجديد ([[_title_1wc96_1]] في Vite 8.3).`,
+            R`حط الاسم الجديد على العنصر. لو كتبت [[styles.titel]] غلط هيتحط [[undefined]] كاسم class من غير أي error.`
           ],
-          sol: R`زرار الأيقونة من غير [[aria-label]]: في Accessibility pane هتلاقي Role [[button]] و Name فاضي، وقارئ الشاشة بيقول «button» بس، و Lighthouse بيطلّعه في «Buttons do not have an accessible name». بعد [[aria-label="افتح القايمة"]] الـ Name بقى «افتح القايمة» وجنبه إنه جاي من [[aria-label]].
+          sol: R`مع الملفين العاديين: الـ h1 بتاع الهيدر حجمه [[20px]] (من [[card.css]] لأنه اتربط آخر) بدل [[32px]]. بعد ما قاعدة الكارت بقت [[.card__title]]: الـ h1 رجع [[32px]] وعنوان الكارت [[20px]]، ومفيش ولا [[!important]].
 
-لما تغيّر [[text-brand]] لـ [[text-red-600]] على الزرار: الأيقونة والكلمة الاتنين بقوا أحمر مع بعض، لأن الـ SVG بتاع lucide مرسوم بـ [[stroke="currentColor"]]، يعني بياخد لون الـ [[color]] من الأب. لو فتحت الـ SVG في Elements هتلاقي [[stroke="currentColor"]] و [[fill="none"]].
-
-الغلط الشائع: تحاول تلوّن الأيقونة بـ [[fill-red-600]] فتطلع مليانة ومشوّهة، لأن lucide أيقونات خطوط. اللون بالـ [[text-*]] والتخانة بـ [[strokeWidth]].
-
-ولو الصفحة بقت 500 بعد ترقية lucide واللوج فيه [[Export Github doesn't exist in target module]]: v1 شال أيقونات البراندات. [[grep lucide package.json]] هتلاقي [[^1.x]]. ارجع بـ [[npm i --save-exact lucide-react@0.577.0]]، أو خليك على 1.x وحط الشعار من [[simple-icons]] بـ [[fill="currentColor"]].`,
+بالـ CSS Modules: الـ Console طبع [[{"title":"_title_1wc96_1"}]] (الحروف اللي في النص hash وممكن تختلف عندك، والرقم اللي في الآخر رقم السطر في الملف: class في السطر التاني بقت [[_2]])، وعنوان الكارت عليه الاسم ده، و [[.title]] بتاع الهيدر شغال زي ما هو.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[package.json]] فيه [[lucide-react: "^0.577.0"]] و [[react: "^19.2.0"]]. لو آخر نسخ متاحة 0.577.3 و 1.67.0 لـ lucide، و 19.3.1 و 20.0.0 لـ react، [[npm update]] هيسطّب إيه لكل واحدة؟ اكتب، وبعدين اعرف من [[npm outdated]] على مشروع حقيقي إن عمود [[Wanted]] بيقول نفس الكلام.`, done: R`كتبت 0.577.3 لـ lucide (الـ caret على 0.x بيقفل الرقم التاني) و 19.3.1 لـ react (مش 20)، وتقدر تشاور على عمود [[Wanted]] في [[npm outdated]] وتشرحه.`, sol: R`~~~bash
-npx semver -r "^0.577.0" 0.577.0 0.577.3 1.67.0
-npx semver -r "^19.2.0" 19.2.0 19.3.1 20.0.0
-npm outdated
+            { lvl: 'تطبيق', t: R`**refactor:** صفحة فيها CSS بالشكل ده: [[.card h3]] و [[.card .btn]] و [[#sidebar .card p]] و [[.card.big]]. حوّلها لـ BEM: كل حاجة class واحدة، والكبير modifier.`, done: R`كل الـ selectors بقت (0,1,0) ما عدا modifier بيغيّر element (0,2,0)، ومفيش id في الـ CSS، والصفحة شكلها نفس الشكل بالظبط (screenshot قبل وبعد)، وتقدر تحط الكارت في الـ sidebar من غير ما شكله يتغيّر.`, sol: R`قبل:
+
+~~~live 430 430 before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكروت</title>
+<style>
+  .card { padding: 16px; border: 1px solid #ccc; }
+  .card h3 { margin: 0; color: #124; }
+  .card .btn { background: #124; color: #fff; }
+  #sidebar .card p { font-size: 14px; }
+  .card.big { padding: 32px; }
+  .card.big h3 { font-size: 28px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>الكروت</h1>
+  <h2>العروض</h2>
+  <article class="card big"><h3>كبير</h3><p>نص</p><button class="btn">شوف</button></article>
+  <aside id="sidebar">
+    <article class="card"><h3>جانبي</h3><p>نص</p><button class="btn">شوف</button></article>
+  </aside>
+</main>
+</body>
+</html>
 ~~~
 
-**الإجابة:** lucide هتبقى 0.577.3، و react هتبقى 19.3.1.
+بعد:
 
-**ليه:** الـ caret [[^]] بيسمح بأي تحديث مش كاسر، والتعريف معتمد على أول رقم مش صفر:
+~~~live 430 430 after.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكروت</title>
+<style>
+  .card { padding: 16px; border: 1px solid #ccc; }
+  .card__title { margin: 0; color: #124; }
+  .card__text { margin-block: 1em; }
+  .card__btn { background: #124; color: #fff; }
+  .card--big { padding: 32px; }
+  .card--big .card__title { font-size: 28px; }
+  .card--compact .card__text { font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>الكروت</h1>
+  <h2>العروض</h2>
+  <article class="card card--big"><h3 class="card__title">كبير</h3><p class="card__text">نص</p><button class="card__btn">شوف</button></article>
+  <aside id="sidebar">
+    <article class="card card--compact"><h3 class="card__title">جانبي</h3><p class="card__text">نص</p><button class="card__btn">شوف</button></article>
+  </aside>
+</main>
+</body>
+</html>
+~~~
 
-- [[^19.2.0]]: أول رقم مش صفر هو 19، فبيسمح بأي 19.x.x، ومش 20.
-- [[^0.577.0]]: الرقم الأول صفر، فأول رقم مش صفر هو 577، فبيسمح بـ 0.577.x بس.
+**الأسماء:** [[block__element--modifier]]. الـ block هو [[card]]، والعنصر جواه [[card__title]]، والحالة أو النوع [[card--big]].
 
-و semver بتعتبر كل [[0.x]] غير ثابتة، فأي زيادة في الرقم التاني ممكن تكسر. عشان كده 1.67.0 مش هتوصل.
+**إيه اللي اتغيّر فعليًا:**
 
-في [[npm outdated]]: [[Wanted]] أعلى نسخة بتطابق الـ range، و [[Latest]] أحدث نسخة منشورة. لو الاتنين مختلفين، [[npm update]] مش هيوصلك لـ Latest.
+- [[.card h3]] كانت بتعتمد على شكل الـ HTML. لو غيّرتها لـ h2 الشكل يبوظ. [[.card__title]] مش بتهتم بالـ tag.
+- [[#sidebar .card p]] كانت بتربط الشكل بالمكان. الكارت لو اتنقل برّه الـ sidebar بيتغيّر. [[.card--compact]] بتروح مع الكارت أينما كان.
+- كل selector وزنه (0,1,0)، ماعدا modifier بيغيّر element فهو (0,2,0)، فمفيش خناقات.
 
-**الغلطة الشائعة:** تفتكر إن [[npm update]] بيجيب آخر نسخة. لازم [[npm install pkg@latest]].
+**الغلطة الشائعة:** تعمل [[.card__body__title]]. الـ BEM مفيهوش عناصر متداخلة: كل element تابع للـ block مباشرة، مهما كان عمقه في الـ HTML.
 
 ~~~text الناتج
-^0.577.0 بيطابق: 0.577.0 ، 0.577.3
-^19.2.0 بيطابق: 19.2.0 ، 19.3.1
-
-npm outdated (lab بنسخة 0.577.0 ، و latest وقت التجربة 1.68.0):
-Package       Current  Wanted   Latest
-lucide-react  0.577.0  0.577.0  1.68.0
+الـ screenshot قبل وبعد: متطابق بايت ببايت
+عدد selectors فيها id في الـ CSS بعد: 0
+أوزان الـ selectors بعد:
+(0,1,0)  .card__title
+(0,2,0)  .card--big .card__title
+(0,1,0)  .card__text
+(0,2,0)  .card--compact .card__text
+(0,1,0)  .card
+(0,1,0)  .card--big
+(0,1,0)  .card__btn
+نقلنا الكارت الجانبي برّه الـ aside: حجم النص = 14px  (لسه نفس الشكل)
+axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صلّح المكوّن البايظ ده بعد الترقية لـ lucide 1.x من غير ما ترجع النسخة: [[import { Github, Youtube, Mail } from "lucide-react"]]. استخدم [[simple-icons]] للبراندين و [[BrandIcon]] زي الدرس، وأثبت بـ [[npx tsc --noEmit]] و [[curl -w "%{http_code}"]].`, done: R`[[tsc]] خرج 0، والصفحة [[200]]، و [[curl | grep -o "<svg" | wc -l]] بيعدّ ٣ أيقونات، واللينكات عليها [[aria-label]].`, sol: R`~~~tsx BrandIcon.tsx
-import type { SimpleIcon } from "simple-icons";
-
-export function BrandIcon({ icon, className }: { icon: SimpleIcon; className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
-      <path d={icon.path} />
-    </svg>
-  );
-}
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** زميلك كتب [[<article class="card--featured">]] والكارت المميز طالع من غير حدود ولا مسافات، مع إن [[.card--featured { border-color: blue; }]] موجودة.`, done: R`عرفت إن الـ modifier بيغيّر لون الحدود بس والحدود نفسها في [[.card]]، فحطيت الاتنين [[class="card card--featured"]]، و Computed بقى بيقول [[border-top-style: solid]] و padding 16px.`, sol: R`~~~live 140 140
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكروت</title>
+<style>
+  .card { border: 1px solid #ccc; padding: 16px; margin-block-end: 8px; }
+  .card--featured { border-color: blue; }
+</style>
+</head>
+<body>
+<main>
+<h1>الكروت</h1>
+<article class="card card--featured">مميز</article>
+</main>
+</body>
+</html>
 ~~~
 
-~~~tsx Footer.tsx
-import { Mail } from "lucide-react";
-import { siGithub, siYoutube } from "simple-icons";
-import { BrandIcon } from "./BrandIcon";
+**السبب:** الـ modifier مش بديل للـ block، ده إضافة عليه. [[.card--featured]] فيها سطر واحد للون الحدود بس. أما الحدود نفسها والمسافات ففي [[.card]]. فلو كتبت الـ modifier لوحده، مفيش حدود أصلًا عشان تتلوّن.
 
-export function Footer() {
-  return (
-    <footer className="flex gap-4 p-4">
-      <a href="https://github.com/acme" aria-label="GitHub"><BrandIcon icon={siGithub} className="size-5" /></a>
-      <a href="https://www.youtube.com/@acme" aria-label="YouTube"><BrandIcon icon={siYoutube} className="size-5" /></a>
-      <a href="mailto:hello@example.com" aria-label="الإيميل"><Mail className="size-5" aria-hidden="true" /></a>
-    </footer>
-  );
-}
-~~~
+**القاعدة:** الاتنين مع بعض دايمًا: [[class="card card--featured"]].
 
-~~~bash
-npx tsc --noEmit
-curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/
-curl -s http://localhost:3000/ | grep -o "<svg" | wc -l
-~~~
-
-**ليه:** lucide 1.x شالت أيقونات البراندات، و [[Mail]] لسه موجودة لأنها أيقونة عامة. فبنسيب [[Mail]] من lucide، ونجيب البراند من [[simple-icons]].
-
-[[BrandIcon]] بيرسم [[icon.path]] بـ [[fill="currentColor"]]، فاللون جاي من اللينك. و simple-icons أشكال ملية، عكس lucide اللي خطوط. عشان كده [[fill]] مش [[stroke]].
-
-و [[aria-label]] على اللينك هو الاسم، والأيقونة [[aria-hidden]].
-
-**انتبه لحاجتين:** [[siLinkedin]] مش موجودة في simple-icons 16.36.0 ([[tsc]] بيقول [[has no exported member]])، فـ LinkedIn محتاج SVG من ملفات الشركة الرسمية. و [[grep -c]] بيعدّ سطور مش تطابقات، و React بيطلّع الصفحة في سطر واحد، فلازم [[grep -o]] مع [[wc -l]].
-
-**الغلطة الشائعة:** ترجّع lucide لـ 0.x عشان ترتاح. كده انت قفلت على نسخة قديمة.
+**الغلطة الشائعة:** تنسخ كل قواعد [[.card]] جوه [[.card--featured]] عشان تشتغل لوحدها. كده لما تغيّر [[.card]] المميز مش هيتغيّر معاها.
 
 ~~~text الناتج
-npx tsc --noEmit        exit 0
-curl                    200
-grep -o "<svg" | wc -l  3
-aria-label:             GitHub ، YouTube ، الإيميل
+قبل (class="card--featured"):
+border-top-style = none   padding = 0px
 
-(اتقاس بـ renderToString من React 19.3.1 وسيرفر Node صغير.)
+بعد (class="card card--featured"):
+border-top-style = solid   padding = 16px   لون الحدود = rgb(0, 0, 255)
+axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من غير ما تسطّب، بـ [[npm pack]] و [[tar]] طلّع [[dist/lucide-react.d.ts]] من 0.577.0 ومن آخر نسخة، وطلّع قايمة الأسامي اللي في القديمة ومش في الجديدة ([[comm -23]] على لستتين مترتبين، أو سكربت Node).`, done: R`عندك لستة فيها [[Github]] و [[Facebook]] و [[Youtube]] على الأقل، وعارف تشرح [[npm pack]] بيعمل إيه في سطر.`, sol: R`~~~bash
-npm pack lucide-react@0.577.0 --silent
-npm pack lucide-react@latest --silent
-mkdir old new
-tar -xzf lucide-react-0.577.0.tgz -C old package/dist/lucide-react.d.ts
-tar -xzf lucide-react-1.68.0.tgz -C new package/dist/lucide-react.d.ts
-node gone.mjs old/package/dist/lucide-react.d.ts new/package/dist/lucide-react.d.ts
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** ملفين CSS فيهم [[.title]] بحجمين مختلفين. اعكس ترتيب الـ [[<link>]] بتاعهم وقيس حجم الـ h1 في كل مرة. وبعدين حوّل واحد منهم لـ [[.module.css]] في Vite وقيس تاني.`, done: R`الحجم بيتغيّر مع ترتيب الـ link (اللي آخر يكسب: 20px أو 32px)، وبعد الـ module الحجم ثابت مهما كان الترتيب، وفي [[dist/assets]] لقيت الاسم الجديد زي [[._title_xxxxx_1]].`, sol: R`~~~css a.css
+.title { font-size: 20px; }
 ~~~
 
-~~~js gone.mjs
-import { readFileSync } from "node:fs";
-
-function exportsOf(file) {
-  const text = readFileSync(file, "utf8");
-  const start = text.lastIndexOf("export {");
-  const body = text.slice(start + "export {".length, text.indexOf("}", start));
-  return new Set(body.split(",").map((s) => s.trim().split(" as ").pop()).filter(Boolean));
-}
-
-const [oldFile, newFile] = process.argv.slice(2);
-const before = exportsOf(oldFile);
-const after = exportsOf(newFile);
-const gone = [...before].filter((name) => !after.has(name)).sort();
-console.log(before.size, after.size, gone.length);
-console.log(gone.join(" "));
+~~~css b.module.css
+.title { font-size: 32px; }
 ~~~
 
-**[[npm pack]] بيعمل إيه:** بينزّل الملف المضغوط اللي npm هيسطّبه، ويحطه في الفولدر، من غير ما يلمس [[node_modules]] أو [[package.json]].
+~~~js main.js
+import './a.css';
+import styles from './b.module.css';
 
-**ليه السكربت بيقرا [[export { ... }]]:** شكل الملف اتغيّر بين النسختين: القديمة [[declare const Github: react.Forward…]]، والجديدة [[declare const Mail: LucideIcon]]. وأول محاولة بـ [[comm -23]] على أسماء [[declare]] طلّعت 61 اسم، منهم أسماء لسه موجودة زي [[Trash2]] كـ alias. سطر [[export]] هو الحقيقة، لأنه اللي بتعمل منه import.
+document.querySelector('h1').className = styles.title;
+~~~
 
-**الغلطة الشائعة:** تعمل [[comm]] من غير [[sort]] بنفس الـ locale. [[comm]] لازم ملفين مترتبين، فاكتب [[LC_ALL=C]] قبل الاتنين.
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>العنوان</title>
+</head>
+<body>
+<main><h1>العنوان</h1></main>
+<script type="module" src="/main.js">$__lt/script>
+</body>
+</html>
+~~~
+
+وعشان تجربة الترتيب من غير modules: ملفين [[a.css]] و [[b.css]] فيهم نفس الـ class، و [[<h1 class="title">]]، وبدّل سطور [[<link>]].
+
+بعد كده [[npm create vite@latest]] ثم [[npx vite build]].
+
+**ليه الترتيب بطّل يفرق:** CSS Modules بتغيّر اسم الـ class وقت البناء لاسم فريد. فـ [[.title]] في الموديول مبقاش [[.title]] أصلًا. ومفيش خناقة، لأن الاسمين مختلفين.
+
+**الغلطة الشائعة:** تكتب [[class="title"]] في الـ HTML وتستنى الموديول يشتغل. الاسم الجديد موجود في [[styles.title]] بس.
 
 ~~~text الناتج
-5844 6932 57
+ملفين عاديين:
+a ثم b  → 32px
+b ثم a  → 20px
 
-(5844 اسم قديم ، 6932 جديد ، 57 راحوا: كل أيقونة باسم و Icon و Lucide)
+b.module.css:
+a ثم الموديول  → 32px
+الموديول ثم a  → 32px
 
-الأيقونات الـ 19:
-Chrome Chromium Codepen Codesandbox Dribbble Facebook Figma Framer Github
-Gitlab Instagram Linkedin Pocket RailSymbol Slack Trello Twitch Twitter Youtube
+الاسم في dist/assets: ._title_1tx54_1
 ~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** اكتب [[majors.mjs]]: بيقرا [[package.json]] وملف JSON فيه آخر نسخة لكل باكدج (اعمله بإيدك أو من [[npm view <pkg> version]])، ويطبع كل باكدج الـ range بتاعه مش هيوصل لآخر نسخة لأن الفرق major، ويخرج بـ 1 لو فيه. (شكل فحص الـ ci في الدرس.)`, done: R`على [[{"lucide-react":"^0.577.0","react":"^19.2.0"}]] وآخر نسخ [[1.67.0]] و [[19.3.1]] بيطبع [[lucide-react: ^0.577.0 -> 1.67.0 (major)]] بس ويخرج 1.`, sol: R`~~~js majors.mjs
-import { readFileSync } from "node:fs";
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** component بيعمل [[el.className = styles.titel]] وشكله مش متنسّق، والـ Console نضيف خالص.`, done: R`في Elements لقيت [[class="undefined"]]، وطبعت [[styles]] ولقيت المفتاح اسمه [[title]]، وصلّحته. وزوّدت سطر بيتأكد: [[if (!styles.title) throw new Error('class ناقصة')]] أو استخدمت TypeScript.`, sol: R`~~~js
+import styles from './card.module.css';
 
-const [pkgFile = "package.json", latestFile = "latest.json"] = process.argv.slice(2);
-const { dependencies = {}, devDependencies = {} } = JSON.parse(readFileSync(pkgFile, "utf8"));
-const latest = JSON.parse(readFileSync(latestFile, "utf8"));
-const all = { ...dependencies, ...devDependencies };
+if (!styles.title) throw new Error('class ناقصة: title');
 
-// نفس منطق الـ caret: أول رقم مش صفر هو الـ major الفعلي
-function lockedPart(version) {
-  const [major, minor, patch] = version.replace(/^[\^~]/, "").split(".").map(Number);
-  if (major > 0) return $__bt$__{major}$__bt;
-  if (minor > 0) return $__bt0.$__{minor}$__bt;
-  return $__bt0.0.$__{patch}$__bt;
-}
+const el = document.querySelector('h2');
+el.className = styles.title;
+~~~
 
-let found = 0;
-for (const [name, range] of Object.entries(all)) {
-  const newest = latest[name];
-  if (!newest) continue;
-  if (!range.startsWith("^")) continue;
-  if (lockedPart(range) !== lockedPart(newest)) {
-    console.log($__bt$__{name}: $__{range} -> $__{newest} (major)$__bt);
-    found++;
+**ليه الـ Console نضيف:** في JavaScript، قراية مفتاح مش موجود في object مش خطأ، بترجّع [[undefined]]. و [[el.className = undefined]] بيحوّلها لنص، فالـ class بيبقى كلمة [[undefined]] حرفيًا. مفيش ولا error، بس مفيش تنسيق.
+
+**خطوات الوصول للسبب:**
+
+1. Elements: لقيت [[class="undefined"]].
+2. [[console.log(styles)]]: لقيت المفتاح [[title]] مش [[titel]].
+3. صلّحت الاسم، وزوّدت سطر فحص، فالغلطة الجاية تصرخ بدل ما تسكت.
+
+**الوقاية:** TypeScript مع [[typescript-plugin-css-modules]] بيطلّع خطأ في المحرر قبل ما تشغّل.
+
+**الغلطة الشائعة:** تدوّر في ملف الـ CSS وتعيد كتابة القاعدة. القاعدة سليمة، المشكلة في السطر اللي بيقراها.
+
+~~~text الناتج
+قبل (styles.titel):
+class في Elements = undefined
+Console: 0 رسالة خطأ
+console.log(styles) = {"title":"_title_1s69e_1"}
+
+بعد (styles.title):
+class في Elements = _title_1s69e_1
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** مكتبة كروت صغيرة بالـ BEM لموقع جيم متخيل: [[.plan]] و [[.plan__name]] و [[.plan__price]] و [[.plan__features]] و [[.plan__cta]]، و ٣ modifiers: [[--featured]] (حدود ملونة وشارة «الأشهر» بـ [[::before]])، و [[--muted]] (رمادي)، و [[--compact]] (padding أقل).`, done: R`٣ كروت جنب بعض كل واحد بـ modifier مختلف، وكل modifier أقل من ٤ سطور CSS لأنه بيغيّر بس، وتقدر تجمع اتنين ([[plan plan--featured plan--compact]]) والاتنين يشتغلوا، ومفيش [[!important]] في الملف.`, sol: R`~~~live 380 720
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الباقات</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; max-width: 800px; margin-inline: auto; }
+  .plan { position: relative; padding: 24px; border: 2px solid #d4d4d8; border-radius: 12px; }
+  .plan__name { margin: 0; font-size: 1.25rem; }
+  .plan__price { font-size: 1.75rem; font-weight: 700; }
+  .plan__features { padding-inline-start: 20px; }
+  .plan__cta { display: inline-block; padding: 10px 16px; background: #0f766e; color: #fff; border-radius: 8px; text-decoration: none; }
+
+  .plan::before {
+    position: absolute; top: -12px; inset-inline-start: 16px;
+    padding: 0 8px; background: #0f766e; color: #fff; border-radius: 999px; font-size: .75rem;
   }
-}
-process.exit(found ? 1 : 0);
+
+  .plan--featured { border-color: #0f766e; }
+  .plan--featured::before { content: "الأشهر"; }
+
+  .plan--muted { color: #52525b; background: #f4f4f5; }
+  .plan--muted .plan__cta { background: #52525b; }
+
+  .plan--compact { padding: 12px; }
+</style>
+</head>
+<body>
+<main>
+<h1>الباقات</h1>
+<div class="plans">
+  <article class="plan plan--muted">
+    <h2 class="plan__name">أساسي</h2>
+    <p class="plan__price">٥٠٠ ج</p>
+    <ul class="plan__features"><li>صالة</li></ul>
+    <a class="plan__cta" href="#basic">اشترك في الأساسي</a>
+  </article>
+  <article class="plan plan--featured">
+    <h2 class="plan__name">ذهبي</h2>
+    <p class="plan__price">٩٠٠ ج</p>
+    <ul class="plan__features"><li>صالة</li><li>حصص</li></ul>
+    <a class="plan__cta" href="#gold">اشترك في الذهبي</a>
+  </article>
+  <article class="plan plan--featured plan--compact">
+    <h2 class="plan__name">سريع</h2>
+    <p class="plan__price">٣٠٠ ج</p>
+    <ul class="plan__features"><li>أسبوع</li></ul>
+    <a class="plan__cta" href="#quick">اشترك في السريع</a>
+  </article>
+</div>
+</main>
+</body>
+</html>
 ~~~
 
-~~~json package.json
-{"dependencies":{"lucide-react":"^0.577.0","react":"^19.2.0"}}
-~~~
+**ليه الـ modifiers قصيرة:** كل واحد بيقول الفرق بس. كل حاجة مشتركة في [[.plan]]. وعشان كده تقدر تجمع اتنين: كل واحد بيلمس خصايص مختلفة، فمفيش تعارض.
 
-~~~json latest.json
-{"lucide-react":"1.67.0","react":"19.3.1"}
-~~~
+- [[position: relative]] على [[.plan]] عشان الشارة [[::before]] تتحسب منه.
+- [[.plan--muted .plan__cta]]: modifier بيغيّر element، وزنها (0,2,0). دي الحالة الوحيدة اللي بنستخدم فيها selector مركّب.
+- شكل الشارة في [[.plan::before]]، وده مش بيترسم لوحده لأن مفيهوش [[content]]. فالـ modifier بيكتب [[content]] بس، وبيفضل سطر واحد.
+- [[content: "الأشهر"]] زينة، وقارئ الشاشة ممكن يقراها. لو المعلومة مهمة خليها نص حقيقي.
 
-~~~bash
-node majors.mjs package.json latest.json
-echo "exit: $?"
-~~~
-
-**ليه [[lockedPart]]:** مقارنة الرقم الأول لوحدها غلط مع [[0.x]]. الدالة بترجع الجزء اللي الـ caret قافل عليه: [[19]] لـ [[^19.2.0]]، و [[0.577]] لـ [[^0.577.0]]. لو الجزء ده اختلف عن آخر نسخة، الـ range مش هيوصلها.
-
-وآخر نسخة فيها [[lockedPart]] بتتحسب بنفس الطريقة: [[1.67.0]] بتدّي [[1]]، و [[19.3.1]] بتدّي [[19]].
-
-**السكربت بيتجاهل** أي range مش بيبدأ بـ [[^]]، و [[process.exit(found ? 1 : 0)]] بيخليه يشتغل في CI.
-
-**الغلطة الشائعة:** تعمل [[parseInt]] على الـ range بالكامل. أو تعتبر 0.577 و 0.578 نفس الـ major.
+**الغلطة الشائعة:** تعمل [[.plan--featured-compact]] لكل تركيبة. كده الأسماء هتتضاعف مع كل modifier جديد.
 
 ~~~text الناتج
-lucide-react: ^0.577.0 -> 1.67.0 (major)
-exit: 1
+padding: عادي 24px   compact 12px
+الاتنين مع بعض: حدود rgb(15, 118, 110) و padding 12px و شارة: "الأشهر"
+عدد سطور CSS في كل modifier: featured 2، muted 2، compact 1
+!important في الملف: 0
+مواضع الكروت على 1280: 86 , 86 , 86 (نفس السطر)
+overflow على 360: 0px   axe: 0 violations
 ~~~` },
-          ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const deps = { "lucide-react": "^0.577.0", "react": "^19.2.0", "simple-icons": "16.36.0" };
-const latest = { "lucide-react": "1.67.0", "react": "19.3.1", "simple-icons": "16.36.0" };
-const parse = v => v.replace(/^[\^~]/, "").split(".").map(Number);
-function caretAllows(range, v) {
-  if (!range.startsWith("^")) return range === v;
-  const [a, b, c] = parse(range), [x, y, z] = parse(v);
-  if (a > 0) return x === a && (y > b || (y === b && z >= c));
-  return x === 0 && y === b && z >= c;
-}
-let bad = 0;
-for (const [name, range] of Object.entries(deps)) {
-  const ok = caretAllows(range, latest[name]);
-  console.log(name + ": " + range + " -> " + latest[name] + (ok ? " ok" : " (major)"));
-  if (!ok) bad++;
-}
-console.log("needs decision: " + bad);`, expect: [R`lucide-react: ^0.577.0 -> 1.67.0 (major)`, R`react: ^19.2.0 -> 19.3.1 ok`, R`simple-icons: 16.36.0 -> 16.36.0 ok`, R`needs decision: 1`] },
-          ],
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** في وثائق Vite (صفحة Features › CSS Modules) اعرف إزاي تخلي الأسماء في الـ JavaScript camelCase (يعني [[.plan-card]] تتقري [[styles.planCard]])، وإيه [[:global()]].`, done: R`لقيت [[css.modules.localsConvention]] في [[vite.config]] وجرّبتها، وفهمت إن [[:global(.x)]] بتسيب الاسم زي ما هو جوه ملف module (مثلًا عشان class جاي من مكتبة).`, sol: R`~~~js vite.config.js
+export default {
+  css: {
+    modules: {
+      localsConvention: 'camelCaseOnly',
+    },
+  },
+};
+~~~
+
+~~~css plan.module.css
+.plan-card { padding: 16px; }
+:global(.lib-tooltip) { color: teal; }
+~~~
+
+~~~js main.js
+import styles from './plan.module.css';
+
+console.log(JSON.stringify(styles));
+document.querySelector('h1').className = styles.planCard;
+~~~
+
+**الإجابات:**
+
+- [[css.modules.localsConvention]]: بتتحكم في شكل المفاتيح في الـ JavaScript. [[camelCase]] بتسيب الاسم الأصلي وتضيف نسخة camelCase، و [[camelCaseOnly]] بتسيب الـ camelCase بس.
+- [[:global(.x)]]: جوه ملف موديول، اسم الـ class بيتسيب زي ما هو من غير hash. بتحتاجه لما class جاي من مكتبة، أو لما تكتب على عنصر برّه الموديول.
+
+**الغلطة الشائعة:** تكتب [[styles['plan-card']]] في كل مكان وتتعب، أو تنسى تعيد تشغيل Vite بعد تعديل الـ config.
+
+~~~text الناتج
+camelCaseOnly: مفاتيح styles = planCard
+camelCase:     مفاتيح styles = plan-card , planCard
+من غير config: مفاتيح styles = plan-card
+
+:global في الملف الناتج: .lib-tooltip{color:teal}
+~~~` },
+          ]
         }
       ]
     }

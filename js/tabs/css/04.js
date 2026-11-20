@@ -1,4676 +1,4004 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "CSS: مين بيكسب ومساحة كل عنصر",
+      t: "HTML: القوايم والاقتباسات",
+      l: 1,
+      n: "أي مجموعة عناصر قايمة، وأي كلام منقول اقتباس، وكل واحد ليه عنصر بيقول ده للمتصفح",
       pre: [
-        { to: "css/<!doctype html>", why: R`ملف الـ CSS بيتربط من الـ head بـ link` },
+        { to: "css/مقدمة HTML والـ Tags", why: R`لازم تكون عارف الـ tag والـ attribute وإزاي تفتح ملف HTML في المتصفح` },
+        { to: "css/semantic HTML", why: R`الوحدة دي بتكمّل عليه: [[<nav>]] و [[<article>]] وشجرة الـ accessibility` }
+      ],
+      goal: [
+        R`تختار بين [[<ul>]] و [[<ol>]] و [[<dl>]] من معنى المحتوى، وتتحكم في ترقيم [[<ol>]] بـ [[start]] و [[reversed]] و [[type]] و [[value]].`,
+        R`تكتب قايمة جوه قايمة صح، وتبني قايمة تنقل ومسار صفحة (breadcrumb) وفهرس محتويات.`,
+        R`تعرض بيانات «اسم وقيمة» (مواصفات، أسئلة، قاموس) بـ [[<dl>]] وتعرف إمتى الجدول أحسن.`,
+        R`تكتب اقتباس طويل وقصير واسم مصدر بـ [[<blockquote>]] و [[<q>]] و [[<cite>]]، وتربط المقولة بصاحبها بـ [[<figure>]] و [[<figcaption>]].`,
+        R`تمسك الغلطات اللي شكلها سليم (قايمة جوه [[<p>]]، [[<ul>]] جوه [[<ul>]] مباشرة) من الـ validator ومن شجرة الـ DOM.`
       ],
       projects: [
-        { lvl: 'صغير', dir: "menu-card", t: R`كارت منيو بملف CSS خارجي`, what: R`خد كارت المطعم من مشروع الوحدة الأولى وزوّدله [[style.css]] واحد: خط ومسافة سطور للفقرات، وعنوان ملوّن، وزرار [[.btn]] بخلفية وزوايا مدورة، و [[box-sizing: border-box]] على كل حاجة. من دروس «مقدمة CSS» و «selectors» و «box model».`, done: R`الـ HTML زي ما هو (اللي اتزوّد سطر الـ link و class على الكارت والزرار بس)، والكارت عرضه 320px بالظبط شامل الـ padding والحدود (Computed)، ومفيش ولا [[style=""]] ولا id في الـ CSS.`, sol: R`ده نفس ملف [[index.html]] بتاع مشروع المطعم في الوحدة الأولى، واتزوّد عليه ٣ حاجات بس: سطر [[<link>]] في الـ head، و [[class="card"]] على [[<main>]]، و [[class="btn"]] على الزرار. وحط [[logo.svg]] بتاع المشروع ده جنبه زي ما هو.
-
-~~~html index.html
+        { lvl: 'صغير', dir: "bakery-menu", t: R`منيو مخبز السنابل`, what: R`صفحة واحدة لمخبز متخيل بـ HTML بس: المنيو قايمة من مستويين (أقسام وتحتها أصناف)، و «إزاي تطلب» خطوات مرقّمة فيها لينك [[tel:]]، والمواعيد [[<dl>]]. كل جزء [[<section>]] بعنوانه. من دروس «ul و ol» و «قوايم جوه قوايم» و «dl و dt و dd».`, done: R`المنيو [[<ul>]] جواها اتنين [[<ul>]] وكل واحدة جوه الـ [[<li>]] بتاع قسمها، والخطوات [[<ol>]] من ٣، والمواعيد [[<dl>]] فيها اتنين [[<dt>]] واتنين [[<dd>]]، والـ validator صفر errors.`, sol: R`~~~live 480 منيو مخبز السنابل
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مطعم الزيتونة: المنيو</title>
-<link rel="stylesheet" href="style.css">
+<title>منيو مخبز السنابل</title>
 </head>
 <body>
-<main class="card">
-  <h1>مطعم الزيتونة</h1>
-  <img src="logo.svg" alt="لوجو المطعم: زيتونة خضرا جوه دايرة" width="120" height="120">
-  <p>أكل بيتي كل يوم من ١٢ الضهر لـ ١٢ بالليل: فول وطعمية الصبح، ومحشي وملوخية على الغدا.</p>
-  <p>للطلب كلمنا على <a href="tel:+20225550147">0225550147</a></p>
-  <button type="button" class="btn">اطلب</button>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-/* the width you write is the whole box: content + padding + border */
-*, *::before, *::after { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  padding: 24px 16px;
-  background: #f5f1e8;
-  color: #1f2937;
-  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
-}
-
-.card {
-  width: 320px;
-  max-width: 100%;
-  margin-inline: auto;
-  padding: 24px;
-  border: 2px solid #d6cfc0;
-  border-radius: 16px;
-  background: white;
-  text-align: center;
-}
-
-.card h1 { margin: 0 0 12px; font-size: 26px; color: #3f6212; }
-.card img { display: block; margin: 0 auto 12px; }
-.card p { margin: 0 0 12px; line-height: 1.7; }
-.card a { color: #3f6212; font-weight: 700; }
-
-.btn {
-  padding: 10px 28px;
-  border: 0;
-  border-radius: 999px;
-  background: #4d7c0f;
-  color: white;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-.btn:hover { background: #3f6212; }
-.btn:focus-visible { outline: 3px solid #1f2937; outline-offset: 3px; }
-~~~
-
-~~~view 520 560 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مطعم الزيتونة: المنيو</title>
-<style id="style">
-/* the width you write is the whole box: content + padding + border */
-*, *::before, *::after { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  padding: 24px 16px;
-  background: #f5f1e8;
-  color: #1f2937;
-  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
-}
-
-.card {
-  width: 320px;
-  max-width: 100%;
-  margin-inline: auto;
-  padding: 24px;
-  border: 2px solid #d6cfc0;
-  border-radius: 16px;
-  background: white;
-  text-align: center;
-}
-
-.card h1 { margin: 0 0 12px; font-size: 26px; color: #3f6212; }
-.card img { display: block; margin: 0 auto 12px; }
-.card p { margin: 0 0 12px; line-height: 1.7; }
-.card a { color: #3f6212; font-weight: 700; }
-
-.btn {
-  padding: 10px 28px;
-  border: 0;
-  border-radius: 999px;
-  background: #4d7c0f;
-  color: white;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-.btn:hover { background: #3f6212; }
-.btn:focus-visible { outline: 3px solid #1f2937; outline-offset: 3px; }
-</style>
-</head>
-<body>
-<main class="card">
-  <h1>مطعم الزيتونة</h1>
-  <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20120%20120%22%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2260%22%20r%3D%2256%22%20fill%3D%22%23557a2b%22%2F%3E%3Cellipse%20cx%3D%2260%22%20cy%3D%2260%22%20rx%3D%2222%22%20ry%3D%2234%22%20fill%3D%22%23a3c45a%22%2F%3E%3C%2Fsvg%3E" alt="لوجو المطعم: زيتونة خضرا جوه دايرة" width="120" height="120">
-  <p>أكل بيتي كل يوم من ١٢ الضهر لـ ١٢ بالليل: فول وطعمية الصبح، ومحشي وملوخية على الغدا.</p>
-  <p>للطلب كلمنا على <a href="tel:+20225550147">0225550147</a></p>
-  <button type="button" class="btn">اطلب</button>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** كارت أبيض في نص صفحة بيج، حوافه مدورة وحواليه حد رفيع، وجواه العنوان أخضر زيتوني، واللوجو، والفقرتين بمسافة سطور مريحة، وزرار «اطلب» أخضر شكله كبسولة. والماوس على الزرار بيغمّق لونه.
-
-**ليه كل سطر:**
-- **[[box-sizing: border-box]] على [[*]] و [[::before]] و [[::after]]:** من غيره [[width: 320px]] معناها عرض المحتوى بس، والـ padding (24 من كل ناحية) والحد (2 من كل ناحية) بيتزوّدوا عليه فالكارت يطلع 372. ومعاه الـ 320 هي الكارت كله، والمحتوى ياخد اللي فاضل (268).
-- **[[max-width: 100%]]:** على شاشة أضيق من 320 الكارت يصغر بدل ما يعمل scroll أفقي.
-- **[[margin-inline: auto]]:** بيقسم المسافة الفاضية على الجنبين فالكارت ييجي في النص. و [[inline]] معناها «ناحية السطر»، فبتشتغل صح في العربي والإنجليزي.
-- **[[.card h1]] و [[.card p]]:** selector من class وعنصر جواه، وزنه (0,1,1). كده الألوان دي للكارت بس، ولو حطيت [[<p>]] برّه الكارت مش هياخدها.
-- **[[font: inherit]] على الزرار:** الزراير مش بتورث خط الصفحة لوحدها (المتصفح بيدّيها خط النظام). السطر ده بيرجّعلها خط الصفحة.
-- **[[border-radius: 999px]]:** أي رقم أكبر من نص ارتفاع الزرار بيخلّي طرفيه نص دايرة.
-- **[[:focus-visible]]:** إطار واضح لما توصل للزرار بالـ Tab بس، مش لما تدوس عليه بالماوس.
-
-**مفيش id ولا [[style=""]]:** id وزنه (1,0,0)، يعني يغلب أي عدد من الـ classes، ولو حبيت تغيّر حاجة بعد كده هتضطر تكتب selector أتقل منه. والـ [[style=""]] أتقل من الاتنين.
-
-~~~text الناتج (Chrome)
-عرض الكارت (getBoundingClientRect)         320
-نفس الكارت بـ box-sizing: content-box       371.2 (= 320 + 24×2 + 1.6×2)
-الحد                                         1.6px (شاشتي زومها 125%، فالمتصفح بيقرّب الـ 2px لـ 1.6)
-نفس القياس بـ chrome --headless --force-device-scale-factor=1:   الحد 2px، والكارت 320، وبـ content-box 372
-على 360                                      الكارت 320، scrollWidth = 360 من 360
-عناصر عليها style=""                         0
-axe                                          0 violations
-~~~` },
-        { lvl: 'صغير', dir: "css-shapes", t: R`٦ أشكال بالـ CSS بس`, what: R`صفحة فيها ٦ أشكال من div فاضي من غير صور: دايرة، وكبسولة، ومثلث بالحدود، وفقاعة كلام (مستطيل مدور ومثلث صغير بـ [[::after]])، وتذكرة بخط متقطع ونص دايرتين على الجنبين، وشارة «جديد» مايلة على ركن كارت. من دروس «selectors» و «box model» و «display».`, done: R`كل شكل مقاسه زي ما قلت بالظبط ([[getBoundingClientRect]]: المثلث مثلًا 40×30 على شاشة زومها 100%، وعرضه وطوله صفر في الـ CSS)، والأشكال جنب بعض بتلف لسطر جديد على 360px من غير scroll أفقي، ومفيش ولا صورة في Network.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>٦ أشكال بالـ CSS بس</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main>
-  <h1>٦ أشكال من غير ولا صورة</h1>
-  <ul class="shapes">
-    <li><div class="circle"></div><p>دايرة</p></li>
-    <li><div class="pill">كبسولة</div><p>كبسولة</p></li>
-    <li><div class="triangle"></div><p>مثلث بالحدود</p></li>
-    <li><div class="bubble">أهلًا!</div><p>فقاعة كلام</p></li>
-    <li><div class="ticket">تذكرة دخول</div><p>تذكرة</p></li>
-    <li><div class="corner-card"><span class="ribbon">جديد</span></div><p>شارة على الركن</p></li>
-  </ul>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
-h1 { font-size: 22px; margin: 0 0 16px; }
-
-/* the cells wrap to a new line instead of making the page scroll */
-.shapes { display: flex; flex-wrap: wrap; gap: 16px; margin: 0; padding: 0; list-style: none; }
-.shapes li { width: 140px; min-height: 140px; padding: 12px; border-radius: 12px; background: white;
-  display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
-.shapes p { margin: 8px 0 0; font-size: 14px; color: #475569; }
-
-/* 1. circle: a square with radius 50% */
-.circle { width: 80px; height: 80px; border-radius: 50%; background: #0ea5e9; }
-
-/* 2. pill: any radius bigger than half the height gives round ends */
-.pill { padding: 8px 20px; border-radius: 999px; background: #8b5cf6; color: white; font-weight: 700; }
-
-/* 3. triangle: no size at all, only borders. The bottom border is the triangle,
-      the two side borders are transparent and give it its width (20 + 20 = 40) */
-.triangle { width: 0; height: 0;
-  border-inline: 20px solid transparent;
-  border-block-end: 30px solid #f97316; }
-
-/* 4. speech bubble: a rounded box and a small triangle made by ::after under it */
-.bubble { position: relative; padding: 10px 16px; border-radius: 14px; background: #15803d; color: white; font-weight: 700; }
-.bubble::after { content: ""; position: absolute; top: 100%; inset-inline-start: 18px;
-  border-inline: 8px solid transparent; border-block-start: 10px solid #15803d; }
-
-/* 5. ticket: a dashed border inside, and two half circles cut out with the page colour */
-.ticket { position: relative; width: 120px; padding: 14px 10px; border-radius: 8px; background: #fde68a;
-  outline: 2px dashed #b45309; outline-offset: -6px; text-align: center; font-weight: 700; color: #78350f; }
-.ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 16px; height: 16px;
-  border-radius: 50%; background: white; transform: translateY(-50%); }
-.ticket::before { inset-inline-start: -8px; }
-.ticket::after { inset-inline-end: -8px; }
-
-/* 6. a ribbon across the corner: rotated, and the card hides what sticks out */
-.corner-card { position: relative; width: 110px; height: 80px; border-radius: 10px; background: #e2e8f0; overflow: hidden; }
-.ribbon { position: absolute; top: 18px; inset-inline-end: -28px; width: 110px; padding: 2px 0;
-  background: #dc2626; color: white; font-size: 13px; font-weight: 700; text-align: center;
-  transform: rotate(-45deg); }
-~~~
-
-~~~view 560 1000 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>٦ أشكال بالـ CSS بس</title>
-<style id="style">
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
-h1 { font-size: 22px; margin: 0 0 16px; }
-
-/* the cells wrap to a new line instead of making the page scroll */
-.shapes { display: flex; flex-wrap: wrap; gap: 16px; margin: 0; padding: 0; list-style: none; }
-.shapes li { width: 140px; min-height: 140px; padding: 12px; border-radius: 12px; background: white;
-  display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
-.shapes p { margin: 8px 0 0; font-size: 14px; color: #475569; }
-
-/* 1. circle: a square with radius 50% */
-.circle { width: 80px; height: 80px; border-radius: 50%; background: #0ea5e9; }
-
-/* 2. pill: any radius bigger than half the height gives round ends */
-.pill { padding: 8px 20px; border-radius: 999px; background: #8b5cf6; color: white; font-weight: 700; }
-
-/* 3. triangle: no size at all, only borders. The bottom border is the triangle,
-      the two side borders are transparent and give it its width (20 + 20 = 40) */
-.triangle { width: 0; height: 0;
-  border-inline: 20px solid transparent;
-  border-block-end: 30px solid #f97316; }
-
-/* 4. speech bubble: a rounded box and a small triangle made by ::after under it */
-.bubble { position: relative; padding: 10px 16px; border-radius: 14px; background: #15803d; color: white; font-weight: 700; }
-.bubble::after { content: ""; position: absolute; top: 100%; inset-inline-start: 18px;
-  border-inline: 8px solid transparent; border-block-start: 10px solid #15803d; }
-
-/* 5. ticket: a dashed border inside, and two half circles cut out with the page colour */
-.ticket { position: relative; width: 120px; padding: 14px 10px; border-radius: 8px; background: #fde68a;
-  outline: 2px dashed #b45309; outline-offset: -6px; text-align: center; font-weight: 700; color: #78350f; }
-.ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 16px; height: 16px;
-  border-radius: 50%; background: white; transform: translateY(-50%); }
-.ticket::before { inset-inline-start: -8px; }
-.ticket::after { inset-inline-end: -8px; }
-
-/* 6. a ribbon across the corner: rotated, and the card hides what sticks out */
-.corner-card { position: relative; width: 110px; height: 80px; border-radius: 10px; background: #e2e8f0; overflow: hidden; }
-.ribbon { position: absolute; top: 18px; inset-inline-end: -28px; width: 110px; padding: 2px 0;
-  background: #dc2626; color: white; font-size: 13px; font-weight: 700; text-align: center;
-  transform: rotate(-45deg); }
-</style>
-</head>
-<body>
-<main>
-  <h1>٦ أشكال من غير ولا صورة</h1>
-  <ul class="shapes">
-    <li><div class="circle"></div><p>دايرة</p></li>
-    <li><div class="pill">كبسولة</div><p>كبسولة</p></li>
-    <li><div class="triangle"></div><p>مثلث بالحدود</p></li>
-    <li><div class="bubble">أهلًا!</div><p>فقاعة كلام</p></li>
-    <li><div class="ticket">تذكرة دخول</div><p>تذكرة</p></li>
-    <li><div class="corner-card"><span class="ribbon">جديد</span></div><p>شارة على الركن</p></li>
-  </ul>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** ٦ كروت بيضا جنب بعض، في كل واحد شكل واسمه تحته: دايرة زرقا، وكبسولة بنفسجي، ومثلث برتقاني، وفقاعة كلام خضرا بسنّة صغيرة تحتها، وتذكرة صفرا بخط متقطع وتجويفين على الجنبين، وكارت رمادي على ركنه شريط أحمر مايل مكتوب عليه «جديد». على موبايل كل كارتين في سطر.
-
-**إزاي كل شكل اتعمل:**
-- **الدايرة:** مربع (80×80) و [[border-radius: 50%]]. لو الطول غير العرض هتطلع بيضاوي.
-- **الكبسولة:** [[border-radius: 999px]]. أي رقم أكبر من نص الارتفاع بيدّي طرفين نص دايرة، أيًّا كان طول الكلام.
-- **المثلث:** عنصر [[width: 0]] و [[height: 0]]، وكل شكله من الحدود. الحدود الأربعة بتتقابل عند الأركان بخط مايل. فلو خلّيت الحد اللي تحت ملوّن (30px) والجنبين شفافين (20px كل واحد)، اللي بيبان مثلث عرضه 40 وطوله 30.
-- **الفقاعة:** مستطيل مدور، و [[::after]] مثلث صغير بنفس الطريقة. [[position: relative]] على الفقاعة عشان [[position: absolute]] بتاع المثلث يتحسب منها. و [[top: 100%]] يحطه تحتها على طول.
-- **التذكرة:** الخط المتقطع [[outline]] مش [[border]]، لأن [[outline-offset: -6px]] يدخّله لجوه. والتجويفين [[::before]] و [[::after]]: دايرتين بلون الكارت اللي ورا، نص كل واحدة برّه التذكرة ([[inset-inline-start: -8px]]). و [[top: 50%]] مع [[translateY(-50%)]] بيحطهم في النص بالظبط (تحت هتلاقي ليه).
-- **الشريط المايل:** [[rotate(-45deg)]]، والكارت عليه [[overflow: hidden]] فاللي طالع من الشريط برّه الكارت مبيبانش. [[inset-inline-end]] في صفحة عربي معناها الشمال.
-
-**[[top: 50%]] و [[translateY(-50%)]] مع بعض:** الـ 50% بتاعة [[top]] من طول الأب، فبتنزّل **أول** العنصر لنص الأب. والـ 50% بتاعة [[translate]] من طول العنصر **نفسه**، فبتطلّعه لفوق نص طوله. النتيجة: نص العنصر على نص الأب، أيًّا كانت المقاسات.
-
-**غلطتين مسكتهم وانا بحل:**
-- الفقاعة كانت خلفيتها [[#22c55e]]، و axe قال [[color-contrast]]: الكلام الأبيض عليها 2.27:1 بس، والمطلوب 4.5. غمّقتها لـ [[#15803d]].
-- الكروت كانت 150px، وعلى 360 بقى في كل سطر كارت واحد بس: 150 + 16 + 150 = 316، والمساحة 313. خليتهم 140.
-
-~~~text الناتج (Chrome، شاشة 360)
-المثلث                 40 × 30 على شاشة زومها 100% (DPR 1)
-                        40 × 29.6 على شاشة زومها 125% (DPR 1.25): المتصفح بيقرّب سُمك الحدود لبكسلات الشاشة الحقيقية
-getComputedStyle المثلث  width = 40px (مع border-box، العرض اللي بيرجع بيشمل الحدود حتى لو كاتب 0)
-الدايرة                 80 × 80
-عدد السطور على 360      3 (كل كارتين في سطر)      scrollWidth = 360 من 360
-صور في Network          0
-axe                     0 violations (كانت color-contrast على الفقاعة)
-~~~` },
-        { lvl: 'متوسط', dir: "gym-bem", t: R`صفحة أسعار جيم بالـ BEM`, what: R`٣ كروت باقات لـ «جيم الأبطال» بـ [[.plan]] و [[.plan__price]] و [[.plan__features]] و [[.plan--featured]]: كل كارت فوقه شريط 4px بلون الباقة بـ [[::before]]، ولما الماوس ييجي عليه بيطلع لفوق 4px وظله بيكبر، والمميز حدوده ملونة وعليه شارة «الأشهر». الـ CSS مترتب في [[@layer reset, components, utilities]]. من دروس الوحدة كلها.`, done: R`مفيش ولا [[!important]] ولا id في الـ CSS، وكل selector في طبقة components فيه class واحدة بس، ممكن معاها [[:hover]] أو [[::before]] (أتقل وزن (0,2,0))، والـ hover مش بيحرّك الكروت اللي جنبه (الحركة بـ transform مش margin)، و utility زي [[.mt-0]] في طبقة utilities بتغلب margin الكارت، حتى قدام selector أتقل منها في طبقة components.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>باقات جيم الأبطال</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main class="page">
-  <h1 class="page__title">اختار باقتك</h1>
-  <div class="plans">
-    <article class="plan" style="--plan-color: #0ea5e9">
-      <h2 class="plan__name">شهري</h2>
-      <p class="plan__price">٥٠٠ <span class="plan__unit">ج / الشهر</span></p>
-      <ul class="plan__features">
-        <li class="plan__feature">الجيم كله من ٦ الصبح لـ ١٢ بالليل</li>
-        <li class="plan__feature">حصتين مع مدرب</li>
-      </ul>
-      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة الشهري">اشترك</a>
-    </article>
-    <article class="plan plan--featured" style="--plan-color: #f59e0b">
-      <p class="plan__badge">الأشهر</p>
-      <h2 class="plan__name">٣ شهور</h2>
-      <p class="plan__price">١٣٠٠ <span class="plan__unit">ج / ٣ شهور</span></p>
-      <ul class="plan__features">
-        <li class="plan__feature">كل اللي في الشهري</li>
-        <li class="plan__feature">٨ حصص مع مدرب</li>
-        <li class="plan__feature">الساونا</li>
-      </ul>
-      <a class="plan__cta" href="#signup" aria-label="اشترك في باقة ٣ شهور">اشترك</a>
-    </article>
-    <article class="plan mt-0" style="--plan-color: #22c55e">
-      <h2 class="plan__name">سنوي</h2>
-      <p class="plan__price">٤٥٠٠ <span class="plan__unit">ج / السنة</span></p>
-      <ul class="plan__features">
-        <li class="plan__feature">كل اللي في الـ ٣ شهور</li>
-        <li class="plan__feature">٤٠ حصة مع مدرب</li>
-        <li class="plan__feature">تجميد الاشتراك شهر</li>
-      </ul>
-      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة السنوي">اشترك</a>
-    </article>
-  </div>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-/* the order of the layers decides who wins, before specificity is even looked at:
-   a later layer beats an earlier one whatever its selectors weigh */
-@layer reset, components, utilities;
-
-@layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; }
-  h1, h2, p, ul { margin: 0; }
-  ul { padding: 0; list-style: none; }
-}
-
-@layer components {
-  .page { max-width: 960px; margin-inline: auto; padding: 24px 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; }
-  .page__title { margin-block-end: 20px; font-size: 26px; }
-
-  .plans { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
-
-  .plan {
-    position: relative;
-    flex: 1 1 240px;
-    margin-block-start: 16px;
-    padding: 28px 20px 20px;
-    border: 2px solid #e2e8f0;
-    border-radius: 16px;
-    background: white;
-    box-shadow: 0 2px 6px rgb(15 23 42 / 0.08);
-    overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  /* the 4px strip on top, in the plan's own colour */
-  .plan::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--plan-color); }
-  /* transform moves the card without moving its neighbours (margin would push them) */
-  .plan:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgb(15 23 42 / 0.14); }
-
-  .plan--featured { border-color: var(--plan-color); }
-
-  .plan__badge { position: absolute; top: 12px; inset-inline-end: 12px; padding: 2px 10px; border-radius: 999px;
-    background: #fef3c7; color: #78350f; font-size: 13px; font-weight: 700; }
-  .plan__name { font-size: 20px; }
-  .plan__price { margin-block: 8px 12px; font-size: 32px; font-weight: 800; }
-  .plan__unit { font-size: 14px; font-weight: 400; color: #475569; }
-  .plan__features { margin-block-end: 16px; line-height: 2; }
-  .plan__feature::before { content: "✓ "; color: #15803d; }
-  .plan__cta { display: block; padding: 10px; border-radius: 10px; background: #0f172a; color: white; text-align: center; text-decoration: none; font-weight: 700; }
-  .plan__cta:focus-visible { outline: 3px solid var(--plan-color); outline-offset: 3px; }
-}
-
-@layer utilities {
-  /* (0,1,0) beats .plan (also 0,1,0) and would even beat .page .plan (0,2,0): it is in a later layer */
-  .mt-0 { margin-block-start: 0; }
-}
-~~~
-
-~~~view 560 1160 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>باقات جيم الأبطال</title>
-<style id="style">
-/* the order of the layers decides who wins, before specificity is even looked at:
-   a later layer beats an earlier one whatever its selectors weigh */
-@layer reset, components, utilities;
-
-@layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; }
-  h1, h2, p, ul { margin: 0; }
-  ul { padding: 0; list-style: none; }
-}
-
-@layer components {
-  .page { max-width: 960px; margin-inline: auto; padding: 24px 16px; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #0f172a; }
-  .page__title { margin-block-end: 20px; font-size: 26px; }
-
-  .plans { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
-
-  .plan {
-    position: relative;
-    flex: 1 1 240px;
-    margin-block-start: 16px;
-    padding: 28px 20px 20px;
-    border: 2px solid #e2e8f0;
-    border-radius: 16px;
-    background: white;
-    box-shadow: 0 2px 6px rgb(15 23 42 / 0.08);
-    overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  /* the 4px strip on top, in the plan's own colour */
-  .plan::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--plan-color); }
-  /* transform moves the card without moving its neighbours (margin would push them) */
-  .plan:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgb(15 23 42 / 0.14); }
-
-  .plan--featured { border-color: var(--plan-color); }
-
-  .plan__badge { position: absolute; top: 12px; inset-inline-end: 12px; padding: 2px 10px; border-radius: 999px;
-    background: #fef3c7; color: #78350f; font-size: 13px; font-weight: 700; }
-  .plan__name { font-size: 20px; }
-  .plan__price { margin-block: 8px 12px; font-size: 32px; font-weight: 800; }
-  .plan__unit { font-size: 14px; font-weight: 400; color: #475569; }
-  .plan__features { margin-block-end: 16px; line-height: 2; }
-  .plan__feature::before { content: "✓ "; color: #15803d; }
-  .plan__cta { display: block; padding: 10px; border-radius: 10px; background: #0f172a; color: white; text-align: center; text-decoration: none; font-weight: 700; }
-  .plan__cta:focus-visible { outline: 3px solid var(--plan-color); outline-offset: 3px; }
-}
-
-@layer utilities {
-  /* (0,1,0) beats .plan (also 0,1,0) and would even beat .page .plan (0,2,0): it is in a later layer */
-  .mt-0 { margin-block-start: 0; }
-}
-</style>
-</head>
-<body>
-<main class="page">
-  <h1 class="page__title">اختار باقتك</h1>
-  <div class="plans">
-    <article class="plan" style="--plan-color: #0ea5e9">
-      <h2 class="plan__name">شهري</h2>
-      <p class="plan__price">٥٠٠ <span class="plan__unit">ج / الشهر</span></p>
-      <ul class="plan__features">
-        <li class="plan__feature">الجيم كله من ٦ الصبح لـ ١٢ بالليل</li>
-        <li class="plan__feature">حصتين مع مدرب</li>
-      </ul>
-      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة الشهري">اشترك</a>
-    </article>
-    <article class="plan plan--featured" style="--plan-color: #f59e0b">
-      <p class="plan__badge">الأشهر</p>
-      <h2 class="plan__name">٣ شهور</h2>
-      <p class="plan__price">١٣٠٠ <span class="plan__unit">ج / ٣ شهور</span></p>
-      <ul class="plan__features">
-        <li class="plan__feature">كل اللي في الشهري</li>
-        <li class="plan__feature">٨ حصص مع مدرب</li>
-        <li class="plan__feature">الساونا</li>
-      </ul>
-      <a class="plan__cta" href="#signup" aria-label="اشترك في باقة ٣ شهور">اشترك</a>
-    </article>
-    <article class="plan mt-0" style="--plan-color: #22c55e">
-      <h2 class="plan__name">سنوي</h2>
-      <p class="plan__price">٤٥٠٠ <span class="plan__unit">ج / السنة</span></p>
-      <ul class="plan__features">
-        <li class="plan__feature">كل اللي في الـ ٣ شهور</li>
-        <li class="plan__feature">٤٠ حصة مع مدرب</li>
-        <li class="plan__feature">تجميد الاشتراك شهر</li>
-      </ul>
-      <a class="plan__cta" href="#signup" aria-label="اشترك في الباقة السنوي">اشترك</a>
-    </article>
-  </div>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** ٣ كروت جنب بعض (وتحت بعض على الموبايل): «شهري» بشريط أزرق فوقه، و «٣ شهور» بشريط برتقاني وحدود برتقاني وشارة «الأشهر» في الركن، و «سنوي» بشريط أخضر. الكارت السنوي أعلى من التانيين بـ 16px (ده [[.mt-0]]). والماوس على أي كارت بيطلّعه لفوق شوية وظله يكبر.
-
-**الـ BEM في سطرين:** [[.plan]] هو الـ **Block** (الحاجة المستقلة). [[.plan__price]] **Element** جوه البلوك (اسم البلوك وشرطتين تحت). [[.plan--featured]] **Modifier** (اسم البلوك وشرطتين): نسخة مختلفة من نفس البلوك. الفايدة: كل selector class واحدة، فكلهم نفس الوزن تقريبًا، واللي بيكسب هو اللي مكتوب بعد. مفيش [[.plans .plan h2 span]].
-
-**الـ [[@layer]]:** السطر الأول [[@layer reset, components, utilities;]] بيحدد الترتيب. المتصفح بيبص على الطبقة **قبل** الـ specificity: أي قاعدة في طبقة متأخرة بتغلب أي قاعدة في طبقة قبلها، مهما كان وزن الـ selector.
-
-**اللون من الـ HTML:** [[style="--plan-color: #0ea5e9"]] مش بيحط شكل، بيحط متغيّر بس. والـ CSS هو اللي بيقرر يستخدمه فين ([[background: var(--plan-color)]] للشريط، والحد في المميز، وإطار الـ focus). كده لو زوّدت باقة رابعة مش محتاج تكتب CSS جديد.
-
-**ليه [[transform]] مش [[margin]] للـ hover:** الـ margin بيغيّر الـ layout، يعني المتصفح بيعيد حساب أماكن العناصر اللي حوالين الكارت. الـ [[transform]] بيحرّك الرسمة بس بعد ما الأماكن اتحسبت، فمحدش حواليه بيتحرك. وكمان [[transition]] عليه أنعم.
-
-**[[aria-label]] على اللينكات:** ٣ لينكات اسمهم «اشترك». لو حد بيستخدم قارئ شاشة وفتح لستة اللينكات هيلاقي «اشترك في باقة ٣ شهور» بدل «اشترك» ٣ مرات.
-
-~~~text الناتج (Chrome، 1280)
-selectors في الـ CSS: .page .page__title .plans .plan .plan::before .plan:hover .plan--featured .plan__badge
-  .plan__name .plan__price .plan__unit .plan__features .plan__feature::before .plan__cta .plan__cta:focus-visible .mt-0
-selectors فيها #        0           !important   0
-margin-block-start      شهري 16px   ٣ شهور 16px   سنوي 0px (.mt-0)
-
-تجربة الطبقات: زوّدت في طبقة components القاعدة .page .plan { margin-block-start: 16px } (وزنها 0,2,0)
-  الكارت السنوي      0px   (.mt-0 وزنها 0,1,0 بس في طبقة بعدها، فكسبت)
-نفس القاعدة برّه كل الطبقات
-  الكارت السنوي      16px  (أي CSS مش في طبقة بيغلب كل الطبقات)
-
-hover على «٣ شهور» (بالماوس فعلًا):
-  ٣ شهور   top 94 → 90   transform: matrix(1, 0, 0, 1, 0, -4)
-  شهري     left 805 top 94 زي ما هو       سنوي   left 176 top 78 زي ما هو
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**خد بالك من التجربة التانية:** CSS مكتوب من غير [[@layer]] أقوى من أي طبقة. فلو ضفت مكتبة أو ملف قديم من غير طبقات، هيغلب الـ utilities بتاعتك. الحل: حطه هو كمان في طبقة ([[@import url(old.css) layer(legacy);]]).` },
-        { lvl: 'صغير', dir: "featured-plan", t: R`كارت الباقة المميزة أكبر من جيرانه وفوقه شارة سطرين`, what: R`صفحة باقات لأكاديمية سباحة متخيلة: ٣ كروت في سطر، والباقة المميزة أطول من جيرانها بحدود أتقل وظل، وفوقها شارة سطرين («الأكتر طلبًا» و «وفّر ٢٥٪») نصها فوق الكارت ونصها على الحد. الشارة [[::before]] من غير ولا عنصر زيادة في الـ HTML، وبتفضل في نص الحد بالظبط لو كبّرت خطها. من دروس «pseudo-elements» و «position» و «box model».`, done: R`الشارة سطرين ([[\A]] و [[white-space: pre]])، ونصها على الحد العلوي للكارت بالظبط، ولو غيّرت [[font-size]] بتاعها لـ 20px لسه في النص (الـ [[translateY]] بيتغيّر لوحده)، والكارت المميز أطول من جيرانه من غير ما يغطّي عليهم، وعلى 360 الكروت تحت بعض والشارة مش راكبة على الكارت اللي فوقها، ومفيش scroll أفقي.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>باقات أكاديمية «موجة» للسباحة</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main>
-  <h1>باقات أكاديمية «موجة» للسباحة</h1>
-  <ul class="plans">
-    <li class="plan">
-      <h2>تجربة</h2>
-      <p class="price">٣٥٠ ج</p>
-      <p>٤ حصص في شهر واحد</p>
-    </li>
-    <li class="plan plan--featured">
-      <h2>الترم</h2>
-      <p class="price">٩٠٠ ج</p>
-      <p>١٢ حصة في ٣ شهور، ومايوه هدية</p>
-    </li>
-    <li class="plan">
-      <h2>السنة</h2>
-      <p class="price">٣٠٠٠ ج</p>
-      <p>٥٠ حصة، وتقدر تجمّد شهر</p>
-    </li>
-  </ul>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 24px 16px; background: #ecfeff; color: #083344; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
-h1 { margin: 0 0 40px; font-size: 24px; text-align: center; }
-
-/* row gap 40px: when the cards wrap on a phone, the ribbon (half of it above the card) needs room */
-.plans { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px 24px; margin: 0; padding: 0; list-style: none; }
-
-.plan { position: relative; width: 220px; padding: 24px 20px; border: 2px solid #a5f3fc; border-radius: 18px; background: white; text-align: center; }
-.plan h2 { margin: 0; font-size: 20px; }
-.plan p { margin: 8px 0 0; }
-.price { font-size: 30px; font-weight: 800; color: #0e7490; }
-
-/* bigger than its neighbours: real padding and border (it takes real space, nothing overlaps),
-   plus a deeper shadow. scale() would also enlarge it, but without taking space, so it would cover the gap */
-.plan--featured { padding-block: 44px 36px; border: 3px solid #0e7490; box-shadow: 0 16px 32px rgb(14 116 144 / 0.25); }
-
-/* the two-line ribbon: its middle sits exactly on the top border.
-   top: 0 puts its top on the border, translateY(-50%) lifts it by half of its OWN height,
-   so it stays centred on the border whatever the text and the font size */
-.plan--featured::before {
-  content: "الأكتر طلبًا\A وفّر ٢٥٪";
-  white-space: pre;
-  position: absolute; top: 0; inset-inline: 0; width: max-content; margin-inline: auto;
-  padding: 6px 18px; border-radius: 12px;
-  background: #0e7490; color: white; font-size: 14px; font-weight: 700; line-height: 1.4;
-  transform: translateY(-50%);
-}
-~~~
-
-~~~view 380 820 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>باقات أكاديمية «موجة» للسباحة</title>
-<style id="style">
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 24px 16px; background: #ecfeff; color: #083344; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
-h1 { margin: 0 0 40px; font-size: 24px; text-align: center; }
-
-/* row gap 40px: when the cards wrap on a phone, the ribbon (half of it above the card) needs room */
-.plans { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px 24px; margin: 0; padding: 0; list-style: none; }
-
-.plan { position: relative; width: 220px; padding: 24px 20px; border: 2px solid #a5f3fc; border-radius: 18px; background: white; text-align: center; }
-.plan h2 { margin: 0; font-size: 20px; }
-.plan p { margin: 8px 0 0; }
-.price { font-size: 30px; font-weight: 800; color: #0e7490; }
-
-/* bigger than its neighbours: real padding and border (it takes real space, nothing overlaps),
-   plus a deeper shadow. scale() would also enlarge it, but without taking space, so it would cover the gap */
-.plan--featured { padding-block: 44px 36px; border: 3px solid #0e7490; box-shadow: 0 16px 32px rgb(14 116 144 / 0.25); }
-
-/* the two-line ribbon: its middle sits exactly on the top border.
-   top: 0 puts its top on the border, translateY(-50%) lifts it by half of its OWN height,
-   so it stays centred on the border whatever the text and the font size */
-.plan--featured::before {
-  content: "الأكتر طلبًا\A وفّر ٢٥٪";
-  white-space: pre;
-  position: absolute; top: 0; inset-inline: 0; width: max-content; margin-inline: auto;
-  padding: 6px 18px; border-radius: 12px;
-  background: #0e7490; color: white; font-size: 14px; font-weight: 700; line-height: 1.4;
-  transform: translateY(-50%);
-}
-</style>
-</head>
-<body>
-<main>
-  <h1>باقات أكاديمية «موجة» للسباحة</h1>
-  <ul class="plans">
-    <li class="plan">
-      <h2>تجربة</h2>
-      <p class="price">٣٥٠ ج</p>
-      <p>٤ حصص في شهر واحد</p>
-    </li>
-    <li class="plan plan--featured">
-      <h2>الترم</h2>
-      <p class="price">٩٠٠ ج</p>
-      <p>١٢ حصة في ٣ شهور، ومايوه هدية</p>
-    </li>
-    <li class="plan">
-      <h2>السنة</h2>
-      <p class="price">٣٠٠٠ ج</p>
-      <p>٥٠ حصة، وتقدر تجمّد شهر</p>
-    </li>
-  </ul>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** ٣ كروت بيضا على خلفية لبني فاتح. الكارت اللي في النص («الترم») أطول، وحدوده أغمق وأتقل، وتحته ظل. وفوقه بالظبط شارة بترولي فيها سطرين، نصها طالع فوق الكارت ونصها نازل على الحد.
-
-**الشارة خطوة خطوة:**
-1. [[content: "الأكتر طلبًا\A وفّر ٢٥٪"]]: الكلام نفسه. [[\A]] هو كود سطر جديد في CSS، والمسافة اللي بعده بتقفل الكود ومش بتظهر.
-2. [[white-space: pre]]: من غيره المتصفح بيعامل السطر الجديد كأنه مسافة، والكلام يطلع سطر واحد.
-3. [[position: absolute]] و [[top: 0]]: أول الشارة على أول الكارت من جوه، يعني تحت الحد على طول (الكارت عليه [[position: relative]]).
-4. [[inset-inline: 0]] و [[width: max-content]] و [[margin-inline: auto]]: الشارة عرضها قد كلامها وفي نص الكارت.
-5. [[transform: translateY(-50%)]]: الـ 50% هنا من طول الشارة **نفسها**، مش طول الكارت. فبتطلع لفوق نص طولها، ونصها يبقى على الحد. ولو الخط كبر والشارة طولت، الإزاحة بتكبر معاها لوحدها.
-
-**ليه مش [[top: -25px]]:** هيبقى صح للخط ده بس. كبّر الخط أو زوّد سطر والشارة هتتزق.
-
-**ليه الكارت أكبر بالـ padding مش بـ [[scale()]]:** [[transform: scale(1.1)]] بيكبّر الرسمة بس، والمكان اللي الكارت حاجزه في الـ layout زي ما هو. يعني الكارت هيركب على الـ gap وممكن يغطّي على جيرانه. الـ padding الزيادة بيكبّر الكارت فعلًا، والكروت التانية بتتحرك عشانه. و [[align-items: center]] بيخلّي الكارتين الصغيرين في نص طوله.
-
-**مشكلة اتقاست وانا بحل:** على 360 الكروت بتنزل تحت بعض، والـ gap كان 24px، ونص الشارة طالع 25.6px فوق الكارت. فالشارة ركبت 1.6px على الكارت اللي فوقها. خليت الـ gap بين السطور 40px ([[gap: 40px 24px]]: الأول بين السطور والتاني بين الأعمدة).
-
-**الكلام في [[::before]]:** Chrome بيحطه في شجرة الـ accessibility فقارئ الشاشة بيقراه، بس مش بتعرف تعلّمه وتنسخه، وأدوات الترجمة ممكن متشوفوش. هنا الشارة زينة وتسويق. لو كانت معلومة مهمة (السعر مثلًا) لازم تبقى في الـ HTML.
-
-~~~text الناتج (Chrome)
-على 800: الكروت (top / bottom)       السنة 124 / 278    الترم 96 / 306    تجربة 124 / 278
-طول الشارة 51.2px      transform: matrix(1, 0, 0, 1, 0, -25.6)      أولها عند 73.4 (فوق الكارت بـ 22.6 وفي نص الحد)
-خط الشارة 20px:        طولها 68px      transform: matrix(1, 0, 0, 1, 0, -34)     لسه في النص
-على 360 (gap 24px):    الكارت الأول بيخلص عند 250، والشارة بتبدأ عند 248.8 (راكبة 1.2px)
-على 360 (gap 40px):    الكارت الأول بيخلص عند 250، والشارة بتبدأ عند 267.8
-scrollWidth = clientWidth على 360 و 800 و 1280
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~` },
-        { lvl: 'متوسط', dir: "bg-library", t: R`مكتبة خلفيات من غير صور`, what: R`صفحة فيها ٨ مربعات، كل واحد خلفية مختلفة بالـ gradients بس: نقط ([[radial-gradient]] و [[background-size]])، وشبكة خطوط (اتنين [[linear-gradient]])، وخطوط مايلة ([[repeating-linear-gradient]])، ومربعات شطرنج ([[conic-gradient]])، وهالة ناعمة (٣ [[radial-gradient]] فوق بعض بألوان شفافة)، وتدرّج لونين، وأمواج، وواحدة من اختيارك. وجنب كل مربع زرار «انسخ الـ CSS».`, done: R`كل خلفية بتتكرر صح لما تكبّر المربع (مفيش قطع في الحواف)، والصفحة كلها من غير ولا request صورة في Network، و ٨ قواعد CSS كل واحدة ٣ سطور أو أقل، والزرار بينسخ القاعدة بالظبط.`, sol: R`الـ ٨ خلفيات في ملف لوحدهم ([[patterns.css]]) عشان الـ JavaScript يقرا كل قاعدة زي ما هي مكتوبة ويعرضها جنب المربع بتاعها.
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مكتبة خلفيات من غير صور</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="patterns.css">
-</head>
-<body>
-<main>
-  <h1>مكتبة خلفيات من غير صور</h1>
-  <p class="hint">كل مربع بيكبر ويصغر من ركنه التحتاني (اسحبه)، عشان تتأكد إن الخلفية بتتكرر من غير قطع.</p>
-  <div class="library">
-    <article class="item">
-      <div class="tile dots"></div>
-      <h2>نقط</h2>
-      <pre><code data-for=".dots"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile grid"></div>
-      <h2>شبكة خطوط</h2>
-      <pre><code data-for=".grid"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile stripes"></div>
-      <h2>خطوط مايلة</h2>
-      <pre><code data-for=".stripes"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile checker"></div>
-      <h2>شطرنج</h2>
-      <pre><code data-for=".checker"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile aurora"></div>
-      <h2>هالة ناعمة</h2>
-      <pre><code data-for=".aurora"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile duo"></div>
-      <h2>تدرّج لونين</h2>
-      <pre><code data-for=".duo"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile waves"></div>
-      <h2>أمواج</h2>
-      <pre><code data-for=".waves"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile plaid"></div>
-      <h2>قماش كاروهات</h2>
-      <pre><code data-for=".plaid"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-  </div>
-  <p class="status" role="status"></p>
-</main>
-<script src="app.js"></script>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
-main { max-width: 1000px; margin-inline: auto; }
-h1 { margin: 0 0 4px; font-size: 24px; }
-.hint { margin: 0 0 16px; color: #475569; }
-.library { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 16px; }
-.item { margin: 0; padding: 12px; border-radius: 14px; background: white; }
-/* resize: the reader can drag the corner and watch the pattern repeat */
-.tile { height: 140px; border-radius: 10px; resize: both; overflow: auto; max-width: 100%; }
-.item h2 { margin-block: 8px 4px; font-size: 17px; }
-pre { margin: 0 0 8px; padding: 8px; border-radius: 8px; background: #0f172a; color: #e2e8f0; font-size: 12px; white-space: pre-wrap; word-break: break-all; direction: ltr; text-align: left; }
-.copy { padding: 6px 12px; border: 0; border-radius: 8px; background: #2563eb; color: white; font: inherit; cursor: pointer; }
-.copy:focus-visible { outline: 3px solid #0f172a; outline-offset: 2px; }
-.status { min-height: 1.5em; font-weight: 700; color: #15803d; }
-~~~
-
-~~~css patterns.css
-.dots { background: radial-gradient(#334155 2px, transparent 2.5px) 0 0 / 20px 20px #f8fafc; }
-.grid { background: linear-gradient(#cbd5e1 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, #cbd5e1 1px, transparent 1px) 0 0 / 24px 24px white; }
-.stripes { background: repeating-linear-gradient(45deg, #fde68a 0 10px, #fbbf24 10px 20px); }
-.checker { background: conic-gradient(#cbd5e1 25%, white 0 50%, #cbd5e1 0 75%, white 0) 0 0 / 40px 40px; }
-.aurora { background: radial-gradient(at 20% 30%, rgb(56 189 248 / 0.6), transparent 50%), radial-gradient(at 80% 20%, rgb(168 85 247 / 0.55), transparent 50%), radial-gradient(at 50% 90%, rgb(34 197 94 / 0.5), transparent 55%) #0f172a; }
-.duo { background: linear-gradient(135deg, #6366f1, #ec4899); }
-.waves { background: radial-gradient(circle at 50% 0, transparent 8px, #0284c7 9px 11px, transparent 12px) 0 0 / 40px 20px, radial-gradient(circle at 50% 100%, transparent 8px, #0284c7 9px 11px, transparent 12px) 20px -10px / 40px 20px #e0f2fe; }
-.plaid { background: repeating-linear-gradient(90deg, rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px), repeating-linear-gradient(rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px) #fff7ed; }
-~~~
-
-~~~js app.js
-// each box shows the rule exactly as it is written in patterns.css, and the button copies that text.
-// fetch reads the file itself. If fetch can't (the page opened as file:// from the folder),
-// the browser's own copy of the rule (cssText) is used: same rule, but rewritten (#fff becomes rgb(255, 255, 255))
-async function readRules() {
-  const rules = {};
-  try {
-    const res = await fetch('patterns.css');
-    if (!res.ok) throw new Error(res.status);
-    for (const line of (await res.text()).split('\n')) {
-      const m = line.match(/^(\.[\w-]+) \{/);
-      if (m) rules[m[1]] = line;
-    }
-  } catch {
-    for (const sheet of document.styleSheets) {
-      if (!sheet.href || !sheet.href.endsWith('patterns.css')) continue;
-      for (const r of sheet.cssRules) rules[r.selectorText] = r.cssText;
-    }
-  }
-  return rules;
-}
-
-const status = document.querySelector('.status');
-readRules().then(rules => {
-  for (const item of document.querySelectorAll('.item')) {
-    const code = item.querySelector('code');
-    code.textContent = rules[code.dataset.for] || '';
-    item.querySelector('.copy').addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(code.textContent);
-        status.textContent = 'اتنسخ: ' + item.querySelector('h2').textContent;
-      } catch {
-        status.textContent = 'المتصفح منع النسخ. علّم الكود واعمل Ctrl+C.';
-      }
-    });
-  }
-});
-~~~
-
-~~~view 620 1700 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مكتبة خلفيات من غير صور</title>
-<style id="style">
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
-main { max-width: 1000px; margin-inline: auto; }
-h1 { margin: 0 0 4px; font-size: 24px; }
-.hint { margin: 0 0 16px; color: #475569; }
-.library { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 16px; }
-.item { margin: 0; padding: 12px; border-radius: 14px; background: white; }
-/* resize: the reader can drag the corner and watch the pattern repeat */
-.tile { height: 140px; border-radius: 10px; resize: both; overflow: auto; max-width: 100%; }
-.item h2 { margin-block: 8px 4px; font-size: 17px; }
-pre { margin: 0 0 8px; padding: 8px; border-radius: 8px; background: #0f172a; color: #e2e8f0; font-size: 12px; white-space: pre-wrap; word-break: break-all; direction: ltr; text-align: left; }
-.copy { padding: 6px 12px; border: 0; border-radius: 8px; background: #2563eb; color: white; font: inherit; cursor: pointer; }
-.copy:focus-visible { outline: 3px solid #0f172a; outline-offset: 2px; }
-.status { min-height: 1.5em; font-weight: 700; color: #15803d; }
-</style>
-<style id="patterns">
-.dots { background: radial-gradient(#334155 2px, transparent 2.5px) 0 0 / 20px 20px #f8fafc; }
-.grid { background: linear-gradient(#cbd5e1 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, #cbd5e1 1px, transparent 1px) 0 0 / 24px 24px white; }
-.stripes { background: repeating-linear-gradient(45deg, #fde68a 0 10px, #fbbf24 10px 20px); }
-.checker { background: conic-gradient(#cbd5e1 25%, white 0 50%, #cbd5e1 0 75%, white 0) 0 0 / 40px 40px; }
-.aurora { background: radial-gradient(at 20% 30%, rgb(56 189 248 / 0.6), transparent 50%), radial-gradient(at 80% 20%, rgb(168 85 247 / 0.55), transparent 50%), radial-gradient(at 50% 90%, rgb(34 197 94 / 0.5), transparent 55%) #0f172a; }
-.duo { background: linear-gradient(135deg, #6366f1, #ec4899); }
-.waves { background: radial-gradient(circle at 50% 0, transparent 8px, #0284c7 9px 11px, transparent 12px) 0 0 / 40px 20px, radial-gradient(circle at 50% 100%, transparent 8px, #0284c7 9px 11px, transparent 12px) 20px -10px / 40px 20px #e0f2fe; }
-.plaid { background: repeating-linear-gradient(90deg, rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px), repeating-linear-gradient(rgb(220 38 38 / 0.3) 0 10px, transparent 10px 30px) #fff7ed; }
-</style>
-</head>
-<body>
-<main>
-  <h1>مكتبة خلفيات من غير صور</h1>
-  <p class="hint">كل مربع بيكبر ويصغر من ركنه التحتاني (اسحبه)، عشان تتأكد إن الخلفية بتتكرر من غير قطع.</p>
-  <div class="library">
-    <article class="item">
-      <div class="tile dots"></div>
-      <h2>نقط</h2>
-      <pre><code data-for=".dots"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile grid"></div>
-      <h2>شبكة خطوط</h2>
-      <pre><code data-for=".grid"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile stripes"></div>
-      <h2>خطوط مايلة</h2>
-      <pre><code data-for=".stripes"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile checker"></div>
-      <h2>شطرنج</h2>
-      <pre><code data-for=".checker"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile aurora"></div>
-      <h2>هالة ناعمة</h2>
-      <pre><code data-for=".aurora"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile duo"></div>
-      <h2>تدرّج لونين</h2>
-      <pre><code data-for=".duo"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile waves"></div>
-      <h2>أمواج</h2>
-      <pre><code data-for=".waves"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-    <article class="item">
-      <div class="tile plaid"></div>
-      <h2>قماش كاروهات</h2>
-      <pre><code data-for=".plaid"></code></pre>
-      <button type="button" class="copy">انسخ الـ CSS</button>
-    </article>
-  </div>
-  <p class="status" role="status"></p>
-</main>
-<script>
-// each box shows the rule exactly as it is written in patterns.css, and the button copies that text.
-// fetch reads the file itself. If fetch can't (the page opened as file:// from the folder),
-// the browser's own copy of the rule (cssText) is used: same rule, but rewritten (#fff becomes rgb(255, 255, 255))
-async function readRules() {
-  const rules = {};
-  try {
-    for (const line of document.getElementById('patterns').textContent.split('\n')) {
-      const m = line.match(/^(\.[\w-]+) \{/);
-      if (m) rules[m[1]] = line;
-    }
-  } catch {
-    for (const sheet of document.styleSheets) {
-      if (!sheet.href || !sheet.href.endsWith('patterns.css')) continue;
-      for (const r of sheet.cssRules) rules[r.selectorText] = r.cssText;
-    }
-  }
-  return rules;
-}
-
-const status = document.querySelector('.status');
-readRules().then(rules => {
-  for (const item of document.querySelectorAll('.item')) {
-    const code = item.querySelector('code');
-    code.textContent = rules[code.dataset.for] || '';
-    item.querySelector('.copy').addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(code.textContent);
-        status.textContent = 'اتنسخ: ' + item.querySelector('h2').textContent;
-      } catch {
-        status.textContent = 'المتصفح منع النسخ. علّم الكود واعمل Ctrl+C.';
-      }
-    });
-  }
-});
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** ٨ كروت، في كل واحد مربع بخلفية، واسمها، والقاعدة بتاعتها في صندوق كود غامق، وزرار «انسخ الـ CSS». وكل مربع ليه علامة صغيرة في ركنه التحتاني: اسحبها والمربع يكبر ويصغر.
-
-**إزاي كل خلفية اتعملت:**
-- **النقط:** [[radial-gradient(#334155 2px, transparent 2.5px)]] بيرسم دايرة 2px في نص البلاطة. و [[/ 20px 20px]] (الـ [[background-size]]) بيقول البلاطة 20×20، والخلفية بتتكرر لوحدها ([[repeat]] هو الافتراضي). النص بكسل بين 2 و 2.5 بيخلي حافة الدايرة ناعمة.
-- **الشبكة:** خلفيتين فوق بعض بفاصلة: خط أفقي 1px ([[linear-gradient]] من فوق لتحت) وخط رأسي ([[90deg]]).
-- **الخطوط المايلة:** [[repeating-linear-gradient]] بيكرر ([[0 10px]] لون و [[10px 20px]] لون تاني) لحد آخر المربع، فمش محتاج [[background-size]].
-- **الشطرنج:** [[conic-gradient]] بيلف حوالين النص: ربع رمادي وربع أبيض ([[0 50%]] معناها «ابدأ من مكان ما اللي قبله خلص»). بلاطة 40×40 فيها ٤ مربعات.
-- **الهالة:** ٣ [[radial-gradient]] شفافين ([[rgb(56 189 248 / 0.6)]]) في أماكن مختلفة على خلفية غامقة. الشفافية هي اللي بتخلّي الألوان تدخل في بعض.
-- **الأمواج:** طبقتين، في كل واحدة حلقة رفيعة ([[transparent 8px, #0284c7 9px 11px, transparent 12px]]) مقصوصة نصين بالبلاطة: الأولى مركزها فوق البلاطة فبيبان نصها اللي تحت (∪)، والتانية مركزها تحت وإزاحتها 20px فبيبان نصها اللي فوق (∩). ورا بعض بيعملوا موجة متصلة.
-- **الكاروهات:** نفس الخطوط المكررة في الاتجاهين بلون شفاف، فمكان ما بيتقاطعوا بيغمق.
-
-**القاعدة اللي بتتنسخ:** النسخة الأولى كانت بتاخد القاعدة من [[sheet.cssRules]] ([[cssText]])، وطلع إن المتصفح بيعيد كتابتها بطريقته: [[#334155]] بقت [[rgb(51, 65, 85)]]، و [[0 0]] بقت [[0px 0px]]، و [[white 0 50%]] اتفكت لـ [[white 0deg, white 50%]]. نفس القاعدة بالظبط، بس مش زي ما انت كاتبها. فالنسخة النهائية بتقرا الملف نفسه بـ [[fetch('patterns.css')]] وتاخد كل سطر بيبدأ بـ [[.اسم {]]. ولو فتحت الصفحة من الفولدر على طول ([[file://]]) الـ fetch بيفشل، فبترجع للـ [[cssText]].
-
-**الغلطة اللي الـ validator مسكها:** أول نسخة كان كل كارت [[<figure>]] والاسم [[<figcaption>]] في النص، تحته الكود والزرار. الـ validator قال [[Element "pre" not allowed as child of element "figure" in this context]]. الـ [[<figcaption>]] لازم يبقى أول حاجة أو آخر حاجة جوه الـ [[<figure>]]. والكارت هنا مش صورة ليها تعليق أصلًا، فبقى [[<article>]] بعنوان [[<h2>]].
-
-**في المعاينة هنا:** النسخ ممكن ميشتغلش (المعاينة جوه iframe مقفول)، فهتظهر رسالة «علّم الكود واعمل Ctrl+C». على جهازك من [[npx serve]] أو Live Server بيشتغل.
-
-~~~text الناتج (Chrome، من سيرفر محلي)
-الطلبات             style.css  patterns.css  app.js  patterns.css (الـ fetch)   صور: 0
-patterns.css        8 قواعد، كل قاعدة سطر واحد
-الكود جوه المربع    .dots { background: radial-gradient(#334155 2px, transparent 2.5px) 0 0 / 20px 20px #f8fafc; }
-cssText لنفس القاعدة .dots { background: radial-gradient(rgb(51, 65, 85) 2px, transparent 2.5px) 0px 0px / 20px 20px rgb(248, 250, 252); }
-دوست «انسخ» في الشطرنج، و Get-Clipboard في PowerShell طلّع:
-  .checker { background: conic-gradient(#cbd5e1 25%, white 0 50%, #cbd5e1 0 75%, white 0) 0 0 / 40px 40px; }
-مربع الأمواج وصل 300px طول: الموجة متصلة من غير قطع
-axe: 0 violations   الـ validator: مفيش رسايل (بعد ما figure بقت article)   CSS validator: No Error Found
-~~~` },
-        { lvl: 'كبير', dir: "clinic-styled", t: R`صفحة العيادة بالتصميم الكامل`, what: R`خد صفحة هبوط العيادة المتخيلة من الوحدة الأولى (نفس الـ HTML) واكتبلها CSS كامل: ملف واحد مقسوم [[@layer reset, base, components, utilities]]، وأسامي BEM لكل جزء ([[.hero]] و [[.service-card]] و [[.doctor]] و [[.faq]])، وهيرو خلفيته هالة gradients، وكروت الخدمات بشريط لون وظل وحركة hover، وكارت «احجز ميعادك» شكله تذكرة بخط متقطع، والأجزاء ورا بعض بخلفيات فاتحة متبادلة، وشريط مايل بين جزئين من غير ما يعمل scroll أفقي. يجمع الوحدة دي مع وحدة HTML.`, done: R`على 360 و 800 و 1280 مفيش scroll أفقي ([[document.documentElement.scrollWidth]] = عرض الشاشة)، ومفيش [[!important]] ولا id ولا [[style=""]]، و axe (اللي جوه Lighthouse) صفر مشاكل (التباين سليم)، والـ HTML نفس عناصر وكلام الوحدة الأولى (اللي اتزوّد class بس، و div واحد من غير كلام حوالين كارت التواصل)، ولو شلت ملف الـ CSS الصفحة لسه مقروءة ومرتبة.`, ext: R`لما توصل لوحدة «الوحدات والمتغيرات» حوّل كل الألوان والمسافات لـ tokens، ولوحدة Flexbox و Grid رتّب الكروت جنب بعض.`, sol: R`ده نفس [[index.html]] بتاع العيادة من الوحدة الأولى، والصورتين [[img/hero.svg]] و [[img/doctor.svg]] زي ما هم. اللي اتغيّر في الـ HTML: سطر الـ [[<link>]]، و class على العناصر، و [[<div class="ticket">]] حوالين محتوى قسم التواصل (من غيره مفيش حاجة تتشكل تذكرة جوه القسم).
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عيادة ابتسامة لطب الأسنان</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header class="site-header">
-  <p class="site-header__logo"><a href="#top">عيادة ابتسامة</a></p>
-  <nav aria-label="أجزاء الصفحة">
-    <ul class="site-header__links">
-      <li><a href="#services">الخدمات</a></li>
-      <li><a href="#steps">الخطوات</a></li>
-      <li><a href="#doctors">الأطبا</a></li>
-      <li><a href="#prices">الأسعار</a></li>
-      <li><a href="#faq">الأسئلة</a></li>
-      <li><a href="#contact">التواصل</a></li>
-    </ul>
-  </nav>
+<header>
+  <h1>مخبز السنابل</h1>
+  <p>عيش طازة كل يوم من ٦ الصبح.</p>
 </header>
-
 <main>
-  <section id="top" class="hero">
-    <h1>سنانك في إيد أمينة</h1>
-    <p>كشف وتنضيف وتقويم في مكان واحد، ومن غير ما تستنى بالساعات.</p>
-    <img src="img/hero.svg" alt="رسم لسنة بيضا مبتسمة" width="800" height="400">
-    <p><a class="btn" href="#contact">احجز كشف</a></p>
-  </section>
-
-  <section id="services" class="section">
-    <h2>الخدمات</h2>
-    <ul class="services">
-      <li class="service-card">كشف وأشعة بانوراما</li>
-      <li class="service-card">تنضيف وتلميع</li>
-      <li class="service-card">حشو وعلاج عصب</li>
-      <li class="service-card">تقويم شفاف</li>
+  <section aria-labelledby="menu-title">
+    <h2 id="menu-title">المنيو</h2>
+    <ul>
+      <li>مخبوزات
+        <ul>
+          <li>عيش بلدي</li>
+          <li>فينو بالسمسم</li>
+          <li>بقسماط</li>
+        </ul>
+      </li>
+      <li>حلويات
+        <ul>
+          <li>بسبوسة بالقشطة</li>
+          <li>كنافة</li>
+        </ul>
+      </li>
     </ul>
   </section>
-
-  <section id="steps" class="section section--alt">
-    <h2>الخطوات</h2>
-    <ol class="steps">
-      <li>احجز من الفورم أو بالتليفون.</li>
-      <li>الكشف والأشعة في نفس الزيارة.</li>
-      <li>خطة علاج مكتوبة بالسعر قبل ما نبدأ.</li>
+  <section aria-labelledby="order-title">
+    <h2 id="order-title">إزاي تطلب</h2>
+    <ol>
+      <li>اتصل على <a href="tel:+200000000000">رقم المخبز</a>.</li>
+      <li>قول الأصناف والعنوان.</li>
+      <li>ادفع لما الطلب يوصل.</li>
     </ol>
   </section>
-
-  <section id="doctors" class="section">
-    <h2>الأطبا</h2>
-    <article class="doctor">
-      <h3 class="doctor__name">د. سلمى فؤاد</h3>
-      <img src="img/doctor.svg" alt="صورة د. سلمى فؤاد" width="200" height="200" loading="lazy">
-      <p>تقويم الأسنان، ١٢ سنة خبرة.</p>
-    </article>
-    <article class="doctor">
-      <h3 class="doctor__name">د. كريم ناجي</h3>
-      <img src="img/doctor.svg" alt="صورة د. كريم ناجي" width="200" height="200" loading="lazy">
-      <p>علاج العصب والحشو التجميلي.</p>
-    </article>
-    <figure class="quote">
-      <blockquote>
-        <p>أول مرة أروح لدكتور سنان ومخافش. شرحولي كل خطوة قبل ما يعملوها.</p>
-      </blockquote>
-      <figcaption>منى، من المرضى</figcaption>
-    </figure>
-  </section>
-
-  <section id="prices" class="section section--alt section--slanted">
-    <h2>الأسعار</h2>
-    <ul class="prices">
-      <li>الكشف والأشعة: ٣٠٠ جنيه</li>
-      <li>التنضيف: ٥٠٠ جنيه</li>
-      <li>الحشو: من ٦٠٠ جنيه</li>
-    </ul>
-  </section>
-
-  <section id="faq" class="section">
-    <h2>الأسئلة</h2>
-    <details class="faq">
-      <summary class="faq__q">الكشف بياخد قد إيه؟</summary>
-      <p>حوالي نص ساعة، بالأشعة.</p>
-    </details>
-    <details class="faq">
-      <summary class="faq__q">بتقبلوا التأمين؟</summary>
-      <p>أيوه، مع أغلب شركات التأمين الطبي.</p>
-    </details>
-  </section>
-
-  <section id="contact" class="section section--alt">
-    <div class="ticket">
-      <h2>التواصل</h2>
-      <p>التليفون: <a href="tel:+20225550199">0225550199</a></p>
-      <address>١٤ شارع النخيل، الدور التاني</address>
-    </div>
+  <section aria-labelledby="hours-title">
+    <h2 id="hours-title">المواعيد</h2>
+    <dl>
+      <dt>السبت للخميس</dt>
+      <dd>من ٦ الصبح لـ ١٠ بالليل</dd>
+      <dt>الجمعة</dt>
+      <dd>من ٢ الضهر لـ ١٠ بالليل</dd>
+    </dl>
   </section>
 </main>
-
-<footer class="site-footer">
-  <p><small>© ٢٠٢٦ عيادة ابتسامة (اسم متخيل)</small></p>
+<footer>
+  <p>مخبز السنابل، شارع النخيل.</p>
 </footer>
 </body>
 </html>
 ~~~
 
-~~~css style.css
-/* the order of the layers is the order of who wins: utilities beat components, components beat base */
-@layer reset, base, components, utilities;
+**القرارات:**
 
-@layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  body, h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
-  img { display: block; max-width: 100%; height: auto; }
-}
+- **المنيو [[<ul>]] من مستويين:** الأقسام ترتيبها مش فارق، والأصناف جوه كل قسم كذلك. والقايمة الفرعية جوه الـ [[<li>]] بتاع القسم، و [[</li>]] بعدها.
+- **الطلب [[<ol>]]:** تتصل، وبعدين تقول، وبعدين تدفع.
+- **المواعيد [[<dl>]]:** الأيام هي الاسم والساعات هي القيمة. لو كانت [[<ul>]] («السبت للخميس: من ٦...») كان الاسم والقيمة هيبقوا نص واحد.
+- كل [[<section>]] ليه [[aria-labelledby]] بيشاور على عنوانه، فبيبقى landmark باسمه (درس «semantic HTML»).
 
-@layer base {
-  html { scroll-behavior: smooth; }
-  body { background: white; color: #0f172a; font: 16px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-  h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.3; }
-  h2 { font-size: 26px; margin-block-end: 16px; }
-  a { color: #0e7490; }
-  a:focus-visible, summary:focus-visible { outline: 3px solid #0e7490; outline-offset: 3px; }
-}
+**الغلطة الشائعة:** تعمل كل قسم في المنيو [[<h3>]] وتحته قايمة، وتنسى إن ده بيغيّر فهرس العناوين. الاتنين حلول سليمة: القايمة من مستويين أنسب لمنيو قصير، والعناوين أنسب لو كل قسم فيه شرح وصور.
 
-@layer components {
-  /* ---------- header ---------- */
-  .site-header { padding: 12px 16px; border-block-end: 1px solid #e2e8f0; }
-  .site-header__logo a { font-weight: 800; font-size: 20px; text-decoration: none; color: #0f172a; }
-  .site-header__links { padding: 0; list-style: none; }
-  .site-header__links li { display: inline-block; margin-inline-end: 12px; }
-
-  /* ---------- hero: three soft halos on top of each other ---------- */
-  .hero {
-    padding: 48px 16px;
-    text-align: center;
-    background:
-      radial-gradient(circle at 15% 20%, rgb(14 165 233 / 0.25), transparent 40%),
-      radial-gradient(circle at 85% 30%, rgb(45 212 191 / 0.25), transparent 40%),
-      radial-gradient(circle at 50% 100%, rgb(250 204 21 / 0.2), transparent 50%),
-      #f0f9ff;
-  }
-  .hero p { max-width: 560px; margin: 12px auto; }
-  .hero img { margin: 16px auto; border-radius: 16px; }
-
-  .btn { display: inline-block; padding: 12px 28px; border-radius: 999px; background: #0e7490; color: white; font-weight: 700; text-decoration: none; }
-  .btn:hover { background: #155e75; }
-
-  /* ---------- sections, a light background every other one ---------- */
-  .section { padding: 40px 16px; }
-  .section > * { max-width: 760px; margin-inline: auto; }
-  .section--alt { background: #f8fafc; }
-
-  /* the slanted strip: a rotated bar wider than the screen. overflow: clip cuts what sticks out,
-     so it never makes the page scroll sideways (and unlike hidden, it does not make a scroll box) */
-  .section--slanted { position: relative; overflow: clip; padding-block-start: 72px; }
-  .section--slanted::before {
-    content: ""; position: absolute; top: 16px; inset-inline: -10%;
-    height: 24px; background: #0e7490; transform: rotate(-2deg);
-  }
-
-  /* ---------- service cards ---------- */
-  .services { padding: 0; list-style: none; }
-  .service-card {
-    position: relative; margin-block-end: 12px; padding: 16px 20px; padding-inline-start: 28px;
-    border-radius: 12px; background: white; box-shadow: 0 2px 8px rgb(15 23 42 / 0.08);
-    font-weight: 600; transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .service-card::before { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 0; width: 6px; border-start-end-radius: 6px; border-end-end-radius: 6px; background: #0ea5e9; }
-  .service-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgb(15 23 42 / 0.12); }
-
-  .steps { padding-inline-start: 24px; }
-  .steps li { margin-block-end: 8px; }
-
-  /* ---------- doctors ---------- */
-  .doctor { margin-block-end: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 16px; }
-  .doctor__name { margin-block-end: 8px; }
-  .doctor img { border-radius: 50%; width: 120px; margin-block-end: 8px; }
-  .quote { padding: 16px 20px; border-inline-start: 4px solid #0ea5e9; background: #f0f9ff; border-radius: 8px; }
-  .quote figcaption { margin-block-start: 8px; color: #475569; }
-
-  .prices { padding: 0; list-style: none; }
-  .prices li { padding-block: 8px; border-block-end: 1px dashed #cbd5e1; }
-
-  /* ---------- FAQ ---------- */
-  .faq { margin-block-end: 8px; padding: 12px 16px; border-radius: 10px; background: #f8fafc; }
-  .faq__q { cursor: pointer; font-weight: 700; }
-  .faq[open] { background: #f0f9ff; }
-
-  /* ---------- contact card shaped like a ticket ---------- */
-  .ticket {
-    position: relative; max-width: 420px; padding: 24px 28px; border-radius: 16px;
-    background: #fef9c3; outline: 2px dashed #a16207; outline-offset: -10px;
-  }
-  .ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 24px; height: 24px; border-radius: 50%; background: #f8fafc; transform: translateY(-50%); }
-  .ticket::before { inset-inline-start: -12px; }
-  .ticket::after { inset-inline-end: -12px; }
-  .ticket a { color: #713f12; }
-
-  .site-footer { padding: 16px; text-align: center; color: #475569; }
-}
-
-@layer utilities {
-  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-}
-~~~
-
-~~~view 700 2900 الشكل النهائي
+~~~text الناتج
+ul=3  ol=1  li=10  dl=1  dt=2  dd=2  section=3  h1=1  h2=3
+العلامات:  • (◦ ◦ ◦)  • (◦ ◦)    1 2 3
+Nu Html Checker: صفر errors
+على عرض 360: مفيش scroll أفقي
+~~~` },
+        { lvl: 'صغير', dir: "book-card", t: R`بطاقة كتاب`, what: R`صفحة لكتاب متخيل قريته: اسمه جوه [[<cite>]] في الـ [[<h1>]]، وبياناته (الكاتبة، الصفحات، التصنيف بقيمتين، تقييمك) في [[<dl>]]، و «ليه عجبتني» قايمة، وأحلى جملة فيه [[<blockquote>]] جوه [[<figure>]] ومصدرها في [[<figcaption>]]، وتعليق صاحبتك جوه الجملة بـ [[<q>]]. من دروس «dl و dt و dd» و «blockquote و q و cite» و «figure و figcaption».`, done: R`اسم الكتاب جوه [[<cite>]] في كل مرة اتذكر ومفيش اسم شخص جوه [[<cite>]]، والتصنيف ليه اتنين [[<dd>]]، والـ [[<figcaption>]] آخر ابن للـ [[<figure>]] ومش جوه الـ [[<blockquote>]]، ومفيش علامات تنصيص مكتوبة جوه الـ [[<q>]]، والـ validator صفر errors.`, sol: R`~~~live 480 بطاقة كتاب: بيت القمر
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عيادة ابتسامة لطب الأسنان</title>
-<style id="style">
-/* the order of the layers is the order of who wins: utilities beat components, components beat base */
-@layer reset, base, components, utilities;
-
-@layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  body, h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
-  img { display: block; max-width: 100%; height: auto; }
-}
-
-@layer base {
-  html { scroll-behavior: smooth; }
-  body { background: white; color: #0f172a; font: 16px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-  h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.3; }
-  h2 { font-size: 26px; margin-block-end: 16px; }
-  a { color: #0e7490; }
-  a:focus-visible, summary:focus-visible { outline: 3px solid #0e7490; outline-offset: 3px; }
-}
-
-@layer components {
-  /* ---------- header ---------- */
-  .site-header { padding: 12px 16px; border-block-end: 1px solid #e2e8f0; }
-  .site-header__logo a { font-weight: 800; font-size: 20px; text-decoration: none; color: #0f172a; }
-  .site-header__links { padding: 0; list-style: none; }
-  .site-header__links li { display: inline-block; margin-inline-end: 12px; }
-
-  /* ---------- hero: three soft halos on top of each other ---------- */
-  .hero {
-    padding: 48px 16px;
-    text-align: center;
-    background:
-      radial-gradient(circle at 15% 20%, rgb(14 165 233 / 0.25), transparent 40%),
-      radial-gradient(circle at 85% 30%, rgb(45 212 191 / 0.25), transparent 40%),
-      radial-gradient(circle at 50% 100%, rgb(250 204 21 / 0.2), transparent 50%),
-      #f0f9ff;
-  }
-  .hero p { max-width: 560px; margin: 12px auto; }
-  .hero img { margin: 16px auto; border-radius: 16px; }
-
-  .btn { display: inline-block; padding: 12px 28px; border-radius: 999px; background: #0e7490; color: white; font-weight: 700; text-decoration: none; }
-  .btn:hover { background: #155e75; }
-
-  /* ---------- sections, a light background every other one ---------- */
-  .section { padding: 40px 16px; }
-  .section > * { max-width: 760px; margin-inline: auto; }
-  .section--alt { background: #f8fafc; }
-
-  /* the slanted strip: a rotated bar wider than the screen. overflow: clip cuts what sticks out,
-     so it never makes the page scroll sideways (and unlike hidden, it does not make a scroll box) */
-  .section--slanted { position: relative; overflow: clip; padding-block-start: 72px; }
-  .section--slanted::before {
-    content: ""; position: absolute; top: 16px; inset-inline: -10%;
-    height: 24px; background: #0e7490; transform: rotate(-2deg);
-  }
-
-  /* ---------- service cards ---------- */
-  .services { padding: 0; list-style: none; }
-  .service-card {
-    position: relative; margin-block-end: 12px; padding: 16px 20px; padding-inline-start: 28px;
-    border-radius: 12px; background: white; box-shadow: 0 2px 8px rgb(15 23 42 / 0.08);
-    font-weight: 600; transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .service-card::before { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 0; width: 6px; border-start-end-radius: 6px; border-end-end-radius: 6px; background: #0ea5e9; }
-  .service-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgb(15 23 42 / 0.12); }
-
-  .steps { padding-inline-start: 24px; }
-  .steps li { margin-block-end: 8px; }
-
-  /* ---------- doctors ---------- */
-  .doctor { margin-block-end: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 16px; }
-  .doctor__name { margin-block-end: 8px; }
-  .doctor img { border-radius: 50%; width: 120px; margin-block-end: 8px; }
-  .quote { padding: 16px 20px; border-inline-start: 4px solid #0ea5e9; background: #f0f9ff; border-radius: 8px; }
-  .quote figcaption { margin-block-start: 8px; color: #475569; }
-
-  .prices { padding: 0; list-style: none; }
-  .prices li { padding-block: 8px; border-block-end: 1px dashed #cbd5e1; }
-
-  /* ---------- FAQ ---------- */
-  .faq { margin-block-end: 8px; padding: 12px 16px; border-radius: 10px; background: #f8fafc; }
-  .faq__q { cursor: pointer; font-weight: 700; }
-  .faq[open] { background: #f0f9ff; }
-
-  /* ---------- contact card shaped like a ticket ---------- */
-  .ticket {
-    position: relative; max-width: 420px; padding: 24px 28px; border-radius: 16px;
-    background: #fef9c3; outline: 2px dashed #a16207; outline-offset: -10px;
-  }
-  .ticket::before, .ticket::after { content: ""; position: absolute; top: 50%; width: 24px; height: 24px; border-radius: 50%; background: #f8fafc; transform: translateY(-50%); }
-  .ticket::before { inset-inline-start: -12px; }
-  .ticket::after { inset-inline-end: -12px; }
-  .ticket a { color: #713f12; }
-
-  .site-footer { padding: 16px; text-align: center; color: #475569; }
-}
-
-@layer utilities {
-  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-}
-</style>
+<title>بطاقة كتاب: بيت القمر</title>
 </head>
 <body>
-<header class="site-header">
-  <p class="site-header__logo"><a href="#top">عيادة ابتسامة</a></p>
-  <nav aria-label="أجزاء الصفحة">
-    <ul class="site-header__links">
-      <li><a href="#services">الخدمات</a></li>
-      <li><a href="#steps">الخطوات</a></li>
-      <li><a href="#doctors">الأطبا</a></li>
-      <li><a href="#prices">الأسعار</a></li>
-      <li><a href="#faq">الأسئلة</a></li>
-      <li><a href="#contact">التواصل</a></li>
+<main>
+  <article>
+    <h1><cite>بيت القمر</cite></h1>
+    <dl>
+      <dt>الكاتبة</dt>
+      <dd>هدى منصور</dd>
+      <dt>عدد الصفحات</dt>
+      <dd>٣٢٠</dd>
+      <dt>التصنيف</dt>
+      <dd>رواية</dd>
+      <dd>غموض</dd>
+      <dt>تقييمي</dt>
+      <dd>٤ من ٥</dd>
+    </dl>
+    <h2>ليه عجبتني</h2>
+    <ul>
+      <li>الفصول قصيرة.</li>
+      <li>النهاية مش متوقعة.</li>
+      <li>اللغة سهلة.</li>
+    </ul>
+    <h2>أحلى جملة</h2>
+    <figure>
+      <blockquote>
+        <p>البيت مكانش مسكون، هو بس كان فاكر كل اللي عدّوا عليه.</p>
+      </blockquote>
+      <figcaption>من الفصل التالت في <cite>بيت القمر</cite></figcaption>
+    </figure>
+    <p>وصاحبتي لما خلّصتها قالت لي <q>مش هعرف أنام النهارده</q>.</p>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+**القرارات:**
+
+- [[<cite>]] جوه [[<h1>]]: العنوان كله اسم عمل. و «هدى منصور» نص عادي في [[<dd>]]: اسم شخص.
+- «التصنيف» ليه قيمتين، فاتنين [[<dd>]]. و «تقييمي: ٤ من ٥» اسم وقيمة زي الباقي.
+- «ليه عجبتني» [[<ul>]]: تلات أسباب من غير ترتيب ومن غير أسماء.
+- الجملة المنقولة من الكتاب [[<blockquote>]]، ومصدرها (الفصل والكتاب) في [[<figcaption>]]. وتعليق الصاحبة [[<q>]] لأنه قصير وجوه جملتي.
+
+**الغلطة الشائعة:** تكتب بيانات الكتاب فقرات «الكاتبة: هدى منصور». الشكل قريب، بس مفيش حاجة بتقول إن «الكاتبة» اسم و «هدى منصور» قيمته.
+
+~~~text الناتج
+dl=1  dt=4  dd=5  ul=1  li=3  figure=1  blockquote=1  figcaption=1  q=1  cite=2
+cite جواه: «بيت القمر» مرتين (ولا اسم شخص)
+العلامات حوالين الـ q:  ” … “  من المتصفح
+Nu Html Checker: صفر errors
+~~~` },
+        { lvl: 'متوسط', dir: "product-specs", t: R`صفحة منتج لمتجر متخيل`, what: R`صفحة «كشّاف الرحلات» في «متجر الخيمة»: [[<header>]] فيه قايمة تنقل، ومسار الصفحة [[<ol>]] جوه [[<nav>]]، وصورة المنتج جوه [[<figure>]] بوصف، وزراير الشرا في [[<menu>]]، والمواصفات [[<dl>]] وكل مجموعة في [[<div>]]، والمميزات [[<ul>]]، وطريقة الطلب [[<ol>]]، ورأيين لعملا كل واحد [[<figure>]] فيه [[<blockquote>]]. ده هيكل أي صفحة منتج حقيقية. من دروس الوحدة كلها.`, done: R`شجرة الـ accessibility فيها اتنين [[navigation]] بأسماء مختلفة، و ٥ [[list]] (تنقل، مسار، أوامر، مميزات، خطوات)، و ٣ [[figure]]، وكل [[<dt>]] و [[<dd>]] جوه [[<div>]]، ولينك واحد في كل [[<nav>]] عليه [[aria-current="page"]]، والـ validator صفر errors، وعلى عرض 360 مفيش scroll أفقي.`, sol: R`~~~live 480 صفحة المنتج
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كشّاف الرحلات KR-204 | متجر الخيمة</title>
+</head>
+<body>
+<header>
+  <a href="#top">متجر الخيمة</a>
+  <nav aria-label="الرئيسية">
+    <ul>
+      <li><a href="#top">الرئيسية</a></li>
+      <li><a href="#lights" aria-current="page">كشّافات</a></li>
+      <li><a href="#bags">شنط</a></li>
     </ul>
   </nav>
 </header>
-
-<main>
-  <section id="top" class="hero">
-    <h1>سنانك في إيد أمينة</h1>
-    <p>كشف وتنضيف وتقويم في مكان واحد، ومن غير ما تستنى بالساعات.</p>
-    <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%22400%22%20viewBox%3D%220%200%20800%20400%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23e0f2fe%22%2F%3E%3Cpath%20d%3D%22M340%20120c-40%200-60%2030-60%2070%200%2060%2030%20130%2050%20130s20-60%2040-60%2020%2060%2040%2060%2050-70%2050-130c0-40-20-70-60-70-20%200-30%2010-30%2010s-10-10-30-10z%22%20fill%3D%22%23fff%22%20stroke%3D%22%230369a1%22%20stroke-width%3D%228%22%2F%3E%3C%2Fsvg%3E" alt="رسم لسنة بيضا مبتسمة" width="800" height="400">
-    <p><a class="btn" href="#contact">احجز كشف</a></p>
-  </section>
-
-  <section id="services" class="section">
-    <h2>الخدمات</h2>
-    <ul class="services">
-      <li class="service-card">كشف وأشعة بانوراما</li>
-      <li class="service-card">تنضيف وتلميع</li>
-      <li class="service-card">حشو وعلاج عصب</li>
-      <li class="service-card">تقويم شفاف</li>
-    </ul>
-  </section>
-
-  <section id="steps" class="section section--alt">
-    <h2>الخطوات</h2>
-    <ol class="steps">
-      <li>احجز من الفورم أو بالتليفون.</li>
-      <li>الكشف والأشعة في نفس الزيارة.</li>
-      <li>خطة علاج مكتوبة بالسعر قبل ما نبدأ.</li>
+<main id="top">
+  <nav aria-label="مسار الصفحة">
+    <ol>
+      <li><a href="#top">الرئيسية</a></li>
+      <li><a href="#lights">كشّافات</a></li>
+      <li><a href="#kr-204" aria-current="page">كشّاف الرحلات</a></li>
     </ol>
-  </section>
-
-  <section id="doctors" class="section">
-    <h2>الأطبا</h2>
-    <article class="doctor">
-      <h3 class="doctor__name">د. سلمى فؤاد</h3>
-      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f0fdfa%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%2399f6e4%22%2F%3E%3Cpath%20d%3D%22M30%20200c0-50%2030-75%2070-75s70%2025%2070%2075z%22%20fill%3D%22%2314b8a6%22%2F%3E%3C%2Fsvg%3E" alt="صورة د. سلمى فؤاد" width="200" height="200" loading="lazy">
-      <p>تقويم الأسنان، ١٢ سنة خبرة.</p>
-    </article>
-    <article class="doctor">
-      <h3 class="doctor__name">د. كريم ناجي</h3>
-      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f0fdfa%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%2399f6e4%22%2F%3E%3Cpath%20d%3D%22M30%20200c0-50%2030-75%2070-75s70%2025%2070%2075z%22%20fill%3D%22%2314b8a6%22%2F%3E%3C%2Fsvg%3E" alt="صورة د. كريم ناجي" width="200" height="200" loading="lazy">
-      <p>علاج العصب والحشو التجميلي.</p>
-    </article>
-    <figure class="quote">
-      <blockquote>
-        <p>أول مرة أروح لدكتور سنان ومخافش. شرحولي كل خطوة قبل ما يعملوها.</p>
-      </blockquote>
-      <figcaption>منى، من المرضى</figcaption>
-    </figure>
-  </section>
-
-  <section id="prices" class="section section--alt section--slanted">
-    <h2>الأسعار</h2>
-    <ul class="prices">
-      <li>الكشف والأشعة: ٣٠٠ جنيه</li>
-      <li>التنضيف: ٥٠٠ جنيه</li>
-      <li>الحشو: من ٦٠٠ جنيه</li>
-    </ul>
-  </section>
-
-  <section id="faq" class="section">
-    <h2>الأسئلة</h2>
-    <details class="faq">
-      <summary class="faq__q">الكشف بياخد قد إيه؟</summary>
-      <p>حوالي نص ساعة، بالأشعة.</p>
-    </details>
-    <details class="faq">
-      <summary class="faq__q">بتقبلوا التأمين؟</summary>
-      <p>أيوه، مع أغلب شركات التأمين الطبي.</p>
-    </details>
-  </section>
-
-  <section id="contact" class="section section--alt">
-    <div class="ticket">
-      <h2>التواصل</h2>
-      <p>التليفون: <a href="tel:+20225550199">0225550199</a></p>
-      <address>١٤ شارع النخيل، الدور التاني</address>
+  </nav>
+  <h1 id="kr-204">كشّاف الرحلات</h1>
+  <figure>
+    <svg role="img" aria-label="كشّاف يد أسود طويل وطالع منه نور أصفر" width="220" height="90" viewBox="0 0 220 90">
+      <polygon points="120,45 215,10 215,80" fill="#fde68a"/>
+      <rect x="20" y="33" width="80" height="24" fill="#1f2937"/>
+      <rect x="100" y="25" width="24" height="40" fill="#374151"/>
+    </svg>
+    <figcaption>الكشّاف باللون الأسود.</figcaption>
+  </figure>
+  <menu>
+    <li><button type="button">ضيف للسلة</button></li>
+    <li><button type="button">احفظه لبعدين</button></li>
+  </menu>
+  <h2>المواصفات</h2>
+  <dl>
+    <div>
+      <dt>الكود</dt>
+      <dd>KR-204</dd>
     </div>
-  </section>
+    <div>
+      <dt>السعر</dt>
+      <dd>٤٥٠ جنيه</dd>
+    </div>
+    <div>
+      <dt>الألوان</dt>
+      <dd>أسود</dd>
+      <dd>أصفر</dd>
+    </div>
+    <div>
+      <dt>الضمان</dt>
+      <dd>سنة</dd>
+    </div>
+  </dl>
+  <h2>المميزات</h2>
+  <ul>
+    <li>ضد المية</li>
+    <li>بيتشحن USB</li>
+    <li>٣ درجات إضاءة</li>
+  </ul>
+  <h2>طريقة الطلب</h2>
+  <ol>
+    <li>اضغط «ضيف للسلة».</li>
+    <li>اكتب العنوان ورقم الموبايل.</li>
+    <li>ادفع عند الاستلام.</li>
+  </ol>
+  <h2>آراء العملا</h2>
+  <figure>
+    <blockquote>
+      <p>نوره قوي والبطارية كمّلت معايا الرحلة كلها.</p>
+    </blockquote>
+    <figcaption>كريم عادل</figcaption>
+  </figure>
+  <figure>
+    <blockquote>
+      <p>وقع مني في المية واشتغل عادي.</p>
+    </blockquote>
+    <figcaption>منى سامي</figcaption>
+  </figure>
 </main>
-
-<footer class="site-footer">
-  <p><small>© ٢٠٢٦ عيادة ابتسامة (اسم متخيل)</small></p>
+<footer>
+  <p>متجر الخيمة، كل الحقوق محفوظة.</p>
 </footer>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** فوق اسم العيادة واللينكات. بعدها هيرو لبني فاتح فيه ٣ بقع ألوان ناعمة (أزرق وفيروزي وأصفر)، والعنوان كبير وزرار «احجز كشف» كبسولة. الخدمات كروت بيضا بظل وشريط أزرق على اليمين، وبتطلع لفوق مع الماوس. الأقسام بالتبادل أبيض ورمادي فاتح جدًا. قبل «الأسعار» شريط أزرق مايل بعرض الشاشة. والأسئلة مربعات بتفتح، وفي الآخر «التواصل» كارت أصفر شكله تذكرة بخط متقطع وتجويفين.
+**ترتيب البناء:**
 
-**الطبقات:** [[reset]] بيصفّر هوامش المتصفح. [[base]] للعناصر نفسها (الخط والعناوين واللينكات). [[components]] لكل جزء باسمه. [[utilities]] أدوات صغيرة. ولأن الترتيب محدد فوق، القاعدة اللي في [[components]] بتغلب اللي في [[base]] حتى لو [[base]] فيها selector أتقل.
+1. الهيكل الكبير: [[<header>]] و [[<main>]] و [[<footer>]]، والـ [[<h1>]] باسم المنتج.
+2. الاتنين [[<nav>]]: الرئيسي [[<ul>]] في الـ header، والمسار [[<ol>]] أول حاجة في الـ main. كل واحد باسمه.
+3. الصورة جوه [[<figure>]] بنص بديل بيوصف شكلها، ووصف بيقول لونها.
+4. [[<menu>]] للزرارين: أوامر على المنتج. الزراير [[type="button"]] لأنها مش جوه فورم (درس «a و button»).
+5. المواصفات [[<dl>]] بـ [[<div>]] حوالين كل مجموعة، عشان لما تيجي تنسّق كل صف يبقى وحدة.
+6. المميزات [[<ul>]] والطلب [[<ol>]].
+7. كل رأي [[<figure>]] لوحده: الكلام في [[<blockquote>]] والاسم في [[<figcaption>]].
 
-**أهم الحتت:**
-- **[[.section > *]]:** كل اللي جوه القسم عرضه 760 بالكتير وفي النص، والخلفية نفسها بعرض الشاشة. كده الألوان المتبادلة بتوصل للحافتين والكلام مش بيبقى سطر طويل على الشاشات الكبيرة.
-- **هالة الهيرو:** ٣ [[radial-gradient]] شفافين وتحتهم لون. أول واحد مكتوب هو اللي فوق.
-- **شريط الخدمات:** [[::before]] لازق على [[inset-inline-start]] (اليمين في العربي)، وزواياه [[border-start-end-radius]] و [[border-end-end-radius]]: أسامي logical معناها «الركن اللي ناحية آخر السطر». أول نسخة كانت [[border-radius: 0 6px 6px 0]] (physical)، فاتدوّر الطرف اللي لازق في الحافة بدل اللي جوه.
-- **الشريط المايل:** [[::before]] أعرض من الشاشة ([[inset-inline: -10%]]) ومايل [[rotate(-2deg)]]. الحتة اللي طالعة برّه الشاشة بتعمل scroll أفقي، و [[overflow: clip]] على القسم بيقصها.
-- **[[overflow: clip]] مش [[hidden]]:** الاتنين بيقصوا. بس [[hidden]] بيخلي القسم «صندوق scroll» (ممكن يتحرك بالكود أو بالـ focus جواه)، و [[clip]] بيقص بس.
-- **التذكرة:** نفس فكرة مشروع الأشكال، والتجويفين لونهم لون القسم ([[#f8fafc]]).
+**اللينكات:** الـ [[href]] في القايمتين مكتوب [[#lights]] وأخواتها عشان المعاينة متخرجش من الصندوق. في متجر حقيقي كل واحد مسار صفحة ([[/lights]]).
 
-**من غير الـ CSS:** الصفحة لسه مترتبة: عناوين، ولستات، ولينكات. بس صورة الهيرو هتعمل scroll أفقي على 800، لأن [[width="800"]] في الـ HTML. وده اللي [[img { max-width: 100%; height: auto; }]] في الـ reset بيصلّحه.
+**ليه المميزات مش في الـ [[<dl>]]:** «ضد المية» ملهاش اسم وقيمة. ولو كتبتها «ضد المية: أيوه» بقت مواصفة وتدخل الـ [[<dl>]].
 
-~~~text الناتج (Chrome)
-scrollWidth / clientWidth (من غير الـ scrollbar)
-  360      342 / 342       800      782 / 782       1280     1262 / 1262
-الشريط المايل من غير overflow: clip على 360   scrollWidth 379 والشاشة 345 (scroll أفقي)
-بـ overflow: hidden                            345 / 345، بس القسم بقى scroll container (scrollWidth > clientWidth جواه)
-بـ overflow: clip                              345 / 345
-زوايا شريط الخدمة                               top-left 6px، bottom-left 6px، top-right 0 (الطرف اللي جوه)
-عناصر عليها style=""   0       selectors فيها #   0       !important   0
-من غير style.css: h1 = 32px (حجم المتصفح)، و scrollWidth 808 على 800 (صورة الهيرو 800px)
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+**الغلطة الشائعة:** الصفحة فيها ٥ قوايم من ٣ أنواع، والسهل إنك تعملهم كلهم [[<ul>]]. ارجع لكل واحدة بالسؤال: الترتيب فارق؟ فيها اسم وقيمة؟ أوامر؟
+
+~~~text الناتج
+nav=2  ul=2  ol=2  menu=1  li=14  dl=1  dt=4  dd=5  figure=3  blockquote=2  figcaption=3  button=2
+شجرة الـ accessibility (مختصرة):
+banner › link ، navigation "الرئيسية" › list (3)
+main › navigation "مسار الصفحة" › list (3) ، heading level=1 ، figure › image ، list (2 button) ،
+       DescriptionList (4 term ، 5 definition) ، list (3) ، list (3) ، figure ، figure
+contentinfo
+كل dt و dd أبوه div: true      عدد aria-current="page": 2
+Nu Html Checker: صفر errors      على عرض 360: مفيش scroll أفقي
 ~~~` },
-        { lvl: 'فكرة', dir: "zen-two", t: R`نفس الـ HTML بشكلين`, what: R`زي مسابقة CSS Zen Garden: صفحة HTML واحدة لمقال أو منيو، وملفين CSS مختلفين خالص (مثلًا «كلاسيك» و «مودرن»). انت اللي تختار الموضوع والشكلين.`, done: R`تبدّل بين الشكلين بتغيير سطر الـ link بس، والاتنين مقروءين ومفيش scroll أفقي، وواحد صاحبك قال الشكلين مختلفين فعلًا.`, ext: R`زوّد زرار بيبدّل بينهم من غير reload (يغيّر [[href]] بتاع الـ link) ويفتكر الاختيار.`, sol: R`الموضوع اللي اخترته: مقال قصير في مجلة متخيلة. ملف HTML واحد، وملفين CSS، وملف JavaScript صغير للمهمة الزيادة (زرار التبديل).
-
-~~~html index.html
+        { lvl: 'متوسط', dir: "device-manual", t: R`دليل استخدام لجهاز متخيل`, what: R`صفحة وثائق لمكنة قهوة اسمها «صباح»: فهرس محتويات مرقّم من مستويين بلينكات للأقسام، وقسم فيه رسم جوه [[<figure>]] الكلام بيشاور عليه «شكل ١»، وخطوات مرقّمة جواها قايمة تحذيرات، واقتباس من شروط الضمان بـ [[<blockquote>]] وجملة قصيرة بـ [[<q>]]، وقاموس للكلمات بـ [[<dl>]] فيه كلمة ليها اسمين. الوثائق هي أكتر مكان بتتستخدم فيه [[<dl>]]. من دروس الوحدة كلها.`, done: R`كل لينك في الفهرس ليه [[id]] مطابق، وشكل الفهرس مطابق لترتيب العناوين ([[<h2>]] ثم [[<h3>]])، والقاموس فيه مجموعة ليها اتنين [[<dt>]]، والـ validator صفر errors.`, sol: R`~~~live 480 دليل استخدام مكنة «صباح»
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إزاي تعمل كوباية شاي مظبوطة</title>
-<link rel="stylesheet" href="classic.css" id="theme">
+<title>دليل استخدام مكنة القهوة «صباح»</title>
 </head>
 <body>
 <header>
-  <p>مجلة «فنجان» (اسم متخيل)</p>
-  <button type="button" id="swap" hidden>بدّل الشكل</button>
+  <h1>دليل استخدام مكنة القهوة «صباح»</h1>
 </header>
 <main>
-  <article>
-    <h1>إزاي تعمل كوباية شاي مظبوطة</h1>
-    <p>الشاي سهل، بس الفرق بين كوباية عادية وكوباية مظبوطة في تلات حاجات صغيرة: المية، والوقت، والكمية.</p>
-    <h2>١. المية</h2>
-    <p>المية تغلي وتسيبها نص دقيقة. المية اللي بتفور لسه بتحرق الورق وتطلّع طعم مر.</p>
-    <h2>٢. الوقت</h2>
-    <p>تلات لأربع دقايق للشاي الأسود. أكتر من كده بيطلع التانين والطعم بيقلب.</p>
-    <blockquote><p>الشاي الحلو مش محتاج سكر كتير، محتاج صبر شوية.</p></blockquote>
-    <h2>٣. الكمية</h2>
-    <ul>
-      <li>معلقة صغيرة لكل كوباية.</li>
-      <li>ولو هتحط لبن، زوّد نص معلقة.</li>
-    </ul>
-  </article>
+  <nav aria-label="محتويات الدليل">
+    <h2>المحتويات</h2>
+    <ol>
+      <li><a href="#parts">أجزاء المكنة</a></li>
+      <li><a href="#first">أول تشغيل</a>
+        <ol>
+          <li><a href="#wash">الغسيل</a></li>
+          <li><a href="#fill">الملي</a></li>
+        </ol>
+      </li>
+      <li><a href="#clean">التنضيف</a></li>
+      <li><a href="#terms">معاني الكلمات</a></li>
+    </ol>
+  </nav>
+  <section aria-labelledby="parts">
+    <h2 id="parts">أجزاء المكنة</h2>
+    <p>المكنة فيها ٣ أجزاء أساسية (<a href="#fig-1">شكل ١</a>).</p>
+    <figure id="fig-1">
+      <svg role="img" aria-label="رسم للمكنة: خزان أزرق فوق، وجسم رمادي في النص، وكوباية بني تحت" width="140" height="150" viewBox="0 0 140 150">
+        <rect x="40" y="5" width="60" height="40" fill="#93c5fd" stroke="#555"/>
+        <rect x="30" y="45" width="80" height="50" fill="#d1d5db" stroke="#555"/>
+        <rect x="52" y="110" width="36" height="34" fill="#92400e" stroke="#555"/>
+      </svg>
+      <figcaption>شكل ١: الخزان، والجسم، والكوباية.</figcaption>
+    </figure>
+  </section>
+  <section aria-labelledby="first">
+    <h2 id="first">أول تشغيل</h2>
+    <h3 id="wash">الغسيل</h3>
+    <ol>
+      <li>فك الخزان.</li>
+      <li>اغسله بمية دافية.
+        <ul>
+          <li>من غير صابون.</li>
+          <li>من غير سلك.</li>
+        </ul>
+      </li>
+      <li>نشّفه وركّبه.</li>
+    </ol>
+    <h3 id="fill">الملي</h3>
+    <ol>
+      <li>املا الخزان لحد علامة MAX.</li>
+      <li>حط البن في الفلتر.</li>
+      <li>دوس زرار التشغيل واستنى ٣ دقايق.</li>
+    </ol>
+  </section>
+  <section aria-labelledby="clean">
+    <h2 id="clean">التنضيف</h2>
+    <p>شروط الضمان بتقول:</p>
+    <blockquote>
+      <p>الضمان بيسقط لو المكنة اتغسلت وهي موصّلة بالكهربا.</p>
+    </blockquote>
+    <p>يعني افصل الفيشة الأول، وده معنى جملة <q>افصل قبل ما تغسل</q> المكتوبة على ضهر المكنة.</p>
+  </section>
+  <section aria-labelledby="terms">
+    <h2 id="terms">معاني الكلمات</h2>
+    <dl>
+      <dt>الخزان</dt>
+      <dd>الوعاء اللي فوق اللي بتتحط فيه المية.</dd>
+      <dt>الفلتر</dt>
+      <dd>المصفاة اللي بيتحط فيها البن.</dd>
+      <dt>التقطير</dt>
+      <dt>الـ drip</dt>
+      <dd>نزول القهوة نقطة نقطة في الكوباية.</dd>
+    </dl>
+  </section>
 </main>
-<footer><p>© ٢٠٢٦ مجلة «فنجان»</p></footer>
-<script src="swap.js"></script>
+<footer>
+  <p>الدليل ده مأخوذ من <cite>كتيّب مكنة صباح</cite>، الطبعة التانية.</p>
+</footer>
 </body>
 </html>
 ~~~
 
-~~~css classic.css
-/* «كلاسيك»: paper, a serif face, a narrow column, everything centred like a printed magazine */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; background: #f5efe0; color: #3b2f22; font: 19px/1.9 "Amiri", "Traditional Arabic", "Times New Roman", serif; }
-header, footer { padding: 12px 16px; text-align: center; border-block: 3px double #8b6f47; }
-header p { margin: 0; font-size: 22px; letter-spacing: 0; font-weight: 700; }
-main { max-width: 620px; margin: 32px auto; padding-inline: 16px; }
-h1 { text-align: center; font-size: 34px; line-height: 1.4; border-block-end: 1px solid #8b6f47; padding-block-end: 12px; }
-h2 { font-size: 24px; color: #7c2d12; }
-blockquote { margin: 24px 0; padding: 8px 24px; border-inline: 1px solid #8b6f47; text-align: center; font-style: italic; }
-footer { font-size: 15px; }
-button { margin-block-start: 8px; padding: 4px 16px; border: 1px solid #3b2f22; background: transparent; color: inherit; font: inherit; font-size: 15px; cursor: pointer; }
+**ترتيب البناء:**
+
+1. العناوين الأول: ٤ [[<h2>]]، وتحت «أول تشغيل» اتنين [[<h3>]]. وكل واحد ليه [[id]].
+2. الفهرس صورة منهم: [[<ol>]] وجواها [[<ol>]] تحت «أول تشغيل». وهو جوه [[<nav>]] باسمه.
+3. كل قسم [[<section>]] و [[aria-labelledby]] بيشاور على [[id]] عنوانه، فنفس الـ [[id]] بيخدم الفهرس والـ landmark.
+4. الرسم [[<figure id="fig-1">]] والفقرة بتشاور عليه بلينك.
+5. الخطوات [[<ol>]]، والتحذيرين تحت «اغسله» [[<ul>]] جوه الـ [[<li>]] بتاعه: هم تفاصيل للخطوة دي، ومش مترتبين.
+6. نص شروط الضمان [[<blockquote>]] لأنه منقول بالنص، والجملة المكتوبة على المكنة [[<q>]].
+7. القاموس [[<dl>]]. «التقطير» و «الـ drip» اتنين [[<dt>]] ورا بعض: اسمين لنفس المعنى.
+8. اسم الكتيّب في الفوتر جوه [[<cite>]].
+
+**ليه العنوان «المحتويات» [[<h2>]] جوه الـ [[<nav>]]:** الفهرس جزء من الصفحة وليه عنوان ظاهر. والـ [[aria-label]] برضه موجود عشان اسم الـ landmark.
+
+**الغلطة الشائعة:** تكتب أرقام الأقسام بإيدك في العناوين وفي الفهرس («٢.١ الغسيل»). أول ما تزوّد قسم هتعدّل في كل حتة. سيب الترقيم للـ [[<ol>]].
+
+~~~text الناتج
+nav=1  ol=4  ul=1  li=14  figure=1  blockquote=1  q=1  cite=1  dl=1  dt=4  dd=3  section=4  h2=5  h3=2
+علامات الفهرس:  1  2 (1 2)  3  4
+كل href ليه id موجود: true   (#parts #first #wash #fill #clean #terms #fig-1)
+مجموعات القاموس: 3   (الخزان | الفلتر | التقطير ، الـ drip)
+Nu Html Checker: صفر errors      على عرض 360: مفيش scroll أفقي
+~~~` },
+        { lvl: 'كبير', dir: "recipes-site", t: R`موقع وصفات من ٣ صفحات بـ HTML بس`, what: R`موقع «مطبخ سلمى» (اسم متخيل): رئيسية (أكتر ٣ وصفات مرقّمين، وآراء بـ [[<figure>]] و [[<blockquote>]])، وصفحة وصفة الكشري (بيانات الوصفة [[<dl>]]، وصورة جوه [[<figure>]]، ومكونات قايمة من مستويين، وطريقة [[<ol>]] جواها خطوات فرعية، ونصيحة مقتبسة)، وصفحة قاموس المطبخ ([[<dl>]] كل مجموعة فيها [[<div>]] ليه [[id]]، والوصفة بتلينك على كلمة فيه). نفس الـ header والـ nav والـ footer في التلاتة، و [[aria-current="page"]] على الصفحة الحالية، ومسار الصفحة في الصفحتين الداخليتين. يجمع الوحدة كلها ومن غير ولا سطر CSS.`, done: R`التلات صفحات صفر errors في الـ validator، وكل لينك بين الصفحات بيفتح صفحة موجودة، ولينك «التقلية» في الوصفة بيفتح القاموس وينزل لكلمتها، وكل صفحة فيها لينك واحد في قايمة التنقل عليه [[aria-current="page"]] وهو لينك الصفحة نفسها، وعلى عرض 360 مفيش scroll أفقي في أي صفحة.`, ext: R`زوّد وصفة تانية (المحشي) بنفس الهيكل، وخلّي صفحة الرئيسية تلينك عليها بدل «قريب». ولما توصل لوحدة الـ CSS نسّق الموقع من غير ما تغيّر ولا عنصر: لو احتجت تغيّر الـ HTML عشان التنسيق، يبقى الهيكل كان ناقصه حاجة.`, sol: R`**شجرة الملفات:**
+
+~~~text
+salma-kitchen/
+  index.html       الرئيسية
+  koshary.html     وصفة الكشري
+  glossary.html    قاموس المطبخ
 ~~~
 
-~~~css modern.css
-/* «مودرن»: dark, a sans face, big bold headings with a coloured bar, cards with rounded corners */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; background: #0b1120; color: #e2e8f0; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; background: #111827; }
-header p { margin: 0; font-weight: 800; color: #fbbf24; }
-main { max-width: 760px; margin: 24px auto; padding-inline: 16px; }
-article { padding: 24px; border-radius: 20px; background: #111827; }
-h1 { margin-block-start: 0; font-size: clamp(28px, 6vw, 44px); line-height: 1.2; background: linear-gradient(90deg, #fbbf24, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; }
-h2 { font-size: 20px; padding-inline-start: 12px; border-inline-start: 4px solid #f472b6; }
-blockquote { margin: 20px 0; padding: 16px 20px; border-radius: 14px; background: #1f2937; font-size: 20px; font-weight: 700; color: #fbbf24; }
-blockquote p { margin: 0; }
-li::marker { color: #f472b6; }
-footer { padding: 16px; text-align: center; color: #94a3b8; }
-button { padding: 6px 14px; border: 0; border-radius: 999px; background: #fbbf24; color: #0b1120; font: inherit; font-weight: 700; cursor: pointer; }
-button:focus-visible { outline: 3px solid #f472b6; outline-offset: 2px; }
-~~~
+**ترتيب البناء:**
 
-~~~js swap.js
-// the extra task: switch the stylesheet without a reload and remember the choice.
-// without JavaScript the button stays hidden and the page keeps the classic look.
-const link = document.getElementById('theme');
-const btn = document.getElementById('swap');
-const KEY = 'fingan-theme';
+1. اكتب الـ [[<header>]] (اسم الموقع وقايمة التنقل) والـ [[<footer>]] مرة واحدة في [[index.html]]، واتأكد منهم.
+2. انسخهم زي ما هم للصفحتين التانيين، وغيّر حاجة واحدة بس: مكان [[aria-current="page"]].
+3. اكتب القاموس قبل الوصفة، عشان الوصفة هتلينك على [[id]] جواه.
+4. اكتب الوصفة.
+5. ارجع للرئيسية وحط اللينكات.
+6. عدّي التلاتة على الـ validator، ودوس على كل لينك.
 
-function use(name) {
-  link.href = name + '.css';
-  btn.textContent = name === 'classic' ? 'جرّب الشكل المودرن' : 'ارجع للشكل الكلاسيك';
-}
-let saved = null;
-try { saved = localStorage.getItem(KEY); } catch {}
-use(saved === 'modern' ? 'modern' : 'classic');
-btn.hidden = false;
+> المعاينات اللي تحت كل واحدة صفحة لوحدها، فاللينكات بين الصفحات مش هتشتغل هنا. احفظ التلات ملفات في فولدر واحد على جهازك وافتح [[index.html]].
 
-btn.addEventListener('click', () => {
-  const next = link.href.endsWith('classic.css') ? 'modern' : 'classic';
-  use(next);
-  try { localStorage.setItem(KEY, next); } catch {}
-});
-~~~
+### index.html
 
-~~~view 560 1100 الشكل الكلاسيك
+~~~live 480 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إزاي تعمل كوباية شاي مظبوطة</title>
-<style id="classic">
-/* «كلاسيك»: paper, a serif face, a narrow column, everything centred like a printed magazine */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; background: #f5efe0; color: #3b2f22; font: 19px/1.9 "Amiri", "Traditional Arabic", "Times New Roman", serif; }
-header, footer { padding: 12px 16px; text-align: center; border-block: 3px double #8b6f47; }
-header p { margin: 0; font-size: 22px; letter-spacing: 0; font-weight: 700; }
-main { max-width: 620px; margin: 32px auto; padding-inline: 16px; }
-h1 { text-align: center; font-size: 34px; line-height: 1.4; border-block-end: 1px solid #8b6f47; padding-block-end: 12px; }
-h2 { font-size: 24px; color: #7c2d12; }
-blockquote { margin: 24px 0; padding: 8px 24px; border-inline: 1px solid #8b6f47; text-align: center; font-style: italic; }
-footer { font-size: 15px; }
-button { margin-block-start: 8px; padding: 4px 16px; border: 1px solid #3b2f22; background: transparent; color: inherit; font: inherit; font-size: 15px; cursor: pointer; }
-</style>
+<title>مطبخ سلمى</title>
 </head>
 <body>
 <header>
-  <p>مجلة «فنجان» (اسم متخيل)</p>
-  <button type="button" id="swap" hidden>بدّل الشكل</button>
+  <a href="index.html">مطبخ سلمى</a>
+  <nav aria-label="الرئيسية">
+    <ul>
+      <li><a href="index.html" aria-current="page">الرئيسية</a></li>
+      <li><a href="koshary.html">وصفة الكشري</a></li>
+      <li><a href="glossary.html">قاموس المطبخ</a></li>
+    </ul>
+  </nav>
 </header>
 <main>
-  <article>
-    <h1>إزاي تعمل كوباية شاي مظبوطة</h1>
-    <p>الشاي سهل، بس الفرق بين كوباية عادية وكوباية مظبوطة في تلات حاجات صغيرة: المية، والوقت، والكمية.</p>
-    <h2>١. المية</h2>
-    <p>المية تغلي وتسيبها نص دقيقة. المية اللي بتفور لسه بتحرق الورق وتطلّع طعم مر.</p>
-    <h2>٢. الوقت</h2>
-    <p>تلات لأربع دقايق للشاي الأسود. أكتر من كده بيطلع التانين والطعم بيقلب.</p>
-    <blockquote><p>الشاي الحلو مش محتاج سكر كتير، محتاج صبر شوية.</p></blockquote>
-    <h2>٣. الكمية</h2>
-    <ul>
-      <li>معلقة صغيرة لكل كوباية.</li>
-      <li>ولو هتحط لبن، زوّد نص معلقة.</li>
-    </ul>
-  </article>
+  <h1>مطبخ سلمى</h1>
+  <p>وصفات مصرية مجرّبة، مكتوبة خطوة خطوة.</p>
+  <section aria-labelledby="top-title">
+    <h2 id="top-title">أكتر ٣ وصفات اتفتحت الشهر ده</h2>
+    <ol>
+      <li><a href="koshary.html">الكشري</a></li>
+      <li>المحشي (قريب)</li>
+      <li>أم علي (قريب)</li>
+    </ol>
+  </section>
+  <section aria-labelledby="said-title">
+    <h2 id="said-title">قالوا عن الوصفات</h2>
+    <figure>
+      <blockquote>
+        <p>أول مرة الكشري يطلع معايا زي بتاع المحل.</p>
+      </blockquote>
+      <figcaption>منى سامي</figcaption>
+    </figure>
+    <figure>
+      <blockquote>
+        <p>الخطوات واضحة حتى للي أول مرة يدخل المطبخ.</p>
+      </blockquote>
+      <figcaption>كريم عادل</figcaption>
+    </figure>
+  </section>
 </main>
-<footer><p>© ٢٠٢٦ مجلة «فنجان»</p></footer>
-
+<footer>
+  <nav aria-label="روابط الفوتر">
+    <ul>
+      <li><a href="glossary.html">قاموس المطبخ</a></li>
+      <li><a href="mailto:hello@example.test">راسلنا</a></li>
+    </ul>
+  </nav>
+  <p>مطبخ سلمى، ٢٠٢٦.</p>
+</footer>
 </body>
 </html>
 ~~~
 
-~~~view 560 1100 نفس الـ HTML بالشكل المودرن
+- «أكتر ٣ وصفات» [[<ol>]]: ده ترتيب. والتانية والتالتة نص من غير لينك لأن صفحاتهم لسه مش موجودة. لينك لصفحة مش موجودة أسوأ من مفيش لينك.
+- كل رأي [[<figure>]] لوحده.
+- الفوتر فيه [[<nav>]] تاني باسم مختلف.
+
+### koshary.html
+
+~~~live 480 koshary.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إزاي تعمل كوباية شاي مظبوطة</title>
-<style id="classic">
-/* «مودرن»: dark, a sans face, big bold headings with a coloured bar, cards with rounded corners */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; background: #0b1120; color: #e2e8f0; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; background: #111827; }
-header p { margin: 0; font-weight: 800; color: #fbbf24; }
-main { max-width: 760px; margin: 24px auto; padding-inline: 16px; }
-article { padding: 24px; border-radius: 20px; background: #111827; }
-h1 { margin-block-start: 0; font-size: clamp(28px, 6vw, 44px); line-height: 1.2; background: linear-gradient(90deg, #fbbf24, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; }
-h2 { font-size: 20px; padding-inline-start: 12px; border-inline-start: 4px solid #f472b6; }
-blockquote { margin: 20px 0; padding: 16px 20px; border-radius: 14px; background: #1f2937; font-size: 20px; font-weight: 700; color: #fbbf24; }
-blockquote p { margin: 0; }
-li::marker { color: #f472b6; }
-footer { padding: 16px; text-align: center; color: #94a3b8; }
-button { padding: 6px 14px; border: 0; border-radius: 999px; background: #fbbf24; color: #0b1120; font: inherit; font-weight: 700; cursor: pointer; }
-button:focus-visible { outline: 3px solid #f472b6; outline-offset: 2px; }
-</style>
+<title>الكشري | مطبخ سلمى</title>
 </head>
 <body>
 <header>
-  <p>مجلة «فنجان» (اسم متخيل)</p>
-  <button type="button" id="swap" hidden>بدّل الشكل</button>
+  <a href="index.html">مطبخ سلمى</a>
+  <nav aria-label="الرئيسية">
+    <ul>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li><a href="koshary.html" aria-current="page">وصفة الكشري</a></li>
+      <li><a href="glossary.html">قاموس المطبخ</a></li>
+    </ul>
+  </nav>
 </header>
 <main>
+  <nav aria-label="مسار الصفحة">
+    <ol>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li><a href="koshary.html" aria-current="page">الكشري</a></li>
+    </ol>
+  </nav>
   <article>
-    <h1>إزاي تعمل كوباية شاي مظبوطة</h1>
-    <p>الشاي سهل، بس الفرق بين كوباية عادية وكوباية مظبوطة في تلات حاجات صغيرة: المية، والوقت، والكمية.</p>
-    <h2>١. المية</h2>
-    <p>المية تغلي وتسيبها نص دقيقة. المية اللي بتفور لسه بتحرق الورق وتطلّع طعم مر.</p>
-    <h2>٢. الوقت</h2>
-    <p>تلات لأربع دقايق للشاي الأسود. أكتر من كده بيطلع التانين والطعم بيقلب.</p>
-    <blockquote><p>الشاي الحلو مش محتاج سكر كتير، محتاج صبر شوية.</p></blockquote>
-    <h2>٣. الكمية</h2>
+    <h1>الكشري</h1>
+    <dl>
+      <dt>بيكفّي</dt>
+      <dd>٤ أفراد</dd>
+      <dt>الوقت</dt>
+      <dd>ساعة</dd>
+      <dt>الصعوبة</dt>
+      <dd>متوسطة</dd>
+    </dl>
+    <figure>
+      <svg role="img" aria-label="طبق كشري: رز وعدس تحت، وصلصة حمرا في النص، وبصل بني فوق" width="200" height="110" viewBox="0 0 200 110">
+        <ellipse cx="100" cy="70" rx="95" ry="35" fill="#e5e7eb" stroke="#555"/>
+        <ellipse cx="100" cy="62" rx="75" ry="25" fill="#d6b88a"/>
+        <ellipse cx="100" cy="56" rx="45" ry="14" fill="#b91c1c"/>
+        <ellipse cx="100" cy="50" rx="22" ry="7" fill="#78350f"/>
+      </svg>
+      <figcaption>شكل ١: الطبق بعد التقديم.</figcaption>
+    </figure>
+    <h2>المكونات</h2>
     <ul>
-      <li>معلقة صغيرة لكل كوباية.</li>
-      <li>ولو هتحط لبن، زوّد نص معلقة.</li>
+      <li>للطبق
+        <ul>
+          <li>كوباية رز</li>
+          <li>كوباية عدس بجبة</li>
+          <li>كوباية مكرونة صغيرة</li>
+        </ul>
+      </li>
+      <li>للصلصة
+        <ul>
+          <li>٤ طماطم</li>
+          <li>٣ فصوص توم</li>
+          <li>معلقة خل</li>
+        </ul>
+      </li>
+      <li>للوش
+        <ul>
+          <li>بصلتين كبار</li>
+          <li>حمص مسلوق</li>
+        </ul>
+      </li>
     </ul>
+    <h2>الطريقة</h2>
+    <ol>
+      <li>اسلق العدس ١٥ دقيقة.</li>
+      <li>ضيف الرز على العدس وسيبهم على نار هادية ٢٠ دقيقة.</li>
+      <li>اسلق المكرونة في حلة تانية.</li>
+      <li>اعمل الصلصة:
+        <ol>
+          <li>حمّر التوم.</li>
+          <li>ضيف الطماطم المضروبة والخل.</li>
+          <li>سيبها تتسبك ١٠ دقايق.</li>
+        </ol>
+      </li>
+      <li>حمّر البصل لحد ما يبقى بني ومقرمش (شوف <a href="glossary.html#taqliya">التقلية</a> في القاموس).</li>
+      <li>رص الرز والعدس، وبعدهم المكرونة، وبعدهم الصلصة، والبصل والحمص على الوش (شكل ١).</li>
+    </ol>
+    <h2>نصيحة</h2>
+    <figure>
+      <blockquote>
+        <p>زيت تحمير البصل متكبّوش: حط منه معلقتين على الرز وهتلاقي الطعم اتغيّر.</p>
+      </blockquote>
+      <figcaption>تيتة نعمات، في <cite>دفتر وصفات العيلة</cite></figcaption>
+    </figure>
   </article>
 </main>
-<footer><p>© ٢٠٢٦ مجلة «فنجان»</p></footer>
-
+<footer>
+  <nav aria-label="روابط الفوتر">
+    <ul>
+      <li><a href="glossary.html">قاموس المطبخ</a></li>
+      <li><a href="mailto:hello@example.test">راسلنا</a></li>
+    </ul>
+  </nav>
+  <p>مطبخ سلمى، ٢٠٢٦.</p>
+</footer>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** نفس الكلام بالظبط مرتين. «كلاسيك»: ورق بيج، وخط serif، وعمود ضيق في النص، والاقتباس بين خطين زي المجلات المطبوعة. «مودرن»: خلفية كحلي، وخط sans، والعنوان بتدرّج من الأصفر للبمبي، والمقال جوه كارت مدور، والاقتباس كارت لوحده.
+- بيانات الوصفة (بيكفّي، الوقت، الصعوبة) [[<dl>]]: اسم وقيمة.
+- المكونات [[<ul>]] من مستويين: ٣ مجموعات (للطبق، للصلصة، للوش) وتحت كل واحدة مكوناتها.
+- الطريقة [[<ol>]]، والخطوة ٤ جواها [[<ol>]] فرعية لأن الصلصة ليها ٣ خطوات مترتبة. والترقيم بعدها بيكمّل 5 و 6 لوحده.
+- لينك «التقلية» [[href="glossary.html#taqliya"]]: اسم الملف وبعده [[#]] والـ [[id]]. بيفتح الصفحة وينزل للكلمة.
+- النصيحة منقولة من حد، فهي [[<blockquote>]] جوه [[<figure>]]، واسم الدفتر جوه [[<cite>]].
+- الطبق بيتشاور عليه «شكل ١» في آخر خطوة.
 
-**الفكرة:** الـ HTML بيقول **إيه** الكلام (عنوان، فقرة، اقتباس، لستة). والـ CSS بيقول **شكله** إيه. لو الـ HTML مكتوب صح (من غير [[<font>]] ولا [[style=""]] ولا [[<br>]] للمسافات)، تقدر تغيّر شكله كله من غير ما تلمسه. ده بالظبط اللي مسابقة CSS Zen Garden بتثبته.
+### glossary.html
 
-**التبديل يدوي:** غيّر [[href="classic.css"]] لـ [[href="modern.css"]] واعمل Refresh.
+~~~live 480 glossary.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قاموس المطبخ | مطبخ سلمى</title>
+</head>
+<body>
+<header>
+  <a href="index.html">مطبخ سلمى</a>
+  <nav aria-label="الرئيسية">
+    <ul>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li><a href="koshary.html">وصفة الكشري</a></li>
+      <li><a href="glossary.html" aria-current="page">قاموس المطبخ</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <nav aria-label="مسار الصفحة">
+    <ol>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li><a href="glossary.html" aria-current="page">قاموس المطبخ</a></li>
+    </ol>
+  </nav>
+  <h1>قاموس المطبخ</h1>
+  <p>الكلمات اللي بتتكرر في الوصفات ومعناها.</p>
+  <dl>
+    <div id="taqliya">
+      <dt>التقلية</dt>
+      <dd>بصل أو توم متحمّر في الزيت لحد ما يبقى بني.</dd>
+    </div>
+    <div id="tasbeek">
+      <dt>التسبيك</dt>
+      <dd>إن الصلصة تتساب على النار لحد ما تتقل.</dd>
+    </div>
+    <div id="nar-hadya">
+      <dt>نار هادية</dt>
+      <dt>نار واطية</dt>
+      <dd>أصغر شعلة في البوتاجاز.</dd>
+    </div>
+    <div id="rashet">
+      <dt>رشّة</dt>
+      <dd>أقل من ربع معلقة صغيرة.</dd>
+      <dd>في الملح: اللي بيتمسك بين صباعين.</dd>
+    </div>
+  </dl>
+</main>
+<footer>
+  <nav aria-label="روابط الفوتر">
+    <ul>
+      <li><a href="glossary.html">قاموس المطبخ</a></li>
+      <li><a href="mailto:hello@example.test">راسلنا</a></li>
+    </ul>
+  </nav>
+  <p>مطبخ سلمى، ٢٠٢٦.</p>
+</footer>
+</body>
+</html>
+~~~
 
-**الزرار (المهمة الزيادة):**
-- الزرار عليه [[hidden]] في الـ HTML، والـ JavaScript هو اللي بيظهّره. كده لو الـ JS ما اشتغلش مش هيبقى في زرار مبيعملش حاجة.
-- [[link.href = name + '.css']] بيغيّر الملف، والمتصفح بيحمّل الجديد ويرسم على طول من غير reload.
-- الاختيار بيتحفظ في [[localStorage]] جوه [[try]]، لأن بعض المتصفحات (والـ iframe المقفول) بترمي error لما تلمسه.
+- كل مجموعة في [[<div>]] وعليه الـ [[id]]. كده اللينك بينزل للمجموعة كلها (الاسم وتعريفه).
+- «نار هادية» و «نار واطية» اتنين [[<dt>]] لتعريف واحد. و «رشّة» ليها اتنين [[<dd>]].
 
-**حاجة اتقاست:** لما الاختيار المحفوظ «مودرن»، الصفحة بتطلب [[classic.css]] الأول (هو اللي مكتوب في الـ HTML)، وبعدين الـ JS بيبدّله. على نت بطيء ممكن تشوف لمحة من الكلاسيك قبل ما يتغيّر. الحل: سكربت صغير جوه الـ [[<head>]] قبل الـ link، بيقرا الاختيار ويكتب الـ href الصح قبل ما المتصفح يرسم. ده في كورس JavaScript.
+**اللي بيتكرر في التلات صفحات:** الـ header والـ footer حرف بحرف، ما عدا [[aria-current]]. في HTML لوحده مفيش طريقة تكتبهم مرة واحدة، وده من الأسباب اللي بتخلي الناس تستخدم أدوات بناء و frameworks بعدين.
 
-~~~text الناتج (Chrome)
-أول فتحة          href = classic.css   الخلفية rgb(245, 239, 224)   الخط Amiri       الزرار «جرّب الشكل المودرن»
-بعد الضغط         href = modern.css    الخلفية rgb(11, 17, 32)      الخط system-ui   الزرار «ارجع للشكل الكلاسيك»
-localStorage      fingan-theme = modern
-Refresh           href = modern.css، والطلبات بالترتيب: classic.css  swap.js  modern.css
-scrollWidth = clientWidth في الشكلين على 800
-axe: 0 violations في الشكلين   الـ validator: مفيش رسايل   CSS validator: No Error Found للملفين
+**الغلطات اللي الناس بتقع فيها في المشروع ده:**
+
+- الـ [[id]] على الـ [[<dt>]] بدل الـ [[<div>]]: لما المجموعة يبقى فيها اتنين [[<dt>]] مش هتعرف تحطه على مين. على الـ [[<div>]] بيغطّي المجموعة كلها.
+- القوايم كتير، فأسهل غلطة إن [[</li>]] يتقفل قبل القايمة الفرعية. الشكل مش هيتغيّر، والـ validator هو اللي هيمسكها.
+- تنسخ الـ header وتنسى تنقل [[aria-current="page"]]، فتلاقي صفحة القاموس بتقول إنك في الرئيسية.
+
+~~~text الناتج
+index.html:     nav=2  ul=2  ol=1  li=8   figure=2  blockquote=2                          Nu Html Checker: صفر errors
+koshary.html:   nav=3  ul=6  ol=3  li=27  dl=1  dt=3  dd=3  figure=2  blockquote=1  cite=1   Nu Html Checker: صفر errors
+glossary.html:  nav=3  ul=2  ol=1  li=7   dl=1  dt=5  dd=5                                Nu Html Checker: صفر errors
+علامات «الطريقة» في koshary.html:  1 2 3 4 (1 2 3) 5 6
+aria-current="page" في قايمة التنقل:  index ← الرئيسية   koshary ← وصفة الكشري   glossary ← قاموس المطبخ
+كل لينك بين الصفحات بيشاور على ملف موجود: true      glossary.html#taqliya ليه id موجود: true
+على عرض 360: مفيش scroll أفقي في التلاتة
+~~~` },
+        { lvl: 'فكرة', dir: "my-shelf", t: R`رف كتبك (أو أفلامك أو ألعابك)`, what: R`صفحة عن الحاجات اللي بتحبها: أحسن ٣ مرتبين، وكل واحد تحته بياناته، وحاجة بتتابعها دلوقتي مع جملة منها عجبتك، وقايمة «بعدين». انت اللي بتختار الموضوع (كتب، أفلام، ألعاب، ألبومات) والأجزاء.`, done: R`فيها على الأقل قايمة مرقّمة وقايمة بنقط و [[<dl>]] واقتباس بمصدره، وكل عنوان عمل جوه [[<cite>]]، والـ validator صفر errors، وواحد صاحبك قراها وعرف أحسن حاجة عندك إيه من غير ما تقوله.`, ext: R`زوّد لكل عمل لينك لصفحته، وصورة غلاف جوه [[<figure>]]. ولما توصل لوحدة الـ CSS خلّي كل عمل كارت.`, sol: R`نسخة نموذجية (أسماء الكتب متخيلة):
+
+~~~live 480 رف كتب كريم
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رف كتب كريم</title>
+</head>
+<body>
+<header>
+  <h1>رف كتب كريم</h1>
+  <nav aria-label="أجزاء الصفحة">
+    <ul>
+      <li><a href="#top3">أحسن ٣ كتب</a></li>
+      <li><a href="#now">بقرا دلوقتي</a></li>
+      <li><a href="#next">هقرا بعدين</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <section aria-labelledby="top3">
+    <h2 id="top3">أحسن ٣ كتب قريتهم السنة دي</h2>
+    <ol>
+      <li>
+        <cite>ظل الجبل</cite>
+        <dl>
+          <dt>النوع</dt>
+          <dd>رواية</dd>
+          <dt>خلّصته في</dt>
+          <dd>٣ أيام</dd>
+        </dl>
+      </li>
+      <li>
+        <cite>عادات صغيرة</cite>
+        <dl>
+          <dt>النوع</dt>
+          <dd>تطوير ذات</dd>
+          <dt>خلّصته في</dt>
+          <dd>أسبوعين</dd>
+        </dl>
+      </li>
+      <li>
+        <cite>بيت القمر</cite>
+        <dl>
+          <dt>النوع</dt>
+          <dd>رواية</dd>
+          <dd>غموض</dd>
+          <dt>خلّصته في</dt>
+          <dd>أسبوع</dd>
+        </dl>
+      </li>
+    </ol>
+  </section>
+  <section aria-labelledby="now">
+    <h2 id="now">بقرا دلوقتي</h2>
+    <p><cite>طريق الملح</cite>، ووصلت لنصه.</p>
+    <figure>
+      <blockquote>
+        <p>الطريق مكانش طويل، إحنا اللي كنا بنمشي ببطء.</p>
+      </blockquote>
+      <figcaption>من <cite>طريق الملح</cite>، صفحة ٨٨</figcaption>
+    </figure>
+  </section>
+  <section aria-labelledby="next">
+    <h2 id="next">هقرا بعدين</h2>
+    <ul>
+      <li><cite>آخر القطارات</cite></li>
+      <li><cite>حديقة الرماد</cite></li>
+    </ul>
+  </section>
+</main>
+<footer>
+  <p>كل الكتب دي أسماء متخيلة للتمرين.</p>
+</footer>
+</body>
+</html>
+~~~
+
+**ليه التصميم ده:**
+
+- **أحسن ٣ [[<ol>]]:** ده ترتيب، والأول أحسن من التاني.
+- **[[<dl>]] جوه كل [[<li>]]:** الـ [[<li>]] بيقبل أي محتوى، فكل كتاب عنصر في القايمة وجواه بياناته. ده بيجمع نوعين من القوايم من غير ما واحدة تتحايل على التانية.
+- **اسم الكتاب [[<cite>]] مش عنوان:** العناوين [[<h2>]] لأجزاء الصفحة. لو كل كتاب بقى ليه شرح طويل، ساعتها كل واحد يبقى [[<article>]] بعنوانه.
+- **الجملة من الكتاب [[<figure>]]:** فيها الاقتباس ومصدره (الكتاب والصفحة).
+- **«هقرا بعدين» [[<ul>]]:** لسه مرتبتهمش.
+- **قايمة تنقل لأجزاء الصفحة:** [[<ul>]] جوه [[<nav>]] بلينكات [[#top3]] وأخواتها.
+
+**اختيارات تانية كانت ممكنة:** جدول بدل الـ [[<dl>]] (الأسماء بتتكرر لتلات كتب، فالجدول منطقي لو عايز القارئ يقارن). اخترت [[<dl>]] لأن المهم هنا الترتيب، مش المقارنة.
+
+~~~text الناتج
+ol=1  ul=2  li=8  dl=3  dt=6  dd=7  figure=1  blockquote=1  cite=7  nav=1  section=3
+كل عنوان كتاب جوه cite: 7 من 7
+Nu Html Checker: صفر errors      على عرض 360: مفيش scroll أفقي
 ~~~` },
       ],
-      l: 1,
-      n: "الـ selector بيختار، والـ cascade بيقرر مين يكسب، والـ box model بيحسب المساحة",
       items: [
         {
-          cmd: "مقدمة CSS وتنسيق العناصر",
+          cmd: "ul و ol",
+          title: "قايمة بنقط ولا قايمة بأرقام؟ ul و ol و li",
+          pre: [{ to: "css/مقدمة HTML والـ Tags", why: R`لو لسه مش متعود على الـ tag اللي بيفتح ويقفل وعلى الـ attributes` }],
           ref: [
-            { t: "MDN: CSS syntax", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Syntax/Introduction" },
-            { t: "MDN: <number>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/number" },
-            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
-            { t: "MDN Curriculum: CSS text styling", url: "https://developer.mozilla.org/en-US/curriculum/core/css-text-styling/" },
+            { t: "MDN: <ul>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ul" },
+            { t: "MDN: <ol>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ol" },
+            { t: "MDN: <li>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/li" },
+            { t: "MDN: <menu>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/menu" },
+            { t: "WHATWG: the ol element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-ol-element" },
+            { t: "WHATWG: the ul element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-ul-element" },
+            { t: "WHATWG: the menu element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-menu-element" },
+            { t: "WHATWG: the li element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-li-element" },
+            { t: "W3C WAI: Content Structure (Lists)", url: "https://www.w3.org/WAI/tutorials/page-structure/content/" }
           ],
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الـ CSS سطرين: [[colr: red;]] (حرف ناقص) و [[font-size: big;]] (قيمة مش موجودة). العنوان هيتغيّر؟ والسطور التانية اللي في نفس القاعدة هتشتغل؟`, done: R`السطرين اتجاهلوا والعنوان فضل بلونه وحجمه، والسطور التانية في نفس القاعدة اشتغلت عادي. في DevTools › Styles هتلاقي السطرين متشطّب عليهم وجنبهم علامة تحذير. المتصفح بيرمي السطر الغلط بس، مش القاعدة كلها.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>توقّع</title>
-<style>
-  h1 {
-    colr: red;
-    font-size: big;
-    background: lightyellow;
-    letter-spacing: 2px;
-  }
-</style>
-</head>
-<body>
-<h1>العنوان</h1>
-</body>
-</html>
-~~~
+          desc: R`أي مجموعة حاجات جنب بعض في الصفحة هي قايمة: [[<ul>]] لو ترتيبهم مش فارق (مشتريات، مميزات، روابط)، و [[<ol>]] لو الترتيب جزء من المعنى (خطوات، ترتيب فايزين). وكل عنصر جوه أي واحدة منهم بيتكتب في [[<li>]].
 
-**الإجابة:** العنوان لونه وحجمه مش هيتغيّروا، والسطرين التانيين هيشتغلوا.
-
-CSS مبيقفش عند الغلط زي JavaScript. لما يلاقي خاصية مش معروفة زي [[colr]] أو قيمة مش معروفة زي [[big]]، بيرمي السطر ده بس ويكمّل. وده مقصود: الموقع القديم ميقعش لما الـ CSS يكبر، والمتصفح القديم يتجاهل الخاصية الجديدة بس.
-
-**إزاي تلاقي الغلط:** مفيش أي رسالة في الـ Console. افتح DevTools، ثم Styles: السطر الغلط متشطّب عليه وجنبه علامة تحذير.
-
-**الغلطة الشائعة:** تدوّر على الغلط في الـ Console وتلاقيه نضيف، فتقول «الكود سليم». أخطاء CSS مبتظهرش هناك خالص.
-
-~~~text الناتج
-color = rgb(0, 0, 0)      (أسود الافتراضي، colr اتجاهلت)
-font-size = 32px  (حجم h1 الافتراضي، big اتجاهلت)
-background-color = rgb(255, 255, 224)   اشتغل
-letter-spacing = 2px     اشتغل
-رسايل في الـ Console: 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت «بُن الصباح» (متجر قهوة متخيل): عنوان h2 لونه بني غامق، وفقرة رمادي بمسافة سطور 1.6، وسعر تقيل، وزرار [[.btn]] بخلفية وكلام أبيض وزوايا 8px. كل ده في [[style.css]] لوحده.`, done: R`الصفحة من غير الـ CSS لسه مفهومة، ومعاه شكلها كارت، والـ Computed بتاع الزرار بيقول [[border-radius: 8px]]، ومفيش أي CSS جوه الـ HTML.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بُن الصباح</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main>
-  <h1>منتجاتنا</h1>
-  <article class="card">
-    <h2>بن يمني</h2>
-    <p>تحميص وسط وطعم فواكه خفيف، مناسب للفلتر والإسبريسو.</p>
-    <p class="price">٣٢٠ جنيه</p>
-    <a class="btn" href="#buy">اشتري</a>
-  </article>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-body {
-  font-family: system-ui;
-  background: #faf7f2;
-  margin: 16px;
-}
-.card {
-  max-width: 320px;
-  padding: 16px;
-  background: #fff;
-  border-radius: 12px;
-}
-.card h2 { color: #4a2c17; margin-block-start: 0; }
-.card p { color: #52525b; line-height: 1.6; }
-.card .price { color: #18181b; font-weight: 700; }
-.btn {
-  display: inline-block;
-  padding: 10px 16px;
-  background: #4a2c17;
-  color: #fff;
-  border-radius: 8px;
-  text-decoration: none;
-}
-~~~
-
-~~~view 340 340 الشكل في المتصفح (من ملفات الحل)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بُن الصباح</title>
-<style>
-body {
-  font-family: system-ui;
-  background: #faf7f2;
-  margin: 16px;
-}
-.card {
-  max-width: 320px;
-  padding: 16px;
-  background: #fff;
-  border-radius: 12px;
-}
-.card h2 { color: #4a2c17; margin-block-start: 0; }
-.card p { color: #52525b; line-height: 1.6; }
-.card .price { color: #18181b; font-weight: 700; }
-.btn {
-  display: inline-block;
-  padding: 10px 16px;
-  background: #4a2c17;
-  color: #fff;
-  border-radius: 8px;
-  text-decoration: none;
-}
-</style>
-</head>
-<body>
-<main>
-  <h1>منتجاتنا</h1>
-  <article class="card">
-    <h2>بن يمني</h2>
-    <p>تحميص وسط وطعم فواكه خفيف، مناسب للفلتر والإسبريسو.</p>
-    <p class="price">٣٢٠ جنيه</p>
-    <a class="btn" href="#buy">اشتري</a>
-  </article>
-</main>
-</body>
-</html>
-~~~
-
-**ليه ملف منفصل:** الملف بيتحمّل مرة ويتخزّن، وكل الصفحات تستخدمه، وتعديل واحد يغيّر الكل. و [[style=""]] جوه الـ HTML بيتكرر في كل عنصر، وبيبقى صعب تغطيه.
-
-- [[line-height: 1.6]] من غير وحدة: المسافة بتتحسب من حجم خط العنصر نفسه.
-- [[.card .price]] وزنها (0,2,0) أكبر من [[.card p]] (0,1,1)، فالسعر بياخد اللون الغامق رغم إنه فقرة.
-- [[display: inline-block]] على اللينك عشان الـ padding يزق اللي حواليه.
-
-**الغلطة الشائعة:** تكتب الألوان في [[style=""]] جوه الـ HTML. تغيير لون واحد هيبقى في كل صفحة، بدل سطر واحد في [[style.css]].
-
-~~~text الناتج
-border-radius الزرار = 8px
-لون h2 = rgb(74, 44, 23)   line-height الفقرة = 25.6px   وزن السعر = 700
-تباين كلام الزرار على خلفيته = 12.62:1
-عدد style="" و <style> في الـ HTML = 0
-من غير الـ CSS: ترتيب القراءة: h2 ثم p ثم p ثم a
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ٣ أشكال من div فاضي: دايرة 80px، وكبسولة 160×40، ومثلث بالحدود بس: [[width: 0; height: 0; border-inline: 20px solid transparent; border-bottom: 30px solid black;]].`, done: R`الدايرة مدورة بالظبط ([[border-radius: 50%]])، والكبسولة جنابها نص دايرة ([[999px]])، والمثلث [[getBoundingClientRect]] بتاعه 40×30 رغم إن width و height صفر: الحدود هي اللي رسمته، والشفافين قصّوا الجنبين.`, sol: R`~~~live 200 200
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أشكال</title>
-<style>
-  .circle { width: 80px; height: 80px; border-radius: 50%; background: #0f766e; }
-  .pill { width: 160px; height: 40px; border-radius: 999px; background: #1d4ed8; margin-block: 16px; }
-  .triangle {
-    width: 0;
-    height: 0;
-    border-inline: 20px solid transparent;
-    border-bottom: 30px solid black;
-  }
-</style>
-</head>
-<body>
-<div class="circle"></div>
-<div class="pill"></div>
-<div class="triangle"></div>
-</body>
-</html>
-~~~
-
-**إزاي المثلث بيتكوّن:** الحدود الأربعة بتتقابل عند الزوايا بخط مايل. لما العنصر مقاسه صفر، الحدود بتبقى هي الشكل كله. عندك ٣ حدود: اليمين والشمال 20px شفافين، والتحتاني 30px أسود. فالمساحة السودا هي مثلث قاعدته 40 وطوله 30.
-
-- [[border-inline]] اختصار لحدود الجنبين، و [[transparent]] بيخليهم يقصّوا الجنبين.
-- [[border-radius: 50%]]: نص العرض ونص الطول، فمع مربع بتبقى دايرة.
-- [[999px]]: رقم كبير، والمتصفح بيصغّره لنص الارتفاع، فالجنبين نص دايرة. لو كتبت [[50%]] على الكبسولة هتطلع بيضاوي.
-
-**الغلطة الشائعة:** تكتب [[height: auto]] أو تسيب نص جوه المثلث، فالقاعدة تعرض وتبوّظ الشكل.
-
-~~~text الناتج
-الدايرة 80×80   border-radius = 50%
-الكبسولة 160×40
-المثلث 40×30   رغم إن width = 0px و height = 0px
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** زرار [[class="o1"]] عليه ٣ قواعد: في [[ext.css]] (مربوط الأول) [[.o1 { color: blue; }]]، وفي [[<style>]] بعده [[.o1 { color: green; }]]، وعلى زرار تاني نفس الـ class ومعاه [[style="color: red"]]. لون كل زرار إيه؟`, done: R`الأول أخضر ([[rgb(0, 128, 0)]]): نفس الوزن فاللي بعد يكسب، والملف الخارجي مش أقوى ولا أضعف من [[<style>]]. والتاني أحمر: الـ [[style=""]] أقوى من الاتنين. اتقاس في Chrome.`, sol: R`~~~html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الألوان</title>
-<link rel="stylesheet" href="ext.css">
-<style>
-  .o1 { color: green; }
-</style>
-</head>
-<body>
-<button id="a" class="o1">الأول</button>
-<button id="b" class="o1" style="color: red">التاني</button>
-</body>
-</html>
-~~~
-
-~~~css ext.css
-.o1 { color: blue; }
-~~~
-
-~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الألوان</title>
-<style>
-.o1 { color: blue; }
-</style>
-<style>
-  .o1 { color: green; }
-</style>
-</head>
-<body>
-<button id="a" class="o1">الأول</button>
-<button id="b" class="o1" style="color: red">التاني</button>
-</body>
-</html>
-~~~
-
-**الإجابة:**
-
-- الزرار الأول: الملف الخارجي و [[<style>]] ليهم نفس المكانة. الاتنين author CSS. نفس الوزن، فاللي **بعد** في الصفحة يكسب، و [[<style>]] مكتوب بعد الـ link.
-- الزرار التاني: [[style=""]] على العنصر أقوى من أي selector عادي.
-
-**جرّب تبدّل:** لو حطيت [[<style>]] قبل [[<link>]] الأزرق هو اللي هيكسب. فالمسألة ترتيب مش مكان.
-
-**الغلطة الشائعة:** تفتكر إن الملف الخارجي أضعف أو أقوى من [[<style>]]. مفيش فرق خالص بينهم.
-
-~~~text الناتج
-الأول  = rgb(0, 128, 0)  (أخضر)
-التاني = rgb(255, 0, 0)  (أحمر)
-لو <style> قبل <link>: الأول = rgb(0, 0, 255)  (أزرق)
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة [[<color>]] على MDN اكتب نفس الأزرق بـ ٣ طرق: [[#2563eb]] و [[hsl(221 83% 53%)]] و [[oklch(0.55 0.2 260)]]، واقرا [[getComputedStyle(el).color]] لكل واحد.`, done: R`الـ hex رجع [[rgb(37, 99, 235)]] والـ hsl رجع [[rgb(36, 99, 235)]] (قريب جدًا بس مش نفسه: التقريب بيفرق)، والـ oklch رجع زي ما هو [[oklch(0.55 0.2 260)]] من غير ما يتحول لـ rgb في Chrome 156.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أزرق</title>
-<style>
-  .a { color: #2563eb; }
-  .b { color: hsl(221 83% 53%); }
-  .c { color: oklch(0.55 0.2 260); }
-</style>
-</head>
-<body>
-<p class="a">hex</p>
-<p class="b">hsl</p>
-<p class="c">oklch</p>
-</body>
-</html>
-~~~
-
-| الصيغة | معناها |
-|---|---|
-| [[#2563eb]] | أحمر وأخضر وأزرق بالـ hex، كل لون رقمين |
-| [[hsl(221 83% 53%)]] | درجة اللون ثم التشبع ثم الإضاءة |
-| [[oklch(0.55 0.2 260)]] | إضاءة ثم قوة اللون ثم درجته، بطريقة أقرب لعين الإنسان |
-
-**ليه الـ hsl طلع مختلف بدرجة:** الـ hex القيمة بالظبط، أما hsl مكتوب بأرقام صحيحة، فالتقريب غيّر رقم الأحمر من 37 لـ 36. الفرق مبيتشافش، بس لو بتقارن ألوان في اختبار، خد بالك.
-
-**ليه oklch فضلت زي ما هي:** ده لون ممكن يكون أوسع من sRGB، فالمتصفح مبيحوّلهوش عشان ميخسرش.
-
-**الغلطة الشائعة:** تكتب اختبار بيقارن [[getComputedStyle]] بـ [[rgb(...)]] على لون oklch. هيفشل، لأن القيمة راجعة بنفس الصيغة.
-
-~~~text الناتج
-hex    → rgb(37, 99, 235)
-hsl    → rgb(36, 99, 235)
-oklch  → oklch(0.55 0.2 260)
-~~~` },
-          ],
-          title: "CSS بيتربط بالصفحة إزاي، والقاعدة بتتكتب إزاي؟",
-          desc: R`[[CSS]] اختصار Cascading Style Sheets. الـ HTML بيقول «ده عنوان»، والـ CSS بيقول «العنوان ده لونه أزرق وحجمه كذا ومكانه فين». الألوان والخطوط والمسافات وترتيب العناصر على الشاشة كلها CSS. من غيره المتصفح بيعرض الصفحة بتنسيقه الافتراضي: خط أسود على خلفية بيضا ولينكات زرقا.
-
-فيه ٣ طرق تحط بيها CSS على صفحة:
-• ملف لوحده (الأحسن): تعمل [[style.css]] وتربطه من الـ HTML بـ [[<link rel="stylesheet" href="style.css">]]. نفس الملف ينفع لكل صفحات الموقع، والمتصفح بيحفظه (cache) فمش بيحمّله تاني مع كل صفحة.
-• جوه الصفحة: بين [[<style>]] و [[</style>]]. مناسب لتجربة سريعة أو صفحة واحدة.
-• على العنصر نفسه: [[style="color: red"]]. اتجنبه غير لو مضطر، لأنه بيغلب أغلب القواعد التانية وصعب تلاقيه بعدين.
-
-القاعدة (rule) شكلها كده: [[h1 { color: blue; }]]
-• الـ selector: الجزء اللي قبل القوس، وبيقول القاعدة دي على مين. [[h1]] معناها كل عناصر h1، و [[.btn]] (بنقطة في الأول) معناها أي عنصر عليه [[class="btn"]].
-• القوسين [[{ }]]: جواهم التنسيق كله.
-• كل سطر جوه اسمه declaration: اسم الخاصية، وبعده [[:]]، وبعده القيمة، وبعده [[;]] تقفل السطر.
-
-الدروس الجاية في القسم ده بتكمّل: «selectors» (كل طرق الاختيار)، و «specificity» و «cascade» (لو قاعدتين على نفس العنصر مين يكسب)، و «box model» (المسافات بتتحسب إزاي).`,
-          example: R`h1 {
-  color: #2563eb;
-  font-size: 28px;
-  text-align: center;
-}
-p {
-  color: #374151;
-  font-size: 16px;
-  line-height: 1.6;
-}
-.btn {
-  background-color: #10b981;
-  color: white;
-  border-radius: 6px;
-}`,
-          try: R`في نفس الفولدر بتاع [[index.html]] (من درس «مقدمة HTML والـ Tags») اعمل ملف [[style.css]] وحط فيه القواعد دي. في [[index.html]] ضيف السطر ده تحت سطر الـ meta: [[<link rel="stylesheet" href="style.css">]]، وغيّر الزرار لـ [[<button type="button" class="btn">بحث</button>]]. احفظ الاتنين واعمل refresh. بعدين امسح الـ [[;]] من آخر سطر [[color: #2563eb;]] واعمل refresh تاني، وشوف إيه اللي اتغير في العنوان.`,
+المتصفح هو اللي بيرسم النقطة أو الرقم، مش انت. وقارئ الشاشة بيعرف إن دي قايمة وفيها كام عنصر. ولو كتبتها فقرات وشرطات بإيدك، كل ده بيضيع.`,
+          example: R`<h2>طلبات المخبز</h2>
+<ul>
+  <li>عيش بلدي</li>
+  <li>فينو</li>
+  <li>بقسماط</li>
+</ul>
+<h2>طريقة الطلب</h2>
+<ol>
+  <li>اختار الأصناف</li>
+  <li>اكتب العنوان</li>
+  <li>ادفع عند الاستلام</li>
+</ol>`,
           flag: "script",
-          deep: {
-            why: R`فصل الهيكل (HTML) عن الشكل (CSS) معناه إنك تقدر تغيّر شكل الموقع كله من ملف واحد من غير ما تلمس ولا صفحة HTML. وأي أداة هتشتغل بيها بعد كده (Tailwind أو CSS Modules أو shadcn) في الآخر بتطلّع قواعد CSS بنفس الشكل ده.`,
-            how: R`المتصفح بيبني شجرة الـ DOM من الـ HTML، ويقرا الـ CSS، ويشوف كل قاعدة بتنطبق على أنهي عناصر. بعدين يحسب مكان ومقاس كل عنصر (layout)، وبعدين يرسم الألوان والخطوط (paint).
-
-الألوان هنا مكتوبة hex: [[#]] وبعدها ٦ حروف/أرقام، كل اتنين منهم كمية أحمر وأخضر وأزرق. تقدر تكتب أسامي ألوان زي [[white]] كمان. و [[px]] وحدة بيكسل، و [[line-height: 1.6]] من غير وحدة معناها «١.٦ ضعف حجم الخط».
-
-كلمة Cascading معناها إن فيه قواعد كتير ممكن تنطبق على نفس العنصر (منك، ومن مكتبة، ومن تنسيق المتصفح الافتراضي)، والمتصفح عنده ترتيب ثابت يحدد مين يكسب. ده موضوع درسي «specificity» و «cascade».`,
-            when: "أي صفحة محتاجة شكل. ابدأ بملف CSS منفصل، ولما تدخل React هتقابل Tailwind (المستوى التاني)، بس فهم القاعدة دي هو اللي هيخليك تعرف Tailwind بيعمل إيه.",
-            mistakes: R`تنسى [[;]] في آخر السطر: المتصفح بيقرا السطر ده واللي بعده كأنهم قيمة واحدة غلط، فبيتجاهل الاتنين ويكمل عادي بعدهم. وتنسى النقطة قبل اسم الـ class ([[btn]] بدل [[.btn]]) فالقاعدة تدوّر على عنصر اسمه btn مش موجود. وتحط كل التنسيق في [[style=""]] جوه الـ HTML فيبقى صعب تعدّله.`
-          },
+          lines: [
+            R`عنوان القايمة الأولى. القايمة نفسها ملهاش اسم، فالعنوان اللي قبلها هو اللي بيقول للقارئ دي قايمة إيه.`,
+            R`[[<ul>]] من unordered list (قايمة مش مترتبة): لو بدّلت أماكن العناصر المعنى ميتغيّرش. جواها [[<li>]] بس.`,
+            R`[[<li>]] من list item: عنصر واحد في القايمة. المتصفح بيرسم قدامه نقطة سودا لوحده.`,
+            R`عنصر تاني. كل حاجة ليها [[<li>]] بتاعها، ومفيش [[<br>]] ولا شرطة بتتكتب بالإيد.`,
+            R`عنصر تالت. لو جيت بعدين وزوّدت رابع، بتزوّد [[<li>]] وخلاص.`,
+            R`نهاية القايمة. [[</ul>]] لازم تتكتب: المتصفح مش بيقفلها لوحده زي ما بيعمل مع [[</li>]].`,
+            R`عنوان القايمة التانية: بيفصل بين القايمتين وبيقول دي خطوات إيه.`,
+            R`[[<ol>]] من ordered list (قايمة مترتبة): الترتيب هنا جزء من المعنى، ولو بدّلت خطوتين الطلب يبوظ.`,
+            R`أول خطوة. مكتبتش «1.» في الكلام: المتصفح هو اللي بيعدّ ويرسم الرقم.`,
+            R`تاني خطوة، ورقمها 2 بييجي من مكانها في القايمة.`,
+            R`تالت خطوة. لو مسحت اللي قبلها، دي تبقى 2 لوحدها من غير ما تلمسها.`,
+            R`نهاية القايمة المترتبة: العد بيخلص هنا، وأي [[<ol>]] بعدها بتبدأ من 1 تاني.`
+          ],
           teach: R`## الفكرة في سطرين
 
-3 قواعد: واحدة للعناوين، وواحدة للفقرات، وواحدة لأي عنصر عليه [[class="btn"]]. ربطتهم بصفحة درس «مقدمة HTML والـ Tags» (بعد ما زوّدت [[class="btn"]] على الزرار) وفتحتها في Chrome (headless)، وقريت التنسيق النهائي لكل عنصر بـ [[getComputedStyle()]]:
+القايمة في HTML عنصرين مع بعض: غلاف ([[<ul>]] أو [[<ol>]]) بيقول «اللي جوايا مجموعة واحدة»، و [[<li>]] لكل عنصر فيها. والفرق بين الغلافين سؤال واحد: **لو بدّلت ترتيب العناصر، المعنى هيتغيّر؟** لأ يبقى [[<ul>]]، أيوه يبقى [[<ol>]].
 
-~~~text index.html
-<meta charset="utf-8">
-<link rel="stylesheet" href="style.css">
-<h1>متجري</h1>
-...
-<button type="button" class="btn">بحث</button>
-~~~
+كل الأرقام والأشكال اللي في الدرس متقاسة من Chrome 157 (headless على Windows 11): الـ computed style من [[getComputedStyle]]، والـ role من شجرة الـ accessibility اللي Chrome بيبنيها.
 
 ---
 
-## ١. تشريح قاعدة
+## ١. [[<ul>]] و [[<li>]]: الترتيب مش فارق
 
-~~~text style.css
-h1 {
-  color: #2563eb;
-}
+~~~live 136 قايمة بنقط
+<p>عندنا النهارده:</p>
+<ul>
+  <li>عيش بلدي</li>
+  <li>فينو</li>
+  <li>بقسماط</li>
+</ul>
 ~~~
 
-~~~text الأجزاء
-h1        { color  :  #2563eb  ;  }
-│         │ │      │  │        │  │
-│         │ │      │  │        │  └─ قفلة القاعدة
-│         │ │      │  │        └──── آخر الـ declaration
-│         │ │      │  └───────────── القيمة
-│         │ │      └──────────────── بين الخاصية والقيمة
-│         │ └─────────────────────── الخاصية (property)
-│         └───────────────────────── بداية التنسيق
-└─────────────────────────────────── الـ selector: على مين
-~~~
+بص على تلات حاجات:
 
-السطر [[color: #2563eb;]] كله اسمه declaration (خاصية وقيمة).
+- قدام كل عنصر **نقطة سودا** انت مكتبتهاش. المتصفح هو اللي رسمها.
+- القايمة **داخلة لجوه** عن الفقرة اللي فوقها.
+- كل [[<li>]] في **سطر لوحده**.
+
+[[ul]] اختصار unordered list، و [[li]] اختصار list item. والقاعدة: جوه [[<ul>]] مباشرة مفيش غير [[<li>]]. أي كلام أو فقرة أو لينك لازم يبقى جوه [[<li>]].
 
 ---
 
-## ٢. قاعدة الـ [[h1]]
+## ٢. [[<ol>]]: الترتيب جزء من المعنى
 
-| السطر | معناه | اتقاس |
+~~~live 136 قايمة بأرقام
+<p>طريقة الطلب:</p>
+<ol>
+  <li>اختار الأصناف</li>
+  <li>اكتب العنوان</li>
+  <li>ادفع عند الاستلام</li>
+</ol>
+~~~
+
+نفس الشكل، بس مكان النقطة **رقم**. والرقم مش مكتوب في الكود: المتصفح بيعدّ العناصر ويرسمه. يعني لو مسحت الخطوة التانية، التالتة بتبقى 2 لوحدها، ولو زوّدت خطوة في النص كل اللي بعدها بيتزحزح.
+
+[[ol]] اختصار ordered list. والمواصفة (WHATWG) بتعرّفها كده: قايمة عناصرها **مترتبة بقصد**، بحيث تغيير الترتيب يغيّر معنى الصفحة.
+
+### أختار أنهي واحدة؟
+
+| الحالة | العنصر | ليه |
 |---|---|---|
-| [[color: #2563eb;]] | لون الكلام | [[rgb(37, 99, 235)]] |
-| [[font-size: 28px;]] | حجم الخط | [[28px]] (كان 32 من غيرها) |
-| [[text-align: center;]] | الكلام في نص السطر | [[center]] |
+| مكونات وصفة، مميزات منتج، روابط الفوتر | [[<ul>]] | بدّل أي اتنين والمعنى زي ما هو |
+| خطوات تسطيب، طريقة عمل، اتجاهات طريق | [[<ol>]] | الخطوة ٣ قبل ٢ تبوّظ النتيجة |
+| ترتيب فايزين، أكتر ١٠ مبيعًا | [[<ol>]] | المكان نفسه هو المعلومة |
+| بنود عقد هتشاور عليها («شوف البند ٤») | [[<ol>]] | الرقم بقى اسم للبند |
 
-### الـ hex بيتقري إزاي؟
-
-[[#2563eb]] بعد الـ [[#]] 6 خانات، كل اتنين منهم رقم بالنظام الست عشري (hexadecimal: أرقام من 0 لـ 9 وبعدها a لـ f، يعني 16 رمز):
-
-| الخانتين | اللون | بالعشري |
-|---|---|---|
-| [[25]] | أحمر | 2×16 + 5 = 37 |
-| [[63]] | أخضر | 6×16 + 3 = 99 |
-| [[eb]] | أزرق | 14×16 + 11 = 235 |
-
-وده بالظبط اللي المتصفح رجّعه: [[rgb(37, 99, 235)]]. كل لون من 0 لـ 255، والأزرق هنا أكترهم فاللون أزرق.
+> الرقم مش زينة. لو اخترت [[<ol>]] عشان «الأرقام شكلها أحلى» وترتيب العناصر مش فارق، انت بتقول معلومة غلط. شكل العلامة بيتغيّر بالـ CSS، والعنصر بيتحدد بالمعنى.
 
 ---
 
-## ٣. قاعدة الـ [[p]]
+## ٣. الشكل الافتراضي بالأرقام
 
-| السطر | اتقاس |
+قست القايمتين في صفحة عربي ([[dir="rtl"]]) عرضها 400px:
+
+~~~text الناتج
+ul:  display=block      margin-top=16px  margin-bottom=16px  padding-right=40px  padding-left=0px  list-style-type=disc
+ol:  display=block      margin-top=16px  margin-bottom=16px  padding-right=40px  padding-left=0px  list-style-type=decimal
+li:  display=list-item  margin=0px       الارتفاع=18px
+عرض الـ ul = 384px      عرض الـ li = 344px   (الفرق 40px هو الـ padding)
+~~~
+
+| اللي شفته | جاي منين |
 |---|---|
-| [[color: #374151;]] | [[rgb(55, 65, 81)]]: رمادي غامق (الـ 3 قريبين من بعض وصغيرين) |
-| [[font-size: 16px;]] | [[16px]] |
-| [[line-height: 1.6;]] | [[25.6px]] |
+| القايمة داخلة لجوه | [[padding]] قدره 40px في **بداية السطر**. في صفحة عربي بيبقى على اليمين، وفي صفحة إنجليزي على الشمال |
+| مسافة فوق وتحت القايمة | [[margin]] قدره 16px فوق وتحت، زي الفقرة |
+| النقطة أو الرقم | الـ [[<li>]] نوع عرضه [[list-item]]: block قدامه **marker** (علامة). شكل العلامة من [[list-style-type]]: [[disc]] نقطة مليانة، و [[decimal]] أرقام |
+| العلامة مرسومة جوه الـ 40px | العلامة بتترسم برّه صندوق الـ [[<li>]]، في مساحة الـ padding بتاع القايمة |
 
-[[line-height]] هو ارتفاع السطر. الرقم من غير وحدة معناه «مضروب في حجم الخط»: 16 × 1.6 = 25.6.
-
----
-
-## ٤. قاعدة الـ [[.btn]]
-
-النقطة قبل الاسم = class. فدي بتمسك أي عنصر عليه [[class="btn"]]، مهما كان نوعه.
-
-| السطر | اتقاس | من غير القاعدة |
-|---|---|---|
-| [[background-color: #10b981;]] | [[rgb(16, 185, 129)]] أخضر | [[rgb(240, 240, 240)]] رمادي فاتح |
-| [[color: white;]] | [[rgb(255, 255, 255)]] | أسود |
-| [[border-radius: 6px;]] | [[6px]] | [[0px]] |
-
-[[white]] اسم لون جاهز. و [[border-radius]] نص قطر الزوايا المدورة.
-
-اللينك محدش لمسه: لونه فضل [[rgb(0, 0, 238)]] الأزرق الافتراضي.
+وفي صفحة عربي الرقم بيتكتب بالأرقام دي: 1 و 2 و 3، مش ١ و ٢ و ٣. تغيير شكل العلامة أو إخفاؤها أو تحريك المسافات كله شغل CSS ([[list-style-type]] وأخواتها)، وليه وحدة لوحده بعدين في الكورس. هنا المهم إنك تعرف الشكل ده جاي منين.
 
 ---
 
-## ٥. لو نسيت [[;]]
+## ٤. المتصفح فاهم إيه؟ القايمة الحقيقية والقايمة المزيفة
 
-مسحت الـ [[;]] بعد [[#2563eb]]. المتصفح بيعرض القاعدة اللي فهمها في [[document.styleSheets]]:
+ناس كتير بتكتب القايمة كده:
 
-~~~text القاعدة زي ما المتصفح فهمها
-قبل:  h1 { color: rgb(37, 99, 235); font-size: 28px; text-align: center; }
-بعد:  h1 { text-align: center; }
+~~~live 102 قايمة مزيفة: فقرة وشرطات
+<p>
+  • عيش بلدي<br>
+  • فينو<br>
+  • بقسماط
+</p>
 ~~~
 
-اللون والحجم الاتنين اختفوا. المتصفح قرا [[color: #2563eb font-size: 28px]] كقيمة واحدة للـ color، ودي قيمة مش مفهومة، فرماها كلها لحد الـ [[;]] اللي بعدها. والنتيجة: الـ h1 بقى أسود و 32px، والـ [[text-align]] اشتغل عادي. يعني الغلطة بتبوّظ سطرين مش واحد، والباقي بيكمّل.
+على الشاشة شبه القايمة. بس شوف شجرة الـ accessibility (اللي قارئ الشاشة بيقراها) للاتنين:
+
+~~~text القايمة الحقيقية (ul)
+list
+  listitem   "عيش بلدي"
+  listitem   "فينو"
+  listitem   "بقسماط"
+~~~
+
+~~~text المزيفة (p و br)
+paragraph
+  "• عيش بلدي"
+  "• فينو"
+  "• بقسماط"
+~~~
+
+في الأولى Chrome ادّى الـ [[<ul>]] role اسمه [[list]] وكل [[<li>]] role اسمه [[listitem]]. في التانية مفيش غير فقرة واحدة فيها كلام، والنقطة «•» بقت جزء من النص وبتتقري.
+
+الفرق العملي:
+
+- **قارئ الشاشة** لما يوصل لقايمة حقيقية بيقول إنها قايمة وفيها كام عنصر قبل ما يقراها، والمستخدم يقدر ينط للقايمة اللي بعدها أو يعدّيها كلها. ده من دليل W3C WAI (صفحة Content Structure): التقنيات المساعدة بتبلّغ المستخدم بعدد العناصر. النطق نفسه مجرّبتوش هنا، اللي اتقاس هو الـ roles اللي Chrome بيطلّعها.
+- **انت** لما تيجي تنسّق: العناصر الحقيقية تقدر تمسك كل واحد منها بالـ CSS. الفقرة الواحدة لأ.
+- **التعديل**: تزوّد عنصر يعني [[<li>]] جديد، والترقيم بيتظبط لوحده.
 
 ---
 
-## ٦. لو اسم الملف غلط
+## ٥. الـ attributes بتاعة [[<ol>]]
 
-كتبت [[href="styles.css"]] (بـ s زيادة): السيرفر رد 404، والـ Console فيه «Failed to load resource: the server responded with a status of 404»، وكل العناصر رجعت لتنسيق المتصفح: الـ h1 أسود و 32 ومش في النص، والـ p [[line-height: normal]]، والزرار رمادي.
+[[<ul>]] ملهاش attributes خاصة بيها. [[<ol>]] ليها تلاتة، و [[<li>]] ليه واحد.
+
+### [[<ol start="3">]]: ابدأ العد من رقم تاني
+
+لما قايمة واحدة تتقطع بفقرة في النص، القايمة التانية بتبدأ من 1 تاني. [[start]] بيقول لها تكمّل:
+
+~~~live 170 قايمة مقطوعة بتكمّل العد
+<ol>
+  <li>اختار الأصناف</li>
+  <li>اكتب العنوان</li>
+</ol>
+<p>لو معاك كود خصم، اكتبه دلوقتي.</p>
+<ol start="3">
+  <li>راجع الطلب</li>
+  <li>ادفع عند الاستلام</li>
+</ol>
+~~~
+
+الأرقام اللي Chrome رسمها: [[1 2]] وبعدين [[3 4]]. والقيمة لازم رقم صحيح، حتى لو شكل العلامة حروف (شوف [[type]] تحت).
+
+### [[<ol reversed>]]: عد تنازلي
+
+[[reversed]] attribute من غير قيمة (boolean): وجوده كفاية. بيخلي الأرقام تنزل بدل ما تطلع:
+
+~~~live 136 عد تنازلي
+<p>أكتر ٣ أصناف اتباعت الأسبوع ده، من التالت للأول:</p>
+<ol reversed>
+  <li>بقسماط</li>
+  <li>فينو</li>
+  <li>عيش بلدي</li>
+</ol>
+~~~
+
+الأرقام: [[3 2 1]]. خد بالك: [[reversed]] بيعكس **الأرقام بس**. العناصر نفسها بتفضل بنفس ترتيب كتابتها في الكود. فلو عايز تعرض من التالت للأول، انت اللي بتكتب التالت أول واحد.
+
+ولو معاه [[start]] بيبدأ منه وينزل: [[<ol reversed start="10">]] بتلات عناصر طلّع [[10 9 8]].
+
+### [[<ol type="a">]]: حروف أو أرقام رومانية
+
+~~~live 170 بنود بالحروف
+<p>شروط المسابقة:</p>
+<ol type="a">
+  <li>السن من ١٨ سنة.</li>
+  <li>مشاركة واحدة لكل شخص.</li>
+  <li>آخر ميعاد يوم ٣٠ في الشهر.</li>
+</ol>
+<p>اللي يخالف الشرط b مشاركته بتتلغي.</p>
+~~~
+
+| القيمة | الشكل | اللي Chrome رسمه لتلات عناصر |
+|---|---|---|
+| [[type="1"]] | أرقام (الافتراضي) | 1 و 2 و 3 |
+| [[type="a"]] | حروف صغيرة | a و b و c |
+| [[type="A"]] | حروف كبيرة | A و B و C |
+| [[type="i"]] | رومانية صغيرة | i و ii و iii |
+| [[type="I"]] | رومانية كبيرة | I و II و III |
+
+القيمة حرف واحد وحالته فارقة: [[a]] غير [[A]]. ومفيش قيمة للحروف العربي ولا للأرقام الهندي (١ ٢ ٣): دول بييجوا من الـ CSS بس.
+
+**إمتى [[type]] وإمتى CSS؟** المواصفة بتقول استخدم [[type]] لما شكل العلامة **جزء من المعنى**، يعني في الصفحة كلام بيشاور على البند بحرفه، زي «الشرط b» في المثال. لو الحروف مجرد شكل، سيبها للـ CSS.
+
+ومع [[start]] الحساب بالرقم: [[<ol type="a" start="4">]] طلّع [[d e f]]، لأن d هو الحرف الرابع.
+
+### [[<li value="2">]]: رقم العنصر ده بالذات
+
+[[value]] بيتحط على [[<li>]] واحد جوه [[<ol>]]، وبيقول «رقمي كذا»، واللي بعده بيكمّل منه:
+
+~~~live 154 تعادل في المركز التاني
+<p>ترتيب سباق الجري:</p>
+<ol>
+  <li>نادي النسور</li>
+  <li>نادي الشعلة</li>
+  <li value="2">نادي الأمل</li>
+  <li value="4">نادي البحر</li>
+</ol>
+~~~
+
+الأرقام: [[1 2 2 4]]. ناديين اتعادلوا في المركز التاني، فالتاني منهم خد [[value="2"]]، واللي بعدهم خد [[value="4"]] لأن مفيش مركز تالت.
+
+[[value]] ملوش معنى جوه [[<ul>]] ولا [[<menu>]]: جرّبته والنقط فضلت نقط، والـ validator قال [[Attribute “value” not allowed on element “li” at this point.]]
+
+### الحالات الطرفية (كلها متجرّبة في Chrome 157)
+
+| الكود | اللي اترسم | ليه |
+|---|---|---|
+| [[<ol start="0">]] | 0 و 1 و 2 | الصفر والسالب مسموحين |
+| [[<ol start="abc">]] | 1 و 2 و 3 | قيمة مش رقم بتتجاهل، والـ validator بيقول [[Bad value “abc” for attribute “start”]] |
+| [[<ol start="2.9">]] | 2 و 3 و 4 | بياخد الجزء الصحيح بس |
+| [[<ol type="x">]] | 1 و 2 و 3 | نوع مش معروف بيرجع للأرقام |
+| [[<ol type="a" start="26">]] | z و aa و ab | بعد z بيكمّل بحرفين |
+| [[<ol type="a" start="-1">]] | 1- و 0 و a | الصفر والسالب بيترسموا أرقام دايمًا |
+| [[<li hidden>]] جوه [[<ol>]] | العناصر الظاهرة 1 و 2 | العنصر المخفي مبيتعدّش |
+| [[<ol reversed>]] وفي النص [[<li value="7">]] | 8 و 7 و 6 | Chrome حسب الأول من الـ value. خطوات المواصفة بتطلّع 3 و 7 و 6. متخلطش الاتنين من غير [[start]] |
+
+---
+
+## ٦. [[<menu>]]: قايمة أوامر
+
+~~~live 145 شريط أوامر
+<p>الطلب رقم ١٢٠:</p>
+<menu>
+  <li><button type="button">اطبع</button></li>
+  <li><button type="button">عدّل</button></li>
+  <li><button type="button">الغي</button></li>
+</menu>
+~~~
+
+[[<menu>]] في المواصفة «بديل semantic لـ [[<ul>]]» معناه **شريط أدوات**: قايمة مش مترتبة، وكل عنصر فيها أمر المستخدم ينفّذه (زراير نسخ ولصق وطباعة). جواها [[<li>]] برضه.
+
+قستها جنب [[<ul>]]:
+
+~~~text الناتج
+menu:  display=block  margin=16px  padding-right=40px  list-style-type=disc  role=list
+ul:    display=block  margin=16px  padding-right=40px  list-style-type=disc  role=list
+النوع في الـ DOM:  HTMLMenuElement  مقابل  HTMLUListElement
+~~~
+
+نفس الشكل ونفس الـ role بالظبط. و MDN بيقولها صريحة: المتصفحات بتعامل [[<menu>]] زي [[<ul>]] من غير أي فرق. فالفرق للي بيقرا الكود بس. استخدمها لمجموعة زراير أوامر لو حابب، و [[<ul>]] مكانها مش غلط.
+
+> [[<menu>]] مش قايمة التنقل بتاعة الموقع. روابط التنقل بتتحط في [[<ul>]] جوه [[<nav>]]، وده الدرس الجاي.
+
+---
+
+## ٧. جوه الـ [[<li>]] إيه اللي ينفع؟
+
+أي حاجة: كلام، لينك، صورة، فقرات، وحتى قايمة تانية (الدرس الجاي).
+
+~~~live 168 عنصر فيه لينك وفقرة
+<ul>
+  <li>
+    <a href="#baladi">عيش بلدي</a>
+    <p>بيتخبز كل يوم الساعة ٦ الصبح.</p>
+  </li>
+  <li>
+    <a href="#fino">فينو</a>
+    <p>سادة أو بالسمسم.</p>
+  </li>
+</ul>
+~~~
+
+بس جوه [[<ul>]] و [[<ol>]] **مباشرة** مفيش غير [[<li>]].
+
+---
+
+## ٨. الغلطات اللي بتحصل فعلًا
+
+### قايمة جوه فقرة
+
+شكلها منطقي: «هتحتاج:» وبعدها القايمة وبعدها تكملة الجملة، كله في [[<p>]] واحد.
+
+~~~live 152 قايمة جوه p
+<p>هتحتاج:
+  <ul>
+    <li>دقيق</li>
+    <li>سكر</li>
+  </ul>
+وبس كده.</p>
+~~~
+
+الشكل طلع عادي، بس المتصفح مبناش اللي انت كتبته. [[<p>]] مينفعش يبقى جواه قايمة، فالـ parser (الجزء اللي بيقرا الـ HTML) قفل الفقرة أول ما شاف [[<ul>]]. ده اللي اتبنى فعلًا:
+
+~~~text الـ DOM اللي Chrome بناه
+p    "هتحتاج:"
+ul
+  li "دقيق"
+  li "سكر"
+"وبس كده."        (نص سايب، مش جوه أي فقرة)
+p                 (فقرة فاضية اتعملت من </p> اللي في الآخر)
+~~~
+
+يعني بقى عندك فقرتين (واحدة منهم فاضية) ونص ملوش عنصر. والـ validator بيقول:
+
+~~~text validator.w3.org/nu
+error: No “p” element in scope but a “p” end tag seen.
+~~~
+
+الصح: الفقرة تتقفل قبل القايمة.
+
+~~~live 152 الصح
+<p>هتحتاج:</p>
+<ul>
+  <li>دقيق</li>
+  <li>سكر</li>
+</ul>
+<p>وبس كده.</p>
+~~~
+
+### كلام مباشر جوه [[<ul>]]
+
+[[<ul>كلام<p>فقرة</p><li>فول</li></ul>]]: المتصفح بيسيبه في مكانه ومبيصلّحوش، بس الكلام والفقرة مبقوش عناصر في القايمة (في شجرة الـ accessibility طلعوا نص وفقرة جوه الـ list، والـ listitem واحد بس). والـ validator:
+
+~~~text validator.w3.org/nu
+error: Text not allowed in element “ul” in this context.
+error: Element “p” not allowed as child of element “ul” in this context.
+~~~
+
+### [[<li>]] من غير قايمة
+
+[[<li>]] لوحده برّه [[<ul>]] و [[<ol>]] و [[<menu>]]: Chrome عامله [[list-item]] وادّاله نقطة، بس النقطة اترسمت برّه حافة الصفحة لأن مفيش قايمة حواليه تدّيها الـ 40px. وفي شجرة الـ accessibility طلع [[listitem]] من غير [[list]]، يعني عنصر في قايمة مش موجودة. والـ validator: [[Element “li” not allowed as child of element “body” in this context.]]
+
+### نسيت [[</li>]]
+
+[[<ul><li>فول<li>طعمية<li>بطاطس</ul>]] اتبنى منه تلات عناصر مظبوطين. قفلة الـ [[<li>]] اختيارية في المواصفة: بيتقفل لوحده لما ييجي [[<li>]] تاني أو القايمة تخلص. اكتبها برضه عشان الكود يتقري، ومع القوايم اللي جوه بعض (الدرس الجاي) غيابها بيلخبط.
 
 ---
 
 ## الخلاصة
 
-| الحتة | مثال |
-|---|---|
-| selector بالنوع | [[h1]] |
-| selector بالـ class | [[.btn]] |
-| declaration | [[color: #2563eb;]] |
-| hex | [[#RRGGBB]]، كل خانتين لون من 0 لـ 255 |
-| رقم من غير وحدة في [[line-height]] | مضروب في حجم الخط |
+- [[<ul>]] لمجموعة ترتيبها مش فارق، و [[<ol>]] لما الترتيب جزء من المعنى، وكل عنصر في [[<li>]].
+- جوه القايمة مباشرة [[<li>]] بس، وجوه الـ [[<li>]] أي حاجة.
+- النقطة والرقم والـ 40px بيرسمهم المتصفح، وتغييرهم شغل CSS.
+- [[start]] بيبدأ العد من رقم، و [[reversed]] بيعكس الأرقام (مش العناصر)، و [[type]] للحروف والرومانية لما العلامة ليها معنى، و [[value]] لرقم عنصر واحد.
+- القايمة الحقيقية بتطلع [[list]] و [[listitem]] في شجرة الـ accessibility. الفقرة اللي فيها شرطات لأ.
+- القايمة متتحطش جوه [[<p>]].`,
+          try: R`اعمل ملف [[lists.html]] بالهيكل الكامل ([[<!doctype html>]] و [[lang="ar" dir="rtl"]] و charset)، وفيه قايمة مشتريات من ٣ حاجات بـ [[<ul>]]، وتحتها طريقة عمل الشاي في ٣ خطوات بـ [[<ol>]]. افتحه في المتصفح، وبعدين جرّب بالترتيب: (١) زوّد [[reversed]] على الـ [[<ol>]]. (٢) شيله واكتب [[start="10"]]. (٣) امسح الخطوة اللي في النص وبص على الأرقام.`,
+          sol: R`الصفحة قبل أي تغيير:
 
-- الملف بيتربط بـ [[<link rel="stylesheet" href="style.css">]].
-- [[;]] ناقصة = السطر ده واللي بعده بيضيعوا.`,
-          lines: [
-            R`القاعدة دي على كل عناصر [[h1]]، وبعدها [[{]] بداية التنسيق.`,
-            R`لون الكلام: أزرق، مكتوب hex.`,
-            R`حجم الخط ٢٨ بيكسل.`,
-            R`الكلام في نص السطر.`,
-            R`[[}]] قفلة قاعدة الـ h1.`,
-            R`قاعدة لكل الفقرات [[p]].`,
-            R`رمادي غامق بدل الأسود.`,
-            R`حجم الخط ١٦ بيكسل (ده حجم المتصفح الافتراضي أصلًا).`,
-            R`المسافة بين السطور ١.٦ ضعف حجم الخط، فالكلام أريح في القراية.`,
-            R`قفلة قاعدة الـ p.`,
-            R`النقطة معناها class: أي عنصر عليه [[class="btn"]].`,
-            R`لون خلفية الزرار: [[#10b981]] أخضر. [[background-color]] بيلوّن مساحة الصندوق كله (المحتوى والـ padding)، مش الكلام بس.`,
-            R`لون الكلام جوه الزرار أبيض عشان يتقري على الأخضر. أي لون خلفية لازم يتكتب معاه لون الكلام، عشان التباين يفضل مضمون.`,
-            R`زوايا مدورة بنص قطر ٦ بيكسل.`,
-            R`قفلة قاعدة الـ btn.`
-          ],
-          sol: R`بعد الـ refresh: «متجري» بقى أزرق وفي نص الصفحة وحجمه 28px (أصغر شوية من حجم h1 الافتراضي اللي هو 32px). الفقرة بقت رمادي غامق والسطور فيها مسافة أوسع. الزرار بقى خلفيته خضرا وكلامه أبيض وزواياه مدورة. اللينك والحقل محدش لمسهم فهيفضلوا زي ما هم.
-
-لو مفيش أي حاجة اتغيرت: غالبًا اسم الملف في [[href]] مش مطابق لاسمه الحقيقي، أو الملفين مش في نفس الفولدر. افتح DevTools › Console هتلاقي غلطة 404 أو [[ERR_FILE_NOT_FOUND]].
-
-ولما تمسح [[;]] بعد اللون: العنوان بيرجع أسود وبحجم الـ h1 الافتراضي، بس لسه في النص. السبب إن المتصفح قرا [[color: #2563eb font-size: 28px]] كقيمة واحدة للـ color، ودي قيمة غلط فاتجاهلها، فضاع اللون والحجم مع بعض، و [[text-align]] اللي بعدهم اشتغل عادي. في DevTools › Styles هتلاقي السطر متشطّب وجنبه علامة تحذير.`
-        },
-        {
-          cmd: "selectors",
-          ref: [
-            { t: "MDN: Type selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Type_selectors" },
-            { t: "MDN: Class selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Class_selectors" },
-            { t: "MDN: Attribute selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Attribute_selectors" },
-            { t: "MDN: Child combinator", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Child_combinator" },
-            { t: "MDN: Descendant combinator", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Descendant_combinator" },
-            { t: "MDN: Pseudo-classes", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Pseudo-classes" },
-            { t: "MDN: Pseudo-elements", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Pseudo-elements" },
-            { t: "MDN: :focus-visible", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:focus-visible" },
-            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<ul class="menu">]] فيه ٣ [[li]]، وأول li جواه [[ul]] تاني فيه ٢ [[li]]. كام عنصر بيرجع من [[.menu > li]]؟ ومن [[.menu li]]؟ ومن [[.menu li:nth-child(odd)]]؟ وبعدين اسأل [[querySelectorAll]].`, done: R`٣ و ٥ و ٣: الـ [[>]] الأولاد المباشرين بس، والمسافة كل الأحفاد، والـ odd اختار الأول والتالت في القايمة الكبيرة والأول في الصغيرة (كل li بيتعدّ وسط إخواته هو بس).`, sol: R`~~~live 130 130
+~~~live 334 lists.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>selectors</title>
+<title>قوايم</title>
 </head>
 <body>
-<ul class="menu">
-  <li>أول
+<h1>يوم الجمعة</h1>
+<h2>هشتري</h2>
+<ul>
+  <li>شاي</li>
+  <li>سكر</li>
+  <li>نعناع</li>
+</ul>
+<h2>طريقة الشاي</h2>
+<ol>
+  <li>اغلي المية</li>
+  <li>حط الشاي والسكر</li>
+  <li>سيبه ٣ دقايق</li>
+</ol>
+</body>
+</html>
+~~~
+
+والتجارب التلاتة:
+
+~~~live 154 بعد reversed، وبعد start="10" ومسح الخطوة اللي في النص
+<ol reversed>
+  <li>اغلي المية</li>
+  <li>حط الشاي والسكر</li>
+  <li>سيبه ٣ دقايق</li>
+</ol>
+<ol start="10">
+  <li>اغلي المية</li>
+  <li>سيبه ٣ دقايق</li>
+</ol>
+~~~
+
+- مع [[reversed]] الأرقام بقت [[3 2 1]] والخطوات نفسها فضلت بترتيبها. يعني القايمة دلوقتي بتقول إن «اغلي المية» هي الخطوة رقم 3، وده غلط في المعنى. [[reversed]] للعد التنازلي اللي ترتيب عناصره مكتوب تنازلي أصلًا.
+- مع [[start="10"]] العد بدأ من 10.
+- لما مسحت الخطوة اللي في النص، الأرقام بقت [[10 11]] من غير ما تلمس حاجة. ده معنى إن المتصفح هو اللي بيعدّ.
+
+~~~text الناتج
+عدد العناصر: ul=1  ol=1  li=6
+العلامات في الصفحة الأولى:  • • •   1 2 3
+بعد reversed:  3 2 1
+بعد start="10" ومسح عنصر:  10 11
+validator.w3.org/nu على lists.html: صفر errors
+~~~
+
+لو النقط أو الأرقام مظهرتش خالص: غالبًا كتبت [[<il>]] بدل [[<li>]]، أو نسيت تقفل [[</ul>]] قبل العنوان اللي بعده.`,
+          deep: {
+            why: R`من غير عناصر القوايم، كل مجموعة حاجات في الصفحة هتتكتب فقرات وشرطات بالإيد. الشكل ممكن يطلع شبه القايمة، بس المتصفح شايف نص عادي: مفيش عدد عناصر لقارئ الشاشة، ومفيش ترقيم بيتظبط لوحده، ومفيش عنصر تمسكه بالـ CSS. والقوايم في كل صفحة تقريبًا: المنيو، وروابط الفوتر، ونتايج البحث، وخطوات الدفع، والتعليقات.`,
+            how: R`الـ [[<li>]] نوع عرضه [[display: list-item]]: صندوق block ومعاه صندوق تاني صغير قدامه اسمه marker. المتصفح بيملا الـ marker حسب [[list-style-type]] بتاع القايمة: نقطة، أو عدّاد.
+
+العدّاد بيتحسب بخطوات المواصفة: يبدأ من [[start]] لو موجود (أو من عدد العناصر لو فيه [[reversed]]، أو من 1)، وكل [[<li>]] ياخد الرقم الحالي، ولو عليه [[value]] ياخد قيمته، وبعدين الرقم يزيد واحد أو ينقص واحد مع [[reversed]].
+
+وفي نفس الوقت المتصفح بيبني شجرة الـ accessibility: [[<ul>]] و [[<ol>]] و [[<menu>]] بيطلعوا [[list]]، وكل [[<li>]] بيطلع [[listitem]].`,
+            when: R`[[<ul>]]: مشتريات، مميزات، روابط، كروت منتجات، تاجات. [[<ol>]]: خطوات، ترتيب، بنود بيتشاور عليها بالرقم. [[<menu>]]: مجموعة زراير أوامر، ولو كتبتها [[<ul>]] مفيش مشكلة. ومتستخدمش قايمة عشان تدخّل كلام لجوه بس، ولا لعنصر واحد ملوش أخوات.`,
+            mistakes: R`تكتب القايمة فقرة فيها [[<br>]] وشرطات. تكتب الأرقام بإيدك جوه [[<li>]] فتطلع «1. 1.». تحط القايمة جوه [[<p>]] فالمتصفح يقسم الفقرة. تختار [[<ol>]] عشان شكل الأرقام والترتيب مش فارق. تفتكر [[reversed]] بيعكس العناصر وهو بيعكس الأرقام بس. تكتب [[type="A"]] وانت قصدك [[a]]. تحط [[start]] أو [[reversed]] على [[<ul>]] (الـ validator: [[Attribute “reversed” not allowed on element “ul” at this point.]]).`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** من غير ما تفتح المتصفح، اكتب الأرقام أو الحروف اللي هتترسم قدام كل عنصر في القوايم التلاتة دي بالترتيب: (أ) [[<ol start="3">]] فيها ٤ عناصر والتالت عليه [[value="10"]]. (ب) [[<ol reversed>]] فيها ٣ عناصر. (ج) [[<ol type="A" start="3">]] فيها عنصرين. وبعدين اكتبهم وشوف.`, done: R`اللي كتبته على الورق هو اللي ظهر: (أ) 3 و 4 و 10 و 11. (ب) 3 و 2 و 1. (ج) C و D.`, sol: R`~~~live 242 القوايم التلاتة
+<ol start="3">
+  <li>أ</li>
+  <li>ب</li>
+  <li value="10">ج</li>
+  <li>د</li>
+</ol>
+<ol reversed>
+  <li>هـ</li>
+  <li>و</li>
+  <li>ز</li>
+</ol>
+<ol type="A" start="3">
+  <li>ح</li>
+  <li>ط</li>
+</ol>
+~~~
+
+**ليه كده:**
+
+- (أ) العد بدأ من [[start="3"]]: 3 ثم 4. التالت عليه [[value="10"]] فخد 10، واللي بعده كمّل من عنده: 11. الـ [[value]] مبيرجعش للعد القديم.
+- (ب) [[reversed]] من غير [[start]] بيبدأ من عدد العناصر (3) وينزل.
+- (ج) [[start]] دايمًا رقم: 3 يعني الحرف التالت، و [[type="A"]] حروف كبيرة، فطلع C ثم D.
+
+**الغلطة الشائعة:** تكتب [[start="C"]]. القيمة مش رقم فبتتجاهل، والقايمة تبدأ من A.
+
+~~~text الناتج
+العلامات اللي Chrome رسمها:
+(أ)  3  4  10  11
+(ب)  3  2  1
+(ج)  C  D
+~~~` },
+            { lvl: 'سريع', t: R`**صنّف واشرح:** لكل حالة قول [[<ul>]] ولا [[<ol>]] ولا [[<menu>]]، وليه في جملة: (١) مكونات كيكة. (٢) ترتيب الفرق في الدوري. (٣) زراير «عدّل» و «امسح» تحت بوست. (٤) خطوات تسطيب برنامج. (٥) روابط «عن الشركة» و «وظايف» في الفوتر. (٦) بنود شروط استخدام بيتقال عليها «زي ما في البند ٣».`, done: R`إجابتك زي الجدول اللي في الحل، وكل اختيار ليه سبب من سؤال «لو بدّلت الترتيب المعنى يتغيّر؟»، مش من شكل العلامة.`, sol: R`| الحالة | العنصر | السبب |
+|---|---|---|
+| مكونات كيكة | [[<ul>]] | بدّل الدقيق والبيض والمعنى زي ما هو |
+| ترتيب الدوري | [[<ol>]] | المركز هو المعلومة |
+| زراير عدّل وامسح | [[<menu>]] أو [[<ul>]] | مجموعة أوامر، وترتيبها مش فارق |
+| خطوات تسطيب | [[<ol>]] | الخطوة ٢ مش هتنفع قبل ١ |
+| روابط الفوتر | [[<ul>]] | مجموعة روابط من غير ترتيب |
+| بنود الشروط | [[<ol>]] | الرقم بقى اسم للبند وبيتشاور عليه |
+
+تلاتة منهم مبنيين:
+
+~~~live 360 تلات حالات
+<h3>مكونات الكيكة</h3>
+<ul>
+  <li>دقيق</li>
+  <li>بيض</li>
+  <li>برتقان</li>
+</ul>
+<h3>ترتيب الدوري</h3>
+<ol>
+  <li>نادي النسور</li>
+  <li>نادي الشعلة</li>
+  <li>نادي البحر</li>
+</ol>
+<h3>زراير البوست</h3>
+<menu>
+  <li><button type="button">عدّل</button></li>
+  <li><button type="button">امسح</button></li>
+</menu>
+~~~
+
+**الحالة اللي بتلخبط:** «المكونات بكتبها بالترتيب اللي هستخدمها بيه، يبقى [[<ol>]]؟» لأ. اسأل: لو حد قراها بترتيب تاني، هيفهم حاجة غلط؟ في المكونات لأ. في الخطوات أيوه.
+
+**الغلطة الشائعة:** تختار بالشكل («عايز أرقام»). الشكل بيتغيّر بسطر CSS، والعنصر الغلط بيفضل بيقول معلومة غلط لقارئ الشاشة ولمحرك البحث.
+
+~~~text الناتج
+في المعاينة:  ul=1  ol=1  menu=1  li=8
+العلامات:  • • •   1 2 3   • •
+الـ role من Chrome: التلاتة list، وكل li جواهم listitem
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة وصفة «كيكة البرتقان» كاملة: [[<h1>]] باسمها، وفقرة فيها بتكفّي كام فرد ووقتها، و [[<h2>]] «المكونات» وتحته قايمة من ٦ مكونات، و [[<h2>]] «الطريقة» وتحته ٥ خطوات. اختار نوع كل قايمة بنفسك.`, done: R`الصفحة فيها [[<ul>]] واحدة جواها ٦ [[<li>]] و [[<ol>]] واحدة جواها ٥، والخطوات مرقّمة من 1 لـ 5 من غير ما تكتب ولا رقم بإيدك، والـ validator (validator.w3.org/nu) صفر errors.`, work: { h: 480, start: R`كيكة البرتقان
+بتكفّي ٨ أفراد، وبتاخد ساعة.
+المكونات
+٢ كوباية دقيق
+كوباية سكر
+٣ بيضات
+نص كوباية زيت
+عصير برتقانتين وبشرهم
+معلقة صغيرة بيكنج بودر
+الطريقة
+سخّن الفرن على ١٨٠ درجة.
+اخفق البيض والسكر لحد ما اللون يفتح.
+ضيف الزيت وعصير البرتقان والبشر.
+نزّل الدقيق والبيكنج بودر وقلّب بالراحة.
+صب الخليط في صينية مدهونة وادخلها الفرن ٤٠ دقيقة.`, checks: [
+              { say: R`اسم الوصفة [[<h1>]]`, q: "h1", has: "كيكة البرتقان", n: 1 },
+              { say: R`فيه [[<h2>]] اتنين: المكونات والطريقة`, q: "h2", n: 2 },
+              { say: R`المكونات قايمة [[<ul>]] فيها ٦ [[<li>]]`, q: "ul > li", n: 6 },
+              { say: R`الخطوات قايمة [[<ol>]] فيها ٥ [[<li>]]`, q: "ol > li", n: 5 },
+              { say: R`جملة «بتكفّي ٨ أفراد» فقرة [[<p>]]`, q: "p", has: "أفراد" },
+            ] }, sol: R`~~~live 480 كيكة البرتقان
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كيكة البرتقان</title>
+</head>
+<body>
+<main>
+  <h1>كيكة البرتقان</h1>
+  <p>بتكفّي ٨ أفراد، وبتاخد ساعة.</p>
+  <h2>المكونات</h2>
+  <ul>
+    <li>٢ كوباية دقيق</li>
+    <li>كوباية سكر</li>
+    <li>٣ بيضات</li>
+    <li>نص كوباية زيت</li>
+    <li>عصير برتقانتين وبشرهم</li>
+    <li>معلقة صغيرة بيكنج بودر</li>
+  </ul>
+  <h2>الطريقة</h2>
+  <ol>
+    <li>سخّن الفرن على ١٨٠ درجة.</li>
+    <li>اخفق البيض والسكر لحد ما اللون يفتح.</li>
+    <li>ضيف الزيت وعصير البرتقان والبشر.</li>
+    <li>نزّل الدقيق والبيكنج بودر وقلّب بالراحة.</li>
+    <li>صب الخليط في صينية مدهونة وادخلها الفرن ٤٠ دقيقة.</li>
+  </ol>
+</main>
+</body>
+</html>
+~~~
+
+**ليه كده:**
+
+- المكونات [[<ul>]]: هتجيبهم كلهم بأي ترتيب. والكميات («٢ كوباية») جزء من الكلام جوه الـ [[<li>]]، مش ترقيم.
+- الطريقة [[<ol>]]: الفرن بيسخن الأول، والدقيق بينزل بعد السوايل.
+- كل قايمة قبلها [[<h2>]]. القايمة ملهاش عنوان خاص بيها، فالعنوان اللي قبلها هو اللي بيعرّفها. وده كمان اللي بيخلي قارئ الشاشة ينط لها من فهرس العناوين.
+- الجملة اللي تحت الـ [[<h1>]] فقرة عادية: معلومتين في جملة واحدة مش قايمة.
+
+**الغلطة الشائعة:** تكتب [[<li>1. سخّن الفرن</li>]]. هتطلع «1. 1. سخّن الفرن»، ولما تمسح خطوة لازم تعيد ترقيم الباقي بإيدك.
+
+~~~text الناتج
+ul=1  ol=1  li=11  h1=1  h2=2
+العلامات:  • • • • • •   1 2 3 4 5
+validator.w3.org/nu: صفر errors
+على عرض 360: مفيش scroll أفقي
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة دورة تدريبية فيها المواعيد مكتوبة فقرة واحدة فيها شرطات و [[<br>]]، وخطوات الحجز فقرة تانية فيها «1)» و «2)» و «3)» مكتوبين بالإيد. الكود في أول الحل. حوّلهم لقوايم حقيقية، وبعدين امسح خطوة «ادفع المقدم» وشوف الترقيم.`, done: R`قبل: شجرة الـ accessibility فيها فقرتين بس. بعد: فيها اتنين [[list]] جواهم ٦ [[listitem]]، ومفيش ولا شرطة ولا رقم مكتوب بالإيد، ولما تمسح خطوة اللي بعدها بتاخد رقمها لوحدها.`, work: { h: 240, solAt: 1, start: R`<p>مواعيد الدورة:<br>
+- السبت: HTML<br>
+- الاتنين: CSS<br>
+- الأربع: مشروع</p>
+<p>خطوات الحجز:<br>
+1) املا الاستمارة<br>
+2) ادفع المقدم<br>
+3) استنى رسالة التأكيد</p>`, checks: [
+              { say: R`مفيش [[<br>]] في الصفحة`, q: "br", n: 0 },
+              { say: R`المواعيد قايمة [[<ul>]] من ٣ [[<li>]]`, q: "ul > li", n: 3 },
+              { say: R`خطوات الحجز قايمة [[<ol>]] من ٣ [[<li>]]`, q: "ol > li", n: 3 },
+              { say: R`مفيش شرطة «-» مكتوبة بالإيد في أول أي عنصر`, q: "li", has: "- ", n: 0 },
+              { say: R`مفيش رقم «1)» مكتوب بالإيد`, q: "li", has: ")", n: 0 },
+            ] }, sol: R`قبل:
+
+~~~live 208 قبل: فقرتين
+<p>مواعيد الدورة:<br>
+- السبت: HTML<br>
+- الاتنين: CSS<br>
+- الأربع: مشروع</p>
+<p>خطوات الحجز:<br>
+1) املا الاستمارة<br>
+2) ادفع المقدم<br>
+3) استنى رسالة التأكيد</p>
+~~~
+
+بعد:
+
+~~~live 240 بعد: قايمتين
+<p>مواعيد الدورة:</p>
+<ul>
+  <li>السبت: HTML</li>
+  <li>الاتنين: CSS</li>
+  <li>الأربع: مشروع</li>
+</ul>
+<p>خطوات الحجز:</p>
+<ol>
+  <li>املا الاستمارة</li>
+  <li>ادفع المقدم</li>
+  <li>استنى رسالة التأكيد</li>
+</ol>
+~~~
+
+**اللي اتغيّر:**
+
+- الجملة اللي بتقدّم القايمة («مواعيد الدورة:») فضلت [[<p>]] لوحدها واتقفلت **قبل** القايمة. القايمة مبتتحطش جوه فقرة.
+- المواعيد [[<ul>]]: تلات أيام، ومفيش واحد «قبل» التاني في المعنى. ممكن حد يقول دي مرتبة بالأيام فتبقى [[<ol>]]، وده مقبول لو الدورة لازم تتاخد بالترتيب. المهم يبقى عندك سبب.
+- الخطوات [[<ol>]]، والـ «1)» اتشالت من الكلام.
+- كل الـ [[<br>]] اتشالت: كل [[<li>]] بينزل سطر لوحده.
+
+**الغلطة الشائعة:** تحوّل لقايمة وتسيب الشرطة أو الرقم في أول الكلام، فتطلع «• - السبت».
+
+~~~text الناتج
+شجرة الـ accessibility قبل:
+paragraph   "مواعيد الدورة:"  "- السبت: HTML"  "- الاتنين: CSS"  "- الأربع: مشروع"
+paragraph   "خطوات الحجز:"  "1) املا الاستمارة"  "2) ادفع المقدم"  "3) استنى رسالة التأكيد"
+
+بعد:
+paragraph   "مواعيد الدورة:"
+list        3 listitem
+paragraph   "خطوات الحجز:"
+list        3 listitem
+
+العلامات بعد:  • • •   1 2 3
+بعد مسح «ادفع المقدم»:  1 2   («استنى رسالة التأكيد» بقت 2 لوحدها)
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** مكتبة الحي (اسم متخيل) طلّعت أكتر ٥ كتب استعارة: ١. ظل الجبل (٤١٢). ٢. طريق الملح (٣٨٠). ٣. بيت القمر (٣٥٥). ٤. آخر القطارات (٢٩٠). ٥. حديقة الرماد (٢٤١). اعرضهم **عد تنازلي** من الخامس للأول، وكل كتاب قدامه رقم مركزه الصح.`, done: R`أول سطر في القايمة «حديقة الرماد» وقدامه 5، وآخر سطر «ظل الجبل» وقدامه 1، والأرقام جاية من [[reversed]] مش مكتوبة بالإيد.`, work: { h: 250, start: R`أكتر ٥ كتب استعارة في مكتبة الحي
+ظل الجبل (٤١٢ استعارة)
+طريق الملح (٣٨٠ استعارة)
+بيت القمر (٣٥٥ استعارة)
+آخر القطارات (٢٩٠ استعارة)
+حديقة الرماد (٢٤١ استعارة)`, checks: [
+              { say: R`القايمة [[<ol>]] فيها ٥ [[<li>]]`, q: "ol > li", n: 5 },
+              { say: R`العد تنازلي بـ [[reversed]] مش بكتابة الأرقام`, q: "ol", attr: ["reversed"], n: 1 },
+              { say: R`أول سطر «حديقة الرماد» (اللي رقمه 5)`, q: "ol > li:first-child", has: "حديقة الرماد", n: 1 },
+              { say: R`آخر سطر «ظل الجبل» (اللي رقمه 1)`, q: "ol > li:last-child", has: "ظل الجبل", n: 1 },
+              { say: R`مفيش [[value]] مكتوب بالإيد على أي [[<li>]]`, q: "li[value]", n: 0 },
+            ] }, sol: R`~~~live 250 من الخامس للأول
+<h2>أكتر ٥ كتب استعارة في مكتبة الحي</h2>
+<p>من الخامس للأول:</p>
+<ol reversed>
+  <li>حديقة الرماد (٢٤١ استعارة)</li>
+  <li>آخر القطارات (٢٩٠ استعارة)</li>
+  <li>بيت القمر (٣٥٥ استعارة)</li>
+  <li>طريق الملح (٣٨٠ استعارة)</li>
+  <li>ظل الجبل (٤١٢ استعارة)</li>
+</ol>
+~~~
+
+**الفكرة:** [[reversed]] بيعكس الأرقام بس. فعشان الخامس يظهر الأول، انت اللي بتكتبه أول [[<li>]]. المتصفح بيعدّ ٥ عناصر ويبدأ من 5 وينزل.
+
+**الغلطة الشائعة:** تسيب العناصر بترتيب البيانات (الأول فوق) وتزوّد [[reversed]] وتفتكر إنه هيقلبهم:
+
+~~~live 138 الغلط: reversed على نفس الترتيب
+<ol reversed>
+  <li>ظل الجبل (٤١٢ استعارة)</li>
+  <li>طريق الملح (٣٨٠ استعارة)</li>
+  <li>بيت القمر (٣٥٥ استعارة)</li>
+  <li>آخر القطارات (٢٩٠ استعارة)</li>
+  <li>حديقة الرماد (٢٤١ استعارة)</li>
+</ol>
+~~~
+
+هنا «ظل الجبل» (أكتر كتاب استعارة) قدامه 5، و «حديقة الرماد» قدامه 1. الصفحة بتقول عكس الحقيقة، والـ validator مش هيشتكي لأن الكود سليم.
+
+~~~text الناتج
+الصح:   العلامات 5 4 3 2 1   وأول عنصر «حديقة الرماد (٢٤١ استعارة)»
+الغلط:  العلامات 5 4 3 2 1   وأول عنصر «ظل الجبل (٤١٢ استعارة)»
+نفس الأرقام في الاتنين: الفرق كله في ترتيب الـ li في الكود
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب نفس التلات مشروبات (شاي، قهوة، ينسون) ٤ مرات في صفحة واحدة: [[<ul>]]، و [[<ol>]]، و [[<menu>]]، وفقرة فيها «•» و [[<br>]]. افتح DevTools › Elements، واختار كل واحدة وافتح تاب Accessibility (درس «semantic HTML»)، واكتب الـ role بتاعها وبتاع العناصر اللي جواها. وبعدين من تاب Computed اكتب [[padding-inline-start]] لكل واحدة.`, done: R`عندك جدول فيه ٤ صفوف: التلاتة الأولانيين [[list]] وجواهم [[listitem]] والـ padding بتاعهم 40px، والرابعة [[paragraph]] والـ padding صفر. وعرفت تقول الفرق بين [[<ul>]] و [[<menu>]] في المتصفح: مفيش.`, sol: R`~~~live 480 ٤ طرق لنفس القايمة
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>٤ طرق لنفس القايمة</title>
+</head>
+<body>
+<h1>٤ طرق لنفس القايمة</h1>
+<h2>ul</h2>
+<ul>
+  <li>شاي</li>
+  <li>قهوة</li>
+  <li>ينسون</li>
+</ul>
+<h2>ol</h2>
+<ol>
+  <li>شاي</li>
+  <li>قهوة</li>
+  <li>ينسون</li>
+</ol>
+<h2>menu</h2>
+<menu>
+  <li>شاي</li>
+  <li>قهوة</li>
+  <li>ينسون</li>
+</menu>
+<h2>p و br</h2>
+<p>• شاي<br>• قهوة<br>• ينسون</p>
+</body>
+</html>
+~~~
+
+| الطريقة | الـ role | العناصر جواها | padding-inline-start | العلامة |
+|---|---|---|---|---|
+| [[<ul>]] | list | ٣ listitem | 40px | نقطة من المتصفح |
+| [[<ol>]] | list | ٣ listitem | 40px | رقم من المتصفح |
+| [[<menu>]] | list | ٣ listitem | 40px | نقطة من المتصفح |
+| [[<p>]] و [[<br>]] | paragraph | نص بس | 0px | «•» مكتوبة في النص |
+
+**اللي تطلع بيه:**
+
+- [[<ul>]] و [[<ol>]] و [[<menu>]] التلاتة [[list]] عند قارئ الشاشة. الفرق بين [[<ul>]] و [[<ol>]] في العلامة وفي المعنى اللي انت قاصده، و [[<menu>]] زي [[<ul>]] بالظبط في المتصفح.
+- الفقرة ملهاش أي علاقة بالقوايم، مهما شكلها قرّب.
+- [[padding-inline-start]] يعني الـ padding اللي في بداية السطر: يمين في العربي وشمال في الإنجليزي. عشان كده القايمة بتدخل من الناحية الصح لوحدها لما [[dir]] يتغيّر.
+
+**الغلطة الشائعة:** تبص في تاب Accessibility على الـ [[<li>]] بس وتنسى الغلاف. الـ [[listitem]] من غير [[list]] حواليه (زي [[<li>]] لوحده) عنصر في قايمة مش موجودة.
+
+~~~text الناتج
+من Chrome 157:
+ul    role=list   padding-right=40px   list-style-type=disc      li: role=listitem ×3
+ol    role=list   padding-right=40px   list-style-type=decimal   li: role=listitem ×3
+menu  role=list   padding-right=40px   list-style-type=disc      li: role=listitem ×3
+p     role=paragraph   padding=0px   جواه: "• شاي"  "• قهوة"  "• ينسون"
+validator.w3.org/nu: صفر errors
+~~~` },
+          ]
+        },
+        {
+          cmd: "قوايم جوه قوايم",
+          title: "القايمة الفرعية بتتحط فين؟ وقايمة التنقل ومسار الصفحة",
+          pre: ["css/ul و ol", { to: "css/semantic HTML", why: R`عشان [[<nav>]] و [[aria-label]] وشجرة الـ accessibility` }],
+          ref: [
+            { t: "MDN: <ul> (Nesting a list)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ul" },
+            { t: "MDN: <ol> (Nesting lists)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ol" },
+            { t: "WHATWG: the li element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-li-element" },
+            { t: "W3C WAI: Menu Structure", url: "https://www.w3.org/WAI/tutorials/menus/structure/" },
+            { t: "W3C APG: Breadcrumb Pattern", url: "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/" },
+            { t: "MDN Curriculum: Semantic HTML (2.3 Lists)", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" }
+          ],
+          desc: R`القايمة الفرعية بتتحط **جوه الـ [[<li>]]** اللي هي تبعه، مش بعده. وبنفس الفكرة بتتبني أهم قايمتين في أي موقع: قايمة التنقل ([[<ul>]] جوه [[<nav>]])، ومسار الصفحة أو الـ breadcrumb ([[<ol>]] جوه [[<nav>]]).
+
+لو حطيت القايمة الفرعية في المكان الغلط، الشكل هيطلع زي ما هو والمعنى هيضيع: المتصفح مش هيعرف «شاي» تبع «مشروبات» ولا لأ.`,
+          example: R`<nav aria-label="الرئيسية">
+  <ul>
+    <li><a href="#home">الرئيسية</a></li>
+    <li>
+      <a href="#menu">المنيو</a>
+      <ul>
+        <li><a href="#bread">مخبوزات</a></li>
+        <li><a href="#sweets">حلويات</a></li>
+      </ul>
+    </li>
+    <li><a href="#contact">تواصل</a></li>
+  </ul>
+</nav>`,
+          flag: "script",
+          lines: [
+            R`[[<nav>]] بيقول إن اللي جواه روابط تنقل، و [[aria-label]] بيسمّيه عشان يتفرّق عن أي [[<nav>]] تاني في الصفحة (درس «semantic HTML»).`,
+            R`الروابط مجموعة واحدة ترتيبها مش فارق في المعنى، فهي [[<ul>]].`,
+            R`كل رابط في [[<li>]] لوحده. اللينك جوه الـ [[<li>]]، مش العكس.`,
+            R`[[<li>]] اتفتح ومتقفلش على نفس السطر، لأن جواه حاجتين: اللينك والقايمة الفرعية.`,
+            R`لينك القسم نفسه: «المنيو» بيفضل رابط يتداس عليه حتى لو تحته قايمة فرعية.`,
+            R`القايمة الفرعية [[<ul>]] اتفتحت **جوه** الـ [[<li>]] بتاع «المنيو»، فالمتصفح عارف إنها تبعه.`,
+            R`عنصر في القايمة الفرعية.`,
+            R`عنصر تاني في القايمة الفرعية.`,
+            R`نهاية القايمة الفرعية، ولسه جوه الـ [[<li>]] بتاع «المنيو».`,
+            R`هنا بس الـ [[<li>]] بتاع «المنيو» بيتقفل، بعد القايمة الفرعية مش قبلها.`,
+            R`عنصر عادي في القايمة الرئيسية، راجع للمستوى الأول.`,
+            R`نهاية القايمة الرئيسية: فيها ٣ عناصر مباشرين، والتاني فيهم جواه قايمة.`,
+            R`نهاية الـ [[<nav>]]: كل الروابط اللي فوق دي landmark واحد اسمه «الرئيسية».`
+          ],
+          teach: R`## الفكرة في سطرين
+
+جوه [[<ul>]] و [[<ol>]] مباشرة مفيش غير [[<li>]] (درس «ul و ol»). يبقى القايمة الفرعية ملهاش غير مكان واحد: **جوه [[<li>]]**. والـ [[<li>]] اللي هي جواه هو «أبوها»: العنصر اللي هي بتفصّله.
+
+القياسات من Chrome 157 (headless على Windows 11)، ورسايل الـ validator من Nu Html Checker.
+
+---
+
+## ١. القايمة الفرعية جوه الـ [[<li>]]
+
+~~~live 156 قايمة من مستويين
+<ul>
+  <li>مخبوزات
     <ul>
-      <li>فرعي ١</li>
-      <li>فرعي ٢</li>
+      <li>عيش بلدي</li>
+      <li>فينو</li>
     </ul>
   </li>
-  <li>تاني</li>
-  <li>تالت</li>
+  <li>حلويات
+    <ul>
+      <li>بسبوسة</li>
+      <li>كنافة</li>
+    </ul>
+  </li>
+</ul>
+~~~
+
+اقرا الكود من عند «مخبوزات»:
+
+1. [[<li>]] اتفتح وجواه كلمة «مخبوزات».
+2. قبل ما يتقفل، اتفتحت [[<ul>]] جديدة فيها عنصرين.
+3. القايمة اتقفلت [[</ul>]].
+4. وبعدها بس الـ [[</li>]] بتاع «مخبوزات».
+
+يعني [[</li>]] بييجي **بعد** القايمة الفرعية. دي الحتة اللي بتتنسي.
+
+اللي المتصفح عمله لوحده:
+
+~~~text الناتج
+المستوى الأول:   list-style-type=disc     margin-top=16px  margin-bottom=16px  padding-right=40px
+المستوى التاني:  list-style-type=circle   margin-top=0px   margin-bottom=0px   padding-right=40px
+~~~
+
+- العلامة اتغيّرت من نقطة مليانة لدايرة فاضية.
+- القايمة الفرعية دخلت 40px كمان، ومن غير مسافة فوقها ولا تحتها.
+
+وفي شجرة الـ accessibility:
+
+~~~text من Chrome
+list
+  listitem  level=1   "مخبوزات"
+    list
+      listitem  level=2   "عيش بلدي"
+      listitem  level=2   "فينو"
+  listitem  level=1   "حلويات"
+    list
+      listitem  level=2   "بسبوسة"
+      listitem  level=2   "كنافة"
+~~~
+
+الـ [[list]] التانية **جوه** الـ [[listitem]] بتاع «مخبوزات». ده اللي بيخلي قارئ الشاشة يعرف إن «عيش بلدي» تفصيل لـ «مخبوزات».
+
+### لحد كام مستوى؟
+
+~~~live 120 أربع مستويات
+<ul>
+  <li>المستوى الأول
+    <ul>
+      <li>المستوى التاني
+        <ul>
+          <li>المستوى التالت
+            <ul>
+              <li>المستوى الرابع</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+~~~
+
+~~~text الناتج
+المستوى:   1      2        3        4
+العلامة:   disc   circle   square   square
+~~~
+
+من التالت العلامة بتثبت على المربع. المواصفة مبتحددش حد للعمق، بس لو وصلت لرابع مستوى غالبًا المحتوى محتاج يتقسّم لصفحات أو عناوين.
+
+---
+
+## ٢. الغلطة الكلاسيكية: [[<ul>]] مباشرة جوه [[<ul>]]
+
+~~~live 156 الغلط: القايمة الفرعية بعد الـ li
+<ul>
+  <li>مخبوزات</li>
+  <ul>
+    <li>عيش بلدي</li>
+    <li>فينو</li>
+  </ul>
+  <li>حلويات</li>
+  <ul>
+    <li>بسبوسة</li>
+    <li>كنافة</li>
+  </ul>
+</ul>
+~~~
+
+قارن المعاينة دي بالأولى: **نفس الشكل بالظبط**. عشان كده الغلطة دي بتعيش في مواقع كتير. الفرق في الكود: الـ [[<li>]] بتاع «مخبوزات» اتقفل، والقايمة الفرعية جت **بعده** كأنها أخته.
+
+الـ parser مبيصلّحش ده. بيبني اللي اتكتب:
+
+~~~text الـ DOM: الغلط
+ul
+  li "مخبوزات"
+  ul                  (ابن مباشر للـ ul، مش جوه li)
+    li "عيش بلدي"
+    li "فينو"
+  li "حلويات"
+  ul
+    li "بسبوسة"
+    li "كنافة"
+~~~
+
+~~~text الـ DOM: الصح
+ul
+  li "مخبوزات"
+    ul                (جوه الـ li)
+      li "عيش بلدي"
+      li "فينو"
+  li "حلويات"
+    ul
+      li "بسبوسة"
+      li "كنافة"
+~~~
+
+في الغلط، «مخبوزات» عنصر خلص، وجنبه قايمة ملهاش صاحب. والـ validator:
+
+~~~text Nu Html Checker
+error: Element “ul” not allowed as child of element “ul” in this context.
+~~~
+
+والنتيجة في شجرة الـ accessibility: الـ [[list]] الفرعية بقت ابن للـ [[list]] الكبيرة مباشرة، مش جوه [[listitem]]. والقايمة الكبيرة بقى فيها حاجات مش عناصر. ولما تيجي تنسّق بالـ CSS «القايمة اللي جوه العنصر ده»، مش هتلاقيها جواه.
+
+**العلاج:** امسح [[</li>]] اللي بعد «مخبوزات» وحطه بعد [[</ul>]] بتاع القايمة الفرعية.
+
+---
+
+## ٣. [[<ol>]] جوه [[<ol>]]، وخلط النوعين
+
+~~~live 174 خطوات جواها خطوات واختيارات
+<ol>
+  <li>جهّز العجينة
+    <ol>
+      <li>انخل الدقيق</li>
+      <li>ضيف الخميرة والمية</li>
+    </ol>
+  </li>
+  <li>سيبها تخمر ساعة</li>
+  <li>اخبزها
+    <ul>
+      <li>في الفرن: ٢٠ دقيقة</li>
+      <li>على الصاج: ٥ دقايق</li>
+    </ul>
+  </li>
+</ol>
+~~~
+
+~~~text العلامات اللي Chrome رسمها
+1
+   1
+   2
+2
+3
+   ◦
+   ◦
+~~~
+
+- القايمة المرقّمة الفرعية **بتبدأ من 1 تاني**. المتصفح مش بيكتب «1.1» و «1.2» لوحده. الترقيم المركّب ده بييجي من CSS counters في وحدة بعدين.
+- جوه الخطوة ٣ القايمة الفرعية [[<ul>]]، لأن «في الفرن» و «على الصاج» اختيارين مش خطوتين. كل مستوى بتختار نوعه بنفس سؤال الدرس اللي فات.
+
+---
+
+## ٤. قايمة التنقل: [[<ul>]] جوه [[<nav>]]
+
+روابط الموقع الرئيسية مجموعة عناصر، يعني قايمة. والعادة المتفق عليها (ودليل W3C WAI بيوصّي بيها): [[<nav>]] وجواه [[<ul>]] وكل رابط في [[<li>]].
+
+~~~live 120 قايمة التنقل
+<nav aria-label="الرئيسية">
+  <ul>
+    <li><a href="#home">الرئيسية</a></li>
+    <li><a href="#menu" aria-current="page">المنيو</a></li>
+    <li><a href="#branches">الفروع</a></li>
+    <li><a href="#contact">تواصل</a></li>
+  </ul>
+</nav>
+~~~
+
+> في المعاينات هنا الـ [[href]] مكتوب [[#menu]] عشان اللينك ميخرجش من الصندوق. في موقعك هيبقى مسار صفحة زي [[/menu]].
+
+[[aria-current="page"]] على لينك واحد بيقول لقارئ الشاشة «انت في الصفحة دي دلوقتي».
+
+النقط لسه ظاهرة والروابط تحت بعض، وده طبيعي من غير CSS. في المواقع بتشوفها صف أفقي من غير نقط لأن الـ CSS شال العلامة ورصّهم جنب بعض (وحدة الـ CSS). الـ HTML بيفضل زي ما هو.
+
+### ليه قايمة ومش روابط ورا بعض؟
+
+~~~live 56 من غير قايمة
+<nav aria-label="الرئيسية">
+  <a href="#home">الرئيسية</a>
+  <a href="#menu" aria-current="page">المنيو</a>
+  <a href="#branches">الفروع</a>
+  <a href="#contact">تواصل</a>
+</nav>
+~~~
+
+~~~text شجرة الـ accessibility: بالقايمة
+navigation "الرئيسية"
+  list
+    listitem   link "الرئيسية"
+    listitem   link "المنيو"
+    listitem   link "الفروع"
+    listitem   link "تواصل"
+~~~
+
+~~~text من غير قايمة
+navigation "الرئيسية"
+  link "الرئيسية"
+  link "المنيو"
+  link "الفروع"
+  link "تواصل"
+~~~
+
+الاتنين شغالين، ومن غير قايمة مش غلط في المواصفة. بس مع القايمة:
+
+- قارئ الشاشة بيقول عدد الروابط قبل ما يقراها («list, 4 items»)، فالمستخدم يعرف القايمة طويلة ولا قصيرة. ده من دليل W3C WAI (Menu Structure)، والنطق نفسه مجرّبتوش هنا.
+- كل رابط في صندوق لوحده، فالتنسيق والمسافات أسهل.
+- لو زوّدت قايمة فرعية (زي المثال اللي في أول الدرس) ليها مكان جاهز: جوه الـ [[<li>]].
+
+> ملاحظة لبعدين: لما تشيل النقط بـ [[list-style: none]]، Safari بيبطّل يعتبرها قايمة في شجرة الـ accessibility، والعلاج [[role="list"]] على القايمة. ده من MDN (صفحة list-style-type)، ومتجرّبش هنا. في Chrome 157 فضلت [[list]] بعد ما شلت النقط.
+
+---
+
+## ٥. مسار الصفحة (breadcrumb): [[<ol>]] جوه [[<nav>]]
+
+المسار هو السطر اللي فوق في المتاجر: الرئيسية ‹ المنيو ‹ حلويات ‹ بسبوسة. بيقولك انت فين في الموقع وتطلع لفوق إزاي.
+
+~~~live 184 مسار الصفحة
+<nav aria-label="مسار الصفحة">
+  <ol>
+    <li><a href="#home">الرئيسية</a></li>
+    <li><a href="#menu">المنيو</a></li>
+    <li><a href="#sweets">حلويات</a></li>
+    <li><a href="#basbousa" aria-current="page">بسبوسة بالقشطة</a></li>
+  </ol>
+</nav>
+<h1>بسبوسة بالقشطة</h1>
+~~~
+
+- [[<ol>]] مش [[<ul>]]: الترتيب هنا هو المعنى. «الرئيسية» قبل «المنيو» لأن المنيو جواها.
+- [[<nav>]] تاني في الصفحة، فلازم اسم مختلف: [[aria-label="مسار الصفحة"]].
+- آخر عنصر هو الصفحة الحالية وعليه [[aria-current="page"]].
+
+ده نفس الهيكل اللي في W3C APG (Breadcrumb Pattern): [[<nav>]] ليه اسم، وجواه [[<ol>]]، واللينك الأخير عليه [[aria-current="page"]].
+
+الأرقام 1 و 2 و 3 و 4 ظاهرة والعناصر تحت بعض، وفي الموقع الحقيقي الـ CSS بيشيل الأرقام ويرصّهم في سطر ويحط فاصل بينهم. المعنى بيفضل في الـ HTML: قايمة مترتبة من ٤ خطوات.
+
+---
+
+## ٦. فهرس المحتويات: قايمة فرعية جوه مرقّمة
+
+~~~live 138 فهرس صفحة طويلة
+<nav aria-label="محتويات الصفحة">
+  <ol>
+    <li><a href="#intro">مقدمة</a></li>
+    <li><a href="#tools">الأدوات</a>
+      <ol>
+        <li><a href="#oven">الفرن</a></li>
+        <li><a href="#tray">الصواني</a></li>
+      </ol>
+    </li>
+    <li><a href="#steps">الخطوات</a></li>
+  </ol>
+</nav>
+~~~
+
+كل لينك [[href="#tools"]] بينزل للعنوان اللي الـ [[id]] بتاعه [[tools]] (درس «a و button»). والقايمة الفرعية تحت «الأدوات» بتقول إن «الفرن» و «الصواني» أقسام جواها. شكل الفهرس هو نفسه شكل العناوين: [[<h2>]] مستوى أول، و [[<h3>]] مستوى تاني.
+
+---
+
+## ٧. مراجعة: أنهي قايمة لأنهي حاجة؟
+
+| الحاجة | الهيكل |
+|---|---|
+| قايمة التنقل الرئيسية | [[<nav>]] › [[<ul>]] › [[<li>]] › [[<a>]] |
+| قايمة منسدلة تحت رابط | [[<ul>]] جوه الـ [[<li>]] بتاع الرابط |
+| مسار الصفحة | [[<nav>]] › [[<ol>]] › [[<li>]] › [[<a>]] |
+| فهرس محتويات | [[<nav>]] › [[<ol>]] وجواها [[<ol>]] للأقسام الفرعية |
+| روابط الفوتر | [[<nav>]] باسم تاني › [[<ul>]] |
+| أقسام وتحتها أصناف | [[<ul>]] وجوه كل [[<li>]] قايمة |
+
+---
+
+## الخلاصة
+
+- القايمة الفرعية جوه الـ [[<li>]]، و [[</li>]] بيتقفل بعدها.
+- [[<ul>]] مباشرة جوه [[<ul>]] شكلها زي الصح، والـ validator بيرفضها، والعلاقة بين العنصر وتفاصيله بتضيع.
+- كل مستوى بيختار نوعه لوحده، والمرقّمة الفرعية بتبدأ من 1.
+- قايمة التنقل [[<ul>]] جوه [[<nav>]]، ومسار الصفحة [[<ol>]] جوه [[<nav>]]، وكل [[<nav>]] ليه [[aria-label]].
+- الشكل الأفقي ومن غير نقط شغل CSS. الـ HTML قايمة في الحالتين.`,
+          try: R`اعمل ملف [[bag.html]] فيه قايمة «شنطة السفر»: تلات عناصر (هدوم، أوراق، شاحن الموبايل)، وتحت «هدوم» قايمة فرعية من عنصرين، وتحت «أوراق» قايمة فرعية من عنصرين. افتحه وشوف شكل العلامة في كل مستوى. وبعدين انقل [[</li>]] بتاع «هدوم» وحطه قبل القايمة الفرعية، وافتح الصفحة تاني: الشكل اتغيّر؟ وافتح DevTools › Elements وشوف القايمة الفرعية بقت ابن مين.`,
+          sol: R`~~~live 238 bag.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شنطة السفر</title>
+</head>
+<body>
+<h1>شنطة السفر</h1>
+<ul>
+  <li>هدوم
+    <ul>
+      <li>٣ قمصان</li>
+      <li>بنطلونين</li>
+    </ul>
+  </li>
+  <li>أوراق
+    <ul>
+      <li>البطاقة</li>
+      <li>التذكرة</li>
+    </ul>
+  </li>
+  <li>شاحن الموبايل</li>
 </ul>
 </body>
 </html>
 ~~~
 
-| الـ selector | العدد | ليه |
-|---|---|---|
-| [[.menu > li]] | ٣ | الأولاد المباشرين بس |
-| [[.menu li]] | ٥ | أي li تحت [[.menu]] في أي عمق |
-| [[.menu li:nth-child(odd)]] | ٣ | الأول والتالت في الكبيرة، والأول في الصغيرة |
+المستوى الأول نقطة مليانة، والتاني دايرة فاضية وداخل 40px كمان.
 
-**الفكرة في** [[nth-child]]**:** العد بيتحسب وسط إخوات العنصر نفسه، مش في الصفحة كلها. فـ «فرعي ١» رقم 1 في قايمته الصغيرة، مش رقم 2.
-
-**الغلطة الشائعة:** تكتب [[.menu li]] وانت عايز القايمة الأولى بس، فالتنسيق ينزل على القايمة الفرعية. لو عايز المستوى الأول استخدم [[>]].
+لما تنقل [[</li>]] لقبل القايمة الفرعية: **الشكل مبيتغيّرش**. بس في تاب Elements القايمة الفرعية بتاعة «هدوم» بقت ابن مباشر للـ [[<ul>]] الكبيرة، وجنب الـ [[<li>]] مش جواه. والـ [[</li>]] اللي فضل بعد القايمة ملوش فتحة، فالمتصفح بيتجاهله، والـ validator بيطلّع عليه error تاني.
 
 ~~~text الناتج
-.menu > li                  → 3
-.menu li                    → 5
-.menu li:nth-child(odd)     → 3   (أول ، فرعي ١ ، تالت)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكارت فيه h3 وبعده p، والـ CSS [[.card p:first-child { color: red; }]] مش شغال على الفقرة.`, done: R`عرفت إن [[:first-child]] معناها «أول ابن خالص» والـ h3 هو الأول، فالـ p مش first-child. بعد [[:first-of-type]] (أول p وسط إخواته) القاعدة اشتغلت.`, sol: R`~~~live 130 130
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكارت</title>
-<style>
-  .card p:first-of-type { color: red; }
-</style>
-</head>
-<body>
-<article class="card">
-  <h3>العنوان</h3>
-  <p>الفقرة الأولى</p>
-  <p>الفقرة التانية</p>
-</article>
-</body>
-</html>
+الصح:   ul=3  li=7   العلامات: • ◦ ◦ • ◦ ◦ •
+        validator: صفر errors
+بعد نقل </li>:  نفس العلامات ونفس الشكل
+        validator: error: Element “ul” not allowed as child of element “ul” in this context.
+                   error: No “li” element in scope but a “li” end tag seen.
+        أبناء الـ ul الكبيرة المباشرين: LI , UL , LI , LI
 ~~~
 
-**السبب:** [[p:first-child]] معناها «عنصر هو p **و** هو أول ابن في أبوه». وأول ابن هنا [[h3]]، فمفيش p يحقق الشرطين.
+يعني عينك مش هتمسك الغلطة دي. اللي بيمسكها الـ validator، أو إنك تبص على الشجرة في DevTools.`,
+          deep: {
+            why: R`المحتوى الحقيقي شجري: قسم وتحته أصناف، رابط وتحته روابط، فصل وتحته أجزاء. لو كل ده اتكتب قايمة واحدة مسطحة، القارئ هيضطر يخمّن مين تبع مين من الكلام نفسه. القايمة جوه [[<li>]] بتقول العلاقة دي للمتصفح صريحة.
 
-أما [[p:first-of-type]] فمعناها «أول p وسط إخواته»، ومش مهم فيه إيه قبله.
+وقايمة التنقل ومسار الصفحة أكتر قوايم بتتكتب في أي موقع، وكل framework ومكتبة مكونات بتطلّعهم بنفس الهيكل ده.`,
+            how: R`الـ parser بيمشي على الـ tags بالترتيب. لما يشوف [[<ul>]] وهو لسه جوه [[<li>]] مفتوح، بيحط القايمة ابن للـ [[<li>]]. ولو الـ [[<li>]] اتقفل قبلها، بيحطها ابن للقايمة الكبيرة زي ما هي، من غير تصليح.
 
-| الـ selector | بيعدّ إيه |
-|---|---|
-| [[:first-child]] | كل الإخوات من أي نوع |
-| [[:first-of-type]] | الإخوات من نفس النوع بس |
+الشكل واحد في الحالتين لأن الـ CSS الافتراضي بتاع المتصفح بيتكلم عن «قايمة جوه قايمة» بأي عمق: أي [[<ul>]] جوه [[<ul>]] بتاخد [[circle]] و margin صفر، سواء بينهم [[<li>]] ولا لأ.
 
-**الغلطة الشائعة:** تقرا [[.card p:first-child]] كأنها «أول p في الكارت». الـ selector مش بيعمل فلتر بالترتيب ده. وتذكّر إن [[type]] هنا نوع العنصر، مش الـ class: [[.x:first-of-type]] مش معناها «أول عنصر عليه x».
+وفي شجرة الـ accessibility Chrome بيدّي كل [[listitem]] رقم مستوى (level) حسب عدد القوايم اللي حواليه.`,
+            when: R`قايمة فرعية: لما عنصر ليه تفاصيل من نفس نوع القايمة (أصناف تحت قسم، خطوات صغيرة تحت خطوة). قايمة تنقل: روابط الموقع الرئيسية وروابط الفوتر. مسار الصفحة: أي موقع فيه أكتر من مستويين (متجر، وثائق، مدونة بأقسام). ولو التفاصيل فقرة شرح مش عناصر، حطها [[<p>]] جوه الـ [[<li>]] مش قايمة.`,
+            mistakes: R`تقفل [[</li>]] قبل القايمة الفرعية. تكتب العناصر الفرعية [[<li>]] عادية وتزقّها بمسافات في الكود وتفتكر إنها بقت فرعية (المسافات في الكود ملهاش أي أثر). تعمل قايمة فرعية عشان تدخّل الكلام لجوه بس. تستخدم [[<ul>]] لمسار الصفحة مع إن الترتيب هو المعنى. تحط اتنين [[<nav>]] من غير [[aria-label]] فيطلعوا بنفس الاسم. تحط [[aria-current="page"]] على أكتر من لينك في نفس القايمة.`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الكود اللي في أول الحل قايمة فيها «فطار» و «غدا» وتحت كل واحد أصناف. من غير ما تشغّله: الـ [[<ul>]] الكبيرة ليها كام ابن مباشر؟ ومين فيهم مش [[<li>]]؟ وهل قايمة «فول وطعمية» جوه العنصر «فطار»؟`, done: R`إجابتك: ٣ أبناء مباشرين (li «فطار»، و ul، و li «غدا»)، والقايمة بتاعة الفول والطعمية **مش** جوه «فطار»، وقايمة الكشري جوه «غدا». واتأكدت من تاب Elements.`, sol: R`~~~live 138 الكود
+<ul>
+  <li>فطار</li>
+  <ul>
+    <li>فول</li>
+    <li>طعمية</li>
+  </ul>
+  <li>غدا
+    <ul>
+      <li>كشري</li>
+    </ul>
+  </li>
+</ul>
+~~~
+
+~~~text الـ DOM اللي Chrome بناه
+ul
+  li "فطار"
+  ul                (ابن مباشر: غلط)
+    li "فول"
+    li "طعمية"
+  li "غدا"
+    ul              (جوه الـ li: صح)
+      li "كشري"
+~~~
+
+**ليه:** الـ [[<li>]] بتاع «فطار» اتقفل على نفس السطر، فالقايمة اللي بعده بقت أخته. الـ [[<li>]] بتاع «غدا» فضل مفتوح لحد بعد القايمة الفرعية.
+
+في المعاينة الاتنين شكلهم واحد: دايرة فاضية وداخلين 40px. الفرق مش بيبان غير في الشجرة.
+
+**الغلطة الشائعة:** تعدّ الـ [[<li>]] بس وتقول «أبناء القايمة اتنين». الأبناء المباشرين تلاتة، وواحد منهم مش مسموح.
 
 ~~~text الناتج
-قبل (first-child): لون الفقرة الأولى = rgb(0, 0, 0)
-بعد (first-of-type): لون الفقرة الأولى = rgb(255, 0, 0)
-                     لون الفقرة التانية = rgb(0, 0, 0)
+أبناء الـ ul الكبيرة المباشرين: LI , UL , LI
+العلامات:  • ◦ ◦ • ◦
+Nu Html Checker: error: Element “ul” not allowed as child of element “ul” in this context.
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** تذكرة حفلة متخيلة: كارت فيه خط متقطع ([[border-top: 2px dashed]]) بيفصل الجزء اللي بيتقطع، ونص دايرة على كل جنب عند الخط ده ([[::before]] و [[::after]] دواير بلون خلفية الصفحة)، ورقم المقعد بخط كبير.`, done: R`التذكرة شكلها مقطوعة من الجنبين عند الخط المتقطع بالظبط، والدايرتين من غير أي عنصر زيادة في الـ HTML (اتنين pseudo-elements بس)، والتذكرة على 360px مش طالعة برّه الشاشة.`, sol: R`~~~live 410 410
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تذكرة</title>
-<style>
-  :root { --page: #e7e5e4; }
-  body { background: var(--page); font-family: system-ui; margin: 16px; }
-  .ticket { max-width: 320px; margin-inline: auto; background: #fff; border-radius: 12px; }
-  .ticket__main { padding: 20px; }
-  .ticket__stub {
-    position: relative;
-    padding: 20px;
-    border-top: 2px dashed #a1a1aa;
-    text-align: center;
-  }
-  .ticket__stub::before,
-  .ticket__stub::after {
-    content: "";
-    position: absolute;
-    top: -13px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: var(--page);
-  }
-  .ticket__stub::before { inset-inline-start: -12px; }
-  .ticket__stub::after { inset-inline-end: -12px; }
-  .seat { font-size: 2.5rem; font-weight: 700; }
-</style>
-</head>
-<body>
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** قايمة «أقسام المكتبة» فيها غلطتين: تحت «روايات» القايمة الفرعية محطوطة بعد الـ [[<li>]] مش جواه، وتحت «أطفال» الأصناف مكتوبة [[<li>]] عادية ومزقوقة بمسافات في الكود بس. الكود في أول الحل. صلّحها بحيث كل قسم أصنافه جواه.`, done: R`الـ validator صفر errors، وفي تاب Elements كل قايمة فرعية جوه الـ [[<li>]] بتاع قسمها، و «قصص مصورة» و «تلوين» علامتهم دايرة فاضية زي «عربي» و «مترجم».`, work: { h: 225, solAt: 1, start: R`<h2>أقسام المكتبة</h2>
+<ul>
+  <li>روايات</li>
+  <ul>
+    <li>عربي</li>
+    <li>مترجم</li>
+  </ul>
+  <li>أطفال</li>
+    <li>قصص مصورة</li>
+    <li>تلوين</li>
+  <li>علوم</li>
+</ul>`, checks: [
+              { say: R`القايمة الرئيسية فيها ٣ أقسام بس: روايات وأطفال وعلوم`, q: "body > ul > li", n: 3 },
+              { say: R`أصناف «روايات» جوه الـ [[<li>]] بتاعها`, q: "li > ul", has: "مترجم", n: 1 },
+              { say: R`أصناف «أطفال» جوه الـ [[<li>]] بتاعها`, q: "li > ul", has: "قصص مصورة", n: 1 },
+              { say: R`مفيش [[<ul>]] واقفة على [[<ul>]] مباشرة`, q: "ul > ul", n: 0 },
+            ] }, sol: R`قبل:
+
+~~~live 225 قبل
+<h2>أقسام المكتبة</h2>
+<ul>
+  <li>روايات</li>
+  <ul>
+    <li>عربي</li>
+    <li>مترجم</li>
+  </ul>
+  <li>أطفال</li>
+    <li>قصص مصورة</li>
+    <li>تلوين</li>
+  <li>علوم</li>
+</ul>
+~~~
+
+في المعاينة «عربي» و «مترجم» شكلهم فرعيين، بس «قصص مصورة» و «تلوين» طالعين في المستوى الأول بنقطة مليانة، مع إنهم مزقوقين في الكود. **المسافات اللي في أول السطر في الكود ملهاش أي أثر**: المتصفح بيشوف الـ tags بس.
+
+بعد:
+
+~~~live 225 بعد
+<h2>أقسام المكتبة</h2>
+<ul>
+  <li>روايات
+    <ul>
+      <li>عربي</li>
+      <li>مترجم</li>
+    </ul>
+  </li>
+  <li>أطفال
+    <ul>
+      <li>قصص مصورة</li>
+      <li>تلوين</li>
+    </ul>
+  </li>
+  <li>علوم</li>
+</ul>
+~~~
+
+**التصليحين:**
+
+- «روايات»: [[</li>]] اتنقل من آخر السطر لبعد [[</ul>]] بتاع قايمته.
+- «أطفال»: اتعمل [[<ul>]] جديدة جوه الـ [[<li>]] بتاعه، واتحط فيها العنصرين.
+
+**الغلطة الشائعة:** تصلّح الأولى بس عشان الـ validator يسكت. التانية مش error خالص (خمس [[<li>]] ورا بعض كود سليم)، بس المعنى غلط: «تلوين» بقى قسم من أقسام المكتبة.
+
+~~~text الناتج
+قبل:  ul=2  li=7   العلامات: • ◦ ◦ • • • •
+      شجرة الـ accessibility: list › listitem «روايات» ، list (عربي، مترجم) ، listitem «أطفال» ، listitem «قصص مصورة» ، listitem «تلوين» ، listitem «علوم»
+      Nu Html Checker: error: Element “ul” not allowed as child of element “ul” in this context.
+بعد:  ul=3  li=7   العلامات: • ◦ ◦ • ◦ ◦ •
+      Nu Html Checker: صفر errors
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** رأس صفحة كتاب «بيت القمر» في موقع «مكتبة الحروف» (اسم متخيل): [[<header>]] فيه اسم الموقع وقايمة تنقل من ٤ روابط (الرئيسية، الكتب، العروض، تواصل) والصفحة الحالية تحت «الكتب». وجوه [[<main>]] مسار الصفحة: الرئيسية ‹ الكتب ‹ روايات ‹ بيت القمر، وبعده [[<h1>]].`, done: R`تاب Accessibility فيه اتنين [[navigation]] بأسماء مختلفة: «الرئيسية» وجواه [[list]] من ٤، و «مسار الصفحة» وجواه [[list]] من ٤ مرقّمين. وفيه لينك واحد في كل قايمة عليه [[aria-current="page"]]، والـ validator صفر errors.`, work: { h: 332, start: R`<header>
+  مكتبة الحروف
+  الرئيسية، الكتب، العروض، تواصل
+</header>
 <main>
-<article class="ticket">
-  <div class="ticket__main">
-    <h1>حفلة الربيع</h1>
-    <p>١٥ أبريل، الساعة ٨ مساءً</p>
-  </div>
-  <div class="ticket__stub">
-    <p>المقعد</p>
-    <p class="seat">B12</p>
-  </div>
-</article>
-</main>
-</body>
-</html>
-~~~
-
-**الخدعة:** الدايرتين مش مقصوصين من التذكرة فعلًا. هما دايرتين بنفس لون خلفية الصفحة، قاعدين فوق حافة الكارت، فالعين بتشوفها قطعة ناقصة.
-
-- [[content: ""]] لازم موجود، وإلا الـ pseudo-element مش هيترسم.
-- [[position: relative]] على الأب، عشان [[absolute]] يتحسب منه.
-- [[top: -13px]]: نص الدايرة 12 + نص الخط 1، فمركزها بالظبط على الخط.
-- [[inset-inline-start]] بدل [[left]]: الشكل يشتغل في RTL و LTR.
-- [[--page]] متغير: لو غيّرت لون الصفحة الدايرتين يمشوا معاها.
-
-**الغلطة الشائعة:** تكتب لون الصفحة بإيدك في الدايرتين، وبعدين تغيّر خلفية الصفحة فالدواير تبان. والخدعة دي مش هتنفع لو الخلفية صورة، ووقتها استخدم [[mask]].
-
-~~~text الناتج
-مركز الدايرة y = 179.875   ومركز الخط y = 179.875
-الدايرة اليمين مركزها على حافة التذكرة: يمين التذكرة 340، وأقصى يمين الدايرة 352 جوه الشاشة
-عناصر زيادة في الـ HTML للدواير: 0 (اتنين pseudo-elements)
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** قايمة تنقل لموقع مكتبة متخيلة: اللينك الحالي عليه [[aria-current="page"]] وبيتلوّن بـ [[a[aria-current="page"] ]] (مش class)، و [[a:hover]] بيعمل خط تحت، و [[a:focus-visible]] حلقة 3px.`, done: R`لما تغيّر الصفحة الحالية بتغيّر الـ attribute بس والتنسيق بيمشي وراه، والحلقة بتظهر بالكيبورد بس مش بالماوس، وقارئ الشاشة بيعرف إنه الصفحة الحالية من الـ attribute نفسه مش من اللون.`, sol: R`~~~live 130 130
+  مسار الصفحة: الرئيسية ‹ الكتب ‹ روايات ‹ بيت القمر
+  <h1>بيت القمر</h1>
+</main>`, checks: [
+              { say: R`جوه [[<header>]] قايمة تنقل [[<nav>]] فيها ٤ روابط في [[<ul>]]`, q: "header nav ul > li a", n: 4 },
+              { say: R`جوه [[<main>]] مسار الصفحة [[<nav>]] فيه ٤ روابط في [[<ol>]]`, q: "main nav ol > li a", n: 4 },
+              { say: R`الـ [[<nav>]] الاتنين ليهم [[aria-label]] مختلف`, q: "nav[aria-label]", n: 2 },
+              { say: R`الصفحة الحالية عليها [[aria-current="page"]] في كل قايمة`, q: 'nav a[aria-current="page"]', n: 2 },
+            ] }, sol: R`~~~live 332 صفحة الكتاب
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكتب</title>
-<style>
-  nav { display: flex; gap: 8px; font-family: system-ui; }
-  nav a { padding: 8px 12px; color: #1e3a8a; text-decoration: none; border-radius: 6px; }
-  a[aria-current="page"] { background: #1e3a8a; color: #fff; }
-  a:hover { text-decoration: underline; }
-  a:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-</style>
+<title>بيت القمر | مكتبة الحروف</title>
 </head>
 <body>
 <header>
+  <a href="#home">مكتبة الحروف</a>
   <nav aria-label="الرئيسية">
-    <a href="#home">الرئيسية</a>
-    <a href="#books" aria-current="page">الكتب</a>
-    <a href="#contact">تواصل</a>
+    <ul>
+      <li><a href="#home">الرئيسية</a></li>
+      <li><a href="#books" aria-current="page">الكتب</a></li>
+      <li><a href="#offers">العروض</a></li>
+      <li><a href="#contact">تواصل</a></li>
+    </ul>
   </nav>
 </header>
-<main><h1>الكتب</h1></main>
-</body>
-</html>
-~~~
-
-**ليه attribute مش class:** [[aria-current="page"]] بتعمل حاجتين في سطر واحد: قارئ الشاشة بيقول «الصفحة الحالية»، والـ CSS بيلوّنها. لو استخدمت [[.active]] لازم تكتب الاتنين وتفتكر تحافظ عليهم. كده مصدر واحد مستحيل يختلف.
-
-- [[a[aria-current="page"]]]: selector بيختار بالـ attribute، ومش محتاج أي class.
-- [[:focus-visible]]: المتصفح بيقرر، الحلقة تظهر للكيبورد، ومبتظهرش لضغطة الماوس على اللينك.
-- [[outline-offset]]: مسافة بين الحلقة والعنصر.
-
-**الغلطة الشائعة:** تكتب [[a:focus { outline: none; }]] عشان الحلقة «وحشة». كده اللي بيستخدم الكيبورد ضاع.
-
-~~~text الناتج
-الصفحة الحالية: الخلفية = rgb(30, 58, 138)
-بعد نقل aria-current للرئيسية: الرئيسية = rgb(30, 58, 138)   والكتب = rgba(0, 0, 0, 0)
-hover: text-decoration = underline
-بالكيبورد: outline = 3px solid rgb(180, 83, 9)
-بالماوس:   outline-style = none
-اسم اللينك: - link "الكتب":
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**مسألة:** على لستة ١٠ كروت اكتب selector لكل واحدة: كل تالت كارت من التاني (٢ و ٥ و ٨)، وآخر كارتين، وكل الكروت ما عدا الأخير، والكارت الوحيد لو اللستة فيها كارت واحد بس.`, done: R`[[:nth-child(3n+2)]] رجّع ٣، و [[:nth-last-child(-n+2)]] رجّع ٢، و [[:not(:last-child)]] رجّع ٩، و [[:only-child]] رجّع صفر على العشرة وواحد لما سبت كارت واحد. واتأكدت من كل رقم بـ [[querySelectorAll().length]].`, sol: R`~~~live 200 200
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكروت</title>
-</head>
-<body>
-<section id="list"></section>
-<script>
-  for (let i = 1; i <= 10; i++) {
-    const card = document.createElement('article');
-    card.textContent = 'كارت ' + i;
-    document.querySelector('#list').append(card);
-  }
-$__lt/script>
-</body>
-</html>
-~~~
-
-~~~js
-const c = (s) => document.querySelectorAll('#list > ' + s).length;
-c(':nth-child(3n+2)');
-c(':nth-last-child(-n+2)');
-c(':not(:last-child)');
-c(':only-child');
-~~~
-
-**قراءة كل واحد:**
-
-- [[:nth-child(3n+2)]]: n بتبدأ من صفر: 2 ثم 5 ثم 8. الـ 3 هي الخطوة، والـ 2 نقطة البداية.
-- [[:nth-last-child(-n+2)]]: العد من الآخر. [[-n+2]] بتدّي 2 و 1 و 0، فآخر اتنين بس.
-- [[:not(:last-child)]]: مفيدة جدًا لحط فاصل بين العناصر من غير ما يبقى بعد الأخير.
-- [[:only-child]]: الأول والأخير في نفس الوقت.
-
-**الغلطة الشائعة:** تكتب [[:nth-child(2 + 3n)]] أو تتوقع إن n بتبدأ من 1. والصيغة الصحيحة [[an+b]] بالترتيب ده، ومن غير مسافات حوالين n.
-
-~~~text الناتج
-:nth-child(3n+2)        → 3 كروت: 2 و 5 و 8
-:nth-last-child(-n+2)   → 2: 9 و 10
-:not(:last-child)       → 9
-:only-child             → 0 على العشرة
-بعد ما سبت كارت واحد   → 1
-~~~` },
-          ],
-          title: "تختار العناصر اللي عايز تنسّقها",
-          desc: R`الـ selector هو الجزء اللي قبل [[{]]: بيقول القاعدة دي على مين. بالنوع [[p]]، أو بالـ class [[.card]]، أو بالـ attribute [[[type="email"]]]، أو بالمكان: [[.card p]] (أي p جوه card) و [[.menu > li]] (الأولاد المباشرين بس).
-
-وفيه pseudo-classes لحالة العنصر: [[:hover]] و [[:focus-visible]] و [[:first-child]] و [[:nth-child(odd)]]، و pseudo-elements بتعمل حتة مش موجودة في الـ HTML: [[::before]] و [[::after]] و [[::placeholder]].`,
-          example: R`p { line-height: 1.7; }
-.card { padding: 1rem; }
-.card p { color: gray; }
-.menu > li { display: inline-block; }
-input[type="email"] { direction: ltr; }
-a:hover { text-decoration: underline; }
-button:focus-visible { outline: 2px solid blue; }
-li:nth-child(odd) { background: whitesmoke; }
-.required::after { content: " *"; color: red; }`,
-          try: R`في DevTools › Console جرّب [[document.querySelectorAll(".card p")]] بنفس الـ selectors، وشوف رجّعلك كام عنصر. نفس اللغة بالظبط بتاعة الـ CSS.`,
-          flag: "script",
-          deep: {
-            why: R`كل CSS بيبدأ بسؤال: القاعدة دي على مين؟ لو الـ selector واسع قوي هتبوّظ حاجات مش قصدك، ولو ضيق قوي هتكتب نفس القاعدة عشر مرات. ونفس اللغة دي بتستخدمها في JavaScript ([[querySelector]]) وفي اختبارات المتصفح (Playwright).`,
-            how: R`المتصفح بيقرا الـ selector من اليمين للشمال. [[.card p]] معناها: هات كل p، وبعدين شوف مين فيهم ليه جد عليه card. عشان كده الجزء اللي على اليمين هو اللي بيحدد التكلفة. في الواقع المتصفحات سريعة جدًا والفرق مش محسوس غير في صفحات ضخمة.
-
-الـ combinators: المسافة (أي حفيد)، و [[>]] (ابن مباشر)، و [[+]] (الأخ اللي بعده على طول)، و [[~]] (أي أخ بعده).
-
-[[:hover]] و [[:focus]] حالات. [[:focus-visible]] ذكية: بتظهر لما المستخدم بيستخدم الكيبورد، ومش بتظهر لما يضغط بالماوس، فتقدر تحط outline واضح من غير ما يضايق حد.
-
-[[::before]] و [[::after]] محتاجين [[content]] (حتى لو فاضي [[""]]) وإلا مش بيظهروا. وبيتحطوا كأنهم أول وآخر ابن جوه العنصر، عشان كده مش بيشتغلوا على [[<img>]] و [[<input>]] (ملهمش أولاد).`,
-            when: R`class لكل حاجة بتنسّقها (أسهل في الـ specificity). والـ attributes والـ pseudo-classes للحالات. ومع Tailwind أغلب الكلام ده بيبقى variants زي [[hover:]] و [[focus-visible:]] (المستوى التاني).`,
-            mistakes: R`selectors طويلة زي [[.page .main .content .card .title]] بتربط التنسيق بشكل الـ HTML، وأول ما الهيكل يتغير يبوظ. و id في الـ CSS بيعمل specificity عالية صعب تغلبها (الدرس الجاي). و [[::after]] من غير [[content]].`
-          },
-          teach: R`## الفكرة في سطرين
-
-9 قواعد، كل واحدة بتختار عناصر بطريقة مختلفة: بالنوع، بالـ class، بالمكان، بالـ attribute، بالحالة، أو حتة مش موجودة في الـ HTML. حطيتهم على صفحة الحل (كارتين، وفقرة برا، ومنيو جواها منيو، وحقلين) وزوّدت لينك وزرار، وفتحتها في Chrome (headless). عدّيت كل selector بـ [[querySelectorAll]] وقريت التنسيق اللي اتطبق:
-
-~~~text index.html
-<div class="card"><p>وصف</p><p class="required">الاسم</p></div>
-<div class="card"><h3>عنوان</h3><div><p>جوه div جوه الكارت</p></div></div>
-<p>برا أي كارت</p>
-<ul class="menu"><li>أ</li><li>ب<ul><li>ج</li></ul></li><li>د</li></ul>
-<input type="email"><input type="text">
-~~~
-
----
-
-## ١. بالنوع وبالـ class
-
-| السطر | بيختار | عدد | اتقاس |
-|---|---|---|---|
-| [[p { line-height: 1.7; }]] | كل [[<p>]] | 4 | [[line-height]] = 27.2px (16 × 1.7) |
-| [[.card { padding: 1rem; }]] | كل عنصر عليه [[class="card"]] | 2 | [[padding]] = 16px |
-
-[[1rem]] = حجم خط الصفحة، 16px افتراضيًا.
-
----
-
-## ٢. بالمكان: المسافة و [[>]]
-
-الرموز اللي بين الـ selectors اسمها combinators:
-
-| الـ selector | معناه | عدد | مين |
-|---|---|---|---|
-| [[.card p]] | أي p **جوه** card مهما كان عميق | 3 | وصف، الاسم، جوه div جوه الكارت |
-| [[.card > p]] | p ابن **مباشر** لـ card | 2 | وصف، الاسم |
-| [[.menu > li]] | li ابن مباشر لـ menu | 3 | أ، ب، د |
-| [[.menu li]] | أي li جوه menu | 4 | أ، ب، ج، د |
-
-- المسافة = descendant (أي حفيد). الفقرة «جوه div جوه الكارت» حفيدة، فـ [[.card p]] مسكها و [[.card > p]] لأ.
-- [[>]] = child (ابن مباشر بس). الـ «ج» جوه [[ul]] تاني، فهي حفيدة لـ menu مش ابنها.
-
-واتقاس أثرهم: [[.card p]] لونها [[rgb(128, 128, 128)]] (ده [[gray]])، والفقرة اللي برا [[rgb(0, 0, 0)]]. و [[.menu > li { display: inline-block; }]]: أ و ب و د بقوا [[inline-block]]، و «ج» فضلت [[list-item]] (عرض الـ li الافتراضي).
-
----
-
-## ٣. بالـ attribute: [[input[type="email"]]]
-
-الأقواس المربعة [[[ ]]] = attribute بقيمة معيّنة. ولزقها في [[input]] من غير مسافة يعني «input **و** عليه الـ attribute ده». عدد: 1. واتقاس: حقل الإيميل [[direction: ltr]]، وحقل الـ text فضل [[rtl]] زي الصفحة.
-
----
-
-## ٤. بالحالة: pseudo-classes
-
-بتبدأ بـ [[:]] واحدة، وبتوصف حالة العنصر دلوقتي.
-
-### [[a:hover]]
-
-الماوس فوق اللينك. في الـ Console طلعت 0 (مفيش ماوس فوق حاجة). حرّكت الماوس المتقلّد فوق اللينك فبقت 1. واللينك أصلًا عليه خط من المتصفح، فالقاعدة دي بتفرق لو انت شايل الخط في مكان تاني.
-
-### [[button:focus-visible]]
-
-الزرار واخد focus والمتصفح شايف إن المستخدم محتاج يشوفه:
-
-| إزاي الزرار اخد الـ focus | [[:focus]] | [[:focus-visible]] | الـ outline |
-|---|---|---|---|
-| ضغطة ماوس | أيوه | لأ | [[none]] |
-| Tab من الكيبورد | أيوه | أيوه | [[rgb(0, 0, 255) solid 2px]] |
-
-ده بالظبط الفرق بينها وبين [[:focus]]: الحلقة الزرقا بتظهر للي بيستخدم الكيبورد بس.
-
-### [[li:nth-child(odd)]]
-
-[[nth-child]] = العنصر رقم كذا بين إخواته، و [[odd]] = الفردي (1، 3، 5...). عدد: 3، وهم أ و ج و د. ليه «ج»؟ لأنها الابن **الأول** في الـ ul بتاعها، فهي فردية بين إخواتها. والـ «ب» التاني فخلفيتها فضلت شفافة، والباقي [[rgb(245, 245, 245)]] ([[whitesmoke]]).
-
----
-
-## ٥. حتة مش موجودة: [[::before]] و [[::after]]
-
-بتبدأ بـ [[::]] اتنين، واسمها pseudo-elements.
-
-~~~text style.css
-.required::after { content: " *"; color: red; }
-~~~
-
-- [[::after]]: حتة جديدة كأنها آخر ابن جوه العنصر.
-- [[content: " *"]]: الكلام اللي فيها. من غير [[content]] مش بتظهر خالص.
-
-[[querySelectorAll(".required::after")]] رجعت 0، لأن الحتة دي مش عنصر في الـ DOM. بس [[getComputedStyle(el, "::after")]] بيقراها: [[content]] = [[" *"]] واللون [[rgb(255, 0, 0)]].
-
----
-
-## الخلاصة
-
-| النوع | مثال | معناه |
-|---|---|---|
-| type | [[p]] | كل p |
-| class | [[.card]] | عليه [[class="card"]] |
-| descendant | [[.card p]] | أي حفيد |
-| child | [[.menu > li]] | ابن مباشر |
-| attribute | [[[type="email"]]] | attribute بقيمة |
-| pseudo-class | [[:hover]] و [[:focus-visible]] و [[:nth-child(odd)]] | حالة |
-| pseudo-element | [[::after]] | حتة جديدة، محتاجة [[content]] |`,
-          lines: [
-            R`بالنوع: كل [[<p>]] في الصفحة من غير استثنا، فالمسافة بين السطور بقت 1.7 في كل الفقرات.`,
-            R`أي عنصر عليه [[class="card"]].`,
-            "أي p جوه card مهما كان عميق (المسافة = أي حفيد).",
-            "الـ li اللي أولاد مباشرين لـ menu بس، مش الأحفاد.",
-            "بالـ attribute: حقول الإيميل بس.",
-            "لما الماوس ييجي على اللينك.",
-            "لما الزرار ياخد focus من الكيبورد (مش من ضغطة ماوس).",
-            "الصفوف الفردية: 1 و 3 و 5...",
-            "حتة مش موجودة في الـ HTML بتتضاف بعد الكلام: نجمة الحقل المطلوب."
-          ],
-          sol: R`على الصفحة اللي في الحل تحت (كارتين وفقرة برا ومنيو فيها منيو جوه منيو)، الـ Console بيرجع: [[querySelectorAll("p")]] ‏4، و [[".card p"]] ‏3 (بما فيهم الـ p اللي جوه div جوه الكارت، لأن المسافة معناها «أي حفيد»)، و [[".card > p"]] ‏2 بس (أولاد مباشرين). و [[".menu > li"]] ‏3 بينما [[".menu li"]] ‏4 لأن الـ li اللي في المنيو الداخلية حفيد مش ابن. و [[li:nth-child(odd)]] ‏3، و [[input[type="email"]]] ‏1.
-
-فيه اتنين هيطلعولك 0 وده صح: [[a:hover]] لأن مفيش حاجة الماوس واقف عليها وانت بتكتب في الـ Console، و [[.required::after]] لأن الـ pseudo-element مش عنصر في الـ DOM أصلًا، بيتشاف بس في Styles. لو رقم طلع أكبر من المتوقع، غالبًا نسيت الفرق بين المسافة و [[>]].`,
-          solCode: R`<div class="card"><p>وصف</p><p class="required">الاسم</p></div>
-<div class="card"><h3>عنوان</h3><div><p>جوه div جوه الكارت</p></div></div>
-<p>برا أي كارت</p>
-<ul class="menu"><li>أ</li><li>ب<ul><li>ج</li></ul></li><li>د</li></ul>
-<input type="email"><input type="text">
-<!-- في الـ Console -->
-document.querySelectorAll(".card p").length   // 3
-document.querySelectorAll(".card > p").length // 2
-document.querySelectorAll(".menu > li").length // 3
-document.querySelectorAll(".menu li").length   // 4`
-        },
-        {
-          cmd: "specificity",
-          ref: [
-            { t: "MDN: Specificity", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity" },
-            { t: "MDN: ID selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/ID_selectors" },
-            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
-          ],
-          practice: [
-            { lvl: 'تطبيق', t: R`**مسألة:** رتّب الـ selectors دي من الأضعف للأقوى، واكتب وزن كل واحد: [[ul li a]] و [[.nav a:hover]] و [[#main .btn]] و [[a[href^="http"] ]] و [[:is(#a, .b) p]] و [[:where(#a) p]]. وبعدين اتأكد بالماوس في DevTools.`, done: R`[[:where(#a) p]] (0,0,1)، و [[ul li a]] (0,0,3)، و [[a[href^="http"] ]] (0,1,1)، و [[.nav a:hover]] (0,2,1)، و [[:is(#a, .b) p]] (1,0,1) لأن is بتاخد وزن أقوى حاجة جواها، و [[#main .btn]] (1,1,0). والـ tooltip في DevTools قال نفس الأرقام.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الوزن</title>
-<style>
-  ul li a { color: black; }
-  .nav a:hover { color: red; }
-  #main .btn { color: blue; }
-  a[href^="http"] { color: green; }
-  :is(#a, .b) p { color: teal; }
-  :where(#a) p { color: orange; }
-</style>
-</head>
-<body>
-<div id="main">
-  <nav class="nav"><ul><li><a class="btn" href="https://example.com">لينك</a></li></ul></nav>
-</div>
-<div id="a"><p>فقرة</p></div>
-</body>
-</html>
-~~~
-
-**العد:** ٣ خانات (ids, classes, elements). الـ class والـ attribute والـ pseudo-class خانة الوسط، والعنصر الخانة الأخيرة. والمقارنة خانة خانة من الشمال، مش جمع.
-
-**الاستثناءين هنا:**
-
-- [[:is(#a, .b)]] بتاخد وزن **أقوى** حاجة جواها، فـ id كامل حتى لو العنصر اختير بالـ class.
-- [[:where()]] وزنها صفر دايمًا، مهما كان جواها.
-
-**الغلطة الشائعة:** تحسب [[:is(#a, .b) p]] على أساس [[.b]] لو ده اللي طابق. الوزن ثابت، مش بيعتمد على اللي طابق فعلًا.
-
-~~~text الناتج
-الترتيب من الأضعف للأقوى، والأرقام من Chrome نفسه:
-(0,0,1)  :where(#a) p
-(0,0,3)  ul li a
-(0,1,1)  a[href^="http"]
-(0,2,1)  .nav a:hover
-(1,0,1)  :is(#a, .b) p
-(1,1,0)  #main .btn
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف فيه ٣ قواعد للزرار كلهم [[!important]] (واحدة للون، وواحدة في الـ hover، وواحدة جوه الـ footer)، وكل واحد زوّد [[!important]] عشان يغلب اللي قبله. شيلهم كلهم من غير ما الشكل يتغيّر.`, done: R`[[grep -c "!important"]] على الملف بقى صفر، والزرار في التلات حالات نفس الشكل (screenshot قبل وبعد)، والحل كان ترتيب القواعد أو modifier واحد زي [[.btn--footer]] بدل selector أطول.`, sol: R`قبل:
-
-~~~css before.css
-.btn { background: #1d4ed8 !important; color: #fff !important; padding: 8px 16px; }
-.btn:hover { background: #1e3a8a !important; }
-footer .btn { background: #166534 !important; }
-~~~
-
-بعد:
-
-~~~css after.css
-.btn { background: #1d4ed8; color: #fff; padding: 8px 16px; }
-.btn:hover { background: #1e3a8a; }
-.btn--footer { background: #166534; }
-~~~
-
-والصفحة، ومعاها التغيير الوحيد في الـ HTML:
-
-~~~html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الأزرار</title>
-<link rel="stylesheet" href="after.css">
-</head>
-<body>
-<main><button id="m" class="btn">عادي</button></main>
-<footer><button id="f" class="btn btn--footer">في الفوتر</button></footer>
-</body>
-</html>
-~~~
-
-~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الأزرار</title>
-<style>
-.btn { background: #1d4ed8; color: #fff; padding: 8px 16px; }
-.btn:hover { background: #1e3a8a; }
-.btn--footer { background: #166534; }
-</style>
-</head>
-<body>
-<main><button id="m" class="btn">عادي</button></main>
-<footer><button id="f" class="btn btn--footer">في الفوتر</button></footer>
-</body>
-</html>
-~~~
-
-**إزاي شلناهم:**
-
-- مفيش خناقة أصلًا بين [[.btn]] و [[.btn:hover]]: الـ hover أقوى بطبيعته (0,2,0) ضد (0,1,0).
-- [[footer .btn]] كانت بتعتمد على مكان الزرار. [[.btn--footer]] بتقول المعنى صراحة، وبنفس وزن [[.btn]]، وهي مكتوبة بعدها فتكسب بالترتيب.
-- في الفوتر الـ hover لسه كسبان (0,2,0) ضد (0,1,0)، زي ما كان قبل.
-
-**الغلطة الشائعة:** تستبدل [[!important]] بـ selector أطول زي [[footer .wrapper .btn.btn]]. دي نفس المشكلة بشكل تاني، والقاعدة الجاية هتحتاج أطول.
-
-~~~text الناتج
-grep -c "!important" before.css → 3
-grep -c "!important" after.css  → 0
-
-مقارنة الـ screenshot قبل وبعد، بايت ببايت:
-من غير hover (الزرارين ظاهرين)  متطابق
-hover على الزرار العادي          متطابق
-hover على زرار الفوتر            متطابق
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p style="color: red">]] وفي الـ CSS [[p.imp { color: blue !important; }]]. مين بيكسب: الـ inline ولا الـ important؟`, done: R`الأزرق ([[rgb(0, 0, 255)]] في Chrome): [[!important]] أقوى من الـ [[style=""]] العادي. ده سبب إن الـ important مشكلة: حتى الـ inline اللي JavaScript بيحطه مبقاش يقدر يغيّر اللون.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مين يكسب</title>
-<style>
-  p.imp { color: blue !important; }
-</style>
-</head>
-<body>
-<p class="imp" style="color: red">كلام</p>
-</body>
-</html>
-~~~
-
-**الإجابة:** الأزرق. [[!important]] بيقلب الترتيب: بيتحسب في طبقة فوق كل حاجة عادية، بما فيها [[style=""]].
-
-وعشان كده هو مشكلة: JavaScript بيغيّر الألوان بـ [[el.style.color = ...]]، وده مش هيأثر:
-
-~~~js
-const p = document.querySelector('p');
-p.style.color = 'green';
-getComputedStyle(p).color;
-~~~
-
-والوحيد اللي يغلبه من الـ inline: [[el.style.setProperty('color', 'green', 'important')]]، يعني important تانية.
-
-**الغلطة الشائعة:** تشغّل كود بيغيّر اللون وتلاقيه ماتغيّرش، وتدوّر على باج في الـ JavaScript، والسبب سطر CSS بعيد. افتح Computed وشوف مين كسب.
-
-~~~text الناتج
-اللون = rgb(0, 0, 255)  (أزرق)
-بعد p.style.color = 'green': rgb(0, 0, 255)  (لسه أزرق)
-بعد setProperty(..., 'important'): rgb(0, 128, 0)
-~~~` },
-            { lvl: 'سريع', t: R`**قارن وقيس:** نفس العنصر عليه [[id="main"]]. قارن وزن [[#main]] بوزن [[ [id="main"] ]]. وبعدين جرّب الاتنين ضد [[.nav .btn.primary]].`, done: R`[[#main]] (1,0,0) و [[ [id="main"] ]] (0,1,0) مع إنهم بيختاروا نفس العنصر: الـ attribute وزنه زي class. فـ [[.nav .btn.primary]] (0,3,0) غلب [[ [id="main"] ]] وخسر قدام [[#main]].`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>id</title>
-<style>
-  .nav .btn.primary { color: green; }
-</style>
-</head>
-<body>
-<nav class="nav"><button id="main" class="btn primary">اضغط</button></nav>
-</body>
-</html>
-~~~
-
-جرّب تضيف كل مرة سطر واحد من دول، **قبل** [[.nav .btn.primary]]:
-
-~~~css
-#main { color: red; }
-[id="main"] { color: red; }
-~~~
-
-| الـ selector | الوزن | بيختار نفس العنصر؟ |
-|---|---|---|
-| [[#main]] | (1,0,0) | أيوه |
-| [[[id="main"]]] | (0,1,0) | أيوه |
-| [[.nav .btn.primary]] | (0,3,0) | أيوه |
-
-**الفكرة:** الوزن من شكل الـ selector، مش من العنصر اللي بيختاره. ووزن id واحد بيغلب أي عدد من الـ classes، لأن المقارنة خانة خانة.
-
-**إمتى ده مفيد:** لو مضطر تختار عنصر بالـ id، بس عايز وزن قليل (مثلًا عنصر من مكتبة)، اكتبه [[[id="main"]]].
-
-**الغلطة الشائعة:** تعتقد إن كتير من الـ classes ممكن يغلبوا id. المقارنة خانة خانة، ومفيش جمع.
-
-~~~text الناتج
-#main ضد .nav .btn.primary          → rgb(255, 0, 0)  (أحمر، id كسب)
-[id="main"] ضد .nav .btn.primary    → rgb(0, 128, 0)  (أخضر، attribute خسر)
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** ليه ملفات الـ reset والمكتبات الحديثة بتكتب قواعدها جوه [[:where()]]؟ ٣ سطور لزميل.`, done: R`الشرح فيه: [[:where()]] وزنها صفر، فأي قاعدة يكتبها صاحب الموقع (حتى [[p]] لوحدها) بتغلبها من غير ما يكبّر الـ selector أو يستخدم important، والمكتبة كده بتدّي شكل افتراضي بس.`, sol: R`**الرد النموذجي لزميلك:**
-
-~~~text الشرح
-:where() وزنها صفر مهما كان جواها، فأي قاعدة صاحب الموقع يكتبها، حتى p لوحدها، بتغلب قاعدة المكتبة.
-كده المكتبة بتدّي شكل افتراضي بس، ومش بتتخانق مع اللي بيستخدمها.
-ومن غيرها كان هيضطر يكبّر الـ selector أو يستخدم !important عشان يغيّر حاجة بسيطة.
-~~~
-
-~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>where</title>
-<style>
-  /* المكتبة */
-  :where(.prose) p { color: gray; }
-  .prose2 p { color: gray; }
-  /* صاحب الموقع */
-  p { color: black; }
-</style>
-</head>
-<body>
-<div class="prose"><p id="a">بـ where</p></div>
-<div class="prose2"><p id="b">من غير where</p></div>
-</body>
-</html>
-~~~
-
-**الغلطة الشائعة:** تستخدم [[:where()]] في كود الموقع نفسه لأي حاجة. دي مناسبة للي **المفروض** يتكسر بسهولة زي reset أو مكتبة، مش لقواعد عايزها تثبت.
-
-~~~text الناتج
-:where(.prose) p  ضد  p  → rgb(0, 0, 0)  (p كسبت)
-.prose2 p         ضد  p  → rgb(128, 128, 128)  (المكتبة كسبت)
-~~~` },
-          ],
-          title: "ليه القاعدة بتاعتي مش بتتطبق؟",
-          desc: R`لما قاعدتين بيختاروا نفس العنصر ويغيّروا نفس الخاصية، المتصفح بيدّي كل selector وزن من 3 خانات: (id، class، نوع). الأعلى يكسب، ولو اتساووا اللي مكتوب آخر يكسب.
-
-id واحد أقوى من أي عدد classes. و [[style=""]] في الـ HTML أقوى منهم كلهم، و [[!important]] بيقلب اللعبة كلها (ودا سبب إنه مشكلة).`,
-          example: R`button { color: black; }
-.btn { color: blue; }
-.nav .btn { color: green; }
-nav .btn:hover { color: orange; }
-.btn.primary { color: white; }
-:where(.nav) .btn { color: purple; }
-nav#main .btn { color: red; }`,
-          try: R`اعمل زرار عليه [[class="btn primary"]] جوه [[<nav class="nav" id="main">]] وحط القواعد دي. افتح DevTools › Elements › Styles: هتلاقي القواعد اللي خسرت متشطّب عليها. وقف بالماوس على أي selector وهيقولك الـ specificity بتاعته.`,
-          flag: "script",
-          deep: {
-            why: R`أشهر مشكلة CSS: كتبت قاعدة ومش بتتطبق، فتحط [[!important]]، وبعدين قاعدة تانية محتاجة تغلبها فتحط [[!important]] تاني، لحد ما الملف يبقى حرب. لو فهمت الوزن هتعرف ليه قاعدة خسرت وتصلّحها صح.`,
-            how: R`الوزن بيتحسب كده: A = عدد الـ ids. B = عدد الـ classes والـ attributes ([[[type]]]) والـ pseudo-classes ([[:hover]]). C = عدد أنواع العناصر ([[div]]) والـ pseudo-elements ([[::before]]). المقارنة خانة خانة من الشمال: A الأول، ولو اتساوت B، ولو اتساوت C. عشان كده 11 class مش بيغلبوا id واحد، مفيش «تحويل» بين الخانات.
-
-حاجات ملهاش وزن: [[*]]، والـ combinators ([[>]] و [[+]] والمسافة)، و [[:where()]]. و [[:is()]] و [[:not()]] و [[:has()]] وزنهم = وزن أتقل حاجة جواهم.
-
-الـ specificity بتتقارن بس بين قواعد في نفس المستوى من الـ cascade. قبلها فيه حاجات أهم: [[!important]] والـ cascade layers (الدرس الجاي). والوراثة ملهاش specificity خالص: أي قاعدة مباشرة على العنصر، حتى [[*]]، بتغلب قيمة جاية بالوراثة من الأب.
-
-[[style="..."]] في الـ HTML بيكسب أي selector، و [[!important]] في ملف CSS بيكسب الـ inline.`,
-            when: "كل مرة قاعدة مش بتتطبق: افتح Styles في DevTools وشوف مين كسب وليه، قبل ما تلمس !important.",
-            mistakes: R`تحل كل حاجة بـ [[!important]]. تستخدم id في التنسيق. وفي مشروع حقيقي كان فيه قواعد للعربي مكتوبة [[html[lang="ar"] .hero-title { font-size: ... !important }]] عشان تغلب utility بتاعة Tailwind: الأنضف إنها تبقى variant زي [[rtl:]]، أو CSS variable قيمته بتتغير حسب اللغة.`
-          },
-          teach: R`## الفكرة في سطرين
-
-7 قواعد كلهم بيمسكوا نفس الزرار وكلهم بيغيّروا [[color]]. واحدة بس هتكسب، والمتصفح بيقرر بالـ specificity (وزن الـ selector). جرّبتهم في Chrome (headless) على [[<nav class="nav" id="main"><button class="btn primary">]]، وخدت الوزن اللي Chrome نفسه حسبه لكل selector (من [[CSS.getMatchedStylesForNode]] في DevTools Protocol، نفس الرقم اللي بيظهر لما تقف على الـ selector في Styles).
-
----
-
-## ١. الوزن 3 خانات (A, B, C)
-
-| الخانة | بتعد إيه |
-|---|---|
-| A | الـ ids: [[#main]] |
-| B | الـ classes [[.btn]]، والـ attributes [[[type]]]، والـ pseudo-classes [[:hover]] |
-| C | أنواع العناصر [[button]]، والـ pseudo-elements [[::after]] |
-
-المقارنة خانة خانة من الشمال، زي ما بتقارن أرقام تليفون: اللي A بتاعه أكبر كسب على طول، ولو اتساووا بص على B، وبعدين C.
-
----
-
-## ٢. السطور واحد واحد
-
-ده اللي Chrome حسبه (كل الـ 7 بيمسكوا الزرار، و [[:hover]] بس لما الماوس عليه):
-
-| السطر | الحسبة | الوزن |
-|---|---|---|
-| [[button]] | نوع واحد | (0,0,1) |
-| [[.btn]] | class واحدة | (0,1,0) |
-| [[.nav .btn]] | 2 class، والمسافة ملهاش وزن | (0,2,0) |
-| [[nav .btn:hover]] | نوع + class + pseudo-class | (0,2,1) |
-| [[.btn.primary]] | 2 class لازقين = عنصر عليه الاتنين | (0,2,0) |
-| [[:where(.nav) .btn]] | [[:where()]] وزنها صفر مهما كان جواها، فاللي فاضل [[.btn]] | (0,1,0) |
-| [[nav#main .btn]] | نوع + id + class | (1,1,1) |
-
-Chrome فك [[:where(.nav) .btn]] وحسب حتة واحدة بس: [[.btn]].
-
----
-
-## ٣. مين كسب؟
-
-| الحالة | اللون اللي اتقاس | الكسبان |
-|---|---|---|
-| الكود زي ما هو | [[rgb(255, 0, 0)]] أحمر | [[nav#main .btn]] (1,1,1) |
-| نفس الكلام والماوس عليه | [[rgb(255, 0, 0)]] أحمر | لسه هو: (0,2,1) أقل من (1,1,1) |
-| شلت سطر الـ id | [[rgb(255, 255, 255)]] أبيض | [[.btn.primary]] |
-| من غير الـ id والماوس عليه | [[rgb(255, 165, 0)]] برتقاني | [[nav .btn:hover]] (0,2,1) |
-
-### ليه الأبيض كسب الأخضر؟
-
-[[.nav .btn]] و [[.btn.primary]] الاتنين (0,2,0). لما الوزن يتساوى، اللي **مكتوب آخر** في الملف يكسب، و [[.btn.primary]] بعدها.
-
----
-
-## ٤. تجارب زيادة
-
-| التجربة | اللون | ليه |
-|---|---|---|
-| [[.a.a.a.a.a.a.a.a.a.a.a]] (11 class) ضد [[#x]] | أحمر بتاع الـ id | (0,11,0) ضد (1,0,0): A الأول، ومفيش «تحويل» بين الخانات |
-| [[style="color:green"]] ضد [[#x]] | أخضر | الـ inline style أقوى من أي selector |
-| [[p { color: blue !important }]] ضد inline و id | أزرق | [[!important]] بيقلب الترتيب كله |
-
----
-
-## الخلاصة
-
-- الوزن (ids، classes، types) والمقارنة من الشمال.
-- id واحد أقوى من أي عدد classes.
-- [[:where()]] وزنها صفر، والمسافة و [[>]] ملهمش وزن.
-- لو اتساووا: الأخير في الملف يكسب.
-- [[style=""]] أقوى من الـ selectors، و [[!important]] أقوى من الكل. استخدم classes بس، وارجع لـ DevTools › Styles تشوف مين كسب قبل ما تفكر في [[!important]].`,
-          lines: [
-            "(0,0,1): نوع عنصر بس. أضعف حاجة.",
-            "(0,1,0): class واحدة تغلب أي عدد أنواع.",
-            R`(0,2,0): اتنين class ([[.nav]] و [[.btn]])، فبتغلب [[.btn]] لوحدها اللي (0,1,0)، والزرار بقى أخضر.`,
-            R`(0,2,1): class و pseudo-class ([[:hover]] وزنها زي class) ونوع.`,
-            R`(0,2,0): زي [[.nav .btn]] بالظبط، فاللي مكتوبة آخر تكسب، ودي هي.`,
-            R`(0,1,0): [[:where()]] وزنها صفر مهما كان جواها، فدي وزنها وزن [[.btn]] بس.`,
-            "(1,1,1): فيها id، فتغلب كل اللي فوق حتى لو فيهم عشر classes."
-          ],
-          sol: R`الزرار هيطلع أحمر، وهيفضل أحمر حتى لما تقف عليه بالماوس. في Styles هتلاقي [[nav#main .btn]] فوق ومش متشطّب، وكل اللي تحته ([[.btn.primary]] و [[.nav .btn]] و [[:where(.nav) .btn]] و [[.btn]] و [[button]]) الـ color بتاعهم متشطّب.
-
-الأرقام اللي هتظهر لما تقف على كل selector: [[nav#main .btn]] ‏(1,1,1)، و [[nav .btn:hover]] ‏(0,2,1)، و [[.nav .btn]] و [[.btn.primary]] ‏(0,2,0) (متعادلين، والأخير في الملف كسب بينهم)، و [[:where(.nav) .btn]] ‏(0,1,0) لأن [[:where]] بيصفّر اللي جواه، و [[.btn]] ‏(0,1,0)، و [[button]] ‏(0,0,1). الـ id لوحده بيغلب أي عدد من الكلاسات.
-
-الغلط الشائع: تتوقع الـ hover يطلّع برتقاني لأنه «أحدث». (0,2,1) أقل من (1,1,1) فبيخسر. ولو امسحت سطر [[nav#main .btn]] هيبقى أبيض، ومع الـ hover برتقاني لأن (0,2,1) أكبر من (0,2,0).`
-        },
-        {
-          cmd: "cascade",
-          ref: [
-            { t: "MDN: Introduction to the CSS cascade", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Introduction" },
-            { t: "MDN: Inheritance", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Inheritance" },
-            { t: "MDN: color", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color" },
-            { t: "MDN: @layer", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@layer" },
-            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ body عليه [[font-family: "Times New Roman"]]. زرار [[<button>]] جوه الصفحة خطه هيبقى إيه؟ ورث من الـ body؟`, done: R`لأ: في Chrome على ويندوز الزرار طلع [[Arial]] وحجمه [[13.3333px]]، لأن المتصفح بيدّي الأزرار والحقول خط من عنده بيغلب الوراثة. الحل اللي في كل reset: [[button, input, select, textarea { font: inherit; }]].`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الخط</title>
-<style>
-  body { font-family: "Times New Roman"; }
-</style>
-</head>
-<body>
-<p>فقرة</p>
-<button>زرار</button>
-<input value="حقل">
-</body>
-</html>
-~~~
-
-**الإجابة:** لأ، الزرار مش بيورث. [[font-family]] خاصية بتتورّث فعلًا، بس الوراثة أضعف حاجة في الـ cascade: أي قاعدة على العنصر نفسه تغلبها. والمتصفح عنده ملف CSS داخلي بيدّي الأزرار والحقول خط وحجم من عنده، وده بيغلب الوراثة.
-
-**الحل اللي في كل reset:**
-
-~~~css
-button, input, select, textarea {
-  font: inherit;
-}
-~~~
-
-[[inherit]] بتقول «خد قيمة أبوك» صراحة، فبقت قاعدة على العنصر نفسه.
-
-**الغلطة الشائعة:** تعمل خط عربي جميل على الـ body، والأزرار تفضل Arial، وتزوّد الخط على كل زرار لوحده.
-
-~~~text الناتج
-                   font-family            font-size
-الفقرة             "Times New Roman"        16px
-الزرار قبل         Arial                  13.3333px
-الزرار بعد inherit "Times New Roman"        16px
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقعك فيه [[.btn { padding: 4px; }]] ومكتبة جاهزة (مربوطة بعدك) فيها [[.btn { padding: 20px; }]]، فأزرارك كلها اتغيّرت. حطها في طبقة: [[@import url("lib.css") layer(vendor);]] في أول ملفك.`, done: R`الـ padding رجع [[4px]] في Computed مع إن المكتبة لسه موجودة: قواعدك اللي برّه أي طبقة بتغلب أي طبقة، مهما كان ترتيب الملفات أو الـ specificity جوه المكتبة.`, sol: R`~~~css style.css
-@import url("lib.css") layer(vendor);
-
-.btn { padding: 4px; }
-~~~
-
-~~~css lib.css
-.btn { padding: 20px; }
-~~~
-
-~~~html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الأزرار</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<button class="btn">زرار</button>
-</body>
-</html>
-~~~
-
-~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الأزرار</title>
-<style>
-@import url("lib.css") layer(vendor);
-
-.btn { padding: 4px; }
-</style>
-</head>
-<body>
-<button class="btn">زرار</button>
-</body>
-</html>
-~~~
-
-**ليه ده بيحل المشكلة:** قبل كده الاتنين في نفس المكانة، ونفس الوزن، فاللي آخر كسب. الـ [[layer(vendor)]] بيحط كل المكتبة في طبقة. والقاعدة: **أي CSS برّه الطبقات بيغلب أي CSS جوه طبقة**، مهما كان الوزن ومهما كان الترتيب.
-
-[[@import]] لازم يبقى أول سطر في الملف، قبل أي قاعدة، وإلا المتصفح بيتجاهله.
-
-**الغلطة الشائعة:** تظن إن الحل تحويل قواعدك لـ [[#id]] أو [[!important]]. وفي الـ layers الـ [[!important]] بيتقلب: important في طبقة بيغلب important برّه الطبقات، فمتستخدمهوش كحل هنا.
-
-~~~text الناتج
-قبل (lib.css مربوط بعد ملفك): padding = 20px
-بعد (layer):                  padding = 4px
-حتى لو المكتبة فيها #x .btn { padding: 20px }: 4px
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** ملف CSS واحد بـ [[@layer reset, components, utilities;]]: reset فيه box-sizing و [[font: inherit]] و margin صفر، و components فيه [[.card]] بـ [[display: grid]] و [[margin-block-end: 24px]]، و utilities فيه [[.mt-0 { margin-block-start: 0; }]] و [[.hidden { display: none; }]].`, done: R`[[<div class="card hidden">]] مختفي رغم إن الاتنين class واحدة، لأن utilities آخر طبقة. ولو بدّلت ترتيب الطبقات في أول سطر بس (من غير ما تحرّك القواعد) الكارت بيرجع يظهر.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطبقات</title>
-<style>
-  @layer reset, components, utilities;
-
-  @layer reset {
-    *, *::before, *::after { box-sizing: border-box; }
-    body, h1, p { margin: 0; }
-    button, input { font: inherit; }
-  }
-
-  @layer components {
-    .card {
-      display: grid;
-      gap: 8px;
-      padding: 16px;
-      margin-block-end: 24px;
-      border: 1px solid #d4d4d8;
-    }
-  }
-
-  @layer utilities {
-    .mt-0 { margin-block-start: 0; }
-    .hidden { display: none; }
-  }
-</style>
-</head>
-<body>
 <main>
-  <h1>الكروت</h1>
-  <div id="a" class="card">كارت عادي</div>
-  <div id="b" class="card hidden">كارت مخفي</div>
+  <nav aria-label="مسار الصفحة">
+    <ol>
+      <li><a href="#home">الرئيسية</a></li>
+      <li><a href="#books">الكتب</a></li>
+      <li><a href="#novels">روايات</a></li>
+      <li><a href="#moon-house" aria-current="page">بيت القمر</a></li>
+    </ol>
+  </nav>
+  <h1 id="moon-house">بيت القمر</h1>
+  <p>رواية من ٣٢٠ صفحة عن بيت قديم على البحر.</p>
 </main>
 </body>
 </html>
 ~~~
 
-**السطر الأول هو كل الحكاية:** [[@layer reset, components, utilities;]] بيحدد الترتيب من الأضعف للأقوى، مهما كان مكان القواعد نفسها في الملف.
+**ليه كده:**
 
-[[.card]] و [[.hidden]] نفس الوزن (0,1,0). لكن الطبقات بتتقارن **قبل** الوزن، و [[utilities]] آخر طبقة فتكسب. فتقدر تطمن إن [[.hidden]] هتشتغل دايمًا، من غير [[!important]].
+- قايمة التنقل [[<ul>]]: ترتيب «العروض» و «تواصل» مش فارق في المعنى. المسار [[<ol>]]: كل مستوى جوه اللي قبله.
+- الاتنين [[<nav>]]، وكل واحد ليه [[aria-label]] مختلف. من غيره قارئ الشاشة يعرض اتنين «navigation» ومحدش يعرف يفرّق.
+- المسار جوه [[<main>]] لأنه بيوصف مكان المحتوى ده، وقايمة التنقل في الـ [[<header>]] لأنها بتاعة الموقع كله.
+- في قايمة التنقل [[aria-current="page"]] على «الكتب» (القسم اللي انت فيه)، وفي المسار على «بيت القمر» (الصفحة نفسها).
+- الـ [[href]] هنا [[#...]] عشان المعاينة. في الموقع: [[/books]] و [[/books/novels]] وهكذا.
 
-**الغلطة الشائعة:** تسيب قواعد برّه أي طبقة وهي المفروض تبقى جوه. أي قاعدة برّه بتغلب كل الطبقات، حتى [[utilities]]، فـ [[.hidden]] هتخسر قدامها.
-
-~~~text الناتج
-.card hidden: display = none  (مخفي)
-بعد تبديل أول سطر لـ utilities, reset, components:
-.card hidden: display = grid  (ظهر، من غير ما نحرّك ولا قاعدة)
-box-sizing للكارت = border-box
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[inherit]] و [[initial]] و [[unset]] و [[revert]]، وجرّب الأربعة على [[color]] لـ p جوه div أحمر، وعلى [[display]] لـ div.`, done: R`على color: inherit و unset أحمر (color بيتورّث)، و initial أسود، و revert كمان أحمر (المتصفح مالوش لون خاص بالـ p، فرجع للوراثة). وعلى display: initial و unset بقوا [[inline]] (مش block!)، و revert رجّع [[block]]. فعرفت إن initial مش «بتاع المتصفح».`, sol: R`~~~live 200 200
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>القيم</title>
-<style>
-  .red { color: red; }
-  .i1 { color: inherit; }
-  .i2 { color: initial; }
-  .i3 { color: unset; }
-  .i4 { color: revert; }
-  .d1 { display: initial; }
-  .d2 { display: unset; }
-  .d3 { display: revert; }
-</style>
-</head>
-<body>
-<div class="red">
-  <p class="i1">inherit</p>
-  <p class="i2">initial</p>
-  <p class="i3">unset</p>
-  <p class="i4">revert</p>
-</div>
-<div class="d1">a</div>
-<div class="d2">b</div>
-<div class="d3">c</div>
-</body>
-</html>
-~~~
-
-| الكلمة | معناها |
-|---|---|
-| [[inherit]] | خد قيمة الأب، حتى لو الخاصية مبتتورّثش |
-| [[initial]] | القيمة الأولية من مواصفة CSS، مش بتاعة المتصفح |
-| [[unset]] | لو الخاصية بتتورّث يبقى inherit، ولو لأ يبقى initial |
-| [[revert]] | ارجع لشكل المتصفح الافتراضي لو فيه، وبعدها الوراثة |
-
-**ليه** [[display: initial]] **طلع inline:** القيمة الأولية لـ [[display]] في المواصفة هي [[inline]] لكل العناصر. إن div يبقى block ده قاعدة في ملف المتصفح، مش في المواصفة. عشان كده [[revert]] رجّعته block.
-
-**الغلطة الشائعة:** تكتب [[display: initial]] عشان «ترجّع» عنصر مخفي. الـ div هيرجع inline وشكله هيتكسر. اكتب [[revert]].
+**الغلطة الشائعة:** تكتب الفاصل «‹» أو «/» بإيدك بين الروابط جوه الـ [[<li>]]. قارئ الشاشة هيقراه مع كل عنصر. الفاصل زينة وبيتحط بالـ CSS.
 
 ~~~text الناتج
-color لـ p جوه div أحمر:
-inherit  rgb(255, 0, 0)
-initial  rgb(0, 0, 0)
-unset    rgb(255, 0, 0)
-revert   rgb(255, 0, 0)
+شجرة الـ accessibility من Chrome:
+banner
+  link "مكتبة الحروف"
+  navigation "الرئيسية"
+    list   4 listitem: الرئيسية ، الكتب ، العروض ، تواصل
+main
+  navigation "مسار الصفحة"
+    list   4 listitem: الرئيسية ، الكتب ، روايات ، بيت القمر
+  heading "بيت القمر" level=1
 
-display لـ div:
-initial  inline
-unset    inline
-revert   block
+ul=1  ol=1  li=8  nav=2   العلامات: • • • •   1 2 3 4
+عدد aria-current="page": 2 (واحد في كل nav)
+Nu Html Checker: صفر errors
 ~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** افتح أي صفحة كبيرة (موقع أخبار أو متجر)، واختار زرار، وفي DevTools › Styles عدّ: كام قاعدة بتطبّق عليه؟ كام واحدة متشطّب عليها؟ وكام [[!important]]؟ وفي Computed اضغط السهم جنب [[color]] تعرف مين كسب.`, done: R`كتبت الأرقام التلاتة لزرار واحد، وعرفت القاعدة اللي كسبت في color و padding واسم الملف بتاعها، وكتبت جملة: الكسب كان بسبب الطبقة ولا الـ specificity ولا الترتيب.`, sol: R`التمرين على موقع حقيقي من اختيارك، فالأرقام هتختلف. عشان تشوف شكل الإجابة، ده معمل بيقلّد موقع متجر متخيل، بنفس طريقة القراءة:
-
-~~~html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متجر</title>
-<link rel="stylesheet" href="vendor.css">
-<style>
-  .btn { padding: 12px 24px; }
-  .product .btn { color: white; }
-  .btn-buy { background: green !important; }
-</style>
-</head>
-<body>
-<main class="product">
-  <h1>المنتج</h1>
-  <button class="btn btn-buy">اشتري</button>
-</main>
-</body>
-</html>
-~~~
-
-~~~css vendor.css
-.btn { padding: 8px; color: black; background: gray; border: 0; }
-.btn:hover { background: darkgray; }
-~~~
-
-~~~view 130 130 الشكل في المتصفح (من ملفات الحل)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متجر</title>
-<style>
-.btn { padding: 8px; color: black; background: gray; border: 0; }
-.btn:hover { background: darkgray; }
-</style>
-<style>
-  .btn { padding: 12px 24px; }
-  .product .btn { color: white; }
-  .btn-buy { background: green !important; }
-</style>
-</head>
-<body>
-<main class="product">
-  <h1>المنتج</h1>
-  <button class="btn btn-buy">اشتري</button>
-</main>
-</body>
-</html>
-~~~
-
-**الخطوات في DevTools:** كليك يمين على الزرار، ثم Inspect. في Styles عدّ القواعد واللي متشطّب عليه. وفي Computed دوّر على [[color]] واضغط السهم: هيوديك للقاعدة الكسبانة والملف بتاعها.
-
-**الغلطة الشائعة:** تعد القواعد من غير ما تفرق بين اللي جاي من «user agent stylesheet» وقواعد الموقع. والموقع الكبير غالبًا CSS بتاعه متجمّع في ملف واحد، فاسم الملف مش هيوضّح المصدر.
-
-**إجابة نموذجية على المعمل:**
-
-~~~text الناتج
-القواعد اللي بتطبّق (من غير بتاعة المتصفح): 4
-  .btn
-  .btn
-  .btn-buy
-  .product .btn
-
-السطور المتشطّب عليها: 3  (.btn → padding ، .btn → color ، .btn → background)
-عدد !important: 1
-
-color = rgb(255, 255, 255): كسبت .product .btn من ملف <style>
-       السبب: الـ specificity (0,2,0) أكبر من .btn في vendor.css (0,1,0)
-padding = 12px 24px: كسبت .btn من ملف <style>
-       السبب: الترتيب، نفس الوزن واللي بعد يكسب
-background = rgb(0, 128, 0): كسبت .btn-buy
-       السبب: !important
-~~~` },
-          ],
-          title: "قاعدتين بيتخانقوا: الترتيب الكامل للي بيكسب",
-          desc: R`الـ cascade هو الخوارزمية اللي بتقرر القيمة النهائية لكل خاصية. بالترتيب: [[!important]] الأول، وبعدين الـ inline style، وبعدين الـ layer ([[@layer]])، وبعدين الـ specificity، وآخر حاجة الترتيب في الملف (الآخر يكسب).
-
-ولو مفيش ولا قاعدة على العنصر، بعض الخصائص بتتورث من الأب (زي [[color]] و [[font-family]] و [[line-height]])، وبعضها لأ (زي [[padding]] و [[border]] و [[background]]).`,
-          example: R`@layer base, components;
-@layer base {
-  a { color: blue; }
-}
-@layer components {
-  .link { color: green; }
-}
-a { color: red; }
-body { color: black; font-family: system-ui; }
-.card { border: inherit; }`,
-          try: R`حط الكود ده في صفحة فيها [[<a class="link">]] وشوف لونه أحمر. امسح سطر [[a { color: red; }]] يبقى أخضر. وبعدين في DevTools › Elements › Computed دوّر على color واضغط على السهم يوديك للقاعدة اللي كسبت.`,
-          flag: "script",
-          deep: {
-            why: "الـ CSS اسمه Cascading Style Sheets، والـ cascade هو قلبه. أي تنسيق فيه أكتر من مصدر (ملفك، ومكتبة، و Tailwind، والمتصفح نفسه) هيبقى فيه تعارض، ولازم قاعدة واضحة تحسمه.",
-            how: R`الترتيب الكامل من الأقوى: 1) الـ origin والـ importance: [[!important]] بتاعة المستخدم والمتصفح، وبعدين [[!important]] بتاعتك، وبعدين العادي بتاعك، وبعدين تنسيق المتصفح الافتراضي. 2) الـ inline style. 3) الـ layers: في الكلام العادي اللي برا أي layer أقوى، وبين الـ layers اللي اتعلنت آخر أقوى (وفي [[!important]] الترتيب بيتعكس). 4) الـ specificity. 5) الترتيب في الكود.
-
-ودا مهم جدًا مع Tailwind v4: هو بيحط كل حاجة في layers حقيقية ([[theme]] و [[base]] و [[components]] و [[utilities]]). فأي CSS تكتبه في globals.css برا layer بيغلب كل الـ utilities، حتى لو الـ specificity بتاعته أقل. عايز قاعدة تتغلب بـ utility؟ حطها في [[@layer base]] أو [[@layer components]].
-
-الوراثة: خصائص الكلام (color و font و line-height و direction و visibility) بتتورث، لأن منطقي إن الكلام جوه كارت ياخد خط الكارت. خصائص الصندوق (margin و padding و border و background و width) مش بتتورث. وعندك كلمات خاصة لأي خاصية: [[inherit]] (خد من الأب)، و [[initial]] (القيمة الافتراضية للخاصية)، و [[unset]] (inherit لو بتتورث و initial لو لأ).`,
-            when: "لما تكتب CSS جنب مكتبة (Tailwind أو Bootstrap)، وعايز تتحكم مين يغلب مين من غير !important.",
-            mistakes: R`تكتب CSS عادي في globals.css جنب Tailwind v4 وتستغرب إن [[p-4]] مش شغال على العنصر: قاعدتك برا layer فبتكسب. وتفتكر إن [[!important]] حل: بيحل مرة ويعمل مشكلة كل مرة بعدها. وتستنى إن [[padding]] يتورث من الأب.`
-          },
-          teach: R`## الفكرة في سطرين
-
-3 قواعد بيلوّنوا اللينك بـ 3 ألوان، والـ cascade هو اللي بيقرر مين يكسب. والفكرة الجديدة هنا الـ layers ([[@layer]]): طبقات بتحدد الأولوية **قبل** ما الـ specificity تتحسب أصلًا. وآخر سطرين عن الوراثة. جرّبت الكود في Chrome (headless) على الصفحة دي، وقريت [[getComputedStyle]]:
-
-~~~text index.html
-<a class="link" href="#">لينك</a>
-<a href="#">لينك عادي</a>
-<section style="border: 3px dashed green; padding: 4px">
-  <div class="card">كارت</div>
-  <div class="plain">عادي</div>
-</section>
-~~~
-
----
-
-## ١. [[@layer base, components;]]
-
-[[@]] في CSS معناها at-rule: أمر للمتصفح مش قاعدة تنسيق. السطر ده بيعلن أسامي الطبقات **وترتيبها**: اللي مكتوبة آخر أقوى. فـ [[components]] أقوى من [[base]].
-
----
-
-## ٢. القواعد جوه الطبقات
-
-~~~text style.css
-@layer base {
-  a { color: blue; }
-}
-@layer components {
-  .link { color: green; }
-}
-~~~
-
-[[@layer base { ... }]] = القواعد اللي جوه القوسين دول تبع طبقة base. لاحظ إن [[a]] وزنه (0,0,1) و [[.link]] وزنه (0,1,0)، بس ده مش هيفرق، الطبقة هي اللي بتحسم.
-
----
-
-## ٣. قاعدة برا أي طبقة
-
-~~~text style.css
-a { color: red; }
-~~~
-
-القواعد اللي برا الطبقات أقوى من أي طبقة. والنتايج:
-
-| الكود | [[.link]] | اللينك العادي |
-|---|---|---|
-| زي ما هو | [[rgb(255, 0, 0)]] أحمر | أحمر |
-| من غير [[a { color: red; }]] | [[rgb(0, 128, 0)]] أخضر | [[rgb(0, 0, 255)]] أزرق |
-| ومعاه قلبت الترتيب لـ [[@layer components, base;]] | [[rgb(0, 0, 255)]] أزرق | أزرق |
-| من غير أي CSS | [[rgb(0, 0, 238)]] | [[rgb(0, 0, 238)]] |
-
-اقرا الجدول:
-
-1. السطر الأول: [[a]] (أضعف selector) غلب [[.link]] لأنه برا الطبقات.
-2. التاني: [[.link]] أخضر لأن components بعد base. واللينك العادي أزرق لأن [[.link]] مش بتمسكه.
-3. التالت: لما base بقت الأخيرة، [[a]] كسب [[.link]] رغم إن وزنه أقل. ده الدليل إن الطبقة بتتحسب قبل الـ specificity.
-4. الرابع: [[rgb(0, 0, 238)]] لون اللينك من تنسيق المتصفح نفسه.
-
-### و [[!important]]؟
-
-جرّبت نفس الـ 3 قواعد بس كلهم [[!important]]: اللون بقى **أزرق** (بتاع base). مع [[!important]] الترتيب بيتعكس: الطبقة الأولى أقوى، والقواعد اللي برا الطبقات أضعف.
-
----
-
-## ٤. الوراثة: [[body { color: black; font-family: system-ui; }]]
-
-- [[font-family]]: الخط. [[system-ui]] = خط نظام التشغيل.
-- لو عنصر ملوش قاعدة لخاصية بتتورث، بياخد قيمة أبوه.
-
-اللي اتقاس على اللينك:
-
-| الخاصية | قيمتها على اللينك | ليه |
-|---|---|---|
-| [[font-family]] | [[system-ui]] | بتتورث، واللينك ملوش قاعدة font. (من غير CSS كانت [[Times New Roman]]) |
-| [[color]] | أحمر مش أسود | الـ color بيتورث، بس اللينك عليه قاعدة مباشرة (منك أو من المتصفح نفسه) والوراثة بتخسر قدام أي قاعدة مباشرة |
-| [[padding]] | [[0px]] | مش بيتورث أصلًا |
-
-حتى في حالة «من غير أي CSS» الـ body أسود واللينك فضل [[rgb(0, 0, 238)]]: قاعدة المتصفح للينكات مباشرة على الـ a، فغلبت الوراثة.
-
----
-
-## ٥. [[.card { border: inherit; }]]
-
-[[border]] مش بيتورث لوحده. [[inherit]] كلمة بتجبر الخاصية تاخد قيمة الأب:
-
-| العنصر | [[border]] |
-|---|---|
-| [[.card]] | [[3px dashed rgb(0, 128, 0)]] (نفس الـ section) |
-| [[.plain]] | [[0px none]] |
-
-[[dashed]] = خط متقطّع.
-
----
-
-## الخلاصة
-
-الترتيب من الأقوى للأضعف (للقواعد العادية من غير [[!important]]):
-
-| الخطوة | السؤال |
-|---|---|
-| ١ | inline style؟ |
-| ٢ | برا الطبقات ولا جوه؟ (برا أقوى، وبين الطبقات الأخيرة أقوى) |
-| ٣ | الـ specificity |
-| ٤ | الأخير في الملف |
-| ٥ | مفيش ولا قاعدة؟ وراثة من الأب (لو الخاصية بتتورث) |
-
-- Tailwind v4 بيحط الـ utilities في طبقة، فأي CSS برا الطبقات بيغلبها.
-- خصائص الكلام بتتورث (color و font)، وخصائص الصندوق لأ (padding و border و background).`,
-          lines: [
-            "بنعلن ترتيب الـ layers: اللي بعد أقوى. components تغلب base مهما كانت الـ specificity.",
-            "بداية layer اسمها base.",
-            R`كل اللينكات أزرق، بس جوه أضعف طبقة: أي قاعدة في components أو برا الطبقات هتغلبها.`,
-            "قفلة الـ layer.",
-            R`بداية طبقة components: أقوى من base عشان اتكتبت بعدها في سطر [[@layer base, components;]]، مش عشان مكانها في الملف.`,
-            R`[[.link]] أخضر، وبتغلب اللي في base.`,
-            "قفلة.",
-            R`قاعدة برا أي layer: بتغلب كل الـ layers، فكل اللينكات هتبقى حمرا حتى [[.link]].`,
-            R`[[color]] و [[font-family]] بيتورّثوا: كل اللي جوه body هياخدهم لو ملوش قاعدة.`,
-            R`[[border]] مش بيتورّث، بس [[inherit]] بيجبره ياخد قيمة الأب.`
-          ],
-          sol: R`بالكود زي ما هو: اللينك أحمر. الـ [[a { color: red; }]] برا أي layer، والقواعد اللي برا الـ layers بتكسب أي قاعدة جوه layer مهما كانت الـ specificity، فحتى [[.link]] (كلاس) خسر قدام [[a]] (عنصر).
-
-بعد ما تمسح السطر: أخضر، لأن [[components]] متعرّف بعد [[base]] في أول سطر، فهو الأقوى بين الطبقتين، مش عشان [[.link]] specificity أعلى. (لو قلبت الترتيب لـ [[@layer components, base;]] هيبقى أزرق رغم إن [[a]] أضعف.) في Computed › color السهم بيوديك لـ [[.link]] جوه [[@layer components]]، وتحتها القواعد اللي خسرت.
-
-والـ [[font-family]] اللي على body هتلاقيها في Computed على اللينك كمان لأنها بتتورث، لكن [[border]] مش بيتورث لوحده، عشان كده محتاج [[inherit]] صريح. لو اللينك طلع أزرق من الأول يبقى غالبًا الـ CSS متحطّش خالص وده لون المتصفح الافتراضي للينكات.`
-        },
-        {
-          cmd: "box model",
-          ref: [
-            { t: "MDN: Introduction to the CSS basic box model", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Introduction" },
-            { t: "MDN: box-sizing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/box-sizing" },
-            { t: "MDN: Mastering margin collapsing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Margin_collapsing" },
-            { t: "MDN: Universal selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Universal_selectors" },
-            { t: "MDN: Selector list", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Selector_list" },
-            { t: "MDN: Next-sibling combinator", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Next-sibling_combinator" },
-            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
-            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`**مسألة:** [[width: 300px; padding: 20px; border: 5px solid; margin: 10px]]. احسب العرض اللي العنصر بياخده على الشاشة (من الحد للحد) والمساحة اللي بيحجزها شامل الـ margin، مرة بـ [[content-box]] ومرة بـ [[border-box]].`, done: R`content-box: الصندوق 350 (300 + 40 + 10) والمحجوز 370، والمحتوى 300. border-box: الصندوق 300 والمحجوز 320 والمحتوى 250. والرسمة في Computed قالت نفس الأرقام.`, sol: R`~~~live 170 170
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الصندوق</title>
-<style>
-  .box { width: 300px; padding: 20px; border: 5px solid; margin: 10px; }
-  .a { box-sizing: content-box; }
-  .b { box-sizing: border-box; }
-</style>
-</head>
-<body>
-<div class="box a">content-box</div>
-<div class="box b">border-box</div>
-</body>
-</html>
-~~~
-
-**الحساب بالأرقام:**
-
-| | content-box | border-box |
-|---|---|---|
-| المحتوى | 300 | 300 − 40 − 10 = 250 |
-| الصندوق من الحد للحد | 300 + 40 + 10 = 350 | 300 |
-| المساحة المحجوزة بالـ margin | 350 + 20 = 370 | 300 + 20 = 320 |
-
-**الفكرة:** [[width]] في [[content-box]] معناها عرض المحتوى، فالـ padding والـ border بيزيدوا عليه. وفي [[border-box]] معناها الصندوق كله، فهم بياكلوا من المحتوى.
-
-والـ margin برّه الصندوق في الحالتين، و [[getBoundingClientRect]] مبيحسبهوش.
-
-**الغلطة الشائعة:** تعتبر [[width: 300px]] معناها إن العنصر 300 على الشاشة، فتتفاجئ بـ 350. عشان كده كل reset حديث بيحط [[box-sizing: border-box]].
-
-~~~text الناتج
-                       الصندوق    المحتوى    بالـ margin
-content-box            350      300      370
-border-box             300      250      320
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين ورا بعض: الأول [[margin-bottom: 24px]] والتاني [[margin-top: 16px]]. المسافة بينهم كام؟ وبعدين حطهم جوه أب عليه [[display: flex; flex-direction: column]] وقيس تاني.`, done: R`عادي المسافة 24 (الـ margins بيتداخلوا وياخد الأكبر)، وجوه flex بقت 40 (الـ flex مفيهوش margin collapse). ودا سبب إن [[gap]] أريح من الـ margins في الـ layouts.`, sol: R`~~~live 240 240
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>margin</title>
-<style>
-  .a { margin-bottom: 24px; height: 40px; background: #bfdbfe; }
-  .b { margin-top: 16px; height: 40px; background: #bbf7d0; }
-  .flex { display: flex; flex-direction: column; }
-</style>
-</head>
-<body>
-<section id="n">
-  <div class="a"></div>
-  <div class="b"></div>
-</section>
-<section id="f" class="flex">
-  <div class="a"></div>
-  <div class="b"></div>
-</section>
-</body>
-</html>
-~~~
-
-**الإجابة:** في الوضع العادي 24، وجوه flex بقت 40.
-
-في الـ block العادي الـ margins الرأسية اللي بتتقابل بتتداخل، ده اسمه margin collapse، والمسافة بتبقى **أكبر** الاتنين مش مجموعهم. دي كانت فكرة قديمة للنصوص: مسافة بعد العنوان ومسافة قبل الفقرة ميتجمعوش.
-
-جوه flex و grid مفيش collapse، فالاتنين بيتجمعوا.
-
-**ليه** [[gap]] **أريح:** بتحط المسافة في الأب مرة واحدة، فمفيش حساب، ومفيش margin زيادة بعد آخر عنصر.
-
-**الغلطة الشائعة:** تزوّد margin على عنصر ومتلاقيش المسافة زادت، لأن العنصر اللي جنبه margin بتاعه أكبر. وفيه حالات تانية للـ collapse، زي margin أول ابن مع أبوه.
-
-~~~text الناتج
-عادي: المسافة = 24px  (الأكبر)
-flex: المسافة = 40px  (المجموع)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كارت باقة عليه [[width: 100%; padding: 24px; border: 2px solid]] جوه صندوق على موبايل 360، وطالع برّه الشاشة من الشمال وعامل scroll أفقي.`, done: R`قبل: الكارت 364 جوه صندوق 312 (اتقاس في Chrome)، يعني طالع 52px. بعد [[box-sizing: border-box]] الكارت بقى 312 بالظبط ومفيش scroll أفقي.`, sol: R`~~~live 210 210
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الباقة</title>
-<style>
-  body { margin: 0; font-family: system-ui; }
-  .box { padding: 24px; }
-  .plan {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 24px;
-    border: 2px solid #0f766e;
-  }
-</style>
-</head>
-<body>
-<main class="box">
-  <h1>الباقة</h1>
-  <article class="plan">٣ شهور، ١٣٠٠ جنيه</article>
-</main>
-</body>
-</html>
-~~~
-
-**السبب:** [[width: 100%]] يعني عرض الصندوق الأب، 312 هنا. ومن غير [[border-box]] الـ padding والـ border بيتزوّدوا فوقها: 312 + 48 + 4 = 364.
-
-ولأن الصفحة RTL، العنصر بيبدأ من اليمين، فالزيادة بتطلع من **الشمال**.
-
-**الحل على الموقع كله:** مش كارت كارت، سطر واحد في الـ reset:
-
-~~~css
-*, *::before, *::after { box-sizing: border-box; }
-~~~
-
-**الغلطة الشائعة:** تعالجها بـ [[width: calc(100% - 52px)]]. هتشتغل، بس كل ما الـ padding يتغيّر الرقم هيتغيّر.
-
-~~~text الناتج
-على 360:
-             الأب    الكارت    طالع     overflow الصفحة
-قبل          312     364     52px     28px
-بعد          312     312     0px      0px
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شريط مايل بين جزئين في الصفحة: [[width: 106%; transform: rotate(-1.4deg)]]، وعامل scroll أفقي على الموبايل. حد اقترح [[html, body { overflow-x: hidden }]].`, done: R`قبل: [[scrollWidth]] كان 382 على شاشة 360. بعد [[overflow-x: clip]] على الـ section اللي فيه الشريط بس بقى 360، من غير ما تلمس الـ body (عشان الـ sticky يفضل شغال، شوف تمرين «جدول responsive»).`, sol: R`~~~live 180 180
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الشريط</title>
-<style>
-  body { margin: 0; font-family: system-ui; }
-  .band { overflow-x: clip; padding-block: 24px; }
-  .strip {
-    box-sizing: border-box;
-    width: 106%;
-    margin-inline-start: -3%;
-    padding: 12px;
-    background: #0f766e;
-    color: #fff;
-    text-align: center;
-    transform: rotate(-1.4deg);
-  }
-</style>
-</head>
-<body>
-<main>
-  <h1>العروض</h1>
-  <section class="band">
-    <div class="strip">خصم ٢٠٪ النهارده بس</div>
-  </section>
-</main>
-</body>
-</html>
-~~~
-
-**ليه مش** [[html, body]]**:** [[overflow-x: hidden]] على الصفحة بيحل الشكل، بس بيكسر أي [[position: sticky]] فيها، زي تمرين «جدول responsive». وهو كمان حل واسع لمشكلة في مكان واحد.
-
-**الحل المحدود:** [[overflow-x: clip]] على الـ section اللي فيه الشريط بس. [[clip]] بيقص من غير ما يعمل منطقة scroll.
-
-و [[padding-block]] عشان الشريط المايل ميتقصّش من فوق وتحت، لأن [[overflow-x: clip]] بيقص أفقي بس، بس لو كتبت [[overflow: clip]] هيقص الاتنين.
-
-و [[margin-inline-start: -3%]] زيادة صغيرة: بتوسّط الشريط، فالـ 6% الزيادة تطلع من الناحيتين بالتساوي.
-
-**الغلطة الشائعة:** تخلي الشريط [[width: 100%]] عشان تتجنب المشكلة. الزوايا المايلة هتبان فاضية في الجناب، وده سبب الـ 106%.
-
-~~~text الناتج
-على 360:
-scrollWidth قبل (من غير clip): 382
-scrollWidth بعد:               360
-sticky في نفس الصفحة بيشتغل: top = 0 بعد النزول
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ٤ كروت حالة لجدول تمارين متخيل (مكتمل، ناقص، تحذير، راحة): فوق كل كارت شريط 4px بلون الحالة بـ [[::before]]، وخلفية الكارت نفس اللون فاتح جدًا، ولما الماوس ييجي عليه [[transform: translateY(-4px)]] وظل أكبر.`, done: R`الشريط جوه الكارت مش زايد عليه (الكارت ارتفاعه ثابت قبل وبعد الشريط، أو محسوب)، والـ hover مش بيحرّك الكروت اللي جنبه (اتأكد إن مكانهم ثابت)، والحالة مكتوبة كلام كمان مش لون بس.`, sol: R`~~~live 250 410
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جدول التمارين</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; max-width: 760px; margin-inline: auto; }
-  .status {
-    --c: #15803d;
-    --soft: #f0fdf4;
-    position: relative;
-    overflow: hidden;
-    padding: 20px 16px 16px;
-    background: var(--soft);
-    border-radius: 8px;
-    transition: transform .15s, box-shadow .15s;
-  }
-  .status::before {
-    content: "";
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline: 0;
-    height: 4px;
-    background: var(--c);
-  }
-  .status:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgb(0 0 0 / .15);
-  }
-  .status--miss { --c: #b91c1c; --soft: #fef2f2; }
-  .status--warn { --c: #a16207; --soft: #fefce8; }
-  .status--rest { --c: #1d4ed8; --soft: #eff6ff; }
-</style>
-</head>
-<body>
-<main>
-<h1>تمارين الأسبوع</h1>
-<div class="grid">
-  <article class="status"><h2>السبت</h2><p>مكتمل</p></article>
-  <article class="status status--miss"><h2>الأحد</h2><p>ناقص</p></article>
-  <article class="status status--warn"><h2>الاتنين</h2><p>تحذير</p></article>
-  <article class="status status--rest"><h2>التلات</h2><p>راحة</p></article>
-</div>
-</main>
-</body>
-</html>
-~~~
-
-**اللي يفرق هنا:**
-
-- [[position: absolute]] على الشريط: مش بياخد مكان، فالكارت ارتفاعه مبيتغيّرش.
-- [[overflow: hidden]]: عشان الشريط ياخد انحناء الزوايا بتاع الكارت.
-- [[--c]] و [[--soft]]: كل modifier بيغيّر متغيرين بس.
-- [[transform]]: بيحرّك العنصر في الرسم، من غير ما يغيّر الـ layout، فالجيران مبيتحركوش. لو استخدمت [[margin-top: -4px]] الصف كله هيتهز.
-
-**الغلطة الشائعة:** الشريط بـ [[border-top: 4px solid]]. الحدود بتزوّد ارتفاع الكارت، والزوايا المدورة بتخلي طرفها رفيع.
-
-~~~text الناتج
-ارتفاع الكارت بالشريط 144.81px، ومن غير الشريط 144.81px
-مكان الكارت اللي جنبه قبل hover x=646 y=85.88، وبعده x=646 y=85.88
-الكارت نفسه طلع 4px
-أقل تباين لكلام الحالة: 19.2:1
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'سريع', t: R`**قارن وقيس:** لينك عليه [[:hover { border: 4px solid }]] ولينك تاني [[:hover { outline: 4px solid }]]، وبعد كل واحد كلمة. حط الماوس على كل واحد وقيس الكلمة اللي بعده اتحركت كام.`, done: R`مع border الكلمة اتحركت 8px (4 من كل ناحية) فالسطر بيترعش، ومع outline اتحركت صفر لأن الـ outline مش جزء من الـ box model. فالـ focus ring والـ hover اللي بيرسم حدود يبقوا outline أو [[box-shadow]].`, sol: R`~~~live 150 150
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الحدود</title>
-<style>
-  a { color: #1d4ed8; }
-  #a:hover { border: 4px solid; }
-  #b:hover { outline: 4px solid; }
-  .x { display: inline-block; }
-</style>
-</head>
-<body>
-<main>
-<h1>الفرق</h1>
-<p><a id="a" href="#one">لينك بحدود</a> <span class="x" id="ax">كلمة</span></p>
-<p><a id="b" href="#two">لينك بـ outline</a> <span class="x" id="bx">كلمة</span></p>
-</main>
-</body>
-</html>
-~~~
-
-**ليه الفرق:** الـ [[border]] جزء من الـ box model، فظهوره بيزوّد العرض 4 من كل ناحية، و الكلمة اللي بعده بتتزق. والـ [[outline]] بيترسم فوق الصفحة، برّه الحسابات خالص، فمحدش بيتحرك.
-
-**لو عايز حدود حقيقية من غير رعشة:** حط [[border: 4px solid transparent]] من الأول، وغيّر اللون بس في الـ hover. أو استخدم [[box-shadow: 0 0 0 4px]].
-
-**الغلطة الشائعة:** حلقة الـ focus بـ [[border]]. كل ما المستخدم يتنقل بـ Tab، الصفحة تتهز.
-
-~~~text الناتج
-الكلمة بعد اللينك بـ border: اتحركت 8px
-الكلمة بعد اللينك بـ outline: اتحركت 0px
-ارتفاع الفقرة قبل وبعد: 18 و 18 (اللينك inline فالحدود الرأسية مبتزقّش)
-~~~` },
-          ],
-          title: "كل عنصر صندوق: المساحة بتتحسب إزاي",
-          desc: R`كل عنصر في الصفحة صندوق من 4 طبقات من جوه لبرا: [[content]] (المحتوى)، و [[padding]] (مسافة جوه الحدود)، و [[border]] (الحدود)، و [[margin]] (مسافة برا بينه وبين اللي جنبه).
-
-الافتراضي [[box-sizing: content-box]]: الـ [[width]] للمحتوى بس، والـ padding والـ border بيتزودوا عليه. عشان كده كل مشروع بيبدأ بـ [[box-sizing: border-box]]، فالـ width يبقى العرض الكامل شامل الـ padding والـ border.`,
-          example: R`*, *::before, *::after {
-  box-sizing: border-box;
-}
-.card {
-  width: 300px;
-  padding: 16px;
-  border: 1px solid lightgray;
-  margin: 0 auto 24px;
-}
-.stack > * + * {
-  margin-top: 16px;
-}`,
-          try: R`اعمل div بـ [[width: 300px; padding: 20px; border: 5px solid]] وافتح DevTools › Computed: هتلاقي رسمة الصندوق بالأرقام، والعرض 350. ضيف [[box-sizing: border-box]] وشوفه بقى 300 والمحتوى صغر لـ 250.`,
-          flag: "script",
-          deep: {
-            why: "لو مش فاهم الصندوق، كل تصميم هيطلع بكسلات زيادة: عمودين كل واحد 50% ومعاهم padding مش هيقفوا جنب بعض. و border-box بيخلي الحساب زي ما دماغك بتفكر: العرض اللي كتبته هو العرض اللي هتشوفه.",
-            how: R`مع [[content-box]]: العرض الظاهر = width + الـ padding يمين وشمال + الـ border يمين وشمال. مع [[border-box]]: العرض الظاهر = width، والمحتوى هو اللي بيصغر. والـ margin برا الحساب في الحالتين.
-
-Margin collapse: الـ margin الرأسي بين عنصرين block فوق بعض مش بيتجمع، الأكبر بس اللي بيفضل. فقرة تحتها 24 واللي بعدها فوقها 16، المسافة 24 مش 40. وكمان الـ margin-top بتاع أول ابن ممكن «يخرج» من الأب لو الأب ملوش padding ولا border. ده مش بيحصل جوه flex أو grid، ولا في الـ margin الأفقي.
-
-[[margin: auto]] الأفقي على عنصر block ليه عرض بيقسّم المساحة الفاضية بالتساوي، فيتوسّط. و [[padding]] بالنسبة المئوية بيتحسب من عرض الأب، حتى الـ padding الرأسي.
-
-Tailwind بيحط [[box-sizing: border-box]] على كل حاجة في الـ Preflight بتاعه، عشان كده مش بتفكر فيه. و [[space-y-4]] في Tailwind نفس فكرة [[.stack]]، و [[gap]] في flex و grid أحسن من الاتنين.`,
-            when: "أول سطر في أي CSS بتكتبه من الصفر. وكل ما تلاقي حاجة أعرض من المتوقع أو مسافة غريبة، افتح رسمة الصندوق في DevTools.",
-            mistakes: R`تنسى إن الـ margin الرأسي بيعمل collapse فتفضل تزوّده وهو مش بيتغير. تحط [[width: 100%]] مع padding من غير border-box فيظهر scroll أفقي. وتستخدم margin للمسافات بين عناصر flex أو grid بدل [[gap]].`
-          },
-          teach: R`## الفكرة في سطرين
-
-كل عنصر صندوق من 4 طبقات، والـ CSS ده بيقول 3 حاجات: احسب العرض شامل الحشو والحدود، واعمل كارت عرضه 300 في النص، وحط مسافة 16 بين العناصر اللي جوه [[.stack]]. جرّبته في Chrome (headless) في نافذة عرضها 800 (والـ body من غير margin عشان الأرقام تبقى سهلة) على كارتين و 3 عناصر جوه stack.
-
----
-
-## ١. الطبقات الأربعة
-
-~~~text الصندوق من برا لجوه
-┌──────────── margin ────────────┐
-│ ┌────────── border ──────────┐ │
-│ │ ┌──────── padding ───────┐ │ │
-│ │ │        content         │ │ │
-│ │ └────────────────────────┘ │ │
-│ └────────────────────────────┘ │
-└────────────────────────────────┘
-~~~
-
-| الطبقة | معناها | بتاخد لون الخلفية؟ |
-|---|---|---|
-| content | الكلام أو الأولاد | أيوه |
-| padding | مسافة جوه الحدود | أيوه |
-| border | الحدود نفسها | لونها هي |
-| margin | مسافة برا، بينه وبين اللي جنبه | لأ، شفافة دايمًا |
-
----
-
-## ٢. [[*, *::before, *::after { box-sizing: border-box; }]]
-
-- [[*]]: كل العناصر. والفاصلة: «و». فالقاعدة على كل عنصر وكل [[::before]] و [[::after]].
-- [[box-sizing]]: الـ [[width]] بيقيس إيه بالظبط.
-
-قست الكارت (عرضه 300 و padding 16 و border 1):
-
-| | [[box-sizing]] | العرض على الشاشة | عرض المحتوى |
-|---|---|---|---|
-| مع السطر ده | [[border-box]] | 300 | 266 |
-| من غيره | [[content-box]] (الافتراضي) | 334 | 300 |
-
-- [[content-box]]: الـ 300 للمحتوى بس، والباقي بيتزوّد: 300 + 16×2 + 1×2 = 334.
-- [[border-box]]: الـ 300 هي العرض كله، والمحتوى بيصغر: 300 − 32 − 2 = 266.
-
----
-
-## ٣. الكارت
-
-~~~text style.css
-.card {
-  width: 300px;
-  padding: 16px;
-  border: 1px solid lightgray;
-  margin: 0 auto 24px;
-}
-~~~
-
-### [[border: 1px solid lightgray]]
-
-اختصار لـ 3 قيم: التخانة، والشكل ([[solid]] خط متصل)، واللون.
-
-### [[margin: 0 auto 24px]]
-
-3 قيم معناها: فوق، والجنبين، وتحت.
-
-| الجزء | القيمة | اتقاس |
-|---|---|---|
-| فوق | 0 | الكارت الأول عند y = 0 |
-| يمين وشمال | [[auto]] | [[250px]] من كل ناحية |
-| تحت | 24px | المسافة بين الكارتين 24 |
-
-[[auto]] في الـ margin الأفقي بيقسم الفاضي بالتساوي: (800 − 300) ÷ 2 = 250، فالكارت بقى في النص. ومن غير border-box الكارت 334، فالـ margin بقى 233 من كل ناحية.
-
----
-
-## ٤. [[.stack > * + *]]
-
-اقراه من اليمين للشمال:
-
-1. [[*]] الأخيرة: أي عنصر...
-2. [[+ *]]: ...قبله على طول أخ (عنصر تاني على نفس المستوى)...
-3. [[.stack >]]: ...وهو ابن مباشر لـ stack.
-
-يعني كل الأولاد **ما عدا الأول**. حطيت 3 divs جوه stack:
-
-| | margin-top للأولاد | المسافات بينهم |
-|---|---|---|
-| مع القاعدة | 0، 16، 16 | 16، 16 |
-| من غيرها | 0، 0، 0 | 0، 0 |
-
-الأول مخدش margin، فمفيش مسافة زيادة فوق الـ stack.
-
----
-
-## ٥. الـ margin الرأسي بيتداخل (margin collapse)
-
-جرّبت عنصرين فوق بعض: الأول [[margin-bottom: 24px]] والتاني [[margin-top: 16px]]:
-
-| المكان | المسافة اللي اتقاست |
-|---|---|
-| جوه block عادي | 24 (الأكبر بس، مش 40) |
-| جوه [[display: flex]] | 40 (اتجمعوا) |
-
-وجرّبت [[<p style="margin-top: 30px">]] أول ابن جوه div ملوش padding ولا border: الـ p طلع لازق في أول الـ div (المسافة 0)، والـ 30 «خرجت» وبقت فوق الـ div نفسه. ده برضه margin collapse.
-
----
-
-## ٦. التجربة اللي في «جرّب»
-
-[[width: 300px; padding: 20px; border: 5px solid]]:
-
-| [[box-sizing]] | [[offsetWidth]] | المحتوى |
-|---|---|---|
-| [[content-box]] | 350 | 300 |
-| [[border-box]] | 300 | 250 |
-
-[[offsetWidth]] = العرض شامل الـ padding والـ border (من غير الـ margin).
-
----
-
-## الخلاصة
-
-| | العرض الظاهر |
-|---|---|
-| [[content-box]] | width + padding × 2 + border × 2 |
-| [[border-box]] | width بالظبط |
-
-- الـ margin برا الحساب دايمًا.
-- [[margin: 0 auto]] بيوسّط عنصر block ليه عرض.
-- الـ margin الرأسي بين عنصرين block بياخد الأكبر، وجوه flex أو grid بيتجمع. وفي flex و grid استخدم [[gap]].`,
-          lines: [
-            "على كل العناصر وكل before و after.",
-            "الـ width والـ height يشملوا الـ padding والـ border.",
-            "قفلة.",
-            R`قاعدة الكارت: أي عنصر عليه [[class="card"]].`,
-            "العرض الكلي 300 بالظبط (بسبب border-box). من غيرها كان هيبقى 334.",
-            "مسافة جوه الكارت من الـ 4 نواحي.",
-            R`حدود من كل ناحية: سُمكها [[1px]] وشكلها [[solid]] (خط متصل) ولونها رمادي فاتح، وبتتحسب جوه الـ 300 بسبب border-box.`,
-            R`فوق صفر، والجنبين [[auto]] (يتوسّط أفقي)، وتحت 24.`,
-            "قفلة.",
-            "أي عنصر جوه stack وقبله أخ: المسافة بين العناصر بس، مش قبل الأول.",
-            "16 بكسل فوق كل عنصر من التاني ورايح.",
-            "قفلة."
-          ],
-          sol: R`في Computed هتلاقي رسمة الصندوق: المحتوى 300 × (ارتفاع السطر)، والـ padding 20 من كل ناحية، والـ border 5، والـ margin 0. العرض اللي بيتشاف على الشاشة ([[offsetWidth]]) = 300 + 20×2 + 5×2 = [[350]].
-
-بعد [[box-sizing: border-box]]: [[offsetWidth]] بقى [[300]]، والمحتوى جوه الرسمة بقى 250 (300 − 40 − 10). يعني الـ width بقت تحسب الـ padding والـ border جواها بدل ما تزودهم.
-
-لو مشفتش فرق، اتأكد إن مفيش reset عندك (زي Tailwind أو الكود اللي في المثال) عامل border-box على كل حاجة أصلًا، فانت كده شايف 300 من الأول. ولو العرض طلع أكبر من 350، يبقى فيه scrollbar أو margin داخل في حسابك؛ الـ margin برا الصندوق ومش بيتحسب في العرض.`
-        },
-        {
-          cmd: "display",
-          ref: [
-            { t: "MDN: display", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/display" },
-            { t: "MDN: <display-legacy>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/display-legacy" },
-            { t: "MDN: <display-outside>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/display-outside" },
-            { t: "MDN: opacity", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/opacity" },
-            { t: "MDN: pointer-events", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/pointer-events" },
-            { t: "MDN: visibility", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/visibility" },
-            { t: "MDN: inset()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/basic-shape/inset" },
-            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
-            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** لينك جوه فقرة عليه [[padding: 10px; margin-top: 20px; margin-bottom: 20px]]. الفقرة هتطول؟ والفقرة اللي تحتها هتنزل؟`, done: R`لأ: ارتفاع الفقرة فضل 18 ومكان الفقرة اللي تحتها فضل زي ما هو، رغم إن Computed بيقول [[margin-top: 20px]]. الـ inline بيتجاهل الـ margin الرأسي، والـ padding بيترسم (خلفية اللينك كبرت) بس مش بيزق السطور فممكن يغطي على السطر اللي فوقه.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>inline</title>
-<style>
-  a { padding: 10px; margin-top: 20px; margin-bottom: 20px; background: #fde68a; }
-</style>
-</head>
-<body>
-<p id="p1">فقرة فيها <a href="#x">لينك</a> عادي.</p>
-<p id="p2">الفقرة اللي تحتها.</p>
-</body>
-</html>
-~~~
-
-**الإجابة:** لأ، الفقرة مش هتطول، واللي تحتها مش هتنزل.
-
-عناصر الـ inline بتتحط جوه خط الكلام. ارتفاع السطر بييجي من [[line-height]]، مش من مقاس العنصر. فـ:
-
-- الـ margin الرأسي: محسوب في Computed بس مالوش أي تأثير.
-- الـ padding الرأسي: بيترسم، والخلفية بتكبر، بس مبيزقّش حاجة. ولو كبر كفاية بيغطي السطر اللي فوقه.
-- الـ padding والـ margin **الأفقيين** بيشتغلوا عادي.
-
-**الحل:** [[display: inline-block]]: العنصر يفضل في السطر، بس يتعامل كصندوق كامل.
-
-**الغلطة الشائعة:** تزوّد margin-top للينك عشان ينزل، وتتحيّر ليه مبيتحركش.
-
-~~~text الناتج
-                       ارتفاع الفقرة     مكان الفقرة التانية
-inline (الافتراضي)      18             50
-من غير padding/margin   18             50
-inline-block            78             110
-
-margin-top في Computed: 20px   ومع كده مالوش أثر
-ارتفاع خلفية اللينك: 37px
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شيل سطر [[.modal[hidden] { display: none; }]] من المثال وخلي [[.modal { display: flex; }]]. المودال عليه [[hidden]] ولسه ظاهر!`, done: R`[[getComputedStyle(modal).display]] رجّع [[flex]]: الـ [[hidden]] شغله [[display: none]] من المتصفح نفسه بأضعف وزن، فأي [[display]] منك بيغلبه. رجّعت السطر (أو [[ [hidden] { display: none !important; }]] في الـ reset زي مكتبات كتير) والمودال اختفى.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>المودال</title>
-<style>
-  .modal { display: flex; position: fixed; inset: 0; background: rgb(0 0 0 / .5); }
-  .modal[hidden] { display: none; }
-</style>
-</head>
-<body>
-<main><h1>الصفحة</h1></main>
-<div class="modal" hidden><p>أهلًا</p></div>
-</body>
-</html>
-~~~
-
-**السبب:** [[hidden]] مش سحر. المتصفح بيترجمه لقاعدة في ملفه الداخلي: [[[hidden] { display: none }]]. وملف المتصفح أضعف مكان في الـ cascade، فأي [[display]] تكتبه انت، حتى class واحدة، بيغلبها.
-
-**الحلين:**
-
-- [[.modal[hidden] { display: none; }]]: وزنها (0,2,0)، أكبر من [[.modal]].
-- سطر عام في الـ reset، وده بيغطي كل العناصر:
-
-~~~css
-[hidden] { display: none !important; }
-~~~
-
-ده من الأماكن القليلة اللي [[!important]] فيها معقولة، لأن [[hidden]] معناه واضح ومفيش سبب تغلبه.
-
-**الغلطة الشائعة:** تعمل [[modal.hidden = true]] من JavaScript، والمودال يفضل ظاهر، فتفتكر إن فيه باج في الكود. افتح Computed وشوف الـ [[display]].
-
-~~~text الناتج
-من غير السطر: display = flex   (ظاهر رغم hidden)
-مع .modal[hidden]: display = none
-بديل reset [hidden]: display = none
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صندوق عرضه 300px جواه ٣ [[span]] عليهم [[display: inline-block; width: 100px]] ومكتوبين في الـ HTML بمسافة بينهم. هيقفوا جنب بعض في سطر واحد؟`, done: R`لأ: التالت نزل سطر جديد (اتقاس: أول اتنين top واحد والتالت تحتهم)، لأن المسافات اللي بين الـ spans في الـ HTML بقت مسافات كلام حقيقية جنب الـ inline-block فالمجموع زاد عن 300. وده من أسباب إن الـ layouts بقت flex و grid.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الصف</title>
-<style>
-  .row { width: 300px; background: #f4f4f5; }
-  .row span { display: inline-block; width: 100px; background: #bfdbfe; }
-</style>
-</head>
-<body>
-<div class="row" id="a">
-  <span>١</span>
-  <span>٢</span>
-  <span>٣</span>
-</div>
-</body>
-</html>
-~~~
-
-**الإجابة:** لأ، التالت هينزل. السطر الجديد والمسافات بين الـ spans في الـ HTML بقت مسافة كلام واحدة. والـ inline-block بيقف في السطر زي الحروف، فالمسافة بتتحسب. والمجموع: 100 + مسافة + 100 + مسافة + 100، وده أكبر من 300.
-
-**الحلول القديمة** كانت [[font-size: 0]] على الأب، أو تلزق الـ tags. كلها ترقيعات.
-
-**الحل الحديث:**
-
-~~~css
-.row { display: flex; }
-.row span { width: 100px; }
-~~~
-
-**الغلطة الشائعة:** تعمل [[width: 33%]] فوق بعض وتتفاجئ بنفس المشكلة. وعرض المسافة نفسه بيعتمد على الخط، فالرقم هيتغيّر من صفحة للتانية.
-
-~~~text الناتج
-inline-block:
-top للتلاتة: 8 , 8 , 26   التالت نزل سطر
-عرض المسافة: 4px
-
-flex:
-top للتلاتة: 8 , 8 , 8   في سطر واحد
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** شريط خطوات طلب (١ اتطلب، ٢ بيتحضّر، ٣ في الطريق، ٤ وصل): كل خطوة دايرة 32px فيها الرقم ([[display: inline-grid; place-items: center]])، وبينهم خط 40×2px [[inline-block]]، والخطوات اللي خلصت لونها مختلف.`, done: R`الدواير والخطوط على نفس الخط بالظبط (الـ top واحد أو [[vertical-align: middle]])، والرقم في نص الدايرة، والشريط كله في سطر واحد على 360px (لو مش كفاية: الخطوط تقصر)، والخطوة الحالية عليها [[aria-current="step"]].`, sol: R`~~~live 140 140
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متابعة الطلب</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  ol { list-style: none; padding: 0; margin: 0; white-space: nowrap; text-align: center; }
-  li { display: inline; }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .step {
-    display: inline-grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #e4e4e7;
-    color: #18181b;
-    vertical-align: middle;
-    font-weight: 700;
-  }
-  .line {
-    display: inline-block;
-    width: clamp(12px, 8vw, 40px);
-    height: 2px;
-    background: #d4d4d8;
-    vertical-align: middle;
-  }
-  .done .step { background: #0f766e; color: #fff; }
-  .done .line { background: #0f766e; }
-  [aria-current="step"] .step { outline: 3px solid #0f766e; outline-offset: 2px; }
-</style>
-</head>
-<body>
-<main>
-<h1>طلبك</h1>
-<ol aria-label="حالة الطلب">
-  <li class="done"><span class="step">١</span><span class="sr">اتطلب</span><span class="line"></span></li>
-  <li class="done"><span class="step">٢</span><span class="sr">بيتحضّر</span><span class="line"></span></li>
-  <li aria-current="step"><span class="step">٣</span><span class="sr">في الطريق</span><span class="line"></span></li>
-  <li><span class="step">٤</span><span class="sr">وصل</span></li>
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** دي خطة كورس مكتوبة نص، والمسافات هي اللي بتبيّن المستويات. حوّلها لقوايم HTML:
+الأسبوع الأول: HTML (العناصر والـ attributes، القوايم والاقتباسات، الفورم).
+الأسبوع التاني: CSS (الألوان والخطوط، الـ box model).
+الأسبوع التالت: مشروع (صفحة شخصية: الهيكل، ثم التنسيق).
+الأسابيع لازم بالترتيب. المواضيع جوه الأسبوع ترتيبها مش فارق.`, done: R`القايمة الخارجية [[<ol>]] من ٣ أسابيع مرقّمين، وجوه كل أسبوع [[<ul>]]، وتحت «صفحة شخصية» مستوى تالت. والعلامات في المعاينة: رقم، ثم دايرة فاضية، ثم مربع.`, work: { h: 300, start: R`<h2>خطة كورس الويب</h2>
+الأسبوع الأول: HTML
+  العناصر والـ attributes
+  القوايم والاقتباسات
+  الفورم
+الأسبوع التاني: CSS
+  الألوان والخطوط
+  الـ box model
+الأسبوع التالت: مشروع
+  صفحة شخصية
+    الهيكل
+    التنسيق`, checks: [
+              { say: R`الأسابيع التلاتة قايمة [[<ol>]] مرقّمة`, q: "body > ol > li", n: 3 },
+              { say: R`جوه كل أسبوع قايمة [[<ul>]] لمواضيعه`, q: "ol > li > ul", n: 3 },
+              { say: R`تحت «صفحة شخصية» مستوى تالت: الهيكل والتنسيق`, q: "ul ul > li", n: 2 },
+              { say: R`المواضيع مش مرقّمة: مفيش [[<ol>]] جوه [[<ol>]]`, q: "ol ol", n: 0 },
+            ] }, sol: R`~~~live 297 خطة الكورس
+<h2>خطة كورس الويب</h2>
+<ol>
+  <li>الأسبوع الأول: HTML
+    <ul>
+      <li>العناصر والـ attributes</li>
+      <li>القوايم والاقتباسات</li>
+      <li>الفورم</li>
+    </ul>
+  </li>
+  <li>الأسبوع التاني: CSS
+    <ul>
+      <li>الألوان والخطوط</li>
+      <li>الـ box model</li>
+    </ul>
+  </li>
+  <li>الأسبوع التالت: مشروع
+    <ul>
+      <li>صفحة شخصية
+        <ul>
+          <li>الهيكل</li>
+          <li>التنسيق</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ol>
-</main>
-</body>
-</html>
 ~~~
 
-**اللي بيخلّيه يقف على خط واحد:**
+**القرارات:**
 
-- [[display: inline-grid]]: الدايرة بتقف في السطر، وجواها grid يوسّط الرقم.
-- [[vertical-align: middle]] على الاتنين: بدونها الخط 2px يقف على خط الكلام تحت، مش في نص الدايرة.
-- [[clamp(12px, 8vw, 40px)]]: على الموبايل الخطوط بتقصر، والشريط يفضل في سطر واحد.
-- [[white-space: nowrap]]: ممنوع النزول سطر.
-- [[aria-current="step"]]: قارئ الشاشة يعرف الخطوة الحالية، وبرضه بنستخدمها في الـ CSS.
-- [[.sr]]: اسم الخطوة نص حقيقي مخفي بالشكل بس، فقارئ الشاشة يقراه.
+- الأسابيع [[<ol>]]: التاني مبني على الأول.
+- المواضيع [[<ul>]]: التمرين قال ترتيبها مش فارق.
+- «الهيكل» و «التنسيق» تحت «صفحة شخصية»: التمرين قال «ثم»، يعني مترتبين. فالأدق إن المستوى التالت يبقى [[<ol>]]. الحل هنا سابه [[<ul>]] عشان تشوف شكل المربع، فجرّب تغيّره لـ [[<ol>]] وشوف الفرق.
+- كل قايمة فرعية جوه الـ [[<li>]] بتاع صاحبها، وكل [[</li>]] بعد القايمة.
 
-**الغلطة الشائعة:** تعتمد على اللون بس في «الخطوات اللي خلصت». الحلقة حوالين الحالية والأرقام نفسها بيخلوا المعنى واضح من غير لون.
+**الغلطة الشائعة:** تعمل كل أسبوع [[<h3>]] وتحته قايمة منفصلة. ده حل سليم كمان لو كل أسبوع قسم كبير في الصفحة. بس لو المطلوب «خطة» تتقري كحاجة واحدة وتتعد («٣ أسابيع»)، القايمة الواحدة أصدق.
 
 ~~~text الناتج
-مركز الدواير y: 102
-مركز الخطوط y: 102
-مركز الرقم في الدايرة الأولى: دايرة (278, 102) ورقم (278, 102)
-عرض الشريط على 360: 228px من 328px  وفي سطر واحد: true
-عرض الخط على 360: 28.8px  وعلى 1280: 40px
-overflow على 360: 0px   axe: 0 violations
+ol=1  ul=4  li=11
+العلامات بالترتيب:  1 ◦ ◦ ◦   2 ◦ ◦   3 ◦ ■ ■
+المستويات في شجرة الـ accessibility: level=1 للأسابيع، level=2 للمواضيع، level=3 للهيكل والتنسيق
 ~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف [[display: contents]] و [[display: flow-root]]. جرّب [[flow-root]] على أب فيه ابن عليه [[margin-top: 30px]].`, done: R`من غير flow-root الـ margin بتاع الابن طلع برّه الأب (الأب نزل 30 كله)، ومعاه الـ margin بقى جوه الأب. وعرفت إن [[contents]] بيشيل صندوق العنصر نفسه وبيسيب أولاده، وإنه زمان كان بيضيّع الـ role بتاع العنصر في بعض المتصفحات.`, sol: R`~~~live 160 160
+            { lvl: 'تحدي', t: R`**ابني:** صفحة «دليل تشغيل الفرن» فيها ٣ أقسام [[<h2>]] (قبل التشغيل، التشغيل، التنضيف)، والأول والتاني تحت كل واحد قسمين [[<h3>]]. وفي أول الصفحة فهرس محتويات: قايمة مرقّمة من مستويين، كل عنصر فيها لينك بينزل لعنوانه.`, done: R`الفهرس فيه ٧ لينكات، وكل [[href]] ليه [[id]] مطابق في الصفحة (مفيش لينك بيودّي لحتة مش موجودة)، والضغط على «التايمر» بينزل لعنوانه والـ URL بيبقى آخره [[#timer]]، وشكل الفهرس مطابق لترتيب العناوين.`, work: { h: 480, start: R`دليل تشغيل الفرن
+قبل التشغيل
+المكان
+سيب ١٠ سم فاضيين حوالين الفرن من كل ناحية.
+الكهربا
+وصّله في فيشة لوحده من غير مشترك.
+التشغيل
+التسخين
+سخّنه ١٠ دقايق قبل ما تحط الأكل.
+التايمر
+لف المفتاح للوقت اللي عايزه، وهيرن لما يخلص.
+التنضيف
+افصل الكهربا واستنى لما يبرد.`, checks: [
+              { say: R`تلات أقسام [[<h2>]]`, q: "h2", n: 3 },
+              { say: R`تحت الأول والتاني قسمين [[<h3>]] كل واحد: ٤`, q: "h3", n: 4 },
+              { say: R`الفهرس مستويين: [[<ol>]] جوه [[<ol>]] لقسمين`, q: "ol ol", n: 2 },
+              { say: R`الفهرس فيه ٧ لينكات [[href="#..."]]`, q: 'ol a[href^="#"]', n: 7 },
+              { say: R`كل عنوان ليه [[id]] عشان اللينك ينزل له`, q: "h2[id], h3[id]", n: 7 },
+            ] }, sol: R`~~~live 480 دليل تشغيل الفرن
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>flow-root</title>
-<style>
-  body { margin: 0; }
-  .parent { background: #bfdbfe; }
-  .child { margin-top: 30px; background: #fde68a; height: 40px; }
-  .fix { display: flow-root; }
-  .list { display: flex; gap: 8px; }
-  .group { display: contents; }
-</style>
-</head>
-<body>
-<div class="parent" id="a"><div class="child"></div></div>
-<div class="parent fix" id="b"><div class="child"></div></div>
-<div class="list"><div class="group"><span id="s1">١</span><span id="s2">٢</span></div></div>
-</body>
-</html>
-~~~
-
-**[[flow-root]]:** بيعمل block formatting context، يعني عالم مقفول: الـ margin بتاع الابن ميخرجش من الأب، والـ float مبيطلعش برّه. من غيره، الـ margin العلوي للابن بيتداخل مع أبوه، والأب كله بينزل 30 بدل ما الابن ينزل جواه.
-
-**[[contents]]:** العنصر نفسه بيختفي من الـ layout، وأولاده بيبقوا كأنهم أولاد جدهم. فـ [[.group]] مبقاش ليه صندوق، و [[١]] و [[٢]] بقوا flex items في [[.list]] مباشرة. والـ [[gap]] بيشتغل بينهم.
-
-**الفخ التاريخي:** [[display: contents]] كان بيضيّع الـ role بتاع العنصر في بعض المتصفحات، زي [[button]] أو [[table]]. متستخدمهوش على عناصر ليها معنى من غير ما تختبر. الجزء ده من MDN.
-
-**الغلطة الشائعة:** تحط [[padding-top: 1px]] أو [[overflow: hidden]] على الأب عشان توقف الـ collapse. [[flow-root]] معمول لكده، ومن غير آثار جانبية.
-
-~~~text الناتج
-من غير flow-root:
-top الأب = 30   ارتفاعه = 40   (الـ margin طلع برّه، فالأب نزل كله)
-
-بـ flow-root:
-top الأب = 0   ارتفاعه = 70   (الـ margin بقى جوه)
-
-display: contents: المسافة بين ١ و ٢ = 8px   (الـ gap شغال عليهم)
-~~~` },
-          ],
-          title: "بلوك ولا جوه السطر؟ وإخفاء العناصر",
-          desc: R`[[block]] بياخد سطر كامل وتقدر تحدد عرضه وطوله ([[div]] و [[p]] و [[h1]]). [[inline]] بيمشي جوه السطر مع الكلام وبيتجاهل [[width]] و [[height]] والـ margin الرأسي ([[span]] و [[a]] و [[strong]]). [[inline-block]] في النص: جوه السطر بس بيقبل مقاسات.
-
-و [[display: none]] بيشيل العنصر خالص من الصفحة، و [[visibility: hidden]] بيخفيه ومكانه يفضل فاضي، و [[opacity: 0]] بيخفيه وهو لسه بيتضغط.`,
-          example: R`.badge { display: inline-block; padding: 2px 8px; }
-.menu a { display: block; }
-.modal[hidden] { display: none; }
-.ghost { visibility: hidden; }
-.fade { opacity: 0; pointer-events: none; }
-.sr-only {
-  position: absolute; width: 1px; height: 1px;
-  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
-}`,
-          try: R`اعمل 3 [[<span>]] وادّيهم width و height: مش هيتأثروا. غيّر لـ [[inline-block]] وبعدين [[block]] وشوف الفرق. وجرّب none و visibility و opacity على زرار، وحاول توصله بـ Tab في كل حالة.`,
-          flag: "script",
-          deep: {
-            why: R`نص مشاكل التنسيق للمبتدئ من هنا: «ليه الـ width مش شغال على الـ span؟» و «ليه اللينك مش واخد السطر؟». وكمان الإخفاء: فيه فرق كبير بين إنك تخفي حاجة عن العين بس، أو عن الكل، أو تسيبها بتتضغط وهي مش باينة.`,
-            how: R`[[display]] ليه وشّين: برّاني بيحدد العنصر نفسه بيتصرف إزاي مع اللي جنبه (block أو inline)، وجوّاني بيحدد أولاده بيترصّوا إزاي (عادي، أو flex، أو grid). [[display: flex]] = block من برا و flex من جوه، و [[inline-flex]] = inline من برا و flex من جوه.
-
-العناصر الـ inline بتتحط على سطر كلام، وارتفاعها من [[line-height]] والخط، مش من [[height]]. عشان كده الـ padding الرأسي على [[<a>]] بيترسم بس مش بيزق السطور اللي فوق وتحت. و [[<img>]] أصلًا inline، ودا سبب المسافة الصغيرة الغريبة تحت الصور (مكان ديل حروف زي g و y). الحل [[display: block]] للصورة، و Preflight بتاع Tailwind بيعملها لوحده.
-
-الإخفاء: [[display: none]] بيشيله من الـ layout ومن شجرة الـ accessibility. [[visibility: hidden]] بيسيب المكان ويشيله من الـ accessibility. [[opacity: 0]] بيسيبه في كل حاجة: مكانه، وبيتضغط، وبياخد focus، وقارئ الشاشة بيقراه. و [[.sr-only]] (موجودة في Tailwind بنفس الاسم) العكس: مخفي عن العين ومقروء لقارئ الشاشة، مثالية لـ label حقل بحث أو اسم زرار أيقونة.`,
-            when: R`[[hidden]] أو display none للحاجات المقفولة (مودال، منيو). visibility لو عايز المكان يفضل ثابت. opacity للحركة (بتتعمل لها transition، و display لأ). و sr-only للكلام اللي لازم يتقري ومش لازم يظهر.`,
-            mistakes: R`تخفي منيو بـ [[opacity: 0]] بس، فاللينكات اللي جواها لسه بتاخد focus بـ Tab وبتتضغط وهي مش باينة. مسافة تحت الصورة ومش عارف منين (هي inline). وتحط width على span وتستغرب.`
-          },
-          teach: R`## الفكرة في سطرين
-
-[[display]] بيقول العنصر بيقف لوحده في سطر ولا جوه السطر مع الكلام، والسطور الباقية 4 طرق مختلفة لإخفاء حاجة. جرّبت كل سطر في Chrome (headless): قست المقاسات بـ [[getBoundingClientRect()]]، ودوست Tab و Enter، وطلّعت شجرة الـ accessibility.
-
----
-
-## ١. block و inline و inline-block
-
-حطيت 3 [[<span>]] عليهم [[width: 100px; height: 50px]] وغيّرت الـ display:
-
-| [[display]] | مقاس كل span | مكانهم |
-|---|---|---|
-| [[inline]] (الافتراضي للـ span) | على قد الحرف: عرض 3 لـ 11، وارتفاع 17 | جنب بعض |
-| [[inline-block]] | 100 × 50 | جنب بعض، وبين كل واحد والتاني 4px |
-| [[block]] | 100 × 50 | تحت بعض: y = 0 ثم 50 ثم 100 |
-
-- [[inline]] تجاهل الـ width والـ height خالص، وارتفاعه جه من الخط.
-- [[inline-block]] قبل المقاسات وفضل في السطر. والـ 4px دي مش margin: دي المسافة (الـ Enter بين الـ tags في الـ HTML) اللي بتتعرض كمسافة كلام.
-- [[block]] قبل المقاسات وكل واحد خد سطر.
-
----
-
-## ٢. السطور الأولى في المثال
-
-| السطر | اتقاس |
-|---|---|
-| [[.badge { display: inline-block; padding: 2px 8px; }]] | الشارة جوه الفقرة في نفس السطر، و 39 × 22 بالـ padding |
-| [[.menu a { display: block; }]] | اللينك عرضه 784 (السطر كله)، فالضغط شغال على العرض كله مش على الكلمة بس |
-
-و [[padding: 2px 8px]] قيمتين: فوق وتحت 2، والجنبين 8.
-
----
-
-## ٣. 4 طرق إخفاء
-
-حطيت 5 أزرار: «قبل»، وبعده واحد بكل طريقة، وبعدهم «بعد».
-
-### [[.modal[hidden] { display: none; }]]
-
-[[.modal[hidden]]]: عنصر عليه class [[modal]] **و** عليه attribute [[hidden]]. و [[display: none]] بيشيله من الصفحة خالص: المقاس اتقاس 0 × 0.
-
-### [[.ghost { visibility: hidden; }]]
-
-مستخبي بس مكانه محجوز: اتقاس 62 × 21 في مكانه.
-
-### [[.fade { opacity: 0; pointer-events: none; }]]
-
-[[opacity]] الشفافية من 0 (مش باين) لـ 1. و [[pointer-events: none]] يعني الماوس بيعدّي من خلاله. اتقاس 58 × 21 في مكانه، ولما ضغطت بالماوس على مكانه الضغطة راحت للي وراه.
-
-### اللي حصل بالكيبورد وقارئ الشاشة
-
-~~~text Tab من زرار «قبل»
-قبل  →  opacity  →  بعد
-~~~
-
-| الطريقة | مكانه | Tab بيوصله | في شجرة الـ accessibility | الماوس |
-|---|---|---|---|---|
-| [[display: none]] | لأ | لأ | لأ | لأ |
-| [[visibility: hidden]] | أيوه | لأ | لأ | لأ |
-| [[opacity: 0]] + [[pointer-events: none]] | أيوه | **أيوه** | **أيوه** ([[button "opacity"]]) | لأ |
-
-والأخطر: وقفت على زرار الـ opacity (مش باين) ودوست Enter، والـ [[onclick]] بتاعه اشتغل. [[pointer-events]] بيمنع الماوس بس، مش الكيبورد.
-
----
-
-## ٤. [[.sr-only]]: مخفي عن العين بس
-
-~~~text style.css
-.sr-only {
-  position: absolute; width: 1px; height: 1px;
-  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
-}
-~~~
-
-[[sr]] اختصار screen reader. كل سطر:
-
-| الخاصية | بتعمل إيه |
-|---|---|
-| [[position: absolute]] | تطلّعه من ترتيب الصفحة فميزقّش حاجة |
-| [[width: 1px; height: 1px]] | يصغر لبكسل (مش 0، عشان بعض قارئات الشاشة بتتجاهل الصفر) |
-| [[overflow: hidden]] | أي حاجة أكبر من البكسل متتعرضش |
-| [[clip-path: inset(50%)]] | يقص من كل ناحية 50%، فمفيش ولا بكسل باين |
-| [[white-space: nowrap]] | الكلام ميتكسرش لسطور (قارئ الشاشة كان ممكن يقرا الكلمات لازقة) |
-
-جرّبته على زرار فيه أيقونة SVG بس و [[<span class="sr-only">بحث</span>]]: الـ span اتقاس 1 × 1، والزرار في شجرة الـ accessibility اسمه [[button "بحث"]].
-
----
-
-## ٥. المسافة اللي تحت الصورة
-
-[[<img>]] أصلًا inline، فبيقف على خط الكلام، وتحته مكان لديل الحروف (زي g و y). صورة 100 × 100 جوه div:
-
-| | ارتفاع الـ div |
-|---|---|
-| الصورة inline (الافتراضي) | 104 |
-| [[img { display: block; }]] | 100 |
-
----
-
-## الخلاصة
-
-| | سطر لوحده | بيقبل width و height |
-|---|---|---|
-| [[block]] | أيوه | أيوه |
-| [[inline]] | لأ | لأ |
-| [[inline-block]] | لأ | أيوه |
-
-| الإخفاء | المكان | الكيبورد وقارئ الشاشة |
-|---|---|---|
-| [[display: none]] / [[hidden]] | بيتشال | مش شايفينه |
-| [[visibility: hidden]] | محجوز | مش شايفينه |
-| [[opacity: 0]] | محجوز | **لسه شايفينه** |
-| [[.sr-only]] | بكسل | شايفينه، والعين لأ |`,
-          lines: [
-            "شارة جوه السطر، بس الـ padding بتاعها بيحجز مكان.",
-            "لينكات المنيو تاخد السطر كله، فالضغط يشتغل على العرض كله.",
-            R`العنصر اللي عليه [[hidden]]: شيله خالص، مش بياخد مكان ولا بيتقري.`,
-            "مستخبي بس مكانه محجوز، ومش بيتضغط ولا بيتقري.",
-            R`شفاف: مكانه محجوز وهيفضل بيتضغط، عشان كده [[pointer-events: none]] معاه.`,
-            "كلاس لإخفاء حاجة عن العين بس، وقارئ الشاشة لسه بيقراها.",
-            "بيطلّعه من الترتيب العادي ويصغّره لبكسل.",
-            "بيقصّ أي حاجة ظاهرة وميكسرش السطر.",
-            "قفلة."
-          ],
-          sol: R`الـ [[<span>]] العادي ([[inline]]): الـ width و الـ height ملهمش أي تأثير، والصندوق على قد الكلام بس. [[inline-block]]: بياخدوا 100×50 وبيفضلوا جنب بعض في نفس السطر (وهتلاقي فراغ صغير بينهم حوالي 4px سببه الـ enter أو المسافة اللي بينهم في الـ HTML). [[block]]: نفس المقاس بس كل واحد في سطر لوحده تحت اللي قبله.
-
-مع Tab على الزرار: [[display: none]] و [[visibility: hidden]] الـ focus بيعدّي من فوقهم للعنصر اللي بعدهم، لأنهم مش موجودين بالنسبة للكيبورد وقارئ الشاشة. أما [[opacity: 0]] مع [[pointer-events: none]]: الـ focus بيقف على زرار مش باين، ولو دوست Enter هيشتغل. الـ [[pointer-events]] بيمنع الماوس بس.
-
-دي أخطر نتيجة في التجربة: مودال أو منيو مخفي بـ opacity بيفضل ياخد Tab ويتقري لقارئ الشاشة. لو عايز تخفيه بحركة fade، ضيف [[visibility: hidden]] أو [[inert]] بعد ما الحركة تخلص.`
-        },
-        {
-          cmd: "BEM و CSS Modules",
-          ref: [
-            { t: "BEM: Methodology", url: "https://en.bem.info/methodology/" },
-            { t: "CSS Modules (GitHub)", url: "https://github.com/css-modules/css-modules" },
-            { t: "MDN: @scope", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@scope" },
-          ],
-          title: "تنظيم الـ CSS: أسماء classes مبتتخانقش (BEM و CSS Modules و @scope)",
-          desc: R`كل الـ CSS في الصفحة عالمي: أي [[.title]] في أي ملف بيطبّق على أي عنصر عليه [[class="title"]] في الموقع كله. فلما ملف الهيدر وملف الكارت الاتنين فيهم [[.title]]، اللي اتحمّل آخر بيكسب والتاني بيبوظ. ده سبب أغلب «قاعدتي مش شغالة» و [[!important]] اللي بيتكتب في كل حتة.
-
-فيه ٣ حلول بيستخدمهم الشغل الحقيقي:
-• **BEM** (Block, Element, Modifier): اتفاق على الأسماء بس. الكارت [[.card]]، وأي حتة جواه [[.card__title]]، وأي نسخة مختلفة منه [[.card--featured]]. الأسماء مستحيل تتكرر، وكل selector وزنه class واحدة.
-• **CSS Modules**: ملف اسمه [[card.module.css]] بتكتب فيه [[.title]] عادي، والأداة (Vite أو Next.js) بتغيّر الاسم لاسم فريد زي [[_title_1wc96_1]]، وانت بتستخدمه من JavaScript بـ [[styles.title]].
-• **[[@scope]]**: من المتصفح نفسه، بيحدد إن القواعد دي جوه [[.card]] بس.
-
-وتقدر تجمعهم مع [[@layer]] من درس «cascade» عشان ترتّب الملفات نفسها: reset، وبعدين components، وبعدين utilities.`,
-          example: R`<article class="card card--featured">
-  <h3 class="card__title">باقة سنوية</h3>
-  <p class="card__price">3,600 ج</p>
-  <a class="card__cta" href="/join">اشترك</a>
-</article>
-// card.css (BEM: block__element--modifier)
-.card { padding: 16px; border: 1px solid #ddd; border-radius: 12px; }
-.card__title { font-size: 1.25rem; margin: 0; }
-.card__price { font-weight: 700; }
-.card--featured { border-color: #2563eb; }
-.card--featured .card__cta { background: #2563eb; color: white; }
-// card.module.css (CSS Modules: Vite و Next.js بيدعموها من غير إعداد)
-.title { font-size: 1.25rem; color: #2563eb; }
-// main.js
-import styles from './card.module.css';
-document.querySelector('#plan-title').className = styles.title;`,
-          try: R`اعمل صفحة فيها [[<h1 class="title">]] في الهيدر، وملفين CSS: [[header.css]] فيه [[.title { font-size: 2rem; }]] و [[card.css]] فيه [[.title { font-size: 1.25rem; }]]، واربط الاتنين بالترتيب ده. قيس حجم الـ h1 من Computed. بعدين سمّي قاعدة الكارت [[.card__title]] بالـ BEM وقيس تاني. ولو معاك Vite: سمّي ملف الكارت [[card.module.css]] واستورده في [[main.js]]، واطبع [[styles]] في الـ Console.`,
-          flag: "script",
-          deep: {
-            why: R`الموقع الصغير بملف CSS واحد بيمشي. أول ما الملفات تبقى ١٠ والصفحات ٢٠ واتنين بيكتبوا CSS، الأسماء بتتكرر من غير ما حد ياخد باله: [[.card]] في صفحة المنتجات و [[.card]] في صفحة المدونة، و [[.title]] في كل حتة. والحل اللي الناس بتلجأ له ([[!important]] أو selector أطول) بيعمل حرب: القاعدة الجاية لازم تبقى أقوى من اللي قبلها. التنظيم بيمنع الحرب من الأول.`,
-            how: R`**BEM** مالوش أي سحر: المتصفح شايف classes عادية. الفايدة إن كل selector بقى class واحدة، فالـ specificity كلها (0,1,0) والترتيب في الملف بس هو اللي بيفرق، ومفيش اسم بيتكرر لأن اسم الـ block جزء من كل اسم. الاستثنا الوحيد المقبول [[.card--featured .card__cta]] (0,2,0): modifier على الـ block بيغيّر element جواه.
-
-**CSS Modules**: وقت الـ build، Vite بيقرا أي ملف اسمه [[*.module.css]]، ويغيّر كل class فيه لاسم فريد (في Vite 8.3 [[.title]] بقت [[._title_1wc96_1]] في ملف الـ CSS النهائي)، ويرجّع لـ JavaScript object فيه الاسم القديم والجديد: [[{"title":"_title_1wc96_1"}]]. فـ [[.title]] بتاع الهيدر (ملف عادي) فضل [[.title]] ومحدش لمسه، والاتنين عايشين في نفس الصفحة.
-
-**[[@scope (.promo) to (.promo__content)]]**: المتصفح بيطبّق القواعد على العناصر اللي جوه [[.promo]] بس، ويقف عند [[.promo__content]] (حدود من تحت). اتجرّب في Chrome 156: صورة جوه promo بقت مدورة، وصورة جوه promo__content فضلت زي ما هي. Chrome بيدعمه من 118؛ شوف درس «Baseline و @supports» قبل ما تعتمد عليه في كل المتصفحات.`,
-            when: R`موقع HTML و CSS عادي (landing page، أو موقع شركة): BEM أو prefix لكل صفحة ([[.pricing-]] و [[.blog-]]). مشروع React أو Vue بـ Vite أو Next.js: CSS Modules لكل component، أو Tailwind (وحدة Tailwind قدام) اللي بيحل نفس المشكلة بطريقة تانية. و [[@scope]] لما تحط CSS لحتة جوه صفحة مش بتاعتك (widget جوه موقع حد تاني) أو عايز تحدد «لحد هنا».`,
-            mistakes: R`تكتب الـ modifier لوحده: [[<article class="card--featured">]] من غير [[card]]، فالكارت بيخسر كل تنسيقه الأساسي (اتقاس: الـ padding بقى 0 والحدود اختفت). أو تعمل element جوه element: [[.card__title__icon]] (الصح [[.card__icon]]، الـ BEM مسطّح). أو تكتب اسم غلط في CSS Modules: [[styles.titel]] بترجّع [[undefined]] والـ class بيبقى حرفيًا [[class="undefined"]] من غير أي error. أو تسمّي الملف [[card.css]] وتستغرب إن الأسماء متغيّرتش (لازم [[.module.css]]). أو تخلط BEM مع selectors زي [[.card h3]]، فترجع الأسماء تتخانق تاني.`
-          },
-          teach: R`## الفكرة في سطرين
-
-الـ CSS مفيهوش «ملف خاص»: كل class بتشتغل على الصفحة كلها. فلازم يا إما أسماء مستحيل تتكرر (BEM)، يا إما أداة تغيّر الأسماء لوحدها (CSS Modules)، يا إما حدود من المتصفح ([[@scope]]). الأرقام هنا من Chrome 156 و Vite 8.3.5.
-
----
-
-## ١. المشكلة بالأرقام
-
-صفحة فيها هيدر بـ [[<h1 class="title">]] وكارت، وملفين اتربطوا بالترتيب ده:
-
-~~~css الملفين
-/* header.css */ .title { font-size: 2rem; }
-/* card.css */   .title { font-size: 1.25rem; }
-~~~
-
-الـ h1 بتاع الهيدر طلع [[20px]] بدل [[32px]]: الاتنين نفس الوزن (0,1,0)، فاللي اتكتب آخر كسب (درس «cascade»). صاحب ملف الكارت مكانش يعرف إن فيه [[.title]] تانية أصلًا.
-
----
-
-## ٢. BEM: اسم الـ block في كل اسم
-
-~~~text شكل الاسم
-card            ← block: الحاجة اللي لوحدها ليها معنى
-card__title     ← element: حتة جوه الـ block (شرطتين تحت)
-card--featured  ← modifier: نسخة مختلفة من الـ block (شرطتين)
-~~~
-
-### الـ HTML
-
-- [[class="card card--featured"]]: الـ block **والـ** modifier مع بعض. الـ modifier بيزوّد على الأساسي مش بيحل محله.
-- [[card__title]] و [[card__price]] و [[card__cta]]: كل حتة جوه الكارت ليها اسم بيبدأ بـ [[card__]]. ومفيش [[card__title__text]]: لو فيه حتة جوه العنوان تبقى [[card__text]] على طول.
-
-### الـ CSS
-
-| القاعدة | الوزن | ليه |
-|---|---|---|
-| [[.card]] | (0,1,0) | الشكل الأساسي لأي كارت |
-| [[.card__title]] | (0,1,0) | العنوان بس، ومستحيل يلمس [[.title]] بتاع الهيدر |
-| [[.card--featured]] | (0,1,0) | لون الحدود بس اتغيّر، والباقي من [[.card]] |
-| [[.card--featured .card__cta]] | (0,2,0) | الـ modifier بيغيّر element جواه: الزرار بقى أزرق في الكارت المميز بس |
-
-اتقاس: الكارت المميز حدوده [[rgb(37, 99, 235)]] و padding بتاعه 16px، والزرار خلفيته نفس الأزرق.
-
-### الفخ: الـ modifier لوحده
-
-[[<article class="card--featured">]] من غير [[card]]: الـ padding طلع [[0px]] والحدود [[none 0px]]. الـ modifier مكتوب فيه لون الحدود بس، والحدود نفسها في [[.card]] اللي مش موجودة.
-
----
-
-## ٣. CSS Modules: الأداة بتغيّر الأسماء
-
-~~~css card.module.css
-.title { font-size: 1.25rem; color: #2563eb; }
-~~~
-
-~~~js main.js
-import styles from './card.module.css';
-document.querySelector('#plan-title').className = styles.title;
-~~~
-
-- [[.module.css]] في آخر الاسم هي اللي بتقول لـ Vite «غيّر الأسماء في الملف ده». ملف [[header.css]] العادي محدش بيلمسه.
-- [[import styles]]: [[styles]] object، و [[console.log]] طبعه [[{"title":"_title_1wc96_1"}]].
-- [[styles.title]]: الاسم الجديد. الـ h3 بقى [[class="_title_1wc96_1"]] وحجمه 20px، والـ h1 بتاع الهيدر فضل 32px.
-
-ده ملف الـ CSS اللي [[vite build]] طلّعه (الاتنين مع بعض):
-
-~~~css dist/assets/index.css
-.title{font-size:2rem}._title_1wc96_1{color:#2563eb;font-size:1.25rem}
-~~~
-
-### الفخ: اسم غلط
-
-[[bad.className = styles.titel]] (حرفين متبدلين): مفيش error في الـ build ولا في الـ Console، والعنصر بقى [[class="undefined"]]. لو شغال TypeScript بيقولك، من غيره لازم تبص بعينك.
-
-وفي React بتكتبها [[className={styles.title}]]، وفي Next.js نفس الفكرة بالظبط.
-
----
-
-## ٤. [[@scope]]: حدود من المتصفح
-
-~~~css @scope
-@scope (.promo) to (.promo__content) {
-  img { border-radius: 50%; }
-}
-~~~
-
-صورة جوه [[.promo]] طلعت [[50%]]، وصورة جوه [[.promo__content]] (اللي جوه promo) طلعت [[0px]]. يعني القاعدة شغالة من [[.promo]] لحد ما توصل لـ [[.promo__content]] وتقف.
-
----
-
-## ٥. تختار إيه؟
-
-| المشروع | الأنسب |
-|---|---|
-| موقع HTML و CSS من غير build | BEM، أو prefix لكل صفحة زي [[.pricing-card]] |
-| React أو Vue أو Next.js | CSS Modules لكل component، أو Tailwind (وحدة قدام) |
-| CSS لحتة جوه صفحة حد تاني | [[@scope]]، أو prefix طويل مستحيل يتكرر |
-| ترتيب الملفات نفسها | [[@layer reset, components, utilities;]] فوق أي طريقة منهم |
-
----
-
-## الخلاصة
-
-- كل class عالمية، والتكرار بيبوّظ صفحات تانية من غير ما تحس.
-- BEM: [[block__element--modifier]]، وزن واحد لكل حاجة، والـ modifier دايمًا مع الـ block.
-- CSS Modules: [[*.module.css]] و [[styles.name]]، والاسم الغلط بيبقى [[undefined]] ساكت.
-- [[@scope]] بيحدد مكان القواعد من المتصفح نفسه.`,
-          lines: [
-            R`الـ block: [[card]] الكارت الأساسي، و [[card--featured]] modifier بيقول «النسخة المميزة». الاتنين لازم مع بعض.`,
-            R`element جوه الـ block: [[card__title]] (شرطتين تحت) يعني «العنوان بتاع الكارت»، فمستحيل يتخانق مع [[.title]] تانية.`,
-            R`element تاني: السعر. كل حتة جوه الكارت اسمها بيبدأ بـ [[card__]].`,
-            R`element تالت: زرار «اشترك» (لينك لأنه بيودّي صفحة تانية)، واسمه [[card__cta]] (CTA = call to action).`,
-            R`نهاية الـ block: كل اللي جواه اسمه بيبدأ بـ [[card__]]، وأي كارت تاني في الصفحة بنفس الأسامي مش هيتأثر غير بالـ modifier بتاعه.`,
-            R`الشكل الأساسي لأي كارت: مسافة جوه، وحدود رمادي، وزوايا مدورة. وزنها class واحدة (0,1,0).`,
-            R`العنوان جوه الكارت بس: حجم 1.25rem ومن غير margin. ميأثرش على أي عنوان تاني في الموقع.`,
-            R`السعر تقيل (700 = bold).`,
-            R`الـ modifier بيغيّر لون الحدود بس. باقي الشكل جاي من [[.card]]، وعشان كده الاتنين لازم على نفس العنصر.`,
-            R`الاستثنا الوحيد: الـ modifier بيغيّر element جواه، فالزرار أزرق في الكارت المميز بس. وزنها (0,2,0).`,
-            R`في CSS Modules بتكتب اسم قصير عادي [[.title]]، والأداة هي اللي هتغيّره لاسم فريد وقت الـ build.`,
-            R`[[import]] بيرجّع object: المفتاح الاسم اللي كتبته ([[title]])، والقيمة الاسم الجديد ([[_title_1wc96_1]] في Vite 8.3).`,
-            R`حط الاسم الجديد على العنصر. لو كتبت [[styles.titel]] غلط هيتحط [[undefined]] كاسم class من غير أي error.`
-          ],
-          sol: R`مع الملفين العاديين: الـ h1 بتاع الهيدر حجمه [[20px]] (من [[card.css]] لأنه اتربط آخر) بدل [[32px]]. بعد ما قاعدة الكارت بقت [[.card__title]]: الـ h1 رجع [[32px]] وعنوان الكارت [[20px]]، ومفيش ولا [[!important]].
-
-بالـ CSS Modules: الـ Console طبع [[{"title":"_title_1wc96_1"}]] (الحروف اللي في النص hash وممكن تختلف عندك، والرقم اللي في الآخر رقم السطر في الملف: class في السطر التاني بقت [[_2]])، وعنوان الكارت عليه الاسم ده، و [[.title]] بتاع الهيدر شغال زي ما هو.`,
-          practice: [
-            { lvl: 'تطبيق', t: R`**refactor:** صفحة فيها CSS بالشكل ده: [[.card h3]] و [[.card .btn]] و [[#sidebar .card p]] و [[.card.big]]. حوّلها لـ BEM: كل حاجة class واحدة، والكبير modifier.`, done: R`كل الـ selectors بقت (0,1,0) ما عدا modifier بيغيّر element (0,2,0)، ومفيش id في الـ CSS، والصفحة شكلها نفس الشكل بالظبط (screenshot قبل وبعد)، وتقدر تحط الكارت في الـ sidebar من غير ما شكله يتغيّر.`, sol: R`قبل:
-
-~~~live 430 430 before.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكروت</title>
-<style>
-  .card { padding: 16px; border: 1px solid #ccc; }
-  .card h3 { margin: 0; color: #124; }
-  .card .btn { background: #124; color: #fff; }
-  #sidebar .card p { font-size: 14px; }
-  .card.big { padding: 32px; }
-  .card.big h3 { font-size: 28px; }
-</style>
+<title>دليل تشغيل الفرن</title>
 </head>
 <body>
 <main>
-  <h1>الكروت</h1>
-  <h2>العروض</h2>
-  <article class="card big"><h3>كبير</h3><p>نص</p><button class="btn">شوف</button></article>
-  <aside id="sidebar">
-    <article class="card"><h3>جانبي</h3><p>نص</p><button class="btn">شوف</button></article>
-  </aside>
+  <h1>دليل تشغيل الفرن</h1>
+  <nav aria-label="محتويات الصفحة">
+    <ol>
+      <li><a href="#before">قبل التشغيل</a>
+        <ol>
+          <li><a href="#place">المكان</a></li>
+          <li><a href="#power">الكهربا</a></li>
+        </ol>
+      </li>
+      <li><a href="#use">التشغيل</a>
+        <ol>
+          <li><a href="#heat">التسخين</a></li>
+          <li><a href="#timer">التايمر</a></li>
+        </ol>
+      </li>
+      <li><a href="#clean">التنضيف</a></li>
+    </ol>
+  </nav>
+  <h2 id="before">قبل التشغيل</h2>
+  <h3 id="place">المكان</h3>
+  <p>سيب ١٠ سم فاضيين حوالين الفرن من كل ناحية.</p>
+  <h3 id="power">الكهربا</h3>
+  <p>وصّله في فيشة لوحده من غير مشترك.</p>
+  <h2 id="use">التشغيل</h2>
+  <h3 id="heat">التسخين</h3>
+  <p>سخّنه ١٠ دقايق قبل ما تحط الأكل.</p>
+  <h3 id="timer">التايمر</h3>
+  <p>لف المفتاح للوقت اللي عايزه، وهيرن لما يخلص.</p>
+  <h2 id="clean">التنضيف</h2>
+  <p>افصل الكهربا واستنى لما يبرد.</p>
 </main>
 </body>
 </html>
 ~~~
 
-بعد:
+**إزاي اتبنى:**
 
-~~~live 430 430 after.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكروت</title>
-<style>
-  .card { padding: 16px; border: 1px solid #ccc; }
-  .card__title { margin: 0; color: #124; }
-  .card__text { margin-block: 1em; }
-  .card__btn { background: #124; color: #fff; }
-  .card--big { padding: 32px; }
-  .card--big .card__title { font-size: 28px; }
-  .card--compact .card__text { font-size: 14px; }
-</style>
-</head>
-<body>
-<main>
-  <h1>الكروت</h1>
-  <h2>العروض</h2>
-  <article class="card card--big"><h3 class="card__title">كبير</h3><p class="card__text">نص</p><button class="card__btn">شوف</button></article>
-  <aside id="sidebar">
-    <article class="card card--compact"><h3 class="card__title">جانبي</h3><p class="card__text">نص</p><button class="card__btn">شوف</button></article>
-  </aside>
-</main>
-</body>
-</html>
-~~~
+1. اكتب العناوين الأول وادّي كل واحد [[id]] قصير بالإنجليزي ومن غير مسافات.
+2. الفهرس صورة من العناوين: كل [[<h2>]] عنصر في القايمة الخارجية، وكل [[<h3>]] تحته عنصر في قايمة جوه الـ [[<li>]] بتاعه.
+3. كل عنصر لينك [[href="#id"]].
+4. الفهرس جوه [[<nav aria-label="محتويات الصفحة">]] لأنه روابط تنقل جوه الصفحة.
 
-**الأسماء:** [[block__element--modifier]]. الـ block هو [[card]]، والعنصر جواه [[card__title]]، والحالة أو النوع [[card--big]].
+**ليه [[<ol>]]:** الأقسام مترتبة، والدليل بيتقري من أوله. والقايمة الفرعية بتبدأ من 1 تاني، فالفهرس طالع 1 (1، 2)، 2 (1، 2)، 3.
 
-**إيه اللي اتغيّر فعليًا:**
-
-- [[.card h3]] كانت بتعتمد على شكل الـ HTML. لو غيّرتها لـ h2 الشكل يبوظ. [[.card__title]] مش بتهتم بالـ tag.
-- [[#sidebar .card p]] كانت بتربط الشكل بالمكان. الكارت لو اتنقل برّه الـ sidebar بيتغيّر. [[.card--compact]] بتروح مع الكارت أينما كان.
-- كل selector وزنه (0,1,0)، ماعدا modifier بيغيّر element فهو (0,2,0)، فمفيش خناقات.
-
-**الغلطة الشائعة:** تعمل [[.card__body__title]]. الـ BEM مفيهوش عناصر متداخلة: كل element تابع للـ block مباشرة، مهما كان عمقه في الـ HTML.
+**الغلطة الشائعة:** تغيّر عنوان أو الـ [[id]] بتاعه وتنسى اللينك في الفهرس. اللينك اللي الـ [[id]] بتاعه مش موجود مبيعملش حاجة لما تدوس عليه، ومفيش error بيظهر.
 
 ~~~text الناتج
-الـ screenshot قبل وبعد: متطابق بايت ببايت
-عدد selectors فيها id في الـ CSS بعد: 0
-أوزان الـ selectors بعد:
-(0,1,0)  .card__title
-(0,2,0)  .card--big .card__title
-(0,1,0)  .card__text
-(0,2,0)  .card--compact .card__text
-(0,1,0)  .card
-(0,1,0)  .card--big
-(0,1,0)  .card__btn
-نقلنا الكارت الجانبي برّه الـ aside: حجم النص = 14px  (لسه نفس الشكل)
-axe: 0 violations
+ol=3  li=7  a=7  h2=3  h3=4
+العلامات:  1 (1 2)   2 (1 2)   3
+كل href ليه id موجود: true   (#before #place #power #use #heat #timer #clean)
+بعد الضغط على «التايمر»: الـ URL آخره #timer
+Nu Html Checker: صفر errors
 ~~~` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** زميلك كتب [[<article class="card--featured">]] والكارت المميز طالع من غير حدود ولا مسافات، مع إن [[.card--featured { border-color: blue; }]] موجودة.`, done: R`عرفت إن الـ modifier بيغيّر لون الحدود بس والحدود نفسها في [[.card]]، فحطيت الاتنين [[class="card card--featured"]]، و Computed بقى بيقول [[border-top-style: solid]] و padding 16px.`, sol: R`~~~live 140 140
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكروت</title>
-<style>
-  .card { border: 1px solid #ccc; padding: 16px; margin-block-end: 8px; }
-  .card--featured { border-color: blue; }
-</style>
-</head>
-<body>
-<main>
-<h1>الكروت</h1>
-<article class="card card--featured">مميز</article>
-</main>
-</body>
-</html>
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب روابط الفوتر كده: [[<div><a>عن المخبز</a> | <a>وظايف</a> | <a>الخصوصية</a></div>]]. اكتب له في ٣ سطور ليه تتكتب [[<nav>]] جواه [[<ul>]]، واكتب النسخة الصح.`, done: R`التلات سطور فيهم: المعنى (روابط تنقل، ومجموعة)، واللي قارئ الشاشة بياخده (landmark باسم، وعدد العناصر)، والفاصل «|» اللي بيتقري. والنسخة الصح فيها [[nav]] باسم و [[ul]] وتلات [[li]].`, sol: R`إجابة نموذجية:
+
+1. دي روابط تنقل، فمكانها [[<nav>]] باسم ([[aria-label="روابط الفوتر"]]) عشان قارئ الشاشة يلاقيها في قايمة الـ landmarks ويفرّقها عن قايمة التنقل اللي فوق.
+2. وهي مجموعة عناصر، فتتكتب [[<ul>]]: قارئ الشاشة يقول عددها، وكل رابط ياخد صندوق لوحده يتنسّق.
+3. الـ «|» المكتوبة بالإيد بتتقري «خط رأسي» بين كل رابطين. الفاصل زينة، ومكانه الـ CSS.
+
+~~~live 102 النسخة الصح
+<nav aria-label="روابط الفوتر">
+  <ul>
+    <li><a href="#about">عن المخبز</a></li>
+    <li><a href="#jobs">وظايف</a></li>
+    <li><a href="#privacy">الخصوصية</a></li>
+  </ul>
+</nav>
 ~~~
 
-**السبب:** الـ modifier مش بديل للـ block، ده إضافة عليه. [[.card--featured]] فيها سطر واحد للون الحدود بس. أما الحدود نفسها والمسافات ففي [[.card]]. فلو كتبت الـ modifier لوحده، مفيش حدود أصلًا عشان تتلوّن.
-
-**القاعدة:** الاتنين مع بعض دايمًا: [[class="card card--featured"]].
-
-**الغلطة الشائعة:** تنسخ كل قواعد [[.card]] جوه [[.card--featured]] عشان تشتغل لوحدها. كده لما تغيّر [[.card]] المميز مش هيتغيّر معاها.
+**الغلطة الشائعة:** تسيب الـ [[<a>]] من غير [[href]] «مؤقتًا». لينك من غير [[href]] مش لينك: مبيتوصلوش بـ Tab ومبيتقريش link (درس «a و button»).
 
 ~~~text الناتج
-قبل (class="card--featured"):
-border-top-style = none   padding = 0px
-
-بعد (class="card card--featured"):
-border-top-style = solid   padding = 16px   لون الحدود = rgb(0, 0, 255)
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** ملفين CSS فيهم [[.title]] بحجمين مختلفين. اعكس ترتيب الـ [[<link>]] بتاعهم وقيس حجم الـ h1 في كل مرة. وبعدين حوّل واحد منهم لـ [[.module.css]] في Vite وقيس تاني.`, done: R`الحجم بيتغيّر مع ترتيب الـ link (اللي آخر يكسب: 20px أو 32px)، وبعد الـ module الحجم ثابت مهما كان الترتيب، وفي [[dist/assets]] لقيت الاسم الجديد زي [[._title_xxxxx_1]].`, sol: R`~~~css a.css
-.title { font-size: 20px; }
-~~~
-
-~~~css b.module.css
-.title { font-size: 32px; }
-~~~
-
-~~~js main.js
-import './a.css';
-import styles from './b.module.css';
-
-document.querySelector('h1').className = styles.title;
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>العنوان</title>
-</head>
-<body>
-<main><h1>العنوان</h1></main>
-<script type="module" src="/main.js">$__lt/script>
-</body>
-</html>
-~~~
-
-وعشان تجربة الترتيب من غير modules: ملفين [[a.css]] و [[b.css]] فيهم نفس الـ class، و [[<h1 class="title">]]، وبدّل سطور [[<link>]].
-
-بعد كده [[npm create vite@latest]] ثم [[npx vite build]].
-
-**ليه الترتيب بطّل يفرق:** CSS Modules بتغيّر اسم الـ class وقت البناء لاسم فريد. فـ [[.title]] في الموديول مبقاش [[.title]] أصلًا. ومفيش خناقة، لأن الاسمين مختلفين.
-
-**الغلطة الشائعة:** تكتب [[class="title"]] في الـ HTML وتستنى الموديول يشتغل. الاسم الجديد موجود في [[styles.title]] بس.
-
-~~~text الناتج
-ملفين عاديين:
-a ثم b  → 32px
-b ثم a  → 20px
-
-b.module.css:
-a ثم الموديول  → 32px
-الموديول ثم a  → 32px
-
-الاسم في dist/assets: ._title_1tx54_1
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** component بيعمل [[el.className = styles.titel]] وشكله مش متنسّق، والـ Console نضيف خالص.`, done: R`في Elements لقيت [[class="undefined"]]، وطبعت [[styles]] ولقيت المفتاح اسمه [[title]]، وصلّحته. وزوّدت سطر بيتأكد: [[if (!styles.title) throw new Error('class ناقصة')]] أو استخدمت TypeScript.`, sol: R`~~~js
-import styles from './card.module.css';
-
-if (!styles.title) throw new Error('class ناقصة: title');
-
-const el = document.querySelector('h2');
-el.className = styles.title;
-~~~
-
-**ليه الـ Console نضيف:** في JavaScript، قراية مفتاح مش موجود في object مش خطأ، بترجّع [[undefined]]. و [[el.className = undefined]] بيحوّلها لنص، فالـ class بيبقى كلمة [[undefined]] حرفيًا. مفيش ولا error، بس مفيش تنسيق.
-
-**خطوات الوصول للسبب:**
-
-1. Elements: لقيت [[class="undefined"]].
-2. [[console.log(styles)]]: لقيت المفتاح [[title]] مش [[titel]].
-3. صلّحت الاسم، وزوّدت سطر فحص، فالغلطة الجاية تصرخ بدل ما تسكت.
-
-**الوقاية:** TypeScript مع [[typescript-plugin-css-modules]] بيطلّع خطأ في المحرر قبل ما تشغّل.
-
-**الغلطة الشائعة:** تدوّر في ملف الـ CSS وتعيد كتابة القاعدة. القاعدة سليمة، المشكلة في السطر اللي بيقراها.
-
-~~~text الناتج
-قبل (styles.titel):
-class في Elements = undefined
-Console: 0 رسالة خطأ
-console.log(styles) = {"title":"_title_1s69e_1"}
-
-بعد (styles.title):
-class في Elements = _title_1s69e_1
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** مكتبة كروت صغيرة بالـ BEM لموقع جيم متخيل: [[.plan]] و [[.plan__name]] و [[.plan__price]] و [[.plan__features]] و [[.plan__cta]]، و ٣ modifiers: [[--featured]] (حدود ملونة وشارة «الأشهر» بـ [[::before]])، و [[--muted]] (رمادي)، و [[--compact]] (padding أقل).`, done: R`٣ كروت جنب بعض كل واحد بـ modifier مختلف، وكل modifier أقل من ٤ سطور CSS لأنه بيغيّر بس، وتقدر تجمع اتنين ([[plan plan--featured plan--compact]]) والاتنين يشتغلوا، ومفيش [[!important]] في الملف.`, sol: R`~~~live 380 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الباقات</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; max-width: 800px; margin-inline: auto; }
-  .plan { position: relative; padding: 24px; border: 2px solid #d4d4d8; border-radius: 12px; }
-  .plan__name { margin: 0; font-size: 1.25rem; }
-  .plan__price { font-size: 1.75rem; font-weight: 700; }
-  .plan__features { padding-inline-start: 20px; }
-  .plan__cta { display: inline-block; padding: 10px 16px; background: #0f766e; color: #fff; border-radius: 8px; text-decoration: none; }
-
-  .plan::before {
-    position: absolute; top: -12px; inset-inline-start: 16px;
-    padding: 0 8px; background: #0f766e; color: #fff; border-radius: 999px; font-size: .75rem;
-  }
-
-  .plan--featured { border-color: #0f766e; }
-  .plan--featured::before { content: "الأشهر"; }
-
-  .plan--muted { color: #52525b; background: #f4f4f5; }
-  .plan--muted .plan__cta { background: #52525b; }
-
-  .plan--compact { padding: 12px; }
-</style>
-</head>
-<body>
-<main>
-<h1>الباقات</h1>
-<div class="plans">
-  <article class="plan plan--muted">
-    <h2 class="plan__name">أساسي</h2>
-    <p class="plan__price">٥٠٠ ج</p>
-    <ul class="plan__features"><li>صالة</li></ul>
-    <a class="plan__cta" href="#basic">اشترك في الأساسي</a>
-  </article>
-  <article class="plan plan--featured">
-    <h2 class="plan__name">ذهبي</h2>
-    <p class="plan__price">٩٠٠ ج</p>
-    <ul class="plan__features"><li>صالة</li><li>حصص</li></ul>
-    <a class="plan__cta" href="#gold">اشترك في الذهبي</a>
-  </article>
-  <article class="plan plan--featured plan--compact">
-    <h2 class="plan__name">سريع</h2>
-    <p class="plan__price">٣٠٠ ج</p>
-    <ul class="plan__features"><li>أسبوع</li></ul>
-    <a class="plan__cta" href="#quick">اشترك في السريع</a>
-  </article>
-</div>
-</main>
-</body>
-</html>
-~~~
-
-**ليه الـ modifiers قصيرة:** كل واحد بيقول الفرق بس. كل حاجة مشتركة في [[.plan]]. وعشان كده تقدر تجمع اتنين: كل واحد بيلمس خصايص مختلفة، فمفيش تعارض.
-
-- [[position: relative]] على [[.plan]] عشان الشارة [[::before]] تتحسب منه.
-- [[.plan--muted .plan__cta]]: modifier بيغيّر element، وزنها (0,2,0). دي الحالة الوحيدة اللي بنستخدم فيها selector مركّب.
-- شكل الشارة في [[.plan::before]]، وده مش بيترسم لوحده لأن مفيهوش [[content]]. فالـ modifier بيكتب [[content]] بس، وبيفضل سطر واحد.
-- [[content: "الأشهر"]] زينة، وقارئ الشاشة ممكن يقراها. لو المعلومة مهمة خليها نص حقيقي.
-
-**الغلطة الشائعة:** تعمل [[.plan--featured-compact]] لكل تركيبة. كده الأسماء هتتضاعف مع كل modifier جديد.
-
-~~~text الناتج
-padding: عادي 24px   compact 12px
-الاتنين مع بعض: حدود rgb(15, 118, 110) و padding 12px و شارة: "الأشهر"
-عدد سطور CSS في كل modifier: featured 2، muted 2، compact 1
-!important في الملف: 0
-مواضع الكروت على 1280: 86 , 86 , 86 (نفس السطر)
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** في وثائق Vite (صفحة Features › CSS Modules) اعرف إزاي تخلي الأسماء في الـ JavaScript camelCase (يعني [[.plan-card]] تتقري [[styles.planCard]])، وإيه [[:global()]].`, done: R`لقيت [[css.modules.localsConvention]] في [[vite.config]] وجرّبتها، وفهمت إن [[:global(.x)]] بتسيب الاسم زي ما هو جوه ملف module (مثلًا عشان class جاي من مكتبة).`, sol: R`~~~js vite.config.js
-export default {
-  css: {
-    modules: {
-      localsConvention: 'camelCaseOnly',
-    },
-  },
-};
-~~~
-
-~~~css plan.module.css
-.plan-card { padding: 16px; }
-:global(.lib-tooltip) { color: teal; }
-~~~
-
-~~~js main.js
-import styles from './plan.module.css';
-
-console.log(JSON.stringify(styles));
-document.querySelector('h1').className = styles.planCard;
-~~~
-
-**الإجابات:**
-
-- [[css.modules.localsConvention]]: بتتحكم في شكل المفاتيح في الـ JavaScript. [[camelCase]] بتسيب الاسم الأصلي وتضيف نسخة camelCase، و [[camelCaseOnly]] بتسيب الـ camelCase بس.
-- [[:global(.x)]]: جوه ملف موديول، اسم الـ class بيتسيب زي ما هو من غير hash. بتحتاجه لما class جاي من مكتبة، أو لما تكتب على عنصر برّه الموديول.
-
-**الغلطة الشائعة:** تكتب [[styles['plan-card']]] في كل مكان وتتعب، أو تنسى تعيد تشغيل Vite بعد تعديل الـ config.
-
-~~~text الناتج
-camelCaseOnly: مفاتيح styles = planCard
-camelCase:     مفاتيح styles = plan-card , planCard
-من غير config: مفاتيح styles = plan-card
-
-:global في الملف الناتج: .lib-tooltip{color:teal}
+شجرة الـ accessibility:
+navigation "روابط الفوتر"
+  list
+    listitem   link "عن المخبز"
+    listitem   link "وظايف"
+    listitem   link "الخصوصية"
+nav=1  ul=1  li=3  a=3
 ~~~` },
           ]
-        }
+        },
+        {
+          cmd: "dl و dt و dd",
+          title: "قايمة اسم وقيمة: المواصفات والأسئلة والقاموس",
+          pre: ["css/ul و ol"],
+          ref: [
+            { t: "MDN: <dl>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dl" },
+            { t: "MDN: <dt>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dt" },
+            { t: "MDN: <dd>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dd" },
+            { t: "WHATWG: the dl element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-dl-element" },
+            { t: "WHATWG: the dt element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-dt-element" },
+            { t: "WHATWG: the dd element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-dd-element" },
+            { t: "MDN Curriculum: Semantic HTML (2.3 Lists)", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" }
+          ],
+          desc: R`[[<dl>]] هي النوع التالت من القوايم: قايمة **أسماء وقيمها**. كل اسم في [[<dt>]] وكل قيمة ليه في [[<dd>]]. بتستخدمها لمواصفات منتج (السعر: ٤٥٠ جنيه)، وأسئلة وإجاباتها، ومصطلحات وتعريفها، وبيانات مقال (الكاتب، التاريخ).
+
+هي أقل التلاتة استخدامًا، وأكتر مكان بتشوفها فيه الوثائق والقواميس والصفحات الأكاديمية. بس لما المحتوى يبقى اسم وقيمة، هي العنصر الصح، مش فقرات فيها كلمة تقيلة ونقطتين.`,
+          example: R`<h2>مواصفات الكشّاف</h2>
+<dl>
+  <dt>السعر</dt>
+  <dd>٤٥٠ جنيه</dd>
+  <dt>الألوان</dt>
+  <dd>أسود</dd>
+  <dd>أصفر</dd>
+  <dt>الضمان</dt>
+  <dd>سنة</dd>
+</dl>`,
+          flag: "script",
+          lines: [
+            R`عنوان القايمة. زي [[<ul>]] و [[<ol>]]، الـ [[<dl>]] ملهاش اسم، فالعنوان اللي قبلها هو اللي بيعرّفها.`,
+            R`[[<dl>]] من description list: الغلاف. جواه مباشرة [[<dt>]] و [[<dd>]] بس (أو [[<div>]] حوالين كل مجموعة، في الشرح).`,
+            R`[[<dt>]] من description term: الاسم، يعني «إيه المعلومة دي؟».`,
+            R`[[<dd>]] من description details: القيمة بتاعة الاسم اللي قبله. المتصفح بيدخّله 40px لجوه.`,
+            R`اسم تاني: من هنا بتبدأ مجموعة جديدة.`,
+            R`أول قيمة للألوان: كل لون في [[<dd>]] لوحده.`,
+            R`قيمة تانية لنفس الاسم: [[<dd>]] ورا [[<dd>]] يعني الاسم ليه أكتر من قيمة.`,
+            R`اسم تالت: [[<dt>]] جه بعد [[<dd>]] فبدأ مجموعة جديدة.`,
+            R`قيمة الضمان، وهي آخر مجموعة في القايمة.`,
+            R`نهاية القايمة. [[</dl>]] لازم تتكتب.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+[[<ul>]] و [[<ol>]] كل عنصر فيهم حتة واحدة. في [[<dl>]] كل عنصر **حتتين**: اسم ([[<dt>]]) وقيمة ([[<dd>]]). والمواصفة (WHATWG) بتسمّيها «name-value groups»: مجموعات اسم وقيمة.
+
+القياسات من Chrome 157 (headless على Windows 11)، ورسايل الـ validator من Nu Html Checker.
+
+---
+
+## ١. [[<dl>]] و [[<dt>]] و [[<dd>]]
+
+~~~live 120 اسم وتحته قيمته
+<dl>
+  <dt>السعر</dt>
+  <dd>٤٥٠ جنيه</dd>
+  <dt>الضمان</dt>
+  <dd>سنة</dd>
+</dl>
+~~~
+
+- [[<dt>]]: الاسم («السعر»). من description term.
+- [[<dd>]]: القيمة («٤٥٠ جنيه»). من description details. بييجي **بعد** الـ [[<dt>]] بتاعه.
+- [[<dl>]]: الغلاف اللي بيلمّهم. من description list.
+
+الشكل الافتراضي:
+
+~~~text الناتج
+dl:  display=block  margin-top=16px  margin-bottom=16px  padding=0px
+dt:  display=block  margin=0px   font-weight=400 (عادي، مش تقيل)
+dd:  display=block  margin-right=40px  (margin-inline-start)   font-weight=400
+~~~
+
+| اللي شفته | جاي منين |
+|---|---|
+| القيمة داخلة لجوه عن الاسم | [[<dd>]] ليه [[margin]] قدره 40px في بداية السطر |
+| مفيش نقط ولا أرقام | [[<dt>]] و [[<dd>]] نوع عرضهم [[block]] عادي، مش [[list-item]] |
+| الاسم **مش** تقيل | Chrome مبيدّيش [[<dt>]] أي تنسيق. ناس كتير فاكرة إنه bold افتراضيًا، وهو لأ |
+
+يعني الفرق بين الاسم والقيمة في الشكل الافتراضي هو الـ 40px بس. التقيل والألوان والصف الأفقي بييجوا من الـ CSS.
+
+---
+
+## ٢. أكتر من قيمة، وأكتر من اسم
+
+~~~live 156 قيمتين لاسم، واسمين لقيمة
+<dl>
+  <dt>الألوان</dt>
+  <dd>أسود</dd>
+  <dd>أصفر</dd>
+  <dt>الموبايل</dt>
+  <dt>واتساب</dt>
+  <dd dir="ltr">0100 000 0000</dd>
+</dl>
+~~~
+
+- «الألوان» ليها [[<dd>]] اتنين: الاسم ليه **قيمتين**.
+- «الموبايل» و «واتساب» اتنين [[<dt>]] ورا بعض وبعدهم [[<dd>]] واحد: **اسمين لنفس القيمة**.
+
+المتصفح بيقسّم المجموعات بقاعدة بسيطة من المواصفة: المجموعة بتبدأ بـ [[<dt>]] واحد أو أكتر، وبعدهم [[<dd>]] واحد أو أكتر. وأول [[<dt>]] ييجي **بعد** [[<dd>]] بيبدأ مجموعة جديدة.
+
+~~~text المجموعات في المثال
+المجموعة 1:   الأسماء: الألوان            القيم: أسود ، أصفر
+المجموعة 2:   الأسماء: الموبايل ، واتساب   القيم: 0100 000 0000
+~~~
+
+> لو القيمة فقرتين (شرح طويل)، الفقرتين بيتحطوا في [[<dd>]] **واحد**. اتنين [[<dd>]] معناهم قيمتين مختلفتين، مش قيمة واحدة مقسومة.
+
+---
+
+## ٣. المتصفح فاهم إيه؟
+
+~~~text شجرة الـ accessibility من Chrome للمثال اللي فات
+DescriptionList
+  term        "الألوان"
+  definition  "أسود"
+  definition  "أصفر"
+  term        "الموبايل"
+  term        "واتساب"
+  definition  "0100 000 0000"
+~~~
+
+Chrome ادّى كل [[<dt>]] role اسمه [[term]]، وكل [[<dd>]] role اسمه [[definition]]، والغلاف نوع داخلي اسمه DescriptionList.
+
+قارن بالطريقة اللي ناس كتير بتكتب بيها المواصفات:
+
+~~~live 100 المزيفة: فقرات وكلمة تقيلة
+<p><b>السعر:</b> ٤٥٠ جنيه</p>
+<p><b>الضمان:</b> سنة</p>
+~~~
+
+دي في الشجرة فقرتين وبس. مفيش حاجة بتقول إن «السعر» اسم و «٤٥٠ جنيه» قيمته: العلاقة في دماغ القارئ بس.
+
+**قارئ الشاشة:** MDN بيقول إن كل قارئ شاشة بيعرض [[<dl>]] بطريقته (العدد، وسياق المصطلح والتعريف، وطريقة التنقل)، وإن الاختلاف ده مش bug. فمتعتمدش على نطق معيّن. ده من وثائق MDN ومتجرّبش هنا.
+
+---
+
+## ٤. بتتستخدم فين؟
+
+المواصفة بتقول المجموعات ممكن تبقى: مصطلحات وتعريفها، أو مواضيع وقيمها (metadata)، أو أسئلة وإجابات، أو أي بيانات اسم وقيمة.
+
+### مواصفات منتج
+
+ده المثال اللي في أول الدرس: السعر، والألوان، والضمان.
+
+### أسئلة وإجابات
+
+~~~live 221 أسئلة شائعة
+<h2>أسئلة بتتكرر</h2>
+<dl>
+  <dt>بتوصّلوا لحد فين؟</dt>
+  <dd>جوه المدينة كلها، والتوصيل في نفس اليوم.</dd>
+  <dt>ينفع أرجّع الطلب؟</dt>
+  <dd>
+    <p>أيوه، خلال ٢٤ ساعة.</p>
+    <p>المخبوزات الطازة مبتترجعش.</p>
+  </dd>
+</dl>
+~~~
+
+السؤال [[<dt>]] والإجابة [[<dd>]]. والإجابة التانية فقرتين جوه [[<dd>]] واحد.
+
+### بيانات مقال (metadata)
+
+~~~live 268 مين كتب وإمتى
+<article>
+  <h2>إزاي تخزّن العيش من غير ما ينشف</h2>
+  <dl>
+    <dt>الكاتبة</dt>
+    <dd>هدى منصور</dd>
+    <dt>اتنشر</dt>
+    <dd>٣ مارس ٢٠٢٦</dd>
+    <dt>وقت القراية</dt>
+    <dd>٤ دقايق</dd>
+  </dl>
+  <p>العيش بينشف لما الهوا يسحب منه المية...</p>
+</article>
+~~~
+
+### قاموس مصطلحات
+
+~~~live 171 قاموس
+<h2>قاموس الخبّاز</h2>
+<dl>
+  <dt><dfn>التخمير</dfn></dt>
+  <dd>إن العجينة تتساب لحد ما الخميرة تنفخها.</dd>
+  <dt><dfn>اللت</dfn></dt>
+  <dd>عجن العجينة باليد عشان تبقى مطاطة.</dd>
+</dl>
+~~~
+
+[[<dfn>]] بيقول «دي الكلمة اللي بتتعرّف هنا» (اتشرح في وحدة «معنى الكلام جوه الفقرة»)، والمتصفح بيميّلها. المواصفة بتنبّه إن [[<dt>]] لوحده مبيقولش إن اللي جواه مصطلح بيتعرّف، وعشان كده القواميس بتزوّد [[<dfn>]].
+
+---
+
+## ٥. [[<div>]] حوالين كل مجموعة
+
+لو عايز تمسك كل مجموعة (الاسم وقيمه) كوحدة واحدة عشان تحط حواليها إطار أو ترصّ الاسم والقيمة في صف، المواصفة بتسمح بـ [[<div>]] حوالين كل مجموعة جوه الـ [[<dl>]]:
+
+~~~live 182 كل مجموعة في div
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مواصفات الكشّاف</title>
+<style>
+  dl > div { border: 1px solid #999; padding: 8px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<dl>
+  <div>
+    <dt>السعر</dt>
+    <dd>٤٥٠ جنيه</dd>
+  </div>
+  <div>
+    <dt>الألوان</dt>
+    <dd>أسود</dd>
+    <dd>أصفر</dd>
+  </div>
+</dl>
+</body>
+</html>
+~~~
+
+سطر الـ CSS اللي في [[<style>]] بيقول: كل [[<div>]] ابن مباشر للـ [[<dl>]] ياخد إطار ومسافة. اتكتب هنا عشان تشوف فايدة الـ [[<div>]]، والـ CSS نفسه في وحدته.
+
+- الـ [[<div>]] مبيغيّرش المعنى. شجرة الـ accessibility طلعت زي ما هي: [[term]] و [[definition]] جوه DescriptionList.
+- ده المكان الوحيد اللي [[<div>]] مسموح فيه جوه [[<dl>]]، ومسموح [[<div>]] بس (مش [[<section>]] ولا [[<li>]]).
+- **يا كله يا بلاش:** لو مجموعة واحدة في [[<div>]]، كل المجموعات لازم تبقى في [[<div>]]. جرّبت أخلط فالـ validator قال:
+
+~~~text Nu Html Checker
+error: Element “dt” not allowed as child of element “dl” in this context.
+error: Element “dd” not allowed as child of element “dl” in this context.
+~~~
+
+---
+
+## ٦. [[<dl>]] ولا [[<ul>]] ولا جدول؟
+
+~~~live 378 نفس النوع من البيانات بتلات أشكال
+<h3>ul: حاجات من غير اسم وقيمة</h3>
+<ul>
+  <li>ضد المية</li>
+  <li>بيتشحن USB</li>
+</ul>
+<h3>dl: اسم وقيمة لحاجة واحدة</h3>
+<dl>
+  <dt>السعر</dt>
+  <dd>٤٥٠ جنيه</dd>
+  <dt>الوزن</dt>
+  <dd>١٢٠ جرام</dd>
+</dl>
+<h3>table: نفس الأسماء لكذا حاجة</h3>
+<table>
+  <tr><th>الموديل</th><th>السعر</th><th>الوزن</th></tr>
+  <tr><td>كشّاف ١</td><td>٤٥٠ جنيه</td><td>١٢٠ جرام</td></tr>
+  <tr><td>كشّاف ٢</td><td>٦٠٠ جنيه</td><td>٩٠ جرام</td></tr>
+</table>
+~~~
+
+| المحتوى | العنصر | ليه |
+|---|---|---|
+| حاجات كل واحدة حتة واحدة (مميزات) | [[<ul>]] | مفيش اسم وقيمة |
+| أسماء وقيم **لحاجة واحدة** (مواصفات منتج واحد) | [[<dl>]] | كل سطر اسم وقيمته |
+| **نفس الأسماء لكذا حاجة** (مقارنة منتجين) | [[<table>]] | الأسماء بقت عواميد، وكل حاجة صف. ده درس «table» في وحدة الجداول |
+| خطوات مترتبة | [[<ol>]] | الترتيب هو المعنى |
+
+سؤال سريع: لو البيانات اتحطت في Excel، هتاخد كام عمود؟ عمودين (اسم وقيمة) يبقى [[<dl>]]. أكتر من عمودين يبقى جدول.
+
+---
+
+## ٧. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[<dd>]] قبل الـ [[<dt>]] بتاعه | Chrome بيعرضه زي ما هو (قيمة داخلة وتحتها اسم). والـ validator: [[Element “dl” is missing a required child element.]] |
+| [[<dt>]] من غير أي [[<dd>]] بعده | الـ validator: [[Element “dl” is missing a required instance of child element “dd”.]] |
+| عنوان جوه [[<dt>]]، زي [[<dt><h3>سؤال</h3></dt>]] | بيترسم، والـ validator: [[The element “h3” must not appear as a descendant of the “dt” element.]] الـ [[<dt>]] ممنوع فيه عناوين و [[<header>]] و [[<footer>]] وعناصر تقسيم. الـ [[<dd>]] مسموح فيه أي حاجة |
+| [[<li>]] أو [[<p>]] مباشرة جوه [[<dl>]] | الـ validator: [[Element “li” not allowed as child of element “dl” in this context.]] |
+| [[<dd>]] لوحده برّه [[<dl>]] | Chrome برضه بيدخّله 40px، وده اللي بيغري ناس تستخدمه للتدخيل. الـ validator: [[Element “dd” not allowed as child of element “body” in this context.]] |
+| [[<dl>]] لحوار بين اتنين (فلان: كذا) | المواصفة بتقول صريح إن [[<dl>]] مش مناسبة للحوارات |
+| نسيت [[</dt>]] أو [[</dd>]] | بيتقفلوا لوحدهم: [[<dl><dt>السعر<dd>٤٥٠<dt>اللون<dd>أسود</dl>]] اتبنى منه اتنين [[<dt>]] واتنين [[<dd>]] مظبوطين. اكتب القفلة برضه |
+
+---
+
+## الخلاصة
+
+- [[<dl>]] قايمة أسماء وقيم: [[<dt>]] الاسم وبعده [[<dd>]] القيمة.
+- ينفع أكتر من [[<dd>]] لنفس الاسم، وأكتر من [[<dt>]] لنفس القيمة. والقيمة الطويلة فقراتها في [[<dd>]] واحد.
+- الشكل الافتراضي: القيمة داخلة 40px، والاسم مش تقيل.
+- [[<div>]] حوالين كل مجموعة مسموح للتنسيق، يا كل المجموعات يا ولا واحدة.
+- اسم وقيمة لحاجة واحدة [[<dl>]]، ونفس الأسماء لكذا حاجة جدول، وحاجات من غير أسماء [[<ul>]].
+- هي أقل القوايم التلاتة استخدامًا، ومكانها المواصفات والأسئلة والقواميس والبيانات الوصفية.`,
+          try: R`اعمل ملف [[card.html]] فيه «بطاقة تعريف» بـ [[<dl>]]: الاسم، والمدينة، واللغات (لغتين، كل لغة في [[<dd>]] لوحدها). افتحه وبص على المسافة قدام القيم. وبعدين بدّل مكان أول [[<dt>]] و [[<dd>]] (القيمة قبل الاسم) وشوف المتصفح هيعرض إيه، وحط الكود في الـ validator (validator.w3.org/nu).`,
+          sol: R`~~~live 238 card.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بطاقة تعريف</title>
+</head>
+<body>
+<h1>بطاقة تعريف</h1>
+<dl>
+  <dt>الاسم</dt>
+  <dd>كريم عادل</dd>
+  <dt>المدينة</dt>
+  <dd>المنصورة</dd>
+  <dt>اللغات</dt>
+  <dd>عربي</dd>
+  <dd>إنجليزي</dd>
+</dl>
+</body>
+</html>
+~~~
+
+الأسماء في أول السطر، والقيم داخلة 40px. و «اللغات» تحتها قيمتين.
+
+لما تبدّل أول اتنين، المتصفح بيعرض «كريم عادل» داخل لجوه وتحته «الاسم» في أول السطر، من غير أي تحذير. هو بيرسم اللي مكتوب. بس المعنى باظ: دلوقتي فيه قيمة من غير اسم، و «الاسم» و «المدينة» بقوا اسمين لقيمة واحدة هي «المنصورة».
+
+~~~text الناتج
+الصح:   dl=1  dt=3  dd=4     validator: صفر errors
+        المجموعات: الاسم ← كريم عادل | المدينة ← المنصورة | اللغات ← عربي ، إنجليزي
+بعد التبديل:  validator: error: Element “dl” is missing a required child element.
+        المجموعات: (من غير اسم) ← كريم عادل | الاسم ، المدينة ← المنصورة | اللغات ← عربي ، إنجليزي
+~~~`,
+          deep: {
+            why: R`بيانات «اسم: قيمة» في كل موقع: مواصفات، وتفاصيل طلب، وبيانات حساب، وإعدادات، وأسئلة شائعة. من غير [[<dl>]] بتتكتب فقرات فيها كلمة تقيلة ونقطتين، أو جدول من عمودين من غير عناوين، أو [[<ul>]] كل عنصر فيها «السعر: ٤٥٠». التلاتة شكلهم مقبول، بس مفيش واحدة فيهم بتقول للمتصفح مين الاسم ومين القيمة.`,
+            how: R`المتصفح بيمشي على أبناء الـ [[<dl>]] بالترتيب (ولو فيه [[<div>]] بيدخل جواه)، وبيلمّهم مجموعات: كل [[<dt>]] بيتضاف لأسماء المجموعة الحالية، وكل [[<dd>]] لقيمها، وأول [[<dt>]] ييجي بعد [[<dd>]] بيقفل المجموعة ويبدأ واحدة جديدة. مفيش attribute بيربط الاسم بالقيمة: الربط بالترتيب بس.
+
+والتنسيق الافتراضي سطر واحد تقريبًا: [[<dd>]] ليه 40px margin في بداية السطر.`,
+            when: R`مواصفات منتج واحد، تفاصيل طلب أو حجز، بيانات مقال أو ملف، أسئلة شائعة قصيرة، قاموس مصطلحات، شرح اختصارات. ومتستخدمهاش: للمقارنة بين كذا حاجة (جدول)، ولا لحوار، ولا عشان الـ 40px بتاعة التدخيل، ولا لأسئلة شائعة عايزها تتفتح وتتقفل (دي [[<details>]] في وحدة تانية).`,
+            mistakes: R`تفتكر إن [[<dt>]] تقيل افتراضيًا فتستغرب الشكل. تحط القيمة قبل الاسم. تقسم إجابة طويلة على اتنين [[<dd>]] فتبقى قيمتين. تحط عنوان [[<h3>]] جوه [[<dt>]]. تلف بعض المجموعات بـ [[<div>]] وتسيب الباقي. تستخدم [[<dd>]] لوحده للتدخيل. تكتب [[<dl>]] لمقارنة تلات منتجات وكل واحد بيكرر نفس الأسماء، والمفروض جدول.`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ [[<dl>]] اللي في أول الحل فيها ٤ [[<dt>]] و ٥ [[<dd>]]. من غير ما تشغّلها: فيها كام مجموعة اسم وقيمة؟ ومين الاسم اللي ليه أكتر من قيمة؟ ومين القيمة اللي ليها أكتر من اسم؟`, done: R`إجابتك: ٣ مجموعات. «الألوان» ليها ٣ قيم. و «KR-204» ليها اسمين: «الكود» و «رقم الصنف».`, sol: R`~~~live 210 الكود
+<dl>
+  <dt>الاسم</dt>
+  <dd>كشّاف الرحلات</dd>
+  <dt>الكود</dt>
+  <dt>رقم الصنف</dt>
+  <dd>KR-204</dd>
+  <dt>الألوان</dt>
+  <dd>أسود</dd>
+  <dd>أصفر</dd>
+  <dd>أحمر</dd>
+</dl>
+~~~
+
+| المجموعة | الأسماء | القيم |
+|---|---|---|
+| 1 | الاسم | كشّاف الرحلات |
+| 2 | الكود، رقم الصنف | KR-204 |
+| 3 | الألوان | أسود، أصفر، أحمر |
+
+**القاعدة:** المجموعة = [[<dt>]] واحد أو أكتر وبعدهم [[<dd>]] واحد أو أكتر. وأول [[<dt>]] بعد [[<dd>]] بيبدأ مجموعة جديدة. فعدّ المرات اللي [[<dt>]] جه فيها بعد [[<dd>]] وزوّد واحد.
+
+**الغلطة الشائعة:** تعدّ الـ [[<dt>]] وتقول ٤ مجموعات. «الكود» و «رقم الصنف» ورا بعض من غير [[<dd>]] بينهم، فهم اسمين لنفس المجموعة.
+
+~~~text الناتج
+dl=1  dt=4  dd=5
+شجرة الـ accessibility من Chrome:
+term "الاسم" ، definition "كشّاف الرحلات"
+term "الكود" ، term "رقم الصنف" ، definition "KR-204"
+term "الألوان" ، definition "أسود" ، definition "أصفر" ، definition "أحمر"
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة «أسئلة شائعة» لجيم الأبطال (اسم متخيل) فيها ٤ أسئلة بإجاباتها في [[<dl>]] واحدة. واحدة من الإجابات فقرتين، وواحدة فيها لينك.`, done: R`الصفحة فيها [[<dl>]] واحدة جواها ٤ [[<dt>]] و ٤ [[<dd>]] بالظبط (الإجابة اللي من فقرتين [[<dd>]] واحد)، والـ validator صفر errors.`, work: { h: 360, start: R`أسئلة شائعة
+الجيم بيفتح إمتى؟
+كل يوم من ٦ الصبح لـ ١٢ بالليل، والجمعة من ٢ الضهر.
+فيه اشتراك شهري؟
+أيوه: شهر بـ ٤٠٠ جنيه، و٣ شهور بـ ١٠٠٠ جنيه.
+ينفع أجرّب قبل ما أشترك؟
+أول حصة مجانًا.
+هات معاك فوطة وجزمة رياضة.
+فيه مدرب خاص؟
+أيوه، بحجز مسبق من صفحة الحجز.`, checks: [
+              { say: R`الأسئلة في [[<dl>]] واحدة`, q: "dl", n: 1 },
+              { say: R`٤ أسئلة كل واحد [[<dt>]]`, q: "dl > dt", n: 4 },
+              { say: R`٤ إجابات كل واحدة [[<dd>]]`, q: "dl > dd", n: 4 },
+              { say: R`الإجابة اللي من فقرتين [[<dd>]] واحد فيه ٢ [[<p>]]`, q: "dd p", n: 2 },
+              { say: R`الإجابة الأخيرة فيها لينك [[<a>]]`, q: "dd a", n: 1 },
+            ] }, sol: R`~~~live 358 أسئلة شائعة
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أسئلة شائعة | جيم الأبطال</title>
+</head>
+<body>
+<main>
+  <h1>أسئلة شائعة</h1>
+  <dl>
+    <dt>الجيم بيفتح إمتى؟</dt>
+    <dd>كل يوم من ٦ الصبح لـ ١٢ بالليل، والجمعة من ٢ الضهر.</dd>
+    <dt>فيه اشتراك شهري؟</dt>
+    <dd>أيوه: شهر بـ ٤٠٠ جنيه، و٣ شهور بـ ١٠٠٠ جنيه.</dd>
+    <dt>ينفع أجرّب قبل ما أشترك؟</dt>
+    <dd>
+      <p>أول حصة مجانًا.</p>
+      <p>هات معاك فوطة وجزمة رياضة.</p>
+    </dd>
+    <dt>فيه مدرب خاص؟</dt>
+    <dd>أيوه، بحجز مسبق من <a href="#booking">صفحة الحجز</a>.</dd>
+  </dl>
+</main>
+</body>
+</html>
+~~~
+
+**ليه كده:**
+
+- كل سؤال [[<dt>]] وإجابته [[<dd>]] بعده على طول.
+- الإجابة التالتة فقرتين جوه [[<dd>]] واحد. لو كانوا اتنين [[<dd>]] كانت بقت «إجابتين بديلتين» لنفس السؤال.
+- اللينك جوه الـ [[<dd>]] عادي: الـ [[<dd>]] بيقبل أي محتوى.
+- السؤال نص عادي جوه [[<dt>]] من غير عنوان: العناوين ممنوعة جوه [[<dt>]].
+
+**الغلطة الشائعة:** تكتب «س:» و «ج:» قدام الكلام. العنصر نفسه بيقول مين السؤال ومين الإجابة.
+
+**حدود الحل ده:** لو الأسئلة كتير وعايز كل إجابة تتفتح بالضغط على سؤالها، ده عنصر [[<details>]] في وحدة تانية. و [[<dl>]] مناسبة لما كله يبقى ظاهر.
+
+~~~text الناتج
+dl=1  dt=4  dd=4  p=2  a=1
+Nu Html Checker: صفر errors
+على عرض 360: مفيش scroll أفقي
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** «مواصفات الشنطة» فيها ٣ غلطات: السعة قيمتها مكتوبة قبل اسمها، و «الخامة» مكتوبة [[<h3>]] جوه [[<dt>]]، والضمان مكتوب [[<p><b>الضمان:</b> سنتين</p>]] جوه الـ [[<dl>]]. الكود في أول الحل. صلّحهم.`, done: R`الـ validator قبل التصليح طلّع ٣ errors وبعده صفر، والـ [[<dl>]] بقى فيها ٣ [[<dt>]] و ٣ [[<dd>]] بالتبادل، ومفيش [[<h3>]] ولا [[<p>]] ولا [[<b>]] جواها.`, work: { h: 207, solAt: 1, start: R`<h2>مواصفات الشنطة</h2>
+<dl>
+  <dd>٣٥ لتر</dd>
+  <dt>السعة</dt>
+  <dt><h3>الخامة</h3></dt>
+  <dd>قماش ضد المية</dd>
+  <p><b>الضمان:</b> سنتين</p>
+</dl>`, checks: [
+              { say: R`كل اسم [[<dt>]] وراه قيمته [[<dd>]] على طول: ٣ أزواج`, q: "dt + dd", n: 3 },
+              { say: R`فيه ٣ [[<dt>]] جوه الـ [[<dl>]]`, q: "dl > dt", n: 3 },
+              { say: R`مفيش [[<h3>]] ولا [[<p>]] ولا [[<b>]] جوه الـ [[<dl>]]`, q: "dl h3, dl p, dl b", n: 0 },
+              { say: R`«الضمان» بقت [[<dt>]] وقيمتها بعدها`, q: "dt", has: "الضمان", n: 1 },
+            ] }, sol: R`قبل:
+
+~~~live 246 قبل
+<h2>مواصفات الشنطة</h2>
+<dl>
+  <dd>٣٥ لتر</dd>
+  <dt>السعة</dt>
+  <dt><h3>الخامة</h3></dt>
+  <dd>قماش ضد المية</dd>
+  <p><b>الضمان:</b> سنتين</p>
+</dl>
+~~~
+
+~~~text Nu Html Checker على «قبل»
+error: Element “dl” is missing a required child element.
+error: The element “h3” must not appear as a descendant of the “dt” element.
+error: Element “p” not allowed as child of element “dl” in this context.
+~~~
+
+بعد:
+
+~~~live 207 بعد
+<h2>مواصفات الشنطة</h2>
+<dl>
+  <dt>السعة</dt>
+  <dd>٣٥ لتر</dd>
+  <dt>الخامة</dt>
+  <dd>قماش ضد المية</dd>
+  <dt>الضمان</dt>
+  <dd>سنتين</dd>
+</dl>
+~~~
+
+**التلات تصليحات:**
+
+- **الترتيب:** [[<dt>]] الأول وبعده [[<dd>]]. في «قبل» كان «٣٥ لتر» قيمة من غير اسم، و «السعة» و «الخامة» اسمين لقيمة واحدة هي «قماش ضد المية». يعني الصفحة كانت بتقول إن السعة قماش.
+- **العنوان:** [[<h3>]] اتشال. لو عايز الاسم يبقى أكبر أو أتقل، ده CSS على [[<dt>]].
+- **الفقرة:** «الضمان» بقى [[<dt>]] و «سنتين» [[<dd>]]. والنقطتين اتشالوا من الكلام: لو عايزهم يظهروا بعد كل اسم، الـ CSS بيزوّدهم.
+
+**الغلطة الشائعة:** تصلّح اللي الـ validator قاله بس من غير ما تقرا المعنى. أول error («missing a required child element») مش بيقولك إن السعة والخامة اتلخبطوا، انت اللي لازم تشوفها.
+
+~~~text الناتج
+قبل:  dt=2  dd=2  p=1  h3=1    Nu Html Checker: 3 errors
+      شجرة الـ accessibility: definition "٣٥ لتر" ، term "السعة" ، term "الخامة" ، definition "قماش ضد المية" ، paragraph
+بعد:  dt=3  dd=3               Nu Html Checker: صفر errors
+      term "السعة" ، definition "٣٥ لتر" ، term "الخامة" ، definition "قماش ضد المية" ، term "الضمان" ، definition "سنتين"
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك بيانات منتج بالشكل ده: [[{"name":"سماعة النغم ٢","sku":"NG-2","price":"٨٩٠ جنيه","colors":["أسود","أبيض","كحلي"],"battery":"٣٠ ساعة","warranty":"سنة"}]]. اعرضها [[<dl>]]، وكل مجموعة جوه [[<div>]] عشان يتحط تحتها خط فاصل بسطر CSS واحد.`, done: R`الـ [[<dl>]] فيها ٥ [[<div>]] وكل [[<dt>]] و [[<dd>]] جوه [[<div>]] (مفيش واحد سايب)، والألوان ٣ [[<dd>]] في نفس الـ [[<div>]]، وتحت كل مجموعة خط، والـ validator صفر errors.`, work: { h: 393, start: R`<h1>سماعة النغم ٢</h1>
+الكود: NG-2
+السعر: ٨٩٠ جنيه
+الألوان: أسود، أبيض، كحلي
+البطارية: ٣٠ ساعة
+الضمان: سنة`, checks: [
+              { say: R`البيانات في [[<dl>]] واحدة`, q: "dl", n: 1 },
+              { say: R`كل مجموعة (كود، سعر، ألوان، بطارية، ضمان) جوه [[<div>]]: ٥`, q: "dl > div", n: 5 },
+              { say: R`كل [[<div>]] فيه [[<dt>]] واحد`, q: "dl > div > dt", n: 5 },
+              { say: R`القيم ٧ [[<dd>]]: الألوان التلاتة كل لون [[<dd>]]`, q: "dd", n: 7 },
+              { say: R`مفيش [[<dt>]] ولا [[<dd>]] سايب برّه [[<div>]]`, q: "dl > dt, dl > dd", n: 0 },
+            ] }, sol: R`~~~live 393 سماعة النغم ٢
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سماعة النغم ٢</title>
+<style>
+  dl > div { border-bottom: 1px solid #bbb; padding: 6px 0; }
+</style>
+</head>
+<body>
+<h1>سماعة النغم ٢</h1>
+<dl>
+  <div>
+    <dt>الكود</dt>
+    <dd>NG-2</dd>
+  </div>
+  <div>
+    <dt>السعر</dt>
+    <dd>٨٩٠ جنيه</dd>
+  </div>
+  <div>
+    <dt>الألوان</dt>
+    <dd>أسود</dd>
+    <dd>أبيض</dd>
+    <dd>كحلي</dd>
+  </div>
+  <div>
+    <dt>البطارية</dt>
+    <dd>٣٠ ساعة</dd>
+  </div>
+  <div>
+    <dt>الضمان</dt>
+    <dd>سنة</dd>
+  </div>
+</dl>
+</body>
+</html>
+~~~
+
+**القرارات:**
+
+- اسم المنتج [[<h1>]] مش صف في القايمة: هو عنوان الحاجة اللي المواصفات بتاعتها.
+- أسماء الحقول اتترجمت للقارئ: [[sku]] بقت «الكود»، و [[warranty]] «الضمان». الـ [[<dt>]] مكتوب للإنسان.
+- [[colors]] مصفوفة من ٣، فبقت ٣ [[<dd>]] تحت [[<dt>]] واحد، والتلاتة في نفس الـ [[<div>]] عشان الخط ييجي تحت المجموعة كلها.
+- سطر الـ CSS: [[dl > div]] معناه كل [[<div>]] ابن مباشر للـ [[<dl>]]، و [[border-bottom]] خط تحته، و [[padding]] مسافة جواه (وحدة الـ CSS).
+
+**الغلطة الشائعة:** تكتب الألوان في [[<dd>]] واحد «أسود، أبيض، كحلي». مش غلط في الـ validator، بس تلات قيم بقوا نص واحد، ومش هتعرف تمسك كل لون لوحده.
+
+~~~text الناتج
+dl=1  div=5  dt=5  dd=7
+كل dt و dd أبوه div: true
+خط تحت كل مجموعة: border-bottom-width=1px على الـ 5
+Nu Html Checker: صفر errors
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن واختار:** عندك ٣ محتويات: (أ) مواصفات موبايل واحد (الشاشة، البطارية). (ب) مقارنة ٣ موبايلات في الشاشة والبطارية. (ج) مميزات باقة (مكالمات من غير حد، ٢٠ جيجا، من غير عقد). اختار لكل واحد [[<dl>]] أو [[<table>]] أو [[<ul>]] واكتبه، وقول ليه التانيين مينفعوش.`, done: R`(أ) [[<dl>]]، و (ب) [[<table>]] فيه صف عناوين و ٣ صفوف، و (ج) [[<ul>]]. وعندك سبب لكل اختيار من شكل البيانات نفسه: كام «عمود» فيها.`, work: { h: 448, start: R`<h2>أ. مواصفات موبايل واحد</h2>
+الشاشة: ٦٫٥ بوصة
+البطارية: ٥٠٠٠ مللي أمبير
+<h2>ب. مقارنة ٣ موبايلات</h2>
+نجم ١: ٦٫١ بوصة، ٤٠٠٠
+نجم ٢: ٦٫٥ بوصة، ٥٠٠٠
+نجم ٣: ٦٫٧ بوصة، ٥٥٠٠
+<h2>ج. مميزات الباقة</h2>
+مكالمات من غير حد
+٢٠ جيجا نت
+من غير عقد`, checks: [
+              { say: R`(أ) مواصفات موبايل واحد في [[<dl>]]: اسم وقيمة`, q: "dl > dt", min: 2 },
+              { say: R`(ب) المقارنة في [[<table>]] فيه صف عناوين و ٣ صفوف`, q: "table tr", n: 4 },
+              { say: R`صف العناوين فيه [[<th>]]`, q: "table th", min: 3 },
+              { say: R`(ج) المميزات في [[<ul>]] من ٣ عناصر [[<li>]]`, q: "ul > li", n: 3 },
+            ] }, sol: R`~~~live 448 التلاتة
+<h2>أ. مواصفات موبايل واحد</h2>
+<dl>
+  <dt>الشاشة</dt>
+  <dd>٦٫٥ بوصة</dd>
+  <dt>البطارية</dt>
+  <dd>٥٠٠٠ مللي أمبير</dd>
+</dl>
+<h2>ب. مقارنة ٣ موبايلات</h2>
+<table>
+  <tr><th>الموديل</th><th>الشاشة</th><th>البطارية</th></tr>
+  <tr><td>نجم ١</td><td>٦٫١ بوصة</td><td>٤٠٠٠</td></tr>
+  <tr><td>نجم ٢</td><td>٦٫٥ بوصة</td><td>٥٠٠٠</td></tr>
+  <tr><td>نجم ٣</td><td>٦٫٧ بوصة</td><td>٥٥٠٠</td></tr>
+</table>
+<h2>ج. مميزات الباقة</h2>
+<ul>
+  <li>مكالمات من غير حد</li>
+  <li>٢٠ جيجا نت</li>
+  <li>من غير عقد</li>
+</ul>
+~~~
+
+| المحتوى | الاختيار | ليه مش التانيين |
+|---|---|---|
+| (أ) موبايل واحد | [[<dl>]] | عمودين: اسم وقيمة. الجدول من عمودين من غير عناوين كتير عليه، و [[<ul>]] هتضيّع العلاقة |
+| (ب) ٣ موبايلات | [[<table>]] | نفس الأسماء بتتكرر لكل موبايل. في [[<dl>]] هتكتب «الشاشة» ٣ مرات ومش هتعرف تقارن بالعين |
+| (ج) مميزات | [[<ul>]] | كل عنصر حتة واحدة، مفيش اسم وقيمة |
+
+**الجدول:** [[<tr>]] صف، و [[<th>]] خانة عنوان، و [[<td>]] خانة بيانات. ده كله في درس «table» في وحدة الجداول. المهم هنا القرار.
+
+**الغلطة الشائعة:** تعمل (ب) تلات [[<dl>]] جنب بعض، واحدة لكل موبايل. كل واحدة لوحدها سليمة، بس القارئ عايز يقارن البطاريات، والمقارنة بتتقري في عمود.
+
+~~~text الناتج
+(أ) DescriptionList: term "الشاشة" ، definition "٦٫٥ بوصة" ، term "البطارية" ، definition "٥٠٠٠ مللي أمبير"
+(ب) table: 4 صفوف (صف عناوين و 3) × 3 عواميد
+(ج) list: 3 listitem
+dl=1  table=1  ul=1
+~~~` },
+          ]
+        },
+        {
+          cmd: "blockquote و q و cite",
+          title: "كلام منقول: اقتباس في فقرة لوحده، واقتباس جوه الجملة، واسم المصدر",
+          pre: [{ to: "css/lang و dir", why: R`علامات التنصيص اللي المتصفح بيحطها بتتحدد من [[lang]]` }, "css/a و button"],
+          ref: [
+            { t: "MDN: <blockquote>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/blockquote" },
+            { t: "MDN: <q>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/q" },
+            { t: "MDN: <cite>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/cite" },
+            { t: "WHATWG: the blockquote element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-blockquote-element" },
+            { t: "WHATWG: the q element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-q-element" },
+            { t: "WHATWG: the cite element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-cite-element" },
+            { t: "MDN: quotes (CSS)", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/quotes" }
+          ],
+          desc: R`لما تنقل كلام حد تاني، HTML فيه تلات حاجات: [[<blockquote>]] لاقتباس طويل واقف لوحده، و [[<q>]] لاقتباس قصير جوه الجملة (والمتصفح هو اللي بيحط علامات التنصيص)، و [[<cite>]] لـ **اسم العمل** اللي بتتكلم عنه: كتاب، فيلم، مقال.
+
+وفيه كمان attribute اسمه [[cite]] (غير العنصر) بيتحط على [[<blockquote>]] و [[<q>]] وفيه لينك المصدر، ومبيظهرش للقارئ.`,
+          example: R`<p>في <cite>دليل المذاكرة الذكية</cite> الكاتبة بتقول:</p>
+<blockquote cite="https://example.test/books/smart-study#ch2">
+  <p>ساعة مذاكرة بتركيز أحسن من تلات ساعات والموبايل جنبك.</p>
+</blockquote>
+<p>وبتلخّص الفصل كله في جملة: <q>ذاكر أقل، وركّز أكتر</q>.</p>`,
+          flag: "script",
+          lines: [
+            R`فقرة بتقدّم الاقتباس. اسم الكتاب جوه [[<cite>]] لأنه عنوان عمل، والمتصفح بيميّله.`,
+            R`[[<blockquote>]]: اللي جواه منقول من مصدر تاني. و [[cite="..."]] هنا attribute فيه عنوان المصدر: المتصفح مش بيعرضه، هو معلومة للكود وللأدوات.`,
+            R`نص الاقتباس نفسه في [[<p>]] جوه الـ [[<blockquote>]]، ومن غير علامات تنصيص: الـ [[<blockquote>]] مبيحطش علامات.`,
+            R`نهاية الاقتباس. المتصفح بيسيب 40px فاضية على يمينه وشماله.`,
+            R`اقتباس قصير جوه الجملة في [[<q>]]. مفيش علامات تنصيص مكتوبة: المتصفح بيحطها قبله وبعده، والنقطة برّه الـ [[<q>]] لأنها مش من الكلام المنقول.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+تلات عناصر، كل واحد بيجاوب على سؤال: **ده كلام مين؟** ([[<blockquote>]] و [[<q>]]: كلام حد تاني)، و **اسمه إيه العمل ده؟** ([[<cite>]]).
+
+القياسات من Chrome 157 (headless على Windows 11)، ورسايل الـ validator من Nu Html Checker.
+
+---
+
+## ١. [[<blockquote>]]: اقتباس واقف لوحده
+
+~~~live 186 اقتباس من فقرتين
+<p>صاحب المخبز كتب في إعلان الافتتاح:</p>
+<blockquote>
+  <p>هنخبز كل يوم الصبح، واللي يفضل آخر اليوم بيتوزّع.</p>
+  <p>مفيش عيش بايت عندنا.</p>
+</blockquote>
+<p>وده اللي خلّى الناس تقف طابور من أول يوم.</p>
+~~~
+
+بص على الاقتباس: داخل لجوه **من الناحيتين**، وقبله وبعده مسافة.
+
+~~~text الناتج
+blockquote:  display=block  margin-top=16px  margin-bottom=16px  margin-right=40px  margin-left=40px
+role=blockquote    (في صفحة عرضها 720: بيبدأ عند 48px وعرضه 624px)
+~~~
+
+- المواصفة بتعرّفه: «قسم منقول من مصدر تاني». يعني الشرط إن الكلام **مش كلامك**.
+- جواه أي محتوى: فقرات، قوايم، عناوين، وحتى [[<blockquote>]] تاني (رد على رد). والكلام ينفع يتحط جواه مباشرة من غير [[<p>]] لو سطر واحد.
+- مبيحطش علامات تنصيص. التدخيل هو العلامة.
+- Chrome ادّاله role اسمه [[blockquote]]، ودليل W3C WAI بيقول إن التقنيات المساعدة بتقدر تبلّغ المستخدم الاقتباس بدأ فين وخلص فين (من الدليل، والنطق مجرّبتوش).
+
+### مش للتدخيل
+
+~~~live 84 الغلط: كلامك انت جوه blockquote
+<blockquote>
+  <p>الفقرة دي مش منقولة من حد، أنا بس عايزها تدخل لجوه.</p>
+</blockquote>
+~~~
+
+ده أشهر سوء استخدام: حد عايز فقرة تدخل لجوه فيلفّها بـ [[<blockquote>]]. الـ validator مش هيشتكي، بس قارئ الشاشة هيقول «اقتباس» على كلام مش منقول. التدخيل بيتعمل بالـ CSS ([[margin]]).
+
+---
+
+## ٢. [[<blockquote cite="...">]]: لينك المصدر اللي مبيظهرش
+
+~~~html
+<blockquote cite="https://example.test/ads/opening">
+  <p>مفيش عيش بايت عندنا.</p>
+</blockquote>
+~~~
+
+الـ attribute [[cite]] قيمته **URL** للمصدر أو لصفحة فيها تفاصيل عن الاقتباس. قسته:
+
+~~~text الناتج
+blockquote.cite  →  "https://example.test/ads/opening"
+مع قيمة نسبية cite="/review/12" (والصفحة ملف مفتوح من القرص C):  →  "file:///C:/review/12"
+اللي ظهر على الشاشة من الـ attribute: ولا حاجة
+~~~
+
+المتصفح بيحوّل القيمة لعنوان كامل، وبس. **مبيعرضهاش ومبيعملش لينك.** والمواصفة بتقول إن العناوين دي «للاستخدام الخاص» أساسًا (سكربت بيجمع إحصائيات مثلًا)، مش للقرّاء.
+
+يعني لو عايز القارئ يشوف المصدر أو يدوس عليه، **اكتبه في الصفحة** بلينك عادي (القسم ٦).
+
+لو كتبت فيه كلام مش URL، زي [[cite="مصدر الكلام"]]، الـ validator بيقول:
+
+~~~text Nu Html Checker
+error: Bad value “مصدر الكلام” for attribute “cite” on element “blockquote”: Illegal character in path segment. Space is not allowed.
+~~~
+
+---
+
+## ٣. [[<q>]]: اقتباس جوه الجملة
+
+~~~live 84 المتصفح حط علامات التنصيص
+<p>الإعلان بيقول <q>مفيش عيش بايت عندنا</q> وده وعد كبير.</p>
+~~~
+
+في الكود مفيش ولا علامة تنصيص. المتصفح هو اللي حطهم قبل وبعد الـ [[<q>]].
+
+~~~text الناتج
+q:  display=inline   quotes=auto   role=generic
+q::before  content=open-quote      q::after  content=close-quote
+~~~
+
+- [[display=inline]]: جوه السطر، مبيكسرش الفقرة. ده الفرق الأساسي عن [[<blockquote>]].
+- العلامات مرسومة بالـ CSS ([[::before]] و [[::after]]) ومش جزء من النص. جرّبت: [[textContent]] و [[innerText]] بتوع الفقرة رجّعوا الجملة **من غير** العلامات، ولما حدّدت الكل ونسخت، العلامات مجتش معايا.
+- بس في شجرة الـ accessibility Chrome حطهم كنص، فقارئ الشاشة بيوصله إن فيه تنصيص.
+
+### اكتب العلامات مرة واحدة
+
+المواصفة: علامات التنصيص **ممنوع** تتكتب قبل الـ [[<q>]] أو بعده أو جواه، لأن المتصفح هيحطها.
+
+~~~live 84 الغلط: علامات مكتوبة وعلامات من المتصفح
+<p>الإعلان بيقول <q>"مفيش عيش بايت عندنا"</q> وده وعد كبير.</p>
+~~~
+
+طلعت علامتين ورا بعض. يا [[<q>]] من غير علامات، يا علامات بإيدك من غير [[<q>]].
+
+### أنهي علامات؟ حسب اللغة
+
+العلامة بتتحدد من [[lang]]. قست نفس الجملة ([[<q>]] جواه [[<q>]]) في صفحات بلغات مختلفة:
+
+| [[lang]] | الاقتباس الخارجي | اللي جواه |
+|---|---|---|
+| [[ar]] | ” … “ | ’ … ‘ |
+| [[en]] أو من غير [[lang]] | “ … ” | ‘ … ’ |
+| [[fr]] | « … » | « … » |
+| [[de]] | „ … “ | ‚ … ‘ |
+
+~~~live 84 اقتباس جواه اقتباس
+<p>الزبون حكى: <q>سألته عن العيش فقال لي <q>لسه طالع من الفرن</q> فاشتريت</q>.</p>
+~~~
+
+المتصفح غيّر العلامة للاقتباس اللي جوه لوحده.
+
+**العربي:** Chrome بيحط للعربي العلامتين ” و “، مش الـ «» اللي متعودين عليها في الكتب العربي. لو عايز «» عندك حلين: تكتبهم بإيدك من غير [[<q>]] (تحت)، أو تغيّر علامات الـ [[<q>]] بخاصية [[quotes]] في الـ CSS (وحدة بعدين).
+
+**لغة مين؟** خاصية [[quotes: auto]] بتاخد لغة **الأب**، مش لغة الـ [[<q>]] نفسه:
+
+~~~live 100 نفس الاقتباس الإنجليزي جوه فقرة عربي وجوه فقرة إنجليزي
+<p>الشعار بتاعهم <q lang="en">Fresh every morning</q>.</p>
+<p lang="en" dir="ltr">Their slogan is <q>Fresh every morning</q>.</p>
+~~~
+
+في السطر الأول الـ [[<q lang="en">]] جوه فقرة عربي، فخد علامات العربي ” “. في التاني الفقرة نفسها [[lang="en"]] فخد “ ”. ده مطابق لوصف MDN لـ [[quotes: auto]]: العلامات المناسبة للغة الموروثة من الأب.
+
+### [[<q>]] اختياري
+
+المواصفة بتقولها صريحة: استخدام [[<q>]] اختياري، والتنصيص بعلامات مكتوبة من غير [[<q>]] «صح بنفس الدرجة».
+
+~~~live 84 من غير q: علامات مكتوبة
+<p>الإعلان بيقول «مفيش عيش بايت عندنا» وده وعد كبير.</p>
+~~~
+
+الفرق إن [[<q>]] بيقول للمتصفح «ده اقتباس» (فتقدر تنسّقه وتحط له [[cite]])، والعلامات المكتوبة نص وخلاص.
+
+### [[<q cite="...">]]
+
+زي [[<blockquote>]] بالظبط: URL للمصدر، ومبيظهرش. قست [[q.cite]] ورجّع العنوان كامل.
+
+### إمتى **لأ**
+
+- كلمة بتسمّيها أو بتتكلم عنها: كلمة «كارديو» جاية من اليوناني. دي مش اقتباس من حد، فالعلامات تتكتب بالإيد.
+- سخرية أو «يعني»: المواصفة بتقول [[<q>]] مش لعلامات التنصيص اللي مش اقتباس.
+- اقتباس من كذا فقرة: ده [[<blockquote>]]. الـ [[<q>]] ممنوع جواه [[<p>]] (الـ validator: [[Element “p” not allowed as child of element “q” in this context.]]).
+
+---
+
+## ٤. [[<cite>]]: اسم العمل
+
+~~~live 84 عنوانين
+<p>قريت <cite>دليل المذاكرة الذكية</cite> في يومين، وبعده بدأت <cite>بيت القمر</cite>.</p>
+~~~
+
+~~~text الناتج
+cite:  display=inline   font-style=italic   font-weight=400
+~~~
+
+المتصفح ميّل الاسمين. والمواصفة بتعرّف العنصر: «عنوان عمل»، وبتعدّ: كتاب، مقال، قصيدة، أغنية، فيلم، برنامج، لعبة، لوحة، مسرحية، برنامج كمبيوتر. و MDN بيزوّد: موقع، صفحة، بوست.
+
+### اسم شخص مش عمل
+
+المواصفة: «اسم الشخص مش عنوان عمل»، والعنصر **ممنوع** يتحط على أسماء الناس.
+
+~~~live 66 الغلط: cite على اسم شخص
+<p><q>مفيش عيش بايت عندنا</q>، <cite>الحاج سيد</cite>.</p>
+~~~
+
+~~~live 84 الصح: الاسم نص عادي، و cite على الجريدة
+<p><q>مفيش عيش بايت عندنا</q>، الحاج سيد في <cite>جريدة الحي</cite>.</p>
+~~~
+
+وهو كمان مش للاقتباس نفسه: [[<cite>مفيش عيش بايت</cite>]] غلط. الكلام المنقول [[<q>]]، واسم العمل [[<cite>]].
+
+ولو اسم العمل حواليه علامات (زي ما بنكتب «بيت القمر»)، العلامات **برّه** الـ [[<cite>]]: هي مش جزء من الاسم.
+
+> ملاحظة: MDN بيقول إن العمل ممكن يبقى «تصريح مكتوب أو شفوي» كمان، فبعض الناس بتحط [[<cite>]] على اسم صاحب المقولة. مواصفة WHATWG (المرجع بتاع الكورس) بتمنعه صريح. امشي على المواصفة.
+
+---
+
+## ٥. [[cite]] الـ attribute و [[<cite>]] العنصر
+
+نفس الاسم وحاجتين مختلفتين:
+
+| | [[cite="..."]] الـ attribute | [[<cite>]] العنصر |
+|---|---|---|
+| بيتحط فين | على [[<blockquote>]] و [[<q>]] | في أي مكان جوه الكلام |
+| جواه إيه | URL | اسم العمل، نص |
+| القارئ بيشوفه؟ | لأ | أيوه، مايل |
+| بيقول إيه | الكلام ده منقول من العنوان ده | ده عنوان كتاب أو فيلم أو مقال |
+
+---
+
+## ٦. صاحب الكلام بيتكتب فين؟
+
+المواصفة: نسبة الاقتباس (مين قاله ومنين) لازم تبقى **برّه** الـ [[<blockquote>]]، لأن اسم القائل مش جزء من الكلام المنقول.
+
+~~~live 100 المصدر في فقرة بعد الاقتباس
+<blockquote cite="https://example.test/ads/opening">
+  <p>مفيش عيش بايت عندنا.</p>
+</blockquote>
+<p>الحاج سيد، من <a href="https://example.test/ads/opening"><cite>إعلان الافتتاح</cite></a></p>
+~~~
+
+هنا المصدر ظاهر للقارئ وبلينك يتداس عليه، ونفس العنوان في [[cite]] للأدوات. والطريقة التانية، اللي بتربط الاقتباس بصاحبه كوحدة واحدة، هي [[<figure>]] و [[<figcaption>]] في الدرس الجاي.
+
+### لو غيّرت في الاقتباس
+
+لو شلت حتة من الكلام أو زوّدت توضيح، المواصفة بتقول اعمله بالطريقة المتعارف عليها في اللغة. وأشهرها الأقواس المربعة:
+
+~~~live 84 حتة محذوفة
+<blockquote>
+  <p>هنخبز كل يوم الصبح [...] مفيش عيش بايت عندنا.</p>
+</blockquote>
+~~~
+
+---
+
+## الخلاصة
+
+- [[<blockquote>]] لاقتباس واقف لوحده: block، ومتدخّل 40px من الناحيتين، ومن غير علامات.
+- [[<q>]] لاقتباس جوه الجملة: inline، والمتصفح بيحط العلامات حسب لغة الأب، فمتكتبهاش.
+- [[<cite>]] لاسم العمل بس. مش للشخص ولا للكلام المنقول.
+- [[cite="URL"]] على [[<blockquote>]] و [[<q>]] مبيظهرش. المصدر اللي عايز القارئ يشوفه اكتبه في الصفحة.
+- صاحب الكلام برّه الـ [[<blockquote>]].
+- الاتنين للكلام المنقول فعلًا، مش للتدخيل ولا لأي علامات تنصيص.`,
+          try: R`اعمل ملف [[quotes.html]] فيه: فقرة فيها اسم كتاب جوه [[<cite>]]، وبعدها [[<blockquote>]] فيه جملة من الكتاب، وبعدها فقرة فيها [[<q>]]. افتحه وشوف التلات أشكال. وبعدين: (١) حدّد الجملة اللي فيها [[<q>]] بالماوس وانسخها والصقها في أي محرر: العلامات اتنسخت؟ (٢) غيّر [[lang="ar"]] في أول الصفحة لـ [[lang="en"]] وشوف العلامات.`,
+          sol: R`~~~live 216 quotes.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اقتباسات</title>
+</head>
+<body>
+<h1>من دفتر القراية</h1>
+<p>من كتاب <cite>عادات صغيرة</cite>:</p>
+<blockquote>
+  <p>اللي بتعمله كل يوم أهم من اللي بتعمله مرة في السنة.</p>
+</blockquote>
+<p>وصاحبي لخّصه لي: <q>ابدأ بخمس دقايق</q>.</p>
+</body>
+</html>
+~~~
+
+- اسم الكتاب مايل ([[<cite>]])، والاقتباس الطويل متدخّل من الناحيتين ([[<blockquote>]])، والقصير جوه الجملة وحواليه علامات ([[<q>]]).
+- (١) اللي اتلصق: «وصاحبي لخّصه لي: ابدأ بخمس دقايق.» **من غير علامات**. العلامات مرسومة بالـ CSS ومش جزء من النص.
+- (٢) مع [[lang="en"]] العلامات بقت “ ” بدل ” “.
+
+~~~text الناتج
+blockquote=1  q=1  cite=1
+cite: font-style=italic    blockquote: margin-right=40px margin-left=40px    q: display=inline
+العلامات مع lang="ar":  ” (U+201D) قبل   و “ (U+201C) بعد
+العلامات مع lang="en":  “ (U+201C) قبل   و ” (U+201D) بعد
+النص المنسوخ من الفقرة الأخيرة:  وصاحبي لخّصه لي: ابدأ بخمس دقايق.
+~~~`,
+          deep: {
+            why: R`الكلام المنقول غير كلامك: القارئ لازم يعرف ده رأي مين، ومحرك البحث لازم يعرف إن النص ده مش أصلي عندك، وقارئ الشاشة لازم يقول فين الاقتباس بدأ وخلص. من غير العناصر دي الاقتباس بيبقى فقرة مايلة أو متدخّلة بالـ CSS، يعني شكل من غير معنى.`,
+            how: R`[[<blockquote>]] عنصر block ليه margin افتراضي 40px يمين وشمال، وبياخد role اسمه [[blockquote]].
+
+[[<q>]] عنصر inline، والمتصفح بيزوّد له [[::before]] و [[::after]] قيمتهم [[open-quote]] و [[close-quote]]. والعلامة الفعلية بتيجي من خاصية [[quotes]] وقيمتها الافتراضية [[auto]]: المتصفح بيختار العلامات المناسبة للغة الأب، وبيبدّل للعلامات الداخلية لو الـ [[<q>]] جوه [[<q>]].
+
+[[<cite>]] عنصر inline تنسيقه الافتراضي [[font-style: italic]] وملوش role خاص.`,
+            when: R`[[<blockquote>]]: مقولة في مقال، رأي عميل، بند من لايحة، رسالة بترد عليها. [[<q>]]: جملة قصيرة جوه كلامك. [[<cite>]]: أي عنوان كتاب أو فيلم أو مقال أو موقع بتذكره، سواء اقتبست منه ولا لأ. ومتستخدمش التلاتة لكلامك انت، ولا لحوار بين شخصيات بتألّفه في نفس الصفحة.`,
+            mistakes: R`[[<blockquote>]] عشان التدخيل. علامات تنصيص مكتوبة جوه [[<q>]] فتطلع مرتين. [[<cite>]] على اسم شخص. [[<cite>]] على الكلام المنقول نفسه. تفتكر إن [[cite="..."]] هيظهر للقارئ أو هيبقى لينك. تكتب اسم القائل جوه الـ [[<blockquote>]]. تحط [[<p>]] جوه [[<q>]]. تستخدم [[<q>]] لكلمة بتسمّيها مش بتقتبسها.`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**صنّف:** لكل جملة قول [[<q>]] ولا [[<blockquote>]] ولا [[<cite>]] ولا ولا حاجة: (١) المدرب قال: الإحماء نص التمرين. (٢) بندين من لايحة الجيم منقولين بالنص. (٣) اسم فيلم اتفرجت عليه. (٤) كلمة «كارديو» وانت بتشرح أصلها. (٥) اسم الست اللي كتبت اللايحة.`, done: R`إجابتك: (١) [[<q>]]. (٢) [[<blockquote>]]. (٣) [[<cite>]]. (٤) ولا حاجة، علامات مكتوبة. (٥) ولا حاجة، نص عادي.`, sol: R`~~~live 306 الخمسة
+<p>المدرب قال <q>الإحماء نص التمرين</q>.</p>
+<p>من لايحة الجيم:</p>
+<blockquote>
+  <p>ممنوع استخدام الأجهزة من غير فوطة.</p>
+  <p>الاشتراك شخصي ومينفعش يتنقل لحد تاني.</p>
+</blockquote>
+<p>اتفرجت على فيلم <cite>الطريق الطويل</cite> امبارح.</p>
+<p>كلمة «كارديو» جاية من كلمة يوناني معناها القلب.</p>
+<p>سلمى فؤاد هي اللي كتبت اللايحة.</p>
+~~~
+
+| الجملة | العنصر | ليه |
+|---|---|---|
+| كلام المدرب | [[<q>]] | منقول، وقصير، وجوه الجملة |
+| بندين من اللايحة | [[<blockquote>]] | منقول، وفقرتين، وواقف لوحده |
+| اسم الفيلم | [[<cite>]] | عنوان عمل |
+| كلمة «كارديو» | ولا حاجة | مش اقتباس من حد، انت بتسمّي الكلمة. العلامات بالإيد |
+| اسم الكاتبة | ولا حاجة | اسم شخص مش عنوان عمل |
+
+**الغلطة الشائعة:** أي حاجة حواليها علامات تنصيص تتحط [[<q>]]. السؤال الصح: الكلام ده قاله أو كتبه حد تاني؟
+
+~~~text الناتج
+q=1  blockquote=1  cite=1  p=7
+شكل كل واحد:  q حواليه ” “ من المتصفح   blockquote متدخّل 40px من الناحيتين   cite مايل
+«كارديو» حواليها «» مكتوبة في النص
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «آراء القرّاء» فيها ٤ غلطات: جملة الترحيب (كلام الموقع نفسه) جوه [[<blockquote>]]، ورأي القارئة مكتوب [[<q>"..."</q>]] بعلامات، واسمها جوه [[<cite>]]، واسم الكتاب جوه [[<i>]]. الكود في أول الحل.`, done: R`مفيش [[<blockquote>]] في الصفحة، والرأي حواليه علامات تنصيص مرة واحدة بس، و [[<cite>]] واحد بس وجواه اسم الكتاب، واسم القارئة نص عادي.`, work: { h: 134, solAt: 1, start: R`<blockquote>
+  <p>أهلًا بيكم في صفحة آراء القرّاء.</p>
+</blockquote>
+<p><q>"الكتاب ده خلّاني أحب القراية"</q>، <cite>منى سامي</cite>.</p>
+<p>والكتاب اسمه <i>بيت القمر</i>.</p>`, checks: [
+              { say: R`مفيش [[<blockquote>]] في الصفحة (الترحيب كلام الموقع نفسه)`, q: "blockquote", n: 0 },
+              { say: R`رأي القارئة جوه [[<q>]]`, q: "q", has: "الكتاب ده", n: 1 },
+              { say: R`من غير علامات تنصيص مكتوبة بإيدك جوه [[<q>]]`, q: "q", has: "\"", n: 0 },
+              { say: R`اسم الكتاب بس جوه [[<cite>]]`, q: "cite", has: "بيت القمر", n: 1 },
+              { say: R`اسم القارئة نص عادي من غير [[<cite>]]`, q: "cite", has: "منى", n: 0 },
+              { say: R`مفيش [[<i>]] في الصفحة`, q: "i", n: 0 },
+            ] }, sol: R`قبل:
+
+~~~live 134 قبل
+<blockquote>
+  <p>أهلًا بيكم في صفحة آراء القرّاء.</p>
+</blockquote>
+<p><q>"الكتاب ده خلّاني أحب القراية"</q>، <cite>منى سامي</cite>.</p>
+<p>والكتاب اسمه <i>بيت القمر</i>.</p>
+~~~
+
+بعد:
+
+~~~live 134 بعد
+<p>أهلًا بيكم في صفحة آراء القرّاء.</p>
+<p><q>الكتاب ده خلّاني أحب القراية</q>، منى سامي.</p>
+<p>والكتاب اسمه <cite>بيت القمر</cite>.</p>
+~~~
+
+**الأربع تصليحات:**
+
+- الترحيب كلام الموقع، فبقى [[<p>]]. لو كان المطلوب إنه يدخل لجوه، ده CSS.
+- العلامات المكتوبة اتشالت من جوه الـ [[<q>]]. في «قبل» كانت طالعة ”"..."“.
+- «منى سامي» اسم شخص، فخرجت من الـ [[<cite>]].
+- «بيت القمر» عنوان عمل، فبقى [[<cite>]] بدل [[<i>]]. الشكل واحد (مايل) والمعنى اتغيّر: [[<i>]] بيقول «كلام بنبرة تانية»، و [[<cite>]] بيقول «عنوان عمل» ([[<i>]] اتشرح في وحدة «معنى الكلام جوه الفقرة»).
+
+**الغلطة الشائعة:** الـ validator مش هيمسك ولا واحدة من الأربعة. كلها كود سليم ومعنى غلط. لازم تقرا.
+
+~~~text الناتج
+قبل:  blockquote=1  q=1  cite=1 (جواه اسم شخص)   النص حوالين الرأي:  ” " … " “
+      Nu Html Checker: صفر errors (ومع كده ٤ غلطات في المعنى)
+بعد:  blockquote=0  q=1  cite=1 (جواه «بيت القمر»)   النص حوالين الرأي:  ” … “
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** مراجعة قصيرة لرواية متخيلة اسمها «ظل الجبل»: [[<h1>]] فيه اسمها، وفقرة تعريف، واقتباس طويل منها ليه [[cite]] بعنوان الفصل، وجملة قصيرة منها جوه كلامك بـ [[<q>]]، وفي الآخر لينك ظاهر للمصدر. استخدم [[example.test]] للعناوين.`, done: R`الصفحة فيها [[<blockquote>]] واحد و [[<q>]] واحد والاتنين عليهم [[cite]] بـ URL سليم، واسم الرواية جوه [[<cite>]] في كل مرة اتذكر، واسم الكاتب نص عادي، وفيه لينك مصدر القارئ يشوفه، والـ validator صفر errors.`, work: { h: 320, start: R`<h1>مراجعة: ظل الجبل</h1>
+خلّصت ظل الجبل لكريم عادل في تلات أيام. الرواية عن قرية بتستنى القطر اللي مبيجيش.
+أحلى حتة فيها وصف الجبل في أول فصل:
+الجبل مكانش بيتحرك، بس كل يوم الصبح كان ضله بيوصل لبيت جديد.
+والبطلة بتكرر جملة واحدة طول الرواية: القطر جاي، ومحدش بيصدقها.
+المصدر: صفحة الرواية عند الناشر.`, checks: [
+              { say: R`الاقتباس الطويل [[<blockquote>]] عليه [[cite]] بعنوان في [[example.test]]`, q: 'blockquote[cite*="example.test"]', n: 1 },
+              { say: R`الجملة القصيرة [[<q>]] عليها [[cite]] كمان`, q: 'q[cite*="example.test"]', n: 1 },
+              { say: R`اسم الرواية في العنوان جوه [[<cite>]]`, q: "h1 cite", has: "ظل الجبل", n: 1 },
+              { say: R`اسم الرواية جوه [[<cite>]] كل مرة اتذكر (مرتين على الأقل)`, q: "cite", has: "ظل الجبل", min: 2 },
+              { say: R`اسم الكاتب نص عادي من غير [[<cite>]]`, q: "cite", has: "كريم", n: 0 },
+              { say: R`لينك ظاهر للمصدر [[<a>]]`, q: 'a[href*="example.test"]', n: 1 },
+            ] }, sol: R`~~~live 320 مراجعة: ظل الجبل
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مراجعة: ظل الجبل</title>
+</head>
+<body>
+<main>
+  <article>
+    <h1>مراجعة: <cite>ظل الجبل</cite></h1>
+    <p>خلّصت <cite>ظل الجبل</cite> لكريم عادل في تلات أيام. الرواية عن قرية بتستنى القطر اللي مبيجيش.</p>
+    <p>أحلى حتة فيها وصف الجبل في أول فصل:</p>
+    <blockquote cite="https://example.test/books/mountain-shadow#ch1">
+      <p>الجبل مكانش بيتحرك، بس كل يوم الصبح كان ضله بيوصل لبيت جديد.</p>
+    </blockquote>
+    <p>والبطلة بتكرر جملة واحدة طول الرواية: <q cite="https://example.test/books/mountain-shadow#ch4">القطر جاي</q>، ومحدش بيصدقها.</p>
+    <p>المصدر: <a href="https://example.test/books/mountain-shadow">صفحة الرواية عند الناشر</a>.</p>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+**ليه كده:**
+
+- «ظل الجبل» جوه [[<cite>]] في العنوان وفي الفقرة: عنوان عمل. و «كريم عادل» نص عادي: اسم شخص.
+- وصف الجبل جملة كاملة واقفة لوحدها، فهي [[<blockquote>]]. و «القطر جاي» كلمتين جوه جملتي، فهي [[<q>]].
+- الـ [[cite]] على الاتنين فيه عنوان الفصل ([[#ch1]] و [[#ch4]]). ده للأدوات.
+- آخر فقرة فيها اللينك اللي القارئ بيشوفه. من غيرها القارئ ميعرفش المصدر، لأن [[cite]] مبيظهرش.
+- بعد الـ [[<q>]] فاصلة مكتوبة برّه العنصر: هي من جملتي مش من الاقتباس.
+
+**الغلطة الشائعة:** تكتفي بـ [[cite="..."]] وتقول «المصدر موجود». موجود في الكود بس.
+
+~~~text الناتج
+blockquote=1  q=1  cite=2  a=1
+blockquote.cite = https://example.test/books/mountain-shadow#ch1
+q.cite          = https://example.test/books/mountain-shadow#ch4
+Nu Html Checker: صفر errors
+على عرض 360: مفيش scroll أفقي
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة [[lang="en"]] فيها تلات فقرات، وفي كل واحدة [[<q>]] جواه [[<q>]]: الأولى إنجليزي، والتانية عليها [[lang="ar"]]، والتالتة عليها [[lang="fr"]]. اكتب العلامات الأربعة اللي هتظهر في كل فقرة (فتحة الخارجي، فتحة الداخلي، قفلة الداخلي، قفلة الخارجي)، وبعدين شغّلها.`, done: R`توقّعك مطابق: الإنجليزي “ ‘ ’ ”، والعربي ” ’ ‘ “، والفرنساوي « « » ». وعرفت ليه الفقرة العربي خدت علامات العربي مع إن الصفحة إنجليزي.`, sol: R`~~~live 152 تلات لغات
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quotes</title>
+</head>
+<body>
+<p>She said <q>he told me <q>wait here</q> and left</q>.</p>
+<p lang="ar" dir="rtl">قالت <q>قال لي <q>استني هنا</q> ومشي</q>.</p>
+<p lang="fr">Elle a dit <q>il m'a dit <q>attends ici</q> et il est parti</q>.</p>
+</body>
+</html>
+~~~
+
+| الفقرة | فتحة الخارجي | فتحة الداخلي | قفلة الداخلي | قفلة الخارجي |
+|---|---|---|---|---|
+| إنجليزي | “ | ‘ | ’ | ” |
+| عربي | ” | ’ | ‘ | “ |
+| فرنساوي | « | « | » | » |
+
+**ليه:** [[quotes: auto]] بياخد لغة أب الـ [[<q>]]. الأب هنا هو الـ [[<p>]]، والـ [[lang]] اللي عليه بيغطّي على لغة الصفحة. فكل فقرة خدت علامات لغتها.
+
+**الغلطة الشائعة:** تحط [[lang]] على الـ [[<q>]] نفسه وتستنى العلامات تتغيّر. مش هتتغيّر، لأن اللي بيتحسب لغة الأب.
+
+~~~text الناتج
+من شجرة الـ accessibility في Chrome (العلامات بتطلع كنص):
+en:  “ U+201C   ‘ U+2018   ’ U+2019   ” U+201D
+ar:  ” U+201D   ’ U+2019   ‘ U+2018   “ U+201C
+fr:  « U+00AB   « U+00AB   » U+00BB   » U+00BB
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** صفحة موضوع في منتدى متخيل: ٣ مشاركات، كل واحدة [[<article>]] ليها [[id]]. المشاركة التانية بتقتبس جملة من الأولى وبترد عليها. والتالتة بتقتبس التانية **بما فيها اقتباسها** وبترد. كل اقتباس عليه [[cite]] بيشاور على المشاركة الأصلية.`, done: R`فيه ٣ [[<blockquote>]]، واحد منهم جوه واحد تاني، وكل [[cite]] قيمته [[#post-1]] أو [[#post-2]] وليه [[id]] مطابق في الصفحة، وكلام صاحب المشاركة نفسه برّه أي [[<blockquote>]]، والـ validator صفر errors.`, work: { h: 480, start: R`سؤال عن الخميرة
+هدى
+العجينة مبتخمرش معايا في الشتا. أعمل إيه؟
+كريم
+حطيها جنب الفرن وهو دافي، وغطّيها بفوطة.
+هدى
+جرّبتها وخمرت في ساعة. شكرًا!`, checks: [
+              { say: R`٣ مشاركات كل واحدة [[<article>]]`, q: "article", n: 3 },
+              { say: R`كل [[<article>]] ليه [[id]]`, q: "article[id]", n: 3 },
+              { say: R`فيه ٣ [[<blockquote>]]`, q: "blockquote", n: 3 },
+              { say: R`واحد منهم جوه [[<blockquote>]] تاني (اقتباس جوه اقتباس)`, q: "blockquote blockquote", n: 1 },
+              { say: R`اقتباسين بيشاوروا على المشاركة الأولى [[cite="#post-1"]]`, q: 'blockquote[cite="#post-1"]', n: 2 },
+              { say: R`واقتباس بيشاور على المشاركة التانية [[cite="#post-2"]]`, q: 'blockquote[cite="#post-2"]', n: 1 },
+            ] }, sol: R`~~~live 480 سؤال عن الخميرة
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سؤال عن الخميرة | منتدى الخبّازين</title>
+</head>
+<body>
+<main>
+  <h1>سؤال عن الخميرة</h1>
+  <article id="post-1">
+    <h2>هدى</h2>
+    <p>العجينة مبتخمرش معايا في الشتا. أعمل إيه؟</p>
+  </article>
+  <article id="post-2">
+    <h2>كريم</h2>
+    <blockquote cite="#post-1">
+      <p>العجينة مبتخمرش معايا في الشتا.</p>
+    </blockquote>
+    <p>حطيها جنب الفرن وهو دافي، وغطّيها بفوطة.</p>
+  </article>
+  <article id="post-3">
+    <h2>هدى</h2>
+    <blockquote cite="#post-2">
+      <blockquote cite="#post-1">
+        <p>العجينة مبتخمرش معايا في الشتا.</p>
+      </blockquote>
+      <p>حطيها جنب الفرن وهو دافي، وغطّيها بفوطة.</p>
+    </blockquote>
+    <p>جرّبتها وخمرت في ساعة. شكرًا!</p>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+**الهيكل:**
+
+- كل مشاركة [[<article>]]: حاجة كاملة لوحدها (درس «semantic HTML»).
+- في المشاركة التانية: الـ [[<blockquote>]] فيه كلام هدى، والفقرة اللي بعده كلام كريم. الحد بين كلامين واضح.
+- في التالتة: [[<blockquote>]] خارجي فيه مشاركة كريم كلها، وجواه [[<blockquote>]] تاني فيه الجملة اللي كريم كان مقتبسها. كل مستوى تدخيل = حد أبعد في السلسلة. وده نفس مثال المواصفة للمنتديات.
+- [[cite="#post-1"]]: الـ [[cite]] بياخد أي URL، و [[#post-1]] عنوان جوه نفس الصفحة.
+
+**الغلطة الشائعة:** تكتب «هدى كتبت:» جوه الـ [[<blockquote>]]. اسم القائل مش من الكلام المنقول. لو عايز تكتبه، حطه في فقرة قبل الاقتباس.
+
+~~~text الناتج
+article=3  blockquote=3  (واحد منهم جوه واحد)
+شجرة الـ accessibility للمشاركة التالتة:
+article
+  heading "هدى" level=2
+  blockquote
+    blockquote
+      paragraph  "العجينة مبتخمرش معايا في الشتا."
+    paragraph  "حطيها جنب الفرن وهو دافي، وغطّيها بفوطة."
+  paragraph  "جرّبتها وخمرت في ساعة. شكرًا!"
+التدخيل: الاقتباس الخارجي 40px من كل ناحية، والداخلي 80px
+Nu Html Checker: صفر errors
+~~~` },
+          ]
+        },
+        {
+          cmd: "figure و figcaption",
+          title: "شكل وتحته وصفه: صورة أو كود أو مقولة بتتشاور عليها",
+          pre: ["css/blockquote و q و cite", { to: "css/img", why: R`عشان [[alt]] والفرق بينه وبين الوصف الظاهر` }],
+          ref: [
+            { t: "MDN: <figure>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/figure" },
+            { t: "MDN: <figcaption>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/figcaption" },
+            { t: "WHATWG: the figure element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-figure-element" },
+            { t: "WHATWG: the figcaption element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-figcaption-element" },
+            { t: "WHATWG: the blockquote element (attribution)", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-blockquote-element" }
+          ],
+          desc: R`[[<figure>]] بيلف حاجة كاملة لوحدها الكلام بيشاور عليها: صورة، رسم بياني، كود، جدول، مقولة. و [[<figcaption>]] جواه هو الوصف أو العنوان بتاعها. الاتنين مع بعض وحدة واحدة: «شكل ١» ووصفه.
+
+وهو الطريقة اللي المواصفة بتربط بيها الاقتباس بصاحبه: [[<blockquote>]] جوه [[<figure>]]، واسم القائل في [[<figcaption>]].`,
+          example: R`<figure>
+  <blockquote>
+    <p>أول مرة أفهم الـ HTML من غير ما أحفظ.</p>
+  </blockquote>
+  <figcaption>سلمى فؤاد، طالبة في <cite>كورس الويب من الصفر</cite></figcaption>
+</figure>`,
+          flag: "script",
+          lines: [
+            R`[[<figure>]]: اللي جواه وحدة واحدة قايمة بذاتها. المتصفح بيدّيه 40px فاضية يمين وشمال.`,
+            R`الاقتباس نفسه. [[<blockquote>]] جواه الكلام المنقول بس.`,
+            R`نص الاقتباس في فقرة.`,
+            R`نهاية الاقتباس. اسم القائلة مش جواه، لأنه مش من الكلام المنقول.`,
+            R`[[<figcaption>]]: وصف الـ [[<figure>]]. هنا فيه مين قال الكلام، واسم الكورس جوه [[<cite>]] لأنه عنوان عمل. مكانه أول ابن أو آخر ابن للـ [[<figure>]].`,
+            R`نهاية الـ [[<figure>]]: الاقتباس وصاحبه بقوا وحدة واحدة.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+المواصفة بتعرّف [[<figure>]]: محتوى **قايم بذاته**، ليه وصف اختياري، و «بيتشاور عليه كوحدة واحدة من الكلام الأساسي». والاختبار العملي: لو نقلت الحاجة دي لجنب الصفحة أو لملحق في الآخر، الكلام يفضل مفهوم؟ لو أيوه، دي figure.
+
+القياسات من Chrome 157 (headless على Windows 11)، ورسايل الـ validator من Nu Html Checker. والصور في المعاينات مرسومة بـ [[<svg>]] صغير (درس «SVG») لأن المعاينة ملهاش ملفات صور. في صفحتك هتبقى [[<img>]] عادي.
+
+---
+
+## ١. [[<figure>]] و [[<figcaption>]]
+
+~~~live 276 رسم بياني ووصفه
+<p>المبيعات زادت كل يوم في أول الأسبوع (شكل ١).</p>
+<figure id="fig-1">
+  <svg role="img" aria-label="تلات أعمدة بتعلى: السبت ٤٠ رغيف، الأحد ٦٥، الاتنين ٩٠" width="220" height="120" viewBox="0 0 220 120">
+    <rect x="20" y="80" width="40" height="40" fill="#c2410c"/>
+    <rect x="90" y="55" width="40" height="65" fill="#c2410c"/>
+    <rect x="160" y="30" width="40" height="90" fill="#c2410c"/>
+  </svg>
+  <figcaption>شكل ١: مبيعات العيش في أول ٣ أيام.</figcaption>
+</figure>
+<p>ويوم الاتنين كان الأعلى.</p>
+~~~
+
+- الفقرة بتقول «(شكل ١)»، والرسم تحته مكتوب «شكل ١: ...». الكلام بيشاور على الشكل **باسمه**.
+- الرسم والوصف داخلين لجوه من الناحيتين.
+- الوصف في سطر لوحده تحت الرسم.
+
+~~~text الناتج
+figure:      display=block  margin-top=16px  margin-bottom=16px  margin-right=40px  margin-left=40px   role=figure
+figcaption:  display=block  margin=0px   font-weight=400   (نص عادي من غير أي تنسيق)
+~~~
+
+يعني [[<figure>]] شكله الافتراضي زي [[<blockquote>]] بالظبط (16px فوق وتحت و 40px من الجنبين)، و [[<figcaption>]] مجرد سطر block. أي تنسيق تاني (خط أصغر، توسيط) CSS.
+
+وفي شجرة الـ accessibility:
+
+~~~text من Chrome
+paragraph   "المبيعات زادت كل يوم في أول الأسبوع (شكل ١)."
+figure
+  image "تلات أعمدة بتعلى: السبت ٤٠ رغيف، الأحد ٦٥، الاتنين ٩٠"
+  Figcaption   "شكل ١: مبيعات العيش في أول ٣ أيام."
+paragraph   "ويوم الاتنين كان الأعلى."
+~~~
+
+الصورة والوصف بقوا جوه [[figure]] واحد. قارئ الشاشة بيقول «figure» لما يدخل، وبيعرف إن الوصف تبع الصورة دي.
+
+### من غير [[<figure>]]
+
+~~~live 158 صورة وتحتها فقرة
+<svg role="img" aria-label="رغيف عيش بلدي" width="120" height="80" viewBox="0 0 120 80">
+  <ellipse cx="60" cy="40" rx="55" ry="30" fill="#d9a441"/>
+</svg>
+<p>رغيف بلدي طالع من الفرن.</p>
+~~~
+
+~~~text من Chrome
+image "رغيف عيش بلدي"
+paragraph   "رغيف بلدي طالع من الفرن."
+~~~
+
+صورة، وبعدها فقرة. مفيش حاجة بتقول إن الفقرة دي وصف الصورة: ممكن تكون بداية الكلام اللي بعدها. ونفس المحتوى جوه [[<figure>]]:
+
+~~~live 150 نفس الصورة جوه figure
+<figure>
+  <svg role="img" aria-label="رغيف عيش بلدي" width="120" height="80" viewBox="0 0 120 80">
+    <ellipse cx="60" cy="40" rx="55" ry="30" fill="#d9a441"/>
+  </svg>
+  <figcaption>رغيف بلدي طالع من الفرن.</figcaption>
+</figure>
+~~~
+
+---
+
+## ٢. قواعد [[<figcaption>]]
+
+- **مكانه:** أول ابن أو آخر ابن للـ [[<figure>]]. فوق المحتوى أو تحته، مش في النص.
+- **عدده:** واحد بس.
+- **اختياري:** [[<figure>]] من غير [[<figcaption>]] سليم.
+- **جواه:** أي محتوى: نص، لينك، [[<cite>]]، فقرتين.
+- **برّه [[<figure>]] ملوش معنى.**
+
+جرّبت أكسر كل قاعدة:
+
+| الكود | Nu Html Checker |
+|---|---|
+| [[<figcaption>]] بين فقرتين جوه الـ [[<figure>]] | الـ validator رفضه كده: [[Element “p” not allowed as child of element “figure” in this context.]] |
+| اتنين [[<figcaption>]] في نفس الـ [[<figure>]] | الـ validator رفضه كده: [[Element “figcaption” not allowed as child of element “figure” in this context.]] |
+| [[<figcaption>]] جوه [[<div>]] عادي | الـ validator رفضه كده: [[Element “figcaption” not allowed as child of element “div” in this context.]] |
+
+المتصفح بيعرض التلاتة عادي من غير أي تصليح، فالـ validator هو اللي بيمسكهم.
+
+---
+
+## ٣. إيه اللي بيتحط في [[<figure>]]؟
+
+مش صور بس. المواصفة بتقول: رسومات، ومخططات، وصور، وكود، وغيرهم.
+
+### مقولة وصاحبها
+
+~~~live 154 رأي عميلة
+<figure>
+  <blockquote>
+    <p>أول مرة أفهم الـ HTML من غير ما أحفظ.</p>
+  </blockquote>
+  <figcaption>سلمى فؤاد، طالبة في <cite>كورس الويب من الصفر</cite></figcaption>
+</figure>
+~~~
+
+ده حل مشكلة الدرس اللي فات: اسم القائل لازم يبقى برّه [[<blockquote>]]، بس عايزه مربوط بيه. الـ [[<figure>]] بيلمّ الاتنين، و [[<figcaption>]] فيه الاسم. وده المثال اللي المواصفة نفسها بتستخدمه.
+
+### كود
+
+~~~live 124 كود ووصفه فوقه
+<figure>
+  <figcaption>كود ١: أصغر قايمة ممكنة.</figcaption>
+  <pre><code>&lt;ul&gt;
+  &lt;li&gt;عيش&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+</figure>
+~~~
+
+هنا [[<figcaption>]] **أول** ابن، فالعنوان طلع فوق الكود. [[<pre>]] بيعرض اللي جواه بسطوره ومسافاته زي ما هي، و [[<code>]] بيقول إن ده كود (اتشرح في وحدة «معنى الكلام جوه الفقرة»)، و [[&lt;]] هي طريقة كتابة علامة [[<]] عشان المتصفح ميفتكرهاش بداية tag.
+
+### قايمة ليها عنوان
+
+~~~live 136 قايمة جوه figure
+<figure>
+  <figcaption>أكتر ٣ أصناف اتباعت في مارس</figcaption>
+  <ol>
+    <li>عيش بلدي</li>
+    <li>فينو</li>
+    <li>بقسماط</li>
+  </ol>
+</figure>
+~~~
+
+القوايم ملهاش عنصر عنوان خاص بيها. لو القايمة «شكل» الكلام بيشاور عليه (أكتر ٣ أصناف، ترتيب)، [[<figure>]] بيدّيها عنوان مربوط بيها. ده مثال من المواصفة برضه. ولو القايمة جزء عادي من الكلام، عنوان [[<h2>]] قبلها كفاية.
+
+### مجموعة أشكال
+
+[[<figure>]] جوه [[<figure>]]: وصف للمجموعة ووصف لكل واحد.
+
+~~~live 360 تلات أشكال ووصف واحد للكل
+<figure>
+  <figcaption>العيش في ٣ مراحل</figcaption>
+  <figure>
+    <svg role="img" aria-label="كورة عجينة بيضا" width="80" height="60" viewBox="0 0 80 60">
+      <circle cx="40" cy="30" r="24" fill="#f5e6c8" stroke="#999"/>
+    </svg>
+    <figcaption>١. العجينة</figcaption>
+  </figure>
+  <figure>
+    <svg role="img" aria-label="رغيف مفرود فاتح اللون" width="80" height="60" viewBox="0 0 80 60">
+      <ellipse cx="40" cy="30" rx="36" ry="14" fill="#ecd9a8" stroke="#999"/>
+    </svg>
+    <figcaption>٢. بعد الفرد</figcaption>
+  </figure>
+  <figure>
+    <svg role="img" aria-label="رغيف منفوخ لونه دهبي" width="80" height="60" viewBox="0 0 80 60">
+      <ellipse cx="40" cy="30" rx="36" ry="22" fill="#d9a441" stroke="#999"/>
+    </svg>
+    <figcaption>٣. بعد الخبز</figcaption>
+  </figure>
+</figure>
+~~~
+
+---
+
+## ٤. [[alt]] ولا [[<figcaption>]]؟
+
+الاتنين، وكل واحد ليه شغلة:
+
+| | [[alt]] | [[<figcaption>]] |
+|---|---|---|
+| بيظهر لمين | اللي مش شايف الصورة (قارئ شاشة، أو الصورة محمّلتش) | الكل |
+| بيقول إيه | **اللي في الصورة**: بديل عنها | **معلومة عن الصورة**: عنوانها، مكانها، مصدرها، اللي تطلع بيه منها |
+| لازم؟ | أيوه على كل صورة ليها معنى | اختياري |
+
+في أول معاينة: البديل «تلات أعمدة بتعلى: السبت ٤٠...» بيوصف الرسم، والوصف «شكل ١: مبيعات العيش في أول ٣ أيام» بيقول هو عن إيه. متكتبش نفس الجملة في الاتنين: قارئ الشاشة هيقراها مرتين.
+
+(في المعاينة البديل مكتوب [[aria-label]] على [[<svg role="img">]] لأنه مش [[<img>]]. مع [[<img>]] بتكتب [[alt]].)
+
+---
+
+## ٥. اسم الـ [[<figure>]] عند قارئ الشاشة
+
+MDN بيقول إن [[<figcaption>]] بيدّي الـ [[<figure>]] الـ accessible name بتاعه (الاسم اللي قارئ الشاشة بيقوله). قست ده في Chrome 157:
+
+~~~text الناتج
+figure وجواه figcaption:   role=figure   computedName=""   وفي الشجرة: figure وجواه ابن نوعه Figcaption
+figure عليه aria-label:    role=figure   computedName="اسم يدوي"
+~~~
+
+يعني في Chrome الـ [[figcaption]] ظاهر كابن للـ [[figure]] بنوعه، بس خانة الاسم نفسها فاضية. فاللي أكيد: العلاقة بين الوصف والشكل موجودة في الشجرة. أما «قارئ الشاشة هينطق الوصف كاسم للشكل» فده كلام MDN ومتجرّبش هنا.
+
+---
+
+## ٦. إمتى **لأ**
+
+المواصفة بتفرّق: الجملة جوه الفقرة «قايمة بذاتها» برضه، بس الصورة اللي جزء من جملة مش figure.
+
+| الحاجة | figure؟ | بدلها |
+|---|---|---|
+| لوجو الموقع في الـ header | لأ | [[<img>]] جوه اللينك |
+| أيقونة جوه جملة أو زرار | لأ | [[<img>]] أو [[<svg>]] في مكانها |
+| صورة زينة (خلفية، فاصل) | لأ | [[alt=""]]، أو CSS |
+| صورة منتج في كارت، من غير وصف، ومحدش بيشاور عليها | مش لازم | [[<img>]] كفاية |
+| جملة مكررة من المقال بخط كبير عشان تشد القارئ (pull quote) | لأ | [[<aside>]]: المواصفة بتقول ده تكرار مش جزء من المحتوى |
+| رسم بياني المقال بيقول عليه «شكل ٢» | أيوه | |
+| كود بتقول عليه «كود ١» | أيوه | |
+| مقولة واسم صاحبها | أيوه | |
+
+و [[<figure>]] مش غلاف لكل [[<img>]]. لو مفيش وصف ومفيش حد بيشاور عليها، الغلاف مبيضيفش حاجة.
+
+### شاور بالاسم مش بالمكان
+
+المواصفة بتنصح: اكتب «شكل ١» مش «الصورة اللي فوق». لأن الـ [[<figure>]] ممكن يتنقل (على الموبايل ينزل تحت، أو في الطباعة يروح آخر الصفحة)، و «اللي فوق» تبقى غلط. ولو ادّيته [[id]] تقدر تعمل اللينك [[<a href="#fig-1">شكل ١</a>]].
+
+---
+
+## الخلاصة
+
+- [[<figure>]] لحاجة قايمة بذاتها الكلام بيشاور عليها: صورة، رسم، كود، قايمة، مقولة.
+- [[<figcaption>]] وصفها: واحد بس، وأول ابن أو آخر ابن، واختياري.
+- الشكل الافتراضي: 16px فوق وتحت و 40px من الجنبين، والوصف نص عادي.
+- مقولة وصاحبها: [[<blockquote>]] جوه [[<figure>]]، والاسم في [[<figcaption>]].
+- [[alt]] بيوصف اللي في الصورة، و [[<figcaption>]] بيقول معلومة عنها. متكررش.
+- مش كل صورة figure: اللوجو والأيقونة وصورة الزينة لأ.`,
+          try: R`اعمل ملف [[review.html]] فيه رأي عميل: [[<figure>]] جواه [[<blockquote>]] فيه جملة، و [[<figcaption>]] فيه اسم العميل. افتحه وافتح DevTools › Elements › Accessibility على الـ [[<figure>]] وشوف الـ role. وبعدين انقل الـ [[<figcaption>]] وحطه **جوه** الـ [[<blockquote>]]، وحط الكود في الـ validator.`,
+          sol: R`~~~live 182 review.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رأي عميل</title>
+</head>
+<body>
+<h1>رأي عميل</h1>
+<figure>
+  <blockquote>
+    <p>الطلب وصل سخن وفي ميعاده.</p>
+  </blockquote>
+  <figcaption>منى سامي، عميلة من ٢٠٢٤</figcaption>
+</figure>
+</body>
+</html>
+~~~
+
+الاقتباس متدخّل مرتين: 40px من الـ [[<figure>]] و 40px كمان من الـ [[<blockquote>]] اللي جواه. والاسم تحته على حد الـ [[<figure>]]. والـ role بتاع الـ [[<figure>]] هو [[figure]]، وجواه [[blockquote]] و Figcaption.
+
+لما تنقل الـ [[<figcaption>]] جوه الـ [[<blockquote>]]: الشكل بيتغيّر حاجة بسيطة (الاسم بيدخل مع الاقتباس)، والمتصفح مبيشتكيش. بس دلوقتي اسم العميل بقى جزء من الكلام المنقول، والـ [[<figure>]] بقى من غير وصف.
+
+~~~text الناتج
+الصح:   figure=1  blockquote=1  figcaption=1     role=figure
+        بداية الـ figure من اليمين: 48px   وبداية الـ blockquote: 88px
+        Nu Html Checker: صفر errors
+بعد النقل:  Nu Html Checker: error: Element “figcaption” not allowed as child of element “blockquote” in this context.
+~~~`,
+          deep: {
+            why: R`في أي مقال أو وثيقة فيه حاجات مش من مجرى الكلام نفسه: صورة، جدول، كود، مقولة. الكلام بيشاور عليها وهي بتوضّحه. من غير [[<figure>]] بتبقى [[<div>]] جواه صورة وفقرة، ومفيش حاجة بتربط الوصف بالصورة غير إنهم جنب بعض. [[<figure>]] و [[<figcaption>]] بيقولوا العلاقة دي للمتصفح، وبيدّوك غلاف واحد تنسّقه وتنقله.`,
+            how: R`[[<figure>]] عنصر block ليه margin افتراضي 16px فوق وتحت و 40px يمين وشمال، وبياخد role اسمه [[figure]]. و [[<figcaption>]] عنصر block من غير أي تنسيق. المتصفح بيعتبر **أول** [[<figcaption>]] ابن مباشر للـ [[<figure>]] هو الوصف.
+
+الـ [[<figure>]] جزء من مجرى الصفحة العادي: بيتعرض في مكانه في الكود. إنه «ممكن يتنقل» ده معنى انت بتقوله، والـ CSS هو اللي بينقله فعلًا لو عايز.`,
+            when: R`صورة أو رسم بياني في مقال، كود في شرح، جدول أو قايمة بتشاور عليها باسمها، مقولة واسم صاحبها (آراء العملا)، قصيدة أو مقطع من نص. ومتستخدمهوش للوجو والأيقونات وصور الزينة، ولا كغلاف تلقائي لكل صورة.`,
+            mistakes: R`[[<figcaption>]] في النص بين المحتوى. [[<figcaption>]] برّه [[<figure>]] أو جوه [[<blockquote>]]. نفس الجملة في [[alt]] وفي [[<figcaption>]]. تعتبر الـ [[<figcaption>]] بديل عن [[alt]] وتسيب الصورة من غيره. تلف اللوجو بـ [[<figure>]]. تكتب الوصف [[<p>]] تحت الصورة. تشاور على الشكل بـ «الصورة اللي فوق». تنسى إن [[<blockquote>]] جوه [[<figure>]] بيتدخّل مرتين (40 و 40) وتستغرب الشكل.`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**صنّف:** أنهي من دول [[<figure>]] وأنهي لأ، وليه: (١) أيقونة سلة جوه جملة «اضغط على … عشان تشوف طلبك». (٢) خريطة الفرع والمقال بيقول «شوف خريطة ١». (٣) لوجو الموقع. (٤) كود من ٥ سطور الشرح بيقول عليه «كود ٢». (٥) صورة خلفية ورا العنوان. (٦) رأي عميل واسمه.`, done: R`إجابتك: (٢) و (٤) و (٦) figure. و (١) و (٣) و (٥) لأ. وكل «لأ» ليها بديل: الأيقونة في مكانها جوه الجملة، واللوجو [[<img>]] جوه لينك، والخلفية CSS.`, sol: R`| الحالة | figure؟ | السبب |
+|---|---|---|
+| أيقونة جوه جملة | لأ | جزء من الجملة. لو اتنقلت الجملة تبوظ |
+| خريطة بيتشاور عليها | أيوه | قايمة بذاتها وليها اسم |
+| اللوجو | لأ | مش محتوى بيتشاور عليه |
+| كود بيتشاور عليه | أيوه | [[<figure>]] جواه [[<pre>]] |
+| صورة خلفية | لأ | زينة، مكانها الـ CSS |
+| رأي عميل واسمه | أيوه | [[<blockquote>]] و [[<figcaption>]] |
+
+الحالتين (١) و (٢) مبنيين:
+
+~~~live 196 أيقونة جوه جملة، وخريطة في figure
+<p>اضغط على <svg role="img" aria-label="علامة السلة" width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="5" width="12" height="9" fill="#444"/></svg> عشان تشوف طلبك.</p>
+<figure>
+  <svg role="img" aria-label="خريطة: المخبز على ناصية شارعين" width="200" height="90" viewBox="0 0 200 90">
+    <rect width="200" height="90" fill="#e5e7eb"/>
+    <rect x="0" y="38" width="200" height="14" fill="#fff"/>
+    <rect x="93" y="0" width="14" height="90" fill="#fff"/>
+    <circle cx="120" cy="25" r="7" fill="#c2410c"/>
+  </svg>
+  <figcaption>خريطة ١: مكان الفرع الرئيسي.</figcaption>
+</figure>
+~~~
+
+**الاختبار:** انقلها ذهنيًا لآخر الصفحة. الخريطة تفضل مفهومة، والجملة تقول «شوف خريطة ١» وخلاص. الأيقونة لو اتنقلت الجملة هتبقى «اضغط على عشان تشوف طلبك».
+
+**الغلطة الشائعة:** «أي صورة يبقى figure». الصورة اللي جزء من جملة أو من واجهة مش figure.
+
+~~~text الناتج
+figure=1  figcaption=1
+شجرة الـ accessibility:
+paragraph   "اضغط على "  image "علامة السلة"  " عشان تشوف طلبك."
+figure
+  image "خريطة: المخبز على ناصية شارعين"
+  Figcaption   "خريطة ١: مكان الفرع الرئيسي."
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** مقال قصير «ليه العيش بينفش؟» فيه ٣ أشكال، كل واحد [[<figure>]] ليه [[id]] ووصف: رسم (SVG بسيط: ٣ دواير بتكبر)، وكود (قايمة مكونات)، ومقولة واسم صاحبها. وكل شكل الكلام اللي قبله بيشاور عليه بلينك [[href="#..."]].`, done: R`فيه ٣ [[<figure>]] وكل واحد ليه [[<figcaption>]] واحد و [[id]]، و ٣ لينكات كل واحد بينزل لشكله، ومفيش في الكلام «اللي فوق» ولا «اللي تحت»، والـ validator صفر errors.`, work: { h: 480, start: R`<h1>ليه العيش بينفش؟</h1>
+الخميرة بتاكل السكر وبتطلّع غاز، والغاز هو اللي بينفخ العجينة. شكل ١ بيورّي حجم العجينة مع الوقت.
+شكل ١: العجينة بعد ٠ و ٣٠ و ٦٠ دقيقة.
+ولو كتبت الوصفة في صفحة، المكونات بتبقى قايمة زي كود ١.
+كود ١: مكونات العجينة.
+وزي ما مكتوب في المقولة اللي تحت، الصبر نص الشغل.
+العجينة اللي بتستعجلها بتطلع ناشفة.
+الحاج سيد، في دفتر الخبّاز`, checks: [
+              { say: R`فيه ٣ أشكال كل واحد [[<figure>]]`, q: "figure", n: 3 },
+              { say: R`كل [[<figure>]] ليه [[id]]`, q: "figure[id]", n: 3 },
+              { say: R`كل [[<figure>]] ليه [[<figcaption>]] واحد`, q: "figure > figcaption", n: 3 },
+              { say: R`الكلام قبل كل شكل بيشاور عليه بلينك [[href="#..."]]: ٣ لينكات`, q: 'a[href^="#"]', n: 3 },
+              { say: R`الرسم [[<svg>]] جوه [[<figure>]]`, q: "figure svg", n: 1 },
+              { say: R`المقولة [[<blockquote>]] جوه [[<figure>]]`, q: "figure blockquote", n: 1 },
+            ] }, sol: R`~~~live 480 ليه العيش بينفش؟
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ليه العيش بينفش؟</title>
+</head>
+<body>
+<main>
+  <article>
+    <h1>ليه العيش بينفش؟</h1>
+    <p>الخميرة بتاكل السكر وبتطلّع غاز، والغاز هو اللي بينفخ العجينة. <a href="#fig-1">شكل ١</a> بيورّي حجم العجينة مع الوقت.</p>
+    <figure id="fig-1">
+      <svg role="img" aria-label="تلات دواير بتكبر: بعد ٠ دقيقة، و٣٠، و٦٠" width="240" height="100" viewBox="0 0 240 100">
+        <circle cx="35" cy="65" r="18" fill="#f5e6c8" stroke="#999"/>
+        <circle cx="110" cy="58" r="27" fill="#f5e6c8" stroke="#999"/>
+        <circle cx="195" cy="50" r="38" fill="#f5e6c8" stroke="#999"/>
+      </svg>
+      <figcaption>شكل ١: العجينة بعد ٠ و ٣٠ و ٦٠ دقيقة.</figcaption>
+    </figure>
+    <p>ولو كتبت الوصفة في صفحة، المكونات بتبقى قايمة زي <a href="#code-1">كود ١</a>.</p>
+    <figure id="code-1">
+      <figcaption>كود ١: مكونات العجينة.</figcaption>
+      <pre><code>&lt;ul&gt;
+  &lt;li&gt;دقيق&lt;/li&gt;
+  &lt;li&gt;خميرة&lt;/li&gt;
+  &lt;li&gt;مية دافية&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+    </figure>
+    <p>وزي ما مكتوب في <a href="#quote-1">المقولة</a> اللي تحت، الصبر نص الشغل.</p>
+    <figure id="quote-1">
+      <blockquote>
+        <p>العجينة اللي بتستعجلها بتطلع ناشفة.</p>
+      </blockquote>
+      <figcaption>الحاج سيد، في <cite>دفتر الخبّاز</cite></figcaption>
+    </figure>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+**ليه كده:**
+
+- كل [[<figure>]] ليه [[id]] ([[fig-1]] و [[code-1]] و [[quote-1]])، والكلام بيشاور عليه بلينك. لو الشكل اتنقل، اللينك لسه شغال.
+- في الرسم الـ [[<figcaption>]] آخر ابن (تحت)، وفي الكود أول ابن (فوق). الاتنين مسموحين، والعادة: وصف الصورة تحتها وعنوان الكود أو الجدول فوقه.
+- الرسم ليه [[aria-label]] بيوصف اللي فيه (٣ دواير بتكبر)، والـ [[<figcaption>]] بيقول هو عن إيه. مش نفس الجملة.
+- في المقولة: الكلام جوه [[<blockquote>]]، والاسم واسم الدفتر (جوه [[<cite>]]) في [[<figcaption>]].
+- جوه [[<pre>]] علامة [[<]] مكتوبة [[&lt;]] وعلامة [[>]] مكتوبة [[&gt;]]. لو اتكتبوا عادي المتصفح هيعمل قايمة حقيقية بدل ما يعرض الكود.
+
+**الغلطة الشائعة:** تنسخ الكود جوه [[<pre>]] زي ما هو. جرّبها: القايمة هتترسم، والكود مش هيبان.
+
+~~~text الناتج
+figure=3  figcaption=3  a=3  blockquote=1  cite=1
+كل href ليه id موجود: true   (#fig-1 #code-1 #quote-1)
+مكان figcaption:  fig-1 آخر ابن   code-1 أول ابن   quote-1 آخر ابن
+Nu Html Checker: صفر errors
+على عرض 360: مفيش scroll أفقي
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود في أول الحل فيه ٤ غلطات: اللوجو ملفوف بـ [[<figure>]]، وصورة الفرع الـ [[<figcaption>]] بتاعها في النص بين فقرة والصورة، والصورة نفسها من غير نص بديل، ورأي العميل الـ [[<figcaption>]] بتاعه جوه الـ [[<blockquote>]]. صلّحهم.`, done: R`الـ validator قبل التصليح طلّع errors وبعده صفر، واللوجو بقى من غير [[<figure>]]، وكل [[<figcaption>]] آخر ابن لـ [[<figure>]]، والصورة ليها نص بديل مختلف عن الوصف.`, work: { h: 322, solAt: 1, start: R`<header>
+  <figure>
+    <svg role="img" aria-label="لوجو مخبز السنابل" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#c2410c"/></svg>
+  </figure>
+</header>
+<figure>
+  <p>صورة الفرع الجديد:</p>
+  <figcaption>الفرع الجديد</figcaption>
+  <svg width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="#d9a441"/><rect x="60" y="45" width="40" height="45" fill="#7c2d12"/></svg>
+</figure>
+<blockquote>
+  <p>أحسن عيش في المنطقة.</p>
+  <figcaption>كريم عادل</figcaption>
+</blockquote>`, checks: [
+              { say: R`اللوجو من غير [[<figure>]]`, q: "header figure", n: 0 },
+              { say: R`صورة الفرع الرسم جواها [[<svg>]] ليه [[aria-label]] (نص بديل)`, q: "figure svg[aria-label]", n: 1 },
+              { say: R`كل [[<figcaption>]] آخر ابن في [[<figure>]] بتاعه`, q: "figure > figcaption:last-child", n: 2 },
+              { say: R`مفيش [[<figcaption>]] جوه [[<blockquote>]]`, q: "blockquote figcaption", n: 0 },
+              { say: R`مفيش فقرة [[<p>]] تايهة جوه [[<figure>]] قبل الصورة`, q: "figure > p", n: 0 },
+            ] }, sol: R`قبل:
+
+~~~live 322 قبل
+<header>
+  <figure>
+    <svg role="img" aria-label="لوجو مخبز السنابل" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#c2410c"/></svg>
+  </figure>
+</header>
+<figure>
+  <p>صورة الفرع الجديد:</p>
+  <figcaption>الفرع الجديد</figcaption>
+  <svg width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="#d9a441"/><rect x="60" y="45" width="40" height="45" fill="#7c2d12"/></svg>
+</figure>
+<blockquote>
+  <p>أحسن عيش في المنطقة.</p>
+  <figcaption>كريم عادل</figcaption>
+</blockquote>
+~~~
+
+~~~text Nu Html Checker على «قبل»
+error: Element “svg” not allowed as child of element “figure” in this context.
+error: Element “figcaption” not allowed as child of element “blockquote” in this context.
+~~~
+
+أول error صياغته غريبة: هو بيشتكي من الـ [[<svg>]] اللي جه **بعد** الـ [[<figcaption>]]. معناه إن الـ [[<figcaption>]] مبقاش آخر ابن.
+
+بعد:
+
+~~~live 298 بعد
+<header>
+  <svg role="img" aria-label="لوجو مخبز السنابل" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#c2410c"/></svg>
+</header>
+<figure>
+  <svg role="img" aria-label="واجهة محل لونها دهبي وبابها بني" width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="#d9a441"/><rect x="60" y="45" width="40" height="45" fill="#7c2d12"/></svg>
+  <figcaption>الفرع الجديد في شارع النخيل.</figcaption>
+</figure>
+<figure>
+  <blockquote>
+    <p>أحسن عيش في المنطقة.</p>
+  </blockquote>
+  <figcaption>كريم عادل</figcaption>
+</figure>
+~~~
+
+**الأربع تصليحات:**
+
+- **اللوجو:** الـ [[<figure>]] اتشال. اللوجو مش شكل بيتشاور عليه. والـ validator مكانش بيشتكي منه، لأن الكود سليم والمعنى هو اللي غلط.
+- **مكان الوصف:** الصورة الأول وبعدها [[<figcaption>]] آخر ابن. وفقرة «صورة الفرع الجديد:» اتشالت لأنها تكرار للوصف.
+- **النص البديل:** الصورة خدت [[role="img"]] و [[aria-label]] بيوصف اللي فيها («واجهة محل لونها دهبي وبابها بني»)، والوصف بيقول هي إيه («الفرع الجديد في شارع النخيل»). في «قبل» الصورة مكانتش ظاهرة لقارئ الشاشة باسم خالص، والـ validator ممسكهاش.
+- **المقولة:** اتلفّت بـ [[<figure>]]، والـ [[<figcaption>]] خرج من الـ [[<blockquote>]] وبقى أخوه.
+
+**الغلطة الشائعة:** تصلّح الـ errors الاتنين وتقف. الغلطتين التانيين (اللوجو والنص البديل) مش errors، ومحدش هيقولك عليهم.
+
+~~~text الناتج
+قبل:  شجرة الـ accessibility:
+      banner › figure › image "لوجو مخبز السنابل"
+      figure › paragraph ، Figcaption "الفرع الجديد" ، image (من غير اسم)
+      blockquote › paragraph ، Figcaption "كريم عادل"
+      Nu Html Checker: 2 errors
+بعد:  banner › image "لوجو مخبز السنابل"
+      figure › image "واجهة محل لونها دهبي وبابها بني" ، Figcaption "الفرع الجديد في شارع النخيل."
+      figure › blockquote ، Figcaption "كريم عادل"
+      Nu Html Checker: صفر errors
+~~~` },
+            { lvl: 'تحدي', t: R`**أشكال:** معرض من ٣ أعلام إشارة لنادي مراكب متخيل، مرسومين بـ [[<svg>]] من مستطيلات ودواير بس: علم أحمر كله، وعلم نصه أصفر ونصه أزرق، وعلم أخضر في نصه دايرة بيضا. كل علم [[<figure>]] بوصفه، والتلاتة جوه [[<figure>]] واحد ليه وصف للمجموعة.`, done: R`فيه ٤ [[<figure>]] (واحد خارجي وتلاتة جواه) و ٤ [[<figcaption>]]، وكل علم ليه نص بديل بيوصف شكله ووصف بيقول معناه، ووصف المجموعة أول ابن للـ [[<figure>]] الخارجي، والـ validator صفر errors.`, work: { h: 460, start: R`<h1>معرض أعلام الإشارة</h1>
+تلات أعلام بيستخدمهم نادي المراكب (اسم متخيل)
+علم ١: ممنوع النزول. (علم أحمر كله)
+علم ٢: انزل بحذر. (نصه الفوقاني أصفر ونصه التحتاني أزرق)
+علم ٣: البحر هادي. (أخضر في نصه دايرة بيضا)`, checks: [
+              { say: R`فيه ٤ [[<figure>]]: واحد خارجي وتلاتة جواه`, q: "figure", n: 4 },
+              { say: R`الـ [[<figure>]] التلاتة الصغيرين جوه الخارجي`, q: "figure figure", n: 3 },
+              { say: R`كل علم رسمة [[<svg>]] ليها [[aria-label]]`, q: "figure figure svg[aria-label]", n: 3 },
+              { say: R`٤ [[<figcaption>]]: وصف لكل علم ووصف للمجموعة`, q: "figcaption", n: 4 },
+              { say: R`وصف المجموعة أول ابن للـ [[<figure>]] الخارجي`, q: "figure > figcaption:first-child", n: 1 },
+              { say: R`العلم الأخضر فيه [[<circle>]] واحدة`, q: "svg circle", n: 1 },
+            ] }, sol: R`~~~live 460 معرض أعلام الإشارة
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معرض أعلام الإشارة</title>
+</head>
+<body>
+<main>
+  <h1>معرض أعلام الإشارة</h1>
+  <figure>
+    <figcaption>تلات أعلام بيستخدمهم نادي المراكب (اسم متخيل)</figcaption>
+    <figure>
+      <svg role="img" aria-label="علم أحمر كله" width="90" height="60" viewBox="0 0 90 60">
+        <rect width="90" height="60" fill="#b91c1c"/>
+      </svg>
+      <figcaption>علم ١: ممنوع النزول.</figcaption>
+    </figure>
+    <figure>
+      <svg role="img" aria-label="علم نصه الفوقاني أصفر ونصه التحتاني أزرق" width="90" height="60" viewBox="0 0 90 60">
+        <rect width="90" height="30" fill="#facc15"/>
+        <rect y="30" width="90" height="30" fill="#1d4ed8"/>
+      </svg>
+      <figcaption>علم ٢: انزل بحذر.</figcaption>
+    </figure>
+    <figure>
+      <svg role="img" aria-label="علم أخضر في نصه دايرة بيضا" width="90" height="60" viewBox="0 0 90 60">
+        <rect width="90" height="60" fill="#15803d"/>
+        <circle cx="45" cy="30" r="14" fill="#fff"/>
+      </svg>
+      <figcaption>علم ٣: البحر هادي.</figcaption>
+    </figure>
+  </figure>
+</main>
+</body>
+</html>
+~~~
+
+**الرسم:** كل [[<svg>]] عرضه 90 وارتفاعه 60. [[<rect>]] مستطيل ([[width]] و [[height]] و [[y]] لبدايته من فوق) و [[<circle>]] دايرة ([[cx]] و [[cy]] مركزها و [[r]] نصف قطرها) و [[fill]] اللون. التفاصيل في درس «SVG».
+
+**الهيكل:**
+
+- الـ [[<figure>]] الخارجي الـ [[<figcaption>]] بتاعه **أول** ابن، فوصف المجموعة طالع فوق.
+- كل علم [[<figure>]] جواه، والـ [[<figcaption>]] بتاعه آخر ابن.
+- النص البديل بيقول الشكل («نصه الفوقاني أصفر ونصه التحتاني أزرق») لأن اللي مش شايف محتاج يعرف العلم شكله إيه. والوصف بيقول المعنى («انزل بحذر»).
+- كل [[<figure>]] جواني بيتدخّل 40px كمان عن الخارجي، فالأعلام طالعة داخلة 80px. ده الـ margin الافتراضي، وبيتصفّر بالـ CSS.
+
+**الغلطة الشائعة:** تحط التلات أوصاف في [[<figcaption>]] واحد طويل. مش غلط (والمواصفة فيها مثال كده)، بس مش هتعرف تربط كل وصف بعَلَمه.
+
+~~~text الناتج
+figure=4  figcaption=4
+شجرة الـ accessibility:
+figure
+  Figcaption   "تلات أعلام بيستخدمهم نادي المراكب (اسم متخيل)"
+  figure › image "علم أحمر كله" ، Figcaption "علم ١: ممنوع النزول."
+  figure › image "علم نصه الفوقاني أصفر ونصه التحتاني أزرق" ، Figcaption "علم ٢: انزل بحذر."
+  figure › image "علم أخضر في نصه دايرة بيضا" ، Figcaption "علم ٣: البحر هادي."
+Nu Html Checker: صفر errors
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب [[<img alt="شكل ٢: الاشتراكات اتضاعفت">]] وتحتها [[<figcaption>]] فيه نفس الجملة بالظبط. اشرح له في ٣ سطور الفرق بين [[alt]] و [[<figcaption>]]، واكتب نسخة صح لرسم فيه ٣ أعمدة: يناير ٢٠، فبراير ٣٥، مارس ٦٠.`, done: R`شرحك فيه: مين بيشوف كل واحد، وكل واحد بيقول إيه، وليه التكرار وحش. والنسخة الصح البديل فيها بيقول الأرقام والوصف بيقول الخلاصة.`, sol: R`إجابة نموذجية:
+
+1. [[alt]] بديل الصورة للي مش شايفها: بيقول **اللي فيها**. و [[<figcaption>]] ظاهر للكل: بيقول **هي عن إيه** أو تطلع منها بإيه.
+2. لو الاتنين نفس الجملة، قارئ الشاشة هيقراها مرتين ورا بعض، واللي شايف مخدش أي معلومة زيادة.
+3. والبديل اللي بيبدأ بـ «شكل ٢:» بيضيّع أهم حاجة: اللي مش شايف الرسم لسه ميعرفش الأرقام.
+
+~~~live 178 النسخة الصح
+<figure>
+  <svg role="img" aria-label="تلات أعمدة: يناير ٢٠، فبراير ٣٥، مارس ٦٠" width="180" height="90" viewBox="0 0 180 90">
+    <rect x="15" y="60" width="35" height="30" fill="#0f766e"/>
+    <rect x="72" y="38" width="35" height="52" fill="#0f766e"/>
+    <rect x="130" y="0" width="35" height="90" fill="#0f766e"/>
+  </svg>
+  <figcaption>شكل ٢: الاشتراكات اتضاعفت ٣ مرات من يناير لمارس.</figcaption>
+</figure>
+~~~
+
+البديل: «تلات أعمدة: يناير ٢٠، فبراير ٣٥، مارس ٦٠» (البيانات نفسها). والوصف: «شكل ٢: الاشتراكات اتضاعفت ٣ مرات من يناير لمارس» (الاسم والخلاصة).
+
+**الغلطة الشائعة:** تسيب [[alt]] فاضي وتقول «الوصف موجود في الـ [[<figcaption>]]». الوصف مبيقولش اللي في الصورة، فاللي مش شايف خد العنوان من غير المحتوى.
+
+~~~text الناتج
+شجرة الـ accessibility:
+figure
+  image "تلات أعمدة: يناير ٢٠، فبراير ٣٥، مارس ٦٠"
+  Figcaption   "شكل ٢: الاشتراكات اتضاعفت ٣ مرات من يناير لمارس."
+النص البديل ≠ نص الوصف: true
+~~~` },
+          ]
+        },
       ]
     }
 ]);

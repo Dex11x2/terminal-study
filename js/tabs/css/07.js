@@ -1,1341 +1,226 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "position و responsive",
-      pre: [
-        { to: "css/display", why: R`الـ flow العادي اللي position بيطلّع منه` },
-        { to: "css/grid", why: R`الـ layouts اللي الـ media queries بتغيّرها` },
-      ],
+      t: "الفورم: باقي الحقول وإرسال البيانات",
       l: 1,
-      n: "position بيطلّع العنصر من الترتيب العادي، و media queries بتغيّر الشكل حسب الشاشة",
+      n: "الفورم بيبعت إيه بالظبط وبأنهي شكل، وباقي أنواع الحقول وحالاتها، ورفع الملفات، والاقتراحات والنتايج والشرايط، وأزرار الفورم",
+      pre: [
+        { to: "css/form و label", why: R`الوحدة دي بتكمّل عليه: هناك عرفت [[<form>]] و [[<label>]] و [[name]] و [[required]]، وهنا هتعرف الطلب اللي بيخرج وباقي الحقول` },
+        { to: "css/fieldset و radio", why: R`الـ radio والـ checkbox والـ [[<select>]] و [[FormData]] اتشرحوا هناك، وهنا بنكمّل حالاتهم ([[checked]] و [[selected]] و [[disabled]])` }
+      ],
+      goal: [
+        R`تقرا أي طلب فورم (GET أو POST أو multipart) وتعرف منه الفورم اللي بعته، وتختار [[method]] و [[enctype]] و [[action]] الصح لأي فورم.`,
+        R`تختار النوع المناسب من الـ 22 نوع بتوع [[<input>]] لأي بيانات، وتعرف كل نوع بيبعت قيمته بأنهي شكل، ومين فيهم محتاج بديل.`,
+        R`تبني فورم رفع ملفات شغال: [[type="file"]] و [[accept]] و [[multiple]] و [[multipart/form-data]]، وتعرف إيه اللي الـ HTML مبيحميش منه.`,
+        R`تفرّق بين [[readonly]] و [[disabled]] من اللي بيتبعت، وتظبط الحالة الأولى بـ [[checked]] و [[selected]]، وتقسّم قايمة بـ [[<optgroup>]].`,
+        R`تزوّد اقتراحات بـ [[<datalist>]]، وتعرض نتيجة بـ [[<output>]]، وتختار بين [[<progress>]] و [[<meter>]] وتلوّن المقياس بـ [[low]] و [[high]] و [[optimum]].`,
+        R`تحط أكتر من زرار في فورم واحد: كل زرار بعنوانه ([[formaction]])، وزرار مسودة بيعدّي من الفحص ([[formnovalidate]])، وزرار برّه الفورم ([[form]])، من غير ما زرار عادي يبعت الفورم بالغلط.`
+      ],
       projects: [
-        { lvl: 'صغير', dir: "float-contact", t: R`زرار تواصل عايم مبيغطّيش حاجة`, what: R`زرار [[fixed]] على [[inset-inline-end]] و [[bottom: calc(1rem + env(safe-area-inset-bottom))]]، والكلام جنبه يختفي تحت 640، ولو فيه شريط CTA تحت على الموبايل الزرار يطلع فوقه. من درس [[sticky و fixed]].`, done: R`في rtl و ltr الزرار في ركن النهاية تحت، وعلى 360 مش فوق زرار «احجز» (قيس الاتنين بـ [[getBoundingClientRect]] ومفيش تداخل)، وبعد scroll 2000 لسه في نفس المكان.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>مركز ريشة للعلاج الطبيعي</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main class="page">
-  <h1>مركز ريشة للعلاج الطبيعي</h1>
-  <p>جلسات للضهر والركبة والرقبة، ومتابعة بعد العمليات. الصفحة طويلة عشان تجرّب الـ scroll: الزرار الأخضر فاضل في مكانه.</p>
-  <h2>الخدمات</h2>
-  <p>علاج آلام الضهر بالتمارين والأجهزة، وتأهيل الركبة بعد الإصابات، وجلسات للرقبة والكتف لأصحاب الشغل على الكمبيوتر.</p>
-  <h2>المواعيد</h2>
-  <p>كل يوم من ١٠ الصبح لـ ١٠ بالليل ما عدا الجمعة. الجلسة ٤٥ دقيقة.</p>
-  <h2>الأسعار</h2>
-  <p>الكشف ٣٠٠ جنيه، والجلسة ٢٥٠، وباقة ١٠ جلسات بـ ٢٠٠٠.</p>
-  <h2>العنوان</h2>
-  <p>٤ شارع النخيل، الدور التاني، فوق الصيدلية.</p>
-  <div class="spacer" aria-hidden="true"></div>
-  <p>آخر الصفحة. الزرار لسه في الركن، وشريط «احجز» على الموبايل مغطّاش الكلام ده لأن الـ body ليه مسافة تحت.</p>
-</main>
-
-<aside aria-label="تواصل سريع">
-<a class="contact" href="https://wa.me/201000000000">
-  <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
-  <span class="contact__text">كلّمنا واتساب</span>
-</a>
-
-<div class="cta-bar">
-  <a class="cta-bar__btn" href="#book">احجز جلسة</a>
-</div>
-</aside>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  --safe-bottom: env(safe-area-inset-bottom, 0px);   /* the iPhone home bar; 0 everywhere else */
-  --cta-h: 0px;                                       /* the bottom bar's height, 0 while it is hidden */
-}
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #f8fafc; }
-.page { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 6rem; }
-.spacer { height: 250vh; }   /* empty filler so the page scrolls */
-
-/* the floating button: fixed to the end corner, above the bar if there is one */
-.contact {
-  position: fixed;
-  inset-inline-end: 1rem;
-  bottom: calc(1rem + var(--cta-h) + var(--safe-bottom));
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.1rem;
-  border-radius: 999px;
-  background: #166534;
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-  box-shadow: 0 6px 18px #0003;
-}
-.contact:focus-visible, .cta-bar__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-.cta-bar { display: none; }
-
-@media (max-width: 39.98rem) {
-  :root { --cta-h: 4.5rem; }
-  /* phone: the text hides (still read by screen readers), only the icon stays */
-  .contact { padding: 0.8rem; }
-  .contact__text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-  .cta-bar {
-    display: flex;
-    position: fixed;
-    inset-inline: 0;
-    bottom: 0;
-    z-index: 10;
-    height: calc(var(--cta-h) + var(--safe-bottom));
-    padding: 0.75rem 1rem calc(0.75rem + var(--safe-bottom));
-    background: #fff;
-    border-top: 1px solid #e5e7eb;
-  }
-  .cta-bar__btn { flex: 1; display: grid; place-items: center; border-radius: 0.75rem; background: #1d4ed8; color: #fff; font-weight: 700; text-decoration: none; }
-  /* the bar covers the last part of the page, so the page gets that much space at the bottom */
-  body { padding-bottom: calc(var(--cta-h) + var(--safe-bottom)); }
-}
-~~~
-
-~~~view 560 600 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>مركز ريشة للعلاج الطبيعي</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  --safe-bottom: env(safe-area-inset-bottom, 0px);   /* the iPhone home bar; 0 everywhere else */
-  --cta-h: 0px;                                       /* the bottom bar's height, 0 while it is hidden */
-}
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #f8fafc; }
-.page { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 6rem; }
-.spacer { height: 250vh; }   /* empty filler so the page scrolls */
-
-/* the floating button: fixed to the end corner, above the bar if there is one */
-.contact {
-  position: fixed;
-  inset-inline-end: 1rem;
-  bottom: calc(1rem + var(--cta-h) + var(--safe-bottom));
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.1rem;
-  border-radius: 999px;
-  background: #166534;
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-  box-shadow: 0 6px 18px #0003;
-}
-.contact:focus-visible, .cta-bar__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-.cta-bar { display: none; }
-
-@media (max-width: 39.98rem) {
-  :root { --cta-h: 4.5rem; }
-  /* phone: the text hides (still read by screen readers), only the icon stays */
-  .contact { padding: 0.8rem; }
-  .contact__text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-  .cta-bar {
-    display: flex;
-    position: fixed;
-    inset-inline: 0;
-    bottom: 0;
-    z-index: 10;
-    height: calc(var(--cta-h) + var(--safe-bottom));
-    padding: 0.75rem 1rem calc(0.75rem + var(--safe-bottom));
-    background: #fff;
-    border-top: 1px solid #e5e7eb;
-  }
-  .cta-bar__btn { flex: 1; display: grid; place-items: center; border-radius: 0.75rem; background: #1d4ed8; color: #fff; font-weight: 700; text-decoration: none; }
-  /* the bar covers the last part of the page, so the page gets that much space at the bottom */
-  body { padding-bottom: calc(var(--cta-h) + var(--safe-bottom)); }
-}
-</style>
-</head>
-<body>
-<main class="page">
-  <h1>مركز ريشة للعلاج الطبيعي</h1>
-  <p>جلسات للضهر والركبة والرقبة، ومتابعة بعد العمليات. الصفحة طويلة عشان تجرّب الـ scroll: الزرار الأخضر فاضل في مكانه.</p>
-  <h2>الخدمات</h2>
-  <p>علاج آلام الضهر بالتمارين والأجهزة، وتأهيل الركبة بعد الإصابات، وجلسات للرقبة والكتف لأصحاب الشغل على الكمبيوتر.</p>
-  <h2>المواعيد</h2>
-  <p>كل يوم من ١٠ الصبح لـ ١٠ بالليل ما عدا الجمعة. الجلسة ٤٥ دقيقة.</p>
-  <h2>الأسعار</h2>
-  <p>الكشف ٣٠٠ جنيه، والجلسة ٢٥٠، وباقة ١٠ جلسات بـ ٢٠٠٠.</p>
-  <h2>العنوان</h2>
-  <p>٤ شارع النخيل، الدور التاني، فوق الصيدلية.</p>
-  <div class="spacer" aria-hidden="true"></div>
-  <p>آخر الصفحة. الزرار لسه في الركن، وشريط «احجز» على الموبايل مغطّاش الكلام ده لأن الـ body ليه مسافة تحت.</p>
-</main>
-
-<aside aria-label="تواصل سريع">
-<a class="contact" href="https://wa.me/201000000000">
-  <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
-  <span class="contact__text">كلّمنا واتساب</span>
-</a>
-
-<div class="cta-bar">
-  <a class="cta-bar__btn" href="#book">احجز جلسة</a>
-</div>
-</aside>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** صفحة مركز علاج طبيعي، وزرار أخضر «كلّمنا واتساب» في الركن تحت على الشمال (في العربي النهاية هي الشمال). انزل في الصفحة: الزرار مبيتحركش. على الموبايل الكلام بيستخبى والأيقونة بس اللي بتفضل، ويظهر تحت خالص شريط أبيض فيه زرار «احجز جلسة» أزرق، والزرار الأخضر بيطلع فوقه.
-
-**[[position: fixed]]:** الزرار بيتقاس من الشاشة نفسها مش من الصفحة، فالـ scroll مبيحركوش.
-- [[inset-inline-end: 1rem]]: ناحية نهاية الكلام. في العربي شمال، ولو قلبت [[dir="ltr"]] بيروح يمين لوحده.
-- [[bottom: calc(1rem + var(--cta-h) + var(--safe-bottom))]]: المسافة من تحت فيها ٣ حاجات: مسافة عادية، وطول شريط «احجز» لو موجود، ومنطقة شريط الـ home في iPhone.
-
-**[[env(safe-area-inset-bottom)]]:** في iPhone اللي من غير زرار home فيه شريط تحت الشاشة. [[env()]] بترجّع ارتفاعه، والـ [[0px]] بعد الفاصلة هي القيمة لو مش موجود. ومن غير [[viewport-fit=cover]] في الـ meta viewport، المتصفح بيحط الصفحة كلها فوق الشريط ده والقيمة بتطلع صفر. على الكمبيوتر وأندرويد قيمتها 0، فالسطر ده مش بيغيّر حاجة هناك.
-
-**الزرار والشريط مبيتداخلوش:** الاتنين [[fixed]] تحت، فالحل إن المسافة اللي تحت الزرار تشيل طول الشريط. [[--cta-h]] صفر برّه الـ media query (مفيش شريط)، و 4.5rem جواها، والزرار والشريط والـ [[padding-bottom]] بتاع الـ body بيقروا نفس المتغير. لو غيّرت طول الشريط، الـ ٣ بيتظبطوا.
-
-**[[padding-bottom]] على الـ body:** الشريط [[fixed]] مش بياخد مكان في الصفحة، فآخر سطر كان هيستخبى تحته. المسافة دي بتخلي آخر الصفحة يطلع فوقه.
-
-**الكلام اللي اتشال على الموبايل:** متشالش بـ [[display: none]]. اتشال بالطريقة اللي بتخفيه من العين بس، عشان قارئ الشاشة يفضل يقول «كلّمنا واتساب». من غيره اللينك كان هيبقى أيقونة من غير اسم.
-
-**غلطة اتصلحت:** axe قال [[region]] مرتين: الزرار والشريط برّه أي landmark. اتحطوا جوه [[<aside aria-label="تواصل سريع">]].
-
-~~~text الناتج (Chrome 157، [يسار، فوق، يمين، تحت])
-360 rtl:   الزرار 31,562,81,612   زرار «احجز» 31,641,344,688   تداخل: لأ (الزرار بيخلص 612 والشريط بيبدأ 641)
-360 ltr:   الزرار 279,562,329,612   زرار «احجز» 16,641,329,688   تداخل: لأ
-1280 rtl:  الزرار 31,731,184,784 (الكلام ظاهر، عرضه 85.9)، مفيش شريط
-1280 ltr:  الزرار 1096,731,1249,784
-بعد scrollTo(0, 2000): scrollY = 2000 والزرار في نفس المكان بالظبط (في الـ 4)
-scrollWidth = عرض الشاشة   axe: 0 violations (كان region ×2 قبل الـ aside)   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**الـ safe area اتجرّبتش هنا:** مفيش iPhone في التجربة. القيمة 0 على Chrome و Windows زي ما الوثائق بتقول، والجزء ده من MDN (env() و viewport-fit).` },
-        { lvl: 'صغير', dir: "badge-card", t: R`كارت منتج بشارات ولينك واحد`, what: R`كارت فيه شارة خصم وشارة «جديد» وزرار مفضّلة كلهم absolute على أركان logical، والكارت كله لينك بـ [[::after]]. من درس [[position: absolute]].`, done: R`في rtl و ltr الشارات في الأركان الصح، و [[elementFromPoint]] فوق زرار المفضّلة بيرجّع BUTTON وفوق الباقي A، وقارئ الشاشة بيقرا لينك واحد بس.`, sol: R`~~~html index.html
+        { lvl: 'صغير', dir: "club-join", t: R`اشتراك عضو جديد: فورم وصفحة «طلبك وصل»`, what: R`أول صفحتين في موقع «نادي الموج» (نادي رياضي متخيل)، للي عايز يشترك. [[index.html]] فيها: اسم النادي في [[<header>]]، وعنوان «اشتراك عضو جديد»، وفورم بيبعت [[post]] لـ [[thanks.html]] وجواه حقل مخفي بيقول إن الباقة [[basic]]، وحقل الاسم، وحقل الموبايل ([[type="tel"]])، والاتنين إجباريين وليهم label و [[autocomplete]]، وزرار [[type="submit"]]. و [[thanks.html]] فيها «طلبك وصل» ولينك يرجّع للرئيسية. من درس «GET و POST و enctype»، والحقول من «form و label».`, done: R`الإرسال الفاضي بيقف عند الاسم. وبعد ما تملا وتدوس «اشترك» بتتفتح [[thanks.html]] والعنوان **مفيهوش** بيانات (لأنه POST). ولو غيّرت [[post]] لـ [[get]] مؤقتًا، العنوان بيبقى آخره [[?plan=basic&name=...&phone=...]]: تلات حقول منهم واحد مكتبتوش.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شنط مشغل خيط</title>
-<link rel="stylesheet" href="style.css">
-<script src="fav.js" defer></script>
+<title>اشتراك عضو جديد | نادي الموج</title>
 </head>
 <body>
-<main class="page">
-  <h1>شنط يدوي</h1>
-  <ul class="cards">
-    <li class="card">
-      <img class="card__img" src="img/bag.svg" alt="" width="400" height="300">
-      <p class="badges"><span class="badge badge--sale">خصم ٢٠٪</span><span class="badge badge--new">جديد</span></p>
-      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة الكروشيه للمفضّلة">♡</button>
-      <h2 class="card__title"><a class="card__link" href="#bag-1">شنطة كروشيه بيج</a></h2>
-      <p class="card__price"><del>٤٥٠ ج</del> ٣٦٠ ج</p>
-    </li>
-    <li class="card">
-      <img class="card__img" src="img/bag.svg" alt="" width="400" height="300">
-      <p class="badges"><span class="badge badge--new">جديد</span></p>
-      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة القماش للمفضّلة">♡</button>
-      <h2 class="card__title"><a class="card__link" href="#bag-2">شنطة قماش مطرّزة</a></h2>
-      <p class="card__price">٣٢٠ ج</p>
-    </li>
-  </ul>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fdf8f3; color: #292524; }
-.page { max-width: 48rem; margin-inline: auto; padding: 1rem; }
-.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-
-/* the card is the reference box for everything absolute inside it */
-.card { position: relative; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e7e5e4; }
-.card__img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
-.card__title { margin: 0.75rem 0 0.25rem; font-size: 1.1rem; }
-.card__price { margin: 0; font-weight: 700; color: #9a3412; }
-.card__price del { color: #78716c; font-weight: 400; }
-
-/* the whole card is one link: the title's link stretches a layer over the card */
-.card__link { color: inherit; text-decoration: none; }
-.card__link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
-.card:has(.card__link:focus-visible) { outline: 3px solid #c2410c; outline-offset: 3px; }
-.card__link:focus-visible { outline: none; }
-
-/* badges: one box on the start corner, the badges inside it one under the other */
-.badges { position: absolute; inset-block-start: 1.25rem; inset-inline-start: 1.25rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; margin: 0; }
-.badge { padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; color: #fff; }
-.badge--sale { background: #b91c1c; }
-.badge--new { background: #1d4ed8; }
-
-/* the button on the end corner, ABOVE the link's layer, so a click on it is not a click on the card */
-.fav {
-  position: absolute;
-  inset-block-start: 1.25rem;
-  inset-inline-end: 1.25rem;
-  z-index: 1;
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 0;
-  border-radius: 50%;
-  background: #fff;
-  color: #b91c1c;
-  font-size: 1.25rem;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #0002;
-}
-.fav[aria-pressed="true"] { background: #b91c1c; color: #fff; }
-.fav:focus-visible { outline: 3px solid #c2410c; outline-offset: 2px; }
-~~~
-
-~~~js fav.js
-document.querySelectorAll(".fav").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const on = btn.getAttribute("aria-pressed") !== "true";
-    btn.setAttribute("aria-pressed", String(on));
-    btn.textContent = on ? "♥" : "♡";
-  });
-});
-~~~
-
-~~~svg img/bag.svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
-  <rect width="400" height="300" fill="#fde7d2"/>
-  <path d="M150 110a50 50 0 0 1 100 0" fill="none" stroke="#9a3412" stroke-width="10"/>
-  <rect x="110" y="110" width="180" height="140" rx="20" fill="#ea580c"/>
-  <rect x="110" y="150" width="180" height="12" fill="#fdba74"/>
-</svg>
-~~~
-
-~~~view 470 780 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شنط مشغل خيط</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fdf8f3; color: #292524; }
-.page { max-width: 48rem; margin-inline: auto; padding: 1rem; }
-.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-
-/* the card is the reference box for everything absolute inside it */
-.card { position: relative; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e7e5e4; }
-.card__img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
-.card__title { margin: 0.75rem 0 0.25rem; font-size: 1.1rem; }
-.card__price { margin: 0; font-weight: 700; color: #9a3412; }
-.card__price del { color: #78716c; font-weight: 400; }
-
-/* the whole card is one link: the title's link stretches a layer over the card */
-.card__link { color: inherit; text-decoration: none; }
-.card__link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
-.card:has(.card__link:focus-visible) { outline: 3px solid #c2410c; outline-offset: 3px; }
-.card__link:focus-visible { outline: none; }
-
-/* badges: one box on the start corner, the badges inside it one under the other */
-.badges { position: absolute; inset-block-start: 1.25rem; inset-inline-start: 1.25rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; margin: 0; }
-.badge { padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; color: #fff; }
-.badge--sale { background: #b91c1c; }
-.badge--new { background: #1d4ed8; }
-
-/* the button on the end corner, ABOVE the link's layer, so a click on it is not a click on the card */
-.fav {
-  position: absolute;
-  inset-block-start: 1.25rem;
-  inset-inline-end: 1.25rem;
-  z-index: 1;
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 0;
-  border-radius: 50%;
-  background: #fff;
-  color: #b91c1c;
-  font-size: 1.25rem;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #0002;
-}
-.fav[aria-pressed="true"] { background: #b91c1c; color: #fff; }
-.fav:focus-visible { outline: 3px solid #c2410c; outline-offset: 2px; }
-</style>
-</head>
-<body>
-<main class="page">
-  <h1>شنط يدوي</h1>
-  <ul class="cards">
-    <li class="card">
-      <img class="card__img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMzAwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCI+CiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZGU3ZDIiLz4KICA8cGF0aCBkPSJNMTUwIDExMGE1MCA1MCAwIDAgMSAxMDAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWEzNDEyIiBzdHJva2Utd2lkdGg9IjEwIi8+CiAgPHJlY3QgeD0iMTEwIiB5PSIxMTAiIHdpZHRoPSIxODAiIGhlaWdodD0iMTQwIiByeD0iMjAiIGZpbGw9IiNlYTU4MGMiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjE1MCIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxMiIgZmlsbD0iI2ZkYmE3NCIvPgo8L3N2Zz4=" alt="" width="400" height="300">
-      <p class="badges"><span class="badge badge--sale">خصم ٢٠٪</span><span class="badge badge--new">جديد</span></p>
-      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة الكروشيه للمفضّلة">♡</button>
-      <h2 class="card__title"><a class="card__link" href="#bag-1">شنطة كروشيه بيج</a></h2>
-      <p class="card__price"><del>٤٥٠ ج</del> ٣٦٠ ج</p>
-    </li>
-    <li class="card">
-      <img class="card__img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMzAwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCI+CiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZGU3ZDIiLz4KICA8cGF0aCBkPSJNMTUwIDExMGE1MCA1MCAwIDAgMSAxMDAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWEzNDEyIiBzdHJva2Utd2lkdGg9IjEwIi8+CiAgPHJlY3QgeD0iMTEwIiB5PSIxMTAiIHdpZHRoPSIxODAiIGhlaWdodD0iMTQwIiByeD0iMjAiIGZpbGw9IiNlYTU4MGMiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjE1MCIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxMiIgZmlsbD0iI2ZkYmE3NCIvPgo8L3N2Zz4=" alt="" width="400" height="300">
-      <p class="badges"><span class="badge badge--new">جديد</span></p>
-      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة القماش للمفضّلة">♡</button>
-      <h2 class="card__title"><a class="card__link" href="#bag-2">شنطة قماش مطرّزة</a></h2>
-      <p class="card__price">٣٢٠ ج</p>
-    </li>
-  </ul>
-</main>
-<script>
-document.querySelectorAll(".fav").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const on = btn.getAttribute("aria-pressed") !== "true";
-    btn.setAttribute("aria-pressed", String(on));
-    btn.textContent = on ? "♥" : "♡";
-  });
-});
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** كارتين شنط. على الركن اليمين فوق شارة حمرا «خصم ٢٠٪» وتحتها زرقا «جديد»، وعلى الشمال فوق دايرة بيضا فيها ♡. الكارت كله بيفتح المنتج لو دوست في أي حتة فيه، ما عدا القلب: القلب بيتملي ♥ ومبيفتحش حاجة.
-
-**[[position: relative]] على الكارت:** أي ابن [[absolute]] بيتقاس من أقرب جد عليه position. من غيرها الشارات كانت هتتقاس من الصفحة كلها وتطلع في ركنها.
-
-**الشارات:** صندوق واحد [[.badges]] absolute على [[inset-inline-start]]، والشارات جواه flex عمودي. أول نسخة كانت كل شارة absolute لوحدها بـ [[top]] بتاعها، وده محتاج قواعد زيادة: لو مفيش خصم، «جديد» لازم تطلع مكانه. الصندوق الواحد حل ده: الشارات بترص نفسها، واللي مش موجودة مبتسيبش مكان.
-
-**الكارت كله لينك واحد:** اللينك على العنوان بس، و [[.card__link::after]] طبقة شفافة [[absolute; inset: 0]] بتغطي الكارت كله. يعني فيه لينك واحد بس في الكارت، وقارئ الشاشة بيقول «شنطة كروشيه بيج، لينك» مرة واحدة. لو كنت لفّيت الكارت كله بـ [[<a>]]، كان هيقرا الصورة والشارات والسعر كلهم جوه اسم اللينك، ومينفعش زرار جوه لينك أصلًا.
-
-**القلب فوق طبقة اللينك:** [[z-index: 1]] على [[.fav]] بيحطه فوق الـ [[::after]]، فالضغطة بتروحله هو. الشارات تحت الطبقة، فالضغط عليها بيفتح المنتج، وده المطلوب.
-
-**[[aria-pressed]]:** زرار بيتشغل ويتقفل. قارئ الشاشة بيقول «مضغوط» أو «مش مضغوط»، والـ JS بيغيّره مع شكل القلب.
-
-~~~text الناتج (Chrome 157، كارت عرضه 326)
-         القلب من حافة النهاية   الشارات من حافة البداية   تحت القلب   تحت الشارة   تحت الصورة   تحت السعر
-rtl      21                     21                         BUTTON      A            A             A
-ltr      21                     21                         BUTTON      A            A             A
-(elementFromPoint في نص كل حاجة)
-
-لينكات جوه الكارت: 1   بعد الضغط على القلب: aria-pressed = true
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**الـ focus على الكارت كله:** [[.card:has(.card__link:focus-visible)]] بيرسم الحلقة على الكارت لما اللينك ياخد focus من الكيبورد، عشان الحلقة حوالين العنوان بس كانت هتبان صغيرة ومش واضح إن الكارت كله لينك.` },
-        { lvl: 'صغير', dir: "watermark", t: R`علامة مائية «نسخة تجريبية» مبتمنعش الضغط`, what: R`صفحة عرض سعر لمطبعة متخيلة، وفوقها كلها علامة مائية «نسخة تجريبية» مايلة ومتكررة وباهتة. العلامة طبقة واحدة [[::after]] على الـ body بـ [[position: fixed; inset: 0]] وخلفية SVG متكررة، و [[pointer-events: none]] عشان الضغط والتحديد يعدّوا منها للي تحتها. من دروس [[sticky و fixed]] و [[z-index]].`, done: R`العلامة فوق الكارت الأبيض كمان (مش وراه)، والكلام تحتها مقروء، و [[elementFromPoint]] فوق زرار «وافق» بيرجّع الزرار والضغط بيشتغل، وتحديد كلام الجدول بيشتغل، ولو شلت [[pointer-events: none]] نفس الـ [[elementFromPoint]] بيرجّع الـ body.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عرض سعر: مطبعة سطور</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body class="draft">
-<main class="quote">
-  <h1>عرض سعر رقم ١٠٤</h1>
-  <p>لـ: كافيه الركن. صالح لحد آخر الشهر.</p>
-  <table>
-    <thead><tr><th scope="col">البند</th><th scope="col">الكمية</th><th scope="col">السعر</th></tr></thead>
-    <tbody>
-      <tr><td>منيو مقوّى A4</td><td>٥٠</td><td>١٬٢٥٠ ج</td></tr>
-      <tr><td>كروت بزنس</td><td>٥٠٠</td><td>٤٠٠ ج</td></tr>
-      <tr><td>ستيكر لوجو</td><td>٢٠٠</td><td>٣٠٠ ج</td></tr>
-    </tbody>
-    <tfoot><tr><th scope="row" colspan="2">الإجمالي</th><td>١٬٩٥٠ ج</td></tr></tfoot>
-  </table>
-  <p class="note">العرض ده مسودة لحد ما توافق عليه. العلامة المائية بتختفي في النسخة النهائية.</p>
-  <button class="approve" type="button">وافق على العرض</button>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding-inline: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #f5f5f4; }
-.quote { max-width: 40rem; margin: 1.5rem auto; padding: 1.5rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 20px #0001; }
-.quote h1 { margin-top: 0; font-size: 1.6rem; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 0.5rem; text-align: start; border-bottom: 1px solid #e7e5e4; }
-tfoot th, tfoot td { font-weight: 800; border-bottom: 0; }
-.note { color: #57534e; font-size: 0.95rem; }
-.approve { padding: 0.7rem 1.4rem; border: 0; border-radius: 0.5rem; background: #166534; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-.approve:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-/* the watermark: one layer over the whole screen, repeated, faint, and transparent to the mouse */
-.draft::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 100;                       /* above the content, so it shows on top of the white paper too */
-  background: url("watermark.svg") repeat;
-  opacity: 0.12;                      /* faint: the text under it stays readable */
-  pointer-events: none;               /* clicks, hover and text selection go through it to what is under it */
-}
-
-/* printing keeps it: a draft on paper is still a draft */
-@media print {
-  body { background: #fff; }
-  .quote { box-shadow: none; margin: 0; }
-}
-~~~
-
-~~~svg watermark.svg
-<svg xmlns="http://www.w3.org/2000/svg" width="260" height="160" viewBox="0 0 260 160">
-  <text x="130" y="90" text-anchor="middle" transform="rotate(-25 130 80)" font-family="Tahoma, sans-serif" font-size="26" font-weight="700" fill="#7f1d1d">نسخة تجريبية</text>
-</svg>
-~~~
-
-~~~view 540 560 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عرض سعر: مطبعة سطور</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding-inline: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #f5f5f4; }
-.quote { max-width: 40rem; margin: 1.5rem auto; padding: 1.5rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 20px #0001; }
-.quote h1 { margin-top: 0; font-size: 1.6rem; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 0.5rem; text-align: start; border-bottom: 1px solid #e7e5e4; }
-tfoot th, tfoot td { font-weight: 800; border-bottom: 0; }
-.note { color: #57534e; font-size: 0.95rem; }
-.approve { padding: 0.7rem 1.4rem; border: 0; border-radius: 0.5rem; background: #166534; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-.approve:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-/* the watermark: one layer over the whole screen, repeated, faint, and transparent to the mouse */
-.draft::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 100;                       /* above the content, so it shows on top of the white paper too */
-  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNjAiIGhlaWdodD0iMTYwIiB2aWV3Qm94PSIwIDAgMjYwIDE2MCI+CiAgPHRleHQgeD0iMTMwIiB5PSI5MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgdHJhbnNmb3JtPSJyb3RhdGUoLTI1IDEzMCA4MCkiIGZvbnQtZmFtaWx5PSJUYWhvbWEsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPtmG2LPYrtipINiq2KzYsdmK2KjZitipPC90ZXh0Pgo8L3N2Zz4=") repeat;
-  opacity: 0.12;                      /* faint: the text under it stays readable */
-  pointer-events: none;               /* clicks, hover and text selection go through it to what is under it */
-}
-
-/* printing keeps it: a draft on paper is still a draft */
-@media print {
-  body { background: #fff; }
-  .quote { box-shadow: none; margin: 0; }
-}
-</style>
-</head>
-<body class="draft">
-<main class="quote">
-  <h1>عرض سعر رقم ١٠٤</h1>
-  <p>لـ: كافيه الركن. صالح لحد آخر الشهر.</p>
-  <table>
-    <thead><tr><th scope="col">البند</th><th scope="col">الكمية</th><th scope="col">السعر</th></tr></thead>
-    <tbody>
-      <tr><td>منيو مقوّى A4</td><td>٥٠</td><td>١٬٢٥٠ ج</td></tr>
-      <tr><td>كروت بزنس</td><td>٥٠٠</td><td>٤٠٠ ج</td></tr>
-      <tr><td>ستيكر لوجو</td><td>٢٠٠</td><td>٣٠٠ ج</td></tr>
-    </tbody>
-    <tfoot><tr><th scope="row" colspan="2">الإجمالي</th><td>١٬٩٥٠ ج</td></tr></tfoot>
-  </table>
-  <p class="note">العرض ده مسودة لحد ما توافق عليه. العلامة المائية بتختفي في النسخة النهائية.</p>
-  <button class="approve" type="button">وافق على العرض</button>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** عرض سعر في كارت أبيض: جدول ٣ بنود وإجمالي وزرار أخضر «وافق على العرض». وفوق الصفحة كلها، حتى فوق الكارت، كلمة «نسخة تجريبية» مايلة ومكررة بلون أحمر باهت.
-
-**الطبقة:** [[.draft::after]] من غير ولا عنصر في الـ HTML. [[position: fixed; inset: 0]] بيخليها بمقاس الشاشة، فبتغطي أي حتة انت فيها وانت بتنزل. و [[z-index: 100]] بيحطها فوق الكارت، لأن العلامة اللي ورا الكارت الأبيض مبتبانش.
-
-**[[pointer-events: none]] أهم سطر:** الطبقة فوق كل حاجة، فمن غيره أي ضغطة كانت هتقع عليها هي: الزرار مبيدوسش، والكلام مبيتحددش. السطر ده بيخلي الماوس «يعدّي» منها كأنها مش موجودة. اتقاس: من غيره [[elementFromPoint]] فوق الزرار رجّع [[BODY]] (الـ [[::after]] تبع الـ body).
-
-**الكلام لسه مقروء:** [[opacity: 0.12]]. والـ SVG نفسه كلمة واحدة مايلة بـ [[rotate(-25)]] في مربع 260×160، و [[background: url(...) repeat]] بيكرره على الشاشة كلها.
-
-**الطباعة:** مفيش قاعدة بتخفي العلامة في [[@media print]]، فالمسودة المطبوعة عليها العلامة برضه.
-
-~~~text الناتج (Chrome 157، 600)
-::after:  position fixed، z-index 100، opacity 0.12، pointer-events none
-elementFromPoint في نص زرار «وافق»: approve، والضغط اشتغل (clicked = 1)
-تحديد أول خانة في الجدول: «منيو مقوّى A4»
-من غير pointer-events: none: نفس النقطة = BODY.draft
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~` },
-        { lvl: 'متوسط', dir: "nav-drawer", t: R`navbar بحالتين و drawer للموبايل`, what: R`هيدر sticky شفاف فوق الهيرو وبيبقى مصمت بظل بعد أول 40px scroll (class بـ listener [[{ passive: true }]])، وتحت 768 زرار ☰ بيفتح drawer من ناحية النهاية فوق scrim، و z-index من توكنز. بيجمع [[sticky و fixed]] و [[z-index]] و [[media queries]].`, done: R`الـ drawer بيدخل من الناحية الصح في rtl و ltr، والـ scrim بيقفله، و Escape بيقفله، والـ toggle عليه [[aria-expanded]] صح، و [[elementFromPoint]] فوق الـ drawer بيرجّع الـ drawer مش الهيدر، ومفيش scroll أفقي وهو مقفول.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>رحلات وادي النجوم</title>
-<link rel="stylesheet" href="style.css">
-<script src="nav.js" defer></script>
-</head>
-<body>
-<header class="header" id="header">
-  <a class="header__logo" href="#top">وادي النجوم</a>
-  <button class="header__toggle" type="button" aria-expanded="false" aria-controls="drawer">☰ <span class="visually-hidden">القايمة</span></button>
-  <!-- the scrim lives INSIDE the header, next to the drawer: the header is its own layer (sticky + z-index),
-       so a z-index inside it only counts against things inside it too -->
-  <div class="scrim" id="scrim" hidden></div>
-  <nav class="drawer" id="drawer" aria-label="الرئيسية">
-    <ul>
-      <li><a href="#trips">الرحلات</a></li>
-      <li><a href="#camp">المخيم</a></li>
-      <li><a href="#prices">الأسعار</a></li>
-      <li><a href="#contact">تواصل</a></li>
-    </ul>
-  </nav>
+<header>
+  <p><strong>نادي الموج</strong></p>
 </header>
-
-<main id="top">
-  <section class="hero">
-    <h1>ليلة تحت النجوم في الصحرا</h1>
-    <p>رحلات مشي بالليل، ومخيم، وتلسكوب.</p>
-  </section>
-  <section class="content">
-    <h2 id="trips">الرحلات</h2>
-    <p>رحلة الويك إند: نطلع الخميس العصر ونرجع الجمعة الضهر. ٦ ساعات مشي على مراحل.</p>
-    <h2 id="camp">المخيم</h2>
-    <p>خيم لشخصين، وأكل، ونار، ومرشد بيشرح النجوم والكواكب.</p>
-    <h2 id="prices">الأسعار</h2>
-    <p>الفرد ١٢٠٠ جنيه شامل الأكل والمواصلات.</p>
-    <h2 id="contact">تواصل</h2>
-    <p>ابعتلنا على الواتساب أو كلّمنا من ٩ لـ ٩.</p>
-  </section>
+<main>
+  <h1>اشتراك عضو جديد</h1>
+  <form action="thanks.html" method="post">
+    <input type="hidden" name="plan" value="basic">
+    <p><label for="name">الاسم بالكامل</label><br>
+    <input id="name" name="name" autocomplete="name" required></p>
+    <p><label for="phone">الموبايل</label><br>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" required></p>
+    <button type="submit">اشترك</button>
+  </form>
 </main>
 </body>
 </html>
 ~~~
 
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  /* every layer has a name: no random 9999 */
-  --z-header: 10;
-  --z-scrim: 20;
-  --z-drawer: 30;
-  --header-h: 4rem;
-  --off: 100%;          /* where the drawer hides: past the end edge. In rtl the end is the left, so it goes the other way */
-}
-[dir="rtl"] { --off: -100%; }
-
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-a:focus-visible, button:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
-
-/* the header: sticky, transparent over the hero, then solid */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-header);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  height: var(--header-h);
-  padding-inline: 1rem;
-  color: #fff;
-  background: transparent;
-  transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
-}
-.header.is-solid { background: #fff; color: #0f172a; box-shadow: 0 2px 12px #0002; }
-.header__logo { color: inherit; font-weight: 800; text-decoration: none; }
-.header__toggle { display: none; margin-inline-start: auto; padding: 0.3rem 0.7rem; border: 1px solid currentColor; border-radius: 0.5rem; background: transparent; color: inherit; font-size: 1.25rem; cursor: pointer; }
-
-.drawer { margin-inline-start: auto; }
-.drawer ul { display: flex; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
-.drawer a { color: inherit; text-decoration: none; font-weight: 600; }
-
-/* the hero goes UNDER the header: it starts at the top of the page */
-.hero { margin-top: calc(-1 * var(--header-h)); padding: calc(var(--header-h) + 4rem) 1rem 5rem; background: linear-gradient(160deg, #1e1b4b, #312e81 60%, #7c3aed); color: #fff; text-align: center; }
-.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
-.content { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 60vh; }
-.content h2 { scroll-margin-top: calc(var(--header-h) + 1rem); }
-
-/* ---------- phone: the links move into a drawer from the end side ---------- */
-@media (max-width: 47.98rem) {
-  .header__toggle { display: block; }
-  .drawer {
-    position: fixed;
-    inset-block: 0;
-    inset-inline-end: 0;
-    z-index: var(--z-drawer);
-    width: min(80vw, 18rem);
-    margin: 0;
-    padding: 4.5rem 1.25rem 1rem;
-    background: #fff;
-    color: #0f172a;
-    box-shadow: 0 0 24px #0004;
-    transform: translateX(var(--off));
-    visibility: hidden;           /* hidden for the keyboard and screen readers too, not only moved away */
-    transition: transform 0.25s, visibility 0s 0.25s;
-  }
-  .drawer.is-open { transform: none; visibility: visible; transition: transform 0.25s; }
-  .drawer ul { flex-direction: column; gap: 0; }
-  .drawer a { display: block; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; }
-
-  .scrim { position: fixed; inset: 0; z-index: var(--z-scrim); background: #0f172a99; }
-  .scrim[hidden] { display: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .header, .drawer, .drawer.is-open { transition: none; }
-}
-~~~
-
-~~~js nav.js
-const header = document.getElementById("header");
-const toggle = document.querySelector(".header__toggle");
-const drawer = document.getElementById("drawer");
-const scrim = document.getElementById("scrim");
-
-// solid after the first 40px of scroll. passive: we never call preventDefault, so the browser can scroll without waiting for us
-function onScroll() { header.classList.toggle("is-solid", scrollY > 40); }
-addEventListener("scroll", onScroll, { passive: true });
-onScroll();
-
-function setOpen(open) {
-  drawer.classList.toggle("is-open", open);
-  scrim.hidden = !open;
-  toggle.setAttribute("aria-expanded", String(open));
-  if (open) drawer.querySelector("a").focus();
-}
-toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
-scrim.addEventListener("click", () => setOpen(false));
-drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
-addEventListener("keydown", e => {
-  if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { setOpen(false); toggle.focus(); }
-});
-~~~
-
-~~~view 560 600 الشكل النهائي
+~~~live 148 thanks.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>رحلات وادي النجوم</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  /* every layer has a name: no random 9999 */
-  --z-header: 10;
-  --z-scrim: 20;
-  --z-drawer: 30;
-  --header-h: 4rem;
-  --off: 100%;          /* where the drawer hides: past the end edge. In rtl the end is the left, so it goes the other way */
-}
-[dir="rtl"] { --off: -100%; }
-
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-a:focus-visible, button:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
-
-/* the header: sticky, transparent over the hero, then solid */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-header);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  height: var(--header-h);
-  padding-inline: 1rem;
-  color: #fff;
-  background: transparent;
-  transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
-}
-.header.is-solid { background: #fff; color: #0f172a; box-shadow: 0 2px 12px #0002; }
-.header__logo { color: inherit; font-weight: 800; text-decoration: none; }
-.header__toggle { display: none; margin-inline-start: auto; padding: 0.3rem 0.7rem; border: 1px solid currentColor; border-radius: 0.5rem; background: transparent; color: inherit; font-size: 1.25rem; cursor: pointer; }
-
-.drawer { margin-inline-start: auto; }
-.drawer ul { display: flex; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
-.drawer a { color: inherit; text-decoration: none; font-weight: 600; }
-
-/* the hero goes UNDER the header: it starts at the top of the page */
-.hero { margin-top: calc(-1 * var(--header-h)); padding: calc(var(--header-h) + 4rem) 1rem 5rem; background: linear-gradient(160deg, #1e1b4b, #312e81 60%, #7c3aed); color: #fff; text-align: center; }
-.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
-.content { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 60vh; }
-.content h2 { scroll-margin-top: calc(var(--header-h) + 1rem); }
-
-/* ---------- phone: the links move into a drawer from the end side ---------- */
-@media (max-width: 47.98rem) {
-  .header__toggle { display: block; }
-  .drawer {
-    position: fixed;
-    inset-block: 0;
-    inset-inline-end: 0;
-    z-index: var(--z-drawer);
-    width: min(80vw, 18rem);
-    margin: 0;
-    padding: 4.5rem 1.25rem 1rem;
-    background: #fff;
-    color: #0f172a;
-    box-shadow: 0 0 24px #0004;
-    transform: translateX(var(--off));
-    visibility: hidden;           /* hidden for the keyboard and screen readers too, not only moved away */
-    transition: transform 0.25s, visibility 0s 0.25s;
-  }
-  .drawer.is-open { transform: none; visibility: visible; transition: transform 0.25s; }
-  .drawer ul { flex-direction: column; gap: 0; }
-  .drawer a { display: block; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; }
-
-  .scrim { position: fixed; inset: 0; z-index: var(--z-scrim); background: #0f172a99; }
-  .scrim[hidden] { display: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .header, .drawer, .drawer.is-open { transition: none; }
-}
-</style>
+<title>طلبك وصل | نادي الموج</title>
 </head>
 <body>
-<header class="header" id="header">
-  <a class="header__logo" href="#top">وادي النجوم</a>
-  <button class="header__toggle" type="button" aria-expanded="false" aria-controls="drawer">☰ <span class="visually-hidden">القايمة</span></button>
-  <!-- the scrim lives INSIDE the header, next to the drawer: the header is its own layer (sticky + z-index),
-       so a z-index inside it only counts against things inside it too -->
-  <div class="scrim" id="scrim" hidden></div>
-  <nav class="drawer" id="drawer" aria-label="الرئيسية">
-    <ul>
-      <li><a href="#trips">الرحلات</a></li>
-      <li><a href="#camp">المخيم</a></li>
-      <li><a href="#prices">الأسعار</a></li>
-      <li><a href="#contact">تواصل</a></li>
-    </ul>
-  </nav>
+<main>
+  <h1>طلبك وصل</h1>
+  <p>هنكلمك على الموبايل خلال يومين عشان نأكد الاشتراك.</p>
+  <p><a href="index.html">ارجع للرئيسية</a></p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 295 شكل index.html (الإرسال هنا بيتكتب تحت بدل ما يفتح thanks.html)
+<header>
+  <p><strong>نادي الموج</strong></p>
 </header>
-
-<main id="top">
-  <section class="hero">
-    <h1>ليلة تحت النجوم في الصحرا</h1>
-    <p>رحلات مشي بالليل، ومخيم، وتلسكوب.</p>
-  </section>
-  <section class="content">
-    <h2 id="trips">الرحلات</h2>
-    <p>رحلة الويك إند: نطلع الخميس العصر ونرجع الجمعة الضهر. ٦ ساعات مشي على مراحل.</p>
-    <h2 id="camp">المخيم</h2>
-    <p>خيم لشخصين، وأكل، ونار، ومرشد بيشرح النجوم والكواكب.</p>
-    <h2 id="prices">الأسعار</h2>
-    <p>الفرد ١٢٠٠ جنيه شامل الأكل والمواصلات.</p>
-    <h2 id="contact">تواصل</h2>
-    <p>ابعتلنا على الواتساب أو كلّمنا من ٩ لـ ٩.</p>
-  </section>
+<main>
+  <h1>اشتراك عضو جديد</h1>
+  <form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+    <input type="hidden" name="plan" value="basic">
+    <p><label for="name">الاسم بالكامل</label><br>
+    <input id="name" name="name" autocomplete="name" required></p>
+    <p><label for="phone">الموبايل</label><br>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" required></p>
+    <button type="submit">اشترك</button>
+  </form>
+  <p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
 </main>
-<script>
-const header = document.getElementById("header");
-const toggle = document.querySelector(".header__toggle");
-const drawer = document.getElementById("drawer");
-const scrim = document.getElementById("scrim");
-
-// solid after the first 40px of scroll. passive: we never call preventDefault, so the browser can scroll without waiting for us
-function onScroll() { header.classList.toggle("is-solid", scrollY > 40); }
-addEventListener("scroll", onScroll, { passive: true });
-onScroll();
-
-function setOpen(open) {
-  drawer.classList.toggle("is-open", open);
-  scrim.hidden = !open;
-  toggle.setAttribute("aria-expanded", String(open));
-  if (open) drawer.querySelector("a").focus();
-}
-toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
-scrim.addEventListener("click", () => setOpen(false));
-drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
-addEventListener("keydown", e => {
-  if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { setOpen(false); toggle.focus(); }
-});
-</script>
-</body>
-</html>
 ~~~
 
-**هتشوف إيه:** فوق هيرو بنفسجي، والهيدر شفاف فوقه وكلامه أبيض. انزل شوية: الهيدر بيبقى أبيض بظل. على الموبايل فيه ☰، ولما تدوس عليه بيدخل درج أبيض من الشمال (النهاية في العربي) فيه الروابط، والصفحة وراه بتغمق.
+**هتشوف إيه:**
 
-**الهيدر:** [[position: sticky; top: 0]]، والهيرو [[margin-top]] بالسالب بطول الهيدر عشان يبدأ من فوق الصفحة ويبان من ورا الهيدر الشفاف. الـ JS بيحط [[is-solid]] لما [[scrollY > 40]].
+- حقلين وزرار. الحقل المخفي ملوش أثر في الصفحة.
+- «اشترك» والحقول فاضية: رسالة المتصفح عند الاسم.
+- بعد ما تملا: الناتج أوله [[plan=basic]].
 
-**[[{ passive: true }]]:** بيقول للمتصفح «مش هعمل [[preventDefault]] على الـ scroll»، فالمتصفح بيحرّك الصفحة على طول من غير ما يستنى الدالة تخلص.
+**ليه كده:**
 
-**الدرج على الموبايل:** [[fixed]] على [[inset-inline-end: 0]] بطول الشاشة، ومستخبي بـ [[transform: translateX(var(--off))]].
-- [[translateX]] مش logical: 100% دايمًا يمين. عشان كده [[--off]] بـ 100% في ltr (النهاية يمين) و -100% في rtl (النهاية شمال).
-- [[visibility: hidden]] مع التحريك: من غيرها الروابط اللي برّه الشاشة كانت هتاخد focus بالـ Tab ويقراها قارئ الشاشة. و [[transition: visibility 0s 0.25s]] بيأخّر الإخفا لحد ما الحركة تخلص.
+- [[method="post"]]: فيه اسم وموبايل، والطلب بيعمل اشتراك. الاتنين سبب كفاية.
+- [[action="thanks.html"]]: مسار نسبي لملف جنب الصفحة (درس «المسارات: مطلق ونسبي»). الصفحة الثابتة مبتقراش البيانات، بس الزائر بيتنقل لصفحة حقيقية بتقوله إيه اللي هيحصل.
+- الباقة في hidden لأن الصفحة دي بتاعة الباقة الأساسية بس، والزائر مش هيختار.
 
-**الـ z-index من توكنز:** [[--z-header]] و [[--z-scrim]] و [[--z-drawer]] (10 و 20 و 30) بدل أرقام عشوائية زي 9999.
+**الغلطة الشائعة:** تنسى [[name]] على حقل الموبايل لأن عليه [[id]] و [[type]]. الفورم هيتبعت والموبايل مش فيه.
 
-**الغلطة اللي القياس مسكها (stacking context):** أول نسخة كان الـ scrim (الغطا الغامق) برّه الهيدر، والدرج جوه الهيدر. الأرقام كانت صح على الورق: الدرج 30 والـ scrim 20. بس [[elementFromPoint]] في نص الدرج المفتوح رجّع [[DIV.scrim]]: الغطا كان فوق الدرج، ومينفعش تدوس على أي لينك.
+**ملحوظة عن النشر:** بدبل كليك على الملف، POST لـ [[thanks.html]] بيفتحها عادي. على استضافة ملفات ثابتة، السيرفر غالبًا بيرفض POST لملف HTML. ده مش غلط في الفورم: POST محتاج كود على السيرفر يستقبله، وده في كورسات الباك إند.
 
-السبب: الهيدر [[sticky]] وعليه [[z-index: 10]]، وده بيعمل منه «طبقة» لوحدها (stacking context). كل اللي جواه بيترتب جوه الطبقة دي بس، فالـ 30 بتاع الدرج معناه «فوق اللي معايا جوه الهيدر». والهيدر كله (10) تحت الـ scrim (20). التصليح: الـ scrim جوه الهيدر جنب الدرج، فالاتنين بيتقارنوا في نفس الطبقة.
+~~~text القياس من Chrome (نفس الفورم على السيرفر المحلي)
+POST /thanks.html
+content-type: application/x-www-form-urlencoded
 
-**القفل:** الضغط على الـ scrim، أو Escape، أو اختيار لينك. ولما بيتقفل بـ Escape، الـ focus بيرجع لزرار ☰ عشان اللي بيستخدم الكيبورد ميتوهش.
-
-~~~text الناتج (Chrome 157، موبايل 360)
-                              rtl                     ltr
-الهيدر scrollY 0 / 41         شفاف / أبيض             شفاف / أبيض
-الدرج مقفول                   -273 لحد 15 (برّه يسار)   345 لحد 633 (برّه يمين)
-الدرج مفتوح                   15 لحد 303              57 لحد 345
-elementFromPoint نص الدرج     DIV.scrim (قبل التصليح)  DIV.scrim (قبل التصليح)
-                              NAV (بعد)               NAV (بعد)
-الضغط برّه الدرج              scrim ← aria-expanded = false
-Escape                        aria-expanded = false
-الـ focus بعد الفتح           «الرحلات»
-الـ focus بعد Escape          زرار ☰
-scrollWidth وهو مقفول         345 = العرض              345 = العرض
-1280: الـ ☰ مستخبي والروابط الـ 4 في سطر واحد (top 21)
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-في الـ rtl الدرج بيبدأ من 15 مش 0 لأن الـ scrollbar في الصفحات العربي على الشمال، والقياس كان جوه iframe فيه scrollbar.` },
-        { lvl: 'متوسط', dir: "docs-toc", t: R`صفحة docs بفهرس لازق`, what: R`صفحة توثيق متخيلة: grid بعمودين، والفهرس [[sticky; top]] مع [[align-self: start]]، والعناوين [[scroll-margin-top]]، وتحت 1024 الفهرس يبقى [[<details>]] فوق المحتوى. من درس [[sticky و fixed]] و [[media queries]].`, done: R`على 1280 الفهرس فاضل ظاهر لحد آخر الصفحة، والضغط على أي لينك بيوصل للعنوان من غير ما يستخبى، وعلى 768 الفهرس مقفول فوق، ومفيش [[overflow: hidden]] على أي جد للفهرس.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>دليل مكتبة «رف»: التثبيت والاستخدام</title>
-<link rel="stylesheet" href="style.css">
-<script src="toc.js" defer></script>
-</head>
-<body>
-<header class="top"><a href="#intro">رف: التوثيق</a></header>
-<div class="layout">
-  <details class="toc" id="toc">
-    <summary>المحتويات</summary>
-    <nav aria-label="محتويات الصفحة">
-      <ol>
-        <li><a href="#intro">مقدمة</a></li>
-        <li><a href="#install">التثبيت</a></li>
-        <li><a href="#first">أول رف</a></li>
-        <li><a href="#options">الخيارات</a></li>
-        <li><a href="#themes">الثيمات</a></li>
-        <li><a href="#faq">أسئلة</a></li>
-      </ol>
-    </nav>
-  </details>
-  <main class="doc">
-    <h1 id="intro">مكتبة «رف»</h1>
-    <p>«رف» مكتبة متخيلة بتعرض كتب على رفوف في صفحة ويب. الصفحة دي بتشرح إزاي تثبتها وتستخدمها.</p>
-    <h2 id="install">التثبيت</h2>
-    <p>انسخ ملف المكتبة جنب صفحتك وحطه في آخر الـ body.</p>
-    <pre><code>&lt;script src="raf.js"&gt;&lt;/script&gt;</code></pre>
-    <h2 id="first">أول رف</h2>
-    <p>اعمل عنصر فاضي بـ id، وبعدين نادي الدالة باسمه وبقايمة الكتب.</p>
-    <pre><code>raf("#shelf", ["مدينة من ورق", "بيت على البحر"]);</code></pre>
-    <h2 id="options">الخيارات</h2>
-    <p>عدد الكتب في الرف، وحجم الغلاف، ولون الخشب، وهل الكتب تتقلب لما الماوس ييجي عليها.</p>
-    <h2 id="themes">الثيمات</h2>
-    <p>فيه ٣ ثيمات جاهزة: خشب فاتح، وخشب غامق، ومعدن. وتقدر تعمل ثيم بمتغيرات CSS.</p>
-    <h2 id="faq">أسئلة</h2>
-    <p>هل بتشتغل من غير إنترنت؟ أيوه، الملف كله عندك.</p>
-    <div class="filler" aria-hidden="true"></div>
-  </main>
-</div>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-:root { --top-h: 3.5rem; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1e293b; background: #fff; }
-a { color: #1d4ed8; }
-a:focus-visible, summary:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-
-/* the site bar stays on top */
-.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; height: var(--top-h); padding-inline: 1rem; background: #0f172a; }
-.top a { color: #fff; font-weight: 800; text-decoration: none; }
-
-.layout { max-width: 70rem; margin-inline: auto; padding: 1rem; }
-.doc { min-width: 0; }
-.doc h1, .doc h2 { scroll-margin-top: calc(var(--top-h) + 1rem); }   /* a jump stops below the sticky bar, not under it */
-pre { overflow-x: auto; padding: 0.75rem; border-radius: 0.5rem; background: #f1f5f9; }
-.filler { height: 150vh; }
-
-/* phone and tablet: the table of contents is a closed box above the text */
-.toc { margin-bottom: 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
-.toc summary { padding: 0.5rem 0.75rem; font-weight: 700; cursor: pointer; }
-.toc ol { margin: 0; padding: 0 2rem 0.75rem; }
-
-/* computer: two columns, the table of contents sticks while the text scrolls */
-@media (min-width: 64rem) {
-  .layout { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 2.5rem; }
-  .toc {
-    position: sticky;
-    top: calc(var(--top-h) + 1rem);
-    align-self: start;   /* without it the grid stretches the box to the full row height, and a box as tall as its parent has nowhere to stick */
-    margin: 0;
-    border: 0;
-  }
-  .toc summary { display: none; }   /* always open here, toc.js sets open */
-  .toc ol { padding-inline-start: 1.25rem; }
-}
-~~~
-
-~~~js toc.js
-// a closed <details> hides its content whatever the CSS says, so on a big screen it has to be opened
-const toc = document.getElementById("toc");
-const wide = matchMedia("(min-width: 64rem)");
-function sync() { toc.open = wide.matches; }   // open on a computer, closed on smaller screens
-wide.addEventListener("change", sync);
-sync();
-~~~
-
-~~~view 560 600 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>دليل مكتبة «رف»: التثبيت والاستخدام</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-:root { --top-h: 3.5rem; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1e293b; background: #fff; }
-a { color: #1d4ed8; }
-a:focus-visible, summary:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-
-/* the site bar stays on top */
-.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; height: var(--top-h); padding-inline: 1rem; background: #0f172a; }
-.top a { color: #fff; font-weight: 800; text-decoration: none; }
-
-.layout { max-width: 70rem; margin-inline: auto; padding: 1rem; }
-.doc { min-width: 0; }
-.doc h1, .doc h2 { scroll-margin-top: calc(var(--top-h) + 1rem); }   /* a jump stops below the sticky bar, not under it */
-pre { overflow-x: auto; padding: 0.75rem; border-radius: 0.5rem; background: #f1f5f9; }
-.filler { height: 150vh; }
-
-/* phone and tablet: the table of contents is a closed box above the text */
-.toc { margin-bottom: 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
-.toc summary { padding: 0.5rem 0.75rem; font-weight: 700; cursor: pointer; }
-.toc ol { margin: 0; padding: 0 2rem 0.75rem; }
-
-/* computer: two columns, the table of contents sticks while the text scrolls */
-@media (min-width: 64rem) {
-  .layout { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 2.5rem; }
-  .toc {
-    position: sticky;
-    top: calc(var(--top-h) + 1rem);
-    align-self: start;   /* without it the grid stretches the box to the full row height, and a box as tall as its parent has nowhere to stick */
-    margin: 0;
-    border: 0;
-  }
-  .toc summary { display: none; }   /* always open here, toc.js sets open */
-  .toc ol { padding-inline-start: 1.25rem; }
-}
-</style>
-</head>
-<body>
-<header class="top"><a href="#intro">رف: التوثيق</a></header>
-<div class="layout">
-  <details class="toc" id="toc">
-    <summary>المحتويات</summary>
-    <nav aria-label="محتويات الصفحة">
-      <ol>
-        <li><a href="#intro">مقدمة</a></li>
-        <li><a href="#install">التثبيت</a></li>
-        <li><a href="#first">أول رف</a></li>
-        <li><a href="#options">الخيارات</a></li>
-        <li><a href="#themes">الثيمات</a></li>
-        <li><a href="#faq">أسئلة</a></li>
-      </ol>
-    </nav>
-  </details>
-  <main class="doc">
-    <h1 id="intro">مكتبة «رف»</h1>
-    <p>«رف» مكتبة متخيلة بتعرض كتب على رفوف في صفحة ويب. الصفحة دي بتشرح إزاي تثبتها وتستخدمها.</p>
-    <h2 id="install">التثبيت</h2>
-    <p>انسخ ملف المكتبة جنب صفحتك وحطه في آخر الـ body.</p>
-    <pre><code>&lt;script src="raf.js"&gt;&lt;/script&gt;</code></pre>
-    <h2 id="first">أول رف</h2>
-    <p>اعمل عنصر فاضي بـ id، وبعدين نادي الدالة باسمه وبقايمة الكتب.</p>
-    <pre><code>raf("#shelf", ["مدينة من ورق", "بيت على البحر"]);</code></pre>
-    <h2 id="options">الخيارات</h2>
-    <p>عدد الكتب في الرف، وحجم الغلاف، ولون الخشب، وهل الكتب تتقلب لما الماوس ييجي عليها.</p>
-    <h2 id="themes">الثيمات</h2>
-    <p>فيه ٣ ثيمات جاهزة: خشب فاتح، وخشب غامق، ومعدن. وتقدر تعمل ثيم بمتغيرات CSS.</p>
-    <h2 id="faq">أسئلة</h2>
-    <p>هل بتشتغل من غير إنترنت؟ أيوه، الملف كله عندك.</p>
-    <div class="filler" aria-hidden="true"></div>
-  </main>
-</div>
-<script>
-// a closed <details> hides its content whatever the CSS says, so on a big screen it has to be opened
-const toc = document.getElementById("toc");
-const wide = matchMedia("(min-width: 64rem)");
-function sync() { toc.open = wide.matches; }   // open on a computer, closed on smaller screens
-wide.addEventListener("change", sync);
-sync();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** شريط غامق فوق فيه «رف: التوثيق». على الشاشة الكبيرة فهرس على اليمين بـ ٦ روابط، والكلام على الشمال، ولما تنزل الفهرس بيفضل مكانه. على الشاشة الأصغر الفهرس صندوق مقفول فوق الكلام مكتوب عليه «المحتويات»، بيتفتح لما تدوس عليه.
-
-**الفهرس اللازق:** [[position: sticky; top: calc(var(--top-h) + 1rem)]]: بيقف تحت الشريط بمسافة. و [[align-self: start]] هو أهم سطر: من غيره الـ grid بيمط الفهرس لطول الصف كله (طول الكلام)، وصندوق طوله قد أبوه ملوش مكان يتحرك فيه، فالـ sticky مبيبانش إنه شغال.
-
-**الـ [[overflow]] على أي جد:** لو أي عنصر فوق الفهرس عليه [[overflow: hidden]] أو [[auto]]، الـ sticky بيلزق جوه العنصر ده بدل الصفحة، وغالبًا مبيلزقش خالص. اتقاس: مفيش ولا جد عليه overflow.
-
-**[[scroll-margin-top]] على العناوين:** لما تدوس لينك من الفهرس، المتصفح بيجيب العنوان لأول الشاشة، يعني تحت الشريط اللازق ومش باين. [[scroll-margin-top]] بيقوله «سيب المسافة دي فوقي»، فالعنوان بيقف تحت الشريط.
-
-**[[<details>]] تحت 1024:** نفس العنصر في الحالتين. على الشاشة الكبيرة [[toc.js]] بيفتحه و [[summary]] مستخبي، فبيبان فهرس عادي. ليه JS؟ لأن [[<details>]] المقفول بيخبّي اللي جواه مهما الـ CSS قال، فلازم يتفتح فعلًا. و [[matchMedia]] بيتابع لو الشاشة اتغيّرت (لفّيت التابلت مثلًا).
-
-~~~text الناتج (Chrome 157)
-1280: الفهرس مفتوح، وبعد scroll لآخر الصفحة (scrollY 1319) الفهرس top = 72 (لسه ظاهر)
-      الضغط على الـ 6 لينكات: كل عنوان top = 72، والشريط بيخلص عند 56 (العنوان تحته بـ 16)
-      جدود الفهرس اللي عليهم overflow غير visible: ولا واحد
-768:  الفهرس مقفول، فوق الكلام (الفهرس top 72، الكلام top 140)، والضغط على «المحتويات» بيفتحه
-      scrollWidth = العرض
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+plan=basic&name=%D9%85%D9%86%D9%89+%D8%B9%D9%84%D9%8A&phone=01012345678
 ~~~` },
-        { lvl: 'متوسط', dir: "sticky-fix", t: R`صلّح ملخص طلب sticky مغطّي الشاشة`, what: R`**صلّح الكود البايظ:** صفحة باقات نت متخيلة فيها ملخص الطلب [[position: sticky; top: 0]] على كل الشاشات. على الموبايل الملخص بيغطي أغلب الشاشة والباقات بتعدّي من تحته، فالـ scroll بيحسّسك إن الصفحة واقفة. وعلى شاشة كمبيوتر قصيرة الملخص أطول من الشاشة، وزرار «كمّل الطلب» اللي في آخره مبيبانش. قيس العطلين، وصلّحهم من غير ما تشيل الـ sticky من الكمبيوتر. من درس [[sticky و fixed]] و [[media queries]].`, done: R`على 360×640: [[elementFromPoint]] في نص الشاشة بيرجّع باقة مش الملخص بعد scroll 300 و 600 و 900، وعلى 1280×400 بعد scroll 600 الملخص لسه ظاهر وزرار «كمّل الطلب» بتوصله بـ scroll جوه الملخص، و axe صفر مشاكل.`, sol: R`~~~html index.html
+        { lvl: 'صغير', dir: "club-join", cont: true, t: R`كل حقل بالنوع بتاعه`, what: R`زي المشروع اللي فات (نفس [[index.html]])، وزوّد على الفورم خمس حقول، كل واحد بالنوع المناسب: اللعبة (قايمة [[<select>]] متقسّمة بـ [[<optgroup>]] لـ «ألعاب مية» و «ألعاب صالة»، وبتبدأ على «سباحة»)، والمدينة (خانة نص باقتراحات [[<datalist>]])، ومستواك من ١ لـ ٥ (شريط [[range]] ومعاه [[<output>]] بيعرض الرقم)، وميعاد التمرين المفضّل ([[time]] من ٩ الصبح لـ ١٠ بالليل وكل نص ساعة)، وشهر بداية الاشتراك ([[month]])، و checkbox «ابعتولي مواعيد البطولات» بيبدأ متعلّم. من دروس «أنواع input كلها» و «readonly و disabled و checked» و «datalist و output».`, done: R`كل حقل ليه label و [[name]]. والقايمة مفتوحة على «سباحة» وتحت عنوانين. وسحب الشريط بيغيّر الرقم اللي جنبه. والميعاد [[18:10]] بيترفض. والإرسال من غير ما تلمس الجديد بيبعت [[sport=swim]] و [[level=3]] و [[news=on]] ومعاهم [[time=]] و [[start=]] فاضيين.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مقارنة باقات النت</title>
-<link rel="stylesheet" href="style.css">
+<title>اشتراك عضو جديد | نادي الموج</title>
 </head>
 <body>
-<main class="layout">
-  <aside class="summary" aria-label="ملخص اختيارك">
-    <h2>اختيارك</h2>
-    <p>باقة ٢٠٠ جيجا</p>
-    <ul>
-      <li>سرعة لحد ١٠٠ ميجا</li>
-      <li>راوتر مجاني</li>
-      <li>تركيب خلال ٤٨ ساعة</li>
-      <li>دعم فني ٢٤ ساعة</li>
-      <li>مكالمات أرضي مجانًا</li>
-      <li>تجديد تلقائي كل شهر</li>
-      <li>إلغاء في أي وقت</li>
-      <li>خصم ١٠٪ لو دفعت سنة</li>
-    </ul>
-    <p class="summary__total">الإجمالي: ٤٥٠ ج / شهر</p>
-    <a class="summary__btn" href="#checkout">كمّل الطلب</a>
-  </aside>
-  <section class="plans">
-    <h1>اختار باقة النت</h1>
-    <article class="plan"><h2>١٠٠ جيجا</h2><p>٣٠٠ ج في الشهر. مناسبة لشخص واحد.</p></article>
-    <article class="plan"><h2>٢٠٠ جيجا</h2><p>٤٥٠ ج في الشهر. مناسبة لبيت صغير.</p></article>
-    <article class="plan"><h2>٤٠٠ جيجا</h2><p>٧٠٠ ج في الشهر. للبيت اللي فيه ألعاب وأفلام.</p></article>
-    <article class="plan"><h2>من غير حد</h2><p>١١٠٠ ج في الشهر. للشغل من البيت.</p></article>
-  </section>
+<header>
+  <p><strong>نادي الموج</strong></p>
+</header>
+<main>
+  <h1>اشتراك عضو جديد</h1>
+  <form action="thanks.html" method="post" oninput="shown.value = level.value">
+    <input type="hidden" name="plan" value="basic">
+    <p><label for="name">الاسم بالكامل</label><br>
+    <input id="name" name="name" autocomplete="name" required></p>
+    <p><label for="phone">الموبايل</label><br>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" required></p>
+    <p><label for="sport">اللعبة</label><br>
+    <select id="sport" name="sport">
+      <optgroup label="ألعاب مية">
+        <option value="swim" selected>سباحة</option>
+        <option value="polo">كرة ماء</option>
+      </optgroup>
+      <optgroup label="ألعاب صالة">
+        <option value="basket">سلة</option>
+        <option value="judo">جودو</option>
+      </optgroup>
+    </select></p>
+    <p><label for="city">المدينة</label><br>
+    <input id="city" name="city" list="cities" autocomplete="address-level2">
+    <datalist id="cities">
+      <option value="طنطا"></option>
+      <option value="المنصورة"></option>
+      <option value="أسوان"></option>
+    </datalist></p>
+    <p><label for="level">مستواك (١ مبتدئ، ٥ محترف)</label><br>
+    <input id="level" name="level" type="range" min="1" max="5" value="3">
+    <output id="shown" for="level">3</output></p>
+    <p><label for="time">ميعاد التمرين المفضّل (من ٩ ص لـ ١٠ م)</label><br>
+    <input id="time" name="time" type="time" min="09:00" max="22:00" step="1800"></p>
+    <p><label for="start">شهر بداية الاشتراك</label><br>
+    <input id="start" name="start" type="month"></p>
+    <p><input id="news" name="news" type="checkbox" checked>
+    <label for="news">ابعتولي مواعيد البطولات</label></p>
+    <button type="submit">اشترك</button>
+  </form>
 </main>
 </body>
 </html>
 ~~~
 
-~~~css broken.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
-.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
-
-/* the order summary sticks at the top on EVERY screen: on a phone it covers 3/4 of it,
-   and on a short screen it is taller than the screen, so its bottom never shows */
-.summary { position: sticky; top: 0; z-index: 1; padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
-.summary h2 { margin-top: 0; }
-.summary__total { font-weight: 800; }
-.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
-
-.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
-
-@media (min-width: 48rem) {
-  .layout { flex-direction: row-reverse; align-items: flex-start; }
-  .summary { flex: 0 0 18rem; }
-  .plans { flex: 1; }
-}
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
-.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
-
-/* phone: the summary is a normal box at the top, it scrolls away like everything else */
-.summary { padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
-.summary h2 { margin-top: 0; }
-.summary__total { font-weight: 800; }
-.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
-.summary__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
-
-/* computer: a column beside the plans, sticky, and NEVER taller than the screen */
-@media (min-width: 48rem) {
-  .layout { flex-direction: row-reverse; align-items: flex-start; }
-  .plans { flex: 1; }
-  .summary {
-    flex: 0 0 18rem;
-    position: sticky;
-    top: 1rem;
-    max-height: calc(100dvh - 2rem);   /* the screen minus the top gap and the same at the bottom */
-    overflow-y: auto;                  /* if the screen is short, the summary scrolls inside itself */
-  }
-}
-~~~
-
-[[broken.html]] هو نفس [[index.html]] بـ [[href="broken.css"]].
-
-~~~view 500 600 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مقارنة باقات النت</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
-.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
-
-/* phone: the summary is a normal box at the top, it scrolls away like everything else */
-.summary { padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
-.summary h2 { margin-top: 0; }
-.summary__total { font-weight: 800; }
-.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
-.summary__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
-
-/* computer: a column beside the plans, sticky, and NEVER taller than the screen */
-@media (min-width: 48rem) {
-  .layout { flex-direction: row-reverse; align-items: flex-start; }
-  .plans { flex: 1; }
-  .summary {
-    flex: 0 0 18rem;
-    position: sticky;
-    top: 1rem;
-    max-height: calc(100dvh - 2rem);   /* the screen minus the top gap and the same at the bottom */
-    overflow-y: auto;                  /* if the screen is short, the summary scrolls inside itself */
-  }
-}
-</style>
-</head>
-<body>
-<main class="layout">
-  <aside class="summary" aria-label="ملخص اختيارك">
-    <h2>اختيارك</h2>
-    <p>باقة ٢٠٠ جيجا</p>
-    <ul>
-      <li>سرعة لحد ١٠٠ ميجا</li>
-      <li>راوتر مجاني</li>
-      <li>تركيب خلال ٤٨ ساعة</li>
-      <li>دعم فني ٢٤ ساعة</li>
-      <li>مكالمات أرضي مجانًا</li>
-      <li>تجديد تلقائي كل شهر</li>
-      <li>إلغاء في أي وقت</li>
-      <li>خصم ١٠٪ لو دفعت سنة</li>
-    </ul>
-    <p class="summary__total">الإجمالي: ٤٥٠ ج / شهر</p>
-    <a class="summary__btn" href="#checkout">كمّل الطلب</a>
-  </aside>
-  <section class="plans">
-    <h1>اختار باقة النت</h1>
-    <article class="plan"><h2>١٠٠ جيجا</h2><p>٣٠٠ ج في الشهر. مناسبة لشخص واحد.</p></article>
-    <article class="plan"><h2>٢٠٠ جيجا</h2><p>٤٥٠ ج في الشهر. مناسبة لبيت صغير.</p></article>
-    <article class="plan"><h2>٤٠٠ جيجا</h2><p>٧٠٠ ج في الشهر. للبيت اللي فيه ألعاب وأفلام.</p></article>
-    <article class="plan"><h2>من غير حد</h2><p>١١٠٠ ج في الشهر. للشغل من البيت.</p></article>
-  </section>
+~~~view 626 شكل index.html (الإرسال هنا بيتكتب تحت)
+<header>
+  <p><strong>نادي الموج</strong></p>
+</header>
+<main>
+  <h1>اشتراك عضو جديد</h1>
+  <form oninput="shown.value = level.value" onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+    <input type="hidden" name="plan" value="basic">
+    <p><label for="name">الاسم بالكامل</label><br>
+    <input id="name" name="name" autocomplete="name" required value="منى علي"></p>
+    <p><label for="phone">الموبايل</label><br>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" required value="01012345678"></p>
+    <p><label for="sport">اللعبة</label><br>
+    <select id="sport" name="sport">
+      <optgroup label="ألعاب مية">
+        <option value="swim" selected>سباحة</option>
+        <option value="polo">كرة ماء</option>
+      </optgroup>
+      <optgroup label="ألعاب صالة">
+        <option value="basket">سلة</option>
+        <option value="judo">جودو</option>
+      </optgroup>
+    </select></p>
+    <p><label for="city">المدينة</label><br>
+    <input id="city" name="city" list="cities" autocomplete="address-level2">
+    <datalist id="cities">
+      <option value="طنطا"></option>
+      <option value="المنصورة"></option>
+      <option value="أسوان"></option>
+    </datalist></p>
+    <p><label for="level">مستواك (١ مبتدئ، ٥ محترف)</label><br>
+    <input id="level" name="level" type="range" min="1" max="5" value="3">
+    <output id="shown" for="level">3</output></p>
+    <p><label for="time">ميعاد التمرين المفضّل (من ٩ ص لـ ١٠ م)</label><br>
+    <input id="time" name="time" type="time" min="09:00" max="22:00" step="1800"></p>
+    <p><label for="start">شهر بداية الاشتراك</label><br>
+    <input id="start" name="start" type="month"></p>
+    <p><input id="news" name="news" type="checkbox" checked>
+    <label for="news">ابعتولي مواعيد البطولات</label></p>
+    <button type="submit">اشترك</button>
+  </form>
+  <p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
 </main>
-</body>
-</html>
 ~~~
 
-~~~view 500 600 النسخة البايظة (انزل فيها على الموبايل)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مقارنة باقات النت (النسخة البايظة)</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
-.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
+**هتشوف إيه:**
 
-/* the order summary sticks at the top on EVERY screen: on a phone it covers 3/4 of it,
-   and on a short screen it is taller than the screen, so its bottom never shows */
-.summary { position: sticky; top: 0; z-index: 1; padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
-.summary h2 { margin-top: 0; }
-.summary__total { font-weight: 800; }
-.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
+- الفورم طوّل: قايمة، وخانة باقتراحات، وشريط جنبه رقم، وحقل ساعة، وحقل شهر، ومربع متعلّم.
+- دوس «اشترك» من غير ما تلمس الجديد: [[plan=basic&name=...&phone=...&sport=swim&city=&level=3&time=&start=&news=on]].
+- اللي ليه قيمة أولى اتبعت بيها ([[sport]] و [[level]] و [[news]])، واللي ملوش اتبعت فاضي.
 
-.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
+**ليه كده:**
 
-@media (min-width: 48rem) {
-  .layout { flex-direction: row-reverse; align-items: flex-start; }
-  .summary { flex: 0 0 18rem; }
-  .plans { flex: 1; }
-}
-</style>
-</head>
-<body>
-<main class="layout">
-  <aside class="summary" aria-label="ملخص اختيارك">
-    <h2>اختيارك</h2>
-    <p>باقة ٢٠٠ جيجا</p>
-    <ul>
-      <li>سرعة لحد ١٠٠ ميجا</li>
-      <li>راوتر مجاني</li>
-      <li>تركيب خلال ٤٨ ساعة</li>
-      <li>دعم فني ٢٤ ساعة</li>
-      <li>مكالمات أرضي مجانًا</li>
-      <li>تجديد تلقائي كل شهر</li>
-      <li>إلغاء في أي وقت</li>
-      <li>خصم ١٠٪ لو دفعت سنة</li>
-    </ul>
-    <p class="summary__total">الإجمالي: ٤٥٠ ج / شهر</p>
-    <a class="summary__btn" href="#checkout">كمّل الطلب</a>
-  </aside>
-  <section class="plans">
-    <h1>اختار باقة النت</h1>
-    <article class="plan"><h2>١٠٠ جيجا</h2><p>٣٠٠ ج في الشهر. مناسبة لشخص واحد.</p></article>
-    <article class="plan"><h2>٢٠٠ جيجا</h2><p>٤٥٠ ج في الشهر. مناسبة لبيت صغير.</p></article>
-    <article class="plan"><h2>٤٠٠ جيجا</h2><p>٧٠٠ ج في الشهر. للبيت اللي فيه ألعاب وأفلام.</p></article>
-    <article class="plan"><h2>من غير حد</h2><p>١١٠٠ ج في الشهر. للشغل من البيت.</p></article>
-  </section>
-</main>
-</body>
-</html>
-~~~
+- اللعبة [[<select>]] لأن القايمة مقفولة (النادي فيه ٤ ألعاب بس). المدينة [[<datalist>]] لأن أي مدينة مقبولة.
+- [[value]] بتاع كل [[<option>]] إنجليزي قصيّر، والكلام المعروض عربي.
+- الـ [[<output>]] بيبدأ بـ ٣ زي الشريط، وسطر [[oninput]] على الفورم بينسخ القيمة.
+- [[step="1800"]] بالثواني: نص ساعة.
+- «مواعيد البطولات» معلومة مفيدة ومش إعلان، فمقبول تبدأ متعلّمة. لو كانت «عروض الشركاء» كانت لازم تبدأ فاضية.
 
-**هتشوف إيه:** على الموبايل: كارت «اختيارك» فوق، وبعده ٤ باقات. في البايظة الكارت بيلزق فوق وبياخد أغلب الشاشة، والباقات بتعدّي من تحته. في المصلّحة الكارت بيطلع لفوق مع الصفحة. على الكمبيوتر الكارت عمود على الشمال بيفضل ظاهر وانت بتنزل.
+**الغلطة الشائعة:** [[<output>]] من غير قيمة أولى. الشريط هيبان عند ٣ والرقم جنبه فاضي لحد أول سحبة.
 
-**العطل الأول: sticky على الموبايل.** الملخص 482px والشاشة 640، فاللي فاضل للباقات 158px بس، وكل scroll بيحرّك حتة صغيرة ورا الملخص. اتقاس: نص الشاشة الملخص في كل مكان. على الموبايل الملخص مش محتاج يلزق أصلًا: بقى عادي بره الـ media query، والـ sticky جوه [[min-width: 48rem]] بس.
-
-**العطل التاني: sticky أطول من الشاشة.** الـ sticky بيلزق الحافة اللي فوق، فلو الصندوق أطول من الشاشة، اللي تحت مش هيبان غير لما أبوه يخلص. على 1280×400 زرار «كمّل الطلب» كان تحت الشاشة (409 لحد 460، والشاشة 400). التصليح: [[max-height: calc(100dvh - 2rem)]] و [[overflow-y: auto]]: الملخص مبيعدّيش الشاشة أبدًا، ولو مش مكفّي بيعمل scroll جواه.
-
-**[[dvh]] مش [[vh]]:** على الموبايل [[100vh]] أطول من الجزء الظاهر لما شريط العنوان يبقى ظاهر. هنا الـ sticky على الكمبيوتر بس، فالاتنين واحد، بس [[dvh]] أسلم لو القاعدة اتنقلت.
-
-**الكيبورد:** الملخص بقى بيتسكرول جواه، و axe بيطلب إن أي صندوق بيتسكرول يتوصله بالكيبورد. هنا جواه لينك «كمّل الطلب»، فالـ Tab بيوصله والمتصفح بيسكرول الصندوق للينك لوحده.
-
-~~~text الناتج (Chrome 157)
-360×640، نص الشاشة بعد scroll:        300        600        900
-  broken.html                           summary    summary    summary   (الملخص top = 0 وطوله 482)
-  index.html                            plan       plan       plan      (الملخص top = -284، -584، -884)
-
-1280×400، بعد scroll 600:
-  broken.html   الملخص -6 لحد 476 (طوله 482)، الزرار 409 لحد 460: برّه الشاشة
-  index.html    الملخص 16 لحد 384 (طوله 368)، الزرار 431 لحد 482 برّه، وبعد scroll جوه الملخص: 317 لحد 368 ظاهر
-  focus على «كمّل الطلب» (زي Tab): الملخص اتسكرول جواه 114px لوحده والزرار 317 لحد 368
-axe (360 و 1280): 0 violations   الـ validator: مفيش رسايل (النسختين)   CSS validator: No Error Found (الملفين)
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي، من غير لمس الحقول الجديدة)
+plan=basic&name=%D9%85%D9%86%D9%89+%D8%B9%D9%84%D9%8A&phone=01012345678&sport=swim&city=&level=3&time=&start=&news=on
 ~~~` },
-        { lvl: 'كبير', dir: "dental-landing", t: R`landing page لعيادة أسنان متخيلة`, what: R`أقسام بـ id وروابط (خدمات، وقبل وبعد، وأسعار، وأسئلة)، و nav زجاجي sticky، وهيرو بعنوان [[clamp()]]، وسلايدر قبل وبعد بـ range و [[clip-path]]، وأسئلة بـ [[<details>]]، وزرار حجز عايم بيختفي لما توصل لقسم الأسعار، و z-index من توكنز. واختبار المقاسات بسكربت درس [[مصفوفة مقاسات]] بالعربي والإنجليزي. بيجمع الوحدة دي مع وحدة Flexbox و Grid والوحدات والمتغيرات.`, done: R`[[node matrix.js]] بيطلّع [[all sizes OK]] على ١٥ عرض × لغتين، والسكربت بيخرج بـ 0، والسلايدر بيشتغل بالكيبورد، وكل لينك في الـ nav بيوصل لعنوانه ظاهر، و axe صفر مشاكل بالعربي والإنجليزي، والصفحة اتشغّلت مرتين ورا بعض بنفس النتيجة.`, ext: R`زوّد quiz «محتاج إيه؟» بخطوات، ونسخة إنجليزي كاملة بزرار لغة، و dark mode، وحط [[matrix.js]] في GitHub Actions يفشل لو أي مقاس اتكسر.`, sol: R`**شجرة الملفات:**
-
-~~~text dental-landing/
-index.html     الصفحة (العربي جواها، والإنجليزي في data-en)
-style.css      التصميم
-lang.js        ?lang=en بيقلب الصفحة إنجليزي (في الـ head)
-page.js        طول الهيدر، والسلايدر، وزرار الحجز (defer)
-img/logo.svg  img/before.svg  img/after.svg
-matrix.js      اختبار المقاسات (درس «مصفوفة مقاسات»)
-shots/         بيتعمل لوحده: لقطة لكل مقاس
-~~~
+        { lvl: 'متوسط', dir: "club-join", cont: true, t: R`المستندات، وزرار «احفظ كمسودة»`, what: R`زي المشروع اللي فات، وزوّد على نفس الفورم حاجتين. **الملفات:** حقل «صورة شخصية» (صورة واحدة، إجباري، JPG أو PNG) وحقل «صور البطاقة» (أكتر من ملف، صور أو PDF)، وكل label فيه النوع وأقصى حجم، والفورم يبقى شكله صح للملفات. **الأزرار:** «اشترك» (الأساسي، بيبعت [[act=send]])، و «احفظ كمسودة» (بيبعت [[act=draft]] لصفحة جديدة [[draft.html]] ومن غير فحص)، و «إلغاء» (مبيبعتش). من دروس «file و accept و multiple» و «أزرار الفورم: formaction وإخواته».`, done: R`الفورم [[post]] و [[multipart/form-data]]. و «اشترك» من غير صورة شخصية بيقف عند حقلها. و «احفظ كمسودة» والفورم فاضي بيفتح [[draft.html]]. و «إلغاء» مبيعملش أي تنقّل. و Enter جوه خانة الاسم بيتصرف زي «اشترك».`, sol: R`الجديد على [[index.html]] بتاع المشروع اللي فات: [[enctype]] على الفورم، وحقلين الملفات قبل الـ checkbox، والتلات أزرار. الملف كامل:
 
 ~~~html index.html
 <!doctype html>
@@ -1343,554 +228,119 @@ shots/         بيتعمل لوحده: لقطة لكل مقاس
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عيادة ابتسامة للأسنان</title>
-<link rel="stylesheet" href="style.css">
-<script src="lang.js"></script>
-<script src="page.js" defer></script>
+<title>اشتراك عضو جديد | نادي الموج</title>
 </head>
 <body>
-<a class="skip" href="#main" data-en="Skip to content">اتخطى للمحتوى</a>
-<header class="header" id="header">
-  <a class="brand" href="#main"><img class="logo" src="img/logo.svg" alt="" width="36" height="36"><span data-en="Ebtesama Dental">عيادة ابتسامة</span></a>
-  <a class="lang" href="?lang=en" data-en="عربي" data-en-href="?lang=ar" lang="en" data-en-lang="ar">EN</a>
-  <nav class="nav" aria-label="أقسام الصفحة" data-en-label="Page sections">
-    <a href="#services" data-en="Services">الخدمات</a>
-    <a href="#before-after" data-en="Before &amp; after">قبل وبعد</a>
-    <a href="#prices" data-en="Prices">الأسعار</a>
-    <a href="#faq" data-en="FAQ">أسئلة</a>
-  </nav>
+<header>
+  <p><strong>نادي الموج</strong></p>
 </header>
-
-<main id="main" tabindex="-1">
-  <section class="hero">
-    <h1 data-en="A smile you are not shy of">ابتسامة مش هتتكسف منها</h1>
-    <p data-en="Cleaning, whitening, fillings and braces. Same-week appointments.">تنضيف وتبييض وحشو وتقويم، ومواعيد في نفس الأسبوع.</p>
-    <a class="btn" href="#prices" data-en="See prices">شوف الأسعار</a>
-  </section>
-
-  <section class="section" aria-labelledby="services">
-    <h2 id="services" data-en="Services">الخدمات</h2>
-    <ul class="cards">
-      <li class="card"><h3 data-en="Cleaning">تنضيف</h3><p data-en="Scaling and polishing in one 40-minute visit.">إزالة الجير وتلميع في زيارة واحدة ٤٠ دقيقة.</p></li>
-      <li class="card"><h3 data-en="Whitening">تبييض</h3><p data-en="Two to four shades lighter, checked with a colour guide.">من درجتين لأربعة أفتح، بنقيسها بدليل ألوان.</p></li>
-      <li class="card"><h3 data-en="Fillings">حشو</h3><p data-en="Tooth-coloured fillings that don't show.">حشو بلون السنة مبيبانش.</p></li>
-      <li class="card"><h3 data-en="Braces">تقويم</h3><p data-en="Clear aligners or metal braces, with monthly follow-up.">شفاف أو معدن، ومتابعة كل شهر.</p></li>
-    </ul>
-  </section>
-
-  <section class="section" aria-labelledby="before-after">
-    <h2 id="before-after" data-en="Before &amp; after">قبل وبعد</h2>
-    <!-- the comparison always goes left to right (before on the left), in both languages -->
-    <figure class="compare" dir="ltr" style="--pos: 50%">
-      <div class="compare__pics">
-      <img src="img/before.svg" alt="الأسنان قبل التبييض: لونها أصفر" data-en-alt="Teeth before whitening: yellow" width="800" height="450">
-      <img class="compare__after" src="img/after.svg" alt="نفس الأسنان بعد التبييض: لونها أبيض" data-en-alt="The same teeth after whitening: white" width="800" height="450">
-      </div>
-      <figcaption>
-        <label for="pos" data-en="Drag to compare">اسحب عشان تقارن</label>
-        <input id="pos" type="range" min="0" max="100" value="50">
-      </figcaption>
-    </figure>
-  </section>
-
-  <section class="section" aria-labelledby="prices">
-    <h2 id="prices" data-en="Prices">الأسعار</h2>
-    <ul class="cards">
-      <li class="card price"><h3 data-en="Check-up">كشف</h3><p class="price__n" data-en="EGP 300">٣٠٠ ج</p></li>
-      <li class="card price"><h3 data-en="Cleaning">تنضيف</h3><p class="price__n" data-en="EGP 600">٦٠٠ ج</p></li>
-      <li class="card price"><h3 data-en="Whitening">تبييض</h3><p class="price__n" data-en="EGP 2,500">٢٬٥٠٠ ج</p></li>
-    </ul>
-  </section>
-
-  <section class="section" aria-labelledby="faq">
-    <h2 id="faq" data-en="FAQ">أسئلة</h2>
-    <details><summary data-en="Does whitening hurt?">التبييض بيوجع؟</summary><p data-en="Some people feel sensitivity for a day or two. We use a calming gel.">ممكن حساسية يوم أو اتنين، وبنستخدم جل مهدّي.</p></details>
-    <details><summary data-en="Do you work on Fridays?">بتشتغلوا الجمعة؟</summary><p data-en="Yes, from 2 pm to 10 pm.">أيوه، من ٢ الضهر لـ ١٠ بالليل.</p></details>
-    <details><summary data-en="Can I pay in instalments?">ينفع أقسّط؟</summary><p data-en="Braces only, over 6 or 12 months.">التقويم بس، على ٦ أو ١٢ شهر.</p></details>
-  </section>
+<main>
+  <h1>اشتراك عضو جديد</h1>
+  <form action="thanks.html" method="post" enctype="multipart/form-data" oninput="shown.value = level.value">
+    <input type="hidden" name="plan" value="basic">
+    <p><label for="name">الاسم بالكامل</label><br>
+    <input id="name" name="name" autocomplete="name" required></p>
+    <p><label for="phone">الموبايل</label><br>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" required></p>
+    <p><label for="sport">اللعبة</label><br>
+    <select id="sport" name="sport">
+      <optgroup label="ألعاب مية">
+        <option value="swim" selected>سباحة</option>
+        <option value="polo">كرة ماء</option>
+      </optgroup>
+      <optgroup label="ألعاب صالة">
+        <option value="basket">سلة</option>
+        <option value="judo">جودو</option>
+      </optgroup>
+    </select></p>
+    <p><label for="city">المدينة</label><br>
+    <input id="city" name="city" list="cities" autocomplete="address-level2">
+    <datalist id="cities">
+      <option value="طنطا"></option>
+      <option value="المنصورة"></option>
+      <option value="أسوان"></option>
+    </datalist></p>
+    <p><label for="level">مستواك (١ مبتدئ، ٥ محترف)</label><br>
+    <input id="level" name="level" type="range" min="1" max="5" value="3">
+    <output id="shown" for="level">3</output></p>
+    <p><label for="time">ميعاد التمرين المفضّل (من ٩ ص لـ ١٠ م)</label><br>
+    <input id="time" name="time" type="time" min="09:00" max="22:00" step="1800"></p>
+    <p><label for="start">شهر بداية الاشتراك</label><br>
+    <input id="start" name="start" type="month"></p>
+    <p><label for="photo">صورة شخصية (JPG أو PNG، أقصى حجم ٢ ميجا)</label><br>
+    <input id="photo" name="photo" type="file" accept="image/jpeg, image/png" required></p>
+    <p><label for="docs">صور البطاقة: الوش والضهر (صور أو PDF، أقصى حجم ٥ ميجا للملف)</label><br>
+    <input id="docs" name="docs" type="file" accept="image/*, .pdf" multiple></p>
+    <p><input id="news" name="news" type="checkbox" checked>
+    <label for="news">ابعتولي مواعيد البطولات</label></p>
+    <button type="submit" name="act" value="send">اشترك</button>
+    <button type="submit" name="act" value="draft" formaction="draft.html" formnovalidate>احفظ كمسودة</button>
+    <button type="button">إلغاء</button>
+  </form>
 </main>
-
-<footer class="footer"><p data-en="12 Garden St. · 0100 000 0000">١٢ شارع الجنينة، ٠١٠٠٠٠٠٠٠٠٠</p></footer>
-
-<a class="book" id="book" href="#prices" data-en="Book now">احجز دلوقتي</a>
 </body>
 </html>
 ~~~
 
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  --z-header: 10;
-  --z-book: 20;
-  --z-skip: 30;
-  --header-h: 4rem;              /* page.js writes the real height here */
-  --brand: #0e7490;
-  --brand-dark: #155e75;
-  --ink: #0f172a;
-  --muted: #475569;
-  --bg: #f0f9ff;
-  --surface: #ffffff;
-  --radius: 1rem;
-}
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--ink); background: var(--bg); }
-img { max-width: 100%; height: auto; }
-a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-h2, h1 { scroll-margin-top: calc(var(--header-h) + 1rem); }
-main:focus { outline: none; }
-
-.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: var(--z-skip); padding: 0.5rem 1rem; background: var(--ink); color: #fff; }
-.skip:focus { top: 1rem; }
-
-/* ---------- glass header: sticky, see-through, blurs what scrolls under it ---------- */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-header);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.25rem 1rem;
-  padding: 0.5rem 1rem;
-  background: #ffffffcc;
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #0e749033;
-}
-.brand { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); font-weight: 800; text-decoration: none; }
-.logo { display: block; width: 36px; height: 36px; }
-.nav { display: flex; flex-wrap: wrap; gap: 0 0.25rem; }
-.nav a { display: inline-block; padding: 0.4rem 0.6rem; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 600; text-decoration: none; }
-.nav a:hover { background: #0e74901a; }
-/* the language link sits next to the name; the section links take the second line on a small screen */
-.lang { padding: 0.3rem 0.6rem; border: 1px solid currentColor; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 700; text-decoration: none; }
-.nav { flex-basis: 100%; }
-@media (min-width: 56rem) {
-  .nav { flex-basis: auto; margin-inline-start: auto; }
-  .lang { order: 1; }   /* on a wide screen: name, links, then the language at the end */
-}
-
-/* ---------- hero ---------- */
-.hero { padding: clamp(2.5rem, 1rem + 6vw, 6rem) 1rem; text-align: center; background: radial-gradient(circle at 70% 20%, #cffafe, transparent 60%), var(--bg); }
-.hero h1 { margin: 0 auto 0.75rem; max-width: 18ch; font-size: clamp(1.9rem, 1.1rem + 4vw, 3.6rem); line-height: 1.2; }
-.hero p { margin: 0 auto 1.5rem; max-width: 40ch; color: var(--muted); font-size: 1.1rem; }
-.btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 999px; background: var(--brand-dark); color: #fff; font-weight: 700; text-decoration: none; }
-
-.section { max-width: 64rem; margin-inline: auto; padding: 2.5rem 1rem; }
-.section h2 { margin-top: 0; font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); }
-.cards { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
-.card { padding: 1.25rem; border-radius: var(--radius); background: var(--surface); box-shadow: 0 4px 16px #0e74901a; }
-.card h3 { margin: 0 0 0.25rem; }
-.card p { margin: 0; color: var(--muted); }
-.card .price__n { font-size: 1.6rem; font-weight: 800; color: var(--brand-dark); }   /* .card p is (0,1,1): this has to be at least that */
-
-/* ---------- before / after: both pictures in one cell, the "after" one clipped ---------- */
-.compare { margin: 0; max-width: 50rem; }
-.compare__pics { position: relative; display: grid; }
-.compare__pics > img { grid-area: 1 / 1; display: block; width: 100%; border-radius: var(--radius); }
-/* the "after" picture shows only from --pos to the right edge */
-.compare__after { clip-path: inset(0 0 0 var(--pos)); }
-/* the dividing line, at the same --pos */
-.compare__pics::after { content: ""; position: absolute; inset-block: 0; left: var(--pos); width: 3px; translate: -50% 0; background: #fff; box-shadow: 0 0 6px #0006; pointer-events: none; }
-.compare figcaption { display: flex; align-items: center; gap: 0.75rem; padding-top: 0.75rem; }
-.compare input { flex: 1; min-width: 0; accent-color: var(--brand-dark); height: 2rem; }
-
-/* ---------- FAQ ---------- */
-details { margin-bottom: 0.5rem; border-radius: 0.75rem; background: var(--surface); }
-summary { padding: 0.75rem 1rem; font-weight: 700; cursor: pointer; }
-details p { margin: 0; padding: 0 1rem 1rem; color: var(--muted); }
-
-.footer { padding: 2rem 1rem 6rem; text-align: center; background: var(--ink); color: #e2e8f0; }
-.footer p { margin: 0; }
-
-/* ---------- floating booking button: hides while the prices are on screen ---------- */
-.book {
-  position: fixed;
-  inset-inline-end: 1rem;
-  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-  z-index: var(--z-book);
-  padding: 0.8rem 1.4rem;
-  border-radius: 999px;
-  background: #b45309;
-  color: #fff;
-  font-weight: 800;
-  text-decoration: none;
-  box-shadow: 0 8px 20px #0004;
-  transition: opacity 0.2s, translate 0.2s, visibility 0s;
-}
-.book.is-hidden { opacity: 0; translate: 0 1rem; visibility: hidden; transition: opacity 0.2s, translate 0.2s, visibility 0s 0.2s; }
-@media (prefers-reduced-motion: reduce) { .book, .book.is-hidden { transition: none; } }
-~~~
-
-~~~js lang.js
-// ?lang=en switches the page to English before it is drawn (this file runs in <head>, so there is no Arabic flash)
-// every element with data-en has its English text in that attribute; data-en-alt, data-en-label and data-en-href likewise
-if (new URLSearchParams(location.search).get("lang") === "en") {
-  document.documentElement.lang = "en";
-  document.documentElement.dir = "ltr";
-  document.title = "Ebtesama Dental Clinic";
-  document.addEventListener("DOMContentLoaded", () => {
-    for (const el of document.querySelectorAll("[data-en]")) el.textContent = el.dataset.en;
-    for (const el of document.querySelectorAll("[data-en-alt]")) el.alt = el.dataset.enAlt;
-    for (const el of document.querySelectorAll("[data-en-label]")) el.setAttribute("aria-label", el.dataset.enLabel);
-    for (const el of document.querySelectorAll("[data-en-href]")) el.setAttribute("href", el.dataset.enHref);
-    for (const el of document.querySelectorAll("[data-en-lang]")) el.lang = el.dataset.enLang;
-  });
-}
-~~~
-
-~~~js page.js
-// 1. the header's real height goes into --header-h (it gets taller when the links wrap on a small screen),
-//    and the headings use it in scroll-margin-top, so a jump never hides a heading under the header
-const header = document.getElementById("header");
-const setHeaderH = () => document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
-// once right away, before the first jump: a ResizeObserver only reports at the next frame, and a link opened
-// as page.html#prices jumps before that. DOMContentLoaded, because lang.js swaps the English text then (its listener is first)
-document.addEventListener("DOMContentLoaded", setHeaderH);
-new ResizeObserver(setHeaderH).observe(header);   // and again whenever the header changes height (links wrap, font size)
-
-// 2. before / after: the range moves --pos, the CSS clips the "after" picture at that point
-const compare = document.querySelector(".compare");
-const range = document.getElementById("pos");
-range.addEventListener("input", () => compare.style.setProperty("--pos", range.value + "%"));
-
-// 3. the floating button hides while the prices are on screen (the booking info is right there)
-const book = document.getElementById("book");
-new IntersectionObserver(([entry]) => {
-  book.classList.toggle("is-hidden", entry.isIntersecting);
-}).observe(document.getElementById("prices").closest("section"));
-~~~
-
-~~~js matrix.js
-// node matrix.js : 15 widths × 2 languages. Exit code 0 only if every size is OK
-const { chromium } = require("playwright-core");
-const fs = require("fs");
-const BASE = "http://127.0.0.1:8931/";
-const widths = [320, 360, 375, 414, 600, 761, 768, 820, 900, 1000, 1024, 1100, 1280, 1440, 1920];
-fs.mkdirSync("shots", { recursive: true });
-
-(async () => {
-  const browser = await chromium.launch({ channel: "chrome" });
-  const page = await browser.newPage();
-  const bad = [];
-  for (const lang of ["ar", "en"]) {
-    for (const w of widths) {
-      await page.setViewportSize({ width: w, height: 800 });
-      await page.goto(BASE + "?lang=" + lang);
-      const r = await page.evaluate(async () => {
-        const iw = innerWidth, sw = document.documentElement.scrollWidth;
-        // anything sticking out of the screen sideways, by name
-        const out = [...document.querySelectorAll("body *")]
-          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.right > iw + 0.5 || b.left < -0.5); })
-          .map(e => e.className || e.tagName.toLowerCase());
-        // touch targets smaller than 24×24 (WCAG 2.5.8)
-        const small = [...document.querySelectorAll("a, button, summary, input")]
-          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.width < 24 || b.height < 24); })
-          .map(e => (e.className || e.tagName) + " " + Math.round(e.getBoundingClientRect().height) + "px");
-        const logo = Math.round(document.querySelector(".logo").getBoundingClientRect().height);
-        // every nav link: after the jump, the heading starts below the sticky header
-        const hidden = [];
-        for (const a of document.querySelectorAll(".nav a[href^='#']")) {
-          document.querySelector(a.getAttribute("href")).scrollIntoView();
-          await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
-          const top = document.querySelector(a.getAttribute("href")).getBoundingClientRect().top;
-          const headerBottom = document.getElementById("header").getBoundingClientRect().bottom;
-          if (top < headerBottom) hidden.push(a.getAttribute("href") + " " + Math.round(top) + "<" + Math.round(headerBottom));
-        }
-        scrollTo(0, 0);
-        return { iw, sw, out: [...new Set(out)], small, logo, hidden };
-      });
-      await page.screenshot({ path: "shots/" + lang + "-" + w + ".png" });
-      const ok = r.sw <= r.iw && !r.out.length && !r.small.length && r.logo <= 40 && !r.hidden.length;
-      if (!ok) bad.push(lang + "-" + w);
-      console.log(lang, String(w).padStart(4), "scrollWidth=" + r.sw, ok ? "OK" : "BROKEN",
-        r.out.length ? "out: " + r.out.join(",") : "", r.small.length ? "small: " + r.small.join(",") : "", r.hidden.length ? "hidden: " + r.hidden.join(",") : "");
-    }
-  }
-  // the slider works from the keyboard: focus it, press → three times
-  await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto(BASE);
-  await page.focus("#pos");
-  for (let i = 0; i < 3; i++) await page.keyboard.press("ArrowRight");
-  const pos = await page.$eval(".compare", e => e.style.getPropertyValue("--pos"));
-  const keyOk = pos === "53%";
-  console.log("slider after → ×3:", pos, keyOk ? "OK" : "BROKEN");
-  if (!keyOk) bad.push("slider");
-
-  console.log(bad.length ? "broken: " + bad.join(" ") : "all sizes OK");
-  await browser.close();
-  process.exitCode = bad.length ? 1 : 0;
-})();
-~~~
-
-~~~svg img/logo.svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="18" fill="#0e7490"/><path d="M11 10c3-2 5 0 7 0s4-2 7 0c2 2 1 7-1 10l-1 7c0 2-2 2-2 0l-1-5c0-2-3-2-3 0l-1 5c0 2-2 2-2 0l-1-7c-2-3-3-8-1-10Z" fill="#fff"/></svg>
-~~~
-
-[[before.svg]] و [[after.svg]]: نفس الرسمة (لثة غامقة و ١٦ سنة)، الأولى السنان لونها [[#e3c770]] (أصفر) والتانية [[#fbfbf7]] (أبيض). أو حط صورتين حقيقيتين بنفس المقاس.
-
-~~~view 640 640 الشكل النهائي
+~~~live 148 draft.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عيادة ابتسامة للأسنان</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  --z-header: 10;
-  --z-book: 20;
-  --z-skip: 30;
-  --header-h: 4rem;              /* page.js writes the real height here */
-  --brand: #0e7490;
-  --brand-dark: #155e75;
-  --ink: #0f172a;
-  --muted: #475569;
-  --bg: #f0f9ff;
-  --surface: #ffffff;
-  --radius: 1rem;
-}
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--ink); background: var(--bg); }
-img { max-width: 100%; height: auto; }
-a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-h2, h1 { scroll-margin-top: calc(var(--header-h) + 1rem); }
-main:focus { outline: none; }
-
-.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: var(--z-skip); padding: 0.5rem 1rem; background: var(--ink); color: #fff; }
-.skip:focus { top: 1rem; }
-
-/* ---------- glass header: sticky, see-through, blurs what scrolls under it ---------- */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-header);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.25rem 1rem;
-  padding: 0.5rem 1rem;
-  background: #ffffffcc;
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #0e749033;
-}
-.brand { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); font-weight: 800; text-decoration: none; }
-.logo { display: block; width: 36px; height: 36px; }
-.nav { display: flex; flex-wrap: wrap; gap: 0 0.25rem; }
-.nav a { display: inline-block; padding: 0.4rem 0.6rem; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 600; text-decoration: none; }
-.nav a:hover { background: #0e74901a; }
-/* the language link sits next to the name; the section links take the second line on a small screen */
-.lang { padding: 0.3rem 0.6rem; border: 1px solid currentColor; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 700; text-decoration: none; }
-.nav { flex-basis: 100%; }
-@media (min-width: 56rem) {
-  .nav { flex-basis: auto; margin-inline-start: auto; }
-  .lang { order: 1; }   /* on a wide screen: name, links, then the language at the end */
-}
-
-/* ---------- hero ---------- */
-.hero { padding: clamp(2.5rem, 1rem + 6vw, 6rem) 1rem; text-align: center; background: radial-gradient(circle at 70% 20%, #cffafe, transparent 60%), var(--bg); }
-.hero h1 { margin: 0 auto 0.75rem; max-width: 18ch; font-size: clamp(1.9rem, 1.1rem + 4vw, 3.6rem); line-height: 1.2; }
-.hero p { margin: 0 auto 1.5rem; max-width: 40ch; color: var(--muted); font-size: 1.1rem; }
-.btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 999px; background: var(--brand-dark); color: #fff; font-weight: 700; text-decoration: none; }
-
-.section { max-width: 64rem; margin-inline: auto; padding: 2.5rem 1rem; }
-.section h2 { margin-top: 0; font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); }
-.cards { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
-.card { padding: 1.25rem; border-radius: var(--radius); background: var(--surface); box-shadow: 0 4px 16px #0e74901a; }
-.card h3 { margin: 0 0 0.25rem; }
-.card p { margin: 0; color: var(--muted); }
-.card .price__n { font-size: 1.6rem; font-weight: 800; color: var(--brand-dark); }   /* .card p is (0,1,1): this has to be at least that */
-
-/* ---------- before / after: both pictures in one cell, the "after" one clipped ---------- */
-.compare { margin: 0; max-width: 50rem; }
-.compare__pics { position: relative; display: grid; }
-.compare__pics > img { grid-area: 1 / 1; display: block; width: 100%; border-radius: var(--radius); }
-/* the "after" picture shows only from --pos to the right edge */
-.compare__after { clip-path: inset(0 0 0 var(--pos)); }
-/* the dividing line, at the same --pos */
-.compare__pics::after { content: ""; position: absolute; inset-block: 0; left: var(--pos); width: 3px; translate: -50% 0; background: #fff; box-shadow: 0 0 6px #0006; pointer-events: none; }
-.compare figcaption { display: flex; align-items: center; gap: 0.75rem; padding-top: 0.75rem; }
-.compare input { flex: 1; min-width: 0; accent-color: var(--brand-dark); height: 2rem; }
-
-/* ---------- FAQ ---------- */
-details { margin-bottom: 0.5rem; border-radius: 0.75rem; background: var(--surface); }
-summary { padding: 0.75rem 1rem; font-weight: 700; cursor: pointer; }
-details p { margin: 0; padding: 0 1rem 1rem; color: var(--muted); }
-
-.footer { padding: 2rem 1rem 6rem; text-align: center; background: var(--ink); color: #e2e8f0; }
-.footer p { margin: 0; }
-
-/* ---------- floating booking button: hides while the prices are on screen ---------- */
-.book {
-  position: fixed;
-  inset-inline-end: 1rem;
-  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-  z-index: var(--z-book);
-  padding: 0.8rem 1.4rem;
-  border-radius: 999px;
-  background: #b45309;
-  color: #fff;
-  font-weight: 800;
-  text-decoration: none;
-  box-shadow: 0 8px 20px #0004;
-  transition: opacity 0.2s, translate 0.2s, visibility 0s;
-}
-.book.is-hidden { opacity: 0; translate: 0 1rem; visibility: hidden; transition: opacity 0.2s, translate 0.2s, visibility 0s 0.2s; }
-@media (prefers-reduced-motion: reduce) { .book, .book.is-hidden { transition: none; } }
-</style>
+<title>المسودة اتحفظت | نادي الموج</title>
 </head>
 <body>
-<a class="skip" href="#main" data-en="Skip to content">اتخطى للمحتوى</a>
-<header class="header" id="header">
-  <a class="brand" href="#main"><img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iIzBlNzQ5MCIvPjxwYXRoIGQ9Ik0xMSAxMGMzLTIgNSAwIDcgMHM0LTIgNyAwYzIgMiAxIDctMSAxMGwtMSA3YzAgMi0yIDItMiAwbC0xLTVjMC0yLTMtMi0zIDBsLTEgNWMwIDItMiAyLTIgMGwtMS03Yy0yLTMtMy04LTEtMTBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+" alt="" width="36" height="36"><span data-en="Ebtesama Dental">عيادة ابتسامة</span></a>
-  <a class="lang" href="?lang=en" data-en="عربي" data-en-href="?lang=ar" lang="en" data-en-lang="ar">EN</a>
-  <nav class="nav" aria-label="أقسام الصفحة" data-en-label="Page sections">
-    <a href="#services" data-en="Services">الخدمات</a>
-    <a href="#before-after" data-en="Before &amp; after">قبل وبعد</a>
-    <a href="#prices" data-en="Prices">الأسعار</a>
-    <a href="#faq" data-en="FAQ">أسئلة</a>
-  </nav>
-</header>
-
-<main id="main" tabindex="-1">
-  <section class="hero">
-    <h1 data-en="A smile you are not shy of">ابتسامة مش هتتكسف منها</h1>
-    <p data-en="Cleaning, whitening, fillings and braces. Same-week appointments.">تنضيف وتبييض وحشو وتقويم، ومواعيد في نفس الأسبوع.</p>
-    <a class="btn" href="#prices" data-en="See prices">شوف الأسعار</a>
-  </section>
-
-  <section class="section" aria-labelledby="services">
-    <h2 id="services" data-en="Services">الخدمات</h2>
-    <ul class="cards">
-      <li class="card"><h3 data-en="Cleaning">تنضيف</h3><p data-en="Scaling and polishing in one 40-minute visit.">إزالة الجير وتلميع في زيارة واحدة ٤٠ دقيقة.</p></li>
-      <li class="card"><h3 data-en="Whitening">تبييض</h3><p data-en="Two to four shades lighter, checked with a colour guide.">من درجتين لأربعة أفتح، بنقيسها بدليل ألوان.</p></li>
-      <li class="card"><h3 data-en="Fillings">حشو</h3><p data-en="Tooth-coloured fillings that don't show.">حشو بلون السنة مبيبانش.</p></li>
-      <li class="card"><h3 data-en="Braces">تقويم</h3><p data-en="Clear aligners or metal braces, with monthly follow-up.">شفاف أو معدن، ومتابعة كل شهر.</p></li>
-    </ul>
-  </section>
-
-  <section class="section" aria-labelledby="before-after">
-    <h2 id="before-after" data-en="Before &amp; after">قبل وبعد</h2>
-    <!-- the comparison always goes left to right (before on the left), in both languages -->
-    <figure class="compare" dir="ltr" style="--pos: 50%">
-      <div class="compare__pics">
-      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDUwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiM5ZjEyMzkiLz48cmVjdCB4PSIwIiB5PSIxMjAiIHdpZHRoPSI4MDAiIGhlaWdodD0iMjEwIiBmaWxsPSIjNGMwNTE5Ii8+PHJlY3QgeD0iNDAiIHk9IjE0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTgiIGZpbGw9IiNlM2M3NzAiLz48cmVjdCB4PSI0MCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjEzMiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjEzMiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjIyNCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjIyNCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjMxNiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjMxNiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjQwOCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjQwOCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjUwMCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjUwMCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjU5MiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjU5MiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjY4NCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjY4NCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjwvc3ZnPg==" alt="الأسنان قبل التبييض: لونها أصفر" data-en-alt="Teeth before whitening: yellow" width="800" height="450">
-      <img class="compare__after" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDUwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiM5ZjEyMzkiLz48cmVjdCB4PSIwIiB5PSIxMjAiIHdpZHRoPSI4MDAiIGhlaWdodD0iMjEwIiBmaWxsPSIjNGMwNTE5Ii8+PHJlY3QgeD0iNDAiIHk9IjE0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTgiIGZpbGw9IiNmYmZiZjciLz48cmVjdCB4PSI0MCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjEzMiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjEzMiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjIyNCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjIyNCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjMxNiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjMxNiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjQwOCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjQwOCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjUwMCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjUwMCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjU5MiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjU5MiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjY4NCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjY4NCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjwvc3ZnPg==" alt="نفس الأسنان بعد التبييض: لونها أبيض" data-en-alt="The same teeth after whitening: white" width="800" height="450">
-      </div>
-      <figcaption>
-        <label for="pos" data-en="Drag to compare">اسحب عشان تقارن</label>
-        <input id="pos" type="range" min="0" max="100" value="50">
-      </figcaption>
-    </figure>
-  </section>
-
-  <section class="section" aria-labelledby="prices">
-    <h2 id="prices" data-en="Prices">الأسعار</h2>
-    <ul class="cards">
-      <li class="card price"><h3 data-en="Check-up">كشف</h3><p class="price__n" data-en="EGP 300">٣٠٠ ج</p></li>
-      <li class="card price"><h3 data-en="Cleaning">تنضيف</h3><p class="price__n" data-en="EGP 600">٦٠٠ ج</p></li>
-      <li class="card price"><h3 data-en="Whitening">تبييض</h3><p class="price__n" data-en="EGP 2,500">٢٬٥٠٠ ج</p></li>
-    </ul>
-  </section>
-
-  <section class="section" aria-labelledby="faq">
-    <h2 id="faq" data-en="FAQ">أسئلة</h2>
-    <details><summary data-en="Does whitening hurt?">التبييض بيوجع؟</summary><p data-en="Some people feel sensitivity for a day or two. We use a calming gel.">ممكن حساسية يوم أو اتنين، وبنستخدم جل مهدّي.</p></details>
-    <details><summary data-en="Do you work on Fridays?">بتشتغلوا الجمعة؟</summary><p data-en="Yes, from 2 pm to 10 pm.">أيوه، من ٢ الضهر لـ ١٠ بالليل.</p></details>
-    <details><summary data-en="Can I pay in instalments?">ينفع أقسّط؟</summary><p data-en="Braces only, over 6 or 12 months.">التقويم بس، على ٦ أو ١٢ شهر.</p></details>
-  </section>
+<main>
+  <h1>المسودة اتحفظت</h1>
+  <p>تقدر تكمّل الطلب في أي وقت خلال أسبوع.</p>
+  <p><a href="index.html">كمّل الطلب</a></p>
 </main>
-
-<footer class="footer"><p data-en="12 Garden St. · 0100 000 0000">١٢ شارع الجنينة، ٠١٠٠٠٠٠٠٠٠٠</p></footer>
-
-<a class="book" id="book" href="#prices" data-en="Book now">احجز دلوقتي</a>
-<script>
-// ?lang=en switches the page to English before it is drawn (this file runs in <head>, so there is no Arabic flash)
-// every element with data-en has its English text in that attribute; data-en-alt, data-en-label and data-en-href likewise
-if (new URLSearchParams(location.search).get("lang") === "en") {
-  document.documentElement.lang = "en";
-  document.documentElement.dir = "ltr";
-  document.title = "Ebtesama Dental Clinic";
-  document.addEventListener("DOMContentLoaded", () => {
-    for (const el of document.querySelectorAll("[data-en]")) el.textContent = el.dataset.en;
-    for (const el of document.querySelectorAll("[data-en-alt]")) el.alt = el.dataset.enAlt;
-    for (const el of document.querySelectorAll("[data-en-label]")) el.setAttribute("aria-label", el.dataset.enLabel);
-    for (const el of document.querySelectorAll("[data-en-href]")) el.setAttribute("href", el.dataset.enHref);
-    for (const el of document.querySelectorAll("[data-en-lang]")) el.lang = el.dataset.enLang;
-  });
-}
-</script>
-<script>
-// 1. the header's real height goes into --header-h (it gets taller when the links wrap on a small screen),
-//    and the headings use it in scroll-margin-top, so a jump never hides a heading under the header
-const header = document.getElementById("header");
-const setHeaderH = () => document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
-// once right away, before the first jump: a ResizeObserver only reports at the next frame, and a link opened
-// as page.html#prices jumps before that. DOMContentLoaded, because lang.js swaps the English text then (its listener is first)
-document.addEventListener("DOMContentLoaded", setHeaderH);
-new ResizeObserver(setHeaderH).observe(header);   // and again whenever the header changes height (links wrap, font size)
-
-// 2. before / after: the range moves --pos, the CSS clips the "after" picture at that point
-const compare = document.querySelector(".compare");
-const range = document.getElementById("pos");
-range.addEventListener("input", () => compare.style.setProperty("--pos", range.value + "%"));
-
-// 3. the floating button hides while the prices are on screen (the booking info is right there)
-const book = document.getElementById("book");
-new IntersectionObserver(([entry]) => {
-  book.classList.toggle("is-hidden", entry.isIntersecting);
-}).observe(document.getElementById("prices").closest("section"));
-</script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** هيدر أبيض شبه شفاف فيه اسم العيادة واللوجو وزرار EN والروابط، والكلام اللي بيعدّي تحته بيبان مموّه. بعده عنوان كبير، و ٤ كروت خدمات، وصورة قبل وبعد عليها خط أبيض بتحركه بشريط تحتها، و ٣ أسعار، و ٣ أسئلة بتتفتح، وزرار برتقاني «احجز دلوقتي» عايم تحت بيختفي لما توصل للأسعار.
-
-**ترتيب البناء:** (١) الـ HTML بالعربي والأقسام بـ id. (٢) الهيدر sticky والـ scroll-margin. (٣) الأقسام والكروت بـ grid. (٤) السلايدر. (٥) زرار الحجز. (٦) الإنجليزي. (٧) [[matrix.js]] وصلّح اللي يطلع.
-
-**الهيدر الزجاجي:** [[background: #ffffffcc]] (أبيض 80%) و [[backdrop-filter: blur(10px)]]: بيموّه اللي وراه. خلي بالك: [[backdrop-filter]] بيخلي العنصر «مرجع» لأي ابن [[position: fixed]]، فأي حاجة fixed جوه الهيدر هتتقاس منه مش من الشاشة. عشان كده زرار الحجز برّه الهيدر.
-
-**الهيدر على الموبايل:** اسم العيادة و EN في سطر، والروابط في سطر تاني ([[.nav { flex-basis: 100% }]]). على 56rem وأكبر كله سطر واحد، و [[order: 1]] بيودّي EN للآخر. أول نسخة كان EN جوه الروابط، فعلى 320 الهيدر بقى ٣ سطور (138px، خُمس الشاشة).
-
-**طول الهيدر بيتغيّر، فالـ scroll-margin لازم يتغيّر معاه:** [[page.js]] بيكتب طوله الحقيقي في [[--header-h]]، والعناوين [[scroll-margin-top: calc(var(--header-h) + 1rem)]].
-
-**الغلطة اللي [[matrix.js]] مسكها:** أول نسخة كانت بتكتب الطول بـ [[ResizeObserver]] بس. المصفوفة قالت [[BROKEN]] على عرضين (ar-320 و en-414): أول عنوان طلع تحت الهيدر ([[#services 80<139]]). السبب إن [[ResizeObserver]] بيبلّغ في الفريم الجاي، وأول قفزة حصلت قبله والقيمة لسه الافتراضية (4rem = 64). ولو حد فتح [[index.html#prices]] كان هيحصل نفس الكلام. التصليح: قياس مرة على طول في [[DOMContentLoaded]]، والـ observer بعدها للتغييرات.
-
-**السلايدر:** الصورتين في نفس الخانة ([[grid-area: 1 / 1]])، و «بعد» عليها [[clip-path: inset(0 0 0 var(--pos))]]: بتتقص من الشمال لحد [[--pos]]. الـ range بيغيّر [[--pos]]، والخط الأبيض [[::after]] على نفس [[--pos]]. والسلايدر [[dir="ltr"]] في اللغتين: المقارنة صورة، و «قبل» على الشمال في أي لغة.
-
-**زرار الحجز:** [[IntersectionObserver]] بيقول إمتى قسم الأسعار على الشاشة، والزرار بياخد [[is-hidden]]: شفاف و [[visibility: hidden]] (عشان الكيبورد ميوصلوش وهو مش باين).
-
-**الإنجليزي:** [[lang.js]] في الـ head (من غير defer) بيقلب [[lang]] و [[dir]] قبل ما الصفحة تترسم، فمفيش ومضة عربي. والكلام بيتبدّل من [[data-en]] في [[DOMContentLoaded]].
-
-~~~text node matrix.js (مرتين ورا بعض، نفس الناتج)
-ar  320 scrollWidth=320 OK
-ar  360 scrollWidth=360 OK
-... (كل العروض)
-ar 1920 scrollWidth=1920 OK
-en  320 scrollWidth=320 OK
-... (كل العروض)
-en 1920 scrollWidth=1920 OK
-slider after → ×3: 53% OK
-all sizes OK
-(exit code 0)
-
-قبل تصليح DOMContentLoaded:
-ar  320 scrollWidth=320 BROKEN   hidden: #services 80<139
-en  414 scrollWidth=414 BROKEN   hidden: #services 80<99
-broken: ar-320 en-414   (exit code 1)
+~~~view 197 215 الجزء الجديد من الفورم (الإرسال هنا بيتكتب تحت)
+<form action="thanks.html" onsubmit="event.preventDefault(); sent.value = (event.submitter.getAttribute('formaction') || this.getAttribute('action')) + ' ← ' + Array.from(new FormData(this, event.submitter), p => p[0] + '=' + (p[1].name === undefined ? p[1] : 'ملف «' + p[1].name + '»')).join(' & ')">
+  <p><label for="photo">صورة شخصية (JPG أو PNG، أقصى حجم ٢ ميجا)</label><br>
+  <input id="photo" name="photo" type="file" accept="image/jpeg, image/png" required></p>
+  <p><label for="docs">صور البطاقة: الوش والضهر (صور أو PDF، أقصى حجم ٥ ميجا للملف)</label><br>
+  <input id="docs" name="docs" type="file" accept="image/*, .pdf" multiple></p>
+  <button type="submit" name="act" value="send">اشترك</button>
+  <button type="submit" name="act" value="draft" formaction="draft.html" formnovalidate>احفظ كمسودة</button>
+  <button type="button">إلغاء</button>
+</form>
+<p>الطلب: <output id="sent">(لسه)</output></p>
 ~~~
 
-~~~text قياسات تانية (Chrome 157)
-فتح index.html#prices على موبايل 320: العنوان top = 154، والهيدر بيخلص 138
-زرار الحجز: ظاهر فوق، ومستخبي عند الأسعار (visibility: hidden)، بالعربي (على الشمال) والإنجليزي (على اليمين)
-الهيدر: rgba(255, 255, 255, 0.8) و blur(10px)
-عنصر fixed; bottom: 0 حطيته جوه الهيدر للتجربة: آخره 56 (آخر الهيدر) مش 800 (آخر الشاشة). من غير backdrop-filter: 800
-axe بالعربي والإنجليزي: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
+(سطر المعاينة هنا متغيّر شوية عشان يكتب العنوان اللي الزرار كان هيبعتله، ويكتب اسم كل ملف بدل محتواه.)
 
-**تشغيله:** في فولدر المشروع [[npm i -D playwright-core@1.64.1]]، وسيرفر على 8931 ([[python -m http.server 8931]])، وبعدين [[node matrix.js]] في ترمنال تاني. شرح السكربت سطر سطر في درس «مصفوفة مقاسات».` },
-        { lvl: 'فكرة', dir: "rescue-page", t: R`صفحة إنقاذ: ٦ أعطال responsive`, what: R`اعمل صفحة فيها ٦ أعطال مقصودة: [[html, body { overflow-x: hidden }]] بيموّت الـ sticky، وعنصر مايل [[width: 106%]]، وأيقونة [[left]] في rtl، وقايمة [[z-index: 9999]] مستخبية، و meta viewport ناقص، وهيدر لازق فوق بيغطي العنوان لما تدوس على لينك. وبعدين صلّحهم واحد واحد.`, done: R`لكل عطل: سطر «العَرَض / إزاي لقيته / التصليح / إزاي اتأكدت» برقم متقاس (scrollWidth أو top أو elementFromPoint)، والمصفوفة بعد التصليح كلها OK.`, ext: R`ابعت الصفحة البايظة لزميل يحلّها وانت تراجع تشخيصه، وحوّل الفحص لسكربت CI بيفشل لو أي عطل رجع.`, sol: R`المثال اللي عملته: «نشرة الحي»، صفحة أخبار حي متخيل. ملف HTML واحد بنسختين ([[broken.html]] من غير meta viewport وبيقرا [[broken.css]]، و [[index.html]] بيقرا [[style.css]])، وجدول [[FIXES.md]].
+**هتشوف إيه:**
+
+- «اشترك» من غير صورة شخصية: رسالة «Please select a file.» عند الحقل.
+- «احفظ كمسودة» والحقول فاضية: [[draft.html ← photo=ملف «» & docs=ملف «» & act=draft]]. الحقلين اتبعتوا فاضيين، والفحص معدّاش عليهم.
+- «إلغاء»: ولا حاجة.
+
+**ليه كده:**
+
+- [[enctype="multipart/form-data"]] على الفورم: من غيره أسامي الملفات بس اللي هتتبعت. وهو على الفورم مش على زرار، فالمسودة كمان بتبعت الملفات المختارة.
+- حقلين مش حقل واحد [[multiple]]: الصورة الشخصية حاجة والبطاقة حاجة، والسيرفر بيفرّق بالاسم.
+- «اشترك» أول زرار في الكود: هو اللي Enter بيدوس عليه.
+- «احفظ كمسودة» عليه [[formnovalidate]]: اللي بيحفظ مسودة لسه مخلّصش، فمينفعش نطلب منه كل الإجباري.
+- «إلغاء» [[type="button"]]: من غيرها كان هيبعت الفورم.
+
+**الغلطة الشائعة:** [[formenctype]] على زرار «اشترك» بس «عشان هو اللي بيرفع». المسودة ساعتها هتبعت أسامي الملفات من غير محتواها، والعضو هيفتكر صوره اتحفظت.
+
+~~~text القياس من Chrome (الطلبات اللي وصلت السيرفر المحلي)
+«احفظ كمسودة» والفورم فاضي:
+POST /draft.html
+content-type: multipart/form-data; boundary=----WebKitFormBoundary...
+(كل الحقول في أجزاء، وآخر جزء: name="act" وقيمته draft)
+
+«اشترك» من غير صورة شخصية:   ولا طلب
+«إلغاء»:                      ولا طلب
+~~~` },
+        { lvl: 'متوسط', dir: "club-join", cont: true, t: R`الفورم على ٣ خطوات، وشريط «الخطوة ٢ من ٣»`, what: R`الفورم بقى طويل (١١ حقل). قسّمه على تلات صفحات، وفي أول كل صفحة [[<progress>]] و label بيقولوا الزائر في أنهي خطوة. [[step1.html]] «بياناتك» (الاسم والموبايل والمدينة)، و [[step2.html]] «اللعبة والمواعيد» (اللعبة والمستوى والميعاد وشهر البداية)، و [[step3.html]] «المستندات» (الملفات والـ checkbox). كل صفحة فورم لوحده بيبعت للي بعدها، والأخيرة لـ [[thanks.html]]. وفي الخطوة ٢ و ٣ زرار «رجوع» بيرجّع للصفحة اللي قبلها **من غير فحص**. و [[index.html]] تبقى صفحة قصيّرة فيها لينك «ابدأ الاشتراك». الحقول نفسها من المشروعين اللي فاتوا: انقلها زي ما هي. من درس «progress و meter»، وزرار الرجوع من «أزرار الفورم: formaction وإخواته».`, done: R`كل صفحة فيها شريط قيمته رقم الخطوة من ٣، و label فيه «الخطوة كذا من ٣» واسمها. و «التالي» بيفحص حقول صفحته بس. و «رجوع» بيرجّع حتى لو الصفحة فيها إجباري فاضي. و «التالي» هو أول زرار في الكود في كل صفحة.`, sol: R`**ترتيب الشغل:** انسخ [[index.html]] القديم تلات مرات بأسامي [[step1.html]] و [[step2.html]] و [[step3.html]]، وامسح من كل نسخة الحقول اللي مش بتاعتها، وزوّد الشريط والأزرار. وبعدين قصّر [[index.html]].
 
 ~~~html index.html
 <!doctype html>
@@ -1898,2549 +348,4304 @@ axe بالعربي والإنجليزي: 0 violations   الـ validator: مفي
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>نشرة الحي</title>
-<link rel="stylesheet" href="style.css">
+<title>نادي الموج</title>
 </head>
 <body>
-<header class="header">
-  <a class="header__name" href="#top">نشرة الحي</a>
-  <details class="menu">
-    <summary>الأقسام</summary>
-    <ul class="menu__list">
-      <li><a href="#news">أخبار</a></li>
-      <li><a href="#events">فعاليات</a></li>
-      <li><a href="#ads">إعلانات</a></li>
-    </ul>
-  </details>
+<header>
+  <p><strong>نادي الموج</strong></p>
 </header>
-
-<main id="top">
-  <section class="hero">
-    <h1>كل اللي بيحصل في الحي، في صفحة واحدة</h1>
-    <form class="search" role="search" action="#news">
-      <label class="visually-hidden" for="q">دوّر في النشرة</label>
-      <span class="search__icon" aria-hidden="true">⌕</span>
-      <input class="search__input" id="q" name="q" type="search" placeholder="دوّر في النشرة">
-    </form>
-  </section>
-  <div class="stripe-wrap"><p class="stripe">عدد جديد كل خميس</p></div>
-  <section class="content">
-    <h2 id="news">أخبار</h2>
-    <p>المكتبة العامة هتفتح يوم السبت كمان من الشهر الجاي.</p>
-    <h2 id="events">فعاليات</h2>
-    <p>دوري كورة للأطفال في الساحة، كل جمعة الساعة ٥.</p>
-    <h2 id="ads">إعلانات</h2>
-    <p>شقة للإيجار في العمارة ٧، الدور التالت.</p>
-    <div class="filler" aria-hidden="true"></div>
-  </section>
+<main>
+  <h1>اشترك في نادي الموج</h1>
+  <p>الاشتراك ٣ خطوات: بياناتك، واللعبة والمواعيد، والمستندات. جهّز صورة شخصية وصورة البطاقة.</p>
+  <p><a href="step1.html">ابدأ الاشتراك</a></p>
 </main>
 </body>
 </html>
 ~~~
 
-~~~css broken.css
-*, *::before, *::after { box-sizing: border-box; }
-/* عطل ١: hides the sideways scroll... and kills position: sticky (body becomes the scroll box) */
-html, body { overflow-x: hidden; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* the header stays on top while you scroll */
-.header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; padding-inline: 1rem; background: #7c2d12; color: #fff; }
-.header__name { color: inherit; font-weight: 800; text-decoration: none; }
-.menu { position: relative; }
-.menu summary { cursor: pointer; font-weight: 700; }
-/* عطل ٤: a huge number that does nothing: the header's layer is 1, the hero's is 2 */
-.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: 9999; min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
-.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
-
-.hero { position: relative; z-index: 2; padding: 2rem 1rem 3rem; background: #fed7aa; }
-.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
-
-/* عطل ٣: the icon on the LEFT, in a right-to-left page: it sits on the end of the text */
-.search { position: relative; max-width: 28rem; }
-.search__icon { position: absolute; left: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
-.search__input { width: 100%; padding: 0.7rem 2.5rem 0.7rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
-
-/* عطل ٢: a tilted band, 6% wider than the page */
-.stripe-wrap { padding-block: 1.5rem; }
-.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
-
-.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
-/* عطل ٦: nothing tells a jump about the header, so the heading lands under it */
-.filler { height: 120vh; }
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  --header-h: 3.5rem;
-  --z-header: 10;    /* the header (and its menu) above everything in the page */
-  --z-menu: 1;       /* inside the header: only has to beat the header's own content */
-}
-/* تصليح ١: no overflow on html/body. The band that stuck out is clipped where it lives (تصليح ٢) */
-/* تصليح ٦: every jump stops below the header */
-html { scroll-padding-top: calc(var(--header-h) + 1rem); }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-.header { position: sticky; top: 0; z-index: var(--z-header); display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: 1rem; background: #7c2d12; color: #fff; }
-.header__name { color: inherit; font-weight: 800; text-decoration: none; }
-.menu { position: relative; }
-.menu summary { cursor: pointer; font-weight: 700; }
-/* تصليح ٤: a small number from a token; it was the header that needed to be higher, not the list */
-.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: var(--z-menu); min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
-.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
-a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-
-.hero { padding: 2rem 1rem 3rem; background: #fed7aa; }   /* no z-index: it never needed one */
-.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
-
-/* تصليح ٣: the start side, whatever the language */
-.search { position: relative; max-width: 28rem; }
-.search__icon { position: absolute; inset-inline-start: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
-.search__input { width: 100%; padding-block: 0.7rem; padding-inline: 2.5rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
-
-/* تصليح ٢: the band is clipped by its own wrapper. clip, not hidden: hidden would make the wrapper a scroll box */
-.stripe-wrap { padding-block: 1.5rem; overflow-x: clip; }
-.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
-
-.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
-.filler { height: 120vh; }
-~~~
-
-[[broken.html]] هو نفس [[index.html]] من غير سطر [[<meta name="viewport">]]، و [[href="broken.css"]] بدل [[style.css]].
-
-~~~view 560 600 الشكل النهائي
+~~~html step1.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>نشرة الحي</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  --header-h: 3.5rem;
-  --z-header: 10;    /* the header (and its menu) above everything in the page */
-  --z-menu: 1;       /* inside the header: only has to beat the header's own content */
-}
-/* تصليح ١: no overflow on html/body. The band that stuck out is clipped where it lives (تصليح ٢) */
-/* تصليح ٦: every jump stops below the header */
-html { scroll-padding-top: calc(var(--header-h) + 1rem); }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-.header { position: sticky; top: 0; z-index: var(--z-header); display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: 1rem; background: #7c2d12; color: #fff; }
-.header__name { color: inherit; font-weight: 800; text-decoration: none; }
-.menu { position: relative; }
-.menu summary { cursor: pointer; font-weight: 700; }
-/* تصليح ٤: a small number from a token; it was the header that needed to be higher, not the list */
-.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: var(--z-menu); min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
-.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
-a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-
-.hero { padding: 2rem 1rem 3rem; background: #fed7aa; }   /* no z-index: it never needed one */
-.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
-
-/* تصليح ٣: the start side, whatever the language */
-.search { position: relative; max-width: 28rem; }
-.search__icon { position: absolute; inset-inline-start: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
-.search__input { width: 100%; padding-block: 0.7rem; padding-inline: 2.5rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
-
-/* تصليح ٢: the band is clipped by its own wrapper. clip, not hidden: hidden would make the wrapper a scroll box */
-.stripe-wrap { padding-block: 1.5rem; overflow-x: clip; }
-.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
-
-.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
-.filler { height: 120vh; }
-</style>
+<title>الخطوة ١ من ٣: بياناتك | نادي الموج</title>
 </head>
 <body>
-<header class="header">
-  <a class="header__name" href="#top">نشرة الحي</a>
-  <details class="menu">
-    <summary>الأقسام</summary>
-    <ul class="menu__list">
-      <li><a href="#news">أخبار</a></li>
-      <li><a href="#events">فعاليات</a></li>
-      <li><a href="#ads">إعلانات</a></li>
-    </ul>
-  </details>
-</header>
-
-<main id="top">
-  <section class="hero">
-    <h1>كل اللي بيحصل في الحي، في صفحة واحدة</h1>
-    <form class="search" role="search" action="#news">
-      <label class="visually-hidden" for="q">دوّر في النشرة</label>
-      <span class="search__icon" aria-hidden="true">⌕</span>
-      <input class="search__input" id="q" name="q" type="search" placeholder="دوّر في النشرة">
-    </form>
-  </section>
-  <div class="stripe-wrap"><p class="stripe">عدد جديد كل خميس</p></div>
-  <section class="content">
-    <h2 id="news">أخبار</h2>
-    <p>المكتبة العامة هتفتح يوم السبت كمان من الشهر الجاي.</p>
-    <h2 id="events">فعاليات</h2>
-    <p>دوري كورة للأطفال في الساحة، كل جمعة الساعة ٥.</p>
-    <h2 id="ads">إعلانات</h2>
-    <p>شقة للإيجار في العمارة ٧، الدور التالت.</p>
-    <div class="filler" aria-hidden="true"></div>
-  </section>
+<main>
+  <h1>اشتراك عضو جديد</h1>
+  <p><label for="step">الخطوة ١ من ٣: بياناتك</label><br>
+  <progress id="step" value="1" max="3">١ من ٣</progress></p>
+  <form action="step2.html" method="post">
+    <input type="hidden" name="plan" value="basic">
+    <p><label for="name">الاسم بالكامل</label><br>
+    <input id="name" name="name" autocomplete="name" required></p>
+    <p><label for="phone">الموبايل</label><br>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" required></p>
+    <p><label for="city">المدينة</label><br>
+    <input id="city" name="city" list="cities" autocomplete="address-level2">
+    <datalist id="cities">
+      <option value="طنطا"></option>
+      <option value="المنصورة"></option>
+      <option value="أسوان"></option>
+    </datalist></p>
+    <button type="submit">التالي</button>
+  </form>
 </main>
 </body>
 </html>
 ~~~
 
-~~~view 560 600 النسخة البايظة (افتح «الأقسام»، وانزل، وجرّب العرض)
+~~~html step2.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>نشرة الحي (النسخة البايظة)</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-/* عطل ١: hides the sideways scroll... and kills position: sticky (body becomes the scroll box) */
-html, body { overflow-x: hidden; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* the header stays on top while you scroll */
-.header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; padding-inline: 1rem; background: #7c2d12; color: #fff; }
-.header__name { color: inherit; font-weight: 800; text-decoration: none; }
-.menu { position: relative; }
-.menu summary { cursor: pointer; font-weight: 700; }
-/* عطل ٤: a huge number that does nothing: the header's layer is 1, the hero's is 2 */
-.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: 9999; min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
-.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
-
-.hero { position: relative; z-index: 2; padding: 2rem 1rem 3rem; background: #fed7aa; }
-.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
-
-/* عطل ٣: the icon on the LEFT, in a right-to-left page: it sits on the end of the text */
-.search { position: relative; max-width: 28rem; }
-.search__icon { position: absolute; left: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
-.search__input { width: 100%; padding: 0.7rem 2.5rem 0.7rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
-
-/* عطل ٢: a tilted band, 6% wider than the page */
-.stripe-wrap { padding-block: 1.5rem; }
-.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
-
-.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
-/* عطل ٦: nothing tells a jump about the header, so the heading lands under it */
-.filler { height: 120vh; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخطوة ٢ من ٣: اللعبة والمواعيد | نادي الموج</title>
 </head>
 <body>
-<header class="header">
-  <a class="header__name" href="#top">نشرة الحي</a>
-  <details class="menu">
-    <summary>الأقسام</summary>
-    <ul class="menu__list">
-      <li><a href="#news">أخبار</a></li>
-      <li><a href="#events">فعاليات</a></li>
-      <li><a href="#ads">إعلانات</a></li>
-    </ul>
-  </details>
-</header>
-
-<main id="top">
-  <section class="hero">
-    <h1>كل اللي بيحصل في الحي، في صفحة واحدة</h1>
-    <form class="search" role="search" action="#news">
-      <label class="visually-hidden" for="q">دوّر في النشرة</label>
-      <span class="search__icon" aria-hidden="true">⌕</span>
-      <input class="search__input" id="q" name="q" type="search" placeholder="دوّر في النشرة">
-    </form>
-  </section>
-  <div class="stripe-wrap"><p class="stripe">عدد جديد كل خميس</p></div>
-  <section class="content">
-    <h2 id="news">أخبار</h2>
-    <p>المكتبة العامة هتفتح يوم السبت كمان من الشهر الجاي.</p>
-    <h2 id="events">فعاليات</h2>
-    <p>دوري كورة للأطفال في الساحة، كل جمعة الساعة ٥.</p>
-    <h2 id="ads">إعلانات</h2>
-    <p>شقة للإيجار في العمارة ٧، الدور التالت.</p>
-    <div class="filler" aria-hidden="true"></div>
-  </section>
+<main>
+  <h1>اشتراك عضو جديد</h1>
+  <p><label for="step">الخطوة ٢ من ٣: اللعبة والمواعيد</label><br>
+  <progress id="step" value="2" max="3">٢ من ٣</progress></p>
+  <form action="step3.html" method="post" oninput="shown.value = level.value">
+    <p><label for="sport">اللعبة</label><br>
+    <select id="sport" name="sport">
+      <optgroup label="ألعاب مية">
+        <option value="swim" selected>سباحة</option>
+        <option value="polo">كرة ماء</option>
+      </optgroup>
+      <optgroup label="ألعاب صالة">
+        <option value="basket">سلة</option>
+        <option value="judo">جودو</option>
+      </optgroup>
+    </select></p>
+    <p><label for="level">مستواك (١ مبتدئ، ٥ محترف)</label><br>
+    <input id="level" name="level" type="range" min="1" max="5" value="3">
+    <output id="shown" for="level">3</output></p>
+    <p><label for="time">ميعاد التمرين المفضّل (من ٩ ص لـ ١٠ م)</label><br>
+    <input id="time" name="time" type="time" min="09:00" max="22:00" step="1800" required></p>
+    <p><label for="start">شهر بداية الاشتراك</label><br>
+    <input id="start" name="start" type="month"></p>
+    <button type="submit">التالي</button>
+    <button type="submit" formaction="step1.html" formnovalidate>رجوع</button>
+  </form>
 </main>
 </body>
 </html>
 ~~~
 
-~~~text FIXES.md
-# نشرة الحي: ٦ أعطال وتصليحها
-
-الأرقام من Chrome على عرض 360 (الـ iframe فيه scrollbar، فالعرض المتاح 345). $__btbroken.html$__bt قبل، و $__btindex.html$__bt بعد.
-
-| # | العَرَض | إزاي لقيته | التصليح | إزاي اتأكدت |
-|---|---|---|---|---|
-| ١ | الهيدر بيمشي مع الصفحة رغم $__btsticky$__bt | بعد scroll 500: $__btheader.getBoundingClientRect().top$__bt = -500 | شلت $__btoverflow-x: hidden$__bt من $__bthtml, body$__bt | بعد scroll 500: top = 0 |
-| ٢ | شريط «عدد جديد» أعرض من الشاشة | العطل ١ كان مخبّيه (345 = 345). بعد ما شلت ١: $__btscrollWidth$__bt = 356 والعرض 345 | $__btoverflow-x: clip$__bt على $__bt.stripe-wrap$__bt بس | $__btscrollWidth$__bt = 345 |
-| ٣ | أيقونة البحث على الشمال فوق آخر الكلام | الأيقونة على بعد 12 من شمال الخانة، والـ padding الفاضي على اليمين | $__btinset-inline-start$__bt و $__btpadding-inline$__bt | الأيقونة على بعد 12 من يمين الخانة (بداية الكلام) |
-| ٤ | القايمة بتفتح ومحدش شايفها | $__btelementFromPoint$__bt فوق أول لينك فيها = $__btSECTION.hero$__bt | $__btz-index$__bt للهيدر من توكن (10)، وشلت $__btz-index: 2$__bt من الهيرو و 9999 من القايمة | $__btelementFromPoint$__bt = $__btA$__bt |
-| ٥ | الصفحة صغيرة جدًا على الموبايل | موبايل 360 (DevTools): $__btinnerWidth$__bt = 980، والصفحة متصغّرة لـ 0.367، والعنوان 15.3px على الشاشة | $__bt<meta name="viewport" content="width=device-width, initial-scale=1">$__bt | $__btinnerWidth$__bt = 360، و scale = 1، والعنوان 26.8px |
-| ٦ | لينك «فعاليات» بيودّي العنوان تحت الهيدر | بعد تصليح ١: العنوان top = 0 والهيدر لحد 56 | $__btscroll-padding-top$__bt على $__bthtml$__bt | العنوان top = 72 (تحت الهيدر بـ 16) |
-
-**الترتيب مهم:** العطل ١ كان مخبّي ٢ و ٦. الـ $__btoverflow-x: hidden$__bt بيخفي الـ scroll الأفقي، فمكنتش شايف إن فيه حاجة طالعة برّه. والهيدر ما كانش بيلزق أصلًا، فمكنش بيغطّي حاجة. اقفل العطل اللي بيخبّي غيره الأول، وبعدين قيس تاني.
-
-axe على النسخة المصلّحة: 0 violations.
+~~~html step3.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخطوة ٣ من ٣: المستندات | نادي الموج</title>
+</head>
+<body>
+<main>
+  <h1>اشتراك عضو جديد</h1>
+  <p><label for="step">الخطوة ٣ من ٣: المستندات</label><br>
+  <progress id="step" value="3" max="3">٣ من ٣</progress></p>
+  <form action="thanks.html" method="post" enctype="multipart/form-data">
+    <p><label for="photo">صورة شخصية (JPG أو PNG، أقصى حجم ٢ ميجا)</label><br>
+    <input id="photo" name="photo" type="file" accept="image/jpeg, image/png" required></p>
+    <p><label for="docs">صور البطاقة: الوش والضهر (صور أو PDF، أقصى حجم ٥ ميجا للملف)</label><br>
+    <input id="docs" name="docs" type="file" accept="image/*, .pdf" multiple></p>
+    <p><input id="news" name="news" type="checkbox" checked>
+    <label for="news">ابعتولي مواعيد البطولات</label></p>
+    <button type="submit" name="act" value="send">اشترك</button>
+    <button type="submit" formaction="step2.html" formnovalidate>رجوع</button>
+  </form>
+</main>
+</body>
+</html>
 ~~~
 
-**هتشوف إيه:** النسخة المصلّحة: هيدر بني بيفضل فوق، و «الأقسام» بتفتح قايمة بيضا فوق الهيرو، وخانة بحث الأيقونة على يمينها، وشريط مايل «عدد جديد كل خميس» مبيعملش scroll أفقي. والبايظة: الهيدر بيمشي مع الصفحة، والقايمة بتفتح ورا الهيرو، والأيقونة على الشمال.
-
-**ليه [[overflow-x: hidden]] على [[body]] بيموّت الـ sticky:** لما [[html]] و [[body]] الاتنين عليهم overflow، الـ body بيبقى «صندوق scroll» لوحده. الـ sticky بيلزق في أقرب صندوق scroll، يعني الـ body. والـ body نفسه مبيتحركش (الصفحة هي اللي بتتحرك)، فالهيدر بيمشي مع الصفحة. اتقاس: بعد scroll 500 الهيدر top = -500.
-
-**ليه [[clip]] مش [[hidden]] في التصليح ٢:** الاتنين بيقصوا اللي طالع برّه. بس [[hidden]] بيخلي العنصر صندوق scroll (نفس المشكلة اللي فوق لو فيه sticky جواه)، و [[clip]] بيقص وبس.
-
-**ليه 9999 مكانش بيعمل حاجة:** الهيدر [[z-index: 1]] والهيرو [[z-index: 2]]. القايمة جوه الهيدر، فالـ 9999 بتاعها بيتحسب جوه طبقة الهيدر بس، والهيدر كله تحت الهيرو. الحل إن الهيدر نفسه يعلى، والقايمة تاخد رقم صغير.
-
-**القاعدة اللي طلعت من المشروع:** عطل بيخبّي غيره. [[overflow-x: hidden]] كان مخبّي الشريط العريض (الـ scroll الأفقي مش باين)، والهيدر اللي مبيلزقش كان مخبّي إنه بيغطي العناوين. اقفل اللي بيخبّي الأول، وقيس تاني.
-
-~~~text الناتج (Chrome 157، 360)
-                                         broken.html          index.html
-١ الهيدر بعد scroll 500 (top)             -500                 0
-٢ scrollWidth / clientWidth               345 / 345 (مخبّي)    345 / 345
-  البايظة من غير عطل ١                    356 / 345
-٣ الأيقونة من حافة الخانة                  12 من الشمال         12 من اليمين
-٤ elementFromPoint فوق لينك القايمة        SECTION.hero         A
-٥ موبايل 360 (DevTools): innerWidth        980 (scale 0.367)    360 (scale 1)
-  العنوان على الشاشة                      15.3px               26.8px
-٦ «فعاليات» بعد القفزة (البايظة بعد ١)    top 0، الهيدر لحد 56   top 72
-axe على المصلّحة: 0 violations   الـ validator: مفيش رسايل (النسختين)   CSS validator: No Error Found (الملفين)
+~~~view 425 شكل step2.html (الأزرار هنا بتكتب تحت بدل ما تتنقّل)
+<main>
+  <h1>اشتراك عضو جديد</h1>
+  <p><label for="step">الخطوة ٢ من ٣: اللعبة والمواعيد</label><br>
+  <progress id="step" value="2" max="3">٢ من ٣</progress></p>
+  <form action="step3.html" oninput="shown.value = level.value" onsubmit="event.preventDefault(); sent.value = 'هيفتح ' + (event.submitter.getAttribute('formaction') || this.getAttribute('action'))">
+    <p><label for="sport">اللعبة</label><br>
+    <select id="sport" name="sport">
+      <optgroup label="ألعاب مية">
+        <option value="swim" selected>سباحة</option>
+        <option value="polo">كرة ماء</option>
+      </optgroup>
+      <optgroup label="ألعاب صالة">
+        <option value="basket">سلة</option>
+        <option value="judo">جودو</option>
+      </optgroup>
+    </select></p>
+    <p><label for="level">مستواك (١ مبتدئ، ٥ محترف)</label><br>
+    <input id="level" name="level" type="range" min="1" max="5" value="3">
+    <output id="shown" for="level">3</output></p>
+    <p><label for="time">ميعاد التمرين المفضّل (من ٩ ص لـ ١٠ م)</label><br>
+    <input id="time" name="time" type="time" min="09:00" max="22:00" step="1800" required></p>
+    <p><label for="start">شهر بداية الاشتراك</label><br>
+    <input id="start" name="start" type="month"></p>
+    <button type="submit">التالي</button>
+    <button type="submit" formaction="step1.html" formnovalidate>رجوع</button>
+  </form>
+  <p><output id="sent">(دوس زرار)</output></p>
+</main>
 ~~~
 
-**العطل ٥ مبيظهرش جوه iframe ولا في شباك عادي:** الـ meta viewport بيأثّر على الموبايل بس. جرّبه في DevTools بـ Device toolbar (موبايل)، أو على موبايلك.` },
+**هتشوف إيه:**
+
+- شريط مليان تلتينه، وفوقه «الخطوة ٢ من ٣: اللعبة والمواعيد».
+- «التالي» والميعاد فاضي: رسالة المتصفح عند الميعاد (بقى [[required]] في النسخة دي).
+- «رجوع» والميعاد فاضي: «هيفتح step1.html». عدّى من غير فحص.
+
+**ليه كده:**
+
+- الشريط قيمته ثابتة في كل ملف (١ و ٢ و ٣): مفيش JavaScript. و [[max="3"]] في التلاتة.
+- الرقم مكتوب في الـ label وفي [[<title>]]: الشريط لوحده مبيقولش «٢ من ٣»، وعنوان التاب بيفرق مع اللي فاتح كذا تاب.
+- [[enctype]] في الخطوة ٣ بس: هي الوحيدة اللي فيها ملفات.
+- «رجوع» زرار إرسال بـ [[formaction]] و [[formnovalidate]]، مش لينك: في موقع حقيقي السيرفر بيحفظ اللي اتكتب في الصفحة قبل ما يرجّع. و «التالي» قبله في الكود عشان Enter.
+- الحقل المخفي [[plan]] في الخطوة ١ بس.
+
+**اللي ناقص ومش من شغل الـ HTML:** البيانات مبتتنقلش من صفحة للي بعدها. كل صفحة بتبعت حقولها وبس، وصفحة ثابتة مبتحفظش حاجة. في موقع حقيقي السيرفر بيحفظ كل خطوة عنده (أو بيرجّعها في حقول hidden في الصفحة الجاية). الهيكل اللي بنيته هو نفسه اللي السيرفر هيشتغل عليه.
+
+**الغلطة الشائعة:** «رجوع» من غير [[formnovalidate]]. الزائر اللي عايز يرجع يصلّح اسمه هيتحبس لحد ما يملا الصفحة الحالية.
+
+~~~text القياس من Chrome
+step1:  progress.position = 0.333…     step2: 0.666…     step3: 1
+step2 والميعاد فاضي:   «التالي» ← ولا طلب      «رجوع» ← POST /step1.html
+~~~` },
+        { lvl: 'كبير', dir: "club-join", cont: true, t: R`بوابة العضو: اشتراك، وتجديد، ولوحة متابعة`, what: R`موقع «نادي الموج» كامل للعضو، بيكمّل على كل اللي بنيته: صفحات الخطوات التلاتة و [[thanks.html]] و [[draft.html]] من المشاريع اللي فاتت **زي ما هم**، وتلات حاجات جديدة. (١) [[index.html]] تبقى الرئيسية: [[<nav>]] فيه لينكات «اشتراك جديد» و «جدّد اشتراكك» و «لوحتي». (٢) [[renew.html]] فورم تجديد لعضو موجود: رقم العضوية [[1042]] يتشاف ويتبعت وميتعدّلش، والباقة الحالية «دهبي» مقفولة بس قيمتها بتتبعت، وكود خصم متعطّل ومكتوب جنبه السبب، وعدد الشهور شريط من ١ لـ ١٢ عليه علامات عند ١ و ٣ و ٦ و ١٢ ومعاه إجمالي بيتحسب (٣٠٠ جنيه للشهر)، وزرارين: «جدّد» و «معاينة الإيصال» (GET لـ [[receipt.html]] في تاب جديدة). (٣) [[dashboard.html]] لوحة العضو: إكمال البيانات (٤ من ٥)، ونسبة الحضور ٨٥٪ (العالي كويس)، والحصص المستخدمة ٩ من ١٠ (القليل كويس)، وكل شريط بالعنصر الصح وليه label فيه الرقم. من كل دروس الوحدة: «readonly و disabled و checked» و «datalist و output» و «progress و meter» و «أزرار الفورم: formaction وإخواته».`, done: R`كل لينكات الـ [[<nav>]] شغالة بدبل كليك. في [[renew.html]]: الإرسال بيبعت [[id=1042]] و [[plan=gold]] و [[months]]، ومبيبعتش [[coupon]] ولا [[total]]. وسحب الشريط بيغيّر الإجمالي. و «معاينة الإيصال» بتفتح تاب جديدة عنوانها فيه البيانات. في [[dashboard.html]]: الحضور أخضر والحصص أحمر، و DevTools بيقول role بتاع كل شريط ([[progressbar]] أو [[meter]]) واسمه. وكل حقل في الموقع ليه label، وكل زرار عليه [[type]].`, ext: R`زوّد في [[renew.html]] حقل «إيصال التحويل» ([[type="file"]]) وخلّي زرار «جدّد» بس هو اللي [[formenctype="multipart/form-data"]]، وقارن الطلبين في Network. وزوّد في [[dashboard.html]] مقياس حرارة حمام السباحة (الوسط كويس).`, sol: R`**شجرة الملفات:**
+
+~~~text club-join
+club-join/
+  index.html        الرئيسية (اتعدّلت)
+  step1.html        من المشروع اللي فات، زي ما هي
+  step2.html        زي ما هي
+  step3.html        زي ما هي
+  thanks.html       زي ما هي
+  draft.html        زي ما هي
+  renew.html        جديدة
+  receipt.html      جديدة
+  dashboard.html    جديدة
+~~~
+
+**ترتيب البناء:** الرئيسية واللينكات الأول (عشان تتنقّل وانت بتجرّب)، وبعدين [[dashboard.html]] (عرض بس)، وبعدين [[renew.html]] (أصعب واحدة)، وآخر حاجة [[receipt.html]].
+
+~~~live 218 236 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نادي الموج</title>
+</head>
+<body>
+<header>
+  <p><strong>نادي الموج</strong></p>
+  <nav aria-label="الرئيسية">
+    <ul>
+      <li><a href="step1.html">اشتراك جديد</a></li>
+      <li><a href="renew.html">جدّد اشتراكك</a></li>
+      <li><a href="dashboard.html">لوحتي</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <h1>أهلًا بيك في نادي الموج</h1>
+  <p>سباحة، وكرة ماء، وسلة، وجودو. الاشتراك ٣ خطوات وبياخد ٥ دقايق.</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~live 304 dashboard.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحتي | نادي الموج</title>
+</head>
+<body>
+<header>
+  <p><a href="index.html">نادي الموج</a></p>
+</header>
+<main>
+  <h1>لوحتي</h1>
+  <p><label for="profile">إكمال بياناتك: ٤ من ٥ خطوات</label><br>
+  <progress id="profile" value="4" max="5">٤ من ٥</progress></p>
+  <p><label for="attend">نسبة حضورك الشهر ده: ٨٥٪ (ممتاز)</label><br>
+  <meter id="attend" value="85" min="0" max="100" low="50" high="80" optimum="100">٨٥٪</meter></p>
+  <p><label for="used">حصصك المستخدمة: ٩ من ١٠ (قرّبت تخلص)</label><br>
+  <meter id="used" value="9" min="0" max="10" low="5" high="8" optimum="0">٩ من ١٠</meter></p>
+  <p><a href="renew.html">جدّد اشتراكك</a></p>
+</main>
+</body>
+</html>
+~~~
+
+~~~html renew.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جدّد اشتراكك | نادي الموج</title>
+</head>
+<body>
+<header>
+  <p><a href="index.html">نادي الموج</a></p>
+</header>
+<main>
+  <h1>جدّد اشتراكك</h1>
+  <form action="thanks.html" method="post" oninput="shown.value = months.value; total.value = Number(months.value) * 300">
+    <input type="hidden" name="plan" value="gold">
+    <p><label for="id">رقم العضوية</label><br>
+    <input id="id" name="id" value="1042" size="6" readonly></p>
+    <p><label for="plan">الباقة الحالية (التغيير من الاستقبال)</label><br>
+    <select id="plan" disabled>
+      <option value="silver">فضي</option>
+      <option value="gold" selected>دهبي</option>
+    </select></p>
+    <p><label for="coupon">كود الخصم (مقفول: عرض نوفمبر خلص)</label><br>
+    <input id="coupon" name="coupon" disabled></p>
+    <p><label for="months">عدد الشهور (من ١ لـ ١٢)</label><br>
+    <input id="months" name="months" type="range" min="1" max="12" value="3" list="marks">
+    <datalist id="marks">
+      <option value="1"></option>
+      <option value="3"></option>
+      <option value="6"></option>
+      <option value="12"></option>
+    </datalist>
+    <output id="shown" for="months">3</output> شهور</p>
+    <p><label for="total">الإجمالي بالجنيه</label>
+    <output id="total" name="total" for="months">900</output></p>
+    <button type="submit" name="act" value="renew">جدّد</button>
+    <button type="submit" formaction="receipt.html" formmethod="get" formtarget="_blank">معاينة الإيصال</button>
+  </form>
+</main>
+</body>
+</html>
+~~~
+
+~~~live 132 receipt.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معاينة الإيصال | نادي الموج</title>
+</head>
+<body>
+<main>
+  <h1>معاينة الإيصال</h1>
+  <p>بيانات التجديد موجودة في عنوان الصفحة دي (بعد علامة الاستفهام). في موقع حقيقي السيرفر بيقراها ويعرض الإيصال.</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 410 شكل renew.html (الأزرار هنا بتكتب الطلب تحت)
+<main>
+  <h1>جدّد اشتراكك</h1>
+  <form action="thanks.html" method="post" oninput="shown.value = months.value; total.value = Number(months.value) * 300" onsubmit="event.preventDefault(); sent.value = (event.submitter.getAttribute('formmethod') || this.getAttribute('method')) + ' ' + (event.submitter.getAttribute('formaction') || this.getAttribute('action')) + ' ← ' + decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+    <input type="hidden" name="plan" value="gold">
+    <p><label for="id">رقم العضوية</label><br>
+    <input id="id" name="id" value="1042" size="6" readonly></p>
+    <p><label for="plan">الباقة الحالية (التغيير من الاستقبال)</label><br>
+    <select id="plan" disabled>
+      <option value="silver">فضي</option>
+      <option value="gold" selected>دهبي</option>
+    </select></p>
+    <p><label for="coupon">كود الخصم (مقفول: عرض نوفمبر خلص)</label><br>
+    <input id="coupon" name="coupon" disabled></p>
+    <p><label for="months">عدد الشهور (من ١ لـ ١٢)</label><br>
+    <input id="months" name="months" type="range" min="1" max="12" value="3" list="marks">
+    <datalist id="marks">
+      <option value="1"></option>
+      <option value="3"></option>
+      <option value="6"></option>
+      <option value="12"></option>
+    </datalist>
+    <output id="shown" for="months">3</output> شهور</p>
+    <p><label for="total">الإجمالي بالجنيه</label>
+    <output id="total" name="total" for="months">900</output></p>
+    <button type="submit" name="act" value="renew">جدّد</button>
+    <button type="submit" formaction="receipt.html" formmethod="get" formtarget="_blank">معاينة الإيصال</button>
+  </form>
+  <p>الطلب: <output id="sent">(دوس زرار)</output></p>
+</main>
+~~~
+
+**هتشوف إيه:**
+
+- **الرئيسية:** تلات لينكات في قايمة.
+- **اللوحة:** شريط أزرق طويل (٤ من ٥)، ومقياس أخضر (٨٥٪)، ومقياس أحمر (٩ من ١٠).
+- **التجديد:** رقم العضوية شكله عادي ومبيتكتبش فيه. الباقة وكود الخصم باهتين. الشريط عليه ٤ علامات، وسحبه بيغيّر «٣ شهور» والإجمالي.
+- «جدّد»: [[post thanks.html ← plan=gold&id=1042&months=3&act=renew]].
+- «معاينة الإيصال»: [[get receipt.html ← plan=gold&id=1042&months=3]].
+
+**ليه كل حاجة كده:**
+
+| الحتة | الاختيار | السبب |
+|---|---|---|
+| رقم العضوية | [[readonly]] | يتشاف ويتبعت وميتعدّلش |
+| الباقة | [[<select disabled>]] + [[hidden]] | مفيش select للقراية بس، والقيمة لازم تتبعت |
+| كود الخصم | [[disabled]] والسبب في الـ label | مش متاح، وقيمته مش مطلوبة |
+| الشهور | [[range]] + [[<datalist>]] + [[<output>]] | مدى صغير، والعلامات عند المدد اللي بتتباع |
+| الإجمالي | [[<output>]] | نتيجة للعرض. السيرفر بيحسب تاني من [[months]] |
+| المعاينة | [[formmethod="get"]] و [[formtarget="_blank"]] | مبتغيّرش حاجة، والعضو يفضل في الفورم |
+| إكمال البيانات | [[<progress>]] | مهمة ليها نهاية |
+| الحضور والحصص | [[<meter>]] و [[optimum]] عكس بعض | قياسين، واحد العالي فيه كويس والتاني القليل |
+
+**الأخطاء اللي اتعاملنا معاها:**
+
+- الزرار الأساسي «جدّد» أول زرار، فـ Enter بيجدّد مش بيفتح المعاينة.
+- كل شريط جنبه الرقم والحالة بالكلام («ممتاز»، «قرّبت تخلص»): اللون لوحده مش كفاية.
+- الـ select المتعطّل ملوش [[name]]، والاسم على الـ hidden: مفيش قيمتين بنفس الاسم.
+
+**الغلطة الشائعة:** [[name="total"]] على الـ output وكود سيرفر مستني [[total]]. مش هيوصل. وحتى لو وصل بطريقة تانية، الإجمالي اللي بيتدفع بيتحسب على السيرفر.
+
+~~~text القياس من Chrome (الطلبات اللي وصلت السيرفر المحلي)
+«جدّد»:
+POST /thanks.html
+content-type: application/x-www-form-urlencoded
+
+plan=gold&id=1042&months=3&act=renew
+
+«معاينة الإيصال»:
+GET /receipt.html?plan=gold&id=1042&months=3
+
+اللوحة:   progress 4/5 position = 0.8      الحضور: أخضر      الحصص: أحمر
+~~~` },
+        { lvl: 'فكرة', dir: "my-signup", t: R`فورم تسجيل لنشاط حقيقي حواليك، على خطوتين`, what: R`اختار نشاط تعرفه (مركز كورسات، ورشة، فريق كورة الحي، حضانة) واعمل فورم التسجيل بتاعه على صفحتين: [[index.html]] «بياناتك» و [[step2.html]] «التفاصيل والمستندات»، وكل صفحة فيها شريط الخطوة. انت اللي تقرر الحقول، بشرط إن الفورم يستخدم على الأقل: ٤ أنواع [[<input>]] غير [[text]]، وقايمة متقسّمة أو [[<datalist>]]، وشريط [[range]] معاه [[<output>]]، وحقل ملف واحد بـ [[accept]]، وحقل [[hidden]]، وزرارين إرسال واحد فيهم [[formnovalidate]].`, done: R`كل حقل ليه label و [[name]]، وجنب كل حقل تعليق HTML من سطر بيقول ليه النوع ده. والفورم اللي فيه ملف [[post]] و [[multipart/form-data]]. وكل [[<button>]] عليه [[type]]. وجرّبت كل زرار وكتبت في آخر الصفحة (في تعليق) الطلب اللي بيبعته.`, ext: R`خلّي صاحب النشاط نفسه (أو حد من أهلك) يملاه من موبايله من غير ما تشرحله حاجة، واكتب الحقول اللي وقف عندها وعدّلها. وزوّد صفحة «لوحة المشترك» فيها [[<meter>]] للأماكن الباقية.`, sol: R`**نسخة نموذجية:** مركز «لسان» (مركز كورسات لغات متخيل).
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخطوة ١ من ٢: بياناتك | مركز لسان</title>
+</head>
+<body>
+<main>
+  <h1>سجّل في كورس</h1>
+  <p><label for="step">الخطوة ١ من ٢: بياناتك</label><br>
+  <progress id="step" value="1" max="2">١ من ٢</progress></p>
+  <form action="step2.html" method="post">
+    <!-- hidden: الصفحة دي بتاعة دورة يناير، والزائر مش هيختارها -->
+    <input type="hidden" name="round" value="2027-01">
+    <!-- text + autocomplete: الاسم نص حر -->
+    <p><label for="name">الاسم</label><br>
+    <input id="name" name="name" autocomplete="name" required></p>
+    <!-- email: المتصفح بيفحص الشكل، والموبايل بيفتح كيبورد فيه @ -->
+    <p><label for="email">الإيميل</label><br>
+    <input id="email" name="email" type="email" autocomplete="email" required></p>
+    <!-- date: تاريخ الميلاد يوم محدد -->
+    <p><label for="birth">تاريخ الميلاد</label><br>
+    <input id="birth" name="birth" type="date" autocomplete="bday" max="2015-12-31"></p>
+    <!-- datalist: إجابات شائعة، وأي إجابة تانية مقبولة -->
+    <p><label for="from">عرفت المركز منين؟</label><br>
+    <input id="from" name="from" list="sources">
+    <datalist id="sources">
+      <option value="صاحب أو قريب"></option>
+      <option value="إعلان في الشارع"></option>
+      <option value="بحث على الإنترنت"></option>
+    </datalist></p>
+    <button type="submit">التالي</button>
+  </form>
+</main>
+</body>
+</html>
+~~~
+
+~~~html step2.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخطوة ٢ من ٢: الكورس | مركز لسان</title>
+</head>
+<body>
+<main>
+  <h1>سجّل في كورس</h1>
+  <p><label for="step">الخطوة ٢ من ٢: الكورس والمستندات</label><br>
+  <progress id="step" value="2" max="2">٢ من ٢</progress></p>
+  <form action="done.html" method="post" enctype="multipart/form-data" oninput="shown.value = hours.value">
+    <!-- select + optgroup: قايمة مقفولة وليها تقسيم طبيعي -->
+    <p><label for="course">الكورس</label><br>
+    <select id="course" name="course" required>
+      <option value="">اختار الكورس</option>
+      <optgroup label="إنجليزي">
+        <option value="en-a1">مبتدئ</option>
+        <option value="en-b1">متوسط</option>
+      </optgroup>
+      <optgroup label="ألماني">
+        <option value="de-a1">مبتدئ</option>
+      </optgroup>
+    </select></p>
+    <!-- range + output: رقم تقريبي في مدى صغير، والـ output بيعرضه -->
+    <p><label for="hours">كام ساعة مذاكرة تقدر عليها في الأسبوع؟ (من ١ لـ ١٥)</label><br>
+    <input id="hours" name="hours" type="range" min="1" max="15" value="5">
+    <output id="shown" for="hours">5</output></p>
+    <!-- time: ميعاد في اليوم، كل نص ساعة -->
+    <p><label for="at">أنسب ميعاد للحصة (من ١٠ ص لـ ٩ م)</label><br>
+    <input id="at" name="at" type="time" min="10:00" max="21:00" step="1800"></p>
+    <!-- file + accept: مستند واحد، PDF أو صورة -->
+    <p><label for="cert">آخر شهادة لغة لو معاك (PDF أو صورة، أقصى حجم ٣ ميجا)</label><br>
+    <input id="cert" name="cert" type="file" accept=".pdf, image/*"></p>
+    <button type="submit" name="act" value="send">سجّل</button>
+    <button type="submit" formaction="index.html" formnovalidate>رجوع</button>
+  </form>
+</main>
+</body>
+</html>
+~~~
+
+~~~live 114 done.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اتسجّلت | مركز لسان</title>
+</head>
+<body>
+<main>
+  <h1>اتسجّلت</h1>
+  <p>هنبعتلك ميعاد اختبار تحديد المستوى على الإيميل.</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 425 شكل step2.html (الأزرار هنا بتكتب تحت)
+<main>
+  <h1>سجّل في كورس</h1>
+  <p><label for="step">الخطوة ٢ من ٢: الكورس والمستندات</label><br>
+  <progress id="step" value="2" max="2">٢ من ٢</progress></p>
+  <form action="done.html" oninput="shown.value = hours.value" onsubmit="event.preventDefault(); sent.value = 'هيفتح ' + (event.submitter.getAttribute('formaction') || this.getAttribute('action'))">
+    <p><label for="course">الكورس</label><br>
+    <select id="course" name="course" required>
+      <option value="">اختار الكورس</option>
+      <optgroup label="إنجليزي">
+        <option value="en-a1">مبتدئ</option>
+        <option value="en-b1">متوسط</option>
+      </optgroup>
+      <optgroup label="ألماني">
+        <option value="de-a1">مبتدئ</option>
+      </optgroup>
+    </select></p>
+    <p><label for="hours">كام ساعة مذاكرة تقدر عليها في الأسبوع؟ (من ١ لـ ١٥)</label><br>
+    <input id="hours" name="hours" type="range" min="1" max="15" value="5">
+    <output id="shown" for="hours">5</output></p>
+    <p><label for="at">أنسب ميعاد للحصة (من ١٠ ص لـ ٩ م)</label><br>
+    <input id="at" name="at" type="time" min="10:00" max="21:00" step="1800"></p>
+    <p><label for="cert">آخر شهادة لغة لو معاك (PDF أو صورة، أقصى حجم ٣ ميجا)</label><br>
+    <input id="cert" name="cert" type="file" accept=".pdf, image/*"></p>
+    <button type="submit" name="act" value="send">سجّل</button>
+    <button type="submit" formaction="index.html" formnovalidate>رجوع</button>
+  </form>
+  <p><output id="sent">(دوس زرار)</output></p>
+</main>
+~~~
+
+**هتشوف إيه:**
+
+- شريط الخطوة مليان (٢ من ٢)، وقايمة الكورسات مكتوب فيها «اختار الكورس».
+- «سجّل» من غير اختيار كورس: رسالة المتصفح عند القايمة. «رجوع»: «هيفتح index.html» من غير فحص.
+
+**ليه التصميم ده:**
+
+- صفحتين: الأولى أسئلة سهلة (اسم وإيميل) عشان الزائر يبدأ، والتانية الاختيارات والملف.
+- [[<option value="">اختار الكورس</option>]] و [[required]]: القايمة مبتبدأش على كورس ممكن الزائر يسيبه بالغلط (درس «form و label»).
+- [[max="2015-12-31"]] على تاريخ الميلاد: المركز بيقبل من ١١ سنة.
+- الشهادة اختيارية، فمفيش [[required]] عليها.
+- التعليقات فوق كل حقل هي المطلوب في «تعرف إنك خلصت»: لو مش عارف تكتب سبب للنوع، غالبًا النوع غلط.
+
+**الغلطة الشائعة:** تبدأ بالحقول اللي عايز تجرّبها («عايز أستخدم color») وتدوّر لها على سؤال. ابدأ من الأسئلة اللي النشاط محتاجها فعلًا، واختار لكل سؤال نوعه.
+
+~~~text القياس من Chrome (الطلبات اللي وصلت السيرفر المحلي)
+الخطوة ١:   POST /step2.html     round=2027-01&name=...&email=...&birth=&from=
+الخطوة ٢ «سجّل» من غير كورس:   ولا طلب
+الخطوة ٢ «رجوع»:               POST /index.html     (multipart، ومن غير فحص)
+~~~` },
       ],
       items: [
         {
-          cmd: "position: absolute",
+          cmd: "GET و POST و enctype",
+          title: "الفورم بيبعت إيه بالظبط؟ action و method و enctype و hidden",
+          pre: ["css/form و label", { to: "css/المسارات: مطلق ونسبي", why: R`قيمة [[action]] مسار زي [[href]] بالظبط، والـ query ([[?a=1&b=2]]) اتشرحت هناك` }],
           ref: [
-            { t: "MDN: position", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position" },
-            { t: "MDN: inset", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset" },
-            { t: "MDN: inset-inline-end", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset-inline-end" },
-            { t: "MDN: top", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/top" },
-            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+            { t: "MDN: <form>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/form" },
+            { t: "MDN: Sending form data", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Sending_and_retrieving_form_data" },
+            { t: "MDN: <input type=\"hidden\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/hidden" },
+            { t: "WHATWG: Form submission attributes", url: "https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#form-submission-attributes" },
+            { t: "WHATWG: the form element", url: "https://html.spec.whatwg.org/multipage/forms.html#the-form-element" }
           ],
-          title: "حط شارة على ركن الكارت بالظبط",
-          desc: R`[[position: relative]] العنصر في مكانه العادي، بس بيبقى «مرجع» لأي ابن [[absolute]]. [[position: absolute]] بيطلّع العنصر من الترتيب خالص (الباقي بيتصرف كأنه مش موجود)، ومكانه بيتحسب من أقرب جد عليه position غير [[static]].
-
-عشان كده النمط المشهور: الأب [[relative]] والابن [[absolute]] بـ [[top: 0]] و [[inset-inline-end: 0]].`,
-          example: R`<article class="card">
-  <span class="badge">جديد</span>
-  <img src="/p.webp" alt="سماعة" width="400" height="300">
-  <a class="stretched" href="/products/42">سماعة لاسلكي</a>
-</article>
-<style>
-  .card { position: relative; }
-  .badge { position: absolute; top: 0.5rem; inset-inline-end: 0.5rem; }
-  .stretched::after { content: ""; position: absolute; inset: 0; }
-  .overlay { position: absolute; inset: 0; background: rgb(0 0 0 / 0.5); }
-</style>`,
-          try: R`امسح [[position: relative]] من الكارت وشوف الشارة طارت لركن الصفحة (أو لأقرب جد relative). وبعدين دوس على أي مكان في الكارت: اللينك بيشتغل بسبب [[::after]].`,
+          desc: R`لما الزائر يدوس زرار الإرسال، المتصفح بيجمع الحقول اللي ليها [[name]] ويبعتها في **طلب** (request) للسيرفر. تلات attributes على [[<form>]] بيحددوا شكل الطلب ده: [[action]] (يروح فين)، و [[method]] (البيانات تتحط في العنوان ولا في جسم الطلب)، و [[enctype]] (البيانات تتكتب بأنهي شكل).
+في الدرس ده هتشوف الطلب نفسه زي ما خرج من Chrome، حرف بحرف، لنفس الفورم وهو مبعوت بأربع طرق.`,
+          example: R`<form action="/join" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="plan" value="gold">
+  <label for="name">الاسم</label>
+  <input id="name" name="name" required>
+  <label for="photo">صورة شخصية</label>
+  <input id="photo" name="photo" type="file">
+  <button type="submit">اشترك</button>
+</form>`,
           flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** شارة [[position: absolute; top: 8px; inset-inline-end: 8px]] جوه كارت **مش** عليه [[relative]]، بس جد الكارت (div حواليه) عليه [[transform: translateY(0)]]. الشارة هتتحسب من مين؟ وبعدين قيس.`, done: R`الشارة اتحسبت من الجد اللي عليه transform مش من الصفحة: في المعمل الجد بيبدأ عند (400، 100) والشارة عند (408، 108) في rtl. عرفت إن [[transform]] بيعمل containing block للـ absolute زي ما بيعمل للـ fixed.`, sol: R`~~~live 300 300
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الشارة</title>
-<style>
-  body { margin: 0; }
-  .grand { width: 300px; height: 200px; margin-block-start: 100px; margin-inline-start: 580px; background: #f4f4f5; transform: translateY(0); }
-  .card { height: 100px; background: #bfdbfe; }
-  .badge { position: absolute; top: 8px; inset-inline-end: 8px; width: 20px; height: 20px; background: #dc2626; }
-</style>
-</head>
-<body>
-<div class="grand">
-  <div class="card"><span class="badge"></span></div>
-</div>
-</body>
-</html>
-~~~
-
-**الإجابة:** الشارة بتتحسب من الجد، مش من الصفحة ومش من الكارت.
-
-[[absolute]] بتطلع لفوق تدوّر على أول أب يكون containing block. والأب ده مش لازم يكون عليه [[position]]. أي عنصر عليه [[transform]] أو [[filter]] أو [[perspective]] بيعمل نفس الحكاية، حتى لو القيمة [[translateY(0)]] ومش بتحرّك حاجة.
-
-**ليه الرقم 408:** الصفحة RTL، فـ [[inset-inline-end]] معناها الشمال. الجد شماله عند 400، زائد 8.
-
-**الغلطة الشائعة:** تزوّد animation فيها [[transform]] على أب بعيد، فكل [[absolute]] و [[fixed]] جواه يتحرك مكانه فجأة، وتدوّر على الغلط في العنصر نفسه.
-
-~~~text الناتج
-الجد عند (400, 100)
-الشارة عند (408, 108)
-
-بعد ما شيلنا transform من الجد:
-الشارة عند (8, 8)  (اتحسبت من الصفحة)
-
-والحل المقصود: position: relative على الكارت:
-الشارة عند (408, 108)
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت منتج لمحل ورد متخيل: صورتين فوق بعض (التانية [[absolute; inset: 0; opacity: 0]] وتظهر مع [[:hover]] و [[:focus-within]])، وشارة خصم على ناحية النهاية، وزرار مفضّلة على ناحية البداية، والكارت كله لينك بـ [[::after]]، بس زرار المفضّلة لسه بيتضغط لوحده.`, done: R`[[document.elementFromPoint]] فوق زرار المفضّلة بيرجّع [[BUTTON]]، وفوق أي حتة تانية في الكارت بيرجّع [[A]]. بـ Tab على اللينك الصورة التانية بتظهر من غير ماوس. ولما تقلب [[dir]] الشارة والزرار بيبدّلوا الناحية.`, sol: R`~~~live 360 360
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>محل الورد</title>
-<style>
-  * { box-sizing: border-box; }
-  body { font-family: system-ui; margin: 16px; }
-  .card { position: relative; max-width: 280px; border: 1px solid #e7e5e4; border-radius: 12px; overflow: hidden; }
-  .card__media { position: relative; aspect-ratio: 4 / 3; }
-  .card__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
-  .card__media img + img { position: absolute; inset: 0; opacity: 0; transition: opacity .2s; }
-  .card:hover img + img, .card:focus-within img + img { opacity: 1; }
-  .card__badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 2px 8px; background: #b91c1c; color: #fff; border-radius: 999px; }
-  .card__fav { position: absolute; z-index: 1; top: 8px; inset-inline-start: 8px; width: 44px; height: 44px; font: inherit; }
-  .card__body { padding: 12px; }
-  .card__title { margin: 0; font-size: 1.125rem; }
-  .card__link::after { content: ""; position: absolute; inset: 0; }
-</style>
-</head>
-<body>
-<main>
-<h1>الورد</h1>
-<article class="card">
-  <div class="card__media">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%' height='100%' fill='%23fda4af'/></svg>" alt="باقة ورد أحمر" width="400" height="300">
-    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%' height='100%' fill='%23fde68a'/></svg>" alt="" width="400" height="300">
-  </div>
-  <span class="card__badge">خصم ٢٠٪</span>
-  <button class="card__fav" type="button" aria-label="أضف للمفضلة">♡</button>
-  <div class="card__body">
-    <h2 class="card__title"><a class="card__link" href="#rose">باقة ورد أحمر</a></h2>
-  </div>
-</article>
-</main>
-</body>
-</html>
-~~~
-
-**الفكرة:** اللينك عنصر صغير، بس [[::after]] بتاعه [[absolute]] و [[inset: 0]]، فبيغطي الكارت كله لأن [[.card]] هو الأقرب اللي عليه [[position: relative]]. فالكارت كله بيتداس، والـ HTML فيه لينك واحد بس.
-
-- [[.card__fav]]: [[z-index: 1]] بيطلّعه فوق الـ [[::after]]، فبيتضغط لوحده. ومن غيره الضغطة هتروح للينك.
-- [[:focus-within]]: الكارت بياخد الحالة لما اللي جواه عليه focus، فالكيبورد بيشوف نفس اللي الماوس بيشوفه.
-- [[alt=""]] على الصورة التانية: زينة، نفس المنتج.
-- [[inset-inline-end]] و [[inset-inline-start]]: يبدّلوا الناحية مع [[dir]].
-
-**الغلطة الشائعة:** تلف الكارت كله في [[<a>]] وتحط جواه [[<button>]]. عنصر تفاعلي جوه عنصر تفاعلي، والـ validator بيرفضه.
-
-~~~text الناتج
-elementFromPoint فوق زرار المفضلة: BUTTON
-elementFromPoint فوق الصورة:      A
-elementFromPoint فوق الشارة:      A
-بـ Tab على اللينك: opacity الصورة التانية = 1
-الـ Tab الأول وقف عند: card__fav
-
-            الشارة x     الزرار x
-rtl         993        1211
-ltr         209        25
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل بحث في صفحة عربي: الأيقونة [[position: absolute; left: 12px]] والحقل [[padding-left: 40px]]. الكلام اللي بتكتبه بيبدأ تحت الأيقونة. صلّحه بحيث نفس الـ CSS يشتغل في العربي والإنجليزي.`, done: R`بعد [[inset-inline-start: 12px]] و [[padding-inline-start: 40px]]: في rtl الأيقونة يمين والكلام بيبدأ بعدها، وفي ltr الأيقونة شمال، ومفيش ولا [[left]] ولا [[right]] في الـ CSS.`, sol: R`~~~live 130 130
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>البحث</title>
-<style>
-  .search { position: relative; max-width: 300px; }
-  .search__icon { position: absolute; inset-inline-start: 12px; top: 50%; translate: 0 -50%; }
-  .search input { width: 100%; box-sizing: border-box; padding-block: 8px; padding-inline-start: 40px; padding-inline-end: 8px; font: inherit; }
-</style>
-</head>
-<body>
-<main>
-<h1>المتجر</h1>
-<div class="search">
-  <span class="search__icon" aria-hidden="true">⌕</span>
-  <input type="search" aria-label="ابحث" value="قهوة">
-</div>
-</main>
-</body>
-</html>
-~~~
-
-**السبب:** في صفحة عربي الكلام بيبدأ من اليمين. و [[left: 12px]] و [[padding-left: 40px]] بيحطوا الأيقونة والمسافة على الشمال، وهي نهاية السطر. فالبداية مفيهاش مسافة، وكلام طويل هيوصل تحت الأيقونة.
-
-**التصليح:** [[inline-start]] معناها «ناحية بداية السطر»، أيًا كانت. سطرين، ومن غير [[[dir="rtl"]]] ومن غير نسخة تانية.
-
-- [[top: 50%]] و [[translate: 0 -50%]]: توسيط رأسي لعنصر [[absolute]] من غير ما تعرف ارتفاعه.
-- [[aria-hidden="true"]]: الأيقونة زينة.
-
-**الغلطة الشائعة:** تكتب [[[dir="rtl"] .search input { padding-right: 40px }]] وتسيب الأصلية. ده سطر لكل اتجاه لكل عنصر.
-
-~~~text الناتج
-                 بداية الحقل     الأيقونة من البداية    padding-inline-start
-rtl              يمين            12px                  40px
-ltr              شمال            12px                  40px
-
-left أو right في الـ CSS: 0
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** فقاعة كلام (tooltip) بديل مثلث بـ [[::after]] و [[border]] شفاف من ٣ نواحي، والمثلث تحت الفقاعة على ناحية البداية، بـ [[inset-inline-start]].`, done: R`المثلث لازق في الفقاعة من غير خط أبيض بينهم، ولما تقلب [[dir]] بيروح للناحية التانية لوحده، والفقاعة مبتأثرش على مكان أي عنصر حواليها (absolute).`, sol: R`~~~live 320 320
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الفقاعة</title>
-<style>
-  body { font-family: system-ui; margin: 80px 40px; }
-  .tip { position: relative; display: inline-block; }
-  .tip__bubble {
-    --bg: #1c1917;
-    position: absolute;
-    bottom: calc(100% + 12px);
-    inset-inline-start: 0;
-    width: max-content;
-    max-width: 200px;
-    padding: 8px 12px;
-    background: var(--bg);
-    color: #fff;
-    border-radius: 8px;
-  }
-  .tip__bubble::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    inset-inline-start: 16px;
-    border: 8px solid transparent;
-    border-top-color: var(--bg);
-  }
-</style>
-</head>
-<body>
-<main>
-<h1>الشحن</h1>
-<p class="tip">
-  <a href="#ship">الشحن المجاني</a>
-  <span class="tip__bubble" role="tooltip">فوق ٥٠٠ جنيه</span>
-</p>
-<p>الفقرة اللي بعدها</p>
-</main>
-</body>
-</html>
-~~~
-
-**المثلث:** عنصر مقاسه صفر و [[border: 8px]]، والحدود الأربعة مثلثات متقابلة. بنخلي التلاتة شفافين ونلوّن اللي فوق بس، فيفضل مثلث راسه تحت.
-
-- [[top: 100%]]: يبدأ من آخر الفقاعة بالظبط، فمفيش مسافة بينهم.
-- [[bottom: calc(100% + 12px)]]: الفقاعة فوق العنصر بمسافة قد المثلث.
-- [[width: max-content]] مع [[max-width]]: الفقاعة قد كلامها، ومن غيرها بتتزنق على عرض أبوها.
-- [[--bg]]: المثلث والفقاعة نفس اللون من مكان واحد.
-
-**الغلطة الشائعة:** تستخدم [[left: 16px]] للمثلث. في RTL هيبقى في الناحية الغلط.
-
-~~~text الناتج
-آخر الفقاعة y = 148.4375   وبداية المثلث y = 148.4375   (لازقين)
-لون حد المثلث = rgb(28, 25, 23)   ولون الفقاعة = rgb(28, 25, 23)
-
-المثلث من اليمين في rtl: 16px
-المثلث من الشمال في ltr: 16px
-
-مكان الفقرة اللي بعدها، مع الفقاعة ومن غيرها: 213.44 و 213.44
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** سلايدر «قبل وبعد» لصور ترميم متخيلة: صورتين فوق بعض في أب [[relative]]، والعليا [[clip-path: inset(0 0 0 var(--pos))]]، وفوقهم [[<input type="range">]] شفاف [[absolute; inset: 0]] بيكتب قيمته في [[--pos]]، وخط رأسي عند [[--pos]].`, done: R`الأسهم من الكيبورد بتحرّك الخط (لأن الـ range input حقيقي)، وعند 50 الخط في نص الصورة بالظبط، وعلى 360 الصورتين بعرض الشاشة ومفيش scroll أفقي، وكتبت إن [[clip-path]] و [[left]] مش logical فلازم تختبر في rtl.`, sol: R`~~~live 470 290
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الترميم</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 16px; font-family: system-ui; }
-  .ba { --pos: 50%; position: relative; direction: ltr; max-width: 640px; margin-inline: auto; aspect-ratio: 16 / 9; }
-  .ba img { display: block; width: 100%; height: 100%; object-fit: cover; }
-  .ba__after { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--pos)); }
-  .ba__line { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; translate: -50% 0; background: #fff; box-shadow: 0 0 0 1px #000; pointer-events: none; }
-  .ba input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
-  .ba:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
-</style>
-</head>
-<body>
-<main>
-<h1>الترميم</h1>
-<div class="ba">
-  <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360'><rect width='100%' height='100%' fill='%2378716c'/></svg>" alt="الحيطة قبل الترميم" width="640" height="360">
-  <div class="ba__after"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360'><rect width='100%' height='100%' fill='%23fde68a'/></svg>" alt="الحيطة بعد الترميم" width="640" height="360"></div>
-  <span class="ba__line"></span>
-  <input type="range" min="0" max="100" value="50" aria-label="قارن قبل وبعد الترميم">
-</div>
-</main>
-<script>
-  const box = document.querySelector('.ba');
-  const range = box.querySelector('input');
-  range.addEventListener('input', () => box.style.setProperty('--pos', range.value + '%'));
-$__lt/script>
-</body>
-</html>
-~~~
-
-**كل قطعة:**
-
-- [[clip-path: inset(0 0 0 var(--pos))]]: اقطع من الشمال بمقدار [[--pos]]. فـ 50% يبان نص الصورة العليا اليمين.
-- [[<input type="range">]] شفاف فوق كل حاجة: كيبورد وسحب وقارئ شاشة ببلاش، بدل JavaScript طويل للسحب.
-- [[opacity: 0]] مش [[display: none]]: عشان يفضل بيتوصله.
-- [[:has(input:focus-visible)]]: الـ range شفاف، فالحلقة لازم تترسم على الأب.
-- [[direction: ltr]] على الصندوق، وده الجزء اللي بيحل مشكلة RTL.
-
-**فخ RTL:** [[clip-path]] و [[left]] مش logical، بس الـ range بيتقلب في RTL: القيمة 25 تبقى ناحية اليمين، و [[--pos: 25%]] من الشمال. فالخط بيمشي عكس إيدك. [[direction: ltr]] بيثبّت الاتنين على نفس الاتجاه.
-
-**الغلطة الشائعة:** تختبر بالعربي بالماوس عند النص بس. عند 50 الاتجاهين بيتقابلوا، فالمشكلة مش هتبان.
-
-~~~text الناتج
-عند 50: الخط x = 640   ونص الصورة x = 640
-سهم يمين ٥ مرات: القيمة = 55   الخط من شمال الصورة = 55%
-Tab وقف عند: INPUT type=range
-ضغط عند 80% من العرض: القيمة = 81
-على 360: عرض الصورتين 328px   overflow 0px
-من غير direction: ltr، الضغط عند 80%: القيمة = 19  (عكس مكان الضغطة)
-axe: 0 violations
-~~~` },
-          ],
-          deep: {
-            why: "فيه حاجات لازم تبقى فوق حاجات: شارة على صورة، وأيقونة جوه input، وطبقة غامقة على هيرو، وزرار X في ركن المودال. الترتيب العادي (flow) مش بيعمل ده، و absolute بيعمله بالظبط.",
-            how: R`[[static]] الافتراضي: العنصر في الـ flow، و top و left ملهمش تأثير. [[relative]]: في الـ flow ومكانه محجوز، و top و left بيزقوه بصريًا بس من غير ما يأثروا على الباقي. [[absolute]]: برا الـ flow، ومكانه بيتحسب من الـ containing block، اللي هو أقرب جد position بتاعه مش static. لو مفيش، بيتحسب من أول الصفحة.
-
-[[inset]] اختصار للأربعة، و [[inset: 0]] مع absolute = غطّي الأب كله. و [[inset-inline-start]] و [[inset-inline-end]] بيتقلبوا مع [[dir]]، فالشارة تفضل في ركن «النهاية» في العربي والإنجليزي من غير تعديل.
-
-العنصر الـ absolute عرضه بيبقى قد محتواه مش قد الأب، إلا لو حددت left و right الاتنين أو width.
-
-وفيه حاجات تانية بتعمل containing block للـ absolute: [[transform]] و [[filter]] على الجد. ودا مهم أكتر مع [[fixed]] (الدرس الجاي).
-
-في Tailwind: [[relative]] و [[absolute]] و [[inset-0]] و [[top-2]] و [[inset-e-2]] (من v4.2 بدل [[end-2]] اللي بقت deprecated).`,
-            when: "عنصر فوق عنصر جوه حدود الأب: شارات، وأيقونات جوه حقول، و overlays، وزرار إغلاق، وكارت كله clickable.",
-            mistakes: R`absolute من غير أب relative فالعنصر يروح مكان غريب. absolute للـ layout العادي (أعمدة وكروت) فأي تغيير في الكلام يبوّظ كل حاجة: ده شغل flex و grid. و [[right: 0]] في موقع عربي وإنجليزي فالشارة في نفس الناحية في اللغتين.`
-          },
-          teach: R`## الشارة بتتحط بالأرقام، بس من أنهي نقطة؟
-
-[[position: absolute]] بيقول للعنصر: «اطلع من الترتيب العادي، واتحط على بُعد كذا من حافة **مرجع**». والسؤال كله: مين المرجع؟ حطينا المثال في صفحة عرضها 1200 وارتفاعها 800، والكارت عرضه 400 ونازل 100px من فوق، وقسنا كل حاجة بـ [[getBoundingClientRect()]].
-
----
-
-## ١. الـ HTML
-
-~~~text index.html
-<article class="card">
-  <span class="badge">جديد</span>
-  <img src="/p.webp" alt="سماعة" width="400" height="300">
-  <a class="stretched" href="/products/42">سماعة لاسلكي</a>
-</article>
-~~~
-
-[[<article>]] عنصر لمحتوى قايم بذاته (كارت منتج). جواه شارة، وصورة، ولينك واحد.
-
-## ٢. [[.card { position: relative; }]]
-
-[[relative]] لوحدها مش بتحرك الكارت ولا مليمتر: هو لسه في مكانه، والكارت فضل عند left = 50 و top = 100. فايدتها إنها بتخلي الكارت **مرجع** لأي ابن absolute. والمرجع ده اسمه containing block.
-
-## ٣. [[.badge { position: absolute; top: 0.5rem; inset-inline-end: 0.5rem; }]]
-
-- [[absolute]]: الشارة طلعت من الترتيب، والصورة طلعت لفوق مكانها كأنها مش موجودة.
-- [[top: 0.5rem]]: 8px تحت حافة الكارت اللي فوق.
-- [[inset-inline-end: 0.5rem]]: 8px من حافة **نهاية السطر**. [[inline]] = اتجاه الكلام، و [[end]] = نهايته: يمين في الإنجليزي، شمال في العربي.
-
-| الصفحة | الكارت | الشارة |
-|---|---|---|
-| ltr | من 50 لـ 450 | من 418.81 لـ 442، و top = 108 |
-| rtl | من 750 لـ 1150 | من 758، و top = 108 |
-
-في ltr الشارة آخرها 442 = 450 - 8، وفي rtl أولها 758 = 750 + 8. نفس السطر، والناحية اتقلبت لوحدها.
-
-## ٤. [[.stretched::after { content: ""; position: absolute; inset: 0; }]]
-
-- [[::after]] اسمه pseudo-element: عنصر وهمي المتصفح بيعمله جوه اللينك، بعد كلامه. ومبيظهرش إلا لو ليه [[content]]، حتى لو فاضي [[""]].
-- [[inset: 0]] اختصار [[top: 0; right: 0; bottom: 0; left: 0]]: اتمد على المرجع كله.
-
-المرجع هنا الكارت (اللينك نفسه مش عليه position)، فالـ ::after بقى طبقة شفافة فوق الكارت كله:
-
-~~~text الناتج
-::after  position: absolute   width: 400px   height: 318px
-العنصر اللي تحت الماوس فوق الصورة: A.stretched
-~~~
-
-[[document.elementFromPoint(x, y)]] دالة بترجع العنصر اللي فوق خالص عند النقطة دي. فوق الصورة رجعت اللينك، يعني الضغطة هناك بتفتح المنتج.
-
-## ٥. [[.overlay { position: absolute; inset: 0; background: rgb(0 0 0 / 0.5); }]]
-
-طبقة غامقة على الأب كله. [[rgb(0 0 0 / 0.5)]] = أسود (أحمر وأخضر وأزرق صفر)، والرقم بعد [[/]] الشفافية: 0.5 يعني نص. جربناها في أب 300 × 200 relative: طلعت 300 × 200 بالظبط من نقطة (0، 0)، ولونها [[rgba(0, 0, 0, 0.5)]].
-
----
-
-## التجربة: نشيل [[position: relative]] من الكارت
-
-| | مع relative | من غيره |
-|---|---|---|
-| الشارة (ltr) | left 418.81، top 108 | left 1168.81، top 8 |
-| الشارة (rtl) | left 758، top 108 | left 8، top 8 |
-| مقاس الـ ::after | 400 × 318 | 1200 × 800 |
-| ضغطة برا الكارت خالص | div عادي | A.stretched |
-
-من غير مرجع، الاتنين اتحسبوا من أول شاشة في الصفحة (اسمها initial containing block، قد الـ viewport): الشارة طارت لركن الصفحة، واللينك الوهمي غطى أول شاشة كلها.
-
-## الخلاصة
-
-| القيمة | في الترتيب؟ | top و left بيتحسبوا من |
-|---|---|---|
-| [[static]] (الافتراضي) | آه | ملهمش تأثير |
-| [[relative]] | آه، ومكانه محجوز | مكانه هو |
-| [[absolute]] | لأ | أقرب جد position بتاعه مش static |
-
-- النمط: الأب [[relative]] والابن [[absolute]].
-- [[inset-inline-end]] بدل [[right]] عشان العربي والإنجليزي.`,
           lines: [
-            R`الكارت: [[<article>]] لأنه منتج قايم بذاته، وهو اللي هيبقى المرجع للشارة.`,
-            R`الشارة «جديد»: [[<span>]] هيتطلّع من الترتيب ويتحط في ركن الكارت.`,
-            R`صورة المنتج بمقاسها الأصلي (400 × 300) عشان المتصفح يحجز مكانها قبل ما تتحمّل.`,
-            R`اسم المنتج لينك واحد بس، والـ [[::after]] بتاعه هيغطي الكارت كله.`,
-            R`قفلة الكارت، وبعدها الـ CSS اللي بيحط كل حاجة مكانها.`,
-            R`بداية الـ CSS: ٤ قواعد، كل واحدة لعنصر من اللي فوق.`,
-            "الكارت مرجع للأولاد الـ absolute، ومكانه هو متغيرش.",
-            "الشارة: فوق بنص rem، وعلى ناحية النهاية (يمين في الإنجليزي، شمال في العربي).",
-            "الكارت كله يبقى clickable: طبقة شفافة من اللينك مغطية الكارت، والـ HTML لسه لينك واحد صح.",
-            R`طبقة غامقة على الأب كله. [[inset: 0]] = top و right و bottom و left كلهم صفر.`,
-            R`قفلة الـ [[<style>]]، وكده المثال خلص.`
+            R`[[action="/join"]] العنوان اللي الطلب هيروحله. [[method="post"]] معناها البيانات تتحط في جسم الطلب مش في العنوان. و [[enctype="multipart/form-data"]] الشكل اللي بيسمح بإرسال ملفات: لازم يتكتب في أي فورم فيه [[type="file"]].`,
+            R`حقل [[type="hidden"]]: مش بيظهر في الصفحة خالص، بس بيتبعت مع الباقي. هنا بيقول للسيرفر إن الاشتراك ده في الباقة [[gold]] من غير ما الزائر يكتب حاجة.`,
+            R`[[<label>]] مربوط بالحقل بـ [[for]] (درس «form و label»). الـ label للزائر، ومبيتبعتش.`,
+            R`[[name="name"]] هو المفتاح اللي القيمة هتتبعت تحته. [[id]] للربط بالـ label جوه الصفحة، و [[name]] للإرسال: من غير [[name]] الحقل مبيتبعتش.`,
+            R`اسم الحقل التاني اللي الزائر شايفه. زي الأول: للزائر مش للسيرفر.`,
+            R`[[type="file"]] بيفتح نافذة اختيار ملف من الجهاز. محتوى الملف بيتبعت بس لو الفورم [[post]] و [[multipart/form-data]] (درس «file و accept و multiple»).`,
+            R`زرار الإرسال: الضغط عليه بيخلّي المتصفح يفحص الحقول ([[required]])، وبعدين يبني الطلب ويبعته لـ [[/join]].`,
+            R`[[</form>]] آخر الفورم. اللي بيتبعت هو الحقول اللي بين الفتحة والقفلة (أو المربوطة بالفورم بـ [[form=]]، درس «أزرار الفورم: formaction وإخواته»).`
           ],
-          sol: R`بـ [[position: relative]]: شارة «جديد» في ركن الكارت فوق، ناحية نهاية السطر (الشمال في صفحة rtl، واليمين في ltr) لأن [[inset-inline-end]] منطقية. بعد ما تمسحه: الشارة بتطير لركن الصفحة فوق خالص (أو لركن أقرب جد عليه position غير static)، لأن الـ absolute بيتحسب من أقرب أب positioned، ولو مفيش بيتحسب من الصفحة.
+          teach: R`## الفكرة في سطرين
 
-والحاجة اللي ممكن متاخدش بالك منها: الـ [[::after]] بتاع اللينك برضه بقى [[inset: 0]] على أول شاشة من الصفحة كلها (الـ initial containing block)، يعني أي ضغطة في أي حتة فيها بتفتح المنتج، حتى برا الكارت. ترجّع الـ relative وتدوس على الصورة أو على فراغ في الكارت: اللينك بيشتغل والماوس بيبقى إيد، وده من [[::after]] اللي مغطي الكارت.
+الفورم مش بيبعت «الصفحة». بيبعت **طلب HTTP** فيه أزواج [[اسم=قيمة]]، واحد لكل حقل ليه [[name]]. والسيرفر بيقرا الأزواج دي ويرد بصفحة.
 
-لو اللينك مش بيشتغل لما تدوس على الصورة، غالبًا فيه عنصر تاني عليه position وجاي بعد اللينك في الـ HTML فهو فوقه، أو الـ card ناقصها relative.`
-        },
-        {
-          cmd: "sticky و fixed",
-          ref: [
-            { t: "MDN: position", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position" },
-            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
-          ],
-          title: "هيدر ثابت وانت بتعمل scroll",
-          desc: R`[[position: fixed]] ثابت في الشاشة نفسها مهما عملت scroll (هيدر، أو زرار واتساب في الركن). وبيطلع من الـ flow، فلازم تسيب مكانه بـ padding.
-
-[[position: sticky]] عادي في مكانه لحد ما يوصل لحد معين ([[top: 0]])، ساعتها يلزق وانت نازل، ويفضل لازق لحد ما أبوه يخلص. مش بياخد مكان حد ومش محتاج padding.`,
-          example: R`.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: rgb(255 255 255 / 0.8);
-  backdrop-filter: blur(12px);
-}
-.whatsapp {
-  position: fixed;
-  bottom: 1rem;
-  inset-inline-end: 1rem;
-}
-.table th { position: sticky; top: 0; }`,
-          try: R`اعمل صفحة طويلة بالهيدر ده، وبعدين حط [[overflow: hidden]] على div بيلف الصفحة كلها: الـ sticky هيبطّل. غيّره لـ [[overflow: clip]] وشوفه رجع يشتغل.`,
-          flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** صفحة تفاصيل كورس: grid بعمودين ([[1fr 22rem]])، والـ aside فيه كارت الحجز عليه [[position: sticky; top: 6rem]]، ومش بيلزق. الـ CSS مفيهوش overflow خالص. لاقي السبب.`, done: R`الـ aside بيتمطّ لطول الصف كله (align الافتراضي stretch)، فمفيش مكان يتحرك فيه: في المعمل طوله 3000 وبعد scroll 800 الـ top بقى -800. بعد [[align-self: start]] طوله قد محتواه وفضل لازق عند 96 (6rem).`, sol: R`~~~live 600 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكورس</title>
-<style>
-  body { margin: 0; font-family: system-ui; }
-  .page { display: grid; grid-template-columns: 1fr 22rem; gap: 16px; }
-  .content { height: 3000px; background: #f4f4f5; }
-  aside { align-self: start; position: sticky; top: 6rem; }
-  .book { padding: 16px; border: 1px solid #d4d4d8; }
-</style>
-</head>
-<body>
-<main class="page">
-  <div class="content"><h1>الكورس</h1></div>
-  <aside aria-label="الحجز"><div class="book">احجز مكانك</div></aside>
-</main>
-</body>
-</html>
-~~~
-
-**السبب:** الـ sticky بيتحرك جوه أبوه بس. وعناصر الـ grid افتراضيًا [[align-self: stretch]]، فالـ aside بيتمد قد الصف كله، 3000. فمفيش مكان فاضي يتحرك فيه، وهو لازق من الأول لآخر الصفحة بس مش ماشي معاك.
-
-**التصليح:** [[align-self: start]] بيخلي الـ aside قد محتواه، فبقى عنده مكان طويل يتحرك فيه جوه الصف.
-
-والمشكلة مش [[overflow]]، ده أول سبب الكل بيدوّر عليه. ولو عايز تفحص: اطبع ارتفاع الأب والعنصر. لو متساويين، مفيش sticky ممكن يحصل.
-
-و [[position: sticky]] هنا على الـ [[aside]] نفسه. ولو سبت الـ aside يتمد وحطيت sticky على [[.book]] هيشتغل برضه، لأن [[.book]] جوه أب طويل.
-
-**الغلطة الشائعة:** تحط [[height: 100%]] على الـ aside. نفس المشكلة.
-
-~~~text الناتج
-                       ارتفاع aside     top بعد scroll 800
-قبل (stretch)          3000            -800
-بعد (align-self: start) 55            96   (6rem = 96)
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** ٣ صفحات فيها نفس الهيدر [[sticky; top: 0]]: (١) [[body { overflow-x: hidden }]]، (٢) [[html, body { overflow-x: hidden }]]، (٣) [[html, body { overflow-x: clip }]]. بعد [[scrollTo(0, 1000)]] الهيدر هيبقى فين في كل واحدة؟`, done: R`(١) [[top]] = 0 (لازق، لأن overflow الـ body لوحده بيتنقل للـ viewport)، (٢) [[top]] = -1000 (الـ body بقى scroll container مبيعملش scroll، فالهيدر مشي مع الصفحة)، (٣) [[top]] = 0. وعرفت ليه [[overflow-x: clip]] هو البديل الآمن.`, sol: R`~~~live 600 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الهيدر</title>
-<style>
-  body { margin: 0; }
-  header { position: sticky; top: 0; background: #124; color: #fff; padding: 12px; }
-  main { height: 3000px; }
-</style>
-</head>
-<body>
-<header>الهيدر</header>
-<main><h1>المحتوى</h1></main>
-</body>
-</html>
-~~~
-
-وضيف واحد من التلاتة في كل نسخة:
-
-~~~css
-body { overflow-x: hidden; }             /* ١ */
-html, body { overflow-x: hidden; }       /* ٢ */
-html, body { overflow-x: clip; }         /* ٣ */
-~~~
-
-**ليه الأولى شغالة والتانية لأ:** فيه قاعدة قديمة في CSS: لو [[html]] مفيهوش overflow، الـ overflow بتاع [[body]] بيتنقل للشاشة نفسها، والـ body بيفضل عادي. فالسطر ١ مبيعملش scroll container على الـ body.
-
-في السطر ٢: [[html]] عليه overflow، فده اللي بيتنقل للشاشة، و overflow الـ [[body]] بيفضل عليه. فالـ body بقى scroll container، طوله قد محتواه فمبيتحركش جواه، والهيدر لازق فيه ومش في الشاشة. فبيمشي مع الصفحة.
-
-و [[clip]] بيقص من غير ما يعمل scroll container خالص.
-
-**الغلطة الشائعة:** تكتب [[html, body]] مع بعض «عشان تضمن»، فتكسر كل sticky في الموقع.
-
-~~~text الناتج
-بعد scrollTo(0, 1000):
-١  body { overflow-x: hidden }        top = 0
-٢  html, body { overflow-x: hidden }  top = -1000
-٣  html, body { overflow-x: clip }    top = 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** navbar كبسولة عايمة لمدونة رحالة متخيلة: [[position: fixed; inset-inline: 0; top: 0.75rem]]، وجواه صندوق [[max-width]] ومدوّر بالكامل وخلفيته نص شفافة و [[backdrop-filter: blur(16px)]]، ومعاه [[@supports not (backdrop-filter: blur(1px))]] بخلفية مصمتة. والأقسام عليها [[scroll-margin-top]] قد الـ nav.`, done: R`لما تدوس على لينك [[#الأقسام]] العنوان بيبان كله تحت الـ nav مش مستخبي وراه (الـ top بتاع العنوان أكبر من أو يساوي bottom بتاع الـ nav)، والـ nav فاضل على بعد 12 من فوق بعد أي scroll، وأول محتوى في الصفحة مش مستخبي (padding-top على الـ main).`, sol: R`~~~live 370 370
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الرحالة</title>
-<style>
-  :root { --nav-h: 3.5rem; --nav-top: 0.75rem; }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: auto; }
-  body { margin: 0; font-family: system-ui; }
-  .nav { position: fixed; inset-inline: 0; top: var(--nav-top); z-index: 10; padding-inline: 16px; }
-  .nav__box {
-    display: flex; align-items: center; gap: 16px;
-    max-width: 720px; height: var(--nav-h); margin-inline: auto; padding-inline: 20px;
-    border-radius: 999px;
-    background: rgb(255 255 255 / .6);
-    backdrop-filter: blur(16px);
-    box-shadow: 0 2px 8px rgb(0 0 0 / .15);
-  }
-  @supports not (backdrop-filter: blur(1px)) {
-    .nav__box { background: #fff; }
-  }
-  main { padding-block-start: calc(var(--nav-h) + var(--nav-top) * 2); padding-inline: 16px; }
-  section { min-height: 90vh; scroll-margin-top: calc(var(--nav-h) + var(--nav-top) * 2); }
-</style>
-</head>
-<body>
-<header class="nav">
-  <nav class="nav__box" aria-label="الأقسام">
-    <a href="#asia">آسيا</a>
-    <a href="#africa">أفريقيا</a>
-  </nav>
-</header>
-<main>
-  <h1>مدونة رحالة</h1>
-  <section id="asia"><h2>آسيا</h2></section>
-  <section id="africa"><h2>أفريقيا</h2></section>
-</main>
-</body>
-</html>
-~~~
-
-**اللي بيحل مشكلة العنصر الـ fixed:** أي عنصر [[fixed]] بيخرج من الصفحة، فالمحتوى بيبدأ تحته.
-
-- [[padding-block-start]] على [[main]]: أول محتوى يبدأ بعد الـ nav.
-- [[scroll-margin-top]] على الأقسام: لما لينك [[#asia]] ينزل، المتصفح بيسيب المسافة دي. من غيرها العنوان بيقف تحت الـ nav ومستخبي.
-- [[--nav-h]] متغير واحد، فلو الارتفاع اتغيّر كله يمشي معاه.
-- [[@supports not (backdrop-filter: blur(1px))]]: المتصفح اللي مش بيدعم البلور ياخد خلفية مصمتة، عشان الكلام يفضل مقروء.
-
-**الغلطة الشائعة:** تحط الـ [[max-width]] والتدوير على [[.nav]] نفسه. [[inset-inline: 0]] هو اللي بيعرّضه، والصندوق جواه هو الكبسولة.
-
-~~~text الناتج
-بعد الضغط على «أفريقيا»:
-bottom الـ nav = 68   top عنوان القسم = 79.78   (العنوان ظاهر)
-top الـ nav بعد الـ scroll = 12   (0.75rem = 12)
-top أول h1 قبل أي scroll = 101.44   وbottom الـ nav = 68
-الـ URL: #africa
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** جدول طلبات طويل جوه صندوق [[max-height: 20rem; overflow: auto]] ورأسه [[th { position: sticky; top: 0 }]] بخلفية، وتحت الشاشة على الموبايل شريط تنقل [[fixed]] بـ [[padding-bottom: env(safe-area-inset-bottom)]].`, done: R`لما تعمل scroll **جوه** صندوق الجدول، الـ th بيفضل فوق الصندوق (هنا الـ overflow هو المقصود: الصندوق نفسه بيعمل scroll). وآخر صف في الصفحة باين فوق الشريط اللي تحت مش مستخبي تحته.`, sol: R`~~~live 540 540
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطلبات</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 16px 16px calc(64px + env(safe-area-inset-bottom)); font-family: system-ui; }
-  .scroll { max-height: 20rem; overflow: auto; border: 1px solid #d4d4d8; }
-  table { border-collapse: separate; border-spacing: 0; width: 100%; }
-  th, td { padding: 8px; text-align: start; }
-  th { position: sticky; top: 0; background: #f4f4f5; }
-  .tabs {
-    position: fixed; inset-inline: 0; bottom: 0;
-    display: flex; justify-content: space-around;
-    padding-block: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom));
-    background: #fff; border-block-start: 1px solid #d4d4d8;
-  }
-  .tabs a { padding: 10px; }
-</style>
-</head>
-<body>
-<main>
-<h1>الطلبات</h1>
-<div class="scroll" tabindex="0" role="region" aria-label="جدول الطلبات">
-  <table>
-    <thead><tr><th scope="col">الرقم</th><th scope="col">العميل</th></tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
-</div>
-<p id="last">آخر سطر في الصفحة</p>
-</main>
-<nav class="tabs" aria-label="التنقل">
-  <a href="#a">الرئيسية</a><a href="#b">الطلبات</a><a href="#c">حسابي</a>
-</nav>
-<script>
-  let html = '';
-  for (let i = 1; i <= 40; i++) html += '<tr><td>' + i + '</td><td>عميل ' + i + '</td></tr>';
-  document.querySelector('#rows').innerHTML = html;
-$__lt/script>
-</body>
-</html>
-~~~
-
-**مين بيلزق في مين:** الـ sticky بيلزق في أقرب أب بيعمل scroll. وهنا [[.scroll]] هو اللي بيعمل scroll فعلًا، فالعنوان بيلزق فوقه، وده المقصود. نفس الـ [[overflow]] اللي بيكسر هيدر الصفحة بيبقى هو الحل هنا.
-
-- [[env(safe-area-inset-bottom)]]: المسافة اللي نظام الموبايل بيحجزها لخط الـ home. على كمبيوتر قيمتها 0. الرقم الحقيقي مبيتشافش غير على جهاز فيه الخط ده.
-- [[padding-bottom]] على الـ [[body]]: عشان آخر سطر في الصفحة ميستخباش تحت الشريط.
-
-**الغلطة الشائعة:** تنسى المسافة دي، فآخر زرار في الصفحة يبقى تحت الشريط ومستحيل يتضغط.
-
-~~~text الناتج
-على 360×640:
-top العنوان قبل وبعد scroll 300 جوه الصندوق: 102.88 و 102.88
-بعد ما نزلنا لآخر الصفحة:
-bottom آخر سطر = 458.88   top الشريط = 582   (السطر فوق الشريط)
-overflow: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الهيدر (ارتفاعه 64) مرة [[fixed]] ومرة [[sticky]]، وتحته [[<h1>]]. قيس [[top]] بتاع الـ h1 قبل أي scroll في الاتنين، وصلّح نسخة الـ fixed.`, done: R`مع sticky الـ h1 بيبدأ تحت الهيدر (top أكبر من أو يساوي 64). مع fixed الـ h1 بيبدأ من فوق خالص تحت الهيدر ومستخبي (top أقل من 64)، والتصليح [[padding-top: 64px]] على الـ body أو متغير [[--nav-h]] بيرجّعه 64 أو أكتر.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الهيدر</title>
-<style>
-  :root { --nav-h: 64px; }
-  body { margin: 0; padding-block-start: var(--nav-h); }
-  header { position: fixed; inset-inline: 0; top: 0; height: var(--nav-h); background: #124; color: #fff; }
-  h1 { margin: 0; }
-</style>
-</head>
-<body>
-<header>الهيدر</header>
-<main><h1>العنوان</h1></main>
-</body>
-</html>
-~~~
-
-**الفرق:**
-
-- [[sticky]] لسه واخد مكانه في الصفحة، فاللي بعده بييجي تحته. وبيلزق بس لما توصل له.
-- [[fixed]] طالع من الصفحة خالص، فالعناصر بتتصرف كأنه مش موجود، والعنوان بيبدأ من فوق خالص ومستخبي تحته.
-
-**التصليح:** مسافة قد ارتفاع الهيدر على [[body]]، ومن متغير واحد. لو الارتفاع رقم في مكان ورقم في مكان تاني، هيختلفوا أول تعديل.
-
-و [[inset-inline: 0]] لازمة: الـ fixed عرضه قد محتواه لو مفيش طرفين محددين.
-
-**الغلطة الشائعة:** تستخدم [[fixed]] وانت عايز [[sticky]]. لو الهيدر في أول الصفحة ومش عايز حاجة خاصة، [[sticky]] أبسط ومن غير تعويض.
-
-~~~text الناتج
-                        top الـ h1
-sticky                  64
-fixed من غير تعويض      0  (مستخبي تحت الهيدر)
-fixed بعد التصليح       64
-~~~` },
-          ],
-          deep: {
-            why: R`الهيدر الثابت والأزرار العايمة موجودين في كل موقع تقريبًا. وأشهر شكوى: «الـ sticky مش شغال»، وليها أسباب محددة لو عرفتها مش هتضيّع ساعة.`,
-            how: R`[[fixed]]: الـ containing block بتاعه الشاشة، فبيفضل مكانه والصفحة بتتحرك تحته. وبيطلع من الـ flow، فلو هيدر fixed ارتفاعه 64، أول 64 من المحتوى هتستخبى تحته، ولازم [[padding-top]] على الـ body أو الـ main. والاستثناء المهم: لو أي جد عليه [[transform]] أو [[filter]] أو [[backdrop-filter]] أو [[will-change: transform]]، الـ fixed بيتحسب منه هو مش من الشاشة. ودا بيحصل كتير لما تحط مودال fixed جوه عنصر عليه animation بـ framer-motion (بيستخدم transform)، فالمودال يطلع جوه الكارت. الحل portal لآخر الـ body (Radix بيعمل ده).
-
-[[sticky]]: هجين. بيتصرف relative لحد ما الـ scroll يوصّله للحد اللي حددته (لازم [[top]] أو [[bottom]]، من غيرهم مش هيلزق). وبيلزق جوه حدود أبوه بس: لما الأب يخلص يمشي معاه، عشان كده sticky جوه div قد ارتفاعه بالظبط مش هيعمل حاجة.
-
-والسبب التاني: sticky بيلزق بالنسبة لأقرب جد «بيعمل scroll». أي جد عليه [[overflow: hidden]] أو [[auto]] بيبقى هو الـ scroll container، ولو هو نفسه مش بيعمل scroll، الـ sticky مش هيتحرك. [[overflow: clip]] بيقص زي hidden بس مش بيعمل scroll container.
-
-و [[backdrop-filter]] على الهيدر شكله حلو بس تقيل على الموبايلات الضعيفة، لأن المتصفح بيعيد حساب الـ blur مع كل scroll.`,
-            when: "sticky للهيدر والـ sidebar وعناوين الجداول وعناوين الأقسام في قايمة طويلة. fixed للأزرار العايمة، والمودال والـ overlay (أحسن في portal)، والإشعارات.",
-            mistakes: R`sticky من غير [[top]]. جد عليه [[overflow-x: hidden]] (اتحط عشان يمنع scroll أفقي) فالـ sticky يموت: استخدم [[overflow-x: clip]]. وهيدر fixed من غير padding فأول عنوان في الصفحة مستخبي تحته.`
-          },
-          teach: R`## عنصرين بيفضلوا ظاهرين وانت بتعمل scroll
-
-حطينا المثال في صفحة [[dir="rtl"]] عرضها 1200 وارتفاعها 800، فيها الهيدر، وبعده محتوى طوله 3000، وزرار الواتساب. وقسنا مكان كل عنصر **على الشاشة** بـ [[getBoundingClientRect()]] قبل الـ scroll وبعد [[scrollTo(0, 1000)]] (يعني نزلنا 1000px).
+وعشان تشوف الطلب بعينك، كل القياسات في الدرس ده معمولة كده: Chrome 157 على Windows 11 بيبعت الفورم لسيرفر صغير شغال على نفس الجهاز، والسيرفر بيكتب الطلب اللي وصله زي ما هو.
 
 ---
 
-## ١. الهيدر
+## ٠. المعمل: سيرفر بيرجّع اللي وصله
 
-~~~text style.css
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: rgb(255 255 255 / 0.8);
-  backdrop-filter: blur(12px);
-}
+ده السيرفر اللي قسنا بيه (ملف Node واحد من غير أي مكتبات). **مش مطلوب منك تكتبه ولا تفهمه دلوقتي:** هو أداة قياس. لو عندك Node وعايز تجرّب بنفسك: احفظه باسم [[echo.js]] وشغّله بـ [[node echo.js]]، وخلّي [[action]] بتاع الفورم [[http://127.0.0.1:8126/join]].
+
+~~~js echo.js
+const http = require("http");
+http.createServer((req, res) => {
+  const chunks = [];
+  req.on("data", (c) => chunks.push(c));
+  req.on("end", () => {
+    const body = Buffer.concat(chunks).toString("utf8");
+    const text = req.method + " " + req.url + "\n" +
+      "content-type: " + (req.headers["content-type"] || "(none)") + "\n" +
+      "content-length: " + (req.headers["content-length"] || "(none)") + "\n\n" + body;
+    console.log(text + "\n=====");
+    res.writeHead(200, { "content-type": "text/plain; charset=utf-8" });
+    res.end(text);
+  });
+}).listen(8126, "127.0.0.1");
 ~~~
 
-- [[position: sticky]]: العنصر في مكانه العادي، لحد ما الـ scroll يوصّله للحد اللي تحت.
-- [[top: 0]]: الحد = أول الشاشة. لما الهيدر يوصل له يلزق. من غير [[top]] الـ sticky مبيعملش حاجة.
-- [[z-index: 10]]: يبقى فوق المحتوى اللي بيعدّي تحته (الدرس الجاي).
-- [[rgb(255 255 255 / 0.8)]]: أبيض شفافيته 80%.
-- [[backdrop-filter: blur(12px)]]: يغبّش اللي **ورا** العنصر بـ 12px. أبيض نص شفاف + blur = الشكل «الزجاجي».
+كل طلب بيتطبع منه ٤ حاجات:
 
-~~~text الناتج
-قبل الـ scroll:      header top: 0
-بعد scroll 1000:    header top: 0   (لازق)
-~~~
-
-## ٢. زرار الواتساب
-
-~~~text style.css
-.whatsapp {
-  position: fixed;
-  bottom: 1rem;
-  inset-inline-end: 1rem;
-}
-~~~
-
-[[fixed]] = المرجع الشاشة نفسها. [[bottom: 1rem]] = 16px من تحت، و [[inset-inline-end]] = 16px من نهاية السطر (الشمال في rtl).
-
-~~~text الناتج (قبل وبعد الـ scroll)
-whatsapp left: 16   top: 766   width: 37.72   height: 18
-~~~
-
-766 + 18 = 784 = 800 - 16. ونفس الرقم بعد ما نزلنا 1000: مبيتحركش.
-
-## ٣. [[.table th { position: sticky; top: 0; }]]
-
-[[th]] خانة العنوان في الجدول. sticky عليها = رأس الجدول يفضل ظاهر وانت نازل في الصفوف، بس جوه حدود الجدول (sticky بيلزق جوه أبوه بس).
-
----
-
-## التجربة: [[overflow]] على div بيلف الصفحة
-
-لفّينا كل حاجة في [[<div class="wrap">]] وجربنا ٣ قيم:
-
-| الـ wrap | header top بعد scroll 1000 | النتيجة |
-|---|---|---|
-| من غير overflow | 0 | لازق |
-| [[overflow: hidden]] | -1000 | مشي مع الصفحة واختفى |
-| [[overflow: clip]] | 0 | لازق |
-
-ليه؟ [[overflow: hidden]] بيخلي الـ div ده **scroll container** (عنصر ممكن يعمل scroll جواه)، والـ sticky بيلزق بالنسبة لأقرب scroll container. والـ div نفسه مبيعملش scroll (الصفحة هي اللي بتتحرك)، فالهيدر مالقاش حاجة يلزق فيها. [[overflow: clip]] بيقص زي hidden بالظبط، بس مش بيعمل scroll container.
-
-## فخ الـ fixed: [[transform]] على جد
-
-حطينا عنصر [[position: fixed; inset: 0]] جوه div عليه [[transform: translateY(0)]] (transform مبيحركش حاجة، بس موجود):
-
-~~~text الناتج
-المتوقع:  0، 0، 1200 × 800 (الشاشة كلها)
-الفعلي:   left 100، top 300، 300 × 200 (قد الـ div)
-~~~
-
-أي [[transform]] أو [[filter]] على جد بيخليه هو المرجع بدل الشاشة. عشان كده المودال بيتحط في portal في آخر الـ body.
-
-## الخلاصة
-
-| | في الترتيب؟ | بيلزق في |
-|---|---|---|
-| [[sticky]] | آه، ومحتاج [[top]] | أقرب scroll container، جوه حدود أبوه |
-| [[fixed]] | لأ، فاحجز مكانه بـ padding | الشاشة (إلا لو جد عليه transform أو filter) |
-
-- sticky مش شغال؟ دوّر على [[top]] ناقص، أو أب قد الهيدر بس، أو [[overflow]] على جد. وبدل [[overflow-x: hidden]] استخدم [[overflow-x: clip]].`,
-          lines: [
-            R`هيدر الموقع: هنخليه يلزق فوق وانت نازل من غير ما ياخد مكان حد.`,
-            "sticky: في مكانه العادي لحد ما يوصل للحد...",
-            "...اللي هو أول الشاشة، وساعتها يلزق.",
-            "فوق المحتوى اللي بيعدّي تحته.",
-            "خلفية بيضا نص شفافة.",
-            "blur للي تحته: الشكل «الزجاجي» المشهور.",
-            R`قفلة [[.site-header]]، والزرار العايم جاي بعده.`,
-            R`زرار واتساب عايم: هيفضل في ركن الشاشة مهما عملت scroll.`,
-            "ثابت في الشاشة مهما عملت scroll.",
-            R`16px من تحت الشاشة (وعلى موبايل فيه شق زوّد [[env(safe-area-inset-bottom)]] عليها).`,
-            "وعلى ناحية النهاية (بيتقلب في العربي).",
-            R`قفلة [[.whatsapp]]، وآخر سطر لعناوين الجداول.`,
-            "رأس الجدول يفضل ظاهر وانت نازل في الصفوف."
-          ],
-          sol: R`الأول الهيدر بيلزق فوق وانت بتعمل scroll، ولما تنزل تحته الكلام بيبان مغبّش ورا الخلفية النص شفافة. بعد [[overflow: hidden]] على الـ div اللي بيلف الصفحة: الهيدر بيمشي مع الصفحة ويختفي فوق زي أي عنصر عادي. السبب إن [[overflow: hidden]] بيخلي الـ div ده scroll container، فالـ sticky بيلزق جواه هو، وهو نفسه مش بيعمل scroll (الصفحة هي اللي بتعمل)، فمفيش حاجة تحصل.
-
-مع [[overflow: clip]]: الهيدر رجع يلزق. [[clip]] بيقص اللي طالع برا زي hidden بالظبط، بس من غير ما يعمل scroll container. زرار الواتساب ([[fixed]]) في الحالات التلاتة ثابت في ركن الشاشة (تحت ناحية الشمال في rtl).
-
-لو الـ sticky مش شغال من الأول خالص، الأسباب المعتادة: ناسي [[top: 0]]، أو الأب المباشر للهيدر طوله قد الهيدر بس (sticky بيلزق جوه أبوه بس)، أو فيه [[overflow]] على أي جد فوق.`
-        },
-        {
-          cmd: "z-index",
-          ref: [
-            { t: "MDN: z-index", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/z-index" },
-            { t: "MDN: translateY()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/transform-function/translateY" },
-            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
-          ],
-          title: "مين فوق مين: الطبقات في الصفحة",
-          desc: R`[[z-index]] بيحدد مين فوق مين، بس بيشتغل على عنصر position بتاعه مش static (أو ابن flex أو grid). والأهم: المقارنة بتحصل جوه نفس الـ stacking context بس.
-
-الـ stacking context زي «طبقة مقفولة»: كل اللي جواها بيترتب مع بعض، وبعدين الطبقة كلها بتترتب مع اللي برا كوحدة واحدة. فابن عليه 9999 جوه أب عليه [[z-index: 1]] عمره ما هيطلع فوق عنصر برا عليه 2.`,
-          example: R`<header class="header">
-  <div class="dropdown">قايمة</div>
-</header>
-<main class="hero">...</main>
-<style>
-  .header { position: relative; z-index: 1; }
-  .dropdown { position: absolute; z-index: 9999; }
-  .hero { position: relative; z-index: 2; }
-  .card { isolation: isolate; }
-  .fade-in { opacity: 0.99; transform: translateY(0); }
-</style>`,
-          try: R`اعمل الكود ده وشوف القايمة مستخبية تحت الهيرو رغم الـ 9999. غيّر z-index الهيدر لـ 3 وشوفها ظهرت. وبعدين ضيف [[opacity: 0.99]] على الهيدر من غير z-index وشوف إنه عمل طبقة جديدة برضه.`,
-          flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** كارت عليه [[transform: translateY(-4px)]] عند الـ hover، وجواه قايمة [[absolute; z-index: 50]] بتنزل على الكارت اللي بعده (اللي عليه نفس الـ hover). لما تقف على الكارت الأول القايمة هتبان؟ ولما الماوس يروح على القايمة نفسها؟`, done: R`كتبت توقعك، وجرّبت: الـ transform عمل stacking context للكارت، فالقايمة اتحبست جواه، والكارت اللي بعده (جاي بعده في الـ HTML وفي نفس المستوى) بيغطيها. والحل [[position: relative; z-index: 1]] على الكارت اللي عليه hover أو [[:focus-within]]، أو portal.`, sol: R`~~~live 240 240
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكروت</title>
-<style>
-  body { margin: 16px; font-family: system-ui; }
-  .card { position: relative; height: 80px; margin-block-end: 8px; padding: 8px; background: #f4f4f5; }
-  .card:hover { transform: translateY(-4px); }
-  .menu { display: none; position: absolute; z-index: 50; top: 100%; inset-inline-start: 8px; width: 160px; height: 60px; background: #fde68a; }
-  .card:hover .menu { display: block; }
-</style>
-</head>
-<body>
-<article class="card" id="a">الكارت الأول <div class="menu">القايمة</div></article>
-<article class="card" id="b">الكارت التاني <div class="menu">قايمة تانية</div></article>
-</body>
-</html>
-~~~
-
-**اللي بيحصل:**
-
-- وقت الـ hover، الـ [[transform]] بيعمل stacking context للكارت. فـ [[z-index: 50]] بقى معناه «50 جوه الكارت الأول بس»، والكارت كله طبقة واحدة.
-- الكارت التاني [[position: relative]]، وجاي بعده في الـ HTML، ففوقه. فالقايمة بتتغطى عند الجزء المتداخل.
-- ولما الماوس يتحرك للجزء ده، هو فعليًا فوق الكارت التاني، فالـ hover بيروح منه، والقايمة بتختفي.
-
-**الحل:** ارفع الكارت نفسه:
-
-~~~css
-.card:hover, .card:focus-within { z-index: 1; }
-~~~
-
-**الغلطة الشائعة:** تزوّد الرقم لـ 9999. الرقم محبوس جوه الكارت، ومش هيفرق مهما كبر.
-
-~~~text الناتج
-hover على الأول، نقطة جوه القايمة فوق الكارت التاني:
-قبل:   elementFromPoint = ARTICLE#b.card   (الكارت التاني غطاها)
-       z-index: 9999 بدل 50 = ARTICLE#b.card
-       بعد تحريك الماوس لنفس النقطة: القايمة ظاهرة؟ false
-من غير transform خالص: DIV.menu
-بعد الحل: elementFromPoint = DIV.menu
-       بعد تحريك الماوس لنفس النقطة: القايمة ظاهرة؟ true
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** المثال بتاع الدرس بالظبط (هيدر [[z-index: 1]] وجواه قايمة [[9999]] وهيرو [[2]]). صلّحه بـ **تلات** طرق مختلفة ومن غير ما تزوّد أي رقم على القايمة.`, done: R`في التلات طرق [[document.elementFromPoint(50, 150)]] بيرجّع [[DIV.dropdown]]: (١) الهيدر [[z-index: 3]]، (٢) شيل الـ z-index من الهيدر، (٣) شيل [[z-index]] من الهيرو أو خليه [[auto]]. وكتبت أنهي واحدة أأمن لما الصفحة تكبر.`, sol: R`~~~live 390 390
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطبقات</title>
-<style>
-  body { margin: 0; }
-  .header { position: relative; z-index: 1; height: 60px; background: #bfdbfe; }
-  .dropdown { position: absolute; top: 100%; left: 0; z-index: 9999; width: 200px; height: 200px; background: #fde68a; }
-  .hero { position: relative; z-index: 2; height: 300px; background: #bbf7d0; }
-</style>
-</head>
-<body>
-<header class="header"><div class="dropdown">قايمة</div></header>
-<main class="hero"><h1>الهيرو</h1></main>
-</body>
-</html>
-~~~
-
-**المشكلة:** الهيدر stacking context برقم 1، والقايمة محبوسة جواه. فـ 9999 بتتقارن بإخواتها جوه الهيدر بس، والهيرو 2 فوق الهيدر كله.
-
-**التلات طرق:**
-
-~~~css
-/* ١: ارفع الهيدر فوق الهيرو */
-.header { z-index: 3; }
-
-/* ٢: شيل z-index من الهيدر، فمبقاش stacking context */
-.header { z-index: auto; }
-
-/* ٣: شيل z-index من الهيرو */
-.hero { z-index: auto; }
-~~~
-
-**أنهي أأمن:** الأولى، وبتوكن زي [[--z-header]]. السبب إن الترتيب بقى مكتوب صريح. الطريقة التانية بتحرر القايمة، فـ 9999 بتتقارن في الصفحة كلها، وده بيفتح نفس الحرب بعد كده. والتالتة بتعتمد على إن محدش هيدي الهيرو رقم تاني.
-
-**الغلطة الشائعة:** تزوّد 99999 على القايمة. أي رقم جواها ميعدّيش حدود الهيدر.
-
-~~~text الناتج
-elementFromPoint(50, 150):
-قبل:                       MAIN.hero
-١  الهيدر z-index: 3:       DIV.dropdown
-٢  الهيدر z-index: auto:    DIV.dropdown
-٣  الهيرو z-index: auto:    DIV.dropdown
-قايمة 99999:                MAIN.hero
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** scale طبقات كتوكنز: [[--z-sticky: 10]] و [[--z-dropdown: 40]] و [[--z-modal: 50]] و [[--z-toast: 100]]، وصفحة فيها هيدر sticky وقايمة ومودال و toast كلهم فوق نفس النقطة.`, done: R`[[elementFromPoint]] عند النقطة اللي فيها الأربعة بيرجّع الـ toast، ولما تقفل الـ toast بيرجّع المودال، و grep على الـ CSS مفيهوش [[z-index:]] برقم مكتوب غير في تعريف التوكنز.`, sol: R`~~~live 290 290
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطبقات</title>
-<style>
-  :root {
-    --z-sticky: 10;
-    --z-dropdown: 40;
-    --z-modal: 50;
-    --z-toast: 100;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui; }
-  .head { position: sticky; top: 0; z-index: var(--z-sticky); height: 200px; background: #bfdbfe; }
-  .drop { position: fixed; top: 20px; left: 20px; z-index: var(--z-dropdown); width: 200px; height: 200px; background: #fde68a; }
-  .modal { position: fixed; top: 40px; left: 40px; z-index: var(--z-modal); width: 200px; height: 200px; background: #bbf7d0; }
-  .toast { position: fixed; top: 60px; left: 60px; z-index: var(--z-toast); width: 200px; height: 100px; background: #fecaca; }
-</style>
-</head>
-<body>
-<header class="head">هيدر</header>
-<main><h1>الصفحة</h1></main>
-<div class="drop">قايمة</div>
-<div class="modal">مودال</div>
-<div class="toast">toast</div>
-</body>
-</html>
-~~~
-
-**ليه scale:** بدل ما كل واحد يختار رقم، الأرقام في مكان واحد، وبأسماء بتقول الترتيب. فمحدش محتاج يخمّن.
-
-**ليه أرقام متباعدة:** مش محتاجة تبقى متتالية، بس المسافة بتسيب مكان لطبقة جديدة من غير ما تعدّل الباقي.
-
-**شرط أساسي:** الأربعة لازم يبقوا في نفس stacking context. لو المودال جوه عنصر عليه [[transform]]، توكن 50 مش هيساعده. عشان كده المودالات والـ toasts غالبًا بتتحط آخر [[body]].
-
-**الغلطة الشائعة:** تكتب [[z-index: 50]] مباشرة مرة واحدة «على السريع». في الآخر الملف فيه ١٥ رقم محدش فاهمهم.
-
-~~~text الناتج
-النقطة (100, 100):
-كلهم موجودين  → toast
-قفلنا الـ toast → modal
-قفلنا المودال  → drop
-قفلنا القايمة  → head
-
-z-index برقم مكتوب برّه تعريف التوكنز: 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** كوتشينة ٣ كروت فوق بعض متفرّدين بـ [[rotate]] و [[translate]]، والكارت اللي الماوس عليه يطلع فوق الكل من غير ما الباقيين يتحركوا.`, done: R`الكارت اللي عليه hover أو focus هو اللي [[elementFromPoint]] بيرجّعه في المكان اللي متداخل فيه، والترتيب بيرجع زي ما كان لما الماوس يمشي، وكل الـ z-index أرقام صغيرة (1 لـ 3).`, sol: R`~~~live 350 350
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكوتشينة</title>
-<style>
-  body { margin: 40px; font-family: system-ui; }
-  .deck { position: relative; width: 320px; height: 200px; margin-inline: auto; }
-  .play {
-    position: absolute;
-    top: 0;
-    left: 80px;
-    width: 120px;
-    height: 170px;
-    z-index: 1;
-    border: 1px solid #44403c;
-    border-radius: 10px;
-    background: #fff;
-    font: 700 1.5rem system-ui;
-    cursor: pointer;
-  }
-  .play:nth-child(1) { rotate: -12deg; translate: -48px 8px; }
-  .play:nth-child(3) { rotate: 12deg; translate: 48px 8px; }
-  .play:hover, .play:focus-visible { z-index: 2; }
-</style>
-</head>
-<body>
-<main>
-<h1>الكوتشينة</h1>
-<div class="deck">
-  <button class="play" type="button">٩</button>
-  <button class="play" type="button">١٠</button>
-  <button class="play" type="button">آس</button>
-</div>
-</main>
-</body>
-</html>
-~~~
-
-**ليه بيطلع فوق من غير ما يتحرك:** [[z-index]] بيغيّر ترتيب الرسم بس، مش المكان. والـ [[rotate]] و [[translate]] ثابتين. فالكارت بيطلع قدام، والباقيين مكانهم.
-
-- [[rotate]] و [[translate]] خصائص منفصلة، فالقاعدة دي مش بتلغي غيرها.
-- [[position: absolute]]: عشان [[z-index]] يشتغل، وعشان الكروت يبقوا فوق بعض.
-- [[:focus-visible]]: نفس الحركة بالكيبورد.
-- كل الكروت [[z-index: 1]]، فالترتيب بينهم جاي من ترتيب الـ HTML، و hover بيبقى 2. رقمين كفاية، فمفيش سباق أرقام.
-
-**الغلطة الشائعة:** تستخدم [[transform: scale()]] في الـ hover فوق [[transform: rotate()]]. القيمة الجديدة بتشيل القديمة، فالكارت بيتعدل فجأة.
-
-~~~text الناتج
-النقطة المتداخلة بين التاني والتالت (642, 189):
-من غير hover: الكارت آس
-بعد hover على التاني: الكارت ١٠
-نفس النقطة والماوس فيها: z-index الكارت التاني = 2
-بعد ما الماوس مشي: الكارت آس
-rotate الكارت الأول قبل وبعد: -12deg و -12deg
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN (صفحة «Stacking context») لاقي ٣ خصائص بتعمل stacking context ومش مذكورة في الدرس، وجرّب كل واحدة على الهيدر بتاع المثال من غير z-index.`, done: R`عندك ٣ خصائص (مثلًا [[mix-blend-mode]] و [[contain: layout]] و [[perspective]] و [[view-transition-name]]) والرابط، ولكل واحدة ناتج [[elementFromPoint]] في نقطة جوه الهيدر نفسه (عشان القص ميلخبطش النتيجة): لو رجّعت [[MAIN.hero]] يبقى عملت context وحبست القايمة. ولو خاصية مكتوبة في MDN ومطلعتش context عندك (في Chrome 156 جربنا [[container-type: inline-size]] ومعملش) اكتب ده.`, sol: R`~~~live 300 300
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطبقات</title>
-<style>
-  body { margin: 0; }
-  .header { position: relative; height: 60px; background: #bfdbfe; }
-  .dropdown { position: absolute; top: 0; left: 0; z-index: 9999; width: 200px; height: 60px; background: #fde68a; }
-  .hero { position: relative; z-index: 2; height: 300px; margin-block-start: -60px; background: rgb(187 247 208 / .9); }
-</style>
-</head>
-<body>
-<header class="header"><div class="dropdown">قايمة</div></header>
-<main class="hero"></main>
-</body>
-</html>
-~~~
-
-**طريقة التجربة:** كل خاصية بتتحط على [[.header]] لوحدها. الهيدر مفيهوش [[z-index]] والقايمة 9999. والهيرو طالع فوق الهيدر بـ margin سالب. والنقطة (50, 30) جوه الهيدر نفسه. لو القايمة حرة، هترجع [[DIV.dropdown]]. لو الخاصية عملت context، القايمة اتحبست، والهيرو هيغطيها، فهترجع [[MAIN.hero]].
-
-و [[isolation: isolate]] و [[opacity]] مش في الجدول لأنهم في الدرس. دي الخصائص الجديدة، من صفحة Stacking context في MDN.
-
-**الغلطة الشائعة:** تعتبر كل حاجة مكتوبة في مرجع هتتصرف زي ما هو قايل. نفس الصفحة بتتحدّث، فجرّب. و [[container-type: inline-size]] زمان كانت بتعمل context، والصف بتاعها تحت بيقول إيه في Chrome 156.
-
-~~~text الناتج
-elementFromPoint(50, 30):
-
-(من غير أي خاصية)               DIV.dropdown   
-mix-blend-mode: multiply;       MAIN.hero   عملت context
-contain: layout;                MAIN.hero   عملت context
-perspective: 100px;             MAIN.hero   عملت context
-view-transition-name: head;     MAIN.hero   عملت context
-will-change: opacity;           MAIN.hero   عملت context
-container-type: inline-size;    DIV.dropdown   معملتش context
-clip-path: inset(0);            MAIN.hero   عملت context
-~~~` },
-          ],
-          deep: {
-            why: "الـ dropdown اللي مستخبي تحت السكشن اللي بعده، والمودال اللي تحت الهيدر، مشاكل كل مشروع. والحل الغلط إنك تزوّد أصفار في الـ z-index، ومش هيشتغل مهما زوّدت، لأن المشكلة في الطبقات مش في الرقم.",
-            how: R`الصفحة نفسها stacking context. وأي عنصر بيعمل context جديد لو: position (relative أو absolute) ومعاه z-index مش auto، أو position fixed أو sticky، أو ابن flex أو grid عليه z-index، أو [[opacity]] أقل من 1، أو [[transform]] أو [[filter]] أو [[backdrop-filter]] أو [[clip-path]] أو [[mask]] مش none، أو [[isolation: isolate]]، أو [[will-change]] على حاجة منهم.
-
-جوه أي context، الترتيب من تحت لفوق: خلفية وحدود صاحب الـ context، وبعدين الأولاد اللي z-index بتاعهم سالب، وبعدين العناصر العادية، وبعدين الـ floats، وبعدين الـ inline، وبعدين الـ positioned اللي z-index بتاعهم auto أو 0 بترتيب الـ HTML، وبعدين الموجب بالترتيب.
-
-الـ context بيتعامل كوحدة: الـ z-index بتاع أي حد جواه ملوش معنى برا. عشان كده الحل دايمًا إنك ترفع العنصر صاحب الـ context (الهيدر)، أو تطلّع العنصر برا خالص بـ portal، زي ما Radix و shadcn بيعملوا للمودال والـ dropdown: بيحطوهم في آخر الـ body.
-
-framer-motion بيحط transform على العناصر اللي بيحركها، فبيعمل context جديد. قايمة جوه كارت متحرك ممكن تستخبى فجأة بسبب ده.`,
-            when: R`خلي عندك scale صغير ثابت: 10 للـ sticky، و 40 للـ dropdown، و 50 للمودال، و 100 للـ toast. وفي Tailwind [[z-10]] و [[z-50]]. واستخدم portal لأي حاجة لازم تبقى فوق كل حاجة.`,
-            mistakes: R`[[z-index: 99999]] بدل ما تفهم الطبقات. z-index على عنصر static (مش بيعمل حاجة، إلا لو ابن flex أو grid). وتنسى إن opacity و transform بيعملوا context، فبعد ما تضيف animation الترتيب يتلخبط.`
-          },
-          teach: R`## ليه 9999 خسرت قدام 2؟
-
-[[z-index]] رقم بيقول مين فوق مين لما عنصرين يقعوا على نفس المكان. بس الرقم بيتقارن **جوه مجموعة** بس، والمجموعة دي اسمها stacking context. حطينا المثال في Chrome: هيدر ارتفاعه 60، وجواه قايمة حمرا 200 × 150 نازلة من top = 40 (يعني نازلة على الهيرو)، وتحته هيرو ارتفاعه 400. وسألنا المتصفح بـ [[document.elementFromPoint(50, 150)]]: مين العنصر اللي فوق خالص عند النقطة دي؟ النقطة دي جوه القايمة وجوه الهيرو في نفس الوقت.
-
----
-
-## ١. الـ HTML
-
-~~~text index.html
-<header class="header">
-  <div class="dropdown">قايمة</div>
-</header>
-<main class="hero">...</main>
-~~~
-
-القايمة **ابن** الهيدر، والهيرو **أخو** الهيدر.
-
-## ٢. [[.header { position: relative; z-index: 1; }]]
-
-[[z-index]] بيشتغل على عنصر عليه position (أو ابن flex أو grid). و [[relative]] مع [[z-index]] رقم = الهيدر عمل stacking context جديد. من دلوقتي الهيدر وكل اللي جواه بيتعاملوا **كطبقة واحدة رقمها 1** قدام أي حد برا.
-
-## ٣. [[.dropdown { position: absolute; z-index: 9999; }]]
-
-الـ 9999 بتتقارن مع إخوات القايمة جوه الهيدر بس. بالنسبة للصفحة القايمة جزء من طبقة الهيدر (1).
-
-## ٤. [[.hero { position: relative; z-index: 2; }]]
-
-الهيرو في نفس مستوى الهيدر (الاتنين أولاد body)، فالمقارنة 2 ضد 1: الهيرو فوق، وبيغطي القايمة.
-
-~~~text الناتج
-elementFromPoint(50, 150) → MAIN.hero
-~~~
-
-## ٥. [[.card { isolation: isolate; }]]
-
-[[isolation: isolate]] بيعمل stacking context **من غير** z-index ومن غير ما يغيّر أي حاجة في الشكل. فايدته: الـ z-index اللي جوه الكارت ميأثرش على اللي برا.
-
-## ٦. [[.fade-in { opacity: 0.99; transform: translateY(0); }]]
-
-[[opacity]] الشفافية من 0 لـ 1، و [[translateY(0)]] تحريك رأسي بصفر. الاتنين مش بيغيّروا الشكل تقريبًا، بس كل واحد منهم لوحده بيعمل stacking context. ده الفخ.
-
----
-
-## التجربة: غيّرنا اللي على الهيدر بس
-
-| على [[.header]] | مين فوق عند (50، 150) | ليه |
-|---|---|---|
-| [[z-index: 1]] (المثال) | MAIN.hero | الهيدر طبقة رقمها 1 والهيرو 2 |
-| [[z-index: 3]] | DIV.dropdown | الطبقة كلها بقت أعلى من الهيرو |
-| من غير z-index خالص | DIV.dropdown | مفيش طبقة، فالـ 9999 بتتقارن مع الهيرو مباشرة |
-| [[opacity: 0.99]] من غير z-index | MAIN.hero | opacity عمل طبقة لوحده |
-| [[transform: translateY(0)]] من غير z-index | MAIN.hero | transform عمل طبقة لوحده |
-| [[isolation: isolate]] من غير z-index | MAIN.hero | isolation عمل طبقة مقصودة |
-
-- [[z-index: 3]]: الطبقة كلها بقت أعلى من 2، فالقايمة طلعت معاها.
-- من غير z-index: مفيش context، فالقايمة بتتقارن بالـ 9999 مع الهيرو مباشرة وتكسب.
-- opacity و transform و isolation: كل واحد عمل context (رقمه زي 0)، فالقايمة اتحبست تاني تحت الهيرو.
-
-## الخلاصة
-
-- الـ z-index بيتقارن جوه نفس الـ stacking context بس.
-- الأب اللي عليه z-index أو opacity أقل من 1 أو transform أو filter أو isolation بيحبس أولاده جواه.
-- القايمة مستخبية؟ متزوّدش أصفار: ارفع الأب صاحب الـ context، أو طلّع القايمة برا بـ portal.`,
-          lines: [
-            R`الهيدر: هيعمل stacking context لما ناخد عليه [[z-index]] في الـ CSS.`,
-            "قايمة بتنزل من الهيدر فوق الهيرو.",
-            R`قفلة الهيدر: القايمة **ابن** الهيدر، ودي النقطة اللي هتفرق.`,
-            R`الهيرو جاي بعد الهيدر، وهو **أخو** الهيدر مش أخو القايمة.`,
-            R`بداية الـ CSS: كل سطر بيحط طبقة لعنصر واحد.`,
-            "الهيدر عمل stacking context بـ z-index 1.",
-            "9999 بس جوه طبقة الهيدر. بالنسبة للصفحة هو «1» زي أبوه.",
-            "الهيرو 2 فبيغطّي الهيدر كله بما فيه القايمة. الحل: ارفع الهيدر نفسه، مش القايمة.",
-            R`[[isolation: isolate]]: اعمل stacking context مقصود من غير z-index، عشان الـ z-index اللي جوه الكارت ميهربش برا.`,
-            "خد بالك: opacity أقل من 1 و transform بيعملوا stacking context من غير ما تاخد بالك.",
-            R`قفلة الـ [[<style>]]، وكده المثال خلص.`
-          ],
-          sol: R`بالكود زي ما هو: القايمة الحمرا اللي تحت الهيدر مستخبية ورا الهيرو، رغم الـ 9999. الهيدر عنده [[z-index: 1]] فعمل stacking context، وكل اللي جواه محبوس في الطبقة 1 كوحدة واحدة، والهيرو بـ 2 فوقها كلها. الـ 9999 بتتقارن بس مع إخوات القايمة جوه الهيدر.
-
-غيّر الهيدر لـ 3: القايمة ظهرت فوق الهيرو، لأن الطبقة كلها بقت أعلى من 2. امسح الـ z-index من الهيدر خالص: القايمة برضه بتظهر (مفيش context، فالـ 9999 بتتقارن مع الهيرو مباشرة). ضيف [[opacity: 0.99]] من غير z-index: القايمة استخبت تاني، لأن opacity أقل من 1 بتعمل stacking context لوحدها، وكذلك [[transform]] و [[filter]] و [[isolation: isolate]].
-
-الغلط الشائع إنك تزوّد القايمة لـ 99999: مش هيفرق أبدًا. ابحث عن الأب اللي عامل الـ context (في DevTools › Layers أو بإنك تشيل خصائص من الأب واحدة واحدة).`
-        },
-        {
-          cmd: "media queries",
-          ref: [
-            { t: "MDN: Using media queries", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Using" },
-            { t: "MDN: @media", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media" },
-            { t: "WHATWG: media attribute", url: "https://html.spec.whatwg.org/multipage/semantics.html#attr-link-media" },
-            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
-          ],
-          title: "تصميم يبدأ من الموبايل ويكبر",
-          desc: R`[[@media (min-width: 48rem) { ... }]] = القواعد دي تشتغل بس لما الشاشة 768 أو أكبر. mobile-first معناها تكتب الـ CSS العادي للموبايل الأول (عمود واحد، وخط أصغر)، وتضيف بـ [[min-width]] للشاشات الأكبر.
-
-ودا نفس اللي Tailwind بيعمله: [[md:grid-cols-3]] = من md وطالع. والكلاس من غير prefix = الموبايل وكل حاجة فوقه.`,
-          example: R`.products { display: grid; gap: 1rem; grid-template-columns: 1fr; }
-@media (min-width: 40rem) {
-  .products { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 64rem) {
-  .products { grid-template-columns: repeat(4, 1fr); }
-}
-@media (hover: hover) {
-  .card:hover { transform: translateY(-4px); }
-}
-@media (prefers-color-scheme: dark) {
-  :root { --bg: oklch(0.17 0.03 265); }
-}`,
-          try: R`افتح DevTools وضع الموبايل (Ctrl+Shift+M) واسحب العرض ببطء، وشوف عدد الأعمدة بيتغير عند 640 و 1024. وبعدين من DevTools › Rendering › Emulate CSS media feature جرّب prefers-color-scheme: dark.`,
-          flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[@media (max-width: 768px) { .x { color: red } }]] وبعدها [[@media (min-width: 768px) { .x { color: blue } }]]. اللون هيبقى إيه على 767 و 768 و 769؟`, done: R`على 767 أحمر، وعلى 768 أزرق (الشرطين اتحققوا، والأخير في الملف كسب)، وعلى 769 أزرق. وعرفت ليه خلط [[max-width]] و [[min-width]] بنفس الرقم بيعمل نقطة فيها القاعدتين.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الحد</title>
-<style>
-  @media (max-width: 768px) { .x { color: red; } }
-  @media (min-width: 768px) { .x { color: blue; } }
-</style>
-</head>
-<body>
-<p class="x">كلام</p>
-</body>
-</html>
-~~~
-
-**الإجابة:**
-
-| العرض | [[max-width: 768px]] | [[min-width: 768px]] | اللون |
-|---|---|---|---|
-| 767 | متحقق | لأ | أحمر |
-| 768 | متحقق | متحقق | أزرق |
-| 769 | لأ | متحقق | أزرق |
-
-**السبب:** [[min-width]] و [[max-width]] بيشملوا الرقم نفسه، فعند 768 الاتنين شغالين، والأخير في الملف بيكسب.
-
-هنا الفرق لون، بس لو قاعدتين بيحطوا [[padding]] و [[display]] مختلفين، عند 768 بالظبط هيتخلطوا، وده باج بيظهر في مقاس واحد بس.
-
-**الحل:** [[(width < 768px)]] و [[(width >= 768px)]]، أو [[max-width: 767px]].
-
-**الغلطة الشائعة:** تختبر على 767 و 769 بس. iPad الكلاسيكي عرضه 768 بالظبط.
-
-~~~text الناتج
-767 → rgb(255, 0, 0)
-768 → rgb(0, 0, 255)
-769 → rgb(0, 0, 255)
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** قسم باقات mobile-first: عمود واحد، ومن [[40rem]] عمودين، ومن [[64rem]] ٣. على الموبايل الباقة المميزة تيجي الأول بـ [[order: -1]]، وعلى الديسكتوب ترجع في النص.`, done: R`على 360 المميزة أول كارت، وعلى 768 عمودين، وعلى 1280 ٣ أعمدة والمميزة في النص. والـ CSS مفيهوش ولا [[max-width]]، ومفيش scroll أفقي في التلاتة.`, sol: R`~~~live 370 500
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الباقات</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; font-family: system-ui; }
-  .plans { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); max-width: 1000px; margin-inline: auto; }
-  .plan { padding: 20px; border: 1px solid #d4d4d8; border-radius: 12px; }
-  .plan--best { order: -1; border-color: #0f766e; border-width: 2px; }
-
-  @media (min-width: 40rem) {
-    .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  @media (min-width: 64rem) {
-    .plans { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .plan--best { order: 0; }
-  }
-</style>
-</head>
-<body>
-<main>
-<h1>الباقات</h1>
-<section class="plans" aria-label="الباقات">
-  <article class="plan"><h2>أساسي</h2></article>
-  <article class="plan plan--best"><h2>ذهبي</h2></article>
-  <article class="plan"><h2>سنوي</h2></article>
-</section>
-</main>
-</body>
-</html>
-~~~
-
-**mobile-first:** الأساس بدون media query للموبايل، وكل [[min-width]] بتضيف بس. فالموبايل بياخد CSS أقل، والقواعد مش بتلغي بعضها.
-
-- الباقة المميزة في النص في الـ HTML. [[order: -1]] بتقدّمها في الموبايل، و [[order: 0]] بترجّعها على الكبير. الترتيب ده شكل بس.
-- 40rem = 640، و 64rem = 1024.
-
-**فخ [[order]]:** ترتيب Tab بيتبع الـ HTML مش الشكل. فعلى الموبايل الباقة الأولى في الشكل هي التانية في Tab. هنا مقبول لأن الاختلاف بسيط، بس متبالغش.
-
-**الغلطة الشائعة:** تكتب [[order: -1]] جوه [[max-width]]. كده رجعت تخلط اتجاهين.
-
-~~~text الناتج
-العرض    الأعمدة    الأول بالشكل      المميزة في العمود    scrollWidth
-360      1          ذهبي              1                  360
-768      2          ذهبي              1                  768
-1280     3          أساسي              2                  1280
-
-max-width في الـ CSS: 0
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة الـ media queries بتاعتها صح بس على الموبايل الحقيقي بتظهر بشكل الديسكتوب. شغّلها في DevTools وضع الموبايل (أو Playwright بـ [[isMobile: true]] وعرض 390) واقرا [[innerWidth]].`, done: R`قبل: [[innerWidth]] = 980 وقاعدة [[min-width: 48rem]] متحققة على موبايل 390. بعد ما ضفت [[<meta name="viewport" content="width=device-width, initial-scale=1">]]: [[innerWidth]] = 390 والقاعدة مش متحققة.`, sol: R`الصفحة بعد التصليح:
-
-~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الموقع</title>
-<style>
-  body { font-family: system-ui; }
-  .desk { display: none; }
-  @media (min-width: 48rem) { .desk { display: block; } }
-</style>
-</head>
-<body>
-<main>
-<h1>الموقع</h1>
-<p class="desk">شكل الكمبيوتر</p>
-</main>
-</body>
-</html>
-~~~
-
-والسطر اللي كان ناقص هو السطر اللي في قالب [[#HEAD]] فوق:
-
-~~~html
-<meta name="viewport" content="width=device-width, initial-scale=1">
-~~~
-
-**ليه الموبايل عمل كده:** من غير السطر ده، المتصفح بيفترض إن الصفحة قديمة ومعمولة لكمبيوتر، فبيرسمها على عرض وهمي 980 ويصغّرها عشان تكفي الشاشة. فالـ [[innerWidth]] 980، وكل الـ media queries بتتحسب عليه.
-
-**ليه بيخدع في DevTools:** لو صغّرت نافذة الكمبيوتر بس، الصفحة بتشتغل صح، فالمشكلة مش هتبان. لازم وضع الموبايل أو جهاز حقيقي.
-
-- [[width=device-width]]: العرض = عرض الجهاز.
-- [[initial-scale=1]]: من غير تكبير أو تصغير.
-
-**الغلطة الشائعة:** تزوّد [[user-scalable=no]] معاه. ده بيمنع التكبير، وهي مشكلة accessibility حقيقية.
-
-~~~text الناتج
-موبايل عرضه 390 (isMobile: true):
-
-                     innerWidth     min-width: 48rem
-من غير viewport      980           true
-بالـ viewport        390           false
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ملف CSS قديم فيه الـ breakpoints دي بـ [[max-width]] متوزعة: 1024 و 768 و 600 و 480 و 768 و 320 و 1024 و 600 و 768. اعدّهم واعمل جدول، وبعدين حوّلهم لـ ٣ أو ٤ breakpoints mobile-first بـ [[min-width]].`, done: R`عندك جدول فيه ٥ قيم فريدة وعدد كل واحدة (768 ×٣، و 1024 ×٢، و 600 ×٢، و 480 و 320 ×١)، والملف الجديد فيه ٤ [[min-width]] أو أقل، ولقطات 320 و 768 و 1280 قبل وبعد شبه بعض.`, sol: R`~~~js count.js
-const list = [1024, 768, 600, 480, 768, 320, 1024, 600, 768];
-const count = {};
-for (const w of list) count[w] = (count[w] ?? 0) + 1;
-console.table(Object.entries(count).sort((a, b) => b[0] - a[0]));
-~~~
-
-قبل، نموذج مختصر من الملف:
-
-~~~css old.css
-.g { display: grid; grid-template-columns: repeat(4, 1fr); }
-@media (max-width: 1024px) { .g { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 768px) { .g { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .g { grid-template-columns: 1fr; } }
-~~~
-
-بعد، mobile-first:
-
-~~~css new.css
-.g { display: grid; grid-template-columns: 1fr; }
-@media (min-width: 481px) { .g { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 769px) { .g { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1025px) { .g { grid-template-columns: repeat(4, 1fr); } }
-~~~
-
-والصفحة:
-
-~~~html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>التحويل</title>
-<link rel="stylesheet" href="new.css">
-</head>
-<body>
-<main class="g"><h1>أ</h1><p>ب</p><p>ج</p><p>د</p></main>
-</body>
-</html>
-~~~
-
-~~~view 150 250 الشكل في المتصفح (من ملفات الحل)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>التحويل</title>
-<style>
-.g { display: grid; grid-template-columns: 1fr; }
-@media (min-width: 481px) { .g { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 769px) { .g { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1025px) { .g { grid-template-columns: repeat(4, 1fr); } }
-</style>
-</head>
-<body>
-<main class="g"><h1>أ</h1><p>ب</p><p>ج</p><p>د</p></main>
-</body>
-</html>
-~~~
-
-**إزاي بنختصر:** ناخد القيم الأكتر استخدامًا (768 و 1024) ونسيب 480. أما 320 فعرض قليل جدًا، و 600 قريب من 480 و 768، فالقواعد بتاعتهم تتدمج في الأقرب.
-
-**ليه** [[481]] **مش** [[480]]**:** [[max-width: 480px]] بتشمل 480، فأول عرض «فوقها» 481. لو كتبت 480 هيبقى فيه عرض واحد بقاعدة مختلفة عن القديم.
-
-**الغلطة الشائعة:** تستبدل [[max-width]] بـ [[min-width]] بنفس الرقم. عند الحد بالظبط هتتغيّر النتيجة.
-
-~~~text الناتج
-القيمة   العدد
-1024    ×2
-768     ×3
-600     ×2
-480     ×1
-320     ×1
-قيم فريدة: 5
-عدد min-width في الملف الجديد: 3
-
-مقارنة الأعمدة قبل وبعد:
-320    قبل 1  بعد 1  متطابق
-480    قبل 1  بعد 1  متطابق
-481    قبل 2  بعد 2  متطابق
-768    قبل 2  بعد 2  متطابق
-769    قبل 3  بعد 3  متطابق
-1024   قبل 3  بعد 3  متطابق
-1025   قبل 4  بعد 4  متطابق
-1280   قبل 4  بعد 4  متطابق
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** ٣ شروط مش للعرض: [[(hover: none)]] أزرار «أضف للسلة» تبان دايمًا على اللمس، و [[(prefers-reduced-motion: reduce)]] يلغي حركة الكروت، و [[print]] يخفي الـ nav والفوتر.`, done: R`من DevTools › Rendering جرّبت [[prefers-reduced-motion]] والحركة وقفت، ومن وضع الموبايل الأزرار باينة من غير hover، و Ctrl+P بيطلّع صفحة من غير nav.`, sol: R`~~~live 290 290
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>المتجر</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  .card { position: relative; padding: 16px; border: 1px solid #d4d4d8; transition: transform .3s; }
-  .card:hover { transform: translateY(-4px); }
-  .add { opacity: 0; transition: opacity .2s; }
-  .card:hover .add, .add:focus-visible { opacity: 1; }
-
-  @media (hover: none) {
-    .add { opacity: 1; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .card, .add { transition: none; }
-    .card:hover { transform: none; }
-  }
-  @media print {
-    nav, footer { display: none; }
-  }
-</style>
-</head>
-<body>
-<nav aria-label="الرئيسية"><a href="#a">الرئيسية</a></nav>
-<main>
-<h1>المنتجات</h1>
-<article class="card"><h2>قهوة</h2><button class="add" type="button">أضف للسلة</button></article>
-</main>
-<footer>كل الحقوق محفوظة</footer>
-</body>
-</html>
-~~~
-
-**التلات شروط:**
-
-- [[(hover: none)]]: الجهاز مفيهوش ماوس. الزرار اللي بيظهر بالـ hover مش هيظهر خالص على اللمس، فلازم يبان دايمًا.
-- [[(prefers-reduced-motion: reduce)]]: المستخدم مختار تقليل الحركة من إعدادات جهازه، غالبًا لأنها بتتعبه.
-- [[print]]: القايمة والفوتر مالهمش لازمة على ورق.
-
-والتجربة من DevTools: تاب Rendering فيه «Emulate CSS media feature prefers-reduced-motion».
-
-**الغلطة الشائعة:** تعتبر كل شاشة صغيرة لمس. [[(hover: none)]] بيسأل عن الجهاز فعلًا، والعرض مش دليل: تابلت كبير برضه لمس.
-
-~~~text الناتج
-الزرار على ماوس:         opacity = 0
-الزرار على لمس (موبايل): opacity = 1
-transition عادي:         0.3s
-بعد reduced-motion:      0s
-hover مع reduced-motion: transform = none
-طباعة: nav = none   footer = none
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**refactor:** حوّل الـ media queries بتاعة المثال للشكل الجديد [[(width >= 40rem)]] و [[(40rem <= width < 64rem)]] وشيل أي تداخل.`, done: R`على 639 و 640 و 1023 و 1024 عدد الأعمدة نفسه زي قبل التحويل (1 و 2 و 2 و 4 في [[gridTemplateColumns]])، ومفيش عرض بتتحقق فيه قاعدتين متعارضتين.`, sol: R`~~~live 210 340
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الشكل الجديد</title>
-<style>
-  .products { display: grid; gap: 1rem; grid-template-columns: 1fr; }
-  @media (40rem <= width < 64rem) {
-    .products { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (width >= 64rem) {
-    .products { grid-template-columns: repeat(4, 1fr); }
-  }
-</style>
-</head>
-<body>
-<main><h1>المنتجات</h1><div class="products"><p>١</p><p>٢</p><p>٣</p><p>٤</p></div></main>
-</body>
-</html>
-~~~
-
-**الفرق:**
-
-- [[(width >= 64rem)]] بديل [[(min-width: 64rem)]]، بس [[<]] و [[>]] بيسمحوا بحد مش شامل، وده كان محتاج [[max-width: 63.99rem]] زمان.
-- [[(40rem <= width < 64rem)]] نطاق واحد مكتوب في سطر، فمفيش عرض بيتحقق فيه قاعدتين.
-
-**ليه القديم كان فيه تداخل:** من 1024 وفوق، [[min-width: 40rem]] و [[min-width: 64rem]] الاتنين متحققين، والأخير بيكسب بالترتيب. لو حد بدّل ترتيب الملف، النتيجة تتغيّر. مع النطاقات الترتيب مبيفرقش.
-
-**التوافق:** الصيغة دي مدعومة في Chrome 104 و Firefox 63 و Safari 16.4، حسب caniuse.
-
-**الغلطة الشائعة:** تكتب [[(width => 40rem)]]. العلامة [[>=]] بالترتيب ده، والعكس بيخلي الشرط كله غلط.
-
-~~~text الناتج
-العرض     قبل    بعد
-639     1      1
-640     2      2
-1023    2      2
-1024    4      4
-
-عرض 1024: قبل بيتحقق 2 شرط، وبعد بيتحقق 1 شرط
-~~~` },
-          ],
-          deep: {
-            why: "أكتر من نص الزيارات من الموبايل. لو بدأت من الديسكتوب، هتقعد تكتب قواعد تلغي قواعد (float none، و width auto، و display none) لحد ما الموبايل يبان كويس. من الموبايل، الأبسط هو الأساس، والشاشات الكبيرة بتضيف بس.",
-            how: R`الـ media query بتتقيّم على الـ viewport (بعد meta viewport). و [[min-width: 40rem]] الـ rem فيها من خط المتصفح الافتراضي، فلو المستخدم كبّر الخط، الـ breakpoint بيتنقل معاه، ودا صح (الشاشة «بقت أضيق» بالنسبة للكلام).
-
-الشكل الجديد [[@media (width >= 48rem)]] نفس المعنى وأوضح، وبيدعم ranges: [[(40rem <= width < 64rem)]]. و Tailwind v4 بيطلّع الشكل ده.
-
-مش كل media queries للعرض: [[hover: hover]] و [[pointer: coarse]] بيفرّقوا الماوس عن اللمس، و [[prefers-color-scheme]] للثيم، و [[prefers-reduced-motion]] للحركة، و [[print]] للطباعة. و Tailwind v4 بيلف [[hover:]] في [[@media (hover: hover)]] لوحده، عشان على الموبايل الـ hover بيعلق بعد اللمس.
-
-الـ breakpoints بتختارها حسب المحتوى مش حسب أجهزة معينة: صغّر الشاشة لحد ما الشكل يبوظ، وهناك حط breakpoint. وافتراضي Tailwind: [[sm]] 40rem، و [[md]] 48rem، و [[lg]] 64rem، و [[xl]] 80rem، و [[2xl]] 96rem.`,
-            when: "أي موقع. ابدأ من 375px، وكبّر، وضيف breakpoint لما الشكل يحتاج. ولو المكون نفسه لازم يتغير حسب مكانه مش حسب الشاشة، استخدم container queries (المستوى التالت).",
-            mistakes: R`تكتب desktop-first بـ [[max-width]] وبعدين تخلطه مع min-width، فعند 768 بالظبط قاعدتين بيشتغلوا. وفي Tailwind تفتكر [[sm:]] = الموبايل: لأ، sm = من 640 وطالع، والموبايل هو الكلاس من غير prefix. وتنسى meta viewport فالـ media queries مش بتشتغل على الموبايل أصلًا.`
-          },
-          teach: R`## قواعد بتشتغل بشرط
-
-[[@media (شرط) { ... }]] = القواعد اللي جوه تشتغل بس لما الشرط يتحقق. والشرط ممكن يبقى عرض الشاشة، أو نوع الماوس، أو ثيم الجهاز. فتحنا المثال في Chrome بعروض مختلفة، وقرينا الأعمدة بـ [[getComputedStyle(...).gridTemplateColumns]]، والشروط نفسها بـ [[matchMedia("(شرط)").matches]]، ودي دالة بترجع true لو الشرط متحقق دلوقتي.
-
----
-
-## ١. الأساس للموبايل (من غير أي شرط)
-
-~~~text style.css
-.products { display: grid; gap: 1rem; grid-template-columns: 1fr; }
-~~~
-
-عمود واحد. السطر ده بيشتغل على **كل** الشاشات، والشروط اللي تحت بتغطي عليه في الشاشات الأكبر.
-
-## ٢. من 640 وطالع
-
-~~~text style.css
-@media (min-width: 40rem) {
-  .products { grid-template-columns: repeat(2, 1fr); }
-}
-~~~
-
-[[min-width: 40rem]] = «العرض 40rem **أو أكتر**». والـ rem جوه الـ media query بيتحسب من خط المتصفح الافتراضي (16)، يعني 640px. والقاعدة اللي جوه ليها نفس الـ specificity بتاعة الأساس وجاية بعده، فبتكسب.
-
-## ٣. من 1024 وطالع
-
-~~~text style.css
-@media (min-width: 64rem) {
-  .products { grid-template-columns: repeat(4, 1fr); }
-}
-~~~
-
-64 × 16 = 1024. فوق 1024 الشرطين متحققين، والأخير في الملف بيكسب: ٤ أعمدة.
-
-| العرض | الأعمدة المتقاسة |
+| السطر | معناه |
 |---|---|
-| 375 | 375px |
-| 639 | 639px |
-| 640 | 312px 312px |
-| 1023 | 503.5px 503.5px |
-| 1024 | 244px 244px 244px 244px |
-| 1440 | 348px 348px 348px 348px |
+| [[POST /join]] | الـ method والعنوان اللي الطلب راحله (ومعاه الـ query لو فيه) |
+| [[content-type]] | الشكل اللي جسم الطلب مكتوب بيه (ده اللي [[enctype]] بيحدده) |
+| [[content-length]] | حجم جسم الطلب بالبايت |
+| بعد السطر الفاضي | **جسم الطلب** (body): البيانات نفسها |
 
-التغيير حصل عند 640 و 1024 بالظبط. و 312 = (640 - 16) ÷ 2، و 244 = (1024 - 3 × 16) ÷ 4.
+والفورم اللي هنبعته في كل التجارب هو ده (٤ حقول، واحد منهم من غير [[name]]):
 
-## ٤. [[@media (hover: hover)]]
-
-~~~text style.css
-@media (hover: hover) {
-  .card:hover { transform: translateY(-4px); }
-}
+~~~html
+<form action="http://127.0.0.1:8126/join">
+  <input name="name" value="منى علي">
+  <input name="phone" value="01012345678">
+  <input value="من غير name">
+  <input type="hidden" name="plan" value="gold">
+</form>
 ~~~
 
-[[hover: hover]] = الجهاز عنده حاجة تقدر «تقف» فوق العناصر (ماوس). و [[translateY(-4px)]] = حرّك العنصر 4px لفوق (السالب لفوق).
+---
 
-| الجهاز في التجربة | [[(hover: hover)]] | [[(pointer: coarse)]] | transform بعد الوقوف على الكارت |
-|---|---|---|---|
-| ديسكتوب بماوس | true | false | matrix(1, 0, 0, 1, 0, -4) |
-| موبايل باللمس | false | true | none |
+## ١. [[<form method="get">]]: البيانات في العنوان
 
-[[matrix(1, 0, 0, 1, 0, -4)]] هي الطريقة اللي المتصفح بيكتب بيها [[translateY(-4px)]]: آخر رقم هو التحريك الرأسي. و [[pointer: coarse]] = مؤشر «تخين» (صباع). على اللمس الكارت متحركش، فمفيش hover يعلق بعد اللمس.
+[[get]] هي القيمة الافتراضية: لو مكتبتش [[method]] خالص، الفورم بيتبعت GET.
 
-## ٥. [[@media (prefers-color-scheme: dark)]]
+~~~text الطلب اللي وصل السيرفر (Chrome 157)
+GET /join?name=%D9%85%D9%86%D9%89+%D8%B9%D9%84%D9%8A&phone=01012345678&plan=gold
+content-type: (none)
+content-length: (none)
 
-~~~text style.css
-@media (prefers-color-scheme: dark) {
-  :root { --bg: oklch(0.17 0.03 265); }
-}
 ~~~
 
-الشرط متحقق لو نظام التشغيل على الوضع الغامق. فتحنا الصفحة مرة بثيم فاتح ومرة غامق (والـ body فيه [[background: var(--bg, white)]]):
+اقرا العنوان حتة حتة:
 
-| ثيم الجهاز | [[--bg]] | خلفية الـ body |
+| الحتة | معناها |
+|---|---|
+| [[/join]] | المسار اللي مكتوب في [[action]] على الفورم |
+| [[?]] | بداية الـ query: المتصفح حطها لوحده |
+| [[name=%D9%85%D9%86%D9%89+%D8%B9%D9%84%D9%8A]] | الحقل [[name]] وقيمته «منى علي»: كل حرف عربي بقى بايتين مكتوبين [[%XX]]، والمسافة بقت [[+]] |
+| [[&]] | الفاصل بين كل حقل واللي بعده |
+| [[phone=01012345678]] | الأرقام والحروف الإنجليزي بتتبعت زي ما هي |
+| [[plan=gold]] | الحقل الـ hidden اتبعت زي أي حقل |
+
+واللي **مش** موجود:
+
+- الحقل التالت («من غير name») مش في الطلب خالص. **[[name]] هو اللي بيخلّي الحقل موجود عند السيرفر.**
+- مفيش جسم للطلب ([[content-length]] مش موجود): في GET كل البيانات في العنوان.
+
+### لو [[action]] فيه query أصلًا
+
+~~~html
+<form method="get" action="/search?old=1&x=2">
+  <input name="q" value="a b&c=d">
+</form>
+~~~
+
+~~~text الطلب اللي وصل
+GET /search?q=a+b%26c%3Dd
+~~~
+
+حاجتين اتقاسوا هنا:
+
+- الـ query القديمة ([[old=1&x=2]]) **اتمسحت**: في GET المتصفح بيبدّل الـ query كلها ببيانات الفورم. لو عايز قيمة ثابتة تتبعت، حطها في حقل [[hidden]] (القسم ٦).
+- علامة [[&]] و [[=]] اللي جوه القيمة اتشفّروا ([[%26]] و [[%3D]])، فالسيرفر مش هيتلخبط بين «علامة جوه الكلام» و «فاصل بين حقلين».
+
+### GET إمتى؟
+
+لما الطلب **بيسأل** ومبيغيّرش حاجة: بحث، فلترة، ترتيب، رقم صفحة. العنوان فيه كل حاجة، فالزائر يقدر يحفظه أو يبعته لحد والنتيجة نفسها تفتح.
+
+ومتستخدمهوش لـ: كلمة سر (هتظهر في شريط العنوان وفي الـ history)، ولا لطلب بيغيّر حاجة (اشتراك، دفع، حذف)، ولا لملف.
+
+---
+
+## ٢. [[<form method="post">]]: البيانات في جسم الطلب
+
+نفس الفورم، وغيّرنا كلمة واحدة: [[method="post"]].
+
+~~~text الطلب اللي وصل السيرفر
+POST /join
+content-type: application/x-www-form-urlencoded
+content-length: 70
+
+name=%D9%85%D9%86%D9%89+%D8%B9%D9%84%D9%8A&phone=01012345678&plan=gold
+~~~
+
+- العنوان بقى [[/join]] بس: مفيش [[?]] ومفيش بيانات فيه.
+- البيانات نفسها، بنفس التشفير بالظبط، نزلت تحت السطر الفاضي: ده جسم الطلب، وحجمه ٧٠ بايت.
+- ظهر [[content-type]]: المتصفح بيقول للسيرفر «الجسم ده مكتوب بشكل [[application/x-www-form-urlencoded]]»، يعني نفس شكل الـ query.
+
+### POST مش معناها «متشفّر»
+
+البيانات في POST مش ظاهرة في شريط العنوان، بس هي ماشية في الطلب نص عادي زي ما انت شايف فوق. اللي بيشفّر الطلب كله (GET أو POST) هو **HTTPS** مش الـ method. فكلمة السر: POST **و** موقع HTTPS.
+
+### القيم المسموحة
+
+| قيمة [[method]] | اللي بيحصل لما الفورم يتبعت |
+|---|---|
+| [[get]] (الافتراضي) | البيانات في العنوان |
+| [[post]] | البيانات في جسم الطلب |
+| [[dialog]] | بيقفل الـ [[<dialog>]] اللي الفورم جواه من غير ما يبعت حاجة (الوحدة الجاية) |
+| أي كلمة تانية ([[put]] مثلًا) | اتقاس: [[form.method]] بيرجّع [[get]]. الفورم مبيعرفش غير التلاتة دول |
+
+---
+
+## ٣. [[<form enctype="multipart/form-data">]]: شكل جسم الطلب
+
+[[enctype]] (encoding type) بيحدد جسم الطلب يتكتب إزاي. **بيشتغل مع POST بس**، وليه تلات قيم.
+
+### القيمة الأولى: [[application/x-www-form-urlencoded]] (الافتراضية)
+
+هي اللي شفتها في القسم ٢: [[اسم=قيمة]] وبينهم [[&]]، والعربي والرموز [[%XX]]. مناسبة لأي فورم مفيهوش ملفات.
+
+### القيمة التانية: [[multipart/form-data]]
+
+~~~text الطلب اللي وصل السيرفر
+POST /join
+content-type: multipart/form-data; boundary=----WebKitFormBoundaryTZlBNYdkEPdNSzMR
+content-length: 346
+
+------WebKitFormBoundaryTZlBNYdkEPdNSzMR
+Content-Disposition: form-data; name="name"
+
+منى علي
+------WebKitFormBoundaryTZlBNYdkEPdNSzMR
+Content-Disposition: form-data; name="phone"
+
+01012345678
+------WebKitFormBoundaryTZlBNYdkEPdNSzMR
+Content-Disposition: form-data; name="plan"
+
+gold
+------WebKitFormBoundaryTZlBNYdkEPdNSzMR--
+~~~
+
+- **multipart** = «من كذا جزء». كل حقل بقى جزء لوحده.
+- [[boundary]]: سطر فاصل المتصفح بيألّفه عشوائي في كل طلب، وبيكتبه في [[content-type]] عشان السيرفر يعرف الأجزاء بتتقطّع فين. آخر فاصل بعده [[--]] يعني «خلصنا».
+- كل جزء أوله [[Content-Disposition: form-data; name="..."]] (اسم الحقل)، وبعدين سطر فاضي، وبعدين القيمة **زي ما هي من غير تشفير**: «منى علي» مكتوبة عربي.
+- الحجم ٣٤٦ بايت بدل ٧٠: الفواصل بتاخد مساحة. فمتستخدمهوش من غير سبب.
+
+والسبب الوحيد: **الملفات**. محتوى الملف (صورة مثلًا) بايتات مش نص، وكتابته [[%XX]] هتكبّره ٣ مرات. في multipart الملف بياخد جزء لوحده بمحتواه الخام (هتشوفه في درس «file و accept و multiple»).
+
+### القيمة التالتة: [[text/plain]]
+
+~~~text الطلب اللي وصل السيرفر
+POST /join
+content-type: text/plain
+content-length: 50
+
+name=منى علي
+phone=01012345678
+plan=gold
+~~~
+
+كل حقل في سطر، من غير أي تشفير. شكله مقروء للبني آدم، بس السيرفر ميقدرش يثق فيه: لو قيمة فيها سطر جديد و [[plan=free]]، مين هيفرّق؟ المواصفة نفسها بتقول إن الشكل ده مش مضمون يتقري بالكمبيوتر. استخدامه الوحيد: التجربة والـ debugging.
+
+| [[enctype]] | الجسم | إمتى |
 |---|---|---|
-| light | (مش متعرّف) | rgb(255, 255, 255) |
-| dark | oklch(0.17 0.03 265) | oklch(0.17 0.03 265) |
+| [[application/x-www-form-urlencoded]] | [[a=1&b=2]] متشفّر | الافتراضي: أي فورم من غير ملفات |
+| [[multipart/form-data]] | أجزاء بينها [[boundary]] | أي فورم فيه [[type="file"]] |
+| [[text/plain]] | سطر لكل حقل من غير تشفير | تجربة بس |
 
 ---
 
-## الخلاصة
+## ٤. [[<form action="/join">]]: الطلب يروح فين
 
-- mobile-first: الأساس من غير شرط للموبايل، و [[min-width]] بيضيف للأكبر.
-- لما كذا شرط يتحققوا، الأخير في الملف بيكسب، فرتّبهم من الصغير للكبير.
-- [[40rem]] = 640 و [[64rem]] = 1024 لو خط المتصفح 16.
-- [[hover: hover]] للماوس بس، و [[prefers-color-scheme]] لثيم الجهاز.`,
-          lines: [
-            "الأساس للموبايل: عمود واحد.",
-            "من 640px (sm في Tailwind)...",
-            R`...المنتجات تبقى عمودين متساويين جنب بعض.`,
-            R`قفلة أول media query، والتانية بتكمّل عليها.`,
-            R`ومن 1024px وطالع (lg في Tailwind)...`,
-            R`...المنتجات تبقى ٤ أعمدة، والقاعدة دي بتكسب لأنها جاية آخر الملف.`,
-            R`قفلة التانية، وبعدها شروط مش للعرض خالص.`,
-            "بس على أجهزة فيها ماوس بجد (مش شاشات لمس)...",
-            "...الكارت يطلع لفوق عند الـ hover.",
-            R`قفلة شرط الـ hover، وآخر شرط للثيم.`,
-            "لو نظام التشغيل على الوضع الغامق...",
-            R`...غيّر متغير الخلفية [[--bg]]، وكل اللي بيستخدمه بيتغيّر معاه.`,
-            R`قفلة آخر media query، وكده المثال خلص.`
-          ],
-          sol: R`وانت بتسحب العرض: من الأصغر لحد 639px عمود واحد (كل كارت بعرض الشاشة). عند 640 بالظبط (يعني [[40rem]] لو خط المتصفح 16px) بيبقوا عمودين. عند 1024 ([[64rem]]) أربعة أعمدة. العرض الحالي بيظهر فوق الشاشة في وضع الموبايل، وشريط الـ media queries (من قايمة الـ ⋮ › Show media queries) بيرسم الـ breakpoints ألوان تدوس عليها.
+[[action]] مسار، وبيتكتب بنفس قواعد [[href]] في درس «المسارات: مطلق ونسبي»:
 
-من Rendering › Emulate CSS media feature prefers-color-scheme اختار [[dark]]: متغيّر [[--bg]] على [[:root]] اتغير؛ لو الـ body بيستخدم [[var(--bg)]] الخلفية هتغمق فورًا من غير ما تغيّر ثيم الجهاز. وتأثير الـ hover على الكروت مش هيشتغل في وضع الموبايل بالـ touch، لأن [[(hover: hover)]] مش متحققة.
+| المكتوب | الطلب بيروح |
+|---|---|
+| [[action="https://example.test/join"]] | العنوان الكامل ده |
+| [[action="/join"]] | [[/join]] من جذر نفس الموقع |
+| [[action="thanks.html"]] | ملف جنب الصفحة الحالية |
+| من غير [[action]] | **نفس الصفحة الحالية** (اتقاس: [[button.formAction]] رجّع عنوان الصفحة نفسها) |
 
-لو عدد الأعمدة اتغير عند أرقام تانية، غالبًا خط المتصفح مش 16px (الـ rem في الـ media query بيتحسب من إعداد المتصفح، مش من [[html { font-size }]]). ولو مفيش أي تغيير، اتأكد إن الـ viewport meta موجود.`
-        },
-        {
-          cmd: "مصفوفة مقاسات",
-          ref: [
-            { t: "MDN: Responsive design", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design" },
-            { t: "MDN: Element.scrollWidth", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollWidth" },
-            { t: "MDN: FontFaceSet.ready", url: "https://developer.mozilla.org/en-US/docs/Web/API/FontFaceSet/ready" },
-            { t: "Playwright: page.setViewportSize()", url: "https://playwright.dev/docs/api/class-page#page-set-viewport-size" },
-          ],
-          title: "اختبار responsive بجد: كل العروض × العربي والإنجليزي، وقياس الـ scroll الأفقي، ولقطة لكل مقاس",
-          desc: R`سحب حافة المتصفح بإيدك بيفوّت حاجات: بتبص على ٣ عروض بلغة واحدة. الطريقة اللي بتمسك المقاسات اللي بتتكسر **فعلًا**: سكربت Playwright بيلف على مصفوفة عروض ([[320]] و [[360]] و [[375]] و [[414]] و [[600]] و [[761]] لحد [[1024]] و [[1100]] و [[1440]] و [[1920]]) × لغتين (عربي RTL وإنجليزي)، ولكل واحدة: [[page.setViewportSize]]، ويقيس [[document.documentElement.scrollWidth]] مقابل [[innerWidth]] (أكبر = فيه scroll أفقي)، ويطلّع العناصر اللي خارجة برا الشاشة بالاسم، ويقيس أهداف اللمس الصغيرة، وياخد لقطة.
+لما الرد ييجي، المتصفح **بيفتحه مكان الصفحة**: الإرسال تنقّل زي الضغط على لينك. عشان كده في المشاريع بنحط في [[action]] صفحة «شكرًا» ثابتة: مفيش سيرفر يقرا البيانات، بس الزائر بيتنقل لصفحة حقيقية.
 
-والأهم: **بعد كل تصليح شغّل المصفوفة كلها تاني**. في المعمل تصليح اللوجو على التابلت ([[flex: none]]) كسر الموبايل من 320 لـ 414، ومحدش كان هيشوفه لو اختبر التابلت بس. وكمان المصفوفة بتقولك أنهي قاعدة CSS بقت ملهاش لازمة.`,
-          example: R`npm i -D playwright-core@1.64.1
-node matrix.js
-node matrix.js "fix=menu,touch,logo,phone"
-# في Console المتصفح على أي صفحة:
-document.documentElement.scrollWidth > innerWidth
-[...document.querySelectorAll("body *")].filter(e => { const b = e.getBoundingClientRect(); return b.right > innerWidth || b.left < 0; })`,
-          lines: [
-            R`باكدج Playwright من غير المتصفحات ([[-D]] للتطوير بس). هنستخدم Chrome المتسطب على الجهاز بـ [[channel: "chrome"]] بدل ما ننزّل متصفح.`,
-            R`شغّل السكربت اللي في الشرح على الصفحة زي ما هي: ٣٠ سطر (١٥ عرض × لغتين)، و [[OK]] أو [[BROKEN]] لكل واحد، ولقطة في [[shots/]].`,
-            R`نفس المصفوفة على الصفحة بالتصليحات (المعمل بيشغّل كل تصليح بكلاس على [[<html>]] عشان نقارن). رقم الخروج [[0]] لو كله تمام، و [[1]] لو فيه مقاس مكسور: ينفع في CI.`,
-            R`في Console: [[true]] = الصفحة أعرض من الشاشة، يعني فيه scroll أفقي.`,
-            R`مين اللي خارج؟ كل عنصر في الـ body، اطلب مستطيله ([[getBoundingClientRect]])، وسيب اللي حافته اليمين بعد عرض الشاشة أو حافته الشمال قبل صفر (ده اللي بيحصل في RTL).`,
-          ],
-          try: R`خد صفحة عندك فيها navbar (أو ابني المعمل اللي في الشرح)، وشغّل المصفوفة عليها بالعربي والإنجليزي. اكتب كل مقاس [[BROKEN]] والعنصر اللي خارج. صلّح واحد بس، وشغّل المصفوفة كلها تاني: فيه مقاس كان سليم واتكسر؟`,
-          flag: "term",
-          teach: R`## العَرَض
-
-الـ navbar «شغّال على الموبايل والديسكتوب»: جربته على 375 و 1440 من DevTools. وبعدين حد فتح الموقع على تابلت بالعربي، وزرار تغيير اللغة و «اشترك» مش ظاهرين خالص، والصفحة بتتسحب يمين وشمال. وحد تاني على موبايل صغير (320) زرار القايمة نصه برا الشاشة.
+> صفحة HTML ثابتة مبتقراش جسم طلب POST. اللي بيقراه كود على السيرفر (كورسات Node و PHP و Python). في الكورس ده بنبني الفورم صح، والطرف التاني لسه جاي.
 
 ---
 
-## المعمل
+## ٥. [[<form target="_blank">]]: الرد يتفتح فين
 
-صفحة navbar فيها: لوجو (صورة 40×40 واسم)، و ٦ روابط، وزرار لغة، وزرار «اشترك الآن»، وزرار قايمة (☰) بيظهر على الموبايل. والصفحة بتشتغل بالعربي ([[dir="rtl"]]) وبـ [[?lang=en]] بالإنجليزي. واتشغّلت على ويندوز 11 بـ [[playwright-core]] 1.64.1 و Chrome 156 المتسطب (Node 24.22).
+زي [[target]] على اللينك (درس «target و rel»):
 
-~~~css style.css (قبل)
-.nav { display: flex; align-items: center; gap: 24px; padding: 12px 24px; }
-.logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 20px; }
-.links { display: flex; gap: 20px; white-space: nowrap; }
-.actions { display: flex; align-items: center; gap: 12px; margin-inline-start: auto; white-space: nowrap; }
-.lang { font-size: 14px; }
-.cta { padding: 10px 18px; border-radius: 8px; }
-.menu-btn { display: none; font-size: 22px; padding: 8px 14px; }
-@media (max-width: 760px) {
-  .links { display: none; }
-  .menu-btn { display: inline-flex; }
-}
+- من غيره (أو [[_self]]): الرد بيتفتح مكان الصفحة الحالية.
+- [[target="_blank"]]: الرد بيتفتح في تاب جديدة، والصفحة اللي فيها الفورم بتفضل مكانها. مفيد لـ «معاينة» أو «اطبع الإيصال».
+- [[target="اسم"]]: الرد بيتفتح جوه [[<iframe name="اسم">]] في نفس الصفحة. دي الطريقة اللي قياسات الدرس ده اتعملت بيها: كل فورم بيبعت جوه iframe والصفحة الأصلية مبتتحركش.
+
+---
+
+## ٦. [[<input type="hidden">]]: حقل الزائر مش شايفه
+
+~~~html
+<input type="hidden" name="plan" value="gold">
 ~~~
 
-والسكربت:
+~~~text القياس من Chrome
+display = none      العرض = 0      بيتبعت: plan=gold
+~~~
 
-~~~js matrix.js
-const { chromium } = require("playwright-core");
-const BASE = "http://127.0.0.1:8931/";
-const widths = [320, 360, 375, 414, 600, 761, 768, 820, 900, 1000, 1024, 1100, 1280, 1440, 1920];
-const extra = process.argv[2] ? "&" + process.argv[2] : "";
-(async () => {
-  const browser = await chromium.launch({ channel: "chrome" });
-  const page = await browser.newPage();
-  const bad = [];
-  for (const lang of ["ar", "en"]) {
-    for (const w of widths) {
-      await page.setViewportSize({ width: w, height: 800 });
-      await page.goto(BASE + "?lang=" + lang + extra);
-      const r = await page.evaluate(() => {
-        const iw = innerWidth, sw = document.documentElement.scrollWidth;
-        const out = [...document.querySelectorAll("body *")]
-          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.right > iw + 0.5 || b.left < -0.5); })
-          .map(e => e.className || e.tagName.toLowerCase());
-        const logo = Math.round(document.querySelector(".logo").getBoundingClientRect().height);
-        const small = [...document.querySelectorAll("a, button")]
-          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.width < 24 || b.height < 24); })
-          .map(e => e.className + " " + Math.round(e.getBoundingClientRect().height) + "px");
-        return { iw, sw, out: [...new Set(out)], logo, small };
-      });
-      await page.screenshot({ path: "shots/" + lang + "-" + w + ".png" });
-      const ok = r.sw <= r.iw && r.logo <= 40 && !r.small.length;
-      if (!ok) bad.push(lang + "-" + w);
-      console.log(lang, String(w).padStart(4), "scrollWidth=" + r.sw, "logo=" + r.logo + "px", ok ? "OK" : "BROKEN", r.out.join(","), r.small.length ? "small: " + r.small.join(",") : "");
-    }
-  }
-  console.log(bad.length ? "broken: " + bad.join(" ") : "all sizes OK");
-  await browser.close();
-  process.exitCode = bad.length ? 1 : 0;
-})();
+- [[display: none]]: مش بيظهر، ومبياخدش مكان، والـ Tab مبيقفش عنده.
+- بيتبعت زي أي حقل: شفته في كل الطلبات اللي فوق.
+
+بيتستخدم لمعلومة السيرفر محتاجها والزائر مش هيكتبها: رقم المنتج اللي الفورم ده بتاعه، الباقة اللي اختارها في الصفحة اللي فاتت، الصفحة اللي جه منها.
+
+**مش مكان للأسرار ولا للأسعار.** أي حد يفتح DevTools ويغيّر [[value="gold"]] لأي حاجة ويبعت. السيرفر لازم يتأكد من كل قيمة جاية من hidden زي ما بيتأكد من أي حقل الزائر كتبه.
+
+---
+
+## ٧. [[<form accept-charset="UTF-8">]]: ترميز الحروف
+
+بيقول الحروف تتحوّل لبايتات بأنهي ترميز قبل ما تتبعت. الافتراضي ترميز الصفحة نفسها، وصفحتك [[<meta charset="utf-8">]] (درس «<!doctype html>»)، فالنتيجة UTF-8 من غير ما تكتب حاجة.
+
+اتقاس: كلمة «قهوة» في فورم GET:
+
+~~~text الطلب اللي وصل
+من غير accept-charset:            GET /?q=%D9%82%D9%87%D9%88%D8%A9      (UTF-8: بايتين لكل حرف)
+accept-charset="windows-1256":    GET /?q=%DE%E5%E6%C9                  (ترميز عربي قديم: بايت لكل حرف)
+~~~
+
+نفس الكلمة وبايتات مختلفة خالص. لو السيرفر مستني UTF-8 وجاله التاني، هيقراها رموز غريبة. المواصفة دلوقتي بتقول إن القيمة الوحيدة الصح هي [[UTF-8]]، فعمليًا: **متكتبوش**، وخلّي الصفحة UTF-8.
+
+---
+
+## ٨. [[<form name="join">]] و [[<form autocomplete="off">]]
+
+- [[name]] على الفورم نفسه **مبيتبعتش**. هو اسم للفورم جوه الصفحة: JavaScript بيلاقيه بـ [[document.forms.join]] (اتقاس: رجّع نفس عنصر الفورم). ملوش علاقة بـ [[name]] بتاع الحقول.
+- [[autocomplete="off"]] على الفورم بيقول للمتصفح ميقترحش قيم محفوظة لكل حقول الفورم مرة واحدة. الافتراضي [[on]] (اتقاس: [[form.autocomplete]] رجّع [[on]]). والأحسن دايمًا تسيبه [[on]] وتكتب [[autocomplete]] المناسب على كل حقل (درس «form و label»). MDN بيقول كمان إن المتصفحات ممكن تتجاهل [[off]] في فورم تسجيل الدخول.
+
+وباقي الـ attributes بتاعة [[<form>]]: [[novalidate]] في درس «أزرار الفورم: formaction وإخواته»، و [[rel]] زي اللينك.
+
+---
+
+## ٩. سطر المعاينة اللي هتشوفه في الوحدة دي
+
+صناديق المعاينة هنا معزولة: مفيش سيرفر وراها. فلو الفورم اتبعت بجد، الصندوق هيفتح صفحة مش موجودة. عشان كده فورمات المعاينة فيها سطر JavaScript واحد بيمنع الإرسال وبيكتبلك **البيانات اللي كانت هتتبعت**:
+
+~~~html
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
 ~~~
 
 | الحتة | بتعمل إيه |
 |---|---|
-| [[widths]] | العروض: موبايلات صغيرة (320 و 360) وشائعة (375 و 414)، وتابلت (761 لحد 1024)، و [[1100]] حدود القايمة، وديسكتوب. ومعاها حدود كل breakpoint (760 و 761) |
-| [[channel: "chrome"]] | Chrome المتسطب. من غير [[npx playwright install]] |
-| [[setViewportSize]] | غيّر عرض الصفحة. ده اللي الـ media queries بتشوفه |
-| [[scrollWidth]] مقابل [[innerWidth]] | الصفحة أعرض من الشاشة = scroll أفقي. وده بيمسك RTL كمان (العنصر بيخرج شمال) |
-| [[out]] | أسامي العناصر اللي حافتها برا الشاشة. [[0.5]] سماح للكسور |
-| [[logo]] | ارتفاع اللوجو. أكتر من 40 = الاسم اتكسر على سطرين (اللوجو «اتضغط») |
-| [[small]] | روابط وزراير أصغر من 24px في أي اتجاه (الحد الأدنى في WCAG 2.2، معيار 2.5.8، من الوثائق) |
-| [[process.exitCode]] | [[1]] لو فيه مقاس مكسور، فينفع يتحط في CI |
+| [[onsubmit="..."]] | كود بيشتغل لحظة ما الفورم يتبعت (كورس JavaScript بيشرح الأحداث) |
+| [[event.preventDefault()]] | «متبعتش»: بيوقف الإرسال الحقيقي |
+| [[new FormData(this, event.submitter)]] | بيجمع نفس الحقول اللي المتصفح كان هيبعتها، ومعاهم الزرار اللي اتداس |
+| [[new URLSearchParams(...)]] | بيكتب الحقول دي في سطر واحد بشكل [[a=1&b=2]] |
+| [[decodeURIComponent(...)]] | بيفك [[%XX]] عشان تقرا العربي |
+| [[sent.value = ...]] | بيحط الناتج في العنصر اللي [[id]] بتاعه [[sent]] |
+
+~~~live 161 179 اكتب اسمك ودوس «اشترك»
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <input type="hidden" name="plan" value="gold">
+  <p><label for="n">الاسم</label> <input id="n" name="name" value="منى علي"></p>
+  <p><label for="c">كود الخصم (الحقل ده من غير name)</label> <input id="c" value="MOGA10"></p>
+  <button>اشترك</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- بعد ما تدوس «اشترك» هيتكتب [[plan=gold&name=منى+علي]].
+- [[plan]] ظهر مع إنك مش شايف حقله في الصفحة: ده الـ hidden.
+- كود الخصم مش في الناتج مع إنه مكتوب قدامك: حقله ملوش [[name]].
+- المسافة اللي في الاسم بقت [[+]].
+
+السطر ده للمعاينة بس. الفورم الحقيقي بيتكتب من غيره.
 
 ---
 
-## ١. أول تشغيل: كل حاجة مكسورة، بس بأشكال مختلفة
+## ١٠. الغلطات اللي بتحصل فعلًا
 
-~~~text node matrix.js (مختصر)
-ar  320 scrollWidth=363 logo=60px BROKEN actions,menu-btn small: lang 21px
-ar  375 scrollWidth=375 logo=60px BROKEN  small: lang 21px
-ar  600 scrollWidth=600 logo=40px BROKEN  small: lang 21px
-ar  761 scrollWidth=924 logo=60px BROKEN actions,lang,cta small: lang 21px
-ar  900 scrollWidth=924 logo=60px BROKEN actions,cta small: lang 21px
-ar 1000 scrollWidth=1000 logo=40px BROKEN  small: lang 21px
-en  320 scrollWidth=366 logo=60px BROKEN actions,menu-btn small: lang 21px
-en  761 scrollWidth=761 logo=60px BROKEN  small: lang 21px
-en  820 scrollWidth=820 logo=40px BROKEN  small: lang 21px
-~~~
-
-نقرا المشاكل الأربعة:
-
-| المشكلة | فين | الدليل |
-|---|---|---|
-| (أ) اللوجو بيتضغط | إنجليزي 761 و 768، والموبايل في الاتنين | [[logo=60px]]: الاسم نزل سطر تاني لأن [[.logo]] بيتصغّر عشان يدّي مكان للروابط |
-| (ب) الأزرار برا الشاشة | **عربي** من 761 لحد 900 | [[scrollWidth=924]] والخارج [[lang]] و [[cta]]. الكلام العربي أطول ([[الصفحة الرئيسية]] مقابل [[Home]])، فالروابط ([[nowrap]]) زقّت الأزرار برا |
-| (ج) زرار القايمة برا | 320 و 360 في الاتنين | [[scrollWidth=363]] و [[366]]، والخارج [[menu-btn]] |
-| (د) هدف لمس صغير | كل المقاسات | [[lang 21px]]: زرار اللغة ارتفاعه 21 بس |
-
-لاحظ إن (ب) **مش موجودة بالإنجليزي** على نفس العرض (en 761 الـ [[scrollWidth=761]] سليم). لو جربت بلغة واحدة، كنت هتفوّتها. ولاحظ إن [[scrollWidth]] بالعربي سليم على 1000 ومكسور على 900 (و 1000 مكتوب عليه [[BROKEN]] بسبب زرار اللغة بس): الكسر في **نطاق** (761 لحد 900 تقريبًا)، مش عند breakpoint واحد.
-
-> في RTL العنصر اللي بيخرج بيخرج **شمال** ([[left]] بالسالب). الشرط [[b.left < -0.5]] هو اللي مسكه. ولو كنت بتدوّر على [[right > innerWidth]] بس، هتقول «سليم».
+| الغلطة | اللي بيحصل |
+|---|---|
+| حقل من غير [[name]] | مبيتبعتش، ومفيش أي رسالة خطأ |
+| فورم تسجيل دخول من غير [[method="post"]] | كلمة السر بتظهر في شريط العنوان وبتتحفظ في الـ history |
+| [[type="file"]] من غير [[enctype="multipart/form-data"]] | اسم الملف بس اللي بيتبعت، ومحتواه لأ |
+| [[enctype]] على فورم GET | ملوش أي تأثير: GET مفيهوش جسم |
+| سعر أو صلاحية في حقل hidden | أي زائر يغيّره من DevTools |
+| [[action="/search?lang=ar"]] مع GET | [[lang=ar]] بتتمسح: حطها hidden |
+| [[method="put"]] أو [[delete]] | الفورم بيتبعت GET كأنك مكتبتش method |
+| تفتكر POST مأمّن البيانات | الأمان من HTTPS |
 
 ---
-
-## ٢. التصليح الأول: القايمة من 1100، و 359، واللمس
-
-~~~css
-.lang { padding-block: 10px; }
-@media (max-width: 1100px) {
-  .links { display: none; }
-  .menu-btn { display: inline-flex; }
-}
-@media (max-width: 359px) {
-  .nav { gap: 12px; padding-inline: 12px; }
-  .actions { gap: 8px; }
-  .cta { padding: 8px 12px; font-size: 14px; }
-  .menu-btn { padding: 6px 10px; }
-}
-~~~
-
-- (ب): بدل ما الروابط تستخبى تحت 761، تستخبى تحت 1100 ويظهر ☰. الحد اتاخد من المصفوفة: العربي مكسور لحد 900 وسليم من 1000، و 1100 فيه هامش للكلام الأطول.
-- (ج): الشاشات اللي أصغر من 360: مسافات وأحجام أصغر.
-- (د): [[padding-block: 10px]] على زرار اللغة يكبّر مساحة اللمس من غير ما يكبّر الكلام.
-
-~~~text node matrix.js "fix=menu,small,touch" (اللي فضل مكسور بس)
-ar  320 scrollWidth=320 logo=60px BROKEN
-ar  360 scrollWidth=363 logo=60px BROKEN actions,menu-btn
-ar  375 scrollWidth=375 logo=60px BROKEN
-ar  414 scrollWidth=414 logo=60px BROKEN
-en  320 scrollWidth=320 logo=60px BROKEN
-en  360 scrollWidth=366 logo=60px BROKEN actions,menu-btn
-en  375 scrollWidth=375 logo=60px BROKEN
-en  414 scrollWidth=414 logo=60px BROKEN
-broken: ar-320 ar-360 ar-375 ar-414 en-320 en-360 en-375 en-414
-~~~
-
-التابلت كله سليم، واللمس اتحل في كل المقاسات. بس شوف 320 و 360: قاعدة 359 صلّحت 320 ([[scrollWidth=320]])، و **360 لسه مكسور** ([[363]]) لأن 360 مش أقل من 359. الحد اتحط بالتخمين، والمصفوفة كشفته.
-
----
-
-## ٣. التصليح التاني: اللوجو [[flex: none]]... وكسر الموبايل
-
-~~~css
-.logo { flex: none; }
-~~~
-
-[[flex: none]] = [[flex: 0 0 auto]]: متكبرش، ومتصغرش، وعرضك قد محتواك. فالاسم مش هينزل سطر تاني.
-
-~~~text node matrix.js "fix=menu,small,touch,logo" (اللي فضل مكسور بس)
-ar  320 scrollWidth=346 logo=40px BROKEN actions,menu-btn
-ar  360 scrollWidth=407 logo=40px BROKEN actions,menu-btn
-ar  375 scrollWidth=407 logo=40px BROKEN actions,menu-btn
-en  320 scrollWidth=360 logo=40px BROKEN actions,menu-btn
-en  360 scrollWidth=420 logo=40px BROKEN actions,menu-btn
-en  375 scrollWidth=420 logo=40px BROKEN actions,menu-btn
-en  414 scrollWidth=420 logo=40px BROKEN actions,menu-btn
-~~~
-
-اللوجو بقى 40 في كل حتة، **بس** الموبايل بقى أسوأ: 375 و 414 كانوا من غير scroll أفقي، دلوقتي [[407]] و [[420]]. اللوجو كان بيتصغّر عشان يدّي مكان للأزرار على الموبايل، ولما منعناه، الأزرار اتزقّت برا. ده **بالظبط** اللي سحب الحافة بالإيد مبيمسكوش: صلّحت التابلت وانت بتبص على التابلت.
-
----
-
-## ٤. التصليح التالت: الموبايل يشيل اسم اللوجو بصريًا
-
-~~~css
-@media (max-width: 480px) {
-  .logo span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-}
-~~~
-
-ده نمط «sr-only»: الاسم مستخبي من الشاشة بس قارئ الشاشة لسه بيقراه (درس aria)، فاللينك لسه اسمه «متجر أكمي». والصورة 40px كفاية كلوجو على الموبايل.
-
-~~~text node matrix.js "fix=menu,small,touch,logo,phone"
-all sizes OK
-~~~
-
-ورقم الخروج [[0]].
-
-## ٥. وقاعدة 359؟ المصفوفة بتقول إنها مبقتش لازمة
-
-شلنا قاعدة [[max-width: 359px]] وشغّلنا تاني:
-
-~~~text node matrix.js "fix=menu,touch,logo,phone"
-all sizes OK
-~~~
-
-لما الاسم اتشال على الموبايل، اتوفّر مكان كفاية لـ 320. فالقاعدة دي بقت كود ميت: امسحها. (في الحالة الأصلية قاعدة [[max-width: 359px]] كانت هي اللي صلّحت 320، لأن ترتيب التصليحات كان مختلف. المصفوفة هي اللي بتقرر، مش الذاكرة.)
-
----
-
-## اللي المصفوفة دي **مبتقولهوش**
-
-- Chromium مش Safari. وأجهزة آيفون في Playwright بتشتغل على WebKit (محتاج [[npx playwright install webkit]]، مش متسطب هنا). فالـ [[100vh]] في Safari، والفيديو، و [[env(safe-area-inset-top)]] (النوتش) محتاجين جهاز حقيقي أو على الأقل WebKit.
-- الخطوط: لو الخط بيتحمّل من النت والسكربت صوّر قبل ما يحمّل، العرض هيختلف. استنى [[document.fonts.ready]] قبل القياس.
-- التفاعل: القايمة لما تتفتح، والـ hover، والكيبورد. ده اختبار تاني.
-- الشكل: [[scrollWidth]] سليم ميعنيش إن الشكل حلو. عشان كده فيه لقطة لكل مقاس في [[shots/]]: ٣٠ صورة تبص عليهم في دقيقة.
 
 ## الخلاصة
 
-| | |
-|---|---|
-| المصفوفة | عروض الموبايل والتابلت والديسكتوب **وحدود كل breakpoint** × كل لغة |
-| scroll أفقي | [[document.documentElement.scrollWidth > innerWidth]] |
-| مين خارج | [[getBoundingClientRect()]]: [[right > innerWidth]] **أو** [[left < 0]] (RTL) |
-| اللمس | أصغر من 24px = مشكلة (WCAG 2.2، معيار 2.5.8) |
-| بعد كل تصليح | المصفوفة **كلها** تاني. تصليح مقاس بيكسر مقاس |
-| رقم الخروج | [[0]] أو [[1]]: حطها في CI |
+- الحقل اللي ليه [[name]] بس هو اللي بيتبعت، بشكل [[اسم=قيمة]].
+- [[method="get"]] (الافتراضي): البيانات في العنوان. للبحث والفلترة.
+- [[method="post"]]: البيانات في جسم الطلب. لأي حاجة بتغيّر أو فيها بيانات شخصية.
+- [[enctype]] مع POST بس: الافتراضي للنص، و [[multipart/form-data]] للملفات، و [[text/plain]] للتجربة.
+- [[action]] مسار زي [[href]]، ومن غيره الطلب بيروح لنفس الصفحة. و [[target]] بيحدد الرد يتفتح فين.
+- [[type="hidden"]] بيتبعت من غير ما يظهر، وأي زائر يقدر يغيّره.`,
+          try: R`اعمل ملف [[join.html]] فيه فورم [[method="get"]] و [[action="join.html"]] (يعني بيبعت لنفسه)، وفيه: حقل [[name="name"]]، وحقل hidden [[name="plan"]] قيمته [[gold]]، وحقل [[type="password"]] اسمه [[pass]]، وزرار. افتحه، واكتب اسم وكلمة سر، ودوس الزرار، وبص على شريط العنوان. وبعدين غيّر [[get]] لـ [[post]] وجرّب تاني.`,
+          sol: R`~~~html join.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اشتراك</title>
+</head>
+<body>
+<form action="join.html" method="get">
+  <input type="hidden" name="plan" value="gold">
+  <p><label for="name">الاسم</label> <input id="name" name="name"></p>
+  <p><label for="pass">كلمة السر</label> <input id="pass" name="pass" type="password"></p>
+  <button type="submit">اشترك</button>
+</form>
+</body>
+</html>
+~~~
 
-> سحب الحافة بالإيد بيوريك المقاسات اللي انت بتبص عليها. المصفوفة بتوريك المقاسات اللي الزوار عليها.`,
+~~~view 161 شكل الصفحة (الإرسال هنا بيتكتب تحت بدل ما يتبعت)
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <input type="hidden" name="plan" value="gold">
+  <p><label for="name">الاسم</label> <input id="name" name="name"></p>
+  <p><label for="pass">كلمة السر</label> <input id="pass" name="pass" type="password"></p>
+  <button type="submit">اشترك</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- **بـ [[get]]:** الصفحة اتحمّلت من جديد، وشريط العنوان بقى آخره [[?plan=gold&name=...&pass=...]]. كلمة السر اللي كانت نقط في الحقل بقت **مكتوبة بحروفها** في العنوان.
+- **بـ [[post]]:** الصفحة اتحمّلت من جديد والعنوان [[join.html]] بس. البيانات راحت في جسم الطلب. (لو فاتح الملف بدبل كليك مفيش سيرفر يقراها، وده عادي.)
+
+~~~text الطلب في الحالتين (متقاس بنفس الفورم على السيرفر المحلي، Chrome 157)
+get:    GET /join.html?plan=gold&name=mona&pass=s3cret
+
+post:   POST /join.html
+        content-type: application/x-www-form-urlencoded
+
+        plan=gold&name=mona&pass=s3cret
+~~~
+
+[[type="password"]] بيخبّي الحروف **على الشاشة** بس. في الطلب هي نص عادي، ومكانها في العنوان أو الجسم بيتحدد من [[method]].`,
           deep: {
-            why: R`أغلب كسر الـ responsive بيحصل في نطاقات مش عند أرقام مشهورة: تابلت بالعربي، أو موبايل صغير، أو حد الـ breakpoint بالظبط. والعربي والإنجليزي بيتكسروا في أماكن مختلفة لأن طول الكلام مختلف. والأخطر: التصليح بيتعمل وانت بتبص على مقاس واحد، فبيكسر مقاس تاني مش قدامك. المصفوفة بتخلّي «سليم» رقم بيتقاس، مش إحساس.`,
-            how: R`[[setViewportSize]] بيغيّر عرض الـ viewport اللي الـ media queries بتتقيّم عليه، وبعد [[goto]] الصفحة بتتبني من جديد بالعرض ده. [[scrollWidth]] بتاع [[documentElement]] هو عرض المحتوى كله بما فيه اللي خارج، فلو أكبر من [[innerWidth]] فيه scroll أفقي. وفي RTL الصفحة بتبدأ من اليمين، فالعنصر اللي بيفيض بيروح شمال ([[left]] سالب)، وده بيزوّد [[scrollWidth]] برضه. و [[flex: none]] بيلغي [[flex-shrink]]، فالعنصر مبيتنازلش عن مكانه، فاللي جنبه هو اللي بيتزق. والـ sr-only بيشيل العنصر من حساب العرض ([[position: absolute]]) من غير ما يشيله من الـ accessibility tree.`,
-            when: R`قبل أي إطلاق، وبعد أي تعديل في الـ header أو الـ navbar أو أي حاجة [[nowrap]] أو [[flex]]، وبعد إضافة لغة. وكخطوة في CI: السكربت بيخرج [[1]] لو فيه مقاس مكسور، فالـ PR بيقف. ولو الصفحة طويلة، اعمل المصفوفة على أهم ٣ صفحات بس (الرئيسية، والمنتج، والدفع).`,
-            mistakes: R`تختبر ٣ عروض بلغة واحدة. تدوّر على [[right > innerWidth]] بس فتفوّت RTL. تحط breakpoint بالتخمين (359) من غير ما تجرّب الرقم اللي بعده (360). تصلّح مقاس ومتعيدش الباقي. تسيب قواعد بقت ميتة بعد تصليح تاني. تفتكر Chromium = Safari. وتشيل اسم اللوجو بـ [[display: none]] فيضيع اسم اللينك عند قارئ الشاشة.`
+            why: R`الفورم هو الطريقة الوحيدة اللي HTML لوحده (من غير JavaScript) بيبعت بيها بيانات من الزائر للسيرفر: بحث، تسجيل، دفع، رفع ملف. ولما الطلب يوصل غلط (حقل ناقص، ملف من غير محتوى، كلمة سر في العنوان) السبب في أغلب الحالات واحد من تلاتة: [[name]] أو [[method]] أو [[enctype]]. اللي فاهم شكل الطلب بيلاقي الغلطة من تاب Network في دقيقة.`,
+            how: R`لحظة الإرسال المتصفح بيبني «قايمة البيانات»: بيلف على حقول الفورم بترتيبها في الصفحة، وبياخد كل حقل ليه [[name]] ومش [[disabled]] (والـ checkbox والـ radio المتعلّمين بس، والزرار اللي اتداس بس). بعدين بيحوّل الحروف لبايتات بترميز الصفحة (UTF-8)، ويكتب القايمة بالشكل اللي [[enctype]] بيقوله. في GET بيحطها مكان الـ query في عنوان [[action]]، وفي POST بيحطها في جسم الطلب ويكتب [[content-type]] و [[content-length]]. وأخيرًا بيتنقّل للرد في المكان اللي [[target]] بيقوله.`,
+            when: R`[[get]]: بحث وفلاتر وأي صفحة نتايج تتحفظ أو تتبعت. [[post]] من غير [[enctype]]: تسجيل، دخول، تعليق، طلب، أي حاجة بتغيّر. [[post]] مع [[multipart/form-data]]: أول ما يبقى فيه [[type="file"]]. [[hidden]]: معلومة ثابتة السيرفر محتاجها مع الفورم ده. [[target="_blank"]]: لما الزائر لازم يفضل في الصفحة والرد يتفتح جنبها.`,
+            mistakes: R`حقل من غير [[name]] وتستنى قيمته توصل. كلمة سر في فورم GET. ملف في فورم من غير [[multipart/form-data]]. تحط الـ query في [[action]] مع GET وتستناها تفضل. تثق في قيمة hidden كأن الزائر مش قادر يغيّرها. تكتب [[enctype]] على فورم GET. وتفتكر إن [[name]] على [[<form>]] هو اللي بيتبعت.`
           },
-          sol: R`أول تشغيل على صفحة فيها navbar طويل غالبًا هيطلع [[BROKEN]] في: الموبايلات الصغيرة (عنصر في [[actions]] برا)، والتابلت بالعربي ([[scrollWidth]] أكبر من العرض)، وأي رابط ارتفاعه أقل من 24. على المعمل: [[broken:]] فيها الـ ٣٠ مقاس في أول تشغيل (بسبب زرار اللغة 21px)، و ٨ بعد التصليح الأول (الموبايل)، و ٧ بعد [[flex: none]] على اللوجو، وصفر ([[all sizes OK]]) بعد قاعدة 480.
-
-والإجابة على السؤال: أيوه. تصليح اللوجو على التابلت ([[flex: none]]) خلّى 375 و 414 (اللي كانوا من غير scroll أفقي) يطلّعوا [[scrollWidth=407]] و [[420]]. ده اللي بيحصل لما تصلّح وانت بتبص على مقاس واحد.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة RTL فيها زرار [[position: absolute; left: -40px]]. [[document.documentElement.scrollWidth > innerWidth]] هيرجّع إيه؟ والفلتر اللي بيدوّر على [[b.right > innerWidth]] بس هيلاقي الزرار؟ جرّب في Console.`, done: R`كتبت توقعك للاتنين، وجربت: الفلتر بـ [[right]] بس ملقاش الزرار، والفلتر بـ [[left < 0]] لقاه.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الزرار</title>
-<style>
-  body { margin: 0; }
-  .btn { position: absolute; left: -40px; top: 8px; width: 100px; height: 40px; }
-</style>
-</head>
-<body>
-<main><h1>الصفحة</h1><button class="btn">زرار</button></main>
-</body>
-</html>
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** فورم البحث ده في متجر «نادي الموج». الزائر كتب «شنطة سباحة» واختار المقاس. اكتب على ورقة العنوان اللي هيطلع، ودوس «دوّر» وقارن. وبعدين صلّح الفورم عشان المقاس يتبعت هو كمان. (من قسم ١ في الشرح: [[name]] والبيانات في العنوان)`, done: R`توقّعت إن [[q]] بس هي اللي هتتبعت، وبعد التصليح الناتج بقى فيه [[q]] و [[size]].`, work: { h: 161, start: R`<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="q">الكلمة</label> <input id="q" name="q" value="شنطة سباحة"></p>
+  <p><label for="size">المقاس</label> <input id="size" value="L"></p>
+  <button>دوّر</button>
+</form>
+<p>الـ query: <output id="sent">(دوس «دوّر»)</output></p>`, checks: [
+              { say: R`حقل الكلمة لسه عليه [[name="q"]]`, q: "input[name=\"q\"]" },
+              { say: R`حقل المقاس بقى عليه [[name="size"]]`, q: "input#size[name=\"size\"]" },
+              { say: R`كل حقل لسه ليه [[<label>]] مربوط بيه`, q: "label[for]", n: 2 },
+            ] }, sol: R`~~~live 161 بعد التصليح
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="q">الكلمة</label> <input id="q" name="q" value="شنطة سباحة"></p>
+  <p><label for="size">المقاس</label> <input id="size" name="size" value="L"></p>
+  <button>دوّر</button>
+</form>
+<p>الـ query: <output id="sent">(دوس «دوّر»)</output></p>
 ~~~
 
-~~~js
-document.documentElement.scrollWidth > innerWidth;
+**هتشوف إيه:**
 
-const all = [...document.querySelectorAll('body *')];
-all.filter((e) => e.getBoundingClientRect().right > innerWidth);
-all.filter((e) => e.getBoundingClientRect().left < 0);
+- قبل التصليح: [[q=شنطة+سباحة]] بس. المقاس [[L]] مكتوب قدامك في الحقل ومش في الناتج.
+- بعد التصليح: [[q=شنطة+سباحة&size=L]].
+
+**ليه:** حقل المقاس كان ليه [[id="size"]] ومفيش [[name]]. الـ [[id]] بيربط الـ [[<label>]] بالحقل جوه الصفحة، ومبيتبعتش. اللي بيتبعت [[name]].
+
+**الغلطة الشائعة:** تمسح [[id]] وتحط [[name]] مكانه. محتاج الاتنين: [[id]] للـ label و [[name]] للسيرفر، وعادي يبقوا نفس الكلمة.
+
+~~~text القياس من Chrome (العنوان الحقيقي لما الفورم اتبعت GET)
+قبل:   /search?q=%D8%B4%D9%86%D8%B7%D8%A9+%D8%B3%D8%A8%D8%A7%D8%AD%D8%A9
+بعد:   /search?q=%D8%B4%D9%86%D8%B7%D8%A9+%D8%B3%D8%A8%D8%A7%D8%AD%D8%A9&size=L
 ~~~
 
-**اللي بيفرق:** في RTL الصفحة بتبدأ من اليمين، والـ scroll الأفقي بيتمد ناحية الشمال. فالعنصر اللي طالع من الشمال بيعمل scroll فعلًا، وعشان كده السطر الأول [[true]]. بس الفلتر بـ [[right]] بيدوّر على اليمين بس، وده مش مكان المشكلة.
+العنوان الحقيقي فيه العربي [[%XX]]، وسطر المعاينة بيفكّه عشان تقراه.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم دخول الأعضاء في «نادي الموج» فيه ٣ مشاكل: كلمة السر هتظهر في العنوان، ورقم العضوية مش هيوصل، وفيه [[enctype]] ملوش لازمة. صلّحهم. (من قسم ٢ و ٣ و ١٠ في الشرح)`, done: R`الفورم بقى [[post]]، ورقم العضوية ليه [[name]]، ومفيش [[enctype]]، وكل الشروط ✓.`, work: { h: 120, start: R`<form action="/login" method="get" enctype="multipart/form-data">
+  <p><label for="id">رقم العضوية</label> <input id="id"></p>
+  <p><label for="pass">كلمة السر</label> <input id="pass" name="pass" type="password"></p>
+  <button>ادخل</button>
+</form>`, checks: [
+              { say: R`الفورم بيبعت بـ [[method="post"]]`, q: "form[method=\"post\" i]" },
+              { say: R`رقم العضوية عليه [[name]]`, q: "input#id[name]" },
+              { say: R`كلمة السر لسه [[type="password"]] وعليها [[name]]`, q: "input[type=\"password\"][name]" },
+              { say: R`مفيش [[enctype="multipart/form-data"]] (الفورم مفيهوش ملفات)`, q: "form[enctype=\"multipart/form-data\"]", n: 0 },
+              { say: R`[[action]] لسه [[/login]]`, q: "form[action=\"/login\"]" },
+            ] }, sol: R`~~~live 119 بعد التصليح
+<form action="/login" method="post" onsubmit="return false">
+  <p><label for="id">رقم العضوية</label> <input id="id" name="member"></p>
+  <p><label for="pass">كلمة السر</label> <input id="pass" name="pass" type="password"></p>
+  <button>ادخل</button>
+</form>
+~~~
 
-وعشان كده فلتر السكربت في الدرس فيه الشرطين: [[b.right > iw + 0.5 || b.left < -0.5]].
+(المعاينة عليها [[onsubmit="return false"]] عشان الصندوق ميتنقلش لصفحة مش موجودة. الشكل في الصفحة زي ما هو قبل وبعد: التصليح كله في الطلب.)
 
-**الفرق في LTR:** نفس الزرار طالع من الشمال، بس في LTR مفيش scroll ناحية الشمال خالص، فالجزء ده بيضيع، و [[scrollWidth]] مبيبيّنهوش. وده باج أخبث.
+| المشكلة | التصليح | ليه |
+|---|---|---|
+| [[method="get"]] | [[method="post"]] | في GET كلمة السر بتتحط في العنوان |
+| رقم العضوية من غير [[name]] | [[name="member"]] | من غير [[name]] مبيتبعتش |
+| [[enctype="multipart/form-data"]] | اتشال | مفيش ملفات، والافتراضي أصغر وأبسط |
 
-**الغلطة الشائعة:** تنقل سكربت فحص من موقع إنجليزي، وتشغّله على موقع عربي، فيقولك «سليم».
+**هتشوف إيه:** مفيش فرق في شكل الصفحة. الفرق في الطلب:
 
-~~~text الناتج
-عرض 800:
-                          rtl             ltr
-scrollWidth > innerWidth  true           false
-scrollWidth               840          800
-الفلتر بـ right           0 عنصر      0 عنصر
-الفلتر بـ left < 0        1 عنصر      1 عنصر
-left الزرار               -40          -40
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي)
+قبل:   GET /login?pass=s3cret
+       (رقم العضوية مش موجود، وكلمة السر في العنوان)
+
+بعد:   POST /login
+       content-type: application/x-www-form-urlencoded
+
+       member=1042&pass=s3cret
+~~~
+
+**الغلطة الشائعة:** تغيّر [[get]] لـ [[post]] وتسيب [[enctype]]. الفورم هيشتغل، بس كل طلب هيتبعت بالأجزاء والفواصل من غير أي سبب، وبعض أكواد السيرفر البسيطة مبتقراش multipart أصلًا.` },
+            { lvl: 'تطبيق', t: R`**ابني:** فورم «احجز حصة سباحة» لـ «نادي الموج». المطلوب: يبعت [[post]] لـ [[/book]]، وفيه حقل الاسم ([[name="name"]])، وحقل الموبايل ([[type="tel"]] و [[name="phone"]])، وحقل مخفي بيقول إن الحصة هي [[swim-101]] ([[name="class"]])، وزرار «احجز». (من قسم ٢ و ٤ و ٦ في الشرح)`, done: R`الفورم فيه حقلين ظاهرين بـ labels وحقل hidden وزرار، وكل الشروط ✓.`, work: { h: 225, start: R`<h1>احجز حصة سباحة</h1>
+<form>
+  الاسم
+  الموبايل
+  احجز
+</form>`, checks: [
+              { say: R`الفورم [[method="post"]] و [[action="/book"]]`, q: "form[method=\"post\" i][action=\"/book\"]" },
+              { say: R`حقل الاسم [[name="name"]] وليه [[<label>]]`, q: "form:has(label) input[name=\"name\"]" },
+              { say: R`حقل الموبايل [[type="tel"]] و [[name="phone"]]`, q: "input[type=\"tel\"][name=\"phone\"]" },
+              { say: R`حقل [[type="hidden"]] اسمه [[class]] وقيمته [[swim-101]]`, q: "input[type=\"hidden\"][name=\"class\"][value=\"swim-101\"]" },
+              { say: R`فيه [[<label>]] لكل حقل ظاهر`, q: "label[for]", n: 2 },
+              { say: R`زرار «احجز» جوه الفورم`, q: "form button", has: "احجز" },
+            ] }, sol: R`~~~live 225 الحل
+<h1>احجز حصة سباحة</h1>
+<form action="/book" method="post" onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <input type="hidden" name="class" value="swim-101">
+  <p><label for="name">الاسم</label> <input id="name" name="name"></p>
+  <p><label for="phone">الموبايل</label> <input id="phone" name="phone" type="tel"></p>
+  <button>احجز</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+(سطر [[onsubmit]] للمعاينة بس، والشروط مبتطلبوش.)
+
+**هتشوف إيه:**
+
+- حقلين وزرار. الحقل المخفي ملوش أي أثر في الصفحة.
+- اكتب اسم ورقم ودوس «احجز»: الناتج أوله [[class=swim-101]] مع إنك مكتبتهاش.
+
+**ليه كده:**
+
+- [[post]] لأن الحجز بيغيّر حاجة عند النادي (حصة اتحجزت)، ولأن فيه رقم موبايل.
+- الـ hidden أول حقل أو آخر حقل، مش مهم: مكانه في الكود بيحدد ترتيبه في الطلب بس.
+- مفيش [[enctype]]: مفيش ملفات.
+
+**الغلطة الشائعة:** تكتب اسم الحصة في [[<input name="class" value="swim-101">]] عادي وتخبّيه بـ CSS. الحقل هيفضل الـ Tab يقف عنده وقارئ الشاشة يقراه. [[type="hidden"]] هو اللي بيشيله من الاتنين.
+
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي)
+POST /book
+content-type: application/x-www-form-urlencoded
+
+class=swim-101&name=%D9%85%D9%86%D9%89&phone=01012345678
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة navbar بالعربي والإنجليزي (٦ روابط وزرارين ولوجو)، وشغّل عليها [[matrix.js]] من غير تعديل. اكتب جدول: كل مقاس [[BROKEN]] والعنصر الخارج، ومجمّعة في «نطاقات» (من كام لكام).`, done: R`عندك جدول فيه نطاق واحد على الأقل بيختلف بين العربي والإنجليزي، وكل سطر فيه اسم العنصر الخارج من ناتج السكربت.`, sol: R`الصفحة، وبتفتح بـ [[?lang=ar]] أو [[?lang=en]]. وشغّل عليها [[matrix.js]] من الدرس زي ما هو:
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ده طلب وصل سيرفر «نادي الموج» (الجسم تحت السطر الفاضي). اكتب الفورم اللي بعته: نفس العنوان، ونفس الـ method، ونفس أسامي الحقول الأربعة بنفس الترتيب، وخلّي [[sport]] مخفي. (من قسم ٢ في الشرح: قراية طلب POST)`, done: R`الفورم بيبعت لـ [[/trial]] بـ [[post]]، وفيه الأربع حقول بأساميهم، وكل الشروط ✓.`, work: { h: 198, start: R`<!--
+POST /trial
+content-type: application/x-www-form-urlencoded
 
-~~~live 150 150
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الموقع</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui; }
-  .bar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; }
-  .logo { flex: none; height: 32px; font-weight: 800; line-height: 32px; text-decoration: none; }
-  .links { display: flex; gap: 12px; }
-  .links a { padding: 6px 4px; white-space: nowrap; }
-  .actions { display: flex; gap: 8px; margin-inline-start: auto; }
-  .cta { padding: 8px 12px; font: inherit; white-space: nowrap; }
-</style>
-</head>
-<body>
-<header class="bar">
-  <a class="logo" href="#home" data-t="logo"></a>
-  <nav class="links" aria-label="الرئيسية">
-    <a href="#1" data-t="a"></a><a href="#2" data-t="b"></a><a href="#3" data-t="c"></a>
-    <a href="#4" data-t="d"></a><a href="#5" data-t="e"></a><a href="#6" data-t="f"></a>
-  </nav>
-  <div class="actions">
-    <button class="cta" type="button" data-t="g"></button>
-    <button class="cta" type="button" data-t="h"></button>
-  </div>
-</header>
-<main><h1 data-t="logo"></h1></main>
-<script>
-  const T = {
-    ar: { logo: 'متجر', a: 'الرئيسية', b: 'المنتجات', c: 'العروض', d: 'الفروع', e: 'المدونة', f: 'تواصل', g: 'ادخل', h: 'سجّل' },
-    en: { logo: 'Store', a: 'Home', b: 'Products', c: 'Special offers', d: 'Our branches', e: 'The blog', f: 'Contact us', g: 'Sign in', h: 'Create account' },
-  };
-  const lang = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ar';
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  for (const el of document.querySelectorAll('[data-t]')) el.textContent = T[lang][el.dataset.t];
-$__lt/script>
-</body>
-</html>
+sport=polo&name=Omar&age=14&phone=01112345678
+-->
+<form>
+</form>`, checks: [
+              { say: R`الفورم [[action="/trial"]] و [[method="post"]]`, q: "form[action=\"/trial\"][method=\"post\" i]" },
+              { say: R`حقل [[sport]] مخفي وقيمته [[polo]]`, q: "input[type=\"hidden\"][name=\"sport\"][value=\"polo\"]" },
+              { say: R`حقل [[name]]`, q: "input[name=\"name\"]" },
+              { say: R`حقل [[age]]`, q: "input[name=\"age\"]" },
+              { say: R`حقل [[phone]]`, q: "input[name=\"phone\"]" },
+              { say: R`[[sport]] أول حقل في الفورم (زي ترتيب الطلب)`, q: "form input:first-of-type[name=\"sport\"]" },
+            ] }, sol: R`~~~live 198 الحل
+<form action="/trial" method="post" onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <input type="hidden" name="sport" value="polo">
+  <p><label for="name">الاسم</label> <input id="name" name="name" value="Omar"></p>
+  <p><label for="age">السن</label> <input id="age" name="age" type="number" value="14"></p>
+  <p><label for="phone">الموبايل</label> <input id="phone" name="phone" type="tel" value="01112345678"></p>
+  <button>جرّب حصة</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
 ~~~
 
-**ليه النطاق بيختلف بين اللغتين:** الكلام الإنجليزي هنا أطول، فبيعدّي عرض الشاشة عند مقاس أكبر. عشان كده المصفوفة لازم تجرب اللغتين، مش واحدة.
+**هتشوف إيه:** دوس «جرّب حصة»: الناتج [[sport=polo&name=Omar&age=14&phone=01112345678]]، نفس جسم الطلب اللي في التمرين حرف بحرف.
 
-**إزاي تطلّع النطاقات:** اقرا السطور [[BROKEN]] المتتالية. أول عرض وآخر عرض هم النطاق. والعنصر الخارج آخر السطر، وده اللي هتصلّحه.
+**إزاي قريت الطلب:**
 
-**الغلطة الشائعة:** تصلّح عند أول مقاس مكسور بس. النطاق كله لازم يتصلّح، و [[.actions]] هو اللي بيطلع برّه هنا في الحالتين.
+- [[POST /trial]] ← [[method="post"]] و [[action="/trial"]].
+- [[content-type: application/x-www-form-urlencoded]] ← الافتراضي، يبقى مفيش [[enctype]] مكتوب.
+- الجسم بيتقطّع عند كل [[&]]: أربع أزواج، يبقى أربع حقول ليها [[name]]. والترتيب في الجسم هو ترتيب الحقول في الكود.
+- الزرار مش في الجسم: ملوش [[name]].
 
-~~~text الناتج
-آخر سطر من matrix.js:
-broken: ar-320 ar-360 ar-375 ar-414 en-320 en-360 en-375 en-414 en-600 en-761 en-768 en-820
+**الغلطة الشائعة:** تكتب [[<form name="trial">]] وتفتكر إن ده العنوان. [[name]] على الفورم اسم ليه جوه الصفحة، والعنوان من [[action]].` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب فورم رفع صورة العضوية، والسيرفر بيقوله «الملف فاضي». الفورم: [[<form action="/photo" method="post">]] وجواه [[<input type="file" name="photo">]]. اشرحله في ٣ سطور إيه اللي وصل السيرفر فعلًا وإيه التصليح. (من قسم ٣ في الشرح: [[enctype]])`, done: R`كتبت إن اللي وصل اسم الملف بس، وإن التصليح [[enctype="multipart/form-data"]]، وليه.`, sol: R`**إجابة نموذجية:**
 
-النطاقات:
-اللغة     من      لحد      العنصر الخارج
-ar        320     414      links , a , actions , cta
-en        320     820      links , a , actions , cta
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[@media (max-width: 359px) { .menu-btn { padding: 4px } }]] اتكتب عشان زرار القايمة برا الشاشة على «الموبايلات الصغيرة»، والمصفوفة لسه بتقول [[360 BROKEN]]. ليه؟ صلّحه بقيمة متقاسة مش متخمّنة، وأثبت بالمصفوفة.`, done: R`شرحت إن 360 مش أقل من 359، ولقيت أصغر عرض سليم بالمصفوفة، والحد الجديد بيخلّي 320 و 360 و 375 [[OK]] من غير ما يكسر الباقي.`, sol: R`~~~live 150 150
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الموقع</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui; }
-  .bar { display: flex; align-items: center; gap: 12px; padding: 8px; }
-  .logo { flex: none; width: 120px; height: 32px; line-height: 32px; font-weight: 800; }
-  .phone { flex: none; width: 110px; padding-block: 6px; white-space: nowrap; }
-  .menu-btn { flex: none; padding: 10px 28px; font: inherit; white-space: nowrap; }
-  @media (max-width: 365px) {
-    .menu-btn { padding: 10px 4px; }
-  }
-</style>
-</head>
-<body>
-<header class="bar">
-  <a class="logo" href="#home">المتجر</a>
-  <a class="phone" href="tel:+200000000000">اتصل بينا</a>
-  <button class="menu-btn" type="button">القايمة</button>
-</header>
-<main><h1>المتجر</h1></main>
-</body>
-</html>
+1. الفورم من غير [[enctype]]، فالجسم اتكتب بالشكل الافتراضي ([[application/x-www-form-urlencoded]]): [[اسم=قيمة]]. والشكل ده نص بس، فالمتصفح بعت **اسم الملف** مكان القيمة.
+2. اللي وصل السيرفر فعلًا هو السطر [[photo=avatar.svg]]: كلمة، مش ملف. محتوى الصورة مخرجش من الجهاز أصلًا.
+3. التصليح كلمتين على الفورم: [[enctype="multipart/form-data"]]. ساعتها كل حقل بياخد جزء لوحده، وجزء الملف فيه اسمه ونوعه ومحتواه الخام.
+
+~~~text القياس من Chrome (نفس الفورم على السيرفر المحلي، والملف صورة صغيرة اسمها avatar.svg)
+من غير enctype:
+POST /photo
+content-type: application/x-www-form-urlencoded
+content-length: 16
+
+photo=avatar.svg
+
+بـ enctype="multipart/form-data":
+POST /photo
+content-type: multipart/form-data; boundary=----WebKitFormBoundarypBpda26Cx6A2Agms
+content-length: 305
+
+------WebKitFormBoundarypBpda26Cx6A2Agms
+Content-Disposition: form-data; name="photo"; filename="avatar.svg"
+Content-Type: image/svg+xml
+
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><circle cx="20" cy="20" r="18" fill="#0a7ea4"/></svg>
+
+------WebKitFormBoundarypBpda26Cx6A2Agms--
 ~~~
 
-**ليه القاعدة ماتطبّقتش:** [[max-width: 359px]] معناها «359 وأقل». والشاشة 360، فمش متحقق. الرقم اتخمّن من اسم «موبايلات صغيرة» مش من قياس.
+١٦ بايت في الأول (اسم الملف) و ٣٠٥ في التاني (الملف نفسه): الفرق ده هو الصورة.
 
-**الطريقة الصح:** اسأل المصفوفة، مش خيالك. جرّب عروض متتالية حوالين النقطة، ولاقي أصغر عرض سليم، واكتب الحد قبله برقم واحد.
-
-**ليه مش نختار رقم «مريح» زي 400:** هيشتغل، بس هيصغّر الزرار على عروض مش محتاجة. الحد المتقاس بيغيّر اللي لازم بس.
-
-**الغلطة الشائعة:** تعدّل الحد بعد ما تجرب 360 بس. لازم تشغّل المصفوفة كلها، لأن الحد الجديد ممكن يكسر عرض تاني.
-
-~~~text الناتج
-قبل (max-width: 359px):
-ar  320 scrollWidth=320 logo=32px OK
-ar  360 scrollWidth=366 logo=32px BROKEN menu-btn
-ar  375 scrollWidth=375 logo=32px OK
-ar  414 scrollWidth=414 logo=32px OK
-
-البحث عن الحد، من غير أي media query:
-360 → scrollWidth 366 BROKEN
-365 → scrollWidth 366 BROKEN
-366 → scrollWidth 366 OK
-375 → scrollWidth 375 OK
-أصغر عرض سليم = 366، فالحد = 365
-
-بعد (max-width: 365px):
-ar  320 scrollWidth=320 logo=32px OK
-ar  360 scrollWidth=360 logo=32px OK
-ar  375 scrollWidth=375 logo=32px OK
-ar  414 scrollWidth=414 logo=32px OK
-آخر سطر: all sizes OK
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** زوّد على السكربت: لكل مقاس مكسور، احفظ لقطة للعنصر الخارج بس ([[element.screenshot]]) في [[shots/broken/]]، واطبع حجم الصفحة الكلي ([[scrollWidth]]) جنب العرض.`, done: R`بعد التشغيل [[shots/broken/]] فيه صورة لكل مقاس [[BROKEN]] (وفاضي لو [[all sizes OK]])، والناتج فيه العرضين جنب بعض.`, sol: R`~~~js matrix-shots.js
-const fs = require("fs");
-const { chromium } = require("playwright-core");
-const BASE = "http://127.0.0.1:8931/";
-const widths = [320, 360, 375, 414, 600, 768, 1024, 1280];
-
-(async () => {
-  fs.rmSync("shots/broken", { recursive: true, force: true });
-  fs.mkdirSync("shots/broken", { recursive: true });
-
-  const browser = await chromium.launch({ channel: "chrome" });
-  const page = await browser.newPage();
-  const bad = [];
-
-  for (const lang of ["ar", "en"]) {
-    for (const w of widths) {
-      await page.setViewportSize({ width: w, height: 800 });
-      await page.goto(BASE + "?lang=" + lang);
-
-      const r = await page.evaluate(() => {
-        const iw = innerWidth;
-        const sw = document.documentElement.scrollWidth;
-        const out = [...document.querySelectorAll("body *")]
-          .filter((e) => {
-            const b = e.getBoundingClientRect();
-            return b.width && (b.right > iw + 0.5 || b.left < -0.5);
-          })
-          .map((e) => (e.className ? "." + e.className.split(" ")[0] : e.tagName.toLowerCase()));
-        return { iw, sw, out: [...new Set(out)] };
-      });
-
-      const ok = r.sw <= r.iw;
-      if (!ok) {
-        bad.push(lang + "-" + w);
-        await page.locator(r.out[0]).first().screenshot({
-          path: "shots/broken/" + lang + "-" + w + ".png",
-        });
-      }
-      console.log(lang, String(w).padStart(4), "width=" + r.iw, "scrollWidth=" + r.sw, ok ? "OK" : "BROKEN", r.out.join(","));
-    }
-  }
-
-  console.log(bad.length ? "broken: " + bad.join(" ") : "all sizes OK");
-  await browser.close();
-  process.exitCode = bad.length ? 1 : 0;
-})();
-~~~
-
-**اللي اتزوّد على [[matrix.js]]:**
-
-- [[fs.rmSync]] ثم [[fs.mkdirSync]]: الفولدر يبدأ فاضي كل مرة، فالصور اللي فيه بتاعة التشغيلة دي بس.
-- [[.map(...)]] بقت بترجّع selector جاهز: [[.actions]] أو اسم العنصر.
-- [[page.locator(r.out[0]).first().screenshot()]]: لقطة للعنصر نفسه، مش الصفحة كلها.
-- [[.first()]]: عشان لو الـ class مكرر.
-- [[r.out[0]]]: أول عنصر طالع، وده غالبًا الأب اللي فيه المشكلة.
-- [[process.exitCode]]: الـ CI يفشل لو فيه كسر.
-
-**الغلطة الشائعة:** تستخدم الـ class كـ selector من غير نقطة. [[.actions]] و [[actions]] حاجتين مختلفتين، والتانية هتدوّر على عنصر اسمه actions.
-
-~~~text الناتج
-ar  320 width=320 scrollWidth=520 BROKEN .actions
-ar  360 width=360 scrollWidth=520 BROKEN .actions
-ar  375 width=375 scrollWidth=520 BROKEN .actions
-broken: ar-320 ar-360 ar-375 ar-414 en-320 en-360 en-375 en-414
-
-عدد الصور في shots/broken/: 8
-عدد سطور BROKEN: 8
-ar-320.png , ar-360.png , ar-375.png , ar-414.png ...
-بعد تصليح الصفحة: all sizes OK، وعدد الصور = 0
-~~~` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[bounds.js]]: بياخد ملف CSS ويطلّع كل [[min-width]] و [[max-width]] بالبكسل، ويطبع لكل واحد العرض اللي عنده والعرض اللي بعده أو قبله (يعني [[max-width: 359px]] = 359 و 360)، ويدمجهم مع المصفوفة الأساسية مترتبين ومن غير تكرار. وبعدين خلي [[matrix.js]] يقرا المصفوفة منه.`, done: R`[[node bounds.js style.css]] على المعمل بيطبع لستة فيها [[359 360]] و [[760 761]] و [[1100 1101]] جنب 320 و 1440، و [[matrix.js]] بيلف عليهم.`, sol: R`~~~js bounds.js
-const fs = require("fs");
-
-const BASE = [320, 375, 414, 768, 1024, 1280, 1440];
-
-// كل حد في الملف بيدّي عرضين: آخر عرض قبل التغيير وأول عرض بعده
-function widthsFrom(file) {
-  const css = fs.readFileSync(file, "utf8");
-  const pairs = [];
-  for (const [, kind, px] of css.matchAll(/\((min|max)-width:\s*(\d+)px\)/g)) {
-    const n = Number(px);
-    pairs.push(kind === "max" ? [n, n + 1] : [n - 1, n]);
-  }
-  const all = [...BASE, ...pairs.flat()];
-  return { pairs, widths: [...new Set(all)].sort((a, b) => a - b) };
-}
-
-if (require.main === module) {
-  const { pairs, widths } = widthsFrom(process.argv[2]);
-  for (const [a, b] of pairs) console.log(a, b);
-  console.log("matrix:", widths.join(" "));
-}
-
-module.exports = { widthsFrom };
-~~~
-
-و [[style.css]] المعمل:
-
-~~~css style.css
-.menu-btn { padding: 12px; }
-@media (max-width: 359px) { .menu-btn { padding: 4px; } }
-@media (max-width: 760px) { .links { display: none; } }
-@media (max-width: 1100px) { .cta { display: none; } }
-@media (min-width: 1440px) { .wrap { max-width: 1200px; } }
-~~~
-
-والتغيير في [[matrix.js]]، بدل سطر [[const widths]]:
-
-~~~js
-const { widthsFrom } = require("./bounds.js");
-const { widths } = widthsFrom("style.css");
-~~~
-
-**الفكرة:** الكسر غالبًا عند الحدود بالظبط، فبدل لستة ثابتة بنسأل ملف الـ CSS نفسه. فكل حد جديد بيتختبر من غير ما حد يفتكر.
-
-- [[matchAll]]: كل التطابقات في الملف، مع المجموعتين (النوع والرقم).
-- [[max]] بيدّي [[n]] و [[n + 1]]، و [[min]] بيدّي [[n - 1]] و [[n]]. لأن [[max-width: 359px]] آخر عرض متحقق فيه 359، وأول عرض مش متحقق 360.
-- [[new Set]]: يشيل المكرر. و [[sort((a, b) => a - b)]] عشان الأرقام تترتب كأرقام، لأن [[sort()]] لوحدها بتحط 1024 قبل 320.
-- [[require.main === module]]: الجزء ده يشتغل لما تشغّل الملف مباشرة بس، مش لما [[matrix.js]] يعمله require.
-
-**القيد:** ده بيقرا القيم بالـ px بس. [[40rem]] هتحتاج تحويل، وده الخطوة الجاية لو ملفك بالـ rem.
-
-**الغلطة الشائعة:** تعمل [[.sort()]] من غير دالة مقارنة.
-
-~~~text الناتج
-$ node bounds.js style.css
-359 360
-760 761
-1100 1101
-1439 1440
-matrix: 320 359 360 375 414 760 761 768 1024 1100 1101 1280 1439 1440
-
-matrix.js بعد التعديل لف على 14 عرض، وآخر سطر: all sizes OK
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الصفحة بخط من Google Fonts. شغّل المصفوفة مرة من غير انتظار الخط، ومرة بعد [[await page.evaluate(() => document.fonts.ready)]]. فيه مقاس نتيجته اختلفت؟ اكتب ليه.`, done: R`عندك نتيجتين، ولو فيه فرق مكتوب المقاس واللي اتغيّر (عرض أو ارتفاع اللوجو)، ولو مفيش مكتوب ليه (الخط كان متخزّن، أو مقاساته قريبة من الافتراضي).`, sol: R`~~~live 140 160
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متجر الخط</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@800&display=swap">
-<style>
-  body { margin: 0; font-family: system-ui; }
-  .bar { display: flex; padding: 8px; }
-  .logo { font: 800 28px Cairo, system-ui; white-space: nowrap; }
-</style>
-</head>
-<body>
-<header class="bar"><a class="logo" href="#home">متجر الخط الجميل</a></header>
-<main><h1>الصفحة</h1></main>
-</body>
-</html>
-~~~
-
-والتغيير في السكربت، بعد [[page.goto]]:
-
-~~~js
-await page.evaluate(() => document.fonts.ready);
-~~~
-
-**ليه بيفرق:** مع [[display=swap]] المتصفح بيعرض الكلام بخط بديل، وبعد ما الخط يتحمّل بيبدّل. فالقياس قبل التبديل بيقيس خط تاني خالص، بعرض وارتفاع مختلفين.
-
-[[document.fonts.ready]] بيرجّع Promise بيخلص لما كل الخطوط المطلوبة تتحمّل. ولازم الصفحة تكون طلبت الخط فعلًا، وده بيحصل أول ما عنصر يستخدمه.
-
-**لو طلعت النتيجتين زي بعض:** الخط ممكن يكون اتخزّن في الـ cache، أو تم تحميله قبل القياس. عشان كده التجربة هنا بتمسح الـ cache وبتأخر الخط صناعيًا.
-
-**الغلطة الشائعة:** تستخدم [[waitForTimeout(1000)]] بدل [[document.fonts.ready]]. رقم عشوائي، بيفشل على نت بطيء، وبيضيّع وقت على نت سريع.
-
-~~~text الناتج
-                       font-family المعروض    عرض اللوجو    ارتفاع اللوجو
-من غير انتظار          الخط البديل           162.64px       37px
-بعد fonts.ready        Cairo                 221.91px       52px
-
-الخط اتحمّل فعلًا: document.fonts.check = true
-المقاس اللي نتيجته اختلفت: عرض 360، اللوجو اتغيّر 59.27px في العرض
-~~~` },
+**الغلطة الشائعة:** تدوّر على المشكلة في كود السيرفر ساعة. افتح تاب Network في DevTools وبص على الطلب: لو [[content-type]] مش [[multipart/form-data]]، المشكلة في الـ HTML.` }
+          ]
+        },
+        {
+          cmd: "أنواع input كلها",
+          title: "الـ 22 نوع بتوع input: كل واحد بيرسم إيه وبيبعت إيه",
+          pre: ["css/form و label", "css/textarea و date و number", { to: "css/GET و POST و enctype", why: R`سطر المعاينة اللي بيكتب «اللي كان هيتبعت» اتشرح هناك في القسم ٩` }],
+          ref: [
+            { t: "MDN: <input> types", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#input_types" },
+            { t: "WHATWG: States of the type attribute", url: "https://html.spec.whatwg.org/multipage/input.html#states-of-the-type-attribute" },
+            { t: "MDN: <input type=\"color\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/color" },
+            { t: "MDN: <input type=\"range\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/range" },
+            { t: "MDN: <input type=\"time\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/time" },
+            { t: "MDN: <input type=\"datetime-local\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/datetime-local" },
+            { t: "MDN: <input type=\"month\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/month" },
+            { t: "MDN: <input type=\"week\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/week" },
+            { t: "MDN: <input type=\"image\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/image" },
+            { t: "MDN: <input type=\"reset\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/reset" }
           ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import fs from "node:fs";
-fs.writeFileSync("style.css", ".a{}\n@media (max-width: 760px) { .x{} }\n@media (max-width: 1100px) { .y{} }\n@media (max-width: 359px) { .z{} }\n@media (min-width: 48rem) { .w{} }\n");
-const base = [320, 375, 414, 768, 1024, 1440];
-const css = fs.readFileSync("style.css", "utf8");
-const extra = [];
-for (const m of css.matchAll(/\((min|max)-width:\s*([\d.]+)(px|rem)\)/g)) {
-  const px = m[3] === "rem" ? Number(m[2]) * 16 : Number(m[2]);
-  extra.push(...(m[1] === "max" ? [px, px + 1] : [px - 1, px]));
-}
-const widths = [...new Set([...base, ...extra])].sort((a, b) => a - b);
-console.log("widths: " + widths.join(" "));
-const rows = [{ w: 360, sw: 363, iw: 360 }, { w: 375, sw: 375, iw: 375 }, { w: 761, sw: 924, iw: 761 }];
-console.log("broken: " + rows.filter(r => r.sw > r.iw).map(r => r.w).join(" "));`, expect: [R`widths: 320 359 360 375 414 760 761 767 768 1024 1100 1101 1440`, R`broken: 360 761`] },
+          desc: R`[[<input>]] عنصر واحد بـ 22 شكل. كلمة [[type]] هي اللي بتقرر: المتصفح يرسم إيه (خانة نص، ولا شريط بيتسحب، ولا نافذة ألوان)، والقيمة اللي بتتبعت شكلها إيه، والموبايل يفتح أنهي كيبورد، وإيه اللي يترفض.
+الدرس ده فيه جدول مرجعي بالـ 22 نوع كلهم، وشرح الأنواع اللي لسه ماتشرحتش: [[color]] و [[range]] و [[time]] و [[datetime-local]] و [[month]] و [[week]] و [[image]] و [[reset]].`,
+          example: R`<label for="color">لون الفانلة</label>
+<input id="color" name="color" type="color" value="#0a7ea4">
+<label for="level">مستواك في السباحة</label>
+<input id="level" name="level" type="range" min="1" max="5" value="3">
+<label for="at">ميعاد الحصة</label>
+<input id="at" name="at" type="time" min="09:00" max="22:00" step="900">
+<label for="start">بداية الاشتراك</label>
+<input id="start" name="start" type="month" min="2026-11">
+<input type="reset" value="امسح">
+<input type="submit" value="ابعت">`,
+          flag: "script",
+          lines: [
+            R`اسم حقل اللون. كل نوع من دول محتاج [[<label>]] زي حقل النص بالظبط، لأن الشكل لوحده (مربع ملوّن) مبيقولش ده لون إيه.`,
+            R`[[type="color"]] بيرسم مربع ملوّن، والضغط عليه بيفتح نافذة اختيار لون. [[value="#0a7ea4"]] اللون اللي الحقل بيبدأ بيه، والقيمة اللي بتتبعت دايمًا بالشكل [[#rrggbb]].`,
+            R`اسم حقل المستوى. مهم هنا بالذات: الشريط مبيكتبش رقمه، فالـ label هو اللي بيقول الشريط ده بيقيس إيه.`,
+            R`[[type="range"]] شريط بيتسحب. [[min="1"]] و [[max="5"]] أول وآخر الشريط، و [[value="3"]] مكان الدايرة في الأول. القيمة اللي بتتبعت رقم بين ١ و ٥.`,
+            R`اسم حقل الميعاد، مربوط بيه بـ [[for="at"]].`,
+            R`[[type="time"]] حقل ساعة ودقايق. [[min]] و [[max]] أول وآخر ميعاد مقبول (من ٩ الصبح لـ ١٠ بالليل)، و [[step="900"]] بالثواني: ٩٠٠ ثانية يعني المواعيد كل ربع ساعة.`,
+            R`اسم حقل الشهر، مربوط بيه بـ [[for="start"]].`,
+            R`[[type="month"]] بيختار شهر وسنة من غير يوم. [[min="2026-11"]] يعني مينفعش شهر قبل نوفمبر ٢٠٢٦. القيمة بتتبعت [[YYYY-MM]].`,
+            R`[[type="reset"]] زرار بيرجّع كل حقول الفورم لقيمها الأولى. [[value]] هنا هو الكلام المكتوب على الزرار. (وهتعرف في القسم ٦ ليه الأحسن متحطوش.)`,
+            R`[[type="submit"]] زرار الإرسال بشكله القديم: [[value]] هو الكلام اللي عليه. بيعمل نفس شغل [[<button type="submit">]].`
           ],
+          teach: R`## الفكرة في سطرين
+
+المواصفة: [[type]] بيحدد «الحالة» اللي الـ [[<input>]] فيها، وكل حالة ليها شكل وقيمة وقواعد. ولو كتبت نوع المتصفح ميعرفوش، بيتعامل معاه كـ [[text]]، فمفيش نوع بيكسر الصفحة.
+
+القياسات من Chrome 157 على Windows 11. اللي جاي من MDN بس (كيبورد الموبايل وشكل المتصفحات التانية) مكتوب جنبه.
+
+---
+
+## ١. الجدول المرجعي: الـ 22 نوع
+
+| النوع | بيرسم إيه | القيمة اللي بتتبعت | مشروح في |
+|---|---|---|---|
+| [[<input type="text">]] | خانة نص سطر واحد (الافتراضي) | النص زي ما اتكتب | «form و label» |
+| [[<input type="search">]] | خانة نص معناها «كلمة بحث» | النص | «search» |
+| [[<input type="tel">]] | خانة نص، وعلى الموبايل كيبورد التليفون | النص من غير أي فحص | «form و label» |
+| [[<input type="url">]] | خانة نص بتفحص إن المكتوب عنوان كامل | العنوان | «textarea و date و number» |
+| [[<input type="email">]] | خانة نص بتفحص شكل الإيميل | الإيميل | «form و label» |
+| [[<input type="password">]] | خانة الحروف فيها نقط | النص **زي ما هو** من غير تشفير | «form و label»، والقسم ٧ هنا |
+| [[<input type="number">]] | خانة أرقام بسهمين | الرقم | «textarea و date و number» |
+| [[<input type="range">]] | شريط بيتسحب | رقم بين [[min]] و [[max]] | القسم ٣ هنا |
+| [[<input type="date">]] | تاريخ ونتيجة | [[2026-11-18]] | «textarea و date و number» |
+| [[<input type="time">]] | ساعة ودقايق | [[18:30]] | القسم ٤ هنا |
+| [[<input type="datetime-local">]] | تاريخ وساعة مع بعض | [[2026-11-18T18:30]] | القسم ٤ هنا |
+| [[<input type="month">]] | شهر وسنة | [[2026-11]] | القسم ٤ هنا |
+| [[<input type="week">]] | رقم أسبوع وسنة | [[2026-W47]] | القسم ٤ هنا |
+| [[<input type="color">]] | مربع ملوّن بيفتح نافذة ألوان | [[#c8102e]] | القسم ٢ هنا |
+| [[<input type="checkbox">]] | مربع صح: كل واحد لوحده | [[on]] أو الـ [[value]]، ولو مش متعلّم مبيتبعتش | «fieldset و radio» |
+| [[<input type="radio">]] | دايرة: واحدة بس من المجموعة | [[value]] بتاع المختارة | «fieldset و radio» |
+| [[<input type="file">]] | زرار «Choose File» | الملف (أو اسمه بس) | «file و accept و multiple» |
+| [[<input type="hidden">]] | ولا حاجة | [[value]] زي ما هو | «GET و POST و enctype» |
+| [[<input type="submit">]] | زرار بيبعت الفورم | مبيتبعتش إلا لو هو اللي اتداس وليه [[name]] | القسم ٦ هنا |
+| [[<input type="image">]] | صورة بتبعت الفورم | مكان الضغطة: [[x]] و [[y]] | القسم ٥ هنا |
+| [[<input type="reset">]] | زرار بيرجّع الحقول لأولها | مبيتبعتش | القسم ٦ هنا |
+| [[<input type="button">]] | زرار مبيعملش حاجة لوحده | مبيتبعتش | القسم ٦ هنا |
+
+وده شكلهم كلهم في متصفحك دلوقتي (الشكل بيختلف من متصفح لمتصفح ومن نظام لنظام):
+
+~~~live 312 454 الـ 22 نوع
+<p><label>text <input type="text" value="نص"></label>
+<label>search <input type="search" value="بحث"></label>
+<label>tel <input type="tel" value="01012345678"></label>
+<label>url <input type="url" value="https://example.test"></label>
+<label>email <input type="email" value="mona@example.test"></label>
+<label>password <input type="password" value="s3cret"></label>
+<label>number <input type="number" value="3"></label>
+<label>range <input type="range"></label></p>
+<p><label>date <input type="date" value="2026-11-18"></label>
+<label>time <input type="time" value="18:30"></label>
+<label>datetime-local <input type="datetime-local" value="2026-11-18T18:30"></label>
+<label>month <input type="month" value="2026-11"></label>
+<label>week <input type="week" value="2026-W47"></label></p>
+<p><label>color <input type="color" value="#c8102e"></label>
+<label>checkbox <input type="checkbox" checked></label>
+<label>radio <input type="radio" checked></label>
+<label>file <input type="file"></label>
+<label>hidden (مش ظاهر) <input type="hidden" value="x"></label></p>
+<p><label>submit <input type="submit"></label>
+<label>image <input type="image" alt="صورة بتبعت" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='24'%3E%3Crect width='60' height='24' rx='6' fill='%230a7ea4'/%3E%3C/svg%3E"></label>
+<label>reset <input type="reset"></label>
+<label>button <input type="button" value="زرار"></label></p>
+~~~
+
+~~~text القياس من Chrome (فورم فيه نوع من كل دول، اتبعت POST للسيرفر المحلي)
+color=#000000          لون من غير value: أسود
+range=50               شريط من غير value: النص بين 0 و 100
+time=18:30
+dt=2026-11-18T18:30    (datetime-local)
+month=2026-11
+week=2026-W47
+date=2026-11-18
+pw=s3cret              كلمة السر نص عادي
+الـ submit والـ reset والـ button: مش في الطلب
+~~~
+
+(علامة [[#]] و [[:]] بيتبعتوا في الطلب [[%23]] و [[%3A]]. مكتوبين هنا مفكوكين عشان يتقروا.)
+
+---
+
+## ٢. [[<input type="color">]]
+
+مربع ملوّن. الضغط عليه بيفتح نافذة اختيار اللون بتاعة النظام، فشكلها مش في إيدك.
+
+~~~live 43 اختار لون وبص على القيمة
+<form oninput="shown.value = color.value">
+  <label for="color">لون الفانلة</label>
+  <input id="color" name="color" type="color" value="#0a7ea4">
+  <output id="shown">#0a7ea4</output>
+</form>
+~~~
+
+([[oninput]] بيشتغل مع كل تغيير في أي حقل جوه الفورم، وهنا بينسخ قيمة الحقل للـ [[<output>]]. الاتنين في درس «datalist و output».)
+
+~~~text القياس من Chrome
+الحجم الافتراضي:     50 × 27 px
+من غير value:        #000000      (أسود)
+value="#C8102E":     #c8102e      (الحروف بتبقى صغيرة)
+value="#f00":        #ff0000      (المختصر بيتفك)
+value="red":         #ff0000      (اسم اللون بيتحوّل)
+value="blah":        #000000      (مش لون: بيرجع أسود)
+~~~
+
+اللي يهمك:
+
+- القيمة **دايمًا** [[#rrggbb]]: علامة [[#]] و ٦ خانات، بحروف صغيرة. مهما كتبت في [[value]]، ده اللي السيرفر هيستلمه.
+- **الحقل ده عمره ما بيبقى فاضي.** لو الزائر ملمسوش، هيتبعت [[#000000]]. فـ [[required]] عليه ملوش معنى، والسيرفر ميقدرش يفرّق بين «اختار أسود» و «مختارش».
+- MDN: زمان كانت القيمة المقبولة في [[value]] هي [[#rrggbb]] بس، ودلوقتي أي لون CSS مقبول. فلو لازم تدعم متصفحات أقدم، اكتب [[value]] بالشكل الكامل [[#rrggbb]].
+
+### [[<input type="color" alpha>]] و [[<input type="color" colorspace="display-p3">]]
+
+> ميزة جديدة لسه مش في كل المتصفحات. يعني إيه «مش Baseline» و «ورا flag»، وإزاي تتأكد بنفسك قبل ما تستخدم أي ميزة: درس «Baseline و @supports».
+
+اتنين attributes جداد في المواصفة على حقل اللون:
+
+- [[alpha]]: بيسمح للزائر يختار شفافية اللون، مش لون مصمت بس.
+- [[colorspace]]: بيختار مساحة الألوان. القيمة [[limited-srgb]] (الافتراضية) أو [[display-p3]] (ألوان أوسع على الشاشات الحديثة).
+
+~~~text القياس من Chrome 157
+'alpha' in HTMLInputElement.prototype       false
+'colorSpace' in HTMLInputElement.prototype  false
+<input type="color" value="#ff000080" alpha>  →  value = #ff0000   (الشفافية اتشالت)
+
+ولما شغّلنا Chrome بخيار الميزات التجريبية:
+<input type="color" value="#ff000080" alpha>  →  value = color(srgb 1 0 0 / 0.501961)
+~~~
+
+يعني في Chrome 157 العادي الاتنين **متجاهَلين**، والمنهج بيقول إنهم مش Baseline. ولاحظ إن لما بيشتغلوا، شكل القيمة بيتغيّر من [[#rrggbb]] لـ [[color(...)]]، فكود السيرفر اللي مستني ٧ حروف هيتكسر. **متستخدمهمش دلوقتي.**
+
+---
+
+## ٣. [[<input type="range">]]
+
+شريط عليه دايرة بتتسحب. المواصفة بتقول إنه لقيمة «مش مهم تبقى دقيقة بالظبط»: مستوى صوت، درجة رضا، مستوى لاعب.
+
+~~~live 38 56 اسحب الدايرة
+<form oninput="shown.value = level.value">
+  <label for="level">مستواك في السباحة (١ مبتدئ، ٥ محترف)</label>
+  <input id="level" name="level" type="range" min="1" max="5" value="3">
+  <output id="shown">3</output>
+</form>
+~~~
+
+~~~text القياس من Chrome
+من غير أي attribute:                 min=0  max=100  step=1  value=50   (النص)
+min="0" max="10" من غير value:       5
+min="1" max="7" value="9":           7      (أكبر من max: بيرجع لـ max)
+min="1" max="5" step="0.5" value="2.3":   2.5    (بيتقرّب لأقرب خطوة)
+min="0" max="10" step="4" value="5":      4      (الخطوات 0 و 4 و 8)
+value="abc":                         50     (مش رقم: بيرجع للنص)
+الـ role:  slider      الحجم: 129 × 16 px
+~~~
+
+- [[min]] و [[max]] طرفين الشريط، والافتراضي ٠ و ١٠٠. و [[step]] المسافة بين كل وقفة والتانية، والافتراضي ١. و [[step="any"]] بيلغي الوقفات.
+- **الحقل ده كمان عمره ما بيبقى فاضي ولا غلط.** أي قيمة برّه المدى أو بين خطوتين المتصفح بيصلّحها في صمت. فمفيش رسالة خطأ هتطلع منه أبدًا.
+- **الشريط مبيكتبش رقمه.** الزائر شايف دايرة على خط، ومش عارف هي ٣ ولا ٤. عشان كده دايمًا جنبه [[<output>]] بيعرض القيمة (المعاينة اللي فوق)، وطرفين الشريط مكتوبين في الـ label.
+- بالكيبورد: الأسهم بتحرّك خطوة، و Home و End بيروحوا للطرفين (ده من ARIA Authoring Practices للـ slider).
+
+**range ولا number؟** لو الرقم بالظبط مهم (سن، كمية، سعر): [[number]]. لو المهم «قد إيه تقريبًا»: [[range]].
+
+---
+
+## ٤. الوقت والتاريخ: [[<input type="time">]] وإخواته
+
+[[type="date"]] اتشرح في درس «textarea و date و number». باقي العيلة ٤ أنواع، وكلهم بنفس القاعدة: **الشكل اللي الزائر شايفه بيتبع لغة متصفحه، والقيمة اللي بتتبعت شكلها ثابت.**
+
+~~~live 168 الأربعة
+<p><label for="t">الميعاد</label> <input id="t" type="time" value="18:30"></p>
+<p><label for="dt">ميعاد الماتش</label> <input id="dt" type="datetime-local" value="2026-11-18T18:30"></p>
+<p><label for="m">شهر بداية الاشتراك</label> <input id="m" type="month" value="2026-11"></p>
+<p><label for="w">أسبوع المعسكر</label> <input id="w" type="week" value="2026-W47"></p>
+~~~
+
+**هتشوف إيه:** في Chrome إنجليزي على Windows الأربعة ظهروا كده: [[06:30 PM]] و [[11/18/2026 06:30 PM]] و [[November 2026]] و [[Week 47, 2026]]. عندك ممكن يظهروا بشكل تاني، بس القيمة هي هي:
+
+| النوع | القيمة اللي بتتبعت | الشكل |
+|---|---|---|
+| [[time]] | [[18:30]] | [[HH:MM]] بنظام ٢٤ ساعة دايمًا، حتى لو الزائر شايف PM |
+| [[datetime-local]] | [[2026-11-18T18:30]] | تاريخ، وحرف [[T]]، وساعة |
+| [[month]] | [[2026-11]] | [[YYYY-MM]] |
+| [[week]] | [[2026-W47]] | السنة، و [[W]]، ورقم الأسبوع |
+
+### [[<input type="time">]]
+
+~~~text القياس من Chrome
+value="18:30"        →  18:30        valueAsNumber = 66600000   (ملّي ثانية من نص الليل = 18.5 ساعة)
+value="18:30:15"     →  18:30:15     (الثواني بتظهر لو اتكتبت)
+value="6pm"          →  ""           (مش بالشكل المطلوب: الحقل بيبدأ فاضي)
+~~~
+
+[[min]] و [[max]] و [[step]] بيشتغلوا عليه. و [[step]] هنا **بالثواني**:
+
+~~~text القياس من Chrome (min="09:00" max="22:00" step="900")
+18:40   stepMismatch = true    الرسالة: Please enter a valid value. The two nearest valid values are 6:30 PM and 6:45 PM.
+23:00   rangeOverflow = true   الرسالة: Value must be 10:00 PM or earlier.
+~~~
+
+### [[<input type="datetime-local">]]
+
+تاريخ وساعة في حقل واحد. كلمة **local** معناها إن القيمة **من غير منطقة زمنية**: [[2026-11-18T18:30]] يعني «ستة ونص مساءً» على ساعة الزائر، ومحدش عارف دي في أنهي بلد.
+
+~~~text القياس من Chrome
+value="2026-11-18T18:30"       →  2026-11-18T18:30
+value="2026-11-18 18:30"       →  2026-11-18T18:30    (المسافة بتتحوّل T)
+value="2026-11-18T18:30:00Z"   →  ""                  (Z يعني منطقة زمنية: مرفوض)
+~~~
+
+مناسب لميعاد في مكان واحد (ماتش في النادي). لو الميعاد لناس في بلاد مختلفة (اجتماع أونلاين)، السيرفر لازم يعرف المنطقة الزمنية من حقل تاني.
+
+### [[<input type="month">]] و [[<input type="week">]]
+
+- [[month]]: شهر وسنة من غير يوم. مناسب لتاريخ انتهاء كارت، أو «شهر بداية الاشتراك».
+- [[week]]: أسبوع من السنة. الأسابيع بتتعد بنظام ISO: الأسبوع بيبدأ الاتنين، و [[2026-W47]] هو الأسبوع اللي أوله الاتنين ١٦ نوفمبر ٢٠٢٦ (اتقاس: [[valueAsDate]] رجّع [[2026-11-16]]).
+
+~~~text القياس من Chrome
+type="month" value="11/2026"    →  ""     (الشكل لازم YYYY-MM)
+type="week"  value="2026-W54"   →  ""     (مفيش أسبوع 54)
+~~~
+
+**الدعم:** المنهج و MDN بيقولوا إن [[month]] و [[week]] **مش Baseline**: حسب جدول MDN، Firefox و Safari على الكمبيوتر مبيدعموهمش، والحقل هناك بيبقى خانة نص عادية. فلو كتبتهم:
+
+- اكتب الشكل المطلوب في الـ label («الشهر، بالشكل 2026-11») وحط [[pattern]] يفحصه (درس «form و label»)، عشان اللي هيكتب بإيده يكتب صح.
+- أو استخدم البديل اللي شغال في كل حتة: [[<select>]] للشهر و [[<input type="number">]] للسنة.
+
+[[time]] و [[datetime-local]] و [[date]] شغالين في كل المتصفحات الأساسية حسب MDN.
+
+---
+
+## ٥. [[<input type="image">]]
+
+زرار إرسال شكله صورة. [[src]] مسار الصورة و [[alt]] اسم الزرار، زي [[<img>]] بالظبط (درس «img»).
+
+~~~html
+<input type="image" name="pos" src="images/send.png" alt="ابعت الطلب">
+~~~
+
+~~~text القياس من Chrome
+الـ role: button      الاسم: ابعت الطلب   (من alt)
+من غير alt:           الاسم بقى «Submit»  (المتصفح حط كلمة من عنده)
+
+الطلب اللي وصل السيرفر لما الصورة اتداست:
+a=1&pos.x=0&pos.y=0
+~~~
+
+الغريب فيه: بيبعت **مكان الضغطة** جوه الصورة: [[pos.x]] و [[pos.y]] بالبيكسل من ركن الصورة. (في القياس الضغطة كانت بكود فطلعت ٠ و ٠. بالماوس هتبقى الأرقام الحقيقية.) ده كان بيتستخدم زمان لخريطة الزائر بيدوس على مكان فيها.
+
+النهارده مش محتاجه: [[<button>]] بيقبل صورة جواه، ومبيبعتش أرقام زيادة:
+
+~~~html
+<button type="submit"><img src="images/send.png" alt="ابعت الطلب"></button>
+~~~
+
+---
+
+## ٦. [[<input type="submit">]] و [[<input type="reset">]] و [[<input type="button">]]
+
+التلاتة أزرار بالشكل القديم (من قبل ما [[<button>]] يتعمل). الكلام اللي على الزرار بييجي من [[value]].
+
+~~~live 82 اكتب في الحقل وبعدين دوس «Reset»
+<form onsubmit="return false">
+  <p><label for="n">الاسم</label> <input id="n" name="name" value="منى"></p>
+  <input type="submit">
+  <input type="reset">
+  <input type="button" value="زرار">
+</form>
+~~~
+
+~~~text القياس من Chrome
+<input type="submit"> من غير value:   مكتوب عليه «Submit»   (role: button)
+<input type="reset">  من غير value:   مكتوب عليه «Reset»    (role: button)
+<input type="button"> من غير value:   فاضي، عرضه 16px
+
+غيّرنا الاسم لـ «changed» ودوسنا reset:   القيمة رجعت «منى»
+~~~
+
+- [[submit]]: بيبعت الفورم. نفس [[<button type="submit">]].
+- [[button]]: مبيعملش حاجة لوحده. مستني JavaScript. نفس [[<button type="button">]].
+- [[reset]]: بيرجّع **كل** حقول الفورم لقيمتها الأولى، يعني لـ [[value]] المكتوب في الكود (مش بيفضّيها: الاسم رجع «منى» مش فاضي).
+- من غير [[value]] الكلمة اللي على الزرار بتيجي من المتصفح بلغته هو. في صفحة عربي اكتب [[value]] دايمًا.
+
+### ليه [[reset]] فكرة وحشة
+
+الزائر ملا فورم من ١٠ حقول، وإيده راحت على «امسح» بدل «ابعت» (والاتنين جنب بعض ونفس الشكل). كل اللي كتبه راح بضغطة، ومفيش تراجع. ومين أصلًا محتاج يمسح فورم كله؟ اللي غلط في حقل بيصلّحه.
+
+MDN بينصح صراحة: متحطش زرار reset في الفورم إلا لو فيه سبب حقيقي. ولو حطيته: بعيد عن زرار الإرسال، وشكله أهدى.
+
+### [[<input>]] ولا [[<button>]]؟
+
+[[<button>]] أحسن في كل حاجة: الكلام بيتكتب بين الفتحة والقفلة فممكن يبقى فيه أيقونة أو [[<strong>]]، وتنسيقه أسهل. الأزرار الـ [[<input>]] هتقابلها في كود قديم، فلازم تعرف تقراها. درس «أزرار الفورم: formaction وإخواته» كله عن [[<button>]].
+
+---
+
+## ٧. خانات النص: نفس الخانة، ومعنى مختلف
+
+[[text]] و [[search]] و [[tel]] و [[url]] و [[email]] و [[password]] كلهم خانة نص بنفس الحجم (اتقاس: ١٧٧ × ٢١ px). الفرق في تلات حاجات:
+
+| النوع | الفحص | كيبورد الموبايل (من MDN) | role في Chrome |
+|---|---|---|---|
+| [[text]] | مفيش | العادي | [[textbox]] |
+| [[search]] | مفيش | العادي، وزرار Enter ممكن يتكتب عليه «بحث» | [[searchbox]] |
+| [[tel]] | مفيش (أشكال التليفونات كتير): استخدم [[pattern]] | لوحة أرقام التليفون | [[textbox]] |
+| [[url]] | لازم عنوان كامل بـ [[https://]] | فيه [[/]] و [[.com]] | [[textbox]] |
+| [[email]] | لازم شكل إيميل | فيه [[@]] و [[.]] | [[textbox]] |
+| [[password]] | مفيش | العادي، والحروف نقط | [[textbox]] |
+
+- شكل الكيبورد من MDN ومش متقاس هنا (محتاج موبايل حقيقي).
+- عايز لوحة أرقام من غير ما تغيّر النوع؟ [[inputmode="numeric"]] (درس «textarea و date و number»).
+- [[password]] بيخبّي الحروف **عن اللي واقف وراك** بس. في الطلب القيمة نص عادي (شفتها في القياس: [[pw=s3cret]]). ومعاه دايمًا [[autocomplete="current-password"]] في الدخول و [[autocomplete="new-password"]] في التسجيل، عشان مدير كلمات السر يشتغل.
+
+---
+
+## ٨. لو النوع مش معروف
+
+~~~text القياس من Chrome
+<input type="foo">        →  input.type = text
+<input type="datetime">   →  input.type = text     (نوع قديم اتشال من المواصفة)
+<input>                   →  input.type = text
+~~~
+
+المتصفح اللي ميعرفش نوع بيرسم خانة نص، والقيمة بتتبعت زي ما اتكتبت. دي اللي بتخلّي الأنواع الجديدة آمنة: في أسوأ الأحوال الزائر هيكتب بإيده. بس معناها كمان إن **السيرفر لازم يفحص الشكل**: ممكن ييجيله «نوفمبر ٢٠٢٦» في حقل كان المفروض [[2026-11]].
+
+---
+
+## ٩. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[range]] من غير رقم ظاهر جنبه | الزائر بيخمّن هو اختار كام |
+| [[range]] لقيمة لازم تبقى دقيقة (سن، سعر) | صعب تقف على الرقم اللي عايزه |
+| [[required]] على [[color]] أو [[range]] | ملوش تأثير: الحقلين دايمًا فيهم قيمة |
+| [[step="15"]] على [[time]] عشان ربع ساعة | الـ step بالثواني: ١٥ يعني ١٥ ثانية. الصح [[900]] |
+| [[value="6:30 PM"]] على [[time]] | مش [[HH:MM]]: الحقل بيبدأ فاضي |
+| [[month]] أو [[week]] من غير بديل | خانة نص في Firefox و Safari على الكمبيوتر (MDN) |
+| [[type="image"]] من غير [[alt]] | زرار اسمه «Submit» أو من غير اسم |
+| [[reset]] جنب [[submit]] | ضغطة غلط بتمسح الفورم |
+| [[type="datetime"]] | نوع ملغي: خانة نص |
+| تفتكر [[password]] بيشفّر | بيخبّي على الشاشة بس |
+
+---
+
+## الخلاصة
+
+- [[type]] بيحدد الشكل والقيمة والكيبورد والفحص. النوع اللي المتصفح ميعرفوش بيبقى [[text]].
+- [[color]] بيبعت [[#rrggbb]]، و [[range]] بيبعت رقم، والاتنين عمرهم ما بيبقوا فاضيين.
+- [[range]] محتاج [[min]] و [[max]] ورقم ظاهر جنبه.
+- [[time]] ([[HH:MM]]) و [[datetime-local]] و [[month]] ([[YYYY-MM]]) و [[week]] ([[YYYY-Www]]): الشكل المعروض بيتغيّر، والقيمة ثابتة.
+- [[month]] و [[week]] مش في كل المتصفحات: جهّز بديل.
+- [[image]] و [[submit]] و [[reset]] و [[button]] أزرار قديمة: استخدم [[<button>]]، وابعد عن reset.`,
+          try: R`اعمل ملف [[types.html]] فيه فورم [[method="get"]] و [[action="types.html"]] جواه: [[color]] اسمه [[c]] من غير value، و [[range]] اسمه [[r]] من غير أي attribute تاني، و [[time]] اسمه [[t]]، وزرار. دوس الزرار **من غير ما تلمس أي حقل** وبص على شريط العنوان. مين اتبعت بقيمة ومين اتبعت فاضي؟`,
+          sol: R`~~~html types.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أنواع</title>
+</head>
+<body>
+<form action="types.html" method="get">
+  <p><label for="c">اللون</label> <input id="c" name="c" type="color"></p>
+  <p><label for="r">المستوى</label> <input id="r" name="r" type="range"></p>
+  <p><label for="t">الميعاد</label> <input id="t" name="t" type="time"></p>
+  <button type="submit">ابعت</button>
+</form>
+</body>
+</html>
+~~~
+
+~~~view 208 شكل الصفحة (الإرسال هنا بيتكتب تحت بدل ما يتبعت)
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="c">اللون</label> <input id="c" name="c" type="color"></p>
+  <p><label for="r">المستوى</label> <input id="r" name="r" type="range"></p>
+  <p><label for="t">الميعاد</label> <input id="t" name="t" type="time"></p>
+  <button type="submit">ابعت</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- العنوان بقى آخره [[?c=%23000000&r=50&t=]].
+- اللون اتبعت أسود ([[%23]] هي علامة [[#]] متشفّرة) مع إنك مختارتش حاجة.
+- الشريط اتبعت [[50]]: النص بين ٠ و ١٠٠.
+- الميعاد اتبعت **فاضي** ([[t=]]): ده الوحيد في التلاتة اللي بيبدأ من غير قيمة، فهو الوحيد اللي [[required]] ليه معنى عليه.
+
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي)
+GET /types.html?c=%23000000&r=50&t=
+~~~`,
+          deep: {
+            why: R`النوع الصح بيدّيك تلات حاجات ببلاش: واجهة جاهزة (نتيجة، ساعة، نافذة ألوان) من غير سطر JavaScript، وكيبورد مناسب على الموبايل، وقيمة شكلها ثابت السيرفر يقراها من غير تخمين. والنوع الغلط بيعمل العكس: زائر بيكتب تاريخ بتلات أشكال مختلفة في خانة نص، وسيرفر بيحاول يفهمهم.`,
+            how: R`كل نوع ليه في المواصفة «خوارزمية تنضيف القيمة» (value sanitization): لما القيمة تتحط (من [[value]] في الكود أو من الزائر)، المتصفح بيعدّيها عليها. [[color]] بيحوّلها لـ [[#rrggbb]] أو يحط أسود. [[range]] بيقرّبها لأقرب خطوة جوه المدى أو يحط النص. [[time]] و [[month]] و [[week]] بيقبلوا الشكل المحدد بس وإلا يفضّوا الحقل. عشان كده الأنواع دي مستحيل تبعت قيمة شكلها غلط من متصفح بيدعمها. والمتصفح اللي مبيدعمش النوع بيعامله كـ [[text]] من غير تنضيف.`,
+            when: R`[[color]]: لون ثيم أو منتج، لما أي لون مقبول (لو الاختيارات ٥ ألوان بس، [[radio]] أحسن). [[range]]: قيمة تقريبية في مدى صغير. [[time]]: ميعاد في اليوم. [[datetime-local]]: ميعاد حدث في مكان واحد. [[month]]: شهر وسنة، مع بديل. [[week]]: نادر، وفي أنظمة الشغل والجداول. [[image]] و [[reset]]: تقراهم في كود قديم ومتكتبهمش.`,
+            mistakes: R`[[range]] من غير [[<output>]] جنبه. [[step]] على [[time]] بالدقايق بدل الثواني. [[required]] على [[color]] أو [[range]]. [[month]] و [[week]] من غير بديل لـ Firefox و Safari. تثق إن القيمة جاية بالشكل الصح من غير فحص على السيرفر. [[type="image"]] من غير [[alt]]. وزرار reset جنب زرار الإرسال.`
+          },
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** فورم «احجز ملعب» في «نادي الموج». كل سطر في البداية محتاج حقل بالنوع المناسب: الميعاد من ٩ الصبح لـ ١٠ بالليل وكل نص ساعة، وعدد اللاعبين شريط من ٢ لـ ١٠، ولون الفانلات، وشهر الحجز. (من قسم ١ و ٢ و ٣ و ٤ في الشرح)`, done: R`كل حقل بالنوع الصح وليه [[<label>]] و [[name]]، وكل الشروط ✓.`, work: { h: 309, start: R`<h1>احجز ملعب</h1>
+<form>
+  الميعاد
+  عدد اللاعبين (من ٢ لـ ١٠)
+  لون الفانلات
+  شهر الحجز
+  <button>احجز</button>
+</form>`, checks: [
+              { say: R`الميعاد [[type="time"]] بين [[09:00]] و [[22:00]]`, q: "input[type=\"time\"][min=\"09:00\"][max=\"22:00\"]" },
+              { say: R`الميعاد كل نص ساعة: [[step="1800"]] (بالثواني)`, q: "input[type=\"time\"][step=\"1800\"]" },
+              { say: R`عدد اللاعبين [[type="range"]] من ٢ لـ ١٠`, q: "input[type=\"range\"][min=\"2\"][max=\"10\"]" },
+              { say: R`لون الفانلات [[type="color"]]`, q: "input[type=\"color\"]" },
+              { say: R`شهر الحجز [[type="month"]]`, q: "input[type=\"month\"]" },
+              { say: R`الأربع حقول ليهم [[name]] و [[<label>]]`, q: "label[for]", n: 4 },
+            ] }, sol: R`~~~live 309 الحل
+<h1>احجز ملعب</h1>
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="at">الميعاد</label> <input id="at" name="at" type="time" min="09:00" max="22:00" step="1800" value="18:00"></p>
+  <p><label for="players">عدد اللاعبين (من ٢ لـ ١٠)</label> <input id="players" name="players" type="range" min="2" max="10" value="6"></p>
+  <p><label for="color">لون الفانلات</label> <input id="color" name="color" type="color" value="#0a7ea4"></p>
+  <p><label for="month">شهر الحجز</label> <input id="month" name="month" type="month" value="2026-12"></p>
+  <button>احجز</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- أربع حقول كل واحد بشكل: ساعة، وشريط، ومربع لون، وشهر.
+- دوس «احجز»: [[at=18:00&players=6&color=#0a7ea4&month=2026-12]]. كل قيمة بشكلها الثابت.
+- جرّب تكتب في الميعاد [[18:10]] وتدوس «احجز»: المتصفح هيرفض ويقولك أقرب ميعادين.
+
+**ليه كده:**
+
+- [[step="1800"]]: نص ساعة = ٣٠ × ٦٠ ثانية.
+- الشريط مناسب هنا لأن المدى صغير (٩ قيم) وطرفيه مكتوبين في الـ label.
+- [[month]] مش [[date]] لأن الحجز بالشهر.
+
+**الغلطة الشائعة:** [[step="30"]] على الميعاد. ده ٣٠ ثانية، فالحقل هيقبل [[18:10]] عادي ومش هتلاحظ إلا لما حجزين يتداخلوا.
+
+~~~text القياس من Chrome
+step="1800" والقيمة 18:10:   stepMismatch = true
+step="30"   والقيمة 18:10:   stepMismatch = false
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم بطولة النادي كل حقوله بالنوع الغلط: ميعاد الماتش خانة نص، والسن شريط، والنوع [[datetime]] اللي اتلغى، وزرار «امسح» جنب «سجّل». صلّح الأربعة. (من قسم ٣ و ٤ و ٦ و ٩ في الشرح)`, done: R`ميعاد الماتش [[datetime-local]]، والسن [[number]]، وميعاد التمرين [[time]]، ومفيش زرار reset، وكل الشروط ✓.`, work: { h: 159, start: R`<form>
+  <p><label for="match">ميعاد الماتش</label> <input id="match" name="match" type="datetime"></p>
+  <p><label for="age">السن</label> <input id="age" name="age" type="range" min="6" max="60"></p>
+  <p><label for="train">ميعاد التمرين</label> <input id="train" name="train" type="text" placeholder="6:30 PM"></p>
+  <input type="reset" value="امسح">
+  <input type="submit" value="سجّل">
+</form>`, checks: [
+              { say: R`ميعاد الماتش [[type="datetime-local"]]`, q: "input#match[type=\"datetime-local\"]" },
+              { say: R`السن [[type="number"]] ولسه بين ٦ و ٦٠`, q: "input#age[type=\"number\"][min=\"6\"][max=\"60\"]" },
+              { say: R`ميعاد التمرين [[type="time"]]`, q: "input#train[type=\"time\"]" },
+              { say: R`مفيش زرار reset`, q: "[type=\"reset\"]", n: 0 },
+              { say: R`لسه فيه زرار إرسال`, q: "input[type=\"submit\"], button:not([type=\"button\"])" },
+            ] }, sol: R`~~~live 159 بعد التصليح
+<form onsubmit="return false">
+  <p><label for="match">ميعاد الماتش</label> <input id="match" name="match" type="datetime-local"></p>
+  <p><label for="age">السن</label> <input id="age" name="age" type="number" min="6" max="60"></p>
+  <p><label for="train">ميعاد التمرين</label> <input id="train" name="train" type="time"></p>
+  <button type="submit">سجّل</button>
+</form>
+~~~
+
+وده اللي كان باين قبل التصليح:
+
+~~~live 157 قبل
+<form onsubmit="return false">
+  <p><label for="match">ميعاد الماتش</label> <input id="match" name="match" type="datetime"></p>
+  <p><label for="age">السن</label> <input id="age" name="age" type="range" min="6" max="60"></p>
+  <p><label for="train">ميعاد التمرين</label> <input id="train" name="train" type="text" placeholder="6:30 PM"></p>
+  <input type="reset" value="امسح">
+  <input type="submit" value="سجّل">
+</form>
+~~~
+
+**هتشوف إيه:**
+
+- قبل: ميعاد الماتش خانة نص فاضية (النوع [[datetime]] مش معروف)، والسن شريط من غير رقم، وميعاد التمرين خانة نص.
+- بعد: ميعاد الماتش بقى حقل تاريخ وساعة بنتيجة، والسن خانة أرقام بسهمين، وميعاد التمرين حقل ساعة.
+- زرار «امسح» اختفى.
+
+| المشكلة | التصليح | ليه |
+|---|---|---|
+| [[type="datetime"]] | [[datetime-local]] | النوع القديم اتلغى وبيتعامل كـ [[text]] |
+| السن [[range]] | [[number]] | السن رقم دقيق، والشريط من غير رقم ظاهر |
+| ميعاد في [[text]] | [[time]] | كل زائر كان هيكتبه بشكل |
+| [[reset]] جنب [[submit]] | اتشال | ضغطة غلط بتمسح الفورم |
+
+**الغلطة الشائعة:** تسيب [[placeholder="6:30 PM"]] على حقل [[time]]. الـ placeholder مبيظهرش على الأنواع اللي ليها واجهة خاصة، والقيمة أصلًا مش بالشكل ده.
+
+~~~text القياس من Chrome
+<input type="datetime">  →  input.type = text
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** فورم تقييم المدرب فيه شريط [[min="1" max="7" value="9"]] ولون [[value="blah"]]. اكتب على ورقة القيمتين اللي هيتبعتوا ودوس «قيّم» وقارن. وبعدين صلّح الشريط عشان التقييم يبقى من ١ لـ ١٠ ويبدأ من ٥. (من قسم ٢ و ٣ في الشرح: المتصفح بيصلّح القيمة في صمت)`, done: R`توقّعت [[rate=7]] و [[color=#000000]]، وبعد التصليح الشريط بقى من ١ لـ ١٠ وبيبدأ من ٥.`, work: { h: 168, start: R`<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="rate">تقييم المدرب (من ١ لـ ٧)</label> <input id="rate" name="rate" type="range" min="1" max="7" value="9"></p>
+  <p><label for="color">لون الشارة</label> <input id="color" name="color" type="color" value="blah"></p>
+  <button>قيّم</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(دوس «قيّم»)</output></p>`, checks: [
+              { say: R`الشريط من ١ لـ ١٠`, q: "input[type=\"range\"][min=\"1\"][max=\"10\"]" },
+              { say: R`الشريط بيبدأ من ٥`, q: "input[type=\"range\"][value=\"5\"]" },
+              { say: R`الـ [[<label>]] بقى مكتوب فيه «١٠» مش «٧»`, q: "label[for=\"rate\"]", has: "١٠" },
+              { say: R`حقل اللون لسه موجود وليه [[name]]`, q: "input[type=\"color\"][name]" },
+            ] }, sol: R`~~~live 168 بعد التصليح
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="rate">تقييم المدرب (من ١ لـ ١٠)</label> <input id="rate" name="rate" type="range" min="1" max="10" value="5"></p>
+  <p><label for="color">لون الشارة</label> <input id="color" name="color" type="color" value="#0a7ea4"></p>
+  <button>قيّم</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(دوس «قيّم»)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- قبل التصليح: الدايرة في آخر الشريط، ومربع اللون أسود. والناتج [[rate=7&color=#000000]].
+- بعد التصليح: الدايرة قرب النص، والناتج [[rate=5&color=#0a7ea4]].
+
+**ليه:** [[value="9"]] أكبر من [[max="7"]]، فالمتصفح رجّعها لـ ٧ من غير أي رسالة. و [[blah]] مش لون، فالحقل أخد اللون الافتراضي الأسود. النوعين دول مبيطلّعوش أخطاء: بيصلّحوا في صمت.
+
+**الغلطة الشائعة:** تغيّر [[max]] وتنسى الـ label. الشريط مبيكتبش أرقامه، فالزائر هيصدّق الـ label اللي بيقول «لـ ٧» ويسحب للآخر وهو فاكر إنه ادّى الدرجة النهائية من ٧.
+
+~~~text القياس من Chrome
+<input type="range" min="1" max="7" value="9">   →  value = 7
+<input type="color" value="blah">                →  value = #000000
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** الأزرار دي شغالة بس مكتوبة بالشكل القديم: زرار صورة من غير [[alt]]، وزرارين [[<input>]]. حوّلهم لـ [[<button>]] من غير ما تغيّر اللي كل زرار بيعمله، وشيل اللي ملوش لازمة. (من قسم ٥ و ٦ في الشرح)`, done: R`مفيش [[<input type="image">]] ولا [[<input type="submit">]] ولا reset، وفيه [[<button type="submit">]] جواه صورة ليها [[alt]]، وكل الشروط ✓.`, work: { h: 120, start: R`<form>
+  <p><label for="q">دوّر على لاعب</label> <input id="q" name="q" type="search"></p>
+  <input type="image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='10' cy='10' r='7' fill='none' stroke='%230a7ea4' stroke-width='3'/%3E%3Cpath d='M15 15l7 7' stroke='%230a7ea4' stroke-width='3'/%3E%3C/svg%3E">
+  <input type="reset" value="امسح">
+  <input type="button" value="بحث متقدم">
+</form>`, checks: [
+              { say: R`مفيش [[<input type="image">]]`, q: "input[type=\"image\"]", n: 0 },
+              { say: R`زرار الإرسال بقى [[<button type="submit">]] وجواه [[<img>]]`, q: "button[type=\"submit\"] img" },
+              { say: R`الصورة ليها [[alt]] مكتوب فيه اسم الزرار`, q: "button img[alt]:not([alt=\"\"])" },
+              { say: R`«بحث متقدم» بقى [[<button type="button">]]`, q: "button[type=\"button\"]", has: "بحث متقدم" },
+              { say: R`مفيش زرار reset`, q: "[type=\"reset\"]", n: 0 },
+            ] }, sol: R`~~~live 94 بعد
+<form onsubmit="return false">
+  <p><label for="q">دوّر على لاعب</label> <input id="q" name="q" type="search"></p>
+  <button type="submit"><img alt="دوّر" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='10' cy='10' r='7' fill='none' stroke='%230a7ea4' stroke-width='3'/%3E%3Cpath d='M15 15l7 7' stroke='%230a7ea4' stroke-width='3'/%3E%3C/svg%3E"></button>
+  <button type="button">بحث متقدم</button>
+</form>
+~~~
+
+**هتشوف إيه:** نفس العدسة، بس بقت جوه زرار ليه إطار، وجنبها «بحث متقدم». زرار «امسح» اختفى: حقل بحث واحد مش محتاج زرار يمسحه.
+
+**ليه كده:**
+
+- [[<input type="image">]] كان بيبعت [[x]] و [[y]] مع كلمة البحث، ومن غير [[alt]] كان اسمه عند قارئ الشاشة «Submit». [[<button>]] جواه [[<img alt="دوّر">]] بيبعت الكلمة بس، واسمه «دوّر».
+- [[<input type="button">]] و [[<button type="button">]] نفس السلوك: مبيبعتوش. كتبنا [[type="button"]] صريح لأن [[<button>]] من غير type جوه فورم بيبعت (درس «أزرار الفورم: formaction وإخواته»).
+
+**الغلطة الشائعة:** تكتب [[<button>بحث متقدم</button>]] من غير type. الزرار هيبعت الفورم بدل ما يفتح البحث المتقدم.
+
+~~~text القياس من Chrome
+قبل:   input type=image من غير alt   →  role=button  الاسم «Submit»      وبيبعت: q=...&x=0&y=0
+بعد:   button > img alt="دوّر"       →  role=button  الاسم «دوّر»        وبيبعت: q=...
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** افتح صفحة [[<input>]] على MDN (اللينك تحت الدرس) ودوّر على جدول الأنواع. طلّع منه: مين من الـ 22 نوع عليه علامة إنه مش مدعوم في كل المتصفحات؟ وإيه النوع اللي الصفحة بتقول عليه deprecated؟ (من قسم ٤ و ٨ في الشرح)`, done: R`كتبت اسم النوعين اللي دعمهم ناقص، والنوع الملغي، وإيه اللي بيحصل في المتصفح اللي مبيدعمش.`, sol: R`**إجابة نموذجية:**
+
+- **دعمهم ناقص:** [[month]] و [[week]]. صفحة كل واحد فيهم على MDN فيها جدول Browser compatibility، وفيه إن Firefox و Safari على الكمبيوتر مبيدعموهمش. (وفي منهج الكورس ده، المبني على بيانات Baseline، [[color]] كمان متعلّم عليه «مش Baseline» بسبب اختلافات في بعض المتصفحات، مع إن الحقل الأساسي شغال في Chrome.)
+- **الملغي (deprecated):** [[datetime]]. كان المفروض يبقى تاريخ وساعة بمنطقة زمنية، ومحدش نفّذه، واتشال. البديل [[datetime-local]].
+- **اللي بيحصل في متصفح مبيدعمش:** الحقل بيبقى [[type="text"]]. الزائر بيكتب بإيده، والقيمة بتتبعت زي ما كتبها.
+
+~~~text القياس من Chrome 157
+<input type="datetime">   →  input.type = text
+<input type="month">      →  input.type = month     (Chrome بيدعمه)
+<input type="week">       →  input.type = week      (Chrome بيدعمه)
+~~~
+
+**الطريقة اللي تتعلمها من التمرين:** قبل ما تستخدم أي نوع (أو أي عنصر) جديد عليك، انزل لآخر صفحته في MDN وبص على جدول Browser compatibility. خانة حمرا في متصفح أساسي = لازم بديل.` }
+          ]
+        },
+        {
+          cmd: "file و accept و multiple",
+          title: "رفع الملفات: type=file و accept و multiple وشكل الطلب",
+          pre: [{ to: "css/GET و POST و enctype", why: R`شكل طلب [[multipart/form-data]] والـ [[boundary]] اتشرحوا هناك في القسم ٣` }],
+          ref: [
+            { t: "MDN: <input type=\"file\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/file" },
+            { t: "MDN: accept", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept" },
+            { t: "MDN: multiple", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/multiple" },
+            { t: "MDN: capture", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/capture" },
+            { t: "WHATWG: File Upload state (type=file)", url: "https://html.spec.whatwg.org/multipage/input.html#file-upload-state-(type=file)" }
+          ],
+          desc: R`[[<input type="file">]] بيخلّي الزائر يختار ملف (أو كذا ملف) من جهازه عشان يتبعت مع الفورم. معاه attributes ليه هو بس: [[accept]] (أنواع الملفات اللي نافذة الاختيار تعرضها)، و [[multiple]] (أكتر من ملف)، و [[capture]] (افتح الكاميرا على الموبايل).
+والملف مبيتبعتش إلا لو الفورم [[method="post"]] و [[enctype="multipart/form-data"]]. من غيرهم اللي بيوصل السيرفر اسم الملف بس.`,
+          example: R`<form action="/join" method="post" enctype="multipart/form-data">
+  <label for="photo">صورة شخصية (JPG أو PNG، أقصى حجم ٢ ميجا)</label>
+  <input id="photo" name="photo" type="file" accept="image/jpeg, image/png" required>
+  <label for="docs">صور البطاقة: الوش والضهر</label>
+  <input id="docs" name="docs" type="file" accept="image/*, .pdf" multiple>
+  <button type="submit">ارفع</button>
+</form>`,
+          flag: "script",
+          lines: [
+            R`التلاتة لازم مع بعض في أي فورم فيه ملف: [[action]] (الملف يروح فين)، و [[method="post"]] (الملف في جسم الطلب)، و [[enctype="multipart/form-data"]] (الشكل اللي بيشيل محتوى الملف).`,
+            R`الـ label بيقول للزائر المطلوب **قبل** ما يختار: نوع الملف وأقصى حجم. الـ HTML مبيعرضش الشروط دي لوحده.`,
+            R`[[type="file"]] بيرسم زرار اختيار الملف. [[accept="image/jpeg, image/png"]] نوعين مفصولين بفاصلة: نافذة الاختيار هتعرض الـ JPG والـ PNG بس. و [[required]]: الفورم مش هيتبعت من غير ملف.`,
+            R`label الحقل التاني. كلمة «الوش والضهر» بتفهّم الزائر إنه هيختار ملفين.`,
+            R`[[multiple]] بيسمح باختيار أكتر من ملف في نفس الحقل. و [[accept="image/*, .pdf"]]: أي صورة ([[image/*]])، أو ملف امتداده [[.pdf]].`,
+            R`زرار الإرسال. الرفع بيبدأ لحظة الضغط عليه، مش لحظة اختيار الملف: اختيار الملف بيسجّله في الحقل بس.`,
+            R`[[</form>]] آخر الفورم: الحقلين والزرار اللي فوقه هم اللي بيتبعتوا في الطلب.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+حقل الملف مختلف عن كل الحقول: قيمته مش نص الزائر كتبه، دي **ملف على جهازه**. عشان كده المتصفح بيحميه: الصفحة متقدرش تختار ملف من عندها، ومتقدرش تعرف مساره الحقيقي.
+
+القياسات من Chrome 157 على Windows 11. الملفات في القياسات اتحطت في الحقل بكود (من غير نافذة الاختيار)، واتبعتت للسيرفر المحلي اللي في درس «GET و POST و enctype».
+
+---
+
+## ١. [[<input type="file">]]: الشكل والقيمة
+
+~~~live 79 97 اختار ملف وشوف المتصفح عرف عنه إيه
+<form onchange="shown.value = photo.files.length + ' ملف: ' + Array.from(photo.files, f => f.name + ' (' + f.size + ' بايت، النوع ' + (f.type || 'مش معروف') + ')').join(' و ')">
+  <label for="photo">صورة شخصية</label>
+  <input id="photo" name="photo" type="file">
+  <p><output id="shown">(لسه مختارتش)</output></p>
+</form>
+~~~
+
+(سطر [[onchange]] بيشتغل لما قيمة حقل تتغيّر، وهنا بيكتب عدد الملفات واسم وحجم ونوع كل واحد. للمعاينة بس.)
+
+**هتشوف إيه:**
+
+- زرار مكتوب عليه «Choose File» وجنبه «No file chosen». الكلمتين من المتصفح بلغته هو، ومش في إيدك تغيّرهم من الـ HTML.
+- بعد ما تختار ملف: اسم الملف بيظهر مكان «No file chosen»، والسطر اللي تحت بيكتب اسمه وحجمه ونوعه.
+- الملف لسه على جهازك: مفيش حاجة اتبعتت.
+
+~~~text القياس من Chrome (بعد اختيار ملف اسمه id-card.txt حجمه 11 بايت)
+الحجم الافتراضي:    253 × 21 px        الـ role: button
+input.value         C:\fakepath\id-card.txt
+input.files.length  1
+files[0].name       id-card.txt
+files[0].size       11
+files[0].type       text/plain
+~~~
+
+كل رقم معناه إيه:
+
+- [[input.value]] هو **اسم الملف وقبله [[C:\fakepath\]]**. ده مش مسار حقيقي: MDN بيقول إن المتصفح بيخبّي المسار الحقيقي عشان الصفحة متعرفش شكل الفولدرات على جهاز الزائر، و [[fakepath]] كلمة ثابتة في المواصفة بتتكتب على أي نظام (حتى الماك واللينكس).
+- [[input.files]] قايمة الملفات المختارة. كل ملف ليه [[name]] و [[size]] (بالبايت) و [[type]] (نوعه بصيغة MIME زي [[image/png]]). دي اللي JavaScript بيقراها.
+
+### الصفحة متقدرش تختار ملف
+
+~~~text القياس من Chrome
+input.value = "C:\x.txt"   →   InvalidStateError: This input element accepts a filename,
+                               which may only be programmatically set to the empty string.
+input.value = ""           →   files.length بقى 0   (المسموح الوحيد: تفضّي الحقل)
+~~~
+
+يعني مينفعش تكتب [[value="..."]] على حقل ملف عشان يبدأ بملف جاهز، ومينفعش كود يحط فيه مسار. لو ينفع، أي صفحة كانت هتسحب ملفات من جهازك من غير ما تعرف.
+
+---
+
+## ٢. الفورم لازم [[post]] و [[multipart/form-data]]
+
+نفس الحقل ونفس الملف (صورة صغيرة اسمها [[avatar.svg]])، في تلات فورمات:
+
+~~~text 1. من غير enctype (الافتراضي)
+POST /photo
+content-type: application/x-www-form-urlencoded
+content-length: 16
+
+photo=avatar.svg
+~~~
+
+~~~text 2. بـ method="get"
+GET /photo?photo=avatar.svg
+~~~
+
+~~~text 3. بـ method="post" و enctype="multipart/form-data"
+POST /join
+content-type: multipart/form-data; boundary=----WebKitFormBoundarycEnzdF75rhwtzFWS
+content-length: 409
+
+------WebKitFormBoundarycEnzdF75rhwtzFWS
+Content-Disposition: form-data; name="name"
+
+منى علي
+------WebKitFormBoundarycEnzdF75rhwtzFWS
+Content-Disposition: form-data; name="photo"; filename="avatar.svg"
+Content-Type: image/svg+xml
+
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><circle cx="20" cy="20" r="18" fill="#0a7ea4"/></svg>
+
+------WebKitFormBoundarycEnzdF75rhwtzFWS--
+~~~
+
+في الأول والتاني اللي اتبعت **كلمة** [[avatar.svg]] وبس. في التالت جزء الملف فيه:
+
+| السطر | معناه |
+|---|---|
+| [[name="photo"]] | اسم الحقل ([[name]] بتاع الـ input) |
+| [[filename="avatar.svg"]] | اسم الملف على جهاز الزائر (الاسم بس، من غير مسار) |
+| [[Content-Type: image/svg+xml]] | نوع الملف زي ما المتصفح خمّنه |
+| بعد السطر الفاضي | **محتوى الملف نفسه** بايت ببايت |
+
+الصورة هنا SVG فمحتواها نص وبيتقري. لو كانت PNG أو JPG كان هيظهر مكانه بايتات مش مقروءة، بنفس الترتيب.
+
+### لو الزائر مختارش ملف
+
+~~~text القياس من Chrome (حقل ملف فاضي في فورم multipart)
+Content-Disposition: form-data; name="photo"; filename=""
+Content-Type: application/octet-stream
+
+~~~
+
+الحقل **بيتبعت برضه**: جزء باسم الحقل، و [[filename]] فاضي، ومحتوى فاضي. فالسيرفر لازم يفحص «فيه ملف فعلًا ولا لأ»، مش «الحقل موجود ولا لأ».
+
+ولو الملف إجباري: [[required]] بيشتغل على حقل الملف.
+
+~~~text القياس من Chrome
+<input type="file" required> وهو فاضي:   valueMissing = true    الرسالة: Please select a file.
+~~~
+
+---
+
+## ٣. [[<input type="file" accept="image/*">]]
+
+[[accept]] قايمة أنواع مفصولة بفاصلة. MDN: كل نوع بيتكتب بواحد من تلات أشكال:
+
+| الشكل | مثال | معناه |
+|---|---|---|
+| امتداد أوله نقطة | [[.pdf]] ، [[.docx]] | الملفات اللي آخر اسمها كده |
+| نوع MIME كامل | [[image/png]] ، [[application/pdf]] | النوع ده بالظبط |
+| عيلة كاملة | [[image/*]] ، [[video/*]] ، [[audio/*]] | أي صورة، أي فيديو، أي صوت |
+
+~~~html
+<input type="file" accept="image/*, .pdf">
+~~~
+
+اللي بيعمله: نافذة اختيار الملف بتفتح وهي عارضة الأنواع دي بس. وعلى الموبايل المتصفح بيعرض المصادر المناسبة للنوع (المعرض مثلًا)، وده بيختلف من نظام لنظام ومتقاسش هنا.
+
+### [[accept]] اقتراح، مش فحص
+
+MDN بالنص: [[accept]] مبيفحصش أنواع الملفات المختارة، هو تلميح بيوجّه الزائر، ولسه ممكن الزائر يغيّر اختيار في نافذة الملفات ويختار أي ملف.
+
+~~~text القياس من Chrome (ملف نصي اتحط في حقل accept="image/*")
+files[0].name = id-card.txt    files[0].type = text/plain
+validity.valid = true          (المتصفح مش شايف أي غلط)
+والملف اتبعت للسيرفر عادي
+~~~
+
+فـ [[accept]] راحة للزائر، مش حماية. **السيرفر لازم يفحص نوع الملف بنفسه**، وميثقش في [[filename]] ولا في [[Content-Type]] اللي في الطلب: الاتنين جايين من جهاز الزائر وممكن يتكتب فيهم أي حاجة.
+
+---
+
+## ٤. [[<input type="file" multiple>]]
+
+من غير [[multiple]] نافذة الاختيار بتقبل ملف واحد. بيه، الزائر يقدر يعلّم على كذا ملف (بـ Ctrl أو Shift وهو بيختار).
+
+~~~text القياس من Chrome (3 ملفات في حقل multiple)
+input.value          C:\fakepath\a.svg        (أول ملف بس)
+input.files.length   3
+~~~
+
+[[value]] بيعرض أول ملف بس، والعدد الحقيقي في [[files]]. وفي الطلب كل ملف بياخد جزء لوحده **بنفس اسم الحقل**:
+
+~~~text الطلب اللي وصل السيرفر (ملفين في الحقل docs)
+POST /join
+content-type: multipart/form-data; boundary=----WebKitFormBoundaryHAsPocwarUti2DCQ
+content-length: 575
+
+------WebKitFormBoundaryHAsPocwarUti2DCQ
+Content-Disposition: form-data; name="docs"; filename="front.svg"
+Content-Type: image/svg+xml
+
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><circle cx="20" cy="20" r="18" fill="#c8102e"/></svg>
+
+------WebKitFormBoundaryHAsPocwarUti2DCQ
+Content-Disposition: form-data; name="docs"; filename="ضهر البطاقة.svg"
+Content-Type: image/svg+xml
+
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><circle cx="20" cy="20" r="18" fill="#333"/></svg>
+
+------WebKitFormBoundaryHAsPocwarUti2DCQ--
+~~~
+
+- جزئين اسمهم [[docs]]: السيرفر بيستلم الحقل ده كقايمة.
+- اسم الملف العربي اللي فيه مسافة اتبعت زي ما هو. السيرفر اللي بيحفظ الملف بالاسم ده من غير تنضيف هيتعب، وده شغل السيرفر مش الـ HTML.
+
+**[[multiple]] مبيحددش عدد.** مفيش attribute بيقول «٢ بالظبط» أو «أقصى حاجة ٥». لو العدد مهم، يا إما حقل لكل ملف (حقل للوش وحقل للضهر: أوضح للزائر كمان)، يا إما السيرفر يفحص.
+
+[[multiple]] بيتكتب كمان على [[<input type="email">]] (كذا إيميل بينهم فاصلة) وعلى [[<select>]] (درس «readonly و disabled و checked»).
+
+---
+
+## ٥. [[<input type="file" capture="environment">]]
+
+على الموبايل، [[capture]] مع [[accept="image/*"]] أو [[video/*]] بيطلب من المتصفح يفتح **الكاميرا مباشرة** بدل نافذة الملفات. القيمة [[environment]] الكاميرا الخلفية، و [[user]] كاميرا السيلفي. على الكمبيوتر ملوش تأثير. (كله من MDN، ومتقاسش هنا لأنه محتاج موبايل.)
+
+مناسب لـ «صوّر البطاقة». وبما إنه بيطلب الكاميرا بدل نافذة الملفات، متحطوش إلا لو التصوير دلوقتي هو المطلوب: اللي عنده الصورة جاهزة هيتضايق.
+
+---
+
+## ٦. الحجم: الـ HTML مبيحددوش
+
+مفيش attribute للحجم. مفيش [[maxsize]] ولا حاجة شبهه في المواصفة. الزائر يقدر يختار فيديو ٢ جيجا في حقل صورة شخصية، والمتصفح هيبدأ يرفعه.
+
+اللي بتعمله في الـ HTML:
+
+- **اكتب الحد في الـ label:** «أقصى حجم ٢ ميجا». ده أهم سطر، لأن الزائر اللي عارف الشرط قبل ما يختار مش هيستنى رفع ملف هيترفض.
+- السيرفر هو اللي بيرفض الملف الكبير فعلًا.
+- فحص الحجم قبل الرفع ([[file.size]]) بيتعمل بـ JavaScript، وده في كورس JavaScript.
+
+---
+
+## ٧. الاسم والـ label
+
+حقل الملف محتاج [[<label>]] زي أي حقل: الزرار مكتوب عليه «Choose File» بس، ومبيقولش ملف إيه. و Chrome بيزوّد على الاسم حالة الحقل («No file chosen» أو اسم الملف المختار)، فقارئ الشاشة بيعرف الحقل فيه ملف ولا لأ.
+
+~~~text القياس من Chrome (شجرة الـ accessibility)
+<label for="photo">صورة شخصية</label> <input id="photo" type="file">
+→  role = button    الاسم = «صورة شخصية :No file chosen»
+من غير label:                 الاسم = «Choose File :No file chosen»
+~~~
+
+وشكل الزرار نفسه (اللون، والكلام اللي عليه) صعب يتغيّر: ده من العناصر اللي المتصفح والنظام بيرسموها. تنسيقه في دروس CSS الجاية.
+
+---
+
+## ٨. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| فورم ملف من غير [[enctype="multipart/form-data"]] | اسم الملف بس بيوصل: [[photo=avatar.svg]] |
+| فورم ملف بـ [[method="get"]] | اسم الملف في العنوان، ومفيش محتوى |
+| حقل ملف من غير [[name]] | ولا حتى الاسم بيتبعت |
+| [[accept="jpg"]] | مش واحد من التلات أشكال: الصح [[.jpg]] أو [[image/jpeg]] |
+| تعتمد على [[accept]] كحماية | الزائر يقدر يختار أي ملف، و [[validity.valid]] بيفضل [[true]] |
+| [[value="photo.jpg"]] على الحقل | مرفوض: الصفحة متقدرش تختار ملف |
+| مفيش حد حجم مكتوب | الزائر بيرفع ملف كبير وبيترفض بعد دقايق انتظار |
+| تستنى عدد محدد من [[multiple]] | [[multiple]] يعني «واحد أو أكتر» وبس |
+| السيرفر بيحفظ الملف باسمه زي ما جه | الاسم من الزائر: ممكن فيه مسافات أو عربي أو أي حاجة |
+
+---
+
+## الخلاصة
+
+- حقل ملف = [[method="post"]] + [[enctype="multipart/form-data"]] + [[name]]. ناقص واحد، مفيش ملف.
+- [[accept]]: امتداد ([[.pdf]])، أو MIME ([[image/png]])، أو عيلة ([[image/*]]). اقتراح لنافذة الاختيار، مش فحص.
+- [[multiple]]: كذا ملف في حقل واحد، وكل ملف جزء في الطلب بنفس الاسم.
+- [[capture]]: الكاميرا على الموبايل.
+- [[value]] دايمًا [[C:\fakepath\]] واسم الملف، والصفحة متقدرش تحط فيه حاجة.
+- الحجم والنوع الحقيقي: السيرفر هو اللي بيفحص. اكتب الشروط في الـ label.`,
+          try: R`اعمل ملف [[upload.html]] فيه فورم [[method="post"]] و [[enctype="multipart/form-data"]] و [[action="upload.html"]]، وجواه حقل ملف [[name="photo"]] عليه [[accept="image/*"]] و [[required]]، وزرار. افتحه ودوس الزرار **من غير ما تختار ملف**. وبعدين دوس «Choose File» وبص نافذة الاختيار عارضة أنهي ملفات.`,
+          sol: R`~~~html upload.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ارفع صورتك</title>
+</head>
+<body>
+<form action="upload.html" method="post" enctype="multipart/form-data">
+  <p><label for="photo">صورة شخصية (أي صورة، أقصى حجم ٢ ميجا)</label></p>
+  <p><input id="photo" name="photo" type="file" accept="image/*" required></p>
+  <button type="submit">ارفع</button>
+</form>
+</body>
+</html>
+~~~
+
+~~~view 116 شكل الصفحة
+<form onsubmit="return false">
+  <p><label for="photo">صورة شخصية (أي صورة، أقصى حجم ٢ ميجا)</label></p>
+  <p><input id="photo" name="photo" type="file" accept="image/*" required></p>
+  <button type="submit">ارفع</button>
+</form>
+~~~
+
+**هتشوف إيه:**
+
+- **من غير ملف:** الفورم متبعتش، وطلعت رسالة المتصفح جنب الحقل: «Please select a file.» (أو ترجمتها بلغة متصفحك). ده شغل [[required]].
+- **نافذة الاختيار:** نوع الملفات تحت في النافذة مكتوب «Image Files» (أو شبهه)، والملفات اللي مش صور مش ظاهرة. بس في نفس القايمة فيه اختيار «All Files»: ده اللي بيخلّي [[accept]] اقتراح مش فحص.
+- بعد اختيار صورة: اسمها ظهر مكان «No file chosen».
+
+~~~text القياس من Chrome
+فاضي:        valueMissing = true     الرسالة: Please select a file.
+بعد اختيار:  input.value = C:\fakepath\avatar.svg      files.length = 1
+~~~
+
+شكل نافذة الاختيار وكلمة «All Files» من Windows، ومتقاسوش في المتصفح الآلي (النافذة بتاعة النظام مش بتاعة الصفحة). جرّبها بإيدك.`,
+          deep: {
+            why: R`أي موقع فيه صورة بروفايل، أو مستند، أو سيرة ذاتية، أو إيصال، فيه حقل ملف. وأشهر باج فيه مبيطلّعش أي خطأ: الفورم بيتبعت، والسيرفر بيرد «تمام»، والملف مش موجود، لأن اللي وصل اسمه بس. اللي شاف شكل الطلب مرة بيعرف السبب من أول نظرة.`,
+            how: R`لما الزائر يختار، المتصفح بيسجّل في الحقل قايمة ملفات ([[FileList]]): لكل ملف اسمه وحجمه ونوعه (من الامتداد غالبًا) وإشارة لمكانه على الديسك. المحتوى مبيتقريش دلوقتي. لحظة الإرسال، لو الفورم multipart، المتصفح بيفتح كل ملف ويصبّ بايتاته في جزء من جسم الطلب بين فاصلين، وقبله سطر فيه اسم الحقل واسم الملف وسطر فيه النوع. لو الفورم مش multipart، بيحط اسم الملف كنص مكان القيمة ومبيفتحش الملف خالص.`,
+            when: R`[[accept="image/*"]] لصورة شخصية أو صورة منتج. [[accept=".pdf"]] أو مع [[image/*]] لمستند رسمي. [[multiple]] لمعرض صور أو مرفقات عددها مش ثابت. حقل لكل ملف لما كل ملف ليه معنى (وش البطاقة، ضهر البطاقة). [[capture]] لما المطلوب «صوّر دلوقتي» على الموبايل.`,
+            mistakes: R`نسيان [[enctype]] (أشهر واحدة). نسيان [[name]]. [[accept]] بامتداد من غير نقطة. الثقة في [[accept]] أو في نوع الملف اللي في الطلب. مفيش حد حجم مكتوب للزائر. محاولة ملء الحقل بـ [[value]]. و [[multiple]] لما المطلوب ملفين محددين.`
+          },
+          practice: [
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم «ارفع صورة الكارنيه» في «نادي الموج» بيتبعت والسيرفر بيقول «مفيش صورة». فيه ٤ مشاكل: شكل الطلب، والـ method، والحقل ملوش [[name]]، و [[accept]] مكتوب غلط. (من قسم ٢ و ٣ و ٨ في الشرح)`, done: R`الفورم [[post]] و [[multipart/form-data]]، والحقل ليه [[name]] و [[accept]] صح و label، وكل الشروط ✓.`, work: { h: 120, start: R`<form action="/card">
+  <p>صورة الكارنيه</p>
+  <p><input type="file" accept="jpg, png"></p>
+  <button>ارفع</button>
+</form>`, checks: [
+              { say: R`الفورم [[method="post"]]`, q: "form[method=\"post\" i]" },
+              { say: R`الفورم [[enctype="multipart/form-data"]]`, q: "form[enctype=\"multipart/form-data\" i]" },
+              { say: R`حقل الملف ليه [[name]]`, q: "input[type=\"file\"][name]" },
+              { say: R`[[accept]] مكتوب صح: فيه [[image/]] أو امتداد بنقطة`, q: "input[type=\"file\"][accept*=\"image/\"], input[type=\"file\"][accept^=\".\"]" },
+              { say: R`«صورة الكارنيه» بقت [[<label>]] مربوط بالحقل`, q: "label[for]", has: "صورة الكارنيه" },
+            ] }, sol: R`~~~live 116 بعد التصليح
+<form action="/card" method="post" enctype="multipart/form-data" onsubmit="return false">
+  <p><label for="card">صورة الكارنيه (JPG أو PNG)</label></p>
+  <p><input id="card" name="card" type="file" accept="image/jpeg, image/png"></p>
+  <button>ارفع</button>
+</form>
+~~~
+
+**هتشوف إيه:** الشكل زي ما هو تقريبًا. الفرق إن الضغط على «صورة الكارنيه» بقى يفتح نافذة الاختيار (بقت label)، والنافذة بتعرض الصور بس.
+
+| المشكلة | التصليح |
+|---|---|
+| من غير [[method]] (يعني GET) | [[method="post"]] |
+| من غير [[enctype]] | [[enctype="multipart/form-data"]] |
+| الحقل من غير [[name]] | [[name="card"]] |
+| [[accept="jpg, png"]] | [[accept="image/jpeg, image/png"]] (أو [[.jpg, .png]]) |
+| اسم الحقل في [[<p>]] | [[<label for="card">]] |
+
+**الغلطة الشائعة:** تصلّح [[enctype]] وتنسى [[method]]. [[enctype]] مع GET ملوش تأثير، فاسم الملف هيفضل يتبعت في العنوان.
+
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي)
+قبل:   GET /card?
+       (ولا حتى اسم الملف: الحقل ملوش name)
+
+بعد:   POST /card
+       content-type: multipart/form-data; boundary=----WebKitFormBoundary...
+
+       ------WebKitFormBoundary...
+       Content-Disposition: form-data; name="card"; filename="avatar.svg"
+       Content-Type: image/svg+xml
+
+       (محتوى الصورة)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** فورم «الكشف الطبي» للعضو الجديد. المطلوب: يبعت لـ [[/medical]]، وفيه حقل [[report]] للتقرير الطبي (PDF بس، وإجباري)، وحقل [[scans]] لصور الأشعة (أي صور، وأكتر من واحدة)، وكل حقل ليه label مكتوب فيه النوع المطلوب. (من قسم ٢ و ٣ و ٤ و ٦ في الشرح)`, done: R`حقلين ملفات بالـ [[accept]] المناسب، والتاني [[multiple]]، والفورم شكله صح للملفات، وكل الشروط ✓.`, work: { h: 251, start: R`<h1>الكشف الطبي</h1>
+<form>
+  التقرير الطبي (PDF)
+  صور الأشعة (أي عدد)
+  <button>ابعت</button>
+</form>`, checks: [
+              { say: R`الفورم بيبعت لـ [[/medical]] بـ [[post]] و [[multipart/form-data]]`, q: "form[action=\"/medical\"][method=\"post\" i][enctype=\"multipart/form-data\" i]" },
+              { say: R`حقل [[report]] بيقبل PDF بس: [[accept=".pdf"]] أو [[application/pdf]]`, q: "input[type=\"file\"][name=\"report\"][accept=\".pdf\"], input[type=\"file\"][name=\"report\"][accept=\"application/pdf\"]" },
+              { say: R`حقل [[report]] إجباري`, q: "input[name=\"report\"][required]" },
+              { say: R`حقل [[scans]] بيقبل أي صورة`, q: "input[type=\"file\"][name=\"scans\"][accept=\"image/*\"]" },
+              { say: R`حقل [[scans]] عليه [[multiple]]`, q: "input[name=\"scans\"][multiple]" },
+              { say: R`كل حقل ليه [[<label>]]`, q: "label[for]", n: 2 },
+            ] }, sol: R`~~~live 251 الحل
+<h1>الكشف الطبي</h1>
+<form action="/medical" method="post" enctype="multipart/form-data" onsubmit="return false">
+  <p><label for="report">التقرير الطبي (ملف PDF، أقصى حجم ٥ ميجا)</label></p>
+  <p><input id="report" name="report" type="file" accept=".pdf" required></p>
+  <p><label for="scans">صور الأشعة (أي عدد من الصور)</label></p>
+  <p><input id="scans" name="scans" type="file" accept="image/*" multiple></p>
+  <button>ابعت</button>
+</form>
+~~~
+
+**هتشوف إيه:**
+
+- زرارين اختيار. الأول مكتوب عليه «Choose File» والتاني «Choose Files» بالجمع: ده أثر [[multiple]] الوحيد الظاهر.
+- دوس «ابعت» من غير ملفات: الرسالة بتطلع عند التقرير بس، لأنه الوحيد اللي عليه [[required]].
+
+**ليه كده:**
+
+- حقلين مش حقل واحد [[multiple]]: التقرير والأشعة حاجتين مختلفتين، والسيرفر محتاج يعرف مين فين من اسم الحقل.
+- الحد الأقصى للحجم مكتوب في الـ label لأن مفيش attribute بيعمله.
+
+**الغلطة الشائعة:** [[accept="pdf"]] من غير نقطة. دي مش واحدة من التلات أشكال اللي المواصفة بتقبلها، فمتستناش من المتصفح يفهمها: الامتداد لازم أوله نقطة.
+
+~~~text القياس من Chrome (الطلب اللي وصل: تقرير وصورتين أشعة)
+POST /medical
+content-type: multipart/form-data; boundary=----WebKitFormBoundaryyVk2Kbz5HkUNBoLX
+content-length: 818
+
+الأجزاء بالترتيب:
+name="report"; filename="report.pdf"     Content-Type: application/pdf
+name="scans";  filename="knee-1.svg"     Content-Type: image/svg+xml
+name="scans";  filename="knee-2.svg"     Content-Type: image/svg+xml
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ده ملخص طلب وصل السيرفر (الأجزاء بالترتيب). اكتب الفورم اللي بعته: كام حقل؟ مين فيهم ملف؟ ومين عليه [[multiple]]؟ (من قسم ٢ و ٤ في الشرح: قراية أجزاء الطلب)`, done: R`الفورم فيه حقل نص مخفي وحقلين ملفات، والتاني [[multiple]]، وكل الشروط ✓.`, work: { h: 120, start: R`<!--
+POST /kit
+content-type: multipart/form-data; boundary=----X
+
+name="member"                                →  1042
+name="logo";   filename="logo.png"
+name="photos"; filename="team-1.jpg"
+name="photos"; filename="team-2.jpg"
+name="photos"; filename="team-3.jpg"
+-->
+<form>
+</form>`, checks: [
+              { say: R`الفورم [[action="/kit"]] و [[post]] و [[multipart/form-data]]`, q: "form[action=\"/kit\"][method=\"post\" i][enctype=\"multipart/form-data\" i]" },
+              { say: R`[[member]] حقل مش ملف (مفيش [[filename]] في جزئه)`, q: "input[name=\"member\"]:not([type=\"file\"])" },
+              { say: R`[[logo]] حقل ملف واحد (من غير [[multiple]])`, q: "input[type=\"file\"][name=\"logo\"]:not([multiple])" },
+              { say: R`[[photos]] حقل ملف عليه [[multiple]]`, q: "input[type=\"file\"][name=\"photos\"][multiple]" },
+              { say: R`تلات حقول بس، مش خمسة`, q: "form input", n: 3 },
+            ] }, sol: R`~~~live 119 الحل
+<form action="/kit" method="post" enctype="multipart/form-data" onsubmit="return false">
+  <input type="hidden" name="member" value="1042">
+  <p><label for="logo">شعار الفريق</label> <input id="logo" name="logo" type="file" accept="image/*"></p>
+  <p><label for="photos">صور الفريق</label> <input id="photos" name="photos" type="file" accept="image/*" multiple></p>
+  <button>ابعت</button>
+</form>
+~~~
+
+**هتشوف إيه:** حقلين ملفات وزرار. رقم العضو مش ظاهر (hidden).
+
+**إزاي قريت الطلب:**
+
+- [[multipart/form-data]] ← فيه ملفات، والـ method أكيد [[post]].
+- [[member]] مفيش في جزئه [[filename]] ← حقل عادي مش ملف. وقيمته رقم الزائر مكتبوش غالبًا ← [[hidden]] (ولو عملته حقل نص عادي فالطلب هيطلع نفسه، والشرط بيقبله).
+- [[logo]] جزء واحد فيه [[filename]] ← حقل ملف.
+- [[photos]] اتكرر ٣ مرات ← حقل واحد [[multiple]] اتختار فيه ٣ ملفات، مش ٣ حقول.
+
+**الغلطة الشائعة:** تكتب ٣ حقول اسمهم [[photos]]. الطلب هيطلع شبهه، بس الزائر هيلاقي ٣ أزرار، ولو عنده ٤ صور مش هيعرف يبعتهم.` },
+            { lvl: 'سريع', t: R`**اشرحها:** مدير النادي سألك تلات أسئلة عن فورم رفع الصور. جاوب على كل واحد في سطرين: (١) «ليه مبنعرفش الصورة كانت في أنهي فولدر على جهاز العضو؟» (٢) «حطينا [[accept="image/*"]]، يبقى محدش يقدر يرفع ملف تاني، صح؟» (٣) «عايزين نمنع الملفات اللي أكبر من ٢ ميجا من الـ HTML.» (من قسم ١ و ٣ و ٦ في الشرح)`, done: R`جاوبت على التلاتة: المسار متخبّي للخصوصية، و [[accept]] اقتراح مش حماية، والحجم ملوش attribute.`, sol: R`**إجابة نموذجية:**
+
+1. **المسار:** المتصفح بيدّي الصفحة اسم الملف بس، وبيكتب قبله [[C:\fakepath\]] مكان المسار الحقيقي. ده مقصود: مسار الملف بيكشف اسم المستخدم على الجهاز وترتيب فولدراته، ودي حاجة مش من حق أي موقع يعرفها.
+2. **[[accept]]:** لأ. هو بيخلّي نافذة الاختيار تعرض الصور بس، والزائر يقدر يغيّرها لـ «All Files» ويختار أي حاجة، والمتصفح هيبعتها من غير اعتراض. اللي بيمنع فعلًا هو السيرفر لما يفحص الملف اللي وصله.
+3. **الحجم:** مفيش attribute في HTML بيحدد حجم الملف. اللي نقدر نعمله في الصفحة: نكتب «أقصى حجم ٢ ميجا» في الـ label، وبعدين (بـ JavaScript) نفحص الحجم قبل الرفع ونقول للعضو. والرفض الحقيقي برضه على السيرفر.
+
+~~~text القياس من Chrome
+input.value                              C:\fakepath\id-card.txt
+ملف text/plain في حقل accept="image/*"   validity.valid = true ، واتبعت
+files[0].size                            11      (الحجم معروف للصفحة، بس HTML مبيستخدموش)
+~~~
+
+**الخلاصة للمدير:** الـ HTML بيساعد العضو يختار صح. اللي بيحمي النادي هو السيرفر.` }
+          ]
+        },
+        {
+          cmd: "readonly و disabled و checked",
+          title: "حالات الحقل: مقفول، متعطّل، متعلّم، ومختار، وإيه اللي بيتبعت من كل واحد",
+          pre: ["css/fieldset و radio", { to: "css/Constraint Validation API", why: R`[[required]] و [[pattern]] و [[min]] و [[max]] ورسايل المتصفح اتشرحوا هناك، وهنا بنراجعهم في جدول` }, "css/GET و POST و enctype"],
+          ref: [
+            { t: "MDN: readonly", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/readonly" },
+            { t: "MDN: disabled", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/disabled" },
+            { t: "MDN: <input type=\"checkbox\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/checkbox" },
+            { t: "MDN: <option>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/option" },
+            { t: "MDN: <optgroup>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/optgroup" },
+            { t: "MDN: <selectedcontent>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/selectedcontent" },
+            { t: "MDN: <textarea>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/textarea" },
+            { t: "MDN: dirname", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/dirname" },
+            { t: "WHATWG: Attributes common to form controls", url: "https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#attributes-common-to-form-controls" },
+            { t: "MDN Curriculum: Forms", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" }
+          ],
+          desc: R`كل حقل في الفورم ليه **حالة**: يتعدّل ولا مقفول، شغال ولا متعطّل، متعلّم ولا لأ. الحالة بتتكتب بكلمة واحدة على الحقل ([[readonly]] أو [[disabled]] أو [[checked]] أو [[selected]])، وبتغيّر تلات حاجات: الزائر يقدر يعمل إيه، والحقل شكله إيه، **والقيمة بتتبعت ولا لأ**.
+وفي الدرس ده كمان باقي الـ attributes اللي بتحدد شكل الحقل وحدود قيمته: [[size]] و [[rows]] و [[cols]] و [[wrap]] و [[dirname]]، ومراجعة لـ [[min]] و [[max]] و [[step]] و [[minlength]] و [[maxlength]] و [[pattern]].`,
+          example: R`<form action="/renew" method="post">
+  <label for="id">رقم العضوية</label>
+  <input id="id" name="id" value="1042" readonly>
+  <label for="coupon">كود الخصم</label>
+  <input id="coupon" name="coupon" value="انتهى العرض" disabled>
+  <input id="news" name="news" type="checkbox" checked>
+  <label for="news">ابعتولي أخبار النادي</label>
+  <button type="submit">جدّد</button>
+</form>`,
+          flag: "script",
+          lines: [
+            R`فورم تجديد الاشتراك، بيتبعت [[post]] لـ [[/renew]] (درس «GET و POST و enctype»).`,
+            R`اسم الحقل الأول، مربوط بيه بـ [[for="id"]].`,
+            R`[[readonly]]: الزائر شايف رقم عضويته ومش قادر يغيّره، **والقيمة بتتبعت** ([[id=1042]]). ده اللي عايزينه: السيرفر محتاج الرقم، والزائر ميلعبش فيه.`,
+            R`اسم الحقل التاني، مربوط بيه بـ [[for="coupon"]].`,
+            R`[[disabled]]: الحقل باهت، ومش بيتداس عليه، **ومش بيتبعت خالص**. العرض خلص، فالحقل موجود للعلم بس.`,
+            R`[[checked]]: الـ checkbox بيبدأ متعلّم. الزائر يقدر يشيل العلامة. لو فضلت، بيتبعت [[news=on]]. لو شالها، مبيتبعتش حاجة.`,
+            R`الـ label بتاع الـ checkbox جاي بعده (درس «fieldset و radio»): الضغط على الكلام بيعلّم المربع.`,
+            R`زرار الإرسال. اللي هيتبعت من الفورم ده: [[id=1042&news=on]] بس.`,
+            R`[[</form>]] آخر الفورم: تلات حقول وزرار، وواحد منهم مش هيتبعت.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+الـ attributes دي كلها «boolean»: وجود الكلمة لوحدها معناه «أيوه»، ومفيش قيمة تتكتب. [[<input disabled>]] متعطّل، ومن غير الكلمة شغال. (و [[disabled="false"]] برضه **متعطّل**: المهم وجود الكلمة مش اللي بعد علامة يساوي.)
+
+القياسات من Chrome 157 على Windows 11، والطلبات على السيرفر المحلي بتاع درس «GET و POST و enctype».
+
+---
+
+## ١. التلات حالات جنب بعض
+
+~~~live 198 جرّب تكتب في كل حقل، وبعدين دوس «ابعت»
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="a">عادي</label> <input id="a" name="normal" value="1"></p>
+  <p><label for="b">readonly</label> <input id="b" name="locked" value="2" readonly></p>
+  <p><label for="c">disabled</label> <input id="c" name="off" value="3" disabled></p>
+  <button>ابعت</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- الأول بيتكتب فيه عادي.
+- التاني شكله زي الأول بالظبط، وبتقدر تدوس جواه وتعلّم على الكلام وتنسخه، بس الكتابة مبتعملش حاجة.
+- التالت باهت ورمادي، والدوس عليه مبيعملش أي حاجة.
+- بعد «ابعت»: [[normal=1&locked=2]]. التالت مش موجود.
+
+~~~text القياس من Chrome
+                      عادي              readonly          disabled
+بيتكتب فيه            أيوه              لأ                لأ
+الـ Tab بيقف عنده     أيوه              أيوه              لأ
+بيتبعت                أيوه              أيوه              لأ
+بيتفحص (required)     أيوه              لأ                لأ
+لون الكلام            rgb(0, 0, 0)      rgb(0, 0, 0)      rgb(84, 84, 84)
+لون الخلفية           أبيض              أبيض              rgba(239, 239, 239, 0.3)
+شكل الماوس فوقه       text              text              default
+~~~
+
+السطر اللي بيفرق في الشغل هو التالت: **[[readonly]] بيتبعت و [[disabled]] لأ.**
+
+---
+
+## ٢. [[<input readonly>]]
+
+«اقراه ومتعدّلوش». بيتستخدم لقيمة الزائر لازم يشوفها والسيرفر لازم يستلمها: رقم العضوية، الإجمالي المحسوب، الإيميل اللي مينفعش يتغيّر.
+
+تلات حاجات لازم تعرفها:
+
+**١. بيشتغل على خانات الكتابة بس.** [[<input>]] النصي بأنواعه (text و email و number و date...) و [[<textarea>]]. على الباقي ملوش أي تأثير:
+
+~~~text القياس من Chrome
+<input type="checkbox" checked readonly>   دوسنا عليه   →   checked = false   (اتغيّر عادي)
+<select readonly>                          غيّرنا الاختيار   →   اتغيّر عادي
+~~~
+
+يعني مفيش checkbox للقراية بس ولا [[<select>]] للقراية بس. البديل: [[disabled]] عليه، ومعاه حقل [[hidden]] بنفس الـ [[name]] يشيل القيمة للسيرفر (هتعمله في التمارين).
+
+**٢. المتصفح مبيفحصوش.** حقل [[readonly]] و [[required]] وفاضي بيعدّي:
+
+~~~text القياس من Chrome
+<input required readonly value="">    willValidate = false     والفورم checkValidity() = true
+~~~
+
+المنطق: مينفعش تطلب من الزائر يصلّح حقل هو مش قادر يكتب فيه.
+
+**٣. مش حماية.** JavaScript يقدر يغيّر القيمة (اتقاس)، وأي زائر يقدر يشيل كلمة [[readonly]] من DevTools ويكتب اللي عايزه. السيرفر لازم يتأكد إن رقم العضوية ده بتاع اللي باعت فعلًا.
+
+---
+
+## ٣. [[<input disabled>]]
+
+«الحقل ده مش متاح دلوقتي». بيشتغل على **كل** عناصر الفورم: [[<input>]] بكل أنواعه و [[<select>]] و [[<textarea>]] و [[<button>]]، وعلى [[<option>]] و [[<optgroup>]]، وعلى [[<fieldset>]] كله مرة واحدة:
+
+~~~html
+<fieldset disabled>
+  <legend>بيانات الكارت القديم</legend>
+  <input name="old_card" value="7781">
+</fieldset>
+~~~
+
+~~~text القياس من Chrome
+الحقل اللي جوه <fieldset disabled>:   :disabled = true      مش بيتبعت
+<button disabled>:                    لون الكلام rgba(16, 16, 16, 0.3)      الضغط مبيعملش حاجة
+~~~
+
+اللي بيحصل للعنصر المتعطّل: باهت، مبيتداسش، الـ Tab بيعدّيه، مبيتفحصش، **ومبيتبعتش**.
+
+**المشكلة فيه:** الزائر اللي بيتنقّل بالكيبورد مبيوصلوش أصلًا، فمش هيعرف إنه موجود ولا ليه مقفول. فلو عطّلت حاجة، اكتب السبب في نص عادي جنبها («كود الخصم: العرض خلص»). وزرار الإرسال المتعطّل «لحد ما تملا الفورم صح» من أسوأ الأفكار: الزائر مش عارف إيه الناقص، ومفيش رسالة هتطلعله.
+
+### readonly ولا disabled؟
+
+| الموقف | الاختيار |
+|---|---|
+| قيمة تتشاف وتتبعت ومتتعدّلش | [[readonly]] |
+| حقل مش متاح دلوقتي، وقيمته مش مطلوبة | [[disabled]] |
+| checkbox أو select «للعرض بس» وقيمته مطلوبة | [[disabled]] + حقل [[hidden]] بنفس الاسم |
+| معلومة للعرض بس، مش هتتبعت | مش حقل أصلًا: نص عادي |
+
+---
+
+## ٤. الحالات في الـ CSS، وليه مهمة
+
+الزائر لازم **يشوف** الحقل في أنهي حالة: ده اللي أنا واقف عليه؟ ده مقفول؟ ده اتعلّم؟ المتصفح بيرسم جزء من ده لوحده (الـ disabled باهت)، والباقي عليك. والـ CSS بيمسك كل حالة بكلمة أولها [[:]] اسمها pseudo-class (درس «selectors» في وحدات CSS):
+
+| الـ pseudo-class | بيمسك |
+|---|---|
+| [[:focus]] | الحقل اللي الكتابة هتنزل فيه دلوقتي (درس «focus-visible») |
+| [[:disabled]] و [[:enabled]] | العنصر المتعطّل، والعنصر اللي شغال |
+| [[:read-only]] و [[:read-write]] | اللي مبيتكتبش فيه، واللي بيتكتب فيه |
+| [[:checked]] | الـ checkbox أو الـ radio المتعلّم، والـ [[<option>]] المختار |
+| [[:required]] و [[:optional]] | الحقل الإجباري، والحقل اللي مش إجباري |
+| [[:invalid]] و [[:user-invalid]] | اللي قيمته غلط (درس «Constraint Validation API») |
+
+~~~live 110 131 الحالات متلوّنة
+<style>
+  input:read-only { background: #e5e7eb; }
+  input:disabled  { text-decoration: line-through; }
+  input:checked + label { font-weight: bold; }
+</style>
+<p><input value="عادي" aria-label="عادي"> <input value="readonly" readonly aria-label="للقراية"> <input value="disabled" disabled aria-label="متعطّل"></p>
+<p><input id="x" type="checkbox" checked> <label for="x">علّم وشيل العلامة</label></p>
+~~~
+
+(تلات سطور CSS: الأول بيدّي خلفية رمادي لكل [[<input>]] مبيتكتبش فيه، والتاني بيشطب على كلام المتعطّل، والتالت بيتقّل الـ label اللي بعد checkbox متعلّم. كتابة CSS في الوحدات الجاية.)
+
+**هتشوف إيه:** التاني والتالت خلفيتهم رمادي، والتالت كلامه مشطوب. والـ label تقيل طول ما المربع متعلّم.
+
+لاحظ إن التالت أخد الخلفية الرمادي هو كمان. ده فخ:
+
+~~~text القياس من Chrome: مين :read-only؟
+<input readonly>            true
+<input disabled>            true     (المتعطّل برضه «مبيتكتبش فيه»)
+<input type="checkbox">     true     (مفيش كتابة فيه أصلًا)
+<button> ، <select>         true
+<p>فقرة</p>                 true     (أي عنصر مبيتكتبش فيه!)
+<input> العادي              false
+~~~
+
+[[:read-only]] معناها «أي حاجة الزائر ميقدرش يكتب فيها»، مش «عليه كلمة readonly». لو عايز اللي عليهم الكلمة بس، الـ selector هو [[input[readonly]]].
+
+---
+
+## ٥. [[<input type="checkbox" checked>]]
+
+[[checked]] بيخلّي الـ checkbox أو الـ radio **يبدأ** متعلّم.
+
+~~~text القياس من Chrome (checkbox عليه checked، وبعدين الزائر شال العلامة)
+                          في الأول     بعد ما شال العلامة     بعد reset للفورم
+input.checked             true         false                  true
+الـ attribute في الكود    موجود        موجود                  موجود
+:checked في الـ CSS       true         false                  true
+~~~
+
+- كلمة [[checked]] في الكود هي **الحالة الأولى** بس. لما الزائر يغيّر، الكود مبيتغيّرش، واللي بيتغيّر الحالة الحقيقية ([[input.checked]] في JavaScript و [[:checked]] في CSS). MDN بيقولها صريحة: الـ attribute مبيعكسش الحالة الحالية.
+- اللي بيتبعت بيتبع الحالة الحقيقية: متعلّم ← [[news=on]] (أو الـ [[value]] لو مكتوب)، مش متعلّم ← ولا حاجة (درس «fieldset و radio»).
+- في مجموعة radio، لو كتبت [[checked]] على اتنين، **الأخير** هو اللي بيفضل متعلّم (اتقاس).
+- الحالة التالتة «نص نص» (شرطة جوه المربع، اسمها indeterminate) ملهاش attribute: بتتعمل بـ JavaScript بس، وهي شكل بس ومبتغيّرش اللي بيتبعت (من MDN).
+
+**إمتى تبدأ بيه متعلّم؟** لما ده اللي أغلب الناس عايزاه **ومفيهوش ضرر**: «افتكرني على الجهاز ده». ومتبدأش بيه متعلّم في موافقة على إعلانات أو مشاركة بيانات: ده بيتعدّ خداع للزائر، وقوانين حماية البيانات (زي GDPR في أوروبا) بتشترط إن الموافقة تبقى باختيار الزائر نفسه.
+
+### [[<input type="checkbox" switch>]]
+
+attribute جديد في المواصفة: بيخلّي الـ checkbox يترسم كـ **مفتاح** on/off (زي بتاع إعدادات الموبايل)، وقارئ الشاشة يقول «switch».
+
+~~~text القياس من Chrome 157
+'switch' in HTMLInputElement.prototype    false
+<input type="checkbox" switch>            اترسم checkbox عادي 13 × 13، والـ role = checkbox
+(وبخيار الميزات التجريبية: role = switch)
+~~~
+
+MDN: الـ attribute ده تجريبي ودعمه محدود، والمتصفح اللي مبيدعموش بيتجاهله. والمنهج بيقول مش Baseline. فلو كتبته، الصفحة شغالة في كل حتة (checkbox عادي)، بس متعتمدش على شكل المفتاح. لو المفتاح مطلوب دلوقتي: checkbox عادي و [[role="switch"]] وشكله بالـ CSS (درس «aria»).
+
+---
+
+## ٦. [[<option selected>]] و [[<optgroup label="...">]]
+
+[[<select>]] اتشرح في درس «fieldset و radio». ناقصه حالتين وعنصر:
+
+~~~live 35 القايمة بتفتح على «سلة» مش على أول اختيار
+<label for="sport">اللعبة</label>
+<select id="sport" name="sport">
+  <optgroup label="ألعاب مية">
+    <option value="swim">سباحة</option>
+    <option value="polo">كرة ماء</option>
+  </optgroup>
+  <optgroup label="ألعاب صالة">
+    <option value="basket" selected>سلة</option>
+    <option value="judo">جودو</option>
+  </optgroup>
+  <optgroup label="متوقفة مؤقتًا" disabled>
+    <option value="tennis">تنس</option>
+  </optgroup>
+</select>
+~~~
+
+**هتشوف إيه:** القايمة مقفولة ومكتوب فيها «سلة». افتحها: الاختيارات تحت تلات عناوين تقيلة، والعناوين نفسها مبتتختارش، و «تنس» باهت ومبيتداسش.
+
+- [[selected]] على [[<option>]] زي [[checked]] على الـ checkbox: الاختيار اللي القايمة **تبدأ** بيه. من غيره القايمة بتبدأ بأول [[<option>]].
+- [[<optgroup label="...">]] بيجمّع اختيارات تحت عنوان. العنوان من [[label]] ومبيتختارش. و [[disabled]] عليه بيعطّل كل اللي جواه.
+
+~~~text القياس من Chrome
+select.value = basket      selectedIndex = 2
+role:  select = combobox     optgroup = group     option = option
+option اللي جوه <optgroup disabled>:   :disabled = true
+اتبعت:  sport=basket
+option من غير value:   القيمة اللي بتتبعت هي الكلام اللي جواه
+selected على اتنين في قايمة عادية:   الأخير هو اللي بيتختار
+~~~
+
+### [[<select multiple size="3">]]
+
+- [[multiple]]: الزائر يختار أكتر من واحد. القايمة بتتحوّل من قايمة منسدلة لصندوق مفتوح.
+- [[size]]: عدد السطور الظاهرة من الصندوق.
+
+~~~live 70 اختار كذا يوم (Ctrl والضغط)
+<form onchange="sent.value = decodeURIComponent(new URLSearchParams(new FormData(this)))">
+  <label for="days">أيام التمرين</label>
+  <select id="days" name="days" multiple size="3">
+    <option selected>sat</option>
+    <option>sun</option>
+    <option selected>mon</option>
+    <option>tue</option>
+  </select>
+  <output id="sent">days=sat&days=mon</output>
+</form>
+~~~
+
+~~~text القياس من Chrome
+role = listbox      الارتفاع بـ size="3": 53px
+اتبعت:  days=sat&days=mon       (الاسم اتكرر مرة لكل اختيار، زي الـ checkboxes)
+~~~
+
+الاختيار المتعدد هنا محتاج Ctrl مع الضغط، وناس كتير متعرفش ده. **مجموعة checkboxes أوضح دايمًا** وبتبعت نفس الشكل.
+
+وفخ اتقاس: [[<select size="3">]] **من غير** [[multiple]] بيتحوّل هو كمان لصندوق مفتوح، وبيبدأ **من غير أي اختيار** ([[selectedIndex = -1]])، فمش هيبعت حاجة لو الزائر ملمسوش.
+
+### [[<selectedcontent>]]: القايمة اللي بتتنسّق
+
+> ميزة جديدة لسه مش في كل المتصفحات. يعني إيه «مش Baseline» و «ورا flag»، وإزاي تتأكد بنفسك قبل ما تستخدم أي ميزة: درس «Baseline و @supports».
+
+[[<select>]] العادي شكله بتاع النظام، وتنسيقه بالـ CSS محدود جدًا. المواصفة ضافت «customizable select»: قايمة كل حتة فيها بتتنسّق، وممكن الاختيار يبقى فيه صورة. و [[<selectedcontent>]] عنصر بيتحط جوه [[<button>]] في أول الـ [[<select>]]، والمتصفح بينسخ فيه محتوى الاختيار الحالي:
+
+~~~html
+<select>
+  <button><selectedcontent></selectedcontent></button>
+  <option value="swim">🏊 سباحة</option>
+  <option value="polo" selected>🤽 كرة ماء</option>
+</select>
+~~~
+
+~~~text القياس من Chrome 157
+typeof HTMLSelectedContentElement                 function   (Chrome عارفه)
+CSS.supports("appearance", "base-select")         true
+النص اللي جوه <selectedcontent> بعد التحميل:       🤽 كرة ماء   (اتنسخ من الاختيار المختار)
+~~~
+
+**حالته:** MDN كاتب عليه «Limited availability»: مش Baseline لأنه مش شغال في بعض المتصفحات الأساسية. والشكل الجديد محتاج سطر CSS ([[appearance: base-select]]) عشان يتفعّل. فده عنصر تعرف إنه موجود وتستناه، ومتبنيش عليه دلوقتي.
+
+---
+
+## ٧. حدود القيمة: مراجعة في جدول
+
+دول اتشرحوا بالتفصيل في «form و label» و «textarea و date و number» و «Constraint Validation API». هنا كلهم جنب بعض، بالرسالة اللي Chrome بيطلّعها:
+
+| المكتوب | الحد | رسالة Chrome لما يتكسر |
+|---|---|---|
+| [[<input maxlength="5">]] | أقصى عدد حروف | مفيش رسالة: الكتابة بتقف عند الحرف الخامس (اتقاس بكتابة حقيقية) |
+| [[<input minlength="3">]] | أقل عدد حروف | Please lengthen this text to 3 characters or more (you are currently using 2 characters). |
+| [[<input pattern="...">]] | الشكل المطلوب (regex) | Please match the requested format. |
+| [[<input type="number" min="16">]] | أقل قيمة | Value must be greater than or equal to 16. |
+| [[<input type="number" max="60">]] | أكبر قيمة | Value must be less than or equal to 60. |
+| [[<input type="number" step="5">]] | القفزة بين القيم | Please enter a valid value. The two nearest valid values are 10 and 15. |
+
+[[min]] و [[max]] و [[step]] بيشتغلوا على [[number]] و [[range]] و [[date]] و [[time]] وباقي أنواع التاريخ (درس «أنواع input كلها»). و [[minlength]] و [[maxlength]] على خانات النص و [[<textarea>]]. و [[pattern]] على خانات النص بس.
+
+فخ اتقاس في [[maxlength]]:
+
+~~~text القياس من Chrome
+<input maxlength="5" value="1234567890">
+validity.tooLong = false      validity.valid = true      واتبعت:  code=1234567890
+~~~
+
+[[maxlength]] بيمنع **الزائر** إنه يكتب أكتر من ٥. القيمة اللي جاية من الكود ([[value]] أو JavaScript) مبتتقصّش ومبتتفحصش. ونفس الكلام على [[minlength]] (درس «Constraint Validation API» القسم ٦). فالحدود دي كلها مساعدة للزائر، **والسيرفر بيفحص تاني**.
+
+---
+
+## ٨. [[<input size="4">]]
+
+عرض الخانة بعدد الحروف تقريبًا. الافتراضي ٢٠.
+
+~~~live 58 76 size مختلف لكل خانة
+<label>كود <input size="4" value="A12"></label>
+<label>الافتراضي <input value="عشرين حرف"></label>
+<label>عنوان <input size="40" value="خانة أعرض"></label>
+~~~
+
+~~~text القياس من Chrome
+size="4":   65px       من غير size (20):   177px       size="40":   317px
+~~~
+
+- **شكل بس.** الخانة اللي [[size="4"]] بتقبل ١٠٠ حرف عادي. الحد من [[maxlength]].
+- مفيد لتلميح: خانة كود من ٤ حروف شكلها قصيّر، فالزائر يفهم إن المطلوب قصيّر.
+- العرض بالـ CSS ([[width]]) أدق وبيتغيّر مع الشاشة. [[size]] مناسب لصفحة من غير CSS.
+
+---
+
+## ٩. [[<textarea rows="5" cols="40">]] و [[<textarea wrap="hard">]]
+
+[[rows]] عدد السطور الظاهرة و [[cols]] عدد الحروف في السطر تقريبًا. الافتراضي سطرين وعشرين حرف.
+
+~~~text القياس من Chrome
+من غير حاجة:          181 × 36 px     (rows=2  cols=20)
+rows="5":             181 × 81 px
+cols="40":            341 × 36 px
+~~~
+
+الاتنين **شكل بس** زي [[size]]: الزائر يكتب ٥٠ سطر في [[rows="3"]] ويطلعله scroll. و Chrome بيحط في ركن الـ textarea مقبض بيكبّرها بالسحب.
+
+### [[wrap]]: السطور اللي المتصفح كسرها بتتبعت ولا لأ؟
+
+لما السطر يوصل لآخر الخانة، المتصفح بينزّل الكلام لسطر جديد **في العرض**. [[wrap]] بيحدد ده يتبعت إزاي:
+
+- [[wrap="soft"]] (الافتراضي): الكسر في العرض بس. القيمة بتتبعت سطر واحد زي ما الزائر كتبها.
+- [[wrap="hard"]]: المتصفح **بيحط سطر جديد حقيقي** في القيمة عند كل كسر. ولازم معاه [[cols]].
+
+~~~text القياس من Chrome (نفس الجملة في خانتين cols="20"، والجملة من غير أي Enter)
+wrap="soft":   عايز حصة الصبح عشان عندي شغل بعد الضهر كل يوم
+
+wrap="hard":   عايز حصة الصبح عشان
+               عندي شغل بعد الضهر كل
+               يوم
+~~~
+
+في الطلب، السطر الجديد بيتبعت [[%0D%0A]] (حرفين: CR و LF)، سواء حطه المتصفح بـ [[hard]] أو الزائر داس Enter.
+
+[[hard]] نادر: لما النص هيتعرض في مكان عرضه ثابت (تذكرة مطبوعة، رسالة نصية). في الباقي سيبه [[soft]] وخلّي المكان اللي هيعرض النص هو اللي يكسره.
+
+---
+
+## ١٠. [[<input dirname="comment.dir">]]
+
+الزائر ممكن يكتب عربي أو إنجليزي في نفس الخانة. [[dirname]] بيخلّي المتصفح يبعت **اتجاه** النص مع النص، في حقل زيادة بالاسم اللي تكتبه:
+
+~~~html
+<input name="comment" dirname="comment.dir" dir="auto">
+~~~
+
+~~~text القياس من Chrome (الطلب اللي وصل)
+كتب «كلام عربي»:   comment=...&comment.dir=rtl
+كتب hello:         comment=hello&comment.dir=ltr
+~~~
+
+- [[dir="auto"]] بيخلّي الخانة تاخد اتجاهها من أول حرف (درس «lang و dir»).
+- [[dirname="comment.dir"]] بيبعت الاتجاه ده تحت الاسم [[comment.dir]]. السيرفر بيحفظه، ولما يعرض التعليق بعدين يحطه في [[dir]] الصح.
+- بيشتغل على خانات النص و [[<textarea>]].
+
+قليل الاستخدام، ومفيد في المواقع اللي تعليقاتها بلغات مختلفة.
+
+---
+
+## ١١. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[disabled]] على حقل قيمته مطلوبة | القيمة مبتتبعتش: استخدم [[readonly]] |
+| [[readonly]] على checkbox أو select | ملوش تأثير: الزائر يغيّر عادي |
+| [[disabled="false"]] | الحقل متعطّل: المهم وجود الكلمة |
+| تثق في [[readonly]] أو hidden كحماية | بيتغيّروا من DevTools |
+| زرار إرسال [[disabled]] لحد ما الفورم يتملى | الزائر مش عارف إيه الناقص، والكيبورد مبيوصلش للزرار |
+| [[input:read-only]] في الـ CSS عشان المقفول | بيمسك الـ disabled والـ checkbox كمان |
+| checkbox موافقة على إعلانات [[checked]] من الأول | خداع للزائر، ومش موافقة حقيقية |
+| [[size]] أو [[cols]] كحد للطول | شكل بس: الحد [[maxlength]] |
+| [[maxlength]] من غير فحص على السيرفر | القيمة اللي من الكود بتعدّي |
+| [[wrap="hard"]] من غير [[cols]] | المواصفة بتطلب [[cols]] معاه |
+| [[<select size>]] من غير اختيار أولي | مبيبعتش حاجة لو الزائر ملمسوش |
+
+---
+
+## الخلاصة
+
+- [[readonly]]: يتشاف ويتبعت وميتعدّلش. لخانات الكتابة بس. مبيتفحصش.
+- [[disabled]]: باهت، مبيتداسش، **مبيتبعتش**. لكل عناصر الفورم وللـ [[<fieldset>]] كله.
+- [[checked]] و [[selected]]: الحالة **الأولى**. اللي بيتبعت هو الحالة الحالية.
+- الحالات بتتمسك في CSS بـ [[:disabled]] و [[:read-only]] و [[:checked]] و [[:focus]]، ولازم الزائر يشوف الفرق.
+- [[size]] و [[rows]] و [[cols]] شكل. [[maxlength]] و [[min]] و [[max]] و [[pattern]] حدود للزائر، والسيرفر بيفحص تاني.
+- [[wrap="hard"]] بيبعت كسر السطور، و [[dirname]] بيبعت اتجاه النص.
+- [[switch]] و [[<selectedcontent>]] لسه مش في كل المتصفحات.`,
+          try: R`اعمل ملف [[renew.html]] فيه الفورم اللي في المثال، بس خلّيه [[method="get"]] و [[action="renew.html"]]. افتحه ودوس «جدّد» وبص على العنوان. وبعدين شيل العلامة من الـ checkbox ودوس تاني. وبعدين غيّر [[disabled]] اللي على كود الخصم لـ [[readonly]] وجرّب مرة تالتة.`,
+          sol: R`~~~html renew.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تجديد الاشتراك</title>
+</head>
+<body>
+<form action="renew.html" method="get">
+  <p><label for="id">رقم العضوية</label> <input id="id" name="id" value="1042" readonly></p>
+  <p><label for="coupon">كود الخصم</label> <input id="coupon" name="coupon" value="انتهى العرض" disabled></p>
+  <p><input id="news" name="news" type="checkbox" checked> <label for="news">ابعتولي أخبار النادي</label></p>
+  <button type="submit">جدّد</button>
+</form>
+</body>
+</html>
+~~~
+
+~~~view 197 شكل الصفحة (الإرسال هنا بيتكتب تحت بدل ما يتبعت)
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="id">رقم العضوية</label> <input id="id" name="id" value="1042" readonly></p>
+  <p><label for="coupon">كود الخصم</label> <input id="coupon" name="coupon" value="انتهى العرض" disabled></p>
+  <p><input id="news" name="news" type="checkbox" checked> <label for="news">ابعتولي أخبار النادي</label></p>
+  <button type="submit">جدّد</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- **أول مرة:** العنوان آخره [[?id=1042&news=on]]. كود الخصم مش موجود (disabled).
+- **بعد ما شلت العلامة:** [[?id=1042]] بس. مفيش [[news=off]]: الـ checkbox اللي مش متعلّم مبيتبعتش خالص.
+- **بعد ما خليت الكود readonly:** [[?id=1042&coupon=...&news=on]]. الحقل بقى شكله عادي (مش باهت)، وقيمته بقت تتبعت.
+
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي، بالمثال زي ما هو)
+POST /renew
+content-type: application/x-www-form-urlencoded
+
+id=1042&news=on
+~~~`,
+          deep: {
+            why: R`فورم التعديل (تعديل بروفايل، تجديد اشتراك، تأكيد طلب) بيبقى نصه حقول جاية مملية ومقفولة. والغلطة اللي بتتكرر: المبرمج بيقفل الحقل بـ [[disabled]] عشان شكله «مقفول»، والسيرفر بيستلم الطلب من غير القيمة دي ويمسحها من قاعدة البيانات. الفرق بين الكلمتين في الشكل بسيط، وفي الطلب هو الفرق بين قيمة وصلت وقيمة ضاعت.`,
+            how: R`لما المتصفح بيبني قايمة البيانات، بيعدّي على كل عنصر في الفورم وبيتخطّى: المتعطّل (هو نفسه أو [[<fieldset>]] فوقه)، والـ checkbox والـ radio اللي حالتهم مش checked، والـ [[<select>]] اللي مفيهوش اختيار، والعنصر اللي ملوش [[name]]. الـ readonly مش في القايمة دي، فبيتبعت. والفحص ([[required]] وإخواته) ليه قايمة تانية: المواصفة بتقول إن الـ disabled والـ readonly «barred from constraint validation»، يعني مستثنيين من الفحص. و [[checked]] و [[selected]] في الكود بيحددوا القيمة الافتراضية اللي زرار reset بيرجّعلها، والحالة الحالية متخزنة في المتصفح مش في الكود.`,
+            when: R`[[readonly]]: رقم طلب أو عضوية، إجمالي محسوب، إيميل الحساب. [[disabled]]: اختيار مش متاح لباقة الزائر، حقل بيتفتح بعد اختيار تاني، زرار وهو بيبعت (لمنع الدبل كليك). [[checked]] و [[selected]]: القيمة الأشيع أو قيمة الزائر المحفوظة من قبل كده. [[<optgroup>]]: قايمة أطول من ٧ أو ٨ اختيارات ليها تقسيم طبيعي. [[size]]: خانة قصيّرة لكود قصيّر. [[wrap="hard"]] و [[dirname]]: حالات خاصة.`,
+            mistakes: R`[[disabled]] مكان [[readonly]] والقيمة تضيع. [[readonly]] على checkbox أو select. الثقة في المقفول كأنه محمي. زرار إرسال متعطّل من غير سبب مكتوب. [[disabled="false"]]. [[:read-only]] في CSS وتستنى يمسك اللي عليه الكلمة بس. [[select multiple]] بدل checkboxes. و [[size]] أو [[cols]] على إنهم حدود.`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** فورم طلب الدولاب في «نادي الموج». اكتب على ورقة مين من الخمس حقول هيتبعت، ودوس «اطلب» وقارن. وبعدين صلّحه عشان الإجمالي ([[total]]) يوصل السيرفر والزائر برضه ميقدرش يغيّره. (من قسم ١ و ٢ و ٣ في الشرح)`, done: R`توقّعت [[member]] و [[locker]] بس، وبعد التصليح [[total=450]] بقى في الناتج، وكل الشروط ✓.`, work: { h: 270, start: R`<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="m">رقم العضوية</label> <input id="m" name="member" value="1042" readonly></p>
+  <p><label for="t">الإجمالي</label> <input id="t" name="total" value="450" disabled></p>
+  <fieldset disabled>
+    <legend>الكارت القديم</legend>
+    <input name="old_card" value="7781" aria-label="رقم الكارت القديم">
+  </fieldset>
+  <p><label><input type="checkbox" name="towel"> فوطة</label>
+     <label><input type="checkbox" name="locker" checked> دولاب</label></p>
+  <button>اطلب</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(دوس «اطلب»)</output></p>`, checks: [
+              { say: R`الإجمالي بقى [[readonly]]`, q: "input[name=\"total\"][readonly]" },
+              { say: R`الإجمالي مش [[disabled]]`, q: "input[name=\"total\"][disabled]", n: 0 },
+              { say: R`رقم العضوية لسه [[readonly]]`, q: "input[name=\"member\"][readonly]" },
+              { say: R`الكارت القديم لسه جوه [[<fieldset disabled>]]`, q: "fieldset[disabled] input[name=\"old_card\"]" },
+            ] }, sol: R`~~~live 270 بعد التصليح
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="m">رقم العضوية</label> <input id="m" name="member" value="1042" readonly></p>
+  <p><label for="t">الإجمالي</label> <input id="t" name="total" value="450" readonly></p>
+  <fieldset disabled>
+    <legend>الكارت القديم</legend>
+    <input name="old_card" value="7781" aria-label="رقم الكارت القديم">
+  </fieldset>
+  <p><label><input type="checkbox" name="towel"> فوطة</label>
+     <label><input type="checkbox" name="locker" checked> دولاب</label></p>
+  <button>اطلب</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(دوس «اطلب»)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- قبل التصليح: الإجمالي باهت، والناتج [[member=1042&locker=on]].
+- بعد التصليح: الإجمالي بقى شكله عادي ولسه مبيتكتبش فيه، والناتج [[member=1042&total=450&locker=on]].
+
+| الحقل | اتبعت؟ | ليه |
+|---|---|---|
+| [[member]] (readonly) | أيوه | الـ readonly بيتبعت |
+| [[total]] (كان disabled) | لأ، وبعد التصليح أيوه | الـ disabled مبيتبعتش |
+| [[old_card]] (جوه fieldset disabled) | لأ | الـ fieldset عطّل كل اللي جواه |
+| [[towel]] (مش متعلّم) | لأ | الـ checkbox المش متعلّم مبيتبعتش |
+| [[locker]] (checked) | أيوه | متعلّم ومن غير value: [[on]] |
+
+**الغلطة الشائعة:** تسيب الإجمالي disabled وتزوّد hidden بنفس الاسم. بيشتغل، بس readonly أبسط لخانة نص. الـ hidden بتحتاجه مع checkbox و select بس.
+
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي)
+قبل:   member=1042&locker=on
+بعد:   member=1042&total=450&locker=on
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في صفحة «باقتك الحالية» المبرمج حط [[readonly]] على الـ [[<select>]] وعلى الـ checkbox عشان العضو ميغيّرهمش. بس الاتنين بيتغيّروا عادي. اقفلهم بجد، وخلّي قيمتهم ([[plan=gold]] و [[rules=on]]) تفضل تتبعت. (من قسم ٢ و ٣ في الشرح: الجدول «readonly ولا disabled؟»)`, done: R`الـ select والـ checkbox بقوا [[disabled]]، وفيه حقلين hidden بيبعتوا [[plan]] و [[rules]]، وكل الشروط ✓.`, work: { h: 158, start: R`<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="plan">الباقة</label>
+  <select id="plan" name="plan" readonly>
+    <option value="silver">فضي</option>
+    <option value="gold" selected>دهبي</option>
+  </select></p>
+  <p><label><input type="checkbox" name="rules" checked readonly> موافق على لايحة النادي</label></p>
+  <button>أكّد</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(غيّر الباقة ودوس «أكّد»)</output></p>`, checks: [
+              { say: R`الـ [[<select>]] بقى [[disabled]]`, q: "select[disabled]" },
+              { say: R`الـ checkbox بقى [[disabled]] ولسه [[checked]]`, q: "input[type=\"checkbox\"][disabled][checked]" },
+              { say: R`حقل hidden بيبعت [[plan=gold]]`, q: "input[type=\"hidden\"][name=\"plan\"][value=\"gold\"]" },
+              { say: R`حقل hidden بيبعت [[rules=on]]`, q: "input[type=\"hidden\"][name=\"rules\"][value=\"on\"]" },
+              { say: R`مفيش [[readonly]] على select أو checkbox`, q: "select[readonly], input[type=\"checkbox\"][readonly]", n: 0 },
+            ] }, sol: R`~~~live 158 بعد التصليح
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <input type="hidden" name="plan" value="gold">
+  <input type="hidden" name="rules" value="on">
+  <p><label for="plan">الباقة</label>
+  <select id="plan" disabled>
+    <option value="silver">فضي</option>
+    <option value="gold" selected>دهبي</option>
+  </select></p>
+  <p><label><input type="checkbox" checked disabled> موافق على لايحة النادي</label></p>
+  <button>أكّد</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(دوس «أكّد»)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- قبل التصليح: تقدر تفتح القايمة وتختار «فضي» وتشيل علامة الموافقة، والناتج يبقى [[plan=silver]] بس. الـ readonly معملش حاجة.
+- بعد التصليح: القايمة والمربع باهتين ومبيتداسوش، والناتج دايمًا [[plan=gold&rules=on]].
+
+**ليه كده:**
+
+- [[readonly]] بيشتغل على خانات الكتابة بس. على select و checkbox المتصفح بيتجاهله.
+- [[disabled]] بيقفلهم، بس بيمنعهم يتبعتوا. فالقيمة راحت لحقل [[hidden]] بنفس الـ [[name]].
+- شلنا [[name]] من الـ select والـ checkbox المتعطّلين: مش هيتبعتوا في كل الأحوال، والاسم دلوقتي بتاع الـ hidden.
+
+**الغلطة الشائعة:** تحط [[disabled]] وتنسى الـ hidden. الشكل هيبقى صح، والسيرفر هيستلم طلب من غير باقة.
+
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي)
+قبل (بعد ما غيّرنا الباقة وشلنا العلامة):   plan=silver
+بعد:                                        plan=gold&rules=on
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** فورم «جدّد اشتراكك». المطلوب: رقم العضوية [[1042]] يتشاف ويتبعت وميتعدّلش، وقايمة اللعبة متقسّمة مجموعتين («ألعاب مية»: سباحة وكرة ماء، و «ألعاب صالة»: سلة وجودو) وبتبدأ على «سلة»، و checkbox الأخبار بيبدأ متعلّم، وخانة ملاحظات ٤ سطور وأقصاها ٢٠٠ حرف. (من قسم ٢ و ٥ و ٦ و ٧ و ٩ في الشرح)`, done: R`الفورم فيه الأربع حاجات بحالاتها الأولى الصح، وكل الشروط ✓.`, work: { h: 363, start: R`<h1>جدّد اشتراكك</h1>
+<form>
+  رقم العضوية: 1042
+  اللعبة: سباحة، كرة ماء، سلة، جودو
+  ابعتولي أخبار النادي
+  ملاحظات
+  <button>جدّد</button>
+</form>`, checks: [
+              { say: R`رقم العضوية حقل [[readonly]] قيمته [[1042]] وليه [[name]]`, q: "input[readonly][value=\"1042\"][name]" },
+              { say: R`القايمة فيها مجموعتين [[<optgroup>]] بعناوين`, q: "select optgroup[label]", n: 2 },
+              { say: R`أربع اختيارات، كل واحد جوه مجموعة`, q: "select optgroup option", n: 4 },
+              { say: R`«سلة» عليها [[selected]]`, q: "option[selected]", has: "سلة" },
+              { say: R`الـ checkbox بيبدأ متعلّم ([[checked]])`, q: "input[type=\"checkbox\"][checked][name]" },
+              { say: R`الملاحظات [[<textarea>]] بـ [[rows="4"]] و [[maxlength="200"]]`, q: "textarea[rows=\"4\"][maxlength=\"200\"][name]" },
+            ] }, sol: R`~~~live 363 الحل
+<h1>جدّد اشتراكك</h1>
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="id">رقم العضوية</label> <input id="id" name="id" value="1042" readonly size="6"></p>
+  <p><label for="sport">اللعبة</label>
+  <select id="sport" name="sport">
+    <optgroup label="ألعاب مية">
+      <option value="swim">سباحة</option>
+      <option value="polo">كرة ماء</option>
+    </optgroup>
+    <optgroup label="ألعاب صالة">
+      <option value="basket" selected>سلة</option>
+      <option value="judo">جودو</option>
+    </optgroup>
+  </select></p>
+  <p><input id="news" name="news" type="checkbox" checked> <label for="news">ابعتولي أخبار النادي</label></p>
+  <p><label for="note">ملاحظات (٢٠٠ حرف)</label><br>
+  <textarea id="note" name="note" rows="4" cols="30" maxlength="200"></textarea></p>
+  <button>جدّد</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- خانة رقم العضوية قصيّرة ([[size="6"]]) ومبيتكتبش فيها.
+- القايمة مقفولة على «سلة»، ولما تفتحها الاختيارات تحت عنوانين.
+- المربع متعلّم من الأول.
+- دوس «جدّد» من غير ما تلمس حاجة: [[id=1042&sport=basket&news=on&note=]]. الملاحظات اتبعتت فاضية.
+
+**ليه كده:**
+
+- [[value]] على كل [[<option>]] بالإنجليزي: السيرفر بيستلم [[basket]] مش «سلة»، فالاسم المعروض يتغيّر من غير ما كود السيرفر يتكسر.
+- [[rows]] و [[cols]] للشكل، و [[maxlength]] هو الحد.
+
+**الغلطة الشائعة:** تكتب [[<option selected="false">]] على الباقي «للتأكيد». أي [[selected]] معناها «مختار» مهما كانت القيمة، والأخير هو اللي هيكسب.
+
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي)
+POST /renew2
+content-type: application/x-www-form-urlencoded
+
+id=1042&sport=basket&news=on&note=
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** خانة كود الخصم في المتجر فيها ٣ غلطات: [[size="8"]] مكتوب على إنه الحد الأقصى، و [[disabled="false"]] عشان «الخانة شغالة»، وخانة الملاحظات [[wrap="hard"]] من غير [[cols]]. صلّحهم: الكود أقصاه ٨ حروف، والخانة شغالة، والملاحظات بتتبعت سطر واحد. (من قسم ٧ و ٨ و ٩ و ١١ في الشرح)`, done: R`الخانة بتتكتب فيها وبتقف عند ٨ حروف، والملاحظات [[soft]]، وكل الشروط ✓.`, work: { h: 213, start: R`<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="code">كود الخصم (٨ حروف)</label> <input id="code" name="code" size="8" disabled="false"></p>
+  <p><label for="note">ملاحظات</label><br>
+  <textarea id="note" name="note" rows="3" wrap="hard"></textarea></p>
+  <button>طبّق</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>`, checks: [
+              { say: R`خانة الكود مفيهاش [[disabled]] خالص`, q: "input#code[disabled]", n: 0 },
+              { say: R`خانة الكود عليها [[maxlength="8"]]`, q: "input#code[maxlength=\"8\"]" },
+              { say: R`الملاحظات مش [[wrap="hard"]]`, q: "textarea[wrap=\"hard\" i]", n: 0 },
+              { say: R`الملاحظات لسه [[rows="3"]] وليها [[name]]`, q: "textarea[rows=\"3\"][name]" },
+            ] }, sol: R`~~~live 213 بعد التصليح
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="code">كود الخصم (٨ حروف)</label> <input id="code" name="code" size="8" maxlength="8"></p>
+  <p><label for="note">ملاحظات</label><br>
+  <textarea id="note" name="note" rows="3" cols="30"></textarea></p>
+  <button>طبّق</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+وده اللي كان باين قبل التصليح:
+
+~~~live 171 قبل
+<form onsubmit="return false">
+  <p><label for="code">كود الخصم (٨ حروف)</label> <input id="code" name="code" size="8" disabled="false"></p>
+  <p><label for="note">ملاحظات</label><br>
+  <textarea id="note" name="note" rows="3" wrap="hard"></textarea></p>
+  <button>طبّق</button>
+</form>
+~~~
+
+**هتشوف إيه:**
+
+- قبل: خانة الكود باهتة ومبيتكتبش فيها خالص.
+- بعد: بتكتب فيها، والكتابة بتقف لوحدها عند الحرف الثامن.
+
+| الغلطة | التصليح | ليه |
+|---|---|---|
+| [[disabled="false"]] | الكلمة اتشالت كلها | attribute من نوع boolean: وجوده = أيوه، مهما كانت القيمة |
+| [[size="8"]] كحد | زوّدنا [[maxlength="8"]] | [[size]] عرض الخانة بس |
+| [[wrap="hard"]] من غير [[cols]] | رجعت للافتراضي ([[soft]]) | المطلوب سطر واحد، و [[hard]] أصلًا محتاج [[cols]] |
+
+**الغلطة الشائعة:** تمسح [[="false"]] وتسيب كلمة [[disabled]]. لازم الكلمة نفسها تتشال.
+
+~~~text القياس من Chrome
+<input disabled="false">    →   input.disabled = true
+<input size="8"> وفيه 20 حرف        →   اتقبلوا كلهم
+<input maxlength="8"> وكتبنا 12 حرف   →   اتسجّل أول 8 بس: ABCDEFGH
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب في الـ CSS [[input:read-only { background: #eee; }]] عشان يلوّن الحقلين اللي عليهم [[readonly]]، ولقى أزرار الـ submit والـ checkboxes والحقول المتعطّلة اتلوّنوا كلهم. اشرحله ليه في سطرين، واكتبله الـ selector الصح. (من قسم ٤ في الشرح: الحالات في الـ CSS)`, done: R`كتبت إن [[:read-only]] بيمسك أي عنصر مبيتكتبش فيه، وإن البديل [[input[readonly]]].`, sol: R`**إجابة نموذجية:**
+
+1. [[:read-only]] مش معناها «عليه كلمة readonly». معناها «الزائر ميقدرش يكتب فيه»: وده بيشمل الحقل المتعطّل، والـ checkbox والـ radio والزرار (مفيش كتابة فيهم أصلًا)، وحتى [[<p>]] العادي.
+2. لو المطلوب الحقول اللي عليها الكلمة بالظبط، امسكهم بالـ attribute نفسه:
+
+~~~css
+input[readonly] { background: #eee; }
+~~~
+
+والأقواس المربعة في الـ CSS معناها «العنصر اللي عليه الـ attribute ده» (درس «selectors»).
+
+~~~text القياس من Chrome: matches(":read-only")
+<input readonly>            true
+<input disabled>            true
+<input type="checkbox">     true
+<input type="submit">       true
+<input type="date">         false
+<input> العادي              false
+~~~
+
+**الغلطة الشائعة العكسية:** تستخدم [[input[disabled]]] وتنسى الحقول اللي اتعطّلت بسبب [[<fieldset disabled>]] فوقها: دي مفيش عليها الكلمة. هناك الصح [[:disabled]]، لأنه بيمسك الحالة الفعلية.` }
+          ]
+        },
+        {
+          cmd: "datalist و output",
+          title: "اقتراحات وانت بتكتب، ونتيجة بتتحسب قدامك",
+          pre: ["css/fieldset و radio", { to: "css/أنواع input كلها", why: R`[[type="range"]] اللي هنحط جنبه [[<output>]] اتشرح هناك في القسم ٣` }],
+          ref: [
+            { t: "MDN: <datalist>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist" },
+            { t: "MDN: <output>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/output" },
+            { t: "WHATWG: the datalist element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-datalist-element" },
+            { t: "WHATWG: the output element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-output-element" },
+            { t: "WHATWG: the list attribute", url: "https://html.spec.whatwg.org/multipage/input.html#the-list-attribute" }
+          ],
+          desc: R`عنصرين بيكمّلوا الحقول: [[<datalist>]] قايمة **اقتراحات** بتظهر تحت الخانة والزائر بيكتب (ولسه يقدر يكتب أي حاجة تانية)، و [[<output>]] مكان بتتعرض فيه **نتيجة** اتحسبت من حقول الفورم.
+الأول بيتربط بالخانة بـ [[list]]، والتاني بيقول هو نتيجة أنهي حقول بـ [[for]].`,
+          example: R`<form oninput="total.value = Number(months.value) * 300">
+  <label for="city">المدينة</label>
+  <input id="city" name="city" list="cities">
+  <datalist id="cities">
+    <option value="طنطا"></option>
+    <option value="المنصورة"></option>
+  </datalist>
+  <label for="months">عدد الشهور</label>
+  <input id="months" name="months" type="range" min="1" max="12" value="3">
+  <output id="total" name="total" for="months">900</output>
+</form>`,
+          flag: "script",
+          lines: [
+            R`[[oninput]] سطر JavaScript بيشتغل مع كل تغيير في أي حقل جوه الفورم: بياخد قيمة [[months]]، يحوّلها رقم بـ [[Number()]]، يضربها في ٣٠٠، ويحط الناتج في [[total]]. (القسم ٥ بيفكّه.)`,
+            R`اسم خانة المدينة، مربوط بيها بـ [[for="city"]].`,
+            R`خانة نص عادية، والجديد فيها [[list="cities"]]: «اقتراحاتك في العنصر اللي الـ [[id]] بتاعه [[cities]]».`,
+            R`[[<datalist id="cities">]] قايمة الاقتراحات. العنصر نفسه مبيظهرش في الصفحة: المتصفح بيعرض اللي جواه تحت الخانة لما الزائر يكتب.`,
+            R`كل [[<option>]] اقتراح. [[value]] هو الكلام اللي هيتحط في الخانة لو الزائر اختاره.`,
+            R`اقتراح تاني. الزائر مش مجبر على الاتنين: يقدر يكتب «أسيوط» عادي.`,
+            R`[[</datalist>]] آخر الاقتراحات: أي [[<option>]] بعد كده مش تبع القايمة دي.`,
+            R`اسم الشريط، وهو اللي بيقول الشريط ده بيقيس إيه.`,
+            R`شريط من ١ لـ ١٢ بيبدأ من ٣ (درس «أنواع input كلها»). الشريط مبيكتبش رقمه، وعشان كده محتاج اللي في السطر الجاي.`,
+            R`[[<output>]] مكان النتيجة. [[for="months"]] بيقول إنها محسوبة من الحقل [[months]]. و [[900]] القيمة اللي بتظهر قبل ما الزائر يلمس حاجة (٣ × ٣٠٠).`,
+            R`[[</form>]] آخر الفورم: سطر [[oninput]] بيسمع للحقول اللي جوه الفورم ده بس.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+[[<datalist>]] بيحل مشكلة «عايز أساعد الزائر باختيارات جاهزة من غير ما أحبسه فيها». و [[<output>]] بيحل مشكلة «عايز أعرض نتيجة، ويبقى واضح للمتصفح ولقارئ الشاشة إنها نتيجة مش كلام عادي».
+
+القياسات من Chrome 157 على Windows 11.
+
+---
+
+## ١. [[<datalist>]] و [[<input list="cities">]]
+
+~~~live 37 دوس في الخانة
+<label for="city">المدينة</label>
+<input id="city" name="city" list="cities">
+<datalist id="cities">
+  <option value="طنطا"></option>
+  <option value="المنصورة"></option>
+  <option value="أسوان"></option>
+</datalist>
+~~~
+
+**هتشوف إيه:**
+
+- خانة نص شكلها عادي.
+- لما تدوس جواها أو تكتب، قايمة بتنزل تحتها فيها الاقتراحات اللي فيها الحروف اللي كتبتها.
+- اختار واحد: اتكتب في الخانة. أو كمّل كتابة «أسيوط» (مش في القايمة): الخانة قبلتها عادي.
+- الـ [[<datalist>]] نفسه ملوش أي أثر في الصفحة.
+
+الربط بكلمتين لازم يتطابقوا حرف بحرف: [[list="cities"]] على الخانة، و [[id="cities"]] على القايمة. زي [[for]] و [[id]] بتوع الـ label.
+
+~~~text القياس من Chrome
+input.list === عنصر الـ datalist       true        (الربط اتعمل)
+عدد الاقتراحات                         3
+role الخانة                            combobox    (بدل textbox: قارئ الشاشة بيعرف إن معاها قايمة)
+datalist:  display = none
+كتبنا «بلد مش في القايمة»:             validity.valid = true      واتبعتت زي ما هي
+list="nope" (id مش موجود):             input.list = null ، والخانة رجعت textbox عادي
+~~~
+
+آخر سطر مهم: لو الـ [[id]] غلط، **مفيش أي خطأ بيظهر**. الخانة بتشتغل كخانة نص عادية من غير اقتراحات.
+
+### [[value]] و [[label]] على الاقتراح
+
+~~~html
+<option value="ASW" label="أسوان"></option>
+~~~
+
+[[value]] هو اللي بيتكتب في الخانة وبيتبعت. و [[label]] كلام بيتعرض جنبه في القايمة. شكل العرض بيختلف من متصفح لمتصفح (من MDN)، فالأضمن إن [[value]] نفسه يبقى الكلام اللي الزائر يفهمه.
+
+---
+
+## ٢. [[<datalist>]] ولا [[<select>]]؟
+
+| | [[<datalist>]] | [[<select>]] |
+|---|---|---|
+| الزائر يكتب حاجة برّه القايمة | **أيوه** | لأ |
+| بيدوّر جوه الاختيارات بالكتابة | أيوه | على الأول حرف بس |
+| القيمة مضمونة من القايمة | **لأ** | أيوه |
+| مناسب لـ | اقتراحات: مدينة، مهنة، اسم نادي | اختيار من مجموعة مقفولة: المقاس، الباقة |
+
+القاعدة: لو السيرفر بيقبل **أي** قيمة والقايمة للمساعدة بس، [[<datalist>]]. لو القيمة لازم تبقى واحدة من القايمة، [[<select>]] (أو radio لو الاختيارات قليلة).
+
+ومتحاولش تحوّل [[<datalist>]] لقايمة مقفولة: هو مبيفحصش حاجة، ومفيش attribute بيقوله «اللي في القايمة بس».
+
+---
+
+## ٣. [[list]] مع أنواع غير النص
+
+[[list]] بيشتغل مع أغلب أنواع [[<input>]]، وكل نوع بيعرض الاقتراحات بطريقته (التفاصيل من MDN):
+
+~~~live 44 الشريط بقى عليه علامات
+<label for="months">عدد الشهور (١ لـ ١٢)</label>
+<input id="months" type="range" min="1" max="12" value="3" list="marks">
+<datalist id="marks">
+  <option value="1"></option>
+  <option value="3"></option>
+  <option value="6"></option>
+  <option value="12"></option>
+</datalist>
+~~~
+
+**هتشوف إيه:** تحت الشريط ٤ شرط صغيرة عند ١ و ٣ و ٦ و ١٢ (المدد اللي النادي بيبيعها). الدايرة لسه بتقف في أي مكان، بس الزائر شايف القيم المهمة فين.
+
+| النوع | الاقتراحات بتظهر إزاي |
+|---|---|
+| [[text]] و [[search]] و [[url]] و [[tel]] و [[email]] و [[number]] | قايمة تحت الخانة |
+| [[range]] | علامات على الشريط |
+| [[color]] | ألوان جاهزة في نافذة الألوان |
+| [[date]] و [[time]] وباقي أنواع التاريخ | قيم جاهزة في نافذة الاختيار |
+
+مبيشتغلش مع: [[hidden]] و [[password]] و [[checkbox]] و [[radio]] و [[file]] والأزرار.
+
+**الدعم:** المنهج (بيانات Baseline) بيقول إن [[<datalist>]] مش Baseline، و MDN بيقول إن الدعم في بعض المتصفحات ناقص مع الأنواع غير النصية. مع خانة النص الخطر قليل: المتصفح اللي مبيعرضش الاقتراحات بيسيب خانة نص شغالة.
+
+وحاجتين من MDN عن الـ accessibility: حجم خط الاقتراحات مبيكبرش مع تكبير الصفحة، وشكل القايمة مبيتنسّقش بالـ CSS. فمتحطش في الاقتراحات معلومة الزائر محتاجها عشان يكمّل.
+
+---
+
+## ٤. [[<output>]]: مكان النتيجة
+
+المواصفة: [[<output>]] بيمثّل نتيجة عملية حسابية عملها التطبيق، أو نتيجة حاجة الزائر عملها.
+
+~~~live 88 اسحب الشريط
+<form oninput="total.value = Number(months.value) * 300">
+  <p><label for="months">عدد الشهور</label>
+  <input id="months" name="months" type="range" min="1" max="12" value="3"></p>
+  <p><label for="total">الإجمالي بالجنيه</label>
+  <output id="total" name="total" for="months">900</output></p>
+</form>
+~~~
+
+**هتشوف إيه:** الإجمالي بيتغيّر وانت بتسحب: ٣ شهور ٩٠٠، و ٦ شهور ١٨٠٠، و ١٢ شهر ٣٦٠٠.
+
+شكله زي [[<span>]] بالظبط: كلام عادي في السطر. الفرق كله في المعنى:
+
+~~~text القياس من Chrome
+display = inline                 (ملوش شكل خاص)
+role = status                    (في شجرة الـ accessibility)
+الاسم = «الإجمالي بالجنيه»       (من الـ label: output بيقبل label زي الحقول)
+output.value = 900               output.htmlFor = months
+بعد ما الشريط بقى 6:             output.value = 1800
+بعد reset للفورم:                output.value = 900      (رجع للكلام المكتوب جواه في الكود)
+مفاتيح البيانات اللي بتتبعت:     months      (total مش فيهم)
+~~~
+
+- **[[role = status]]:** ده «live region»: قارئ الشاشة بيقرا التغيير لما يحصل، من غير ما الزائر يسيب الحقل اللي هو فيه (حسب MDN و ARIA، ومش متقاس بقارئ شاشة هنا). لو النتيجة في [[<span>]] عادي، الزائر الكفيف هيسحب الشريط ومش هيعرف إن فيه رقم اتغيّر.
+- **بياخد [[<label>]]:** الاسم اللي فوق اتقاس من [[<label for="total">]].
+- **[[for]]:** الـ [[id]] بتاع الحقل (أو الحقول، بينهم مسافة) اللي النتيجة محسوبة منهم: [[for="qty price"]]. معلومة للمتصفح والأدوات، ومش هي اللي بتحسب.
+- **مبيتبعتش.** حتى وعليه [[name]]. الـ [[name]] بيخلّي JavaScript يوصله من الفورم ([[total.value]])، مش أكتر. لو السيرفر محتاج الإجمالي، يحسبه هو من [[months]] (وده الصح: متثقش في إجمالي جاي من المتصفح).
+
+---
+
+## ٥. سطر الحساب، حتة حتة
+
+الـ HTML لوحده مبيحسبش. اللي بيحسب سطر JavaScript واحد مكتوب في [[oninput]] على الفورم:
+
+~~~html
+<form oninput="total.value = Number(months.value) * 300">
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[oninput="..."]] | الكود ده يشتغل كل ما قيمة أي حقل جوه الفورم تتغيّر (حرف اتكتب، شريط اتسحب) |
+| [[months.value]] | قيمة الحقل اللي اسمه [[months]]. جوه [[oninput]] بتاع الفورم، حقول الفورم بتتنادى بأساميها |
+| [[Number(...)]] | قيمة أي حقل **نص** حتى لو شكلها رقم (درس «textarea و date و number»). [[Number]] بيحوّلها لرقم |
+| [[* 300]] | ضرب في سعر الشهر |
+| [[total.value = ...]] | حط الناتج في الـ output اللي اسمه [[total]] |
+
+ولو عايز رقم الشهور نفسه يظهر جنب الشريط، [[<output>]] تاني وأمر تاني قبله، وبينهم فاصلة منقوطة:
+
+~~~live 88 الاتنين بيتحركوا
+<form oninput="shown.value = months.value; total.value = Number(months.value) * 300">
+  <p><label for="months">عدد الشهور</label>
+  <input id="months" name="months" type="range" min="1" max="12" value="3">
+  <output id="shown" for="months">3</output></p>
+  <p><label for="total">الإجمالي بالجنيه</label>
+  <output id="total" name="total" for="months">900</output></p>
+</form>
+~~~
+
+ده أقصى JavaScript في الكورس ده. الأحداث ([[input]] و [[change]] و [[submit]]) وكتابة الكود في ملف لوحده بدل الـ attribute: كورس JavaScript.
+
+**لازم تكتب القيمة الأولى بإيدك** جوه الـ [[<output>]] ([[900]]): [[oninput]] مبيشتغلش إلا لما الزائر يغيّر حاجة، فمن غيرها النتيجة هتبدأ فاضية.
+
+---
+
+## ٦. [[<output>]] ولا حاجة تانية؟
+
+| عايز تعرض | العنصر |
+|---|---|
+| نتيجة بتتغيّر مع الحقول (إجمالي، عدد حروف باقي، قيمة شريط) | [[<output>]] |
+| قيمة ثابتة لازم تتبعت | [[<input readonly>]] (درس «readonly و disabled و checked») |
+| نسبة إنجاز أو قياس | [[<progress>]] أو [[<meter>]] (الدرس الجاي) |
+| كلام عادي مبيتغيّرش | [[<p>]] أو [[<span>]] |
+
+---
+
+## ٧. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[list]] و [[id]] مش متطابقين | مفيش اقتراحات، ومفيش خطأ |
+| [[list="cities"]] و [[id="cities"]] على نفس الخانة | [[list]] بيشاور على الـ [[<datalist>]] مش على الخانة |
+| [[<datalist>]] على إنه قايمة مقفولة | أي قيمة بتتقبل وبتتبعت |
+| اقتراحات [[<option>]] من غير [[value]] ومن غير كلام | القايمة بتطلع فيها سطور فاضية |
+| نتيجة في [[<span>]] | قارئ الشاشة مبيعرفش إنها اتغيّرت |
+| [[<output>]] فاضي في الكود | النتيجة فاضية لحد ما الزائر يلمس حقل |
+| تستنى [[<output name="total">]] يتبعت | مبيتبعتش أبدًا، حتى وعليه [[name]] |
+| [[months.value * 300]] من غير [[Number]] | الضرب هنا بيشتغل، بس الجمع ([[+]]) هيلزق النصين في بعض |
+
+---
+
+## الخلاصة
+
+- [[<datalist id="x">]] + [[<input list="x">]]: اقتراحات، والزائر حر يكتب غيرها. مفيش فحص.
+- قيمة لازم تبقى من القايمة: [[<select>]].
+- [[list]] مع [[range]] بيرسم علامات على الشريط.
+- [[<output>]]: نتيجة. شكله نص عادي، و role بتاعه [[status]]، وبياخد label، ومبيتبعتش.
+- [[for]] على الـ output: الحقول اللي النتيجة منهم.
+- الحساب نفسه سطر [[oninput]] على الفورم، والقيمة الأولى مكتوبة بإيدك.`,
+          try: R`اعمل ملف [[price.html]] فيه فورم جواه: خانة عدد ([[type="number"]] اسمها [[qty]] وقيمتها ٢)، و [[<output>]] اسمه [[total]] جواه ١٠٠، وسطر [[oninput]] بيضرب العدد في ٥٠. افتحه وغيّر العدد. وبعدين امسح [[Number( )]] من السطر وخلّي العملية جمع: [[qty.value + 50]]، وبص على النتيجة.`,
+          sol: R`~~~live 37 price.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>السعر</title>
+</head>
+<body>
+<form oninput="total.value = Number(qty.value) * 50">
+  <label for="qty">عدد الحصص</label>
+  <input id="qty" name="qty" type="number" min="1" value="2">
+  <label for="total">الإجمالي</label>
+  <output id="total" name="total" for="qty">100</output>
+</form>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:**
+
+- غيّر العدد لـ ٣: الإجمالي بقى ١٥٠. لـ ١٠: بقى ٥٠٠.
+- **بعد ما خليتها [[qty.value + 50]]:** العدد ٣ بيطلّع [[350]] مش ٥٣. القيمة نص، وعلامة [[+]] بين نصين بتلزقهم: «3» و «50» بقوا «350».
+- رجّع [[Number(qty.value) + 50]]: بقت ٥٣.
+
+~~~text القياس من Chrome
+Number(qty.value) * 50   والعدد 3   →   150
+qty.value + 50           والعدد 3   →   350     (لزق مش جمع)
+Number(qty.value) + 50   والعدد 3   →   53
+~~~
+
+عشان كده [[Number()]] بيتكتب دايمًا، حتى مع الضرب اللي بيشتغل من غيره.`,
+          deep: {
+            why: R`الاتنين بيعملوا حاجة كانت بتتعمل بمكتبات JavaScript كاملة. الاقتراحات وانت بتكتب (autocomplete) من أكتر الحاجات المطلوبة في أي فورم، و [[<datalist>]] بيدّيها بـ ٥ سطور HTML بتشتغل بالكيبورد وعلى الموبايل. والنتيجة اللي بتتغيّر قدام الزائر (إجمالي، عدّاد) لو اتحطت في عنصر عادي، مستخدم قارئ الشاشة مبيعرفش إنها موجودة أصلًا.`,
+            how: R`الخانة اللي عليها [[list]] بتدوّر في الصفحة على عنصر [[<datalist>]] بنفس الـ [[id]]. لو لقته، المتصفح بياخد الـ [[<option>]] اللي جواه (اللي مش [[disabled]] وليهم [[value]]) ويعرضهم كاقتراحات مفلترة بالمكتوب، وبيغيّر role الخانة لـ [[combobox]]. الاختيار بيحط الـ [[value]] في الخانة كأن الزائر كتبه، ومفيش أي ربط تاني. و [[<output>]] عنصر من عناصر الفورم ([[form.elements]] بيعدّه) بس مستثنى من الإرسال ومن الفحص. قيمته هي النص اللي جواه، وقيمته الافتراضية (اللي reset بيرجّعلها) هي النص المكتوب في الكود. والمتصفح بيدّيه role [[status]]، وده معناه [[aria-live="polite"]] ضمنًا.`,
+            when: R`[[<datalist>]]: مدينة، مهنة، جنسية، اسم مدرسة، كلمات بحث شائعة، قيم جاهزة لخانة رقم. [[list]] على [[range]]: لما فيه قيم مميزة على الشريط. [[<output>]]: الرقم اللي جنب [[range]]، إجمالي سلة، عدد الحروف الباقية، نتيجة حاسبة.`,
+            mistakes: R`[[list]] بيشاور على [[id]] مش موجود ومحدش بيلاحظ. الاعتماد على [[<datalist>]] كأنه بيمنع القيم التانية. اقتراحات بالمئات (القايمة بتبقى مش عملية: ده شغل بحث على السيرفر). [[<output>]] من غير قيمة أولى. نسيان [[Number()]]. وإنك تبعت الإجمالي من المتصفح وتثق فيه.`
+          },
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** خانة «اللعبة اللي بتحبها» في استبيان «نادي الموج»: خانة نص معاها ٣ اقتراحات (سباحة، كرة ماء، جودو)، والعضو يقدر يكتب لعبة تانية. وتحتها شريط «كام ساعة في الأسبوع» من ١ لـ ١٠ ومعاه [[<output>]] بيعرض الرقم. (من قسم ١ و ٤ و ٥ في الشرح)`, done: R`الخانة مربوطة بـ [[<datalist>]] فيه ٣ اقتراحات، والـ output مربوط بالشريط وبيبدأ بنفس قيمته، وكل الشروط ✓.`, work: { h: 120, start: R`<form>
+  اللعبة اللي بتحبها: سباحة، كرة ماء، جودو (أو اكتب غيرهم)
+  كام ساعة في الأسبوع (من ١ لـ ١٠)
+</form>`, checks: [
+              { say: R`خانة عليها [[list="sports"]] وليها [[name]]`, q: "input[list=\"sports\"][name]" },
+              { say: R`[[<datalist id="sports">]] فيه ٣ اقتراحات ليهم [[value]]`, q: "datalist#sports option[value]", n: 3 },
+              { say: R`شريط [[type="range"]] من ١ لـ ١٠ والـ [[id]] بتاعه [[hours]]`, q: "input#hours[type=\"range\"][min=\"1\"][max=\"10\"]" },
+              { say: R`[[<output for="hours">]] جنب الشريط`, q: "output[for=\"hours\"]" },
+              { say: R`الفورم عليه سطر [[oninput]] بيحدّث الـ output`, q: "form[oninput]" },
+              { say: R`الخانة والشريط ليهم [[<label>]]`, q: "label[for]", min: 2 },
+            ] }, sol: R`~~~live 91 109 الحل
+<form oninput="shown.value = hours.value">
+  <p><label for="sport">اللعبة اللي بتحبها</label>
+  <input id="sport" name="sport" list="sports">
+  <datalist id="sports">
+    <option value="سباحة"></option>
+    <option value="كرة ماء"></option>
+    <option value="جودو"></option>
+  </datalist></p>
+  <p><label for="hours">كام ساعة في الأسبوع (من ١ لـ ١٠)</label>
+  <input id="hours" name="hours" type="range" min="1" max="10" value="4">
+  <output id="shown" for="hours">4</output></p>
+</form>
+~~~
+
+**هتشوف إيه:**
+
+- دوس في الخانة: التلات اقتراحات نزلوا. اكتب «تنس»: اتقبلت.
+- اسحب الشريط: الرقم اللي جنبه بيتغيّر معاه.
+
+**ليه كده:**
+
+- [[<datalist>]] مش [[<select>]] لأن السؤال مفتوح: العضو ممكن يحب لعبة النادي معندوش.
+- الـ output بيبدأ بـ [[4]] مكتوبة بإيدينا، نفس [[value="4"]] على الشريط. لو اختلفوا، الزائر هيشوف رقم غلط لحد ما يسحب.
+- [[shown.value = hours.value]] من غير [[Number]]: بننسخ النص زي ما هو، مفيش حساب.
+
+**الغلطة الشائعة:** [[list="sport"]] بدل [[sports]] (نفس [[id]] الخانة). الخانة هتشاور على نفسها، ومفيش اقتراحات، ومفيش خطأ.
+
+~~~text القياس من Chrome
+input.list === datalist      true         role الخانة: combobox
+عدد الاقتراحات               3
+الشريط 7 بعد السحب           output.value = 7
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** خانة «الفرع» مبتطلّعش اقتراحات، والنتيجة مكتوبة في [[<span>]]، وبتبدأ فاضية. فيه ٣ مشاكل. (من قسم ١ و ٤ و ٧ في الشرح)`, done: R`الاقتراحات بتظهر، والنتيجة [[<output>]] مربوط بالحقل وبيبدأ بـ ٢٠٠، وكل الشروط ✓.`, work: { h: 120, start: R`<form oninput="total.value = Number(kids.value) * 200">
+  <p><label for="branch">الفرع</label>
+  <input id="branch" name="branch" list="branch">
+  <datalist id="branches">
+    <option value="فرع الكورنيش"></option>
+    <option value="فرع الجامعة"></option>
+  </datalist></p>
+  <p><label for="kids">عدد الأطفال</label>
+  <input id="kids" name="kids" type="number" min="1" value="1">
+  الإجمالي: <span id="total"></span></p>
+</form>`, checks: [
+              { say: R`[[list]] على الخانة بيطابق [[id]] الـ [[<datalist>]]`, q: "input[list=\"branches\"]" },
+              { say: R`النتيجة بقت [[<output>]] مش [[<span>]]`, q: "output#total" },
+              { say: R`مفيش [[<span id="total">]]`, q: "span#total", n: 0 },
+              { say: R`الـ output مربوط بالحقل: [[for="kids"]]`, q: "output[for=\"kids\"]" },
+              { say: R`الـ output بيبدأ بـ ٢٠٠ (طفل واحد × ٢٠٠)`, q: "output#total", has: "200" },
+            ] }, sol: R`~~~live 90 بعد التصليح
+<form oninput="total.value = Number(kids.value) * 200">
+  <p><label for="branch">الفرع</label>
+  <input id="branch" name="branch" list="branches">
+  <datalist id="branches">
+    <option value="فرع الكورنيش"></option>
+    <option value="فرع الجامعة"></option>
+  </datalist></p>
+  <p><label for="kids">عدد الأطفال</label>
+  <input id="kids" name="kids" type="number" min="1" value="1">
+  <label for="total">الإجمالي:</label> <output id="total" for="kids">200</output></p>
+</form>
+~~~
+
+**هتشوف إيه:**
+
+- قبل: خانة الفرع من غير اقتراحات، وبعد «الإجمالي:» مفيش حاجة لحد ما تغيّر العدد.
+- بعد: الاقتراحين بيظهروا، و «٢٠٠» مكتوبة من الأول، وبتبقى ٤٠٠ و ٦٠٠ مع العدد.
+
+| المشكلة | التصليح |
+|---|---|
+| [[list="branch"]] والـ datalist اسمه [[branches]] | [[list="branches"]] |
+| النتيجة في [[<span>]] | [[<output for="kids">]]، ومعاه label |
+| النتيجة فاضية في الأول | [[200]] مكتوبة جوه الـ output |
+
+السطر [[total.value = ...]] كان شغال مع الـ [[<span>]] في الشكل؟ لأ: [[<span>]] ملوش [[value]] بيتعرض، فالنتيجة مكانتش بتظهر أصلًا. [[<output>]] هو اللي [[value]] بتاعه هو النص اللي جواه.
+
+**الغلطة الشائعة:** تصلّح الـ [[list]] بإنك تغيّر [[id]] الـ datalist لـ [[branch]]. كده بقى فيه عنصرين بنفس الـ [[id]] (الخانة والقايمة)، والـ [[id]] لازم يبقى فريد في الصفحة.
+
+~~~text القياس من Chrome
+قبل:   input.list = null       span.textContent = ""    (حتى بعد تغيير العدد)
+بعد:   input.list = datalist   output.value = 200 ، وبعد العدد 3: 600
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** في فورم حجز الملعب ده، الزائر اختار ساعتين ودوس «احجز». اكتب على ورقة إيه اللي هيتبعت: هل [[total]] معاهم؟ ودوس وقارن. وبعدين صلّح الـ output عشان يبقى مربوط بالحقلين اللي بيتحسب منهم. (من قسم ٤ في الشرح: «مبيتبعتش» و [[for]])`, done: R`توقّعت إن [[total]] مش هيتبعت، وبعد التصليح الـ output عليه [[for="hours price"]]، وكل الشروط ✓.`, work: { h: 195, start: R`<form oninput="total.value = Number(hours.value) * Number(price.value)" onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="hours">عدد الساعات</label> <input id="hours" name="hours" type="number" min="1" value="2"></p>
+  <p><label for="price">سعر الساعة</label> <input id="price" name="price" value="150" readonly></p>
+  <p>الإجمالي: <output id="total" name="total">300</output></p>
+  <button>احجز</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(دوس «احجز»)</output></p>`, checks: [
+              { say: R`الـ output عليه [[for]] فيه [[hours]]`, q: "output#total[for~=\"hours\"]" },
+              { say: R`الـ output عليه [[for]] فيه [[price]]`, q: "output#total[for~=\"price\"]" },
+              { say: R`الـ output ليه [[<label>]]`, q: "label[for=\"total\"]" },
+              { say: R`سعر الساعة لسه [[readonly]] (عشان يتبعت)`, q: "input[name=\"price\"][readonly]" },
+            ] }, sol: R`~~~live 195 بعد التصليح
+<form oninput="total.value = Number(hours.value) * Number(price.value)" onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="hours">عدد الساعات</label> <input id="hours" name="hours" type="number" min="1" value="2"></p>
+  <p><label for="price">سعر الساعة</label> <input id="price" name="price" value="150" readonly></p>
+  <p><label for="total">الإجمالي:</label> <output id="total" name="total" for="hours price">300</output></p>
+  <button>احجز</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(دوس «احجز»)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- الناتج قبل وبعد التصليح واحد: [[hours=2&price=150]]. الإجمالي ٣٠٠ ظاهر في الصفحة ومش في الطلب.
+- التصليح مغيّرش شكل الصفحة: [[for]] و [[<label>]] معلومات للمتصفح وقارئ الشاشة.
+
+**ليه:**
+
+- [[<output>]] مبيتبعتش أبدًا، حتى وعليه [[name]]. والسيرفر مش محتاجه: عنده الساعات والسعر ويحسب هو.
+- سعر الساعة [[readonly]] فبيتبعت (درس «readonly و disabled و checked»).
+- [[for="hours price"]]: اسمين بينهم مسافة، لأن النتيجة من حقلين.
+
+**الغلطة الشائعة:** تحوّل الـ output لـ [[<input name="total" readonly>]] عشان يتبعت، والسيرفر يستخدم الرقم ده للدفع. أي زائر يغيّره من DevTools ويدفع جنيه واحد.
+
+~~~text القياس من Chrome
+مفاتيح البيانات اللي بتتبعت:   hours , price
+output.htmlFor بعد التصليح:   hours price
+الاسم في شجرة الـ accessibility:   status «الإجمالي:»
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** تلات خانات في فورم الاشتراك. لكل واحدة قول تستخدم [[<datalist>]] ولا [[<select>]] ولا radio، وليه، في سطر: (١) المحافظة اللي العضو ساكن فيها (٢٧ محافظة). (٢) «عرفت النادي منين؟» (٣) مقاس التيشيرت: S و M و L و XL. (من قسم ٢ في الشرح)`, done: R`اخترت عنصر لكل خانة وكتبت السبب: القايمة مقفولة ولا مفتوحة، وعدد الاختيارات.`, sol: R`**إجابة نموذجية:**
+
+1. **المحافظة: [[<select>]].** القايمة مقفولة (مفيش محافظة برّه الـ ٢٧) وطويلة. السيرفر محتاج قيمة مضمونة من القايمة، و [[<datalist>]] كان هيقبل «القاهره» بالهاء و «cairo» وأي حاجة.
+2. **عرفت النادي منين: [[<datalist>]].** السؤال مفتوح: فيه إجابات شائعة تستاهل تتقترح (صاحب، إعلان، مشيت قدامه)، بس أي إجابة تانية مقبولة ومفيدة.
+3. **المقاس: radio.** ٤ اختيارات بس ومقفولة. الـ radio بيعرضهم كلهم قدام العضو من غير ما يفتح قايمة، وضغطة واحدة تكفي (درس «fieldset و radio»).
+
+| السؤال | مقفول؟ | عدد الاختيارات | العنصر |
+|---|---|---|---|
+| المحافظة | أيوه | ٢٧ | [[<select>]] |
+| عرفتنا منين | لأ | مفتوح | [[<datalist>]] |
+| المقاس | أيوه | ٤ | radio |
+
+**القاعدة:** مفتوح ← [[<datalist>]]. مقفول وقليل (لحد ٥ تقريبًا) ← radio. مقفول وكتير ← [[<select>]].
+
+**الغلطة الشائعة:** [[<datalist>]] للمحافظة «عشان البحث بالكتابة أسهل». أسهل فعلًا، بس البيانات اللي هتتجمع هتبقى بعشرين شكل للمحافظة الواحدة.` }
+          ]
+        },
+        {
+          cmd: "progress و meter",
+          title: "شريطين بيتملوا: واحد لمهمة ماشية، وواحد لقياس",
+          pre: [{ to: "css/datalist و output", why: R`الجدول اللي بيفرّق بين [[<output>]] و [[<progress>]] و [[<meter>]] بدأ هناك في القسم ٦` }],
+          ref: [
+            { t: "MDN: <progress>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/progress" },
+            { t: "MDN: <meter>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meter" },
+            { t: "WHATWG: the progress element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-progress-element" },
+            { t: "WHATWG: the meter element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-meter-element" }
+          ],
+          desc: R`[[<progress>]] و [[<meter>]] الاتنين بيرسموا شريط جزء منه مليان، وعشان كده بيتلخبطوا. الفرق في المعنى: [[<progress>]] بيقول **مهمة خلص منها قد إيه** (رفع ملف، خطوات فورم)، و [[<meter>]] بيقول **قياس واقف فين في مدى معروف** (مساحة مستخدمة، أماكن محجوزة، نسبة حضور).
+و [[<meter>]] بيعرف كمان القيمة دي كويسة ولا وحشة، من [[low]] و [[high]] و [[optimum]]، وبيلوّن الشريط على أساسها.`,
+          example: R`<label for="step">الخطوة ٢ من ٤</label>
+<progress id="step" value="2" max="4">٢ من ٤</progress>
+<label for="load">جاري رفع الصورة</label>
+<progress id="load"></progress>
+<label for="seats">الأماكن المحجوزة: ١٨ من ٢٠</label>
+<meter id="seats" value="18" min="0" max="20" low="10" high="16" optimum="5">١٨ من ٢٠</meter>`,
+          flag: "script",
+          lines: [
+            R`اسم الشريط الأول. الاتنين ([[<progress>]] و [[<meter>]]) بياخدوا [[<label>]] زي الحقول، والـ label هنا فيه الرقم مكتوب: الشريط لوحده مبيقولش «٢ من ٤».`,
+            R`[[<progress>]] مهمة من ٤ خطوات ([[max="4"]]) خلص منها ٢ ([[value="2"]]): الشريط مليان نصه. والكلام اللي بين الفتحة والقفلة بيظهر بس في متصفح قديم ميعرفش العنصر.`,
+            R`اسم الشريط التاني: مهمة شغالة دلوقتي.`,
+            R`[[<progress>]] من غير [[value]]: «شغال، ومش عارف خلص قد إيه». المتصفح بيرسمه شريط بيتحرك رايح جاي.`,
+            R`اسم المقياس، وفيه القيمة بالأرقام.`,
+            R`[[<meter>]] قياس: ١٨ في مدى من ٠ لـ ٢٠. [[low="10"]] و [[high="16"]] بيقسموا المدى تلات مناطق، و [[optimum="5"]] بيقول إن المنطقة القليلة هي الكويسة (حصة فاضية أحسن للي عايز يحجز). ١٨ في أبعد منطقة عنها، فالشريط أحمر.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+المواصفة: [[<progress>]] بيمثّل «مدى اكتمال مهمة»، و [[<meter>]] بيمثّل «قياس عددي جوه مدى معروف، أو كسر من كل». الأول ليه نهاية بيتحرك ناحيتها، والتاني رقم ممكن يطلع وينزل.
+
+القياسات من Chrome 157 على Windows 11. الألوان اتشافت في صورة للصفحة من نفس المتصفح.
+
+---
+
+## ١. [[<progress value="2" max="4">]]
+
+~~~live 34 مهمة من ٤ خطوات، خلص منها ٢
+<label for="step">الخطوة ٢ من ٤</label>
+<progress id="step" value="2" max="4">٢ من ٤</progress>
+~~~
+
+**هتشوف إيه:** شريط نصه الأول ملوّن (أزرق في Chrome على Windows) ونصه التاني رمادي. اللون وشكل الحواف بيختلفوا من متصفح لمتصفح ومن نظام لنظام.
+
+- [[value]]: خلص قد إيه.
+- [[max]]: المهمة كلها قد إيه. من غيره [[max]] = ١، و [[value]] ساعتها كسر بين ٠ و ١.
+- مفيش [[min]]: المهمة دايمًا بتبدأ من صفر.
+
+~~~text القياس من Chrome
+الحجم الافتراضي: 160 × 16 px     display: inline-block     role: progressbar
+
+<progress value="2" max="4">        position = 0.5     (النسبة المليانة)
+<progress value="0.3">              max = 1      position = 0.3
+<progress value="30" max="100">     position = 0.3
+<progress value="150" max="100">    value = 100  position = 1      (أكبر من max: بيتقفل عند max)
+<progress value="-5" max="100">     value = 0    position = 0
+~~~
+
+[[position]] هو [[value ÷ max]]: الجزء المليان من الشريط. والقيمة اللي برّه المدى المتصفح بيرجّعها جواه في صمت.
+
+الكلام اللي بين [[<progress>]] و [[</progress>]] (هنا «٢ من ٤») **مبيظهرش** في أي متصفح حديث. هو للمتصفح القديم اللي ميعرفش العنصر: هيعرض الكلام ده مكان الشريط.
+
+---
+
+## ٢. [[<progress>]] من غير [[value]]
+
+~~~live 34 مهمة مش معروف هتخلص إمتى
+<label for="load">جاري رفع الصورة</label>
+<progress id="load"></progress>
+~~~
+
+**هتشوف إيه:** في Chrome على Windows: حتة ملوّنة بتتحرك من طرف الشريط للطرف التاني وترجع، من غير ما تقف.
+
+~~~text القياس من Chrome
+<progress></progress>     position = -1      :indeterminate = true      role = progressbar
+~~~
+
+دي الحالة «غير المحددة» (indeterminate): المهمة شغالة، ومفيش رقم نقوله. [[position = -1]] معناها «مفيش نسبة»، والـ CSS بيمسكها بـ [[:indeterminate]].
+
+الفرق بينها وبين [[value="0"]]: صفر معناه «لسه مبدأش»، ومن غير [[value]] معناه «شغال ومش عارف وصل فين».
+
+---
+
+## ٣. الشريط مبيتحركش لوحده
+
+[[<progress>]] بيعرض الرقم اللي في [[value]] وبس. عشان يتحرك لازم حاجة تغيّر [[value]]:
+
+- **فورم من كذا صفحة:** كل صفحة ملف HTML لوحده، وفيه الشريط بقيمة ثابتة مكتوبة بإيدك: صفحة ١ فيها [[value="1"]]، وصفحة ٢ فيها [[value="2"]]. مفيش JavaScript خالص (ده اللي هتعمله في مشاريع الوحدة).
+- **رفع ملف أو تحميل:** JavaScript بيغيّر [[progress.value]] مع كل جزء بيخلص. ده في كورس JavaScript.
+
+~~~live 162 الخطوة ٣ من ٤ في فورم اشتراك
+<p><label for="step">اشتراك عضو جديد: الخطوة ٣ من ٤ (المستندات)</label><br>
+<progress id="step" value="3" max="4">٣ من ٤</progress></p>
+<ol>
+  <li>بياناتك ✓</li>
+  <li>اللعبة والمواعيد ✓</li>
+  <li><strong>المستندات</strong></li>
+  <li>المراجعة والدفع</li>
+</ol>
+~~~
+
+**هتشوف إيه:** الشريط مليان تلات أرباعه، وتحته الخطوات الأربعة مكتوبة والحالية تقيلة. الشريط بيدّي الإحساس، والقايمة بتقول الأسامي: الاتنين مع بعض.
+
+---
+
+## ٤. [[<meter value="12" min="0" max="20">]]
+
+~~~live 34 قياس: ١٢ من ٢٠
+<label for="seats">الأماكن المحجوزة: ١٢ من ٢٠</label>
+<meter id="seats" value="12" min="0" max="20">١٢ من ٢٠</meter>
+~~~
+
+**هتشوف إيه:** شريط أقصر من بتاع [[<progress>]]، مليان ٦٠٪ منه بالأخضر.
+
+- [[value]]: القياس الحالي. **إجباري** (من غيره القياس صفر).
+- [[min]] و [[max]]: أول وآخر المدى. الافتراضي ٠ و ١.
+
+~~~text القياس من Chrome
+الحجم الافتراضي: 80 × 16 px     display: inline-block     role: meter
+
+<meter value="0.6">                    min = 0   max = 1      (من غير min و max: كسر)
+<meter value="60" min="0" max="100">   60 من 100
+<meter value="150" max="100">          value = 100    (بيتقفل عند max)
+<meter value="5" min="10" max="100">   value = 10     (بيتقفل عند min)
+~~~
+
+**أشهر غلطة:** [[<meter value="60">]] من غير [[max]]. المدى الافتراضي من ٠ لـ ١، فالـ ٦٠ بتتقفل عند ١ والشريط بيطلع مليان على الآخر.
+
+---
+
+## ٥. [[<meter low="10" high="16" optimum="5">]]: القيمة كويسة ولا وحشة
+
+التلاتة مع بعض بيخلّوا الشريط يتلوّن:
+
+- [[low]] و [[high]] بيقسموا المدى **تلات مناطق**: القليلة (من [[min]] لـ [[low]])، والوسط (من [[low]] لـ [[high]])، والعالية (من [[high]] لـ [[max]]).
+- [[optimum]] رقم بيقع في واحدة من التلات مناطق: **المنطقة دي هي الكويسة.**
+
+~~~live 118 172 نفس التقسيم (low=30 و high=70) ونفس القيم، و optimum مختلف
+<p>العالي كويس (optimum=90):
+<meter value="20" max="100" low="30" high="70" optimum="90">20</meter>
+<meter value="50" max="100" low="30" high="70" optimum="90">50</meter>
+<meter value="85" max="100" low="30" high="70" optimum="90">85</meter></p>
+<p>القليل كويس (optimum=10):
+<meter value="20" max="100" low="30" high="70" optimum="10">20</meter>
+<meter value="50" max="100" low="30" high="70" optimum="10">50</meter>
+<meter value="85" max="100" low="30" high="70" optimum="10">85</meter></p>
+<p>الوسط كويس (optimum=50):
+<meter value="20" max="100" low="30" high="70" optimum="50">20</meter>
+<meter value="50" max="100" low="30" high="70" optimum="50">50</meter>
+<meter value="85" max="100" low="30" high="70" optimum="50">85</meter></p>
+~~~
+
+~~~text القياس من Chrome على Windows (ألوان الشريط، والقيم 20 و 50 و 85)
+                           القيمة 20      القيمة 50      القيمة 85
+optimum=90 (العالي كويس)   أحمر           أصفر           أخضر
+optimum=10 (القليل كويس)   أخضر           أصفر           أحمر
+optimum=50 (الوسط كويس)    أصفر           أخضر           أصفر
+
+من غير low و high خالص:    أخضر           أخضر           أخضر
+low و high من غير optimum: أصفر           أخضر           أصفر
+~~~
+
+القاعدة اللي ورا الجدول:
+
+- القيمة في **نفس منطقة** الـ [[optimum]]: أخضر.
+- القيمة في المنطقة **اللي جنبها**: أصفر.
+- القيمة في المنطقة **البعيدة** (والـ optimum في الطرف التاني): أحمر.
+
+وسطرين في آخر الجدول:
+
+- من غير [[low]] و [[high]] مفيش مناطق، فالشريط أخضر دايمًا.
+- [[low]] و [[high]] من غير [[optimum]]: الـ optimum الافتراضي نص المدى (اتقاس: [[meter.optimum = 50]])، فالوسط هو الكويس. عشان كده مفيش أحمر: مفيش منطقة «بعيدة» عن الوسط.
+
+أمثلة من الواقع:
+
+| القياس | الكويس | [[optimum]] |
+|---|---|---|
+| شحن البطارية، نسبة الحضور، الدرجة | العالي | قرب [[max]] |
+| مساحة الديسك المستخدمة، الأماكن المحجوزة، استهلاك الباقة | القليل | قرب [[min]] |
+| درجة حرارة المية، ضغط الكاوتش | الوسط | بين [[low]] و [[high]] |
+
+الألوان نفسها (أخضر وأصفر وأحمر) من Chrome. MDN بيقول إن المتصفح «ممكن» يلوّن الشريط حسب المنطقة، فمتعتمدش على لون معين.
+
+---
+
+## ٦. مين فيهم؟
+
+| عايز تعرض | العنصر | ليه |
+|---|---|---|
+| رفع ملف، خطوات فورم، تحميل | [[<progress>]] | مهمة ليها نهاية |
+| حاجة شغالة ومش عارف مدتها | [[<progress>]] من غير [[value]] | |
+| مساحة مستخدمة، أماكن محجوزة، درجة من ١٠٠، نسبة تصويت | [[<meter>]] | قياس في مدى معروف |
+| رقم الزائر **بيختاره** في مدى | [[<input type="range">]] | ده حقل، والاتنين التانيين للعرض بس |
+| رقم من غير مدى (السن، السعر، عدد الأعضاء) | نص عادي أو [[<output>]] | مفيش «من كام» |
+
+المواصفة بتحدد حالتين [[<meter>]] مش ليهم:
+
+- **مش للتقدّم.** ده شغل [[<progress>]].
+- **مش لرقم ملوش حد أقصى معروف.** الوزن أو الطول مينفعش يتحطوا في [[<meter>]] إلا لو فيه [[max]] ليه معنى.
+
+والاتنين **للعرض بس**: الزائر مبيغيّرهمش، ومبيتبعتوش مع الفورم.
+
+---
+
+## ٧. الاسم والرقم المكتوب
+
+~~~text القياس من Chrome (شجرة الـ accessibility)
+<label for="step">الخطوة ٢ من ٤</label> <progress id="step" value="2" max="4">
+→  progressbar «الخطوة ٢ من ٤»
+
+<label for="seats">الأماكن المحجوزة: ١٨ من ٢٠</label> <meter id="seats" value="18" max="20">
+→  meter «الأماكن المحجوزة: ١٨ من ٢٠»
+~~~
+
+تلات حاجات لازم تبقى مع أي شريط:
+
+1. **[[<label>]].** شريط من غير اسم ملوش معنى لحد.
+2. **الرقم مكتوب نص.** الشريط بيدّي فكرة تقريبية. «١٨ من ٢٠» بتقول الحقيقة. حطها في الـ label أو جنب الشريط.
+3. **متعتمدش على اللون.** أحمر وأخضر بيتلخبطوا عند ناس كتير (عمى الألوان). لو الحالة مهمة اكتبها: «الحصة قربت تكمل».
+
+إزاي قارئ الشاشة بينطق القيمة بيختلف من برنامج لبرنامج (ومتقاسش هنا)، وده سبب تاني إن الرقم يبقى في الـ label.
+
+---
+
+## ٨. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[<meter value="60">]] من غير [[max]] | المدى ٠ لـ ١: الشريط مليان على الآخر |
+| [[<progress>]] لمساحة الديسك | المعنى غلط: ده قياس مش مهمة، ومفيش ألوان تحذير |
+| [[<meter>]] لخطوات فورم | المعنى غلط، وقارئ الشاشة هيقول «meter» مش «progress» |
+| [[<progress min="1">]] | مفيش [[min]] على progress: بيتجاهله |
+| شريط من غير label ومن غير رقم | محدش عارف ده شريط إيه ولا واصل فين |
+| [[optimum]] من غير [[low]] و [[high]] | مفيش مناطق، فمفيش تغيير في اللون |
+| [[low]] أكبر من [[high]] | التقسيم ملوش معنى، والمتصفح بيعدّل القيم في صمت |
+| تستنى الشريط يتحرك لوحده | [[value]] ثابت لحد ما JavaScript أو صفحة جديدة يغيّروه |
+
+---
+
+## الخلاصة
+
+- [[<progress value max>]]: مهمة خلص منها قد إيه. من غير [[value]]: شغال ومش معروف.
+- [[<meter value min max>]]: قياس في مدى. [[max]] لازم يتكتب لو المدى مش من ٠ لـ ١.
+- [[low]] و [[high]] بيعملوا تلات مناطق، و [[optimum]] بيقول مين فيهم الكويسة: نفس المنطقة أخضر، اللي جنبها أصفر، البعيدة أحمر (في Chrome).
+- الاتنين للعرض: مبيتغيّروش من الزائر ومبيتبعتوش.
+- دايمًا معاهم [[<label>]] والرقم مكتوب.`,
+          try: R`اعمل ملف [[bars.html]] فيه [[<meter>]] لشحن بطارية: المدى من ٠ لـ ١٠٠، و [[low="20"]] و [[high="80"]] و [[optimum="100"]]. اكتبه ٣ مرات بقيم ١٠ و ٥٠ و ٩٠، ومع كل واحد label فيه الرقم. افتح الصفحة وبص على الألوان. وبعدين غيّر [[optimum]] في التلاتة لـ [[0]] وبص تاني.`,
+          sol: R`~~~live 118 bars.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>البطارية</title>
+</head>
+<body>
+<p><label for="a">الشحن ١٠٪</label>
+<meter id="a" value="10" min="0" max="100" low="20" high="80" optimum="100">١٠٪</meter></p>
+<p><label for="b">الشحن ٥٠٪</label>
+<meter id="b" value="50" min="0" max="100" low="20" high="80" optimum="100">٥٠٪</meter></p>
+<p><label for="c">الشحن ٩٠٪</label>
+<meter id="c" value="90" min="0" max="100" low="20" high="80" optimum="100">٩٠٪</meter></p>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:**
+
+- **بـ [[optimum="100"]]** (العالي كويس): ١٠٪ أحمر، و ٥٠٪ أصفر، و ٩٠٪ أخضر. زي أيقونة البطارية.
+- **بـ [[optimum="0"]]** (القليل كويس): الألوان اتعكست: ١٠٪ أخضر، و ٥٠٪ أصفر، و ٩٠٪ أحمر. نفس الأرقام ونفس [[low]] و [[high]]، والمعنى اتقلب. ده مناسب لـ «مساحة مستخدمة» مش لبطارية.
+
+~~~text القياس من Chrome على Windows
+                 10        50        90
+optimum="100"    أحمر      أصفر      أخضر
+optimum="0"      أخضر      أصفر      أحمر
+~~~
+
+[[optimum]] مش لازم يبقى [[max]] أو [[min]] بالظبط: أي رقم جوه المنطقة الكويسة بيدّي نفس النتيجة. ٩٠ زي ١٠٠ هنا.`,
+          deep: {
+            why: R`قبل العنصرين دول، أي شريط كان [[<div>]] جواه [[<div>]] عرضه نسبة، وقارئ الشاشة مكانش بيشوف حاجة. العنصرين بيدّوك الشريط والمعنى مع بعض: role صح، وقيمة بتتقري، ومن غير CSS ولا JavaScript. وفورم الاشتراك الطويل من غير «الخطوة ٢ من ٤» الناس بتسيبه في النص، لأنها مش عارفة باقي قد إيه.`,
+            how: R`المتصفح بيحسب لـ [[<progress>]] النسبة [[value ÷ max]] (بعد ما يحبس [[value]] بين ٠ و [[max]]) ويرسم الجزء ده مليان. لو مفيش [[value]] بيدخل الحالة غير المحددة ويشغّل حركة. و [[<meter>]] بيحبس كل أرقامه جوه [[min]] و [[max]]، وبعدين بيحدد منطقة القيمة ومنطقة الـ [[optimum]]: نفس المنطقة «optimum»، متجاورتين «suboptimum»، متباعدتين «even less good» (دي أسامي الحالات في المواصفة)، وكل حالة ليها لون في المتصفح. والعنصرين في شجرة الـ accessibility بـ role [[progressbar]] و [[meter]] ومعاهم القيمة الحالية والمدى.`,
+            when: R`[[<progress>]]: خطوات فورم أو طلب، رفع وتحميل، نسبة إكمال كورس أو بروفايل. من غير [[value]]: انتظار رد سيرفر مش معروف مدته. [[<meter>]]: استهلاك باقة أو مساحة، أماكن فاضية، درجة امتحان، قوة كلمة سر، تقييم من ٥.`,
+            mistakes: R`[[<meter>]] من غير [[max]] وقيمة أكبر من ١. استخدام واحد مكان التاني. [[min]] على [[<progress>]]. [[optimum]] لوحده من غير [[low]] و [[high]]. شريط من غير label ولا رقم مكتوب. والاعتماد على اللون لوحده عشان يقول «خطر».`
+          },
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** لوحة العضو في «نادي الموج» فيها تلات شرايط، كل واحد بالعنصر المناسب: (١) «إكمال بياناتك: ٣ من ٥ خطوات». (٢) «نسبة حضورك: ٨٥٪» والعالي كويس، وتحت ٥٠ ضعيف وفوق ٨٠ ممتاز. (٣) «حصصك المستخدمة: ٩ من ١٠» والقليل كويس، ولحد ٥ مريح وفوق ٨ قرّبت تخلص. (من قسم ١ و ٤ و ٥ و ٦ في الشرح)`, done: R`شريط [[<progress>]] واتنين [[<meter>]] بالمدى والمناطق والـ optimum الصح، وكل واحد ليه label، وكل الشروط ✓.`, work: { h: 182, start: R`<h1>لوحة العضو</h1>
+<p>إكمال بياناتك: ٣ من ٥ خطوات</p>
+<p>نسبة حضورك: ٨٥٪</p>
+<p>حصصك المستخدمة: ٩ من ١٠</p>`, checks: [
+              { say: R`إكمال البيانات [[<progress>]] قيمته ٣ من ٥`, q: "progress[value=\"3\"][max=\"5\"]" },
+              { say: R`الحضور [[<meter>]] قيمته ٨٥ من ١٠٠`, q: "meter[value=\"85\"][max=\"100\"]" },
+              { say: R`الحضور: [[low="50"]] و [[high="80"]]`, q: "meter[value=\"85\"][low=\"50\"][high=\"80\"]" },
+              { say: R`الحصص [[<meter>]] قيمته ٩ من ١٠ و [[low="5"]] و [[high="8"]]`, q: "meter[value=\"9\"][max=\"10\"][low=\"5\"][high=\"8\"]" },
+              { say: R`الاتنين meter ليهم [[optimum]]`, q: "meter[optimum]", n: 2 },
+              { say: R`التلات شرايط ليهم [[<label>]]`, q: "label[for]", n: 3 },
+            ] }, sol: R`~~~live 182 الحل
+<h1>لوحة العضو</h1>
+<p><label for="profile">إكمال بياناتك: ٣ من ٥ خطوات</label>
+<progress id="profile" value="3" max="5">٣ من ٥</progress></p>
+<p><label for="attend">نسبة حضورك: ٨٥٪</label>
+<meter id="attend" value="85" min="0" max="100" low="50" high="80" optimum="100">٨٥٪</meter></p>
+<p><label for="used">حصصك المستخدمة: ٩ من ١٠</label>
+<meter id="used" value="9" min="0" max="10" low="5" high="8" optimum="0">٩ من ١٠</meter></p>
+~~~
+
+**هتشوف إيه:**
+
+- الأول شريط طويل مليان ٦٠٪ (أزرق في Chrome).
+- التاني قصيّر وأخضر: ٨٥ في المنطقة العالية، وهي الكويسة.
+- التالت قصيّر وأحمر: ٩ في المنطقة العالية، والكويسة هي القليلة.
+
+**ليه كده:**
+
+- إكمال البيانات مهمة ليها نهاية ← [[<progress>]]. الحضور والحصص قياسات ← [[<meter>]].
+- الحضور: [[optimum="100"]] في المنطقة فوق ٨٠. الحصص: [[optimum="0"]] في المنطقة تحت ٥.
+- نفس الشكل تقريبًا (٨٥٪ و ٩٠٪ مليانين)، واللون عكس بعض: ده شغل [[optimum]].
+
+**الغلطة الشائعة:** [[<meter value="85">]] من غير [[max="100"]]. الشريط هيتملي كله، لأن المدى الافتراضي آخره ١.
+
+~~~text القياس من Chrome على Windows
+progress 3/5:                               position = 0.6
+meter 85 (low=50 high=80 optimum=100):      أخضر
+meter 9  (low=5  high=8  optimum=0):        أحمر
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في صفحة الاشتراك تلات شرايط كلهم غلط: خطوات الفورم معمولة [[<meter>]]، ومساحة ملفات العضو معمولة [[<progress>]]، ودرجة اختبار السباحة [[<meter value="70">]] مليان على الآخر مع إنها ٧٠ من ١٠٠. (من قسم ٤ و ٦ و ٨ في الشرح)`, done: R`الخطوات [[<progress>]]، والمساحة [[<meter>]] والقليل فيه كويس، والدرجة ليها [[max="100"]]، وكل الشروط ✓.`, work: { h: 120, start: R`<p><label for="s">الخطوة ٢ من ٤</label>
+<meter id="s" value="2" max="4">٢ من ٤</meter></p>
+<p><label for="d">مساحة ملفاتك: ٤٥٠ من ٥٠٠ ميجا</label>
+<progress id="d" value="450" max="500">٤٥٠ من ٥٠٠</progress></p>
+<p><label for="g">درجة اختبار السباحة: ٧٠ من ١٠٠</label>
+<meter id="g" value="70">٧٠</meter></p>`, checks: [
+              { say: R`الخطوات بقت [[<progress>]] قيمته ٢ من ٤`, q: "progress#s[value=\"2\"][max=\"4\"]" },
+              { say: R`المساحة بقت [[<meter>]] قيمته ٤٥٠ من ٥٠٠`, q: "meter#d[value=\"450\"][max=\"500\"]" },
+              { say: R`المساحة ليها [[low]] و [[high]] و [[optimum]]`, q: "meter#d[low][high][optimum]" },
+              { say: R`الدرجة ليها [[max="100"]]`, q: "meter#g[value=\"70\"][max=\"100\"]" },
+              { say: R`كل شريط لسه ليه [[<label>]]`, q: "label[for]", n: 3 },
+            ] }, sol: R`~~~live 118 بعد التصليح
+<p><label for="s">الخطوة ٢ من ٤</label>
+<progress id="s" value="2" max="4">٢ من ٤</progress></p>
+<p><label for="d">مساحة ملفاتك: ٤٥٠ من ٥٠٠ ميجا</label>
+<meter id="d" value="450" min="0" max="500" low="250" high="400" optimum="0">٤٥٠ من ٥٠٠</meter></p>
+<p><label for="g">درجة اختبار السباحة: ٧٠ من ١٠٠</label>
+<meter id="g" value="70" min="0" max="100">٧٠</meter></p>
+~~~
+
+وده اللي كان باين قبل التصليح:
+
+~~~live 118 136 قبل
+<p><label for="s">الخطوة ٢ من ٤</label>
+<meter id="s" value="2" max="4">٢ من ٤</meter></p>
+<p><label for="d">مساحة ملفاتك: ٤٥٠ من ٥٠٠ ميجا</label>
+<progress id="d" value="450" max="500">٤٥٠ من ٥٠٠</progress></p>
+<p><label for="g">درجة اختبار السباحة: ٧٠ من ١٠٠</label>
+<meter id="g" value="70">٧٠</meter></p>
+~~~
+
+**هتشوف إيه:**
+
+- قبل: الخطوات شريط قصيّر أخضر، والمساحة شريط أزرق عادي (مفيش أي تحذير مع إنها قرّبت تخلص)، والدرجة مليانة ١٠٠٪.
+- بعد: الخطوات شريط تقدّم نصه مليان، والمساحة **حمرا**، والدرجة مليانة ٧٠٪.
+
+| المشكلة | التصليح | ليه |
+|---|---|---|
+| خطوات في [[<meter>]] | [[<progress>]] | مهمة ليها نهاية |
+| مساحة في [[<progress>]] | [[<meter>]] بمناطق و [[optimum="0"]] | قياس، والقليل كويس، ولازم يحذّر |
+| [[<meter value="70">]] | زوّدنا [[max="100"]] | المدى الافتراضي ٠ لـ ١ |
+
+**الغلطة الشائعة:** تصلّح الدرجة بـ [[value="0.7"]] بدل [[max="100"]]. الشريط هيطلع صح، بس قارئ الشاشة هيقرا «٠٫٧» والـ label بيقول «٧٠».
+
+~~~text القياس من Chrome
+قبل:   <meter value="70">             →  meter.value = 1     (اتقفلت عند max الافتراضي)
+بعد:   <meter value="70" max="100">   →  meter.value = 70
+       meter 450 من 500 (low=250 high=400 optimum=0)   →  أحمر
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** تلات مقاييس لحرارة مية حمام السباحة، نفس القيمة (٢٠ درجة) ونفس المناطق، و [[optimum]] مختلف. اكتب على ورقة لون كل واحد وقارن باللي قدامك. وبعدين: الحرارة المثالية للسباحة ٢٧ درجة، فصلّح المقياس التالت عشان الوسط يبقى هو الكويس. (من قسم ٥ في الشرح: جدول الألوان)`, done: R`توقّعت أحمر ثم أخضر ثم أحمر، وبعد التصليح التالت بقى أصفر (٢٠ جنب المنطقة الكويسة)، وكل الشروط ✓.`, work: { h: 120, start: R`<p><label for="a">أ: الحرارة ٢٠°</label>
+<meter id="a" value="20" min="10" max="40" low="24" high="30" optimum="38">٢٠°</meter></p>
+<p><label for="b">ب: الحرارة ٢٠°</label>
+<meter id="b" value="20" min="10" max="40" low="24" high="30" optimum="12">٢٠°</meter></p>
+<p><label for="c">ج: الحرارة ٢٠°</label>
+<meter id="c" value="20" min="10" max="40" low="24" high="30" optimum="38">٢٠°</meter></p>`, checks: [
+              { say: R`المقياس «ج» بقى [[optimum="27"]]`, q: "meter#c[optimum=\"27\"]" },
+              { say: R`«ج» لسه بنفس المناطق: [[low="24"]] و [[high="30"]]`, q: "meter#c[low=\"24\"][high=\"30\"]" },
+              { say: R`«أ» و «ب» زي ما هم`, q: "meter#a[optimum=\"38\"], meter#b[optimum=\"12\"]", n: 2 },
+            ] }, sol: R`~~~live 118 بعد التصليح
+<p><label for="a">أ: الحرارة ٢٠°</label>
+<meter id="a" value="20" min="10" max="40" low="24" high="30" optimum="38">٢٠°</meter></p>
+<p><label for="b">ب: الحرارة ٢٠°</label>
+<meter id="b" value="20" min="10" max="40" low="24" high="30" optimum="12">٢٠°</meter></p>
+<p><label for="c">ج: الحرارة ٢٠°</label>
+<meter id="c" value="20" min="10" max="40" low="24" high="30" optimum="27">٢٠°</meter></p>
+~~~
+
+**هتشوف إيه:**
+
+- «أ» أحمر، و «ب» أخضر، و «ج» قبل التصليح أحمر زي «أ» وبعده **أصفر**.
+
+**ليه:** القيمة ٢٠ في المنطقة القليلة (من ١٠ لـ ٢٤).
+
+| المقياس | الـ optimum في أنهي منطقة | القيمة ٢٠ منها | اللون |
+|---|---|---|---|
+| أ ([[38]]) | العالية | بعيدة (بينهم منطقة) | أحمر |
+| ب ([[12]]) | القليلة | نفسها | أخضر |
+| ج ([[27]]) | الوسط | جنبها | أصفر |
+
+يعني مية ٢٠ درجة «مش مثالية بس مش كارثة»، وده المعنى الصح لحمام سباحة: المثالي في النص، والبرد والسخونة الاتنين وحشين.
+
+**الغلطة الشائعة:** تحاول تخلّي «ج» أخضر بتغيير [[low]] لـ ١٥. الشريط هيخضرّ، بس انت كده بتقول إن ٢٠ درجة مثالية، وده مش صحيح. المناطق بتتحدد من الواقع، مش من اللون اللي عايزه.
+
+~~~text القياس من Chrome على Windows
+أ (optimum=38):   أحمر
+ب (optimum=12):   أخضر
+ج (optimum=27):   أصفر
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** صنّف الست حاجات دي: [[<progress>]] ولا [[<meter>]] ولا ولا واحد فيهم؟ وسبب في كلمتين لكل واحدة: (١) رفع فيديو التمرين. (٢) عدد أعضاء النادي: ١٢٤٠. (٣) قوة كلمة السر. (٤) «الطلب: اتأكد ← بيتجهز ← في الطريق ← وصل». (٥) شحن الساعة الرياضية. (٦) مستوى الصوت اللي العضو بيظبطه. (من قسم ٦ في الشرح: «مين فيهم؟»)`, done: R`صنّفت الستة وكتبت السبب: مهمة ليها نهاية، ولا قياس في مدى، ولا رقم من غير مدى، ولا حقل الزائر بيغيّره.`, sol: R`**إجابة نموذجية:**
+
+| الحاجة | العنصر | السبب |
+|---|---|---|
+| رفع فيديو التمرين | [[<progress>]] | مهمة بتخلص عند ١٠٠٪ |
+| عدد الأعضاء ١٢٤٠ | ولا واحد: نص عادي | رقم من غير حد أقصى معروف |
+| قوة كلمة السر | [[<meter>]] | قياس في مدى (ضعيفة لقوية)، والعالي كويس |
+| مراحل الطلب | [[<progress>]] | مهمة من ٤ خطوات ليها نهاية |
+| شحن الساعة | [[<meter>]] | قياس من ٠ لـ ١٠٠، بيطلع وينزل |
+| مستوى الصوت اللي بيتظبط | ولا واحد: [[<input type="range">]] | الزائر **بيغيّره**، والاتنين التانيين للعرض بس |
+
+**السؤالين اللي بيحسموها:**
+
+1. الزائر بيغيّر القيمة؟ أيوه ← [[range]]. لأ ← كمّل.
+2. فيه «من كام»؟ لأ ← نص. أيوه وبيمشي ناحية نهاية ← [[<progress>]]. أيوه وبيطلع وينزل ← [[<meter>]].
+
+**الغلطة الشائعة:** شحن البطارية [[<progress>]] «عشان بيتملي». الشحن بينزل تاني، ومفيش مهمة بتخلص: ده قياس.` }
+          ]
+        },
+        {
+          cmd: "أزرار الفورم: formaction وإخواته",
+          title: "أكتر من زرار في الفورم: type و name و value و form و formaction و formnovalidate",
+          pre: ["css/a و button", { to: "css/GET و POST و enctype", why: R`[[action]] و [[method]] و [[enctype]] و [[target]] على الفورم اتشرحوا هناك، وهنا الزرار بيغيّرهم` }, { to: "css/Constraint Validation API", why: R`فحص المتصفح اللي [[novalidate]] بيوقفه` }],
+          ref: [
+            { t: "MDN: <button>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button" },
+            { t: "WHATWG: the button element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-button-element" },
+            { t: "WHATWG: Form submission attributes (formaction...)", url: "https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#form-submission-attributes" },
+            { t: "WHATWG: Implicit submission", url: "https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#implicit-submission" },
+            { t: "MDN: form attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/form" },
+            { t: "MDN Curriculum: Semantic HTML › Other interactive elements", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" }
+          ],
+          desc: R`الفورم بيتبعت لما **زرار** يتداس، والزرار ده مش مجرد «ابعت»: يقدر يبعت قيمة باسمه ([[name]] و [[value]])، ويقدر يغيّر للطلب ده بس العنوان والـ method وشكل الجسم ([[formaction]] و [[formmethod]] و [[formenctype]] و [[formtarget]])، ويقدر يعدّي من فحص المتصفح ([[formnovalidate]])، ويقدر يبقى مكتوب برّه الفورم خالص ([[form]]).
+وأول حاجة في الدرس الفخ اللي كل مبتدئ بيقع فيه: [[<button>]] جوه فورم **بيبعت الفورم** حتى لو مكتبتش إنه زرار إرسال.`,
+          example: R`<form id="join" action="/join" method="post">
+  <label for="email">الإيميل</label>
+  <input id="email" name="email" type="email" required>
+  <button type="submit" name="act" value="send">اشترك</button>
+  <button type="submit" name="act" value="draft" formaction="/draft" formnovalidate>احفظ كمسودة</button>
+  <button type="button">إلغاء</button>
+</form>
+<button type="submit" form="join" name="act" value="send">اشترك دلوقتي</button>`,
+          flag: "script",
+          lines: [
+            R`الفورم ليه [[id="join"]] عشان الزرار اللي برّه (آخر سطر) يقدر يشاور عليه. وبيبعت [[post]] لـ [[/join]].`,
+            R`اسم الحقل، مربوط بيه بـ [[for="email"]].`,
+            R`حقل إيميل إجباري: المتصفح مش هيبعت الفورم وهو فاضي أو شكله غلط.`,
+            R`زرار الإرسال الأساسي. [[name="act"]] و [[value="send"]]: لو هو اللي اتداس، هيتبعت [[act=send]] مع باقي البيانات.`,
+            R`زرار إرسال تاني لنفس الفورم. [[value="draft"]] بيقول للسيرفر إن ده حفظ مش اشتراك، و [[formaction="/draft"]] بيبعت الطلب لعنوان تاني، و [[formnovalidate]] بيعدّي من الفحص: المسودة تتحفظ حتى لو الإيميل لسه فاضي.`,
+            R`[[type="button"]]: زرار مبيبعتش. مستني JavaScript يقوله يعمل إيه (يقفل النافذة مثلًا). من غير الكلمة دي كان هيبعت الفورم.`,
+            R`[[</form>]] آخر الفورم: التلات أزرار اللي فوق تبعه لأنهم جواه.`,
+            R`زرار مكتوب **برّه** الفورم، و [[form="join"]] بيربطه بيه: الضغط عليه بيبعت الفورم كأنه جواه.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+الفورم بيقول القاعدة ([[action]] و [[method]])، والزرار اللي اتداس يقدر يكسرها للمرة دي. وده اللي بيخلّي فورم واحد يعمل كذا حاجة: «اشترك»، «احفظ كمسودة»، «معاينة».
+
+القياسات من Chrome 157 على Windows 11، والطلبات على السيرفر المحلي بتاع درس «GET و POST و enctype».
+
+---
+
+## ١. [[<button type="submit">]] و [[<button type="button">]] و [[<button type="reset">]]
+
+[[<button>]] ليه تلات أنواع:
+
+| قيمة [[type]] | الزرار بيعمل إيه لما يتداس |
+|---|---|
+| [[submit]] | بيبعت الفورم اللي هو تبعه |
+| [[button]] | ولا حاجة لوحده: مستني JavaScript |
+| [[reset]] | بيرجّع حقول الفورم لقيمها الأولى |
+
+### الفخ: من غير [[type]] الزرار [[submit]]
+
+~~~text القياس من Chrome
+<button> جوه فورم، من غير type:      button.type = submit
+<button type="foo">:                 button.type = submit     (قيمة غلط = الافتراضي)
+<button type="button">:              button.type = button
+~~~
+
+يعني أي [[<button>]] تكتبه جوه [[<form>]] من غير [[type]] هو زرار إرسال. جرّب:
+
+~~~live 161 دوس «أظهر كلمة السر»
+<form onsubmit="event.preventDefault(); sent.value = 'الفورم اتبعت! ' + decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="email">الإيميل</label> <input id="email" name="email" value="mona@example.test"></p>
+  <p><label for="pass">كلمة السر</label> <input id="pass" name="pass" type="password" value="s3cret">
+  <button>أظهر كلمة السر</button></p>
+  <button>ادخل</button>
+</form>
+<p><output id="sent">(لسه محصلش إرسال)</output></p>
+~~~
+
+**هتشوف إيه:** دوست على «أظهر كلمة السر» فطلع «الفورم اتبعت!». الزرار ده المفروض يكشف الحروف بس، لكنه من غير [[type]] فبعت الفورم. في صفحة حقيقية الزائر كان هيتنقل لصفحة تانية وهو لسه بيكتب.
+
+**القاعدة:** كل [[<button>]] جوه فورم يتكتب عليه [[type]] صريح. اللي بيبعت [[type="submit"]]، وأي زرار تاني [[type="button"]].
+
+وبرّه أي فورم، الزرار برضه [[type]] بتاعه [[submit]]، بس مفيش فورم يبعته، فالضغط مبيعملش حاجة (اتقاس: [[button.form = null]]).
+
+### [[<button type="reset">]]
+
+نفس [[<input type="reset">]] في درس «أنواع input كلها»: بيرجّع كل الحقول لـ [[value]] المكتوب في الكود.
+
+~~~text القياس من Chrome
+غيّرنا الحقل من «1» لـ «changed» ودوسنا <button type="reset">:   القيمة رجعت «1» ، ومفيش طلب اتبعت
+~~~
+
+**وليه وحش:** ضغطة غلط بتمسح كل اللي الزائر كتبه ومفيش تراجع، وهو أصلًا نادر حد يحتاجه. MDN بينصح متحطوش. لو فيه سبب حقيقي (فورم فلاتر مثلًا): بعيد عن زرار الإرسال، وشكله أهدى، وكلمته واضحة («امسح الفلاتر»).
+
+---
+
+## ٢. [[<button name="act" value="send">]]: مين الزرار اللي اتداس؟
+
+الزرار بيتبعت زي الحقول: [[name]] هو المفتاح و [[value]] هو القيمة. بفرق واحد: **الزرار اللي اتداس بس** هو اللي بيتبعت.
+
+~~~live 124 دوس كل زرار وشوف الفرق
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="note">الطلب</label> <input id="note" name="note" value="حصة سباحة"></p>
+  <button type="submit" name="act" value="save">حفظ</button>
+  <button type="submit" name="act" value="send">إرسال</button>
+  <button type="submit" value="x">من غير name</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- «حفظ»: [[note=حصة+سباحة&act=save]].
+- «إرسال»: [[note=حصة+سباحة&act=send]].
+- «من غير name»: [[note=حصة+سباحة]] بس. الزرار اللي ملوش [[name]] مبيتبعتش حتى لو ليه [[value]].
+
+~~~text القياس من Chrome (الطلب اللي وصل السيرفر المحلي)
+دوسنا «إرسال»:           a=1&act=send
+زرار ليه value من غير name:   a=1
+~~~
+
+- الكلام اللي بين [[<button>]] و [[</button>]] للزائر. [[value]] للسيرفر. فالكلام يتغيّر أو يتترجم من غير ما كود السيرفر يتأثر.
+- التلات أزرار ممكن ياخدوا نفس [[name]]: واحد بس هيتبعت.
+
+### Enter جوه خانة: مين اللي بيتبعت؟
+
+المواصفة: الضغط على Enter جوه خانة نص بيبعت الفورم كأن الزائر داس على **الزرار الافتراضي**، وهو **أول زرار إرسال في الفورم** بترتيب الكود.
+
+~~~text القياس من Chrome
+مين الزرار الافتراضي (:default) في:
+<form> <button>أ</button> <input type="submit"> <button type="button">ج</button> </form>
+أ = true      الـ input = false      ج = false
+
+ضغطة Enter حقيقية جوه الخانة، في فورم فيه «امسح حسابي» (act=delete) قبل «حفظ» (act=save):
+اتبعت:   name=منى+علي&act=delete
+
+ضغطة Enter في فورم أول زرار فيه type="button" والتاني submit:
+اتبعت، والزرار اللي اتحسب هو التاني   (الـ type="button" مبيتعدّش)
+~~~
+
+فترتيب الأزرار في الكود مهم: **الزرار الأساسي الأول.** لو أول زرار «امسح حسابي» والتاني «حفظ»، الزائر اللي بيدوس Enter بعد ما يكتب هيمسح حسابه.
+
+---
+
+## ٣. الأربعة اللي بيغيّروا الطلب
+
+كل attribute على [[<form>]] ليه أخ على الزرار اسمه بيبدأ بـ [[form]]. لو الزرار اللي اتداس عليه الأخ ده، **بيكسب** على اللي مكتوب على الفورم، للطلب ده بس:
+
+| على الفورم | على الزرار | بيغيّر |
+|---|---|---|
+| [[action]] | [[formaction]] | الطلب يروح فين |
+| [[method]] | [[formmethod]] | GET ولا POST |
+| [[enctype]] | [[formenctype]] | شكل جسم الطلب |
+| [[target]] | [[formtarget]] | الرد يتفتح فين |
+| [[novalidate]] | [[formnovalidate]] | الفحص (القسم ٤) |
+
+كلهم بيشتغلوا على أزرار الإرسال بس: [[<button type="submit">]] و [[<input type="submit">]] و [[<input type="image">]].
+
+فورم واحد بأربع أزرار:
+
+~~~html
+<form action="/cart" method="post">
+  <input name="qty" value="2">
+  <button type="submit">حدّث السلة</button>
+  <button type="submit" formaction="/checkout">ادفع</button>
+  <button type="submit" formaction="/cart/preview" formmethod="get">معاينة</button>
+  <button type="submit" formaction="/cart/receipt" formenctype="text/plain">إيصال نصي</button>
+</form>
+~~~
+
+~~~text القياس من Chrome: الطلب اللي كل زرار بعته
+«حدّث السلة»:    POST /cart                content-type: application/x-www-form-urlencoded     qty=2
+«ادفع»:          POST /checkout            content-type: application/x-www-form-urlencoded     qty=2
+«معاينة»:        GET  /cart/preview?qty=2
+«إيصال نصي»:     POST /cart/receipt        content-type: text/plain                            qty=2
+~~~
+
+### [[<button formaction="/checkout">]]
+
+أكترهم استخدامًا: نفس البيانات، وعنوان تاني. «حدّث» و «ادفع»، أو «حفظ» و «حفظ ومعاينة».
+
+### [[<button formmethod="get">]]
+
+الزرار ده بيبعت GET والفورم POST (أو العكس). في المثال: «معاينة» مبتغيّرش حاجة عند السيرفر، فتبقى GET وعنوانها يتحفظ.
+
+### [[<button formenctype="multipart/form-data">]]
+
+بيغيّر شكل الجسم. نادر. استخدام منطقي: فورم فيه حقل ملف اختياري، وزرار «ارفع» بس هو اللي multipart.
+
+### [[<button formtarget="_blank">]]
+
+الرد بتاع الزرار ده بيتفتح في تاب جديدة والفورم يفضل مكانه. مناسب لـ «معاينة» أو «اطبع».
+
+~~~live 124 كل زرار بيبعت لعنوان
+<form action="/cart" method="post" onsubmit="event.preventDefault(); sent.value = (event.submitter.getAttribute('formmethod') || this.getAttribute('method')) + ' ' + (event.submitter.getAttribute('formaction') || this.getAttribute('action')) + ' ← ' + decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="qty">عدد الحصص</label> <input id="qty" name="qty" type="number" value="2"></p>
+  <button type="submit">حدّث السلة</button>
+  <button type="submit" formaction="/checkout">ادفع</button>
+  <button type="submit" formaction="/cart/preview" formmethod="get">معاينة</button>
+</form>
+<p>الطلب: <output id="sent">(دوس زرار)</output></p>
+~~~
+
+(سطر المعاينة هنا زايد عليه حتة: قبل البيانات بيكتب الـ method والعنوان، وبياخدهم من الزرار اللي اتداس لو عليه [[formmethod]] أو [[formaction]]، وإلا من الفورم.)
+
+**هتشوف إيه:** [[post /cart ← qty=2]]، و [[post /checkout ← qty=2]]، و [[get /cart/preview ← qty=2]]. نفس الفورم، وتلات طلبات مختلفة.
+
+---
+
+## ٤. [[<form novalidate>]] و [[<button formnovalidate>]]
+
+المتصفح بيفحص الحقول ([[required]] و [[type="email"]] و [[pattern]]...) قبل ما يبعت، ولو فيه غلط مبيبعتش. كلمتين بيوقفوا الفحص ده:
+
+- [[novalidate]] على [[<form>]]: مفيش فحص لأي إرسال من الفورم ده.
+- [[formnovalidate]] على زرار: مفيش فحص لما **الزرار ده** يتداس. باقي الأزرار بتفحص عادي.
+
+~~~live 124 سيب الإيميل فاضي ودوس كل زرار
+<form action="/join" method="post" onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="email">الإيميل (إجباري)</label> <input id="email" name="email" type="email" required></p>
+  <button type="submit" name="act" value="send">اشترك</button>
+  <button type="submit" name="act" value="draft" formnovalidate>احفظ كمسودة</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- «اشترك» والإيميل فاضي: رسالة المتصفح بتطلع على الحقل، ومفيش حاجة اتبعتت.
+- «احفظ كمسودة»: اتبعت [[email=&act=draft]] من غير أي رسالة.
+
+~~~text القياس من Chrome (الطلبات اللي وصلت السيرفر المحلي، والإيميل فاضي)
+«اشترك»:                               ولا طلب (الفحص وقّف الإرسال)
+«احفظ كمسودة» (formnovalidate):        POST /draft     email=&act=draft
+«اشترك» بعد كتابة إيميل صح:            POST /join      email=mona%40example.test&act=send
+
+<form novalidate> وفيه «مش إيميل» في حقل type="email":
+POST /novalidate     email=%D9%85%D8%B4+%D8%A5%D9%8A%D9%85%D9%8A%D9%84      (القيمة الغلط اتبعتت)
+~~~
+
+إمتى كل واحدة:
+
+- [[formnovalidate]]: «احفظ كمسودة»، «رجوع للخطوة اللي فاتت»، «إلغاء» اللي بيبعت للسيرفر. الزائر مش لازم يملا الفورم صح عشان يحفظ أو يرجع.
+- [[novalidate]] على الفورم: لما الفحص والرسايل هيتعملوا بـ JavaScript بتاعك (درس «ملخص الأخطاء»)، فمش عايز رسايل المتصفح تطلع فوق رسايلك.
+
+والاتنين بيوقفوا **المنع** بس: الحقل لسه بيتعدّ غلط ([[:invalid]] لسه شغال، و [[checkValidity()]] لسه بيرجّع [[false]]، اتقاس).
+
+**ومهما كان، السيرفر بيفحص تاني.** [[novalidate]] بيتكتب من DevTools في ثانية.
+
+---
+
+## ٥. [[<button form="join">]]: زرار برّه الفورم
+
+العنصر بيبقى تبع الفورم اللي هو **جواه**. [[form="..."]] بيغيّر ده: بيكتب [[id]] بتاع الفورم، والعنصر يبقى تبعه وهو في أي مكان في الصفحة.
+
+~~~live 198 216 الزرار والموبايل برّه الفورم
+<form id="join" onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="name">الاسم</label> <input id="name" name="name" value="منى"></p>
+</form>
+<p><label for="phone">الموبايل (برّه الفورم، وعليه form="join")</label> <input id="phone" name="phone" value="010" form="join"></p>
+<p><label for="lost">حقل برّه من غير form</label> <input id="lost" name="lost" value="x"></p>
+<p><button type="submit" form="join" name="act" value="go">اشترك</button></p>
+<p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:** الزرار تحت خالص وبرّه الفورم، وبرضه بيبعته: [[name=منى&phone=010&act=go]]. الموبايل اتبعت (عليه [[form="join"]])، والحقل «lost» لأ (برّه ومش مربوط).
+
+~~~text القياس من Chrome
+الطلب اللي وصل:   name=%D9%85%D9%86%D9%89&phone=010&act=go
+
+<button> برّه أي فورم ومن غير form:      button.form = null    (مبيعملش حاجة)
+<button form="join">:                     button.form = الفورم
+<button form="nope"> (id مش موجود):       button.form = null
+~~~
+
+- [[form]] بيتكتب على [[<button>]] و [[<input>]] و [[<select>]] و [[<textarea>]] و [[<fieldset>]] و [[<output>]].
+- القيمة [[id]] الفورم، مش [[name]] بتاعه.
+- لو الـ [[id]] غلط: العنصر يتيم ومفيش خطأ.
+
+بيتستخدم لما شكل الصفحة بيحط الزرار بعيد عن الحقول: زرار «حفظ» في شريط ثابت فوق، أو زرار «ادفع» في ملخص الطلب على الجنب. وبيحل مشكلة تانية: **فورم جوه فورم ممنوع** في HTML، و [[form]] بيخلّي حقل في وسط فورم يبقى تبع فورم تاني.
+
+---
+
+## ٦. attributes على [[<button>]] ملهاش علاقة بالإرسال
+
+[[<button>]] ليه أربع attributes تانيين بيفتحوا ويقفلوا عناصر في الصفحة من غير JavaScript: [[popovertarget]] و [[popovertargetaction]] (بيفتحوا popover)، و [[command]] و [[commandfor]] (بيدّوا أمر لعنصر تاني، زي فتح [[<dialog>]]). دول موضوع الوحدة الجاية مع [[<dialog>]] و popover.
+
+و [[disabled]] على الزرار اتشرح في درس «readonly و disabled و checked»، ومنع الإرسال مرتين في درس «ملخص الأخطاء».
+
+---
+
+## ٧. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[<button>]] من غير [[type]] جوه فورم | بيبعت الفورم: «أظهر كلمة السر» و «زوّد صف» بيبعتوا |
+| زرار خطير أول زرار إرسال في الكود | Enter جوه أي خانة بيدوس عليه |
+| زرار ليه [[value]] من غير [[name]] | مبيتبعتش، والسيرفر ميعرفش مين اتداس |
+| السيرفر بيقرا الكلام اللي على الزرار | أول ترجمة أو تعديل في الكلمة بيكسر الكود |
+| [[formaction]] على [[type="button"]] | ملوش تأثير: الزرار مبيبعتش أصلًا |
+| «احفظ كمسودة» من غير [[formnovalidate]] | الزائر ميقدرش يحفظ إلا لما يملا كل الإجباري |
+| [[novalidate]] ومفيش فحص بديل | بيانات غلط بتتبعت من غير أي تنبيه |
+| [[form="join"]] والـ [[id]] مش موجود أو مكرر | الزرار مبيعملش حاجة، ومفيش خطأ |
+| [[<form>]] جوه [[<form>]] | ممنوع: المتصفح بيتجاهل الفورم الجواني. استخدم [[form=]] |
+| زرار reset جنب الإرسال | ضغطة غلط بتمسح كل حاجة |
+
+---
+
+## الخلاصة
+
+- [[<button>]] جوه فورم = [[submit]]. اكتب [[type]] دايمًا: [[submit]] للي بيبعت و [[button]] للباقي. وابعد عن [[reset]].
+- [[name]] و [[value]] على الزرار بيتبعتوا لو هو اللي اتداس بس. و Enter بيدوس على أول زرار إرسال.
+- [[formaction]] و [[formmethod]] و [[formenctype]] و [[formtarget]]: الزرار بيغيّر العنوان والـ method والشكل ومكان الرد، للطلب ده بس.
+- [[formnovalidate]] للزرار اللي لازم يعدّي من غير فحص (مسودة، رجوع). [[novalidate]] للفورم كله لما الفحص عليك.
+- [[form="id"]] بيربط زرار أو حقل بفورم هو مش جواه.`,
+          try: R`اعمل ملف [[buttons.html]] فيه فورم [[method="get"]] و [[action="buttons.html"]] جواه حقل [[name="q"]] وتلات أزرار من غير [[type]]: «دوّر» و «امسح الخانة» و «مساعدة». افتحه واكتب كلمة ودوس «مساعدة» وبص على العنوان. وبعدين اكتب على الأزرار [[type]] المناسب وجرّب تاني.`,
+          sol: R`~~~html buttons.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أزرار</title>
+</head>
+<body>
+<form action="buttons.html" method="get">
+  <label for="q">دوّر على حصة</label>
+  <input id="q" name="q" type="search">
+  <button type="submit">دوّر</button>
+  <button type="button">امسح الخانة</button>
+  <button type="button">مساعدة</button>
+</form>
+</body>
+</html>
+~~~
+
+~~~view 79 100 شكل الصفحة (الإرسال هنا بيتكتب تحت بدل ما يتبعت)
+<form onsubmit="event.preventDefault(); sent.value = 'اتبعت: ' + decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <label for="q">دوّر على حصة</label>
+  <input id="q" name="q" type="search" value="سباحة">
+  <button type="submit">دوّر</button>
+  <button type="button">امسح الخانة</button>
+  <button type="button">مساعدة</button>
+</form>
+<p><output id="sent">(لسه محصلش إرسال)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- **من غير [[type]]:** «مساعدة» حمّلت الصفحة من جديد والعنوان بقى آخره [[?q=...]]. و «امسح الخانة» نفس الكلام. التلاتة كانوا زرار إرسال.
+- **بعد [[type]]:** «دوّر» بس هو اللي بيبعت. الاتنين التانيين مبيعملوش حاجة (لسه محتاجين JavaScript عشان يمسحوا أو يفتحوا المساعدة)، بس الأهم إنهم مبقوش بيبعتوا.
+
+ليه «امسح الخانة» [[type="button"]] مش [[type="reset"]]؟ هنا reset كان هيشتغل (حقل واحد)، بس reset بيمسح **كل** الفورم، ولو الفورم كبر هيمسح حاجات مش مقصودة. وحقل [[type="search"]] في Chrome فيه علامة × بتمسحه أصلًا.
+
+~~~text القياس من Chrome
+<button> من غير type جوه فورم:   button.type = submit
+<button type="button">:          button.type = button ، والضغط مبعتش أي طلب
+~~~`,
+          deep: {
+            why: R`أغلب الفورمات الحقيقية فيها أكتر من زرار: حفظ وإرسال، التالي والسابق، حذف وتعديل. من غير الـ attributes دي كان الحل فورم لكل زرار (وتكرار الحقول)، أو JavaScript بيغيّر [[action]] قبل الإرسال. والفخ بتاع [[type]] من أكتر الباجات اللي بتتعب: الصفحة «بتعمل refresh لوحدها» لما الزائر يدوس زرار ملوش علاقة بالإرسال، والمبرمج بيدوّر في الـ JavaScript والمشكلة كلمة ناقصة في الـ HTML.`,
+            how: R`لما زرار إرسال يتداس، المتصفح بيسجّله كـ «submitter». بعدين: لو مفيش [[novalidate]] على الفورم ولا [[formnovalidate]] على الـ submitter، بيفحص الحقول، ولو فيه غلط بيقف ويعرض الرسالة. بعدها بيبني قايمة البيانات وبيضيف عليها [[name]] و [[value]] بتوع الـ submitter. وبعدين بيحدد العنوان والـ method والـ enctype والـ target: بياخد كل واحد من الـ submitter لو مكتوب عليه ([[formaction]]...)، وإلا من الفورم. و Enter جوه خانة بيدوّر على الزرار الافتراضي (أول زرار إرسال تبع الفورم بترتيب الشجرة) ويعمل كأنه اتداس. ومين «تبع الفورم»: العنصر اللي جواه، أو اللي عليه [[form]] بيشاور على [[id]] بتاعه.`,
+            when: R`[[name]] و [[value]] على الأزرار: لما السيرفر يستلم كل الأزرار على نفس العنوان ويفرّق بالقيمة. [[formaction]]: لما كل زرار ليه عنوان. [[formnovalidate]]: مسودة، رجوع، إلغاء. [[formtarget="_blank"]]: معاينة أو طباعة. [[form=]]: الزرار في header أو footer أو عمود جانبي بعيد عن الحقول، أو زرار في صف جدول بيبعت فورم موجود في مكان تاني.`,
+            mistakes: R`[[<button>]] من غير [[type]]. زرار خطير هو الأول في الكود. الاعتماد على نص الزرار في السيرفر. [[formnovalidate]] على الزرار الأساسي «عشان الرسايل مضايقة». [[novalidate]] من غير فحص بديل. [[form]] بـ [[name]] الفورم بدل [[id]]. ومحاولة حل كل ده بفورم جوه فورم.`
+          },
+          practice: [
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم تسجيل فريق في بطولة «نادي الموج». العضو بيدوس «+ زوّد لاعب» أو «أظهر الكود» فالفورم بيتبعت قبل ما يخلّص. صلّح أنواع الأزرار: واحد بس يبعت. (من قسم ١ في الشرح: الفخ)`, done: R`«سجّل الفريق» بس هو [[submit]]، والاتنين التانيين [[type="button"]]، وكل الشروط ✓.`, work: { h: 198, start: R`<form onsubmit="event.preventDefault(); sent.value = 'الفورم اتبعت! ' + decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="team">اسم الفريق</label> <input id="team" name="team" value="القروش"></p>
+  <p><label for="p1">اللاعب ١</label> <input id="p1" name="player" value="عمر">
+  <button>+ زوّد لاعب</button></p>
+  <p><label for="code">كود البطولة</label> <input id="code" name="code" type="password" value="MOGA26">
+  <button>أظهر الكود</button></p>
+  <button>سجّل الفريق</button>
+</form>
+<p><output id="sent">(لسه محصلش إرسال)</output></p>`, checks: [
+              { say: R`«+ زوّد لاعب» بقى [[type="button"]]`, q: "button[type=\"button\"]", has: "زوّد لاعب" },
+              { say: R`«أظهر الكود» بقى [[type="button"]]`, q: "button[type=\"button\"]", has: "أظهر الكود" },
+              { say: R`«سجّل الفريق» مكتوب عليه [[type="submit"]] صريح`, q: "button[type=\"submit\"]", has: "سجّل الفريق" },
+              { say: R`زرار إرسال واحد بس في الفورم`, q: "form button:not([type=\"button\"]):not([type=\"reset\"])", n: 1 },
+            ] }, sol: R`~~~live 198 بعد التصليح
+<form onsubmit="event.preventDefault(); sent.value = 'الفورم اتبعت! ' + decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="team">اسم الفريق</label> <input id="team" name="team" value="القروش"></p>
+  <p><label for="p1">اللاعب ١</label> <input id="p1" name="player" value="عمر">
+  <button type="button">+ زوّد لاعب</button></p>
+  <p><label for="code">كود البطولة</label> <input id="code" name="code" type="password" value="MOGA26">
+  <button type="button">أظهر الكود</button></p>
+  <button type="submit">سجّل الفريق</button>
+</form>
+<p><output id="sent">(لسه محصلش إرسال)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- قبل: أي زرار من التلاتة بيطلّع «الفورم اتبعت!».
+- بعد: «+ زوّد لاعب» و «أظهر الكود» مبيعملوش حاجة (محتاجين JavaScript عشان يشتغلوا، وده مش موضوعنا)، و «سجّل الفريق» بس هو اللي بيبعت.
+
+**ليه:** [[<button>]] جوه فورم من غير [[type]] بياخد [[submit]]. المتصفح ميعرفش إن «أظهر الكود» مش قصده الإرسال: انت اللي بتقوله بـ [[type="button"]].
+
+**الغلطة الشائعة:** تسيب الأزرار زي ما هي وتحل المشكلة بـ JavaScript ([[event.preventDefault()]] على كل زرار). بيشتغل، بس لو الـ JavaScript اتأخر في التحميل أو فيه خطأ، الأزرار هترجع تبعت. [[type="button"]] شغال من غير أي كود.
+
+~~~text القياس من Chrome
+قبل:   التلات أزرار  button.type = submit
+بعد:   submit , button , button      وزرار الإرسال الافتراضي: «سجّل الفريق»
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** فورم «طلب اشتراك» فيه حقل إيميل إجباري وزرارين: «ابعت الطلب» (بيبعت [[act=send]] لـ [[/join]] وبيفحص)، و «احفظ كمسودة» (بيبعت [[act=draft]] لـ [[/draft]] **من غير فحص**). (من قسم ٢ و ٣ و ٤ في الشرح)`, done: R`الإيميل فاضي: «ابعت الطلب» بيطلّع رسالة المتصفح، و «احفظ كمسودة» بيبعت. وكل الشروط ✓.`, work: { h: 188, start: R`<h1>طلب اشتراك</h1>
+<form>
+  الإيميل
+  ابعت الطلب
+  احفظ كمسودة
+</form>`, checks: [
+              { say: R`الفورم [[action="/join"]] و [[method="post"]]`, q: "form[action=\"/join\"][method=\"post\" i]" },
+              { say: R`حقل إيميل [[type="email"]] إجباري وليه label`, q: "form:has(label[for]) input[type=\"email\"][required][name]" },
+              { say: R`«ابعت الطلب» زرار [[submit]] بيبعت [[act=send]]`, q: "button[type=\"submit\"][name=\"act\"][value=\"send\"]" },
+              { say: R`«احفظ كمسودة» بيبعت [[act=draft]]`, q: "button[type=\"submit\"][name=\"act\"][value=\"draft\"]" },
+              { say: R`«احفظ كمسودة» عليه [[formnovalidate]] و [[formaction="/draft"]]`, q: "button[value=\"draft\"][formnovalidate][formaction=\"/draft\"]" },
+              { say: R`«ابعت الطلب» **مش** عليه [[formnovalidate]] وهو أول زرار`, q: "form button:first-of-type[value=\"send\"]:not([formnovalidate])" },
+            ] }, sol: R`~~~live 188 الحل
+<h1>طلب اشتراك</h1>
+<form action="/join" method="post" onsubmit="event.preventDefault(); sent.value = (event.submitter.getAttribute('formaction') || this.getAttribute('action')) + ' ← ' + decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="email">الإيميل</label> <input id="email" name="email" type="email" required></p>
+  <button type="submit" name="act" value="send">ابعت الطلب</button>
+  <button type="submit" name="act" value="draft" formaction="/draft" formnovalidate>احفظ كمسودة</button>
+</form>
+<p>الطلب: <output id="sent">(لسه)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- الإيميل فاضي و «ابعت الطلب»: رسالة المتصفح على الحقل، ومفيش إرسال.
+- الإيميل فاضي و «احفظ كمسودة»: [[/draft ← email=&act=draft]].
+- اكتب إيميل صح و «ابعت الطلب»: [[/join ← email=...&act=send]].
+
+**ليه كده:**
+
+- «ابعت الطلب» الأول في الكود: هو اللي Enter جوه الخانة بيدوس عليه.
+- [[formaction]] و [[name]] و [[value]] مع بعض مش تكرار: واحد بيحدد العنوان والتاني بيقول للسيرفر مين اتداس. ينفع تكتفي بواحد فيهم حسب السيرفر مستني إيه.
+
+**الغلطة الشائعة:** [[novalidate]] على الفورم كله عشان المسودة تعدّي. كده «ابعت الطلب» كمان هيبعت إيميل فاضي.
+
+~~~text القياس من Chrome (الطلبات اللي وصلت السيرفر المحلي)
+«ابعت الطلب» والإيميل فاضي:     ولا طلب
+«احفظ كمسودة» والإيميل فاضي:    POST /draft    email=&act=draft
+«ابعت الطلب» بإيميل صح:         POST /join     email=mona%40example.test&act=send
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** في صفحة «حسابي» الزائر غيّر اسمه وداس **Enter** وهو في الخانة. اكتب على ورقة: [[act]] هيتبعت بأنهي قيمة؟ جرّب في الصندوق (دوس جوه الخانة و Enter). وبعدين صلّح الترتيب عشان Enter يحفظ. (من قسم ٢ في الشرح: «Enter جوه خانة»)`, done: R`توقّعت [[act=delete]]، وبعد التصليح Enter بيبعت [[act=save]]، وكل الشروط ✓.`, work: { h: 124, start: R`<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="name">الاسم</label> <input id="name" name="name" value="منى علي"></p>
+  <button type="submit" name="act" value="delete">امسح حسابي</button>
+  <button type="submit" name="act" value="save">حفظ</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(دوس Enter جوه الخانة)</output></p>`, checks: [
+              { say: R`أول زرار إرسال في الفورم هو «حفظ»`, q: "form button:first-of-type[value=\"save\"]" },
+              { say: R`«امسح حسابي» لسه موجود وبيبعت [[act=delete]]`, q: "button[name=\"act\"][value=\"delete\"]" },
+              { say: R`الزرارين لسه [[type="submit"]]`, q: "button[type=\"submit\"]", n: 2 },
+            ] }, sol: R`~~~live 124 بعد التصليح
+<form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="name">الاسم</label> <input id="name" name="name" value="منى علي"></p>
+  <button type="submit" name="act" value="save">حفظ</button>
+  <button type="submit" name="act" value="delete">امسح حسابي</button>
+</form>
+<p>اللي كان هيتبعت: <output id="sent">(دوس Enter جوه الخانة)</output></p>
+~~~
+
+**هتشوف إيه:**
+
+- قبل: Enter جوه خانة الاسم طلّع [[name=منى+علي&act=delete]]. الزائر كان عايز يحفظ اسمه، والطلب اللي راح «امسح حسابي».
+- بعد: Enter بيطلّع [[name=منى+علي&act=save]].
+
+**ليه:** Enter جوه خانة بيدوس على الزرار الافتراضي، وهو أول زرار إرسال في الكود. الترتيب في الكود هو اللي بيحسم، مش شكل الزرار ولا حجمه.
+
+**وأحسن من كده:** الحذف ميبقاش زرار في نفس الفورم أصلًا. فورم لوحده، أو صفحة لوحدها فيها تأكيد.
+
+**الغلطة الشائعة:** تسيب الترتيب وتعكس الأزرار بالـ CSS عشان «حفظ» يظهر الأول. Enter بيتبع ترتيب الكود، فالشكل هيقول حاجة والكيبورد هيعمل حاجة تانية.
+
+~~~text القياس من Chrome (مين :default)
+قبل:   «امسح حسابي» = true    «حفظ» = false
+بعد:   «حفظ» = true           «امسح حسابي» = false
+~~~
+
+ولما اتداس Enter فعلًا جوه الخانة في Chrome قبل التصليح، اللي اتبعت: [[name=منى+علي&act=delete]].` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** دي تلات طلبات وصلت السيرفر من **نفس الفورم**، كل واحد من زرار. اكتب الفورم: حقل واحد وتلات أزرار. (من قسم ٣ في الشرح: جدول «الطلب اللي كل زرار بعته»)`, done: R`فورم واحد بـ [[post]] لـ [[/class]]، وزرارين بيغيّروا العنوان، وواحد منهم بيغيّر الـ method، وكل الشروط ✓.`, work: { h: 124, start: R`<!--
+1)  POST /class               hours=3
+2)  POST /class/waitlist      hours=3
+3)  GET  /class/price?hours=3
+-->
+<form>
+</form>`, checks: [
+              { say: R`الفورم [[action="/class"]] و [[method="post"]]`, q: "form[action=\"/class\"][method=\"post\" i]" },
+              { say: R`حقل اسمه [[hours]]`, q: "input[name=\"hours\"]" },
+              { say: R`زرار من غير [[formaction]] (بيبعت للفورم نفسه)`, q: "form button[type=\"submit\"]:not([formaction])" },
+              { say: R`زرار [[formaction="/class/waitlist"]]`, q: "button[formaction=\"/class/waitlist\"]:not([formmethod])" },
+              { say: R`زرار [[formaction="/class/price"]] و [[formmethod="get"]]`, q: "button[formaction=\"/class/price\"][formmethod=\"get\" i]" },
+              { say: R`تلات أزرار بس، ومفيش فيهم [[name]] (الطلبات مفيهاش غير [[hours]])`, q: "form button:not([name])", n: 3 },
+            ] }, sol: R`~~~live 124 الحل
+<form action="/class" method="post" onsubmit="event.preventDefault(); sent.value = (event.submitter.getAttribute('formmethod') || this.getAttribute('method')) + ' ' + (event.submitter.getAttribute('formaction') || this.getAttribute('action')) + ' ← ' + decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+  <p><label for="hours">عدد الساعات</label> <input id="hours" name="hours" type="number" value="3"></p>
+  <button type="submit">احجز</button>
+  <button type="submit" formaction="/class/waitlist">قايمة الانتظار</button>
+  <button type="submit" formaction="/class/price" formmethod="get">احسب السعر</button>
+</form>
+<p>الطلب: <output id="sent">(دوس زرار)</output></p>
+~~~
+
+**هتشوف إيه:** كل زرار بيطلّع سطر: [[post /class ← hours=3]]، و [[post /class/waitlist ← hours=3]]، و [[get /class/price ← hours=3]]. زي التلات طلبات بالظبط.
+
+**إزاي قريت الطلبات:**
+
+- اتنين POST وواحد GET، فالأغلبية على الفورم: [[method="post"]]، والتالت [[formmethod="get"]].
+- [[/class]] أقصر عنوان وهو الأساس: [[action="/class"]]. والاتنين التانيين [[formaction]].
+- الجسم [[hours=3]] بس في التلاتة: مفيش زرار ليه [[name]].
+
+**الغلطة الشائعة:** تلات فورمات، كل واحد فيه نسخة من حقل [[hours]]. الزائر هيكتب الرقم في واحد ويدوس زرار التاني.
+
+~~~text القياس من Chrome (نفس التركيبة بعناوين المثال اللي في الشرح)
+POST /cart                 qty=2
+POST /checkout             qty=2
+GET  /cart/preview?qty=2
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** الصفحة دي شغالة، بس المصمم عايز زرار «أكّد الحجز» يتنقل للـ [[<footer>]] اللي في آخر الصفحة، **برّه** الفورم، من غير ما يبطّل يبعته. انقله. (من قسم ٥ في الشرح: [[form=]])`, done: R`الزرار جوه [[<footer>]] وبرّه [[<form>]]، ولسه بيبعت الفورم باسمه وقيمته، وكل الشروط ✓.`, work: { h: 214, start: R`<main>
+  <h1>حجز ملعب</h1>
+  <form onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+    <p><label for="day">اليوم</label> <input id="day" name="day" type="date" value="2026-12-01"></p>
+    <button type="submit" name="act" value="book">أكّد الحجز</button>
+  </form>
+  <p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+</main>
+<footer>
+  <p>الإجمالي: ٣٠٠ جنيه</p>
+</footer>`, checks: [
+              { say: R`الفورم ليه [[id="booking"]]`, q: "form#booking" },
+              { say: R`الزرار بقى جوه [[<footer>]]`, q: "footer button[type=\"submit\"]" },
+              { say: R`مفيش زرار جوه [[<form>]]`, q: "form button", n: 0 },
+              { say: R`الزرار عليه [[form="booking"]]`, q: "footer button[form=\"booking\"]" },
+              { say: R`الزرار لسه بيبعت [[act=book]]`, q: "button[name=\"act\"][value=\"book\"]" },
+            ] }, sol: R`~~~live 214 بعد
+<main>
+  <h1>حجز ملعب</h1>
+  <form id="booking" onsubmit="event.preventDefault(); sent.value = decodeURIComponent(new URLSearchParams(new FormData(this, event.submitter)))">
+    <p><label for="day">اليوم</label> <input id="day" name="day" type="date" value="2026-12-01"></p>
+  </form>
+  <p>اللي كان هيتبعت: <output id="sent">(لسه)</output></p>
+</main>
+<footer>
+  <p>الإجمالي: ٣٠٠ جنيه</p>
+  <button type="submit" form="booking" name="act" value="book">أكّد الحجز</button>
+</footer>
+~~~
+
+**هتشوف إيه:** الزرار بقى تحت الإجمالي في آخر الصفحة. دوس عليه: [[day=2026-12-01&act=book]]. نفس الناتج اللي كان بيطلع وهو جوه الفورم.
+
+**ليه كده:**
+
+- [[id="booking"]] على الفورم و [[form="booking"]] على الزرار: نفس فكرة [[for]] و [[id]].
+- [[name]] و [[value]] اتنقلوا مع الزرار، فلسه بيتبعتوا.
+- الفحص ([[required]]) و Enter جوه الخانة لسه شغالين: الزرار لسه «تبع الفورم» في كل حاجة.
+
+**الغلطة الشائعة:** تنقل الزرار وتنسى [[form=]]. الزرار هيبقى [[submit]] من غير فورم، والضغط عليه مش هيعمل أي حاجة ومش هيطلّع أي خطأ.
+
+~~~text القياس من Chrome
+زرار في footer من غير form:       button.form = null
+زرار في footer بـ form="booking":  button.form = الفورم      والطلب: day=2026-12-01&act=book
+~~~` }
+          ]
         }
       ]
     }

@@ -1,3458 +1,3925 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "الصور والفيديو و SVG",
-      pre: [
-        { to: "css/img", why: R`width و height و alt و srcset اللي الوحدة دي بتكمّل عليهم` },
-        { to: "css/media queries", why: R`picture بيختار الصورة بـ media` },
-      ],
+      t: "HTML: عناصر تفاعلية و global attributes",
       l: 1,
-      n: "صورة بتملا مكانها من غير ما تتمط، وصيغ حديثة بـ fallback، وفيديو و YouTube و SVG بيتصرفوا صح",
+      n: "اللي الـ HTML بيديهولك من غير JavaScript (أو بسطر واحد): نافذة dialog، وقايمة popover، وإخفاء وتعطيل أجزاء من الصفحة، ونص بيتعدّل في مكانه، وباقي الـ attributes اللي بتتكتب على أي عنصر، وبيانات محرك البحث بيقراها",
+      pre: [
+        { to: "css/a و button", why: R`كل حاجة في الوحدة دي بتتفتح بزرار: لازم تكون عارف [[<button type="button">]] وإمتى زرار وإمتى لينك` },
+        { to: "css/أزرار الفورم: formaction وإخواته", why: R`[[<form method="dialog">]] و [[popovertarget]] و [[command]] كلهم بيتكتبوا على زرار، وهناك عرفت الزرار بيبعت إيه ومين الزرار الافتراضي` }
+      ],
+      goal: [
+        R`تفتح نافذة تأكيد بـ [[<dialog>]] وتقفلها بـ [[<form method="dialog">]]، وتعرف الفرق بين [[show()]] و [[showModal()]] من اللي بيحصل للفوكس و Esc وباقي الصفحة، وتتحكم في القفل بـ [[closedby]].`,
+        R`تعمل قايمة أو تلميح بـ [[popover]] و [[popovertarget]] من غير ولا سطر JavaScript، وتختار بين [[auto]] و [[manual]] و [[hint]]، وتفتح dialog بـ [[command]] و [[commandfor]].`,
+        R`تختار بين popover و dialog و [[<details>]] لأي حاجة بتتفتح وتتقفل.`,
+        R`تخفي جزء بـ [[hidden]] (و [[hidden="until-found"]])، وتعطّل جزء بـ [[inert]]، وتفرّق بينهم وبين [[disabled]] و [[aria-hidden]].`,
+        R`تخلّي نص يتعدّل في مكانه بـ [[contenteditable]]، وتظبط كيبورد الموبايل والتصحيح بـ [[spellcheck]] و [[autocapitalize]] و [[autocorrect]] و [[enterkeyhint]] و [[writingsuggestions]]، وتمنع ترجمة اسم بـ [[translate="no"]].`,
+        R`تعرف كل global attribute بيعمل إيه وتلاقيه في جدول واحد: [[autofocus]] و [[accesskey]] و [[draggable]] و [[title]] و [[data-*]] والباقي.`,
+        R`توصف منتج لمحرك البحث بـ [[itemscope]] و [[itemtype]] و [[itemprop]]، وتعرف إمتى JSON-LD أحسن.`
+      ],
       projects: [
-        { lvl: 'صغير', dir: "city-gallery", t: R`معرض صور مدينة متخيلة`, what: R`١٢ صورة بنسب مختلفة في شبكة auto-fit، كل واحدة [[aspect-ratio]] و [[object-fit: cover]] و [[width]] و [[height]] في الـ HTML و [[loading="lazy"]] (ما عدا أول صفين). من درس [[object-fit]].`, done: R`الشبكة مفيهاش قفزة وهي بتحمّل (Performance › Layout shifts فاضي أو قريب من صفر)، وكل الصور في الصف نفس الارتفاع، وعلى 360 مفيش scroll أفقي.`, sol: R`الصور الـ ١٢ مرسومة بسكربت (عمارات وسما ومية) بمقاسات مختلفة: ٤ عريضة (1200×800 و 1400×700…)، و ٣ طويلة (800×1200…)، و ٢ مربعة، والباقي بين ده وده. حط أي ١٢ صورة عندك بنفس الأسامي.
-
-~~~html index.html
+        { lvl: 'صغير', dir: "nour-notes", t: R`دفتر نور: قايمة الملاحظات ونافذة «تمسح؟»`, what: R`أول صفحة في «دفتر نور» (تطبيق ملاحظات متخيل)، للي عايز يشوف ملاحظاته ويمسح منها. [[index.html]] فيها: اسم التطبيق في [[<header>]]، وعنوان «ملاحظاتي»، وقايمة [[<ul>]] فيها تلات ملاحظات (مشتريات الأسبوع، أفكار المشروع، كتب عايز أقراها) وجنب كل واحدة زرار «امسح». التلات أزرار بيفتحوا **نفس** نافذة التأكيد: [[<dialog>]] modal ليها عنوان مربوط بـ [[aria-labelledby]]، وجملة «مش هترجع»، وفورم [[method="dialog"]] فيه «إلغاء» الأول و «امسح». من درس «dialog و closedby».`, done: R`أي زرار «امسح» بيفتح النافذة في نص الشاشة والفوكس على «إلغاء». Tab مبيخرجش للقايمة اللي ورا. Esc أو أي زرار بيقفلها، والفوكس بيرجع لزرار «امسح» **بتاع نفس الملاحظة** اللي فتحت منها.`, sol: R`~~~live 244 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>معرض مدينة النخيل</title>
-<link rel="stylesheet" href="style.css">
+<title>دفتر نور</title>
 </head>
 <body>
-<main class="page">
-  <h1>مدينة النخيل في ١٢ صورة</h1>
-  <p>صور بمقاسات مختلفة (عريضة وطويلة ومربعة)، وكلها بتاخد نفس المكان في الشبكة.</p>
-  <ul class="gallery">
-    <li><figure class="shot"><img src="img/city-01.jpg" alt="عمارات بالليل قدامها مية" width="1200" height="800"><figcaption>الكورنيش</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-02.jpg" alt="عمارات بالنهار قدامها مية" width="800" height="1200"><figcaption>برج الساعة</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-03.jpg" alt="عمارات بالنهار قدامها مية" width="1200" height="675"><figcaption>الكوبري الجديد</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-04.jpg" alt="عمارات الصبح بدري قدامها مية" width="1000" height="1000"><figcaption>ميدان المحطة</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-05.jpg" alt="عمارات وقت المغرب قدامها مية" width="1200" height="800"><figcaption>سوق السمك</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-06.jpg" alt="عمارات بالليل قدامها مية" width="900" height="1200"><figcaption>عمارات الشط</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-07.jpg" alt="عمارات بالنهار قدامها مية" width="1400" height="700" loading="lazy"><figcaption>الميناء</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-08.jpg" alt="عمارات بالنهار قدامها مية" width="1000" height="1000" loading="lazy"><figcaption>الجامع الكبير</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-09.jpg" alt="عمارات الصبح بدري قدامها مية" width="1200" height="900" loading="lazy"><figcaption>شارع الفن</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-10.jpg" alt="عمارات وقت المغرب قدامها مية" width="800" height="1100" loading="lazy"><figcaption>المنارة</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-11.jpg" alt="عمارات بالليل قدامها مية" width="1200" height="675" loading="lazy"><figcaption>النهر</figcaption></figure></li>
-    <li><figure class="shot"><img src="img/city-12.jpg" alt="عمارات بالنهار قدامها مية" width="1000" height="800" loading="lazy"><figcaption>حديقة الحي</figcaption></figure></li>
-  </ul>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #111827; color: #f9fafb; }
-.page { max-width: 80rem; margin-inline: auto; padding: 1rem; }
-
-.gallery {
-  display: grid;
-  gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.shot { margin: 0; }
-.shot img {
-  display: block;
-  width: 100%;
-  height: auto;            /* the width/height attributes give the ratio before the file arrives... */
-  aspect-ratio: 4 / 3;     /* ...and this replaces it: every photo gets the same 4:3 box */
-  object-fit: cover;       /* fill the box, crop what is extra, never stretch */
-  border-radius: 0.5rem;
-  background: #374151;     /* what you see while it loads */
-}
-.shot figcaption { padding-top: 0.35rem; font-size: 0.9rem; color: #d1d5db; }
-~~~
-
-~~~view 700 900 الشكل النهائي (المعاينة بنسخ صغيرة من الصور)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>معرض مدينة النخيل</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #111827; color: #f9fafb; }
-.page { max-width: 80rem; margin-inline: auto; padding: 1rem; }
-
-.gallery {
-  display: grid;
-  gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.shot { margin: 0; }
-.shot img {
-  display: block;
-  width: 100%;
-  height: auto;            /* the width/height attributes give the ratio before the file arrives... */
-  aspect-ratio: 4 / 3;     /* ...and this replaces it: every photo gets the same 4:3 box */
-  object-fit: cover;       /* fill the box, crop what is extra, never stretch */
-  border-radius: 0.5rem;
-  background: #374151;     /* what you see while it loads */
-}
-.shot figcaption { padding-top: 0.35rem; font-size: 0.9rem; color: #d1d5db; }
-</style>
-</head>
-<body>
-<main class="page">
-  <h1>مدينة النخيل في ١٢ صورة</h1>
-  <p>صور بمقاسات مختلفة (عريضة وطويلة ومربعة)، وكلها بتاخد نفس المكان في الشبكة.</p>
-  <ul class="gallery">
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات بالليل قدامها مية" width="1200" height="800"><figcaption>الكورنيش</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات بالنهار قدامها مية" width="800" height="1200"><figcaption>برج الساعة</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات بالنهار قدامها مية" width="1200" height="675"><figcaption>الكوبري الجديد</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات الصبح بدري قدامها مية" width="1000" height="1000"><figcaption>ميدان المحطة</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,UklGRooWAABXRUJQVlA4IH4WAACQZACdASosAcgAPt1orU+opiQiKDNbIRAbiU3eJ/w3jzju4zlfEVqW98v0G9+9IH+69P/oic8x50PTC+q30V3q7/9XBXv612s/3vpWfgE1Sxl9if1P98/Ov2774fjJ/h+oR+R/zf9Zfz/9VPZB55/tf+V/U/6d7gvrR9e72T/c9B/qT/y/cA/l39n9Nf8B4ZX3T1B/6V6L399/8/8x/ifWL9h/tH8Bv9uL1rXb3CCkuCVWcwgpLFqrOYQUlwQ3yjZ5XZIn91gwx9Xw+wOCMozrEl0rF7D+vvUxJfj8mMK6Me+1XvG2B+GlAYQYSVEiMP/lVniVo/rxEX8wKIWIRKpvfWSMMr7Asoj4NEvIjaharTOBShBNEHI88aWEop66+KSFIf8YkOj5GSB1mn5AVYPATGMfoN4pINUCE0jk9hP7H2oeFKwD/vk/OxpA47esZVEJu+n4h5A0yVTxOozWqI5in3F3i4vQtrik+80aj4bG3swQjb95UuByNJdtoiF13X5ykjetBpuZgskkk9EPf3ROsBqCE08HAthP17ObOZIQ8b4+coDawcdi1qTElNflClZdR/cCVN/WXQ770hjZO/BZqdJwCJT/GUf0Ac/lNV0100YmuSi+TBcI+nIgLygZajnc0FeVjz8hL7j3voFqFNpZZjsVx8jQH8IzFPodyRWXGi5udDrFmZV7oYjr9g7D8YIct3hzP5Ct15WbuBpW4UVpiXnENUbbHhoaVEvEQjc6NFVWCqdn0rvdiX+xRkCmhrSeyNug1dJCDFs5Wcj1n8l0LW4rMbiK3WMidDMefMIl34a3dm1td+VTdBjLxKRj5efvWmrHpBtFADUHXFJC6A7+H4fYXrJAVQSYc9hehexKF+2nRt/BO1toxqky36Hx5GdOSYO9eo6SvShv4FYQkcmUN4dtHglqQ18zhth1FLDt2wlHm4ecBcIAcw9INe6ZEVLCOh1iEm2bIWSg2Jq7bfOu+ThnniD6b7RmNzaMDvXph6VqhcBQyzxqfs/Rs4Syu0NGBVIjterGnnuKGcWQkNSB/1ASuK1oP0L/OeBmb+r3I2C/Qd0/2j/BgHu0yQAA/u4v7yC+EfQP0DO3zD8YfGEJNNMRfHF/UwYi/j54VF18SLS/sjGzKyuSW0lofDCxPnb3Cjy0O2G4bMi3r6Y0azUdIWB1EOZBEZXLBdxQDFyDKnTjELN6oB0/KYZWvuw64As1cdmPPoZDMdrQ0gJvtXYWjh1XuBKMm8CH0iSBHhYL4rCZM5BH4x/S8hViHmeAsNj/UfOLM+3he3dW4Df+1sz31DtPATd8iXNEw0eo1PNxNG3QbqXvlaT/r+9in0Y+gi22MLBa9uktqOnzDHnW/QHIsQUba5erAj0Kr4Nxr5xSlWOJZgOIcLOleX/pLsn3ygcD9Kg+54O9ypef5n2uZv8TdfIyw6UJ69ronvX/U+h3RawY8upk3wsHcwQMues+ck0EZ1MZRvFX3jMZo+iccAotAPLYOm8AF353Kp8Ulh/ZFByA5Lm8vjHkEm9Ts6J3lDcqY9jEXOHyFzWDgukzYTOf17Qri+/uO1h+w5hJeu7id/43KAkw0dBT8Q7T9VtQkErffgiQNTCueVm3MWfzNolWCj8czanBwtNhxQaDY08hKnkbHrhM2/+o+dks3ICvldvDnGIuobkI8hn7xLfhsbszN9Prq7Za3KnZjPTJJJwvIKvmUzJM1hzFQNuv68YY0NCK487wwrd+aH62fqBvx+vSvV2CO8cFy1zRtCoM4MfBQddynyeCfcgnR7vTHseHu0GTiJgpw04Ra2Q0dg33F5VY5Q8nVm8arTS45m3V1CPCU488+DkuWby5SI16M0hcSyxMa1tbdLwg2VhOsUlE7Ns15xGvzxvzXDnCGT6BG2XL8gwAnxjZn2ZaKZzdbM4B1Rdaj0EVlCqEXLoMxoVqYOJLtWcEY1ENrTJNxfj1DdRRGVfDPpmBM/SjEADnMcAcBWU0/cd864QapVRDYgr4X66jKVeUeSbv0BtH0wye/7uxA1Nm4ttqpSA29mYC9f9oJQTjMOR4cjVtJC39IEiZDq0ZUbDZGbbY1tSQjhnfJ9ajOB4P7Avv2zmbYN2GbX8k3gi86HO00+z+DIS4gV7P4qq2WD6AvDV+j0Buer8BbHodkhcBBfJadmTXzirEJNkhKfi2ceUrI/noVY1J8aMPukkr0TutPVE8Z4Nuta+BDhpYy4Om8qBdYO0X448ei9RZT5OFSoeSopoWrlzyK7z2ekHpEWF6kopc4sJXPYLXraM6b1s3zPLSbIC6y0sZBqYrJLRccBZ/XOw/uxRejHJcskK246uMrmz4Pc77yMcxqOwiHXRvVQs1F+HX0s3H5FEwWaieXWJU+RtgnEoShJsMKLpykrmz0bTkRVJgwHwnw+PGjCvbLYhtNnfFBDc12JHUPtVyCQNEhHsr7uCQn5j2S681wOGF8hQIwaLa2CANRbSleaLrS53t0EgdK64A6DmxuLTCcEuYET9GWTkA63HAPJCtbwv8gj+JlaT/tDQTHo5AVXEhghe1h4Y6J9pNLMnkN1fMftkbGjipuFRNet12oNUYaH1Gv5RnWAJ+FN73Vob89M1ffJitnkZ75HeyMxgdwojZ/w9wa79P3yoamsJ2aU5ZylZygcRRuc3q8NozGOtj+NmciBWdHOk4QfLx2XvLVngUCpy3BAeWHz+azsvAsuJIcfPtfZF9kcv9meQYpijxi4e3PP25fQDIlf0b57GgaEEUY5+JnnS8BKjCEav7ZRiCjUPKz4XwRTtTYtXF+bhrT9kCgdSn58R3sya+IUBv3Xmm2rv4a7nSkgLFvBevuXLCcdj7exjqyddLhqfFJVB2OIBJW2Ju19diQ6cZwqbvWWmvuwQmNgbEYgfhzdbjN73A/3j2pfJdOkUFtGzOHRdkUE0v7FXnKODU+sQbQA6XjtmSBvcH/Z0mvkMum/d1CT1C5nahYpF8iGTbeAtHI9ooHmEweoUauFwkqT2svvuM9zDa8hz92OS4i/GdAG5lRrGkg0YGLvFw8CKkYW+6IbKdfppo3yT7auKX4Gp9OvUaxqHCyu6YJjdEXnp5bSefW5ulzFL0LvBAgI5tSq945u84gYQQfZ+lWQqD465E/ti2SZz2JLggsPcayfQSiDBRZmy1UMhekU5PNrIgqRe9K21H/KxXggBulcRzHiwr6gumjFE/Xehi4YGCr1F3D2nfvSEAVHvw6CjfoO4REB8DnOS7d++j8KKVRYaZscX25dSc0rx/W3bQ+Hp98AuJD2wdNXIbbR/7jAKTS2mmx0powEBTEYowynojUlvPcWvXmublRq81QBCK8CEnpPvPB3LnXgozjCPgxD84r/04WEYvCAIjcJ2H9SsfH+A1imAj4MQ/OKyazuMmXXRPb9Prd8EgTbXLzl7piYUdxwCbLo5ssVMYB/ZpuGwYqnQ9nS9BVwqmRpzV4GGgyt1fqPGvBtBNewnGdYsp6f9Gsvqtn3kzvOzPGg52q2IBX8fiwnEoDa9hGsaZeeG2HZhmFQUZ0UD8UNH3SLEQYCBqKsHxhMcwBtWjAR1NHEPrrGGEnfFgyMuaiGsqOeOIzaW/bj6Fui4f+vorQNCduOwixKukCMjlzWnJqZDWguzgsWXgbTMP/j9pxnBlTTh908Ytc8uj+FR/fmL4Bij6Rex1sZOqM6wWQ2TXEB3MUWADoetctpCPbFBTC5CFWV8VCs8ihHSN6bW1y8eDDVYAZ9jBACec6xYyhSahvzTZCa+uCJfdEpDUAUSGKzOi6UrhtviNaZuGXflUJqT0AMVusxNzWLhEROVRCsrE71++jIxe3kB9+St8aX5CbI9vuUfEsFklCWCMFSpa23Aop7jWuViftNgDkdVcDL/ALedFGTorKyk8zO9yFsMF1s2PLF3OcJshGI1p7TqWA6mhTSbGxJRZ20U6hCzIlueviaXlC5K9AKGM/wLixTVqyslPIMwA4E315ztwHeL/hQ90lh9I9vnyMqlOIYwkAH3yqAo6KQtO51ij2y6JUTyCUfHU71hkXWlvwbTe2Np9pU3BuR/uoHXwMH2z2qo/FCTYYTwVyQnw9o0RIRz8RW8wdwSTP8olpeOKeLQzGmnU0GcwvzX/jH3a0qeTXe1Dn2+L4jGLVclgu83JBgw4qXqT9fgQ2qoSvNF1pd0Yty2c1asHLvo3HfnU0Dxrm1tKHR60iV8BoBtdOGzqqnt4ozL/dPH4vksAbEQNwRNIH7tQDnz1H1AC5cTWO0zp+qEDIhx+4KxeQ8n3+OhfsKY9rMPsVrtfnHLXNGzxw3hw3GP+8hlY7hXT2aQLnJktaUc+XLjebXz3WMslaLA9dsExjw17QtPj0aBx8EUPsoV09Lcl6bp/Cosm7yYUkuFpPhiWNIn1gw0lSrUxdRJSJwohA2G72RmMDg0aI2f7O8/rV24GRcPeb6ZLJrWo/C+bHbRMjT8rP3m2wqE1Bv8SvplMyTGlT8k2QkojjKY0jQtiAc7hgD3yBa2fGm62VGGatlLsIXszJbM4KXhYfX8TQ9r2weXGHIprHCwpRozlbIzW5GzNChVsLXnHFb69SidyB8BWxJXT0/ZZWjsYbKojyS4GyBUq1wRfv1kFfUwXpFgdNYTm8CLNmxlc/IIQgtkhEL3QxOgxuMNADgx5RxEAXGJr633o42SyZXD+53ekA1ofmpgLVH8wWDhKpwle4CBQKYpb462Gz/GO+xrZQjNHW2nZWaqVZtTgqEUdlmqZo9LmaTAKSeUVfPtwcX/0WJc8pdrrtw9wjt0DgwKxyJUiZKiQKnM2CqO4Ijv8gv0PkpRfVqZ0BmLzSmF0/wAlAaJEYqorxP0Ep83cOCRtgusoM3BJJ1+HKt3EUsTRsaO3A4lp6nSbgm3gUo5ggi2ZLsFprSF2sCzr5+4g3Q3BQbHIRJvTkhuMoAIs/uh/m9R2kwWSD/BNSOtPT8X/6uz7AnWisePYHsXAOJl7SmQYT9EtNZqjKxzcZZtkNBnjT38T66pcMt4C0RGCxdPf86NFQZIYekEQ3kIS96r0zBJIMv5wWa6puz3IyhUgDrNl3aKlDMwsYBBPjESdypsYmvK0CcmwjpSRjMVm1hFlJ8y/T8+KeKupkNXxS3rt5+k5TZKu38bwEwE6bQsiDurZD1qbU6CooiggDiLgMuzyhNhJDIY3zmQ9n64eIu9eIv1dynyeCfcMec4AduYnibuuVGT1BHQUOvR10j03DcvfKTdYdic4JmsdzdRfR6AXW9gmUVkktYWufoUyxUJYp9utdHmOX1sp1XR5Pq7u0gQvt+UCdf+AC388Qvq76th7pjNAtZ51v6YKMFdOpIFHTOrB3yENebpycgTxAffkqOQUg4fXMam7SnEQZUH8ZOX7u6Z3JIGJm3MvhFEkay+q2grhzx3U16qxEUUPYrDs201YWgyEczHn4av53GgmCVIOXyPa45O3KyYblROpU436PrrudRt//97Vwalur4Zj+YBhiy6mKNKn9j3JlaWMuzPeuRAhToWB12Y26yLuupwPcuR960YOND74h46TBW/W6xxchJEiOXGHIprHCwnwefBPCGmu5OGXXYpLYH5vomBZ7+KwWRBSRkKyyPHKmyFUuCrXY3CmEIT6SrPDJ3qniq/HEo3/qAoExlSgf+ULpMDCwcLOvU0Ixl752EH35VSke6BC778Fd4NUoyy2nhWhPa02ntLggpEG7Ezn+GH2vzdUEStYEbeQIVD7gzRl/i9JDswYZyvl0AL5nHxbG29WAlTSt+y5a3fmq1CpZhC85hNoezAY/BwyLJAjvXZDaHf7w8ZnITNWN3xld4pr3gcbuArb3VWTDiPGz+FxdfTt05oQeqiUkKe+NegRRzegIt6EFElJz4xJUkCnANOxK1wihwCdI4tX0ZGM0eoVyIJn4elRtVCXIbtSND0XdM7DFvwt1RGi4/LgM8K3NREEX7ro7M4yGSopBSTiCgNZBz6M1x9nf2rK5k+nelXEpRb/Hv41pBSGbNWt5Y1hHl0QGvcANcIeCmsk8ssCThqOj8Ya2leF8PdxNVAfFOatog6/GGLoDfjmqOE33V2i037OceOs7Ev8nVS52jInj4c9Va19z1jS4MgLrrTey1qHUP7UL3w4wmHeYQEGnMd5CGStp455FuT8+e7OwWCoIE45tXbncMzSaZmv09V/wRU7GTPQLBEcjlONjQ60OHgHb1FqneTke6VXL1C6zEHxlRI5JD5Q3IzDYN6knJgDV2hHJGCf9tvUC5Zb2I/vRlzFHFfBnc1ycIMOwrC4veixA52kGUr5CDObUMYLe9S+JhukPN+QS61fU/lo4hxXwZ3NcnCDDsKxPHBe1FgvgFq+yjnnRjW1qF2SZeSaAx1BWUHvP7jVHkI0yEMf81oajDaPDSSsdjTK4NQ/AfYKUDvq4NTX5G9a9hGjYfP6vviYYETUh2BSaoSlqpGQ3lviSTguyYvA5kl+iqTEjNNBcUYeuHvXxRegOOE0OelaQ+nR8B3fKQwt2O7uDpo5vmrL6x0hlghmNl1VCpYSfJM5HiMYRwksuLV6q273OclhVG7iv5UmBVxXqSsOLSbbC5zkhc0vGL16kGLGk66aq5JebTNutvljmp0LIV9aoFawrw/ANUswHjjEwMqsnGOmMUISWSWLGsS+eVoXaakHr1TJm7rfIH1V4OahRTM3APteTjmbIhBOjpYGG7QhZqz3TjKL8rR9vTJQQ1mz4qunFBaF2I6i7XqzqJeBd7DH3t350VOtW4Zxw4IEO3vpJLVxqm3Wq+DdUBhOdWis5juO52aqP3HtlOIjVj8TiZ9KHD8Z/3W3RJLfQKQc68Dbyut//kXQigeo7W3yAij9Cd5WcknpT7qp4+Vfh0AAzi4w7k2SIxeu4Sus478j4tD5YSLcmXkI1S+IxU0LzhD3EVNEgoMW812/hC96MnTnOy8eBqdy1KJ41N9sETRgOCFhCKU6SMsI4JiU6svy5ZQaFycvHGfVTqig63Sav7dhdRIZ3r5tFFlFlXsyoj44gdUU61bo1nSjZE/Z+t3DAEJlkQ6Oabj3jxqgCSo7SKH0sAygDlswJUh42sYHyjQzVyHllgKld02ad683BkDix3E3dwpz4BzUWaC+A8qnw9x19yqIEP0BCaGIR+gL7bdat4AWBo7991wtlrUusQ3MUShYy/OKEtpmndnp24o7rg0IZ83OI0+Z3at4VQ4w73nnBAn6EVtoaZOKk2U3aBful3S9mYiPDf3B3xXeOgsxboWHkVMYB/Y1iNzkawvpl+U/7CI7ZdD1VfmXCPIcYNcBBw4UPK+mr8V4a9BAULrFsrJmgmo+hDFFd4IqVp1ze2NP34FBK1yys7ZCsEgp3AAc7aVuHQS/gOdgpyKav/+RrR9AJIkuaOKU1MEfSWEWrama4zWKR1f/f1cGJ5YCrpSOCZlbVzrtDQFnHwAviPFw1lCaBMR6gHxPFj2JgV4hlw3I+rGuwI/AF8BsXzYrQAB3Pbp/blr1mYTLGATqLXaQeKMdZNQoAWsFawdbXLIpAAyBaobzzbzVg8kGuo1CzGc7j811fRh1c0G1ztShqUIPllY+JLyGfslbJUAIGK43QmK0gsmJBYoU+UZBQRkdFFjkQl0P80mIWk+Q1EIgGEIkp3EkDWDqkw87R4BEEAMP94HVyGGb/PbJsEgYyvC6CEQAAAAA" alt="عمارات وقت المغرب قدامها مية" width="1200" height="800"><figcaption>سوق السمك</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات بالليل قدامها مية" width="900" height="1200"><figcaption>عمارات الشط</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات بالنهار قدامها مية" width="1400" height="700" loading="lazy"><figcaption>الميناء</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات بالنهار قدامها مية" width="1000" height="1000" loading="lazy"><figcaption>الجامع الكبير</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات الصبح بدري قدامها مية" width="1200" height="900" loading="lazy"><figcaption>شارع الفن</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات وقت المغرب قدامها مية" width="800" height="1100" loading="lazy"><figcaption>المنارة</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات بالليل قدامها مية" width="1200" height="675" loading="lazy"><figcaption>النهر</figcaption></figure></li>
-    <li><figure class="shot"><img src="data:image/webp;base64,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" alt="عمارات بالنهار قدامها مية" width="1000" height="800" loading="lazy"><figcaption>حديقة الحي</figcaption></figure></li>
-  </ul>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** خلفية غامقة، و ١٢ صورة لمدينة في شبكة، كلهم نفس الحجم بالظبط (مستطيل 4:3) حتى الصور الطويلة والمربعة، وتحت كل صورة اسم المكان. على 1280 أربع صور في الصف، وعلى الموبايل صورة واحدة.
-
-**الشبكة:** [[repeat(auto-fit, minmax(min(15rem, 100%), 1fr))]]: عدد الأعمدة على قد العرض، من غير media query.
-
-**كل الصور نفس الشكل:** [[aspect-ratio: 4 / 3]] بيخلي الصندوق 4:3 مهما كانت نسبة الصورة، و [[object-fit: cover]] بيملاه من غير ما يمط الصورة: بيكبّرها لحد ما تغطي الصندوق ويقص الزيادة. لو شلت [[object-fit]] الصورة الطويلة هتتعصر في الصندوق العريض.
-
-**[[width]] و [[height]] في الـ HTML:** حتى لو الـ CSS هيغيّر المقاس، الرقمين دول بيقولوا للمتصفح نسبة الصورة **قبل** ما تحمّل، فبيحجزلها مكانها من الأول ومفيش حاجة بتتنطط وهي بتحمّل. اتقاس بـ Performance في DevTools: نفس الصفحة من غير الرقمين و [[aspect-ratio]]: CLS = 0.79 (Google بيعتبر أكتر من 0.1 وحش). بيهم: 0.00.
-
-**[[loading="lazy"]]:** على الصور من ٧ لـ ١٢ بس. الصور اللي بتبان أول ما الصفحة تفتح (أول صفين على الكمبيوتر) لازم تحمّل على طول، لأن lazy عليها بيأخّر أهم حاجة في الصفحة (LCP).
-
-**الـ alt والـ figcaption مش نفس الكلام:** الاسم «الكورنيش» تحت الصورة في [[<figcaption>]]، والـ alt بيوصف اللي في الصورة («عمارات بالليل قدامها مية»). لو الاتنين نفس الكلمة، قارئ الشاشة بيقولها مرتين.
-
-~~~text الناتج (Chrome 157)
-1280: 4 أعمدة، أول صف: كل الصور top = 139 وطولها 224، ونسبة كل الصور 1.333 (4:3)
-360:  عمود واحد 312.8px، scrollWidth = clientWidth (345 مع الـ scrollbar)
-Performance (DevTools، reload):   بـ width و height و aspect-ratio   CLS 0.00
-                                  نفس الصفحة من غيرهم                CLS 0.79
-eager: 6 صور، lazy: 6
-axe (360 و 1280): 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~` },
-        { lvl: 'صغير', dir: "icon-sprite", t: R`sprite أيقونات من ١٠`, what: R`ملف [[icons.svg]] فيه ١٠ [[<symbol>]] متنضّفين بـ svgo، وصفحة بتعرضهم بـ [[<use>]] بـ ٣ ألوان و ٣ مقاسات من غير ما تكرر أي path. من درس [[SVG]].`, done: R`تغيير [[color]] على الأب بيلوّن الأيقونات، والمقاسات 16 و 24 و 48 حادة، و grep على الصفحة مفيهوش أي [[<path]] برا الـ symbols.`, sol: R`**الخطوات:** ١٠ أيقونات زي ما بتطلع من برنامج تصميم في [[raw/]] ← svgo بينضّفهم في [[clean/]] ← سكربت صغير بيجمعهم في [[icons.svg]] ← الصفحة بتستخدمهم بـ [[<use>]].
-
-مثال لأيقونة من [[raw/]] (الملف زي ما برنامج التصميم طلّعه):
-
-~~~svg raw/home.svg
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with a design tool -->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" id="home-icon">
-  <title>home</title>
-  <sodipodi:namedview pagecolor="#ffffff" showgrid="false"/>
-  <g id="Layer_1" stroke="#000000" fill="none" stroke-width="2.000" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M3.000 11.000 L12.000 3.000 L21.000 11.000"/><path d="M5 10 L5 21 L19 21 L19 10"/><path d="M10 21 L10 15 L14 15 L14 21"/>
-  </g>
-</svg>
-~~~
-
-~~~js svgo.config.mjs
-// svgo settings: the default cleanup, but keep viewBox, and turn the fixed black into currentColor
-export default {
-  multipass: true,
-  plugins: [
-    { name: "preset-default", params: { overrides: { removeViewBox: false } } },
-    { name: "convertColors", params: { currentColor: true } },
-    "removeDimensions",
-  ],
-};
-~~~
-
-~~~bash الترمنال
-npx svgo@4.0.0 -f raw -o clean --config svgo.config.mjs
-node build-sprite.js
-~~~
-
-~~~svg clean/home.svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>home</title><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m3 11 9-8 9 8"/><path d="M5 10v11h14V10"/><path d="M10 21v-6h4v6"/></g></svg>
-~~~
-
-~~~js build-sprite.js
-// node build-sprite.js : every clean/<name>.svg becomes one <symbol id="i-<name>"> inside icons.svg
-const fs = require("fs");
-const files = fs.readdirSync("clean").filter(f => f.endsWith(".svg")).sort();
-const symbols = files.map(f => {
-  const svg = fs.readFileSync("clean/" + f, "utf8");
-  const viewBox = svg.match(/viewBox="([^"]+)"/)[1];
-  const inner = svg.replace(/^<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "").replace(/<title>.*?<\/title>/, "");
-  return '  <symbol id="i-' + f.replace(".svg", "") + '" viewBox="' + viewBox + '">' + inner + "</symbol>";
-});
-fs.writeFileSync("icons.svg", '<svg xmlns="http://www.w3.org/2000/svg">\n' + symbols.join("\n") + "\n</svg>\n");
-console.log(files.length + " symbols, icons.svg = " + fs.statSync("icons.svg").size + " bytes");
-~~~
-
-~~~svg icons.svg
-<svg xmlns="http://www.w3.org/2000/svg">
-  <symbol id="i-bell" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 16v-5c0-3.5 2.5-6 6-6s6 2.5 6 6v5l2 2H4Zm4 5h4"/></symbol>
-  <symbol id="i-cart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 4h3l2 11h11l2-8H7"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></g></symbol>
-  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
-  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20c-7-5-9-8-9-11.5C3 6 5 4 7.5 4c2 0 3.5 1.5 4.5 3 1-1.5 2.5-3 4.5-3C19 4 21 6 21 8.5 21 12 19 15 12 20"/></symbol>
-  <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m3 11 9-8 9 8"/><path d="M5 10v11h14V10"/><path d="M10 21v-6h4v6"/></g></symbol>
-  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="18" height="14" x="3" y="5" rx="2"/><path d="m3 7 9 6 9-6"/></g></symbol>
-  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3h4l2 5-2.5 1.5c1 2.5 3.5 5 6 6L16 13l5 2v4c0 1-1 2-2 2-9 0-16-7-16-16 0-1 1-2 2-2"/></symbol>
-  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></g></symbol>
-  <symbol id="i-star" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 3 2.7 5.5 5.8.8-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.8-.8Z"/></symbol>
-  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7"/></g></symbol>
-</svg>
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أيقونات متجر الحي</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main class="page">
-  <h1>١٠ أيقونات من ملف واحد</h1>
-  <p>كل أيقونة مرسومة مرة واحدة في <code>icons.svg</code>، والصفحة بتشاور عليها بـ <code>&lt;use&gt;</code>. اللون من <code>color</code> على الأب، والمقاس من <code>width</code>.</p>
-  <section class="set set--small">
-    <h2>صغيرة 16px، رمادي</h2>
-    <ul class="icons">
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-home"></use></svg><span>الرئيسية</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"></use></svg><span>بحث</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-cart"></use></svg><span>السلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-heart"></use></svg><span>المفضّلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-user"></use></svg><span>حسابي</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-bell"></use></svg><span>الإشعارات</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-mail"></use></svg><span>الرسايل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-phone"></use></svg><span>اتصل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-clock"></use></svg><span>المواعيد</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-star"></use></svg><span>التقييم</span></li>
-    </ul>
-  </section>
-  <section class="set set--mid">
-    <h2>متوسطة 24px، أزرق</h2>
-    <ul class="icons">
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-home"></use></svg><span>الرئيسية</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"></use></svg><span>بحث</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-cart"></use></svg><span>السلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-heart"></use></svg><span>المفضّلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-user"></use></svg><span>حسابي</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-bell"></use></svg><span>الإشعارات</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-mail"></use></svg><span>الرسايل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-phone"></use></svg><span>اتصل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-clock"></use></svg><span>المواعيد</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-star"></use></svg><span>التقييم</span></li>
-    </ul>
-  </section>
-  <section class="set set--big">
-    <h2>كبيرة 48px، أحمر</h2>
-    <ul class="icons">
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-home"></use></svg><span>الرئيسية</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"></use></svg><span>بحث</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-cart"></use></svg><span>السلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-heart"></use></svg><span>المفضّلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-user"></use></svg><span>حسابي</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-bell"></use></svg><span>الإشعارات</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-mail"></use></svg><span>الرسايل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-phone"></use></svg><span>اتصل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-clock"></use></svg><span>المواعيد</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-star"></use></svg><span>التقييم</span></li>
-    </ul>
-  </section>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f8fafc; color: #0f172a; }
-.page { max-width: 60rem; margin-inline: auto; padding: 1rem; }
-code { padding: 0 0.3em; border-radius: 0.25rem; background: #e2e8f0; }
-h2 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
-
-.icons { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; margin: 0; padding: 0; list-style: none; }
-.icons li { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; min-width: 4.5rem; font-size: 0.8rem; }
-
-/* one rule for every icon: the size is a variable, the colour is whatever color the parent has */
-.icon { width: var(--size, 24px); height: var(--size, 24px); color: inherit; }
-
-.set--small { --size: 16px; color: #475569; }
-.set--mid   { --size: 24px; color: #1d4ed8; }
-.set--big   { --size: 48px; color: #b91c1c; }
-.set .icons span { color: #0f172a; }
-~~~
-
-~~~view 680 1100 الشكل النهائي (في المعاينة الـ sprite جوه الصفحة، شوف تحت)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أيقونات متجر الحي</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f8fafc; color: #0f172a; }
-.page { max-width: 60rem; margin-inline: auto; padding: 1rem; }
-code { padding: 0 0.3em; border-radius: 0.25rem; background: #e2e8f0; }
-h2 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
-
-.icons { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; margin: 0; padding: 0; list-style: none; }
-.icons li { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; min-width: 4.5rem; font-size: 0.8rem; }
-
-/* one rule for every icon: the size is a variable, the colour is whatever color the parent has */
-.icon { width: var(--size, 24px); height: var(--size, 24px); color: inherit; }
-
-.set--small { --size: 16px; color: #475569; }
-.set--mid   { --size: 24px; color: #1d4ed8; }
-.set--big   { --size: 48px; color: #b91c1c; }
-.set .icons span { color: #0f172a; }
-</style>
-</head>
-<body>
-<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-bell" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 16v-5c0-3.5 2.5-6 6-6s6 2.5 6 6v5l2 2H4Zm4 5h4"/></symbol>
-  <symbol id="i-cart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 4h3l2 11h11l2-8H7"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></g></symbol>
-  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
-  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20c-7-5-9-8-9-11.5C3 6 5 4 7.5 4c2 0 3.5 1.5 4.5 3 1-1.5 2.5-3 4.5-3C19 4 21 6 21 8.5 21 12 19 15 12 20"/></symbol>
-  <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m3 11 9-8 9 8"/><path d="M5 10v11h14V10"/><path d="M10 21v-6h4v6"/></g></symbol>
-  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="18" height="14" x="3" y="5" rx="2"/><path d="m3 7 9 6 9-6"/></g></symbol>
-  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3h4l2 5-2.5 1.5c1 2.5 3.5 5 6 6L16 13l5 2v4c0 1-1 2-2 2-9 0-16-7-16-16 0-1 1-2 2-2"/></symbol>
-  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></g></symbol>
-  <symbol id="i-star" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 3 2.7 5.5 5.8.8-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.8-.8Z"/></symbol>
-  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7"/></g></symbol>
-</svg>
-<main class="page">
-  <h1>١٠ أيقونات من ملف واحد</h1>
-  <p>كل أيقونة مرسومة مرة واحدة في <code>icons.svg</code>، والصفحة بتشاور عليها بـ <code>&lt;use&gt;</code>. اللون من <code>color</code> على الأب، والمقاس من <code>width</code>.</p>
-  <section class="set set--small">
-    <h2>صغيرة 16px، رمادي</h2>
-    <ul class="icons">
-      <li><svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg><span>الرئيسية</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg><span>بحث</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-cart"></use></svg><span>السلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-heart"></use></svg><span>المفضّلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg><span>حسابي</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg><span>الإشعارات</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg><span>الرسايل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg><span>اتصل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg><span>المواعيد</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg><span>التقييم</span></li>
-    </ul>
-  </section>
-  <section class="set set--mid">
-    <h2>متوسطة 24px، أزرق</h2>
-    <ul class="icons">
-      <li><svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg><span>الرئيسية</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg><span>بحث</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-cart"></use></svg><span>السلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-heart"></use></svg><span>المفضّلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg><span>حسابي</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg><span>الإشعارات</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg><span>الرسايل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg><span>اتصل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg><span>المواعيد</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg><span>التقييم</span></li>
-    </ul>
-  </section>
-  <section class="set set--big">
-    <h2>كبيرة 48px، أحمر</h2>
-    <ul class="icons">
-      <li><svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg><span>الرئيسية</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg><span>بحث</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-cart"></use></svg><span>السلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-heart"></use></svg><span>المفضّلة</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg><span>حسابي</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg><span>الإشعارات</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg><span>الرسايل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg><span>اتصل</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg><span>المواعيد</span></li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg><span>التقييم</span></li>
-    </ul>
-  </section>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** ٣ صفوف، في كل صف نفس الـ ١٠ أيقونات (بيت، وبحث، وسلة، وقلب…) وتحت كل واحدة اسمها. الأول صغير رمادي 16px، والتاني أزرق 24px، والتالت أحمر 48px.
-
-**svgo عمل إيه:** شال سطر الـ [[<?xml?>]] والتعليق و [[sodipodi:namedview]] (بيانات البرنامج) والـ [[id]] اللي ملهاش لازمة، وحوّل [[M3.000 11.000 L12.000 3.000]] لـ [[m3 11 9-8]]، وحوّل [[#000000]] لـ [[currentColor]] (عشان plugin [[convertColors]]). الـ ١٠ ملفات نزلوا من 6037 بايت لـ 2663. و [[removeViewBox: false]] مهم: من غير [[viewBox]] الأيقونة مش هتتكبّر وتصغر صح.
-
-**[[<symbol>]] و [[<use>]]:** [[icons.svg]] فيه ١٠ [[<symbol>]]، كل واحد ليه [[id]] و [[viewBox]] ومبيترسمش لوحده. الصفحة بتقول [[<use href="icons.svg#i-home">]] = «ارسم الـ symbol ده هنا». الرسمة نفسها في ملف واحد، والـ ٣٠ أيقونة في الصفحة بيشاوروا عليها. والملف ده بيتكاش زي أي صورة.
-
-**اللون والمقاس:** الـ path جوه الـ symbol [[stroke="currentColor"]]، يعني «لون الكلام بتاع العنصر». فـ [[color]] على الأب ([[.set--mid { color: #1d4ed8 }]]) بيلوّن الأيقونات اللي جواه. والمقاس من [[--size]] على [[width]] و [[height]]، والرسمة بتتكبّر من الـ [[viewBox]] حادة لأنها خطوط مش بكسلات.
-
-**ليه المعاينة فيها الـ sprite جوه الصفحة:** المعاينة [[srcdoc]] ملهاش ملفات جنبها، فـ [[icons.svg#i-home]] مش هيلاقي ملف. في ملفاتك على السيرفر الـ sprite ملف لوحده زي ما فوق. ولو فتحت [[index.html]] بدبل كليك ([[file://]]) Chrome مش هيرسم الأيقونات: اتقاس [[getBBox()]] لأول [[<use>]]: من [[file://]] = 0×0، ومن سيرفر محلي = 12×12. يعني لازم سيرفر ([[npx serve]] أو [[python -m http.server]]).
-
-~~~text الناتج
-npx svgo@4.0.0 -f raw -o clean --config svgo.config.mjs   (آخر سطر)
-star.svg:
-Done in 2 ms!
-0.621 KiB - 58.2% = 0.26 KiB
-
-الـ 10 ملفات: 6037 بايت ← 2663
-node build-sprite.js
-10 symbols, icons.svg = 2381 bytes
-
-في الصفحة (Chrome 157): 30 <use>، و 0 <path> (grep على index.html كمان: 0)
-المقاسات: 16x16 و 24x24 و 48x48، والألوان rgb(71, 85, 105) و rgb(29, 78, 216) و rgb(185, 28, 28)
-color على الصف التاني ← rgb(22, 163, 74): الأيقونات اتلوّنت أخضر
-axe (360 و 1280): 0 violations   الـ validator: مفيش رسايل (والـ sprite بـ --svg كمان)   CSS validator: No Error Found
-~~~` },
-        { lvl: 'متوسط', dir: "tool-box", t: R`صندوق أدوات رسم بأيقونات SVG و tooltips`, what: R`شريط أدوات لتطبيق رسم متخيل: ٦ أزرار أيقونات (قلم، وأستيكة، وجردل لون، وكتابة، وأشكال، وتحريك) من sprite جوه الصفحة، وأداة واحدة شغالة بلون مختلف ([[aria-pressed]])، و tooltip باسم الأداة لما الماوس ييجي عليها أو الكيبورد يوقف عليها، و Escape بيخفيه. الأسهم بتمشي بين الأدوات (roving tabindex). من دروس [[SVG]] و [[position: absolute]] (والكيبورد من وحدة Accessibility).`, done: R`كل زرار ليه اسم يتقري (مش الأيقونة بس)، وأداة واحدة بس [[aria-pressed="true"]]، و Tab بيدخل الشريط مرة واحدة والأسهم بتمشي جواه (في rtl السهم الشمال للي بعده)، والـ tooltip بيظهر مع الـ hover والـ focus وبيختفي بـ Escape، و axe صفر مشاكل.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لوحة رسم: صندوق الأدوات</title>
-<link rel="stylesheet" href="style.css">
-<script src="tools.js" defer></script>
-</head>
-<body>
-<!-- the sprite lives in the page: drawn once, used by every button -->
-<svg width="0" height="0" class="sprite" aria-hidden="true">
-  <symbol id="t-pen" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></symbol>
-  <symbol id="t-eraser" viewBox="0 0 24 24"><path d="M8 20h12"/><path d="M4 15 14 5l5 5-8 8H7z"/></symbol>
-  <symbol id="t-fill" viewBox="0 0 24 24"><path d="M5 11 12 4l7 7-7 7z"/><path d="M19 15c0 2 1.5 3 1.5 4a1.5 1.5 0 0 1-3 0c0-1 1.5-2 1.5-4z"/></symbol>
-  <symbol id="t-text" viewBox="0 0 24 24"><path d="M5 6V4h14v2"/><path d="M12 4v16"/><path d="M9 20h6"/></symbol>
-  <symbol id="t-shape" viewBox="0 0 24 24"><rect x="3" y="11" width="9" height="9" rx="1"/><circle cx="16" cy="8" r="5"/></symbol>
-  <symbol id="t-hand" viewBox="0 0 24 24"><path d="M8 13V5a1.5 1.5 0 0 1 3 0v6"/><path d="M11 11V4a1.5 1.5 0 0 1 3 0v7"/><path d="M14 11V6a1.5 1.5 0 0 1 3 0v7c0 4-2 7-6 7-3 0-5-2-7-6l-1-2a1.5 1.5 0 0 1 2.5-1.5L8 13"/></symbol>
-</svg>
-
-<main class="page">
-  <h1>لوحة رسم</h1>
-  <div class="toolbar" role="toolbar" aria-label="أدوات الرسم">
-    <button type="button" class="tool" aria-pressed="true" data-tip="قلم"><svg aria-hidden="true"><use href="#t-pen"></use></svg><span class="visually-hidden">قلم</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="أستيكة" tabindex="-1"><svg aria-hidden="true"><use href="#t-eraser"></use></svg><span class="visually-hidden">أستيكة</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="جردل لون" tabindex="-1"><svg aria-hidden="true"><use href="#t-fill"></use></svg><span class="visually-hidden">جردل لون</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="كتابة" tabindex="-1"><svg aria-hidden="true"><use href="#t-text"></use></svg><span class="visually-hidden">كتابة</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="أشكال" tabindex="-1"><svg aria-hidden="true"><use href="#t-shape"></use></svg><span class="visually-hidden">أشكال</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="تحريك اللوحة" tabindex="-1"><svg aria-hidden="true"><use href="#t-hand"></use></svg><span class="visually-hidden">تحريك اللوحة</span></button>
-  </div>
-  <p class="status" aria-live="polite">الأداة: <b id="current">قلم</b></p>
-  <div class="canvas" aria-hidden="true"></div>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; }
-.page { max-width: 48rem; margin-inline: auto; padding: 1rem; }
-.sprite { position: absolute; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-.toolbar { display: inline-flex; gap: 0.25rem; padding: 0.35rem; border-radius: 0.9rem; background: #fff; box-shadow: 0 4px 16px #0f172a1f; }
-.tool {
-  position: relative;                 /* the tooltip is placed from the button */
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 0;
-  border-radius: 0.65rem;
-  background: transparent;
-  color: #475569;                     /* the icon is stroke="currentColor" through the svg below */
-  cursor: pointer;
-}
-.tool svg { width: 1.5rem; height: 1.5rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.tool:hover { background: #f1f5f9; color: #0f172a; }
-.tool[aria-pressed="true"] { background: #4338ca; color: #fff; }   /* the active tool */
-.tool:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-
-/* the tooltip: the button's own name, under it, on hover and on keyboard focus */
-.tool::after {
-  content: attr(data-tip);
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 50%;
-  translate: -50% 0;
-  z-index: 1;
-  padding: 0.25rem 0.6rem;
-  border-radius: 0.4rem;
-  background: #0f172a;
-  color: #fff;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.15s;
-}
-.tool:hover::after, .tool:focus-visible::after { opacity: 1; visibility: visible; }
-.toolbar.tips-off .tool::after { opacity: 0; visibility: hidden; }   /* Escape hides it (tools.js) */
-@media (prefers-reduced-motion: reduce) { .tool::after { transition: none; } }
-
-.status { margin: 1.5rem 0 0.5rem; }
-/* a grid of lines: two repeating gradients. Only the LAST layer of background may have a colour, so the white goes in background-color */
-.canvas {
-  height: 14rem;
-  border-radius: 0.75rem;
-  background-color: #fff;
-  background-image:
-    repeating-linear-gradient(0deg, transparent 0 23px, #e2e8f0 23px 24px),
-    repeating-linear-gradient(90deg, transparent 0 23px, #e2e8f0 23px 24px);
-}
-~~~
-
-~~~js tools.js
-const bar = document.querySelector(".toolbar");
-const tools = [...bar.querySelectorAll(".tool")];
-const current = document.getElementById("current");
-
-// one tool at a time: the pressed one is also the only one in the Tab order (roving tabindex)
-function choose(btn, focus) {
-  tools.forEach(t => {
-    const on = t === btn;
-    t.setAttribute("aria-pressed", String(on));
-    t.tabIndex = on ? 0 : -1;
-  });
-  current.textContent = btn.dataset.tip;
-  if (focus) btn.focus();
-}
-tools.forEach(t => t.addEventListener("click", () => choose(t, false)));
-
-// arrows move between tools. In a right-to-left page the "next" tool is on the LEFT, so ArrowLeft goes forward
-bar.addEventListener("keydown", e => {
-  const i = tools.indexOf(document.activeElement);
-  if (i < 0) return;
-  const rtl = getComputedStyle(bar).direction === "rtl";
-  const step = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
-  if (step) { e.preventDefault(); choose(tools[(i + step + tools.length) % tools.length], true); }
-  if (e.key === "Home") { e.preventDefault(); choose(tools[0], true); }
-  if (e.key === "End") { e.preventDefault(); choose(tools[tools.length - 1], true); }
-  if (e.key === "Escape") bar.classList.add("tips-off");           // WCAG 1.4.13: a tooltip can be dismissed
-});
-bar.addEventListener("pointermove", () => bar.classList.remove("tips-off"));
-bar.addEventListener("focusin", () => bar.classList.remove("tips-off"));
-~~~
-
-~~~view 460 460 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لوحة رسم: صندوق الأدوات</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; }
-.page { max-width: 48rem; margin-inline: auto; padding: 1rem; }
-.sprite { position: absolute; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-.toolbar { display: inline-flex; gap: 0.25rem; padding: 0.35rem; border-radius: 0.9rem; background: #fff; box-shadow: 0 4px 16px #0f172a1f; }
-.tool {
-  position: relative;                 /* the tooltip is placed from the button */
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 0;
-  border-radius: 0.65rem;
-  background: transparent;
-  color: #475569;                     /* the icon is stroke="currentColor" through the svg below */
-  cursor: pointer;
-}
-.tool svg { width: 1.5rem; height: 1.5rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.tool:hover { background: #f1f5f9; color: #0f172a; }
-.tool[aria-pressed="true"] { background: #4338ca; color: #fff; }   /* the active tool */
-.tool:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-
-/* the tooltip: the button's own name, under it, on hover and on keyboard focus */
-.tool::after {
-  content: attr(data-tip);
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 50%;
-  translate: -50% 0;
-  z-index: 1;
-  padding: 0.25rem 0.6rem;
-  border-radius: 0.4rem;
-  background: #0f172a;
-  color: #fff;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.15s;
-}
-.tool:hover::after, .tool:focus-visible::after { opacity: 1; visibility: visible; }
-.toolbar.tips-off .tool::after { opacity: 0; visibility: hidden; }   /* Escape hides it (tools.js) */
-@media (prefers-reduced-motion: reduce) { .tool::after { transition: none; } }
-
-.status { margin: 1.5rem 0 0.5rem; }
-/* a grid of lines: two repeating gradients. Only the LAST layer of background may have a colour, so the white goes in background-color */
-.canvas {
-  height: 14rem;
-  border-radius: 0.75rem;
-  background-color: #fff;
-  background-image:
-    repeating-linear-gradient(0deg, transparent 0 23px, #e2e8f0 23px 24px),
-    repeating-linear-gradient(90deg, transparent 0 23px, #e2e8f0 23px 24px);
-}
-</style>
-</head>
-<body>
-<!-- the sprite lives in the page: drawn once, used by every button -->
-<svg width="0" height="0" class="sprite" aria-hidden="true">
-  <symbol id="t-pen" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></symbol>
-  <symbol id="t-eraser" viewBox="0 0 24 24"><path d="M8 20h12"/><path d="M4 15 14 5l5 5-8 8H7z"/></symbol>
-  <symbol id="t-fill" viewBox="0 0 24 24"><path d="M5 11 12 4l7 7-7 7z"/><path d="M19 15c0 2 1.5 3 1.5 4a1.5 1.5 0 0 1-3 0c0-1 1.5-2 1.5-4z"/></symbol>
-  <symbol id="t-text" viewBox="0 0 24 24"><path d="M5 6V4h14v2"/><path d="M12 4v16"/><path d="M9 20h6"/></symbol>
-  <symbol id="t-shape" viewBox="0 0 24 24"><rect x="3" y="11" width="9" height="9" rx="1"/><circle cx="16" cy="8" r="5"/></symbol>
-  <symbol id="t-hand" viewBox="0 0 24 24"><path d="M8 13V5a1.5 1.5 0 0 1 3 0v6"/><path d="M11 11V4a1.5 1.5 0 0 1 3 0v7"/><path d="M14 11V6a1.5 1.5 0 0 1 3 0v7c0 4-2 7-6 7-3 0-5-2-7-6l-1-2a1.5 1.5 0 0 1 2.5-1.5L8 13"/></symbol>
-</svg>
-
-<main class="page">
-  <h1>لوحة رسم</h1>
-  <div class="toolbar" role="toolbar" aria-label="أدوات الرسم">
-    <button type="button" class="tool" aria-pressed="true" data-tip="قلم"><svg aria-hidden="true"><use href="#t-pen"></use></svg><span class="visually-hidden">قلم</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="أستيكة" tabindex="-1"><svg aria-hidden="true"><use href="#t-eraser"></use></svg><span class="visually-hidden">أستيكة</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="جردل لون" tabindex="-1"><svg aria-hidden="true"><use href="#t-fill"></use></svg><span class="visually-hidden">جردل لون</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="كتابة" tabindex="-1"><svg aria-hidden="true"><use href="#t-text"></use></svg><span class="visually-hidden">كتابة</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="أشكال" tabindex="-1"><svg aria-hidden="true"><use href="#t-shape"></use></svg><span class="visually-hidden">أشكال</span></button>
-    <button type="button" class="tool" aria-pressed="false" data-tip="تحريك اللوحة" tabindex="-1"><svg aria-hidden="true"><use href="#t-hand"></use></svg><span class="visually-hidden">تحريك اللوحة</span></button>
-  </div>
-  <p class="status" aria-live="polite">الأداة: <b id="current">قلم</b></p>
-  <div class="canvas" aria-hidden="true"></div>
-</main>
-<script>
-const bar = document.querySelector(".toolbar");
-const tools = [...bar.querySelectorAll(".tool")];
-const current = document.getElementById("current");
-
-// one tool at a time: the pressed one is also the only one in the Tab order (roving tabindex)
-function choose(btn, focus) {
-  tools.forEach(t => {
-    const on = t === btn;
-    t.setAttribute("aria-pressed", String(on));
-    t.tabIndex = on ? 0 : -1;
-  });
-  current.textContent = btn.dataset.tip;
-  if (focus) btn.focus();
-}
-tools.forEach(t => t.addEventListener("click", () => choose(t, false)));
-
-// arrows move between tools. In a right-to-left page the "next" tool is on the LEFT, so ArrowLeft goes forward
-bar.addEventListener("keydown", e => {
-  const i = tools.indexOf(document.activeElement);
-  if (i < 0) return;
-  const rtl = getComputedStyle(bar).direction === "rtl";
-  const step = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
-  if (step) { e.preventDefault(); choose(tools[(i + step + tools.length) % tools.length], true); }
-  if (e.key === "Home") { e.preventDefault(); choose(tools[0], true); }
-  if (e.key === "End") { e.preventDefault(); choose(tools[tools.length - 1], true); }
-  if (e.key === "Escape") bar.classList.add("tips-off");           // WCAG 1.4.13: a tooltip can be dismissed
-});
-bar.addEventListener("pointermove", () => bar.classList.remove("tips-off"));
-bar.addEventListener("focusin", () => bar.classList.remove("tips-off"));
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** شريط أبيض فيه ٦ أيقونات، القلم أول واحد بخلفية بنفسجي (الأداة الشغالة). الماوس على أي أيقونة بيطلّع تحتها اسمها في صندوق غامق صغير. الضغط على أداة بيخليها هي الشغالة، و «الأداة: …» تحت بيتغيّر. وتحت مساحة رسم بمربعات.
-
-**الـ sprite جوه الصفحة:** [[<svg width="0" height="0">]] في أول الـ body فيه ٦ [[<symbol>]]، والأزرار [[<use href="#t-pen">]]. ده بيشتغل من غير سيرفر ومن غير ملف تاني. لو الأيقونات كتير وبتتكرر في صفحات، ملف لوحده أحسن عشان الكاش.
-
-**الاسم:** الأيقونة [[aria-hidden="true"]]، والاسم [[<span class="visually-hidden">قلم</span>]] جوه الزرار. الـ tooltip نفس الكلمة من [[data-tip]]، بس هو للعين بس.
-
-**الـ tooltip:** [[::after]] بـ [[content: attr(data-tip)]] و [[position: absolute]] تحت الزرار ([[top: calc(100% + 0.5rem)]])، والزرار [[position: relative]]. بيظهر مع [[:hover]] و [[:focus-visible]] (الكيبورد لازم يشوفه زي الماوس). و [[visibility: hidden]] مع [[opacity: 0]] عشان ميتقريش وهو مستخبي. و WCAG (1.4.13) بيطلب إنه يتقفل من غير ما تحرّك الماوس: Escape بيحط [[tips-off]].
-
-**الأداة الشغالة:** [[aria-pressed="true"]] على واحدة بس، والـ CSS بيلوّنها من نفس الـ attribute ([[.tool[aria-pressed="true"]]]). كده الشكل وقارئ الشاشة مبيختلفوش أبدًا.
-
-**الكيبورد (roving tabindex):** الشريط [[role="toolbar"]]، والأداة الشغالة بس [[tabindex="0"]] والباقي [[-1]]، فالـ Tab بيدخل الشريط مرة ويطلع. جواه الأسهم. وفي rtl الأداة اللي «بعد» على الشمال، فالسهم الشمال هو اللي بيروح لها (الـ JS بيقرا [[direction]]).
-
-**غلطة اتصلحت:** الـ CSS validator قال [[“#fff” is not a “background” value]] على مساحة الرسم. كنت كاتب [[background: #fff repeating-linear-gradient(...), #fff repeating-linear-gradient(...)]]: لون في كل طبقة، والمسموح لون في آخر طبقة بس. التصليح: [[background-color]] لوحده، و [[background-image]] بالطبقتين.
-
-~~~text الناتج (Playwright بـ Chrome 157، ضغطات حقيقية)
-Tab:                       focus «قلم»، pressed «قلم»، tabbable 1
-ArrowLeft (rtl = next):    focus «أستيكة»، pressed «أستيكة»، status «أستيكة»
-End:                       «تحريك اللوحة»
-ArrowLeft من الأخيرة:      «قلم» (بيلف)
-الـ tooltip بعد 400ms من الـ focus: opacity 1 / visible
-Escape:                    opacity 0 / hidden
-Tab تاني:                  بيطلع برّه الشريط
-hover على «جردل لون»:      opacity 1
-click على «أشكال»:         status «أشكال»
-axe (360 و 1280): 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found (كانت 1 قبل background-color)
-~~~` },
-        { lvl: 'متوسط', dir: "restore-compare", t: R`قبل وبعد لترميم صور قديمة`, what: R`سلايدر قبل وبعد: صورتين فوق بعض، والعليا [[clip-path: inset()]] من [[--pos]]، و range input شفاف للكيبورد واللمس، والصورة «قبل» [[filter: grayscale(.85) sepia(.25)]]، و [[touch-action: pan-y]] عشان الصفحة تفضل تعمل scroll على الموبايل. بيجمع [[object-fit]] و [[position: absolute]].`, done: R`الأسهم و Home و End بيحرّكوا الخط، والقيمة بتتقري لقارئ الشاشة ([[aria-valuetext]] زي «50٪»)، والسلايدر شغال في rtl من غير ما يتعكس غلط، وعلى 360 بتعمل scroll للصفحة وانت صباعك على الصورة.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ترميم صور قديمة: قبل وبعد</title>
-<link rel="stylesheet" href="style.css">
-<script src="compare.js" defer></script>
-</head>
-<body>
-<main class="page">
-  <h1>رجّعنا صورة الشارع القديمة</h1>
-  <p>اسحب الخط (أو استخدم الأسهم) عشان تقارن الصورة قبل الترميم وبعده.</p>
-
-  <!-- the comparison always reads left to right: «قبل» on the left, in any language -->
-  <figure class="compare" dir="ltr" style="--pos: 50%">
-    <img class="compare__before" src="img/before.jpg" alt="الصورة قبل الترميم: باهتة ومخدوشة" width="1200" height="800">
-    <img class="compare__after" src="img/after.jpg" alt="نفس الصورة بعد الترميم: ألوانها واضحة" width="1200" height="800">
-    <span class="tag tag--before">قبل</span>
-    <span class="tag tag--after">بعد</span>
-    <input class="compare__range" type="range" min="0" max="100" value="50" aria-label="مكان الخط بين قبل وبعد" aria-valuetext="٥٠٪ من الصورة بعد الترميم">
-  </figure>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fafaf9; color: #1c1917; }
-.page { max-width: 56rem; margin-inline: auto; padding: 1rem; }
-
-/* both pictures in the same box, one on top of the other */
-.compare { position: relative; margin: 0; border-radius: 0.75rem; overflow: hidden; }
-.compare img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
-.compare__before { filter: grayscale(0.85) sepia(0.25); }          /* old: almost grey, a little brown */
-.compare__after {
-  position: absolute;
-  inset: 0;
-  height: 100%;
-  clip-path: inset(0 0 0 var(--pos));                               /* hide everything left of --pos */
-}
-
-/* the line and its round handle, at the same --pos */
-.compare::after {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  left: var(--pos);
-  width: 3px;
-  translate: -50% 0;
-  background: #fff;
-  box-shadow: 0 0 8px #0008;
-  pointer-events: none;
-}
-.compare::before {
-  content: "⇆";
-  position: absolute;
-  top: 50%;
-  left: var(--pos);
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: #fff;
-  color: #1c1917;
-  font-size: 1.3rem;
-  box-shadow: 0 2px 10px #0006;
-  pointer-events: none;
-}
-
-/* the range: invisible, covering the whole picture, so dragging anywhere works */
-.compare__range {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: ew-resize;
-  touch-action: pan-y;       /* a vertical swipe still scrolls the page on a phone */
-}
-/* the input is invisible, so its focus ring goes on the picture */
-.compare:has(.compare__range:focus-visible) { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-.tag { position: absolute; top: 0.75rem; padding: 0.15rem 0.6rem; border-radius: 999px; background: #000a; color: #fff; font-size: 0.85rem; pointer-events: none; }
-.tag--before { left: 0.75rem; }
-.tag--after { right: 0.75rem; }
-~~~
-
-~~~js compare.js
-const box = document.querySelector(".compare");
-const range = box.querySelector(".compare__range");
-const ar = n => n.toLocaleString("ar-EG");
-
-function update() {
-  box.style.setProperty("--pos", range.value + "%");
-  // what a screen reader says instead of a bare number
-  range.setAttribute("aria-valuetext", ar(100 - range.value) + "٪ من الصورة بعد الترميم");
-}
-range.addEventListener("input", update);
-update();
-~~~
-
-الصورتين نفس المنظر من نفس السكربت: [[before.jpg]] بخدوش ونقط وتغبيش، و [[after.jpg]] نضيفة.
-
-~~~view 640 440 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ترميم صور قديمة: قبل وبعد</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fafaf9; color: #1c1917; }
-.page { max-width: 56rem; margin-inline: auto; padding: 1rem; }
-
-/* both pictures in the same box, one on top of the other */
-.compare { position: relative; margin: 0; border-radius: 0.75rem; overflow: hidden; }
-.compare img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
-.compare__before { filter: grayscale(0.85) sepia(0.25); }          /* old: almost grey, a little brown */
-.compare__after {
-  position: absolute;
-  inset: 0;
-  height: 100%;
-  clip-path: inset(0 0 0 var(--pos));                               /* hide everything left of --pos */
-}
-
-/* the line and its round handle, at the same --pos */
-.compare::after {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  left: var(--pos);
-  width: 3px;
-  translate: -50% 0;
-  background: #fff;
-  box-shadow: 0 0 8px #0008;
-  pointer-events: none;
-}
-.compare::before {
-  content: "⇆";
-  position: absolute;
-  top: 50%;
-  left: var(--pos);
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: #fff;
-  color: #1c1917;
-  font-size: 1.3rem;
-  box-shadow: 0 2px 10px #0006;
-  pointer-events: none;
-}
-
-/* the range: invisible, covering the whole picture, so dragging anywhere works */
-.compare__range {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: ew-resize;
-  touch-action: pan-y;       /* a vertical swipe still scrolls the page on a phone */
-}
-/* the input is invisible, so its focus ring goes on the picture */
-.compare:has(.compare__range:focus-visible) { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-.tag { position: absolute; top: 0.75rem; padding: 0.15rem 0.6rem; border-radius: 999px; background: #000a; color: #fff; font-size: 0.85rem; pointer-events: none; }
-.tag--before { left: 0.75rem; }
-.tag--after { right: 0.75rem; }
-</style>
-</head>
-<body>
-<main class="page">
-  <h1>رجّعنا صورة الشارع القديمة</h1>
-  <p>اسحب الخط (أو استخدم الأسهم) عشان تقارن الصورة قبل الترميم وبعده.</p>
-
-  <!-- the comparison always reads left to right: «قبل» on the left, in any language -->
-  <figure class="compare" dir="ltr" style="--pos: 50%">
-    <img class="compare__before" src="data:image/webp;base64,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" alt="الصورة قبل الترميم: باهتة ومخدوشة" width="1200" height="800">
-    <img class="compare__after" src="data:image/webp;base64,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" alt="نفس الصورة بعد الترميم: ألوانها واضحة" width="1200" height="800">
-    <span class="tag tag--before">قبل</span>
-    <span class="tag tag--after">بعد</span>
-    <input class="compare__range" type="range" min="0" max="100" value="50" aria-label="مكان الخط بين قبل وبعد" aria-valuetext="٥٠٪ من الصورة بعد الترميم">
-  </figure>
-</main>
-<script>
-const box = document.querySelector(".compare");
-const range = box.querySelector(".compare__range");
-const ar = n => n.toLocaleString("ar-EG");
-
-function update() {
-  box.style.setProperty("--pos", range.value + "%");
-  // what a screen reader says instead of a bare number
-  range.setAttribute("aria-valuetext", ar(100 - range.value) + "٪ من الصورة بعد الترميم");
-}
-range.addEventListener("input", update);
-update();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** صورة شارع، شمالها باهت رمادي بني ومخدوش (قبل)، ويمينها ألوان واضحة (بعد)، وفي النص خط أبيض عليه دايرة ⇆. اسحب في أي حتة على الصورة والخط بيتحرك. وفوق على الأركان «قبل» و «بعد».
-
-**الصورتين فوق بعض:** «قبل» عادية، و «بعد» [[position: absolute; inset: 0]] فوقها بالظبط. و [[clip-path: inset(0 0 0 var(--pos))]] بيقص «بعد» من الشمال لحد [[--pos]]، فاللي قبل الخط «قبل» واللي بعده «بعد».
-
-**«قبل» شكلها قديم من CSS:** [[filter: grayscale(0.85) sepia(0.25)]]: ٨٥٪ رمادي وشوية بني.
-
-**الـ range شفاف فوق الصورة كلها:** [[<input type="range">]] بـ [[opacity: 0]] و [[inset: 0]]، فالسحب في أي حتة على الصورة بيحرّكه، والكيبورد بيشتغل لوحده (الأسهم و Home و End) من غير ولا سطر JavaScript زيادة. الـ JS بيقرا القيمة ويحطها في [[--pos]] بس.
-
-**الـ focus:** الـ input مش باين، فالحلقة على الصورة كلها بـ [[.compare:has(.compare__range:focus-visible)]].
-
-**قارئ الشاشة:** من غير [[aria-valuetext]] كان هيقول «52». دلوقتي بيقول «٤٨٪ من الصورة بعد الترميم».
-
-**rtl:** المقارنة كلها [[dir="ltr"]]: الـ range في صفحة عربي بيمشي من اليمين للشمال، يعني السهم اليمين كان هيحرّك الخط شمال. في صورة، «قبل» على الشمال و «بعد» على اليمين أوضح في أي لغة، فالمقارنة ltr والصفحة نفسها rtl.
-
-**[[touch-action: pan-y]]:** على الموبايل الـ range فوق الصورة كلها، فمن غير السطر ده المتصفح ممكن ياخد سحب الصباع للسلايدر حتى لو انت عايز تنزل في الصفحة. [[pan-y]] بيقوله «السحب لفوق ولتحت للصفحة».
-
-~~~text الناتج (Chrome 157، ضغطات كيبورد حقيقية)
-البداية:   value 50، --pos 50%، «٥٠٪ من الصورة بعد الترميم»
-→ مرتين:   value 52، --pos 52%، «٤٨٪ من الصورة بعد الترميم»
-Home:      value 0،  --pos 0%،  «١٠٠٪ من الصورة بعد الترميم»
-End:       value 100، --pos 100%، «٠٪ من الصورة بعد الترميم»
-direction للـ range: ltr، و touch-action: pan-y
-filter على قبل: grayscale(0.85) sepia(0.25)، و clip-path على بعد: inset(0px 0px 0px 50%)
-axe (360 و 1280): 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**السحب بالصباع على موبايل حقيقي اتجرّبش هنا:** القيمة اتقاست ([[touch-action]] = [[pan-y]])، والسلوك من MDN. جرّبه على موبايلك: انزل في الصفحة وصباعك على الصورة.` },
-        { lvl: 'متوسط', dir: "hero-media", t: R`هيرو بـ art direction وفيديو بزرار إيقاف`, what: R`هيرو فيه [[<picture>]] بصورة عريضة للديسكتوب وطولية للموبايل بـ AVIF و WebP، وتحتها قسم فيه فيديو خلفية [[muted autoplay loop playsinline]] بزرار إيقاف ويحترم reduced motion، و YouTube facade. من دروس [[picture]] و [[video و iframe]].`, done: R`Network على 1280 و 390: ملف صورة واحد لكل مقاس، والـ iframe بتاع يوتيوب مش موجود قبل الضغط (٢ requests بس للـ facade)، وبعد الضغط الـ focus على الـ iframe، ومع reduce الفيديو واقف.`, sol: R`**الملفات:** الصور بـ ٣ صيغ لكل مقاس، والفيديو بصيغتين، و [[embed.html]] واقف مكان صفحة المشغّل بتاعة موقع الفيديو (في الحقيقة لينك [[/embed/]] بتاع الموقع).
-
-~~~bash الترمنال (الصور اتعملت بسكربت Python، والفيديو بـ ffmpeg)
-ffmpeg -f lavfi -i "gradients=s=960x540:d=6:speed=0.03:c0=0x0e7490:c1=0x7c3aed:c2=0xf59e0b:n=3,format=yuv420p" -c:v libx264 -crf 30 -preset slow -movflags +faststart -an loop.mp4
-ffmpeg -i loop.mp4 -c:v libvpx-vp9 -crf 42 -b:v 0 -an loop.webm
-ffmpeg -i loop.mp4 -frames:v 1 -q:v 5 poster.jpg
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>رحلات الواحة</title>
-<link rel="stylesheet" href="style.css">
-<script src="media.js" defer></script>
-</head>
-<body>
+<header>
+  <h1>دفتر نور</h1>
+</header>
 <main>
-  <section class="hero">
-    <!-- one image per screen: the browser takes the FIRST source that matches, top to bottom -->
-    <picture>
-      <source media="(max-width: 40rem)" type="image/avif" srcset="img/hero-tall.avif">
-      <source media="(max-width: 40rem)" type="image/webp" srcset="img/hero-tall.webp">
-      <source media="(max-width: 40rem)" srcset="img/hero-tall.jpg">
-      <source type="image/avif" srcset="img/hero-wide.avif">
-      <source type="image/webp" srcset="img/hero-wide.webp">
-      <img class="hero__img" src="img/hero-wide.jpg" alt="بيوت الواحة وقت المغرب" width="1600" height="700" fetchpriority="high">
-    </picture>
-    <div class="hero__text">
-      <h1>ليلتين في الواحة</h1>
-      <p>رحلة بالعربية، ونوم في بيوت طين، وسما مليانة نجوم.</p>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="mood">
-    <h2 id="mood">الجو هناك</h2>
-    <div class="bg-video">
-      <video id="loop" muted autoplay loop playsinline poster="media/poster.jpg" aria-hidden="true">
-        <source src="media/loop.webm" type="video/webm">
-        <source src="media/loop.mp4" type="video/mp4">
-      </video>
-      <p class="bg-video__text">ألوان الصحرا من الصبح لحد المغرب</p>
-      <button class="bg-video__btn" id="pause" type="button" aria-pressed="false">⏸ وقّف الحركة</button>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="review">
-    <h2 id="review">ريفيو من رحلة الشهر اللي فات</h2>
-    <!-- the facade: a picture and a button. The real player loads only after the click -->
-    <div class="facade" id="facade" data-src="embed.html">
-      <img src="img/review-thumb.jpg" alt="" width="640" height="360" loading="lazy">
-      <button class="facade__play" type="button">▶ شغّل الريفيو (٣ دقايق)</button>
-    </div>
-  </section>
+  <h2>ملاحظاتي</h2>
+  <ul>
+    <li>مشتريات الأسبوع <button type="button" onclick="del.showModal()">امسح</button></li>
+    <li>أفكار المشروع <button type="button" onclick="del.showModal()">امسح</button></li>
+    <li>كتب عايز أقراها <button type="button" onclick="del.showModal()">امسح</button></li>
+  </ul>
 </main>
+
+<dialog id="del" aria-labelledby="del-title">
+  <h2 id="del-title">تمسح الملاحظة؟</h2>
+  <p>الملاحظة هتتمسح ومش هترجع.</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>
 </body>
 </html>
 ~~~
 
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fffbeb; color: #1c1917; }
-img, video { display: block; max-width: 100%; }
-button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+**هتشوف إيه:**
 
-/* hero: the picture fills the box; the text sits on it in the same grid cell */
-.hero { display: grid; }
-.hero > * { grid-area: 1 / 1; }
-.hero__img { width: 100%; height: auto; max-height: 80vh; object-fit: cover; }
-.hero__text { align-self: end; margin: 1rem; padding: 1rem 1.25rem; border-radius: 0.75rem; background: #1c1917d9; color: #fff; max-width: 32rem; }
-.hero__text h1 { margin: 0 0 0.25rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.8rem); }
-.hero__text p { margin: 0; }
+- عنوان، وقايمة من تلات سطور كل سطر جنبه «امسح».
+- دوس «امسح» بتاع أي ملاحظة: صندوق في النص فيه «تمسح الملاحظة؟»، والصفحة وراه عليها غبشة خفيفة.
+- الفوكس على «إلغاء». Esc بيقفل.
 
-.section { max-width: 56rem; margin-inline: auto; padding: 2rem 1rem; }
+**ليه كده:**
 
-/* background video: decoration under text, with a pause button */
-.bg-video { display: grid; border-radius: 1rem; overflow: hidden; }
-.bg-video > * { grid-area: 1 / 1; }
-.bg-video video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-.bg-video__text { align-self: center; justify-self: center; margin: 0; padding: 0.5rem 1rem; border-radius: 0.5rem; background: #0009; color: #fff; font-size: clamp(1.1rem, 0.9rem + 1vw, 1.6rem); font-weight: 700; text-align: center; }
-.bg-video__btn { align-self: end; justify-self: start; margin: 0.75rem; padding: 0.45rem 0.9rem; border: 0; border-radius: 999px; background: #fff; color: #1c1917; font: inherit; font-weight: 700; cursor: pointer; }
+- نافذة واحدة للتلات أزرار: السؤال واحد، فمش محتاج تلات نسخ. كل زرار بينادي نفس الـ [[id]].
+- النافذة مكتوبة برّه [[<main>]]، في آخر [[<body>]]: مكانها في الكود مش مهم لأنها بتطلع في الـ top layer، وكده القايمة تفضل قايمة بس.
+- «إلغاء» الأول: هو اللي بياخد الفوكس، و Enter بسرعة مبيمسحش.
+- الملاحظة مبتتمسحش فعلًا: الـ HTML فتح النافذة وسجّل الاختيار في [[returnValue]]. المسح نفسه (ومعرفة أنهي ملاحظة) شغل JavaScript.
 
-/* facade: looks like a player, costs one picture */
-.facade { display: grid; border-radius: 1rem; overflow: hidden; background: #000; aspect-ratio: 16 / 9; }
-.facade > * { grid-area: 1 / 1; }
-.facade img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-/* opacity under 1 paints the picture in a higher layer than the button, so the button needs its own layer above it */
-.facade__play { position: relative; z-index: 1; align-self: center; justify-self: center; padding: 0.75rem 1.4rem; border: 0; border-radius: 999px; background: #dc2626; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
-.facade iframe { width: 100%; height: 100%; border: 0; }
-~~~
+**الغلطة الشائعة:** [[<dialog>]] جوه كل [[<li>]] بنفس [[id="del"]]. الـ [[id]] المكرر بيخلّي كل الأزرار تفتح أول نافذة بس.
 
-~~~js media.js
-// 1. background video: a pause button, and no motion at all for people who asked for less motion
-const video = document.getElementById("loop");
-const pause = document.getElementById("pause");
-function setPlaying(on) {
-  if (on) video.play(); else video.pause();
-  pause.setAttribute("aria-pressed", String(!on));
-  pause.textContent = on ? "⏸ وقّف الحركة" : "▶ شغّل الحركة";
-}
-pause.addEventListener("click", () => setPlaying(video.paused));
-if (matchMedia("(prefers-reduced-motion: reduce)").matches) setPlaying(false);
-
-// 2. facade: the real player is created only when someone asks for it
-const facade = document.getElementById("facade");
-facade.querySelector(".facade__play").addEventListener("click", () => {
-  const frame = document.createElement("iframe");
-  frame.src = facade.dataset.src;
-  frame.title = "ريفيو رحلة الواحة";
-  frame.allow = "autoplay; fullscreen";
-  facade.replaceChildren(frame);
-  frame.focus();                     // the button is gone: put the keyboard on the player, not at the top of the page
-});
-~~~
-
-~~~html embed.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>مشغّل الريفيو</title>
-<style>
-  body { margin: 0; display: grid; place-items: center; height: 100vh; background: #000; color: #fff; font-family: system-ui, sans-serif; }
-</style>
-</head>
-<body>
-<!-- stand-in for the video site's player page (in a real site: the provider's /embed/ link) -->
-<p>هنا مشغّل موقع الفيديو</p>
-</body>
-</html>
-~~~
-
-~~~view 760 860 الشكل النهائي (المعاينة: صورة صغيرة بدل AVIF، والفيديو صورة الـ poster بس)
+~~~text القياس من Chrome
+دوسنا «امسح» بتاع تاني ملاحظة:   matches(':modal') = true ، والفوكس على «إلغاء»
+النافذة في accessibility tree:     role = dialog ، name = "تمسح الملاحظة؟"
+Tab تلات مرات:                     رجع على «إلغاء» (زرارين وشريط المتصفح)
+Esc:                               اتقفلت ، والفوكس رجع على «امسح» بتاع تاني ملاحظة
+«امسح» اللي في النافذة:            returnValue = delete ، والقايمة لسه 3 (المسح الفعلي JavaScript)
+~~~` },
+        { lvl: 'صغير', dir: "nour-notes", cont: true, t: R`قايمة «⋮» لكل ملاحظة، ورسالة «اتحفظت»`, what: R`زي المشروع اللي فات (نفس [[index.html]])، وزوّد عليه حاجتين من درس «popover و popovertarget». (١) بدل زرار «امسح» جنب كل ملاحظة، زرار «⋮» ليه [[aria-label]] باسم الملاحظة، والتلاتة بيفتحوا **قايمة واحدة** [[popover]] فيها «ثبّت» و «انسخ» و «امسح». «امسح» اللي في القايمة هو اللي بيفتح نافذة التأكيد بتاعة المشروع اللي فات. (٢) زرار «احفظ الكل» في الـ [[<header>]] بيطلّع رسالة «كل الملاحظات اتحفظت ✓» من نوع [[popover="manual"]] فيها زرار «×» بيقفلها.`, done: R`«⋮» بيفتح القايمة، والضغط برّه بيقفلها. «امسح» من القايمة بيفتح نافذة التأكيد **والقايمة بتتقفل لوحدها**. رسالة «اتحفظت» بتفضل مفتوحة وانت بتفتح وتقفل القايمة وبتدوس Esc، ومبتتقفلش غير بـ «×».`, sol: R`~~~live 266 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>رحلات الواحة</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fffbeb; color: #1c1917; }
-img, video { display: block; max-width: 100%; }
-button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-/* hero: the picture fills the box; the text sits on it in the same grid cell */
-.hero { display: grid; }
-.hero > * { grid-area: 1 / 1; }
-.hero__img { width: 100%; height: auto; max-height: 80vh; object-fit: cover; }
-.hero__text { align-self: end; margin: 1rem; padding: 1rem 1.25rem; border-radius: 0.75rem; background: #1c1917d9; color: #fff; max-width: 32rem; }
-.hero__text h1 { margin: 0 0 0.25rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.8rem); }
-.hero__text p { margin: 0; }
-
-.section { max-width: 56rem; margin-inline: auto; padding: 2rem 1rem; }
-
-/* background video: decoration under text, with a pause button */
-.bg-video { display: grid; border-radius: 1rem; overflow: hidden; }
-.bg-video > * { grid-area: 1 / 1; }
-.bg-video video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-.bg-video__text { align-self: center; justify-self: center; margin: 0; padding: 0.5rem 1rem; border-radius: 0.5rem; background: #0009; color: #fff; font-size: clamp(1.1rem, 0.9rem + 1vw, 1.6rem); font-weight: 700; text-align: center; }
-.bg-video__btn { align-self: end; justify-self: start; margin: 0.75rem; padding: 0.45rem 0.9rem; border: 0; border-radius: 999px; background: #fff; color: #1c1917; font: inherit; font-weight: 700; cursor: pointer; }
-
-/* facade: looks like a player, costs one picture */
-.facade { display: grid; border-radius: 1rem; overflow: hidden; background: #000; aspect-ratio: 16 / 9; }
-.facade > * { grid-area: 1 / 1; }
-.facade img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-/* opacity under 1 paints the picture in a higher layer than the button, so the button needs its own layer above it */
-.facade__play { position: relative; z-index: 1; align-self: center; justify-self: center; padding: 0.75rem 1.4rem; border: 0; border-radius: 999px; background: #dc2626; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
-.facade iframe { width: 100%; height: 100%; border: 0; }
-</style>
+<title>دفتر نور</title>
 </head>
 <body>
+<header>
+  <h1>دفتر نور</h1>
+  <button type="button" popovertarget="saved" popovertargetaction="show">احفظ الكل</button>
+</header>
 <main>
-  <section class="hero">
-    <!-- one image per screen: the browser takes the FIRST source that matches, top to bottom -->
-    <picture>
-      <source media="(max-width: 40rem)" srcset="data:image/webp;base64,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">
-      <img class="hero__img" src="data:image/webp;base64,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" alt="بيوت الواحة وقت المغرب" width="1600" height="700" fetchpriority="high">
-    </picture>
-    <div class="hero__text">
-      <h1>ليلتين في الواحة</h1>
-      <p>رحلة بالعربية، ونوم في بيوت طين، وسما مليانة نجوم.</p>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="mood">
-    <h2 id="mood">الجو هناك</h2>
-    <div class="bg-video">
-      <video id="loop" muted autoplay loop playsinline poster="data:image/webp;base64,UklGRloFAABXRUJQVlA4IE4FAAAwOgCdASoIAiQBPsFgqVEnpaOioAnI8BgJZ27hYMc/1P+FP4I6QsTSF6+FHiWIACg1jd6xu9Y3esbvWN3qdz7sWDbL06cNGBOjBGuCuiSER8qNoy+vu4VvsK32Fb7CwX/+ZEoL/+oFDG7L2RJrhW+wrfYVvx3zfmRAmm2Wk4HT8GRQc+oOfUHPqDwe/T2LsIKGN2XK//f2y9OnDRgTox2PtucJREOqtxzq76JR2y9OnDRgTo2fzC90uG2OIe5Xa8xzxLhW+wrfYVvsLALxgCSDiHjvmdyC9HrG71jd6xu/f//tc9nRKzOkbf0OK17r71jd6xu9ZBgc5aN/UgWhEnA6fgkuK8S4VvsK32FcfxThjKK3m7cc5D77p+E1LD+GN3rG71jd+4S1vCJJ6bRg8PWMQhmEEBOjAnRgTpH5jn77NMqGze6Z9vG900A6lwJ0YE6MC7aaZ7XT2c5D77p+E1LD6fD59OnDRgTrYVXf/4v/Xedlyu15nc6QlWoOfUHPqDn5yOy3OGK07LldrzIHvun+eEG71jd6xu/f/A6yRfNzs51d9FwOio997+2Xp04aMCmEd5Pn3SWHd48Nm900K+6f52y9OnDRgTqHmPjej/xwwfegTXNozKGNxBgA/vIg/834Ort8P/nX219tcxh9aNaPWt+bRrR61vzaNdEuqf9MHdvfWixRq4wH7F9aLQpcxgP2L2I9n0xFv8l0iPuMYIatB3Psw1tcODsduP4wCTCFQ7QRl2ADZEAAAAEjEgyfw0Hf0pO7xRHzgAdJkhC9ML+sspCkqmGdEFvcn4kAAAvqsMPQbdN0E5XrTW1iLmcwvb0+er73WELWr5hhSjxWpQAAAY4LopanQFaoe5Qux+VXW55olBsY1fdp3aUNOI4bMcVvcbdoAAATBgpjI4YpDqhWqqDD6MSxQNZ/B/XD0mNsBaK6iZTGSFYYj50AAAv8jhlqVg0xFmJIxQszvjS0yAL3iZCxVp9cn96FPL6GrbCgk87cAAAauvag3zSj4yoDREFCJHQAoIJGnMFQGZllyAcaYbYmSwN7IVDsIWfXwoVAAAlLXJ16Z2w9GYPDLK4WDlgcIqHpFxVQ5pzXatj7CRLrx0wYUjfvrXG6IgNe5AV+uwAAHlbpNYMQppRiJNZxiRy3IVHnH+ZIP6Nys6zVSgGsugsgTmIKbT4j/BY7YXQAAPHgF744B1QBDzYy7/ysTwSQ0z/l+dUPsw6mvAVi0RteKjGmplwnLbrGJqPOAADW6+BgPiBrkrikD+N5P2x/r1RmBXi/SPibPTvNpOWkUfIY4sJ+x4mHXUAAWzsA5Twiia2thBLGdz9woUxrBTGO0I0lg2puDwgjEpWyMr3UqqDwqhk4KBSv13nQAEBmqhGyTJs27agvmm0eU9l6Ld7a+qr8BDlX9liBFhexGE7V5uwW1u2yGXHP0P2gAOfncErPNrLdPiRdP8FGLJVUcBLtbZJn1PCsL57abOncIXhu/FKJ31m1Cw62gcFDgAHMWPaVwDioRkAdUowcSBoGrhvAHQFhaGlMP5agyp+7tWTDtIYZX27YOyyncFAAvfBCGpF+xL9RxVr8pXJEYuezQTYtbwerkFqAwV3N0dgzCy5mmrZCeXIUuAA712lh/bKB4GwTFoyAsjKI6Z1LEpnfYYBZBz8ao4FJkofjQPO3DkKCVjnIAqhM+SwhVPyJPa2hjkGO6UMui8c79PT5Pr2gxhah0q+JhNSTxqvhm7pGnfwEIoAnhJyOf0LAaktmW0nbzY7O3Cd46YTGo19ocROEf9WA73iro/dooUaNidFrLMQAAA==" aria-hidden="true">
-      </video>
-      <p class="bg-video__text">ألوان الصحرا من الصبح لحد المغرب</p>
-      <button class="bg-video__btn" id="pause" type="button" aria-pressed="false">⏸ وقّف الحركة</button>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="review">
-    <h2 id="review">ريفيو من رحلة الشهر اللي فات</h2>
-    <!-- the facade: a picture and a button. The real player loads only after the click -->
-    <div class="facade" id="facade" data-src="data:text/html;base64,PCFkb2N0eXBlIGh0bWw+CjxodG1sIGxhbmc9ImFyIiBkaXI9InJ0bCI+CjxoZWFkPgo8bWV0YSBjaGFyc2V0PSJ1dGYtOCI+Cjx0aXRsZT7Zhdi02LrZkdmEINin2YTYsdmK2YHZitmIPC90aXRsZT4KPHN0eWxlPgogIGJvZHkgeyBtYXJnaW46IDA7IGRpc3BsYXk6IGdyaWQ7IHBsYWNlLWl0ZW1zOiBjZW50ZXI7IGhlaWdodDogMTAwdmg7IGJhY2tncm91bmQ6ICMwMDA7IGNvbG9yOiAjZmZmOyBmb250LWZhbWlseTogc3lzdGVtLXVpLCBzYW5zLXNlcmlmOyB9Cjwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjwhLS0gc3RhbmQtaW4gZm9yIHRoZSB2aWRlbyBzaXRlJ3MgcGxheWVyIHBhZ2UgKGluIGEgcmVhbCBzaXRlOiB0aGUgcHJvdmlkZXIncyAvZW1iZWQvIGxpbmspIC0tPgo8cD7Zh9mG2Kcg2YXYtNi62ZHZhCDZhdmI2YLYuSDYp9mE2YHZitiv2YrZiDwvcD4KPC9ib2R5Pgo8L2h0bWw+">
-      <img src="data:image/webp;base64,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" alt="" width="640" height="360" loading="lazy">
-      <button class="facade__play" type="button">▶ شغّل الريفيو (٣ دقايق)</button>
-    </div>
-  </section>
-</main>
-<script>
-// 1. background video: a pause button, and no motion at all for people who asked for less motion
-const video = document.getElementById("loop");
-const pause = document.getElementById("pause");
-function setPlaying(on) {
-  if (on) video.play(); else video.pause();
-  pause.setAttribute("aria-pressed", String(!on));
-  pause.textContent = on ? "⏸ وقّف الحركة" : "▶ شغّل الحركة";
-}
-pause.addEventListener("click", () => setPlaying(video.paused));
-if (matchMedia("(prefers-reduced-motion: reduce)").matches) setPlaying(false);
-
-// 2. facade: the real player is created only when someone asks for it
-const facade = document.getElementById("facade");
-facade.querySelector(".facade__play").addEventListener("click", () => {
-  const frame = document.createElement("iframe");
-  frame.src = facade.dataset.src;
-  frame.title = "ريفيو رحلة الواحة";
-  frame.allow = "autoplay; fullscreen";
-  facade.replaceChildren(frame);
-  frame.focus();                     // the button is gone: put the keyboard on the player, not at the top of the page
-});
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** هيرو كبير فيه بيوت وقت المغرب وفوقه صندوق غامق «ليلتين في الواحة». على الموبايل الصورة طولية بدل العريضة. تحته فيديو ألوان بتتحرك وعليه زرار «⏸ وقّف الحركة»، وتحته صورة مغمّقة عليها زرار أحمر «▶ شغّل الريفيو»: لما تدوس عليه بيظهر المشغّل مكانها.
-
-**[[<picture>]] بيختار صورة واحدة:** المتصفح بيقرا الـ [[<source>]] من فوق لتحت وبياخد **أول** واحد يناسبه، والـ [[<img>]] في الآخر للمتصفح اللي مبيفهمش ولا واحد.
-- الـ ٣ اللي فيهم [[media="(max-width: 40rem)"]] للموبايل (صورة طولية)، والـ ٢ اللي بعدهم للكمبيوتر.
-- جوه كل مقاس: AVIF الأول، وبعدين WebP، وبعدين JPEG. المتصفح اللي بيدعم AVIF بياخده ومش بيحمّل الباقي.
-- **art direction** = صورة مختلفة (قصّة تانية) مش نفس الصورة أصغر. عشان كده [[media]] مش [[srcset]].
-
-**الأحجام (نفس الصورة):** AVIF 5.2KB، و WebP 23KB، و JPEG 59KB. الفرق هنا كبير لأن الصورة رسمة ألوانها مسطّحة، وفي صورة حقيقية الفرق بيبقى أقل. قيس صورك انت قبل ما تقرر.
-
-**[[fetchpriority="high"]]:** دي أكبر حاجة بتظهر أول ما الصفحة تفتح (LCP)، فبنقول للمتصفح يجيبها قبل أي صورة تانية.
-
-**فيديو الخلفية:** [[muted]] (من غيره Chrome بيمنع [[autoplay]])، و [[playsinline]] (من غيره iPhone بيفتحه شاشة كاملة)، و [[loop]]، و [[poster]] صورة لحد ما يحمّل. و WebM الأول لأنه أصغر هنا (26KB قصاد 58KB MP4)، و MP4 للمتصفح اللي مبيشغّلش WebM. و [[aria-hidden="true"]] لأنه زينة: الجملة اللي فوقه هي المعنى.
-
-**زرار الإيقاف و reduced motion:** WCAG بيطلب طريقة توقف أي حركة شغالة أكتر من ٥ ثواني. ولو المستخدم مختار «حركة أقل» في جهازه ([[prefers-reduced-motion: reduce]]) الفيديو بيقف أول ما الصفحة تفتح.
-
-**الـ facade:** مشغّل موقع الفيديو بيحمّل حاجات كتير (سكربتات وخطوط) حتى لو محدش شغّله. الـ facade صورة وزرار بس، و [[iframe]] بيتعمل لما حد يدوس. وبعد الضغط الزرار بيختفي، فالـ focus بيروح للـ iframe بدل ما يرجع لأول الصفحة.
-
-**غلطة مسكها الاختبار:** أول نسخة Playwright مقدرش يدوس الزرار: «img ... intercepts pointer events». الصورة عليها [[opacity: 0.8]]، وأي عنصر [[opacity]] بتاعه أقل من 1 بيترسم في طبقة أعلى من العناصر العادية، فغطّت الزرار رغم إنه بعدها في الـ HTML. يعني أي حد بالماوس مكانش هيعرف يشغّل الريفيو. التصليح: [[position: relative; z-index: 1]] على الزرار.
-
-~~~text الناتج (Playwright 1.64.1 بـ Chrome 157)
-1280: images = img/hero-wide.avif, img/review-thumb.jpg | iframes before click = 0
-  after click: new requests = embed.html | focus = IFRAME ريفيو رحلة الواحة
-  video playing = true | first source used = loop.webm
-390: images = img/hero-tall.avif, img/review-thumb.jpg | iframes before click = 0
-reduce: video paused = true | button = ▶ شغّل الحركة / aria-pressed=true
-
-قبل تصليح الزرار:
-page.click: Timeout 30000ms exceeded.
-  - <img alt="" width="640" height="360" loading="lazy" src="img/review-thumb.jpg"/> intercepts pointer events
-axe (360 و 1280): 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~` },
-        { lvl: 'متوسط', dir: "srcset-album", t: R`ألبوم بـ srcset و sizes: المتصفح بيختار المقاس`, what: R`ألبوم رحلة متخيلة: ٤ صور، كل واحدة بـ ٣ مقاسات (480 و 960 و 1440 عرض) في [[srcset]] بـ [[w]]، و [[sizes]] بيقول للمتصفح الصورة هتطلع قد إيه على الشاشة (عمود واحد على الموبايل، وعمودين من 48rem). وبعدين قيس المتصفح اختار أنهي ملف على شاشات وكثافات مختلفة. من درس [[picture]].`, done: R`الرقم اللي في [[sizes]] بيطابق عرض الصورة الحقيقي على الشاشة (قيسه)، و [[currentSrc]] على 360 بكثافة 1 هو 480، وبكثافة 2 هو 960، وبكثافة 3 هو 1440، وعلى 1280 بكثافة 1 أصغر ملف بيكفي العرض، ومفيش scroll أفقي.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ألبوم رحلة الإسكندرية</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main class="page">
-  <h1>ألبوم الرحلة</h1>
-  <p>كل صورة ليها ٣ مقاسات، والمتصفح بيختار أصغر واحد يكفي الشاشة دي.</p>
-  <ul class="album">
-    <li><figure>
-      <img src="img/trip-1-960.webp"
-           srcset="img/trip-1-480.webp 480w, img/trip-1-960.webp 960w, img/trip-1-1440.webp 1440w"
-           sizes="(min-width: 48rem) calc((min(100vw, 64rem) - 3rem) / 2), calc(100vw - 2rem)"
-           alt="صورة من الرحلة: الكورنيش الصبح" width="1440" height="960">
-      <figcaption>الكورنيش الصبح</figcaption>
-    </figure></li>
-    <li><figure>
-      <img src="img/trip-2-960.webp"
-           srcset="img/trip-2-480.webp 480w, img/trip-2-960.webp 960w, img/trip-2-1440.webp 1440w"
-           sizes="(min-width: 48rem) calc((min(100vw, 64rem) - 3rem) / 2), calc(100vw - 2rem)"
-           alt="صورة من الرحلة: السوق القديم" width="1440" height="960">
-      <figcaption>السوق القديم</figcaption>
-    </figure></li>
-    <li><figure>
-      <img src="img/trip-3-960.webp"
-           srcset="img/trip-3-480.webp 480w, img/trip-3-960.webp 960w, img/trip-3-1440.webp 1440w"
-           sizes="(min-width: 48rem) calc((min(100vw, 64rem) - 3rem) / 2), calc(100vw - 2rem)"
-           alt="صورة من الرحلة: الكوبري بالليل" width="1440" height="960" loading="lazy">
-      <figcaption>الكوبري بالليل</figcaption>
-    </figure></li>
-    <li><figure>
-      <img src="img/trip-4-960.webp"
-           srcset="img/trip-4-480.webp 480w, img/trip-4-960.webp 960w, img/trip-4-1440.webp 1440w"
-           sizes="(min-width: 48rem) calc((min(100vw, 64rem) - 3rem) / 2), calc(100vw - 2rem)"
-           alt="صورة من الرحلة: شط البحيرة" width="1440" height="960" loading="lazy">
-      <figcaption>شط البحيرة</figcaption>
-    </figure></li>
+  <h2>ملاحظاتي</h2>
+  <ul>
+    <li>مشتريات الأسبوع <button type="button" popovertarget="menu" aria-label="خيارات مشتريات الأسبوع">⋮</button></li>
+    <li>أفكار المشروع <button type="button" popovertarget="menu" aria-label="خيارات أفكار المشروع">⋮</button></li>
+    <li>كتب عايز أقراها <button type="button" popovertarget="menu" aria-label="خيارات كتب عايز أقراها">⋮</button></li>
   </ul>
 </main>
+
+<div id="menu" popover>
+  <p><button type="button">ثبّت</button></p>
+  <p><button type="button">انسخ</button></p>
+  <p><button type="button" onclick="del.showModal()">امسح</button></p>
+</div>
+
+<div id="saved" popover="manual">
+  كل الملاحظات اتحفظت ✓
+  <button type="button" popovertarget="saved" popovertargetaction="hide" aria-label="اقفل الرسالة">×</button>
+</div>
+
+<dialog id="del" aria-labelledby="del-title">
+  <h2 id="del-title">تمسح الملاحظة؟</h2>
+  <p>الملاحظة هتتمسح ومش هترجع.</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>
 </body>
 </html>
 ~~~
 
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fff7ed; color: #1c1917; }
-.page { max-width: 64rem; margin-inline: auto; padding: 1rem; }   /* 1rem each side: that is the "2rem" in sizes */
+**هتشوف إيه:**
 
-/* phone: one column. 48rem and up: two columns with a 1rem gap */
-.album { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
-@media (min-width: 48rem) { .album { grid-template-columns: 1fr 1fr; } }
+- كل ملاحظة جنبها «⋮». دوس عليه: صندوق في النص فيه تلات أزرار.
+- «امسح» من الصندوق: القايمة اختفت وطلعت نافذة «تمسح الملاحظة؟».
+- «احفظ الكل»: رسالة في النص. افتح القايمة واقفلها، ودوس Esc: الرسالة لسه موجودة. «×» بيقفلها.
 
-figure { margin: 0; }
-.album img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
-figcaption { padding-top: 0.3rem; color: #57534e; }
-~~~
+**ليه كده:**
 
-~~~js srcset-check.js (القياس، بـ playwright-core)
-const { chromium } = require("playwright-core");
-const URL = "http://127.0.0.1:8765/srcset-album/index.html";
-(async () => {
-  const browser = await chromium.launch({ channel: "chrome" });
-  for (const [w, dpr] of [[360, 1], [360, 2], [360, 3], [800, 1], [1280, 1], [1280, 2]]) {
-    const ctx = await browser.newContext({ viewport: { width: w, height: 800 }, deviceScaleFactor: dpr, isMobile: w < 500 });
-    const page = await ctx.newPage();
-    await page.goto(URL, { waitUntil: "networkidle" });
-    const r = await page.$eval(".album img", i => ({ file: i.currentSrc.split("/").pop(), cssWidth: Math.round(i.getBoundingClientRect().width) }));
-    console.log(String(w).padStart(4), "DPR", dpr, "| image width", r.cssWidth, "CSS px =", r.cssWidth * dpr, "screen px | chose", r.file);
-    await ctx.close();
-  }
-  await browser.close();
-})();
-~~~
+- القايمة [[auto]] (بتتقفل لوحدها) والرسالة [[manual]] (بتفضل): نوعين لحاجتين مختلفتين.
+- [[showModal()]] بيقفل أي popover مفتوح قبل ما يفتح النافذة (اتقاس)، فمش محتاج تقفل القايمة بإيدك.
+- «⋮» مش كلمة، فكل زرار ليه [[aria-label]] فيه اسم ملاحظته: «خيارات مشتريات الأسبوع». من غيره قارئ الشاشة بيقول «⋮» تلات مرات.
+- «احفظ الكل» عليه [[popovertargetaction="show"]]: ضغطة تانية متخبّيش الرسالة.
+- القايمة والرسالة والنافذة مكتوبين مرة واحدة في آخر الصفحة، زي النافذة في المشروع اللي فات.
 
-~~~view 760 900 الشكل النهائي (المعاينة بنسخة صغيرة واحدة، المتصفح مش بيختار هنا)
+**الغلطة الشائعة:** الرسالة [[popover]] عادي. أول ضغطة على «⋮» هتقفلها، والزائر ميعرفش الحفظ تم ولا لأ.
+
+~~~text القياس من Chrome
+«⋮» الأول:                                 القايمة اتفتحت ، والزرار name = "خيارات مشتريات الأسبوع" ، expanded = true
+«امسح» من القايمة:                         النافذة اتفتحت ، والقايمة اتقفلت
+«احفظ الكل» ثم فتح القايمة ثم Esc ثم كليك برّه:   الرسالة لسه مفتوحة ، والقايمة اتقفلت
+«×»:                                       الرسالة اتقفلت
+~~~` },
+        { lvl: 'متوسط', dir: "nour-notes", cont: true, t: R`صفحة الملاحظة: عنوان ونص بيتعدّلوا في مكانهم`, what: R`زي المشروعين اللي فاتوا، وزوّد صفحة تانية [[note.html]] بتتفتح لما الزائر يدوس على «مشتريات الأسبوع» في [[index.html]] (خلّي اسم الملاحظة هناك لينك). الصفحة فيها: لينك «كل الملاحظات» يرجّع، و [[<article>]] عليه بيانات الملاحظة ([[data-note-id="12"]] و [[data-color="yellow"]] و [[data-pinned]])، وجواه: العنوان [[<h1>]] بيتعدّل كنص بس ومن غير فحص إملائي، وصندوق النص بيتعدّل كنص بس وليه دور واسم لقارئ الشاشة، وسطر «آخر تعديل» فيه [[<time>]] ومبيتعدّلش، وفقرة «اتحفظت ✓» عليها [[hidden]]. وفي الـ [[<footer>]] اسم التطبيق «Nour Notes» بلغته وممنوع من الترجمة. من درس «contenteditable و spellcheck» و «hidden و inert» و «autofocus و accesskey و draggable» (قسم [[data-*]]).`, done: R`بتعرف تكتب في العنوان وفي النص، و Ctrl+B مبيعملش حاجة فيهم. سطر التاريخ مبيتعدّلش. «اتحفظت ✓» مش باينة. Tab بيقف على اللينك والعنوان والنص.`, sol: R`الملف الجديد:
+
+~~~html note.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ألبوم رحلة الإسكندرية</title>
+<title>مشتريات الأسبوع | دفتر نور</title>
+</head>
+<body>
+<header>
+  <p><a href="index.html">كل الملاحظات</a></p>
+</header>
+<main>
+  <article data-note-id="12" data-color="yellow" data-pinned>
+    <h1 contenteditable="plaintext-only" spellcheck="false" enterkeyhint="done">مشتريات الأسبوع</h1>
+    <div contenteditable="plaintext-only" role="textbox" aria-multiline="true" aria-label="نص الملاحظة" autocapitalize="sentences">لبن وعيش وجبنة.</div>
+    <p>آخر تعديل: <time datetime="2026-11-03">٣ نوفمبر</time></p>
+    <p id="saved" hidden>اتحفظت ✓</p>
+  </article>
+</main>
+<footer>
+  <p>مكتوبة في <span lang="en" translate="no">Nour Notes</span></p>
+</footer>
+</body>
+</html>
+~~~
+
+~~~view 250 شكل note.html (دوس على العنوان أو النص واكتب)
+<header>
+  <p><a>كل الملاحظات</a></p>
+</header>
+<main>
+  <article data-note-id="12" data-color="yellow" data-pinned>
+    <h1 contenteditable="plaintext-only" spellcheck="false" enterkeyhint="done">مشتريات الأسبوع</h1>
+    <div contenteditable="plaintext-only" role="textbox" aria-multiline="true" aria-label="نص الملاحظة" autocapitalize="sentences">لبن وعيش وجبنة.</div>
+    <p>آخر تعديل: <time datetime="2026-11-03">٣ نوفمبر</time></p>
+    <p id="saved" hidden>اتحفظت ✓</p>
+  </article>
+</main>
+<footer>
+  <p>مكتوبة في <span lang="en" translate="no">Nour Notes</span></p>
+</footer>
+~~~
+
+والسطر اللي اتغيّر في [[index.html]] (اسم أول ملاحظة بقى لينك):
+
+~~~html
+<li><a href="note.html">مشتريات الأسبوع</a> <button type="button" popovertarget="menu" aria-label="خيارات مشتريات الأسبوع">⋮</button></li>
+~~~
+
+**هتشوف إيه:**
+
+- لينك، وعنوان كبير، وسطر النص، وسطر التاريخ، واسم التطبيق تحت. «اتحفظت ✓» مش موجودة.
+- دوس على العنوان: مؤشر كتابة. اكتب وامسح. Ctrl+B: مفيش.
+- نفس الكلام في النص. سطر التاريخ كلام عادي.
+
+**ليه كده:**
+
+- [[contenteditable]] على العنوان والنص كل واحد لوحده، مش على [[<article>]]: التاريخ والرسالة المستخبية ميتعدّلوش.
+- الاتنين [[plaintext-only]]: ملاحظة نص، ومش عايزين لصق بألوان وصور.
+- العنوان [[<h1>]] فضل عنوان (من غير [[role]]): لو اتكتب عليه [[role="textbox"]] كان هيبطّل يبقى عنوان الصفحة. صندوق النص [[<div>]] ملوش معنى، فهو اللي أخد [[role="textbox"]] و [[aria-multiline]] و [[aria-label]].
+- [[spellcheck="false"]] على العنوان (ممكن يبقى اسم أو كود)، والنص سايبينه بالفحص.
+- [[data-*]] على [[<article>]]: دي بيانات الملاحظة للكود. و [[data-pinned]] من غير قيمة.
+- «اتحفظت ✓» [[hidden]] في الكود من دلوقتي: JavaScript بعدين هيشيل الـ attribute لما الحفظ يحصل.
+
+**الغلطة الشائعة:** تستنى إن التعديل يتحفظ. حمّل الصفحة: الكلام القديم رجع. [[contenteditable]] بيغيّر اللي على الشاشة بس.
+
+~~~text القياس من Chrome
+قابل للتعديل:                 العنوان = true ، النص = true ، التاريخ = false
+العنوان في accessibility tree:  role = heading ، level = 1
+النص في accessibility tree:     role = textbox ، name = "نص الملاحظة" ، multiline = true
+Ctrl+B على العنوان ثم كتابة:    مشتريات الأسبوع ٢     (من غير <b>)
+«اتحفظت ✓»:                    display = none
+article.dataset:               {"noteId":"12","color":"yellow","pinned":""}
+Tab:                           اللينك > العنوان > النص
+~~~` },
+        { lvl: 'متوسط', dir: "nour-notes", cont: true, t: R`جولة أول مرة: لوحة ترحيب، والصفحة واقفة وراها`, what: R`زي اللي فات، وارجع لـ [[index.html]] وزوّد عليها تجربة «أول زيارة»، من درس «hidden و inert» و «autofocus و accesskey و draggable». (١) لوحة ترحيب [[<aside id="tour">]] فوق القايمة فيها عنوان وجملة وزرار «فهمت، يلا نبدأ» عليه [[autofocus]]. (٢) [[<main id="page">]] كله بيبدأ [[inert]]، وباهت بسطر CSS واحد. الزرار بسطر [[onclick]] واحد بيخبّي اللوحة ويشغّل الصفحة. (٣) خانة بحث فوق القايمة ([[type="search"]] و [[enterkeyhint="search"]] وليها label). (٤) قسم «اختصارات الكيبورد» في آخر الصفحة: عنوانه باين، ومحتواه [[hidden="until-found"]] وجواه فقرة [[id="keys"]]، والاختصارات [[<kbd translate="no">]]. والقايمة والرسالة والنافذة بتوع المشروعين الأولانيين **برّه** [[<main>]] زي ما هم.`, done: R`الصفحة بتفتح والفوكس على «فهمت»، والقايمة باهتة ومفيش فيها حاجة بتتداس ولا Tab بيدخلها. بعد «فهمت»: اللوحة اختفت والصفحة اشتغلت. محتوى الاختصارات مش باين، وبيظهر لما تفتح [[index.html#keys]] أو تدوّر بـ Ctrl+F على «للحفظ».`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دفتر نور</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fff7ed; color: #1c1917; }
-.page { max-width: 64rem; margin-inline: auto; padding: 1rem; }   /* 1rem each side: that is the "2rem" in sizes */
-
-/* phone: one column. 48rem and up: two columns with a 1rem gap */
-.album { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
-@media (min-width: 48rem) { .album { grid-template-columns: 1fr 1fr; } }
-
-figure { margin: 0; }
-.album img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
-figcaption { padding-top: 0.3rem; color: #57534e; }
+  [inert] { opacity: 0.5; }
 </style>
 </head>
 <body>
-<main class="page">
-  <h1>ألبوم الرحلة</h1>
-  <p>كل صورة ليها ٣ مقاسات، والمتصفح بيختار أصغر واحد يكفي الشاشة دي.</p>
-  <ul class="album">
-    <li><figure>
-      <img src="data:image/webp;base64,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"
-           alt="صورة من الرحلة: الكورنيش الصبح" width="1440" height="960">
-      <figcaption>الكورنيش الصبح</figcaption>
-    </figure></li>
-    <li><figure>
-      <img src="data:image/webp;base64,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"
-           alt="صورة من الرحلة: السوق القديم" width="1440" height="960">
-      <figcaption>السوق القديم</figcaption>
-    </figure></li>
-    <li><figure>
-      <img src="data:image/webp;base64,UklGRuggAABXRUJQVlA4INwgAABwrgCdASoIAlsBPsFeqk8npSQiJJMpyPAYCWVu/BFYw92kc/0uKfXf3+GhX3gN7IXo/8wDy4/+H1aeYf/y+iD6Vf7tvnP/j9RTzbfWD/0OS2eLf6n/Z/1m+HHgt+G/v/7Ff2jtPfmf7DyYYnfyD7Jfhf8F+Kft1/svyu/rXo/8hf7f8sfgF/Kv5d/iftu4fHcfML9YvqH62eLV/lf4j1K+y//O9wH+V/1H0s/3fhF/f/+D+z3wAfy7/L+q3/kf/Lzl/X3sJf0H/EDgdkRERERERERERERERERERGpOc5znOc5znOc5znOc5znOc5znBkREREREREREREREREREREREREREREREREPgfPekL6U0VZnG5TO+7u7u7tcIQhCEIQhCEIQg9yTDlllFKACJfcUMiT4iQoMW4iIiIiIiIiIhwKPrzLG0eXkdRfcyXKOzzDlVvYzMr9SlKUpSlKUpSlJ+4FB4sdHNd4/Fu4vgZu2gdWBX6G97URERERERERD36xKsSGmT/g1nWZL6DeWPdLu/3QAE5fp0e3vQwAVay3+e7fq1dtKuC+ZY4URIaAVS8cCTkLSchAhC8IcAQaiGwS0QJYrEdCNCrFUj9ydHs9XwlZh1ad+sjT7mk/mkt/odXG1IqYLCdLWbDxR8I/RG5YmfXIqaJb9jmArKqqqjulY8tlYFnNFBxiTQ58+8qQsRvUY+uY7VosFhCIuoXNqZBJ8v/7TtBhk9d6jFo3zG9OxHOSF8bhR4Q+y6U+dhKU6yb168s5NInV9PBy3R4ii/Qfh2JznM/j8Mcy/RRHK0MrSMEdbKQ5DkXyF5ZAwT4t5dQbDNxOe9CM0fOFaAFqXfut+weXsLcAbneduKhmG5PblxBo8ccrBh0DvZr3RXK+YwKam//Sl13LfVma65noPCNoQNKx+QITSI5S1ShhvdLTuKnTdAmadKD8eUKH8xsy9hcQ5SiG/TdcggtqnDxz2g6qLZF8gpOumj9jIhxLK4J0V8rZref+pbgF2oavW6H/BkKPUWtVmHRwE3pTdqJJ2EikEs22iS5bntLfKoFR7iBDAyvl8o51BjSgKfFrwp21T03nYXh3Z8yjYqxXnOT+f6sKY+lLvXKB5g7SSXc86u43/SyFcoZob58KSn7rigJWl3cnpW53uv2mwIxvst64pkI1paDZ7TQi91Gq9pjDnyqeCyBAsm1FbffBYGgscuy4Kvl19kT2++gykEl4Dp4gpP3LgpD3EGjrvRvXCSrY58qTq4tUiOTfUuR03sL/wMoXVqtx/oBLAIeEsonSFj7CMFlA4sxHJZUx5xm4CK2TZDNl3RyWW6fnN5Cm367CzlfIlc/ox/z6MZRsVrMWxdmctnu0dhU+B9LdWEYE+mqspjKdNa4NiW2vNbYSrPhN9kY/l7QHVuruSgm9sl5nBeUULTaZUL+IOViM3jBVbIs6w1LOj96gQ9rG4Zy1fkStL9TFRFoV2adVQLuk8q2F59AMGN7Euy338slWOZgmbpeBfdZFf4KB+UqGkKGj1qqKGmcncYkTE5O2JUlPxYmhOtNVIChBdGnponsBClxnrN711iB9oD+ORQyKtkcmQJDjZ8v4P9GR4ohEFKJeXqNE4sGLBfytmjeADErhr7rDc1EGQkzy9BsFc01B2LXXeTrtP5JL8N4VwMMdxD+rR1Z9cSKMKe+mPcT8GRIdj72hf4AoKKdhCYc6GaRjIFHhA3iwjP1tM6qqb9yErhKJXbTqyHbTDwbS7E6oG6V08/Sl7zZrGJcvEiPXAdqB1LOK+kRgm17359sCPzAX5mZjjdGP+Zksd7gqegobj4eD9OREREREPtpY+rLi0f3mC6ggz7Vl3A+C3ko1Ii8xJQGwIEht3dgAAA/v065cbSlTVUDNHVQAAAABFxmr37gAAAADmgAAAAABG1YAAIsfgb5gV0fg2eijgNgfgwGPDFNdy1xv1VDtNGB5DsdlXXxhsVqxtbf9jTeA//q9KQ9nPl89PjrQtE528X1uhJ52kF2C2rCu7sDnHKKY/NCwql4WM5yQrmpWdYseqdA4jVECrpDidx+ka0FBBRcipX31HSAAA+Wpd/FuAOGVS2Qk25MjEH2ritfUh/BP7pWH1DnsHDEIIB4PF/dpBr6xzO938pGTQAGjIl+h67N0x6YMvfVwpjmXSM9QbxYKUU8o3gXAABWrLKxQSBuAcuOiSZx3DQWCnm5wwyVCCA/6B+rPF8z/V6jDELsUM5TYS2c4lNq+GRlJu+1qQfYz+sRBXqgVXt8nUpVTEMm/ZB1GEW+JOjkclnleg7wRxeJn2HRCoi59onM6LFIDqviYYTsIzjB0SHAAAdRQxwt7PNoeWrmn/uMAU1z/btxOUAFWQg1XGr3RyRtANWC4Yc1Y1ybckjaK/slT5KkJqx7x/zXxLlH3w75aGGb6ph3jdVFiKaTa8wK7AJj+Zw+l0W86u/JSO/nuzhmv+Mf6Lb2UiBeQcCeR2x4M9+ZEWRTiqWtju451RxN3Q2Aj4I6pyJt5rWuvoD93VUmvAVysn/Q8teq3kq66vnduVaofAzg+4ClK+qWo2ujNcl/5Kwhfsd1eDTLR7onA97Z8qlBnZX+g2LcN/JZcCASdz4qmC4zuZVj3GtzlhKd8P0CIfPQ9v6GiQefm3IFXq51+nW35q/phSNa/qwcmT+BJLSGYMMAuHgf6XnPXmPuf/k7fmmpm8C3YUtpCF6t0jhdybRaTioMc/Lg7tu+bL8ka/XR46JPgT5Lj1Prh+ufGq2PeZaHD/V9SVihCEIWwZKuUQEX2W6c/CqPQ2cf3RqFuuTitiJWD4d6CyFS67JVcFyJDUk/Khaf11+W/eJgsumtDMD2hcMuzjmUT1zV3Ss9ySZ4SGHHfkb4orNCm60V8TvYI/6zSTsiVDNApEukzGQ/AEuJbjzlRjhBR5hRM1RxG/sFdwCGHZ0FIEK5KHOFGsjl4W/TGlmVVa8A2ECEdQOY5/tLKNczp7KoqcFx0Zmmq+GTtH9VEgB9TyOskNk5dNb5VK3OIjC+HvQMAGc1HAJtBxJpXbxET7gaR3WeqCcVZzyRs3EtI5yOHTezVEW8o862P1Pqn7TZw0cIlh2tVABUvx2WmG1envo/22XSiffO3r+LQzqrYIRInjBVOdx3pYAUqIHsTPEWML+PZU9szNtd+tnaaffaPeag/w037hb0bK7EKsbaVe4aY2IXwu7vK4E05Ai7bs+sI9Fwinn5Ch0peEGj8/FKWnFcpNvwnPXWSN/Lbkh0xY5uiP2wnSrAthx1hglZBwSIQZviUyDEnnbo1APuWwZXodjIHjrQaoi14CCfFV/4xOHuxet7a2NjxHm5YvQh+3GDSllExj1WyilVpEUj8BYTuTrvs8u5Q6zmH0W9GXmwqWsHc0z9ufRDJoHCMrAgx8DIggfE8Hl2N8XBFSWZgYtZYTMW3ui8A6upYhiEtqtW89DM419Xy6GNIjSvvdCoH8pibnJQsxFm++NLRSTKKHXfdgKnIEwjJGxLkWn+MHahPQAMu0Y6nAww5NWmmijB2myCv400dMJHxMFKWx73VJ/oP/Zs4b8xp2hkOp0SoAuY5uIhqetOdL8woEzdwjgeO/PZHTwAP4GDAzFb0MDnFq7tWiOhhRulMXvNaMvsDm8gCH7bTyEqFQYqH9VeiTa16W9YBScn6kG/0JK4JbY2J0MnV6mU9GuGR+2RdQ5TsG2nwVM6ykH59WNNVCOK8QHkqUTxgxILhdbPFBJziFe4aKOtzrCzqAFAHAMY+ZDoPADqJyUlhulEvU4fFURINPRJuvdQ3fYtvwC8EldJ+G1jFchtrquY73RRbOkd5ybZYPlg/K5HxEn+sQkNZV+mQKg8iS+wPCRwMQNgd5AnbFiIXmSLBNOC2Kxk77SmZ4WYz4n6RmPPbsZL+DZGTw7SV33vFE/lwpRJfi7m1sik08leZfse0C7cdtpdBHPbLBAsNehWkCR05dah22tRfb0RQIYo4bKpmSw1GrEDz9oEPZLBnQEAPXNejvgZzzBQtXa/zC175q/2m7WjCahDsuCHE9J2zwsxE8XQIjfoaVVVPwaEAqV2ERzpwq6cZ4KXYzqtEAvVo5Hacbie32X8070lp9BTdAel8qx0aDzAA8SI6kT6/557czmF6oB2RnmyVnvImaH7InuUWaWZhKMJE+gaI9k8w5cUYpbK0hVd9f+zRs2Ge4qz62XlBbI7jxPKRx0uULhiFoRsiOBFrtWb2GMS3udt8m6hhl9dFoppLlQpX6Kt56jURUQQp0jzD5b6Aux07wrXxJzevXgJok7aw1PchMt44rvO6swYmoxT0BAivQtTM32/eHVVq8SD7sZNQi8+usKqxP19sPmpBYFQGOTa4EsuKMQPBguq8MkIeNPr9Z4i0g7srqPQU9DZ1qK4bAZUxC7mUCpM5ufsKPDxOvVRW+D7FIHu76wxixeQzeO77AKgefwEcN/Oqlvsl6NTTxsWCyaQ2REZBaKbmul6IFb9+co4r3uFgxVX/BIX5ULaNhI27gT9ZTB6iG30x7xxFvOlVoOqiAGybm7yGO/tgd2Wg/t74pd9F6N5QrychU28cM8pZfdrHuUwvzFArMCdUE0T2Xj4OpsBFvV72nYSwKisX9wRqDMUsVyAGskl5vfll5LVIOQTWFbVtEfCB8VHix3fE5/QiZZWxGSXXzNWcdZfI4fs+uKQyJ88HOV2P0op2EE7rUrbPdjWZ7pzKj061146BGf2c8seQySfCxZCdpBrdZygk8+ZzvgsPgEsvxyNn7WjGd5TXn2m0AbQGC9s3UB+ES3yBUW1x73IipK0NKG7xDNw9vsskpOa0WTJdr0s3f15Q+J27k3Ou/u46hOtoFhxUKPbOmSzK7orHKhoUOm/E5hwUmPAGDu1OaPB3jtHst3zi/iWC3atSkhjauXtnNDCojyy82gFNy8+7wqMfbR7/35lL+k+KVQAB+H3eN+0sHXnDDXlsuMmpqaK2nedIqb/8eK7sGSoUR3xw/DtFjSelsjzr0bRFdviUdcK1MyK8i6Oo/58HKy6lxBQkpPiqIWEO6A8Yn9LBPDvgdyyAOh87UZMBEzVXxCbMTWYCiaNCdfkCZliAwa1AEYxJFZH+NlhFPLAJnD+4B8DICqN63GnTwoTL820iihsqx2HgsG7bpYaduZCym3ZES9HQ1xnKZW3K9xb8q/0QAuCDQHAj0CHRESvQ5qXGLd2h6fkNuoHF3wTSOTnUHM4xqvm+vjFZ2DdGRa3eOA9Ph1rzsiccMVGMI8OxGP/+CoDwvN9oKiRDOA0p70gQIUEGiTIHW2jwR8NRwA81RXuGJijHSfejo+c8U92uXIaNs0/mKv2I9ZmGg1qK5hNKH//jytNapYdH91zgqIBigMTcoa++femkXEXUsjN3kYBiePvziRqfLT8pAgbF0fCdp9nNNy2YYvECMQeaOP27xGOj+DB4ZDcq605YoyQ6AyPvtKstPwlZmTAMW5HNwzPVWSkolsotbvVrkCwxl2KLemP6zBeDCHqIQnH6EBcsgYAbxd3tdND5sUkb6gPqrODvINvbmeQbeUo34W8Gq6N5ve662SufzajiSd3SWj0MgxnvSPXn8tvExmyUuNonqBUVDree0DpYjqNSSLZZJKJRPX4gSSpMEZ82iFwF0v2TiCGDzUUkqrrPMqFC5RSKv5hB6M0nwHpxuiF7bedsSPmTuZt4BkJSp/8AbefyPc3HVADg0oT3t+dyUQU823XBVL3Zo2o0fhpa54j5WPbF3IIpr7ab4sG9QZcqL878QhUdAyD0XBJaQWcoWSiHMEVzJP2HYqMVg4yC6g5tvKSEytvb3nh3gMgtxxCaz5PDPnytKTM2fknGr+OhbFEstwa9hgVSBFMYMqxUdtG5ahbmIHvqfH2HFeAvxxLTTKvUPtrJDiZUJAXnVWA6zumoQdeccNuQrKZiGB408Q/P44Y+x5mTNm0MBfpEciGVQtec2iYlzSIO9aZU4PXHCgUjetRVVBU8o8wV9Gtfn9YO9lYRVDrxnpRcLxhuo+wnifBNH5DvOk27pE7wltNefc9mk0XAB8mKpHa2Wx2aGmUXBd5OIS9CJ8WONO409B1rvSEvYOcMpVuxsz198TA0SpgCboje/s2iSqjH97FUnoilOJGFXf2dlsLw9KrIuAyWQ6DyEvALgm5AHI2lIFEx+XJ3qauLQb+JzCeWqsQrYmi2sajcj9jA7Pa1EMneHooTvFKWDVHhXp3VOjoF9t8RbBWqIt4PiV2NhYlPkqRPy3xd9ZHw4qnViL/sY0SshkNcKLRWv3V0Dq92g6VQ95HxPO8IOHMJa1VVVjWCS2YohydjK964lF8H73uF+ukBIfdwOsboMmlQY208dRE4yw7ajvLEcL71A+SV+ceQiy/XiO0ftrK0FCuc7i8a47Quop4sJpxPSuHqTuAGj0boCZqb/rq/4Ko3hmWBv2m036KSAOEHZqA923Qez/muGTzWdIL9MqybOpiT2EVIdidR0cHtucxduS3waz3buH5IobI9Biet3NI0r07FFQje+c7xO1xNLLWpTAInO4zxQntK01EKSzLVNxW0F4SxzRjgRFdVNCGjdV53QaV2wrq4xvN9BfOkV9oeuIEDE3b9vez6brFdUIwQc5KOqxrTxSsc7U1HyMbWBlM3YNKdojhlSdJWSnxcd2Nm/cQ5WpjIYJ7+vz4rXJfu+hAq3azcaNFm+R6xVvdeEEv2dxBQ5iJq19ItvzTHdClqeuwhq5iGpNjBwJymbi7bkKLjWiN8ly4ZoROzwx6FmLO1GE+JEvPKBiC9vgBUJqs1f7CPuNSg6HM46HmMwInhYmmAUn3uce9aMtX6aSBQ8+ZeFRgTWNwi/xwCScf0p2LYWfsMZ9alnAqIEXCE5VHAynw6aXijVIvYvYvSmJObU9Y4Gnjx+5XWnI6H4q2cTfg/1oAKm3k4UsH1xYzZ44Mz/PE2HZNySiY9xWC6CqFUW/Hz6rvTa17IyIHjgG7l/7AkLsYC6NXNBJE/x13yreyNIj8G2LWleWRDvOmi8r1ZCi7246+3ZzObli0oqTSLOeuHuo9nUTYZksipTz3aLg2fXAQVjwbfgXhyv3B74J0Auf0Y2g2RxoKxcwiugfLLqKGoJ3tXyN/UuC6pL/9sFvTe1+Nt1QaLmBxSHt3c4FK+HGx5Uj1GIJx20LYQstUytfHtbSdDEfsjhr4nOM2OHJW1QkvxNLilb88o/BiXw5jSCUPW5r6vy/yK7C9EpGbw3zmfVskyp70aUejvsyY4AIR5Yji8JIodu888VMWYpDSWXiSBvdBbs4O8p60K7452FWWGsQ3oPTrFQaNUY7d/z4VQFrtGHPwqTdo3KqhLWev44dfJ0Id41qOWqJh+vu0idaCZ4nPKO51DxyKsKJ9kmZmaZzlCB4o6GBFLyIdtJ62Z3a73auHMvW1L6eWkjF379Ew2VoJygHb/3kSBFCAtNGtBzMV/GDiIesqdrNsQwLJfg/kAYpvnKem4zWid2q0+DnalIo+8KDXnQa7AOy5H4T7M95xN/vHm8SXz7nHAeJAlJLCPUbFIiTI68k0obqyYDO0bgKKcAF1qE440dLQcJNiUJix8wsSI14brqzFam1mtqTbycRT78vE3tu9Rk70HKI5vAwZLiithqzeDqTIo+jAFvANzfugNyFSNts7LM22nQVj4WuckTQKvgK7p+y5ctKzmSew/016UlGPsJPrNnMJye8u0z1b8R/w/TNhB3gPHlaU6tm01q+/9d+x2juerRHbuXM7aNCG4fPOqvokABN8PE2HUTEc1iSveYuj9SI1PNTZXJXvEtsChOtXWe6fVCeS36/8Fv626bMfZeUALzL1G7iVk3cWakVT6pGeLzjYsDFJek/tW1agbJAt+M6XRbzoaAFy3DJgiMR2Lyc3E97ijRk1w8rMSSWxXDZLieyGStjjjGFW/UQmQze2p+NDn7xMPxb7ASQUGpByq1LH0oVxvX9JPknOjO1rdNzQoQXAcNLbVMYNirAiN8wsAQQpZncbQ2LWQZBff1kT10z7eJLGtqN/ms4wWNAWSikPuk0S2dX7ToeVh/ROF6kISkkv37q/Xffmc3LnsP5vwWi7XXD949FiY0NbXxPzoGEpdJtfM+xa/IkdGDsyVUvgSQPWtoCspvbYqKSfjJOy+vw74xCSbS9MJ04B+b5n6jbgL6edpV1/HpmOp/ED2ddJXNujqDwcgJz3T51IoDVHpq7MgxwfAHD1jC+eMxDq/EyGOjcA5FYQoA6XwxFJI/tntuxxlLa5MBr2UNTNni/QjP4004Vdj8HzYaCBIbfLEqwjQjZQXq+gPHOHs0mfP12bMZ3IeuixwUvTmNS++fgK4mrJbzdRF5U1z8rtMZGfnjMlT+VG/bioFrrTQp6SZyEVmPHbC33xOLAe5B5V5/jKF12kJpT0uTZ7L8rlab1Scsm3zdCLFmw0GQsI1/D/ByDXfLFo7SHOpdvTuu+iP8Kk8xytKdUTo0ajZmDqQXPngzfsb2Vry9VbGiuIcH2nMxweYiVQrupWYSRzpx5vETb12kmceGSb54mqLIfYCkqELtTtFXRuBFklA/qNJHa0Cg3AmV6XjLjvs9J6ullPIMio1rGBd34wbgiGr/7FrvAmxI/cAnFzATxcA7WkoIS/0x+ozZQgcZTM4zdAwDav5kt1oIxDuMC23NpZJ7ZYpM8tAk75Y0KMbLpY9aUtl+6dNuyT0EFCbT202POtWhOOSHhfKxTM+j+hM1Qw1cSGmiBIAU7gfiGhiKvhJUDhGt1XVyE/544sC8iGvj0SiFN8CbF3NO2JN76y67Pe9NWPEBtu3eh0roN8Tmy1d0FoT1bm6vIwsDgdMQjZHhhebaGK8TTcbWYmmhSH58ebls+c2b4jbZ7uAxVil3fBR2iOAMvdQipDug2BlYuIeWmMbdmMQZVHIh5+tu7kDoebHoSR27oyUDmrxDdCwhL4F0A8sHFDXgkDbd9DI/aEs08vCm8AYX80o3zfnpZ41TVb3uGOQupd/BjpstYcvdAZXIxEOsuc8+iGlFcSUFQm3kY5m+QcAXClNhNy0i5qoyRtbVfbySeaGFd1msXZZtrNzfLu8eszQ9PxYdKWQvetsdIMjepWe0Rl4YWELOiCDytVzfexRm0NYi6GyO6NmZFyVMedmRzb2SLz16UZsRvBczNmereQdPZbXnA3F2s98Je4nZ15dllR+42wLJPux4iAE2VS5W3Pzb3uTOyMB0+a+2R4gfMDC20Gqz1TjlviJCaalZ/JsDaihva8KIpIMYRA+CtNVszYOT+d6a2kqENQFZYFehPyTM2hFhchfn9/7y7mY0dO2UaAFvKXWscZ86Z6Q/UQhniZorE/gMCYB6Xw4OPQpBM8eIrpjLDUN4af0TmzYebkqE4ZZ0+djIUnJG0IQznureYR3P0S+sPEGig38vuqgEK8zbfnObii4DkG4fOQ6UrNiyR8VCVkOtCt4LWICBij3T9cHShjhi2aV3wHEjl/jzcLyfEltrKlB9ojiNEjjQf+75DHgsSsVd8fsQwjFE7oitT4OOirAxfROOR1JX1HUKzTpSHN+g13C1TsqSaCKTW8XmIiuS4voV+raykdq8G2E5MPB8oa1yGyi42Ps088C0VRQRHMC6SVluIrBXMBYebi1cW/vhSQqMxvuwJ94s1rJIP92euUzMYISaCRcbAxsxoO3DwEHw2y63tvTswizsoG9io29FpvW+gxs721FvIV1SZimF16tbAPAITbtUc2Pjywh3MGuUZFfhuulo/X590i81hOA0L4Ew5lmMXN1gM4pLDp/LMyWZ5911vz2JIloXexUZwJobEuiXt9ngCElwip9UnVj/ALUPCoCqfAxExjD2m6kA7zGBW29oMZFqjNvg/s6L32GQXedZDskIspRcXajLeFcw7eFh0smAV76OXoCoo7ZC03qLxff9WXHFTmjGJW9tNC2Gobw0/e4J5r0KHsDzg7YrOkobJCgObxr/i/0ISU+Lsfkex3OHMSyrnlCDqCSv8tWI98AA6UjtNCG/5NtVbMV2LOSEyKrTrRTv89secuydoCToUIMYbOWOUlZVDM+f1wCC7QHGTRqOzx1JunDQfn3cfYVGlAfED921X170ZyEZ1El3uiBfCdXAb/PgMz8CUA+AvOwlkPD55KwQ4zbIH+uQP3XREZXsuRJZGxoHfGSdMUwIkfZgpDDpilvxnWg9p0hXHxerE6KWOyoDmeQV+yp6u78ErVq4GgDt9WqxJCzKYnVrSXc8Hkj2OydGTzhznZn5Ezjw73Mwm5+G1SNGbJBuE0Htok3uWzIhNRWVUuBJRsOR23v4F3TxiVrbTPQ9gsswm0EdzuBYlAGL5yQQ2HeRw1jhfdrGD+pJPS+EL2Yxx7yEsQtSTVvck0xGlDfUxpk+Y0DPESnNmwuits37aaXnBnjkQTVDR7KpdYqv1cxk3neor1asm5Dx0qGuQ8FwWerV7Zl0RMsP48d95lXy5IEPvSa67vQhV7hoKIvJhPtisIZFD0su6Sil/GfP9wlZ6d/jmr8SbxILGMy+Fq3bRgwY+VqpfLoIT64M7c1xiB70rrvyMeALH9w4aP+FTMVRyY09TzCJF7lw6pZnfAGTXpT2sVh15PN1X24huADGjb0R8aiP6Ki9naMsJYr0o1UCfd7luTGXCty2SYO6a4lnPoYFQUJF2ucDNZ4k5FMCy5C08OXTI7/bfldcysAZC1a9JSI3Vf6xjEm/FsLX4vDIyG25fbkF1R+ZkCl2reLm2Mni4H9iKZC4U5g9GkHBeVRBdLLw5S7/ECYtwqP5LCnkIWah9B69KmMArlMQBcnccw8I63JU0SMSesyrGLMR55xyqI7N/k5sjPwKKx6aepLS2YAAADh/Dya7NGf/smDrKzrV4Lk5lWIhkx4QMY+/r66+dZaZXuGiEoa2sNR2xnLpAAAD9YezgAI4IwHdAbSG6vgt/sLqTvVxG6T5tz99KRoIdXxve7FAAiYG8Ddf4ZCmtIIcu7C8l3+upxAOtZPOKdROGhELuwnjneP6AUkixQwpdCgeOl/8+6CdAACzo60sG4LGV31fABjJZutMxIgNlXio7/1pVIzAgUH0rH/Tk7eI66nvZgAACLANeCTCJrFZAlj+P8AZBUIOMaKICSdKfakwSiZFzYBYGSrHi1X/YEOYhpDQPoIkL7V6QC7L4evsiq4gnbYJ82b+oGB0uDl0Qp0eb1n+g+ghfR4zewAAAAAA="
-           alt="صورة من الرحلة: الكوبري بالليل" width="1440" height="960" loading="lazy">
-      <figcaption>الكوبري بالليل</figcaption>
-    </figure></li>
-    <li><figure>
-      <img src="data:image/webp;base64,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"
-           alt="صورة من الرحلة: شط البحيرة" width="1440" height="960" loading="lazy">
-      <figcaption>شط البحيرة</figcaption>
-    </figure></li>
+<header>
+  <h1>دفتر نور</h1>
+  <button type="button" popovertarget="saved" popovertargetaction="show">احفظ الكل</button>
+</header>
+
+<aside id="tour" aria-labelledby="tour-title">
+  <h2 id="tour-title">أهلًا بيك في دفتر نور</h2>
+  <p>كل ملاحظة جنبها زرار «⋮» فيه التثبيت والنسخ والمسح.</p>
+  <button type="button" autofocus onclick="tour.hidden = true; page.inert = false">فهمت، يلا نبدأ</button>
+</aside>
+
+<main id="page" inert>
+  <h2>ملاحظاتي</h2>
+  <p><label for="q">دوّر في الملاحظات</label> <input id="q" name="q" type="search" enterkeyhint="search"></p>
+  <ul>
+    <li><a href="note.html">مشتريات الأسبوع</a> <button type="button" popovertarget="menu" aria-label="خيارات مشتريات الأسبوع">⋮</button></li>
+    <li>أفكار المشروع <button type="button" popovertarget="menu" aria-label="خيارات أفكار المشروع">⋮</button></li>
+    <li>كتب عايز أقراها <button type="button" popovertarget="menu" aria-label="خيارات كتب عايز أقراها">⋮</button></li>
   </ul>
+
+  <h2>اختصارات الكيبورد</h2>
+  <div hidden="until-found">
+    <p id="keys"><kbd translate="no">Ctrl+S</kbd> للحفظ، و <kbd translate="no">Ctrl+F</kbd> للبحث في الصفحة.</p>
+  </div>
 </main>
+
+<div id="menu" popover>
+  <p><button type="button">ثبّت</button></p>
+  <p><button type="button">انسخ</button></p>
+  <p><button type="button" onclick="del.showModal()">امسح</button></p>
+</div>
+
+<div id="saved" popover="manual">
+  كل الملاحظات اتحفظت ✓
+  <button type="button" popovertarget="saved" popovertargetaction="hide" aria-label="اقفل الرسالة">×</button>
+</div>
+
+<dialog id="del" aria-labelledby="del-title">
+  <h2 id="del-title">تمسح الملاحظة؟</h2>
+  <p>الملاحظة هتتمسح ومش هترجع.</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** ٤ صور من رحلة، صورتين في الصف على الكمبيوتر وصورة على الموبايل، وتحت كل صورة اسم المكان. الشكل عادي، والشغل كله في إن كل جهاز بيحمّل مقاس مختلف.
-
-**[[srcset]] بـ [[w]]:** [[img/trip-1-480.webp 480w, …-960.webp 960w, …-1440.webp 1440w]] = «عندي نفس الصورة بـ ٣ عروض». المتصفح هو اللي بيختار، مش انت.
-
-**[[sizes]]:** المتصفح بيختار قبل ما الـ CSS يتحسب، فمبيعرفش الصورة هتطلع قد إيه. [[sizes]] بيقوله: «من 48rem وأكبر: نص (العرض لحد 64rem ناقص 3rem)، غير كده: العرض كله ناقص 2rem». الأرقام دي من الـ CSS بالظبط: الصفحة [[max-width: 64rem]] و [[padding: 1rem]] من كل جنب (2rem)، والعمودين بينهم [[gap: 1rem]]، يعني نص (64rem − 2rem − 1rem). لو [[sizes]] غلط، المتصفح هيحمّل ملف أكبر أو أصغر من اللازم.
-
-**إزاي بيختار:** عرض الصورة بالبكسل الحقيقي = عرضها في الـ CSS × كثافة الشاشة (DPR)، وبياخد أصغر ملف قده أو أكبر. على 360: الصورة 328 CSS px. بكثافة 1 = 328 ← 480. بكثافة 2 = 656 ← 960. بكثافة 3 = 984 ← 1440. وعلى 1280: الصورة 488، وده أكبر من 480 بـ 8 بس، فبياخد 960.
-
-**[[srcset]] ولا [[<picture>]]:** [[srcset]] لنفس الصورة بمقاسات مختلفة (المتصفح يختار). [[<picture>]] بـ [[media]] لما عايز صورة **مختلفة** (قصّة تانية) على شاشة معيّنة، زي مشروع الهيرو. و [[<picture>]] بـ [[type]] للصيغ.
-
-~~~text node srcset-check.js (Playwright 1.64.1 بـ Chrome 157)
-360 DPR 1 | image width 328 CSS px = 328 screen px | chose trip-1-480.webp
-360 DPR 2 | image width 328 CSS px = 656 screen px | chose trip-1-960.webp
-360 DPR 3 | image width 328 CSS px = 984 screen px | chose trip-1-1440.webp
-800 DPR 1 | image width 376 CSS px = 376 screen px | chose trip-1-480.webp
-1280 DPR 1 | image width 488 CSS px = 488 screen px | chose trip-1-960.webp
-1280 DPR 2 | image width 488 CSS px = 976 screen px | chose trip-1-1440.webp
-360: scrollWidth = clientWidth   axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**السكربت بيفتح context جديد لكل مقاس** (مش نفس الصفحة بمقاس تاني)، عشان كل قياس يبدأ من غير كاش ومن غير صور اتحمّلت قبل كده.` },
-        { lvl: 'كبير', dir: "headphone-page", t: R`صفحة منتج سماعة متخيلة`, what: R`صفحة منتج كاملة: معرض صور (صورة كبيرة و thumbnails بـ [[object-fit]] والضغط بيبدّل)، و picture بصيغ حديثة للهيرو، وفيديو عرض بترجمة VTT عربي وإنجليزي، و YouTube facade لريفيو، وأيقونات sprite بـ currentColor، وتقييم بحلقة SVG، وكله في layout الوحدات اللي فاتت (grid و sticky للسعر). بيجمع الوحدة دي مع Flexbox و Grid و position.`, done: R`Lighthouse على موبايل: LCP أقل من 2.5 ثانية و CLS أقل من 0.1 (اكتب الأرقام)، والصورة الكبيرة [[fetchpriority="high"]] والباقي lazy، وكل صورة ليها alt مفيد أو [[alt=""]] لو زينة، والترجمة بتتغيّر من قايمة الفيديو، ومفيش scroll أفقي على 360، والصفحة شغالة لو JavaScript اتقفل (المعرض بيظهر أول صورة).`, ext: R`زوّد lightbox للصور بـ [[<dialog>]]، و zoom على الصورة الكبيرة بالماوس، وقارن LCP قبل وبعد [[fetchpriority]] على Slow 4G واكتب الفرق.`, sol: R`~~~text headphone-page/
-index.html  style.css  product.js  embed.html
-icons.svg                   (الـ sprite من مشروع «sprite أيقونات من ١٠»)
-img/hp-front|sand|side|fold .avif .webp .jpg   (1200×900)
-img/thumb-*.webp            (240×180)
-img/review-thumb.jpg
-media/demo.mp4  media/demo-poster.jpg  media/ar.vtt  media/en.vtt
-~~~
-
-**ترتيب البناء:** (١) الـ HTML: المعرض، وصندوق الشرا، والفيديو، والريفيو. (٢) الـ layout بـ grid و sticky. (٣) المعرض بـ JS. (٤) الترجمة. (٥) Lighthouse وصلّح اللي يطلع.
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>سماعة صدى: إلغاء ضوضاء و ٤٠ ساعة بطارية</title>
-<link rel="stylesheet" href="style.css">
-<script src="product.js" defer></script>
-</head>
-<body>
-<header class="site"><a href="#top">متجر نغمة</a></header>
-
-<main class="product" id="top">
-  <section class="gallery" aria-label="صور السماعة">
-    <picture class="gallery__main">
-      <source id="src-avif" type="image/avif" srcset="img/hp-front.avif">
-      <source id="src-webp" type="image/webp" srcset="img/hp-front.webp">
-      <img id="main-img" src="img/hp-front.jpg" alt="سماعة صدى السودا من قدام" width="1200" height="900" fetchpriority="high">
-    </picture>
-    <ul class="thumbs">
-      <li><button type="button" aria-pressed="true" data-name="front" data-alt="سماعة صدى السودا من قدام"><img src="img/thumb-front.webp" alt="" width="240" height="180" loading="lazy">السودا</button></li>
-      <li><button type="button" aria-pressed="false" data-name="sand" data-alt="سماعة صدى بلون الرملة من قدام"><img src="img/thumb-sand.webp" alt="" width="240" height="180" loading="lazy">رملي</button></li>
-      <li><button type="button" aria-pressed="false" data-name="side" data-alt="سماعة صدى الزرقا من الجنب"><img src="img/thumb-side.webp" alt="" width="240" height="180" loading="lazy">من الجنب</button></li>
-      <li><button type="button" aria-pressed="false" data-name="fold" data-alt="سماعة صدى البنفسجي وهي متطبّقة"><img src="img/thumb-fold.webp" alt="" width="240" height="180" loading="lazy">متطبّقة</button></li>
-    </ul>
-  </section>
-
-  <section class="buy" aria-labelledby="name">
-    <h1 id="name">سماعة صدى</h1>
-    <div class="rating">
-      <svg class="ring" viewBox="0 0 36 36" role="img" aria-labelledby="ring-t">
-        <title id="ring-t">التقييم ٤٫٦ من ٥</title>
-        <circle class="ring__track" cx="18" cy="18" r="15.5" pathLength="100"/>
-        <circle class="ring__fill" cx="18" cy="18" r="15.5" pathLength="100" style="--value: 92"/>
-      </svg>
-      <p><b>٤٫٦</b> من ٥ <span>(٢١٨ تقييم)</span></p>
-    </div>
-    <p class="price">٣٬٤٥٠ ج <del>٣٬٩٥٠ ج</del></p>
-    <ul class="features">
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-bell"></use></svg>إلغاء ضوضاء بزرار واحد</li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-clock"></use></svg>بطارية ٤٠ ساعة</li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-phone"></use></svg>مكالمات بميكروفونين</li>
-      <li><svg class="icon" aria-hidden="true"><use href="icons.svg#i-star"></use></svg>ضمان سنتين</li>
-    </ul>
-    <button class="add" type="button"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-cart"></use></svg>ضيف للسلة</button>
-  </section>
-
-  <section class="demo" aria-labelledby="demo-t">
-    <h2 id="demo-t">شوفها شغالة</h2>
-    <video controls preload="metadata" poster="media/demo-poster.jpg" width="960" height="540">
-      <source src="media/demo.mp4" type="video/mp4">
-      <track kind="captions" src="media/ar.vtt" srclang="ar" label="عربي" default>
-      <track kind="subtitles" src="media/en.vtt" srclang="en" label="English">
-    </video>
-  </section>
-
-  <section class="review" aria-labelledby="review-t">
-    <h2 id="review-t">ريفيو مستخدم</h2>
-    <div class="facade" id="facade" data-src="embed.html">
-      <img src="img/review-thumb.jpg" alt="" width="640" height="360" loading="lazy">
-      <button class="facade__play" type="button">▶ شغّل الريفيو</button>
-    </div>
-  </section>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-:root { --ink: #0f172a; --muted: #475569; --brand: #1d4ed8; --line: #e2e8f0; --bg: #f8fafc; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--ink); background: var(--bg); }
-img, video { display: block; max-width: 100%; height: auto; }
-a:focus-visible, button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-.site { padding: 0.75rem 1rem; background: #fff; border-bottom: 1px solid var(--line); }
-.site a { color: var(--ink); font-weight: 800; text-decoration: none; }
-
-/* phone: everything one under the other. Computer: pictures and video on one side, the buy box beside them */
-.product { display: grid; gap: 1.5rem; max-width: 72rem; margin-inline: auto; padding: 1rem; }
-@media (min-width: 64rem) {
-  .product { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); grid-template-areas: "gallery buy" "demo buy" "review buy"; }
-  .gallery { grid-area: gallery; }
-  .demo { grid-area: demo; }
-  .review { grid-area: review; }
-  .buy { grid-area: buy; position: sticky; top: 1rem; align-self: start; }   /* the price stays while the pictures scroll */
-}
-
-/* gallery: one big picture, 4 small buttons */
-.gallery__main img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 1rem; background: #fff; }
-.thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin: 0.75rem 0 0; padding: 0; list-style: none; }
-.thumbs button { display: grid; gap: 0.25rem; width: 100%; padding: 0.25rem; border: 2px solid transparent; border-radius: 0.6rem; background: #fff; color: var(--muted); font: inherit; font-size: 0.8rem; cursor: pointer; }
-.thumbs img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0.4rem; }
-.thumbs button[aria-pressed="true"] { border-color: var(--brand); color: var(--ink); font-weight: 700; }
-
-/* the buy box */
-.buy { padding: 1.25rem; border-radius: 1rem; background: #fff; border: 1px solid var(--line); }
-.buy h1 { margin: 0 0 0.5rem; font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem); }
-.rating { display: flex; align-items: center; gap: 0.75rem; }
-.rating p { margin: 0; }
-.rating span { color: var(--muted); }
-
-/* the ring: the circle's length counts as 100 (pathLength), so --value is a percentage */
-.ring { width: 3rem; height: 3rem; rotate: -90deg; }          /* start the line at the top, not on the right */
-.ring circle { fill: none; stroke-width: 4; }
-.ring__track { stroke: var(--line); }
-.ring__fill { stroke: #f59e0b; stroke-linecap: round; stroke-dasharray: var(--value) 100; }
-
-.price { margin: 0.75rem 0; font-size: 1.6rem; font-weight: 800; color: var(--brand); }
-.price del { font-size: 1rem; font-weight: 400; color: var(--muted); }
-.features { display: grid; gap: 0.5rem; margin: 0 0 1rem; padding: 0; list-style: none; }
-.features li { display: flex; align-items: center; gap: 0.6rem; }
-.icon { flex: none; width: 1.4rem; height: 1.4rem; color: var(--brand); }
-.add { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.8rem; border: 0; border-radius: 0.75rem; background: var(--brand); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
-.add .icon { color: inherit; }
-
-.demo video { width: 100%; border-radius: 1rem; background: #000; }
-
-.facade { display: grid; border-radius: 1rem; overflow: hidden; background: #000; aspect-ratio: 16 / 9; }
-.facade > * { grid-area: 1 / 1; }
-.facade img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-.facade__play { position: relative; z-index: 1; align-self: center; justify-self: center; padding: 0.75rem 1.4rem; border: 0; border-radius: 999px; background: #dc2626; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
-.facade iframe { width: 100%; height: 100%; border: 0; }
-~~~
-
-~~~js product.js
-// 1. gallery: a button swaps the big picture. Inside <picture> the browser picks a <source> first,
-//    so changing img.src alone would change nothing on a browser that supports AVIF: every source changes together
-const img = document.getElementById("main-img");
-const avif = document.getElementById("src-avif");
-const webp = document.getElementById("src-webp");
-const buttons = document.querySelectorAll(".thumbs button");
-buttons.forEach(btn => btn.addEventListener("click", () => {
-  const name = btn.dataset.name;
-  avif.srcset = "img/hp-" + name + ".avif";
-  webp.srcset = "img/hp-" + name + ".webp";
-  img.src = "img/hp-" + name + ".jpg";
-  img.alt = btn.dataset.alt;
-  buttons.forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-}));
-
-// 2. review facade: the player loads only after the click
-const facade = document.getElementById("facade");
-facade.querySelector(".facade__play").addEventListener("click", () => {
-  const frame = document.createElement("iframe");
-  frame.src = facade.dataset.src;
-  frame.title = "ريفيو سماعة صدى";
-  frame.allow = "autoplay; fullscreen";
-  facade.replaceChildren(frame);
-  frame.focus();
-});
-~~~
-
-~~~text media/ar.vtt
-WEBVTT
-
-00:00.000 --> 00:02.500
-دي سماعة «صدى» الجديدة.
-
-00:02.500 --> 00:05.000
-بتلغي الدوشة اللي حواليك بزرار واحد.
-
-00:05.000 --> 00:08.000
-والبطارية بتكفي ٤٠ ساعة.
-~~~
-
-~~~text media/en.vtt
-WEBVTT
-
-00:00.000 --> 00:02.500
-This is the new Sada headphone.
-
-00:02.500 --> 00:05.000
-It cancels the noise around you with one button.
-
-00:05.000 --> 00:08.000
-And the battery lasts 40 hours.
-~~~
-
-[[icons.svg]] و [[embed.html]] زي المشروعين اللي فاتوا.
-
-~~~view 760 900 الشكل النهائي (المعاينة بصور صغيرة، والفيديو صورة الـ poster بس)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>سماعة صدى: إلغاء ضوضاء و ٤٠ ساعة بطارية</title>
+~~~view 494 شكل index.html (دوس «فهمت، يلا نبدأ»)
 <style>
-*, *::before, *::after { box-sizing: border-box; }
-:root { --ink: #0f172a; --muted: #475569; --brand: #1d4ed8; --line: #e2e8f0; --bg: #f8fafc; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--ink); background: var(--bg); }
-img, video { display: block; max-width: 100%; height: auto; }
-a:focus-visible, button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-.site { padding: 0.75rem 1rem; background: #fff; border-bottom: 1px solid var(--line); }
-.site a { color: var(--ink); font-weight: 800; text-decoration: none; }
+  [inert] { opacity: 0.5; }
+</style>
+<header>
+  <h1>دفتر نور</h1>
+  <button type="button" popovertarget="saved" popovertargetaction="show">احفظ الكل</button>
+</header>
 
-/* phone: everything one under the other. Computer: pictures and video on one side, the buy box beside them */
-.product { display: grid; gap: 1.5rem; max-width: 72rem; margin-inline: auto; padding: 1rem; }
-@media (min-width: 64rem) {
-  .product { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); grid-template-areas: "gallery buy" "demo buy" "review buy"; }
-  .gallery { grid-area: gallery; }
-  .demo { grid-area: demo; }
-  .review { grid-area: review; }
-  .buy { grid-area: buy; position: sticky; top: 1rem; align-self: start; }   /* the price stays while the pictures scroll */
-}
+<aside id="tour" aria-labelledby="tour-title">
+  <h2 id="tour-title">أهلًا بيك في دفتر نور</h2>
+  <p>كل ملاحظة جنبها زرار «⋮» فيه التثبيت والنسخ والمسح.</p>
+  <button type="button" autofocus onclick="tour.hidden = true; page.inert = false">فهمت، يلا نبدأ</button>
+</aside>
 
-/* gallery: one big picture, 4 small buttons */
-.gallery__main img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 1rem; background: #fff; }
-.thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin: 0.75rem 0 0; padding: 0; list-style: none; }
-.thumbs button { display: grid; gap: 0.25rem; width: 100%; padding: 0.25rem; border: 2px solid transparent; border-radius: 0.6rem; background: #fff; color: var(--muted); font: inherit; font-size: 0.8rem; cursor: pointer; }
-.thumbs img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0.4rem; }
-.thumbs button[aria-pressed="true"] { border-color: var(--brand); color: var(--ink); font-weight: 700; }
+<main id="page" inert>
+  <h2>ملاحظاتي</h2>
+  <p><label for="q">دوّر في الملاحظات</label> <input id="q" name="q" type="search" enterkeyhint="search"></p>
+  <ul>
+    <li><a>مشتريات الأسبوع</a> <button type="button" popovertarget="menu" aria-label="خيارات مشتريات الأسبوع">⋮</button></li>
+    <li>أفكار المشروع <button type="button" popovertarget="menu" aria-label="خيارات أفكار المشروع">⋮</button></li>
+    <li>كتب عايز أقراها <button type="button" popovertarget="menu" aria-label="خيارات كتب عايز أقراها">⋮</button></li>
+  </ul>
 
-/* the buy box */
-.buy { padding: 1.25rem; border-radius: 1rem; background: #fff; border: 1px solid var(--line); }
-.buy h1 { margin: 0 0 0.5rem; font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem); }
-.rating { display: flex; align-items: center; gap: 0.75rem; }
-.rating p { margin: 0; }
-.rating span { color: var(--muted); }
+  <h2>اختصارات الكيبورد</h2>
+  <div hidden="until-found">
+    <p id="keys"><kbd translate="no">Ctrl+S</kbd> للحفظ، و <kbd translate="no">Ctrl+F</kbd> للبحث في الصفحة.</p>
+  </div>
+</main>
 
-/* the ring: the circle's length counts as 100 (pathLength), so --value is a percentage */
-.ring { width: 3rem; height: 3rem; rotate: -90deg; }          /* start the line at the top, not on the right */
-.ring circle { fill: none; stroke-width: 4; }
-.ring__track { stroke: var(--line); }
-.ring__fill { stroke: #f59e0b; stroke-linecap: round; stroke-dasharray: var(--value) 100; }
+<div id="menu" popover>
+  <p><button type="button">ثبّت</button></p>
+  <p><button type="button">انسخ</button></p>
+  <p><button type="button" onclick="del.showModal()">امسح</button></p>
+</div>
 
-.price { margin: 0.75rem 0; font-size: 1.6rem; font-weight: 800; color: var(--brand); }
-.price del { font-size: 1rem; font-weight: 400; color: var(--muted); }
-.features { display: grid; gap: 0.5rem; margin: 0 0 1rem; padding: 0; list-style: none; }
-.features li { display: flex; align-items: center; gap: 0.6rem; }
-.icon { flex: none; width: 1.4rem; height: 1.4rem; color: var(--brand); }
-.add { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.8rem; border: 0; border-radius: 0.75rem; background: var(--brand); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
-.add .icon { color: inherit; }
+<div id="saved" popover="manual">
+  كل الملاحظات اتحفظت ✓
+  <button type="button" popovertarget="saved" popovertargetaction="hide" aria-label="اقفل الرسالة">×</button>
+</div>
 
-.demo video { width: 100%; border-radius: 1rem; background: #000; }
+<dialog id="del" aria-labelledby="del-title">
+  <h2 id="del-title">تمسح الملاحظة؟</h2>
+  <p>الملاحظة هتتمسح ومش هترجع.</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>
+~~~
 
-.facade { display: grid; border-radius: 1rem; overflow: hidden; background: #000; aspect-ratio: 16 / 9; }
-.facade > * { grid-area: 1 / 1; }
-.facade img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-.facade__play { position: relative; z-index: 1; align-self: center; justify-self: center; padding: 0.75rem 1.4rem; border: 0; border-radius: 999px; background: #dc2626; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
-.facade iframe { width: 100%; height: 100%; border: 0; }
+**هتشوف إيه:**
+
+- لوحة الترحيب واضحة، وكل اللي تحتها (العنوان والبحث والقايمة) باهت.
+- جرّب تدوس على خانة البحث أو «⋮»: مفيش.
+- «فهمت، يلا نبدأ»: اللوحة اختفت، واللي تحت رجع بلونه واشتغل.
+- عنوان «اختصارات الكيبورد» تحته فاضي.
+
+**ليه كده:**
+
+- اللوحة مش [[<dialog>]] modal هنا عشان تتمرن على [[inert]] بإيدك. في مشروع حقيقي [[showModal()]] كان هيعمل ده كله لوحده، و [[inert]] اليدوي للحالات اللي مفيش فيها modal.
+- [[inert]] على [[<main>]] بس. اللوحة والـ [[<header>]] برّاه فشغالين. والقايمة والنافذة برّاه برضه: لو كانوا جوه [[<main>]] كانوا هيقفوا معاه.
+- سطر [[[inert] { opacity: 0.5; }]] في [[<style>]]: [[inert]] ملوش شكل، ولازم الزائر يشوف إن الجزء واقف.
+- سطر [[onclick]] فيه حاجتين بينهم [[;]]: [[tour.hidden = true]] بيخبّي اللوحة، و [[page.inert = false]] بيشيل [[inert]] من [[<main>]]. (JavaScript، وهتفهمه في كورسه.)
+- [[autofocus]] على زرار اللوحة: اللي ماشي بالكيبورد يبدأ منه، مش من حاجة واقفة.
+- الاختصارات [[until-found]] مش [[hidden]]: اللي يدوّر على «للحفظ» يلاقيها.
+
+**الغلطة الشائعة:** [[inert]] على [[<body>]]. اللوحة هتقف هي كمان، والصفحة كلها تبقى ميتة من غير أي طريقة للخروج.
+
+~~~text القياس من Chrome
+بعد التحميل:               الفوكس على «فهمت، يلا نبدأ» ، و main opacity = 0.5
+كليك على خانة البحث:       الفوكس ماراحش
+Tab:                       احفظ الكل > فهمت، يلا نبدأ > شريط المتصفح > احفظ الكل   (ولا حاجة من main)
+بعد «فهمت»:                اللوحة display = none ، inert = false ، opacity = 1 ، وخانة البحث بتاخد فوكس
+صندوق الاختصارات:          ارتفاعه 0
+فتح index.html#keys:       hidden اتشال والاختصارات ظهرت (و autofocus اتجاهل لأن العنوان فيه #)
+~~~
+
+(Ctrl+F من MDN، الباقي اتقاس.)` },
+        { lvl: 'كبير', dir: "nour-notes", cont: true, t: R`صفحة «الإعدادات»: كل الوحدة في صفحة واحدة`, what: R`الصفحة التالتة في «دفتر نور»: [[settings.html]]، للي عايز يظبط حسابه. بتجمع كل اللي بنيته، وكل قسم [[<section>]] ليه عنوان مربوط بـ [[aria-labelledby]]: (١) **الحساب:** «الاسم الظاهر» بيتعدّل في مكانه زي عنوان الملاحظة في المشروع التالت (نص بس، ودور واسم، ومن غير فحص إملائي، و [[autocapitalize="words"]])، وجنبه زرار «؟» بيفتح تلميح popover زي قايمة المشروع التاني، وفورم بيغيّر الإيميل ([[post]]، وحقل [[type="email"]] إجباري بتلميحات الكتابة). (٢) **المظهر:** زرار بيفتح قايمة popover فيها تلات ألوان، كل لون زرار عليه [[data-color]]. (٣) **المزامنة (قريبًا):** قسم كامل [[inert]] وباهت، زي [[<main>]] في المشروع الرابع. (٤) **منطقة الخطر:** «امسح حسابي» بيفتح نافذة تأكيد زي المشروع الأول، بس مبتتقفلش بـ Esc ولا بالضغط برّه ([[closedby="none"]])، والفوكس بيبدأ على «لأ، خليني» بـ [[autofocus]]. (٥) **عن التطبيق:** بلوك عليه microdata من نوع [[SoftwareApplication]]: الاسم (إنجليزي وممنوع من الترجمة) والنسخة والتصنيف والنظام، وعرض بسعر [[0]] و [[EGP]]، والمصممة كـ [[Person]]. من دروس الوحدة الستة.`, done: R`كل قسم بيشتغل زي ما اتوصف: الاسم بيتعدّل كنص، و «؟» والألوان بيفتحوا popover وفتح واحد بيقفل التاني، وقسم المزامنة مبيردش، ونافذة المسح مبتتقفلش غير بزرار، والفورم الفاضي مبيتبعتش. والـ microdata بتطلّع حاجة واحدة [[SoftwareApplication]] جواها [[Offer]] و [[Person]].`, ext: R`زوّد لينك «الإعدادات» في [[<header>]] بتاع [[index.html]]. اعمل نسخة من نافذة المسح بتتفتح بـ [[command="show-modal"]] و [[commandfor]] بدل [[onclick]] وجرّبها. خلّي قسم «اختصارات الكيبورد» بتاع المشروع الرابع يتنقل هنا. وزوّد في «عن التطبيق» خاصية [[url]] على لينك لصفحة التطبيق، وافحص الصفحة في Schema Markup Validator.`, sol: R`**شجرة الملفات بعد المشروع ده:**
+
+~~~text
+nour-notes/
+  index.html       القايمة والجولة (المشاريع ١ و ٢ و ٤)
+  note.html        الملاحظة اللي بتتعدّل (المشروع ٣)
+  settings.html    الإعدادات (المشروع ده)
+~~~
+
+**ترتيب البناء:** الهيكل والأقسام الخمسة بعناوينها ← قسم الحساب ← المظهر ← المزامنة ← النافذة وزرارها ← microdata على آخر قسم. وبعد كل قسم افتح الصفحة وجرّبه قبل اللي بعده.
+
+~~~html settings.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الإعدادات | دفتر نور</title>
+<style>
+  [inert] { opacity: 0.5; }
 </style>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-bell" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 16v-5c0-3.5 2.5-6 6-6s6 2.5 6 6v5l2 2H4Zm4 5h4"/></symbol>
-  <symbol id="i-cart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 4h3l2 11h11l2-8H7"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></g></symbol>
-  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
-  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20c-7-5-9-8-9-11.5C3 6 5 4 7.5 4c2 0 3.5 1.5 4.5 3 1-1.5 2.5-3 4.5-3C19 4 21 6 21 8.5 21 12 19 15 12 20"/></symbol>
-  <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m3 11 9-8 9 8"/><path d="M5 10v11h14V10"/><path d="M10 21v-6h4v6"/></g></symbol>
-  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="18" height="14" x="3" y="5" rx="2"/><path d="m3 7 9 6 9-6"/></g></symbol>
-  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3h4l2 5-2.5 1.5c1 2.5 3.5 5 6 6L16 13l5 2v4c0 1-1 2-2 2-9 0-16-7-16-16 0-1 1-2 2-2"/></symbol>
-  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></g></symbol>
-  <symbol id="i-star" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 3 2.7 5.5 5.8.8-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.8-.8Z"/></symbol>
-  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7"/></g></symbol>
-</svg>
-<header class="site"><a href="#top">متجر نغمة</a></header>
-
-<main class="product" id="top">
-  <section class="gallery" aria-label="صور السماعة">
-    <picture class="gallery__main">
-      <img id="main-img" src="data:image/webp;base64,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" alt="سماعة صدى السودا من قدام" width="1200" height="900" fetchpriority="high">
-    </picture>
-    <ul class="thumbs">
-      <li><button type="button" aria-pressed="true" data-name="front" data-alt="سماعة صدى السودا من قدام"><img src="data:image/webp;base64,UklGRvACAABXRUJQVlA4IOQCAADwFgCdASq0AIcAPsFgqU+npaQiJXOZgPAYCWlu4W5w7HNz5E2Sy6GC+nXaKHBNYZmZmZmZNQQvV/x9b9l2+KBulZbJzSO7u5yb82NNenECtBKJVij0IlNGO7oAEg6ez9dL1EnI2SAYHpGoR71mXVVip+nPSaivMHnOY3846jTQQO7iYzI9xcFAe/a5ZvovFgLpqqQnR+y1+IJ3fOnQumvvG1VLOvImNFQTNx21KmKEMGsF5bv9fIoGZm0fRn//94AA/v1cKO7kgcuqoSpSSUeWmU/bNMru+6k/g65+4IIWXiLP/CaCoX90mWENSxPPwubVrdm3HeoslbH3Wo6spuZBDm29W/pkuYIwihAozKcqDcZxSysHy6boDLdZoZ8obPPc+RNTfaC4hAjyFX5rj9bHOsl9M/lIrNv5SO+S5hUnwlc3H5F/yzjTIoWVLIqiH2of8r0Ql9848iEma2ZUzS2Bg5UMxIJzyBhuoNLmanIoM/t2iPDroJyk2OVu1SgDpCFw/8APpweJK+8WN2NUEri5bKt09+1YuNXmqI/yT/mhiIQEoUVzujdPPTjVJ+ve2PTU3rFrhGhKzKosfoo14fvl8M+pSoST3+wEId0O03J2mnMoJpTUWWT8cQIiGYFUCBC4u1lZJvZ0JHyxu309w9tf4XGdQf4gVEaHswC+dOeDVWJ3H3N8d3Mad5c9LjIbm+u2VQMnzl16b6jXOtOK43yHAXCb2rBeihRe+rydNCfrjoRD4v+LdzdGULajXItupKChwZ3wBGO4zND9OcNx8519q9LKKwRlFQpOia24TblWDFrfxOR7gPo++JU5Tlz2RexVip4TDRAibVE6AkSegQbALfC2DaGvVKZ3dBUsC61BDQI4D/znPZ+wHUbG6IiTNFdDYyjEaNWj7LdSwu2C2/iK3adUYAB8qMIwcm0Ei3517qJJYR6ThQBsyU60CBF5f1zoUP8RL0Jv20pdstCf04JbAAAAAA==" alt="" width="240" height="180" loading="lazy">السودا</button></li>
-      <li><button type="button" aria-pressed="false" data-name="sand" data-alt="سماعة صدى بلون الرملة من قدام"><img src="data:image/webp;base64,UklGRkACAABXRUJQVlA4IDQCAAAwFgCdASq0AIcAPsFgqk8npaQiJbG5QPAYCWlu4W5w7HNn55WczDghYUPxzhOKNFbrAwryZEc0DQt7MAogRxX8D4qSueQLzq8JMcK7owl9t8qrEtgvwPFtoH6CvsoQaQ3LNF02mhwIP8s3qJVMNNzbakMiSVu4S7p1MWDh/wR1RJIXyAHi6lf8B0kzaGGO7RfpgH6/49h0vyxCGaBGYQj6YXOjswHSsb1vlODHR9JSzOHQxza+Hm1KgAAA/vxuj/g2SKbja0NIACKPV7DOUxgZld/QNv2q3mftfX0PpX4QQyuDpin4L/7lnTBe4D0QvCFHhCw4Zf8btAAbLZSGx7+Tj3IORNSKyYgMgzdVU1e31sHMF1e57qfbbf8tRtbfPTfW6YWvc5pj4BLhsU4VjZxS4wkCPeY4lcTzPsMKzLXeCwkG6U9B5pvBJPY7i9cwE1DXrFEJbb59cYb9MAC/pAqmbBXSS7+eeE7hDRYNb8nzPQwHnhDTpD1t3G/La2fqnVlU21d3zTawTBdiIzXgMwN8aL8ccj0PgKFPSkDidNkYE9dRRmD2EpNq075kbt9XIAlRUmlhzfkdH6l8cnfA27V5aWj5n0p+zkspSg3qI40R0KSPfA/uRs+KUYbMTIOhUAw6AMjwHHyk2l9RrAWsyfYXullLuoOWAUKgMv2krewCR5sGKAAJlTXRa8dX5aFwwd0kOjnALFC86IuiLk6MFt9VIToJOHLTXnst7KWHeu1xAAAAAAA=" alt="" width="240" height="180" loading="lazy">رملي</button></li>
-      <li><button type="button" aria-pressed="false" data-name="side" data-alt="سماعة صدى الزرقا من الجنب"><img src="data:image/webp;base64,UklGRlIDAABXRUJQVlA4IEYDAABQGACdASq0AIcAPsFgqE+npaOiJlPZAPAYCWVu4XNAzTib3EeHb7c+xpptOwel7q7uJNfVOt9SPnDIT8dlR0Nt737B8YPfx+19RvWy0OY4VSFF2AyAflo6MqwC5sX4BLSWoIPKiYGFyelEur6SQIjZ0WsIMkUSlr8cRqQXGCAS4sqMpAS6rUEHn9ayAkkpTLdJ5gLi5s+53K0XqNWJ7KdNS1zPWAvCvXGMXNZd7KdHvrnYh7JlAHeT1EyR5ibXvyKti2sIIJchAwcKAAD+/o26bgfXwLEvNWTh3nuhwxD0pEMTzrzOrG+TFc0AGIZCnbHD6p6EENdnGs6jQg4Bup27R8noUXb7G7R5DRkp9QqYtbCPPB7UF5/bCBABKWymKXy3qgVe6FzjrmGSGqMEMuwIiheckYdbW/uinyMkRkRJI8UqpSJ5hhV5qgEkFmd3C09PXPiCwuM6gIfWjLi4EZEVHlYIb9nUowoNcLCMCChm+9hKO8VGox+R828MNTRv0IiU0dTPQW6GIpRPYjoJDzB5SAl+mgesMLZox7GTKwScWrWch70DN++I40HYKI9PRWbjZ/GiyBHjHy86PFDwb7T78r0lmHdPfFxovp90Q+LbIBCj1rwQKourzwBzYsHZ31ByTz5vreO5tmTW1W5+7+h6qQ6PtpPVISg+saQKdfseYyO5+t2BgvLqBTUjk3dbH5CIxrvOteJWcTaYsXQzryiYWiGHjSBJP4+VJXwd5Z6IT/Kl49Y0CmbkHxEYmJQyrDCfItq/pQ6e18KNSZJgQr9PNIQxkbU7W8FQk1bFnc1nSlX/h3Ztw2zYcO4Ssz/c9VJ4Z+ZjlrQ58TulwL7QdVFQybX8YFtUUHkhzb34GwfoWG1tFXEFxgXxqJVFSVCtD5O41oYtZshRZsL6FS6+OwEe4COj7/ckbaBe5rb0UqX3lW9EUrKiU91y45cSgmr2a/9ivurEDTeG6NnAy2KR0hlm70AewSQE5IdXQ3SvIYcf8prgETZl4Ketx0tAPe0Q3zxICMGEQlC5fXp6N6PehAIBPmMSO5muA4jHqpvoMISHAxMDsZGt8lvgpUmBADZkp1mMBF5WPNVFQl4UGFTDidoFuEQAAAAA" alt="" width="240" height="180" loading="lazy">من الجنب</button></li>
-      <li><button type="button" aria-pressed="false" data-name="fold" data-alt="سماعة صدى البنفسجي وهي متطبّقة"><img src="data:image/webp;base64,UklGRtoCAABXRUJQVlA4IM4CAACwFQCdASq0AIcAPsFcqE+npKOiJRlosPAYCWdu4XEw/bVqPt5WmU8QllMqmGgac3gAvxSQYpIMUkGKSDFJBqSZumRe5ukIENIOdoscRzRK6B6ylzlpkMH4h/xxY1wWF2B5ZLamZYniqhiOV2F6VQCl/d+zlqWNcHgWhG4+gDJjW8RgJAEQ2KFDEz8af7qogbRY4sl1iJPsq+YwWgMY8ZXDzRgU+M9FSpnMzZAqZvEGLD0wmIGHQAD+/ciHprIIJcMMVth8ueggfbkBp2n1vs6dwbKLgm0Vz6VcoRnrpx/WzKrDYoeoGoVt5wk31Giex+ENRKl1FoAX4ke0oxgfZG3xNxmi/t8dsGpNjYEK/0SE7v2HHtt1r+MVR08HGWrGBQ3wdfERGQ2QBGDIZRILdEZgBIaZ/f3chGefyTXQRZZuI3UHcMhcec+7Q+HS/uAdKLREvvHxCWdb0+J6Crjx6ICCiRjoj5azqj8tDz1yfsgErJxphPrZqsBbhSeEjdimvcUtu/FJUBsHCnGQdt6fq/10vxyRxY2K4k2H8xUf1e0vpM2VtPDxQyaR05Xf/DSt8iYY88TxrM5lWDSuPL7IcsOf+AtAGoB48dkwSGEh5ZhzbkUXDin9wewJSQq7CSL0Q6YYuPzT+yDMbv+jv/MmvN5uYU9TQ7LAkNLBMhPStv0jUl7ZZhqe5h2aJaIzVXlY3vtepAH61/Um/I2P1lHK6fluTGwmZ22Dgn7jAzO+CIcxPfGb5eMOlHiBv8vJ062OFsEEwkqNehyb5p6xLoBApGKEcpXzTXLfjF4sl+m9ddXrdxF5PxPBDhbYXyXjcs0b0k1auB8/Z/Iw5gVTdSAd21PJVXdgsS2ZKEdUDidMKXiNmENa71JkQaHmPDtOovDYAG78lOyXG0CD7FKLMckbK3mn4owbvxiUUD/cagReVekdO1HM6bA0AIkERSBsoAAA" alt="" width="240" height="180" loading="lazy">متطبّقة</button></li>
-    </ul>
+<header>
+  <p><a href="index.html">كل الملاحظات</a></p>
+  <h1>الإعدادات</h1>
+</header>
+<main>
+  <section aria-labelledby="acc-title">
+    <h2 id="acc-title">الحساب</h2>
+    <p>الاسم الظاهر:
+      <span contenteditable="plaintext-only" role="textbox" aria-label="الاسم الظاهر" spellcheck="false" autocapitalize="words" enterkeyhint="done">منى علي</span>
+      <button type="button" popovertarget="namehelp" aria-label="مساعدة عن الاسم الظاهر">؟</button>
+    </p>
+    <div id="namehelp" popover>دوس على الاسم واكتب الاسم الجديد. ده اللي بيظهر على ملاحظاتك المشتركة.</div>
+    <form action="/settings/email" method="post">
+      <p><label for="email">الإيميل</label>
+      <input id="email" name="email" type="email" autocomplete="email" spellcheck="false" enterkeyhint="done" required></p>
+      <button type="submit">حدّث الإيميل</button>
+    </form>
   </section>
 
-  <section class="buy" aria-labelledby="name">
-    <h1 id="name">سماعة صدى</h1>
-    <div class="rating">
-      <svg class="ring" viewBox="0 0 36 36" role="img" aria-labelledby="ring-t">
-        <title id="ring-t">التقييم ٤٫٦ من ٥</title>
-        <circle class="ring__track" cx="18" cy="18" r="15.5" pathLength="100"/>
-        <circle class="ring__fill" cx="18" cy="18" r="15.5" pathLength="100" style="--value: 92"/>
-      </svg>
-      <p><b>٤٫٦</b> من ٥ <span>(٢١٨ تقييم)</span></p>
+  <section aria-labelledby="look-title">
+    <h2 id="look-title">المظهر</h2>
+    <button type="button" popovertarget="theme">اختار لون الدفتر</button>
+    <div id="theme" popover>
+      <p><button type="button" data-color="yellow">أصفر</button></p>
+      <p><button type="button" data-color="green">أخضر</button></p>
+      <p><button type="button" data-color="blue">أزرق</button></p>
     </div>
-    <p class="price">٣٬٤٥٠ ج <del>٣٬٩٥٠ ج</del></p>
-    <ul class="features">
-      <li><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>إلغاء ضوضاء بزرار واحد</li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg>بطارية ٤٠ ساعة</li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg>مكالمات بميكروفونين</li>
-      <li><svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg>ضمان سنتين</li>
-    </ul>
-    <button class="add" type="button"><svg class="icon" aria-hidden="true"><use href="#i-cart"></use></svg>ضيف للسلة</button>
   </section>
 
-  <section class="demo" aria-labelledby="demo-t">
-    <h2 id="demo-t">شوفها شغالة</h2>
-    <video controls preload="metadata" poster="data:image/webp;base64,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" width="960" height="540">
-    </video>
+  <section aria-labelledby="sync-title" inert>
+    <h2 id="sync-title">المزامنة (قريبًا)</h2>
+    <p><label><input type="checkbox" name="sync"> زامن ملاحظاتي على كل أجهزتي</label></p>
+    <button type="button">زامن دلوقتي</button>
   </section>
 
-  <section class="review" aria-labelledby="review-t">
-    <h2 id="review-t">ريفيو مستخدم</h2>
-    <div class="facade" id="facade" data-src="data:text/html;base64,PCFkb2N0eXBlIGh0bWw+CjxodG1sIGxhbmc9ImFyIiBkaXI9InJ0bCI+CjxoZWFkPgo8bWV0YSBjaGFyc2V0PSJ1dGYtOCI+Cjx0aXRsZT7Zhdi02LrZkdmEINix2YrZgdmK2Ygg2KfZhNiz2YXYp9i52Kk8L3RpdGxlPgo8c3R5bGU+CiAgYm9keSB7IG1hcmdpbjogMDsgZGlzcGxheTogZ3JpZDsgcGxhY2UtaXRlbXM6IGNlbnRlcjsgaGVpZ2h0OiAxMDB2aDsgYmFja2dyb3VuZDogIzAwMDsgY29sb3I6ICNmZmY7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWksIHNhbnMtc2VyaWY7IH0KPC9zdHlsZT4KPC9oZWFkPgo8Ym9keT4KPCEtLSBzdGFuZC1pbiBmb3IgdGhlIHZpZGVvIHNpdGUncyBwbGF5ZXIgcGFnZSAoaW4gYSByZWFsIHNpdGU6IHRoZSBwcm92aWRlcidzIC9lbWJlZC8gbGluaykgLS0+CjxwPtmH2YbYpyDZhdi02LrZkdmEINmF2YjZgti5INin2YTZgdmK2K/ZitmIPC9wPgo8L2JvZHk+CjwvaHRtbD4=">
-      <img src="data:image/webp;base64,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" alt="" width="640" height="360" loading="lazy">
-      <button class="facade__play" type="button">▶ شغّل الريفيو</button>
-    </div>
+  <section aria-labelledby="danger-title">
+    <h2 id="danger-title">منطقة الخطر</h2>
+    <button type="button" onclick="bye.showModal()">امسح حسابي</button>
+  </section>
+
+  <section aria-labelledby="about-title" itemscope itemtype="https://schema.org/SoftwareApplication">
+    <h2 id="about-title">عن التطبيق</h2>
+    <p><span itemprop="name" lang="en" translate="no">Nour Notes</span>، نسخة <span itemprop="softwareVersion">1.0</span></p>
+    <p>تطبيق <span itemprop="applicationCategory">ملاحظات</span> بيشتغل على <span itemprop="operatingSystem">أي متصفح حديث</span>.</p>
+    <p itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+      السعر: <data itemprop="price" value="0">مجاني</data>
+      <meta itemprop="priceCurrency" content="EGP">
+    </p>
+    <p>من تصميم <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">منى علي</span></span></p>
   </section>
 </main>
-<script>
-// 1. gallery: a button swaps the big picture. Inside <picture> the browser picks a <source> first,
-//    so changing img.src alone would change nothing on a browser that supports AVIF: every source changes together
-const img = document.getElementById("main-img");
-const avif = document.getElementById("src-avif");
-const webp = document.getElementById("src-webp");
-const buttons = document.querySelectorAll(".thumbs button");
-buttons.forEach(btn => btn.addEventListener("click", () => {
-  const name = btn.dataset.name;
-  avif.srcset = "img/hp-" + name + ".avif";
-  webp.srcset = "img/hp-" + name + ".webp";
-  img.src = "img/hp-" + name + ".jpg";
-  img.alt = btn.dataset.alt;
-  buttons.forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-}));
 
-// 2. review facade: the player loads only after the click
-const facade = document.getElementById("facade");
-facade.querySelector(".facade__play").addEventListener("click", () => {
-  const frame = document.createElement("iframe");
-  frame.src = facade.dataset.src;
-  frame.title = "ريفيو سماعة صدى";
-  frame.allow = "autoplay; fullscreen";
-  facade.replaceChildren(frame);
-  frame.focus();
-});
-</script>
+<dialog id="bye" aria-labelledby="bye-title" closedby="none">
+  <h2 id="bye-title">تمسح حسابك؟</h2>
+  <p>كل ملاحظاتك هتتمسح ومش هترجع.</p>
+  <form method="dialog">
+    <button value="cancel" autofocus>لأ، خليني</button>
+    <button value="delete">امسح حسابي</button>
+  </form>
+</dialog>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** على الكمبيوتر صورة سماعة كبيرة وتحتها ٤ صور صغيرة، والضغط على أي واحدة بيغيّر الكبيرة. جنبها صندوق أبيض فيه «سماعة صدى»، ودايرة تقييم صفرا مليانة ٩٢٪، والسعر، و ٤ مميزات بأيقونات زرقا، وزرار «ضيف للسلة». الصندوق ده بيفضل ظاهر وانت بتنزل. تحت: فيديو بترجمة عربي، وريفيو بزرار تشغيل.
-
-**الـ layout:** على الموبايل كله تحت بعض. على 64rem وأكبر grid بعمودين و [[grid-template-areas]]: الصور والفيديو والريفيو على جنب، والشرا على الجنب التاني في الـ ٣ صفوف. و [[.buy { position: sticky; top: 1rem; align-self: start }]] (من غير [[align-self: start]] الصندوق بيتمط لطول الـ ٣ صفوف ومبيلزقش، زي درس «sticky و fixed»).
-
-**المعرض والفخ اللي في [[<picture>]]:** الـ JS بيغيّر الـ [[srcset]] بتاع الـ ٢ [[<source>]] **و** [[src]] بتاع الـ [[<img>]]. ليه مش [[img.src]] بس؟ اتقاس: غيّرت [[img.src]] لوحده لصورة تانية، و [[currentSrc]] فضل [[hp-front.avif]]. المتصفح بياخد الـ [[<source>]] الأول اللي يناسبه، والـ [[src]] بتاع الـ img مبيتقريش أصلًا طول ما فيه source مناسب.
-
-**من غير JavaScript:** الصورة الأولى في الـ HTML زي ما هي، فالمعرض بيبان بأول صورة (اتقاس بـ Playwright والـ JS مقفول). الأزرار مش بتعمل حاجة بس الصفحة سليمة.
-
-**الصور الصغيرة:** أزرار ([[<button>]] بـ [[aria-pressed]]) مش لينكات، لأنها بتغيّر حاجة في نفس الصفحة. والصورة جوه الزرار [[alt=""]] لأن الكلام اللي جنبها («رملي») هو اسم الزرار.
-
-**دايرة التقييم:** [[pathLength="100"]] بيقول للمتصفح «اعتبر طول الدايرة 100»، فـ [[stroke-dasharray: var(--value) 100]] يعني «ارسم 92 وسيب 100». من غيره كان لازم تحسب محيط الدايرة (2 × π × 15.5 = 97.4). و [[rotate: -90deg]] عشان الخط يبدأ من فوق. والدايرة [[role="img"]] واسمها «التقييم ٤٫٦ من ٥».
-
-**الترجمة:** [[<track>]] واحد عربي [[kind="captions"]] (نفس لغة الكلام) و [[default]]، وواحد إنجليزي [[kind="subtitles"]] (ترجمة). الاتنين بيظهروا في قايمة الـ CC في مشغّل المتصفح. أول نسخة كان العربي [[subtitles]] و axe قال [[video-caption]] «محتاج مراجعة»، لأنه بيدوّر على [[captions]].
-
-**الأداء:** الصورة الكبيرة [[fetchpriority="high"]] ومش lazy (هي الـ LCP)، والـ thumbnails والريفيو lazy، والفيديو [[preload="metadata"]] (مبيحمّلش الفيديو كله لحد ما حد يشغّله)، وكل صورة ليها [[width]] و [[height]].
-
-~~~text Lighthouse 13.6.0، موبايل (simulated throttling)
-CHROME_PATH="/c/Program Files/Google/Chrome/Application/chrome.exe" npx lighthouse@13.6.0 http://127.0.0.1:8765/headphone-page/index.html --chrome-flags="--headless=new" --only-categories=performance,accessibility --output=json --output-path=lh1.json
-
-Performance 100   Accessibility 100
-largest-contentful-paint   1.2 s     (عنصر الـ LCP: <img id="main-img">)
-cumulative-layout-shift    0
-first-contentful-paint     0.8 s
-total-blocking-time        50 ms
-الـ insights اللي تحت 0.9: cache و document-latency و render-blocking: كلهم من السيرفر المحلي (python http.server مبيبعتش cache headers ولا ضغط)، مش من الصفحة
-~~~
-
-~~~text Playwright (Chrome 157)
-start: hp-front.avif | fetchpriority: high
-img.src only -> currentSrc: hp-front.avif          ← الفخ
-button «من الجنب» -> currentSrc: hp-side.avif | alt: سماعة صدى الزرقا من الجنب | pressed: front=false sand=false side=true fold=false
-Enter on «متطبّقة» -> hp-fold.avif
-text tracks: ar:showing en:disabled
-after switching to English: ar:disabled en:showing
-buy box top after scrolling 900: 16
-ring dash: 92px, 100px
-iframes before click: 0
-360: scrollWidth = 360 | buy position = static
-JS off: main picture = hp-front.avif | natural width = 1200
-axe (360 و 1280): 0 violations (كان video-caption «محتاج مراجعة» قبل captions)   CSS validator: No Error Found
-الـ validator: رسالتين على pathLength في <circle> (الـ validator لسه بيقرا SVG 1.1؛ pathLength على circle في SVG 2 و Chrome بيطبقه: الدايرة اتقاست 92px من 100)
-~~~` },
-        { lvl: 'فكرة', dir: "dash-mockup", t: R`mockup لوحة تحكم من غير ولا صورة`, what: R`اعمل «لقطة شاشة» لتطبيق متخيل جوه الهيرو بـ HTML و SVG بس: نافذة متصفح (٣ نقط وشريط عنوان)، و sidebar، وكروت أرقام، ورسم بياني [[<polyline>]]، و [[dir="ltr"]] على الأرقام. حاد على أي شاشة وبيتبدّل مع الثيم.`, done: R`الـ mockup مفيهوش ولا [[<img>]]، وبيتكبر من 360 لـ 1920 من غير ما يبوظ، وألوانه من CSS variables فلما تغيّر متغير بيتغيّر، وقارئ الشاشة بيقرا اسم واحد ليه ([[role="img"]] و [[aria-label]]).`, ext: R`حرّك الأرقام بـ count-up لما يظهر، وارسم الخط بـ [[stroke-dashoffset]]، واعمل نسخة dark، وقارن حجمها بلقطة PNG لنفس الشكل.`, sol: R`المثال اللي عملته: هيرو لتطبيق مصاريف بيت متخيل اسمه «رصيد»، وجنبه «لقطة» للتطبيق كلها HTML و SVG.
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>رصيد: تطبيق مصاريف البيت</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main class="hero">
-  <div class="hero__text">
-    <h1>اعرف فلوسك راحت فين</h1>
-    <p>«رصيد» بيجمع مصاريف البيت في مكان واحد، ويقولك كل شهر صرفت كام في إيه.</p>
-    <a class="btn" href="#start">جرّبه ببلاش</a>
-  </div>
-
-  <!-- a picture of the app made of HTML and SVG: one name for screen readers, the inside is decoration -->
-  <div class="shot-wrap">
-    <div class="shot" role="img" aria-label="شكل التطبيق: ٣ كروت أرقام للشهر ورسم بياني المصاريف فيه بتزيد لحد آخر الشهر">
-      <div class="win">
-        <span class="win__dot"></span><span class="win__dot"></span><span class="win__dot"></span>
-        <span class="win__url" dir="ltr">app.raseed.example</span>
-      </div>
-      <div class="app">
-        <div class="app__side">
-          <span class="nav nav--on"></span><span class="nav"></span><span class="nav"></span><span class="nav"></span>
-        </div>
-        <div class="app__main">
-          <div class="kpis">
-            <div class="kpi"><span class="kpi__label">الشهر ده</span><span class="kpi__n" dir="ltr">8,420</span></div>
-            <div class="kpi"><span class="kpi__label">الأكل</span><span class="kpi__n" dir="ltr">3,150</span></div>
-            <div class="kpi"><span class="kpi__label">المواصلات</span><span class="kpi__n" dir="ltr">1,200</span></div>
-          </div>
-          <svg class="chart" viewBox="0 0 300 120" preserveAspectRatio="none">
-            <polyline class="chart__grid" points="0,30 300,30"/>
-            <polyline class="chart__grid" points="0,60 300,60"/>
-            <polyline class="chart__grid" points="0,90 300,90"/>
-            <polyline class="chart__line" points="0,95 40,80 80,85 120,55 160,62 200,35 240,48 300,20"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </div>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  color-scheme: light dark;
-  --page: #f8fafc;  --ink: #0f172a;  --muted: #475569;
-  --frame: #e2e8f0; --app: #ffffff;  --side: #eef2ff;  --card: #f1f5f9;
-  --brand: #4f46e5; --line: #4f46e5; --grid: #cbd5e1;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --page: #0b1120; --ink: #e2e8f0;  --muted: #94a3b8;
-    --frame: #1e293b; --app: #0f172a; --side: #1e1b4b;  --card: #1e293b;
-    --brand: #818cf8; --line: #a5b4fc; --grid: #334155;
-  }
-}
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: var(--page); color: var(--ink); }
-
-.hero { display: grid; gap: 2rem; align-items: center; max-width: 72rem; margin-inline: auto; padding: 2rem 1rem; }
-@media (min-width: 56rem) { .hero { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); } }
-.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 2.5vw, 3rem); }
-.hero p { margin: 0 0 1.25rem; color: var(--muted); font-size: 1.1rem; }
-.btn { display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px; background: var(--brand); color: #fff; font-weight: 700; text-decoration: none; }
-@media (prefers-color-scheme: dark) { .btn { color: #0b1120; } }
-.btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-/* the picture: every size inside is cqi (1% of this box), so the whole thing scales like an image */
-.shot-wrap { container-type: inline-size; }
-.shot { border-radius: 2.5cqi; overflow: hidden; background: var(--frame); box-shadow: 0 3cqi 8cqi #0003; font-size: 2.6cqi; }
-
-.win { display: flex; align-items: center; gap: 1.2cqi; padding: 1.8cqi 2.4cqi; }
-.win__dot { width: 2cqi; height: 2cqi; border-radius: 50%; background: #f87171; }
-.win__dot:nth-child(2) { background: #fbbf24; }
-.win__dot:nth-child(3) { background: #34d399; }
-.win__url { margin-inline-start: 2cqi; flex: 1; padding: 0.6cqi 2cqi; border-radius: 99cqi; background: var(--app); color: var(--muted); font-size: 2.2cqi; }
-
-.app { display: grid; grid-template-columns: 14cqi 1fr; aspect-ratio: 16 / 9; background: var(--app); }
-.app__side { display: flex; flex-direction: column; gap: 2cqi; padding: 3cqi 2.4cqi; background: var(--side); }
-.nav { height: 2cqi; border-radius: 1cqi; background: var(--grid); }
-.nav--on { background: var(--brand); }
-.app__main { display: grid; grid-template-rows: auto 1fr; gap: 3cqi; padding: 3cqi; }
-
-.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqi; }
-.kpi { display: grid; gap: 0.6cqi; padding: 2cqi; border-radius: 1.6cqi; background: var(--card); }
-.kpi__label { color: var(--muted); font-size: 2.1cqi; }
-.kpi__n { font-size: 4cqi; font-weight: 800; text-align: start; }
-
-.chart { width: 100%; height: 100%; }
-.chart polyline { fill: none; vector-effect: non-scaling-stroke; }
-.chart__grid { stroke: var(--grid); stroke-width: 1; }
-.chart__line { stroke: var(--line); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
-~~~
-
-~~~view 560 520 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>رصيد: تطبيق مصاريف البيت</title>
+~~~view 775 شكل settings.html (جرّب كل قسم)
 <style>
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  color-scheme: light dark;
-  --page: #f8fafc;  --ink: #0f172a;  --muted: #475569;
-  --frame: #e2e8f0; --app: #ffffff;  --side: #eef2ff;  --card: #f1f5f9;
-  --brand: #4f46e5; --line: #4f46e5; --grid: #cbd5e1;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --page: #0b1120; --ink: #e2e8f0;  --muted: #94a3b8;
-    --frame: #1e293b; --app: #0f172a; --side: #1e1b4b;  --card: #1e293b;
-    --brand: #818cf8; --line: #a5b4fc; --grid: #334155;
-  }
-}
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: var(--page); color: var(--ink); }
-
-.hero { display: grid; gap: 2rem; align-items: center; max-width: 72rem; margin-inline: auto; padding: 2rem 1rem; }
-@media (min-width: 56rem) { .hero { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); } }
-.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 2.5vw, 3rem); }
-.hero p { margin: 0 0 1.25rem; color: var(--muted); font-size: 1.1rem; }
-.btn { display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px; background: var(--brand); color: #fff; font-weight: 700; text-decoration: none; }
-@media (prefers-color-scheme: dark) { .btn { color: #0b1120; } }
-.btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-/* the picture: every size inside is cqi (1% of this box), so the whole thing scales like an image */
-.shot-wrap { container-type: inline-size; }
-.shot { border-radius: 2.5cqi; overflow: hidden; background: var(--frame); box-shadow: 0 3cqi 8cqi #0003; font-size: 2.6cqi; }
-
-.win { display: flex; align-items: center; gap: 1.2cqi; padding: 1.8cqi 2.4cqi; }
-.win__dot { width: 2cqi; height: 2cqi; border-radius: 50%; background: #f87171; }
-.win__dot:nth-child(2) { background: #fbbf24; }
-.win__dot:nth-child(3) { background: #34d399; }
-.win__url { margin-inline-start: 2cqi; flex: 1; padding: 0.6cqi 2cqi; border-radius: 99cqi; background: var(--app); color: var(--muted); font-size: 2.2cqi; }
-
-.app { display: grid; grid-template-columns: 14cqi 1fr; aspect-ratio: 16 / 9; background: var(--app); }
-.app__side { display: flex; flex-direction: column; gap: 2cqi; padding: 3cqi 2.4cqi; background: var(--side); }
-.nav { height: 2cqi; border-radius: 1cqi; background: var(--grid); }
-.nav--on { background: var(--brand); }
-.app__main { display: grid; grid-template-rows: auto 1fr; gap: 3cqi; padding: 3cqi; }
-
-.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqi; }
-.kpi { display: grid; gap: 0.6cqi; padding: 2cqi; border-radius: 1.6cqi; background: var(--card); }
-.kpi__label { color: var(--muted); font-size: 2.1cqi; }
-.kpi__n { font-size: 4cqi; font-weight: 800; text-align: start; }
-
-.chart { width: 100%; height: 100%; }
-.chart polyline { fill: none; vector-effect: non-scaling-stroke; }
-.chart__grid { stroke: var(--grid); stroke-width: 1; }
-.chart__line { stroke: var(--line); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+  [inert] { opacity: 0.5; }
 </style>
+<header>
+  <p><a>كل الملاحظات</a></p>
+  <h1>الإعدادات</h1>
+</header>
+<main>
+  <section aria-labelledby="acc-title">
+    <h2 id="acc-title">الحساب</h2>
+    <p>الاسم الظاهر:
+      <span contenteditable="plaintext-only" role="textbox" aria-label="الاسم الظاهر" spellcheck="false" autocapitalize="words" enterkeyhint="done">منى علي</span>
+      <button type="button" popovertarget="namehelp" aria-label="مساعدة عن الاسم الظاهر">؟</button>
+    </p>
+    <div id="namehelp" popover>دوس على الاسم واكتب الاسم الجديد. ده اللي بيظهر على ملاحظاتك المشتركة.</div>
+    <form action="/settings/email" method="post">
+      <p><label for="email">الإيميل</label>
+      <input id="email" name="email" type="email" autocomplete="email" spellcheck="false" enterkeyhint="done" required></p>
+      <button type="submit">حدّث الإيميل</button>
+    </form>
+  </section>
+
+  <section aria-labelledby="look-title">
+    <h2 id="look-title">المظهر</h2>
+    <button type="button" popovertarget="theme">اختار لون الدفتر</button>
+    <div id="theme" popover>
+      <p><button type="button" data-color="yellow">أصفر</button></p>
+      <p><button type="button" data-color="green">أخضر</button></p>
+      <p><button type="button" data-color="blue">أزرق</button></p>
+    </div>
+  </section>
+
+  <section aria-labelledby="sync-title" inert>
+    <h2 id="sync-title">المزامنة (قريبًا)</h2>
+    <p><label><input type="checkbox" name="sync"> زامن ملاحظاتي على كل أجهزتي</label></p>
+    <button type="button">زامن دلوقتي</button>
+  </section>
+
+  <section aria-labelledby="danger-title">
+    <h2 id="danger-title">منطقة الخطر</h2>
+    <button type="button" onclick="bye.showModal()">امسح حسابي</button>
+  </section>
+
+  <section aria-labelledby="about-title" itemscope itemtype="https://schema.org/SoftwareApplication">
+    <h2 id="about-title">عن التطبيق</h2>
+    <p><span itemprop="name" lang="en" translate="no">Nour Notes</span>، نسخة <span itemprop="softwareVersion">1.0</span></p>
+    <p>تطبيق <span itemprop="applicationCategory">ملاحظات</span> بيشتغل على <span itemprop="operatingSystem">أي متصفح حديث</span>.</p>
+    <p itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+      السعر: <data itemprop="price" value="0">مجاني</data>
+      <meta itemprop="priceCurrency" content="EGP">
+    </p>
+    <p>من تصميم <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">منى علي</span></span></p>
+  </section>
+</main>
+
+<dialog id="bye" aria-labelledby="bye-title" closedby="none">
+  <h2 id="bye-title">تمسح حسابك؟</h2>
+  <p>كل ملاحظاتك هتتمسح ومش هترجع.</p>
+  <form method="dialog">
+    <button value="cancel" autofocus>لأ، خليني</button>
+    <button value="delete">امسح حسابي</button>
+  </form>
+</dialog>
+~~~
+
+**هتشوف إيه:**
+
+- **الحساب:** دوس على «منى علي» واكتب. «؟» بيطلّع جملة الشرح في نص الصفحة.
+- **المظهر:** الزرار بيطلّع تلات أزرار ألوان. لو تلميح «؟» كان مفتوح، بيتقفل.
+- **المزامنة:** القسم باهت، والـ checkbox والزرار مبيردوش.
+- **منطقة الخطر:** النافذة بتفتح والفوكس على «لأ، خليني». Esc والضغط برّه مبيعملوش حاجة.
+- **عن التطبيق:** تلات سطور عادية. كلمة «مجاني» هي السعر.
+
+**كل قرار وسببه:**
+
+| القرار | السبب |
+|---|---|
+| الاسم الظاهر [[<span contenteditable="plaintext-only">]] مش [[<input>]] | بيتعدّل في مكانه وسط الجملة. ومعاه [[role="textbox"]] و [[aria-label]] لأن [[<span>]] ملوش معنى |
+| الإيميل [[<input>]] جوه فورم | ده بيتبعت للسيرفر، و [[contenteditable]] مبيتبعتش |
+| [[spellcheck="false"]] على الاسم والإيميل | مش كلام لغة |
+| التلميح والألوان [[popover]] عادي | حاجات صغيرة بتتقفل لوحدها، وواحدة بس في المرة |
+| المزامنة [[inert]] مش [[hidden]] | الزائر يشوف إن الميزة جاية. والعنوان فيه «(قريبًا)» عشان السبب يبقى مكتوب |
+| نافذة المسح [[closedby="none"]] | قرار ميتلغيش ولا يتاخد بالغلط: لازم زرار صريح. وفيها زرار «لأ، خليني» فالزائر مش محبوس |
+| [[autofocus]] على «لأ، خليني» | هو الاختيار الآمن |
+| النافذة بـ [[onclick]] مش [[command]] | [[command]] لسه جديد (Chrome 135 و Firefox 144 و Safari 26.2)، وزرار مسح الحساب لازم يشتغل عند الكل |
+| microdata مش JSON-LD | صفحة HTML مكتوبة بالإيد، والبيانات هي نفس الكلام الباين |
+| «مجاني» جوه [[<data value="0">]] | الزائر بيقرا كلمة، والماكينة عايزة رقم |
+
+**الغلطات اللي بتحصل في المشروع ده:**
+
+- [[id]] فيه شرطة للنافذة أو الـ popover اللي بيتنادى من [[onclick]]: [[bye]] شغال، [[bye-dialog]] لأ. (الـ popover بيتنادى من [[popovertarget]] فالشرطة فيه عادي، بس خليهم كلمة واحدة وخلاص.)
+- زرار «؟» جوه الفورم من غير [[type="button"]]: هيبعت الفورم. هنا هو برّه الفورم وعليه [[type]] برضه.
+- [[itemprop="name"]] بتاع المصممة برّه الـ [[itemscope]] بتاعها: هيتحسب اسم تاني للتطبيق.
+
+~~~text القياس من Chrome
+تلميح «؟» ثم قايمة الألوان:          القايمة اتفتحت والتلميح اتقفل
+كليك على checkbox المزامنة:           checked = false   (الكليك ماوصلش)
+الاسم الظاهر في accessibility tree:    role = textbox ، name = "الاسم الظاهر"
+«امسح حسابي»:                         matches(':modal') = true ، والفوكس على «لأ، خليني»
+Esc ، وبعدين كليك برّه:                النافذة لسه مفتوحة
+«حدّث الإيميل» والخانة فاضية:          الفورم مش valid ، ومفيش طلب اتبعت
+
+microdata (خوارزمية المواصفة):
+حاجة نوعها https://schema.org/SoftwareApplication
+  name = "Nour Notes" ، softwareVersion = "1.0"
+  applicationCategory = "ملاحظات" ، operatingSystem = "أي متصفح حديث"
+  offers = حاجة نوعها https://schema.org/Offer:   price = "0" ، priceCurrency = "EGP"
+  author = حاجة نوعها https://schema.org/Person:  name = "منى علي"
+~~~
+
+**اللي الصفحة لسه مبتعملوش** (وده شغل JavaScript والسيرفر): حفظ الاسم الجديد، وتطبيق اللون، وتنفيذ المسح بعد [[returnValue = delete]]، واستقبال الإيميل على [[/settings/email]].` },
+        { lvl: 'فكرة', dir: "nour-shop", t: R`صفحة منتج لمتجر صغير: بيانات لمحرك البحث، وطلب في نافذة`, what: R`صفحة منتج واحد لمتجر تعرفه أو تتخيله (هنا: «نوتة نور A5» من «متجر دار نور»)، لزائر جاي من البحث وعايز يعرف السعر ويطلب. [[index.html]] فيها: المنتج في [[<article>]] عليه microdata [[Product]] (اسم، وصف، ماركة، وعرض فيه سعر بالرقم وعملة وحالة التوفر) و [[data-sku]]، وزرار «اطلب دلوقتي» بيفتح نافذة modal فيها فورم طلب حقيقي ([[post]]، اسم وموبايل إجباريين بتلميحات الكتابة) وزرار «إلغاء» بيقفل من غير فحص، وزرار «مقاسات الورق» بيفتح popover، وقسم «أسئلة شائعة» بـ [[<details>]]. الفكرة إنك **تختار الأداة لكل حاجة بتتفتح** من جدول درس «popover و popovertarget»، وتستخدم نفس نافذة وقايمة مشاريع «دفتر نور» في سياق تاني.`, done: R`الـ microdata بتطلّع منتج واحد بعرضه. «اطلب دلوقتي» بيفتح النافذة والفوكس في خانة الاسم. «أكّد الطلب» والخانات فاضية مبيبعتش، و «إلغاء» بيقفل من غير ما يشتكي. المقاسات popover بيتقفل لوحده، والأسئلة بتتفرد في مكانها.`, ext: R`بدّل المنتج بمنتج من عندك وغيّر الخصايص. زوّد [[image]] بصورة و [[aggregateRating]] لو فيه تقييمات حقيقية. اكتب نفس البيانات JSON-LD وقارن الاتنين في Schema Markup Validator (وسيب واحد بس في الصفحة). وزوّد صفحة [[thanks.html]] الفورم يروحلها.`, sol: R`نسخة نموذجية:
+
+~~~live 372 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نوتة نور A5 | متجر دار نور</title>
 </head>
 <body>
-<main class="hero">
-  <div class="hero__text">
-    <h1>اعرف فلوسك راحت فين</h1>
-    <p>«رصيد» بيجمع مصاريف البيت في مكان واحد، ويقولك كل شهر صرفت كام في إيه.</p>
-    <a class="btn" href="#start">جرّبه ببلاش</a>
+<header>
+  <p><strong>متجر دار نور</strong></p>
+</header>
+<main>
+  <article itemscope itemtype="https://schema.org/Product" data-sku="NB-A5-120">
+    <h1 itemprop="name">نوتة نور A5</h1>
+    <p itemprop="description">نوتة 120 صفحة بغلاف قماش وورق كريمي.</p>
+    <p>الماركة: <span itemprop="brand">دار نور</span></p>
+    <p itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+      <data itemprop="price" value="85.00">٨٥ جنيه</data>
+      <meta itemprop="priceCurrency" content="EGP">
+      <link itemprop="availability" href="https://schema.org/InStock">(متاحة)
+    </p>
+    <p>
+      <button type="button" onclick="order.showModal()">اطلب دلوقتي</button>
+      <button type="button" popovertarget="sizes">مقاسات الورق</button>
+    </p>
+  </article>
+
+  <div id="sizes" popover>
+    <p><strong>A5:</strong> 14.8 × 21 سم (نص ورقة الطباعة العادية)</p>
+    <p><strong>A6:</strong> 10.5 × 14.8 سم (حجم الجيب)</p>
   </div>
 
-  <!-- a picture of the app made of HTML and SVG: one name for screen readers, the inside is decoration -->
-  <div class="shot-wrap">
-    <div class="shot" role="img" aria-label="شكل التطبيق: ٣ كروت أرقام للشهر ورسم بياني المصاريف فيه بتزيد لحد آخر الشهر">
-      <div class="win">
-        <span class="win__dot"></span><span class="win__dot"></span><span class="win__dot"></span>
-        <span class="win__url" dir="ltr">app.raseed.example</span>
-      </div>
-      <div class="app">
-        <div class="app__side">
-          <span class="nav nav--on"></span><span class="nav"></span><span class="nav"></span><span class="nav"></span>
-        </div>
-        <div class="app__main">
-          <div class="kpis">
-            <div class="kpi"><span class="kpi__label">الشهر ده</span><span class="kpi__n" dir="ltr">8,420</span></div>
-            <div class="kpi"><span class="kpi__label">الأكل</span><span class="kpi__n" dir="ltr">3,150</span></div>
-            <div class="kpi"><span class="kpi__label">المواصلات</span><span class="kpi__n" dir="ltr">1,200</span></div>
-          </div>
-          <svg class="chart" viewBox="0 0 300 120" preserveAspectRatio="none">
-            <polyline class="chart__grid" points="0,30 300,30"/>
-            <polyline class="chart__grid" points="0,60 300,60"/>
-            <polyline class="chart__grid" points="0,90 300,90"/>
-            <polyline class="chart__line" points="0,95 40,80 80,85 120,55 160,62 200,35 240,48 300,20"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </div>
+  <h2>أسئلة شائعة</h2>
+  <details>
+    <summary>الشحن بياخد قد إيه؟</summary>
+    <p>من يومين لأربعة أيام شغل.</p>
+  </details>
+  <details>
+    <summary>ينفع أرجّعها؟</summary>
+    <p>أيوه، خلال ١٤ يوم ولو لسه في غلافها.</p>
+  </details>
 </main>
+
+<dialog id="order" aria-labelledby="order-title">
+  <h2 id="order-title">اطلب «نوتة نور A5»</h2>
+  <form action="/orders" method="post">
+    <input type="hidden" name="sku" value="NB-A5-120">
+    <p><label for="name">الاسم</label><br>
+    <input id="name" name="name" autocomplete="name" autocapitalize="words" enterkeyhint="next" required autofocus></p>
+    <p><label for="phone">الموبايل</label><br>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" enterkeyhint="send" required></p>
+    <button type="submit">أكّد الطلب</button>
+    <button type="submit" formmethod="dialog" formnovalidate value="cancel">إلغاء</button>
+  </form>
+</dialog>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** على يمين الهيرو «اعرف فلوسك راحت فين» وزرار. وعلى الشمال شباك متصفح صغير: ٣ نقط ملونة وشريط عنوان، وجواه تطبيق فيه عمود جانبي و ٣ كروت أرقام ورسم بياني خطي. لو جهازك على الوضع الغامق كله بيبقى غامق.
+**هتشوف إيه:**
 
-**بيتكبّر زي صورة:** [[.shot-wrap { container-type: inline-size }]]، وكل مقاس جوه الـ mockup بـ [[cqi]] (1% من عرض الصندوق): الخط، والمسافات، والدواير. فلما الصندوق يكبر كل حاجة بتكبر بنفس النسبة. اتقاس: النسبة 1.561 على 360 و 1.565 على 1920، والرقم الكبير 13.1px و 23.9px.
+- اسم المتجر، وكارت المنتج: اسم ووصف وماركة و «٨٥ جنيه (متاحة)»، وزرارين.
+- «مقاسات الورق»: صندوق صغير فوق الصفحة، بيتقفل بأي ضغطة برّه.
+- «اطلب دلوقتي»: نافذة فيها خانتين، والمؤشر في «الاسم». «أكّد الطلب» وهي فاضية: رسالة المتصفح. «إلغاء»: بتتقفل.
+- الأسئلة: كل سؤال بيتفرد تحته.
 
-**الرسم البياني:** [[<polyline points="0,95 40,80 …">]] على [[viewBox="0 0 300 120"]] و [[preserveAspectRatio="none"]] (يتمط على قد مكانه). و [[vector-effect: non-scaling-stroke]] عشان الخط يفضل 3px حتى لو الرسمة اتمطت.
+**ليه اخترت كل أداة:**
 
-**الأرقام [[dir="ltr"]]:** «8,420» جوه صفحة عربي ممكن الفاصلة تتنقل. [[dir="ltr"]] على الرقم بيثبّته.
+| الحاجة | الأداة | ليه |
+|---|---|---|
+| فورم الطلب | [[<dialog>]] modal | الزائر بيكتب بيانات: مينفعش ضغطة برّه تضيّعها، ولا يشتغل في الصفحة اللي ورا |
+| المقاسات | [[popover]] | معلومة سريعة يبص عليها ويكمّل |
+| الأسئلة | [[<details>]] | محتوى من الصفحة، ولازم يتلاقى بـ Ctrl+F ومن محرك البحث |
 
-**اسم واحد لقارئ الشاشة:** [[role="img"]] و [[aria-label]] على الـ mockup كله: قارئ الشاشة بيقول جملة واحدة بتوصف الصورة، ومش بيدخل جوه يقرا «8,420» و «الأكل» كأنهم كلام حقيقي في الصفحة.
+**وتفاصيل الفورم اللي جوه النافذة:**
 
-**الثيم:** كل الألوان متغيرات على [[:root]]، و [[@media (prefers-color-scheme: dark)]] بيغيّرهم. [[color-scheme: light dark]] بيخلي المتصفح يلوّن الـ scrollbar والفورم بالثيم كمان.
+- الفورم [[method="post"]] عادي، فـ «أكّد الطلب» بيبعت للسيرفر فعلًا. مش [[method="dialog"]]: ده كان هيقفل النافذة ويرمي البيانات.
+- «إلغاء» عليه [[formmethod="dialog"]] (يقفل بدل ما يبعت) و [[formnovalidate]] (من غير ما يطلب ملء الخانات): الاتنين من درس «أزرار الفورم».
+- «أكّد الطلب» الأول في الكود: Enter جوه خانة بيأكّد.
+- [[autofocus]] على خانة الاسم: الزائر فتح النافذة عشان يكتب.
+- [[enterkeyhint="next"]] على الاسم و [[send]] على الموبايل (آخر خانة)، و [[autocapitalize="words"]] على الاسم.
+- [[data-sku]] على الكارت للكود، ونفس القيمة في حقل [[hidden]] جوه الفورم عشان تتبعت.
 
-**غلطة اتصلحت:** أول [[aria-label]] كان «المصاريف بتقل آخر الشهر»، والخط في الرسمة طالع. قارئ الشاشة كان هيقول عكس اللي مرسوم. الوصف لازم يتكتب من الرسمة نفسها.
+**ليه microdata هنا:** صفحة منتج هي أكتر مكان البيانات المنظمة بتفرق فيه: السعر والتوفر ممكن يظهروا تحت النتيجة في البحث. والصفحة مكتوبة بالإيد فالبيانات اتحطت على الكلام نفسه.
 
-~~~text الناتج (Playwright بـ Chrome 157)
-mockup 360  {"shotW":328,"shotH":210,"ratio":"1.561","kpiFont":"13.12px","imgs":0,"sw":360}
-mockup 1920 {"shotW":598,"shotH":382,"ratio":"1.565","kpiFont":"23.9363px","imgs":0,"sw":1920}
-mockup light rgb(255, 255, 255) / line rgb(79, 70, 229)
-mockup dark  rgb(15, 23, 42) / line rgb(165, 180, 252)
-axe (360 و 1280): 0 violations   الـ validator: مفيش رسايل
-CSS validator: 31 رسالة كلها container-type و cqi (الـ validator لسه مبيعرفهمش، وهما Baseline)
-~~~` },
+**الغلطة الشائعة:** فورم الطلب جوه popover. أول ضغطة برّه (أو على الكيبورد اللي طالع في الموبايل) بتقفله واللي اتكتب بيروح.
+
+~~~text القياس من Chrome
+«مقاسات الورق»:                    popover اتفتح
+«اطلب دلوقتي»:                     matches(':modal') = true ، والـ popover اتقفل ، والفوكس في خانة الاسم
+«أكّد الطلب» والخانات فاضية:       النافذة لسه مفتوحة ، والفورم مش valid
+«إلغاء» والخانات فاضية:            اتقفلت ، returnValue = cancel ، ومفيش طلب اتبعت
+أول سؤال:                          details open = true
+
+microdata (خوارزمية المواصفة):
+حاجة نوعها https://schema.org/Product
+  name = "نوتة نور A5" ، description = "نوتة 120 صفحة بغلاف قماش وورق كريمي." ، brand = "دار نور"
+  offers = حاجة نوعها https://schema.org/Offer:
+             price = "85.00" ، priceCurrency = "EGP" ، availability = "https://schema.org/InStock"
+~~~` }
       ],
       items: [
         {
-          cmd: "object-fit",
+          cmd: "dialog و closedby",
+          title: "نافذة تأكيد من الـ HTML نفسه: dialog و show() و showModal() و method=\"dialog\" و closedby",
+          pre: ["css/a و button", { to: "css/أزرار الفورم: formaction وإخواته", why: R`الزرار جوه فورم بيبعته، و [[value]] الزرار اللي اتداس: نفس الفكرة بتقفل الـ dialog` }],
           ref: [
-            { t: "MDN: object-position", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/object-position" },
-            { t: "MDN: object-fit", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/object-fit" },
+            { t: "MDN: <dialog>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog" },
+            { t: "WHATWG: the dialog element", url: "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-dialog-element" },
+            { t: "WHATWG: closedby", url: "https://html.spec.whatwg.org/multipage/interactive-elements.html#attr-dialog-closedby" },
+            { t: "MDN: HTMLDialogElement.showModal()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal" },
+            { t: "MDN: inert", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inert" }
           ],
-          title: "صورة الكارت تملا المكان من غير ما تتمط",
-          desc: R`لما تدّي صورة عرض وارتفاع مش بنفس نسبتها، المتصفح بيمطّها. [[object-fit: cover]] بيخليها تملا المكان كله وتتقص من الأطراف، و [[contain]] بيخليها تبان كلها وتسيب فراغ (مناسب للّوجو وصور المنتجات اللي مينفعش حاجة منها تتقص).
-
-و [[object-position]] بيحدد أنهي جزء يفضل باين لما تتقص: [[50% 20%]] يعني قريب من فوق، مفيد لصور الناس عشان الوش ميتقصش.
-
-ومعاهم [[aspect-ratio]] عشان كل الكروت تبقى نفس الشكل مهما كانت الصور. وفي Tailwind: [[aspect-square]] و [[object-cover]] و [[object-top]].`,
-          example: R`.card-img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  object-position: 50% 20%;
-}
-.logo { width: 8rem; height: 4rem; object-fit: contain; }
-<img class="card-img" src="/p/42.webp" width="800" height="600" alt="سماعة سودا">
-<img className="aspect-square w-full object-cover object-top" src="/team/mona.webp" alt="منى، مديرة المبيعات" width="400" height="400" />
-<div className="relative aspect-video"><Image src="/hero.webp" alt="" fill sizes="100vw" className="object-cover" /></div>`,
-          try: R`حط صورة طولية (بورتريه) في صندوق [[aspect-ratio: 4 / 3]]، وفي DevTools غيّر [[object-fit]] بين [[fill]] و [[cover]] و [[contain]] و [[none]]. وبعدين مع cover غيّر [[object-position]] لـ [[top]] و [[bottom]] وشوف أنهي جزء بيختفي.`,
+          desc: R`[[<dialog>]] نافذة صغيرة بتطلع فوق الصفحة: «متأكد إنك عايز تمسح؟»، أو فورم صغير، أو رسالة. المتصفح نفسه بيعمل الشغل الصعب: بيحطها فوق كل حاجة، وبينقل الفوكس جواها، وبيقفلها بـ Esc، وبيوقّف الصفحة اللي وراها.
+بتتفتح بسطر JavaScript واحد ([[showModal()]])، وبتتقفل من غير JavaScript خالص بـ [[<form method="dialog">]].
+(درس «Dialog» اللي في وحدة shadcn عن component جاهز في React. ده العنصر الأصلي اللي في الـ HTML.)`,
+          example: R`<button type="button" onclick="del.showModal()">امسح الملاحظة</button>
+<dialog id="del" aria-labelledby="del-title" closedby="any">
+  <h2 id="del-title">تمسح «مشتريات الأسبوع»؟</h2>
+  <p>الملاحظة هتتمسح ومش هترجع.</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>`,
           flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صورة بانوراما 1200 × 400 في صندوق 300 × 300. مع [[contain]]: الصورة هتترسم بمقاس كام، والفاضي فين وقد إيه؟ ومع [[cover]]: أنهي جزء هيتقص؟`, done: R`contain: الصورة 300 × 100 (صغرت لـ ربع)، وفاضي 100 فوق و 100 تحت. cover: الصورة اتكبّرت لـ 900 × 300 واتقص 300 من كل جنب، فالنص بس باين. وأكّدت بلقطة شاشة أو بلون أول وآخر سطر.`, sol: R`الحساب أولًا، وبعدين صفحة صغيرة تأكّده بلون أول وآخر الصورة.
-
-~~~live 600 640 predict.html
-<!doctype html>
-<meta charset="utf-8">
-<title>contain و cover</title>
-<style>
-  img { display: block; width: 300px; height: 300px; margin-block-end: 1rem; background: #eee; }
-</style>
-<!-- بانوراما 1200×400: أخضر أول 300، وأزرق في النص، وأحمر آخر 300 -->
-<img style="object-fit: contain" alt="contain" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1200'%20height='400'%3E%3Crect%20width='300'%20height='400'%20fill='green'/%3E%3Crect%20x='300'%20width='600'%20height='400'%20fill='blue'/%3E%3Crect%20x='900'%20width='300'%20height='400'%20fill='red'/%3E%3C/svg%3E">
-<img style="object-fit: cover" alt="cover" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1200'%20height='400'%3E%3Crect%20width='300'%20height='400'%20fill='green'/%3E%3Crect%20x='300'%20width='600'%20height='400'%20fill='blue'/%3E%3Crect%20x='900'%20width='300'%20height='400'%20fill='red'/%3E%3C/svg%3E">
-~~~
-
-**contain:** المتصفح بيدوّر على أصغر تكبير يخلي الصورة كلها جوه الصندوق. العرض محتاج 300 ÷ 1200 = 0.25، والارتفاع محتاج 300 ÷ 400 = 0.75، فبياخد الأصغر (0.25). الصورة تبقى 300 × 100، والباقي من الارتفاع 200 يتقسم نصين: 100 فوق و 100 تحت.
-
-**cover:** بياخد الأكبر (0.75) عشان الصندوق كله يتغطى. الصورة تبقى 900 × 300، والزيادة في العرض 600 تتقص نصين: 300 من كل جنب، لأن [[object-position]] الافتراضي [[50% 50%]].
-
-**الغلطة الشائعة:** تفتكر إن cover «بيقص من تحت» زي ما بتشوف في الصور الطولية. القص دايمًا في الاتجاه الزايد: البانوراما زيادتها في العرض، فالأطراف هي اللي بتروح.
-
-~~~text الناتج
-                        contain                     cover
-الصورة بعد التحجيم      300 × 100                   900 × 300
-الفاضي أو المقصوص       100 فوق و 100 تحت          300 من كل جنب
-لون (150, 50)           أبيض (خلفية)                أزرق
-لون (150, 150)          أزرق                        أزرق
-لون (2, 150)            أخضر (أول الصورة)           أزرق (الأخضر اتقص كله)
-لون (297, 150)          أحمر (آخر الصورة)           أزرق (الأحمر اتقص كله)
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة فريق لمكتبة متخيلة: ٨ كروت بصور مختلفة النسب (طولي وعرضي ومربع)، كل صورة [[aspect-ratio: 4 / 5]] و [[object-fit: cover]] و [[object-position: 50% 20%]]، والشبكة auto-fit.`, done: R`على 360 و 768 و 1280 كل الكروت في الصف نفس الارتفاع بالظبط (قيس [[height]] بتاع كل صورة)، ومفيش صورة متمطّطة، والوشوش باينة في الصور الطولية، ومفيش scroll أفقي.`, sol: R`~~~live 600 720 team.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فريق مكتبة النور</title>
-<style>
-  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; background: #f4f1ea; color: #222; }
-  .team { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem;
-          grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); }
-  .card { background: #fff; border-radius: .75rem; overflow: hidden; }
-  .card img { display: block; width: 100%; height: auto;
-              aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; }
-  .card h2 { margin: .5rem .75rem 0; font-size: 1rem; }
-  .card p  { margin: 0 .75rem .75rem; color: #555; font-size: .875rem; }
-</style>
-</head>
-<body>
-<main>
-<h1>فريق مكتبة النور</h1>
-<ul class="team">
-  <li class="card"><img data-size="600x900" width="600" height="900" alt="منى مبتسمة قدام رف كتب"><h2>منى</h2><p>مديرة المكتبة</p></li>
-  <li class="card"><img data-size="900x600" width="900" height="600" alt="كريم ماسك كتاب"><h2>كريم</h2><p>الاستعارة</p></li>
-  <li class="card"><img data-size="700x700" width="700" height="700" alt="سارة قدام الكمبيوتر"><h2>سارة</h2><p>الفهرسة</p></li>
-  <li class="card"><img data-size="500x1000" width="500" height="1000" alt="عمر واقف على سلم الرفوف"><h2>عمر</h2><p>الرفوف</p></li>
-  <li class="card"><img data-size="1200x500" width="1200" height="500" alt="هبة بتقرا للأطفال"><h2>هبة</h2><p>ركن الأطفال</p></li>
-  <li class="card"><img data-size="800x800" width="800" height="800" alt="ياسر جنب ماكينة التصوير"><h2>ياسر</h2><p>النسخ</p></li>
-  <li class="card"><img data-size="640x960" width="640" height="960" alt="نورا ماسكة صندوق كتب"><h2>نورا</h2><p>المشتريات</p></li>
-  <li class="card"><img data-size="1000x700" width="1000" height="700" alt="طارق عند باب المكتبة"><h2>طارق</h2><p>الأمن</p></li>
-</ul>
-</main>
-<script>
-  // صور تجريبية عشان الصفحة تشتغل من غير ملفات: بدّلها بصورك الحقيقية
-  document.querySelectorAll("img[data-size]").forEach((img, i) => {
-    const [w, h] = img.dataset.size.split("x");
-    const svg = $__bt<svg xmlns="http://www.w3.org/2000/svg" width="$__{w}" height="$__{h}"><rect width="100%" height="100%" fill="hsl($__{i * 45} 45% 70%)"/><circle cx="$__{w / 2}" cy="$__{h * 0.2}" r="$__{w * 0.14}" fill="#0005"/></svg>$__bt;
-    img.src = "data:image/svg+xml," + encodeURIComponent(svg);
-  });
-$__lt/script>
-</body>
-</html>
-~~~
-
-**الـ validator هيقول هنا** [[Element "img" is missing one or more of the following attributes: "src", "srcset"]]: الصور التجريبية بتتحط بالـ JavaScript بعد ما الصفحة تتقري، فالـ HTML نفسه من غير [[src]]. في صفحتك الحقيقية اكتب [[src]] بمسار صورتك على كل [[<img>]] وامسح السكربت، والـ validator هيسكت.
-
-**ليه شغال:** الصور ملفاتها مختلفة (طولي وعرضي ومربع)، بس المقاس اللي بتاخده على الشاشة جاي من الـ CSS مش من الملف:
-
-- [[grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr))]] بيحط أعمدة قد ما يقدر، كل عمود 10rem على الأقل. و [[min(100%, 10rem)]] بتحمي الموبايل الصغير أوي من الـ overflow.
-- [[width: 100%]] الصورة بعرض الكارت، و [[aspect-ratio: 4 / 5]] بيحسب الارتفاع من العرض، فكل الصور في العمود نفس الارتفاع مهما كان شكل الملف.
-- [[height: auto]] لازمة: من غيرها الـ [[height="900"]] اللي في الـ HTML بيكسب ويلغي الـ aspect-ratio.
-- [[object-fit: cover]] بيملا المكان ويقص، و [[object-position: 50% 20%]] بيخلي الجزء الباين هو اللي عند 20% من فوق، وده مكان الوش في الصور الطولية.
-- [[width]] و [[height]] في الـ HTML لسه موجودين عشان المتصفح يحجز مكان قبل ما الصورة تتحمّل.
-
-**الغلطة الشائعة:** تسيب [[object-position]] على الافتراضي (النص)، فالصور الطولية تتقص من فوق ومن تحت بالتساوي والوش يروح نصه. جرّب تغيّرها لـ [[50% 50%]] وبص على الدايرة اللي في الصورة التجريبية.
-
-~~~text الناتج
-العرض    الأعمدة   عرض الصورة × ارتفاعها     scrollWidth  clientWidth
-360      1         328 × 410                 360          360
-768      4         172 × 215                 768          768
-1280     7         164.56 × 205.7            1280         1280
-
-كل الصور في الصف نفس الـ top. على 1280 بعض الأعمدة 164.58 × 205.72 بفرق 0.02px
-من تقسيم العرض على 7، وده كسر بكسل مش بيتشاف.
-axe: صفر مشاكل.
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<img src="/a.jpg" width="800" height="600" style="width: 100%; aspect-ratio: 1">]] جوه كارت عرضه 400، والمفروض يبقى مربع. قيس الارتفاع وصلّح.`, done: R`قبل: الارتفاع 600 (الـ [[height]] اللي في الـ HTML كسب على الـ aspect-ratio). بعد [[height: auto]]: 400 × 400، ومن غير ما تمسح [[width]] و [[height]] من الـ HTML (لسه محتاجهم لحجز المكان).`, sol: R`~~~live 420 420 fix.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>كارت مربع</title></head>
-<body>
-<div style="width: 400px">
-  <img id="pic" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='600'%3E%3Crect%20width='100%25'%20height='100%25'%20fill='teal'/%3E%3C/svg%3E"
-       width="800" height="600" alt="صورة منتج"
-       style="width: 100%; height: auto; aspect-ratio: 1; object-fit: cover">
-</div>
-</body>
-</html>
-~~~
-
-التصليح كلمة واحدة: [[height: auto]] في الـ style. و [[object-fit: cover]] زيادة عشان الصورة 800 × 600 ماتتمطّش لما تتحط في صندوق مربع.
-
-**ليه كان بايظ:** الـ [[height="600"]] في الـ HTML بيتحوّل لقاعدة CSS ضعيفة، بس لسه قيمة. و [[aspect-ratio]] بيشتغل بس لو واحد من البعدين [[auto]]. والعرض اتحدد والارتفاع اتحدد، فمفيش حاجة يحسبها، فالـ [[aspect-ratio: 1]] بيتجاهل في سكوت.
-
-**الغلطة الشائعة:** تمسح [[width]] و [[height]] من الـ HTML عشان «بيبوظوا الدنيا». كده الشكل يتصلّح فعلًا، بس المتصفح مبقاش عارف نسبة الصورة قبل التحميل، فترجع قفزة الـ layout. سيبهم وزوّد [[height: auto]].
-
-~~~text الناتج
-                     العرض    الارتفاع
-قبل (height من HTML)  400      600
-بعد height: auto      400      400
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ألبوم صور رحلة متخيلة على شكل polaroid: [[<figure>]] بإطار أبيض وظل، والصورة مربعة [[cover]]، و [[figcaption]] تحت، وكل صورة متلفّة زاوية مختلفة بـ [[:nth-child]] و [[rotate]].`, done: R`كل الصور نفس المقاس رغم إن الملفات مختلفة، والكروت متلفّة بـ ٣ زوايا على الأقل، والـ caption مقري، ولما تقف على كارت بيتعدل ([[rotate: 0deg]]) ويكبر شوية من غير ما يزق اللي جنبه.`, sol: R`~~~live 600 720 album.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ألبوم رحلة الأقصر</title>
-<style>
-  body { margin: 0; padding: 2rem 1rem; background: #4a3f35; color: #fff; font-family: system-ui, sans-serif; }
-  h1 { text-align: center; }
-  .album { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; }
-  .polaroid { margin: 0; width: 13rem; padding: .75rem .75rem 1.25rem; background: #fff;
-              box-shadow: 0 .5rem 1rem #0006; transition: rotate .2s, scale .2s; }
-  .polaroid:nth-child(3n + 1) { rotate: -4deg; }
-  .polaroid:nth-child(3n + 2) { rotate: 2deg; }
-  .polaroid:nth-child(3n)     { rotate: -1.5deg; }
-  .polaroid:hover { rotate: 0deg; scale: 1.06; position: relative; z-index: 1; }
-  .polaroid img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
-  .polaroid figcaption { margin-top: .75rem; text-align: center; color: #333; }
-  @media (prefers-reduced-motion: reduce) { .polaroid { transition: none; } }
-</style>
-</head>
-<body>
-<main>
-<h1>رحلة الأقصر</h1>
-<div class="album">
-  <figure class="polaroid"><img data-size="1200x800" width="1200" height="800" alt="معبد الكرنك وقت الغروب"><figcaption>الكرنك</figcaption></figure>
-  <figure class="polaroid"><img data-size="800x1200" width="800" height="1200" alt="عمود ضخم من تحت"><figcaption>عمود الكرنك</figcaption></figure>
-  <figure class="polaroid"><img data-size="900x900" width="900" height="900" alt="مركب شراعي في النيل"><figcaption>فلوكة</figcaption></figure>
-  <figure class="polaroid"><img data-size="1000x500" width="1000" height="500" alt="منطاد فوق البر الغربي"><figcaption>المنطاد</figcaption></figure>
-  <figure class="polaroid"><img data-size="600x1000" width="600" height="1000" alt="مدخل مقبرة ملكية"><figcaption>وادي الملوك</figcaption></figure>
-  <figure class="polaroid"><img data-size="1100x700" width="1100" height="700" alt="سوق الأقصر بالليل"><figcaption>السوق</figcaption></figure>
-</div>
-</main>
-<script>
-  // صور تجريبية عشان الصفحة تشتغل من غير ملفات: بدّلها بصورك الحقيقية
-  document.querySelectorAll("img[data-size]").forEach((img, i) => {
-    const [w, h] = img.dataset.size.split("x");
-    const svg = $__bt<svg xmlns="http://www.w3.org/2000/svg" width="$__{w}" height="$__{h}"><rect width="100%" height="100%" fill="hsl($__{i * 45} 45% 70%)"/><circle cx="$__{w / 2}" cy="$__{h * 0.2}" r="$__{w * 0.14}" fill="#0005"/></svg>$__bt;
-    img.src = "data:image/svg+xml," + encodeURIComponent(svg);
-  });
-$__lt/script>
-</body>
-</html>
-~~~
-
-**الـ validator هيقول هنا** [[Element "img" is missing one or more of the following attributes: "src", "srcset"]]: الصور التجريبية بتتحط بالـ JavaScript بعد ما الصفحة تتقري، فالـ HTML نفسه من غير [[src]]. في صفحتك الحقيقية اكتب [[src]] بمسار صورتك على كل [[<img>]] وامسح السكربت، والـ validator هيسكت.
-
-**ليه شغال:**
-
-- [[.polaroid]] عرضه ثابت 13rem، والـ padding من تحت أكبر عشان شكل الـ polaroid. و [[aspect-ratio: 1]] مع [[object-fit: cover]] بيخلي الملفات الستة (عرضي وطولي) كلها مربع 208 × 208.
-- [[:nth-child(3n + 1)]] و [[3n + 2]] و [[3n]] بيوزّعوا ٣ زوايا بالتناوب، ومن غير ما تكتب class لكل كارت.
-- [[rotate]] و [[scale]] هنا خصائص لوحدها (مش جوه [[transform]])، فـ transition بيحرّك كل واحدة لوحدها.
-- الـ hover بيغيّر [[rotate]] و [[scale]] بس. الاتنين مبيأثروش على الـ layout، فالكارت اللي جنبه مش بيتحرك. و [[z-index: 1]] مع [[position: relative]] عشان الكارت المكبّر ييجي فوق جاره مش تحته.
-
-**الغلطة الشائعة:** تكبّر الكارت بـ [[width]] في الـ hover. ده بيغيّر الـ layout فكل الكروت اللي بعده تتزق وتترعش. [[scale]] بيرسم بس ومبيحسبش مكان.
-
-~~~text الناتج
-عند 360 و 1280:
-rotate للكروت الستة: -4deg, 2deg, -1.5deg, -4deg, 2deg, -1.5deg
-كل صورة: 208 × 208
-scrollWidth = clientWidth (مفيش scroll أفقي)
-
-hover على الكارت الأول بعد 350ms:
-rotate = 0deg ، scale = 1.06
-offsetLeft للكارت اللي جنبه: 652 قبل و 652 بعد (متحركش)
-axe: صفر مشاكل.
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الصورة مرة [[<img>]] بـ [[object-fit: cover]] ومرة [[div]] بـ [[background-image]] و [[background-size: cover]]. قارن في DevTools: اسم العنصر في Accessibility tree، وهل [[loading="lazy"]] ينفع، وهل [[srcset]] ينفع.`, done: R`عندك جدول ٣ صفوف: الـ img ليه اسم (الـ alt) والـ div ملوش، والـ img بيدعم lazy و srcset والـ div لأ (محتاج [[image-set()]] و JavaScript)، والشكل على الشاشة واحد. وكتبت إمتى الـ background مقبول (زينة بس).`, sol: R`~~~live 600 720 compare.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>img ضد background</title>
-<style>
-  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; }
-  .box { width: 300px; height: 200px; margin-block-end: 1rem; }
-  img.box { display: block; object-fit: cover; }
-  div.box { background-size: cover; background-position: center; }
-  .spacer { height: 3000px; }
-</style>
-</head>
-<body>
-<img class="box" src="photo.jpg" alt="شارع المعز بالليل">
-<div class="box" style="background-image: url(photo.jpg)"></div>
-
-<div class="spacer"></div>
-
-<!-- تحت الشاشة بكتير: مين هيتحمّل قبل ما توصله؟ -->
-<img class="box" src="far-img.jpg" alt="قلعة صلاح الدين" loading="lazy">
-<div class="box" style="background-image: url(far-bg.jpg)"></div>
-</body>
-</html>
-~~~
-
-حط جنبها ٣ صور باسم [[photo.jpg]] و [[far-img.jpg]] و [[far-bg.jpg]]، وشغّل الصفحة من سيرفر محلي ([[npx serve .]]) عشان Network يبان.
-
-| المقارنة | [[<img>]] بـ object-fit | [[div]] بـ background |
-|---|---|---|
-| الاسم في Accessibility tree | image «شارع المعز بالليل» | مش موجود أصلًا (generic من غير اسم، فالـ tree بيتجاهله) |
-| [[loading="lazy"]] | شغال: [[far-img.jpg]] مطلبش لحد الـ scroll | مفيش attribute زيه: [[far-bg.jpg]] اتحمّل مع الصفحة |
-| [[srcset]] و [[sizes]] | شغالين، والمتصفح بيختار الملف | مفيش. أقرب حاجة [[image-set()]] بتاخد الكثافة بس، ومن غير [[sizes]] |
-
-**إمتى الـ background مقبول:** لما الصورة زينة بحتة ومحدش هيخسر حاجة لو ماشافهاش: نقشة، أو تدرّج، أو خلفية قسم. لو الصورة محتوى (منتج أو شخص أو مكان)، [[<img>]] حتى لو الشكل واحد، لأن قارئ الشاشة ومحرك البحث والـ Print بيتعاملوا معاها، وصورة الـ LCP بتتعرف بدري.
-
-**الغلطة الشائعة:** تحكم بالعين. الاتنين على الشاشة شبه بعض بالظبط، والفرق كله في اللي مش باين: الاسم والتحميل والملف المختار.
-
-~~~text الناتج
-Network قبل أي scroll:
-/photo.jpg      (مرة واحدة: الاتنين نفس الملف)
-/far-bg.jpg     اتحمّل رغم إنه تحت الشاشة بـ 3000px
-far-img.jpg     لسه مطلبش
-
-بعد scroll لآخر الصفحة:
-/far-img.jpg    اتطلب دلوقتي
-
-ariaSnapshot للصفحة:
-- img "شارع المعز بالليل"
-- img "قلعة صلاح الدين"
-(الـ div ملوش أي سطر)
-~~~` },
+          lines: [
+            R`الزرار اللي بيفتح. [[type="button"]] عشان ميبعتش فورم، و [[onclick="del.showModal()"]] سطر JavaScript واحد: هات العنصر اللي الـ [[id]] بتاعه [[del]] وافتحه كنافذة modal.`,
+            R`النافذة نفسها. مقفولة ومش باينة لحد ما تتفتح. [[id="del"]] هو الاسم اللي الزرار بيناديها بيه، و [[aria-labelledby="del-title"]] بيقول لقارئ الشاشة إن اسم النافذة هو العنوان اللي جواها، و [[closedby="any"]] بيخلّيها تتقفل كمان لما الزائر يدوس برّاها.`,
+            R`عنوان النافذة، وعليه الـ [[id]] اللي [[aria-labelledby]] بيشاور عليه.`,
+            R`شرح قصير للي هيحصل، عشان الزائر يقرر وهو فاهم.`,
+            R`[[method="dialog"]]: الفورم ده مبيبعتش حاجة لسيرفر. أي زرار إرسال جواه **بيقفل النافذة** وبس.`,
+            R`أول زرار في الفورم، فالفوكس بييجي عليه أول ما النافذة تتفتح. [[value="cancel"]] هي القيمة اللي النافذة هتفتكرها لو هو اللي اتداس.`,
+            R`الزرار التاني. لو اتداس، النافذة بتتقفل وقيمتها [[delete]]، وده اللي كود الصفحة هيبص عليه عشان يعرف الزائر اختار إيه.`,
+            R`[[</form>]] بيقفل الفورم: الزرارين اللي جواه هم اللي بيقفلوا النافذة.`,
+            R`آخر النافذة. كل اللي بين [[<dialog>]] و [[</dialog>]] مستخبي لحد ما تتفتح.`
           ],
-          deep: {
-            why: R`كروت المنتجات والفريق والمقالات بتيجي صورها بمقاسات مختلفة من ناس مختلفة. من غير object-fit يا الصور تتمط (منظر مش احترافي خالص)، يا كل كارت بارتفاع مختلف والـ grid يبوظ.`,
-            how: R`الـ [[<img>]] ليه صندوق (العرض والارتفاع اللي انت اديتهم) ومحتوى (الصورة نفسها بنسبتها). [[object-fit]] بيقول المحتوى يتحط إزاي جوه الصندوق: [[fill]] (الافتراضي) بيمطّه، و [[cover]] بيكبّره لحد ما يغطي الصندوق كله ويقص الزيادة، و [[contain]] بيصغّره لحد ما يبان كله، و [[none]] بيسيبه بمقاسه الأصلي، و [[scale-down]] زي contain بس عمره ما يكبّر الصورة.
+          teach: R`## الفكرة في سطرين
 
-[[object-position]] بنفس فكرة [[background-position]]: القيمة الافتراضية [[50% 50%]] (النص). لو القص بيقطع الوشوش، ارفعها لفوق.
+[[<dialog>]] صندوق مستخبي في الصفحة. لما يتفتح «modal» المتصفح بيعمل أربع حاجات لوحده: بيحطه فوق كل الصفحة، وبينقل الفوكس جواه، وبيوقّف كل اللي وراه (لا كليك ولا Tab)، وبيقفله بـ Esc ويرجّع الفوكس للزرار اللي فتحه.
 
-الـ [[width]] و [[height]] في الـ HTML لسه مهمين عشان يحجزوا المكان (درس img)، بس خد بالك: الـ [[height]] اللي في الـ HTML المتصفح بيعامله كأنه [[height]] في CSS، فلو سبته، الصورة بتاخد ارتفاعه وتتجاهل الـ [[aspect-ratio]]. عشان كده لازم [[height: auto]] في CSS، و Tailwind بيحطها لكل الصور في الـ Preflight.
-
-[[<Image fill>]] في Next.js بيخلي الصورة [[position: absolute]] وتملا أبوها، فالأب لازم يبقى [[relative]] وليه مقاس (هنا [[aspect-video]])، و [[object-cover]] بيمنع المط، و [[sizes]] ضروري عشان يختار الملف الصح.`,
-            when: R`أي صورة في صندوق مقاسه ثابت: كروت، و avatars، وهيرو. contain للّوجو وصور المنتجات على خلفية بيضا اللي مينفعش حاجة منها تتقص. و [[object-fit]] بيشتغل كمان على [[<video>]].`,
-            mistakes: R`[[height: 200px]] على صورة من غير object-fit فتتمط. [[background-image]] بدل [[<img>]] عشان تستخدم [[background-size: cover]]: كده ضاع الـ alt والـ lazy loading والـ srcset. [[<Image fill>]] والأب مش relative فالصورة تملا الصفحة كلها. و cover على لوجو فيتقص نصه.`
-          },
-          teach: R`## الصورة جوه صندوق مش بنفس نسبتها
-
-أي [[<img>]] فيه حاجتين: **الصندوق** (المقاس اللي الـ CSS اداهوله) و**الصورة نفسها** بنسبتها الأصلية. لما النسبتين مختلفين، [[object-fit]] بيقرر الصورة تتحط إزاي. عشان نشوف ده بالأرقام، عملنا صورة طولية 600 × 900 مقسومة لـ ٩ شرايط ألوان، كل شريط 100px، مترقمين من 0 (فوق) لـ 8 (تحت). حطيناها في كارت عرضه 400، وصوّرنا الصورة في Chrome وقرينا لون أول سطر وآخر سطر فيها: كده نعرف أنهي جزء من الصورة باين.
+كل القياسات في الدرس من Chrome 157 على Windows 11، بضغطات كيبورد وكليكات حقيقية.
 
 ---
 
-## ١. [[.card-img]] سطر سطر
+## ١. [[<dialog>]] و [[<dialog open>]]
 
-~~~text style.css
-.card-img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  object-position: 50% 20%;
-}
+العنصر لوحده **مقفول**: مكتوب في الكود ومش باين في الصفحة.
+
+~~~text القياس من Chrome
+<dialog> من غير open:      display = none
+<dialog open>:             display = block ، position = absolute ، border = 3px solid ، padding = 16px
+                           الخلفية أبيض والكلام أسود ، وفي نص عرض الصفحة (margin: auto)
+                           وهو مش modal:  matches(':modal') = false
 ~~~
 
-- [[width: 100%]]: عرض الكارت = 400.
-- [[height: auto]]: مهم جدًا. الـ HTML فيه [[height="600"]]، والمتصفح بيعامله كأنه CSS. جربنا من غير السطر ده: الصورة طلعت **400 × 600** والـ aspect-ratio اتجاهل. ومعاه: **400 × 300**.
-- [[aspect-ratio: 4 / 3]]: الارتفاع = العرض × 3 ÷ 4 = 300.
-- [[object-fit: cover]]: كبّر الصورة لحد ما تغطي الصندوق كله، واقصص الزيادة.
-- [[object-position: 50% 20%]]: لو فيه قص، أنهي جزء يفضل باين. الرقم الأول أفقي والتاني رأسي.
+[[open]] attribute من غير قيمة (زي [[required]]): وجوده معناه «النافذة مفتوحة».
 
-### الحسبة بتاعة cover
-
-الصورة 600 × 900 والصندوق 400 × 300. عشان تغطي العرض لازم تصغر لـ 400 ÷ 600 = ⅔، فتبقى 400 × 600. الارتفاع 600 والصندوق 300، يعني 300 بكسل زيادة لازم يتقصوا. و [[20%]] معناها: اقصص 20% من الزيادة من فوق والباقي من تحت.
-
-| object-position | اللي باين من فوق لتحت |
-|---|---|
-| [[50% 50%]] (الافتراضي) | شريط 2 لـ 6 (النص) |
-| [[50% 20%]] (المثال) | شريط 0 لـ 5 |
-| [[top]] | شريط 0 لـ 4 |
-| [[bottom]] | شريط 4 لـ 8 |
-
-مع [[20%]] أول شريط (فوق خالص) باين، فلو صورة شخص، الراس مش هتتقص.
-
-## ٢. القيم الخمسة على نفس الصورة
-
-| object-fit | اللي حصل (متقاس) |
-|---|---|
-| [[fill]] (الافتراضي) | الـ ٩ شرايط كلهم باينين ومضغوطين: الصورة اتمطّت |
-| [[cover]] | الصندوق مليان، وجزء من فوق وتحت اتقص |
-| [[contain]] | الصورة كلها باينة (شريط 0 لـ 8)، والجنبين فاضيين أبيض |
-| [[none]] | الصورة بمقاسها الأصلي في النص: شريط 3 لـ 5 بس |
-| [[scale-down]] | زي contain، بس عمره ما يكبّر صورة صغيرة |
-
-## ٣. [[.logo { width: 8rem; height: 4rem; object-fit: contain; }]]
-
-صندوق 128 × 64 بالعرض، والصورة طولية. مع [[contain]]: النص فيه الصورة، والشمال واليمين فاضيين (أبيض). يعني اللوجو كله باين من غير قص ولا مط.
-
-## ٤. نفس الكلام بـ HTML و Tailwind و Next
-
-~~~text index.html
-<img class="card-img" src="/p/42.webp" width="800" height="600" alt="سماعة سودا">
+~~~live 86 dialog مكتوب عليه open
+<p>كلام الصفحة العادي.</p>
+<dialog open>
+  <p>أنا dialog مفتوح من الكود.</p>
+  <form method="dialog"><button>اقفل</button></form>
+</dialog>
+<p>كلام تاني تحت.</p>
 ~~~
 
-الـ [[width]] و [[height]] في الـ HTML بيدّوا المتصفح النسبة قبل ما الصورة تتحمّل، فيحجز المكان.
+**هتشوف إيه:** صندوق ببرواز أسود في نص العرض، فوق الكلام. دوس «اقفل»: بيختفي، ومفيش أي طريقة ترجّعه (مفيش زرار بيفتحه).
 
-~~~text Tailwind
-<img className="aspect-square w-full object-cover object-top" ... />
+**ومتكتبش [[open]] بإيدك.** MDN بيقول كده صريح، لسببين:
+
+- النافذة اللي بتتفتح بـ [[open]] **مش modal**: الصفحة اللي وراها لسه شغالة، و Esc مبيقفلهاش.
+- المتصفح هو اللي بيكتب [[open]] وبيمسحه لما تفتح وتقفل. انت بتستخدمه بس عشان تعرف الحالة (وفي الـ CSS بعدين بتمسك النافذة المفتوحة بيه).
+
+---
+
+## ٢. [[show()]] و [[showModal()]]: سطر JavaScript واحد
+
+الفتح محتاج JavaScript، وهو سطر واحد جوه [[onclick]] على الزرار:
+
+~~~html
+<button type="button" onclick="note.show()">افتح عادي</button>
+<button type="button" onclick="note.showModal()">افتح modal</button>
+<dialog id="note">...</dialog>
 ~~~
 
-[[aspect-square]] = [[aspect-ratio: 1 / 1]]، و [[w-full]] = [[width: 100%]]، و [[object-cover]] و [[object-top]] نفس الخصائص. ومش محتاج [[h-auto]] لأن الـ Preflight بتاع Tailwind بيحط [[height: auto]] على كل الصور.
+> ده سطر JavaScript، وهتفهمه في كورس JavaScript. دلوقتي كفاية تعرف إن [[note]] هو الـ [[id]] بتاع الـ dialog، و [[.showModal()]] معناها «افتحه كنافذة modal»، و [[.show()]] «افتحه عادي». عشان السطر القصير ده يشتغل، خلّي الـ [[id]] كلمة واحدة من حروف إنجليزي ([[note]] مش [[my-note]])، ومتكونش كلمة ليها معنى تاني جوه [[onclick]] زي [[open]] و [[close]] و [[clear]] و [[title]] و [[name]].
 
-~~~text Next.js
-<div className="relative aspect-video"><Image src="/hero.webp" alt="" fill sizes="100vw" className="object-cover" /></div>
+جرّب الاتنين:
+
+~~~live 250 دوس كل زرار، وجرّب Esc و «زرار في الصفحة»
+<p><button type="button" onclick="note.show()">افتح بـ show()</button>
+<button type="button" onclick="note.showModal()">افتح بـ showModal()</button></p>
+<p><button type="button" onclick="hits.value = Number(hits.value) + 1">زرار في الصفحة</button> اتداس <output id="hits">0</output> مرة</p>
+<dialog id="note">
+  <p>ملاحظة: الاجتماع الساعة ٥.</p>
+  <form method="dialog"><button>تمام</button></form>
+</dialog>
 ~~~
 
-[[fill]] بيخلي الصورة [[position: absolute]] و [[inset: 0]]، فبتملا الأب. عشان كده الأب [[relative]] (مرجع) و [[aspect-video]] (= 16 / 9، عشان يبقى ليه ارتفاع).
+(سطر [[onclick]] التاني عدّاد بس: كل ضغطة على «زرار في الصفحة» بتزوّد الرقم واحد، عشان تشوف الزرار شغال ولا لأ.)
 
-## الخلاصة
+**هتشوف إيه:**
 
-- [[cover]] للكروت والـ avatars (مليانة ومقصوصة)، و [[contain]] للّوجوهات (كاملة).
-- [[object-position]] بيختار الجزء الباين، ورفعه لفوق بيحمي الوشوش.
-- مع [[aspect-ratio]] على صورة فيها [[height]] في الـ HTML، اكتب [[height: auto]].`,
-          lines: [
-            R`صورة الكارت: القاعدة دي على كل [[<img>]] عليه الكلاس ده، ومقاسه هيتحدد من الكارت.`,
-            R`[[width: 100%]]: الصورة بعرض الكارت كله، فلو الكارت 400 الصورة 400.`,
-            R`[[height: auto]]: ألغي الارتفاع اللي جاي من [[height="600"]] في الـ HTML، عشان الـ aspect-ratio هو اللي يحسب الارتفاع.`,
-            "كل الكروت نفس النسبة مهما كانت الصورة.",
-            "املا الصندوق كله واقصص الزيادة بدل ما تمط.",
-            "لو فيه قص، خلّي الجزء اللي فوق شوية باين (عشان الوشوش).",
-            R`قفلة [[.card-img]]، والسطر الجاي للّوجو.`,
-            R`لوجو: مقاس ثابت، و [[contain]] عشان يبان كله من غير قص.`,
-            "الصورة في الـ HTML، ومقاسها الأصلي لحجز المكان.",
-            "نفس الفكرة بـ Tailwind: مربع، ومليان، والقص من تحت.",
-            R`Next Image بـ [[fill]]: الأب [[relative]] وليه نسبة، والصورة [[object-cover]].`
-          ],
-          sol: R`[[fill]]: الصورة الطولية اتمطت بالعرض والوشوش عريضة. [[cover]]: الصندوق مليان والصورة بنسبتها، بس اتقص جزء من فوق ومن تحت. [[contain]]: الصورة كلها باينة وفيه فراغ يمين وشمال. [[none]]: الصورة بحجمها الأصلي، غالبًا جزء صغير منها بس اللي باين.
+- **[[show()]]:** النافذة طلعت، و «زرار في الصفحة» لسه بيعدّ، و Esc مبيعملش حاجة. اقفلها بـ «تمام».
+- **[[showModal()]]:** النافذة في نص الشاشة ووراها غبشة خفيفة، و «زرار في الصفحة» **مبيعدّش** مهما دوست، و Esc بيقفلها.
 
-مع cover و [[object-position: top]]: اللي فوق باين واللي تحت اتقص، و [[bottom]] العكس. لو التغيير ملوش أي تأثير، يبقى الصورة نسبتها قريبة من الصندوق أصلًا، جرّب صورة أطول.`
-        },
-        {
-          cmd: "picture",
-          ref: [
-            { t: "MDN: Responsive images", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Responsive_images" },
-            { t: "WHATWG: the picture element", url: "https://html.spec.whatwg.org/multipage/embedded-content.html#the-picture-element" },
-            { t: "MDN: <picture>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/picture" },
-          ],
-          title: "صورة مختلفة للموبايل، و AVIF مع fallback",
-          desc: R`[[<picture>]] بيحط جواه كذا [[<source>]] وفي الآخر [[<img>]]. المتصفح بيمشي على الـ sources بالترتيب وياخد أول واحد ينفع (نوعه مدعوم و [[media]] بتاعته متحققة)، ويعرضه في الـ img. ولو ولا واحد نفع، بياخد الـ img نفسه.
-
-استخدامين: صيغ حديثة ([[AVIF]] أصغر بكتير، وبعدها [[WebP]]، وبعدها JPEG للقديم)، و art direction: صورة مقصوصة مختلفة للموبايل (مش نفس الصورة أصغر، لأن ده شغل [[srcset]] في درس img).
-
-الـ [[alt]] والـ [[width]] و [[height]] و [[loading]] والكلاسات كلها على الـ [[<img>]]، مش على picture.`,
-          example: R`<picture>
-  <source media="(max-width: 767px)" type="image/avif" srcset="/hero-mobile.avif" width="800" height="1000">
-  <source media="(max-width: 767px)" type="image/webp" srcset="/hero-mobile.webp" width="800" height="1000">
-  <source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
-  <source type="image/webp" srcset="/hero-800.webp 800w, /hero-1600.webp 1600w" sizes="100vw">
-  <img src="/hero-1600.jpg" width="1600" height="700" alt="عرض الصيف: خصم 30% على السماعات" fetchpriority="high">
-</picture>`,
-          try: R`حوّل صورة لـ AVIF و WebP (من squoosh.app أو [[npx sharp-cli]])، واعمل الـ picture. افتح DevTools › Network وفلتر على Img: شوف أنهي ملف اتحمّل على عرض كبير، وبعدين وضع الموبايل واعمل refresh. وقارن أحجام الملفات التلاتة.`,
-          flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** نفس الـ picture بتاع المثال بس الـ sources العامة (من غير [[media]]) جت **قبل** بتاعة الموبايل. على موبايل 390 أنهي ملف هيتحمّل؟ وبعدين شوف Network.`, done: R`اتحمّل [[hero-1600.avif]] أو [[hero-800.avif]] (صورة الديسكتوب العريضة) مش [[hero-mobile.avif]]، لأن المتصفح بياخد أول source ينفع، والعام بينفع دايمًا. ورجّعت الترتيب الصح.`, sol: R`~~~live 120 120 wrong.html
-<picture>
-  <!-- العام الأول: غلط -->
-  <source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
-  <source type="image/webp" srcset="/hero-800.webp 800w, /hero-1600.webp 1600w" sizes="100vw">
-  <source media="(max-width: 767px)" type="image/avif" srcset="/hero-mobile.avif" width="800" height="1000">
-  <source media="(max-width: 767px)" type="image/webp" srcset="/hero-mobile.webp" width="800" height="1000">
-  <img src="/hero-1600.jpg" width="1600" height="700" alt="عرض الصيف" fetchpriority="high">
-</picture>
+~~~text القياس من Chrome
+                                show()            showModal()
+modal؟  matches(':modal')        false             true
+position                         absolute          fixed  (في نص الشاشة حتى لو الصفحة اتعملها scroll)
+الفوكس بعد الفتح                 أول عنصر جواه      أول عنصر جواه
+Esc                              مبيقفلش            بيقفل
+كليك على زرار في الصفحة          اشتغل (1)          ماشتغلش (0)
+الغبشة ::backdrop                مفيش               rgba(0, 0, 0, 0.1)
+أقصى مقاس                        من غير حد          calc(100% - 38px) عرض وارتفاع
 ~~~
 
-والتصليح: انقل سطرين [[media]] فوق، عشان الأكتر تحديدًا ييجي الأول.
+| | [[show()]] | [[showModal()]] |
+|---|---|---|
+| اسمه | non-modal | modal |
+| الصفحة اللي ورا | شغالة عادي | واقفة |
+| يتقفل بـ Esc | لأ | أيوه |
+| بيتستخدم في | حاجة جنب الشغل: شات صغير، لوحة أدوات | حاجة لازم تترد عليها الأول: تأكيد حذف، فورم تسجيل دخول |
 
-**ليه:** المتصفح بيمشي على الـ [[<source>]] من فوق لتحت وبياخد **أول واحد ينفع**، ومبيكمّلش يدوّر على الأحسن. الـ source العام مفيهوش [[media]]، فبينفع على أي شاشة، فبيوقف عنده ومبيوصلش أبدًا لبتاع الموبايل. ده زي [[if]] و [[else if]]: الحالة العامة تتحط في الآخر.
+في الشغل الحقيقي تسعة من عشرة [[showModal()]].
 
-على 390 بكثافة 1 الـ [[sizes="100vw"]] بيطلّب 390px، فبياخد [[hero-800.avif]]. على موبايل بكثافة 3 الطلب 1170px، فهتلاقيه [[hero-1600.avif]]. وفي الحالتين الصورة العريضة هي اللي نزلت مش الطولية.
+---
 
-**الغلطة الشائعة:** تستنى إن المتصفح يقرا كل الـ sources ويختار الأنسب. هو بيقف عند أول تطابق.
+## ٣. يعني إيه «modal»؟ الصفحة اللي ورا بقت inert
 
-~~~text الناتج
-الترتيب الغلط على 390:  /hero-800.avif     الصورة 390 × 243.75 (عريضة)
-الترتيب الصح على 390:   /hero-mobile.avif  الصورة 390 × 487.5 (طولية 4:5)
-الترتيب الصح على 1280:  /hero-1600.avif    الصورة 1280 × 800
-~~~` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[<img srcset="/c-400.jpg 400w, /c-800.jpg 800w, /c-1600.jpg 1600w" sizes="(min-width: 64rem) 33vw, 100vw">]]. أنهي ملف هيتحمّل على: 1280 بكثافة 1، و 1280 بكثافة 2، و 390 بكثافة 3، و 390 بكثافة 1؟ احسب وبعدين جرّب (DevTools › Device Toolbar بيغيّر الـ DPR).`, done: R`1280×1: الصورة 33vw ≈ 422 → [[c-800]]. 1280×2: 845 → [[c-1600]]. 390×3: 1170 → [[c-1600]]. 390×1: 390 → [[c-400]]. وده اللي اتحمّل فعلًا في Chrome (اقفل الكاش بين كل تجربة عشان المتصفح ممكن يستخدم ملف أكبر متكاش).`, sol: R`~~~html srcset.html
-<!doctype html>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>srcset</title>
-<style>body { margin: 0 } img { display: block; max-width: 100%; height: auto }</style>
-<img id="i" src="/c-800.jpg" alt=""
-     srcset="/c-400.jpg 400w, /c-800.jpg 800w, /c-1600.jpg 1600w"
-     sizes="(min-width: 64rem) 33vw, 100vw">
-<!-- في الكونسول: i.currentSrc -->
+«modal» معناها: **مفيش حاجة في الصفحة تشتغل غير النافذة دي** لحد ما تتقفل. المواصفة بتقول إن المتصفح بيخلّي باقي الصفحة «inert» (خامل). واللي اتقاس:
+
+~~~text القياس من Chrome (dialog مفتوح بـ showModal وجواه خانة وزرارين)
+كليك بالماوس على زرار في الصفحة اللي ورا:      الزرار ماتداسش (العدّاد 0)
+Tab ست مرات:                                   الخانة > لا > أيوه > شريط المتصفح > الخانة > لا
+                                               (ولا مرة راح لزرار أو لينك في الصفحة اللي ورا)
+الزرار اللي ورا في accessibility tree:          ignored = true   (قارئ الشاشة مش شايفه)
+الـ dialog نفسه:                                role = dialog ، modal = true
 ~~~
 
-**خطوات الحساب:**
+- **الماوس:** أي كليك برّه النافذة مبيوصلش للي تحته.
+- **الكيبورد:** Tab بيلف جوه النافذة بس.
+- **قارئ الشاشة:** الصفحة اللي ورا مش موجودة بالنسباله.
 
-1. [[sizes]]: هل العرض 1024px أو أكتر ([[64rem]])؟ لو أيوه الصورة [[33vw]]، ولو لأ [[100vw]].
-2. اضرب المقاس في كثافة الشاشة (DPR): ده عدد البكسلات اللي الشاشة محتاجاها فعلًا.
-3. المتصفح بياخد أنسب ملف من الـ [[srcset]] (الـ [[w]] معناها عرض الملف الحقيقي، مش عرض العرض على الشاشة).
+وده من غير ما تكتب [[inert]] على حاجة: المتصفح بيعمله لوحده مع [[showModal()]]. (الـ attribute نفسه، لما تحتاج تعطّل جزء بإيدك، في درس «hidden و inert».)
 
-| الشاشة | حجم الصورة | × الكثافة | الملف |
+### الغبشة [[::backdrop]] والحالة [[:modal]]
+
+دول اسمين بتوع CSS هتقابلهم:
+
+- [[::backdrop]]: الطبقة اللي المتصفح بيحطها ورا النافذة الـ modal وبتغطي الصفحة كلها. لونها الافتراضي أسود شفاف 10% (اتقاس: [[rgba(0, 0, 0, 0.1)]]).
+- [[:modal]]: بيمسك النافذة وهي مفتوحة modal بس.
+
+تلوينهم وتغيير شكل النافذة في وحدات الـ CSS. هنا كفاية تعرف إنهم موجودين وإن الشكل الافتراضي بتاع المتصفح شغال.
+
+---
+
+## ٤. الفوكس: بيروح فين وبيرجع فين
+
+~~~text القياس من Chrome
+فتح بـ showModal() وجواه خانة وزرارين:     الفوكس على الخانة (أول عنصر بياخد فوكس)
+dialog جواه كلام بس، من غير زرار:          الفوكس على الـ <dialog> نفسه
+dialog فيه زرارين والتاني عليه autofocus:   الفوكس على التاني
+بعد القفل (Esc أو زرار):                    الفوكس رجع للزرار اللي فتح النافذة
+~~~
+
+- الفوكس بيروح **لأول عنصر جواها ينفع ياخد فوكس**. في نافذة «تمسح؟» خلّي أول زرار «إلغاء»: الزائر اللي بيدوس Enter بسرعة ميمسحش بالغلط.
+- عايز الفوكس يبدأ على عنصر تاني؟ اكتب عليه [[autofocus]] (درس «autofocus و accesskey و draggable»).
+- بعد القفل الفوكس بيرجع للزرار اللي فتح، فاللي ماشي بالكيبورد بيكمّل من مكانه.
+- **متكتبش [[tabindex]] على [[<dialog>]]** (MDN: ممنوع). الفوكس للي جواه.
+
+---
+
+## ٥. [[<form method="dialog">]]: القفل من غير JavaScript
+
+في درس «GET و POST و enctype» [[method]] كان [[get]] أو [[post]]. فيه قيمة تالتة: [[dialog]]. الفورم اللي عليه [[method="dialog"]] وهو جوه [[<dialog>]] **مبيبعتش أي طلب**: أي زرار إرسال جواه بيقفل النافذة.
+
+~~~live 193 افتح واختار، وبص على السطر اللي تحت
+<button type="button" onclick="del.showModal()">امسح الملاحظة</button>
+<p>آخر اختيار: <output id="res">(لسه)</output></p>
+<dialog id="del" onclose="res.value = del.returnValue || '(اتقفلت بـ Esc)'">
+  <p>تمسح «مشتريات الأسبوع»؟</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>
+~~~
+
+(سطر [[onclose]] JavaScript برضه: لما النافذة تتقفل، اكتب قيمتها في السطر اللي تحت الزرار. القيمة اسمها [[returnValue]].)
+
+**هتشوف إيه:**
+
+- دوست «إلغاء»: النافذة اتقفلت والسطر بقى [[cancel]].
+- دوست «امسح»: [[delete]].
+- قفلت بـ Esc: القيمة فاضية.
+
+~~~text القياس من Chrome
+دوسنا «أيوه» (value="yes"):      النافذة اتقفلت ، returnValue = yes ، عنوان الصفحة ماتغيّرش (مفيش طلب)
+Esc:                             النافذة اتقفلت ، returnValue = ""
+Enter جوه خانة في الفورم:        اتقفلت ، returnValue = قيمة أول زرار إرسال
+~~~
+
+- [[value]] على الزرار هي اللي بتتسجل في [[returnValue]]: نفس [[value]] اللي الزرار كان بيبعتها للسيرفر في درس «أزرار الفورم».
+- القاعدة بتاعة «Enter بيدوس أول زرار إرسال» لسه شغالة هنا. عشان كده «إلغاء» الأول.
+- زرار واحد عايزه يقفل وهو في فورم عادي؟ [[<button formmethod="dialog">]] بيعمل كده للزرار ده بس.
+- زرار «اقفل» من غير فورم خالص: [[<button commandfor="del" command="close">]] (درس «popover و popovertarget»).
+
+الـ HTML بيقفل النافذة وبيسجّل الاختيار. **تنفيذ** الاختيار (المسح الفعلي) شغل JavaScript أو السيرفر.
+
+---
+
+## ٦. [[<dialog closedby="any">]]: مين يقدر يقفلها
+
+فيه تلات طرق نافذة تتقفل بيهم: الزائر يدوس **برّاها**، أو يدوس **Esc** (أو زرار الرجوع في الموبايل)، أو **زرار انت كاتبه** جواها. [[closedby]] بيحدد المسموح:
+
+| القيمة | كليك برّه | Esc | زرار جواها |
 |---|---|---|---|
-| 1280 × 1 | 33vw = 422.4 | 422 | [[c-800]] (الـ 400 أصغر من المطلوب) |
-| 1280 × 2 | 422.4 | 845 | [[c-1600]] |
-| 390 × 3 | 100vw = 390 | 1170 | [[c-1600]] |
-| 390 × 1 | 390 | 390 | [[c-400]] |
+| [[closedby="any"]] | بيقفل | بيقفل | بيقفل |
+| [[closedby="closerequest"]] | لأ | بيقفل | بيقفل |
+| [[closedby="none"]] | لأ | لأ | بيقفل |
 
-**الغلطة الشائعة:** تنسى الكثافة، فتفتكر إن موبايل 390 هياخد الملف الصغير دايمًا. الموبايل الجديد بكثافة 3 بياخد أكبر ملف عندك. وغلطة تانية: تجرّب من غير ما تقفل الكاش، فالمتصفح يلاقي ملف أكبر متكاش ويستخدمه.
-
-~~~text الناتج
-1280 × 1 → /c-800.jpg    الصورة على الشاشة 422.39 × 264
-1280 × 2 → /c-1600.jpg   الصورة على الشاشة 422.39 × 264
-390  × 3 → /c-1600.jpg   الصورة على الشاشة 390 × 243.75
-390  × 1 → /c-400.jpg    الصورة على الشاشة 390 × 243.75
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<picture><source type="image/avif" src="/hero.avif"><img src="/hero.jpg" alt="..."></picture>]]. الـ AVIF مبيتحمّلش أبدًا حتى في Chrome. ليه؟`, done: R`الـ [[<source>]] جوه picture بيقرا [[srcset]] بس، و [[src]] عليه بيتجاهل، فالمتصفح بيروح للـ img. بعد [[srcset="/hero.avif"]] الـ Network بيوري [[hero.avif]] بس.`, sol: R`~~~live 120 120 fixed.html
-<picture>
-  <source type="image/avif" srcset="/hero.avif">
-  <img src="/hero.jpg" alt="عرض الصيف">
-</picture>
+~~~text القياس من Chrome (showModal ، وبعدين كليك برّه ، وبعدين Esc)
+closedby="any":            الكليك برّه قفلها ، و Esc بيقفلها
+closedby="closerequest":   الكليك برّه ماقفلهاش ، و Esc قفلها
+closedby="none":           لا الكليك ولا Esc ، الزرار اللي جواها بس
+من غير closedby:           زي closerequest مع showModal() ، وزي none مع show()
 ~~~
 
-**السبب:** [[<source>]] عنده [[src]] فعلًا، بس ده بيتقري جوه [[<video>]] و [[<audio>]] بس. جوه [[<picture>]] المتصفح بيقرا [[srcset]] لا غير، فالـ source اللي مفيهوش [[srcset]] بيتجاهل كأنه مش موجود، ويروح للـ [[<img>]].
-
-و [[<img>]] عكسه: [[src]] هو الـ fallback الإلزامي، فمتبدلوش بـ srcset هناك.
-
-**الغلطة الشائعة:** تدوّر على error. مفيش ولا رسالة في الكونسول، والصورة ظاهرة عادي بالـ JPEG، فالمشكلة بتعيش سنين. الطريقة الوحيدة تعرف: Network أو [[document.querySelector("img").currentSrc]].
-
-~~~text الناتج
-بـ src:    اتحمّل /hero.jpg بس     currentSrc = .../hero.jpg
-بـ srcset: اتحمّل /hero.avif بس    currentSrc = .../hero.avif
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** خد صورة واحدة وحوّلها بـ [[npx sharp-cli]] لـ AVIF و WebP و JPEG بمقاسين (800 و 1600)، ونسخة مقصوصة 4:5 للموبايل، واعمل picture فيه art direction والصيغ التلاتة.`, done: R`عندك جدول بأحجام الملفات الستة (AVIF الأصغر غالبًا)، وعلى 1280 اتحمّل ملف عريض واحد، وعلى 390 اتحمّل الملف الطولي، و [[getBoundingClientRect]] للصورة على 390 نسبته 4:5 من أول ما الصفحة فتحت (مفيش قفزة).`, sol: R`~~~bash
-# من صورة أصلية photo.png (2000 × 1250)
-npx sharp-cli -i photo.png -o hero-800.avif  --format avif resize 800
-npx sharp-cli -i photo.png -o hero-1600.avif --format avif resize 1600
-npx sharp-cli -i photo.png -o hero-800.webp  --format webp resize 800
-npx sharp-cli -i photo.png -o hero-1600.webp --format webp resize 1600
-npx sharp-cli -i photo.png -o hero-800.jpg   --format jpeg resize 800
-npx sharp-cli -i photo.png -o hero-1600.jpg  --format jpeg resize 1600
-# النسخة الطولية 4:5 للموبايل (800 × 1000 مقصوصة من النص)
-npx sharp-cli -i photo.png -o hero-mobile.avif --format avif resize 800 1000 --fit cover
-npx sharp-cli -i photo.png -o hero-mobile.webp --format webp resize 800 1000 --fit cover
+~~~live 193 جرّب تقفل كل واحدة بالضغط برّاها وبـ Esc
+<p><button type="button" onclick="news.showModal()">إيه الجديد؟ (any)</button>
+<button type="button" onclick="terms.showModal()">الشروط (none)</button></p>
+<dialog id="news" closedby="any">
+  <p>ضفنا الوضع الغامق. دوس في أي حتة برّه عشان تقفل.</p>
+  <form method="dialog"><button>تمام</button></form>
+</dialog>
+<dialog id="terms" closedby="none">
+  <p>لازم توافق على الشروط عشان تكمّل.</p>
+  <form method="dialog"><button value="ok">موافق</button></form>
+</dialog>
 ~~~
 
-~~~live 600 540 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>هيرو المحمصة</title>
-<style>
-  body { margin: 0; font-family: system-ui, sans-serif; }
-  img { display: block; width: 100%; height: auto; }
-</style>
-</head>
-<body>
-<main>
-  <picture>
-    <source media="(max-width: 767px)" type="image/avif" srcset="/hero-mobile.avif" width="800" height="1000">
-    <source media="(max-width: 767px)" type="image/webp" srcset="/hero-mobile.webp" width="800" height="1000">
-    <source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
-    <source type="image/webp" srcset="/hero-800.webp 800w, /hero-1600.webp 1600w" sizes="100vw">
-    <img src="/hero-1600.jpg" width="1600" height="1000" alt="رفوف قهوة في محمصة" fetchpriority="high">
-  </picture>
-  <h1>محمصة النيل</h1>
-</main>
-</body>
-</html>
-~~~
+**هتشوف إيه:** نافذة «إيه الجديد؟» بتتقفل بأي ضغطة برّاها أو Esc. نافذة «الشروط» مبتتقفلش غير بزرار «موافق».
 
-**ليه الترتيب ده:** الموبايل الأول لأن [[media]] شرط أضيق، وجوه كل مجموعة AVIF قبل WebP (الأصغر قبل الأوسع دعمًا)، والـ [[<img>]] آخر حاجة كـ fallback ومكان الـ [[alt]] و [[fetchpriority]].
+إمتى كل واحدة:
 
-**ليه مفيش قفزة:** [[width="800" height="1000"]] على الـ source بيقول للمتصفح نسبة الصورة الطولية قبل ما تتحمّل، فبيحجز 4:5 على الموبايل، و 16:10 من الـ [[<img>]] على الديسكتوب.
+- [[any]]: نافذة معلومات أو قايمة اختيارات، قفلها ملوش تمن.
+- [[closerequest]] (الافتراضي مع modal): تأكيد أو فورم. ضغطة غلط برّه مش هتضيّع اللي اتكتب.
+- [[none]]: لازم الزائر يختار. قليل، ولازم يبقى جواها زرار بيقفل، وإلا الزائر اتحبس.
 
-**الغلطة الشائعة:** تنسى [[width]] و [[height]] على source الموبايل. كده المتصفح بيحجز نسبة الـ img العريضة، وأول ما الصورة الطولية توصل كل اللي تحتها يتزق لتحت.
-
-~~~text الناتج
-الملف             الحجم بالـ byte (صورة اختبار، صورتك أرقامها مختلفة)
-hero-800.avif     12,979
-hero-800.webp     13,824
-hero-800.jpg      23,187
-hero-1600.avif    28,695
-hero-1600.webp    43,052
-hero-1600.jpg     70,113
-
-على 1280: اتحمّل /hero-1600.avif بس. الصندوق 1280 × 800.
-على 390:  اتحمّل /hero-mobile.avif بس. الصندوق 390 × 487.5 = نسبة 0.8 (4:5)
-          من أول ما الصفحة فتحت.
-~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من web.dev أو MDN: إيه اللي بيحصل لصورة الهيرو لو عليها [[loading="lazy"]]؟ وإمتى [[fetchpriority="high"]] يفرق؟ وبعدين جرّب الاتنين و Lighthouse على Slow 4G.`, done: R`كتبت إن lazy على صورة فوق الشاشة بيأخّر تحميلها لحد ما الـ layout يخلص فالـ LCP بيتأخر، و [[fetchpriority="high"]] بيقدّمها في الطابور. وعندك رقم LCP للحالتين من Lighthouse.`, sol: R`**إجابة نموذجية من web.dev و MDN:**
-
-- [[loading="lazy"]] بيقول للمتصفح «استنى لحد ما تعرف الصورة دي قريبة من الشاشة». والمعلومة دي مش معروفة غير بعد ما الـ CSS ييجي والـ layout يتحسب، فالصورة بتفقد تحميلها البدري اللي الـ preload scanner كان بيعمله. لو الصورة دي عنصر الـ LCP، الـ LCP نفسه بيتأخر.
-- [[fetchpriority="high"]] مبيغيّرش **هل** الصورة هتتحمّل، بيغيّر ترتيبها في الطابور. الصور اللي فوق الشاشة Chrome بيرفع أولويتها لوحده، بس بعد ما يعرف مكانها. الـ attribute بيقوله كده من الأول. بيفرق لما الصفحة فيها طلبات كتير بتتنافس على نت بطيء، ومفيش فرق تقريبًا في صفحة فيها صورة واحدة.
-
-~~~live 560 310 test.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>هيرو</title>
-<meta name="description" content="تجربة LCP">
-<style>body { margin: 0 } img { display: block; width: 100%; height: auto }</style>
-</head>
-<body>
-<main>
-  <!-- غيّر السطر ده بين loading="lazy" و fetchpriority="high" ومن غير أي حاجة.
-       وزوّد CSS وكام سكربت defer في الـ head عشان الطلبات تتنافس زي صفحة حقيقية -->
-  <img src="/hero.jpg" width="1600" height="1000" alt="رفوف قهوة" loading="lazy">
-  <h1>محمصة</h1>
-</main>
-</body>
-</html>
-~~~
-
-~~~bash
-npx serve . -l 4000
-npx lighthouse http://localhost:4000/test.html --quiet --only-categories=performance --throttling-method=devtools --output=json --output-path=lh.json
-~~~
-
-**الغلطة الشائعة:** تحط [[loading="lazy"]] على كل الصور بـ loop «عشان الأداء»، ومنها صورة الهيرو. القاعدة: اللي فوق الشاشة مش lazy، واللي تحتها lazy.
-
-~~~text الناتج
-الحالة                     LCP       Performance
-loading="lazy"             7.7 s     68
-من غير attribute           7.3 s     68 و 69
-fetchpriority="high"       7.3 s     69
-
-(Lighthouse 13.6 من الـ Node API بـ throttlingMethod: devtools، مرتين لكل حالة. الصفحة فيها
-صورة 890KB و CSS وست سكربتات defer. الأرقام متكررة في المرتين.)
-في صفحة صورة واحدة خفيفة مع المحاكاة الافتراضية مطلعش فرق مفيد، وده اللي
-بيفسّر ليه التجربة لازم تبقى على صفحة فيها طلبات بتتنافس.
-~~~` },
-          ],
-          deep: {
-            why: R`صورة الهيرو غالبًا أكبر حاجة في الصفحة وهي اللي بتحدد LCP. نفس الصورة بـ AVIF ممكن تبقى نص حجم الـ WebP وأصغر بكتير من JPEG. وصورة عريضة 16:9 على موبايل طولي بتبقى شريط صغير الكلام اللي فيها مش باين، فمحتاج صورة مقصوصة تانية.`,
-            how: R`المتصفح بيقرا [[type]] ويسأل نفسه: أعرف أفك الصيغة دي؟ لو لأ بيعدّي من غير ما يحمّل حاجة. وبيقرا [[media]] زي media query. أول source يعدّي الاتنين بيكسب، وجواه [[srcset]] و [[sizes]] بيشتغلوا عادي زي درس img. فالترتيب مهم: الأدق (موبايل + AVIF) الأول، والعام في الآخر.
-
-[[width]] و [[height]] على الـ source: لما صورة الموبايل نسبتها مختلفة (4:5 بدل 16:9)، دول بيخلوا المتصفح يحجز المكان الصح ليها بدل ما يستخدم نسبة الـ img، فمفيش CLS.
-
-AVIF بقت مدعومة في كل المتصفحات الحديثة، بس الـ fallback مش بيكلّف حاجة (المتصفح مبيحمّلش غير ملف واحد)، والـ encode بتاعها أبطأ، فاعملها وقت الـ build مش مع كل request.
-
-في Next.js، [[<Image>]] بيحوّل الصيغة لوحده حسب اللي المتصفح بيقول إنه بيدعمه (WebP افتراضيًا، و AVIF لو ضفتها في [[images.formats]] في الـ config)، فمش محتاج picture عشان الصيغ. بس لـ art direction لسه محتاج picture أو [[getImageProps]].`,
-            when: R`صور الهيرو والبانرات الكبيرة: صيغ حديثة دايمًا، و art direction لما الصورة فيها كلام أو تفاصيل هتضيع على الموبايل. الصور الصغيرة والأيقونات: مش محتاجة.`,
-            mistakes: R`الـ [[alt]] أو الكلاس على [[<picture>]] بدل الـ img. الـ source العام قبل الخاص فالموبايل ياخد صورة الديسكتوب. picture لنفس الصورة بمقاسات مختلفة (ده srcset). تنسى الـ [[<img>]] جوه فمفيش صورة خالص. و [[src]] على [[<source>]] بدل [[srcset]] (الـ source مبيقراش src جوه picture).`
-          },
-          teach: R`## المتصفح بيختار ملف واحد من قايمة
-
-[[<picture>]] نفسه مبيعرضش حاجة. هو بيدّي المتصفح قايمة اختيارات ([[<source>]])، والمتصفح ياخد **أول واحد** ينفعه ويحطه في الـ [[<img>]] اللي في الآخر. عشان نتأكد من ده، عملنا ملفات حقيقية بـ sharp (مكتبة Node لتحويل الصور) لصورة تجربة 1600 × 700، وفتحنا المثال في Chrome بمقاسات مختلفة، وسجلنا كل request للصور.
+**الدعم (جدول MDN):** Chrome 134 و Firefox 141 و Safari 27.3. يعني جديدة. في متصفح أقدم الـ attribute بيتجاهل والنافذة بتشتغل بالافتراضي (Esc بيقفل، والكليك برّه لأ)، فمفيش حاجة بتبوظ.
 
 ---
 
-## ١. السطرين الأولانيين: الموبايل
+## ٧. اسم النافذة: [[<dialog aria-labelledby="del-title">]]
 
-~~~text index.html
-<source media="(max-width: 767px)" type="image/avif" srcset="/hero-mobile.avif" width="800" height="1000">
-<source media="(max-width: 767px)" type="image/webp" srcset="/hero-mobile.webp" width="800" height="1000">
+قارئ الشاشة لما النافذة تتفتح بيقول اسمها. من غير اسم بيقول «dialog» بس.
+
+~~~text القياس من Chrome (accessibility tree)
+<dialog> فيه <h2> من غير ربط:                    role = dialog ، name = ""
+<dialog aria-labelledby="t"> و <h2 id="t">:      role = dialog ، name = "امسح الملاحظة؟"
 ~~~
 
-- [[media]]: شرط زي media query. [[max-width: 767px]] = الشاشة 767 أو أصغر.
-- [[type]]: صيغة الملف (اسمها MIME type). لو المتصفح مبيعرفش يفك [[image/avif]]، بيعدّي السطر من غير ما يحمّل حاجة.
-- [[srcset]]: الملف (أو الملفات). جوه picture لازم [[srcset]] مش [[src]].
-- [[width="800" height="1000"]]: نسبة الصورة دي (4:5)، عشان المتصفح يحجز مكان بالنسبة الصح.
-
-## ٢. السطرين التانيين: الشاشات الكبيرة
-
-~~~text index.html
-<source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
-<source type="image/webp" srcset="/hero-800.webp 800w, /hero-1600.webp 1600w" sizes="100vw">
-~~~
-
-- مفيش [[media]]، فبيشتغلوا على أي شاشة.
-- [[800w]] = الملف ده عرضه 800 بكسل. والمتصفح بيختار مقاس حسب [[sizes]].
-- [[sizes="100vw"]] = الصورة هتتعرض بعرض الشاشة كلها.
-
-## ٣. الـ img: الاحتياطي والمكان اللي الصورة بتتعرض فيه
-
-~~~text index.html
-<img src="/hero-1600.jpg" width="1600" height="700" alt="عرض الصيف: خصم 30% على السماعات" fetchpriority="high">
-~~~
-
-لو ولا source نفع، الـ [[src]] بتاعه هو اللي بيتحمّل (JPEG، كل المتصفحات بتعرفه). و [[fetchpriority="high"]] = حمّلها بأولوية عالية لأنها أهم صورة فوق. والـ alt والمقاس هنا مش على picture.
+فاكتب عنوان جوه النافذة، واديه [[id]]، واكتب نفس الـ [[id]] في [[aria-labelledby]] على [[<dialog>]]. نفس فكرة [[for]] و [[id]] في الـ label. (النطق نفسه: من MDN، مش متجرّب بقارئ شاشة هنا.)
 
 ---
 
-## اللي اتحمّل فعلًا
+## ٨. الغلطات اللي بتحصل فعلًا
 
-| الشاشة | الملفات اللي اتطلبت | المقاس المعروض |
-|---|---|---|
-| 1200، كثافة 1 | [[/hero-1600.avif]] بس | 1200 × 525 |
-| 1200، كثافة 2 | [[/hero-1600.avif]] بس | 1200 × 525 |
-| 700 | [[/hero-mobile.avif]] بس | 700 × 875 |
-| 390، كثافة 3 | [[/hero-mobile.avif]] بس | 390 × 487.5 |
-
-- في كل حالة ملف **واحد** اتحمّل.
-- على 1200 اختار 1600 مش 800: الصورة هتتعرض 1200 بكسل، والـ 800 أصغر من المطلوب.
-- على 700 الصورة بقت طولية: 700 × 875 = نسبة 4:5 بتاعة صورة الموبايل، مش 1600 × 700. ده من الـ [[width]] و [[height]] اللي على الـ source.
-
-ولما غيّرنا [[image/avif]] لصيغة وهمية (كأننا متصفح قديم مبيعرفش AVIF)، اتحمّل [[/hero-1600.webp]] بدالها.
-
-## أحجام الملفات اللي عملناها
-
-| الملف | الحجم |
+| الغلطة | اللي بيحصل |
 |---|---|
-| hero-1600.jpg | 268,494 byte |
-| hero-1600.webp | 252,490 byte |
-| hero-1600.avif | 107,321 byte |
-| hero-800.avif | 11,614 byte |
+| [[<dialog open>]] مكتوب في الكود | النافذة باينة من أول تحميل، ومش modal، و Esc مبيقفلهاش |
+| [[show()]] لنافذة تأكيد | الزائر يقدر يدوس على الصفحة اللي ورا ويسيب السؤال من غير رد |
+| [[showModal()]] على نافذة مفتوحة أصلًا بـ [[open]] أو [[show()]] | خطأ في الـ Console (النص تحت) والنافذة بتفضل non-modal |
+| زرار «إلغاء» من غير فورم ولا [[command]] | مبيعملش حاجة: الزرار برّه أي فورم ملوش شغلة |
+| الفورم اللي جوه النافذة من غير [[method="dialog"]] | الزرار بيبعت GET والصفحة بتتحمّل من جديد |
+| «امسح» أول زرار | الفوكس عليه و Enter بيمسح |
+| [[closedby="none"]] ومفيش زرار قفل | الزائر محبوس، ومفيش غير إنه يقفل التاب |
+| [[<div>]] بـ CSS بدل [[<dialog>]] | الفوكس بيفضل ورا، و Tab بيخرج للصفحة، و Esc مبيقفلش: كل ده لازم يتكتب JavaScript |
+| نافذة من غير اسم | قارئ الشاشة بيقول «dialog» وخلاص |
 
-الصورة دي متولّدة (ألوان متدرجة ونقط عشوائية)، فالفرق في صورة حقيقية بيختلف، بس الترتيب غالبًا كده: AVIF أصغر، وبعدها WebP، وبعدها JPEG.
+~~~text الخطأ الحقيقي في Console (Chrome)
+InvalidStateError: Failed to execute 'showModal' on 'HTMLDialogElement': The dialog is already open as a non-modal dialog, and therefore cannot be opened as a modal dialog.
+~~~
+
+معناه: النافذة مفتوحة بالفعل «عادي»، ومينفعش تتحوّل modal وهي مفتوحة. الحل: شيل [[open]] من الكود، أو اقفلها الأول.
+
+---
 
 ## الخلاصة
 
-- المتصفح بيمشي على الـ sources بالترتيب وياخد أول واحد [[type]] و [[media]] بتوعه ينفعوا، فالأدق الأول.
-- [[srcset]] على الـ source، و [[alt]] والمقاس والكلاسات على الـ img.
-- ملف واحد بس بيتحمّل، فالـ fallback ملوش تمن.`,
-          lines: [
-            R`بداية الـ [[<picture>]]: مبيعرضش حاجة لوحده، هو لستة اختيارات للمتصفح.`,
-            R`موبايل وبيدعم AVIF: صورة مقصوصة طولي، ونسبتها الخاصة بـ width و height.`,
-            "موبايل ومش بيدعم AVIF: نفس الصورة WebP.",
-            R`شاشة كبيرة وبيدعم AVIF: مقاسين، والمتصفح يختار بـ [[sizes]].`,
-            R`شاشة كبيرة ومش بيدعم AVIF: نفس المقاسين بصيغة WebP.`,
-            R`آخر احتمال والمكان اللي الصورة بتتعرض فيه فعلًا: الـ alt والمقاس والأولوية هنا.`,
-            R`قفلة الـ [[<picture>]]، والمتصفح هيحمّل ملف واحد بس من اللستة.`
-          ],
-          sol: R`على عرض كبير في Chrome: هتلاقي [[hero-1600.avif]] اتحمّل (الـ [[hero-800.avif]] بيتاخد بس لما الصورة هتتعرض 800 بكسل حقيقي أو أقل، يعني عرض الشاشة × الكثافة)، ومفيش WebP ولا JPEG. في وضع الموبايل بعد refresh: [[hero-mobile.avif]] والصورة بقت طولية. ملف واحد بس بيتحمّل في كل مرة.
-
-الأحجام: غالبًا AVIF أصغر من WebP بشوية لنص، والاتنين أصغر بكتير من JPEG (الأرقام بتختلف حسب الصورة والجودة).
-
-لو لقيت صورة الديسكتوب على الموبايل: الـ sources الخاصة بالموبايل لازم تيجي الأول. ولو مفيش حاجة اتحمّلت: اتأكد إنك كتبت [[srcset]] مش [[src]] على الـ source.`
-        },
-        {
-          cmd: "video و iframe",
-          ref: [
-            { t: "WHATWG: the iframe element", url: "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element" },
-            { t: "MDN: <iframe>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe" },
-            { t: "WHATWG: the video element", url: "https://html.spec.whatwg.org/multipage/media.html#the-video-element" },
-            { t: "MDN: <video>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/video" },
-            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
-          ],
-          title: "فيديو بيشتغل لوحده على الموبايل، و YouTube ميتقّلش الصفحة",
-          desc: R`[[<video>]] محتاج [[controls]] عشان المستخدم يشغّل ويوقف، و [[poster]] صورة لحد ما يشتغل، و [[preload="metadata"]] عشان ميحمّلش الفيديو كله على الفاضي. والترجمة بـ [[<track kind="captions">]] وملف WebVTT.
-
-فيديو خلفية بيشتغل لوحده لازم [[muted autoplay loop playsinline]]: المتصفحات بتمنع الـ autoplay بصوت، و iPhone من غير [[playsinline]] بيفتحه full screen.
-
-و [[<iframe>]] (YouTube أو خريطة) لازم له [[title]] و [[loading="lazy"]]. وأحسن من كده: facade، يعني صورة الفيديو وزرار تشغيل، والـ iframe يتعمل بس لما المستخدم يدوس.`,
-          example: R`<video controls preload="metadata" poster="/video/intro.jpg" width="1280" height="720">
-  <source src="/video/intro.webm" type="video/webm">
-  <source src="/video/intro.mp4" type="video/mp4">
-  <track kind="captions" src="/video/intro.ar.vtt" srclang="ar" label="عربي" default>
-</video>
-<video autoplay muted loop playsinline poster="/hero.jpg" aria-hidden="true" src="/hero.mp4"></video>
-<iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="شرح المنتج في دقيقتين" width="560" height="315" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-<button type="button" class="yt-facade" data-id="VIDEO_ID" aria-label="شغّل: شرح المنتج في دقيقتين" style="background-image: url(https://i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg)">▶</button>`,
-          try: R`حط iframe يوتيوب عادي في صفحة، وافتح Network واعمل refresh: عدّ الـ requests والحجم. وبعدين بدّله بزرار الـ facade واكتب السكربت اللي لما تدوس عليه يحط الـ iframe مكانه ويشغّله، وقارن الـ Network تاني قبل الضغط.`,
-          flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** فيديو هيرو [[<video autoplay loop src="/hero.mp4">]] مبيشتغلش، ومفيش ولا error. صلّحه، واكتب الـ attributes الناقصة ليه.`, done: R`قبل: [[video.paused]] = [[true]] بعد التحميل. بعد [[muted]] و [[playsinline]] (و [[poster]] و [[aria-hidden="true"]] لأنه زينة): [[paused]] = [[false]]، وكتبت إن Chrome بيمنع autoplay بصوت في سكوت.`, sol: R`~~~live 170 170 fixed.html
-<video autoplay muted loop playsinline poster="/poster.jpg" aria-hidden="true" src="/hero.mp4"></video>
-~~~
-
-**كل attribute ليه شغله:**
-
-- [[muted]]: الأهم. Chrome و Safari بيمنعوا تشغيل فيديو بصوت من غير ضغطة من المستخدم، بس بيسمحوا بالصامت.
-- [[playsinline]]: على iPhone من غيره الفيديو بيفتح fullscreen أو مبيشتغلش في مكانه.
-- [[poster]]: الصورة اللي بتبان قبل أول frame، ولو الـ autoplay اتمنع.
-- [[aria-hidden="true"]]: فيديو زينة ملوش معنى لقارئ الشاشة.
-
-**ليه مفيش error:** الـ attribute [[autoplay]] مجرد طلب، والمتصفح بيرفضه في سكوت. الـ error مش بيبان غير لو انت ناديت [[video.play()]] بإيدك، وقتها الـ Promise بيرفض بـ [[NotAllowedError]].
-
-**الغلطة الشائعة:** الفيديو بيشتغل عندك وانت بتجرّب لأنك ضغطت في الصفحة قبلها أو بتعمل reload (Chrome بيحسب تفاعلك مع الموقع)، فتفتكر إنه سليم، وعند زائر جديد واقف. جرّب في Incognito.
-
-~~~text الناتج
-قبل (autoplay loop بس):
-video.paused = true ، currentTime = 0
-
-بعد muted و playsinline:
-video.paused = false ، currentTime = 0.88 بعد 900ms
-
-ولو ناديت play() من غير muted ومن غير ضغطة:
-NotAllowedError: play() failed because the user didn't interact with the document first.
-~~~
-
-(اتقاس في Chrome بـ [[--autoplay-policy=document-user-activation-required]]، وده اللي زائر جديد بيقابله.)` },
-            { lvl: 'تطبيق', t: R`**ابني:** فيديو خلفية للهيرو بزرار «إيقاف/تشغيل» عليه [[aria-pressed]]، ولو المستخدم مفعّل [[prefers-reduced-motion: reduce]] الفيديو ميشتغلش لوحده ويبان الـ poster.`, done: R`من DevTools › Rendering مع [[reduce]]: [[video.paused]] = [[true]] والـ poster ظاهر. من غيره بيشتغل، والزرار بيوقّفه ويغيّر [[aria-pressed]]، والزرار بيتوصل بالـ Tab وليه اسم.`, sol: R`~~~live 120 120 index.html
+- [[<dialog>]] مقفول لحد ما يتفتح. الفتح: [[showModal()]] (modal) أو [[show()]]. ومتكتبش [[open]] بإيدك.
+- modal = فوق كل حاجة، والفوكس جواه، والصفحة اللي ورا واقفة، و Esc بيقفل، والفوكس بيرجع للزرار.
+- القفل من غير JavaScript: [[<form method="dialog">]]، و [[value]] الزرار بتتسجل في [[returnValue]].
+- [[closedby]]: [[any]] (حتى الكليك برّه) و [[closerequest]] (Esc وزرار) و [[none]] (زرار بس).
+- أول زرار هو الآمن، والنافذة ليها اسم بـ [[aria-labelledby]].`,
+          try: R`اعمل ملف [[dialog.html]] فيه زرار «اخرج من الحساب» بيفتح نافذة modal بتسأل «متأكد إنك عايز تخرج؟» وفيها زرارين: «لأ، خليني» ([[value="stay"]]) و «اخرج» ([[value="logout"]]). افتحه في Chrome وجرّب: Tab كذا مرة، وكليك على الصفحة اللي ورا، و Esc، وكل زرار.`,
+          sol: R`~~~html dialog.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>هيرو بفيديو خلفية</title>
-<style>
-  body { margin: 0; font-family: system-ui, sans-serif; }
-  .hero { position: relative; isolation: isolate; display: grid; place-items: center;
-          min-height: 60vh; color: #fff; background: #0b1120; overflow: hidden; }
-  .hero video { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; }
-  .hero h1 { margin: 0; padding: 1rem; text-align: center; text-shadow: 0 1px 4px #000; }
-  #toggle { position: absolute; inset-block-end: 1rem; inset-inline-end: 1rem; min-block-size: 2.75rem;
-            padding-inline: 1rem; border: 0; border-radius: .5rem; background: #fff; color: #0b1120; font: inherit; }
-</style>
+<title>حسابي</title>
 </head>
 <body>
-<section class="hero">
-  <video id="bg" muted loop playsinline preload="metadata" poster="poster.jpg" aria-hidden="true" tabindex="-1">
-    <source src="hero.mp4" type="video/mp4">
-  </video>
-  <h1>قهوة مختصة بتتحمّص كل أسبوع</h1>
-  <button id="toggle" type="button" aria-pressed="false">إيقاف الفيديو</button>
+<h1>حسابي</h1>
+<p>أهلًا يا منى.</p>
+<button type="button" onclick="out.showModal()">اخرج من الحساب</button>
+
+<dialog id="out" aria-labelledby="out-title">
+  <h2 id="out-title">متأكد إنك عايز تخرج؟</h2>
+  <form method="dialog">
+    <button value="stay">لأ، خليني</button>
+    <button value="logout">اخرج</button>
+  </form>
+</dialog>
+</body>
+</html>
+~~~
+
+~~~view 210 شكل الصفحة (دوس الزرار)
+<h1>حسابي</h1>
+<p>أهلًا يا منى.</p>
+<button type="button" onclick="out.showModal()">اخرج من الحساب</button>
+<dialog id="out" aria-labelledby="out-title">
+  <h2 id="out-title">متأكد إنك عايز تخرج؟</h2>
+  <form method="dialog">
+    <button value="stay">لأ، خليني</button>
+    <button value="logout">اخرج</button>
+  </form>
+</dialog>
+~~~
+
+**هتشوف إيه:**
+
+- النافذة في نص الشاشة، والفوكس على «لأ، خليني» (حواليه برواز الفوكس).
+- Tab بيتنقل بين الزرارين (وبيعدّي على شريط المتصفح) ومبيروحش لزرار «اخرج من الحساب» اللي ورا.
+- الكليك على «حسابي» أو الزرار اللي ورا مبيعملش حاجة.
+- Esc أو أي زرار من الاتنين بيقفل، والفوكس بيرجع على «اخرج من الحساب».
+
+~~~text القياس من Chrome
+بعد الفتح:     matches(':modal') = true ، والفوكس على أول زرار
+بعد «اخرج»:    النافذة اتقفلت ، returnValue = logout ، والفوكس رجع للزرار اللي فتح
+~~~
+
+الخروج الفعلي من الحساب مش هنا: الـ HTML سجّل الاختيار ([[logout]])، والتنفيذ بييجي مع JavaScript.`,
+          deep: {
+            why: R`قبل [[<dialog>]] كانت النافذة [[<div>]] متلوّن ومحطوط فوق الصفحة بالـ CSS، وكل السلوك بيتكتب بـ JavaScript: نقل الفوكس، وحبسه جوه النافذة، وتعطيل اللي ورا، و Esc، وإرجاع الفوكس. أغلب النوافذ اللي اتكتبت كده كانت ناقصة حاجة منهم، فاللي ماشي بالكيبورد أو بقارئ شاشة كان بيتوه ورا النافذة. دلوقتي المتصفح بيعمل الخمسة صح، وانت بتكتب سطر واحد.`,
+            how: R`[[showModal()]] بيعمل تلات حاجات: بيكتب [[open]] على العنصر، وبيحطه في «top layer» (طبقة فوق الصفحة كلها، مفيش [[z-index]] يعلى عليها)، وبيعلّم باقي المستند إنه «blocked by a modal dialog» فيبقى inert: لا كليك ولا فوكس ولا قارئ شاشة. وبعدين بيشغّل «dialog focusing steps»: يدوّر على عنصر عليه [[autofocus]]، وإلا أول عنصر ياخد فوكس، وإلا الـ dialog نفسه. ولما زرار إرسال يتداس جوه فورم [[method="dialog"]]، المتصفح بدل ما يبعت طلب بياخد [[value]] الزرار ويقفل النافذة بيها ([[returnValue]])، ويرجّع الفوكس للعنصر اللي كان عليه قبل الفتح. Esc بيبعت «close request»، و [[closedby]] بيحدد النافذة ترد عليه ولا لأ.`,
+            when: R`[[showModal()]]: تأكيد حذف، تسجيل دخول، فورم قصير لازم يخلص، صورة بالحجم الكبير. [[show()]]: لوحة جنب الشغل الزائر بيرجعلها (بحث واستبدال، شات). ولو اللي عايزه قايمة صغيرة أو تلميح بيتقفل لوحده: ده popover مش dialog (الدرس الجاي). ولو محتوى في الصفحة بيتطوي ويتفرد: [[<details>]].`,
+            mistakes: R`كتابة [[open]] في الكود. [[show()]] لحاجة لازم تبقى modal. نسيان [[method="dialog"]] فالزرار يحمّل الصفحة. الزرار الخطير أول زرار. نافذة من غير عنوان ومن غير [[aria-labelledby]]. [[closedby="none"]] من غير زرار قفل. ونافذة modal بتتفتح لوحدها أول ما الصفحة تحمّل (اشتراك في النشرة): الزائر لسه مشافش حاجة وانت وقّفتله الصفحة.`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** صفحة «ملاحظاتي» فيها زرار «امسح الكل». خلّيه يفتح نافذة modal بتسأل «تمسح كل الملاحظات؟» وفيها «إلغاء» ([[cancel]]) و «امسح الكل» ([[clear]])، والاتنين بيقفلوها من غير JavaScript. (من قسم ٢ و ٥ في الشرح)`, done: R`الزرار بيفتح النافذة في نص الشاشة، وأي زرار من الاتنين بيقفلها، وكل الشروط ✓.`, work: { h: 250, start: R`<h1>ملاحظاتي</h1>
+<button type="button">امسح الكل</button>
+
+تمسح كل الملاحظات؟
+إلغاء
+امسح الكل`, checks: [
+              { say: R`السؤال والزرارين جوه [[<dialog id="wipe">]]`, q: "dialog#wipe" },
+              { say: R`النافذة **مش** مكتوب عليها [[open]]`, q: "dialog[open]", n: 0 },
+              { say: R`الزرار اللي في الصفحة بيفتحها بـ [[onclick="wipe.showModal()"]]`, q: "button[type=\"button\"][onclick*=\"wipe.showModal()\"]" },
+              { say: R`جوه النافذة [[<form method="dialog">]]`, q: "dialog#wipe form[method=\"dialog\" i]" },
+              { say: R`أول زرار في الفورم «إلغاء» وقيمته [[cancel]]`, q: "dialog form button:first-of-type[value=\"cancel\"]" },
+              { say: R`«امسح الكل» زرار في الفورم قيمته [[clear]]`, q: "dialog form button[value=\"clear\"]" },
+            ] }, sol: R`~~~live 193 الحل (دوس «امسح الكل»)
+<h1>ملاحظاتي</h1>
+<button type="button" onclick="wipe.showModal()">امسح الكل</button>
+
+<dialog id="wipe">
+  <p>تمسح كل الملاحظات؟</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="clear">امسح الكل</button>
+  </form>
+</dialog>
+~~~
+
+**هتشوف إيه:**
+
+- في الصفحة عنوان وزرار بس. السؤال مش باين.
+- دوس «امسح الكل»: صندوق في نص الشاشة فيه السؤال وزرارين، والفوكس على «إلغاء».
+- أي زرار من الاتنين (أو Esc) بيقفله.
+
+**ليه كده:**
+
+- [[<dialog>]] من غير [[open]]: مستخبي لحد ما [[showModal()]] يفتحه.
+- [[method="dialog"]] هو اللي خلّى الزرارين يقفلوا. من غيره كانوا هيبعتوا الفورم والصفحة تتحمّل من جديد.
+- «إلغاء» الأول: الفوكس بييجي عليه، و Enter مبيمسحش.
+- الـ [[id]] اسمه [[wipe]] مش [[clear]]: جوه [[onclick]] الكلمة [[clear]] (وزيها [[open]] و [[close]] و [[title]]) ليها معنى تاني عند المتصفح، فالسطر مكانش هيلاقي النافذة.
+
+**الغلطة الشائعة:** تكتب [[<dialog open>]] «عشان أشوفها وأنا بكتب» وتنساها. النافذة هتبان من أول تحميل ومش هتبقى modal.
+
+~~~text القياس من Chrome
+قبل الضغط:    display بتاع <dialog> = none
+بعد الضغط:    matches(':modal') = true ، والفوكس على «إلغاء»
+«امسح الكل»:  النافذة اتقفلت ، returnValue = clear
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نافذة «عن التطبيق» المفروض تتفتح modal لما الزائر يدوس الزرار. اللي حاصل: النافذة باينة من أول ما الصفحة تفتح، و Esc مبيقفلهاش، وزرار «اقفل» مبيعملش حاجة. فيها تلات غلطات. (من قسم ١ و ٢ و ٥ في الشرح)`, done: R`الصفحة بتفتح والنافذة مستخبية، والزرار بيفتحها modal، و «اقفل» بيقفلها، وكل الشروط ✓.`, work: { h: 260, start: R`<h1>ملاحظاتي</h1>
+<button type="button" onclick="about.show()">عن التطبيق</button>
+
+<dialog id="about" open>
+  <h2>دفتر نور</h2>
+  <p>نسخة 1.0</p>
+  <button type="button">اقفل</button>
+</dialog>`, checks: [
+              { say: R`النافذة مبقاش مكتوب عليها [[open]]`, q: "dialog[open]", n: 0 },
+              { say: R`الزرار بيفتحها بـ [[about.showModal()]] مش [[show()]]`, q: "button[onclick*=\"about.showModal()\"]" },
+              { say: R`«اقفل» جوه [[<form method="dialog">]]`, q: "dialog form[method=\"dialog\" i] button", has: "اقفل" },
+              { say: R`«اقفل» مبقاش [[type="button"]] (عشان يبعت الفورم اللي بيقفل)`, q: "dialog button[type=\"button\"]", n: 0 },
+            ] }, sol: R`~~~live 260 بعد التصليح (دوس «عن التطبيق»)
+<h1>ملاحظاتي</h1>
+<button type="button" onclick="about.showModal()">عن التطبيق</button>
+
+<dialog id="about">
+  <h2>دفتر نور</h2>
+  <p>نسخة 1.0</p>
+  <form method="dialog">
+    <button>اقفل</button>
+  </form>
+</dialog>
+~~~
+
+وده اللي كان باين قبل التصليح:
+
+~~~live 260 قبل
+<h1>ملاحظاتي</h1>
+<button type="button" onclick="about.show()">عن التطبيق</button>
+
+<dialog id="about" open>
+  <h2>دفتر نور</h2>
+  <p>نسخة 1.0</p>
+  <button type="button">اقفل</button>
+</dialog>
+~~~
+
+**هتشوف إيه:**
+
+- **قبل:** النافذة باينة تحت الزرار من غير ما حد يفتحها، ومفيش غبشة وراها، و Esc و «اقفل» مبيعملوش حاجة.
+- **بعد:** الصفحة فيها العنوان والزرار بس. الزرار بيفتح النافذة في نص الشاشة، و «اقفل» و Esc بيقفلوها.
+
+**التلات غلطات:**
+
+1. [[open]] في الكود: النافذة مفتوحة من الأول ومش modal. اتشال.
+2. [[show()]]: بيفتح non-modal. بقى [[showModal()]].
+3. [[<button type="button">]] من غير فورم: زرار ملوش شغلة. بقى زرار إرسال جوه [[<form method="dialog">]]. (جوه فورم، الزرار من غير [[type]] بيبقى [[submit]]: هنا ده اللي احنا عايزينه.)
+
+**الغلطة الشائعة:** تصلّح الزرار وتسيب [[open]]. النافذة هتفضل باينة من الأول، ولو الزائر داس «عن التطبيق» هيطلع خطأ في الـ Console لأن [[showModal()]] مبيشتغلش على نافذة مفتوحة non-modal.
+
+~~~text القياس من Chrome
+قبل:   matches(':modal') = false ، Esc: النافذة لسه مفتوحة ، «اقفل»: لسه مفتوحة
+بعد:   مقفولة في الأول ، وبعد الضغط matches(':modal') = true ، و «اقفل» قفلها
+~~~` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع، وبعدين صلّح:** الزائر داس «امسح الحساب» فالنافذة اتفتحت، وداس **Enter** على طول من غير ما يقرا. اكتب على ورقة: [[returnValue]] هتبقى إيه؟ جرّب في الصندوق. المصمم عايز ترتيب الزرارين يفضل زي ما هو، فصلّحها من غير ما تبدّلهم: خلّي الفوكس يبدأ على «إلغاء». (من قسم ٤ في الشرح: الفوكس بيروح فين)`, done: R`توقّعت [[delete]]، وبعد التصليح Enter بيطلّع [[cancel]]، وكل الشروط ✓.`, work: { h: 250, start: R`<button type="button" onclick="acc.showModal()">امسح الحساب</button>
+<p>آخر اختيار: <output id="res">(لسه)</output></p>
+
+<dialog id="acc" onclose="res.value = acc.returnValue">
+  <p>الحساب وكل ملاحظاته هيتمسحوا.</p>
+  <form method="dialog">
+    <button value="delete">امسح حسابي</button>
+    <button value="cancel">إلغاء</button>
+  </form>
+</dialog>`, checks: [
+              { say: R`«إلغاء» عليه [[autofocus]]`, q: "dialog button[value=\"cancel\"][autofocus]" },
+              { say: R`عنصر واحد بس في النافذة عليه [[autofocus]]`, q: "dialog [autofocus]", n: 1 },
+              { say: R`الترتيب زي ما هو: «امسح حسابي» لسه أول زرار`, q: "dialog form button:first-of-type[value=\"delete\"]" },
+            ] }, sol: R`~~~live 193 بعد التصليح (افتح ودوس Enter)
+<button type="button" onclick="acc.showModal()">امسح الحساب</button>
+<p>آخر اختيار: <output id="res">(لسه)</output></p>
+
+<dialog id="acc" onclose="res.value = acc.returnValue">
+  <p>الحساب وكل ملاحظاته هيتمسحوا.</p>
+  <form method="dialog">
+    <button value="delete">امسح حسابي</button>
+    <button value="cancel" autofocus>إلغاء</button>
+  </form>
+</dialog>
+~~~
+
+**هتشوف إيه:**
+
+- **قبل:** النافذة فتحت والفوكس على «امسح حسابي» (أول زرار). Enter طلّع [[delete]].
+- **بعد:** الفوكس على «إلغاء». Enter بيطلّع [[cancel]].
+
+**ليه:** [[showModal()]] بيدوّر الأول على عنصر عليه [[autofocus]] جوه النافذة. لو ملقاش، بياخد أول عنصر ينفع ياخد فوكس. و Enter على زرار عليه الفوكس بيدوس الزرار ده.
+
+**وأحسن من كده** لو المصمم وافق: «إلغاء» يبقى الأول في الكود. ساعتها حتى Enter جوه خانة في النافذة هيلغي.
+
+**الغلطة الشائعة:** [[autofocus]] على الزرارين «احتياطي». المتصفح بياخد الأول بترتيب الكود، يعني «امسح حسابي» تاني.
+
+~~~text القياس من Chrome (showModal ثم Enter)
+قبل:   الفوكس على «امسح حسابي» ، returnValue = delete
+بعد:   الفوكس على «إلغاء» ، returnValue = cancel
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** في الصفحة نافذتين. «إيه الجديد؟» معلومات بس، فالمفروض تتقفل بأي ضغطة برّاها. و «شروط الاستخدام» لازم الزائر يدوس «موافق»، فلا الضغط برّه ولا Esc يقفلوها. اكتب [[closedby]] المناسب على كل واحدة. (من قسم ٦ في الشرح: جدول [[closedby]])`, done: R`الأولى بتتقفل بكليك برّاها، والتانية بزرار «موافق» بس، وكل الشروط ✓.`, work: { h: 250, start: R`<p><button type="button" onclick="news.showModal()">إيه الجديد؟</button>
+<button type="button" onclick="terms.showModal()">شروط الاستخدام</button></p>
+
+<dialog id="news">
+  <p>ضفنا البحث جوه الملاحظات.</p>
+  <form method="dialog"><button>تمام</button></form>
+</dialog>
+
+<dialog id="terms">
+  <p>لازم توافق على الشروط عشان تكمّل.</p>
+  <form method="dialog"><button value="ok">موافق</button></form>
+</dialog>`, checks: [
+              { say: R`«إيه الجديد؟» عليها [[closedby="any"]]`, q: "dialog#news[closedby=\"any\"]" },
+              { say: R`«شروط الاستخدام» عليها [[closedby="none"]]`, q: "dialog#terms[closedby=\"none\"]" },
+              { say: R`نافذة الشروط لسه فيها زرار بيقفلها`, q: "dialog#terms form[method=\"dialog\" i] button[value=\"ok\"]" },
+            ] }, sol: R`~~~live 193 الحل
+<p><button type="button" onclick="news.showModal()">إيه الجديد؟</button>
+<button type="button" onclick="terms.showModal()">شروط الاستخدام</button></p>
+
+<dialog id="news" closedby="any">
+  <p>ضفنا البحث جوه الملاحظات.</p>
+  <form method="dialog"><button>تمام</button></form>
+</dialog>
+
+<dialog id="terms" closedby="none">
+  <p>لازم توافق على الشروط عشان تكمّل.</p>
+  <form method="dialog"><button value="ok">موافق</button></form>
+</dialog>
+~~~
+
+**هتشوف إيه:**
+
+- «إيه الجديد؟»: دوس في أي حتة فاضية حوالين الصندوق، هيتقفل. و Esc و «تمام» كمان.
+- «شروط الاستخدام»: الضغط برّه و Esc مبيعملوش حاجة. «موافق» بس.
+
+**ليه كده:** من غير [[closedby]] النافذتين كانوا زي بعض (Esc بيقفل، والكليك برّه لأ). [[any]] زوّد الكليك برّه، و [[none]] شال حتى Esc.
+
+**الغلطة الشائعة:** [[closedby="none"]] على نافذة فيها فورم طويل «عشان الزائر ميقفلهاش بالغلط». كده لو مفيش زرار «إلغاء» واضح فالزائر محبوس. الافتراضي ([[closerequest]]) كفاية: الكليك برّه مبيقفلش، و Esc موجود للي عايز يخرج.
+
+~~~text القياس من Chrome
+closedby="any":    كليك برّه: اتقفلت
+closedby="none":   كليك برّه: مفتوحة ، Esc: مفتوحة ، «موافق»: اتقفلت
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** النافذة دي شغالة، بس قارئ الشاشة بيقول «dialog» ومبيقولش هي عن إيه، لأن عنوانها [[<b>]] جوه فقرة. خلّي العنوان [[<h2>]] واربطه بالنافذة كاسم ليها. (من قسم ٧ في الشرح: اسم النافذة)`, done: R`العنوان [[<h2>]] ليه [[id]]، والنافذة بتشاور عليه بـ [[aria-labelledby]]، وكل الشروط ✓.`, work: { h: 260, start: R`<button type="button" onclick="del.showModal()">امسح الملاحظة</button>
+
+<dialog id="del">
+  <p><b>تمسح «أفكار المشروع»؟</b></p>
+  <p>مش هتقدر ترجّعها.</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>`, checks: [
+              { say: R`العنوان بقى [[<h2 id="del-title">]] جوه النافذة`, q: "dialog h2#del-title", has: "أفكار المشروع" },
+              { say: R`مفيش [[<b>]]`, q: "dialog b", n: 0 },
+              { say: R`النافذة عليها [[aria-labelledby="del-title"]]`, q: "dialog[aria-labelledby=\"del-title\"]" },
+              { say: R`الزرارين والفورم زي ما هم`, q: "dialog form[method=\"dialog\" i] button", n: 2 },
+            ] }, sol: R`~~~live 260 بعد
+<button type="button" onclick="del.showModal()">امسح الملاحظة</button>
+
+<dialog id="del" aria-labelledby="del-title">
+  <h2 id="del-title">تمسح «أفكار المشروع»؟</h2>
+  <p>مش هتقدر ترجّعها.</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>
+~~~
+
+**هتشوف إيه:** العنوان بقى أكبر شوية (شكل [[<h2>]] الافتراضي). الباقي زي ما هو. الفرق الحقيقي مش باين بالعين: هو في اللي قارئ الشاشة بيقوله.
+
+**ليه كده:**
+
+- [[<b>]] شكل بس، ملوش معنى «عنوان». [[<h2>]] عنوان بجد.
+- [[aria-labelledby]] بياخد [[id]] العنصر اللي فيه الاسم. زي [[for]] على الـ label.
+
+**الغلطة الشائعة:** [[aria-labelledby="تمسح الملاحظة"]] (الكلام نفسه بدل الـ [[id]]). مش هيلاقي عنصر بالاسم ده والنافذة هتفضل من غير اسم. لو عايز تكتب الكلام نفسه: [[aria-label="..."]].
+
+~~~text القياس من Chrome (accessibility tree)
+قبل:   role = dialog ، name = ""
+بعد:   role = dialog ، name = "تمسح «أفكار المشروع»؟"
+~~~
+
+الاسم هو اللي قارئ الشاشة بيقراه مع فتح النافذة (النطق نفسه من MDN).` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب نافذة «تأكيد الدفع» وفتحها بـ [[show()]]، وبيقولك «ما هي بتطلع عادي، إيه الفرق؟». اكتبله في ٣ سطور الفرق اللي الزائر هيحس بيه. (من قسم ٢ و ٣ في الشرح)`, done: R`كتبت تلات فروق كل واحد منهم حاجة الزائر بيعملها (كليك، Tab، Esc)، مش تعريفات.`, sol: R`إجابة نموذجية:
+
+1. **الكليك:** مع [[show()]] الزائر يقدر يدوس «ادفع» اللي في الصفحة تاني والنافذة مفتوحة، أو يغيّر الكمية وهي لسه بتسأله. مع [[showModal()]] أي كليك برّه النافذة مبيوصلش.
+2. **الكيبورد:** مع [[show()]] Tab بيخرج من النافذة ويكمّل في الصفحة، فاللي ماشي بالكيبورد بيتوه. مع [[showModal()]] Tab بيلف جواها بس.
+3. **Esc:** مع [[show()]] مبيقفلش. مع [[showModal()]] بيقفل ويرجّع الفوكس للزرار اللي فتح.
+
+والتأكيد على الدفع لازم يترد عليه قبل أي حاجة تانية، فهو modal.
+
+~~~text القياس من Chrome
+                          show()        showModal()
+كليك على زرار ورا         اشتغل          ماشتغلش
+Esc                       مبيقفلش        بيقفل
+:modal                    false          true
+~~~` }
+          ]
+        }
+,
+        {
+          cmd: "popover و popovertarget",
+          title: "قايمة وتلميح من غير JavaScript: popover و popovertarget و popovertargetaction و command و commandfor",
+          pre: [{ to: "css/dialog و closedby", why: R`الـ popover بيتقارن بالـ dialog في كل حاجة، و [[command]] بيفتح الـ dialog اللي عملته هناك من غير [[onclick]]` }, { to: "css/details و summary", why: R`التالت في جدول الاختيار: محتوى بيتطوي ويتفرد جوه الصفحة` }],
+          ref: [
+            { t: "MDN: popover (global attribute)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/popover" },
+            { t: "MDN: Using the Popover API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using" },
+            { t: "WHATWG: The popover attribute", url: "https://html.spec.whatwg.org/multipage/popover.html#the-popover-attribute" },
+            { t: "WHATWG: popovertarget و popovertargetaction", url: "https://html.spec.whatwg.org/multipage/popover.html#attr-popovertarget" },
+            { t: "MDN: <button> (command, commandfor)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button" },
+            { t: "WHATWG: command و commandfor", url: "https://html.spec.whatwg.org/multipage/form-elements.html#attr-button-command" }
+          ],
+          desc: R`[[popover]] attribute بيتكتب على أي عنصر فيخلّيه **يطلع فوق الصفحة لما زرار يتداس، ويختفي لوحده** لما الزائر يدوس برّاه أو يدوس Esc. قايمة «⋮»، تلميح «؟»، رسالة «اتحفظت». والزرار بيتربط بيه بـ [[popovertarget]]، من غير ولا سطر JavaScript.
+وفي نفس الدرس [[command]] و [[commandfor]]: نفس الفكرة بس أعم، زرار بيدّي أمر لعنصر تاني، وبيهم الـ [[<dialog>]] بتاع الدرس اللي فات بيتفتح من غير [[onclick]].`,
+          example: R`<button type="button" popovertarget="menu">⋮ خيارات</button>
+<div id="menu" popover>
+  <button type="button">ثبّت الملاحظة</button>
+  <button type="button">انسخها</button>
+  <button type="button" popovertarget="menu" popovertargetaction="hide">اقفل</button>
+</div>
+<button type="button" commandfor="del" command="show-modal">امسح</button>
+<dialog id="del">
+  <p>تمسح الملاحظة؟</p>
+  <button type="button" commandfor="del" command="close">إلغاء</button>
+</dialog>`,
+          flag: "script",
+          lines: [
+            R`الزرار اللي بيفتح القايمة. [[popovertarget="menu"]] فيها [[id]] العنصر اللي هيطلع. كل ضغطة بتفتحه لو مقفول وتقفله لو مفتوح.`,
+            R`القايمة نفسها: [[<div>]] عادي عليه [[popover]]. الكلمة دي لوحدها بتخبّيه لحد ما يتفتح، وبتخلّيه يتقفل لوحده بـ Esc أو بضغطة برّاه. و [[id="menu"]] هو اللي الزرار بيشاور عليه.`,
+            R`اختيار جوه القايمة. زرار عادي [[type="button"]]، شغله (التثبيت) هيتكتب بـ JavaScript بعدين.`,
+            R`اختيار تاني بنفس الشكل.`,
+            R`زرار جوه القايمة بيقفلها. [[popovertarget="menu"]] بيشاور على نفس القايمة، و [[popovertargetaction="hide"]] بيقول «اقفل بس» بدل «افتح أو اقفل».`,
+            R`[[</div>]] بيقفل القايمة: التلات أزرار اللي فوق هم كل اللي هيطلع لما الـ popover يتفتح.`,
+            R`زرار بيفتح [[<dialog>]] من غير JavaScript: [[commandfor="del"]] العنصر اللي الأمر رايحله، و [[command="show-modal"]] الأمر نفسه، وهو نفس [[del.showModal()]].`,
+            R`نافذة التأكيد بتاعة الدرس اللي فات، و [[id="del"]] هو اللي [[commandfor]] بيشاور عليه.`,
+            R`السؤال اللي جوه النافذة.`,
+            R`زرار بيقفل النافذة بأمر [[close]]. بديل [[<form method="dialog">]] لما مش محتاج فورم.`,
+            R`[[</dialog>]] بيقفل النافذة. السؤال وزرار «إلغاء» بس هم اللي جواها.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+attribute على العنصر ([[popover]]) و attribute على الزرار ([[popovertarget]])، والمتصفح بيعمل الباقي: يخبّي العنصر، ويطلّعه فوق كل الصفحة لما الزرار يتداس، ويقفله لما الزائر يدوس في أي حتة تانية.
+
+القياسات من Chrome 157 على Windows 11، بكليكات وضغطات حقيقية.
+
+---
+
+## ١. [[<div popover>]] و [[<button popovertarget="menu">]]
+
+~~~live 190 دوس «⋮ خيارات»، وبعدين دوس في أي حتة فاضية
+<p>ملاحظة: مشتريات الأسبوع <button type="button" popovertarget="menu">⋮ خيارات</button></p>
+<div id="menu" popover>
+  <p><button type="button">ثبّت الملاحظة</button></p>
+  <p><button type="button">انسخها</button></p>
+</div>
+<p>كلام الصفحة اللي تحت.</p>
+~~~
+
+**هتشوف إيه:**
+
+- القايمة مش باينة في الأول.
+- دوس «⋮ خيارات»: صندوق ببرواز أسود بيطلع **في نص الصفحة** فوق الكلام.
+- دوس في أي حتة برّاه، أو Esc، أو الزرار تاني: بيختفي.
+
+~~~text القياس من Chrome
+<div popover> وهو مقفول:     display = none
+بعد الضغط على الزرار:        display = block ، position = fixed ، border = 3px solid ، padding = 4px
+                             الخلفية أبيض والكلام أسود ، وفي نص الشاشة (inset: 0 و margin: auto)
+                             matches(':popover-open') = true
+~~~
+
+التلات حاجات اللي بتربطهم:
+
+- [[popover]] على العنصر اللي هيطلع. أي عنصر: [[<div>]] أو [[<ul>]] أو [[<nav>]] أو [[<p>]].
+- [[id]] على نفس العنصر.
+- [[popovertarget]] على **[[<button>]]** (أو [[<input type="button">]])، وقيمته الـ [[id]] ده. مبيشتغلش على [[<a>]] ولا [[<div>]].
+
+**وليه في النص مش جنب الزرار؟** ده الشكل الافتراضي بتاع المتصفح. تحريكه جنب الزرار اللي فتحه شغل CSS (anchor positioning) وهييجي في وحدات الـ CSS. في الوحدة دي القايمة بتطلع في النص وده كفاية عشان تفهم السلوك.
+
+---
+
+## ٢. القفل لوحده: light dismiss
+
+«light dismiss» معناها إن الـ popover بيتقفل بأي حاجة تدل إن الزائر خلّص منه:
+
+~~~text القياس من Chrome (popover عادي، يعني auto)
+Esc:                                   اتقفل ، والفوكس على الزرار اللي فتحه
+كليك على زرار تاني في الصفحة:           اتقفل ، **والزرار التاني اشتغل** (العدّاد بقى 1)
+فتح popover تاني من زرار تاني:          الأول اتقفل والتاني اتفتح
+ضغطة تانية على نفس الزرار:              اتقفل
+~~~
+
+خد بالك من السطر التاني: ده عكس الـ dialog الـ modal. الصفحة اللي ورا الـ popover **شغالة**، والضغطة اللي قفلته وصلت للي تحتها.
+
+~~~live 200 افتح «مشاركة» وبعدين «ترتيب»
+<p><button type="button" popovertarget="share">مشاركة</button>
+<button type="button" popovertarget="sort">ترتيب</button></p>
+<div id="share" popover><p>انسخ اللينك</p><p>ابعت بالإيميل</p></div>
+<div id="sort" popover><p>الأحدث أولًا</p><p>بالاسم</p></div>
+~~~
+
+**هتشوف إيه:** مفيش وقت القايمتين مفتوحين مع بعض. فتح واحدة بيقفل التانية.
+
+---
+
+## ٣. [[<button popovertargetaction="hide">]]: افتح بس، أو اقفل بس
+
+الزرار اللي عليه [[popovertarget]] بيعمل «بدّل» (toggle): يفتح المقفول ويقفل المفتوح. [[popovertargetaction]] بيغيّر ده:
+
+| القيمة | الزرار بيعمل إيه |
+|---|---|
+| [[popovertargetaction="toggle"]] | يفتح لو مقفول، ويقفل لو مفتوح. وده الافتراضي لو مكتبتش حاجة |
+| [[popovertargetaction="show"]] | يفتح بس. لو مفتوح مبيحصلش حاجة |
+| [[popovertargetaction="hide"]] | يقفل بس. لو مقفول مبيحصلش حاجة |
+
+~~~text القياس من Chrome
+toggle مرتين:     اتفتح وبعدين اتقفل
+show مرتين:       اتفتح ، وفضل مفتوح
+hide:             اتقفل ، و hide تاني: مفيش خطأ ومفيش تغيير
+~~~
+
+أشهر استخدام: زرار «×» أو «اقفل» **جوه** الـ popover نفسه، عليه [[popovertarget]] بنفس الـ [[id]] و [[popovertargetaction="hide"]].
+
+---
+
+## ٤. [[<div popover="manual">]] و [[<div popover="hint">]]: التلات أنواع
+
+[[popover]] من غير قيمة معناها [[popover="auto"]]. وفيه قيمتين تانيين:
+
+| القيمة | بيتقفل بـ Esc وبالضغط برّه؟ | لما يتفتح بيقفل غيره؟ | مناسب لـ |
+|---|---|---|---|
+| [[popover="auto"]] (أو [[popover]] بس) | أيوه | بيقفل أي [[auto]] و [[hint]] مفتوح | قايمة، اختيارات، بحث |
+| [[popover="manual"]] | لأ | لأ، ومفيش حاجة بتقفله | رسالة «اتحفظت»، إشعار، لوحة بتفضل |
+| [[popover="hint"]] | أيوه | بيقفل [[hint]] تاني بس، وبيسيب الـ [[auto]] | تلميح صغير فوق قايمة مفتوحة |
+
+~~~text القياس من Chrome (اللي مفتوح بعد كل خطوة)
+auto أ ، وبعدين hint:              أ + hint          (الـ hint ماقفلش الـ auto)
+وبعدين hint تاني:                   أ + hint التاني   (الـ hint الأول اتقفل)
+وبعدين auto ب:                      ب بس              (قفل الـ auto والـ hint)
+وبعدين اتنين manual:                ب + manual + manual
+Esc:                                manual + manual    (الـ auto اتقفل ، والـ manual لأ)
+كليك برّه:                          manual لسه مفتوحين
+popover="كلمة غلط":                 بيتعامل كـ manual
+~~~
+
+[[manual]] ملوش قفل تلقائي، فلازم زرار يقفله:
+
+~~~live 119 دوس «احفظ»، وجرّب Esc والضغط برّه
+<p><button type="button" popovertarget="saved" popovertargetaction="show">احفظ</button></p>
+<div id="saved" popover="manual">
+  اتحفظت الملاحظة.
+  <button type="button" popovertarget="saved" popovertargetaction="hide">×</button>
+</div>
+~~~
+
+**هتشوف إيه:** الرسالة طلعت ومبتتقفلش لا بـ Esc ولا بضغطة برّه. «×» بس. (في تطبيق حقيقي JavaScript بيقفلها بعد كام ثانية.)
+
+**الدعم (جدول MDN):** [[popover]] و [[auto]] و [[manual]] في كل المتصفحات من أبريل 2024 (Chrome 114 و Firefox 125 و Safari 17)، ودلوقتي Baseline «Widely available». [[hint]] جديدة: Chrome 151 و Firefox 153 و Safari 27.3 (ونسخ أقدم كانت بتطبّقها بشكل مختلف). فالتلميح اللي لازم يشتغل عند الكل اكتبه [[auto]] دلوقتي.
+
+---
+
+## ٥. الـ top layer: فوق كل حاجة
+
+الـ popover المفتوح (والـ dialog الـ modal) بيتحطوا في طبقة اسمها **top layer**: فوق الصفحة كلها، مهما كان مكان العنصر في الكود ومهما كان [[z-index]] بتاع غيره.
+
+~~~text القياس من Chrome
+عنصر في الصفحة عليه z-index: 9999 ، و popover مفتوح فوقه:
+العنصر اللي تحت الماوس في النقطة دي = الزرار اللي جوه الـ popover   (الـ popover فوق)
+~~~
+
+يعني مش محتاج تحط القايمة في آخر [[<body>]] ولا تحارب بـ [[z-index]]: اكتبها جنب الزرار بتاعها في الكود وهي هتطلع فوق.
+
+واسمين CSS هتقابلهم بعدين (تلوينهم في وحدات الـ CSS):
+
+- [[:popover-open]] بيمسك الـ popover وهو مفتوح.
+- [[::backdrop]] موجود ورا الـ popover زي الـ dialog، بس شفاف خالص (اتقاس: [[rgba(0, 0, 0, 0)]])، فمفيش غبشة.
+
+---
+
+## ٦. الـ popover مش modal
+
+~~~text القياس من Chrome
+بعد فتح الـ popover:           الفوكس لسه على الزرار اللي فتحه (مادخلش جواه)
+Tab من الزرار:                 راح لأول زرار جوه الـ popover ، حتى لو الـ popover مكتوب في آخر الصفحة
+كليك على الصفحة اللي ورا:      اشتغل
+الزرار في accessibility tree:   expanded = false وهو مقفول ، و expanded = true وهو مفتوح
+الـ popover نفسه:               من غير اسم ومن غير role خاص (Chrome بيعرضه group)
+~~~
+
+- الفوكس مبيتنقلش لوحده: الزائر بيدوس Tab فيدخل القايمة.
+- الصفحة اللي ورا مش واقفة.
+- المتصفح بيقول لقارئ الشاشة إن الزرار «مفتوح» أو «مقفول» من غير ما تكتب [[aria-expanded]].
+
+عايز الصفحة تقف والفوكس يتحبس؟ ده dialog مش popover.
+
+---
+
+## ٧. [[<button command="show-modal" commandfor="del">]]: زرار بيدّي أمر
+
+[[popovertarget]] بيعرف يكلّم popover بس. [[commandfor]] و [[command]] نفس الفكرة لأي عنصر: [[commandfor]] فيه [[id]] العنصر، و [[command]] الأمر.
+
+### [[<button commandfor="del">]] و [[<button command="close">]]
+
+| الأمر | رايح لـ | زي ما تكتب |
+|---|---|---|
+| [[command="show-modal"]] | [[<dialog>]] | [[showModal()]] |
+| [[command="close"]] | [[<dialog>]] | بيقفله. و [[value]] الزرار بتبقى [[returnValue]] |
+| [[command="request-close"]] | [[<dialog>]] | «اطلب القفل»: زي ضغطة Esc، فـ [[closedby="none"]] يقدر يرفض |
+| [[command="toggle-popover"]] | popover | [[popovertargetaction="toggle"]] |
+| [[command="show-popover"]] | popover | [[popovertargetaction="show"]] |
+| [[command="hide-popover"]] | popover | [[popovertargetaction="hide"]] |
+
+~~~live 210 نافذة بتتفتح وتتقفل من غير ولا سطر JavaScript
+<button type="button" commandfor="del" command="show-modal">امسح الملاحظة</button>
+<dialog id="del" aria-labelledby="del-title">
+  <h2 id="del-title">تمسح «مشتريات الأسبوع»؟</h2>
+  <button type="button" commandfor="del" command="close" value="cancel">إلغاء</button>
+  <button type="button" commandfor="del" command="close" value="delete">امسح</button>
+</dialog>
+~~~
+
+**هتشوف إيه:** نفس نافذة الدرس اللي فات بالظبط: في النص، ووراها غبشة، والفوكس على «إلغاء»، و Esc بيقفل. بس مفيش [[onclick]] ومفيش فورم.
+
+~~~text القياس من Chrome
+command="show-modal":    النافذة اتفتحت ، matches(':modal') = true ، والفوكس جواها
+command="close" والزرار value="ok":    اتقفلت ، returnValue = ok ، والفوكس رجع للزرار اللي فتح
+command="request-close":               اتقفلت (النافذة من غير closedby="none")
+command="toggle-popover":              فتح الـ popover ، وضغطة تانية قفلته
+~~~
+
+- الزرار لازم [[type="button"]]. اتقاس: زرار جوه فورم من غير [[type]] وعليه [[command]] **مبيعملش أي حاجة**، لا بينفّذ الأمر ولا بيبعت الفورم.
+- [[command]] من غير [[commandfor]] (أو العكس) مبيعملش حاجة.
+- فيه كمان أوامر بتبدأ بـ [[--]] (زي [[command="--rotate"]]): دي أوامر انت بتخترعها و JavaScript بيسمعها. كورس JavaScript.
+
+**الدعم (جدول MDN):** Chrome 135 و Firefox 144 و Safari 26.2. يعني موجودة في آخر نسخ المتصفحات التلاتة، بس من قريب (Safari من آخر 2025)، ومش «Widely available» لسه. في متصفح أقدم الزرار **مبيعملش حاجة**، ومفيش بديل تلقائي. فلحد ما النسخ القديمة تختفي: [[popovertarget]] للـ popover (مدعوم من 2024)، و [[onclick="del.showModal()"]] للـ dialog، أو [[command]] مع ملف صغير بيعوّض (polyfill) في كورس JavaScript.
+
+---
+
+## ٨. popover ولا dialog ولا [[<details>]]؟
+
+التلاتة «حاجة بتتفتح وتتقفل». الفرق في مكانها وفي اللي بيحصل للصفحة:
+
+| | [[<details>]] | [[popover]] | [[<dialog>]] بـ [[showModal()]] |
+|---|---|---|---|
+| المحتوى بيظهر فين | في مكانه، والصفحة بتتزق لتحت | فوق الصفحة (top layer) | فوق الصفحة (top layer) |
+| الصفحة اللي ورا | شغالة | شغالة | واقفة |
+| الفوكس | مكانه | مكانه، و Tab بيدخل | بيتنقل جواه ويتحبس |
+| بيتقفل لوحده | لأ | أيوه (Esc وضغطة برّه) | Esc بس (أو حسب [[closedby]]) |
+| محتاج JavaScript | لأ | لأ | سطر للفتح (أو [[command]]) |
+| Ctrl+F بيلاقي اللي جواه وهو مقفول | أيوه وبيفتحه (MDN) | لأ | لأ |
+| مثال | أسئلة شائعة، «اقرا أكتر» | قايمة «⋮»، تلميح، إشعار | تأكيد حذف، تسجيل دخول |
+
+اسأل نفسك بالترتيب:
+
+1. الزائر **لازم يرد** قبل ما يكمّل؟ ← [[<dialog>]] modal.
+2. حاجة صغيرة بتطلع فوق وتختفي أول ما يبص لحاجة تانية؟ ← [[popover]].
+3. محتوى من الصفحة نفسها، بس مطوي؟ ← [[<details>]].
+
+---
+
+## ٩. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[popovertarget]] على [[<a>]] أو [[<div>]] | مبيشتغلش: على [[<button>]] و [[<input type="button">]] بس |
+| القيمة [[class]] أو اسم مش [[id]] | الزرار مبيعملش حاجة، ومفيش خطأ |
+| نسيان [[popover]] على العنصر | العنصر باين طول الوقت والزرار ملوش تأثير |
+| [[hidden]] على العنصر «عشان يستخبى» مع [[popover]] | [[popover]] بيخبّيه لوحده. الاتنين مع بعض لخبطة |
+| زرار [[popovertarget]] جوه فورم من غير [[type="button"]] | **بيبعت الفورم** والـ popover مبيتفتحش (اتقاس) |
+| زرار [[command]] جوه فورم من غير [[type="button"]] | مبيعملش حاجة خالص: لا الأمر ولا الإرسال (اتقاس) |
+| [[popover="manual"]] من غير زرار قفل | الرسالة بتفضل على الشاشة للأبد |
+| فورم مهم أو تأكيد جوه popover | ضغطة غلط برّه بتقفله، والزائر يقدر يشتغل في الصفحة اللي ورا |
+| [[command]] لوحده في مشروع لازم يشتغل على متصفحات قديمة | الزرار ميت هناك |
+| مستني القايمة تطلع جنب الزرار | الافتراضي نص الشاشة. المكان شغل CSS |
+
+---
+
+## الخلاصة
+
+- [[popover]] على العنصر + [[id]]، و [[popovertarget="id"]] على زرار: قايمة بتتفتح وتتقفل من غير JavaScript.
+- [[auto]] (الافتراضي) بيتقفل لوحده وبيقفل غيره. [[manual]] مبيتقفلش غير بزرار. [[hint]] للتلميحات، ولسه جديدة.
+- [[popovertargetaction]]: [[toggle]] و [[show]] و [[hide]].
+- الـ popover في الـ top layer، ومش modal: الصفحة شغالة والفوكس مكانه.
+- [[command]] و [[commandfor]] بيفتحوا ويقفلوا [[<dialog>]] و popover من غير JavaScript، بس دعمهم جديد.
+- لازم يرد: dialog. بيطلع ويختفي: popover. مطوي في الصفحة: [[<details>]].`,
+          try: R`اعمل ملف [[popover.html]] فيه زرار «؟ مساعدة» بيفتح popover فيه سطرين شرح وزرار «فهمت» بيقفله. افتحه في Chrome وجرّب تقفله بأربع طرق: «فهمت»، و Esc، وضغطة برّه، وضغطة تانية على «؟ مساعدة». وبعدين غيّر [[popover]] لـ [[popover="manual"]] وشوف مين من الأربعة لسه شغال.`,
+          sol: R`~~~html popover.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ملاحظة جديدة</title>
+</head>
+<body>
+<h1>ملاحظة جديدة</h1>
+<button type="button" popovertarget="help">؟ مساعدة</button>
+
+<div id="help" popover>
+  <p>أول سطر بيبقى عنوان الملاحظة.</p>
+  <p>الملاحظة بتتحفظ لوحدها وانت بتكتب.</p>
+  <button type="button" popovertarget="help" popovertargetaction="hide">فهمت</button>
+</div>
+</body>
+</html>
+~~~
+
+~~~view 220 شكل الصفحة (دوس «؟ مساعدة»)
+<h1>ملاحظة جديدة</h1>
+<button type="button" popovertarget="help">؟ مساعدة</button>
+<div id="help" popover>
+  <p>أول سطر بيبقى عنوان الملاحظة.</p>
+  <p>الملاحظة بتتحفظ لوحدها وانت بتكتب.</p>
+  <button type="button" popovertarget="help" popovertargetaction="hide">فهمت</button>
+</div>
+~~~
+
+**هتشوف إيه:**
+
+- **[[popover]] (auto):** الأربع طرق كلهم بيقفلوه.
+- **[[popover="manual"]]:** «فهمت» والضغطة التانية على «؟ مساعدة» بس. Esc والضغط برّه مبيعملوش حاجة.
+
+~~~text القياس من Chrome
+auto:     Esc: اتقفل ، كليك برّه: اتقفل ، الزرار تاني: اتقفل ، hide: اتقفل
+manual:   Esc: مفتوح ، كليك برّه: مفتوح ، زرار hide جواه: اتقفل
+~~~
+
+للمساعدة [[auto]] هو الصح: الزائر بيقراها ويكمّل، وأي ضغطة تانية معناها إنه خلّص منها.`,
+          deep: {
+            why: R`القوايم والتلميحات كانت أكتر حاجة بتتكتب JavaScript في أي صفحة: افتح، واقفل لما يدوس برّه، واقفل بـ Esc، واقفل القايمة التانية، وحطها فوق كل حاجة. وكل مكتبة كانت بتعملها بطريقة، وكلهم كانوا بيتخانقوا مع [[z-index]] و [[overflow: hidden]] اللي بيقصّ القايمة. [[popover]] خلّى ده شغل المتصفح: attribute واحد، وطبقة فوق الكل، وسلوك قفل واحد عند كل المواقع.`,
+            how: R`[[popover]] بيدّي العنصر [[display: none]] من ستايل المتصفح. لما الزرار اللي عليه [[popovertarget]] يتداس، المتصفح بيدوّر على العنصر اللي ليه الـ [[id]] ده، وينفّذ الـ action: بيحطه في الـ top layer وبيشيل [[display: none]]، وبيعلّمه [[:popover-open]]. المتصفح ماسك قايمة بالـ popovers المفتوحين من نوع [[auto]]: فتح واحد جديد مش جوه اللي مفتوح بيقفل اللي قبله. وأي كليك برّه آخر واحد في القايمة، أو «close request» (Esc)، بيقفله. [[manual]] مش في القايمة دي أصلًا فمحدش بيقفله. و [[commandfor]] و [[command]] بيعملوا نفس التدوير بالـ [[id]]، وبعدين بيبعتوا للعنصر الأمر، والعنصر (dialog أو popover) بينفّذ اللي يعرفه منه.`,
+            when: R`[[auto]]: قايمة اختيارات، قايمة المستخدم، فلتر، تلميح بيتفتح بضغطة. [[manual]]: إشعار «اتحفظت»، شريط الكوكيز، لوحة الزائر بيفتحها ويقفلها بنفسه. [[hint]]: تلميح فوق قايمة مفتوحة (لما الدعم يستقر). [[command]]: لما المشروع بيستهدف متصفحات حديثة أو فيه polyfill. ومتستخدمش popover لحاجة لازم تترد عليها (dialog) ولا لمحتوى أساسي في الصفحة (details).`,
+            mistakes: R`[[popovertarget]] على لينك. [[id]] مكرر أو مكتوب غلط. فورم دفع جوه popover. [[manual]] من غير زرار قفل. الاعتماد على [[hint]] أو [[command]] من غير ما تبص على الدعم. ومحتوى مهم (سعر، تحذير) جوه popover بس: الزائر اللي مفتحوش مشافوش، و Ctrl+F مبيلاقيهوش.`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** في صفحة «دفتر نور» زرار «⋮» جنب الملاحظة. خلّيه يفتح قايمة فيها تلات اختيارات: «ثبّت»، «انسخ»، «شارك». من غير JavaScript. (من قسم ١ في الشرح)`, done: R`الضغط على «⋮» بيطلّع القايمة، والضغط برّه بيقفلها، وكل الشروط ✓.`, work: { h: 220, start: R`<p>ملاحظة: أفكار المشروع <button type="button">⋮</button></p>
+
+ثبّت
+انسخ
+شارك`, checks: [
+              { say: R`فيه عنصر عليه [[popover]] و [[id="menu"]]`, q: "[popover]#menu" },
+              { say: R`الزرار «⋮» عليه [[popovertarget="menu"]]`, q: "button[type=\"button\"][popovertarget=\"menu\"]", has: "⋮" },
+              { say: R`جوه القايمة تلات أزرار`, q: "#menu button", n: 3 },
+              { say: R`كل زرار جوه القايمة [[type="button"]]`, q: "#menu button:not([type=\"button\"])", n: 0 },
+            ] }, sol: R`~~~live 220 الحل (دوس «⋮»)
+<p>ملاحظة: أفكار المشروع <button type="button" popovertarget="menu">⋮</button></p>
+
+<div id="menu" popover>
+  <p><button type="button">ثبّت</button></p>
+  <p><button type="button">انسخ</button></p>
+  <p><button type="button">شارك</button></p>
+</div>
+~~~
+
+**هتشوف إيه:**
+
+- سطر الملاحظة وجنبه «⋮» بس.
+- دوس «⋮»: صندوق في نص الصفحة فيه التلات أزرار تحت بعض.
+- دوس برّه أو Esc: بيختفي.
+
+**ليه كده:**
+
+- [[popover]] خبّى الـ [[<div>]] وخلّاه يتقفل لوحده.
+- [[popovertarget="menu"]] = [[id="menu"]]: دي الوصلة الوحيدة بين الزرار والقايمة.
+- الاختيارات أزرار مش [[<p>]] بس: الزائر هيدوس عليها، والحاجة اللي بتتداس وبتعمل فعل زرار (درس «a و button»). شغلها نفسه لسه محتاج JavaScript.
+
+**الغلطة الشائعة:** [[popovertarget="#menu"]] بعلامة [[#]] زي اللينك. القيمة الـ [[id]] لوحده من غير [[#]].
+
+~~~text القياس من Chrome
+قبل الضغط:   display = none ، والزرار expanded = false
+بعد الضغط:   matches(':popover-open') = true ، والزرار expanded = true
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زرار «؟ مساعدة» المفروض يطلّع تلميح، بس الضغط عليه مبيعملش أي حاجة. اللي كتبه خبّى التلميح بـ [[hidden]] وربطه بـ [[class]]. صلّحه. (من قسم ١ و ٩ في الشرح)`, done: R`الزرار بيطلّع التلميح وبيخبّيه، وكل الشروط ✓.`, work: { h: 190, start: R`<h1>ملاحظة جديدة</h1>
+<button type="button" popovertarget="help">؟ مساعدة</button>
+
+<div class="help" hidden>
+  أول سطر بيبقى عنوان الملاحظة.
+</div>`, checks: [
+              { say: R`التلميح ليه [[id="help"]]`, q: "div#help" },
+              { say: R`التلميح عليه [[popover]]`, q: "#help[popover]" },
+              { say: R`مفيش [[hidden]] على التلميح`, q: "#help[hidden]", n: 0 },
+              { say: R`الزرار لسه [[popovertarget="help"]]`, q: "button[popovertarget=\"help\"]" },
+            ] }, sol: R`~~~live 133 بعد التصليح
+<h1>ملاحظة جديدة</h1>
+<button type="button" popovertarget="help">؟ مساعدة</button>
+
+<div id="help" popover>
+  أول سطر بيبقى عنوان الملاحظة.
+</div>
+~~~
+
+وده اللي كان قبل التصليح (دوس الزرار: مفيش حاجة):
+
+~~~live 120 قبل
+<h1>ملاحظة جديدة</h1>
+<button type="button" popovertarget="help">؟ مساعدة</button>
+
+<div class="help" hidden>
+  أول سطر بيبقى عنوان الملاحظة.
+</div>
+~~~
+
+**هتشوف إيه:**
+
+- **قبل:** الزرار بيتداس ومفيش أي حاجة بتحصل، ومفيش خطأ.
+- **بعد:** الزرار بيطلّع التلميح في نص الصفحة، وضغطة برّه بتخبّيه.
+
+**الغلطتين:**
+
+1. [[popovertarget]] بيدوّر على **[[id]]**. العنصر كان عليه [[class="help"]] بس، فالزرار ملقاش حد.
+2. [[hidden]] بيخبّي وخلاص: مفيش زرار بيعرف يفتحه من غير JavaScript. [[popover]] بيخبّي **وبيتفتح**.
+
+**الغلطة الشائعة:** تزوّد [[popover]] وتسيب [[hidden]]. العنصر هيفضل عليه الاتنين، وده مش معنى واحد واضح: شيل [[hidden]].
+
+~~~text القياس من Chrome
+قبل:   الضغط على الزرار: مفيش عنصر اتفتح
+بعد:   matches(':popover-open') = true
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** زرار «احفظ» بيطلّع رسالة «اتحفظت ✓». الرسالة لازم **تفضل** لحد ما الزائر يدوس «×» اللي جواها: لا Esc ولا الضغط برّه يقفلوها. و «احفظ» لو اتداس تاني والرسالة مفتوحة، تفضل مفتوحة. (من قسم ٣ و ٤ في الشرح)`, done: R`الرسالة بتطلع وبتفضل، و «×» بيقفلها، وكل الشروط ✓.`, work: { h: 190, start: R`<p><button type="button">احفظ</button></p>
+
+<div>
+  اتحفظت ✓
+  <button type="button">×</button>
+</div>`, checks: [
+              { say: R`الرسالة [[popover="manual"]] وليها [[id="saved"]]`, q: "#saved[popover=\"manual\"]" },
+              { say: R`«احفظ» عليه [[popovertarget="saved"]]`, q: "button[popovertarget=\"saved\"]", has: "احفظ" },
+              { say: R`«احفظ» بيفتح بس: [[popovertargetaction="show"]]`, q: "button[popovertarget=\"saved\"][popovertargetaction=\"show\"]", has: "احفظ" },
+              { say: R`«×» جوه الرسالة وبيقفلها: [[popovertargetaction="hide"]]`, q: "#saved button[popovertarget=\"saved\"][popovertargetaction=\"hide\"]" },
+            ] }, sol: R`~~~live 121 الحل
+<p><button type="button" popovertarget="saved" popovertargetaction="show">احفظ</button></p>
+
+<div id="saved" popover="manual">
+  اتحفظت ✓
+  <button type="button" popovertarget="saved" popovertargetaction="hide">×</button>
+</div>
+~~~
+
+**هتشوف إيه:**
+
+- «احفظ»: الرسالة طلعت في نص الصفحة.
+- «احفظ» تاني: لسه مفتوحة.
+- Esc أو ضغطة برّه: لسه مفتوحة.
+- «×»: اتقفلت.
+
+**ليه كده:**
+
+- [[manual]] شال القفل التلقائي كله.
+- [[show]] على «احفظ»: لو سبته [[toggle]] (الافتراضي) كانت الضغطة التانية هتخبّي الرسالة، كأن الحفظ اتلغى.
+- «×» جوه الرسالة بيشاور على الرسالة اللي هو جواها. ده عادي.
+
+**الغلطة الشائعة:** [[popover]] بس (يعني [[auto]]). الرسالة هتختفي مع أول ضغطة في أي حتة، وممكن الزائر ميلحقش يشوفها.
+
+~~~text القياس من Chrome
+show مرتين:           مفتوح
+Esc ، وكليك برّه:      مفتوح
+زرار hide جواه:        اتقفل
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** النافذة دي شغالة بسطر [[onclick]]. المشروع بقى بيستهدف المتصفحات الحديثة بس، فشيل الـ JavaScript خالص: افتحها واقفلها بـ [[command]] و [[commandfor]]. (من قسم ٧ في الشرح)`, done: R`مفيش [[onclick]] في الصفحة، والزرار لسه بيفتح النافذة modal، و «إلغاء» و «امسح» بيقفلوها، وكل الشروط ✓.`, work: { h: 250, start: R`<button type="button" onclick="del.showModal()">امسح الملاحظة</button>
+
+<dialog id="del">
+  <p>تمسح «أفكار المشروع»؟</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>`, checks: [
+              { say: R`مفيش [[onclick]] في الصفحة`, q: "[onclick]", n: 0 },
+              { say: R`الزرار عليه [[commandfor="del"]] و [[command="show-modal"]]`, q: "button[type=\"button\"][commandfor=\"del\"][command=\"show-modal\"]" },
+              { say: R`النافذة لسه [[id="del"]] وفيها الزرارين بقيمهم`, q: "dialog#del button[value]", n: 2 },
+              { say: R`الزرارين بيقفلوا النافذة (فورم [[method="dialog"]] أو [[command="close"]])`, q: "dialog#del form[method=\"dialog\" i] button[value=\"cancel\"], dialog#del button[command=\"close\"][commandfor=\"del\"][value=\"cancel\"]" },
+            ] }, sol: R`~~~live 193 بعد
+<button type="button" commandfor="del" command="show-modal">امسح الملاحظة</button>
+
+<dialog id="del">
+  <p>تمسح «أفكار المشروع»؟</p>
+  <form method="dialog">
+    <button value="cancel">إلغاء</button>
+    <button value="delete">امسح</button>
+  </form>
+</dialog>
+~~~
+
+**هتشوف إيه:** نفس اللي كان بالظبط: النافذة في النص، والفوكس على «إلغاء»، وأي زرار بيقفلها. اللي اتغيّر الكود بس: سطر الـ JavaScript راح.
+
+**ليه كده:**
+
+- [[command="show-modal"]] هو [[showModal()]] مكتوب كـ HTML. و [[commandfor="del"]] بدل الاسم [[del]] اللي كان قبل النقطة.
+- الفورم [[method="dialog"]] فضل زي ما هو: هو أصلًا من غير JavaScript. وكان ينفع بدله [[<button type="button" commandfor="del" command="close" value="cancel">]].
+
+**الغلطة الشائعة:** تكتب [[command]] وتنسى [[type="button"]]. برّه فورم مفيش فرق، بس لو الزرار اتنقل جوه فورم هيبطّل يشتغل خالص (اتقاس: لا بينفّذ الأمر ولا بيبعت).
+
+**ومتنساش الدعم:** Chrome 135 و Firefox 144 و Safari 26.2 (جدول MDN). في متصفح أقدم الزرار ده ميت، وسطر [[onclick]] كان شغال.
+
+~~~text القياس من Chrome
+command="show-modal":   النافذة اتفتحت ، matches(':modal') = true ، والفوكس جواها
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني (اختار الأداة):** في صفحة الملاحظة تلات حاجات «بتتفتح». لكل واحدة اختار [[<details>]] أو [[popover]] أو [[<dialog>]] واكتبها: (١) «إزاي أشارك ملاحظة؟» سؤال وإجابته جزء من الصفحة. (٢) زرار «مشاركة» بيطلّع اختيارين صغيرين. (٣) زرار «اخرج» لازم الزائر يأكّده قبل أي حاجة تانية. (من قسم ٨ في الشرح: جدول الاختيار)`, done: R`السؤال [[<details>]]، والمشاركة popover، والخروج dialog بيتفتح modal وبيتقفل من غير JavaScript، وكل الشروط ✓.`, work: { h: 280, start: R`<h1>أفكار المشروع</h1>
+
+إزاي أشارك ملاحظة؟
+دوس «مشاركة» واختار الطريقة.
+
+<button type="button">مشاركة</button>
+انسخ اللينك
+ابعت بالإيميل
+
+<button type="button">اخرج</button>
+متأكد إنك عايز تخرج؟
+لأ
+اخرج`, checks: [
+              { say: R`السؤال [[<summary>]] جوه [[<details>]]`, q: "details > summary", has: "إزاي أشارك" },
+              { say: R`اختيارات المشاركة جوه عنصر [[popover]] ليه [[id="share"]]`, q: "[popover]#share" },
+              { say: R`زرار «مشاركة» عليه [[popovertarget="share"]]`, q: "button[popovertarget=\"share\"]", has: "مشاركة" },
+              { say: R`سؤال الخروج جوه [[<dialog id="bye">]]`, q: "dialog#bye", has: "متأكد" },
+              { say: R`زرار «اخرج» بيفتحه modal ([[onclick="bye.showModal()"]] أو [[command="show-modal"]])`, q: "button[onclick*=\"bye.showModal()\"], button[commandfor=\"bye\"][command=\"show-modal\"]" },
+              { say: R`النافذة بتتقفل بفورم [[method="dialog"]] فيه زرارين`, q: "dialog#bye form[method=\"dialog\" i] button", n: 2 },
+            ] }, sol: R`~~~live 193 الحل
+<h1>أفكار المشروع</h1>
+
+<details>
+  <summary>إزاي أشارك ملاحظة؟</summary>
+  <p>دوس «مشاركة» واختار الطريقة.</p>
+</details>
+
+<p><button type="button" popovertarget="share">مشاركة</button>
+<button type="button" onclick="bye.showModal()">اخرج</button></p>
+
+<div id="share" popover>
+  <p><button type="button">انسخ اللينك</button></p>
+  <p><button type="button">ابعت بالإيميل</button></p>
+</div>
+
+<dialog id="bye">
+  <p>متأكد إنك عايز تخرج؟</p>
+  <form method="dialog">
+    <button value="stay">لأ</button>
+    <button value="logout">اخرج</button>
+  </form>
+</dialog>
+~~~
+
+**هتشوف إيه:**
+
+- السؤال سطر جنبه سهم. دوس عليه: الإجابة بتظهر **تحته** والزرارين بينزلوا.
+- «مشاركة»: صندوق صغير فوق الصفحة، وبيختفي مع أي ضغطة برّه.
+- «اخرج»: نافذة في النص ووراها غبشة، ومفيش حاجة في الصفحة بتتداس لحد ما ترد.
+
+**ليه كل واحدة:**
+
+- الإجابة محتوى من الصفحة (والزائر ممكن يدوّر عليها بـ Ctrl+F): [[<details>]].
+- المشاركة اختيار سريع، ولو الزائر غيّر رأيه بيدوس في أي حتة: [[popover]].
+- الخروج قرار: لازم «لأ» أو «اخرج»: [[<dialog>]] modal.
+
+**الغلطة الشائعة:** كله dialog. القايمة الصغيرة هتوقّف الصفحة كلها وتغبّشها عشان اختيارين، والسؤال هيبقى نافذة بدل سطر بيتفرد.
+
+~~~text القياس من Chrome
+details:    الصفحة اللي ورا شغالة ، والمحتوى في مكانه
+popover:    كليك برّه: اتقفل ، والزرار اللي ورا اشتغل
+dialog:     كليك على زرار ورا: ماشتغلش ، matches(':modal') = true
+~~~` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع، وبعدين غيّر:** في الصفحة لوحتين: «الألوان» و «الخطوط». اكتب على ورقة: لو فتحت «الألوان» وبعدين «الخطوط»، مين هيفضل مفتوح؟ جرّب. المصمم عايز الاتنين **يفضلوا مفتوحين مع بعض** والزائر يقفل كل واحدة بزرارها. غيّر النوع. (من قسم ٤ في الشرح: جدول التلات أنواع)`, done: R`توقّعت إن «الخطوط» بس هي اللي هتفضل، وبعد التغيير الاتنين بيفضلوا مفتوحين، وكل الشروط ✓.`, work: { h: 220, start: R`<p><button type="button" popovertarget="colors">الألوان</button>
+<button type="button" popovertarget="fonts">الخطوط</button></p>
+
+<div id="colors" popover>أصفر، أخضر، أزرق</div>
+<div id="fonts" popover>عادي، كبير</div>`, checks: [
+              { say: R`«الألوان» بقت [[popover="manual"]]`, q: "#colors[popover=\"manual\"]" },
+              { say: R`«الخطوط» بقت [[popover="manual"]]`, q: "#fonts[popover=\"manual\"]" },
+              { say: R`الزرارين لسه بيبدّلوا (من غير [[popovertargetaction]] أو [[toggle]])`, q: "button[popovertarget]:not([popovertargetaction]), button[popovertarget][popovertargetaction=\"toggle\"]", n: 2 },
+            ] }, sol: R`~~~live 116 بعد التغيير
+<p><button type="button" popovertarget="colors">الألوان</button>
+<button type="button" popovertarget="fonts">الخطوط</button></p>
+
+<div id="colors" popover="manual">أصفر، أخضر، أزرق</div>
+<div id="fonts" popover="manual">عادي، كبير</div>
+~~~
+
+**هتشوف إيه:**
+
+- **قبل:** فتحت «الألوان» وبعدين «الخطوط»: «الألوان» اختفت.
+- **بعد:** الاتنين مفتوحين. (الاتنين بيطلعوا في نص الصفحة فوق بعض، فهتشوف اللي اتفتح آخر واحد فوق. تفريقهم في المكان شغل CSS.) كل زرار بيقفل لوحته بضغطة تانية.
+
+**ليه:** [[auto]] معناه «واحد بس مفتوح». [[manual]] بيطلع من النظام ده: مبيقفلش حد ومحدش بيقفله. وزرار الـ toggle كفاية للقفل، فمش لازم «×».
+
+**الغلطة الشائعة:** [[popover="hint"]] «عشان ميقفلش التاني». [[hint]] بيقفل أي [[hint]] تاني، فهترجع لنفس المشكلة.
+
+~~~text القياس من Chrome (اللي مفتوح)
+auto ثم auto:        التاني بس
+manual ثم manual:    الاتنين
+hint ثم hint:        التاني بس
+~~~` }
+          ]
+        }
+,
+        {
+          cmd: "hidden و inert",
+          title: "جزء مش موجود وجزء موجود بس واقف: hidden و hidden=\"until-found\" و inert و tabindex",
+          pre: [{ to: "css/dialog و closedby", why: R`هناك شفت المتصفح بيخلّي الصفحة اللي ورا النافذة inert لوحده. هنا بتكتبها بإيدك` }, { to: "css/roving tabindex", why: R`[[tabindex]] مشروح هناك بالتفصيل، وهنا ملخصه في جدول` }],
+          ref: [
+            { t: "MDN: hidden", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/hidden" },
+            { t: "WHATWG: The hidden attribute", url: "https://html.spec.whatwg.org/multipage/interaction.html#the-hidden-attribute" },
+            { t: "MDN: inert", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inert" },
+            { t: "WHATWG: The inert attribute", url: "https://html.spec.whatwg.org/multipage/interaction.html#the-inert-attribute" },
+            { t: "MDN: tabindex", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/tabindex" }
+          ],
+          desc: R`[[hidden]] بيقول «العنصر ده مش جزء من الصفحة دلوقتي»: مش باين، ومبيتداسش، وقارئ الشاشة مش شايفه. و [[inert]] بيقول «العنصر ده باين بس **واقف**»: لا كليك ولا Tab ولا قارئ شاشة، وهو لسه في مكانه قدام العين.
+الاتنين بيتكتبوا على أي عنصر، وبيشتغلوا على كل اللي جواه.`,
+          example: R`<p id="saved" hidden>الملاحظة اتحفظت.</p>
+<div hidden="until-found">
+  <p id="tips">نصيحة: دوس Ctrl+S للحفظ.</p>
+</div>
+<main inert>
+  <button type="button">ملاحظة جديدة</button>
+</main>
+<div tabindex="0">صندوق بياخد فوكس</div>`,
+          flag: "script",
+          lines: [
+            R`رسالة مكتوبة في الكود ومش باينة: [[hidden]] خلّاها [[display: none]]. لما الحفظ يحصل، JavaScript بيشيل الـ attribute فتظهر.`,
+            R`[[hidden="until-found"]]: المحتوى مستخبي، بس لو الزائر دوّر على كلمة منه بـ Ctrl+F أو دخل بلينك بيشاور على حاجة جواه، المتصفح بيظهره.`,
+            R`الفقرة اللي جوه الصندوق المستخبي. [[id="tips"]] عشان لينك زي [[page.html#tips]] يقدر يوصلها ويفتح الصندوق.`,
+            R`[[</div>]] بيقفل الصندوق المستخبي: أي حاجة تتكتب قبله هتستخبى مع الفقرة وتظهر معاها.`,
+            R`[[inert]] على [[<main>]]: كل اللي جواه باين زي ما هو، بس مفيش حاجة فيه بتتداس ولا بتاخد فوكس.`,
+            R`الزرار ده باين، بس الكليك عليه مبيوصلش و Tab بيعدّيه، لأنه جوه عنصر inert.`,
+            R`[[</main>]] بيقفل الجزء الواقف. اللي بييجي بعده في الصفحة شغال عادي.`,
+            R`[[tabindex="0"]] بيخلّي عنصر مش بياخد فوكس في العادة ([[<div>]]) يقف عليه Tab في دوره.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+- [[hidden]]: العنصر **مش موجود** للزائر، بأي طريقة.
+- [[inert]]: العنصر **موجود وباين**، بس المتصفح بيتجاهل أي تعامل معاه.
+
+القياسات من Chrome 157 على Windows 11.
+
+---
+
+## ١. [[<p hidden>]]: مش جزء من الصفحة دلوقتي
+
+~~~live 81 دوس الزرار كذا مرة
+<button type="button" onclick="msg.hidden = !msg.hidden">أظهر / اخفي الرسالة</button>
+<p id="msg" hidden>الملاحظة اتحفظت ✓</p>
+<p>كلام الصفحة اللي تحت.</p>
+~~~
+
+(سطر [[onclick]] هنا JavaScript: بيعكس [[hidden]] على العنصر اللي الـ [[id]] بتاعه [[msg]]، يعني يكتبه لو مش موجود ويشيله لو موجود. هتفهمه في كورس JavaScript.)
+
+**هتشوف إيه:** الرسالة مش باينة والسطر اللي تحت لازق في الزرار (الرسالة مش واخدة مكان). كل ضغطة بتظهرها أو تخفيها، والسطر اللي تحت بينزل ويطلع.
+
+~~~text القياس من Chrome
+<p hidden>:              display = none   (مش واخد مكان ، ومبيتداسش)
+في accessibility tree:    ignored = true   (قارئ الشاشة مش شايفه)
+<p hidden="false">:      display = none   (لسه مستخبي!)
+~~~
+
+- [[hidden]] من غير قيمة، زي [[required]] و [[open]]: **وجوده** هو المعنى. عشان العنصر يظهر لازم الـ attribute يتشال خالص. [[hidden="false"]] لسه إخفاء.
+- المعنى في المواصفة: «مش مناسب دلوقتي». رسالة نجاح لسه محصلتش، خطوة ٢ في فورم والزائر في خطوة ١، تاب مش مفتوح.
+- ومش لإخفاء حاجة عن ناس وإظهارها لناس: اللي [[hidden]] عليه مستخبي عن الكل، قارئ الشاشة كمان. (المحتوى اللي لقارئ الشاشة بس ليه طريقة تانية في الـ CSS.)
+
+### الفخ: سطر CSS بيلغي [[hidden]]
+
+[[hidden]] شغال بسطر في ستايل المتصفح نفسه ([[display: none]]). وأي [[display]] تكتبه انت في الـ CSS بيكسب عليه:
+
+~~~live 62 الصندوق التاني عليه hidden وباين برضه
+<style>
+  .card { display: flex; gap: 8px; border: 1px solid; padding: 8px; }
+</style>
+<p hidden>فقرة عليها hidden: مستخبية.</p>
+<div class="card" hidden>صندوق عليه hidden و class="card": <strong>باين!</strong></div>
+~~~
+
+(السطر اللي جوه [[<style>]] CSS: بيدّي أي عنصر عليه [[class="card"]] برواز ومسافة و [[display: flex]]. هتتعلمه في وحدات الـ CSS. المهم هنا إنه كتب [[display]].)
+
+~~~text القياس من Chrome
+<p hidden>:                     display = none
+<div class="card" hidden>:      display = flex    (الـ CSS كسب)
+~~~
+
+الحل سطر واحد في أول ملف الـ CSS بتاع أي مشروع:
+
+~~~css
+[hidden] { display: none !important; }
+~~~
+
+معناه: أي عنصر عليه [[hidden]] يستخبى، ومفيش سطر تاني يكسب عليه. (الاستثناء [[hidden="until-found"]] اللي جاي: ده مبيستخدمش [[display: none]] أصلًا، فلو بتستخدمه في المشروع، السطر ده محتاج استثناء ليه، وده بييجي مع الـ selectors في وحدات الـ CSS.)
+
+---
+
+## ٢. [[<div hidden="until-found">]]: مستخبي لحد ما حد يدوّر عليه
+
+القيمة الوحيدة اللي [[hidden]] بياخدها. العنصر مستخبي، **بس** المتصفح بيظهره لوحده في حالتين:
+
+- الزائر دوّر بـ Ctrl+F على كلمة جواه.
+- الزائر دخل بلينك بيشاور على حاجة جواه ([[#id]])، أو لينك «text fragment» من محرك بحث.
+
+~~~text القياس من Chrome
+<div hidden="until-found">:     display = block ، content-visibility = hidden ، الارتفاع = 0
+فتحنا page.html#tips (والـ id ده جوه الصندوق):
+                                 المتصفح شال hidden من على الصندوق ، والارتفاع بقى 18px ، والصفحة نزلت عنده
+فتحنا الصفحة بلينك text fragment لكلمة جواه:
+                                 نفس النتيجة: hidden اتشال
+~~~
+
+(Ctrl+F نفسه مينفعش يتساق من سكربت، فده من MDN والمواصفة: البحث بيلاقي الكلمة، وبيظهر الصندوق، وبينزل عندها.)
+
+الفرق بينه وبين [[hidden]] العادي:
+
+| | [[hidden]] | [[hidden="until-found"]] |
+|---|---|---|
+| بيستخبى إزاي | [[display: none]] | [[content-visibility: hidden]]: العنصر موجود بارتفاع صفر ومحتواه مش مرسوم |
+| Ctrl+F بيلاقي اللي جواه | لأ | أيوه، وبيظهره |
+| لينك [[#id]] لحاجة جواه | مبيوصلش | بيوصل وبيظهره |
+| بعد ما يظهر | | الـ attribute بيتشال، ومبيرجعش يستخبى لوحده |
+
+بيتستخدم في: نص طويل مطوي (شروط، تفاصيل منتج، باقي المقال) عايز الزائر ومحرك البحث يلاقوا اللي جواه. ولو عايز سهم وعنوان بيتداس عليه كمان، [[<details>]] بيعمل الاتنين (درس «details و summary»).
+
+**الدعم (جدول MDN):** Chrome 102 و Firefox 148. Safari 26.2 بيظهر المحتوى بس مبينزلش عند الكلمة صح (مكتوب في الجدول «partial»). في متصفح مش داعم العنصر بيتعامل كـ [[hidden]] عادي: مستخبي ومفيش بحث بيظهره. فمتحطش جواه حاجة الزائر **لازم** يشوفها.
+
+---
+
+## ٣. [[<main inert>]]: باين بس واقف
+
+~~~live 113 جرّب تدوس وتكتب في الجزء الواقف، وجرّب Tab
+<section>
+  <p><strong>جزء عادي:</strong> <button type="button" onclick="a.value = Number(a.value) + 1">دوسني</button> اتداس <output id="a">0</output> مرة</p>
 </section>
-<script>
-  const video = document.getElementById("bg");
-  const btn = document.getElementById("toggle");
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function show(isPaused) {
-    btn.setAttribute("aria-pressed", String(isPaused));
-    btn.textContent = isPaused ? "تشغيل الفيديو" : "إيقاف الفيديو";
-  }
-  show(reduce);
-  if (!reduce) video.play().catch(() => show(true));
-
-  btn.addEventListener("click", () => {
-    if (video.paused) video.play(); else video.pause();
-    show(video.paused);
-  });
-$__lt/script>
-</body>
-</html>
+<section inert>
+  <p><strong>جزء عليه inert:</strong> <button type="button" onclick="b.value = Number(b.value) + 1">دوسني</button> اتداس <output id="b">0</output> مرة
+  <a href="#x">لينك</a> <input value="اكتب هنا" aria-label="خانة"></p>
+</section>
 ~~~
 
-ملفات تجريبية لو معندكش فيديو:
+**هتشوف إيه:** الجزئين شكلهم واحد. بس في التاني: الزرار مبيعدّش، والخانة مبتاخدش كتابة، و Tab بيعدّي من فوقهم كأنهم مش موجودين، والنص مبيتحددش بالماوس.
 
-~~~bash
-ffmpeg -f lavfi -i testsrc2=size=640x360:rate=24 -t 10 -c:v libx264 -pix_fmt yuv420p hero.mp4
-ffmpeg -i hero.mp4 -frames:v 1 poster.jpg
+~~~text القياس من Chrome
+كليك بالماوس على زرار جوه inert:      الزرار ماتداسش
+Tab:                                    عدّى الزرار واللينك والخانة اللي جوه inert
+استدعاء focus() على الزرار:             الفوكس ماراحش
+في accessibility tree:                  ignored = true
+الشكل:                                  opacity = 1   (مفيش أي تغيير في الشكل)
 ~~~
 
-**الفكرة:** مفيش [[autoplay]] في الـ HTML خالص. الـ JavaScript هو اللي بيقرر: بيقرا [[matchMedia("(prefers-reduced-motion: reduce)")]]، ولو مش طالب حركة أقل بينادي [[video.play()]]. كده مع reduce الفيديو عمره ما بيبدأ والـ [[poster]] يفضل ظاهر.
+- [[inert]] من غير قيمة، ومعناه بيتورّث لكل اللي جوه العنصر.
+- **الشكل مبيتغيّرش.** الزائر هيشوف زرار عادي ويدوس ومفيش حاجة تحصل. فلازم انت تبيّن إن الجزء واقف، بسطر CSS زي [[[inert] { opacity: 0.5; }]] (يخلّي أي جزء inert باهت للنص).
+- وحسب MDN، Ctrl+F كمان مبيدوّرش جوه inert (Chrome 124 و Firefox 120، و Safari لأ).
 
-- [[aria-pressed]] بيقول للقارئ «الزرار ده مضغوط ولا لأ». هنا [[true]] = الفيديو واقف، وكلمة الزرار بتتغيّر مع القيمة. دالة [[show()]] هي المكان الوحيد اللي بيغيّر الاتنين، عشان ميتلخبطوش.
-- [[.catch(() => show(true))]]: لو المتصفح منع التشغيل (وضع توفير الطاقة مثلًا)، الزرار يقول «تشغيل» مش «إيقاف».
-- [[tabindex="-1"]] و [[aria-hidden="true"]] على الفيديو: زينة، والزرار هو أول وقفة في Tab.
+### إمتى تكتبه بإيدك
 
-**الغلطة الشائعة:** تحط [[autoplay]] في الـ HTML وبعدين توقّف الفيديو بـ JavaScript لو reduce. كده الفيديو بيتحرك لحظة قبل الـ script، واللي طلب حركة أقل شاف حركة.
+[[showModal()]] بيعمل الصفحة inert لوحده. انت بتكتب [[inert]] لما **مفيش** modal dialog والمفروض جزء يقف:
 
-~~~text الناتج
-من غير reduce:
-video.paused = false ، aria-pressed = "false" ، الزرار «إيقاف الفيديو»
-Tab → الزرار (id=toggle) ، Enter → paused = true ، aria-pressed = "true" ، «تشغيل الفيديو»
+- لوحة جانبية مفتوحة بـ [[show()]] أو popover، وعايز الصفحة اللي وراها تقف.
+- فورم بيتبعت دلوقتي: الفورم كله يقف لحد ما الرد ييجي، بدل [[disabled]] على كل حقل.
+- محتوى موجود في الكود بس برّه الشاشة (سلايد مش دوره، قايمة جانبية مقفولة): من غير [[inert]] الزائر بـ Tab بيدخل على أزرار مش شايفها.
 
-مع reduce (Rendering › prefers-reduced-motion):
-video.paused = true والـ poster ظاهر ، aria-pressed = "true"
-Enter → paused = false (المستخدم طلب بنفسه، فمسموح)
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اكتب ملف [[intro.ar.vtt]] لـ ٣ جمل (من 0 لـ 2، ومن 2 لـ 5، ومن 5 لـ 8 ثواني)، وبعدين امسح أول سطر [[WEBVTT]] وشوف بيحصل إيه.`, done: R`بالملف السليم [[video.textTracks[0].cues.length]] = 3 والترجمة بتبان. من غير [[WEBVTT]]: [[cues.length]] = 0 و [[track.readyState]] = 3 (ERROR)، يعني الملف كله اترفض في سكوت.`, sol: R`~~~text intro.ar.vtt
-WEBVTT
+اللي بيكتب [[inert]] ويشيله في الوقت المناسب JavaScript. في الـ HTML انت بتكتب الحالة اللي الصفحة بتبدأ بيها.
 
-00:00:00.000 --> 00:00:02.000
-أهلًا بيك في جولة المتجر.
+---
 
-00:00:02.000 --> 00:00:05.000
-هنا بنحمّص القهوة كل صباح.
+## ٤. [[hidden]] ولا [[inert]] ولا [[disabled]] ولا [[aria-hidden]]؟
 
-00:00:05.000 --> 00:00:08.000
-وهنا بنغلّفها ونبعتها لك.
+| | باين؟ | بيتداس بالماوس؟ | Tab بيقف عليه؟ | قارئ الشاشة شايفه؟ | بيتكتب على |
+|---|---|---|---|---|---|
+| [[hidden]] | لأ | لأ | لأ | لأ | أي عنصر |
+| [[inert]] | أيوه | لأ | لأ | لأ | أي عنصر (وكل اللي جواه) |
+| [[disabled]] | أيوه، باهت | لأ | لأ | أيوه، وبيقول «disabled» | عناصر الفورم بس |
+| [[aria-hidden="true"]] | أيوه | **أيوه** | **أيوه** | لأ | أي عنصر |
+
+~~~text القياس من Chrome (زرار في كل حالة)
+جوه inert:              Tab عدّاه ، والكليك ماوصلش ، ignored = true
+disabled:               Tab عدّاه ، وفي accessibility tree: role = button ، disabled = true
+جوه aria-hidden="true": Tab **وقف عليه**
 ~~~
 
-~~~live 170 170 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>ترجمة</title></head>
-<body>
-<video id="v" src="hero.mp4" controls>
-  <track id="t" default kind="subtitles" srclang="ar" label="عربي" src="intro.ar.vtt">
-</video>
-<script>
-  setTimeout(() => {
-    console.log(v.textTracks[0].cues?.length, t.readyState);
-  }, 800);
-$__lt/script>
-</body>
-</html>
+- [[disabled]] لحقل أو زرار واحد في فورم، والزائر محتاج يعرف إنه موجود بس مش متاح (درس «readonly و disabled و checked»).
+- [[inert]] لمنطقة كاملة من أي عناصر.
+- [[aria-hidden]] بيخبّي عن قارئ الشاشة بس. لو حطيته على جزء فيه أزرار، اللي ماشي بالكيبورد هيقف على زرار قارئ الشاشة مبيقولش عنه حاجة. للزينة بس (أيقونة جنب كلمة).
+
+---
+
+## ٥. [[<div tabindex="0">]]: مين بياخد فوكس
+
+[[inert]] بيشيل عناصر من طريق Tab. [[tabindex]] بيحط عناصر فيه، أو بيشيل واحد بعينه:
+
+| القيمة | Tab بيقف عليه؟ | ينفع الفوكس يروحله بكليك أو JavaScript؟ |
+|---|---|---|
+| [[tabindex="0"]] | أيوه، في دوره بترتيب الكود | أيوه |
+| [[tabindex="-1"]] | لأ | أيوه |
+| [[tabindex="5"]] (أي رقم موجب) | أيوه، **قبل** كل العناصر العادية | أيوه |
+| من غير [[tabindex]] على [[<div>]] | لأ | لأ |
+
+~~~text القياس من Chrome
+الكود بالترتيب:   زرار ١ ، div tabindex="0" ، div tabindex="-1" ، زرار tabindex="5" ، div عادي ، زرار ٢
+Tab:              الزرار أبو 5 > زرار ١ > الـ div أبو 0 > زرار ٢
+focus() على الـ div أبو -1:   الفوكس راحله
+focus() على الـ div العادي:    الفوكس ماراحش
+الـ div أبو 0 في accessibility tree:   role = generic   (بياخد فوكس ، بس لسه مش زرار)
 ~~~
 
-شغّلها من سيرفر ([[npx serve .]])، لأن المتصفح بيرفض يقرا ملف VTT من [[file://]].
+- [[tabindex="0"]] بيدّي الفوكس بس. مبيخلّيش الـ [[<div>]] زرار: لا Enter ولا Space ولا role. لو بيتداس، اكتبه [[<button>]].
+- الرقم الموجب بيلخبط الترتيب على كل الصفحة. متستخدموش.
+- [[-1]] للعنصر اللي JavaScript بينقل له الفوكس (عنوان بعد التنقل، رسالة خطأ).
 
-**شكل الملف:** أول سطر لازم [[WEBVTT]] بالظبط، وبعده سطر فاضي، وكل جملة (cue) سطر توقيت [[بداية --> نهاية]] وبعده الكلام، وسطر فاضي بين كل cue والتاني.
+التفاصيل ومثال كامل في درس «roving tabindex».
 
-**الأرقام بتعني إيه:** [[track.readyState]] فيه ٤ قيم: 0 لسه ماتحمّلش، و 1 بيتحمّل، و 2 جاهز، و 3 خطأ. لما تمسح [[WEBVTT]] المتصفح بيعتبر الملف كله مش VTT ويرفضه.
+---
 
-**الغلطة الشائعة:** تستنى رسالة في الكونسول. مفيش، الترجمة بس مبتظهرش. ولو الملف جاي من دومين تاني، الـ [[<video>]] محتاج [[crossorigin]] والسيرفر محتاج CORS.
+## ٦. الغلطات اللي بتحصل فعلًا
 
-~~~text الناتج
-الملف السليم:         cues.length = 3 ، readyState = 2 (LOADED)
-من غير سطر WEBVTT:    cues.length = 0 ، readyState = 3 (ERROR)
-                      مفيش ولا رسالة error في الكونسول بخصوص الترجمة
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** iframe يوتيوب (أو خريطة) responsive بـ [[width: 100%; height: auto; aspect-ratio: 16 / 9]] بدل حيلة [[padding-top: 56.25%]] القديمة.`, done: R`على 360 ارتفاع الـ iframe 202.5 (= 360 × 9 ÷ 16)، وعلى 768 قد 432، ومفيش wrapper ولا [[position: absolute]] في الـ CSS، والـ iframe عليه [[title]].`, sol: R`~~~live 520 290 index.html
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[hidden="false"]] عشان العنصر يظهر | لسه مستخبي. الـ attribute لازم يتشال |
+| [[hidden]] على عنصر الـ CSS مديله [[display]] | العنصر باين |
+| [[hidden]] لمحتوى المفروض قارئ الشاشة يقراه | مستخبي عنه كمان |
+| محتوى أساسي جوه [[hidden="until-found"]] | في متصفح مش داعم، مستخبي للأبد |
+| [[inert]] من غير أي تغيير في الشكل | أزرار شكلها شغال ومبتردش، والزائر يفتكر الصفحة بايظة |
+| [[inert]] على [[<body>]] كله | الصفحة كلها ماتت، بما فيها النافذة اللي كنت عايزها تشتغل |
+| [[disabled]] على [[<div>]] أو [[<a>]] | ملوش تأثير: [[disabled]] لعناصر الفورم بس. المنطقة تاخد [[inert]] |
+| [[aria-hidden="true"]] على جزء فيه أزرار | Tab بيقف على أزرار قارئ الشاشة ساكت عنها |
+| [[tabindex="0"]] على [[<div>]] بدل [[<button>]] | فوكس من غير Enter ولا Space ولا اسم |
+
+---
+
+## الخلاصة
+
+- [[hidden]]: مش موجود. بيتشال عشان يظهر، ومتسيبش الـ CSS يلغيه.
+- [[hidden="until-found"]]: مستخبي لحد ما البحث أو لينك يوصلّه.
+- [[inert]]: باين وواقف، هو وكل اللي جواه. وبيّن ده في الشكل.
+- [[disabled]] لحقل في فورم. [[aria-hidden]] للزينة بس.
+- [[tabindex]]: [[0]] يدخل طريق Tab، و [[-1]] فوكس من غير Tab، والموجب ممنوع.`,
+          try: R`اعمل ملف [[hidden.html]] فيه: فقرة «نزّل التطبيق» عليها [[hidden]]، وصندوق [[hidden="until-found"]] جواه فقرة ليها [[id="refund"]] فيها «الاسترجاع خلال ١٤ يوم»، ولينك فوق بيروح لـ [[#refund]]، وجزء [[inert]] فيه زرار. افتحه في Chrome: دوّر بـ Ctrl+F على «استرجاع»، وحمّل الصفحة تاني ودوس اللينك، وجرّب Tab.`,
+          sol: R`~~~html hidden.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فيديو responsive</title>
-<style>
-  body { margin: 0; font-family: system-ui, sans-serif; }
-  .embed { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 0; }
-</style>
+<title>الاشتراك</title>
 </head>
 <body>
-<main>
-<h1>جولة المحمصة</h1>
-<iframe class="embed" src="https://www.youtube-nocookie.com/embed/VIDEO_ID"
-        title="جولة داخل المحمصة" loading="lazy" allowfullscreen></iframe>
-</main>
+<h1>الاشتراك</h1>
+<p hidden>نزّل التطبيق</p>
+<p><a href="#refund">سياسة الاسترجاع</a></p>
+
+<div hidden="until-found">
+  <p id="refund">الاسترجاع خلال ١٤ يوم من الدفع.</p>
+</div>
+
+<section inert>
+  <button type="button">ادفع</button> (لسه مش متاح)
+</section>
 </body>
 </html>
 ~~~
 
-بدّل [[VIDEO_ID]] برقم فيديو حقيقي عشان يشتغل.
-
-**ليه الطريقة دي أحسن:** الحيلة القديمة كانت wrapper بـ [[padding-top: 56.25%]] و iframe جواه [[position: absolute]]، لأن الـ iframe مكانش بيعرف يحسب ارتفاعه من عرضه. دلوقتي [[aspect-ratio: 16 / 9]] بيعمل ده مباشرة، و [[height: auto]] بيسيبه يحسب.
-
-- [[display: block]] بيشيل الفراغ الصغير اللي تحت العناصر الـ inline.
-- [[border: 0]] بديل الـ [[frameborder]] القديم.
-- [[title]] لازم: ده اسم الـ iframe لقارئ الشاشة، و axe بيطلّع [[frame-title]] لو ناقص.
-- [[loading="lazy"]]: يوتيوب تقيل، فميتحمّلش غير لما يقرب.
-
-**الغلطة الشائعة:** تكتب [[aspect-ratio]] وتسيب [[height="315"]] في الـ HTML اللي جاي من كود التضمين. نفس مشكلة الصور: الارتفاع المتحدد بيلغي النسبة.
-
-~~~text الناتج
-عرض الشاشة   iframe width   iframe height
-360          360            202.5    (360 × 9 ÷ 16)
-768          768            432
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** فيديو عندك (أو اعمله بـ ffmpeg) ٦٠ ثانية. حطه ٣ مرات بـ [[preload="none"]] و [[metadata]] و [[auto]]، وعدّ الـ bytes في Network قبل ما تدوس play.`, done: R`عندك ٣ أرقام: none قريب من صفر، و metadata أقل بكتير من auto، وكتبت ليه [[metadata]] الاختيار الافتراضي للفيديو اللي في نص الصفحة و [[none]] لفيديوهات كتير في صفحة واحدة.`, sol: R`~~~bash
-# فيديو تجربة 60 ثانية بصوت، حوالي 4.3MB
-ffmpeg -f lavfi -i testsrc2=size=640x360:rate=24 -f lavfi -i sine=frequency=330 -t 60 -c:v libx264 -pix_fmt yuv420p -b:v 500k -c:a aac -b:a 64k -movflags +faststart v.mp4
+~~~view 150 شكل الصفحة أول ما تفتح
+<h1>الاشتراك</h1>
+<p hidden>نزّل التطبيق</p>
+<p><a>سياسة الاسترجاع</a></p>
+<div hidden="until-found">
+  <p id="refund">الاسترجاع خلال ١٤ يوم من الدفع.</p>
+</div>
+<section inert>
+  <button type="button">ادفع</button> (لسه مش متاح)
+</section>
 ~~~
 
-~~~live 170 170 index.html
-<!doctype html>
-<meta charset="utf-8">
-<title>preload</title>
-<!-- جرّب واحد في المرة، وخد نسخة باسم مختلف من الملف لكل تجربة عشان الكاش -->
-<video preload="none" src="v.mp4" controls></video>
-<!-- <video preload="metadata" src="v.mp4" controls></video> -->
-<!-- <video preload="auto" src="v.mp4" controls></video> -->
+(اللينك في المعاينة دي من غير [[href]]: اللينكات اللي بتروح لـ [[#id]] بتتجرّب في ملف حقيقي، مش جوه صندوق المعاينة.)
+
+**هتشوف إيه في الملف بتاعك:**
+
+- «نزّل التطبيق» مش باينة، و «الاسترجاع خلال ١٤ يوم» مش باينة.
+- Ctrl+F و «استرجاع»: جملة الاسترجاع ظهرت واتعلّمت.
+- حمّل تاني ودوس «سياسة الاسترجاع»: الجملة ظهرت والعنوان بقى آخره [[#refund]].
+- Ctrl+F و «نزّل»: مفيش نتيجة. [[hidden]] العادي مبيتلاقاش.
+- Tab: بيقف على اللينك بس. زرار «ادفع» مبياخدش فوكس ومبيتداسش.
+
+~~~text القياس من Chrome
+قبل:                          الصندوق display = block ، content-visibility = hidden ، ارتفاعه 0
+بعد فتح الصفحة على #refund:    hidden اتشال من الصندوق ، وارتفاعه بقى 18px
+زرار «ادفع» جوه inert:         الكليك ماوصلش ، و Tab عدّاه
 ~~~
 
-افتح DevTools › Network، و Disable cache، وشغّلها من سيرفر محلي، ومتدوسش play.
-
-**بيحصل إيه:**
-
-- [[none]]: ولا byte. مفيش حتى مدة الفيديو، فالـ controls بتبان فاضية لحد ما حد يدوس.
-- [[metadata]]: المفروض «المدة والمقاس وأول frame بس»، بس المتصفح بياخد قدر من الـ buffer معاها. في التجربة دي 1.2MB.
-- [[auto]]: المتصفح بيبدأ يحمّل كمية كبيرة وكأن المستخدم هيتفرج.
-
-**ليه [[metadata]] الافتراضي للفيديو في نص الصفحة:** الزائر بيشوف المدة وأول frame، والصفحة مش بتدفع تمن الفيديو كله. و [[none]] لصفحة فيها فيديوهات كتير، لأن حتى metadata مضروبة في ٢٠ فيديو رقم كبير، وحط [[poster]] عشان متبقاش مربع أسود.
-
-**الغلطة الشائعة:** تفتكر إن الأرقام ثابتة. Chrome بيغيّر كمية الـ buffer حسب النت، و [[-movflags +faststart]] بيفرق كمان (من غيره الـ metadata في آخر الملف فبيطلب طلبات زيادة).
-
-~~~text الناتج
-الملف كله: 4,279,184 byte
-
-preload     الـ bytes قبل play     readyState     اللي اتخزّن (ثانية)
-none        0                     0              0
-metadata    1,245,184             4              17.5
-auto        3,145,728             4              44.1
-
-(سيرفر محلي من غير throttling، بعد 3 ثواني من الفتح)
-~~~` },
-          ],
+(خطوة Ctrl+F من MDN، الباقي اتقاس.)`,
           deep: {
-            why: R`iframe يوتيوب واحد بيحمّل مئات الـ KB من JavaScript قبل ما حد يدوس play، وبيبطّأ الصفحة حتى لو محدش هيتفرج. والفيديو من غير poster بيبان مربع أسود. والفيديو من غير ترجمة مش مفهوم للصم، ولا لأي حد فاتح الموبايل في مواصلات من غير سماعة.`,
-            how: R`الـ [[<source>]] جوه video زي picture: المتصفح ياخد أول نوع يعرف يشغّله. [[preload="none"]] مبيحمّلش حاجة، و [[metadata]] بيحمّل المدة وأول frame بس، و [[auto]] ممكن يحمّل كتير.
-
-سياسة الـ autoplay: المتصفح بيسمح بالتشغيل التلقائي لو الفيديو [[muted]] (أو المستخدم اتفاعل مع الموقع قبل كده). و [[playsinline]] لـ iOS Safari. والفيديو اللي بيشتغل لوحده أكتر من 5 ثواني لازم يبقى فيه طريقة توقفه (WCAG)، وتحترم [[prefers-reduced-motion]] (متشغلوش لوحده).
-
-ملف الـ VTT نص عادي: أول سطر [[WEBVTT]]، وبعدين لكل جملة سطر وقت [[00:00.000 --> 00:03.000]] وتحته الكلام. و [[kind="captions"]] (كل الصوت مكتوب) غير [[subtitles]] (ترجمة للغة تانية). ولو الـ VTT على domain تاني، الـ video محتاج [[crossorigin]] والسيرفر يبعت CORS.
-
-الـ facade: زرار بصورة الفيديو من [[i.ytimg.com]]، ولما يتضغط تعمل iframe بـ [[?autoplay=1]] وتحطه مكانه. فيه مكتبة جاهزة اسمها [[lite-youtube-embed]]. و [[youtube-nocookie.com]] بيقلل الـ cookies لحد ما المستخدم يشغّل. وفي الحالتين الـ iframe محتاج [[title]] عشان قارئ الشاشة يعرف هو إيه.`,
-            when: R`فيديو بتاعك (شرح، إعلان): [[<video>]] بـ controls و poster و captions. خلفية للهيرو: muted autoplay loop playsinline وقصير وخفيف، ومعاه زرار إيقاف. فيديو يوتيوب في صفحة فيها كذا فيديو أو في الـ landing: facade دايمًا.`,
-            mistakes: R`autoplay من غير muted فمبيشتغلش ومفيش أي error. نسيان playsinline فالآيفون يفتحه full screen. فيديو 50MB في الهيرو على موبايل. iframe من غير title. 10 iframes يوتيوب في صفحة واحدة. فيديو خلفية ملوش زرار إيقاف ومبيحترمش reduced motion. وترجمة محروقة في الفيديو نفسه بدل track (مبتتكبرش ومبتتقفلش ومبتتدوّرش).`
+            why: R`الصفحة فيها دايمًا حاجات مش وقتها: رسالة لسه محصلتش، خطوة جاية، قايمة مقفولة. وفيها أوقات جزء منها لازم يقف: وهي بتحمّل، أو وفيه لوحة مفتوحة فوقها. زمان الأولى كانت [[class]] بتتلوّن بـ CSS، والتانية كانت شبه مستحيلة: تعطيل كل زرار ولينك وخانة واحد واحد، وتظبيط [[tabindex="-1"]] و [[aria-hidden]] على كل حاجة، وترجيعهم بعدين. [[hidden]] و [[inert]] بيقولوا المعنى مرة واحدة على العنصر الأب، والمتصفح بيطبّقه على الماوس والكيبورد وقارئ الشاشة مع بعض.`,
+            how: R`[[hidden]] في ستايل المتصفح سطر واحد: [[[hidden] { display: none }]]. عشان كده أي [[display]] من عندك بيلغيه: ده CSS عادي والأقوى بيكسب. [[hidden="until-found"]] بدل كده بياخد [[content-visibility: hidden]]: العنصر له صندوق بس محتواه مبيترسمش، فالمتصفح لسه يقدر يدوّر جواه. ولما البحث أو لينك يوصل لحاجة جواه، بيبعت حدث اسمه [[beforematch]] وبيشيل الـ attribute. و [[inert]] مش CSS خالص: المتصفح بيعلّم العنصر وكل ولاده إنهم «inert»، فاختبار «إيه اللي تحت الماوس» بيعدّيهم، وقايمة العناصر اللي بتاخد فوكس بتستبعدهم، والـ accessibility tree بتشيلهم.`,
+            when: R`[[hidden]]: حاجة مش وقتها، و JavaScript هيظهرها. [[hidden="until-found"]]: نص مطوي لازم يتلاقى بالبحث. [[inert]]: منطقة لازم تقف مؤقتًا، أو محتوى برّه الشاشة. [[disabled]]: حقل أو زرار واحد في فورم. [[aria-hidden]]: زينة مكررة لقارئ الشاشة. [[tabindex="0"]]: عنصر مخصوص محتاج فوكس ومفيش عنصر HTML جاهز ليه (نادر). [[tabindex="-1"]]: هدف JavaScript بينقل له الفوكس.`,
+            mistakes: R`[[hidden="false"]]. نسيان سطر [[[hidden] { display: none !important }]] في مشروع فيه [[display: flex]] على كل حاجة. [[inert]] من غير شكل باهت. [[inert]] على أب النافذة اللي المفروض تشتغل. [[aria-hidden]] على جزء تفاعلي. [[tabindex]] موجب. وإخفاء حاجة بـ [[hidden]] على أساس إنها «سر»: الكود كله بيتشاف في View Source.`
           },
-          teach: R`## ٣ طرق تحط فيديو في صفحة
-
-فيديو بتاعك بأزرار تحكم، وفيديو خلفية بيشتغل لوحده، وفيديو يوتيوب. عشان نجرّب بجد، عملنا بـ ffmpeg فيديو تجربة 1280 × 720 مدته ٦ ثواني بصيغتين (WebM و MP4)، وصورة poster، وملف ترجمة، وفتحنا المثال في Chrome. وقرينا حالة كل فيديو من JavaScript: [[currentSrc]] (الملف اللي اختاره)، و [[paused]] (واقف؟)، و [[duration]] (المدة بالثواني).
-
----
-
-## ١. الفيديو العادي
-
-~~~text index.html
-<video controls preload="metadata" poster="/video/intro.jpg" width="1280" height="720">
-  <source src="/video/intro.webm" type="video/webm">
-  <source src="/video/intro.mp4" type="video/mp4">
-  <track kind="captions" src="/video/intro.ar.vtt" srclang="ar" label="عربي" default>
-</video>
-~~~
-
-- [[controls]]: أزرار التشغيل والصوت والوقت بتاعة المتصفح.
-- [[poster]]: صورة بتظهر لحد ما المستخدم يشغّل.
-- [[preload="metadata"]]: حمّل المعلومات (المدة والمقاس) بس.
-- [[width]] و [[height]]: النسبة، عشان يحجز المكان.
-- [[<source>]]: زي picture، المتصفح بياخد أول [[type]] يعرف يشغّله. Chrome اختار [[/video/intro.webm]].
-- [[<track kind="captions">]]: ملف ترجمة. [[srclang]] لغته، و [[label]] اسمه في القايمة، و [[default]] = مفعّل من الأول.
-
-~~~text الناتج
-currentSrc: /video/intro.webm   paused: true   duration: 6.008
-textTracks[0]: captions، عربي، ar، mode: showing، 2 cues
-~~~
-
-[[showing]] = الترجمة ظاهرة، و 2 cues = الجملتين اللي في الملف.
-
-### ملف الـ VTT
-
-~~~text intro.ar.vtt
-WEBVTT
-
-00:00.000 --> 00:03.000
-أهلًا، ده فيديو تجربة
-
-00:03.000 --> 00:06.000
-وده السطر التاني
-~~~
-
-أول سطر لازم [[WEBVTT]]. وكل جملة (اسمها cue) سطر وقت [[من --> لحد]] بالدقايق والثواني، وتحته الكلام، وسطر فاضي بينها.
-
-### [[preload]] بيفرق قد إيه؟
-
-جربنا فيديو WebM مدته 60 ثانية وحجمه حوالي 8 ميجا، وعدّينا الـ bytes اللي السيرفر المحلي بعتها في أول ٤ ثواني من غير ما حد يدوس play:
-
-| preload | اللي اتبعت | المدة معروفة؟ |
-|---|---|---|
-| [[none]] | ولا byte | لأ (NaN) |
-| [[metadata]] | حوالي 1.4 ميجا (أول 7.6 ثانية) | آه، 60 |
-| [[auto]] | حوالي 5.5 ميجا (أول 26 ثانية) | آه، 60 |
-
-يعني Chrome مع metadata بيحمّل حتة صغيرة من الأول مش المعلومات بس، بس أقل بكتير من auto.
-
-## ٢. فيديو الخلفية
-
-~~~text index.html
-<video autoplay muted loop playsinline poster="/hero.jpg" aria-hidden="true" src="/hero.mp4"></video>
-~~~
-
-- [[autoplay]]: يشتغل لوحده. [[muted]]: من غير صوت. [[loop]]: يعيد لما يخلص.
-- [[playsinline]]: على iPhone يشتغل مكانه في الصفحة مش full screen.
-- [[aria-hidden="true"]]: قارئ الشاشة يتجاهله، لأنه زينة.
-
-قارنّاه بنفس الفيديو بـ [[autoplay]] من غير [[muted]]:
-
-| | paused بعد التحميل |
-|---|---|
-| [[autoplay muted]] | false (شغال) |
-| [[autoplay]] لوحده | true (Chrome منعه) |
-
-ومفيش أي error في الـ Console: الفيديو بيفضل واقف وخلاص.
-
-## ٣. يوتيوب: iframe ضد facade
-
-~~~text index.html
-<iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="شرح المنتج في دقيقتين" width="560" height="315" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-~~~
-
-- [[<iframe>]] صفحة جوه صفحتك. [[title]] اسمها لقارئ الشاشة.
-- [[loading="lazy"]]: متتحمّلش غير لما تقرب من الشاشة.
-- [[allow]]: الصلاحيات اللي الصفحة اللي جوه تاخدها (تشغيل تلقائي، وفيديو محمي، وصورة جوه صورة).
-
-~~~text index.html
-<button type="button" class="yt-facade" data-id="VIDEO_ID" aria-label="شغّل: شرح المنتج في دقيقتين" style="background-image: url(https://i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg)">▶</button>
-~~~
-
-الـ facade زرار عادي خلفيته صورة الفيديو من [[i.ytimg.com]]، و [[data-id]] فيه رقم الفيديو، و [[aria-label]] اسم الزرار.
-
-جربنا الاتنين بفيديو يوتيوب حقيقي، وعدّينا الـ requests في أول ٦ ثواني:
-
-| | requests | الحجم تقريبًا |
-|---|---|---|
-| iframe عادي (الفيديو في الشاشة) | 15 (من 7 domains) | 1164 KB |
-| facade قبل الضغط | 2 (الصفحة والصورة) | 24 KB |
-
-### الـ solCode: إزاي الـ facade بيتحول iframe
-
-- [[document.addEventListener('click', ...)]]: اسمع أي ضغطة في الصفحة.
-- [[e.target.closest('.yt-facade')]]: الضغطة كانت على الزرار أو جواه؟ لو لأ [[return]].
-- [[document.createElement('iframe')]]: اعمل iframe جديد.
-- [[iframe.src = ...]]: الرابط مبني بـ template string: [[btn.dataset.id]] بيقرا [[data-id]]، و [[?autoplay=1]] = اشتغل على طول.
-- [[title]] من [[aria-label]]، و [[allow]] و [[allowFullscreen]] والمقاس زي الـ iframe العادي.
-- [[btn.replaceWith(iframe)]]: حط الـ iframe مكان الزرار.
-- [[iframe.focus()]]: الـ focus كان على الزرار اللي اتشال، فحطه على الـ iframe عشان مستخدم الكيبورد ميتوهش.
-
-بعد ما ضغطنا: الـ iframe اتعمل بالرابط [[...embed/VIDEO_ID?autoplay=1]] والـ title صح، و [[document.activeElement]] (العنصر اللي عليه الـ focus) بقى [[IFRAME]].
-
-## الخلاصة
-
-| الحالة | لازم |
-|---|---|
-| فيديو بتاعك | [[controls]] و [[poster]] و [[preload="metadata"]] و [[<track>]] |
-| فيديو خلفية | [[autoplay muted loop playsinline]] و [[aria-hidden]] |
-| يوتيوب | [[title]] و [[loading="lazy"]]، وأحسن facade |
-
-- autoplay من غير muted بيتمنع في سكوت.`,
-          lines: [
-            "فيديو عادي: أزرار تحكم، ويحمّل المدة بس، وصورة لحد ما يشتغل، ومقاس عشان يحجز المكان.",
-            "WebM الأول (أصغر غالبًا).",
-            R`MP4 للمتصفحات اللي مبتشغّلش WebM (آخر احتمال قبل ما الفيديو ميشتغلش).`,
-            R`الترجمة: ملف VTT بالعربي، و [[default]] مفعّلة من الأول.`,
-            R`قفلة الـ [[<video>]] الأول، وبعده فيديو الخلفية.`,
-            R`فيديو خلفية: بيشتغل لوحده لأنه [[muted]]، ومش full screen على الآيفون، ومخفي عن قارئ الشاشة لأنه زينة.`,
-            R`يوتيوب عادي: [[nocookie]]، و [[title]] للـ accessibility، و [[lazy]] ميتحملش غير لما يقرب.`,
-            "الـ facade: زرار بصورة الفيديو، والـ iframe بيتعمل بس لما يتضغط."
-          ],
-          sol: R`الـ iframe العادي: حوالي 15 request من كذا domain (JavaScript و CSS و fonts من يوتيوب) وحجم حوالي 1.1MB قبل ما تدوس play (ده اللي اتقاس في Chrome على فيديو حقيقي). الـ facade قبل الضغط: request واحد (الصورة، عشرات الـ KB). بعد الضغط: الـ iframe بيتحمّل ويشتغل على طول لأن فيه [[autoplay=1]].
-
-لو الفيديو مشتغلش لوحده بعد الضغط: اتأكد إن [[allow]] فيه [[autoplay]]. ولو الـ focus ضاع بعد ما الزرار اتشال: حط الـ focus على الـ iframe الجديد.`,
-          solCode: R`document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.yt-facade');
-  if (!btn) return;
-  const iframe = document.createElement('iframe');
-  iframe.src = $__bthttps://www.youtube-nocookie.com/embed/$__{btn.dataset.id}?autoplay=1$__bt;
-  iframe.title = btn.getAttribute('aria-label');
-  iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
-  iframe.allowFullscreen = true;
-  iframe.width = 560;
-  iframe.height = 315;
-  btn.replaceWith(iframe);
-  iframe.focus();
-});`
-        },
-        {
-          cmd: "SVG",
-          ref: [
-            { t: "MDN: <svg>", url: "https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/svg" },
-            { t: "MDN: SVG tutorial", url: "https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorials/SVG_from_scratch" },
-            { t: "MDN: fill (SVG)", url: "https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/fill" },
-            { t: "MDN: param()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/param" },
-          ],
-          title: "SVG: inline ولا img؟ و currentColor و svgo",
-          desc: R`[[<img src="logo.svg">]]: سهل وبيتكاش، بس الـ CSS بتاع صفحتك مش بيوصل جواه، فمتقدرش تغيّر لونه مع الـ hover أو الـ dark mode.
-
-[[<svg>]] inline في الـ HTML: الـ CSS بيوصل لكل جزء فيه، و [[fill="currentColor"]] أو [[stroke="currentColor"]] بيخليه ياخد لون الكلام اللي حواليه ([[color]]). ده اللي lucide-react بيعمله.
-
-وأي SVG طالع من Figma أو Illustrator فيه زبالة (metadata، و groups فاضية، وأرقام بـ 6 decimals). [[svgo]] بينضّفه وغالبًا بيصغّره للنص أو أقل.`,
-          example: R`<img src="/logo.svg" alt="متجر النور" width="120" height="32">
-<button type="button" class="icon-btn" aria-label="السلة">
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-    <circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
-    <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
-  </svg>
-</button>
-<svg role="img" aria-labelledby="chart-t" viewBox="0 0 100 40"><title id="chart-t">المبيعات زادت 20% الشهر ده</title>...</svg>
-// styles.css
-.icon-btn { color: var(--color-gray-700); }
-.icon-btn:hover { color: var(--color-brand); }`,
-          try: R`صدّر أيقونة من Figma (أو خد أي SVG) وشغّل [[npx svgo icon.svg -o icon.min.svg]] وقارن الملفين. وبعدين حط نفس الأيقونة مرة كـ [[<img>]] ومرة inline جوه زرار عليه [[color: red]]: أنهي واحدة اتلوّنت؟`,
-          flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[<svg width="48" height="48"><circle cx="12" cy="12" r="10"/></svg>]] اترسمت صغيرة في ركن الـ 48 بدل ما تملاها. صلّحها بخاصية واحدة.`, done: R`قبل: عرض الدايرة 20px. بعد [[viewBox="0 0 24 24"]]: عرضها 40px، لأن الرسمة بقت متحسوبة على لوحة 24 بتتمطّ على الـ 48.`, sol: R`~~~live 120 120 fixed.html
-<svg width="48" height="48" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+            { lvl: 'سريع', t: R`**ابني:** في صفحة «دفتر نور» تلات فقرات. «اتحفظت ✓» المفروض متبانش لحد ما الحفظ يحصل، و «مفيش ملاحظات لسه» المفروض تبان دلوقتي، و «جاري التحميل...» خلصت ومتبانش. اكتب [[hidden]] على اللي المفروض يستخبى. (من قسم ١ في الشرح)`, done: R`الصفحة فيها العنوان و «مفيش ملاحظات لسه» بس، وكل الشروط ✓.`, work: { h: 130, start: R`<h1>دفتر نور</h1>
+<p id="saved">اتحفظت ✓</p>
+<p id="empty">مفيش ملاحظات لسه</p>
+<p id="loading" hidden="false">جاري التحميل...</p>`, checks: [
+              { say: R`«اتحفظت ✓» عليها [[hidden]]`, q: "#saved[hidden]" },
+              { say: R`«مفيش ملاحظات لسه» **مش** عليها [[hidden]]`, q: "#empty:not([hidden])" },
+              { say: R`«جاري التحميل...» عليها [[hidden]]`, q: "#loading[hidden]" },
+              { say: R`مفيش [[hidden="false"]] في الصفحة`, q: "[hidden=\"false\"]", n: 0 },
+            ] }, sol: R`~~~live 130 الحل
+<h1>دفتر نور</h1>
+<p id="saved" hidden>اتحفظت ✓</p>
+<p id="empty">مفيش ملاحظات لسه</p>
+<p id="loading" hidden>جاري التحميل...</p>
 ~~~
 
-**الفرق:** [[width]] و [[height]] مقاس الـ SVG على الشاشة. و [[viewBox="0 0 24 24"]] مقاس اللوحة اللي الرسمة اترسمت عليها. لما الاتنين يختلفوا، الرسمة بتتكبّر عشان اللوحة تملا الشاشة: 48 ÷ 24 = ضعف.
+**هتشوف إيه:** العنوان وتحته «مفيش ملاحظات لسه» بس.
 
-من غير [[viewBox]]، كل وحدة في الرسمة = 1px، فدايرة نص قطرها 10 قطرها 20px، في ركن صندوق 48.
+**وخد بالك:** كود البداية كان شكله صح من أول لحظة في فقرة التحميل: [[hidden="false"]] **بيخبّي** برضه. بس اللي كتبه كان قصده «اظهر»، واللي هييجي بعده هيقراها كده. عشان كده الشرط الرابع موجود: اكتب [[hidden]] لوحدها للإخفاء، وشيلها خالص للإظهار.
 
-**الغلطة الشائعة:** تصلّحها بتغيير [[r]] و [[cx]] و [[cy]] لأرقام أكبر. ده بيخلي كل مقاس محتاج رسمة تانية، و [[viewBox]] بيخلي نفس الرسمة تشتغل بأي مقاس.
+**الغلطة الشائعة:** [[hidden="true"]] و [[hidden="false"]] كأنه مفتاح. المتصفح مبيقراش القيمة (غير [[until-found]]).
 
-~~~text الناتج
-قبل: عرض الدايرة 20px (في ركن الـ 48)
-بعد: عرض الدايرة 40px (ماليّة الـ 48 مع هامش 4 من كل ناحية)
+~~~text القياس من Chrome
+<p hidden>:            display = none
+<p hidden="false">:    display = none
+<p> من غير hidden:     display = block
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** sprite فيه ٦ أيقونات متخيلة بـ [[<symbol id="i-cart" viewBox="0 0 24 24">]] جوه [[<svg style="display: none">]] في أول الـ body، وكل زرار بيستخدم [[<svg><use href="#i-cart"/></svg>]] و [[stroke="currentColor"]].`, done: R`الستة أزرار بتتلوّن مع [[color]] بتاع الزرار (hover بيغيّرهم كلهم)، وكل زرار ليه [[aria-label]] والـ svg جواه [[aria-hidden="true"]]، وتعريف كل أيقونة موجود مرة واحدة بس في الـ HTML.`, sol: R`~~~live 170 170 icons.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>sprite أيقونات</title>
-<style>
-  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; }
-  .bar { display: flex; flex-wrap: wrap; gap: .5rem; }
-  .icon-btn { display: grid; place-items: center; inline-size: 3rem; block-size: 3rem; padding: 0;
-              border: 1px solid currentColor; border-radius: .5rem; background: none; color: #334155; cursor: pointer; }
-  .icon-btn:hover { color: #0f766e; }
-  .icon-btn:focus-visible { outline: 2px solid #0f766e; outline-offset: 2px; }
-  .icon-btn svg { inline-size: 1.5rem; block-size: 1.5rem; fill: none; stroke: currentColor;
-                  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شريط «العرض انتهى» المفروض مستخبي ([[hidden]] مكتوب عليه) بس باين في الصفحة. السبب في الـ [[<style>]]. صلّحها **من غير** ما تشيل [[class="banner"]] ولا سطر الـ [[display: flex]]: زوّد سطر CSS واحد. (من قسم ١ في الشرح: الفخ)`, done: R`الشريط مش باين، ولسه عليه [[hidden]] و [[class="banner"]]، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
+  .banner { display: flex; gap: 8px; border: 1px solid; padding: 8px; }
 </style>
-</head>
-<body>
-<svg style="display: none">
-  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 13h11l2-9H6"/></symbol>
-  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20S3 14 3 8a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6-9 12-9 12Z"/></symbol>
-  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-5-5"/></symbol>
-  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 5-7 8-7s7 2 8 7"/></symbol>
-  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V10a6 6 0 0 1 12 0v7l2 2H4Z"/><path d="M10 21h4"/></symbol>
-  <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></symbol>
-</svg>
 
-<main>
-<h1>أيقونات المتجر</h1>
-<div class="bar">
-  <button class="icon-btn" type="button" aria-label="السلة"><svg aria-hidden="true"><use href="#i-cart"/></svg></button>
-  <button class="icon-btn" type="button" aria-label="المفضلة"><svg aria-hidden="true"><use href="#i-heart"/></svg></button>
-  <button class="icon-btn" type="button" aria-label="بحث"><svg aria-hidden="true"><use href="#i-search"/></svg></button>
-  <button class="icon-btn" type="button" aria-label="حسابي"><svg aria-hidden="true"><use href="#i-user"/></svg></button>
-  <button class="icon-btn" type="button" aria-label="التنبيهات"><svg aria-hidden="true"><use href="#i-bell"/></svg></button>
-  <button class="icon-btn" type="button" aria-label="قفل"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+<div class="banner" hidden>
+  <strong>العرض انتهى</strong>
+  <span>استنى العرض الجاي</span>
 </div>
-</main>
-</body>
-</html>
-~~~
-
-**ليه شغال:**
-
-- [[<symbol>]] تعريف مبيترسمش لوحده، ومعاه [[viewBox]] بتاعه. و [[<use href="#i-cart">]] بيرسم نسخة منه في أي مكان، فكل أيقونة متعرّفة مرة واحدة ومستخدمة قد ما تحب.
-- [[stroke: currentColor]] معناها «خد لون النص بتاع العنصر». الزرار [[color]] بتاعه يتغيّر في الـ hover، فالأيقونة تتغيّر معاه من غير سطر CSS زيادة.
-- [[aria-label]] على الزرار هو الاسم، و [[aria-hidden="true"]] على الـ svg عشان القارئ ميحاولش يقراها.
-
-**ملاحظة مهمة:** [[hidden]] مبيخبيش [[<svg>]]. الـ attribute ده بتاع عناصر HTML، والـ svg عنصر من namespace تاني، فـ Chrome سايبه [[display: inline]] وبياخد مكان 300 × 150 فاضي فوق الصفحة. عشان كده هنا [[style="display: none"]]، و [[<use>]] لسه بيشتغل عادي.
-
-**الغلطة الشائعة:** تحط [[stroke="#333"]] أو [[fill="#333"]] جوه الـ [[<path>]]. اللون المكتوب على العنصر نفسه بيخلي الأيقونة متسمعش لـ currentColor، فتفضل بنفس اللون في الـ hover.
-
-~~~text الناتج
-stroke قبل الـ hover: rgb(51, 65, 85) ، وبعده: rgb(15, 118, 110)
-symbol: 6 ، use: 6 ، paths برا الـ symbols: 0
-الـ sprite حسابه display: none ومش واخد مكان (بـ hidden كان فيه حوالي 150px فاضيين فوق)
-Tab الأول: focus على الزرار «السلة»
-
-ariaSnapshot:
-- button "السلة"
-- button "المفضلة"
-- button "بحث"
-- button "حسابي"
-- button "التنبيهات"
-- button "قفل"
-axe: صفر مشاكل.
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** حلقة تقدّم SVG: دايرة [[r="40"]] و [[stroke-dasharray]] = محيطها و [[stroke-dashoffset]] محسوب من [[--p]] بـ [[calc()]]، وملفوفة [[rotate(-90deg)]] عشان تبدأ من فوق، والرقم في النص.`, done: R`مع [[--p: 75]] الحلقة مكمّلة ٣ أرباع من فوق مع عقارب الساعة، و [[getComputedStyle]] بيقول dasharray ≈ 251.33 و dashoffset ≈ 62.83. ولما تغيّر [[--p]] من DevTools الحلقة بتتغيّر من غير JavaScript.`, sol: R`~~~live 290 290 ring.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>حلقة تقدّم</title>
+<p>أهلًا بيك في دفتر نور.</p>`, checks: [
+              { say: R`الشريط لسه عليه [[hidden]] و [[class="banner"]]`, q: "div.banner[hidden]" },
+              { say: R`سطر [[display: flex]] لسه موجود`, q: "style", has: "display: flex" },
+              { say: R`في الـ [[<style>]] قاعدة بتبدأ بـ [[[hidden] {]]`, q: "style", has: "[hidden]" },
+              { say: R`القاعدة فيها [[!important]]`, q: "style", has: "!important" },
+            ] }, sol: R`~~~live 52 بعد التصليح
 <style>
-  body { margin: 2rem; font-family: system-ui, sans-serif; }
-  .ring { --p: 75; --c: calc(2 * pi * 40); position: relative; inline-size: 10rem; block-size: 10rem; }
-  .ring svg { display: block; inline-size: 100%; block-size: 100%; rotate: -90deg; }
-  .ring circle { fill: none; stroke-width: 10; }
-  .track { stroke: #e2e8f0; }
-  .bar { stroke: #0f766e; stroke-linecap: round;
-         stroke-dasharray: var(--c);
-         stroke-dashoffset: calc(var(--c) * (100 - var(--p)) / 100);
-         transition: stroke-dashoffset .3s; }
-  .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 1.75rem; font-weight: 700; }
+  .banner { display: flex; gap: 8px; border: 1px solid; padding: 8px; }
+  [hidden] { display: none !important; }
 </style>
-</head>
-<body>
-<main>
-<h1>تقدّم الدورة</h1>
-<div class="ring" role="img" aria-label="التقدم 75 في المية">
-  <svg viewBox="0 0 100 100" aria-hidden="true">
-    <circle class="track" cx="50" cy="50" r="40"/>
-    <circle class="bar" cx="50" cy="50" r="40"/>
-  </svg>
-  <span class="num" aria-hidden="true">75%</span>
+
+<div class="banner" hidden>
+  <strong>العرض انتهى</strong>
+  <span>استنى العرض الجاي</span>
 </div>
-</main>
-</body>
-</html>
+<p>أهلًا بيك في دفتر نور.</p>
 ~~~
 
-غيّر [[--p]] من DevTools على [[.ring]] وشوف الحلقة بتتحرك.
+وده اللي كان باين قبل التصليح:
 
-**الحساب:** محيط الدايرة [[2 × π × 40]] ≈ 251.33.
-
-- [[stroke-dasharray: var(--c)]] بيقول «الخط قطعة طولها المحيط كله، وبعدها فراغ قد المحيط».
-- [[stroke-dashoffset]] بيزحلق القطعة. لو الـ offset = المحيط، القطعة كلها برا والحلقة فاضية. لو صفر، الحلقة مليانة.
-- فالـ offset المطلوب هو الجزء الفاضي: [[c × (100 - p) / 100]]. مع 75: ربع المحيط، 62.83.
-- [[rotate: -90deg]]: الدايرة في SVG بتبدأ من الساعة ٣، فبنلفّها عشان تبدأ من فوق.
-- [[calc(2 * pi * 40)]]: الثابت [[pi]] جوه [[calc()]] بيغنيك عن كتابة الرقم.
-
-الرقم في النص [[aria-hidden]]، والمعنى كله في [[role="img"]] و [[aria-label]] على الأب، عشان القارئ يقول جملة واحدة.
-
-**الغلطة الشائعة:** تعكس الحساب وتكتب [[c × p / 100]]، فمع 75 يطلع ربع الحلقة بس مليان. الـ offset هو اللي **مش** مرسوم.
-
-~~~text الناتج
---p: 75
-stroke-dasharray  = calc(251.327px)
-stroke-dashoffset = calc(62.8319px)
-الحلقة ٣ أرباع مبتدية من فوق مع عقارب الساعة
-
---p: 30 من DevTools
-stroke-dashoffset = calc(175.929px)   (من غير JavaScript)
-axe: صفر مشاكل.
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** خط تحت كلمة في عنوان كأنه مرسوم بالقلم: [[<path pathLength="1">]] و [[stroke-dasharray: 1]] و [[stroke-dashoffset]] من 1 لـ 0 بـ animation، ومعاه [[prefers-reduced-motion]].`, done: R`الخط بيترسم من البداية للنهاية مرة واحدة لما الصفحة تفتح، ومع [[reduce]] في Rendering بيبان مرسوم على طول من غير حركة، وفي rtl بيترسم من اليمين (اعكس الـ path أو استخدم [[scale: -1 1]]).`, sol: R`~~~live 120 170 underline.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>خط بالقلم</title>
+~~~live 130 قبل
 <style>
-  body { margin: 2rem; font-family: system-ui, sans-serif; }
-  h1 { font-size: 2.5rem; }
-  .mark { position: relative; display: inline-block; }
-  .mark svg { position: absolute; inset-inline: 0; inset-block-end: -.5em; inline-size: 100%; block-size: .5em;
-              fill: none; stroke: #e11d48; stroke-width: 4; stroke-linecap: round; overflow: visible; }
-  /* الـ path بيبدأ من شمال، فنقلبه في rtl عشان الرسم يبدأ من اليمين */
-  :dir(rtl) .mark svg { scale: -1 1; }
-  .mark path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .9s ease-out .2s forwards; }
-  @keyframes draw { to { stroke-dashoffset: 0; } }
-  @media (prefers-reduced-motion: reduce) {
-    .mark path { animation: none; stroke-dashoffset: 0; }
-  }
+  .banner { display: flex; gap: 8px; border: 1px solid; padding: 8px; }
 </style>
-</head>
-<body>
-<h1>أحسن <span class="mark">قهوة<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 7 C 25 2, 60 2, 98 6"/></svg></span> في البلد</h1>
-</body>
-</html>
+
+<div class="banner" hidden>
+  <strong>العرض انتهى</strong>
+  <span>استنى العرض الجاي</span>
+</div>
+<p>أهلًا بيك في دفتر نور.</p>
 ~~~
 
-**ليه شغال:**
+**هتشوف إيه:**
 
-- [[pathLength="1"]] بيقول للمتصفح «اعتبر طول المسار 1»، مهما كان طوله الحقيقي. كده مش محتاج تحسب الطول.
-- [[stroke-dasharray: 1]]: قطعة طولها المسار كله.
-- [[stroke-dashoffset: 1]]: القطعة مزحلقة برا، فمفيش حاجة باينة. والـ animation بينزّلها لـ 0، فالخط بيترسم من أوله لآخره.
-- [[forwards]] بيخلي الخط يفضل مرسوم بعد ما الحركة تخلص.
-- [[preserveAspectRatio="none"]] عشان الرسمة تتمط على عرض الكلمة، أي كلمة.
+- **قبل:** شريط ببرواز فيه «العرض انتهى» فوق جملة الترحيب.
+- **بعد:** جملة الترحيب بس.
 
-**الـ rtl:** المسار مرسوم من الشمال لليمين، فالقلم في العربي هيمشي عكس اتجاه القراية. [[:dir(rtl) .mark svg { scale: -1 1; }]] بيعمل مراية للـ svg كله، فالرسم يبدأ من اليمين.
+**ليه:** [[hidden]] بيشتغل بـ [[display: none]] من ستايل المتصفح، و [[.banner { display: flex }]] بتاعك أقوى منه فكسب. السطر الجديد بيقول: أي عنصر عليه [[hidden]] يبقى [[display: none]]، و [[!important]] بتخلّيه يكسب على أي [[display]] تاني. (ترتيب مين بيكسب في الـ CSS في درس «specificity».)
 
-**reduce:** مش كفاية نلغي الحركة. لو لغيتها بس، الـ [[stroke-dashoffset: 1]] يفضل والخط مبيبانش خالص. لازم نرجّعها 0.
+**الغلطة الشائعة:** تحل المشكلة للشريط ده بس ([[.banner[hidden] { display: none }]]). المشكلة هتتكرر مع أول عنصر تاني عليه [[display]]. السطر العام بيتكتب مرة واحدة للمشروع كله.
 
-**الغلطة الشائعة:** تنسى [[pathLength]] وتكتب [[stroke-dasharray: 1]]، فيطلع خط منقّط بنقط طولها بكسل، مش خط بيترسم.
-
-~~~text الناتج
-stroke-dashoffset عند الفتح: 1px (الخط مش باين)
-stroke-dashoffset بعد 1.4 ثانية: 0px (مرسوم تحت كلمة «قهوة»)
-scale على الـ svg في rtl: -1 1
-عرض الـ svg = عرض الكلمة بالظبط: 80.16px
-
-مع reduce:
-stroke-dashoffset = 0px ، document.getAnimations().length = 0 (مرسوم من غير حركة)
+~~~text القياس من Chrome
+قبل:   <div class="banner" hidden>   display = flex
+بعد:   display = none
 ~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[npx svgo --help]] لاقي الـ flag اللي بيشغّل التنضيف كذا لفة لحد ما الملف ميصغرش تاني، والـ flag اللي بيشتغل على فولدر كامل. وجرّبهم على ٥ أيقونات.`, done: R`لقيت [[--multipass]] و [[-f]] (أو [[--folder]])، وعندك جدول بحجم كل أيقونة قبل وبعد، ولسه كل أيقونة فيها [[viewBox]].`, sol: R`~~~bash
-npx svgo --help
-# الفولدر كله، والنتيجة في فولدر تاني، بكذا لفة
-npx svgo -f icons-in -o icons-out --multipass
+            { lvl: 'تطبيق', t: R`**refactor:** لوحة «جولة سريعة» مفتوحة جنب الصفحة، والمفروض الصفحة الأساسية تقف لحد ما الزائر يقفلها. اللي كتب الكود حط [[disabled]] على كل زرار، بس اللينك لسه بيتداس والـ [[disabled]] اللي على الـ [[<div>]] ملوش أي تأثير. بدّل ده كله بـ attribute واحد على [[<main>]]. (من قسم ٣ و ٤ في الشرح)`, done: R`[[<main>]] عليه [[inert]]، ومفيش [[disabled]] جواه، واللوحة لسه شغالة، وكل الشروط ✓.`, work: { h: 230, start: R`<main>
+  <h1>دفتر نور</h1>
+  <button type="button" disabled>ملاحظة جديدة</button>
+  <button type="button" disabled>بحث</button>
+  <a href="#settings">الإعدادات</a>
+  <div disabled>ملاحظة: مشتريات الأسبوع</div>
+</main>
+
+<aside>
+  <h2>جولة سريعة</h2>
+  <p>من هنا بتكتب ملاحظة جديدة.</p>
+  <button type="button">فهمت</button>
+</aside>`, checks: [
+              { say: R`[[<main>]] عليه [[inert]]`, q: "main[inert]" },
+              { say: R`مفيش [[disabled]] جوه [[<main>]]`, q: "main [disabled]", n: 0 },
+              { say: R`اللوحة [[<aside>]] **مش** inert ومش جوه [[<main>]]`, q: "aside:not([inert])" },
+              { say: R`مفيش [[inert]] غير على [[<main>]]`, q: "[inert]", n: 1 },
+            ] }, sol: R`~~~live 259 بعد
+<style>[inert] { opacity: 0.5; }</style>
+<main inert>
+  <h1>دفتر نور</h1>
+  <button type="button">ملاحظة جديدة</button>
+  <button type="button">بحث</button>
+  <a href="#settings">الإعدادات</a>
+  <div>ملاحظة: مشتريات الأسبوع</div>
+</main>
+
+<aside>
+  <h2>جولة سريعة</h2>
+  <p>من هنا بتكتب ملاحظة جديدة.</p>
+  <button type="button">فهمت</button>
+</aside>
 ~~~
 
-**الإجابة:** [[--multipass]] («Pass over SVGs multiple times to ensure all optimizations are applied») و [[-f]] أو [[--folder]] («Input folder, optimize and rewrite all *.svg files»). ومن غير [[-o]] بيكتب فوق الملفات الأصلية، فاديله فولدر تاني أو اعمل commit الأول.
+**هتشوف إيه:** الجزء اللي فوق كله باهت، ومفيش فيه حاجة بتتداس ولا بتاخد فوكس: لا الزرارين ولا اللينك. و Tab بيروح على طول لزرار «فهمت» اللي في اللوحة.
 
-**ليه كذا لفة:** تنضيف بيفتح الباب لتنضيف تاني. مثلًا مسح [[<g>]] فاضي بيخلّي attribute يتنقل للعنصر، فتطلع فرصة تقصير ماكانتش موجودة.
+**ليه كده:**
 
-**الغلطة الشائعة:** تستخدم إعداد قديم بيمسح [[viewBox]]، فالأيقونة تبطل تتكبّر. في svgo 4 [[removeViewBox]] مش في الـ preset الافتراضي، وبرضه اتأكد بـ grep بعد التنضيف.
+- [[inert]] على الأب بيوقّف كل اللي جواه مرة واحدة، مهما كان نوعه.
+- [[disabled]] كان بيوقّف الزرارين بس. اللينك مش عنصر فورم فمبياخدش [[disabled]]، وعلى [[<div>]] ده attribute مش معروف والمتصفح بيتجاهله.
+- سطر [[[inert] { opacity: 0.5; }]] مني عشان يبان إن الجزء واقف: [[inert]] لوحده مبيغيّرش الشكل. (مش من شروط التمرين.)
 
-~~~bash
-grep -L viewBox icons-out/*.svg    # المفروض ميطبعش حاجة
-~~~
+**الغلطة الشائعة:** [[inert]] على [[<body>]] «عشان كله يقف». اللوحة جوه [[<body>]] فهتقف هي كمان، والزائر مش هيعرف يقفلها.
 
-~~~text الناتج
-الملف        قبل    لفة واحدة    --multipass    viewBox
-bell.svg     891    260          258            موجود
-cart.svg     957    396          396            موجود
-heart.svg    860    276          276            موجود
-search.svg   811    309          309            موجود
-user.svg     871    321          321            موجود
-
-(بالـ byte، svgo 4.1.0، أيقونات فيها metadata من برنامج رسم.)
-الفرق بين لفة ولفات صغير هنا، بس في bell.svg طلعت 2 byte زيادة.
+~~~text القياس من Chrome
+قبل:   Tab بيقف على اللينك «الإعدادات» (الزرارين disabled بس)
+بعد:   Tab بيعدّي كل اللي في main ، والكليك على اللينك ماوصلش
 ~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة «الشروط» طويلة. خلّي فقرة «الاسترجاع» مطوية عشان الصفحة تبقى قصيرة، بس اللي يدوّر بـ Ctrl+F على «استرجاع» أو ييجي بلينك [[#refund]] يلاقيها. العنوان يفضل باين. (من قسم ٢ في الشرح)`, done: R`العنوان باين والفقرة مستخبية في صندوق [[hidden="until-found"]] وليها [[id="refund"]]، وكل الشروط ✓.`, work: { h: 150, start: R`<h1>الشروط</h1>
+<h2>الاسترجاع</h2>
+<p>الاسترجاع متاح خلال ١٤ يوم من الدفع، والمبلغ بيرجع على نفس وسيلة الدفع.</p>
+<h2>الخصوصية</h2>
+<p>ملاحظاتك محدش بيقراها غيرك.</p>`, checks: [
+              { say: R`فقرة الاسترجاع جوه عنصر عليه [[hidden="until-found"]]`, q: "[hidden=\"until-found\"] p", has: "الاسترجاع متاح" },
+              { say: R`الفقرة ليها [[id="refund"]]`, q: "[hidden=\"until-found\"] p#refund" },
+              { say: R`عنوان «الاسترجاع» برّه الصندوق المستخبي`, q: "[hidden] h2", n: 0 },
+              { say: R`فقرة الخصوصية لسه باينة`, q: "[hidden] p", n: 1 },
+            ] }, sol: R`~~~live 230 الحل
+<h1>الشروط</h1>
+<h2>الاسترجاع</h2>
+<div hidden="until-found">
+  <p id="refund">الاسترجاع متاح خلال ١٤ يوم من الدفع، والمبلغ بيرجع على نفس وسيلة الدفع.</p>
+</div>
+<h2>الخصوصية</h2>
+<p>ملاحظاتك محدش بيقراها غيرك.</p>
+~~~
+
+**هتشوف إيه:** عنوان «الاسترجاع» وتحته على طول عنوان «الخصوصية» وفقرتها. فقرة الاسترجاع مش باينة ومش واخدة مكان.
+
+**جرّبها في ملف عندك** (اللينكات لـ [[#id]] بتتجرّب في ملف حقيقي): احفظ الحل في [[terms.html]]، وافتحه، ودوّر بـ Ctrl+F على «استرجاع». أو افتح [[terms.html#refund]] من شريط العنوان.
+
+**ليه كده:**
+
+- [[hidden]] العادي كان هيخبّيها عن البحث وعن اللينك كمان.
+- الصندوق [[<div>]] حوالين الفقرة، مش الـ attribute على الفقرة نفسها: كده لو زوّدت فقرات تانية للقسم يستخبوا معاها. (وعلى الفقرة مباشرة برضه بيشتغل.)
+- العنوان برّه: الزائر لازم يشوف إن فيه قسم اسمه «الاسترجاع».
+
+**الغلطة الشائعة:** تخبّي العنوان مع الفقرة. الصفحة مش هيبان فيها إن فيه حاجة عن الاسترجاع أصلًا إلا للي يدوّر بالكلمة.
+
+~~~text القياس من Chrome
+الصندوق:                        content-visibility = hidden ، ارتفاعه 0
+بعد فتح الصفحة على #refund:      hidden اتشال والفقرة ظهرت
+~~~
+
+(Ctrl+F من MDN. والدعم: Chrome 102 و Firefox 148، و Safari 26.2 جزئي.)` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع، وبعدين صلّح:** في الصفحة خمس أزرار، كل واحد في حالة. اكتب على ورقة: لو دوست Tab من أول الصفحة، هيقف على **كام** زرار، وأنهي؟ جرّب في الصندوق. وبعدين: الزرار اللي جوه [[aria-hidden]] نسخة زينة مكررة والكيبورد مش المفروض يوصله. صلّحه. (من قسم ٤ في الشرح: جدول المقارنة)`, done: R`توقّعت زرارين («حفظ» و «حفظ (نسخة)»)، وبعد التصليح Tab بيقف على «حفظ» بس، وكل الشروط ✓.`, work: { h: 170, start: R`<p><button type="button">حفظ</button></p>
+<p hidden><button type="button">حفظ (مستخبي)</button></p>
+<p inert><button type="button">حفظ (واقف)</button></p>
+<p><button type="button" disabled>حفظ (disabled)</button></p>
+<p aria-hidden="true"><button type="button">حفظ (نسخة)</button></p>`, checks: [
+              { say: R`مفيش [[aria-hidden]] في الصفحة`, q: "[aria-hidden]", n: 0 },
+              { say: R`«حفظ (نسخة)» بقى جوه عنصر [[inert]]`, q: "[inert] button", has: "نسخة" },
+              { say: R`لسه فيه خمس أزرار`, q: "button", n: 5 },
+              { say: R`واحد [[disabled]] وواحد جوه [[hidden]] زي ما هم`, q: "[hidden] button, button[disabled]", n: 2 },
+            ] }, sol: R`~~~live 150 بعد التصليح
+<p><button type="button">حفظ</button></p>
+<p hidden><button type="button">حفظ (مستخبي)</button></p>
+<p inert><button type="button">حفظ (واقف)</button></p>
+<p><button type="button" disabled>حفظ (disabled)</button></p>
+<p inert><button type="button">حفظ (نسخة)</button></p>
+~~~
+
+**هتشوف إيه:** أربع أزرار باينين (المستخبي لأ)، وواحد منهم باهت (الـ disabled). دوس Tab:
+
+- **قبل:** وقف على «حفظ» وبعدين «حفظ (نسخة)».
+- **بعد:** «حفظ» بس.
+
+**ليه كل واحد:**
+
+| الزرار | Tab بيقف؟ | ليه |
+|---|---|---|
+| حفظ | أيوه | عادي |
+| جوه [[hidden]] | لأ | مش موجود |
+| جوه [[inert]] | لأ | واقف |
+| [[disabled]] | لأ | زرار فورم متعطل |
+| جوه [[aria-hidden]] | **أيوه** | [[aria-hidden]] بيخبّي عن قارئ الشاشة بس |
+
+[[inert]] بيعمل اللي [[aria-hidden]] كان المفروض يعمله (يخبّي عن قارئ الشاشة) وبيشيل الفوكس والكليك كمان.
+
+**الغلطة الشائعة:** تسيب [[aria-hidden]] وتزوّد [[tabindex="-1"]] على الزرار. بيشتغل للكيبورد، بس الماوس لسه بيدوس عليه، ولازم تكرره على كل عنصر جوه.
+
+~~~text القياس من Chrome (Tab)
+زرار عادي ، وزرار جوه inert ، وزرار disabled ، وزرار جوه aria-hidden:
+Tab وقف على:   العادي > اللي جوه aria-hidden
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك بيسأل: «عندي زرار "ادفع" مش عايزه يشتغل لحد ما الزائر يوافق على الشروط. أكتب عليه [[hidden]] ولا [[inert]] ولا [[disabled]]؟». جاوبه في ٣ سطور وقول ليه. (من قسم ٤ في الشرح)`, done: R`اخترت واحد وقلت التلاتة بيفرقوا في إيه للزائر.`, sol: R`إجابة نموذجية:
+
+1. **[[disabled]].** الزرار عنصر فورم واحد، والزائر محتاج يشوف إن فيه زرار «ادفع» بس لسه مش متاح. [[disabled]] بيخلّيه باهت، وقارئ الشاشة بيقول «disabled»، وكل ده من غير CSS.
+2. [[hidden]] هيشيل الزرار خالص، فالزائر مش هيعرف إن فيه دفع أصلًا ولا هو واقف على إيه.
+3. [[inert]] هيسيبه **شكله شغال** وهو مبيردش، وقارئ الشاشة مش هيشوفه خالص. [[inert]] لمنطقة كاملة مش لزرار.
+
+~~~text القياس من Chrome (accessibility tree)
+<button disabled>:        role = button ، disabled = true      (موجود ومتعلّم إنه متعطل)
+<button> جوه inert:       ignored = true                        (مش موجود)
+<button hidden>:          ignored = true ، display = none
+~~~` }
+          ]
+        }
+,
+        {
+          cmd: "contenteditable و spellcheck",
+          title: "نص بيتعدّل في مكانه، وتظبيط الكتابة: contenteditable و spellcheck و autocapitalize و autocorrect و writingsuggestions و enterkeyhint و translate",
+          pre: [{ to: "css/form و label", why: R`[[<input>]] و [[<textarea>]] هم الطريقة العادية للكتابة، و [[contenteditable]] بيتقارن بيهم` }, { to: "css/textarea و date و number", why: R`[[inputmode]] (شكل كيبورد الموبايل) مشروح هناك، وهنا إخواته` }],
+          ref: [
+            { t: "MDN: contenteditable", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/contenteditable" },
+            { t: "WHATWG: contenteditable", url: "https://html.spec.whatwg.org/multipage/interaction.html#attr-contenteditable" },
+            { t: "MDN: spellcheck", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/spellcheck" },
+            { t: "MDN: autocapitalize", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/autocapitalize" },
+            { t: "MDN: autocorrect", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/autocorrect" },
+            { t: "MDN: writingsuggestions", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/writingsuggestions" },
+            { t: "MDN: enterkeyhint", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/enterkeyhint" },
+            { t: "MDN: translate", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/translate" }
           ],
-          deep: {
-            why: R`الأيقونات في كل حتة: أزرار، ومنيو، وحالات. لو كل لون محتاج ملف SVG منفصل، هيبقى عندك 4 نسخ من كل أيقونة (عادي، و hover، و dark، و disabled). مع currentColor أيقونة واحدة بتاخد لون أي مكان تتحط فيه.`,
-            how: R`الـ [[<img>]] بيعامل الـ SVG كصورة منفصلة: document لوحده، والـ CSS و JavaScript بتوع الصفحة مش بيوصلوله، والمتصفح بيكاشه زي أي صورة. الـ inline جزء من الـ DOM: [[:hover]] و CSS variables و [[currentColor]] كلهم بيشتغلوا، بس بيتقل حجم الـ HTML ومبيتكاش لوحده.
+          desc: R`[[contenteditable]] بيخلّي **أي عنصر** في الصفحة يتكتب فيه: عنوان، فقرة، خانة في جدول. الزائر بيدوس على الكلام ويعدّله في مكانه، من غير [[<input>]].
+ومعاه في الدرس الـ attributes اللي بتظبط الكتابة نفسها في أي مكان بيتكتب فيه (حقل أو [[contenteditable]]): التصحيح الإملائي [[spellcheck]]، وتلات تلميحات لكيبورد الموبايل ([[autocapitalize]] و [[autocorrect]] و [[enterkeyhint]])، واقتراحات الكتابة [[writingsuggestions]]، و [[translate]] اللي بيمنع ترجمة كلمة.`,
+          example: R`<h2 contenteditable="plaintext-only" spellcheck="false">عنوان الملاحظة</h2>
+<div contenteditable role="textbox" aria-multiline="true" aria-label="نص الملاحظة" enterkeyhint="done">اكتب هنا</div>
+<input name="title" autocapitalize="words" autocorrect="off" enterkeyhint="next">
+<textarea name="code" spellcheck="false" autocapitalize="off" writingsuggestions="false"></textarea>
+<p>التطبيق اسمه <span translate="no">Nour Notes</span>.</p>`,
+          flag: "script",
+          lines: [
+            R`عنوان بيتعدّل في مكانه. [[contenteditable="plaintext-only"]]: نص بس، من غير تنسيق ولا سطور جديدة بعناصر. و [[spellcheck="false"]]: من غير خطوط حمرا تحت الكلام (العنوان ممكن يبقى اسم أو كود).`,
+            R`صندوق بيتكتب فيه بتنسيق ([[contenteditable]] لوحدها). ولأن [[<div>]] ملوش معنى عند قارئ الشاشة: [[role="textbox"]] بيقول إنه خانة كتابة، و [[aria-multiline="true"]] إنها كذا سطر، و [[aria-label]] اسمها. و [[enterkeyhint="done"]] بيكتب «تم» على زرار Enter في كيبورد الموبايل.`,
+            R`حقل عادي بتلات تلميحات: [[autocapitalize="words"]] أول حرف في كل كلمة كبير، و [[autocorrect="off"]] من غير تصحيح تلقائي، و [[enterkeyhint="next"]] زرار Enter مكتوب عليه «التالي».`,
+            R`خانة لكود: من غير تصحيح إملائي، ومن غير حروف كبيرة تلقائي، ومن غير اقتراحات كتابة من المتصفح.`,
+            R`[[translate="no"]] على اسم التطبيق: لو الزائر ترجم الصفحة، الاسم يفضل زي ما هو.`
+          ],
+          teach: R`## الفكرة في سطرين
 
-[[currentColor]] معناها «قيمة [[color]] في العنصر ده»، وبتتورث من الأب. فلو الـ path عليه [[fill="currentColor"]] والزرار [[color: red]]، الأيقونة حمرا.
+[[contenteditable]] بيحوّل أي عنصر لمكان بيتكتب فيه. والباقي تلميحات للمتصفح عن **إزاي** الكتابة تتساعد: يصحّح ولا لأ، يكبّر أول حرف ولا لأ، يكتب إيه على زرار Enter.
 
-الـ accessibility: أيقونة جوه زرار أو جنب كلام يبقى [[aria-hidden="true"]] والاسم على الزرار. SVG بيعني حاجة لوحده (رسم بياني، لوجو inline) ياخد [[role="img"]] واسم من [[<title>]] أو [[aria-label]].
-
-svgo (نسخة 4) بيشيل الـ XML declaration والتعليقات والـ metadata والـ groups الفاضية ويقصّر الأرقام، وبيسيب [[viewBox]] و [[<title>]] افتراضيًا. والـ [[fill="#000"]] بيشيله لأن الأسود هو الافتراضي، وساعتها الأيقونة inline بتبقى سودا مش currentColor، فحط [[fill="currentColor"]] على الـ [[<svg>]] نفسه، أو اعمل [[svgo.config.mjs]] فيه plugin [[convertColors]] بـ [[currentColor: true]].
-
-وفي React: الأيقونات من مكتبة (lucide-react) أو ملفات بتتحول لـ components بـ SVGR. واللوجو الكبير أو الرسومات التوضيحية [[<img>]] أحسن عشان الكاش.`,
-            when: R`أيقونات بتتلوّن أو بتتحرك: inline أو مكتبة أيقونات. لوجو ثابت، ورسومات كبيرة، وصور مقالات: [[<img>]]. وأي SVG جاي من برنامج تصميم: svgo قبل ما يدخل المشروع.`,
-            mistakes: R`SVG من غير [[viewBox]] فمبيتكبرش ولا بيصغر صح. لون ثابت [[fill="#333"]] جوه الأيقونة فمبتتلونش. [[<img src="icon.svg">]] وتستغرب ليه [[color]] مش شغال. SVG inline تقيل (خريطة، رسمة 200KB) بيتكرر في كل صفحة. أيقونة لوحدها في زرار من غير اسم. و SVG جاي من مستخدمين بيتحط inline: ممكن يكون فيه [[<script>]] (XSS)، فنضّفه أو اعرضه كـ img.`
-          },
-          teach: R`## SVG صورة مكتوبة كـ كود
-
-SVG (Scalable Vector Graphics) ملف نصي فيه أشكال: دواير وخطوط ومسارات بأرقام. عشان كده بيتكبر لأي مقاس من غير ما يبوظ. وتقدر تحطه بطريقتين: كصورة بـ [[<img>]]، أو تلزق الكود نفسه في الـ HTML (inline). جربنا الاتنين في Chrome على زرار لونه أحمر، وقرينا لون الخط من [[getComputedStyle]] ومن صورة الشاشة نفسها.
-
----
-
-## ١. اللوجو كـ img
-
-~~~text index.html
-<img src="/logo.svg" alt="متجر النور" width="120" height="32">
-~~~
-
-ملف منفصل، المتصفح بيكاشه، و [[alt]] اسمه. بس هو document مقفول: الـ CSS بتاع الصفحة مش بيدخل جواه.
-
-## ٢. الأيقونة inline جوه زرار
-
-~~~text index.html
-<button type="button" class="icon-btn" aria-label="السلة">
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-    <circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
-    <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
-  </svg>
-</button>
-~~~
-
-- [[aria-label="السلة"]]: اسم الزرار لقارئ الشاشة، لأن مفيش كلام جواه.
-- [[viewBox="0 0 24 24"]]: الرسمة مرسومة على لوحة 24 × 24. أي أرقام جوه بتتحسب على اللوحة دي، و [[width]] و [[height]] المقاس على الشاشة. لو كبّرتهم لـ 48 الرسمة تكبر معاهم.
-- [[fill="none"]]: الأشكال من جوه فاضية. [[stroke="currentColor"]]: الخط حواليها بلون [[color]] بتاع الأب. [[stroke-width="2"]]: سُمك الخط.
-- [[aria-hidden="true"]]: قارئ الشاشة يتجاهل الرسمة، والاسم على الزرار.
-- [[<circle cx="9" cy="20" r="1" />]]: دايرة مركزها (9، 20) ونص قطرها 1. دول عجلتين السلة.
-- [[<path d="...">]]: [[d]] أوامر رسم: [[M1 1]] = روح للنقطة (1، 1)، و [[h4]] = خط أفقي 4، و [[l2.7 13.4]] = خط للنقطة دي بالنسبة للحالية، و [[a]] = قوس (الركن المدوّر)، و [[L]] = خط لنقطة، و [[H6]] = خط أفقي لحد x = 6.
-
-## ٣. اللون من CSS
-
-~~~text style.css
-.icon-btn { color: var(--color-gray-700); }
-.icon-btn:hover { color: var(--color-brand); }
-~~~
-
-(الـ [[// styles.css]] في المثال مجرد عنوان بيقول الحتة دي في ملف CSS.)
-
-~~~text الناتج: stroke بتاع الـ path
-عادي:          oklch(0.373 0.034 259.733)   (رمادي غامق)
-وقت الـ hover:  rgb(255, 0, 0)               (لون البراند في التجربة)
-~~~
-
-الأيقونة ملهاش ولا قاعدة CSS، بس [[currentColor]] بيقرا [[color]] من الزرار.
-
-## ٤. SVG بيعني حاجة لوحده
-
-~~~text index.html
-<svg role="img" aria-labelledby="chart-t" viewBox="0 0 100 40"><title id="chart-t">المبيعات زادت 20% الشهر ده</title>...</svg>
-~~~
-
-[[role="img"]] = عامله كصورة، و [[aria-labelledby="chart-t"]] = اسمك هو الكلام اللي في العنصر اللي id بتاعه [[chart-t]]، يعني الـ [[<title>]]. قرينا شجرة الـ accessibility من Chrome، والرسمة ظهرت كده:
-
-~~~text الناتج
-image: المبيعات زادت 20% الشهر ده
-~~~
+القياسات من Chrome 157 على Windows 11 بكتابة وضغطات حقيقية. سلوك كيبورد الموبايل نفسه من MDN (مكتوب عند كل واحدة).
 
 ---
 
-## التجربة الأولى: svgo على ملف من برنامج تصميم
+## ١. [[<div contenteditable>]]: أي عنصر بيتكتب فيه
 
-عملنا أيقونة السلة بالشكل اللي Illustrator بيصدّره (فيها [[<?xml>]] وتعليق البرنامج و [[<metadata>]] و [[<g>]] جوه [[<g>]] و [[fill="#000000"]] وأرقام زي [[9.000000]])، وشغلنا:
-
-~~~powershell
-npx svgo icon.svg -o icon.min.svg
+~~~live 170 دوس على أي سطر واكتب
+<h2 contenteditable>عنوان بيتعدّل</h2>
+<p contenteditable>فقرة بتتعدّل: امسح واكتب، وجرّب Ctrl+B على كلمة محددة.</p>
+<p>فقرة عادية: مبتتعدّلش.</p>
 ~~~
 
-[[npx]] بيشغّل أداة من npm من غير ما تسطّبها global، و [[-o]] = output: اسم الملف الجديد.
+**هتشوف إيه:** أول سطرين لما تدوس عليهم بيظهر فيهم مؤشر الكتابة وحواليهم برواز الفوكس، وبتكتب وتمسح زي أي خانة. التالت كلام عادي.
 
-~~~text الناتج
-icon.svg:
-Done in 11 ms!
-0.915 KiB - 67% = 0.302 KiB
-~~~
+القيم:
 
-~~~text icon.min.svg
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="24" height="24" viewBox="0 0 24 24"><title>السلة</title><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path fill="none" stroke="#000" stroke-width="2" d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
-~~~
-
-- من 937 byte لـ 309: الـ xml والتعليق والـ metadata والـ g اتشالوا، و [[9.000000]] بقت [[9]]، والـ path اتكتب أقصر.
-- [[viewBox]] و [[<title>]] لسه موجودين.
-- [[fill="#000000"]] على الدواير اتشال (الأسود هو الافتراضي)، و [[stroke="#000"]] على الـ path فضل.
-
-## التجربة التانية: مين بيتلوّن؟
-
-حطينا ٣ زراير عليهم [[color: red]]، وقرينا الألوان:
-
-| جوه الزرار | النتيجة المتقاسة |
+| القيمة | المعنى |
 |---|---|
-| الأيقونة inline بـ [[currentColor]] | stroke = rgb(255, 0, 0)، والبكسلات على الشاشة حمرا |
-| [[<img src="icon.min.svg">]] | البكسلات سودا (0، 0، 0) |
-| icon.min.svg ملزوق inline | stroke = rgb(0, 0, 0) و fill الدواير rgb(0, 0, 0) |
+| [[contenteditable]] أو [[contenteditable="true"]] | بيتعدّل، **وبتنسيق**: خط تقيل، ولصق بألوانه وصوره |
+| [[contenteditable="plaintext-only"]] | بيتعدّل، نص بس من غير أي تنسيق |
+| [[contenteditable="false"]] | مبيتعدّلش، حتى لو أبوه بيتعدّل |
+| من غير الـ attribute | زي أبوه: بيتعدّل لو الأب بيتعدّل |
 
-الـ img مقفول على الـ CSS. والملف المنضّف حتى لو inline فضل أسود، لأن الألوان مكتوبة جواه ([[stroke="#000"]]) أو مش موجودة خالص (افتراضي أسود). عشان كده الـ solCode بيستخدم plugin [[convertColors]] بـ [[currentColor: true]] يحوّل أي لون ثابت لـ [[currentColor]]. جربناه على نفس الملف: الـ path طلع [[stroke="currentColor"]]، بس الدواير طلعت من غير [[fill]] خالص (الـ [[#000000]] اتشال قبل ما يتحوّل)، يعني هتفضل سودا. فضيف [[fill="currentColor"]] على الـ [[<svg>]] نفسه، والدواير هتورثه.
+~~~text القياس من Chrome (الخاصية isContentEditable)
+<div contenteditable>:                    true
+<div contenteditable="plaintext-only">:   true
+<div contenteditable="false">:            false
+<div contenteditable="yes">:              false     (قيمة غلط = كأنه مش مكتوب)
+<p> جوه <div contenteditable>:            true      (ورثها من أبوه)
+<p contenteditable="false"> جوه نفس الأب: false
+Tab:                                      بيقف على كل عنصر contenteditable في دوره
+~~~
+
+- دي **مش** attribute من غير قيمة زي [[hidden]]: هي قيم محددة. [[contenteditable="false"]] معناها «لأ» بجد.
+- العنصر بياخد فوكس بـ Tab لوحده، من غير [[tabindex]].
+- [[contenteditable="false"]] جوه أب بيتعدّل بيعمل «جزيرة» ثابتة: تاريخ، أو اسم الكاتب، أو زرار وسط النص.
+
+---
+
+## ٢. المتصفح بيكتب إيه جوه العنصر
+
+لما الزائر يكتب، المتصفح بيغيّر الـ HTML اللي جوه العنصر:
+
+~~~text القياس من Chrome (العنصر كان فيه «ملاحظة»)
+كتبنا « جديدة»:                  ملاحظة جديدة
+Enter وكتبنا «سطر تاني»:         ملاحظة جديدة<div>سطر تاني</div>
+حددنا الكل و Ctrl+B:             <b>ملاحظة جديدة</b><div><b>سطر تاني</b></div>
+
+نفس الخطوات جوه contenteditable="plaintext-only":
+Ctrl+B:                          نص            (مفيش تنسيق)
+Enter وكتبنا «س٢»:               نص + سطر جديد عادي + س٢     (مفيش <div>)
+~~~
+
+- مع [[contenteditable]] العادي: Enter بيعمل [[<div>]] جديد، و Ctrl+B بيحط [[<b>]]، واللصق من Word أو من صفحة تانية بيجيب تنسيقه معاه. (شكل الـ HTML ده بيختلف من متصفح لمتصفح: MDN.)
+- مع [[plaintext-only]]: حروف وسطور بس.
+
+~~~live 174 جرّب Ctrl+B و Enter في الاتنين
+<p><strong>عادي:</strong></p>
+<div contenteditable style="border: 1px solid; padding: 4px">حدد كلمة ودوس Ctrl+B</div>
+<p><strong>plaintext-only:</strong></p>
+<div contenteditable="plaintext-only" style="border: 1px solid; padding: 4px">حدد كلمة ودوس Ctrl+B</div>
+~~~
+
+([[style="border: 1px solid; padding: 4px"]] سطر CSS على العنصر نفسه: برواز ومسافة عشان تشوف حدود المكان اللي بيتكتب فيه. هتتعلمه في وحدات الـ CSS.)
+
+**هتشوف إيه:** في الأول الكلمة بتبقى تقيلة. في التاني Ctrl+B مبيعملش حاجة.
+
+**القاعدة:** عنوان، اسم، خانة في جدول، أي حاجة المفروض تبقى نص: [[plaintext-only]]. [[contenteditable]] العادي لمحرر نصوص بجد (وده مشروع JavaScript كبير).
+
+**الدعم (جدول MDN):** [[contenteditable]] في كل المتصفحات من زمان. [[plaintext-only]]: Chrome 51 و Safari 5، و Firefox من 136 بس (2025). في Firefox أقدم القيمة بتتجاهل والعنصر **مبيتعدّلش**.
+
+---
+
+## ٣. اللي [[contenteditable]] مبيعملوش
+
+هو بيخلّي العنصر يتكتب فيه وبس. تلات حاجات [[<input>]] و [[<textarea>]] بيعملوهم وهو لأ:
+
+~~~text القياس من Chrome
+فورم فيه <div contenteditable> مكتوب فيه كلام و <input name="a" value="1">:
+اللي الفورم بيبعته:      a=1          (كلام الـ div مش موجود)
+
+<div contenteditable> في accessibility tree:
+role = generic ، name = ""   (قابل للتعديل ، بس من غير اسم ومن غير دور «خانة»)
+~~~
+
+1. **مبيتبعتش مع الفورم.** ملوش [[name]] ولا [[value]]. اللي اتكتب بيفضل في الصفحة لحد ما JavaScript ياخده ويبعته.
+2. **ملوش اسم ولا دور.** [[<label for>]] مبيشتغلش معاه. فلازم تكتب: [[role="textbox"]]، و [[aria-label="..."]] (أو [[aria-labelledby]])، و [[aria-multiline="true"]] لو كذا سطر.
+3. **مفيش فحص.** لا [[required]] ولا [[maxlength]] ولا [[placeholder]].
+
+| عايز | استخدم |
+|---|---|
+| حقل في فورم بيتبعت | [[<input>]] أو [[<textarea>]] |
+| نص في الصفحة الزائر يعدّله في مكانه (عنوان ملاحظة، اسم ملف، خانة جدول) | [[contenteditable="plaintext-only"]] |
+| محرر بتنسيق | [[contenteditable]] مع JavaScript كتير، أو مكتبة جاهزة |
+
+### واللي بيتكتب فيه HTML
+
+اللي جوه [[contenteditable]] العادي HTML مش نص: الزائر يقدر يلزق فيه أي حاجة. لو كود الصفحة أخد المحتوى ده زي ما هو وحفظه وعرضه لزائر تاني، يبقى أي حد يقدر يحط كود في صفحتك (ده اسمه XSS، وهييجي في كورس JavaScript). [[plaintext-only]] بيقفل الباب ده من عند الكتابة، والسيرفر لازم ينضّف برضه.
+
+---
+
+## ٤. [[<textarea spellcheck="false">]]: التصحيح الإملائي
+
+المتصفح بيحط خط أحمر متعرج تحت الكلمة اللي شايفها غلط، في أي مكان بيتكتب فيه.
+
+| القيمة | المعنى |
+|---|---|
+| [[spellcheck="true"]] أو [[spellcheck=""]] | افحص الإملاء وعلّم على الغلط |
+| [[spellcheck="false"]] | متفحصش الإملاء في العنصر ده |
+| من غير الـ attribute | المتصفح بيقرر حسب العنصر، وممكن يورثها من الأب |
+
+~~~text القياس من Chrome (الخاصية spellcheck)
+<input> من غير الـ attribute:        true
+<textarea spellcheck="false">:      false
+~~~
+
+~~~live 166 اكتب كلمة إنجليزي غلط في الخانتين (زي helo wrld)
+<p><label for="s1">بفحص إملائي</label><br><textarea id="s1" rows="2">helo wrld</textarea></p>
+<p><label for="s2">من غير (spellcheck="false")</label><br><textarea id="s2" rows="2" spellcheck="false">helo wrld</textarea></p>
+~~~
+
+**هتشوف إيه:** دوس جوه كل خانة واكتب حرف. في الأولى المتصفح بيحط خط أحمر تحت الكلام الغلط (لو قاموس اللغة متسطب عندك)، وفي التانية لأ. (الخط الأحمر مبيتقاسش من سكربت، فده من MDN: والـ attribute «تلميح» والمتصفح مش ملزم بيه.)
+
+اكتب [[spellcheck="false"]] على: كود، اسم مستخدم، إيميل، رقم طلب، كود خصم. أي حاجة مش كلام لغة.
+
+**والخصوصية (MDN):** بعض المتصفحات فيها «تصحيح محسّن» بيبعت اللي بيتكتب لسيرفر عشان يصححه. فأي خانة فيها معلومة حساسة (سر، رقم بطاقة، سؤال أمان) تاخد [[spellcheck="false"]].
+
+---
+
+## ٥. تلميحات كيبورد الموبايل
+
+التلاتة دول ملهمش أي تأثير على كيبورد الكمبيوتر. بيغيّروا كيبورد الشاشة في الموبايل والإملاء بالصوت (كل سلوكهم هنا من MDN، واللي اتقاس إن Chrome بيقرا القيم).
+
+### [[<input autocapitalize="words">]]
+
+الحروف الكبيرة التلقائية (للغات اللي فيها حروف كبيرة):
+
+| القيمة | بيكبّر |
+|---|---|
+| [[autocapitalize="none"]] أو [[off]] | ولا حرف: كله زي ما الزائر كتبه |
+| [[autocapitalize="sentences"]] أو [[on]] | أول حرف في كل جملة |
+| [[autocapitalize="words"]] | أول حرف في كل كلمة (اسم شخص، عنوان) |
+| [[autocapitalize="characters"]] | كل الحروف (كود خصم، رقم لوحة) |
+
+- ملوش تأثير على [[type="email"]] و [[type="url"]] و [[type="password"]]: دول عمرهم ما بيتكبّروا.
+- من غيره: Chrome و Safari بيكبّروا أول الجملة، و Firefox لأ.
+- لو مكتوب على [[<form>]]، بيمشي على كل الحقول اللي جواه.
+- الدعم: Chrome 43 و Firefox 111 و Safari على iOS من 10.3.
+
+### [[<input autocorrect="off">]]
+
+التصحيح التلقائي: الكيبورد بيبدّل الكلمة اللي شايفها غلط **لوحده** (غير [[spellcheck]] اللي بيعلّم بس).
+
+- [[autocorrect="on"]] (أو من غير قيمة) و [[autocorrect="off"]].
+- اقفله على: اسم مستخدم، اسم علم، كود، مصطلح. مفيش أسوأ من كيبورد بيغيّر اسم الزائر لكلمة تانية.
+- ملوش تأثير على [[email]] و [[url]] و [[password]].
+- الدعم: Safari 14.1 و Firefox 136 و Chrome 153. جديد في Chrome، ولو مش مدعوم الكيبورد بيتصرف بالافتراضي.
+
+### [[<input enterkeyhint="search">]]
+
+الكلمة (أو الأيقونة) اللي على زرار Enter في كيبورد الشاشة:
+
+| القيمة | زرار Enter بيقول |
+|---|---|
+| [[enterkeyhint="enter"]] | «سطر جديد»: Enter هينزل سطر |
+| [[enterkeyhint="done"]] | «تم»: خلّصت كتابة، والكيبورد بيتقفل |
+| [[enterkeyhint="go"]] | «روح»: هيوديك لعنوان أو صفحة |
+| [[enterkeyhint="next"]] | «التالي»: هينقلك للحقل اللي بعده |
+| [[enterkeyhint="previous"]] | «السابق»: الحقل اللي قبله |
+| [[enterkeyhint="search"]] | «بحث»: هيدوّر باللي اتكتب |
+| [[enterkeyhint="send"]] | «إرسال»: هيبعت الرسالة أو الفورم |
+
+- بيغيّر **الكلمة بس**. اللي بيحصل لما الزرار يتداس هو هو (إرسال الفورم مثلًا).
+- بيتكتب على حقول الفورم وعلى [[contenteditable]].
+- الدعم: Chrome 77 و Firefox 94 و Safari 13.1.
+
+~~~text القياس من Chrome (المتصفح قرا القيم)
+<textarea autocapitalize="words" autocorrect="off" enterkeyhint="send" writingsuggestions="false">
+autocapitalize = words ، autocorrect = false ، enterKeyHint = send ، writingSuggestions = false
+
+<input> من غير أي واحدة:
+autocapitalize = "" ، autocorrect = true ، enterKeyHint = "" ، writingSuggestions = true
+~~~
+
+وأخوهم الرابع [[inputmode]] (كيبورد أرقام ولا إيميل ولا عادي) مشروح في درس «textarea و date و number».
+
+---
+
+## ٦. [[<textarea writingsuggestions="false">]]: اقتراحات المتصفح
+
+بعض المتصفحات بتقترح تكملة الجملة وانت بتكتب (كلام رمادي قدام المؤشر). [[writingsuggestions]] بيقفلها أو يفتحها:
+
+- [[writingsuggestions="true"]] (أو من غير قيمة): الافتراضي، مسموح.
+- [[writingsuggestions="false"]]: ممنوع، للعنصر وكل اللي جواه.
+
+اقفله في: خانة كود، امتحان أو تمرين كتابة، مكان الاقتراح فيه بيغطي على اقتراحات التطبيق نفسه.
+
+**الدعم (جدول MDN):** Chrome 124 و Safari 18. Firefox مش داعمه (ومبيعرضش الاقتراحات دي أصلًا). السلوك من MDN.
+
+---
+
+## ٧. [[<span translate="no">]]: متترجمش دي
+
+لما الزائر يترجم الصفحة (ترجمة المتصفح أو أداة ترجمة)، كل الكلام بيتترجم. [[translate="no"]] بيستثني عنصر:
+
+~~~html
+<p>التطبيق اسمه <span translate="no">Nour Notes</span>، واكتب <kbd translate="no">npm start</kbd> عشان يشتغل.</p>
+~~~
+
+| القيمة | المعنى |
+|---|---|
+| [[translate="yes"]] أو [[translate=""]] | يتترجم (الافتراضي) |
+| [[translate="no"]] | يفضل زي ما هو، هو وكل اللي جواه |
+
+~~~text القياس من Chrome (الخاصية translate)
+<p translate="no">:                 false
+عنصر جوه <p translate="no">:        false     (ورثها)
+<p> عادي:                           true
+~~~
+
+بيتكتب على: اسم التطبيق أو الشركة، اسم شخص، كود أو أمر، عنوان إيميل، مصطلح لازم يفضل بلغته. (إن أدوات الترجمة بتحترمه: من MDN. الدعم: Chrome 19 و Firefox 111 و Safari 6.)
+
+---
+
+## ٨. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[contenteditable]] بدل [[<textarea>]] في فورم | اللي اتكتب مبيتبعتش |
+| [[contenteditable]] عادي لعنوان أو اسم | الزائر بيلزق كلام بألوان وخطوط وصور جوه العنوان |
+| [[contenteditable="yes"]] | قيمة غلط: العنصر مبيتعدّلش |
+| [[contenteditable]] من غير [[role]] ولا اسم | قارئ الشاشة ميعرفش إن ده مكان كتابة ولا بتاع إيه |
+| [[contenteditable]] على [[<body>]] أو على جزء كبير | كل حاجة بتتعدّل، حتى الأزرار واللينكات |
+| حفظ الـ HTML اللي جوه العنصر زي ما هو | أي حد يقدر يحط كود في الصفحة |
+| [[spellcheck]] شغال على خانة كود أو اسم مستخدم | خطوط حمرا تحت كل حاجة |
+| [[autocapitalize]] و [[autocorrect]] شغالين على اسم مستخدم | الموبايل بيكبّر أول حرف وبيغيّر الاسم، وتسجيل الدخول بيفشل |
+| [[enterkeyhint="send"]] والفورم مبيبعتش بـ Enter | الزرار مكتوب عليه «إرسال» ومبيبعتش |
+| [[translate="no"]] على [[<body>]] | الصفحة كلها ممنوعة من الترجمة |
+
+---
 
 ## الخلاصة
 
-| | [[<img>]] | inline |
+- [[contenteditable]] بيخلّي أي عنصر يتكتب فيه. للنص: [[plaintext-only]]. ومبيتبعتش مع الفورم، ومحتاج [[role]] واسم.
+- [[spellcheck="false"]]: من غير خطوط حمرا، وعلى أي خانة حساسة.
+- للموبايل: [[autocapitalize]] (حروف كبيرة)، و [[autocorrect]] (تبديل الكلمات)، و [[enterkeyhint]] (كلمة زرار Enter)، و [[inputmode]] (شكل الكيبورد).
+- [[writingsuggestions="false"]]: من غير اقتراحات تكملة.
+- [[translate="no"]]: الاسم أو الكود يفضل زي ما هو في الترجمة.`,
+          try: R`اعمل ملف [[edit.html]] فيه كارت ملاحظة: عنوان [[<h2>]] بيتعدّل كنص بس، وفقرة بتتعدّل بتنسيق، وسطر «آخر تعديل: النهارده» مبيتعدّلش. افتحه في Chrome: عدّل العنوان، وجرّب Ctrl+B في العنوان وفي الفقرة، وافتح DevTools (F12) وبص على الـ HTML بتاع الفقرة بعد ما تدوس Enter فيها.`,
+          sol: R`~~~html edit.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ملاحظة</title>
+</head>
+<body>
+<article>
+  <h2 contenteditable="plaintext-only">مشتريات الأسبوع</h2>
+  <p contenteditable role="textbox" aria-multiline="true" aria-label="نص الملاحظة">لبن وعيش وجبنة.</p>
+  <p>آخر تعديل: النهارده</p>
+</article>
+</body>
+</html>
+~~~
+
+~~~view 150 شكل الصفحة (دوس على العنوان أو الفقرة واكتب)
+<article>
+  <h2 contenteditable="plaintext-only">مشتريات الأسبوع</h2>
+  <p contenteditable role="textbox" aria-multiline="true" aria-label="نص الملاحظة">لبن وعيش وجبنة.</p>
+  <p>آخر تعديل: النهارده</p>
+</article>
+~~~
+
+**هتشوف إيه:**
+
+- العنوان والفقرة بيتكتب فيهم. سطر «آخر تعديل» لأ.
+- Ctrl+B في العنوان: مفيش. في الفقرة: الكلمة بقت تقيلة.
+- في DevTools بعد Enter في الفقرة: المتصفح زوّد [[<div>]] جواها للسطر الجديد.
+
+~~~text القياس من Chrome
+الفقرة بعد كتابة و Enter و Ctrl+B:     <b>...</b><div><b>...</b></div>
+العنوان (plaintext-only) بعد Ctrl+B:    النص زي ما هو
+العنوان في accessibility tree:          role = heading   (لسه عنوان ، وبقى قابل للتعديل)
+الفقرة في accessibility tree:           role = textbox ، name = "نص الملاحظة" ، multiline = true
+~~~
+
+والتعديل ده بيروح مع أول تحميل للصفحة: [[contenteditable]] بيغيّر اللي على الشاشة بس. الحفظ شغل JavaScript.`,
+          deep: {
+            why: R`فيه واجهات [[<input>]] فيها غريب: عنوان ملاحظة شكله عنوان، اسم ملف في قايمة، خانة في جدول، تعليق. الزائر عايز يدوس على الكلام نفسه ويغيّره. [[contenteditable]] بيدّي ده من غير ما تبدّل العنصر بحقل وترجّعه. والتلميحات ([[autocapitalize]] و [[autocorrect]] و [[enterkeyhint]] و [[spellcheck]]) موجودة عشان الكيبورد «الذكي» بيبوّظ أي حاجة مش كلام عادي: بيكبّر أول حرف في اسم المستخدم، وبيصحّح كود الخصم لكلمة، وبيحط خط أحمر تحت اسم العيلة.`,
+            how: R`لما عنصر يبقى «editing host» (عليه [[contenteditable]] بقيمة صح)، المتصفح بيخلّيه ياخد فوكس، وبيحط فيه مؤشر كتابة، وبيترجم ضغطات الكيبورد لتعديلات على الـ DOM اللي جواه: حرف بيتزوّد على نص، Enter بيقسم العنصر أو يزوّد واحد، Ctrl+B بيلف المحدد بـ [[<b>]]. مع [[plaintext-only]] نفس الكلام بس التعديلات المسموحة حروف وسطور. والتلميحات التانية مبتغيّرش حاجة في الصفحة: المتصفح بيبعتها لكيبورد النظام (أو للمصحح) كـ «معلومات عن الخانة دي»، والكيبورد هو اللي بيقرر يعمل بيها إيه. عشان كده كلها اسمها hint ومفيش ضمان.`,
+            when: R`[[contenteditable="plaintext-only"]]: تعديل في المكان لنص قصير. [[contenteditable]]: محرر بتنسيق ومعاه JavaScript. [[spellcheck="false"]] و [[autocorrect="off"]] و [[autocapitalize="off"]]: اسم مستخدم، كود، إيميل مكتوب في حقل نص. [[autocapitalize="words"]]: اسم شخص أو مدينة. [[autocapitalize="characters"]]: كود خصم. [[enterkeyhint="search"]] في البحث، و [[next]] في فورم كذا حقل، و [[send]] في شات. [[translate="no"]]: أسماء وكود.`,
+            mistakes: R`[[contenteditable]] مكان حقل فورم. محرر كامل بـ [[contenteditable]] من غير ما تحسب حساب اللصق. [[contenteditable]] من غير اسم ولا دور. تجربة [[autocapitalize]] و [[enterkeyhint]] على الكمبيوتر والاستغراب إن «مفيش حاجة حصلت» (دول للموبايل). [[spellcheck="false"]] على خانة رسالة عادية «عشان الشكل». والاعتماد على أي واحدة منهم كأنها قاعدة: كلها تلميحات.`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** كارت ملاحظة في «دفتر نور». خلّي العنوان يتعدّل في مكانه **كنص بس**، والنص اللي تحته يتعدّل بتنسيق، وسطر التاريخ يفضل ثابت. (من قسم ١ و ٢ في الشرح)`, done: R`بتعرف تكتب في العنوان والنص، وسطر التاريخ لأ، وكل الشروط ✓.`, work: { h: 170, start: R`<article>
+  <h2>أفكار المشروع</h2>
+  <div>صفحة رئيسية، وصفحة عن التطبيق.</div>
+  <p>اتكتبت يوم ٣ نوفمبر</p>
+</article>`, checks: [
+              { say: R`العنوان [[contenteditable="plaintext-only"]]`, q: "h2[contenteditable=\"plaintext-only\"]" },
+              { say: R`النص [[contenteditable]] (بتنسيق)`, q: "div[contenteditable=\"\"], div[contenteditable=\"true\"]" },
+              { say: R`سطر التاريخ من غير [[contenteditable]]`, q: "article > p:not([contenteditable])", has: "اتكتبت" },
+              { say: R`[[<article>]] نفسه مش [[contenteditable]]`, q: "article[contenteditable]", n: 0 },
+            ] }, sol: R`~~~live 170 الحل (دوس واكتب)
+<article>
+  <h2 contenteditable="plaintext-only">أفكار المشروع</h2>
+  <div contenteditable>صفحة رئيسية، وصفحة عن التطبيق.</div>
+  <p>اتكتبت يوم ٣ نوفمبر</p>
+</article>
+~~~
+
+**هتشوف إيه:** الصفحة شكلها زي ما هي. الفرق لما تدوس: العنوان والنص بيظهر فيهم مؤشر كتابة وبرواز فوكس، وسطر التاريخ لأ. Ctrl+B بيشتغل في النص ومبيشتغلش في العنوان.
+
+**ليه كده:**
+
+- الـ attribute على كل عنصر لوحده، مش على [[<article>]]: لو اتكتب على الأب كان التاريخ هيتعدّل كمان.
+- العنوان [[plaintext-only]]: عنوان فيه سطرين أو كلمة تقيلة أو صورة ملزوقة ملوش معنى.
+
+**الغلطة الشائعة:** [[contenteditable]] على [[<article>]] كله. أسهل في الكتابة، بس الزائر يقدر يمسح التاريخ، ويمسح العنوان نفسه كعنصر فالكارت يبقى من غير [[<h2>]].
+
+~~~text القياس من Chrome (isContentEditable)
+h2 = true (plaintext-only) ، div = true ، p = false
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكارت ده المفروض كله يتعدّل **ما عدا** سطر «الكاتبة: منى علي». اللي حاصل: مفيش حاجة بتتعدّل خالص. وبعد ما تصلّحها خد بالك من سطر الكاتبة. (من قسم ١ في الشرح: جدول القيم)`, done: R`العنوان والفقرة بيتعدّلوا، وسطر الكاتبة ثابت، وكل الشروط ✓.`, work: { h: 170, start: R`<article contenteditable="yes">
+  <h2>خطة الأسبوع</h2>
+  <p>السبت: مراجعة. الأحد: كتابة.</p>
+  <p>الكاتبة: منى علي</p>
+</article>`, checks: [
+              { say: R`[[<article>]] قيمته صح: [[contenteditable]] أو [[contenteditable="true"]]`, q: "article[contenteditable=\"\"], article[contenteditable=\"true\"]" },
+              { say: R`مفيش [[contenteditable="yes"]]`, q: "[contenteditable=\"yes\"]", n: 0 },
+              { say: R`سطر الكاتبة عليه [[contenteditable="false"]]`, q: "article p[contenteditable=\"false\"]", has: "الكاتبة" },
+              { say: R`العنوان والفقرة الأولى من غير [[contenteditable="false"]]`, q: "article [contenteditable=\"false\"]", n: 1 },
+            ] }, sol: R`~~~live 170 بعد التصليح
+<article contenteditable>
+  <h2>خطة الأسبوع</h2>
+  <p>السبت: مراجعة. الأحد: كتابة.</p>
+  <p contenteditable="false">الكاتبة: منى علي</p>
+</article>
+~~~
+
+وده اللي كان قبل التصليح (جرّب تكتب: مفيش):
+
+~~~live 150 قبل
+<article contenteditable="yes">
+  <h2>خطة الأسبوع</h2>
+  <p>السبت: مراجعة. الأحد: كتابة.</p>
+  <p>الكاتبة: منى علي</p>
+</article>
+~~~
+
+**هتشوف إيه:**
+
+- **قبل:** كلام عادي، الضغط عليه مبيعملش حاجة.
+- **بعد:** العنوان والفقرة بيتكتب فيهم. سطر الكاتبة مبيتكتبش فيه.
+
+**الغلطتين:**
+
+1. [[yes]] مش من القيم. القيم [[true]] (أو فاضي) و [[plaintext-only]] و [[false]]. والقيمة الغلط بتتعامل كأن الـ attribute مش مكتوب.
+2. بعد التصليح الكل ورث التعديل من [[<article>]]، فسطر الكاتبة محتاج [[contenteditable="false"]] صريحة.
+
+**الغلطة الشائعة:** تخلّي سطر الكاتبة [[hidden]] أو [[inert]] «عشان ميتعدّلش». الأول بيخبّيه، والتاني بيمنع حتى نسخه. المطلوب إنه يبان ويتقري وميتغيّرش: [[contenteditable="false"]].
+
+~~~text القياس من Chrome (isContentEditable)
+قبل:   article = false ، وكل اللي جواه false
+بعد:   article = true ، h2 = true ، الفقرة = true ، سطر الكاتبة = false
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** صندوق «نص الملاحظة» شغال، بس قارئ الشاشة مبيقولش عنه حاجة: لا إنه مكان كتابة ولا بتاع إيه. والنص المفروض يبقى نص بس. زوّد الناقص. (من قسم ٣ في الشرح: ملوش اسم ولا دور)`, done: R`الصندوق ليه دور واسم ومتعلّم إنه كذا سطر، وبيقبل نص بس، وكل الشروط ✓.`, work: { h: 130, start: R`<h2>ملاحظة جديدة</h2>
+<div contenteditable>اكتب ملاحظتك هنا</div>`, checks: [
+              { say: R`الصندوق [[contenteditable="plaintext-only"]]`, q: "div[contenteditable=\"plaintext-only\"]" },
+              { say: R`عليه [[role="textbox"]]`, q: "div[contenteditable][role=\"textbox\"]" },
+              { say: R`عليه [[aria-multiline="true"]]`, q: "div[contenteditable][aria-multiline=\"true\"]" },
+              { say: R`ليه اسم: [[aria-label]] مش فاضي، أو [[aria-labelledby]]`, q: "div[contenteditable][aria-label]:not([aria-label=\"\"]), div[contenteditable][aria-labelledby]" },
+            ] }, sol: R`~~~live 130 بعد
+<h2>ملاحظة جديدة</h2>
+<div contenteditable="plaintext-only" role="textbox" aria-multiline="true" aria-label="نص الملاحظة">اكتب ملاحظتك هنا</div>
+~~~
+
+**هتشوف إيه:** نفس الشكل، وبتكتب فيه زي الأول. الفرق في اللي قارئ الشاشة بيقوله (مش باين بالعين)، وفي إن Ctrl+B واللصق بتنسيق مبقوش شغالين.
+
+**ليه كل واحدة:**
+
+- [[role="textbox"]]: «ده مكان كتابة». من غيره [[<div>]] ملوش معنى.
+- [[aria-multiline="true"]]: «كذا سطر»، يعني Enter بيعمل سطر مش إرسال.
+- [[aria-label]]: الاسم. وكان ينفع [[aria-labelledby]] بيشاور على [[id]] العنوان.
+
+**الغلطة الشائعة:** [[<label for="...">]] على الصندوق. الـ label بيتربط بعناصر الفورم بس، و [[<div>]] مش منهم.
+
+**وأبسط من كل ده** لو مش محتاج الشكل الخاص: [[<textarea>]] بـ [[<label>]]. جاهز بدوره واسمه وبيتبعت مع الفورم.
+
+~~~text القياس من Chrome (accessibility tree)
+قبل:   role = generic ، name = ""
+بعد:   role = textbox ، name = "نص الملاحظة" ، multiline = true
+~~~
+
+(النطق نفسه من MDN.)` },
+            { lvl: 'تطبيق', t: R`**ابني:** فورم على الموبايل فيه أربع خانات. اكتب على كل واحدة التلميحات المناسبة: **الاسم** (أول حرف في كل كلمة كبير)، و **كود الخصم** (كله حروف كبيرة، ومن غير تصحيح تلقائي ولا فحص إملائي)، و **البحث** (زرار Enter مكتوب عليه «بحث»)، و **الرسالة** (زرار Enter مكتوب عليه «إرسال»). (من قسم ٤ و ٥ في الشرح)`, done: R`كل خانة عليها تلميحاتها، وكل الشروط ✓.`, work: { h: 230, start: R`<form>
+  <p><label for="name">الاسم</label> <input id="name" name="name"></p>
+  <p><label for="code">كود الخصم</label> <input id="code" name="code"></p>
+  <p><label for="q">بحث</label> <input id="q" name="q" type="search"></p>
+  <p><label for="msg">رسالتك</label> <textarea id="msg" name="msg"></textarea></p>
+</form>`, checks: [
+              { say: R`الاسم: [[autocapitalize="words"]]`, q: "input[name=\"name\"][autocapitalize=\"words\"]" },
+              { say: R`الكود: [[autocapitalize="characters"]]`, q: "input[name=\"code\"][autocapitalize=\"characters\"]" },
+              { say: R`الكود: [[autocorrect="off"]] و [[spellcheck="false"]]`, q: "input[name=\"code\"][autocorrect=\"off\"][spellcheck=\"false\"]" },
+              { say: R`البحث: [[enterkeyhint="search"]]`, q: "input[name=\"q\"][enterkeyhint=\"search\"]" },
+              { say: R`الرسالة: [[enterkeyhint="send"]]`, q: "textarea[name=\"msg\"][enterkeyhint=\"send\"]" },
+            ] }, sol: R`~~~live 185 الحل
+<form>
+  <p><label for="name">الاسم</label> <input id="name" name="name" autocapitalize="words"></p>
+  <p><label for="code">كود الخصم</label> <input id="code" name="code" autocapitalize="characters" autocorrect="off" spellcheck="false"></p>
+  <p><label for="q">بحث</label> <input id="q" name="q" type="search" enterkeyhint="search"></p>
+  <p><label for="msg">رسالتك</label> <textarea id="msg" name="msg" enterkeyhint="send"></textarea></p>
+</form>
+~~~
+
+**هتشوف إيه:** على الكمبيوتر الفورم شكله وتصرفه زي ما هو: التلميحات دي لكيبورد الشاشة. على موبايل (حسب MDN): في «الاسم» الكيبورد بيكبّر أول حرف في كل كلمة إنجليزي، وفي «كود الخصم» بيكتب كله كبير ومبيبدّلش الكود لكلمة، وزرار Enter بيبقى «بحث» في خانة البحث و «إرسال» في الرسالة.
+
+**ليه كده:**
+
+- الكود محتاج التلاتة: [[autocapitalize]] للحروف، و [[autocorrect="off"]] عشان الكيبورد ميغيّرش [[SAVE20]] لكلمة شبهها، و [[spellcheck="false"]] عشان ميحطش تحته خط أحمر.
+- [[enterkeyhint]] بيغيّر الكلمة بس. الإرسال الفعلي بـ Enter لسه شغل الفورم (أو JavaScript في الرسالة).
+
+**الغلطة الشائعة:** [[autocapitalize="on"]] على الاسم. [[on]] معناها أول الجملة بس، يعني «Mona ali».
+
+~~~text القياس من Chrome (المتصفح قرا القيم)
+name:  autocapitalize = words
+code:  autocapitalize = characters ، autocorrect = false ، spellcheck = false
+q:     enterKeyHint = search
+msg:   enterKeyHint = send
+~~~
+
+(سلوك الكيبورد نفسه على الموبايل: من MDN، ومتجرّبش هنا.)` },
+            { lvl: 'تطبيق', t: R`**ابني:** الفقرة دي هتتترجم بترجمة المتصفح لزوار بلغات تانية. فيها حاجتين لازم يفضلوا زي ما هم: اسم التطبيق «Nour Notes»، واختصار الكيبورد اللي جوه [[<kbd>]]. امنع ترجمتهم هم بس. (من قسم ٧ في الشرح)`, done: R`الاسم والاختصار عليهم [[translate="no"]] والفقرة نفسها بتتترجم عادي، وكل الشروط ✓.`, work: { h: 110, start: R`<p>افتح Nour Notes ودوس <kbd>Ctrl+S</kbd> عشان تحفظ الملاحظة.</p>`, checks: [
+              { say: R`«Nour Notes» جوه [[<span translate="no">]]`, q: "p span[translate=\"no\"]", has: "Nour Notes" },
+              { say: R`[[<kbd>]] عليه [[translate="no"]]`, q: "p kbd[translate=\"no\"]" },
+              { say: R`الفقرة نفسها **مش** عليها [[translate]]`, q: "p[translate]", n: 0 },
+            ] }, sol: R`~~~live 52 الحل
+<p>افتح <span translate="no">Nour Notes</span> ودوس <kbd translate="no">Ctrl+S</kbd> عشان تحفظ الملاحظة.</p>
+~~~
+
+**هتشوف إيه:** الفقرة زي ما هي بالظبط. [[translate]] ملوش أي شكل، وتأثيره بيبان لما الصفحة تتترجم بس.
+
+**ليه كده:**
+
+- الاسم مكانش جوه عنصر، فاتلفّ بـ [[<span>]]: عنصر من غير معنى، موجود عشان تحط عليه attribute.
+- [[<kbd>]] عنصر موجود فالـ attribute اتكتب عليه مباشرة.
+- الفقرة من غير [[translate]]: باقي الجملة لازم تتترجم.
+
+**الغلطة الشائعة:** [[translate="false"]]. القيم [[yes]] و [[no]] مش [[true]] و [[false]] (عكس [[spellcheck]] و [[contenteditable]]).
+
+~~~text القياس من Chrome (الخاصية translate)
+span و kbd:   false
+p:            true
+~~~
+
+(إن أدوات الترجمة بتسيب العنصر: من MDN.)` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك عمل فورم «اكتب تعليقك» بـ [[<div contenteditable>]] جوه [[<form>]]، والتعليقات بتوصل السيرفر فاضية. اشرحله في ٣ سطور ليه، وإيه أبسط حل. (من قسم ٣ في الشرح)`, done: R`قلت السبب (مين بيتبعت مع الفورم) والحل.`, sol: R`إجابة نموذجية:
+
+1. الفورم بيبعت **عناصر الفورم اللي ليها [[name]]** بس: [[<input>]] و [[<textarea>]] و [[<select>]] والأزرار. [[<div contenteditable>]] مش منهم: ملوش [[name]] ولا [[value]]، فالمتصفح مبيشوفوش وهو بيجمع البيانات.
+2. أبسط حل: [[<textarea name="comment">]] بـ [[<label>]]. بيتبعت، وليه اسم لقارئ الشاشة، و [[required]] و [[maxlength]] شغالين عليه.
+3. [[contenteditable]] يتساب لتعديل نص في مكانه، ومعاه JavaScript بياخد المحتوى ويبعته.
+
+~~~text القياس من Chrome
+فورم فيه <div contenteditable>جوه فورم</div> و <input name="a" value="1"> و <textarea name="t">:
+اللي اتبعت:   a=1&t=
+~~~` }
+          ]
+        }
+,
+        {
+          cmd: "autofocus و accesskey و draggable",
+          title: "باقي الـ global attributes: autofocus و accesskey و draggable و title و data-* وجدول بكل الـ attributes",
+          pre: [{ to: "css/hidden و inert", why: R`[[hidden]] و [[inert]] و [[tabindex]] من نفس العيلة واتشرحوا هناك` }, { to: "css/abbr و dfn و time", why: R`[[title]] اتشرح هناك على [[<abbr>]]، وهنا ليه مينفعش تعتمد عليه في أي مكان تاني` }],
+          ref: [
+            { t: "MDN: Global attributes", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes" },
+            { t: "WHATWG: Global attributes", url: "https://html.spec.whatwg.org/multipage/dom.html#global-attributes" },
+            { t: "MDN: autofocus", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/autofocus" },
+            { t: "MDN: accesskey", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/accesskey" },
+            { t: "MDN: draggable", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/draggable" },
+            { t: "MDN: title", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/title" },
+            { t: "MDN: data-*", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/data-*" },
+            { t: "MDN: headingoffset", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/headingoffset" }
+          ],
+          desc: R`«Global attributes» هي الـ attributes اللي ينفع تتكتب على **أي عنصر** في الـ HTML: [[id]] و [[class]] و [[lang]] و [[hidden]] وغيرهم. عددهم حوالي تلاتين، واتشرح منهم كتير في الدروس اللي فاتت.
+الدرس ده بيقفل الباقي: [[autofocus]] (الفوكس أول ما الصفحة تفتح)، و [[accesskey]] (اختصار كيبورد)، و [[draggable]] (عنصر بيتسحب)، و [[title]] (التلميح اللي بيطلع مع الماوس، وليه متعتمدش عليه)، و [[data-*]] (بيانات من عندك على العنصر). وفي آخره **جدول بكل الـ global attributes** وكل واحد اتشرح فين.`,
+          example: R`<input name="q" type="search" autofocus>
+<button type="button" accesskey="s">حفظ</button>
+<li draggable="true" data-note-id="42" data-pinned>مشتريات الأسبوع</li>
+<button type="button" title="امسح الملاحظة" aria-label="امسح الملاحظة">🗑</button>`,
+          flag: "script",
+          lines: [
+            R`[[autofocus]]: أول ما الصفحة تفتح، المؤشر يبقى في خانة البحث دي من غير ما الزائر يدوس عليها.`,
+            R`[[accesskey="s"]]: اختصار كيبورد للزرار. في Chrome على ويندوز Alt+S بيدوس عليه.`,
+            R`[[draggable="true"]]: العنصر ده بيتسحب بالماوس. و [[data-note-id="42"]] و [[data-pinned]] بيانات من عندك متخزنة على العنصر: رقم الملاحظة، وإنها متثبتة. مبيبانوش للزائر، و JavaScript و CSS بيقروهم.`,
+            R`زرار أيقونة. [[title]] بيطلّع تلميح لما الماوس يقف عليه، و [[aria-label]] هو الاسم اللي قارئ الشاشة بيقراه: [[title]] لوحده مش كفاية.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+كل دول attributes بتتكتب على أي عنصر. خمسة منهم ليهم شرح هنا، وتلاتة بييجوا في كورسات جاية، واتنين جداد لسه مش مدعومين، وفي الآخر الجدول الكامل.
+
+القياسات من Chrome 157 على Windows 11.
+
+---
+
+## ١. [[<input autofocus>]]: الفوكس أول ما الصفحة تفتح
+
+~~~html
+<h1>بحث في الملاحظات</h1>
+<input name="q" type="search" autofocus>
+~~~
+
+الزائر بيفتح الصفحة ويكتب على طول، من غير ما يدوس على الخانة.
+
+~~~text القياس من Chrome
+صفحة فيها تلات خانات والتانية عليها autofocus:       الفوكس على التانية بعد التحميل
+خانتين عليهم autofocus:                              الفوكس على **الأولى** فيهم بترتيب الكود
+جوه <dialog> اتفتح بـ showModal():                   الفوكس على العنصر اللي عليه autofocus جوه النافذة
+~~~
+
+- attribute من غير قيمة. و**واحد بس** في الصفحة (أو واحد جوه كل [[<dialog>]] و popover).
+- global attribute: بيتكتب على أي عنصر بياخد فوكس (خانة، زرار، لينك، عنصر [[contenteditable]] أو عليه [[tabindex]]).
+- جوه [[<dialog>]] هو اللي بيحدد الفوكس يبدأ منين لما النافذة تتفتح (درس «dialog و closedby»).
+- المعاينة اللي جوه الدروس هنا مش هتوريك [[autofocus]] الصفحة: المتصفح بيمنعه جوه iframe من موقع تاني. جرّبه في ملف عندك.
+
+**وليه تستخدمه بحساب (MDN):**
+
+- قارئ الشاشة بيبدأ يقرا **من عند العنصر ده**، فالزائر بيفوته كل اللي فوقه: العنوان والشرح. ومن غير label واضح مش هيعرف هو فين.
+- الصفحة بتنزل لحد العنصر لو مش باين، فالزائر يلاقي نفسه في نص الصفحة.
+- على الموبايل الكيبورد بيفتح لوحده وياخد نص الشاشة.
+- لو العنوان فيه [[#id]] (لينك لجزء من الصفحة)، المتصفح بيتجاهل [[autofocus]].
+
+مناسب لـ: صفحة شغلتها الوحيدة حقل واحد (بحث، تسجيل دخول)، أو جوه [[<dialog>]]. مش مناسب لـ: فورم في آخر صفحة طويلة، أو خانة اشتراك في النشرة.
+
+---
+
+## ٢. [[<button accesskey="s">]]: اختصار كيبورد
+
+[[accesskey]] بياخد حرف، والمتصفح بيخلّيه اختصار: بيدوس على الزرار أو اللينك، أو ينقل الفوكس للخانة.
+
+المشكلة إن **المفاتيح اللي بتتداس مع الحرف بتختلف** من متصفح لمتصفح ومن نظام لنظام (الجدول من MDN):
+
+| المتصفح والنظام | الاختصار |
+|---|---|
+| Chrome و Edge على Windows | Alt + الحرف |
+| Firefox على Windows | Alt + Shift + الحرف |
+| Chrome و Safari و Firefox على Mac | Control + Option + الحرف |
+
+~~~text القياس من Chrome
+<button accesskey="s">:    الخاصية accessKey = "s"
+الضغطة نفسها (Alt+S):      مبتتبعتش من سكربت في Chrome headless ، فتشغيل الاختصار من MDN
+~~~
+
+**وليه MDN بينصح متستخدموش في المواقع العادية:**
+
+- الاختصار ممكن يخبط في اختصار بتاع المتصفح أو النظام أو قارئ الشاشة (Alt+D في Chrome بيروح لشريط العنوان).
+- الحرف ممكن ميكونش على كيبورد الزائر (كيبورد عربي أو ألماني).
+- الزائر ميعرفش إن فيه اختصار أصلًا إلا لو كتبتهوله في الصفحة.
+
+مكانه: تطبيق ويب الناس بتشتغل عليه كل يوم (بريد، محرر)، والاختصارات مكتوبة قدامهم، وغالبًا معمولة بـ JavaScript مش بـ [[accesskey]].
+
+---
+
+## ٣. [[<li draggable="true">]]: عنصر بيتسحب
+
+~~~live 88 اسحب أي ملاحظة بالماوس
+<ul>
+  <li draggable="true">مشتريات الأسبوع</li>
+  <li draggable="true">أفكار المشروع</li>
+  <li>ملاحظة من غير draggable: بتتحدد كنص بس</li>
+</ul>
+~~~
+
+**هتشوف إيه:** أول سطرين لما تمسكهم وتسحب، نسخة شفافة منهم بتمشي مع الماوس. التالت بيتحدد كنص. ولما تسيب الماوس: **مفيش حاجة بتحصل**، العنصر بيرجع مكانه.
+
+~~~text القياس من Chrome (الخاصية draggable)
+<img>:                          true     (الصور بتتسحب لوحدها)
+<a href="...">:                 true     (واللينكات)
+<a> من غير href ، <p> ، <div>:  false
+<div draggable="true">:         true
+<div draggable> (من غير قيمة):  false    (!)
+<div draggable="yes">:          false
+سحب عنصر draggable="true" بالماوس:   الحدث dragstart اتبعت
+~~~
+
+- القيم [[true]] و [[false]] **مكتوبين**. [[draggable]] لوحدها مبتشتغلش (زي [[contenteditable]]، مش زي [[hidden]]).
+- [[draggable="false"]] بيمنع سحب صورة أو لينك (شعار الموقع مثلًا).
+- الـ attribute بيخلّي العنصر **يتسحب** بس. المكان اللي هيتساب فيه، واللي يحصل ساعتها (إعادة الترتيب)، كله JavaScript: Drag and Drop API في كورس JavaScript.
+- السحب بالماوس بس. اللي ماشي بالكيبورد أو باللمس محتاج طريقة تانية (أزرار «لفوق» و «لتحت»)، فمتخلّيش السحب الطريقة الوحيدة.
+
+---
+
+## ٤. [[<button title="...">]]: التلميح، وليه متعتمدش عليه
+
+[[title]] بيحط كلام على العنصر، والمتصفح بيعرضه في مربع أصفر صغير لما **الماوس** يقف على العنصر ثانية.
+
+~~~live 57 وقّف الماوس على كل واحد ثانية
+<p><button type="button" title="امسح الملاحظة">🗑</button>
+<abbr title="HyperText Markup Language">HTML</abbr>
+<span title="السعر شامل الضريبة">١٠٠ جنيه</span></p>
+~~~
+
+**هتشوف إيه:** مع الماوس، كل واحد بيطلّع مربع فيه الكلام. جرّب توصل لنفس الكلام بـ Tab، أو على موبايل: مش هتلاقيه.
+
+المشاكل (من MDN):
+
+- **اللمس:** مفيش «وقوف بالماوس» على الموبايل. الكلام مبيظهرش.
+- **الكيبورد:** الفوكس على العنصر مبيطلّعش التلميح.
+- **قارئ الشاشة:** بعضهم بيقراه وبعضهم لأ، حسب الإعدادات.
+- **التكبير:** التلميح صغير ومبيتكبّرش مع الصفحة، وبيختفي لوحده.
+
+~~~text القياس من Chrome (accessibility tree)
+<button title="امسح الملاحظة">🗑</button>:      name = "🗑" ، description = "امسح الملاحظة"
+<button title="امسح الملاحظة">امسح</button>:    name = "امسح" ، description = "امسح الملاحظة"
+<input title="اكتب اسمك"> من غير label:         name = "اكتب اسمك"
+~~~
+
+يعني زرار الأيقونة اسمه عند قارئ الشاشة «🗑»، و [[title]] وصف جانبي بس. **القاعدة: أي معلومة الزائر محتاجها متتحطش في [[title]] لوحده.**
+
+| عايز | بدل [[title]] |
+|---|---|
+| اسم لزرار أيقونة | [[aria-label="امسح الملاحظة"]]، أو كلام مكتوب جنب الأيقونة |
+| اسم لحقل | [[<label>]] |
+| شرح مهم (شامل الضريبة) | كلام مكتوب في الصفحة |
+| شرح إضافي بيتفتح | [[popover]] بزرار «؟» |
+
+الأماكن اللي [[title]] ليه معنى رسمي فيها: [[<abbr title>]] (فك الاختصار، درس «abbr و dfn و time»)، و [[<iframe title>]] (اسم الإطار، وده إجباري)، و [[<link title>]]. وزيادة على [[aria-label]] على زرار أيقونة عشان بتوع الماوس يشوفوا تلميح: تمام.
+
+---
+
+## ٥. [[<li data-note-id="42">]]: بيانات من عندك
+
+أي attribute اسمه بيبدأ بـ [[data-]] بتاعك انت: المتصفح مبيعملش بيه حاجة، ومبيبانش للزائر. بتخزّن فيه معلومة عن العنصر عشان JavaScript أو CSS يقروها.
+
+~~~html
+<li data-note-id="42" data-color="yellow" data-pinned>مشتريات الأسبوع</li>
+~~~
+
+~~~text القياس من Chrome
+el.dataset:                                  {"noteId":"42","pinned":"","color":"yellow"}
+عدد العناصر اللي بيمسكها [data-pinned]:      1
+attribute مكتوب data-Color:                   اتسجّل data-color   (الـ HTML بيصغّر الحروف)
+~~~
+
+- الاسم: [[data-]] وبعدها حروف صغيرة وأرقام وشرطات: [[data-note-id]]. من غير مسافات ولا حروف كبيرة.
+- القيمة دايمًا نص. ومن غير قيمة ([[data-pinned]]) معناها «موجود».
+- في JavaScript بتتقري من [[dataset]] والشرطة بتتحول لحرف كبير: [[data-note-id]] بقت [[noteId]].
+- في الـ CSS بتتمسك بـ attribute selector: القاعدة اللي بتبدأ بـ [[li[data-pinned] {]] بتلوّن الملاحظات المتثبتة بس.
+
+إمتى: رقم العنصر في قاعدة البيانات، حالته (متثبت، مقري)، نوعه. حاجة الكود محتاجها وملهاش attribute رسمي.
+
+وإمتى لأ:
+
+- لو فيه عنصر أو attribute رسمي بنفس المعنى، استخدمه: التاريخ في [[<time datetime>]] مش [[data-date]]، والقيمة في [[<data value>]].
+- محتوى الزائر لازم يشوفه: يتكتب في الصفحة. قارئ الشاشة ومحرك البحث مبيقروش [[data-*]].
+- أسرار: كل اللي في الـ HTML بيتشاف في View Source.
+
+---
+
+## ٦. [[id]] و [[class]] و [[style]] في جدول
+
+التلاتة اتقابلوا قبل كده. الفرق بينهم:
+
+| الـ attribute | بيعمل إيه | كام مرة | بيتستخدم في |
+|---|---|---|---|
+| [[<h2 id="about">]] | اسم **فريد** للعنصر | مرة واحدة في الصفحة | لينك [[#about]]، و [[for]] و [[aria-labelledby]] و [[popovertarget]] و [[commandfor]] و [[form]] |
+| [[<p class="note pinned">]] | اسم **مجموعة** (أو كذا اسم بينهم مسافة) | على أي عدد عناصر | الـ CSS والـ JavaScript بيمسكوا بيه كل عناصر المجموعة |
+| [[<p style="color: red">]] | CSS مكتوب على العنصر نفسه | | تجربة سريعة، أو قيمة JavaScript بيحسبها. الباقي في ملف الـ CSS |
+
+- [[id]] المكرر مبيطلّعش خطأ، بس اللينك و [[popovertarget]] وإخواتهم بيروحوا لأول واحد بس.
+- [[style]] أقوى من أي حاجة في ملف الـ CSS تقريبًا، فصعب تتغيّر بعدين (درس «specificity»). التفاصيل في وحدات الـ CSS ودرس «(id, class, type)».
+
+---
+
+## ٧. تلاتة هتقابلهم في كورسات جاية
+
+| الـ attribute | بيعمل إيه | بيتشرح فين |
 |---|---|---|
-| الكاش | آه | لأ (جزء من الـ HTML) |
-| CSS و [[currentColor]] | مش بيوصلوا | بيشتغلوا |
-| مناسب لـ | لوجو، رسومات كبيرة | أيقونات بتتلوّن |
+| [[<button is="fancy-button">]] | بيقول إن العنصر ده نسخة «مخصوصة» من عنصر عادي، معرّفة بـ JavaScript (customized built-in element). Safari مش داعمه | كورس JavaScript: Web Components |
+| [[<span slot="title">]] | بيحدد المحتوى ده يتحط في أنهي «خانة» ([[<slot>]]) جوه component | كورس JavaScript: Web Components و Shadow DOM |
+| [[<script nonce="r4nd0m">]] | كلمة عشوائية السيرفر بيكتبها على الـ [[<script>]] أو [[<style>]] المسموح، وبيبعت نفس الكلمة في هيدر Content-Security-Policy. أي سكربت من غيرها المتصفح بيرفضه | كورس الأمان: Content Security Policy |
 
-- أيقونة جوه زرار: [[aria-hidden="true"]] عليها والاسم على الزرار. SVG بيعني حاجة: [[role="img"]] واسم.
-- أي SVG من برنامج تصميم: svgo الأول، وبعدين [[currentColor]] بدل الألوان الثابتة.
+---
 
-## مش مدعوم لسه: [[param()]] لتلوين SVG جوه [[<img>]]
+## ٨. جداد ولسه مش مدعومين: [[<section headingoffset="1">]] و [[<dialog headingreset>]]
 
 > ميزة جديدة لسه مش في كل المتصفحات. يعني إيه «مش Baseline» و «ورا flag»، وإزاي تتأكد بنفسك قبل ما تستخدم أي ميزة: درس «Baseline و @supports».
 
-هتشوفها في MDN، فلازم تعرف هي إيه وليه متستخدمهاش دلوقتي.
+اتنين اتضافوا للمواصفة قريب. الفكرة: component فيه [[<h1>]] بيتحط جوه صفحة فيها [[<h1>]]. بدل ما تغيّر العنوان لـ [[<h2>]] بإيدك، الأب بيقول «انزل بكل العناوين اللي جوايا مستوى»:
 
-**الفكرة:** حل لنفس المشكلة اللي فوق (الـ img مقفول على الـ CSS). الملف نفسه بيكتب [[stroke="env(--color1, black)"]] بدل لون ثابت، يعني «اللون ده متغيّر اسمه [[--color1]]، ولو محدش بعته يبقى أسود». والصفحة بتبعت قيمته من برّه بـ [[param()]]، بـ ٣ طرق:
-
-~~~css
-/* ١. خاصية على العنصر */
-.icon { link-parameters: param(--color1, red); }
-/* ٢. جوه url() */
-.box { background-image: url("icon.svg" param(--color1, red)); }
+~~~html
+<h1>دفتر نور</h1>
+<section headingoffset="1">
+  <h1>ملاحظة</h1>            <!-- المستوى المحسوب: 2 -->
+  <article headingoffset="2">
+    <h2>تفاصيل</h2>          <!-- 2 + 1 + 2 = 5 -->
+  </article>
+  <dialog headingreset>
+    <h1>تأكيد</h1>           <!-- المفروض يرجع 1: headingreset بيوقف العدّ -->
+  </dialog>
+</section>
 ~~~
 
-والتالتة في الـ HTML: [[<img src="icon.svg#param(--color1, red)">]].
+- [[headingoffset]]: رقم من 0 لـ 8 بيتزوّد على مستوى كل عنوان جوه العنصر. والمستوى ده هو اللي قارئ الشاشة بيقوله. اسم العنصر وشكله مبيتغيّروش.
+- [[headingreset]]: من غير قيمة. بيقول «اللي جوايا يبدأ يعدّ من الأول»، لمحتوى برّه ترتيب الصفحة زي [[<dialog>]].
 
-**الحالة:** تجريبية (مسودة CSS Linked Parameters). مفيش متصفح بيطبّقها. قسناها في Chrome 157:
-
-~~~text الناتج (Chrome 157، الكونسول)
-CSS.supports("link-parameters", "param(--c, red)")                  false
-CSS.supports("background-image", 'url("a.svg" param(--c, red))')     false
+~~~text القياس من Chrome 157 (مستوى العنوان في accessibility tree)
+عادي:                                        «ملاحظة» = 1 ، «تفاصيل» = 2      (الـ attributes متجاهلة)
+بعد تشغيل Experimental Web Platform features: «ملاحظة» = 2 ، «تفاصيل» = 5
+                                              و «تأكيد» طلع 2 مش 1 (التطبيق التجريبي لسه مش مطابق لشرح MDN)
 ~~~
 
-**يعني إيه بالنسبالك:** متكتبهاش في مشروع. لو عايز أيقونة بتتلوّن النهارده: inline بـ [[currentColor]] (الجدول اللي فوق)، أو [[mask-image]] بلون الخلفية (درس «mask»). وراجع جدول التوافق في MDN كل فترة: لما يبقى أخضر في Chrome و Firefox و Safari، تقدر تستخدمها.`,
-          lines: [
-            R`لوجو ثابت: [[<img>]] بيتكاش، ومقاس، و alt.`,
-            R`زرار أيقونة: الاسم «السلة» على الزرار نفسه لأن مفيش كلام جواه.`,
-            R`الأيقونة inline: الخطوط بلون الكلام ([[currentColor]])، ومخفية عن قارئ الشاشة لأن الزرار ليه اسم.`,
-            R`عجلتين السلة: دايرتين نص قطرهم 1 عند (9، 20) و (18، 20) على لوحة الـ 24.`,
-            R`جسم السلة: مسار [[d]] بأوامر رسم (روح، وخط، وقوس)، وده اللي بيتلوّن بالـ stroke.`,
-            R`قفلة الـ [[<svg>]]: الرسمة كلها جوه الزرار.`,
-            R`قفلة الزرار، وبعده SVG بيعني حاجة لوحده.`,
-            R`SVG بيعني حاجة لوحده: [[role="img"]] واسمه من الـ [[<title>]].`,
-            "لون الأيقونة هو لون الزرار.",
-            "في الـ hover الزرار بيتلوّن، والأيقونة معاه من غير أي CSS ليها."
+**الدعم (جدول MDN، نوفمبر 2026):** Chrome من 151 **ورا flag تجريبي**، و Firefox ورا flag في النسخة التجريبية، و Safari 27.3. MDN معلّمهم «Experimental» ومش Baseline.
+
+**يعني متستخدمهمش دلوقتي.** اكتب مستوى العنوان الصح بإيدك ([[<h2>]] جوه القسم)، زي درس «h1 لحد h6». المتصفح اللي مش داعم بيتجاهلهم، فلو كتبتهم لازم الصفحة تبقى مظبوطة من غيرهم أصلًا.
+
+---
+
+## ٩. جدول كل الـ global attributes
+
+| الـ attribute | بيعمل إيه | اتشرح فين |
+|---|---|---|
+| [[<button accesskey="s">]] | اختصار كيبورد | هنا، قسم ٢ |
+| [[<input autocapitalize="words">]] | الحروف الكبيرة في كيبورد الموبايل | «contenteditable و spellcheck» |
+| [[<input autocorrect="off">]] | التصحيح التلقائي | «contenteditable و spellcheck» |
+| [[<input autofocus>]] | الفوكس أول ما الصفحة أو النافذة تفتح | هنا، قسم ١ |
+| [[<p class="note">]] | اسم مجموعة للـ CSS والـ JavaScript | هنا قسم ٦، و «(id, class, type)» |
+| [[<div contenteditable>]] | العنصر بيتكتب فيه | «contenteditable و spellcheck» |
+| [[<li data-note-id="42">]] | بيانات من عندك ([[data-*]]) | هنا، قسم ٥ |
+| [[<p dir="rtl">]] | اتجاه الكتابة | «lang و dir» |
+| [[<li draggable="true">]] | العنصر بيتسحب | هنا، قسم ٣ |
+| [[<input enterkeyhint="search">]] | كلمة زرار Enter في الموبايل | «contenteditable و spellcheck» |
+| [[<section headingoffset="1">]] | بينزّل مستوى العناوين اللي جواه (لسه مش مدعوم) | هنا، قسم ٨ |
+| [[<dialog headingreset>]] | بيرجّع عدّ العناوين من الأول (لسه مش مدعوم) | هنا، قسم ٨ |
+| [[<p hidden>]] | مش جزء من الصفحة دلوقتي | «hidden و inert» |
+| [[<h2 id="about">]] | اسم فريد | هنا قسم ٦، و «(id, class, type)» |
+| [[<main inert>]] | باين بس واقف | «hidden و inert» |
+| [[<input inputmode="numeric">]] | شكل كيبورد الموبايل | «textarea و date و number» |
+| [[<button is="fancy-button">]] | عنصر عادي مخصوص بـ JavaScript | هنا قسم ٧، وكورس JavaScript |
+| [[<div itemscope>]] | بداية «حاجة» موصوفة لمحرك البحث | «itemscope و itemprop» |
+| [[<div itemtype="https://schema.org/Product">]] | نوع الحاجة | «itemscope و itemprop» |
+| [[<span itemprop="name">]] | خاصية من خصايصها | «itemscope و itemprop» |
+| [[<div itemid="...">]] | رقم أو عنوان فريد للحاجة | «itemscope و itemprop» |
+| [[<div itemref="more">]] | خصايص مكتوبة في حتة تانية من الصفحة | «itemscope و itemprop» |
+| [[<p lang="en">]] | لغة المحتوى | «lang و dir» |
+| [[<script nonce="r4nd0m">]] | تصريح لسكربت مع CSP | هنا قسم ٧، وكورس الأمان |
+| [[<div popover>]] | بيطلع فوق الصفحة ويتقفل لوحده | «popover و popovertarget» |
+| [[<span slot="title">]] | خانة جوه component | هنا قسم ٧، وكورس JavaScript |
+| [[<textarea spellcheck="false">]] | الفحص الإملائي | «contenteditable و spellcheck» |
+| [[<p style="color: red">]] | CSS على العنصر نفسه | هنا قسم ٦، و «specificity» |
+| [[<div tabindex="0">]] | مكان العنصر في طريق Tab | «hidden و inert»، و «roving tabindex» |
+| [[<abbr title="...">]] | تلميح مع الماوس | هنا قسم ٤، و «abbr و dfn و time» |
+| [[<span translate="no">]] | متترجمش ده | «contenteditable و spellcheck» |
+| [[<textarea writingsuggestions="false">]] | اقتراحات تكملة الكتابة | «contenteditable و spellcheck» |
+
+وحاجتين مش global attributes رسميًا بس بيتكتبوا على أي عنصر: [[role]] و [[aria-*]] (معنى العنصر لقارئ الشاشة، في دروس الـ accessibility)، و [[onclick]] وإخواتها (سطر JavaScript على العنصر. استخدمناها في الوحدة دي عشان لسه مفيش JavaScript، وفي الشغل الحقيقي الأحداث بتتكتب في ملف الـ JavaScript).
+
+---
+
+## ١٠. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[autofocus]] على عنصرين | الأول بس بياخد الفوكس |
+| [[autofocus]] على خانة في آخر صفحة طويلة | الصفحة بتفتح على آخرها، وقارئ الشاشة بيبدأ من هناك |
+| [[accesskey]] بحرف المتصفح مستخدمه | اختصار المتصفح أو اختصارك، واحد فيهم بيبوظ |
+| [[draggable]] من غير قيمة | العنصر مبيتسحبش |
+| السحب هو الطريقة الوحيدة لإعادة الترتيب | الكيبورد واللمس برّه |
+| اسم زرار الأيقونة في [[title]] بس | قارئ الشاشة بيقول «🗑»، والموبايل مبيشوفش حاجة |
+| معلومة مهمة في [[title]] | اللي بيشوفها بتوع الماوس اللي استنوا ثانية بس |
+| محتوى في [[data-*]] | مبيبانش ومبيتقريش |
+| [[data-noteId]] | بيتسجل [[data-noteid]]، وفي [[dataset]] بيبقى [[noteid]] مش [[noteId]] |
+| [[id]] مكرر | اللينكات والربط بيروحوا لأول واحد |
+
+---
+
+## الخلاصة
+
+- [[autofocus]]: واحد في الصفحة، ولصفحة شغلتها حقل واحد أو جوه dialog.
+- [[accesskey]]: اختصار بيختلف من متصفح لمتصفح. ابعد عنه في المواقع العادية.
+- [[draggable="true"]]: بيتسحب، والباقي JavaScript، ولازم بديل بالكيبورد.
+- [[title]]: تلميح للماوس بس. مفيش معلومة تعتمد عليه.
+- [[data-*]]: بيانات للكود، مش محتوى للزائر.
+- أي global attribute: دوّر عليه في جدول قسم ٩.`,
+          try: R`اعمل ملف [[search.html]] فيه عنوان، وخانة بحث عليها [[autofocus]]، وتحتها قايمة من تلات ملاحظات كل واحدة [[draggable="true"]] وعليها [[data-note-id]] برقمها. افتحه في Chrome: اكتب على طول من غير ما تدوس على الخانة، واسحب ملاحظة، وافتح DevTools (F12) وفي تاب Console اكتب [[document.querySelector('li').dataset]] ودوس Enter.`,
+          sol: R`~~~html search.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بحث في الملاحظات</title>
+</head>
+<body>
+<h1>بحث في الملاحظات</h1>
+<p><label for="q">دوّر</label> <input id="q" name="q" type="search" autofocus></p>
+<ul>
+  <li draggable="true" data-note-id="12">مشتريات الأسبوع</li>
+  <li draggable="true" data-note-id="15">أفكار المشروع</li>
+  <li draggable="true" data-note-id="21">كتب عايز أقراها</li>
+</ul>
+</body>
+</html>
+~~~
+
+~~~view 200 شكل الصفحة (في ملفك المؤشر هيبقى في الخانة من الأول)
+<h1>بحث في الملاحظات</h1>
+<p><label for="q">دوّر</label> <input id="q" name="q" type="search"></p>
+<ul>
+  <li draggable="true" data-note-id="12">مشتريات الأسبوع</li>
+  <li draggable="true" data-note-id="15">أفكار المشروع</li>
+  <li draggable="true" data-note-id="21">كتب عايز أقراها</li>
+</ul>
+~~~
+
+**هتشوف إيه:**
+
+- أول ما الصفحة تفتح، المؤشر بينوّر جوه خانة البحث، واللي بتكتبه بيتكتب فيها.
+- لما تسحب ملاحظة، نسخة شفافة منها بتمشي مع الماوس، ولما تسيب بترجع.
+- في الـ Console: [[DOMStringMap {noteId: '12'}]].
+
+(السطر اللي بيتكتب في الـ Console JavaScript: «هات أول [[<li>]] في الصفحة واعرضلي بياناته». هتفهمه في كورس JavaScript.)
+
+~~~text القياس من Chrome
+بعد التحميل:                 الفوكس على الخانة اللي عليها autofocus
+li.draggable:                true ، وسحبه بعت dragstart
+li.dataset:                  {"noteId":"12"}
+~~~`,
+          deep: {
+            why: R`فيه احتياجات بتتكرر على كل أنواع العناصر: اسم، مجموعة، لغة، إخفاء، فوكس، بيانات للكود. بدل ما كل عنصر يعرّف نسخته، المواصفة حطتهم في قايمة واحدة بتشتغل على الكل. والقايمة دي بتكبر: [[popover]] و [[inert]] و [[enterkeyhint]] و [[writingsuggestions]] كلهم جداد نسبيًا، و [[headingoffset]] لسه داخل. فاللي يعرف القايمة يعرف إيه اللي المتصفح بيعمله ببلاش قبل ما يكتب JavaScript.`,
+            how: R`[[autofocus]]: المتصفح وهو بيحلل الصفحة بيحط كل عنصر عليه [[autofocus]] في قايمة انتظار، وبعد ما الصفحة تجهز بياخد أول واحد لسه موجود وينفع ياخد فوكس وينقل له الفوكس، إلا لو الزائر سبق وداس على حاجة أو العنوان فيه [[#id]]. [[draggable="true"]] بيخلّي ضغطة وسحبة بالماوس تبدأ «drag»: المتصفح بياخد صورة للعنصر ويبعت حدث [[dragstart]]، ولو مفيش كود قال «المكان ده بيقبل»، بيلغي السحب. [[title]] بيتحط في الـ accessibility tree كـ description (أو كاسم لو مفيش اسم تاني خالص)، وبيتعرض كـ tooltip من نظام التشغيل. و [[data-*]] المتصفح بيخزنه زي أي attribute وبيعرضه في [[dataset]] بعد ما يحوّل [[a-b]] لـ [[aB]].`,
+            when: R`[[autofocus]]: بحث، تسجيل دخول، وأول حقل أو زرار «إلغاء» في dialog. [[draggable]]: قايمة بتترتب، كروت بتتنقل بين أعمدة، ملف بيتسحب، ودايمًا مع بديل. [[data-*]]: معرّف العنصر، حالته، إعداد لـ JavaScript. [[title]]: [[<abbr>]] و [[<iframe>]]، وتلميح زيادة فوق اسم موجود. [[accesskey]]: تطبيق شغل داخلي الناس متدربة عليه.`,
+            mistakes: R`[[autofocus]] في كل فورم «عشان أسهّل». [[title]] كبديل لـ label أو لـ [[aria-label]]. [[title]] بنفس كلام الزرار («حفظ» وتلميحه «حفظ»): تكرار قارئ الشاشة بيقراه مرتين. [[data-*]] بدل عنصر رسمي ([[<time>]] و [[<data>]])، أو لتخزين محتوى. [[draggable]] من غير [[="true"]]. ورقم سري أو token في [[data-*]].`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** صفحة «بحث في الملاحظات» المفروض تفتح والمؤشر في خانة البحث. اللي حاصل: الفوكس بيروح لخانة «إيميلك» بتاعة النشرة اللي في آخر الصفحة، والصفحة بتنزل عندها. صلّحها. (من قسم ١ في الشرح)`, done: R`[[autofocus]] واحد بس في الصفحة وهو على خانة البحث، وكل الشروط ✓.`, work: { h: 220, start: R`<h1>بحث في الملاحظات</h1>
+<p><label for="q">دوّر</label> <input id="q" name="q" type="search"></p>
+<p>نتايج البحث هتظهر هنا.</p>
+<footer>
+  <p><label for="mail">اشترك في النشرة: إيميلك</label>
+  <input id="mail" name="mail" type="email" autofocus></p>
+</footer>`, checks: [
+              { say: R`خانة البحث عليها [[autofocus]]`, q: "input[type=\"search\"][autofocus]" },
+              { say: R`خانة الإيميل مبقاش عليها [[autofocus]]`, q: "input[type=\"email\"][autofocus]", n: 0 },
+              { say: R`[[autofocus]] واحد بس في الصفحة`, q: "[autofocus]", n: 1 },
+            ] }, sol: R`~~~live 220 بعد التصليح
+<h1>بحث في الملاحظات</h1>
+<p><label for="q">دوّر</label> <input id="q" name="q" type="search" autofocus></p>
+<p>نتايج البحث هتظهر هنا.</p>
+<footer>
+  <p><label for="mail">اشترك في النشرة: إيميلك</label>
+  <input id="mail" name="mail" type="email"></p>
+</footer>
+~~~
+
+**هتشوف إيه (في ملف عندك، لأن المعاينة هنا مبتشغّلش [[autofocus]] الصفحة):**
+
+- **قبل:** المؤشر في خانة الإيميل اللي تحت. في صفحة طويلة كان الزائر هيلاقي نفسه في الـ footer.
+- **بعد:** المؤشر في خانة البحث، والزائر بيكتب على طول.
+
+**ليه:** [[autofocus]] للحاجة اللي الزائر جاي الصفحة عشانها. النشرة مش هي.
+
+**الغلطة الشائعة:** تزوّد [[autofocus]] على البحث وتسيب بتاع الإيميل. بيشتغل بالصدفة (الأول في الكود بيكسب)، بس أول ما حد يغيّر الترتيب المشكلة ترجع.
+
+~~~text القياس من Chrome
+عنصرين عليهم autofocus:    الفوكس على الأول بترتيب الكود
+بعد التصليح:               الفوكس على خانة البحث
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** دي تلات ملاحظات جاية من قاعدة البيانات. اكتب بيانات كل واحدة على الـ [[<li>]] بتاعها بـ [[data-*]]: الرقم في [[data-note-id]]، واللون في [[data-color]]، والمتثبتة عليها [[data-pinned]] من غير قيمة. (من قسم ٥ في الشرح)`, done: R`كل [[<li>]] عليه رقمه ولونه، وواحدة بس عليها [[data-pinned]]، وكل الشروط ✓.`, work: { h: 170, start: R`<!--
+id   العنوان             اللون     متثبتة
+12   مشتريات الأسبوع     yellow    أيوه
+15   أفكار المشروع       green     لأ
+21   كتب عايز أقراها     yellow    لأ
+-->
+<ul>
+  <li>مشتريات الأسبوع</li>
+  <li>أفكار المشروع</li>
+  <li>كتب عايز أقراها</li>
+</ul>`, checks: [
+              { say: R`«مشتريات الأسبوع»: [[data-note-id="12"]] و [[data-color="yellow"]]`, q: "li[data-note-id=\"12\"][data-color=\"yellow\"]", has: "مشتريات" },
+              { say: R`«أفكار المشروع»: [[data-note-id="15"]] و [[data-color="green"]]`, q: "li[data-note-id=\"15\"][data-color=\"green\"]", has: "أفكار" },
+              { say: R`«كتب عايز أقراها»: [[data-note-id="21"]] و [[data-color="yellow"]]`, q: "li[data-note-id=\"21\"][data-color=\"yellow\"]", has: "كتب" },
+              { say: R`واحدة بس عليها [[data-pinned]]، وهي «مشتريات الأسبوع»`, q: "li[data-pinned]", n: 1, has: "مشتريات" },
+              { say: R`الأرقام مش في [[id]]: دي بيانات للكود، مش اسم للعنصر`, q: "li[id]", n: 0 },
+            ] }, sol: R`~~~live 88 الحل
+<ul>
+  <li data-note-id="12" data-color="yellow" data-pinned>مشتريات الأسبوع</li>
+  <li data-note-id="15" data-color="green">أفكار المشروع</li>
+  <li data-note-id="21" data-color="yellow">كتب عايز أقراها</li>
+</ul>
+~~~
+
+**هتشوف إيه:** القايمة زي ما هي بالظبط: تلات سطور. [[data-*]] مبيغيّرش أي حاجة في الشكل. البيانات بقت على العناصر، وتتشاف في DevTools.
+
+**ليه كده:**
+
+- كل عمود في الجدول بقى attribute. اللي «لأ» في عمود «متثبتة» **مفيهوش الـ attribute خالص**، مش [[data-pinned="false"]]: كده القاعدة اللي بتبدأ بـ [[li[data-pinned] {]] في الـ CSS تمسك المتثبتة بس.
+- العنوان فضل كلام جوه الـ [[<li>]]: ده محتوى الزائر بيقراه، مش بيانات للكود.
+
+**الغلطة الشائعة:** [[data-pinned="no"]] على غير المتثبتين. أي selector بيسأل «عليه [[data-pinned]]؟» هيمسكهم كلهم.
+
+~~~text القياس من Chrome
+أول li:    dataset = {"noteId":"12","color":"yellow","pinned":""}
+عدد العناصر اللي بيمسكها [data-pinned]:   1
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في الكارت ده حاجتين الزائر على الموبايل وقارئ الشاشة مش واصلينلهم: اسم زرار الأيقونة، وإن السعر شامل الضريبة. الاتنين محطوطين في [[title]] بس. طلّعهم. (من قسم ٤ في الشرح: جدول «بدل title»)`, done: R`الزرار ليه [[aria-label]]، و «شامل الضريبة» مكتوبة في الصفحة، وكل الشروط ✓.`, work: { h: 130, start: R`<p>اشتراك سنوي: <span title="السعر شامل الضريبة">٦٠٠ جنيه</span></p>
+<p><button type="button" title="امسح الاشتراك">🗑</button></p>`, checks: [
+              { say: R`الزرار عليه [[aria-label="امسح الاشتراك"]]`, q: "button[aria-label=\"امسح الاشتراك\"]" },
+              { say: R`«شامل الضريبة» مكتوبة ككلام في الفقرة`, q: "p", has: "شامل الضريبة" },
+              { say: R`مفيش [[<span title>]]`, q: "span[title]", n: 0 },
+            ] }, sol: R`~~~live 110 بعد التصليح
+<p>اشتراك سنوي: ٦٠٠ جنيه <small>(شامل الضريبة)</small></p>
+<p><button type="button" aria-label="امسح الاشتراك" title="امسح الاشتراك">🗑</button></p>
+~~~
+
+وده اللي كان قبل التصليح:
+
+~~~live 110 قبل
+<p>اشتراك سنوي: <span title="السعر شامل الضريبة">٦٠٠ جنيه</span></p>
+<p><button type="button" title="امسح الاشتراك">🗑</button></p>
+~~~
+
+**هتشوف إيه:**
+
+- **قبل:** «٦٠٠ جنيه» وزرار سلة. موضوع الضريبة مش باين إلا لو وقفت بالماوس على السعر ثانية.
+- **بعد:** «(شامل الضريبة)» مكتوبة جنب السعر بخط أصغر. والزرار شكله زي ما هو.
+
+**ليه كده:**
+
+- معلومة عن السعر محتوى، والمحتوى يتكتب. [[<small>]] للملاحظة الجانبية (درس «mark و small و del و ins»).
+- [[aria-label]] بيدّي الزرار اسم حقيقي. و [[title]] فضل معاه عشان بتوع الماوس يشوفوا تلميح: زيادة مش أساس.
+
+**الغلطة الشائعة:** تسيب [[title]] وتقول «قارئ الشاشة بيقراه». اللي اتقاس إن اسم الزرار «🗑» والـ [[title]] وصف جانبي، وقراءته بتتوقف على الإعدادات.
+
+~~~text القياس من Chrome (accessibility tree)
+قبل:   الزرار name = "🗑" ، description = "امسح الاشتراك"
+بعد:   الزرار name = "امسح الاشتراك"
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الملاحظات التلاتة المفروض تتسحب عشان تترتب، بس اللي كتب الكود كتب [[draggable]] من غير قيمة فمفيش واحدة بتتسحب. والشعار اللي فوق بيتسحب (الصور بتتسحب لوحدها) وده مش مطلوب. صلّح الاتنين. (من قسم ٣ في الشرح)`, done: R`التلات ملاحظات بيتسحبوا والشعار لأ، وكل الشروط ✓.`, work: { h: 200, start: R`<p><img alt="شعار دفتر نور" width="40" height="40" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><rect width='40' height='40' fill='gold'/></svg>"></p>
+<ul>
+  <li draggable>مشتريات الأسبوع</li>
+  <li draggable>أفكار المشروع</li>
+  <li draggable>كتب عايز أقراها</li>
+</ul>`, checks: [
+              { say: R`التلات ملاحظات [[draggable="true"]]`, q: "li[draggable=\"true\"]", n: 3 },
+              { say: R`الشعار [[draggable="false"]]`, q: "img[draggable=\"false\"]" },
+              { say: R`الشعار لسه ليه [[alt]]`, q: "img[alt]:not([alt=\"\"])" },
+            ] }, sol: R`~~~live 148 بعد التصليح (اسحب الملاحظات، وجرّب تسحب المربع الأصفر)
+<p><img draggable="false" alt="شعار دفتر نور" width="40" height="40" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><rect width='40' height='40' fill='gold'/></svg>"></p>
+<ul>
+  <li draggable="true">مشتريات الأسبوع</li>
+  <li draggable="true">أفكار المشروع</li>
+  <li draggable="true">كتب عايز أقراها</li>
+</ul>
+~~~
+
+**هتشوف إيه:**
+
+- **قبل:** سحب أي ملاحظة بيحدد الكلام بس، والمربع الأصفر (الشعار) بيطلع منه نسخة شفافة مع الماوس.
+- **بعد:** كل ملاحظة بتطلع منها نسخة مع الماوس، والشعار ثابت.
+
+**ليه:** [[draggable]] قيمه [[true]] و [[false]] مكتوبين. من غير قيمة المتصفح بيرجع للافتراضي بتاع العنصر: [[<li>]] لأ، و [[<img>]] أيوه.
+
+**الغلطة الشائعة:** تفتكر إن الترتيب اشتغل. العنصر بيتسحب بس، ولما تسيبه بيرجع: إعادة الترتيب نفسها JavaScript. ولازم معاها أزرار للكيبورد واللمس.
+
+~~~text القياس من Chrome (الخاصية draggable)
+<li draggable>:            false
+<li draggable="true">:     true
+<img>:                     true
+<img draggable="false">:   false
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني (مراجعة الوحدة من الجدول):** الكارت ده محتاج خمس attributes من جدول قسم ٩، واحد لكل طلب: (١) جملة «نسخة تجريبية» متبانش دلوقتي. (٢) الاسم «Nour Notes» إنجليزي جوه صفحة عربي، وميتترجمش. (٣) الكارت كله متخزن عليه رقم الخطة [[7]] في [[data-plan-id]]. (٤) خانة الكود من غير فحص إملائي. (٥) زرار «اشترك» واقف هو والخانة لحد ما الدفع يتفعّل: وقّف الفورم كله بـ attribute واحد. (من قسم ٩ في الشرح: الجدول)`, done: R`كل طلب ليه الـ attribute بتاعه، وكل الشروط ✓.`, work: { h: 230, start: R`<article>
+  <h2>خطة Nour Notes السنوية</h2>
+  <p>نسخة تجريبية</p>
+  <form>
+    <p><label for="code">كود الخصم</label> <input id="code" name="code"></p>
+    <button type="submit">اشترك</button>
+  </form>
+</article>`, checks: [
+              { say: R`«نسخة تجريبية» عليها [[hidden]]`, q: "p[hidden]", has: "نسخة تجريبية" },
+              { say: R`«Nour Notes» جوه [[<span lang="en" translate="no">]]`, q: "h2 span[lang=\"en\"][translate=\"no\"]", has: "Nour Notes" },
+              { say: R`الكارت عليه [[data-plan-id="7"]]`, q: "article[data-plan-id=\"7\"]" },
+              { say: R`خانة الكود [[spellcheck="false"]]`, q: "input[name=\"code\"][spellcheck=\"false\"]" },
+              { say: R`الفورم عليه [[inert]]`, q: "form[inert]" },
+            ] }, sol: R`~~~live 143 الحل
+<article data-plan-id="7">
+  <h2>خطة <span lang="en" translate="no">Nour Notes</span> السنوية</h2>
+  <p hidden>نسخة تجريبية</p>
+  <form inert>
+    <p><label for="code">كود الخصم</label> <input id="code" name="code" spellcheck="false"></p>
+    <button type="submit">اشترك</button>
+  </form>
+</article>
+~~~
+
+**هتشوف إيه:**
+
+- «نسخة تجريبية» اختفت.
+- العنوان زي ما هو.
+- الخانة والزرار باينين بس مبيردوش: لا كتابة ولا ضغط ولا Tab.
+
+**ليه كل واحد:**
+
+| الطلب | الـ attribute | ليه ده |
+|---|---|---|
+| متبانش دلوقتي | [[hidden]] | مش وقتها، ومش موجودة لأي حد |
+| اسم بلغة تانية وميتترجمش | [[lang="en"]] و [[translate="no"]] | الأول للنطق الصح، والتاني للترجمة. اتنين لأن كل واحد بيقول حاجة |
+| رقم للكود | [[data-plan-id]] | بيانات مش محتوى |
+| من غير خط أحمر | [[spellcheck="false"]] | الكود مش كلام لغة |
+| يقف كله | [[inert]] على الفورم | مرة واحدة بدل [[disabled]] على كل عنصر |
+
+**الغلطة الشائعة:** [[inert]] من غير ما تبيّن ده في الشكل. في مشروع حقيقي زوّد سطر CSS يبهّت الفورم، وجملة تقول ليه واقف.
+
+~~~text القياس من Chrome
+<p hidden>:                 display = none
+الخانة جوه <form inert>:    Tab عدّاها ، والكليك ماوصلش
+span.translate:             false
+article.dataset:            {"planId":"7"}
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** المدير طلب «نحط اختصارات كيبورد للموقع: Alt+S للبحث و Alt+H للرئيسية» وعايزها بـ [[accesskey]]. اكتبله في ٣ سطور ليه دي مش فكرة كويسة لموقع عام، وإيه البديل. (من قسم ٢ في الشرح)`, done: R`ذكرت مشكلتين على الأقل من التلاتة (التعارض، اختلاف المتصفحات، محدش يعرف) وبديل.`, sol: R`إجابة نموذجية:
+
+1. **مش هتشتغل زي ما هو متخيل.** [[accesskey="s"]] في Chrome على ويندوز Alt+S، وفي Firefox Alt+Shift+S، وعلى الماك Control+Option+S. مفيش «Alt+S» واحدة لكل الزوار.
+2. **بتخبط في اختصارات موجودة.** المتصفح وقارئ الشاشة ليهم اختصارات بـ Alt، وكيبورد الزائر ممكن ميبقاش عليه الحرف أصلًا. والزائر مش هيعرف إن فيه اختصار إلا لو كتبناه في الصفحة.
+3. **البديل:** الزائر اللي ماشي بالكيبورد محتاج ترتيب Tab سليم، ولينك «تخطى للمحتوى»، وعناوين صح. ولو فعلًا عايزين اختصارات (تطبيق بيتفتح كل يوم): تتعمل بـ JavaScript، وتتكتب في صفحة مساعدة، وتتقفل من الإعدادات.
+
+~~~text من MDN (جدول accesskey)
+Chrome على Windows:     Alt + الحرف
+Firefox على Windows:    Alt + Shift + الحرف
+Mac:                    Control + Option + الحرف
+~~~` }
+          ]
+        }
+,
+        {
+          cmd: "itemscope و itemprop",
+          title: "بيانات محرك البحث بيقراها من الصفحة نفسها: microdata بـ itemscope و itemtype و itemprop و itemid و itemref",
+          pre: [{ to: "css/abbr و dfn و time", why: R`[[<time datetime>]] و [[<data value>]]: القيمة اللي للماكينة غير الكلام اللي للزائر. نفس الفكرة هنا` }, { to: "css/meta و Open Graph", why: R`البيانات اللي في [[<head>]] لجوجل ولكارت المشاركة. هنا البيانات على المحتوى نفسه` }],
+          ref: [
+            { t: "WHATWG: Microdata", url: "https://html.spec.whatwg.org/multipage/microdata.html" },
+            { t: "WHATWG: Microdata values (القيمة بتتاخد منين)", url: "https://html.spec.whatwg.org/multipage/microdata.html#values" },
+            { t: "MDN: Microdata", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Microdata" },
+            { t: "MDN: itemscope", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/itemscope" },
+            { t: "MDN: itemprop", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/itemprop" }
           ],
-          sol: R`على أيقونة تجربة، svgo طبع حاجة زي [[Done in 14 ms! 0.449 KiB - 65.4% = 0.155 KiB]]. الملف الجديد سطر واحد: من غير [[<?xml>]] ولا التعليق بتاع البرنامج ولا [[<metadata>]] ولا الـ [[<g>]]، والأرقام اتقصّرت ([[7.000]] بقت [[7]])، والـ [[viewBox]] و [[<title>]] لسه موجودين.
+          desc: R`الزائر بيقرا «نوتة نور، ٨٥ جنيه، متاحة» ويفهم إن ده منتج وده سعره. محرك البحث شايف تلات حتت نص. **microdata** خمس attributes بتتكتب على نفس العناصر اللي الزائر شايفها، وبتقول للماكينة: ده منتج، وده اسمه، وده سعره بالرقم والعملة.
+مبتغيّرش أي حاجة في شكل الصفحة، والمتصفح نفسه مبيعملش بيها حاجة: اللي بيقراها محركات البحث وأدوات تانية.`,
+          example: R`<article itemscope itemtype="https://schema.org/Product">
+  <h2 itemprop="name">نوتة نور A5</h2>
+  <p itemprop="description">نوتة 120 صفحة بغلاف قماش.</p>
+  <p itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+    <data itemprop="price" value="85.00">٨٥ جنيه</data>
+    <meta itemprop="priceCurrency" content="EGP">
+    <link itemprop="availability" href="https://schema.org/InStock">متاحة
+  </p>
+</article>`,
+          flag: "script",
+          lines: [
+            R`[[itemscope]]: «العنصر ده بيوصف حاجة واحدة». و [[itemtype]] بيقول نوعها بعنوان من قاموس schema.org: [[Product]] يعني منتج.`,
+            R`[[itemprop="name"]]: خاصية من خصايص المنتج اسمها [[name]]، وقيمتها الكلام اللي جوه العنصر.`,
+            R`خاصية تانية: الوصف. نفس الطريقة.`,
+            R`خاصية [[offers]] (العرض)، وقيمتها مش نص: [[itemscope]] على نفس العنصر بيخلّيها «حاجة» جوه الحاجة، ونوعها [[Offer]].`,
+            R`السعر. الزائر شايف «٨٥ جنيه»، والماكينة بتاخد [[85.00]] من [[value]] على [[<data>]].`,
+            R`العملة. [[<meta>]] مبيبانش في الصفحة، وقيمته في [[content]]. بيتستخدم لمعلومة الماكينة محتاجاها والزائر مش محتاج يشوفها مكتوبة.`,
+            R`الحالة: متاحة. [[<link>]] مبيبانش برضه، وقيمته العنوان اللي في [[href]]. وكلمة «متاحة» بعده للزائر.`,
+            R`[[</p>]] بيقفل العرض: السعر والعملة والحالة اللي فوق تبعه هو، مش تبع المنتج مباشرة.`,
+            R`[[</article>]] بيقفل المنتج. أي [[itemprop]] بعده مش هيتحسب من خصايصه.`
+          ],
+          teach: R`## الفكرة في سطرين
 
-الـ inline جوه الزرار الأحمر اتلوّن أحمر (لو فيه [[currentColor]])، والـ img فضل بلونه الأصلي، لأن الـ CSS مش بيدخل جوه الـ img.
+microdata بتقسم الصفحة لـ **حاجات** (items) وكل حاجة ليها **خصايص** (properties): اسم وقيمة. [[itemscope]] بيبدأ حاجة، و [[itemtype]] نوعها، و [[itemprop]] خاصية فيها.
 
-لو الـ inline فضل أسود: الأيقونة فيها [[fill]] بلون ثابت أو svgo شال [[fill="#000"]] فبقت على الافتراضي (أسود). حط [[fill="currentColor"]] على الـ [[<svg>]].`,
-          solCode: R`// svgo.config.mjs: أي لون ثابت في الأيقونة يبقى currentColor
-export default {
-  plugins: ['preset-default', { name: 'convertColors', params: { currentColor: true } }],
-};`
+الـ HTML في الدرس اتحمّل في Chrome 157، واللي «الماكينة بتقراه» طالع من تطبيق خوارزمية المواصفة (WHATWG: microdata to JSON) على الصفحة. اللي جوجل بيعمله بالبيانات دي بعد كده: من الوثائق.
+
+---
+
+## ١. الشكل مبيتغيّرش
+
+~~~live 170 كارت منتج عليه microdata
+<article itemscope itemtype="https://schema.org/Product">
+  <h2 itemprop="name">نوتة نور A5</h2>
+  <p itemprop="description">نوتة 120 صفحة بغلاف قماش.</p>
+  <p itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+    <data itemprop="price" value="85.00">٨٥ جنيه</data>
+    <meta itemprop="priceCurrency" content="EGP">
+    <link itemprop="availability" href="https://schema.org/InStock">متاحة
+  </p>
+</article>
+~~~
+
+**هتشوف إيه:** عنوان، ووصف، وسطر «٨٥ جنيه متاحة». كارت عادي. الـ [[<meta>]] والـ [[<link>]] مش باينين، ومفيش attribute من الخمسة غيّر حاجة في الشكل.
+
+واللي الماكينة بتطلّعه من نفس الكود:
+
+~~~text القياس (خوارزمية المواصفة على الصفحة في Chrome)
+حاجة نوعها https://schema.org/Product
+  name         = "نوتة نور A5"
+  description  = "نوتة 120 صفحة بغلاف قماش."
+  offers       = حاجة نوعها https://schema.org/Offer
+                   price          = "85.00"
+                   priceCurrency  = "EGP"
+                   availability   = "https://schema.org/InStock"
+~~~
+
+---
+
+## ٢. [[<article itemscope>]]: بداية «حاجة»
+
+[[itemscope]] من غير قيمة. معناه: كل [[itemprop]] جوه العنصر ده بيوصف **حاجة واحدة**.
+
+~~~text القياس
+<article itemtype="https://schema.org/Product"> من غير itemscope ، وجواه itemprop="name":
+عدد الحاجات اللي طلعت = 0
+~~~
+
+من غير [[itemscope]] مفيش حاجة: [[itemtype]] و [[itemprop]] لوحدهم ملهمش معنى.
+
+بيتكتب على العنصر اللي **حاوي** كل معلومات الحاجة: [[<article>]] بتاع المنتج، [[<li>]] بتاع النتيجة، [[<section>]] بتاع «عن الكاتبة».
+
+---
+
+## ٣. [[<article itemtype="https://schema.org/Product">]]: نوعها
+
+[[itemtype]] عنوان بيقول الحاجة دي إيه. العنوان من **قاموس** (vocabulary) متفق عليه، عشان كل المواقع تسمّي الخصايص بنفس الأسامي. القاموس اللي محركات البحث بتفهمه هو **schema.org** (MDN: جوجل ومايكروسوفت وغيرهم):
+
+| النوع | [[itemtype]] | أشهر خصايصه |
+|---|---|---|
+| منتج | [[https://schema.org/Product]] | [[name]] و [[description]] و [[image]] و [[brand]] و [[offers]] |
+| عرض (سعر) | [[https://schema.org/Offer]] | [[price]] و [[priceCurrency]] و [[availability]] |
+| شخص | [[https://schema.org/Person]] | [[name]] و [[jobTitle]] و [[email]] و [[url]] |
+| مقال | [[https://schema.org/Article]] | [[headline]] و [[author]] و [[datePublished]] |
+| كتاب | [[https://schema.org/Book]] | [[name]] و [[author]] و [[numberOfPages]] |
+| مناسبة | [[https://schema.org/Event]] | [[name]] و [[startDate]] و [[location]] |
+| شركة أو جهة | [[https://schema.org/Organization]] | [[name]] و [[url]] و [[logo]] |
+
+- العنوان مش لينك المتصفح بيفتحه. هو **اسم** متفق عليه، ولازم يتكتب بالحرف: [[Product]] بـ P كبيرة.
+- أسامي الخصايص ([[name]] و [[price]]...) جاية من صفحة النوع في schema.org. متخترعش أسامي: الماكينة مش هتفهمها.
+- [[itemtype]] مبيتكتبش غير على عنصر عليه [[itemscope]].
+
+---
+
+## ٤. [[<h2 itemprop="name">]]: خاصية
+
+[[itemprop]] بيتكتب على عنصر **جوه** الـ [[itemscope]]، واسمه اسم الخاصية. والقيمة بتتاخد من العنصر، ومكانها بيختلف حسب العنصر:
+
+| العنصر | القيمة بتتاخد من | مثال |
+|---|---|---|
+| [[<meta>]] | [[content]] | [[<meta itemprop="priceCurrency" content="EGP">]] |
+| [[<a>]] و [[<link>]] و [[<area>]] | [[href]] (العنوان الكامل) | [[<a itemprop="url" href="/p/1">]] |
+| [[<img>]] و [[<video>]] و [[<audio>]] و [[<iframe>]] و [[<source>]] | [[src]] | [[<img itemprop="image" src="...">]] |
+| [[<data>]] و [[<meter>]] | [[value]] | [[<data itemprop="price" value="85.00">]] |
+| [[<time>]] | [[datetime]]، ولو مش مكتوب فالكلام اللي جواه | [[<time itemprop="datePublished" datetime="2025-03-10">]] |
+| عنصر عليه [[itemscope]] كمان | حاجة جديدة (القسم ٥) | |
+| أي عنصر تاني | الكلام اللي جواه | [[<h2 itemprop="name">]] |
+
+~~~text القياس (كل عنصر وقيمته)
+<span itemprop="name">اسم</span>                        name   = "اسم"
+<img itemprop="image" src="https://example.test/a.png">  image  = "https://example.test/a.png"
+<a itemprop="url" href="/p/1">لينك</a>                   url    = العنوان الكامل للصفحة + /p/1   (مش كلمة «لينك»)
+<meter itemprop="rating" value="4" max="5">              rating = "4"
+<span itemprop="a b">قيمتين</span>                       a = "قيمتين" ، b = "قيمتين"   (اسمين بينهم مسافة)
+itemprop="name" مرتين في نفس الحاجة                      name   = "اسم" و "اسم تاني"   (قيمتين)
+~~~
+
+اللي بيطلع من الجدول:
+
+- الكلام اللي الزائر بيقراه مش دايمًا القيمة اللي الماكينة عايزاها. «٨٥ جنيه» للزائر و [[85.00]] للماكينة: [[<data value>]]. «١٠ مارس» و [[2025-03-10]]: [[<time datetime>]]. (درس «abbr و dfn و time».)
+- معلومة الماكينة محتاجاها ومش مكتوبة في الصفحة (العملة): [[<meta itemprop content>]]. ومعلومة قيمتها عنوان (متاح ولا لأ): [[<link itemprop href>]]. الاتنين مسموح يتكتبوا جوه [[<body>]] لما يكون عليهم [[itemprop]].
+- بس الأصل إن البيانات تبقى **على الكلام اللي باين**. [[<meta>]] للاستثناء.
+
+---
+
+## ٥. حاجة جوه حاجة
+
+لما قيمة الخاصية نفسها ليها خصايص (العرض ليه سعر وعملة، الكاتب ليه اسم ولينك)، بتكتب [[itemprop]] و [[itemscope]] و [[itemtype]] **على نفس العنصر**:
+
+~~~html
+<article itemscope itemtype="https://schema.org/Book">
+  <h2 itemprop="name">حكايات الورق</h2>
+  <p>تأليف
+    <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+      <span itemprop="name">سلمى حسن</span>
+    </span>
+  </p>
+</article>
+~~~
+
+~~~text القياس
+حاجة نوعها https://schema.org/Book
+  name    = "حكايات الورق"
+  author  = حاجة نوعها https://schema.org/Person
+              name = "سلمى حسن"
+~~~
+
+- [[itemprop="author"]] بيقول «دي خاصية الكتاب اللي اسمها author».
+- [[itemscope]] على نفس العنصر بيقول «وقيمتها حاجة».
+- [[itemprop="name"]] اللي جوه بقى تبع **الشخص** مش الكتاب: كل [[itemprop]] تبع أقرب [[itemscope]] فوقه.
+
+---
+
+## ٦. [[<article itemid="...">]] و [[<div itemref="...">]]
+
+### [[<article itemid="https://example.test/products/nour-a5">]]
+
+عنوان (أو رقم بصيغة عنوان) **فريد** للحاجة نفسها: لو نفس المنتج مكتوب في صفحتين بنفس [[itemid]]، الماكينة تعرف إنهم واحد. بيتكتب على عنصر عليه [[itemscope]] و [[itemtype]].
+
+~~~text القياس
+<article itemscope itemtype="https://schema.org/Product" itemid="https://example.test/products/nour-notebook">
+الحاجة طلعت ومعاها:   id = "https://example.test/products/nour-notebook"
+~~~
+
+### [[<article itemref="brand">]]
+
+الخصايص لازم تبقى جوه الـ [[itemscope]]. [[itemref]] بيستثني: فيه [[id]] عنصر (أو كذا [[id]] بينهم مسافة) **برّه**، والخصايص اللي فيه تتحسب للحاجة دي.
+
+~~~html
+<article itemscope itemtype="https://schema.org/Product" itemref="brand">
+  <h2 itemprop="name">نوتة نور A5</h2>
+</article>
+<article itemscope itemtype="https://schema.org/Product" itemref="brand">
+  <h2 itemprop="name">قلم نور الأزرق</h2>
+</article>
+<footer>
+  <p id="brand">كل المنتجات من <span itemprop="brand">دار نور</span>.</p>
+</footer>
+~~~
+
+~~~text القياس
+من غير itemref:    المنتج الأول: name بس ، والتاني: name بس
+بـ itemref="brand": المنتج الأول: name + brand = "دار نور" ، والتاني: name + brand = "دار نور"
+~~~
+
+- القيمة [[id]] عادي بتاع عنصر، **مش** [[itemid]].
+- بيتستخدم لما المعلومة مكتوبة مرة واحدة في الصفحة ومشتركة بين كذا حاجة، أو شكل الصفحة حاططها بعيد.
+
+الاتنين أقل استخدامًا بكتير من التلاتة الأولانيين.
+
+---
+
+## ٧. مين بيقرا ده، وبيعمل بيه إيه
+
+~~~text القياس من Chrome
+تغيير في الشكل:                         مفيش
+الخاصية itemScope على العناصر:          مش موجودة
+document.getItems:                      undefined
+~~~
+
+المتصفح مبيعملش حاجة بالـ microdata (كان فيه API ليها زمان واتشال). اللي بيقراها:
+
+- **محركات البحث.** بتفهم من [[Product]] و [[Offer]] إن الصفحة فيها منتج بسعر، وممكن تعرض السعر والتقييم والتوفر تحت النتيجة (اسمها rich results). مفيش ضمان: ده قرار المحرك، وليه شروط لكل نوع في وثائق كل محرك.
+- **أدوات تانية:** قارئ المقالات، أدوات جمع الأسعار، إضافات المتصفح.
+
+**قارئ الشاشة مبيستخدمهاش.** الـ microdata للماكينات اللي بتلمّ بيانات، مش للـ accessibility. معنى الصفحة للبني آدم لسه من العناصر نفسها: [[<h2>]] و [[<time>]] و [[<article>]].
+
+وتتأكد منها بأداة بتطلّع البيانات من الصفحة: Schema Markup Validator على [[validator.schema.org]] (MDN بيشاور عليها). بتلزق الكود أو اللينك، وبتعرضلك الحاجات وخصايصها زي القياسات اللي فوق.
+
+---
+
+## ٨. البديل الأشهر: JSON-LD
+
+نفس البيانات ممكن تتكتب في [[<script>]] واحد مستقل، بصيغة اسمها JSON-LD، من غير ما تلمس عناصر الصفحة:
+
+~~~html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "نوتة نور A5",
+  "description": "نوتة 120 صفحة بغلاف قماش.",
+  "offers": {
+    "@type": "Offer",
+    "price": "85.00",
+    "priceCurrency": "EGP",
+    "availability": "https://schema.org/InStock"
+  }
+}
+</script>
+~~~
+
+نفس القاموس ونفس الأسامي. الفرق في المكان:
+
+| | microdata | JSON-LD |
+|---|---|---|
+| البيانات مكتوبة فين | على عناصر الصفحة نفسها | في [[<script>]] لوحده |
+| لو الكلام في الصفحة اتغيّر | البيانات بتتغيّر معاه (هي هي) | لازم تفتكر تغيّر الاتنين |
+| تغيير شكل الـ HTML | ممكن يكسر البيانات ([[itemprop]] خرج برّه الـ [[itemscope]]) | مبيأثرش |
+| بيتولّد إزاي | بإيدك في الـ template | سهل يتولّد من الكود أو من قاعدة البيانات |
+| الأشهر النهارده | أقل | أكتر، وهو اللي أغلب الوثائق والأدوات بتبدأ بيه |
+
+في مشروع بيتبني بـ framework، JSON-LD هو المعتاد (درس «JSON-LD» في كورس Next.js بيشرحه بالتفصيل). microdata مناسبة لصفحة HTML مكتوبة بالإيد، أو لما عايز البيانات تفضل لازقة في الكلام. **متكتبش الاتنين لنفس الحاجة** ببيانات مختلفة.
+
+وده كله غير البيانات اللي في [[<head>]] (العنوان والوصف وصورة المشاركة): دي في درس «meta و Open Graph».
+
+---
+
+## ٩. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[itemtype]] من غير [[itemscope]] | مفيش حاجة بتتقري خالص |
+| [[itemprop]] برّه أي [[itemscope]] | خاصية من غير صاحب: بتتجاهل |
+| [[itemprop="price"]] على «٨٥ جنيه» | السعر بيتقري «٨٥ جنيه» كنص، مش رقم. [[<data value="85.00">]] |
+| السعر على المنتج مباشرة بدل [[offers]] | القاموس بيقول السعر خاصية العرض ([[Offer]])، فالمحرك مش هيلاقيه مكانه |
+| [[itemprop="url"]] على [[<span>]] فيه كلمة «الموقع» | القيمة كلمة «الموقع». لازم [[<a href>]] |
+| [[itemtype="schema.org/product"]] | من غير [[https://]] وبحرف صغير: نوع مش معروف |
+| اختراع أسامي خصايص | محدش هيفهمها |
+| بيانات في الـ microdata مش مكتوبة للزائر (سعر أرخص، تقييم مش موجود) | محركات البحث بتعتبره غش وبتعاقب عليه (وثائق المحركات) |
+| [[itemref]] فيه [[itemid]] بدل [[id]] | مبيلاقيش العنصر |
+
+---
+
+## الخلاصة
+
+- [[itemscope]] بيبدأ حاجة، و [[itemtype]] نوعها من schema.org، و [[itemprop]] خاصية فيها.
+- القيمة من الكلام، إلا: [[content]] في [[<meta>]]، و [[href]] في اللينكات، و [[src]] في الصور، و [[value]] في [[<data>]]، و [[datetime]] في [[<time>]].
+- حاجة جوه حاجة: [[itemprop]] و [[itemscope]] و [[itemtype]] على نفس العنصر.
+- [[itemid]] اسم فريد للحاجة، و [[itemref]] بيضم خصايص من برّه بالـ [[id]].
+- الشكل مبيتغيّرش والمتصفح مش مهتم: ده لمحركات البحث. والبديل الأشهر JSON-LD.`,
+          try: R`اعمل ملف [[about.html]] فيه بلوك «عن الكاتبة»: اسمها في [[<h2>]]، وشغلتها في فقرة، ولينك إيميل [[mailto:]]، ولينك لموقعها. زوّد عليه microdata من نوع [[https://schema.org/Person]] بالخصايص [[name]] و [[jobTitle]] و [[email]] و [[url]]. افتحه في Chrome وشوف إن الشكل متغيّرش، وبعدين الزق الكود في Schema Markup Validator وشوف الخصايص اللي طلعت.`,
+          sol: R`~~~live 190 about.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عن الكاتبة</title>
+</head>
+<body>
+<section itemscope itemtype="https://schema.org/Person">
+  <h2 itemprop="name">منى علي</h2>
+  <p itemprop="jobTitle">مصممة واجهات</p>
+  <p><a itemprop="email" href="mailto:mona@example.test">mona@example.test</a></p>
+  <p><a itemprop="url" href="https://example.test/mona">موقعها</a></p>
+</section>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** اسم، وشغلة، ولينكين. نفس الصفحة اللي كانت هتطلع من غير أي attribute من دول.
+
+~~~text القياس (خوارزمية المواصفة على الصفحة في Chrome)
+حاجة نوعها https://schema.org/Person
+  name      = "منى علي"
+  jobTitle  = "مصممة واجهات"
+  email     = "mailto:mona@example.test"
+  url       = "https://example.test/mona"
+~~~
+
+**خد بالك من اللينكين:** القيمة [[href]] مش الكلام. [[email]] طلع [[mailto:mona@example.test]]، و [[url]] طلع العنوان مش كلمة «موقعها». لو كانوا [[<span>]] كانت القيمة هتبقى الكلام المكتوب.
+
+(نتيجة Schema Markup Validator نفسها متجرّبتش هنا: الأداة موقع خارجي. المفروض تعرض نفس الأربع خصايص.)`,
+          deep: {
+            why: R`محرك البحث بيقرا ملايين الصفحات، وكل واحدة بتكتب السعر والتاريخ والاسم بشكل. من غير بيانات منظمة هو بيخمّن: «85» ده سعر ولا رقم موديل؟ البيانات المنظمة بتشيل التخمين: صاحب الصفحة بيقول بنفسه إيه ده. والمقابل إن المحرك يقدر يعرض النتيجة بشكل أغنى (سعر، تقييم، تاريخ مناسبة)، وده بيفرق في عدد اللي بيدوسوا عليها.`,
+            how: R`الماكينة بتمشي على الصفحة وتدوّر على كل عنصر عليه [[itemscope]] ومش عليه [[itemprop]]: دي الحاجات «الرئيسية». لكل واحدة بتلمّ كل العناصر اللي عليها [[itemprop]] جواها (وجوه العناصر اللي [[itemref]] بيشاور عليها)، ومبتدخلش جوه [[itemscope]] تاني إلا كقيمة. ولكل خاصية بتاخد القيمة حسب نوع العنصر: [[content]] أو [[href]] أو [[src]] أو [[value]] أو [[datetime]] أو النص. ولو العنصر عليه [[itemscope]]، القيمة حاجة جديدة بتتلمّ بنفس الطريقة. الناتج شجرة من الحاجات والخصايص، وهي نفس الشجرة اللي JSON-LD بيكتبها صريحة.`,
+            when: R`منتج بسعر، مقال بكاتب وتاريخ، مناسبة بميعاد ومكان، وصفة، كتاب، بيانات شركة أو شخص في صفحة «عن». microdata لما الصفحة HTML ثابت أو template بسيط. JSON-LD لما البيانات جاية من كود أو CMS، أو الفريق مش عايز يلمس الـ HTML. ومش لكل حاجة في الصفحة: للحاجات اللي ليها نوع في schema.org ومحرك البحث بيستخدمه.`,
+            mistakes: R`نسيان [[itemscope]]. [[itemprop]] على الكلام المعروض بدل القيمة ([[<data>]] و [[<time>]]). خاصية على النوع الغلط (السعر على المنتج). نوع مكتوب غلط. بيانات مش مطابقة للي الزائر شايفه. وتوقّع إن rich results هتظهر في نفس اليوم أو مضمونة.`
+          },
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** بلوك «عن الكاتبة» في صفحة «دفتر نور». زوّد عليه microdata من نوع [[https://schema.org/Person]]: الاسم [[name]]، والشغلة [[jobTitle]]، والإيميل [[email]]. (من قسم ٢ و ٣ و ٤ في الشرح)`, done: R`البلوك عليه [[itemscope]] و [[itemtype]]، والتلات خصايص على عناصرها، وكل الشروط ✓.`, work: { h: 170, start: R`<section>
+  <h2>منى علي</h2>
+  <p>مصممة واجهات</p>
+  <p><a href="mailto:mona@example.test">mona@example.test</a></p>
+</section>`, checks: [
+              { say: R`[[<section>]] عليه [[itemscope]]`, q: "section[itemscope]" },
+              { say: R`ونوعه [[itemtype="https://schema.org/Person"]]`, q: "section[itemscope][itemtype=\"https://schema.org/Person\"]" },
+              { say: R`الاسم [[itemprop="name"]]`, q: "section[itemscope] [itemprop=\"name\"]", has: "منى علي" },
+              { say: R`الشغلة [[itemprop="jobTitle"]]`, q: "section[itemscope] [itemprop=\"jobTitle\"]", has: "مصممة" },
+              { say: R`الإيميل [[itemprop="email"]] على اللينك نفسه (القيمة من [[href]])`, q: "section[itemscope] a[itemprop=\"email\"][href^=\"mailto:\"]" },
+            ] }, sol: R`~~~live 170 الحل
+<section itemscope itemtype="https://schema.org/Person">
+  <h2 itemprop="name">منى علي</h2>
+  <p itemprop="jobTitle">مصممة واجهات</p>
+  <p><a itemprop="email" href="mailto:mona@example.test">mona@example.test</a></p>
+</section>
+~~~
+
+**هتشوف إيه:** البلوك زي ما هو بالظبط. مفيش حرف اتغيّر في الشكل.
+
+**ليه كده:**
+
+- [[itemscope]] و [[itemtype]] على [[<section>]]: هو اللي حاوي كل معلومات الشخص.
+- كل [[itemprop]] على العنصر اللي فيه القيمة، من غير ما تزوّد عناصر جديدة.
+- [[email]] على [[<a>]] مش على الفقرة اللي حواليه: على [[<a>]] القيمة [[href]]، وعلى [[<p>]] كانت هتبقى الكلام.
+
+**الغلطة الشائعة:** [[itemprop="jobtitle"]] بحروف صغيرة. أسامي الخصايص بتفرق في الحروف: في schema.org اسمها [[jobTitle]].
+
+~~~text القياس (خوارزمية المواصفة)
+حاجة نوعها https://schema.org/Person
+  name = "منى علي" ، jobTitle = "مصممة واجهات" ، email = "mailto:mona@example.test"
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كارت المنتج ده المفروض محرك البحث يقرا منه الاسم والسعر. الأداة بتقول «مفيش أي حاجة في الصفحة». وحتى لو قرا، السعر مكتوب كنص. صلّح: (١) خلّي الكارت «حاجة». (٢) السعر جوه عرض [[offers]] من نوع [[Offer]]. (٣) السعر رقم [[85.00]] والعملة [[EGP]]. (من قسم ٢ و ٤ و ٥ في الشرح)`, done: R`الكارت [[itemscope]]، وجواه عرض فيه سعر بالرقم وعملة، وكل الشروط ✓.`, work: { h: 150, start: R`<article itemtype="https://schema.org/Product">
+  <h2 itemprop="name">نوتة نور A5</h2>
+  <p>السعر: <span itemprop="price">٨٥ جنيه</span></p>
+</article>`, checks: [
+              { say: R`[[<article>]] عليه [[itemscope]]`, q: "article[itemscope][itemtype=\"https://schema.org/Product\"]" },
+              { say: R`فيه [[itemprop="offers"]] عليه [[itemscope]] ونوعه [[Offer]]`, q: "article [itemprop=\"offers\"][itemscope][itemtype=\"https://schema.org/Offer\"]" },
+              { say: R`السعر [[<data itemprop="price" value="85.00">]] جوه العرض`, q: "[itemprop=\"offers\"] data[itemprop=\"price\"][value=\"85.00\"]" },
+              { say: R`العملة [[<meta itemprop="priceCurrency" content="EGP">]] جوه العرض`, q: "[itemprop=\"offers\"] meta[itemprop=\"priceCurrency\"][content=\"EGP\"]" },
+              { say: R`الزائر لسه شايف «٨٥ جنيه»`, q: "article", has: "٨٥ جنيه" },
+            ] }, sol: R`~~~live 103 بعد التصليح
+<article itemscope itemtype="https://schema.org/Product">
+  <h2 itemprop="name">نوتة نور A5</h2>
+  <p itemprop="offers" itemscope itemtype="https://schema.org/Offer">السعر: <data itemprop="price" value="85.00">٨٥ جنيه</data>
+  <meta itemprop="priceCurrency" content="EGP"></p>
+</article>
+~~~
+
+**هتشوف إيه:** نفس الكارت: العنوان و «السعر: ٨٥ جنيه». التصليح كله في اللي الماكينة بتقراه:
+
+~~~text القياس (خوارزمية المواصفة)
+قبل:   عدد الحاجات = 0
+
+بعد:   حاجة نوعها https://schema.org/Product
+         name   = "نوتة نور A5"
+         offers = حاجة نوعها https://schema.org/Offer
+                    price = "85.00" ، priceCurrency = "EGP"
+~~~
+
+**التلات غلطات:**
+
+1. [[itemtype]] من غير [[itemscope]]: مفيش حاجة أصلًا، فكل الـ [[itemprop]] اتجاهلوا.
+2. السعر كان خاصية على المنتج. في schema.org السعر خاصية **العرض**، والعرض هو خاصية المنتج [[offers]].
+3. [[<span>]] قيمته الكلام: «٨٥ جنيه». [[<data value="85.00">]] بيدّي الرقم للماكينة ويسيب الكلام للزائر. والعملة ملهاش مكان في الكلام غير كلمة «جنيه»، فاتكتبت [[<meta>]].
+
+**الغلطة الشائعة:** [[<meta itemprop="price" content="85.00">]] وتسيب «٨٥ جنيه» نص عادي. بيشتغل، بس البيانات بقت منفصلة عن الكلام: لو السعر اتغيّر في واحد واتنسى في التاني، الماكينة والزائر هيشوفوا سعرين.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ده اللي المفروض الماكينة تقراه من كارت الكتاب (في التعليق). الكارت مكتوب من غير microdata. زوّدها عشان يطلع نفس الناتج بالظبط. خد بالك: الكاتبة حاجة جوه حاجة، والتاريخ بصيغة الماكينة. (من قسم ٤ و ٥ في الشرح)`, done: R`الكتاب [[Book]]، والكاتبة [[Person]] جواه، والتاريخ [[<time datetime>]]، وكل الشروط ✓.`, work: { h: 190, start: R`<!--
+Book
+  name          = "حكايات الورق"
+  author        = Person
+                    name = "سلمى حسن"
+  datePublished = "2025-03-10"
+  numberOfPages = "212"
+-->
+<article>
+  <h2>حكايات الورق</h2>
+  <p>تأليف سلمى حسن</p>
+  <p>صدر في ١٠ مارس ٢٠٢٥</p>
+  <p>212 صفحة</p>
+</article>`, checks: [
+              { say: R`الكارت [[itemscope]] ونوعه [[https://schema.org/Book]]`, q: "article[itemscope][itemtype=\"https://schema.org/Book\"]" },
+              { say: R`العنوان [[itemprop="name"]]`, q: "article > h2[itemprop=\"name\"]", has: "حكايات الورق" },
+              { say: R`الكاتبة [[itemprop="author"]] وعليها [[itemscope]] ونوعها [[Person]]`, q: "[itemprop=\"author\"][itemscope][itemtype=\"https://schema.org/Person\"]" },
+              { say: R`اسم الكاتبة [[itemprop="name"]] **جوه** الـ author، وفيه «سلمى حسن» بس`, q: "[itemprop=\"author\"] [itemprop=\"name\"]", has: "سلمى حسن" },
+              { say: R`التاريخ [[<time itemprop="datePublished" datetime="2025-03-10">]]`, q: "time[itemprop=\"datePublished\"][datetime=\"2025-03-10\"]" },
+              { say: R`عدد الصفحات [[itemprop="numberOfPages"]] على الرقم لوحده`, q: "[itemprop=\"numberOfPages\"]", has: "212" },
+            ] }, sol: R`~~~live 190 الحل
+<article itemscope itemtype="https://schema.org/Book">
+  <h2 itemprop="name">حكايات الورق</h2>
+  <p>تأليف <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">سلمى حسن</span></span></p>
+  <p>صدر في <time itemprop="datePublished" datetime="2025-03-10">١٠ مارس ٢٠٢٥</time></p>
+  <p><span itemprop="numberOfPages">212</span> صفحة</p>
+</article>
+~~~
+
+**هتشوف إيه:** الكارت زي ما هو: عنوان وتلات سطور.
+
+~~~text القياس (خوارزمية المواصفة)
+حاجة نوعها https://schema.org/Book
+  name          = "حكايات الورق"
+  author        = حاجة نوعها https://schema.org/Person
+                    name = "سلمى حسن"
+  datePublished = "2025-03-10"
+  numberOfPages = "212"
+~~~
+
+**إزاي قريت المطلوب:**
+
+- [[author = Person]] وتحتها [[name]]: يعني حاجة جوه حاجة. عنصر عليه التلاتة ([[itemprop]] و [[itemscope]] و [[itemtype]])، وجواه عنصر تاني للاسم.
+- [[2025-03-10]] مش «١٠ مارس ٢٠٢٥»: القيمة لازم تيجي من [[datetime]].
+- [[212]] من غير كلمة «صفحة»: الـ [[itemprop]] على [[<span>]] حوالين الرقم بس.
+- كلمة «تأليف» و «صدر في» برّه العناصر اللي عليها [[itemprop]].
+
+**الغلطة الشائعة:** [[<p itemprop="author">تأليف سلمى حسن</p>]]. الكاتبة هتطلع نص «تأليف سلمى حسن» مش شخص ليه اسم.` },
+            { lvl: 'تطبيق', t: R`**refactor:** في الصفحة منتجين، واسم الماركة مكتوب مرة واحدة في الـ [[<footer>]]. دلوقتي الماركة مش بتتقري لأي منتج لأنها برّه الاتنين. من غير ما تنقل الجملة من مكانها ولا تكررها، خلّيها تتحسب للمنتجين. (من قسم ٦ في الشرح: [[itemref]])`, done: R`كل منتج بيطلع معاه [[brand]]، والجملة لسه في الـ footer مرة واحدة، وكل الشروط ✓.`, work: { h: 220, start: R`<article itemscope itemtype="https://schema.org/Product">
+  <h2 itemprop="name">نوتة نور A5</h2>
+</article>
+<article itemscope itemtype="https://schema.org/Product">
+  <h2 itemprop="name">قلم نور الأزرق</h2>
+</article>
+<footer>
+  <p>كل المنتجات من <span itemprop="brand">دار نور</span>.</p>
+</footer>`, checks: [
+              { say: R`فيه عنصر في الـ footer ليه [[id="brand"]] وجواه (أو عليه) [[itemprop="brand"]]`, q: "footer #brand [itemprop=\"brand\"], footer #brand[itemprop=\"brand\"]" },
+              { say: R`المنتجين عليهم [[itemref="brand"]]`, q: "article[itemscope][itemref=\"brand\"]", n: 2 },
+              { say: R`[[itemprop="brand"]] لسه مكتوب مرة واحدة`, q: "[itemprop=\"brand\"]", n: 1 },
+              { say: R`الجملة لسه في الـ footer`, q: "footer", has: "دار نور" },
+            ] }, sol: R`~~~live 150 بعد
+<article itemscope itemtype="https://schema.org/Product" itemref="brand">
+  <h2 itemprop="name">نوتة نور A5</h2>
+</article>
+<article itemscope itemtype="https://schema.org/Product" itemref="brand">
+  <h2 itemprop="name">قلم نور الأزرق</h2>
+</article>
+<footer>
+  <p id="brand">كل المنتجات من <span itemprop="brand">دار نور</span>.</p>
+</footer>
+~~~
+
+**هتشوف إيه:** عنوانين وتحتهم جملة الماركة. الشكل زي ما هو.
+
+~~~text القياس (خوارزمية المواصفة)
+قبل:   المنتج ١: name = "نوتة نور A5"              المنتج ٢: name = "قلم نور الأزرق"
+بعد:   المنتج ١: name = "نوتة نور A5" ، brand = "دار نور"
+       المنتج ٢: name = "قلم نور الأزرق" ، brand = "دار نور"
+~~~
+
+**ليه كده:**
+
+- [[id="brand"]] على الفقرة اللي فيها الخاصية، و [[itemref="brand"]] على كل منتج: «خد كمان الخصايص اللي في العنصر ده».
+- [[itemprop="brand"]] فضل على [[<span>]] حوالين الاسم بس، فالقيمة «دار نور» مش الجملة كلها.
+
+**الغلطة الشائعة:** تحط [[id]] على الـ [[<span>]] اللي عليه [[itemprop]] نفسه. ده شغال كمان ([[itemref]] بياخد العنصر نفسه واللي جواه)، بس الغلط إنك تكتب في [[itemref]] اسم الخاصية ([[itemref="brand"]] ومفيش عنصر بالـ [[id]] ده): مش هيلاقي حاجة ومفيش خطأ.` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلتك بتبني موقع متجر بـ framework والمنتجات جاية من قاعدة بيانات، وسألتك: «أكتب microdata على الكروت ولا JSON-LD؟». جاوبها في ٣ سطور. (من قسم ٨ في الشرح: جدول المقارنة)`, done: R`اخترت واحد لحالتها وقلت إمتى التاني أحسن.`, sol: R`إجابة نموذجية:
+
+1. **JSON-LD.** البيانات عندك في الكود أصلًا (كائن المنتج من قاعدة البيانات)، فتحويله لـ [[<script type="application/ld+json">]] سطر، ومش هتوزّعي [[itemprop]] على كل عنصر في الـ component.
+2. وهو مبيتأثرش بتغيير شكل الكارت: المصمم يغيّر الـ HTML زي ما هو عايز والبيانات سليمة. مع microdata نقل عنصر برّه الـ [[itemscope]] بيكسر البيانات من غير أي خطأ ظاهر.
+3. microdata أحسن لما الصفحة HTML مكتوبة بالإيد، أو لما تحبي تضمني إن البيانات هي هي الكلام اللي الزائر شايفه. وفي الحالتين: نفس أسامي schema.org، ومتكتبيش الاتنين لنفس المنتج بقيم مختلفة.
+
+~~~html
+<script type="application/ld+json">
+{ "@context": "https://schema.org", "@type": "Product", "name": "نوتة نور A5",
+  "offers": { "@type": "Offer", "price": "85.00", "priceCurrency": "EGP" } }
+</script>
+~~~` }
+          ]
         }
       ]
     }

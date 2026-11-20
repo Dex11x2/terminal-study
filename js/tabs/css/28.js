@@ -1,3764 +1,2827 @@
-// HTML: الصوت والفيديو والـ embed (وحدة من منهج syllabus/css.json). بتكمّل وحدة «الصور والفيديو و SVG» (08.js).
-// كل القياسات والمعاينات من Chrome 157 headless على Windows 11، على صفحات من سيرفر Node محلي على بورتين (127.0.0.1:8731 و 8732 كـ origin تاني) بيكتب كل طلب وصله.
-// ملفات الميديا اتعملت بـ ffmpeg (نغمة MP3 و Ogg، وفيديو WebM و MP4)، وملف WAV و PDF اتكتبوا بـ Node. سياسة الـ autoplay اتقاست بالإعداد الافتراضي (والـ headless طلع زي العادي).
-// المتصفحات التانية، ونطق قارئ الشاشة، و iPhone (playsinline)، وأنواع التراخيص: من MDN و WHATWG و Creative Commons، ومكتوب جنب كل واحدة.
-// المعاينات الحية مبتقراش ملفات، فالصوت والفيديو والـ VTT والصور فيها data: URIs قصيرة (WAV 0.2 ثانية، و WebM 4 ثواني 160×90).
+// تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "HTML: الصوت والفيديو والـ embed",
-      l: 1,
-      n: "مشغّل صوت بأكتر من صيغة، وكابشن وترجمة للفيديو، و iframe مقفول عليه، و PDF جوه الصفحة، وصورة فيها لينكات، و canvas و template، ومعنى replaced element، وتراخيص الميديا",
+      t: "الأداء",
       pre: [
-        { to: "css/img", why: R`[[alt]] و [[width]] و [[height]] و [[loading]] اتشرحوا هناك، والوحدة دي بتبني عليهم في الفيديو والـ iframe والـ image map` },
-        { to: "css/video و iframe", why: R`الوحدة دي تكملته: هناك اتبنى فيديو بـ [[controls]] وأول ملف VTT و iframe بـ [[title]]، وهنا الصوت، وأنواع الـ track، و [[sandbox]] و [[allow]]، وباقي عناصر التضمين` }
+        { to: "css/img", why: R`width و height والصور اللي بتعمل CLS` },
+        { to: "css/<!doctype html>", why: R`الـ head اللي بيحمّل الـ CSS والخطوط` },
       ],
-      goal: [
-        R`تحط ملف صوت بمشغّل ظاهر وأكتر من صيغة ولينك تحميل، وتعرف ليه [[autoplay]] مبيشتغلش وإمتى [[muted]] بينفع.`,
-        R`تكتب ملف WebVTT وتربطه بـ [[<track>]] بالنوع واللغة والاسم الصح، وتفرّق بين الكابشن والترجمة والنص المكتوب، وتحجز مكان الفيديو بـ [[poster]] و [[width]] و [[height]].`,
-        R`تضمّن صفحة من موقع تاني في [[<iframe>]] وتقفل عليها بـ [[sandbox]] وتدّيها بـ [[allow]] اللي محتاجاه بس، وتقرا رسايل المنع في الـ Console.`,
-        R`تعرض PDF بـ [[<object>]] ببديل ولينك، وتعرف ليه [[<img>]] و [[<iframe>]] أحسن من [[<object>]] و [[<embed>]] في الباقي.`,
-        R`تعمل image map بـ [[<map>]] و [[<area>]]، وتعرف إمتى يبوظ، وتحوّله SVG بلينكات.`,
-        R`تعرف [[<canvas>]] و [[<noscript>]] و [[<template>]] و [[<slot>]] بيعملوا إيه من غير JavaScript، وإيه اللي مستني كورس JavaScript.`,
-        R`تشرح يعني إيه replaced element، وتختار بين [[loading]] و [[decoding]] و [[fetchpriority]]، وتقرا رخصة أي ملف ميديا وتكتب نسبته.`
-      ],
+      l: 3,
+      n: "الصفحة تظهر بسرعة ومتتنطش، والـ JavaScript ميجبرش المتصفح يعيد الحساب على الفاضي",
       projects: [
-        { lvl: 'صغير', dir: "mahatta", t: R`صفحة الحلقة الأولى: مشغّل ولينك تحميل`, what: R`أول صفحة في موقع «بودكاست المحطة» (بودكاست متخيل عن تعلّم الويب، بيقدّمه منى وكريم)، للي عايز يسمع الحلقة. [[index.html]] فيها: اسم البودكاست في [[<header>]]، وعنوان الحلقة [[<h1>]] «الحلقة ١: يعني إيه صوت في الصفحة»، وفقرة وصف، ومشغّل [[<audio>]] ظاهر لملف [[media/ep1.mp3]] (بـ [[<source>]] ونوعه، و [[preload="metadata"]]، واسم بـ [[aria-label]]، ومن غير [[autoplay]])، ولينك تحميل برّه المشغّل مكتوب فيه النوع، وقايمة «في الحلقة دي» من تلات نقط. ملف الصوت: سجّل ٣٠ ثانية بموبايلك وحوّلها MP3، أو أي MP3 عندك، وحطه في فولدر [[media]]. من درس «audio و source».`, done: R`الصفحة بتفتح والمشغّل واقف (مفيش صوت لوحده) والمدة مكتوبة عليه. ولما تدوس ▶ الصوت بيشتغل. ولينك التحميل بينزّل الملف. وفي الـ Console: [[document.querySelector("audio").currentSrc]] آخره [[ep1.mp3]].`, sol: R`فولدر [[media]] وملف الصوت الأول. لو معندكش تسجيل، ده أمر بيعمل نغمة تجربة ٣ ثواني (محتاج ffmpeg):
+        { lvl: 'صغير', dir: "article-cls", t: R`صفحة مقال CLS بتاعها صفر`, what: R`صفحة مقال فيها صورة هيرو، و ٣ صور جوه الكلام، وفيديو مضمّن، ومكان إعلان، وخط من موقعك. احجز مكان كل حاجة ([[width]] و [[height]] و [[aspect-ratio]] و [[min-height]] وخط احتياطي مظبوط). من درس CLS.`, done: R`snippet الـ [[PerformanceObserver]] على [[layout-shift]] بيطبع صفر entries (أو مجموع أقل من 0.01) على Slow 4G و Disable cache، و Lighthouse بيقول CLS أقل من 0.05.`, sol: R`**المعمل:** كل مشاريع الوحدة دي في فولدر واحد، وفيه ٣ ملفات مشتركة: سيرفر صغير، وأداة القياس، و Lighthouse. اتعملوا مرة هنا، والمشاريع اللي بعد كده بتستخدمهم.
 
-~~~bash
-mkdir media
-ffmpeg -f lavfi -i "sine=frequency=440:duration=3" -c:a libmp3lame -b:a 32k media/ep1.mp3
+~~~bash الترمنال
+mkdir perf-lab && cd perf-lab
+npm init -y && npm pkg set type=module
+npm i -D playwright-core@1.64.1 @axe-core/playwright@4.14.0 lighthouse@13.6.0 @fontsource/cairo@5.3.0
+node serve.mjs . 8817
 ~~~
 
-~~~html index.html
+~~~js serve.mjs
+// node serve.mjs [dir] [port]: a static server with no packages, for Playwright's webServer
+import http from "node:http";
+import fs from "node:fs/promises";
+import path from "node:path";
+
+const root = path.resolve(process.argv[2] || "site");
+const port = Number(process.argv[3] || 4173);
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".json": "application/json" };
+
+http.createServer(async (req, res) => {
+  const url = new URL(req.url, "http://x");
+  let file = path.join(root, decodeURIComponent(url.pathname));
+  if (!file.startsWith(root)) { res.writeHead(403).end(); return; }      // no ../ out of the folder
+  if (file.endsWith(path.sep)) file = path.join(file, "index.html");
+  try {
+    const body = await fs.readFile(file);
+    res.writeHead(200, { "content-type": types[path.extname(file)] || "application/octet-stream" }).end(body);
+  } catch {
+    res.writeHead(404).end("not found");
+  }
+}).listen(port, () => console.log("http://localhost:" + port));
+~~~
+
+~~~js lab.mjs
+// shared measuring helpers for the performance unit
+import { chromium } from "playwright-core";
+
+// like DevTools › Network › "Slow 4G" (Chrome's preset values) + CPU 4x slower, cache off
+export const SLOW_4G = { offline: false, latency: 562.5, downloadThroughput: (1.4 * 1024 * 1024) / 8 * 0.9, uploadThroughput: (675 * 1024) / 8 * 0.9 };
+
+export async function browser() {
+  // --no-proxy-server: Chrome on Windows looks for a proxy first (~850ms on every new browser, measured)
+  return chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+}
+
+export async function throttled(b, { viewport = { width: 412, height: 823 }, cpu = 4, net = SLOW_4G, ...o } = {}) {
+  const ctx = await b.newContext({ viewport, deviceScaleFactor: 1, ...o });
+  const page = await ctx.newPage();
+  const cdp = await ctx.newCDPSession(page);
+  await cdp.send("Network.enable");
+  await cdp.send("Network.setCacheDisabled", { cacheDisabled: true });
+  if (net) await cdp.send("Network.emulateNetworkConditions", net);
+  if (cpu > 1) await cdp.send("Emulation.setCPUThrottlingRate", { rate: cpu });
+  return { ctx, page, cdp };
+}
+
+// records every layout shift (and what moved) from the very start of the page
+export async function recordShifts(page) {
+  await page.addInitScript(() => {
+    window.__shifts = [];
+    new PerformanceObserver(list => {
+      for (const e of list.getEntries()) {
+        if (e.hadRecentInput) continue;
+        window.__shifts.push({
+          at: Math.round(e.startTime), value: Number(e.value.toFixed(4)),
+          moved: e.sources.map(s => (s.node ? s.node.nodeName.toLowerCase() + (s.node.className ? "." + String(s.node.className).split(" ")[0] : "") : "?")).join(",")
+        });
+      }
+    }).observe({ type: "layout-shift", buffered: true });
+  });
+}
+
+// scrolls to the bottom in small steps, like a reader, so lazy things load and late things arrive
+export async function readThrough(page, ms = 4000) {
+  const steps = 20;
+  for (let i = 0; i < steps; i++) { await page.mouse.wheel(0, 300); await page.waitForTimeout(ms / steps); }
+}
+~~~
+
+~~~js lh.mjs
+// node lh.mjs <url> [label]: Lighthouse 13.6.0, Mobile (its default: simulated Slow 4G + CPU 4x), prints the numbers that matter
+import { execFileSync } from "node:child_process";
+import fs from "node:fs";
+
+const [url, label = url] = process.argv.slice(2);
+const out = "lh-" + label.replace(/\W+/g, "_") + ".json";
+execFileSync(process.execPath, ["node_modules/lighthouse/cli/index.js", url, "--only-categories=performance", "--output=json", "--output-path=" + out, "--quiet",
+  "--chrome-flags=--headless=new --no-proxy-server"], { env: { ...process.env, CHROME_PATH: "C:/Program Files/Google/Chrome/Application/chrome.exe" }, stdio: "inherit" });
+const r = JSON.parse(fs.readFileSync(out, "utf8")), a = r.audits;
+const lcpEl = (JSON.stringify(a["lcp-breakdown-insight"]?.details || "").match(/"snippet":"([^"]{0,60})/) || [])[1];
+console.log(label + " | Performance " + Math.round(r.categories.performance.score * 100) +
+  " | FCP " + a["first-contentful-paint"].displayValue + " | LCP " + a["largest-contentful-paint"].displayValue +
+  " | TBT " + a["total-blocking-time"].displayValue + " | CLS " + a["cumulative-layout-shift"].displayValue + " | LCP element: " + lcpEl);
+~~~
+
+الصور اتعملت بـ [[gen-images.mjs]]: بيرسم منظر (سما وتلال وشمس ونقط زي الصور الحقيقية) في canvas جوه Chrome، ويحفظه WebP بـ [[canvas.toDataURL("image/webp", 0.8)]]. فمحتاجتش أي برنامج صور.
+
+~~~js gen-images.mjs
+// node gen-images.mjs <out-dir> <name> <w1,w2,...> <ratio> <seed> [quality | png]
+// draws a photo-like scene (sky, hills, sun, noise) in Chrome's canvas and saves it as WebP at each width
+import { chromium } from "playwright-core";
+import fs from "node:fs";
+import path from "node:path";
+
+const [out, name, widths, ratio = "1.777", seed = "1", q = "0.8"] = process.argv.slice(2);
+fs.mkdirSync(out, { recursive: true });
+const b = await chromium.launch({ channel: "chrome", args: ["--no-proxy-server"] });
+const p = await b.newPage();
+for (const w of widths.split(",").map(Number)) {
+  const h = Math.round(w / Number(ratio));
+  const data = await p.evaluate(({ w, h, seed, q }) => {
+    let s = Number(seed) * 9301;
+    const rnd = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+    const c = Object.assign(document.createElement("canvas"), { width: w, height: h });
+    const x = c.getContext("2d");
+    const hue = (Number(seed) * 47) % 360;
+    const sky = x.createLinearGradient(0, 0, 0, h);
+    sky.addColorStop(0, $__bthsl($__{hue} 70% 75%)$__bt); sky.addColorStop(1, $__bthsl($__{(hue + 40) % 360} 80% 88%)$__bt);
+    x.fillStyle = sky; x.fillRect(0, 0, w, h);
+    x.fillStyle = $__bthsl($__{(hue + 30) % 360} 90% 70%)$__bt; x.beginPath(); x.arc(w * 0.75, h * 0.3, h * 0.12, 0, 7); x.fill();
+    for (let layer = 0; layer < 4; layer++) {
+      x.fillStyle = $__bthsl($__{(hue + 120 + layer * 15) % 360} 35% $__{55 - layer * 10}%)$__bt;
+      x.beginPath(); x.moveTo(0, h);
+      for (let i = 0; i <= 12; i++) x.lineTo((w * i) / 12, h * (0.45 + layer * 0.12) + rnd() * h * 0.12);
+      x.lineTo(w, h); x.fill();
+    }
+    const img = x.getImageData(0, 0, w, h);                     // grain, so the file has photo-like weight
+    for (let i = 0; i < img.data.length; i += 4) { const n = (rnd() - 0.5) * 18; img.data[i] += n; img.data[i + 1] += n; img.data[i + 2] += n; }
+    x.putImageData(img, 0, 0);
+    return q === "png" ? c.toDataURL("image/png") : c.toDataURL("image/webp", Number(q));
+  }, { w, h, seed, q });
+  const file = path.join(out, $__bt$__{name}-$__{w}.$__{q === "png" ? "png" : "webp"}$__bt);
+  fs.writeFileSync(file, Buffer.from(data.split(",")[1], "base64"));
+  console.log(file, w + "x" + h, Math.round(fs.statSync(file).size / 1024) + "KB");
+}
+await b.close();
+~~~
+
+**المقال:**
+
+~~~html article-cls/index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الحلقة ١: يعني إيه صوت في الصفحة | بودكاست المحطة</title>
+<title>رحلة حبة البن: من الشجرة للفنجان</title>
+<link rel="preload" href="fonts/cairo-arabic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<script src="late.js" defer></script>
 </head>
 <body>
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-</header>
-<main>
-  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
-  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
-  <audio controls preload="metadata" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
-    <source src="media/ep1.mp3" type="audio/mpeg">
-  </audio>
-  <p><a href="media/ep1.mp3" download>نزّل الحلقة ١ (MP3)</a></p>
-  <h2>في الحلقة دي</h2>
-  <ul>
-    <li>مشغّل الصوت بيظهر إمتى</li>
-    <li>أكتر من صيغة لنفس الملف</li>
-    <li>ليه التشغيل التلقائي ممنوع</li>
-  </ul>
+<main class="article">
+  <h1>رحلة حبة البن: من الشجرة للفنجان</h1>
+  <p class="meta">مقال متخيل للتجربة · ٦ دقايق قراية</p>
+  <img class="hero" src="img/hero-1200.webp" alt="تلال خضرا تحت شمس الصبح" width="1200" height="675">
+
+  <p>البن بيبدأ ثمرة حمرا على شجرة في الجبل. المزارع بيقطفها بإيده لما تستوي، وجوه كل ثمرة حبتين.</p>
+  <figure><img src="img/a-800.webp" alt="ثمر البن على الشجرة" width="800" height="533" loading="lazy"><figcaption>الثمرة لما بتستوي.</figcaption></figure>
+  <p>بعد القطف الثمر بيتغسل أو بيتنشف في الشمس. الطريقتين بيدّوا طعم مختلف: المغسول أنضف، والمتنشف أحلى.</p>
+
+  <aside class="ad" aria-label="إعلان"></aside>
+
+  <p>الحبوب الخضرا بتسافر في شكاير خيش، وممكن تستنى شهور من غير ما تبوظ، لحد ما توصل للمحمصة.</p>
+  <figure><img src="img/b-800.webp" alt="شكاير بن خضرا في مخزن" width="800" height="600" loading="lazy"><figcaption>البن الأخضر بيستحمل السفر.</figcaption></figure>
+
+  <div class="video"><!-- the player comes later from late.js; its box is already here --></div>
+
+  <p>في المحمصة كل دقيقة بتفرق. ١٠ دقايق بتطلّع تحميص فاتح، و ١٤ بتطلّع غامق ومر.</p>
+  <figure><img src="img/c-800.webp" alt="بن محمص في صينية التبريد" width="800" height="800" loading="lazy"><figcaption>بعد التحميص على طول.</figcaption></figure>
+  <p>وآخر خطوة الطحن، وده أحسن يحصل قبل ما تعمل الفنجان على طول.</p>
 </main>
 </body>
 </html>
 ~~~
 
-~~~view 384 438 شكل index.html (الصوت هنا صفارة قصيرة مكتوبة جوه الصفحة)
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-</header>
-<main>
-  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
-  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
-  <audio controls preload="metadata" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
-    <source src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA=" type="audio/wav">
-  </audio>
-  <p><a href="#">نزّل الحلقة ١ (MP3)</a></p>
-  <h2>في الحلقة دي</h2>
-  <ul>
-    <li>مشغّل الصوت بيظهر إمتى</li>
-    <li>أكتر من صيغة لنفس الملف</li>
-    <li>ليه التشغيل التلقائي ممنوع</li>
-  </ul>
-</main>
+~~~css article-cls/style.css
+/* the real font, shown as soon as it arrives */
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+/* the fallback, scaled so a line of Arabic takes the same width as in Cairo (measured: 97.6% and 96.8%).
+   Each one is a separate family: if a machine doesn't have Segoe UI, the browser moves on to Tahoma */
+@font-face { font-family: "Cairo fallback"; src: local("Segoe UI"); size-adjust: 97.6%; }
+@font-face { font-family: "Cairo fallback 2"; src: local("Tahoma"); size-adjust: 96.8%; }
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: "Cairo", "Cairo fallback", "Cairo fallback 2", sans-serif; line-height: 1.8; color: #1f2937; background: #fff; }
+.article { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h1 { margin: 0; font-size: clamp(1.7rem, 1.2rem + 2.5vw, 2.6rem); line-height: 1.3; }
+.meta { margin: 0.25rem 0 1rem; color: #4b5563; }
+
+/* images: width/height in the HTML give the ratio; this keeps it while the width follows the column */
+img { display: block; max-width: 100%; height: auto; border-radius: 0.75rem; }
+figure { margin: 1.5rem 0; }
+figcaption { margin-block-start: 0.4rem; color: #4b5563; font-size: 0.9rem; }
+
+/* the ad slot: its size is booked before the ad exists */
+.ad { min-height: 250px; margin: 1.5rem 0; display: grid; place-items: center; border-radius: 0.75rem; background: #f3f4f6; }
+.ad:empty::before { content: "إعلان"; color: #6b7280; font-size: 0.8rem; }
+
+/* the video: a 16:9 box, the iframe fills it when it comes */
+.video { aspect-ratio: 16 / 9; margin: 1.5rem 0; border-radius: 0.75rem; background: #111827; overflow: hidden; }
+.video iframe { display: block; width: 100%; height: 100%; border: 0; }
 ~~~
 
-**هتشوف إيه:**
+~~~js article-cls/late.js
+// things that arrive late on real sites: an ad after 1s, a video player after 1.5s
+setTimeout(() => {
+  const ad = document.querySelector(".ad");
+  ad.innerHTML = '<a href="#" style="display:grid;place-items:center;width:300px;height:250px;background:#fde68a;color:#78350f;font-weight:700;text-decoration:none;border-radius:8px">محمصة حبّاية: خصم ٢٠٪</a>';
+}, 1000);
 
-- اسم البودكاست، والعنوان، والوصف، وتحتهم المشغّل واقف، وبعده لينك التحميل والقايمة.
-- مفيش أي صوت لحد ما تدوس ▶.
-
-**ليه كده:**
-
-- [[<source>]] ومعاه [[type]] بدل [[src]] على [[<audio>]]: لما تزوّد صيغة تانية (Ogg) هتبقى سطر فوقه وخلاص.
-- [[preload="metadata"]]: المدة بتبان من غير ما الملف كله يتحمّل.
-- لينك التحميل برّه [[<audio>]]: جواه كان هيبقى نص بديل مبيظهرش.
-
-**الغلطة الشائعة:** تنسى [[controls]]، فتفتح الصفحة وتلاقي مكان المشغّل فاضي وتفتكر إن المسار غلط.
-
-~~~text القياس من Chrome (الملف اللي اتعمل بالأمر اللي فوق، من سيرفر محلي)
-currentSrc = .../media/ep1.mp3      paused = true      duration = 3      الحجم 300 × 54
-Audio «الحلقة ١: يعني إيه صوت في الصفحة»
-~~~` },
-        { lvl: 'صغير', dir: "mahatta", cont: true, t: R`النص المكتوب، والكلام بيظهر مع الصوت`, what: R`زي المشروع اللي فات (نفس [[index.html]])، وزوّد عليه حاجتين عشان الحلقة توصل للي مش سامع. **النص المكتوب:** قسم [[<h2>]] «نص الحلقة» تحته أربع فقرات، كل واحدة بتبدأ باسم اللي بيتكلم تقيل، وواحدة منهم وصف صوت بين قوسين. **الكابشن:** ملف [[media/ep1.ar.vtt]] فيه نفس الأربع جمل بتوقيتهم (واسم المتكلم بـ [[<v>]])، وبدّل [[<audio>]] بـ [[<video>]] بيشغّل نفس ملف الصوت، عليه [[poster]] هو غلاف الحلقة [[media/cover.svg]] و [[width]] و [[height]]، وجواه [[<track>]] كابشن عربي شغال من الأول. من درس «track و WebVTT» (قسم ٢ و ٣ و ٥)، والـ [[<audio>]] من المشروع اللي فات.`, done: R`الصفحة مفتوحة من سيرفر ([[npx serve .]]). الغلاف ظاهر مكان المشغّل، ولما تدوس ▶ الصوت بيشتغل والجمل بتظهر فوق الغلاف في وقتها. وفي الـ Console: [[document.querySelector("video").textTracks[0].cues.length]] بيرجّع [[4]]. والنص المكتوب مقري تحت المشغّل من غير تشغيل.`, sol: R`~~~text media/ep1.ar.vtt
-WEBVTT
-
-00:00.000 --> 00:02.000
-<v منى>أهلًا بيكم في المحطة.
-
-00:02.000 --> 00:04.000
-[موسيقى المقدمة]
-
-00:04.000 --> 00:06.000
-<v كريم>النهارده هنحط صوت في صفحة.
-
-00:06.000 --> 00:08.000
-<v منى>ومن غير ما يشتغل لوحده.
+setTimeout(() => {
+  const box = document.querySelector(".video");
+  box.innerHTML = '<iframe src="player.html" title="فيديو: التحميص في ٣ دقايق" loading="lazy"></iframe>';
+}, 1500);
 ~~~
 
-~~~xml media/cover.svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
-  <rect width="640" height="360" fill="#0f766e"/>
-  <text x="320" y="170" font-size="48" fill="white" text-anchor="middle">بودكاست المحطة</text>
-  <text x="320" y="230" font-size="28" fill="white" text-anchor="middle">الحلقة ١</text>
-</svg>
+[[player.html]] صفحة سودا فيها «▶ التحميص في ٣ دقايق» (بدل مشغّل فيديو من موقع تاني). و [[before.html]] هو نفس المقال **من غير** [[width]] و [[height]] على الصور، ومن غير الـ preload، وبـ [[before.css]] ده:
+
+~~~css article-cls/before.css
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: "Cairo", sans-serif; line-height: 1.8; color: #1f2937; background: #fff; }
+.article { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h1 { margin: 0; font-size: clamp(1.7rem, 1.2rem + 2.5vw, 2.6rem); line-height: 1.3; }
+.meta { margin: 0.25rem 0 1rem; color: #4b5563; }
+
+img { display: block; max-width: 100%; height: auto; border-radius: 0.75rem; }
+figure { margin: 1.5rem 0; }
+figcaption { margin-block-start: 0.4rem; color: #4b5563; font-size: 0.9rem; }
+
+.ad { margin: 1.5rem 0; }
+.video { margin: 1.5rem 0; }
+.video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 0.75rem; }
 ~~~
 
-~~~html index.html
+~~~js article-cls/measure.mjs
+// node article-cls/measure.mjs: CLS of before.html and index.html on Slow 4G, cache off, CPU 4x
+import { browser, throttled, recordShifts, readThrough } from "../lab.mjs";
+const b = await browser();
+for (const file of ["before.html", "index.html"]) {
+  const { ctx, page } = await throttled(b);
+  await recordShifts(page);
+  await page.goto("http://127.0.0.1:8817/article-cls/" + file, { waitUntil: "load", timeout: 60000 });
+  await page.waitForTimeout(2500);                 // the ad (1s) and the player (1.5s) arrive
+  await readThrough(page);
+  const shifts = await page.evaluate(() => window.__shifts);
+  const total = shifts.reduce((s, e) => s + e.value, 0);
+  console.log("== " + file + ": " + shifts.length + " shifts، المجموع " + total.toFixed(4));
+  for (const s of shifts) console.log("   " + s.at + "ms  " + s.value + "  ← " + s.moved);
+  await ctx.close();
+}
+await b.close();
+~~~
+
+~~~view 760 900 المقال (الصور في المعاينة نسخة صغيرة)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الحلقة ١: يعني إيه صوت في الصفحة | بودكاست المحطة</title>
-</head>
-<body>
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-</header>
-<main>
-  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
-  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
-  <video controls preload="metadata" width="640" height="360" poster="media/cover.svg" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
-    <source src="media/ep1.mp3" type="audio/mpeg">
-    <track default kind="captions" srclang="ar" label="عربي" src="media/ep1.ar.vtt">
-  </video>
-  <p><a href="media/ep1.mp3" download>نزّل الحلقة ١ (MP3)</a></p>
-  <h2>في الحلقة دي</h2>
-  <ul>
-    <li>مشغّل الصوت بيظهر إمتى</li>
-    <li>أكتر من صيغة لنفس الملف</li>
-    <li>ليه التشغيل التلقائي ممنوع</li>
-  </ul>
-  <h2>نص الحلقة</h2>
-  <p><strong>منى:</strong> أهلًا بيكم في المحطة.</p>
-  <p>[موسيقى المقدمة]</p>
-  <p><strong>كريم:</strong> النهارده هنحط صوت في صفحة.</p>
-  <p><strong>منى:</strong> ومن غير ما يشتغل لوحده.</p>
-</main>
-</body>
-</html>
-~~~
-
-~~~view 576 630 شكل index.html (دوس ▶: الصوت هنا صفارة، والكابشن بيظهر فوق الغلاف)
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-</header>
-<main>
-  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
-  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
-  <video controls preload="metadata" width="320" height="180" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E" aria-label="الحلقة ١: يعني إيه صوت في الصفحة" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-    <track default kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-  </video>
-  <p><a href="#">نزّل الحلقة ١ (MP3)</a></p>
-  <h2>نص الحلقة</h2>
-  <p><strong>منى:</strong> أهلًا بيكم في المحطة.</p>
-  <p>[موسيقى المقدمة]</p>
-  <p><strong>كريم:</strong> النهارده هنحط صوت في صفحة.</p>
-  <p><strong>منى:</strong> ومن غير ما يشتغل لوحده.</p>
-</main>
-~~~
-
-**هتشوف إيه:**
-
-- مكان الشريط الرمادي بقى مستطيل أخضر عليه اسم البودكاست ورقم الحلقة، وعليه أزرار المشغّل.
-- دوس ▶: الصوت بيشتغل، والغلاف بيفضل ظاهر (الملف مفيهوش صورة)، والجمل بتتبدّل في أسفله.
-- تحت: النص كله مكتوب، وده اللي بيتقري من غير تشغيل وبيتدوّر فيه.
-
-**ليه [[<video>]] لملف صوت:** [[<audio>]] مبيرسمش الكابشن (درس «audio و source» قسم ٨). [[<video>]] بيشغّل ملف الصوت عادي، وبيدّي مساحة يترسم عليها الـ [[poster]] والكابشن.
-
-**ليه الاتنين (الكابشن والنص):** الكابشن ماشي مع الصوت. والنص المكتوب بيتقري ويتنسخ ويتدوّر فيه، ومحرك البحث بيقراه.
-
-**ليه [[npx serve .]]:** لو فتحت الملف بدبل كليك ([[file://]])، ملف الـ VTT بيترفض والكابشن مبيظهرش.
-
-**الغلطة الشائعة:** الوقت في الـ VTT أطول من الملف. الجمل اللي توقيتها بعد آخر الصوت عمرها ما هتظهر، ومفيش رسالة.
-
-~~~text القياس من Chrome (من سيرفر محلي، وملف الصوت 3 ثواني)
-video.currentSrc = .../media/ep1.mp3      videoWidth = 0      الحجم 640 × 360 (من width و height)
-textTracks[0]:  kind = captions   mode = showing   cues = 4
-من file:// :    cues = 0    track.readyState = 3 (ERROR)
-~~~` },
-        { lvl: 'متوسط', dir: "mahatta", cont: true, t: R`صفحة «شاهد الدرس»: فيديو بكابشن وترجمة وفصول`, what: R`زي المشروع اللي فات (نفس الفولدر ونفس [[media]])، وزوّد صفحة تانية [[watch.html]] للي عايز يتفرّج على شرح الحلقة. فيها: نفس الـ [[<header>]]، و [[<nav>]] فيه لينكين («الحلقة» لـ [[index.html]] و «شاهد الدرس» لـ [[watch.html]])، وعنوان [[<h1>]]، وفيديو [[media/lesson1.mp4]] بـ [[controls]] و [[preload="metadata"]] و [[width]] و [[height]] و [[poster]] (نفس [[media/cover.svg]])، وجواه [[<source>]] بنوعه، وكابشن عربي [[default]] (نفس [[media/ep1.ar.vtt]] بتاع المشروع اللي فات)، وترجمة إنجليزي [[media/lesson1.en.vtt]] ملف جديد، ونص بديل فيه لينك. وتحت الفيديو قايمة مرقّمة «فصول الدرس» بتوقيت كل فصل في [[<time>]]. وزوّد نفس الـ [[<nav>]] في [[index.html]]. الفيديو: صوّر ١٠ ثواني بموبايلك، أو استخدم الأمر اللي في الحل. من درس «track و WebVTT»، و [[<time>]] من درس «abbr و dfn و time».`, done: R`من السيرفر: [[watch.html]] بتفتح والغلاف ظاهر بمقاس الفيديو قبل ما يشتغل (مفيش قفزة). دوس ▶: الكابشن العربي ظاهر، ومن زرار CC تقدر تبدّل لـ English. وفي الـ Console: [[textTracks.length]] بيرجّع [[2]]، والأول [[showing]] والتاني [[disabled]]. واللينكين في الـ [[<nav>]] بيودّوا بين الصفحتين.`, sol: R`فيديو تجربة ٨ ثواني بصوت (لو معندكش فيديو):
-
-~~~bash
-ffmpeg -f lavfi -i "testsrc2=size=640x360:rate=24" -f lavfi -i "sine=frequency=330" -t 8 -c:v libx264 -pix_fmt yuv420p -c:a aac -movflags +faststart media/lesson1.mp4
-~~~
-
-~~~text media/lesson1.en.vtt
-WEBVTT
-
-00:00.000 --> 00:02.000
-Welcome to El-Mahatta.
-
-00:02.000 --> 00:04.000
-[intro music]
-
-00:04.000 --> 00:06.000
-Today we put a sound on a page.
-
-00:06.000 --> 00:08.000
-And it will not play by itself.
-~~~
-
-~~~html watch.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شاهد الدرس ١ | بودكاست المحطة</title>
-</head>
-<body>
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-  <nav aria-label="صفحات الحلقة">
-    <a href="index.html">الحلقة</a> |
-    <a href="watch.html" aria-current="page">شاهد الدرس</a>
-  </nav>
-</header>
-<main>
-  <h1>شاهد الدرس ١: صوت في الصفحة</h1>
-  <video controls preload="metadata" width="640" height="360" poster="media/cover.svg">
-    <source src="media/lesson1.mp4" type="video/mp4">
-    <track default kind="captions" srclang="ar" label="عربي" src="media/ep1.ar.vtt">
-    <track kind="subtitles" srclang="en" label="English" src="media/lesson1.en.vtt">
-    <p>متصفحك مش بيشغّل الفيديو. <a href="media/lesson1.mp4">نزّل الدرس (MP4)</a></p>
-  </video>
-  <h2>فصول الدرس</h2>
-  <ol>
-    <li><time datetime="PT0S">0:00</time> المقدمة</li>
-    <li><time datetime="PT4S">0:04</time> أول ملف صوت</li>
-    <li><time datetime="PT6S">0:06</time> ليه مبيشتغلش لوحده</li>
-  </ol>
-</main>
-</body>
-</html>
-~~~
-
-وفي [[index.html]] زوّد نفس الـ [[<nav>]] جوه [[<header>]] (و [[aria-current="page"]] على لينك «الحلقة» هناك):
-
-~~~html
-<nav aria-label="صفحات الحلقة">
-  <a href="index.html" aria-current="page">الحلقة</a> |
-  <a href="watch.html">شاهد الدرس</a>
-</nav>
-~~~
-
-~~~view 476 شكل watch.html (دوس ▶ وجرّب زرار CC)
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-  <nav aria-label="صفحات الحلقة">
-    <a href="#">الحلقة</a> |
-    <a href="#" aria-current="page">شاهد الدرس</a>
-  </nav>
-</header>
-<main>
-  <h1>شاهد الدرس ١: صوت في الصفحة</h1>
-  <video controls preload="metadata" width="320" height="180" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-    <track default kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-    <track kind="subtitles" srclang="en" label="English" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
-  </video>
-  <h2>فصول الدرس</h2>
-  <ol>
-    <li><time datetime="PT0S">0:00</time> المقدمة</li>
-    <li><time datetime="PT4S">0:04</time> أول ملف صوت</li>
-    <li><time datetime="PT6S">0:06</time> ليه مبيشتغلش لوحده</li>
-  </ol>
-</main>
-~~~
-
-**هتشوف إيه:**
-
-- الغلاف الأخضر بمقاس الفيديو، ولما تدوس ▶ الفيديو بيبدأ والكابشن العربي تحته.
-- زرار CC فيه «عربي» و «English».
-- تحت الفيديو الفصول مكتوبة بوقتها.
-
-**ليه كده:**
-
-- نفس ملف الكابشن بتاع الحلقة اتستخدم تاني: ملف الـ VTT منفصل عن الفيديو، فبيخدم الصوت والفيديو.
-- [[width]] و [[height]] بنفس نسبة الفيديو (16:9)، فالصفحة مبتتهزّش لما المعلومات توصل.
-- الفصول قايمة HTML عادية: [[kind="chapters"]] مبيترسمش في Chrome (درس «track و WebVTT» قسم ٢)، فالقايمة هي اللي الزائر بيشوفها. و [[datetime="PT4S"]] مدة بصيغة بيقراها البرامج: ٤ ثواني.
-- [[aria-current="page"]] بيقول لقارئ الشاشة «انت في الصفحة دي».
-
-**الغلطة الشائعة:** [[label="إنجليزي"]] على الترجمة. اللي محتاجها بيقرا إنجليزي: اكتب [[English]].
-
-~~~text القياس من Chrome (من سيرفر محلي، بالفيديو اللي اتعمل بالأمر اللي فوق)
-قبل التشغيل:   الحجم 640 × 360      videoWidth × videoHeight = 640 × 360      duration = 8
-textTracks.length = 2
-[0] captions   ar   mode = showing    cues = 4
-[1] subtitles  en   mode = disabled   cues = null      (ملفه متطلبش من السيرفر)
-~~~` },
-        { lvl: 'متوسط', dir: "mahatta", cont: true, t: R`صفحة «إضافات الحلقة»: iframe مقفول عليه، وملخص PDF`, what: R`زي المشروع اللي فات، وزوّد صفحة تالتة [[extras.html]] ولينكها في الـ [[<nav>]] بتاع التلات صفحات. فيها حاجتين. **بطاقة الحلقة في iframe:** صفحة صغيرة [[card.html]] (فيها اسم الحلقة وزرار «👏 صفّق» بيعدّ الضغطات بسطر [[onclick]])، ومعروضة في [[extras.html]] جوه [[<iframe>]] ليه [[title]] ومقاس و [[loading="lazy"]] و [[sandbox]] بيسمح بالسكربتات بس. دي نفس طريقة تضمين أي مشغّل أو خريطة من مزوّد، والبطاقة هنا واقفة مكان المزوّد. وتحتها iframe تاني بـ [[srcdoc]] فيه تعليق مستمع، و [[sandbox]] فاضي. **الملخص PDF:** [[<object>]] لملف [[media/ep1-notes.pdf]] بنوعه ومقاسه و [[title]]، وجواه بديل بلينك، وتحته لينك تحميل. الـ PDF: افتح [[index.html]] في Chrome ودوس [[Ctrl+P]] واختار «Save as PDF» واحفظه بالاسم ده. من دروس «iframe sandbox و allow» و «object و embed».`, done: R`زرار التصفيق جوه البطاقة بيعدّ. ولو شلت [[allow-scripts]] مؤقتًا، بيبطّل والـ Console فيه رسالة «Blocked script execution». والتعليق ظاهر في صندوقه. والـ PDF معروض جوه الصفحة، ولو غيّرت اسمه في [[data]] لاسم غلط بيظهر البديل بلينكه.`, sol: R`~~~html card.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>بطاقة الحلقة ١</title>
-</head>
-<body>
-<p><strong>الحلقة ١: يعني إيه صوت في الصفحة</strong></p>
-<p><button type="button" onclick="n.textContent++">👏 صفّق</button> <b id="n">0</b></p>
-</body>
-</html>
-~~~
-
-~~~html extras.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إضافات الحلقة ١ | بودكاست المحطة</title>
-</head>
-<body>
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-  <nav aria-label="صفحات الحلقة">
-    <a href="index.html">الحلقة</a> |
-    <a href="watch.html">شاهد الدرس</a> |
-    <a href="extras.html" aria-current="page">إضافات</a>
-  </nav>
-</header>
-<main>
-  <h1>إضافات الحلقة ١</h1>
-  <h2>بطاقة الحلقة</h2>
-  <iframe src="card.html" title="بطاقة الحلقة ١ وعدّاد التصفيق" width="320" height="110"
-          loading="lazy" sandbox="allow-scripts"></iframe>
-  <h2>تعليق من مستمع</h2>
-  <iframe sandbox title="تعليق من مستمع على الحلقة ١" width="320" height="70"
-          srcdoc="<p>حلقة جميلة، كمّلوا!</p>"></iframe>
-  <h2>ملخص الحلقة</h2>
-  <object data="media/ep1-notes.pdf" type="application/pdf" width="320" height="400" title="ملخص الحلقة ١ (PDF)">
-    <p>المتصفح مش عارض الملف هنا. <a href="media/ep1-notes.pdf">افتح ملخص الحلقة ١ (PDF)</a></p>
-  </object>
-  <p><a href="media/ep1-notes.pdf" download>نزّل ملخص الحلقة ١ (PDF)</a></p>
-</main>
-</body>
-</html>
-~~~
-
-وزوّد لينك «إضافات» في الـ [[<nav>]] بتاع [[index.html]] و [[watch.html]]:
-
-~~~html
-<a href="extras.html">إضافات</a>
-~~~
-
-~~~view 598 شكل extras.html (البطاقة هنا مكتوبة بـ srcdoc، والـ PDF مبيتعرضش في المعاينة فظاهر بديله)
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-  <nav aria-label="صفحات الحلقة">
-    <a href="#">الحلقة</a> |
-    <a href="#">شاهد الدرس</a> |
-    <a href="#" aria-current="page">إضافات</a>
-  </nav>
-</header>
-<main>
-  <h1>إضافات الحلقة ١</h1>
-  <h2>بطاقة الحلقة</h2>
-  <iframe title="بطاقة الحلقة ١ وعدّاد التصفيق" width="320" height="110" loading="lazy" sandbox="allow-scripts"
-          srcdoc="<html dir=rtl><p><strong>الحلقة ١: يعني إيه صوت في الصفحة</strong></p><p><button type=button onclick='n.textContent++'>👏 صفّق</button> <b id=n>0</b></p>"></iframe>
-  <h2>تعليق من مستمع</h2>
-  <iframe sandbox title="تعليق من مستمع على الحلقة ١" width="320" height="70"
-          srcdoc="<p>حلقة جميلة، كمّلوا!</p>"></iframe>
-  <h2>ملخص الحلقة</h2>
-  <object data="media/ep1-notes.pdf" type="application/pdf" width="320" height="400" title="ملخص الحلقة ١ (PDF)">
-    <p>المتصفح مش عارض الملف هنا. <a href="#">افتح ملخص الحلقة ١ (PDF)</a></p>
-  </object>
-  <p><a href="#">نزّل ملخص الحلقة ١ (PDF)</a></p>
-</main>
-~~~
-
-**هتشوف إيه:**
-
-- صندوق فيه اسم الحلقة وزرار، والرقم بيزيد مع كل ضغطة.
-- صندوق تاني فيه التعليق.
-- في مشروعك: صندوق 320 × 400 فيه صفحة الـ PDF، وتحته لينك التحميل.
-
-**ليه كده:**
-
-- [[sandbox="allow-scripts"]] على البطاقة: العدّاد محتاج سكربت، ومش محتاج فورم ولا نوافذ ولا يقرا صفحتك. ومفيش [[allow-same-origin]]، لأن البطاقة من نفس موقعك والاتنين مع بعض بيلغوا القفل.
-- التعليق كلام من زائر: [[sandbox]] فاضي، فلو كتب كود مش هيشتغل.
-- البديل اللي جوه [[<object>]] بيظهر لما الـ PDF ميتعرضش، واللينك اللي برّه موجود دايمًا.
-
-**لما تبدّل البطاقة بمزوّد حقيقي:** [[src]] يبقى عنوان التضمين بتاعه، وغالبًا هتحتاج تزوّد [[allow-same-origin]] (ساعتها آمن لأنه موقع تاني) و [[allow="fullscreen"]] لو فيديو.
-
-**الغلطة الشائعة:** تحط [[sandbox]] على الـ [[<object>]]. مفيش: [[sandbox]] على [[<iframe>]] بس. وده سبب إن الصفحات بتتحط في iframe مش object.
-
-~~~text القياس من Chrome (من سيرفر محلي)
-البطاقة:      Iframe «بطاقة الحلقة ١ وعدّاد التصفيق»      بعد ضغطتين: الرقم 2
-من غير allow-scripts، بعد ضغطة:
-   Blocked script execution in 'http://127.0.0.1:8731/p4/card.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-الـ PDF:      الحجم 320 × 400      ارتفاع البديل = 0      PluginObject «ملخص الحلقة ١ (PDF)»
-data غلط:     ارتفاع البديل = 18 (ظاهر)
-~~~` },
-        { lvl: 'كبير', dir: "mahatta", cont: true, t: R`موقع «المحطة» كامل: الحلقة، والدرس، والإضافات، والاستوديو، والمصادر`, what: R`موقع البودكاست كله، بيكمّل على اللي بنيته: [[index.html]] (المشغّل والكابشن والنص المكتوب من المشروعين الأول والتاني)، و [[watch.html]] (من التالت)، و [[extras.html]] و [[card.html]] (من الرابع). وزوّد صفحتين و ٣ تحسينات. **[[studio.html]]:** مسقط الاستوديو مرسوم SVG ([[viewBox]]) فيه تلات أشكال، كل شكل جوه [[<a>]] بـ [[aria-label]] بيودّي لقسم في نفس الصفحة ([[#rec]] و [[#mix]] و [[#wait]])، وتحته التلات أقسام، كل قسم [[<h2>]] بـ [[id]] وفقرة. **[[credits.html]]:** «مصادر الميديا»: قايمة بكل ملف مش من صنعك (صورة، وموسيقى، وأيقونة) بنسبته الكاملة: الاسم لينك للمصدر، وصاحبه، والرخصة لينك عليه [[rel="license"]]، والتعديل. **التحسينات:** (١) [[<nav>]] واحد بالخمس لينكات في كل الصفحات. (٢) في [[index.html]]: صورة للاستوديو تحت النص المكتوب، جوه [[<figure>]] بنسبتها، وعليها [[width]] و [[height]] و [[loading="lazy"]] و [[decoding="async"]]. (٣) في [[index.html]]: [[<noscript>]] بيقول إن عدّاد التصفيق في صفحة الإضافات محتاج JavaScript. من كل دروس الوحدة: «audio و source» و «track و WebVTT» و «iframe sandbox و allow» و «object و embed» و «map و area» (البديل الحديث) و «canvas و noscript و template» و «replaced elements والتراخيص».`, done: R`الخمس صفحات بيتنقّل بينهم من الـ [[<nav>]]. في [[studio.html]] كل شكل بيودّي لقسمه، ولما تصغّر النافذة لـ 360 الأشكال بتصغر ولينكاتها لسه في مكانها. في [[credits.html]] كل بند فيه اسم ومصدر ورخصة. وصورة الاستوديو في [[index.html]] مكانها محجوز، وفي الـ Console: [[document.querySelector("img").loading]] بيرجّع [[lazy]]. و validator.w3.org مبيطلّعش أخطاء في الخمس صفحات.`, ext: R`زوّد حلقة تانية ([[ep2.html]]) بنفس الهيكل، وخلّي [[index.html]] قايمة حلقات، كل حلقة مشغّلها [[preload="none"]]. وزوّد في [[studio.html]] نسخة image map من نفس المسقط ([[<img usemap>]] و [[<map>]] و [[<area>]]) وقارن الاتنين على عرض 360. وزوّد [[<canvas>]] في صفحة الإضافات بيرسم عمود لكل حلقة، ببديل نصي فيه الأرقام.`, sol: R`شجرة الملفات:
-
-~~~text
-mahatta/
-├── index.html        الحلقة: المشغّل، والكابشن، والنص المكتوب، وصورة الاستوديو
-├── watch.html        شاهد الدرس (من المشروع التالت، والـ nav بس اللي اتغيّر)
-├── extras.html       الإضافات (من المشروع الرابع، والـ nav بس اللي اتغيّر)
-├── card.html         البطاقة اللي جوه الـ iframe (زي ما هي)
-├── studio.html       جديد: مسقط الاستوديو SVG بلينكات
-├── credits.html      جديد: مصادر الميديا
-└── media/
-    ├── ep1.mp3   ep1.ar.vtt   cover.svg          (من المشروعين الأول والتاني)
-    ├── lesson1.mp4   lesson1.en.vtt              (من التالت)
-    ├── ep1-notes.pdf                             (من الرابع)
-    └── studio.svg                                جديد: صورة الاستوديو
-~~~
-
-ترتيب البناء: الـ [[<nav>]] الجديد في الصفحات التلاتة الموجودة، وبعده [[studio.html]]، وبعده [[credits.html]]، وآخر حاجة الصورة والـ [[<noscript>]] في [[index.html]] (عشان نسبة الصورة بتشاور على صفحة المصادر).
-
-الـ [[<nav>]] اللي في الخمس صفحات (و [[aria-current="page"]] بيتنقل للينك الصفحة اللي انت فيها):
-
-~~~html
-<nav aria-label="صفحات الموقع">
-  <a href="index.html">الحلقة</a> |
-  <a href="watch.html">شاهد الدرس</a> |
-  <a href="extras.html">إضافات</a> |
-  <a href="studio.html">الاستوديو</a> |
-  <a href="credits.html">المصادر</a>
-</nav>
-~~~
-
-~~~xml media/studio.svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
-  <rect width="640" height="360" fill="#e2e8f0"/>
-  <rect x="80" y="220" width="480" height="30" fill="#92400e"/>
-  <circle cx="220" cy="150" r="46" fill="#334155"/>
-  <circle cx="420" cy="150" r="46" fill="#334155"/>
-  <rect x="212" y="196" width="16" height="24" fill="#334155"/>
-  <rect x="412" y="196" width="16" height="24" fill="#334155"/>
-</svg>
-~~~
-
-~~~html studio.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الاستوديو | بودكاست المحطة</title>
+<title>رحلة حبة البن: من الشجرة للفنجان</title>
 <style>
-  svg { display: block; width: 100%; max-width: 600px; height: auto; }
-  svg a:hover, svg a:focus-visible { opacity: 0.7; }
+/* the real font, shown as soon as it arrives */
+@font-face { font-family: "Cairo"; src: url("data:font/woff2;base64,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") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Cairo"; src: url("data:font/woff2;base64,d09GMgABAAAAADaAABAAAAAAoUgAADYdAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoQSG6NWHJFGBmA/U1RBVEAAiiIRCAqBvXyBoRALhhQAATYCJAOMJAQgBYQkB6VgDAcbsI4X2DaNGnY7gC2f6h0yOa6D84Kg62euo6gdnJR09v//ScnJGDIsUNUsq/+HmG3mrJJRlYuMJvfiqgFlqJeOUqROrEPEs3UFocRxXhmLGNPkttkTRDRaHMNvyOeNOdGpGh5y7O+QPoren9Kv726fcBFtsUQUBYVTMndiY3k6SgkfJUtVaarBB+7g32D1X1cu78CT3rnSB194iTEn845vXEwb9DesLQo9QmOf5ML//+fV73NfKml+QOn1RwJHNEcWR6zhebf1/meKqCigiKSIiKg4QFyIiIioqIiIinOAOPm6KyfZPK/MxtnYNraZjaXWlY1l3e663VhnpTaF4l2Dd2Y3yX2C56EgHKMuy7Kqb4VxrScSCvjC8/3f+7jPzCs/FA9oKMIVONQaaOVQkAMW7RSN/XUnAHyxlr60UNBbFwE+oT0KT1Ignqt9KyJPcjl3cF7Ikw8yAobWWtYaPZHJKypnKnOzoUIp//2PsHkUIm/HXjEvF9W0fKFWDK3zh54Waju94MnZr4+OcjDhlmoEhmxoMMVyPuhQHbuydvTkcq2SgOimAijTnfQ96pdXWcTMkVY/MOdSXT2ijTZTv1oCvvf9teaQS2a+2ltEpLKeoieLkG1e+muAlggPwibMARjP+dbstTOfOL/AZFMC9d89X1AVbncmd5PZDR4m2SPKZ9xZyE2ym/1EoEoMwjApJMn+G1slK3SFMRWyskL21e9b1k5uqH9ptt+hTjiiUXMo5AWhMA6mprs21eV2hByme0bMQnYpCoPQSIziYQ1CG3w+nVk7f0fzMrIVkCcE1qlZOMB+dVD21ozsEVgGrb2ksDdAYIewuqq4omPokjLVdYivv7JIUTQHz+O02SaP1ZSVU5xDyTuwBhJmPrNhV1HktHtU4rAahJ4eo9EgDMpJIEx08rKTtDvzVM6oRihmwuN8i+RJ23uPK4TimiCEEF7XmJCaIT2/p3M/pvU7qVeSLc13l5jYEBBGQCSKNf5WPtAIWFUAkgG0iyfqovseqjeJVQpD+OGhWun5C7gZyoTrHIcANZhpGtRRS0OIj1CyszTQfwzAoJkIB6AkPSmKt96UxMcQSqEgIYIHcp+GBmFSo5OgvcsSmKnKmA28KcdoAE24PFwdMJagsQVBRgZB1QJioXHQKBSmMIUrX89NMRuUyi1fZLDnQ4GAAVQDSADCKXxuqulmmGX549VoldXWWGud9TbYZLOttrnQRS62w0677LYHCIK0pqkz02wrrBSx0RYgAHEk6ISq8kqCFggf1RUUAvaLAqQKUKABEJ1XAAaq9kL1fH9Et4/rqoC/xl5/KMuA9bKiMqEnbTSYILQHIID88SGwKT4nyfG8qN2NNVhIIAhAQNKqBeJfRJxMueWqMWeNOGKfnTZbb7UVzNq1QFQpVyhbGjUlOYkQEK1VAMS5+gUIQ10Aor3DgFjdrUC01+yGfXlLZzgJckCjvaLe2l21MN9V/xScy1f1lNIDUNrH+vDs8t4nZr3KvWsoga78QK8R4OydjRLpvfNQFHACkmfrkYr4ZrLf+IIXeIRrOIUj469hBzZhNZaymZicji3p8B0D0fsedV0dfSUErKBXL3Ll0nxdBSkRIV9cLAz2ILpmfENXadWKNcfV9s6RWVuvX/MsClcs/KMOb657IYAmHlB+XvAGf+NHXMFpDGHg9rqXGfn/egF1AFtNTgFkiC3T4+GfWTaXTfiBAZnfnHJ9l7149DS64mBwDx0oCuu70rJTJI4TKSx3HupzX/TP3utYR3uoqw9oQCmymRRB4IBBiCb8GdN4gitkpBZrZyvogxkNMCIbCZCREGuMfW/CjXOsoa++85mPfegNxzzmkOvttckqc1UpV8RX/0KjEktGzI4/r8sRIPs4SkATVH8kNmc0dpf1QApNsJPtTRvPWMsLKhJem1YkDonPo4BxrsfHoeMGMJR6eFw9RoAh2I3j/DEK5B43tXbudfiCOl9eQ8j98+KNTpZ/vHirFzOjml/Z5iAE3UcTkOdzToGdGYJ9zVxK6aGDUG6srrWQ1Vtj+4sWxUhpdIfykB+qSXEVx5/HkVVpuVjcwiOLU3OxtLpRXf/19WC4nIN2YMuMwxqHX+XZ56PLKhq3ldq4gouM0l3uReeS1OSj1B1H0j9K+TGJbhi5x8W0dyLURsN459Wpsbxjo9TQKh5GqXyZmWOH5Pk/4FEYBTBM9KMNApDungQAQ0LwjeG1m9iDTRE+nIeDAD3jXFY9dDEp0WPpOmHE4W1lmDu2GtXdfACw2O0/6Cxylh0kuoVPj7tykmM7Pe6aL860O20XJg2J2ByeRr0fQxn0bPtVMqsOKaUWZfexaIDvhvb5aDgahoO5756o8/+7RHcfmDA+11sKj/gEduEcLtBTcGLuxGoC17iLps4t3LVTVtbtyimf7y6Uc004P98td6tOHVPl4jOTyaJRR7I5by8m4Wg6yo5Fvzvrrd7nMbMM/itluzrL2EoNAwosV4nVx1dalgcA9OZGVa0Za/GKsXPNtnussgdHn+1zCpN7MzXWX11PKefIOSa3l54Iz2A7+rEeSmAD6dh4wfH2DtKTqe6mPEcy1XE3t25J3ZcQ0Nwl7GFn0wfFtj//oBfU9xPe7r70L2ljebCOiX132FOaaFnr/IaCUdVfvCDshZjphRfvWypCVCK+aWIC962B9VVecyOKbHZvvDpb5lEk20sE6Ht9efBqdX6MvxkiZ4+aZVjFK/ct04nipREJK5cphHSJhHD5CuniCuFiCeli2PaL1CREZtFYEavm1zknppdIvJhz4t8l2vV4+c6fbT41byGuzrGLSM5yEckI0REk0T4kYufczNZjNVYI82xnLUB2Vc3yWYhEZM80oZ7KSI4kkiARIVMgeJMTMZFEdCSCMq1LeAzcQn9GIWYm/OFvxrPx93g0fhz3xo1xZVwEpzGMQ/nQ2I4YHANRH5JoGZKoG0m0CIloGnXMKErHgMgfmUI7VCJ2yGpAjKDcf3gh2MNZ0IadIKKxJYD6varv+ko8Wb7hnxy17OfcEpZT+msf9k4n9cBEz3dUnnusB7q7W7sR/ViF3ryzbV/yhtZEYSDFWvPc6oRp7IQqIIXoCeGyr2+7XA/cnLV8qUa012L0ayepBBRaeb6+BTyXaSDaZtP3Zt6JLXmvLXlVqv7cVjK/sUse/rNTGWx3MYoLa+r+lT9V/5KdB8JOvyPoUh41YM5v0mgspyxCa8v2pjTfyaqiV9X5s02FMrFRDMNSMrrKHVMx+VlIqr8sza31Zk0oPxcn/KHGicYXQgt16BOIzc3InuSHKJGPaE1ytm2u5AxbdYabNK87ySxAYul926V9zKNeqEvYXH5e/VA/A8Y+aWaywW1ploXsuXNroNTVs1t9z5AtCzYrpseHcPicZI8b9khmsxK8oSYJxWSwDDMyqy+orfjMIQkZCtmbkHMqA1H2yj7lXLjjRBfpc6f3TpI7nM5ZTut61OOSMS6PVh9Fk9CHDMk5xzqdayv2Sssnz2/OUja0+G4b3G+FKLlsccLrFhlbev9veI9siwGQ0J7T7OtD4QdNK1rC5gu2i7LBaMuvXIUV3xa/Xup474ZWznNB3EGzTH6NS7iFGMtPL9t08sCjXdF/+MTUAWf0ahNiyaYNu5m+adaA2dhmdnc0MYodFfZfc4L+bz0Aa2wSeLN67oBqAUmuKIcQFAIP+cBEJlC+fjIAFAMgwQDwF8QMwDeAD7X6oiz8jSfOPRD3cAlncDE9AHalWzRdJ1iL5fHC/wYXYxqimzlhry4Hu92DUkv2mtmTd/H4ry91VJspLN11iDFiCrCP5WG0XKRAgFVS4ibJcjNhZmM+zP7MY4EUUMwcL+2EV9Zsuggmyr1Q/B4FMJi3WRKhAISPr8NSiIuhpMMemGCyDXjg5Yr3T+IMAgYAWqjYBAOFrgfkNhcm36eboPYcVezKAKKsKo//Y55IMlHkoinEiGVUA9Hiplse+sGvfvOnvzzx1CuvzZg150NgCAWhIQxE0lY7yTJ1lSNXH33lKwAGDwMDzDHHQAwbBjFiBMyoURBnnQVx0UUQY8ZAwKAxMoKoUQMCgYBo0QICAhBHrtEFHSqllM+XYoCavi5nAgIgOm8t6+QYsHs2ZXgDGnA9DxyJa/dhZQ3QftgiCX+rSg4Ud2wPAemL6iIjEP01IweA8J1RXwZ4FH7nbeDXQMCChpHnlwlA4P+8zi77eX7IBxMStH2+OuQeQe473VxjRcXDt9Kfwvg741mXqdOeKdu1y8WDhYeDiY7CWgJg5AkCZjSBwAyHD4wsAcCsjhCYY9BjzihfQvEnwUf7nU2FK5x48aTH+wKBuOIOGyYs3J7AI553xziTakbqhrXmvj1mcpXI1c0SuGLxTFRhqXFhAQ+Y4jrX+J7LFyDGDjo0SFCq7FWEjBOO2ELF4T5uWaggBU2ONURghS/WB0s1OAEMNliBwgJchSXCjDkNjFb/zM28HvsQ84Q/d96VX2RmjpcjI204QVypBu9ZuDLRceZYNSDURdZQk1NWVcREZKSExIMlOAT42LiDecjoaEgoqH9lw167JydYYbmNIMgwOHDiyl28BEnUUmil01luhTWOOuHU3C/HPvA8GkMUNA2lb8KcltlA/ksSIGINiT06JjYuHn9CIcQkpGTkFGIpqWikyZSrUCmDKnUaNFmkk9kyq6y23kabbbfbPgcccsQxw0adddGYy753zXUPTHnquZde+99b78364JMv5iEhFISBcJAFZAlZQTaQrWSpOuiokwt0ASITBhwWWGKFDVSOXLjx4M1PgGBhwkWIFCVajDiJkqXKkKNACb1Kteo1WqhDj6VW+tZaG2yyzS577XfQYUcdd9IZF1wy4YqrJt1w3xPPvPDKG9PemTHno8++BkAGoSEshIcIEBGyhkjaSdFemnQZOht9d4g7W2t+nicffIFCxUuSIl2WPEXKVKhm0myxLkss9401Bnxnix32WGDvu+fgtdTckdEwsHB48SUQRCSBmpZOtnzFyvvk39+uW68V+vRbZ9BWOw1xNuK08yDcDXu5Ka+0GzfgGYTfQQSlJCNVA4FSnPEmOG2/7LDUz37khtOGDOhWJx8HAwRadcAyer1k0boa7dhsi2223sW2yYW2wXbbbKcYBAuWyLZqmq68ol1VtRpZ3FjDorsIBQsbq2lrrBUElzYtgemFIqISRZe1SKmhWld5NVXnZisQlr8GIZW/9iCN+8mW4TldoJ00Z8EAbGp0AGoH/UvLV0sE4fG8TY6znaYx3G8F72oVYCvm+oxx+P8yEMmRsLvgJjxAv3IWQA5oIFspgDQfIM/16PdpFQJBAAx6XI5AAAgSiQIU0FBRZHIusoMBcLQKCihwoSPW/11e0w6LGlOkrS4FVhqsFZbKiQuRNDp6tZotYkYQGUIpeVUDE0si0/NTMhnoqWQhS6NjE1Pzy1euWr9Jf/2NllhhrY22uuTp51965bX/9wWPhI6NJ8L0104IDIHBkSgMjkBKTkFJRU1Lz8gMxhKpTK5QqtQazdavn+cDZRoSXa6kGctngHOXbt1vOmVU0Orik13Zirem3rjfvp+jLLbMSk02a37q2RcfhPPPFcOKA1eeJAApKBxRY/FEMreuoWNgYoHGk+lsvliu1j+A6cdb/s+u/r8LoJ+CnMhE8H3+5egemr38umututu4ubMXrDm6r49eaj43z6E4WZrVP9/4AKDZTlsf778ZgIrziIHUnOwsyNy9F+4Qb7TL7I6XnQANBli6lLDmTqD/FAPKdMwx3NXwjHLCu1R7WehoKqmX5hBKI02GzJ1QNll7zSMXoPyvvYQiJQCVU6EKoCb0z7eOGnXmWqyBL2wPOvanzhqtEVHMs0anW2Cb7Xbb6wr77He9g251p0MeWKGPa6mWFoLGEhyHWXASBqq9vjrg3Qvinaa/Vsbpdx5PHdvgoI/W9C45dvucS6+wzFBFFmBDfQxYeXVpf5/4rE0OdAxOuLx4qlKjmj8Bvk7dupj1WmKzrbbYbcgeY0lRa7o6s8w2w0ycLXDWeefcD8MAhQbOFjvcdsfdfYdHfvd41qhMZUHPq3z2tYc9N3tpzHgSGCKNJJQv5kcM/3ty0JFZT4OCbAcyevqUPc2ByXJlc9x5vj7CoMAQUaiSoTmBlxRZM3TLsb3Aj5I4K/Kqqbf73fm6+H/F8lVg9/nGav3W2GjQd4aNOGHSdVd876prJlwGAUW5DgBNAYBLBdBOQPrvINtXAon9AcEpAGDAUTMCBCr6jK4rQIMmSNSqQkAHmwywvnBgeGqdCGTNfhk+eWDSSZgVMx4Mil4fvyUsjsSpRaAwCVi8HmRYVD0MI1JMflhRTf72xRWEOdpHG9OJC0aPTXBvmtfGyT2YyYkJJ87icCBBMuaHbqrrIkS/LxAVgENq2xNj4dhiACk5socofCCOq8UNE+lhw2ABp6gQ3HKg2xmHjACemIzCWBEKcYWvYtE7cHiqezHsr3OnmtpvW6WiR3TK+ihMqdJGFm1kw2ypFajTxcnT+OdXeUT33F88u8WL3nn3zGzOZuednniyn6YQELaqaCL5YaBMv/wW5dKXMRHn89fFnWFNgzpvFop5q55poO5QRi8D/XrLSU2JKiFgJdb99VDUuA7o5yKAdzgulkibkDdQMtjE2ZuOMIFPeTtWOqjfUDRehT5D4AfWZWwWz8NU1emDFg3NODI0Ia0D/dcolgC6OWcYKAG1eCXte6l89Vb9o5w1G5X2Rnt84L3/ZdpFYhUlog8hJ0lNDcKrp810xJ8ek/We9t0Q8siBQRKcbVB37CGN7duNh/v7iY8dau6U4PDOl8ybFCaLTEMG1YtX50Xc3oCC13bu5cTeBWLYNGg4PtfO5uPPoMQ1YFUmUFVB1kOVzgngBIoHU6Jb5YumVE8i5Ku073Z3qVY2TgtyYAYFLI1XgUQXGCVixWQfCtMLrHHXgawClDZMMm8tZ+lp/Z3HieVm4kA0fD1j55oxeBoOSSIrWXGSKicAtAI5wo/ZmErXjFDDB9T5TDNV0whLziO3BXwHgypBrbWGVaU17R0YY+Rcsfg1ziLTElI92cvwGDMoJOa3h1GabgOCY+3Uxbk0GzNoDb0aO3L9YIOyWy4krGjA6FF/GZ58fd0nJofa0U2gx6aOvBVfBvj8uEU0Tb59spKSEmWvk5zGVJ404vo55l2URWah65jJFqxkeFQoWTo1m/I8cvWFm0hWF2mWMGifuLU0VjObUR8/u+ug5KP3rN9VAglJPZvp2f7c/NT107NrzO6tHYV/0U4cMRcKKWS+J1oaWbFCNND21PXjTY73zheQNF1fYhLHhHAZ5rv4SHX5bai841a+m3ZZ38dHxmRHSvbucigfpA3i9xNDahPtjdkne5xBxcRiplMLHTwSGmQucpRyNxRSwOklNOnM7hhnavPIbUlCGvC+b07jrkik+6rP+rtS7XwL+3UD2udMKetVaL1DXmfM/K5N5e+zIYgTkp2VqCyOLiXBEszNLj8uZ8BQ1U3R5cIgXXKrGE2BMq7/XWUsR2LKtOq1x57OC6GxXZloa/o4iboIqcNjnXmpauC5xUedkoYxhH9Eavg3pYsajbvySFOrpWW3PnXjd/PhSUr4UYijrduX36SOyIbikvw2Z9fkdOpz0qzR5jKbN3kGs8iQRBZQBg/nymn/mX96iWl23ym9DC+twfiGWOKjs0cBO8zwsNveUmCX7uswGR5pGaWHorC91L+jwZ4lO2Nmnwmr8aiL9FoqxF6RdVTuiu+dJ/oxP+SO9AK913fDYA6+pX3Vh7Q6+lcYqZW+Qcje6m4/QfK/w7DAYoUtGZrrR1zLirMVTpbvENpNJ2gZ8TnSbGrrccLKQXrtxBCzI42pAuKcyTK+6dp5OEzXFvaeXQKpbeaItMezuK0T8QUbr2FQTipvf3prf7wqY7az8p9r6zSZv/Oi64vXl3Q8qE+XNViUdFi5fDV9AiAuqpxZTeeGScTuPAr/k+U7L2AooaQ+1bviVZeGpmg54O6MTvvBt77qnKvKmlbjVs2JBWq4wbLhwBmsGzFltikXzChSNFYk5Zo0h9bzNWs9C2u3ogo1fMxNN/zrx+wbbwFqkx5X6w37VozZcGKCCmHnSzZ5hpKVM7G2Tnc6w0lvyPXTIdlfoqqWBMY7JrMF1aXTGS1vndc38/NIavZtYASaxaA59nB2cRb3hoY1i7Q3dFfmqQPd+6YXtCSXqaFiPjZHG+Z+DmlZoyBT+AYttqGhTGrTLjMclAq/aILdmwhxp+HpiKFUhx4OjWxHhWfRNnTWCtnZKWypaK8H8oYKmpvtYS9V2wjZQzc/nXFBLo1xTwdmC7ii0L7R1XY24k/kGUXffRQ+v7Ad7lKt6yUMMnEgmfpjLUa+RyGh9if0UXbjwds1SE3eFdjkUIHyCDZG2eJpNxVOtEzO9yT+Rt6X6HjQrcuzOecypvBJl3DTlzHCuGNXq2VOglGPYzg/eHh1r+i/9+ta32WE4r59zXfkxz0hVDmBRX/ph3Xp49vXpXlFzu5ttt04fbvcjTPoUnJTe6xPOZsa63e9Z4ZrCd732Fk4Kz63nypiVzbOUMx4g/DHC5XQ8r1PKA1aGevrakitaFwkpcXUebq0Sibj7k6OytHslXq2V2Re6HlmfIF0nDDcWZ1X9sd+oN9Q2talhyqsYHE7XKgI7AqlkY10Au68rNJx7rf41zJunNewNGm+Q9hfoZ4UxKdO02ZDEXY20hMHS22VjkPL43GdxwaXJtUOwjhtM+yYJ97pGI3edKLSKb0JhOg6DC5yUr2H0L9Alm73C0WWpDvz8V+K+txVt/nI3aPXdW6nG2Hcbj50uxFJOLS3mg3fYVLduDhSF3v4tJ2aY4Rpa+fMvvNt87Rq8nzw4m7jy+7WAzQuFH6UCt4XkvvS125LQ+cuJ0R6gb32m7kZAUHcjJjIXHagp4oyHpYvWubgccSC41Iy+F8h8gkBmeM94+B3pA6Z/RO2b7XYsiSKlRVVVQZqK1YHKys1NG17Pa2D5vdtg6NHl3O8ZYBlp3kGWBQ9AiXyeib0ddul6rBlKqqVXcgqHIKcTJSOpzZrjDgLSSNgIwsRgGAsYE/rLinbkxG+rOqZAYAi+Do6D4Atx778CUD2Z+VkDQ4kNwXICuXRsoImocbYL44PVztqcBzL8tM51jxNW4hCH4//P0YaIBRKAxRWcAGuBjYBZCg7J/vckMxjOl/G4mr8JkP0CEB6JKESn5WKCEWRZB3TFveeNBmMfXW1XOu9PG5nuKomcHLnI0ay+R2jMTwxi7wePOe1BnggeuRa3mHfNzvDqbHFgNRcm0MTp8TK8GSHJOy/hf5enZW3ppUyaDhOWiMABBwWPtFcpCJTNRTDSJS5iJKR5Oz2MFmn4SY4j+iR+WjGAT+J7rNWd3+ga99cwr28DMGYMfIgfYEIPEE6EFnssNCsMv8CmTqb3itJrI6hYCIJyURtepctQWZdhUu04zYrmYHBUS7/uW0wb4hVVnSIJmchUzLT7uewy+bLGT7VOQFKyDPJ2TdZ66eyOxsteUTCSS01LZ3kIisdXuVABuOIHgnPn+PNKN8lBjEgRw3ZVbzJU+3sfMtOEb7kM/I9YaVEzbIuF1Fnce4xyOpHYeY+gCQz7SbF1OPxpdXldAJtML5o0+bcYt7sb11vagruhTrLF3O9E1wjAxeOvnXOr5IkLv8hniKQ5fBEifSCwL9BC2JAQh7PMVU7KfaLfJ1jS+9ot1gg/wYsAOFN/lM2ilr2MlOnubPS5EwOAZphUCaNlVCQ0982jXeVXUyXIiNRlsOWRGXzwhIdD933mpJ6ksCfmkgQKZKN1JMldArRIyw67pp84wqYCI9koR8bdwwZ8yMytaX5kmzU+AkqwsO8C+NjijkhzpGWP3Uzpi0h+8g47Cgelxn9HFwes6vwSA9peEBuXvizPdfurBw56CqN0IcZnfz5FU5hEXqpCyOaL4sKSmJ6TSJbVEv4lRpVoWehZ+iefJc8kpdXHkk/0j2hAd65yuScSKrpV+Kna4ikkiWQCeU0BRa6apmupryTmLIgP8aIdingzCuc+P5GJ+923EJ2bpZP8vR6VoIjuEJQoNqnlaTvTDvCMzYKt+luVLTiRZXS85HpieQcFbC4J/4e+L86FWORD0YZFBYL+5SnGf2E5WkaYbUxJO3PGXAd0SMncrFdO/R33xC+33lLGx5VtJ8QO155auUmlSGpRDn7gIjzV+rBibPQdInjDXIqNoqQTExP67KziLSpxCdSuYpoBv8Z/8N013Eij0gOkjNsLhRWv7rTY2JL24LVQIkYEP3DMIstmrmxAVJPGYnSPvP43ngyc4Rq91NfxZnjvcKc66xfNI2CvPb04FPVkoHp1E4PZfglaYZnUJxjluBHbZrOHFTzzsK9E0VdvdSnsj490Hrbn0uxsPK662/JHC6+zONUlcQ8Hb26bbNU5xkcR+vXEsBADAiVkmkn312eAb9onassxyTlRKDuY+HJsM65aMvWTTViQEDf+kHZDnzlcSxZoknqIUHfR5+LBO/oFVYaue2fqasDkUzc9Ny8xh1POzr3bYe4yQ3zjTUINCB6pJc0KXAwQ2dvC+YXWVtjGjeP/x+3Fnntav7aa64W2T80RcT3WJd4qMJqKsPjbXzESt61c0Lj3hCOilCeklhGiMEksNwxyqVei1iJh/FpfD4+20qZtqGEFBaZTbspsUrkzfDyMqJsSDqvNF82MW8VSEEMSBvDYefinW/8JMTQ3K4hbvx2UNuQ0FNF0GkS0wjROBXHDRvP+MDhF/DpfIFFNvH5NJXYSjIb+KLqvFlHdhZQOpw00iGVmiBSFvrm/lUU3tQclJG5CHrLiv4aDP607vmQ2EFxKyT4lr1CDJiplYHCSq1WWOPvXvdJcz5xoaedQRwaa+sdj4Du7xZbxComA1s3BHirCOWaxDQLOS7JnY2N20BfxAonSnGp1dDRWqkoL1X13q/Km7HES0qtSiL/w5O7O056W9TqydFrKA6p29SpyjQNnhe4Wesy0nMmRqRtcD+Kn0cRV0sanvb9yEeylfvTeGX5vonu6eg0rJtVBi2DXGjlF9nCKlCHLimdajQJ/P01qf6BgSn+/sl8gUHgmBZsbx+T5ii4a5osvNeftIHVVUEpf2550YE8uSyRfedLoQd/GrHol8bD50oalq0sY0m0jFXAcOIgMgMXWrUxZFyOhdpue2B06wxy8ExNGEq3LRvOVYW/qXF9M6yazhqNvq0LVUGeNBbnkBvZ8CMDscPT1lOJPQfaBLHTsYCLrCl3/bwDp2IDrDO4OnLRkaSQD4WQDyr2pIixp8aUrnXgb0SPuOcfvt7U3RS6I4BVYx/gRiqCAQstYCD1aZ5qRI8ozXblb2e7qgk/NjZQozG02LfCk7haOH42ku2gr5hkuaywKQDARY805EhiN4vfH3SzkVXsZKmvTkjOIiRWdNlutiygcDYkMIVOkRFSmau2JelYhuv6azxZqLbCS8nKsUgkWFfF4LJwTPdbEkeq0iR5Wq3hdDAU/NiISkSSzE0YCjk9nEyvVTvrqyVnxOd9XPYX9TcE1L0vQ+hb8/LKiqjM+OCAPWX8rp4uoaNOLCtlJ8QMad1iUtydw5H0kmzEGDN82dtKgh9VSjLT5f4+R0R+ax4fMd0Fms+A6JH9V/xG20SATYk6FGAaJe7fpVqYZxapQxiyOp+sqvt9ad9EFWgaSCC28bIXRJTsXH+v3nnGPAOQ+a1158R9vOWIQZMTS5TOEUwFof+cuIS6yiigTQ4SQjW7HZKQzpke7idgTaaEpEoiLgr82erzAWJAMmvmEPAGB6vSkIBXthbkMwHL6T4yIiiA93W4O3W144sWXATDGNK8mcBP+eD2OZnYOxk5OmQJACzgPOfi8Vxx4nf/QSA/8G5NsebXxhSy/myksUdgTL6ZFTMzEIfU3ykgdyhIZlTKNWhfZ09nY4Wpm+b4My3HGFJd1PuY3DKLaqNrTtZv7qKc6LsfYqD4cRn/eKmP54pmpoBv1r0Z83ii9CRycUH9vfr91NoBMkj9ycyasevIFKhUuXA0bqaHNqPIpTlzv36aasUNshhvVGeu2+nIBgtNPLif3Cgsnpc7a7Z1JHegTbnIqw6dJpj9RIL/ZG8a1LomkUZXLQIRK7y20yU9Ja8RA9KDFCKl4z3jroJtJ4+oLRznWCyfq2Q65J7GZ/mwWHPW1H/2j1qrWLqN1qvTbkf3v6dYz7HOv0ry03C3g89ylzWLRV4NR5PjherACyAJ37myE1T19/SvD/56xKhLrAJzPEEG63aB6rX1CXXLDtctPVsieBla35vea8xr3L19UhbszUz59RcqZcvx+LsNUOzkBv/wjPBwcYaBLyMPfy8kGHemUvziPb0y+XCfzMAXZ4rF4d1fdLmJn+XpGe9HSd1BMAqvDNssMClMoBAVUsJSR/uWynmUMl5ZVFq2MEyUHRCVxiujlvPkvqXq6FJWkMlPznaLDeLT871VVXSnPJ6KnscPdIuTs4FjU3l6MdLeD2Z+WNM7lKYL6ksIOajrfbQGvF+z8dGa3oO6hJA+XdBQWi9QFauiFkf/FSD0D6JcLnGu2SXFO6kNYcJCUZS0oDEw+UQ/GHCUGReogr2SBVt7tgYkCzSiKOpvrBJziVxe0BHQ5djf039SPR4XHRqhjYmkpLlZR+UXaXDuJiazlgN+gg768qdto7wjQxoNJmXQwc9RCq9Icoyf5zWyVdD8nNBHs+EQbX7uHeCdH5+Tl5WYnmeRkZqQEZLrUhTkR46Bv9ls64gW72Iy14opgGcdbeCLjQr0Z0ed+E+4oOZhDMU36/D0ErzobE44sCRbB0z8hAivprQyayQGAcVjIl5WYqDA8Q9VYz5DiPgl0pvQEpe1JLuhHxzGAOX6mkWue1wgLgLI0XXmOoDndR11gcuPTQPS4c7uOFH7RrQcpBgB6PNW7SQbi6fWE7aE/T+/KfDjfGj15luBG1gTC5Sb+5f1g9DbFUTHhccTKp/6RfISc1gxzlEWUptSTGFAXIl9sK2Hw/k3T35oCqZRd1r8GJYvBy0tNm55C0zkRdIIcvsCxK0AtD1wLndstGkODrZpdqx3LnkAVrXUYUmpQtgYTT9oA02VxkpzK0J6U+XGvW55wLFOkm9TWMqqy4vzjyyMLojyj8qNZZlUdE5NA6xtgDm14DeHbT+d2M5R1LXWXeowtZiAeMr1DyPTNft/V6n9S5rNb11JWlEYMeyFaFA6eKEkZ/5ZmGY+qMNL+9wwMVEMyDeW+ywH6t84oTRW0GY3cvNPjG7YYv7G1w4+4rjpOBDrDBthJ5mP1ge2lrtoQ9xLcfJNV69+pNOfnWy08PndB5BpPo98QC7taHLSiqOjpIE82nB8N7s1IFbud6NWKteKXn8VHr9AP+z00wE6Y/8vTk6Tgwz64LUD9q+oDq/sHb46UL+CZFqMUJX4cxaFEj+56biM4ko7ywAtdbT//2ZgnfxGLD1wpPd0+nuSBdVx1M8Jy3h3FzS/VrEGagxeYPu7wGh3X6wOdkp2dknOtWOpC1bykjuYUPw7OB8QgEBmviG5ii2hGMeIjQK9WG0X//6p0bjd+zHTGo2r33NB9UFtnBTj/vvHSzJsi6R6ydTGyeTdLPWSYEf89u3BYlDCW16MbeVvhKyzbjrv5yddaUT6M8xq0fElWbzUqrGyHq6qhpRbei5WZmvjGGUUm+xSGjgpPXhjEPXAeci7ytQlDQjYp0E3CisWaG+YeW8Qwojffo0o48Vp2DDULxWL7Wu8HhkZ+uR6maaRbxPHuCW7JK5VgMi6ybyoII4EszmIeJVGfFGBN4EmOyl5hqVXY6QUbRqnJWQZ//ravYA0w8xKGfzGTGVZRFNNIJ8+EqsXSJHXrJDOeYtYMX1s1Baz1VtnmIpivEhaey40/sY6DFORI16E1ot073sbDFORUS9CWx2jlvMf35ZjweIHibanayezP8zUjesFtsSP33rbJJdNWGD3IOY+2NCAbnCMHNCabq7oerZl5txktrLBYEy6Nt0o6BxoezenB9skG5veeEjpUSdd3//AvGPAG3YrcLp+GEfRGde4Z8ZHo6cXxjuttVKBHsWxK2hrXFiB3ZpvXKzMwbEJW++A97K2reusZn055311P17+vS3ydov+9WYvZ+36528crih0D/qmnm5SoXrLxAUK5TRDw53Oo3hY0TQA51C/3L/t0c00Zi/t5+tbPA693CS/D3k6045heHVxg/s6pMte6dbClLdMViV5Qt4zdaJQJg0Nh3RZPEs9H4X5Wfl9XlbJXAkxQ5jiWe73HM3c5/UnN3b9aRmdfnDrb5VbSWNGlOFxm338TjS3KQz6xY/tae6UJZOBffpbo/ksq9odc56zTWE4e1zjMZmrVLzwGfVmSxo1gn/7uhbVCuHEe/7MtWwTXONRS9rw8ZTc2J1CmjCFwSjx4yj+1M6njCyIo5UaQ0LzZJwbtayaBApjc1BYLSZzlRjyyEfv2NpUFfc5xYgGt9QMRKaEPSHOnt+zOUJoRLq4dnJbLFL33wc5ClwRL+nSNmer0V5aKSyOy+5kvgrbjE2hLFchNATwF2GhEmJJ2EbFNJxKqIxGQS6X1gb/HvZS+F21guXlMQf+fuNEn9VJB/r34a4s8H9/vW1T6QZ9thpwrb9mFoF/76WeSqBmYB4yix4E8KIGKNre1IQlCAlBGZsIEvkzXbCl7tEwcKb+fllTj/Rra+azcJh5Adtn6rJt8O+/3K0viX7E5VYA+bL/8mTb/mz8uMdXw1dxUaP09pdxdZd9WWd50/81KTT/xptuREG1geyh+UsIZCDVvjtfcfP+vv/fIRzn8f8dfzm1bjV/bzmL9uzM3/xi374+7/r5lB6rrvW+x774PQaQALAW7d6J2yql7T9DHcasW6FmnJS8YH8BVLydpIOJvcjVUXQYyx3vWkAzxMz3C0tjxuu32drmKVH0zuOeoLTNzA4gagE4MAEvgkxUmu/OBGREgIWysGphNalCNctm6IzoXs/ZshWMxNOtpI4dQdZKEuyIe87FI6cgO2WmZ+NzEuLLlh0dGaFtpUXVVgUnNWA/33iBp4QtdKIq2G/RIxEZTVKjVuiMceVTKqXrTpNW9/KWjEPmFOlEjFhuV0wopReZ4K61Ii6GIp6YpeOcdLJPLNtm6kcYhOUudr0aGJsXWAGrSVaTqpACL4C7ZlDKTNzqaja4EjYejJxfzk8SNlA5Wy8NWQF5G1xZkOV8Da54wIpMWu29WC8yuMKec6IOZiXm7GmCvOpVGaN0jcGyVw6jvPahxb0lQLWswB4R6jQTq2ycMM3KCdE8qRtO++tqUa84bzZQpZeUIzlDzISHyN86MkLetVkMvR2zbpUh4/hPeVbmJCoa+67OXB44I8EMvZGQFSQPR08ENAi1T2rTKn6bXXFuy1MlkgrtkYek/nl2RUKoVQ8ZqamSNA88VL2sTNQik02SIFoFDyWSJqHeHb8GnKFzUHpZY5c1LXqLkRVgAyHIqOQirCYp+usgWxW2gQ741HoHouqU4FFC0CrPyWElFyTdeX+URH1mduFSScV1mU1V+HagXE4rNhGoUOUwrqvWAapWIkV7sehqlZCVUmQtkdRWZMCq6Ktjh9nhGw9HlfZfOV3hE0Qm67UHLSWSQu0VKaH+qvRZ6Y6V1LEAv2U5VQA/qx/TfKccZKORM9f3glAKujls1toIz8u93VpgMx2B4JmRfp7j0FRjj5syW3O918GUvCKymtOwycQCAc/DFailhCI40JQBayfH+XpiAoHRN6wwYLoG+Ow1heHjSz1mLnvEoyyIHfegAycxCe+yzoFojjLqzsPBAALgcr7298qB5l0X/45HoZ4A4NmtA+s1u73/Mb1QgKMMAoDAvkSgDp4l2w4IyF5f+j++j6bwHLWKIX55tgxOQslMsq9wG+fG95cKviX2FYa1Am7XjYhuv3AbQkhlv3V9iNQXe4PF2NYvN6ttQQw8Rbz6eNW8zpFh+oZ4DN53Re3n6pc+Ntbut3rQRAHuzpNhfXS/6MqB8HHR3P5G3SuoDikXSicQsXgFyiEJg1sDpIMjD5KDhhNBm1DatYHX2HBI++D2MNVdW1ChTuGDU1iLwluZa3wkP/Cc4fU7T75pODZcdy6qPXWlgdRWQVrtMgkqyCFetqpRHG3gFrnwevFO7LaSalZHkhjVO++Rhb1br5IvIDQIIw30OpkZ2VdwMo5ZneNw6/5lM3tpP//yjBECdxubIXippM2R6EGMB4hvPtEbCZbOXSbce87He75+5Seo7RpSwI+eAOWBoDMDIwNb6Ci2Y7/afUAjYg3WeE+CcKnM5Ys+Hz+B0BlbhHPEFv/Abhhv8eRcDeVDkWfcwv1/uD6gu4EeH9QpoKrYVNUrynMjNwjRRQTOtfLLBPlQIuH6TZdXgzxPkXKulUJx7kLxM6DtgjQwFsa5p7wuGTOI0By3WAJBruKS7eOVhQIFmVzObzuepUMJkI2jS+MviS4WScdRiM6RR8IO/KZk/TilyV284wsawbwAAmgKNYisRfzrQ3FAWWngV8mbtWixmXe7QRB4sRsMnr93Q+Hl9G5oKHbvhkHESLH4dexqjRBbgvr4aaDWDaxPAOHuRch5o6yBPM3CVbOUm7Bb6mmZF8svQr/T8OcXN8WTHx2WxfVhoo3Saofm0dknYQwclhOX9i7rm0RLp6jAte2AAF9+gH9YWbbsQ699tr98Q30FwpxGjQAmKWo8XsEGvZ5EVDaF+y7DbpovDgj8p3goU1vBlOkoq3daeXIcVCJXpyL305QA3BPyzz8oZaUbXUVCi5po69AYG01/v+LhFCZVh4oF/PGM5gcFbV4viIwSNvfSoRuTShvLdlzPfxHRtcWEMi6k0sa6FxSdUxBGcZK+NrdpQat+4Kbt+uFZ1j0s6/YEbUz/9nndz/uBEIygGE6QFM2wHC+I0pOyd1U13eAnZv971/ODMIqTNMuLsqqb9oXFb83LZ3oXX1xcu/7wPxoGRyBRaAwWhycQSWQKlUZnMFlsDpfHFwhFYilpGVk5eQVFJWUVVTV1DU0tbR1dPX0DQyNjE1MzABEmNMNyvCBKsqJqumFatuN6fhBGcZJmeVFWddN2/TBO87KW2vqYa5+L7wfvkkOSFVXTDdOyHdfjBUAIRlAMJ0iKZliOxxcIRWKJVCZXKFVqjVanNxhNZovVZnc4XW6P1wcEgSFQGByBRKExWBw+6iOSyBQqjc5gstgcLo8vEIrieqRfIpXJFUqVWqPV6Q1Gk9nSytrG1s7ewdHJ2cXVzd3Ds2qXyMai/d5eqSd9ZgTfW/YkJZdqSChoOAgSieUedKuDJm1Kv3oplvwm+x+xRnY5XeVRcbp91UKuGfabkfOe7RDKvzmSWuDJmeTd756C9wY4tR4AAUigtpU3VuBdayAlExhR4sxBsACiYpaiCUIVKtW1VIM6daMr1RSMZIq9yXnnPXBNQqIDzHse1QicApAuo0pUeg41wMFCIwABMJQMMhBZg0IVrjc5IHAcyQOB4+gsCyKwozgiIqIPajUUdkRFz/NNilE3SxK4nGW3g21aoDZZ8RAwcPfYzWHuxGn5/ze8lRd76yAvJAJQQT711T2kwHiuLM3FQaoGVbyhKJnElIC0SYKUSRLGBXBDCwchbELRYB0IOQoQWZMCYSeBolI+2DW8ujQvNqFYUQkKOSuAh5RXIUB0zZy894o15Ii0jFPUeWcoNWnkPbEwgjUkCAThXQiATn1CTxFAVvRmFGETiKQHDmAAoFqAg0eA/r3ZGeXxWx61O//ycpTzAg6iCQEAEelKOm20e29fy/kfefyd/ycZxTpuCL9GZw6Z2wxr27MbGwt73tpZ+84Uw7OT6bR5zPQ//ZuHy3qxn/hqnlaVx1sWgENCfYQ+LblhYOERfhjOSm97ILK0UkG8SRA23ALX3cZ/xsPqo757YkackJsmh8BMK3twtturJxOefHzFT4PDqNh3PTtUQ4/4hd9c9mSq753lWTmJBQoECK2qiOrDSOvhiDguhZ7HVJQNdBHWl7m1052f7sDRfGAIDroLYqQnHV2EBUErD8OsiwOKGEI9va6C2nA2D9dbu2ulWmhF5IGFhFtKHbRkVaH5Qk3Zg3hOWZWDcUEhQERapzPk5dT149u86CGe4TyqUb1aTqIDbQVxweNTLkD4pK/LWpxnu08S6lw573kAAUXGGAUNC/e6v9dM1ZpzkMTu6uGq5GVv2G6PRi8KAAQDh4CEgoaBhSNviIFDQEJBw8DCdfzmTaqqF636rG059WYW2HprWsqd/eT/p8zY0ePyMTXLy//mTL6OR1lCnBb+qzL5Ph4px8Hh/6Um22f/nRkmjEZYool9X892waU92D7cmqTD0HMIiDomurbWywQuTQPpQb3y0WczqLWF1yaA8nojvG95VdEpjemUAqNFU6fYQOHarwAgIhLRsgbPtyCje6PiG6E6ntIxnVIkSOpcaQjIX7q13KxLu2rm2dp8PPtR2/wv69z7Nvo/31NrJQA=") format("woff2"); font-weight: 700; font-display: swap; }
+
+/* the fallback, scaled so a line of Arabic takes the same width as in Cairo (measured: 97.6% and 96.8%).
+   Each one is a separate family: if a machine doesn't have Segoe UI, the browser moves on to Tahoma */
+@font-face { font-family: "Cairo fallback"; src: local("Segoe UI"); size-adjust: 97.6%; }
+@font-face { font-family: "Cairo fallback 2"; src: local("Tahoma"); size-adjust: 96.8%; }
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: "Cairo", "Cairo fallback", "Cairo fallback 2", sans-serif; line-height: 1.8; color: #1f2937; background: #fff; }
+.article { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+h1 { margin: 0; font-size: clamp(1.7rem, 1.2rem + 2.5vw, 2.6rem); line-height: 1.3; }
+.meta { margin: 0.25rem 0 1rem; color: #4b5563; }
+
+/* images: width/height in the HTML give the ratio; this keeps it while the width follows the column */
+img { display: block; max-width: 100%; height: auto; border-radius: 0.75rem; }
+figure { margin: 1.5rem 0; }
+figcaption { margin-block-start: 0.4rem; color: #4b5563; font-size: 0.9rem; }
+
+/* the ad slot: its size is booked before the ad exists */
+.ad { min-height: 250px; margin: 1.5rem 0; display: grid; place-items: center; border-radius: 0.75rem; background: #f3f4f6; }
+.ad:empty::before { content: "إعلان"; color: #6b7280; font-size: 0.8rem; }
+
+/* the video: a 16:9 box, the iframe fills it when it comes */
+.video { aspect-ratio: 16 / 9; margin: 1.5rem 0; border-radius: 0.75rem; background: #111827; overflow: hidden; }
+.video iframe { display: block; width: 100%; height: 100%; border: 0; }
 </style>
 </head>
 <body>
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-  <nav aria-label="صفحات الموقع">
-    <a href="index.html">الحلقة</a> |
-    <a href="watch.html">شاهد الدرس</a> |
-    <a href="extras.html">إضافات</a> |
-    <a href="studio.html" aria-current="page">الاستوديو</a> |
-    <a href="credits.html">المصادر</a>
-  </nav>
-</header>
-<main>
-  <h1>استوديو المحطة</h1>
-  <p>دوس على أي غرفة في المسقط، أو اختار من القايمة اللي تحته.</p>
-  <svg viewBox="0 0 300 150" role="group" aria-label="مسقط استوديو المحطة">
-    <rect width="300" height="150" fill="#e2e8f0"/>
-    <a href="#rec" aria-label="غرفة التسجيل"><rect x="10" y="10" width="130" height="130" fill="#0f766e"/></a>
-    <a href="#mix" aria-label="غرفة المكساج"><circle cx="220" cy="50" r="40" fill="#b45309"/></a>
-    <a href="#wait" aria-label="الاستقبال"><polygon points="160,140 220,100 280,140" fill="#1d4ed8"/></a>
-  </svg>
-  <ul>
-    <li><a href="#rec">غرفة التسجيل</a> (المربع الأخضر)</li>
-    <li><a href="#mix">غرفة المكساج</a> (الدايرة البرتقالي)</li>
-    <li><a href="#wait">الاستقبال</a> (المثلث الأزرق)</li>
-  </ul>
-  <h2 id="rec">غرفة التسجيل</h2>
-  <p>مايكين وترابيزة خشب، والحيطان مبطّنة عشان الصدى.</p>
-  <h2 id="mix">غرفة المكساج</h2>
-  <p>هنا الحلقة بتتقصّ وبيتزوّد عليها الموسيقى.</p>
-  <h2 id="wait">الاستقبال</h2>
-  <p>الضيوف بيستنوا هنا قبل التسجيل.</p>
+<main class="article">
+  <h1>رحلة حبة البن: من الشجرة للفنجان</h1>
+  <p class="meta">مقال متخيل للتجربة · ٦ دقايق قراية</p>
+  <img class="hero" src="data:image/webp;base64,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" alt="تلال خضرا تحت شمس الصبح" width="1200" height="675">
+
+  <p>البن بيبدأ ثمرة حمرا على شجرة في الجبل. المزارع بيقطفها بإيده لما تستوي، وجوه كل ثمرة حبتين.</p>
+  <figure><img src="data:image/webp;base64,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" alt="ثمر البن على الشجرة" width="800" height="533" loading="lazy"><figcaption>الثمرة لما بتستوي.</figcaption></figure>
+  <p>بعد القطف الثمر بيتغسل أو بيتنشف في الشمس. الطريقتين بيدّوا طعم مختلف: المغسول أنضف، والمتنشف أحلى.</p>
+
+  <aside class="ad" aria-label="إعلان"></aside>
+
+  <p>الحبوب الخضرا بتسافر في شكاير خيش، وممكن تستنى شهور من غير ما تبوظ، لحد ما توصل للمحمصة.</p>
+  <figure><img src="data:image/webp;base64,UklGRggOAABXRUJQVlA4WAoAAAAgAAAAPwEA7wAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZWUDggGgwAANBFAJ0BKkAB8AA+0WSqUCglo6KnFhmZABoJZWPs6VyPwMwH/byDLhnOXVuvS8mP+3Fw+N9BzaNwf+V+w3eNX3hvTjdD3zB6H6u9xF/K+i5eT56EvrHevrxrHKBhM6O7I///YiXN+cNqlcmnZtUsZfp4iq8n0g6SA5aY+ra6d/4g+kEhIIc4AyFoF+/lMNKvvu7KMy2mKvUYQMmcZIDuHsqxUc0mSL0hZhUWAHFz0mnzIk0fU46fcaSN5Qun8hZSMd+/07ctGQdFJruM5WOHVC8arO6AuoFPNhrg0CCqshK/RkOv0CY2TF4/OHVCUyJUXyPPWPFNgePtZlGd7pVTv0IFMFDyKlQgqeo0neYgJ/ShBUoHf+YKuWUlAh2UZynewNydQv4b/QYdohL1VMs+kZv/ts78yPFqxipiCnFY0UKVFTF5pvCjGQC/V+5NOewV/6qveBGqam7wfbzxGeW9acTUgjiBQyFRHLzbhAYCWDUGNkfSQgydOPHyiXz9c0Wd0Q2pBOnqHmH/nbhv7Q4MzLDtq9Gs1P3wYdIHGu3bxxxQlGa9iAd4D23f14AsZgOKKqXRKsp0DOiF6d18VPJWcYhcWv0mMMBc5b1L3h1gGoF/+5p2Xd36BvTef+aUJYLOGVuEVC/5ft29YP+MGed9bsD0u7gM0/pUOzpJe8rNvJR1y9/QtqmR2HwZ2+5wwUQyrenp3BtnpS16cb5EsYRv8NRkH9Lxtyhoud12dgtCumGHbU1kNyMnAAD+6pIH9Ub/F3UncAPYZxpcCEB4TbhJOdezJC6tFGFNXVQHrJlhOFZXrtPmdhunvEExsjuSNXMA9X6HUqCjLxLXLGcmn9xNXlCnioF83xmx9Km6e1Qg9m0xOQf2ccck5R2kXxOBPXJe0XhqKkUgEztWFLE3thZtVzGTLrKJlTdaVX+zS0oDr6wXIdEFRmhsPgK+/gNjUKMWgKHKwk75GWcPcp4UHFV2V8npIFiuIANCRZ8JIn47jEQg2xgolFQpL4coZzkkvV5WxuC4emNYI+DUZUdpj8dZGIT3m8PD6eY+GnKXaFogaZEOgq+UtDFGtjd4V4c0Je48e4zT2N4a/At0Xeqb+gDcVhtSIKXMvdHAXDrTUVND4Yj9R/47JYIedD+C3gClgruI8AdNTaj4IuQxB0mrcW0FFdG7xoBLHH7CcrNfAeR//EBWxicoXZNbPrzV/dZLDw5pAm53dvAgsU54ul12JJutXRBOXmszZ/64uL/20qwHenl+VhTBBpOa/SyzvJ8OMWOK/ltipe8P/xD2wYRfkIs3biOBdxuO42qBPml7g87N+p2TVBnlpMPPItATCfIgI/PeRV6wW3JquozoqLGmYxr5lDr4Vb8O9C2Dv+ANMFpzZas3WFrtQ4IZ0IK8RA1TZIVCj7a0gd5gXmO/ERwrHyx5BIDndcX5KOZbipO8TK10YRCG3oKb478eJd+w/yEXiLR3E+Abb0b8W8AcDUzkY2zSlE+l2L2cJ0irbCegdrDNN0OZERatzf4sQT56bav16IQbXCH8vQvizBGw9dQ/pC+gDG5hXSiVahfYrJHfUHFG3UIBuME/JPG0QOG135p64Y0qwPUQPfB7VkEu2MO6yQ3t/SlBk4xco2VIxvhqpIj7VzUdN5utsUdUduQ/qPq5CzBBGasBePw1gp/wUeKIwxh889GXFwvTxpLxjrREyc+RLGDXy9g/eJiEIXItFp8gL8OpSrIR44667f2kcUyy+HueCOlYPR3RoHJ8tFZIo8zMBOrfQKID2AAZBQnbwW+KDntWv9S0qYQU5MzWkI2IKe7Z3X7xqNeObscrAezh+HCT/qj6WW6ZJGeW3drlyLi5Ia7h54dRSMg9E4toM8GU0mv/erecxRl/L8s/W+VClBx044WtS3jnAnxoHLwe1aaNw2ttOOroZF+DVNplZv3lPTyLVLTx1pt0PZeV3M17doOWRZRqRC6gDakb9XAXTD4Nd8oZsGWuffmgQMtYoPA2rfiN6SlAZgwx52CLhSjOMQ20R46ZCJUrBzIZ/qXR3XOQTDVSYValOtzlxoDJs8cMqdpYUJ+FTL+K6iLgjyAFH5z91ZZxvkYLDNOHaSDc3lER8G4NIg6pziZCEIb08cW6uXdX0GUWnhhvzeFAt8jIDyOsGaWkovb/Lh3Gd0McHlfpZ4ww+rbNhr2lVO1ytJ7xYJkwZocrziDd/07yDntcWUJyHATSPzmg+rBJGhcAXF00EaBXXVR83fhAT+We+pLIM14LP9vQwJoc9pdXcgT36l2lnhg+pp5eMaSvU2LAmchacrKVidTOQbQ5MolF61CLklqJrACCjgob6t1dgRlCevd/npsX1W8sytYF9FfW3IXges/84uMO19m7GwHRn/EZc61bj+tqPsxD31hk/AzH52myx0niTzrNZzE1txxLYTLBx/y42Bd1d9dIdyGhDMwKxbEbuzRgvKwTABELA0VKjoK6Cm3aKXiGA7BBZRmYf5mWmkeBh9S5knDmSY8MRBgWBNPWC+6XcDHjFfGMVw+gVS0VlBPohsLNciyvWZY1oZp7dgNLZli8pSZtZ23QgnBzb/rw/pR1hB9Ekouaa6hacQ7NV2y01xoEBqDlFTbUxhY3wCzQnBxc/x170aSLi1SAOE3MPEJQ3yfsr8rVCPTvtbRfPagb4FWib622Gjbv252BeP0Yomn3c4LGLjMf8BGwmvft+s+Y8SNvQP8lYp/IsWEkPq2DWugO63bWVYtBqwrvqxodzBAaVyHIqqcJjXdNNcAFbIg1nclYTcaa0Xs0iP5wNeh/NK5zt8A6UcpYPTUiKgWRhyca2zENLDf6ohcKPE94CwhXOFzSZzLgyvGoX93dCTrYOjkhXwppYx5gL6zPNkSLPD1kZHFfxwjBri7jOS8H6R+ZCOANwnB3QfGBAM8s1jVu5Yg7FhrG1/4F7sOMlGwLVAg+SCEogo6t3PvlhaSG03iTG5FWBavkJVilYWOCNDgBYjHRRSk9oFUyxOwHONCUMIKGhRgceoT74Df/xa1GcLisJDSm60vPhBi5yNgByUbb8FjF0ohm2NrWiKh3G4kt/qY7Hd67DgY/bRP4vxi5TNJ2/rPLOMjpoeaHgR57bobU9ZdT8KFXvEZmMIfM3FzPq6JaWiZMeeGKqOv5AZEZf/cLukCAGgQWDDUkV6FK4br7fb5dMEsHTfM5Ux5L7WhGOdbtXtxxiSWVtkq9iYvDSyp+A+6G86A8Si1gMGCxPCMINtKVgYywK2TddA0Kf2F0f/09LikbEXyC/vHjPy7xDX+K+0ckOBy/zxs0kMv5VP+bbAdBZGQlKSRG+abqtSejXAeoV1awbRppWIIPAtXQXaL0msSRCCRPswbWNgdrWUAPDDPuUQ4Coku12MVJCXh2/AEYUgATCcZrXPmD8UlapdRB9H91UQr6YnmNcM13+fI04ovl3BRfs8gxWua1i6i0WzwJSrkd94DS7ytwd6m9RxnYLjO4QVv8AIV4P3e6mLJ5EYFAYoDiJnJQW6x3N4/wEaYtl+Yj+SPyR1ZJqKRgtECWG+sj3YrwP/cYpLNfqiIz5s8/e2I10MoVT6c/QstG69Z8/5AFQSlgC2mdFqygJiBD4e0E/7aPVebMUPq54t9CMdm3mJNyk7iZXvCV+hCGoDBDp+BwrKsmiLwc2EOyGtbCr24EQcCuUlXCQUQR8EagYt0lDFREvww5y/KpGP5/DSIJPJQrkXKGdF9KcwoU2vmmTE7bHwsre4znQHqlaxO+rjbkze6P4u+Rc+BnemWaxPeM7NAsIUns4SMP2sqOmMuZ0ggm+QRQMxiVrD6e9/clL0gOoUe9fZ2F31RI9biJjQGj1CvBYbu98mI+3gQkrNSQVDq1JpFbtG0ggyyEcZy0+DPYopf4Z4RwX50ZHfEHVNCXPiw8LdL6yNN1YLEpXHetTKo74ErutKoacYtKuMZyAaYB4VNTLwYTyj4p0W4Ek7awPRhPI3w3WQOmDikp4CXv4pbvY2hVHhu3OzShWGLmeZzp5lWi/P7MaLCPuAtkn7toF1p0/TyO95KirNcRQgQ6E93kjF38RtlvbQy2P0HwOayZsbWx5OsfsjWfe2N25tETPWJRMbnYJ6ZgsqWg8LwG6780DCgKUAAA" alt="شكاير بن خضرا في مخزن" width="800" height="600" loading="lazy"><figcaption>البن الأخضر بيستحمل السفر.</figcaption></figure>
+
+  <div class="video"><!-- the player comes later from late.js; its box is already here --></div>
+
+  <p>في المحمصة كل دقيقة بتفرق. ١٠ دقايق بتطلّع تحميص فاتح، و ١٤ بتطلّع غامق ومر.</p>
+  <figure><img src="data:image/webp;base64,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" alt="بن محمص في صينية التبريد" width="800" height="800" loading="lazy"><figcaption>بعد التحميص على طول.</figcaption></figure>
+  <p>وآخر خطوة الطحن، وده أحسن يحصل قبل ما تعمل الفنجان على طول.</p>
 </main>
+<script>
+// things that arrive late on real sites: an ad after 1s, a video player after 1.5s
+setTimeout(() => {
+  const ad = document.querySelector(".ad");
+  ad.innerHTML = '<a href="#" style="display:grid;place-items:center;width:300px;height:250px;background:#fde68a;color:#78350f;font-weight:700;text-decoration:none;border-radius:8px">محمصة حبّاية: خصم ٢٠٪</a>';
+}, 1000);
+
+setTimeout(() => {
+  const box = document.querySelector(".video");
+  box.innerHTML = '<iframe srcdoc="<body style=&quot;margin:0;height:100vh;display:grid;place-items:center;background:#111827;color:#f9fafb;font-family:system-ui&quot;>▶ التحميص في ٣ دقايق</body>" title="فيديو: التحميص في ٣ دقايق"></iframe>';
+}, 1500);
+</script>
 </body>
 </html>
 ~~~
 
-~~~html credits.html
+**هتشوف إيه:** مقال «رحلة حبة البن» بخط Cairo: صورة تلال كبيرة، وفقرات، و ٣ صور بتعليق تحت كل واحدة، ومربع رمادي مكتوب فيه «إعلان» بيتملي بعد ثانية بإعلان أصفر، ومربع أسود بيجي فيه مشغّل الفيديو. ولا حاجة بتتحرك من مكانها وهي بتوصل.
+
+**كل حاجة ليها مكان محجوز قبل ما توصل:**
+- **الصور:** [[width]] و [[height]] في الـ HTML بيدّوا المتصفح النسبة، و [[height: auto]] في الـ CSS بيخلّي الارتفاع يمشي مع عرض العمود. المكان بيتحجز قبل ما أول byte من الصورة يوصل.
+- **الإعلان:** [[min-height: 250px]] (مقاس الإعلان المعروف 300×250).
+- **الفيديو:** صندوق [[aspect-ratio: 16 / 9]]، والـ iframe بيملاه لما ييجي.
+- **الخط:** [[font-display: swap]] بيوري الكلام بخط الجهاز على طول، وبعدين يبدّله بـ Cairo. التبديل ده بيحرّك الكلام لو الخطين عرضهم مختلف. فالخط الاحتياطي [[size-adjust]] بتاعه متظبط عشان السطر ياخد نفس العرض.
+
+**[[size-adjust]] اتحسب إزاي:** نفس الجملة العربي بحجم 100px: Cairo عرضها 3782px، و Segoe UI عرضها 3874px. يبقى Segoe UI محتاج يصغر لـ 3782 ÷ 3874 = 97.6٪. و Tahoma 96.8٪. كل خط احتياطي في [[@font-face]] لوحده، فلو جهاز مفيهوش Segoe UI، المتصفح بيروح للي بعده.
+
+**غلطة في القياس:** أول مرة قست العرض على صفحة عملتها بـ [[page.setContent]]، والخط مااتحمّلش («NetworkError»). الصفحة دي origin غير السيرفر، والخطوط من origin تاني محتاجة CORS. حطيت صفحة القياس على نفس السيرفر واشتغلت.
+
+**الـ shifts اللي فاضلة (0.001 لكل واحدة):** دي الكلام وهو بيتبدّل لـ Cairo. صغيرة لأن العرض متظبط. ولو عايز صفر بالظبط: [[font-display: optional]] (المتصفح بيستخدم Cairo بس لو وصل بسرعة، وإلا بيكمّل بخط الجهاز).
+
+~~~text node article-cls/measure.mjs (Slow 4G حقيقي، cache مقفول، CPU 4x، شاشة 412px، scroll لآخر المقال)
+== before.html: 4 shifts، المجموع 0.2582 (والتشغيل التاني 0.3610: الإعلان والصور بيوصلوا في أوقات مختلفة)
+   1324ms  0.1647  ← p,p,p,p,figure
+   1957ms  0.0914  ← p,p,p,figcaption,figure
+   1999ms  0.0011  ← #text
+   2037ms  0.001   ← #text,#text,#text,#text
+== index.html: 2 shifts، المجموع 0.0023 (نفس الرقم في التشغيلين)
+   1489ms  0.0013  ← #text
+   1984ms  0.001   ← #text,#text,#text,#text
+~~~
+
+~~~text node lh.mjs (Lighthouse 13.6.0، Mobile)
+before | Performance 79 لـ 80 | FCP 0.8 s | LCP 2.6 لـ 2.9 s | CLS 0.318 لـ 0.361
+after  | Performance 98       | FCP 0.8 s | LCP 2.4 s       | CLS 0.001
+axe: 0 على الاتنين   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**غلطة مسكها الـ validator ومسكهاش axe:** الإعلان كان [[<div aria-label="إعلان">]]. الـ [[aria-label]] ممنوع على [[div]] من غير role، فبقى [[<aside aria-label="إعلان">]].` },
+        { lvl: 'صغير', dir: "reflow-hunter", t: R`صياد الـ forced reflow`, what: R`خد صفحة فيها scroll handler أو loop بيقرا ويكتب مقاسات (اكتبها انت لو مفيش)، وسجّل Performance trace، ولاقي كل «Forced reflow» بالسطر بتاعه، وصلّحهم بالترتيب (اقرا الكل ثم اكتب الكل) أو CSS. من درس layout thrashing.`, done: R`الـ trace بعد التصليح مفيهوش ولا تحذير Forced reflow في الـ handler، والوقت بتاع الـ handler نزل لرقم مكتوب قبل وبعد.`, sol: R`المثال: صفحة متابعة طلبات فيها ٣٠٠ طلب، والطلب اللي في نص الشاشة بيكبر. ٣ نسخ بنفس الـ HTML والـ CSS، والفرق في السكربت.
+
+~~~html reflow-hunter/bad.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مصادر الميديا | بودكاست المحطة</title>
+<title>متابعة الطلبات (النسخة البطيئة)</title>
+<link rel="stylesheet" href="style.css">
+<script src="rows.js" defer></script>
+<script src="bad.js" defer></script>
 </head>
 <body>
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-  <nav aria-label="صفحات الموقع">
-    <a href="index.html">الحلقة</a> |
-    <a href="watch.html">شاهد الدرس</a> |
-    <a href="extras.html">إضافات</a> |
-    <a href="studio.html">الاستوديو</a> |
-    <a href="credits.html" aria-current="page">المصادر</a>
-  </nav>
-</header>
-<main>
-  <h1>مصادر الميديا</h1>
-  <p>كل ملف في الموقع مش من صنعنا مكتوب هنا بصاحبه ورخصته.</p>
-  <h2>الصور</h2>
-  <ul>
-    <li id="studio-photo">«<a href="https://photos.example.test/p/4821">استوديو صغير</a>» رسم سلمى فؤاد، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتغيّرت ألوانها.</li>
-  </ul>
-  <h2>الموسيقى</h2>
-  <ul>
-    <li>«<a href="https://music.example.test/t/307">صباح هادي</a>» تأليف نادر حلمي، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتقصّ منها أول ٥ ثواني لمقدمة الحلقة.</li>
-  </ul>
-  <h2>الأيقونات</h2>
-  <ul>
-    <li>أيقونة السماعة 🎧: من حروف النظام (emoji)، مش ملف.</li>
-  </ul>
-  <h2>من صنعنا</h2>
-  <p>التسجيلات، والفيديو، وغلاف الحلقة، ومسقط الاستوديو، وملفات الكابشن: فريق المحطة.</p>
+<main class="wrap">
+  <h1>متابعة الطلبات</h1>
+  <p class="note">الطلب اللي في نص الشاشة بيكبر وانت بتعمل scroll.</p>
+  <ol class="timeline"></ol>
 </main>
 </body>
 </html>
 ~~~
 
-~~~html index.html
+[[batch.html]] نفس الملف بـ [[batch.js]] بدل [[bad.js]]، و [[view.html]] من غير سكربت للـ scroll خالص وفيه [[view.css]].
+
+~~~css reflow-hunter/style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1e293b; background: #f8fafc; }
+.wrap { max-width: 36rem; margin: 0 auto; padding: 1rem; }
+h1 { margin: 0 0 0.25rem; font-size: 1.4rem; }
+.note { margin: 0 0 1rem; color: #475569; }
+.timeline { margin: 0; padding: 0; list-style: none; }
+.row { padding: 0.5rem 1rem; margin-block-end: 0.4rem; border-radius: 0.5rem; background: #fff; border: 1px solid #e2e8f0; }
+.row b { color: #4f46e5; }
+/* the row in the middle of the screen gets bigger: padding changes = layout changes */
+.row.near { padding-block: 1rem; font-size: 1.15rem; border-color: #4f46e5; }
+~~~
+
+~~~js reflow-hunter/rows.js
+// builds the 300 rows of the timeline once, on load (not on scroll)
+const list = document.querySelector(".timeline");
+const events = ["اتسجّل طلب", "اتأكد الدفع", "اتجهّز في المخزن", "خرج مع المندوب", "وصل للعميل"];
+for (let i = 0; i < 300; i++) {
+  const li = document.createElement("li");
+  li.className = "row";
+  li.innerHTML = "<b>" + (i + 1).toLocaleString("ar-EG") + "</b> طلب رقم " + (4100 + i).toLocaleString("ar-EG") + ": " + events[i % 5];
+  list.append(li);
+}
+~~~
+
+~~~js reflow-hunter/bad.js
+// the slow version: read, write, read, write… for 300 rows on every scroll event
+const rows = document.querySelectorAll(".row");
+addEventListener("scroll", function onScrollBad() {
+  const middle = innerHeight / 2;
+  for (const row of rows) {
+    const r = row.getBoundingClientRect();                          // READ: needs an up-to-date layout
+    row.classList.toggle("near", Math.abs(r.top + r.height / 2 - middle) < 120);   // WRITE: changes the layout
+  }                                                                 // → the next READ forces a new layout, 300 times
+});
+~~~
+
+~~~js reflow-hunter/batch.js
+// fix 1: read everything first, then write everything, once per frame
+const rows = [...document.querySelectorAll(".row")];
+let queued = false;
+addEventListener("scroll", () => {
+  if (queued) return;                                               // many scroll events, one update per frame
+  queued = true;
+  requestAnimationFrame(function updateRows() {
+    queued = false;
+    const middle = innerHeight / 2;
+    const near = rows.map(row => {                                  // 1. all the READs (one layout, at the start)
+      const r = row.getBoundingClientRect();
+      return Math.abs(r.top + r.height / 2 - middle) < 120;
+    });
+    rows.forEach((row, i) => row.classList.toggle("near", near[i])); // 2. all the WRITEs (no reads between them)
+  });
+}, { passive: true });
+~~~
+
+~~~css reflow-hunter/view.css
+/* fix 2: no JavaScript on scroll. Each row is scaled by its own place in the viewport (view timeline).
+   scale = transform = no layout at all; the scroll itself drives it */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .row {
+      animation: grow-in-middle linear both;
+      animation-timeline: view();
+    }
+    @keyframes grow-in-middle {
+      0%, 35%, 65%, 100% { scale: 1; border-color: #e2e8f0; }
+      50% { scale: 1.06; border-color: #4f46e5; }
+    }
+  }
+}
+~~~
+
+~~~js reflow-hunter/measure.mjs
+// node reflow-hunter/measure.mjs: scroll each version with the CPU 4x slower and read the Performance trace
+import { browser, throttled } from "../lab.mjs";
+const b = await browser();
+for (const v of ["bad", "batch", "view"]) {
+  const { ctx, page } = await throttled(b, { net: null, cpu: 4 });
+  await page.goto("http://127.0.0.1:8817/reflow-hunter/" + v + ".html"); await page.waitForTimeout(500);
+  await page.evaluate(() => { window.__f = []; let last = performance.now(); const t = n => { window.__f.push(n - last); last = n; if (!window.__stop) requestAnimationFrame(t); }; requestAnimationFrame(t); });
+  await b.startTracing(page, { categories: ["devtools.timeline", "disabled-by-default-devtools.timeline", "disabled-by-default-devtools.timeline.stack"] });
+  for (let i = 0; i < 40; i++) { await page.mouse.wheel(0, 200); await page.waitForTimeout(30); }
+  await page.waitForTimeout(300);
+  const ev = JSON.parse((await b.stopTracing()).toString()).traceEvents;
+  const frames = await page.evaluate(() => { window.__stop = true; return window.__f.slice(1); });
+  const forced = ev.filter(e => e.name === "Layout" && e.args?.beginData?.stackTrace?.length);
+  const where = [...new Set(forced.map(e => e.args.beginData.stackTrace[0].functionName + ":" + e.args.beginData.stackTrace[0].lineNumber))];
+  const handlers = ev.filter(e => e.name === "FunctionCall" && e.ph === "X" && /onScrollBad|updateRows/.test(e.args?.data?.functionName || ""));
+  const ms = handlers.reduce((s, e) => s + e.dur / 1000, 0);
+  const layouts = ev.filter(e => e.name === "Layout");
+  const layoutMs = layouts.reduce((s, e) => s + (e.dur || 0) / 1000, 0);
+  console.log(v.padEnd(6) + "| handler اشتغل " + handlers.length + " مرة، مجموع " + ms.toFixed(0) + "ms، متوسط " + (handlers.length ? (ms / handlers.length).toFixed(1) : 0) + "ms" +
+    " | Layout " + layouts.length + " (" + layoutMs.toFixed(0) + "ms)، forced " + forced.length + (where.length ? " ← " + where.join(" ") : "") +
+    " | frames أطول من 25ms: " + frames.filter(f => f > 25).length + " من " + frames.length + "، أطول " + Math.round(Math.max(...frames)) + "ms");
+  await ctx.close();
+}
+await b.close();
+~~~
+
+~~~view 700 760 نسخة «اقرا الكل ثم اكتب الكل» (اعمل scroll جوه)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الحلقة ١: يعني إيه صوت في الصفحة | بودكاست المحطة</title>
+<title>متابعة الطلبات (اقرا الكل ثم اكتب الكل)</title>
 <style>
-  img, video { max-width: 100%; height: auto; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1e293b; background: #f8fafc; }
+.wrap { max-width: 36rem; margin: 0 auto; padding: 1rem; }
+h1 { margin: 0 0 0.25rem; font-size: 1.4rem; }
+.note { margin: 0 0 1rem; color: #475569; }
+.timeline { margin: 0; padding: 0; list-style: none; }
+.row { padding: 0.5rem 1rem; margin-block-end: 0.4rem; border-radius: 0.5rem; background: #fff; border: 1px solid #e2e8f0; }
+.row b { color: #4f46e5; }
+/* the row in the middle of the screen gets bigger: padding changes = layout changes */
+.row.near { padding-block: 1rem; font-size: 1.15rem; border-color: #4f46e5; }
 </style>
 </head>
 <body>
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-  <nav aria-label="صفحات الموقع">
-    <a href="index.html" aria-current="page">الحلقة</a> |
-    <a href="watch.html">شاهد الدرس</a> |
-    <a href="extras.html">إضافات</a> |
-    <a href="studio.html">الاستوديو</a> |
-    <a href="credits.html">المصادر</a>
-  </nav>
-</header>
-<main>
-  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
-  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
-  <video controls preload="metadata" width="640" height="360" poster="media/cover.svg" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
-    <source src="media/ep1.mp3" type="audio/mpeg">
-    <track default kind="captions" srclang="ar" label="عربي" src="media/ep1.ar.vtt">
-  </video>
-  <p><a href="media/ep1.mp3" download>نزّل الحلقة ١ (MP3)</a></p>
-  <noscript><p>عدّاد التصفيق في صفحة «إضافات» محتاج JavaScript. باقي الموقع شغال من غيره.</p></noscript>
-  <h2>في الحلقة دي</h2>
-  <ul>
-    <li>مشغّل الصوت بيظهر إمتى</li>
-    <li>أكتر من صيغة لنفس الملف</li>
-    <li>ليه التشغيل التلقائي ممنوع</li>
-  </ul>
-  <h2>نص الحلقة</h2>
-  <p><strong>منى:</strong> أهلًا بيكم في المحطة.</p>
-  <p>[موسيقى المقدمة]</p>
-  <p><strong>كريم:</strong> النهارده هنحط صوت في صفحة.</p>
-  <p><strong>منى:</strong> ومن غير ما يشتغل لوحده.</p>
-  <figure>
-    <img src="media/studio.svg" alt="رسم لاستوديو المحطة: مايكين على ترابيزة خشب" width="640" height="360" loading="lazy" decoding="async">
-    <figcaption>«استوديو صغير» رسم سلمى فؤاد، <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. <a href="credits.html#studio-photo">التفاصيل في صفحة المصادر</a>.</figcaption>
-  </figure>
+<main class="wrap">
+  <h1>متابعة الطلبات</h1>
+  <p class="note">الطلب اللي في نص الشاشة بيكبر وانت بتعمل scroll.</p>
+  <ol class="timeline"></ol>
 </main>
+<script>
+// builds the 300 rows of the timeline once, on load (not on scroll)
+const list = document.querySelector(".timeline");
+const events = ["اتسجّل طلب", "اتأكد الدفع", "اتجهّز في المخزن", "خرج مع المندوب", "وصل للعميل"];
+for (let i = 0; i < 300; i++) {
+  const li = document.createElement("li");
+  li.className = "row";
+  li.innerHTML = "<b>" + (i + 1).toLocaleString("ar-EG") + "</b> طلب رقم " + (4100 + i).toLocaleString("ar-EG") + ": " + events[i % 5];
+  list.append(li);
+}
+</script>
+<script>
+// fix 1: read everything first, then write everything, once per frame
+const rows = [...document.querySelectorAll(".row")];
+let queued = false;
+addEventListener("scroll", () => {
+  if (queued) return;                                               // many scroll events, one update per frame
+  queued = true;
+  requestAnimationFrame(function updateRows() {
+    queued = false;
+    const middle = innerHeight / 2;
+    const near = rows.map(row => {                                  // 1. all the READs (one layout, at the start)
+      const r = row.getBoundingClientRect();
+      return Math.abs(r.top + r.height / 2 - middle) < 120;
+    });
+    rows.forEach((row, i) => row.classList.toggle("near", near[i])); // 2. all the WRITEs (no reads between them)
+  });
+}, { passive: true });
+</script>
 </body>
 </html>
 ~~~
 
-~~~view 828 714 شكل studio.html (صغّر العرض بزرار «موبايل»: اللينكات لسه في مكانها)
-<style>
-  svg { display: block; width: 100%; max-width: 600px; height: auto; }
-  svg a:hover, svg a:focus-visible { opacity: 0.7; }
-</style>
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-  <nav aria-label="صفحات الموقع">
-    <a href="#">الحلقة</a> | <a href="#">شاهد الدرس</a> | <a href="#">إضافات</a> | <a href="#" aria-current="page">الاستوديو</a> | <a href="#">المصادر</a>
-  </nav>
-</header>
-<main>
-  <h1>استوديو المحطة</h1>
-  <p>دوس على أي غرفة في المسقط، أو اختار من القايمة اللي تحته.</p>
-  <svg viewBox="0 0 300 150" role="group" aria-label="مسقط استوديو المحطة">
-    <rect width="300" height="150" fill="#e2e8f0"/>
-    <a href="#rec" aria-label="غرفة التسجيل"><rect x="10" y="10" width="130" height="130" fill="#0f766e"/></a>
-    <a href="#mix" aria-label="غرفة المكساج"><circle cx="220" cy="50" r="40" fill="#b45309"/></a>
-    <a href="#wait" aria-label="الاستقبال"><polygon points="160,140 220,100 280,140" fill="#1d4ed8"/></a>
-  </svg>
-  <ul>
-    <li><a href="#rec">غرفة التسجيل</a> (المربع الأخضر)</li>
-    <li><a href="#mix">غرفة المكساج</a> (الدايرة البرتقالي)</li>
-    <li><a href="#wait">الاستقبال</a> (المثلث الأزرق)</li>
-  </ul>
-  <h2 id="rec">غرفة التسجيل</h2>
-  <p>مايكين وترابيزة خشب، والحيطان مبطّنة عشان الصدى.</p>
-  <h2 id="mix">غرفة المكساج</h2>
-  <p>هنا الحلقة بتتقصّ وبيتزوّد عليها الموسيقى.</p>
-  <h2 id="wait">الاستقبال</h2>
-  <p>الضيوف بيستنوا هنا قبل التسجيل.</p>
-</main>
-~~~
+**هتشوف إيه:** لستة طويلة من الطلبات («١ طلب رقم ٤١٠٠: اتسجّل طلب»…). وانت بتعمل scroll، الطلب اللي في نص الشاشة بيكبر وحده بنفسجي.
 
-~~~view 408 462 شكل credits.html
-<header>
-  <p><strong>بودكاست المحطة</strong></p>
-</header>
-<main>
-  <h1>مصادر الميديا</h1>
-  <p>كل ملف في الموقع مش من صنعنا مكتوب هنا بصاحبه ورخصته.</p>
-  <h2>الصور</h2>
-  <ul>
-    <li>«<a href="#">استوديو صغير</a>» رسم سلمى فؤاد، رخصة <a href="#" rel="license">CC BY 4.0</a>. اتغيّرت ألوانها.</li>
-  </ul>
-  <h2>الموسيقى</h2>
-  <ul>
-    <li>«<a href="#">صباح هادي</a>» تأليف نادر حلمي، رخصة <a href="#" rel="license">CC BY 4.0</a>. اتقصّ منها أول ٥ ثواني لمقدمة الحلقة.</li>
-  </ul>
-  <h2>من صنعنا</h2>
-  <p>التسجيلات، والفيديو، وغلاف الحلقة، ومسقط الاستوديو، وملفات الكابشن: فريق المحطة.</p>
-</main>
-~~~
+**ليه [[bad.js]] بطيء:** [[getBoundingClientRect()]] محتاج layout محدّث. وأول [[classList.toggle("near")]] بيغيّر الـ padding (layout). فالقراية الجاية مش هتلاقي layout جاهز، والمتصفح بيعمل layout كامل **حالًا** جوه الـ loop. ده الـ forced reflow، وبيحصل في كل كارت بيتغيّر.
 
-**هتشوف إيه:**
+**[[batch.js]]:** نفس الحساب، بس:
+1. كل الـ reads الأول في [[map]]: layout واحد في الأول.
+2. كل الـ writes بعدهم: مفيش قراية بينهم، فمفيش حاجة تجبر المتصفح.
+3. جوه [[requestAnimationFrame]] ومرة واحدة لكل frame مهما الـ scroll بعت events، و [[passive: true]] عشان الـ scroll ميستناش الـ handler.
 
-- شريط تنقّل واحد في كل الصفحات، واللينك بتاع الصفحة الحالية هو اللي عليه [[aria-current]].
-- [[studio.html]]: المسقط واخد عرض الصفحة (لحد 600)، وكل شكل بيبهت لما الماوس يعدّي عليه، وبيودّي لقسمه. وتحته نفس اللينكات قايمة.
-- [[credits.html]]: كل بند سطر فيه لينكين.
-- [[index.html]]: صورة الاستوديو تحت النص، وتحتها نسبتها.
+**[[view.css]] من غير JavaScript خالص:** كل كارت بيتحرك على حسب مكانه في الشاشة ([[animation-timeline: view()]])، والحركة [[scale]] بس، يعني composite من غير layout. جوه [[@supports]]، والمتصفح اللي مبيدعمهوش بيوري اللستة عادي.
 
-**ليه التصميم ده:**
+**إزاي تلاقيها في DevTools:** Performance › سجّل وانت بتعمل scroll › في Main هتلاقي مثلثات حمرا على Layout، وفي Summary «Forced reflow» والسطر اللي عمله ([[bad.js:6]]). القياس هنا بيقرا نفس الحاجة من الـ trace.
 
-- المسقط SVG مش image map: الصفحة بتتصغّر على الموبايل، وإحداثيات [[<area>]] مبتتصغّرش (درس «map و area» قسم ٤). والقايمة اللي تحته للي مش هيدوس على رسم.
-- النسبة في مكانين: مختصرة تحت الصورة، وكاملة في صفحة المصادر. لما الملفات تكتر، صفحة واحدة بتتراجع أسهل.
-- الصورة تحت أول الشاشة: [[loading="lazy"]] و [[decoding="async"]]. والغلاف (الـ [[poster]]) أول الشاشة ومفيهوش الاتنين. في صفحة قصيرة زي دي الـ lazy مش هيبان في Network (القياس تحت)، وهيفرق لما الصفحة تطول بحلقات أكتر.
-- [[<noscript>]] بيقول الحقيقة: حاجة واحدة بس محتاجة JavaScript. باقي الموقع HTML شغال من غيره.
-- السطرين CSS في [[studio.html]]: [[width: 100%]] و [[max-width]] و [[height: auto]] بيخلّوا الـ SVG يتصغّر مع الصفحة بنسبته، و [[opacity]] مع [[:hover]] و [[:focus-visible]] بيبيّن الشكل اللي الماوس أو الـ Tab عليه (درس «selectors»).
+**٣ حاجات في القياس نفسه:**
+- **[[stackTrace]] بيظهر بس مع الـ category [[disabled-by-default-devtools.timeline.stack]].** من غيرها كل الـ forced بتطلع صفر.
+- **الكتابة لازم تغيّر الـ layout:** لو بتكتب [[transform]] أو [[opacity]] بس وبعدين تقرا، ده style recalc مش layout (اتقاس في وحدة الحركة).
+- **عدد الـ frames الطويلة مش مقياس ثابت هنا:** نفس النسخة الغلط طلّعت 13 و 1 و 2 و 41 في تشغيلات مختلفة. الثابت هو عدد الـ forced layouts ووقت الـ handler.
 
-**الأخطاء اللي المشروع بيتعامل معاها:** الـ PDF مبيتعرضش: فيه بديل ولينك. الكابشن مبيتحمّلش: النص المكتوب موجود. JavaScript مقفول: [[<noscript>]]، والعدّاد بس اللي واقف. الصورة متحمّلتش: [[alt]] ومكانها محجوز.
-
-**الغلطة الشائعة:** تنسخ الـ [[<nav>]] وتنسى تنقل [[aria-current="page"]]، فكل الصفحات بتقول إنك في «الحلقة».
-
-~~~text القياس من Chrome (الخمس صفحات من سيرفر محلي)
-studio.html بعرض 800:   الـ SVG 600 × 300       نص الدايرة → circle جوه a[href="#mix"]
-studio.html بعرض 360:   الـ SVG 344 × 172       نص الدايرة برده → circle جوه a[href="#mix"]
-شجرة الـ accessibility: group «مسقط استوديو المحطة»   link «غرفة التسجيل»   link «غرفة المكساج»   link «الاستقبال»
-index.html:             img.loading = "lazy". الصفحة قصيرة، فـ Chrome طلب media/studio.svg مع فتح الصفحة (نافذة 800 × 600):
-                        المتصفح بيبدأ يحمّل الصورة الـ lazy قبل ما توصل الشاشة بمسافة. على بعد 6000px (قياس درس «iframe sandbox و allow») التحميل اتأجّل
-credits.html:           document.querySelectorAll('a[rel~="license"]').length = 2
+~~~text node reflow-hunter/measure.mjs (CPU 4x، ٤٠ scroll × 200px)
+bad   | handler اشتغل 40 مرة، متوسط 23.2 لـ 42.4ms | Layout 316، forced 316 ← onScrollBad:6
+batch | handler اشتغل 40 مرة، متوسط 2.1 لـ 3.0ms  | Layout 40، forced 0
+view  | handler اشتغل 0 مرة                       | Layout 0، forced 0
+(الأرقام بالمللي ثانية اتغيرت بين ٤ تشغيلات حسب ضغط الجهاز، والـ forced ثابتة)
+frames أطول من 25ms: مش ثابتة (bad: 13، 1، 2، 41)، فمش في الحكم
+axe: 0 على التلاتة   الـ validator: مفيش رسايل
+CSS validator: style.css No Error Found | view.css: «Property animation-timeline doesn't exist»
+(الـ validator لسه مبيعرفش الخاصية دي، و Chrome بيشغّلها، وهي جوه @supports)
 ~~~` },
-        { lvl: 'فكرة', dir: "my-recording", t: R`صفحة لتسجيل من عندك: صوت، ونصه، وصورة بنسبتها`, what: R`اختار حاجة حقيقية حواليك تتسجّل صوت: حكاية بيحكيها حد كبير في العيلة، أو شرح درس لزميلك، أو وصفة بتتقال، أو تعريف بمحل في شارعكم. سجّلها بموبايلك (دقيقة كفاية) واعمللها صفحة [[index.html]] فيها: عنوان، وجملة مين بيتكلم وإمتى اتسجّلت، والمشغّل (بكل اللي اتعلمته: [[controls]] و [[<source>]] بنوعه و [[aria-label]] ومن غير [[autoplay]])، ولينك تحميل، والنص المكتوب كامل، وصورة واحدة من تصويرك في [[<figure>]] بنسبتها ورخصة انت اللي تختارها. مفيش حل واحد صح: اللي تحت نسخة نموذجية.`, done: R`حد غيرك يقدر يسمع التسجيل، ويقدر يقراه من غير ما يسمعه، ويعرف من الصفحة مين صاحب التسجيل والصورة ومسموحله يعمل بيهم إيه. والمشغّل واقف لحد ما يتداس، وليه اسم في شجرة الـ accessibility.`, ext: R`اكتب ملف [[.vtt]] للتسجيل وشغّله في [[<video>]] بغلاف زي المشروع التاني. وزوّد تسجيل تاني في نفس الصفحة، كل واحد [[preload="none"]] وتحته نصه. واسأل صاحب الحكاية: يوافق تتنشر بأنهي رخصة؟ واكتب اللي اتفقتوا عليه.`, sol: R`~~~html index.html
+        { lvl: 'متوسط', dir: "hero-fast", t: R`هيرو بيظهر في أقل من ثانيتين`, what: R`صفحة landing أول شاشة فيها صورة كبيرة وعنوان بخط عربي. اعمل: [[srcset]] و [[sizes]] و [[fetchpriority="high"]] للصورة (ومن غير [[loading="lazy"]] عليها)، و preload للخط الوحيد اللي في أول شاشة، و CSS أول شاشة inline والباقي ملف واحد صغير، و JavaScript بـ [[defer]]. بيجمع دروس الوحدة.`, done: R`Lighthouse (Mobile، Slow 4G) بيدّي LCP أقل من 2.5s و CLS أقل من 0.1 و TBT أقل من 200ms، وفي Network الصورة والخط أولويتهم High وبيبدأوا قبل ما الـ CSS الكبير يخلص، ومفيش تحذير «preloaded but not used».`, sol: R`المثال: landing لشركة رحلات متخيلة «رحّال». الصورة بـ ٣ مقاسات من [[gen-images.mjs]] ([[node gen-images.mjs hero-fast/img hero 480,960,1600 1.5 13 0.75]]: ‏13KB و 47KB و 125KB)، والخط Cairo العريض بس.
+
+~~~html hero-fast/index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>حكاية الساقية: تسجيل من بيتنا</title>
+<title>رحّال: رحلات صغيرة في الويك إند</title>
+<!-- 1. the only font in the first screen: the headline's bold Arabic -->
+<link rel="preload" href="fonts/cairo-arabic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<!-- 2. the first screen's CSS, inline: nothing to wait for before the first paint -->
 <style>
-  img { max-width: 100%; height: auto; }
+  @font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+  @font-face { font-family: "Cairo fallback"; src: local("Segoe UI"); size-adjust: 97.6%; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #10231b; background: #f6faf7; }
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; }
+  .logo { font-weight: 800; color: #10231b; text-decoration: none; }
+  .hero { position: relative; display: grid; min-height: min(80vh, 40rem); }
+  .hero img { grid-area: 1 / 1; width: 100%; height: 100%; object-fit: cover; }
+  .hero__text { grid-area: 1 / 1; align-self: end; padding: 2rem 1rem; background: linear-gradient(transparent, #0b1f17d9 45%); color: #fff; }
+  .hero h1 { margin: 0 0 0.5rem; font-family: "Cairo", "Cairo fallback", sans-serif; font-weight: 700; font-size: clamp(2rem, 1.2rem + 4vw, 3.6rem); line-height: 1.25; }
+  .hero p { margin: 0 0 1rem; max-width: 32rem; font-size: 1.1rem; }
+  .btn { display: inline-block; padding: 0.7rem 1.5rem; border-radius: 999px; background: #facc15; color: #10231b; font-weight: 800; text-decoration: none; }
+</style>
+<!-- 3. the rest of the CSS: loaded without blocking the first paint -->
+<link rel="stylesheet" href="rest.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="rest.css"></noscript>
+<!-- 4. JavaScript: runs after the HTML is read, never blocks it -->
+<script src="app.js" defer></script>
+</head>
+<body>
+<header class="top"><a class="logo" href="#">رحّال</a><a href="#trips">الرحلات</a></header>
+<main>
+  <section class="hero">
+    <!-- the LCP image: the browser picks the width from sizes, starts it early (high), and never lazy -->
+    <img src="img/hero-960.webp"
+         srcset="img/hero-480.webp 480w, img/hero-960.webp 960w, img/hero-1600.webp 1600w"
+         sizes="100vw" width="1600" height="1067" fetchpriority="high"
+         alt="جبال خضرا تحت شمس العصر">
+    <div class="hero__text">
+      <h1>رحلات صغيرة، ذكريات كبيرة</h1>
+      <p>يومين في الجبل أو على البحر، والمواصلات والأكل علينا.</p>
+      <a class="btn" href="#trips">شوف رحلات الشهر</a>
+    </div>
+  </section>
+
+  <section id="trips" class="trips">
+    <h2>رحلات الشهر</h2>
+    <ul class="cards">
+      <li class="card"><h3>سانت كاترين</h3><p>طلوع الجبل والشروق من فوق. ٢٤٠٠ ج.</p></li>
+      <li class="card"><h3>الفيوم</h3><p>وادي الريان والشلالات. ٩٥٠ ج.</p></li>
+      <li class="card"><h3>دهب</h3><p>غطس في البلو هول. ٣١٠٠ ج.</p></li>
+    </ul>
+  </section>
+</main>
+<footer class="foot">رحّال، شركة متخيلة للتجربة.</footer>
+</body>
+</html>
+~~~
+
+~~~css hero-fast/rest.css
+/* everything under the first screen: it can arrive a little later */
+.top a:not(.logo) { color: #14532d; }
+.trips { max-width: 56rem; margin: 0 auto; padding: 3rem 1rem; }
+.trips h2 { margin: 0 0 1rem; font-size: 1.6rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1.25rem; border-radius: 1rem; background: #fff; border: 1px solid #cfe3d6; }
+.card h3 { margin: 0 0 0.25rem; }
+.card p { margin: 0; color: #335c4a; }
+.foot { padding: 2rem 1rem; text-align: center; color: #335c4a; }
+.btn:hover { background: #fde047; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+~~~
+
+~~~js hero-fast/app.js
+// defer: this runs after the HTML is parsed; nothing in the first screen waits for it
+document.querySelectorAll('a[href="#trips"]').forEach(a => a.addEventListener("click", e => {
+  e.preventDefault();
+  document.getElementById("trips").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}));
+~~~
+
+~~~js hero-fast/measure.mjs
+// node hero-fast/measure.mjs: what the Network panel shows on Slow 4G (priority, start, end) + console warnings
+import { browser, throttled } from "../lab.mjs";
+const b = await browser();
+const { ctx, page, cdp } = await throttled(b);
+const req = new Map();
+cdp.on("Network.requestWillBeSent", e => req.set(e.requestId, { url: e.request.url.split("/").pop(), prio: e.request.initialPriority, start: e.timestamp }));
+cdp.on("Network.resourceChangedPriority", e => { const r = req.get(e.requestId); if (r) r.prio += " ← " + e.newPriority; });
+cdp.on("Network.loadingFinished", e => { const r = req.get(e.requestId); if (r) { r.end = e.timestamp; r.kb = Math.round(e.encodedDataLength / 1024); } });
+const warnings = [];
+page.on("console", m => { if (m.type() === "warning" || m.type() === "error") warnings.push(m.text()); });
+await page.goto("http://127.0.0.1:8817/hero-fast/index.html", { waitUntil: "load", timeout: 60000 });
+await page.waitForTimeout(5000);                    // "preloaded but not used" shows up a few seconds after load
+const t0 = Math.min(...[...req.values()].map(r => r.start));
+console.log("Slow 4G، cache مقفول، CPU 4x، شاشة 412px:");
+for (const r of [...req.values()].sort((a, b) => a.start - b.start))
+  console.log("  " + r.url.padEnd(32) + (r.prio || "").padEnd(16) + "بدأ " + String(Math.round((r.start - t0) * 1000)).padStart(5) + "ms  خلص " + String(Math.round((r.end - t0) * 1000)).padStart(5) + "ms  " + r.kb + "KB");
+console.log("الصورة اللي اختارها srcset: " + await page.$eval(".hero img", i => i.currentSrc.split("/").pop()));
+console.log("تحذيرات الكونسول: " + (warnings.length ? warnings.join(" | ") : "مفيش"));
+await ctx.close(); await b.close();
+~~~
+
+~~~js hero-fast/lcp.mjs
+// node hero-fast/lcp.mjs: real LCP (PerformanceObserver) on Slow 4G + CPU 4x, 3 runs per page and screen
+import { browser, throttled } from "../lab.mjs";
+const b = await browser();
+for (const [w, h] of [[412, 823], [1350, 900]]) {
+  for (const f of ["before.html", "index.html"]) {
+    const runs = [];
+    for (let i = 0; i < 3; i++) {
+      const { ctx, page } = await throttled(b, { viewport: { width: w, height: h } });
+      await page.goto("http://127.0.0.1:8817/hero-fast/" + f, { waitUntil: "networkidle", timeout: 60000 });
+      await page.waitForTimeout(3000);   // the last LCP entry can come late (a lazy image)
+      runs.push(await page.evaluate(() => new Promise(r => new PerformanceObserver(l => { const e = l.getEntries().at(-1); r(Math.round(e.startTime) + (e.element?.tagName === "IMG" ? "img" : "txt")); }).observe({ type: "largest-contentful-paint", buffered: true }))));
+      await ctx.close();
+    }
+    console.log(w + "px " + f.padEnd(12) + " LCP: " + runs.join("  "));
+  }
+}
+await b.close();
+~~~
+
+~~~view 940 970 الشكل (الصورة في المعاينة نسخة صغيرة)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رحّال: رحلات صغيرة في الويك إند</title>
+<!-- 1. the only font in the first screen: the headline's bold Arabic -->
+<!-- 2. the first screen's CSS, inline: nothing to wait for before the first paint -->
+<style>
+  @font-face { font-family: "Cairo"; src: url("data:font/woff2;base64,d09GMgABAAAAADaAABAAAAAAoUgAADYdAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoQSG6NWHJFGBmA/U1RBVEAAiiIRCAqBvXyBoRALhhQAATYCJAOMJAQgBYQkB6VgDAcbsI4X2DaNGnY7gC2f6h0yOa6D84Kg62euo6gdnJR09v//ScnJGDIsUNUsq/+HmG3mrJJRlYuMJvfiqgFlqJeOUqROrEPEs3UFocRxXhmLGNPkttkTRDRaHMNvyOeNOdGpGh5y7O+QPoren9Kv726fcBFtsUQUBYVTMndiY3k6SgkfJUtVaarBB+7g32D1X1cu78CT3rnSB194iTEn845vXEwb9DesLQo9QmOf5ML//+fV73NfKml+QOn1RwJHNEcWR6zhebf1/meKqCigiKSIiKg4QFyIiIioqIiIinOAOPm6KyfZPK/MxtnYNraZjaXWlY1l3e663VhnpTaF4l2Dd2Y3yX2C56EgHKMuy7Kqb4VxrScSCvjC8/3f+7jPzCs/FA9oKMIVONQaaOVQkAMW7RSN/XUnAHyxlr60UNBbFwE+oT0KT1Ignqt9KyJPcjl3cF7Ikw8yAobWWtYaPZHJKypnKnOzoUIp//2PsHkUIm/HXjEvF9W0fKFWDK3zh54Waju94MnZr4+OcjDhlmoEhmxoMMVyPuhQHbuydvTkcq2SgOimAijTnfQ96pdXWcTMkVY/MOdSXT2ijTZTv1oCvvf9teaQS2a+2ltEpLKeoieLkG1e+muAlggPwibMARjP+dbstTOfOL/AZFMC9d89X1AVbncmd5PZDR4m2SPKZ9xZyE2ym/1EoEoMwjApJMn+G1slK3SFMRWyskL21e9b1k5uqH9ptt+hTjiiUXMo5AWhMA6mprs21eV2hByme0bMQnYpCoPQSIziYQ1CG3w+nVk7f0fzMrIVkCcE1qlZOMB+dVD21ozsEVgGrb2ksDdAYIewuqq4omPokjLVdYivv7JIUTQHz+O02SaP1ZSVU5xDyTuwBhJmPrNhV1HktHtU4rAahJ4eo9EgDMpJIEx08rKTtDvzVM6oRihmwuN8i+RJ23uPK4TimiCEEF7XmJCaIT2/p3M/pvU7qVeSLc13l5jYEBBGQCSKNf5WPtAIWFUAkgG0iyfqovseqjeJVQpD+OGhWun5C7gZyoTrHIcANZhpGtRRS0OIj1CyszTQfwzAoJkIB6AkPSmKt96UxMcQSqEgIYIHcp+GBmFSo5OgvcsSmKnKmA28KcdoAE24PFwdMJagsQVBRgZB1QJioXHQKBSmMIUrX89NMRuUyi1fZLDnQ4GAAVQDSADCKXxuqulmmGX549VoldXWWGud9TbYZLOttrnQRS62w0677LYHCIK0pqkz02wrrBSx0RYgAHEk6ISq8kqCFggf1RUUAvaLAqQKUKABEJ1XAAaq9kL1fH9Et4/rqoC/xl5/KMuA9bKiMqEnbTSYILQHIID88SGwKT4nyfG8qN2NNVhIIAhAQNKqBeJfRJxMueWqMWeNOGKfnTZbb7UVzNq1QFQpVyhbGjUlOYkQEK1VAMS5+gUIQ10Aor3DgFjdrUC01+yGfXlLZzgJckCjvaLe2l21MN9V/xScy1f1lNIDUNrH+vDs8t4nZr3KvWsoga78QK8R4OydjRLpvfNQFHACkmfrkYr4ZrLf+IIXeIRrOIUj469hBzZhNZaymZicji3p8B0D0fsedV0dfSUErKBXL3Ll0nxdBSkRIV9cLAz2ILpmfENXadWKNcfV9s6RWVuvX/MsClcs/KMOb657IYAmHlB+XvAGf+NHXMFpDGHg9rqXGfn/egF1AFtNTgFkiC3T4+GfWTaXTfiBAZnfnHJ9l7149DS64mBwDx0oCuu70rJTJI4TKSx3HupzX/TP3utYR3uoqw9oQCmymRRB4IBBiCb8GdN4gitkpBZrZyvogxkNMCIbCZCREGuMfW/CjXOsoa++85mPfegNxzzmkOvttckqc1UpV8RX/0KjEktGzI4/r8sRIPs4SkATVH8kNmc0dpf1QApNsJPtTRvPWMsLKhJem1YkDonPo4BxrsfHoeMGMJR6eFw9RoAh2I3j/DEK5B43tXbudfiCOl9eQ8j98+KNTpZ/vHirFzOjml/Z5iAE3UcTkOdzToGdGYJ9zVxK6aGDUG6srrWQ1Vtj+4sWxUhpdIfykB+qSXEVx5/HkVVpuVjcwiOLU3OxtLpRXf/19WC4nIN2YMuMwxqHX+XZ56PLKhq3ldq4gouM0l3uReeS1OSj1B1H0j9K+TGJbhi5x8W0dyLURsN459Wpsbxjo9TQKh5GqXyZmWOH5Pk/4FEYBTBM9KMNApDungQAQ0LwjeG1m9iDTRE+nIeDAD3jXFY9dDEp0WPpOmHE4W1lmDu2GtXdfACw2O0/6Cxylh0kuoVPj7tykmM7Pe6aL860O20XJg2J2ByeRr0fQxn0bPtVMqsOKaUWZfexaIDvhvb5aDgahoO5756o8/+7RHcfmDA+11sKj/gEduEcLtBTcGLuxGoC17iLps4t3LVTVtbtyimf7y6Uc004P98td6tOHVPl4jOTyaJRR7I5by8m4Wg6yo5Fvzvrrd7nMbMM/itluzrL2EoNAwosV4nVx1dalgcA9OZGVa0Za/GKsXPNtnussgdHn+1zCpN7MzXWX11PKefIOSa3l54Iz2A7+rEeSmAD6dh4wfH2DtKTqe6mPEcy1XE3t25J3ZcQ0Nwl7GFn0wfFtj//oBfU9xPe7r70L2ljebCOiX132FOaaFnr/IaCUdVfvCDshZjphRfvWypCVCK+aWIC962B9VVecyOKbHZvvDpb5lEk20sE6Ht9efBqdX6MvxkiZ4+aZVjFK/ct04nipREJK5cphHSJhHD5CuniCuFiCeli2PaL1CREZtFYEavm1zknppdIvJhz4t8l2vV4+c6fbT41byGuzrGLSM5yEckI0REk0T4kYufczNZjNVYI82xnLUB2Vc3yWYhEZM80oZ7KSI4kkiARIVMgeJMTMZFEdCSCMq1LeAzcQn9GIWYm/OFvxrPx93g0fhz3xo1xZVwEpzGMQ/nQ2I4YHANRH5JoGZKoG0m0CIloGnXMKErHgMgfmUI7VCJ2yGpAjKDcf3gh2MNZ0IadIKKxJYD6varv+ko8Wb7hnxy17OfcEpZT+msf9k4n9cBEz3dUnnusB7q7W7sR/ViF3ryzbV/yhtZEYSDFWvPc6oRp7IQqIIXoCeGyr2+7XA/cnLV8qUa012L0ayepBBRaeb6+BTyXaSDaZtP3Zt6JLXmvLXlVqv7cVjK/sUse/rNTGWx3MYoLa+r+lT9V/5KdB8JOvyPoUh41YM5v0mgspyxCa8v2pjTfyaqiV9X5s02FMrFRDMNSMrrKHVMx+VlIqr8sza31Zk0oPxcn/KHGicYXQgt16BOIzc3InuSHKJGPaE1ytm2u5AxbdYabNK87ySxAYul926V9zKNeqEvYXH5e/VA/A8Y+aWaywW1ploXsuXNroNTVs1t9z5AtCzYrpseHcPicZI8b9khmsxK8oSYJxWSwDDMyqy+orfjMIQkZCtmbkHMqA1H2yj7lXLjjRBfpc6f3TpI7nM5ZTut61OOSMS6PVh9Fk9CHDMk5xzqdayv2Sssnz2/OUja0+G4b3G+FKLlsccLrFhlbev9veI9siwGQ0J7T7OtD4QdNK1rC5gu2i7LBaMuvXIUV3xa/Xup474ZWznNB3EGzTH6NS7iFGMtPL9t08sCjXdF/+MTUAWf0ahNiyaYNu5m+adaA2dhmdnc0MYodFfZfc4L+bz0Aa2wSeLN67oBqAUmuKIcQFAIP+cBEJlC+fjIAFAMgwQDwF8QMwDeAD7X6oiz8jSfOPRD3cAlncDE9AHalWzRdJ1iL5fHC/wYXYxqimzlhry4Hu92DUkv2mtmTd/H4ry91VJspLN11iDFiCrCP5WG0XKRAgFVS4ibJcjNhZmM+zP7MY4EUUMwcL+2EV9Zsuggmyr1Q/B4FMJi3WRKhAISPr8NSiIuhpMMemGCyDXjg5Yr3T+IMAgYAWqjYBAOFrgfkNhcm36eboPYcVezKAKKsKo//Y55IMlHkoinEiGVUA9Hiplse+sGvfvOnvzzx1CuvzZg150NgCAWhIQxE0lY7yTJ1lSNXH33lKwAGDwMDzDHHQAwbBjFiBMyoURBnnQVx0UUQY8ZAwKAxMoKoUQMCgYBo0QICAhBHrtEFHSqllM+XYoCavi5nAgIgOm8t6+QYsHs2ZXgDGnA9DxyJa/dhZQ3QftgiCX+rSg4Ud2wPAemL6iIjEP01IweA8J1RXwZ4FH7nbeDXQMCChpHnlwlA4P+8zi77eX7IBxMStH2+OuQeQe473VxjRcXDt9Kfwvg741mXqdOeKdu1y8WDhYeDiY7CWgJg5AkCZjSBwAyHD4wsAcCsjhCYY9BjzihfQvEnwUf7nU2FK5x48aTH+wKBuOIOGyYs3J7AI553xziTakbqhrXmvj1mcpXI1c0SuGLxTFRhqXFhAQ+Y4jrX+J7LFyDGDjo0SFCq7FWEjBOO2ELF4T5uWaggBU2ONURghS/WB0s1OAEMNliBwgJchSXCjDkNjFb/zM28HvsQ84Q/d96VX2RmjpcjI204QVypBu9ZuDLRceZYNSDURdZQk1NWVcREZKSExIMlOAT42LiDecjoaEgoqH9lw167JydYYbmNIMgwOHDiyl28BEnUUmil01luhTWOOuHU3C/HPvA8GkMUNA2lb8KcltlA/ksSIGINiT06JjYuHn9CIcQkpGTkFGIpqWikyZSrUCmDKnUaNFmkk9kyq6y23kabbbfbPgcccsQxw0adddGYy753zXUPTHnquZde+99b78364JMv5iEhFISBcJAFZAlZQTaQrWSpOuiokwt0ASITBhwWWGKFDVSOXLjx4M1PgGBhwkWIFCVajDiJkqXKkKNACb1Kteo1WqhDj6VW+tZaG2yyzS577XfQYUcdd9IZF1wy4YqrJt1w3xPPvPDKG9PemTHno8++BkAGoSEshIcIEBGyhkjaSdFemnQZOht9d4g7W2t+nicffIFCxUuSIl2WPEXKVKhm0myxLkss9401Bnxnix32WGDvu+fgtdTckdEwsHB48SUQRCSBmpZOtnzFyvvk39+uW68V+vRbZ9BWOw1xNuK08yDcDXu5Ka+0GzfgGYTfQQSlJCNVA4FSnPEmOG2/7LDUz37khtOGDOhWJx8HAwRadcAyer1k0boa7dhsi2223sW2yYW2wXbbbKcYBAuWyLZqmq68ol1VtRpZ3FjDorsIBQsbq2lrrBUElzYtgemFIqISRZe1SKmhWld5NVXnZisQlr8GIZW/9iCN+8mW4TldoJ00Z8EAbGp0AGoH/UvLV0sE4fG8TY6znaYx3G8F72oVYCvm+oxx+P8yEMmRsLvgJjxAv3IWQA5oIFspgDQfIM/16PdpFQJBAAx6XI5AAAgSiQIU0FBRZHIusoMBcLQKCihwoSPW/11e0w6LGlOkrS4FVhqsFZbKiQuRNDp6tZotYkYQGUIpeVUDE0si0/NTMhnoqWQhS6NjE1Pzy1euWr9Jf/2NllhhrY22uuTp51965bX/9wWPhI6NJ8L0104IDIHBkSgMjkBKTkFJRU1Lz8gMxhKpTK5QqtQazdavn+cDZRoSXa6kGctngHOXbt1vOmVU0Orik13Zirem3rjfvp+jLLbMSk02a37q2RcfhPPPFcOKA1eeJAApKBxRY/FEMreuoWNgYoHGk+lsvliu1j+A6cdb/s+u/r8LoJ+CnMhE8H3+5egemr38umututu4ubMXrDm6r49eaj43z6E4WZrVP9/4AKDZTlsf778ZgIrziIHUnOwsyNy9F+4Qb7TL7I6XnQANBli6lLDmTqD/FAPKdMwx3NXwjHLCu1R7WehoKqmX5hBKI02GzJ1QNll7zSMXoPyvvYQiJQCVU6EKoCb0z7eOGnXmWqyBL2wPOvanzhqtEVHMs0anW2Cb7Xbb6wr77He9g251p0MeWKGPa6mWFoLGEhyHWXASBqq9vjrg3Qvinaa/Vsbpdx5PHdvgoI/W9C45dvucS6+wzFBFFmBDfQxYeXVpf5/4rE0OdAxOuLx4qlKjmj8Bvk7dupj1WmKzrbbYbcgeY0lRa7o6s8w2w0ycLXDWeefcD8MAhQbOFjvcdsfdfYdHfvd41qhMZUHPq3z2tYc9N3tpzHgSGCKNJJQv5kcM/3ty0JFZT4OCbAcyevqUPc2ByXJlc9x5vj7CoMAQUaiSoTmBlxRZM3TLsb3Aj5I4K/Kqqbf73fm6+H/F8lVg9/nGav3W2GjQd4aNOGHSdVd876prJlwGAUW5DgBNAYBLBdBOQPrvINtXAon9AcEpAGDAUTMCBCr6jK4rQIMmSNSqQkAHmwywvnBgeGqdCGTNfhk+eWDSSZgVMx4Mil4fvyUsjsSpRaAwCVi8HmRYVD0MI1JMflhRTf72xRWEOdpHG9OJC0aPTXBvmtfGyT2YyYkJJ87icCBBMuaHbqrrIkS/LxAVgENq2xNj4dhiACk5socofCCOq8UNE+lhw2ABp6gQ3HKg2xmHjACemIzCWBEKcYWvYtE7cHiqezHsr3OnmtpvW6WiR3TK+ihMqdJGFm1kw2ypFajTxcnT+OdXeUT33F88u8WL3nn3zGzOZuednniyn6YQELaqaCL5YaBMv/wW5dKXMRHn89fFnWFNgzpvFop5q55poO5QRi8D/XrLSU2JKiFgJdb99VDUuA7o5yKAdzgulkibkDdQMtjE2ZuOMIFPeTtWOqjfUDRehT5D4AfWZWwWz8NU1emDFg3NODI0Ia0D/dcolgC6OWcYKAG1eCXte6l89Vb9o5w1G5X2Rnt84L3/ZdpFYhUlog8hJ0lNDcKrp810xJ8ek/We9t0Q8siBQRKcbVB37CGN7duNh/v7iY8dau6U4PDOl8ybFCaLTEMG1YtX50Xc3oCC13bu5cTeBWLYNGg4PtfO5uPPoMQ1YFUmUFVB1kOVzgngBIoHU6Jb5YumVE8i5Ku073Z3qVY2TgtyYAYFLI1XgUQXGCVixWQfCtMLrHHXgawClDZMMm8tZ+lp/Z3HieVm4kA0fD1j55oxeBoOSSIrWXGSKicAtAI5wo/ZmErXjFDDB9T5TDNV0whLziO3BXwHgypBrbWGVaU17R0YY+Rcsfg1ziLTElI92cvwGDMoJOa3h1GabgOCY+3Uxbk0GzNoDb0aO3L9YIOyWy4krGjA6FF/GZ58fd0nJofa0U2gx6aOvBVfBvj8uEU0Tb59spKSEmWvk5zGVJ404vo55l2URWah65jJFqxkeFQoWTo1m/I8cvWFm0hWF2mWMGifuLU0VjObUR8/u+ug5KP3rN9VAglJPZvp2f7c/NT107NrzO6tHYV/0U4cMRcKKWS+J1oaWbFCNND21PXjTY73zheQNF1fYhLHhHAZ5rv4SHX5bai841a+m3ZZ38dHxmRHSvbucigfpA3i9xNDahPtjdkne5xBxcRiplMLHTwSGmQucpRyNxRSwOklNOnM7hhnavPIbUlCGvC+b07jrkik+6rP+rtS7XwL+3UD2udMKetVaL1DXmfM/K5N5e+zIYgTkp2VqCyOLiXBEszNLj8uZ8BQ1U3R5cIgXXKrGE2BMq7/XWUsR2LKtOq1x57OC6GxXZloa/o4iboIqcNjnXmpauC5xUedkoYxhH9Eavg3pYsajbvySFOrpWW3PnXjd/PhSUr4UYijrduX36SOyIbikvw2Z9fkdOpz0qzR5jKbN3kGs8iQRBZQBg/nymn/mX96iWl23ym9DC+twfiGWOKjs0cBO8zwsNveUmCX7uswGR5pGaWHorC91L+jwZ4lO2Nmnwmr8aiL9FoqxF6RdVTuiu+dJ/oxP+SO9AK913fDYA6+pX3Vh7Q6+lcYqZW+Qcje6m4/QfK/w7DAYoUtGZrrR1zLirMVTpbvENpNJ2gZ8TnSbGrrccLKQXrtxBCzI42pAuKcyTK+6dp5OEzXFvaeXQKpbeaItMezuK0T8QUbr2FQTipvf3prf7wqY7az8p9r6zSZv/Oi64vXl3Q8qE+XNViUdFi5fDV9AiAuqpxZTeeGScTuPAr/k+U7L2AooaQ+1bviVZeGpmg54O6MTvvBt77qnKvKmlbjVs2JBWq4wbLhwBmsGzFltikXzChSNFYk5Zo0h9bzNWs9C2u3ogo1fMxNN/zrx+wbbwFqkx5X6w37VozZcGKCCmHnSzZ5hpKVM7G2Tnc6w0lvyPXTIdlfoqqWBMY7JrMF1aXTGS1vndc38/NIavZtYASaxaA59nB2cRb3hoY1i7Q3dFfmqQPd+6YXtCSXqaFiPjZHG+Z+DmlZoyBT+AYttqGhTGrTLjMclAq/aILdmwhxp+HpiKFUhx4OjWxHhWfRNnTWCtnZKWypaK8H8oYKmpvtYS9V2wjZQzc/nXFBLo1xTwdmC7ii0L7R1XY24k/kGUXffRQ+v7Ad7lKt6yUMMnEgmfpjLUa+RyGh9if0UXbjwds1SE3eFdjkUIHyCDZG2eJpNxVOtEzO9yT+Rt6X6HjQrcuzOecypvBJl3DTlzHCuGNXq2VOglGPYzg/eHh1r+i/9+ta32WE4r59zXfkxz0hVDmBRX/ph3Xp49vXpXlFzu5ttt04fbvcjTPoUnJTe6xPOZsa63e9Z4ZrCd732Fk4Kz63nypiVzbOUMx4g/DHC5XQ8r1PKA1aGevrakitaFwkpcXUebq0Sibj7k6OytHslXq2V2Re6HlmfIF0nDDcWZ1X9sd+oN9Q2talhyqsYHE7XKgI7AqlkY10Au68rNJx7rf41zJunNewNGm+Q9hfoZ4UxKdO02ZDEXY20hMHS22VjkPL43GdxwaXJtUOwjhtM+yYJ97pGI3edKLSKb0JhOg6DC5yUr2H0L9Alm73C0WWpDvz8V+K+txVt/nI3aPXdW6nG2Hcbj50uxFJOLS3mg3fYVLduDhSF3v4tJ2aY4Rpa+fMvvNt87Rq8nzw4m7jy+7WAzQuFH6UCt4XkvvS125LQ+cuJ0R6gb32m7kZAUHcjJjIXHagp4oyHpYvWubgccSC41Iy+F8h8gkBmeM94+B3pA6Z/RO2b7XYsiSKlRVVVQZqK1YHKys1NG17Pa2D5vdtg6NHl3O8ZYBlp3kGWBQ9AiXyeib0ddul6rBlKqqVXcgqHIKcTJSOpzZrjDgLSSNgIwsRgGAsYE/rLinbkxG+rOqZAYAi+Do6D4Atx778CUD2Z+VkDQ4kNwXICuXRsoImocbYL44PVztqcBzL8tM51jxNW4hCH4//P0YaIBRKAxRWcAGuBjYBZCg7J/vckMxjOl/G4mr8JkP0CEB6JKESn5WKCEWRZB3TFveeNBmMfXW1XOu9PG5nuKomcHLnI0ay+R2jMTwxi7wePOe1BnggeuRa3mHfNzvDqbHFgNRcm0MTp8TK8GSHJOy/hf5enZW3ppUyaDhOWiMABBwWPtFcpCJTNRTDSJS5iJKR5Oz2MFmn4SY4j+iR+WjGAT+J7rNWd3+ga99cwr28DMGYMfIgfYEIPEE6EFnssNCsMv8CmTqb3itJrI6hYCIJyURtepctQWZdhUu04zYrmYHBUS7/uW0wb4hVVnSIJmchUzLT7uewy+bLGT7VOQFKyDPJ2TdZ66eyOxsteUTCSS01LZ3kIisdXuVABuOIHgnPn+PNKN8lBjEgRw3ZVbzJU+3sfMtOEb7kM/I9YaVEzbIuF1Fnce4xyOpHYeY+gCQz7SbF1OPxpdXldAJtML5o0+bcYt7sb11vagruhTrLF3O9E1wjAxeOvnXOr5IkLv8hniKQ5fBEifSCwL9BC2JAQh7PMVU7KfaLfJ1jS+9ot1gg/wYsAOFN/lM2ilr2MlOnubPS5EwOAZphUCaNlVCQ0982jXeVXUyXIiNRlsOWRGXzwhIdD933mpJ6ksCfmkgQKZKN1JMldArRIyw67pp84wqYCI9koR8bdwwZ8yMytaX5kmzU+AkqwsO8C+NjijkhzpGWP3Uzpi0h+8g47Cgelxn9HFwes6vwSA9peEBuXvizPdfurBw56CqN0IcZnfz5FU5hEXqpCyOaL4sKSmJ6TSJbVEv4lRpVoWehZ+iefJc8kpdXHkk/0j2hAd65yuScSKrpV+Kna4ikkiWQCeU0BRa6apmupryTmLIgP8aIdingzCuc+P5GJ+923EJ2bpZP8vR6VoIjuEJQoNqnlaTvTDvCMzYKt+luVLTiRZXS85HpieQcFbC4J/4e+L86FWORD0YZFBYL+5SnGf2E5WkaYbUxJO3PGXAd0SMncrFdO/R33xC+33lLGx5VtJ8QO155auUmlSGpRDn7gIjzV+rBibPQdInjDXIqNoqQTExP67KziLSpxCdSuYpoBv8Z/8N013Eij0gOkjNsLhRWv7rTY2JL24LVQIkYEP3DMIstmrmxAVJPGYnSPvP43ngyc4Rq91NfxZnjvcKc66xfNI2CvPb04FPVkoHp1E4PZfglaYZnUJxjluBHbZrOHFTzzsK9E0VdvdSnsj490Hrbn0uxsPK662/JHC6+zONUlcQ8Hb26bbNU5xkcR+vXEsBADAiVkmkn312eAb9onassxyTlRKDuY+HJsM65aMvWTTViQEDf+kHZDnzlcSxZoknqIUHfR5+LBO/oFVYaue2fqasDkUzc9Ny8xh1POzr3bYe4yQ3zjTUINCB6pJc0KXAwQ2dvC+YXWVtjGjeP/x+3Fnntav7aa64W2T80RcT3WJd4qMJqKsPjbXzESt61c0Lj3hCOilCeklhGiMEksNwxyqVei1iJh/FpfD4+20qZtqGEFBaZTbspsUrkzfDyMqJsSDqvNF82MW8VSEEMSBvDYefinW/8JMTQ3K4hbvx2UNuQ0FNF0GkS0wjROBXHDRvP+MDhF/DpfIFFNvH5NJXYSjIb+KLqvFlHdhZQOpw00iGVmiBSFvrm/lUU3tQclJG5CHrLiv4aDP607vmQ2EFxKyT4lr1CDJiplYHCSq1WWOPvXvdJcz5xoaedQRwaa+sdj4Du7xZbxComA1s3BHirCOWaxDQLOS7JnY2N20BfxAonSnGp1dDRWqkoL1X13q/Km7HES0qtSiL/w5O7O056W9TqydFrKA6p29SpyjQNnhe4Wesy0nMmRqRtcD+Kn0cRV0sanvb9yEeylfvTeGX5vonu6eg0rJtVBi2DXGjlF9nCKlCHLimdajQJ/P01qf6BgSn+/sl8gUHgmBZsbx+T5ii4a5osvNeftIHVVUEpf2550YE8uSyRfedLoQd/GrHol8bD50oalq0sY0m0jFXAcOIgMgMXWrUxZFyOhdpue2B06wxy8ExNGEq3LRvOVYW/qXF9M6yazhqNvq0LVUGeNBbnkBvZ8CMDscPT1lOJPQfaBLHTsYCLrCl3/bwDp2IDrDO4OnLRkaSQD4WQDyr2pIixp8aUrnXgb0SPuOcfvt7U3RS6I4BVYx/gRiqCAQstYCD1aZ5qRI8ozXblb2e7qgk/NjZQozG02LfCk7haOH42ku2gr5hkuaywKQDARY805EhiN4vfH3SzkVXsZKmvTkjOIiRWdNlutiygcDYkMIVOkRFSmau2JelYhuv6azxZqLbCS8nKsUgkWFfF4LJwTPdbEkeq0iR5Wq3hdDAU/NiISkSSzE0YCjk9nEyvVTvrqyVnxOd9XPYX9TcE1L0vQ+hb8/LKiqjM+OCAPWX8rp4uoaNOLCtlJ8QMad1iUtydw5H0kmzEGDN82dtKgh9VSjLT5f4+R0R+ax4fMd0Fms+A6JH9V/xG20SATYk6FGAaJe7fpVqYZxapQxiyOp+sqvt9ad9EFWgaSCC28bIXRJTsXH+v3nnGPAOQ+a1158R9vOWIQZMTS5TOEUwFof+cuIS6yiigTQ4SQjW7HZKQzpke7idgTaaEpEoiLgr82erzAWJAMmvmEPAGB6vSkIBXthbkMwHL6T4yIiiA93W4O3W144sWXATDGNK8mcBP+eD2OZnYOxk5OmQJACzgPOfi8Vxx4nf/QSA/8G5NsebXxhSy/myksUdgTL6ZFTMzEIfU3ykgdyhIZlTKNWhfZ09nY4Wpm+b4My3HGFJd1PuY3DKLaqNrTtZv7qKc6LsfYqD4cRn/eKmP54pmpoBv1r0Z83ii9CRycUH9vfr91NoBMkj9ycyasevIFKhUuXA0bqaHNqPIpTlzv36aasUNshhvVGeu2+nIBgtNPLif3Cgsnpc7a7Z1JHegTbnIqw6dJpj9RIL/ZG8a1LomkUZXLQIRK7y20yU9Ja8RA9KDFCKl4z3jroJtJ4+oLRznWCyfq2Q65J7GZ/mwWHPW1H/2j1qrWLqN1qvTbkf3v6dYz7HOv0ry03C3g89ylzWLRV4NR5PjherACyAJ37myE1T19/SvD/56xKhLrAJzPEEG63aB6rX1CXXLDtctPVsieBla35vea8xr3L19UhbszUz59RcqZcvx+LsNUOzkBv/wjPBwcYaBLyMPfy8kGHemUvziPb0y+XCfzMAXZ4rF4d1fdLmJn+XpGe9HSd1BMAqvDNssMClMoBAVUsJSR/uWynmUMl5ZVFq2MEyUHRCVxiujlvPkvqXq6FJWkMlPznaLDeLT871VVXSnPJ6KnscPdIuTs4FjU3l6MdLeD2Z+WNM7lKYL6ksIOajrfbQGvF+z8dGa3oO6hJA+XdBQWi9QFauiFkf/FSD0D6JcLnGu2SXFO6kNYcJCUZS0oDEw+UQ/GHCUGReogr2SBVt7tgYkCzSiKOpvrBJziVxe0BHQ5djf039SPR4XHRqhjYmkpLlZR+UXaXDuJiazlgN+gg768qdto7wjQxoNJmXQwc9RCq9Icoyf5zWyVdD8nNBHs+EQbX7uHeCdH5+Tl5WYnmeRkZqQEZLrUhTkR46Bv9ls64gW72Iy14opgGcdbeCLjQr0Z0ed+E+4oOZhDMU36/D0ErzobE44sCRbB0z8hAivprQyayQGAcVjIl5WYqDA8Q9VYz5DiPgl0pvQEpe1JLuhHxzGAOX6mkWue1wgLgLI0XXmOoDndR11gcuPTQPS4c7uOFH7RrQcpBgB6PNW7SQbi6fWE7aE/T+/KfDjfGj15luBG1gTC5Sb+5f1g9DbFUTHhccTKp/6RfISc1gxzlEWUptSTGFAXIl9sK2Hw/k3T35oCqZRd1r8GJYvBy0tNm55C0zkRdIIcvsCxK0AtD1wLndstGkODrZpdqx3LnkAVrXUYUmpQtgYTT9oA02VxkpzK0J6U+XGvW55wLFOkm9TWMqqy4vzjyyMLojyj8qNZZlUdE5NA6xtgDm14DeHbT+d2M5R1LXWXeowtZiAeMr1DyPTNft/V6n9S5rNb11JWlEYMeyFaFA6eKEkZ/5ZmGY+qMNL+9wwMVEMyDeW+ywH6t84oTRW0GY3cvNPjG7YYv7G1w4+4rjpOBDrDBthJ5mP1ge2lrtoQ9xLcfJNV69+pNOfnWy08PndB5BpPo98QC7taHLSiqOjpIE82nB8N7s1IFbud6NWKteKXn8VHr9AP+z00wE6Y/8vTk6Tgwz64LUD9q+oDq/sHb46UL+CZFqMUJX4cxaFEj+56biM4ko7ywAtdbT//2ZgnfxGLD1wpPd0+nuSBdVx1M8Jy3h3FzS/VrEGagxeYPu7wGh3X6wOdkp2dknOtWOpC1bykjuYUPw7OB8QgEBmviG5ii2hGMeIjQK9WG0X//6p0bjd+zHTGo2r33NB9UFtnBTj/vvHSzJsi6R6ydTGyeTdLPWSYEf89u3BYlDCW16MbeVvhKyzbjrv5yddaUT6M8xq0fElWbzUqrGyHq6qhpRbei5WZmvjGGUUm+xSGjgpPXhjEPXAeci7ytQlDQjYp0E3CisWaG+YeW8Qwojffo0o48Vp2DDULxWL7Wu8HhkZ+uR6maaRbxPHuCW7JK5VgMi6ybyoII4EszmIeJVGfFGBN4EmOyl5hqVXY6QUbRqnJWQZ//ravYA0w8xKGfzGTGVZRFNNIJ8+EqsXSJHXrJDOeYtYMX1s1Baz1VtnmIpivEhaey40/sY6DFORI16E1ot073sbDFORUS9CWx2jlvMf35ZjweIHibanayezP8zUjesFtsSP33rbJJdNWGD3IOY+2NCAbnCMHNCabq7oerZl5txktrLBYEy6Nt0o6BxoezenB9skG5veeEjpUSdd3//AvGPAG3YrcLp+GEfRGde4Z8ZHo6cXxjuttVKBHsWxK2hrXFiB3ZpvXKzMwbEJW++A97K2reusZn055311P17+vS3ydov+9WYvZ+36528crih0D/qmnm5SoXrLxAUK5TRDw53Oo3hY0TQA51C/3L/t0c00Zi/t5+tbPA693CS/D3k6045heHVxg/s6pMte6dbClLdMViV5Qt4zdaJQJg0Nh3RZPEs9H4X5Wfl9XlbJXAkxQ5jiWe73HM3c5/UnN3b9aRmdfnDrb5VbSWNGlOFxm338TjS3KQz6xY/tae6UJZOBffpbo/ksq9odc56zTWE4e1zjMZmrVLzwGfVmSxo1gn/7uhbVCuHEe/7MtWwTXONRS9rw8ZTc2J1CmjCFwSjx4yj+1M6njCyIo5UaQ0LzZJwbtayaBApjc1BYLSZzlRjyyEfv2NpUFfc5xYgGt9QMRKaEPSHOnt+zOUJoRLq4dnJbLFL33wc5ClwRL+nSNmer0V5aKSyOy+5kvgrbjE2hLFchNATwF2GhEmJJ2EbFNJxKqIxGQS6X1gb/HvZS+F21guXlMQf+fuNEn9VJB/r34a4s8H9/vW1T6QZ9thpwrb9mFoF/76WeSqBmYB4yix4E8KIGKNre1IQlCAlBGZsIEvkzXbCl7tEwcKb+fllTj/Rra+azcJh5Adtn6rJt8O+/3K0viX7E5VYA+bL/8mTb/mz8uMdXw1dxUaP09pdxdZd9WWd50/81KTT/xptuREG1geyh+UsIZCDVvjtfcfP+vv/fIRzn8f8dfzm1bjV/bzmL9uzM3/xi374+7/r5lB6rrvW+x774PQaQALAW7d6J2yql7T9DHcasW6FmnJS8YH8BVLydpIOJvcjVUXQYyx3vWkAzxMz3C0tjxuu32drmKVH0zuOeoLTNzA4gagE4MAEvgkxUmu/OBGREgIWysGphNalCNctm6IzoXs/ZshWMxNOtpI4dQdZKEuyIe87FI6cgO2WmZ+NzEuLLlh0dGaFtpUXVVgUnNWA/33iBp4QtdKIq2G/RIxEZTVKjVuiMceVTKqXrTpNW9/KWjEPmFOlEjFhuV0wopReZ4K61Ii6GIp6YpeOcdLJPLNtm6kcYhOUudr0aGJsXWAGrSVaTqpACL4C7ZlDKTNzqaja4EjYejJxfzk8SNlA5Wy8NWQF5G1xZkOV8Da54wIpMWu29WC8yuMKec6IOZiXm7GmCvOpVGaN0jcGyVw6jvPahxb0lQLWswB4R6jQTq2ycMM3KCdE8qRtO++tqUa84bzZQpZeUIzlDzISHyN86MkLetVkMvR2zbpUh4/hPeVbmJCoa+67OXB44I8EMvZGQFSQPR08ENAi1T2rTKn6bXXFuy1MlkgrtkYek/nl2RUKoVQ8ZqamSNA88VL2sTNQik02SIFoFDyWSJqHeHb8GnKFzUHpZY5c1LXqLkRVgAyHIqOQirCYp+usgWxW2gQ741HoHouqU4FFC0CrPyWElFyTdeX+URH1mduFSScV1mU1V+HagXE4rNhGoUOUwrqvWAapWIkV7sehqlZCVUmQtkdRWZMCq6Ktjh9nhGw9HlfZfOV3hE0Qm67UHLSWSQu0VKaH+qvRZ6Y6V1LEAv2U5VQA/qx/TfKccZKORM9f3glAKujls1toIz8u93VpgMx2B4JmRfp7j0FRjj5syW3O918GUvCKymtOwycQCAc/DFailhCI40JQBayfH+XpiAoHRN6wwYLoG+Ow1heHjSz1mLnvEoyyIHfegAycxCe+yzoFojjLqzsPBAALgcr7298qB5l0X/45HoZ4A4NmtA+s1u73/Mb1QgKMMAoDAvkSgDp4l2w4IyF5f+j++j6bwHLWKIX55tgxOQslMsq9wG+fG95cKviX2FYa1Am7XjYhuv3AbQkhlv3V9iNQXe4PF2NYvN6ttQQw8Rbz6eNW8zpFh+oZ4DN53Re3n6pc+Ntbut3rQRAHuzpNhfXS/6MqB8HHR3P5G3SuoDikXSicQsXgFyiEJg1sDpIMjD5KDhhNBm1DatYHX2HBI++D2MNVdW1ChTuGDU1iLwluZa3wkP/Cc4fU7T75pODZcdy6qPXWlgdRWQVrtMgkqyCFetqpRHG3gFrnwevFO7LaSalZHkhjVO++Rhb1br5IvIDQIIw30OpkZ2VdwMo5ZneNw6/5lM3tpP//yjBECdxubIXippM2R6EGMB4hvPtEbCZbOXSbce87He75+5Seo7RpSwI+eAOWBoDMDIwNb6Ci2Y7/afUAjYg3WeE+CcKnM5Ys+Hz+B0BlbhHPEFv/Abhhv8eRcDeVDkWfcwv1/uD6gu4EeH9QpoKrYVNUrynMjNwjRRQTOtfLLBPlQIuH6TZdXgzxPkXKulUJx7kLxM6DtgjQwFsa5p7wuGTOI0By3WAJBruKS7eOVhQIFmVzObzuepUMJkI2jS+MviS4WScdRiM6RR8IO/KZk/TilyV284wsawbwAAmgKNYisRfzrQ3FAWWngV8mbtWixmXe7QRB4sRsMnr93Q+Hl9G5oKHbvhkHESLH4dexqjRBbgvr4aaDWDaxPAOHuRch5o6yBPM3CVbOUm7Bb6mmZF8svQr/T8OcXN8WTHx2WxfVhoo3Saofm0dknYQwclhOX9i7rm0RLp6jAte2AAF9+gH9YWbbsQ699tr98Q30FwpxGjQAmKWo8XsEGvZ5EVDaF+y7DbpovDgj8p3goU1vBlOkoq3daeXIcVCJXpyL305QA3BPyzz8oZaUbXUVCi5po69AYG01/v+LhFCZVh4oF/PGM5gcFbV4viIwSNvfSoRuTShvLdlzPfxHRtcWEMi6k0sa6FxSdUxBGcZK+NrdpQat+4Kbt+uFZ1j0s6/YEbUz/9nndz/uBEIygGE6QFM2wHC+I0pOyd1U13eAnZv971/ODMIqTNMuLsqqb9oXFb83LZ3oXX1xcu/7wPxoGRyBRaAwWhycQSWQKlUZnMFlsDpfHFwhFYilpGVk5eQVFJWUVVTV1DU0tbR1dPX0DQyNjE1MzABEmNMNyvCBKsqJqumFatuN6fhBGcZJmeVFWddN2/TBO87KW2vqYa5+L7wfvkkOSFVXTDdOyHdfjBUAIRlAMJ0iKZliOxxcIRWKJVCZXKFVqjVanNxhNZovVZnc4XW6P1wcEgSFQGByBRKExWBw+6iOSyBQqjc5gstgcLo8vEIrieqRfIpXJFUqVWqPV6Q1Gk9nSytrG1s7ewdHJ2cXVzd3Ds2qXyMai/d5eqSd9ZgTfW/YkJZdqSChoOAgSieUedKuDJm1Kv3oplvwm+x+xRnY5XeVRcbp91UKuGfabkfOe7RDKvzmSWuDJmeTd756C9wY4tR4AAUigtpU3VuBdayAlExhR4sxBsACiYpaiCUIVKtW1VIM6daMr1RSMZIq9yXnnPXBNQqIDzHse1QicApAuo0pUeg41wMFCIwABMJQMMhBZg0IVrjc5IHAcyQOB4+gsCyKwozgiIqIPajUUdkRFz/NNilE3SxK4nGW3g21aoDZZ8RAwcPfYzWHuxGn5/ze8lRd76yAvJAJQQT711T2kwHiuLM3FQaoGVbyhKJnElIC0SYKUSRLGBXBDCwchbELRYB0IOQoQWZMCYSeBolI+2DW8ujQvNqFYUQkKOSuAh5RXIUB0zZy894o15Ii0jFPUeWcoNWnkPbEwgjUkCAThXQiATn1CTxFAVvRmFGETiKQHDmAAoFqAg0eA/r3ZGeXxWx61O//ycpTzAg6iCQEAEelKOm20e29fy/kfefyd/ycZxTpuCL9GZw6Z2wxr27MbGwt73tpZ+84Uw7OT6bR5zPQ//ZuHy3qxn/hqnlaVx1sWgENCfYQ+LblhYOERfhjOSm97ILK0UkG8SRA23ALX3cZ/xsPqo757YkackJsmh8BMK3twtturJxOefHzFT4PDqNh3PTtUQ4/4hd9c9mSq753lWTmJBQoECK2qiOrDSOvhiDguhZ7HVJQNdBHWl7m1052f7sDRfGAIDroLYqQnHV2EBUErD8OsiwOKGEI9va6C2nA2D9dbu2ulWmhF5IGFhFtKHbRkVaH5Qk3Zg3hOWZWDcUEhQERapzPk5dT149u86CGe4TyqUb1aTqIDbQVxweNTLkD4pK/LWpxnu08S6lw573kAAUXGGAUNC/e6v9dM1ZpzkMTu6uGq5GVv2G6PRi8KAAQDh4CEgoaBhSNviIFDQEJBw8DCdfzmTaqqF636rG059WYW2HprWsqd/eT/p8zY0ePyMTXLy//mTL6OR1lCnBb+qzL5Ph4px8Hh/6Um22f/nRkmjEZYool9X892waU92D7cmqTD0HMIiDomurbWywQuTQPpQb3y0WczqLWF1yaA8nojvG95VdEpjemUAqNFU6fYQOHarwAgIhLRsgbPtyCje6PiG6E6ntIxnVIkSOpcaQjIX7q13KxLu2rm2dp8PPtR2/wv69z7Nvo/31NrJQA=") format("woff2"); font-weight: 700; font-display: swap; }
+  @font-face { font-family: "Cairo fallback"; src: local("Segoe UI"); size-adjust: 97.6%; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #10231b; background: #f6faf7; }
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; }
+  .logo { font-weight: 800; color: #10231b; text-decoration: none; }
+  .hero { position: relative; display: grid; min-height: min(80vh, 40rem); }
+  .hero img { grid-area: 1 / 1; width: 100%; height: 100%; object-fit: cover; }
+  .hero__text { grid-area: 1 / 1; align-self: end; padding: 2rem 1rem; background: linear-gradient(transparent, #0b1f17d9 45%); color: #fff; }
+  .hero h1 { margin: 0 0 0.5rem; font-family: "Cairo", "Cairo fallback", sans-serif; font-weight: 700; font-size: clamp(2rem, 1.2rem + 4vw, 3.6rem); line-height: 1.25; }
+  .hero p { margin: 0 0 1rem; max-width: 32rem; font-size: 1.1rem; }
+  .btn { display: inline-block; padding: 0.7rem 1.5rem; border-radius: 999px; background: #facc15; color: #10231b; font-weight: 800; text-decoration: none; }
+</style>
+<!-- 3. the rest of the CSS: loaded without blocking the first paint -->
+<style>
+/* everything under the first screen: it can arrive a little later */
+.top a:not(.logo) { color: #14532d; }
+.trips { max-width: 56rem; margin: 0 auto; padding: 3rem 1rem; }
+.trips h2 { margin: 0 0 1rem; font-size: 1.6rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1.25rem; border-radius: 1rem; background: #fff; border: 1px solid #cfe3d6; }
+.card h3 { margin: 0 0 0.25rem; }
+.card p { margin: 0; color: #335c4a; }
+.foot { padding: 2rem 1rem; text-align: center; color: #335c4a; }
+.btn:hover { background: #fde047; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+</style>
+<!-- 4. JavaScript: runs after the HTML is read, never blocks it -->
+</head>
+<body>
+<header class="top"><a class="logo" href="#">رحّال</a><a href="#trips">الرحلات</a></header>
+<main>
+  <section class="hero">
+    <!-- the LCP image: the browser picks the width from sizes, starts it early (high), and never lazy -->
+    <img src="data:image/webp;base64,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" width="1600" height="1067" fetchpriority="high"
+         alt="جبال خضرا تحت شمس العصر">
+    <div class="hero__text">
+      <h1>رحلات صغيرة، ذكريات كبيرة</h1>
+      <p>يومين في الجبل أو على البحر، والمواصلات والأكل علينا.</p>
+      <a class="btn" href="#trips">شوف رحلات الشهر</a>
+    </div>
+  </section>
+
+  <section id="trips" class="trips">
+    <h2>رحلات الشهر</h2>
+    <ul class="cards">
+      <li class="card"><h3>سانت كاترين</h3><p>طلوع الجبل والشروق من فوق. ٢٤٠٠ ج.</p></li>
+      <li class="card"><h3>الفيوم</h3><p>وادي الريان والشلالات. ٩٥٠ ج.</p></li>
+      <li class="card"><h3>دهب</h3><p>غطس في البلو هول. ٣١٠٠ ج.</p></li>
+    </ul>
+  </section>
+</main>
+<footer class="foot">رحّال، شركة متخيلة للتجربة.</footer>
+<script>
+// defer: this runs after the HTML is parsed; nothing in the first screen waits for it
+document.querySelectorAll('a[href="#trips"]').forEach(a => a.addEventListener("click", e => {
+  e.preventDefault();
+  document.getElementById("trips").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}));
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** صورة جبال خضرا مالية أول شاشة، وعليها من تحت تدرّج غامق فيه «رحلات صغيرة، ذكريات كبيرة» بخط عريض، وجملة، وزرار أصفر. وتحت ٣ كروت رحلات.
+
+**الـ ٤ حاجات في الـ [[<head>]] بالترتيب:**
+1. **preload للخط العريض بس:** هو الوحيد اللي في أول شاشة. و [[crossorigin]] لازم حتى من نفس السيرفر، لأن الخطوط بتتطلب بـ CORS. من غيره الـ preload بيتحمّل مرتين.
+2. **CSS أول شاشة inline:** المتصفح يرسم من غير ما يستنى أي ملف.
+3. **الباقي [[media="print"]]:** ملف [[print]] مبيوقفش الرسم، و [[onload]] بيقلبه [[all]] لما يوصل. و [[<noscript>]] للي الـ JavaScript عنده مقفول.
+4. **[[defer]]:** السكربت بيستنى لحد ما الـ HTML يتقري، ومبيوقفوش.
+
+**الصورة:** [[srcset]] بـ ٣ مقاسات و [[sizes="100vw"]]: على شاشة 412px المتصفح اختار [[hero-480.webp]] (13KB). و [[fetchpriority="high"]] بيقول للمتصفح «دي أهم صورة». ومن غير [[loading="lazy"]]: الـ lazy بيأخر الصورة لحد ما المتصفح يحسب الـ layout ويتأكد إنها في الشاشة.
+
+**مقارنة بالغلطات الشائعة ([[before.html]]):** نفس الصفحة بس فيها [[loading="lazy"]] بدل [[fetchpriority]]، ومن غير preload، والـ CSS كله في ملف بيوقف الرسم، والسكربت من غير [[defer]].
+
+~~~text node hero-fast/measure.mjs (Network على Slow 4G، cache مقفول، CPU 4x، شاشة 412px)
+index.html                      VeryHigh   بدأ     0ms  خلص   617ms  4KB
+cairo-arabic-700-normal.woff2   High       بدأ   627ms  خلص  1380ms  14KB
+app.js                          Low        بدأ   628ms  خلص  1220ms  1KB
+hero-480.webp                   High       بدأ   628ms  خلص  1390ms  13KB
+rest.css                        VeryLow    بدأ   633ms  خلص  1235ms  1KB
+الصورة والخط High، وبدأوا قبل ما rest.css يخلص
+تحذيرات الكونسول: 404 لـ favicon.ico بس (مفيش «preloaded but not used»)
+~~~
+
+~~~text Lighthouse 13.6.0 Mobile، و LCP حقيقي (PerformanceObserver، Slow 4G و CPU 4x، ٣ مرات)
+Lighthouse  index.html : Performance 100 | FCP 0.6 s | LCP 1.5 s | TBT 30 ms | CLS 0
+Lighthouse  before.html: Performance 100 | FCP 0.9 s | LCP 1.2 s | TBT 0 ms  | CLS 0.001
+LCP حقيقي 412px  before.html: 2020  2060  2052 ms
+LCP حقيقي 412px  index.html : 1388  1392  1420 ms
+axe: 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**ليه Lighthouse قال إن القديمة أسرع؟** Lighthouse في Mobile **بيحسب** الأرقام (simulated throttling): بيحمّل الصفحة بسرعة وبعدين يقدّر هتاخد قد إيه على Slow 4G. في صفحة صغيرة كده (٤ ملفات صغيرين) التقدير مشافش فرق، وحسب الـ preload بتاع الخط بيزاحم الصورة. أما على الشبكة البطيئة الحقيقية (Network.emulateNetworkConditions، زي DevTools) الفرق ثابت: ٢ ثانية مقابل ١.٤. الدرس: لما Lighthouse يقول حاجة مستغربة، قيسها بالـ throttling الحقيقي قبل ما تصدّق أي واحد فيهم.
+
+**على شاشة كبيرة (1350px)** الـ LCP كان مرة الصورة ومرة العنوان في نفس النسخة، فمعتمدتش عليه. والـ done بيطلب Mobile.` },
+        { lvl: 'متوسط', dir: "products", t: R`لستة ٢٠٠٠ منتج بتعمل scroll ناعم`, what: R`صفحة فيها ٢٠٠٠ كارت منتج. قيس وقت أول رسم ووقت الـ scroll، وبعدين حط [[content-visibility: auto]] و [[contain-intrinsic-size: auto 320px]] على كل كارت، والصور [[loading="lazy"]] و [[decoding="async"]] بمقاسات، وقيس تاني.`, done: R`جدول قبل وبعد: وقت الـ Rendering في Performance لأول تحميل، وعدد الصور اللي اتحمّلت في أول شاشة، وإن الـ scrollbar مبيتنطش لما توصل للكروت (بفضل [[contain-intrinsic-size]]).`, sol: R`الصفحة متولّدة بسكربت: ٢٠٠٠ كارت في الـ HTML نفسه (445KB)، و ١٠ صور منتجات 300×300 بـ [[?n=]] مختلف، فكل كارت طلب لوحده زي ٢٠٠٠ صورة حقيقية. ٣ نسخ: قبل، وبعد، وبعد من غير [[contain-intrinsic-size]] (عشان تشوف هو بيعمل إيه).
+
+~~~js products/make-pages.mjs
+// node products/make-pages.mjs: writes 3 versions of a 2000-product page (same cards, different CSS/attributes)
+import fs from "node:fs";
+
+const names = ["سماعة", "شاحن", "كابل", "ساعة", "حافظة", "باور بانك", "ماوس", "كيبورد", "لمبة ذكية", "ستاند"];
+const colors = ["أسود", "أبيض", "أزرق", "رمادي", "أحمر"];
+const card = (i, imgAttrs) =>
+  $__bt<li class="card"><img src="img/p$__{i % 10}-300.webp?n=$__{i}" alt="" $__{imgAttrs}><h2>$__{names[i % 10]} $__{colors[i % 5]}</h2>$__bt +
+  $__bt<p class="price">$__{((i * 37) % 900 + 99).toLocaleString("ar-EG")} ج</p><button type="button">أضف للسلة</button></li>$__bt;
+
+const page = (title, css, imgAttrs) => $__bt<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$__{title}</title>
+<link rel="stylesheet" href="$__{css}">
+</head>
+<body>
+<main class="wrap">
+<h1>كل المنتجات (٢٠٠٠)</h1>
+<ul class="grid">
+$__{Array.from({ length: 2000 }, (_, i) => card(i, imgAttrs)).join("\n")}
+</ul>
+</main>
+</body>
+</html>
+$__bt;
+
+// the "?n=" makes every card its own request, like 2000 different product photos
+fs.writeFileSync("products/before.html", page("٢٠٠٠ منتج (قبل)", "base.css", ""));
+fs.writeFileSync("products/index.html", page("٢٠٠٠ منتج", "fast.css", 'width="300" height="300" loading="lazy" decoding="async"'));
+fs.writeFileSync("products/no-intrinsic.html", page("٢٠٠٠ منتج (من غير contain-intrinsic-size)", "no-intrinsic.css", 'width="300" height="300" loading="lazy" decoding="async"'));
+console.log("3 pages, " + Math.round(fs.statSync("products/index.html").size / 1024) + "KB each");
+~~~
+
+~~~css products/base.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.5; color: #1f2937; background: #f9fafb; }
+.wrap { max-width: 72rem; margin: 0 auto; padding: 1rem; }
+h1 { margin: 0 0 1rem; font-size: 1.4rem; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { display: grid; gap: 0.35rem; padding: 0.75rem; border-radius: 0.75rem; background: #fff; border: 1px solid #e5e7eb; }
+.card img { width: 100%; height: auto; border-radius: 0.5rem; }
+.card h2 { margin: 0; font-size: 1rem; }
+.price { margin: 0; font-weight: 700; color: #047857; }
+.card button { padding: 0.45rem; border: 0; border-radius: 999px; background: #111827; color: #fff; font: inherit; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+~~~
+
+[[fast.css]] = [[base.css]] + الأسطر دي:
+
+~~~css products/fast.css (الزيادة)
+/* off-screen cards: the browser skips their layout and paint until they come near the screen.
+   contain-intrinsic-size = the size to assume for a card it hasn't drawn yet. It is the CONTENT box:
+   the card is 314px tall on a wide screen and 285px on a phone (measured), minus 24px padding and 2px border.
+   "auto" = once drawn, remember the real size */
+.card { content-visibility: auto; contain-intrinsic-size: auto 288px; }
+@media (max-width: 40rem) { .card { contain-intrinsic-size: auto 259px; } }
+~~~
+
+و [[no-intrinsic.css]] = [[base.css]] + [[.card { content-visibility: auto; }]] بس.
+
+~~~js products/measure.mjs
+// node products/measure.mjs: the before/after table for the 2000-product page (CPU 4x, cache off)
+import { browser, throttled } from "../lab.mjs";
+const b = await browser();
+const RENDER = new Set(["UpdateLayoutTree", "Layout", "PrePaint", "Paint", "Layerize"]);
+for (const f of ["before.html", "no-intrinsic.html", "index.html"]) {
+  const { ctx, page } = await throttled(b, { net: null, cpu: 4, viewport: { width: 1280, height: 800 } });
+  // the browser keeps only 250 resource entries by default: the first run stopped counting at 249
+  await page.addInitScript(() => performance.setResourceTimingBufferSize(5000));
+  await b.startTracing(page, { categories: ["devtools.timeline", "disabled-by-default-devtools.timeline"] });
+  await page.goto("http://127.0.0.1:8817/products/" + f, { waitUntil: "load", timeout: 120000 });
+  await page.waitForTimeout(1500);
+  const ev = JSON.parse((await b.stopTracing()).toString()).traceEvents.filter(e => e.ph === "X" && RENDER.has(e.name));
+  const sum = n => ev.filter(e => e.name === n).reduce((s, e) => s + e.dur / 1000, 0);
+  const firstLayout = Math.max(...ev.filter(e => e.name === "Layout").map(e => e.dur / 1000));
+  const t = await page.evaluate(() => ({
+    fcp: Math.round(performance.getEntriesByName("first-contentful-paint")[0].startTime),
+    load: Math.round(performance.getEntriesByType("navigation")[0].loadEventEnd),
+    imgs: performance.getEntriesByType("resource").filter(r => r.initiatorType === "img").length,
+  }));
+  // scroll through: does the page height (= the scrollbar) change on the way down?
+  const hs = [await page.evaluate(() => document.documentElement.scrollHeight)];
+  for (let i = 0; i < 40; i++) { await page.mouse.wheel(0, 900); await page.waitForTimeout(60); hs.push(await page.evaluate(() => document.documentElement.scrollHeight)); }
+  const step = Math.max(...hs.slice(1).map((h, i) => Math.abs(h - hs[i])));
+  console.log(f.padEnd(18) + "| FCP " + t.fcp + "ms، load " + t.load + "ms" +
+    " | Rendering (style+layout+paint) " + Math.round(sum("UpdateLayoutTree") + sum("Layout") + sum("PrePaint") + sum("Paint") + sum("Layerize")) + "ms، أكبر Layout " + Math.round(firstLayout) + "ms" +
+    " | صور اتحمّلت من غير scroll: " + t.imgs +
+    " | طول الصفحة: من " + Math.min(...hs) + " لـ " + Math.max(...hs) + "px، أكبر نطّة في خطوة scroll واحدة " + step + "px");
+  await ctx.close();
+}
+await b.close();
+~~~
+
+~~~view 760 900 أول ٢٠ كارت (الصور في المعاينة نسخة صغيرة)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كل المنتجات</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.5; color: #1f2937; background: #f9fafb; }
+.wrap { max-width: 72rem; margin: 0 auto; padding: 1rem; }
+h1 { margin: 0 0 1rem; font-size: 1.4rem; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { display: grid; gap: 0.35rem; padding: 0.75rem; border-radius: 0.75rem; background: #fff; border: 1px solid #e5e7eb; }
+.card img { width: 100%; height: auto; border-radius: 0.5rem; }
+.card h2 { margin: 0; font-size: 1rem; }
+.price { margin: 0; font-weight: 700; color: #047857; }
+.card button { padding: 0.45rem; border: 0; border-radius: 999px; background: #111827; color: #fff; font: inherit; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+
+/* off-screen cards: the browser skips their layout and paint until they come near the screen.
+   contain-intrinsic-size = the size to assume for a card it hasn't drawn yet. It is the CONTENT box:
+   the card is 314px tall on a wide screen and 285px on a phone (measured), minus 24px padding and 2px border.
+   "auto" = once drawn, remember the real size */
+.card { content-visibility: auto; contain-intrinsic-size: auto 288px; }
+@media (max-width: 40rem) { .card { contain-intrinsic-size: auto 259px; } }
 </style>
 </head>
 <body>
-<main>
-  <h1>حكاية الساقية</h1>
-  <p>جدتي فاطمة بتحكي عن الساقية اللي كانت جنب بيتهم. اتسجّلت في البيت، في <time datetime="2026-11">نوفمبر 2026</time>.</p>
-  <audio controls preload="metadata" aria-label="حكاية الساقية بصوت جدتي فاطمة">
-    <source src="media/saqia.mp3" type="audio/mpeg">
-  </audio>
-  <p><a href="media/saqia.mp3" download>نزّل التسجيل (MP3، دقيقة)</a></p>
-  <h2>نص الحكاية</h2>
-  <p><strong>جدتي:</strong> الساقية كانت بتلف من الفجر، وصوتها يوصل لآخر الغيط.</p>
-  <p><strong>جدتي:</strong> وكنا نقعد جنبها نستنى أبويا يرجع.</p>
-  <p>[ضحكة]</p>
-  <p><strong>جدتي:</strong> دلوقتي مكانها عمارة.</p>
-  <figure>
-    <img src="media/garden.jpg" alt="شجرة توت قديمة قدام بيت من دور واحد" width="800" height="600" loading="lazy" decoding="async">
-    <figcaption>«شجرة التوت» تصوير هشام نبيل، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>.</figcaption>
-  </figure>
-  <h2>حقوق التسجيل</h2>
-  <p>التسجيل والنص: هشام نبيل، بموافقة صاحبة الحكاية. مسموح بالنشر مع ذكر المصدر (<a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>).</p>
+<main class="wrap">
+<h1>كل المنتجات (أول ٢٠ من ٢٠٠٠)</h1>
+<ul class="grid">
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>سماعة أسود</h2><p class="price">٩٩ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>شاحن أبيض</h2><p class="price">١٣٦ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>كابل أزرق</h2><p class="price">١٧٣ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>ساعة رمادي</h2><p class="price">٢١٠ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>حافظة أحمر</h2><p class="price">٢٤٧ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>باور بانك أسود</h2><p class="price">٢٨٤ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>ماوس أبيض</h2><p class="price">٣٢١ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>كيبورد أزرق</h2><p class="price">٣٥٨ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>لمبة ذكية رمادي</h2><p class="price">٣٩٥ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>ستاند أحمر</h2><p class="price">٤٣٢ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>سماعة أسود</h2><p class="price">٤٦٩ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>شاحن أبيض</h2><p class="price">٥٠٦ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>كابل أزرق</h2><p class="price">٥٤٣ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>ساعة رمادي</h2><p class="price">٥٨٠ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>حافظة أحمر</h2><p class="price">٦١٧ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>باور بانك أسود</h2><p class="price">٦٥٤ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>ماوس أبيض</h2><p class="price">٦٩١ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>كيبورد أزرق</h2><p class="price">٧٢٨ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>لمبة ذكية رمادي</h2><p class="price">٧٦٥ ج</p><button type="button">أضف للسلة</button></li>
+<li class="card"><img src="data:image/webp;base64,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" alt="" width="300" height="300" loading="lazy" decoding="async"><h2>ستاند أحمر</h2><p class="price">٨٠٢ ج</p><button type="button">أضف للسلة</button></li>
+</ul>
 </main>
 </body>
 </html>
 ~~~
 
-~~~view 618 672 شكل الصفحة (الصوت صفارة قصيرة، والصورة بانر مكان صورتك)
-<main>
-  <h1>حكاية الساقية</h1>
-  <p>جدتي فاطمة بتحكي عن الساقية اللي كانت جنب بيتهم. اتسجّلت في البيت، في <time datetime="2026-11">نوفمبر 2026</time>.</p>
-  <audio controls preload="metadata" aria-label="حكاية الساقية بصوت جدتي فاطمة">
-    <source src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA=" type="audio/wav">
-  </audio>
-  <p><a href="#">نزّل التسجيل (MP3، دقيقة)</a></p>
-  <h2>نص الحكاية</h2>
-  <p><strong>جدتي:</strong> الساقية كانت بتلف من الفجر، وصوتها يوصل لآخر الغيط.</p>
-  <p><strong>جدتي:</strong> وكنا نقعد جنبها نستنى أبويا يرجع.</p>
-  <p>[ضحكة]</p>
-  <p><strong>جدتي:</strong> دلوقتي مكانها عمارة.</p>
-  <figure>
-    <img alt="شجرة توت قديمة قدام بيت من دور واحد" width="320" height="80" loading="lazy" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-    <figcaption>«شجرة التوت» تصوير هشام نبيل، رخصة <a href="#" rel="license">CC BY 4.0</a>.</figcaption>
-  </figure>
-  <h2>حقوق التسجيل</h2>
-  <p>التسجيل والنص: هشام نبيل، بموافقة صاحبة الحكاية. مسموح بالنشر مع ذكر المصدر (<a href="#" rel="license">CC BY 4.0</a>).</p>
-</main>
+**هتشوف إيه:** grid كروت بيضا: صورة منظر مربعة، واسم المنتج («سماعة أسود»)، وسعر أخضر، وزرار أسود «أضف للسلة». الشكل في النسختين واحد بالظبط.
+
+**[[content-visibility: auto]]:** الكارت اللي بعيد عن الشاشة المتصفح مبيحسبش الـ layout بتاعه ومبيرسموش، لحد ما يقرب. فأول تحميل بيشتغل على حوالي ٣٠ كارت بدل ٢٠٠٠.
+
+**[[contain-intrinsic-size]]:** الكارت اللي اتساب محتاج مقاس افتراضي، وإلا هيتحسب 0px. من غيره الصفحة بتبان أقصر بكتير (30419px بدل 132209px)، وبتطول وانت نازل، فالـ scrollbar بيتنطط (لحد 5767px في خطوة scroll واحدة). و [[auto]] قبل الرقم معناها «أول ما ترسمه، افتكر مقاسه الحقيقي».
+
+**غلطتين في الرقم نفسه:**
+- **أول رقم كان تخمين (320px):** الصفحة طلعت أطول بـ 7000px، والنطّة 77px. قست الكارت الحقيقي: 314px على الشاشة الواسعة و 285px على الموبايل.
+- **[[contain-intrinsic-size]] مقاس الـ content box:** حطيت 314 والصفحة لسه أطول بـ 26px لكل كارت. الكارت فيه padding 12px من كل ناحية و border 1px، فالرقم الصح 314 − 26 = 288، و 285 − 26 = 259 للموبايل. بعدها النطّة بقت 2px.
+
+**الصور:** [[loading="lazy"]] (اللي بعيد مبيتحمّلش) و [[decoding="async"]] (فك الصورة مبيوقفش الرسم) و [[width]] و [[height]].
+
+**غلطة في القياس:** أول تشغيل قال إن «قبل» حمّلت 249 صورة بس. المتصفح بيحتفظ بـ **250** entry بس في Resource Timing بشكل افتراضي. [[performance.setResourceTimingBufferSize(5000)]] طلّع الرقم الحقيقي: 2000.
+
+~~~text node products/measure.mjs (CPU 4x، cache مقفول، ٤٠ scroll × 900px)
+شاشة 1280px:
+before.html       | FCP 1352ms، load 4547ms | Rendering 847ms، أكبر Layout 376ms | صور من غير scroll: 2000 | الطول ثابت 132209px
+no-intrinsic.html | FCP  288ms، load  726ms | Rendering 318ms، أكبر Layout  87ms | صور: 30 | الطول من 30419 لـ 50892px، أكبر نطّة 5767px
+index.html        | FCP  232ms، load  692ms | Rendering 251ms، أكبر Layout  41ms | صور: 30 | الطول من 132068 لـ 132107px، أكبر نطّة 2px
+شاشة 412px:
+before.html       | FCP 1100ms، load 4298ms | Rendering 803ms، أكبر Layout 374ms | صور: 2000
+index.html        | FCP  240ms، load  600ms | Rendering 231ms، أكبر Layout  46ms | صور: 14 | أكبر نطّة 1px
+(Rendering = مجموع UpdateLayoutTree و Layout و PrePaint و Paint و Layerize في الـ trace)
+axe: 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'كبير', dir: "rescue", t: R`إنقاذ صفحة بطيئة`, what: R`ابني صفحة فيها ٨ مشاكل أداء بقصد زي اللي بتتكرر في المشاريع: خط من غير [[font-display]] بـ [[@import]]، وصورة الهيرو [[loading="lazy"]]، وصور من غير مقاسات، و CSS 300KB نصه مش مستخدم، و scroll handler بيعمل layout thrashing، و [[filter: blur(80px)]] على عنصر قد الشاشة، و [[will-change]] على كل الكروت، وبانر بيتحط فوق الصفحة بعد ثانية. وبعدين شخّص كل واحدة بأداة (Lighthouse، و Performance، و Coverage، و Rendering › Paint flashing و Layer borders) وصلّحها. بيجمع الوحدة دي مع الحركة والصور.`, done: R`تقرير فيه لكل مشكلة: العَرَض، والأداة اللي كشفتها، والسبب، والتصليح، والرقم قبل وبعد. Lighthouse Performance من تحت الـ 50 لـ 90 أو أكتر على Mobile، والصفحة شكلها زي ما هو، والتقرير بيتعاد بنفس الخطوات على جهاز تاني بنفس النتيجة تقريبًا.`, ext: R`اعمل GitHub Action بيشغّل Lighthouse CI بـ budget ([[budget.json]]) ويوقّع الـ PR لو LCP أو CLS أو حجم الـ CSS عدّى الحد.`, sol: R`المثال: متجر متخيل «دكّان». [[before.html]] فيها الـ ٨ مشاكل بقصد، و [[index.html]] بعد التصليح، و [[REPORT.md]] التقرير. الشكل في الاتنين واحد.
+
+~~~css rescue/base.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: "Cairo", system-ui, sans-serif; line-height: 1.7; color: #1c1917; background: #fffbeb; }
+a { color: #9a3412; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #fffbebf2; }
+.top.scrolled { box-shadow: 0 4px 16px #0002; }
+.logo { font-weight: 700; font-size: 1.3rem; color: #1c1917; text-decoration: none; }
+.banner { padding: 0.75rem 1rem; text-align: center; background: #1c1917; color: #fde68a; font-weight: 700; }
+.hero { position: relative; display: grid; gap: 1.5rem; max-width: 64rem; margin: 0 auto; padding: 2rem 1rem; isolation: isolate; }
+.hero h1 { margin: 0; font-size: clamp(2rem, 1.2rem + 4vw, 3.4rem); line-height: 1.25; }
+.hero p { margin: 0; font-size: 1.1rem; color: #57534e; }
+.hero img { width: 100%; height: auto; border-radius: 1.25rem; }
+.btn { justify-self: start; padding: 0.7rem 1.5rem; border-radius: 999px; background: #9a3412; color: #fff; font-weight: 700; text-decoration: none; }
+.items { max-width: 64rem; margin: 0 auto; padding: 1rem; }
+.items h2 { margin: 0 0 1rem; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #fde68a; }
+.card img { width: 100%; height: auto; border-radius: 0.75rem; }
+.card h3 { margin: 0.5rem 0 0; font-size: 1.05rem; }
+.card p { margin: 0; color: #047857; font-weight: 700; }
+.card.seen { border-color: #f59e0b; }
+.foot { padding: 2rem 1rem; text-align: center; color: #57534e; }
 ~~~
 
-**هتشوف إيه:** العنوان، وسطر مين وإمتى، والمشغّل، واللينك، والنص، والصورة بنسبتها، وفي الآخر حقوق التسجيل.
+~~~js rescue/make-before.mjs (بيعمل before.css: ‏288KB)
+// node rescue/make-before.mjs: builds the slow page's CSS (the real rules + a big unused "framework") and its HTML
+import fs from "node:fs";
 
-**ليه اخترت التصميم ده:**
+// problem 4: ~300KB of CSS; the page uses only base.css from it
+const sizes = [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48, 64];
+const props = { m: "margin", p: "padding", mt: "margin-top", mb: "margin-bottom", ms: "margin-inline-start", me: "margin-inline-end", pt: "padding-top", pb: "padding-bottom", ps: "padding-inline-start", pe: "padding-inline-end", gap: "gap", w: "width", h: "height", maxw: "max-width", minh: "min-height" };
+const colors = ["red", "orange", "amber", "lime", "green", "teal", "sky", "blue", "violet", "pink", "slate", "stone"];
+let junk = "/* a whole utility framework, imported for 10 classes */\n";
+for (const bp of ["", "sm-", "md-", "lg-", "xl-"]) {
+  let block = "";
+  for (const [k, v] of Object.entries(props)) for (const s of sizes) block += $__bt.$__{bp}$__{k}-$__{s} { $__{v}: $__{s * 0.25}rem; }\n$__bt;
+  for (const c of colors) for (let n = 1; n <= 9; n++) block += $__bt.$__{bp}text-$__{c}-$__{n}00 { color: hsl($__{colors.indexOf(c) * 30} 70% $__{95 - n * 9}%); }\n.$__{bp}bg-$__{c}-$__{n}00 { background-color: hsl($__{colors.indexOf(c) * 30} 70% $__{95 - n * 9}%); }\n.$__{bp}border-$__{c}-$__{n}00 { border-color: hsl($__{colors.indexOf(c) * 30} 70% $__{95 - n * 9}%); }\n$__bt;
+  const min = { "": 0, "sm-": 640, "md-": 768, "lg-": 1024, "xl-": 1280 }[bp];
+  // and a hover: copy of every class, like real utility frameworks generate
+  const states = block + block.replace(/^\.([\w-]+) \{/gm, ".hover\\:$1:hover {");
+  junk += min ? $__bt@media (min-width: $__{min}px) {\n$__{states}}\n$__bt : states;
+}
 
-- **النص تحت المشغّل مباشرة:** اللي مش هيسمع (أو مش فاهم لهجة جدتي) بيلاقي الكلام على طول.
-- **«[ضحكة]» مكتوبة:** جزء من الحكاية، والنص من غيرها ناقص.
-- **قسم لحقوق التسجيل:** الصوت بتاع حد تاني (جدتي)، فمكتوب إن النشر بموافقتها، وبأنهي رخصة.
-- **صورة من تصويري:** مفيش مصدر خارجي، فالنسبة اسم ورخصة بس.
-- **[[<audio>]] مش [[<video>]]:** مفيش كابشن في النسخة دي. لما تكتب ملف الـ VTT (بند «زوّد عليه»)، بدّله.
+// problems 1, 6 and 7 live in the CSS too
+const problems = $__bt
+/* 1. the font comes through an @import chain, with no font-display (invisible text while it loads) */
+@import url("before-fonts.css");
 
-**الغلطة الشائعة:** تنشر صوت حد من غير ما تسأله. الرخصة بتنظّم حق صاحب العمل، وصاحب الصوت ليه حق تاني: إنه يوافق.
+/* 6. a full-screen glow made with a huge blur */
+.glow { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 20% 20%, #fdba74, transparent 40%), radial-gradient(circle at 80% 60%, #fde047, transparent 40%); filter: blur(80px); }
 
-~~~text القياس من Chrome (بملف صوت تجربة 3 ثواني مكان التسجيل، من سيرفر محلي)
-Audio «حكاية الساقية بصوت جدتي فاطمة»      paused = true      duration = 3
-document.querySelectorAll('a[rel~="license"]').length = 2
-~~~` }
+/* 7. "for smooth animations": every card is its own layer */
+.card { will-change: transform; }
+$__bt;
+// @import must come first in a stylesheet, so it goes at the top
+fs.writeFileSync("rescue/before.css", problems.trim().split("\n").filter(l => l.startsWith("@import")).join("\n") + "\n" +
+  fs.readFileSync("rescue/base.css", "utf8") + problems.split("\n").filter(l => !l.startsWith("@import")).join("\n") + junk);
+console.log("before.css: " + Math.round(fs.statSync("rescue/before.css").size / 1024) + "KB");
+~~~
+
+~~~css rescue/before-fonts.css
+/* no font-display: the browser hides the text until the font arrives (up to 3 seconds) */
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2"); font-weight: 700; }
+~~~
+
+~~~html rescue/before.html (أول كارت، والـ ٢٤ زيه)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دكّان: حاجات البيت المصري</title>
+<link rel="stylesheet" href="before.css">
+<script src="before.js" defer></script>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<header class="top"><a class="logo" href="#">دكّان</a><a href="#items">المنتجات</a></header>
+<main>
+  <section class="hero">
+    <h1>حاجات البيت المصري، من إيد الصنايعي لبيتك</h1>
+    <p>فوانيس وكليم وفخار، كل قطعة معمولة بإيد.</p>
+    <a class="btn" href="#items">اتفرّج على المنتجات</a>
+    <img src="img/hero-1600.webp" alt="رسمة تلال بألوان الغروب" loading="lazy">
+  </section>
+  <section id="items" class="items">
+    <h2>وصل جديد</h2>
+    <ul class="grid">
+      <li class="card"><img src="img/item0-400.webp" alt="فانوس نحاس"><h3>فانوس نحاس</h3><p>٤٥٠ ج</p></li>
+    </ul>
+  </section>
+</main>
+<footer class="foot">دكّان، متجر متخيل للتجربة.</footer>
+</body>
+</html>
+~~~
+
+~~~js rescue/before.js
+// 5. on every scroll: read a card's position, write its class, read the next one…
+addEventListener("scroll", function markSeen() {
+  document.querySelector(".top").classList.toggle("scrolled", scrollY > 10);
+  for (const card of document.querySelectorAll(".card")) {
+    const top = card.getBoundingClientRect().top;               // read
+    card.classList.toggle("seen", top < innerHeight);           // write
+    card.style.paddingBlockEnd = top < innerHeight ? "1rem" : "0.75rem";   // a write that changes layout
+  }
+});
+
+// 8. a promo banner, one second later, at the very top: everything under it moves down
+setTimeout(() => {
+  const banner = document.createElement("aside");
+  banner.setAttribute("aria-label", "عرض الشحن");
+  banner.className = "banner";
+  banner.textContent = "شحن مجاني على أي طلب فوق ٥٠٠ ج";
+  document.body.prepend(banner);
+}, 1000);
+~~~
+
+**بعد التصليح:**
+
+~~~html rescue/index.html (أول كارت، والـ ٢٤ زيه)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دكّان: حاجات البيت المصري</title>
+<link rel="preload" href="fonts/cairo-arabic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<aside class="banner-slot" aria-label="عرض الشحن"></aside>
+<header class="top"><a class="logo" href="#">دكّان</a><a href="#items">المنتجات</a></header>
+<main>
+  <section class="hero">
+    <h1>حاجات البيت المصري، من إيد الصنايعي لبيتك</h1>
+    <p>فوانيس وكليم وفخار، كل قطعة معمولة بإيد.</p>
+    <a class="btn" href="#items">اتفرّج على المنتجات</a>
+    <img src="img/hero-960.webp" srcset="img/hero-480.webp 480w, img/hero-960.webp 960w, img/hero-1600.webp 1600w"
+         sizes="(min-width: 64rem) 62rem, calc(100vw - 2rem)" width="1600" height="1000" fetchpriority="high"
+         alt="رسمة تلال بألوان الغروب">
+  </section>
+  <section id="items" class="items">
+    <h2>وصل جديد</h2>
+    <ul class="grid">
+      <li class="card"><img src="img/item0-400.webp" alt="فانوس نحاس" width="400" height="400" loading="lazy" decoding="async"><h3>فانوس نحاس</h3><p>٤٥٠ ج</p></li>
+    </ul>
+  </section>
+</main>
+<footer class="foot">دكّان، متجر متخيل للتجربة.</footer>
+</body>
+</html>
+~~~
+
+~~~css rescue/style.css
+/* 1. the font: declared here (no @import chain), shown with swap, and a fallback scaled to the same width */
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Cairo fallback"; src: local("Segoe UI"); size-adjust: 97.6%; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: "Cairo", "Cairo fallback", system-ui, sans-serif; line-height: 1.7; color: #1c1917; background: #fffbeb; }
+a { color: #9a3412; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #fffbebf2; }
+.top.scrolled { box-shadow: 0 4px 16px #0002; }
+.logo { font-weight: 700; font-size: 1.3rem; color: #1c1917; text-decoration: none; }
+.banner { padding: 0.75rem 1rem; text-align: center; background: #1c1917; color: #fde68a; font-weight: 700; }
+.hero { position: relative; display: grid; gap: 1.5rem; max-width: 64rem; margin: 0 auto; padding: 2rem 1rem; isolation: isolate; }
+.hero h1 { margin: 0; font-size: clamp(2rem, 1.2rem + 4vw, 3.4rem); line-height: 1.25; }
+.hero p { margin: 0; font-size: 1.1rem; color: #57534e; }
+.hero img { width: 100%; height: auto; border-radius: 1.25rem; }
+.btn { justify-self: start; padding: 0.7rem 1.5rem; border-radius: 999px; background: #9a3412; color: #fff; font-weight: 700; text-decoration: none; }
+.items { max-width: 64rem; margin: 0 auto; padding: 1rem; }
+.items h2 { margin: 0 0 1rem; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #fde68a; }
+.card img { width: 100%; height: auto; border-radius: 0.75rem; }
+.card h3 { margin: 0.5rem 0 0; font-size: 1.05rem; }
+.card p { margin: 0; color: #047857; font-weight: 700; }
+.card.seen { border-color: #f59e0b; }
+.foot { padding: 2rem 1rem; text-align: center; color: #57534e; }
+
+/* 6. the same glow without a filter: soft gradients are already blurry, nothing to blur every frame */
+.glow { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 20% 20%, #fdba7499, transparent 55%), radial-gradient(circle at 80% 60%, #fde04799, transparent 55%); }
+
+/* 7. no will-change on 24 cards: the browser makes a layer by itself when something really animates */
+
+/* 8. the banner's place is booked before it arrives */
+.banner-slot { min-height: 3.2rem; background: #1c1917; }
+.banner-slot .banner { margin: 0; }
+~~~
+
+~~~js rescue/app.js
+// 5. no reading positions on scroll: the browser tells us when a card enters the screen
+const seen = new IntersectionObserver(entries => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add("seen"); seen.unobserve(e.target); }
+});
+document.querySelectorAll(".card").forEach(c => seen.observe(c));
+
+// the header shadow: a 1px sentinel at the top; when it leaves the screen, we scrolled
+const sentinel = document.createElement("div");
+sentinel.style.cssText = "position:absolute;top:0;height:1px;width:1px";
+document.body.prepend(sentinel);
+new IntersectionObserver(([e]) => document.querySelector(".top").classList.toggle("scrolled", !e.isIntersecting)).observe(sentinel);
+
+// 8. the banner fills a slot that already has its height
+setTimeout(() => {
+  document.querySelector(".banner-slot").innerHTML = '<p class="banner">شحن مجاني على أي طلب فوق ٥٠٠ ج</p>';
+}, 1000);
+~~~
+
+~~~js rescue/diagnose.mjs
+// node rescue/diagnose.mjs: the numbers for the report, each from the tool that shows it in DevTools
+import { browser, throttled, recordShifts, readThrough } from "../lab.mjs";
+const b = await browser();
+const U = f => "http://127.0.0.1:8817/rescue/" + f;
+for (const f of ["before.html", "index.html"]) {
+  console.log("== " + f);
+
+  // Network (Slow 4G): when does the font start, compared to the page?  [problem 1]
+  {
+    const { ctx, page, cdp } = await throttled(b);
+    const starts = {};
+    cdp.on("Network.requestWillBeSent", e => { starts[e.request.url.split("/").pop()] ??= e.timestamp; });
+    await recordShifts(page);
+    await page.goto(U(f), { waitUntil: "load", timeout: 90000 });
+    await page.waitForTimeout(2500);
+    const t0 = starts[f];
+    const font = Object.keys(starts).find(k => k.includes("700"));
+    console.log("  [Network] الخط بدأ بعد " + Math.round((starts[font] - t0) * 1000) + "ms من الصفحة" + (starts["before-fonts.css"] ? " (بعد before.css ثم before-fonts.css)" : " (من الـ preload)"));
+    const fcp = await page.evaluate(() => Math.round(performance.getEntriesByName("first-contentful-paint")[0].startTime));
+    console.log("  [Performance] FCP على Slow 4G: " + fcp + "ms");
+    const shifts = await page.evaluate(() => window.__shifts);
+    console.log("  [Performance › Layout shifts] " + (shifts.map(s => s.at + "ms " + s.value + " ← " + s.moved).join(" | ") || "مفيش"));
+    await ctx.close();
+  }
+
+  // Coverage + Layers + scroll trace (CPU 4x, fast network)  [problems 4, 5, 6, 7]
+  {
+    const { ctx, page, cdp } = await throttled(b, { net: null });
+    await page.coverage.startCSSCoverage();
+    await page.goto(U(f), { waitUntil: "load" }); await page.waitForTimeout(1500);
+    const cov = await page.coverage.stopCSSCoverage();
+    const css = cov.filter(c => /\.css$/.test(c.url) && !c.url.includes("fonts"));
+    const total = css.reduce((s, c) => s + c.text.length, 0), used = css.reduce((s, c) => s + c.ranges.reduce((t, r) => t + r.end - r.start, 0), 0);
+    console.log("  [Coverage] CSS " + Math.round(total / 1024) + "KB، المستخدم منه " + Math.round(used / 1024) + "KB (" + Math.round((1 - used / total) * 100) + "% مش مستخدم)");
+
+    await cdp.send("LayerTree.enable");
+    let layers = 0;
+    cdp.on("LayerTree.layerTreeDidChange", e => { if (e.layers) layers = e.layers.filter(l => l.drawsContent).length; });
+    await page.mouse.wheel(0, 10); await page.waitForTimeout(500);
+    console.log("  [Layers] طبقات بترسم: " + layers);
+
+    await page.mouse.wheel(0, -10); await page.waitForTimeout(200);
+    await b.startTracing(page, { categories: ["devtools.timeline", "disabled-by-default-devtools.timeline", "disabled-by-default-devtools.timeline.stack"] });
+    for (let i = 0; i < 30; i++) { await page.mouse.wheel(0, 150); await page.waitForTimeout(30); }
+    await page.waitForTimeout(300);
+    const ev = JSON.parse((await b.stopTracing()).toString()).traceEvents.filter(e => e.ph === "X" || e.ph === "B");
+    const forced = ev.filter(e => e.name === "Layout" && e.args?.beginData?.stackTrace?.length);
+    const paint = ev.filter(e => e.name === "Paint").reduce((s, e) => s + (e.dur || 0) / 1000, 0);
+    const handler = ev.filter(e => e.name === "FunctionCall" && /markSeen/.test(e.args?.data?.functionName || "")).reduce((s, e) => s + e.dur / 1000, 0);
+    console.log("  [Performance وقت الـ scroll] forced layout: " + forced.length + (forced[0] ? " ← " + forced[0].args.beginData.stackTrace[0].functionName : "") + " | وقت الـ handler: " + handler.toFixed(0) + "ms | Paint: " + paint.toFixed(0) + "ms");
+    await ctx.close();
+  }
+}
+await b.close();
+~~~
+
+~~~text rescue/REPORT.md
+# دكّان: إنقاذ الأداء
+
+$__btbefore.html$__bt قبل، و $__btindex.html$__bt بعد. الشكل واحد.
+
+Lighthouse 13.6.0، Mobile (simulated Slow 4G و CPU 4x)، ٣ مرات ورا بعض:
+
+| | Performance | FCP | LCP | TBT | CLS |
+|---|---|---|---|---|---|
+| قبل | 70، 64، 70 | 2.4 s | 4.5 لـ 6.4 s | 0 ms | 0.219 |
+| بعد | 96، 96، 96 | 0.8 s | 2.7 s | 0 ms | 0 |
+
+الـ LCP في «قبل» بيتغير من مرة للتانية لأن الصورة lazy: وقت بدايتها مش ثابت. و «بعد» ثابت.
+
+باقي الأرقام من $__btnode rescue/diagnose.mjs$__bt (Slow 4G حقيقي و CPU 4x لـ Network و CLS، و CPU 4x لـ Coverage و Layers و الـ scroll).
+
+| # | العَرَض | الأداة | السبب | التصليح | قبل ← بعد |
+|---|---|---|---|---|---|
+| ١ | الكلام مش باين أول ثانيتين | Network: الخط بدأ متأخر؛ Lighthouse: render-blocking | الخط جاي من $__bt@import$__bt جوه CSS جوه CSS، ومن غير $__btfont-display$__bt | $__bt@font-face$__bt في نفس الملف بـ $__btswap$__bt، و preload للخط العريض، وخط احتياطي $__btsize-adjust$__bt | بداية الخط 4377 ← 609ms، FCP 4672 ← 1500ms |
+| ٢ | الصورة الكبيرة آخر حاجة بتظهر | Lighthouse: lcp-discovery-insight | $__btloading="lazy"$__bt على صورة الـ LCP | من غير lazy، و $__btfetchpriority="high"$__bt، و $__btsrcset$__bt | LCP 4.5 لـ 6.4 ← 2.7 s |
+| ٣ | الكروت بتتنطط لما الصور توصل | Lighthouse: unsized-images؛ Performance › Layout shifts | صور من غير $__btwidth$__bt و $__btheight$__bt | المقاسات في الـ HTML | shift 0.1609 ← 0 |
+| ٤ | الصفحة بتستنى ملف CSS كبير | Coverage | framework كامل لـ ١٠ كلاسات | ملف فيه اللي مستخدم بس | 288KB (99٪ مش مستخدم) ← 3KB |
+| ٥ | الـ scroll بيقطّع على موبايل ضعيف | Performance: Forced reflow في $__btmarkSeen$__bt | قراية مكان كل كارت وكتابة padding في نفس اللفة | $__btIntersectionObserver$__bt للكروت وللـ header | forced layout 9 ← 0، الـ handler 38 لـ 60 ← 0ms |
+| ٦ | تقيل لما الشاشة تتغير (لف الموبايل) | Rendering › Paint flashing و Layer borders؛ الـ trace | $__btfilter: blur(80px)$__bt على عنصر قد الشاشة | نفس الشكل بـ $__btradial-gradient$__bt ناعم من غير filter | raster في ٥ resize: 51.9 ← 24.3ms |
+| ٧ | ذاكرة كتير | Layers | $__btwill-change: transform$__bt على كل كارت | شيله؛ المتصفح بيعمل طبقة لوحده وقت الحركة | طبقات بترسم 14 ← 5 |
+| ٨ | الصفحة بتنزل لتحت بعد ثانية | Performance › Layout shifts (main) | بانر بيتحط فوق الصفحة | مكانه محجوز $__btmin-height$__bt من الأول | shift 0.0577 ← 0 |
+
+**ملاحظات:**
+- Lighthouse مسك ٥ من الـ ٨ لوحده (١ و ٢ و ٣ و ٤ و ٨). الـ ٣ التانيين (٥ و ٦ و ٧) محتاجين Performance و Layers، لأنهم بيحصلوا وانت بتستخدم الصفحة، مش وهي بتفتح.
+- الـ blur ماغيّرش وقت الـ Paint وقت الـ scroll (14 لـ 40ms في الاتنين، بيتغير من تشغيل للتاني): العنصر $__btfixed$__bt في طبقة لوحده بتترسم مرة. التمن بيبان لما الطبقة تترسم تاني (resize).
+- الـ ٨ مشاكل نزّلوا الصفحة لـ 64 لـ 70 مش تحت 50: ولا واحدة منهم بتشغّل JavaScript وقت الفتح، فـ TBT صفر، و TBT ليه ٣٠٪ من الدرجة.
+- $__btcache-insight$__bt فاضل في الاتنين: سيرفر التجربة مبيبعتش $__btCache-Control$__bt. على السيرفر الحقيقي ده سطر في الإعدادات.
+
+**تعيده إزاي على جهاز تاني:** شغّل $__btnode serve.mjs . 8817$__bt من فولدر المعمل، وبعدين $__btnode lh.mjs http://127.0.0.1:8817/rescue/before.html$__bt و $__btnode rescue/diagnose.mjs$__bt. الأرقام بالمللي ثانية هتختلف مع سرعة الجهاز، والاتجاه والنسب هي اللي تتقارن.
+~~~
+
+~~~view 760 900 بعد التصليح (و «قبل» نفس الشكل؛ الصور في المعاينة نسخة صغيرة)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دكّان: حاجات البيت المصري</title>
+<style>
+/* 1. the font: declared here (no @import chain), shown with swap, and a fallback scaled to the same width */
+@font-face { font-family: "Cairo"; src: url("data:font/woff2;base64,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") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Cairo"; src: url("data:font/woff2;base64,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") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Cairo fallback"; src: local("Segoe UI"); size-adjust: 97.6%; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: "Cairo", "Cairo fallback", system-ui, sans-serif; line-height: 1.7; color: #1c1917; background: #fffbeb; }
+a { color: #9a3412; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #fffbebf2; }
+.top.scrolled { box-shadow: 0 4px 16px #0002; }
+.logo { font-weight: 700; font-size: 1.3rem; color: #1c1917; text-decoration: none; }
+.banner { padding: 0.75rem 1rem; text-align: center; background: #1c1917; color: #fde68a; font-weight: 700; }
+.hero { position: relative; display: grid; gap: 1.5rem; max-width: 64rem; margin: 0 auto; padding: 2rem 1rem; isolation: isolate; }
+.hero h1 { margin: 0; font-size: clamp(2rem, 1.2rem + 4vw, 3.4rem); line-height: 1.25; }
+.hero p { margin: 0; font-size: 1.1rem; color: #57534e; }
+.hero img { width: 100%; height: auto; border-radius: 1.25rem; }
+.btn { justify-self: start; padding: 0.7rem 1.5rem; border-radius: 999px; background: #9a3412; color: #fff; font-weight: 700; text-decoration: none; }
+.items { max-width: 64rem; margin: 0 auto; padding: 1rem; }
+.items h2 { margin: 0 0 1rem; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #fde68a; }
+.card img { width: 100%; height: auto; border-radius: 0.75rem; }
+.card h3 { margin: 0.5rem 0 0; font-size: 1.05rem; }
+.card p { margin: 0; color: #047857; font-weight: 700; }
+.card.seen { border-color: #f59e0b; }
+.foot { padding: 2rem 1rem; text-align: center; color: #57534e; }
+
+/* 6. the same glow without a filter: soft gradients are already blurry, nothing to blur every frame */
+.glow { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 20% 20%, #fdba7499, transparent 55%), radial-gradient(circle at 80% 60%, #fde04799, transparent 55%); }
+
+/* 7. no will-change on 24 cards: the browser makes a layer by itself when something really animates */
+
+/* 8. the banner's place is booked before it arrives */
+.banner-slot { min-height: 3.2rem; background: #1c1917; }
+.banner-slot .banner { margin: 0; }
+</style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<aside class="banner-slot" aria-label="عرض الشحن"></aside>
+<header class="top"><a class="logo" href="#">دكّان</a><a href="#items">المنتجات</a></header>
+<main>
+  <section class="hero">
+    <h1>حاجات البيت المصري، من إيد الصنايعي لبيتك</h1>
+    <p>فوانيس وكليم وفخار، كل قطعة معمولة بإيد.</p>
+    <a class="btn" href="#items">اتفرّج على المنتجات</a>
+    <img src="data:image/webp;base64,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" width="1600" height="1000" fetchpriority="high"
+         alt="رسمة تلال بألوان الغروب">
+  </section>
+  <section id="items" class="items">
+    <h2>وصل جديد</h2>
+    <ul class="grid">
+      <li class="card"><img src="data:image/webp;base64,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" alt="فانوس نحاس" width="400" height="400" loading="lazy" decoding="async"><h3>فانوس نحاس</h3><p>٤٥٠ ج</p></li>
+      <li class="card"><img src="data:image/webp;base64,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" alt="كليم يدوي" width="400" height="400" loading="lazy" decoding="async"><h3>كليم يدوي</h3><p>١٢٠٠ ج</p></li>
+      <li class="card"><img src="data:image/webp;base64,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" alt="طقم فناجين" width="400" height="400" loading="lazy" decoding="async"><h3>طقم فناجين</h3><p>٣٢٠ ج</p></li>
+      <li class="card"><img src="data:image/webp;base64,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" alt="سلة خوص" width="400" height="400" loading="lazy" decoding="async"><h3>سلة خوص</h3><p>١٨٠ ج</p></li>
+      <li class="card"><img src="data:image/webp;base64,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" alt="مخدة تلّي" width="400" height="400" loading="lazy" decoding="async"><h3>مخدة تلّي</h3><p>٢٦٠ ج</p></li>
+      <li class="card"><img src="data:image/webp;base64,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" alt="صينية مطعّمة" width="400" height="400" loading="lazy" decoding="async"><h3>صينية مطعّمة</h3><p>٩٠٠ ج</p></li>
+    </ul>
+  </section>
+</main>
+<footer class="foot">دكّان، متجر متخيل للتجربة.</footer>
+<script>
+// 5. no reading positions on scroll: the browser tells us when a card enters the screen
+const seen = new IntersectionObserver(entries => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add("seen"); seen.unobserve(e.target); }
+});
+document.querySelectorAll(".card").forEach(c => seen.observe(c));
+
+// the header shadow: a 1px sentinel at the top; when it leaves the screen, we scrolled
+const sentinel = document.createElement("div");
+sentinel.style.cssText = "position:absolute;top:0;height:1px;width:1px";
+document.body.prepend(sentinel);
+new IntersectionObserver(([e]) => document.querySelector(".top").classList.toggle("scrolled", !e.isIntersecting)).observe(sentinel);
+
+// 8. the banner fills a slot that already has its height
+setTimeout(() => {
+  document.querySelector(".banner-slot").innerHTML = '<p class="banner">شحن مجاني على أي طلب فوق ٥٠٠ ج</p>';
+}, 1000);
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خلفية كريمي فيها نور برتقالي وأصفر ناعم، وشريط أسود فوق «شحن مجاني على أي طلب فوق ٥٠٠ ج» (بيظهر بعد ثانية في مكانه المحجوز)، وهيدر «دكّان»، وعنوان كبير، وصورة تلال بألوان الغروب، و ٢٤ كارت (فانوس نحاس، وكليم يدوي…).
+
+**أهم حاجة في المشروع: كل مشكلة ليها أداة بتكشفها.** Lighthouse مسك ٥ لوحده (التقرير بيقول أنهي audit لكل واحدة). الـ ٣ التانيين بيحصلوا وانت بتستخدم الصفحة مش وهي بتفتح، فمحتاجين أدوات تانية:
+- **الـ scroll handler:** Performance وانت بتعمل scroll: 9 forced layouts بتشاور على [[markSeen]].
+- **[[will-change]] على ٢٤ كارت:** Layers (أو Rendering › Layer borders): 14 طبقة بترسم بدل 5.
+- **الـ blur:** Paint flashing وقت الـ scroll **مبيوريش** فرق (الـ [[fixed]] في طبقة لوحده بيترسم مرة). التمن بيبان لما الطبقة تترسم تاني: في ٥ resize، شغل الـ raster كان 51.9ms بدل 24.3ms.
+
+**الـ banner:** في «قبل» بيتحط في أول [[body]] بعد ثانية، فكل اللي تحته بينزل (shift 0.0577 في [[main]]). في «بعد» ليه [[<aside>]] بـ [[min-height]] من الأول، والإعلان بيتملي جواه.
+
+**الـ CSS:** في «قبل» 288KB من framework والصفحة بتستخدم 2KB (Coverage: ‏99٪ مش مستخدم). ده كمان سبب بداية الخط المتأخرة: المتصفح لازم ينزّل الـ 288KB ويقراهم عشان يلاقي [[@import]]، وبعدين ينزّل [[before-fonts.css]]، وبعدين الخط. يعني ٣ طلبات ورا بعض.
+
+**الصراحة في الأرقام:**
+- الـ ٨ مشاكل نزّلوا الصفحة لـ 64 لـ 70 مش تحت 50. ولا واحدة منهم بتشغّل JavaScript وقت الفتح، فـ TBT صفر، و TBT ليه ٣٠٪ من الدرجة. معملتش مشاكل زيادة عشان أنزّل الرقم.
+- «قبل» نفسها بتتغير من تشغيل للتاني (LCP 4.5 لـ 6.4) بسبب الصورة الـ lazy، و «بعد» ثابت 96 في ٣ تشغيلات.
+- الجهاز التاني ماتجرّبش. التقرير فيه الأوامر عشان تعيده.
+
+**غلطتين صلّحتهم بعد axe:** البانر كان [[<p>]] برّه أي landmark (axe [[region]])، فبقى [[<aside aria-label="عرض الشحن">]] في النسختين. والتغيير ده نفسه غيّر الـ CLS بتاع «قبل» من 0.262 لـ 0.219، لأن الـ [[<p>]] كان ليه margin فالبانر كان أطول.
+
+~~~text node lh.mjs (Lighthouse 13.6.0 Mobile، ٣ مرات بعد آخر تعديل)
+before | Performance 70، 64، 70 | FCP 2.4 s | LCP 4.5 لـ 6.4 s | TBT 0 ms | CLS 0.219
+after  | Performance 96، 96، 96 | FCP 0.8 s | LCP 2.7 s       | TBT 0 ms | CLS 0
+الـ audits اللي وقعت في before: unused-css-rules (286 KiB)، unsized-images، lcp-discovery-insight،
+  cls-culprits-insight، render-blocking-insight (1,750 ms)، image-delivery-insight
+فاضل في after: cache-insight (السيرفر مبيبعتش Cache-Control)، render-blocking 150 ms
+~~~
+
+~~~text node rescue/diagnose.mjs
+== before.html
+  [Network] الخط بدأ بعد 4377ms (بعد before.css ثم before-fonts.css) | FCP على Slow 4G: 4672ms
+  [Layout shifts] 5190ms 0.1609 ← section.items | 5583ms 0.0577 ← main
+  [Coverage] CSS 288KB، المستخدم 2KB (99% مش مستخدم)
+  [Layers] 14 | [scroll] forced layout 9 ← markSeen، الـ handler 38ms
+== index.html
+  [Network] الخط بدأ بعد 609ms (preload) | FCP على Slow 4G: 1500ms
+  [Layout shifts] 0.0024 و 0.0003 (الكلام وقت تبديل الخط)
+  [Coverage] CSS 3KB، المستخدم 2KB | [Layers] 5 | [scroll] forced layout 0
+raster في ٥ resize: before 51.9ms، after 24.3ms
+axe: 0 على الاتنين   الـ validator: مفيش رسايل   CSS validator: No Error Found (style.css و base.css)
+~~~` },
+        { lvl: 'فكرة', dir: "daily", t: R`قيس موقع بتستخدمه كل يوم`, what: R`اختار موقع بتفتحه كتير وبتحس إنه تقيل، وقيسه بـ Lighthouse و Performance (من غير ما تلمس الكود بتاعه)، وطلّع أكبر ٣ أسباب للبطء بأدلة، واكتب إزاي كنت هتصلّحهم.`, done: R`تقرير صفحة واحدة: ٣ مشاكل، ولكل واحدة لقطة من الأداة ورقم، والتصليح المقترح والمكسب المتوقع.`, ext: R`اعمل نسخة محلية صغيرة من الجزء البطيء وجرّب التصليح فعلًا وقيس الفرق.`, sol: R`**ليه صفحة متخيلة:** الكورس مبيقيسش مواقع حقيقية بأساميها. فعملت صفحة «الخبر النهارده» بنفس المشاكل اللي بتتكرر في مواقع الأخبار التقيلة، وطبّقت عليها نفس الطريقة بالظبط. على موقعك الحقيقي: نفس الأوامر مع اللينك بتاعه، من غير ما تلمس الكود.
+
+~~~js daily/make-js.mjs
+// node daily/make-js.mjs: builds the heavy files a typical news site ships (a bundle with all its data, a chat widget)
+import fs from "node:fs";
+
+// bundle.js: 3000 old articles inlined as data, and a search index built on startup, for a box most readers never use
+const words = ["الدوري", "الأهلي", "الزمالك", "الطقس", "الأسعار", "البنزين", "الدولار", "المدارس", "الامتحانات", "القطار", "المترو", "الكهربا"];
+const items = Array.from({ length: 3000 }, (_, i) => ({ id: i, t: words[i % 12] + " " + words[(i * 7) % 12] + " خبر رقم " + i, body: (words[(i * 3) % 12] + " ").repeat(30) }));
+const bundle = $__bt// the whole site in one file (generated)
+const ARCHIVE = $__{JSON.stringify(items)};
+function buildIndex() {                                   // runs as soon as the page loads, on the main thread
+  const index = new Map();
+  for (let pass = 0; pass < 6; pass++)
+    for (const a of ARCHIVE) for (const w of (a.t + " " + a.body).split(" ")) {
+      if (!index.has(w)) index.set(w, new Set());
+      index.get(w).add(a.id);
+    }
+  return index;
+}
+window.searchIndex = buildIndex();
+document.querySelector(".search").addEventListener("input", e => {
+  const hits = window.searchIndex.get(e.target.value.trim()) || new Set();
+  document.querySelector(".hits").textContent = hits.size.toLocaleString("ar-EG") + " نتيجة";
+});
+$__bt;
+fs.writeFileSync("daily/bundle.js", bundle);
+
+// chat.js: a "third-party" widget; most of it is a library the page never calls
+const lib = Array.from({ length: 1500 }, (_, i) => $__btfunction helper$__{i}(a,b){return (a*$__{i}+b)%$__{i + 7};}$__bt).join("\n");
+fs.mkdirSync("daily/third", { recursive: true });
+fs.writeFileSync("daily/third/chat.js", $__bt// chat widget (pretend this comes from another company)
+$__{lib}
+(function () {
+  const start = performance.now(); while (performance.now() - start < 60) {}   // its own startup work
+  const b = document.createElement("button");
+  b.className = "chat-bubble"; b.type = "button"; b.textContent = "💬 كلّمنا";
+  (document.body || document.documentElement).append(b);
+})();
+$__bt);
+for (const f of ["daily/bundle.js", "daily/third/chat.js"]) console.log(f + ": " + Math.round(fs.statSync(f).size / 1024) + "KB");
+~~~
+
+الصور: ٤ PNG بعرض 1600 ([[node gen-images.mjs daily/img news0 1600 1.5 50 png]]، كل واحدة 2.4MB)، ونفس الـ ٤ WebP بعرض 400 (10KB).
+
+~~~html daily/before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخبر النهارده</title>
+<link rel="stylesheet" href="style.css">
+<!-- a chat widget from another company, in the head, without defer -->
+<script src="http://localhost:8817/daily/third/chat.js"></script>
+<script src="bundle.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <h1 class="logo">الخبر النهارده</h1>
+  <div class="search-box"><label for="q">دوّر في الأرشيف</label><input id="q" class="search" type="search"><span class="hits" aria-live="polite"></span></div>
+</header>
+<main>
+  <ul class="news">
+    <li class="story"><img src="img/news0-1600.png" alt=""><h2>تعديل مواعيد المترو في رمضان</h2><p>خبر متخيل للتجربة.</p></li>
+    <li class="story"><img src="img/news1-1600.png" alt=""><h2>الطقس: أمطار خفيفة على السواحل</h2><p>خبر متخيل للتجربة.</p></li>
+    <li class="story"><img src="img/news2-1600.png" alt=""><h2>أسعار الخضار في سوق العبور</h2><p>خبر متخيل للتجربة.</p></li>
+    <li class="story"><img src="img/news3-1600.png" alt=""><h2>نتيجة الشهادة الإعدادية الأسبوع الجاي</h2><p>خبر متخيل للتجربة.</p></li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+~~~css daily/style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #fff; }
+.top { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-block-end: 3px solid #b91c1c; }
+.logo { margin: 0; font-size: 1.4rem; font-weight: 800; color: #b91c1c; }
+.search-box { display: flex; gap: 0.5rem; align-items: center; }
+.search { padding: 0.4rem 0.7rem; border: 1px solid #6b7280; border-radius: 0.5rem; font: inherit; }
+.hits { color: #4b5563; font-size: 0.9rem; }
+.news { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr)); max-width: 64rem; margin: 0 auto; padding: 1rem; list-style: none; }
+.story img { width: 100%; height: auto; border-radius: 0.5rem; }
+.story h2 { margin: 0.5rem 0 0.25rem; font-size: 1.1rem; }
+.story p { margin: 0; color: #4b5563; }
+.chat-bubble { position: fixed; inset-block-end: 1rem; inset-inline-start: 1rem; padding: 0.6rem 1rem; border: 0; border-radius: 999px; background: #1d4ed8; color: #fff; font: inherit; font-weight: 700; box-shadow: 0 6px 20px #0003; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+~~~
+
+~~~js daily/measure.mjs
+// node daily/measure.mjs: long tasks (Performance › Main) and bytes by type (Network) for both versions
+import { browser, throttled } from "../lab.mjs";
+const b = await browser();
+for (const f of ["before.html", "index.html"]) {
+  const { ctx, page, cdp } = await throttled(b, { net: null, cpu: 4 });
+  const bytes = {};
+  const types = new Map();
+  cdp.on("Network.responseReceived", e => types.set(e.requestId, e.type));
+  cdp.on("Network.loadingFinished", e => { const t = types.get(e.requestId) || "Other"; bytes[t] = (bytes[t] || 0) + e.encodedDataLength; });
+  await b.startTracing(page, { categories: ["devtools.timeline", "disabled-by-default-devtools.timeline"] });
+  await page.goto("http://127.0.0.1:8817/daily/" + f, { waitUntil: "load", timeout: 120000 });
+  await page.waitForTimeout(1500);
+  const ev = JSON.parse((await b.stopTracing()).toString()).traceEvents;
+  // a long task = a main-thread task over 50ms; named after the biggest thing inside it (a script, or Layout)
+  const tasks = ev.filter(e => e.name === "RunTask" && e.ph === "X" && e.dur > 50000);
+  const longs = tasks.map(t => {
+    const inside = ev.filter(x => x.ph === "X" && x !== t && x.tid === t.tid && x.ts >= t.ts && x.ts + (x.dur || 0) <= t.ts + t.dur && /EvaluateScript|FunctionCall|Layout|UpdateLayoutTree|ParseHTML|Paint/.test(x.name));
+    const top = inside.sort((p, q) => q.dur - p.dur)[0];
+    const what = top ? top.name + (top.args?.data?.url ? " " + top.args.data.url.split("/").pop() : "") : "?";
+    return Math.round(t.dur / 1000) + "ms " + what;
+  });
+  const tbt = tasks.reduce((s, t) => s + t.dur / 1000 - 50, 0);
+  console.log("== " + f + " (CPU 4x)");
+  console.log("   long tasks: " + (longs.join(" | ") || "مفيش") + " | مجموع الزيادة فوق 50ms: " + Math.round(tbt) + "ms");
+  console.log("   الحجم: " + Object.entries(bytes).sort((a, b) => b[1] - a[1]).map(([t, n]) => t + " " + Math.round(n / 1024) + "KB").join("، "));
+  await ctx.close();
+}
+await b.close();
+~~~
+
+~~~text daily/REPORT.md
+# «الخبر النهارده»: أكبر ٣ أسباب للبطء
+
+صفحة متخيلة بتقلّد موقع أخبار تقيل ($__btbefore.html$__bt). القياس: Lighthouse 13.6.0 Mobile، و Performance و Network بـ CPU 4x ($__btnode daily/measure.mjs$__bt).
+
+**قبل:** Performance 58، FCP 1.8 s، **LCP 60.3 s**، **TBT 330 ms**، CLS 0. الصفحة بتنزّل 11MB: صور 9752KB، و JavaScript 1434KB.
+
+## ١. صور PNG بـ 1600px في كروت عرضها 400
+
+- **الدليل:** Network › Img: ٤ صور × 2.4MB = 9752KB. ودي سبب الـ LCP اللي بـ 60 ثانية على Slow 4G (Lighthouse بيحاكيه).
+- **التصليح المقترح:** WebP بالعرض اللي بيتعرض فعلًا (400px)، و $__btwidth$__bt و $__btheight$__bt، و $__btloading="lazy"$__bt للي تحت أول شاشة.
+- **المكسب المتوقع:** الصور تنزل من حوالي 10MB لأقل من 50KB، و LCP تحت 2.5 ثانية.
+
+## ٢. ملف JavaScript واحد 1.4MB بيبني index للبحث أول ما الصفحة تفتح
+
+- **الدليل:** Performance › Main: long task **391ms** $__btEvaluateScript bundle.js$__bt (على CPU 4x)، و Lighthouse TBT 330ms.
+- **السبب:** الأرشيف كله (٣٠٠٠ خبر) جوه الـ bundle، والـ index بيتبني لكل زائر، مع إن أغلبهم مبيستخدمش البحث.
+- **التصليح المقترح:** الأرشيف في ملف JSON لوحده، يتحمّل ويتبني أول ما حد يحط الماوس أو الكيبورد في خانة البحث.
+- **المكسب المتوقع:** TBT قريب من الصفر، و 1.4MB ميتحمّلوش أصلًا لأغلب الزوار.
+
+## ٣. widget الشات من شركة تانية في الـ head من غير defer
+
+- **الدليل:** Performance: $__btParseHTML$__bt اتوقف 67ms والسكربت شغال، لأن السكربت في نص قراية الـ HTML. و Network: طلب لـ origin تاني قبل أول رسم.
+- **التصليح المقترح:** facade: زرار شكله زي الـ widget، والسكربت الحقيقي يتحمّل بأول ضغطة بس.
+- **المكسب المتوقع:** مفيش سكربت من برّه قبل أول رسم، و 70KB ميتحمّلوش للي مبيكلّمش حد.
+
+## الـ ext: التصليح اتعمل واتقاس ($__btindex.html$__bt)
+
+| | قبل | بعد |
+|---|---|---|
+| Lighthouse Performance | 58 | 100 |
+| LCP | 60.3 s | 1.2 s |
+| TBT | 330 ms | 20 ms |
+| الصور | 9752KB | 41KB |
+| JavaScript وقت الفتح | 1434KB | 1KB |
+| long tasks (CPU 4x) | 391ms bundle.js، 67ms ParseHTML، 64ms Layout | 141ms Layout (أول layout للصفحة) |
+
+البحث بيشتغل زي ما هو («الأهلي» = ٥٠٠ نتيجة)، والشات بيتحمّل بأول ضغطة.
+~~~
+
+**الـ ext: التصليح نفسه.** [[archive.json]] = الـ [[ARCHIVE]] اللي كانت جوه الـ bundle، في ملف لوحده.
+
+~~~html daily/index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخبر النهارده</title>
+<link rel="stylesheet" href="style.css">
+<script src="search.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <h1 class="logo">الخبر النهارده</h1>
+  <div class="search-box"><label for="q">دوّر في الأرشيف</label><input id="q" class="search" type="search"><span class="hits" aria-live="polite"></span></div>
+</header>
+<main>
+  <ul class="news">
+    <li class="story"><img src="img/news0-400.webp" alt="" width="400" height="267"><h2>تعديل مواعيد المترو في رمضان</h2><p>خبر متخيل للتجربة.</p></li>
+    <li class="story"><img src="img/news1-400.webp" alt="" width="400" height="267"><h2>الطقس: أمطار خفيفة على السواحل</h2><p>خبر متخيل للتجربة.</p></li>
+    <li class="story"><img src="img/news2-400.webp" alt="" width="400" height="267" loading="lazy"><h2>أسعار الخضار في سوق العبور</h2><p>خبر متخيل للتجربة.</p></li>
+    <li class="story"><img src="img/news3-400.webp" alt="" width="400" height="267" loading="lazy"><h2>نتيجة الشهادة الإعدادية الأسبوع الجاي</h2><p>خبر متخيل للتجربة.</p></li>
+  </ul>
+</main>
+<button type="button" class="chat-bubble" id="chat">💬 كلّمنا</button>
+<script src="chat-facade.js" defer></script>
+</body>
+</html>
+~~~
+
+~~~js daily/search.js
+// the archive and its index only load when someone actually uses the search box
+let index = null;
+const box = document.querySelector(".search"), hits = document.querySelector(".hits");
+async function ready() {
+  if (index) return index;
+  hits.textContent = "بيحمّل الأرشيف…";
+  const archive = await (await fetch("archive.json")).json();
+  index = new Map();
+  for (const a of archive) for (const w of (a.t + " " + a.body).split(" ")) {
+    if (!index.has(w)) index.set(w, new Set());
+    index.get(w).add(a.id);
+  }
+  hits.textContent = "";
+  return index;
+}
+box.addEventListener("focus", ready, { once: true });
+box.addEventListener("input", async () => {
+  const found = (await ready()).get(box.value.trim()) || new Set();
+  hits.textContent = found.size.toLocaleString("ar-EG") + " نتيجة";
+});
+~~~
+
+~~~js daily/chat-facade.js
+// a facade: a plain button that looks like the widget. The real widget loads on the first click only
+document.getElementById("chat").addEventListener("click", function load() {
+  this.remove();
+  const s = document.createElement("script");
+  s.src = "http://localhost:8817/daily/third/chat.js";
+  document.body.append(s);
+}, { once: true });
+~~~
+
+~~~view 740 900 بعد التصليح (البحث والشات محتاجين السيرفر، فمش شغالين في المعاينة)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخبر النهارده</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #fff; }
+.top { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-block-end: 3px solid #b91c1c; }
+.logo { margin: 0; font-size: 1.4rem; font-weight: 800; color: #b91c1c; }
+.search-box { display: flex; gap: 0.5rem; align-items: center; }
+.search { padding: 0.4rem 0.7rem; border: 1px solid #6b7280; border-radius: 0.5rem; font: inherit; }
+.hits { color: #4b5563; font-size: 0.9rem; }
+.news { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr)); max-width: 64rem; margin: 0 auto; padding: 1rem; list-style: none; }
+.story img { width: 100%; height: auto; border-radius: 0.5rem; }
+.story h2 { margin: 0.5rem 0 0.25rem; font-size: 1.1rem; }
+.story p { margin: 0; color: #4b5563; }
+.chat-bubble { position: fixed; inset-block-end: 1rem; inset-inline-start: 1rem; padding: 0.6rem 1rem; border: 0; border-radius: 999px; background: #1d4ed8; color: #fff; font: inherit; font-weight: 700; box-shadow: 0 6px 20px #0003; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1 class="logo">الخبر النهارده</h1>
+  <div class="search-box"><label for="q">دوّر في الأرشيف</label><input id="q" class="search" type="search"><span class="hits" aria-live="polite"></span></div>
+</header>
+<main>
+  <ul class="news">
+    <li class="story"><img src="data:image/webp;base64,UklGRtgoAABXRUJQVlA4WAoAAAAgAAAAjwEACgEASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZWUDgg6iYAADB9AJ0BKpABCwE+kUacSyWjoqGl9vmYsBIJZ1nx4cPPn8G39///9JaE/8vNpb+/l5teSd/l2YX9Hnj///l8/yP//vcNLZopxcKomv8qyT4nWordFzGnE3Q579/9xicAJ6qiP/k0gH5k0QHn7eib/helV1M282Yv7+m8l34H/W7h3+Dzsf//LX+/u0+5XFLf/94WV1//6WLOqfF///DA//gfAnJ7fadJ5oChRSWXJz9PVpoZ13C1KTk9vtOk/0vog/GhZk3gZRMRpXaWY4ilJyd3WQEK1om0RhuIbJ7vIjf5f65gheK7yP+DcBHOJO3s+lakFruJTi5nnQyjkx6LQqtHEhLGU0sbx9LqpKtYeP0y80v4ME0yiDJWHlSL0leQ7J9Edg3xLJ3Gf6HByWzYezWwm19vK7KcisduKzEy9HfT9ZikbjlqMZEfaGmNrXFnglTMrrpQIZP/OwtuMDZ/knxzjWIP4xiwId9LlEpORxPtLAVUYaR9uyG+bL/A1hoQauwRCwsYLJ3jUQEQzEdHaT4svRuaxZCejSeWHG1vbsWoZxWYO5/cAzWen3DHsKEhp2+xZD6Li2KoZc8ZWLdSTJyXg5AsDzTsdesaFHbiQoqzPlGKbZech0IxJ2TeK2K4pWkCH+iJqpIQHF9yga1svihC+fw5NEpRCwnfipXeGPVLVpKl+VAnW2EKYx6TNuC+g8BPCtrU/Ir6OdJ5MMC7nMN4tOuQkGEuCdPaDeVKdHrBivO8hifyrOWq7xnmDoWIRUis6h1J3+fOfrKdwf34VdJ2Ht1pqI3IOfIPuXYxljtC7azRiho6JYqXpVQfRwMVyvsJQNlMJ+n7ltFqEFPQ99LpZOA1hvo2///zxZwnU4X+NJeFc/NNdBLblJ9HIVytmQdFNVpf+SbwYofIzJfhUPeJc3HX5dVku6lt9sy2gT9m9/zyHVV/ICcxgdQm5rPl4wDduhpuaLMN72RzXeXKLIOetC+hq7AAEriLegsRqUmZpnfUlYZy94ivAlaERAjofsrUQw5v6aSbLhxd4BNUmsoyEYcyK+mEdRNSMpFiLOtnnVIfbsz6sWNgeOIOK5lutXx5iweMZC3K/jvZJB8OIXi1bRgcvWbWz7gvTzHdiKIDV1hJvvHSoOJoLXcQfcMC/mCFruz/VJVqBx0GjWx/O7v6SqahOw/wuyXvIFHWRehOXLCZ/IS5KJGs8tnXrg0+eclMCSERhHaNqCDTGJcIz5/8q4hVbK4e3fFKQhbc3XqEcBvID/LbZ+cCGOb04Sxrxnwm/og48sf5QEjMpceaQ4WpSaN/RODNguOjlUGy6VvQU0ii0cvAr4JERkYzl/0jFpgAAP7wo0AAGiZ36sP5/x//i3zX8QIXvo99gaHlxCpFAJSoTvVdFx+p0uoMLsUElGcm+2PGNVuESLr2i6oDgg3t0k7/3+iQy6UZ+cpOMO/WRpjydfYvwUv86UCvYqhUjU8gvC9qQup72xjTJMDylxdz2fX7kGn2LfNoSiicn1W82gzojXh96Ek7ZsNhLATToBLXBLF0CTQ8C3G6dKmzkfnbKKtIuG8fGhEnbL/x3FiR22ZZt41cZPGqWPweWA3j6HBFY4rf92QS4EEvWHjPQKQVr7z7ZgD5vsHH5mgAX2JHV3xp7iEylExkcSHvF4T+e8ZofcPPi7VS4Y5OyBWaD8nKFDXR6oinjllbB0hmw9I46J9v9cjPWUs6LDaaoebf644CZ8UJ26ezcfra4Or64C/pno98te/ZZHRrFfdloAucg/nu6bDwbapr1ciTuNciG4d5v05dGUgMu3/2PQSJ7O6NJDMT0kaA/gij4O2oyEQCVY+kb9XclZXz2KB+KAEQ9293wBunTwrV1NCVKnnddrLkVh448VGjv48LdbXoE8jjggg2S6JG+yWfg70LnyqMqZjFEK0Lf4UEXX7J+rK13byn9+jiopIy3oufjz8IEVzgmfK9DiqJsYmuxogvspaZOVEMhAB5PzVnO2JEiJ9x/Nf5O4uQYcPv32l19HFVR+X7N6Einiw6Go6ljXLugp4QBmB3zOc0dOnt5jxA8Qrz+wbfFwAgG6r8pLQrfV9/55LLD3tGfCbgb3aTmgcOR6i71p02YvRyt/Szbt+MAmMYi+YnCBn3YforyR15tsBaZR7U4vO6zT+Pt7f0leb/tewOqdS9NHS88c74lhtcp+lisIANR8HmU2mkYnMatyiJZAOOVrfpMK4CodEcSWX+2SNbz12ftRFp6EeD/ZiVqD5a8JPcNZ8uW41v2Wrsksqkisw6FkHzViwlF9PznjhR+Qi3ktgTlpDEwn5uobE9YV1Xx2VEWSjXB4ktp2DXQKdxUawmaGyRZ7WU8YuFlo2krvNPr6pXnAuxGX/a+3pniZQXnD2N7ecGqPz4NE2gYCVfx22DhAOX/NKymmtO2YOtbu9KBptl1zG/kcjUY/dxBF9FN/PRPmfhoCTAuu186CSl7Up4dksQQBwCvJj7WDT6w7THsK6+sawNYOe33Ik03Z19BzLdhMDBoTKUsV7VdM7iOFsPmyuJX18P08CyI8ekVAGX1ihZEODhbRZAbcSUfYvTXjFLA5Jw1dJjpD+HCFedYwY2UFiP5KZVhJCdAze4H3lIU6uOiswPCCjZNvo0Ua+x2TbPZKkdwNQ19t70dXWrjRiQHlPbZOvOzem+GfrwBIuUv2HOJq9gA+2igtXtazV6qO5Nezm+3lThhY8BJcdHlvrvFr1gKiLjEF1r+IjC6SjXrQG4hX+l3RFAfrFE5j2IMJifSiL00VwEgd58WoMOtNok5NmwOeP0AecWtHAy1mKf9Cp3vTdFtg/8r9MWcTEf6wn/71TBDSmp8zo93CokEeS0a2PQxPhGYUkr4rxLrMqz4nyOZguOf1ehF8a7Jn3V5UlI+dMK5ZgaWmDnwesKmdgn8bNwR4GU9gpJ27EyoZSGhxYmqzTK90hGdzkbhif8MlzrtnnlXtIGuG498TlAAPfb7EQo6WJkg5v4n7nBlUxq/EOgBvV/WUyY7Bn2nrrzNXziX+zALJNJfIo1MrhLZkyvxbGnEInKoriR+xiy3Vhp8LyGOqUr2oU27DxhLN0cDC1jBQJrqRBlcKI+OLc4vWFRY4ODsLvmxd37zQ5omrNitwi4GOlpKE+et/9iiLJDJsPxacviA863OB3IuK8qZlGemVCuWlh5n6WQ3HnO1DqrvLxXKHwcEMHR9FwuYmJv54CHyrMQruxo5FNYOsRcgbYFkeozkJo8uQVn8WTqSqpFT113F3hATUK6SDsHB2isxfqKHyiINntXO6wb8tnmCxyJeQy3uPo9BMNMfs9F0JZKfuIB7lVTcdEE3Gz9PrEE6Mfw4peQGCrE6tWQtjQGQIu+mZZHE7SFVJnHdpmMyXWaujiVY0fQgOFhLPfoHYAkrO8UK+tzXMDpuUXOQL7jaaTzs1hBr2RfFi39NLKJ+Se/wdwNl+Sg1qUYTW8bVDqBYFPD/v2U+sCpDh3H2VAh+BrqzJC04JaooZ+v9onerUZTXDVHScWqLVG/2t/cIfBxrFmu1uYTRlD/H2CMetNvFqSV9pmJNEhwfejvVOjS/VYlait4Rjch2rYcvroMPCt39Byme4oWNYQVQsOdRZeu6igD+7JwPiWSCUoTyOCOrtw+k2TSi/bGIvSoVtpiUd4DcWLVPBVdsL5SFDZR/J7xEmPl52d2qfEpw9BliAOOGA5uR987VTztb1VKReAU206ak0kxo7RDnwFvWEPGT4MSbPiA2hEGfLGRKMCVTI7L2duzl67SflijWBHNoDQR0GFq2r2InepxJObETCyyRHAYM68rPBcB9zNXPuxq5ysRFJgCCFNdJTZzsF8mK06QxvAzCRIGDxPgU+azI/fITS8e+SiUrLdbUJQuNfb9/0D1yaBubsSWqR2kpetva9p0J5uD+dZzIwMV0l/70Z0Nf51Ts+4CJVaFbtOzLVcICNVArD59l6cGzB0BNW88t3d0HC4X94zXFLJE8x+mF0UUVgItaFQS7MDNpLG+pAG5f3b08Jmu8kokeV+7nwlS14Vfx9mjRGfgFz3oYaOogXxA7QA66TJoinu3+jAqQOaNO9xyPj7eOuRgtDhFwkpYYq8VLPIx73gNlKhOnMCGtemB9FHpqx8BZftCff/SAT+cyl6CBOgdiF8K6Y9q05f2e77Ipfi1F/BReIXxAviGqnsxCAwL6gWM45itI3azUXiPSjvfw8pyz/VlO0xlRCB8T2pOOT/FzKkv1fe93IeVSAzkc5ehMJ/hHRQ66SiYCTJwfRCQcDGKwsYKIwM9Rnz1LYN0vB+UsJo8+fjCBnSg5VTurb9KsEoO5/PGkOLlrqubfB2QyQtq9uryADfgaYMlaZE08Knk0B1SjT1lNHkZCe4zrt40nj0E+g8dvtTUwg5twlp8tYIzaQpmhky3+yM32rc+Axal7ORTKSdlN/Aqcdof/uRcexIYA3dP9B6dde2hhlZdk8tL9hWTmZ7L2KzD2eaDGabgPbIpnqz+Hrz03MbcBSEWG3gcLcdapzd7q7GzS3hIDxtqLxdulfa9Za+MlRMzIMlcxmKZfEBE04xpmt1bPOQjUUq8Ca9l/X8ivCRKm9ZPOTh+x0O/WxlIoGveaK3/bfTw4Z0G50ZqVM5QGuPXIPfeDuXE/gs4Xf+uaaw12TXN7rtSEebwMDFQJ2wXKWhJsfILUTx9y02RhXdTNqMrEdtrsGZYj1AXa2Owy2p2zi21O+kH5g5n4zD+iTDp7IcQ200xqzpskr6PCPEcvOm95uIQaYEP0iockB2pYSVdGpK3Mz4ay1xPe1Mn9S4k0pfhwmsRohCcZ1CIRaKfd/mLKYTpMNJakTASTky97pMBPTbLmgqATnMFkvNEIY35LiwXA3CJdnIEZbLi7zLHCWTqx4J/nKyWMJissSRWZUsSP25ZOG/zCb4c9moQsLIYXLwH4aJEbPdoxIeDrPRDUdkxgWn8D7kZC9g08RHyLGxaeIl/HeIf6QKWNOGoWL/YoExtM48lIriPgC6W9b7h95b2+HktgdEQXRzyD/xVfpxS2JhXbUHTyxDIrl0oGeKWYjfKvX+zmzKnNusk7xoZCgbvPVKURAVXe/DvKzPBq5XyX3zMK3VJN+OXn0ZRBtPYRjUPtb4p6322Ec3OecmW1qL4/ik5SUTKTS+e9uIAX0AGw/+gOa6NAvLCrZ7Iq9zX5Q3m1ulYgveXeAqGuFJiIfCIbDyCkLLIDoN9Gl2ixAuhq42GHlG+4Y2O0gLwJAWogV22RWvAUdg9lYeaakvRdp3RE3cMXy95JvJ3UGXsAZGslWw6A33egzh45dTkc4jQFhqfKQm0cR+IfurTMVDIRfrvRjVvorwXUd10H1feSf4SSIuIvsP9PKUL+cTH3EiuJ/bdNl0lEkP0NWBZQWLjHB5ZFMSeAntg5aAMR4JcNHneux6bo5ukOCBJXbCkuS/lhEK37wFdG0jhrdJ4PCxpBBqsh081s3IcbMnD7fnjG81v9pfDlhJuHc3GHLFUKn6lAYx3/t31JDq5Kzc9oHnXWfJDR5MBPGxNiqd5WAqnvRQ6pni4zes/Iy1yf1hdZwBrtAQoUQnCd3lf08T2eVvnuQr/u96mMpEvkI620BnWAEpcFYnJbqeVH2NyRuwRPC5/VENfktw4+xETf/QtE3WdoZ1gcERveUaTiOlfJ17Yunn8Wm884sA/IgmZuv6iDmSbkbYYzB4qxHL/e6sbV37t8n5Tpcy9VuCmEKSBe92szBog6jAXkb38i2BVOph4zboDApKxP7kzXG6TB8syHH0r9hXCCGztGpkRIH65ZU811Uw1RAc2inHTzke6J9Bzue075zBlm5VWLbBbIox7ZVfau7/hcxEF8s9laYhs57ZS/5N5WBtrm36UQVFR/0D8GsNhxtbq9TlEwtsAwq2k6tMchJpQ11abAkBKZpfq63GeYtk65MqshiGzelDbRbuYKyIPeA3jt/yyOIK4m+4vnaQ9Bki0k8rbsof0Z3BGZLWW0mv8Kk+y5iRZbhOq1timOUy/AZ5KmtMu51xH3gBayxzbx5P7BQX1hIu3daERYZKHhlwV3Tc4GpsysgxQmtm0RYyb0qRvvuMLivKkezFxx8FbrqsiXhOSv6+xI5O4mCYoEr6UxDY6R5YPHDkwzVnOG2Hbf/BDy+k5rbWzMHqAg7M12fmcP0jAafIl18GQDW2pmdS8IoU2v9WA+LenOC2xPNLS5hXapF6hOlRbWQGuPMirex+M3j/gvpOFiOQtK4rDQGliJ6Xc1rv/YSICwHwgE+0Mfr3bymhXgfddr2YgQhFbnLrzx3d+x08XSZz2lR4x4CsS4ykVV3laPdIc1h+pbCWtTQWRx5Qa6T3Xu6W8i9XIvlvLmaEzj++7Lsgj06NjzCKDmVMqevclwY1W1fnH38GcYynVQAt20ZtohHLitPjBPOX3Vdv25spAMoqiVlgi3xOrtNGQaa2IpWPlo8KkBhPXsOpn1WvZ6mqeA99FKvlCrAyOGdOxSVag+egrMHnyTyR0VqauodIVSxAWXKcCOOXgKpMp3zqKhxjWazk0r+5f68n54PezNqPgE0obo/AI3vCJQrW7vijvdX/N/yuL/7Xbrq0puxl8jvRpw5sLZ445nl7jOWPuFkmzEeaYATQOlsa0SFXzrQI90VO3TkqWWJbB8D/zW8cCssIWCk4QL36FBmOjA7Fin4lw1E0ogJYKo4smq/cJKUlsOpk6aGYL1fUE0wtpt1I1dUuaWoP48dRWryMHrUTRVwSzwojsX5u1R5AN/1A5ybHpo3Ro+pp0XymOEAlXnEN/FQFC54q1b2LTS2S2S3T1q0vBtLlyEh9ztkaLkxwYuYLzR1RLZeh9xYdhLxw5NxXvO1cw/6V5oqlsWHSPAy7JsHeFPEulZlT3Qn2CdBA03+gezZPSvsGzivEwBnTr4lLGkM68Aplof8jq42+KRZEsuu/yCs89caRurv/c8OcrPgPz6ZRECfUhmlH/Un9OcAAnNH60UVMLlelvfy6e8GUEpIl18z0bKn1u1uAaRCXdWyTqs+7WKpefcgFddNgKhZOgUgc/cJ8TkTNBtGtxYplhgy5OMTYo44wbOnVvXqWVz0bZrTMU5n9xFoitMfT7opgBzzIVoNhaPkJN/Vpt06GUPP4rbjDvww0ylBMl97GnOgQIykxCFXQs5+AmrmlpKUhFv7vgJ+TssoQLLJuqcu7CX9cm6PCaf3+5686kDoXPsgigVFWdF8PYfsh35pjgYGEe6clwGFeHjz93HQfOnX1GuDP62///2lPvGdd4M8KjvFMBTNkS0WhZXNHh2tG4nzEoNj/Qg+IzFUXhm309lBVZVrJkkuza0XL7GaN9xeGAGIrxLGK/TH7xthCygb3+Ln5DhrGwd23NZOg7tEcPY6wc2N9BoRBQhQcq68Ws25N4QClo7DgiQlbv6JNSP73xca0egycsiTMwTpapn2cAcNxsCK+THctoA997r6Tu/jOnp9NdGAd0NzjbZUP/HET8NuWbumT1SaMWOCkZhoAK5SUaH8ErzFIXDGxeDXHrZ9RVGvqaEO/JyReQIzTfJVeU7IpL/03l7C5EtDHCCVzbBZ9qQowZXIctqkTcZPIZ3UDBjPO4rPDJKlarcRHcVce1AM7i8c3Mk0bxmcixkDQ9dDqn245HXywF4D8cgD5hypLS+FKwtAJ7KV0Ku1uUtcPAfhc51WOuAEnpVGvwK9XNiz5Nqa5GvjEwRGXJOlIojGWXJiTtYYeyCdPa+KSCcgzlb6ZJRXNxP+06vcxPgsqSACs7iBQ2SPqz/7xjTeoj8yjbimzf0DPXsKkOKFqJeXgEfuXcCUPh9kYBebjwM2dTMnWka/WfChi0EToDBIvvCaAjuXFu+66Nbqcgq/4p40WuUMjitjA49NqgnIedMh56FPmi+ZZjOhqmOfhBn5zkh9fZWxiINuAO0nh8QkWqjZ+uvifB1xB8YbSPxNq07SRCxMCcpEbRc9F+G2HoepKW7l/YaxP16nl3ACe4zldIIv316OqtiGCYthYJYJGUDbmwKVjPrkVt2SfToRGV2KgPHMfmialENdtIeRwlcYa6ywBgR0kTr2AFuDcdHIizGGI1KVPtUp3orZ75cibCrOXfUatK0vTB0BINl9MSWKLQH1fE8l4Avv4nnxIiT2C2S27YVoqIhgck+zt4MLeZ30oVYXY0kHgWJ62XWbSCiIYG2Ias5SuGfp8QoMnxG1vE1d3Kto4Wxcuyn3SQTZdksUZ+k/49QuSEP47lU/1oMhW4ohVVbVdI9Zxmj5sAaUpod8AZOGfND+6NQQxpIn0phaQ6qAkr4Ex+FgOhOGy9hVdCF+SCkg5/D7BA1v4DQ2gGiGtDuoL1bJhKqYd9LfW9CrqX1MN0fOYR/hhBhPt2IrGvXpJ51w2oYddtvO+gdxwpzUe9TZiZwsJchX0PM6viTecHw48O1LixmV5RPjayxTulrv8Imyzon+98Rj7LNgnzYgyDzmQPN7cg903NMPxUAfmgt/CvkKdSiwsw1vd+tVYWTbk9ucCYvEr0MtVZLvvNYvss0VdBZth5wtS5JAiBZPfj9T+OdDR5F+ODufCe5xl6/MUey1Re9wghgffSnxV0fPUiQHQFqwVhzxGs24MzHNyhde6aLWfKBvRvnVO8jEUsnijdDNaKTdOcYe47TfPlL2XjhR9rlfswVU8thccC0uv8tvPt16TLI54A+g8z5GxVQAbuk5TGfjf80b6cN9YDygbDKhG/0mg/Pjgy2PfGNw0DhfsKswVgMIVNM8q6OOlTJlCYcODSu9t+FwE85qGN8RDzVplrqDjlKyAp8I0wluWT3EHcPVSclqPgzdrawZcUxxHkA31JVaPUtKIbKEZb/emiTbbNvmwiK5ZtwuJFY2d8GwBRhofkv3GWRf3zRn/KAORoCkZs1ah0/LLs47Z6M83jp4IZ8rqsYHPRa6/DKCBlJ8sPA9n/oyEswjmVDxS10yFigHJ/AnT3MXxk1BMI2710qhnmmvt5Pada981NdkxeULAIUeUyR6KniWnebc+jyzFzcjR26zwTNmysIq3vW9L5rkpG05nTJ5BLuuKY+CdXWV1umsrR7lNsvXz56CgrmK/XeG/oxb1vLJ6RGbOhW+UqJ4x3jZXE40er/W0TRqt1QV5j2LdnyctFTEywuePU9m1mND35pzDBQMHyifFVbkyrrhIimGKIxtvxattbW8bahBuIpi82/r8EKmQCdPOKBz2emtKLMnqtrkvEKYv6wtNnYIioOYnvxDnSkwjbGNhL28w4hJeIx+kMTKbYUcHyz94kn2EmdqGIu/5uCrkfiAlIdKUQ4tfipk51PoRUq3rSI4Mi6IhqswJqgSZYQyiWcG2chsq/cgnPwhTNN9ilTb4mFf0O7CF2vDcM7lGGthlnOdXz8qudHNg/BOrC9gVyXzKSLcHG4+7EeKXJJFwUouXmmvHNszst355tCiUfgH2fyojVTiJHrsWDwtjAuS0ccqROvj0jTFLPARiMSI9ipZJ5LedDGyXRKuihXLLnf5Yicw8TiSQrQh9M0LOC9y2yrWS2PLIXEUbsnbGQbABOAncwAQn8mfsA/YbtMMdhJI7Lbq8sOZXDOY3bNNwb8FWuFcRevO1KkLXD/ovwQQGY9+bc/NieQjRnfd//1FCwAd992TnTJMumY0ob1xYv3CPgDLoIwfnvE72xn75zFtgfPrQH+ZKAHLqtjwnzHXSbjN5yiKts99UjmGA8/1XHdJAVv61+LaEKHwN0qZ+rd/3643RTx97Tr0yiKVFbPQvFJoHOMvhGZ28lu2aejCl9YCHTrCj9djIe8QN8LHOBWi/SoAtR8xqoM3AFog9TaFq9dVRDvHQT/kJUQZGyHLNt4CSXrPRtej66yQkNhxCsKR3IL90+h7nJr93F0VtSapOzPIOuGZuFplRXJbOPKpgLN651DhO+78A1R1afJ+eIHWbaowQRtBT7itLpDf3RDWzKIk6fARneYM57/o+GRI2uvjWsDwbquiyNJa6ww4yxi5B8Iunj3ZtvUmiVS33qkBDiRnLg9m8sie9rZrSv79AcQ+fRxfAi7ibpMxKap0GDW6qyT34J6Fhy2jigrGbaPXdie1XkNuigbII5rfueB4QV6/KDx1qxJLuIKHkKLxI+x+eFx2Dmc6Wk6UeO2td9R/4kByqjn3AkF6+TBk9LPRqFGsYLjB6JOYIgJQzNaixACzVSMOBHvRjyz6eKK9Mwj2UzEkezmHjE5ImtnO7YgRK1v3BsuHABWgBB+B9KqwdvVVvSjOQgci+FvmIFh/J/ukpX3APlfdow6HoqWLJo4ZC/+T7y5+l1OS24q2q1t5im3XJfaVtj3Rkhm8OMEFPjnxWCa1TFcFy4wP03FcG3wrxuCde/OZViv1sa4K3ZTGT0bN1keOI3qUgDqSF7ijIyyQBMPc3+c/WV7dMr412WQO5U/WwmJOz53b6W6VOVXbNb/v9Sw4qLo7v1toIi109MKwCqk+ri51VN2UlYnk+IxfPU8AL7TjtWYsA8mXg7feTAJOJrU/h7J8xGtTXxJJCaUTVaMR2YnJthyccYs5rkUWBdZ1O2jXO9gRavRX0KTnbXynhGVpRjJH3JGVUxI9U7GP+/siE9WERxs72GknTnsSqxoAHSDNkCCQoivcgP1t7D1+LM4ujv/rFCQHVkXPCZRw2gF1igXpymCqMAYndqBMD0kcImhOJlvnhXlRHKeoUlCaNAU9L0R0NiWYtUmAwti5qqJM0Xx8ufDfy2QKS5TIPOyxwIEznr+uaMsTnw6P1yyO1HRGrQzyZK9NgNwmE8qtocb2JwPDPDo/2MFuGbRioIM0yeFuIyHNaB0maFRzs0kMIPSiUhfDwCPDszwmX7AcIwGuGmDKdWDt0W0lUMl4v8XsQuJazcx7UV0gzBvoKMo+yPGQB6NJWjqfez0J9UglyI/Yk7XumTHmwmIKBjMEkgnPlePBb6lBflH0+eqcSks5VD1MrAxzTLOYoCF+KodQ1yo/7gjVzzmxiRTQz8VWdE80u5U1KsoDrpfKRAmkCyc3OU84Pe9eFcDOJH1+Qr9y9rnKamYPsPC4GqFqIcISZ1vzX31BjHZhDfeKzMEpft50BgurW7zINX3lj8LJQwk63GmkupA8UzTM+ia4UCfJUfNW7dBPYY0P6cH4dQaGiJLn34NwqXIb7QF48SQ4925hWlfxHy2K2sSjn7HH+lXaEK4uexOMtI1wznTfM1LDBBtL7D7jRvUFnRX3GqxtXBM8NrpHfU8HUjZdOpoKSgRcZzqmnjKFsXXegG2FV+YwwspntGCmd4T+8knRgnJs9vH25A72BxSCUn4jagOtNLhn6ITuy4Po4gys35f/WjVv/dnqTwAy71ojFlZOoXdooq2IJautwJIFeUfk056fzT9G0WFZYDPCAE4EHjpq8dq4IvQvbVvO1wDJ2lQksipzTzwhYiMJpi1PM3vyoS8+K9+cyUlO3IF7jwleFJ9xdhoGYpsWW6pV7PEagMHsJzgnyfPR/xpHNFq/Gs1TsmKX+y9gRw7fi5S/EzZPi01ap4RelQk/Wll+sgAp6qDC+Xq8koA2ax8MfHb7PzQO6E/D9iT8v3i9TwN7wIp7ZgMU5kEVPK4sxM6Z0EWWmGsRoPlZX+gspkEHDsrYewLYho0dQ+6E/zpIyKmiGof7nwKBqMwiJ3uIMl0BrBS4NnngBJCkBvDdH5VNwSFEBf838dJVtNrM4CH4gYJsoX7zycke8KnlxHR2TcX1bC2n/o5eZ98fmcYY3OsBh4gD+gG3SpxoBQ6VLCRIX1/HZpuXXvUXpBAAiGLs3PYA92+72rOnP5XpRqvAE9CXcVJUU93mTj/N+0pEhljHYa+jwdnrrInXIVNBPvNGkbvCp65XMzlBeQDigvV7B87oqsdDDJmfzv+HvcU6cdtTlthKOn3zKbCVndIN5OX08wyhdlylqz9wuMxDuQi7LsdXqftEs4H82xC2oqf+Ovu/lhaopn8oYExb5kZkMSbp8Zgar4peKWXn28DQm8FyOn2EjuFNy4qVsB0GiIK5hnjxNVQbXJX1uPrmE/kZfBcb2T0EnPVNEJqEU88hfsv7Zq/iv8AvL+hLEHcZtUGj9sDRfsjJhwAba2Y8Y1/y4KwPK32cOtjz+VXpdQQZTaqcaQnOmXkDJDPiBzPSJg+R70aqfFSxmM/F+UmtGnwkxxHwEd2rvjgyLokxr5l6yf966rqPNJMie7GofkdygJuKEYTqeYXuFOFklxsGyqHE2rvoddT6DT593cAF3BTSSUlAWbYpGX3w+Lb2l+UGnRoIU05Pv+Fg0Nl0Zfz4DKZZiCZLYZhvuXP6M5glXqm5ZSaaxXYPrFRSrR30gkaQd+n/LmFnhq7IcenUSzE/VgIf3ksNhaABk8qPtjty4mPSq5rJ0CSEl6KdT4R08ObUmROqz9Hmiz7P7u7gyvhig62UHc5WuFvToXkJ49wziIQjD3/6Wu+xlLmdEs3loaL40wyKbiNivZBQ0UvST/fkUR9aIJUzpgxWA+EYstoLPF4a80ukwk9I5nYCFeBNzmI8NVxTtHOfRJ0tf5f6DgYL69xACEAN5B2dB/DZ3SOU83U1bOABPAcDY7nj6oCD256mtO9ujFH34yK3qzkmXdoXTJUADI4v/km9Kn1OXQDm2eAi4UNcJbscleASHpNBBZZqlKc6D/CWKoZ77e/Fk0GIKLuFq1f66teNP1A2Sw4vH1AByAsKT6QROTd/yhq/KOz9eVO57W8oFvbn6AmJqDpVc1etTvyaDw2mETiv8g2WkgNab3BZhNoIQj56Hj9ceTWzjoM8a7Na7vrevbkZjO6IRXJalymkSwCW3bxMYPydmo/pxR5nmdWrW1k+PCXdW8o3vZycGuaiyb6M2hT3ObGPgcYKgc/44IYKAVBrPgnF2bofb1APUzga3Zj6gdS3dN861ik0o4gWiAz0mQckwxErDBjza88Nx1MK4jTvCFoRpmFgrPtOeEZLXGFGCURBn/H+OhQ9Uj/WjtaW2YvTm08A7gRpWwsRWEljSxbLAgt8d/+E/bj/PfdPDQyc73xHFCauAaX7VLqyI/DeoD/YyVAwQ6KpUtx3y8s7JbODGyX7UYfQXPv+r+zgZD2AxpKG94EWUvG+B+e17+W/nHDzLOWhbkRmyxb15MKxJH4I8VcrJ9teuPy6qKbxuwLB1K0HGxZOmTteeVxOVHhMBLTJZymfoViVnaAFh0Fglhmd5P5A8Em0cGyTR7IUfZrQc6fvZEJSgnbXbXZk4iVSE3GXqEskKXsw4jGIs1OgAA" alt="" width="400" height="267"><h2>تعديل مواعيد المترو في رمضان</h2><p>خبر متخيل للتجربة.</p></li>
+    <li class="story"><img src="data:image/webp;base64,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" alt="" width="400" height="267"><h2>الطقس: أمطار خفيفة على السواحل</h2><p>خبر متخيل للتجربة.</p></li>
+    <li class="story"><img src="data:image/webp;base64,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" alt="" width="400" height="267" loading="lazy"><h2>أسعار الخضار في سوق العبور</h2><p>خبر متخيل للتجربة.</p></li>
+    <li class="story"><img src="data:image/webp;base64,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" alt="" width="400" height="267" loading="lazy"><h2>نتيجة الشهادة الإعدادية الأسبوع الجاي</h2><p>خبر متخيل للتجربة.</p></li>
+  </ul>
+</main>
+<button type="button" class="chat-bubble" id="chat">💬 كلّمنا</button>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر بخط أحمر «الخبر النهارده» وخانة «دوّر في الأرشيف»، و ٤ كروت أخبار بصور، وزرار أزرق «💬 كلّمنا» في الركن. الشكل في النسختين واحد، الفرق في اللي بيتحمّل.
+
+**الطريقة (اللي التقرير مبني عليها):**
+1. **Lighthouse Mobile:** الدرجة والأرقام، وأنهي metric أسوأ حاجة (هنا LCP و TBT).
+2. **Network:** الحجم حسب النوع. الصور 9752KB من 11MB، يعني نص المشكلة في ملفات مش كود.
+3. **Performance › Main:** كل long task وإيه اللي جواها. ٣٩١ms [[bundle.js]].
+4. **لكل سبب:** الدليل، والتصليح المقترح، والمكسب المتوقع.
+
+**الـ facade:** زرار شكله زي الـ widget، والسكربت الحقيقي ([[chat.js]] من origin تاني) بيتحمّل بأول ضغطة. اتقاس: [[chat.js]] مش موجود في Resource Timing قبل الضغط، وموجود بعده.
+
+**البحث عند الطلب:** [[archive.json]] بيتحمّل بأول focus في خانة البحث، مش وقت الفتح. اتقاس: قبل الـ focus مش موجود، وبعد كتابة «الأهلي» طلع «٥٠٠ نتيجة» (نفس نتيجة النسخة القديمة).
+
+**غلطة في أداة القياس:** أول نسخة من [[measure.mjs]] سمّت كل long task بأول سكربت جواها، فطلع إن [[chat-facade.js]] (٧ سطور) عامل task بـ 143ms. لما فصّلت الـ task لقيته **Layout بـ 144ms**: أول layout للصفحة على CPU 4x. دلوقتي كل task بيتسمّى بأكبر حاجة جواه.
+
+~~~text node lh.mjs و node daily/measure.mjs
+Lighthouse before | Performance 58  | FCP 1.8 s | LCP 60.3 s | TBT 330 ms | CLS 0
+Lighthouse after  | Performance 100 | FCP 0.8 s | LCP 1.2 s  | TBT 0 لـ 20 ms | CLS 0
+== before.html (CPU 4x)
+   long tasks: 67ms ParseHTML | 64ms Layout | 391ms EvaluateScript bundle.js | الزيادة فوق 50ms: 373ms
+   الحجم: Image 9752KB، Script 1434KB، Document 2KB، Stylesheet 1KB
+== index.html (CPU 4x)
+   long tasks: 141ms Layout | الزيادة فوق 50ms: 91ms
+   الحجم: Image 41KB، Document 2KB، Script 1KB، Stylesheet 1KB
+الـ 67ms ParseHTML = chat.js شغال في نص قراية الـ HTML (في الـ head من غير defer)
+axe: 0 (بعد ما اللوجو بقى h1: «page-has-heading-one»)   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
       ],
       items: [
         {
-          cmd: "audio و source",
-          title: "ملف صوت بيشتغل في الصفحة: مشغّل، وأكتر من صيغة، ومن غير تشغيل مفاجئ",
-          pre: [{ to: "css/video و iframe", why: R`[[<video>]] و [[<source>]] و [[preload]] اتشرحوا هناك على الفيديو، وهنا نفس الأفكار على الصوت، ومعاها اللي متقالش: سياسة الـ autoplay بالتفصيل، و [[media]] على [[<source>]]، والنص البديل` }],
+          cmd: "CLS",
           ref: [
-            { t: "MDN: <audio>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/audio" },
-            { t: "MDN: <source>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/source" },
-            { t: "MDN: Autoplay guide for media and Web Audio APIs", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay" },
-            { t: "WHATWG: the audio element", url: "https://html.spec.whatwg.org/multipage/media.html#the-audio-element" },
-            { t: "WHATWG: the source element", url: "https://html.spec.whatwg.org/multipage/embedded-content.html#the-source-element" }
+            { t: "web.dev: Cumulative Layout Shift (CLS)", url: "https://web.dev/articles/cls" },
+            { t: "web-vitals (GitHub)", url: "https://github.com/GoogleChrome/web-vitals" },
+            { t: "MDN: aspect-ratio", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/aspect-ratio" },
+            { t: "WHATWG: the style element", url: "https://html.spec.whatwg.org/multipage/semantics.html#the-style-element" },
+            { t: "MDN: <style>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/style" },
           ],
-          desc: R`[[<audio>]] بيحط ملف صوت في الصفحة (حلقة بودكاست، تسجيل درس، نطق كلمة). من غير [[controls]] مبيظهرش خالص، وبـ [[controls]] المتصفح بيرسم مشغّل فيه تشغيل وإيقاف وشريط وقت وصوت.
-و [[<source>]] جواه بيدّي المتصفح أكتر من ملف لنفس الصوت، وهو بياخد أول واحد يعرف يشغّله. والتشغيل التلقائي للصوت ([[autoplay]]) المتصفحات بتمنعه، فمتبنيش عليه.`,
-          example: R`<h2>الحلقة ١: يعني إيه صوت في الصفحة</h2>
-<audio controls preload="metadata" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
-  <source src="media/ep1.ogg" type="audio/ogg; codecs=opus">
-  <source src="media/ep1.mp3" type="audio/mpeg">
-  <p>متصفحك مش بيشغّل الصوت.</p>
-</audio>
-<p><a href="media/ep1.mp3" download>نزّل الحلقة (MP3، ٣ ميجا)</a></p>`,
-          flag: "script",
-          lines: [
-            R`عنوان الحلقة قبل المشغّل. المشغّل نفسه مفيهوش أي كلام، فالعنوان هو اللي بيقول للزائر ده صوت إيه.`,
-            R`[[<audio>]] بـ [[controls]] عشان المشغّل يظهر، و [[preload="metadata"]] عشان المتصفح يجيب مدة الملف بس مش الملف كله، و [[aria-label]] اسم المشغّل لقارئ الشاشة.`,
-            R`أول ملف: Ogg بكودك Opus (حجمه أصغر لنفس الجودة). [[type]] بيقول للمتصفح الصيغة من غير ما يحمّل الملف، فلو مش بيعرفها بيعدّي على اللي بعده.`,
-            R`تاني ملف: MP3، وده بيشتغل في كل المتصفحات الحالية، فهو آخر واحد في الترتيب (الاحتياطي).`,
-            R`النص البديل: بيظهر بس في متصفح قديم جدًا ميعرفش [[<audio>]] أصلًا. في المتصفحات الحالية مبيظهرش حتى لو الملفات كلها باظت.`,
-            R`قفلة [[</audio>]]. العنصر ده لازم يتقفل: الـ [[<source>]] والنص البديل بيتحطوا بين الفتحة والقفلة.`,
-            R`لينك تحميل **برّه** المشغّل: ده اللي بيشتغل لو المشغّل مشتغلش، وللي عايز يسمع الحلقة من غير نت. و [[download]] بيخلّي المتصفح ينزّل الملف بدل ما يفتحه.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-المواصفة بتقول: [[<audio>]] بيمثّل صوت أو stream صوتي. ملوش شكل من عنده: الشكل كله هو المشغّل اللي المتصفح بيرسمه لما تكتب [[controls]].
-
-القياسات كلها من Chrome 157 على Windows 11، بملفات صوت اتعملت بـ ffmpeg (نغمة ٣ ثواني بصيغة MP3 و Ogg) واتفتحت من سيرفر محلي.
-
-> **عن المعاينات في الوحدة دي:** المعاينة الحية مبتقراش ملفات من جهازك، فملف الصوت مكتوب جوه الصفحة نفسها بـ [[data:]] (سطر طويل من حروف وأرقام هو ملف WAV صغير: صفارة خُمس ثانية). في موقعك هتكتب مكانه مسار ملف عادي زي [[src="media/ep1.mp3"]]. المسارات اتشرحت في درس «المسارات: مطلق ونسبي».
-
----
-
-## ١. [[<audio controls>]]
-
-~~~live 80 مشغّل صوت (دوس ▶ هتسمع صفارة قصيرة)
-<audio controls src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio>
+          title: "الصفحة بتتنط وانت بتقرا",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي تغيير من دول بيعمل layout shift: عنصر [[position: relative]] الـ [[top]] بتاعه اتغير من 0 لـ 40px، وعنصر عليه [[transform: translateY(40px)]]، و div ارتفاعه 80px اتحط في أول الـ body؟ اكتب، وبعدين جرّب بـ [[new PerformanceObserver(l => console.log(l.getEntries())).observe({ type: "layout-shift", buffered: true })]].`, done: R`[[top]] طلّع entry، و transform مطلّعش حاجة، والـ div اللي اتحط فوق طلّع entry قيمته أكبر (قسناها 0.022 في Chrome 156) لأنه زق كل اللي تحته. فالحركة بـ transform مبتأثرش على CLS.`, sol: R`~~~live 420 420 test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>layout shift</title>
+<style>
+  body { margin: 0; font: 18px system-ui; }
+  #a { position: relative; top: 0; height: 60px; background: #def; }
+</style>
+</head>
+<body>
+<main>
+  <div id="a">عنصر</div>
+  <p>سطر تحت العنصر</p><p>سطر تحت العنصر</p><p>سطر تحت العنصر</p><p>سطر تحت العنصر</p>
+  <p>سطر تحت العنصر</p><p>سطر تحت العنصر</p><p>سطر تحت العنصر</p><p>سطر تحت العنصر</p>
+</main>
+<script>
+  new PerformanceObserver((l) => console.log(l.getEntries())).observe({ type: "layout-shift", buffered: true });
+  setTimeout(() => {
+    const a = document.getElementById("a");
+    a.style.top = "40px";                     // جرّب واحد في المرة
+    // a.style.transform = "translateY(40px)";
+    // document.body.insertAdjacentHTML("afterbegin", '<div style="height: 80px"></div>');
+  }, 800);
+$__lt/script>
+</body>
+</html>
 ~~~
 
-**هتشوف إيه:** شريط رمادي فيه زرار ▶، والوقت، وشريط التقدّم، وزرار الصوت، وتلات نقط (قايمة فيها سرعة التشغيل والتحميل). ده شكله في Chrome، وكل متصفح بيرسمه بشكله.
+**الإجابة:** [[top]] بيطلّع entry، و [[transform]] لأ، والـ div اللي اتحط فوق بيطلّع رقم أكبر.
 
-~~~text القياس من Chrome
-<audio src="ep.mp3">            display: none      الحجم: 0 × 0      (موجود في الصفحة ومش باين)
-<audio controls src="ep.mp3">   display: inline    الحجم: 300 × 54
-الاتنين بعد التحميل:            paused = true      (واقف لحد ما حد يدوس)
+**ليه:** Layout Shift API بيقيس تغيّر **مكان العناصر في الـ layout**. [[transform]] بيتطبق بعد الـ layout، فالمكان في الحساب متغيرش. والـ div الجديد بيزق كل اللي تحته، فنسبة الشاشة اللي اتحركت أكبر.
+
+**ملحوظة:** [[top]] لازم يكون متعرّف في الأول. من [[auto]] لـ 40px مطلّعش entry في Chrome 156، ومن [[0]] لـ 40px طلّع.
+
+**الغلطة الشائعة:** تحرّك العناصر بـ [[top]] في animation.
+
+~~~text الناتج
+top من 0 لـ 40px:     entry بقيمة 0.0039
+transform:             مفيش entry
+div فوق كل حاجة:       entry بقيمة 0.0372
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة فيها ٣ صور من غير [[width]] و [[height]]. افتحها بـ Slow 4G و Disable cache وقيس CLS بالـ snippet أو Lighthouse، وبعدين زوّد المقاسات وقيس تاني.`, done: R`رقمين قبل وبعد، والبعد صفر أو قريب منه، وفي Performance › Layout Shifts مبقاش فيه مستطيلات على الصور.`, sol: R`قبل:
+
+~~~live 310 310 before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>من غير مقاسات</title>
+<style>body { margin: 0; font-family: system-ui, sans-serif; } img { display: block; max-width: 100%; height: auto; }</style></head>
+<body><main><h1>المعرض</h1>
+<img src="/a.jpg" alt="صورة 1"><p>كلام تحت الصورة الأولى</p>
+<img src="/b.jpg" alt="صورة 2"><p>كلام تحت الصورة التانية</p>
+<img src="/c.jpg" alt="صورة 3"><p>كلام تحت الصورة التالتة</p>
+</main></body>
+</html>
 ~~~
 
-- [[paused]] خاصية بتتقري من JavaScript: [[true]] يعني واقف.
-- من غير [[controls]] العنصر موجود والملف بيتحمّل، بس مفيش حاجة تتشاف ولا تتداس. ده بيتستخدم بس لما JavaScript هو اللي بيشغّل الصوت (زرار «اسمع النطق» مثلًا).
-- [[controls]] من الـ boolean attributes: وجوده يكفي، ومبياخدش قيمة (زي [[required]] في الفورم).
+بعد:
 
----
-
-## ٢. [[<source src="..." type="...">]]: أكتر من ملف لنفس الصوت
-
-بدل [[src]] على [[<audio>]]، حط جواه [[<source>]] لكل صيغة. المتصفح بيمشي عليهم بالترتيب وياخد **أول** واحد يعرف يشغّله.
-
-~~~html
-<audio controls>
-  <source src="media/ep1.xyz" type="audio/x-nope">
-  <source src="media/ep1.ogg" type="audio/ogg; codecs=opus">
-  <source src="media/ep1.mp3" type="audio/mpeg">
-</audio>
+~~~live 600 720 after.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>بمقاسات</title>
+<style>body { margin: 0; font-family: system-ui, sans-serif; } img { display: block; max-width: 100%; height: auto; }</style></head>
+<body><main><h1>المعرض</h1>
+<img src="/a.jpg" width="800" height="400" alt="صورة 1"><p>كلام تحت الصورة الأولى</p>
+<img src="/b.jpg" width="800" height="400" alt="صورة 2"><p>كلام تحت الصورة التانية</p>
+<img src="/c.jpg" width="800" height="400" alt="صورة 3"><p>كلام تحت الصورة التالتة</p>
+</main></body>
+</html>
 ~~~
 
-~~~text القياس من Chrome (currentSrc = الملف اللي اتاخد فعلًا)
-التلات sources اللي فوق:                          currentSrc = ep1.ogg
-   ← النوع الأول مش معروف فاتعدّى من غير ما ملفه يتطلب، والتاني اتاخد، والتالت متلمسش
+**ليه شغال:** لما المتصفح يشوف [[width="800" height="400"]]، بيحسب [[aspect-ratio: 800 / 400]] قبل ما الصورة توصل، فبيحجز ارتفاعها. مع [[height: auto]] و [[max-width: 100%]] النسبة بتفضل صح على أي عرض.
 
-<source src="missing.ogg"> وبعده <source src="ep1.mp3">  (من غير type):
-                                                  currentSrc = ep1.mp3
-   ← من غير type المتصفح اضطر يطلب الملف الأول (رجع 404) وبعدين راح للتاني
-~~~
+من غير المقاسات، الصورة ارتفاعها صفر، ولما توصل بتزق اللي تحتها، وكل صورة تعمل shift لوحدها.
 
-[[type]] هو نوع الملف (MIME type). لما يتكتب، المتصفح بيقرر من غير ما يحمّل حاجة. ولما ميتكتبش، بيجرّب كل ملف بطلب حقيقي.
+**ليه التأخير:** بنأخر الصور (أو Slow 4G) عشان الـ shift يبان. على كاش سريع مش هتشوفه.
 
-المتصفح بيعرف يشغّل إيه؟ ده اللي Chrome 157 رد بيه لما اتسأل بـ [[canPlayType()]]:
+**الغلطة الشائعة:** تحط [[height="400"]] من غير [[height: auto]] في CSS، فالصورة تتمط لما تصغر.
 
-| [[type]] | رد Chrome | معناه |
-|---|---|---|
-| [[audio/mpeg]] (MP3) | [[probably]] | هيشتغل غالبًا |
-| [[audio/ogg; codecs=opus]] | [[probably]] | هيشتغل غالبًا |
-| [[audio/ogg]] و [[audio/wav]] و [[audio/mp4]] | [[maybe]] | النوع معروف، والكودك اللي جواه متحددش |
-| [[audio/x-nope]] | نص فاضي | مش هيشتغل |
+~~~text الناتج
+الصور وصلت بعد 200 و 500 و 800ms:
 
-- **MP3** بيشتغل في كل المتصفحات الحالية (MDN). لو هتحط صيغة واحدة، هي دي.
-- الصيغ الأحدث (Opus) حجمها أصغر. حطها الأول، و MP3 في الآخر كاحتياطي.
-- [[<source>]] عنصر فاضي (void): ملوش قفلة، زي [[<img>]].
-- لو كتبت [[src]] على [[<audio>]] نفسه، الـ [[<source>]] اللي جواه بيتجاهلوا.
+           CLS       عدد الـ shifts
+قبل        0.0829    2
+بعد        0         0
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** بانر «خصم ٢٠٪» بيتحط في أول الصفحة بـ JavaScript بعد ثانية من التحميل وبيزق كل حاجة لتحت. صلّحه بطريقتين: مكان محجوز بـ [[min-height]] من الأول، أو بانر [[position: fixed]] فوق المحتوى.`, done: R`الـ snippet بيطلّع صفر layout shifts من البانر في الطريقتين، والبانر لسه بيتقفل بزرار ليه اسم، وفي طريقة الـ fixed المحتوى اللي تحته مش مستخبي (فيه [[padding]] بنفس ارتفاعه أو البانر تحت).`, sol: R`الطريقة ١، مكان محجوز:
 
----
-
-## ٣. [[<source media="...">]]: ملف مختلف حسب الشاشة
-
-[[media]] بياخد شرط زي بتاع [[<picture>]] (درس «picture»). الـ [[<source>]] اللي شرطه مش متحقق بيتعدّى.
-
-~~~html
-<audio controls>
-  <source src="media/ep1-hq.ogg" type="audio/ogg" media="(min-width: 2000px)">
-  <source src="media/ep1.mp3" type="audio/mpeg">
-</audio>
-~~~
-
-~~~text القياس من Chrome (نافذة عرضها 800)
-media="(min-width: 2000px)"  ← الشرط مش متحقق      currentSrc = ep1.mp3
-media="(min-width: 600px)"   ← الشرط متحقق          currentSrc = ep1-hq.ogg
-~~~
-
-الاختيار بيحصل **مرة واحدة** وقت التحميل. تكبير النافذة بعد كده مبيغيّرش الملف. والاستخدام الحقيقي ليه في الفيديو أكتر (فيديو صغير للموبايل وكبير للديسكتوب). اتقاس في Chrome بس، ودعم المتصفحات التانية راجعه في صفحة [[<source>]] على MDN قبل ما تعتمد عليه.
-
----
-
-## ٤. النص البديل، ولينك التحميل
-
-اللي بين [[<audio>]] و [[</audio>]] (غير الـ [[<source>]]) هو النص البديل. MDN: بيظهر في المتصفحات اللي **مبتعرفش العنصر**. يعني مش بيظهر لما الملف يبوظ.
-
-~~~live 122 ملف مش موجود: المشغّل رمادي، والنص البديل اللي جواه مش ظاهر
-<audio controls>
-  <source src="media/missing.mp3" type="audio/mpeg">
-  <p>النص ده جوه audio: مش هتشوفه.</p>
-</audio>
-<p><a href="media/ep1.mp3" download>نزّل الحلقة (MP3)</a> ← ده برّه، فباين.</p>
-~~~
-
-**هتشوف إيه:** مشغّل باهت زراره مبيتداسش، وتحته اللينك. الجملة اللي جوه [[<audio>]] مش موجودة في الصفحة.
-
-~~~text القياس من Chrome (ملف مش موجود)
-ارتفاع النص البديل: 0      networkState = 3  (NO_SOURCE: مفيش ملف ينفع)
-~~~
-
-عشان كده لينك التحميل بيتحط **برّه** المشغّل. هو اللي بينقذ الزائر لما المشغّل ميشتغلش.
-
----
-
-## ٥. [[<audio loop muted>]]
-
-- [[loop]]: لما الصوت يخلص يرجع من الأول لوحده. لصوت خلفية قصير، مش لحلقة.
-- [[muted]]: يبدأ مكتوم. الزائر يقدر يفتح الصوت من المشغّل.
-
-الاتنين boolean. والغلطة المشهورة فيهم:
-
-~~~text القياس من Chrome
-<audio controls muted="false">     muted = true     ← لسه مكتوم!
-<audio controls loop muted>        loop = true      muted = true
-~~~
-
-[[muted="false"]] مبتفتحش الصوت. الـ boolean attribute شغال طول ما هو مكتوب، بأي قيمة. عشان تلغيه امسحه كله.
-
----
-
-## ٦. [[<audio autoplay>]] وسياسة المتصفح
-
-[[autoplay]] بيطلب من المتصفح يشغّل الصوت أول ما الصفحة تفتح. المتصفحات بترفض الطلب ده لو فيه صوت مسموع والزائر لسه ملمسش الصفحة.
-
-~~~text القياس من Chrome 157 (صفحة لسه مفتوحة، ومحدش داس على حاجة)
-<audio autoplay>                         paused = true    اتمنع
-<audio autoplay muted>                   paused = true    اتمنع برده
-<video autoplay>          (فيه صوت)      paused = true    اتمنع
-<video autoplay muted>                   paused = false   اشتغل
-<video autoplay>          (ملف من غير صوت خالص، ومن غير muted)
-                                         paused = true    اتمنع
-
-audio.play() من JavaScript من غير ضغطة:
-NotAllowedError: play() failed because the user didn't interact with the document first.
-
-بعد ضغطة حقيقية بالماوس في الصفحة:    audio.play() اشتغل   (paused = false)
-~~~
-
-اللي يطلع من الجدول:
-
-1. **الصوت بـ [[autoplay]] مبيشتغلش.** ومفيش رسالة خطأ: المشغّل بيفضل واقف وخلاص.
-2. **[[muted]] بينفع مع [[<video>]] بس.** في Chrome، [[<audio autoplay muted>]] فضل واقف. الاستثناء معمول لفيديو الخلفية الصامت.
-3. **الفيديو لازم عليه [[muted]] مكتوبة**، حتى لو ملفه مفيهوش صوت أصلًا.
-4. **بعد أول ضغطة من الزائر** التشغيل من JavaScript بيبقى مسموح. عشان كده زرار «شغّل» بيشتغل دايمًا.
-
-الـ headless هنا زي Chrome العادي: نفس السياسة ([[document-user-activation-required]]) من غير ما نغيّر حاجة. ولما شغّلنا Chrome بـ [[--autoplay-policy=no-user-gesture-required]] الخمسة اشتغلوا، وده إعداد للاختبار مش عند أي زائر.
-
-باقي المتصفحات (من دليل Autoplay في MDN، مش متقاس هنا): التشغيل التلقائي مسموح لو الصوت مكتوم، أو الزائر اتفاعل مع الموقع، أو الموقع في قايمة مسموح ليها (المتصفح بيضيفه لوحده لو الزائر بيشغّل ميديا عليه كتير، أو الزائر يضيفه بإيده)، أو الصفحة جوه [[<iframe>]] واخد الإذن بـ [[allow="autoplay"]] (درس «iframe sandbox و allow»). و Firefox فيه إعداد يمنع الكل، و Safari محتاج [[playsinline]] للفيديو.
-
-**الخلاصة العملية:** متكتبش [[autoplay]] على [[<audio>]]. الزائر هو اللي يدوس.
-
----
-
-## ٧. [[<audio preload="none">]]
-
-[[preload]] تلميح للمتصفح: يحمّل قد إيه قبل ما حد يدوس ▶.
-
-| القيمة | المتصفح بيحمّل |
-|---|---|
-| [[none]] | ولا حاجة لحد ما الزائر يدوس |
-| [[metadata]] | معلومات الملف (المدة) |
-| [[auto]] | ممكن يحمّل الملف كله |
-
-~~~text القياس من Chrome (ملف 3 ثواني، من سيرفر محلي)
-من غير preload:        الخاصية preload = "metadata"   (الافتراضي في Chrome)
-preload="none":        duration = NaN    readyState = 0    ← المشغّل بيعرض 0:00
-preload="metadata":    duration = 3      readyState = 4
-preload="auto":        duration = 3      readyState = 4
-~~~
-
-- [[duration]] مدة الملف بالثواني. [[NaN]] معناها «لسه مش معروفة».
-- [[readyState]] رقم من ٠ لـ ٤: ٠ مفيش أي بيانات، و ٤ فيه اللي يكفي للتشغيل. الملف هنا صغير فاتحمّل كله مع [[metadata]].
-- MDN: الافتراضي بيختلف من متصفح لمتصفح، والمواصفة بتنصح بـ [[metadata]]. والقيمة دي تلميح، المتصفح مش مجبر عليها.
-- صفحة فيها ٢٠ حلقة: [[preload="none"]] على الكل. صفحة حلقة واحدة: [[metadata]].
-
-قياس الـ bytes لكل قيمة موجود في درس «video و iframe» (قسم «preload بيفرق قد إيه؟»).
-
----
-
-## ٨. اسم المشغّل، والنص المكتوب
-
-~~~text القياس من Chrome (شجرة الـ accessibility)
-<audio controls>                                        →  Audio «»        (من غير اسم)
-<audio controls aria-label="الحلقة ١: يعني إيه صوت">    →  Audio «الحلقة ١: يعني إيه صوت»
-<figure><figcaption>الحلقة ٢</figcaption><audio controls></figure>
-                                                        →  Audio «»        (الـ figcaption مسمّاش المشغّل)
-~~~
-
-شجرة الـ accessibility هي النسخة اللي قارئ الشاشة بيقراها من الصفحة. المشغّل فيها من غير اسم، فلو الصفحة فيها ٥ حلقات، القارئ هيسمع «Audio» خمس مرات. الحل: عنوان ([[<h2>]]) قبل كل مشغّل، و [[aria-label]] عليه. ونطق قارئ الشاشة نفسه متقاسش هنا.
-
-والأهم: **الصوت لوحده مبيوصلش للكل.** الأصم، واللي في مكان دوشة، ومحرك البحث، محتاجين الكلام مكتوب (transcript) في الصفحة. MDN: أي صوت فيه كلام محتاج نص مكتوب.
-
-و [[<audio>]] مبيعرضش كابشن: جرّبنا [[<track>]] جواه، الملف اتحمّل ([[cues = 3]]) ومفيش أي حاجة ظهرت، والمشغّل فضل 300 × 54. لو عايز كلام بيظهر مع الصوت، شغّل الملف في [[<video>]] (الدرس الجاي).
-
----
-
-## ٩. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[<audio src="ep.mp3">]] من غير [[controls]] | مفيش حاجة في الصفحة: [[display: none]] |
-| [[autoplay]] على الصوت | مبيشتغلش، ومن غير أي رسالة |
-| [[muted="false"]] | الصوت مكتوم: الـ attribute موجود |
-| [[<audio src="a.mp3">]] وجواه [[<source>]] | الـ sources بيتجاهلوا |
-| [[<source>]] من غير [[type]] | المتصفح بيطلب كل ملف عشان يجرّبه |
-| MP3 أول واحد وبعده Ogg | Ogg عمره ما هيتاخد: الأول اللي بيشتغل هو اللي بيكسب |
-| لينك التحميل جوه [[<audio>]] بس | محدش هيشوفه في متصفح حديث |
-| حلقة من غير نص مكتوب | الأصم ومحرك البحث مش واصلهم حاجة |
-
----
-
-## الخلاصة
-
-- [[<audio controls>]]: من غير [[controls]] مفيش مشغّل.
-- [[<source src type>]]: أول صيغة المتصفح يعرفها. الأحدث الأول و MP3 الآخر، ودايمًا [[type]].
-- [[autoplay]] على الصوت بيتمنع، و [[muted]] مبينقذش غير [[<video>]].
-- [[preload="none"]] لصفحة فيها مشغّلات كتير، و [[metadata]] لواحد.
-- عنوان و [[aria-label]]، ولينك تحميل برّه، ونص مكتوب للحلقة.`,
-          try: R`اعمل ملف [[player.html]] فيه عنوان «تجربة الصوت» ومشغّلين لنفس الملف (أي ملف MP3 عندك، سمّيه [[test.mp3]] وحطه جنب الصفحة): الأول [[<audio controls>]] عادي، والتاني [[<audio controls autoplay muted="false" loop>]]. افتح الصفحة في Chrome من غير ما تدوس على حاجة: مين فيهم اشتغل؟ وبعدين دوس ▶ على التاني: فيه صوت؟ وبيعيد لما يخلص؟`,
-          sol: R`~~~html player.html
+~~~live 210 210 reserve.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تجربة الصوت</title>
+<title>بانر محجوز</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  /* الطريقة ١: المكان محجوز من الأول */
+  .slot { min-height: 3rem; }
+  .banner { display: flex; align-items: center; justify-content: space-between; min-height: 3rem; padding-inline: 1rem; background: #fef3c7; color: #451a03; box-sizing: border-box; }
+  .banner button { min-block-size: 2.25rem; min-inline-size: 2.25rem; }
+  main { padding: 1rem; }
+</style>
 </head>
 <body>
-<h1>تجربة الصوت</h1>
-<p>الأول: <audio controls src="test.mp3"></audio></p>
-<p>التاني: <audio controls autoplay muted="false" loop src="test.mp3"></audio></p>
+<div class="slot" id="slot"></div>
+<main><h1>المتجر</h1><p>كل المنتجات هنا.</p></main>
+<script>
+  setTimeout(() => {
+    const slot = document.getElementById("slot");
+    slot.innerHTML = '<div class="banner"><span>خصم ٢٠٪ النهارده</span><button type="button" aria-label="اقفل العرض">✕</button></div>';
+    slot.querySelector("button").onclick = () => slot.firstElementChild.remove();
+  }, 1000);
+$__lt/script>
 </body>
 </html>
 ~~~
 
-~~~view 234 نفس الصفحة (الملف هنا صفارة قصيرة مكتوبة جوه الصفحة)
-<h1>تجربة الصوت</h1>
-<p>الأول: <audio controls src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio></p>
-<p>التاني: <audio controls autoplay muted="false" loop src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio></p>
-~~~
+الطريقة ٢، فوق المحتوى:
 
-**هتشوف إيه:**
-
-- ولا واحد اشتغل لوحده. التاني عليه [[autoplay]]، و Chrome منعه في سكوت.
-- التاني أيقونة الصوت عليها شرطة: مكتوم، مع إن المكتوب [[muted="false"]].
-- لما تدوس ▶ على التاني: الشريط بيتحرك ومفيش صوت، ولما يخلص بيرجع من الأول ([[loop]]).
-
-**ليه كده:** [[autoplay]] طلب والمتصفح بيرفضه للصوت. و [[muted]] boolean: أي قيمة معناها «مكتوم». امسح [[muted="false"]] خالص وجرّب تاني: الصوت هيطلع.
-
-~~~text القياس من Chrome
-الأول:    paused = true    muted = false
-التاني:   paused = true    muted = true     loop = true
-~~~`,
-          deep: {
-            why: R`قبل [[<audio>]] الصوت في الصفحة كان محتاج plugin (Flash)، ومكانش بيشتغل على الموبايل. العنصر ده بيشتغل في كل متصفح من غير أي حاجة تتسطّب، وبيدّي مشغّل الكيبورد وقارئ الشاشة بيعرفوا يستخدموه. وسياسة الـ autoplay اتعملت لأن المواقع كانت بتشغّل إعلانات بصوت أول ما الصفحة تفتح.`,
-            how: R`المتصفح بيمشي على الـ [[<source>]] بالترتيب. اللي [[media]] بتاعه مش متحقق أو [[type]] بتاعه مش معروف بيتعدّى من غير طلب، وأول واحد ينفع بيبقى [[currentSrc]]. بعدها بيحمّل حسب [[preload]]، وبيرفع [[readyState]] من ٠ لـ ٤. ولما حاجة تطلب التشغيل ([[autoplay]] أو [[play()]]) بيسأل السياسة: فيه ضغطة من الزائر على الصفحة؟ لو لأ والصوت مسموع، [[autoplay]] بيتجاهل و [[play()]] بيرجّع Promise مرفوض بـ [[NotAllowedError]].`,
-            when: R`حلقة بودكاست، تسجيل محاضرة، نطق كلمة في قاموس، مقطع من كتاب صوتي، رسالة صوتية في صفحة «عن الشركة». لو فيه صورة بتتحرك مع الصوت يبقى [[<video>]]. ولو الصوت مستضاف عند خدمة تانية، هتاخد منها [[<iframe>]] (درس «iframe sandbox و allow»).`,
-            mistakes: R`نسيان [[controls]] فالمشغّل ميظهرش. [[autoplay]] على صوت والاعتماد عليه. [[muted="false"]] على أساس إنها بتفتح الصوت. [[<source>]] من غير [[type]]. ترتيب الصيغ بالعكس (MP3 الأول). لينك التحميل جوه العنصر. وصفحة حلقات من غير نص مكتوب ولا أسامي للمشغّلات.`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** مشغّل الحلقة ٢ في بودكاست «المحطة». المطلوب: مشغّل ظاهر، جواه ملفين بالترتيب الصح (Ogg الأول وبعده MP3) وكل واحد بنوعه، ومن غير تشغيل تلقائي، واسم للمشغّل بـ [[aria-label]]، ولينك تحميل للـ MP3 برّه المشغّل. (من قسم ١ و ٢ و ٤ و ٨ في الشرح)`, done: R`المشغّل ظاهر تحت العنوان، واللينك تحته، وكل الشروط ✓. (المشغّل هيبان باهت لأن الملفين مش موجودين في المعاينة، والمطلوب هنا الكود.)`, work: { h: 170, start: R`<h2>الحلقة ٢: الكابشن والترجمة</h2>
-<p>ملفات الحلقة: media/ep2.ogg و media/ep2.mp3</p>`, checks: [
-              { say: R`فيه [[<audio>]] عليه [[controls]]`, q: "audio[controls]" },
-              { say: R`جواه اتنين [[<source>]]`, q: "audio > source", n: 2 },
-              { say: R`الأول Ogg ومعاه [[type]] بتاعه`, q: "audio > source:first-of-type[src$=\".ogg\"][type^=\"audio/ogg\"]" },
-              { say: R`التاني MP3 ونوعه [[audio/mpeg]]`, q: "audio > source:last-of-type[src$=\".mp3\"][type=\"audio/mpeg\"]" },
-              { say: R`المشغّل ليه [[aria-label]] ومفيهوش [[autoplay]]`, q: "audio[aria-label]:not([autoplay])" },
-              { say: R`لينك [[download]] للـ MP3 برّه المشغّل`, q: ":not(audio) > a[download][href$=\".mp3\"]" },
-            ] }, sol: R`~~~live 182 الحل
-<h2>الحلقة ٢: الكابشن والترجمة</h2>
-<audio controls preload="metadata" aria-label="الحلقة ٢: الكابشن والترجمة">
-  <source src="media/ep2.ogg" type="audio/ogg; codecs=opus">
-  <source src="media/ep2.mp3" type="audio/mpeg">
-</audio>
-<p><a href="media/ep2.mp3" download>نزّل الحلقة ٢ (MP3)</a></p>
-~~~
-
-**هتشوف إيه:**
-
-- العنوان، وتحته المشغّل (باهت هنا لأن الملفين مش موجودين في المعاينة)، وتحته لينك التحميل.
-- في فولدر مشروعك، بالملفين في [[media/]]، المشغّل هيبان عادي والمدة مكتوبة.
-
-**ليه كده:**
-
-- Ogg/Opus الأول لأن حجمه أصغر، و MP3 الآخر لأنه بيشتغل في كل حتة.
-- [[type]] على الاتنين: المتصفح اللي مبيعرفش Ogg بيعدّيه من غير ما يطلب الملف.
-- اللينك برّه [[<audio>]]: جواه مكانش هيبان.
-
-**الغلطة الشائعة:** [[<audio controls src="media/ep2.mp3">]] ومعاه الـ sources. الـ [[src]] اللي على العنصر بيكسب، والـ Ogg مش هيتاخد أبدًا.
-
-~~~text القياس من Chrome (بالملفين موجودين على سيرفر محلي)
-currentSrc = ep2.ogg      paused = true      الحجم: 300 × 54
-Audio «الحلقة ٢: الكابشن والترجمة»
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مشغّل «نشرة المحطة» فيه ٤ مشاكل: مش ظاهر في الصفحة، وعليه تشغيل تلقائي، ومكتوب عليه [[muted="false"]] «عشان الصوت يطلع»، ولينك التحميل محطوط جواه. (من قسم ١ و ٤ و ٥ و ٦ في الشرح)`, done: R`المشغّل ظاهر، ومفيهوش [[autoplay]] ولا [[muted]]، واللينك برّه وباين، وكل الشروط ✓.`, work: { h: 150, start: R`<h2>نشرة المحطة: أخبار الأسبوع</h2>
-<audio autoplay muted="false" src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA=">
-  <a href="media/news.mp3" download>نزّل النشرة</a>
-</audio>`, checks: [
-              { say: R`المشغّل عليه [[controls]]`, q: "audio[controls]" },
-              { say: R`مفيش [[autoplay]]`, q: "audio[autoplay]", n: 0 },
-              { say: R`مفيش [[muted]] بأي قيمة`, q: "audio[muted]", n: 0 },
-              { say: R`مفيش لينك جوه [[<audio>]]`, q: "audio a", n: 0 },
-              { say: R`لينك التحميل موجود برّه المشغّل`, q: ":not(audio) > a[download]" },
-            ] }, sol: R`~~~live 182 بعد التصليح
-<h2>نشرة المحطة: أخبار الأسبوع</h2>
-<audio controls src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio>
-<p><a href="media/news.mp3" download>نزّل النشرة</a></p>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 74 قبل
-<h2>نشرة المحطة: أخبار الأسبوع</h2>
-<audio autoplay muted="false" src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA=">
-  <a href="media/news.mp3" download>نزّل النشرة</a>
-</audio>
-~~~
-
-**هتشوف إيه:**
-
-- قبل: العنوان لوحده. مفيش مشغّل، ومفيش لينك، ومفيش صوت.
-- بعد: المشغّل ظاهر وواقف، واللينك تحته.
-
-| المشكلة | التصليح | ليه |
-|---|---|---|
-| من غير [[controls]] | زوّدناه | من غيره [[display: none]] |
-| [[autoplay]] | اتمسح | Chrome بيمنعه، والزائر مبيحبوش |
-| [[muted="false"]] | اتمسح كله | أي قيمة معناها «مكتوم» |
-| اللينك جوه [[<audio>]] | طلع برّه في [[<p>]] | اللي جوه نص بديل مبيظهرش |
-
-**الغلطة الشائعة:** تغيّر [[muted="false"]] لـ [[muted="no"]] أو [[muted="0"]]. كلهم مكتوم. الحل الوحيد إن الكلمة تتمسح.
-
-~~~text القياس من Chrome
-قبل:   display = none    paused = true    muted = true
-بعد:   display = inline  paused = true    muted = false    300 × 54
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** اكتب على ورقة: Chrome هياخد أنهي ملف من التلاتة؟ وليه الـ Opus (الأصغر) عمره ما هيتاخد؟ وبعدين رتّبهم صح: الأصغر الأول، والنوع اللي مفيش متصفح يعرفه يتمسح. (من قسم ٢ في الشرح)`, done: R`كتبت توقّعك، والـ sources بقوا اتنين: Opus الأول و MP3 الآخر، وكل الشروط ✓.`, work: { h: 110, start: R`<audio controls>
-  <source src="media/ep3.mp3" type="audio/mpeg">
-  <source src="media/ep3.opus.ogg" type="audio/ogg; codecs=opus">
-  <source src="media/ep3.rm" type="audio/x-realaudio">
-</audio>`, checks: [
-              { say: R`الـ sources بقوا اتنين بس`, q: "audio > source", n: 2 },
-              { say: R`مفيش [[audio/x-realaudio]]`, q: "source[type=\"audio/x-realaudio\"]", n: 0 },
-              { say: R`Opus هو الأول`, q: "audio > source:first-of-type[type*=\"opus\"]" },
-              { say: R`MP3 هو الآخر`, q: "audio > source:last-of-type[type=\"audio/mpeg\"]" },
-            ] }, sol: R`~~~live 80 بعد الترتيب
-<audio controls>
-  <source src="media/ep3.opus.ogg" type="audio/ogg; codecs=opus">
-  <source src="media/ep3.mp3" type="audio/mpeg">
-</audio>
-~~~
-
-**التوقّع:** Chrome هياخد [[ep3.mp3]]. هو أول واحد في الترتيب وبيعرف يشغّله، فبيقف عنده ومبيبصش على اللي بعده. الـ Opus كان تاني واحد، فعمره ما هيتوصله في أي متصفح بيشغّل MP3 (يعني كلهم).
-
-**هتشوف إيه:** نفس المشغّل قبل وبعد (باهت هنا لأن الملفات مش في المعاينة). الفرق في الملف اللي بيتحمّل، وده بيتشاف في DevTools › Network مش في الصفحة.
-
-**ليه كده:** الترتيب هو الأولوية. «الأحسن الأول، والمضمون الآخر». و [[audio/x-realaudio]] صيغة قديمة مفيش متصفح حالي بيشغّلها، فسطرها ملوش فايدة.
-
-**الغلطة الشائعة:** تفتكر المتصفح بيختار «أحسن» ملف. هو بيختار **أول** ملف ينفع.
-
-~~~text القياس من Chrome
-قبل:   currentSrc = ep3.mp3
-بعد:   currentSrc = ep3.opus.ogg
-canPlayType("audio/x-realaudio") = ""      (مش هيشتغل)
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** صاحب بودكاست «المحطة» طلب منك «أول ما الصفحة تفتح، مقدمة البودكاست تشتغل لوحدها». اشرحله في ٣ سطور: ليه ده مش هيحصل، وإيه البديل اللي بيشتغل فعلًا. (من قسم ٦ في الشرح)`, done: R`كتبت ٣ سطور فيهم: المتصفح بيمنع، و [[muted]] مبينفعش مع الصوت، والبديل زرار الزائر يدوسه.`, sol: R`إجابة نموذجية:
-
-1. المتصفحات بتمنع أي صوت يشتغل قبل ما الزائر يلمس الصفحة. [[<audio autoplay>]] بيفضل واقف، ومن غير أي رسالة خطأ.
-2. حيلة [[muted]] بتشتغل مع فيديو الخلفية بس، والصوت المكتوم ملوش معنى أصلًا.
-3. البديل: مشغّل ظاهر في أول الصفحة وجنبه «اسمع المقدمة (٣٠ ثانية)». أول ضغطة من الزائر بتسمح بالتشغيل.
-
-~~~text القياس من Chrome 157 (من غير أي ضغطة)
-<audio autoplay>           paused = true
-<audio autoplay muted>     paused = true
-بعد ضغطة حقيقية:          audio.play() اشتغل
-~~~
-
-**الغلطة الشائعة:** إنك تجرّب على جهازك وتلاقيها اشتغلت، لأنك دوست في الصفحة قبل كده أو بتفتح الموقع ده كتير (Chrome بيحسب تفاعلك معاه). جرّب دايمًا في نافذة Incognito.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** افتح صفحة [[<audio>]] على MDN (اللينك تحت الدرس) ودوّر على [[controlslist]]: بياخد أنهي تلات قيم؟ وأنهي واحدة بتشيل «تحميل» من قايمة التلات نقط؟ وهل ده بيمنع الزائر ينزّل الملف فعلًا؟ (بيكمّل قسم ١ في الشرح)`, done: R`كتبت التلات قيم، واللي بتشيل التحميل، وجملة عن ليه ده مش حماية.`, sol: R`من MDN: [[controlslist]] بيساعد المتصفح يختار أنهي أزرار تظهر في المشغّل، وقيمه [[nodownload]] و [[nofullscreen]] و [[noremoteplayback]].
-
-~~~live 80 من غير «تحميل» في قايمة التلات نقط
-<audio controls controlslist="nodownload" src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio>
-~~~
-
-**هتشوف إيه:** نفس المشغّل. افتح التلات نقط وقارن بمشغّل قسم ١: بند «تحميل» مش موجود هنا.
-
-**هل ده حماية؟** لأ. الملف لسه بيتحمّل للمتصفح عشان يتسمع، وعنوانه مكتوب في الكود وفي DevTools › Network. [[nodownload]] بيشيل الزرار بس.
-
-~~~text القياس من Chrome 157
-audio.controlsList.supports("nodownload")        = true
-audio.controlsList.supports("nofullscreen")      = true
-audio.controlsList.supports("noremoteplayback")  = true
-~~~
-
-دعم المتصفحات التانية للـ attribute ده راجعه في جدول MDN قبل ما تعتمد عليه.` },
-          ]
-        },
-        {
-          cmd: "track و WebVTT",
-          title: "كلام بيظهر مع الفيديو في وقته: كابشن وترجمة، وصورة قبل التشغيل",
-          pre: [
-            { to: "css/video و iframe", why: R`الـ [[<video>]] و [[controls]] و [[preload]] وأول ملف VTT اتشرحوا هناك (قسم «ملف الـ VTT»). الدرس ده بيكمّل: أنواع الـ track الخمسة، وباقي صيغة WebVTT، و [[poster]] و [[playsinline]]` },
-            "css/audio و source"
-          ],
-          ref: [
-            { t: "MDN: <track>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/track" },
-            { t: "MDN: <video>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/video" },
-            { t: "MDN: WebVTT format", url: "https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API/Web_Video_Text_Tracks_Format" },
-            { t: "WHATWG: the track element", url: "https://html.spec.whatwg.org/multipage/media.html#the-track-element" },
-            { t: "WHATWG: the video element", url: "https://html.spec.whatwg.org/multipage/media.html#the-video-element" }
-          ],
-          desc: R`[[<track>]] بيربط الفيديو بملف نص فيه كلام بتوقيت (WebVTT): كل جملة بتظهر فوق الفيديو في ثوانيها. [[kind]] بيقول الكلام ده إيه (كابشن للي مش سامع، ولا ترجمة للغة تانية، ولا فصول)، و [[srclang]] لغته، و [[label]] اسمه في قايمة المشغّل، و [[default]] بيشغّله من الأول.
-ومعاه في الدرس باقي attributes الفيديو: [[poster]] (الصورة اللي قبل التشغيل)، و [[width]] و [[height]] اللي بيحجزوا مكانه، و [[playsinline]] و [[muted]] و [[loop]].`,
-          example: R`<video controls preload="metadata" width="640" height="360" poster="media/lesson1.jpg">
-  <source src="media/lesson1.webm" type="video/webm">
-  <source src="media/lesson1.mp4" type="video/mp4">
-  <track kind="captions" srclang="ar" label="عربي (كابشن)" src="media/lesson1.ar.vtt" default>
-  <track kind="subtitles" srclang="en" label="English" src="media/lesson1.en.vtt">
-  <track kind="chapters" srclang="ar" label="الفصول" src="media/lesson1.chapters.vtt">
-  <p>متصفحك مش بيشغّل الفيديو. <a href="media/lesson1.mp4">نزّل الدرس</a></p>
-</video>`,
-          flag: "script",
-          lines: [
-            R`الفيديو: [[controls]] للأزرار، و [[preload="metadata"]] يجيب المدة والمقاس بس، و [[width]] و [[height]] بيحجزوا مكانه قبل ما يتحمّل، و [[poster]] صورة بتتعرض لحد ما الزائر يدوس ▶.`,
-            R`الصيغة الأولى WebM. [[<source>]] هنا زي ما هو في [[<audio>]]: أول نوع المتصفح يعرفه بيتاخد.`,
-            R`MP4 كاحتياطي للمتصفح اللي مبيشغّلش WebM.`,
-            R`الكابشن العربي: [[kind="captions"]] يعني كل اللي بيتسمع مكتوب (الكلام والأصوات)، و [[srclang="ar"]] لغة الملف، و [[label]] اسمه في القايمة، و [[default]] بيخلّيه شغال من أول ما الفيديو يفتح.`,
-            R`ترجمة إنجليزي: [[kind="subtitles"]] للي سامع ومش فاهم اللغة. من غير [[default]]، فبتفضل مقفولة وملفها مبيتحمّلش لحد ما الزائر يختارها.`,
-            R`الفصول: [[kind="chapters"]] عناوين أجزاء الفيديو بتوقيتها. مبتترسمش فوق الفيديو، وبتتقري من JavaScript أو من مشغّل بيدعمها.`,
-            R`النص البديل ولينك تحميل، للمتصفح اللي ميعرفش [[<video>]] خالص.`,
-            R`قفلة [[</video>]]. الـ [[<source>]] الأول، وبعدهم الـ [[<track>]]، وبعدهم النص البديل: ده الترتيب اللي المواصفة بتطلبه.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-المواصفة: [[<track>]] بيحدد «text track» للفيديو أو الصوت، يعني نص مربوط بالوقت. الملف نفسه بصيغة WebVTT (Web Video Text Tracks)، ملف نص عادي امتداده [[.vtt]].
-
-القياسات من Chrome 157 على Windows 11. الفيديوهات وملفات الـ VTT اتفتحت من سيرفر محلي.
-
-> في المعاينات: الفيديو تيل أخضر ٤ ثواني من غير صوت، مكتوب جوه الصفحة بـ [[data:]] زي ملف الصوت في الدرس اللي فات، وكذلك ملف الـ VTT والـ poster. في موقعك دي كلها مسارات ملفات.
-
----
-
-## ١. [[<track>]] جوه [[<video>]]
-
-~~~live 206 دوس ▶ وبص على أسفل الفيديو
-<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-  <track default kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-</video>
-~~~
-
-**هتشوف إيه:** أول ما تدوس ▶، في أسفل الفيديو بيظهر «أهلًا بيكم في المحطة» على خلفية سودا، وبعد ثانيتين بيتبدّل بـ «[موسيقى هادية]». وفي أزرار المشغّل زرار **CC**: منه بتقفل الكابشن وتفتحه.
-
-~~~text القياس من Chrome
-video.textTracks.length = 1
-textTracks[0]:   kind = captions   language = "ar"   label = "عربي"   mode = showing   cues = 2
-~~~
-
-- [[textTracks]]: قايمة الـ tracks بتاعة الفيديو، بتتقري من JavaScript.
-- [[cues]]: الجمل اللي في الملف. كل جملة بتوقيتها اسمها cue.
-- [[mode]]: حالة الـ track. [[showing]] يعني ظاهر.
-
-[[<track>]] عنصر فاضي (void) ملوش قفلة، ومكانه جوه [[<video>]] أو [[<audio>]] بس. لما حطيناه برّه الفيديو: [[textTracks.length = 0]] والملف متطلبش.
-
----
-
-## ٢. [[<track kind="captions" srclang="ar" label="عربي" default>]]
-
-### [[kind]]: الكلام ده إيه
-
-| [[kind]] | لمين (من MDN) | Chrome عمل إيه (متقاس) |
-|---|---|---|
-| [[subtitles]] | سامع الصوت ومش فاهم اللغة: ترجمة الحوار | بيترسم فوق الفيديو |
-| [[captions]] | مش سامع (أصم، أو الصوت مقفول، أو دوشة): الحوار **ومعاه** الأصوات المهمة ومين بيتكلم | بيترسم فوق الفيديو |
-| [[descriptions]] | مش شايف: وصف مكتوب للي في الصورة، المفروض يتنطق | مترسمش |
-| [[chapters]] | عناوين أجزاء الفيديو للتنقّل | مترسمش |
-| [[metadata]] | بيانات للسكربتات، مش للزائر | مترسمش، و [[mode = hidden]] |
-
-~~~text القياس من Chrome
-من غير kind:        kind = subtitles     (ده الافتراضي)
-kind="banana":      kind = metadata      (قيمة غلط بتتحوّل metadata: مش هتتعرض!)
-kind="caption":     kind = metadata      (غلطة حرف واحد، والكابشن اختفى من غير أي رسالة)
-~~~
-
-**captions ولا subtitles؟** الترجمة بتفترض إنك سامع، فمبتكتبش «[باب بيتقفل]». الكابشن بيفترض إنك مش سامع، فبيكتب كل صوت ليه معنى. فيديو عربي لجمهور عربي: اكتبله [[captions]] بالعربي.
-
-### [[srclang]] و [[label]]
-
-- [[srclang]]: لغة الكلام اللي في الملف، بنفس أكواد [[lang]] (درس «lang و dir»): [[ar]] و [[en]]. MDN: لو [[kind="subtitles"]] يبقى [[srclang]] **إجباري**.
-- [[label]]: الاسم اللي الزائر بيشوفه في قايمة CC. اكتبه بلغة الترجمة نفسها: «English» مش «إنجليزي»، لأن اللي هيختارها بيقرا إنجليزي.
-
-### [[default]]
-
-~~~text القياس من Chrome
-track عليه default:              mode = showing     الملف اتحمّل (readyState = LOADED)
-track من غير default:            mode = disabled    cues = null    الملف متطلبش من السيرفر خالص
-اتنين عليهم default:             الأول showing، والتاني disabled
-مفيش default على أي واحد:        الكل disabled لحد ما الزائر يختار من زرار CC
-~~~
-
-- [[disabled]]: مقفول، وملفه مبيتحمّلش. يعني ١٠ لغات في الفيديو مبيكلّفوش حاجة لحد ما حد يختار واحدة.
-- [[default]] على واحد بس لكل فيديو (MDN). وهو «شغّله إلا لو إعدادات الزائر بتفضّل track تاني».
-
----
-
-## ٣. ملف WebVTT: اللي بعد الأساسيات
-
-الأساس (سطر [[WEBVTT]]، وسطر فاضي، وكل cue سطر توقيت وتحته الكلام) في درس «video و iframe». ده ملف فيه الباقي:
-
-~~~text media/lesson1.ar.vtt
-WEBVTT
-
-NOTE الملف ده كابشن الحلقة الأولى. السطر ده تعليق ومبيتعرضش.
-
-intro
-00:00:00.000 --> 00:00:02.000
-<v منى>أهلًا بيكم في الحلقة الأولى.
-
-2
-00:00:02.000 --> 00:00:04.000 line:0 align:start
-[موسيقى هادية]
-
-00:04.000 --> 00:06.000
-<v كريم>النهارده هنتكلم عن <i>الصوت</i> في الصفحة.
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[NOTE ...]] | تعليق ليك انت. مبيتعرضش، وبعده سطر فاضي |
-| [[intro]] أو [[2]] فوق سطر التوقيت | اسم الـ cue (اختياري). بيتقري من JavaScript في [[cue.id]] |
-| [[00:00:02.000]] | ساعات:دقايق:ثواني.أجزاء من ألف. الساعات اختيارية: [[00:04.000]] زيها |
-| [[-->]] | سهم من شرطتين وعلامة أكبر، وحواليه مسافة من كل ناحية |
-| [[<v منى>]] | مين بيتكلم (voice). مبيتكتبش على الشاشة، وبيتقري من السكربتات والتنسيق |
-| «[موسيقى هادية]» | وصف صوت بين قوسين مربعين: ده اللي بيخلّي الملف captions مش subtitles |
-| [[line:0 align:start]] | إعدادات الـ cue بعد التوقيت: [[line:0]] يعني أول سطر فوق بدل تحت (لو فيه كلام مكتوب في أسفل الصورة)، و [[align:start]] بيبدأ الكلام من أول السطر |
-| [[<i>]] و [[<b>]] و [[<u>]] | مايل وتقيل وتحته خط، جوه الكلام |
-
-~~~text القياس من Chrome (الملف اللي فوق)
-cues = 3
-cue 1:  id = "intro"   0 → 2    text = "<v منى>أهلًا بيكم في الحلقة الأولى."    line = auto   align = center
-cue 2:  id = "2"       2 → 4    text = "[موسيقى هادية]"                         line = 0      align = start
-cue 3:  id = ""        4 → 6    text = "<v كريم>النهارده هنتكلم عن <i>الصوت</i> في الصفحة."
-~~~
-
-### الملف البايظ بيتصرف إزاي
-
-المتصفح مبيقولش حاجة لما ملف الـ VTT يبقى فيه غلط. الجملة بتختفي وخلاص.
-
-~~~text القياس من Chrome (كل سطر ملف فيه غلطة واحدة)
-أول سطر "VTT" بدل "WEBVTT":                 cues = 0    readyState = ERROR   (الملف كله اترفض)
-ملف SRT (أرقام وفواصل، ومن غير WEBVTT):      cues = 0    readyState = ERROR
-الملف مش موجود (404):                       cues = 0    readyState = ERROR
-00:00:02,000 (فاصلة بدل النقطة، زي SRT):     الـ cue ده اتشال، والباقي اشتغل
-00:04.000 -> 00:06.000 (شرطة واحدة):        الـ cue ده اتشال
-0:06.000 (الدقايق رقم واحد):                الـ cue ده اتشال
-00:02.00 (جزئين بدل تلاتة بعد النقطة):       الـ cue ده اتشال
-الملف من دومين تاني من غير CORS:            readyState = ERROR، وفي الـ Console:
-   Unsafe attempt to load URL http://127.0.0.1:8732/ar.vtt from frame with URL http://127.0.0.1:8731/t1.html. Domains, protocols and ports must match.
-~~~
-
-- عشان تتأكد: في DevTools › Console اكتب [[document.querySelector("video").textTracks[0].cues.length]] وقارن بعدد الجمل اللي كتبتها.
-- ملف الـ VTT لازم يبقى من نفس الموقع. لو من دومين تاني: [[crossorigin]] على [[<video>]] والسيرفر التاني يسمح بـ CORS (MDN).
-- ملفات الترجمة اللي بتتنزّل من النت غالبًا SRT: التوقيت فيها بفاصلة، وفيها رقم فوق كل جملة، ومفيهاش [[WEBVTT]]. بتتحوّل بإنك تزوّد السطر الأول وتغيّر الفواصل اللي في التوقيت لنقط.
-
----
-
-## ٤. كابشن، ولا ترجمة، ولا وصف، ولا نص مكتوب؟
-
-| الزائر | محتاج | بيتعمل بإيه |
-|---|---|---|
-| أصم أو ضعيف السمع، أو الصوت مقفول | كل اللي بيتسمع، مكتوب في وقته | [[<track kind="captions">]] |
-| سامع ومش فاهم اللغة | ترجمة الحوار | [[<track kind="subtitles">]] |
-| كفيف | وصف للي في الصورة | [[kind="descriptions"]] مبيتنطقش في Chrome (متقاس: مترسمش ومفيش صوت)، فالعملي: الوصف يتقال في الفيديو نفسه، أو يتكتب في الصفحة |
-| أي حد عايز يقرا أو يدوّر، ومحرك البحث | الكلام كله مكتوب في الصفحة | نص مكتوب (transcript) تحت الفيديو: HTML عادي |
-
-الكابشن والنص المكتوب مش بدل بعض: الأول ماشي مع الصورة، والتاني بيتقري لوحده وبيتدوّر فيه.
-
----
-
-## ٥. [[<video poster="media/lesson1.jpg" width="640" height="360">]]
-
-[[poster]] عنوان صورة بتتعرض مكان الفيديو لحد ما يشتغل. من غيرها بيتعرض أول frame (بعد ما يتحمّل)، وده غالبًا أسود أو لقطة ملهاش معنى.
-
-~~~live 206 poster وعليه عنوان الحلقة، ولما تدوس ▶ بيختفي
-<video controls width="320" height="180" preload="none" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED"></video>
-~~~
-
-**هتشوف إيه:** صورة خضرا مكتوب عليها «الحلقة ١» وفوقها أزرار المشغّل. دوس ▶: الصورة بتروح والفيديو بيبدأ.
-
-و [[width]] و [[height]] بيعملوا إيه؟ نفس اللي بيعملوه في [[<img>]]: بيحجزوا المكان.
-
-~~~text القياس من Chrome (فيديو مقاسه الحقيقي 320 × 180، وقبل ما أي بيانات توصل)
-من غير width/height ولا poster:          الحجم 300 × 150    ← المقاس الافتراضي
-من غير width/height ومعاه poster 480×270: الحجم 480 × 270    ← خد مقاس الصورة
-width="640" height="360":                الحجم 640 × 360    aspect-ratio: auto 640 / 360
-بعد ما معلومات الفيديو وصلت (من غير width/height):  الحجم بقى 320 × 180
-~~~
-
-يعني من غير [[width]] و [[height]] الفيديو بيبدأ 300 × 150 وبعدين بيقفز لمقاسه الحقيقي، وكل اللي تحته بيتزق. دي نفس مشكلة الصور اللي في درس «CLS»، ونفس الحل.
-
----
-
-## ٦. [[<video playsinline muted loop>]]
-
-التلاتة دول مع [[autoplay]] هما فيديو الخلفية الصامت (اتبنى في درس «video و iframe»). كل واحد لوحده:
-
-| attribute | بيعمل إيه |
-|---|---|
-| [[muted]] | يبدأ مكتوم. وهو الشرط اللي بيخلّي [[autoplay]] يشتغل على الفيديو (القياس في درس «audio و source» قسم ٦) |
-| [[loop]] | يعيد من الأول لما يخلص |
-| [[playsinline]] | على iPhone: الفيديو يشتغل في مكانه جوه الصفحة بدل ما يفتح ملو الشاشة. المواصفة بتقول إنه «بيشجّع» المتصفح على كده |
-
-~~~text القياس من Chrome
-<video playsinline muted loop>     playsInline = true    muted = true    loop = true
-~~~
-
-[[playsinline]] مبيغيّرش حاجة في Chrome على الكمبيوتر (الفيديو أصلًا بيشتغل في مكانه)، ووجوده مبيضرّش. تأثيره على iPhone من MDN، متقاسش هنا.
-
-والفيديو اللي فيه كلام محدش بيحط عليه [[muted]] ولا [[loop]] ولا [[autoplay]]: الزائر يدوس ▶ بنفسه.
-
----
-
-## ٧. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[kind="caption"]] (من غير s) | بقى [[metadata]]: مفيش كابشن، ومفيش رسالة |
-| [[default]] على اتنين | الأول بس اللي بيشتغل |
-| نسيان [[default]] خالص | الكابشن موجود ومقفول، ومعظم الزوار مش هيعرفوا |
-| [[kind="subtitles"]] من غير [[srclang]] | مخالف للمواصفة، والمتصفح مش عارف لغة الملف |
-| [[label="إنجليزي"]] على ترجمة إنجليزي | اللي محتاجها مش هيعرف يقرا اسمها |
-| فاصلة في التوقيت [[00:00:02,000]] | الجملة دي بتختفي |
-| [[<track>]] برّه [[<video>]] | بيتجاهل، والملف مبيتطلبش |
-| فيديو من غير [[width]] و [[height]] | بيبدأ 300 × 150 وبعدين يقفز |
-| الكلام محروق في الفيديو نفسه بدل [[<track>]] | مبيتقفلش، ومبيتكبرش، ومبيتدوّرش فيه |
-
----
-
-## الخلاصة
-
-- [[<track kind srclang label default>]] جوه [[<video>]]، وملفه [[.vtt]] من نفس الموقع.
-- [[captions]] للي مش سامع (بالأصوات)، و [[subtitles]] للي مش فاهم اللغة. دول الاتنين اللي Chrome بيرسمهم.
-- [[default]] على واحد بس، والباقي ملفاتهم مبتتحمّلش لحد ما حد يختارهم.
-- غلطة في الـ VTT معناها جملة بتختفي في سكوت: عدّ الـ [[cues]] من الـ Console.
-- [[poster]] للصورة، و [[width]] و [[height]] للمكان، و [[playsinline muted loop]] لفيديو الخلفية بس.`,
-          try: R`في فولدر فيه فيديو قصير عندك (سمّيه [[clip.mp4]]): اكتب ملف [[clip.ar.vtt]] فيه تلات جمل (كل واحدة ثانيتين)، والتانية وصف صوت بين قوسين مربعين. واكتب [[watch.html]] فيها الفيديو بالـ track ده شغال من الأول. شغّل [[npx serve .]] وافتح الصفحة، وعدّ الـ cues من الـ Console. وبعدين غيّر النقطة في توقيت الجملة التانية لفاصلة، واعمل Ctrl+R وعدّ تاني.`,
-          sol: R`~~~text clip.ar.vtt
-WEBVTT
-
-00:00.000 --> 00:02.000
-أهلًا بيكم في المحطة.
-
-00:02.000 --> 00:04.000
-[موسيقى هادية]
-
-00:04.000 --> 00:06.000
-النهارده أول حلقة.
-~~~
-
-~~~html watch.html
+~~~live 220 220 fixed.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تجربة الكابشن</title>
+<title>بانر fixed</title>
+<style>
+  body { margin: 0; padding-block-end: 3.5rem; font-family: system-ui, sans-serif; }
+  /* الطريقة ٢: فوق المحتوى، تحت الشاشة، و padding بنفس الارتفاع عشان ميغطيش آخر الصفحة */
+  .banner { position: fixed; inset-inline: 0; inset-block-end: 0; display: flex; align-items: center; justify-content: space-between; min-height: 3.5rem; padding-inline: 1rem; background: #fef3c7; color: #451a03; box-sizing: border-box; }
+  .banner button { min-block-size: 2.25rem; min-inline-size: 2.25rem; }
+  main { padding: 1rem; }
+</style>
 </head>
 <body>
-<h1>تجربة الكابشن</h1>
-<video controls width="640" height="360" src="clip.mp4">
-  <track default kind="captions" srclang="ar" label="عربي" src="clip.ar.vtt">
-</video>
+<main><h1>المتجر</h1><p>كل المنتجات هنا.</p></main>
+<script>
+  setTimeout(() => {
+    document.body.insertAdjacentHTML("beforeend", '<div class="banner" id="b"><span>خصم ٢٠٪ النهارده</span><button type="button" aria-label="اقفل العرض">✕</button></div>');
+    document.querySelector("#b button").onclick = () => document.getElementById("b").remove();
+  }, 1000);
+$__lt/script>
 </body>
 </html>
 ~~~
 
-~~~view 278 شكل watch.html (الفيديو والملف هنا مكتوبين جوه الصفحة)
-<h1>تجربة الكابشن</h1>
-<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-  <track default kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة.%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]%0A%0A00:04.000 --> 00:06.000%0Aالنهارده أول حلقة.">
-</video>
+**الطريقة ١:** [[.slot]] موجود من الأول بـ [[min-height: 3rem]]، فالمكان فاضي لحد ما البانر ييجي، ومفيش حاجة بتتحرك. العيب: فراغ لو البانر مظهرش.
+
+**الطريقة ٢:** [[position: fixed]] طالع من الـ flow، فمبيزقش حاجة. و [[padding-block-end]] على الـ body بنفس ارتفاعه، عشان آخر الصفحة ميتغطاش.
+
+**الاسم:** [[aria-label="اقفل العرض"]] على زرار ✕.
+
+**الغلطة الشائعة:** تعمل [[position: fixed]] فوق الصفحة [[top: 0]]، فيغطي الهيدر. أو تقفل البانر بـ [[display: none]] في الطريقة ١ فتسيب فراغ أو shift عند القفل.
+
+~~~text الناتج
+                 CLS       زرار الاسم        بعد القفل
+قبل              0.0116    مفيش              -
+مكان محجوز       0         «اقفل العرض»      البانر راح
+fixed            0         «اقفل العرض»      البانر راح
+axe صفر في الطريقتين
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** لستة جاية من API وهمي بتتأخر 1.5 ثانية. وهي بتتحمّل اعرض skeleton بنفس مقاس الكارت الحقيقي (shimmer من درس الحركة)، والحاوية عليها [[aria-busy="true"]] لحد ما البيانات توصل.`, done: R`CLS صفر لحظة ما البيانات تيجي، وارتفاع الـ skeleton والكارت الحقيقي الفرق بينهم أقل من 4px، و [[aria-busy]] بقى [[false]] بعدها، والـ shimmer واقف مع reduce.`, sol: R`~~~live 440 440 list.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>skeleton</title>
+<style>
+  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; }
+  .list { display: grid; gap: 1rem; max-inline-size: 28rem; padding: 0; margin: 0; list-style: none; }
+  .card { box-sizing: border-box; block-size: 6rem; padding: 1rem; border: 1px solid #cbd5e1; border-radius: .5rem; }
+  .card h2 { margin: 0; font-size: 1rem; line-height: 1.5rem; }
+  .card p { margin: .5rem 0 0; line-height: 1.25rem; color: #475569; }
+  .sk { position: relative; overflow: hidden; background: #e2e8f0; border-radius: .25rem; }
+  .sk.t { block-size: 1.5rem; inline-size: 60%; }
+  .sk.l { block-size: 1.25rem; margin-block-start: .5rem; inline-size: 90%; }
+  .sk::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, #f8fafc, transparent);
+               transform: translateX(-100%); animation: slide 1.2s linear infinite; }
+  @keyframes slide { to { transform: translateX(100%); } }
+  @media (prefers-reduced-motion: reduce) { .sk::after { animation: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>المنتجات</h1>
+  <ul class="list" id="list" aria-busy="true">
+    <li class="card"><div class="sk t"></div><div class="sk l"></div></li>
+    <li class="card"><div class="sk t"></div><div class="sk l"></div></li>
+    <li class="card"><div class="sk t"></div><div class="sk l"></div></li>
+  </ul>
+</main>
+<script>
+  const fakeApi = () => new Promise((resolve) => setTimeout(() => resolve([
+    { name: "سماعة", desc: "بطارية 30 ساعة" },
+    { name: "ساعة", desc: "ضد الماء" },
+    { name: "شاحن", desc: "65 وات" },
+  ]), 1500));
+
+  fakeApi().then((items) => {
+    const list = document.getElementById("list");
+    list.replaceChildren(...items.map((item) => {
+      const li = document.createElement("li");
+      li.className = "card";
+      const h2 = document.createElement("h2");
+      h2.textContent = item.name;
+      const p = document.createElement("p");
+      p.textContent = item.desc;
+      li.append(h2, p);
+      return li;
+    }));
+    list.setAttribute("aria-busy", "false");
+  });
+$__lt/script>
+</body>
+</html>
 ~~~
 
-**هتشوف إيه:**
+**ليه مفيش قفزة:** [[.card]] ارتفاعها ثابت [[6rem]] في الحالتين، و [[box-sizing: border-box]] بيخلي الحساب واضح. الـ skeleton بياخد نفس أحجام العنوان والسطر، فلما المحتوى ييجي مفيش حاجة بتتحرك.
 
-- دوس ▶: «أهلًا بيكم في المحطة» في أسفل الفيديو، وبعدها «[موسيقى هادية]»، وبعدها «النهارده أول حلقة» (الفيديو اللي في المعاينة ٤ ثواني، فالجملة التالتة مش هتلحق تظهر).
-- بعد ما تغيّر [[00:02.000]] لـ [[00:02,000]]: الجملة التانية مبتظهرش، والأولى والتالتة زي ما هم.
+**[[aria-busy]]:** [[true]] وقت التحميل، و [[false]] بعد ما الداتا توصل.
 
-**ليه [[npx serve .]]:** المتصفح بيرفض يقرا ملف VTT من [[file://]]، فلازم الصفحة تتفتح من سيرفر (اتشرح في درس «video و iframe»).
+**[[textContent]]** مش [[innerHTML]]: الداتا جاية من API، فأي HTML فيها ميتنفذش.
 
-**الغلطة الشائعة:** تفضل تدوّر على رسالة خطأ. مفيش. الطريقة الوحيدة: تعدّ.
+**ملحوظة من القياس:** الـ PerformanceObserver طلّع entry صغير 0.0066 عند 668ms، مصدره [[::after]] بتاع الـ shimmer وهو بيبدأ، مش وصول البيانات. لما وقفت الـ shimmer الرقم بقى صفر. والـ entry ده صغير وبرا لحظة وصول البيانات اللي التمرين بيسأل عنها.
 
-~~~text القياس من Chrome (في الـ Console)
-> document.querySelector("video").textTracks[0].cues.length
-3                                    ← الملف السليم
-2                                    ← بعد الفاصلة: الجملة التانية اتشالت
-~~~`,
+**الغلطة الشائعة:** تعمل skeleton شكله قريب بس، فيقفز 20px لحظة الوصول.
+
+~~~text الناتج
+ارتفاع الكارت:   skeleton 96 ، 96 ، 96  ←  حقيقي 96 ، 96 ، 96
+aria-busy:       true ← false
+shift عند وصول البيانات (1.5 ثانية): صفر
+shift كلي: 0.0067 من بداية الـ shimmer (من غيره: صفر)
+reduce: 0 animations
+axe صفر
+~~~` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** استخدم مكتبة [[web-vitals]] (نسخة attribution) و [[onCLS(console.log, { reportAllChanges: true })]] على صفحة بتتنط، وطلّع من النتيجة العنصر اللي عمل أكبر shift ووقته.`, done: R`عرفت الـ selector من [[attribution.largestShiftTarget]] والوقت من [[attribution.largestShiftTime]]، وصلّحت العنصر ده بالذات، والرقم نزل تحت 0.1.`, sol: R`~~~js entry.js
+import { onCLS } from "web-vitals/attribution";
+
+onCLS((metric) => {
+  console.log(metric.value, metric.attribution.largestShiftTarget, metric.attribution.largestShiftTime);
+}, { reportAllChanges: true });
+~~~
+
+~~~html bad.html
+<div id="ad"></div>
+<main id="content">…</main>
+<script>
+  setTimeout(() => {
+    document.getElementById("ad").innerHTML = '<div style="height: 200px">إعلان</div>';
+  }, 500);
+$__lt/script>
+~~~
+
+والتصليح:
+
+~~~css fix.css
+#ad { min-height: 200px; }
+~~~
+
+~~~view 240 240 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+#ad { min-height: 200px; }
+</style>
+<div id="ad"></div>
+<main id="content">…</main>
+<script>
+  setTimeout(() => {
+    document.getElementById("ad").innerHTML = '<div style="height: 200px">إعلان</div>';
+  }, 500);
+</script>
+</body></html>
+~~~
+
+**ليه [[attribution]]:** الرقم لوحده بيقولك إن فيه مشكلة، و [[attribution]] بيقولك مين. [[largestShiftTarget]] selector لأكبر عنصر اتحرك.
+
+**لاحظ:** العنصر المذكور [[#content]]، مش [[#ad]]. اللي اتحرك هو الضحية، والسبب هو اللي قبله. دوّر فوق العنصر.
+
+**[[reportAllChanges]]:** من غيره الـ callback بيتأخر لحد ما الصفحة تتقفل أو تتخبى.
+
+**الغلطة الشائعة:** تصلّح [[#content]] نفسه، فمش هيتغير حاجة.
+
+~~~text الناتج
+web-vitals 6.2.3:
+
+قبل:  value 0.215 ، largestShiftTarget #content ، largestShiftTime 540.5
+بعد:  value 0
+~~~` },
+          ],
+          desc: R`CLS (Cumulative Layout Shift) مقياس من جوجل لكمية الحركة المفاجئة للمحتوى: صورة اتحمّلت ودفعت الكلام، أو إعلان ظهر فوق الزرار. المطلوب [[0.1]] أو أقل.
+
+الأسباب المشهورة: صور وفيديو و iframes من غير مقاسات، وخطوط بتتبدّل بمقاسات مختلفة، ومحتوى بيتحط فوق محتوى موجود (بانر كوكيز، أو إشعار) بعد ما الصفحة ترسم.`,
+          example: R`<img src="/hero.webp" width="1200" height="600" alt="...">
+<iframe src="https://example.com/embed/video" class="video" title="فيديو الشرح"></iframe>
+<div class="ad-slot"></div>
+<div class="skeleton"></div>
+<style>
+  img, video { max-width: 100%; height: auto; }
+  .video { width: 100%; aspect-ratio: 16 / 9; }
+  .ad-slot { min-height: 250px; }
+  .skeleton { height: 7.5rem; border-radius: 0.75rem; background: whitesmoke; }
+  .toast { position: fixed; bottom: 1rem; }
+</style>`,
+          try: R`افتح موقعك وفي DevTools › Performance اعمل record مع reload، ودوّر على Layout shifts (أو شغّل Lighthouse). وبعدين امسح width و height من صورة الهيرو، واعمل Slow 4G، وشوف الرقم بيزيد.`,
+          flag: "script",
           deep: {
-            why: R`فيديو من غير كابشن مقفول قدام الأصم، وقدام كل اللي فاتحين الموبايل والصوت مقفول (في المواصلات، أو جنب حد نايم). والكلام المحروق جوه الصورة مبيحلّش: مبيتقفلش، ومبيتترجمش، ومحرك البحث مبيقراهوش. [[<track>]] بيخلّي الكلام ملف نص منفصل: يتصلّح في دقيقة، ويتعمل منه ١٠ لغات، والزائر يختار.`,
-            how: R`المتصفح بيعمل لكل [[<track>]] كائن text track وبيحدد الـ [[mode]] بتاعه: اللي عليه [[default]] (ونوعه captions أو subtitles) بيبقى [[showing]]، والباقي [[disabled]]. الملف بيتطلب بس لما الـ mode ميبقاش [[disabled]]. الـ parser بيقرا [[WEBVTT]] وبعدين cue ورا cue، واللي سطر توقيته مش مظبوط بيتشال لوحده. ووقت التشغيل، مع كل تغيير في [[currentTime]] المتصفح بيشوف أنهي cues وقتها دلوقتي (اسمها [[activeCues]]) وبيرسمها في صندوق فوق الفيديو، وبيبعت حدث [[cuechange]].`,
-            when: R`أي فيديو فيه كلام: [[captions]] بلغة الفيديو، و [[subtitles]] لكل لغة تانية جمهورك بيتكلمها. فيديو تعليمي طويل: [[chapters]] ومعاها قايمة فصول مكتوبة في الصفحة. [[poster]] دايمًا. و [[width]] و [[height]] دايمًا.`,
-            mistakes: R`[[kind]] مكتوب غلط فالـ track بيبقى [[metadata]]. [[default]] على أكتر من واحد أو ولا واحد. ملف SRT متسمّي [[.vtt]]. فاصلة في التوقيت. فتح الصفحة من [[file://]] والاستغراب إن الكابشن مش ظاهر. ملف VTT من دومين تاني. و [[label]] بلغة غير لغة الترجمة.`
+            why: R`انت داخل تدوس «إلغاء» والصفحة اتنطت فدست «تأكيد الدفع». CLS مش مجرد إزعاج، ده بيخلي الناس تدوس حاجات غلط، وجوجل بيحسبه ضمن Core Web Vitals (مع LCP و INP) اللي بتأثر على الترتيب.`,
+            how: R`المتصفح بيسجّل كل مرة عنصر ظاهر يتحرك من مكانه بين frame والتاني من غير ما المستخدم يكون السبب. الـ score لكل shift = (نسبة الشاشة اللي اتأثرت) × (المسافة اللي اتحركتها كنسبة من الشاشة). والـ shifts القريبة من بعض بتتجمع في مجموعة (session window)، و CLS = أكبر مجموعة في عمر الصفحة.
+
+الحركة اللي بتحصل في خلال 500ms بعد ضغطة من المستخدم (فتح accordion مثلًا) مش بتتحسب لأنها متوقعة. وحركات [[transform]] مش بتتحسب لأنها مش بتغيّر الـ layout، عشان كده الـ animations بتاعة transform آمنة.
+
+الحلول كلها فكرة واحدة: احجز المكان قبل ما المحتوى يوصل. للصور: width و height (أو [[aspect-ratio]]). للخطوط: [[size-adjust]] للخط الاحتياطي (next/font بيعمله) أو [[font-display: optional]]. للمحتوى الديناميكي: skeleton بنفس المقاس، أو اعرضه في مكان مش هيزق حاجة. وفي Next.js، [[next/image]] بيجبرك على المقاسات، و [[loading.tsx]] بيعرض skeleton.
+
+القياس: في المعمل Lighthouse و Performance panel. وفي الحقيقة من المستخدمين (field data): Search Console و PageSpeed Insights، أو مكتبة [[web-vitals]] بتبعت الأرقام للـ analytics بتاعك.`,
+            when: "قبل أي launch، وبعد ما تضيف صور أو خطوط أو widgets من برا (شات، وإعلانات، و embeds).",
+            mistakes: R`تقيس على جهازك بنت سريع ومفيش shift، والمستخدم على 4G بيشوف الصفحة بتتنط. بانر كوكيز بيزق الصفحة لتحت بدل ما يبقى fixed. و [[<Image fill>]] جوه أب ملوش ارتفاع.`
           },
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** فيديو «الدرس ١» في «المحطة» محطوط ومعاه ملفين نص جاهزين (العربي الأول والإنجليزي التاني)، بس الـ [[<track>]] ناقصهم كل حاجة غير [[src]]. كمّلهم: العربي كابشن وشغال من الأول، والإنجليزي ترجمة، وكل واحد بلغته واسمه. (من قسم ٢ في الشرح)`, done: R`لما تدوس ▶ الكابشن العربي بيظهر لوحده، وزرار CC فيه الاسمين، وكل الشروط ✓.`, work: { h: 250, start: R`<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-  <track src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-  <track src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
-</video>`, checks: [
-              { say: R`الأول [[kind="captions"]] ولغته [[ar]]`, q: "video > track:first-of-type[kind=\"captions\"][srclang=\"ar\"]" },
-              { say: R`التاني [[kind="subtitles"]] ولغته [[en]]`, q: "video > track:last-of-type[kind=\"subtitles\"][srclang=\"en\"]" },
-              { say: R`الاتنين ليهم [[label]]`, q: "video > track[label]", n: 2 },
-              { say: R`[[label]] بتاع الإنجليزي مكتوب إنجليزي`, q: "track[srclang=\"en\"][label=\"English\"]" },
-              { say: R`[[default]] على العربي بس`, q: "track[default]", n: 1 },
-              { say: R`العربي هو اللي عليه [[default]]`, q: "track[srclang=\"ar\"][default]" },
-            ] }, sol: R`~~~live 206 الحل (دوس ▶)
-<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-  <track kind="captions" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-  <track kind="subtitles" srclang="en" label="English" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
-</video>
+          teach: R`## كل سطر في المثال بيحجز مكان قبل ما المحتوى يوصل
+
+CLS بيزيد لما حاجة ظاهرة تتنقل من مكانها لوحدها. والمثال كله فكرة واحدة: كل حاجة ممكن توصل متأخر (صورة، أو فيديو، أو إعلان، أو بيانات) ليها مكان محجوز من الأول. حطيناه في صفحة فيها عنوان، وصورة هيرو 1200×600 السيرفر بيأخّرها 800ms، و 20 فقرة تحتها، وبعدهم الـ iframe والإعلان والـ skeleton. شاشة 1000×800 في Chrome، وجمعنا الـ CLS بـ [[PerformanceObserver]] على نوع [[layout-shift]] (نفس الأرقام اللي Lighthouse بيجمعها).
+
+---
+
+## ١. الصورة
+
+~~~text HTML
+<img src="/hero.webp" width="1200" height="600" alt="...">
 ~~~
 
-**هتشوف إيه:**
-
-- دوس ▶: «أهلًا بيكم في المحطة» بالعربي في أسفل الفيديو.
-- دوس CC: القايمة فيها «عربي» و «English». اختار English: الجملة بتبقى «Welcome to El-Mahatta».
-
-**ليه كده:**
-
-- العربي [[captions]] لأن فيه «[موسيقى هادية]»: وصف صوت. الإنجليزي ترجمة حوار بس.
-- [[default]] على لغة الفيديو الأصلية. الإنجليزي مقفول وملفه مبيتحمّلش لحد ما يتختار.
-
-**الغلطة الشائعة:** [[default]] على الاتنين «عشان يبقوا جاهزين». الأول بس اللي هيشتغل.
-
-~~~text القياس من Chrome
-[0]  kind = captions    language = "ar"   label = "عربي"      mode = showing    cues = 2
-[1]  kind = subtitles   language = "en"   label = "English"   mode = disabled   cues = null
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فيديو «جولة في الاستوديو» كابشنه مش بيظهر. فيه ٤ مشاكل: [[kind]] مكتوب غلط، و [[default]] على الاتنين، والترجمة الإنجليزي من غير لغة، والـ track التالت برّه الفيديو. (من قسم ١ و ٢ و ٧ في الشرح)`, done: R`التلاتة جوه الفيديو، والعربي [[captions]] وعليه [[default]] لوحده، والإنجليزي ليه [[srclang]]، وكل الشروط ✓.`, work: { h: 250, start: R`<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-  <track kind="caption" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-  <track kind="subtitles" label="English" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
-</video>
-<track kind="chapters" srclang="ar" label="الفصول" src="media/tour.chapters.vtt">`, checks: [
-              { say: R`العربي [[kind="captions"]]`, q: "track[srclang=\"ar\"][kind=\"captions\"]" },
-              { say: R`مفيش [[kind="caption"]]`, q: "track[kind=\"caption\"]", n: 0 },
-              { say: R`[[default]] على واحد بس، وهو العربي`, q: "track[default]", n: 1 },
-              { say: R`الإنجليزي ليه [[srclang="en"]]`, q: "track[kind=\"subtitles\"][srclang=\"en\"]" },
-              { say: R`التلاتة جوه [[<video>]]`, q: "video > track", n: 3 },
-            ] }, sol: R`~~~live 206 بعد التصليح (دوس ▶)
-<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-  <track kind="captions" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-  <track kind="subtitles" srclang="en" label="English" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
-  <track kind="chapters" srclang="ar" label="الفصول" src="media/tour.chapters.vtt">
-</video>
+~~~text CSS
+img, video { max-width: 100%; height: auto; }
 ~~~
 
-وده اللي كان باين قبل التصليح:
+- [[width="1200" height="600"]]: مقاس الصورة الأصلي. المتصفح بيحسب منهم النسبة (1200 ÷ 600 = 2:1) قبل ما الصورة توصل.
+- [[max-width: 100%]]: متعديش عرض الأب. الشاشة كانت 1000 والـ body ليه margin، فالصورة بقت 968px.
+- [[height: auto]]: الارتفاع يتحسب من العرض والنسبة: 968 ÷ 2 = 484. من غيرها الـ [[height="600"]] كان هيفضل 600 والصورة تتمط.
+- [[alt]]: وصف الصورة لقارئ الشاشة (ملوش علاقة بالـ CLS).
 
-~~~live 206 قبل (دوس ▶)
-<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-  <track kind="caption" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-  <track kind="subtitles" label="English" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
-</video>
-<track kind="chapters" srclang="ar" label="الفصول" src="media/tour.chapters.vtt">
+### القياس
+
+~~~text اتقاس في Chrome (الصورة متأخرة 800ms)
+مع width و height:
+  قبل ما الصورة توصل:  img 968×484   أول فقرة top=584
+  بعد ما وصلت:         img 968×484   أول فقرة top=584   CLS = 0
+
+من غيرهم:
+  قبل ما الصورة توصل:  img 0×0       أول فقرة top=114
+  بعد ما وصلت:         img 968×484   أول فقرة top=584   CLS = 0.2323
 ~~~
 
-**هتشوف إيه:**
+من غير المقاسات، الكلام كان بادئ عند 114 ونط 470px لتحت مرة واحدة، والـ CLS طلع أكتر من ضعف الحد (0.1). الرقم ده بيتحسب تقريبًا كده: (قد إيه من الشاشة اتأثر) × (المسافة اللي اتحركها كنسبة من ارتفاع الشاشة)، فبيكبر مع كمية الكلام اللي تحت الصورة وقد إيه نطت.
 
-- قبل: لما تدوس ▶ بيظهر الإنجليزي «Welcome to El-Mahatta». العربي مش بيظهر.
-- بعد: العربي هو اللي بيظهر، والإنجليزي في القايمة.
+---
 
-| المشكلة | التصليح | ليه |
+## ٢. الـ iframe
+
+~~~text HTML + CSS
+<iframe src="https://example.com/embed/video" class="video" title="فيديو الشرح"></iframe>
+.video { width: 100%; aspect-ratio: 16 / 9; }
+~~~
+
+- [[iframe]] صفحة جوه صفحتك (زي فيديو YouTube). مقاسه الافتراضي 300×150 مهما كان جواه.
+- [[title]]: اسم الـ iframe لقارئ الشاشة.
+- [[aspect-ratio: 16 / 9]]: الارتفاع = العرض × 9 ÷ 16. قسناه: [[972 × 548.5]]. المحتوى نفسه 968 (زي الصورة) و 968 × 9 ÷ 16 = 544.5، والـ iframe عليه border افتراضي 2px من كل ناحية فبيزوّد 4 على العرض والارتفاع.
+
+## ٣. الإعلان والـ skeleton
+
+~~~text CSS
+.ad-slot { min-height: 250px; }
+.skeleton { height: 7.5rem; border-radius: 0.75rem; background: whitesmoke; }
+~~~
+
+- [[min-height: 250px]]: الـ div فاضي، بس ارتفاعه 250 (قسناه: [[ad h=250]]). لما الإعلان يوصل بنفس المقاس مفيش حاجة تتزق. و [[min]] عشان لو الإعلان طلع أطول يكبر.
+- [[.skeleton]]: مربع رمادي ([[whitesmoke]]) بارتفاع 7.5rem = 120px (قسناه: [[skeleton h=120]])، تقريبًا قد المحتوى الحقيقي. و [[border-radius: 0.75rem]] = 12px تدوير.
+
+## ٤. الإشعار
+
+~~~text CSS
+.toast { position: fixed; bottom: 1rem; }
+~~~
+
+[[position: fixed]]: العنصر بيطلع من مكانه في الصفحة ويتثبّت في الشاشة، فلما يظهر مش بيزق حاجة. و [[bottom: 1rem]] = 16px من تحت. أظهرناه بعد التحميل: الـ CLS زاد [[0.0000]].
+
+## ٥. [[<style>]] نفسه
+
+الـ CSS في المثال جوه [[<style>]] في نفس الصفحة، فمتطبّق من أول رسمة. لو المقاسات دي كانت في ملف CSS بيتحمّل متأخر، الصورة كانت هتترسم من غير [[height: auto]] الأول وتتغير بعدين.
+
+---
+
+## الملخص
+
+| المحتوى المتأخر | الحجز | اتقاس |
 |---|---|---|
-| [[kind="caption"]] | [[captions]] | القيمة الغلط بتتحوّل [[metadata]]، وده مبيترسمش |
-| [[default]] على الاتنين | اتشال من الإنجليزي | واحد بس لكل فيديو |
-| ترجمة من غير [[srclang]] | [[srclang="en"]] | إجباري مع [[subtitles]] |
-| [[<track>]] برّه [[<video>]] | دخل جواه | برّه بيتجاهل |
+| صورة | [[width]] و [[height]] + [[height: auto]] | 968×484 من أول لحظة، CLS ‏0 (من غيرهم 0.2323) |
+| iframe | [[aspect-ratio: 16 / 9]] | 972×548.5 |
+| إعلان | [[min-height: 250px]] | 250 |
+| بيانات من API | skeleton بنفس الارتفاع | 120 |
+| إشعار | [[position: fixed]] | CLS زاد 0 |
 
-**الغلطة الشائعة:** تدوّر على الغلط في ملف الـ VTT وهو سليم. لما الكابشن ميظهرش، بص على [[kind]] الأول.
+## الخلاصة
 
-~~~text القياس من Chrome
-قبل:   [0] kind = metadata   mode = hidden       [1] kind = subtitles  language = ""  mode = showing
-       التالت (برّه الفيديو): مش في textTracks، وملفه متطلبش
-بعد:   [0] kind = captions   mode = showing      [1] subtitles  en  disabled      [2] chapters  disabled
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ (ملف VTT):** ملف كابشن مقدمة «المحطة» فيه ٤ جمل، ومبيظهرش منه ولا واحدة. صلّحه لحد ما الأربعة يظهروا، وزوّد مين بيتكلم في آخر جملتين. (من قسم ٣ في الشرح)
+- CLS = الحاجات اللي بتتنقل لوحدها، والحد الكويس 0.1.
+- الحل دايمًا: احجز المكان قبل ما المحتوى يوصل.
+- اختبر بنت بطيء أو صورة متأخرة: على نت سريع والصورة في الكاش مش هتشوف النطة.`,
+          lines: [
+            "width و height بيحجزوا مكان بنسبة 2:1 قبل ما الصورة توصل.",
+            "iframe فيديو: ملوش مقاسات من نفسه.",
+            "مكان إعلان أو widget بيتحمّل متأخر.",
+            "مكان محتوى جاي من API.",
+            R`بلوك [[<style>]] صغير فيه القواعد اللي بتحجز المكان (في مشروع حقيقي في ملف الـ CSS).`,
+            "الصورة تصغر مع الشاشة والارتفاع يتحسب من النسبة، فالمكان المحجوز صح.",
+            R`[[aspect-ratio]] بيحجز ارتفاع الفيديو من عرضه.`,
+            "احجز أقل ارتفاع للإعلان حتى لو لسه فاضي.",
+            "skeleton بنفس ارتفاع المحتوى الحقيقي تقريبًا، فلما البيانات توصل مفيش نطة.",
+            R`الإشعارات [[fixed]]: بتظهر فوق الصفحة من غير ما تزق حاجة.`,
+            R`قفلة الـ style؛ القواعد دي لازم تبقى في الـ CSS اللي بيتحمّل قبل الرسم مش بعده.`
+          ],
+          sol: R`في Performance بعد record مع reload: هتلاقي track اسمه Layout shifts (أو مربعات بنفسجي) عند اللحظة اللي الصورة وصلت فيها، ولما تدوس عليه يوريك العناصر اللي اتحركت. وفي Lighthouse الرقم تحت Cumulative Layout Shift؛ الكويس أقل من 0.1.
 
-~~~text intro.ar.vtt (البايظ)
-VTT
+قست ده على صفحة فيها عنوان وصورة هيرو 1200×600 وكلام كتير تحتها، والصورة بتتأخر 800ms: مع [[width]] و [[height]] الـ CLS كان [[0]]، لأن المتصفح حجز مكان بنسبة 2:1 من الأول. من غيرهم الـ CLS طلع حوالي [[0.43]] (أكتر من 4 أضعاف الحد)، لأن الكلام كله نط لتحت مرة واحدة لما الصورة وصلت.
 
-00:00.000 --> 00:02.000
-أهلًا بيكم في المحطة.
-
-00:00:02,000 --> 00:00:04,000
-[موسيقى المقدمة]
-
-00:04.000 -> 00:06.000
-معاكم منى.
-
-0:06.000 --> 0:08.000
-ومعاكم كريم.
-~~~`, done: R`في الـ Console: [[textTracks[0].cues.length]] بقى [[4]] بعد ما كان [[0]].`, sol: R`~~~text intro.ar.vtt
-WEBVTT
-
-00:00.000 --> 00:02.000
-أهلًا بيكم في المحطة.
-
-00:00:02.000 --> 00:00:04.000
-[موسيقى المقدمة]
-
-00:04.000 --> 00:06.000
-<v منى>معاكم منى.
-
-00:06.000 --> 00:08.000
-<v كريم>ومعاكم كريم.
-~~~
-
-| السطر | الغلطة | التصليح |
-|---|---|---|
-| ١ | [[VTT]] | [[WEBVTT]] بالظبط. دي اللي كانت مانعة الملف كله |
-| ٦ | [[00:00:02,000]] فاصلة | نقطة: [[00:00:02.000]] |
-| ٩ | [[->]] شرطة واحدة | [[-->]] شرطتين |
-| ١٢ | [[0:06.000]] الدقايق رقم واحد | رقمين: [[00:06.000]] |
-
-**ليه بالترتيب ده:** صلّح السطر الأول الأول. طول ما هو غلط، الملف كله مرفوض ومش هتعرف باقي الغلطات اتصلّحت ولا لأ. بعده، كل غلطة بتشيل جملتها بس.
-
-**الغلطة الشائعة:** تصلّح [[WEBVTT]] وتلاقي جملة واحدة ظهرت، فتفتكر إن الباقي «لسه بيتحمّل». هو مش هييجي: عدّ الـ cues.
-
-~~~text القياس من Chrome
-الملف البايظ:                         cues = 0    readyState = ERROR
-بعد تصليح السطر الأول بس:             cues = 1    (أهلًا بيكم في المحطة.)
-بعد تصليح الأربعة:                    cues = 4    readyState = LOADED
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** الفيديو ده عليه تلات tracks. اكتب على ورقة: أنهي واحد هيظهر لما تدوس ▶؟ وأنهي ملف مش هيتحمّل خالص؟ وبعدين خلّي العربي هو اللي يظهر من الأول. (من قسم ٢ في الشرح، جزء [[default]])`, done: R`كتبت توقّعك، والعربي بقى عليه [[default]] لوحده من الـ tracks اللي بتترسم، وكل الشروط ✓.`, work: { h: 250, start: R`<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-  <track kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-  <track kind="subtitles" srclang="en" label="English" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
-  <track kind="chapters" srclang="ar" label="الفصول" default src="media/ep1.chapters.vtt">
-</video>`, checks: [
-              { say: R`العربي عليه [[default]]`, q: "track[kind=\"captions\"][srclang=\"ar\"][default]" },
-              { say: R`الإنجليزي مفيهوش [[default]]`, q: "track[srclang=\"en\"][default]", n: 0 },
-              { say: R`التلاتة لسه موجودين جوه الفيديو`, q: "video > track", n: 3 },
-            ] }, sol: R`~~~live 206 بعد التعديل (دوس ▶)
-<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
-  <track kind="captions" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
-  <track kind="subtitles" srclang="en" label="English" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
-  <track kind="chapters" srclang="ar" label="الفصول" default src="media/ep1.chapters.vtt">
-</video>
-~~~
-
-**التوقّع:** قبل التعديل الإنجليزي هو اللي بيظهر (عليه [[default]])، وملف العربي مبيتطلبش من السيرفر خالص. والفصول عليها [[default]] برده، فملفها بيتحمّل، بس مبتترسمش.
-
-**هتشوف إيه:** قبل: «Welcome to El-Mahatta». بعد: «أهلًا بيكم في المحطة».
-
-**ليه [[default]] على الفصول مش مشكلة:** قاعدة «واحد بس» في Chrome طلعت بتتحسب لكل مجموعة: الكابشن والترجمة مجموعة، والفصول مجموعة لوحدها. بس MDN بيقول واحد لكل فيديو، فالأضمن تشيله من الفصول لو مش محتاجه.
-
-**الغلطة الشائعة:** تفتكر إن لغة المتصفح هي اللي بتختار. من غير [[default]] مفيش حاجة بتظهر لوحدها في Chrome.
-
-~~~text القياس من Chrome (قبل التعديل)
-[0] captions  ar   mode = disabled   cues = null   (الملف متطلبش)
-[1] subtitles en   mode = showing    cues = 2
-[2] chapters  ar   mode = showing    cues = 2      (محمّل، ومش مرسوم)
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت «شاهد الدرس ٢»: الفيديو محتاج يحجز مكانه (320 × 180) قبل ما يتحمّل، ويعرض صورة لحد ما حد يدوس، وميحمّلش أي حاجة من الملف قبلها، ومن غير تشغيل تلقائي. الصورة جاهزة في البداية في [[<img>]] صغير: انقل عنوانها ([[src]]) لمكانها الصح على الفيديو وامسح الـ [[<img>]]. (من قسم ٥ و ٦ في الشرح)`, done: R`الصورة «الحلقة ١» ظاهرة مكان الفيديو بمقاس 320 × 180، وكل الشروط ✓.`, work: { h: 250, start: R`<h2>شاهد الدرس ٢</h2>
-<img alt="" width="96" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E">
-<video src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED"></video>`, checks: [
-              { say: R`الفيديو عليه [[controls]]`, q: "video[controls]" },
-              { say: R`ليه [[width="320"]] و [[height="180"]]`, q: "video[width=\"320\"][height=\"180\"]" },
-              { say: R`ليه [[poster]]`, q: "video[poster^=\"data:image\"]" },
-              { say: R`[[preload="none"]]`, q: "video[preload=\"none\"]" },
-              { say: R`مفيش [[autoplay]]`, q: "video[autoplay]", n: 0 },
-              { say: R`الـ [[<img>]] الصغير اتمسح`, q: "img", n: 0 },
-            ] }, sol: R`~~~live 266 الحل
-<h2>شاهد الدرس ٢</h2>
-<video controls width="320" height="180" preload="none" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED"></video>
-~~~
-
-**هتشوف إيه:** تحت العنوان مستطيل أخضر مكتوب عليه «الحلقة ١» وعليه أزرار المشغّل. في البداية كانت الصورة لوحدها صغيرة، وتحتها فيديو من غير أزرار.
-
-**ليه كده:**
-
-- [[width]] و [[height]]: المكان محجوز من أول لحظة، فاللي تحت الفيديو مبيتزقش.
-- [[poster]]: مع [[preload="none"]] مفيش أول frame يتعرض، فمن غيرها المكان يبقى أسود.
-- [[preload="none"]]: مناسب لصفحة فيها دروس كتير.
-
-**الغلطة الشائعة:** [[poster]] مقاسه غير مقاس الفيديو، ومن غير [[width]] و [[height]]. الفيديو بياخد مقاس الصورة الأول، وبعدين يتغيّر لما يشتغل.
-
-~~~text القياس من Chrome
-قبل التحميل:   الحجم 320 × 180    readyState = 0    aspect-ratio: auto 320 / 180
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** لكل حالة قول محتاجة إيه (captions ولا subtitles ولا نص مكتوب في الصفحة ولا أكتر من واحد) وليه، في سطر: (١) درس طبخ بالعربي لجمهور عربي. (٢) نفس الدرس وعايز توصل لناس بتتكلم إنجليزي. (٣) حلقة بودكاست صوت بس. (من قسم ٤ في الشرح)`, done: R`تلات إجابات، كل واحدة فيها النوع والسبب.`, sol: R`إجابة نموذجية:
-
-1. **captions بالعربي.** اللغة مفهومة، فالمحتاج هو اللي مش سامع: يتكتب الكلام ومعاه الأصوات اللي ليها معنى («[صوت الزيت بيطشّ]»). ومعاه المقادير مكتوبة في الصفحة.
-2. **subtitles بالإنجليزي، ومعاها الـ captions العربي.** الترجمة للي سامع ومش فاهم. والاتنين مع بعض في نفس الفيديو: [[default]] على العربي.
-3. **نص مكتوب (transcript) في الصفحة.** [[<audio>]] مبيرسمش كابشن (درس «audio و source» قسم ٨)، فالكلام كله يتكتب HTML تحت المشغّل. ولو عايز الكلام يظهر مع الصوت في وقته: شغّل الملف في [[<video>]] بـ [[poster]] وحط عليه [[<track>]].
-
-**الغلطة الشائعة:** تعتبر الترجمة الإنجليزي «كابشن» وتقول الفيديو accessible. الأصم العربي لسه مش واصله حاجة.` },
-          ]
+لو الرقم مزدش بعد ما مسحت المقاسات: غالبًا الصورة في الكاش فبتيجي فورًا، اعمل Disable cache. أو فيه [[aspect-ratio]] في الـ CSS بيحجز المكان بدل الـ attributes. وخلي بالك إن Lighthouse بيقيس التحميل بس؛ الـ shifts اللي بتحصل بعد ما المستخدم يعمل scroll بتبان في Web Vitals الحقيقية (CrUX) مش في Lighthouse.`
         },
         {
-          cmd: "iframe sandbox و allow",
-          title: "صفحة من موقع تاني جوه صفحتك: تقفل عليها إيه وتسمحلها بإيه",
-          pre: [{ to: "css/video و iframe", why: R`[[<iframe>]] نفسه و [[title]] و [[loading="lazy"]] والـ facade بتاع يوتيوب اتشرحوا هناك. الدرس ده بيكمّل بالأمان: [[sandbox]] و [[allow]] و [[srcdoc]] و [[referrerpolicy]]` }],
+          cmd: "critical CSS",
           ref: [
-            { t: "MDN: <iframe>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe" },
-            { t: "MDN: Permissions Policy", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Permissions_Policy" },
-            { t: "WHATWG: the iframe element", url: "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element" },
-            { t: "WHATWG: sandboxing", url: "https://html.spec.whatwg.org/multipage/browsers.html#sandboxing" }
+            { t: "web.dev: Extract critical CSS", url: "https://web.dev/articles/extract-critical-css" },
+            { t: "MDN: rel=preload", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/preload" },
+            { t: "MDN: rel=preconnect", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/preconnect" },
+            { t: "MDN: svh", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length" },
           ],
-          desc: R`[[<iframe>]] بيفتح صفحة كاملة جوه صفحتك: مشغّل فيديو، خريطة، فورم دفع. الصفحة دي كود مش بتاعك، فالسؤال: مسموحلها تعمل إيه؟ [[sandbox]] بيقفل عليها كل حاجة (سكربتات، فورم، نوافذ) وانت بتفتح اللي محتاجاه بالاسم. و [[allow]] بيدّيها صلاحيات الجهاز (ملو الشاشة، الكاميرا، المكان).
-ومعاهم: [[srcdoc]] (محتوى الـ iframe مكتوب في نفس الملف)، و [[loading="lazy"]]، و [[referrerpolicy]]، و [[title]] اللي من غيره قارئ الشاشة مش عارف الصندوق ده إيه.`,
-          example: R`<iframe src="https://player.example.test/embed/ep1"
-        title="فيديو الحلقة ١ من بودكاست المحطة"
-        width="560" height="315"
-        loading="lazy"
-        sandbox="allow-scripts allow-same-origin allow-presentation"
-        allow="fullscreen; picture-in-picture"
-        referrerpolicy="strict-origin-when-cross-origin"></iframe>
-<iframe srcdoc="<p>أهلًا من جوه الـ iframe</p>" title="بطاقة ترحيب" width="300" height="80" sandbox></iframe>`,
+          title: "ليه الصفحة بيضا ثانيتين قبل ما تظهر؟",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي واحد من دول بيوقّف أول رسم: [[<link rel="stylesheet" media="print">]]، و [[<link rel="stylesheet" media="(min-width: 2000px)">]] على شاشة 1280، و [[<script src>]] في الـ head من غير defer، و [[<script defer>]]، و [[<script type="module">]]، و [[@import]] جوه ملف CSS؟`, done: R`بيوقّف: السكربت العادي (بيوقف قراية الـ HTML)، و [[@import]] (سلسلة طلبات قبل الرسم). مش بيوقّف: print، والـ media اللي مش متطابقة (بتتحمّل بأولوية قليلة)، و defer، و module. واتأكدت من عمود Priority في Network و Lighthouse «Render-blocking resources».`, sol: R`**الإجابة:**
+
+| العنصر | بيوقّف الرسم؟ | FCP مع ملف متأخر 1.5 ثانية |
+|---|---|---|
+| مفيش حاجة | | 28ms |
+| [[media="print"]] | لأ | 44ms |
+| [[media="(min-width: 2000px)"]] | لأ | 36ms |
+| [[<script src>]] | أيوه | 1544ms |
+| [[<script defer>]] | لأ | 32ms |
+| [[<script type="module">]] | لأ | 32ms |
+| [[@import]] جوه CSS | أيوه، ومرتين | 3060ms |
+
+~~~html test.html
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>مين بيوقّف؟</title>
+<!-- حط سطر واحد في المرة، وأخّر الملف من السيرفر 1.5 ثانية -->
+<link rel="stylesheet" href="/main.css">
+</head>
+<body><main><h1>النص</h1></main></body>
+</html>
+~~~
+
+~~~js console
+performance.getEntriesByName("first-contentful-paint")[0].startTime
+~~~
+
+**القاعدة:** المتصفح مبيرسمش قبل ما CSS اللي بينطبق دلوقتي يوصل، عشان ميرسمش مرتين. الـ [[media]] اللي مش متطابق مش بينطبق، فبيتحمّل بأولوية قليلة من غير ما يوقّف. والسكربت العادي بيوقف قراية الـ HTML لأنه ممكن يعدّله.
+
+[[@import]] أسوأ: الملف الأول لازم يوصل، وبعدين يبدأ التاني.
+
+**الغلطة الشائعة:** تفتكر إن [[@import]] زي [[<link>]]. الاتنين شكلهم واحد في الناتج، بس الوقت ضعف.
+
+~~~text الناتج
+baseline 28 ، print 44 ، nomatch 36 ، script 1544 ، defer 32 ، module 32 ، @import 3060
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس الصفحة مرتين على Slow 4G: مرة بملف CSS واحد 200KB في الـ head، ومرة بـ CSS أول شاشة inline (أقل من 14KB) والباقي بيتحمّل من غير ما يوقّف ([[media="print"]] و [[onload="this.media='all'"]]).`, done: R`FCP قبل وبعد من Lighthouse أو Performance، والتانية أسرع، ومفيش «وميض» لما الـ CSS الكامل يوصل (الأول شاشة شكلها واحد في الحالتين).`, sol: R`النسخة التانية:
+
+~~~html two.html
+<head>
+<style>
+  /* CSS أول شاشة بس، أقل من 14KB */
+  body { margin: 0; font-family: system-ui; }
+  .hero { padding: 2rem; background: #0f172a; color: #fff; }
+  .hero h1 { font-size: 2rem; }
+</style>
+<link rel="stylesheet" href="/full.css" media="print" onload="this.media='all'">
+</head>
+~~~
+
+**الحيلة:** [[media="print"]] بيخلي الملف مش بيوقّف الرسم. أول ما يتحمّل، [[onload]] بيغيّره لـ [[all]] فينطبق.
+
+**ليه 14KB:** أول رحلة TCP بتشيل حوالي 14KB، فلو الـ HTML مع CSS الحرج جوه الحد ده، أول رسم ميستناش رحلة تانية.
+
+**ليه مفيش وميض:** CSS أول شاشة نفس القواعد اللي في الملف الكامل، فلما يوصل مفيش حاجة بتتغيّر.
+
+**جهّز fallback:** لو JavaScript مقفول، [[onload]] مش هيشتغل، فضيف [[<noscript><link rel="stylesheet" href="/full.css"></noscript>]].
+
+**الغلطة الشائعة:** تعمل inline لـ CSS ناقص، فالصفحة تبان مبهدلة لحظة وبعدين تتعدل.
+
+~~~text الناتج
+CSS كامل 201KB ، و CSS حرج 109 byte. Lighthouse مرتين (devtools throttling):
+
+                  FCP
+ملف واحد          2.4 s ، 2.5 s
+inline + print    0.7 s ، 0.7 s
+
+لقطة قبل وبعد وصول الـ CSS الكامل: متطابقين byte بـ byte
+link.media بعد التحميل: all
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صورة الهيرو عليها [[loading="lazy"]] «عشان الأداء». قيس LCP، وبعدين شيل الـ lazy وزوّد [[fetchpriority="high"]] (أو preload بـ [[imagesrcset]] لو الصورة background).`, done: R`LCP قبل وبعد من Lighthouse، وفي Network الصورة بقت أولويتها High وبتبدأ بدري في الـ waterfall، وباقي الصور اللي تحت لسه lazy.`, sol: R`~~~live 120 120 hero.html
+<!-- الهيرو -->
+<img src="/hero.jpg" width="1600" height="1000" alt="رفوف قهوة" fetchpriority="high">
+
+<!-- تحت الشاشة -->
+<img src="/below.jpg" width="1600" height="1000" alt="المحمصة" loading="lazy">
+~~~
+
+ولو الصورة [[background]] في CSS:
+
+~~~html head.html
+<link rel="preload" as="image" href="/hero.jpg" imagesrcset="/hero-800.jpg 800w, /hero.jpg 1600w" imagesizes="100vw" fetchpriority="high">
+~~~
+
+**ليه:** [[loading="lazy"]] معناها «استنى لحد ما تعرف مكانها». صورة الهيرو هي عنصر LCP غالبًا، فالتأخير بيتحسب عليك مباشرة.
+
+**[[imagesrcset]]** لأن المتصفح مش بيشوف الـ background بدري، فلازم تقوله.
+
+**ليه الأرقام قريبة في الصفحة البسيطة:** صفحة فيها صورة واحدة مفيهاش حاجة تنافسها، فالأولوية مش بتفرق. الفرق بيبان مع CSS وسكربتات كتير، زي القياس في درس [[picture]]: 7.7 ثانية ضد 7.3.
+
+**الغلطة الشائعة:** تحط [[fetchpriority="high"]] على كل الصور. لو كله مهم، مفيش حاجة مهمة.
+
+~~~text الناتج
+                       Network Priority    below.jpg    LCP (صفحة فيها صورة بس)
+loading="lazy"         Low                 مطلبش        10.7 s
+fetchpriority="high"   High                مطلبش        10.7 s
+
+في صفحة فيها CSS وست سكربتات:
+lazy 7.7 s ، fetchpriority 7.3 s
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عملت [[<link rel="preload" href="/f.woff2" as="font" type="font/woff2" crossorigin>]] بس مفيش CSS بيستخدم الخط ده. الكونسول هيقول إيه بعد التحميل؟`, done: R`Chrome 156 طلّع تحذير: «The resource http://…/f.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate [[as]] value and it is preloaded intentionally.» يعني preload غلط بيضيّع bandwidth من حاجات تانية.`, sol: R`~~~live 120 120 preload.html
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>preload</title>
+<link rel="preload" href="/f.woff2" as="font" type="font/woff2" crossorigin>
+</head>
+<body><main><h1>مفيش CSS بيستخدم الخط</h1></main></body>
+</html>
+~~~
+
+**الإجابة:** تحذير في الكونسول بعد ثواني من [[load]].
+
+**ليه:** [[preload]] بيقول للمتصفح «هحتاج ده أكيد». المتصفح نزّله بأولوية عالية، وزاحم بيه حاجات تانية، ومحدش استخدمه. فهو بيحذّرك.
+
+**نفس التحذير بيطلع لو:** الملف اللي في CSS مختلف عن اللي في preload، أو ناسي [[crossorigin]] على خط، فالمتصفح بينزّله مرتين.
+
+**الغلطة الشائعة:** تفتح الكونسول على طول وتقول مفيش تحذير. لازم تستنى كام ثانية بعد [[load]].
+
+~~~text الناتج
+The resource http://localhost/f.woff2 was preloaded using link preload but not
+used within a few seconds from the window's load event. Please make sure it has
+an appropriate $__btas$__bt value and it is preloaded intentionally.
+~~~` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** افتح DevTools › Coverage (من Command Menu) وسجّل وانت بتفتح الرئيسية بتاعتك. كام في المية من الـ CSS مش مستخدم؟ وأنهي ملف أسوأ؟`, done: R`رقم لكل ملف (Unused Bytes)، وعرفت إن الرقم ده لصفحة واحدة بس (الصفحات التانية ممكن تستخدم الباقي)، وطلعت بخطة: إيه يتقسم أو يتمسح.`, sol: R`~~~text الخطوات
+1. DevTools ← Ctrl+Shift+P ← اكتب Coverage ← Show Coverage
+2. دوس زرار التسجيل بتاع reload
+3. بص على عمود Unused Bytes لكل ملف CSS
+4. دوس على الملف: الأحمر مش مستخدم والأزرق مستخدم
+~~~
+
+وبرمجيًا:
+
+~~~js coverage.mjs
+await page.coverage.startCSSCoverage();
+await page.goto(url);
+const entries = await page.coverage.stopCSSCoverage();
+for (const entry of entries) {
+  const used = entry.ranges.reduce((sum, r) => sum + r.end - r.start, 0);
+  console.log(entry.url, entry.text.length, used);
+}
+~~~
+
+**ازاي تقرا الرقم:** Coverage بيقيس الصفحة دي بس، في اللحظة دي. القواعد بتاعة [[:hover]] أو صفحة تانية هتطلع «مش مستخدمة» وهي مستخدمة. فالرقم بيقولك فين تبص، مش إيه تمسح.
+
+**الخطة:** لفّ على الصفحات المهمة مع التسجيل، وبعدين قسّم CSS حسب الصفحة أو احذف اللي مش مستخدم في أي مكان.
+
+**الغلطة الشائعة:** تمسح كل الأحمر من أول صفحة، فالموقع ينكسر في الصفحات التانية.
+
+~~~text الناتج
+ملف تجريبي فيه قاعدة واحدة مستخدمة من 100:
+
+cov.css:  1,997 byte ، مستخدم 16 ، مش مستخدم 1,981 (99.2٪)
+
+رقم موقعك هيختلف، واكتبه لكل ملف.
+~~~` },
+          ],
+          desc: R`المتصفح مش بيرسم أي حاجة لحد ما كل ملفات الـ CSS اللي في الـ head تتحمّل (render-blocking). فكل ملف CSS كبير أو بطيء أو جاي من سيرفر تاني بيأخّر أول ظهور للصفحة.
+
+الحل: CSS صغير (Tailwind بيطلّع المستخدم بس)، والـ CSS الضروري لأول شاشة (critical CSS) يبقى أول حاجة أو inline، والباقي يتأجّل. و [[preload]] و [[preconnect]] للحاجات اللي هتحتاجها بدري.`,
+          example: R`<head>
+  <link rel="preconnect" href="https://cdn.example.com" crossorigin>
+  <link rel="preload" href="/fonts/cairo-var.woff2" as="font" type="font/woff2" crossorigin>
+  <style>header{height:4rem}.hero{min-height:60svh}</style>
+  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/print.css" media="print">
+  <script src="/app.js" defer></script>
+</head>`,
+          try: R`افتح DevTools › Network واعمل reload وبص على الـ Waterfall: شوف أول رسم حصل امتى بالنسبة لملفات الـ CSS. وبعدين في Lighthouse دوّر على تحذير الـ render-blocking requests.`,
           flag: "script",
-          lines: [
-            R`[[src]] عنوان الصفحة اللي هتتفتح جوه. هنا مشغّل فيديو عند مزوّد متخيل ([[player.example.test]])، وده الشكل اللي بييجي في «كود التضمين» من أي خدمة فيديو.`,
-            R`[[title]] اسم الـ iframe. قارئ الشاشة بيقراه قبل ما يدخل جوه، فاكتب فيه المحتوى مش «iframe» ولا «فيديو».`,
-            R`المقاس بالبيكسل. من غيره الـ iframe بيبقى 300 × 150 مهما كان اللي جواه.`,
-            R`[[loading="lazy"]]: الصفحة اللي جوه متتحمّلش غير لما الزائر يقرّب منها بالـ scroll.`,
-            R`[[sandbox]] بيقفل كل حاجة، والتلات كلمات بيفتحوا: السكربتات، وإن الصفحة تفضل على الـ origin بتاعها (عشان الـ cookies والتخزين بتوع المزوّد يشتغلوا)، والعرض على شاشة خارجية.`,
-            R`[[allow]] صلاحيات الجهاز: ملو الشاشة، وصورة جوه صورة. كل صلاحية باسمها وبينهم [[;]].`,
-            R`[[referrerpolicy]]: المزوّد يعرف إيه عن الصفحة اللي الطلب جاي منها. القيمة دي بتبعت اسم موقعك بس من غير مسار الصفحة، وهي الافتراضية، ومكتوبة هنا عشان تبان. وبعدها قفلة [[</iframe>]]، وهي إجبارية.`,
-            R`iframe محتواه مكتوب في [[srcdoc]] بدل ما ييجي من عنوان، وعليه [[sandbox]] فاضي: كل القيود شغالة، وده كفاية لمحتوى ثابت.`
-          ],
-          teach: R`## الفكرة في سطرين
+          deep: {
+            why: "لو المتصفح رسم الصفحة قبل الـ CSS، هتظهر HTML خام وبعدين تتقلب فجأة (FOUC). عشان كده بيستنى. بس ده معناه إن كل ميلي ثانية في تحميل الـ CSS هي ميلي ثانية الشاشة فيها بيضا، ودا بيأثر مباشرة على FCP و LCP.",
+            how: R`المتصفح بيقرا الـ HTML، ولما يلاقي [[<link rel="stylesheet">]] بيبدأ تحميله ويكمّل قراية، بس مش بيرسم لحد ما الـ CSS كله يتحمّل ويتحلل. لو ملف CSS فيه [[@import]] لملف تاني، المتصفح مش هيعرف عنه غير بعد ما الأول يوصل، فبيبقى تحميل ورا تحميل. ودا ليه [[@import url()]] لخطوط خارجية جوه ملف CSS أبطأ من [[<link>]] في الـ head، وأبطأ بكتير من next/font.
 
-المواصفة: [[<iframe>]] بيمثّل «navigable» جوه الصفحة، يعني نافذة متصفح صغيرة ليها صفحتها وعنوانها وسكربتاتها. والقاعدة الأمنية اللي فوق كل ده اسمها same-origin policy: صفحتين من موقعين مختلفين مبيقروش بعض.
+[[media]] على الـ link بيخلّي الملفات اللي مش مطابقة (print مثلًا) تتحمّل بأولوية قليلة ومن غير ما توقف الرسم.
 
-القياسات من Chrome 157 على Windows 11، على صفحتين من سيرفر Node محلي على بورتين ([[127.0.0.1:8731]] للصفحة الأم، و [[127.0.0.1:8732]] كـ «موقع تاني»: بورت مختلف يعني origin مختلف). الصفحة اللي جوه بتبعت للأم اللي قدرت تعمله، والسيرفر بيكتب كل طلب وصله.
+الـ critical CSS: تطلّع القواعد اللي أول شاشة محتاجاها وتحطها inline، والباقي يتحمّل بعدين. في مشروع Tailwind الـ CSS كله غالبًا عشرات الـ KB بعد الضغط، فالمكسب صغير ومش مستاهل التعقيد. و Next.js بيقسّم الـ CSS حسب الـ route، فكل صفحة بتحمّل الـ CSS بتاعها.
 
----
+[[preconnect]] بيوفّر وقت الـ DNS والـ TCP والـ TLS مع سيرفر تاني (ممكن مئات الـ ms على الموبايل). و [[preload]] بيقول «هتحتاج الملف ده أكيد، ابدأ دلوقتي» بأولوية عالية، فاستخدمه لحاجة أو اتنين بس، وإلا كل حاجة بقت أولوية ومفيش حاجة أولوية.`,
+            when: "صفحات الـ landing والصفحات اللي جاية من جوجل، واللي LCP بتاعها وحش. وأي موقع بيحمّل CSS أو خطوط من CDN خارجي.",
+            mistakes: R`مكتبة CSS كاملة عشان كلاسين. [[@import]] جوه [[@import]]. preload لكل الخطوط والصور فالأولويات تبوظ. و CSS كل الصفحات في ملف واحد ضخم في مشروع PHP، فالصفحة الرئيسية بتحمّل تنسيق الداشبورد.`
+          },
+          teach: R`## الـ head بالترتيب اللي بيخلّي أول رسمة تيجي بدري
 
-## ١. الـ iframe صفحة لوحدها
-
-~~~live 132 iframe محتواه مكتوب جوه الكود
-<p>ده كلام في الصفحة الأم.</p>
-<iframe srcdoc="<p>وده كلام في صفحة تانية جوه iframe.</p>" title="مثال iframe" width="300" height="60"></iframe>
-~~~
-
-**هتشوف إيه:** السطر الأول، وتحته صندوق ليه برواز رفيع جواه السطر التاني. الخط جوه الصندوق مختلف واتجاهه من الشمال: دي صفحة تانية، مبتورّثش أي CSS ولا [[dir]] من صفحتك.
-
-~~~text القياس من Chrome
-<iframe> من غير أي attribute:     المحتوى 300 × 150    البرواز 2px inset    display: inline
-الصفحة الأم بتقرا iframe من نفس الموقع:     contentDocument موجود
-الصفحة الأم بتقرا iframe من موقع تاني:      contentDocument = null
-الصفحة اللي جوه (من موقع تاني) بتقرا الأم:  SecurityError
-~~~
-
-- [[contentDocument]]: صفحة الـ iframe زي ما الأم شايفاها من JavaScript. [[null]] يعني ممنوع.
-- الـ iframe مبيكبرش على قد اللي جواه. المقاس منك انت: [[width]] و [[height]]، أو CSS (تمرين الـ [[aspect-ratio]] في درس «video و iframe»).
-- البرواز بيتشال بـ [[border: 0]] في الـ CSS.
+المثال [[<head>]] فيه 6 سطور، كل واحد بيقول للمتصفح حاجة عن الأولوية: افتح اتصال بدري، حمّل الخط بدري، ده CSS جاهز، ده CSS لازم تستناه، ده CSS متستناهوش، وده JavaScript متوقفش عشانه. حطيناه في صفحة على سيرفر محلي، وخلّينا السيرفر يأخّر [[app.css]] ثانية و [[print.css]] ثانيتين عشان نشوف مين بيوقف الرسم، وقرينا من Chrome أولوية كل request (من DevTools Protocol) ووقت أول رسمة (FCP = First Contentful Paint) من [[performance]].
 
 ---
 
-## ٢. [[<iframe srcdoc="...">]]
+## ١. [[<link rel="preconnect" href="https://cdn.example.com" crossorigin>]]
 
-[[srcdoc]] بياخد HTML مكتوب، والمتصفح بيعمل منه صفحة الـ iframe من غير أي طلب للسيرفر.
+- [[rel]] = relation، نوع العلاقة بين الصفحة واللينك.
+- [[preconnect]]: «هتحتاج السيرفر ده قريب، افتح الاتصال من دلوقتي». فتح اتصال جديد = DNS (يعرف الـ IP) + TCP (يفتح الخط) + TLS (التشفير بتاع https)، وده ممكن ياخد مئات الـ ms على موبايل.
+- [[crossorigin]]: الاتصالات اللي بتجيب خطوط بتتعمل في وضع CORS، والمتصفح بيفصلها عن العادية. فلو هتجيب خطوط من السيرفر ده، الـ preconnect لازم يبقى بنفس الوضع، وإلا الاتصال اللي اتفتح مش هيتستخدم.
 
-~~~text القياس من Chrome
-<iframe src="far.html" srcdoc="<p>من srcdoc</p>">
-   اللي اتعرض: «من srcdoc»       far.html متطلبش من السيرفر خالص   ← srcdoc بيكسب
-جوه الـ iframe:
-   location.href = about:srcdoc
-   origin        = http://127.0.0.1:8731     ← نفس origin الصفحة الأم
-   والصفحة اللي جوه قرت عنوان الأم (parent.document.title) عادي
-مع sandbox="allow-scripts":
-   origin        = null
-~~~
+ده مش request، فمش هتلاقيه في قايمة الـ requests تحت.
 
-- [[srcdoc]] من غير [[sandbox]] **جزء من موقعك**: نفس الـ origin، ويقدر يقرا صفحتك ويغيّرها. فلو المحتوى جاي من مستخدم (تعليق، إيميل، معاينة كود)، لازم معاه [[sandbox]].
-- علامة [["]] جوه [[srcdoc]] بتتكتب [[&quot;]]، و [[&]] بتتكتب [[&amp;]]، لأن القيمة كلها جوه علامتين تنصيص.
-- المعاينات الحية في الموقع ده معمولة بالظبط كده: [[<iframe sandbox="allow-scripts allow-forms" srcdoc="...">]].
+## ٢. [[<link rel="preload" href="/fonts/cairo-var.woff2" as="font" type="font/woff2" crossorigin>]]
+
+- [[preload]]: «حمّل الملف ده دلوقتي بأولوية عالية، هتحتاجه أكيد».
+- [[as="font"]]: نوعه، عشان المتصفح يدّيه الأولوية الصح ويعيد استخدامه لما الـ CSS يطلبه.
+- [[type="font/woff2"]]: لو المتصفح مبيدعمش النوع ده، ميحمّلوش.
+- [[crossorigin]]: الخطوط دايمًا بتتطلب بـ CORS، حتى من نفس الموقع. من غيره الملف بيتحمّل مرتين.
+
+من غير preload، المتصفح مش هيعرف إن فيه خط غير لما يقرا [[app.css]] ويلاقي [[@font-face]]، يعني بعد ما الـ CSS يوصل.
+
+## ٣. [[<style>header{height:4rem}.hero{min-height:60svh}</style>]]
+
+CSS جوه الصفحة نفسها (inline): مفيش request، فمتطبّق من أول رسمة. و [[60svh]] = 60% من ارتفاع الشاشة الصغير (s = small: لما شريط المتصفح في الموبايل ظاهر). قسناه: الهيدر [[64px]]، والهيرو [[432px]] (60% من شاشة ارتفاعها 720).
+
+## ٤. [[<link rel="stylesheet" href="/app.css">]]
+
+CSS عادي، و **render-blocking**: المتصفح مش هيرسم أي حاجة لحد ما يوصل.
+
+## ٥. [[<link rel="stylesheet" href="/print.css" media="print">]]
+
+[[media="print"]]: القواعد دي للطباعة بس. المتصفح لسه بيحمّله (لو المستخدم طبع)، بس بأولوية واطية ومن غير ما يوقف الرسم.
+
+## ٦. [[<script src="/app.js" defer></script>]]
+
+[[defer]]: حمّل الملف وانت بتكمّل قراية الـ HTML، ونفّذه بعد ما الـ HTML يخلص، بالترتيب. من غيره، الـ script في الـ head كان هيوقف قراية الصفحة لحد ما يتحمّل ويتنفذ.
 
 ---
 
-## ٣. [[<iframe sandbox>]]: اقفل كل حاجة، وافتح اللي محتاجه
+## القياس
 
-[[sandbox]] لوحده (من غير قيمة) بيشغّل **كل** القيود. وكل كلمة تتكتب في قيمته بتشيل قيد واحد.
+الأولوية اللي Chrome اداها لكل request (DevTools بيكتبها Highest و High و Low و Lowest، والـ protocol بيكتبها VeryHigh و High و Low و VeryLow):
 
-~~~live 86 150 نفس الصفحة مرتين: بـ sandbox فاضي، وبـ allow-scripts
-<iframe sandbox title="sandbox فاضي" width="230" height="56"
-  srcdoc="<noscript>السكربتات مقفولة</noscript><script>document.write('السكربت اشتغل')</script>"></iframe>
-<iframe sandbox="allow-scripts" title="sandbox مع allow-scripts" width="230" height="56"
-  srcdoc="<noscript>السكربتات مقفولة</noscript><script>document.write('السكربت اشتغل')</script>"></iframe>
+~~~text اتقاس في Chrome
+/crit.html            VeryHigh  Document
+/fonts/cairo-var.woff2 High     Font        ← بدأ عند 76ms مع app.css
+/app.css              VeryHigh  Stylesheet
+/app.js               Low       Script
+/print.css            VeryLow   Stylesheet
 ~~~
 
-**هتشوف إيه:** صندوقين جواهم نفس الكود. الأول مكتوب فيه «السكربتات مقفولة» (ده محتوى [[<noscript>]]، درس «canvas و noscript و template»)، والتاني «السكربت اشتغل».
+والأوقات (بالـ ms من أول الصفحة):
 
-ده اللي اتقاس لكل قيد، على صفحة من نفس السيرفر:
+~~~text اتقاس في Chrome
+app.css خلص:     1090
+FCP:             1096    ← أول رسمة بعد app.css على طول
+print.css خلص:   2098    ← بعد الرسم بثانية، ومأخّرهوش
+app.js اتنفذ:    1092
+~~~
 
-| الحاجة | من غير [[sandbox]] | بـ [[sandbox]] فاضي | الكلمة اللي بتفتحها |
+- الصفحة فضلت بيضا لحد ما [[app.css]] وصل، حتى مع إن الـ HTML والـ [[<style>]] جاهزين من الأول. ده معنى render-blocking: كل ms في تحميل الـ CSS ده = ms شاشة بيضا.
+- [[print.css]] خلص عند 2098 والرسم حصل عند 1096، يعني [[media="print"]] شالته من الطريق.
+- الخط بدأ يتحمّل عند 76ms، نفس لحظة [[app.css]]، بدل ما يستنى لحد 1090.
+- [[app.js]] برضه اتنفذ عند 1092 بعد [[app.css]]: المتصفح مش بينفّذ scripts قبل ما الـ CSS اللي قبلها يوصل (ممكن تكون بتقرا styles). يعني CSS بطيء بيأخّر الـ JavaScript كمان.
+
+## الملخص
+
+| السطر | بيوقف الرسم؟ | الأولوية | ليه |
 |---|---|---|---|
-| السكربتات | بتشتغل | مقفولة | [[allow-scripts]] |
-| إرسال فورم | بيتبعت | مبيتبعتش | [[allow-forms]] |
-| الـ origin | [[http://127.0.0.1:8731]] | [[null]]: مفيش cookies ولا [[localStorage]] (بيرموا [[SecurityError]]) | [[allow-same-origin]] |
-| [[alert()]] و [[confirm()]] و [[print()]] | بيظهروا | بيتجاهلوا | [[allow-modals]] |
-| إنها تنقل الصفحة الأم لعنوان تاني ([[top.location]]) | مسموح بشروط | [[SecurityError]] | [[allow-top-navigation-by-user-activation]] |
-| نافذة جديدة ([[target="_blank"]]) | مسموح | بيفشل في سكوت (MDN) | [[allow-popups]] |
-| تنزيل ملف | مسموح | ممنوع (MDN) | [[allow-downloads]] |
-
-~~~text رسايل Chrome بنصها (من الـ Console)
-Blocked script execution in 'http://127.0.0.1:8731/child.html?t=s5' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-
-Blocked form submission to 'http://127.0.0.1:8731/submitted?tag=s3' because the form's frame is sandboxed and the 'allow-forms' permission is not set.
-
-Ignored call to 'alert()'. The document is sandboxed, and the 'allow-modals' keyword is not set.
-
-Unsafe attempt to initiate navigation for frame with URL 'http://127.0.0.1:8731/if1.html' from frame with URL 'http://127.0.0.1:8731/child.html?t=s3'. The frame attempting navigation of the top-level window is sandboxed, but the flag of 'allow-top-navigation' or 'allow-top-navigation-by-user-activation' is not set.
-~~~
-
-وملاحظة من القياس: بـ [[sandbox="allow-scripts"]] الصفحة اتعاملت كـ origin مجهول، **حتى وهي من نفس السيرفر**. يعني مش قادرة تقرا صفحتك، ولا الـ cookies بتاعة موقعك.
-
-### [[allow-scripts]] مع [[allow-same-origin]]: إمتى خطر
-
-~~~text القياس من Chrome (صفحة من نفس موقعك، وعليها الاتنين)
-جوه الـ iframe:   origin = http://127.0.0.1:8731    parent.document.title = "parent page"   ← قرت الصفحة الأم
-تحذير Chrome:
-An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing.
-~~~
-
-صفحة **من موقعك** معاها الاتنين تقدر توصل لعنصر الـ [[<iframe>]] نفسه في الصفحة الأم وتمسح منه [[sandbox]]. يعني القفل ملوش لازمة. MDN: ده «strongly discouraged».
-
-أما صفحة **من موقع تاني** (مشغّل فيديو، خريطة) فالاتنين مع بعض عادي ومطلوب غالبًا: [[allow-same-origin]] بيخلّيها على الـ origin **بتاعها هي** (مش بتاعك)، فتقدر تستخدم الـ cookies والتخزين بتوعها، ولسه مش قادرة تقرا صفحتك.
-
-### تختار الكلمات إزاي
-
-1. ابدأ بـ [[sandbox]] فاضي.
-2. افتح الصفحة و DevTools › Console. كل حاجة اتمنعت ليها رسالة فيها اسم الكلمة الناقصة.
-3. زوّد الكلمة دي بس، وجرّب تاني.
-
-| المحتوى | [[sandbox]] المناسب |
-|---|---|
-| HTML ثابت (معاينة رسالة، بطاقة) | [[sandbox]] فاضي |
-| ويدجت فيه JavaScript، ومش محتاج يحفظ حاجة | [[allow-scripts]] |
-| مشغّل فيديو أو خريطة من مزوّد | [[allow-scripts allow-same-origin]] وغالبًا [[allow-popups]] للينك «افتح في الموقع» |
-| فورم دفع أو اشتراك من مزوّد | [[allow-scripts allow-same-origin allow-forms]] |
-
----
-
-## ٤. [[<iframe allow="fullscreen; geolocation">]]: صلاحيات الجهاز
-
-[[sandbox]] عن اللي الصفحة تعمله **في المتصفح**. [[allow]] عن **مزايا الجهاز**: الكاميرا، المايك، المكان، ملو الشاشة، التشغيل التلقائي. اسمه الرسمي Permissions Policy.
-
-~~~text القياس من Chrome (document.featurePolicy.allowsFeature جوه الـ iframe)
-                                           geolocation   camera   fullscreen   autoplay
-iframe من نفس الموقع، من غير allow:         true          true     true         true
-iframe من موقع تاني، من غير allow:          false         false    false        false
-   + allow="geolocation; camera; fullscreen; autoplay":
-                                           true          true     true         true
-   + allowfullscreen بس:                   false         false    true         false
-iframe من نفس الموقع + allow="geolocation 'none'":
-                                           false         true     true         true
-~~~
-
-- صفحة من موقع تاني **مبتاخدش أي حاجة** لحد ما تسمّيها في [[allow]]. عشان كده كود التضمين بتاع أي مشغّل فيديو فيه [[allow="..."]] طويل.
-- الصلاحيات بينها [[;]]. و [['none']] بعد الاسم بتمنعها حتى عن صفحة من موقعك.
-- [[allow]] مبيدّيش الصلاحية للصفحة مباشرة. هو بيسمحلها **تطلب**. الزائر لسه هيشوف «الموقع عايز يعرف مكانك» ويوافق أو يرفض.
-- [[autoplay]] هنا هو البند الرابع في شروط التشغيل التلقائي (درس «audio و source» قسم ٦).
-
-الأسامي اللي بتقابلها: [[fullscreen]] و [[autoplay]] و [[picture-in-picture]] و [[encrypted-media]] و [[camera]] و [[microphone]] و [[geolocation]] و [[clipboard-write]]. القايمة الكاملة في صفحة Permissions Policy على MDN.
-
-### [[<iframe allowfullscreen>]]
-
-ده الشكل القديم لـ [[allow="fullscreen"]]. MDN: «legacy»، واتعرّف من جديد على إنه [[allow="fullscreen *"]]. القياس اللي فوق بيأكد: فتح [[fullscreen]] بس. لسه موجود في كود التضمين بتاع خدمات كتير، ووجوده مع [[allow]] مبيضرّش. في كود جديد اكتب [[allow="fullscreen"]].
-
----
-
-## ٥. [[<iframe loading="lazy">]]
-
-~~~text القياس من Chrome (الاتنين تحت الشاشة بـ 6000px، والسيرفر بيكتب الطلبات)
-<iframe src="far.html?eager">                    GET /far.html?eager     ← اتطلب مع الصفحة
-<iframe loading="lazy" src="far.html?lazy">      (مفيش أي طلب)           ← مستني الـ scroll
-~~~
-
-مشغّل فيديو من مزوّد بيحمّل معاه سكربتات كتير (الأرقام في درس «video و iframe»). لو تحت في الصفحة، [[loading="lazy"]] بيأجّل ده كله. MDN: التأجيل بيحصل بس لما JavaScript شغال في المتصفح.
-
----
-
-## ٦. [[<iframe referrerpolicy="no-referrer">]]
-
-كل طلب بيخرج من صفحتك معاه header اسمه [[Referer]]: «الطلب ده جاي من الصفحة الفلانية». [[referrerpolicy]] بيحدد يتبعت منه قد إيه.
-
-~~~text القياس من Chrome (الـ Referer اللي وصل السيرفر، والصفحة الأم http://127.0.0.1:8731/if1.html)
-iframe لموقع تاني، من غير referrerpolicy:      Referer: http://127.0.0.1:8731/           ← اسم الموقع بس
-iframe لنفس الموقع، من غير referrerpolicy:     Referer: http://127.0.0.1:8731/if1.html   ← العنوان كامل
-referrerpolicy="no-referrer":                  (مفيش Referer)
-referrerpolicy="unsafe-url":                   Referer: http://127.0.0.1:8731/if1.html   ← كامل، حتى لموقع تاني
-~~~
-
-- الافتراضي [[strict-origin-when-cross-origin]]: الموقع التاني بيعرف اسم موقعك ومبيعرفش الصفحة. ده كويس في أغلب الحالات.
-- [[no-referrer]]: لو عنوان الصفحة نفسه فيه حاجة خاصة (رقم طلب، اسم مستخدم) أو مش عايز المزوّد يعرف موقعك.
-- [[unsafe-url]]: متستخدمهاش.
-- نفس الـ attribute على [[<a>]] و [[<img>]] و [[<area>]] بنفس القيم.
-
----
-
-## ٧. [[<iframe title="...">]]
-
-~~~text القياس من Chrome (شجرة الـ accessibility)
-<iframe src="..." title="خريطة فرع المعادي">     →  Iframe «خريطة فرع المعادي»
-<iframe src="...">                               →  Iframe «»
-<iframe src="..." name="byname">                 →  Iframe «»       ← name مش اسم للقارئ
-~~~
-
-MDN: من غير [[title]] مستخدم قارئ الشاشة لازم يدخل جوه الـ iframe عشان يعرف هو إيه، وده متعب في صفحة فيها كذا واحد. اكتب المحتوى: «خريطة: استوديو المحطة في المعادي»، مش «خريطة» ولا «iframe».
-
----
-
-## ٨. الحالة الحقيقية: مشغّل أو خريطة من مزوّد
-
-المزوّد بيدّيك «كود التضمين» جاهز. ده شكله (بعنوان متخيل):
-
-~~~html
-<iframe width="560" height="315" src="https://player.example.test/embed/ep1"
-        frameborder="0" allowfullscreen></iframe>
-~~~
-
-قبل ما تلزقه، عدّي عليه:
-
-| البند | تعمل إيه |
-|---|---|
-| [[title]] | مش موجود في أغلب الأكواد الجاهزة: زوّده |
-| [[loading="lazy"]] | زوّده لو الـ iframe مش في أول الشاشة |
-| [[allow]] | سيب اللي المشغّل محتاجه بس. كود جاهز فيه [[camera; microphone]] لمشغّل فيديو: امسحهم |
-| [[sandbox]] | جرّبه بالترتيب اللي في قسم ٣. لو المزوّد مش بيشتغل بيه خالص، انت بتثق فيه بالكامل: قرار، مش تفصيلة |
-| [[frameborder="0"]] | attribute قديم. مكانه [[border: 0]] في الـ CSS |
-| [[width]] و [[height]] | سيبهم، وخلّيه يتصغّر بـ [[aspect-ratio]] (درس «video و iframe») |
-
-### «الموقع رفض يتعرض»
-
-مش كل موقع بيقبل يتحط في iframe. الموقع نفسه بيقرر، بـ header في رد السيرفر:
-
-~~~text القياس من Chrome (صفحة سيرفرها بيبعت الـ header ده)
-X-Frame-Options: DENY
-   → مكان الـ iframe: صندوق رمادي في نصه أيقونة ورقة حزينة      contentDocument = null
-
-Content-Security-Policy: frame-ancestors 'none'
-   → نفس الصندوق، وفي الـ Console:
-Framing 'http://127.0.0.1:8731/' violates the following Content Security Policy directive: "frame-ancestors 'none'". The request has been blocked.
-~~~
-
-ده مش غلط في كودك ومفيش attribute بيحلّه. البنوك وصفحات تسجيل الدخول بتعمل كده عشان محدش يحطها جوه صفحة مزيّفة. الحل: لينك عادي للموقع، أو صفحة التضمين الرسمية لو المزوّد عنده واحدة (العنوان اللي فيه [[/embed/]]).
-
----
-
-## ٩. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| iframe من غير [[title]] | قارئ الشاشة بيقول «Iframe» وبس |
-| محتوى من مستخدم في [[srcdoc]] من غير [[sandbox]] | الكود ده بيشتغل كأنه صفحتك: يقرا ويغيّر أي حاجة |
-| [[allow-scripts allow-same-origin]] على صفحة من موقعك | تقدر تشيل الـ sandbox عن نفسها |
-| [[sandbox]] على مشغّل فيديو من غير [[allow-scripts]] | صندوق فاضي: المشغّل كله JavaScript |
-| [[allowfullscreen="false"]] | attribute boolean: وجوده معناه «مسموح» |
-| لصق كود التضمين زي ما هو | صلاحيات زيادة، ومن غير [[title]]، ومن غير lazy |
-| تحاول تحط موقع بيبعت [[X-Frame-Options]] | صندوق رمادي، ومفيش حل من ناحيتك |
-| تستنى الـ iframe يكبر على قد محتواه | بيفضل 300 × 150 أو المقاس اللي كتبته |
-
----
+| [[preconnect]] | لأ | (مش request) | يوفّر وقت فتح الاتصال |
+| [[preload]] خط | لأ | High | الخط يبدأ مع الـ CSS مش بعده |
+| [[<style>]] inline | لأ (جاهز) | مفيش request | أول شاشة متنسقة من أول رسمة |
+| [[app.css]] | **أيوه** | VeryHigh | خليه صغير |
+| [[print.css]] بـ [[media="print"]] | لأ | VeryLow | مش للشاشة |
+| [[app.js]] بـ [[defer]] | لأ | Low | يتنفذ بعد الـ HTML |
 
 ## الخلاصة
 
-- الـ iframe صفحة تانية: مبتورّثش CSS، ومن موقع تاني مبتقراش صفحتك ولا انت بتقراها.
-- [[sandbox]] فاضي بيقفل الكل، وكل كلمة [[allow-...]] بتفتح حاجة. ابدأ فاضي وزوّد.
-- [[allow-scripts]] مع [[allow-same-origin]]: عادي لمزوّد من موقع تاني، وممنوع لمحتوى من موقعك.
-- [[allow]] لمزايا الجهاز، و iframe من موقع تاني مبياخدش أي واحدة من غيره.
-- [[srcdoc]] للمحتوى المكتوب، و [[loading="lazy"]] للي تحت، و [[title]] دايمًا.`,
-          try: R`اعمل [[frames.html]] فيها نفس الـ iframe تلات مرات: مرة من غير [[sandbox]]، ومرة بـ [[sandbox]] فاضي، ومرة بـ [[sandbox="allow-scripts"]]. والمحتوى في [[srcdoc]]: زرار عليه [[onclick]] بيغيّر الكلام اللي جنبه من «لسه» لـ «اتداس». وكل واحد ليه [[title]] مختلف. افتحها ودوس على التلات أزرار: مين اشتغل؟ وافتح الـ Console وشوف الرسالة.`,
-          sol: R`~~~live 162 298 frames.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تجربة sandbox</title>
-</head>
-<body>
-<h1>تجربة sandbox</h1>
-<iframe title="من غير sandbox" width="210" height="60"
-  srcdoc="<button onclick=&quot;s.textContent='اتداس'&quot;>دوس</button> <span id=s>لسه</span>"></iframe>
-<iframe sandbox title="sandbox فاضي" width="210" height="60"
-  srcdoc="<button onclick=&quot;s.textContent='اتداس'&quot;>دوس</button> <span id=s>لسه</span>"></iframe>
-<iframe sandbox="allow-scripts" title="sandbox مع allow-scripts" width="210" height="60"
-  srcdoc="<button onclick=&quot;s.textContent='اتداس'&quot;>دوس</button> <span id=s>لسه</span>"></iframe>
-</body>
-</html>
-~~~
+- كل [[<link rel="stylesheet">]] عادي في الـ head = الشاشة بيضا لحد ما يوصل.
+- [[media]] بيشيل الـ CSS اللي مش للشاشة من الطريق، و [[defer]] بيشيل الـ JS.
+- [[preload]] و [[preconnect]] لحاجة أو اتنين مهمين بس.`,
+          lines: [
+            R`الـ [[<head>]]: كل اللي فيه بيتقري قبل ما المتصفح يرسم أي حاجة، فترتيبه بيفرق.`,
+            "افتح الاتصال بسيرفر تاني بدري (DNS و TLS) قبل ما تحتاجه.",
+            R`حمّل الخط الأساسي من الأول بدل ما المتصفح يكتشفه بعد ما يقرا الـ CSS. [[crossorigin]] لازم مع الخطوط حتى لو من نفس الموقع.`,
+            "CSS أول شاشة inline: مفيش request.",
+            "باقي الـ CSS: بيوقف الرسم، فخليه صغير.",
+            R`CSS الطباعة: [[media="print"]] بيخليه يتحمّل من غير ما يوقف الرسم.`,
+            R`الـ JS بـ [[defer]]: ميوقفش القراية ولا الرسم.`,
+            R`قفلة الـ head؛ بعدها الـ body، وأول رسم بيحصل لما الـ CSS اللي فوق يخلص.`
+          ],
+          sol: R`في الـ Waterfall: ملف [[app.css]] بيتحمّل بأولوية Highest، وخط أول رسم (FCP، الخط الأخضر أو الأزرق في الـ Timeline) بيبقى بعد ما يخلص. يعني طول ما الملف ده بيتحمّل الصفحة بيضا. بطّأ النت لـ Slow 4G وهتشوف الفرق بوضوح: الصفحة البيضا بتطول قد مدة تحميل الـ CSS. أما [[print.css]] فبيتحمّل بأولوية Lowest ومش بيأخّر الرسم، لأن الـ [[media="print"]] مش متحققة على الشاشة.
 
-**هتشوف إيه:**
+الـ [[<style>]] اللي في الـ head متطبّق من غير request، فالهيدر والهيرو بياخدوا مقاسهم من أول رسمة. والـ font بتاع الـ preload بيظهر في أول الـ waterfall جنب الـ HTML بدل ما يستنى الـ CSS يتقري.
 
-- الأول والتالت: الكلمة بتتغيّر لـ «اتداس».
-- التاني ([[sandbox]] فاضي): الزرار بيتداس ومفيش حاجة بتحصل.
-
-**ليه كده:** [[onclick]] سكربت. [[sandbox]] الفاضي بيمنع السكربتات كلها، ومنها اللي مكتوب في attribute. و [[allow-scripts]] بيرجّعها، والصفحة لسه مقفول عليها الباقي (فورم، نوافذ، origin).
-
-**لاحظ [[&quot;]]:** قيمة [[srcdoc]] بين علامتين تنصيص، فأي علامة تنصيص جواها بتتكتب [[&quot;]].
-
-**الغلطة الشائعة:** تحل المشكلة بإنك تمسح [[sandbox]] كله. اللي ناقص كلمة واحدة.
-
-~~~text القياس من Chrome (الـ Console بعد ما دوست على التاني)
-Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-~~~`,
-          deep: {
-            why: R`أي [[<iframe>]] معناه إنك شغّلت كود حد تاني جوه صفحتك، قدام زوارك. لو المزوّد اتخترق، أو الإعلان طلع خبيث، من غير [[sandbox]] يقدر يفتح نوافذ، وينقل الزائر لموقع تاني، ويطلب الكاميرا باسم موقعك. [[sandbox]] و [[allow]] بيخلّوا القاعدة «ممنوع إلا اللي سمحت بيه» بدل «مسموح إلا اللي منعته».`,
-            how: R`لما المتصفح بيعمل الـ iframe بيحسبله مجموعة «sandboxing flags» من قيمة [[sandbox]]: كل flag قيد، وكل كلمة [[allow-...]] بتشيل flag. الـ flags دي بتتورّث لأي iframe أو نافذة تتفتح من جوه (إلا مع [[allow-popups-to-escape-sandbox]]). ومن غير [[allow-same-origin]] الصفحة بتاخد origin فريد «opaque» بيتكتب [[null]]، فكل فحص same-origin بيفشل. و [[allow]] بيتحوّل لـ policy بتتحط على الـ iframe: كل ميزة ليها قايمة origins مسموح ليها، والافتراضي لمعظمها [[self]]، يعني موقعك بس.`,
-            when: R`[[sandbox]]: أي محتوى مش انت اللي كاتبه (تعليقات، معاينة إيميل أو كود، إعلانات، ويدجت من طرف تالت). [[allow]]: أي مزوّد محتاج ميزة جهاز (فيديو ملو الشاشة، خريطة عايزة مكانك، مكالمة فيديو عايزة الكاميرا). [[srcdoc]]: معاينة أو محتوى صغير بيتولّد في نفس الصفحة. ولو المحتوى بتاعك ومن موقعك: متستخدمش iframe أصلًا، اكتبه في الصفحة.`,
-            mistakes: R`iframe من غير [[title]]. [[srcdoc]] فيه كلام من مستخدم من غير [[sandbox]]. [[allow-same-origin]] مع [[allow-scripts]] على صفحة من نفس الموقع. نسخ كود التضمين بكل الصلاحيات اللي فيه. [[allowfullscreen="false"]]. والاستغراب من صندوق رمادي سببه [[X-Frame-Options]] عند الموقع التاني.`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** مشغّل فيديو الحلقة ١ من مزوّد خارجي في صفحة «المحطة». (عشان المعاينة، صفحة المزوّد مكتوبة في [[srcdoc]] بدل [[src]]، وده السطر الوحيد اللي متغيّروش.) كمّل الـ iframe: اسم يوصف المحتوى، ومقاس 320 × 180، وتحميل متأجّل، وقفل بيسمح بالسكربتات بس، وصلاحية ملو الشاشة. (من قسم ٣ و ٤ و ٥ و ٧ في الشرح)`, done: R`الصندوق بقى 320 × 180 والسكربت اللي جواه لسه شغال (مكتوب «المشغّل جاهز»)، وكل الشروط ✓.`, work: { h: 250, start: R`<h2>شاهد الحلقة ١</h2>
-<iframe srcdoc="<body style='margin:0;background:#0f766e;color:#fff;font:16px sans-serif;text-align:center'><p>▶ فيديو الحلقة ١</p><script>document.body.append('المشغّل جاهز')</script>"></iframe>`, checks: [
-              { say: R`الـ iframe ليه [[title]] فيه كلمة «الحلقة»`, q: "iframe[title*=\"الحلقة\"]" },
-              { say: R`المقاس [[width="320"]] و [[height="180"]]`, q: "iframe[width=\"320\"][height=\"180\"]" },
-              { say: R`[[loading="lazy"]]`, q: "iframe[loading=\"lazy\"]" },
-              { say: R`عليه [[sandbox]] فيه [[allow-scripts]]`, q: "iframe[sandbox~=\"allow-scripts\"]" },
-              { say: R`الـ sandbox مفيهوش [[allow-top-navigation]]`, q: "iframe[sandbox~=\"allow-top-navigation\"]", n: 0 },
-              { say: R`[[allow]] فيه [[fullscreen]]`, q: "iframe[allow*=\"fullscreen\"]" },
-            ] }, sol: R`~~~live 270 الحل
-<h2>شاهد الحلقة ١</h2>
-<iframe title="فيديو الحلقة ١ من بودكاست المحطة" width="320" height="180" loading="lazy"
-  sandbox="allow-scripts" allow="fullscreen"
-  srcdoc="<body style='margin:0;background:#0f766e;color:#fff;font:16px sans-serif;text-align:center'><p>▶ فيديو الحلقة ١</p><script>document.body.append('المشغّل جاهز')</script>"></iframe>
-~~~
-
-**هتشوف إيه:** صندوق أخضر 320 × 180 فيه «▶ فيديو الحلقة ١» وتحتها «المشغّل جاهز». الجملة التانية كتبها سكربت، فوجودها معناه إن [[allow-scripts]] شغال. لو كتبت [[sandbox]] فاضي كانت هتختفي.
-
-**ليه كده:**
-
-- [[title]] فيه رقم الحلقة واسم البودكاست: في صفحة فيها ٥ فيديوهات كل واحد ليه اسم مختلف.
-- [[sandbox="allow-scripts"]]: المشغّل محتاج JavaScript، ومش محتاج يبعت فورم ولا يفتح نوافذ.
-- [[allow="fullscreen"]]: من غيره زرار ملو الشاشة جوه المشغّل مش هيشتغل، لأن المزوّد موقع تاني.
-
-**في موقعك** السطر الأخير هيبقى [[src="https://player.example.test/embed/ep1"]]، والمزوّد الحقيقي غالبًا هيحتاج [[allow-same-origin]] كمان عشان الـ cookies بتاعته.
-
-**الغلطة الشائعة:** [[sandbox="allow-scripts; allow-forms"]] بـ [[;]]. الكلمات في [[sandbox]] بينها **مسافة**، والـ [[;]] بتاعة [[allow]].
-
-~~~text القياس من Chrome
-Iframe «فيديو الحلقة ١ من بودكاست المحطة»      الحجم 324 × 184 (بالبرواز)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة الحلقة بتعرض «تعليق المستمع» في iframe، والتعليق كلام بيكتبه أي زائر. المبرمج نسخ الـ attributes من مشغّل الفيديو. فيه ٤ مشاكل: الصلاحيات أكتر من اللازم لمحتوى ثابت، و [[allow]] بيدّي الكاميرا والمكان، و [[allowfullscreen="false"]]، ومفيش اسم. (من قسم ٣ و ٤ و ٧ و ٩ في الشرح)`, done: R`التعليق بيتعرض، والـ [[sandbox]] فاضي، ومفيش [[allow]] ولا [[allowfullscreen]]، وفيه [[title]]، وكل الشروط ✓.`, work: { h: 150, start: R`<h2>تعليق المستمع</h2>
-<iframe sandbox="allow-scripts allow-same-origin allow-top-navigation allow-forms"
-  allow="camera; geolocation" allowfullscreen="false" width="320" height="70"
-  srcdoc="<p>حلقة جميلة، كمّلوا!</p>"></iframe>`, checks: [
-              { say: R`[[sandbox]] موجود وفاضي`, q: "iframe[sandbox=\"\"]" },
-              { say: R`مفيش [[allow]]`, q: "iframe[allow]", n: 0 },
-              { say: R`مفيش [[allowfullscreen]]`, q: "iframe[allowfullscreen]", n: 0 },
-              { say: R`فيه [[title]]`, q: "iframe[title]" },
-              { say: R`التعليق لسه في [[srcdoc]]`, q: "iframe[srcdoc*=\"حلقة جميلة\"]" },
-            ] }, sol: R`~~~live 160 بعد التصليح
-<h2>تعليق المستمع</h2>
-<iframe sandbox title="تعليق من مستمع على الحلقة ١" width="320" height="70"
-  srcdoc="<p>حلقة جميلة، كمّلوا!</p>"></iframe>
-~~~
-
-**هتشوف إيه:** نفس الصندوق ونفس التعليق قبل وبعد. الفرق مش في الشكل: الفرق في اللي التعليق **يقدر يعمله** لو زائر كتب فيه كود بدل الكلام.
-
-| المشكلة | التصليح | ليه |
-|---|---|---|
-| [[allow-scripts allow-same-origin]] على محتوى من موقعك | [[sandbox]] فاضي | الاتنين مع بعض بيلغوا القفل، والتعليق مش محتاج سكربتات أصلًا |
-| [[allow-top-navigation]] و [[allow-forms]] | اتمسحوا | تعليق خبيث كان يقدر ينقل الزائر لموقع تاني |
-| [[allow="camera; geolocation"]] | اتمسح | تعليق مش محتاج كاميرا |
-| [[allowfullscreen="false"]] | اتمسح | boolean: وجوده معناه «مسموح» |
-| من غير [[title]] | زوّدناه | قارئ الشاشة كان بيقول «Iframe» بس |
-
-**الغلطة الشائعة:** تسيب [[allow-scripts]] «احتياطي». لو زائر كتب [[<script>]] في تعليقه، هيشتغل عند كل اللي يفتحوا الصفحة.
-
-~~~text القياس من Chrome (نفس الـ attributes القديمة على صفحة من نفس السيرفر)
-قبل:   origin = http://127.0.0.1:8731     parent.document.title = "parent page"   (قرت الصفحة الأم)
-       An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing.
-بعد:   السكربتات مقفولة:  Blocked script execution in '...' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** ويدجت «عدّاد التصفيق» في iframe. اكتب على ورقة: لما تدوس 👏 الرقم هيزيد؟ ليه؟ وبعدين خلّيه يشتغل بأقل صلاحية ممكنة. (من قسم ٣ في الشرح، جزء «تختار الكلمات إزاي»)`, done: R`كتبت توقّعك، والرقم بيزيد مع كل ضغطة، والـ [[sandbox]] فيه [[allow-scripts]] بس، وكل الشروط ✓.`, work: { h: 130, start: R`<iframe sandbox title="عدّاد التصفيق للحلقة ١" width="240" height="60"
-  srcdoc="<button onclick='n.textContent++'>👏 صفّق</button> <b id=n>0</b>"></iframe>`, checks: [
-              { say: R`الـ [[sandbox]] فيه [[allow-scripts]]`, q: "iframe[sandbox~=\"allow-scripts\"]" },
-              { say: R`مفيهوش [[allow-same-origin]]`, q: "iframe[sandbox~=\"allow-same-origin\"]", n: 0 },
-              { say: R`[[sandbox]] لسه موجود (متمسحش)`, q: "iframe[sandbox]" },
-              { say: R`الـ iframe لسه ليه [[title]]`, q: "iframe[title]" },
-            ] }, sol: R`~~~live 90 بعد التعديل (دوس 👏)
-<iframe sandbox="allow-scripts" title="عدّاد التصفيق للحلقة ١" width="240" height="60"
-  srcdoc="<button onclick='n.textContent++'>👏 صفّق</button> <b id=n>0</b>"></iframe>
-~~~
-
-وده اللي كان باين قبل التعديل:
-
-~~~live 90 قبل (دوس 👏: مفيش حاجة)
-<iframe sandbox title="عدّاد التصفيق للحلقة ١" width="240" height="60"
-  srcdoc="<button onclick='n.textContent++'>👏 صفّق</button> <b id=n>0</b>"></iframe>
-~~~
-
-**التوقّع:** لأ، الرقم هيفضل ٠. [[sandbox]] الفاضي بيقفل السكربتات، و [[onclick]] سكربت.
-
-**هتشوف إيه:** قبل: الزرار بيتداس والرقم ٠. بعد: ١ و ٢ و ٣ مع كل ضغطة.
-
-**ليه [[allow-scripts]] لوحدها:** العدّاد بيغيّر رقم جوه صفحته بس. مش بيبعت فورم، ولا بيحفظ في [[localStorage]]، ولا بيفتح نافذة. فكلمة واحدة تكفي.
-
-**الغلطة الشائعة:** تمسح [[sandbox]] خالص «عشان يشتغل». هيشتغل، وهيبقى [[srcdoc]] من غير قفل: جزء من صفحتك بكل صلاحياتها.
-
-~~~text القياس من Chrome (الـ Console قبل التعديل، بعد ضغطة)
-Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ده لوج سيرفر مزوّد الخرايط، فيه تلات طلبات جاية من تلات iframes في صفحة [[https://mahatta.example.test/orders/7731/track]] (صفحة تتبّع طلب، ورقم الطلب في العنوان). لكل سطر: أنهي [[referrerpolicy]] كان على الـ iframe؟ وأنهي واحد فيهم سرّب رقم الطلب للمزوّد؟ (من قسم ٦ في الشرح)
-
-~~~text لوج المزوّد
-GET /embed?place=studio    Referer: https://mahatta.example.test/
-GET /embed?place=branch    Referer: https://mahatta.example.test/orders/7731/track
-GET /embed?place=depot     (من غير Referer)
-~~~`, done: R`كتبت القيمة لكل سطر، وحددت السطر اللي فيه التسريب، وكتبت الـ iframe الأنسب لصفحة زي دي.`, sol: R`| الطلب | الـ [[Referer]] اللي وصل | [[referrerpolicy]] |
-|---|---|---|
-| [[place=studio]] | اسم الموقع بس | مفيش (الافتراضي [[strict-origin-when-cross-origin]]) أو [[origin]] |
-| [[place=branch]] | العنوان كامل برقم الطلب | [[unsafe-url]] |
-| [[place=depot]] | مفيش | [[no-referrer]] |
-
-**التسريب في السطر التاني:** المزوّد عرف إن فيه طلب رقمه 7731 وعرف عنوان صفحة تتبّعه. لو الصفحة دي بتتفتح باللينك من غير تسجيل دخول، أي حد عند المزوّد يقدر يفتحها.
-
-الأنسب لصفحة عنوانها فيه بيانات:
-
-~~~html
-<iframe src="https://maps.example.test/embed?place=depot" title="خريطة: مخزن التسليم"
-        width="400" height="300" loading="lazy" referrerpolicy="no-referrer"></iframe>
-~~~
-
-**ليه مش الافتراضي وخلاص:** الافتراضي كان هيبعت اسم الموقع بس، وده كفاية هنا برده. [[no-referrer]] أضمن لما مفيش سبب يخلّي المزوّد يعرف موقعك أصلًا. المهم إن محدش يكتب [[unsafe-url]].
-
-**الغلطة الشائعة:** تفتكر إن [[sandbox]] بيمنع الـ [[Referer]]. ملوش علاقة: الـ header ده بيتبعت مع طلب تحميل الصفحة نفسه.
-
-~~~text القياس من Chrome (على السيرفر المحلي، والصفحة الأم http://127.0.0.1:8731/if1.html)
-الافتراضي لموقع تاني:    Referer: http://127.0.0.1:8731/
-unsafe-url:              Referer: http://127.0.0.1:8731/if1.html
-no-referrer:             (مفيش)
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** صاحب «المحطة» عايز صفحة «ادفع اشتراكك» فيها صفحة البنك نفسها جوه iframe «عشان الزائر ميخرجش من موقعنا». جرّبتها وطلع صندوق رمادي. اشرحله في ٣ سطور: ليه، وليه ده في مصلحته، والبديل. (من قسم ٨ في الشرح، جزء «الموقع رفض يتعرض»)`, done: R`٣ سطور فيهم: الـ header، وسبب وجوده، والبديل.`, sol: R`إجابة نموذجية:
-
-1. موقع البنك بيبعت مع صفحته header ([[X-Frame-Options: DENY]] أو [[Content-Security-Policy: frame-ancestors 'none']]) بيقول للمتصفح «متعرضنيش جوه أي صفحة تانية»، والمتصفح بيلتزم. مفيش attribute عندنا بيلغي ده.
-2. ده حماية للعميل: لو الصفحة بتتعرض في iframe، أي موقع مزيّف يقدر يحطها ويرسم فوقها أزرار مخفية (clickjacking). فالبنك اللي بيرفض ده بنك بياخد باله.
-3. البديل: زرار «ادفع» بيودّي الزائر لصفحة الدفع عند البنك أو شركة الدفع وبيرجّعه لموقعنا بعدها، أو ويدجت الدفع الرسمي لو الشركة عندها واحد معمول للتضمين.
-
-~~~text القياس من Chrome (صفحة سيرفرها بيبعت الـ header)
-مكان الـ iframe: صندوق رمادي فيه أيقونة ورقة حزينة        contentDocument = null
-Framing 'http://127.0.0.1:8731/' violates the following Content Security Policy directive: "frame-ancestors 'none'". The request has been blocked.
-~~~` },
-          ]
+في Lighthouse هتلاقي «Render-blocking requests» (أو «Eliminate render-blocking resources» في النسخ الأقدم) وفيها [[app.css]] والوقت اللي ممكن توفّره. ولو لقيت ملف JavaScript فيها كمان، يبقى فيه [[<script>]] في الـ head من غير [[defer]] ولا [[async]].`
         },
         {
-          cmd: "object و embed",
-          title: "ملف PDF جوه الصفحة، والعنصرين اللي فضلوا من أيام الـ plugins",
-          pre: ["css/iframe sandbox و allow", "css/img"],
+          cmd: "layout thrashing",
           ref: [
-            { t: "MDN: <object>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/object" },
-            { t: "MDN: <embed>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/embed" },
-            { t: "WHATWG: the object element", url: "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-object-element" },
-            { t: "WHATWG: the embed element", url: "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-embed-element" }
+            { t: "web.dev: Avoid large, complex layouts and layout thrashing", url: "https://web.dev/articles/avoid-large-complex-layouts-and-layout-thrashing" },
+            { t: "MDN: requestAnimationFrame()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame" },
+            { t: "What forces layout / reflow (Paul Irish)", url: "https://gist.github.com/paulirish/5d52fb081b3570c81e3a" },
+            { t: "MDN: addEventListener() passive", url: "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener" },
           ],
-          desc: R`[[<object>]] و [[<embed>]] بيحطوا «ملف خارجي» في الصفحة والمتصفح هو اللي يقرر يعرضه بإيه. اتعملوا لأيام الـ plugins (Flash و Java)، والـ plugins راحت. اللي فضل ليهم في الشغل الحقيقي حاجة واحدة تقريبًا: عرض ملف **PDF** جوه الصفحة.
-الفرق بينهم: [[<object>]] ليه محتوى بديل بيظهر لو الملف متعرضش، و [[<embed>]] عنصر فاضي ملوش بديل. وللصور والصفحات والفيديو: [[<img>]] و [[<iframe>]] و [[<video>]] أحسن منهم دايمًا.`,
-          example: R`<object data="media/ep1-notes.pdf" type="application/pdf" width="600" height="400" title="ملخص الحلقة ١ (PDF)">
-  <p>المتصفح مش عارض الملف هنا.</p>
-</object>
-<p><a href="media/ep1-notes.pdf" download>نزّل ملخص الحلقة ١ (PDF، صفحتين)</a></p>
-<embed src="media/ep1-notes.pdf" type="application/pdf" width="600" height="400" title="ملخص الحلقة ١ (PDF)">`,
-          flag: "script",
-          lines: [
-            R`[[<object>]]: [[data]] عنوان الملف، و [[type]] نوعه (PDF)، و [[width]] و [[height]] مقاس الصندوق، و [[title]] اسمه لقارئ الشاشة.`,
-            R`المحتوى البديل: اللي بين الفتحة والقفلة بيتعرض **بس** لو المتصفح معرفش يعرض الملف (مش موجود، أو النوع مش مدعوم، أو المتصفح مبيعرضش PDF).`,
-            R`قفلة [[</object>]]. إجبارية، لأن العنصر بياخد محتوى.`,
-            R`لينك تحميل برّه العنصر: بيفضل موجود في كل الحالات، حتى لو العارض اشتغل والملف نفسه فيه مشكلة.`,
-            R`[[<embed>]] لنفس الملف: [[src]] بدل [[data]]، ومن غير قفلة ولا محتوى بديل. مكتوب هنا للمقارنة، وفي صفحة حقيقية بتختار واحد منهم.`
-          ],
-          teach: R`## الفكرة في سطرين
+          title: "JavaScript بيخلي المتصفح يعيد حساب الصفحة مية مرة",
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** اعمل ١٠٠٠ [[.card]] وجرّب الطريقتين اللي في المثال، وحوّط كل واحدة بـ [[performance.now()]].`, done: R`رقمين: في Chrome 156 قسناهم 274.8ms للقراية والكتابة بالتبادل و 7.6ms للقراية كلها ثم الكتابة. وجهازك أرقامه مختلفة بس الفرق بنفس الحجم تقريبًا.`, sol: R`~~~js console
+const cards = [...document.querySelectorAll(".card")];
 
-المواصفة: [[<object>]] بيمثّل «مورد خارجي» بيتعامل معاه حسب نوعه: كصورة، أو كصفحة جوه الصفحة، أو كحاجة بيعرضها plugin. و [[<embed>]] «نقطة دمج» لمحتوى خارجي. MDN: المتصفحات الحالية مبقتش بتدعم الـ plugins زي Flash، والعنصرين لسه بيعرضوا اللي المتصفح نفسه بيعرف يعرضه، زي الـ PDF في العارض اللي جواه.
+let t = performance.now();
+for (const el of cards) {
+  el.style.height = el.offsetWidth * 0.75 + "px";
+}
+console.log("بالتبادل", performance.now() - t);
 
-القياسات من Chrome 157 على Windows 11، بملف PDF صفحة واحدة (590 byte) وملف SVG من سيرفر محلي.
+// اعمل reload قبل التجربة التانية
+t = performance.now();
+const widths = cards.map((el) => el.offsetWidth);
+cards.forEach((el, i) => (el.style.height = widths[i] * 0.75 + "px"));
+console.log("قراية ثم كتابة", performance.now() - t);
+~~~
 
----
+**ليه الفرق ضخم:** [[offsetWidth]] لازم يرجّع رقم صحيح. لو فيه كتابة قبله، المتصفح بيحسب الـ layout كله دلوقتي. في الـ loop الأولى: كتابة ثم قراية ١٠٠٠ مرة، يعني ١٠٠٠ layout. في التانية: layout واحد.
 
-## ١. [[<object data="..." type="...">]]
+**الحل الأحسن:** [[.card { aspect-ratio: 4 / 3; }]] من غير JavaScript.
 
-| attribute | بيعمل إيه |
+**الغلطة الشائعة:** تقيس التانية من غير reload، فالـ layout متخزن والرقم يطلع أصغر من الحقيقة.
+
+~~~text الناتج
+1000 كارت في Chrome 156 ، 3 مرات:
+
+بالتبادل:         285.3 ، 265 ، 247.2 ms
+قراية ثم كتابة:   1 ، 0.7 ، 0.6 ms
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** هيدر بيصغر مع الـ scroll: الـ handler بيقرا [[scrollY]] و [[header.offsetHeight]] ويكتب [[style.height]] و [[style.padding]] في كل event. سجّل Performance وانت بتعمل scroll، وصلّحه: اقرا مرة، واكتب في [[requestAnimationFrame]]، وغيّر [[transform: scale]] بدل الارتفاع.`, done: R`الـ trace قبل فيه علامات بنفسجي «Forced reflow»، وبعد مفيش، والـ frames أقصر. وعارف إن فيه حل من غير JavaScript خالص بـ [[animation-timeline: scroll()]] في وحدة CSS الحديث.`, sol: R`قبل:
+
+~~~live 600 720 before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>هيدر تقيل</title>
+<style>body { margin: 0; font-family: system-ui, sans-serif; } header { position: sticky; top: 0; height: 96px; padding: 24px; box-sizing: border-box; background: #0f172a; color: #fff; } main { height: 4000px; }</style></head>
+<body>
+<header id="h">المتجر</header>
+<main><h1>المحتوى</h1></main>
+<script>
+  const header = document.getElementById("h");
+  addEventListener("scroll", () => {
+    const small = scrollY > 80;
+    if (header.offsetHeight > 0) header.style.height = small ? "64px" : "96px";
+    if (header.offsetHeight > 0) header.style.padding = small ? "8px" : "24px";
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+بعد:
+
+~~~live 600 720 after.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>هيدر خفيف</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  header { position: sticky; top: 0; height: 96px; padding: 24px; box-sizing: border-box; background: #0f172a; color: #fff;
+           transform-origin: top; transition: transform .2s; }
+  header.small { transform: scaleY(.67); }
+  main { height: 4000px; }
+</style>
+</head>
+<body>
+<header id="h">المتجر</header>
+<main><h1>المحتوى</h1></main>
+<script>
+  const header = document.getElementById("h");
+  let queued = false;
+  addEventListener("scroll", () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      header.classList.toggle("small", scrollY > 80);
+    });
+  }, { passive: true });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**التغييرات:**
+
+- [[requestAnimationFrame]] مع [[queued]]: مهما جت أحداث scroll في الـ frame، بيتنفّذ مرة واحدة.
+- [[{ passive: true }]]: المتصفح ميستناش handler عشان يعمل scroll.
+- [[classList.toggle]] بدل [[style.height]]: الحركة كلها في CSS.
+- [[transform: scaleY(.67)]] بدل [[height]]: من غير layout.
+
+**ملحوظة:** [[scale]] بيضغط الكلام كمان. لو الشكل ده مش مقبول، خلي الخلفية في [[::before]] هي اللي تتضغط.
+
+**بدون JavaScript:** [[animation-timeline: scroll()]] في وحدة CSS الحديث.
+
+**الغلطة الشائعة:** تحط كل الشغل في [[requestAnimationFrame]] وتسيب القراية والكتابة بالتبادل جواه. الترتيب هو المهم.
+
+~~~text الناتج
+trace وانت بتعمل scroll 30 خطوة:
+
+          أحداث Layout     وقت Layout
+قبل       348              14.2ms
+بعد       0                0ms
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** دوّر على gist «What forces layout / reflow» (Paul Irish)، وطلّع ٨ حاجات بتجبر layout غير [[offsetWidth]].`, done: R`لستة ٨ فيها مثلًا [[getComputedStyle()]] و [[scrollIntoView()]] و [[innerText]] و [[focus()]] و [[scrollTop]] و [[clientHeight]] و [[getClientRects()]] و [[window.innerHeight]]، وجنب كل واحدة إمتى بتستخدمها.`, sol: R`**إجابة نموذجية من gist «What forces layout / reflow» لـ Paul Irish:**
+
+| الحاجة | بتستخدمها إمتى |
 |---|---|
-| [[data]] | عنوان الملف. ده مكان [[src]] في العناصر التانية |
-| [[type]] | نوع الملف (MIME type): [[application/pdf]] و [[image/svg+xml]]. MDN: لازم واحد على الأقل من [[data]] و [[type]]، والأحسن الاتنين |
-| [[width]] و [[height]] | مقاس الصندوق بالبيكسل |
-| [[title]] | الاسم اللي قارئ الشاشة بيقراه |
+| [[getComputedStyle()]] | قراية قيمة CSS محسوبة |
+| [[el.scrollIntoView()]] | تنقّل لعنصر |
+| [[el.innerText]] | قراية النص الظاهر |
+| [[el.focus()]] | نقل الـ focus |
+| [[el.scrollTop]] | مكان الـ scroll |
+| [[el.clientHeight]] | ارتفاع العنصر |
+| [[el.getClientRects()]] | مستطيلات عنصر inline |
+| [[window.innerHeight]] | ارتفاع الشاشة |
 
-~~~text القياس من Chrome
-<object></object>                                   الحجم 300 × 150    display: inline
-<object data="notes.pdf" type="application/pdf" width="300" height="200">
-   الـ PDF اتعرض في عارض Chrome (شريط أدوات غامق والصفحة تحته)      ارتفاع المحتوى البديل = 0
-   navigator.pdfViewerEnabled = true
-~~~
+**ليه ده مش معناه متستخدمهمش:** القراية نفسها مش مشكلة. المشكلة قراية بعد كتابة في نفس الـ frame.
 
-[[navigator.pdfViewerEnabled]] خاصية المتصفح بيقول بيها هو بيعرض PDF جوه الصفحة ولا لأ. في Chrome على الكمبيوتر [[true]]. مش كل متصفح كده (خصوصًا على الموبايل)، وده سبب وجود البديل ولينك التحميل.
+**[[textContent]] أرخص من [[innerText]]:** مش بيحتاج layout.
 
-~~~live 56 object لملف PDF (المعاينة هنا معزولة ومبتعرضش PDF، فهتشوف البديل)
-<object data="media/ep1-notes.pdf" type="application/pdf" width="300" height="120" title="ملخص الحلقة ١ (PDF)">
-  <p>المتصفح مش عارض الملف هنا. <a href="media/ep1-notes.pdf">افتح ملخص الحلقة ١ (PDF)</a></p>
-</object>
-~~~
+**الغلطة الشائعة:** تعتبر [[getBoundingClientRect]] ممنوع. استخدمه، بس في أول الـ frame قبل أي كتابة.
 
-**هتشوف إيه:** في المعاينة دي: الجملة البديلة واللينك (العارض مقفول جوه المعاينة، واتقاس: حتى PDF مكتوب بـ [[data:]] مبيتعرضش فيها والبديل هو اللي بيظهر). في فولدر مشروعك، بملف PDF حقيقي في [[media/]]: صندوق 300 × 120 جواه صفحة الـ PDF وفوقها شريط العارض.
-
----
-
-## ٢. المحتوى البديل
-
-هنا [[<object>]] مختلف عن [[<audio>]] و [[<video>]]: البديل بتاعه بيظهر فعلًا لما الملف يفشل.
-
-~~~live 90 نوع المتصفح مبيعرفوش، وملف مش موجود
-<object data="media/game.swf" type="application/x-shockwave-flash">
-  <p>اللعبة دي كانت Flash، و Flash اتقفل. <a href="games.html">جرّب الألعاب الجديدة</a></p>
-</object>
-<object data="media/missing.pdf" type="application/pdf">
-  <p>الملف مش موجود. <a href="index.html">ارجع للحلقات</a></p>
-</object>
-~~~
-
-**هتشوف إيه:** سطرين كلام عاديين بلينكاتهم. مفيش صندوق فاضي ولا أيقونة مكسورة: البديل أخد مكان العنصر.
-
-~~~text القياس من Chrome
-type="application/x-shockwave-flash":     البديل اتعرض (ارتفاعه 18px)
-data="nofile.pdf" (404):                  البديل اتعرض (ارتفاعه 18px)
-data="notes.pdf" موجود:                   البديل متعرضش (ارتفاعه 0)
-~~~
-
-والبديل ممكن يبقى [[<object>]] تاني: المتصفح بيجرّب البرّاني، ولو فشل بيجرّب اللي جواه، وهكذا. اتقاس: [[<object>]] لفيديو مش موجود وجواه [[<object>]] لـ SVG، فاللي اتعرض الـ SVG.
-
----
-
-## ٣. [[<object>]] بيعرض صورة أو صفحة كمان
-
-~~~live 106 SVG جوه object
-<object type="image/svg+xml" title="بانر بودكاست المحطة" data="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-  <p>بودكاست المحطة</p>
-</object>
-~~~
-
-**هتشوف إيه:** مستطيل أخضر مكتوب عليه «بودكاست المحطة». شكله زي [[<img>]] بالظبط.
-
-~~~text القياس من Chrome
-<object data="pic.svg" type="image/svg+xml">   الحجم 120 × 60 (مقاس الـ SVG)
-     contentDocument موجود، والـ <script> اللي جوه ملف الـ SVG اشتغل
-<img src="pic.svg">                            نفس الشكل، والسكربت اللي جوه الملف مبيشتغلش
-<object data="far.html">                       الحجم 300 × 150، وجواه الصفحة: زي iframe
-~~~
-
-يعني [[<object>]] بيفتح الـ SVG كـ **مستند** (بسكربتاته)، و [[<img>]] بيعرضه كـ **صورة** وبس. ده كان بيتستخدم لـ SVG تفاعلي، والنهارده الـ SVG بيتكتب inline في الصفحة (درس «SVG»).
-
-وللصفحات: [[<object>]] معندوش [[sandbox]] ولا [[allow]] ولا [[loading]]. يعني صفحة جوه [[<object>]] ملهاش أي قفل من اللي في الدرس اللي فات. استخدم [[<iframe>]].
-
----
-
-## ٤. [[<embed src="..." type="...">]]
-
-~~~html
-<embed src="media/ep1-notes.pdf" type="application/pdf" width="600" height="400" title="ملخص الحلقة ١ (PDF)">
-~~~
-
-- عنصر فاضي (void): ملوش قفلة، يعني **ملوش محتوى بديل**.
-- [[src]] للعنوان (مش [[data]])، و [[type]] و [[width]] و [[height]] زي [[<object>]]. MDN: المقاس بالبيكسل بس، من غير نسب مئوية.
-
-~~~text القياس من Chrome
-<embed>  من غير أي حاجة:                      الحجم 0 × 0
-<embed src="notes.pdf" type="application/pdf" width="300" height="200">     الـ PDF اتعرض
-<embed src="nofile.pdf" type="application/pdf">
-     صندوق 300 × 150 غامق جواه نص رد السيرفر «not found»      ← مفيش بديل يتعرض
-~~~
-
-لما الملف يفشل، [[<embed>]] بيسيب صندوق بايظ قدام الزائر، و [[<object>]] بيعرض البديل اللي انت كاتبه. عشان كده MDN بيقول: لعرض PDF فكّر في [[<object>]] أو [[<iframe>]].
-
----
-
-## ٥. PDF في الصفحة: أنهي عنصر؟
-
-| الطريقة | لو الملف متعرضش | قفل وتحكّم | إمتى |
-|---|---|---|---|
-| لينك [[<a href="x.pdf">]] | مفيش حاجة تبوظ | مش محتاج | **دايمًا موجود**، لوحده أو مع أي طريقة تانية |
-| [[<object data type>]] | بيعرض البديل اللي جواه | مفيش | معاينة PDF جوه الصفحة |
-| [[<iframe src="x.pdf">]] | صندوق فاضي أو رسالة المتصفح | [[loading="lazy"]] و [[title]] | PDF تحت في صفحة طويلة |
-| [[<embed src type>]] | صندوق بايظ | مفيش | كود قديم بتصونه |
-
-والقواعد اللي فوق الجدول:
-
-1. **لينك التحميل مش اختياري.** الموبايل، وقارئ الشاشة، واللي عايز يطبع، كلهم محتاجينه. واكتب فيه النوع والحجم: «(PDF، صفحتين)».
-2. **الـ PDF مش بديل عن الصفحة.** لو المحتوى مهم (منيو، أسعار، ملخص حلقة)، اكتبه HTML والـ PDF نسخة للتحميل. الـ PDF مبيتظبطش على عرض الموبايل، ومحرك البحث بيفضّل الصفحة.
-3. **[[title]] على العنصر.**
-
-~~~text القياس من Chrome (شجرة الـ accessibility)
-<object data="notes.pdf" type="application/pdf">                            →  PluginObject «»
-<object ... title="ملخص الحلقة ١ (PDF)">                                    →  PluginObject «ملخص الحلقة ١ (PDF)»
-<embed src="notes.pdf" type="application/pdf" title="ملخص في embed">        →  EmbeddedObject «ملخص في embed»
-~~~
-
----
-
-## ٦. ليه [[<img>]] و [[<iframe>]] أحسن في الغالب
-
-| عايز تحط | العنصر | اللي [[<object>]] و [[<embed>]] معندهمش |
-|---|---|---|
-| صورة (ومنها SVG) | [[<img>]] | [[alt]] و [[srcset]] و [[loading="lazy"]] و [[decoding]] |
-| صفحة من موقع تاني | [[<iframe>]] | [[sandbox]] و [[allow]] و [[loading]] و [[referrerpolicy]] |
-| فيديو أو صوت | [[<video>]] و [[<audio>]] | [[controls]] و [[<track>]] و [[<source>]] |
-| PDF | [[<object>]] مع لينك | ده مكانهم |
-| Flash أو Java applet | مفيش | اتقفلوا. المحتوى لازم يتعمل من جديد بـ HTML |
-
----
-
-## ٧. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| PDF في [[<embed>]] ومن غير لينك | على متصفح مبيعرضش PDF: صندوق فاضي، ومفيش طريقة للملف |
-| كلام بين [[<embed>]] و [[</embed>]] على إنه بديل | [[<embed>]] ملوش قفلة: الكلام بيتعرض دايمًا تحته كنص عادي |
-| [[<object src="x.pdf">]] | مفيش [[src]] على object: اسمه [[data]] |
-| [[<object>]] من غير [[type]] | المتصفح بيستنى رد السيرفر عشان يعرف النوع |
-| صورة عادية في [[<object>]] | ضاع [[alt]] و lazy و [[srcset]] |
-| صفحة موقع تاني في [[<object>]] | من غير أي [[sandbox]] |
-| المنيو كله PDF | مبيتقريش على الموبايل، ومبيظهرش في البحث |
-
----
-
-## الخلاصة
-
-- [[<object data type>]] ليه بديل بيظهر لما الملف يفشل. [[<embed src type>]] فاضي وملوش بديل.
-- استخدامهم الحقيقي النهارده: معاينة PDF. ومعاها دايمًا لينك تحميل و [[title]].
-- صورة ← [[<img>]]، صفحة ← [[<iframe>]]، فيديو ← [[<video>]].`,
-          try: R`اعمل [[notes.html]] وجنبها أي ملف PDF عندك باسم [[notes.pdf]]. حط الملف مرتين: مرة في [[<object>]] ببديل فيه لينك، ومرة في [[<embed>]]، وتحتهم لينك تحميل. افتح الصفحة: الاتنين عرضوا الملف؟ وبعدين غيّر اسم الملف في الاتنين لـ [[nofile.pdf]] واعمل Ctrl+R: مين فيهم اتصرف أحسن؟`,
-          sol: R`~~~html notes.html
+~~~text الناتج
+لستة ٨ بنود.
+(إجابة من الوثائق، مش ناتج تشغيل.)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** عدّاد أرقام بيعد من 0 لـ 12,500 في ثانية ونص لما يظهر (IntersectionObserver ثم [[requestAnimationFrame]])، بـ [[font-variant-numeric: tabular-nums]] و [[min-inline-size]] بعدد الحروف، و [[Intl.NumberFormat("ar-EG")]] للأرقام. ومع reduce يطلع الرقم النهائي على طول.`, done: R`العرض ثابت وهو بيعد (الكلام اللي جنبه مبيتهزش و layout-shift صفر)، ومفيش forced reflow في كل frame (مبتقراش مقاسات جوه الـ loop)، والرقم النهائي بيتقري لقارئ الشاشة مرة واحدة مش كل رقم.`, sol: R`~~~live 380 380 counter.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ملخص الحلقة</title>
+<title>عدّاد</title>
+<style>
+  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; }
+  .gap { block-size: 120vh; }
+  .stat { display: flex; align-items: baseline; gap: .5rem; font-size: 2.5rem; }
+  .num { display: inline-block; min-inline-size: 7ch; font-variant-numeric: tabular-nums; text-align: end; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+</style>
 </head>
 <body>
-<h1>ملخص الحلقة</h1>
-<object data="notes.pdf" type="application/pdf" width="400" height="300" title="ملخص الحلقة (PDF) في object">
-  <p>المتصفح مش عارض الملف. <a href="notes.pdf">افتح الملخص (PDF)</a></p>
-</object>
-<embed src="notes.pdf" type="application/pdf" width="400" height="300" title="ملخص الحلقة (PDF) في embed">
-<p><a href="notes.pdf" download>نزّل الملخص (PDF)</a></p>
+<main>
+  <h1>أرقامنا</h1>
+  <div class="gap"></div>
+  <p class="stat"><span class="num" id="n" aria-hidden="true">٠</span> <span id="after">عميل</span><span class="sr-only">١٢٬٥٠٠ عميل</span></p>
+</main>
+<script>
+  const el = document.getElementById("n");
+  const target = 12500;
+  const duration = 1500;
+  const format = new Intl.NumberFormat("ar-EG");
+
+  function run() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.textContent = format.format(target);
+      return;
+    }
+    const start = performance.now();
+    requestAnimationFrame(function tick(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      el.textContent = format.format(Math.round(target * progress));
+      if (progress < 1) requestAnimationFrame(tick);
+    });
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting) return;
+    observer.disconnect();
+    run();
+  });
+  observer.observe(el);
+$__lt/script>
 </body>
 </html>
 ~~~
 
-~~~view 274 شكلها والملف مش موجود (وده برده شكلها جوه المعاينة المعزولة)
-<h1>ملخص الحلقة</h1>
-<object data="nofile.pdf" type="application/pdf" width="300" height="200" title="ملخص الحلقة (PDF) في object">
-  <p>المتصفح مش عارض الملف. <a href="notes.pdf">افتح الملخص (PDF)</a></p>
-</object>
-<embed src="nofile.pdf" type="application/pdf" width="300" height="100" title="ملخص الحلقة (PDF) في embed">
-<p><a href="notes.pdf" download>نزّل الملخص (PDF)</a></p>
-~~~
+**ليه العرض ثابت:**
 
-**هتشوف إيه:**
+- [[font-variant-numeric: tabular-nums]]: كل الأرقام نفس العرض، فـ 1 مبياخدش أقل من 8.
+- [[min-inline-size: 7ch]]: مكان آخر رقم محجوز من الأول، و [[text-align: end]] بيخلي النهاية ثابتة.
 
-- **والملف موجود** (على جهازك): صندوقين جنب بعض أو تحت بعض، في كل واحد صفحة الـ PDF وشريط العارض. مفيش فرق في الشكل.
-- **والملف مش موجود:** [[<object>]] اختفى وظهر مكانه «المتصفح مش عارض الملف» باللينك. و [[<embed>]] ساب صندوق فاضي (ومن سيرفر بيظهر جواه نص الخطأ).
+**ليه مفيش forced reflow:** الـ [[tick]] بيكتب [[textContent]] بس، ومفيش قراية مقاسات. و [[performance.now()]] مش بيعمل layout. و [[Intl.NumberFormat("ar-EG")]] بيدّي الأرقام العربي والفاصل.
 
-**ليه كده:** [[<object>]] ليه محتوى، والمتصفح بيعرضه لما الملف يفشل. [[<embed>]] ملوش.
+**قارئ الشاشة:** العدّاد [[aria-hidden="true"]]، والرقم النهائي في [[sr-only]] مرة واحدة، بدل ما يقرا كل رقم.
 
-**الغلطة الشائعة:** تجرّب والملف موجود بس، وتقرر إن الاتنين زي بعض.
+**[[observer.disconnect()]]:** العد يحصل مرة واحدة.
 
-~~~text القياس من Chrome (من سيرفر محلي)
-notes.pdf:      object 400 × 300 (البديل ارتفاعه 0)        embed 400 × 300
-nofile.pdf:     object: البديل ظاهر (ارتفاعه 18)            embed: صندوق جواه «not found»
-~~~`,
-          deep: {
-            why: R`زمان المتصفح مكانش بيعرف يشغّل فيديو ولا صوت ولا حتى PDF، فكان لازم عنصر يقول «الملف ده، وهاتله البرنامج اللي يشغّله». ده كان [[<object>]] (القياسي) و [[<embed>]] (اللي المتصفحات عملته الأول). لما [[<video>]] و [[<audio>]] و [[<canvas>]] و SVG دخلوا HTML، والـ plugins اتقفلت لأسباب أمان، العنصرين فضلوا من غير شغل تقريبًا. بتتعلمهم عشان تعرف تقرا الكود القديم، وتعرف الحالة الوحيدة اللي لسه ليهم.`,
-            how: R`المتصفح بياخد [[type]] (أو نوع الرد من السيرفر) ويقرر: لو صورة بيعرضها كصورة، ولو نوع بيفتحه كمستند (HTML أو SVG أو PDF في العارض) بيعمل جوه العنصر navigable زي بتاع [[<iframe>]]، ولو مفيش حاجة تنفع بيعرض أولاد العنصر كمحتوى بديل. [[<embed>]] بيمشي نفس الطريق من غير الخطوة الأخيرة، لأنه ملوش أولاد.`,
-            when: R`[[<object>]]: معاينة PDF (ملخص، منيو، فاتورة) مع لينك تحميل. [[<embed>]]: مفيش سبب لكود جديد. ولما تلاقي واحد فيهم في موقع قديم حواليه Flash أو [[<param>]]: المحتوى ده مبيشتغلش عند حد دلوقتي، وبيتشال أو بيتعمل من جديد.`,
-            mistakes: R`الاعتماد على معاينة الـ PDF من غير لينك. بديل مكتوب «جوه» [[<embed>]]. [[src]] على [[<object>]] أو [[data]] على [[<embed>]]. صور وصفحات في [[<object>]] بدل [[<img>]] و [[<iframe>]]. ونسيان [[title]].`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** قسم «ملخص الحلقة ٢» في صفحة الحلقة: معاينة للملف [[media/ep2-notes.pdf]] بمقاس 320 × 200، واسم لقارئ الشاشة، وبديل جواه جملة ولينك للملف، ولينك تحميل تحت المعاينة مكتوب فيه النوع. (من قسم ١ و ٢ و ٥ في الشرح)`, done: R`في المعاينة هنا هتشوف البديل (الـ PDF مبيتعرضش فيها)، وتحته لينك التحميل، وكل الشروط ✓.`, work: { h: 190, start: R`<h2>ملخص الحلقة ٢</h2>
-<p>الملف: media/ep2-notes.pdf (صفحتين)</p>`, checks: [
-              { say: R`فيه [[<object>]] بـ [[data]] بيشاور على الـ PDF`, q: "object[data$=\"ep2-notes.pdf\"]" },
-              { say: R`نوعه [[application/pdf]]`, q: "object[type=\"application/pdf\"]" },
-              { say: R`مقاسه 320 × 200`, q: "object[width=\"320\"][height=\"200\"]" },
-              { say: R`ليه [[title]]`, q: "object[title]" },
-              { say: R`البديل اللي جواه فيه لينك للملف`, q: "object a[href$=\".pdf\"]" },
-              { say: R`لينك [[download]] برّه الـ object`, q: ":not(object) > a[download][href$=\".pdf\"]" },
-            ] }, sol: R`~~~live 142 الحل
-<h2>ملخص الحلقة ٢</h2>
-<object data="media/ep2-notes.pdf" type="application/pdf" width="320" height="200" title="ملخص الحلقة ٢ (PDF)">
-  <p>المتصفح مش عارض الملف هنا. <a href="media/ep2-notes.pdf">افتح ملخص الحلقة ٢ (PDF)</a></p>
-</object>
-<p><a href="media/ep2-notes.pdf" download>نزّل ملخص الحلقة ٢ (PDF، صفحتين)</a></p>
-~~~
+**الغلطة الشائعة:** تعمل [[setInterval]] كل 16ms. مش متزامن مع الشاشة، والوقت بيبوظ مع أي تأخير. الحساب من الوقت الفعلي بيخلص في 1.5 ثانية حتى لو frames اتفوّتت.
 
-**هتشوف إيه:**
+~~~text الناتج
+كل 250ms بعد ما ظهر:
+٢٬١٩٨ ، ٤٬٣٩٣ ، ٦٬٦١٤ ، ٨٬٨٠٨ ، ١١٬٠٠٣ ، ١٢٬٥٠٠
 
-- هنا: «المتصفح مش عارض الملف هنا» واللينك، وتحتهم لينك التحميل.
-- في مشروعك والملف موجود: صندوق 320 × 200 فيه الـ PDF، وتحته لينك التحميل، والجملة البديلة مش ظاهرة.
-
-**ليه لينكين:** اللي جوه بديل: بيظهر بس لما المعاينة تفشل. واللي برّه ثابت: للي عايز الملف على جهازه حتى والمعاينة شغالة.
-
-**الغلطة الشائعة:** [[<object src="...">]]. المتصفح بيتجاهل [[src]] هنا: اتقاس إن الملف مبيتطلبش من السيرفر أصلًا، وبيفضل صندوق فاضي بالمقاس المكتوب (والبديل كمان مبيظهرش)، فتفتكر إن الملف هو اللي فيه مشكلة.
-
-~~~text القياس من Chrome (الملف موجود، سيرفر محلي)
-الحجم 320 × 200      ارتفاع البديل = 0      PluginObject «ملخص الحلقة ٢ (PDF)»
+right بتاع الكلمة اللي جنبه: 425.06 في كل القراءات
+layout shift: صفر
+reduce: ١٢٬٥٠٠ على طول
+axe صفر
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «جدول الحلقات» فيها ٣ مشاكل: الجدول PDF في [[<embed>]] ومكتوب «جواه» بديل، ومن غير نوع ولا اسم، ولوجو البودكاست محطوط في [[<object>]]. (من قسم ٤ و ٦ و ٧ في الشرح)`, done: R`الـ PDF بقى [[<object>]] ببديل حقيقي ونوع واسم، واللوجو [[<img>]] بـ [[alt]]، ومفيش [[<embed>]]، وكل الشروط ✓.`, work: { h: 230, start: R`<object data="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E"></object>
-<h2>جدول حلقات الشهر</h2>
-<embed src="media/schedule.pdf" width="320" height="100">
-  <p>مش شايف الجدول؟ <a href="media/schedule.pdf">افتحه من هنا</a></p>
-</embed>`, checks: [
-              { say: R`مفيش [[<embed>]]`, q: "embed", n: 0 },
-              { say: R`الجدول في [[<object>]] بـ [[data]] ونوعه PDF`, q: "object[data$=\"schedule.pdf\"][type=\"application/pdf\"]" },
-              { say: R`الـ object ليه [[title]]`, q: "object[data$=\"schedule.pdf\"][title]" },
-              { say: R`البديل ولينكه **جوه** الـ object`, q: "object > p > a[href$=\"schedule.pdf\"]" },
-              { say: R`اللوجو [[<img>]] ليه [[alt]] فيه كلام`, q: "img[src^=\"data:image/svg\"][alt]:not([alt=\"\"])" },
-              { say: R`مفيش object للصورة`, q: "object[data^=\"data:image\"]", n: 0 },
-            ] }, sol: R`~~~live 200 بعد التصليح
-<img alt="بودكاست المحطة" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-<h2>جدول حلقات الشهر</h2>
-<object data="media/schedule.pdf" type="application/pdf" width="320" height="100" title="جدول حلقات الشهر (PDF)">
-  <p>مش شايف الجدول؟ <a href="media/schedule.pdf">افتحه من هنا</a></p>
-</object>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 320 قبل
-<object data="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E"></object>
-<h2>جدول حلقات الشهر</h2>
-<embed src="media/schedule.pdf" width="320" height="100">
-  <p>مش شايف الجدول؟ <a href="media/schedule.pdf">افتحه من هنا</a></p>
-</embed>
-~~~
-
-**هتشوف إيه:**
-
-- قبل: تحت العنوان صندوق فاضي 320 × 100 (الـ [[<embed>]])، **وتحته** جملة «مش شايف الجدول؟». الجملة دي كانت هتفضل ظاهرة حتى لو الـ PDF اتعرض.
-- بعد: الصندوق الفاضي راح، والجملة ظاهرة لأنها بقت بديل حقيقي والملف مش بيتعرض هنا. في مشروعك والملف موجود: الـ PDF يظهر والجملة تختفي.
-- اللوجو نفس الشكل في الاتنين.
-
-| المشكلة | التصليح | ليه |
-|---|---|---|
-| بديل «جوه» [[<embed>]] | [[<object>]] والبديل جواه | [[<embed>]] void: اللي بعده أخ ليه مش ابنه |
-| من غير [[type]] ولا [[title]] | اتكتبوا | النوع عشان المتصفح يقرر بدري، والاسم للقارئ |
-| لوجو في [[<object>]] | [[<img alt>]] بمقاسه | صورة: محتاجة [[alt]] ومقاس يحجز مكانها |
-
-**الغلطة الشائعة:** تسيب [[</embed>]] في الكود. المتصفح بيتجاهلها في سكوت، والـ validator بيعلّم عليها.
-
-~~~text القياس من Chrome
-قبل:   embed.children.length = 0      الفقرة أخت الـ embed مش ابنه       اللوجو: PluginObject «»
-بعد:   object > p > a موجود           اللوجو: image «بودكاست المحطة»
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** ده كود بانر من نسخة ٢٠١٠ من موقع «المحطة»: Flash، ولو مشتغلش يبقى SVG، ولو مشتغلش يبقى نص. اكتب على ورقة: إيه اللي هيتعرض في متصفح النهارده؟ وبعدين اكتبه زي ما يتكتب دلوقتي: الصورة لوحدها بنص بديل. (من قسم ٢ و ٦ في الشرح)`, done: R`كتبت توقّعك، ومفيش [[<object>]] خالص، والبانر [[<img>]] بـ [[alt]]، وكل الشروط ✓.`, work: { h: 130, start: R`<object data="media/banner.swf" type="application/x-shockwave-flash" width="320" height="80">
-  <object data="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E" type="image/svg+xml" width="320" height="80">
-    <p>بودكاست المحطة</p>
-  </object>
-</object>`, checks: [
-              { say: R`مفيش [[<object>]]`, q: "object", n: 0 },
-              { say: R`البانر [[<img>]]`, q: "img[src^=\"data:image/svg\"]" },
-              { say: R`[[alt]] فيه «بودكاست المحطة»`, q: "img[alt*=\"بودكاست المحطة\"]" },
-              { say: R`الصورة ليها [[width]] و [[height]]`, q: "img[width][height]" },
-            ] }, sol: R`~~~live 106 الحل
-<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E" alt="بودكاست المحطة" width="320" height="80">
-~~~
-
-**التوقّع:** هيتعرض الـ SVG. Flash مش مدعوم في أي متصفح حالي، فالـ [[<object>]] البرّاني بيفشل ويعرض بديله، وبديله [[<object>]] تاني بيشتغل. والنص «بودكاست المحطة» مبيظهرش لأن اللي قبله نجح.
-
-**هتشوف إيه:** نفس البانر الأخضر قبل وبعد. الكود نزل من ٥ سطور لسطر.
-
-**ليه [[<img>]]:** الملف صورة. و [[alt]] بياخد مكان النص البديل القديم، وبيتقري لقارئ الشاشة.
-
-**الغلطة الشائعة:** تسيب سطر الـ Flash «يمكن حد لسه عنده». محدش: المتصفحات شالت الدعم، وأول طلب للملف ده وقت ضايع.
-
-~~~text القياس من Chrome
-قبل:   البرّاني (Flash) فشل ← الجوّاني (SVG) اتعرض 320 × 80       PluginObject «»
-بعد:   image «بودكاست المحطة»      320 × 80
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** لكل حاجة من الخمسة قول العنصر المناسب وسبب في كلمتين: (١) لوجو SVG. (٢) منيو المطعم PDF. (٣) خريطة من مزوّد خرايط. (٤) تسجيل صوتي. (٥) لعبة Flash قديمة. (من قسم ٥ و ٦ في الشرح)`, done: R`خمس إجابات، كل واحدة عنصر وسبب.`, sol: R`| الحاجة | العنصر | السبب |
-|---|---|---|
-| لوجو SVG | [[<img>]] (أو SVG inline لو هيتلوّن بالـ CSS) | صورة: [[alt]] ومقاس |
-| منيو PDF | المنيو نفسه HTML، ومعاه لينك للـ PDF. ولو لازم معاينة: [[<object>]] ببديل | الـ PDF مبيتقريش على الموبايل |
-| خريطة من مزوّد | [[<iframe>]] بـ [[title]] و [[loading="lazy"]] و [[sandbox]] | صفحة موقع تاني: محتاجة قفل |
-| تسجيل صوتي | [[<audio controls>]] | مشغّل، وكيبورد، وقارئ شاشة |
-| لعبة Flash | ولا واحد | Flash اتقفل. تتعمل من جديد بـ [[<canvas>]] و JavaScript |
-
-**الغلطة الشائعة:** «كله ينفع في [[<object>]]». ينفع يتعرض، بس بيضيّع كل اللي العنصر المتخصص بيدّيه.` },
-          ]
-        },
-        {
-          cmd: "map و area",
-          title: "صورة واحدة فيها كذا لينك، كل لينك على حتة منها",
-          pre: ["css/img", { to: "css/a و button", why: R`كل [[<area>]] هو لينك زي [[<a>]]: نفس [[href]] ونفس قواعد النص اللي بيوصفه` }],
-          ref: [
-            { t: "MDN: <map>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/map" },
-            { t: "MDN: <area>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/area" },
-            { t: "MDN: <img> (usemap, ismap)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img" },
-            { t: "WHATWG: image maps", url: "https://html.spec.whatwg.org/multipage/image-maps.html" }
           ],
-          desc: R`الـ image map بيخلّي أجزاء من صورة واحدة تتداس، وكل جزء يودّي لعنوان: مسقط مبنى، خريطة محافظات، صورة فريق. [[<map>]] بيجمع المناطق وليه اسم، و [[<area>]] منطقة واحدة بشكلها ([[shape]]) وإحداثياتها ([[coords]]) وعنوانها ([[href]]) ونصها البديل ([[alt]])، و [[usemap]] على [[<img>]] بيربط الصورة بالخريطة.
-وعيبه الكبير: الإحداثيات بالبيكسل ومبتتصغّرش مع الصورة، فعلى الموبايل اللينكات بتروح في غير مكانها. البديل الحديث SVG بلينكات جواه.`,
-          example: R`<img src="media/studio-plan.png" alt="مسقط استوديو المحطة: غرفة التسجيل، وغرفة المكساج، والاستقبال" width="300" height="150" usemap="#studio">
-<map name="studio">
-  <area shape="rect" coords="10,10,140,140" href="rooms.html#rec" alt="غرفة التسجيل">
-  <area shape="circle" coords="220,50,40" href="rooms.html#mix" alt="غرفة المكساج">
-  <area shape="poly" coords="160,140,220,100,280,140" href="rooms.html#wait" alt="الاستقبال">
-  <area shape="default" href="rooms.html" alt="كل الغرف">
-</map>`,
+          desc: R`لما تقرا مقاس من الـ DOM ([[offsetWidth]] أو [[getBoundingClientRect()]] أو [[scrollTop]]) بعد ما غيّرت style، المتصفح لازم يعيد حساب الـ layout فورًا عشان يديك رقم صح (forced reflow). ولو عملت ده جوه loop (اكتب، اقرا، اكتب، اقرا)، بيحسب الصفحة في كل لفة.
+
+الحل: اقرا كل اللي محتاجه الأول، وبعدين اكتب كله. وأي حاجة بتتكرر مع الـ scroll أو الحركة حطها في [[requestAnimationFrame]].`,
+          example: R`const cards = [...document.querySelectorAll(".card")];
+// وحش: قراية وكتابة بالتبادل
+for (const el of cards) {
+  el.style.height = el.offsetWidth * 0.75 + "px";
+}
+// كويس: اقرا الكل، وبعدين اكتب الكل
+const widths = cards.map((el) => el.offsetWidth);
+cards.forEach((el, i) => (el.style.height = widths[i] * 0.75 + "px"));
+// أحسن: CSS يعملها من غير JavaScript: .card { aspect-ratio: 4 / 3; }
+window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { passive: true });`,
+          try: R`اعمل صفحة فيها 500 div وشغّل النسخة الوحشة، وسجّل في DevTools › Performance: هتلاقي بلوكات Layout كتير وتحذير Forced reflow. شغّل النسخة الكويسة وقارن.`,
           flag: "script",
-          lines: [
-            R`الصورة: [[alt]] بيوصفها كلها، و [[width]] و [[height]] مقاسها (الإحداثيات محسوبة عليه)، و [[usemap="#studio"]] بيقول «مناطقي في الخريطة اللي اسمها studio». علامة [[#]] إجبارية.`,
-            R`[[<map name="studio">]]: الحاوية بتاعة المناطق. الاسم في [[name]] من غير [[#]]، ولازم يطابق اللي في [[usemap]].`,
-            R`مستطيل: [[coords]] فيها ركنين، فوق-شمال (10,10) وتحت-يمين (140,140). و [[href]] اللينك، و [[alt]] اسمه.`,
-            R`دايرة: المركز (220,50) ونص القطر 40.`,
-            R`مضلّع: نقطة ورا نقطة (x,y)، هنا تلات نقط يعني مثلث. المتصفح بيقفل الشكل من آخر نقطة لأول نقطة.`,
-            R`[[shape="default"]]: كل اللي فاضل من الصورة برّه المناطق التانية. من غير [[coords]].`,
-            R`قفلة [[</map>]]. الـ [[<map>]] نفسه مبيترسمش، فمكانه في الكود مش مهم، والمعتاد بعد الصورة على طول.`
-          ],
-          teach: R`## الفكرة في سطرين
+          deep: {
+            why: "الـ JavaScript والـ layout شغالين على نفس الـ thread. كل reflow على صفحة كبيرة ممكن ياخد ملي ثواني، ولو اتكرر مية مرة في frame واحد، الصفحة بتقف والـ scroll بيقطّع، و INP (سرعة الاستجابة للضغط) بيبوظ.",
+            how: R`المتصفح كسول بذكاء: لما تغيّر style، مش بيحسب على طول. بيعلّم إن الـ layout «قديم» ويستنى آخر الـ frame يحسب كل التغييرات مرة واحدة. بس لو طلبت رقم بيعتمد على الـ layout (offsetWidth و offsetTop و clientHeight و scrollHeight و getBoundingClientRect و getComputedStyle و scrollTop)، لازم يحسب حالًا، ودا الـ forced synchronous layout. لو كتبت بعده وقريت تاني يحسب تاني، ودا الـ thrashing.
 
-المواصفة: الـ image map بيخلّي مناطق هندسية على صورة مربوطة بلينكات. الصورة [[<img>]] عادية، والمناطق متعرّفة في عنصر تاني اسمه [[<map>]]، والاتنين مربوطين بالاسم.
+الفرق بين reflow و repaint: الـ reflow (layout) = حساب أماكن ومقاسات العناصر، وممكن يأثر على الصفحة كلها. والـ repaint = رسم البكسلات من جديد من غير ما الأماكن تتغير (لون، وخلفية، وظل). والـ composite = تركيب الطبقات بس (transform و opacity). من الأغلى للأرخص.
 
-القياسات من Chrome 157 على Windows 11. الصورة في المعاينات مسقط 300 × 150 مرسوم SVG: مربع أخضر (غرفة التسجيل)، ودايرة برتقالي (المكساج)، ومثلث أزرق (الاستقبال).
+[[requestAnimationFrame(fn)]] بينفّذ fn قبل الرسم الجاي مباشرة، فالكتابات بتتجمع في frame واحد. ولو الحدث بيتكرر كتير (scroll أو mousemove)، استخدم flag عشان متطلبش أكتر من rAF في الـ frame. و [[ResizeObserver]] و [[IntersectionObserver]] بيدّوك المقاسات والظهور من غير ما تقرا في loop.
 
----
+وفي React: القراية بتبقى في [[useLayoutEffect]] (قبل الرسم) أو ref callback، مش في كل render.`,
+            when: "أي كود بيقيس عناصر: masonry، أو sticky بـ JavaScript، أو animations يدوي، أو قوايم طويلة virtualized، وأي حاجة على scroll أو resize.",
+            mistakes: R`تحسب مقاسات في scroll handler من غير rAF. تحرّك بـ [[top]] و [[left]] من JavaScript بدل transform. و [[getComputedStyle]] جوه loop. وفي مشروع حقيقي كان فيه handler على الـ scroll بيعمل [[setScrolled(window.scrollY > 8)]] مع [[passive: true]]: كويس، لأنه بيقرا رقم واحد رخيص ومش بيكتب في الـ DOM مباشرة، و React مش بيعيد الـ render غير لما القيمة تتغير فعلًا.`
+          },
+          teach: R`## نفس الشغل، مرة بـ 500 layout ومرة بـ layout واحد
 
-## ١. [[<img usemap="#studio">]] و [[<map name="studio">]]
-
-~~~live 176 حرّك الماوس على الأشكال، أو دوس Tab
-<img alt="مسقط استوديو المحطة: غرفة التسجيل، وغرفة المكساج، والاستقبال" width="300" height="150" usemap="#studio" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="studio">
-  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
-  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
-  <area shape="poly" coords="160,140,220,100,280,140" href="#wait" alt="الاستقبال">
-</map>
-~~~
-
-**هتشوف إيه:** الصورة عادية، ومفيش أي حاجة بتقول إن فيها لينكات. لما الماوس يعدّي على المربع أو الدايرة أو المثلث بيبقى إيد، وعلى الرمادي بيفضل سهم. ولما تدوس Tab، حدود الشكل بتترسم حواليه (ده الـ focus).
-
-~~~text القياس من Chrome (document.elementFromPoint: العنصر اللي تحت النقطة)
-النقطة (50,50)    →  AREA  (المستطيل)
-النقطة (220,50)   →  AREA  (الدايرة)
-النقطة (220,125)  →  AREA  (المثلث)
-النقطة (150,5)    →  IMG   (مفيش منطقة هنا)
-
-<map>:   display: inline     <area>:  display: none
-document.links.length بيعدّ كل <area> ليه href
-~~~
-
-- [[usemap]] بياخد [[#]] وبعدها اسم الخريطة. اتقاس: [[usemap="studio"]] من غير [[#]] مبيشتغلش خالص (النقطة رجّعت [[IMG]]).
-- الاسم بيتكتب في [[name]] على [[<map>]]. (Chrome قِبل [[id]] لوحده كمان، بس المواصفة بتطلب [[name]].)
-- نفس الخريطة ممكن تتربط بأكتر من صورة.
-- MDN: [[usemap]] مينفعش على صورة جوه [[<a>]] أو [[<button>]].
+المثال بيدّي كل كارت ارتفاع = عرضه × 0.75 (نسبة 4:3)، بطريقتين: واحدة بتخلط القراية والكتابة جوه الـ loop، وواحدة بتقرا الكل الأول وبعدين تكتب الكل. شغّلنا الـ solCode حرفيًا في Chrome (500 كارت، شاشة 1280 عرض) 3 مرات، وعدّينا عدد مرات الـ layout بـ [[LayoutCount]] من Chrome DevTools Protocol.
 
 ---
 
-## ٢. [[<area shape="rect" coords="10,10,140,140" href="..." alt="...">]]
+## ١. هات الكروت
 
-### [[shape]] و [[coords]]
-
-الإحداثيات بالبيكسل (CSS pixels)، محسوبة من **الركن فوق-شمال** للصورة: x بيزيد ناحية اليمين، و y بيزيد لتحت. ده حتى في صفحة عربي RTL.
-
-| [[shape]] | [[coords]] | معناها |
-|---|---|---|
-| [[rect]] | [[x1,y1,x2,y2]] | ركن فوق-شمال، وركن تحت-يمين |
-| [[circle]] | [[x,y,r]] | المركز، ونص القطر |
-| [[poly]] | [[x1,y1,x2,y2,x3,y3,...]] | نقط الشكل بالترتيب، وبيتقفل لوحده |
-| [[default]] | (من غير) | كل الصورة اللي مش تبع منطقة تانية |
-
-من غير [[shape]] المتصفح بيعتبرها [[rect]].
-
-بتجيب الأرقام منين؟ افتح الصورة في أي برنامج رسم وحرّك الماوس: الإحداثيات بتتكتب تحت. أو ارسم الأشكال في برنامج بيطلّع كود الـ [[<map>]] جاهز.
-
-### لما منطقتين يركبوا على بعض
-
-~~~text القياس من Chrome
-<area rect 0,0,100,50  href="/big">  وبعده  <area rect 0,0,30,30  href="/small">
-   النقطة (10,10)  →  big          ← اللي مكتوب الأول هو اللي فوق، والصغير مبيتوصلوش
-<area shape="default">  وبعده  <area rect 0,0,50,50>
-   النقطة (20,20)  →  rect         ← default دايمًا آخر واحد، مهما كان مكانه في الكود
+~~~text JavaScript
+const cards = [...document.querySelectorAll(".card")];
 ~~~
 
-القاعدة: **الصغير الأول والكبير بعده.**
+- [[document.querySelectorAll(".card")]]: كل العناصر اللي عليها كلاس [[card]]، بس بترجع NodeList مش array.
+- [[[...]]]: الـ [[...]] (spread) بيفرد العناصر جوه array جديدة، عشان نقدر نستخدم [[map]] و [[forEach]] عليها براحتنا.
 
-### [[href]] و [[alt]]
+## ٢. الطريقة الوحشة
 
-- [[<area href>]] لينك كامل: بياخد [[target]] و [[rel]] و [[download]] و [[referrerpolicy]] زي [[<a>]].
-- [[alt]] هو **نص اللينك**: [[<area>]] عنصر فاضي ملوش كلام جواه، فالاسم كله من [[alt]]. MDN: إجباري طول ما فيه [[href]].
-- [[<area>]] من غير [[href]] منطقة ميتة: مبتتداسش. بتتستخدم عشان «تخرم» حتة من منطقة أكبر مكتوبة بعدها.
-
-~~~text القياس من Chrome (شجرة الـ accessibility)
-image «مسقط استوديو المحطة: غرفة التسجيل، وغرفة المكساج، والاستقبال»
-link «غرفة التسجيل»
-link «غرفة المكساج»
-link «الاستقبال»
-<area> من غير href:   مش في الشجرة      computedRole فاضي
+~~~text JavaScript
+for (const el of cards) {
+  el.style.height = el.offsetWidth * 0.75 + "px";
+}
 ~~~
 
-قارئ الشاشة بيشوف صورة وبعدها تلات لينكات بأساميهم من [[alt]]. من غير [[alt]] بيبقوا تلات لينكات من غير اسم.
+- [[for (const el of cards)]]: لف على الكروت واحد واحد، و [[el]] الكارت الحالي.
+- [[el.offsetWidth]]: عرض العنصر بالبكسل كرقم صحيح (بالـ border والـ padding). ده **قراية** من الـ layout.
+- [[* 0.75 + "px"]]: اضرب في 0.75، وزوّد [[px]] في الآخر فيبقى نص زي [[285.75px]].
+- [[el.style.height = ...]]: ده **كتابة**: غيّرت style، فالـ layout بقى قديم.
 
----
+المشكلة في الترتيب: لفة 1 كتبت height، لفة 2 بتقرا [[offsetWidth]]، فالمتصفح لازم يعيد حساب الـ layout الأول عشان يدّيك رقم صح (ده الـ forced reflow). وبعدين تكتب، واللفة اللي بعدها تقرا تاني... 500 مرة.
 
-## ٣. [[<img ismap>]]: الخريطة اللي السيرفر بيحسبها
+## ٣. الطريقة الكويسة
 
-[[ismap]] شكل تاني أقدم: الصورة جوه [[<a>]]، والمتصفح بيزوّد مكان الضغطة على آخر العنوان، والسيرفر هو اللي يقرر.
-
-~~~html
-<a href="/pick"><img src="media/studio-plan.png" alt="اختار مكان في الاستوديو" width="300" height="150" ismap></a>
+~~~text JavaScript
+const widths = cards.map((el) => el.offsetWidth);
+cards.forEach((el, i) => (el.style.height = widths[i] * 0.75 + "px"));
 ~~~
 
-~~~text القياس من Chrome (ضغطة حقيقية على النقطة 120,40 من الصورة، والسيرفر كتب الطلب)
-GET /pick?120,40
+- [[cards.map((el) => el.offsetWidth)]]: [[map]] بيعمل array جديدة من نتيجة الدالة على كل عنصر، يعني array بالعروض. كله قراية، فأول قراية بتحسب الـ layout مرة، والباقي بيقرا من نفس الحساب.
+- [[cards.forEach((el, i) => ...)]]: لف على الكروت، و [[i]] رقم الكارت (index) عشان نجيب عرضه من [[widths[i]]].
+- الأقواس حوالين [[(el.style.height = ...)]]: الـ arrow function بترجع نتيجة الـ assignment، والأقواس بتوضح إن ده مقصود.
+- كله كتابة، والمتصفح يحسب الـ layout مرة واحدة بعدها.
+
+## ٤. القياس (الـ solCode)
+
+في الـ solCode فيه سطرين زيادة للقياس: [[performance.now()]] بيرجّع الوقت بالـ ms بدقة كسور، فالفرق بين قبل وبعد = مدة الكود. و [[document.body.offsetHeight]] قراية فاضية بتجبر المتصفح يخلّص أي layout مستني، عشان الوقت يتحسب كامل.
+
+~~~text الناتج في Chrome (3 مرات)
+bad 123.7   good 2.5
+bad 123.7   good 2.5
+bad 227.6   good 6.2
 ~~~
 
-- MDN: [[ismap]] مسموح بس على صورة جوه [[<a>]] ليه [[href]].
-- اللي بيدوس Enter بالكيبورد مبيبعتش مكان، وقارئ الشاشة بيشوف لينك واحد. عشان كده مبقاش بيتستخدم: [[usemap]] (المتصفح بيحسب) أحسن منه في كل حاجة.
-
----
-
-## ٤. المشكلة: الصورة بتتصغّر، والإحداثيات لأ
-
-دي نفس الخريطة، والصورة معروضة بنص المقاس (150 × 75) زي ما بيحصل على شاشة ضيقة مع [[max-width: 100%]]:
-
-~~~live 102 نفس الـ coords على صورة متصغّرة: الماوس بيبقى إيد في أماكن غلط
-<img alt="مسقط استوديو المحطة" style="width:150px;height:75px" usemap="#small" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="small">
-  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
-  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
-  <area shape="poly" coords="160,140,220,100,280,140" href="#wait" alt="الاستقبال">
-</map>
+~~~text اتقاس بـ LayoutCount
+الوحشة:   500 layout
+الكويسة:  1 layout
 ~~~
 
-**هتشوف إيه:** الصورة الصغيرة كلها تقريبًا بقت لينك واحد: حرّك الماوس على الدايرة البرتقالي، هتلاقيه إيد، والعنوان اللي بيظهر تحت في المتصفح بتاع «غرفة التسجيل» مش «المكساج».
+والنتيجة واحدة في الاتنين: كل كارت عرضه [[381]] (30% من عرض الـ body + الـ border) وارتفاعه [[285.75px]]. الوحشة أبطأ حوالي 37 مرة، و 124ms يعني أكتر من 7 frames (الـ frame في شاشة 60Hz حوالي 16.7ms) الصفحة واقفة فيهم.
 
-~~~text القياس من Chrome (الصورة 150 × 75)
-النقطة (25,25)    مكان المربع الأخضر      →  المستطيل   ✓
-النقطة (110,25)   مكان الدايرة البرتقالي  →  المستطيل   ✗ لينك غلط
-النقطة (145,70)   جنب المثلث              →  مفيش منطقة
+## ٥. الـ CSS بدل كل ده
+
+~~~text CSS
+.card { aspect-ratio: 4 / 3; }
 ~~~
 
-الإحداثيات مكتوبة لصورة 300 × 150. المستطيل (من 10 لـ 140) لسه واخد نفس البيكسلات، يعني غطّى الصورة الصغيرة كلها تقريبًا، والدايرة اللي مركزها عند 220 بقت برّه الصورة خالص. HTML معندوش طريقة يكتب بيها الإحداثيات كنسبة.
+الارتفاع = العرض × 3 ÷ 4 = نفس الـ 0.75، والمتصفح بيحسبه في نفس الـ layout من غير أي JavaScript.
 
----
+## ٦. الـ scroll
 
-## ٥. البديل الحديث: SVG بلينكات
-
-في SVG، [[viewBox]] بيعرّف مساحة الرسم بأرقامها (هنا 300 × 150)، والأشكال بتتكتب بالأرقام دي، وكل حاجة بتكبر وتصغر مع بعض. واللينك [[<a>]] عادي حوالين الشكل.
-
-~~~live 102 نفس المسقط SVG بنص المقاس: كل لينك في مكانه
-<svg viewBox="0 0 300 150" width="150" role="group" aria-label="مسقط استوديو المحطة">
-  <rect width="300" height="150" fill="#e2e8f0"/>
-  <a href="#rec" aria-label="غرفة التسجيل"><rect x="10" y="10" width="130" height="130" fill="#0f766e"/></a>
-  <a href="#mix" aria-label="غرفة المكساج"><circle cx="220" cy="50" r="40" fill="#b45309"/></a>
-  <a href="#wait" aria-label="الاستقبال"><polygon points="160,140 220,100 280,140" fill="#1d4ed8"/></a>
-</svg>
+~~~text JavaScript
+window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { passive: true });
 ~~~
 
-**هتشوف إيه:** نفس الرسم متصغّر، والماوس بيبقى إيد على كل شكل لوحده، والعنوان اللي تحت صح.
-
-~~~text القياس من Chrome (الـ SVG معروض بعرض 150)
-النقطة (30,30)    →  rect جوه <a href="#rec">      ✓
-النقطة (110,25)   →  circle جوه <a href="#mix">    ✓
-شجرة الـ accessibility:   group «مسقط استوديو المحطة»   link «غرفة التسجيل»   link «غرفة المكساج»   link «الاستقبال»
-~~~
-
-والمكسب التاني: الأشكال عناصر حقيقية، فالـ CSS بيلوّنها مع [[:hover]] و [[:focus-visible]] والزائر يشوف هو فوق إيه. الـ [[<area>]] مبيتلوّنش. شرح SVG نفسه في درس «SVG».
-
-ولو الصورة فوتوغرافية ومش هتتحوّل SVG: قايمة لينكات عادية تحت الصورة، وده أبسط وأضمن حل.
-
----
-
-## ٦. إمتى الـ image map فكرة وحشة؟
-
-| الحالة | الحكم |
-|---|---|
-| صفحة responsive والصورة بتتصغّر | لأ: اللينكات هتروح في غير مكانها (قسم ٤) |
-| المناطق صغيرة أو لازقة في بعض | لأ: الصباع على الموبايل محتاج هدف كبير |
-| محتاج المنطقة تتلوّن لما الماوس يعدّي عليها | لأ: [[<area>]] مبيتنسّقش بالـ CSS |
-| قايمة تنقّل أو أزرار معمولة صورة واحدة | لأ: دي لينكات عادية بـ CSS |
-| صورة مقاسها ثابت فعلًا (إيميل، كشك عرض) | ممكن |
-| موقع قديم بتصونه | سيبه شغال، وزوّد قايمة لينكات نصية تحته |
-
----
-
-## ٧. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[usemap="studio"]] من غير [[#]] | الخريطة مش مربوطة: الصورة مفيهاش ولا لينك |
-| [[<area href>]] من غير [[alt]] | لينك من غير اسم لقارئ الشاشة |
-| منطقة كبيرة مكتوبة قبل صغيرة جواها | الصغيرة عمرها ما بتتداس |
-| [[coords]] محسوبة على مقاس الملف، والصورة معروضة بمقاس تاني | كل اللينكات مزحزحة |
-| [[coords="10%,10%,50%,50%"]] أو [[coords="10px,10px,140px,140px"]] | أرقام بيكسل بس، من غير [[px]] ولا [[%]] |
-| الاعتماد على الصورة لوحدها | محدش عارف إن فيها لينكات: مفيش أي علامة |
-
----
+- [[addEventListener("scroll", fn)]]: شغّل fn كل ما الصفحة تعمل scroll (ممكن عشرات المرات في الثانية).
+- [[requestAnimationFrame(updateHeader)]]: متنفّذش دلوقتي، نفّذ قبل الرسمة الجاية. فالقراية والكتابة اللي في [[updateHeader]] بتتعمل مرة في الـ frame مع باقي التغييرات.
+- [[{ passive: true }]]: وعد إن الـ handler مش هيعمل [[preventDefault()]]. على الـ scroll مش فارق، فايدته مع [[wheel]] و [[touchmove]].
 
 ## الخلاصة
 
-- [[<img usemap="#اسم">]] + [[<map name="اسم">]] + [[<area shape coords href alt>]].
-- [[rect]] ركنين، و [[circle]] مركز ونص قطر، و [[poly]] نقط، و [[default]] الباقي. من فوق-شمال وبالبيكسل.
-- [[alt]] هو نص اللينك، والصغير يتكتب قبل الكبير.
-- الإحداثيات مبتتصغّرش: في صفحة responsive استخدم SVG بـ [[<a>]]، أو لينكات عادية.
-- [[ismap]] بيبعت مكان الضغطة للسيرفر، ومبقاش ليه استخدام.`,
-          try: R`انسخ كود قسم ١ في ملف [[plan.html]] (الصورة بـ [[data:]] زي ما هي) وزوّد منطقة رابعة [[shape="default"]] بتودّي لـ [[#all]] واسمها «باقي الاستوديو». افتحها وحرّك الماوس على الرمادي: بقى إيد؟ وبعدين انقل سطر الـ [[default]] لأول الـ [[<map>]] وجرّب المربع الأخضر: لسه بيودّي لـ [[#rec]]؟`,
-          sol: R`~~~live 176 plan.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مسقط الاستوديو</title>
-</head>
-<body>
-<img alt="مسقط استوديو المحطة: غرفة التسجيل، وغرفة المكساج، والاستقبال" width="300" height="150" usemap="#studio" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="studio">
-  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
-  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
-  <area shape="poly" coords="160,140,220,100,280,140" href="#wait" alt="الاستقبال">
-  <area shape="default" href="#all" alt="باقي الاستوديو">
-</map>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:**
-
-- الماوس بقى إيد على **كل** الصورة: الأشكال التلاتة كل واحد بلينكه، والرمادي بيودّي لـ [[#all]].
-- بعد ما تنقل [[default]] لأول سطر: مفيش أي تغيير. المربع لسه [[#rec]].
-
-**ليه كده:** [[default]] معناه «اللي فاضل»، فالمتصفح بيحسبه آخر واحد مهما كان ترتيبه في الكود. الترتيب بيفرق بين المناطق اللي ليها [[coords]] بس.
-
-**الغلطة الشائعة:** [[<area shape="default" coords="0,0,300,150">]]. MDN: [[coords]] ممنوع مع [[default]].
-
-~~~text القياس من Chrome
-النقطة (150,5) قبل ما تزوّد default:   IMG
-بعد default:                           AREA (باقي الاستوديو)
-default مكتوب الأول، والنقطة (20,20) جوه مستطيل بعده:   AREA (المستطيل)
-~~~`,
-          deep: {
-            why: R`أول الويب، قايمة التنقّل كانت صورة واحدة مرسوم عليها الأزرار، والـ image map كان الطريقة الوحيدة تخلّي كل زرار يودّي لمكان. الـ CSS شال الحاجة دي. اللي فضل: صورة فعلًا فيها أماكن (خريطة، مسقط، صورة جماعية) وعايز كل مكان يتداس. وحتى ده، SVG بيعمله أحسن.`,
-            how: R`لما الماوس يتحرك فوق صورة عليها [[usemap]]، المتصفح بيدوّر على [[<map>]] بالاسم، وبيمشي على الـ [[<area>]] بالترتيب: أول واحدة النقطة تقع جوه شكلها هي اللي بتاخد الضغطة، و [[default]] بيتجرّب في الآخر. الإحداثيات بتتحسب من ركن الصورة فوق-شمال بالـ CSS pixels من غير أي تحويل، وعشان كده تصغير الصورة بيبوّظها. وكل [[<area href>]] بيدخل ترتيب الـ Tab وشجرة الـ accessibility كلينك اسمه من [[alt]].`,
-            when: R`صورة بمقاس ثابت فيها مناطق واضحة وكبيرة: مسقط في صفحة داخلية للديسكتوب، أو قالب إيميل (الإيميل مبيدعمش SVG كويس). في أي حاجة responsive: SVG inline بلينكات، أو صورة وتحتها قايمة لينكات.`,
-            mistakes: R`نسيان [[#]] في [[usemap]]. [[alt]] ناقص على المناطق. إحداثيات على مقاس غير المعروض. منطقة كبيرة قبل الصغيرة. والاعتماد على image map في صفحة بتتصغّر على الموبايل.`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** مسقط الاستوديو محطوط صورة عادية. خلّي غرفتين يتداسوا: المربع الأخضر (ركنه فوق-شمال 10,10 وتحت-يمين 140,140) يودّي لـ [[#rec]] واسمه «غرفة التسجيل»، والدايرة البرتقالي (مركزها 220,50 ونص قطرها 40) تودّي لـ [[#mix]] واسمها «غرفة المكساج». سمّي الخريطة [[plan]]. (من قسم ١ و ٢ في الشرح)`, done: R`الماوس بيبقى إيد على المربع والدايرة بس، وكل الشروط ✓.`, work: { h: 200, start: R`<img alt="مسقط استوديو المحطة" width="300" height="150" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">`, checks: [
-              { say: R`الصورة عليها [[usemap="#plan"]]`, q: "img[usemap=\"#plan\"]" },
-              { say: R`فيه [[<map name="plan">]]`, q: "map[name=\"plan\"]" },
-              { say: R`جواه منطقتين`, q: "map[name=\"plan\"] > area", n: 2 },
-              { say: R`المستطيل بإحداثياته ولينكه`, q: "area[shape=\"rect\"][coords=\"10,10,140,140\"][href=\"#rec\"]" },
-              { say: R`الدايرة بإحداثياتها ولينكها`, q: "area[shape=\"circle\"][coords=\"220,50,40\"][href=\"#mix\"]" },
-              { say: R`كل منطقة ليها [[alt]] فيه كلام`, q: "area[alt]:not([alt=\"\"])", n: 2 },
-            ] }, sol: R`~~~live 176 الحل
-<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="#plan" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="plan">
-  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
-  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
-</map>
-~~~
-
-**هتشوف إيه:** الصورة زي ما هي. الماوس إيد على المربع والدايرة، وسهم على المثلث والرمادي. و Tab بيقف مرتين.
-
-**ليه كده:**
-
-- [[usemap="#plan"]] بالـ [[#]]، و [[name="plan"]] من غيرها.
-- [[rect]] أربع أرقام، و [[circle]] تلاتة، بينهم فواصل من غير مسافات.
-- المثلث مالوش [[<area>]]، فمبيتداسش.
-
-**الغلطة الشائعة:** تكتب إحداثيات الدايرة أربع أرقام زي المستطيل. [[circle]] مركز ونص قطر بس.
-
-~~~text القياس من Chrome
-(50,50) → AREA      (220,50) → AREA      (220,125) → IMG
-link «غرفة التسجيل»      link «غرفة المكساج»
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** خريطة مسقط الاستوديو مفيش فيها ولا حتة بتتداس. فيه ٤ مشاكل: الربط بين الصورة والخريطة ناقصه حرف، والأسامي مش زي بعض، والمناطق من غير أسامي، وشكل مكتوب غلط. (من قسم ١ و ٢ و ٧ في الشرح)`, done: R`الماوس بيبقى إيد على المربع والدايرة، وكل الشروط ✓.`, work: { h: 200, start: R`<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="studio" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="studio-map">
-  <area shape="rectangle" coords="10,10,140,140" href="#rec">
-  <area shape="circle" coords="220,50,40" href="#mix">
-</map>`, checks: [
-              { say: R`[[usemap]] بيبدأ بـ [[#]]`, q: "img[usemap^=\"#\"]" },
-              { say: R`اسم الخريطة هو نفسه اللي في [[usemap]]`, q: "img[usemap=\"#studio\"] ~ map[name=\"studio\"], img[usemap=\"#studio-map\"] ~ map[name=\"studio-map\"]" },
-              { say: R`المستطيل [[shape="rect"]]`, q: "area[shape=\"rect\"][href=\"#rec\"]" },
-              { say: R`مفيش [[shape="rectangle"]]`, q: "area[shape=\"rectangle\"]", n: 0 },
-              { say: R`المنطقتين ليهم [[alt]] فيه كلام`, q: "area[alt]:not([alt=\"\"])", n: 2 },
-            ] }, sol: R`~~~live 176 بعد التصليح
-<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="#studio" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="studio">
-  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
-  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
-</map>
-~~~
-
-**هتشوف إيه:** الصورة نفسها قبل وبعد (الخريطة مبتترسمش، فمفيش فرق في الشكل). الفرق في الماوس: قبل سهم في كل حتة، وبعد إيد على المربع والدايرة.
-
-| المشكلة | التصليح | ليه |
-|---|---|---|
-| [[usemap="studio"]] | [[usemap="#studio"]] | من غير [[#]] الربط مبيحصلش |
-| [[name="studio-map"]] | [[name="studio"]] | الاسمين لازم يتطابقوا بالحرف |
-| من غير [[alt]] | زوّدناه | هو اسم اللينك |
-| [[shape="rectangle"]] | [[rect]] | القيم أربعة بس: [[rect]] و [[circle]] و [[poly]] و [[default]] |
-
-**الغلطة الشائعة:** تصلّح الاسم وتنسى الـ [[#]] أو العكس. الاتنين لازم مع بعض.
-
-~~~text القياس من Chrome
-usemap="studio" (من غير #):    النقطة (20,20) → IMG       ولا لينك
-usemap="#studio" واسم مطابق:   النقطة (20,20) → AREA      link «غرفة التسجيل»
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** في خريطة الاستوديو منطقة صغيرة «باب الطوارئ» (30 × 30 في ركن غرفة التسجيل) ومنطقة غرفة التسجيل كلها. اكتب على ورقة: لما تدوس على ركن الباب (النقطة 20,20) هتروح فين؟ وبعدين رتّبهم عشان الباب يتداس. (من قسم ٢ في الشرح، جزء «لما منطقتين يركبوا على بعض»)`, done: R`كتبت توقّعك، ومنطقة الباب بقت مكتوبة قبل غرفة التسجيل، وكل الشروط ✓.`, work: { h: 200, start: R`<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="#s" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="s">
-  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
-  <area shape="rect" coords="10,10,40,40" href="#exit" alt="باب الطوارئ">
-</map>`, checks: [
-              { say: R`الباب هو أول [[<area>]]`, q: "map > area:first-child[href=\"#exit\"]" },
-              { say: R`غرفة التسجيل بعده`, q: "map > area:last-child[href=\"#rec\"]" },
-              { say: R`الإحداثيات متغيّرتش`, q: "area[coords=\"10,10,40,40\"][href=\"#exit\"]" },
-            ] }, sol: R`~~~live 176 بعد الترتيب
-<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="#s" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="s">
-  <area shape="rect" coords="10,10,40,40" href="#exit" alt="باب الطوارئ">
-  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
-</map>
-~~~
-
-**التوقّع:** هتروح [[#rec]]. غرفة التسجيل مكتوبة الأول وبتغطّي النقطة، فالمتصفح بيقف عندها ومبيوصلش للباب.
-
-**هتشوف إيه:** الصورة واحدة. بعد الترتيب: حرّك الماوس على ركن المربع الأخضر فوق-شمال، العنوان اللي بيظهر تحت في المتصفح آخره [[#exit]]، وفي باقي المربع [[#rec]].
-
-**ليه كده:** أول [[<area>]] النقطة تقع جواها هي اللي بتكسب. فالمنطقة اللي جوه منطقة تانية لازم تتكتب قبلها.
-
-**الغلطة الشائعة:** تحاول تحلها بـ [[z-index]]. الـ [[<area>]] مبيترسمش، فالـ CSS ملوش كلمة هنا: الترتيب في الكود بس.
-
-~~~text القياس من Chrome (مستطيل كبير 0,0,100,50 وصغير 0,0,30,30)
-الكبير الأول:    النقطة (10,10) → big
-الصغير الأول:    النقطة (10,10) → small      النقطة (60,25) → big
-~~~` },
-            { lvl: 'تطبيق', t: R`**refactor:** الخريطة دي شغالة، بس الصفحة بقت responsive والصورة بتتصغّر. حوّلها لـ SVG بلينكات: نفس المربع ونفس الدايرة بنفس الأرقام، وكل شكل جوه [[<a>]] بنفس الـ [[href]] واسمه في [[aria-label]]، والـ SVG بـ [[viewBox="0 0 300 150"]] ومعروض بعرض 150. (من قسم ٥ في الشرح)`, done: R`مفيش [[<img>]] ولا [[<map>]]، والرسم بنص المقاس وكل شكل بيتداس في مكانه، وكل الشروط ✓.`, work: { h: 200, start: R`<img alt="مسقط استوديو المحطة" style="width:150px;height:75px" usemap="#plan" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="plan">
-  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
-  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
-</map>`, checks: [
-              { say: R`مفيش [[<map>]] ولا [[<area>]]`, q: "map, area", n: 0 },
-              { say: R`فيه [[<svg>]] بـ [[viewBox="0 0 300 150"]]`, q: "svg[viewBox=\"0 0 300 150\"]" },
-              { say: R`المربع [[<rect>]] جوه لينك [[#rec]]`, q: "svg a[href=\"#rec\"] > rect[x=\"10\"][y=\"10\"][width=\"130\"][height=\"130\"]" },
-              { say: R`الدايرة [[<circle>]] جوه لينك [[#mix]]`, q: "svg a[href=\"#mix\"] > circle[cx=\"220\"][cy=\"50\"][r=\"40\"]" },
-              { say: R`اللينكين ليهم [[aria-label]]`, q: "svg a[aria-label]", n: 2 },
-              { say: R`الـ SVG كله ليه اسم ([[aria-label]])`, q: "svg[aria-label]" },
-            ] }, sol: R`~~~live 102 الحل
-<svg viewBox="0 0 300 150" width="150" role="group" aria-label="مسقط استوديو المحطة">
-  <rect width="300" height="150" fill="#e2e8f0"/>
-  <a href="#rec" aria-label="غرفة التسجيل"><rect x="10" y="10" width="130" height="130" fill="#0f766e"/></a>
-  <a href="#mix" aria-label="غرفة المكساج"><circle cx="220" cy="50" r="40" fill="#b45309"/></a>
-</svg>
-~~~
-
-وده اللي كان قبل (جرّب الماوس على الدايرة في الاتنين):
-
-~~~live 102 قبل
-<img alt="مسقط استوديو المحطة" style="width:150px;height:75px" usemap="#plan" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
-<map name="plan">
-  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
-  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
-</map>
-~~~
-
-**هتشوف إيه:**
-
-- قبل: الدايرة البرتقالي بتودّي لـ [[#rec]] (لينك المربع)، لأن إحداثيات المربع غطّت الصورة الصغيرة.
-- بعد: نفس الرسم (من غير المثلث)، والدايرة بتودّي لـ [[#mix]].
-
-**التحويل:**
-
-| في الـ map | في الـ SVG |
+| الحركة | بتكلّف |
 |---|---|
-| [[rect]] و [[coords="10,10,140,140"]] (ركنين) | [[<rect x="10" y="10" width="130" height="130">]] (ركن وعرض وارتفاع: 140 − 10 = 130) |
-| [[circle]] و [[coords="220,50,40"]] | [[<circle cx="220" cy="50" r="40">]] |
-| [[href]] على [[<area>]] | [[<a href>]] حوالين الشكل |
-| [[alt]] | [[aria-label]] على [[<a>]] |
-
-**الغلطة الشائعة:** تكتب [[width="140" height="140"]] للمربع. [[coords]] فيها ركنين، و SVG عايز عرض وارتفاع: اطرح.
-
-~~~text القياس من Chrome (الاتنين معروضين بعرض 150)
-map:   النقطة (110,25) → المستطيل (غلط)
-SVG:   النقطة (110,25) → circle جوه a[href="#mix"]      link «غرفة المكساج»
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** لكل حالة قول: image map ولا SVG بلينكات ولا لينكات عادية؟ وسبب في سطر: (١) خريطة مصر، كل محافظة تودّي لصفحة فروعها، والموقع بيتفتح على الموبايل. (٢) شريط تنقّل فيه خمس كلمات، المصمم بعته صورة واحدة. (٣) قالب إيميل فيه صورة عرض، نصها الشمال يودّي لمنتج ونصها اليمين لمنتج تاني. (من قسم ٦ في الشرح)`, done: R`تلات إجابات بأسبابها.`, sol: R`إجابة نموذجية:
-
-1. **SVG بلينكات، ومعاه قايمة المحافظات نص.** الصفحة responsive فالإحداثيات هتبوظ، والمحافظات الصغيرة صعب تتداس بالصباع، فالقايمة النصية هي اللي هتتستخدم فعلًا على الموبايل.
-2. **لينكات عادية بـ CSS.** ده نص، ومكانه [[<nav>]] فيه [[<a>]]. الصورة مبتتترجمش ومبتتكبرش مع الخط ومحرك البحث مبيقراش اللي فيها.
-3. **image map (أو صورتين جنب بعض، كل واحدة جوه [[<a>]]).** برامج الإيميل دعمها لـ SVG والـ CSS ضعيف، والمقاس ثابت. والصورتين أبسط وأضمن من الخريطة.
-
-**الغلطة الشائعة:** تختار image map «عشان أسرع». كتابته أسرع فعلًا، وبعدين أول شاشة موبايل بتكشفه.` },
-          ]
-        },
-        {
-          cmd: "canvas و noscript و template",
-          title: "تلات عناصر مستنيين JavaScript: لوحة رسم، ورسالة للي مقفّله، وقالب مستخبي",
-          pre: [{ to: "css/iframe sandbox و allow", why: R`معاينة [[<noscript>]] هنا معمولة بـ [[<iframe sandbox>]] اللي بيقفل السكربتات، واتشرح هناك` }],
-          ref: [
-            { t: "MDN: <canvas>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/canvas" },
-            { t: "MDN: <noscript>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/noscript" },
-            { t: "MDN: <template>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/template" },
-            { t: "MDN: <slot>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/slot" },
-            { t: "WHATWG: the canvas element", url: "https://html.spec.whatwg.org/multipage/canvas.html#the-canvas-element" },
-            { t: "WHATWG: scripting (noscript, template, slot)", url: "https://html.spec.whatwg.org/multipage/scripting.html" }
-          ],
-          desc: R`التلاتة دول HTML شغله بيبدأ لما JavaScript ييجي. [[<canvas>]] مساحة فاضية السكربت بيرسم عليها بالبيكسل. [[<noscript>]] محتوى بيظهر بس عند اللي JavaScript مقفول عنده. و [[<template>]] حتة HTML المتصفح بيقراها وميعرضهاش، لحد ما سكربت ينسخها ويحطها في الصفحة.
-ومعاهم [[<slot>]]: فتحة جوه component بيتحط فيها محتوى من برّه. الدرس ده بيشرح جزء الـ HTML بس: العنصر بيعمل إيه لوحده، وإيه اللي بيتكتب جواه. الرسم والنسخ والـ components في كورس JavaScript.`,
-          example: R`<canvas id="chart" width="300" height="120">عدد مرات سماع الحلقات: الأولى ٤٠، والتانية ٦٥، والتالتة ٩٠.</canvas>
-<script>
-  const ctx = document.getElementById("chart").getContext("2d");
-  ctx.fillStyle = "teal";
-  ctx.fillRect(20, 20, 100, 60);
-</script>
-<noscript><p>الرسم محتاج JavaScript. الأرقام مكتوبة في الجدول تحت.</p></noscript>
-<template id="episode-row">
-  <li><a href="#">عنوان الحلقة</a></li>
-</template>`,
-          flag: "script",
+| كتابة style | ولا حاجة لحد آخر الـ frame |
+| قراية مقاس بعد كتابة | layout كامل فورًا |
+| اكتب، اقرا، اكتب، اقرا | layout في كل لفة (500 هنا) |
+| اقرا الكل، اكتب الكل | layout واحد |
+| [[aspect-ratio]] | صفر JavaScript |`,
           lines: [
-            R`[[<canvas>]] بمقاس 300 × 120 بيكسل و [[id]] عشان السكربت يلاقيه. والكلام اللي جواه هو المحتوى البديل: نفس المعلومة اللي الرسم هيقولها، مكتوبة.`,
-            R`فتحة [[<script>]]: من هنا JavaScript. التلات سطور الجايين هم كل الرسم.`,
-            R`[[getElementById("chart")]] بيجيب الـ canvas، و [[getContext("2d")]] بيرجّع «أداة الرسم» بتاعته (اسمها context). كل أمر رسم بيتنادى عليها.`,
-            R`[[fillStyle]] لون التعبئة لأي شكل هيترسم بعد كده.`,
-            R`[[fillRect(x, y, العرض, الارتفاع)]]: مستطيل مليان، ركنه فوق-شمال عند (20,20)، وعرضه 100 وارتفاعه 60.`,
-            R`قفلة السكربت. لازم ييجي **بعد** الـ canvas في الكود، عشان يلاقيه موجود.`,
-            R`[[<noscript>]]: الفقرة دي بتظهر بس لو JavaScript مقفول في المتصفح. عند باقي الناس كأنها مش مكتوبة.`,
-            R`[[<template>]] بـ [[id]]: اللي جواه قالب، مبيتعرضش.`,
-            R`صف حلقة جوه القالب. موجود في الكود ومش موجود في الصفحة: لا بيترسم، ولا لينكه بيتداس، ولا [[querySelector]] بيلاقيه.`,
-            R`قفلة القالب. سكربت في الصفحة هينسخ اللي جواه مرة لكل حلقة ويملاه.`
+            "كل الكروت كـ array.",
+            R`[[for...of]] على الكروت واحد واحد، وكل لفة فيها قراية وكتابة.`,
+            R`بتقرا [[offsetWidth]] بعد ما كتبت height للكارت اللي قبله، فالمتصفح يعيد الـ layout كل لفة. 500 كارت = 500 reflow.`,
+            "قفلة.",
+            "القراية كلها مرة واحدة: layout واحد.",
+            "الكتابة كلها بعدها: المتصفح يحسب مرة واحدة في الـ frame الجاي.",
+            R`مع الـ scroll: حدّث في الـ frame الجاي بس. و [[passive]] هنا مش فارق لأن الـ scroll event مبيتلغيش أصلًا، فايدته الحقيقية مع [[wheel]] و [[touchmove]].`
           ],
-          teach: R`## الفكرة في سطرين
+          sol: R`النسخة الوحشة في Performance: بلوك Scripting طويل جواه عشرات أو مئات من البلوكات البنفسجي الصغيرة [[Layout]] ورا بعض، وعلى كتير منهم مثلث أحمر وتحذير «Forced reflow is a likely performance bottleneck». النسخة الكويسة: Layout واحد بس (أو اتنين) في الآخر.
 
-الصفحة من غير JavaScript هي HTML و CSS وبس. العناصر دي بتحدد اللي بيحصل على الحدود: مكان السكربت بيرسم فيه، ورسالة للي السكربت مش شغال عنده، ومخزن HTML السكربت بياخد منه.
+قست الفرق على 500 div: الوحشة أخدت حوالي 125ms (يعني أكتر من 7 frames متعطلة، والصفحة بتهنّج)، والكويسة حوالي 4ms. أكتر من 30 مرة أسرع بنفس النتيجة بالظبط، والفرق بيزيد مع عدد العناصر. والأحسن من الاتنين [[aspect-ratio: 4 / 3]] في الـ CSS: صفر JavaScript.
 
-القياسات من Chrome 157 على Windows 11.
-
----
-
-## ١. [[<canvas>]]
-
-المواصفة: [[<canvas>]] بيدّي السكربتات «لوحة bitmap» ترسم عليها: رسوم بيانية، ألعاب، تعديل صور. bitmap يعني شبكة بيكسلات، زي صورة PNG، مش عناصر.
-
-~~~live 148 canvas وعليه مستطيل اترسم بتلات سطور
-<canvas id="chart" width="300" height="120" style="border:1px solid #94a3b8">عدد مرات سماع الحلقات: الأولى ٤٠، والتانية ٦٥، والتالتة ٩٠.</canvas>
-<script>
-  const ctx = document.getElementById("chart").getContext("2d");
-  ctx.fillStyle = "teal";
-  ctx.fillRect(20, 20, 100, 60);
-</script>
-~~~
-
-**هتشوف إيه:** صندوق ليه خط رمادي رفيع (ده من [[border]] اللي مكتوب في [[style]] عشان حدود اللوحة تبان، والـ CSS ده بيتشرح في درس «box model»)، وجواه مستطيل أخضر مزرق. والجملة اللي جوه [[<canvas>]] مش ظاهرة.
-
-~~~text القياس من Chrome
-<canvas></canvas>                   width = 300   height = 150   display: inline     (فاضي وشفاف)
-بعد fillRect(20, 10, 100, 50):
-   البيكسل (30,20)  = 0,128,128,255      ← teal، و 255 يعني مش شفاف
-   البيكسل (150,80) = 0,0,0,0            ← شفاف: مفيش حاجة مرسومة هنا
-~~~
-
-- من غير سكربت، [[<canvas>]] مستطيل شفاف 300 × 150 مفيهوش أي حاجة.
-- الإحداثيات من فوق-شمال: x لليمين و y لتحت (زي [[coords]] في الدرس اللي فات).
-- اللي اترسم بقى بيكسلات. مفيش «عنصر مستطيل» تدوس عليه أو تلوّنه بالـ CSS أو قارئ الشاشة يشوفه. ده الفرق بينه وبين SVG.
-
-### [[width]] و [[height]] هنا مش زي الـ CSS
-
-~~~text القياس من Chrome
-<canvas width="200" height="100" style="width:400px; height:100px">
-   اللوحة (bitmap):  200 × 100          الصندوق في الصفحة:  400 × 100
-~~~
-
-الـ attributes بيحددوا **عدد بيكسلات اللوحة**. والـ CSS بيحدد **المقاس المعروض**. لو مختلفين، الرسم بيتمط زي صورة اتكبّرت: هنا كل حاجة هتبان عرضها الضعف ومهزوزة. فالمقاس يتكتب في الـ attributes.
-
-### المحتوى البديل
-
-MDN: اللي بين [[<canvas>]] و [[</canvas>]] بيتعرض في المتصفحات اللي مبتدعمش canvas. دي مبقتش موجودة، بس المحتوى ده ليه شغل تاني اتقاس:
-
-~~~text القياس من Chrome (شجرة الـ accessibility)
-<canvas width="200" height="100">رسم بياني: ... <a href="#t">الجدول</a></canvas>
-   على الشاشة: ارتفاع اللينك = 0 (مش مرسوم)
-   في الشجرة:  Canvas «»   وجواه   link «الجدول»          ← قارئ الشاشة شايف اللينك
-
-<canvas role="img" aria-label="رسم: ٣ أعمدة">      →  image «رسم: ٣ أعمدة»
-~~~
-
-يعني البديل هو اللي قارئ الشاشة بياخده بدل الرسم. اكتب فيه المعلومة اللي الرسم بيقولها (الأرقام، أو لينك لجدول)، مش «متصفحك لا يدعم canvas». ولرسم بسيط: [[role="img"]] و [[aria-label]] بيخلّوه يتقري كصورة باسمها.
-
-| عايز | العنصر |
-|---|---|
-| صورة جاهزة | [[<img>]] |
-| رسم من أشكال (أيقونة، مسقط، رسم بياني بسيط) بيتكبّر ويتداس ويتلوّن | SVG |
-| رسم بيتغيّر بسرعة أو فيه آلاف القطع (لعبة، تعديل صورة، رسم بياني تقيل) | [[<canvas>]] |
-
-باقي أوامر الرسم (خطوط، دواير، نص، صور، حركة) في كورس JavaScript، درس «canvas: ارسم أشكال وحرّكها».
-
----
-
-## ٢. [[<noscript>]]
-
-~~~live 126 230 نفس الكود في صفحتين: واحدة JavaScript مقفول فيها، وواحدة شغال
-<iframe sandbox title="JavaScript مقفول" width="250" height="96"
-  srcdoc="<noscript><p>الصفحة دي محتاجة JavaScript.</p></noscript><p>باقي الصفحة.</p>"></iframe>
-<iframe sandbox="allow-scripts" title="JavaScript شغال" width="250" height="96"
-  srcdoc="<noscript><p>الصفحة دي محتاجة JavaScript.</p></noscript><p>باقي الصفحة.</p>"></iframe>
-~~~
-
-**هتشوف إيه:** الصندوق الأول فيه سطرين: «الصفحة دي محتاجة JavaScript» و «باقي الصفحة». والتاني فيه «باقي الصفحة» بس. ([[sandbox]] الفاضي بيقفل السكربتات في الصندوق الأول، وده بيخلّي المتصفح يعامله كصفحة JavaScript مقفول فيها.)
-
-MDN: لو السكربتات مقفولة، [[<noscript>]] بيمثّل أولاده كـ HTML عادي. ولو شغالة، بيمثّلهم كـ **نص**.
-
-~~~text القياس من Chrome (JavaScript شغال)
-<noscript><p>...</p><img src="/ns-pixel.gif"></noscript>
-   مش مرسوم في الصفحة       children.length = 0       childNodes.length = 1 (نص واحد)
-   textContent = "<p>الصفحة محتاجة JavaScript. ..."     ← الكود نفسه كحروف، مش عناصر
-   الصورة اللي جواه: متطلبتش من السيرفر
-~~~
-
-يعني عند زائر JavaScript شغال عنده، اللي جوه [[<noscript>]] مبيتحوّلش لعناصر أصلًا: لا بيترسم، ولا صوره بتتحمّل، ولا [[querySelector]] بيلاقيه.
-
-- في [[<body>]]: بياخد أي محتوى (فقرة، لينك لنسخة أبسط، صورة).
-- في [[<head>]]: بياخد [[<link>]] و [[<style>]] و [[<meta>]] بس. مثلًا CSS بيظهر محتوى كان مستخبي ومستني سكربت.
-
-**اللي مبيعملوش:** [[<noscript>]] بيشتغل لما JavaScript **مقفول**. لو السكربت بتاعك محمّلش (النت قطع، أو فيه error، أو اتمنع)، JavaScript لسه «شغال» في المتصفح، فالـ [[<noscript>]] مش هيظهر. الحل الحقيقي: الصفحة الأساسية تبقى HTML شغال من غير سكربت، والسكربت يزوّد عليها.
-
----
-
-## ٣. [[<template>]]
-
-المواصفة: [[<template>]] بيعرّف حتة HTML السكربت يقدر ينسخها ويحطها في الصفحة. MDN: محتواه مبيتعرضش.
-
-~~~live 170 القالب مستخبي، وكل ضغطة بتنسخ منه صف
-<template id="row">
-  <li>🎧 <a href="#">حلقة جديدة</a></li>
-</template>
-<ul id="list">
-  <li>🎧 <a href="#">الحلقة ١ (مكتوبة في الصفحة)</a></li>
-</ul>
-<button type="button" onclick="list.append(row.content.cloneNode(true))">زوّد حلقة من القالب</button>
-~~~
-
-**هتشوف إيه:** قايمة فيها حلقة واحدة وزرار. الصف اللي جوه [[<template>]] مش ظاهر. كل ضغطة على الزرار بتزوّد صف «حلقة جديدة».
-
-السطر الوحيد من JavaScript هنا: [[list.append(row.content.cloneNode(true))]].
-
-- [[row.content]]: محتوى القالب. مش أولاد عاديين: «قطعة مستند» منفصلة (DocumentFragment).
-- [[cloneNode(true)]]: نسخة منه بكل اللي جواه. القالب نفسه بيفضل زي ما هو للمرة الجاية.
-- [[list.append(...)]]: النسخة بتتحط في آخر القايمة، ومن اللحظة دي بقت عناصر حقيقية.
-
-~~~text القياس من Chrome
-<template id="row"><li class="ep"><img src="/tpl-img.gif"><a>عنوان</a><script>window.tplRan = true</script></li></template>
-
-قبل النسخ:    display: none      template.childNodes.length = 0      template.content.children.length = 1
-              document.querySelectorAll(".ep").length = 0
-              الصورة: متطلبتش من السيرفر          السكربت اللي جواه: متشغّلش
-بعد نسختين:   querySelectorAll(".ep").length = 2
-              الصورة اتطلبت                       السكربت اشتغل       القالب لسه فيه نسخته
-~~~
-
-ده معنى «خامل» (inert): المتصفح قرا الـ HTML واتأكد إنه سليم، وحطه على جنب. لا صور بتتحمّل، ولا سكربتات بتشتغل، ولا CSS بيطبّق، لحد ما نسخة تدخل الصفحة.
-
-**ليه مش [[<div hidden>]]؟** الـ [[<div>]] المستخبي جزء من الصفحة: صوره بتتحمّل، وسكربتاته بتشتغل، و [[querySelectorAll]] بيلاقي اللي جواه، وقارئ الشاشة ممكن يوصله. [[<template>]] برّه ده كله.
-
----
-
-## ٤. [[<slot>]]
-
-[[<slot>]] «فتحة» جوه الـ shadow tree بتاع component: مكان بيقول «المحتوى اللي صاحب الصفحة هيكتبه جوه الـ component يتعرض هنا». والـ shadow tree شجرة عناصر خاصة بالـ component، مستخبية عن باقي الصفحة والـ CSS بتاعها.
-
-الـ HTML يقدر يعمل shadow tree من غير JavaScript: [[<template shadowrootmode="open">]] كأول ابن لعنصر. اسمها Declarative Shadow DOM.
-
-~~~live 86 كارت حلقة: القالب فيه فتحتين، والمحتوى بييجي من برّه
-<article>
-  <template shadowrootmode="open">
-    <style>h3 { color: teal; margin: 0; }</style>
-    <h3><slot name="title">حلقة من غير عنوان</slot></h3>
-    <p><slot>مفيش وصف لسه.</slot></p>
-  </template>
-  <span slot="title">الحلقة ٣: التراخيص</span>
-  نجيب الصور والموسيقى منين من غير مشاكل.
-</article>
-~~~
-
-**هتشوف إيه:** «الحلقة ٣: التراخيص» عنوان بلون أخضر مزرق، وتحته الوصف في فقرة. الـ [[<span>]] اللي كتبته اتعرض **جوه** الـ [[<h3>]] اللي في القالب.
-
-| الحتة | معناها |
-|---|---|
-| [[<slot name="title">]] | فتحة ليها اسم. اللي جواها («حلقة من غير عنوان») محتوى افتراضي بيظهر لو محدش ملا الفتحة |
-| [[<span slot="title">]] | الـ attribute [[slot]] على عنصر برّه القالب: «حطني في الفتحة اللي اسمها title» |
-| [[<slot>]] من غير اسم | الفتحة الافتراضية: بتاخد كل اللي ملوش [[slot]] (هنا جملة الوصف) |
-
-~~~text القياس من Chrome
-article.shadowRoot.mode = "open"        عدد الـ <template> اللي فضلت في الصفحة = 0
-الفتحة title  ←  <span>                 الفتحة الافتراضية  ←  النص "نجيب الصور والموسيقى منين من غير مشاكل."
-لون الـ <h3> اللي جوه القالب = rgb(0, 128, 128)    (الـ style اللي جوه القالب طبّق جواه بس)
-
-<slot>نص</slot> برّه أي shadow tree:     display: contents      النص ظاهر عادي
-<template shadowrootmode="banana">:      مفيش shadow root، والقالب فضل template عادي (مستخبي)، وفي الـ Console:
-   Invalid declarative shadowrootmode attribute value. Valid values are "open" and "closed".
-~~~
-
-- المتصفح لما قابل القالب ده، **شاله** من الصفحة وعمل مكانه shadow root للعنصر الأب.
-- [[<slot>]] لوحده برّه shadow tree ملوش أي تأثير: محتواه بيتعرض كأنه مش موجود.
-- الـ CSS اللي جوه القالب مبيخرجش برّه، والـ CSS بتاع الصفحة مبيدخلش جوه.
-
-### attributes الـ shadow root على [[<template>]]
-
-| attribute | بيعمل إيه (من MDN) | القياس في Chrome 157 | الحالة |
-|---|---|---|---|
-| [[<template shadowrootmode="open">]] | بيعمل shadow root للأب. [[open]] بيخلّيه يتقري من JavaScript، و [[closed]] بيخبّيه | [[shadowRoot.mode = "open"]]، ومع [[closed]]: [[shadowRoot = null]] | Baseline |
-| [[<template shadowrootclonable>]] | نسخ العنصر الأب ([[cloneNode]]) ياخد الـ shadow root معاه | [[clonable = true]] | Baseline جديد |
-| [[<template shadowrootdelegatesfocus>]] | الضغط على حتة مبتاخدش focus جوه القالب بيودّي الـ focus لأول عنصر ياخده | [[delegatesFocus = true]] | Baseline جديد |
-| [[<template shadowrootserializable>]] | [[getHTML()]] يقدر يكتب الـ shadow root كنص تاني | [[serializable = true]] | Baseline جديد |
-| [[<template shadowrootslotassignment="manual">]] | الفتحات مبتتملاش لوحدها، والسكربت بيوزّع بـ [[slot.assign()]]. الافتراضي [[named]] | [[slotAssignment = "manual"]]، ومفيش حاجة اتوزّعت | مش Baseline |
-| [[<template shadowrootcustomelementregistry>]] | الـ shadow root يبدأ من غير سجل custom elements، وسكربت يركّبله سجل خاص بعدين | [[customElementRegistry = null]] | Baseline جديد |
-
-«Baseline» يعني شغال في كل المتصفحات الأساسية من سنين، و «Baseline جديد» يعني شغال في آخر نسخة من كل واحد ولسه مش في النسخ الأقدم. الحالة من بيانات المنهج (web-features)، مش متقاسة هنا: احنا قسنا Chrome بس. في كود للناس كلها: [[shadowrootmode]] آمن، والباقي راجع جدول الدعم في MDN قبله.
-
-دول كلهم إعدادات لـ component بيتبني بـ JavaScript. شرحهم الكامل في كورس JavaScript: دروس «shadow DOM» و «slots» و «Declarative Shadow DOM و :defined».
-
----
-
-## ٥. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| مقاس الـ canvas في الـ CSS بس | اللوحة لسه 300 × 150 والرسم بيتمط |
-| السكربت مكتوب قبل [[<canvas>]] | [[getElementById]] بيرجّع [[null]]، والـ Console فيه error |
-| canvas من غير محتوى بديل ولا [[aria-label]] | قارئ الشاشة: «Canvas» من غير اسم ولا معلومة |
-| الاعتماد على [[<noscript>]] لما السكربت يقع | مبيظهرش: JavaScript مش مقفول، السكربت بس اللي فشل |
-| رسالة «جاري التحميل» جوه [[<template>]] | عمرها ما بتظهر: القالب مبيتعرضش |
-| [[document.querySelector]] على عنصر جوه القالب | [[null]]: لازم [[template.content.querySelector]] |
-| [[<slot>]] في صفحة عادية من غير shadow tree | ملوش تأثير |
-| [[shadowrootmode]] على قالب مش أول ابن، أو بقيمة غلط | بيفضل قالب عادي مستخبي |
-
----
-
-## الخلاصة
-
-- [[<canvas width height>]]: لوحة بيكسلات فاضية، والرسم بـ JavaScript. المقاس في الـ attributes، والمعلومة في المحتوى البديل.
-- [[<noscript>]]: بيظهر بس لما JavaScript مقفول، مش لما السكربت يفشل.
-- [[<template>]]: HTML خامل، بيتنسخ بـ [[content.cloneNode(true)]].
-- [[<slot>]]: فتحة جوه shadow tree، بتتملي بالـ attribute [[slot]] من برّه.
-- الباقي في كورس JavaScript.`,
-          try: R`اعمل [[lab.html]] فيها: (١) [[<canvas>]] 200 × 100 وسكربت بيرسم مستطيلين بلونين مختلفين. (٢) [[<noscript>]] فيه جملة. (٣) [[<template>]] فيه [[<p>]] مكتوب فيه «أنا في القالب»، وبرّه القالب [[<p>]] مكتوب فيه «أنا في الصفحة». افتحها في Chrome، وفي الـ Console اكتب [[document.querySelectorAll("p").length]]. الرقم كام؟ وليه مش ٣؟`,
-          sol: R`~~~live 168 lab.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>معمل العناصر</title>
-</head>
+لو مشفتش فرق، غالبًا العناصر بعرض ثابت ومش بيتأثروا ببعض، أو الجهاز سريع جدًا: زوّد العدد أو فعّل CPU throttling ‏(4x slowdown) في Performance.`,
+          solCode: R`<style>.card { width: 30%; display: inline-block; border: 1px solid; }</style>
 <body>
-<canvas id="c" width="200" height="100" role="img" aria-label="مستطيلين: أخضر وبرتقالي"></canvas>
 <script>
-  const ctx = document.getElementById("c").getContext("2d");
-  ctx.fillStyle = "teal";
-  ctx.fillRect(10, 10, 80, 80);
-  ctx.fillStyle = "orange";
-  ctx.fillRect(110, 30, 80, 40);
-</script>
-<noscript><p>JavaScript مقفول عندك.</p></noscript>
-<template><p>أنا في القالب</p></template>
-<p>أنا في الصفحة</p>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** مربع أخضر مزرق ومستطيل برتقالي جنب بعض، وتحتهم «أنا في الصفحة». الجملتين التانيين مش ظاهرين.
-
-**الرقم:** [[1]]. فيه تلات [[<p>]] مكتوبين في الملف، وواحد بس في الصفحة:
-
-- اللي جوه [[<noscript>]]: JavaScript شغال، فمحتواه نص مش عناصر.
-- اللي جوه [[<template>]]: في [[template.content]]، مش في الصفحة.
-
-**الغلطة الشائعة:** تغيّر [[fillStyle]] بعد [[fillRect]]. اللون بيتحدد قبل الرسم، وبيفضل ماشي على كل اللي بعده لحد ما تغيّره.
-
-~~~text القياس من Chrome
-document.querySelectorAll("p").length = 1
-document.querySelector("template").content.querySelectorAll("p").length = 1
-البيكسل (20,20) = 0,128,128,255 (teal)      البيكسل (120,40) = 255,165,0,255 (orange)
-~~~`,
-          deep: {
-            why: R`[[<canvas>]] اتعمل عشان الرسم السريع اللي الـ DOM مبيقدرش عليه. [[<noscript>]] من أيام ما JavaScript كان اختياري، ولسه مفيد لرسالة واضحة أو بديل. و [[<template>]] حل مشكلة قديمة: المبرمجين كانوا بيخبّوا قوالب الـ HTML في [[<div style="display:none">]] أو جوه [[<script type="text/template">]] كنص، والاتنين ليهم مشاكل (الأول صوره بتتحمّل، والتاني مبيتفحصش).`,
-            how: R`الـ parser بيعامل كل واحد معاملة خاصة. [[<canvas>]]: بيعمل bitmap بمقاس الـ attributes، وأولاده بيدخلوا الـ DOM من غير ما يترسموا. [[<noscript>]]: لو السكربتات شغالة بيقرا اللي جواه كنص خام لحد القفلة، ولو مقفولة بيقراه HTML. [[<template>]]: أولاده بيتحطوا في DocumentFragment تابع لمستند تاني خامل، وده اللي بيمنع التحميل والتشغيل. ولو عليه [[shadowrootmode]] وهو أول ابن: بيتعمل shadow root للأب والمحتوى بيتحط فيه، والقالب نفسه مبيدخلش الصفحة.`,
-            when: R`[[<canvas>]]: رسم بياني تقيل، لعبة، توقيع بالماوس، تعديل صور. [[<noscript>]]: جملة «الجزء ده محتاج JavaScript» أو لينك لنسخة بسيطة. [[<template>]]: صف أو كارت بيتكرر والسكربت بيملاه ببيانات (قايمة حلقات، نتايج بحث). [[<slot>]]: جوه web component بتكتبه.`,
-            mistakes: R`مقاس canvas بالـ CSS. سكربت الرسم قبل العنصر. canvas من غير بديل. انتظار [[<noscript>]] لما السكربت يفشل. محتوى مهم جوه [[<template>]] على أمل إنه يظهر. و [[<slot>]] من غير shadow tree.`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** رسم «مرات سماع الحلقة ١» في صفحة «المحطة». السكربت جاهز وبيرسم على عنصر [[id]] بتاعه [[plays]]. اكتب الـ [[<canvas>]] اللي ناقص: 300 × 100، وبيتقري لقارئ الشاشة كصورة اسمها «رسم بياني: الحلقة ١ اتسمعت ٤٠ مرة»، وجواه نفس المعلومة كنص بديل. وحطه في المكان اللي يخلّي السكربت يلاقيه. (من قسم ١ في الشرح)`, done: R`المستطيل الأخضر بيترسم تحت العنوان، وكل الشروط ✓.`, work: { h: 200, start: R`<h2>مرات السماع</h2>
-<script>
-  const ctx = document.getElementById("plays").getContext("2d");
-  ctx.fillStyle = "teal";
-  ctx.fillRect(10, 30, 160, 40);
-</script>`, checks: [
-              { say: R`فيه [[<canvas id="plays">]]`, q: "canvas#plays" },
-              { say: R`مقاسه 300 × 100 في الـ attributes`, q: "canvas[width=\"300\"][height=\"100\"]" },
-              { say: R`[[role="img"]] و [[aria-label]]`, q: "canvas[role=\"img\"][aria-label]" },
-              { say: R`جواه نص بديل فيه الرقم «٤٠»`, q: "canvas", has: "٤٠" },
-              { say: R`الـ canvas مكتوب قبل السكربت`, q: "canvas#plays ~ script" },
-            ] }, sol: R`~~~live 186 الحل
-<h2>مرات السماع</h2>
-<canvas id="plays" width="300" height="100" role="img" aria-label="رسم بياني: الحلقة ١ اتسمعت ٤٠ مرة">الحلقة ١ اتسمعت ٤٠ مرة.</canvas>
-<script>
-  const ctx = document.getElementById("plays").getContext("2d");
-  ctx.fillStyle = "teal";
-  ctx.fillRect(10, 30, 160, 40);
-</script>
-~~~
-
-**هتشوف إيه:** تحت العنوان شريط أخضر مزرق عرضه 160. في البداية مكانش فيه حاجة: السكربت كان بيدوّر على [[plays]] وميلاقيهوش.
-
-**ليه كده:**
-
-- [[id="plays"]] هو اللي السكربت بيدوّر عليه.
-- المقاس في الـ attributes عشان اللوحة تبقى 300 × 100 بيكسل فعلًا.
-- الـ canvas قبل السكربت: المتصفح بيقرا من فوق لتحت، والسكربت بيشتغل أول ما يتقري.
-
-**الغلطة الشائعة:** تحط الـ canvas تحت السكربت. في الـ Console: [[TypeError: Cannot read properties of null (reading 'getContext')]].
-
-~~~text القياس من Chrome
-canvas: 300 × 100      البيكسل (20,40) = 0,128,128,255      image «رسم بياني: الحلقة ١ اتسمعت ٤٠ مرة»
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «إحصائيات المحطة» فيها ٣ مشاكل: المربع المرسوم طالع مبطّط مش مربع، وجملة «الأرقام بتتحدّث كل ساعة» مش ظاهرة لحد، والـ canvas ملوش أي اسم. (من قسم ١ و ٣ و ٥ في الشرح)`, done: R`المربع بقى مربع، والجملة ظاهرة، والـ canvas ليه اسم، وكل الشروط ✓.`, work: { h: 200, start: R`<canvas id="c" style="width:300px;height:60px;border:1px solid #94a3b8"></canvas>
-<script>
-  const ctx = document.getElementById("c").getContext("2d");
-  ctx.fillStyle = "teal";
-  ctx.fillRect(10, 5, 50, 50);
-</script>
-<template><p>الأرقام بتتحدّث كل ساعة.</p></template>`, checks: [
-              { say: R`الـ canvas مقاسه في الـ attributes: 300 × 60`, q: "canvas[width=\"300\"][height=\"60\"]" },
-              { say: R`مفيش [[width]] ولا [[height]] في [[style]] بتاعه`, q: "canvas[style*=\"width\"], canvas[style*=\"height\"]", n: 0 },
-              { say: R`الجملة في [[<p>]] ظاهر في الصفحة`, q: "p", has: "الأرقام بتتحدّث كل ساعة" },
-              { say: R`مفيش [[<template>]]`, q: "template", n: 0 },
-              { say: R`الـ canvas ليه [[aria-label]] أو نص بديل`, q: "canvas[aria-label], canvas:not(:empty)" },
-            ] }, sol: R`~~~live 130 بعد التصليح
-<canvas id="c" width="300" height="60" role="img" aria-label="مربع أخضر: عدد الحلقات" style="border:1px solid #94a3b8"></canvas>
-<script>
-  const ctx = document.getElementById("c").getContext("2d");
-  ctx.fillStyle = "teal";
-  ctx.fillRect(10, 5, 50, 50);
-</script>
-<p>الأرقام بتتحدّث كل ساعة.</p>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 88 قبل
-<canvas id="c" style="width:300px;height:60px;border:1px solid #94a3b8"></canvas>
-<script>
-  const ctx = document.getElementById("c").getContext("2d");
-  ctx.fillStyle = "teal";
-  ctx.fillRect(10, 5, 50, 50);
-</script>
-<template><p>الأرقام بتتحدّث كل ساعة.</p></template>
-~~~
-
-**هتشوف إيه:**
-
-- قبل: مستطيل مبطّط (عرضه 50 وارتفاعه 20) وحوافه مهزوزة شوية، ومفيش أي جملة.
-- بعد: مربع 50 × 50 حاد، وتحته الجملة.
-
-| المشكلة | التصليح | ليه |
-|---|---|---|
-| المقاس في [[style]] بس | [[width="300" height="60"]] | اللوحة كانت 300 × 150 واتضغطت في 60: كل ارتفاع اتضرب في 0.4 |
-| جملة جوه [[<template>]] | [[<p>]] عادي | القالب مبيتعرضش أبدًا |
-| canvas من غير اسم | [[role="img"]] و [[aria-label]] | قارئ الشاشة كان بيقول «Canvas» بس |
-
-**الغلطة الشائعة:** تصلّح التبطيط بإنك تغيّر أرقام [[fillRect]] لحد ما يبان مربع. الرسم هيفضل مهزوز، وأي شكل تاني هيتبطّط برده.
-
-~~~text القياس من Chrome
-قبل:   اللوحة 300 × 150    الصندوق 300 × 60     المربع المرسوم 50 × 50 باين 50 × 20
-بعد:   اللوحة 300 × 60     الصندوق 300 × 60     باين 50 × 50
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** اكتب على ورقة: كام حلقة هتظهر في القايمة؟ وبعدين خلّي التلات حلقات يظهروا من غير أي JavaScript، وسيب القالب فيه صف واحد فاضي للحلقات الجاية. (من قسم ٣ في الشرح)`, done: R`كتبت توقّعك، والقايمة فيها تلات حلقات ظاهرين، والقالب لسه موجود، وكل الشروط ✓.`, work: { h: 170, start: R`<ul>
-  <li>الحلقة ١: الصوت</li>
-  <template id="row">
-    <li>الحلقة ٢: الكابشن</li>
-    <li>الحلقة ٣: التراخيص</li>
-  </template>
-</ul>`, checks: [
-              { say: R`القايمة فيها تلات [[<li>]] ظاهرين`, q: "ul > li", n: 3 },
-              { say: R`الحلقة ٢ ظاهرة`, q: "ul > li", has: "الحلقة ٢" },
-              { say: R`الحلقة ٣ ظاهرة`, q: "ul > li", has: "الحلقة ٣" },
-              { say: R`القالب [[<template id="row">]] لسه موجود`, q: "template#row" },
-            ] }, sol: R`~~~live 92 بعد التعديل
-<ul>
-  <li>الحلقة ١: الصوت</li>
-  <li>الحلقة ٢: الكابشن</li>
-  <li>الحلقة ٣: التراخيص</li>
-  <template id="row">
-    <li></li>
-  </template>
-</ul>
-~~~
-
-وده اللي كان باين قبل التعديل:
-
-~~~live 56 قبل
-<ul>
-  <li>الحلقة ١: الصوت</li>
-  <template id="row">
-    <li>الحلقة ٢: الكابشن</li>
-    <li>الحلقة ٣: التراخيص</li>
-  </template>
-</ul>
-~~~
-
-**التوقّع:** حلقة واحدة. الاتنين التانيين جوه [[<template>]]، فمش في الصفحة.
-
-**هتشوف إيه:** قبل: نقطة واحدة. بعد: تلات نقط، والصف الفاضي اللي في القالب مش ظاهر.
-
-**ليه كده:** المحتوى اللي الزائر لازم يشوفه يتكتب HTML عادي. القالب للي **هيتكرر** بسكربت: شكل الصف من غير بيانات. ([[<template>]] مسموح جوه [[<ul>]].)
-
-**الغلطة الشائعة:** تسيب بيانات حقيقية في القالب «والسكربت يطلّعها». لو السكربت محمّلش، الزائر ومحرك البحث مش شايفين غير حلقة واحدة.
-
-~~~text القياس من Chrome
-قبل:   document.querySelectorAll("li").length = 1      template.content.children.length = 2
-بعد:   document.querySelectorAll("li").length = 3      template.content.children.length = 1
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت حلقة معمول بقالب فيه فتحتين: [[title]] للعنوان، وفتحة افتراضية للوصف. الكارت فاضي دلوقتي فبيعرض الكلام الافتراضي. املاه **من برّه القالب**: العنوان «الحلقة ٤: الخرايط» في [[<span>]] رايح للفتحة [[title]]، والوصف «صورة فيها كذا لينك.» كنص عادي. ومتغيّرش حاجة جوه [[<template>]]. (من قسم ٤ في الشرح)`, done: R`الكارت بيعرض «الحلقة ٤: الخرايط» بالأخضر وتحته الوصف، بدل «حلقة من غير عنوان»، وكل الشروط ✓.`, work: { h: 150, start: R`<article>
-  <template shadowrootmode="open">
-    <style>h3 { color: teal; margin: 0; }</style>
-    <h3><slot name="title">حلقة من غير عنوان</slot></h3>
-    <p><slot>مفيش وصف لسه.</slot></p>
-  </template>
-</article>`, checks: [
-              { say: R`فيه [[<span slot="title">]] ابن مباشر للـ [[<article>]]`, q: "article > span[slot=\"title\"]" },
-              { say: R`العنوان فيه «الحلقة ٤»`, q: "article > span[slot=\"title\"]", has: "الحلقة ٤" },
-              { say: R`الوصف مكتوب جوه الـ [[<article>]]`, q: "article", has: "صورة فيها كذا لينك" },
-              { say: R`القالب لسه أول ابن وعليه [[shadowrootmode="open"]]`, q: "article > template[shadowrootmode=\"open\"]:first-child" },
-            ] }, sol: R`~~~live 86 الحل
-<article>
-  <template shadowrootmode="open">
-    <style>h3 { color: teal; margin: 0; }</style>
-    <h3><slot name="title">حلقة من غير عنوان</slot></h3>
-    <p><slot>مفيش وصف لسه.</slot></p>
-  </template>
-  <span slot="title">الحلقة ٤: الخرايط</span>
-  صورة فيها كذا لينك.
-</article>
-~~~
-
-وده اللي كان باين قبل:
-
-~~~live 52 قبل
-<article>
-  <template shadowrootmode="open">
-    <style>h3 { color: teal; margin: 0; }</style>
-    <h3><slot name="title">حلقة من غير عنوان</slot></h3>
-    <p><slot>مفيش وصف لسه.</slot></p>
-  </template>
-</article>
-~~~
-
-**هتشوف إيه:** قبل: «حلقة من غير عنوان» و «مفيش وصف لسه». بعد: «الحلقة ٤: الخرايط» بنفس اللون والحجم (جوه الـ [[<h3>]] بتاع القالب)، وتحتها الوصف.
-
-**ليه كده:**
-
-- [[slot="title"]] على الـ [[<span>]] بيودّيه للفتحة اللي [[name]] بتاعها [[title]].
-- النص اللي ملوش [[slot]] بيروح للفتحة اللي من غير اسم.
-- الكلام اللي جوه [[<slot>]] في القالب افتراضي: بيتعرض بس لو الفتحة فضلت فاضية.
-
-**الغلطة الشائعة:** تكتب العنوان جوه القالب مكان [[<slot>]]. هيظهر، بس كده القالب بقى لكارت واحد، وفكرته إن نفس القالب يخدم كل الكروت.
-
-~~~text القياس من Chrome
-قبل:   الفتحتين فاضيين ← المحتوى الافتراضي معروض
-بعد:   title ← <span>      الافتراضية ← النص       article.shadowRoot.mode = "open"
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب في الصفحة [[<noscript>الموقع محتاج JavaScript</noscript>]]، وبعدين ملف [[app.js]] اتمسح من السيرفر بالغلط، فالصفحة فتحت فاضية عند الكل **ومن غير** الرسالة. اشرحله في ٣ سطور ليه الرسالة مظهرتش، وإيه اللي كان المفروض يتعمل. (من قسم ٢ في الشرح، جزء «اللي مبيعملوش»)`, done: R`٣ سطور: شرط ظهور [[<noscript>]]، وليه مش متحقق، والحل.`, sol: R`إجابة نموذجية:
-
-1. [[<noscript>]] بيظهر في حالة واحدة: JavaScript **مقفول** في المتصفح (من الإعدادات، أو إضافة بتمنعه، أو [[sandbox]] من غير [[allow-scripts]]).
-2. عند زوارك JavaScript شغال. اللي حصل إن ملف واحد رجع 404. المتصفح لسه «بيدعم السكربتات»، فاعتبر محتوى [[<noscript>]] نص ومرسمهوش.
-3. الحل إن الصفحة متبقاش فاضية من غير السكربت: المحتوى الأساسي (العناوين، قايمة الحلقات، المشغّلات) HTML مكتوب، والسكربت يزوّد الإضافات. ساعتها لو الملف وقع، الزائر يشوف الصفحة ناقصة ميزة، مش فاضية.
-
-~~~text القياس من Chrome (JavaScript شغال)
-noscript:   مش مرسوم      children.length = 0      الصور اللي جواه متطلبتش
-iframe بـ sandbox فاضي (السكربتات مقفولة):   محتوى noscript اتعرض واتحمّلت صورته
-~~~` },
-          ]
-        },
-        {
-          cmd: "replaced elements والتراخيص",
-          title: "ليه الصورة والفيديو بيتصرفوا غير باقي العناصر، وتجيب الميديا منين من غير مشاكل",
-          pre: [
-            { to: "css/img", why: R`[[loading]] و [[fetchpriority]] و [[width]] و [[height]] اتشرحوا هناك. الدرس ده بيزوّد [[decoding]] وبيجمع التلاتة في جدول` },
-            { to: "css/figure و figcaption", why: R`سطر «مصدر الصورة ورخصتها» بيتكتب في [[<figcaption>]]` }
-          ],
-          ref: [
-            { t: "MDN Glossary: Replaced elements", url: "https://developer.mozilla.org/en-US/docs/Glossary/Replaced_elements" },
-            { t: "MDN: <img> (decoding, fetchpriority, loading)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img" },
-            { t: "MDN Curriculum: Semantic HTML (2.6 Media)", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
-            { t: "Creative Commons: About CC Licenses", url: "https://creativecommons.org/share-your-work/cclicenses/" },
-            { t: "Creative Commons: Recommended practices for attribution", url: "https://wiki.creativecommons.org/Recommended_practices_for_attribution" },
-            { t: "WHATWG: the img element (decoding)", url: "https://html.spec.whatwg.org/multipage/embedded-content.html#attr-img-decoding" }
-          ],
-          desc: R`«replaced element» اسم المجموعة اللي فيها [[<img>]] و [[<video>]] و [[<iframe>]] وإخواتهم: عناصر محتواها مش من كلام الصفحة، المتصفح «بيبدّل» مكانها حاجة جاية من برّه (صورة، فيديو، صفحة). وده بيفسّر تصرفات غريبة عليها: inline وبتاخد عرض وارتفاع، وليها مقاس من نفسها، وتحتها فراغ صغير.
-والنص التاني من الدرس عن الميديا نفسها: [[decoding]] آخر تلميحات الصورة، وبعدها السؤال اللي قبل أي كود: الصورة أو الصوت ده بتاع مين، ومسموحلي أستخدمه إزاي؟`,
-          example: R`<figure>
-  <img src="media/studio.jpg" alt="استوديو المحطة: مايكين على ترابيزة خشب" width="800" height="450" loading="lazy" decoding="async">
-  <figcaption>«استوديو صغير» تصوير سلمى فؤاد، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتقصّت من الأصل.</figcaption>
-</figure>`,
-          flag: "script",
-          lines: [
-            R`[[<figure>]] بيجمع الصورة وسطر الكلام اللي تحتها في وحدة واحدة.`,
-            R`الصورة: [[alt]] بيوصفها، و [[width]] و [[height]] بيحجزوا مكانها، و [[loading="lazy"]] بيأجّل تحميلها لحد ما تقرّب، و [[decoding="async"]] بيقول للمتصفح «فكّ الصورة على مهلك، ومتعطّلش رسم باقي الصفحة عشانها».`,
-            R`سطر النسبة (attribution): اسم العمل، وصاحبه، ورخصته بلينك لنص الرخصة، وإنك عدّلت فيه. [[rel="license"]] بيقول إن اللينك ده هو رخصة المحتوى.`,
-            R`قفلة [[</figure>]]: الصورة ونسبتها مع بعض، فلو الصورة اتنقلت في الصفحة النسبة تتنقل معاها.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-معظم العناصر محتواها هو الكلام والعناصر اللي جواها في ملف الـ HTML. شوية عناصر محتواها بييجي من ملف تاني، والـ CSS بيتعامل مع «الصندوق» بتاعها بس من غير ما يعرف اللي جواه. دول الـ replaced elements.
-
-القياسات من Chrome 157 على Windows 11. وجزء التراخيص من موقع Creative Commons ومن منهج MDN، ومفيش فيه حاجة تتقاس.
-
----
-
-## ١. يعني إيه replaced element
-
-MDN: عناصر HTML محتواها «بيتبدّل» بمورد خارجي أو بمحتوى متعرّف برّه بنية المستند، وشكلها مستقل عن نموذج التنسيق بتاع CSS.
-
-| العنصر | replaced؟ (من MDN) | مقاسه من غير أي CSS (متقاس) |
-|---|---|---|
-| [[<img>]] | دايمًا | مقاس ملف الصورة نفسه (صورة 120 × 60 خدت 120 × 60) |
-| [[<video>]] | دايمًا | 300 × 150 لحد ما معلومات الفيديو توصل |
-| [[<iframe>]] | دايمًا | 300 × 150 (و 2px برواز) |
-| [[<embed>]] | دايمًا | 0 × 0 من غير ملف |
-| [[<audio>]] | في حالات | 300 × 54 بـ [[controls]]، ومن غيره مبيترسمش |
-| [[<canvas>]] | في حالات | 300 × 150 |
-| [[<object>]] | في حالات | 300 × 150 |
-| [[<input type="image">]] | الوحيد من عناصر الفورم | مقاس صورته |
-
-وباقي عناصر الفورم ([[<input>]] و [[<button>]] و [[<textarea>]])؟ MDN: دي «widgets» مش replaced، ما عدا [[<input type="image">]].
-
-### ده بيفرق في إيه
-
-**١. inline، وبياخد عرض وارتفاع.**
-
-~~~live 76 صورة وكلمة، الاتنين inline، وعلى الاتنين نفس الـ CSS: width 200px و height 50px
-<img alt="" style="width:200px; height:50px" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-<span style="width:200px; height:50px; background:#fde68a">كلمة</span>
-~~~
-
-**هتشوف إيه:** الصورة بقت 200 × 50 (واتمطّت). والكلمة فضلت بحجمها، وخلفيتها الصفرا على قدها بس.
-
-~~~text القياس من Chrome
-<img style="width:200px; height:50px">     display: inline     الحجم 200 × 50
-<span style="width:200px; height:50px">    display: inline     الحجم 21.9 × 17      ← اتجاهلهم
-~~~
-
-العنصر الـ inline العادي بيتجاهل [[width]] و [[height]] (درس «display»). الـ replaced element inline برده، بس بيحترمهم، لأن ليه صندوق بمقاس.
-
-**٢. ليه مقاس من نفسه.** الصورة عارفة عرضها وارتفاعها ونسبتهم من الملف. واللي ملوش مقاس (iframe، أو فيديو لسه متحمّلش) بياخد 300 × 150. عشان كده [[width]] و [[height]] في الـ HTML مهمين: بيدّوا المتصفح المقاس قبل ما الملف يوصل (درس «CLS»).
-
-**٣. اللي جواه بيتظبط بـ [[object-fit]].** لما الصندوق نسبته غير نسبة المحتوى، [[object-fit]] و [[object-position]] بيقرروا المحتوى يتقص ولا يتمط (درس «object-fit»). الخاصيتين دول للـ replaced elements بس.
-
-**٤. تحته فراغ صغير.**
-
-~~~live 198 نفس الصورة مرتين جوه صندوق أصفر: الأولى inline، والتانية display: block
-<div style="background:#fde68a; width:320px; margin-bottom:12px"><img alt="" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E"></div>
-<div style="background:#fde68a; width:320px"><img alt="" width="320" height="80" style="display:block" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E"></div>
-~~~
-
-**هتشوف إيه:** تحت الصورة الأولى شريط أصفر رفيع. تحت التانية مفيش.
-
-~~~text القياس من Chrome (صورة ارتفاعها 60)
-الصورة inline:            ارتفاع الصندوق اللي حواليها = 64     ← 4px زيادة
-الصورة display: block:    ارتفاع الصندوق = 60
-~~~
-
-الصورة الـ inline قاعدة على سطر الكتابة (baseline) زي الحرف، والسطر سايب تحتها مكان لديل الحروف اللي بتنزل (زي «ج» و «ع»). [[display: block]] بيطلّعها من السطر. ده سبب الفراغ اللي بيظهر تحت أي صورة في كارت.
-
-**٥. الـ CSS مبيدخلش جواه.** متقدرش تلوّن أزرار [[<video controls>]] ولا تنسّق صفحة جوه [[<iframe>]] من صفحتك. و [[::before]] و [[::after]] مبيشتغلوش على [[<img>]] (من مواصفة CSS، متقاسش هنا): مفيش «جوه» يتحط فيه محتوى.
-
----
-
-## ٢. [[<img decoding="async">]]
-
-ملف الصورة (JPEG أو WebP) مضغوط. عشان يترسم، المتصفح لازم «يفكّه» (decode) لبيكسلات، وده بياخد وقت في الصور الكبيرة. [[decoding]] تلميح: الفكّ ده يحصل إمتى بالنسبة لرسم باقي الصفحة.
-
-| القيمة | معناها (من MDN) |
-|---|---|
-| [[sync]] | فكّ الصورة مع رسم باقي المحتوى، واعرض الكل مرة واحدة |
-| [[async]] | ارسم باقي المحتوى الأول، وفكّ الصورة واعرضها بعده |
-| [[auto]] | المتصفح يقرر. ده الافتراضي |
-
-~~~text القياس من Chrome
-<img>                       decoding = "auto"
-<img decoding="async">      decoding = "async"
-<img decoding="banana">     decoding = "auto"      ← القيمة الغلط بترجع للافتراضي
-~~~
-
-MDN صريح في ده: على صورة عادية مكتوبة في الـ HTML، الفرق صعب يتشاف بالعين (بيتقاس بالأدوات). الفرق بيبان أكتر لما JavaScript بيزوّد صور كبيرة للصفحة. فاستخدامه العملي: [[decoding="async"]] على الصور الكبيرة اللي مش أهم حاجة في الشاشة، ومش هيضرّ. تأثيره على الوقت متقاسش هنا.
-
----
-
-## ٣. تلميحات الصورة التلاتة في جدول
-
-| | [[loading]] | [[decoding]] | [[fetchpriority]] |
-|---|---|---|---|
-| بيتحكم في | **إمتى** الملف يتطلب | **إمتى** الملف يتفكّ بالنسبة للرسم | **ترتيب** الملف في طابور التحميل |
-| القيم | [[eager]] و [[lazy]] | [[sync]] و [[async]] و [[auto]] | [[high]] و [[low]] و [[auto]] |
-| من غيره (الخاصية في Chrome) | [[auto]] (يعني يتحمّل على طول) | [[auto]] | [[auto]] |
-| صورة الهيرو (أول الشاشة) | متكتبوش | متكتبوش | [[high]] |
-| صور تحت في الصفحة | [[lazy]] | [[async]] | متكتبوش |
-| اتشرح في | درس «img» قسم ٢ | هنا | درس «img» |
-
-التلاتة «تلميحات»: المتصفح ممكن ميلتزمش. والقاعدة اللي بتجمعهم: الصورة الأهم في أول الشاشة تاخد [[fetchpriority="high"]] ومتاخدش [[lazy]]، وكل اللي تحت ياخد [[loading="lazy" decoding="async"]]. وكلهم محتاجين [[width]] و [[height]].
-
----
-
-## ٤. الميديا بتيجي منين: التراخيص
-
-كل صورة وصوت وفيديو وخط ليه صاحب. «لقيتها على النت» مش إذن. اللي بيحدد مسموحلك بإيه هو **الرخصة** (license): الشروط اللي صاحب العمل حاططها لاستخدامه.
-
-### أنواع التراخيص
-
-| النوع | معناه | محتاج منك |
-|---|---|---|
-| ملكية عامة (public domain) و CC0 | صاحبه اتنازل عن حقوقه، أو مدتها خلصت | ولا حاجة. موقع CC عن CC0: من غير إذن، ومن غير نسبة إجبارية |
-| رخص حرة بشروط (Creative Commons، و MIT للكود والأيقونات) | مسموح بشروط مكتوبة | تنفّذ الشروط، وأولها تكتب اسم صاحبه |
-| royalty-free | بتدفع مرة (أو بتاخده مجانًا من موقع) وتستخدمه كتير بشروط الموقع | تقرا شروط الموقع: «royalty-free» مش معناها «مجاني» ولا «من غير شروط» |
-| rights-managed | بتدفع على كل استخدام محدد (المدة، والبلد، وعدد النسخ) | عقد لكل استخدام |
-| «كل الحقوق محفوظة»، أو مفيش رخصة مكتوبة | ممنوع من غير إذن مكتوب من صاحبه | متستخدموش |
-
-### رخص Creative Commons
-
-كل رخصة CC مركّبة من حروف، وكل حرف شرط:
-
-| الحرف | الشرط |
-|---|---|
-| **BY** | لازم تنسب العمل لصاحبه. في كل الرخص الستة |
-| **SA** (ShareAlike) | لو عدّلت فيه، اللي تطلّعه لازم يتنشر بنفس الرخصة |
-| **NC** (NonCommercial) | للاستخدام غير التجاري بس |
-| **ND** (NoDerivatives) | من غير تعديل: تستخدمه زي ما هو |
-
-| الرخصة | تجاري؟ | تعدّل فيه؟ | مناسبة لموقع شركة أو بودكاست بإعلانات؟ |
-|---|---|---|---|
-| CC BY | آه | آه | آه |
-| CC BY-SA | آه | آه، وتنشر تعديلك بنفس الرخصة | آه، مع الشرط ده |
-| CC BY-ND | آه | لأ | آه لو هتستخدمه من غير أي تعديل |
-| CC BY-NC | لأ | آه | لأ |
-| CC BY-NC-SA | لأ | آه، بنفس الرخصة | لأ |
-| CC BY-NC-ND | لأ | لأ | لأ |
-
-(الجدول من صفحة «About CC Licenses» على موقع Creative Commons. وتعريفهم لـ «غير تجاري»: مش مقصود بيه أساسًا مكسب تجاري أو مقابل مادي.)
-
-### بتدوّر فين
-
-منهج MDN بيسمّي أمثلة: بحث الصور في Google (فيه فلتر «حقوق الاستخدام»)، و Flickr (فيه فلتر بالرخصة)، و The Noun Project للأيقونات. والقاعدة مع أي موقع: الرخصة بتتقري من **صفحة العمل نفسه**، مش من الفلتر. الفلتر بيقرّبك، والصفحة هي اللي بتقول.
-
-والأضمن من ده كله: صوّر وسجّل وارسم بنفسك. ساعتها انت صاحب الحق.
-
-### تلتزم بالرخصة إزاي: النسبة (attribution)
-
-Creative Commons بتنصح بأربع حاجات، اختصارهم **TASL**:
-
-| الحرف | إيه | مثال |
-|---|---|---|
-| **T**itle | اسم العمل (لو ليه اسم) | «استوديو صغير» |
-| **A**uthor | صاحبه، بالاسم اللي هو طالبه | سلمى فؤاد |
-| **S**ource | لينك للمكان الأصلي اللي العمل منشور فيه | صفحة الصورة |
-| **L**icense | اسم الرخصة بالظبط، ولينك لنصها | CC BY 4.0 |
-
-ولو عدّلت: اكتب إيه اللي اتغيّر («اتقصّت من الأصل»).
-
-~~~live 140 158 صورة ونسبتها
-<figure>
-  <img alt="بانر أخضر مكتوب عليه بودكاست المحطة" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-  <figcaption>«<a href="https://photos.example.test/p/4821">استوديو صغير</a>» تصوير سلمى فؤاد، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتقصّت من الأصل.</figcaption>
-</figure>
-~~~
-
-**هتشوف إيه:** الصورة وتحتها سطر فيه لينكين: اسم العمل بيودّي لمصدره، واسم الرخصة بيودّي لنصها.
-
-- CC: مفيش شكل واحد إجباري للنسبة، المهم الأربع معلومات يوصلوا «بطريقة معقولة» حسب المكان. تحت الصورة، أو في صفحة «المصادر» لو الصور كتير.
-- [[<a rel="license">]] بيقول للمتصفح ومحركات البحث إن اللينك ده رخصة المحتوى (جدول [[rel]] في درس «target و rel»).
-- الموسيقى في حلقة بودكاست: النسبة بتتقال في آخر الحلقة وبتتكتب في صفحتها.
-
----
-
-## ٥. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[span { width: 200px }]] وتستغرب إنه مشتغلش زي الصورة | الـ span مش replaced: بيتجاهل العرض |
-| فراغ تحت الصورة في الكارت وتحاول تشيله بـ [[margin]] | سببه سطر الكتابة: [[display: block]] |
-| [[img::before]] | مبيظهرش |
-| [[decoding="lazy"]] أو [[loading="async"]] | القيمتين متبدّلين: كل واحد بيرجع للافتراضي في سكوت |
-| صورة من بحث الصور من غير ما تفتح صفحتها | مفيش رخصة يعني ممنوع |
-| CC BY-NC في موقع تجاري | مخالفة للرخصة |
-| تقصّ صورة رخصتها ND | التعديل ممنوع |
-| «الصورة من النت» كنسبة | لا اسم، ولا مصدر، ولا رخصة: مش نسبة |
-
----
-
-## الخلاصة
-
-- replaced element: محتواه من برّه ([[<img>]] و [[<video>]] و [[<iframe>]] و [[<embed>]] دايمًا، و [[<audio>]] و [[<canvas>]] و [[<object>]] في حالات). inline وبياخد مقاس، وليه مقاس من نفسه أو 300 × 150، وبيتظبط بـ [[object-fit]].
-- [[decoding="async"]] للصور اللي تحت، مع [[loading="lazy"]]. و [[fetchpriority="high"]] للهيرو لوحده.
-- قبل أي ملف ميديا: مين صاحبه، وإيه رخصته. مفيش رخصة يعني لأ.
-- CC: [[BY]] انسب، [[SA]] انشر بنفس الرخصة، [[NC]] غير تجاري، [[ND]] من غير تعديل.
-- النسبة: الاسم، وصاحبه، والمصدر، والرخصة، واللي غيّرته.`,
-          try: R`اعمل [[credit.html]] فيها صورة من تصويرك انت (أي صورة على جهازك، سمّيها [[photo.jpg]])، جوه [[<figure>]]، وتحتها نسبة كأنك بتنشرها برخصة CC BY 4.0: اسم للصورة، واسمك، واسم الرخصة بلينك لنصها. وعلى الصورة [[width]] و [[height]] و [[loading="lazy"]] و [[decoding="async"]]. وبعدين في الـ Console اكتب [[document.querySelector("img").decoding]] وشوف الرد، وغيّر القيمة في الملف لـ [[fast]] واعمل Ctrl+R واسأل تاني.`,
-          sol: R`~~~html credit.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>صورة ونسبتها</title>
-</head>
-<body>
-<figure>
-  <img src="photo.jpg" alt="كوباية شاي على سور البلكونة وقت الغروب" width="800" height="600" loading="lazy" decoding="async">
-  <figcaption>«شاي المغرب» تصوير هشام نبيل، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>.</figcaption>
-</figure>
-</body>
-</html>
-~~~
-
-~~~view 140 158 شكل الصفحة (الصورة هنا بانر مكان صورتك)
-<figure>
-  <img alt="كوباية شاي على سور البلكونة وقت الغروب" width="320" height="80" loading="lazy" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-  <figcaption>«شاي المغرب» تصوير هشام نبيل، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>.</figcaption>
-</figure>
-~~~
-
-**هتشوف إيه:** الصورة وتحتها سطر النسبة، و «CC BY 4.0» لينك.
-
-**ليه مفيش لينك «مصدر»:** الصورة أول مرة تتنشر هنا، فالصفحة دي هي المصدر. لو كانت من موقع تاني كان اسمها هيبقى لينك ليه.
-
-**الغلطة الشائعة:** تكتب «رخصة Creative Commons» وخلاص. فيه ست رخص شروطهم مختلفة: الاسم بالظبط والنسخة (CC BY 4.0).
-
-~~~text القياس من Chrome (في الـ Console)
-> document.querySelector("img").decoding
-"async"
-بعد ما القيمة بقت decoding="fast":
-"auto"                 ← قيمة مش معروفة، فرجعت للافتراضي
-~~~`,
-          deep: {
-            why: R`اسم «replaced element» بيظهر في كل وثائق CSS: [[object-fit]] «بتشتغل على replaced elements»، و [[width]] «مبتشتغلش على inline non-replaced elements». من غير ما تعرف المصطلح، الجمل دي ملهاش معنى، والتصرفات اللي وراها بتبان عشوائية. والتراخيص: موقع العميل اللي عليه صورة من غير حق ممكن يجيله إنذار قانوني وفاتورة، والمسؤولية على اللي حط الصورة.`,
-            how: R`في الـ layout، المتصفح بيسأل الـ replaced element عن «مقاسه الطبيعي» (العرض، والارتفاع، والنسبة) ويحسب الصندوق منهم ومن الـ CSS، وبعدين يرسم المحتوى جوه الصندوق حسب [[object-fit]]. العنصر العادي العكس: مقاسه بيتحسب من محتواه وأولاده. والصورة بتعدّي بتلات مراحل: طلب الملف (بيتحكم فيه [[loading]] و [[fetchpriority]])، وفكّه لبيكسلات ([[decoding]])، ورسمه.`,
-            when: R`المصطلح: كل ما تقرا عن خاصية CSS وتلاقي «replaced». [[decoding="async"]]: صور المحتوى الكبيرة تحت أول الشاشة، والمعارض. والتراخيص: قبل ما أي ملف مش من صنعك يدخل فولدر المشروع. واعمل ملف أو صفحة «المصادر» من أول يوم.`,
-            mistakes: R`معاملة [[<img>]] كأنها [[<span>]] أو [[<div>]]. محاولة شيل الفراغ اللي تحت الصورة بالـ margin. تبديل قيم [[loading]] و [[decoding]]. استخدام صور من غير رخصة مكتوبة. رخصة NC في شغل تجاري. تعديل عمل رخصته ND. ونسبة ناقصة من غير اسم الرخصة.`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** صورة غلاف الحلقة ٣ محتاجة نسبة. البيانات في البداية. اكتبها: الصورة والنسبة في [[<figure>]]، والنسبة في [[<figcaption>]] فيها اسم العمل لينك للمصدر، واسم المصوّر، واسم الرخصة لينك لنصها وعليه [[rel="license"]]، وإن الصورة اتعدّلت. (من قسم ٤ في الشرح، جزء «النسبة»)`, done: R`الصورة وتحتها سطر فيه لينكين، وكل الشروط ✓.`, work: { h: 250, start: R`<img alt="غلاف الحلقة ٣" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-<p>اسم العمل: موجة خضرا</p>
-<p>المصوّر: طارق سامي</p>
-<p>المصدر: https://photos.example.test/p/9012</p>
-<p>الرخصة: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)</p>
-<p>التعديل: اتكتب عليها اسم البودكاست</p>`, checks: [
-              { say: R`الصورة جوه [[<figure>]]`, q: "figure > img" },
-              { say: R`النسبة في [[<figcaption>]] فيه اسم المصوّر`, q: "figure > figcaption", has: "طارق سامي" },
-              { say: R`اسم العمل لينك للمصدر`, q: "figcaption a[href=\"https://photos.example.test/p/9012\"]", has: "موجة خضرا" },
-              { say: R`اسم الرخصة لينك لنصها وعليه [[rel="license"]]`, q: "figcaption a[rel~=\"license\"][href=\"https://creativecommons.org/licenses/by-sa/4.0/\"]", has: "CC BY-SA 4.0" },
-              { say: R`مكتوب إيه اللي اتعدّل`, q: "figcaption", has: "اسم البودكاست" },
-              { say: R`مفيش فقرات البيانات الخام`, q: "p", n: 0 },
-            ] }, sol: R`~~~live 140 158 الحل
-<figure>
-  <img alt="غلاف الحلقة ٣" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-  <figcaption>«<a href="https://photos.example.test/p/9012">موجة خضرا</a>» تصوير طارق سامي، رخصة <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>. اتكتب عليها اسم البودكاست.</figcaption>
-</figure>
-~~~
-
-**هتشوف إيه:** الصورة، وتحتها سطر واحد: «موجة خضرا» لينك، واسم المصوّر، و «CC BY-SA 4.0» لينك، وجملة التعديل.
-
-**ليه كده:** دي الـ TASL بالترتيب: الاسم (Title)، وصاحبه (Author)، ولينك المصدر (Source) على الاسم، والرخصة (License) بلينكها.
-
-**خد بالك من SA:** الغلاف ده عمل معدّل من صورة رخصتها BY-SA، فالغلاف نفسه لازم يتنشر بـ CC BY-SA 4.0. لو مش عايز كده، دوّر على صورة CC BY أو CC0.
-
-**الغلطة الشائعة:** تحط لينك الرخصة على كلمة «هنا». اسم الرخصة نفسه هو اللي يتكتب ويبقى اللينك.
-
-~~~text القياس من Chrome (شجرة الـ accessibility)
-figure     image «غلاف الحلقة ٣»     link «موجة خضرا»     link «CC BY-SA 4.0»
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة الحلقة فيها صورتين: الغلاف الكبير أول الشاشة، وصورة الضيف تحت خالص. التلميحات عليهم متلخبطة: القيم متبدّلة بين الـ attributes، والغلاف متأجّل، وصورة الضيف واخدة أولوية عالية. (من قسم ٢ و ٣ في الشرح)`, done: R`الغلاف عليه [[fetchpriority="high"]] بس، وصورة الضيف [[loading="lazy"]] و [[decoding="async"]]، وكل الشروط ✓.`, work: { h: 230, start: R`<img id="cover" alt="غلاف الحلقة ٣" width="320" height="80" loading="lazy" decoding="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-<p>وصف الحلقة...</p>
-<img id="guest" alt="ضيفة الحلقة: المصوّرة سلمى فؤاد" width="320" height="80" loading="async" fetchpriority="high" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">`, checks: [
-              { say: R`الغلاف [[fetchpriority="high"]]`, q: "#cover[fetchpriority=\"high\"]" },
-              { say: R`الغلاف مفيهوش [[loading="lazy"]]`, q: "#cover[loading=\"lazy\"]", n: 0 },
-              { say: R`صورة الضيف [[loading="lazy"]]`, q: "#guest[loading=\"lazy\"]" },
-              { say: R`صورة الضيف [[decoding="async"]]`, q: "#guest[decoding=\"async\"]" },
-              { say: R`صورة الضيف مفيهاش [[fetchpriority="high"]]`, q: "#guest[fetchpriority=\"high\"]", n: 0 },
-              { say: R`مفيش قيم متبدّلة ([[decoding="lazy"]] أو [[loading="async"]])`, q: "img[decoding=\"lazy\"], img[loading=\"async\"]", n: 0 },
-            ] }, sol: R`~~~live 240 بعد التصليح
-<img id="cover" alt="غلاف الحلقة ٣" width="320" height="80" fetchpriority="high" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-<p>وصف الحلقة...</p>
-<img id="guest" alt="ضيفة الحلقة: المصوّرة سلمى فؤاد" width="320" height="80" loading="lazy" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-~~~
-
-**هتشوف إيه:** نفس الصفحة قبل وبعد: التلميحات مبتغيّرش الشكل، بتغيّر ترتيب ووقت التحميل (بيتشاف في DevTools › Network عمود Priority).
-
-| المشكلة | التصليح | ليه |
-|---|---|---|
-| [[decoding="lazy"]] على الغلاف | اتمسح | [[lazy]] قيمة [[loading]] مش [[decoding]]، فكانت بترجع [[auto]] |
-| [[loading="lazy"]] على الغلاف | اتمسح، وزوّدنا [[fetchpriority="high"]] | أول صورة في الشاشة: التأجيل بيأخّر أهم حاجة |
-| [[loading="async"]] على صورة الضيف | [[loading="lazy"]] و [[decoding="async"]] | القيمتين كانوا متبدّلين |
-| [[fetchpriority="high"]] على صورة تحت | اتمسح | لو كل الصور «عالية» محدش فيهم عالي |
-
-**الغلطة الشائعة:** تحط التلاتة على كل الصور «للأداء». [[lazy]] و [[high]] على نفس الصورة عكس بعض.
-
-~~~text القياس من Chrome
-decoding="lazy"   →  الخاصية decoding = "auto"
-loading="async"   →  الخاصية loading  = "auto"
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** صندوق أصفر جواه صورة ارتفاعها 80 وبس. اكتب على ورقة: ارتفاع الصندوق كام؟ ٨٠ بالظبط؟ وبعدين خلّي الصندوق على قد الصورة بالظبط بسطر CSS واحد على الصورة. (من قسم ١ في الشرح، بند ٤)`, done: R`كتبت توقّعك، والشريط الأصفر اللي تحت الصورة اختفى، وكل الشروط ✓.`, work: { h: 130, start: R`<div style="background:#fde68a; width:320px">
-  <img alt="بودكاست المحطة" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-</div>`, checks: [
-              { say: R`الصورة عليها [[display: block]]`, q: "img[style*=\"display:block\"], img[style*=\"display: block\"]" },
-              { say: R`الصورة لسه جوه الـ [[<div>]] الأصفر`, q: "div[style*=\"background\"] > img" },
-              { say: R`المقاس في الـ HTML زي ما هو`, q: "img[width=\"320\"][height=\"80\"]" },
-            ] }, sol: R`~~~live 102 بعد التعديل
-<div style="background:#fde68a; width:320px">
-  <img alt="بودكاست المحطة" width="320" height="80" style="display:block" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-</div>
-~~~
-
-وده اللي كان باين قبل:
-
-~~~live 106 قبل
-<div style="background:#fde68a; width:320px">
-  <img alt="بودكاست المحطة" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
-</div>
-~~~
-
-**التوقّع:** أكتر من ٨٠ بكام بيكسل. الصورة inline، فقاعدة على سطر الكتابة والسطر سايب تحتها مكان لديل الحروف.
-
-**هتشوف إيه:** قبل: شريط أصفر رفيع تحت البانر. بعد: مفيش أصفر باين خالص، الصندوق على قد الصورة.
-
-**ليه [[display: block]]:** بيطلّع الصورة من السطر، فمبقاش فيه baseline ولا مكان تحته. ([[vertical-align: bottom]] بيحلها برده والصورة تفضل inline.)
-
-**الغلطة الشائعة:** [[margin-bottom: -4px]]. الرقم بيتغيّر مع حجم الخط ونوعه، فهيبوظ أول ما الخط يتغيّر.
-
-~~~text القياس من Chrome (صورة 120 × 60، والخط الافتراضي 16px)
-inline:   ارتفاع الصندوق = 64
-block:    ارتفاع الصندوق = 60
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** فريق «المحطة» جمع خمس ملفات لصفحة الحلقة (البودكاست فيه إعلانات، يعني استخدام تجاري). لكل ملف قول: يتستخدم ولا لأ؟ وبأنهي شرط؟ (من قسم ٤ في الشرح)
-
-~~~text ملفات الحلقة
-1. صورة استوديو    CC BY 4.0           هتتقصّ مربع
-2. موسيقى المقدمة  CC BY-NC 4.0        زي ما هي
-3. أيقونة مايك     CC0                 هيتغيّر لونها
-4. صورة الضيفة     CC BY-ND 4.0        هتتقصّ دايرة
-5. صورة غلاف       من بحث الصور، ومفيش أي رخصة مكتوبة في صفحتها
-~~~`, done: R`خمس أحكام، كل واحد بسببه من حروف الرخصة.`, sol: R`| الملف | الحكم | السبب |
-|---|---|---|
-| ١. صورة الاستوديو، CC BY | **آه** | تجاري وتعديل مسموحين. الشرط: نسبة كاملة، وتكتب «اتقصّت» |
-| ٢. الموسيقى، CC BY-NC | **لأ** | NC = غير تجاري، والبودكاست فيه إعلانات |
-| ٣. الأيقونة، CC0 | **آه** | من غير أي شرط، والنسبة اختيارية |
-| ٤. صورة الضيفة، CC BY-ND | **لأ بالشكل ده** | ND = من غير تعديل، والقصّ دايرة بيغيّر شكل العمل. تتستخدم زي ما هي مع النسبة، أو تطلبوا من الضيفة صورة |
-| ٥. صورة من غير رخصة | **لأ** | مفيش رخصة معناها كل الحقوق محفوظة. الحل: إذن مكتوب من صاحبها، أو صورة تانية |
-
-**القاعدة:** اقرا الحروف واحد واحد وقارنها باللي هتعمله: هتكسب منه؟ (NC). هتعدّل فيه؟ (ND و SA). وفي كل الحالات BY: انسب.
-
-**الغلطة الشائعة:** تعتبر القصّ «مش تعديل». CC نفسها بتعتبر القصّ تغيير بسيط لازم يتذكر، ومع ND الأضمن متلمسش العمل.
-
-النسبة للملف الأول زي ما تتكتب في الصفحة:
-
-~~~live 56 نسبة الملف ١
-<p><small>«<a href="https://photos.example.test/p/4821">استوديو صغير</a>» تصوير سلمى فؤاد، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتقصّت من الأصل.</small></p>
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** افتح صفحة «Replaced elements» في قاموس MDN (اللينك تحت الدرس). طلّع منها: (١) أنهي عناصر مكتوب إنها replaced دايمًا، وأنهي «في حالات معينة». (٢) إيه اللي بيتقال عليه «anonymous replaced element»؟ (بيكمّل قسم ١ في الشرح)`, done: R`كتبت القايمتين، وجملة عن الـ anonymous replaced elements.`, sol: R`من صفحة MDN:
-
-1. **دايمًا:** [[<img>]] و [[<video>]] و [[<iframe>]] و [[<embed>]] (ومعاهم [[<fencedframe>]]، عنصر تجريبي مش في الكورس). **في حالات معينة:** [[<audio>]] و [[<canvas>]] و [[<object>]] و [[<input>]] من نوع [[image]] بس.
-2. **anonymous replaced elements:** الحاجات اللي بتتحط في الصفحة بخاصية [[content]] في الـ CSS (زي صورة في [[::before]]). «anonymous» لأنها مش موجودة في كود الـ HTML.
-
-~~~text القياس من Chrome (بيأكد الجدول)
-<audio> من غير controls:   display: none   (مش replaced: مفيش صندوق أصلًا)
-<audio controls>:          300 × 54
-<canvas>:                  300 × 150       <object>: 300 × 150       <embed>: 0 × 0
-~~~
-
-**ليه «في حالات»:** [[<audio>]] من غير [[controls]] مبيترسمش خالص، و [[<object>]] اللي ملفه فشل بيعرض أولاده (محتوى عادي)، و [[<canvas>]] في متصفح مبيدعمهوش بيعرض بديله. في الحالات دي العنصر مبقاش «محتوى من برّه».` },
-          ]
+  document.body.insertAdjacentHTML("beforeend", '<div class="card">x</div>'.repeat(500));
+  const cards = [...document.querySelectorAll(".card")];
+  let t = performance.now();
+  for (const el of cards) el.style.height = el.offsetWidth * 0.75 + "px";
+  console.log("bad", performance.now() - t); // ~125ms
+  cards.forEach((el) => (el.style.height = ""));
+  document.body.offsetHeight;
+  t = performance.now();
+  const widths = cards.map((el) => el.offsetWidth);
+  cards.forEach((el, i) => (el.style.height = widths[i] * 0.75 + "px"));
+  document.body.offsetHeight;
+  console.log("good", performance.now() - t); // ~4ms
+</script>`
         }
       ]
     }

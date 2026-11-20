@@ -1,4 +1,4 @@
-# منهج HTML و CSS (css): 1179 من 1180 بند متغطي (99٪)
+# منهج HTML و CSS (css): 1180 من 1180 بند متغطي (100٪)
 
 اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 217 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
 
@@ -11,14 +11,10 @@
 | خصائص CSS | 422 | 422 | 0 | 0 | 251 |
 | selectors | 88 | 88 | 0 | 0 | 56 |
 | at-rules | 16 | 16 | 0 | 0 | 3 |
-| دوال CSS | 93 | 92 | 0 | 1 | 14 |
+| دوال CSS | 93 | 93 | 0 | 0 | 14 |
 | وحدات | 62 | 62 | 0 | 0 | 0 |
 | أنواع القيم | 37 | 37 | 0 | 0 | 2 |
 | مهارات (MDN Curriculum) | 155 | 155 | 0 | 0 | 0 |
-
-## دوال CSS: ناقص 1
-
-- **CSS Values and Units** ناقص: `param()`
 
 ## مستبعد أوتوماتيك (من حالة المرجع)
 

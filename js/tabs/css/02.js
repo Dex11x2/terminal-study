@@ -1,4142 +1,3421 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "الفورم: كل أنواع الحقول والأخطاء",
+      t: R`HTML: من الملف للمتصفح`,
+      l: 1,
+      n: "الطريق كله على جهازك: فولدر وملف من الترمنال، وكتابة في VS Code، وفتح في Chrome، وفحص قبل ما تقول خلصت",
       pre: [
-        { to: "css/form و label", why: R`الـ label و for و required والـ submit اللي الوحدة دي بتبني عليهم` },
+        { to: "css/مقدمة HTML والـ Tags", why: R`لازم تكون عارف الـ tag والعنصر والـ attribute، لأن الوحدة دي مش بتشرح HTML نفسه: بتشرح بتكتبه فين وبتشوفه إزاي` },
+        { to: "css/<!doctype html>", why: R`هيكل الصفحة ([[<head>]] و [[<body>]] و charset و viewport) هو اللي VS Code هيكتبهولك هنا بضغطة، فلازم تكون فاهم كل سطر فيه` },
+        { to: "start", why: R`لو عمرك ما فتحت ترمنال قبل كده` },
       ],
+      goal: [
+        R`تعمل فولدر مشروع وملفاته من الترمنال على ويندوز والماك ولينكس ([[mkdir]] و [[cd]] و [[ni]] أو [[touch]])، بأسامي متكسرش الرابط بعدين، وتعرف تقرا رسالة الخطأ لما الفولدر يكون موجود أو الاسم فيه مسافة.`,
+        R`تفتح الفولدر في VS Code بـ [[code .]]، وتكتب هيكل الصفحة بـ Emmet ([[!]] ثم Tab) وتظبط [[lang]] و [[dir]]، وتحفظ وتنسّق الكود، وتشغّل الترمنال من جوه المحرر.`,
+        R`تفتح الصفحة في Chrome وتقرا شريط العنوان ([[file:///]] يعني إيه وإيه فرقه عن [[http://]])، وتشتغل باللفة «عدّل، احفظ، Ctrl+R»، وتعرف تمشي بالترتيب لما «غيّرت ومفيش حاجة حصلت».`,
+        R`تفحص شغلك قبل ما تسلّمه: View Source (اللي كتبته) قصاد Elements (اللي المتصفح بناه)، وعرض 360 من Device Toolbar، و Console، والـ HTML validator لحد ما يقول مفيش أخطاء.`,
+        R`ترتّب مشروع من كذا صفحة: فولدر لكل مشروع، وصور في [[images/]]، وصفحات بتوصل لبعض، وتعيد الطريق كله لوحدك من فولدر فاضي.`,
+      ],
+      use: {
+        prog: R`كل مشروع جاي في الكورس (وفي JavaScript و React بعده) بيبدأ بنفس الخطوات: فولدر، ومحرر، ومتصفح، وفحص. اللي بيتغيّر هو اللي بتكتبه جوه الملفات.`,
+        work: R`أول يوم في أي شغل: «اعمل clone للمشروع وافتحه وشغّله». ولما حد يقولك «الصفحة عندي مش بتتغيّر» أو «الصورة مش ظاهرة»، ترتيب الفحص اللي هنا هو اللي بتمشي عليه.`,
+        cs: R`الفرق بين الملف (نص على الديسك)، واللي المتصفح بيبنيه منه في الذاكرة (الـ DOM)، والعنوان اللي بيوصلك ليه (URL).`,
+      },
       projects: [
-        { lvl: 'صغير', dir: "bmi-calc", t: R`حاسبة BMI`, what: R`فورم فيه الوزن ([[type="number"]] و [[min="20"]] و [[max="300"]] و [[step="0.1"]]) والطول بالسنتي، والنتيجة في [[<output>]] عليه [[aria-live="polite"]] بتتحدّث مع كل [[input]]، وجنبها التصنيف (نحيف، طبيعي، زيادة). من دروس «textarea و date و number» و «Constraint Validation API».`, done: R`70 كيلو و 175 سم بيطلّعوا 22.9 «طبيعي»، والحقل الفاضي أو 500 كيلو بيطلّع رسالة المتصفح ([[rangeOverflow]]) ومفيش رقم غلط في النتيجة، وكتابة حرف [[e]] لوحده في الوزن مش بتكسر الحساب ([[validity.badInput]]).`, sol: R`~~~html index.html
-<!doctype html>
+        { lvl: 'صغير', dir: "rokn-books", cont: true, t: R`ركن الأطفال: صفحة تالتة لموقع المكتبة`, what: R`كمّل من الفولدر اللي الدروس خلصت بيه: [[rokn-books]] وفيه [[index.html]] و [[about.html]] و [[images/logo.svg]]. صاحب المكتبة عايز صفحة لركن الأطفال. اعمل ملف جديد [[kids.html]] من الترمنال، وفيه: [[<h1>]] باسم الركن، وفقرة تعريف (لأنهي سن، وفيه إيه)، و [[<h2>]] «كتب بنرشّحها» وتحته [[<ul>]] من تلات كتب، و [[<h2>]] «ساعة الحدوتة» وتحته فقرة بالميعاد، ولينك يرجّع للرئيسية. وفي [[index.html]] زوّد لينك للصفحة الجديدة. انت أصلًا جوه الفولدر، فمن الخطوة ١ في «ابدأ إزاي» نفّذ [[ni kids.html]] (أو [[touch kids.html]]) بس: لو كتبت [[mkdir rokn-books]] هيرد بـ [[already exists]]، وده معناه إنك في المكان الصح. من دروس الوحدة الخمسة.`, done: R`[[tree /f]] (أو [[ls -R]]) فيه تلات ملفات HTML وفولدر [[images]]. والتاب مكتوب عليه «ركن الأطفال | مكتبة الركن». ومن الرئيسية بتوصل للصفحة وبترجع بكليك. والـ validator بيقول valid على [[kids.html]] و [[index.html]]. وعلى عرض 360 مفيش scroll أفقي.`, sol: R`**الأوامر** (في الترمنال اللي جوه VS Code، وانت في [[rokn-books]]):
+
+~~~powershell
+ni kids.html
+~~~
+
+~~~bash
+touch kids.html
+~~~
+
+وبعدين افتح [[kids.html]] من الـ Explorer، و [[!]] ثم Tab، وغيّر [[lang]] و [[dir]] و [[title]]، واكتب المحتوى ([[h1]] ثم [[p]] ثم [[h2+ul>li*3]] ثم [[h2+p]] ثم [[p>a]]).
+
+~~~live 360 400 kids.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>حاسبة BMI</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; }
-  form { max-width: 360px; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; display: grid; gap: 12px; }
-  h1 { margin: 0; font-size: 22px; }
-  label { display: grid; gap: 4px; font-weight: 600; }
-  input { font: inherit; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
-  .result { padding: 14px; border-radius: 10px; background: #f0fdfa; font-size: 18px; }
-  output { font-size: 28px; font-weight: 800; color: #0f766e; }
-  .msg { margin: 4px 0 0; color: #b91c1c; font-size: 14px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ركن الأطفال | مكتبة الركن</title>
 </head>
 <body>
-<main>
-<form id="bmi">
-  <h1>احسب الـ BMI</h1>
-  <label>الوزن بالكيلو
-    <input name="weight" type="number" min="20" max="300" step="0.1" inputmode="decimal" required value="70">
-  </label>
-  <label>الطول بالسنتي
-    <input name="height" type="number" min="100" max="250" step="1" inputmode="numeric" required value="175">
-  </label>
-  <div class="result">
-    <output name="bmi" for="weight height" aria-live="polite"></output>
-    <span id="kind"></span>
-    <p class="msg" id="msg"></p>
-  </div>
-</form>
-</main>
-<script>
-  const form = document.getElementById('bmi');
-  const { weight, height, bmi } = form.elements;
-  const kind = document.getElementById('kind');
-  const msg = document.getElementById('msg');
-
-  function update() {
-    // a field that is empty, out of range, or not a number: show the browser's own message, never a wrong number
-    const bad = [weight, height].find(f => !f.checkValidity());
-    if (bad) {
-      bmi.value = '—';
-      kind.textContent = '';
-      msg.textContent = bad.validationMessage;
-      return;
-    }
-    const m = height.valueAsNumber / 100;
-    const n = weight.valueAsNumber / (m * m);
-    bmi.value = n.toFixed(1);
-    kind.textContent = n < 18.5 ? 'نحيف' : n < 25 ? 'طبيعي' : 'زيادة';
-    msg.textContent = '';
-  }
-  form.addEventListener('input', update);
-  form.addEventListener('submit', e => e.preventDefault());
-  update();
-</script>
+    <h1>ركن الأطفال</h1>
+    <p>ركن هادي في آخر المكتبة للأطفال من ٤ لـ ١٠ سنين: كتب مصوّرة، وحواديت، وألوان.</p>
+    <h2>كتب بنرشّحها</h2>
+    <ul>
+        <li>القطة اللي بتحب القراية</li>
+        <li>رحلة نقطة مية</li>
+        <li>أسامي النجوم</li>
+    </ul>
+    <h2>ساعة الحدوتة</h2>
+    <p>كل سبت الساعة ١١ الصبح. الحضور مجاني، والمكان بيكفّي ١٥ طفل.</p>
+    <p><a href="index.html">ارجع للرئيسية</a></p>
 </body>
 </html>
 ~~~
 
-~~~view 330 360 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>حاسبة BMI</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; }
-  form { max-width: 360px; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; display: grid; gap: 12px; }
-  h1 { margin: 0; font-size: 22px; }
-  label { display: grid; gap: 4px; font-weight: 600; }
-  input { font: inherit; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
-  .result { padding: 14px; border-radius: 10px; background: #f0fdfa; font-size: 18px; }
-  output { font-size: 28px; font-weight: 800; color: #0f766e; }
-  .msg { margin: 4px 0 0; color: #b91c1c; font-size: 14px; }
-</style>
-</head>
-<body>
-<main>
-<form id="bmi">
-  <h1>احسب الـ BMI</h1>
-  <label>الوزن بالكيلو
-    <input name="weight" type="number" min="20" max="300" step="0.1" inputmode="decimal" required value="70">
-  </label>
-  <label>الطول بالسنتي
-    <input name="height" type="number" min="100" max="250" step="1" inputmode="numeric" required value="175">
-  </label>
-  <div class="result">
-    <output name="bmi" for="weight height" aria-live="polite"></output>
-    <span id="kind"></span>
-    <p class="msg" id="msg"></p>
-  </div>
-</form>
-</main>
-<script>
-  const form = document.getElementById('bmi');
-  const { weight, height, bmi } = form.elements;
-  const kind = document.getElementById('kind');
-  const msg = document.getElementById('msg');
+والسطر اللي بيتزوّد في آخر الـ [[<body>]] بتاع [[index.html]]، تحت لينك «عن المكتبة»:
 
-  function update() {
-    // a field that is empty, out of range, or not a number: show the browser's own message, never a wrong number
-    const bad = [weight, height].find(f => !f.checkValidity());
-    if (bad) {
-      bmi.value = '—';
-      kind.textContent = '';
-      msg.textContent = bad.validationMessage;
-      return;
-    }
-    const m = height.valueAsNumber / 100;
-    const n = weight.valueAsNumber / (m * m);
-    bmi.value = n.toFixed(1);
-    kind.textContent = n < 18.5 ? 'نحيف' : n < 25 ? 'طبيعي' : 'زيادة';
-    msg.textContent = '';
-  }
-  form.addEventListener('input', update);
-  form.addEventListener('submit', e => e.preventDefault());
-  update();
-</script>
-</body>
-</html>
+~~~html السطر الجديد في الرئيسية
+    <p><a href="kids.html">ركن الأطفال</a></p>
 ~~~
-
-**هتشوف إيه:** كارت أبيض فيه حقلين (70 و 175 مكتوبين من الأول)، وتحتهم مربع أخضر فاتح فيه **22.9** كبير وجنبه «طبيعي». غيّر الوزن والرقم بيتغيّر وانت بتكتب. امسح الوزن: الرقم بيبقى «—» وتحته بالأحمر رسالة المتصفح.
 
 **ليه كده:**
-- [[type="number"]] مع [[min]] و [[max]] و [[step]]: المتصفح نفسه بيعرف إن 500 غلط، فمش محتاج تكتب الشروط دي في JavaScript. و [[inputmode="decimal"]] بيفتح كيبورد فيه علامة عشرية على الموبايل.
-- [[valueAsNumber]] بيرجّع رقم على طول بدل [[Number(value)]].
-- قبل أي حساب: [[checkValidity()]] على الحقلين. لو حقل مش سليم بنعرض [[validationMessage]] (رسالة المتصفح نفسها، بلغة المتصفح) ومبنحسبش. ده اللي بيمنع «BMI = 163» لما حد يكتب 500.
-- [[<output for="weight height">]] بيقول لقارئ الشاشة النتيجة دي جاية من الحقلين دول، و [[aria-live="polite"]] بيخليه يقرا الرقم الجديد لما يتغيّر من غير ما يقطع الكلام.
 
-**فخ قسته:** لما تكتب حرف [[e]] لوحده في حقل رقم، [[value]] بيرجّع نص فاضي [[""]] زي الحقل الفاضي بالظبط. الفرق في [[validity.badInput]]: [[true]] مع الحرف. عشان كده بنسأل [[checkValidity()]] مش [[value === ""]].
+- الملف اتعمل جنب [[index.html]]، فاللينك [[href="kids.html"]] من غير أي مسار: «ملف في نفس الفولدر».
+- الـ [[<title>]] فيه اسم الصفحة ثم اسم الموقع، زي [[about.html]]: كل تاب بيقول هو أنهي صفحة.
+- عنوان واحد [[<h1>]] للصفحة، وتحته [[<h2>]] لكل قسم. نفس ترتيب الرئيسية.
+- صفحة جديدة من غير لينك ليها محدش هيوصلها. فالمشروع ملفين اتعدّلوا مش ملف واحد.
 
-**وفخ تاني:** [[step="0.1"]] معناه 70.25 غلط، والمتصفح بيقولك أقرب رقمين صح.
+**الغلطة الشائعة:** تنسخ [[index.html]] وتسمّي النسخة [[kids.html]] وتغيّر المحتوى، وتنسى الـ [[<title>]]. الصفحتين يبقوا بنفس الاسم على التاب. لو هتنسخ، أول حاجة تغيّرها العنوان.
 
-~~~text الناتج (Chrome، 70 كيلو و 175 سم في الأول)
-70 و 175                      22.9 طبيعي
-55                            18.0 نحيف
-90                            29.4 زيادة
-الوزن فاضي                     —  Please fill out this field.
-500                           —  Value must be less than or equal to 300.   (rangeOverflow = true)
-70.25                         —  Please enter a valid value. The two nearest valid values are 70.2 and 70.3.
-كتبت e بالكيبورد                —  Please enter a number.   (value = "" و badInput = true)
-axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
+(اللينك في المعاينة مش هيفتح: المعاينة صفحة واحدة. على جهازك هيفتح.)
+
+~~~text الناتج (PowerShell 7.6 و Chrome 157)
+C:.
+│   about.html
+│   index.html
+│   kids.html
+│
+└───images
+        logo.svg
+
+kids.html:   h1: 1   h2: 2   li: 3   لينك: index.html   title = ركن الأطفال | مكتبة الركن
+index.html:  اللينكات: tel:+200000000000 ، about.html ، kids.html
+الـ validator على الاتنين: The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0
+عرض 360: scrollWidth = 360
 ~~~` },
-        { lvl: 'صغير', dir: "gym-plans", t: R`اختيار باقة جيم بالكروت`, what: R`٣ باقات لـ «جيم الأبطال» (شهري، ٣ شهور، سنوي) كل واحدة [[<label>]] شكلها كارت وجواها radio، والكارت المختار بيتلوّن بـ [[.plan:has(input:checked)]] من غير JavaScript، والـ radio نفسه مخفي بالشكل بس (مش [[display: none]]). من درس «fieldset و radio».`, done: R`الأسهم بتنقّل الاختيار بين الكروت، والكارت اللي عليه الـ focus عليه outline واضح ([[:has(:focus-visible)]])، و [[getComputedStyle]] على الكارت المختار بيرجّع لون الحدود الجديد، و [[new FormData(form).get('plan')]] بيرجّع الباقة.`, sol: R`~~~html index.html
-<!doctype html>
+        { lvl: 'صغير', dir: "rokn-books", cont: true, t: R`اطلب كتاب: فورم وصفحة شكر`, what: R`زي المشروع اللي فات (ملف جديد من الترمنال ولينك ليه من الرئيسية)، وزوّد عليه حاجة واحدة: فورم بيوديك لصفحة تانية. في نفس الفولدر اعمل ملفين. الأول [[contact.html]]: [[<h1>]] «اطلب كتاب»، وفقرة، و [[<form action="thanks.html" method="get">]] فيه تلات حقول كل واحد بـ [[<label>]] مربوط بيه (الاسم، ورقم الموبايل [[type="tel"]] و [[dir="ltr"]]، واسم الكتاب) وكلهم [[required]]، وزرار [[type="submit"]]. التاني [[thanks.html]]: عنوان «طلبك وصل» وفقرة ولينك للرئيسية. وفي [[index.html]] لينك لـ [[contact.html]]. نفّذ [[ni contact.html, thanks.html]] بس من الخطوة ١. من درس «form و label» ودروس الوحدة.`, done: R`الضغط على أي [[label]] بيحط المؤشر في حقله. ولو دوست الزرار والحقول فاضية المتصفح بيوقّفك برسالة. ولما تملا وتبعت بتوصل [[thanks.html]]، وشريط العنوان آخره [[?name=…&phone=…&book=…]] بالقيم اللي كتبتها. والـ validator بيقول valid على الملفين.`, sol: R`~~~powershell
+ni contact.html, thanks.html
+~~~
+
+~~~bash
+touch contact.html thanks.html
+~~~
+
+~~~live 310 310 contact.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>باقات جيم الأبطال</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fafaf9; color: #1c1917; }
-  main { max-width: 760px; margin-inline: auto; }
-  fieldset { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-  h1 { margin: 0 0 12px; font-size: 26px; }
-  legend { font-size: 18px; font-weight: 800; margin-block-end: 12px; }
-  .plan { position: relative; display: grid; gap: 6px; padding: 18px; background: white; border: 2px solid #d6d3d1; border-radius: 14px; cursor: pointer; }
-  .plan b { font-size: 18px; }
-  .plan .price { font-size: 26px; font-weight: 800; }
-  .plan small { color: #78716c; }
-  /* hidden to the eye only: still reachable with Tab and the arrow keys, still read by a screen reader */
-  .plan input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
-  .plan:has(input:checked) { border-color: rgb(15, 118, 110); background: #f0fdfa; }
-  .plan:has(input:checked) b::after { content: " ✓"; color: rgb(15, 118, 110); }
-  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 3px; }
-  button { margin-block-start: 16px; font: inherit; font-weight: 700; padding: 10px 24px; border: 0; border-radius: 10px; background: #0f766e; color: white; }
-  #chosen { min-height: 1.5em; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اطلب كتاب | مكتبة الركن</title>
 </head>
 <body>
-<main>
-<h1>باقات جيم الأبطال</h1>
-<form id="plans">
-  <fieldset>
-    <legend>اختار باقتك</legend>
-    <label class="plan"><input type="radio" name="plan" value="month" checked><b>شهر</b><span class="price">٥٠٠ ج</span><small>تجرّب من غير التزام</small></label>
-    <label class="plan"><input type="radio" name="plan" value="quarter"><b>٣ شهور</b><span class="price">١٣٠٠ ج</span><small>بتوفّر ٢٠٠ جنيه</small></label>
-    <label class="plan"><input type="radio" name="plan" value="year"><b>سنة</b><span class="price">٤٥٠٠ ج</span><small>بتوفّر ١٥٠٠ جنيه</small></label>
-  </fieldset>
-  <button>اشترك</button>
-  <p id="chosen" aria-live="polite"></p>
-</form>
-</main>
-<script>
-  const form = document.getElementById('plans');
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    document.getElementById('chosen').textContent = 'الباقة اللي هتتبعت: ' + new FormData(form).get('plan');
-  });
-</script>
+    <h1>اطلب كتاب</h1>
+    <p>مش لاقي كتاب عندنا؟ اكتب اسمه وهنكلّمك أول ما يوصل.</p>
+    <form action="thanks.html" method="get">
+        <p>
+            <label for="name">اسمك</label>
+            <input id="name" name="name" autocomplete="name" required>
+        </p>
+        <p>
+            <label for="phone">رقم الموبايل</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required>
+        </p>
+        <p>
+            <label for="book">اسم الكتاب</label>
+            <input id="book" name="book" required>
+        </p>
+        <button type="submit">ابعت الطلب</button>
+    </form>
+    <p><a href="index.html">ارجع للرئيسية</a></p>
 </body>
 </html>
 ~~~
 
-~~~view 360 620 الشكل النهائي
-<!doctype html>
+~~~live 160 160 thanks.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>باقات جيم الأبطال</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fafaf9; color: #1c1917; }
-  main { max-width: 760px; margin-inline: auto; }
-  fieldset { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-  h1 { margin: 0 0 12px; font-size: 26px; }
-  legend { font-size: 18px; font-weight: 800; margin-block-end: 12px; }
-  .plan { position: relative; display: grid; gap: 6px; padding: 18px; background: white; border: 2px solid #d6d3d1; border-radius: 14px; cursor: pointer; }
-  .plan b { font-size: 18px; }
-  .plan .price { font-size: 26px; font-weight: 800; }
-  .plan small { color: #78716c; }
-  /* hidden to the eye only: still reachable with Tab and the arrow keys, still read by a screen reader */
-  .plan input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
-  .plan:has(input:checked) { border-color: rgb(15, 118, 110); background: #f0fdfa; }
-  .plan:has(input:checked) b::after { content: " ✓"; color: rgb(15, 118, 110); }
-  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 3px; }
-  button { margin-block-start: 16px; font: inherit; font-weight: 700; padding: 10px 24px; border: 0; border-radius: 10px; background: #0f766e; color: white; }
-  #chosen { min-height: 1.5em; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلبك وصل | مكتبة الركن</title>
 </head>
 <body>
-<main>
-<h1>باقات جيم الأبطال</h1>
-<form id="plans">
-  <fieldset>
-    <legend>اختار باقتك</legend>
-    <label class="plan"><input type="radio" name="plan" value="month" checked><b>شهر</b><span class="price">٥٠٠ ج</span><small>تجرّب من غير التزام</small></label>
-    <label class="plan"><input type="radio" name="plan" value="quarter"><b>٣ شهور</b><span class="price">١٣٠٠ ج</span><small>بتوفّر ٢٠٠ جنيه</small></label>
-    <label class="plan"><input type="radio" name="plan" value="year"><b>سنة</b><span class="price">٤٥٠٠ ج</span><small>بتوفّر ١٥٠٠ جنيه</small></label>
-  </fieldset>
-  <button>اشترك</button>
-  <p id="chosen" aria-live="polite"></p>
-</form>
-</main>
-<script>
-  const form = document.getElementById('plans');
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    document.getElementById('chosen').textContent = 'الباقة اللي هتتبعت: ' + new FormData(form).get('plan');
-  });
-</script>
+    <h1>طلبك وصل</h1>
+    <p>شكرًا. هنكلّمك على الرقم اللي كتبته أول ما الكتاب يوصل.</p>
+    <p><a href="index.html">ارجع للرئيسية</a></p>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** عنوان «باقات جيم الأبطال» وتحته ٣ كروت بيضا جنب بعض (وعلى الموبايل تحت بعض)، في كل كارت المدة والسعر كبير وسطر صغير رمادي. الكارت المختار حدوده خضرا وخلفيته خضرا فاتحة وجنب اسمه علامة ✓. دوس «اشترك» والسطر اللي تحت بيقول الباقة اللي هتتبعت.
+والسطر الجديد في آخر الـ [[<body>]] بتاع [[index.html]]:
+
+~~~html السطر الجديد في الرئيسية
+    <p><a href="contact.html">اطلب كتاب</a></p>
+~~~
 
 **ليه كده:**
-- الكارت كله [[<label>]] والـ radio جواه: الضغط على أي حتة في الكارت بيختار.
-- الـ radio **مش** [[display: none]]: مخفي بالشكل بس ([[width: 1px]] و [[clip-path: inset(50%)]])، فالأسهم و Tab شغالين وقارئ الشاشة بيقول «radio button، 2 of 3».
-- [[.plan:has(input:checked)]]: الكارت بيتلوّن حسب اللي جواه، من غير JavaScript.
-- [[.plan:has(input:focus-visible)]]: الدايرة اللي كان عليها الـ focus اختفت، فلازم الكارت كله ياخد الـ outline، وإلا اللي بيستخدم الكيبورد مش هيعرف هو فين.
-- الكروت [[grid]] بـ [[repeat(auto-fit, minmax(min(200px, 100%), 1fr))]]: تلاتة جنب بعض على الكمبيوتر، وواحد في السطر على الموبايل.
 
-**الغلطة اللي axe مسكها في نسختي الأولى:** مكانش فيه [[<h1>]] (الـ legend كان هو العنوان الوحيد)، و axe قال [[page-has-heading-one]]. الـ legend اسم للمجموعة مش عنوان للصفحة.
+- [[action="thanks.html"]] نفس قاعدة اللينك: «ملف جنب الصفحة دي». لما الفورم يتبعت، المتصفح بيروح للصفحة دي.
+- [[method="get"]] بيحط القيم في العنوان نفسه بعد علامة [[?]]، كل حقل [[name=value]] وبينهم [[&]]. الاسم اللي قبل [[=]] هو الـ [[name]] بتاع الحقل. عشان كده حقل من غير [[name]] مبيتبعتش.
+- مفيش سيرفر هنا، فالطلب مبيروحش لحد: الفايدة إنك **تشوف** الفورم بيبعت إيه. في موقع حقيقي الـ [[action]] بيبقى عنوان على سيرفر والـ [[method]] يبقى [[post]]، فالبيانات متظهرش في العنوان (درس «form و label»).
+- كل حقل جوه [[<p>]] مع الـ [[label]] بتاعه، عشان كل واحد ياخد سطر من غير CSS.
+- الموبايل [[dir="ltr"]]: الأرقام بتتكتب من الشمال حتى في صفحة عربي.
 
-**ملحوظة عن الرقم:** الـ outline مكتوب [[3px]] و Chrome عندي رجّع [[2.4px]]. ده لأن الشاشة عليها تكبير 125% ([[devicePixelRatio = 1.25]]): 3 × 1.25 = 3.75 بكسل حقيقي، و Chrome بيقرّب سُمك الحدود لتحت لبكسل كامل (3)، و 3 ÷ 1.25 = 2.4. على شاشة 100% هتشوف 3px.
+**ملحوظة:** زرار الإرسال في المعاينة اللي فوق مش هيوديك لحتة، لأن المعاينة بتعرض صفحة واحدة. جرّب الإرسال على جهازك.
 
-~~~text الناتج (Chrome، Tab ثم سهم لتحت ثم «اشترك»)
-الـ focus                    radio "quarter" (عرضه في الصفحة 1px)
-حدود الكارت المختار           rgb(15, 118, 110)    وحدود الباقي: rgb(214, 211, 209)
-outline الكارت                solid 2.4px rgb(29, 78, 216)   (devicePixelRatio = 1.25)
-new FormData(form).get('plan')   "quarter"
-السطر تحت الزرار              الباقة اللي هتتبعت: quarter
-axe: 0 violations (كانت page-has-heading-one قبل الـ h1)   الـ validator: مفيش رسايل
-~~~` },
-        { lvl: 'متوسط', dir: "shifa-booking", t: R`حجز ميعاد في عيادة متخيلة`, what: R`فورم حجز لـ «عيادة الشفاء»: الاسم، والموبايل بـ pattern، والتخصص (select بـ optgroup)، والتاريخ ([[min]] = النهارده بالتوقيت المحلي)، والوقت ([[type="time"]] و [[step="900"]] كل ربع ساعة)، وملاحظات (textarea بـ maxlength وعداد حروف)، وملخص أخطاء فوق. من دروس الوحدة كلها.`, done: R`تاريخ امبارح مقفول في الـ calendar، والإرسال الفاضي بيطلّع ملخص فيه لينك لكل حقل غلط والضغط على اللينك بيحط الـ focus في الحقل، والعداد بيقف عند الـ maxlength. وفي Network › Slow 3G: الدبل كليك على «احجز» بيوصّل request واحد بس للسيرفر (من غير الحماية بيوصل اتنين).`, sol: R`~~~html index.html
-<!doctype html>
+**الغلطة الشائعة:** تنسى تعمل [[thanks.html]] أو تكتب اسمها غلط في الـ [[action]]. ساعتها بعد الإرسال هتشوف «Your file couldn’t be accessed» و [[ERR_FILE_NOT_FOUND]] اللي عرفتهم في درس «start index.html و Ctrl+R».
+
+~~~text الناتج (Chrome 157، كتبت: منى ، 01000000000 ، بيت القمر)
+الضغط على label «رقم الموبايل»:  المؤشر راح للحقل phone
+إرسال والحقول فاضية:             المتصفح وقّف وكتب: Please fill out this field.
+بعد الإرسال، شريط العنوان آخره:
+  thanks.html?name=%D9%85%D9%86%D9%89&phone=01000000000&book=%D8%A8%D9%8A%D8%AA+%D8%A7%D9%84%D9%82%D9%85%D8%B1
+ولما تفكّه:
+  thanks.html?name=منى&phone=01000000000&book=بيت+القمر
+الـ validator على contact.html و thanks.html: The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0
+~~~
+
+الحروف العربي اتحولت لرموز [[%D9…]] والمسافة بقت [[+]]: نفس اللي حصل لاسم الفولدر العربي في أول درس. Chrome ممكن يعرضها عربي في الشريط، ولما تنسخ العنوان بتطلع بالرموز. (رسالة الحقل الفاضي بلغة المتصفح نفسه: عندي إنجليزي.)` },
+        { lvl: 'متوسط', dir: "rokn-books", cont: true, t: R`هيكل واحد لكل الصفحات`, what: R`الموقع بقى خمس صفحات، وكل واحدة فيها لينكات رجوع مختلفة. وحّدهم: في **كل** صفحة حط نفس الـ [[<header>]] وجواه [[<nav aria-label="صفحات الموقع">]] فيه أربع لينكات (الرئيسية، وعن المكتبة، وركن الأطفال، واطلب كتاب)، ولفّ محتوى الصفحة في [[<main>]]، وفي الآخر نفس الـ [[<footer>]] فيه عنوان المكتبة ولينك التليفون. وامسح اللينكات المتبعترة اللي في آخر كل صفحة («ارجع للرئيسية» واللي في آخر [[index.html]]). وبعدين الجديد: افحص الخمس صفحات من الترمنال بأمر واحد بدل ما تلصق كل واحدة. مفيش ملفات جديدة، فمتنفّذش الخطوة ١ من «ابدأ إزاي» خالص: ابدأ من [[code .]]. من درس «semantic HTML» ودرس «View Source و validator» (التمرين الخامس).`, done: R`كل صفحة فيها [[header]] و [[nav]] و [[main]] و [[footer]] مرة واحدة، و ٥ لينكات (أربعة في الـ nav وواحد تليفون). ومن أي صفحة بتوصل لأي صفحة بكليك واحد. والأمر الواحد طلّع valid خمس مرات. و [[grep]] (أو [[Select-String]]) على [[<title>]] طلّع خمس عناوين مختلفين.`, sol: R`**الحتة المشتركة.** دي بتتحط في كل صفحة زي ما هي، أول حاجة جوه الـ [[<body>]]:
+
+~~~html أول الـ body في كل صفحة
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="about.html">عن المكتبة</a>
+            <a href="kids.html">ركن الأطفال</a>
+            <a href="contact.html">اطلب كتاب</a>
+        </nav>
+    </header>
+~~~
+
+ودي آخر حاجة قبل [[</body>]]:
+
+~~~html آخر الـ body في كل صفحة
+    <footer>
+        <p>مكتبة الركن، ٧ شارع النخيل. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
+~~~
+
+واللي بينهم (محتوى الصفحة نفسه) بيتلف في [[<main>]] … [[</main>]]. وبعدها حدد الملف كله ودوس [[Shift+Alt+F]] عشان المسافات تتظبط.
+
+[[index.html]] بعد التعديل:
+
+~~~html index.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>احجز ميعاد: عيادة الشفاء</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
-  form { max-width: 480px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
-  h1 { margin: 0; font-size: 24px; }
-  .field { display: grid; gap: 4px; }
-  label { font-weight: 600; }
-  .hint { color: #64748b; font-size: 14px; }
-  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #94a3b8; border-radius: 8px; width: 100%; }
-  [aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
-  .summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 10px; background: #fef2f2; }
-  .summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
-  .summary ul { margin: 0; padding-inline-start: 20px; }
-  .summary a { color: #991b1b; }
-  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #0369a1; color: white; }
-  button:disabled { background: #94a3b8; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الركن</title>
 </head>
 <body>
-<main>
-<form id="book" action="thanks.html" method="get" novalidate>
-  <h1>احجز ميعاد في عيادة الشفاء</h1>
-
-  <div class="summary" id="summary" tabindex="-1" hidden>
-    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
-    <ul id="errors"></ul>
-  </div>
-
-  <div class="field">
-    <label for="name">الاسم</label>
-    <input id="name" name="name" autocomplete="name" required>
-  </div>
-
-  <div class="field">
-    <label for="phone">الموبايل</label>
-    <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required
-           pattern="01[0125][0-9]{8}" aria-describedby="phone-hint">
-    <span class="hint" id="phone-hint">١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015</span>
-  </div>
-
-  <div class="field">
-    <label for="dept">التخصص</label>
-    <select id="dept" name="dept" required>
-      <option value="">اختار…</option>
-      <optgroup label="باطنة">
-        <option value="heart">قلب</option>
-        <option value="stomach">جهاز هضمي</option>
-      </optgroup>
-      <optgroup label="جراحة">
-        <option value="bones">عظام</option>
-        <option value="general">جراحة عامة</option>
-      </optgroup>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="day">اليوم</label>
-    <input id="day" name="day" type="date" required>
-  </div>
-
-  <div class="field">
-    <label for="time">الساعة</label>
-    <input id="time" name="time" type="time" min="10:00" max="21:00" step="900" required aria-describedby="time-hint">
-    <span class="hint" id="time-hint">من ١٠ الصبح لـ ٩ بالليل، كل ربع ساعة</span>
-  </div>
-
-  <div class="field">
-    <label for="notes">ملاحظات (اختياري)</label>
-    <textarea id="notes" name="notes" rows="3" maxlength="200" aria-describedby="left"></textarea>
-    <span class="hint" id="left">فاضل 200 حرف</span>
-  </div>
-
-  <button id="send">احجز</button>
-</form>
-</main>
-<script>
-  const form = document.getElementById('book');
-  const summary = document.getElementById('summary');
-  const list = document.getElementById('errors');
-  const send = document.getElementById('send');
-
-  // the earliest day is today in the reader's own time zone (toISOString() would give the UTC date: yesterday after midnight in Cairo)
-  const now = new Date();
-  const pad = n => String(n).padStart(2, '0');
-  document.getElementById('day').min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
-
-  const notes = document.getElementById('notes');
-  notes.addEventListener('input', () => {
-    document.getElementById('left').textContent = 'فاضل ' + (notes.maxLength - notes.value.length) + ' حرف';
-  });
-
-  // a summary link moves the focus into its field, not just the scroll
-  list.addEventListener('click', e => {
-    const a = e.target.closest('a');
-    if (!a) return;
-    e.preventDefault();
-    document.querySelector(a.hash).focus();
-  });
-
-  let sent = false;
-  form.addEventListener('submit', e => {
-    const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
-    for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
-    if (bad.length) {
-      e.preventDefault();
-      list.innerHTML = '';
-      for (const f of bad) {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = '#' + f.id;
-        a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
-        li.append(a);
-        list.append(li);
-      }
-      document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
-      summary.hidden = false;
-      summary.focus();
-      return;
-    }
-    // the second click of a double click: the first one already sent the form
-    if (sent) { e.preventDefault(); return; }
-    sent = true;
-    send.disabled = true;
-    send.textContent = 'بنحجز…';
-  });
-</script>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="about.html">عن المكتبة</a>
+            <a href="kids.html">ركن الأطفال</a>
+            <a href="contact.html">اطلب كتاب</a>
+        </nav>
+    </header>
+    <main>
+        <img src="images/logo.svg" alt="لوجو مكتبة الركن: كتاب مفتوح" width="120" height="120">
+        <h1>مكتبة الركن</h1>
+        <p>مكتبة صغيرة على ناصية شارع النخيل: كتب جديدة ومستعملة، وركن للأطفال.</p>
+        <p>العنوان: ٧ شارع النخيل، جنب الصيدلية.</p>
+        <h2>مواعيد العمل</h2>
+        <ul>
+            <li>من السبت للخميس: ١٠ الصبح لـ ٩ بالليل</li>
+            <li>الجمعة: ٤ العصر لـ ٩ بالليل</li>
+            <li>أول يوم في كل شهر: جرد، والمكتبة مقفولة</li>
+        </ul>
+        <h2>أقسام المكتبة</h2>
+        <ul>
+            <li>روايات</li>
+            <li>كتب أطفال</li>
+            <li>كتب مستعملة</li>
+        </ul>
+        <h2>عرض الأسبوع</h2>
+        <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+    </main>
+    <footer>
+        <p>مكتبة الركن، ٧ شارع النخيل. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
 </body>
 </html>
 ~~~
 
-~~~html thanks.html
-<!doctype html>
+~~~view 670 690 شكل index.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اتحجز: عيادة الشفاء</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الركن</title>
 </head>
 <body>
-<main>
-  <h1>الميعاد اتحجز</h1>
-  <p>هنكلمك على الموبايل قبل الميعاد بيوم. <a href="index.html">احجز ميعاد تاني</a></p>
-</main>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="about.html">عن المكتبة</a>
+            <a href="kids.html">ركن الأطفال</a>
+            <a href="contact.html">اطلب كتاب</a>
+        </nav>
+    </header>
+    <main>
+        <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%20width%3D%22120%22%20height%3D%22120%22%3E%3Crect%20width%3D%22120%22%20height%3D%22120%22%20rx%3D%2216%22%20fill%3D%22%231f4e5f%22%2F%3E%3Cpath%20d%3D%22M60%2036%20C48%2028%2032%2028%2022%2032%20V88%20C32%2084%2048%2084%2060%2092%20C72%2084%2088%2084%2098%2088%20V32%20C88%2028%2072%2028%2060%2036%20Z%22%20fill%3D%22%23fdf6e3%22%2F%3E%3Cpath%20d%3D%22M60%2036%20V92%22%20stroke%3D%22%231f4e5f%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E" alt="لوجو مكتبة الركن: كتاب مفتوح" width="120" height="120">
+        <h1>مكتبة الركن</h1>
+        <p>مكتبة صغيرة على ناصية شارع النخيل: كتب جديدة ومستعملة، وركن للأطفال.</p>
+        <p>العنوان: ٧ شارع النخيل، جنب الصيدلية.</p>
+        <h2>مواعيد العمل</h2>
+        <ul>
+            <li>من السبت للخميس: ١٠ الصبح لـ ٩ بالليل</li>
+            <li>الجمعة: ٤ العصر لـ ٩ بالليل</li>
+            <li>أول يوم في كل شهر: جرد، والمكتبة مقفولة</li>
+        </ul>
+        <h2>أقسام المكتبة</h2>
+        <ul>
+            <li>روايات</li>
+            <li>كتب أطفال</li>
+            <li>كتب مستعملة</li>
+        </ul>
+        <h2>عرض الأسبوع</h2>
+        <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+    </main>
+    <footer>
+        <p>مكتبة الركن، ٧ شارع النخيل. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
 </body>
 </html>
 ~~~
 
-~~~view 760 820 الشكل النهائي
-<!doctype html>
+وصفحة تانية كاملة، عشان تقارن. الفرق بينهم اللي جوه الـ [[<main>]] والـ [[<title>]] بس:
+
+~~~live 390 430 kids.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>احجز ميعاد: عيادة الشفاء</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
-  form { max-width: 480px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
-  h1 { margin: 0; font-size: 24px; }
-  .field { display: grid; gap: 4px; }
-  label { font-weight: 600; }
-  .hint { color: #64748b; font-size: 14px; }
-  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #94a3b8; border-radius: 8px; width: 100%; }
-  [aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
-  .summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 10px; background: #fef2f2; }
-  .summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
-  .summary ul { margin: 0; padding-inline-start: 20px; }
-  .summary a { color: #991b1b; }
-  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #0369a1; color: white; }
-  button:disabled { background: #94a3b8; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ركن الأطفال | مكتبة الركن</title>
 </head>
 <body>
-<main>
-<form id="book" method="get" novalidate>
-  <h1>احجز ميعاد في عيادة الشفاء</h1>
-
-  <div class="summary" id="summary" tabindex="-1" hidden>
-    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
-    <ul id="errors"></ul>
-  </div>
-
-  <div class="field">
-    <label for="name">الاسم</label>
-    <input id="name" name="name" autocomplete="name" required>
-  </div>
-
-  <div class="field">
-    <label for="phone">الموبايل</label>
-    <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required
-           pattern="01[0125][0-9]{8}" aria-describedby="phone-hint">
-    <span class="hint" id="phone-hint">١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015</span>
-  </div>
-
-  <div class="field">
-    <label for="dept">التخصص</label>
-    <select id="dept" name="dept" required>
-      <option value="">اختار…</option>
-      <optgroup label="باطنة">
-        <option value="heart">قلب</option>
-        <option value="stomach">جهاز هضمي</option>
-      </optgroup>
-      <optgroup label="جراحة">
-        <option value="bones">عظام</option>
-        <option value="general">جراحة عامة</option>
-      </optgroup>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="day">اليوم</label>
-    <input id="day" name="day" type="date" required>
-  </div>
-
-  <div class="field">
-    <label for="time">الساعة</label>
-    <input id="time" name="time" type="time" min="10:00" max="21:00" step="900" required aria-describedby="time-hint">
-    <span class="hint" id="time-hint">من ١٠ الصبح لـ ٩ بالليل، كل ربع ساعة</span>
-  </div>
-
-  <div class="field">
-    <label for="notes">ملاحظات (اختياري)</label>
-    <textarea id="notes" name="notes" rows="3" maxlength="200" aria-describedby="left"></textarea>
-    <span class="hint" id="left">فاضل 200 حرف</span>
-  </div>
-
-  <button id="send">احجز</button>
-</form>
-</main>
-<script>
-  const form = document.getElementById('book');
-  const summary = document.getElementById('summary');
-  const list = document.getElementById('errors');
-  const send = document.getElementById('send');
-
-  // the earliest day is today in the reader's own time zone (toISOString() would give the UTC date: yesterday after midnight in Cairo)
-  const now = new Date();
-  const pad = n => String(n).padStart(2, '0');
-  document.getElementById('day').min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
-
-  const notes = document.getElementById('notes');
-  notes.addEventListener('input', () => {
-    document.getElementById('left').textContent = 'فاضل ' + (notes.maxLength - notes.value.length) + ' حرف';
-  });
-
-  // a summary link moves the focus into its field, not just the scroll
-  list.addEventListener('click', e => {
-    const a = e.target.closest('a');
-    if (!a) return;
-    e.preventDefault();
-    document.querySelector(a.hash).focus();
-  });
-
-  let sent = false;
-  form.addEventListener('submit', e => {
-    const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
-    for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
-    if (bad.length) {
-      e.preventDefault();
-      list.innerHTML = '';
-      for (const f of bad) {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = '#' + f.id;
-        a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
-        li.append(a);
-        list.append(li);
-      }
-      document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
-      summary.hidden = false;
-      summary.focus();
-      return;
-    }
-    // the second click of a double click: the first one already sent the form
-    if (sent) { e.preventDefault(); return; }
-    sent = true;
-    send.disabled = true;
-    send.textContent = 'بنحجز…';
-  });
-</script>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="about.html">عن المكتبة</a>
+            <a href="kids.html">ركن الأطفال</a>
+            <a href="contact.html">اطلب كتاب</a>
+        </nav>
+    </header>
+    <main>
+        <h1>ركن الأطفال</h1>
+        <p>ركن هادي في آخر المكتبة للأطفال من ٤ لـ ١٠ سنين: كتب مصوّرة، وحواديت، وألوان.</p>
+        <h2>كتب بنرشّحها</h2>
+        <ul>
+            <li>القطة اللي بتحب القراية</li>
+            <li>رحلة نقطة مية</li>
+            <li>أسامي النجوم</li>
+        </ul>
+        <h2>ساعة الحدوتة</h2>
+        <p>كل سبت الساعة ١١ الصبح. الحضور مجاني، والمكان بيكفّي ١٥ طفل.</p>
+    </main>
+    <footer>
+        <p>مكتبة الركن، ٧ شارع النخيل. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** كارت أبيض فيه عنوان وتحته الحقول ورا بعض، وتحت الموبايل والساعة سطر رمادي بيشرح المطلوب. دوس «احجز» والفورم فاضي: فوق بيظهر مربع أحمر «فيه 5 حاجات لازم تتصلّح» وتحته لينك لكل حقل، والحقول الغلط بتبقى حمرا.
+والتلاتة الباقيين ([[about.html]] و [[contact.html]] و [[thanks.html]]) نفس الخطوات بالظبط: الـ header فوق، والمحتوى القديم جوه [[<main>]] من غير سطر «ارجع للرئيسية»، والـ footer تحت.
+
+**الفحص بأمر واحد:**
+
+~~~bash
+for f in *.html; do echo "== $f"; curl -s -H "Content-Type: text/html; charset=utf-8" --data-binary @"$f" "https://html5.validator.nu/?out=text"; done
+~~~
+
+~~~powershell
+foreach ($f in ls *.html) { "== $($f.Name)"; curl.exe -s -H "Content-Type: text/html; charset=utf-8" --data-binary "@$($f.Name)" "https://html5.validator.nu/?out=text" }
+~~~
+
+- [[for f in *.html]] و [[foreach ($f in ls *.html)]]: «لكل ملف آخره [[.html]] في الفولدر، نفّذ اللي جاي، والملف اسمه [[f]]».
+- [[echo "== $f"]]: اطبع اسم الملف، عشان تعرف كل رد بتاع مين.
+- والباقي هو أمر [[curl]] بتاع درس «View Source و validator»، واسم الملف متبدّل بالمتغيّر.
 
 **ليه كده:**
-- [[novalidate]] على الفورم: بنقفل فقاعة المتصفح عشان نعرض كل الأخطاء مرة واحدة في الملخص. بس الشروط نفسها ([[required]] و [[pattern]] و [[min]]) لسه شغالة، وبنسألها بـ [[checkValidity()]].
-- **أقل تاريخ = النهارده بتوقيتك:** [[toISOString()]] بيرجّع التاريخ بتوقيت جرينتش، فبعد نص الليل في القاهرة لحد الساعة 2 بيقول امبارح. عشان كده بنبني التاريخ من [[getFullYear()]] و [[getMonth()]] و [[getDate()]].
-- [[step="900"]] في الوقت = 900 ثانية = ربع ساعة. و [[min]] و [[max]] بيحددوا مواعيد العيادة.
-- [[optgroup]] بيجمّع التخصصات تحت عنوان، والاختيار الأول [[value=""]] عشان [[required]] يرفضه.
-- الملخص [[tabindex="-1"]] وبناخد عليه الـ focus: قارئ الشاشة بيقرا عدد الأخطاء على طول. واللينك بيعمل [[focus()]] على الحقل بإيدنا، لأن [[href="#phone"]] لوحده بينزّل الصفحة بس.
-- [[aria-invalid="true"]] على الحقول الغلط: لونها بيتغيّر، وقارئ الشاشة بيقول «invalid entry».
-- [[aria-describedby]]: السطر الرمادي بيتقري مع اسم الحقل.
 
-**الدبل كليك (اتقاس، والنتيجة مش زي ما كنت متوقع):** على سيرفر محلي سريع، حتى **من غير** الحماية، السيرفر استلم طلب واحد: Chrome بيلغي التنقّل الأولاني لما التاني يبدأ قبل ما يتبعت. بس على Slow 3G، من غير الحماية، السيرفر استلم **طلبين** (حجزين لنفس الشخص). ومع المتغير [[sent]] وزرار [[disabled]]: طلب واحد. يعني المشكلة بتظهر عند الناس اللي النت عندهم بطيء بس، ومش هتشوفها على جهازك غير لو جربت Slow 3G.
+- [[<header>]] و [[<nav>]] و [[<main>]] و [[<footer>]] بيقولوا للمتصفح ولقارئ الشاشة كل جزء هو إيه (درس «semantic HTML»). و [[aria-label]] بيدّي الـ nav اسم.
+- لما القايمة واحدة في كل صفحة، الزائر مبيتوهش، وانت مبتفكرش «الصفحة دي بترجّع لفين».
+- لينك التليفون اتنقل للـ footer فبقى في كل صفحة، مش في الرئيسية بس.
 
-~~~text الناتج (Chrome، ١٩ نوفمبر)
-day.min                     2026-11-19
-اختيار 2020-01-01           Value must be 11/19/2026 or later.
-الساعة 10:10                Please enter a valid value. The two nearest valid values are 10:00 AM and 10:15 AM.
-الساعة 22:00                Value must be 9:00 PM or earlier.
+**الغلطة الشائعة:** تغيّر الـ nav في تلات صفحات وتنسى اتنين. عشان كده الفحص بـ [[grep -c]]: كل ملف لازم يطلّع نفس الرقم.
 
-«احجز» والفورم فاضي          الـ focus على الملخص، و 5 حقول aria-invalid="true":
-  الاسم: Please fill out this field.
-  الموبايل: Please fill out this field.
-  التخصص: Please select an item in the list.
-  اليوم: Please fill out this field.
-  الساعة: Please fill out this field.
-الضغط على لينك «الموبايل»     الـ focus راح لـ #phone
-200 حرف في الملاحظات          فاضل 0 حرف
+~~~text الناتج (Git Bash و Chrome 157)
+== about.html
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+== contact.html
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+== index.html
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+== kids.html
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+== thanks.html
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
 
-دبل كليك، Slow 3G، من غير الحماية    السيرفر استلم 2 طلب
-دبل كليك، Slow 3G، بالحماية           السيرفر استلم 1 طلب
-axe: 0 violations   الـ validator: مفيش رسايل
-~~~` },
-        { lvl: 'متوسط', dir: "coffee-quiz", t: R`اختبار «أنسب قهوة ليك» خطوة خطوة`, what: R`٤ أسئلة، كل سؤال fieldset بـ legend و radios، وسؤال واحد بس ظاهر في المرة ([[hidden]] على الباقي)، وزرار «التالي» مبيعدّيش لو السؤال مش متجاوب ([[reportValidity()]] على الـ radio)، وزرار «رجوع»، وفي الآخر كارت نتيجة عليه [[aria-live="polite"]]. فكرة «quiz بيخلص بتوصية» اللي بتتعمل في صفحات الهبوط.`, done: R`بالكيبورد بس تقدر تجاوب الأربعة (الأسهم للاختيار و Enter للتالي)، و «التالي» من غير اختيار بيطلّع رسالة المتصفح على المجموعة، و «رجوع» بيرجّع اختيارك زي ما هو، والنتيجة بتتغيّر لو غيّرت إجابة.`, sol: R`~~~html index.html
-<!doctype html>
+$ grep -c "<a " *.html
+about.html:5
+contact.html:5
+index.html:5
+kids.html:5
+thanks.html:5
+
+$ grep -n "<title>" *.html
+about.html:6:    <title>عن المكتبة | مكتبة الركن</title>
+contact.html:6:    <title>اطلب كتاب | مكتبة الركن</title>
+index.html:6:    <title>مكتبة الركن</title>
+kids.html:6:    <title>ركن الأطفال | مكتبة الركن</title>
+thanks.html:6:    <title>طلبك وصل | مكتبة الركن</title>
+
+كل صفحة: header و nav و main و footer = 4 عناصر   عرض 360: scrollWidth = 360
+~~~
+
+[[grep -c "<a "]] بيعدّ السطور اللي فيها لينك في كل ملف، و [[grep -n "<title>"]] بيطبع سطر العنوان من كل ملف برقمه. في PowerShell: [[Select-String -Path *.html -Pattern "<title>"]].` },
+        { lvl: 'متوسط', dir: "rokn-books", cont: true, t: R`عروض الشهر، وفحص التسليم`, what: R`زي المشروع اللي فات (صفحة جوه نفس الهيكل، وفحص من الترمنال)، وزوّد عليه: سيرفر محلي، وفحص تسليم كامل. صاحب المكتبة بعتلك عروض ديسمبر: «شنطة الشتا» (تلات روايات مستعملة في شنطة قماش، ١٢٠ جنيه)، و «كتاب وكراسة تلوين» (أي كتاب أطفال ومعاه كراسة هدية، ٨٥ جنيه)، و «بدّل وخد» (كتابين قريتهم بكتاب مستعمل، كل خميس، من غير فلوس). اعمل [[offers.html]] بنفس الهيكل: [[<h1>]]، وفقرة بمدة العروض، وكل عرض [[<article>]] فيه [[<h2>]] وفقرة وصف وفقرة سعر، وفي الآخر فقرة فيها لينك لـ [[contact.html]]. وزوّد لينك «عروض الشهر» في الـ nav بتاع **الست** صفحات. وبعدين شغّل الموقع من سيرفر محلي ([[npx serve]]، أو Live Server) واملا جدول التسليم: لكل صفحة، الـ validator و Console وعرض 360. نفّذ [[ni offers.html]] بس من الخطوة ١. لو معندكش Node ولا الإضافة: اعمل الفحص على [[file:///]] واقرا جزء السيرفر في الحل.`, done: R`[[grep -c "<a "]] بيطلّع 6 لكل صفحة و 7 لـ [[offers.html]]. والجدول فيه ست صفوف كلها سليمة. وعنوان السيرفر من غير اسم ملف بيفتح الرئيسية. وقلت في جملة ليه تعديل الـ nav في ست ملفات كان متعب.`, sol: R`~~~powershell
+ni offers.html
+~~~
+
+~~~live 580 580 offers.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أنسب قهوة ليك</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fdf8f3; color: #292524; }
-  form { max-width: 440px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
-  h1 { margin: 0 0 4px; font-size: 22px; }
-  .step { margin: 0 0 12px; color: #78716c; font-size: 14px; }
-  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
-  legend { font-size: 18px; font-weight: 700; margin-block-end: 10px; }
-  fieldset label { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border: 1px solid #d6d3d1; border-radius: 10px; cursor: pointer; }
-  fieldset label:has(input:checked) { border-color: #92400e; background: #fef3c7; }
-  .nav { display: flex; gap: 8px; margin-block-start: 16px; }
-  button { font: inherit; font-weight: 700; padding: 10px 18px; border-radius: 10px; border: 1px solid #92400e; background: white; color: #92400e; }
-  button[type="submit"] { background: #92400e; color: white; }
-  .result { margin-block-start: 16px; padding: 16px; border-radius: 12px; background: #292524; color: #fef3c7; }
-  .result b { display: block; font-size: 24px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عروض شهر ديسمبر | مكتبة الركن</title>
 </head>
 <body>
-<main>
-<form id="quiz" novalidate>
-  <h1>أنسب قهوة ليك</h1>
-  <p class="step" id="step">سؤال 1 من 4</p>
-
-  <fieldset>
-    <legend>بتحب طعم القهوة إزاي؟</legend>
-    <label><input type="radio" name="q1" value="strong" required> تقيلة ومُرّة</label>
-    <label><input type="radio" name="q1" value="milk"> بلبن كتير</label>
-    <label><input type="radio" name="q1" value="sweet"> مسكّرة</label>
-  </fieldset>
-
-  <fieldset hidden>
-    <legend>بتشربها إمتى؟</legend>
-    <label><input type="radio" name="q2" value="strong" required> أول ما أصحى</label>
-    <label><input type="radio" name="q2" value="milk"> مع الفطار</label>
-    <label><input type="radio" name="q2" value="sweet"> بالليل مع الحلو</label>
-  </fieldset>
-
-  <fieldset hidden>
-    <legend>سخنة ولا ساقعة؟</legend>
-    <label><input type="radio" name="q3" value="strong" required> سخنة دايمًا</label>
-    <label><input type="radio" name="q3" value="milk"> على حسب الجو</label>
-    <label><input type="radio" name="q3" value="sweet"> ساقعة بتلج</label>
-  </fieldset>
-
-  <fieldset hidden>
-    <legend>كوباية كبيرة ولا صغيرة؟</legend>
-    <label><input type="radio" name="q4" value="strong" required> فنجان صغير</label>
-    <label><input type="radio" name="q4" value="milk"> مج كبير</label>
-    <label><input type="radio" name="q4" value="sweet"> كوباية بشفاطة</label>
-  </fieldset>
-
-  <div class="nav">
-    <button type="button" id="back" hidden>رجوع</button>
-    <button type="submit" id="next">التالي</button>
-  </div>
-
-  <div class="result" id="result" aria-live="polite" hidden></div>
-</form>
-</main>
-<script>
-  const form = document.getElementById('quiz');
-  const steps = [...form.querySelectorAll('fieldset')];
-  const back = document.getElementById('back');
-  const next = document.getElementById('next');
-  const result = document.getElementById('result');
-  const coffees = {
-    strong: ['إسبريسو', 'فنجان صغير مركّز، من غير سكر ولا لبن.'],
-    milk: ['لاتيه', 'إسبريسو على لبن سخن كتير ورغوة خفيفة.'],
-    sweet: ['آيس موكا', 'قهوة بشوكولاتة وتلج، حلوة وساقعة.'],
-  };
-  let at = 0;
-
-  function show(i) {
-    steps.forEach((s, n) => s.hidden = n !== i);
-    at = i;
-    back.hidden = i === 0;
-    next.textContent = i === steps.length - 1 ? 'شوف النتيجة' : 'التالي';
-    document.getElementById('step').textContent = 'سؤال ' + (i + 1) + ' من ' + steps.length;
-  }
-
-  // Enter on a radio submits the form, so «التالي» works from the keyboard without extra code
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const first = steps[at].querySelector('input');
-    // the group is valid once any radio with this name is checked; reportValidity shows the browser's message on the group
-    if (!first.reportValidity()) return;
-    if (at < steps.length - 1) { show(at + 1); focusStep(); return; }
-    const votes = {};
-    for (const [, v] of new FormData(form)) votes[v] = (votes[v] || 0) + 1;
-    const best = Object.keys(votes).sort((a, b) => votes[b] - votes[a])[0];
-    result.innerHTML = 'أنسب قهوة ليك: <b>' + coffees[best][0] + '</b>' + coffees[best][1];
-    result.hidden = false;
-  });
-
-  // the focus goes to the chosen answer if there is one (coming back), else to the first
-  function focusStep() {
-    (steps[at].querySelector('input:checked') || steps[at].querySelector('input')).focus();
-  }
-
-  back.addEventListener('click', () => { result.hidden = true; show(at - 1); focusStep(); });
-  show(0);
-</script>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="about.html">عن المكتبة</a>
+            <a href="kids.html">ركن الأطفال</a>
+            <a href="contact.html">اطلب كتاب</a>
+            <a href="offers.html">عروض الشهر</a>
+        </nav>
+    </header>
+    <main>
+        <h1>عروض شهر ديسمبر</h1>
+        <p>العروض سارية من أول الشهر لآخره، ولحد ما الكمية تخلص.</p>
+        <article>
+            <h2>شنطة الشتا</h2>
+            <p>تلات روايات مستعملة من اختيارك في شنطة قماش.</p>
+            <p>السعر: ١٢٠ جنيه</p>
+        </article>
+        <article>
+            <h2>كتاب وكراسة تلوين</h2>
+            <p>أي كتاب من ركن الأطفال ومعاه كراسة تلوين هدية.</p>
+            <p>السعر: ٨٥ جنيه</p>
+        </article>
+        <article>
+            <h2>بدّل وخد</h2>
+            <p>هات كتابين قريتهم وخد كتاب مستعمل ببلاش، كل يوم خميس.</p>
+            <p>السعر: من غير فلوس</p>
+        </article>
+        <p>عايز تحجز عرض؟ <a href="contact.html">اطلبه من هنا</a>.</p>
+    </main>
+    <footer>
+        <p>مكتبة الركن، ٧ شارع النخيل. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
 </body>
 </html>
 ~~~
 
-~~~view 470 520 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أنسب قهوة ليك</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fdf8f3; color: #292524; }
-  form { max-width: 440px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
-  h1 { margin: 0 0 4px; font-size: 22px; }
-  .step { margin: 0 0 12px; color: #78716c; font-size: 14px; }
-  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
-  legend { font-size: 18px; font-weight: 700; margin-block-end: 10px; }
-  fieldset label { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border: 1px solid #d6d3d1; border-radius: 10px; cursor: pointer; }
-  fieldset label:has(input:checked) { border-color: #92400e; background: #fef3c7; }
-  .nav { display: flex; gap: 8px; margin-block-start: 16px; }
-  button { font: inherit; font-weight: 700; padding: 10px 18px; border-radius: 10px; border: 1px solid #92400e; background: white; color: #92400e; }
-  button[type="submit"] { background: #92400e; color: white; }
-  .result { margin-block-start: 16px; padding: 16px; border-radius: 12px; background: #292524; color: #fef3c7; }
-  .result b { display: block; font-size: 24px; }
-</style>
-</head>
-<body>
-<main>
-<form id="quiz" novalidate>
-  <h1>أنسب قهوة ليك</h1>
-  <p class="step" id="step">سؤال 1 من 4</p>
+والسطر اللي اتزوّد في الـ [[<nav>]] بتاع كل صفحة (آخر لينك):
 
-  <fieldset>
-    <legend>بتحب طعم القهوة إزاي؟</legend>
-    <label><input type="radio" name="q1" value="strong" required> تقيلة ومُرّة</label>
-    <label><input type="radio" name="q1" value="milk"> بلبن كتير</label>
-    <label><input type="radio" name="q1" value="sweet"> مسكّرة</label>
-  </fieldset>
-
-  <fieldset hidden>
-    <legend>بتشربها إمتى؟</legend>
-    <label><input type="radio" name="q2" value="strong" required> أول ما أصحى</label>
-    <label><input type="radio" name="q2" value="milk"> مع الفطار</label>
-    <label><input type="radio" name="q2" value="sweet"> بالليل مع الحلو</label>
-  </fieldset>
-
-  <fieldset hidden>
-    <legend>سخنة ولا ساقعة؟</legend>
-    <label><input type="radio" name="q3" value="strong" required> سخنة دايمًا</label>
-    <label><input type="radio" name="q3" value="milk"> على حسب الجو</label>
-    <label><input type="radio" name="q3" value="sweet"> ساقعة بتلج</label>
-  </fieldset>
-
-  <fieldset hidden>
-    <legend>كوباية كبيرة ولا صغيرة؟</legend>
-    <label><input type="radio" name="q4" value="strong" required> فنجان صغير</label>
-    <label><input type="radio" name="q4" value="milk"> مج كبير</label>
-    <label><input type="radio" name="q4" value="sweet"> كوباية بشفاطة</label>
-  </fieldset>
-
-  <div class="nav">
-    <button type="button" id="back" hidden>رجوع</button>
-    <button type="submit" id="next">التالي</button>
-  </div>
-
-  <div class="result" id="result" aria-live="polite" hidden></div>
-</form>
-</main>
-<script>
-  const form = document.getElementById('quiz');
-  const steps = [...form.querySelectorAll('fieldset')];
-  const back = document.getElementById('back');
-  const next = document.getElementById('next');
-  const result = document.getElementById('result');
-  const coffees = {
-    strong: ['إسبريسو', 'فنجان صغير مركّز، من غير سكر ولا لبن.'],
-    milk: ['لاتيه', 'إسبريسو على لبن سخن كتير ورغوة خفيفة.'],
-    sweet: ['آيس موكا', 'قهوة بشوكولاتة وتلج، حلوة وساقعة.'],
-  };
-  let at = 0;
-
-  function show(i) {
-    steps.forEach((s, n) => s.hidden = n !== i);
-    at = i;
-    back.hidden = i === 0;
-    next.textContent = i === steps.length - 1 ? 'شوف النتيجة' : 'التالي';
-    document.getElementById('step').textContent = 'سؤال ' + (i + 1) + ' من ' + steps.length;
-  }
-
-  // Enter on a radio submits the form, so «التالي» works from the keyboard without extra code
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const first = steps[at].querySelector('input');
-    // the group is valid once any radio with this name is checked; reportValidity shows the browser's message on the group
-    if (!first.reportValidity()) return;
-    if (at < steps.length - 1) { show(at + 1); focusStep(); return; }
-    const votes = {};
-    for (const [, v] of new FormData(form)) votes[v] = (votes[v] || 0) + 1;
-    const best = Object.keys(votes).sort((a, b) => votes[b] - votes[a])[0];
-    result.innerHTML = 'أنسب قهوة ليك: <b>' + coffees[best][0] + '</b>' + coffees[best][1];
-    result.hidden = false;
-  });
-
-  // the focus goes to the chosen answer if there is one (coming back), else to the first
-  function focusStep() {
-    (steps[at].querySelector('input:checked') || steps[at].querySelector('input')).focus();
-  }
-
-  back.addEventListener('click', () => { result.hidden = true; show(at - 1); focusStep(); });
-  show(0);
-</script>
-</body>
-</html>
+~~~html السطر الجديد في الـ nav
+            <a href="offers.html">عروض الشهر</a>
 ~~~
 
-**هتشوف إيه:** كارت فيه «سؤال 1 من 4» وتحته السؤال و ٣ إجابات كل واحدة في مستطيل. اختار إجابة والمستطيل بيتلوّن أصفر. «التالي» بيوديك للسؤال اللي بعده، وفي الآخر الزرار بيبقى «شوف النتيجة» وبيظهر تحته كارت غامق فيه اسم القهوة.
+**السيرفر:**
+
+~~~powershell
+npx serve -l tcp://127.0.0.1:8793 .
+~~~
+
+وافتح [[http://127.0.0.1:8793]] في Chrome. (مع Live Server: زرار Go Live، والعنوان [[http://127.0.0.1:5500]].)
 
 **ليه كده:**
-- كل سؤال [[<fieldset>]] و [[<legend>]]: قارئ الشاشة بيقرا السؤال قبل كل إجابة.
-- [[hidden]] على كل الأسئلة ماعدا اللي انت فيه.
-- «التالي» زرار [[submit]]: لما تدوس Enter وانت على radio المتصفح بيبعت الفورم، فـ «التالي» بيشتغل من الكيبورد ببلاش.
-- [[novalidate]]: من غيره المتصفح كان هيحاول يتأكد من **كل** الأسئلة مع أول «التالي»، ويقف عند سؤال مخفي ميقدرش يوريهولك. فبنسأل بإيدنا عن سؤال واحد بس: [[reportValidity()]] على أول radio في السؤال الحالي (والمجموعة كلها بتبقى سليمة لو أي واحد فيها متعلّم).
-- «رجوع» بيخفي ويظهر بس، فالإجابة اللي اخترتها بتفضل زي ما هي. والـ focus بيروح على الإجابة المختارة مش أول واحدة.
-- النتيجة: كل إجابة ليها نوع قهوة، والنوع اللي اتختار أكتر بيكسب. ولو حصل تعادل، النوع اللي جه الأول في إجاباتك هو اللي بيكسب.
 
-**الغلطة الشائعة:** «التالي» زرار [[type="button"]] بـ click listener: الماوس شغال بس Enter مبيعملش حاجة.
+- [[<article>]] لكل عرض: كل واحد حاجة مستقلة بعنوانها، تنفع تتنقل لصفحة تانية زي ما هي (درس «semantic HTML»).
+- السعر في فقرة لوحده، عشان يبقى سهل تلاقيه وتغيّره الشهر الجاي.
+- آخر فقرة بتودّي على الفورم اللي عملته في المشروع التاني: الصفحات بتشتغل مع بعض.
+- السيرفر هنا عشان تجرّب الموقع بالشكل اللي الزائر هيشوفه: عنوان [[http://]]، والرئيسية بتفتح من غير اسم ملف.
 
-~~~text الناتج (Chrome، بالكيبورد بس)
-Tab ثم Enter من غير اختيار      فضل في «سؤال 1 من 4»: Please select one of these options.
-سهم لتحت ثم Enter               سؤال 2 من 4
-Space ثم Enter                  سؤال 3 من 4
-سهم لتحت ثم Enter (مرتين)        الإجابات: q1=milk q2=strong q3=milk q4=milk
-                                أنسب قهوة ليك: لاتيه
-«رجوع»                          سؤال 3 من 4، والـ focus على q3=milk (الإجابة زي ما هي)
-غيّرت q3 و q4 لـ sweet          أنسب قهوة ليك: آيس موكا
-axe: 0 violations   الـ validator: مفيش رسايل
-~~~` },
-        { lvl: 'متوسط', dir: "free-chapter", t: R`فورم «اقرا الفصل الأول ببلاش» لرواية متخيلة`, what: R`صفحة غامقة لدار نشر متخيلة اسمها «حبر»: فورم صغير (الاسم، ورقم الواتساب، والإيميل، و checkbox موافقة) بيفتح الفصل الأول في [[thanks.html]]. المطلوب: (١) رسالة الخطأ تحت كل حقل تظهر بس بعد ما الشخص يسيب الحقل أو يدوس الزرار ([[:user-invalid]] و [[:has()]])، مش أول ما الصفحة تفتح. (٢) رقم الموبايل يتقبل بالأرقام العربي ([[٠١٠...]]) ويتحوّل لأرقام إنجليزي وانت بتكتب. (٣) الرقم يتبعت بشكل واحد دايمًا: [[+201012345678]]، سواء اتكتب بـ 0 أو بـ +20. ده نمط صفحات «سيب بياناتك وخد حاجة ببلاش» اللي بيستخدمها أي حد بيبيع منتج رقمي. من دروس «Constraint Validation API» و «textarea و date و number».`, done: R`أول ما الصفحة تفتح مفيش ولا رسالة حمرا رغم إن الحقول فاضية، وكتابة [[٠١٠١٢٣٤٥٦٧٨]] بالكيبورد بتبقى [[01012345678]] والحقل سليم، وكتابة [[0123]] وبعدين Tab بتظهّر «الرقم ده مش رقم موبايل مصري»، والإرسال بيفتح [[thanks.html]] وفي الرابط [[wa=+201012345678]].`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اقرا الفصل الأول ببلاش: حبر</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #1e1b2e; color: #f5f3ff; }
-  .box { max-width: 420px; margin-inline: auto; padding: 24px; border-radius: 18px; background: #2a2640; }
-  h1 { margin: 0 0 4px; font-size: 24px; }
-  .lead { margin: 0 0 18px; color: #c4b5fd; }
-  form { display: grid; gap: 14px; }
-  .field { display: grid; gap: 4px; }
-  label { font-weight: 600; }
-  input[type="text"], input[type="tel"], input[type="email"] { font: inherit; padding: 10px 12px; border: 1px solid #6d5fa8; border-radius: 10px; background: #1e1b2e; color: inherit; }
-  .hint { color: #a5a1c7; font-size: 14px; }
-  .err { display: none; color: #fca5a5; font-size: 14px; }
-  /* the message shows after the person left the field or pressed «ابعتلي»: :user-invalid, not :invalid */
-  input:user-invalid { border-color: #f87171; }
-  .field:has(input:user-invalid) .err { display: block; }
-  .agree { display: flex; gap: 8px; align-items: start; font-weight: 400; }
-  button { font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #a78bfa; color: #1e1b2e; }
-</style>
-</head>
-<body>
-<main class="box">
-  <h1>اقرا الفصل الأول ببلاش</h1>
-  <p class="lead">من رواية «ليالي البحر». سيب بياناتك والفصل يفتح على طول.</p>
+**ليه تعديل الـ nav متعب:** نفس السطر اتكتب في ست ملفات، ولو نسيت واحد الموقع يبقى فيه صفحة بقايمة ناقصة. HTML لوحده مفيهوش طريقة يقول «حط القايمة دي في كل الصفحات». ده اللي بتحلّه الأدوات اللي جاية بعدين (القوالب والـ components). دلوقتي الحل: [[grep -c]] بعد كل تعديل.
 
-  <form id="signup" action="thanks.html" method="get">
-    <div class="field">
-      <label for="name">اسمك</label>
-      <input id="name" name="name" type="text" autocomplete="name" required>
-      <span class="err">اكتب اسمك.</span>
-    </div>
+**حاجتين هتلاحظهم مع [[serve]]:**
 
-    <div class="field">
-      <label for="wa">رقم الواتساب</label>
-      <input id="wa" name="wa" type="tel" autocomplete="tel" dir="ltr" required aria-describedby="wa-hint"
-             pattern="(\+20|0)?1[0125][0-9]{8}">
-      <span class="hint" id="wa-hint">زي 01012345678، وينفع بالأرقام العربي</span>
-      <span class="err">الرقم ده مش رقم موبايل مصري.</span>
-    </div>
+- بيشيل [[.html]] من العنوان: لما تدوس «عروض الشهر» العنوان يبقى [[/offers]].
+- الفورم بيوصل [[/thanks]] من غير القيم اللي بعد [[?]]: التحويل من [[/thanks.html]] لـ [[/thanks]] بيشيلها. على [[file:///]] القيم بتفضل. ده سلوك الأداة دي، مش غلطة في صفحتك.
 
-    <div class="field">
-      <label for="email">الإيميل</label>
-      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
-      <span class="err">الإيميل ناقص أو فيه غلط.</span>
-    </div>
+**الغلطة الشائعة:** تقفل الترمنال والسيرفر شغال وتستغرب إن الصفحة «مبقتش تفتح». السيرفر برنامج: لما يقف، عنوان الـ [[http://]] بيقف معاه. وملفاتك زي ما هي.
 
-    <label class="agree"><input type="checkbox" name="agree" value="yes" required> موافق أستلم رسايل عن الرواية (تقدر تلغي في أي وقت).</label>
+~~~text الناتج (serve على Node 24، و Chrome 157)
+ INFO  Accepting connections at http://127.0.0.1:8793
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 GET /
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 Returned 200 in 12 ms
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 GET /about.html
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 Returned 301 in 0 ms
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 GET /about
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 Returned 200 in 1 ms
 
-    <button>ابعتلي الفصل</button>
-  </form>
-</main>
-<script>
-  const wa = document.getElementById('wa');
-  // ٠١٠ written with Arabic-Indic digits (or Persian ones from some keyboards) becomes 010 before the pattern checks it
-  function latinDigits(s) {
-    return s.replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x0660)
-            .replace(/[۰-۹]/g, d => d.charCodeAt(0) - 0x06F0)
-            .replace(/[\s-]/g, '');
-  }
-  wa.addEventListener('input', () => {
-    const fixed = latinDigits(wa.value);
-    if (fixed !== wa.value) wa.value = fixed;
-  });
-  // what gets sent is one shape: +201012345678
-  document.getElementById('signup').addEventListener('submit', () => {
-    wa.value = '+20' + wa.value.replace(/^(\+20|0)/, '');
-  });
-</script>
-</body>
-</html>
+$ grep -c "<a " *.html
+about.html:6
+contact.html:6
+index.html:6
+kids.html:6
+offers.html:7
+thanks.html:6
+
+جدول التسليم:
+الصفحة          validator    Console    عرض 360 (scrollWidth)
+index.html      valid        فاضي       360
+about.html      valid        فاضي       360
+kids.html       valid        فاضي       360
+contact.html    valid        فاضي       360
+thanks.html     valid        فاضي       360
+offers.html     valid        فاضي       360
 ~~~
 
-~~~html thanks.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الفصل الأول: ليالي البحر</title>
-</head>
-<body>
-<main>
-  <h1>الفصل الأول: الرجوع</h1>
-  <p>رجع سالم القرية بعد عشرين سنة، ولقى البحر زي ما هو…</p>
-</main>
-</body>
-</html>
-~~~
-
-~~~view 520 580 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اقرا الفصل الأول ببلاش: حبر</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #1e1b2e; color: #f5f3ff; }
-  .box { max-width: 420px; margin-inline: auto; padding: 24px; border-radius: 18px; background: #2a2640; }
-  h1 { margin: 0 0 4px; font-size: 24px; }
-  .lead { margin: 0 0 18px; color: #c4b5fd; }
-  form { display: grid; gap: 14px; }
-  .field { display: grid; gap: 4px; }
-  label { font-weight: 600; }
-  input[type="text"], input[type="tel"], input[type="email"] { font: inherit; padding: 10px 12px; border: 1px solid #6d5fa8; border-radius: 10px; background: #1e1b2e; color: inherit; }
-  .hint { color: #a5a1c7; font-size: 14px; }
-  .err { display: none; color: #fca5a5; font-size: 14px; }
-  /* the message shows after the person left the field or pressed «ابعتلي»: :user-invalid, not :invalid */
-  input:user-invalid { border-color: #f87171; }
-  .field:has(input:user-invalid) .err { display: block; }
-  .agree { display: flex; gap: 8px; align-items: start; font-weight: 400; }
-  button { font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #a78bfa; color: #1e1b2e; }
-</style>
-</head>
-<body>
-<main class="box">
-  <h1>اقرا الفصل الأول ببلاش</h1>
-  <p class="lead">من رواية «ليالي البحر». سيب بياناتك والفصل يفتح على طول.</p>
-
-  <form id="signup" method="get">
-    <div class="field">
-      <label for="name">اسمك</label>
-      <input id="name" name="name" type="text" autocomplete="name" required>
-      <span class="err">اكتب اسمك.</span>
-    </div>
-
-    <div class="field">
-      <label for="wa">رقم الواتساب</label>
-      <input id="wa" name="wa" type="tel" autocomplete="tel" dir="ltr" required aria-describedby="wa-hint"
-             pattern="(\+20|0)?1[0125][0-9]{8}">
-      <span class="hint" id="wa-hint">زي 01012345678، وينفع بالأرقام العربي</span>
-      <span class="err">الرقم ده مش رقم موبايل مصري.</span>
-    </div>
-
-    <div class="field">
-      <label for="email">الإيميل</label>
-      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
-      <span class="err">الإيميل ناقص أو فيه غلط.</span>
-    </div>
-
-    <label class="agree"><input type="checkbox" name="agree" value="yes" required> موافق أستلم رسايل عن الرواية (تقدر تلغي في أي وقت).</label>
-
-    <button>ابعتلي الفصل</button>
-  </form>
-</main>
-<script>
-  const wa = document.getElementById('wa');
-  // ٠١٠ written with Arabic-Indic digits (or Persian ones from some keyboards) becomes 010 before the pattern checks it
-  function latinDigits(s) {
-    return s.replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x0660)
-            .replace(/[۰-۹]/g, d => d.charCodeAt(0) - 0x06F0)
-            .replace(/[\s-]/g, '');
-  }
-  wa.addEventListener('input', () => {
-    const fixed = latinDigits(wa.value);
-    if (fixed !== wa.value) wa.value = fixed;
-  });
-  // what gets sent is one shape: +201012345678
-  document.getElementById('signup').addEventListener('submit', () => {
-    wa.value = '+20' + wa.value.replace(/^(\+20|0)/, '');
-  });
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** خلفية بنفسجي غامق جدًا وكارت أفتح شوية فيه عنوان أبيض وسطر بنفسجي فاتح، والحقول غامقة بحدود بنفسجي. مفيش أي أحمر في الأول. اكتب رقم ناقص وسيب الحقل: الحدود بتبقى حمرا وتحتها «الرقم ده مش رقم موبايل مصري.»
-
-**ليه كده:**
-- **[[:user-invalid]] مع [[:has()]]:** [[.field:has(input:user-invalid) .err]] معناها «رسالة الخطأ اللي في نفس الـ field مع حقل الشخص لمسه وطلع غلط». من غير JavaScript.
-- **الأرقام العربي:** الحرف [[٠]] رقمه في Unicode [[0x0660]]، و [[١]] بعده وهكذا. فـ [[charCodeAt(0) - 0x0660]] بيطلّع الرقم. والأرقام الفارسي ([[۰]] من [[0x06F0]]) بتيجي من بعض الكيبوردات، فبنحوّلها هي كمان. وبنشيل المسافات والشَرط.
-- **[[pattern="(\+20|0)?1[0125][0-9]{8}"]]:** بيقبل [[010...]] و [[+2010...]] و [[10...]]. ووقت الإرسال بنشيل البداية ونحط [[+20]]، فالسيرفر يستلم شكل واحد بس ويقدر يدوّر عليه.
-- **[[autocomplete]]** على الاسم والموبايل والإيميل: الموبايل بيملاهم بضغطة.
-- **checkbox الموافقة [[required]]:** إذن صريح قبل أي رسايل، ومكتوب جنبه إنه يقدر يلغي.
-
-**الغلطة الشائعة:** [[input:invalid { border-color: red }]]: الصفحة بتفتح والحقول كلها حمرا قبل ما الشخص يكتب حرف، وده بيخوّف الناس.
-
-~~~text الناتج (Chrome)
-أول ما الصفحة تفتح                 رسالة الخطأ: display = none (والحقل :invalid فعلًا)
-كتبت ٠١٠١٢٣٤٥٦٧٨ بالكيبورد          value = "01012345678"   checkValidity() = true
-كتبت 0123 وبعدين Tab                :user-invalid = true، والرسالة display = block
-                                   حقل الاسم اللي متلمسش: :invalid = true بس رسالته لسه none
-الإرسال                            /free-chapter/thanks.html?name=سارة&wa=+201012345678&email=sara@example.com&agree=yes
-axe: 0 violations   الـ validator: مفيش رسايل
-~~~` },
-        { lvl: 'متوسط', dir: "pay-tabs", t: R`صفحة دفع بتابات من غير JavaScript`, what: R`صفحة «ادفع تمن الرواية» فيها ٣ تابات (محفظة موبايل، تحويل بنكي، كارت)، والتابات radios حقيقية مخفية بالشكل وكل radio جوه [[<label>]] شكله تاب، والمحتوى بيظهر بـ [[form:has(#t-bank:checked) .bank]] من غير سطر JavaScript. في كل تاب صفوف «الاسم والقيمة وزرار انسخ»، والقيمة ممكن تبقى طويلة جدًا (رقم حساب IBAN من ٢٩ حرف): على 360px لازم القيمة تلف لسطرين والزرار يفضل جنبها، مش يقع تحتها ([[grid-template-columns: minmax(0, 1fr) auto]] و [[overflow-wrap: anywhere]]). وتحت التابات [[<input type="file" accept="image/*">]] لصورة الإيصال. نمط صفحات الدفع اليدوي في المتاجر الصغيرة. من دروس «fieldset و radio» و «ملخص الأخطاء».`, done: R`Tab بيوقف على التابات والأسهم بتنقّل بينها والمحتوى بيتغيّر، والصفحة بتشتغل لو قفلت JavaScript من DevTools (ماعدا زرار انسخ)، وعلى 360px في تاب «تحويل بنكي» رقم الحساب في سطرين وزرار «انسخ» جنبه ومفيش scroll أفقي، و axe صفر violations.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ادفع: رواية ليالي البحر</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f3ff; color: #1e1b4b; }
-  main { max-width: 520px; margin-inline: auto; }
-  h1 { font-size: 22px; margin: 0 0 12px; }
-  fieldset { border: 0; padding: 0; margin: 0; }
-  legend { font-weight: 700; margin-block-end: 8px; }
-
-  /* the tabs: real radios (keyboard + screen reader), the label is what you see */
-  .tabs { display: flex; gap: 6px; }
-  .tabs input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
-  .tabs label { flex: 1; text-align: center; padding: 10px 6px; border-radius: 10px 10px 0 0; background: #ddd6fe; cursor: pointer; font-weight: 600; }
-  .tabs label:has(input:checked) { background: white; color: #5b21b6; }
-  .tabs label:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: -3px; }
-
-  .panel { display: none; padding: 16px; background: white; border-radius: 0 0 12px 12px; }
-  /* one rule per tab: the panel whose radio is checked shows */
-  form:has(#t-wallet:checked) .wallet,
-  form:has(#t-bank:checked) .bank,
-  form:has(#t-card:checked) .card { display: block; }
-
-  /* the value can be long (an account number): it wraps, and the copy button stays beside it */
-  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 0; border-block-end: 1px solid #ede9fe; }
-  .row span { display: block; color: #6d28d9; font-size: 13px; }
-  .row code { font-size: 16px; overflow-wrap: anywhere; }
-  .copy { font: inherit; padding: 6px 12px; border: 1px solid #7c3aed; border-radius: 8px; background: white; color: #7c3aed; }
-
-  .receipt { display: grid; gap: 6px; margin-block-start: 16px; }
-  .receipt label { font-weight: 600; }
-  .send { width: 100%; margin-block-start: 16px; font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #6d28d9; color: white; }
-</style>
-</head>
-<body>
-<main>
-<h1>ادفع تمن الرواية: ٢٥٠ جنيه</h1>
-<form method="get">
-  <fieldset>
-    <legend>هتدفع إزاي؟</legend>
-    <div class="tabs">
-      <label><input type="radio" name="method" id="t-wallet" value="wallet" checked> محفظة موبايل</label>
-      <label><input type="radio" name="method" id="t-bank" value="bank"> تحويل بنكي</label>
-      <label><input type="radio" name="method" id="t-card" value="card"> كارت</label>
-    </div>
-  </fieldset>
-
-  <div class="panel wallet">
-    <p>حوّل على رقم المحفظة ده، وبعدين ارفع صورة الإيصال تحت.</p>
-    <div class="row"><div><span>رقم المحفظة</span><code>01000000000</code></div><button type="button" class="copy">انسخ</button></div>
-    <div class="row"><div><span>المبلغ</span><code>250</code></div><button type="button" class="copy">انسخ</button></div>
-  </div>
-
-  <div class="panel bank">
-    <p>حوّل من تطبيق البنك على الحساب ده.</p>
-    <div class="row"><div><span>اسم الحساب</span><code>دار حبر للنشر</code></div><button type="button" class="copy">انسخ</button></div>
-    <div class="row"><div><span>رقم الحساب (IBAN)</span><code>EG000000000000000000000000000</code></div><button type="button" class="copy">انسخ</button></div>
-  </div>
-
-  <div class="panel card">
-    <p>الدفع بالكارت بيفتح صفحة الدفع الآمنة بتاعة البنك (مش في المشروع ده).</p>
-  </div>
-
-  <div class="receipt">
-    <label for="receipt">صورة الإيصال (لو حوّلت)</label>
-    <input id="receipt" name="receipt" type="file" accept="image/*">
-  </div>
-  <button class="send">بعت</button>
-</form>
-</main>
-<script>
-  // the only JavaScript on the page: the copy buttons (the tabs work without it)
-  document.addEventListener('click', async e => {
-    const b = e.target.closest('.copy');
-    if (!b) return;
-    const text = b.previousElementSibling.querySelector('code').textContent;
-    try { await navigator.clipboard.writeText(text); b.textContent = 'اتنسخ ✓'; }
-    catch { b.textContent = 'انسخ بإيدك'; }
-    setTimeout(() => b.textContent = 'انسخ', 1500);
-  });
-</script>
-</body>
-</html>
-~~~
-
-~~~view 520 600 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ادفع: رواية ليالي البحر</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f3ff; color: #1e1b4b; }
-  main { max-width: 520px; margin-inline: auto; }
-  h1 { font-size: 22px; margin: 0 0 12px; }
-  fieldset { border: 0; padding: 0; margin: 0; }
-  legend { font-weight: 700; margin-block-end: 8px; }
-
-  /* the tabs: real radios (keyboard + screen reader), the label is what you see */
-  .tabs { display: flex; gap: 6px; }
-  .tabs input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
-  .tabs label { flex: 1; text-align: center; padding: 10px 6px; border-radius: 10px 10px 0 0; background: #ddd6fe; cursor: pointer; font-weight: 600; }
-  .tabs label:has(input:checked) { background: white; color: #5b21b6; }
-  .tabs label:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: -3px; }
-
-  .panel { display: none; padding: 16px; background: white; border-radius: 0 0 12px 12px; }
-  /* one rule per tab: the panel whose radio is checked shows */
-  form:has(#t-wallet:checked) .wallet,
-  form:has(#t-bank:checked) .bank,
-  form:has(#t-card:checked) .card { display: block; }
-
-  /* the value can be long (an account number): it wraps, and the copy button stays beside it */
-  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 0; border-block-end: 1px solid #ede9fe; }
-  .row span { display: block; color: #6d28d9; font-size: 13px; }
-  .row code { font-size: 16px; overflow-wrap: anywhere; }
-  .copy { font: inherit; padding: 6px 12px; border: 1px solid #7c3aed; border-radius: 8px; background: white; color: #7c3aed; }
-
-  .receipt { display: grid; gap: 6px; margin-block-start: 16px; }
-  .receipt label { font-weight: 600; }
-  .send { width: 100%; margin-block-start: 16px; font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #6d28d9; color: white; }
-</style>
-</head>
-<body>
-<main>
-<h1>ادفع تمن الرواية: ٢٥٠ جنيه</h1>
-<form method="get">
-  <fieldset>
-    <legend>هتدفع إزاي؟</legend>
-    <div class="tabs">
-      <label><input type="radio" name="method" id="t-wallet" value="wallet" checked> محفظة موبايل</label>
-      <label><input type="radio" name="method" id="t-bank" value="bank"> تحويل بنكي</label>
-      <label><input type="radio" name="method" id="t-card" value="card"> كارت</label>
-    </div>
-  </fieldset>
-
-  <div class="panel wallet">
-    <p>حوّل على رقم المحفظة ده، وبعدين ارفع صورة الإيصال تحت.</p>
-    <div class="row"><div><span>رقم المحفظة</span><code>01000000000</code></div><button type="button" class="copy">انسخ</button></div>
-    <div class="row"><div><span>المبلغ</span><code>250</code></div><button type="button" class="copy">انسخ</button></div>
-  </div>
-
-  <div class="panel bank">
-    <p>حوّل من تطبيق البنك على الحساب ده.</p>
-    <div class="row"><div><span>اسم الحساب</span><code>دار حبر للنشر</code></div><button type="button" class="copy">انسخ</button></div>
-    <div class="row"><div><span>رقم الحساب (IBAN)</span><code>EG000000000000000000000000000</code></div><button type="button" class="copy">انسخ</button></div>
-  </div>
-
-  <div class="panel card">
-    <p>الدفع بالكارت بيفتح صفحة الدفع الآمنة بتاعة البنك (مش في المشروع ده).</p>
-  </div>
-
-  <div class="receipt">
-    <label for="receipt">صورة الإيصال (لو حوّلت)</label>
-    <input id="receipt" name="receipt" type="file" accept="image/*">
-  </div>
-  <button class="send">بعت</button>
-</form>
-</main>
-<script>
-  // the only JavaScript on the page: the copy buttons (the tabs work without it)
-  document.addEventListener('click', async e => {
-    const b = e.target.closest('.copy');
-    if (!b) return;
-    const text = b.previousElementSibling.querySelector('code').textContent;
-    try { await navigator.clipboard.writeText(text); b.textContent = 'اتنسخ ✓'; }
-    catch { b.textContent = 'انسخ بإيدك'; }
-    setTimeout(() => b.textContent = 'انسخ', 1500);
-  });
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** عنوان «ادفع تمن الرواية: ٢٥٠ جنيه» وتحته ٣ تابات بنفسجي فاتح، والتاب المختار أبيض ولازق في المربع الأبيض اللي تحته. في «محفظة موبايل» رقم المحفظة والمبلغ وجنب كل واحد زرار «انسخ». دوس «تحويل بنكي» والمحتوى بيتغيّر. على «موبايل» رقم الحساب الطويل بيلف لسطرين والزرار جنبه.
-
-**ليه كده:**
-- **التابات radios:** [[name="method"]] واحد، فواحد بس مختار، والأسهم بتنقّل بينهم، وقيمته بتتبعت مع الفورم. وكل radio ليه [[id]] عشان الـ CSS يسأل عنه: [[form:has(#t-bank:checked) .bank { display: block; }]].
-- **مفيش JavaScript للتابات:** الزرار الوحيد اللي محتاج سكربت هو «انسخ» ([[navigator.clipboard.writeText]])، ولو النسخ اترفض بيقول «انسخ بإيدك».
-- **القيمة الطويلة:** [[grid-template-columns: minmax(0, 1fr) auto]]: العمود التاني على قد الزرار، والأول ياخد الباقي. و [[minmax(0, …)]] بيسمح للعمود يصغر عن طول الكلمة، و [[overflow-wrap: anywhere]] بيكسر الرقم الطويل.
-- **[[type="file"]] و [[accept="image/*"]]:** المتصفح بيفتح الصور بس. ومع [[method="get"]] اسم الملف بس اللي بيتبعت، مش الصورة. رفع الملف الحقيقي محتاج [[method="post"]] و [[enctype="multipart/form-data"]] وسيرفر (درس «إرسال الفورم» في الوحدة اللي بعدها).
-
-**فخ قسته:** الصفحة [[dir="rtl"]]، فالسهم **الشمال** هو اللي بيروح للتاب اللي بعده، واليمين بيرجع (ومن أول تاب بيلف لآخر واحد). ده صح: الاتجاه بيمشي مع اتجاه الصفحة.
-
-**المشكلة اللي الصفحة دي بتحلها:** الطريقة اللي بتيجي على البال [[.row { display: flex; flex-wrap: wrap; justify-content: space-between; }]]. على 360px رقم الحساب مبيتكسرش، فالزرار بيقع لسطر لوحده تحت القيمة. قستها جنب الحل:
-
-~~~text الناتج (Chrome، 360px، تاب «تحويل بنكي»، رقم الحساب)
-                 overflow أفقي   أعلى القيمة   أعلى الزرار    الزرار فين
-flex + wrap      0               306           333            تحت القيمة
-grid (الحل)      0               306           298            جنبها (والقيمة سطرين، طولها 41px)
-
-Tab ثم سهم يمين    من «محفظة» لـ «كارت» (لفّ لآخر تاب)
-سهم شمال           رجع لـ «محفظة»
-axe: 0 violations   الـ validator: مفيش رسايل
-~~~` },
-        { lvl: 'كبير', dir: "sabah-checkout", t: R`Checkout لمتجر قهوة متخيل (من غير دفع حقيقي)`, what: R`صفحة طلب لـ «بُن الصباح»: بياناتك (autocomplete كامل)، وعنوان الشحن في شبكة عمودين بتبقى عمود واحد على الموبايل والحقل الطويل [[grid-column: 1 / -1]]، وطريقة الدفع radio cards (كارت أو كاش)، وكوبون بتاريخ انتهاء بيتحسب لآخر اليوم مش أوله، وملخص أخطاء، ومنع الإرسال مرتين، ومسودة بتتحفظ في localStorage كل ثانية **من غير** أي حقل حساس (رقم الكارت مثلًا)، وصفحة «اتطلب» بعد النجاح. فكرة «الفورم الطويل اللي بيرجع مكان ما وقفت».`, done: R`على 360px عمود واحد وعلى 800px عمودين، والإرسال الفاضي بيحط الـ focus على أول غلط والملخص فيه عدد الأخطاء، وقفل التاب وفتحه بيرجّع كل الحقول ما عدا الحساسة (اتأكد من Application › Local Storage إن رقم الكارت مش متخزن)، وكوبون بينتهي النهارده لسه شغال الساعة 11 بالليل، و axe صفر violations، والدبل كليك بيبعت طلب واحد، ولو الطلب فشل (Network › Offline) الزرار بيرجع والبيانات متمسحتش.`, ext: R`زوّد رسالة تأكيد بتفتح واتساب برسالة جاهزة ([[wa.me/?text=]] و [[encodeURIComponent]])، ونسخة إنجليزي بـ [[dir="ltr"]] من غير ما تغيّر الـ CSS.`, sol: R`**شجرة الملفات:**
+[[301]] معناها «العنوان ده اتنقل، روح للعنوان التاني»: ده تحويل [[/about.html]] لـ [[/about]].` },
+        { lvl: 'كبير', dir: "yasmin-nursery", t: R`من الصفر لوحدك: موقع مشتل الياسمين`, what: R`عميل جديد، وفولدر جديد، ومن غير خطوات: اعمل الطريق كله لوحدك. «مشتل الياسمين» (اسم متخيل) عايز موقع من أربع صفحات بنفس الهيكل ([[header]] فيه [[nav]]، و [[main]]، و [[footer]]). **[[index.html]]:** لوجو من [[images/logo.svg]]، و [[<h1>]]، وفقرة تعريف، و [[<h2>]] «مواعيد العمل» وتحته قايمة، و [[<h2>]] «بنوصّل لحد البيت» وتحته فقرة، ولينك لصفحة النباتات. **[[plants.html]]:** تلات نباتات، كل واحدة [[<article>]] فيه [[<h2>]] وفقرة عناية وفقرة سعر، ولينك للطلب. **[[contact.html]]:** فورم بيروح [[thanks.html]] بـ [[get]]: الاسم، والموبايل، والنبتة، و checkbox «عايز توصيل للبيت». **[[thanks.html]]:** رسالة شكر ولينك. هتعيد استخدام اللي بنيته: الهيكل المشترك من المشروع التالت، والفورم وصفحة الشكر من التاني، والـ [[<article>]] من الرابع، وطريقة اللوجو من درس «فولدر لكل مشروع». والدروس: الخمسة كلهم. شغّل ساعة الموبايل قبل ما تبدأ.`, done: R`الشجرة: أربع ملفات HTML وفولدر [[images]] فيه [[logo.svg]]، وكله جوه [[projects/yasmin-nursery]] مش جوه [[rokn-books]]. والـ validator بيقول valid أربع مرات من أمر واحد. و Console فاضي في الأربعة (يعني اللوجو اتحمّل). وعلى 360 مفيش scroll أفقي. والفورم بيوصل [[thanks.html]] والعنوان فيه [[delivery=yes]] لما تعلّم على الـ checkbox. وسجّلت الوقت.`, ext: R`زوّد صفحة خامسة (نصايح العناية) وشوف هتعدّل كام ملف. ارسم لوجو بتاعك بدل الجاهز. اعمل [[git init]] في الفولدر وامشي مع أول تلات دروس في كورس Git. وأعد المشروع بعد أسبوع من غير ما تبص على الحل، وقارن الوقت.`, sol: R`**شجرة الملفات:**
 
 ~~~text
-sabah-checkout/
-├── index.html    الفورم والسلة
-├── style.css     الشكل والعمودين
-├── app.js        الدفع والكوبون والمسودة والإرسال
-└── thanks.html   صفحة «اتطلب»
+yasmin-nursery/
+├── index.html       الرئيسية: لوجو، وتعريف، ومواعيد، وتوصيل
+├── plants.html      تلات نباتات، كل واحدة article
+├── contact.html     فورم الطلب
+├── thanks.html      بعد الإرسال
+└── images/
+    └── logo.svg     اللوجو
 ~~~
 
-**ترتيب البناء:** الـ HTML الأول بكل الحقول وأنواعها و [[autocomplete]]، وبعدين الـ CSS (عمود واحد، وبعدين العمودين)، وبعدين JavaScript حتة حتة بالترتيب ده: الكارت أو الكاش، والكوبون، والمسودة، والملخص، والإرسال. وجرّب كل حتة قبل اللي بعدها.
+**ترتيب البناء:**
 
-**مهم:** شغّله من سيرفر محلي (Live Server في VS Code، أو [[python -m http.server]] في الفولدر) مش بفتح الملف على طول، لأن [[fetch]] مبيشتغلش على [[file://]].
+1. الفولدر والملفات كلها مرة واحدة من الترمنال، و [[code .]].
+2. [[index.html]] الأول، كامل بالهيكل (header و main و footer)، وافتحه وافحصه.
+3. انسخ منه الهيكل للتلات صفحات، وغيّر الـ [[<title>]] والـ [[<main>]] في كل واحدة.
+4. الفحص على الأربعة بأمر واحد، وبعدين المتصفح: كل لينك، والفورم، وعرض 360، و Console.
+
+**١. الفولدر والملفات:**
+
+~~~powershell
+cd ~\projects
+mkdir yasmin-nursery
+cd yasmin-nursery
+mkdir images
+ni index.html, plants.html, contact.html, thanks.html, images\logo.svg
+code .
+~~~
+
+~~~bash
+mkdir -p ~/projects/yasmin-nursery/images && cd ~/projects/yasmin-nursery
+touch index.html plants.html contact.html thanks.html images/logo.svg
+code .
+~~~
+
+أول سطر [[cd ~\projects]]: لو كنت لسه واقف في [[rokn-books]]، المشروع الجديد كان هيتعمل جواه.
+
+**٢. اللوجو** ([[images/logo.svg]]، انسخه زي ما هو: دايرة فاتحة وجواها نبتة بورقتين):
+
+~~~xml
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="60" fill="#e8f3e8"/>
+  <path d="M60 100 V56" stroke="#2f6b3a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M60 60 C38 58 28 44 28 26 C48 26 60 38 60 60 Z" fill="#3f8f4f"/>
+  <path d="M60 72 C82 70 92 56 92 38 C72 38 60 50 60 72 Z" fill="#5fae6a"/>
+</svg>
+~~~
+
+**٣. الصفحات:**
 
 ~~~html index.html
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إتمام الطلب: بُن الصباح</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشتل الياسمين</title>
 </head>
 <body>
-<main>
-<h1>إتمام الطلب</h1>
-
-<div class="layout">
-<form id="checkout" novalidate>
-  <div class="summary" id="summary" tabindex="-1" hidden>
-    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
-    <ul id="errors"></ul>
-  </div>
-
-  <fieldset>
-    <legend>بياناتك</legend>
-    <div class="grid">
-      <div class="field wide">
-        <label for="name">الاسم بالكامل</label>
-        <input id="name" name="name" autocomplete="name" required>
-      </div>
-      <div class="field">
-        <label for="email">الإيميل</label>
-        <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
-      </div>
-      <div class="field">
-        <label for="phone">الموبايل</label>
-        <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
-      </div>
-    </div>
-  </fieldset>
-
-  <fieldset>
-    <legend>عنوان الشحن</legend>
-    <div class="grid">
-      <div class="field wide">
-        <label for="street">الشارع ورقم العمارة والشقة</label>
-        <input id="street" name="street" autocomplete="address-line1" required>
-      </div>
-      <div class="field">
-        <label for="city">المدينة</label>
-        <input id="city" name="city" autocomplete="address-level2" required>
-      </div>
-      <div class="field">
-        <label for="area">المحافظة</label>
-        <input id="area" name="area" autocomplete="address-level1" required>
-      </div>
-    </div>
-  </fieldset>
-
-  <fieldset>
-    <legend>طريقة الدفع</legend>
-    <div class="pay">
-      <label class="card"><input type="radio" name="pay" value="cash" checked> كاش عند الاستلام</label>
-      <label class="card"><input type="radio" name="pay" value="card"> كارت</label>
-    </div>
-    <!-- disabled while «كاش» is chosen: a disabled field is neither validated nor sent -->
-    <fieldset class="cardbox" id="cardbox" disabled hidden>
-      <legend>بيانات الكارت</legend>
-      <div class="grid">
-        <div class="field wide">
-          <label for="ccnum">رقم الكارت</label>
-          <input id="ccnum" name="ccnum" autocomplete="cc-number" inputmode="numeric" dir="ltr" required pattern="[0-9 ]{12,23}">
-        </div>
-        <div class="field">
-          <label for="ccexp">تاريخ الانتهاء</label>
-          <input id="ccexp" name="ccexp" autocomplete="cc-exp" dir="ltr" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])/[0-9]{2}">
-        </div>
-        <div class="field">
-          <label for="cccsc">CVV</label>
-          <input id="cccsc" name="cccsc" autocomplete="cc-csc" inputmode="numeric" dir="ltr" required pattern="[0-9]{3,4}">
-        </div>
-      </div>
-    </fieldset>
-  </fieldset>
-
-  <fieldset>
-    <legend>كوبون خصم</legend>
-    <div class="coupon">
-      <label for="coupon" class="visually-hidden">كود الكوبون</label>
-      <input id="coupon" name="coupon" dir="ltr" autocomplete="off" aria-describedby="coupon-msg">
-      <button type="button" id="apply">طبّق</button>
-    </div>
-    <p id="coupon-msg" class="hint" aria-live="polite"></p>
-  </fieldset>
-
-  <p id="fail" class="fail" role="alert" hidden>الطلب متبعتش (النت فاصل؟). بياناتك زي ما هي، جرّب تاني.</p>
-  <button id="send" class="send">اطلب</button>
-</form>
-
-<aside class="cart" aria-labelledby="cart-title">
-  <h2 id="cart-title">طلبك</h2>
-  <ul>
-    <li><span>بن محوّج، ربع كيلو</span><span>١٨٠ ج</span></li>
-    <li><span>بن فاتح، ربع كيلو</span><span>١٦٠ ج</span></li>
-    <li><span>الشحن</span><span>٤٠ ج</span></li>
-    <li id="discount-row" hidden><span>الخصم</span><span id="discount"></span></li>
-  </ul>
-  <p class="total"><span>الإجمالي</span><output id="total">٣٨٠ ج</output></p>
-</aside>
-</div>
-</main>
-<script src="app.js"></script>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="plants.html">النباتات</a>
+            <a href="contact.html">اطلب نبتة</a>
+        </nav>
+    </header>
+    <main>
+        <img src="images/logo.svg" alt="لوجو مشتل الياسمين: نبتة بورقتين" width="120" height="120">
+        <h1>مشتل الياسمين</h1>
+        <p>نباتات للبيت والبلكونة، وتربة وأصص، ونصيحة ببلاش لكل نبتة تشتريها.</p>
+        <h2>مواعيد العمل</h2>
+        <ul>
+            <li>كل يوم: من ٩ الصبح لـ ٧ المغرب</li>
+            <li>الاتنين: إجازة</li>
+        </ul>
+        <h2>بنوصّل لحد البيت</h2>
+        <p>التوصيل جوه الحي بـ ٢٠ جنيه، وببلاش للطلبات فوق ٣٠٠ جنيه.</p>
+        <p><a href="plants.html">شوف النباتات المتاحة</a></p>
+    </main>
+    <footer>
+        <p>مشتل الياسمين، ١٢ شارع الترعة. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
 </body>
 </html>
 ~~~
 
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf6f1; color: #292524; font: 16px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
-main { max-width: 980px; margin-inline: auto; }
-h1 { margin: 0 0 16px; }
-
-.layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
-@media (min-width: 800px) { .layout { grid-template-columns: 1fr 300px; align-items: start; } }
-
-form { display: grid; gap: 16px; }
-fieldset { margin: 0; padding: 16px; border: 0; border-radius: 14px; background: white; }
-legend { float: inline-start; width: 100%; margin-block-end: 10px; font-weight: 800; font-size: 18px; }
-
-/* two columns from 600px up, the long fields take the whole row */
-.grid { clear: both; display: grid; gap: 12px; grid-template-columns: 1fr; }
-@media (min-width: 600px) { .grid { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
-
-.field { display: grid; gap: 4px; min-width: 0; }
-label { font-weight: 600; }
-input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
-[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
-
-.pay { clear: both; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.card { display: flex; gap: 8px; align-items: center; padding: 12px; border: 2px solid #d6d3d1; border-radius: 12px; cursor: pointer; }
-.card:has(input:checked) { border-color: #92400e; background: #fef3c7; }
-.card:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
-.cardbox { margin-block-start: 12px; padding: 12px; background: #fafaf9; }
-
-.coupon { clear: both; display: flex; gap: 8px; }
-.coupon button { font: inherit; padding: 8px 16px; border: 1px solid #92400e; border-radius: 8px; background: white; color: #92400e; }
-.hint { margin: 6px 0 0; font-size: 14px; color: #57534e; }
-
-.summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 12px; background: #fef2f2; }
-.summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
-.summary a { color: #991b1b; }
-.fail { margin: 0; padding: 10px 14px; border-radius: 10px; background: #fef2f2; color: #991b1b; }
-
-.send { font: inherit; font-weight: 800; padding: 14px; border: 0; border-radius: 12px; background: #92400e; color: white; }
-.send:disabled { background: #a8a29e; }
-
-.cart { padding: 16px; border-radius: 14px; background: #292524; color: #fef3c7; }
-.cart h2 { margin: 0 0 8px; }
-.cart ul { margin: 0; padding: 0; list-style: none; }
-.cart li, .total { display: flex; justify-content: space-between; gap: 8px; padding-block: 6px; border-block-end: 1px solid #44403c; }
-.total { margin: 8px 0 0; border: 0; font-size: 20px; font-weight: 800; }
-
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-~~~
-
-~~~js app.js
-const form = document.getElementById('checkout');
-const send = document.getElementById('send');
-const fail = document.getElementById('fail');
-const cardbox = document.getElementById('cardbox');
-const DRAFT = 'sabah-checkout-draft';
-const SUBTOTAL = 380; // 180 + 160 + 40 shipping
-
-// ---------- card or cash ----------
-function payChanged() {
-  const card = form.elements.pay.value === 'card';
-  cardbox.hidden = !card;
-  cardbox.disabled = !card; // disabled: not validated, not sent
-}
-form.addEventListener('change', e => { if (e.target.name === 'pay') payChanged(); });
-
-// ---------- coupon: valid until the END of its last day, in the reader's time zone ----------
-const COUPONS = {
-  SABAH10: { pct: 10, until: '2026-12-31' },
-  WINTER5: { pct: 5, until: '2026-01-31' },
-};
-function couponState(code, now = new Date()) {
-  const c = COUPONS[code.trim().toUpperCase()];
-  if (!c) return { ok: false, msg: 'الكود ده مش موجود.' };
-  // new Date('2026-12-31') is midnight UTC: 2 AM in Cairo, and the code would die at the START of the day
-  const [y, m, d] = c.until.split('-').map(Number);
-  const end = new Date(y, m - 1, d, 23, 59, 59, 999);
-  if (now > end) return { ok: false, msg: 'الكود ده خلص يوم ' + c.until + '.' };
-  return { ok: true, pct: c.pct, msg: 'اتطبّق خصم ' + c.pct + '٪.' };
-}
-const money = n => n.toLocaleString('ar-EG') + ' ج';
-function applyCoupon() {
-  const input = form.elements.coupon;
-  const s = input.value ? couponState(input.value) : { ok: false, msg: '' };
-  document.getElementById('coupon-msg').textContent = s.msg;
-  const off = s.ok ? Math.round(SUBTOTAL * s.pct / 100) : 0;
-  document.getElementById('discount-row').hidden = !off;
-  document.getElementById('discount').textContent = '- ' + money(off);
-  document.getElementById('total').textContent = money(SUBTOTAL - off);
-}
-document.getElementById('apply').addEventListener('click', applyCoupon);
-
-// ---------- draft: saved every second, never the card fields ----------
-const isPrivate = f => (f.autocomplete || '').startsWith('cc-');
-function saveDraft() {
-  const data = {};
-  for (const f of form.elements) {
-    if (!f.name || isPrivate(f) || f.type === 'button' || f.type === 'submit') continue;
-    if (f.type === 'radio') { if (f.checked) data[f.name] = f.value; }
-    else data[f.name] = f.value;
-  }
-  try { localStorage.setItem(DRAFT, JSON.stringify(data)); } catch {}
-}
-function loadDraft() {
-  let data = null;
-  try { data = JSON.parse(localStorage.getItem(DRAFT)); } catch {}
-  if (!data) return;
-  for (const [k, v] of Object.entries(data)) {
-    // form.elements.pay is a RadioNodeList: setting its value checks the radio with that value
-    if (form.elements[k]) form.elements[k].value = v;
-  }
-}
-loadDraft();
-payChanged();
-applyCoupon();
-const autosave = setInterval(saveDraft, 1000);
-
-// ---------- errors summary ----------
-const summary = document.getElementById('summary');
-const list = document.getElementById('errors');
-list.addEventListener('click', e => {
-  const a = e.target.closest('a');
-  if (!a) return;
-  e.preventDefault();
-  document.querySelector(a.hash).focus();
-});
-function showErrors(bad) {
-  list.innerHTML = '';
-  for (const f of bad) {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = '#' + f.id;
-    a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
-    li.append(a);
-    list.append(li);
-  }
-  document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
-  summary.hidden = false;
-  summary.focus();
-}
-
-// ---------- send once ----------
-let sending = false;
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-  if (sending) return;
-  const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
-  for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
-  if (bad.length) { showErrors(bad); return; }
-  summary.hidden = true;
-  fail.hidden = true;
-  sending = true;
-  send.disabled = true;
-  send.textContent = 'بنبعت الطلب…';
-  try {
-    // no server in this project: thanks.html stands in for the API (a real shop sends a POST to its own /api/orders)
-    const res = await fetch('thanks.html', { method: 'HEAD', cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    // stop the autosave FIRST: the next page can take seconds to load, and a save in between writes the draft back
-    clearInterval(autosave);
-    localStorage.removeItem(DRAFT);
-    location.href = 'thanks.html';
-  } catch {
-    fail.hidden = false;
-    sending = false;
-    send.disabled = false;
-    send.textContent = 'اطلب';
-  }
-});
-~~~
-
-~~~html thanks.html
-<!doctype html>
+~~~view 530 550 شكل index.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اتطلب: بُن الصباح</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشتل الياسمين</title>
 </head>
 <body>
-<main>
-  <h1>اتطلب ☕</h1>
-  <p>الطلب هيوصلك خلال يومين، وهنكلمك على الموبايل قبلها.</p>
-  <p><a href="index.html">ارجع للمتجر</a></p>
-</main>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="plants.html">النباتات</a>
+            <a href="contact.html">اطلب نبتة</a>
+        </nav>
+    </header>
+    <main>
+        <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%20width%3D%22120%22%20height%3D%22120%22%3E%3Crect%20width%3D%22120%22%20height%3D%22120%22%20rx%3D%2260%22%20fill%3D%22%23e8f3e8%22%2F%3E%3Cpath%20d%3D%22M60%20100%20V56%22%20stroke%3D%22%232f6b3a%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M60%2060%20C38%2058%2028%2044%2028%2026%20C48%2026%2060%2038%2060%2060%20Z%22%20fill%3D%22%233f8f4f%22%2F%3E%3Cpath%20d%3D%22M60%2072%20C82%2070%2092%2056%2092%2038%20C72%2038%2060%2050%2060%2072%20Z%22%20fill%3D%22%235fae6a%22%2F%3E%3C%2Fsvg%3E" alt="لوجو مشتل الياسمين: نبتة بورقتين" width="120" height="120">
+        <h1>مشتل الياسمين</h1>
+        <p>نباتات للبيت والبلكونة، وتربة وأصص، ونصيحة ببلاش لكل نبتة تشتريها.</p>
+        <h2>مواعيد العمل</h2>
+        <ul>
+            <li>كل يوم: من ٩ الصبح لـ ٧ المغرب</li>
+            <li>الاتنين: إجازة</li>
+        </ul>
+        <h2>بنوصّل لحد البيت</h2>
+        <p>التوصيل جوه الحي بـ ٢٠ جنيه، وببلاش للطلبات فوق ٣٠٠ جنيه.</p>
+        <p><a href="plants.html">شوف النباتات المتاحة</a></p>
+    </main>
+    <footer>
+        <p>مشتل الياسمين، ١٢ شارع الترعة. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
 </body>
 </html>
 ~~~
 
-~~~view 900 1500 الشكل النهائي
-<!doctype html>
+~~~live 580 580 plants.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إتمام الطلب: بُن الصباح</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf6f1; color: #292524; font: 16px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
-main { max-width: 980px; margin-inline: auto; }
-h1 { margin: 0 0 16px; }
-
-.layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
-@media (min-width: 800px) { .layout { grid-template-columns: 1fr 300px; align-items: start; } }
-
-form { display: grid; gap: 16px; }
-fieldset { margin: 0; padding: 16px; border: 0; border-radius: 14px; background: white; }
-legend { float: inline-start; width: 100%; margin-block-end: 10px; font-weight: 800; font-size: 18px; }
-
-/* two columns from 600px up, the long fields take the whole row */
-.grid { clear: both; display: grid; gap: 12px; grid-template-columns: 1fr; }
-@media (min-width: 600px) { .grid { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
-
-.field { display: grid; gap: 4px; min-width: 0; }
-label { font-weight: 600; }
-input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
-[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
-
-.pay { clear: both; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.card { display: flex; gap: 8px; align-items: center; padding: 12px; border: 2px solid #d6d3d1; border-radius: 12px; cursor: pointer; }
-.card:has(input:checked) { border-color: #92400e; background: #fef3c7; }
-.card:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
-.cardbox { margin-block-start: 12px; padding: 12px; background: #fafaf9; }
-
-.coupon { clear: both; display: flex; gap: 8px; }
-.coupon button { font: inherit; padding: 8px 16px; border: 1px solid #92400e; border-radius: 8px; background: white; color: #92400e; }
-.hint { margin: 6px 0 0; font-size: 14px; color: #57534e; }
-
-.summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 12px; background: #fef2f2; }
-.summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
-.summary a { color: #991b1b; }
-.fail { margin: 0; padding: 10px 14px; border-radius: 10px; background: #fef2f2; color: #991b1b; }
-
-.send { font: inherit; font-weight: 800; padding: 14px; border: 0; border-radius: 12px; background: #92400e; color: white; }
-.send:disabled { background: #a8a29e; }
-
-.cart { padding: 16px; border-radius: 14px; background: #292524; color: #fef3c7; }
-.cart h2 { margin: 0 0 8px; }
-.cart ul { margin: 0; padding: 0; list-style: none; }
-.cart li, .total { display: flex; justify-content: space-between; gap: 8px; padding-block: 6px; border-block-end: 1px solid #44403c; }
-.total { margin: 8px 0 0; border: 0; font-size: 20px; font-weight: 800; }
-
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النباتات | مشتل الياسمين</title>
 </head>
 <body>
-<main>
-<h1>إتمام الطلب</h1>
-
-<div class="layout">
-<form id="checkout" novalidate>
-  <div class="summary" id="summary" tabindex="-1" hidden>
-    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
-    <ul id="errors"></ul>
-  </div>
-
-  <fieldset>
-    <legend>بياناتك</legend>
-    <div class="grid">
-      <div class="field wide">
-        <label for="name">الاسم بالكامل</label>
-        <input id="name" name="name" autocomplete="name" required>
-      </div>
-      <div class="field">
-        <label for="email">الإيميل</label>
-        <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
-      </div>
-      <div class="field">
-        <label for="phone">الموبايل</label>
-        <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
-      </div>
-    </div>
-  </fieldset>
-
-  <fieldset>
-    <legend>عنوان الشحن</legend>
-    <div class="grid">
-      <div class="field wide">
-        <label for="street">الشارع ورقم العمارة والشقة</label>
-        <input id="street" name="street" autocomplete="address-line1" required>
-      </div>
-      <div class="field">
-        <label for="city">المدينة</label>
-        <input id="city" name="city" autocomplete="address-level2" required>
-      </div>
-      <div class="field">
-        <label for="area">المحافظة</label>
-        <input id="area" name="area" autocomplete="address-level1" required>
-      </div>
-    </div>
-  </fieldset>
-
-  <fieldset>
-    <legend>طريقة الدفع</legend>
-    <div class="pay">
-      <label class="card"><input type="radio" name="pay" value="cash" checked> كاش عند الاستلام</label>
-      <label class="card"><input type="radio" name="pay" value="card"> كارت</label>
-    </div>
-    <!-- disabled while «كاش» is chosen: a disabled field is neither validated nor sent -->
-    <fieldset class="cardbox" id="cardbox" disabled hidden>
-      <legend>بيانات الكارت</legend>
-      <div class="grid">
-        <div class="field wide">
-          <label for="ccnum">رقم الكارت</label>
-          <input id="ccnum" name="ccnum" autocomplete="cc-number" inputmode="numeric" dir="ltr" required pattern="[0-9 ]{12,23}">
-        </div>
-        <div class="field">
-          <label for="ccexp">تاريخ الانتهاء</label>
-          <input id="ccexp" name="ccexp" autocomplete="cc-exp" dir="ltr" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])/[0-9]{2}">
-        </div>
-        <div class="field">
-          <label for="cccsc">CVV</label>
-          <input id="cccsc" name="cccsc" autocomplete="cc-csc" inputmode="numeric" dir="ltr" required pattern="[0-9]{3,4}">
-        </div>
-      </div>
-    </fieldset>
-  </fieldset>
-
-  <fieldset>
-    <legend>كوبون خصم</legend>
-    <div class="coupon">
-      <label for="coupon" class="visually-hidden">كود الكوبون</label>
-      <input id="coupon" name="coupon" dir="ltr" autocomplete="off" aria-describedby="coupon-msg">
-      <button type="button" id="apply">طبّق</button>
-    </div>
-    <p id="coupon-msg" class="hint" aria-live="polite"></p>
-  </fieldset>
-
-  <p id="fail" class="fail" role="alert" hidden>الطلب متبعتش (النت فاصل؟). بياناتك زي ما هي، جرّب تاني.</p>
-  <button id="send" class="send">اطلب</button>
-</form>
-
-<aside class="cart" aria-labelledby="cart-title">
-  <h2 id="cart-title">طلبك</h2>
-  <ul>
-    <li><span>بن محوّج، ربع كيلو</span><span>١٨٠ ج</span></li>
-    <li><span>بن فاتح، ربع كيلو</span><span>١٦٠ ج</span></li>
-    <li><span>الشحن</span><span>٤٠ ج</span></li>
-    <li id="discount-row" hidden><span>الخصم</span><span id="discount"></span></li>
-  </ul>
-  <p class="total"><span>الإجمالي</span><output id="total">٣٨٠ ج</output></p>
-</aside>
-</div>
-</main>
-<script>
-const form = document.getElementById('checkout');
-const send = document.getElementById('send');
-const fail = document.getElementById('fail');
-const cardbox = document.getElementById('cardbox');
-const DRAFT = 'sabah-checkout-draft';
-const SUBTOTAL = 380; // 180 + 160 + 40 shipping
-
-// ---------- card or cash ----------
-function payChanged() {
-  const card = form.elements.pay.value === 'card';
-  cardbox.hidden = !card;
-  cardbox.disabled = !card; // disabled: not validated, not sent
-}
-form.addEventListener('change', e => { if (e.target.name === 'pay') payChanged(); });
-
-// ---------- coupon: valid until the END of its last day, in the reader's time zone ----------
-const COUPONS = {
-  SABAH10: { pct: 10, until: '2026-12-31' },
-  WINTER5: { pct: 5, until: '2026-01-31' },
-};
-function couponState(code, now = new Date()) {
-  const c = COUPONS[code.trim().toUpperCase()];
-  if (!c) return { ok: false, msg: 'الكود ده مش موجود.' };
-  // new Date('2026-12-31') is midnight UTC: 2 AM in Cairo, and the code would die at the START of the day
-  const [y, m, d] = c.until.split('-').map(Number);
-  const end = new Date(y, m - 1, d, 23, 59, 59, 999);
-  if (now > end) return { ok: false, msg: 'الكود ده خلص يوم ' + c.until + '.' };
-  return { ok: true, pct: c.pct, msg: 'اتطبّق خصم ' + c.pct + '٪.' };
-}
-const money = n => n.toLocaleString('ar-EG') + ' ج';
-function applyCoupon() {
-  const input = form.elements.coupon;
-  const s = input.value ? couponState(input.value) : { ok: false, msg: '' };
-  document.getElementById('coupon-msg').textContent = s.msg;
-  const off = s.ok ? Math.round(SUBTOTAL * s.pct / 100) : 0;
-  document.getElementById('discount-row').hidden = !off;
-  document.getElementById('discount').textContent = '- ' + money(off);
-  document.getElementById('total').textContent = money(SUBTOTAL - off);
-}
-document.getElementById('apply').addEventListener('click', applyCoupon);
-
-// ---------- draft: saved every second, never the card fields ----------
-const isPrivate = f => (f.autocomplete || '').startsWith('cc-');
-function saveDraft() {
-  const data = {};
-  for (const f of form.elements) {
-    if (!f.name || isPrivate(f) || f.type === 'button' || f.type === 'submit') continue;
-    if (f.type === 'radio') { if (f.checked) data[f.name] = f.value; }
-    else data[f.name] = f.value;
-  }
-  try { localStorage.setItem(DRAFT, JSON.stringify(data)); } catch {}
-}
-function loadDraft() {
-  let data = null;
-  try { data = JSON.parse(localStorage.getItem(DRAFT)); } catch {}
-  if (!data) return;
-  for (const [k, v] of Object.entries(data)) {
-    // form.elements.pay is a RadioNodeList: setting its value checks the radio with that value
-    if (form.elements[k]) form.elements[k].value = v;
-  }
-}
-loadDraft();
-payChanged();
-applyCoupon();
-const autosave = setInterval(saveDraft, 1000);
-
-// ---------- errors summary ----------
-const summary = document.getElementById('summary');
-const list = document.getElementById('errors');
-list.addEventListener('click', e => {
-  const a = e.target.closest('a');
-  if (!a) return;
-  e.preventDefault();
-  document.querySelector(a.hash).focus();
-});
-function showErrors(bad) {
-  list.innerHTML = '';
-  for (const f of bad) {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = '#' + f.id;
-    a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
-    li.append(a);
-    list.append(li);
-  }
-  document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
-  summary.hidden = false;
-  summary.focus();
-}
-
-// ---------- send once ----------
-let sending = false;
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-  if (sending) return;
-  const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
-  for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
-  if (bad.length) { showErrors(bad); return; }
-  summary.hidden = true;
-  fail.hidden = true;
-  sending = true;
-  send.disabled = true;
-  send.textContent = 'بنبعت الطلب…';
-  try {
-    // no server in this project: thanks.html stands in for the API (a real shop sends a POST to its own /api/orders)
-    const res = await fetch('thanks.html', { method: 'HEAD', cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    // stop the autosave FIRST: the next page can take seconds to load, and a save in between writes the draft back
-    clearInterval(autosave);
-    localStorage.removeItem(DRAFT);
-    location.href = 'thanks.html';
-  } catch {
-    fail.hidden = false;
-    sending = false;
-    send.disabled = false;
-    send.textContent = 'اطلب';
-  }
-});
-</script>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="plants.html">النباتات</a>
+            <a href="contact.html">اطلب نبتة</a>
+        </nav>
+    </header>
+    <main>
+        <h1>النباتات المتاحة</h1>
+        <p>الأسعار للأصيص المتوسط. اسأل عن المقاسات التانية.</p>
+        <article>
+            <h2>ريحان</h2>
+            <p>بيحب الشمس، ويتروي كل يومين.</p>
+            <p>السعر: ٢٥ جنيه</p>
+        </article>
+        <article>
+            <h2>صبّار</h2>
+            <p>بيستحمل النسيان: مية مرة كل أسبوعين.</p>
+            <p>السعر: ٤٠ جنيه</p>
+        </article>
+        <article>
+            <h2>بوتس</h2>
+            <p>للأوضة اللي نورها قليل، ويتروي مرة في الأسبوع.</p>
+            <p>السعر: ٦٠ جنيه</p>
+        </article>
+        <p>عجبتك واحدة؟ <a href="contact.html">اطلبها من هنا</a>.</p>
+    </main>
+    <footer>
+        <p>مشتل الياسمين، ١٢ شارع الترعة. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** على الكمبيوتر عمودين: الفورم على اليمين في كروت بيضا (بياناتك، والعنوان، وطريقة الدفع، والكوبون) وعلى الشمال كارت بني غامق فيه طلبك والإجمالي ٣٨٠ ج. على الموبايل كله عمود واحد والسلة تحت. اختار «كارت» وبيظهر مربع فيه رقم الكارت والتاريخ والـ CVV. اكتب [[sabah10]] ودوس «طبّق»: سطر خصم بيظهر والإجمالي يبقى ٣٤٢ ج. (المعاينة هنا جوه صندوق مقفول، فـ «اطلب» فيها هيطلّع رسالة «الطلب متبعتش». جرّبه عندك من سيرفر محلي.)
+~~~live 370 370 contact.html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اطلب نبتة | مشتل الياسمين</title>
+</head>
+<body>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="plants.html">النباتات</a>
+            <a href="contact.html">اطلب نبتة</a>
+        </nav>
+    </header>
+    <main>
+        <h1>اطلب نبتة</h1>
+        <p>اكتب اسمك ورقمك والنبتة اللي عايزها، وهنكلّمك نأكّد الميعاد.</p>
+        <form action="thanks.html" method="get">
+            <p>
+                <label for="name">اسمك</label>
+                <input id="name" name="name" autocomplete="name" required>
+            </p>
+            <p>
+                <label for="phone">رقم الموبايل</label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required>
+            </p>
+            <p>
+                <label for="plant">النبتة</label>
+                <input id="plant" name="plant" required>
+            </p>
+            <p>
+                <label><input type="checkbox" name="delivery" value="yes"> عايز توصيل للبيت</label>
+            </p>
+            <button type="submit">ابعت الطلب</button>
+        </form>
+    </main>
+    <footer>
+        <p>مشتل الياسمين، ١٢ شارع الترعة. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
+</body>
+</html>
+~~~
 
-**الأجزاء المهمة:**
-- **الكارت والكاش:** مربع الكارت [[<fieldset disabled>]] لما تختار كاش. الحقل الـ disabled المتصفح مبيتأكدش منه ومبيبعتوش، فمش محتاج تشيل [[required]] وترجّعه.
-- **[[autocomplete]]:** [[cc-number]] و [[cc-exp]] و [[cc-csc]] للكارت، و [[address-line1]] و [[address-level2]] (المدينة) و [[address-level1]] (المحافظة) للعنوان. كنت كاتب [[street-address]] على [[<input>]] والـ validator قال: [[The autofill field name "street-address" is not allowed in this context.]] لأن [[street-address]] للعنوان كله في سطور كتير، يعني [[<textarea>]] بس.
-- **الكوبون لآخر اليوم:** [[new Date('2026-12-31')]] معناه نص الليل بتوقيت جرينتش = الساعة ٢ الصبح في القاهرة، فالكوبون كان هيخلص في **أول** يومه الأخير. الحل: [[new Date(y, m - 1, d, 23, 59, 59, 999)]] بتوقيت الجهاز.
-- **المسودة:** [[setInterval]] كل ثانية بيحفظ كل الحقول في [[localStorage]] **ماعدا** أي حقل [[autocomplete]] بتاعه بيبدأ بـ [[cc-]]. رقم الكارت مكانه السيرفر بس، ولو اتحفظ في المتصفح أي سكربت على الصفحة يقدر يقراه.
-- **الإرسال مرة واحدة:** المتغير [[sending]] والزرار [[disabled]]. ولو الطلب فشل ([[catch]])، الزرار بيرجع والبيانات بتفضل.
-- **[[fetch('thanks.html', { method: 'HEAD' })]]** بدل السيرفر الحقيقي: المشروع مفيهوش backend، فبنسأل عن صفحة موجودة كأنها الـ API. في متجر حقيقي ده بيبقى [[POST]] لـ [[/api/orders]] (تاب Node).
+~~~live 220 220 thanks.html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلبك وصل | مشتل الياسمين</title>
+</head>
+<body>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="plants.html">النباتات</a>
+            <a href="contact.html">اطلب نبتة</a>
+        </nav>
+    </header>
+    <main>
+        <h1>طلبك وصل</h1>
+        <p>شكرًا. هنكلّمك على الرقم اللي كتبته عشان نأكّد الميعاد.</p>
+        <p><a href="plants.html">ارجع للنباتات</a></p>
+    </main>
+    <footer>
+        <p>مشتل الياسمين، ١٢ شارع الترعة. <a href="tel:+200000000000">كلّمنا</a></p>
+    </footer>
+</body>
+</html>
+~~~
 
-**باج حقيقي لقيته وانا بجرّب الحل:** بعد طلب ناجح المسودة كانت لسه في [[localStorage]]. اللي حصل: [[removeItem]] اشتغل، وبعدين صفحة «اتطلب» خدت ثانيتين تحمّل على Slow 3G، وفي الوقت ده [[setInterval]] اشتغل تاني وحفظ المسودة من جديد. الحل: [[clearInterval(autosave)]] **قبل** [[removeItem]]. والدرس: أي حاجة شغالة بالتوقيت لازم توقفها قبل ما تمسح اللي بتكتبه.
+**٤. الفحص:**
 
-**وفخ في التجربة نفسها:** بعد ما صلّحت [[app.js]] وعملت Refresh، Chrome شغّل النسخة القديمة من الذاكرة ومطلبش الملف أصلًا من السيرفر. علّم **Disable cache** في Network وانت شغال.
+~~~bash
+for f in *.html; do echo "== $f"; curl -s -H "Content-Type: text/html; charset=utf-8" --data-binary @"$f" "https://html5.validator.nu/?out=text"; done
+~~~
 
-~~~text الناتج (Chrome)
-360px      الفورم عمود واحد، والسلة تحته، و overflow = 0
-800px      الصفحة: فورم + سلة 300px، وجوه الفورم عمودين، و overflow = 0
+~~~powershell
+foreach ($f in ls *.html) { "== $($f.Name)"; curl.exe -s -H "Content-Type: text/html; charset=utf-8" --data-binary "@$($f.Name)" "https://html5.validator.nu/?out=text" }
+~~~
 
-«اطلب» والفورم فاضي       الـ focus على الملخص: «فيه 6 حاجات»  #name #email #phone #street #city #area
-نفس الكلام والدفع «كارت»   9 حاجات: الـ 6 و #ccnum #ccexp #cccsc
+**ليه كده:**
 
-couponState('SABAH10', 31 ديسمبر 11 بالليل)   ok: true، خصم 10٪
-couponState('sabah10', 1 يناير 12:00:01)     الكود ده خلص يوم 2026-12-31.
-couponState('WINTER5')                       الكود ده خلص يوم 2026-01-31.
-new Date('2026-12-31') في القاهرة             Thu Dec 31 2026 02:00:00
-بعد «طبّق» sabah10                            الإجمالي ٣٤٢ ج، الخصم - ٣٨ ج
+- **[[index.html]] الأول وكامل:** الهيكل المشترك بيتكتب مرة ويتفحص مرة. لو نسخته وفيه غلطة، هتبقى في أربع ملفات.
+- **الـ checkbox جوه الـ [[label]] بتاعه:** الضغط على الكلام بيعلّم المربع من غير [[for]] ولا [[id]]. و [[value="yes"]] هي اللي بتظهر في العنوان. ولو المربع مش متعلّم، الحقل مبيتبعتش خالص.
+- **[[thanks.html]] بيرجّع للنباتات مش للرئيسية:** اللي لسه طالب نبتة غالبًا عايز يشوف غيرها.
+- **الأسعار في فقرة «السعر: …»:** الرقم لوحده من غير كلمة مبيتفهمش لما يتقري بصوت.
+- **فين الأخطاء المتعامل معاها؟** في موقع HTML بس، «المتانة» هي الفحص: الـ validator على كل صفحة، و Console فاضي (مفيش ملف ناقص)، و [[required]] على الحقول (المتصفح بيمنع الإرسال الناقص)، و [[alt]] على اللوجو (لو الصورة متحمّلتش الكلام بيظهر مكانها). والمشروع يتعاد من الأول من غير مشاكل: أوامر الخطوة ١ لو اتنفّذت تاني مبتمسحش حاجة ([[mkdir]] و [[ni]] بيقولوا already exists، و [[touch]] مبيلمسش المحتوى).
 
-المسودة بعد ثانية    {"name":"منى سامي","email":"mona@example.com",...,"pay":"card","coupon":"sabah10"}   (مفيش ccnum ولا cccsc)
-Refresh             الاسم والمدينة والكارت مختار رجعوا، ورقم الكارت فاضي ""
+**الغلطة الشائعة:** تبدأ تكتب قبل ما تعمل [[cd]] للفولدر الجديد، فملفات المشتل تتعمل جوه موقع المكتبة. أول فحص في المشروع ده [[pwd]].
 
-3 ضغطات على «اطلب» (Slow 3G)   السيرفر استلم HEAD واحد، وبعدها thanks.html
-المسودة بعد النجاح               قبل التصليح: لسه موجودة   بعد clearInterval: null
-Offline                          «الطلب متبعتش (النت فاصل؟)...»، الزرار رجع «اطلب»، والاسم زي ما هو
-axe: 0 violations   الـ validator: مفيش رسايل
+**ولما حاجة تبوظ:** ارجع لترتيب الفحص. الصفحة مش بتتغيّر: درس «start index.html و Ctrl+R» (النقطة، ثم العنوان). اللوجو مش ظاهر: Console فيه اسم الملف اللي المتصفح دوّر عليه. الشكل غريب: الـ validator ثم Elements.
+
+~~~text الناتج (PowerShell 7.6 و Git Bash و Chrome 157)
+C:.
+│   contact.html
+│   index.html
+│   plants.html
+│   thanks.html
+│
+└───images
+        logo.svg
+
+== contact.html
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+== index.html
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+== plants.html
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+== thanks.html
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+
+كل صفحة: header و nav و main و footer = 4   عرض 360: scrollWidth = 360   Console: فاضي
+index.html:   اللوجو 120×120   h2: 2   li: 2
+plants.html:  article: 3   h2: 3
+contact.html: الحقول: 4   وكل label مربوط بحقله: 4
+بعد الإرسال (سلمى ، 01000000000 ، ريحان ، والتوصيل متعلّم) العنوان لما تفكّه:
+  thanks.html?name=سلمى&phone=01000000000&plant=ريحان&delivery=yes
 ~~~` },
-        { lvl: 'فكرة', dir: "tutor-form", t: R`فورم لنشاط حقيقي حواليك`, what: R`اختار نشاط تعرفه (درس خصوصي، ورشة تصليح، ماتش كورة في الحي) واعمل الفورم اللي هيستقبل الطلبات بتاعته: انت اللي تقرر الحقول وأنواعها والقواعد والرسايل.`, done: R`كل حقل ليه سبب مكتوب في تعليق (ليه النوع ده وليه required أو لأ)، و ٣ أصحاب ملوه من موبايلاتهم من غير ما يسألوك حاجة، و axe صفر violations.`, ext: R`اربطه بـ Google Sheets أو بـ backend بسيط من تاب Node، وابعت إيميل تأكيد.`, sol: R`نسخة نموذجية: فورم حجز حصص خصوصي لمدرس رياضيات متخيل. التعليقات في الكود هي الجزء المهم: كل حقل جنبه ليه هو موجود وليه النوع ده.
+        { lvl: 'فكرة', dir: "my-place", t: R`من الصفر لوحدك: موقع لمكان انت عارفه`, what: R`اختار مكان حقيقي انت عارفه كويس (كشك، ورشة، محل، مركز دروس) واعمله موقع صغير، **باسم متخيل** مش اسمه الحقيقي. انت اللي بتقرر الصفحات والمحتوى. الحد الأدنى: صفحتين بنفس الهيكل ([[header]] فيه [[nav]]، و [[main]]، و [[footer]])، وقايمة واحدة على الأقل، ولينك تليفون، وكل ده في فولدر جديد اسمه [[my-place]] (أو اسم يوصف المكان). قبل ما تكتب أي كود: اكتب على ورقة مين هيفتح الموقع ده وعايز يعرف إيه، ورتّب الصفحة على أساس إجابتك. ومن غير ما تبص على أي خطوات.`, done: R`واحد غيرك فتح الموقع وجاوب في أقل من نص دقيقة: المكان فين؟ وبيفتح إمتى؟ وأكلّمه إزاي؟ والـ validator بيقول valid على كل صفحة. وعلى 360 مفيش scroll أفقي. و [[tree /f]] مفيهوش ولا اسم فيه مسافة أو حرف كبير.`, ext: R`زوّد صورة للمكان في [[images]] (صورة انت اللي مصوّرها) بـ [[alt]] بيوصفها. زوّد صفحة فيها فورم. واعرض الموقع على صاحب المكان واسأله إيه اللي ناقص: إجابته هي المشروع الجاي.`, sol: R`ده مشروع مفتوح، فمفيش حل واحد. دي نسخة نموذجية لـ «عصير عم حسن» (كشك عصير متخيل)، وليه اتعملت كده.
 
-~~~html index.html
-<!doctype html>
+~~~powershell
+cd ~\projects
+mkdir my-place
+cd my-place
+ni index.html, menu.html
+code .
+~~~
+
+~~~live 410 420 index.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>احجز حصة رياضيات</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #eef2ff; color: #1e1b4b; }
-  form { max-width: 460px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
-  h1 { margin: 0; font-size: 22px; }
-  .field { display: grid; gap: 4px; }
-  label, legend { font-weight: 600; }
-  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #a5b4fc; border-radius: 8px; }
-  fieldset { border: 1px solid #c7d2fe; border-radius: 10px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
-  .hint { color: #6366f1; font-size: 14px; }
-  /* red only after the person touched the field, not the moment the page opens */
-  input:user-invalid, select:user-invalid { border-color: #b91c1c; background: #fef2f2; }
-  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #4338ca; color: white; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عصير عم حسن</title>
 </head>
 <body>
-<main>
-<form method="get">
-  <h1>احجز حصة رياضيات مع أستاذ حمدي</h1>
-
-  <!-- الاسم: لازم، عشان المدرس يعرف بيكلم مين -->
-  <div class="field">
-    <label for="student">اسم الطالب</label>
-    <input id="student" name="student" autocomplete="off" required>
-  </div>
-
-  <!-- رقم ولي الأمر مش الطالب: هو اللي بيدفع وبيأكّد الميعاد. tel عشان كيبورد الأرقام -->
-  <div class="field">
-    <label for="parent">موبايل ولي الأمر</label>
-    <input id="parent" name="parent" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
-  </div>
-
-  <!-- select مش radio: ٦ اختيارات كتير على أزرار جنب بعض في الموبايل -->
-  <div class="field">
-    <label for="grade">السنة الدراسية</label>
-    <select id="grade" name="grade" required>
-      <option value="">اختار…</option>
-      <option>أولى إعدادي</option><option>تانية إعدادي</option><option>تالتة إعدادي</option>
-      <option>أولى ثانوي</option><option>تانية ثانوي</option><option>تالتة ثانوي</option>
-    </select>
-  </div>
-
-  <!-- radio: اختيار واحد من ٢ بس، فكله ظاهر من غير ضغط -->
-  <fieldset>
-    <legend>نوع الحصة</legend>
-    <label><input type="radio" name="kind" value="home" required> في البيت</label>
-    <label><input type="radio" name="kind" value="online"> أونلاين</label>
-  </fieldset>
-
-  <!-- checkboxes: الطالب ممكن يختار أكتر من يوم -->
-  <fieldset>
-    <legend>الأيام المناسبة</legend>
-    <label><input type="checkbox" name="days" value="sat"> السبت</label>
-    <label><input type="checkbox" name="days" value="mon"> الاتنين</label>
-    <label><input type="checkbox" name="days" value="wed"> الأربع</label>
-  </fieldset>
-
-  <!-- مش required: مش كل طالب عنده حاجة معيّنة يقولها -->
-  <div class="field">
-    <label for="topic">في درس معيّن صعب عليك؟ (اختياري)</label>
-    <textarea id="topic" name="topic" rows="3" maxlength="300"></textarea>
-    <span class="hint">مثلًا: المعادلات، الهندسة</span>
-  </div>
-
-  <button>ابعت الطلب</button>
-</form>
-</main>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="menu.html">المنيو</a>
+        </nav>
+    </header>
+    <main>
+        <h1>عصير عم حسن</h1>
+        <p>كشك عصير على أول شارع المدرسة من سنة ١٩٩٨. قصب وفواكه الموسم، معصورين قدامك.</p>
+        <h2>هتلاقينا فين</h2>
+        <p>أول شارع المدرسة، قصاد موقف الميكروباص.</p>
+        <h2>المواعيد</h2>
+        <ul>
+            <li>في الصيف: من ٨ الصبح لـ ١٢ بالليل</li>
+            <li>في الشتا: من ٩ الصبح لـ ٩ بالليل</li>
+        </ul>
+        <p><a href="tel:+200000000000">اطلب بالتليفون</a></p>
+    </main>
+    <footer>
+        <p>عصير عم حسن. الدفع كاش بس.</p>
+    </footer>
 </body>
 </html>
 ~~~
 
-~~~view 640 700 الشكل النهائي
-<!doctype html>
+~~~live 410 410 menu.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>احجز حصة رياضيات</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #eef2ff; color: #1e1b4b; }
-  form { max-width: 460px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
-  h1 { margin: 0; font-size: 22px; }
-  .field { display: grid; gap: 4px; }
-  label, legend { font-weight: 600; }
-  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #a5b4fc; border-radius: 8px; }
-  fieldset { border: 1px solid #c7d2fe; border-radius: 10px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
-  .hint { color: #6366f1; font-size: 14px; }
-  /* red only after the person touched the field, not the moment the page opens */
-  input:user-invalid, select:user-invalid { border-color: #b91c1c; background: #fef2f2; }
-  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #4338ca; color: white; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنيو | عصير عم حسن</title>
 </head>
 <body>
-<main>
-<form method="get">
-  <h1>احجز حصة رياضيات مع أستاذ حمدي</h1>
-
-  <!-- الاسم: لازم، عشان المدرس يعرف بيكلم مين -->
-  <div class="field">
-    <label for="student">اسم الطالب</label>
-    <input id="student" name="student" autocomplete="off" required>
-  </div>
-
-  <!-- رقم ولي الأمر مش الطالب: هو اللي بيدفع وبيأكّد الميعاد. tel عشان كيبورد الأرقام -->
-  <div class="field">
-    <label for="parent">موبايل ولي الأمر</label>
-    <input id="parent" name="parent" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
-  </div>
-
-  <!-- select مش radio: ٦ اختيارات كتير على أزرار جنب بعض في الموبايل -->
-  <div class="field">
-    <label for="grade">السنة الدراسية</label>
-    <select id="grade" name="grade" required>
-      <option value="">اختار…</option>
-      <option>أولى إعدادي</option><option>تانية إعدادي</option><option>تالتة إعدادي</option>
-      <option>أولى ثانوي</option><option>تانية ثانوي</option><option>تالتة ثانوي</option>
-    </select>
-  </div>
-
-  <!-- radio: اختيار واحد من ٢ بس، فكله ظاهر من غير ضغط -->
-  <fieldset>
-    <legend>نوع الحصة</legend>
-    <label><input type="radio" name="kind" value="home" required> في البيت</label>
-    <label><input type="radio" name="kind" value="online"> أونلاين</label>
-  </fieldset>
-
-  <!-- checkboxes: الطالب ممكن يختار أكتر من يوم -->
-  <fieldset>
-    <legend>الأيام المناسبة</legend>
-    <label><input type="checkbox" name="days" value="sat"> السبت</label>
-    <label><input type="checkbox" name="days" value="mon"> الاتنين</label>
-    <label><input type="checkbox" name="days" value="wed"> الأربع</label>
-  </fieldset>
-
-  <!-- مش required: مش كل طالب عنده حاجة معيّنة يقولها -->
-  <div class="field">
-    <label for="topic">في درس معيّن صعب عليك؟ (اختياري)</label>
-    <textarea id="topic" name="topic" rows="3" maxlength="300"></textarea>
-    <span class="hint">مثلًا: المعادلات، الهندسة</span>
-  </div>
-
-  <button>ابعت الطلب</button>
-</form>
-</main>
+    <header>
+        <nav aria-label="صفحات الموقع">
+            <a href="index.html">الرئيسية</a>
+            <a href="menu.html">المنيو</a>
+        </nav>
+    </header>
+    <main>
+        <h1>المنيو</h1>
+        <p>الأسعار للكوباية الكبيرة.</p>
+        <h2>طول السنة</h2>
+        <ul>
+            <li>قصب: ١٥ جنيه</li>
+            <li>ليمون بالنعناع: ٢٠ جنيه</li>
+            <li>برتقال: ٢٥ جنيه</li>
+        </ul>
+        <h2>في الموسم بس</h2>
+        <ul>
+            <li>مانجة (الصيف): ٣٥ جنيه</li>
+            <li>فراولة (الشتا): ٣٠ جنيه</li>
+        </ul>
+    </main>
+    <footer>
+        <p>عصير عم حسن. الدفع كاش بس.</p>
+    </footer>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** خلفية بنفسجي فاتح وكارت أبيض فيه العنوان والحقول. نوع الحصة والأيام كل واحد في مربع بحدود فاتحة والاختيارات جنب بعض. وأول ما تفتح الصفحة **مفيش ولا حقل أحمر**. دوس «ابعت» والفورم فاضي: الحقول الناقصة بتبقى حمرا والـ focus بيروح لأول واحد.
+**ليه التصميم ده:**
 
-**ليه اخترت كده:**
-- **مين بيملا الفورم؟** ولي الأمر غالبًا، فالموبايل اللي بنطلبه بتاعه هو.
-- **كل نوع بسبب:** ٦ سنين دراسية = [[select]]؛ اختيارين بس = [[radio]] ظاهرين؛ أكتر من يوم = [[checkbox]]؛ كلام حر = [[textarea]] بـ [[maxlength]].
-- **الأيام مش required:** لو مفيش يوم مناسب المدرس يتصل ويتفقوا. الحقل الإجباري اللي ملوش لازمة بيخلي ناس تقفل الصفحة.
-- **[[:user-invalid]] مش [[:invalid]]:** [[:invalid]] بيلوّن الحقول الإجبارية بالأحمر أول ما الصفحة تفتح، قبل ما حد يكتب أي حاجة. [[:user-invalid]] بيستنى لحد ما الشخص يلمس الحقل أو يدوس «ابعت».
+- **السؤال الأول:** مين هيفتح موقع كشك عصير؟ واحد معدّي وعايز يعرف «فين، وفاتح دلوقتي ولا لأ، وبكام». فالرئيسية فيها المكان والمواعيد قبل أي حاجة، والأسعار في صفحة لوحدها.
+- **صفحتين بس:** المحتوى ميستاهلش أكتر. صفحة «عن الكشك» كانت هتبقى فقرة واحدة، فدخلت في أول فقرة في الرئيسية.
+- **المنيو قايمتين بعنوانين** («طول السنة» و «في الموسم بس»): الزبون اللي بيسأل «فيه مانجة؟» بيلاقي الإجابة من العنوان.
+- **«الدفع كاش بس» في الـ footer:** معلومة لازم تبان في كل صفحة، فمكانها الحتة المشتركة.
+- **مفيش صور:** مفيش صورة حقيقية للمكان، وصورة من النت لمكان تاني كدب على الزائر. الصورة تتزوّد لما تتصوّر.
+- **الاسم متخيل:** الموقع تمرين. متنشرش رقم تليفون ولا عنوان حد حقيقي من غير إذنه.
 
-~~~text الناتج (Chrome)
-أول ما الصفحة تفتح     7 عناصر :invalid، و 0 منهم :user-invalid (مفيش أحمر)
-«ابعت» والفورم فاضي     5 حقول بقت حمرا (الاسم، والموبايل، والسنة، والاختيارين)، والـ focus على #student
-axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
+**الغلطة الشائعة:** تبدأ بـ «عايز الموقع يبقى فيه إيه» بدل «الزائر عايز إيه». النتيجة صفحة فيها تاريخ المكان في الأول، والمواعيد في الآخر.
+
+~~~text الناتج (PowerShell 7.6 و Chrome 157)
+C:.
+    index.html
+    menu.html
+
+index.html:  header و nav و main و footer = 4   h2: 2   li: 2   لينك تليفون: 1
+menu.html:   header و nav و main و footer = 4   h2: 2   li: 5
+الـ validator على الاتنين: The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0
+عرض 360: scrollWidth = 360
 ~~~` },
       ],
-      l: 1,
-      n: "اختيارات بـ fieldset، والنوع الصح لكل حقل، و validation المتصفح من JavaScript، وأخطاء واضحة للكل",
       items: [
         {
-          cmd: "fieldset و radio",
-          ref: [
-            { t: "WHATWG: the fieldset element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-fieldset-element" },
-            { t: "MDN: <fieldset>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/fieldset" },
-            { t: "MDN: <input type=\"radio\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/radio" },
-            { t: "WHATWG: the legend element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-legend-element" },
-            { t: "MDN: <legend>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/legend" },
-            { t: "WHATWG: the select element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-select-element" },
-            { t: "MDN: <select>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/select" },
-            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
-          ],
+          cmd: "mkdir و ni و touch",
           practice: [
-            { lvl: 'تطبيق', t: R`**أشكال:** اختيار باقة في جيم متخيل بـ ٣ كروت: كل كارت [[<label class="plan">]] جواه radio ونص، والـ radio مخفي بالشكل بس (حجم 1px و [[clip-path: inset(50%)]])، والكارت المختار حدوده بلون مختلف بـ [[.plan:has(input:checked)]].`, done: R`الضغط على أي حتة في الكارت بيختاره، والأسهم بتنقّل بين الكروت، و [[getComputedStyle(card).borderColor]] على المختار بيرجّع اللون اللي حطيته في الـ :has، ومفيش ولا سطر JavaScript.`, sol: R`~~~live 310 310
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الباقات</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 12px; max-width: 420px; }
-  .plan { display: block; padding: 14px; border: 2px solid #d4d4d8; border-radius: 12px; cursor: pointer; }
-  .plan input {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    clip-path: inset(50%);
-  }
-  .plan:has(input:checked) { border-color: rgb(15, 118, 110); background: #f0fdfa; }
-  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
-</style>
-</head>
-<body>
-<main>
-<h1>اختار باقتك</h1>
-<form>
-  <fieldset>
-    <legend>الباقة</legend>
-    <label class="plan"><input type="radio" name="plan" value="month" checked> شهر، ٥٠٠ جنيه</label>
-    <label class="plan"><input type="radio" name="plan" value="quarter"> ٣ شهور، ١٣٠٠ جنيه</label>
-    <label class="plan"><input type="radio" name="plan" value="year"> سنة، ٤٥٠٠ جنيه</label>
-  </fieldset>
-</form>
-</main>
-</body>
-</html>
+            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص على الدرس: اعمل جوه [[projects]] فولدر اسمه [[practice-site]]، وجواه ملفين فاضيين [[index.html]] و [[about.html]]، واعرض اللي جواه. (الفولدر ده هو معملك في تمارين الوحدة كلها، عشان مشروع المكتبة يفضل نضيف.)`, done: R`الأمر اللي بيعرض محتوى الفولدر طلّع الملفين بالاسمين دول بالظبط، وحجم كل واحد 0.`, sol: R`~~~powershell
+cd ~\projects
+mkdir practice-site
+cd practice-site
+ni index.html, about.html
+ls
 ~~~
 
-**اللي بيخلي الكارت كله يتداس:** الـ [[input]] جوه الـ [[label]]، فأي ضغطة على الـ label بتعلّم الـ radio من غير [[for]] ولا JavaScript.
+~~~bash
+cd ~/projects
+mkdir practice-site && cd practice-site
+touch index.html about.html
+ls -l
+~~~
 
-**ليه الإخفاء بالشكل مش** [[display: none]]**:** الـ [[input]] لازم يفضل موجود عشان يتوصله بالكيبورد وقارئ الشاشة يقراه. [[width: 1px]] و [[height: 1px]] و [[clip-path: inset(50%)]] بيخلوه مش مرئي بس لسه في الصفحة. و [[position: absolute]] عشان ميزقّش النص.
+**ليه كده:** [[ni]] بياخد أكتر من اسم بينهم فاصلة [[,]] (في PowerShell الفاصلة معناها «قايمة»). و [[touch]] بياخدهم بمسافة. لو عكست (فاصلة مع [[touch]] أو مسافة مع [[ni]]) مش هيشتغل: [[ni a.html b.html]] بيرد بـ [[A positional parameter cannot be found that accepts argument 'b.html']].
 
-**الجزء الجديد:** [[.plan:has(input:checked)]] معناها «الكارت اللي جواه radio متعلّم». ده اللي بيخلي الأب يتغيّر حسب ابنه.
+**الغلطة الشائعة:** تنسى [[cd practice-site]] وتعمل الملفين في [[projects]] نفسه. عشان كده آخر سطر [[ls]]: بتتأكد بعينك.
 
-**الغلطة الشائعة:** تخفي الـ radio وتنسى السطر بتاع [[:focus-visible]]. اللي بيستخدم الكيبورد مش هيشوف هو واقف فين، لأن الدايرة اللي كان عليها الإطار اختفت.
+~~~text الناتج (PowerShell 7.6)
+    Directory: C:\Users\ali\projects\practice-site
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/18/2026  6:25 PM              0 about.html
+-a---          11/18/2026  6:25 PM              0 index.html
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** واحد كتب [[mkdir my site]] (من غير علامات تنصيص). هيحصل إيه في PowerShell؟ وهيحصل إيه في bash؟ توقّع الاتنين، وبعدين جرّب جوه [[practice-site]].`, done: R`قلت قبل ما تجرّب: PowerShell بيرفض ومبيعملش حاجة، و bash بيعمل فولدرين. وبعد التجربة مسحت اللي اتعمل.`, sol: R`**PowerShell:** بيرفض، ومفيش أي فولدر بيتعمل:
+
+~~~text PowerShell 7.6 و 5.1
+mkdir: A positional parameter cannot be found that accepts argument 'site'.
+~~~
+
+المعنى: [[mkdir]] مستني اسم واحد، ولقى كلمة تانية ([[site]]) مش عارف يحطها فين.
+
+**bash:** مبيشتكيش، وبيعمل فولدرين، واحد اسمه [[my]] وواحد اسمه [[site]]:
+
+~~~bash
+mkdir my site
+ls
+~~~
+
+~~~text الناتج (Git Bash)
+my
+site
+~~~
+
+**ليه:** المسافة في الترمنال هي اللي بتفصل بين الكلمات. فالأمر شاف كلمتين. لو مصمم على اسم فيه مسافة لازم تحطه بين علامتين تنصيص: [[mkdir "my site"]]. بس الأسهل والأصح إنك متعملش أسامي فيها مسافات أصلًا: [[my-site]].
+
+**التنضيف في bash:** [[rmdir my site]] (بيمسح الفولدر الفاضي بس، فهو آمن).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صاحبك كتب صفحة في Notepad وحفظها، ولما بيفتحها في المتصفح بيشوف الكود نفسه نص، مش صفحة. جوه [[practice-site]] اعمل الحالة دي بنفسك: ملف اسمه [[Home Page.html.txt]]. وبعدين صلّح الاسم بأمر واحد لـ [[home.html]].`, done: R`[[ls]] بيعرض [[home.html]] ومفيش أي ملف آخره [[.txt]]، وقلت إيه التلات حاجات اللي كانت غلط في الاسم القديم.`, sol: R`~~~powershell
+ni "Home Page.html.txt"
+ren "Home Page.html.txt" home.html
+ls -Name
+~~~
+
+~~~bash
+touch "Home Page.html.txt"
+mv "Home Page.html.txt" home.html
+ls
+~~~
+
+**ليه كده:** [[ren]] (اختصار [[Rename-Item]]) و [[mv]] بياخدوا الاسم القديم وبعدين الجديد. والاسم القديم فيه مسافة فلازم علامات التنصيص. من غيرها bash بيفهم إنهم تلات كلمات وبيرد:
+
+~~~text Git Bash من غير علامات تنصيص
+mv: target 'index.html' is not a directory
+~~~
+
+(الرسالة دي طلعت لما جرّبت [[mv Home Page.html.txt index.html]]: شاف ملفين مصدر وهدف، والهدف لازم يبقى فولدر.)
+
+**التلات غلطات في الاسم القديم:**
+
+1. آخره [[.txt]]: ده اللي بيخلي المتصفح يعرضه نص. الامتداد الحقيقي هو اللي بعد **آخر** نقطة.
+2. فيه مسافة: هتبقى [[%20]] في الرابط، وكل أمر هيحتاج علامات تنصيص.
+3. فيه حروف كبيرة: سيرفرات كتير بتفرّق بين [[Home.html]] و [[home.html]].
+
+**الغلطة الشائعة:** تفتكر إن الملف اسمه [[Home Page.html]] عشان ويندوز مخبّي الامتداد. [[ls]] في الترمنال بيعرض الاسم الحقيقي دايمًا.
 
 ~~~text الناتج
-الضغط على نص الكارت التاني: quarter
-لون حدود المختار: rgb(15, 118, 110)   ولون حدود غير المختار: rgb(212, 212, 216)
-Tab ثم سهم لتحت: quarter   وسهم تاني: year
-عرض الـ radio في الصفحة: 1px، ومفيش ولا سطر JavaScript
-overflow على 360: 0px   axe: 0 violations
+home.html
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نفس كروت الباقات بس الـ radio عليه [[display: none]] عشان «ميبانش». جرّب توصل للكروت بالكيبورد بس، وبعدين صلّحها.`, done: R`مع [[display: none]] الـ Tab بيعدّي من غير ما يقف على أي كارت (الـ radio اتشال من الكيبورد وشجرة الـ accessibility)، وبعد ما خبّيته بالشكل بس بقى الـ Tab بيقف على المجموعة والأسهم بتختار.`, sol: R`قبل:
-
-~~~css
-.plan input { display: none; }
+            { lvl: 'تطبيق', t: R`**ابني حاجة:** جهّز هيكل مشروع كامل اسمه [[shop-demo]] جوه [[projects]]: تلات صفحات ([[index.html]] و [[products.html]] و [[contact.html]]) وفولدر [[images]] جواه ملف [[logo.svg]]. واعرض الشجرة. حاول بأقل عدد أوامر.`, done: R`الشجرة فيها أربع ملفات في مكانهم وفولدر واحد، وكل الأسامي حروف صغيرة من غير مسافات.`, sol: R`~~~powershell
+mkdir shop-demo
+cd shop-demo
+mkdir images
+ni index.html, products.html, contact.html, images\logo.svg
+tree /f
 ~~~
 
-بعد:
-
-~~~css
-.plan input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  clip-path: inset(50%);
-}
-.plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; }
+~~~bash
+mkdir -p shop-demo/images && cd shop-demo
+touch index.html products.html contact.html images/logo.svg
+ls -R
 ~~~
 
-والـ HTML كامل عشان تجرب:
+**ليه كده:**
 
-~~~live 260 260
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الباقات</title>
-<style>
-  .plan { display: block; padding: 12px; border: 2px solid #999; margin-block-end: 8px; }
-  .plan input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
-  .plan:has(input:checked) { border-color: rgb(15, 118, 110); }
-  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; }
-</style>
-</head>
-<body>
-<main>
-<h1>الباقات</h1>
-<form>
-  <fieldset>
-    <legend>الباقة</legend>
-    <label class="plan"><input type="radio" name="plan" value="a"> شهر</label>
-    <label class="plan"><input type="radio" name="plan" value="b"> سنة</label>
-  </fieldset>
-  <button>اشترك</button>
-</form>
-</main>
-</body>
-</html>
+- الملف اللي جوه فولدر بيتكتب بمساره: [[images\logo.svg]] في PowerShell و [[images/logo.svg]] في bash. والفولدر لازم يكون موجود الأول، عشان كده [[mkdir images]] قبل [[ni]].
+- في bash [[mkdir -p shop-demo/images]] بيعمل الفولدرين مرة واحدة. من غير [[-p]] بيرفض لو الفولدر الأب مش موجود: [[mkdir: cannot create directory 'a/b/c': No such file or directory]].
+- في PowerShell [[mkdir shop-demo\images]] بيعمل الاتنين من غير أي خيار.
+
+**الغلطة الشائعة:** تعمل الملفات قبل [[cd shop-demo]]، فتتعمل برّه المشروع.
+
+~~~text الناتج (tree /f في PowerShell)
+C:.
+│   contact.html
+│   index.html
+│   products.html
+│
+└───images
+        logo.svg
 ~~~
 
-**اللي بيحصل:** [[display: none]] مش بس بيخفي العنصر، ده بيشيله من الصفحة كلها: مبيتوصلش بـ Tab، وقارئ الشاشة مبيشوفوش، حتى لو الـ label ظاهر. الماوس بس هو اللي شغال، لأن الضغط بيروح للـ label.
+~~~text الناتج (ls -R في Git Bash)
+.:
+contact.html
+images
+index.html
+products.html
 
-**الغلطة الشائعة:** تجرب بالماوس بس، فتلاقيه شغال وتقفل التذكرة. جرّب كل كروت الاختيار بالكيبورد قبل ما تعتبرها خلصت. ونفس المشكلة بتحصل مع [[visibility: hidden]].
-
-~~~text الناتج
-                       أول Tab وقف عند     الأسهم اختارت    راديوز في شجرة الـ a11y
-display: none          BUTTON               ولا حاجة             0
-مخفي بالشكل بس         INPUT a               b             2
+./images:
+logo.svg
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مجموعة radios اسمها [[pay]] ومفيش ولا واحد متعلّم. [[form.elements.pay.value]] هيرجّع إيه؟ وبعد ما تعلّم «كاش» ([[value="cod"]])؟ وهل [[pay]] هيبقى موجود في [[FormData]] قبل الاختيار؟`, done: R`قبل الاختيار رجّع نص فاضي [[""]] (مش null)، وبعده [[cod]]، و [[new FormData(form).has('pay')]] كان [[false]] قبل الاختيار: المجموعة اللي مفيهاش اختيار مبتتبعتش خالص.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الدفع</title>
-</head>
-<body>
-<form id="f">
-  <label><input type="radio" name="pay" value="card"> كارت</label>
-  <label><input type="radio" name="pay" value="cod"> كاش</label>
-</form>
-</body>
-</html>
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** الدرس قال إن [[ni index.html]] بيرفض لو الملف موجود. فيه خيار اسمه [[-Force]] بيخلّيه «ينجح». من صفحة [[New-Item]] في وثائق مايكروسوفت (مثال رقم ٩): إيه اللي بيحصل للملف الموجود؟ وبعدين جرّبها على ملف تجربة فيه سطر، **مش** على ملف في مشروعك. وإيه المقابل في bash؟`, done: R`كتبت جملة واحدة بتقول ليه [[ni -Force]] خطر على ملف فيه شغل، وشفت الحجم بيتغيّر بعينك، وعرفت إن [[touch]] مفيهوش المشكلة دي.`, sol: R`~~~powershell
+Set-Content test.html "<h1>مكتبة الركن</h1>"
+(Get-Item test.html).Length
+ni test.html -Force
+(Get-Item test.html).Length
 ~~~
 
-~~~js
-const form = document.querySelector('#f');
-form.elements.pay.value;
-new FormData(form).has('pay');
-form.elements.pay[1].checked = true;   // علّم كاش
-form.elements.pay.value;
-~~~
+**الشرح:** [[Set-Content]] بيكتب السطر في الملف. [[(Get-Item test.html).Length]] بيجيب حجمه بالبايت. وبعد [[ni -Force]] الحجم بقى صفر: الملف **اتمسح محتواه** واتعمل مكانه واحد فاضي بنفس الاسم. الوثائق بتقولها صريحة في المثال ٩: «This overwrites the existing file».
 
-**الإجابة:** [[form.elements.pay]] مش عنصر واحد، ده مجموعة اسمها [[RadioNodeList]]، و [[.value]] بتاعتها قيمة المتعلّم. ولو مفيش متعلّم بترجّع نص فاضي [[""]]، مش [[null]].
+يعني الرفض العادي ([[The file ... already exists]]) كان بيحميك. و [[-Force]] بيشيل الحماية دي.
 
-أما [[FormData]] فبيجمع اللي هيتبعت فعلًا، والمجموعة اللي مفيهاش اختيار مش بتتبعت خالص. عشان كده [[has]] رجّعت [[false]].
+**في bash:** [[touch index.html]] على ملف موجود مبيلمسش محتواه، بيغيّر تاريخ آخر تعديل بس. جرّبتها على صفحة حجمها 1755 بايت: فضلت 1755.
 
-**الغلطة الشائعة:** تكتب [[if (form.elements.pay.value === null)]]. الشرط ده عمره ما هيتحقق. اكتب [[if (!form.elements.pay.value)]]، أو حط [[required]] على المجموعة.
+**الغلطة الشائعة:** تنسخ أمر من النت فيه [[-Force]] «عشان الخطأ يختفي» من غير ما تعرف هو بيعمل إيه.
 
-~~~text الناتج
-قبل الاختيار: value = ""   FormData.has = false
-بعد «كاش»:   value = "cod"   FormData.has = true
-نوع form.elements.pay = RadioNodeList
+~~~text الناتج (PowerShell 7.6)
+32
+
+    Directory: C:\Users\ali\projects\practice-site
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/18/2026  6:37 PM              0 test.html
+
+0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم دفع فيه [[<input type="radio" name="pay1" value="card">]] و [[<input type="radio" name="pay2" value="cod">]]، و [[<legend>]] مكتوب برّه الـ fieldset. المستخدم قدر يعلّم الاتنين!`, done: R`بعد ما بقوا نفس الـ [[name]] تعليم واحد بيشيل التاني، و [[FormData]] فيه قيمة واحدة لـ [[pay]]، والـ legend جوه الـ fieldset كأول عنصر فتاب Accessibility بقى بيقول اسم المجموعة «طريقة الدفع».`, sol: R`~~~live 150 150
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الدفع</title>
-</head>
-<body>
-<main>
-<h1>الدفع</h1>
-<form id="f">
-  <fieldset>
-    <legend>طريقة الدفع</legend>
-    <label><input type="radio" name="pay" value="card"> كارت</label>
-    <label><input type="radio" name="pay" value="cod"> كاش عند الاستلام</label>
-  </fieldset>
-</form>
-</main>
-</body>
-</html>
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك سمّى مشروعه [[My Site]] والصفحة [[Home Page.html]] وبيقول «شغالة عندي، إيه المشكلة؟». اكتبله رد من تلات سطور بالظبط، كل سطر فيه مشكلة واحدة حقيقية والدليل عليها.`, done: R`التلات سطور فيهم: شكل الرابط بالـ [[%20]]، وعلامات التنصيص في الترمنال، والحروف الكبيرة على السيرفر. ومفيش سطر بيقول «عشان ده الأصول».`, sol: R`**إجابة نموذجية:**
+
+1. الرابط هيبقى [[my%20site/Home%20Page.html]]: كل مسافة بتتحول [[%20]]، وده اللي هيتبعت لأي حد تشاركه اللينك.
+2. كل أمر في الترمنال هيحتاج علامات تنصيص ([[cd "My Site"]])، ولو نسيتها الأمر بيفهمهم كلمتين.
+3. جهازك (ويندوز والماك) مبيفرّقش بين [[Home]] و [[home]]، بس أغلب السيرفرات بتفرّق. فلينك مكتوب [[home page.html]] هيشتغل عندك وهيبوظ بعد الرفع.
+
+والحل سطر واحد: [[my-site/index.html]].
+
+**الدليل على السطر الأول:** فتحت صفحة بالاسم ده في Chrome وقريت العنوان:
+
+~~~text الناتج (Chrome 157)
+file:///C:/Users/ali/projects/my%20site/Home%20Page.html
 ~~~
 
-**الغلطتين:**
-
-- الـ radios بتبقى مجموعة واحدة بس لو ليهم نفس [[name]]. [[pay1]] و [[pay2]] يعني مجموعتين، كل واحدة فيها اختيار واحد، فالمستخدم قدر يعلّم الاتنين.
-- [[legend]] لازم يبقى أول ابن جوه [[fieldset]]. برّه الـ fieldset ده مجرد كلام، مش اسم المجموعة.
-
-و [[fieldset]] مهم لقارئ الشاشة: لما يدخل المجموعة بيقول «طريقة الدفع» قبل ما يقرا «كارت»، فالمستخدم يعرف بيختار إيه.
-
-**الغلطة الشائعة:** تكتب JavaScript يلغي تعليم الراديو التاني، بدل ما تصلّح الـ [[name]]. سطر الـ HTML بيعمل ده ببلاش، والأسهم كمان بتتظبط لوحدها.
-
-~~~text الناتج
-قبل: اتعلّم 2 راديو في نفس الوقت
-بعد: اتعلّم 1 راديو، و FormData.getAll('pay') = ["cod"]
-
-تاب Accessibility:
-- group "طريقة الدفع":
-  - text: طريقة الدفع
-  - radio "كارت"
-  - text: كارت
-  - radio "كاش عند الاستلام" [checked]
-  - text: كاش عند الاستلام
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** اختبار صغير «أنسب قهوة ليك» من ٣ أسئلة، كل سؤال fieldset و legend و ٣ radios ليهم [[value]] بنقط (1 و 2 و 3)، وزرار يحسب المجموع ويعرض النتيجة في [[<output aria-live="polite">]].`, done: R`لو سؤال مش متجاوب الإرسال بيقف عنده (حط [[required]] على أول radio في كل مجموعة)، والمجموع 3 بيقول «إسبريسو» و 9 بيقول «لاتيه» مثلًا، والنتيجة بتتغيّر من غير reload.`, sol: R`~~~live 550 550
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أنسب قهوة ليك</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  fieldset { border: 1px solid #d4d4d8; border-radius: 12px; margin-block-end: 12px; }
-  label { display: block; padding: 4px 0; }
-  output { display: block; margin-block-start: 12px; font-size: 1.25rem; font-weight: 700; }
-</style>
-</head>
-<body>
-<main>
-<h1>أنسب قهوة ليك</h1>
-<form id="quiz">
-  <fieldset>
-    <legend>بتحبها قد إيه؟</legend>
-    <label><input type="radio" name="q1" value="1" required> تقيلة جدًا</label>
-    <label><input type="radio" name="q1" value="2"> وسط</label>
-    <label><input type="radio" name="q1" value="3"> خفيفة</label>
-  </fieldset>
-  <fieldset>
-    <legend>اللبن؟</legend>
-    <label><input type="radio" name="q2" value="1" required> من غير</label>
-    <label><input type="radio" name="q2" value="2"> شوية</label>
-    <label><input type="radio" name="q2" value="3"> كتير</label>
-  </fieldset>
-  <fieldset>
-    <legend>السكر؟</legend>
-    <label><input type="radio" name="q3" value="1" required> من غير</label>
-    <label><input type="radio" name="q3" value="2"> معلقة</label>
-    <label><input type="radio" name="q3" value="3"> معلقتين</label>
-  </fieldset>
-  <button>شوف النتيجة</button>
-  <output id="result" aria-live="polite"></output>
-</form>
-</main>
-<script>
-  const form = document.querySelector('#quiz');
-  const result = document.querySelector('#result');
-
-  function coffeeFor(score) {
-    if (score <= 4) return 'إسبريسو';
-    if (score <= 7) return 'كابتشينو';
-    return 'لاتيه';
-  }
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const data = new FormData(form);
-    const score = ['q1', 'q2', 'q3'].reduce((sum, q) => sum + Number(data.get(q)), 0);
-    result.textContent = coffeeFor(score) + ' (مجموعك ' + score + ')';
-  });
-$__lt/script>
-</body>
-</html>
-~~~
-
-**كل جزء بيعمل إيه:**
-
-- [[required]] على راديو واحد كفاية: القاعدة بتتطبق على المجموعة كلها اللي ليها نفس الـ [[name]].
-- [[e.preventDefault()]]: بيوقف إعادة تحميل الصفحة. والفحص بتاع [[required]] بيحصل قبل event الـ submit أصلًا، فالكود بتاعك مش هيشتغل لو فيه سؤال ناقص.
-- [[data.get(q)]] بترجّع نص، فـ [[Number]] لازمة، وإلا [[0 + "1"]] تبقى [[01]].
-- [[reduce]] بتجمع القيم، و [[0]] في آخرها هي بداية العداد.
-- [[aria-live="polite"]]: قارئ الشاشة بيقرا النتيجة لما تتغيّر من غير ما الـ focus يتحرك.
-
-**الغلطة الشائعة:** تستخدم [[click]] على الزرار بدل [[submit]] على الفورم. كده الفحص ممكن يتعدّى، و Enter من الكيبورد مش هيتعامل زي الضغط.
-
-~~~text الناتج
-إرسال من غير إجابة: النتيجة = «»   والـ focus عند q1 value=1
-كل الإجابات 1: إسبريسو (مجموعك 3)
-كل الإجابات 2: كابتشينو (مجموعك 6)
-كل الإجابات 3: لاتيه (مجموعك 9)
-الصفحة اتعمل لها reload: false
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[<select>]] و [[<input list="...">]] مع [[<datalist>]]، واعمل حقل «المدينة» بـ datalist فيه ٥ مدن.`, done: R`تقدر تختار من الاقتراحات أو تكتب مدينة مش في اللستة وتتبعت عادي (ده الفرق: datalist اقتراح مش إجبار)، والـ select مبيقبلش غير اللي فيه.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>المدينة</title>
-</head>
-<body>
-<main>
-<h1>العنوان</h1>
-<form id="f">
-  <label for="city">المدينة</label>
-  <input id="city" name="city" list="cities">
-  <datalist id="cities">
-    <option value="القاهرة"></option>
-    <option value="الإسكندرية"></option>
-    <option value="المنصورة"></option>
-    <option value="أسوان"></option>
-    <option value="طنطا"></option>
-  </datalist>
-
-  <label for="gov">المحافظة</label>
-  <select id="gov" name="gov">
-    <option>القاهرة</option>
-    <option>الجيزة</option>
-  </select>
-</form>
-</main>
-</body>
-</html>
-~~~
-
-| | [[select]] | [[input]] مع [[datalist]] |
-|---|---|---|
-| القيم | لازم من اللستة | أي نص، واللستة اقتراح |
-| الكتابة | مفيش | عادي، والاقتراحات بتتفلتر |
-| الشكل | ثابت | بيختلف من متصفح للتاني |
-| إمتى | اللستة مقفولة: البلد، المقاس | أغلب الناس هيختاروا، والباقي يكتب |
-
-**الربط:** [[list="cities"]] على الـ input لازم يساوي [[id="cities"]] بتاع الـ datalist.
-
-**الغلطة الشائعة:** تستخدم datalist وانت عايز إجبار، فتستقبل في السيرفر مدينة مكتوبة غلط. لو القيمة لازم تبقى من اللستة استخدم select، وافحصها في السيرفر في كل الأحوال.
-
-~~~text الناتج
-كتابة «دمياط» في datalist (مش في اللستة): اتقبلت = true، و FormData = دمياط
-محاولة تعيين select بقيمة مش فيه: القيمة بقت ""
-عدد الاقتراحات = 5
-axe: 0 violations
-~~~` },
+والسطر التالت من صفحة «Dealing with files» في MDN، مش من تجربة: المعمل هنا ويندوز.` },
           ],
-          title: "اختيار واحد ولا أكتر؟ radio و checkbox و select",
-          desc: R`[[radio]] لاختيار واحد بس من مجموعة، وكل الـ radios اللي في المجموعة ليهم نفس الـ [[name]]. و [[checkbox]] لصفر أو أكتر. و [[<select>]] لاختيار واحد من قايمة طويلة.
+          title: "فولدر المشروع وملفاته من الترمنال",
+          desc: R`أي صفحة بتبدأ بفولدر وجواه ملف. [[mkdir]] بيعمل الفولدر، و [[cd]] بيدخّلك جواه، و [[ni]] (في PowerShell) أو [[touch]] (في bash على الماك ولينكس) بيعمل الملف فاضي، و [[ls]] بيوريك اللي اتعمل.
 
-والمجموعة كلها بتتلف في [[<fieldset>]] وأول حاجة جواه [[<legend>]] فيه السؤال. من غيرهم قارئ الشاشة بيقول «كارت، radio button» ومش بيقول السؤال أصلًا. ومعاهم بيقول «طريقة الدفع، مجموعة، كارت، radio button، 1 من 2».
+المشروع اللي هنبنيه في الوحدة كلها: صفحة لـ «مكتبة الركن»، مكتبة متخيلة على ناصية شارع. في الدرس ده هنجهّز مكانها: فولدر [[rokn-books]] جوه فولدر [[projects]]، وجواه ملف واحد اسمه [[index.html]]. والدرس الجاي بيبدأ من الفولدر ده بالظبط.
 
-قاعدة سريعة: 5 اختيارات أو أقل يبقى radio (كلهم باينين وضغطة واحدة)، أكتر من كده select.`,
-          example: R`<fieldset>
-  <legend>طريقة الدفع</legend>
-  <label><input type="radio" name="pay" value="card" required> كارت</label>
-  <label><input type="radio" name="pay" value="cod"> كاش عند الاستلام</label>
-</fieldset>
-<fieldset>
-  <legend>ابعتلي إشعارات على</legend>
-  <label><input type="checkbox" name="notify" value="email" checked> الإيميل</label>
-  <label><input type="checkbox" name="notify" value="sms"> SMS</label>
-</fieldset>
-<label for="city">المحافظة</label>
-<select id="city" name="city" required>
-  <option value="">اختار…</option>
-  <optgroup label="الدلتا">
-    <option value="gharbia">الغربية</option>
-    <option value="dakahlia">الدقهلية</option>
-  </optgroup>
-</select>`,
-          try: R`حط الكود في [[<form>]] ومعاه زرار submit، ودوس عليه من غير ما تختار حاجة وشوف المتصفح بيقف فين. وبعدين علّم الـ checkboxes الاتنين، وافتح الـ Console واكتب [[Object.fromEntries(new FormData(document.forms[0]))]] وبعدها [[new FormData(document.forms[0]).getAll('notify')]] وقارن.`,
-          flag: "script",
+الأسامي ليها قواعد: حروف إنجليزي صغيرة، من غير مسافات ولا عربي، والكلمات بينها [[-]]. مش ذوق: اسم الفولدر والملف هيبقوا جزء من رابط الصفحة.`,
+          example: R`# Windows (PowerShell):
+cd ~
+mkdir projects
+cd projects
+mkdir rokn-books
+cd rokn-books
+ni index.html
+ls
+# Linux and Mac:
+cd ~
+mkdir -p projects/rokn-books
+cd projects/rokn-books
+touch index.html
+ls -l`,
+          try: R`نفّذ أوامر نظامك بالترتيب. وبعدين اكتب [[mkdir rokn-books]] مرة تانية وانت جوه [[projects]] واقرا الرسالة: دي أول رسالة خطأ هتقابلها كتير، ومعناها بسيط.`,
           deep: {
-            why: R`أي فورم دفع أو تسجيل أو إعدادات فيه اختيارات. ولو المجموعة ملهاش legend، مستخدم قارئ الشاشة بيسمع «نعم، لا» ومش عارف السؤال إيه. ولو الـ radios أسماءهم مختلفة، المستخدم يقدر يختار الاتنين مع بعض والسيرفر يستلم بيانات متناقضة.`,
-            how: R`الـ radios اللي ليهم نفس الـ [[name]] جوه نفس الفورم بقوا مجموعة: تعليم واحد بيشيل التاني، والمجموعة كلها وقفة Tab واحدة، وجواها بتتنقل بالأسهم (والسهم بيختار كمان). و [[required]] على radio واحد بس بيكفي للمجموعة كلها.
+            why: R`ممكن تعمل الفولدر والملف بالماوس (كليك يمين ثم New). بس الترمنال بيعمل تلات حاجات الماوس مبيعملهاش: بيوريك الاسم الحقيقي للملف (ويندوز بيخبّي الامتداد، فـ [[index.html.txt]] بيبان [[index.html]])، وبيتكتب في شرح أو رسالة فأي حد ينفّذه زي ما هو، وهو نفس الطريقة اللي هتشغّل بيها Git و npm بعدين. وكل مشروع في الكورس ده بيبدأ بالتلات سطور دول.`,
+            how: R`الترمنال دايمًا «واقف» في فولدر، اسمه working directory. كل اسم تكتبه من غير مسار كامل بيتفهم بالنسبة للفولدر ده: [[mkdir rokn-books]] بيعمل الفولدر جوه المكان اللي انت فيه، و [[ni index.html]] بيعمل الملف جوه المكان اللي انت فيه. عشان كده [[cd]] قبل [[ni]] مش تفصيلة: لو نسيتها الملف بيتعمل في حتة تانية.
 
-وقت الإرسال: الـ checkbox اللي مش متعلّم مش بيتبعت خالص (مش [[false]])، والمتعلّم بيتبعت بالـ [[value]] بتاعه (ولو ملوش value بيتبعت [[on]]). ولو كذا checkbox ليهم نفس الـ name بيتبعتوا كذا مرة، فلازم [[formData.getAll('notify')]] مش [[get]].
-
-في الـ select: أول option بـ [[value=""]] هو اللي بيخلي [[required]] يشتغل، لأن الـ required بيرفض القيمة الفاضية. و [[<optgroup>]] بيقسّم القايمة بعناوين مبتتختارش.
-
-والشكل: [[accent-color: var(--color-brand)]] بيلوّن الـ checkbox والـ radio الأصليين من غير ما تكسرهم. وفيه [[appearance: base-select]] جديد بيخليك تعمل ستايل كامل للـ select، بس لسه مش في كل المتصفحات، فاتأكد من caniuse قبل ما تعتمد عليه.`,
-            when: R`radio: اختيار واحد إجباري وقليل (الجنس، طريقة الدفع، حجم). checkbox لوحده: موافقة أو تشغيل/إطفاء. checkboxes: اختيارات متعددة. select: قايمة طويلة (محافظات، دول). ولو القايمة طويلة جدًا ومحتاجة بحث، ده combobox (مستوى تالت).`,
-            mistakes: R`كل radio بـ name مختلف فيتعلّموا كلهم. checkbox لاختيار واحد من اتنين. select لـ «نعم/لا». option أولاني من غير [[value=""]] فالـ required ميشتغلش. [[Object.fromEntries(formData)]] مع checkboxes بنفس الاسم: بيسيب آخر قيمة بس. وتخفي الـ input بـ [[display: none]] عشان تعمل شكل مخصص: كده اتشال من الكيبورد وقارئ الشاشة. وسؤال انترفيو: «ليه الـ radio group وقفة Tab واحدة؟» لأنها widget واحد، والأسهم للتنقل جواه، ودا نفس فكرة roving tabindex.`
+الملف اللي بيتعمل حجمه صفر بايت: اسم على الديسك من غير محتوى. الامتداد [[.html]] هو اللي بيقول للنظام وللمتصفح «ده صفحة»، ومفيش حاجة جوه الملف بتقول كده.`,
+            when: R`في أول كل مشروع، وكل ما تحتاج ملف جديد (صفحة تانية، ملف CSS بعدين). ولما المشروع يكبر هتعمل الملفات من VS Code كمان (الدرس الجاي)، والاتنين بيعملوا نفس الحاجة.`,
+            mistakes: R`تشتغل على سطح المكتب نفسه: ملفات كل المشاريع جنب بعض، ومينفعش يبقى فيه [[index.html]] اتنين. تسمّي بمسافات أو عربي. تنسى [[cd]] فالملف يتعمل برّه الفولدر. تحفظ من Notepad فيبقى الاسم [[index.html.txt]]. وتكتب [[touch]] في PowerShell أو [[ni]] في bash: كل واحد ليه أمره.`
           },
           teach: R`## الفكرة في سطرين
 
-3 أنواع اختيار: radio (واحد بس)، و checkbox (صفر أو أكتر)، و select (واحد من قايمة). والمجموعات ملفوفة في [[fieldset]] عشان يبقى ليها سؤال. حطيت المثال جوه [[<form>]] ومعاه زرار، وجرّبته في Chrome (headless): الكيبورد، ورسايل المتصفح، و [[FormData]].
+الموقع على جهازك فولدر عادي جواه ملفات نص. هنعمل الفولدر والملف بأربع أوامر، ونفهم كل واحد بيعمل إيه وبيرد بإيه.
+
+كل الأوامر هنا اتشغّلت على Windows 11 في PowerShell 7.6 و Windows PowerShell 5.1 و Git Bash (bash 5.3). أوامر الماك ولينكس هي نفس أوامر bash اللي اتشغّلت في Git Bash.
 
 ---
 
-## ١. [[<fieldset>]] و [[<legend>]]
+## ١. المشاريع بتتحط فين؟
 
-- [[fieldset]]: صندوق بيجمّع حقول ليها علاقة ببعض. المتصفح بيرسم حواليه برواز.
-- [[legend]]: عنوان الصندوق (السؤال). لازم يبقى أول حاجة جواه.
+في فولدر واحد ثابت جوه الـ home بتاعك، وكل مشروع جواه في فولدر لوحده:
 
-في شجرة الـ accessibility بتاعة Chrome:
-
-~~~text الناتج
-group "طريقة الدفع"
-  radio "كارت"
-  radio "كاش عند الاستلام"
-group "ابعتلي إشعارات على"
-  checkbox "الإيميل"
-  checkbox "SMS"
+~~~text الشكل اللي عايزينه
+C:\Users\ali\               (الـ home: على الماك /Users/ali وعلى لينكس /home/ali)
+└── projects\               (كل مشاريعك هنا)
+    └── rokn-books\         (مشروع مكتبة الركن)
+        └── index.html      (الصفحة الرئيسية)
 ~~~
 
-الـ fieldset بقى [[group]]، واسمه جه من الـ legend. فقارئ الشاشة لما يدخل على «كارت» يقول السؤال الأول.
+- **الـ home** فولدر المستخدم بتاعك. ليه اختصار في الترمنال: [[~]].
+- **[[projects]]** اسم اخترناه (MDN بتسميه [[web-projects]]). المهم يبقى مكان واحد تعرف ترجعله.
+- **ليه مش سطح المكتب؟** لأن كل موقع فيه ملف اسمه [[index.html]]، وفولدر واحد مينفعش يشيل اتنين بنفس الاسم. فلازم كل مشروع في فولدره.
 
 ---
 
-## ٢. الـ radios
+## ٢. انت واقف فين؟
 
-~~~text index.html
-<label><input type="radio" name="pay" value="card" required> كارت</label>
-<label><input type="radio" name="pay" value="cod"> كاش عند الاستلام</label>
+افتح الترمنال (لو أول مرة: كورس «ابدأ من هنا» بيشرح بتفتحه إزاي). هو دايمًا واقف في فولدر. روح للـ home واسأله انت فين:
+
+~~~powershell
+cd ~
+pwd
 ~~~
 
-| الحتة | معناها |
+- [[cd]] اختصار change directory: «انقلني للفولدر ده».
+- [[~]] معناها الـ home.
+- [[pwd]] اختصار print working directory: «اطبع الفولدر اللي أنا فيه».
+
+~~~text الناتج (PowerShell)
+Path
+----
+C:\Users\ali
+~~~
+
+(في bash نفس الأمرين، والناتج سطر واحد: [[/c/Users/ali]] في Git Bash، و [[/Users/ali]] على الماك.)
+
+---
+
+## ٣. [[mkdir]]: اعمل فولدر
+
+~~~powershell
+mkdir projects
+~~~
+
+[[mkdir]] اختصار make directory. بياخد اسم الفولدر الجديد وبيعمله جوه المكان اللي انت فيه.
+
+~~~text الناتج (PowerShell 7.6)
+    Directory: C:\Users\ali
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          11/18/2026  6:25 PM                projects
+~~~
+
+إزاي تقرا الجدول ده (هتشوفه مع كل أمر بيعمل أو بيعرض ملفات):
+
+| العمود | معناه |
 |---|---|
-| [[type="radio"]] | دايرة، واحدة بس فيها بتتعلّم |
-| [[name="pay"]] | نفس الاسم = نفس المجموعة. ده اللي بيربطهم |
-| [[value="card"]] | اللي بيتبعت للسيرفر لو ده اللي اتختار |
-| [[required]] | على واحد بس، وبيسري على المجموعة كلها |
-| [[cod]] | اختصار cash on delivery: كاش عند الاستلام |
+| [[Directory:]] | الفولدر اللي الحاجة اتعملت جواه |
+| [[Mode]] | أول حرف [[d]] يعني فولدر (directory). الملف بيبدأ بـ [[-]] |
+| [[LastWriteTime]] | آخر تعديل |
+| [[Length]] | الحجم بالبايت. فاضي للفولدرات |
+| [[Name]] | الاسم |
 
-اللي اتقاس:
-
-- دوست «ابعت» من غير ما أختار: الرسالة «Please select one of these options.» والـ focus راح لأول radio. مع إن [[required]] مكتوب على الأولاني بس، الاتنين اتعلّموا [[invalid]].
-- وقفت على «كارت» ودوست السهم لتحت: الـ focus راح لـ «كاش» **واتعلّم كمان** ([[:checked]] بقى [[cod]]). يعني الأسهم بتتنقل وبتختار.
+في bash نفس الأمر [[mkdir projects]] ومبيطبعش أي حاجة لما ينجح. في الترمنال، السكوت معناه «تمام».
 
 ---
 
-## ٣. الـ checkboxes
+## ٤. [[cd]]: ادخل جواه
 
-~~~text index.html
-<label><input type="checkbox" name="notify" value="email" checked> الإيميل</label>
-<label><input type="checkbox" name="notify" value="sms"> SMS</label>
+~~~powershell
+cd projects
+mkdir rokn-books
+cd rokn-books
 ~~~
 
-[[checked]] attribute من غير قيمة: المربع متعلّم من الأول. والاتنين ليهم نفس الـ [[name]]، بس ده مش بيخليهم مجموعة زي الـ radio: كل واحد بيتعلّم لوحده.
+دخلنا [[projects]]، وعملنا جواه فولدر المشروع، ودخلناه. [[cd]] مبيطبعش حاجة، فاتأكد بـ [[pwd]]:
 
----
+~~~text الناتج
+C:\Users\ali\projects\rokn-books
+~~~
 
-## ٤. الـ [[<select>]]
+تلات حاجات هتستخدمهم مع [[cd]] كل يوم:
 
-| الحتة | معناها |
+| الأمر | بيعمل إيه |
 |---|---|
-| [[<select id="city" name="city" required>]] | القايمة. الـ id عشان الـ label، والـ name عشان الإرسال |
-| [[<option value="">اختار…</option>]] | أول اختيار وقيمته فاضية |
-| [[<optgroup label="الدلتا">]] | عنوان مجموعة جوه القايمة، مبيتختارش |
-| [[<option value="gharbia">الغربية</option>]] | المستخدم بيشوف «الغربية»، والسيرفر بيستلم [[gharbia]] |
+| [[cd ..]] | ارجع فولدر واحد لفوق (النقطتين معناهم «الفولدر الأب») |
+| [[cd ~]] | روح للـ home من أي مكان |
+| اكتب أول حرفين ودوس Tab | الترمنال بيكمّل الاسم لوحده، فمبتغلطش في الإملاء |
 
-Chrome سمّى الـ select [[combobox "المحافظة"]] (من الـ label)، والـ optgroup ظهر [[group "الدلتا"]] جواه.
+**على الماك ولينكس** الخطوتين ٣ و ٤ ممكن يبقوا سطر واحد:
 
-بعد ما اخترت الدفع ودوست «ابعت» تاني، المتصفح وقف عند المحافظة: «Please select an item in the list.». السبب: الاختيار المبدئي قيمته [[""]]، و [[required]] بيرفض القيمة الفاضية.
+~~~bash
+mkdir -p ~/projects/rokn-books
+cd ~/projects/rokn-books
+~~~
+
+[[-p]] (من parents) بتقول لـ [[mkdir]]: اعمل كل الفولدرات اللي في المسار، ولو واحد منهم موجود متشتكيش. من غيرها [[mkdir projects/rokn-books]] بيرفض لو [[projects]] لسه مش موجود.
 
 ---
 
-## ٥. الكيبورد: كام وقفة Tab؟
+## ٥. [[ni]] و [[touch]]: اعمل الملف
 
-~~~text ترتيب Tab
-radio كارت  →  checkbox الإيميل  →  checkbox SMS  →  select  →  زرار
+دي الخطوة الوحيدة اللي أمرها مختلف بين النظامين.
+
+**PowerShell:**
+
+~~~powershell
+ni index.html
 ~~~
 
-الـ radio group كله وقفة واحدة (الـ «كاش» مظهرش)، والجوه بالأسهم. أما كل checkbox وقفة لوحده.
+[[ni]] اختصار [[New-Item]]: «اعمل حاجة جديدة». ولما تديله اسم من غير ما تقول نوعه بيعمل ملف.
+
+~~~text الناتج (PowerShell 7.6)
+    Directory: C:\Users\ali\projects\rokn-books
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/18/2026  6:25 PM              0 index.html
+~~~
+
+[[Mode]] بدأ بـ [[-]] مش [[d]]: ده ملف. و [[Length]] صفر: الملف فاضي.
+
+**bash (الماك ولينكس و Git Bash):**
+
+~~~bash
+touch index.html
+~~~
+
+[[touch]] معناه الأصلي «المس الملف» (حدّث تاريخ تعديله). ولو الملف مش موجود بيعمله فاضي، وده اللي بنستخدمه هنا. مبيطبعش حاجة.
+
+لو كتبت أمر نظام في التاني، دي الرسايل:
+
+~~~text touch في PowerShell
+touch: The term 'touch' is not recognized as a name of a cmdlet, function, script file, or executable program.
+~~~
+
+~~~text ni في bash
+bash: ni: command not found
+~~~
+
+الاتنين معناهم واحد: «مفيش أمر بالاسم ده هنا». مش غلطة منك في الفولدر ولا في الملف.
 
 ---
 
-## ٦. إيه اللي بيتبعت؟ ([[FormData]])
+## ٦. شوف اللي عملته
 
-[[new FormData(form)]] بيجمّع اللي الفورم هيبعته. اخترت كارت والغربية وعلّمت الـ checkboxes الاتنين:
-
-~~~text Console
-[...new FormData(document.forms[0])]
-Object.fromEntries(new FormData(document.forms[0]))
-new FormData(document.forms[0]).getAll('notify')
+~~~powershell
+ls
 ~~~
 
-~~~text الناتج
-pay=card & notify=email & notify=sms & city=gharbia
-{ pay: 'card', notify: 'sms', city: 'gharbia' }
-[ 'email', 'sms' ]
+[[ls]] اختصار list: اعرض اللي في الفولدر. في PowerShell بيطلّع نفس الجدول اللي فات. و [[dir]] بيعمل نفس الحاجة بالظبط (الاتنين اسمين لنفس الأمر [[Get-ChildItem]]).
+
+في bash [[ls]] لوحده بيطبع الأسامي بس، و [[ls -l]] (الـ l من long) بيطبع سطر تفاصيل لكل ملف:
+
+~~~text ls -l في Git Bash
+total 0
+-rw-r--r-- 1 ali 197609 0 Nov 18 18:25 index.html
 ~~~
 
-- [[document.forms]]: كل الفورمات اللي في الصفحة، و [[0]] بين الأقواس المربعة يعني أولهم.
-- السطر الأول: [[notify]] اتبعتت **مرتين**.
-- [[Object.fromEntries]] بيحوّل الأزواج لـ object، والـ object مينفعش فيه مفتاح مكرر، فاتبقى آخر واحد ([[sms]]) وضاع [[email]].
-- [[getAll('notify')]] بترجّع كل القيم في array.
+اللي يهمك دلوقتي: أول حرف [[-]] يعني ملف ([[d]] يعني فولدر)، والرقم اللي قبل التاريخ ([[0]]) هو الحجم، وآخر حاجة الاسم.
 
-وشلت العلامة من الاتنين:
+ولو عايز تشوف المشروع كله كشجرة، من جوه [[projects]]:
 
-~~~text الناتج
-pay=card & city=gharbia
-getAll('notify')  →  []
-get('notify')     →  null
+~~~powershell
+cd ..
+tree /f
 ~~~
 
-[[notify]] اختفت خالص. مش [[false]] ولا [[""]].
+~~~text الناتج (ويندوز)
+Folder PATH listing
+C:.
+└───rokn-books
+        index.html
+~~~
+
+[[tree]] بيرسم الفولدرات، و [[/f]] (من files) بتخليه يعرض الملفات كمان. و [[C:.]] في أول الرسمة معناها «الفولدر اللي انت واقف فيه». ده أمر ويندوز. في Git Bash وعلى الماك [[tree]] مش موجود من غير تسطيب، والبديل الجاهز [[ls -R]] (الـ R من recursive: ادخل جوه كل فولدر):
+
+~~~text ls -R في Git Bash
+.:
+rokn-books
+
+./rokn-books:
+index.html
+~~~
+
+متنساش ترجع للمشروع: [[cd rokn-books]].
+
+---
+
+## ٧. قواعد الأسامي
+
+| القاعدة | بدل | اكتب |
+|---|---|---|
+| حروف إنجليزي صغيرة | [[Rokn-Books]] | [[rokn-books]] |
+| من غير مسافات، والكلمات بينها [[-]] | [[rokn books]] | [[rokn-books]] |
+| من غير عربي | [[مكتبة الركن]] | [[rokn-books]] |
+| الامتداد صح وواحد | [[index.html.txt]] | [[index.html]] |
+
+وده السبب، بالقياس مش بالكلام. عملت نفس الصفحة بتلات أسامي وفتحتهم في Chrome وقريت العنوان:
+
+~~~text العنوان في Chrome 157
+rokn-books/index.html
+    file:///C:/Users/ali/projects/rokn-books/index.html
+
+my site/Home Page.html
+    file:///C:/Users/ali/projects/my%20site/Home%20Page.html
+
+مكتبة الركن/الرئيسية.html
+    file:///C:/Users/ali/projects/%D9%85%D9%83%D8%AA%D8%A8%D8%A9%20%D8%A7%D9%84%D8%B1%D9%83%D9%86/%D8%A7%D9%84%D8%B1%D8%A6%D9%8A%D8%B3%D9%8A%D8%A9.html
+~~~
+
+- الرابط مينفعش يبقى فيه مسافة، فالمتصفح بيبدّلها بـ [[%20]].
+- كل حرف عربي بيتحول لرموز زي [[%D9%85]]. الصفحة بتفتح، بس الرابط ده هو اللي هتنسخه وتبعته، وهو اللي هتكتبه في أي لينك بين صفحاتك.
+- **الحروف الكبيرة:** ويندوز والماك مبيفرّقوش بين [[Index.html]] و [[index.html]]، وأغلب السيرفرات بتفرّق. فالصفحة تشتغل عندك وتبوظ بعد الرفع. (دي من صفحة «Dealing with files» في MDN، مجرّبتهاش: المعمل هنا ويندوز.) لو كله حروف صغيرة المشكلة مبتحصلش أصلًا.
+- **المسافة في الترمنال** بتفصل بين الكلمات، فأي اسم فيه مسافة هيحتاج علامات تنصيص في كل أمر.
+
+---
+
+## ٨. ليه [[index.html]] بالذات؟
+
+لأن ده الاسم اللي السيرفرات بتدوّر عليه لما حد يطلب فولدر من غير ما يسمّي ملف. لما تكتب عنوان موقع وخلاص، السيرفر بيرجّعلك [[index.html]] اللي في الفولدر الرئيسي.
+
+جرّبتها: شغّلت سيرفر صغير على فولدر المشروع (هتعمله في درس «start index.html و Ctrl+R») وطلبت العنوان من غير اسم ملف:
+
+~~~text طلب الفولدر نفسه
+http://127.0.0.1:8793/     ←  رجّع index.html (العنوان في الصفحة: مكتبة الركن)
+~~~
+
+فالصفحة الرئيسية لأي موقع اسمها [[index.html]]، والصفحات التانية بأسامي بتوصف اللي فيها: [[about.html]] و [[contact.html]].
+
+---
+
+## ٩. الغلطات اللي هتقابلها، برسايلها
+
+### الفولدر موجود قبل كده
+
+~~~text mkdir rokn-books مرة تانية (PowerShell 7.6)
+New-Item: An item with the specified name C:\Users\ali\projects\rokn-books already exists.
+~~~
+
+~~~text نفس الحاجة في bash
+mkdir: cannot create directory 'rokn-books': File exists
+~~~
+
+مفيش حاجة باظت ولا اتمسحت. الأمر بيقولك «موجود»، فادخله بـ [[cd rokn-books]] وكمّل.
+
+### الملف موجود قبل كده
+
+~~~text ni index.html مرة تانية
+New-Item: The file 'C:\Users\ali\projects\rokn-books\index.html' already exists.
+~~~
+
+برضه حماية: [[ni]] مبيكتبش فوق ملف موجود. (في bash [[touch index.html]] على ملف موجود مبيعملش مشكلة ومبيلمسش محتواه.)
+
+### اسم فولدر غلط في [[cd]]
+
+~~~text cd rokn-book (ناقص s)
+Set-Location: Cannot find path 'C:\Users\ali\projects\rokn-book' because it does not exist.
+~~~
+
+~~~text نفس الحاجة في bash
+bash: cd: rokn-book: No such file or directory
+~~~
+
+الرسالة فيها المسار اللي دوّر عليه. اقراه: غالبًا حرف ناقص، أو انت واقف في فولدر غير اللي فاكره ([[pwd]] و [[ls]] يحسموها).
+
+### الملف اتحفظ [[index.html.txt]]
+
+دي بتحصل لما تكتب الصفحة في Notepad وتحفظها: بيزوّد [[.txt]] في الآخر، وويندوز بيخبّي الامتدادات فتشوف الاسم [[index.html]] عادي. والنتيجة: المتصفح بيعرض الكود نص. الترمنال بيكشفها:
+
+~~~text ls -Name
+index.html.txt
+~~~
+
+والتصليح: [[ren index.html.txt index.html]] (في bash: [[mv index.html.txt index.html]]). ومن الدرس الجاي هتكتب في VS Code، وهو بيحفظ بالاسم اللي انت كاتبه من غير إضافات.
+
+---
+
+## الأنظمة جنب بعض
+
+| عايز | PowerShell (ويندوز) | bash و zsh (الماك ولينكس و Git Bash) |
+|---|---|---|
+| أنا فين | [[pwd]] | [[pwd]] |
+| اعمل فولدر | [[mkdir rokn-books]] | [[mkdir rokn-books]] |
+| ادخله | [[cd rokn-books]] | [[cd rokn-books]] |
+| اعمل ملف | [[ni index.html]] | [[touch index.html]] |
+| كذا ملف | [[ni a.html, b.html]] | [[touch a.html b.html]] |
+| اعرض | [[ls]] أو [[dir]] | [[ls -l]] |
+| شجرة | [[tree /f]] | [[ls -R]] |
+| غيّر اسم | [[ren old.html new.html]] | [[mv old.html new.html]] |
+
+لو عايز تفاصيل أي أمر منهم: كورس PowerShell (درس «New-Item» و «Set-Location») وكورس bash (دروس «mkdir» و «cd» و «touch» و «ls»).
 
 ---
 
 ## الخلاصة
 
-| | radio | checkbox | select |
-|---|---|---|---|
-| كام اختيار | واحد | صفر أو أكتر | واحد |
-| اللي بيربطهم | نفس [[name]] | (كل واحد لوحده) | عنصر واحد |
-| [[required]] | على واحد بيكفي | على كل واحد لوحده | محتاج option بـ [[value=""]] |
-| الكيبورد | وقفة واحدة والأسهم جواها | وقفة لكل واحد | وقفة واحدة |
-| لو مش متختار | مش بيتبعت | مش بيتبعت | بيتبعت [[""]] |
+- المشاريع في [[~/projects]]، وكل مشروع فولدر.
+- [[mkdir]] ثم [[cd]] ثم [[ni]] أو [[touch]] ثم [[ls]]: اعمل، ادخل، اعمل الملف، اتأكد.
+- الأسامي: إنجليزي صغير، من غير مسافات، بـ [[-]] بين الكلمات. والرئيسية اسمها [[index.html]].
+- [[already exists]] و [[does not exist]] مش كوارث: اقرا المسار اللي في الرسالة.
 
-- لفّ أي مجموعة في [[fieldset]] و [[legend]].
-- checkboxes بنفس الاسم: [[getAll]] مش [[get]] ولا [[Object.fromEntries]].`,
+**الفولدر دلوقتي:** [[projects/rokn-books]] وجواه [[index.html]] حجمه صفر. الدرس الجاي بيفتحه في VS Code ويكتب فيه.`,
           lines: [
-            R`بداية المجموعة الأولى: [[<fieldset>]] بيلف الـ radios اللي بيجاوبوا على نفس السؤال، والمتصفح بيرسم حواليهم برواز لحد ما تشيله بالـ CSS.`,
-            "السؤال. قارئ الشاشة بيقوله قبل أول اختيار.",
-            R`radio متعلّم باسم [[pay]]. [[required]] على واحد بيكفي للمجموعة.`,
-            R`نفس الـ [[name]]، فتعليمه بيشيل التاني.`,
-            R`نهاية مجموعة الدفع: قارئ الشاشة بيعرف إن الاختيارين دول بس اللي تبع سؤال «طريقة الدفع».`,
-            "مجموعة checkboxes: تختار صفر أو أكتر.",
-            R`السؤال بتاع المجموعة التانية: [[<legend>]] لازم يبقى أول عنصر جوه الـ fieldset عشان يتقري كاسمها.`,
-            R`[[checked]] متعلّم من الأول، وهيتبعت [[notify=email]].`,
-            R`نفس الاسم، فلو اتعلّموا الاتنين هيتبعتوا مرتين.`,
-            R`نهاية مجموعة الإشعارات. الـ select اللي بعدها مش محتاج fieldset لأنه حقل واحد وليه label عادي.`,
-            "label الـ select مربوط بالـ id زي أي حقل.",
-            R`قايمة، و [[required]] يرفض القيمة الفاضية.`,
-            R`اختيار مبدئي قيمته فاضية، فالمستخدم مجبر يختار حاجة تانية.`,
-            "عنوان مجموعة جوه القايمة، مبيتختارش.",
-            R`الكلام بالعربي للمستخدم، والـ [[value]] ثابت للسيرفر.`,
-            R`اختيار تاني في نفس المجموعة: [[value="dakahlia"]] هو اللي بيتبعت، و «الدقهلية» اللي بيظهر.`,
-            R`نهاية الـ [[<optgroup>]]: لو عندك مجموعة تانية (الصعيد مثلًا) تبدأ بعدها بـ optgroup جديد.`,
-            R`نهاية الـ select: قيمته وقت الإرسال هي [[value]] الاختيار المتعلّم، ولو لسه على «اختار…» قيمته فاضية والـ [[required]] بيوقف الإرسال.`
+            R`[[cd ~]]: روح للـ home بتاعك ([[C:\Users\ali]])، عشان تبدأ من مكان معروف مهما كان الترمنال فاتح فين.`,
+            R`[[mkdir projects]]: اعمل الفولدر اللي هيشيل كل مشاريعك. بيتعمل مرة واحدة في العمر، ولو موجود هيرد بـ [[already exists]].`,
+            R`[[cd projects]]: ادخل جواه، عشان اللي هيتعمل بعد كده يتعمل هنا.`,
+            R`[[mkdir rokn-books]]: فولدر المشروع. الاسم حروف صغيرة و [[-]] بدل المسافة.`,
+            R`[[cd rokn-books]]: ادخل المشروع. من هنا لآخر الوحدة، ده الفولدر اللي الترمنال واقف فيه.`,
+            R`[[ni index.html]]: [[ni]] اختصار [[New-Item]]. بيعمل ملف فاضي (0 بايت) بالاسم ده، وبيرفض لو الملف موجود.`,
+            R`[[ls]]: اعرض محتوى الفولدر واتأكد إن الملف اتعمل بالاسم الصح وفي المكان الصح.`,
+            R`[[cd ~]]: نفس البداية على الماك ولينكس: الـ home ([[/Users/ali]] أو [[/home/ali]]).`,
+            R`[[mkdir -p projects/rokn-books]]: الفولدرين في أمر واحد. [[-p]] بتعمل أي فولدر ناقص في المسار ومبتشتكيش لو موجود.`,
+            R`[[cd projects/rokn-books]]: ادخل المشروع مرة واحدة بالمسار كله.`,
+            R`[[touch index.html]]: بيعمل الملف فاضي لو مش موجود. ولو موجود مبيلمسش محتواه.`,
+            R`[[ls -l]]: القايمة بالتفاصيل: أول حرف [[-]] يعني ملف، والرقم اللي قبل التاريخ هو الحجم (0).`
           ],
-          sol: R`لما تدوس submit والحقول فاضية: المتصفح بيقف عند أول حقل required فاضي (مجموعة الدفع) ويعرض رسالة جنبها، ومش بيبعت حاجة.
+          sol: R`الأوامر بترجّع جدول فيه [[index.html]] بحجم 0. والمرة التانية [[mkdir rokn-books]] بيرفض:
 
-بعد ما تختار وتعلّم الـ checkboxes الاتنين، [[Object.fromEntries(...)]] هيطلّع حاجة زي [[{pay: 'cod', notify: 'sms', city: 'gharbia'}]]: الـ [[notify]] فيها قيمة واحدة بس (آخر واحدة) لأن الـ object مينفعش يبقى فيه نفس المفتاح مرتين. أما [[getAll('notify')]] فبترجّع [[['email', 'sms']]].
+~~~text PowerShell 7.6
+New-Item: An item with the specified name C:\Users\ali\projects\rokn-books already exists.
+~~~
 
-ولو شلت العلامة من الاتنين، [[notify]] مش هتظهر خالص في الـ FormData. الغلط الشائع: تتوقعها [[false]] أو [[[]]] وتكتب كود في السيرفر على الأساس ده.`
+~~~text Windows PowerShell 5.1 (نفس المعنى، بشكل أطول)
+mkdir : An item with the specified name C:\Users\ali\projects\rokn-books already exists.
+    + CategoryInfo          : ResourceExists: (C:\Users\ali\projects\rokn-books:String) [New-Item], IOException
+    + FullyQualifiedErrorId : DirectoryExist,Microsoft.PowerShell.Commands.NewItemCommand
+~~~
+
+~~~text bash
+mkdir: cannot create directory 'rokn-books': File exists
+~~~
+
+**معناها:** فيه حاجة بالاسم ده في المكان ده. الفولدر القديم واللي جواه زي ما هم: [[mkdir]] مبيمسحش ومبيبدّلش. فالتصرف الصح إنك تدخله ([[cd rokn-books]])، مش إنك تدوّر على طريقة «تجبر» الأمر.
+
+لاحظ إن bash بيقول [[File exists]] حتى لو اللي موجود فولدر: عنده كل حاجة على الديسك «file».`,
+          ref: [
+            { t: "MDN: Dealing with files", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Environment_setup/Dealing_with_files" },
+            { t: "Microsoft Learn: New-Item", url: "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/new-item" },
+          ],
+          pre: [{ to: "start", why: R`لو لسه مش عارف تفتح الترمنال على نظامك` }]
         },
         {
-          cmd: "textarea و date و number",
-          ref: [
-            { t: "WHATWG: the textarea element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-textarea-element" },
-            { t: "MDN: <textarea>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/textarea" },
-            { t: "MDN: <input type=\"date\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/date" },
-            { t: "MDN: <input type=\"number\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/number" },
-            { t: "MDN: <input type=\"url\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/url" },
-            { t: "WHATWG: inputmode attribute", url: "https://html.spec.whatwg.org/multipage/interaction.html#attr-inputmode" },
-            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
-          ],
+          cmd: "code . و Emmet !",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على جهاز توقيته نيويورك (في DevTools: Sensors › Location، أو [[timezoneId]] في Playwright) إيه ناتج [[new Date('2026-06-26').getDate()]] و [[new Date('2026-06-26T00:00').getDate()]]؟`, done: R`الأول طلع 25 والتاني 26: النص اللي فيه تاريخ بس بيتقري منتصف الليل UTC (ودي الساعة 8 بالليل يوم 25 في نيويورك)، واللي فيه وقت من غير Z بيتقري بالتوقيت المحلي. وده نفس اللي بيرجع من [[date.valueAsDate]] (اتطبع [[2026-06-26T00:00:00.000Z]]).`, sol: R`~~~js
-// في Console على جهاز توقيته نيويورك
-new Date('2026-06-26').getDate();
-new Date('2026-06-26T00:00').getDate();
-
-const i = document.createElement('input');
-i.type = 'date';
-i.value = '2026-06-26';
-i.valueAsDate.toISOString();
-~~~
-
-عشان تغيّر التوقيت من غير ما تلمس الجهاز: DevTools، ثم More tools، ثم Sensors، ثم Location واختار نيويورك.
-
-**ليه مختلفين:** المعيار قايل حاجتين مختلفتين:
-
-- تاريخ بس [[2026-06-26]]: يتقري منتصف الليل **UTC**. ونيويورك في يونيو ورا UTC بـ ٤ ساعات، فده الساعة 8 بالليل يوم 25.
-- تاريخ ووقت من غير Z: يتقري بالتوقيت **المحلي**، فهو 26 فعلًا.
-
-و [[getDate()]] بترجّع اليوم بالتوقيت المحلي، فالأول طلع 25.
-
-**الغلطة الشائعة:** تعمل [[new Date(input.value)]] من حقل [[type="date"]] وتعرض اليوم. في مصر مش هتشوف المشكلة لأنها قدام UTC، وأول عميل في أمريكا هيشوف ميعاده قبلها بيوم. لو عايز اليوم نفسه، قارن النص زي ما هو، أو ضيف [[T00:00]].
-
-~~~text الناتج
-التوقيت: America/New_York
-new Date('2026-06-26').getDate()        = 25
-new Date('2026-06-26T00:00').getDate()  = 26
-input.valueAsDate                       = 2026-06-26T00:00:00.000Z
-~~~` },
-            { lvl: 'تحدي', t: R`**مسألة:** كوبون فيه حقل «ينتهي في» ([[type="date"]]). اكتب [[isExpired(dateStr, now)]] بترجّع true بس بعد آخر اليوم ده بالتوقيت المحلي، مش من أوله.`, done: R`مع [[isExpired('2026-06-26', new Date('2026-06-26T23:00'))]] بترجّع false، ومع [[new Date('2026-06-27T00:01')]] بترجّع true، ومع [[new Date('2026-06-26T00:30')]] false. والحل بيبني [[new Date(dateStr + 'T23:59:59.999')]] مش [[new Date(dateStr)]].`, sol: R`~~~js
-function isExpired(dateStr, now = new Date()) {
-  const lastMoment = new Date(dateStr + 'T23:59:59.999');
-  return now > lastMoment;
-}
-~~~
-
-**السطر المهم:** [[dateStr + 'T23:59:59.999']] بيبني آخر لحظة في اليوم **بالتوقيت المحلي**، لأن النص فيه وقت ومن غير [[Z]]. والكوبون مكتوب عليه «ينتهي في 26» يعني طول يوم 26 شغال.
-
-**ليه** [[now]] **parameter:** عشان تقدر تختبر الدالة بوقت ثابت. لو جوه الدالة [[new Date()]] مباشرة، النتيجة هتتغيّر كل مرة تشغّلها. و [[= new Date()]] قيمة افتراضية للاستخدام العادي.
-
-و [[>]] بين تاريخين شغالة لأن JavaScript بيحوّلهم لأرقام (milliseconds).
-
-**الغلطة الشائعة:** تكتب [[new Date(dateStr) < now]]. ده بيقرا التاريخ منتصف الليل UTC، يعني الكوبون بينتهي **أول** اليوم، مش آخره. في القاهرة صيفًا بعد الساعة 3 الفجر هيقولك الكوبون انتهى.
-
-~~~text الناتج
-isExpired('2026-06-26', new Date('2026-06-26T23:00'))  → false
-isExpired('2026-06-26', new Date('2026-06-27T00:01'))  → true
-isExpired('2026-06-26', new Date('2026-06-26T00:30'))  → false
-
-الحل الغلط new Date(dateStr) < now في القاهرة 3:01 الفجر يوم 26 → true
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** حاسبة BMI: وزن ([[step="0.1"]] و min و max) وطول بالسنتي، والنتيجة في [[<output>]] بـ [[aria-live="polite"]] بتتحدّث مع كل حرف، وبتستخدم [[valueAsNumber]] مش [[Number(value)]].`, done: R`70 و 175 بيطلّعوا 22.9، والحقل الفاضي بيخلي [[valueAsNumber]] بـ [[NaN]] والنتيجة بتقول «اكتب الوزن» مش NaN، وكتابة 70.55 في الوزن بتطلّع رسالة المتصفح عن أقرب قيمتين.`, sol: R`~~~live 290 290
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>حاسبة BMI</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  form { display: grid; gap: 8px; max-width: 280px; }
-  input { padding: 8px; font: inherit; }
-  output { font-size: 1.5rem; font-weight: 700; }
-</style>
-</head>
-<body>
-<main>
-<h1>حاسبة BMI</h1>
-<form id="bmi">
-  <label for="w">الوزن (كجم)</label>
-  <input id="w" type="number" step="0.1" min="20" max="300" value="70">
-  <label for="h">الطول (سنتي)</label>
-  <input id="h" type="number" min="100" max="250" value="175">
-  <output id="res" for="w h" aria-live="polite"></output>
-</form>
-</main>
-<script>
-  const w = document.querySelector('#w');
-  const h = document.querySelector('#h');
-  const res = document.querySelector('#res');
-
-  function update() {
-    const weight = w.valueAsNumber;
-    const height = h.valueAsNumber;
-    if (Number.isNaN(weight)) { res.textContent = 'اكتب الوزن'; return; }
-    if (Number.isNaN(height)) { res.textContent = 'اكتب الطول'; return; }
-    const meters = height / 100;
-    res.textContent = (weight / (meters * meters)).toFixed(1);
-  }
-
-  document.querySelector('#bmi').addEventListener('input', update);
-  update();
-$__lt/script>
-</body>
-</html>
-~~~
-
-**السطور المهمة:**
-
-- [[valueAsNumber]] بيرجّع رقم جاهز، أو [[NaN]] لو الحقل فاضي. أما [[Number("")]] فبترجّع [[0]]، يعني الحقل الفاضي هيتحسب وزن صفر.
-- [[Number.isNaN]] هي اللي بتمسك الحالة دي قبل الحساب.
-- الـ [[input]] event على الـ form نفسه، لأن الأحداث بتطلع لأعلى (bubbling)، فمستمع واحد بيغطي الحقلين.
-- [[toFixed(1)]] رقم واحد بعد العلامة.
-- [[step="0.1"]] هو اللي بيخلي 70.5 مقبولة، والافتراضي [[step="1"]] كان هيرفضها.
-
-**الغلطة الشائعة:** تعرض الناتج من غير فحص الفاضي، فالمستخدم يشوف [[NaN]] أو [[Infinity]] وهو بيمسح الطول عشان يكتبه من الأول.
-
-~~~text الناتج
-70 و 175            → 22.9
-الوزن فاضي           → اكتب الوزن   (valueAsNumber = NaN)
-الطول فاضي           → اكتب الطول
-الوزن 70.55          → stepMismatch = true
-رسالة المتصفح: Please enter a valid value. The two nearest valid values are 70.5 and 70.6.
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم شكوى فيه [[<textarea name="msg" required value="اكتب هنا">]] وبعده [[</textarea>]] في سطر تاني بعد مسافات. المستخدم بيبعت الشكوى فاضية والـ required ساكت!`, done: R`عرفت إن [[value]] مش attribute على الـ textarea (الكلام بيتكتب بين التاجين)، وإن المسافات اللي بين التاجين بقت قيمة الحقل ([[ta.value]] رجّع [["   "]] فـ [[valueMissing]] بـ false). بعد ما خليت [[<textarea ...></textarea>]] لازقين و [[placeholder]] للتلميح، الإرسال الفاضي بيقف.`, sol: R`قبل (كل المشكلة في السطرين دول):
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب اختصار Emmet واحد يطلّع الكود ده بالظبط، وجرّبه في [[practice-site/index.html]]:
 
 ~~~html
-<textarea name="msg" required value="اكتب هنا">
-   </textarea>
+<h2></h2>
+<ul>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+</ul>
+~~~`, done: R`سطر واحد من ١٠ حروف، ولما دوست Tab طلع عنوان وتحته قايمة فيها أربع عناصر.`, sol: R`~~~text الاختصار
+h2+ul>li*4
 ~~~
 
-بعد:
+**ليه كده:**
 
-~~~live 130 130
-<!doctype html>
-<html lang="ar" dir="rtl">
+- [[+]] معناها «جنبه»: الـ [[ul]] أخ للـ [[h2]] مش جواه.
+- [[>]] معناها «جواه»: الـ [[li]] ابن للـ [[ul]].
+- [[*4]] معناها «كرّره أربع مرات».
+
+الترتيب بيتقري من الشمال لليمين: عنوان، وجنبه قايمة، وجواها عنصر مكرر أربع مرات.
+
+**الغلطة الشائعة:** [[h2>ul>li*4]]. دي بتحط القايمة **جوه** العنوان، وده HTML غلط (العنوان بياخد كلام بس). الفرق كله في علامة واحدة.
+
+الناتج هو الكود اللي في التمرين. (معنى العلامات من وثائق Emmet، صفحة Abbreviations Syntax.)` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فتحت ملف جديد [[practice-site/about.html]]، كتبت [[!]] ودوست Tab، وكتبت جوه الـ body فقرة عربي وحفظت. من غير ما تغيّر أي حاجة تانية: الفقرة هتبدأ من يمين الصفحة ولا شمالها؟ والنقطة اللي في آخر الجملة هتظهر فين؟`, done: R`قلت «من الشمال، والنقطة في أول السطر من الشمال» قبل ما تفتح الصفحة، وعرفت أنهي سطر في الهيكل هو السبب.`, sol: R`~~~live 60 80 هيكل Emmet زي ما هو، وجواه عربي
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شكوى</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
-<main>
-<h1>شكوى</h1>
-<form id="f">
-  <label for="msg">الشكوى</label>
-  <textarea id="msg" name="msg" required placeholder="اكتب هنا"></textarea>
-  <button>ابعت</button>
-</form>
-</main>
+    <p>مكتبة صغيرة على ناصية شارع النخيل: كتب جديدة ومستعملة، وركن للأطفال.</p>
 </body>
 </html>
 ~~~
 
-**المشكلتين:**
+**اللي هتشوفه:** الفقرة لازقة في شمال الصفحة واليمين فاضي، والنقطة اللي المفروض تبقى آخر الجملة راحت لأقصى الشمال، قبل الكلام. (على عرض الموبايل الفقرة بتبقى سطرين: التاني بيبدأ من الشمال والنقطة قبله.)
 
-- [[textarea]] ملوش [[value]] attribute. الـ [[input]] بيقراه، لكن الـ textarea قيمته هي الكلام اللي **بين** التاجين. فـ [[value="اكتب هنا"]] متجاهلة.
-- اللي بين التاجين كان سطر جديد ومسافات. والمتصفح بيشيل أول سطر جديد بعد الفتحة، والمسافات اللي بعده بتفضل قيمة حقيقية. فالحقل مش فاضي، و [[required]] راضي.
+**ليه:** Emmet بيكتب [[<html lang="en">]] ومبيكتبش [[dir]] خالص. فالصفحة اتجاهها [[ltr]] (من الشمال لليمين). الحروف العربي نفسها بتتكتب صح من اليمين، بس «بداية السطر» بقت الشمال، وعلامات الترقيم بتتحط على أساس اتجاه الصفحة.
 
-**الغلطة الشائعة:** تشوف الحقل فاضي بالعين وتدوّر على باج في الـ JavaScript. لما حقل [[required]] يعدّي وهو باين فاضي، اطبع [[JSON.stringify(ta.value)]]. وعشان كده [[<textarea></textarea>]] لازم يبقوا لازقين، حتى لو الـ formatter عايز يفصلهم.
+**التصليح:** [[<html lang="ar" dir="rtl">]]، و [[<title>]] يتغيّر من [[Document]] لاسم الصفحة.
 
-~~~text الناتج
-قبل: ta.value = "   "   valueMissing = false   الفورم بيتبعت = true
-بعد: ta.value = ""   valueMissing = true   الفورم بيتبعت = false
-axe: 0 violations
+~~~text القياس (Chrome 157، عرض 360)
+lang="en" من غير dir:   direction = ltr   مسافة القايمة = padding-left 40px
+lang="ar" dir="rtl":    direction = rtl   مسافة القايمة = padding-right 40px
 ~~~` },
-            { lvl: 'سريع', t: R`**قارن وقيس:** حقل [[type="number" step="1"]]: اكتب فيه 2.5 بالكيبورد واقرا [[validity.stepMismatch]] و [[validationMessage]]. وبعدين غيّر لـ [[step="any"]].`, done: R`مع step 1 رجّع [[true]] والرسالة في Chrome «Please enter a valid value. The two nearest valid values are 2 and 3.»، ومع [[step="any"]] بقى سليم. والفلوس والوزن محتاجين [[step="0.01"]] أو any.`, sol: R`~~~live 120 120
-<!doctype html>
+            { lvl: 'تطبيق', t: R`**ابني حاجة:** في [[practice-site/index.html]] اعمل صفحة «كشك الجرايد» (اسم متخيل) بـ Emmet من غير ما تكتب ولا tag بإيدك: الهيكل، وعنوان رئيسي، وفقرة، وعنوان فرعي «بنبيع إيه»، وقايمة من تلات حاجات، ولينك تليفون. اكتب الاختصارات اللي استخدمتها بالترتيب.`, done: R`الصفحة فيها [[h1]] واحد و [[h2]] واحد و ٣ [[li]] ولينك [[tel:]]، و [[lang="ar" dir="rtl"]]، ومكتبتش علامة [[<]] ولا مرة.`, work: { h: 280, start: R`كشك الجرايد
+جرايد ومجلات وكروت شحن، من ٦ الصبح.
+بنبيع إيه
+جرايد ومجلات
+كروت شحن
+مناديل ولبان
+كلّمنا: +200000000000`, checks: [
+              { say: R`الهيكل كامل و [[<html>]] عليه [[lang="ar"]] و [[dir="rtl"]]`, q: "html[lang=\"ar\"][dir=\"rtl\"]", src: "<html" },
+              { say: R`[[<title>]] جوه الـ [[<head>]] وفيه اسم الكشك`, q: "head > title", has: "كشك" },
+              { say: R`العنوان الرئيسي [[<h1>]] «كشك الجرايد»`, q: "h1", has: "كشك" },
+              { say: R`العنوان الفرعي [[<h2>]] «بنبيع إيه»`, q: "h2", has: "بنبيع" },
+              { say: R`القايمة فيها تلات [[<li>]]`, q: "li", n: 3 },
+              { say: R`لينك التليفون [[<a href="tel:...">]]`, q: "a[href^=\"tel:\"]", has: "كلّمنا" },
+            ] }, sol: R`**الاختصارات بالترتيب** (كل واحد وبعده Tab):
+
+~~~text
+!
+h1{كشك الجرايد}
+p{جرايد ومجلات وكروت شحن، من ٦ الصبح.}
+h2{بنبيع إيه}
+ul>li*3
+a:tel
+~~~
+
+وبعدين: غيّر [[lang="en"]] لـ [[lang="ar" dir="rtl"]]، واكتب العنوان في [[<title>]]، واملا الـ [[li]] التلاتة، وكمّل الرقم في الـ [[href]] واكتب نص اللينك.
+
+~~~live 280 280 index.html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>step</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كشك الجرايد</title>
 </head>
 <body>
-<label for="n">السعر</label>
-<input id="n" type="number" step="1">
-</body>
-</html>
-~~~
-
-~~~js
-const n = document.querySelector('#n');
-n.value = '2.5';
-n.validity.stepMismatch;
-n.validationMessage;
-n.step = 'any';
-n.validity.stepMismatch;
-~~~
-
-**معنى** [[step]]**:** القيم المسموحة تبدأ من [[min]] (أو صفر) وتزيد بمقدار الـ step. فـ [[step="1"]] وهو الافتراضي يعني أرقام صحيحة بس، ورقم زي 2.5 مش مسموح.
-
-وعشان كده المتصفح بيقولك أقرب قيمتين مسموحتين.
-
-| القيمة | تستخدمها في |
-|---|---|
-| [[step="1"]] (افتراضي) | عدد قطع، عمر |
-| [[step="0.01"]] | فلوس بقرشين |
-| [[step="any"]] | وزن أو قياس من غير حد للكسور |
-
-**الغلطة الشائعة:** تنسى الـ step في حقل السعر. تجربتك انت بـ 100 هتعدّي، وأول عميل يكتب 99.5 الفورم هيرفض.
-
-~~~text الناتج
-step="1"   القيمة 2.5:
-  stepMismatch = true
-  الرسالة: Please enter a valid value. The two nearest valid values are 2 and 3.
-step="any" القيمة 2.5:
-  stepMismatch = false   valid = true
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف شكل الـ value لـ [[type="time"]] و [[month]] و [[week]] و [[datetime-local]]، وبعدين اتأكد بنفسك في الـ Console.`, done: R`طلعوا [[14:30]] و [[2026-10]] و [[2026-W41]] و [[2026-10-05T14:30]] مهما كان الشكل اللي المستخدم شايفه بالعربي، وعرفت إن السيرفر بيستقبل الصيغ دي بالظبط.`, sol: R`~~~js
-for (const [type, value] of [
-  ['time', '14:30'],
-  ['month', '2026-10'],
-  ['week', '2026-W41'],
-  ['datetime-local', '2026-10-05T14:30'],
-]) {
-  const i = document.createElement('input');
-  i.type = type;
-  i.value = value;
-  console.log(type, JSON.stringify(i.value));
-}
-~~~
-
-| الـ type | شكل الـ value | ملحوظة |
-|---|---|---|
-| [[time]] | [[HH:mm]] | ٢٤ ساعة دايمًا، حتى لو ظاهر 2:30 PM |
-| [[month]] | [[YYYY-MM]] | |
-| [[week]] | [[YYYY-Www]] | حرف W ورقم الأسبوع |
-| [[datetime-local]] | [[YYYY-MM-DDTHH:mm]] | من غير توقيت، يعني مفيش Z |
-
-**ليه ده مهم:** الشكل اللي المستخدم شايفه بيتغيّر حسب لغة جهازه، لكن اللي بيوصل للسيرفر ثابت. فالسيرفر مش محتاج يعرف لغة المستخدم.
-
-**الغلطة الشائعة:** تحوّل [[datetime-local]] لـ UTC من غير ما تفكر. القيمة دي مفيهاش توقيت، فلازم السيرفر يعرف توقيت المستخدم، أو تبعته في حقل تاني. وكمان، لو القيمة شكلها غلط المتصفح بيفضّي الحقل في صمت، زي ما هتشوف في آخر سطر.
-
-~~~text الناتج
-time "14:30"
-month "2026-10"
-week "2026-W41"
-datetime-local "2026-10-05T14:30"
-
-time بقيمة "2:30 PM" → ""
-~~~` },
-          ],
-          title: "كل حقل بنوعه، وإمتى متستخدمش type=\"number\"",
-          desc: R`[[<textarea>]] للكلام اللي أكتر من سطر. و [[type="date"]] بيدّي calendar أصلي، وقيمته دايمًا [[2026-10-05]] مهما كان الشكل اللي المستخدم شايفه. و [[type="number"]] للكميات الحقيقية (كمية، سن) ومعاه [[min]] و [[max]] و [[step]]. و [[email]] و [[tel]] و [[url]] بيغيّروا الكيبورد وبعضهم بيعمل validation.
-
-وإمتى متستخدمش number: أي رقم مش «كمية» (تليفون، كارت، كود OTP، رقم قومي، رمز بريدي). هنا [[inputmode="numeric"]] على حقل نص: كيبورد أرقام من غير أسهم ولا شيل للأصفار.`,
-          example: R`<label for="msg">رسالتك</label>
-<textarea id="msg" name="msg" rows="4" maxlength="500"></textarea>
-<label for="qty">الكمية</label>
-<input id="qty" name="qty" type="number" min="1" max="10" step="1" value="1">
-<label for="date">ميعاد التوصيل</label>
-<input id="date" name="date" type="date" min="2026-10-01">
-<label for="otp">كود التأكيد</label>
-<input id="otp" name="otp" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6">
-<label for="site">موقعك</label>
-<input id="site" name="site" type="url" placeholder="https://" dir="ltr">`,
-          try: R`حط الحقول في صفحة وافتح الـ Console. اختار تاريخ واكتب [[date.value]] و [[date.valueAsDate]]. وبعدين [[qty.value = 'abc']] واقرا [[qty.value]] و [[qty.valueAsNumber]]. وافتح الصفحة من الموبايل وشوف كيبورد كل حقل.`,
-          flag: "script",
-          deep: {
-            why: R`النوع الصح بيوفّر على المستخدم: كيبورد مناسب، و calendar بدل ما يكتب التاريخ بإيده ويغلط في الترتيب، و validation ببلاش. والنوع الغلط بيبوّظ البيانات: [[type="number"]] على تليفون بيشيل الصفر اللي على الشمال، وفيه أسهم، والـ scroll بالماوس فوقه بيغيّر القيمة من غير ما تاخد بالك.`,
-            how: R`[[value]] دايمًا string. للأرقام فيه [[valueAsNumber]] (و [[NaN]] لو فاضي)، وللتاريخ [[valueAsDate]] (Date بتوقيت UTC). و type=number لما تكتب فيه حاجة مش رقم، [[value]] بيرجع [[""]] مش الكلام اللي اتكتب، فمتعرفش من JavaScript المستخدم كتب إيه غلط.
-
-الـ [[date]] بيعرض التاريخ بلغة وشكل جهاز المستخدم، بس القيمة اللي بتتبعت وبتتقري ثابتة [[YYYY-MM-DD]]، ودا اللي خلّي الحقل ده أحسن من نص حر. و [[min]] و [[max]] بيقفلوا الأيام اللي مينفعش تتختار.
-
-[[autocomplete="one-time-code"]] بيخلي الموبايل يقترح الكود اللي جه في SMS. و [[maxlength]] على textarea بيوقف الكتابة عند الحد، واعرض عدّاد جنبه عشان المستخدم ميتفاجئش.
-
-وفيه [[field-sizing: content]] في CSS بيخلي الـ textarea يكبر مع الكلام من غير JavaScript، بس لسه مش في كل المتصفحات، فخليه تحسين إضافي.`,
-            when: R`number: كمية، سن، عدد أفراد. date: ميعاد قريب (توصيل، حجز). تاريخ الميلاد: ناس كتير (زي GOV.UK) بيفضّلوا 3 حقول نص (يوم وشهر وسنة) لأن الـ calendar بيخليك ترجع 30 سنة ورا. tel: أي تليفون. inputmode=numeric: أكواد وأرقام تعريفية.`,
-            mistakes: R`type=number لتليفون أو كارت. [[pattern]] من غير رسالة واضحة جنب الحقل، فالمستخدم يشوف «Please match the requested format» ومش فاهم. تعتمد على [[qty.value]] كرقم فتجمع strings ([[1 + '1']] بيطلّع [[11]]). و date بتحوّله بـ [[new Date(value)]] وتعرضه بتوقيت محلي فيطلع يوم قبله في بعض المناطق: خليه string أو اتعامل معاه كتاريخ من غير وقت. وسؤال انترفيو: «امتى type=number مش مناسب؟» والإجابة: لما القيمة مش حاجة بتتجمع وتطرح.`
-          },
-          teach: R`## الفكرة في سطرين
-
-5 حقول، كل واحد نوعه على قد البيانات اللي فيه. هنفك كل حقل، ونشوف قيمته بتتقري إزاي من JavaScript، والمتصفح بيرفض إيه. كل النتايج من Chrome (headless، لغته إنجليزي)، بقيم حطيتها من الـ Console وبكتابة بالكيبورد المتقلّد.
-
-> أي عنصر ليه [[id]] المتصفح بيعمل له متغير بنفس الاسم، عشان كده [[date.value]] في الـ Console شغالة من غير querySelector. ده للتجربة بس، في الكود الحقيقي امسك العنصر بـ querySelector.
-
----
-
-## ١. [[<textarea>]]
-
-~~~text index.html
-<textarea id="msg" name="msg" rows="4" maxlength="500"></textarea>
-~~~
-
-- [[textarea]]: حقل كلام متعدد السطور. ليه قفلة، والكلام اللي بين الـ tags هو القيمة المبدئية.
-- [[rows="4"]]: الارتفاع المبدئي 4 سطور. اتقاس 66 بيكسل.
-- [[maxlength="500"]]: أقصى عدد حروف. كتبت 510 حرف بالكيبورد، والقيمة وقفت عند 500: المتصفح بيمنع الكتابة، مش بيعرض غلط.
-
----
-
-## ٢. [[type="number"]]
-
-~~~text index.html
-<input id="qty" name="qty" type="number" min="1" max="10" step="1" value="1">
-~~~
-
-[[min]] أقل قيمة، و [[max]] أكبر قيمة، و [[step]] الخطوة (القيم المسموحة 1، 2، 3...)، و [[value]] القيمة المبدئية.
-
-### القيمة string مش رقم
-
-~~~text Console
-qty.value
-typeof qty.value
-qty.value + 1
-qty.valueAsNumber + 1
-~~~
-
-~~~text الناتج
-'1'
-'string'
-'11'
-2
-~~~
-
-[[qty.value + 1]] طلعت [[11]] لأن الـ [[+]] بين string ورقم بيلزقهم. [[valueAsNumber]] بيرجّع رقم بجد.
-
-### لما القيمة متبقاش رقم
-
-| اللي حصل | [[value]] | [[valueAsNumber]] |
-|---|---|---|
-| [[qty.value = 'abc']] من الكود | [[""]] | [[NaN]] |
-| كتبت [[1e3abc]] بالكيبورد | [[1e3]] | 1000 |
-
-الحروف اتمنعت وانت بتكتب، بس [[e]] عدّت لأن [[1e3]] رقم سليم (1 × 10 أس 3). و [[NaN]] اختصار Not a Number.
-
-### المتصفح بيرفض إيه؟
-
-| القيمة | الخاصية في [[validity]] | الرسالة |
-|---|---|---|
-| 11 | [[rangeOverflow]] | Value must be less than or equal to 10. |
-| 2.5 | [[stepMismatch]] | Please enter a valid value. The two nearest valid values are 2 and 3. |
-
----
-
-## ٣. [[type="date"]]
-
-~~~text index.html
-<input id="date" name="date" type="date" min="2026-10-01">
-~~~
-
-### القيمة دايمًا [[YYYY-MM-DD]]
-
-[[YYYY]] السنة 4 أرقام، و [[MM]] الشهر، و [[DD]] اليوم. ده الشكل اللي بيتبعت وبيتقري، مهما كان الشكل اللي المستخدم شايفه. وجرّبت أحط [[05/10/2026]] من الكود: [[date.value]] رجع [[""]]، يعني الحقل رفض أي شكل تاني.
-
-و [[min]] بنفس الشكل: حطيت [[2026-09-30]] فطلع [[rangeUnderflow]] والرسالة «Value must be 10/01/2026 or later.».
-
-### [[valueAsDate]] وفرق التوقيت
-
-حطيت [[2026-10-05]] وقريته في منطقتين زمنيتين:
-
-| المنطقة | [[valueAsDate]] | [[toLocaleDateString()]] |
-|---|---|---|
-| القاهرة | Mon Oct 05 2026 03:00 GMT+0300 | 05/10/2026 |
-| نيويورك | Sun Oct 04 2026 20:00 GMT-0400 | **04/10/2026** |
-
-[[valueAsDate]] بيرجّع [[Date]] الساعة 00:00 بتوقيت UTC (التوقيت العالمي). في نيويورك الساعة دي لسه يوم 4 بالليل، فالتاريخ ظهر يوم قبله. و [[new Date(date.value)]] عمل نفس الغلطة. عشان كده خلي التاريخ string لو مش محتاج الوقت.
-
----
-
-## ٤. كود التأكيد: نص بكيبورد أرقام
-
-~~~text index.html
-<input id="otp" name="otp" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6">
-~~~
-
-- مفيش [[type]]، فهو [[text]] (اتقاس [[otp.type]] = [[text]]).
-- [[inputmode="numeric"]]: يغيّر كيبورد الموبايل بس لأرقام، من غير ما يغيّر نوع الحقل.
-- [[autocomplete="one-time-code"]]: الموبايل يقترح الكود اللي جه في SMS. [[OTP]] اختصار one-time password.
-- [[pattern="[0-9]{6}"]]: regular expression. [[0-9]] بين القوسين المربعين يعني أي رقم من 0 لـ 9، و [[{6}]] 6 مرات بالظبط. حطيت [[12a]] فطلع [[patternMismatch]] والرسالة «Please match the requested format.» (رسالة عامة، عشان كده اكتب القاعدة جنب الحقل).
-- [[maxlength="6"]]: الكتابة بتقف عند 6 حروف.
-
-ليه مش [[type="number"]]؟ لأن الكود ممكن يبدأ بصفر، ومش حاجة بتتجمع.
-
----
-
-## ٥. [[type="url"]]
-
-~~~text index.html
-<input id="site" name="site" type="url" placeholder="https://" dir="ltr">
-~~~
-
-| القيمة | سليمة؟ | الرسالة |
-|---|---|---|
-| [[example.com]] | لأ ([[typeMismatch]]) | Please enter a URL. |
-| [[https://example.com]] | أيوه | |
-
-لازم الرابط كامل ومعاه [[https://]]، عشان كده الـ [[placeholder]] بيوريه للمستخدم.
-
----
-
-## الخلاصة
-
-| الحقل | قيمته | امتى |
-|---|---|---|
-| [[textarea]] | string | كلام أكتر من سطر |
-| [[type="number"]] | string، ورقم من [[valueAsNumber]] | كمية أو سن |
-| [[type="date"]] | [[YYYY-MM-DD]] | ميعاد |
-| [[inputmode="numeric"]] | string | تليفون، كود، رقم قومي |
-| [[type="url"]] | string | رابط كامل |
-
-- [[value]] دايمًا string، حتى في number.
-- [[valueAsDate]] بتوقيت UTC، فممكن يطلع يوم قبله.`,
-          lines: [
-            R`اسم حقل الرسالة: [[for="msg"]] بيربطه بالـ textarea اللي [[id="msg"]] زي أي input بالظبط.`,
-            R`حقل كلام متعدد السطور. [[rows]] الارتفاع المبدئي، و [[maxlength]] أقصى عدد حروف.`,
-            R`اسم حقل الكمية: [[for="qty"]] = [[id]] الـ input، والضغط على الكلمة بيحط المؤشر في الحقل.`,
-            R`رقم حقيقي: أقل حاجة 1 وأكتر حاجة 10 وبيزيد 1، ومبدئيًا 1.`,
-            R`اسم حقل التاريخ: لازم label حتى لو فيه calendar، لأن قارئ الشاشة مش هيعرف «تاريخ إيه» من غيره.`,
-            R`calendar أصلي، والأيام قبل [[min]] مقفولة. القيمة دايمًا [[YYYY-MM-DD]].`,
-            R`اسم حقل كود التأكيد: [[for="otp"]] = [[id="otp"]]. اكتب جنبه «٦ أرقام» عشان المستخدم يعرف الشكل قبل ما يغلط.`,
-            R`نص مش number: كيبورد أرقام، والموبايل يقترح الكود من الـ SMS، و [[pattern]] 6 أرقام بالظبط.`,
-            R`اسم حقل الموقع: [[for="site"]] مربوط بالـ input اللي [[type="url"]] تحته.`,
-            R`[[type="url"]]: كيبورد فيه / و .com، ومبيقبلش غير رابط كامل. و [[dir="ltr"]] عشان الرابط ميتقلبش.`
-          ],
-          sol: R`[[date.value]] بيرجع حاجة زي [[2026-10-05]] حتى لو الحقل بيعرض «٥/١٠/٢٠٢٦» أو بالإنجليزي. و [[date.valueAsDate]] بيرجع Date الساعة 00:00 UTC، فلو عملته [[toLocaleDateString()]] في منطقة غرب جرينتش هيطلع يوم 4.
-
-[[qty.value = 'abc']] وبعدها [[qty.value]] بيرجع [[""]] لأن الحقل رفض القيمة، و [[qty.valueAsNumber]] بيرجع [[NaN]].
-
-على الموبايل: qty و otp كيبورد أرقام، و url كيبورد فيه [[/]]، و date بيفتح calendar. لو otp طلعلك كيبورد حروف يبقى نسيت [[inputmode="numeric"]].`
-        },
-        {
-          cmd: "Constraint Validation API",
-          ref: [
-            { t: "MDN: Constraint validation", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Constraint_validation" },
-            { t: "MDN: ValidityState", url: "https://developer.mozilla.org/en-US/docs/Web/API/ValidityState" },
-            { t: "MDN: setCustomValidity()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setCustomValidity" },
-            { t: "MDN: :user-invalid", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:user-invalid" },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** حقل [[type="email"]]. أنهي قيمة هتعدّي: [[a@b]] و [[a@b.]] و [[a..b@c.com]] و [[a b@c.com]] و [[أحمد@example.com]] و [[ a@b.com ]] (بمسافات)؟ قول الأول وبعدين اسأل [[validity.valid]].`, done: R`في Chrome عدّوا [[a@b]] (مش لازم .com) و [[a..b@c.com]] واللي بمسافات (المتصفح بيشيل المسافات من الأول والآخر)، ووقعوا [[a@b.]] واللي فيه مسافة في النص والعربي. يعني validation المتصفح شكل بس، والسيرفر لازم يتأكد تاني.`, sol: R`~~~js
-const i = document.createElement('input');
-i.type = 'email';
-for (const v of ['a@b', 'a@b.', 'a..b@c.com', 'a b@c.com', 'أحمد@example.com', ' a@b.com ']) {
-  i.value = v;
-  console.log(JSON.stringify(v), '→', JSON.stringify(i.value), i.validity.valid);
-}
-~~~
-
-**ليه النتيجة كده:** المتصفح بيطبّق regex من المعيار، وهو بسيط عن قصد.
-
-- [[a@b]] يعدّي: الإيميل من غير نقطة صح نظريًا، زي [[admin@localhost]].
-- [[a@b.]] يقع: نقطة في الآخر من غير حاجة بعدها.
-- [[a..b@c.com]] يعدّي: الـ regex مبيفحصش النقطتين ورا بعض.
-- [[a b@c.com]] يقع: مسافة في النص.
-- [[أحمد@example.com]] يقع: الجزء قبل الـ @ حروف لاتيني بس.
-- القيمة بالمسافات تعدّي، لأن المتصفح بيشيل المسافات من الأول والآخر، وده بان في القيمة نفسها.
-
-**الاستنتاج:** الفحص ده شكل بس. ميعرفش الإيميل موجود ولا لأ. السيرفر لازم يفحص تاني، والفحص الوحيد المضمون هو إنك تبعت رسالة تأكيد.
-
-**الغلطة الشائعة:** تكتب regex طويل تبقى فاكر إنه «أدق». هيرفض إيميلات سليمة، وهيعدّي إيميلات مش موجودة.
-
-~~~text الناتج
-القيمة               بعد التنضيف       valid
-"a@b"   "a@b"   true
-"a@b."   "a@b."   false
-"a..b@c.com"   "a..b@c.com"   true
-"a b@c.com"   "a b@c.com"   false
-"أحمد@example.com"   "أحمد@example.com"   false
-" a@b.com "   "a@b.com"   true
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل اسم مستخدم عليه [[pattern="[a-z0-9-]+"]]، والمستخدم كتب [[ABC]] والفورم اتبعت عادي! افتح الـ Console قبل ما تصلّح.`, done: R`الـ Console فيه «Pattern attribute value [a-z0-9-]+ is not a valid regular expression» لأن Chrome بيقرا الـ pattern بفلاج [[v]] وفيه الشَرطة في الآخر لازم تتهرّب، فالـ pattern اتجاهل خالص. بعد [[pattern="[a-z0-9\-]+"]] الـ ABC بقى [[patternMismatch]] و [[ab-1]] بيعدّي.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اسم المستخدم</title>
-</head>
-<body>
-<main>
-<h1>حساب جديد</h1>
-<form id="f">
-  <label for="u">اسم المستخدم</label>
-  <input id="u" name="u" pattern="[a-z0-9\-]+" required>
-  <button>تسجيل</button>
-</form>
-</main>
-</body>
-</html>
-~~~
-
-**اللي حصل:** Chrome بيقرا الـ [[pattern]] بالفلاج [[v]]، وده أكتر تشددًا من الفلاج [[u]] القديم. وفي الوضع ده [[-]] في آخر [[[...]]] لازم تتهرّب بـ [[\-]]. ولو الـ regex غلط، المتصفح **بيتجاهل الـ pattern خالص** ويكتب تحذير في الـ Console، والفورم بيتبعت عادي.
-
-**ليه الـ Console أول حاجة:** من غيره هتقعد تعدّل في الحروف وتدوّر على باج في مكان تاني. الفورم مش بيقول حاجة، ده الـ Console بس.
-
-**الغلطة الشائعة:** تنقل regex من ملف JavaScript للـ [[pattern]] من غير تجربة. والـ [[pattern]] مش محتاج [[^]] و [[$]]، المتصفح بيطابق القيمة كلها لوحده.
-
-~~~text الناتج
-قبل، رسالة الـ Console:
-Pattern attribute value [a-z0-9-]+ is not a valid regular expression: Uncaught SyntaxError: Invalid regular expression: /[a-z0-9-]+/v: Invalid character class
-
-قبل: ABC → patternMismatch = false  valid = true
-
-بعد:
-ABC  → patternMismatch = true  valid = false
-ab-1 → patternMismatch = false  valid = true
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيعرض رسالة عربي: [[email.addEventListener('invalid', () => email.setCustomValidity('اكتب إيميل صح'))]]. المستخدم غلط مرة، وبعدين كتب إيميل سليم، ولسه مش قادر يبعت.`, done: R`عرفت إن [[customError]] فضل [[true]] بعد الإيميل السليم ([[checkValidity()]] رجّع false)، لأن محدش رجّعها فاضية. بعد ما زوّدت [[email.addEventListener('input', () => email.setCustomValidity(''))]] بقى بيبعت.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اشتراك</title>
-</head>
-<body>
-<main>
-<h1>اشتراك</h1>
-<form id="f">
-  <label for="email">الإيميل</label>
-  <input id="email" type="email" required>
-  <button>اشترك</button>
-</form>
-</main>
-<script>
-  const email = document.querySelector('#email');
-
-  email.addEventListener('invalid', () => {
-    email.setCustomValidity('اكتب إيميل صح');
-  });
-
-  email.addEventListener('input', () => {
-    email.setCustomValidity('');
-  });
-$__lt/script>
-</body>
-</html>
-~~~
-
-**السبب:** [[setCustomValidity('أي كلام')]] مش بس بتغيّر الرسالة، دي بتعلن إن الحقل **غلط**. والحالة دي بتفضل ثابتة لحد ما تنادي نفس الدالة بنص فاضي. المتصفح مبيعيدش الفحص ويشيلها لوحده.
-
-فالترتيب اللي كان بيحصل: الإيميل غلط، فـ [[invalid]] بيتنادي ويحط الرسالة. المستخدم صلّح، بس الحقل لسه عليه [[customError]]. يدوس إرسال، يترفض، و [[invalid]] يتنادي تاني. دايرة مقفولة.
-
-**الحل:** مع كل كتابة فضّي الرسالة، والفحص العادي يشتغل من الأول.
-
-**الغلطة الشائعة:** تحط [[setCustomValidity('')]] جوه [[invalid]] نفسه. الحدث ده بيتنادي بس لو الحقل غلط، فالسطر مش هيتنفّذ في الوقت الصح.
-
-~~~text الناتج
-قبل التصليح، بعد ما كتب a@b.com: customError = true  checkValidity = false
-بعد التصليح، نفس الخطوات:        customError = false  checkValidity = true
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** مقياس قوة كلمة السر: [[<meter min="0" max="4" low="2" high="3" optimum="4">]] بيتحدّث مع كل حرف (نقطة للطول 8+، وللحروف الكبيرة، وللأرقام، وللرموز)، و [[setCustomValidity]] بيرفض أقل من 3 برسالة بتقول ناقص إيه.`, done: R`[[abc]] بيسيب المقياس فاضي (صفر نقطة) و [[abc1]] بيدّيه أحمر، والاتنين ليهم رسالة فيها الناقص، و [[Abcdef12!]] بيدّيه أخضر والفورم بيتبعت، والمقياس ليه label مربوط ([[<label for="strength">]]) فتاب Accessibility بيقول اسمه.`, sol: R`~~~live 260 260
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كلمة السر</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  form { display: grid; gap: 8px; max-width: 320px; }
-  input { padding: 8px; font: inherit; }
-  meter { width: 100%; height: 16px; }
-</style>
-</head>
-<body>
-<main>
-<h1>حساب جديد</h1>
-<form id="f">
-  <label for="pass">كلمة السر</label>
-  <input id="pass" type="password" autocomplete="new-password">
-  <label for="strength">القوة</label>
-  <meter id="strength" min="0" max="4" low="2" high="3" optimum="4" value="0"></meter>
-  <button>تسجيل</button>
-  <p id="ok" hidden>اتسجلت</p>
-</form>
-</main>
-<script>
-  const pass = document.querySelector('#pass');
-  const meter = document.querySelector('#strength');
-
-  const RULES = [
-    { ok: (s) => s.length >= 8, need: '٨ حروف على الأقل' },
-    { ok: (s) => /[A-Z]/.test(s), need: 'حرف كبير' },
-    { ok: (s) => /[0-9]/.test(s), need: 'رقم' },
-    { ok: (s) => /[^A-Za-z0-9]/.test(s), need: 'رمز' },
-  ];
-
-  function check() {
-    const missing = RULES.filter((r) => !r.ok(pass.value));
-    const score = RULES.length - missing.length;
-    meter.value = score;
-    pass.setCustomValidity(score < 3 ? 'ناقص: ' + missing.map((r) => r.need).join('، ') : '');
-  }
-
-  pass.addEventListener('input', check);
-  check();
-
-  document.querySelector('#f').addEventListener('submit', (e) => {
-    e.preventDefault();
-    document.querySelector('#ok').hidden = false;
-  });
-$__lt/script>
-</body>
-</html>
-~~~
-
-**الفكرة:** القواعد في array، كل قاعدة دالة بترجّع true أو false ومعاها الكلام اللي هيظهر لو ناقصة. كده زيادة قاعدة سطر واحد.
-
-- [[RULES.filter]] بيجيب القواعد الفاشلة، والنقط هي الفرق.
-- [[low]] و [[high]] و [[optimum]] هما اللي بيخلوا المتصفح يختار اللون: تحت [[low]] بعيد عن الأمثل فأحمر، وعند [[optimum]] أخضر.
-- [[setCustomValidity]] بنص يرفض، وبنص فاضي يقبل، فالفورم بيقف لوحده.
-- [[check()]] أول ما الصفحة تفتح، عشان الحقل الفاضي يترفض من غير ما حد يكتب.
-- لو القيمة صفر الشريط بيبقى فاضي خالص، مفيهوش لون أصلًا. الأحمر بيبدأ من نقطة واحدة.
-
-**الغلطة الشائعة:** تعمل [[if (score < 3) alert(...)]] في الـ submit. كده الفحص بعيد عن المتصفح، وقارئ الشاشة مش هيربطه بالحقل.
-
-~~~text الناتج
-القيمة       المقياس   اللون          الرسالة
-abc          0/4     فاضي           ناقص: ٨ حروف على الأقل، حرف كبير، رقم، رمز
-abc1         1/4     أحمر           ناقص: ٨ حروف على الأقل، حرف كبير، رمز
-abcD12       2/4     أصفر           ناقص: ٨ حروف على الأقل، رمز
-abcD1234     3/4     أخضر           (مفيش رسالة) و valid = true
-Abcdef12!    4/4     أخضر           (مفيش رسالة) والفورم اتبعت: true
-
-اسم المقياس في تاب Accessibility: - meter "القوة"
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** سكربت للـ Console بيلف على [[form.elements]] ويطبع لكل حقل اسمه وأسماء الـ validity اللي بـ true بس (زي [[email: valueMissing]]).`, done: R`على فورم فاضي فيه required بيطبع [[valueMissing]] للحقول الإجبارية بس، وبعد ما تكتب [[abc]] في الإيميل بيطبع [[typeMismatch]]، ولما كله سليم مبيطبعش غير الحقول اللي [[valid]] بس أو مبيطبعش حاجة.`, sol: R`~~~js
-function report(form) {
-  for (const el of form.elements) {
-    if (!el.name) continue;
-    const bad = [];
-    for (const key in el.validity) {
-      if (key !== 'valid' && el.validity[key]) bad.push(key);
-    }
-    if (bad.length) console.log(el.name + ': ' + bad.join(', '));
-  }
-}
-report(document.forms[0]);
-~~~
-
-وفورم تجرب عليه:
-
-~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الفورم</title>
-</head>
-<body>
-<form>
-  <input name="email" type="email" required aria-label="الإيميل">
-  <input name="age" type="number" min="18" required aria-label="السن">
-  <input name="note" aria-label="ملاحظة">
-  <button>ابعت</button>
-</form>
-</body>
-</html>
-~~~
-
-**إزاي بيشتغل:**
-
-- [[form.elements]] فيها كل الحقول، والزرار كمان. و [[if (!el.name) continue]] بتعدّي اللي مالوش اسم زي الزرار.
-- [[el.validity]] object فيه ١١ property. و [[for...in]] بتلف عليها بما فيها اللي جاية من الـ prototype.
-- بنعدّي [[valid]] لأنها مش نوع غلط، هي النتيجة النهائية.
-
-**الغلطة الشائعة:** تعمل [[Object.keys(el.validity)]]. بترجّع لستة فاضية، لأن القيم دي مش properties مباشرة على الـ object، دي getters في الـ prototype. عشان كده [[for...in]] هنا.
-
-~~~text الناتج
-فورم فاضي:
-email: valueMissing
-age: valueMissing
-
-بعد abc في الإيميل:
-email: typeMismatch
-age: valueMissing
-
-بعد ما كله سليم:
-(مطبعش حاجة)
-
-Object.keys(el.validity).length = 0
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** صفحة [[ValidityState]] على MDN فيها ١١ property. اعمل حقل يطلّع [[badInput]] وحقل يطلّع [[rangeOverflow]].`, done: R`[[badInput]] طلع لما كتبت حرف [[e]] لوحده في [[type="number"]] (والـ value بقى [[""]] والرسالة «Please enter a number.»)، و [[rangeOverflow]] لما كتبت 15 في حقل [[max="10"]] (الرسالة «Value must be less than or equal to 10.»).`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>validity</title>
-</head>
-<body>
-<label for="n">الكمية</label>
-<input id="n" type="number">
-<label for="m">التقييم</label>
-<input id="m" type="number" max="10">
-</body>
-</html>
-~~~
-
-اكتب بالكيبورد، مش بالكود: حرف [[e]] لوحده في الأول، و [[15]] في التاني.
-
-**الفرق بين الاتنين:**
-
-- [[badInput]]: اللي مكتوب مش رقم أصلًا. الحرف [[e]] مسموح بيه في الكتابة لأن [[1e5]] رقم، بس لوحده مش رقم. والـ [[value]] بيبقى فاضي، لأن المتصفح مش قادر يحوّله. ده معناه إن JavaScript ميعرفش إن فيه حاجة مكتوبة، غير من [[badInput]].
-- [[rangeOverflow]]: الرقم سليم، بس أكبر من [[max]].
-
-| الـ property | بتبقى true لما |
-|---|---|
-| [[valueMissing]] | حقل [[required]] فاضي |
-| [[typeMismatch]] | شكل email أو url غلط |
-| [[patternMismatch]] | مش مطابق لـ [[pattern]] |
-| [[tooLong]] و [[tooShort]] | أطول من [[maxlength]] أو أقصر من [[minlength]] |
-| [[rangeUnderflow]] و [[rangeOverflow]] | برّه [[min]] و [[max]] |
-| [[stepMismatch]] | مش على الـ [[step]] |
-| [[badInput]] | المتصفح مش قادر يفهم اللي اتكتب |
-| [[customError]] | عليه [[setCustomValidity]] |
-| [[valid]] | كله سليم |
-
-**الغلطة الشائعة:** تفحص [[input.value === '']] عشان تعرف الحقل فاضي. في حالة [[badInput]] الجملة دي true والمستخدم كاتب حاجة فعلًا.
-
-~~~text الناتج
-حرف e لوحده:
-  badInput = true   value = ""
-  الرسالة: Please enter a number.
-
-15 مع max="10":
-  rangeOverflow = true
-  الرسالة: Value must be less than or equal to 10.
-
-عدد الـ properties في ValidityState: 11
-~~~` },
-          ],
-          title: "validation المتصفح من JavaScript: validity و setCustomValidity",
-          desc: R`كل حقل فيه [[validity]]: object فيه سبب الغلط ([[valueMissing]] و [[typeMismatch]] و [[tooShort]] و [[rangeUnderflow]] و [[patternMismatch]] و [[customError]]) و [[valid]] لو كله تمام. و [[validationMessage]] الرسالة اللي المتصفح هيعرضها.
-
-[[checkValidity()]] بترجع true أو false، و [[reportValidity()]] كمان بتعرض الرسالة وتحط الـ focus على الحقل. و [[setCustomValidity('...')]] بتخلي الحقل غلط برسالتك انت (زي «كلمتين السر مش زي بعض»)، و [[setCustomValidity('')]] بترجّعه سليم.
-
-و [[novalidate]] على الفورم بيوقف رسايل المتصفح وقت الإرسال عشان تعرض انت أخطائك، بس الـ API كله لسه شغال. وفي CSS، [[:user-invalid]] بتلوّن الحقل الغلط بعد ما المستخدم يلمسه بس، مش أول ما الصفحة تفتح زي [[:invalid]].`,
-          example: R`const form = document.querySelector('#signup');
-const pass = form.elements.password;
-const confirm = form.elements.confirm;
-confirm.addEventListener('input', () => {
-  confirm.setCustomValidity(confirm.value === pass.value ? '' : 'كلمتين السر مش زي بعض');
-});
-form.addEventListener('submit', (e) => {
-  if (!form.checkValidity()) {
-    e.preventDefault();
-    form.reportValidity();
-  }
-});
-console.log(pass.validity.valueMissing, pass.validity.tooShort, pass.validationMessage);
-// styles.css
-input:user-invalid { border-color: crimson; }`,
-          try: R`اعمل [[<form id="signup" method="post" novalidate>]] فيه [[password]] بـ [[required minlength="8"]] و [[confirm]]، وحط السكربت. اكتب باسورد وتأكيد مختلف ودوس submit. وبعدين في الـ Console اكتب [[confirm.validity]] و [[form.checkValidity()]]. وبعدين غيّر الباسورد الأصلي بس (مش التأكيد) لحد ما يبقوا زي بعض: الرسالة لسه موجودة؟`,
-          flag: "script",
-          deep: {
-            why: R`الـ attributes ([[required]] و [[minlength]] و [[type]]) بتغطي أغلب الحالات، بس فيه قواعد بتعتمد على أكتر من حقل (تأكيد الباسورد، تاريخ النهاية بعد البداية) أو على السيرفر (الإيميل مستخدم قبل كده). الـ API ده بيخليك تحط القواعد دي في نفس نظام المتصفح، فالـ [[:user-invalid]] والرسايل و [[checkValidity]] كلهم يشتغلوا عليها من غير ما تبني نظام validation من الصفر.`,
-            how: R`لو الفورم من غير [[novalidate]]، المتصفح بيعمل validation قبل حدث [[submit]]، ولو فيه غلط حدث submit مش بيحصل أصلًا. ولو بـ [[novalidate]]، حدث submit بيحصل دايمًا وانت اللي بتسأل [[form.checkValidity()]].
-
-[[setCustomValidity]] بتلزق في الحقل: طول ما الرسالة مش فاضية الحقل غلط، حتى لو المستخدم صلّح. عشان كده لازم تنادي [[setCustomValidity('')]] (string فاضي) في كل تغيير يخلي الحقل سليم، وعلى الحقلين (الباسورد والتأكيد) مش واحد بس.
-
-[[tooShort]] و [[tooLong]] بيتحسبوا بس لما المستخدم هو اللي يكتب، مش لما تحط [[value]] من الكود. ودي تفصيلة بتلخبط في الاختبارات.
-
-[[:user-invalid]] (وأختها [[:user-valid]]) بتشتغل بعد ما المستخدم يعدّل الحقل ويسيبه، أو بعد محاولة submit. ودي Baseline في كل المتصفحات الحديثة، وأحسن بكتير من [[:invalid]] اللي بتلوّن الفورم كله أحمر أول ما يفتح.`,
-            when: R`قواعد بين أكتر من حقل، ورسايل بلغتك بدل رسايل المتصفح، وأخطاء راجعة من السيرفر تحطها على الحقل بتاعها. ولو بتستخدم React Hook Form أو Zod في الفرونت، هما بيعملوا نفس الفكرة بنظامهم، بس الـ attributes الأصلية لسه مفيدة كخط أول.`,
-            mistakes: R`تنادي [[setCustomValidity('غلط')]] ومترجعش تناديها بـ string فاضي لما الغلط يتصلح، فالحقل يفضل غلط للأبد والفورم مبيتبعتش. تسمع على التأكيد بس فلو المستخدم غيّر الباسورد الأصلي الغلط ميتحدثش. تستخدم [[:invalid]] فالحقول تبقى حمرا قبل ما حد يكتب. وتفتكر إن validation المتصفح أمان: أي حد يقدر يبعت request من غير الفورم، فالسيرفر لازم يتأكد تاني.`
-          },
-          teach: R`## الفكرة في سطرين
-
-نفس الـ validation اللي المتصفح بيعمله لوحده من [[required]] و [[minlength]]، بس من JavaScript: تسأله الحقل سليم ولا لأ وليه، وتضيف قواعدك انت (زي «التأكيد = كلمة السر»). جرّبت الكود في Chrome (headless) على الفورم ده:
-
-~~~text index.html
-<form id="signup" method="post" novalidate>
-  <label for="p">كلمة السر</label>
-  <input id="p" name="password" type="password" required minlength="8">
-  <label for="c">التأكيد</label>
-  <input id="c" name="confirm" type="password">
-  <button>سجّل</button>
-</form>
-~~~
-
-[[novalidate]] على الفورم: «متعرضش رسايلك لوحدك وقت الإرسال، أنا هقرر». الـ API نفسه بيفضل شغال.
-
----
-
-## ١. مسك الحقول
-
-~~~text app.js
-const form = document.querySelector('#signup');
-const pass = form.elements.password;
-const confirm = form.elements.confirm;
-~~~
-
-- [[const]]: متغير مش هيتغيّر.
-- [[querySelector('#signup')]]: أول عنصر الـ id بتاعه [[signup]] (الـ [[#]] = id).
-- [[form.elements]]: كل حقول الفورم، وتقدر تجيب الحقل باسمه ([[name]]): [[.password]] و [[.confirm]].
-
----
-
-## ٢. [[validity]]: الحقل غلط ليه؟
-
-آخر سطر في المثال:
-
-~~~text app.js
-console.log(pass.validity.valueMissing, pass.validity.tooShort, pass.validationMessage);
-~~~
-
-~~~text الناتج أول ما الصفحة فتحت
-true false Please fill out this field.
-~~~
-
-- [[valueMissing]] بـ [[true]]: الحقل [[required]] وفاضي.
-- [[tooShort]] بـ [[false]]: مفيش كلام أصلًا عشان يبقى قصير.
-- [[validationMessage]]: الرسالة اللي المتصفح كان هيعرضها.
-
-[[validity]] فيه خانة لكل سبب. ده اللي رجع لحقل التأكيد بعد ما بقى غلط:
-
-~~~text الناتج
-valueMissing: false   typeMismatch: false   patternMismatch: false
-tooLong: false        tooShort: false       rangeUnderflow: false
-rangeOverflow: false  stepMismatch: false   badInput: false
-customError: true     valid: false
-~~~
-
-[[valid]] بيبقى [[true]] بس لو كل الباقي [[false]].
-
----
-
-## ٣. [[setCustomValidity]]: قاعدة من عندك
-
-~~~text app.js
-confirm.addEventListener('input', () => {
-  confirm.setCustomValidity(confirm.value === pass.value ? '' : 'كلمتين السر مش زي بعض');
-});
-~~~
-
-فكها من جوه:
-
-1. [[confirm.value === pass.value]]: [[===]] مقارنة، بترجّع true أو false.
-2. [[? '' : '...']]: الـ ternary. لو الشرط true خد اللي بعد [[?]] (string فاضي)، لو false خد اللي بعد [[:]] (الرسالة).
-3. [[setCustomValidity(...)]]: string فاضي = الحقل سليم. أي كلام = الحقل غلط والكلام ده رسالته.
-4. [[addEventListener('input', ...)]]: شغّل ده مع كل حرف بيتكتب في التأكيد.
-
-كتبت [[secret123]] في كلمة السر و [[secret12]] في التأكيد:
-
-~~~text الناتج
-customError: true   valid: false
-validationMessage: كلمتين السر مش زي بعض
-form.checkValidity(): false
-~~~
-
----
-
-## ٤. الإرسال: [[checkValidity]] و [[reportValidity]]
-
-~~~text app.js
-form.addEventListener('submit', (e) => {
-  if (!form.checkValidity()) {
-    e.preventDefault();
-    form.reportValidity();
-  }
-});
-~~~
-
-| الدالة | بتعمل إيه |
-|---|---|
-| [[form.checkValidity()]] | بترجّع [[true]] لو كل الحقول سليمة. ساكتة |
-| [[!]] قبلها | عكس: «لو مش سليم» |
-| [[e.preventDefault()]] | [[e]] هو الحدث. امنع الإرسال العادي |
-| [[form.reportValidity()]] | اعرض الرسالة على أول حقل غلط وحط الـ focus عليه |
-
-دوست «سجّل»: الصفحة فضلت مكانها، والـ focus راح لحقل التأكيد ([[document.activeElement.name]] = [[confirm]]).
-
----
-
-## ٥. المشكلة اللي في المثال
-
-مسحت آخر حرف من كلمة السر عشان تبقى [[secret12]] زي التأكيد:
-
-~~~text الناتج
-pass.value === confirm.value   →  true
-confirm.validationMessage      →  كلمتين السر مش زي بعض
-form.checkValidity()           →  false
-~~~
-
-الرسالة لسه لازقة، لأن الـ listener على التأكيد بس، ومحدش نادى [[setCustomValidity('')]]. الحل (الـ solCode): دالة واحدة [[sync]] بتتنادي من الحقلين. جرّبتها بنفس الخطوات: الرسالة بقت [[""]] و [[checkValidity()]] بقت [[true]]، والفورم اتبعت.
-
-> ليه [[method="post"]] في الفورم فوق؟ جرّبته من غيرها: الفورم اتبعت بـ GET (الـ default) والباسوردات ظهرت في الـ URL: [[/ok?password=secret12&confirm=secret12]]، يعني تتسجل في الـ history وفي logs السيرفر. أي فورم فيه كلمة سر لازم [[method="post"]].
-
----
-
-## ٦. [[tooShort]] بيتحسب إمتى؟
-
-| اللي عملته | [[tooShort]] |
-|---|---|
-| كتبت [[abc]] بالكيبورد | [[true]]، والرسالة: Please lengthen this text to 8 characters or more (you are currently using 3 characters). |
-| [[pass.value = 'abc']] من الكود | [[false]]، و [[valid]] بـ [[true]] |
-
-الطول بيتحسب بس على اللي المستخدم كتبه.
-
----
-
-## ٧. [[:user-invalid]] في الـ CSS
-
-~~~text style.css
-input:user-invalid { border-color: crimson; }
-~~~
-
-[[crimson]] اسم لون أحمر غامق. قست [[border-top-color]] لحقل كلمة السر:
-
-| الوقت | [[:invalid]] | [[:user-invalid]] | لون البوردر |
-|---|---|---|---|
-| أول ما الصفحة فتحت | أيوه | لأ | [[rgb(118, 118, 118)]] رمادي |
-| كتبت [[abc]] وخرجت من الحقل | أيوه | أيوه | [[rgb(220, 20, 60)]] = crimson |
-
-يعني [[:invalid]] شغال من أول لحظة (الحقل فاضي و required)، و [[:user-invalid]] استنى لحد ما المستخدم لمس الحقل.
-
----
-
-## الخلاصة
-
-| الأداة | امتى |
-|---|---|
-| [[el.validity]] | تعرف السبب: فاضي ولا قصير ولا شكله غلط |
-| [[el.validationMessage]] | الرسالة الجاهزة بلغة المتصفح، تعرضها جنب الحقل |
-| [[setCustomValidity('msg')]] و [[('')]] | قاعدة من عندك. لازم ترجّعها فاضية لما الغلط يتصلح |
-| [[form.checkValidity()]] | سؤال ساكت: true أو false من غير ما يعرض حاجة |
-| [[form.reportValidity()]] | سؤال ويعرض الرسالة والـ focus |
-| [[:user-invalid]] | تلوين بعد ما المستخدم يلمس الحقل |`,
-          lines: [
-            R`الفورم، وعليه [[novalidate]] في الـ HTML عشان احنا اللي نقرر امتى نعرض.`,
-            R`[[form.elements]] بيجيب الحقل بالـ [[name]] بتاعه.`,
-            R`حقل تأكيد كلمة السر بنفس الطريقة: [[name="confirm"]]. سمّيناه [[confirm]] بس ده بيغطي على [[window.confirm]] جوه السكربت ده، فلو احتجتها سمّيه [[confirmEl]].`,
-            "مع كل حرف في التأكيد...",
-            R`...لو زي الباسورد الرسالة فاضية (الحقل سليم)، غير كده الحقل غلط بالرسالة دي.`,
-            "قفلة.",
-            R`لما المستخدم يدوس «سجّل» أو Enter، الحدث [[submit]] بيوصل هنا قبل ما الفورم تتبعت فعلًا، فلسه تقدر توقفها.`,
-            "لو فيه أي حقل غلط (بما فيهم الـ custom)...",
-            R`...امنع الإرسال: [[e.preventDefault()]] بيلغي الإرسال العادي فالصفحة متتحمّلش والبيانات متروحش.`,
-            "...واعرض رسالة المتصفح على أول حقل غلط وحط الـ focus عليه.",
-            "قفلة الـ if.",
-            "قفلة الـ listener.",
-            R`تقدر تسأل عن أي سبب: فاضي؟ قصير؟ والرسالة بلغة المتصفح.`,
-            R`بوردر أحمر بعد ما المستخدم يلمس الحقل بس، مش أول ما الصفحة تفتح.`
-          ],
-          sol: R`بعد ما تكتب تأكيد مختلف: [[confirm.validity.customError]] بـ true و [[valid]] بـ false، و [[form.checkValidity()]] بـ false، والـ submit بيعرض «كلمتين السر مش زي بعض» على حقل التأكيد.
-
-المشكلة اللي هتلاقيها: لو غيّرت الباسورد الأصلي لحد ما يبقى زي التأكيد، الرسالة لسه موجودة، لأن الـ listener على التأكيد بس. الحل تعمل دالة واحدة وتسمع بيها على الحقلين.
-
-وتفصيلة: لو حطيت [[pass.value = 'abc']] من الـ Console، [[pass.validity.tooShort]] هتفضل false، لأنها بتتحسب بس لما المستخدم يكتب بإيده.`,
-          solCode: R`const form = document.querySelector('#signup');
-const pass = form.elements.password;
-const confirm = form.elements.confirm;
-const sync = () => confirm.setCustomValidity(confirm.value === pass.value ? '' : 'كلمتين السر مش زي بعض');
-pass.addEventListener('input', sync);
-confirm.addEventListener('input', sync);
-form.addEventListener('submit', (e) => {
-  if (!form.checkValidity()) {
-    e.preventDefault();
-    form.reportValidity();
-  }
-});`
-        },
-        {
-          cmd: "ملخص الأخطاء",
-          ref: [
-            { t: "MDN: Client-side form validation", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation" },
-            { t: "WAI Tutorials: User notifications (forms)", url: "https://www.w3.org/WAI/tutorials/forms/notifications/" },
-            { t: "MDN: aria-disabled", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-disabled" },
-            { t: "MDN: aria-invalid", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid" },
-          ],
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** فورم طلب لمتجر قهوة متخيل في شبكة: [[.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }]]، والعنوان حقل طويل [[grid-column: 1 / -1]]، وعلى الموبايل عمود واحد، وفوقه صندوق الملخص.`, done: R`على 800px الاسم والموبايل جنب بعض والعنوان واخد السطر كله، وعلى 360px كله تحت بعض، والملخص بيظهر فوق الشبكة مش جواها، والأخطاء تحت كل حقل مش بتكسر الشبكة.`, sol: R`~~~live 510 620
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>طلب قهوة</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  form { max-width: 720px; margin-inline: auto; }
-  .summary { border: 2px solid #b91c1c; border-radius: 8px; padding: 12px; margin-block-end: 16px; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .wide { grid-column: 1 / -1; }
-  .field { display: grid; gap: 4px; align-content: start; min-width: 0; }
-  input { padding: 10px; font: inherit; width: 100%; box-sizing: border-box; }
-  .err { color: #b91c1c; font-size: .875rem; margin: 0; }
-  button { margin-block-start: 12px; padding: 10px 20px; font: inherit; }
-  @media (max-width: 520px) {
-    .row { grid-template-columns: 1fr; }
-  }
-</style>
-</head>
-<body>
-<main>
-<h1>اطلب قهوتك</h1>
-<form novalidate>
-  <div class="summary" role="alert">
-    <h2>فيه غلطتين</h2>
+    <h1>كشك الجرايد</h1>
+    <p>جرايد ومجلات وكروت شحن، من ٦ الصبح.</p>
+    <h2>بنبيع إيه</h2>
     <ul>
-      <li><a href="#name">الاسم مطلوب</a></li>
-      <li><a href="#phone">الموبايل ناقص</a></li>
+        <li>جرايد ومجلات</li>
+        <li>كروت شحن</li>
+        <li>مناديل ولبان</li>
     </ul>
-  </div>
-  <div class="row">
-    <div class="field">
-      <label for="name">الاسم</label>
-      <input id="name" name="name" autocomplete="name" aria-describedby="name-e" aria-invalid="true">
-      <p class="err" id="name-e">اكتب اسمك</p>
-    </div>
-    <div class="field">
-      <label for="phone">الموبايل</label>
-      <input id="phone" name="phone" type="tel" dir="ltr" autocomplete="tel" aria-describedby="phone-e" aria-invalid="true">
-      <p class="err" id="phone-e">١١ رقم</p>
-    </div>
-    <div class="field wide">
-      <label for="addr">العنوان</label>
-      <input id="addr" name="addr" autocomplete="address-line1">
-    </div>
-  </div>
-  <button>اطلب</button>
-</form>
-</main>
+    <a href="tel:+200000000000">كلّمنا</a>
 </body>
 </html>
 ~~~
 
-**اللي بيعمل الشبكة:**
+**ليه كده:** [[{}]] بتحط النص جوه العنصر، فالعنوان والفقرة بيطلعوا جاهزين. و [[a:tel]] بيكتب [[<a href="tel:+"></a>]] والمؤشر واقف بعد علامة [[+]] مستني الرقم.
 
-- [[grid-template-columns: 1fr 1fr]]: عمودين متساويين.
-- [[grid-column: 1 / -1]] معناها من أول خط لآخر خط، يعني السطر كله. و [[-1]] هو آخر خط مهما كان عدد الأعمدة.
-- [[align-content: start]] على الـ field: لو حقل تحته غلطة وحقل تاني لأ، اللي مفيهوش مبيتمطّش.
-- [[min-width: 0]]: من غيرها، الحقول ممكن تعمل overflow لأن الـ grid item مبيصغرش عن محتواه.
-- الملخص برّه [[.row]]، فمبيبقاش خلية في الشبكة.
+**الغلطة الشائعة:** تسيب [[<title>Document</title>]]. الصفحة بتشتغل، بس التاب في المتصفح مكتوب عليه Document، وده أول حاجة اللي بيراجع شغلك بيلاحظها.
 
-**الغلطة الشائعة:** تحط الملخص جوه [[.row]]، فياخد عمود واحد ويزق الحقول. وأي عنصر زيادة في الشبكة بيتحسب خلية.
-
-~~~text الناتج
-على 800:
-الاسم x=406 عرض=354، الموبايل x=40 عرض=354، نفس السطر: true
-العنوان عرضه 720  (السطر كله)
-
-على 360:
-أعمدة الشبكة: 328px
-الترتيب تحت بعض: y = 260 , 365 , 470
-overflow: 0px
-axe: 0 violations
+~~~text الناتج (Chrome 157)
+h1: 1   h2: 1   li: 3   a: 1 (tel:+200000000000)   title = كشك الجرايد
+الـ validator: The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الملخص لينك [[<a href="#email">الإيميل</a>]]. لما تدوس عليه، الـ focus هيروح فين: اللينك، ولا الحقل نفسه، ولا مفيش؟`, done: R`في Chrome [[document.activeElement]] بقى الحقل نفسه ([[#email]])، فالمستخدم يكتب على طول. ده بيحصل بس لو الهدف عنصر بيتركّز عليه (input)؛ لو اللينك رايح لـ div الـ focus مش بيروح له.`, sol: R`~~~live 600 720
-<!doctype html>
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الصفحة دي شغالة، بس مكتوبة من غير أي ترتيب. الصقها في [[practice-site/about.html]] ورتّبها بأمر واحد من VS Code، من غير ما تلمس المسافات بإيدك:
+
+~~~html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الملخص</title>
-<style>form { padding-block-start: 900px; }</style>
+<meta charset="UTF-8">
+      <title>عن الكشك</title>
 </head>
 <body>
-<main>
-<h1>الفورم</h1>
-<a id="l1" href="#email">الإيميل</a>
-<a id="l2" href="#box">الصندوق</a>
-<form>
-  <label for="email">الإيميل</label>
-  <input id="email" type="email">
-  <div id="box">صندوق عادي</div>
-</form>
-</main>
+<h1>عن الكشك</h1>
+        <p>فاتحين من سنة ٢٠٠٥.</p>
+  <ul><li>جرايد</li><li>مجلات</li></ul>
 </body>
 </html>
-~~~
+~~~`, done: R`كل عنصر جوه عنصر تاني مزقوق لجوه بنفس المسافة، وكل [[li]] في سطر لوحده، والصفحة في المتصفح زي ما هي بالظبط.`, sol: R`**الأمر:** [[Shift+Alt+F]] (على الماك [[Shift+Option+F]])، أو كليك يمين جوه الملف ثم Format Document. وبعدين [[Ctrl+S]].
 
-**الإجابة:** الـ focus بيروح للحقل نفسه. لما اللينك يودّي لعنصر بيقبل الـ focus زي [[input]]، المتصفح بينزل له ويركّز فيه، فالمستخدم يكتب على طول. وده اللي بيخلي ملخص الأخطاء مفيد فعلًا.
-
-لو الهدف [[div]] عادي، الصفحة بتنزل له، بس [[document.activeElement]] مش بيبقى الـ div. المتصفح بيحرّك نقطة بداية الـ Tab بس.
-
-**لو محتاج الـ focus يروح لعنصر عادي** (زي عنوان الصفحة): حط عليه [[tabindex="-1"]]. الرقم ده معناه «يقبل الـ focus من الكود واللينكات، بس مش من Tab».
-
-**الغلطة الشائعة:** تكتب JavaScript يعمل [[scrollIntoView]] ثم [[focus()]] لكل لينك. اللينك بيعمل ده لوحده.
-
-~~~text الناتج
-الضغط على لينك #email:
-document.activeElement = input#email   الـ URL = #email   الحقل نزل لجوه الشاشة: true
-
-الضغط على لينك #box:
-document.activeElement = body
-
-بعد tabindex="-1" على الصندوق:
-document.activeElement = div#box
-~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** زرارين «بيبعت…»: واحد [[disabled]] وواحد [[aria-disabled="true"]]. من الحقل اللي قبلهم دوس Tab، وبعدين دوس Enter على اللي وصلت له.`, done: R`الـ Tab عدّى الـ disabled ووقف على الـ aria-disabled، والضغط عليه شغّل الـ onclick عادي (اتعدّ مرتين في التجربة). يعني aria-disabled بيسيب الزرار في الكيبورد ويقول إنه مقفول، بس الكود لازم يتأكد بنفسه بـ flag زي [[sending]] في الدرس.`, sol: R`~~~live 160 160
-<!doctype html>
+~~~html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الإرسال</title>
+    <meta charset="UTF-8">
+    <title>عن الكشك</title>
 </head>
+
 <body>
-<main>
-<h1>تسجيل</h1>
-<label for="n">الاسم</label>
-<input id="n">
-<button id="a" disabled onclick="count()">بيبعت…</button>
-<button id="b" aria-disabled="true" onclick="count()">بيبعت…</button>
-<p id="c">0</p>
-</main>
-<script>
-  let clicks = 0;
-  function count() { clicks++; document.querySelector('#c').textContent = clicks; }
-$__lt/script>
+    <h1>عن الكشك</h1>
+    <p>فاتحين من سنة ٢٠٠٥.</p>
+    <ul>
+        <li>جرايد</li>
+        <li>مجلات</li>
+    </ul>
 </body>
+
 </html>
 ~~~
 
-**اللي طلع:**
+**ليه كده:** المتصفح مبيهتمش بالمسافات اللي في أول السطر: النسختين بيطلّعوا نفس الصفحة. الترتيب ليك انت: لما كل ابن مزقوق لجوه عن أبوه، بتشوف بعينك مين جوه مين، والـ tag اللي مش مقفول بيبان من أول نظرة.
 
-| | [[disabled]] | [[aria-disabled="true"]] |
-|---|---|---|
-| Tab بيقف عليه | لأ | أيوه |
-| قارئ الشاشة يعرف إنه مقفول | أيوه، لو وصله | أيوه |
-| الضغط بيشغّل onclick | لأ | **أيوه** |
+**الغلطة الشائعة:** ترتّب بالمسطرة وزرار Tab سطر سطر. ده شغل المحرر.
 
-الـ ARIA مش بتغيّر سلوك العنصر. دي بتقول لقارئ الشاشة معلومة بس. فالزرار لسه زرار عادي، والكود بتاعك لازم يمنع الضغط بنفسه:
+الشكل اللي فوق متكتب من الإعدادات الافتراضية للـ formatter في VS Code 1.147 (المسافة 4، والإعداد [[html.format.extraLiners]] قيمته [[head, body, /html]]، وده اللي بيسيب سطر فاضي قبل التلاتة دول)، مش من تشغيل الأمر في المعمل ده. لو طلعلك فرق في السطور الفاضية فده من إعدادات [[html.format]] عندك.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من غير ما الدرس يقولك: افتح إعدادات VS Code ([[Ctrl+,]]) ودوّر على [[auto save]]. إيه الأربع قيم اللي ينفع تختار منهم؟ وأنهي واحدة هتخلي الملف يتحفظ لما تروح للمتصفح؟ ولو اخترت [[afterDelay]]، بيستنى قد إيه؟`, done: R`كتبت الأربع قيم ومعنى كل واحدة في سطر، واخترت واحدة لنفسك وقلت ليه.`, sol: R`**الإجابة (من صفحة Basic Editing في وثائق VS Code، قسم Save / Auto Save):**
 
-~~~js
-let sending = false;
-async function send() {
-  if (sending) return;
-  sending = true;
-  // ...
-}
-~~~
+| القيمة | معناها |
+|---|---|
+| [[off]] | مفيش حفظ تلقائي. ده الافتراضي: لازم [[Ctrl+S]] |
+| [[afterDelay]] | بيحفظ بعد ما تبطّل كتابة بمدة. المدة في [[files.autoSaveDelay]]، والافتراضي 1000 ملي ثانية (ثانية واحدة) |
+| [[onFocusChange]] | بيحفظ لما المؤشر يسيب الملف (تدوس على ملف تاني أو على الترمنال) |
+| [[onWindowChange]] | بيحفظ لما تسيب شباك VS Code نفسه، يعني لما تروح للمتصفح |
 
-**إمتى كل واحد:** أثناء إرسال بتاخد ثواني، [[aria-disabled]] أحسن، لأن [[disabled]] بيرمي الـ focus من الزرار، واللي بيستخدم الكيبورد بيضيع مكانه. أما زرار مش متاح أصلًا، فـ [[disabled]] أوضح.
+فاللي بيحفظ «لما تروح للمتصفح» هو [[onWindowChange]]. وأسهل طريق ليها من غير الإعدادات: قايمة File ثم Auto Save (بتشغّل [[afterDelay]]).
 
-**الغلطة الشائعة:** تكتب [[aria-disabled]] وتفتكر إن الضغط اتمنع.
+**رأي:** وانت بتتعلم، خليها [[off]] أسبوع. لما تدوس [[Ctrl+S]] بإيدك بتبقى عارف إمتى الملف اتغيّر على الديسك، وده بيفهّمك لفة «احفظ ثم Ctrl+R» اللي في الدرس الجاي. وبعد كده شغّل [[onWindowChange]].
 
-~~~text الناتج
-Tab من الحقل: وقف عند #b
-Enter عليه + Space عليه: العداد = 2
-- button "بيبعت…" [disabled]
-- button "بيبعت…" [disabled]
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**محاكاة:** خلي السيرفر بطيء: بدل الـ fetch حط [[await new Promise((r) => setTimeout(r, 2000))]]، وغيّر كلمة الزرار لـ «بيبعت…» وقت الانتظار. اضغط ٥ مرات ورا بعض بسرعة.`, done: R`عداد في الكود بيقول إن الإرسال اتنفّذ مرة واحدة بس، والزرار رجع «سجّل» بعد ثانيتين، ولو رميت error جوه الـ Promise الزرار برضه رجع (بسبب [[finally]]).`, sol: R`~~~live 160 160
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تسجيل</title>
-</head>
-<body>
-<main>
-<h1>تسجيل</h1>
-<form id="f">
-  <label for="n">الاسم</label>
-  <input id="n" value="منى">
-  <button id="send">سجّل</button>
-</form>
-<p>مرات الإرسال: <output id="count">0</output></p>
-</main>
-<script>
-  const button = document.querySelector('#send');
-  let sending = false;
-  let count = 0;
-  window.shouldFail = false;
-
-  async function fakeServer() {
-    await new Promise((r) => setTimeout(r, 2000));
-    if (window.shouldFail) throw new Error('السيرفر وقع');
-  }
-
-  document.querySelector('#f').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (sending) return;
-    sending = true;
-    button.textContent = 'بيبعت…';
-    button.setAttribute('aria-disabled', 'true');
-    try {
-      count++;
-      document.querySelector('#count').textContent = count;
-      await fakeServer();
-    } catch (err) {
-      console.error(err.message);
-    } finally {
-      sending = false;
-      button.textContent = 'سجّل';
-      button.removeAttribute('aria-disabled');
-    }
-  });
-$__lt/script>
-</body>
-</html>
-~~~
-
-**السطور اللي بتمنع الإرسال المكرر:**
-
-- [[if (sending) return;]] أول سطر بعد [[preventDefault]]. الـ flag بيتغيّر قبل أي [[await]]، فالضغطة التانية بتلاقيه true.
-- [[finally]]: بيتنفّذ سواء الطلب نجح أو فشل. من غيره، أول خطأ بيسيب الزرار مقفول للأبد.
-- بنعالج الـ [[submit]] مش الـ [[click]]، عشان Enter في الحقل يتعامل نفس المعاملة.
-
-**ليه مش كفاية نعمل** [[button.disabled = true]]**:** ده بيرمي الـ focus من الزرار، والـ Enter في الحقل ممكن يوصل قبل ما السطر يتنفّذ. الـ flag أضمن.
-
-**الغلطة الشائعة:** تحط [[sending = false]] في آخر الـ try. لو الطلب وقع، السطر ده مش هيتنفّذ.
-
-~~~text الناتج
-٥ ضغطات ورا بعض:
-مرات الإرسال = 1
-كلمة الزرار أثناء الانتظار = بيبعت…
-بعد ثانيتين = سجّل
-
-مع رمي error جوه الـ Promise:
-كلمة الزرار بعد الخطأ = سجّل
-الضغط تاني اشتغل: مرات الإرسال = 3
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** فورم حجز لعيادة متخيلة بيفتح واتساب برسالة جاهزة: الاسم والميعاد والملاحظات في سطور، و [[window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener')]].`, done: R`الرسالة بتوصل كاملة بالسطور (الـ [[\n]] اتحوّلت [[%0A]])، واسم زي «سلمى & أحمد» بيوصل كامل. ومن غير [[encodeURIComponent]] الـ [[&]] بتقطع الرسالة: [[new URL('https://wa.me/?text=سلمى & أحمد').searchParams.get('text')]] رجّع [[سلمى ]] بس.`, sol: R`~~~live 390 390
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>احجز</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  form { display: grid; gap: 8px; max-width: 340px; }
-  input, textarea { padding: 10px; font: inherit; }
-</style>
-</head>
-<body>
-<main>
-<h1>احجز عند عيادة الشفاء</h1>
-<form id="f">
-  <label for="n">الاسم</label>
-  <input id="n" name="name" required autocomplete="name">
-  <label for="d">الميعاد</label>
-  <input id="d" name="when" type="datetime-local" required>
-  <label for="m">ملاحظات</label>
-  <textarea id="m" name="notes"></textarea>
-  <button>افتح واتساب</button>
-</form>
-</main>
-<script>
-  document.querySelector('#f').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const msg = [
-      'حجز جديد',
-      'الاسم: ' + data.get('name'),
-      'الميعاد: ' + data.get('when'),
-      'ملاحظات: ' + (data.get('notes') || 'مفيش'),
-    ].join('\n');
-    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener');
-  });
-$__lt/script>
-</body>
-</html>
-~~~
-
-**السطور المهمة:**
-
-- [[.join('\n')]]: بيحط سطر جديد بين كل جزء.
-- [[encodeURIComponent]]: بيحوّل أي حرف ليه معنى في الـ URL لشكل آمن. السطر الجديد بقى [[%0A]]، و [[&]] بقت [[%26]].
-- [[data.get('notes') || 'مفيش']]: لو الحقل فاضي، اكتب «مفيش».
-- [[noopener]]: الصفحة الجديدة متقدرش توصل لصفحتك.
-
-**ليه** [[encodeURIComponent]] **لازم:** الـ [[&]] في الـ URL معناها «اللي بعدي parameter جديد». فمن غيرها، اسم زي «سلمى & أحمد» بيقطع الرسالة عند الـ &، وباقيها بيتفهم كـ parameter تاني.
-
-**الغلطة الشائعة:** تستخدم [[encodeURI]] بدل [[encodeURIComponent]]. الأولى بتسيب [[&]] زي ما هي، لأنها معمولة لـ URL كامل مش لقيمة جواه.
-
-~~~text الناتج
-الـ URL اللي اتفتح (أوله):
-https://wa.me/?text=%D8%AD%D8%AC%D8%B2%20%D8%AC%D8%AF%D9%8A%D8…
-
-فيه %0A بدل السطر الجديد: true
-الرسالة اللي واتساب هيقراها:
-حجز جديد
-الاسم: سلمى & أحمد
-الميعاد: 2026-07-01T10:30
-ملاحظات: أول زيارة
-
-من غير encodeURIComponent:
-new URL('https://wa.me/?text=سلمى & أحمد').searchParams.get('text') = "سلمى "
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك عايز يشيل الملخص ويكتفي بالرسالة الحمرا تحت كل حقل. اكتبله في ٣ سطور إمتى الملخص بيفرق.`, done: R`الشرح فيه: الفورم الطويل اللي الغلط فيه تحت الشاشة، ومستخدم قارئ الشاشة اللي بيسمع العدد واللينكات مرة واحدة، والموبايل اللي الرسالة الحمرا فيه ممكن تبقى برّه الشاشة.`, sol: R`**الرد النموذجي لزميلك:**
-
-~~~text الشرح
-الرسالة تحت الحقل كفاية لو الفورم قصير والغلط قدامك. الملخص بيفرق في ٣ حالات:
-١. فورم طويل والغلطة في حقل تحت الشاشة: من غير ملخص المستخدم بيدوس إرسال ومش شايف أي حاجة حصلت.
-٢. قارئ الشاشة: بيسمع «فيه ٣ غلطات» والأسامي مرة واحدة، ويدخل على اللينك مباشرة بدل ما يدوّر حقل حقل.
-٣. الموبايل: الشاشة صغيرة والكيبورد واكلة نصها، فالرسالة الحمرا غالبًا برّه الشاشة.
-~~~
-
-**الحل الصح الاتنين مع بعض:** الملخص بيقول إيه الغلط، والرسالة تحت كل حقل بتقول إزاي تصلّحه. والصفحة دي بتوضّح الحالة الأولى: الحقل فوق والزرار تحت:
-
-~~~live 600 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فورم طويل</title>
-<style>.gap { height: 1400px; }</style>
-</head>
-<body>
-<main>
-<h1>فورم طويل</h1>
-<form novalidate>
-  <label for="e">الإيميل</label>
-  <input id="e" required>
-  <p class="err" hidden>اكتب إيميلك</p>
-  <div class="gap"></div>
-  <button type="button" onclick="document.querySelector('.err').hidden = false">ابعت</button>
-</form>
-</main>
-</body>
-</html>
-~~~
-
-**الغلطة الشائعة:** تحط الملخص من غير ما تنقل الـ focus له. قارئ الشاشة مش هيعرف إنه ظهر، إلا لو عليه [[role="alert"]] أو الـ focus راحله.
-
-~~~text الناتج
-شاشة 360×640، نزلت لآخر الفورم ودست ابعت:
-الرسالة الحمرا موقعها y = -823، يعني فوق الشاشة ومش باينة
-هل ظهرت في الشاشة؟ لأ
-وكل اللي المستخدم شايفه: زرار مفيش بعده أي تغيير
-~~~` },
+**الغلطة الشائعة:** تشغّل Auto Save وتنسى إنك شغّلته، وبعدين تستغرب إن ملف اتغيّر وانت «مكنتش حفظت».` },
           ],
-          title: "الفورم رفض: المستخدم يعرف الغلط فين، وميبعتش مرتين",
-          desc: R`لما الإرسال يفشل، اعمل 3 حاجات: رسالة جنب كل حقل غلط ومربوطة بيه بـ [[aria-describedby]] ومعاها [[aria-invalid="true"]]، وملخص فوق الفورم فيه لينك لكل حقل غلط (مهم في الفورمات الطويلة)، وحط الـ focus على أول حقل غلط عشان قارئ الشاشة يقول اسمه والغلط بتاعه على طول.
+          title: "VS Code: افتح الفولدر واكتب الصفحة",
+          desc: R`[[code .]] بيفتح الفولدر اللي انت فيه في VS Code. وجوه ملف HTML، علامة [[!]] وبعدها Tab بتكتب هيكل الصفحة كله (ده Emmet، مدمج في المحرر). وبعدها: [[Ctrl+S]] للحفظ، و [[Shift+Alt+F]] لترتيب الكود، و [[Ctrl+$__bt]] للترمنال اللي جوه المحرر.
 
-ولما الإرسال يبدأ فعلًا، امنع الضغطة التانية: flag في الكود، والزرار يبقى [[aria-disabled]] لحد ما الرد يرجع.
+هنبدأ من الفولدر اللي الدرس اللي فات خلص بيه ([[projects/rokn-books]] وجواه [[index.html]] فاضي)، ونخلص والملف فيه صفحة «مكتبة الركن» كاملة ومحفوظة.
 
-الـ HTML المتوقع: كل حقل ليه [[id]] و [[aria-describedby="<id>-err"]] وبعده [[<p id="<id>-err">]]، وفوق الفورم [[<div id="summary" hidden>]] فيه [[<h2>]] و [[<ul>]].`,
-          example: R`const form = document.querySelector('#signup');
-const summary = document.querySelector('#summary');
-const submitBtn = form.querySelector('[type=submit]');
-let sending = false;
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (sending) return;
-  const fields = [...form.querySelectorAll('input, select, textarea')];
-  const bad = fields.filter((el) => !el.checkValidity());
-  for (const el of fields) {
-    el.setAttribute('aria-invalid', String(!el.validity.valid));
-    document.getElementById(el.id + '-err').textContent = el.validationMessage;
-  }
-  summary.hidden = bad.length === 0;
-  summary.querySelector('h2').textContent = $__btفيه $__{bad.length} حاجات محتاجة تتصلح$__bt;
-  summary.querySelector('ul').innerHTML = bad.map((el) => $__bt<li><a href="#$__{el.id}">$__{el.labels[0].textContent}</a></li>$__bt).join('');
-  if (bad.length) return bad[0].focus();
-  sending = true;
-  submitBtn.setAttribute('aria-disabled', 'true');
-  try {
-    await fetch(form.action, { method: 'POST', body: new FormData(form) });
-  } finally {
-    sending = false;
-    submitBtn.removeAttribute('aria-disabled');
-  }
-});`,
-          try: R`اعمل فورم فيه الاسم والإيميل (required) بالـ HTML اللي في الشرح، وحط [[novalidate]] على الفورم وشغّل السكربت. دوس سجّل والحقول فاضية: الـ focus راح فين؟ الملخص فيه كام لينك؟ وبعدين املاهم صح، ودوس سجّل مرتين ورا بعض بسرعة وبص في Network › Fetch/XHR: كام request اتبعت؟`,
-          flag: "script",
+الدرس ده بيوريك اللي محتاجه من VS Code لصفحة HTML بس. كل اختصار هنا ليه درس كامل في كورس VS Code، واللينكات في الشرح.`,
+          example: R`code .                 Open the current folder in VS Code
+! then Tab             The HTML skeleton
+h1{text}               <h1>text</h1>
+ul>li*3                A list with 3 items
+a:tel                  <a href="tel:+"></a>
+Ctrl+S                 Save (Mac: Cmd+S)
+Shift+Alt+F            Format Document (Mac: Shift+Option+F)
+Ctrl+$__bt                 Show or hide the integrated terminal`,
+          try: R`افتح [[rokn-books]] بـ [[code .]]، وافتح [[index.html]]، واكتب [[!]] ودوس Tab. قبل ما تغيّر أي حاجة: عدّ السطور اللي اتكتبت، وقول كل سطر منهم اتشرح في أنهي درس من الوحدة اللي فاتت.`,
+          flag: "keys",
           deep: {
-            why: R`لو الفورم رفض من غير ما يقول ليه، أو الرسالة ظهرت فوق والمستخدم تحت، أو قارئ الشاشة فضل ساكت، المستخدم بيمشي. والضغطة المزدوجة على «ادفع» أو «اطلب» بتعمل طلبين ودفع مرتين، ودي من أشهر مشاكل المتاجر.`,
-            how: R`[[aria-describedby]] بيخلي قارئ الشاشة يقرا الرسالة بعد اسم الحقل ونوعه: «الإيميل، edit، invalid entry، اكتب الإيميل». و [[aria-invalid]] هو اللي بيقول «invalid». فلما الـ focus يروح لأول حقل غلط، المستخدم بيسمع كل اللي محتاجه في جملة واحدة.
+            why: R`تقدر تكتب HTML في أي محرر نصوص. بس Notepad بيحفظ الملف [[.txt]]، ومبيلوّنش الكود، ومبيقفلش الـ tags. VS Code بيعمل التلاتة، وبيوريك ملفات المشروع كلها جنب الكود، وفيه ترمنال جواه. و Emmet بيشيل عنك كتابة نفس العشر سطور في أول كل صفحة، فمبتنساش [[charset]] ولا [[viewport]].`,
+            how: R`[[code]] برنامج صغير بيتسطّب مع VS Code (على ويندوز ولينكس). النقطة معناها «الفولدر الحالي»، فالمحرر بيفتح والفولدر ده هو جذر المشروع: الـ Explorer بيعرض ملفاته، والترمنال المدمج بيبدأ منه.
 
-الملخص: اللينكات [[href="#email"]] بتنقل الـ focus للحقل نفسه لما تتضغط. في فورم قصير (2 أو 3 حقول) ممكن تستغنى عن الملخص وتكتفي بالـ focus على أول حقل. في فورم طويل (زي GOV.UK) بيحطوا الـ focus على الملخص نفسه ([[tabindex="-1"]]) عشان المستخدم يعرف العدد الأول.
+Emmet بيقرا الاختصار اللي قبل المؤشر ويبدّله بالكود. [[!]] معناها جوه VS Code [[!!!+doc]]: سطر الـ doctype وبعده هيكل المستند. المحرر بيعرضه كاقتراح وانت بتكتب، و Tab أو Enter بيقبلوا الاقتراح.
 
-الـ [[validationMessage]] بيبقى فاضي لما الحقل سليم، فنفس السطر بيمسح الرسالة القديمة. ورسايل المتصفح بلغته، ولو عايز رسايلك انت استخدم [[setCustomValidity]] (الدرس اللي فات).
-
-ليه [[aria-disabled]] مش [[disabled]]؟ [[disabled]] بيشيل الزرار من الـ Tab، فلو الـ focus كان عليه بيضيع لأول الصفحة. [[aria-disabled]] بيقول لقارئ الشاشة إنه مقفول والـ focus بيفضل مكانه، والـ flag [[sending]] هو اللي بيمنع فعلًا. وفي React 19 فيه [[useFormStatus]] بيدّيك [[pending]] جوه الفورم، وفي السيرفر الحماية الحقيقية idempotency key (نفس المفتاح مرتين = طلب واحد).`,
-            when: R`أي فورم فيه أكتر من حقل، وخصوصًا الدفع والتسجيل. ومنع الضغطة المزدوجة في أي زرار بيعمل حاجة مش بتتعاد (طلب، دفع، إرسال رسالة).`,
-            mistakes: R`رسالة واحدة عامة «فيه أخطاء» من غير ما تقول فين. الأخطاء بالأحمر بس (اللي عنده عمى ألوان مش هيشوفها). رسالة مش مربوطة بالحقل فقارئ الشاشة ميقولهاش. الـ focus يفضل على الزرار. [[disabled]] على الزرار وقت الإرسال فالـ focus يضيع. تنسى ترجّع الزرار لو الطلب فشل فالمستخدم يفضل محبوس. و [[innerHTML]] بكلام جاي من المستخدم (XSS)، هنا الـ labels بتاعتنا فمفيش مشكلة، بس لو فيه أي قيمة من المستخدم استخدم [[textContent]].`
+والملف اللي بتكتب فيه نسخة في ذاكرة المحرر. الديسك مبيتغيّرش غير لما تحفظ. والمتصفح بيقرا من الديسك.`,
+            when: R`كل مرة تبدأ مشروع أو ترجع لمشروع: [[cd]] للفولدر ثم [[code .]]. و [[!]] في أول كل ملف HTML جديد. والحفظ قبل كل مرة تبص على المتصفح.`,
+            mistakes: R`تفتح الملف لوحده (دبل كليك) بدل الفولدر: مفيش Explorer، والترمنال بيبدأ من مكان تاني. تسيب [[lang="en"]] و [[<title>Document</title>]] زي ما Emmet كتبهم. تكتب [[!]] في ملف مش محفوظ باسم آخره [[.html]]: المحرر مش عارف إنه HTML فـ Emmet مش بيشتغل. وتنسى الحفظ وتقعد تدوّر على المشكلة في الكود.`
           },
           teach: R`## الفكرة في سطرين
 
-الكود ده بيستلم حدث الإرسال بنفسه: يفحص كل حقل، ويكتب رسالة تحت كل حقل غلط، ويعمل ملخص فوقه، ويحط الـ focus على أول غلط. ولو كله سليم يبعت بـ [[fetch]] ويمنع الضغطة التانية. جرّبته في Chrome (headless) على الـ HTML اللي في الحل (الاسم والإيميل required و [[novalidate]] على الفورم)، والسيرفر المحلي بيتأخر ثانية قبل ما يرد عشان أقدر أدوس تاني والطلب لسه شغال.
+هنفتح فولدر المشروع في المحرر، ونخلّي المحرر يكتب الهيكل، ونكتب احنا المحتوى، ونحفظ.
+
+[[code .]] و [[code --version]] اتشغّلوا هنا على VS Code 1.147 على Windows 11. خطوات الواجهة (القوايم، والزراير، والاختصارات) من وثائق VS Code الرسمية. وشكل اللي Emmet بيكتبه من ملف الاختصارات اللي جوه VS Code 1.147 نفسه ومن وثائق Emmet.
 
 ---
 
-## ١. التجهيز
+## ١. افتح الفولدر، مش الملف
 
-~~~text app.js
-const form = document.querySelector('#signup');
-const summary = document.querySelector('#summary');
-const submitBtn = form.querySelector('[type=submit]');
-let sending = false;
+وانت واقف في [[rokn-books]] في الترمنال:
+
+~~~powershell
+code .
 ~~~
 
-- [[[type=submit]]]: selector بالـ attribute: العنصر اللي [[type]] بتاعه [[submit]]. و [[form.querySelector]] بيدوّر جوه الفورم بس.
-- [[let]]: متغير هيتغيّر (عكس [[const]]). [[sending]] اسمه flag: true أو false بيقول «فيه إرسال شغال دلوقتي».
+- [[code]] الأمر اللي بيشغّل VS Code.
+- [[.]] معناها «الفولدر اللي أنا فيه».
+
+الأمر مبيطبعش حاجة، وبيفتح شباك VS Code على الفولدر. (نفس الأمر على الماك ولينكس.)
+
+تلات حاجات ممكن تقابلك:
+
+| اللي حصل | معناه | تعمل إيه |
+|---|---|---|
+| سؤال «Do you trust the authors…» | VS Code بيسأل قبل ما يشغّل أي حاجة من فولدر أول مرة يشوفه | ده فولدرك انت: اختار Yes |
+| [[code]] مش متعرّف (ويندوز أو لينكس) | الترمنال اتفتح قبل ما VS Code يتسطّب | اقفل الترمنال وافتحه تاني |
+| [[code]] مش متعرّف (الماك) | الأمر محتاج خطوة تسطيب | في VS Code: [[Cmd+Shift+P]] واكتب Shell Command: Install 'code' command in PATH |
+
+ولو مفيش فايدة: افتح VS Code بإيدك، ومن قايمة File اختار Open Folder، واختار [[rokn-books]]. النتيجة واحدة.
+
+**ليه الفولدر مش الملف؟** لأن المشروع هيبقى فيه كذا ملف، ولأن الترمنال اللي جوه المحرر بيبدأ من الفولدر المفتوح. التفاصيل في كورس VS Code، درس «code .».
 
 ---
 
-## ٢. أول الـ listener
+## ٢. الشاشة قدامك فيها إيه
 
-~~~text app.js
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (sending) return;
-~~~
+| الجزء | مكانه | بتستخدمه في إيه |
+|---|---|---|
+| Activity Bar | شريط أيقونات على أقصى الشمال | بتبدّل بين الملفات والبحث وغيرهم |
+| Explorer (في الـ Side Bar) | العمود اللي جنبه | ملفات المشروع. هتلاقي فيه [[index.html]] |
+| Editor | المساحة الكبيرة | بتكتب هنا. كل ملف مفتوح ليه تاب فوق |
+| Panel | تحت (بيظهر لما تفتح الترمنال) | الترمنال والأخطاء |
+| Status Bar | الشريط اللي تحت خالص | نوع الملف (HTML)، والترميز (UTF-8)، ورقم السطر |
 
-- [[async]]: الدالة جواها [[await]] (هنستنى الـ fetch).
-- [[e.preventDefault()]]: امنع الإرسال العادي (اللي بيعمل reload)، إحنا اللي هنبعت.
-- [[if (sending) return;]]: لو فيه طلب لسه مخلصش، اخرج من غير ما تعمل حاجة.
+لو الـ Explorer مش ظاهر: [[Ctrl+B]] بيظهّر العمود ويخبّيه.
 
----
-
-## ٣. مين الغلط؟
-
-~~~text app.js
-const fields = [...form.querySelectorAll('input, select, textarea')];
-const bad = fields.filter((el) => !el.checkValidity());
-~~~
-
-- [[querySelectorAll('input, select, textarea')]]: الفاصلة في الـ selector معناها «أو». بيرجّع NodeList.
-- [[[...]]] حوالين الـ NodeList: الـ [[...]] (spread) بيفرده جوه array جديدة، عشان يبقى عندنا [[filter]].
-- [[filter]]: بيرجّع array فيها العناصر اللي الشرط بتاعها true بس. والشرط [[!el.checkValidity()]] يعني «الحقل مش سليم».
+دوس على [[index.html]] في الـ Explorer: هيتفتح فاضي في الـ Editor. بصّ على الـ Status Bar: مكتوب HTML. المحرر عرف نوع الملف من الامتداد، وده اللي بيشغّل التلوين و Emmet.
 
 ---
 
-## ٤. علامة ورسالة على كل حقل
+## ٣. ملف جديد من المحرر كمان
 
-~~~text app.js
-for (const el of fields) {
-  el.setAttribute('aria-invalid', String(!el.validity.valid));
-  document.getElementById(el.id + '-err').textContent = el.validationMessage;
-}
-~~~
+في الدرس اللي فات عملنا الملف بـ [[ni]]. من المحرر: حرّك الماوس على اسم الفولدر في الـ Explorer، هتظهر أيقونة New File (ورقة عليها علامة +)، أو كليك يمين في العمود ثم New File، واكتب الاسم **بالامتداد**: [[about.html]].
 
-- [[for (const el of fields)]]: لف على كل حقل، واسمه جوه اللفة [[el]].
-- [[String(!el.validity.valid)]]: عكس [[valid]] ومحوّل لنص: [[true]] أو [[false]]. و [[setAttribute]] بيحطه على العنصر.
-- [[el.id + '-err']]: لو الـ id [[email]] يبقى [[email-err]]، وده الـ [[<p>]] اللي تحت الحقل.
-- [[textContent]] = الرسالة. والحقل السليم رسالته [[""]]، فنفس السطر بيمسح الرسالة القديمة.
+الطريقتين بيعملوا نفس الملف على الديسك. استخدم اللي أقرب لإيدك. (متعملش [[about.html]] دلوقتي، هنحتاجه في آخر درس.)
 
 ---
 
-## ٥. الملخص
+## ٤. [[!]] وبعدها Tab: الهيكل كله
 
-~~~text app.js
-summary.hidden = bad.length === 0;
-summary.querySelector('h2').textContent = $__btفيه $__{bad.length} حاجات محتاجة تتصلح$__bt;
-summary.querySelector('ul').innerHTML = bad.map((el) => $__bt<li><a href="#$__{el.id}">$__{el.labels[0].textContent}</a></li>$__bt).join('');
+جوه [[index.html]] الفاضي اكتب علامة التعجب:
+
+~~~text
+!
 ~~~
 
-- [[hidden]]: لو مفيش غلط (الطول 0) خبّي الملخص.
-- الـ backticks حوالين النص اسمها template literal، و [[$__{...}]] جواها بيحط قيمة.
-- [[bad.map(...)]]: بيحوّل كل حقل غلط لسطر [[<li>]] فيه لينك [[#id]]، والاسم من [[el.labels[0].textContent]] (أول label مربوط بالحقل).
-- [[.join('')]]: يلزق السطور في string واحد من غير فاصل.
+هتظهر قايمة اقتراحات صغيرة أول بند فيها [[!]] ومكتوب جنبه Emmet Abbreviation. دوس Tab (أو Enter). المحرر هيكتب:
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+</body>
+</html>
+~~~
+
+كل سطر هنا انت عارفه من درس «<!doctype html>»:
+
+| السطر | هو إيه | محتاج تغيّره؟ |
+|---|---|---|
+| [[<!DOCTYPE html>]] | بيقول للمتصفح «صفحة حديثة». الحروف الكبيرة والصغيرة فيه واحد | لأ |
+| [[<html lang="en">]] | لغة الصفحة | **آه**: [[lang="ar" dir="rtl"]] |
+| [[<meta charset="UTF-8">]] | الترميز، عشان العربي ميطلعش رموز | لأ |
+| [[<meta name="viewport" …>]] | عشان الموبايل يعرض الصفحة بعرضه الحقيقي | لأ |
+| [[<title>Document</title>]] | الاسم اللي على التاب | **آه**: اسم صفحتك |
+| [[<body>]] | المؤشر واقف جواه، مستني المحتوى | اكتب هنا |
+
+بعد ما Emmet يكتب، روح لسطر الـ [[<title>]] وبدّل كلمة [[Document]] باسم صفحتك، وبعدين انزل للسطر الفاضي اللي جوه الـ [[body]].
+
+> لو دوست Tab ولقيت مسافة اتزوّدت ومفيش هيكل: قايمة الاقتراحات كانت مقفولة (مثلًا دوست Esc قبلها). امسح، واكتب [[!]] تاني، واستنى القايمة تظهر. ولو مبتظهرش خالص: الملف مش محفوظ باسم آخره [[.html]].
+
+### غيّر اللغة والاتجاه
+
+السطر التاني يبقى:
+
+~~~html
+<html lang="ar" dir="rtl">
+~~~
+
+من غيره الصفحة العربي هتبدأ من الشمال وعلامات الترقيم هتتلخبط (التمرين التاني بيوريك الشكل). التفاصيل في درس «lang و dir».
 
 ---
 
-## ٦. الـ focus، وبعدين الإرسال
+## ٥. اختصارات بتكسب من أول يوم
 
-~~~text app.js
-if (bad.length) return bad[0].focus();
-sending = true;
-submitBtn.setAttribute('aria-disabled', 'true');
-try {
-  await fetch(form.action, { method: 'POST', body: new FormData(form) });
-} finally {
-  sending = false;
-  submitBtn.removeAttribute('aria-disabled');
-}
+Emmet مش للهيكل بس. أي اسم عنصر وبعده Tab بيتكتب مفتوح ومقفول. وفيه خمس علامات بتخليك تكتب سطر وتاخد عشرة:
+
+| العلامة | معناها | مثال | بيطلّع |
+|---|---|---|---|
+| (اسم لوحده) | العنصر | [[h1]] | [[<h1></h1>]] |
+| [[{}]] | النص اللي جواه | [[h1{مكتبة الركن}]] | [[<h1>مكتبة الركن</h1>]] |
+| [[>]] | جواه | [[ul>li]] | [[li]] جوه [[ul]] |
+| [[*]] | كرّره | [[ul>li*3]] | قايمة فيها تلات عناصر |
+| [[+]] | جنبه | [[h2+p]] | عنوان وبعده فقرة |
+| [[:]] | نسخة جاهزة من العنصر | [[a:tel]] | [[<a href="tel:+"></a>]] |
+
+اللي هنستخدمهم دلوقتي:
+
+~~~text
+ul>li*3
 ~~~
 
-- لو فيه غلط: الـ focus على أول واحد ([[bad[0]]]) واخرج.
-- [[sending = true]] **قبل** الـ [[await]]: ده اللي بيقفل الباب على الضغطة التانية.
-- [[try]] و [[finally]]: اللي في [[finally]] بيتنفّذ دايمًا، سواء الطلب نجح أو رمى error، فالزرار مبيفضلش مقفول للأبد.
-- [[fetch(form.action, ...)]]: يبعت لنفس العنوان اللي في [[action]]، بـ [[POST]]، والجسم [[new FormData(form)]].
+~~~html
+<ul>
+    <li></li>
+    <li></li>
+    <li></li>
+</ul>
+~~~
+
+[[<ul>]] قايمة و [[<li>]] عنصر فيها (شفتهم جوه الـ [[nav]] في درس «semantic HTML»، وليهم وحدة كاملة بعدين: «القوايم والاقتباسات»). المؤشر بيقف جوه أول [[li]]، وبعد ما تكتب، Tab بينقلك للي بعده.
+
+~~~text
+a:tel
+~~~
+
+~~~html
+<a href="tel:+"></a>
+~~~
+
+لينك تليفون، والمؤشر بعد علامة [[+]] عشان تكمّل الرقم.
+
+والمحرر بيساعدك حتى من غير Emmet: لما تكتب [[<p>]] بإيدك، أول ما تقفل القوس بيكتبلك [[</p>]] لوحده.
+
+باقي العلامات والتركيبات الأطول في كورس VS Code، درس «Emmet».
 
 ---
 
-## ٧. اللي اتقاس
+## ٦. اكتب صفحة المكتبة
 
-### دوست «سجّل» والحقلين فاضيين
+جوه الـ [[body]]، بالاختصارات دي بالترتيب (كل واحد وبعده Tab): [[h1{مكتبة الركن}]] ثم [[p]] ثم [[h2{مواعيد العمل}]] ثم [[ul>li*3]] ثم [[p>a:tel]]. واملا الكلام. الملف يبقى:
 
-~~~text الناتج
-الـ focus على:      name
-الملخص ظاهر:        نعم
-العنوان:            فيه 2 حاجات محتاجة تتصلح
-الـ ul:             <li><a href="#name">الاسم</a></li><li><a href="#email">الإيميل</a></li>
-name:  aria-invalid=true   الرسالة: Please fill out this field.
-email: aria-invalid=true   الرسالة: Please fill out this field.
+~~~live 280 300 index.html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الركن</title>
+</head>
+<body>
+    <h1>مكتبة الركن</h1>
+    <p>مكتبة صغيرة على ناصية شارع النخيل: كتب جديدة ومستعملة، وركن للأطفال.</p>
+    <h2>مواعيد العمل</h2>
+    <ul>
+        <li>من السبت للخميس: ١٠ الصبح لـ ٩ بالليل</li>
+        <li>الجمعة: ٤ العصر لـ ٩ بالليل</li>
+        <li>أول يوم في كل شهر: جرد، والمكتبة مقفولة</li>
+    </ul>
+    <p><a href="tel:+200000000000">كلّمنا</a></p>
+</body>
+</html>
 ~~~
 
-وفي شجرة الـ accessibility كل حقل بقى كده:
+اللي المفروض تشوفه في المعاينة: عنوان كبير، وتحته فقرة، وعنوان أصغر، وقايمة بتلات نقط على اليمين، ولينك أزرق. كل ده شكل المتصفح الافتراضي: مفيش ولا سطر CSS.
 
-~~~text الناتج
-textbox "الإيميل"  invalid=true  description: Please fill out this field.
+(المعاينة اللي فوق من الموقع ده. على جهازك لسه مشفتش حاجة: الملف مفتوح في المحرر بس. فتحه في المتصفح هو الدرس الجاي.)
+
+---
+
+## ٧. الحفظ: النقطة اللي على التاب
+
+بصّ على تاب [[index.html]] فوق: مكان علامة الإغلاق (×) فيه **نقطة**. دي معناها «في تعديلات مش محفوظة». اللي انت شايفه في المحرر لسه مش على الديسك، والمتصفح بيقرا من الديسك.
+
+~~~text
+Ctrl+S        (على الماك: Cmd+S)
 ~~~
 
-الـ description جاية من [[aria-describedby="email-err"]] اللي في الـ HTML، فقارئ الشاشة بيقول الاسم وإنه غلط والرسالة مع بعض. وضغطت على لينك «الإيميل» في الملخص: الـ hash بقى [[#email]] والـ focus راح للحقل نفسه.
+النقطة بترجع ×. دلوقتي الملف على الديسك هو اللي قدامك. اتأكد من الترمنال:
 
-### ملّيتهم صح ودوست دبل كليك
-
-~~~text الناتج
-حدث submit:   مرتين (بينهم 1 ملّي ثانية)
-POST للسيرفر: واحد بس
+~~~powershell
+ls
 ~~~
 
-الضغطة التانية لقت [[sending]] بـ [[true]] فرجعت. ونفس النتيجة مع Enter مرتين ورا بعض في حقل الإيميل. وفي الثانية اللي الطلب شغال فيها: [[aria-disabled="true"]] على الزرار، وبعد ما الرد رجع اتشال.
+~~~text الناتج (PowerShell 7.6)
+    Directory: C:\Users\ali\projects\rokn-books
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/18/2026  6:27 PM            745 index.html
+~~~
+
+[[Length]] بقى 745 بدل 0: الملف اتكتب فيه. (الرقم عندك ممكن يختلف شوية حسب المسافات ونوع نهاية السطر.)
+
+**الحفظ التلقائي:** من قايمة File اختار Auto Save، والمحرر هيحفظ لوحده بعد ثانية من آخر حرف. مريح، بس وانت بتتعلم الأحسن تحفظ بإيدك لحد ما اللفة تثبت في دماغك (التمرين الخامس فيه القيم الأربعة).
+
+---
+
+## ٨. رتّب الكود بضغطة
+
+~~~text
+Shift+Alt+F        (على الماك: Shift+Option+F، وعلى لينكس: Ctrl+Shift+I)
+~~~
+
+ده أمر Format Document: بيظبط المسافات اللي في أول كل سطر بحيث كل عنصر جوه عنصر تاني يبقى مزقوق لجوه. الصفحة في المتصفح مبتتغيّرش، بس انت بتشوف مين جوه مين، والـ tag اللي نسيت تقفله بيبان. (درسه في كورس VS Code: «Shift+Alt+F».)
+
+---
+
+## ٩. الترمنال اللي جوه المحرر
+
+~~~text
+Ctrl+$__bt        (المفتاح اللي تحت Esc. أو من القايمة: Terminal ثم New Terminal)
+~~~
+
+بيفتح ترمنال في الـ Panel تحت الكود، وبيبدأ من فولدر المشروع المفتوح. يعني من غير [[cd]]: اكتب [[ls]] وهتلاقي [[index.html]]. من هنا ورايح مش محتاج شباك ترمنال لوحده: المحرر والترمنال في مكان واحد. (درسه في كورس VS Code: «Ctrl+$__bt».)
 
 ---
 
 ## الخلاصة
 
-| الخطوة | السطر |
+| الخطوة | بتعملها إزاي |
 |---|---|
-| امنع الإرسال العادي | [[e.preventDefault()]] |
-| امنع الضغطة التانية | [[if (sending) return]] و [[sending = true]] قبل الـ await |
-| مين الغلط | [[filter(el => !el.checkValidity())]] |
-| علّم كل حقل | [[aria-invalid]] ورسالة في [[<p id="...-err">]] |
-| ملخص بلينكات | [[href="#id"]] |
-| الـ focus | [[bad[0].focus()]] |
-| رجّع الزرار مهما حصل | [[finally]] |`,
+| افتح المشروع | [[code .]] من جوه الفولدر |
+| الهيكل | [[!]] ثم Tab، وغيّر [[lang]] و [[dir]] و [[title]] |
+| المحتوى | اسم العنصر ثم Tab، و [[ul>li*3]] و [[a:tel]] |
+| احفظ | [[Ctrl+S]]، والنقطة على التاب تختفي |
+| رتّب | [[Shift+Alt+F]] |
+| ترمنال | [[Ctrl+$__bt]] |
+
+**الفولدر دلوقتي:** [[rokn-books/index.html]] فيه الصفحة كاملة ومحفوظة (745 بايت)، ومفتوح في VS Code. الدرس الجاي بيفتحه في Chrome.`,
           lines: [
-            "الفورم (عليه novalidate في الـ HTML).",
-            "صندوق الملخص فوق الفورم.",
-            R`زرار الإرسال: [[form.querySelector('[type=submit]')]] بيمسك الزرار اللي بيبعت الفورم، عشان نقفله وقت الإرسال.`,
-            "flag: بنبعت دلوقتي ولا لأ.",
-            R`لما الفورم تتبعت: الـ function [[async]] عشان نقدر نستنى الـ fetch جواها بـ [[await]].`,
-            "إحنا اللي هنبعت بـ fetch، فامنع الإرسال العادي.",
-            "لو فيه طلب لسه مخلصش، تجاهل الضغطة دي.",
-            R`كل الحقول (من غير الأزرار، لأن الزرار كمان ليه [[checkValidity]]).`,
-            R`الحقول الغلط بس: [[filter]] بيسيب الحقل اللي [[checkValidity()]] بيرجّعه false.`,
-            R`نلف على كل الحقول (السليم والغلط)، عشان السليم كمان لازم رسالته القديمة تتمسح.`,
-            R`[[aria-invalid]] بـ true أو false حسب حالته.`,
-            "رسالته تحته، وبتتمسح لوحدها لو بقى سليم.",
-            "قفلة.",
-            "الملخص يظهر لو فيه غلط.",
-            R`عنوان الملخص فيه عدد الأخطاء، عشان أول حاجة قارئ الشاشة يقولها لما يوصل للملخص «فيه 2 حاجات محتاجة تتصلح».`,
-            "لينك لكل حقل غلط باسمه من الـ label.",
-            "لو فيه غلط: الـ focus على أول حقل غلط ووقف هنا.",
-            "كله سليم: علّم إننا بنبعت.",
-            "الزرار يبان مقفول ويفضل ماسك الـ focus.",
-            R`[[try]] عشان لو الطلب فشل (النت قطع مثلًا) الكود اللي في [[finally]] يشتغل برضه.`,
-            R`الطلب نفسه: [[fetch]] لعنوان الـ [[action]] بـ POST، و [[new FormData(form)]] بيجمع كل حقل ليه name.`,
-            "...ومهما حصل (نجح أو فشل)...",
-            R`...افتح الإرسال تاني: [[sending = false]] عشان الضغطة الجاية تتقبل.`,
-            R`...ورجّع الزرار: شيل [[aria-disabled]] فقارئ الشاشة مبقاش يقول إنه مقفول.`,
-            "قفلة الـ finally.",
-            "قفلة الـ listener."
+            R`[[code .]]: افتح الفولدر الحالي في VS Code. النقطة هي الفولدر اللي الترمنال واقف فيه، فلازم تكون جوه [[rokn-books]].`,
+            R`[[!]] ثم Tab: Emmet بيكتب هيكل الصفحة: doctype و html و head (فيه charset و viewport و title) و body.`,
+            R`[[h1{text}]]: اسم العنصر وبين القوسين النص اللي جواه. بيطلع العنصر مفتوح ومقفول والنص في النص.`,
+            R`[[ul>li*3]]: [[>]] يعني جواه و [[*3]] يعني تلات مرات: قايمة فيها تلات عناصر فاضيين.`,
+            R`[[a:tel]]: نسخة جاهزة من اللينك للتليفون، والمؤشر واقف بعد [[+]] مستني الرقم.`,
+            R`[[Ctrl+S]]: اكتب الملف على الديسك. قبلها التعديل في المحرر بس، والنقطة على التاب بتقول كده.`,
+            R`[[Shift+Alt+F]]: Format Document. بيرتّب مسافات أول السطر في الملف كله من غير ما يغيّر الصفحة.`,
+            R`[[Ctrl+$__bt]]: يظهّر ويخبّي الترمنال اللي جوه المحرر، وبيبدأ من فولدر المشروع.`
           ],
-          sol: R`أول submit والحقول فاضية: الـ focus بيروح لحقل الاسم (أول حقل غلط)، وقارئ الشاشة بيقول اسمه و invalid والرسالة. الملخص بيظهر وفيه لينكين (الاسم والإيميل) والعنوان «فيه 2 حاجات محتاجة تتصلح». وكل حقل عليه [[aria-invalid="true"]] وتحته رسالة المتصفح.
+          sol: R`**عشر سطور.** (الحادي عشر السطر الفاضي اللي جوه الـ body.)
 
-بعد ما تملاهم صح وتدوس مرتين بسرعة: request واحد بس في Network، لأن الضغطة التانية لقت [[sending]] بـ true ورجعت. ولو لقيت اتنين يبقى الـ flag اتحط بعد الـ await مش قبله.
+| السطر | اتشرح فين |
+|---|---|
+| [[<!DOCTYPE html>]] | «<!doctype html>» |
+| [[<html lang="en">]] | «lang و dir» |
+| [[<head>]] و [[</head>]] | «<!doctype html>» |
+| [[<meta charset="UTF-8">]] | «<!doctype html>» |
+| [[<meta name="viewport" …>]] | «<!doctype html>» |
+| [[<title>]] | «<!doctype html>» |
+| [[<body>]] و [[</body>]] و [[</html>]] | «<!doctype html>» و «مقدمة HTML والـ Tags» |
 
-لو الـ focus مراحش للحقل: اتأكد إن الـ id في الـ HTML زي اللي في [[aria-describedby]]، وإن الـ [[<p>]] بتاع الغلط موجود (لو مش موجود [[getElementById]] بيرجع null والسكربت يقع).`,
-          solCode: R`<div id="summary" hidden>
-  <h2></h2>
-  <ul></ul>
-</div>
-<form id="signup" action="/api/signup" novalidate>
-  <label for="name">الاسم</label>
-  <input id="name" name="name" required aria-describedby="name-err">
-  <p id="name-err"></p>
-  <label for="email">الإيميل</label>
-  <input id="email" name="email" type="email" required aria-describedby="email-err">
-  <p id="email-err"></p>
-  <button type="submit">سجّل</button>
-</form>`
-        }
+فمفيش سطر في اللي Emmet كتبه انت مش فاهمه. هو بس وفّر عليك الكتابة.
+
+الفرق الوحيد عن اللي اتعلمته: Emmet بيكتب [[<!DOCTYPE html>]] بحروف كبيرة و [[UTF-8]] بحروف كبيرة و [[initial-scale=1.0]]. التلاتة زي [[<!doctype html>]] و [[utf-8]] و [[initial-scale=1]] بالظبط عند المتصفح. الدليل: بعتّ الهيكل زي ما Emmet كتبه للـ validator:
+
+~~~text الناتج
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+~~~
+
+(«بعتّه للـ validator» دي هتتعلمها في درس «View Source و validator».)`,
+          ref: [
+            { t: "VS Code Docs: Emmet in Visual Studio Code", url: "https://code.visualstudio.com/docs/languages/emmet" },
+            { t: "VS Code Docs: HTML in Visual Studio Code", url: "https://code.visualstudio.com/docs/languages/html" },
+            { t: "VS Code Docs: Basic editing (Save / Auto Save, Formatting)", url: "https://code.visualstudio.com/docs/editing/codebasics" },
+            { t: "VS Code Docs: User interface", url: "https://code.visualstudio.com/docs/editing/getting-started/userinterface" },
+            { t: "VS Code Docs: Terminal basics", url: "https://code.visualstudio.com/docs/terminal/basics" },
+            { t: "VS Code Docs: Command line interface", url: "https://code.visualstudio.com/docs/configure/command-line" },
+            { t: "Emmet Docs: Abbreviations syntax", url: "https://docs.emmet.io/abbreviations/syntax/" },
+          ],
+          pre: [
+            "css/mkdir و ni و touch",
+            { to: "css/lang و dir", why: R`عشان تعرف ليه بنغيّر [[lang="en"]] اللي Emmet بيكتبها` },
+            { to: "vscode/code .", why: R`الدرس الكامل للأمر [[code]] وخياراته` },
+            { to: "vscode/Emmet", why: R`باقي علامات Emmet والتركيبات الأطول` },
+          ]
+        },
+        {
+          cmd: "start index.html و Ctrl+R",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** افتح [[practice-site/index.html]] في Chrome بتلات طرق مختلفة (من الترمنال، وبالسحب من VS Code، وبـ [[Ctrl+O]] من جوه Chrome). في كل مرة انسخ العنوان من شريط العنوان وقارن.`, done: R`التلات عناوين متطابقين حرف بحرف وبيبدأوا بـ [[file:///]]، وعرفت إن الطريقة مش مهمة: المهم العنوان اللي في الآخر.`, sol: R`~~~powershell
+start index.html
+~~~
+
+~~~bash
+open index.html       # Mac
+xdg-open index.html   # Linux
+~~~
+
+والطريقتين التانيين بالماوس: اسحب [[index.html]] من الـ Explorer في VS Code وارميه على شباك Chrome. أو في Chrome دوس [[Ctrl+O]] (على الماك [[Cmd+O]]) واختار الملف.
+
+**ليه التلاتة واحد:** في كل الحالات انت بتدّي المتصفح مسار ملف على الديسك، وهو بيحوّله لعنوان [[file:///]]. الملف واحد، فالعنوان واحد.
+
+**الغلطة الشائعة:** تفتح الملف من نسخة تانية ليه (في Downloads مثلًا) وتعدّل في نسخة [[projects]]. العنوان هو اللي بيكشفها.
+
+~~~text الناتج (التلات مرات)
+file:///C:/Users/ali/projects/practice-site/index.html
+~~~
+
+[[start index.html]] اتشغّل هنا مرة واحدة على ويندوز. [[open]] و [[xdg-open]] من صفحات الـ man بتاعتهم.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ده عنوان من شريط العنوان عند زميلك:
+
+~~~text
+file:///C:/Users/ali/Desktop/New%20folder%20(2)/index%20-%20Copy.html
+~~~
+
+من غير ما تشوف جهازه: الملف اسمه إيه بالظبط؟ وفي أنهي فولدر؟ والصفحة دي ينفع يبعتلك لينكها تفتحها؟ وإيه اللي تنصحه بيه؟`, done: R`كتبت اسم الملف والفولدر بالمسافات الحقيقية، وقلت «لأ» وليه، واقترحت اسمين جداد.`, sol: R`**القراية:** كل [[%20]] مسافة. يبقى:
+
+~~~text
+الفولدر:  C:\Users\ali\Desktop\New folder (2)
+الملف:    index - Copy.html
+~~~
+
+**ينفع يبعت اللينك؟** لأ. [[file:///]] معناها «ملف على الديسك بتاع الجهاز ده». لو فتحته عندك، متصفحك هيدوّر على [[C:\Users\ali\Desktop\...]] على جهازك انت، ومش هيلاقيه. اللي بيتبعت هو الملف نفسه (أو لينك [[https://]] بعد ما الموقع يترفع).
+
+**النصيحة:**
+
+- الاسم [[New folder (2)]] و [[index - Copy]] معناهم إن فيه نسخ كتير من نفس الشغل، ومحدش عارف أنهي واحدة الأخيرة. فولدر واحد للمشروع باسم واضح: [[projects/my-site]].
+- والملف [[index.html]] من غير مسافات.
+- وبرّه سطح المكتب.
+
+**الغلطة الشائعة:** تعدّل في [[index.html]] والمتصفح فاتح [[index - Copy.html]]. وده أول سبب لـ «غيّرت ومفيش حاجة حصلت».` },
+            { lvl: 'تطبيق', t: R`**صلّح (محقق):** تلات ناس كل واحد بيقول «غيّرت العنوان في الصفحة ومفيش حاجة اتغيّرت في المتصفح». حدد سبب كل واحد من الدليل، وبالترتيب اللي في الدرس:
+
+١. **منى:** تاب الملف في VS Code عليه نقطة مكان الـ ×.
+٢. **كريم:** مفيش نقطة. شريط العنوان في Chrome آخره [[rokn-books/index.html]]، والملف اللي في VS Code لما وقف عليه بالماوس طلع مساره [[Downloads\rokn-books\index.html]].
+٣. **هدى:** مفيش نقطة، والمسارين واحد. هي غيّرت الكلام اللي جوه [[<title>]].`, done: R`كتبت لكل واحد: السبب، والفحص اللي كشفه، والتصليح في سطر. ومحدش فيهم سببه الكاش.`, sol: R`| مين | السبب | الفحص اللي كشفه | التصليح |
+|---|---|---|---|
+| منى | الملف مش محفوظ | الفحص ١: النقطة على التاب | [[Ctrl+S]] ثم [[Ctrl+R]] |
+| كريم | بيعدّل في نسخة والمتصفح فاتح نسخة تانية | الفحص ٢: قارن شريط العنوان بمسار الملف في المحرر | افتح في المحرر الفولدر اللي في شريط العنوان، وامسح النسخة الزيادة |
+| هدى | التعديل اتحفظ واتقرا، بس مكانه مش في الصفحة | الفحص ٤: [[<title>]] بيظهر على التاب فوق، مش جوه الصفحة | بصّي على التاب: الاسم اتغيّر فعلًا. العنوان اللي في الصفحة هو [[<h1>]] |
+
+**ليه الترتيب مهم:** الفحص الأول بياخد ثانية وبيحل أغلب الحالات. لو بدأت بالكاش (آخر فحص) هتضيّع وقت في حاجة تقريبًا مبتحصلش مع ملف HTML على [[file:///]].
+
+**الغلطة الشائعة:** تقفل المتصفح وتفتحه، أو تعيد كتابة الكود، قبل ما تبص على النقطة.
+
+~~~text القياس اللي الترتيب مبني عليه (Chrome 157، ملف على file:///)
+الملف اتغيّر على الديسك ومفيش reload:   الصفحة لسه القديمة
+بعد Ctrl+R عادي:                          الصفحة الجديدة
+~~~
+
+يعني [[Ctrl+R]] العادي بيقرا الملف من الديسك من جديد. لو الملف محفوظ والمسار صح، هتشوف التعديل.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** في شريط العنوان، امسح اسم الملف وسيب الفولدر بس (العنوان يخلص بـ [[practice-site/]]) ودوس Enter. إيه اللي ظهر؟ وبعدين اكتب اسم ملف مش موجود ([[practice-site/nope.html]]). وإيه اللي ظهر؟ ولو عندك Node: شغّل [[npx serve]] في نفس الفولدر واعمل نفس التجربتين على عنوان الـ [[http://]]. اكتب الأربع نتايج في جدول.`, done: R`الجدول فيه أربع خانات، وعرفت منه ليه الصفحة الرئيسية لازم اسمها [[index.html]].`, sol: R`~~~powershell
+npx serve -l tcp://127.0.0.1:8793 .
+~~~
+
+| | على [[file:///]] | على [[http://127.0.0.1:8793]] |
+|---|---|---|
+| عنوان الفولدر | صفحة عنوانها [[Index of C:\Users\ali\projects\practice-site\]] فيها قايمة بالملفات | الصفحة نفسها ([[index.html]]) |
+| ملف مش موجود | «Your file couldn’t be accessed» و [[ERR_FILE_NOT_FOUND]] | رد [[404]] من السيرفر |
+
+**ليه كده:** على [[file:///]] مفيش سيرفر: المتصفح بيفتح اللي طلبته بالحرف. طلبت فولدر، فعرضلك محتوى الفولدر. السيرفر عنده قاعدة: «لو الطلب فولدر، رجّع [[index.html]] اللي فيه». وعشان كده لما تكتب عنوان موقع من غير اسم ملف بتشوف صفحته الرئيسية، وعشان كده اسمها [[index.html]].
+
+**الغلطة الشائعة:** تسمّي الرئيسية [[home.html]] أو [[main.html]]. على جهازك هتشتغل (انت بتفتح الملف باسمه)، وبعد الرفع اللي يكتب عنوان الموقع هيلاقي قايمة ملفات أو 404.
+
+~~~text اللي السيرفر طبعه في الترمنال (serve، Node 24)
+ INFO  Accepting connections at http://127.0.0.1:8793
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 GET /
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 Returned 200 in 12 ms
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 GET /nope
+ HTTP  11/18/2026 6:35:29 PM 127.0.0.1 Returned 404 in 1 ms
+~~~
+
+[[200]] معناها «تمام، خد الصفحة» و [[404]] «مفيش حاجة بالاسم ده». (كورس «المتصفح و DevTools»، درس «Status codes».) وقّف السيرفر بـ [[Ctrl+C]].` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من صفحة إضافة Live Server في VS Code Marketplace (مش من الدرس): إيه الطرق اللي بتشغّل بيها السيرفر؟ وإيه اختصار الكيبورد اللي بيشغّله واللي بيوقّفه؟ ولو الفولدر مفيهوش ولا ملف HTML، هتشغّله إزاي؟`, done: R`كتبت أربع طرق تشغيل على الأقل، والاختصارين، وإجابة السؤال التالت من نص الصفحة.`, sol: R`**الإجابة (من صفحة الإضافة ritwickdey.LiveServer):**
+
+1. زرار **Go Live** في الـ Status Bar (تحت على اليمين). نفس الزرار بيوقّفه.
+2. كليك يمين على ملف HTML في الـ Explorer ثم **Open with Live Server**.
+3. كليك يمين جوه الملف المفتوح ونفس الاختيار.
+4. اختصار: [[Alt+L]] وبعده [[Alt+O]] للتشغيل، و [[Alt+L]] وبعده [[Alt+C]] للإيقاف (على الماك [[Cmd+L]] ثم [[Cmd+O]] و [[Cmd+L]] ثم [[Cmd+C]]).
+5. من الـ Command Palette ([[F1]] أو [[Ctrl+Shift+P]]): **Live Server: Open With Live Server** و **Live Server: Stop Live Server**.
+
+**ولو مفيش ملف HTML في الـ workspace:** الصفحة بتقول إنك لازم تستخدم الطريقة ٤ أو ٥ (الاختصار أو الـ Command Palette)، لأن الطرق التانية بتظهر مع ملفات HTML بس.
+
+**ليه التمرين ده:** أي إضافة أو أداة ليها صفحة بتقول بتشتغل إزاي. قرايتها بتاخد دقيقتين وبتغنيك عن فيديو ربع ساعة.
+
+**الغلطة الشائعة:** تدوّر على زرار Go Live ومتلاقيهوش، عشان فاتح ملف لوحده مش فولدر. الإضافة بتشتغل على الفولدر المفتوح ([[code .]]).
+
+الإجابة دي من صفحة الإضافة. مسطّبتهاش ولا شغّلتها في المعمل.` },
+          ],
+          title: "شوف الصفحة في Chrome: العنوان، واللفة، ولما مفيش حاجة بتتغيّر",
+          desc: R`[[start index.html]] (على الماك [[open]] وعلى لينكس [[xdg-open]]) بيفتح الصفحة في المتصفح. العنوان اللي هيظهر بيبدأ بـ [[file:///]]: يعني المتصفح بيقرا ملف من الديسك بتاعك، مش من سيرفر. وبعد كل تعديل: احفظ في المحرر، ودوس [[Ctrl+R]] في المتصفح.
+
+بنبدأ من اللي الدرس اللي فات خلص بيه: [[rokn-books/index.html]] مكتوب ومحفوظ ومفتوح في VS Code. هنفتحه في Chrome، ونقرا شريط العنوان، ونعدّل سطر ونشوفه بيتغيّر، ونتعلم الترتيب اللي تمشي عليه لما تعدّل ومتشوفش حاجة.
+
+وفي الآخر: السيرفر المحلي (Live Server أو [[npx serve]]) بيضيف إيه، وإمتى تحتاجه.`,
+          example: R`# Windows (PowerShell):
+start index.html
+# Mac:
+open index.html
+# Linux (Ubuntu):
+xdg-open index.html`,
+          try: R`افتح الصفحة. في VS Code غيّر كلمة في الـ [[<h1>]] **ومتحفظش**، وارجع للمتصفح ودوس [[Ctrl+R]]. اتغيّرت؟ دلوقتي احفظ ودوس [[Ctrl+R]] تاني. وبعدين رجّع الكلمة زي ما كانت واحفظ.`,
+          deep: {
+            why: R`الكود اللي في المحرر مش هو الصفحة: الصفحة هي اللي المتصفح بيبنيه لما يقرا الملف. ولحد ما تفتحها متعرفش كتبت إيه فعلًا. واللفة «عدّل، احفظ، Ctrl+R» هتعملها آلاف المرات، فلازم تبقى أوتوماتيك. وجملة «غيّرت ومفيش حاجة حصلت» هتقولها وهتسمعها كتير، وليها ترتيب فحص ثابت بيحلها في دقيقة.`,
+            how: R`الأمر [[start]] (واخواته) بيدّي الملف للنظام، والنظام بيفتحه بالبرنامج الافتراضي لنوعه. وملفات [[.html]] برنامجها الافتراضي هو المتصفح الأساسي عندك. المتصفح بيقرا الملف من الديسك مرة واحدة ويبني الصفحة في الذاكرة. بعد كده هو مش مراقب الملف: لو الملف اتغيّر، الصفحة المفتوحة بتفضل زي ما هي لحد ما تطلب منه يقرا تاني ([[Ctrl+R]]).
+
+وعشان كده فيه تلات نسخ من صفحتك في نفس اللحظة: اللي في المحرر (ممكن متكونش محفوظة)، واللي على الديسك، واللي المتصفح قراها آخر مرة. اللفة بتنقل التعديل من الأولى للتانية (الحفظ) ومن التانية للتالتة (الـ reload).`,
+            when: R`بعد كل تعديل عايز تشوفه. والسيرفر المحلي لما المشروع يحتاجه: الصفحات اللي في الوحدة دي كلها بتشتغل كاملة من [[file:///]]، والسيرفر بيبقى لازم لما تبدأ JavaScript بيحمّل ملفات.`,
+            mistakes: R`تدوس [[Ctrl+R]] من غير ما تحفظ. تعدّل في نسخة والمتصفح فاتح نسخة تانية. تبعت لحد لينك [[file:///]]. تفتكر إن المتصفح «مخزّن القديم» وتمسح الكاش، والمشكلة إن الملف مش محفوظ. وتفتح الملف بدبل كليك فيتفتح في متصفح غير اللي انت فاكره.`
+          },
+          teach: R`## الفكرة في سطرين
+
+المتصفح بيقرا ملفك من الديسك ويرسمه. هنفتح الملف، ونفهم العنوان اللي فوق، ونتعلم اللفة اللي بتتكرر مع كل تعديل.
+
+[[start index.html]] اتشغّل هنا مرة واحدة على Windows 11. القياسات من Chrome 157. [[open]] و [[xdg-open]] من صفحات الـ man بتاعتهم. Live Server من صفحته في VS Code Marketplace، و [[npx serve]] اتشغّل هنا (Node 24).
+
+---
+
+## ١. افتح الملف من الترمنال
+
+في الترمنال اللي جوه VS Code ([[Ctrl+$__bt]])، وانت في فولدر المشروع:
+
+~~~powershell
+start index.html
+~~~
+
+| النظام | الأمر | بيعمل إيه |
+|---|---|---|
+| ويندوز (PowerShell) | [[start index.html]] | [[start]] اختصار [[Start-Process]]: بيفتح الملف بالبرنامج الافتراضي لنوعه |
+| الماك | [[open index.html]] | نفس الفكرة: كأنك عملت دبل كليك على الملف |
+| لينكس | [[xdg-open index.html]] | بيفتح الملف بالتطبيق الافتراضي لسطح المكتب |
+
+الأمر مبيطبعش حاجة، والصفحة بتفتح في تاب جديد في **المتصفح الأساسي** عندك.
+
+### لو فتحت في متصفح غير Chrome
+
+الكورس بيستخدم Chrome عشان أدوات الفحص اللي في الدرس الجاي. عندك تلات طرق تانية، كلهم بيوصلوا لنفس النتيجة:
+
+- **السحب والرمي:** اسحب [[index.html]] من الـ Explorer في VS Code وارميه على شباك Chrome.
+- **من جوه Chrome:** [[Ctrl+O]] (على الماك [[Cmd+O]]) واختار الملف.
+- **دبل كليك** على الملف من مدير الملفات (بيفتح في المتصفح الأساسي برضه).
+
+---
+
+## ٢. اقرا شريط العنوان
+
+ده اللي مكتوب فوق:
+
+~~~text
+file:///C:/Users/ali/projects/rokn-books/index.html
+~~~
+
+فكّه حتة حتة:
+
+| الحتة | اسمها | معناها |
+|---|---|---|
+| [[file:]] | الـ scheme | الطريقة اللي المتصفح جاب بيها الصفحة: «اقرا ملف من الديسك» |
+| [[//]] | | بعدها المفروض اسم الجهاز اللي عليه الملف |
+| (فاضي) | الـ host | مفيش جهاز تاني: الملف على جهازك. عشان كده الشرطتين بقوا تلاتة |
+| [[/C:/Users/ali/projects/rokn-books/]] | المسار | نفس مسار الفولدر، بس الشرطة مايلة لقدام |
+| [[index.html]] | الملف | |
+
+على الماك العنوان بيبقى [[file:///Users/ali/projects/rokn-books/index.html]].
+
+والقياس من المتصفح نفسه:
+
+~~~text Chrome 157
+location.protocol = "file:"
+location.host     = ""          (فاضي)
+~~~
+
+### وإيه الفرق عن [[http://]]؟
+
+المواقع اللي بتفتحها كل يوم عنوانها [[https://example.test/about.html]]. الفرق في أول كلمة:
+
+| | [[file:///]] | [[http://]] و [[https://]] |
+|---|---|---|
+| مين بيجيب الصفحة | المتصفح بيقرا الملف من الديسك بنفسه | برنامج اسمه سيرفر بيبعتها للمتصفح |
+| اللي بعد الشرطتين | فاضي | اسم الجهاز اللي عليه السيرفر ([[example.test]]) |
+| مين يقدر يفتح العنوان | انت بس، على الجهاز ده | أي حد يوصل للسيرفر |
+| لو طلبت فولدر | قايمة بالملفات اللي فيه | [[index.html]] اللي فيه |
+
+فالعنوان ده مينفعش تبعته لحد: هو مسار على الديسك بتاعك. اللي بيخلي الصفحة توصل للناس هو إنها تتحط على سيرفر، وده موضوع النشر بعدين.
+
+وده شكل اللي بيظهر لما المسار غلط (حرف ناقص، أو الملف اتنقل):
+
+~~~text صفحة الخطأ في Chrome 157
+Your file couldn’t be accessed
+It may have been moved, edited, or deleted.
+ERR_FILE_NOT_FOUND
+~~~
+
+---
+
+## ٣. اللفة: عدّل، احفظ، [[Ctrl+R]]
+
+حط VS Code والمتصفح جنب بعض (على ويندوز: مفتاح Windows مع السهم الشمال لواحد واليمين للتاني).
+
+**عدّل:** في VS Code، بعد الفقرة الأولى زوّد سطر:
+
+~~~html
+    <p>العنوان: ٧ شارع النخيل، جنب الصيدلية.</p>
+~~~
+
+**احفظ:** [[Ctrl+S]]. النقطة اللي على التاب تختفي.
+
+**حمّل من جديد:** دوس على شباك Chrome ثم [[Ctrl+R]] (على الماك [[Cmd+R]]. و [[F5]] بيعمل نفس الحاجة). الـ R من reload.
+
+~~~live 310 330 index.html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الركن</title>
+</head>
+<body>
+    <h1>مكتبة الركن</h1>
+    <p>مكتبة صغيرة على ناصية شارع النخيل: كتب جديدة ومستعملة، وركن للأطفال.</p>
+    <p>العنوان: ٧ شارع النخيل، جنب الصيدلية.</p>
+    <h2>مواعيد العمل</h2>
+    <ul>
+        <li>من السبت للخميس: ١٠ الصبح لـ ٩ بالليل</li>
+        <li>الجمعة: ٤ العصر لـ ٩ بالليل</li>
+        <li>أول يوم في كل شهر: جرد، والمكتبة مقفولة</li>
+    </ul>
+    <p><a href="tel:+200000000000">كلّمنا</a></p>
+</body>
+</html>
+~~~
+
+السطر الجديد ظهر تحت الفقرة الأولى.
+
+**ليه لازم [[Ctrl+R]]؟** لأن المتصفح قرا الملف مرة واحدة ومبيراقبوش. قسته:
+
+~~~text Chrome 157، ملف على file:///
+١. أول فتح:                               الصفحة = النسخة القديمة
+٢. الملف اتغيّر على الديسك، من غير reload:   الصفحة = النسخة القديمة
+٣. بعد Ctrl+R:                            الصفحة = النسخة الجديدة
+~~~
+
+---
+
+## ٤. «غيّرت ومفيش حاجة حصلت»
+
+هتحصلك النهارده. امشي على الترتيب ده، من الأسرع والأشيع للأندر، ومتنطّش:
+
+### الفحص ١: الملف محفوظ؟
+
+بصّ على تاب الملف في VS Code. لو فيه نقطة مكان الـ ×: مش محفوظ. [[Ctrl+S]] ثم [[Ctrl+R]]. ده السبب في أغلب المرات.
+
+### الفحص ٢: المتصفح فاتح نفس الملف اللي بتعدّل فيه؟
+
+قارن حاجتين:
+
+- شريط العنوان في المتصفح.
+- مسار الملف في المحرر (وقّف الماوس على التاب، أو اكتب [[pwd]] في الترمنال اللي جوه المحرر).
+
+لو مختلفين (نسخة في Downloads ونسخة في projects، أو [[about.html]] و [[index.html]]): انت بتعدّل في ملف والمتصفح بيعرض التاني.
+
+### الفحص ٣: عملت reload للتاب الصح؟
+
+لو فاتح الصفحة في تابين، أو دوست [[Ctrl+R]] والمؤشر لسه في VS Code، الـ reload مرحش للمتصفح. دوس على الصفحة الأول.
+
+### الفحص ٤: التعديل وصل، بس مش في المكان اللي بتبص فيه؟
+
+دوس [[Ctrl+U]] في المتصفح: ده بيعرض الملف زي ما المتصفح قراه (الدرس الجاي). دوّر على تعديلك:
+
+- **موجود:** الملف اتقرا صح. المشكلة في الـ HTML: غيّرت [[<title>]] (بيظهر على التاب مش في الصفحة)، أو كتبت جوه الـ [[<head>]]، أو فيه tag مش مقفول.
+- **مش موجود:** ارجع للفحص ١ و ٢.
+
+### الفحص ٥: الكاش
+
+آخر احتمال: [[Ctrl+Shift+R]] (hard reload: حمّل من غير النسخ المخزنة). مع ملف HTML على [[file:///]] ده تقريبًا مبيحصلش، والقياس اللي فوق بيقول إن [[Ctrl+R]] العادي بيقرا من الديسك. هتحتاجه بعدين مع ملفات CSS والصور لما الصفحة تيجي من سيرفر. الدرس الكامل: كورس «المتصفح و DevTools»، درس «Hard Reload».
+
+| الترتيب | السؤال | بتعرف منين |
+|---|---|---|
+| ١ | محفوظ؟ | النقطة على التاب |
+| ٢ | نفس الملف؟ | شريط العنوان قصاد مسار الملف |
+| ٣ | reload للتاب الصح؟ | دوس على الصفحة ثم [[Ctrl+R]] |
+| ٤ | التعديل في الملف المقري؟ | [[Ctrl+U]] |
+| ٥ | كاش؟ | [[Ctrl+Shift+R]] |
+
+---
+
+## ٥. الخطوة الجاية: سيرفر محلي
+
+كل اللي فات شغال من غير أي تسطيب، وكفاية لكل صفحات الوحدة دي. بس فيه طريقة تانية هتقابلها في كل شرح على النت: تشغّل سيرفر صغير على جهازك يبعت ملفاتك للمتصفح، فالعنوان يبقى [[http://]] بدل [[file:///]].
+
+### Live Server (إضافة في VS Code)
+
+إضافة بتتسطّب من جوه VS Code (أيقونة Extensions في الـ Activity Bar، ودوّر على Live Server). بعد التسطيب:
+
+- زرار **Go Live** بيظهر في الـ Status Bar تحت. دوس عليه والفولدر مفتوح.
+- أو كليك يمين على [[index.html]] ثم **Open with Live Server**.
+
+المتصفح بيفتح على عنوان شبه ده:
+
+~~~text
+http://127.0.0.1:5500/index.html
+~~~
+
+- [[127.0.0.1]] رقم معناه «الجهاز ده نفسه» (واسمه التاني [[localhost]]).
+- [[5500]] البورت: رقم الباب اللي السيرفر واقف عليه. 5500 هو الافتراضي في إعدادات الإضافة.
+
+**اللي بيضيفه:** الـ live reload. كل ما تحفظ، الصفحة بتتحمّل لوحدها من غير [[Ctrl+R]].
+
+(الكلام عن Live Server من صفحة الإضافة ووثيقة إعداداتها. متسطّبتش هنا. و MDN بترشّح إضافة تانية من مايكروسوفت اسمها Live Preview بتعمل نفس الشغل.)
+
+### [[npx serve]] (لو عندك Node)
+
+~~~powershell
+npx serve -l tcp://127.0.0.1:8793 .
+~~~
+
+- [[npx]] بييجي مع Node: بيشغّل أداة من غير ما تسطّبها على الجهاز. أول مرة هيسألك يحمّلها ولا لأ.
+- [[serve]] سيرفر ملفات بسيط.
+- [[-l tcp://127.0.0.1:8793]] اسمع على الجهاز ده بس، على بورت 8793.
+- [[.]] الفولدر الحالي.
+
+~~~text الناتج (Node 24)
+ INFO  Accepting connections at http://127.0.0.1:8793
+~~~
+
+افتح العنوان ده في Chrome: نفس الصفحة، بس من سيرفر. الترمنال بيفضل مشغول طول ما السيرفر شغال، وبتوقّفه بـ [[Ctrl+C]]. و [[serve]] مفيهوش live reload: لسه بتدوس [[Ctrl+R]].
+
+ملحوظة هتشوفها: [[serve]] بيشيل [[.html]] من العنوان. لو فتحت [[/about.html]] هيحوّلك لـ [[/about]]. طبيعي.
+
+### أحتاجه إمتى؟
+
+| | [[file:///]] | سيرفر محلي |
+|---|---|---|
+| تسطيب | ولا حاجة | إضافة، أو Node |
+| صفحات HTML و CSS | شغالة كاملة | شغالة كاملة |
+| تحميل تلقائي بعد الحفظ | لأ | مع Live Server |
+| JavaScript بيحمّل ملفات تانية | المتصفح بيمنع حاجات | شغال |
+
+فدلوقتي هو راحة مش ضرورة. وهيبقى ضرورة في كورس JavaScript. السبب بالتفصيل في كورس «المتصفح و DevTools»، درس «سيرفر محلي بدل file://».
+
+---
+
+## الخلاصة
+
+- [[start index.html]] (أو [[open]] أو [[xdg-open]]) بيفتح الصفحة. ولو مش Chrome: اسحب الملف عليه.
+- [[file:///]] = ملف من الديسك بتاعك. مينفعش يتبعت.
+- اللفة: عدّل، [[Ctrl+S]]، [[Ctrl+R]].
+- مفيش حاجة اتغيّرت؟ النقطة، ثم العنوان، ثم التاب، ثم [[Ctrl+U]]، وآخر حاجة الكاش.
+
+**الفولدر دلوقتي:** [[rokn-books/index.html]] فيه سطر العنوان الجديد، ومفتوح في VS Code وفي Chrome جنب بعض. الدرس الجاي بيفحصه.`,
+          lines: [
+            R`[[start index.html]]: [[start]] في PowerShell اختصار [[Start-Process]]. بيدّي الملف لويندوز، وويندوز بيفتحه بالبرنامج الافتراضي لملفات [[.html]]: المتصفح الأساسي.`,
+            R`[[open index.html]]: نفس الشغل على الماك: بيفتح الملف بالتطبيق الافتراضي، كأنك عملت عليه دبل كليك.`,
+            R`[[xdg-open index.html]]: نفس الشغل على لينكس: بيفتح الملف بالتطبيق اللي سطح المكتب محدده لنوعه.`
+          ],
+          sol: R`| الخطوة | اللي في المحرر | اللي على الديسك | اللي في المتصفح بعد [[Ctrl+R]] |
+|---|---|---|---|
+| غيّرت ومحفظتش | الكلمة الجديدة (وعلى التاب نقطة) | القديمة | القديمة |
+| حفظت | الجديدة | الجديدة | الجديدة |
+
+**في الأولى مفيش حاجة اتغيّرت،** مع إنك دوست [[Ctrl+R]]. المتصفح عمل اللي عليه: قرا الملف من الديسك. والملف على الديسك لسه القديم، لأن التعديل كان في ذاكرة المحرر بس.
+
+دي أهم حاجة في الدرس: فيه تلات نسخ، والحفظ هو اللي بينقل من الأولى للتانية.
+
+~~~text القياس (Chrome 157)
+الملف اتغيّر على الديسك ومفيش reload:   الصفحة القديمة
+بعد Ctrl+R:                              الصفحة الجديدة
+~~~`,
+          ref: [
+            { t: "MDN: How do you set up a local testing server?", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Tools_and_setup/set_up_a_local_testing_server" },
+            { t: "VS Code Marketplace: Live Server", url: "https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer" },
+            { t: "Live Server: settings", url: "https://github.com/ritwickdey/vscode-live-server/blob/master/docs/settings.md" },
+            { t: "macOS: open (man page)", url: "https://ss64.com/mac/open.html" },
+            { t: "freedesktop.org: xdg-open", url: "https://portland.freedesktop.org/doc/xdg-open.html" },
+          ],
+          pre: [
+            "css/code . و Emmet !",
+            { to: "web/Hard Reload", why: R`الدرس الكامل للكاش و [[Ctrl+Shift+R]]` },
+            { to: "web/سيرفر محلي بدل file://", why: R`ليه [[file:///]] بيمنع حاجات، وطرق تانية لتشغيل سيرفر` },
+          ]
+        },
+        {
+          cmd: "View Source و validator",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** الـ validator رد على صفحة بالرسالة دي:
+
+~~~text
+Error: End tag “h3” seen, but there were open elements.
+From line 9, column 18; to line 9, column 22
+~~~
+
+والسطر ٩ في الملف هو [[<h2>بنبيع إيه</h3>]]. اقرا الرسالة حتة حتة: نوعها إيه؟ بتشاور على أنهي حروف بالظبط؟ والتصليح إيه؟ وهل الصفحة كان شكلها بايظ؟`, done: R`قلت إن الحروف من ١٨ لـ ٢٢ هي [[</h3>]] نفسها، وإن التصليح حرف واحد، وإن الشكل كان سليم ومع ذلك دي غلطة.`, sol: R`| الحتة | معناها |
+|---|---|
+| [[Error]] | غلطة لازم تتصلّح (النوع التاني [[Warning]]: تنبيه) |
+| [[End tag “h3” seen]] | لقيت tag قفل لـ h3 |
+| [[but there were open elements]] | وكان لسه فيه عنصر مفتوح مش من نوعه |
+| [[line 9, column 18]] لحد [[column 22]] | مكانها: السطر ٩، من الحرف ١٨ للحرف ٢٢. دول خمس حروف: [[</h3>]] |
+
+**التصليح:** [[</h3>]] تبقى [[</h2>]]. اللي بيتفتح بـ [[h2]] بيتقفل بـ [[h2]].
+
+**الشكل كان بايظ؟** لأ. المتصفح لما يلاقي قفلة عنوان أي رقم وفيه عنوان مفتوح، بيقفل العنوان المفتوح ويكمّل. القياس:
+
+~~~text Chrome 157
+عدد h2 في Elements = 1     عدد h3 = 0     العنوان ظاهر عادي
+~~~
+
+**ليه نصلّحها والشكل سليم؟** لأن ده تسامح من المتصفح مش قاعدة تعتمد عليها: الغلطة اللي جنبها ممكن متعديش بنفس السهولة. والـ validator هو الوحيد اللي قالك عليها.
+
+**الغلطة الشائعة:** تعدّ الحروف من أول السطر من غير ما تحسب المسافات اللي في أوله. الأربع مسافات محسوبين.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الصفحة دي ناقصها قفلات كتير: مفيش ولا [[</li>]] ومفيش [[</p>]]. الـ validator هيطلّع كام error؟ توقّع، وبعدين الصقها فيه. وافتحها وبصّ في Elements.
+
+~~~html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تجربة</title>
+</head>
+<body>
+    <ul>
+        <li>شاي
+        <li>قهوة
+        <li>ينسون
+    </ul>
+    <p>المشاريب السخنة بس.
+</body>
+</html>
+~~~`, done: R`الـ validator قال مفيش أخطاء، و Elements فيه تلات [[li]] وكل واحد مقفول، وعرفت الفرق بين «قفلة اختيارية» و «غلطة».`, sol: R`**صفر.**
+
+~~~text الناتج
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+~~~
+
+**ليه:** مواصفة HTML بتسمح إن [[</li>]] و [[</p>]] يتسابوا في حالات محددة (القفلة «اختيارية»). المتصفح عارف إن [[<li>]] جديد معناه إن اللي قبله خلص. وده اللي بناه:
+
+~~~html
+<ul>
+    <li>شاي</li>
+    <li>قهوة</li>
+    <li>ينسون</li>
+</ul>
+<p>المشاريب السخنة بس.</p>
+~~~
+
+~~~text Chrome 157
+li: 3   p: 1   كلهم مقفولين في Elements
+~~~
+
+**يبقى أسيب القفلات؟** لأ، اكتبها دايمًا. القفلة الاختيارية ليها شروط، وانت مش حافظها. [[<p>]] مثلًا بيتقفل لوحده قبل [[<ul>]] (وده اللي عمل الفقرة الفاضية في الدرس)، بس [[<h2>]] و [[<a>]] و [[<strong>]] مبيتقفلوش لوحدهم خالص. لما تكتب كل قفلة، الكود بيقول اللي انت قاصده، مش اللي المتصفح خمّنه.
+
+**الغلطة الشائعة:** تفتكر إن الـ validator «مش شغال» عشان مطلّعش حاجة. هو شغال: الصفحة دي قانونية فعلًا.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الصق الصفحة دي في [[practice-site/index.html]] (فوق اللي فيه) وافتحها. فيها أربع مشاكل. استخدم الأدوات بالترتيب (العين، ثم Elements، ثم الـ validator) وصلّح لحد ما الـ validator يقول مفيش أخطاء ولا تنبيهات.
+
+~~~html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>كشك الجرايد</h1>
+    <h2>بنبيع إيه</h3>
+    <ul>
+        <li>جرايد ومجلات</li>
+        <li>كروت شحن</li>
+    </ul>
+    <p>للطلبات: <a href="tel:+200000000000>كلّمنا</a></p>
+    <p>العنوان: ميدان المحطة.</p>
+</body>
+</html>
+~~~`, done: R`الـ validator رجّع «valid» من غير أي [[Error]] ولا [[Warning]]، وآخر فقرتين ظاهرين، واللينك شغال، والتاب مكتوب عليه اسم الصفحة.`, work: { h: 260, start: R`<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>كشك الجرايد</h1>
+    <h2>بنبيع إيه</h3>
+    <ul>
+        <li>جرايد ومجلات</li>
+        <li>كروت شحن</li>
+    </ul>
+    <p>للطلبات: <a href="tel:+200000000000>كلّمنا</a></p>
+    <p>العنوان: ميدان المحطة.</p>
+</body>
+</html>`, checks: [
+              { say: R`[[<html>]] عليه [[lang="ar"]]`, q: "html[lang=\"ar\"]" },
+              { say: R`في الـ [[<head>]] [[<title>]] فيه اسم الصفحة`, q: "head > title", has: "كشك" },
+              { say: R`العنوان الفرعي «بنبيع إيه» مفتوح بـ [[<h2>]] ومقفول بـ [[</h2>]]`, q: "h2", has: "بنبيع", src: "</h2>" },
+              { say: R`لينك «كلّمنا» اتقفلت علامة التنصيص بتاعته`, q: "a[href^=\"tel:\"]", has: "كلّمنا" },
+              { say: R`الفقرة الأخيرة «العنوان: ميدان المحطة» ظهرت`, q: "p", has: "ميدان المحطة" },
+            ] }, sol: R`**١. بالعين:** الفقرة الأخيرة («العنوان: ميدان المحطة») مش موجودة، وكلمة «كلّمنا» مش موجودة، والكلام بادئ من الشمال، والتاب مكتوب عليه اسم الملف.
+
+**٢. في Elements:** آخر حاجة في الـ body هي [[<p>للطلبات: </p>]]. كل اللي بعدها اختفى.
+
+~~~text Chrome 157، قبل التصليح
+title = (فاضي)   lang = (فاضي)   direction = ltr
+p: 1 («للطلبات:»)   a: 0
+~~~
+
+**٣. الـ validator:**
+
+~~~text الناتج قبل التصليح
+Error: Element “head” is missing a required instance of child element “title”.
+From line 6, column 1; to line 6, column 7
+Error: End tag “h3” seen, but there were open elements.
+From line 9, column 18; to line 9, column 22
+Error: End of file reached when inside an attribute value. Ignoring tag.
+At line 17, column 8
+Warning: Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.
+From line 1, column 16; to line 2, column 6
+There were errors. (Tried in the text/html mode.)
+~~~
+
+| الرسالة | الغلطة | التصليح |
+|---|---|---|
+| [[missing … “title”]] | مفيش [[<title>]] في الـ head | زوّد [[<title>كشك الجرايد</title>]] |
+| [[End tag “h3” seen]] | [[<h2>]] مقفول بـ [[</h3>]] | [[</h2>]] |
+| [[End of file reached when inside an attribute value]] | علامة التنصيص بتاعة الـ [[href]] مش مقفولة، فالمتصفح اعتبر كل اللي بعدها لحد آخر الملف جزء من قيمة الـ attribute | اقفلها: [[href="tel:+200000000000"]] |
+| [[Consider adding a “lang”]] (تنبيه) | [[<html>]] من غير [[lang]] | [[<html lang="ar" dir="rtl">]] |
+
+لاحظ الرسالة التالتة: بتشاور على السطر ١٧ (آخر الملف)، والغلطة الحقيقية في السطر ١٤. الـ validator بيقول فين **اكتشف** المشكلة. لما الرسالة تشاور على آخر الملف، دوّر لفوق على حاجة مفتوحة ومتقفلتش.
+
+**بعد التصليح:**
+
+~~~live 260 260 index.html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كشك الجرايد</title>
+</head>
+<body>
+    <h1>كشك الجرايد</h1>
+    <h2>بنبيع إيه</h2>
+    <ul>
+        <li>جرايد ومجلات</li>
+        <li>كروت شحن</li>
+    </ul>
+    <p>للطلبات: <a href="tel:+200000000000">كلّمنا</a></p>
+    <p>العنوان: ميدان المحطة.</p>
+</body>
+</html>
+~~~
+
+**الغلطة الشائعة:** تصلّح اللي ظاهر بس (الفقرة المختفية) وتقف. غلطة الـ [[</h3>]] والـ [[title]] مكنوش ظاهرين في الصفحة خالص.
+
+~~~text الناتج بعد التصليح
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+p: 2   a: 1   title = كشك الجرايد   عرض 360: scrollWidth = 360
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** في [[practice-site/index.html]] (النسخة المتصلّحة)، افتح Device Toolbar على عرض 360. وبعدين امسح سطر الـ [[<meta name="viewport" …>]] واحفظ واعمل reload. إيه اللي اتغيّر في الشكل؟ اكتب في Console الأمر [[innerWidth]] في الحالتين وسجّل الرقمين. وبعدين رجّع السطر.`, done: R`الرقمين 360 و 980، وشفت الصفحة «بتبعد» والخط بيصغر، ورجّعت السطر والرقم رجع 360.`, sol: R`**الخطوات:** [[F12]] ثم [[Ctrl+Shift+M]]. من قايمة Dimensions اختار Responsive، واكتب 360 في خانة العرض. ودوس على تاب Console في DevTools واكتب:
+
+~~~text
+innerWidth
+~~~
+
+[[innerWidth]] بيرجّع عرض المساحة اللي الصفحة بترسم عليها، بالبيكسل.
+
+| | [[innerWidth]] | الشكل |
+|---|---|---|
+| السطر موجود | 360 | الخط بحجمه الطبيعي، والسطور بتلف جوه الشاشة |
+| السطر متشال | 980 | الصفحة كلها متصغّرة كأنك بتبص على شاشة كمبيوتر من بعيد |
+
+**ليه:** الموبايل بيفترض إن أي صفحة معمولة لشاشة عرضها 980. فبيرسمها على 980 وبيصغّرها عشان تدخل في الـ 360. سطر الـ viewport بيقوله «اعرضني على عرضك الحقيقي». (شرحه في درس «<!doctype html>».)
+
+**ليه التمرين ده هنا:** ده سطر Emmet بيكتبه لوحده، فمش هتنساه. بس لو نسخت صفحة قديمة من غيره، ده أول حاجة تفحصها على عرض الموبايل، ومش هتبان خالص على شاشة الكمبيوتر العادية.
+
+**الغلطة الشائعة:** تصغّر شباك المتصفح بالماوس بدل Device Toolbar. الشباك الصغير مبيتصرفش زي الموبايل: بيفضل يرسم على عرضه الحقيقي حتى من غير سطر الـ viewport، فالمشكلة مبتظهرش.
+
+~~~text القياس (Chrome 157، محاكاة موبايل بعرض 360)
+مع viewport:      innerWidth = 360   scrollWidth = 360
+من غير viewport:  innerWidth = 980   scrollWidth = 980
+~~~` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** افحص الصفحة من الترمنال بدل ما تلصقها في الموقع. جوه [[rokn-books]] ابعت [[index.html]] للـ validator بـ [[curl]]، مرة بـ [[out=text]] ومرة بـ [[out=gnu]]. إيه الفرق بين الشكلين؟ وبعدين (على النسخة اللي فيها الغلطتين بتوع الدرس، لو لسه عندك، أو ارجعلها مؤقتًا) طلّع **عدد** الأخطاء برقم واحد.`, done: R`شغّلت الأمر مرتين وشفت الشكلين، وطلّعت الرقم 6 من النسخة البايظة، والنسخة السليمة بترجّع جملة «valid».`, sol: R`~~~bash
+curl -s -H "Content-Type: text/html; charset=utf-8" --data-binary @index.html "https://html5.validator.nu/?out=gnu"
+~~~
+
+~~~powershell
+curl.exe -s -H "Content-Type: text/html; charset=utf-8" --data-binary "@index.html" "https://html5.validator.nu/?out=gnu"
+~~~
+
+**كل حتة:**
+
+- [[curl]] برنامج بيبعت طلبات للنت من الترمنال. في PowerShell اكتبه [[curl.exe]]: في Windows PowerShell 5.1 كلمة [[curl]] لوحدها اسم مستعار لأمر تاني.
+- [[-s]] من silent: متطبعش شريط التحميل.
+- [[-H "Content-Type: text/html; charset=utf-8"]] بيقول للخدمة «اللي جايلك HTML، وترميزه UTF-8». من غيره العربي بيتقري غلط.
+- [[--data-binary @index.html]] ابعت محتوى الملف ده زي ما هو. علامة [[@]] معناها «اقرا من ملف».
+- [[?out=gnu]] شكل الرد. [[text]] للقراية، و [[gnu]] سطر لكل رسالة.
+
+~~~text out=gnu على النسخة البايظة
+:24.5-24.8: error: No “p” element in scope but a “p” end tag seen.
+:25.20-25.23: error: Heading cannot be a child of another heading.
+:26.5-26.7: error: Element “p” not allowed as child of element “h2” in this context. (Suppressing further errors from this subtree.)
+:27.5-27.7: error: Element “p” not allowed as child of element “h2” in this context. (Suppressing further errors from this subtree.)
+:28.1-28.7: error: End tag for  “body” seen, but there were unclosed elements.
+:25.20-25.23: error: Unclosed element “h2”.
+~~~
+
+**الفرق:** نفس الرسايل. في [[gnu]] كل رسالة في سطر واحد بيبدأ بالمكان ([[24.5-24.8]] يعني من السطر ٢٤ الحرف ٥ للسطر ٢٤ الحرف ٨)، فسهل تعدّها وتدوّر فيها.
+
+**العدد:**
+
+~~~bash
+curl -s -H "Content-Type: text/html; charset=utf-8" --data-binary @index.html "https://html5.validator.nu/?out=gnu" | grep -c ": error:"
+~~~
+
+~~~powershell
+curl.exe -s -H "Content-Type: text/html; charset=utf-8" --data-binary "@index.html" "https://html5.validator.nu/?out=gnu" | Select-String ": error:" | Measure-Object | ForEach-Object Count
+~~~
+
+علامة [[|]] بتاخد ناتج الأمر اللي قبلها وتدّيه للي بعدها. [[grep -c]] بيعدّ السطور اللي فيها النص ده، و [[Select-String]] مع [[Measure-Object]] بيعملوا نفس الحاجة في PowerShell.
+
+~~~text الناتج
+6
+~~~
+
+**الغلطة الشائعة:** تبعت ملف فيه بيانات حقيقية (أسامي عملا، أرقام) لخدمة عامة. اللي بتبعته هنا صفحة تمرين، وده تمام. أي حاجة خاصة متتبعتش.
+
+الأوامر اتشغّلت في Git Bash و PowerShell 7.6 و 5.1 على الخدمة العامة [[html5.validator.nu]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك بيقول «الصفحة فاتحة قدامي وشكلها تمام، ليه أفحص؟». رد عليه في تلات سطور، كل سطر بدليل من الدرس ده (رقم أو رسالة)، من غير كلمة «المفروض».`, done: R`التلات سطور فيهم: غلطة مبتبانش بالعين، وفرق بين الملف والشجرة، وحاجة مبتبانش غير على عرض الموبايل.`, sol: R`**إجابة نموذجية:**
+
+1. المتصفح مبيقولش: صفحة فيها ٦ أخطاء عند الـ validator فتحت من غير ولا رسالة، و Console كان فاضي.
+2. اللي شايفه مش اللي كتبته: كتبت ٥ فقرات والمتصفح بنى ٦، واحدة منهم فاضية. دي بتبان في Elements بس.
+3. شكلها تمام **على شاشتك**: من غير سطر الـ viewport الصفحة بتترسم على 980 بدل 360 على الموبايل، وده مبيبانش غير في Device Toolbar.
+
+**ليه التلاتة دول:** كل سطر بيقابل أداة: الـ validator، و Elements، و Device Toolbar. «شكلها تمام» بتغطي اللي العين بتشوفه على شاشة واحدة، والأدوات بتغطي الباقي.` },
+          ],
+          title: "افحص شغلك: View Source و Elements وعرض 360 و Console والـ validator",
+          desc: R`المتصفح مبيقولش إن الـ HTML فيه غلطة: بيصلّحها على طريقته ويعرض الصفحة. فالفحص شغلك انت، وليه أربع أدوات: View Source ([[Ctrl+U]]) بيوريك اللي كتبته، و Elements ([[F12]]) بيوريك اللي المتصفح بناه، و Device Toolbar ([[Ctrl+Shift+M]]) بيوريك الصفحة على عرض موبايل، والـ HTML validator بيقولك كل غلطة بسطرها.
+
+بنبدأ من صفحة المكتبة اللي الدرس اللي فات خلص بيها. هنزوّد عليها قسمين بسرعة ونغلط غلطتين زي ما أي حد بيغلط، ونستخدم الأدوات عشان نلاقيهم ونصلّحهم. والدرس بيخلص والصفحة عدّت من الـ validator.
+
+شرح DevTools الكامل في كورس «المتصفح و DevTools». هنا بناخد منه اللي يخص صفحة HTML.`,
+          example: R`Ctrl+U                 View page source (Mac: Cmd+Option+U)
+F12                    Open DevTools (Mac: Cmd+Option+I)
+Ctrl+Shift+C           Pick an element on the page (Mac: Cmd+Option+C)
+Ctrl+Shift+M           Device toolbar, with DevTools open (Mac: Cmd+Shift+M)
+Ctrl+Shift+J           Open the Console (Mac: Cmd+Option+J)
+validator.w3.org/nu    Check by: text input, paste the page, Check`,
+          try: R`على الصفحة بعد ما تصلّحها: افتح Elements، ودوس على سطر الـ [[<h1>]] ودوس Delete. وبعدين دبل كليك على [[rtl]] في أول سطر واكتب [[ltr]] ودوس Enter. الصفحة اتغيّرت؟ دلوقتي دوس [[Ctrl+R]]. إيه اللي حصل؟ وافتح الملف في VS Code: اتغيّر؟`,
+          flag: "keys",
+          deep: {
+            why: R`في لغة برمجة، الغلطة بتوقّف البرنامج وبتطلّع رسالة. HTML مش كده: المتصفح مصمم إنه يعرض أي حاجة مهما كانت بايظة، فبيخمّن قصدك ويكمّل. التخمين ده أحيانًا صح، وأحيانًا بيمسح نص صفحتك، وأحيانًا بيسيب حاجة غلط مبتبانش غير لما تكتب CSS أو لما قارئ شاشة يعدّي عليها. فمفيش حد هيقولك غير الأدوات دي.`,
+            how: R`المتصفح بيقرا نص الملف حرف حرف ويبني منه شجرة العناصر (الـ DOM) في الذاكرة، وبيرسم الشجرة مش الملف. ولما النص يخالف القواعد (فقرة جواها قايمة، عنوان مش مقفول) فيه قواعد تصليح مكتوبة في مواصفة HTML بتقول يعمل إيه بالظبط، فكل المتصفحات بتصلّح بنفس الطريقة.
+
+View Source بيعرض النص. Elements بيعرض الشجرة. لو الاتنين مختلفين في صفحة مفيهاش JavaScript، يبقى المتصفح صلّح حاجة، يعني فيه غلطة.
+
+والـ validator برنامج بيقرا النص بنفس قواعد المتصفح، بس بدل ما يصلّح ساكت بيكتب رسالة عن كل مخالفة.`,
+            when: R`الـ validator: قبل ما تقول «خلصت» على أي صفحة، وأول حاجة لما الصفحة تتصرف غريب. Elements: لما الشكل مش زي ما متوقع. عرض 360: كل صفحة، لأن أغلب الزوار من الموبايل. Console: كل مرة تفتح DevTools، بصّة.`,
+            mistakes: R`تثق في الشكل. تقرا آخر رسالة في الـ validator بدل الأولى. تصلّح في Elements وتنسى إن التعديل هناك مبيتحفظش. تدوّر على غلطة HTML في Console (مش بتظهر هناك). وتفتكر إن «valid» معناها «الصفحة كويسة»: معناها إن الكتابة سليمة بس.`
+          },
+          teach: R`## الفكرة في سطرين
+
+هنغلط غلطتين حقيقيتين، ونشوف كل أداة بتكشف إيه. وفي الآخر عندك ترتيب فحص تمشي عليه في أي صفحة.
+
+كل النواتج هنا من Chrome 157 على Windows 11، ومن الـ Nu Html Checker (الخدمة العامة). خطوات الواجهة في DevTools من وثائق Chrome DevTools.
+
+---
+
+## ١. اكتب بسرعة واغلط
+
+عايزين نزوّد قسمين للصفحة: «أقسام المكتبة» و «عرض الأسبوع». اكتب ده في [[index.html]] قبل فقرة «كلّمنا»، **بالغلطتين اللي فيه**:
+
+~~~html
+    <p>أقسام المكتبة:
+        <ul>
+            <li>روايات</li>
+            <li>كتب أطفال</li>
+            <li>كتب مستعملة</li>
+        </ul>
+    </p>
+    <h2>عرض الأسبوع<h2>
+    <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+~~~
+
+احفظ و [[Ctrl+R]]. دي الصفحة:
+
+~~~live 530 550 الصفحة بالغلطتين
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الركن</title>
+</head>
+<body>
+    <h1>مكتبة الركن</h1>
+    <p>مكتبة صغيرة على ناصية شارع النخيل: كتب جديدة ومستعملة، وركن للأطفال.</p>
+    <p>العنوان: ٧ شارع النخيل، جنب الصيدلية.</p>
+    <h2>مواعيد العمل</h2>
+    <ul>
+        <li>من السبت للخميس: ١٠ الصبح لـ ٩ بالليل</li>
+        <li>الجمعة: ٤ العصر لـ ٩ بالليل</li>
+        <li>أول يوم في كل شهر: جرد، والمكتبة مقفولة</li>
+    </ul>
+    <p>أقسام المكتبة:
+        <ul>
+            <li>روايات</li>
+            <li>كتب أطفال</li>
+            <li>كتب مستعملة</li>
+        </ul>
+    </p>
+    <h2>عرض الأسبوع<h2>
+    <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+    <p><a href="tel:+200000000000">كلّمنا</a></p>
+</body>
+</html>
+~~~
+
+بصّ على آخر الصفحة: جملة العرض ولينك «كلّمنا» بقوا خط كبير وتقيل زي العنوان. دي غلطة باينة. والغلطة التانية مش باينة خالص: قسم «أقسام المكتبة» شكله سليم.
+
+والمتصفح مقالش حاجة: مفيش رسالة، ومفيش علامة حمرا.
+
+---
+
+## ٢. View Source: اللي انت كتبته
+
+~~~text
+Ctrl+U        (على الماك: Cmd+Option+U. أو كليك يمين على الصفحة ثم View page source)
+~~~
+
+بيفتح تاب جديد عنوانه نفس عنوان الصفحة وقبله [[view-source:]]، وفيه الملف زي ما المتصفح استلمه، بأرقام السطور:
+
+~~~text view-source:file:///C:/Users/ali/projects/rokn-books/index.html
+18      <p>أقسام المكتبة:
+19          <ul>
+20              <li>روايات</li>
+21              <li>كتب أطفال</li>
+22              <li>كتب مستعملة</li>
+23          </ul>
+24      </p>
+25      <h2>عرض الأسبوع<h2>
+26      <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+27      <p><a href="tel:+200000000000">كلّمنا</a></p>
+28  </body>
+~~~
+
+ده نفس اللي في VS Code، حرف بحرف. فايدته:
+
+- تتأكد إن المتصفح قرا النسخة الجديدة (الفحص ٤ في الدرس اللي فات).
+- تشوف كود أي صفحة على النت وتتعلم منه.
+- أرقام السطور: الـ validator هيكلّمك بيها.
+
+اللي مبيعملوش: مبيقولش فين الغلط. في Chrome السطر ٢٥ معروض عادي من غير أي علامة. (Firefox بيحط خط أحمر منقّط تحت بعض الأخطاء في صفحة الـ source. دي من منهج MDN، مش من تجربة هنا.)
+
+---
+
+## ٣. Elements: اللي المتصفح بناه
+
+~~~text
+F12        (على الماك: Cmd+Option+I. أو كليك يمين على أي حتة في الصفحة ثم Inspect)
+~~~
+
+بيفتح DevTools. أول تاب اسمه Elements، وفيه شجرة العناصر. افتح الـ [[<body>]] بالسهم اللي جنبه. ده اللي فيه (نفس الجزء):
+
+~~~html
+    <p>أقسام المكتبة:
+        </p><ul>
+            <li>روايات</li>
+            <li>كتب أطفال</li>
+            <li>كتب مستعملة</li>
+        </ul>
+    <p></p>
+    <h2>عرض الأسبوع</h2><h2>
+    <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+    <p><a href="tel:+200000000000">كلّمنا</a></p>
+</h2>
+~~~
+
+قارنه باللي كتبته. المتصفح غيّر تلات حاجات:
+
+| اللي كتبته | اللي المتصفح بناه | ليه |
+|---|---|---|
+| [[<ul>]] جوه الـ [[<p>]] | الـ [[<p>]] اتقفل **قبل** الـ [[<ul>]]، والقايمة بقت برّه | الفقرة مينفعش يبقى جواها قايمة، فأول ما القايمة تبدأ الفقرة بتتقفل لوحدها |
+| [[</p>]] بعد القايمة | فقرة جديدة فاضية [[<p></p>]] | القفلة دي ملقتش فقرة مفتوحة تقفلها، فالمتصفح عمل فقرة فاضية عشانها |
+| [[<h2>عرض الأسبوع<h2>]] | [[<h2>]] مقفول، وبعده [[<h2>]] تاني مفتوح لآخر الصفحة | الـ [[<h2>]] التاني (اللي كان المفروض [[</h2>]]) فتح عنوان جديد، ومفيش حاجة قفلته، فبلع كل اللي بعده |
+
+وبالأرقام:
+
+~~~text Chrome 157
+                كتبت    المتصفح بنى
+عدد <p>          5         6        (واحدة فاضية)
+عدد <h2>         3         3        (التالت جواه فقرتين)
+~~~
+
+- **الغلطة الأولى مبتبانش بالعين** (الفقرة الفاضية ملهاش شكل)، بس لما تكتب CSS يدّي مسافة لكل فقرة هتلاقي فراغ مش عارف جاي منين.
+- **الغلطة التانية باينة:** جملة العرض ولينك «كلّمنا» جوه [[<h2>]]، فواخدين شكله. وقارئ الشاشة هيقراهم على إنهم عنوان.
+
+القاعدة: في صفحة مفيهاش JavaScript، أي فرق بين View Source و Elements معناه إن المتصفح صلّح حاجة.
+
+### جرّب التصليح في Elements قبل ما تكتبه
+
+Elements مش للفرجة بس: تقدر تغيّر في الشجرة والصفحة تتغيّر قدامك في نفس اللحظة.
+
+| عايز | تعمل |
+|---|---|
+| تغيّر نص | دبل كليك على النص، اكتب، Enter |
+| تغيّر attribute أو تزوّد واحد | دبل كليك على الاسم أو القيمة. ولإضافة جديد: كليك يمين على العنصر ثم Add attribute |
+| تمسح عنصر | دوس عليه ثم Delete |
+| تخبّيه من غير مسح | دوس عليه ثم [[H]] |
+| تعدّل الكود نفسه | كليك يمين ثم Edit as HTML، وبعد التعديل [[Ctrl+Enter]] |
+| تتراجع | [[Ctrl+Z]] |
+
+جرّب دلوقتي: دوس على الفقرة الفاضية [[<p></p>]] ودوس Delete. ودوس على الـ [[<h2>]] الأخير، كليك يمين ثم Edit as HTML، وشيل منه الفقرتين.
+
+**بس خد بالك:** ده تعديل في الشجرة اللي في ذاكرة المتصفح. الملف على الديسك زي ما هو، وأول [[Ctrl+R]] كل التعديلات بتروح. Elements مكان تجرّب فيه، والتصليح الحقيقي بيتكتب في VS Code.
+
+(ولما تتعلم CSS هتستخدم نفس المكان عشان تزوّد وتشيل [[class]] من عنصر وتشوف التنسيق بيتطبق ولا لأ. شرح التاب كله في كورس «المتصفح و DevTools»، درسي «View Page Source و Inspect» و «Elements».)
+
+---
+
+## ٤. الـ HTML validator: كل غلطة بسطرها
+
+Elements وراك إن فيه حاجة اتغيّرت، بس انت اللي قارنت بعينك. الـ validator بيعمل المقارنة دي عنك: برنامج بيقرا الـ HTML ويطلّع قايمة بكل مخالفة لقواعد اللغة، ورقم سطرها.
+
+الأداة اسمها Nu Html Checker، وهي اللي W3C بتشغّلها على العنوان ده:
+
+~~~text
+https://validator.w3.org/nu/
+~~~
+
+### بتستخدمه إزاي
+
+في الصفحة قايمة اسمها **Check by** فيها تلات اختيارات:
+
+| الاختيار | بتدّيه إيه | ينفعك إمتى |
+|---|---|---|
+| [[address]] | عنوان صفحة على النت | بعد ما موقعك يترفع. عنوان [[file:///]] مينفعش: الخدمة مش شايفة الديسك بتاعك |
+| [[file upload]] | ملف من جهازك | ينفع دلوقتي |
+| [[text input]] | الكود نفسه، لصق | ينفع دلوقتي، وهو الأسرع |
+
+1. اختار **text input**.
+2. في VS Code: [[Ctrl+A]] (حدد الكل) ثم [[Ctrl+C]] (انسخ).
+3. الصق في المربع ([[Ctrl+V]]) ودوس **Check**.
+
+### الرد
+
+ده اللي رجع على صفحتنا:
+
+~~~text الناتج
+Error: No “p” element in scope but a “p” end tag seen.
+From line 24, column 5; to line 24, column 8
+Error: Heading cannot be a child of another heading.
+From line 25, column 20; to line 25, column 23
+Error: Element “p” not allowed as child of element “h2” in this context. (Suppressing further errors from this subtree.)
+From line 26, column 5; to line 26, column 7
+Error: Element “p” not allowed as child of element “h2” in this context. (Suppressing further errors from this subtree.)
+From line 27, column 5; to line 27, column 7
+Error: End tag for  “body” seen, but there were unclosed elements.
+From line 28, column 1; to line 28, column 7
+Error: Unclosed element “h2”.
+From line 25, column 20; to line 25, column 23
+There were errors. (Tried in the text/html mode.)
+~~~
+
+### إزاي تقرا رسالة
+
+كل رسالة سطرين:
+
+~~~text
+Error: No “p” element in scope but a “p” end tag seen.
+From line 24, column 5; to line 24, column 8
+~~~
+
+- **النوع:** [[Error]] مخالفة للقواعد، لازم تتصلّح. و [[Warning]] تنبيه: الكتابة قانونية بس فيه حاجة الأحسن تتعمل.
+- **النص:** «لقيت قفلة [[p]] ومفيش [[p]] مفتوح».
+- **المكان:** السطر ٢٤، من الحرف ٥ للحرف ٨. روح للسطر ٢٤ في VS Code (رقم السطر على الشمال، أو [[Ctrl+G]] واكتب الرقم): هتلاقي [[</p>]].
+
+### ست رسايل، غلطتين
+
+| الرسالة | السطر | جاية من |
+|---|---|---|
+| [[No “p” element in scope but a “p” end tag seen]] | ٢٤ | الغلطة ١: القايمة جوه الفقرة |
+| [[Heading cannot be a child of another heading]] | ٢٥ | الغلطة ٢: [[<h2>]] بدل [[</h2>]] |
+| [[Element “p” not allowed as child of element “h2”]] | ٢٦ | نتيجة الغلطة ٢: الفقرة بقت جوه العنوان |
+| نفس الرسالة | ٢٧ | نتيجة الغلطة ٢ |
+| [[End tag for “body” seen, but there were unclosed elements]] | ٢٨ | نتيجة الغلطة ٢: وصل لآخر الصفحة والعنوان مفتوح |
+| [[Unclosed element “h2”]] | ٢٥ | الغلطة ٢ نفسها، بالاسم |
+
+فالطريقة: **صلّح أول رسالة، وافحص تاني.** غلطة واحدة بتولّد رسايل كتير بعدها، ولما تتصلّح بيختفوا كلهم. متقعدش تصلّح الست رسايل واحدة واحدة.
+
+(الرسالة التانية بتقول «عنوان جوه عنوان»، و Elements وراك العنوانين جنب بعض. الاتنين بيوصفوا نفس السطر: [[<h2>]] اتفتح و [[<h2>]] تاني اتفتح قبل ما الأول يتقفل.)
+
+### التصليح
+
+في VS Code: الفقرة اللي قبل القايمة تبقى عنوان (هي أصلًا عنوان القسم)، والـ [[<h2>]] التاني يبقى [[</h2>]]:
+
+~~~html
+    <h2>أقسام المكتبة</h2>
+    <ul>
+        <li>روايات</li>
+        <li>كتب أطفال</li>
+        <li>كتب مستعملة</li>
+    </ul>
+    <h2>عرض الأسبوع</h2>
+    <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+~~~
+
+احفظ، والصق تاني، و Check:
+
+~~~text الناتج
+The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter previewness of this service).
+~~~
+
+(ده نص الرد لما الفحص بيتم من الترمنال، زي التمرين الخامس. في صفحة الموقع نفسها الرسالة «Document checking completed. No errors or warnings to show.»، حسب صفحة Debugging HTML في MDN.)
+
+### «valid» معناها إيه بالظبط
+
+إن الكتابة ماشية على قواعد اللغة: كل عنصر في مكان مسموح، وكل حاجة مقفولة، ومفيش attribute ناقص إجباري. **مش** معناها إن الصفحة كويسة: صفحة كلها [[<div>]] ومفيهاش ولا عنوان هتعدّي. وصفحة الأداة نفسها بتقول إنها أداة فحص، مش شهادة نجاح.
+
+واللي بتلصقه بيتبعت لخدمة عامة على النت. لصفحات التمرين مفيش مشكلة. متلصقش صفحة فيها بيانات خاصة.
+
+### ولما تكتب CSS بعدين
+
+الـ validator هيفضل أول فحص، حتى لما المشكلة شكلها مشكلة تنسيق. الـ CSS بيتطبق على الشجرة اللي المتصفح بناها، مش على اللي كتبته. في مثالنا: لو كتبت تنسيق يلوّن كل [[<h2>]]، جملة العرض ولينك «كلّمنا» كانوا هيتلوّنوا معاه، لأنهم جوه [[<h2>]] مش مقفول. ولو كتبت تنسيق للفقرة اللي فيها القايمة، مكنش هيوصل للقايمة، لأنها خرجت برّه الفقرة. فلما تنسيق «مش راضي يتطبق» أو «بيتطبق على حاجة غلط»: افحص الـ HTML الأول، وبعدين دوّر في الـ CSS.
+
+---
+
+## ٥. عرض 360: الصفحة على الموبايل
+
+و DevTools مفتوحة:
+
+~~~text
+Ctrl+Shift+M        (على الماك: Cmd+Shift+M. أو أيقونة الموبايل والتابلت في أول شريط DevTools)
+~~~
+
+ده الـ Device Toolbar: الصفحة بتتعرض جوه إطار بعرض موبايل. فوق الإطار قايمة Dimensions: سيبها Responsive، واكتب في خانة العرض [[360]]. ده عرض موبايل صغير شائع، فلو الصفحة سليمة عليه هتبقى سليمة على الأكبر.
+
+بتدوّر على حاجتين:
+
+- **scroll أفقي:** لو الصفحة بتتحرك يمين وشمال، فيه حاجة أعرض من الشاشة.
+- **كلام متصغّر جدًا:** معناه إن سطر الـ viewport ناقص (التمرين الرابع).
+
+~~~text القياس على صفحة المكتبة (Chrome 157، عرض 360)
+innerWidth = 360     scrollWidth = 360     (مفيش scroll أفقي)
+~~~
+
+[[scrollWidth]] عرض المحتوى كله. لما يساوي عرض الشاشة يبقى مفيش حاجة خارجة.
+
+صفحة HTML من غير CSS قليل لما تكسر على 360: الكلام بيلف لوحده. المشاكل بتبدأ مع الصور والجداول والـ CSS، وساعتها تكون العادة دي ثبتت. وده تقريب مش موبايل حقيقي (وثائق DevTools بتقولها صريحة)، فلما يبقى الموقع مرفوع افتحه من موبايلك كمان. الدرس الكامل: كورس «المتصفح و DevTools»، درس «Device Toolbar».
+
+---
+
+## ٦. Console: بصّة على الأحمر
+
+~~~text
+Ctrl+Shift+J        (على الماك: Cmd+Option+J. أو تاب Console جوه DevTools)
+~~~
+
+الـ Console هو المكان اللي المتصفح بيكتب فيه مشاكله: سطور حمرا للأخطاء وصفرا للتنبيهات.
+
+حاجتين لازم تعرفهم دلوقتي:
+
+**أخطاء الـ HTML مش بتظهر هنا.** فتحت الصفحة بالغلطتين والـ Console فاضي تمامًا. الـ Console بيتكلم عن JavaScript وعن الملفات اللي متحمّلتش. أخطاء الكتابة مكانها الـ validator.
+
+**اللي هيظهرلك في صفحة HTML: ملف مش موجود.** لو الصفحة بتطلب صورة والمسار غلط، هتلاقي:
+
+~~~text Console في Chrome 157
+Failed to load resource: net::ERR_FILE_NOT_FOUND          logo.svg
+~~~
+
+السطر بيقول إيه اللي حصل (التحميل فشل، الملف مش موجود) وعلى اليمين اسم الملف. هتقابلها في الدرس الجاي لما نحط صورة. قراية الأخطاء بالتفصيل: كورس «المتصفح و DevTools»، درس «قراءة الأخطاء».
+
+فالعادة: كل ما تفتح DevTools، بصّة على Console. فاضي؟ كمّل.
+
+---
+
+## ٧. الصفحة بعد الفحص
+
+~~~live 520 540 index.html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الركن</title>
+</head>
+<body>
+    <h1>مكتبة الركن</h1>
+    <p>مكتبة صغيرة على ناصية شارع النخيل: كتب جديدة ومستعملة، وركن للأطفال.</p>
+    <p>العنوان: ٧ شارع النخيل، جنب الصيدلية.</p>
+    <h2>مواعيد العمل</h2>
+    <ul>
+        <li>من السبت للخميس: ١٠ الصبح لـ ٩ بالليل</li>
+        <li>الجمعة: ٤ العصر لـ ٩ بالليل</li>
+        <li>أول يوم في كل شهر: جرد، والمكتبة مقفولة</li>
+    </ul>
+    <h2>أقسام المكتبة</h2>
+    <ul>
+        <li>روايات</li>
+        <li>كتب أطفال</li>
+        <li>كتب مستعملة</li>
+    </ul>
+    <h2>عرض الأسبوع</h2>
+    <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+    <p><a href="tel:+200000000000">كلّمنا</a></p>
+</body>
+</html>
+~~~
+
+كل عنوان خطه كبير لوحده، وكل قسم تحته قايمته أو فقرته، ولينك «كلّمنا» رجع خط عادي.
+
+~~~text الناتج (Chrome 157)
+h1: 1   h2: 3   p: 4   li: 6      View Source و Elements متطابقين
+الـ validator: The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0
+عرض 360: scrollWidth = 360         Console: فاضي
+~~~
+
+---
+
+## الخلاصة: الفحص قبل «خلصت»
+
+| الترتيب | الأداة | بتجاوب على | الاختصار |
+|---|---|---|---|
+| ١ | العين | الشكل زي ما متوقع؟ | |
+| ٢ | الـ validator | الكتابة سليمة؟ | الصق في [[validator.w3.org/nu]] |
+| ٣ | Elements | المتصفح بنى اللي أنا قاصده؟ | [[F12]] |
+| ٤ | Device Toolbar | سليمة على 360؟ | [[Ctrl+Shift+M]] |
+| ٥ | Console | فيه ملف متحمّلش؟ | [[Ctrl+Shift+J]] |
+
+- View Source = اللي كتبته. Elements = اللي اتبنى. الفرق بينهم = المتصفح صلّح حاجة.
+- الـ validator: صلّح أول رسالة وافحص تاني.
+- التعديل في Elements تجربة، مبيتحفظش.
+
+**الفولدر دلوقتي:** [[rokn-books/index.html]] فيه خمس أجزاء (التعريف، والعنوان، والمواعيد، والأقسام، والعرض) وعدّى من الـ validator. الدرس الجاي بيزوّد صورة وصفحة تانية.`,
+          lines: [
+            R`[[Ctrl+U]]: يفتح الملف زي ما المتصفح استلمه في تاب جديد، بأرقام السطور. ده «اللي انت كتبته».`,
+            R`[[F12]]: يفتح DevTools. تاب Elements فيه شجرة العناصر اللي المتصفح بناها من الملف، وبتتعدّل للتجربة.`,
+            R`[[Ctrl+Shift+C]]: وضع الاختيار: حرّك الماوس على الصفحة ودوس على أي حاجة، و Elements يوديك لسطرها في الشجرة.`,
+            R`[[Ctrl+Shift+M]]: Device Toolbar (و DevTools مفتوحة): الصفحة جوه إطار بعرض موبايل. اكتب 360 في خانة العرض.`,
+            R`[[Ctrl+Shift+J]]: يفتح DevTools على تاب Console: السطور الحمرا هنا هي الملفات اللي متحمّلتش وأخطاء JavaScript.`,
+            R`[[validator.w3.org/nu]]: الـ Nu Html Checker. اختار text input من قايمة Check by، والصق الصفحة كلها، ودوس Check.`
+          ],
+          sol: R`**في المتصفح:** العنوان اختفى، والصفحة كلها اتقلبت وبقت بادئة من الشمال. التعديل ظهر في نفس اللحظة.
+
+**بعد [[Ctrl+R]]:** كل حاجة رجعت. العنوان موجود والصفحة من اليمين.
+
+**الملف في VS Code:** متغيّرش ولا حرف.
+
+~~~text القياس (Chrome 157)
+                         عدد h1     dir
+بعد التعديل في Elements     0       ltr
+بعد Ctrl+R                 1       rtl
+~~~
+
+**ليه:** Elements بيعدّل في الشجرة اللي في ذاكرة المتصفح، مش في الملف. و [[Ctrl+R]] بيرمي الشجرة ويبني واحدة جديدة من الملف اللي على الديسك.
+
+فهو معمل تجارب: جرّب فيه التصليح، ولما يعجبك اكتبه في VS Code واحفظ.`,
+          ref: [
+            { t: "MDN Curriculum: Semantic HTML (2.2 و 2.9 Debugging HTML)", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
+            { t: "MDN: Debugging HTML", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Debugging_HTML" },
+            { t: "W3C: Nu Html Checker", url: "https://validator.w3.org/nu/" },
+            { t: "Nu Html Checker: About", url: "https://validator.w3.org/nu/about.html" },
+            { t: "Chrome DevTools: View and change the DOM", url: "https://developer.chrome.com/docs/devtools/dom" },
+            { t: "Chrome DevTools: Device mode", url: "https://developer.chrome.com/docs/devtools/device-mode" },
+            { t: "Chrome DevTools: Open DevTools", url: "https://developer.chrome.com/docs/devtools/open" },
+          ],
+          pre: [
+            "css/start index.html و Ctrl+R",
+            { to: "web/View Page Source و Inspect", why: R`الفرق بين الاتنين في المواقع اللي فيها JavaScript` },
+            { to: "web/Elements", why: R`باقي تاب Elements: Styles و Computed` },
+            { to: "web/Device Toolbar", why: R`الدرس الكامل لوضع الموبايل` },
+          ]
+        },
+        {
+          cmd: "فولدر لكل مشروع",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الفولدر شكله كده، والسطر في [[index.html]]. أنهي واحد من الأربعة هيعرض الصورة؟ توقّع الأربعة، وبعدين جرّبهم واحد واحد وبصّ على Console في كل مرة.
+
+~~~text
+rokn-books/
+├── index.html
+└── images/
+    └── logo.svg
+~~~
+
+~~~html
+(أ) <img src="logo.svg" alt="لوجو">
+(ب) <img src="images/logo.svg" alt="لوجو">
+(ج) <img src="image/logo.svg" alt="لوجو">
+(د) <img src="Images/Logo.SVG" alt="لوجو">
+~~~`, done: R`قلت إن (ب) شغالة، و (أ) و (ج) لأ وليه، و (د) شغالة على جهازك بس متتكتبش وليه.`, sol: R`| | النتيجة | ليه |
+|---|---|---|
+| (أ) [[logo.svg]] | مش ظاهرة | المتصفح دوّر على الملف جنب [[index.html]]، وهو جوه [[images]] |
+| (ب) [[images/logo.svg]] | ظاهرة | ادخل [[images]] وخد [[logo.svg]]: ده مكانه |
+| (ج) [[image/logo.svg]] | مش ظاهرة | الفولدر اسمه [[images]] بحرف s. حرف واحد ناقص |
+| (د) [[Images/Logo.SVG]] | ظاهرة على ويندوز | ويندوز والماك مبيفرّقوش بين الحروف الكبيرة والصغيرة في أسامي الملفات |
+
+**ليه (د) متتكتبش:** أغلب السيرفرات بتفرّق. فالصورة تظهر عندك وتختفي بعد الرفع، وده من أصعب الأخطاء لأن «عندي شغالة». اكتب الاسم زي ما هو على الديسك بالحرف، وخلّي كل أسامي الملفات حروف صغيرة فالمشكلة متحصلش. (سلوك السيرفر من صفحة «Dealing with files» في MDN، والباقي مقاس هنا.)
+
+**الغلطة الشائعة:** لما الصورة متظهرش، تدوّر في الـ HTML. اسم الملف اللي المتصفح دوّر عليه مكتوب في Console: قارنه باللي في [[ls]].
+
+~~~text القياس (Chrome 157 على Windows 11)
+(أ) naturalWidth = 0     Console: Failed to load resource: net::ERR_FILE_NOT_FOUND   logo.svg
+(ب) naturalWidth = 120   Console: فاضي
+(ج) naturalWidth = 0     Console: Failed to load resource: net::ERR_FILE_NOT_FOUND   logo.svg
+(د) naturalWidth = 120   Console: فاضي
+~~~
+
+[[naturalWidth]] عرض الصورة الحقيقي بعد ما تتحمّل. صفر معناه «متحمّلتش».` },
+            { lvl: 'تطبيق', t: R`**صلّح (رتّب):** واحد كان شغال على سطح المكتب، وعنده في فولدر واحد ملفات مشروعين متلخبطين: [[index.html]] و [[about.html]] بتوع موقع عيادة، و [[menu.html]] و [[prices.html]] و [[logo.svg]] بتوع موقع كافيه. جوه [[practice-site]] اعمل فولدر [[messy]] وجواه الخمس ملفات دول فاضيين، وبعدين افصلهم: كل مشروع في فولدره، وصورة الكافيه في [[images]]. بالترمنال بس.`, done: R`الشجرة فيها فولدرين [[clinic-site]] و [[cafe-site]]، ومفيش ولا ملف برّاهم، و [[logo.svg]] جوه [[cafe-site/images]].`, sol: R`~~~powershell
+mkdir clinic-site, cafe-site, cafe-site\images
+mv index.html, about.html clinic-site
+mv menu.html, prices.html cafe-site
+mv logo.svg cafe-site\images
+tree /f
+~~~
+
+~~~bash
+mkdir -p clinic-site cafe-site/images
+mv index.html about.html clinic-site/
+mv menu.html prices.html cafe-site/
+mv logo.svg cafe-site/images/
+ls -R
+~~~
+
+**ليه كده:** [[mv]] (من move) بياخد الملفات وبعدين الفولدر اللي رايحين له. في PowerShell الملفات بينهم فاصلة، وفي bash مسافة. ([[mv]] في PowerShell اسم تاني لـ [[Move-Item]].)
+
+**ناقص حاجة:** موقع الكافيه دلوقتي مفيهوش [[index.html]]. [[menu.html]] كانت بتتفتح باسمها فمحدش لاحظ. دي أول حاجة هتتعمل له.
+
+**ولو الصفحات كان فيها [[<img src="logo.svg">]]؟** هتبوظ بعد النقل، وتتصلّح لـ [[images/logo.svg]]. نقل ملف معناه إنك تراجع كل مكان بيشاور عليه.
+
+**الغلطة الشائعة:** تعمل النقل بالسحب بالماوس وتسيب نسخة ورا. [[mv]] بينقل، مبينسخش، والشجرة في الآخر بتأكد.
+
+~~~text الناتج (tree /f في PowerShell 7.6)
+C:.
+├───cafe-site
+│   │   menu.html
+│   │   prices.html
+│   │
+│   └───images
+│           logo.svg
+│
+└───clinic-site
+        about.html
+        index.html
+~~~` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** الدرس قال إن الخطوة الجاية بعد ترتيب الفولدر هي Git. من درس «git init / clone» في كورس Git (مش من هنا): إيه الأمر اللي بيحوّل فولدر مشروع لـ repo؟ وإيه اللي بيتزوّد في الفولدر بعده؟ جرّبه على فولدر تجربة جديد اسمه [[git-demo]] فيه [[index.html]] فاضي، **مش** على مشروع المكتبة. وليه القاعدة «repo لكل مشروع» هي نفس قاعدة «فولدر لكل مشروع»؟`, done: R`شفت رسالة [[Initialized empty Git repository]]، ولقيت الفولدر المخفي بأمر عرض بيوري المخفي، وجاوبت السؤال الأخير في جملة.`, sol: R`~~~bash
+mkdir git-demo && cd git-demo
+touch index.html
+git init
+ls -a
+~~~
+
+**الشرح:** [[git init]] بيعمل جوه الفولدر فولدر مخفي اسمه [[.git]]: ده المكان اللي Git بيخزّن فيه تاريخ المشروع. [[ls -a]] (الـ a من all) بيعرض الملفات المخفية كمان (اللي اسمها بيبدأ بنقطة). في PowerShell: [[ls -Force]].
+
+ملفاتك نفسها متلمستش: [[index.html]] زي ما هو.
+
+**ليه نفس القاعدة:** الـ [[.git]] بيتابع كل اللي في الفولدر اللي هو فيه. لو الفولدر فيه مشروعين، تاريخهم هيتلخبط في بعض ومش هتعرف ترفع واحد من غير التاني. فولدر واحد = مشروع واحد = repo واحد.
+
+**الغلطة الشائعة:** تكتب [[git init]] وانت واقف في [[projects]] (أو في الـ home) بدل ما تكون جوه المشروع. ساعتها كل مشاريعك بقت repo واحد. [[pwd]] قبل [[git init]].
+
+~~~text الناتج (Git Bash)
+Initialized empty Git repository in C:/Users/ali/projects/git-demo/.git/
+.
+..
+.git
+index.html
+~~~
+
+ده كل اللي محتاجه من Git هنا. الباقي (تحفظ نسخة، وترفع) في كورس Git من أوله.` },
+          ],
+          title: "رتّب المشروع: فولدر واحد، وصور في images، وصفحة تانية",
+          desc: R`كل اللي الموقع محتاجه بيبقى جوه فولدر واحد: الصفحات في الفولدر نفسه، والصور في فولدر [[images]] جواه. والملفات بتشاور على بعض بمسار بيبدأ من مكان الصفحة ([[images/logo.svg]])، مش من أول الديسك. فلما تنقل الفولدر كله أو ترفعه، كل حاجة بتفضل شغالة.
+
+ده آخر درس في الوحدة. بنبدأ من صفحة المكتبة المفحوصة، ونزوّد عليها لوجو في [[images]] وصفحة تانية [[about.html]] ولينك بين الصفحتين. وفي الآخر: إشارة لـ Git، والطريق كله في جدول واحد.
+
+المسارات هنا في فقرة واحدة على قد اللي محتاجه دلوقتي. شرحها الكامل (الفولدر الأب، والمسار المطلق، وأنواع اللينكات) في الوحدة الجاية عن اللينكات.`,
+          example: R`# Windows (PowerShell):
+mkdir images
+ni images\logo.svg, about.html
+tree /f
+# Linux and Mac:
+mkdir images
+touch images/logo.svg about.html
+ls -R`,
+          try: R`بعد ما تخلّص الدرس: اعمل نسخة من الفولدر كله جنبه باسم [[rokn-copy]] ([[Copy-Item rokn-books rokn-copy -Recurse]] في PowerShell، أو [[cp -r rokn-books rokn-copy]] في bash)، وافتح [[index.html]] اللي في النسخة. الصورة ظاهرة؟ واللينك بيودّي على أنهي [[about.html]]؟ ليه؟ وبعدين امسح النسخة.`,
+          deep: {
+            why: R`المشروع اللي ملفاته متبعترة (صورة في Downloads، وصفحة على سطح المكتب) بيشتغل على جهازك النهارده بس. أول ما تنقله، أو تبعته لحد، أو ترفعه، الصور بتختفي واللينكات بتبوظ. والمشروع اللي كله في فولدر واحد بتنسخه زي ما هو وبيشتغل في أي مكان.`,
+            how: R`لما المتصفح يلاقي [[src="images/logo.svg"]] في صفحة عنوانها [[…/rokn-books/index.html]]، بيشيل اسم الصفحة من العنوان ويحط المسار مكانه: [[…/rokn-books/images/logo.svg]]. يعني المسار «نسبي»: بيتحسب من مكان الصفحة اللي هو مكتوب فيها. وعشان كده مش مهم الفولدر نفسه موجود فين على الديسك.
+
+واللينك [[href="about.html"]] نفس الحكاية: «ملف اسمه about.html جنب الصفحة دي».`,
+            when: R`من أول ملف تاني في المشروع. وكل مرة تزوّد صورة: حطها في [[images]] الأول وبعدين اكتب الـ [[<img>]].`,
+            mistakes: R`تكتب مسار الصورة من أول الديسك ([[C:\Users\…]]): بيشتغل على جهازك انت بس. تسيب الصورة في Downloads وتشاور عليها. تكتب الاسم بحروف غير اللي على الديسك. تنقل ملف من غير ما تراجع اللي بيشاور عليه. وتعمل مشروع جديد جوه فولدر مشروع قديم.`
+          },
+          teach: R`## الفكرة في سطرين
+
+الموقع فولدر. كل اللي فيه بيشاور على بعضه من جوه، فيتنقل كله مرة واحدة. هنزوّد صورة وصفحة تانية ونشوف القاعدة دي وهي شغالة.
+
+الأوامر اتشغّلت في PowerShell 7.6 و 5.1 و Git Bash على Windows 11، والقياسات من Chrome 157.
+
+---
+
+## ١. فولدر الصور
+
+في الترمنال اللي جوه VS Code، وانت في [[rokn-books]]:
+
+~~~powershell
+mkdir images
+ni images\logo.svg, about.html
+~~~
+
+~~~bash
+mkdir images
+touch images/logo.svg about.html
+~~~
+
+عملنا تلات حاجات: فولدر [[images]]، وجواه ملف صورة فاضي، وصفحة تانية فاضية جنب [[index.html]]. الملف اللي جوه فولدر بيتكتب بمساره: اسم الفولدر، وشرطة، واسم الملف.
+
+الاسم [[images]] مش كلمة محجوزة، بس ده اللي أغلب المشاريع بتستخدمه (وهو اللي MDN بتقترحه)، فأي حد يفتح مشروعك يعرف يدوّر فين.
+
+### الصورة نفسها
+
+افتح [[images/logo.svg]] في VS Code والصق ده واحفظ:
+
+~~~xml
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="16" fill="#1f4e5f"/>
+  <path d="M60 36 C48 28 32 28 22 32 V88 C32 84 48 84 60 92 C72 84 88 84 98 88 V32 C88 28 72 28 60 36 Z" fill="#fdf6e3"/>
+  <path d="M60 36 V92" stroke="#1f4e5f" stroke-width="3"/>
+</svg>
+~~~
+
+ده ملف SVG: صورة مكتوبة نص (مربع غامق وجواه كتاب مفتوح). مش مطلوب تفهم سطوره دلوقتي، انسخه زي ما هو. اخترناه عشان تعمل الصورة بنفسك من غير ما تنزّل حاجة من النت. (شرحه في درس «SVG» في وحدة الصور.) ولو عندك صورة [[.png]] أو [[.jpg]] بتاعتك، حطها في [[images]] واستخدمها بنفس الطريقة.
+
+---
+
+## ٢. حط الصورة في الصفحة
+
+في [[index.html]]، أول سطر جوه الـ [[<body>]]:
+
+~~~html
+    <img src="images/logo.svg" alt="لوجو مكتبة الركن: كتاب مفتوح" width="120" height="120">
+~~~
+
+([[alt]] و [[width]] و [[height]] مشروحين في درس «img».)
+
+المهم هنا قيمة [[src]]، وده كل اللي محتاجه عن المسارات دلوقتي:
+
+> [[images/logo.svg]] معناها: **من الفولدر اللي فيه الصفحة دي**، ادخل [[images]]، وخد [[logo.svg]]. المسار بيبدأ من مكان ملف الـ HTML، مش من أول الديسك. والشرطة مايلة لقدام [[/]] دايمًا، حتى على ويندوز.
+
+احفظ و [[Ctrl+R]]. والمتصفح حوّل المسار لإيه؟
+
+~~~text Chrome 157
+الصفحة:           file:///C:/Users/ali/projects/rokn-books/index.html
+src المكتوب:      images/logo.svg
+العنوان اللي اتطلب:  file:///C:/Users/ali/projects/rokn-books/images/logo.svg
+naturalWidth = 120     (الصورة اتحمّلت)
+~~~
+
+شال [[index.html]] من آخر عنوان الصفحة وحط [[images/logo.svg]] مكانه.
+
+### ولما المسار يبقى غلط
+
+لو كتبت [[image/logo.svg]] (من غير s):
+
+- في الصفحة: أيقونة صورة مكسورة وجنبها كلام الـ [[alt]]. (وده أول سبب لوجود الـ [[alt]].)
+- في Console ([[Ctrl+Shift+J]]):
+
+~~~text Console في Chrome 157
+Failed to load resource: net::ERR_FILE_NOT_FOUND          logo.svg
+~~~
+
+دي الرسالة اللي الدرس اللي فات قال إنك هتقابلها. دوس على اسم الملف في آخر السطر، هتشوف العنوان الكامل اللي المتصفح دوّر عليه: [[…/rokn-books/image/logo.svg]]. قارنه بالشجرة: الفولدر اسمه [[images]].
+
+والـ validator ملوش دعوة بالحكاية دي: هو بيفحص الكتابة، ومبيشوفش ملفاتك. المسار الغلط بيعدّي منه. والعكس: لو نسيت الـ [[alt]]، الصورة بتظهر عادي والـ validator هو اللي بيتكلم:
+
+~~~text الناتج
+Error: An “img” element must have an “alt” attribute, except under certain conditions. For details, consult guidance on providing text alternatives for images.
+From line 9, column 5; to line 9, column 56
+~~~
+
+كل أداة بتشوف حاجة.
+
+---
+
+## ٣. صفحة تانية ولينك بينهم
+
+افتح [[about.html]]، و [[!]] ثم Tab، وغيّر [[lang]] و [[dir]] و [[title]]، واكتب:
+
+~~~live 190 230 about.html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عن المكتبة | مكتبة الركن</title>
+</head>
+<body>
+    <h1>عن المكتبة</h1>
+    <p>مكتبة الركن فتحت سنة ٢٠١٩ في دكان صغير على الناصية. بدأنا برفّين كتب مستعملة، والنهارده عندنا أكتر من ألفين كتاب.</p>
+    <p>بنشتري الكتب المستعملة اللي حالتها كويسة، وبنبدّل كتاب بكتاب كل يوم خميس.</p>
+    <p><a href="index.html">ارجع للرئيسية</a></p>
+</body>
+</html>
+~~~
+
+لاحظ الـ [[<title>]]: اسم الصفحة، وبعده اسم الموقع. كده كل تاب في المتصفح مكتوب عليه هو أنهي صفحة.
+
+وفي [[index.html]]، آخر حاجة في الـ [[<body>]]:
+
+~~~html
+    <p><a href="about.html">عن المكتبة</a></p>
+~~~
+
+[[href="about.html"]] نفس قاعدة الصورة: «ملف اسمه [[about.html]] في نفس الفولدر اللي فيه الصفحة دي». و [[href="index.html"]] في الصفحة التانية بيرجّع.
+
+احفظ الملفين، وافتح [[index.html]]، ودوس على اللينك، وبصّ على شريط العنوان: آخره بقى [[about.html]]. ودوس «ارجع للرئيسية»: رجع [[index.html]]. بقى عندك موقع من صفحتين.
+
+(اللينكات اللي في المعاينة هنا مش هتفتح: المعاينة بتعرض صفحة واحدة. على جهازك هتفتح.)
+
+---
+
+## ٤. المشروع بعد الترتيب
+
+~~~powershell
+tree /f
+~~~
+
+~~~text الناتج (PowerShell 7.6)
+C:.
+│   about.html
+│   index.html
+│
+└───images
+        logo.svg
+~~~
+
+و [[index.html]] كامل:
+
+~~~html index.html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الركن</title>
+</head>
+<body>
+    <img src="images/logo.svg" alt="لوجو مكتبة الركن: كتاب مفتوح" width="120" height="120">
+    <h1>مكتبة الركن</h1>
+    <p>مكتبة صغيرة على ناصية شارع النخيل: كتب جديدة ومستعملة، وركن للأطفال.</p>
+    <p>العنوان: ٧ شارع النخيل، جنب الصيدلية.</p>
+    <h2>مواعيد العمل</h2>
+    <ul>
+        <li>من السبت للخميس: ١٠ الصبح لـ ٩ بالليل</li>
+        <li>الجمعة: ٤ العصر لـ ٩ بالليل</li>
+        <li>أول يوم في كل شهر: جرد، والمكتبة مقفولة</li>
+    </ul>
+    <h2>أقسام المكتبة</h2>
+    <ul>
+        <li>روايات</li>
+        <li>كتب أطفال</li>
+        <li>كتب مستعملة</li>
+    </ul>
+    <h2>عرض الأسبوع</h2>
+    <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+    <p><a href="tel:+200000000000">كلّمنا</a></p>
+    <p><a href="about.html">عن المكتبة</a></p>
+</body>
+</html>
+~~~
+
+~~~view 690 700 شكل index.html في المتصفح
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الركن</title>
+</head>
+<body>
+    <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%20width%3D%22120%22%20height%3D%22120%22%3E%3Crect%20width%3D%22120%22%20height%3D%22120%22%20rx%3D%2216%22%20fill%3D%22%231f4e5f%22%2F%3E%3Cpath%20d%3D%22M60%2036%20C48%2028%2032%2028%2022%2032%20V88%20C32%2084%2048%2084%2060%2092%20C72%2084%2088%2084%2098%2088%20V32%20C88%2028%2072%2028%2060%2036%20Z%22%20fill%3D%22%23fdf6e3%22%2F%3E%3Cpath%20d%3D%22M60%2036%20V92%22%20stroke%3D%22%231f4e5f%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E" alt="لوجو مكتبة الركن: كتاب مفتوح" width="120" height="120">
+    <h1>مكتبة الركن</h1>
+    <p>مكتبة صغيرة على ناصية شارع النخيل: كتب جديدة ومستعملة، وركن للأطفال.</p>
+    <p>العنوان: ٧ شارع النخيل، جنب الصيدلية.</p>
+    <h2>مواعيد العمل</h2>
+    <ul>
+        <li>من السبت للخميس: ١٠ الصبح لـ ٩ بالليل</li>
+        <li>الجمعة: ٤ العصر لـ ٩ بالليل</li>
+        <li>أول يوم في كل شهر: جرد، والمكتبة مقفولة</li>
+    </ul>
+    <h2>أقسام المكتبة</h2>
+    <ul>
+        <li>روايات</li>
+        <li>كتب أطفال</li>
+        <li>كتب مستعملة</li>
+    </ul>
+    <h2>عرض الأسبوع</h2>
+    <p>أي كتابين مستعملين بـ ٥٠ جنيه.</p>
+    <p><a href="tel:+200000000000">كلّمنا</a></p>
+    <p><a href="about.html">عن المكتبة</a></p>
+</body>
+</html>
+~~~
+
+والفحص زي الدرس اللي فات، على الصفحتين:
+
+~~~text الناتج (Chrome 157)
+index.html:  الـ validator: valid     عرض 360: scrollWidth = 360     Console: فاضي     الصورة 120×120
+about.html:  الـ validator: valid     عرض 360: scrollWidth = 360     Console: فاضي
+~~~
+
+### القاعدة
+
+| | مكانه |
+|---|---|
+| الصفحة الرئيسية | [[index.html]] في الفولدر نفسه |
+| باقي الصفحات | جنبها، باسم بيوصفها: [[about.html]] |
+| الصور | جوه [[images]] |
+| ملفات CSS و JavaScript (بعدين) | فولدر لكل نوع، بنفس الفكرة |
+| مشروع تاني | فولدر تاني جوه [[projects]]، مش جوه ده |
+
+---
+
+## ٥. الخطوة الجاية: Git
+
+دلوقتي عندك فولدر مرتب، وده بالظبط اللي Git بيشتغل عليه. Git بيحفظ نسخة من المشروع كل ما تقوله، فترجع لأي نسخة قديمة، وهو الطريق لرفع الموقع على النت.
+
+البداية أمر واحد بيتكتب **جوه فولدر المشروع**: [[git init]]. مش هنشرحه هنا: كورس Git بيبدأ من الصفر (درس «مقدمة Git و GitHub» ثم «git init / clone»). المهم إنك عارف إن الترتيب اللي عملته هو أول شرط ليه: مشروع واحد في الفولدر.
+
+---
+
+## الطريق كله
+
+دي الست خطوات اللي بتظهر في أول كل مشروع في الكورس، وكل واحدة اتشرحت فين:
+
+| الخطوة | بتعمل إيه | الدرس |
+|---|---|---|
+| ١. الفولدر والملفات | [[mkdir]] ثم [[cd]] ثم [[ni]] أو [[touch]] | «mkdir و ni و touch» |
+| ٢. افتحه في VS Code | [[code .]] | «code . و Emmet !» |
+| ٣. اكتب الصفحة | [[!]] ثم Tab، و [[lang="ar" dir="rtl"]]، و [[Ctrl+S]] | «code . و Emmet !» |
+| ٤. شوفها في Chrome | [[start index.html]]، وبعد كل تعديل [[Ctrl+R]] | «start index.html و Ctrl+R» |
+| ٥. افحصها | الـ validator، و [[F12]]، و [[Ctrl+Shift+M]] على 360، و Console | «View Source و validator» |
+| ٦. رتّبها | صور في [[images]]، وصفحات جنب بعض، وفولدر لكل مشروع | الدرس ده |
+
+---
+
+## الخلاصة
+
+- فولدر واحد = مشروع واحد. كل اللي الموقع محتاجه جواه.
+- [[src="images/logo.svg"]] و [[href="about.html"]]: المسار من مكان الصفحة.
+- صورة مش ظاهرة: Console فيه اسم الملف اللي المتصفح دوّر عليه.
+- بعد أي ملف جديد: [[tree /f]] أو [[ls -R]] واتأكد إنه في مكانه.
+
+**الفولدر دلوقتي:** [[rokn-books]] فيه [[index.html]] و [[about.html]] و [[images/logo.svg]]. مشاريع الوحدة بتكمّل من هنا: أول أربعة بيكبّروا موقع المكتبة صفحة صفحة، وآخر اتنين بتعمل فيهم الطريق كله لوحدك من فولدر فاضي.`,
+          lines: [
+            R`[[mkdir images]]: فولدر الصور جوه المشروع. لازم يتعمل قبل ما تعمل ملف جواه.`,
+            R`[[ni images\logo.svg, about.html]]: ملفين بأمر واحد (بينهم فاصلة): ملف الصورة جوه [[images]]، والصفحة التانية جنب [[index.html]].`,
+            R`[[tree /f]]: ارسم الفولدر بملفاته واتأكد إن كل حاجة في مكانها.`,
+            R`[[mkdir images]]: نفس الأمر على الماك ولينكس.`,
+            R`[[touch images/logo.svg about.html]]: الملفين بأمر واحد (بينهم مسافة)، والمسار بشرطة لقدام.`,
+            R`[[ls -R]]: اعرض الفولدر وكل اللي جواه. الـ R من recursive.`
+          ],
+          sol: R`**الصورة ظاهرة، واللينك بيودّي على [[about.html]] اللي في النسخة،** مش اللي في الأصل.
+
+~~~powershell
+Copy-Item rokn-books rokn-copy -Recurse
+~~~
+
+~~~bash
+cp -r rokn-books rokn-copy
+~~~
+
+[[-Recurse]] و [[-r]] معناهم «الفولدر وكل اللي جواه». من غيرهم الفولدر بيتنسخ فاضي أو الأمر بيرفض.
+
+~~~text القياس (Chrome 157، الصفحة مفتوحة من النسخة)
+الصفحة:     file:///C:/Users/ali/projects/rokn-copy/index.html
+الصورة:     naturalWidth = 120
+اللينك:      file:///C:/Users/ali/projects/rokn-copy/about.html
+~~~
+
+**ليه:** مفيش في الملفات أي مكان مكتوب فيه [[rokn-books]] ولا [[C:\Users]]. الصورة مكتوبة [[images/logo.svg]] واللينك [[about.html]]: الاتنين بيتحسبوا من مكان الصفحة اللي اتفتحت. الصفحة اتنقلت، فهم اتنقلوا معاها.
+
+وده اللي هيحصل بالظبط لما ترفع الفولدر على سيرفر: العنوان هيتغيّر كله، والموقع هيفضل شغال.
+
+**التنضيف:** [[Remove-Item rokn-copy -Recurse]] في PowerShell، أو [[rm -r rokn-copy]] في bash. اقرا اسم الفولدر مرتين قبل Enter: المسح من الترمنال مبيعدّيش على سلة المهملات.`,
+          ref: [
+            { t: "MDN: Dealing with files", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Environment_setup/Dealing_with_files" },
+            { t: "Microsoft Learn: New-Item", url: "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/new-item" },
+          ],
+          pre: [
+            "css/View Source و validator",
+            { to: "css/img", why: R`الـ [[alt]] و [[width]] و [[height]] اللي على الصورة مشروحين هناك` },
+            { to: "git/git init / clone", why: R`الخطوة اللي بعد الوحدة دي، لما تحب تحفظ نسخ من المشروع وترفعه` },
+          ]
+        },
       ]
     }
 ]);

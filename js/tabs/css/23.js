@@ -1,4005 +1,3939 @@
-// القوايم والاقتباسات: ul و ol و dl و blockquote (وحدة من منهج syllabus/css.json)
-// كل القياسات والمعاينات في الوحدة دي من Chrome 157 headless على Windows 11، ورسايل الـ validator من Nu Html Checker.
+// تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "HTML: القوايم والاقتباسات",
-      l: 1,
-      n: "أي مجموعة عناصر قايمة، وأي كلام منقول اقتباس، وكل واحد ليه عنصر بيقول ده للمتصفح",
+      t: "الثيم والعربي والخطوط والأيقونات",
       pre: [
-        { to: "css/مقدمة HTML والـ Tags", why: R`لازم تكون عارف الـ tag والـ attribute وإزاي تفتح ملف HTML في المتصفح` },
-        { to: "css/semantic HTML", why: R`الوحدة دي بتكمّل عليه: [[<nav>]] و [[<article>]] وشجرة الـ accessibility` }
+        { to: "css/CSS variables", why: R`الثيم كله متغيرات` },
+        { to: "css/lang و dir", why: R`الاتجاه اللي الـ logical properties بتمشي وراه` },
       ],
-      goal: [
-        R`تختار بين [[<ul>]] و [[<ol>]] و [[<dl>]] من معنى المحتوى، وتتحكم في ترقيم [[<ol>]] بـ [[start]] و [[reversed]] و [[type]] و [[value]].`,
-        R`تكتب قايمة جوه قايمة صح، وتبني قايمة تنقل ومسار صفحة (breadcrumb) وفهرس محتويات.`,
-        R`تعرض بيانات «اسم وقيمة» (مواصفات، أسئلة، قاموس) بـ [[<dl>]] وتعرف إمتى الجدول أحسن.`,
-        R`تكتب اقتباس طويل وقصير واسم مصدر بـ [[<blockquote>]] و [[<q>]] و [[<cite>]]، وتربط المقولة بصاحبها بـ [[<figure>]] و [[<figcaption>]].`,
-        R`تمسك الغلطات اللي شكلها سليم (قايمة جوه [[<p>]]، [[<ul>]] جوه [[<ul>]] مباشرة) من الـ validator ومن شجرة الـ DOM.`
-      ],
+      l: 2,
+      n: "dark mode من غير وميض، ومكونات بتتقلب لوحدها في العربي، وخط بيتحمّل صح، وأيقونات ليها اسم",
       projects: [
-        { lvl: 'صغير', dir: "bakery-menu", t: R`منيو مخبز السنابل`, what: R`صفحة واحدة لمخبز متخيل بـ HTML بس: المنيو قايمة من مستويين (أقسام وتحتها أصناف)، و «إزاي تطلب» خطوات مرقّمة فيها لينك [[tel:]]، والمواعيد [[<dl>]]. كل جزء [[<section>]] بعنوانه. من دروس «ul و ol» و «قوايم جوه قوايم» و «dl و dt و dd».`, done: R`المنيو [[<ul>]] جواها اتنين [[<ul>]] وكل واحدة جوه الـ [[<li>]] بتاع قسمها، والخطوات [[<ol>]] من ٣، والمواعيد [[<dl>]] فيها اتنين [[<dt>]] واتنين [[<dd>]]، والـ validator صفر errors.`, sol: R`~~~live 480 منيو مخبز السنابل
+        { lvl: 'صغير', dir: "theme-switch", t: R`زرار ثيم بتلات اختيارات`, what: R`segmented control فيه فاتح وغامق و«زي الجهاز»، معمول من ٣ [[<input type="radio">]] متنسّقين (مش div)، والاختيار بيتحط [[data-theme]] على html بسكربت inline في الـ head قبل الرسم، ويتحفظ في localStorage جوه [[try/catch]]، و [[color-scheme]] بيتغير معاه. من درس dark mode.`, done: R`refresh على كل اختيار من التلاتة من غير ولا frame غلط (Performance › Screenshots)، و«زي الجهاز» بيتقلب لوحده لو غيّرت ثيم الجهاز والصفحة مفتوحة، والأسهم بتتنقل بين الاختيارات (ده شغل الـ radio ببلاش)، و axe صفر مشاكل.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>منيو مخبز السنابل</title>
+<title>ثيم بتلات اختيارات</title>
+<!-- inline and BEFORE the stylesheet: it runs before the first paint, so there is no flash of the wrong theme -->
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") {
+      document.documentElement.dataset.theme = t;
+      document.documentElement.style.colorScheme = t;
+    }
+  })();
+</script>
+<link rel="stylesheet" href="style.css">
+<script src="theme.js" defer></script>
 </head>
 <body>
-<header>
-  <h1>مخبز السنابل</h1>
-  <p>عيش طازة كل يوم من ٦ الصبح.</p>
-</header>
-<main>
-  <section aria-labelledby="menu-title">
-    <h2 id="menu-title">المنيو</h2>
-    <ul>
-      <li>مخبوزات
-        <ul>
-          <li>عيش بلدي</li>
-          <li>فينو بالسمسم</li>
-          <li>بقسماط</li>
-        </ul>
-      </li>
-      <li>حلويات
-        <ul>
-          <li>بسبوسة بالقشطة</li>
-          <li>كنافة</li>
-        </ul>
-      </li>
-    </ul>
-  </section>
-  <section aria-labelledby="order-title">
-    <h2 id="order-title">إزاي تطلب</h2>
-    <ol>
-      <li>اتصل على <a href="tel:+200000000000">رقم المخبز</a>.</li>
-      <li>قول الأصناف والعنوان.</li>
-      <li>ادفع لما الطلب يوصل.</li>
-    </ol>
-  </section>
-  <section aria-labelledby="hours-title">
-    <h2 id="hours-title">المواعيد</h2>
-    <dl>
-      <dt>السبت للخميس</dt>
-      <dd>من ٦ الصبح لـ ١٠ بالليل</dd>
-      <dt>الجمعة</dt>
-      <dd>من ٢ الضهر لـ ١٠ بالليل</dd>
-    </dl>
-  </section>
-</main>
-<footer>
-  <p>مخبز السنابل، شارع النخيل.</p>
-</footer>
-</body>
-</html>
-~~~
-
-**القرارات:**
-
-- **المنيو [[<ul>]] من مستويين:** الأقسام ترتيبها مش فارق، والأصناف جوه كل قسم كذلك. والقايمة الفرعية جوه الـ [[<li>]] بتاع القسم، و [[</li>]] بعدها.
-- **الطلب [[<ol>]]:** تتصل، وبعدين تقول، وبعدين تدفع.
-- **المواعيد [[<dl>]]:** الأيام هي الاسم والساعات هي القيمة. لو كانت [[<ul>]] («السبت للخميس: من ٦...») كان الاسم والقيمة هيبقوا نص واحد.
-- كل [[<section>]] ليه [[aria-labelledby]] بيشاور على عنوانه، فبيبقى landmark باسمه (درس «semantic HTML»).
-
-**الغلطة الشائعة:** تعمل كل قسم في المنيو [[<h3>]] وتحته قايمة، وتنسى إن ده بيغيّر فهرس العناوين. الاتنين حلول سليمة: القايمة من مستويين أنسب لمنيو قصير، والعناوين أنسب لو كل قسم فيه شرح وصور.
-
-~~~text الناتج
-ul=3  ol=1  li=10  dl=1  dt=2  dd=2  section=3  h1=1  h2=3
-العلامات:  • (◦ ◦ ◦)  • (◦ ◦)    1 2 3
-Nu Html Checker: صفر errors
-على عرض 360: مفيش scroll أفقي
-~~~` },
-        { lvl: 'صغير', dir: "book-card", t: R`بطاقة كتاب`, what: R`صفحة لكتاب متخيل قريته: اسمه جوه [[<cite>]] في الـ [[<h1>]]، وبياناته (الكاتبة، الصفحات، التصنيف بقيمتين، تقييمك) في [[<dl>]]، و «ليه عجبتني» قايمة، وأحلى جملة فيه [[<blockquote>]] جوه [[<figure>]] ومصدرها في [[<figcaption>]]، وتعليق صاحبتك جوه الجملة بـ [[<q>]]. من دروس «dl و dt و dd» و «blockquote و q و cite» و «figure و figcaption».`, done: R`اسم الكتاب جوه [[<cite>]] في كل مرة اتذكر ومفيش اسم شخص جوه [[<cite>]]، والتصنيف ليه اتنين [[<dd>]]، والـ [[<figcaption>]] آخر ابن للـ [[<figure>]] ومش جوه الـ [[<blockquote>]]، ومفيش علامات تنصيص مكتوبة جوه الـ [[<q>]]، والـ validator صفر errors.`, sol: R`~~~live 480 بطاقة كتاب: بيت القمر
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بطاقة كتاب: بيت القمر</title>
-</head>
-<body>
-<main>
-  <article>
-    <h1><cite>بيت القمر</cite></h1>
-    <dl>
-      <dt>الكاتبة</dt>
-      <dd>هدى منصور</dd>
-      <dt>عدد الصفحات</dt>
-      <dd>٣٢٠</dd>
-      <dt>التصنيف</dt>
-      <dd>رواية</dd>
-      <dd>غموض</dd>
-      <dt>تقييمي</dt>
-      <dd>٤ من ٥</dd>
-    </dl>
-    <h2>ليه عجبتني</h2>
-    <ul>
-      <li>الفصول قصيرة.</li>
-      <li>النهاية مش متوقعة.</li>
-      <li>اللغة سهلة.</li>
-    </ul>
-    <h2>أحلى جملة</h2>
-    <figure>
-      <blockquote>
-        <p>البيت مكانش مسكون، هو بس كان فاكر كل اللي عدّوا عليه.</p>
-      </blockquote>
-      <figcaption>من الفصل التالت في <cite>بيت القمر</cite></figcaption>
-    </figure>
-    <p>وصاحبتي لما خلّصتها قالت لي <q>مش هعرف أنام النهارده</q>.</p>
+<main class="page">
+  <h1>مدونة «سطر»</h1>
+  <fieldset class="seg">
+    <legend>الثيم</legend>
+    <label><input type="radio" name="theme" value="light"> فاتح</label>
+    <label><input type="radio" name="theme" value="dark"> غامق</label>
+    <label><input type="radio" name="theme" value="system"> زي الجهاز</label>
+  </fieldset>
+  <article class="card">
+    <h2>إزاي تكتب كل يوم</h2>
+    <p>عشر دقايق الصبح أحسن من ساعتين آخر الأسبوع.</p>
+    <a href="#more">كمّل القراية</a>
   </article>
 </main>
 </body>
 </html>
 ~~~
 
-**القرارات:**
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
 
-- [[<cite>]] جوه [[<h1>]]: العنوان كله اسم عمل. و «هدى منصور» نص عادي في [[<dd>]]: اسم شخص.
-- «التصنيف» ليه قيمتين، فاتنين [[<dd>]]. و «تقييمي: ٤ من ٥» اسم وقيمة زي الباقي.
-- «ليه عجبتني» [[<ul>]]: تلات أسباب من غير ترتيب ومن غير أسماء.
-- الجملة المنقولة من الكتاب [[<blockquote>]]، ومصدرها (الفصل والكتاب) في [[<figcaption>]]. وتعليق الصاحبة [[<q>]] لأنه قصير وجوه جملتي.
+/* light by default */
+:root {
+  color-scheme: light dark;     /* "system": the browser may use either; scrollbars and form controls follow */
+  --bg: #f8fafc; --fg: #0f172a; --muted: #475569; --card: #ffffff; --line: #cbd5e1; --brand: #4338ca; --on-brand: #ffffff;
+}
+/* "system" (no data-theme): follow the device, live */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
+  }
+}
+/* a choice the reader made wins over the device */
+:root[data-theme="dark"] {
+  --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
+}
 
-**الغلطة الشائعة:** تكتب بيانات الكتاب فقرات «الكاتبة: هدى منصور». الشكل قريب، بس مفيش حاجة بتقول إن «الكاتبة» اسم و «هدى منصور» قيمته.
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+.page { max-width: 40rem; margin-inline: auto; padding: 1rem; }
+a { color: var(--brand); }
 
-~~~text الناتج
-dl=1  dt=4  dd=5  ul=1  li=3  figure=1  blockquote=1  figcaption=1  q=1  cite=2
-cite جواه: «بيت القمر» مرتين (ولا اسم شخص)
-العلامات حوالين الـ q:  ” … “  من المتصفح
-Nu Html Checker: صفر errors
-~~~` },
-        { lvl: 'متوسط', dir: "product-specs", t: R`صفحة منتج لمتجر متخيل`, what: R`صفحة «كشّاف الرحلات» في «متجر الخيمة»: [[<header>]] فيه قايمة تنقل، ومسار الصفحة [[<ol>]] جوه [[<nav>]]، وصورة المنتج جوه [[<figure>]] بوصف، وزراير الشرا في [[<menu>]]، والمواصفات [[<dl>]] وكل مجموعة في [[<div>]]، والمميزات [[<ul>]]، وطريقة الطلب [[<ol>]]، ورأيين لعملا كل واحد [[<figure>]] فيه [[<blockquote>]]. ده هيكل أي صفحة منتج حقيقية. من دروس الوحدة كلها.`, done: R`شجرة الـ accessibility فيها اتنين [[navigation]] بأسماء مختلفة، و ٥ [[list]] (تنقل، مسار، أوامر، مميزات، خطوات)، و ٣ [[figure]]، وكل [[<dt>]] و [[<dd>]] جوه [[<div>]]، ولينك واحد في كل [[<nav>]] عليه [[aria-current="page"]]، والـ validator صفر errors، وعلى عرض 360 مفيش scroll أفقي.`, sol: R`~~~live 480 صفحة المنتج
+/* the segmented control: real radios, styled through their labels */
+.seg { display: inline-flex; gap: 0.25rem; margin: 0 0 1.5rem; padding: 0.25rem; border: 1px solid var(--line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.seg label { padding: 0.4rem 1rem; border-radius: 999px; cursor: pointer; }
+.seg input { position: absolute; opacity: 0; }                 /* hidden from the eye, still focusable and still a radio */
+.seg label:has(input:checked) { background: var(--brand); color: var(--on-brand); font-weight: 700; }
+.seg label:has(input:focus-visible) { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.card { padding: 1.25rem; border-radius: 1rem; background: var(--card); border: 1px solid var(--line); }
+.card h2 { margin-top: 0; }
+.card p { color: var(--muted); }
+~~~
+
+~~~js theme.js
+// the radios: show the saved choice, save a new one, apply it
+const root = document.documentElement;
+let saved = "system";
+try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
+const radios = document.querySelectorAll('input[name="theme"]');
+radios.forEach(r => { r.checked = r.value === saved; });
+
+function apply(value) {
+  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
+  else { root.dataset.theme = value; root.style.colorScheme = value; }
+  try { localStorage.setItem("theme", value); } catch (e) {}
+}
+radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
+~~~
+
+~~~view 360 380 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كشّاف الرحلات KR-204 | متجر الخيمة</title>
+<title>ثيم بتلات اختيارات</title>
+<!-- inline and BEFORE the stylesheet: it runs before the first paint, so there is no flash of the wrong theme -->
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") {
+      document.documentElement.dataset.theme = t;
+      document.documentElement.style.colorScheme = t;
+    }
+  })();
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+/* light by default */
+:root {
+  color-scheme: light dark;     /* "system": the browser may use either; scrollbars and form controls follow */
+  --bg: #f8fafc; --fg: #0f172a; --muted: #475569; --card: #ffffff; --line: #cbd5e1; --brand: #4338ca; --on-brand: #ffffff;
+}
+/* "system" (no data-theme): follow the device, live */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
+  }
+}
+/* a choice the reader made wins over the device */
+:root[data-theme="dark"] {
+  --bg: #0b1120; --fg: #e5e7eb; --muted: #9ca3af; --card: #111827; --line: #374151; --brand: #a5b4fc; --on-brand: #0b1120;
+}
+
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
+.page { max-width: 40rem; margin-inline: auto; padding: 1rem; }
+a { color: var(--brand); }
+
+/* the segmented control: real radios, styled through their labels */
+.seg { display: inline-flex; gap: 0.25rem; margin: 0 0 1.5rem; padding: 0.25rem; border: 1px solid var(--line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.seg label { padding: 0.4rem 1rem; border-radius: 999px; cursor: pointer; }
+.seg input { position: absolute; opacity: 0; }                 /* hidden from the eye, still focusable and still a radio */
+.seg label:has(input:checked) { background: var(--brand); color: var(--on-brand); font-weight: 700; }
+.seg label:has(input:focus-visible) { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.card { padding: 1.25rem; border-radius: 1rem; background: var(--card); border: 1px solid var(--line); }
+.card h2 { margin-top: 0; }
+.card p { color: var(--muted); }
+</style>
 </head>
 <body>
-<header>
-  <a href="#top">متجر الخيمة</a>
-  <nav aria-label="الرئيسية">
-    <ul>
-      <li><a href="#top">الرئيسية</a></li>
-      <li><a href="#lights" aria-current="page">كشّافات</a></li>
-      <li><a href="#bags">شنط</a></li>
-    </ul>
-  </nav>
-</header>
-<main id="top">
-  <nav aria-label="مسار الصفحة">
-    <ol>
-      <li><a href="#top">الرئيسية</a></li>
-      <li><a href="#lights">كشّافات</a></li>
-      <li><a href="#kr-204" aria-current="page">كشّاف الرحلات</a></li>
-    </ol>
-  </nav>
-  <h1 id="kr-204">كشّاف الرحلات</h1>
-  <figure>
-    <svg role="img" aria-label="كشّاف يد أسود طويل وطالع منه نور أصفر" width="220" height="90" viewBox="0 0 220 90">
-      <polygon points="120,45 215,10 215,80" fill="#fde68a"/>
-      <rect x="20" y="33" width="80" height="24" fill="#1f2937"/>
-      <rect x="100" y="25" width="24" height="40" fill="#374151"/>
-    </svg>
-    <figcaption>الكشّاف باللون الأسود.</figcaption>
-  </figure>
-  <menu>
-    <li><button type="button">ضيف للسلة</button></li>
-    <li><button type="button">احفظه لبعدين</button></li>
-  </menu>
-  <h2>المواصفات</h2>
-  <dl>
-    <div>
-      <dt>الكود</dt>
-      <dd>KR-204</dd>
-    </div>
-    <div>
-      <dt>السعر</dt>
-      <dd>٤٥٠ جنيه</dd>
-    </div>
-    <div>
-      <dt>الألوان</dt>
-      <dd>أسود</dd>
-      <dd>أصفر</dd>
-    </div>
-    <div>
-      <dt>الضمان</dt>
-      <dd>سنة</dd>
-    </div>
-  </dl>
-  <h2>المميزات</h2>
-  <ul>
-    <li>ضد المية</li>
-    <li>بيتشحن USB</li>
-    <li>٣ درجات إضاءة</li>
-  </ul>
-  <h2>طريقة الطلب</h2>
-  <ol>
-    <li>اضغط «ضيف للسلة».</li>
-    <li>اكتب العنوان ورقم الموبايل.</li>
-    <li>ادفع عند الاستلام.</li>
-  </ol>
-  <h2>آراء العملا</h2>
-  <figure>
-    <blockquote>
-      <p>نوره قوي والبطارية كمّلت معايا الرحلة كلها.</p>
-    </blockquote>
-    <figcaption>كريم عادل</figcaption>
-  </figure>
-  <figure>
-    <blockquote>
-      <p>وقع مني في المية واشتغل عادي.</p>
-    </blockquote>
-    <figcaption>منى سامي</figcaption>
-  </figure>
-</main>
-<footer>
-  <p>متجر الخيمة، كل الحقوق محفوظة.</p>
-</footer>
-</body>
-</html>
-~~~
-
-**ترتيب البناء:**
-
-1. الهيكل الكبير: [[<header>]] و [[<main>]] و [[<footer>]]، والـ [[<h1>]] باسم المنتج.
-2. الاتنين [[<nav>]]: الرئيسي [[<ul>]] في الـ header، والمسار [[<ol>]] أول حاجة في الـ main. كل واحد باسمه.
-3. الصورة جوه [[<figure>]] بنص بديل بيوصف شكلها، ووصف بيقول لونها.
-4. [[<menu>]] للزرارين: أوامر على المنتج. الزراير [[type="button"]] لأنها مش جوه فورم (درس «a و button»).
-5. المواصفات [[<dl>]] بـ [[<div>]] حوالين كل مجموعة، عشان لما تيجي تنسّق كل صف يبقى وحدة.
-6. المميزات [[<ul>]] والطلب [[<ol>]].
-7. كل رأي [[<figure>]] لوحده: الكلام في [[<blockquote>]] والاسم في [[<figcaption>]].
-
-**اللينكات:** الـ [[href]] في القايمتين مكتوب [[#lights]] وأخواتها عشان المعاينة متخرجش من الصندوق. في متجر حقيقي كل واحد مسار صفحة ([[/lights]]).
-
-**ليه المميزات مش في الـ [[<dl>]]:** «ضد المية» ملهاش اسم وقيمة. ولو كتبتها «ضد المية: أيوه» بقت مواصفة وتدخل الـ [[<dl>]].
-
-**الغلطة الشائعة:** الصفحة فيها ٥ قوايم من ٣ أنواع، والسهل إنك تعملهم كلهم [[<ul>]]. ارجع لكل واحدة بالسؤال: الترتيب فارق؟ فيها اسم وقيمة؟ أوامر؟
-
-~~~text الناتج
-nav=2  ul=2  ol=2  menu=1  li=14  dl=1  dt=4  dd=5  figure=3  blockquote=2  figcaption=3  button=2
-شجرة الـ accessibility (مختصرة):
-banner › link ، navigation "الرئيسية" › list (3)
-main › navigation "مسار الصفحة" › list (3) ، heading level=1 ، figure › image ، list (2 button) ،
-       DescriptionList (4 term ، 5 definition) ، list (3) ، list (3) ، figure ، figure
-contentinfo
-كل dt و dd أبوه div: true      عدد aria-current="page": 2
-Nu Html Checker: صفر errors      على عرض 360: مفيش scroll أفقي
-~~~` },
-        { lvl: 'متوسط', dir: "device-manual", t: R`دليل استخدام لجهاز متخيل`, what: R`صفحة وثائق لمكنة قهوة اسمها «صباح»: فهرس محتويات مرقّم من مستويين بلينكات للأقسام، وقسم فيه رسم جوه [[<figure>]] الكلام بيشاور عليه «شكل ١»، وخطوات مرقّمة جواها قايمة تحذيرات، واقتباس من شروط الضمان بـ [[<blockquote>]] وجملة قصيرة بـ [[<q>]]، وقاموس للكلمات بـ [[<dl>]] فيه كلمة ليها اسمين. الوثائق هي أكتر مكان بتتستخدم فيه [[<dl>]]. من دروس الوحدة كلها.`, done: R`كل لينك في الفهرس ليه [[id]] مطابق، وشكل الفهرس مطابق لترتيب العناوين ([[<h2>]] ثم [[<h3>]])، والقاموس فيه مجموعة ليها اتنين [[<dt>]]، والـ validator صفر errors.`, sol: R`~~~live 480 دليل استخدام مكنة «صباح»
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>دليل استخدام مكنة القهوة «صباح»</title>
-</head>
-<body>
-<header>
-  <h1>دليل استخدام مكنة القهوة «صباح»</h1>
-</header>
-<main>
-  <nav aria-label="محتويات الدليل">
-    <h2>المحتويات</h2>
-    <ol>
-      <li><a href="#parts">أجزاء المكنة</a></li>
-      <li><a href="#first">أول تشغيل</a>
-        <ol>
-          <li><a href="#wash">الغسيل</a></li>
-          <li><a href="#fill">الملي</a></li>
-        </ol>
-      </li>
-      <li><a href="#clean">التنضيف</a></li>
-      <li><a href="#terms">معاني الكلمات</a></li>
-    </ol>
-  </nav>
-  <section aria-labelledby="parts">
-    <h2 id="parts">أجزاء المكنة</h2>
-    <p>المكنة فيها ٣ أجزاء أساسية (<a href="#fig-1">شكل ١</a>).</p>
-    <figure id="fig-1">
-      <svg role="img" aria-label="رسم للمكنة: خزان أزرق فوق، وجسم رمادي في النص، وكوباية بني تحت" width="140" height="150" viewBox="0 0 140 150">
-        <rect x="40" y="5" width="60" height="40" fill="#93c5fd" stroke="#555"/>
-        <rect x="30" y="45" width="80" height="50" fill="#d1d5db" stroke="#555"/>
-        <rect x="52" y="110" width="36" height="34" fill="#92400e" stroke="#555"/>
-      </svg>
-      <figcaption>شكل ١: الخزان، والجسم، والكوباية.</figcaption>
-    </figure>
-  </section>
-  <section aria-labelledby="first">
-    <h2 id="first">أول تشغيل</h2>
-    <h3 id="wash">الغسيل</h3>
-    <ol>
-      <li>فك الخزان.</li>
-      <li>اغسله بمية دافية.
-        <ul>
-          <li>من غير صابون.</li>
-          <li>من غير سلك.</li>
-        </ul>
-      </li>
-      <li>نشّفه وركّبه.</li>
-    </ol>
-    <h3 id="fill">الملي</h3>
-    <ol>
-      <li>املا الخزان لحد علامة MAX.</li>
-      <li>حط البن في الفلتر.</li>
-      <li>دوس زرار التشغيل واستنى ٣ دقايق.</li>
-    </ol>
-  </section>
-  <section aria-labelledby="clean">
-    <h2 id="clean">التنضيف</h2>
-    <p>شروط الضمان بتقول:</p>
-    <blockquote>
-      <p>الضمان بيسقط لو المكنة اتغسلت وهي موصّلة بالكهربا.</p>
-    </blockquote>
-    <p>يعني افصل الفيشة الأول، وده معنى جملة <q>افصل قبل ما تغسل</q> المكتوبة على ضهر المكنة.</p>
-  </section>
-  <section aria-labelledby="terms">
-    <h2 id="terms">معاني الكلمات</h2>
-    <dl>
-      <dt>الخزان</dt>
-      <dd>الوعاء اللي فوق اللي بتتحط فيه المية.</dd>
-      <dt>الفلتر</dt>
-      <dd>المصفاة اللي بيتحط فيها البن.</dd>
-      <dt>التقطير</dt>
-      <dt>الـ drip</dt>
-      <dd>نزول القهوة نقطة نقطة في الكوباية.</dd>
-    </dl>
-  </section>
-</main>
-<footer>
-  <p>الدليل ده مأخوذ من <cite>كتيّب مكنة صباح</cite>، الطبعة التانية.</p>
-</footer>
-</body>
-</html>
-~~~
-
-**ترتيب البناء:**
-
-1. العناوين الأول: ٤ [[<h2>]]، وتحت «أول تشغيل» اتنين [[<h3>]]. وكل واحد ليه [[id]].
-2. الفهرس صورة منهم: [[<ol>]] وجواها [[<ol>]] تحت «أول تشغيل». وهو جوه [[<nav>]] باسمه.
-3. كل قسم [[<section>]] و [[aria-labelledby]] بيشاور على [[id]] عنوانه، فنفس الـ [[id]] بيخدم الفهرس والـ landmark.
-4. الرسم [[<figure id="fig-1">]] والفقرة بتشاور عليه بلينك.
-5. الخطوات [[<ol>]]، والتحذيرين تحت «اغسله» [[<ul>]] جوه الـ [[<li>]] بتاعه: هم تفاصيل للخطوة دي، ومش مترتبين.
-6. نص شروط الضمان [[<blockquote>]] لأنه منقول بالنص، والجملة المكتوبة على المكنة [[<q>]].
-7. القاموس [[<dl>]]. «التقطير» و «الـ drip» اتنين [[<dt>]] ورا بعض: اسمين لنفس المعنى.
-8. اسم الكتيّب في الفوتر جوه [[<cite>]].
-
-**ليه العنوان «المحتويات» [[<h2>]] جوه الـ [[<nav>]]:** الفهرس جزء من الصفحة وليه عنوان ظاهر. والـ [[aria-label]] برضه موجود عشان اسم الـ landmark.
-
-**الغلطة الشائعة:** تكتب أرقام الأقسام بإيدك في العناوين وفي الفهرس («٢.١ الغسيل»). أول ما تزوّد قسم هتعدّل في كل حتة. سيب الترقيم للـ [[<ol>]].
-
-~~~text الناتج
-nav=1  ol=4  ul=1  li=14  figure=1  blockquote=1  q=1  cite=1  dl=1  dt=4  dd=3  section=4  h2=5  h3=2
-علامات الفهرس:  1  2 (1 2)  3  4
-كل href ليه id موجود: true   (#parts #first #wash #fill #clean #terms #fig-1)
-مجموعات القاموس: 3   (الخزان | الفلتر | التقطير ، الـ drip)
-Nu Html Checker: صفر errors      على عرض 360: مفيش scroll أفقي
-~~~` },
-        { lvl: 'كبير', dir: "recipes-site", t: R`موقع وصفات من ٣ صفحات بـ HTML بس`, what: R`موقع «مطبخ سلمى» (اسم متخيل): رئيسية (أكتر ٣ وصفات مرقّمين، وآراء بـ [[<figure>]] و [[<blockquote>]])، وصفحة وصفة الكشري (بيانات الوصفة [[<dl>]]، وصورة جوه [[<figure>]]، ومكونات قايمة من مستويين، وطريقة [[<ol>]] جواها خطوات فرعية، ونصيحة مقتبسة)، وصفحة قاموس المطبخ ([[<dl>]] كل مجموعة فيها [[<div>]] ليه [[id]]، والوصفة بتلينك على كلمة فيه). نفس الـ header والـ nav والـ footer في التلاتة، و [[aria-current="page"]] على الصفحة الحالية، ومسار الصفحة في الصفحتين الداخليتين. يجمع الوحدة كلها ومن غير ولا سطر CSS.`, done: R`التلات صفحات صفر errors في الـ validator، وكل لينك بين الصفحات بيفتح صفحة موجودة، ولينك «التقلية» في الوصفة بيفتح القاموس وينزل لكلمتها، وكل صفحة فيها لينك واحد في قايمة التنقل عليه [[aria-current="page"]] وهو لينك الصفحة نفسها، وعلى عرض 360 مفيش scroll أفقي في أي صفحة.`, ext: R`زوّد وصفة تانية (المحشي) بنفس الهيكل، وخلّي صفحة الرئيسية تلينك عليها بدل «قريب». ولما توصل لوحدة الـ CSS نسّق الموقع من غير ما تغيّر ولا عنصر: لو احتجت تغيّر الـ HTML عشان التنسيق، يبقى الهيكل كان ناقصه حاجة.`, sol: R`**شجرة الملفات:**
-
-~~~text
-salma-kitchen/
-  index.html       الرئيسية
-  koshary.html     وصفة الكشري
-  glossary.html    قاموس المطبخ
-~~~
-
-**ترتيب البناء:**
-
-1. اكتب الـ [[<header>]] (اسم الموقع وقايمة التنقل) والـ [[<footer>]] مرة واحدة في [[index.html]]، واتأكد منهم.
-2. انسخهم زي ما هم للصفحتين التانيين، وغيّر حاجة واحدة بس: مكان [[aria-current="page"]].
-3. اكتب القاموس قبل الوصفة، عشان الوصفة هتلينك على [[id]] جواه.
-4. اكتب الوصفة.
-5. ارجع للرئيسية وحط اللينكات.
-6. عدّي التلاتة على الـ validator، ودوس على كل لينك.
-
-> المعاينات اللي تحت كل واحدة صفحة لوحدها، فاللينكات بين الصفحات مش هتشتغل هنا. احفظ التلات ملفات في فولدر واحد على جهازك وافتح [[index.html]].
-
-### index.html
-
-~~~live 480 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مطبخ سلمى</title>
-</head>
-<body>
-<header>
-  <a href="index.html">مطبخ سلمى</a>
-  <nav aria-label="الرئيسية">
-    <ul>
-      <li><a href="index.html" aria-current="page">الرئيسية</a></li>
-      <li><a href="koshary.html">وصفة الكشري</a></li>
-      <li><a href="glossary.html">قاموس المطبخ</a></li>
-    </ul>
-  </nav>
-</header>
-<main>
-  <h1>مطبخ سلمى</h1>
-  <p>وصفات مصرية مجرّبة، مكتوبة خطوة خطوة.</p>
-  <section aria-labelledby="top-title">
-    <h2 id="top-title">أكتر ٣ وصفات اتفتحت الشهر ده</h2>
-    <ol>
-      <li><a href="koshary.html">الكشري</a></li>
-      <li>المحشي (قريب)</li>
-      <li>أم علي (قريب)</li>
-    </ol>
-  </section>
-  <section aria-labelledby="said-title">
-    <h2 id="said-title">قالوا عن الوصفات</h2>
-    <figure>
-      <blockquote>
-        <p>أول مرة الكشري يطلع معايا زي بتاع المحل.</p>
-      </blockquote>
-      <figcaption>منى سامي</figcaption>
-    </figure>
-    <figure>
-      <blockquote>
-        <p>الخطوات واضحة حتى للي أول مرة يدخل المطبخ.</p>
-      </blockquote>
-      <figcaption>كريم عادل</figcaption>
-    </figure>
-  </section>
-</main>
-<footer>
-  <nav aria-label="روابط الفوتر">
-    <ul>
-      <li><a href="glossary.html">قاموس المطبخ</a></li>
-      <li><a href="mailto:hello@example.test">راسلنا</a></li>
-    </ul>
-  </nav>
-  <p>مطبخ سلمى، ٢٠٢٦.</p>
-</footer>
-</body>
-</html>
-~~~
-
-- «أكتر ٣ وصفات» [[<ol>]]: ده ترتيب. والتانية والتالتة نص من غير لينك لأن صفحاتهم لسه مش موجودة. لينك لصفحة مش موجودة أسوأ من مفيش لينك.
-- كل رأي [[<figure>]] لوحده.
-- الفوتر فيه [[<nav>]] تاني باسم مختلف.
-
-### koshary.html
-
-~~~live 480 koshary.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكشري | مطبخ سلمى</title>
-</head>
-<body>
-<header>
-  <a href="index.html">مطبخ سلمى</a>
-  <nav aria-label="الرئيسية">
-    <ul>
-      <li><a href="index.html">الرئيسية</a></li>
-      <li><a href="koshary.html" aria-current="page">وصفة الكشري</a></li>
-      <li><a href="glossary.html">قاموس المطبخ</a></li>
-    </ul>
-  </nav>
-</header>
-<main>
-  <nav aria-label="مسار الصفحة">
-    <ol>
-      <li><a href="index.html">الرئيسية</a></li>
-      <li><a href="koshary.html" aria-current="page">الكشري</a></li>
-    </ol>
-  </nav>
-  <article>
-    <h1>الكشري</h1>
-    <dl>
-      <dt>بيكفّي</dt>
-      <dd>٤ أفراد</dd>
-      <dt>الوقت</dt>
-      <dd>ساعة</dd>
-      <dt>الصعوبة</dt>
-      <dd>متوسطة</dd>
-    </dl>
-    <figure>
-      <svg role="img" aria-label="طبق كشري: رز وعدس تحت، وصلصة حمرا في النص، وبصل بني فوق" width="200" height="110" viewBox="0 0 200 110">
-        <ellipse cx="100" cy="70" rx="95" ry="35" fill="#e5e7eb" stroke="#555"/>
-        <ellipse cx="100" cy="62" rx="75" ry="25" fill="#d6b88a"/>
-        <ellipse cx="100" cy="56" rx="45" ry="14" fill="#b91c1c"/>
-        <ellipse cx="100" cy="50" rx="22" ry="7" fill="#78350f"/>
-      </svg>
-      <figcaption>شكل ١: الطبق بعد التقديم.</figcaption>
-    </figure>
-    <h2>المكونات</h2>
-    <ul>
-      <li>للطبق
-        <ul>
-          <li>كوباية رز</li>
-          <li>كوباية عدس بجبة</li>
-          <li>كوباية مكرونة صغيرة</li>
-        </ul>
-      </li>
-      <li>للصلصة
-        <ul>
-          <li>٤ طماطم</li>
-          <li>٣ فصوص توم</li>
-          <li>معلقة خل</li>
-        </ul>
-      </li>
-      <li>للوش
-        <ul>
-          <li>بصلتين كبار</li>
-          <li>حمص مسلوق</li>
-        </ul>
-      </li>
-    </ul>
-    <h2>الطريقة</h2>
-    <ol>
-      <li>اسلق العدس ١٥ دقيقة.</li>
-      <li>ضيف الرز على العدس وسيبهم على نار هادية ٢٠ دقيقة.</li>
-      <li>اسلق المكرونة في حلة تانية.</li>
-      <li>اعمل الصلصة:
-        <ol>
-          <li>حمّر التوم.</li>
-          <li>ضيف الطماطم المضروبة والخل.</li>
-          <li>سيبها تتسبك ١٠ دقايق.</li>
-        </ol>
-      </li>
-      <li>حمّر البصل لحد ما يبقى بني ومقرمش (شوف <a href="glossary.html#taqliya">التقلية</a> في القاموس).</li>
-      <li>رص الرز والعدس، وبعدهم المكرونة، وبعدهم الصلصة، والبصل والحمص على الوش (شكل ١).</li>
-    </ol>
-    <h2>نصيحة</h2>
-    <figure>
-      <blockquote>
-        <p>زيت تحمير البصل متكبّوش: حط منه معلقتين على الرز وهتلاقي الطعم اتغيّر.</p>
-      </blockquote>
-      <figcaption>تيتة نعمات، في <cite>دفتر وصفات العيلة</cite></figcaption>
-    </figure>
+<main class="page">
+  <h1>مدونة «سطر»</h1>
+  <fieldset class="seg">
+    <legend>الثيم</legend>
+    <label><input type="radio" name="theme" value="light"> فاتح</label>
+    <label><input type="radio" name="theme" value="dark"> غامق</label>
+    <label><input type="radio" name="theme" value="system"> زي الجهاز</label>
+  </fieldset>
+  <article class="card">
+    <h2>إزاي تكتب كل يوم</h2>
+    <p>عشر دقايق الصبح أحسن من ساعتين آخر الأسبوع.</p>
+    <a href="#more">كمّل القراية</a>
   </article>
 </main>
-<footer>
-  <nav aria-label="روابط الفوتر">
-    <ul>
-      <li><a href="glossary.html">قاموس المطبخ</a></li>
-      <li><a href="mailto:hello@example.test">راسلنا</a></li>
-    </ul>
-  </nav>
-  <p>مطبخ سلمى، ٢٠٢٦.</p>
-</footer>
+<script>
+// the radios: show the saved choice, save a new one, apply it
+const root = document.documentElement;
+let saved = "system";
+try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
+const radios = document.querySelectorAll('input[name="theme"]');
+radios.forEach(r => { r.checked = r.value === saved; });
+
+function apply(value) {
+  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
+  else { root.dataset.theme = value; root.style.colorScheme = value; }
+  try { localStorage.setItem("theme", value); } catch (e) {}
+}
+radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
+</script>
 </body>
 </html>
 ~~~
 
-- بيانات الوصفة (بيكفّي، الوقت، الصعوبة) [[<dl>]]: اسم وقيمة.
-- المكونات [[<ul>]] من مستويين: ٣ مجموعات (للطبق، للصلصة، للوش) وتحت كل واحدة مكوناتها.
-- الطريقة [[<ol>]]، والخطوة ٤ جواها [[<ol>]] فرعية لأن الصلصة ليها ٣ خطوات مترتبة. والترقيم بعدها بيكمّل 5 و 6 لوحده.
-- لينك «التقلية» [[href="glossary.html#taqliya"]]: اسم الملف وبعده [[#]] والـ [[id]]. بيفتح الصفحة وينزل للكلمة.
-- النصيحة منقولة من حد، فهي [[<blockquote>]] جوه [[<figure>]]، واسم الدفتر جوه [[<cite>]].
-- الطبق بيتشاور عليه «شكل ١» في آخر خطوة.
+**هتشوف إيه:** «مدونة سطر»، وتحتها كبسولة فيها ٣ اختيارات (فاتح، وغامق، وزي الجهاز)، وكارت مقال. الاختيار بيقلب ألوان الصفحة كلها، وبيفضل بعد الـ refresh.
 
-### glossary.html
+**ليه radio مش div:** ٣ اختيارات واحد بس منهم شغال = radio group. الـ [[<input type="radio">]] بيدّيك ببلاش: الأسهم بتنقل بينهم، و Tab بيدخل المجموعة مرة واحدة، وقارئ الشاشة بيقول «فاتح، زرار راديو، ١ من ٣». الـ input مستخبي بـ [[opacity: 0]] بس (مش [[display: none]]، كده كان هيختفي من الكيبورد)، والشكل على الـ label بـ [[:has(input:checked)]].
 
-~~~live 480 glossary.html
+**الوميض وإزاي اتمنع:** المتصفح بيرسم أول ما يقرا الـ CSS. لو السكربت اللي بيحط الثيم المحفوظ اشتغل بعد كده، أول frame بيطلع بالثيم الغلط وبعدين يتقلب. عشان كده السكربت ده inline في الـ [[<head>]]، قبل الـ [[<link>]]، ومش في ملف [[defer]]: بيتنفّذ قبل أول رسم. وباقي الشغل (الأزرار) في [[theme.js]] بـ [[defer]] عادي.
+
+**«زي الجهاز» بيتقلب لوحده:** لما الاختيار «زي الجهاز»، الـ html مفيهوش [[data-theme]]، فقاعدة [[@media (prefers-color-scheme: dark)]] على [[:root:not([data-theme])]] هي اللي بتشتغل. لو غيّرت ثيم الجهاز والصفحة مفتوحة، المتصفح بيعيد حساب الـ media query لوحده، من غير ولا سطر JS.
+
+**[[color-scheme]]:** بيقول للمتصفح يلوّن حاجاته هو (الـ scrollbar، والـ checkbox، وخلفية الـ input) بالثيم. «زي الجهاز» = [[light dark]]، والاختيار الثابت = [[light]] أو [[dark]].
+
+**[[localStorage]] جوه [[try/catch]]:** في شباك خاص أو موقع ممنوع من التخزين بيرمي error. من غير [[try]] السكربت كان هيقف والثيم ميتحطش.
+
+~~~text الناتج (Playwright بـ Chrome 157، الجهاز غامق والمحفوظ «فاتح»، والسكربتات متأخرة 500ms زي شبكة بطيئة)
+السكربت inline في الـ head:   اشتغل 47ms، أول رسم 164ms ← قبل الرسم، وأول frame «light»
+نفس الكود في ملف defer:       اشتغل 542ms، أول رسم 56ms  ← بعد الرسم، وأول frame من غير ثيم (غامق زي الجهاز) وبعدين اتقلب
+
+«زي الجهاز» والجهاز فاتح: rgb(248, 250, 252)، والجهاز اتقلب غامق والصفحة مفتوحة: rgb(11, 17, 32)
+اختيار «فاتح»: rgb(248, 250, 252)، و localStorage = light
+السهم الشمال من «فاتح» (rtl = اللي بعده): «غامق»
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**جرّب الوميض بنفسك:** في DevTools › Network اختار «Slow 4G»، وانقل السكربت من الـ head لملف بـ [[defer]]، واعمل refresh على صفحة ثيمها المحفوظ عكس ثيم جهازك.` },
+        { lvl: 'صغير', dir: "comment-card", t: R`كارت تعليق بلغتين`, what: R`كارت فيه صورة ودايرة حالة واسم ووقت وزرار «رد» بسهم و badge «جديد» في الركن، مكتوب بـ logical properties بس (CSS عادي أو Tailwind)، وزرار فوق بيقلب [[dir]] و [[lang]] على html. من درس logical properties و lucide-react.`, done: R`ملف الـ CSS مفيهوش ولا [[left]] ولا [[right]] ولا [[[dir=rtl]]]، والسهم بس عليه [[rtl:-scale-x-100]]، ولقطة RTL مراية للقطة LTR، واسم إنجليزي فيه رموز في آخره بيظهر صح جوه الجملة العربي.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>قاموس المطبخ | مطبخ سلمى</title>
+<title>كارت تعليق بلغتين</title>
+<link rel="stylesheet" href="style.css">
+<script src="dir.js" defer></script>
 </head>
 <body>
-<header>
-  <a href="index.html">مطبخ سلمى</a>
-  <nav aria-label="الرئيسية">
-    <ul>
-      <li><a href="index.html">الرئيسية</a></li>
-      <li><a href="koshary.html">وصفة الكشري</a></li>
-      <li><a href="glossary.html" aria-current="page">قاموس المطبخ</a></li>
-    </ul>
-  </nav>
-</header>
-<main>
-  <nav aria-label="مسار الصفحة">
-    <ol>
-      <li><a href="index.html">الرئيسية</a></li>
-      <li><a href="glossary.html" aria-current="page">قاموس المطبخ</a></li>
-    </ol>
-  </nav>
-  <h1>قاموس المطبخ</h1>
-  <p>الكلمات اللي بتتكرر في الوصفات ومعناها.</p>
-  <dl>
-    <div id="taqliya">
-      <dt>التقلية</dt>
-      <dd>بصل أو توم متحمّر في الزيت لحد ما يبقى بني.</dd>
+<main class="page">
+  <h1 class="title" data-ar="آخر التعليقات" data-en="Latest comments">آخر التعليقات</h1>
+  <button type="button" class="switch" id="switch" lang="en">English</button>
+  <article class="comment">
+    <span class="new" data-ar="جديد" data-en="New">جديد</span>
+    <div class="who">
+      <span class="avatar"><img src="img/avatar.webp" alt="" width="48" height="48"><span class="online" title="متصل" data-ar-title="متصل" data-en-title="Online"></span></span>
+      <p class="name"><bdi>Sara (UX)!</bdi></p>
+      <time class="when" datetime="2026-11-20T09:30" data-ar="من ٥ دقايق" data-en="5 minutes ago">من ٥ دقايق</time>
     </div>
-    <div id="tasbeek">
-      <dt>التسبيك</dt>
-      <dd>إن الصلصة تتساب على النار لحد ما تتقل.</dd>
-    </div>
-    <div id="nar-hadya">
-      <dt>نار هادية</dt>
-      <dt>نار واطية</dt>
-      <dd>أصغر شعلة في البوتاجاز.</dd>
-    </div>
-    <div id="rashet">
-      <dt>رشّة</dt>
-      <dd>أقل من ربع معلقة صغيرة.</dd>
-      <dd>في الملح: اللي بيتمسك بين صباعين.</dd>
-    </div>
-  </dl>
+    <p class="text" data-ar="الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة." data-en="This saved me an hour. The logical properties part was the clearest.">الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة.</p>
+    <button type="button" class="reply"><svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /> <path d="m9 17-5-5 5-5" /></svg><span data-ar="رد" data-en="Reply">رد</span></button>
+  </article>
+  <p class="demo">من غير bdi: كتبت <span class="name-raw">Sara (UX)!</span> تعليق.</p>
+  <p class="demo">بـ bdi: كتبت <bdi class="name-bdi">Sara (UX)!</bdi> تعليق.</p>
 </main>
-<footer>
-  <nav aria-label="روابط الفوتر">
-    <ul>
-      <li><a href="glossary.html">قاموس المطبخ</a></li>
-      <li><a href="mailto:hello@example.test">راسلنا</a></li>
-    </ul>
-  </nav>
-  <p>مطبخ سلمى، ٢٠٢٦.</p>
-</footer>
 </body>
 </html>
 ~~~
 
-- كل مجموعة في [[<div>]] وعليه الـ [[id]]. كده اللينك بينزل للمجموعة كلها (الاسم وتعريفه).
-- «نار هادية» و «نار واطية» اتنين [[<dt>]] لتعريف واحد. و «رشّة» ليها اتنين [[<dd>]].
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.7; }
+.page { max-width: 34rem; margin-inline: auto; padding: 1rem; }
+.title { margin-block: 0 0.75rem; font-size: 1.4rem; }
 
-**اللي بيتكرر في التلات صفحات:** الـ header والـ footer حرف بحرف، ما عدا [[aria-current]]. في HTML لوحده مفيش طريقة تكتبهم مرة واحدة، وده من الأسباب اللي بتخلي الناس تستخدم أدوات بناء و frameworks بعدين.
+/* logical only: start/end, block/inline. The same file works in Arabic and in English */
+.switch { margin-block-end: 1rem; padding-block: 0.4rem; padding-inline: 1rem; border: 1px solid #94a3b8; border-radius: 999px; background: #fff; font: inherit; cursor: pointer; }
+.comment { position: relative; padding: 1.25rem; padding-inline-end: 4.5rem; border-radius: 1rem; background: #fff; box-shadow: 0 2px 10px #0f172a14; }
+.new { position: absolute; inset-block-start: 0.75rem; inset-inline-end: 0.75rem; padding-inline: 0.6rem; border-radius: 999px; background: #4338ca; color: #fff; font-size: 0.8rem; font-weight: 700; }
+.who { display: flex; align-items: center; gap: 0.75rem; }
+.avatar { position: relative; flex: none; }
+.avatar img { display: block; border-radius: 50%; }
+.online { position: absolute; inset-block-end: 0; inset-inline-end: 0; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: #16a34a; border: 2px solid #fff; }
+.name { margin: 0; font-weight: 700; }
+.when { margin-inline-start: auto; color: #475569; font-size: 0.85rem; }
+.text { margin-block: 0.75rem; }
+.reply { display: inline-flex; align-items: center; gap: 0.4rem; padding-block: 0.35rem; padding-inline: 0.8rem; border: 0; border-radius: 0.5rem; background: #e0e7ff; color: #3730a3; font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+.icon { width: 1.1rem; height: 1.1rem; }
+/* the ONE thing logical properties can't do: an arrow drawn pointing one way */
+.icon-flip:dir(rtl) { scale: -1 1; }
+.demo { color: #475569; }
+~~~
 
-**الغلطات اللي الناس بتقع فيها في المشروع ده:**
+~~~js dir.js
+// flips the page between Arabic (rtl) and English (ltr): only lang, dir and the texts change; the CSS stays as it is
+const html = document.documentElement;
+const btn = document.getElementById("switch");
+btn.addEventListener("click", () => {
+  const en = html.lang === "ar";
+  html.lang = en ? "en" : "ar";
+  html.dir = en ? "ltr" : "rtl";
+  btn.textContent = en ? "عربي" : "English";
+  btn.lang = en ? "ar" : "en";
+  for (const el of document.querySelectorAll("[data-ar]")) el.textContent = en ? el.dataset.en : el.dataset.ar;
+  for (const el of document.querySelectorAll("[data-ar-title]")) el.title = en ? el.dataset.enTitle : el.dataset.arTitle;
+});
+~~~
 
-- الـ [[id]] على الـ [[<dt>]] بدل الـ [[<div>]]: لما المجموعة يبقى فيها اتنين [[<dt>]] مش هتعرف تحطه على مين. على الـ [[<div>]] بيغطّي المجموعة كلها.
-- القوايم كتير، فأسهل غلطة إن [[</li>]] يتقفل قبل القايمة الفرعية. الشكل مش هيتغيّر، والـ validator هو اللي هيمسكها.
-- تنسخ الـ header وتنسى تنقل [[aria-current="page"]]، فتلاقي صفحة القاموس بتقول إنك في الرئيسية.
+الأيقونة SVG [[reply]] من lucide (‏[[lucide-static@0.577.0]]، نفس نسخة [[lucide-react]] في الدرس)، متحطة في الـ HTML بـ [[aria-hidden="true"]] لأن كلمة «رد» جنبها. والصورة [[img/avatar.webp]] أي صورة مربعة 96×96.
 
-~~~text الناتج
-index.html:     nav=2  ul=2  ol=1  li=8   figure=2  blockquote=2                          Nu Html Checker: صفر errors
-koshary.html:   nav=3  ul=6  ol=3  li=27  dl=1  dt=3  dd=3  figure=2  blockquote=1  cite=1   Nu Html Checker: صفر errors
-glossary.html:  nav=3  ul=2  ol=1  li=7   dl=1  dt=5  dd=5                                Nu Html Checker: صفر errors
-علامات «الطريقة» في koshary.html:  1 2 3 4 (1 2 3) 5 6
-aria-current="page" في قايمة التنقل:  index ← الرئيسية   koshary ← وصفة الكشري   glossary ← قاموس المطبخ
-كل لينك بين الصفحات بيشاور على ملف موجود: true      glossary.html#taqliya ليه id موجود: true
-على عرض 360: مفيش scroll أفقي في التلاتة
+~~~view 460 460 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كارت تعليق بلغتين</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.7; }
+.page { max-width: 34rem; margin-inline: auto; padding: 1rem; }
+.title { margin-block: 0 0.75rem; font-size: 1.4rem; }
+
+/* logical only: start/end, block/inline. The same file works in Arabic and in English */
+.switch { margin-block-end: 1rem; padding-block: 0.4rem; padding-inline: 1rem; border: 1px solid #94a3b8; border-radius: 999px; background: #fff; font: inherit; cursor: pointer; }
+.comment { position: relative; padding: 1.25rem; padding-inline-end: 4.5rem; border-radius: 1rem; background: #fff; box-shadow: 0 2px 10px #0f172a14; }
+.new { position: absolute; inset-block-start: 0.75rem; inset-inline-end: 0.75rem; padding-inline: 0.6rem; border-radius: 999px; background: #4338ca; color: #fff; font-size: 0.8rem; font-weight: 700; }
+.who { display: flex; align-items: center; gap: 0.75rem; }
+.avatar { position: relative; flex: none; }
+.avatar img { display: block; border-radius: 50%; }
+.online { position: absolute; inset-block-end: 0; inset-inline-end: 0; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: #16a34a; border: 2px solid #fff; }
+.name { margin: 0; font-weight: 700; }
+.when { margin-inline-start: auto; color: #475569; font-size: 0.85rem; }
+.text { margin-block: 0.75rem; }
+.reply { display: inline-flex; align-items: center; gap: 0.4rem; padding-block: 0.35rem; padding-inline: 0.8rem; border: 0; border-radius: 0.5rem; background: #e0e7ff; color: #3730a3; font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+.icon { width: 1.1rem; height: 1.1rem; }
+/* the ONE thing logical properties can't do: an arrow drawn pointing one way */
+.icon-flip:dir(rtl) { scale: -1 1; }
+.demo { color: #475569; }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1 class="title" data-ar="آخر التعليقات" data-en="Latest comments">آخر التعليقات</h1>
+  <button type="button" class="switch" id="switch" lang="en">English</button>
+  <article class="comment">
+    <span class="new" data-ar="جديد" data-en="New">جديد</span>
+    <div class="who">
+      <span class="avatar"><img src="data:image/webp;base64,UklGRuIBAABXRUJQVlA4INYBAAAwDACdASpgAGAAPtFgqE2oJiQiLVVYwQAaCUAaeYRqwG2AbKgxQb4GkCZF3apJ0MQfWhGDYv9+Oh/RcGxLdTMNsJ+OZ5XTBuOcmz7koUfKMuqxW2JzF8Rcvg8foqMoKrlSYca+2V5lfhwAAP7vrFfVd14AGBw7pTCGkhbWRMPTWLFnfua2PKDxxy1CpgB/ElMTxsW2UZj6Vz3RL/OPFkTRkxys+bJ1l24vDwWepTpEWVoOpl3LsQrF3gKUSjFnrku4OIEbMa5pIw4ypWgsQQ4YlBXZVi3NigVWnY8+jTPUK8J/j+6ydlDaEE1Drgd+bDjKaTvEen8PieiujmmRfSGwM3y5bK1pjQYUq/8ywEzjRVpJizLAI49jouR5WMLde8CbRiMLcdFKb5L/oDPRQVCGjOW200L6Gr7Oix9OqATM5EJEaFD9ktlIY4qQnHWFJEa+h6kVLHeJdbmOmpack9jagk/Fp8ElLXlKOcraIHRVYbWKJe606WpOKUyiiIwaasKX6P9Kuz5Z2HGYM2h2TQ+Ka1TFwACwQij7SM2LJdBpF/3Mn2HBzopmdgYcIBBHEjY21BeOapMq4M7MSnMR1MhDLGhkWGzOI/aZYuStWY9eVFZ6FgAAAA==" alt="" width="48" height="48"><span class="online" title="متصل" data-ar-title="متصل" data-en-title="Online"></span></span>
+      <p class="name"><bdi>Sara (UX)!</bdi></p>
+      <time class="when" datetime="2026-11-20T09:30" data-ar="من ٥ دقايق" data-en="5 minutes ago">من ٥ دقايق</time>
+    </div>
+    <p class="text" data-ar="الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة." data-en="This saved me an hour. The logical properties part was the clearest.">الشرح ده وفّر عليّا ساعة. الجزء بتاع الـ logical properties كان أوضح حاجة.</p>
+    <button type="button" class="reply"><svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /> <path d="m9 17-5-5 5-5" /></svg><span data-ar="رد" data-en="Reply">رد</span></button>
+  </article>
+  <p class="demo">من غير bdi: كتبت <span class="name-raw">Sara (UX)!</span> تعليق.</p>
+  <p class="demo">بـ bdi: كتبت <bdi class="name-bdi">Sara (UX)!</bdi> تعليق.</p>
+</main>
+<script>
+// flips the page between Arabic (rtl) and English (ltr): only lang, dir and the texts change; the CSS stays as it is
+const html = document.documentElement;
+const btn = document.getElementById("switch");
+btn.addEventListener("click", () => {
+  const en = html.lang === "ar";
+  html.lang = en ? "en" : "ar";
+  html.dir = en ? "ltr" : "rtl";
+  btn.textContent = en ? "عربي" : "English";
+  btn.lang = en ? "ar" : "en";
+  for (const el of document.querySelectorAll("[data-ar]")) el.textContent = en ? el.dataset.en : el.dataset.ar;
+  for (const el of document.querySelectorAll("[data-ar-title]")) el.title = en ? el.dataset.enTitle : el.dataset.arTitle;
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارت تعليق: صورة دايرية عليها نقطة خضرا (متصل)، والاسم «Sara (UX)!»، و «من ٥ دقايق» على الجنب التاني، والتعليق، وزرار «رد» بسهم، وفي الركن شارة «جديد». وزرار «English» فوق بيقلب الكارت كله إنجليزي من الشمال لليمين. وتحت سطرين بيوروا مشكلة الاسم.
+
+**logical properties بس:** [[inset-inline-end]] للشارة، و [[padding-inline-end]] للمسافة اللي تحتها، و [[margin-inline-start: auto]] للوقت، و [[border-block-end]]… مفيش ولا [[left]] ولا [[right]] ولا [[[dir=rtl]]] في الملف (grep: 0). فنفس الـ CSS بيطلع مراية في الإنجليزي.
+
+**السهم هو الاستثناء الوحيد:** logical properties بتقلب الأماكن، مش الرسومات. السهم مرسوم لناحية معيّنة، فبيتقلب بـ [[.icon-flip:dir(rtl) { scale: -1 1 }]]. و [[:dir(rtl)]] بيقرا الاتجاه الفعلي حتى لو [[dir]] متحط على جد بعيد.
+
+**الاسم الإنجليزي جوه جملة عربي:** «كتبت Sara (UX)! تعليق». المتصفح بيرتّب الحروف بقواعد اتجاه (bidi)، والـ «!» ملهاش اتجاه، فبتاخد اتجاه الجملة العربي وتطير لأول الاسم. اتقاس: من غير [[<bdi>]] الـ «!» عند x = 368 والـ S عند 373 (قبله)، وبـ [[<bdi>]] الـ «!» عند 471 بعد «)» عند 466. [[<bdi>]] بيقول «ده اتجاهه لوحده»، وده مهم في أي اسم جاي من المستخدمين.
+
+**زرار اللغة:** بيغيّر [[lang]] و [[dir]] على الـ html والكلام من [[data-ar]] و [[data-en]] بس. والـ CSS زي ما هو.
+
+**غلطة مسكها axe:** [[page-has-heading-one]]: الصفحة كانت من غير [[<h1>]]، فاتزوّد «آخر التعليقات».
+
+~~~text الناتج (Playwright بـ Chrome 157، كارت عرضه 552، [من الشمال، من اليمين])
+rtl: الشارة [12, 456]   الصورة [444, 20]   الوقت [72, 377]   الرد [429, 20]   السهم scale -1 1
+ltr: الشارة [454, 12]   الصورة [20, 444]   الوقت [354, 72]   الرد [20, 401]   السهم none
+(كل رقم من اليمين في rtl هو نفس الرقم من الشمال في ltr: مراية)
+
+x للـ S و ! و ) :
+من غير bdi: S 373، ! 368، ) 433   ← الـ ! طارت لأول الاسم
+بـ bdi:     S 406، ! 471، ) 466   ← في آخره
+axe: 0 violations (كانت page-has-heading-one قبل الـ h1)   الـ validator: مفيش رسايل   CSS validator: No Error Found
 ~~~` },
-        { lvl: 'فكرة', dir: "my-shelf", t: R`رف كتبك (أو أفلامك أو ألعابك)`, what: R`صفحة عن الحاجات اللي بتحبها: أحسن ٣ مرتبين، وكل واحد تحته بياناته، وحاجة بتتابعها دلوقتي مع جملة منها عجبتك، وقايمة «بعدين». انت اللي بتختار الموضوع (كتب، أفلام، ألعاب، ألبومات) والأجزاء.`, done: R`فيها على الأقل قايمة مرقّمة وقايمة بنقط و [[<dl>]] واقتباس بمصدره، وكل عنوان عمل جوه [[<cite>]]، والـ validator صفر errors، وواحد صاحبك قراها وعرف أحسن حاجة عندك إيه من غير ما تقوله.`, ext: R`زوّد لكل عمل لينك لصفحته، وصورة غلاف جوه [[<figure>]]. ولما توصل لوحدة الـ CSS خلّي كل عمل كارت.`, sol: R`نسخة نموذجية (أسماء الكتب متخيلة):
+        { lvl: 'متوسط', dir: "menu-i18n", t: R`منيو مطعم «الركن الأخضر» بلغتين`, what: R`صفحة منيو (مطعم متخيل) فيها أقسام وأطباق وأسعار. النصوص في dictionary بـ [[data-i18n="key"]]، وزرار اللغة بيغيّر [[lang]] و [[dir]] والنصوص من غير reload ويفتكر الاختيار. الأسعار بـ [[Intl.NumberFormat]] (‏[[ar-EG]] و [[en-US]] بعملة [[EGP]]) وعمودها [[font-variant-numeric: tabular-nums]]، وخط لكل لغة بـ [[:lang(ar)]] و [[:lang(en)]]، والخطوط woff2 من الموقع بـ [[unicode-range]]. بيجمع الدروس التلاتة الأولى.`, done: R`تبديل اللغة بيغيّر الاتجاه والنصوص وشكل الأسعار في نفس اللحظة، وأرقام عمود الأسعار متصفّة تحت بعض، والاختيار فاضل بعد refresh، وصفحة عربي بس بتنزّل ملف الخط العربي بس (Network › Font)، ومفيش ولا [[[dir=rtl]]] في الـ CSS.`, sol: R`~~~text menu-i18n/
+index.html  style.css  i18n.js
+fonts/cairo-arabic-400-normal.woff2  fonts/cairo-arabic-700-normal.woff2
+fonts/inter-latin-400-normal.woff2   fonts/inter-latin-700-normal.woff2
+fonts/Cairo-OFL.txt  fonts/Inter-OFL.txt   (رخصة الخطين: OFL، لازم تتنقل معاهم)
+~~~
 
-~~~live 480 رف كتب كريم
+~~~bash الخطوط من npm (fontsource)، وبعدين بتتنسخ جنب الموقع
+npm i @fontsource/cairo@5.3.0 @fontsource/inter@5.3.0
+cp node_modules/@fontsource/cairo/files/cairo-arabic-{400,700}-normal.woff2 fonts/
+cp node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.woff2 fonts/
+~~~
+
+~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>رف كتب كريم</title>
+<title>منيو الركن الأخضر</title>
+<script>
+  // the saved language before the first paint: no flash of the other direction
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("lang"); } catch (e) {}
+    if (l === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
+  })();
+</script>
+<link rel="stylesheet" href="style.css">
+<script src="i18n.js" defer></script>
 </head>
 <body>
-<header>
-  <h1>رف كتب كريم</h1>
-  <nav aria-label="أجزاء الصفحة">
-    <ul>
-      <li><a href="#top3">أحسن ٣ كتب</a></li>
-      <li><a href="#now">بقرا دلوقتي</a></li>
-      <li><a href="#next">هقرا بعدين</a></li>
-    </ul>
-  </nav>
+<header class="top">
+  <h1 data-i18n="title">منيو الركن الأخضر</h1>
+  <button type="button" id="lang" class="lang" lang="en">English</button>
 </header>
-<main>
-  <section aria-labelledby="top3">
-    <h2 id="top3">أحسن ٣ كتب قريتهم السنة دي</h2>
-    <ol>
-      <li>
-        <cite>ظل الجبل</cite>
-        <dl>
-          <dt>النوع</dt>
-          <dd>رواية</dd>
-          <dt>خلّصته في</dt>
-          <dd>٣ أيام</dd>
-        </dl>
-      </li>
-      <li>
-        <cite>عادات صغيرة</cite>
-        <dl>
-          <dt>النوع</dt>
-          <dd>تطوير ذات</dd>
-          <dt>خلّصته في</dt>
-          <dd>أسبوعين</dd>
-        </dl>
-      </li>
-      <li>
-        <cite>بيت القمر</cite>
-        <dl>
-          <dt>النوع</dt>
-          <dd>رواية</dd>
-          <dd>غموض</dd>
-          <dt>خلّصته في</dt>
-          <dd>أسبوع</dd>
-        </dl>
-      </li>
-    </ol>
+<main class="menu">
+  <section aria-labelledby="s-main">
+    <h2 id="s-main" data-i18n="mains">الأطباق الرئيسية</h2>
+    <ul class="dishes">
+      <li><span data-i18n="koshari">كشري بالدقة</span><span class="price" data-price="65"></span></li>
+      <li><span data-i18n="molokhia">ملوخية بالفراخ</span><span class="price" data-price="180"></span></li>
+      <li><span data-i18n="grill">مشويات مشكّلة (لفردين)</span><span class="price" data-price="1250"></span></li>
+    </ul>
   </section>
-  <section aria-labelledby="now">
-    <h2 id="now">بقرا دلوقتي</h2>
-    <p><cite>طريق الملح</cite>، ووصلت لنصه.</p>
-    <figure>
-      <blockquote>
-        <p>الطريق مكانش طويل، إحنا اللي كنا بنمشي ببطء.</p>
-      </blockquote>
-      <figcaption>من <cite>طريق الملح</cite>، صفحة ٨٨</figcaption>
-    </figure>
-  </section>
-  <section aria-labelledby="next">
-    <h2 id="next">هقرا بعدين</h2>
-    <ul>
-      <li><cite>آخر القطارات</cite></li>
-      <li><cite>حديقة الرماد</cite></li>
+  <section aria-labelledby="s-drinks">
+    <h2 id="s-drinks" data-i18n="drinks">المشروبات</h2>
+    <ul class="dishes">
+      <li><span data-i18n="tea">شاي بالنعناع</span><span class="price" data-price="25"></span></li>
+      <li><span data-i18n="mango">عصير مانجا</span><span class="price" data-price="55"></span></li>
+      <li><span data-i18n="sobia">سوبيا</span><span class="price" data-price="40.5"></span></li>
     </ul>
   </section>
 </main>
-<footer>
-  <p>كل الكتب دي أسماء متخيلة للتمرين.</p>
-</footer>
 </body>
 </html>
 ~~~
 
-**ليه التصميم ده:**
+~~~css style.css
+/* fonts from our own site. unicode-range: the browser downloads a file only if the page has characters in its range */
+@font-face {
+  font-family: "Cairo";
+  src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-latin-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122;
+}
 
-- **أحسن ٣ [[<ol>]]:** ده ترتيب، والأول أحسن من التاني.
-- **[[<dl>]] جوه كل [[<li>]]:** الـ [[<li>]] بيقبل أي محتوى، فكل كتاب عنصر في القايمة وجواه بياناته. ده بيجمع نوعين من القوايم من غير ما واحدة تتحايل على التانية.
-- **اسم الكتاب [[<cite>]] مش عنوان:** العناوين [[<h2>]] لأجزاء الصفحة. لو كل كتاب بقى ليه شرح طويل، ساعتها كل واحد يبقى [[<article>]] بعنوانه.
-- **الجملة من الكتاب [[<figure>]]:** فيها الاقتباس ومصدره (الكتاب والصفحة).
-- **«هقرا بعدين» [[<ul>]]:** لسه مرتبتهمش.
-- **قايمة تنقل لأجزاء الصفحة:** [[<ul>]] جوه [[<nav>]] بلينكات [[#top3]] وأخواتها.
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #f0fdf4; color: #14532d; }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
 
-**اختيارات تانية كانت ممكنة:** جدول بدل الـ [[<dl>]] (الأسماء بتتكرر لتلات كتب، فالجدول منطقي لو عايز القارئ يقارن). اخترت [[<dl>]] لأن المهم هنا الترتيب، مش المقارنة.
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; max-width: 40rem; margin-inline: auto; padding: 1rem; }
+.top h1 { margin: 0; font-size: 1.6rem; }
+.lang { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid #15803d; border-radius: 999px; background: #fff; color: #14532d; font: inherit; font-weight: 700; cursor: pointer; }
+.lang:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
 
-~~~text الناتج
-ol=1  ul=2  li=8  dl=3  dt=6  dd=7  figure=1  blockquote=1  cite=7  nav=1  section=3
-كل عنوان كتاب جوه cite: 7 من 7
-Nu Html Checker: صفر errors      على عرض 360: مفيش scroll أفقي
+.menu { max-width: 40rem; margin-inline: auto; padding: 0 1rem 2rem; }
+.menu h2 { margin-block: 1.5rem 0.5rem; font-size: 1.2rem; }
+.dishes { margin: 0; padding: 0; list-style: none; }
+.dishes li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.6rem; border-block-end: 1px dashed #86efac; }
+/* every digit the same width: the prices line up under each other */
+.price { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+~~~
+
+~~~js i18n.js
+// every text that changes lives here, by key. The HTML says which key: data-i18n="koshari"
+const dict = {
+  ar: { title: "منيو الركن الأخضر", mains: "الأطباق الرئيسية", drinks: "المشروبات", koshari: "كشري بالدقة", molokhia: "ملوخية بالفراخ", grill: "مشويات مشكّلة (لفردين)", tea: "شاي بالنعناع", mango: "عصير مانجا", sobia: "سوبيا", button: "English" },
+  en: { title: "Green Corner Menu", mains: "Main dishes", drinks: "Drinks", koshari: "Koshari with garlic sauce", molokhia: "Molokhia with chicken", grill: "Mixed grill (for two)", tea: "Mint tea", mango: "Mango juice", sobia: "Sobia", button: "عربي" },
+};
+const locale = { ar: "ar-EG", en: "en-US" };
+
+function render(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === "ar" ? "rtl" : "ltr";
+  document.title = dict[lang].title;
+  for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = dict[lang][el.dataset.i18n];
+  // the same number, written the way each language writes money
+  const money = new Intl.NumberFormat(locale[lang], { style: "currency", currency: "EGP" });
+  for (const el of document.querySelectorAll("[data-price]")) el.textContent = money.format(Number(el.dataset.price));
+  const btn = document.getElementById("lang");
+  btn.textContent = dict[lang].button;
+  btn.lang = lang === "ar" ? "en" : "ar";       // the button's word is in the OTHER language
+}
+
+document.getElementById("lang").addEventListener("click", () => {
+  const next = document.documentElement.lang === "ar" ? "en" : "ar";
+  try { localStorage.setItem("lang", next); } catch (e) {}
+  render(next);
+});
+render(document.documentElement.lang);
+~~~
+
+~~~view 560 560 الشكل النهائي (المعاينة بخط الجهاز (ملفات الخطوط مش جوه المعاينة))
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>منيو الركن الأخضر</title>
+<script>
+  // the saved language before the first paint: no flash of the other direction
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("lang"); } catch (e) {}
+    if (l === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
+  })();
+</script>
+<style>
+/* fonts from our own site. unicode-range: the browser downloads a file only if the page has characters in its range */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #f0fdf4; color: #14532d; }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; max-width: 40rem; margin-inline: auto; padding: 1rem; }
+.top h1 { margin: 0; font-size: 1.6rem; }
+.lang { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid #15803d; border-radius: 999px; background: #fff; color: #14532d; font: inherit; font-weight: 700; cursor: pointer; }
+.lang:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.menu { max-width: 40rem; margin-inline: auto; padding: 0 1rem 2rem; }
+.menu h2 { margin-block: 1.5rem 0.5rem; font-size: 1.2rem; }
+.dishes { margin: 0; padding: 0; list-style: none; }
+.dishes li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.6rem; border-block-end: 1px dashed #86efac; }
+/* every digit the same width: the prices line up under each other */
+.price { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1 data-i18n="title">منيو الركن الأخضر</h1>
+  <button type="button" id="lang" class="lang" lang="en">English</button>
+</header>
+<main class="menu">
+  <section aria-labelledby="s-main">
+    <h2 id="s-main" data-i18n="mains">الأطباق الرئيسية</h2>
+    <ul class="dishes">
+      <li><span data-i18n="koshari">كشري بالدقة</span><span class="price" data-price="65"></span></li>
+      <li><span data-i18n="molokhia">ملوخية بالفراخ</span><span class="price" data-price="180"></span></li>
+      <li><span data-i18n="grill">مشويات مشكّلة (لفردين)</span><span class="price" data-price="1250"></span></li>
+    </ul>
+  </section>
+  <section aria-labelledby="s-drinks">
+    <h2 id="s-drinks" data-i18n="drinks">المشروبات</h2>
+    <ul class="dishes">
+      <li><span data-i18n="tea">شاي بالنعناع</span><span class="price" data-price="25"></span></li>
+      <li><span data-i18n="mango">عصير مانجا</span><span class="price" data-price="55"></span></li>
+      <li><span data-i18n="sobia">سوبيا</span><span class="price" data-price="40.5"></span></li>
+    </ul>
+  </section>
+</main>
+<script>
+// every text that changes lives here, by key. The HTML says which key: data-i18n="koshari"
+const dict = {
+  ar: { title: "منيو الركن الأخضر", mains: "الأطباق الرئيسية", drinks: "المشروبات", koshari: "كشري بالدقة", molokhia: "ملوخية بالفراخ", grill: "مشويات مشكّلة (لفردين)", tea: "شاي بالنعناع", mango: "عصير مانجا", sobia: "سوبيا", button: "English" },
+  en: { title: "Green Corner Menu", mains: "Main dishes", drinks: "Drinks", koshari: "Koshari with garlic sauce", molokhia: "Molokhia with chicken", grill: "Mixed grill (for two)", tea: "Mint tea", mango: "Mango juice", sobia: "Sobia", button: "عربي" },
+};
+const locale = { ar: "ar-EG", en: "en-US" };
+
+function render(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === "ar" ? "rtl" : "ltr";
+  document.title = dict[lang].title;
+  for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = dict[lang][el.dataset.i18n];
+  // the same number, written the way each language writes money
+  const money = new Intl.NumberFormat(locale[lang], { style: "currency", currency: "EGP" });
+  for (const el of document.querySelectorAll("[data-price]")) el.textContent = money.format(Number(el.dataset.price));
+  const btn = document.getElementById("lang");
+  btn.textContent = dict[lang].button;
+  btn.lang = lang === "ar" ? "en" : "ar";       // the button's word is in the OTHER language
+}
+
+document.getElementById("lang").addEventListener("click", () => {
+  const next = document.documentElement.lang === "ar" ? "en" : "ar";
+  try { localStorage.setItem("lang", next); } catch (e) {}
+  render(next);
+});
+render(document.documentElement.lang);
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** «منيو الركن الأخضر» وزرار «English»، وقسمين أطباق ومشروبات، وكل طبق جنبه سعره بالأرقام العربي «٦٥٫٠٠ ج.م.». الزرار بيقلب الصفحة كلها إنجليزي من الشمال لليمين والأسعار «EGP 65.00»، والاختيار بيفضل بعد الـ refresh.
+
+**الكلام من dictionary:** كل كلام بيتغيّر عليه [[data-i18n="koshari"]]، و [[dict.ar]] و [[dict.en]] فيهم نفس المفاتيح. [[render(lang)]] بيغيّر [[lang]] و [[dir]] والعنوان وكل الكلام والأسعار مرة واحدة، من غير reload.
+
+**الأسعار بـ [[Intl.NumberFormat]]:** نفس الرقم [[65]]، و [[ar-EG]] بيكتبه «٦٥٫٠٠ ج.م.» (أرقام عربي، وفاصلة عشرية عربي، والعملة بالعربي)، و [[en-US]] بيكتبه «EGP 65.00». مفيش ولا سعر مكتوب بإيدك في الـ HTML: [[data-price]] بس.
+
+**[[tabular-nums]]:** الأرقام في الخط العادي عروضها مختلفة (الـ ١ أضيق)، فعمود الأسعار بيتعوّج. [[tabular-nums]] بيخلي كل رقم نفس العرض. اتقاس: حافة كل الأسعار على نفس الـ x (46 في العربي، و 654 في الإنجليزي).
+
+**خط لكل لغة، والصفحة بتنزّل اللي محتاجاه بس:** [[:root:lang(ar)]] بـ Cairo، و [[:root:lang(en)]] بـ Inter. وكل [[@font-face]] عليه [[unicode-range]]: Cairo للحروف العربي بس، و Inter للاتيني بس. المتصفح بينزّل ملف خط بس لو الصفحة فيها حرف من المدى ده **وبيتكتب بالخط ده**. اتقاس: الصفحة العربي نزّلت ملفين Cairo بس، والإنجليزي ملفين Inter بس.
+
+**زرار «English» في الصفحة العربي:** عليه [[lang="en"]] (قارئ الشاشة ينطقه إنجليزي)، و [[font: inherit]] بياخد Cairo من الأب. Cairo مفيهوش حروف لاتيني في المدى بتاعه، فالكلمة بتتكتب بخط الجهاز، وملف Inter كله (24KB) مبيتنزّلش عشان كلمة واحدة.
+
+**[[font-display: swap]]:** الكلام بيبان على طول بخط الجهاز، وبيتبدّل للخط لما يحمّل، بدل ما يفضل مستخبي.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+ar: rtl | ‏٦٥٫٠٠ ج.م.‏ | ‏١٨٠٫٠٠ ج.م.‏ | ‏١٬٢٥٠٫٠٠ ج.م.‏ | ‏٢٥٫٠٠ ج.م.‏ | ‏٥٥٫٠٠ ج.م.‏ | ‏٤٠٫٥٠ ج.م.‏
+    حافة الأسعار: 46,46,46,46,46,46 | الخطوط: cairo-arabic-700-normal.woff2, cairo-arabic-400-normal.woff2
+en: ltr | EGP 65.00 | EGP 180.00 | EGP 1,250.00 | EGP 25.00 | EGP 55.00 | EGP 40.50
+    حافة الأسعار: 654 ×6 | الخطوط: inter-latin-700-normal.woff2, inter-latin-400-normal.woff2
+ضغطة الزرار: en ltr «Green Corner Menu» | بعد refresh: en
+grep على الـ CSS لـ [dir=rtl]: 0
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**غلطة اتصلحت (في المشروع الكبير الأول):** أول نسخة كانت [[:lang(ar) { line-height: 1.85 }]] من غير [[:root]]. [[:lang(ar)]] بيمسك **كل** عنصر في الصفحة العربي، ووزنه (0,1,0) أكبر من [[h1]] (0,0,1)، فالعناوين أخدت 1.85 بدل 1.25 (عنوان 64px سطره 118px). على [[:root]] الإعداد بيتورّث بس، والعنوان يقدر يغيّره. شوف مشروع «عدسة».` },
+        { lvl: 'متوسط', dir: "color-studio", t: R`استوديو الألوان`, what: R`صفحة فيها slider لدرجة اللون (hue من 0 لـ 360) بيولّد من لون واحد كل التوكنز: [[--brand]] بـ [[oklch()]]، و [[--brand-soft]] و [[--ring]] بـ [[color-mix(in oklab, var(--brand) 20%, transparent)]]، ونسخة للغامق أفتح شوية. تحت الـ slider عينات: زرار، و badge، ولينك، وحقل بـ focus، و alert نجاح وخطر (الألوان الوظيفية ثابتة مش بتتغير مع البراند). من dark mode، ومتغيرات CSS في الوحدة اللي فاتت.`, done: R`تحريك الـ slider بيغيّر كل العينات في الثيمين من غير ما تلمس غير متغير واحد، و alerts النجاح والخطر لونها مبيتغيرش، وفيه ٣ درجات hue موثّقة في الصفحة إن كلامها 4.5:1 أو أكتر في الوضعين (من DevTools).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>استوديو الألوان</title>
+<link rel="stylesheet" href="style.css">
+<script src="studio.js" defer></script>
+</head>
+<body>
+<main class="page">
+  <h1>استوديو الألوان</h1>
+  <p class="lead">حرّك درجة اللون: كل لون في الصفحة بيتولّد من رقم واحد.</p>
+  <div class="controls">
+    <label for="hue">درجة اللون (hue):</label> <output id="hue-out" for="hue">270</output>
+    <input id="hue" type="range" min="0" max="360" value="270">
+    <button type="button" id="mode" aria-pressed="false">الوضع الغامق</button>
+  </div>
+
+  <section class="samples" aria-label="عينات">
+    <button type="button" class="btn">احجز دلوقتي</button>
+    <span class="badge">جديد</span>
+    <a href="#more">لينك عادي</a>
+    <label class="field">خانة فيها focus <input value="اضغط هنا" aria-label="خانة تجربة"></label>
+    <p class="alert alert--ok">اتحفظ. (لون النجاح ثابت مهما البراند اتغيّر)</p>
+    <p class="alert alert--danger">فيه غلطة. (لون الخطر ثابت)</p>
+  </section>
+
+  <section class="tested">
+    <h2>درجات اتقاس تباينها</h2>
+    <p>الأرقام من قياس حقيقي في Chrome (نسبة التباين، والمطلوب 4.5 أو أكتر):</p>
+    <div class="tbl" tabindex="0" role="region" aria-label="جدول التباين">
+    <table>
+      <thead><tr><th scope="col">hue</th><th scope="col">فاتح: كلام على البراند</th><th scope="col">فاتح: لينك على الخلفية</th><th scope="col">غامق: كلام على البراند</th><th scope="col">غامق: لينك على الخلفية</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">30</th><td>7.17</td><td>8.13</td><td>8.98</td><td>9.57</td></tr>
+        <tr><th scope="row">150</th><td>5.82</td><td>6.57</td><td>9.85</td><td>10.58</td></tr>
+        <tr><th scope="row">270</th><td>6.80</td><td>7.82</td><td>9.19</td><td>9.83</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>وأقل رقم في كل الدرجات من 0 لـ 360: 5.35 (hue 195، فاتح).</p>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --hue: 270;                                        /* the ONE number. Everything brand-coloured comes from it */
+  --bg: #ffffff;
+  --fg: #111827;
+  --brand: oklch(0.48 0.17 var(--hue));              /* dark enough for white text on it */
+  --on-brand: #ffffff;
+  --brand-text: oklch(0.45 0.17 var(--hue));         /* brand colour used as TEXT on the page background */
+  --brand-soft: color-mix(in oklab, var(--brand) 20%, transparent);
+  --ring: color-mix(in oklab, var(--brand) 55%, transparent);
+  /* functional colours: fixed, they must not change with the brand */
+  --ok-bg: #dcfce7; --ok-fg: #14532d;
+  --danger-bg: #fee2e2; --danger-fg: #7f1d1d;
+}
+:root[data-mode="dark"] {
+  --bg: #0b1120;
+  --fg: #e5e7eb;
+  --brand: oklch(0.78 0.12 var(--hue));              /* lighter in the dark mode */
+  --on-brand: #0b1120;
+  --brand-text: oklch(0.80 0.12 var(--hue));
+  --ok-bg: #052e16; --ok-fg: #bbf7d0;
+  --danger-bg: #450a0a; --danger-fg: #fecaca;
+}
+
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-block: 1rem; }
+.controls input { flex: 1; min-width: 12rem; accent-color: var(--brand); }
+button { font: inherit; cursor: pointer; }
+#mode { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid var(--fg); border-radius: 999px; background: transparent; color: var(--fg); }
+
+.samples { display: grid; gap: 1rem; justify-items: start; padding: 1.25rem; border-radius: 1rem; border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); }
+.btn { padding-block: 0.6rem; padding-inline: 1.2rem; border: 0; border-radius: 0.6rem; background: var(--brand); color: var(--on-brand); font-weight: 700; }
+.badge { padding-inline: 0.7rem; border-radius: 999px; background: var(--brand-soft); color: var(--brand-text); font-weight: 700; }
+a { color: var(--brand-text); }
+.field { display: grid; gap: 0.25rem; }
+.field input { padding: 0.5rem 0.75rem; border: 1px solid color-mix(in oklab, var(--fg) 45%, transparent); border-radius: 0.5rem; background: var(--bg); color: var(--fg); font: inherit; }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.field input:focus-visible { outline: 3px solid var(--ring); box-shadow: 0 0 0 6px var(--brand-soft); }
+.alert { margin: 0; padding: 0.6rem 1rem; border-radius: 0.6rem; }
+.alert--ok { background: var(--ok-bg); color: var(--ok-fg); }
+.alert--danger { background: var(--danger-bg); color: var(--danger-fg); }
+
+.tested table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tested th, .tested td { padding: 0.4rem 0.6rem; border-block-end: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); text-align: start; }
+.tbl { overflow-x: auto; }
+~~~
+
+~~~js studio.js
+const root = document.documentElement;
+const hue = document.getElementById("hue");
+const out = document.getElementById("hue-out");
+hue.addEventListener("input", () => {
+  root.style.setProperty("--hue", hue.value);       // one variable changes, everything follows
+  out.value = hue.value;
+});
+const mode = document.getElementById("mode");
+mode.addEventListener("click", () => {
+  const dark = root.dataset.mode !== "dark";
+  if (dark) root.dataset.mode = "dark"; else delete root.dataset.mode;
+  mode.setAttribute("aria-pressed", String(dark));
+});
+~~~
+
+~~~js color-check.js (القياس بـ playwright-core)
+// for every hue 0..360 (step 15), in both modes: contrast of (text on brand) and (brand text on page)
+const { chromium } = require("playwright-core");
+(async () => {
+  const browser = await chromium.launch({ channel: "chrome" });
+  const p = await browser.newPage();
+  await p.goto("http://127.0.0.1:8765/color-studio/index.html");
+  const rows = await p.evaluate(() => {
+    const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+    const rgb = css => { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); };
+    const L = c => { const v = c.map(x => x / 255).map(x => x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+    const cr = (a, b) => { const x = [L(a), L(b)].sort((m, n) => n - m); return (x[0] + 0.05) / (x[1] + 0.05); };
+    const get = (el, prop) => getComputedStyle(el)[prop];
+    const btn = document.querySelector(".btn"), link = document.querySelector("a"), ok = document.querySelector(".alert--ok");
+    const out = [];
+    for (const mode of ["light", "dark"]) {
+      if (mode === "dark") document.documentElement.dataset.mode = "dark"; else delete document.documentElement.dataset.mode;
+      for (let h = 0; h <= 360; h += 15) {
+        document.documentElement.style.setProperty("--hue", h);
+        const onBrand = cr(rgb(get(btn, "color")), rgb(get(btn, "backgroundColor")));
+        const textOnPage = cr(rgb(get(link, "color")), rgb(get(document.body, "backgroundColor")));
+        out.push({ mode, h, onBrand: +onBrand.toFixed(2), textOnPage: +textOnPage.toFixed(2), okBg: get(ok, "backgroundColor") });
+      }
+    }
+    return out;
+  });
+  for (const mode of ["light", "dark"]) {
+    const r = rows.filter(x => x.mode === mode);
+    console.log(mode, "min on-brand", Math.min(...r.map(x => x.onBrand)), "at hue", r.find(x => x.onBrand === Math.min(...r.map(y => y.onBrand))).h,
+      "| min brand-text", Math.min(...r.map(x => x.textOnPage)), "at hue", r.find(x => x.textOnPage === Math.min(...r.map(y => y.textOnPage))).h,
+      "| ok-bg values:", [...new Set(r.map(x => x.okBg))].join(" "));
+  }
+  for (const h of [30, 150, 270]) console.log("hue", h, JSON.stringify(rows.filter(x => x.h === h).map(x => x.mode + ": text on brand " + x.onBrand + ", brand text " + x.textOnPage)));
+  console.log("below 4.5:", JSON.stringify(rows.filter(x => x.onBrand < 4.5 || x.textOnPage < 4.5).map(x => x.mode + " " + x.h + " (" + x.onBrand + "/" + x.textOnPage + ")")));
+  await browser.close();
+})();
+~~~
+
+~~~view 820 1000 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>استوديو الألوان</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --hue: 270;                                        /* the ONE number. Everything brand-coloured comes from it */
+  --bg: #ffffff;
+  --fg: #111827;
+  --brand: oklch(0.48 0.17 var(--hue));              /* dark enough for white text on it */
+  --on-brand: #ffffff;
+  --brand-text: oklch(0.45 0.17 var(--hue));         /* brand colour used as TEXT on the page background */
+  --brand-soft: color-mix(in oklab, var(--brand) 20%, transparent);
+  --ring: color-mix(in oklab, var(--brand) 55%, transparent);
+  /* functional colours: fixed, they must not change with the brand */
+  --ok-bg: #dcfce7; --ok-fg: #14532d;
+  --danger-bg: #fee2e2; --danger-fg: #7f1d1d;
+}
+:root[data-mode="dark"] {
+  --bg: #0b1120;
+  --fg: #e5e7eb;
+  --brand: oklch(0.78 0.12 var(--hue));              /* lighter in the dark mode */
+  --on-brand: #0b1120;
+  --brand-text: oklch(0.80 0.12 var(--hue));
+  --ok-bg: #052e16; --ok-fg: #bbf7d0;
+  --danger-bg: #450a0a; --danger-fg: #fecaca;
+}
+
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-block: 1rem; }
+.controls input { flex: 1; min-width: 12rem; accent-color: var(--brand); }
+button { font: inherit; cursor: pointer; }
+#mode { padding-block: 0.35rem; padding-inline: 1rem; border: 1px solid var(--fg); border-radius: 999px; background: transparent; color: var(--fg); }
+
+.samples { display: grid; gap: 1rem; justify-items: start; padding: 1.25rem; border-radius: 1rem; border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); }
+.btn { padding-block: 0.6rem; padding-inline: 1.2rem; border: 0; border-radius: 0.6rem; background: var(--brand); color: var(--on-brand); font-weight: 700; }
+.badge { padding-inline: 0.7rem; border-radius: 999px; background: var(--brand-soft); color: var(--brand-text); font-weight: 700; }
+a { color: var(--brand-text); }
+.field { display: grid; gap: 0.25rem; }
+.field input { padding: 0.5rem 0.75rem; border: 1px solid color-mix(in oklab, var(--fg) 45%, transparent); border-radius: 0.5rem; background: var(--bg); color: var(--fg); font: inherit; }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.field input:focus-visible { outline: 3px solid var(--ring); box-shadow: 0 0 0 6px var(--brand-soft); }
+.alert { margin: 0; padding: 0.6rem 1rem; border-radius: 0.6rem; }
+.alert--ok { background: var(--ok-bg); color: var(--ok-fg); }
+.alert--danger { background: var(--danger-bg); color: var(--danger-fg); }
+
+.tested table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tested th, .tested td { padding: 0.4rem 0.6rem; border-block-end: 1px solid color-mix(in oklab, var(--fg) 20%, transparent); text-align: start; }
+.tbl { overflow-x: auto; }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>استوديو الألوان</h1>
+  <p class="lead">حرّك درجة اللون: كل لون في الصفحة بيتولّد من رقم واحد.</p>
+  <div class="controls">
+    <label for="hue">درجة اللون (hue):</label> <output id="hue-out" for="hue">270</output>
+    <input id="hue" type="range" min="0" max="360" value="270">
+    <button type="button" id="mode" aria-pressed="false">الوضع الغامق</button>
+  </div>
+
+  <section class="samples" aria-label="عينات">
+    <button type="button" class="btn">احجز دلوقتي</button>
+    <span class="badge">جديد</span>
+    <a href="#more">لينك عادي</a>
+    <label class="field">خانة فيها focus <input value="اضغط هنا" aria-label="خانة تجربة"></label>
+    <p class="alert alert--ok">اتحفظ. (لون النجاح ثابت مهما البراند اتغيّر)</p>
+    <p class="alert alert--danger">فيه غلطة. (لون الخطر ثابت)</p>
+  </section>
+
+  <section class="tested">
+    <h2>درجات اتقاس تباينها</h2>
+    <p>الأرقام من قياس حقيقي في Chrome (نسبة التباين، والمطلوب 4.5 أو أكتر):</p>
+    <div class="tbl" tabindex="0" role="region" aria-label="جدول التباين">
+    <table>
+      <thead><tr><th scope="col">hue</th><th scope="col">فاتح: كلام على البراند</th><th scope="col">فاتح: لينك على الخلفية</th><th scope="col">غامق: كلام على البراند</th><th scope="col">غامق: لينك على الخلفية</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">30</th><td>7.17</td><td>8.13</td><td>8.98</td><td>9.57</td></tr>
+        <tr><th scope="row">150</th><td>5.82</td><td>6.57</td><td>9.85</td><td>10.58</td></tr>
+        <tr><th scope="row">270</th><td>6.80</td><td>7.82</td><td>9.19</td><td>9.83</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>وأقل رقم في كل الدرجات من 0 لـ 360: 5.35 (hue 195، فاتح).</p>
+  </section>
+</main>
+<script>
+const root = document.documentElement;
+const hue = document.getElementById("hue");
+const out = document.getElementById("hue-out");
+hue.addEventListener("input", () => {
+  root.style.setProperty("--hue", hue.value);       // one variable changes, everything follows
+  out.value = hue.value;
+});
+const mode = document.getElementById("mode");
+mode.addEventListener("click", () => {
+  const dark = root.dataset.mode !== "dark";
+  if (dark) root.dataset.mode = "dark"; else delete root.dataset.mode;
+  mode.setAttribute("aria-pressed", String(dark));
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** slider لدرجة اللون، وتحته زرار مليان، وشارة فاتحة، ولينك، وخانة، وتنبيهين (نجاح أخضر وخطر أحمر)، وجدول تباين. حرّك الـ slider: الزرار والشارة واللينك وحلقة الـ focus بيتلوّنوا بنفس الدرجة، والتنبيهين مبيتغيّروش.
+
+**رقم واحد بيولّد كله:** [[--hue]] على [[:root]]، و [[--brand: oklch(0.48 0.17 var(--hue))]]. [[oklch]] = إضاءة، وتشبّع، ودرجة. الإضاءة والتشبّع ثابتين، فأي درجة بتطلع بنفس الغمق تقريبًا، والتباين بيفضل مضمون. في [[hsl]] الأصفر والأزرق بنفس الأرقام ليهم إضاءة مختلفة خالص.
+
+**الألوان المشتقة بـ [[color-mix]]:** [[--brand-soft]] = البراند 20% مع شفاف (خلفية الشارة)، و [[--ring]] = 55% (حلقة الـ focus). بتتغيّر مع البراند لوحدها.
+
+**الألوان الوظيفية ثابتة:** النجاح والخطر قيم مكتوبة، مش من [[--hue]]: لو البراند بقى أحمر، «الخطر» لازم يفضل أحمر ومعناه واضح. اتقاس: خلفية تنبيه النجاح نفس القيمة في الـ ٢٥ درجة.
+
+**الوضع الغامق:** نفس [[--hue]]، بإضاءة أعلى ([[0.78]]) وكلام غامق على البراند.
+
+**التباين اتقاس لكل درجة:** السكربت بيلف على الدرجات من 0 لـ 360 كل 15، وفي الوضعين بيقيس الكلام على الزرار واللينك على الخلفية. المتصفح بيرجّع اللون [[oklch(...)]]، فالسكربت بيرسمه في بكسل على [[canvas]] ويقرا الـ RGB، وبيحسب التباين بمعادلة WCAG. أقل رقم في كل الدرجات 5.35 (hue 195، فاتح)، يعني الـ slider كله آمن.
+
+**غلطة مسكها الـ validator:** أول نسخة كان الرقم [[<output>]] جوه [[<label for="hue">]]. أي عنصر ليه label جوه [[label]] لازم يكون هو اللي الـ [[for]] بيشاور عليه، فالـ [[output]] اتنقل برّه الـ label.
+
+~~~text node color-check.js
+light min on-brand 5.35 at hue 195 | min brand-text 6.05 at hue 195 | ok-bg values: rgb(220, 252, 231)
+dark min on-brand 8.88 at hue 345 | min brand-text 9.52 at hue 15 | ok-bg values: rgb(5, 46, 22)
+hue 30  ["light: text on brand 7.17, brand text 8.13","dark: text on brand 8.98, brand text 9.57"]
+hue 150 ["light: text on brand 5.82, brand text 6.57","dark: text on brand 9.85, brand text 10.58"]
+hue 270 ["light: text on brand 6.8, brand text 7.82","dark: text on brand 9.19, brand text 9.83"]
+below 4.5: []
+
+الـ slider من 270 لـ 30: الزرار oklch(0.78 0.12 270) ← oklch(0.78 0.12 30)
+axe (360 و 1280، فاتح وغامق): 0 violations   الـ validator: مفيش رسايل (بعد نقل output)   CSS validator: No Error Found
+~~~` },
+        { lvl: 'كبير', dir: "adasa", t: R`landing ثنائية اللغة لاستوديو تصوير متخيل «عدسة»`, what: R`صفحة كاملة (هيرو، وخدمات، وأعمال، وأسعار، وFAQ، وفوتر) بالعربي والإنجليزي على [[/ar]] و [[/en]]. توكنز طبقتين (خام ثم أسامي بالمعنى)، و ٣ ثيمات من غير وميض، و RTL و LTR بالـ logical properties بس، وخطين woff2 من الموقع بـ [[unicode-range]] و [[swap]] و preload لخط العناوين بس، وضبط العربي ([[line-height: 1.85]] للفقرات و [[letter-spacing: 0]] لـ [[:lang(ar)]] وعناوين بـ [[clamp()]])، وأيقونات lucide بـ [[aria-hidden]] أو اسم. وفيها من تأثيرات المشاريع الحقيقية: navbar زجاجي sticky ([[backdrop-filter]] ومعاه [[@supports not]] بخلفية شبه مصمتة)، وهيرو بـ ٣ [[radial-gradient]] وطبقة noise خفيفة من SVG [[feTurbulence]] في data URI بـ [[pointer-events: none]]. بيجمع الوحدة دي مع الوحدات والمتغيرات و Tailwind.`, done: R`Lighthouse (Mobile) في اللغتين والثيمين: Accessibility ‏100 و Performance ‏90 أو أكتر و CLS أقل من 0.05. صفر طلبات خطوط لدومين تاني. الصفحة شغالة والـ JavaScript مقفول (الثيم من [[prefers-color-scheme]] واللغة من الـ URL). لقطة RTL مراية LTR. وفيه README بجدول: كل توكن واستخدامه.`, ext: R`زوّد ثيم [[prefers-contrast: more]] و [[forced-colors]] (Windows High Contrast)، واعمل صفحة style guide بتعرض التوكنز كلها، وانشرها على GitHub Pages برابط.`, sol: R`~~~text adasa/
+ar/index.html  en/index.html  styleguide.html (المشروع الجاي)  README.md
+assets/tokens.css  assets/style.css  assets/theme.js
+assets/fonts/  (Cairo عربي 400 و 700، و Inter لاتيني 400 و 700، ورخصهم)
+assets/img/work-1..4.webp
+~~~
+
+**ترتيب البناء:** (١) [[tokens.css]]: خام، وبعدين أسامي بالمعنى للفاتح والغامق. (٢) الخطوط بـ [[unicode-range]]. (٣) الصفحة العربي بالـ logical properties. (٤) الإنجليزي نسخة بنفس الـ HTML والكلام مترجم. (٥) Lighthouse في اللغتين والثيمين.
+
+~~~css assets/tokens.css
+/* layer 1: raw values. Nothing on the page uses these names directly */
+:root {
+  --raw-ink-950: #0c0a09;
+  --raw-ink-900: #1c1917;
+  --raw-ink-700: #44403c;
+  --raw-ink-500: #78716c;
+  --raw-ink-300: #a8a29e;
+  --raw-sand-50: #fafaf9;
+  --raw-sand-100: #f5f5f4;
+  --raw-sand-200: #e7e5e4;
+  --raw-amber-300: #fcd34d;
+  --raw-amber-700: #b45309;
+  --raw-amber-800: #92400e;
+  --raw-teal-300: #5eead4;
+  --raw-teal-800: #115e59;
+  --white: #ffffff;
+}
+
+/* layer 2: names by meaning. The page uses ONLY these. A theme = a different mapping.
+   [data-theme] works on ANY element, not only <html>: a section can show the other theme (the style guide does) */
+:root, [data-theme="light"] {
+  --color-bg: var(--raw-sand-50);
+  --color-surface: var(--white);
+  --color-fg: var(--raw-ink-900);
+  --color-muted: var(--raw-ink-700);
+  --color-line: var(--raw-sand-200);
+  --color-accent: var(--raw-amber-800);
+  --color-on-accent: var(--white);
+  --color-glow-1: #fde68a;
+  --color-glow-2: #99f6e4;
+  --color-glass: rgb(250 250 249 / 0.72);
+  --color-glass-solid: rgb(250 250 249 / 0.96);
+
+  --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
+  --radius: 1rem;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.35);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: var(--raw-ink-950);
+    --color-surface: var(--raw-ink-900);
+    --color-fg: var(--raw-sand-100);
+    --color-muted: var(--raw-ink-300);
+    --color-line: var(--raw-ink-700);
+    --color-accent: var(--raw-amber-300);
+    --color-on-accent: var(--raw-ink-950);
+    --color-glow-1: #78350f;
+    --color-glow-2: #134e4a;
+    --color-glass: rgb(12 10 9 / 0.7);
+    --color-glass-solid: rgb(12 10 9 / 0.96);
+  }
+}
+[data-theme="dark"] {
+  --color-bg: var(--raw-ink-950);
+  --color-surface: var(--raw-ink-900);
+  --color-fg: var(--raw-sand-100);
+  --color-muted: var(--raw-ink-300);
+  --color-line: var(--raw-ink-700);
+  --color-accent: var(--raw-amber-300);
+  --color-on-accent: var(--raw-ink-950);
+  --color-glow-1: #78350f;
+  --color-glow-2: #134e4a;
+  --color-glass: rgb(12 10 9 / 0.7);
+  --color-glass-solid: rgb(12 10 9 / 0.96);
+}
+~~~
+
+~~~css assets/style.css
+/* fonts from this site only. unicode-range: a page downloads only the file whose letters it has */
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: "Cairo"; src: url("fonts/cairo-arabic-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: "Inter"; src: url("fonts/inter-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122; }
+@font-face { font-family: "Inter"; src: url("fonts/inter-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122; }
+
+*, *::before, *::after { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); margin: 0 0 var(--space-3); }
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--color-accent); }
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+.wrap { max-width: 68rem; margin-inline: auto; padding-inline: var(--space-2); }
+.section { padding-block: var(--space-5); }
+.icon { flex: none; width: 1.5rem; height: 1.5rem; }
+.icon-flip:dir(rtl) { scale: -1 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* glass header: blurred where supported, almost solid where not */
+.header { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-glass); backdrop-filter: blur(12px); border-block-end: 1px solid var(--color-line); }
+@supports not (backdrop-filter: blur(1px)) {
+  .header { background: var(--color-glass-solid); }
+}
+.header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding-block: 0.6rem; }
+.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-fg); font-weight: 700; text-decoration: none; }
+.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin-inline-start: auto; }
+.nav a { color: var(--color-fg); text-decoration: none; }
+.nav a:hover { color: var(--color-accent); }
+.tools { display: flex; align-items: center; gap: 0.5rem; }
+/* the other-language link: system font, so one English word does not download a whole font on the Arabic page */
+.lang { font-family: system-ui, sans-serif; padding: 0.25rem 0.75rem; border: 1px solid var(--color-line); border-radius: 999px; color: var(--color-fg); text-decoration: none; font-weight: 700; }
+.seg { display: inline-flex; margin: 0; padding: 0.15rem; border: 1px solid var(--color-line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.seg label { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; color: var(--color-muted); }
+.seg input { position: absolute; opacity: 0; }
+.seg label:has(input:checked) { background: var(--color-accent); color: var(--color-on-accent); }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.seg .icon { width: 1.1rem; height: 1.1rem; }
+
+/* hero: three soft lights, and a very light noise on top that the mouse goes through */
+.hero { position: relative; isolation: isolate; overflow: clip; padding-block: clamp(4rem, 2rem + 10vw, 9rem);
+  background:
+    radial-gradient(40rem 22rem at 15% 20%, var(--color-glow-1), transparent 70%),
+    radial-gradient(36rem 20rem at 85% 30%, var(--color-glow-2), transparent 70%),
+    radial-gradient(50rem 18rem at 50% 110%, var(--color-glow-1), transparent 70%),
+    var(--color-bg); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"); }
+.hero h1 { margin: 0 0 var(--space-2); font-size: clamp(2rem, 1.2rem + 4vw, 4rem); max-width: 16ch; }
+.hero p { margin: 0 0 var(--space-3); max-width: 42ch; font-size: 1.15rem; color: var(--color-muted); }
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-lg); }
+
+.cards { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); box-shadow: var(--shadow-sm); }
+.card h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; font-size: 1.15rem; }
+.card h3 .icon { color: var(--color-accent); }
+.card p { margin: 0; color: var(--color-muted); }
+
+.works { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.works figure { margin: 0; }
+.works img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); }
+.works figcaption { padding-block-start: 0.4rem; color: var(--color-muted); }
+
+.price { display: grid; gap: 0.5rem; }
+.price .amount { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-fg); }
+
+details { margin-block-end: var(--space-1); padding: var(--space-2); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+summary { cursor: pointer; font-weight: 700; }
+details p { margin: var(--space-1) 0 0; color: var(--color-muted); }
+
+.footer { padding-block: var(--space-4); border-block-start: 1px solid var(--color-line); color: var(--color-muted); }
+~~~
+
+~~~html ar/index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عدسة: استوديو تصوير</title>
+<meta name="description" content="تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.">
+<link rel="alternate" hreflang="en" href="../en/">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  })();
+</script>
+<link rel="preload" href="../assets/fonts/cairo-arabic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/theme.js" defer></script>
+</head>
+<body>
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="./"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m14.31 8 5.74 9.94" /> <path d="M9.69 8h11.48" /> <path d="m7.38 12 5.74-9.94" /> <path d="M9.69 16 3.95 6.06" /> <path d="M14.31 16H2.83" /> <path d="m16.62 12-5.74 9.94" /> </svg><span>عدسة</span></a>
+    <nav class="nav" aria-label="أقسام الصفحة">
+      <a href="#services">الخدمات</a>
+      <a href="#work">أعمالنا</a>
+      <a href="#prices">الأسعار</a>
+      <a href="#faq">أسئلة</a>
+    </nav>
+    <div class="tools">
+      <fieldset class="seg">
+        <legend>الثيم</legend>
+        <label title="فاتح"><input type="radio" name="theme" value="light" aria-label="فاتح"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></label>
+        <label title="غامق"><input type="radio" name="theme" value="dark" aria-label="غامق"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></label>
+        <label title="زي الجهاز"><input type="radio" name="theme" value="system" aria-label="زي الجهاز" checked><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="3" rx="2" /> <line x1="8" x2="16" y1="21" y2="21" /> <line x1="12" x2="12" y1="17" y2="21" /> </svg></label>
+      </fieldset>
+      <a class="lang" href="../en/" lang="en" hreflang="en">English</a>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>صور بتحكي الحكاية زي ما حصلت</h1>
+      <p>تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.</p>
+      <a class="btn" href="#prices">احجز جلسة<svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
+    </div>
+  </section>
+  <section class="section" id="services" aria-labelledby="h-services">
+    <div class="wrap">
+      <h2 id="h-services">الخدمات</h2>
+      <ul class="cards">
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg>منتجات</h3><p>خلفية بيضا أو مشهد، و ٢٠ صورة متعدّلة.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg>بورتريه</h3><p>ساعة في الاستوديو بإضاءة ناعمة.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5.8 11.3 2 22l10.7-3.79" /> <path d="M4 3h.01" /> <path d="M22 8h.01" /> <path d="M15 2h.01" /> <path d="M22 20h.01" /> <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /> <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /> <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /> <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /> </svg>مناسبات</h3><p>خطوبة أو عيد ميلاد، لحد ٤ ساعات.</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="work" aria-labelledby="h-work">
+    <div class="wrap">
+      <h2 id="h-work">أعمالنا</h2>
+      <ul class="works">
+        <li><figure><img src="../assets/img/work-1.webp" alt="صورة من شغلنا: منيو مطعم" width="600" height="400" loading="lazy"><figcaption>منيو مطعم</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-2.webp" alt="صورة من شغلنا: بورتريه عيلة" width="600" height="400" loading="lazy"><figcaption>بورتريه عيلة</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-3.webp" alt="صورة من شغلنا: منتجات يدوية" width="600" height="400" loading="lazy"><figcaption>منتجات يدوية</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-4.webp" alt="صورة من شغلنا: خطوبة في جنينة" width="600" height="400" loading="lazy"><figcaption>خطوبة في جنينة</figcaption></figure></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="prices" aria-labelledby="h-prices">
+    <div class="wrap">
+      <h2 id="h-prices">الأسعار</h2>
+      <ul class="cards">
+        <li class="card price"><h3>جلسة قصيرة</h3><p>تبدأ من</p><p class="amount">‏١٬٥٠٠ ج.م.‏</p></li>
+        <li class="card price"><h3>يوم منتجات</h3><p>تبدأ من</p><p class="amount">‏٤٬٥٠٠ ج.م.‏</p></li>
+        <li class="card price"><h3>مناسبة</h3><p>تبدأ من</p><p class="amount">‏٦٬٠٠٠ ج.م.‏</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="faq" aria-labelledby="h-faq">
+    <div class="wrap">
+      <h2 id="h-faq">أسئلة</h2>
+      <details><summary>بتسلّموا الصور إمتى؟</summary><p>خلال ٥ أيام شغل.</p></details>
+      <details><summary>ينفع تيجوا عندي؟</summary><p>أيوه، في القاهرة والجيزة.</p></details>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap"><p>عدسة، ١٢ شارع الفن، وسط البلد</p></div></footer>
+</body>
+</html>
+~~~
+
+~~~html en/index.html
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adasa: photo studio</title>
+<meta name="description" content="Products, portraits and small events, in the studio or at your place.">
+<link rel="alternate" hreflang="ar" href="../ar/">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  })();
+</script>
+<link rel="preload" href="../assets/fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/theme.js" defer></script>
+</head>
+<body>
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="./"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m14.31 8 5.74 9.94" /> <path d="M9.69 8h11.48" /> <path d="m7.38 12 5.74-9.94" /> <path d="M9.69 16 3.95 6.06" /> <path d="M14.31 16H2.83" /> <path d="m16.62 12-5.74 9.94" /> </svg><span>Adasa</span></a>
+    <nav class="nav" aria-label="Page sections">
+      <a href="#services">Services</a>
+      <a href="#work">Work</a>
+      <a href="#prices">Prices</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="tools">
+      <fieldset class="seg">
+        <legend>Theme</legend>
+        <label title="Light"><input type="radio" name="theme" value="light" aria-label="Light"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></label>
+        <label title="Dark"><input type="radio" name="theme" value="dark" aria-label="Dark"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></label>
+        <label title="Device"><input type="radio" name="theme" value="system" aria-label="Device" checked><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="3" rx="2" /> <line x1="8" x2="16" y1="21" y2="21" /> <line x1="12" x2="12" y1="17" y2="21" /> </svg></label>
+      </fieldset>
+      <a class="lang" href="../ar/" lang="ar" hreflang="ar">عربي</a>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>Photos that tell the story the way it happened</h1>
+      <p>Products, portraits and small events, in the studio or at your place.</p>
+      <a class="btn" href="#prices">Book a session<svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
+    </div>
+  </section>
+  <section class="section" id="services" aria-labelledby="h-services">
+    <div class="wrap">
+      <h2 id="h-services">Services</h2>
+      <ul class="cards">
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg>Products</h3><p>White background or a scene, 20 edited photos.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg>Portraits</h3><p>One hour in the studio with soft light.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5.8 11.3 2 22l10.7-3.79" /> <path d="M4 3h.01" /> <path d="M22 8h.01" /> <path d="M15 2h.01" /> <path d="M22 20h.01" /> <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /> <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /> <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /> <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /> </svg>Events</h3><p>Engagements or birthdays, up to 4 hours.</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="work" aria-labelledby="h-work">
+    <div class="wrap">
+      <h2 id="h-work">Our work</h2>
+      <ul class="works">
+        <li><figure><img src="../assets/img/work-1.webp" alt="A photo from our work: Restaurant menu" width="600" height="400" loading="lazy"><figcaption>Restaurant menu</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-2.webp" alt="A photo from our work: Family portrait" width="600" height="400" loading="lazy"><figcaption>Family portrait</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-3.webp" alt="A photo from our work: Handmade products" width="600" height="400" loading="lazy"><figcaption>Handmade products</figcaption></figure></li>
+        <li><figure><img src="../assets/img/work-4.webp" alt="A photo from our work: Garden engagement" width="600" height="400" loading="lazy"><figcaption>Garden engagement</figcaption></figure></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="prices" aria-labelledby="h-prices">
+    <div class="wrap">
+      <h2 id="h-prices">Prices</h2>
+      <ul class="cards">
+        <li class="card price"><h3>Short session</h3><p>From</p><p class="amount">EGP 1,500</p></li>
+        <li class="card price"><h3>Products day</h3><p>From</p><p class="amount">EGP 4,500</p></li>
+        <li class="card price"><h3>Event</h3><p>From</p><p class="amount">EGP 6,000</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="faq" aria-labelledby="h-faq">
+    <div class="wrap">
+      <h2 id="h-faq">FAQ</h2>
+      <details><summary>When do we get the photos?</summary><p>Within 5 working days.</p></details>
+      <details><summary>Can you come to us?</summary><p>Yes, in Cairo and Giza.</p></details>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap"><p>Adasa, 12 Art Street, Downtown</p></div></footer>
+</body>
+</html>
+~~~
+
+~~~js assets/theme.js
+// the radios: show the saved choice, save a new one, apply it
+const root = document.documentElement;
+let saved = "system";
+try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
+const radios = document.querySelectorAll('input[name="theme"]');
+radios.forEach(r => { r.checked = r.value === saved; });
+
+function apply(value) {
+  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
+  else { root.dataset.theme = value; root.style.colorScheme = value; }
+  try { localStorage.setItem("theme", value); } catch (e) {}
+}
+radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
+~~~
+
+~~~text README.md
+# عدسة: صفحة الاستوديو
+
+$__btar/$__bt و $__bten/$__bt نفس الصفحة بلغتين. الـ CSS والخطوط والصور في $__btassets/$__bt. دليل الهوية: $__btstyleguide.html$__bt.
+
+## التوكنز
+
+| التوكن | فاتح | غامق | بيتستخدم في |
+|---|---|---|---|
+| $__bt--color-bg$__bt | $__bt--raw-sand-50$__bt | $__bt--raw-ink-950$__bt | خلفية الصفحة |
+| $__bt--color-surface$__bt | $__bt#ffffff$__bt | $__bt--raw-ink-900$__bt | الكروت والأسئلة |
+| $__bt--color-fg$__bt | $__bt--raw-ink-900$__bt | $__bt--raw-sand-100$__bt | الكلام |
+| $__bt--color-muted$__bt | $__bt--raw-ink-700$__bt | $__bt--raw-ink-300$__bt | الكلام الهادي والوصف |
+| $__bt--color-line$__bt | $__bt--raw-sand-200$__bt | $__bt--raw-ink-700$__bt | الحدود والخطوط |
+| $__bt--color-accent$__bt | $__bt--raw-amber-800$__bt | $__bt--raw-amber-300$__bt | اللينكات والزرار والـ focus |
+| $__bt--color-on-accent$__bt | $__bt#ffffff$__bt | $__bt--raw-ink-950$__bt | الكلام على الزرار |
+| $__bt--color-glow-1$__bt و $__bt--color-glow-2$__bt | دهبي وتركواز فاتحين | نفس الألوان غامقة | أضواء الهيرو |
+| $__bt--color-glass$__bt | أبيض 72% | أسود 70% | الهيدر الزجاجي |
+| $__bt--color-glass-solid$__bt | أبيض 96% | أسود 96% | الهيدر لو المتصفح مبيدعمش $__btbackdrop-filter$__bt |
+| $__bt--space-1$__bt لحد $__bt--space-5$__bt | 0.5 و 1 و 1.5 و 2.5 و 4 rem | نفسها | المسافات |
+| $__bt--radius$__bt | 1rem | نفسها | تدوير الكروت والصور |
+| $__bt--shadow-sm$__bt و $__bt--shadow-lg$__bt | ظل صغير حاد، وكبير ناعم | نفسها | الكروت، والزرار |
+| $__bt--z-header$__bt | 10 | نفسها | الهيدر اللازق |
+
+## القواعد
+
+- الصفحة مبتستخدمش $__bt--raw-*$__bt خالص: الأسامي بالمعنى بس.
+- مفيش $__btleft$__bt ولا $__btright$__bt ولا $__bt[dir=rtl]$__bt في الـ CSS. السهم بس بيتقلب بـ $__bt:dir(rtl)$__bt.
+- الخطوط من الموقع نفسه، و $__btunicode-range$__bt بيخلي الصفحة العربي تنزّل Cairo بس، والإنجليزي Inter بس.
+~~~
+
+~~~view 760 900 الشكل النهائي (المعاينة بخط الجهاز (ملفات الخطوط مش جوه المعاينة)، وصور صغيرة)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عدسة: استوديو تصوير</title>
+<meta name="description" content="تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.">
+<link rel="alternate" hreflang="en" href="../en/">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  })();
+</script>
+<style>
+/* layer 1: raw values. Nothing on the page uses these names directly */
+:root {
+  --raw-ink-950: #0c0a09;
+  --raw-ink-900: #1c1917;
+  --raw-ink-700: #44403c;
+  --raw-ink-500: #78716c;
+  --raw-ink-300: #a8a29e;
+  --raw-sand-50: #fafaf9;
+  --raw-sand-100: #f5f5f4;
+  --raw-sand-200: #e7e5e4;
+  --raw-amber-300: #fcd34d;
+  --raw-amber-700: #b45309;
+  --raw-amber-800: #92400e;
+  --raw-teal-300: #5eead4;
+  --raw-teal-800: #115e59;
+  --white: #ffffff;
+}
+
+/* layer 2: names by meaning. The page uses ONLY these. A theme = a different mapping.
+   [data-theme] works on ANY element, not only <html>: a section can show the other theme (the style guide does) */
+:root, [data-theme="light"] {
+  --color-bg: var(--raw-sand-50);
+  --color-surface: var(--white);
+  --color-fg: var(--raw-ink-900);
+  --color-muted: var(--raw-ink-700);
+  --color-line: var(--raw-sand-200);
+  --color-accent: var(--raw-amber-800);
+  --color-on-accent: var(--white);
+  --color-glow-1: #fde68a;
+  --color-glow-2: #99f6e4;
+  --color-glass: rgb(250 250 249 / 0.72);
+  --color-glass-solid: rgb(250 250 249 / 0.96);
+
+  --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
+  --radius: 1rem;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.35);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: var(--raw-ink-950);
+    --color-surface: var(--raw-ink-900);
+    --color-fg: var(--raw-sand-100);
+    --color-muted: var(--raw-ink-300);
+    --color-line: var(--raw-ink-700);
+    --color-accent: var(--raw-amber-300);
+    --color-on-accent: var(--raw-ink-950);
+    --color-glow-1: #78350f;
+    --color-glow-2: #134e4a;
+    --color-glass: rgb(12 10 9 / 0.7);
+    --color-glass-solid: rgb(12 10 9 / 0.96);
+  }
+}
+[data-theme="dark"] {
+  --color-bg: var(--raw-ink-950);
+  --color-surface: var(--raw-ink-900);
+  --color-fg: var(--raw-sand-100);
+  --color-muted: var(--raw-ink-300);
+  --color-line: var(--raw-ink-700);
+  --color-accent: var(--raw-amber-300);
+  --color-on-accent: var(--raw-ink-950);
+  --color-glow-1: #78350f;
+  --color-glow-2: #134e4a;
+  --color-glass: rgb(12 10 9 / 0.7);
+  --color-glass-solid: rgb(12 10 9 / 0.96);
+}
+</style>
+<style>
+/* fonts from this site only. unicode-range: a page downloads only the file whose letters it has */
+
+*, *::before, *::after { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); margin: 0 0 var(--space-3); }
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--color-accent); }
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+.wrap { max-width: 68rem; margin-inline: auto; padding-inline: var(--space-2); }
+.section { padding-block: var(--space-5); }
+.icon { flex: none; width: 1.5rem; height: 1.5rem; }
+.icon-flip:dir(rtl) { scale: -1 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* glass header: blurred where supported, almost solid where not */
+.header { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-glass); backdrop-filter: blur(12px); border-block-end: 1px solid var(--color-line); }
+@supports not (backdrop-filter: blur(1px)) {
+  .header { background: var(--color-glass-solid); }
+}
+.header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding-block: 0.6rem; }
+.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-fg); font-weight: 700; text-decoration: none; }
+.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin-inline-start: auto; }
+.nav a { color: var(--color-fg); text-decoration: none; }
+.nav a:hover { color: var(--color-accent); }
+.tools { display: flex; align-items: center; gap: 0.5rem; }
+/* the other-language link: system font, so one English word does not download a whole font on the Arabic page */
+.lang { font-family: system-ui, sans-serif; padding: 0.25rem 0.75rem; border: 1px solid var(--color-line); border-radius: 999px; color: var(--color-fg); text-decoration: none; font-weight: 700; }
+.seg { display: inline-flex; margin: 0; padding: 0.15rem; border: 1px solid var(--color-line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.seg label { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; color: var(--color-muted); }
+.seg input { position: absolute; opacity: 0; }
+.seg label:has(input:checked) { background: var(--color-accent); color: var(--color-on-accent); }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.seg .icon { width: 1.1rem; height: 1.1rem; }
+
+/* hero: three soft lights, and a very light noise on top that the mouse goes through */
+.hero { position: relative; isolation: isolate; overflow: clip; padding-block: clamp(4rem, 2rem + 10vw, 9rem);
+  background:
+    radial-gradient(40rem 22rem at 15% 20%, var(--color-glow-1), transparent 70%),
+    radial-gradient(36rem 20rem at 85% 30%, var(--color-glow-2), transparent 70%),
+    radial-gradient(50rem 18rem at 50% 110%, var(--color-glow-1), transparent 70%),
+    var(--color-bg); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"); }
+.hero h1 { margin: 0 0 var(--space-2); font-size: clamp(2rem, 1.2rem + 4vw, 4rem); max-width: 16ch; }
+.hero p { margin: 0 0 var(--space-3); max-width: 42ch; font-size: 1.15rem; color: var(--color-muted); }
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-lg); }
+
+.cards { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); box-shadow: var(--shadow-sm); }
+.card h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; font-size: 1.15rem; }
+.card h3 .icon { color: var(--color-accent); }
+.card p { margin: 0; color: var(--color-muted); }
+
+.works { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.works figure { margin: 0; }
+.works img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); }
+.works figcaption { padding-block-start: 0.4rem; color: var(--color-muted); }
+
+.price { display: grid; gap: 0.5rem; }
+.price .amount { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-fg); }
+
+details { margin-block-end: var(--space-1); padding: var(--space-2); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+summary { cursor: pointer; font-weight: 700; }
+details p { margin: var(--space-1) 0 0; color: var(--color-muted); }
+
+.footer { padding-block: var(--space-4); border-block-start: 1px solid var(--color-line); color: var(--color-muted); }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="./"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m14.31 8 5.74 9.94" /> <path d="M9.69 8h11.48" /> <path d="m7.38 12 5.74-9.94" /> <path d="M9.69 16 3.95 6.06" /> <path d="M14.31 16H2.83" /> <path d="m16.62 12-5.74 9.94" /> </svg><span>عدسة</span></a>
+    <nav class="nav" aria-label="أقسام الصفحة">
+      <a href="#services">الخدمات</a>
+      <a href="#work">أعمالنا</a>
+      <a href="#prices">الأسعار</a>
+      <a href="#faq">أسئلة</a>
+    </nav>
+    <div class="tools">
+      <fieldset class="seg">
+        <legend>الثيم</legend>
+        <label title="فاتح"><input type="radio" name="theme" value="light" aria-label="فاتح"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></label>
+        <label title="غامق"><input type="radio" name="theme" value="dark" aria-label="غامق"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></label>
+        <label title="زي الجهاز"><input type="radio" name="theme" value="system" aria-label="زي الجهاز" checked><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="3" rx="2" /> <line x1="8" x2="16" y1="21" y2="21" /> <line x1="12" x2="12" y1="17" y2="21" /> </svg></label>
+      </fieldset>
+      <a class="lang" href="../en/" lang="en" hreflang="en">English</a>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>صور بتحكي الحكاية زي ما حصلت</h1>
+      <p>تصوير منتجات وبورتريه ومناسبات صغيرة، في الاستوديو أو عندك.</p>
+      <a class="btn" href="#prices">احجز جلسة<svg class="icon icon-flip" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
+    </div>
+  </section>
+  <section class="section" id="services" aria-labelledby="h-services">
+    <div class="wrap">
+      <h2 id="h-services">الخدمات</h2>
+      <ul class="cards">
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg>منتجات</h3><p>خلفية بيضا أو مشهد، و ٢٠ صورة متعدّلة.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg>بورتريه</h3><p>ساعة في الاستوديو بإضاءة ناعمة.</p></li>
+        <li class="card"><h3><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5.8 11.3 2 22l10.7-3.79" /> <path d="M4 3h.01" /> <path d="M22 8h.01" /> <path d="M15 2h.01" /> <path d="M22 20h.01" /> <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /> <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /> <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /> <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /> </svg>مناسبات</h3><p>خطوبة أو عيد ميلاد، لحد ٤ ساعات.</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="work" aria-labelledby="h-work">
+    <div class="wrap">
+      <h2 id="h-work">أعمالنا</h2>
+      <ul class="works">
+        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: منيو مطعم" width="600" height="400" loading="lazy"><figcaption>منيو مطعم</figcaption></figure></li>
+        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: بورتريه عيلة" width="600" height="400" loading="lazy"><figcaption>بورتريه عيلة</figcaption></figure></li>
+        <li><figure><img src="data:image/webp;base64,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" alt="صورة من شغلنا: منتجات يدوية" width="600" height="400" loading="lazy"><figcaption>منتجات يدوية</figcaption></figure></li>
+        <li><figure><img src="data:image/webp;base64,UklGRgoTAABXRUJQVlA4IP4SAADwYACdASosAcgAPtFgqE2oJaQiKLX7eQAaCWNu/HwCejkk66l3ETKX9/3z3lgv3+lv/NdIz00c8Buufqx9FX6vn/NwWv/E/Zd8uPFv7x9svbPjHzT/zX9q88P8F4c/HbUC/IP5h/ut7b1XzAvaH573yP8z/MPU762ewD+p/or/afCEoB/q71Yf6v/z/6b/P+sL6/9hH+4mUm69/BodccvUHJqBPJzXLGAYOAyRRSU+kmR8IQHoEhE1D8sDOr/+vg/+C9guHtH0etvoctPy0xGKY5WfFeSZzABg2e27LFxD+JYB+PRm1Pyxr5Tc4IDrVLhXCIkUENnToBrbhktN7GWPO0gsCUFFH7d3NU7KjnDT0K/uF3MM2v5/wPIhwWPz/LVb0rljjeDg5UXnY23PBH4b6ha7qnJkLk/pQP4aoUNylonE9UbJpQkENRQh6OktLR06XRuWVcMGyA4dh3SJhqzYHTI+/YYOEda3uCsiRn2BMNHDAjSWS2jtqb7YLvIKSPSXZgT4t85c2mW146Nrmyef7EvOrduW4r9Gtr11R5NmTBFqHN51HrWtA6O4EtD/wgCZ1jjTT3+e6GTiu/WhCa7ta285NooKcP1SQWzMG+QRT2qqR/PCXC9idC2h44/nJ95GAreVl8fpSNdUEDj8AgGqqLFlEcMubAxX24n24R9cIh5YsL0846+Z7ybBZhX0z+CPq5ywmZ1MnxDj730A8W9gXGglZxCmDtHie9Jpxq8T+vC3KCWTvdXfU1jUH0fhD34QgY+2HbXJvTw4sqRlagi6/HbYLSw6nroZ3gSxNKVqVA+jrD9ZpRN0g+5Yojciuwt3/pImfsJLPjJQZ2KyUoWAPciuQHY8+Hi0WVj8j8cb2dYrFNnDIkeHxmOM81uJ62vDnYLZv8YWqXSVF25LIJOC9ts5qOWtErTGHs5VeMSOKVNX1d44/KSxMDi5NbA8Y9nN1MP4eec92/7pSSc9skrXrMRa2VgvCtmB9GiSXB6sIfyHGySVv+NGKDcmZFtri+sZmlOY5fqW+ofc52/JT9gAAP7u8OIg/+E/10+tNjf/PH5m/SWoHe2LXQXDqqzk5QCuiYBL9lErf6rQUmwW/XfhmCIsYCPTdwCi8GI+GrDu2aQ2NouUPtAHx8xHpg8eQKzEbERE/VecsE0IYtG2X1ZO+OlOoNfFDcnc2Kc5lHluTp87HspI4AKAVVV8EOL0Mcqnfz44M7YbJWBW/XeIpcOW5R5oGjdlZz53RjFsPPUbfPkpUBoAWN89HzfTqEwN47DEv7f3e+ResrahuqLSm5DPUvQwS0rtRsmkYEkLJRxcBZ1mv5uNw9Ubg5ZjjmVEf2lUASo2UJl+oERPcN0l+U9/iBDUVKSUvo2zDuNQif9dqcShBfMn8EQ9Snd/ABxRt5ma5EhxaGn4I6XbBOTHNt9JNpZYS2ZNKMknjX+bIWdtGSIV6RMuQD7yXqt+hgKVQDCBr4GD4O2nCbd//XUTLnFE6jcZTfc3AhwNukvgPiDz+uotbYzsDbbj6T9gfjd8Fgf8kd9NgzBn3u/cgON8/uSfBmXzUut+u0D7jYGcptI12PmBQZtNw6JccRNyeuhKbsE6xeV0i+hhfpA/IcT6F6cbs5beq/JD6Qq2Mrc1pVOsP//XcFCSq6/G/hs2bDjKLsNsfEjVN6xT3RZ/nIPgRXW0dvGk4Vp5RCDvsUlxbGA+sRWoTl53sJpjvf+GszoqBOLsTwnMMHYoxXSuQjHpkMQR5mSO8rMb0SwfAf1qFVHFyxtTUtuJJFnKDplrgfJC1o2h7TpuYAUuFa01sh7HgbNrXJT/eA9Ui1N15xRVNyOOaG6/h/ZLaTzge/eN7374zeAwZf8ceDTkOmD5zN3X/FmzRG/NvGVsR+30xauTZmZgKTrhQkmAhaYeFJKl9cKmydXgMlpOg0E+J0AvQxxx3F+PAsNrE94iRt4Vcj0MQKqN7BisYsRTXHPxaCxObdK7DMsLm3Gv0m1vxnmBA9kUsLL/ExuP6PU3I06vxJix72tD1Zn9/WG0ptB2GKcfFXi2l5Gm0mSJKhEl+11Pi3weUDVlcDXeV57f0/BHdFHjzKZ9woEPCNZ1ipPs4Hj0ekKMriaH/9T4XElDXaIKxMx1Tn+5ygBXNEJiLehA2VewGjmJ3Lcl0LMdEDmMiIxsFxTeHSq7eN2SZPyrGpSvqN4ziPbQ20ArBcDOOn3AvaUDhejFdK5CKrnSTSv8SRshDoqQxId20mHO2AIjQ5yVz3RYjwKpOhC2nfN3lMwg/bybdYem9tSQ0/KHfeHp7mlEY9s4k5yQKJ9NmqZSckSQlAe9amNfvqVanqLyQT3oa709ko2xUFUXmEhgHgPIUvESkhUluDe1/7RagGOgkKVQuI+xvZZ67Ki7CkN4bvpgcnH9CxcsKk94lyK4HLY0pLDaRXY80HLFeoJ/1GNMoH0hFQkhwREh/c1Vx9bmEWHHZpG1ufuOY+MoGeuTfXbsOCJfCbgLGcCUVF0RMLuUf9URP2w+buhA+GozlB5xV3FNG3q3KhinxlbVqPrIr3K3pcQC2QeT3k8oRoPT3gHNjZFQR8UDbTX5RArgz4t8HiN3NFzqrl9nUNa+KWpd3HKows3LCgJkcqfNM1Md6RyBC3Z6wdxIFYdLTfxVwH53rn7FpidSR8hG+Jso5tVpHkTemqVSmQ2ECsAUL4cGJKLOv4+ItWixBYF9YmmnqaIVMRJJqmbfTXOyi9HVszwhkShzh1zkzq0faxbszj2KXAY9D9QbdhNUYDcymGY8RYagY99IsG7L915YoBdt+lf0xK0P/Cc4slqNnxjOfs/8WbNEb828ZWxH7fTe/ja+Z6qx+genKC08scNftYzaAidnlLOVHe/rWcXEuknzIFbkOxTIFVmqCqBevWHk+UtEZ1Hyipv0Ngrv1PQCJNNcHofTfgjbw9gj641HecSNpW3vkrphZIMcGaz66csh8hBlS0wMNcFam1x6GqlfRpnJ6kJizqfLm3BMqwnRxUy+CMTagy8pJl9bgGsuJvg6pTggNUr848dYbrsevzIccdlXTUq7/MDcXnA5Hv+raEBhZ29Fmf1l7KdpZM0HpW9WBuUvQMYkEN21WIFlab0WMBE7ONTEu6VeFea4bFe8EGznjZOMO+2TL/sxR2b7Qk8uR2YancNLB8EhJLuzSjAVN1A2GJG8NWyb7UFaUuacJiwcUf/3qhjR1g/bJuGz9grQ6rQ57a4K4lH8zvvMM8XIjm1Ulp1Ap+/5FpTgLhCnzDTErOBFZvn9Q9nYUqI5Q9dkmvWLyt1izVSqB0sBhi9jrdRcMMuJapmlc1yP2OVYpt8x7FSgNpve/1DM8uPsb0yAtT4B0b3S/XWm7OrJzPW+JzfPM9hirsKHZkX/RIklYqoacOsVom4ntsSXsqDWcm5UIWmhcWOJ4GDlMI7yHmpqfUxEcO2np/wVluDstFyp5QvYj6gw1M2HHh2sr6jrr9mTJxfktyvba1jwlBvPOjo+Ije1ntYj7QTpg7Ag4zUD9dKSyki2MtKzq6cJR/AOGLuXo1JKefNSxuySRANvFuOdJuDwlIs2FlbqRBb5NHyHG8YXwtdpP9FQY0STCQM+o9A0ITa6iPPeNkCOlr9Uddb2wg8QZ/71KR23o2vOAS3of2rPTpoAQUrTucd2Q0EpcjKPi2ZyVleW/r3sZId4zIZ27LbUzViKhneU3hCOr7TvSlT9T/i1965iJDcrQliKyZI8F1Ly1YO5u+WnV4gbJ97lky1ve67mnj4p3nDW6YJqLsV5tFvk2GoRP0LXZMujy2NylLSi2+BvW9BmSIBY5gdQOGxHUZOOEQpsJBmH2aIyPgG81nDfLjzcWmgQjlpkUff+cXVk3fWn/w92UtuRFpO/wxdGIjzaWa55FxQmjLa5JzhsaKPnE4Iki3NVJKm9s8tRxFo6ClFPCiXRLaM2ovwG/NK5rt7vTi9wFrMAQGc0wwNk2st4W+GORupF02cHTNoAAGPvv++CvokYDAHTgNdX9F1dm9p7GVQpgclClIVGtVugzGL2T8GGU03578Gl6Jjte3/1gVkIzvmQkOhWAgprkJeWAGS1tK0LR0D3icr1RKlQzMlF0XA9vJykyubca/SYY+dAtmGjGgKTWJRjO6+fDLjlzPy+mueQJsaAUtvCg0WzuaISxfbmn5GBLBaWzYO4twvqxXd4ltikCn8sQ2jazOGCBR++Sss8DCXThbbONoQNaXNjbqupAKkIhQAEULDVUhP0AVBSyeMj8J8CLopVzyCDaDWwnj/iCJwUd/yeonApD/aCKJmIOLlGwLOHG/u0thTRoX0Itd7pR3v8neQ10vp+xVCem7GDiJBPphncPRt+2mo4QPglc3HEn2X4uoPeim+pgziRho2WCnLdKxSBLOmL6ODdeXW/fCXatIXiLl8neHSLduLhh0N1Y/sW5JIbgpQ6Fwnmb8phA2HySS85Y8JC8wJInPnZ4/QJr7YfWdAoUADUk0Xfm57KIl831O4rf5YINvWhDpFi7mC4s1pccgRLNvvyPQIg5Wu6ImXHM4jBMkN2YQCmD6EMm+sMse05F+imY7ikiNSkGKP/YsHx78F/rPHUhz9doy3493llbznZN06vhOkUDwWUCDgi20lwqY3OabkRV4p22+Ufsh7k5JeJ3zsseRqJBa/6+gK4RIEbC6AqyxJlFlyvG8LZDRtF42Rk3k132J3H6BjDfS1tbygirt8dUit2DbKMHzKRbK5ihpn1TFlkTUhsbMzweFYEynzzUc4yizkA4a/StGNIbuZZKOq8r8Y6T1E4BW2GB4bLSiiFXDXQZ3zsPPtDXdh1z3DxVp+jJ8QbtyhDsJs7iM6DyFDURNqjPXzbIX6z2FdNJvCMNOoQvmGHi4yeXASHiFUOAhSussNVrhVz1Fmzex80VmR8MwoNxXZRp2Z3hMkKYXmDIj2Zp5cBgeUQh2D2AksSetwbR2zxJvcKCIUZdPhQPAzWhLnFo6cNT4wmQgPxstkloRMVKfuh0nbAQdzFgtNlfQ7qNw6nY9hbmygTNjV20AC5ZLlhIgVbgGGoeIMMdSeLZuWY3QPd1aKNHwem0aE49uIaPcELy3bEgIoop3mj0zsUxPcBtZ+vDDzfY0mcVs7cIbZphEjALtQBPmU0G5rzcKmt4my7Q62WFJBWMlOnEM3+RFeLgsyCZ6eirBCKwDPOjWGIbPpuP2cimqG6Bj9qh1X8YvQkZUnk7ZpCy6O382E58ks4W9HS960n3VImXIGzoMx8afS7I6p3pvZugdiRaticXop+cEgOlCYnJbsmw1/CW1RuanrsspveaNUKnnvQRFQNrPzvJ2vyObS2PTn2Jlvj/TvV9Uzi1b0eXHJ2p2iv/kfuq3AMNxz8TD+hClSjsf1MniodIQyTkKr0vL15RpQcHV+OEOZhlKhnD1FvZwOsMyF023FwQ4OIVRG7Et8JUvmbJMGeCwPAHzLlmC/XjjN79kbSWQ8U4wG4FAhqg4sllBvc3biePEzSJN/zW3vrR8g7+iTlUng44cXYM7SVFhtzS3psd5AY6KQpu69oFOiNHaiSf37EUVQ20pv6zneLLtCpeq83NALgP6D/axKWUOeJC95Q15jaAMGH/ZOxdUxwSGRUDEtQwxW6vBrDrSL59EHVgEuBywJgIAMhaC+/h3FtsDoicl5dV6ElUmIXV1Lngvc0ItQL245gihfGy3hL4QGHhwsdPTRHwH53uCChBF2aS+UEIeWW6nWwa8D/L5vCTshkeXDrk5cykn2z6hDTuTmpWF5IFVzfhvXiL7prQ80m/57zvPcXaM+oU78MtWIOxC16HQQ11z/6HxAg289nS3ZNIPkT5Dggbw9X5mcS8aPYfy8CHovn07krYQzbCZUyCJJiQCTQwAgL1fLC22cvc5rqcnIarxn4QwJJMqgAJ417flprvCyLS1Cy+kQs+8CB9GPKus+06CkjfdrlA2WkxbwQbgVNAahTBb2tRPKIG9EwEmRCOI2U00IhNOWUeFDl++/7zN5+9PDckYzNcosSxshAvwHo8lLpRI4Fo/gPst1NM8XotoJ4I5CJv82u2uwhtO/t4QdQN2Ytaad1C85qaxbnvSiePpONYTSHgJpJCVR2VwI5LQvu2UxoCy9eie44oh9SmR+cJLXNMEGhGvL5obZj3UVoGSzl5dpF98jOg8VKwlPgsdd3rB2/+Yv8Uq5kTDNc3n4NWXwnxrJPl1bXyWJXB5PBuib3gHu1OMnHnvonkh+pD18MZZOmSqP6VXkXIAuFqFFbC/qmz25TRA/ImCB4rwYbSDnyAAXt/ZNnj9W114uzuQW3E3Bm8xk6DxmBys5qa9euLzhzDSTJYVjJBaDdHagK4WsG9ghLCRwAgZCwDK/YgIGsUt7aeuD0jtDhGuUxGhboekxt8qQPkUAAzeqFs14iSxkZ4LrBsFqI/KlImN8UuoGMcNo71P9X5E1aBIufQ+M9BAfepw6bBMGaW3z9fs3FPAAAAA==" alt="صورة من شغلنا: خطوبة في جنينة" width="600" height="400" loading="lazy"><figcaption>خطوبة في جنينة</figcaption></figure></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="prices" aria-labelledby="h-prices">
+    <div class="wrap">
+      <h2 id="h-prices">الأسعار</h2>
+      <ul class="cards">
+        <li class="card price"><h3>جلسة قصيرة</h3><p>تبدأ من</p><p class="amount">‏١٬٥٠٠ ج.م.‏</p></li>
+        <li class="card price"><h3>يوم منتجات</h3><p>تبدأ من</p><p class="amount">‏٤٬٥٠٠ ج.م.‏</p></li>
+        <li class="card price"><h3>مناسبة</h3><p>تبدأ من</p><p class="amount">‏٦٬٠٠٠ ج.م.‏</p></li>
+      </ul>
+    </div>
+  </section>
+  <section class="section" id="faq" aria-labelledby="h-faq">
+    <div class="wrap">
+      <h2 id="h-faq">أسئلة</h2>
+      <details><summary>بتسلّموا الصور إمتى؟</summary><p>خلال ٥ أيام شغل.</p></details>
+      <details><summary>ينفع تيجوا عندي؟</summary><p>أيوه، في القاهرة والجيزة.</p></details>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap"><p>عدسة، ١٢ شارع الفن، وسط البلد</p></div></footer>
+<script>
+// the radios: show the saved choice, save a new one, apply it
+const root = document.documentElement;
+let saved = "system";
+try { saved = localStorage.getItem("theme") || "system"; } catch (e) {}
+const radios = document.querySelectorAll('input[name="theme"]');
+radios.forEach(r => { r.checked = r.value === saved; });
+
+function apply(value) {
+  if (value === "system") { delete root.dataset.theme; root.style.colorScheme = ""; }
+  else { root.dataset.theme = value; root.style.colorScheme = value; }
+  try { localStorage.setItem("theme", value); } catch (e) {}
+}
+radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر زجاجي فيه «عدسة» والروابط و ٣ أيقونات ثيم (شمس، وقمر، وشاشة) و «English». تحته هيرو فيه أضواء دهبي وتركواز ناعمة وحبيبات خفيفة جدًا، وعنوان كبير وزرار «احجز جلسة ←». بعده ٣ كروت خدمات بأيقونات، و ٤ صور أعمال، و ٣ أسعار، وسؤالين بيتفتحوا.
+
+**التوكنز طبقتين:** [[--raw-amber-800]] وأخواتها قيم خام، محدش في الصفحة بيستخدمها. فوقها أسامي بالمعنى ([[--color-accent]] و [[--color-surface]]…)، وهي اللي في كل قاعدة. الثيم الغامق = نفس الأسامي بتشاور على خام تاني. والـ [[[data-theme="dark"]]] شغال على أي عنصر (مش [[:root]] بس)، عشان قسم يقدر ياخد ثيم تاني (صفحة الهوية بتستخدم ده).
+
+**من غير JavaScript:** الثيم: لو مفيش اختيار محفوظ، [[prefers-color-scheme]] بيقرر. اللغة: من الرابط نفسه ([[/ar/]] و [[/en/]])، مش من سكربت، و [[<a href="../en/" hreflang="en">]] لينك عادي. والأسئلة [[<details>]] بتتفتح لوحدها. اتقاس والـ JS مقفول: العربي rtl والإنجليزي ltr، والثيم من الجهاز في الحالتين.
+
+**الخطوط:** [[preload]] لخط العناوين (700) بس، لأنه في الهيرو اللي بيبان الأول. والـ 400 بيحمّل لما الصفحة تطلبه. والصفحة العربي بتنزّل Cairo بس، والإنجليزي Inter بس (زي مشروع المنيو). ولينك «English» في الصفحة العربي بخط الجهاز، عشان كلمة واحدة متنزّلش ملف Inter كله.
+
+**الهيدر الزجاجي:** [[backdrop-filter: blur(12px)]] على خلفية 72%. المتصفح اللي مبيدعموش هيعرض الكلام فوق الصور شفاف ومش مقروء، فـ [[@supports not (backdrop-filter: blur(1px))]] بيدّيه خلفية 96%.
+
+**الهيرو:** ٣ [[radial-gradient]] بأماكن ومقاسات مختلفة فوق لون الخلفية. والحبيبات [[::after]] صورة SVG فيها [[feTurbulence]] (فلتر بيعمل noise) في data URI، بـ [[opacity: 0.18]] و [[pointer-events: none]] (عشان الضغط يعدّي للزرار). و [[z-index: -1]] جوه [[isolation: isolate]]: الحبيبات ورا الكلام بس، مش ورا الصفحة كلها.
+
+**غلطة شفتها في اللقطة:** أول نسخة كانت [[:lang(ar) { line-height: 1.85 }]]، والعنوان الكبير السطرين بتوعه بعاد عن بعض. [[:lang(ar)]] بيمسك كل عنصر، ووزنه أكبر من [[h1]]، فالعنوان اتقاس: خط 64px وسطره 118.4px (1.85). بقت [[:root:lang(ar), [lang="ar"]]]: الإعداد على الـ html والعناصر اللي عليها [[lang]] بس، والباقي بيورثه، والعنوان رجع 80px (1.25).
+
+~~~text Lighthouse 13.6.0 موبايل (Chrome بـ --blink-settings=preferredColorScheme=1 للفاتح و 0 للغامق)
+ar light  perf 100  a11y 100  LCP 0.9 s  CLS 0  | الخطوط من: 127.0.0.1:8765 بس (cairo-arabic-700 و cairo-arabic-400)
+ar dark   perf 100  a11y 100  LCP 0.9 s  CLS 0
+en light  perf 100  a11y 100  LCP 0.9 s  CLS 0  | (inter-latin-700 و inter-latin-400)
+en dark   perf 100  a11y 100  LCP 0.9 s  CLS 0
+~~~
+
+~~~text Playwright (Chrome 157)
+JavaScript مقفول: light ar rtl rgb(250, 250, 249) | light en ltr | dark ar rtl rgb(12, 10, 9) | dark en ltr، والأسئلة شغالة
+1280، [من الشمال، من اليمين]:
+ar: logo [1095, 112]  card1 [827, 112]  cta [1017, 112]
+en: logo [112, 1088]  card1 [112, 827]  cta [112, 974]       ← مراية
+السهم في العربي scale -1 1 | الحبيبات pointer-events none، opacity 0.18 | الهيدر blur(12px) على rgba(250, 250, 249, 0.72)
+اختيار «غامق» وبعدين refresh: dark rgb(12, 10, 9)، والزرار المختار dark
+h1 قبل التصليح: 64px و line-height 118.4px (1.85)   بعده: 80px (1.25)، والفقرة لسه 1.85
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**إزاي Chrome اتقال «الجهاز فاتح» في الاختبار:** ويندوز هنا على الوضع الغامق، والـ headless بياخده. اتقاس: من غير flag و [[--force-dark-mode]] الاتنين غامق، و [[--blink-settings=preferredColorScheme=1]] بس اللي طلّع فاتح (و [[0]] غامق).` },
+        { lvl: 'فكرة', dir: "adasa-identity", t: R`هوية بصرية لمشروعك انت`, what: R`اختار مشروع عايز تعمله (أو موقعك الشخصي)، وقرر هويته: palette بـ oklch بثيمين، وخطين (عربي ولاتيني) بأسباب الاختيار، ومقياس مسافات و radius وظلال (ظل صغير حاد + ظل كبير ناعم)، وطبقات [[z-index]] بأسامي ([[--z-header]] و [[--z-modal]])، ومدد وحركة ([[--ease]]). واعمل صفحة واحدة بتعرضهم كلهم في الثيمين والاتجاهين.`, done: R`أي مكوّن جديد في المشروع بيتبني من التوكنز من غير ولا قيمة hard-coded، والصفحة فيها كل توكن بمثال حي وبتباينه.`, ext: R`صدّر التوكنز كـ JSON، وولّد منه [[@theme]] بتاع Tailwind ومتغيرات CSS عادية بسكربت صغير، فالتعديل بيبقى في مكان واحد.`, sol: R`المثال اللي عملته: هوية «عدسة» نفسها (المشروع اللي فات)، وصفحة [[styleguide.html]] بتعرض كل توكن في الثيمين والاتجاهين. التوكنز والـ CSS والخطوط هما نفس ملفات [[assets/]] بتاعة «عدسة».
+
+~~~html styleguide.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عدسة: دليل الهوية</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/styleguide.css">
+<script src="assets/styleguide.js" defer></script>
+</head>
+<body>
+<main class="wrap sg">
+  <h1>«عدسة»: دليل الهوية</h1>
+  <p class="sg-note">كل حاجة هنا جاية من <code>assets/tokens.css</code>. الأرقام بتتحسب في الصفحة نفسها من الألوان الحقيقية.</p>
+
+  <section aria-labelledby="sg-colors">
+    <h2 id="sg-colors">الألوان (الأسامي بالمعنى)</h2>
+    <div class="sg-themes">
+      <div data-theme="light" class="sg-panel"><h3>فاتح</h3><ul class="sg-swatches" data-swatches></ul></div>
+      <div data-theme="dark" class="sg-panel"><h3>غامق</h3><ul class="sg-swatches" data-swatches></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-type">
+    <h2 id="sg-type">الخطوط</h2>
+    <div class="sg-themes">
+      <div class="sg-panel"><p class="sg-tag">Cairo، عربي، line-height 1.85</p><p class="sg-h">عنوان كبير بالعربي</p><p>فقرة عادية بالعربي: المسافة بين السطور أكبر عشان النقط والحروف اللي تحت السطر.</p></div>
+      <div class="sg-panel" lang="en" dir="ltr"><p class="sg-tag">Inter, Latin, line-height 1.6</p><p class="sg-h">A big English heading</p><p>A normal paragraph in English, with a shorter line height.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-scale">
+    <h2 id="sg-scale">المسافات والتدوير والظلال والطبقات</h2>
+    <ul class="sg-space">
+      <li><span style="inline-size: var(--space-1)"></span><code>--space-1</code></li>
+      <li><span style="inline-size: var(--space-2)"></span><code>--space-2</code></li>
+      <li><span style="inline-size: var(--space-3)"></span><code>--space-3</code></li>
+      <li><span style="inline-size: var(--space-4)"></span><code>--space-4</code></li>
+      <li><span style="inline-size: var(--space-5)"></span><code>--space-5</code></li>
+    </ul>
+    <div class="sg-boxes">
+      <div class="sg-box" style="box-shadow: var(--shadow-sm)"><code>--shadow-sm</code> و <code>--radius</code></div>
+      <div class="sg-box" style="box-shadow: var(--shadow-lg)"><code>--shadow-lg</code></div>
+      <div class="sg-box"><code>--z-header</code> = <span data-var="--z-header"></span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-components">
+    <h2 id="sg-components">المكونات في الثيمين والاتجاهين</h2>
+    <div class="sg-grid4">
+      <div data-theme="light" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
+      <div data-theme="dark" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
+      <div data-theme="light" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
+      <div data-theme="dark" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
+    </div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css assets/styleguide.css
+/* the style guide page only. Every value still comes from the tokens */
+.sg { padding-block: var(--space-4); }
+.sg h2 { margin-block-start: var(--space-4); }
+.sg-note { color: var(--color-muted); }
+.sg-themes { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
+.sg-grid4 { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); }
+.sg-panel { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-3); border-radius: var(--radius); background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-line); }
+.sg-panel h3 { margin: 0; }
+.sg-swatches { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.sg-swatches li { display: grid; grid-template-columns: 2.25rem 1fr auto; align-items: center; gap: var(--space-1); }
+.sg-chip { inline-size: 2.25rem; block-size: 2.25rem; border-radius: 0.5rem; border: 1px solid var(--color-line); }
+.sg-swatches code { font-size: 0.85rem; }
+.sg-ratio { font-variant-numeric: tabular-nums; font-size: 0.85rem; color: var(--color-muted); }
+.sg-tag { margin: 0; color: var(--color-muted); font-size: 0.85rem; }
+.sg-h { margin: 0; font-size: 1.6rem; font-weight: 700; }
+.sg-space { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.sg-space li { display: flex; align-items: center; gap: var(--space-2); }
+.sg-space span { display: block; block-size: 1rem; border-radius: 0.25rem; background: var(--color-accent); }
+.sg-boxes { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-3); }
+.sg-box { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+~~~
+
+~~~js assets/styleguide.js
+// fills every swatch list with the colour tokens, their real value in that theme, and their contrast
+const tokens = [
+  ["--color-fg", "الكلام", "--color-bg"],
+  ["--color-muted", "الكلام الهادي", "--color-bg"],
+  ["--color-accent", "اللينكات والزرار", "--color-bg"],
+  ["--color-on-accent", "كلام على الزرار", "--color-accent"],
+  ["--color-fg", "الكلام على الكروت", "--color-surface"],
+  ["--color-bg", "الخلفية", null],
+  ["--color-surface", "الكروت", null],
+  ["--color-line", "الخطوط والحدود", null],
+];
+// any CSS colour -> [r, g, b] by painting one pixel
+const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+function rgb(css) { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); }
+function lum(c) { const v = c.map(x => x / 255).map(x => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; }
+function ratio(a, b) { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); }
+
+for (const list of document.querySelectorAll("[data-swatches]")) {
+  const style = getComputedStyle(list);
+  for (const [name, use, against] of tokens) {
+    const value = style.getPropertyValue(name).trim();
+    const li = document.createElement("li");
+    const chip = document.createElement("span");
+    chip.className = "sg-chip";
+    chip.style.background = "var(" + name + ")";
+    li.append(chip);
+    const label = document.createElement("span");
+    label.innerHTML = "<code></code> " + use;
+    label.querySelector("code").textContent = name;
+    li.append(label);
+    const r = document.createElement("span");
+    r.className = "sg-ratio";
+    if (against) {
+      const n = ratio(rgb(value), rgb(style.getPropertyValue(against).trim()));
+      r.textContent = n.toFixed(2) + (n >= 4.5 ? " ✓" : " ✗");
+      r.title = "التباين مع " + against;
+    } else r.textContent = value;
+    li.append(r);
+    list.append(li);
+  }
+}
+for (const el of document.querySelectorAll("[data-var]")) el.textContent = getComputedStyle(document.documentElement).getPropertyValue(el.dataset.var).trim();
+~~~
+
+~~~view 760 900 الشكل النهائي (المعاينة بخط الجهاز (ملفات الخطوط مش جوه المعاينة))
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عدسة: دليل الهوية</title>
+<style>
+/* layer 1: raw values. Nothing on the page uses these names directly */
+:root {
+  --raw-ink-950: #0c0a09;
+  --raw-ink-900: #1c1917;
+  --raw-ink-700: #44403c;
+  --raw-ink-500: #78716c;
+  --raw-ink-300: #a8a29e;
+  --raw-sand-50: #fafaf9;
+  --raw-sand-100: #f5f5f4;
+  --raw-sand-200: #e7e5e4;
+  --raw-amber-300: #fcd34d;
+  --raw-amber-700: #b45309;
+  --raw-amber-800: #92400e;
+  --raw-teal-300: #5eead4;
+  --raw-teal-800: #115e59;
+  --white: #ffffff;
+}
+
+/* layer 2: names by meaning. The page uses ONLY these. A theme = a different mapping.
+   [data-theme] works on ANY element, not only <html>: a section can show the other theme (the style guide does) */
+:root, [data-theme="light"] {
+  --color-bg: var(--raw-sand-50);
+  --color-surface: var(--white);
+  --color-fg: var(--raw-ink-900);
+  --color-muted: var(--raw-ink-700);
+  --color-line: var(--raw-sand-200);
+  --color-accent: var(--raw-amber-800);
+  --color-on-accent: var(--white);
+  --color-glow-1: #fde68a;
+  --color-glow-2: #99f6e4;
+  --color-glass: rgb(250 250 249 / 0.72);
+  --color-glass-solid: rgb(250 250 249 / 0.96);
+
+  --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
+  --radius: 1rem;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.35);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: var(--raw-ink-950);
+    --color-surface: var(--raw-ink-900);
+    --color-fg: var(--raw-sand-100);
+    --color-muted: var(--raw-ink-300);
+    --color-line: var(--raw-ink-700);
+    --color-accent: var(--raw-amber-300);
+    --color-on-accent: var(--raw-ink-950);
+    --color-glow-1: #78350f;
+    --color-glow-2: #134e4a;
+    --color-glass: rgb(12 10 9 / 0.7);
+    --color-glass-solid: rgb(12 10 9 / 0.96);
+  }
+}
+[data-theme="dark"] {
+  --color-bg: var(--raw-ink-950);
+  --color-surface: var(--raw-ink-900);
+  --color-fg: var(--raw-sand-100);
+  --color-muted: var(--raw-ink-300);
+  --color-line: var(--raw-ink-700);
+  --color-accent: var(--raw-amber-300);
+  --color-on-accent: var(--raw-ink-950);
+  --color-glow-1: #78350f;
+  --color-glow-2: #134e4a;
+  --color-glass: rgb(12 10 9 / 0.7);
+  --color-glass-solid: rgb(12 10 9 / 0.96);
+}
+</style>
+<style>
+/* fonts from this site only. unicode-range: a page downloads only the file whose letters it has */
+
+*, *::before, *::after { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
+/* on <html> (and any element with its own lang): children INHERIT it, so a heading can still set its own line-height.
+   A bare :lang(ar) matches every element and beats h1 { line-height } (a pseudo-class outweighs a tag name) */
+:root:lang(ar), [lang="ar"] { font-family: "Cairo", system-ui, sans-serif; line-height: 1.85; letter-spacing: 0; }
+:root:lang(en), [lang="en"] { font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); margin: 0 0 var(--space-3); }
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--color-accent); }
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+.wrap { max-width: 68rem; margin-inline: auto; padding-inline: var(--space-2); }
+.section { padding-block: var(--space-5); }
+.icon { flex: none; width: 1.5rem; height: 1.5rem; }
+.icon-flip:dir(rtl) { scale: -1 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* glass header: blurred where supported, almost solid where not */
+.header { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-glass); backdrop-filter: blur(12px); border-block-end: 1px solid var(--color-line); }
+@supports not (backdrop-filter: blur(1px)) {
+  .header { background: var(--color-glass-solid); }
+}
+.header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); padding-block: 0.6rem; }
+.logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-fg); font-weight: 700; text-decoration: none; }
+.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin-inline-start: auto; }
+.nav a { color: var(--color-fg); text-decoration: none; }
+.nav a:hover { color: var(--color-accent); }
+.tools { display: flex; align-items: center; gap: 0.5rem; }
+/* the other-language link: system font, so one English word does not download a whole font on the Arabic page */
+.lang { font-family: system-ui, sans-serif; padding: 0.25rem 0.75rem; border: 1px solid var(--color-line); border-radius: 999px; color: var(--color-fg); text-decoration: none; font-weight: 700; }
+.seg { display: inline-flex; margin: 0; padding: 0.15rem; border: 1px solid var(--color-line); border-radius: 999px; }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.seg label { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; color: var(--color-muted); }
+.seg input { position: absolute; opacity: 0; }
+.seg label:has(input:checked) { background: var(--color-accent); color: var(--color-on-accent); }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.seg .icon { width: 1.1rem; height: 1.1rem; }
+
+/* hero: three soft lights, and a very light noise on top that the mouse goes through */
+.hero { position: relative; isolation: isolate; overflow: clip; padding-block: clamp(4rem, 2rem + 10vw, 9rem);
+  background:
+    radial-gradient(40rem 22rem at 15% 20%, var(--color-glow-1), transparent 70%),
+    radial-gradient(36rem 20rem at 85% 30%, var(--color-glow-2), transparent 70%),
+    radial-gradient(50rem 18rem at 50% 110%, var(--color-glow-1), transparent 70%),
+    var(--color-bg); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"); }
+.hero h1 { margin: 0 0 var(--space-2); font-size: clamp(2rem, 1.2rem + 4vw, 4rem); max-width: 16ch; }
+.hero p { margin: 0 0 var(--space-3); max-width: 42ch; font-size: 1.15rem; color: var(--color-muted); }
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-lg); }
+
+.cards { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); box-shadow: var(--shadow-sm); }
+.card h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; font-size: 1.15rem; }
+.card h3 .icon { color: var(--color-accent); }
+.card p { margin: 0; color: var(--color-muted); }
+
+.works { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.works figure { margin: 0; }
+.works img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); }
+.works figcaption { padding-block-start: 0.4rem; color: var(--color-muted); }
+
+.price { display: grid; gap: 0.5rem; }
+.price .amount { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-fg); }
+
+details { margin-block-end: var(--space-1); padding: var(--space-2); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+summary { cursor: pointer; font-weight: 700; }
+details p { margin: var(--space-1) 0 0; color: var(--color-muted); }
+
+.footer { padding-block: var(--space-4); border-block-start: 1px solid var(--color-line); color: var(--color-muted); }
+</style>
+<style>
+/* the style guide page only. Every value still comes from the tokens */
+.sg { padding-block: var(--space-4); }
+.sg h2 { margin-block-start: var(--space-4); }
+.sg-note { color: var(--color-muted); }
+.sg-themes { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
+.sg-grid4 { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); }
+.sg-panel { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-3); border-radius: var(--radius); background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-line); }
+.sg-panel h3 { margin: 0; }
+.sg-swatches { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.sg-swatches li { display: grid; grid-template-columns: 2.25rem 1fr auto; align-items: center; gap: var(--space-1); }
+.sg-chip { inline-size: 2.25rem; block-size: 2.25rem; border-radius: 0.5rem; border: 1px solid var(--color-line); }
+.sg-swatches code { font-size: 0.85rem; }
+.sg-ratio { font-variant-numeric: tabular-nums; font-size: 0.85rem; color: var(--color-muted); }
+.sg-tag { margin: 0; color: var(--color-muted); font-size: 0.85rem; }
+.sg-h { margin: 0; font-size: 1.6rem; font-weight: 700; }
+.sg-space { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.sg-space li { display: flex; align-items: center; gap: var(--space-2); }
+.sg-space span { display: block; block-size: 1rem; border-radius: 0.25rem; background: var(--color-accent); }
+.sg-boxes { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-3); }
+.sg-box { padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-line); }
+</style>
+</head>
+<body>
+<main class="wrap sg">
+  <h1>«عدسة»: دليل الهوية</h1>
+  <p class="sg-note">كل حاجة هنا جاية من <code>assets/tokens.css</code>. الأرقام بتتحسب في الصفحة نفسها من الألوان الحقيقية.</p>
+
+  <section aria-labelledby="sg-colors">
+    <h2 id="sg-colors">الألوان (الأسامي بالمعنى)</h2>
+    <div class="sg-themes">
+      <div data-theme="light" class="sg-panel"><h3>فاتح</h3><ul class="sg-swatches" data-swatches></ul></div>
+      <div data-theme="dark" class="sg-panel"><h3>غامق</h3><ul class="sg-swatches" data-swatches></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-type">
+    <h2 id="sg-type">الخطوط</h2>
+    <div class="sg-themes">
+      <div class="sg-panel"><p class="sg-tag">Cairo، عربي، line-height 1.85</p><p class="sg-h">عنوان كبير بالعربي</p><p>فقرة عادية بالعربي: المسافة بين السطور أكبر عشان النقط والحروف اللي تحت السطر.</p></div>
+      <div class="sg-panel" lang="en" dir="ltr"><p class="sg-tag">Inter, Latin, line-height 1.6</p><p class="sg-h">A big English heading</p><p>A normal paragraph in English, with a shorter line height.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-scale">
+    <h2 id="sg-scale">المسافات والتدوير والظلال والطبقات</h2>
+    <ul class="sg-space">
+      <li><span style="inline-size: var(--space-1)"></span><code>--space-1</code></li>
+      <li><span style="inline-size: var(--space-2)"></span><code>--space-2</code></li>
+      <li><span style="inline-size: var(--space-3)"></span><code>--space-3</code></li>
+      <li><span style="inline-size: var(--space-4)"></span><code>--space-4</code></li>
+      <li><span style="inline-size: var(--space-5)"></span><code>--space-5</code></li>
+    </ul>
+    <div class="sg-boxes">
+      <div class="sg-box" style="box-shadow: var(--shadow-sm)"><code>--shadow-sm</code> و <code>--radius</code></div>
+      <div class="sg-box" style="box-shadow: var(--shadow-lg)"><code>--shadow-lg</code></div>
+      <div class="sg-box"><code>--z-header</code> = <span data-var="--z-header"></span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sg-components">
+    <h2 id="sg-components">المكونات في الثيمين والاتجاهين</h2>
+    <div class="sg-grid4">
+      <div data-theme="light" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
+      <div data-theme="dark" class="sg-panel" lang="ar" dir="rtl"><article class="card"><h3>جلسة قصيرة</h3><p>ساعة في الاستوديو.</p></article><a class="btn" href="#sg-colors">احجز</a></div>
+      <div data-theme="light" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
+      <div data-theme="dark" class="sg-panel" lang="en" dir="ltr"><article class="card"><h3>Short session</h3><p>One hour in the studio.</p></article><a class="btn" href="#sg-colors">Book</a></div>
+    </div>
+  </section>
+</main>
+<script>
+// fills every swatch list with the colour tokens, their real value in that theme, and their contrast
+const tokens = [
+  ["--color-fg", "الكلام", "--color-bg"],
+  ["--color-muted", "الكلام الهادي", "--color-bg"],
+  ["--color-accent", "اللينكات والزرار", "--color-bg"],
+  ["--color-on-accent", "كلام على الزرار", "--color-accent"],
+  ["--color-fg", "الكلام على الكروت", "--color-surface"],
+  ["--color-bg", "الخلفية", null],
+  ["--color-surface", "الكروت", null],
+  ["--color-line", "الخطوط والحدود", null],
+];
+// any CSS colour -> [r, g, b] by painting one pixel
+const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+function rgb(css) { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); }
+function lum(c) { const v = c.map(x => x / 255).map(x => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; }
+function ratio(a, b) { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); }
+
+for (const list of document.querySelectorAll("[data-swatches]")) {
+  const style = getComputedStyle(list);
+  for (const [name, use, against] of tokens) {
+    const value = style.getPropertyValue(name).trim();
+    const li = document.createElement("li");
+    const chip = document.createElement("span");
+    chip.className = "sg-chip";
+    chip.style.background = "var(" + name + ")";
+    li.append(chip);
+    const label = document.createElement("span");
+    label.innerHTML = "<code></code> " + use;
+    label.querySelector("code").textContent = name;
+    li.append(label);
+    const r = document.createElement("span");
+    r.className = "sg-ratio";
+    if (against) {
+      const n = ratio(rgb(value), rgb(style.getPropertyValue(against).trim()));
+      r.textContent = n.toFixed(2) + (n >= 4.5 ? " ✓" : " ✗");
+      r.title = "التباين مع " + against;
+    } else r.textContent = value;
+    li.append(r);
+    list.append(li);
+  }
+}
+for (const el of document.querySelectorAll("[data-var]")) el.textContent = getComputedStyle(document.documentElement).getPropertyValue(el.dataset.var).trim();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** صفحة «دليل الهوية»: لوحتين ألوان (فاتح وغامق) جنب بعض، كل لون بمربعه واسمه واستخدامه ونسبة تباينه بـ ✓. بعدها الخطين بمثال عربي وإنجليزي، ومقياس المسافات مرسوم، والظلال والتدوير، وكارت وزرار في ٤ نسخ (فاتح وغامق × عربي وإنجليزي).
+
+**قرارات الهوية (والسبب):**
+- **الألوان:** رمادي دافي (sand و ink) بدل الرمادي الأزرق، عشان صور التصوير هي اللي تلفت. ولون واحد مميز: كهرماني غامق في الفاتح وفاتح في الغامق.
+- **الخطين:** Cairo للعربي (حروف واضحة في الأحجام الصغيرة)، و Inter للاتيني (مصمم للشاشات). الاتنين OFL ببلاش ومن الموقع نفسه.
+- **المسافات:** مقياس ٥ خطوات (0.5 لـ 4rem) بدل أرقام عشوائية.
+- **الظلال:** صغير حاد للكروت، وكبير ناعم للزرار المهم.
+- **الطبقات:** [[--z-header]] بالاسم.
+
+**الثيمين في نفس الصفحة:** [[<div data-theme="dark">]] جوه صفحة فاتحة. ده شغال لأن التوكنز [[[data-theme="dark"]]] على أي عنصر مش [[:root]] بس.
+
+**التباين بيتحسب في الصفحة:** [[styleguide.js]] بيقرا قيمة كل توكن من [[getComputedStyle]] جوه اللوحة (فاتح أو غامق)، ويحوّله لـ RGB بـ canvas، ويحسب التباين مع الخلفية اللي بيتحط عليها. لو حد غيّر توكن بكرة، الرقم بيتغيّر لوحده، و ✗ بيبان لو نزل تحت 4.5.
+
+**القاعدة اللي بتحمي الهوية:** أي مكون جديد بيتبني من الأسامي بالمعنى بس. الـ README بتاع «عدسة» فيه جدول كل توكن واستخدامه.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+light: --color-fg=16.74 ✓, --color-muted=9.84 ✓, --color-accent=6.79 ✓, --color-on-accent=7.09 ✓, --color-fg=17.49 ✓, --color-bg=#fafaf9, --color-surface=#ffffff, --color-line=#e7e5e4
+dark:  --color-fg=18.11 ✓, --color-muted=7.83 ✓, --color-accent=13.70 ✓, --color-on-accent=13.70 ✓, --color-fg=16.03 ✓, --color-bg=#0c0a09, --color-surface=#1c1917, --color-line=#44403c
+اللوحات الـ 4: light/rtl rgb(250, 250, 249) زرار rgb(146, 64, 14) | dark/rtl rgb(12, 10, 9) زرار rgb(252, 211, 77) | light/ltr | dark/ltr (نفس الألوان)
+الخطوط: Cairo 400 و 700، و Inter 400 و 700 (الصفحة فيها اللغتين)
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+صفحتين «عدسة» بعد ما التوكنز بقت [data-theme] على أي عنصر: axe 0، و Lighthouse ar dark: perf 100 و a11y 100
 ~~~` },
       ],
       items: [
         {
-          cmd: "ul و ol",
-          title: "قايمة بنقط ولا قايمة بأرقام؟ ul و ol و li",
-          pre: [{ to: "css/مقدمة HTML والـ Tags", why: R`لو لسه مش متعود على الـ tag اللي بيفتح ويقفل وعلى الـ attributes` }],
+          cmd: "dark mode",
           ref: [
-            { t: "MDN: <ul>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ul" },
-            { t: "MDN: <ol>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ol" },
-            { t: "MDN: <li>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/li" },
-            { t: "MDN: <menu>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/menu" },
-            { t: "WHATWG: the ol element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-ol-element" },
-            { t: "WHATWG: the ul element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-ul-element" },
-            { t: "WHATWG: the menu element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-menu-element" },
-            { t: "WHATWG: the li element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-li-element" },
-            { t: "W3C WAI: Content Structure (Lists)", url: "https://www.w3.org/WAI/tutorials/page-structure/content/" }
+            { t: "next-themes (GitHub)", url: "https://github.com/pacocoursey/next-themes" },
+            { t: "Tailwind CSS: Dark mode", url: "https://tailwindcss.com/docs/dark-mode" },
+            { t: "MDN: color-scheme", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme" },
+            { t: "MDN: prefers-color-scheme", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme" },
           ],
-          desc: R`أي مجموعة حاجات جنب بعض في الصفحة هي قايمة: [[<ul>]] لو ترتيبهم مش فارق (مشتريات، مميزات، روابط)، و [[<ol>]] لو الترتيب جزء من المعنى (خطوات، ترتيب فايزين). وكل عنصر جوه أي واحدة منهم بيتكتب في [[<li>]].
-
-المتصفح هو اللي بيرسم النقطة أو الرقم، مش انت. وقارئ الشاشة بيعرف إن دي قايمة وفيها كام عنصر. ولو كتبتها فقرات وشرطات بإيدك، كل ده بيضيع.`,
-          example: R`<h2>طلبات المخبز</h2>
-<ul>
-  <li>عيش بلدي</li>
-  <li>فينو</li>
-  <li>بقسماط</li>
-</ul>
-<h2>طريقة الطلب</h2>
-<ol>
-  <li>اختار الأصناف</li>
-  <li>اكتب العنوان</li>
-  <li>ادفع عند الاستلام</li>
-</ol>`,
-          flag: "script",
-          lines: [
-            R`عنوان القايمة الأولى. القايمة نفسها ملهاش اسم، فالعنوان اللي قبلها هو اللي بيقول للقارئ دي قايمة إيه.`,
-            R`[[<ul>]] من unordered list (قايمة مش مترتبة): لو بدّلت أماكن العناصر المعنى ميتغيّرش. جواها [[<li>]] بس.`,
-            R`[[<li>]] من list item: عنصر واحد في القايمة. المتصفح بيرسم قدامه نقطة سودا لوحده.`,
-            R`عنصر تاني. كل حاجة ليها [[<li>]] بتاعها، ومفيش [[<br>]] ولا شرطة بتتكتب بالإيد.`,
-            R`عنصر تالت. لو جيت بعدين وزوّدت رابع، بتزوّد [[<li>]] وخلاص.`,
-            R`نهاية القايمة. [[</ul>]] لازم تتكتب: المتصفح مش بيقفلها لوحده زي ما بيعمل مع [[</li>]].`,
-            R`عنوان القايمة التانية: بيفصل بين القايمتين وبيقول دي خطوات إيه.`,
-            R`[[<ol>]] من ordered list (قايمة مترتبة): الترتيب هنا جزء من المعنى، ولو بدّلت خطوتين الطلب يبوظ.`,
-            R`أول خطوة. مكتبتش «1.» في الكلام: المتصفح هو اللي بيعدّ ويرسم الرقم.`,
-            R`تاني خطوة، ورقمها 2 بييجي من مكانها في القايمة.`,
-            R`تالت خطوة. لو مسحت اللي قبلها، دي تبقى 2 لوحدها من غير ما تلمسها.`,
-            R`نهاية القايمة المترتبة: العد بيخلص هنا، وأي [[<ol>]] بعدها بتبدأ من 1 تاني.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-القايمة في HTML عنصرين مع بعض: غلاف ([[<ul>]] أو [[<ol>]]) بيقول «اللي جوايا مجموعة واحدة»، و [[<li>]] لكل عنصر فيها. والفرق بين الغلافين سؤال واحد: **لو بدّلت ترتيب العناصر، المعنى هيتغيّر؟** لأ يبقى [[<ul>]]، أيوه يبقى [[<ol>]].
-
-كل الأرقام والأشكال اللي في الدرس متقاسة من Chrome 157 (headless على Windows 11): الـ computed style من [[getComputedStyle]]، والـ role من شجرة الـ accessibility اللي Chrome بيبنيها.
-
----
-
-## ١. [[<ul>]] و [[<li>]]: الترتيب مش فارق
-
-~~~live 136 قايمة بنقط
-<p>عندنا النهارده:</p>
-<ul>
-  <li>عيش بلدي</li>
-  <li>فينو</li>
-  <li>بقسماط</li>
-</ul>
-~~~
-
-بص على تلات حاجات:
-
-- قدام كل عنصر **نقطة سودا** انت مكتبتهاش. المتصفح هو اللي رسمها.
-- القايمة **داخلة لجوه** عن الفقرة اللي فوقها.
-- كل [[<li>]] في **سطر لوحده**.
-
-[[ul]] اختصار unordered list، و [[li]] اختصار list item. والقاعدة: جوه [[<ul>]] مباشرة مفيش غير [[<li>]]. أي كلام أو فقرة أو لينك لازم يبقى جوه [[<li>]].
-
----
-
-## ٢. [[<ol>]]: الترتيب جزء من المعنى
-
-~~~live 136 قايمة بأرقام
-<p>طريقة الطلب:</p>
-<ol>
-  <li>اختار الأصناف</li>
-  <li>اكتب العنوان</li>
-  <li>ادفع عند الاستلام</li>
-</ol>
-~~~
-
-نفس الشكل، بس مكان النقطة **رقم**. والرقم مش مكتوب في الكود: المتصفح بيعدّ العناصر ويرسمه. يعني لو مسحت الخطوة التانية، التالتة بتبقى 2 لوحدها، ولو زوّدت خطوة في النص كل اللي بعدها بيتزحزح.
-
-[[ol]] اختصار ordered list. والمواصفة (WHATWG) بتعرّفها كده: قايمة عناصرها **مترتبة بقصد**، بحيث تغيير الترتيب يغيّر معنى الصفحة.
-
-### أختار أنهي واحدة؟
-
-| الحالة | العنصر | ليه |
-|---|---|---|
-| مكونات وصفة، مميزات منتج، روابط الفوتر | [[<ul>]] | بدّل أي اتنين والمعنى زي ما هو |
-| خطوات تسطيب، طريقة عمل، اتجاهات طريق | [[<ol>]] | الخطوة ٣ قبل ٢ تبوّظ النتيجة |
-| ترتيب فايزين، أكتر ١٠ مبيعًا | [[<ol>]] | المكان نفسه هو المعلومة |
-| بنود عقد هتشاور عليها («شوف البند ٤») | [[<ol>]] | الرقم بقى اسم للبند |
-
-> الرقم مش زينة. لو اخترت [[<ol>]] عشان «الأرقام شكلها أحلى» وترتيب العناصر مش فارق، انت بتقول معلومة غلط. شكل العلامة بيتغيّر بالـ CSS، والعنصر بيتحدد بالمعنى.
-
----
-
-## ٣. الشكل الافتراضي بالأرقام
-
-قست القايمتين في صفحة عربي ([[dir="rtl"]]) عرضها 400px:
-
-~~~text الناتج
-ul:  display=block      margin-top=16px  margin-bottom=16px  padding-right=40px  padding-left=0px  list-style-type=disc
-ol:  display=block      margin-top=16px  margin-bottom=16px  padding-right=40px  padding-left=0px  list-style-type=decimal
-li:  display=list-item  margin=0px       الارتفاع=18px
-عرض الـ ul = 384px      عرض الـ li = 344px   (الفرق 40px هو الـ padding)
-~~~
-
-| اللي شفته | جاي منين |
-|---|---|
-| القايمة داخلة لجوه | [[padding]] قدره 40px في **بداية السطر**. في صفحة عربي بيبقى على اليمين، وفي صفحة إنجليزي على الشمال |
-| مسافة فوق وتحت القايمة | [[margin]] قدره 16px فوق وتحت، زي الفقرة |
-| النقطة أو الرقم | الـ [[<li>]] نوع عرضه [[list-item]]: block قدامه **marker** (علامة). شكل العلامة من [[list-style-type]]: [[disc]] نقطة مليانة، و [[decimal]] أرقام |
-| العلامة مرسومة جوه الـ 40px | العلامة بتترسم برّه صندوق الـ [[<li>]]، في مساحة الـ padding بتاع القايمة |
-
-وفي صفحة عربي الرقم بيتكتب بالأرقام دي: 1 و 2 و 3، مش ١ و ٢ و ٣. تغيير شكل العلامة أو إخفاؤها أو تحريك المسافات كله شغل CSS ([[list-style-type]] وأخواتها)، وليه وحدة لوحده بعدين في الكورس. هنا المهم إنك تعرف الشكل ده جاي منين.
-
----
-
-## ٤. المتصفح فاهم إيه؟ القايمة الحقيقية والقايمة المزيفة
-
-ناس كتير بتكتب القايمة كده:
-
-~~~live 102 قايمة مزيفة: فقرة وشرطات
-<p>
-  • عيش بلدي<br>
-  • فينو<br>
-  • بقسماط
-</p>
-~~~
-
-على الشاشة شبه القايمة. بس شوف شجرة الـ accessibility (اللي قارئ الشاشة بيقراها) للاتنين:
-
-~~~text القايمة الحقيقية (ul)
-list
-  listitem   "عيش بلدي"
-  listitem   "فينو"
-  listitem   "بقسماط"
-~~~
-
-~~~text المزيفة (p و br)
-paragraph
-  "• عيش بلدي"
-  "• فينو"
-  "• بقسماط"
-~~~
-
-في الأولى Chrome ادّى الـ [[<ul>]] role اسمه [[list]] وكل [[<li>]] role اسمه [[listitem]]. في التانية مفيش غير فقرة واحدة فيها كلام، والنقطة «•» بقت جزء من النص وبتتقري.
-
-الفرق العملي:
-
-- **قارئ الشاشة** لما يوصل لقايمة حقيقية بيقول إنها قايمة وفيها كام عنصر قبل ما يقراها، والمستخدم يقدر ينط للقايمة اللي بعدها أو يعدّيها كلها. ده من دليل W3C WAI (صفحة Content Structure): التقنيات المساعدة بتبلّغ المستخدم بعدد العناصر. النطق نفسه مجرّبتوش هنا، اللي اتقاس هو الـ roles اللي Chrome بيطلّعها.
-- **انت** لما تيجي تنسّق: العناصر الحقيقية تقدر تمسك كل واحد منها بالـ CSS. الفقرة الواحدة لأ.
-- **التعديل**: تزوّد عنصر يعني [[<li>]] جديد، والترقيم بيتظبط لوحده.
-
----
-
-## ٥. الـ attributes بتاعة [[<ol>]]
-
-[[<ul>]] ملهاش attributes خاصة بيها. [[<ol>]] ليها تلاتة، و [[<li>]] ليه واحد.
-
-### [[<ol start="3">]]: ابدأ العد من رقم تاني
-
-لما قايمة واحدة تتقطع بفقرة في النص، القايمة التانية بتبدأ من 1 تاني. [[start]] بيقول لها تكمّل:
-
-~~~live 170 قايمة مقطوعة بتكمّل العد
-<ol>
-  <li>اختار الأصناف</li>
-  <li>اكتب العنوان</li>
-</ol>
-<p>لو معاك كود خصم، اكتبه دلوقتي.</p>
-<ol start="3">
-  <li>راجع الطلب</li>
-  <li>ادفع عند الاستلام</li>
-</ol>
-~~~
-
-الأرقام اللي Chrome رسمها: [[1 2]] وبعدين [[3 4]]. والقيمة لازم رقم صحيح، حتى لو شكل العلامة حروف (شوف [[type]] تحت).
-
-### [[<ol reversed>]]: عد تنازلي
-
-[[reversed]] attribute من غير قيمة (boolean): وجوده كفاية. بيخلي الأرقام تنزل بدل ما تطلع:
-
-~~~live 136 عد تنازلي
-<p>أكتر ٣ أصناف اتباعت الأسبوع ده، من التالت للأول:</p>
-<ol reversed>
-  <li>بقسماط</li>
-  <li>فينو</li>
-  <li>عيش بلدي</li>
-</ol>
-~~~
-
-الأرقام: [[3 2 1]]. خد بالك: [[reversed]] بيعكس **الأرقام بس**. العناصر نفسها بتفضل بنفس ترتيب كتابتها في الكود. فلو عايز تعرض من التالت للأول، انت اللي بتكتب التالت أول واحد.
-
-ولو معاه [[start]] بيبدأ منه وينزل: [[<ol reversed start="10">]] بتلات عناصر طلّع [[10 9 8]].
-
-### [[<ol type="a">]]: حروف أو أرقام رومانية
-
-~~~live 170 بنود بالحروف
-<p>شروط المسابقة:</p>
-<ol type="a">
-  <li>السن من ١٨ سنة.</li>
-  <li>مشاركة واحدة لكل شخص.</li>
-  <li>آخر ميعاد يوم ٣٠ في الشهر.</li>
-</ol>
-<p>اللي يخالف الشرط b مشاركته بتتلغي.</p>
-~~~
-
-| القيمة | الشكل | اللي Chrome رسمه لتلات عناصر |
-|---|---|---|
-| [[type="1"]] | أرقام (الافتراضي) | 1 و 2 و 3 |
-| [[type="a"]] | حروف صغيرة | a و b و c |
-| [[type="A"]] | حروف كبيرة | A و B و C |
-| [[type="i"]] | رومانية صغيرة | i و ii و iii |
-| [[type="I"]] | رومانية كبيرة | I و II و III |
-
-القيمة حرف واحد وحالته فارقة: [[a]] غير [[A]]. ومفيش قيمة للحروف العربي ولا للأرقام الهندي (١ ٢ ٣): دول بييجوا من الـ CSS بس.
-
-**إمتى [[type]] وإمتى CSS؟** المواصفة بتقول استخدم [[type]] لما شكل العلامة **جزء من المعنى**، يعني في الصفحة كلام بيشاور على البند بحرفه، زي «الشرط b» في المثال. لو الحروف مجرد شكل، سيبها للـ CSS.
-
-ومع [[start]] الحساب بالرقم: [[<ol type="a" start="4">]] طلّع [[d e f]]، لأن d هو الحرف الرابع.
-
-### [[<li value="2">]]: رقم العنصر ده بالذات
-
-[[value]] بيتحط على [[<li>]] واحد جوه [[<ol>]]، وبيقول «رقمي كذا»، واللي بعده بيكمّل منه:
-
-~~~live 154 تعادل في المركز التاني
-<p>ترتيب سباق الجري:</p>
-<ol>
-  <li>نادي النسور</li>
-  <li>نادي الشعلة</li>
-  <li value="2">نادي الأمل</li>
-  <li value="4">نادي البحر</li>
-</ol>
-~~~
-
-الأرقام: [[1 2 2 4]]. ناديين اتعادلوا في المركز التاني، فالتاني منهم خد [[value="2"]]، واللي بعدهم خد [[value="4"]] لأن مفيش مركز تالت.
-
-[[value]] ملوش معنى جوه [[<ul>]] ولا [[<menu>]]: جرّبته والنقط فضلت نقط، والـ validator قال [[Attribute “value” not allowed on element “li” at this point.]]
-
-### الحالات الطرفية (كلها متجرّبة في Chrome 157)
-
-| الكود | اللي اترسم | ليه |
-|---|---|---|
-| [[<ol start="0">]] | 0 و 1 و 2 | الصفر والسالب مسموحين |
-| [[<ol start="abc">]] | 1 و 2 و 3 | قيمة مش رقم بتتجاهل، والـ validator بيقول [[Bad value “abc” for attribute “start”]] |
-| [[<ol start="2.9">]] | 2 و 3 و 4 | بياخد الجزء الصحيح بس |
-| [[<ol type="x">]] | 1 و 2 و 3 | نوع مش معروف بيرجع للأرقام |
-| [[<ol type="a" start="26">]] | z و aa و ab | بعد z بيكمّل بحرفين |
-| [[<ol type="a" start="-1">]] | 1- و 0 و a | الصفر والسالب بيترسموا أرقام دايمًا |
-| [[<li hidden>]] جوه [[<ol>]] | العناصر الظاهرة 1 و 2 | العنصر المخفي مبيتعدّش |
-| [[<ol reversed>]] وفي النص [[<li value="7">]] | 8 و 7 و 6 | Chrome حسب الأول من الـ value. خطوات المواصفة بتطلّع 3 و 7 و 6. متخلطش الاتنين من غير [[start]] |
-
----
-
-## ٦. [[<menu>]]: قايمة أوامر
-
-~~~live 145 شريط أوامر
-<p>الطلب رقم ١٢٠:</p>
-<menu>
-  <li><button type="button">اطبع</button></li>
-  <li><button type="button">عدّل</button></li>
-  <li><button type="button">الغي</button></li>
-</menu>
-~~~
-
-[[<menu>]] في المواصفة «بديل semantic لـ [[<ul>]]» معناه **شريط أدوات**: قايمة مش مترتبة، وكل عنصر فيها أمر المستخدم ينفّذه (زراير نسخ ولصق وطباعة). جواها [[<li>]] برضه.
-
-قستها جنب [[<ul>]]:
-
-~~~text الناتج
-menu:  display=block  margin=16px  padding-right=40px  list-style-type=disc  role=list
-ul:    display=block  margin=16px  padding-right=40px  list-style-type=disc  role=list
-النوع في الـ DOM:  HTMLMenuElement  مقابل  HTMLUListElement
-~~~
-
-نفس الشكل ونفس الـ role بالظبط. و MDN بيقولها صريحة: المتصفحات بتعامل [[<menu>]] زي [[<ul>]] من غير أي فرق. فالفرق للي بيقرا الكود بس. استخدمها لمجموعة زراير أوامر لو حابب، و [[<ul>]] مكانها مش غلط.
-
-> [[<menu>]] مش قايمة التنقل بتاعة الموقع. روابط التنقل بتتحط في [[<ul>]] جوه [[<nav>]]، وده الدرس الجاي.
-
----
-
-## ٧. جوه الـ [[<li>]] إيه اللي ينفع؟
-
-أي حاجة: كلام، لينك، صورة، فقرات، وحتى قايمة تانية (الدرس الجاي).
-
-~~~live 168 عنصر فيه لينك وفقرة
-<ul>
-  <li>
-    <a href="#baladi">عيش بلدي</a>
-    <p>بيتخبز كل يوم الساعة ٦ الصبح.</p>
-  </li>
-  <li>
-    <a href="#fino">فينو</a>
-    <p>سادة أو بالسمسم.</p>
-  </li>
-</ul>
-~~~
-
-بس جوه [[<ul>]] و [[<ol>]] **مباشرة** مفيش غير [[<li>]].
-
----
-
-## ٨. الغلطات اللي بتحصل فعلًا
-
-### قايمة جوه فقرة
-
-شكلها منطقي: «هتحتاج:» وبعدها القايمة وبعدها تكملة الجملة، كله في [[<p>]] واحد.
-
-~~~live 152 قايمة جوه p
-<p>هتحتاج:
-  <ul>
-    <li>دقيق</li>
-    <li>سكر</li>
-  </ul>
-وبس كده.</p>
-~~~
-
-الشكل طلع عادي، بس المتصفح مبناش اللي انت كتبته. [[<p>]] مينفعش يبقى جواه قايمة، فالـ parser (الجزء اللي بيقرا الـ HTML) قفل الفقرة أول ما شاف [[<ul>]]. ده اللي اتبنى فعلًا:
-
-~~~text الـ DOM اللي Chrome بناه
-p    "هتحتاج:"
-ul
-  li "دقيق"
-  li "سكر"
-"وبس كده."        (نص سايب، مش جوه أي فقرة)
-p                 (فقرة فاضية اتعملت من </p> اللي في الآخر)
-~~~
-
-يعني بقى عندك فقرتين (واحدة منهم فاضية) ونص ملوش عنصر. والـ validator بيقول:
-
-~~~text validator.w3.org/nu
-error: No “p” element in scope but a “p” end tag seen.
-~~~
-
-الصح: الفقرة تتقفل قبل القايمة.
-
-~~~live 152 الصح
-<p>هتحتاج:</p>
-<ul>
-  <li>دقيق</li>
-  <li>سكر</li>
-</ul>
-<p>وبس كده.</p>
-~~~
-
-### كلام مباشر جوه [[<ul>]]
-
-[[<ul>كلام<p>فقرة</p><li>فول</li></ul>]]: المتصفح بيسيبه في مكانه ومبيصلّحوش، بس الكلام والفقرة مبقوش عناصر في القايمة (في شجرة الـ accessibility طلعوا نص وفقرة جوه الـ list، والـ listitem واحد بس). والـ validator:
-
-~~~text validator.w3.org/nu
-error: Text not allowed in element “ul” in this context.
-error: Element “p” not allowed as child of element “ul” in this context.
-~~~
-
-### [[<li>]] من غير قايمة
-
-[[<li>]] لوحده برّه [[<ul>]] و [[<ol>]] و [[<menu>]]: Chrome عامله [[list-item]] وادّاله نقطة، بس النقطة اترسمت برّه حافة الصفحة لأن مفيش قايمة حواليه تدّيها الـ 40px. وفي شجرة الـ accessibility طلع [[listitem]] من غير [[list]]، يعني عنصر في قايمة مش موجودة. والـ validator: [[Element “li” not allowed as child of element “body” in this context.]]
-
-### نسيت [[</li>]]
-
-[[<ul><li>فول<li>طعمية<li>بطاطس</ul>]] اتبنى منه تلات عناصر مظبوطين. قفلة الـ [[<li>]] اختيارية في المواصفة: بيتقفل لوحده لما ييجي [[<li>]] تاني أو القايمة تخلص. اكتبها برضه عشان الكود يتقري، ومع القوايم اللي جوه بعض (الدرس الجاي) غيابها بيلخبط.
-
----
-
-## الخلاصة
-
-- [[<ul>]] لمجموعة ترتيبها مش فارق، و [[<ol>]] لما الترتيب جزء من المعنى، وكل عنصر في [[<li>]].
-- جوه القايمة مباشرة [[<li>]] بس، وجوه الـ [[<li>]] أي حاجة.
-- النقطة والرقم والـ 40px بيرسمهم المتصفح، وتغييرهم شغل CSS.
-- [[start]] بيبدأ العد من رقم، و [[reversed]] بيعكس الأرقام (مش العناصر)، و [[type]] للحروف والرومانية لما العلامة ليها معنى، و [[value]] لرقم عنصر واحد.
-- القايمة الحقيقية بتطلع [[list]] و [[listitem]] في شجرة الـ accessibility. الفقرة اللي فيها شرطات لأ.
-- القايمة متتحطش جوه [[<p>]].`,
-          try: R`اعمل ملف [[lists.html]] بالهيكل الكامل ([[<!doctype html>]] و [[lang="ar" dir="rtl"]] و charset)، وفيه قايمة مشتريات من ٣ حاجات بـ [[<ul>]]، وتحتها طريقة عمل الشاي في ٣ خطوات بـ [[<ol>]]. افتحه في المتصفح، وبعدين جرّب بالترتيب: (١) زوّد [[reversed]] على الـ [[<ol>]]. (٢) شيله واكتب [[start="10"]]. (٣) امسح الخطوة اللي في النص وبص على الأرقام.`,
-          sol: R`الصفحة قبل أي تغيير:
-
-~~~live 334 lists.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>قوايم</title>
-</head>
-<body>
-<h1>يوم الجمعة</h1>
-<h2>هشتري</h2>
-<ul>
-  <li>شاي</li>
-  <li>سكر</li>
-  <li>نعناع</li>
-</ul>
-<h2>طريقة الشاي</h2>
-<ol>
-  <li>اغلي المية</li>
-  <li>حط الشاي والسكر</li>
-  <li>سيبه ٣ دقايق</li>
-</ol>
-</body>
-</html>
-~~~
-
-والتجارب التلاتة:
-
-~~~live 154 بعد reversed، وبعد start="10" ومسح الخطوة اللي في النص
-<ol reversed>
-  <li>اغلي المية</li>
-  <li>حط الشاي والسكر</li>
-  <li>سيبه ٣ دقايق</li>
-</ol>
-<ol start="10">
-  <li>اغلي المية</li>
-  <li>سيبه ٣ دقايق</li>
-</ol>
-~~~
-
-- مع [[reversed]] الأرقام بقت [[3 2 1]] والخطوات نفسها فضلت بترتيبها. يعني القايمة دلوقتي بتقول إن «اغلي المية» هي الخطوة رقم 3، وده غلط في المعنى. [[reversed]] للعد التنازلي اللي ترتيب عناصره مكتوب تنازلي أصلًا.
-- مع [[start="10"]] العد بدأ من 10.
-- لما مسحت الخطوة اللي في النص، الأرقام بقت [[10 11]] من غير ما تلمس حاجة. ده معنى إن المتصفح هو اللي بيعدّ.
-
-~~~text الناتج
-عدد العناصر: ul=1  ol=1  li=6
-العلامات في الصفحة الأولى:  • • •   1 2 3
-بعد reversed:  3 2 1
-بعد start="10" ومسح عنصر:  10 11
-validator.w3.org/nu على lists.html: صفر errors
-~~~
-
-لو النقط أو الأرقام مظهرتش خالص: غالبًا كتبت [[<il>]] بدل [[<li>]]، أو نسيت تقفل [[</ul>]] قبل العنوان اللي بعده.`,
-          deep: {
-            why: R`من غير عناصر القوايم، كل مجموعة حاجات في الصفحة هتتكتب فقرات وشرطات بالإيد. الشكل ممكن يطلع شبه القايمة، بس المتصفح شايف نص عادي: مفيش عدد عناصر لقارئ الشاشة، ومفيش ترقيم بيتظبط لوحده، ومفيش عنصر تمسكه بالـ CSS. والقوايم في كل صفحة تقريبًا: المنيو، وروابط الفوتر، ونتايج البحث، وخطوات الدفع، والتعليقات.`,
-            how: R`الـ [[<li>]] نوع عرضه [[display: list-item]]: صندوق block ومعاه صندوق تاني صغير قدامه اسمه marker. المتصفح بيملا الـ marker حسب [[list-style-type]] بتاع القايمة: نقطة، أو عدّاد.
-
-العدّاد بيتحسب بخطوات المواصفة: يبدأ من [[start]] لو موجود (أو من عدد العناصر لو فيه [[reversed]]، أو من 1)، وكل [[<li>]] ياخد الرقم الحالي، ولو عليه [[value]] ياخد قيمته، وبعدين الرقم يزيد واحد أو ينقص واحد مع [[reversed]].
-
-وفي نفس الوقت المتصفح بيبني شجرة الـ accessibility: [[<ul>]] و [[<ol>]] و [[<menu>]] بيطلعوا [[list]]، وكل [[<li>]] بيطلع [[listitem]].`,
-            when: R`[[<ul>]]: مشتريات، مميزات، روابط، كروت منتجات، تاجات. [[<ol>]]: خطوات، ترتيب، بنود بيتشاور عليها بالرقم. [[<menu>]]: مجموعة زراير أوامر، ولو كتبتها [[<ul>]] مفيش مشكلة. ومتستخدمش قايمة عشان تدخّل كلام لجوه بس، ولا لعنصر واحد ملوش أخوات.`,
-            mistakes: R`تكتب القايمة فقرة فيها [[<br>]] وشرطات. تكتب الأرقام بإيدك جوه [[<li>]] فتطلع «1. 1.». تحط القايمة جوه [[<p>]] فالمتصفح يقسم الفقرة. تختار [[<ol>]] عشان شكل الأرقام والترتيب مش فارق. تفتكر [[reversed]] بيعكس العناصر وهو بيعكس الأرقام بس. تكتب [[type="A"]] وانت قصدك [[a]]. تحط [[start]] أو [[reversed]] على [[<ul>]] (الـ validator: [[Attribute “reversed” not allowed on element “ul” at this point.]]).`
-          },
+          title: "وضع غامق بزرار ومن غير وميض",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** من غير ما تفتح المتصفح، اكتب الأرقام أو الحروف اللي هتترسم قدام كل عنصر في القوايم التلاتة دي بالترتيب: (أ) [[<ol start="3">]] فيها ٤ عناصر والتالت عليه [[value="10"]]. (ب) [[<ol reversed>]] فيها ٣ عناصر. (ج) [[<ol type="A" start="3">]] فيها عنصرين. وبعدين اكتبهم وشوف.`, done: R`اللي كتبته على الورق هو اللي ظهر: (أ) 3 و 4 و 10 و 11. (ب) 3 و 2 و 1. (ج) C و D.`, sol: R`~~~live 242 القوايم التلاتة
-<ol start="3">
-  <li>أ</li>
-  <li>ب</li>
-  <li value="10">ج</li>
-  <li>د</li>
-</ol>
-<ol reversed>
-  <li>هـ</li>
-  <li>و</li>
-  <li>ز</li>
-</ol>
-<ol type="A" start="3">
-  <li>ح</li>
-  <li>ط</li>
-</ol>
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الجهاز على dark، و [[localStorage.theme]] فيه [[light]]، والـ CSS فيه [[@custom-variant dark (&:where(.dark, .dark *));]]. خلفية [[<body className="bg-white dark:bg-gray-950">]] هتبقى إيه؟ وهتبقى إيه لو مسحت سطر [[@custom-variant]]؟ اكتب الإجابتين، وبعدين جرّب من DevTools › Rendering › Emulate CSS media feature [[prefers-color-scheme]].`, done: R`كتبت أبيض في الأولى (الكلاس [[light]] اللي على html هو اللي بيحكم مش الجهاز)، وغامق في التانية (من غير السطر [[dark:]] بيرجع يسمع للجهاز ويتجاهل الزرار)، والتجربة طابقت الاتنين.`, sol: R`~~~css in.css
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 ~~~
 
-**ليه كده:**
-
-- (أ) العد بدأ من [[start="3"]]: 3 ثم 4. التالت عليه [[value="10"]] فخد 10، واللي بعده كمّل من عنده: 11. الـ [[value]] مبيرجعش للعد القديم.
-- (ب) [[reversed]] من غير [[start]] بيبدأ من عدد العناصر (3) وينزل.
-- (ج) [[start]] دايمًا رقم: 3 يعني الحرف التالت، و [[type="A"]] حروف كبيرة، فطلع C ثم D.
-
-**الغلطة الشائعة:** تكتب [[start="C"]]. القيمة مش رقم فبتتجاهل، والقايمة تبدأ من A.
-
-~~~text الناتج
-العلامات اللي Chrome رسمها:
-(أ)  3  4  10  11
-(ب)  3  2  1
-(ج)  C  D
-~~~` },
-            { lvl: 'سريع', t: R`**صنّف واشرح:** لكل حالة قول [[<ul>]] ولا [[<ol>]] ولا [[<menu>]]، وليه في جملة: (١) مكونات كيكة. (٢) ترتيب الفرق في الدوري. (٣) زراير «عدّل» و «امسح» تحت بوست. (٤) خطوات تسطيب برنامج. (٥) روابط «عن الشركة» و «وظايف» في الفوتر. (٦) بنود شروط استخدام بيتقال عليها «زي ما في البند ٣».`, done: R`إجابتك زي الجدول اللي في الحل، وكل اختيار ليه سبب من سؤال «لو بدّلت الترتيب المعنى يتغيّر؟»، مش من شكل العلامة.`, sol: R`| الحالة | العنصر | السبب |
-|---|---|---|
-| مكونات كيكة | [[<ul>]] | بدّل الدقيق والبيض والمعنى زي ما هو |
-| ترتيب الدوري | [[<ol>]] | المركز هو المعلومة |
-| زراير عدّل وامسح | [[<menu>]] أو [[<ul>]] | مجموعة أوامر، وترتيبها مش فارق |
-| خطوات تسطيب | [[<ol>]] | الخطوة ٢ مش هتنفع قبل ١ |
-| روابط الفوتر | [[<ul>]] | مجموعة روابط من غير ترتيب |
-| بنود الشروط | [[<ol>]] | الرقم بقى اسم للبند وبيتشاور عليه |
-
-تلاتة منهم مبنيين:
-
-~~~live 360 تلات حالات
-<h3>مكونات الكيكة</h3>
-<ul>
-  <li>دقيق</li>
-  <li>بيض</li>
-  <li>برتقان</li>
-</ul>
-<h3>ترتيب الدوري</h3>
-<ol>
-  <li>نادي النسور</li>
-  <li>نادي الشعلة</li>
-  <li>نادي البحر</li>
-</ol>
-<h3>زراير البوست</h3>
-<menu>
-  <li><button type="button">عدّل</button></li>
-  <li><button type="button">امسح</button></li>
-</menu>
-~~~
-
-**الحالة اللي بتلخبط:** «المكونات بكتبها بالترتيب اللي هستخدمها بيه، يبقى [[<ol>]]؟» لأ. اسأل: لو حد قراها بترتيب تاني، هيفهم حاجة غلط؟ في المكونات لأ. في الخطوات أيوه.
-
-**الغلطة الشائعة:** تختار بالشكل («عايز أرقام»). الشكل بيتغيّر بسطر CSS، والعنصر الغلط بيفضل بيقول معلومة غلط لقارئ الشاشة ولمحرك البحث.
-
-~~~text الناتج
-في المعاينة:  ul=1  ol=1  menu=1  li=8
-العلامات:  • • •   1 2 3   • •
-الـ role من Chrome: التلاتة list، وكل li جواهم listitem
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة وصفة «كيكة البرتقان» كاملة: [[<h1>]] باسمها، وفقرة فيها بتكفّي كام فرد ووقتها، و [[<h2>]] «المكونات» وتحته قايمة من ٦ مكونات، و [[<h2>]] «الطريقة» وتحته ٥ خطوات. اختار نوع كل قايمة بنفسك.`, done: R`الصفحة فيها [[<ul>]] واحدة جواها ٦ [[<li>]] و [[<ol>]] واحدة جواها ٥، والخطوات مرقّمة من 1 لـ 5 من غير ما تكتب ولا رقم بإيدك، والـ validator (validator.w3.org/nu) صفر errors.`, work: { h: 480, start: R`كيكة البرتقان
-بتكفّي ٨ أفراد، وبتاخد ساعة.
-المكونات
-٢ كوباية دقيق
-كوباية سكر
-٣ بيضات
-نص كوباية زيت
-عصير برتقانتين وبشرهم
-معلقة صغيرة بيكنج بودر
-الطريقة
-سخّن الفرن على ١٨٠ درجة.
-اخفق البيض والسكر لحد ما اللون يفتح.
-ضيف الزيت وعصير البرتقان والبشر.
-نزّل الدقيق والبيكنج بودر وقلّب بالراحة.
-صب الخليط في صينية مدهونة وادخلها الفرن ٤٠ دقيقة.`, checks: [
-              { say: R`اسم الوصفة [[<h1>]]`, q: "h1", has: "كيكة البرتقان", n: 1 },
-              { say: R`فيه [[<h2>]] اتنين: المكونات والطريقة`, q: "h2", n: 2 },
-              { say: R`المكونات قايمة [[<ul>]] فيها ٦ [[<li>]]`, q: "ul > li", n: 6 },
-              { say: R`الخطوات قايمة [[<ol>]] فيها ٥ [[<li>]]`, q: "ol > li", n: 5 },
-              { say: R`جملة «بتكفّي ٨ أفراد» فقرة [[<p>]]`, q: "p", has: "أفراد" },
-            ] }, sol: R`~~~live 480 كيكة البرتقان
+~~~html index.html
 <!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كيكة البرتقان</title>
-</head>
-<body>
-<main>
-  <h1>كيكة البرتقان</h1>
-  <p>بتكفّي ٨ أفراد، وبتاخد ساعة.</p>
-  <h2>المكونات</h2>
-  <ul>
-    <li>٢ كوباية دقيق</li>
-    <li>كوباية سكر</li>
-    <li>٣ بيضات</li>
-    <li>نص كوباية زيت</li>
-    <li>عصير برتقانتين وبشرهم</li>
-    <li>معلقة صغيرة بيكنج بودر</li>
-  </ul>
-  <h2>الطريقة</h2>
-  <ol>
-    <li>سخّن الفرن على ١٨٠ درجة.</li>
-    <li>اخفق البيض والسكر لحد ما اللون يفتح.</li>
-    <li>ضيف الزيت وعصير البرتقان والبشر.</li>
-    <li>نزّل الدقيق والبيكنج بودر وقلّب بالراحة.</li>
-    <li>صب الخليط في صينية مدهونة وادخلها الفرن ٤٠ دقيقة.</li>
-  </ol>
-</main>
-</body>
+<html lang="ar" dir="rtl" class="light">
+<head><meta charset="utf-8"><title>مين بيحكم؟</title><link rel="stylesheet" href="out.css"></head>
+<body class="bg-white dark:bg-gray-950">الخلفية</body>
 </html>
 ~~~
 
-**ليه كده:**
+**الحالة الأولى (السطر موجود):** [[@custom-variant dark]] بيغيّر معنى [[dark:]] من «إعداد الجهاز» لـ «فيه كلاس [[.dark]] على العنصر أو على أب ليه». الـ html عليه [[light]] مش [[dark]]، فالقاعدة مبتتطبقش، والخلفية بيضا رغم إن الجهاز غامق.
 
-- المكونات [[<ul>]]: هتجيبهم كلهم بأي ترتيب. والكميات («٢ كوباية») جزء من الكلام جوه الـ [[<li>]]، مش ترقيم.
-- الطريقة [[<ol>]]: الفرن بيسخن الأول، والدقيق بينزل بعد السوايل.
-- كل قايمة قبلها [[<h2>]]. القايمة ملهاش عنوان خاص بيها، فالعنوان اللي قبلها هو اللي بيعرّفها. وده كمان اللي بيخلي قارئ الشاشة ينط لها من فهرس العناوين.
-- الجملة اللي تحت الـ [[<h1>]] فقرة عادية: معلومتين في جملة واحدة مش قايمة.
+**الحالة التانية (السطر ممسوح):** [[dark:]] بترجع للافتراضي: [[@media (prefers-color-scheme: dark)]]. الجهاز غامق، فالخلفية غامقة، والكلاس [[light]] ملوش أي تأثير. يعني زرار الثيم بقى ملوش لازمة.
 
-**الغلطة الشائعة:** تكتب [[<li>1. سخّن الفرن</li>]]. هتطلع «1. 1. سخّن الفرن»، ولما تمسح خطوة لازم تعيد ترقيم الباقي بإيدك.
+**الغلطة الشائعة:** تعمل زرار ثيم، وتجرّب على جهاز فاتح فيبان شغال، لأنك بتقلب ناحية واحدة بس. جرّب والجهاز غامق والاختيار فاتح.
 
 ~~~text الناتج
-ul=1  ol=1  li=11  h1=1  h2=2
-العلامات:  • • • • • •   1 2 3 4 5
-validator.w3.org/nu: صفر errors
-على عرض 360: مفيش scroll أفقي
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة دورة تدريبية فيها المواعيد مكتوبة فقرة واحدة فيها شرطات و [[<br>]]، وخطوات الحجز فقرة تانية فيها «1)» و «2)» و «3)» مكتوبين بالإيد. الكود في أول الحل. حوّلهم لقوايم حقيقية، وبعدين امسح خطوة «ادفع المقدم» وشوف الترقيم.`, done: R`قبل: شجرة الـ accessibility فيها فقرتين بس. بعد: فيها اتنين [[list]] جواهم ٦ [[listitem]]، ومفيش ولا شرطة ولا رقم مكتوب بالإيد، ولما تمسح خطوة اللي بعدها بتاخد رقمها لوحدها.`, work: { h: 240, solAt: 1, start: R`<p>مواعيد الدورة:<br>
-- السبت: HTML<br>
-- الاتنين: CSS<br>
-- الأربع: مشروع</p>
-<p>خطوات الحجز:<br>
-1) املا الاستمارة<br>
-2) ادفع المقدم<br>
-3) استنى رسالة التأكيد</p>`, checks: [
-              { say: R`مفيش [[<br>]] في الصفحة`, q: "br", n: 0 },
-              { say: R`المواعيد قايمة [[<ul>]] من ٣ [[<li>]]`, q: "ul > li", n: 3 },
-              { say: R`خطوات الحجز قايمة [[<ol>]] من ٣ [[<li>]]`, q: "ol > li", n: 3 },
-              { say: R`مفيش شرطة «-» مكتوبة بالإيد في أول أي عنصر`, q: "li", has: "- ", n: 0 },
-              { say: R`مفيش رقم «1)» مكتوب بالإيد`, q: "li", has: ")", n: 0 },
-            ] }, sol: R`قبل:
+الجهاز dark ، و html عليه class="light"
 
-~~~live 208 قبل: فقرتين
-<p>مواعيد الدورة:<br>
-- السبت: HTML<br>
-- الاتنين: CSS<br>
-- الأربع: مشروع</p>
-<p>خطوات الحجز:<br>
-1) املا الاستمارة<br>
-2) ادفع المقدم<br>
-3) استنى رسالة التأكيد</p>
+بـ @custom-variant:   rgb(255, 255, 255)           أبيض
+من غيره:              oklch(0.13 0.028 261.692)    غامق
 ~~~
 
-بعد:
-
-~~~live 240 بعد: قايمتين
-<p>مواعيد الدورة:</p>
-<ul>
-  <li>السبت: HTML</li>
-  <li>الاتنين: CSS</li>
-  <li>الأربع: مشروع</li>
-</ul>
-<p>خطوات الحجز:</p>
-<ol>
-  <li>املا الاستمارة</li>
-  <li>ادفع المقدم</li>
-  <li>استنى رسالة التأكيد</li>
-</ol>
-~~~
-
-**اللي اتغيّر:**
-
-- الجملة اللي بتقدّم القايمة («مواعيد الدورة:») فضلت [[<p>]] لوحدها واتقفلت **قبل** القايمة. القايمة مبتتحطش جوه فقرة.
-- المواعيد [[<ul>]]: تلات أيام، ومفيش واحد «قبل» التاني في المعنى. ممكن حد يقول دي مرتبة بالأيام فتبقى [[<ol>]]، وده مقبول لو الدورة لازم تتاخد بالترتيب. المهم يبقى عندك سبب.
-- الخطوات [[<ol>]]، والـ «1)» اتشالت من الكلام.
-- كل الـ [[<br>]] اتشالت: كل [[<li>]] بينزل سطر لوحده.
-
-**الغلطة الشائعة:** تحوّل لقايمة وتسيب الشرطة أو الرقم في أول الكلام، فتطلع «• - السبت».
-
-~~~text الناتج
-شجرة الـ accessibility قبل:
-paragraph   "مواعيد الدورة:"  "- السبت: HTML"  "- الاتنين: CSS"  "- الأربع: مشروع"
-paragraph   "خطوات الحجز:"  "1) املا الاستمارة"  "2) ادفع المقدم"  "3) استنى رسالة التأكيد"
-
-بعد:
-paragraph   "مواعيد الدورة:"
-list        3 listitem
-paragraph   "خطوات الحجز:"
-list        3 listitem
-
-العلامات بعد:  • • •   1 2 3
-بعد مسح «ادفع المقدم»:  1 2   («استنى رسالة التأكيد» بقت 2 لوحدها)
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** مكتبة الحي (اسم متخيل) طلّعت أكتر ٥ كتب استعارة: ١. ظل الجبل (٤١٢). ٢. طريق الملح (٣٨٠). ٣. بيت القمر (٣٥٥). ٤. آخر القطارات (٢٩٠). ٥. حديقة الرماد (٢٤١). اعرضهم **عد تنازلي** من الخامس للأول، وكل كتاب قدامه رقم مركزه الصح.`, done: R`أول سطر في القايمة «حديقة الرماد» وقدامه 5، وآخر سطر «ظل الجبل» وقدامه 1، والأرقام جاية من [[reversed]] مش مكتوبة بالإيد.`, work: { h: 250, start: R`أكتر ٥ كتب استعارة في مكتبة الحي
-ظل الجبل (٤١٢ استعارة)
-طريق الملح (٣٨٠ استعارة)
-بيت القمر (٣٥٥ استعارة)
-آخر القطارات (٢٩٠ استعارة)
-حديقة الرماد (٢٤١ استعارة)`, checks: [
-              { say: R`القايمة [[<ol>]] فيها ٥ [[<li>]]`, q: "ol > li", n: 5 },
-              { say: R`العد تنازلي بـ [[reversed]] مش بكتابة الأرقام`, q: "ol", attr: ["reversed"], n: 1 },
-              { say: R`أول سطر «حديقة الرماد» (اللي رقمه 5)`, q: "ol > li:first-child", has: "حديقة الرماد", n: 1 },
-              { say: R`آخر سطر «ظل الجبل» (اللي رقمه 1)`, q: "ol > li:last-child", has: "ظل الجبل", n: 1 },
-              { say: R`مفيش [[value]] مكتوب بالإيد على أي [[<li>]]`, q: "li[value]", n: 0 },
-            ] }, sol: R`~~~live 250 من الخامس للأول
-<h2>أكتر ٥ كتب استعارة في مكتبة الحي</h2>
-<p>من الخامس للأول:</p>
-<ol reversed>
-  <li>حديقة الرماد (٢٤١ استعارة)</li>
-  <li>آخر القطارات (٢٩٠ استعارة)</li>
-  <li>بيت القمر (٣٥٥ استعارة)</li>
-  <li>طريق الملح (٣٨٠ استعارة)</li>
-  <li>ظل الجبل (٤١٢ استعارة)</li>
-</ol>
-~~~
-
-**الفكرة:** [[reversed]] بيعكس الأرقام بس. فعشان الخامس يظهر الأول، انت اللي بتكتبه أول [[<li>]]. المتصفح بيعدّ ٥ عناصر ويبدأ من 5 وينزل.
-
-**الغلطة الشائعة:** تسيب العناصر بترتيب البيانات (الأول فوق) وتزوّد [[reversed]] وتفتكر إنه هيقلبهم:
-
-~~~live 138 الغلط: reversed على نفس الترتيب
-<ol reversed>
-  <li>ظل الجبل (٤١٢ استعارة)</li>
-  <li>طريق الملح (٣٨٠ استعارة)</li>
-  <li>بيت القمر (٣٥٥ استعارة)</li>
-  <li>آخر القطارات (٢٩٠ استعارة)</li>
-  <li>حديقة الرماد (٢٤١ استعارة)</li>
-</ol>
-~~~
-
-هنا «ظل الجبل» (أكتر كتاب استعارة) قدامه 5، و «حديقة الرماد» قدامه 1. الصفحة بتقول عكس الحقيقة، والـ validator مش هيشتكي لأن الكود سليم.
-
-~~~text الناتج
-الصح:   العلامات 5 4 3 2 1   وأول عنصر «حديقة الرماد (٢٤١ استعارة)»
-الغلط:  العلامات 5 4 3 2 1   وأول عنصر «ظل الجبل (٤١٢ استعارة)»
-نفس الأرقام في الاتنين: الفرق كله في ترتيب الـ li في الكود
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب نفس التلات مشروبات (شاي، قهوة، ينسون) ٤ مرات في صفحة واحدة: [[<ul>]]، و [[<ol>]]، و [[<menu>]]، وفقرة فيها «•» و [[<br>]]. افتح DevTools › Elements، واختار كل واحدة وافتح تاب Accessibility (درس «semantic HTML»)، واكتب الـ role بتاعها وبتاع العناصر اللي جواها. وبعدين من تاب Computed اكتب [[padding-inline-start]] لكل واحدة.`, done: R`عندك جدول فيه ٤ صفوف: التلاتة الأولانيين [[list]] وجواهم [[listitem]] والـ padding بتاعهم 40px، والرابعة [[paragraph]] والـ padding صفر. وعرفت تقول الفرق بين [[<ul>]] و [[<menu>]] في المتصفح: مفيش.`, sol: R`~~~live 480 ٤ طرق لنفس القايمة
+~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
 <!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>٤ طرق لنفس القايمة</title>
-</head>
-<body>
-<h1>٤ طرق لنفس القايمة</h1>
-<h2>ul</h2>
-<ul>
-  <li>شاي</li>
-  <li>قهوة</li>
-  <li>ينسون</li>
-</ul>
-<h2>ol</h2>
-<ol>
-  <li>شاي</li>
-  <li>قهوة</li>
-  <li>ينسون</li>
-</ol>
-<h2>menu</h2>
-<menu>
-  <li>شاي</li>
-  <li>قهوة</li>
-  <li>ينسون</li>
-</menu>
-<h2>p و br</h2>
-<p>• شاي<br>• قهوة<br>• ينسون</p>
-</body>
+<html lang="ar" dir="rtl" class="light">
+<head><meta charset="utf-8"><title>مين بيحكم؟</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-950:oklch(13% .028 261.692);--color-white:#fff;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.bg-white{background-color:var(--color-white)}.dark\:bg-gray-950:where(.dark,.dark *){background-color:var(--color-gray-950)}}
+</style></head>
+<body class="bg-white dark:bg-gray-950">الخلفية</body>
 </html>
-~~~
-
-| الطريقة | الـ role | العناصر جواها | padding-inline-start | العلامة |
-|---|---|---|---|---|
-| [[<ul>]] | list | ٣ listitem | 40px | نقطة من المتصفح |
-| [[<ol>]] | list | ٣ listitem | 40px | رقم من المتصفح |
-| [[<menu>]] | list | ٣ listitem | 40px | نقطة من المتصفح |
-| [[<p>]] و [[<br>]] | paragraph | نص بس | 0px | «•» مكتوبة في النص |
-
-**اللي تطلع بيه:**
-
-- [[<ul>]] و [[<ol>]] و [[<menu>]] التلاتة [[list]] عند قارئ الشاشة. الفرق بين [[<ul>]] و [[<ol>]] في العلامة وفي المعنى اللي انت قاصده، و [[<menu>]] زي [[<ul>]] بالظبط في المتصفح.
-- الفقرة ملهاش أي علاقة بالقوايم، مهما شكلها قرّب.
-- [[padding-inline-start]] يعني الـ padding اللي في بداية السطر: يمين في العربي وشمال في الإنجليزي. عشان كده القايمة بتدخل من الناحية الصح لوحدها لما [[dir]] يتغيّر.
-
-**الغلطة الشائعة:** تبص في تاب Accessibility على الـ [[<li>]] بس وتنسى الغلاف. الـ [[listitem]] من غير [[list]] حواليه (زي [[<li>]] لوحده) عنصر في قايمة مش موجودة.
-
-~~~text الناتج
-من Chrome 157:
-ul    role=list   padding-right=40px   list-style-type=disc      li: role=listitem ×3
-ol    role=list   padding-right=40px   list-style-type=decimal   li: role=listitem ×3
-menu  role=list   padding-right=40px   list-style-type=disc      li: role=listitem ×3
-p     role=paragraph   padding=0px   جواه: "• شاي"  "• قهوة"  "• ينسون"
-validator.w3.org/nu: صفر errors
 ~~~` },
-          ]
-        },
-        {
-          cmd: "قوايم جوه قوايم",
-          title: "القايمة الفرعية بتتحط فين؟ وقايمة التنقل ومسار الصفحة",
-          pre: ["css/ul و ol", { to: "css/semantic HTML", why: R`عشان [[<nav>]] و [[aria-label]] وشجرة الـ accessibility` }],
-          ref: [
-            { t: "MDN: <ul> (Nesting a list)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ul" },
-            { t: "MDN: <ol> (Nesting lists)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ol" },
-            { t: "WHATWG: the li element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-li-element" },
-            { t: "W3C WAI: Menu Structure", url: "https://www.w3.org/WAI/tutorials/menus/structure/" },
-            { t: "W3C APG: Breadcrumb Pattern", url: "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/" },
-            { t: "MDN Curriculum: Semantic HTML (2.3 Lists)", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" }
-          ],
-          desc: R`القايمة الفرعية بتتحط **جوه الـ [[<li>]]** اللي هي تبعه، مش بعده. وبنفس الفكرة بتتبني أهم قايمتين في أي موقع: قايمة التنقل ([[<ul>]] جوه [[<nav>]])، ومسار الصفحة أو الـ breadcrumb ([[<ol>]] جوه [[<nav>]]).
-
-لو حطيت القايمة الفرعية في المكان الغلط، الشكل هيطلع زي ما هو والمعنى هيضيع: المتصفح مش هيعرف «شاي» تبع «مشروبات» ولا لأ.`,
-          example: R`<nav aria-label="الرئيسية">
-  <ul>
-    <li><a href="#home">الرئيسية</a></li>
-    <li>
-      <a href="#menu">المنيو</a>
-      <ul>
-        <li><a href="#bread">مخبوزات</a></li>
-        <li><a href="#sweets">حلويات</a></li>
-      </ul>
-    </li>
-    <li><a href="#contact">تواصل</a></li>
-  </ul>
-</nav>`,
-          flag: "script",
-          lines: [
-            R`[[<nav>]] بيقول إن اللي جواه روابط تنقل، و [[aria-label]] بيسمّيه عشان يتفرّق عن أي [[<nav>]] تاني في الصفحة (درس «semantic HTML»).`,
-            R`الروابط مجموعة واحدة ترتيبها مش فارق في المعنى، فهي [[<ul>]].`,
-            R`كل رابط في [[<li>]] لوحده. اللينك جوه الـ [[<li>]]، مش العكس.`,
-            R`[[<li>]] اتفتح ومتقفلش على نفس السطر، لأن جواه حاجتين: اللينك والقايمة الفرعية.`,
-            R`لينك القسم نفسه: «المنيو» بيفضل رابط يتداس عليه حتى لو تحته قايمة فرعية.`,
-            R`القايمة الفرعية [[<ul>]] اتفتحت **جوه** الـ [[<li>]] بتاع «المنيو»، فالمتصفح عارف إنها تبعه.`,
-            R`عنصر في القايمة الفرعية.`,
-            R`عنصر تاني في القايمة الفرعية.`,
-            R`نهاية القايمة الفرعية، ولسه جوه الـ [[<li>]] بتاع «المنيو».`,
-            R`هنا بس الـ [[<li>]] بتاع «المنيو» بيتقفل، بعد القايمة الفرعية مش قبلها.`,
-            R`عنصر عادي في القايمة الرئيسية، راجع للمستوى الأول.`,
-            R`نهاية القايمة الرئيسية: فيها ٣ عناصر مباشرين، والتاني فيهم جواه قايمة.`,
-            R`نهاية الـ [[<nav>]]: كل الروابط اللي فوق دي landmark واحد اسمه «الرئيسية».`
-          ],
-          teach: R`## الفكرة في سطرين
-
-جوه [[<ul>]] و [[<ol>]] مباشرة مفيش غير [[<li>]] (درس «ul و ol»). يبقى القايمة الفرعية ملهاش غير مكان واحد: **جوه [[<li>]]**. والـ [[<li>]] اللي هي جواه هو «أبوها»: العنصر اللي هي بتفصّله.
-
-القياسات من Chrome 157 (headless على Windows 11)، ورسايل الـ validator من Nu Html Checker.
-
----
-
-## ١. القايمة الفرعية جوه الـ [[<li>]]
-
-~~~live 156 قايمة من مستويين
-<ul>
-  <li>مخبوزات
-    <ul>
-      <li>عيش بلدي</li>
-      <li>فينو</li>
-    </ul>
-  </li>
-  <li>حلويات
-    <ul>
-      <li>بسبوسة</li>
-      <li>كنافة</li>
-    </ul>
-  </li>
-</ul>
-~~~
-
-اقرا الكود من عند «مخبوزات»:
-
-1. [[<li>]] اتفتح وجواه كلمة «مخبوزات».
-2. قبل ما يتقفل، اتفتحت [[<ul>]] جديدة فيها عنصرين.
-3. القايمة اتقفلت [[</ul>]].
-4. وبعدها بس الـ [[</li>]] بتاع «مخبوزات».
-
-يعني [[</li>]] بييجي **بعد** القايمة الفرعية. دي الحتة اللي بتتنسي.
-
-اللي المتصفح عمله لوحده:
-
-~~~text الناتج
-المستوى الأول:   list-style-type=disc     margin-top=16px  margin-bottom=16px  padding-right=40px
-المستوى التاني:  list-style-type=circle   margin-top=0px   margin-bottom=0px   padding-right=40px
-~~~
-
-- العلامة اتغيّرت من نقطة مليانة لدايرة فاضية.
-- القايمة الفرعية دخلت 40px كمان، ومن غير مسافة فوقها ولا تحتها.
-
-وفي شجرة الـ accessibility:
-
-~~~text من Chrome
-list
-  listitem  level=1   "مخبوزات"
-    list
-      listitem  level=2   "عيش بلدي"
-      listitem  level=2   "فينو"
-  listitem  level=1   "حلويات"
-    list
-      listitem  level=2   "بسبوسة"
-      listitem  level=2   "كنافة"
-~~~
-
-الـ [[list]] التانية **جوه** الـ [[listitem]] بتاع «مخبوزات». ده اللي بيخلي قارئ الشاشة يعرف إن «عيش بلدي» تفصيل لـ «مخبوزات».
-
-### لحد كام مستوى؟
-
-~~~live 120 أربع مستويات
-<ul>
-  <li>المستوى الأول
-    <ul>
-      <li>المستوى التاني
-        <ul>
-          <li>المستوى التالت
-            <ul>
-              <li>المستوى الرابع</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-~~~
-
-~~~text الناتج
-المستوى:   1      2        3        4
-العلامة:   disc   circle   square   square
-~~~
-
-من التالت العلامة بتثبت على المربع. المواصفة مبتحددش حد للعمق، بس لو وصلت لرابع مستوى غالبًا المحتوى محتاج يتقسّم لصفحات أو عناوين.
-
----
-
-## ٢. الغلطة الكلاسيكية: [[<ul>]] مباشرة جوه [[<ul>]]
-
-~~~live 156 الغلط: القايمة الفرعية بعد الـ li
-<ul>
-  <li>مخبوزات</li>
-  <ul>
-    <li>عيش بلدي</li>
-    <li>فينو</li>
-  </ul>
-  <li>حلويات</li>
-  <ul>
-    <li>بسبوسة</li>
-    <li>كنافة</li>
-  </ul>
-</ul>
-~~~
-
-قارن المعاينة دي بالأولى: **نفس الشكل بالظبط**. عشان كده الغلطة دي بتعيش في مواقع كتير. الفرق في الكود: الـ [[<li>]] بتاع «مخبوزات» اتقفل، والقايمة الفرعية جت **بعده** كأنها أخته.
-
-الـ parser مبيصلّحش ده. بيبني اللي اتكتب:
-
-~~~text الـ DOM: الغلط
-ul
-  li "مخبوزات"
-  ul                  (ابن مباشر للـ ul، مش جوه li)
-    li "عيش بلدي"
-    li "فينو"
-  li "حلويات"
-  ul
-    li "بسبوسة"
-    li "كنافة"
-~~~
-
-~~~text الـ DOM: الصح
-ul
-  li "مخبوزات"
-    ul                (جوه الـ li)
-      li "عيش بلدي"
-      li "فينو"
-  li "حلويات"
-    ul
-      li "بسبوسة"
-      li "كنافة"
-~~~
-
-في الغلط، «مخبوزات» عنصر خلص، وجنبه قايمة ملهاش صاحب. والـ validator:
-
-~~~text Nu Html Checker
-error: Element “ul” not allowed as child of element “ul” in this context.
-~~~
-
-والنتيجة في شجرة الـ accessibility: الـ [[list]] الفرعية بقت ابن للـ [[list]] الكبيرة مباشرة، مش جوه [[listitem]]. والقايمة الكبيرة بقى فيها حاجات مش عناصر. ولما تيجي تنسّق بالـ CSS «القايمة اللي جوه العنصر ده»، مش هتلاقيها جواه.
-
-**العلاج:** امسح [[</li>]] اللي بعد «مخبوزات» وحطه بعد [[</ul>]] بتاع القايمة الفرعية.
-
----
-
-## ٣. [[<ol>]] جوه [[<ol>]]، وخلط النوعين
-
-~~~live 174 خطوات جواها خطوات واختيارات
-<ol>
-  <li>جهّز العجينة
-    <ol>
-      <li>انخل الدقيق</li>
-      <li>ضيف الخميرة والمية</li>
-    </ol>
-  </li>
-  <li>سيبها تخمر ساعة</li>
-  <li>اخبزها
-    <ul>
-      <li>في الفرن: ٢٠ دقيقة</li>
-      <li>على الصاج: ٥ دقايق</li>
-    </ul>
-  </li>
-</ol>
-~~~
-
-~~~text العلامات اللي Chrome رسمها
-1
-   1
-   2
-2
-3
-   ◦
-   ◦
-~~~
-
-- القايمة المرقّمة الفرعية **بتبدأ من 1 تاني**. المتصفح مش بيكتب «1.1» و «1.2» لوحده. الترقيم المركّب ده بييجي من CSS counters في وحدة بعدين.
-- جوه الخطوة ٣ القايمة الفرعية [[<ul>]]، لأن «في الفرن» و «على الصاج» اختيارين مش خطوتين. كل مستوى بتختار نوعه بنفس سؤال الدرس اللي فات.
-
----
-
-## ٤. قايمة التنقل: [[<ul>]] جوه [[<nav>]]
-
-روابط الموقع الرئيسية مجموعة عناصر، يعني قايمة. والعادة المتفق عليها (ودليل W3C WAI بيوصّي بيها): [[<nav>]] وجواه [[<ul>]] وكل رابط في [[<li>]].
-
-~~~live 120 قايمة التنقل
-<nav aria-label="الرئيسية">
-  <ul>
-    <li><a href="#home">الرئيسية</a></li>
-    <li><a href="#menu" aria-current="page">المنيو</a></li>
-    <li><a href="#branches">الفروع</a></li>
-    <li><a href="#contact">تواصل</a></li>
-  </ul>
-</nav>
-~~~
-
-> في المعاينات هنا الـ [[href]] مكتوب [[#menu]] عشان اللينك ميخرجش من الصندوق. في موقعك هيبقى مسار صفحة زي [[/menu]].
-
-[[aria-current="page"]] على لينك واحد بيقول لقارئ الشاشة «انت في الصفحة دي دلوقتي».
-
-النقط لسه ظاهرة والروابط تحت بعض، وده طبيعي من غير CSS. في المواقع بتشوفها صف أفقي من غير نقط لأن الـ CSS شال العلامة ورصّهم جنب بعض (وحدة الـ CSS). الـ HTML بيفضل زي ما هو.
-
-### ليه قايمة ومش روابط ورا بعض؟
-
-~~~live 56 من غير قايمة
-<nav aria-label="الرئيسية">
-  <a href="#home">الرئيسية</a>
-  <a href="#menu" aria-current="page">المنيو</a>
-  <a href="#branches">الفروع</a>
-  <a href="#contact">تواصل</a>
-</nav>
-~~~
-
-~~~text شجرة الـ accessibility: بالقايمة
-navigation "الرئيسية"
-  list
-    listitem   link "الرئيسية"
-    listitem   link "المنيو"
-    listitem   link "الفروع"
-    listitem   link "تواصل"
-~~~
-
-~~~text من غير قايمة
-navigation "الرئيسية"
-  link "الرئيسية"
-  link "المنيو"
-  link "الفروع"
-  link "تواصل"
-~~~
-
-الاتنين شغالين، ومن غير قايمة مش غلط في المواصفة. بس مع القايمة:
-
-- قارئ الشاشة بيقول عدد الروابط قبل ما يقراها («list, 4 items»)، فالمستخدم يعرف القايمة طويلة ولا قصيرة. ده من دليل W3C WAI (Menu Structure)، والنطق نفسه مجرّبتوش هنا.
-- كل رابط في صندوق لوحده، فالتنسيق والمسافات أسهل.
-- لو زوّدت قايمة فرعية (زي المثال اللي في أول الدرس) ليها مكان جاهز: جوه الـ [[<li>]].
-
-> ملاحظة لبعدين: لما تشيل النقط بـ [[list-style: none]]، Safari بيبطّل يعتبرها قايمة في شجرة الـ accessibility، والعلاج [[role="list"]] على القايمة. ده من MDN (صفحة list-style-type)، ومتجرّبش هنا. في Chrome 157 فضلت [[list]] بعد ما شلت النقط.
-
----
-
-## ٥. مسار الصفحة (breadcrumb): [[<ol>]] جوه [[<nav>]]
-
-المسار هو السطر اللي فوق في المتاجر: الرئيسية ‹ المنيو ‹ حلويات ‹ بسبوسة. بيقولك انت فين في الموقع وتطلع لفوق إزاي.
-
-~~~live 184 مسار الصفحة
-<nav aria-label="مسار الصفحة">
-  <ol>
-    <li><a href="#home">الرئيسية</a></li>
-    <li><a href="#menu">المنيو</a></li>
-    <li><a href="#sweets">حلويات</a></li>
-    <li><a href="#basbousa" aria-current="page">بسبوسة بالقشطة</a></li>
-  </ol>
-</nav>
-<h1>بسبوسة بالقشطة</h1>
-~~~
-
-- [[<ol>]] مش [[<ul>]]: الترتيب هنا هو المعنى. «الرئيسية» قبل «المنيو» لأن المنيو جواها.
-- [[<nav>]] تاني في الصفحة، فلازم اسم مختلف: [[aria-label="مسار الصفحة"]].
-- آخر عنصر هو الصفحة الحالية وعليه [[aria-current="page"]].
-
-ده نفس الهيكل اللي في W3C APG (Breadcrumb Pattern): [[<nav>]] ليه اسم، وجواه [[<ol>]]، واللينك الأخير عليه [[aria-current="page"]].
-
-الأرقام 1 و 2 و 3 و 4 ظاهرة والعناصر تحت بعض، وفي الموقع الحقيقي الـ CSS بيشيل الأرقام ويرصّهم في سطر ويحط فاصل بينهم. المعنى بيفضل في الـ HTML: قايمة مترتبة من ٤ خطوات.
-
----
-
-## ٦. فهرس المحتويات: قايمة فرعية جوه مرقّمة
-
-~~~live 138 فهرس صفحة طويلة
-<nav aria-label="محتويات الصفحة">
-  <ol>
-    <li><a href="#intro">مقدمة</a></li>
-    <li><a href="#tools">الأدوات</a>
-      <ol>
-        <li><a href="#oven">الفرن</a></li>
-        <li><a href="#tray">الصواني</a></li>
-      </ol>
-    </li>
-    <li><a href="#steps">الخطوات</a></li>
-  </ol>
-</nav>
-~~~
-
-كل لينك [[href="#tools"]] بينزل للعنوان اللي الـ [[id]] بتاعه [[tools]] (درس «a و button»). والقايمة الفرعية تحت «الأدوات» بتقول إن «الفرن» و «الصواني» أقسام جواها. شكل الفهرس هو نفسه شكل العناوين: [[<h2>]] مستوى أول، و [[<h3>]] مستوى تاني.
-
----
-
-## ٧. مراجعة: أنهي قايمة لأنهي حاجة؟
-
-| الحاجة | الهيكل |
-|---|---|
-| قايمة التنقل الرئيسية | [[<nav>]] › [[<ul>]] › [[<li>]] › [[<a>]] |
-| قايمة منسدلة تحت رابط | [[<ul>]] جوه الـ [[<li>]] بتاع الرابط |
-| مسار الصفحة | [[<nav>]] › [[<ol>]] › [[<li>]] › [[<a>]] |
-| فهرس محتويات | [[<nav>]] › [[<ol>]] وجواها [[<ol>]] للأقسام الفرعية |
-| روابط الفوتر | [[<nav>]] باسم تاني › [[<ul>]] |
-| أقسام وتحتها أصناف | [[<ul>]] وجوه كل [[<li>]] قايمة |
-
----
-
-## الخلاصة
-
-- القايمة الفرعية جوه الـ [[<li>]]، و [[</li>]] بيتقفل بعدها.
-- [[<ul>]] مباشرة جوه [[<ul>]] شكلها زي الصح، والـ validator بيرفضها، والعلاقة بين العنصر وتفاصيله بتضيع.
-- كل مستوى بيختار نوعه لوحده، والمرقّمة الفرعية بتبدأ من 1.
-- قايمة التنقل [[<ul>]] جوه [[<nav>]]، ومسار الصفحة [[<ol>]] جوه [[<nav>]]، وكل [[<nav>]] ليه [[aria-label]].
-- الشكل الأفقي ومن غير نقط شغل CSS. الـ HTML قايمة في الحالتين.`,
-          try: R`اعمل ملف [[bag.html]] فيه قايمة «شنطة السفر»: تلات عناصر (هدوم، أوراق، شاحن الموبايل)، وتحت «هدوم» قايمة فرعية من عنصرين، وتحت «أوراق» قايمة فرعية من عنصرين. افتحه وشوف شكل العلامة في كل مستوى. وبعدين انقل [[</li>]] بتاع «هدوم» وحطه قبل القايمة الفرعية، وافتح الصفحة تاني: الشكل اتغيّر؟ وافتح DevTools › Elements وشوف القايمة الفرعية بقت ابن مين.`,
-          sol: R`~~~live 238 bag.html
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة HTML عادية من غير Tailwind ولا React: كل الألوان توكنز في [[:root]] ([[--bg]] و [[--surface]] و [[--fg]] و [[--muted]] و [[--brand]] و [[--line]])، و [[:root[data-theme="dark"]]] بيعيد تعريفهم هما بس، ومعاهم [[color-scheme]] في الاتنين. زرار [[role="switch"]] بـ [[aria-checked]] بيبدّل ويحفظ في localStorage جوه [[try/catch]].`, done: R`مفيش ولا لون (hex أو [[rgb(]] أو [[oklch(]]) برا بلوكات التوكنز، والزرار بيقلب الصفحة كلها ومعاها الـ scrollbar وحقل input، وقارئ الشاشة (أو Accessibility pane في DevTools) بيقول switch و on/off. ولو فتحتها في نافذة Incognito والكوكيز متقفلة (localStorage بيرمي error) الصفحة لسه بتشتغل والزرار بيقلب، بس مش بيفتكر.`, sol: R`~~~live 600 620 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شنطة السفر</title>
-</head>
-<body>
-<h1>شنطة السفر</h1>
-<ul>
-  <li>هدوم
-    <ul>
-      <li>٣ قمصان</li>
-      <li>بنطلونين</li>
-    </ul>
-  </li>
-  <li>أوراق
-    <ul>
-      <li>البطاقة</li>
-      <li>التذكرة</li>
-    </ul>
-  </li>
-  <li>شاحن الموبايل</li>
-</ul>
-</body>
-</html>
-~~~
-
-المستوى الأول نقطة مليانة، والتاني دايرة فاضية وداخل 40px كمان.
-
-لما تنقل [[</li>]] لقبل القايمة الفرعية: **الشكل مبيتغيّرش**. بس في تاب Elements القايمة الفرعية بتاعة «هدوم» بقت ابن مباشر للـ [[<ul>]] الكبيرة، وجنب الـ [[<li>]] مش جواه. والـ [[</li>]] اللي فضل بعد القايمة ملوش فتحة، فالمتصفح بيتجاهله، والـ validator بيطلّع عليه error تاني.
-
-~~~text الناتج
-الصح:   ul=3  li=7   العلامات: • ◦ ◦ • ◦ ◦ •
-        validator: صفر errors
-بعد نقل </li>:  نفس العلامات ونفس الشكل
-        validator: error: Element “ul” not allowed as child of element “ul” in this context.
-                   error: No “li” element in scope but a “li” end tag seen.
-        أبناء الـ ul الكبيرة المباشرين: LI , UL , LI , LI
-~~~
-
-يعني عينك مش هتمسك الغلطة دي. اللي بيمسكها الـ validator، أو إنك تبص على الشجرة في DevTools.`,
-          deep: {
-            why: R`المحتوى الحقيقي شجري: قسم وتحته أصناف، رابط وتحته روابط، فصل وتحته أجزاء. لو كل ده اتكتب قايمة واحدة مسطحة، القارئ هيضطر يخمّن مين تبع مين من الكلام نفسه. القايمة جوه [[<li>]] بتقول العلاقة دي للمتصفح صريحة.
-
-وقايمة التنقل ومسار الصفحة أكتر قوايم بتتكتب في أي موقع، وكل framework ومكتبة مكونات بتطلّعهم بنفس الهيكل ده.`,
-            how: R`الـ parser بيمشي على الـ tags بالترتيب. لما يشوف [[<ul>]] وهو لسه جوه [[<li>]] مفتوح، بيحط القايمة ابن للـ [[<li>]]. ولو الـ [[<li>]] اتقفل قبلها، بيحطها ابن للقايمة الكبيرة زي ما هي، من غير تصليح.
-
-الشكل واحد في الحالتين لأن الـ CSS الافتراضي بتاع المتصفح بيتكلم عن «قايمة جوه قايمة» بأي عمق: أي [[<ul>]] جوه [[<ul>]] بتاخد [[circle]] و margin صفر، سواء بينهم [[<li>]] ولا لأ.
-
-وفي شجرة الـ accessibility Chrome بيدّي كل [[listitem]] رقم مستوى (level) حسب عدد القوايم اللي حواليه.`,
-            when: R`قايمة فرعية: لما عنصر ليه تفاصيل من نفس نوع القايمة (أصناف تحت قسم، خطوات صغيرة تحت خطوة). قايمة تنقل: روابط الموقع الرئيسية وروابط الفوتر. مسار الصفحة: أي موقع فيه أكتر من مستويين (متجر، وثائق، مدونة بأقسام). ولو التفاصيل فقرة شرح مش عناصر، حطها [[<p>]] جوه الـ [[<li>]] مش قايمة.`,
-            mistakes: R`تقفل [[</li>]] قبل القايمة الفرعية. تكتب العناصر الفرعية [[<li>]] عادية وتزقّها بمسافات في الكود وتفتكر إنها بقت فرعية (المسافات في الكود ملهاش أي أثر). تعمل قايمة فرعية عشان تدخّل الكلام لجوه بس. تستخدم [[<ul>]] لمسار الصفحة مع إن الترتيب هو المعنى. تحط اتنين [[<nav>]] من غير [[aria-label]] فيطلعوا بنفس الاسم. تحط [[aria-current="page"]] على أكتر من لينك في نفس القايمة.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الكود اللي في أول الحل قايمة فيها «فطار» و «غدا» وتحت كل واحد أصناف. من غير ما تشغّله: الـ [[<ul>]] الكبيرة ليها كام ابن مباشر؟ ومين فيهم مش [[<li>]]؟ وهل قايمة «فول وطعمية» جوه العنصر «فطار»؟`, done: R`إجابتك: ٣ أبناء مباشرين (li «فطار»، و ul، و li «غدا»)، والقايمة بتاعة الفول والطعمية **مش** جوه «فطار»، وقايمة الكشري جوه «غدا». واتأكدت من تاب Elements.`, sol: R`~~~live 138 الكود
-<ul>
-  <li>فطار</li>
-  <ul>
-    <li>فول</li>
-    <li>طعمية</li>
-  </ul>
-  <li>غدا
-    <ul>
-      <li>كشري</li>
-    </ul>
-  </li>
-</ul>
-~~~
-
-~~~text الـ DOM اللي Chrome بناه
-ul
-  li "فطار"
-  ul                (ابن مباشر: غلط)
-    li "فول"
-    li "طعمية"
-  li "غدا"
-    ul              (جوه الـ li: صح)
-      li "كشري"
-~~~
-
-**ليه:** الـ [[<li>]] بتاع «فطار» اتقفل على نفس السطر، فالقايمة اللي بعده بقت أخته. الـ [[<li>]] بتاع «غدا» فضل مفتوح لحد بعد القايمة الفرعية.
-
-في المعاينة الاتنين شكلهم واحد: دايرة فاضية وداخلين 40px. الفرق مش بيبان غير في الشجرة.
-
-**الغلطة الشائعة:** تعدّ الـ [[<li>]] بس وتقول «أبناء القايمة اتنين». الأبناء المباشرين تلاتة، وواحد منهم مش مسموح.
-
-~~~text الناتج
-أبناء الـ ul الكبيرة المباشرين: LI , UL , LI
-العلامات:  • ◦ ◦ • ◦
-Nu Html Checker: error: Element “ul” not allowed as child of element “ul” in this context.
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** قايمة «أقسام المكتبة» فيها غلطتين: تحت «روايات» القايمة الفرعية محطوطة بعد الـ [[<li>]] مش جواه، وتحت «أطفال» الأصناف مكتوبة [[<li>]] عادية ومزقوقة بمسافات في الكود بس. الكود في أول الحل. صلّحها بحيث كل قسم أصنافه جواه.`, done: R`الـ validator صفر errors، وفي تاب Elements كل قايمة فرعية جوه الـ [[<li>]] بتاع قسمها، و «قصص مصورة» و «تلوين» علامتهم دايرة فاضية زي «عربي» و «مترجم».`, work: { h: 225, solAt: 1, start: R`<h2>أقسام المكتبة</h2>
-<ul>
-  <li>روايات</li>
-  <ul>
-    <li>عربي</li>
-    <li>مترجم</li>
-  </ul>
-  <li>أطفال</li>
-    <li>قصص مصورة</li>
-    <li>تلوين</li>
-  <li>علوم</li>
-</ul>`, checks: [
-              { say: R`القايمة الرئيسية فيها ٣ أقسام بس: روايات وأطفال وعلوم`, q: "body > ul > li", n: 3 },
-              { say: R`أصناف «روايات» جوه الـ [[<li>]] بتاعها`, q: "li > ul", has: "مترجم", n: 1 },
-              { say: R`أصناف «أطفال» جوه الـ [[<li>]] بتاعها`, q: "li > ul", has: "قصص مصورة", n: 1 },
-              { say: R`مفيش [[<ul>]] واقفة على [[<ul>]] مباشرة`, q: "ul > ul", n: 0 },
-            ] }, sol: R`قبل:
-
-~~~live 225 قبل
-<h2>أقسام المكتبة</h2>
-<ul>
-  <li>روايات</li>
-  <ul>
-    <li>عربي</li>
-    <li>مترجم</li>
-  </ul>
-  <li>أطفال</li>
-    <li>قصص مصورة</li>
-    <li>تلوين</li>
-  <li>علوم</li>
-</ul>
-~~~
-
-في المعاينة «عربي» و «مترجم» شكلهم فرعيين، بس «قصص مصورة» و «تلوين» طالعين في المستوى الأول بنقطة مليانة، مع إنهم مزقوقين في الكود. **المسافات اللي في أول السطر في الكود ملهاش أي أثر**: المتصفح بيشوف الـ tags بس.
-
-بعد:
-
-~~~live 225 بعد
-<h2>أقسام المكتبة</h2>
-<ul>
-  <li>روايات
-    <ul>
-      <li>عربي</li>
-      <li>مترجم</li>
-    </ul>
-  </li>
-  <li>أطفال
-    <ul>
-      <li>قصص مصورة</li>
-      <li>تلوين</li>
-    </ul>
-  </li>
-  <li>علوم</li>
-</ul>
-~~~
-
-**التصليحين:**
-
-- «روايات»: [[</li>]] اتنقل من آخر السطر لبعد [[</ul>]] بتاع قايمته.
-- «أطفال»: اتعمل [[<ul>]] جديدة جوه الـ [[<li>]] بتاعه، واتحط فيها العنصرين.
-
-**الغلطة الشائعة:** تصلّح الأولى بس عشان الـ validator يسكت. التانية مش error خالص (خمس [[<li>]] ورا بعض كود سليم)، بس المعنى غلط: «تلوين» بقى قسم من أقسام المكتبة.
-
-~~~text الناتج
-قبل:  ul=2  li=7   العلامات: • ◦ ◦ • • • •
-      شجرة الـ accessibility: list › listitem «روايات» ، list (عربي، مترجم) ، listitem «أطفال» ، listitem «قصص مصورة» ، listitem «تلوين» ، listitem «علوم»
-      Nu Html Checker: error: Element “ul” not allowed as child of element “ul” in this context.
-بعد:  ul=3  li=7   العلامات: • ◦ ◦ • ◦ ◦ •
-      Nu Html Checker: صفر errors
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** رأس صفحة كتاب «بيت القمر» في موقع «مكتبة الحروف» (اسم متخيل): [[<header>]] فيه اسم الموقع وقايمة تنقل من ٤ روابط (الرئيسية، الكتب، العروض، تواصل) والصفحة الحالية تحت «الكتب». وجوه [[<main>]] مسار الصفحة: الرئيسية ‹ الكتب ‹ روايات ‹ بيت القمر، وبعده [[<h1>]].`, done: R`تاب Accessibility فيه اتنين [[navigation]] بأسماء مختلفة: «الرئيسية» وجواه [[list]] من ٤، و «مسار الصفحة» وجواه [[list]] من ٤ مرقّمين. وفيه لينك واحد في كل قايمة عليه [[aria-current="page"]]، والـ validator صفر errors.`, work: { h: 332, start: R`<header>
-  مكتبة الحروف
-  الرئيسية، الكتب، العروض، تواصل
-</header>
-<main>
-  مسار الصفحة: الرئيسية ‹ الكتب ‹ روايات ‹ بيت القمر
-  <h1>بيت القمر</h1>
-</main>`, checks: [
-              { say: R`جوه [[<header>]] قايمة تنقل [[<nav>]] فيها ٤ روابط في [[<ul>]]`, q: "header nav ul > li a", n: 4 },
-              { say: R`جوه [[<main>]] مسار الصفحة [[<nav>]] فيه ٤ روابط في [[<ol>]]`, q: "main nav ol > li a", n: 4 },
-              { say: R`الـ [[<nav>]] الاتنين ليهم [[aria-label]] مختلف`, q: "nav[aria-label]", n: 2 },
-              { say: R`الصفحة الحالية عليها [[aria-current="page"]] في كل قايمة`, q: 'nav a[aria-current="page"]', n: 2 },
-            ] }, sol: R`~~~live 332 صفحة الكتاب
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بيت القمر | مكتبة الحروف</title>
-</head>
-<body>
-<header>
-  <a href="#home">مكتبة الحروف</a>
-  <nav aria-label="الرئيسية">
-    <ul>
-      <li><a href="#home">الرئيسية</a></li>
-      <li><a href="#books" aria-current="page">الكتب</a></li>
-      <li><a href="#offers">العروض</a></li>
-      <li><a href="#contact">تواصل</a></li>
-    </ul>
-  </nav>
-</header>
-<main>
-  <nav aria-label="مسار الصفحة">
-    <ol>
-      <li><a href="#home">الرئيسية</a></li>
-      <li><a href="#books">الكتب</a></li>
-      <li><a href="#novels">روايات</a></li>
-      <li><a href="#moon-house" aria-current="page">بيت القمر</a></li>
-    </ol>
-  </nav>
-  <h1 id="moon-house">بيت القمر</h1>
-  <p>رواية من ٣٢٠ صفحة عن بيت قديم على البحر.</p>
-</main>
-</body>
-</html>
-~~~
-
-**ليه كده:**
-
-- قايمة التنقل [[<ul>]]: ترتيب «العروض» و «تواصل» مش فارق في المعنى. المسار [[<ol>]]: كل مستوى جوه اللي قبله.
-- الاتنين [[<nav>]]، وكل واحد ليه [[aria-label]] مختلف. من غيره قارئ الشاشة يعرض اتنين «navigation» ومحدش يعرف يفرّق.
-- المسار جوه [[<main>]] لأنه بيوصف مكان المحتوى ده، وقايمة التنقل في الـ [[<header>]] لأنها بتاعة الموقع كله.
-- في قايمة التنقل [[aria-current="page"]] على «الكتب» (القسم اللي انت فيه)، وفي المسار على «بيت القمر» (الصفحة نفسها).
-- الـ [[href]] هنا [[#...]] عشان المعاينة. في الموقع: [[/books]] و [[/books/novels]] وهكذا.
-
-**الغلطة الشائعة:** تكتب الفاصل «‹» أو «/» بإيدك بين الروابط جوه الـ [[<li>]]. قارئ الشاشة هيقراه مع كل عنصر. الفاصل زينة وبيتحط بالـ CSS.
-
-~~~text الناتج
-شجرة الـ accessibility من Chrome:
-banner
-  link "مكتبة الحروف"
-  navigation "الرئيسية"
-    list   4 listitem: الرئيسية ، الكتب ، العروض ، تواصل
-main
-  navigation "مسار الصفحة"
-    list   4 listitem: الرئيسية ، الكتب ، روايات ، بيت القمر
-  heading "بيت القمر" level=1
-
-ul=1  ol=1  li=8  nav=2   العلامات: • • • •   1 2 3 4
-عدد aria-current="page": 2 (واحد في كل nav)
-Nu Html Checker: صفر errors
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** دي خطة كورس مكتوبة نص، والمسافات هي اللي بتبيّن المستويات. حوّلها لقوايم HTML:
-الأسبوع الأول: HTML (العناصر والـ attributes، القوايم والاقتباسات، الفورم).
-الأسبوع التاني: CSS (الألوان والخطوط، الـ box model).
-الأسبوع التالت: مشروع (صفحة شخصية: الهيكل، ثم التنسيق).
-الأسابيع لازم بالترتيب. المواضيع جوه الأسبوع ترتيبها مش فارق.`, done: R`القايمة الخارجية [[<ol>]] من ٣ أسابيع مرقّمين، وجوه كل أسبوع [[<ul>]]، وتحت «صفحة شخصية» مستوى تالت. والعلامات في المعاينة: رقم، ثم دايرة فاضية، ثم مربع.`, work: { h: 300, start: R`<h2>خطة كورس الويب</h2>
-الأسبوع الأول: HTML
-  العناصر والـ attributes
-  القوايم والاقتباسات
-  الفورم
-الأسبوع التاني: CSS
-  الألوان والخطوط
-  الـ box model
-الأسبوع التالت: مشروع
-  صفحة شخصية
-    الهيكل
-    التنسيق`, checks: [
-              { say: R`الأسابيع التلاتة قايمة [[<ol>]] مرقّمة`, q: "body > ol > li", n: 3 },
-              { say: R`جوه كل أسبوع قايمة [[<ul>]] لمواضيعه`, q: "ol > li > ul", n: 3 },
-              { say: R`تحت «صفحة شخصية» مستوى تالت: الهيكل والتنسيق`, q: "ul ul > li", n: 2 },
-              { say: R`المواضيع مش مرقّمة: مفيش [[<ol>]] جوه [[<ol>]]`, q: "ol ol", n: 0 },
-            ] }, sol: R`~~~live 297 خطة الكورس
-<h2>خطة كورس الويب</h2>
-<ol>
-  <li>الأسبوع الأول: HTML
-    <ul>
-      <li>العناصر والـ attributes</li>
-      <li>القوايم والاقتباسات</li>
-      <li>الفورم</li>
-    </ul>
-  </li>
-  <li>الأسبوع التاني: CSS
-    <ul>
-      <li>الألوان والخطوط</li>
-      <li>الـ box model</li>
-    </ul>
-  </li>
-  <li>الأسبوع التالت: مشروع
-    <ul>
-      <li>صفحة شخصية
-        <ul>
-          <li>الهيكل</li>
-          <li>التنسيق</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ol>
-~~~
-
-**القرارات:**
-
-- الأسابيع [[<ol>]]: التاني مبني على الأول.
-- المواضيع [[<ul>]]: التمرين قال ترتيبها مش فارق.
-- «الهيكل» و «التنسيق» تحت «صفحة شخصية»: التمرين قال «ثم»، يعني مترتبين. فالأدق إن المستوى التالت يبقى [[<ol>]]. الحل هنا سابه [[<ul>]] عشان تشوف شكل المربع، فجرّب تغيّره لـ [[<ol>]] وشوف الفرق.
-- كل قايمة فرعية جوه الـ [[<li>]] بتاع صاحبها، وكل [[</li>]] بعد القايمة.
-
-**الغلطة الشائعة:** تعمل كل أسبوع [[<h3>]] وتحته قايمة منفصلة. ده حل سليم كمان لو كل أسبوع قسم كبير في الصفحة. بس لو المطلوب «خطة» تتقري كحاجة واحدة وتتعد («٣ أسابيع»)، القايمة الواحدة أصدق.
-
-~~~text الناتج
-ol=1  ul=4  li=11
-العلامات بالترتيب:  1 ◦ ◦ ◦   2 ◦ ◦   3 ◦ ■ ■
-المستويات في شجرة الـ accessibility: level=1 للأسابيع، level=2 للمواضيع، level=3 للهيكل والتنسيق
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** صفحة «دليل تشغيل الفرن» فيها ٣ أقسام [[<h2>]] (قبل التشغيل، التشغيل، التنضيف)، والأول والتاني تحت كل واحد قسمين [[<h3>]]. وفي أول الصفحة فهرس محتويات: قايمة مرقّمة من مستويين، كل عنصر فيها لينك بينزل لعنوانه.`, done: R`الفهرس فيه ٧ لينكات، وكل [[href]] ليه [[id]] مطابق في الصفحة (مفيش لينك بيودّي لحتة مش موجودة)، والضغط على «التايمر» بينزل لعنوانه والـ URL بيبقى آخره [[#timer]]، وشكل الفهرس مطابق لترتيب العناوين.`, work: { h: 480, start: R`دليل تشغيل الفرن
-قبل التشغيل
-المكان
-سيب ١٠ سم فاضيين حوالين الفرن من كل ناحية.
-الكهربا
-وصّله في فيشة لوحده من غير مشترك.
-التشغيل
-التسخين
-سخّنه ١٠ دقايق قبل ما تحط الأكل.
-التايمر
-لف المفتاح للوقت اللي عايزه، وهيرن لما يخلص.
-التنضيف
-افصل الكهربا واستنى لما يبرد.`, checks: [
-              { say: R`تلات أقسام [[<h2>]]`, q: "h2", n: 3 },
-              { say: R`تحت الأول والتاني قسمين [[<h3>]] كل واحد: ٤`, q: "h3", n: 4 },
-              { say: R`الفهرس مستويين: [[<ol>]] جوه [[<ol>]] لقسمين`, q: "ol ol", n: 2 },
-              { say: R`الفهرس فيه ٧ لينكات [[href="#..."]]`, q: 'ol a[href^="#"]', n: 7 },
-              { say: R`كل عنوان ليه [[id]] عشان اللينك ينزل له`, q: "h2[id], h3[id]", n: 7 },
-            ] }, sol: R`~~~live 480 دليل تشغيل الفرن
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>دليل تشغيل الفرن</title>
-</head>
-<body>
-<main>
-  <h1>دليل تشغيل الفرن</h1>
-  <nav aria-label="محتويات الصفحة">
-    <ol>
-      <li><a href="#before">قبل التشغيل</a>
-        <ol>
-          <li><a href="#place">المكان</a></li>
-          <li><a href="#power">الكهربا</a></li>
-        </ol>
-      </li>
-      <li><a href="#use">التشغيل</a>
-        <ol>
-          <li><a href="#heat">التسخين</a></li>
-          <li><a href="#timer">التايمر</a></li>
-        </ol>
-      </li>
-      <li><a href="#clean">التنضيف</a></li>
-    </ol>
-  </nav>
-  <h2 id="before">قبل التشغيل</h2>
-  <h3 id="place">المكان</h3>
-  <p>سيب ١٠ سم فاضيين حوالين الفرن من كل ناحية.</p>
-  <h3 id="power">الكهربا</h3>
-  <p>وصّله في فيشة لوحده من غير مشترك.</p>
-  <h2 id="use">التشغيل</h2>
-  <h3 id="heat">التسخين</h3>
-  <p>سخّنه ١٠ دقايق قبل ما تحط الأكل.</p>
-  <h3 id="timer">التايمر</h3>
-  <p>لف المفتاح للوقت اللي عايزه، وهيرن لما يخلص.</p>
-  <h2 id="clean">التنضيف</h2>
-  <p>افصل الكهربا واستنى لما يبرد.</p>
-</main>
-</body>
-</html>
-~~~
-
-**إزاي اتبنى:**
-
-1. اكتب العناوين الأول وادّي كل واحد [[id]] قصير بالإنجليزي ومن غير مسافات.
-2. الفهرس صورة من العناوين: كل [[<h2>]] عنصر في القايمة الخارجية، وكل [[<h3>]] تحته عنصر في قايمة جوه الـ [[<li>]] بتاعه.
-3. كل عنصر لينك [[href="#id"]].
-4. الفهرس جوه [[<nav aria-label="محتويات الصفحة">]] لأنه روابط تنقل جوه الصفحة.
-
-**ليه [[<ol>]]:** الأقسام مترتبة، والدليل بيتقري من أوله. والقايمة الفرعية بتبدأ من 1 تاني، فالفهرس طالع 1 (1، 2)، 2 (1، 2)، 3.
-
-**الغلطة الشائعة:** تغيّر عنوان أو الـ [[id]] بتاعه وتنسى اللينك في الفهرس. اللينك اللي الـ [[id]] بتاعه مش موجود مبيعملش حاجة لما تدوس عليه، ومفيش error بيظهر.
-
-~~~text الناتج
-ol=3  li=7  a=7  h2=3  h3=4
-العلامات:  1 (1 2)   2 (1 2)   3
-كل href ليه id موجود: true   (#before #place #power #use #heat #timer #clean)
-بعد الضغط على «التايمر»: الـ URL آخره #timer
-Nu Html Checker: صفر errors
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب روابط الفوتر كده: [[<div><a>عن المخبز</a> | <a>وظايف</a> | <a>الخصوصية</a></div>]]. اكتب له في ٣ سطور ليه تتكتب [[<nav>]] جواه [[<ul>]]، واكتب النسخة الصح.`, done: R`التلات سطور فيهم: المعنى (روابط تنقل، ومجموعة)، واللي قارئ الشاشة بياخده (landmark باسم، وعدد العناصر)، والفاصل «|» اللي بيتقري. والنسخة الصح فيها [[nav]] باسم و [[ul]] وتلات [[li]].`, sol: R`إجابة نموذجية:
-
-1. دي روابط تنقل، فمكانها [[<nav>]] باسم ([[aria-label="روابط الفوتر"]]) عشان قارئ الشاشة يلاقيها في قايمة الـ landmarks ويفرّقها عن قايمة التنقل اللي فوق.
-2. وهي مجموعة عناصر، فتتكتب [[<ul>]]: قارئ الشاشة يقول عددها، وكل رابط ياخد صندوق لوحده يتنسّق.
-3. الـ «|» المكتوبة بالإيد بتتقري «خط رأسي» بين كل رابطين. الفاصل زينة، ومكانه الـ CSS.
-
-~~~live 102 النسخة الصح
-<nav aria-label="روابط الفوتر">
-  <ul>
-    <li><a href="#about">عن المخبز</a></li>
-    <li><a href="#jobs">وظايف</a></li>
-    <li><a href="#privacy">الخصوصية</a></li>
-  </ul>
-</nav>
-~~~
-
-**الغلطة الشائعة:** تسيب الـ [[<a>]] من غير [[href]] «مؤقتًا». لينك من غير [[href]] مش لينك: مبيتوصلوش بـ Tab ومبيتقريش link (درس «a و button»).
-
-~~~text الناتج
-شجرة الـ accessibility:
-navigation "روابط الفوتر"
-  list
-    listitem   link "عن المخبز"
-    listitem   link "وظايف"
-    listitem   link "الخصوصية"
-nav=1  ul=1  li=3  a=3
-~~~` },
-          ]
-        },
-        {
-          cmd: "dl و dt و dd",
-          title: "قايمة اسم وقيمة: المواصفات والأسئلة والقاموس",
-          pre: ["css/ul و ol"],
-          ref: [
-            { t: "MDN: <dl>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dl" },
-            { t: "MDN: <dt>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dt" },
-            { t: "MDN: <dd>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dd" },
-            { t: "WHATWG: the dl element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-dl-element" },
-            { t: "WHATWG: the dt element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-dt-element" },
-            { t: "WHATWG: the dd element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-dd-element" },
-            { t: "MDN Curriculum: Semantic HTML (2.3 Lists)", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" }
-          ],
-          desc: R`[[<dl>]] هي النوع التالت من القوايم: قايمة **أسماء وقيمها**. كل اسم في [[<dt>]] وكل قيمة ليه في [[<dd>]]. بتستخدمها لمواصفات منتج (السعر: ٤٥٠ جنيه)، وأسئلة وإجاباتها، ومصطلحات وتعريفها، وبيانات مقال (الكاتب، التاريخ).
-
-هي أقل التلاتة استخدامًا، وأكتر مكان بتشوفها فيه الوثائق والقواميس والصفحات الأكاديمية. بس لما المحتوى يبقى اسم وقيمة، هي العنصر الصح، مش فقرات فيها كلمة تقيلة ونقطتين.`,
-          example: R`<h2>مواصفات الكشّاف</h2>
-<dl>
-  <dt>السعر</dt>
-  <dd>٤٥٠ جنيه</dd>
-  <dt>الألوان</dt>
-  <dd>أسود</dd>
-  <dd>أصفر</dd>
-  <dt>الضمان</dt>
-  <dd>سنة</dd>
-</dl>`,
-          flag: "script",
-          lines: [
-            R`عنوان القايمة. زي [[<ul>]] و [[<ol>]]، الـ [[<dl>]] ملهاش اسم، فالعنوان اللي قبلها هو اللي بيعرّفها.`,
-            R`[[<dl>]] من description list: الغلاف. جواه مباشرة [[<dt>]] و [[<dd>]] بس (أو [[<div>]] حوالين كل مجموعة، في الشرح).`,
-            R`[[<dt>]] من description term: الاسم، يعني «إيه المعلومة دي؟».`,
-            R`[[<dd>]] من description details: القيمة بتاعة الاسم اللي قبله. المتصفح بيدخّله 40px لجوه.`,
-            R`اسم تاني: من هنا بتبدأ مجموعة جديدة.`,
-            R`أول قيمة للألوان: كل لون في [[<dd>]] لوحده.`,
-            R`قيمة تانية لنفس الاسم: [[<dd>]] ورا [[<dd>]] يعني الاسم ليه أكتر من قيمة.`,
-            R`اسم تالت: [[<dt>]] جه بعد [[<dd>]] فبدأ مجموعة جديدة.`,
-            R`قيمة الضمان، وهي آخر مجموعة في القايمة.`,
-            R`نهاية القايمة. [[</dl>]] لازم تتكتب.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-[[<ul>]] و [[<ol>]] كل عنصر فيهم حتة واحدة. في [[<dl>]] كل عنصر **حتتين**: اسم ([[<dt>]]) وقيمة ([[<dd>]]). والمواصفة (WHATWG) بتسمّيها «name-value groups»: مجموعات اسم وقيمة.
-
-القياسات من Chrome 157 (headless على Windows 11)، ورسايل الـ validator من Nu Html Checker.
-
----
-
-## ١. [[<dl>]] و [[<dt>]] و [[<dd>]]
-
-~~~live 120 اسم وتحته قيمته
-<dl>
-  <dt>السعر</dt>
-  <dd>٤٥٠ جنيه</dd>
-  <dt>الضمان</dt>
-  <dd>سنة</dd>
-</dl>
-~~~
-
-- [[<dt>]]: الاسم («السعر»). من description term.
-- [[<dd>]]: القيمة («٤٥٠ جنيه»). من description details. بييجي **بعد** الـ [[<dt>]] بتاعه.
-- [[<dl>]]: الغلاف اللي بيلمّهم. من description list.
-
-الشكل الافتراضي:
-
-~~~text الناتج
-dl:  display=block  margin-top=16px  margin-bottom=16px  padding=0px
-dt:  display=block  margin=0px   font-weight=400 (عادي، مش تقيل)
-dd:  display=block  margin-right=40px  (margin-inline-start)   font-weight=400
-~~~
-
-| اللي شفته | جاي منين |
-|---|---|
-| القيمة داخلة لجوه عن الاسم | [[<dd>]] ليه [[margin]] قدره 40px في بداية السطر |
-| مفيش نقط ولا أرقام | [[<dt>]] و [[<dd>]] نوع عرضهم [[block]] عادي، مش [[list-item]] |
-| الاسم **مش** تقيل | Chrome مبيدّيش [[<dt>]] أي تنسيق. ناس كتير فاكرة إنه bold افتراضيًا، وهو لأ |
-
-يعني الفرق بين الاسم والقيمة في الشكل الافتراضي هو الـ 40px بس. التقيل والألوان والصف الأفقي بييجوا من الـ CSS.
-
----
-
-## ٢. أكتر من قيمة، وأكتر من اسم
-
-~~~live 156 قيمتين لاسم، واسمين لقيمة
-<dl>
-  <dt>الألوان</dt>
-  <dd>أسود</dd>
-  <dd>أصفر</dd>
-  <dt>الموبايل</dt>
-  <dt>واتساب</dt>
-  <dd dir="ltr">0100 000 0000</dd>
-</dl>
-~~~
-
-- «الألوان» ليها [[<dd>]] اتنين: الاسم ليه **قيمتين**.
-- «الموبايل» و «واتساب» اتنين [[<dt>]] ورا بعض وبعدهم [[<dd>]] واحد: **اسمين لنفس القيمة**.
-
-المتصفح بيقسّم المجموعات بقاعدة بسيطة من المواصفة: المجموعة بتبدأ بـ [[<dt>]] واحد أو أكتر، وبعدهم [[<dd>]] واحد أو أكتر. وأول [[<dt>]] ييجي **بعد** [[<dd>]] بيبدأ مجموعة جديدة.
-
-~~~text المجموعات في المثال
-المجموعة 1:   الأسماء: الألوان            القيم: أسود ، أصفر
-المجموعة 2:   الأسماء: الموبايل ، واتساب   القيم: 0100 000 0000
-~~~
-
-> لو القيمة فقرتين (شرح طويل)، الفقرتين بيتحطوا في [[<dd>]] **واحد**. اتنين [[<dd>]] معناهم قيمتين مختلفتين، مش قيمة واحدة مقسومة.
-
----
-
-## ٣. المتصفح فاهم إيه؟
-
-~~~text شجرة الـ accessibility من Chrome للمثال اللي فات
-DescriptionList
-  term        "الألوان"
-  definition  "أسود"
-  definition  "أصفر"
-  term        "الموبايل"
-  term        "واتساب"
-  definition  "0100 000 0000"
-~~~
-
-Chrome ادّى كل [[<dt>]] role اسمه [[term]]، وكل [[<dd>]] role اسمه [[definition]]، والغلاف نوع داخلي اسمه DescriptionList.
-
-قارن بالطريقة اللي ناس كتير بتكتب بيها المواصفات:
-
-~~~live 100 المزيفة: فقرات وكلمة تقيلة
-<p><b>السعر:</b> ٤٥٠ جنيه</p>
-<p><b>الضمان:</b> سنة</p>
-~~~
-
-دي في الشجرة فقرتين وبس. مفيش حاجة بتقول إن «السعر» اسم و «٤٥٠ جنيه» قيمته: العلاقة في دماغ القارئ بس.
-
-**قارئ الشاشة:** MDN بيقول إن كل قارئ شاشة بيعرض [[<dl>]] بطريقته (العدد، وسياق المصطلح والتعريف، وطريقة التنقل)، وإن الاختلاف ده مش bug. فمتعتمدش على نطق معيّن. ده من وثائق MDN ومتجرّبش هنا.
-
----
-
-## ٤. بتتستخدم فين؟
-
-المواصفة بتقول المجموعات ممكن تبقى: مصطلحات وتعريفها، أو مواضيع وقيمها (metadata)، أو أسئلة وإجابات، أو أي بيانات اسم وقيمة.
-
-### مواصفات منتج
-
-ده المثال اللي في أول الدرس: السعر، والألوان، والضمان.
-
-### أسئلة وإجابات
-
-~~~live 221 أسئلة شائعة
-<h2>أسئلة بتتكرر</h2>
-<dl>
-  <dt>بتوصّلوا لحد فين؟</dt>
-  <dd>جوه المدينة كلها، والتوصيل في نفس اليوم.</dd>
-  <dt>ينفع أرجّع الطلب؟</dt>
-  <dd>
-    <p>أيوه، خلال ٢٤ ساعة.</p>
-    <p>المخبوزات الطازة مبتترجعش.</p>
-  </dd>
-</dl>
-~~~
-
-السؤال [[<dt>]] والإجابة [[<dd>]]. والإجابة التانية فقرتين جوه [[<dd>]] واحد.
-
-### بيانات مقال (metadata)
-
-~~~live 268 مين كتب وإمتى
-<article>
-  <h2>إزاي تخزّن العيش من غير ما ينشف</h2>
-  <dl>
-    <dt>الكاتبة</dt>
-    <dd>هدى منصور</dd>
-    <dt>اتنشر</dt>
-    <dd>٣ مارس ٢٠٢٦</dd>
-    <dt>وقت القراية</dt>
-    <dd>٤ دقايق</dd>
-  </dl>
-  <p>العيش بينشف لما الهوا يسحب منه المية...</p>
-</article>
-~~~
-
-### قاموس مصطلحات
-
-~~~live 171 قاموس
-<h2>قاموس الخبّاز</h2>
-<dl>
-  <dt><dfn>التخمير</dfn></dt>
-  <dd>إن العجينة تتساب لحد ما الخميرة تنفخها.</dd>
-  <dt><dfn>اللت</dfn></dt>
-  <dd>عجن العجينة باليد عشان تبقى مطاطة.</dd>
-</dl>
-~~~
-
-[[<dfn>]] بيقول «دي الكلمة اللي بتتعرّف هنا» (اتشرح في وحدة «معنى الكلام جوه الفقرة»)، والمتصفح بيميّلها. المواصفة بتنبّه إن [[<dt>]] لوحده مبيقولش إن اللي جواه مصطلح بيتعرّف، وعشان كده القواميس بتزوّد [[<dfn>]].
-
----
-
-## ٥. [[<div>]] حوالين كل مجموعة
-
-لو عايز تمسك كل مجموعة (الاسم وقيمه) كوحدة واحدة عشان تحط حواليها إطار أو ترصّ الاسم والقيمة في صف، المواصفة بتسمح بـ [[<div>]] حوالين كل مجموعة جوه الـ [[<dl>]]:
-
-~~~live 182 كل مجموعة في div
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مواصفات الكشّاف</title>
+<title>توكنز الثيم</title>
 <style>
-  dl > div { border: 1px solid #999; padding: 8px; margin-bottom: 8px; }
+  :root {
+    color-scheme: light;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --fg: #0f172a;
+    --muted: #475569;
+    --brand: #0f766e;
+    --line: #cbd5e1;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0b1120;
+    --surface: #1e293b;
+    --fg: #f1f5f9;
+    --muted: #94a3b8;
+    --brand: #2dd4bf;
+    --line: #475569;
+  }
+  body { margin: 0; padding: 1.5rem; font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+  .card { max-width: 28rem; margin-block-start: 1rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--surface); }
+  .card p { color: var(--muted); }
+  .card a { color: var(--brand); }
+  input { display: block; width: 100%; box-sizing: border-box; padding: .5rem; }
+  #theme { min-block-size: 2.75rem; padding-inline: 1rem; border: 1px solid var(--line); border-radius: .5rem; background: var(--surface); color: var(--fg); font: inherit; }
 </style>
 </head>
 <body>
-<dl>
-  <div>
-    <dt>السعر</dt>
-    <dd>٤٥٠ جنيه</dd>
-  </div>
-  <div>
-    <dt>الألوان</dt>
-    <dd>أسود</dd>
-    <dd>أصفر</dd>
-  </div>
-</dl>
-</body>
-</html>
-~~~
-
-سطر الـ CSS اللي في [[<style>]] بيقول: كل [[<div>]] ابن مباشر للـ [[<dl>]] ياخد إطار ومسافة. اتكتب هنا عشان تشوف فايدة الـ [[<div>]]، والـ CSS نفسه في وحدته.
-
-- الـ [[<div>]] مبيغيّرش المعنى. شجرة الـ accessibility طلعت زي ما هي: [[term]] و [[definition]] جوه DescriptionList.
-- ده المكان الوحيد اللي [[<div>]] مسموح فيه جوه [[<dl>]]، ومسموح [[<div>]] بس (مش [[<section>]] ولا [[<li>]]).
-- **يا كله يا بلاش:** لو مجموعة واحدة في [[<div>]]، كل المجموعات لازم تبقى في [[<div>]]. جرّبت أخلط فالـ validator قال:
-
-~~~text Nu Html Checker
-error: Element “dt” not allowed as child of element “dl” in this context.
-error: Element “dd” not allowed as child of element “dl” in this context.
-~~~
-
----
-
-## ٦. [[<dl>]] ولا [[<ul>]] ولا جدول؟
-
-~~~live 378 نفس النوع من البيانات بتلات أشكال
-<h3>ul: حاجات من غير اسم وقيمة</h3>
-<ul>
-  <li>ضد المية</li>
-  <li>بيتشحن USB</li>
-</ul>
-<h3>dl: اسم وقيمة لحاجة واحدة</h3>
-<dl>
-  <dt>السعر</dt>
-  <dd>٤٥٠ جنيه</dd>
-  <dt>الوزن</dt>
-  <dd>١٢٠ جرام</dd>
-</dl>
-<h3>table: نفس الأسماء لكذا حاجة</h3>
-<table>
-  <tr><th>الموديل</th><th>السعر</th><th>الوزن</th></tr>
-  <tr><td>كشّاف ١</td><td>٤٥٠ جنيه</td><td>١٢٠ جرام</td></tr>
-  <tr><td>كشّاف ٢</td><td>٦٠٠ جنيه</td><td>٩٠ جرام</td></tr>
-</table>
-~~~
-
-| المحتوى | العنصر | ليه |
-|---|---|---|
-| حاجات كل واحدة حتة واحدة (مميزات) | [[<ul>]] | مفيش اسم وقيمة |
-| أسماء وقيم **لحاجة واحدة** (مواصفات منتج واحد) | [[<dl>]] | كل سطر اسم وقيمته |
-| **نفس الأسماء لكذا حاجة** (مقارنة منتجين) | [[<table>]] | الأسماء بقت عواميد، وكل حاجة صف. ده درس «table» في وحدة الجداول |
-| خطوات مترتبة | [[<ol>]] | الترتيب هو المعنى |
-
-سؤال سريع: لو البيانات اتحطت في Excel، هتاخد كام عمود؟ عمودين (اسم وقيمة) يبقى [[<dl>]]. أكتر من عمودين يبقى جدول.
-
----
-
-## ٧. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[<dd>]] قبل الـ [[<dt>]] بتاعه | Chrome بيعرضه زي ما هو (قيمة داخلة وتحتها اسم). والـ validator: [[Element “dl” is missing a required child element.]] |
-| [[<dt>]] من غير أي [[<dd>]] بعده | الـ validator: [[Element “dl” is missing a required instance of child element “dd”.]] |
-| عنوان جوه [[<dt>]]، زي [[<dt><h3>سؤال</h3></dt>]] | بيترسم، والـ validator: [[The element “h3” must not appear as a descendant of the “dt” element.]] الـ [[<dt>]] ممنوع فيه عناوين و [[<header>]] و [[<footer>]] وعناصر تقسيم. الـ [[<dd>]] مسموح فيه أي حاجة |
-| [[<li>]] أو [[<p>]] مباشرة جوه [[<dl>]] | الـ validator: [[Element “li” not allowed as child of element “dl” in this context.]] |
-| [[<dd>]] لوحده برّه [[<dl>]] | Chrome برضه بيدخّله 40px، وده اللي بيغري ناس تستخدمه للتدخيل. الـ validator: [[Element “dd” not allowed as child of element “body” in this context.]] |
-| [[<dl>]] لحوار بين اتنين (فلان: كذا) | المواصفة بتقول صريح إن [[<dl>]] مش مناسبة للحوارات |
-| نسيت [[</dt>]] أو [[</dd>]] | بيتقفلوا لوحدهم: [[<dl><dt>السعر<dd>٤٥٠<dt>اللون<dd>أسود</dl>]] اتبنى منه اتنين [[<dt>]] واتنين [[<dd>]] مظبوطين. اكتب القفلة برضه |
-
----
-
-## الخلاصة
-
-- [[<dl>]] قايمة أسماء وقيم: [[<dt>]] الاسم وبعده [[<dd>]] القيمة.
-- ينفع أكتر من [[<dd>]] لنفس الاسم، وأكتر من [[<dt>]] لنفس القيمة. والقيمة الطويلة فقراتها في [[<dd>]] واحد.
-- الشكل الافتراضي: القيمة داخلة 40px، والاسم مش تقيل.
-- [[<div>]] حوالين كل مجموعة مسموح للتنسيق، يا كل المجموعات يا ولا واحدة.
-- اسم وقيمة لحاجة واحدة [[<dl>]]، ونفس الأسماء لكذا حاجة جدول، وحاجات من غير أسماء [[<ul>]].
-- هي أقل القوايم التلاتة استخدامًا، ومكانها المواصفات والأسئلة والقواميس والبيانات الوصفية.`,
-          try: R`اعمل ملف [[card.html]] فيه «بطاقة تعريف» بـ [[<dl>]]: الاسم، والمدينة، واللغات (لغتين، كل لغة في [[<dd>]] لوحدها). افتحه وبص على المسافة قدام القيم. وبعدين بدّل مكان أول [[<dt>]] و [[<dd>]] (القيمة قبل الاسم) وشوف المتصفح هيعرض إيه، وحط الكود في الـ validator (validator.w3.org/nu).`,
-          sol: R`~~~live 238 card.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بطاقة تعريف</title>
-</head>
-<body>
-<h1>بطاقة تعريف</h1>
-<dl>
-  <dt>الاسم</dt>
-  <dd>كريم عادل</dd>
-  <dt>المدينة</dt>
-  <dd>المنصورة</dd>
-  <dt>اللغات</dt>
-  <dd>عربي</dd>
-  <dd>إنجليزي</dd>
-</dl>
-</body>
-</html>
-~~~
-
-الأسماء في أول السطر، والقيم داخلة 40px. و «اللغات» تحتها قيمتين.
-
-لما تبدّل أول اتنين، المتصفح بيعرض «كريم عادل» داخل لجوه وتحته «الاسم» في أول السطر، من غير أي تحذير. هو بيرسم اللي مكتوب. بس المعنى باظ: دلوقتي فيه قيمة من غير اسم، و «الاسم» و «المدينة» بقوا اسمين لقيمة واحدة هي «المنصورة».
-
-~~~text الناتج
-الصح:   dl=1  dt=3  dd=4     validator: صفر errors
-        المجموعات: الاسم ← كريم عادل | المدينة ← المنصورة | اللغات ← عربي ، إنجليزي
-بعد التبديل:  validator: error: Element “dl” is missing a required child element.
-        المجموعات: (من غير اسم) ← كريم عادل | الاسم ، المدينة ← المنصورة | اللغات ← عربي ، إنجليزي
-~~~`,
-          deep: {
-            why: R`بيانات «اسم: قيمة» في كل موقع: مواصفات، وتفاصيل طلب، وبيانات حساب، وإعدادات، وأسئلة شائعة. من غير [[<dl>]] بتتكتب فقرات فيها كلمة تقيلة ونقطتين، أو جدول من عمودين من غير عناوين، أو [[<ul>]] كل عنصر فيها «السعر: ٤٥٠». التلاتة شكلهم مقبول، بس مفيش واحدة فيهم بتقول للمتصفح مين الاسم ومين القيمة.`,
-            how: R`المتصفح بيمشي على أبناء الـ [[<dl>]] بالترتيب (ولو فيه [[<div>]] بيدخل جواه)، وبيلمّهم مجموعات: كل [[<dt>]] بيتضاف لأسماء المجموعة الحالية، وكل [[<dd>]] لقيمها، وأول [[<dt>]] ييجي بعد [[<dd>]] بيقفل المجموعة ويبدأ واحدة جديدة. مفيش attribute بيربط الاسم بالقيمة: الربط بالترتيب بس.
-
-والتنسيق الافتراضي سطر واحد تقريبًا: [[<dd>]] ليه 40px margin في بداية السطر.`,
-            when: R`مواصفات منتج واحد، تفاصيل طلب أو حجز، بيانات مقال أو ملف، أسئلة شائعة قصيرة، قاموس مصطلحات، شرح اختصارات. ومتستخدمهاش: للمقارنة بين كذا حاجة (جدول)، ولا لحوار، ولا عشان الـ 40px بتاعة التدخيل، ولا لأسئلة شائعة عايزها تتفتح وتتقفل (دي [[<details>]] في وحدة تانية).`,
-            mistakes: R`تفتكر إن [[<dt>]] تقيل افتراضيًا فتستغرب الشكل. تحط القيمة قبل الاسم. تقسم إجابة طويلة على اتنين [[<dd>]] فتبقى قيمتين. تحط عنوان [[<h3>]] جوه [[<dt>]]. تلف بعض المجموعات بـ [[<div>]] وتسيب الباقي. تستخدم [[<dd>]] لوحده للتدخيل. تكتب [[<dl>]] لمقارنة تلات منتجات وكل واحد بيكرر نفس الأسماء، والمفروض جدول.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ [[<dl>]] اللي في أول الحل فيها ٤ [[<dt>]] و ٥ [[<dd>]]. من غير ما تشغّلها: فيها كام مجموعة اسم وقيمة؟ ومين الاسم اللي ليه أكتر من قيمة؟ ومين القيمة اللي ليها أكتر من اسم؟`, done: R`إجابتك: ٣ مجموعات. «الألوان» ليها ٣ قيم. و «KR-204» ليها اسمين: «الكود» و «رقم الصنف».`, sol: R`~~~live 210 الكود
-<dl>
-  <dt>الاسم</dt>
-  <dd>كشّاف الرحلات</dd>
-  <dt>الكود</dt>
-  <dt>رقم الصنف</dt>
-  <dd>KR-204</dd>
-  <dt>الألوان</dt>
-  <dd>أسود</dd>
-  <dd>أصفر</dd>
-  <dd>أحمر</dd>
-</dl>
-~~~
-
-| المجموعة | الأسماء | القيم |
-|---|---|---|
-| 1 | الاسم | كشّاف الرحلات |
-| 2 | الكود، رقم الصنف | KR-204 |
-| 3 | الألوان | أسود، أصفر، أحمر |
-
-**القاعدة:** المجموعة = [[<dt>]] واحد أو أكتر وبعدهم [[<dd>]] واحد أو أكتر. وأول [[<dt>]] بعد [[<dd>]] بيبدأ مجموعة جديدة. فعدّ المرات اللي [[<dt>]] جه فيها بعد [[<dd>]] وزوّد واحد.
-
-**الغلطة الشائعة:** تعدّ الـ [[<dt>]] وتقول ٤ مجموعات. «الكود» و «رقم الصنف» ورا بعض من غير [[<dd>]] بينهم، فهم اسمين لنفس المجموعة.
-
-~~~text الناتج
-dl=1  dt=4  dd=5
-شجرة الـ accessibility من Chrome:
-term "الاسم" ، definition "كشّاف الرحلات"
-term "الكود" ، term "رقم الصنف" ، definition "KR-204"
-term "الألوان" ، definition "أسود" ، definition "أصفر" ، definition "أحمر"
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة «أسئلة شائعة» لجيم الأبطال (اسم متخيل) فيها ٤ أسئلة بإجاباتها في [[<dl>]] واحدة. واحدة من الإجابات فقرتين، وواحدة فيها لينك.`, done: R`الصفحة فيها [[<dl>]] واحدة جواها ٤ [[<dt>]] و ٤ [[<dd>]] بالظبط (الإجابة اللي من فقرتين [[<dd>]] واحد)، والـ validator صفر errors.`, work: { h: 360, start: R`أسئلة شائعة
-الجيم بيفتح إمتى؟
-كل يوم من ٦ الصبح لـ ١٢ بالليل، والجمعة من ٢ الضهر.
-فيه اشتراك شهري؟
-أيوه: شهر بـ ٤٠٠ جنيه، و٣ شهور بـ ١٠٠٠ جنيه.
-ينفع أجرّب قبل ما أشترك؟
-أول حصة مجانًا.
-هات معاك فوطة وجزمة رياضة.
-فيه مدرب خاص؟
-أيوه، بحجز مسبق من صفحة الحجز.`, checks: [
-              { say: R`الأسئلة في [[<dl>]] واحدة`, q: "dl", n: 1 },
-              { say: R`٤ أسئلة كل واحد [[<dt>]]`, q: "dl > dt", n: 4 },
-              { say: R`٤ إجابات كل واحدة [[<dd>]]`, q: "dl > dd", n: 4 },
-              { say: R`الإجابة اللي من فقرتين [[<dd>]] واحد فيه ٢ [[<p>]]`, q: "dd p", n: 2 },
-              { say: R`الإجابة الأخيرة فيها لينك [[<a>]]`, q: "dd a", n: 1 },
-            ] }, sol: R`~~~live 358 أسئلة شائعة
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أسئلة شائعة | جيم الأبطال</title>
-</head>
-<body>
 <main>
-  <h1>أسئلة شائعة</h1>
-  <dl>
-    <dt>الجيم بيفتح إمتى؟</dt>
-    <dd>كل يوم من ٦ الصبح لـ ١٢ بالليل، والجمعة من ٢ الضهر.</dd>
-    <dt>فيه اشتراك شهري؟</dt>
-    <dd>أيوه: شهر بـ ٤٠٠ جنيه، و٣ شهور بـ ١٠٠٠ جنيه.</dd>
-    <dt>ينفع أجرّب قبل ما أشترك؟</dt>
-    <dd>
-      <p>أول حصة مجانًا.</p>
-      <p>هات معاك فوطة وجزمة رياضة.</p>
-    </dd>
-    <dt>فيه مدرب خاص؟</dt>
-    <dd>أيوه، بحجز مسبق من <a href="#booking">صفحة الحجز</a>.</dd>
-  </dl>
+  <h1>الإعدادات</h1>
+  <button id="theme" type="button" role="switch" aria-checked="false">الوضع الغامق</button>
+  <section class="card">
+    <h2>حسابك</h2>
+    <p>غيّر بياناتك من هنا.</p>
+    <label for="name">الاسم</label>
+    <input id="name" value="سارة">
+    <p><a href="#help">محتاج مساعدة؟</a></p>
+  </section>
+  <div style="height: 150vh"></div>
 </main>
+<script>
+  const root = document.documentElement;
+  const btn = document.getElementById("theme");
+
+  function read() {
+    try { return localStorage.getItem("theme"); } catch { return null; }
+  }
+  function save(value) {
+    try { localStorage.setItem("theme", value); } catch { /* مفيش تخزين: الزرار يشتغل برضه */ }
+  }
+  function apply(dark) {
+    root.dataset.theme = dark ? "dark" : "light";
+    btn.setAttribute("aria-checked", String(dark));
+  }
+
+  apply(read() === "dark");
+  btn.addEventListener("click", () => {
+    const dark = btn.getAttribute("aria-checked") !== "true";
+    apply(dark);
+    save(dark ? "dark" : "light");
+  });
+$__lt/script>
 </body>
 </html>
 ~~~
 
-**ليه كده:**
+**ليه شغال:**
 
-- كل سؤال [[<dt>]] وإجابته [[<dd>]] بعده على طول.
-- الإجابة التالتة فقرتين جوه [[<dd>]] واحد. لو كانوا اتنين [[<dd>]] كانت بقت «إجابتين بديلتين» لنفس السؤال.
-- اللينك جوه الـ [[<dd>]] عادي: الـ [[<dd>]] بيقبل أي محتوى.
-- السؤال نص عادي جوه [[<dt>]] من غير عنوان: العناوين ممنوعة جوه [[<dt>]].
+- كل لون متعرّف مرتين بس: في [[:root]] و [[:root[data-theme="dark"]]]. باقي الـ CSS بيقول [[var(--bg)]] ومبيعرفش فيه كام ثيم.
+- [[color-scheme]] بيقول للمتصفح يرسم حاجاته هو بالثيم ده: الـ scrollbar وحقول الـ input والـ checkbox. من غيره تبقى صفحة غامقة وفيها input أبيض.
+- [[role="switch"]] مع [[aria-checked]]: القارئ بيقول «switch، on». والزرار الحقيقي بيجيب Tab و Enter و Space ببلاش.
+- [[try/catch]] حوالين كل وصول لـ localStorage: في بعض إعدادات الخصوصية مجرد قراية [[localStorage]] بترمي [[SecurityError]]، ومن غيره السكربت كله يقف والزرار يموت.
 
-**الغلطة الشائعة:** تكتب «س:» و «ج:» قدام الكلام. العنصر نفسه بيقول مين السؤال ومين الإجابة.
-
-**حدود الحل ده:** لو الأسئلة كتير وعايز كل إجابة تتفتح بالضغط على سؤالها، ده عنصر [[<details>]] في وحدة تانية. و [[<dl>]] مناسبة لما كله يبقى ظاهر.
+**الغلطة الشائعة:** تقرا [[localStorage]] من غير [[try]]، لأنه مبيقعش عندك أبدًا. جرّبها بإنك تعرّف [[localStorage]] يرمي error قبل سكربت الصفحة.
 
 ~~~text الناتج
-dl=1  dt=4  dd=4  p=2  a=1
-Nu Html Checker: صفر errors
-على عرض 360: مفيش scroll أفقي
+فاتح:  data-theme=light ، background rgb(248, 250, 252) ، color-scheme light
+       input rgb(255, 255, 255) ، aria-checked false
+
+بعد الضغط:
+غامق:  data-theme=dark ، background rgb(11, 17, 32) ، color-scheme dark
+       input rgb(59, 59, 59) (اتغيّر من color-scheme لوحده)
+
+بعد reload: لسه dark
+ariaSnapshot:  - switch "الوضع الغامق" [checked]
+grep على ألوان برا بلوكات التوكنز: صفر
+axe: صفر في الوضعين ، وعلى 360 مفيش scroll أفقي
+
+localStorage بيرمي SecurityError:
+الزرار قلب لـ dark ، وبعد reload رجع light (بيشتغل بس مش بيفتكر)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** «مواصفات الشنطة» فيها ٣ غلطات: السعة قيمتها مكتوبة قبل اسمها، و «الخامة» مكتوبة [[<h3>]] جوه [[<dt>]]، والضمان مكتوب [[<p><b>الضمان:</b> سنتين</p>]] جوه الـ [[<dl>]]. الكود في أول الحل. صلّحهم.`, done: R`الـ validator قبل التصليح طلّع ٣ errors وبعده صفر، والـ [[<dl>]] بقى فيها ٣ [[<dt>]] و ٣ [[<dd>]] بالتبادل، ومفيش [[<h3>]] ولا [[<p>]] ولا [[<b>]] جواها.`, work: { h: 207, solAt: 1, start: R`<h2>مواصفات الشنطة</h2>
-<dl>
-  <dd>٣٥ لتر</dd>
-  <dt>السعة</dt>
-  <dt><h3>الخامة</h3></dt>
-  <dd>قماش ضد المية</dd>
-  <p><b>الضمان:</b> سنتين</p>
-</dl>`, checks: [
-              { say: R`كل اسم [[<dt>]] وراه قيمته [[<dd>]] على طول: ٣ أزواج`, q: "dt + dd", n: 3 },
-              { say: R`فيه ٣ [[<dt>]] جوه الـ [[<dl>]]`, q: "dl > dt", n: 3 },
-              { say: R`مفيش [[<h3>]] ولا [[<p>]] ولا [[<b>]] جوه الـ [[<dl>]]`, q: "dl h3, dl p, dl b", n: 0 },
-              { say: R`«الضمان» بقت [[<dt>]] وقيمتها بعدها`, q: "dt", has: "الضمان", n: 1 },
-            ] }, sol: R`قبل:
-
-~~~live 246 قبل
-<h2>مواصفات الشنطة</h2>
-<dl>
-  <dd>٣٥ لتر</dd>
-  <dt>السعة</dt>
-  <dt><h3>الخامة</h3></dt>
-  <dd>قماش ضد المية</dd>
-  <p><b>الضمان:</b> سنتين</p>
-</dl>
-~~~
-
-~~~text Nu Html Checker على «قبل»
-error: Element “dl” is missing a required child element.
-error: The element “h3” must not appear as a descendant of the “dt” element.
-error: Element “p” not allowed as child of element “dl” in this context.
-~~~
-
-بعد:
-
-~~~live 207 بعد
-<h2>مواصفات الشنطة</h2>
-<dl>
-  <dt>السعة</dt>
-  <dd>٣٥ لتر</dd>
-  <dt>الخامة</dt>
-  <dd>قماش ضد المية</dd>
-  <dt>الضمان</dt>
-  <dd>سنتين</dd>
-</dl>
-~~~
-
-**التلات تصليحات:**
-
-- **الترتيب:** [[<dt>]] الأول وبعده [[<dd>]]. في «قبل» كان «٣٥ لتر» قيمة من غير اسم، و «السعة» و «الخامة» اسمين لقيمة واحدة هي «قماش ضد المية». يعني الصفحة كانت بتقول إن السعة قماش.
-- **العنوان:** [[<h3>]] اتشال. لو عايز الاسم يبقى أكبر أو أتقل، ده CSS على [[<dt>]].
-- **الفقرة:** «الضمان» بقى [[<dt>]] و «سنتين» [[<dd>]]. والنقطتين اتشالوا من الكلام: لو عايزهم يظهروا بعد كل اسم، الـ CSS بيزوّدهم.
-
-**الغلطة الشائعة:** تصلّح اللي الـ validator قاله بس من غير ما تقرا المعنى. أول error («missing a required child element») مش بيقولك إن السعة والخامة اتلخبطوا، انت اللي لازم تشوفها.
-
-~~~text الناتج
-قبل:  dt=2  dd=2  p=1  h3=1    Nu Html Checker: 3 errors
-      شجرة الـ accessibility: definition "٣٥ لتر" ، term "السعة" ، term "الخامة" ، definition "قماش ضد المية" ، paragraph
-بعد:  dt=3  dd=3               Nu Html Checker: صفر errors
-      term "السعة" ، definition "٣٥ لتر" ، term "الخامة" ، definition "قماش ضد المية" ، term "الضمان" ، definition "سنتين"
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك بيانات منتج بالشكل ده: [[{"name":"سماعة النغم ٢","sku":"NG-2","price":"٨٩٠ جنيه","colors":["أسود","أبيض","كحلي"],"battery":"٣٠ ساعة","warranty":"سنة"}]]. اعرضها [[<dl>]]، وكل مجموعة جوه [[<div>]] عشان يتحط تحتها خط فاصل بسطر CSS واحد.`, done: R`الـ [[<dl>]] فيها ٥ [[<div>]] وكل [[<dt>]] و [[<dd>]] جوه [[<div>]] (مفيش واحد سايب)، والألوان ٣ [[<dd>]] في نفس الـ [[<div>]]، وتحت كل مجموعة خط، والـ validator صفر errors.`, work: { h: 393, start: R`<h1>سماعة النغم ٢</h1>
-الكود: NG-2
-السعر: ٨٩٠ جنيه
-الألوان: أسود، أبيض، كحلي
-البطارية: ٣٠ ساعة
-الضمان: سنة`, checks: [
-              { say: R`البيانات في [[<dl>]] واحدة`, q: "dl", n: 1 },
-              { say: R`كل مجموعة (كود، سعر، ألوان، بطارية، ضمان) جوه [[<div>]]: ٥`, q: "dl > div", n: 5 },
-              { say: R`كل [[<div>]] فيه [[<dt>]] واحد`, q: "dl > div > dt", n: 5 },
-              { say: R`القيم ٧ [[<dd>]]: الألوان التلاتة كل لون [[<dd>]]`, q: "dd", n: 7 },
-              { say: R`مفيش [[<dt>]] ولا [[<dd>]] سايب برّه [[<div>]]`, q: "dl > dt, dl > dd", n: 0 },
-            ] }, sol: R`~~~live 393 سماعة النغم ٢
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الثيم بيتحط في [[useEffect]] بعد ما الصفحة تترسم: [[document.documentElement.classList.toggle("dark", localStorage.theme === "dark")]]. اختار dark واعمل refresh: الصفحة بتفتح بيضا لحظة وبعدين تغمق. صلّحه من غير next-themes: سكربت inline صغير في أول الـ [[<head>]] بيعمل نفس السطر قبل الرسم، وبيرجع لـ [[matchMedia("(prefers-color-scheme: dark)")]] لو مفيش اختيار.`, done: R`في DevTools › Performance مع CPU 4x slowdown و Screenshots شغالة، أول frame فيه محتوى غامق ومفيش ولا frame أبيض. وفي View Source السكربت قبل أي [[<link rel="stylesheet">]].`, sol: R`~~~live 150 150 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>سماعة النغم ٢</title>
+<script>
+  (function () {
+    let stored = null;
+    try { stored = localStorage.getItem("theme"); } catch {}
+    const dark = stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.classList.toggle("dark", dark);
+  })();
+$__lt/script>
+<title>بعد</title>
 <style>
-  dl > div { border-bottom: 1px solid #bbb; padding: 6px 0; }
+  body { margin: 0; min-height: 100vh; background: #fff; color: #111; font: 2rem system-ui; }
+  .dark body { background: #0b1120; color: #f1f5f9; }
 </style>
 </head>
 <body>
-<h1>سماعة النغم ٢</h1>
-<dl>
-  <div>
-    <dt>الكود</dt>
-    <dd>NG-2</dd>
-  </div>
-  <div>
-    <dt>السعر</dt>
-    <dd>٨٩٠ جنيه</dd>
-  </div>
-  <div>
-    <dt>الألوان</dt>
-    <dd>أسود</dd>
-    <dd>أبيض</dd>
-    <dd>كحلي</dd>
-  </div>
-  <div>
-    <dt>البطارية</dt>
-    <dd>٣٠ ساعة</dd>
-  </div>
-  <div>
-    <dt>الضمان</dt>
-    <dd>سنة</dd>
-  </div>
-</dl>
+<main><h1>الصفحة</h1></main>
 </body>
 </html>
 ~~~
 
-**القرارات:**
+**ليه الوميض بيحصل:** [[useEffect]] بيشتغل بعد أول رسم. المتصفح بيرسم الصفحة بيضا، وبعدين الكود يحط [[.dark]]. وأي صفحة جاية من السيرفر هتعمل كده، لأن السيرفر مش عارف اختيار المستخدم.
 
-- اسم المنتج [[<h1>]] مش صف في القايمة: هو عنوان الحاجة اللي المواصفات بتاعتها.
-- أسماء الحقول اتترجمت للقارئ: [[sku]] بقت «الكود»، و [[warranty]] «الضمان». الـ [[<dt>]] مكتوب للإنسان.
-- [[colors]] مصفوفة من ٣، فبقت ٣ [[<dd>]] تحت [[<dt>]] واحد، والتلاتة في نفس الـ [[<div>]] عشان الخط ييجي تحت المجموعة كلها.
-- سطر الـ CSS: [[dl > div]] معناه كل [[<div>]] ابن مباشر للـ [[<dl>]]، و [[border-bottom]] خط تحته، و [[padding]] مسافة جواه (وحدة الـ CSS).
+**التصليح:** سكربت inline في أول [[<head>]]. السكربتات اللي من غير [[defer]] بتوقّف قراية الـ HTML، فالمتصفح مبيرسمش حاجة لحد ما يخلص. السكربت لازم يبقى inline: لو ملف خارجي، هتستنى الشبكة قبل أول رسم.
 
-**الغلطة الشائعة:** تكتب الألوان في [[<dd>]] واحد «أسود، أبيض، كحلي». مش غلط في الـ validator، بس تلات قيم بقوا نص واحد، ومش هتعرف تمسك كل لون لوحده.
+**المنطق:** لو فيه اختيار محفوظ خده، ولو مفيش اسأل [[matchMedia]].
+
+**في React:** ضيف [[suppressHydrationWarning]] على [[<html>]]، لأن الكلاس اتغيّر قبل hydration.
+
+**الغلطة الشائعة:** تحط السكربت في آخر [[<body>]] أو تعمله [[defer]]، فيرجع الوميض. وتنسى [[try/catch]]، فخطأ في localStorage يوقّف الصفحة.
 
 ~~~text الناتج
-dl=1  div=5  dt=5  dd=7
-كل dt و dd أبوه div: true
-خط تحت كل مجموعة: border-bottom-width=1px على الـ 5
-Nu Html Checker: صفر errors
+ألوان الـ frames بعد الفتح (localStorage.theme = dark ، CPU 4x):
+
+قبل:  أحمر (الصفحة القديمة) ← 255,255,255 (أبيض) ← 11,17,32 (غامق)
+بعد:  أحمر (الصفحة القديمة) ← 11,17,32 (غامق)
+
+من غير اختيار محفوظ والجهاز dark: html عليه class="dark"
 ~~~` },
-            { lvl: 'تحدي', t: R`**قارن واختار:** عندك ٣ محتويات: (أ) مواصفات موبايل واحد (الشاشة، البطارية). (ب) مقارنة ٣ موبايلات في الشاشة والبطارية. (ج) مميزات باقة (مكالمات من غير حد، ٢٠ جيجا، من غير عقد). اختار لكل واحد [[<dl>]] أو [[<table>]] أو [[<ul>]] واكتبه، وقول ليه التانيين مينفعوش.`, done: R`(أ) [[<dl>]]، و (ب) [[<table>]] فيه صف عناوين و ٣ صفوف، و (ج) [[<ul>]]. وعندك سبب لكل اختيار من شكل البيانات نفسه: كام «عمود» فيها.`, work: { h: 448, start: R`<h2>أ. مواصفات موبايل واحد</h2>
-الشاشة: ٦٫٥ بوصة
-البطارية: ٥٠٠٠ مللي أمبير
-<h2>ب. مقارنة ٣ موبايلات</h2>
-نجم ١: ٦٫١ بوصة، ٤٠٠٠
-نجم ٢: ٦٫٥ بوصة، ٥٠٠٠
-نجم ٣: ٦٫٧ بوصة، ٥٥٠٠
-<h2>ج. مميزات الباقة</h2>
-مكالمات من غير حد
-٢٠ جيجا نت
-من غير عقد`, checks: [
-              { say: R`(أ) مواصفات موبايل واحد في [[<dl>]]: اسم وقيمة`, q: "dl > dt", min: 2 },
-              { say: R`(ب) المقارنة في [[<table>]] فيه صف عناوين و ٣ صفوف`, q: "table tr", n: 4 },
-              { say: R`صف العناوين فيه [[<th>]]`, q: "table th", min: 3 },
-              { say: R`(ج) المميزات في [[<ul>]] من ٣ عناصر [[<li>]]`, q: "ul > li", n: 3 },
-            ] }, sol: R`~~~live 448 التلاتة
-<h2>أ. مواصفات موبايل واحد</h2>
-<dl>
-  <dt>الشاشة</dt>
-  <dd>٦٫٥ بوصة</dd>
-  <dt>البطارية</dt>
-  <dd>٥٠٠٠ مللي أمبير</dd>
-</dl>
-<h2>ب. مقارنة ٣ موبايلات</h2>
-<table>
-  <tr><th>الموديل</th><th>الشاشة</th><th>البطارية</th></tr>
-  <tr><td>نجم ١</td><td>٦٫١ بوصة</td><td>٤٠٠٠</td></tr>
-  <tr><td>نجم ٢</td><td>٦٫٥ بوصة</td><td>٥٠٠٠</td></tr>
-  <tr><td>نجم ٣</td><td>٦٫٧ بوصة</td><td>٥٥٠٠</td></tr>
-</table>
-<h2>ج. مميزات الباقة</h2>
-<ul>
-  <li>مكالمات من غير حد</li>
-  <li>٢٠ جيجا نت</li>
-  <li>من غير عقد</li>
-</ul>
+            { lvl: 'تطبيق', t: R`**مسألة:** لون البراند [[#0d9488]] كلام على الأبيض تباينه 3.74:1، والكلام الأبيض على زرار بنفس اللون برضه 3.74:1، والاتنين ساقطين. اعمل توكنين [[--brand]] و [[--on-brand]] (لون الكلام اللي فوق البراند) بقيمة للفاتح وقيمة للغامق [[#0b1120]]، من نفس عيلة اللون، بحيث الأربع حالات (براند على الخلفية، وكلام على الزرار، في الوضعين) كلها 4.5:1 أو أكتر.`, done: R`الأربع أرقام من مربع اللون في DevTools فوق 4.5. حل واحد اتقاس: [[#0f766e]] للفاتح (5.47 على الأبيض، و 5.47 للأبيض عليه)، و [[#2dd4bf]] للغامق بكلام [[#0b1120]] على الزرار (10.12 في الاتجاهين). والغامق مش «نفس اللون مقلوب»: البراند فيه أفتح.`, sol: R`~~~css tokens.css
+:root {
+  --bg: #ffffff;
+  --brand: #0f766e;
+  --on-brand: #ffffff;
+}
+:root.dark {
+  --bg: #0b1120;
+  --brand: #2dd4bf;
+  --on-brand: #0b1120;
+}
+.link { color: var(--brand); }
+.btn  { background: var(--brand); color: var(--on-brand); }
 ~~~
 
-| المحتوى | الاختيار | ليه مش التانيين |
-|---|---|---|
-| (أ) موبايل واحد | [[<dl>]] | عمودين: اسم وقيمة. الجدول من عمودين من غير عناوين كتير عليه، و [[<ul>]] هتضيّع العلاقة |
-| (ب) ٣ موبايلات | [[<table>]] | نفس الأسماء بتتكرر لكل موبايل. في [[<dl>]] هتكتب «الشاشة» ٣ مرات ومش هتعرف تقارن بالعين |
-| (ج) مميزات | [[<ul>]] | كل عنصر حتة واحدة، مفيش اسم وقيمة |
+~~~view 150 150 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; background: var(--bg); color: #888; } :root.dark body { color: #cbd5e1; } :root:not(.dark) body { color: #0f172a; }
+.btn { border: 0; padding: 0.6rem 1.2rem; border-radius: 8px; font: inherit; font-weight: 700; }
+</style>
+<style>
+/* من الحل */
+:root {
+  --bg: #ffffff;
+  --brand: #0f766e;
+  --on-brand: #ffffff;
+}
+:root.dark {
+  --bg: #0b1120;
+  --brand: #2dd4bf;
+  --on-brand: #0b1120;
+}
+.link { color: var(--brand); }
+.btn  { background: var(--brand); color: var(--on-brand); }
+</style>
+</head>
+<body>
+<p><button type="button" onclick="document.documentElement.classList.toggle('dark')">بدّل الوضع الغامق</button></p>
+<p>كلام عادي فيه <a class="link" href="#">لينك بلون البراند</a> جوه الجملة.</p>
+<p><button class="btn" type="button">زرار بلون البراند</button></p>
+</body>
+</html>
+~~~
 
-**الجدول:** [[<tr>]] صف، و [[<th>]] خانة عنوان، و [[<td>]] خانة بيانات. ده كله في درس «table» في وحدة الجداول. المهم هنا القرار.
+**طريقة الحل:** الحساب بيقول إن اللون الواحد مش هينفع. [[#0d9488]] في المنطقة الوسط، فبيقع مع الأبيض من الناحيتين. فبنعمل حاجتين:
 
-**الغلطة الشائعة:** تعمل (ب) تلات [[<dl>]] جنب بعض، واحدة لكل موبايل. كل واحدة لوحدها سليمة، بس القارئ عايز يقارن البطاريات، والمقارنة بتتقري في عمود.
+- الفاتح: نغمّق البراند درجة ([[#0f766e]]). الكلام عليه أبيض.
+- الغامق: البراند لازم يبقى **أفتح** عشان يتشاف على خلفية غامقة ([[#2dd4bf]]). وبما إنه بقى فاتح، الكلام عليه لازم يبقى غامق. وعشان كده [[--on-brand]] توكن لوحده، مش أبيض ثابت.
+
+ونفس العيلة (teal)، فالهوية مش بتتغيّر.
+
+**الغلطة الشائعة:** تثبّت [[color: white]] على الزرار في الوضعين، فالزرار في الغامق يبقى أبيض على فاتح. أو تقلب اللون رياضيًا بدل ما تقيسه.
 
 ~~~text الناتج
-(أ) DescriptionList: term "الشاشة" ، definition "٦٫٥ بوصة" ، term "البطارية" ، definition "٥٠٠٠ مللي أمبير"
-(ب) table: 4 صفوف (صف عناوين و 3) × 3 عواميد
-(ج) list: 3 listitem
-dl=1  table=1  ul=1
-~~~` },
-          ]
-        },
-        {
-          cmd: "blockquote و q و cite",
-          title: "كلام منقول: اقتباس في فقرة لوحده، واقتباس جوه الجملة، واسم المصدر",
-          pre: [{ to: "css/lang و dir", why: R`علامات التنصيص اللي المتصفح بيحطها بتتحدد من [[lang]]` }, "css/a و button"],
-          ref: [
-            { t: "MDN: <blockquote>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/blockquote" },
-            { t: "MDN: <q>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/q" },
-            { t: "MDN: <cite>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/cite" },
-            { t: "WHATWG: the blockquote element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-blockquote-element" },
-            { t: "WHATWG: the q element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-q-element" },
-            { t: "WHATWG: the cite element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-cite-element" },
-            { t: "MDN: quotes (CSS)", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/quotes" }
-          ],
-          desc: R`لما تنقل كلام حد تاني، HTML فيه تلات حاجات: [[<blockquote>]] لاقتباس طويل واقف لوحده، و [[<q>]] لاقتباس قصير جوه الجملة (والمتصفح هو اللي بيحط علامات التنصيص)، و [[<cite>]] لـ **اسم العمل** اللي بتتكلم عنه: كتاب، فيلم، مقال.
+الأصلي #0d9488 مع الأبيض:   3.74:1 ساقط
 
-وفيه كمان attribute اسمه [[cite]] (غير العنصر) بيتحط على [[<blockquote>]] و [[<q>]] وفيه لينك المصدر، ومبيظهرش للقارئ.`,
-          example: R`<p>في <cite>دليل المذاكرة الذكية</cite> الكاتبة بتقول:</p>
-<blockquote cite="https://example.test/books/smart-study#ch2">
-  <p>ساعة مذاكرة بتركيز أحسن من تلات ساعات والموبايل جنبك.</p>
-</blockquote>
-<p>وبتلخّص الفصل كله في جملة: <q>ذاكر أقل، وركّز أكتر</q>.</p>`,
+                         التباين
+فاتح: براند على أبيض     5.47:1
+فاتح: أبيض على البراند   5.47:1
+غامق: براند على #0b1120  10.12:1
+غامق: #0b1120 على البراند 10.12:1
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** كارت فيه [[bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-800]] ومتكرر في ١٢ مكوّن. حوّله لطبقتين: متغيرات خام في [[:root]] و [[.dark]]، وبعدين [[@theme inline]] فيه [[--color-bg: var(--bg)]] وأخواتها، فالكلاس يبقى [[bg-bg text-fg border-line]] من غير ولا [[dark:]].`, done: R`[[grep -rc "dark:" src/components]] بيطلع صفر (أو بس للحاجات اللي فعلًا مختلفة، زي صورة ليها نسخة غامقة)، ولقطة الشاشة قبل وبعد في الوضعين متطابقة، وإضافة لون جديد بقت سطرين في ملف واحد.`, sol: R`~~~css in.css
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: var(--color-white);
+  --fg: var(--color-gray-900);
+  --line: var(--color-gray-200);
+}
+.dark {
+  --bg: var(--color-gray-950);
+  --fg: var(--color-gray-100);
+  --line: var(--color-gray-800);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-line: var(--line);
+}
+~~~
+
+~~~html بعد
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>كارت</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-6">
+<main>
+  <article class="rounded-xl border bg-bg p-6 text-fg border-line">
+    <h1 class="text-xl font-bold">كارت</h1>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+**الطبقتين:**
+
+1. **المتغيرات الخام** في [[:root]] و [[.dark]]: هي اللي بتتغيّر مع الثيم.
+2. **[[@theme inline]]**: بتعرّف Tailwind عليها. [[inline]] مهمة: من غيرها القيمة بتتحسب مرة على [[:root]] والكلاس [[.dark]] تحت مش بيأثر، زي ما شفنا في درس [[@theme]].
+
+الكلاس [[bg-bg text-fg border-line]] بقى بيقول معنى، والـ [[dark:]] اختفت. إضافة لون: سطر في [[:root]] وسطر في [[.dark]] وسطر في [[@theme inline]].
+
+**امتى تسيب [[dark:]]:** لما الحاجة مختلفة فعلًا، زي صورة ليها نسخة غامقة.
+
+**الغلطة الشائعة:** تعمل [[@theme]] من غير [[inline]]، فالوضع الفاتح يبان سليم والغامق مبيتغيرش.
+
+~~~text الناتج
+لقطة قبل وبعد في الوضع الفاتح: متطابقة byte بـ byte
+لقطة قبل وبعد في الوضع الغامق: متطابقة byte بـ byte
+grep -c "dark:" في الـ HTML بعد التحويل: 0
+~~~
+
+~~~view 130 130 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>كارت</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-border-style:solid;--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-800:oklch(27.8% .033 256.848);--color-gray-900:oklch(21% .034 264.665);--color-gray-950:oklch(13% .028 261.692);--color-white:#fff;--spacing:.25rem;--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-bold:700;--radius-xl:.75rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-line{border-color:var(--line)}.bg-bg{background-color:var(--bg)}.p-6{padding:calc(var(--spacing) * 6)}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.text-fg{color:var(--fg)}}:root{--bg:var(--color-white);--fg:var(--color-gray-900);--line:var(--color-gray-200)}.dark{--bg:var(--color-gray-950);--fg:var(--color-gray-100);--line:var(--color-gray-800)}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}
+</style></head>
+<body class="p-6">
+<main>
+  <article class="rounded-xl border bg-bg p-6 text-fg border-line">
+    <h1 class="text-xl font-bold">كارت</h1>
+  </article>
+</main>
+</body>
+</html>
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** حط [[* { transition: background-color .4s, color .4s }]] ودوس زرار الثيم: كل عنصر بيتلوّن لوحده والصفحة «بتسيح». اعمل نسخة تانية فيها كلاس [[theme-switching]] على html بيقفل الـ transitions ([[.theme-switching * { transition: none !important }]])، يتحط قبل التبديل ويتشال بعد [[requestAnimationFrame]] مرتين. وقيس الفرق بـ [[document.getAnimations().length]] في الكونسول على طول بعد الضغطة.`, done: R`النسخة الأولى بتطلّع رقم أكبر من صفر (في صفحة فيها body و ٤ عناصر اتقاس 5 transitions شغالين مع بعض)، والتانية صفر والتبديل بيبان في frame واحد. وفهمت إن ده نفس اللي [[disableTransitionOnChange]] بيعمله في next-themes.`, sol: R`~~~live 230 230 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>تبديل نضيف</title>
+<style>
+  :root { --bg: #fff; --fg: #111; }
+  :root.dark { --bg: #0b1120; --fg: #f1f5f9; }
+  * { transition: background-color .4s, color .4s; }
+  .theme-switching * { transition: none !important; }
+  body { background: var(--bg); color: var(--fg); font-family: system-ui, sans-serif; }
+  .card { padding: 1rem; background: var(--bg); }
+</style>
+</head>
+<body>
+<main>
+  <h1>الثيم</h1>
+  <div class="card">واحد</div>
+  <div class="card">اتنين</div>
+  <button id="plain" type="button">تبديل عادي</button>
+  <button id="clean" type="button">تبديل نضيف</button>
+</main>
+<script>
+  const root = document.documentElement;
+  document.getElementById("plain").onclick = () => root.classList.toggle("dark");
+  document.getElementById("clean").onclick = () => {
+    root.classList.add("theme-switching");
+    root.classList.toggle("dark");
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theme-switching")));
+  };
+$__lt/script>
+</body>
+</html>
+~~~
+
+في الكونسول:
+
+~~~js console
+document.getElementById("plain").click(); document.getAnimations().length;
+document.getElementById("clean").click(); document.getAnimations().length;
+~~~
+
+**ليه «بتسيح»:** [[* { transition }]] معناها كل عنصر بيبدأ حركته لوحده. والعناصر اللي بتورث لونها بتتحرك كمان، فالنص ممكن يوصل بعد الخلفية بلحظة.
+
+**التصليح:** كلاس [[theme-switching]] بيقفل الـ transitions لحظة التبديل بس. بنشيله بعد [[requestAnimationFrame]] مرتين: الأولى قبل الرسم، والتانية بعد ما الرسم الجديد خلص. لو شيلته على طول، المتصفح هيدمج التغييرين ويبدأ الـ transition عادي.
+
+ده نفس اللي [[disableTransitionOnChange]] بيعمله في next-themes.
+
+**الغلطة الشائعة:** تستخدم [[setTimeout(…, 0)]] بدل الـ frames، أو تنسى تشيل الكلاس، فكل hover في الموقع يتجمد.
+
+~~~text الناتج
+تبديل عادي:  document.getAnimations().length = 8
+تبديل نضيف:  document.getAnimations().length = 0
+بعد الضغطة الكلاس اتشال: html class=""
+
+(صفحتك رقمها حسب عدد عناصرها.)
+~~~` },
+          ],
+          desc: R`في Tailwind v4 الـ [[dark:]] افتراضيًا بيتبع نظام التشغيل. عشان تخليه بزرار، غيّر الـ variant يبقى على كلاس: [[@custom-variant dark (&:where(.dark, .dark *));]]، وبعدين [[<html class="dark">]] يقلب كل حاجة.
+
+و [[next-themes]] في Next.js بيعمل الباقي: بيحط الكلاس، ويحفظ الاختيار في localStorage، ويتبع النظام لو المستخدم مختارش، ويشغّل script صغير قبل الرسم فمفيش وميض أبيض.`,
+          example: R`// globals.css
+@custom-variant dark (&:where(.dark, .dark *));
+// app/layout.tsx
+import { ThemeProvider } from "next-themes";
+<html lang="ar" dir="rtl" suppressHydrationWarning>
+  <body className="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      {children}
+    </ThemeProvider>
+  </body>
+</html>
+// theme-toggle.tsx ("use client")
+const { resolvedTheme, setTheme } = useTheme();
+<button onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}>غيّر الثيم</button>`,
+          try: R`طبّق ده في مشروع Next، واختار dark واعمل refresh: مفيش وميض أبيض. وفي DevTools › Application › Local Storage شوف مفتاح [[theme]]. وبعدين امسح [[suppressHydrationWarning]] وشوف التحذير في الكونسول.`,
           flag: "script",
-          lines: [
-            R`فقرة بتقدّم الاقتباس. اسم الكتاب جوه [[<cite>]] لأنه عنوان عمل، والمتصفح بيميّله.`,
-            R`[[<blockquote>]]: اللي جواه منقول من مصدر تاني. و [[cite="..."]] هنا attribute فيه عنوان المصدر: المتصفح مش بيعرضه، هو معلومة للكود وللأدوات.`,
-            R`نص الاقتباس نفسه في [[<p>]] جوه الـ [[<blockquote>]]، ومن غير علامات تنصيص: الـ [[<blockquote>]] مبيحطش علامات.`,
-            R`نهاية الاقتباس. المتصفح بيسيب 40px فاضية على يمينه وشماله.`,
-            R`اقتباس قصير جوه الجملة في [[<q>]]. مفيش علامات تنصيص مكتوبة: المتصفح بيحطها قبله وبعده، والنقطة برّه الـ [[<q>]] لأنها مش من الكلام المنقول.`
-          ],
-          teach: R`## الفكرة في سطرين
+          deep: {
+            why: "المستخدمين متوقعين dark mode، وأي موقع بيفتح أبيض ثانية وبعدين يغمق بيبان مكسور. المشكلة إن السيرفر مش عارف اختيار المستخدم (محفوظ في المتصفح)، فلازم حاجة تحط الكلاس قبل ما الصفحة تترسم.",
+            how: R`[[@custom-variant dark (&:where(.dark, .dark *))]] بيغيّر معنى [[dark:bg-x]] لـ «لو العنصر نفسه أو جد ليه عليه [[.dark]]». و [[:where]] عشان الـ variant ميزودش specificity، فـ [[dark:bg-x]] يفضل بنفس وزن أي utility (كلاس واحد). ولو بتستخدم attribute: [[&:where([data-theme=dark], [data-theme=dark] *)]].
 
-تلات عناصر، كل واحد بيجاوب على سؤال: **ده كلام مين؟** ([[<blockquote>]] و [[<q>]]: كلام حد تاني)، و **اسمه إيه العمل ده؟** ([[<cite>]]).
+next-themes بيحقن [[<script>]] صغير في أول الصفحة بيتنفذ قبل الرسم: بيقرا localStorage (أو [[prefers-color-scheme]] لو system) ويحط الكلاس على html، وكمان [[color-scheme]] عشان الـ scrollbars وحقول الفورم تغمق هي كمان. بس السيرفر رسم html من غير الكلاس، فـ React هيلاقي فرق وقت الـ hydration، و [[suppressHydrationWarning]] بيسكّت التحذير ده على العنصر ده بس.
 
-القياسات من Chrome 157 (headless على Windows 11)، ورسايل الـ validator من Nu Html Checker.
+أي حاجة شكلها بيعتمد على الثيم في JavaScript (أيقونة شمس أو قمر) مش معروفة على السيرفر. فالمكون لازم يستنى لحد ما يتعمل mount: [[useEffect(() => setMounted(true), [])]]، وقبلها يعرض placeholder بنفس المقاس.
+
+الطريقة الأنضف من [[dark:]] على كل عنصر: متغيرات. [[:root { --bg: white }]] و [[.dark { --bg: black }]] وتوكن [[--color-bg]] في [[@theme inline]]، فتكتب [[bg-bg]] بس وهو يتغير لوحده، ودا اللي shadcn بيعمله.
+
+وفيه حل من غير script خالص: cookie فيها الثيم، والسيرفر يحط الكلاس في الـ HTML نفسه. في مشروع حقيقي كان كده: الـ layout بيقرا الـ cookie ويحط [[data-theme]] على html، فمفيش وميض ولا فرق hydration.`,
+            when: R`أي موقع أو داشبورد. ولو الموقع landing بسيط، [[dark:]] الافتراضي اللي بيتبع النظام ممكن يكفي من غير زرار.`,
+            mistakes: R`تنسى [[suppressHydrationWarning]]. تعرض أيقونة الثيم من غير mounted فتظهر غلط وبعدين تتقلب. تكتب [[darkMode: "class"]] في tailwind.config.js في مشروع v4 ومفيش حاجة بتحصل: v4 مش بيقرا الملف ده غير بـ [[@config]]. و [[dark:]] على كل عنصر في المشروع بدل متغيرات، فأي لون جديد يتنسي في وضع من الاتنين.`
+          },
+          teach: R`## كلاس على [[<html>]] بيقلب الصفحة كلها
+
+الفكرة كلها: [[dark:]] يشتغل لما يبقى فيه كلاس [[dark]] فوق، و next-themes هو اللي بيحط الكلاس ده ويشيله ويفتكره. حطينا المثال في مشروع Next.js 16.4 (Tailwind 4.3.3، و next-themes 0.4.6)، وعملنا build وفتحناه في Chrome مرة والجهاز light ومرة dark (Playwright بيحاكي إعداد النظام).
 
 ---
 
-## ١. [[<blockquote>]]: اقتباس واقف لوحده
+## ١. [[globals.css]]: [[@custom-variant dark (&:where(.dark, .dark *));]]
 
-~~~live 186 اقتباس من فقرتين
-<p>صاحب المخبز كتب في إعلان الافتتاح:</p>
-<blockquote>
-  <p>هنخبز كل يوم الصبح، واللي يفضل آخر اليوم بيتوزّع.</p>
-  <p>مفيش عيش بايت عندنا.</p>
-</blockquote>
-<p>وده اللي خلّى الناس تقف طابور من أول يوم.</p>
+- [[@custom-variant]]: أمر Tailwind v4 بيعرّف variant جديد (أو يغيّر واحد موجود). اسمه هنا [[dark]].
+- [[&]]: العنصر اللي عليه الكلاس نفسه.
+- [[:where(.dark, .dark *)]]: «العنصر لو عليه [[.dark]]، أو لو جوه حد عليه [[.dark]]». والمسافة قبل [[*]] = «جوه، في أي عمق».
+- [[:where()]] specificity بتاعها صفر، فالكلاس يفضل بوزن كلاس واحد زي أي utility.
+
+القاعدة اللي طلعت في الـ CSS:
+
+~~~text من الـ CSS الناتج
+.dark\:bg-gray-950:where(.dark,.dark *){background-color:var(--color-gray-950)}
 ~~~
 
-بص على الاقتباس: داخل لجوه **من الناحيتين**، وقبله وبعده مسافة.
+ومن غير السطر ده، [[dark:]] في v4 بيتبع [[prefers-color-scheme]] بتاع الجهاز، والزرار مش هيأثر.
+
+## ٢. [[app/layout.tsx]]
+
+### [[import { ThemeProvider } from "next-themes";]]
+
+package بيدير الثيم: يحط الكلاس، ويحفظ الاختيار، ويقرا إعداد الجهاز.
+
+### [[<html lang="ar" dir="rtl" suppressHydrationWarning>]]
+
+[[lang]] و [[dir]] للعربي. و [[suppressHydrationWarning]] هنتكلم عنه في الخطوة ٥.
+
+### [[<body className="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">]]
+
+لونين لكل حاجة: [[bg-white]] و [[text-gray-900]] في العادي، و [[dark:bg-gray-950]] و [[dark:text-gray-100]] لما [[.dark]] تبقى على html.
+
+### [[<ThemeProvider ...>]]
+
+| الـ prop | يعني |
+|---|---|
+| [[attribute="class"]] | حط الثيم ككلاس على html ([[class="dark"]]). البديل [[data-theme]] |
+| [[defaultTheme="system"]] | لو المستخدم لسه مختارش، امشي على الجهاز |
+| [[enableSystem]] | اسمح بـ [[system]] كاختيار |
+| [[disableTransitionOnChange]] | وقف كل الـ transitions لحظة التبديل، عشان كل لون ميتحركش لوحده |
+
+و [[{children}]] = الصفحة نفسها.
+
+## ٣. [[theme-toggle.tsx]]
+
+الملف لازم يبدأ بـ [["use client"]] لأن الزرار فيه [[onClick]] و hook، ودول بيشتغلوا في المتصفح بس.
+
+- [[const { resolvedTheme, setTheme } = useTheme();]]: [[useTheme]] hook بيرجّع object، والـ [[{ }]] بتطلّع منه اتنين بأساميهم.
+- [[resolvedTheme]]: الثيم الفعلي، [[light]] أو [[dark]]. حتى لو الاختيار [[system]]، ده بيقولك النتيجة.
+- [[setTheme("dark")]]: يغيّر الثيم ويحفظه.
+- [[resolvedTheme === "dark" ? "light" : "dark"]]: الـ [[? :]] اسمه ternary: «لو dark خليه light، وإلا خليه dark».
+
+---
+
+## ٤. اللي حصل في المتصفح
+
+### الجهاز light، أول مرة
 
 ~~~text الناتج
-blockquote:  display=block  margin-top=16px  margin-bottom=16px  margin-right=40px  margin-left=40px
-role=blockquote    (في صفحة عرضها 720: بيبدأ عند 48px وعرضه 624px)
+html class   = "...variable light"
+html style   = "color-scheme: light;"
+localStorage theme = null
+body background    = rgb(255, 255, 255)
 ~~~
 
-- المواصفة بتعرّفه: «قسم منقول من مصدر تاني». يعني الشرط إن الكلام **مش كلامك**.
-- جواه أي محتوى: فقرات، قوايم، عناوين، وحتى [[<blockquote>]] تاني (رد على رد). والكلام ينفع يتحط جواه مباشرة من غير [[<p>]] لو سطر واحد.
-- مبيحطش علامات تنصيص. التدخيل هو العلامة.
-- Chrome ادّاله role اسمه [[blockquote]]، ودليل W3C WAI بيقول إن التقنيات المساعدة بتقدر تبلّغ المستخدم الاقتباس بدأ فين وخلص فين (من الدليل، والنطق مجرّبتوش).
+([[...variable]] ده كلاس الخط من درس next/font، ملوش علاقة.) ومفيش [[theme]] في localStorage لأن المستخدم لسه مختارش، فالثيم جاي من الجهاز.
 
-### مش للتدخيل
-
-~~~live 84 الغلط: كلامك انت جوه blockquote
-<blockquote>
-  <p>الفقرة دي مش منقولة من حد، أنا بس عايزها تدخل لجوه.</p>
-</blockquote>
-~~~
-
-ده أشهر سوء استخدام: حد عايز فقرة تدخل لجوه فيلفّها بـ [[<blockquote>]]. الـ validator مش هيشتكي، بس قارئ الشاشة هيقول «اقتباس» على كلام مش منقول. التدخيل بيتعمل بالـ CSS ([[margin]]).
-
----
-
-## ٢. [[<blockquote cite="...">]]: لينك المصدر اللي مبيظهرش
-
-~~~html
-<blockquote cite="https://example.test/ads/opening">
-  <p>مفيش عيش بايت عندنا.</p>
-</blockquote>
-~~~
-
-الـ attribute [[cite]] قيمته **URL** للمصدر أو لصفحة فيها تفاصيل عن الاقتباس. قسته:
+### ضغطنا الزرار
 
 ~~~text الناتج
-blockquote.cite  →  "https://example.test/ads/opening"
-مع قيمة نسبية cite="/review/12" (والصفحة ملف مفتوح من القرص C):  →  "file:///C:/review/12"
-اللي ظهر على الشاشة من الـ attribute: ولا حاجة
+html class   = "...variable dark"
+html style   = "color-scheme: dark;"
+localStorage theme = "dark"
+body background    = lab(1.90334 0.278696 -5.48866)    ← gray-950
 ~~~
 
-المتصفح بيحوّل القيمة لعنوان كامل، وبس. **مبيعرضهاش ومبيعملش لينك.** والمواصفة بتقول إن العناوين دي «للاستخدام الخاص» أساسًا (سكربت بيجمع إحصائيات مثلًا)، مش للقرّاء.
+[[color-scheme: dark]] بيقول للمتصفح يغمّق حاجاته هو كمان: الـ scrollbar وحقول الفورم.
 
-يعني لو عايز القارئ يشوف المصدر أو يدوس عليه، **اكتبه في الصفحة** بلينك عادي (القسم ٦).
+### refresh
 
-لو كتبت فيه كلام مش URL، زي [[cite="مصدر الكلام"]]، الـ validator بيقول:
+الكلاس كان [[dark]] و [[color-scheme: dark]] **قبل** ما الصفحة تخلص تحميل (قسناه لحظة [[readyState = "interactive"]]، قبل ما React يشتغل). يعني مفيش لحظة بيضا.
 
-~~~text Nu Html Checker
-error: Bad value “مصدر الكلام” for attribute “cite” on element “blockquote”: Illegal character in path segment. Space is not allowed.
-~~~
+### الجهاز dark، أول مرة
 
----
+فتح [[dark]] لوحده من غير ما نضغط حاجة. ضغطنا الزرار: بقى [[light]] واتحفظ، ومع إن الجهاز لسه dark الخلفية بيضا. ده بالظبط شغل [[@custom-variant]]: [[dark:]] بقى بيسمع للكلاس مش للجهاز.
 
-## ٣. [[<q>]]: اقتباس جوه الجملة
+### إزاي مفيش وميض؟
 
-~~~live 84 المتصفح حط علامات التنصيص
-<p>الإعلان بيقول <q>مفيش عيش بايت عندنا</q> وده وعد كبير.</p>
-~~~
-
-في الكود مفيش ولا علامة تنصيص. المتصفح هو اللي حطهم قبل وبعد الـ [[<q>]].
+الـ HTML اللي جاي من السيرفر:
 
 ~~~text الناتج
-q:  display=inline   quotes=auto   role=generic
-q::before  content=open-quote      q::after  content=close-quote
+<html lang="ar" dir="rtl" class="pW5XIG_variable">
+<body class="..."><div hidden=""></div><script>(...)("class","theme","system",null,["light","dark"],null,true,true)</script>
 ~~~
 
-- [[display=inline]]: جوه السطر، مبيكسرش الفقرة. ده الفرق الأساسي عن [[<blockquote>]].
-- العلامات مرسومة بالـ CSS ([[::before]] و [[::after]]) ومش جزء من النص. جرّبت: [[textContent]] و [[innerText]] بتوع الفقرة رجّعوا الجملة **من غير** العلامات، ولما حدّدت الكل ونسخت، العلامات مجتش معايا.
-- بس في شجرة الـ accessibility Chrome حطهم كنص، فقارئ الشاشة بيوصله إن فيه تنصيص.
+السيرفر مش عارف اختيارك، فبعت html **من غير** dark. بس أول حاجة في الـ body [[<script>]] صغير بيتنفّذ قبل ما أي حاجة تترسم: بيقرا [[localStorage.getItem("theme")]]، ولو مفيش أو [[system]] بيسأل [[matchMedia("(prefers-color-scheme: dark)")]]، ويحط الكلاس والـ [[color-scheme]] على html.
 
-### اكتب العلامات مرة واحدة
+## ٥. [[suppressHydrationWarning]]
 
-المواصفة: علامات التنصيص **ممنوع** تتكتب قبل الـ [[<q>]] أو بعده أو جواه، لأن المتصفح هيحطها.
+React لما بيشتغل في المتصفح (hydration) بيقارن الـ HTML اللي جه من السيرفر باللي هو كان هيرسمه. والـ script غيّر html قبله. شلنا الـ prop وشغّلنا [[next dev]] والجهاز dark:
 
-~~~live 84 الغلط: علامات مكتوبة وعلامات من المتصفح
-<p>الإعلان بيقول <q>"مفيش عيش بايت عندنا"</q> وده وعد كبير.</p>
+~~~text الـ Console
+A tree hydrated but some attributes of the server rendered HTML didn't match the client properties.
+  <html
+    lang="ar"
+    dir="rtl"
++   className="cairo_..._variable"
+-   className="cairo_..._variable dark"
+-   style={{color-scheme:"dark"}}
+  >
 ~~~
 
-طلعت علامتين ورا بعض. يا [[<q>]] من غير علامات، يا علامات بإيدك من غير [[<q>]].
-
-### أنهي علامات؟ حسب اللغة
-
-العلامة بتتحدد من [[lang]]. قست نفس الجملة ([[<q>]] جواه [[<q>]]) في صفحات بلغات مختلفة:
-
-| [[lang]] | الاقتباس الخارجي | اللي جواه |
-|---|---|---|
-| [[ar]] | ” … “ | ’ … ‘ |
-| [[en]] أو من غير [[lang]] | “ … ” | ‘ … ’ |
-| [[fr]] | « … » | « … » |
-| [[de]] | „ … “ | ‚ … ‘ |
-
-~~~live 84 اقتباس جواه اقتباس
-<p>الزبون حكى: <q>سألته عن العيش فقال لي <q>لسه طالع من الفرن</q> فاشتريت</q>.</p>
-~~~
-
-المتصفح غيّر العلامة للاقتباس اللي جوه لوحده.
-
-**العربي:** Chrome بيحط للعربي العلامتين ” و “، مش الـ «» اللي متعودين عليها في الكتب العربي. لو عايز «» عندك حلين: تكتبهم بإيدك من غير [[<q>]] (تحت)، أو تغيّر علامات الـ [[<q>]] بخاصية [[quotes]] في الـ CSS (وحدة بعدين).
-
-**لغة مين؟** خاصية [[quotes: auto]] بتاخد لغة **الأب**، مش لغة الـ [[<q>]] نفسه:
-
-~~~live 100 نفس الاقتباس الإنجليزي جوه فقرة عربي وجوه فقرة إنجليزي
-<p>الشعار بتاعهم <q lang="en">Fresh every morning</q>.</p>
-<p lang="en" dir="ltr">Their slogan is <q>Fresh every morning</q>.</p>
-~~~
-
-في السطر الأول الـ [[<q lang="en">]] جوه فقرة عربي، فخد علامات العربي ” “. في التاني الفقرة نفسها [[lang="en"]] فخد “ ”. ده مطابق لوصف MDN لـ [[quotes: auto]]: العلامات المناسبة للغة الموروثة من الأب.
-
-### [[<q>]] اختياري
-
-المواصفة بتقولها صريحة: استخدام [[<q>]] اختياري، والتنصيص بعلامات مكتوبة من غير [[<q>]] «صح بنفس الدرجة».
-
-~~~live 84 من غير q: علامات مكتوبة
-<p>الإعلان بيقول «مفيش عيش بايت عندنا» وده وعد كبير.</p>
-~~~
-
-الفرق إن [[<q>]] بيقول للمتصفح «ده اقتباس» (فتقدر تنسّقه وتحط له [[cite]])، والعلامات المكتوبة نص وخلاص.
-
-### [[<q cite="...">]]
-
-زي [[<blockquote>]] بالظبط: URL للمصدر، ومبيظهرش. قست [[q.cite]] ورجّع العنوان كامل.
-
-### إمتى **لأ**
-
-- كلمة بتسمّيها أو بتتكلم عنها: كلمة «كارديو» جاية من اليوناني. دي مش اقتباس من حد، فالعلامات تتكتب بالإيد.
-- سخرية أو «يعني»: المواصفة بتقول [[<q>]] مش لعلامات التنصيص اللي مش اقتباس.
-- اقتباس من كذا فقرة: ده [[<blockquote>]]. الـ [[<q>]] ممنوع جواه [[<p>]] (الـ validator: [[Element “p” not allowed as child of element “q” in this context.]]).
-
----
-
-## ٤. [[<cite>]]: اسم العمل
-
-~~~live 84 عنوانين
-<p>قريت <cite>دليل المذاكرة الذكية</cite> في يومين، وبعده بدأت <cite>بيت القمر</cite>.</p>
-~~~
-
-~~~text الناتج
-cite:  display=inline   font-style=italic   font-weight=400
-~~~
-
-المتصفح ميّل الاسمين. والمواصفة بتعرّف العنصر: «عنوان عمل»، وبتعدّ: كتاب، مقال، قصيدة، أغنية، فيلم، برنامج، لعبة، لوحة، مسرحية، برنامج كمبيوتر. و MDN بيزوّد: موقع، صفحة، بوست.
-
-### اسم شخص مش عمل
-
-المواصفة: «اسم الشخص مش عنوان عمل»، والعنصر **ممنوع** يتحط على أسماء الناس.
-
-~~~live 66 الغلط: cite على اسم شخص
-<p><q>مفيش عيش بايت عندنا</q>، <cite>الحاج سيد</cite>.</p>
-~~~
-
-~~~live 84 الصح: الاسم نص عادي، و cite على الجريدة
-<p><q>مفيش عيش بايت عندنا</q>، الحاج سيد في <cite>جريدة الحي</cite>.</p>
-~~~
-
-وهو كمان مش للاقتباس نفسه: [[<cite>مفيش عيش بايت</cite>]] غلط. الكلام المنقول [[<q>]]، واسم العمل [[<cite>]].
-
-ولو اسم العمل حواليه علامات (زي ما بنكتب «بيت القمر»)، العلامات **برّه** الـ [[<cite>]]: هي مش جزء من الاسم.
-
-> ملاحظة: MDN بيقول إن العمل ممكن يبقى «تصريح مكتوب أو شفوي» كمان، فبعض الناس بتحط [[<cite>]] على اسم صاحب المقولة. مواصفة WHATWG (المرجع بتاع الكورس) بتمنعه صريح. امشي على المواصفة.
-
----
-
-## ٥. [[cite]] الـ attribute و [[<cite>]] العنصر
-
-نفس الاسم وحاجتين مختلفتين:
-
-| | [[cite="..."]] الـ attribute | [[<cite>]] العنصر |
-|---|---|---|
-| بيتحط فين | على [[<blockquote>]] و [[<q>]] | في أي مكان جوه الكلام |
-| جواه إيه | URL | اسم العمل، نص |
-| القارئ بيشوفه؟ | لأ | أيوه، مايل |
-| بيقول إيه | الكلام ده منقول من العنوان ده | ده عنوان كتاب أو فيلم أو مقال |
-
----
-
-## ٦. صاحب الكلام بيتكتب فين؟
-
-المواصفة: نسبة الاقتباس (مين قاله ومنين) لازم تبقى **برّه** الـ [[<blockquote>]]، لأن اسم القائل مش جزء من الكلام المنقول.
-
-~~~live 100 المصدر في فقرة بعد الاقتباس
-<blockquote cite="https://example.test/ads/opening">
-  <p>مفيش عيش بايت عندنا.</p>
-</blockquote>
-<p>الحاج سيد، من <a href="https://example.test/ads/opening"><cite>إعلان الافتتاح</cite></a></p>
-~~~
-
-هنا المصدر ظاهر للقارئ وبلينك يتداس عليه، ونفس العنوان في [[cite]] للأدوات. والطريقة التانية، اللي بتربط الاقتباس بصاحبه كوحدة واحدة، هي [[<figure>]] و [[<figcaption>]] في الدرس الجاي.
-
-### لو غيّرت في الاقتباس
-
-لو شلت حتة من الكلام أو زوّدت توضيح، المواصفة بتقول اعمله بالطريقة المتعارف عليها في اللغة. وأشهرها الأقواس المربعة:
-
-~~~live 84 حتة محذوفة
-<blockquote>
-  <p>هنخبز كل يوم الصبح [...] مفيش عيش بايت عندنا.</p>
-</blockquote>
-~~~
-
----
+[[+]] = اللي React متوقعه، و [[-]] = اللي لقاه فعلًا. الفرق في [[className]] و [[style]] بتوع html بس، ودول متوقعين. رجّعنا الـ prop: الخطأ اختفى. وهو بيسكّت html نفسه بس، مش اللي جواه.
 
 ## الخلاصة
 
-- [[<blockquote>]] لاقتباس واقف لوحده: block، ومتدخّل 40px من الناحيتين، ومن غير علامات.
-- [[<q>]] لاقتباس جوه الجملة: inline، والمتصفح بيحط العلامات حسب لغة الأب، فمتكتبهاش.
-- [[<cite>]] لاسم العمل بس. مش للشخص ولا للكلام المنقول.
-- [[cite="URL"]] على [[<blockquote>]] و [[<q>]] مبيظهرش. المصدر اللي عايز القارئ يشوفه اكتبه في الصفحة.
-- صاحب الكلام برّه الـ [[<blockquote>]].
-- الاتنين للكلام المنقول فعلًا، مش للتدخيل ولا لأي علامات تنصيص.`,
-          try: R`اعمل ملف [[quotes.html]] فيه: فقرة فيها اسم كتاب جوه [[<cite>]]، وبعدها [[<blockquote>]] فيه جملة من الكتاب، وبعدها فقرة فيها [[<q>]]. افتحه وشوف التلات أشكال. وبعدين: (١) حدّد الجملة اللي فيها [[<q>]] بالماوس وانسخها والصقها في أي محرر: العلامات اتنسخت؟ (٢) غيّر [[lang="ar"]] في أول الصفحة لـ [[lang="en"]] وشوف العلامات.`,
-          sol: R`~~~live 216 quotes.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اقتباسات</title>
-</head>
-<body>
-<h1>من دفتر القراية</h1>
-<p>من كتاب <cite>عادات صغيرة</cite>:</p>
-<blockquote>
-  <p>اللي بتعمله كل يوم أهم من اللي بتعمله مرة في السنة.</p>
-</blockquote>
-<p>وصاحبي لخّصه لي: <q>ابدأ بخمس دقايق</q>.</p>
-</body>
-</html>
-~~~
+| الحتة | شغلتها |
+|---|---|
+| [[@custom-variant dark (...)]] | [[dark:]] يسمع للكلاس مش للجهاز |
+| [[attribute="class"]] | next-themes يحط [[class="dark"]] على html |
+| [[defaultTheme="system"]] + [[enableSystem]] | من غير اختيار: زي الجهاز |
+| الـ script في أول الـ body | يحط الكلاس قبل الرسم، فمفيش وميض |
+| [[localStorage.theme]] | الاختيار المحفوظ |
+| [[suppressHydrationWarning]] | يسكّت فرق html المتوقع |
+| [[resolvedTheme]] | الثيم الفعلي للزرار |`,
+          lines: [
+            R`[[dark:]] يشتغل لما [[.dark]] تبقى على العنصر أو أي جد ليه، بدل ما يتبع النظام.`,
+            R`بنستورد [[ThemeProvider]] من next-themes: المكوّن اللي بيحط الكلاس على html ويحفظ الاختيار ويقرا إعداد الجهاز.`,
+            R`[[suppressHydrationWarning]] لأن next-themes هيحط كلاس على html قبل React، فالسيرفر والمتصفح هيختلفوا في الحتة دي بس.`,
+            R`لونين لكل حاجة: أبيض وكلام غامق في العادي، و [[dark:bg-gray-950]] و [[dark:text-gray-100]] لما [[.dark]] تبقى فوق.`,
+            R`[[attribute="class"]] يحط [[.dark]]، والافتراضي النظام، و [[disableTransitionOnChange]] يمنع كل الـ transitions تشتغل مع بعض وقت التبديل.`,
+            R`الصفحة كلها جوه الـ provider، فأي مكوّن تحت يقدر ينادي [[useTheme()]] ويعرف الثيم.`,
+            R`قفلة الـ provider: أي حاجة برّاه متقدرش تستخدم [[useTheme]] وهترجع قيم فاضية.`,
+            R`قفلة الـ body اللي عليه ألوان الوضعين.`,
+            R`قفلة الـ html اللي عليه الكلاس اللي بيتغيّر.`,
+            R`[[resolvedTheme]] = الثيم الفعلي (لو system بيقولك light ولا dark).`,
+            R`الزرار بيبص على الثيم الفعلي ويحط عكسه بـ [[setTheme]]، و next-themes بيحفظه في localStorage.`
+          ],
+          sol: R`بعد ما تختار dark وتعمل refresh: الصفحة بتفتح غامقة من أول frame، من غير ولا لمحة بيضا. لو فتحت Elements هتلاقي على [[<html>]] ‏[[class="dark"]] ومعاها [[style="color-scheme: dark;"]]، ودول اتحطوا بـ script صغير next-themes بيحطه قبل ما الصفحة تترسم. وفي Application › Local Storage هتلاقي مفتاح [[theme]] وقيمته [[dark]] (أو [[light]]، ولو لسه مختارتش هتلاقيه مش موجود أو [[system]]).
 
-- اسم الكتاب مايل ([[<cite>]])، والاقتباس الطويل متدخّل من الناحيتين ([[<blockquote>]])، والقصير جوه الجملة وحواليه علامات ([[<q>]]).
-- (١) اللي اتلصق: «وصاحبي لخّصه لي: ابدأ بخمس دقايق.» **من غير علامات**. العلامات مرسومة بالـ CSS ومش جزء من النص.
-- (٢) مع [[lang="en"]] العلامات بقت “ ” بدل ” “.
+لما تمسح [[suppressHydrationWarning]] وتعمل refresh وانت على dark: في الـ Console خطأ hydration من React بيقول إن attributes الـ HTML اللي جاي من السيرفر مش زي اللي على العميل، وهتلاقي فيه [[class]] و [[style]] بتوع الـ html. ده لأن السيرفر بعت html من غير class، والـ script غيّرها قبل React. الـ prop ده بيسكّت التحذير للعنصر ده بس، مش لأولاده.
 
-~~~text الناتج
-blockquote=1  q=1  cite=1
-cite: font-style=italic    blockquote: margin-right=40px margin-left=40px    q: display=inline
-العلامات مع lang="ar":  ” (U+201D) قبل   و “ (U+201C) بعد
-العلامات مع lang="en":  “ (U+201C) قبل   و ” (U+201D) بعد
-النص المنسوخ من الفقرة الأخيرة:  وصاحبي لخّصه لي: ابدأ بخمس دقايق.
-~~~`,
-          deep: {
-            why: R`الكلام المنقول غير كلامك: القارئ لازم يعرف ده رأي مين، ومحرك البحث لازم يعرف إن النص ده مش أصلي عندك، وقارئ الشاشة لازم يقول فين الاقتباس بدأ وخلص. من غير العناصر دي الاقتباس بيبقى فقرة مايلة أو متدخّلة بالـ CSS، يعني شكل من غير معنى.`,
-            how: R`[[<blockquote>]] عنصر block ليه margin افتراضي 40px يمين وشمال، وبياخد role اسمه [[blockquote]].
-
-[[<q>]] عنصر inline، والمتصفح بيزوّد له [[::before]] و [[::after]] قيمتهم [[open-quote]] و [[close-quote]]. والعلامة الفعلية بتيجي من خاصية [[quotes]] وقيمتها الافتراضية [[auto]]: المتصفح بيختار العلامات المناسبة للغة الأب، وبيبدّل للعلامات الداخلية لو الـ [[<q>]] جوه [[<q>]].
-
-[[<cite>]] عنصر inline تنسيقه الافتراضي [[font-style: italic]] وملوش role خاص.`,
-            when: R`[[<blockquote>]]: مقولة في مقال، رأي عميل، بند من لايحة، رسالة بترد عليها. [[<q>]]: جملة قصيرة جوه كلامك. [[<cite>]]: أي عنوان كتاب أو فيلم أو مقال أو موقع بتذكره، سواء اقتبست منه ولا لأ. ومتستخدمش التلاتة لكلامك انت، ولا لحوار بين شخصيات بتألّفه في نفس الصفحة.`,
-            mistakes: R`[[<blockquote>]] عشان التدخيل. علامات تنصيص مكتوبة جوه [[<q>]] فتطلع مرتين. [[<cite>]] على اسم شخص. [[<cite>]] على الكلام المنقول نفسه. تفتكر إن [[cite="..."]] هيظهر للقارئ أو هيبقى لينك. تكتب اسم القائل جوه الـ [[<blockquote>]]. تحط [[<p>]] جوه [[<q>]]. تستخدم [[<q>]] لكلمة بتسمّيها مش بتقتبسها.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**صنّف:** لكل جملة قول [[<q>]] ولا [[<blockquote>]] ولا [[<cite>]] ولا ولا حاجة: (١) المدرب قال: الإحماء نص التمرين. (٢) بندين من لايحة الجيم منقولين بالنص. (٣) اسم فيلم اتفرجت عليه. (٤) كلمة «كارديو» وانت بتشرح أصلها. (٥) اسم الست اللي كتبت اللايحة.`, done: R`إجابتك: (١) [[<q>]]. (٢) [[<blockquote>]]. (٣) [[<cite>]]. (٤) ولا حاجة، علامات مكتوبة. (٥) ولا حاجة، نص عادي.`, sol: R`~~~live 306 الخمسة
-<p>المدرب قال <q>الإحماء نص التمرين</q>.</p>
-<p>من لايحة الجيم:</p>
-<blockquote>
-  <p>ممنوع استخدام الأجهزة من غير فوطة.</p>
-  <p>الاشتراك شخصي ومينفعش يتنقل لحد تاني.</p>
-</blockquote>
-<p>اتفرجت على فيلم <cite>الطريق الطويل</cite> امبارح.</p>
-<p>كلمة «كارديو» جاية من كلمة يوناني معناها القلب.</p>
-<p>سلمى فؤاد هي اللي كتبت اللايحة.</p>
-~~~
-
-| الجملة | العنصر | ليه |
-|---|---|---|
-| كلام المدرب | [[<q>]] | منقول، وقصير، وجوه الجملة |
-| بندين من اللايحة | [[<blockquote>]] | منقول، وفقرتين، وواقف لوحده |
-| اسم الفيلم | [[<cite>]] | عنوان عمل |
-| كلمة «كارديو» | ولا حاجة | مش اقتباس من حد، انت بتسمّي الكلمة. العلامات بالإيد |
-| اسم الكاتبة | ولا حاجة | اسم شخص مش عنوان عمل |
-
-**الغلطة الشائعة:** أي حاجة حواليها علامات تنصيص تتحط [[<q>]]. السؤال الصح: الكلام ده قاله أو كتبه حد تاني؟
-
-~~~text الناتج
-q=1  blockquote=1  cite=1  p=7
-شكل كل واحد:  q حواليه ” “ من المتصفح   blockquote متدخّل 40px من الناحيتين   cite مايل
-«كارديو» حواليها «» مكتوبة في النص
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «آراء القرّاء» فيها ٤ غلطات: جملة الترحيب (كلام الموقع نفسه) جوه [[<blockquote>]]، ورأي القارئة مكتوب [[<q>"..."</q>]] بعلامات، واسمها جوه [[<cite>]]، واسم الكتاب جوه [[<i>]]. الكود في أول الحل.`, done: R`مفيش [[<blockquote>]] في الصفحة، والرأي حواليه علامات تنصيص مرة واحدة بس، و [[<cite>]] واحد بس وجواه اسم الكتاب، واسم القارئة نص عادي.`, work: { h: 134, solAt: 1, start: R`<blockquote>
-  <p>أهلًا بيكم في صفحة آراء القرّاء.</p>
-</blockquote>
-<p><q>"الكتاب ده خلّاني أحب القراية"</q>، <cite>منى سامي</cite>.</p>
-<p>والكتاب اسمه <i>بيت القمر</i>.</p>`, checks: [
-              { say: R`مفيش [[<blockquote>]] في الصفحة (الترحيب كلام الموقع نفسه)`, q: "blockquote", n: 0 },
-              { say: R`رأي القارئة جوه [[<q>]]`, q: "q", has: "الكتاب ده", n: 1 },
-              { say: R`من غير علامات تنصيص مكتوبة بإيدك جوه [[<q>]]`, q: "q", has: "\"", n: 0 },
-              { say: R`اسم الكتاب بس جوه [[<cite>]]`, q: "cite", has: "بيت القمر", n: 1 },
-              { say: R`اسم القارئة نص عادي من غير [[<cite>]]`, q: "cite", has: "منى", n: 0 },
-              { say: R`مفيش [[<i>]] في الصفحة`, q: "i", n: 0 },
-            ] }, sol: R`قبل:
-
-~~~live 134 قبل
-<blockquote>
-  <p>أهلًا بيكم في صفحة آراء القرّاء.</p>
-</blockquote>
-<p><q>"الكتاب ده خلّاني أحب القراية"</q>، <cite>منى سامي</cite>.</p>
-<p>والكتاب اسمه <i>بيت القمر</i>.</p>
-~~~
-
-بعد:
-
-~~~live 134 بعد
-<p>أهلًا بيكم في صفحة آراء القرّاء.</p>
-<p><q>الكتاب ده خلّاني أحب القراية</q>، منى سامي.</p>
-<p>والكتاب اسمه <cite>بيت القمر</cite>.</p>
-~~~
-
-**الأربع تصليحات:**
-
-- الترحيب كلام الموقع، فبقى [[<p>]]. لو كان المطلوب إنه يدخل لجوه، ده CSS.
-- العلامات المكتوبة اتشالت من جوه الـ [[<q>]]. في «قبل» كانت طالعة ”"..."“.
-- «منى سامي» اسم شخص، فخرجت من الـ [[<cite>]].
-- «بيت القمر» عنوان عمل، فبقى [[<cite>]] بدل [[<i>]]. الشكل واحد (مايل) والمعنى اتغيّر: [[<i>]] بيقول «كلام بنبرة تانية»، و [[<cite>]] بيقول «عنوان عمل» ([[<i>]] اتشرح في وحدة «معنى الكلام جوه الفقرة»).
-
-**الغلطة الشائعة:** الـ validator مش هيمسك ولا واحدة من الأربعة. كلها كود سليم ومعنى غلط. لازم تقرا.
-
-~~~text الناتج
-قبل:  blockquote=1  q=1  cite=1 (جواه اسم شخص)   النص حوالين الرأي:  ” " … " “
-      Nu Html Checker: صفر errors (ومع كده ٤ غلطات في المعنى)
-بعد:  blockquote=0  q=1  cite=1 (جواه «بيت القمر»)   النص حوالين الرأي:  ” … “
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** مراجعة قصيرة لرواية متخيلة اسمها «ظل الجبل»: [[<h1>]] فيه اسمها، وفقرة تعريف، واقتباس طويل منها ليه [[cite]] بعنوان الفصل، وجملة قصيرة منها جوه كلامك بـ [[<q>]]، وفي الآخر لينك ظاهر للمصدر. استخدم [[example.test]] للعناوين.`, done: R`الصفحة فيها [[<blockquote>]] واحد و [[<q>]] واحد والاتنين عليهم [[cite]] بـ URL سليم، واسم الرواية جوه [[<cite>]] في كل مرة اتذكر، واسم الكاتب نص عادي، وفيه لينك مصدر القارئ يشوفه، والـ validator صفر errors.`, work: { h: 320, start: R`<h1>مراجعة: ظل الجبل</h1>
-خلّصت ظل الجبل لكريم عادل في تلات أيام. الرواية عن قرية بتستنى القطر اللي مبيجيش.
-أحلى حتة فيها وصف الجبل في أول فصل:
-الجبل مكانش بيتحرك، بس كل يوم الصبح كان ضله بيوصل لبيت جديد.
-والبطلة بتكرر جملة واحدة طول الرواية: القطر جاي، ومحدش بيصدقها.
-المصدر: صفحة الرواية عند الناشر.`, checks: [
-              { say: R`الاقتباس الطويل [[<blockquote>]] عليه [[cite]] بعنوان في [[example.test]]`, q: 'blockquote[cite*="example.test"]', n: 1 },
-              { say: R`الجملة القصيرة [[<q>]] عليها [[cite]] كمان`, q: 'q[cite*="example.test"]', n: 1 },
-              { say: R`اسم الرواية في العنوان جوه [[<cite>]]`, q: "h1 cite", has: "ظل الجبل", n: 1 },
-              { say: R`اسم الرواية جوه [[<cite>]] كل مرة اتذكر (مرتين على الأقل)`, q: "cite", has: "ظل الجبل", min: 2 },
-              { say: R`اسم الكاتب نص عادي من غير [[<cite>]]`, q: "cite", has: "كريم", n: 0 },
-              { say: R`لينك ظاهر للمصدر [[<a>]]`, q: 'a[href*="example.test"]', n: 1 },
-            ] }, sol: R`~~~live 320 مراجعة: ظل الجبل
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مراجعة: ظل الجبل</title>
-</head>
-<body>
-<main>
-  <article>
-    <h1>مراجعة: <cite>ظل الجبل</cite></h1>
-    <p>خلّصت <cite>ظل الجبل</cite> لكريم عادل في تلات أيام. الرواية عن قرية بتستنى القطر اللي مبيجيش.</p>
-    <p>أحلى حتة فيها وصف الجبل في أول فصل:</p>
-    <blockquote cite="https://example.test/books/mountain-shadow#ch1">
-      <p>الجبل مكانش بيتحرك، بس كل يوم الصبح كان ضله بيوصل لبيت جديد.</p>
-    </blockquote>
-    <p>والبطلة بتكرر جملة واحدة طول الرواية: <q cite="https://example.test/books/mountain-shadow#ch4">القطر جاي</q>، ومحدش بيصدقها.</p>
-    <p>المصدر: <a href="https://example.test/books/mountain-shadow">صفحة الرواية عند الناشر</a>.</p>
-  </article>
-</main>
-</body>
-</html>
-~~~
-
-**ليه كده:**
-
-- «ظل الجبل» جوه [[<cite>]] في العنوان وفي الفقرة: عنوان عمل. و «كريم عادل» نص عادي: اسم شخص.
-- وصف الجبل جملة كاملة واقفة لوحدها، فهي [[<blockquote>]]. و «القطر جاي» كلمتين جوه جملتي، فهي [[<q>]].
-- الـ [[cite]] على الاتنين فيه عنوان الفصل ([[#ch1]] و [[#ch4]]). ده للأدوات.
-- آخر فقرة فيها اللينك اللي القارئ بيشوفه. من غيرها القارئ ميعرفش المصدر، لأن [[cite]] مبيظهرش.
-- بعد الـ [[<q>]] فاصلة مكتوبة برّه العنصر: هي من جملتي مش من الاقتباس.
-
-**الغلطة الشائعة:** تكتفي بـ [[cite="..."]] وتقول «المصدر موجود». موجود في الكود بس.
-
-~~~text الناتج
-blockquote=1  q=1  cite=2  a=1
-blockquote.cite = https://example.test/books/mountain-shadow#ch1
-q.cite          = https://example.test/books/mountain-shadow#ch4
-Nu Html Checker: صفر errors
-على عرض 360: مفيش scroll أفقي
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة [[lang="en"]] فيها تلات فقرات، وفي كل واحدة [[<q>]] جواه [[<q>]]: الأولى إنجليزي، والتانية عليها [[lang="ar"]]، والتالتة عليها [[lang="fr"]]. اكتب العلامات الأربعة اللي هتظهر في كل فقرة (فتحة الخارجي، فتحة الداخلي، قفلة الداخلي، قفلة الخارجي)، وبعدين شغّلها.`, done: R`توقّعك مطابق: الإنجليزي “ ‘ ’ ”، والعربي ” ’ ‘ “، والفرنساوي « « » ». وعرفت ليه الفقرة العربي خدت علامات العربي مع إن الصفحة إنجليزي.`, sol: R`~~~live 152 تلات لغات
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quotes</title>
-</head>
-<body>
-<p>She said <q>he told me <q>wait here</q> and left</q>.</p>
-<p lang="ar" dir="rtl">قالت <q>قال لي <q>استني هنا</q> ومشي</q>.</p>
-<p lang="fr">Elle a dit <q>il m'a dit <q>attends ici</q> et il est parti</q>.</p>
-</body>
-</html>
-~~~
-
-| الفقرة | فتحة الخارجي | فتحة الداخلي | قفلة الداخلي | قفلة الخارجي |
-|---|---|---|---|---|
-| إنجليزي | “ | ‘ | ’ | ” |
-| عربي | ” | ’ | ‘ | “ |
-| فرنساوي | « | « | » | » |
-
-**ليه:** [[quotes: auto]] بياخد لغة أب الـ [[<q>]]. الأب هنا هو الـ [[<p>]]، والـ [[lang]] اللي عليه بيغطّي على لغة الصفحة. فكل فقرة خدت علامات لغتها.
-
-**الغلطة الشائعة:** تحط [[lang]] على الـ [[<q>]] نفسه وتستنى العلامات تتغيّر. مش هتتغيّر، لأن اللي بيتحسب لغة الأب.
-
-~~~text الناتج
-من شجرة الـ accessibility في Chrome (العلامات بتطلع كنص):
-en:  “ U+201C   ‘ U+2018   ’ U+2019   ” U+201D
-ar:  ” U+201D   ’ U+2019   ‘ U+2018   “ U+201C
-fr:  « U+00AB   « U+00AB   » U+00BB   » U+00BB
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** صفحة موضوع في منتدى متخيل: ٣ مشاركات، كل واحدة [[<article>]] ليها [[id]]. المشاركة التانية بتقتبس جملة من الأولى وبترد عليها. والتالتة بتقتبس التانية **بما فيها اقتباسها** وبترد. كل اقتباس عليه [[cite]] بيشاور على المشاركة الأصلية.`, done: R`فيه ٣ [[<blockquote>]]، واحد منهم جوه واحد تاني، وكل [[cite]] قيمته [[#post-1]] أو [[#post-2]] وليه [[id]] مطابق في الصفحة، وكلام صاحب المشاركة نفسه برّه أي [[<blockquote>]]، والـ validator صفر errors.`, work: { h: 480, start: R`سؤال عن الخميرة
-هدى
-العجينة مبتخمرش معايا في الشتا. أعمل إيه؟
-كريم
-حطيها جنب الفرن وهو دافي، وغطّيها بفوطة.
-هدى
-جرّبتها وخمرت في ساعة. شكرًا!`, checks: [
-              { say: R`٣ مشاركات كل واحدة [[<article>]]`, q: "article", n: 3 },
-              { say: R`كل [[<article>]] ليه [[id]]`, q: "article[id]", n: 3 },
-              { say: R`فيه ٣ [[<blockquote>]]`, q: "blockquote", n: 3 },
-              { say: R`واحد منهم جوه [[<blockquote>]] تاني (اقتباس جوه اقتباس)`, q: "blockquote blockquote", n: 1 },
-              { say: R`اقتباسين بيشاوروا على المشاركة الأولى [[cite="#post-1"]]`, q: 'blockquote[cite="#post-1"]', n: 2 },
-              { say: R`واقتباس بيشاور على المشاركة التانية [[cite="#post-2"]]`, q: 'blockquote[cite="#post-2"]', n: 1 },
-            ] }, sol: R`~~~live 480 سؤال عن الخميرة
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>سؤال عن الخميرة | منتدى الخبّازين</title>
-</head>
-<body>
-<main>
-  <h1>سؤال عن الخميرة</h1>
-  <article id="post-1">
-    <h2>هدى</h2>
-    <p>العجينة مبتخمرش معايا في الشتا. أعمل إيه؟</p>
-  </article>
-  <article id="post-2">
-    <h2>كريم</h2>
-    <blockquote cite="#post-1">
-      <p>العجينة مبتخمرش معايا في الشتا.</p>
-    </blockquote>
-    <p>حطيها جنب الفرن وهو دافي، وغطّيها بفوطة.</p>
-  </article>
-  <article id="post-3">
-    <h2>هدى</h2>
-    <blockquote cite="#post-2">
-      <blockquote cite="#post-1">
-        <p>العجينة مبتخمرش معايا في الشتا.</p>
-      </blockquote>
-      <p>حطيها جنب الفرن وهو دافي، وغطّيها بفوطة.</p>
-    </blockquote>
-    <p>جرّبتها وخمرت في ساعة. شكرًا!</p>
-  </article>
-</main>
-</body>
-</html>
-~~~
-
-**الهيكل:**
-
-- كل مشاركة [[<article>]]: حاجة كاملة لوحدها (درس «semantic HTML»).
-- في المشاركة التانية: الـ [[<blockquote>]] فيه كلام هدى، والفقرة اللي بعده كلام كريم. الحد بين كلامين واضح.
-- في التالتة: [[<blockquote>]] خارجي فيه مشاركة كريم كلها، وجواه [[<blockquote>]] تاني فيه الجملة اللي كريم كان مقتبسها. كل مستوى تدخيل = حد أبعد في السلسلة. وده نفس مثال المواصفة للمنتديات.
-- [[cite="#post-1"]]: الـ [[cite]] بياخد أي URL، و [[#post-1]] عنوان جوه نفس الصفحة.
-
-**الغلطة الشائعة:** تكتب «هدى كتبت:» جوه الـ [[<blockquote>]]. اسم القائل مش من الكلام المنقول. لو عايز تكتبه، حطه في فقرة قبل الاقتباس.
-
-~~~text الناتج
-article=3  blockquote=3  (واحد منهم جوه واحد)
-شجرة الـ accessibility للمشاركة التالتة:
-article
-  heading "هدى" level=2
-  blockquote
-    blockquote
-      paragraph  "العجينة مبتخمرش معايا في الشتا."
-    paragraph  "حطيها جنب الفرن وهو دافي، وغطّيها بفوطة."
-  paragraph  "جرّبتها وخمرت في ساعة. شكرًا!"
-التدخيل: الاقتباس الخارجي 40px من كل ناحية، والداخلي 80px
-Nu Html Checker: صفر errors
-~~~` },
-          ]
+لو لسه فيه وميض أبيض: اتأكد إن [[@custom-variant dark]] مكتوب (من غيره [[dark:]] بيشتغل على ثيم الجهاز مش على الكلاس)، وإن [[attribute="class"]] على الـ provider. ولو الزرار مش بيعمل حاجة أول مرة، غالبًا بتقرا [[theme]] (اللي ممكن يبقى [[system]]) بدل [[resolvedTheme]].`
         },
         {
-          cmd: "figure و figcaption",
-          title: "شكل وتحته وصفه: صورة أو كود أو مقولة بتتشاور عليها",
-          pre: ["css/blockquote و q و cite", { to: "css/img", why: R`عشان [[alt]] والفرق بينه وبين الوصف الظاهر` }],
+          cmd: "logical properties",
           ref: [
-            { t: "MDN: <figure>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/figure" },
-            { t: "MDN: <figcaption>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/figcaption" },
-            { t: "WHATWG: the figure element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-figure-element" },
-            { t: "WHATWG: the figcaption element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-figcaption-element" },
-            { t: "WHATWG: the blockquote element (attribution)", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-blockquote-element" }
+            { t: "MDN: Basic concepts of logical properties and values", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Logical_properties_and_values/Basic_concepts" },
+            { t: "Tailwind CSS: Logical properties and RTL", url: "https://tailwindcss.com/docs/hover-focus-and-other-states#rtl-support" },
+            { t: "MDN: dir attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/dir" },
+            { t: "MDN: padding-left", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-left" },
+            { t: "MDN: padding-right", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-right" },
           ],
-          desc: R`[[<figure>]] بيلف حاجة كاملة لوحدها الكلام بيشاور عليها: صورة، رسم بياني، كود، جدول، مقولة. و [[<figcaption>]] جواه هو الوصف أو العنوان بتاعها. الاتنين مع بعض وحدة واحدة: «شكل ١» ووصفه.
+          title: "مكون واحد يشتغل عربي وإنجليزي من غير rtl: في كل حتة",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]: [[.a { margin-inline-start: 2rem }]] و [[.b { translate: 20px 0 }]] و [[.c { background: linear-gradient(to right, red, blue) }]] و [[.d { border-start-start-radius: 1rem }]]. كل واحدة هتأثر على أنهي ناحية؟ اكتب، وبعدين اتأكد من Computed في DevTools.`, done: R`[[.a]] يمين، و [[.b]] يمين برضه (translate مش logical)، و [[.c]] الأحمر لسه شمال (الـ gradient مش بيتقلب)، و [[.d]] الركن اللي فوق على اليمين: Computed بيقول [[border-top-right-radius: 16px]] و [[border-top-left-radius: 0px]].`, sol: R`~~~live 120 120 test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>logical</title>
+<style>
+  body { margin: 0; width: 400px; }
+  .a { margin-inline-start: 2rem; }
+  .b { translate: 20px 0; }
+  .c { background: linear-gradient(to right, red, blue); height: 2rem; }
+  .d { border-start-start-radius: 1rem; }
+</style>
+</head>
+<body>
+<div class="a">a</div>
+<div class="b">b</div>
+<div class="c">c</div>
+<div class="d">d</div>
+</body>
+</html>
+~~~
 
-وهو الطريقة اللي المواصفة بتربط بيها الاقتباس بصاحبه: [[<blockquote>]] جوه [[<figure>]]، واسم القائل في [[<figcaption>]].`,
-          example: R`<figure>
-  <blockquote>
-    <p>أول مرة أفهم الـ HTML من غير ما أحفظ.</p>
-  </blockquote>
-  <figcaption>سلمى فؤاد، طالبة في <cite>كورس الويب من الصفر</cite></figcaption>
-</figure>`,
+**القاعدة:** الـ logical بتتقلب مع [[dir]]، والفيزيائية لأ.
+
+- [[.a]]: [[margin-inline-start]] هو بداية السطر. في rtl البداية يمين.
+- [[.b]]: [[translate]] إحداثيات شاشة، فالموجب يمين في أي لغة. يعني في rtl مش بيتقلب.
+- [[.c]]: [[to right]] اتجاه فيزيائي، فالأحمر شمال في أي لغة.
+- [[.d]]: [[border-start-start-radius]] يعني بداية البلوك مع بداية السطر، وده الركن اللي فوق على اليمين في rtl.
+
+**الغلطة الشائعة:** تفتكر إن rtl بيقلب كل حاجة. هو بيقلب ترتيب المحتوى والخصائص الـ logical. الـ transform والـ gradient والأيقونات لأ.
+
+~~~text الناتج
+.a   margin-right: 32px ، margin-left: 0px
+.b   اتحرك يمين 20px (زي ltr بالظبط)
+.c   linear-gradient(to right, rgb(255, 0, 0), rgb(0, 0, 255))
+.d   border-top-right-radius: 16px ، border-top-left-radius: 0px
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** كارت تعليق مكتوب بـ [[padding-left]] و [[border-left]] و [[text-align: left]] و [[float: right]] لزرار الرد، و badge بـ [[position: absolute; right: 8px]]. حوّل كل خاصية لـ logical (أو Tailwind: [[ps-*]] و [[border-s]] و [[text-start]] و [[inset-e-*]]) واقلب [[dir]] على html.`, done: R`مفيش ولا [[left]] ولا [[right]] في الـ CSS، ولقطة الشاشة في RTL مراية للقطة LTR بالظبط (البادج في الركن التاني، والخط على الناحية التانية)، من غير ولا سطر [[[dir=rtl]]].`, sol: R`~~~live 200 200 comment.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تعليق</title>
+<style>
+  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; }
+  .comment { position: relative; max-width: 24rem; padding-inline-start: 1rem; border-inline-start: 4px solid #0f766e; text-align: start; }
+  .comment h2 { margin: 0; font-size: 1rem; }
+  .reply { float: inline-end; }
+  .badge { position: absolute; inset-block-start: 0; inset-inline-end: 8px; padding-inline: .5rem; background: #0f766e; color: #fff; border-radius: 1rem; font-size: .75rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>التعليقات</h1>
+  <article class="comment">
+    <span class="badge">جديد</span>
+    <h2>سارة</h2>
+    <p>الدرس ده حلو جدًا.</p>
+    <button class="reply" type="button">رد</button>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+| قبل | بعد |
+|---|---|
+| [[padding-left]] | [[padding-inline-start]] |
+| [[border-left]] | [[border-inline-start]] |
+| [[text-align: left]] | [[text-align: start]] |
+| [[float: right]] | [[float: inline-end]] |
+| [[right: 8px]] | [[inset-inline-end: 8px]] |
+| [[top: 0]] | [[inset-block-start: 0]] |
+
+وفي Tailwind: [[ps-4]] و [[border-s-4]] و [[text-start]] و [[float-end]] و [[inset-e-2]].
+
+**ليه:** كل خاصية بقت بتوصف علاقتها بالنص مش بالشاشة، فمفيش حاجة تتكتب مرتين.
+
+**الغلطة الشائعة:** تحوّل [[left]] لـ [[inset-inline-end]] بالغلط. [[left]] في ltr بداية، فبيبقى [[start]]. فكّر في الاتجاه الأصلي للكود.
+
+~~~text الناتج
+عدد كلمة left أو right في الصفحة: 0
+
+         الحد               البادج عن الكارت      زرار الرد
+rtl      يمين 4px           8px من الشمال         على الشمال
+ltr      شمال 4px           8px من اليمين         على اليمين
+
+المسافات متطابقة مراية: 280.95 و 8 ، و 300.98 و 0.
+axe صفر في الاتجاهين.
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقع فيه [[[dir=rtl] .space-x-4 > :not(:last-child) { margin-right: 0; margin-left: 1rem }]] و [[html[dir=rtl] .text-left { text-align: right !important }]] عشان يعكس Tailwind بإيده. امسح الـ overrides دي كلها واستخدم اللي بيتقلب لوحده.`, done: R`[[grep -c "dir=rtl"]] على ملف الـ CSS بيطلع صفر، وعدد [[!important]] نقص، و [[space-x-4]] بقت [[gap-4]] و [[text-left]] بقت [[text-start]]، والصفحة في اللغتين زي ما كانت.`, sol: R`امسح الـ overrides كلها، وخلي الـ CSS كده:
+
+~~~css style.css
+.row { display: flex; gap: 1rem; }
+.title { text-align: start; }
+~~~
+
+~~~html قبل وبعد
+<!-- قبل -->
+<div class="flex space-x-4">…</div>
+<h1 class="text-left">…</h1>
+
+<!-- بعد -->
+<div class="flex gap-4">…</div>
+<h1 class="text-start">…</h1>
+~~~
+
+~~~view 210 210 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+.row { display: flex; gap: 1rem; }
+.title { text-align: start; }
+</style>
+<!-- قبل -->
+<div class="flex space-x-4">…</div>
+<h1 class="text-left">…</h1>
+
+<!-- بعد -->
+<div class="flex gap-4">…</div>
+<h1 class="text-start">…</h1>
+</body></html>
+~~~
+
+~~~bash
+grep -c "dir=rtl" style.css
+grep -c "!important" style.css
+~~~
+
+**ليه:** [[gap]] مسافة بين العناصر، مش margin على ناحية، فملوش اتجاه أصلًا. و [[text-start]] بيتبع [[dir]].
+
+كل override من دول كان بيصلّح نتيجة، والـ logical بيشيل السبب. و [[!important]] كان لازم بس عشان يكسب الكلاس الأصلي.
+
+**الغلطة الشائعة:** تسيب [[space-x-4]] وتضيف [[rtl:space-x-reverse]]. دي كانت حلول قديمة، و [[gap]] أبسط في flex و grid.
+
+~~~text الناتج
+grep -c "dir=rtl" style.css     0
+grep -c "!important" style.css  0
+
+(CSS الملف ده سطرين، والشكل في اللغتين بيطلع نفس اللي اتقاس في التمرين اللي قبله.)
+~~~` },
+            { lvl: 'تطبيق', t: R`**مسألة:** في صفحة عربي اكتب الجملتين دول: «المستخدم Sara_99! كسب» و «كلمني على +20 100 000 0000». شوف الـ ! بتظهر فين والرقم بيتقري إزاي، وصلّحهم بـ [[<bdi>]] للاسم و [[dir="ltr"]] للرقم.`, done: R`قبل التصليح الـ ! ظهرت شمال الاسم «!Sara_99» والرقم اتلخبط («100» بقت شمال «+20»)، وبعده الاسم بقى «Sara_99!» والرقم بالترتيب. اتأكدنا بمكان كل حرف من [[Range.getBoundingClientRect()]] في Chrome 156: الـ ! كانت شمال الـ S وبقت يمين الـ 9.`, sol: R`~~~live 300 300 bidi.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>اتجاه مختلط</title>
+<style>body { font: 1.25rem system-ui; }</style>
+</head>
+<body>
+<main>
+  <h1>اتجاه مختلط</h1>
+  <p id="a">المستخدم Sara_99! كسب</p>
+  <p id="b">المستخدم <bdi>Sara_99!</bdi> كسب</p>
+  <p id="c">كلمني على +20 100 000 0000</p>
+  <p id="d">كلمني على <span dir="ltr">+20 100 000 0000</span></p>
+</main>
+</body>
+</html>
+~~~
+
+**بيحصل إيه:** خوارزمية الـ bidi بتقسم السطر لحتت حسب اتجاه كل حرف. الحروف اللاتيني اتجاهها قوي (LTR)، والعربي قوي (RTL)، بس الـ [[!]] والمسافة والـ [[+]] محايدين، فبياخدوا اتجاه اللي حواليهم.
+
+- [[Sara_99!]]: الـ [[!]] جت بين لاتيني وعربي، فاتحسبت على العربي واتنقلت لشمال الاسم.
+- [[<bdi>]] بيعزل الاسم، فالـ [[!]] تفضل جزء منه. استخدمه مع أي كلام جاي من المستخدم، لأنك مش عارف لغته.
+- التليفون: الأرقام «ضعيفة»، والمسافات بينها محايدة، فالمجموعات اتعكس ترتيبها. [[dir="ltr"]] بيثبّت الاتجاه.
+
+**الغلطة الشائعة:** تصلّحها بـ [[text-align]]. ده بيحرّك السطر، مش ترتيب الحروف جواه.
+
+~~~text الناتج
+مكان الحروف (left بالـ px من Range.getBoundingClientRect):
+
+                  !          S          آخر 9
+قبل               1112.9     1118.6     1175.6    (الـ ! شمال الـ S)
+بعد bdi           1180.7     1112.9     1169.9    (الـ ! يمين الـ 9)
+
+                  +          أول 1      آخر 0
+قبل               1160.5     1101.1     1047      (+20 يمين و 100 شماله)
+بعد dir="ltr"     1014.7     1055.4     1163.4    (بالترتيب من الشمال)
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** drawer بيطلع من ناحية النهاية: [[inset-inline-end: 0]]، ومقفول بـ [[translate]] برا الشاشة. الـ translate مش logical، فاستخدم متغير [[--dir]] (‏1 في LTR و -1 في RTL بـ [[:dir(rtl)]]) و [[translate: calc(100% * var(--dir)) 0]].`, done: R`في الإنجليزي بيطلع من اليمين وفي العربي من الشمال، والصفحة وهو مقفول مفيهاش scroll أفقي ([[document.documentElement.scrollWidth === document.documentElement.clientWidth]] بيرجّع [[true]] في الاتجاهين)، و Escape بيقفله.`, sol: R`~~~live 120 120 drawer.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>درج</title>
+<style>
+  :root { --dir: 1; }
+  :root:dir(rtl) { --dir: -1; }
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  .drawer { position: fixed; inset-block: 0; inset-inline-end: 0; inline-size: min(20rem, 85vw); padding: 1rem; box-sizing: border-box;
+            background: #fff; box-shadow: 0 0 1rem #0005; transition: translate .25s, visibility 0s .25s;
+            translate: calc(100% * var(--dir)) 0; visibility: hidden; }
+  .drawer.open { translate: 0 0; visibility: visible; transition: translate .25s, visibility 0s; }
+  @media (prefers-reduced-motion: reduce) { .drawer { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>الرئيسية</h1>
+  <button id="open" type="button" aria-expanded="false" aria-controls="drawer">القايمة</button>
+</main>
+<aside id="drawer" class="drawer" aria-label="القايمة">
+  <button id="close" type="button">قفل</button>
+  <p><a href="#a">المنتجات</a></p>
+</aside>
+<script>
+  const drawer = document.getElementById("drawer");
+  const open = document.getElementById("open");
+  const close = document.getElementById("close");
+  function set(isOpen) {
+    drawer.classList.toggle("open", isOpen);
+    open.setAttribute("aria-expanded", String(isOpen));
+    (isOpen ? close : open).focus();
+  }
+  open.addEventListener("click", () => set(true));
+  close.addEventListener("click", () => set(false));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && drawer.classList.contains("open")) set(false);
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه [[--dir]]:** [[inset-inline-end]] بيحط الدرج صح في اللغتين، بس [[translate]] إحداثيات شاشة. فمحتاجين نضرب في إشارة: 1 في ltr، و -1 في rtl. [[:root:dir(rtl)]] بيقرا الاتجاه الفعلي، حتى لو اتغيّر بـ [[dir]] من JavaScript.
+
+**[[visibility: hidden]]:** مقفول بس لسه في الصفحة، فمن غيرها Tab هيدخل جواه. والـ transition بتاعها مختلف في الاتجاهين:
+
+- الفتح [[visibility 0s]]: يبان فورًا، عشان [[close.focus()]] يشتغل. أول تجربة كتبت [[visibility .25s]] في الاتجاهين، والـ focus مرحش للزرار.
+- القفل [[visibility 0s .25s]]: يستخبى بعد ما الحركة تخلص.
+
+**ليه مفيش scroll أفقي:** الدرج [[position: fixed]]، والعناصر الـ fixed برا الشاشة مبتزوّدش [[scrollWidth]] هنا.
+
+**الغلطة الشائعة:** تستخدم [[transform: translateX(100%)]] ثابتة، فالدرج في العربي يطلع يمين الشاشة فوق المحتوى.
+
+~~~text الناتج
+          مفتوح (left - right)   مقفول left     الـ focus مفتوح/مقفول
+rtl       0 - 306                -306           close / open
+ltr       54 - 360               360            close / open
+
+scrollWidth === clientWidth: true في الاتجاهين ، مفتوح ومقفول
+Escape بيقفل ، axe صفر
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN صفحة «CSS logical properties and values» هات الاسم الـ logical لـ [[width]] و [[height]] و [[border-top-left-radius]] و [[top]] و [[float: left]] و [[text-align: right]]، وشوف في وثائق Tailwind v4 فيه كلاس لكل واحد ولا لأ.`, done: R`جدول ٦ صفوف: [[inline-size]] و [[block-size]] و [[border-start-start-radius]] و [[inset-block-start]] و [[float: inline-start]] و [[text-align: end]]، وجنب كل واحد كلاس Tailwind أو «مفيش، استخدم arbitrary value».`, sol: R`**الإجابة من MDN، والكلاسات اتبنت بـ Tailwind 4.3.4 واتأكدت من [[out.css]]:**
+
+| الفيزيائي | الـ logical | Tailwind |
+|---|---|---|
+| [[width]] | [[inline-size]] | [[inline-1]] |
+| [[height]] | [[block-size]] | [[block-1]] |
+| [[border-top-left-radius]] | [[border-start-start-radius]] | [[rounded-ss-lg]] |
+| [[top]] | [[inset-block-start]] | [[inset-bs-0]] |
+| [[float: left]] | [[float: inline-start]] | [[float-start]] |
+| [[text-align: right]] | [[text-align: end]] | [[text-end]] |
+
+الأتنين الأخيرين بنفترض صفحة ltr: [[left]] بداية و [[right]] نهاية.
+
+**ليه ده مهم مش بس للعربي:** [[inline-size]] هو «عرض» في الكتابة الأفقية، و«ارتفاع» في الكتابة الرأسية. الاسم بيوصف اتجاه النص.
+
+**الغلطة الشائعة:** تفتكر إن [[start-0]] و [[inset-s-0]] واحد في كل حاجة. الاتنين [[inset-inline-start]]، بس القيمة الأولى من [[--spacing]] والتانية [[0px]] مباشرة. والشكل واحد لما تبقى صفر.
+
+~~~text الناتج
+.inline-1      inline-size: var(--spacing)
+.block-1       block-size: var(--spacing)
+.rounded-ss-lg border-start-start-radius: var(--radius-lg)
+.inset-bs-0    inset-block-start: 0px
+.float-start   float: inline-start
+.text-end      text-align: end
+~~~` },
+          ],
+          desc: R`بدل [[left]] و [[right]] استخدم start و end: [[ms-4]] (margin-inline-start) بدل [[ml-4]]، و [[pe-2]] بدل [[pr-2]]، و [[text-start]] بدل [[text-left]]، و [[inset-s-0]] بدل [[left-0]]، و [[rounded-s-lg]] و [[border-e]]. دول بيتقلبوا لوحدهم مع [[dir]].
+
+والحاجات اللي ليها اتجاه (سهم «التالي»، أيقونة رجوع) اقلبها بـ [[rtl:-scale-x-100]]. أما أيقونة زي البحث أو الساعة فسيبها.`,
+          example: R`<div className="flex items-center gap-3 ps-4 pe-2">
+  <img className="size-10 rounded-full" src="/u.jpg" alt="" />
+  <p className="text-start">محمد</p>
+  <span className="ms-auto">من 5 دقايق</span>
+</div>
+<button className="inline-flex items-center gap-2">
+  التالي <ArrowRight className="size-4 rtl:-scale-x-100" />
+</button>
+<aside className="border-e ps-6">...</aside>
+<span className="absolute top-2 inset-e-2">جديد</span>
+<span dir="ltr">+20 100 000 0000</span>`,
+          try: R`اعمل المكون ده وقلّب [[dir]] على html بين rtl و ltr: كل حاجة هتتقلب صح. بعدين غيّر [[ms-auto]] لـ [[ml-auto]] وشوف الوقت لزق في الناحية الغلط في العربي.`,
           flag: "script",
-          lines: [
-            R`[[<figure>]]: اللي جواه وحدة واحدة قايمة بذاتها. المتصفح بيدّيه 40px فاضية يمين وشمال.`,
-            R`الاقتباس نفسه. [[<blockquote>]] جواه الكلام المنقول بس.`,
-            R`نص الاقتباس في فقرة.`,
-            R`نهاية الاقتباس. اسم القائلة مش جواه، لأنه مش من الكلام المنقول.`,
-            R`[[<figcaption>]]: وصف الـ [[<figure>]]. هنا فيه مين قال الكلام، واسم الكورس جوه [[<cite>]] لأنه عنوان عمل. مكانه أول ابن أو آخر ابن للـ [[<figure>]].`,
-            R`نهاية الـ [[<figure>]]: الاقتباس وصاحبه بقوا وحدة واحدة.`
-          ],
-          teach: R`## الفكرة في سطرين
+          deep: {
+            why: R`موقع عربي وإنجليزي بـ left و right معناه نسختين من كل مكون، أو [[rtl:]] على كل عنصر. الـ logical properties بتخلي الكود يوصف «البداية والنهاية» مش «الشمال واليمين»، والمتصفح يحوّلهم حسب اتجاه الصفحة.`,
+            how: R`في CSS: [[margin-inline-start]] و [[padding-inline-end]] و [[inset-inline-start]] و [[border-inline-end]] و [[text-align: start]]. الـ inline = اتجاه الكتابة (أفقي في العربي والإنجليزي)، والـ block = الاتجاه العمودي عليه (فوق وتحت). فـ [[margin-block]] = فوق وتحت، و [[padding-inline]] = الجنبين.
 
-المواصفة بتعرّف [[<figure>]]: محتوى **قايم بذاته**، ليه وصف اختياري، و «بيتشاور عليه كوحدة واحدة من الكلام الأساسي». والاختبار العملي: لو نقلت الحاجة دي لجنب الصفحة أو لملحق في الآخر، الكلام يفضل مفهوم؟ لو أيوه، دي figure.
+في Tailwind: [[ms-*]] و [[me-*]] و [[ps-*]] و [[pe-*]] و [[inset-s-*]] و [[inset-e-*]] و [[rounded-s-*]] و [[rounded-e-*]] و [[border-s]] و [[border-e]] و [[text-start]] و [[text-end]]. و [[mx-*]] و [[px-*]] أصلًا متماثلين فمش فارقين. ([[start-*]] و [[end-*]] للـ position بقوا deprecated من v4.2 لصالح [[inset-s-*]] و [[inset-e-*]].)
 
-القياسات من Chrome 157 (headless على Windows 11)، ورسايل الـ validator من Nu Html Checker. والصور في المعاينات مرسومة بـ [[<svg>]] صغير (درس «SVG») لأن المعاينة ملهاش ملفات صور. في صفحتك هتبقى [[<img>]] عادي.
+اللي مش بيتقلب لوحده: [[translate-x]] (الرقم الموجب دايمًا يمين)، و [[rotate]]، والـ gradients ([[bg-linear-to-r]])، والظل اللي ليه إزاحة أفقية، و [[background-position]]. دول محتاجين [[rtl:]]: [[rtl:-translate-x-1]] أو [[rtl:bg-linear-to-l]].
+
+الأيقونات: اللي معناها اتجاه (أسهم التالي والسابق، ورجوع، وإرسال، والـ chevrons في الـ breadcrumb) بتتقلب. واللي بتمثل حاجة حقيقية (ساعة، وبحث، و play في مشغل فيديو، وعلامة صح) متتقلبش. في مشروع حقيقي أيقونات الأسهم كلها كانت [[rtl:-scale-x-100]]، والحركة عند الـ hover [[rtl:group-hover:-translate-x-1]]، والأرقام والأوقات عليها [[dir="ltr"]]. و shadcn فيه [[--rtl]] بيحوّل مكوناته لـ logical لوحده.`,
+            when: "أي مشروع ممكن يبقى فيه عربي، حتى لو دلوقتي إنجليزي بس. عوّد إيدك على ms و pe من الأول، مفيش أي تكلفة.",
+            mistakes: R`[[ml-2]] للمسافة بين أيقونة وكلام، وفي العربي الأيقونة تلزق في الكلام والمسافة تروح الناحية التانية (أحسن [[gap-2]] على الأب). تقلب كل الأيقونات فالساعة تلف بالعكس. و [[translate-x]] في animation أو toggle من غير [[rtl:]]. وساعات الحل المقبول [[dir="ltr"]] على العنصر ده بس، لو شكله مش مرتبط باللغة.`
+          },
+          teach: R`## «البداية» و «النهاية» بدل «شمال» و «يمين»
+
+كل كلاس في المثال بيقول «من ناحية البداية» أو «من ناحية النهاية»، والمتصفح بيعرف البداية فين من [[dir]]: في [[rtl]] البداية يمين، وفي [[ltr]] شمال. حطينا المثال في صفحة Vite (Tailwind 4.3.3) جوه صندوق عرضه 600 و [[relative]]، و [[ArrowRight]] من lucide-react، وقسنا كل حاجة في Chrome مرة بـ [[dir="rtl"]] على html ومرة [[ltr]]. الأرقام تحت مكان العنصر من الطرف الشمال للصندوق (من - لـ).
 
 ---
 
-## ١. [[<figure>]] و [[<figcaption>]]
+## ١. الكلاسات بتطلّع إيه في CSS
 
-~~~live 276 رسم بياني ووصفه
-<p>المبيعات زادت كل يوم في أول الأسبوع (شكل ١).</p>
-<figure id="fig-1">
-  <svg role="img" aria-label="تلات أعمدة بتعلى: السبت ٤٠ رغيف، الأحد ٦٥، الاتنين ٩٠" width="220" height="120" viewBox="0 0 220 120">
-    <rect x="20" y="80" width="40" height="40" fill="#c2410c"/>
-    <rect x="90" y="55" width="40" height="65" fill="#c2410c"/>
-    <rect x="160" y="30" width="40" height="90" fill="#c2410c"/>
-  </svg>
-  <figcaption>شكل ١: مبيعات العيش في أول ٣ أيام.</figcaption>
-</figure>
-<p>ويوم الاتنين كان الأعلى.</p>
+~~~text من الـ CSS الناتج
+.ps-4{padding-inline-start:calc(var(--spacing) * 4)}
+.pe-2{padding-inline-end:calc(var(--spacing) * 2)}
+.ms-auto{margin-inline-start:auto}
+.ml-auto{margin-left:auto}
+.text-start{text-align:start}
+.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}
+.inset-e-2{inset-inline-end:calc(var(--spacing) * 2)}
 ~~~
 
-- الفقرة بتقول «(شكل ١)»، والرسم تحته مكتوب «شكل ١: ...». الكلام بيشاور على الشكل **باسمه**.
-- الرسم والوصف داخلين لجوه من الناحيتين.
-- الوصف في سطر لوحده تحت الرسم.
+- **inline** = اتجاه السطر (الجنبين). و **block** = فوق وتحت.
+- [[s]] = start (البداية)، و [[e]] = end (النهاية).
+- [[ml-auto]] الوحيد اللي فيه [[left]] صريحة، فمش بيتقلب.
+
+## ٢. الصف: [[<div className="flex items-center gap-3 ps-4 pe-2">]]
+
+- [[flex items-center]]: العناصر جنب بعض ومتوسّطين رأسيًا. والـ flex نفسه بيمشي مع [[dir]]: أول عنصر عند البداية.
+- [[gap-3]]: 12px بين كل عنصرين، من غير ما تحدد ناحية.
+- [[ps-4]] و [[pe-2]]: 16px من البداية و 8px من النهاية.
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| [[padding-right]] | 16px | 8px |
+| [[padding-left]] | 8px | 16px |
+
+## ٣. الصورة والاسم والوقت
+
+~~~text App.tsx
+<img className="size-10 rounded-full" src="/u.jpg" alt="" />
+<p className="text-start">محمد</p>
+<span className="ms-auto">من 5 دقايق</span>
+~~~
+
+- [[size-10]]: 40×40px. و [[rounded-full]]: دايرة. و [[alt=""]]: صورة للزينة، قارئ الشاشة يتجاهلها.
+- [[text-start]]: الكلام على ناحية البداية. القيمة المحسوبة فضلت [[start]] في الحالتين، والمتصفح بيترجمها.
+- [[ms-auto]]: margin من ناحية البداية بـ [[auto]]. في الـ flex الـ [[auto]] بياكل كل المساحة الفاضية، فبيزق العنصر لآخر الصف.
+
+| العنصر | [[rtl]] | [[ltr]] |
+|---|---|---|
+| الصورة | 543 - 583 (يمين) | 17 - 57 (شمال) |
+| «محمد» | 495 - 531 | 69 - 105 |
+| الوقت بـ [[ms-auto]] | **9 - 84** (أقصى الشمال) | 516 - 591 (أقصى اليمين) |
+| الوقت بـ [[ml-auto]] | **460 - 535** (لازق في الاسم) | 516 - 591 |
+
+السطر الأخير هو الغلطة: [[ml-auto]] في [[ltr]] بيدّي نفس النتيجة بالظبط، فاللي بيجرّب بالإنجليزي بس مش هيشوف المشكلة. في [[rtl]] الـ margin الشمال زق الوقت يمين ناحية الاسم.
+
+## ٤. زرار التالي: [[rtl:-scale-x-100]]
+
+~~~text App.tsx
+<button className="inline-flex items-center gap-2">
+  التالي <ArrowRight className="size-4 rtl:-scale-x-100" />
+</button>
+~~~
+
+- [[ArrowRight]]: سهم بيشاور يمين، يعني «لقدام» في الإنجليزي.
+- [[-scale-x-100]]: [[scale-x]] = تكبير على المحور الأفقي، و [[100]] = 100٪، والسالب = اعكسه مراية.
+- [[rtl:]]: بس لما الصفحة RTL.
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| [[scale]] المحسوب | [[-1 1]] (معكوس، بيشاور شمال) | [[none]] |
+
+والـ selector اللي طلع في Tailwind 4.3.3:
+
+~~~text من الـ CSS الناتج
+.rtl\:-scale-x-100:where(:is(:lang(ar),:lang(he),:lang(fa),...),[dir=rtl],[dir=rtl] *){...}
+~~~
+
+يعني [[rtl:]] بيشتغل لو العنصر جوه [[dir="rtl"]] **أو** جوه [[lang]] لغة بتتكتب من اليمين (عربي، عبري، فارسي...). عشان كده خلي [[lang]] و [[dir]] على html متفقين.
+
+## ٥. [[<aside className="border-e ps-6">]]
+
+خط فاصل على ناحية النهاية، و 24px padding من البداية:
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| border شمال / يمين | 1px / 0 | 0 / 1px |
+| padding شمال / يمين | 0 / 24px | 24px / 0 |
+
+## ٦. الشارة: [[absolute top-2 inset-e-2]]
+
+- [[absolute]]: مكانها محسوب من أقرب أب [[relative]] (الصندوق).
+- [[top-2]]: 8px من فوق.
+- [[inset-e-2]]: 8px من ناحية النهاية ([[inset-inline-end]]).
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| مكانها | 9 - 40 (الركن الشمال) | 560 - 591 (الركن اليمين) |
+| [[left]] المحسوب | 8px | 559.266px |
+| [[right]] المحسوب | 559.266px | 8px |
+
+## ٧. [[<span dir="ltr">+20 100 000 0000</span>]]
+
+جربنا نفس الرقم جوه سطر عربي مرتين، وقرينا ترتيب الحروف على الشاشة من الشمال لليمين:
 
 ~~~text الناتج
-figure:      display=block  margin-top=16px  margin-bottom=16px  margin-right=40px  margin-left=40px   role=figure
-figcaption:  display=block  margin=0px   font-weight=400   (نص عادي من غير أي تنسيق)
+من غير dir:    0000 000 100 20+
+dir="ltr":     +20 100 000 0000
 ~~~
 
-يعني [[<figure>]] شكله الافتراضي زي [[<blockquote>]] بالظبط (16px فوق وتحت و 40px من الجنبين)، و [[<figcaption>]] مجرد سطر block. أي تنسيق تاني (خط أصغر، توسيط) CSS.
+من غير [[dir]]، المتصفح اعتبر كل مجموعة أرقام حتة لوحدها في سطر RTL، فرتّبهم من اليمين للشمال والـ [[+]] راحت للآخر. [[dir="ltr"]] على العنصر ده بس بيخليه يتكتب شمال ليمين صح.
 
-وفي شجرة الـ accessibility:
+## الخلاصة
 
-~~~text من Chrome
-paragraph   "المبيعات زادت كل يوم في أول الأسبوع (شكل ١)."
-figure
-  image "تلات أعمدة بتعلى: السبت ٤٠ رغيف، الأحد ٦٥، الاتنين ٩٠"
-  Figcaption   "شكل ١: مبيعات العيش في أول ٣ أيام."
-paragraph   "ويوم الاتنين كان الأعلى."
+| بدل | استخدم | CSS |
+|---|---|---|
+| [[ml-*]] / [[mr-*]] | [[ms-*]] / [[me-*]] | [[margin-inline-start/end]] |
+| [[pl-*]] / [[pr-*]] | [[ps-*]] / [[pe-*]] | [[padding-inline-start/end]] |
+| [[left-*]] / [[right-*]] | [[inset-s-*]] / [[inset-e-*]] | [[inset-inline-start/end]] |
+| [[border-l]] / [[border-r]] | [[border-s]] / [[border-e]] | [[border-inline-start/end]] |
+| [[text-left]] / [[text-right]] | [[text-start]] / [[text-end]] | [[text-align: start/end]] |
+
+- الأيقونات اللي معناها اتجاه: [[rtl:-scale-x-100]].
+- جرّب دايمًا في الاتجاهين، لأن الغلط مش بيبان في [[ltr]].`,
+          lines: [
+            "padding من البداية 16 ومن النهاية 8. في العربي البداية يمين.",
+            R`صورة البروفايل: مقاس ثابت ودايرة، ومالهاش أي اتجاه فمش محتاجة logical.`,
+            "الكلام محاذي للبداية مهما كانت اللغة.",
+            R`[[ms-auto]] يزق الوقت لآخر الصف: شمال في العربي، يمين في الإنجليزي.`,
+            R`قفلة الصف؛ الـ [[gap-3]] اللي عليه أصلًا مالوش اتجاه فبيشتغل في اللغتين.`,
+            R`زرار «التالي»: [[inline-flex]] و [[gap-2]] بين الكلمة والسهم، من غير margin على ناحية معينة.`,
+            R`السهم لليمين في الإنجليزي، و [[rtl:-scale-x-100]] يقلبه مراية في العربي.`,
+            R`قفلة الزرار؛ ترتيب الكلمة والسهم بيتقلب لوحده مع [[dir]] لأنه flex.`,
+            "خط فاصل على ناحية النهاية، و padding من البداية.",
+            R`شارة في ركن النهاية فوق. [[inset-e-2]] من v4.2 بدل [[end-2]].`,
+            "رقم التليفون LTR جوه صفحة عربي."
+          ],
+          sol: R`مع [[dir="rtl"]]: الصورة على اليمين وجنبها «محمد»، و «من 5 دقايق» لازقة في أقصى الشمال، والـ padding الأكبر (16px) ناحية اليمين، وسهم «التالي» معكوس بيشاور شمال، والـ border بتاع الـ aside على الشمال، والشارة «جديد» في الركن الشمال فوق. قلّب لـ [[ltr]]: كل ده اتعكس (الصورة شمال، والوقت أقصى اليمين، والسهم يمين)، من غير ولا [[rtl:]] ولا سطر زيادة. رقم التليفون بيفضل [[+20 100 000 0000]] في الحالتين.
+
+بعد ما تغيّر [[ms-auto]] لـ [[ml-auto]] في العربي: «من 5 دقايق» بقت لازقة في «محمد» والفراغ كله راح على الطرف الشمال. قست ده في صفحة عرضها 600: مع [[ms-auto]] الوقت كان من 8 لـ 82px (أقصى الشمال)، ومع [[ml-auto]] بقى من 409 لـ 483 جنب الاسم. لأن [[ml-auto]] = [[margin-left]] دايمًا، والوقت في rtl آخر عنصر وعلى الشمال أصلًا، فالـ margin زقّه لليمين ناحية الاسم. في الـ ltr التغيير مش هيبان لأن start = left، وده بالظبط ليه الغلط ده بيعدّي على اللي بيجرّب بالإنجليزي بس.`
+        },
+        {
+          cmd: "next/font",
+          ref: [
+            { t: "Next.js: Font optimization", url: "https://nextjs.org/docs/app/getting-started/fonts" },
+            { t: "Next.js: Font module API", url: "https://nextjs.org/docs/app/api-reference/components/font" },
+            { t: "MDN: font-display", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/font-display" },
+            { t: "MDN: size-adjust", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/size-adjust" },
+          ],
+          title: "خط عربي بيتحمّل بسرعة ومن غير ما الصفحة تتنط",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** خط بيوصل بعد ٤ ثواني على نت بطيء. المستخدم هيشوف إيه في أول ٣ ثواني مع كل قيمة من [[font-display]]: [[block]] و [[swap]] و [[fallback]] و [[optional]]؟ وأنهي واحدة الخط ممكن ميظهرش خالص في أول زيارة؟ اكتب جدول، وبعدين جرّب بـ DevTools › Network › Slow 3G و Disable cache.`, done: R`الجدول: [[block]] كلام مخفي لحد ٣ ثواني تقريبًا وبعدين الاحتياطي، و [[swap]] الاحتياطي على طول، و [[fallback]] لحظة صغيرة مخفي وبعدين الاحتياطي ومبيبدّلش لو الخط اتأخر كتير، و [[optional]] الاحتياطي وغالبًا مبيبدّلش في أول زيارة. وفي التجربة شفت [[optional]] بيظهر الخط بس بعد refresh (من الـ cache).`, sol: R`~~~css fonts.css
+/* غيّر font-display بين block و swap و fallback و optional */
+@font-face {
+  font-family: Cairo;
+  src: url(/cairo-ar.woff2) format("woff2");
+  font-display: swap;
+}
+body { font-family: Cairo, Arial, sans-serif; }
 ~~~
 
-الصورة والوصف بقوا جوه [[figure]] واحد. قارئ الشاشة بيقول «figure» لما يدخل، وبيعرف إن الوصف تبع الصورة دي.
+**الجدول:**
 
-### من غير [[<figure>]]
+| القيمة | أول ٣ ثواني | لو الخط جه بعد ٤ ثواني |
+|---|---|---|
+| [[block]] | كلام مخفي | بيبدّل للخط |
+| [[swap]] | الاحتياطي على طول | بيبدّل للخط |
+| [[fallback]] | لحظة صغيرة مخفي، وبعدين الاحتياطي | مبيبدّلش |
+| [[optional]] | لحظة صغيرة مخفي، وبعدين الاحتياطي | مبيبدّلش، والخط بيتخزن للزيارة الجاية |
 
-~~~live 158 صورة وتحتها فقرة
-<svg role="img" aria-label="رغيف عيش بلدي" width="120" height="80" viewBox="0 0 120 80">
-  <ellipse cx="60" cy="40" rx="55" ry="30" fill="#d9a441"/>
+**الفكرة:** كل قيمة عبارة عن فترتين: فترة block (مخفي)، وفترة swap (مسموح يبدّل). [[optional]] مفيهاش swap تقريبًا، فلو الخط مجاش في أول لحظة خلاص. الخط الأساسي في موقع عربي بياخد [[swap]]، و [[optional]] لو الثبات أهم من شكل الخط.
+
+**الغلطة الشائعة:** تستخدم [[block]] لخط النص، فالموبايل البطيء يشوف صفحة فاضية ٣ ثواني. وفي تجربة [[optional]] لازم تعمل reload من غير ما تقفل الكاش.
+
+~~~text الناتج
+الخط اتأخر 4 ثواني (Chrome 156). نص = عدد بكسلات غامقة في اللقطة:
+
+           500ms     2000ms    3700ms     5500ms     7500ms
+block      مخفي      مخفي      692        1041       1041
+swap       692       692       692        1041       1041
+fallback   692       692       692        692        692
+optional   692       692       692        692        692
+
+692 = الاحتياطي ، 1041 = الخط الحقيقي.
+في الزيارة التانية بكاش مع optional: عرض الجملة 201.2 ← 241.8 (الخط ظهر)
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس صفحة مقال عربي ٣ مرات: (أ) [[@import url(...)]] لخط من Google جوه ملف الـ CSS، و (ب) [[<link>]] في الـ head ومعاه [[preconnect]]، و (ج) ملف woff2 من موقعك و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] و [[font-display: swap]]. قيس بـ Lighthouse (Mobile) و Network.`, done: R`جدول ٣ صفوف فيه FCP و LCP وعدد الطلبات لدومين تاني. في (أ) الـ waterfall فيه سلسلة ٣ خطوات (CSS بتاعك ← CSS جوجل ← الخط)، وفي (ج) صفر طلبات برا الموقع والخط بيبدأ يتحمّل مع الـ HTML.`, sol: R`~~~css a.css
+@import url("https://fonts.googleapis.com/css2?family=Cairo&display=swap");
+body { font-family: Cairo, sans-serif; }
+~~~
+
+~~~html (ب) في الـ head
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo&display=swap">
+~~~
+
+~~~html (ج) في الـ head
+<link rel="preload" href="/cairo-ar.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face {
+    font-family: Cairo;
+    src: url(/cairo-ar.woff2) format("woff2");
+    font-display: swap;
+    unicode-range: U+0600-06FF;
+  }
+  body { font-family: Cairo, sans-serif; }
+</style>
+~~~
+
+~~~bash
+npx lighthouse http://localhost:4000/c --quiet --only-categories=performance --throttling-method=devtools --output=json --output-path=c.json
+~~~
+
+**ليه (ج) الأسرع:**
+
+- (أ): المتصفح لازم يحمّل [[a.css]]، يلاقي [[@import]]، يطلب CSS جوجل، يلاقي الخط، يطلبه. ٣ خطوات متسلسلة ودومينين جداد.
+- (ب): بنشيل خطوة، و [[preconnect]] بيفتح الاتصال بدري، بس لسه فيه دومينين.
+- (ج): كله من نفس الدومين والاتصال مفتوح، و [[preload]] بيبدأ الخط مع الـ HTML.
+
+و [[crossorigin]] لازم على preload الخط حتى لو من نفس الموقع: الخطوط بتتطلب بوضع CORS، ومن غيره المتصفح بيحمّله مرتين.
+
+**الغلطة الشائعة:** تحط [[@import]] في أول CSS عشان أسهل. وده اللي next/font بيحله: بيحمّل الخط وقت الـ build ويقدّمه من موقعك.
+
+~~~text الناتج
+Lighthouse 13.6 ، مرتين لكل طريقة:
+
+                    FCP و LCP          طلبات برا الموقع
+(أ) @import         2.2 s ، 3.1 s      3 (googleapis و gstatic)
+(ب) link            2.5 s ، 2.3 s      3 (googleapis و gstatic)
+(ج) من موقعك        1.2 s ، 1.0 s      0
+
+الصفحة خفيفة، فالـ LCP = الـ FCP في كل تشغيلة. والفرق بين (أ) و (ب) هنا
+جوه تذبذب الشبكة، أما (ج) فأسرع بوضوح.
+~~~` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** عرّفنا خطين بنفس الاسم: ملف عربي بـ [[unicode-range: U+0600-06FF]] وملف لاتيني بـ [[unicode-range: U+0000-00FF]]. صفحة فيها كلام عربي بس: المتصفح هينزّل كام ملف؟ اكتب، وبعدين افتح Network › Font.`, done: R`نزّل الاتنين، مش العربي بس! السبب المسافة: [[U+0020]] جوه الـ range اللاتيني، وأي صفحة فيها مسافة. ولما غيّرنا اللاتيني لـ [[U+0041-005A, U+0061-007A]] (حروف بس) نزل العربي لوحده. اتقاس في Chrome 156 بعدّ طلبات الخطوط.`, sol: R`~~~live 120 120 test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>unicode-range</title>
+<style>
+  @font-face { font-family: C; src: url(/ar.woff2) format("woff2"); unicode-range: U+0600-06FF; }
+  @font-face { font-family: C; src: url(/lat.woff2) format("woff2"); unicode-range: U+0000-00FF; }
+  body { font-family: C, sans-serif; }
+</style>
+</head>
+<body><p>كلام عربي بس</p></body>
+</html>
+~~~
+
+**الإجابة:** ملفين، مش واحد.
+
+**ليه:** المتصفح بينزّل الملف لو الصفحة فيها حرف جوه الـ range بتاعه. [[U+0000-00FF]] فيها [[U+0020]]، وده المسافة. وأي صفحة عربي فيها مسافات.
+
+**التصليح:** ضيّق الـ range للحروف بس: [[U+0041-005A, U+0061-007A]]. وهتحتاج تفكر في الأرقام و [[@]] لو عايزهم من الخط اللاتيني.
+
+**الغلطة الشائعة:** تفتكر إن [[unicode-range]] زي [[lang]]، فالصفحة العربي تجيب العربي. هو بيقارن بالحروف الموجودة فعليًا.
+
+~~~text الناتج
+U+0000-00FF:                 /ar.woff2 و /lat.woff2
+U+0041-005A, U+0061-007A:    /ar.woff2 بس
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[html[dir=rtl] * { font-family: "Cairo" !important }]]، فبلوكات الكود في صفحة الشرح طلعت بخط Cairo مش mono. وفيه label بـ [[text-transform: uppercase; letter-spacing: .18em]] متطبّق على العربي والإنجليزي. صلّح الاتنين: الخط متغير على [[body]] بيتورّث، والـ label بقاعدة [[:lang(ar)]] بتصفّر الـ letter-spacing.`, done: R`Computed font-family بتاع [[<code>]] بيبدأ بخط mono، و [[!important]] اتمسحت، والـ label العربي letter-spacing بتاعه [[normal]]. ملاحظة اتقاست: Chrome 156 أصلًا مش بيطبّق letter-spacing على العربي (عرض «مبرمجين» فضل 114.3px بيه ومن غيره، و «Coders» زاد من 96.9 لـ 135.3)، بس متصفحات تانية أو نسخ قديمة ممكن تقطّع الحروف، فالتصفير لسه صح.`, sol: R`~~~live 160 160 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>خطوط</title>
+<style>
+  :root { --font-sans: "Cairo", system-ui, sans-serif; --font-mono: ui-monospace, Consolas, monospace; }
+  body { font-family: var(--font-sans); }
+  code, pre { font-family: var(--font-mono); }
+  .label { text-transform: uppercase; letter-spacing: .18em; }
+  .label:lang(ar) { letter-spacing: normal; }
+</style>
+</head>
+<body>
+<main>
+  <h1>الشرح</h1>
+  <p>استخدم <code>npm install</code> وبعدين شغّل.</p>
+  <span id="ar" class="label">مبرمجين</span>
+  <span id="en" class="label" lang="en">Coders</span>
+</main>
+</body>
+</html>
+~~~
+
+**التصليح الأول:** [[html[dir=rtl] * { font-family: "Cairo" !important }]] بيضرب كل عنصر مباشرة، فبيغلب الوراثة وأي قاعدة تانية. لما المتغير يتحط على [[body]]، العناصر بتورثه، و [[code]] يقدر يكتب خطه عادي.
+
+**التصليح التاني:** [[.label:lang(ar)]] بيطابق أي عنصر لغته عربي، حتى لو اللغة جاية من [[<html lang="ar">]]. و [[lang="en"]] على الـ span بيخرجه منها. فالإنجليزي بياخد 0.18em، والعربي [[normal]].
+
+**ليه:** الحروف العربي موصولة، والمسافات بينها بتقطّع الوصلة في المتصفحات اللي بتطبّقها. وزي ما اتقاس في Chrome 156 المتصفح نفسه بيتجاهلها، بس مش كل المتصفحات كده.
+
+**الغلطة الشائعة:** تكتب [[:lang(ar) .label]]. ده معناه «label جوه أي عنصر عربي»، و [[<html>]] عربي، فالإنجليزي كمان يتصفّر. جرّبتها في الأول وطلعت كده: [[letter-spacing]] بتاع الإنجليزي بقى [[normal]].
+
+~~~text الناتج
+font-family بتاع code: ui-monospace, Consolas, monospace
+letter-spacing للعربي: normal
+letter-spacing للإنجليزي: 2.88px (0.18em من 16px)
+axe صفر
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** من غير Next، اعمل خط احتياطي مظبوط بإيدك: [[@font-face { font-family: "Cairo Fallback"; src: local("Arial"); size-adjust: ...; ascent-override: ... }]] وحطه تاني واحد في الـ stack. جرّب قيم لحد ما الفقرة بالخطين ليها نفس الارتفاع تقريبًا.`, done: R`ارتفاع الفقرة بالاحتياطي وبالخط الحقيقي ([[offsetHeight]]) الفرق بينهم أقل من 2%، وفي Performance › Layout Shifts مفيش shift وقت ما الخط يوصل، ومن غير الاحتياطي المظبوط فيه shift. وعرفت إن ده بالظبط اللي next/font بيعمله لوحده.`, sol: R`~~~css fallback.css
+@font-face {
+  font-family: Cairo;
+  src: url(/cairo-ar.woff2) format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cairo Fallback";
+  src: local("Arial");
+  size-adjust: 118%;
+  ascent-override: 110.4%;
+  descent-override: 48.4%;
+  line-gap-override: 0%;
+}
+body { font-family: Cairo, "Cairo Fallback", sans-serif; }
+~~~
+
+**الحساب:** ارتفاع سطر Cairo كبير: ascent 1.303 و descent 0.571 من حجم الخط. Arial أقل بكتير، فالفقرة بتطول لما الخط يوصل.
+
+1. [[ascent-override]] و [[descent-override]] بيدّوا Arial نفس ارتفاع السطر.
+2. [[size-adjust]] بيغيّر عرض الحروف، فالسطر يتكسر في نفس المكان تقريبًا. وبما إنه بيضرب كل المقاييس، قسمنا: 130.3 ÷ 1.18 = 110.4.
+3. جرّبت من 84٪ لـ 136٪. من 112 لـ 124 عدد السطور مطابق، فاخترت النص.
+
+**الغلطة الشائعة:** تظبط على فقرة واحدة وعرض واحد وتفتكر إنها متطابقة دايمًا. عدد السطور بيتغيّر مع النص والعرض، بس الفرق بيبقى صغير. وده بالظبط اللي next/font بيحسبه لوحده.
+
+~~~text الناتج
+ارتفاع الفقرة (عرض 600 ، خط 18px):
+Cairo                297
+Arial عادي           168
+Cairo Fallback       297    الفرق 0٪
+
+الخط اتأخر 800ms:
+                  الارتفاع قبل ← بعد     CLS
+Arial عادي        168 ← 297              0.0739
+Cairo Fallback    297 ← 297              0
+~~~` },
+          ],
+          desc: R`[[next/font/google]] بينزّل الخط وقت الـ build ويخدمه من موقعك (مفيش request لجوجل)، وبيعمل خط احتياطي مقاساته مظبوطة فالكلام ميتنطش لما الخط الحقيقي يوصل. و [[variable]] بيطلّعه كمتغير CSS تربطه بـ Tailwind.
+
+برا Next بتكتب [[@font-face]] بنفسك: ملف [[woff2]] من موقعك، و [[font-display: swap]] عشان الكلام يظهر بخط النظام لحد ما خطك يتحمّل.`,
+          example: R`// app/layout.tsx
+import { Cairo } from "next/font/google";
+const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-cairo", display: "swap" });
+<html lang="ar" dir="rtl" className={cairo.variable}>
+// globals.css
+@theme inline {
+  --font-sans: var(--font-cairo), system-ui, sans-serif;
+}
+// من غير Next
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/cairo-var.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: swap;
+}`,
+          try: R`حط Cairo بـ next/font، وافتح Network وفلتر على Font: هتلاقي ملف woff2 جاي من [[/_next/static/media]] مش من جوجل. وبعدين بطّأ النت (Slow 4G) واعمل refresh وشوف الكلام بيظهر بخط النظام وبعدين يتبدّل.`,
+          flag: "script",
+          deep: {
+            why: "الخط تقل خفي: ملف أو اتنين، وكل واحد عشرات الـ KB، ولو جاي من سيرفر تاني بعد ما الـ CSS يتحمّل بيتأخر أكتر. والصفحة يا إما تفضل من غير كلام، يا إما الكلام يظهر بخط وبعدين يتبدّل ويتنط لأن المقاسات مختلفة (CLS).",
+            how: R`[[font-display]] بيحدد المتصفح يعمل إيه لحد ما الخط يوصل: [[block]] يخفي الكلام شوية، و [[swap]] يعرضه بالخط الاحتياطي على طول ويبدّل أول ما يوصل، و [[optional]] يستنى لحظة، ولو الخط موصلش يكمّل بالاحتياطي في الصفحة دي (مفيش تبديل خالص). next/font الافتراضي swap.
+
+مشكلة swap: الخط الاحتياطي (Arial مثلًا) عرض حروفه وارتفاع سطوره مختلف، فلما يتبدّل الفقرات بتطول أو تقصر والصفحة تتنط. next/font بيحل ده بـ [[adjustFontFallback]] (شغال افتراضيًا): بيعمل [[@font-face]] للخط الاحتياطي بـ [[size-adjust]] وقيم محسوبة، بحيث يبقى قد خطك تقريبًا.
+
+[[subsets]] بيحدد أنهي subsets يتعملها preload. الباقي بيتخدم من موقعك برضه، والمتصفح بيحمّله بس لو الصفحة فيها حروف منه (unicode-range). والـ variable fonts ملف واحد لكل الأوزان بدل ملف لكل وزن. و [[--font-sans]] في Tailwind هو الخط الافتراضي للصفحة كلها (الـ Preflight بيحطه على html)، فتغييره بيغيّر الموقع كله.
+
+و [[@import url(...)]] لخط من سيرفر خارجي جوه ملف الـ CSS أسوأ حالة: المتصفح لازم يحمّل الـ CSS بتاعك، ويلاقي الـ import، ويحمّل CSS الخط، ويلاقي ملف الخط، ويحمّله. سلسلة requests واحد ورا التاني.`,
+            when: R`في Next دايمًا next/font. في Vite أو PHP: [[@font-face]] بملفات woff2 عندك، و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للخط الأساسي بس.`,
+            mistakes: R`في مشروع حقيقي كان globals.css بيبدأ بـ [[@import url("https://fonts.example.com/...")]] لخط لاتيني جنب خطوط next/font: request خارجي بيوقف الرسم، وكان ممكن يتنقل لـ [[next/font/local]]. وتحمّل 6 أوزان وانت بتستخدم 2. وتنسى subset الـ [[arabic]] فملف العربي ميتعملوش preload: الكلام يظهر بخط النظام الأول ويتبدّل متأخر (الملف بيتحمّل من موقعك برضه، بس بعد ما المتصفح يكتشف إنه محتاجه).`
+          },
+          teach: R`## الخط بقى ملف من موقعك
+
+[[next/font]] بينزّل الخط من Google **وقت الـ build**، ويحطه جوه مشروعك، ويكتب الـ [[@font-face]] لوحده. والمستخدم بياخد الخط من سيرفرك انت. حطينا الجزء الأول في مشروع Next.js 16.4 (Tailwind 4.3.3) وعملنا build وفتحناه في Chrome، والجزء التاني ([[@font-face]] بإيدك) في صفحة Vite.
+
+---
+
+## ١. [[import { Cairo } from "next/font/google";]]
+
+كل خط في Google Fonts ليه function بنفس اسمه. ولو الاسم فيه مسافة بتبقى [[_]]: [[Noto_Kufi_Arabic]].
+
+## ٢. [[const cairo = Cairo({ ... });]]
+
+| الخيار | يعني |
+|---|---|
+| [[subsets: ["arabic", "latin"]]] | أنهي أجزاء من الخط يتعملها preload (تحت) |
+| [[variable: "--font-cairo"]] | اعمل متغير CSS بالاسم ده فيه اسم الخط |
+| [[display: "swap"]] | [[font-display: swap]]: اعرض الكلام فورًا بخط احتياطي وبدّل لما الخط يوصل |
+
+Cairo خط **variable**: ملف واحد فيه كل الأوزان، فمش محتاج [[weight]]. وده باين في الـ CSS اللي اتولّد: [[font-weight:200 1000]].
+
+## ٣. [[<html lang="ar" dir="rtl" className={cairo.variable}>]]
+
+[[cairo.variable]] اسم كلاس اتولّد وقت الـ build. في الـ HTML طلع [[class="pW5XIG_variable"]]، والـ CSS بتاعه:
+
+~~~text من الـ CSS الناتج
+.pW5XIG_variable{--font-cairo:"Cairo", "Cairo Fallback"}
+~~~
+
+يعني الكلاس ده بس بيعرّف المتغير على html، ومش بيغيّر أي خط لوحده.
+
+## ٤. [[globals.css]]: [[@theme inline]]
+
+~~~text globals.css
+@theme inline {
+  --font-sans: var(--font-cairo), system-ui, sans-serif;
+}
+~~~
+
+- [[--font-sans]] هو الخط الافتراضي في Tailwind، والـ Preflight بيحطه على [[html]]، فالموقع كله بياخده.
+- [[var(--font-cairo)]]: هات قيمة المتغير اللي next/font عمله.
+- [[system-ui, sans-serif]]: لو مفيش، خط النظام.
+- [[inline]]: Tailwind يحط القيمة نفسها مكان ما بتتستخدم بدل [[var(--font-sans)]]. في الـ CSS الناتج لقينا [[--default-font-family:var(--font-cairo), system-ui, sans-serif]]، ومفيش [[--font-sans]] خالص. ده المطلوب لما قيمة في الـ theme بتشاور على متغير تاني: المتغير يتقري في مكان الاستخدام.
+
+والنتيجة المحسوبة على الفقرة:
+
+~~~text getComputedStyle
+font-family: Cairo, "Cairo Fallback", system-ui, sans-serif
+~~~
+
+## ٥. اللي حصل وقت الـ build
+
+next/font كتب 4 [[@font-face]]. ٣ لـ Cairo، كل واحد لجزء من الحروف، وواحد للخط الاحتياطي:
+
+| الملف | الحروف ([[unicode-range]]) | preload |
+|---|---|---|
+| [[9ff27b8a0a8f3dc0-s.p....woff2]] | العربي ([[U+6??]]...) | أيوه |
+| [[d41831e24743a3c1-s.p....woff2]] | اللاتيني الأساسي ([[U+??]]...) | أيوه |
+| [[a5b03b231ce290a0-s....woff2]] | latin-ext (حروف أوروبية زيادة) | لأ |
+
+- [[unicode-range]]: المتصفح بيحمّل الملف بس لو الصفحة فيها حروف من المدى ده.
+- الـ [[.p.]] في الاسم = عليه [[<link rel="preload">]] في الـ head. اللي في [[subsets]] بس هما اللي اتعملهم preload.
+
+والخط الاحتياطي:
+
+~~~text من الـ CSS الناتج
+@font-face{font-family:Cairo Fallback;src:local(Arial);ascent-override:137.65%;descent-override:60.32%;line-gap-override:0.0%;size-adjust:94.66%}
+~~~
+
+ده Arial اللي على الجهاز ([[local(Arial)]])، بس متعدّل: [[size-adjust:94.66%]] بيصغّر حروفه، و [[ascent-override]] و [[descent-override]] بيظبطوا ارتفاع السطر، عشان مقاساته تبقى قريبة من Cairo. فلما Cairo يوصل ويتبدّل، الكلام ميتنطش.
+
+## ٦. في Chrome
+
+~~~text الـ Network (نوع font)
+/_next/static/media/9ff27b8a0a8f3dc0-s.p.40_3w74kn95bo.woff2
+/_next/static/media/d41831e24743a3c1-s.p.08tn9snzkmifr.woff2
+~~~
+
+- ملفين بس اتحمّلوا: العربي واللاتيني، لأن الصفحة فيها عربي وكلمة Hello. الـ latin-ext متحمّلش.
+- الاتنين من [[localhost]]، ومفيش ولا request لـ [[fonts.googleapis.com]] أو [[fonts.gstatic.com]].
+- في الـ head لقينا [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للملفين دول.
+- Chrome قال إن الكلام اترسم فعلًا بخط [[Cairo]] (custom).
+
+---
+
+## ٧. من غير Next: [[@font-face]] بإيدك
+
+~~~text globals.css
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/cairo-var.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: swap;
+}
+~~~
+
+- [[font-family: "Cairo"]]: الاسم اللي هتكتبه بعدين في [[font-family]]. انت اللي بتختاره.
+- [[src: url(...) format("woff2")]]: الملف من موقعك، و [[woff2]] أصغر صيغة خطوط.
+- [[font-weight: 200 1000]]: الملف ده بيغطي كل الأوزان من 200 لـ 1000 (variable).
+- [[font-display: swap]]: نفس الكلام اللي فوق.
+
+جربناه في صفحة Vite، وأخّرنا ملف الخط ثانيتين عمدًا:
+
+| الوقت | الخط اللي اترسم بيه الكلام | حالة الخط |
+|---|---|---|
+| 208ms | Segoe UI (خط ويندوز) | [[loading]] |
+| 2340ms | Cairo | [[loaded]] |
+
+يعني الكلام ظهر على طول بخط النظام، واتبدّل لما Cairo وصل. ده [[swap]]. بس هنا مفيش [[Cairo Fallback]] متظبط، فلو المقاسات مختلفة الكلام ممكن يتنط وقت التبديل، وده اللي next/font بيحله لوحده.
+
+## الخلاصة
+
+| | next/font | [[@font-face]] بإيدك |
+|---|---|---|
+| الملف | بينزل وقت الـ build ويتخدم من موقعك | انت بتحطه في [[public/fonts]] |
+| preload | لوحده للـ [[subsets]] | [[<link rel="preload">]] بإيدك |
+| خط احتياطي متظبط | لوحده ([[size-adjust]]) | مش موجود إلا لو كتبته |
+| الربط بـ Tailwind | [[variable]] + [[--font-sans]] | [[--font-sans: "Cairo", ...]] |
+
+- متنساش [[arabic]] في [[subsets]]، وإلا ملف العربي ميتعملوش preload.
+- مفيش [[<link>]] لـ Google Fonts ولا [[@import url(...)]].`,
+          lines: [
+            R`أي خط من Google Fonts كـ function (المسافة في الاسم بتبقى [[_]]).`,
+            R`الـ subsets اللي هيتعملها preload (العربي واللاتيني)، والباقي بيتخدم من موقعك برضه بس مش بيتحمّل غير لو اتستخدم. ومتغير CSS اسمه [[--font-cairo]]. Cairo خط variable فمش محتاج weights.`,
+            "الكلاس بيعرّف المتغير على html.",
+            R`بلوك Tailwind بيعرّف توكنز، والسطر اللي جواه بيخلّي [[font-sans]] (الخط الافتراضي للصفحة) يبقى Cairo.`,
+            "Cairo الأول، ولو محمّلش خط النظام.",
+            R`قفلة. [[inline]] لأنه بيشاور على متغير.`,
+            "برا Next: تعريف الخط بإيدك.",
+            R`الاسم اللي هتستخدمه في [[font-family]].`,
+            "ملف woff2 من موقعك (أصغر صيغة).",
+            "ملف variable واحد فيه كل الأوزان من 200 لـ 1000.",
+            "اعرض الكلام فورًا بخط احتياطي وبدّل لما الخط يوصل.",
+            "قفلة."
+          ],
+          sol: R`في Network بفلتر Font: هتلاقي ملف أو اتنين [[.woff2]] بأسماء فيها hash زي [[/_next/static/media/xxxxxxxx-s.p.woff2]]، والدومين هو دومين موقعك (localhost:3000)، ومفيش ولا request لـ [[fonts.googleapis.com]] ولا [[fonts.gstatic.com]]. Next نزّل الخط وقت الـ build وبيقدّمه من عندك. والـ [[.p.]] في الاسم معناها إن عليه preload في الـ head.
+
+مع Slow 4G وrefresh: الكلام بيظهر الأول بخط النظام وبعد ثانية أو اتنين بيتبدّل لـ Cairo (ده الـ [[swap]]). والنطّة وقت التبديل صغيرة جدًا، لأن next/font بيعمل خط fallback اسمه زي [[Cairo Fallback]] معدّل بـ [[size-adjust]] عشان مقاساته تبقى قريبة من Cairo. هتلاقيه في Computed › font-family.
+
+لو لقيت request لجوجل، يبقى فيه [[<link>]] لـ Google Fonts لسه في الـ layout أو [[@import url(...)]] في الـ CSS، امسحهم. ولو الخط متطبقش خالص، غالبًا [[--font-sans]] مش بيقرا [[var(--font-cairo)]] أو الـ [[className={cairo.variable}]] مش على [[<html>]].`
+        },
+        {
+          cmd: "lucide-react",
+          ref: [
+            { t: "Lucide: lucide-react", url: "https://lucide.dev/guide/react" },
+            { t: "Lucide: Accessibility", url: "https://lucide.dev/how-to/accessibility" },
+            { t: "Simple Icons", url: "https://simpleicons.org/" },
+          ],
+          title: "أيقونات SVG كمكونات React",
+          desc: R`في [[lucide-react]] كل أيقونة مكون: [[<Search />]] و [[<Menu />]] و [[<ChevronLeft />]]. بتستورد اللي محتاجه بس، والباقي مش بيدخل الـ bundle. الحجم بـ [[size-4]]، واللون بياخد [[currentColor]] فبيمشي مع [[text-*]].
+
+ومن v1 الأيقونات عليها [[aria-hidden]] افتراضيًا، فلو الزرار أيقونة بس، لازم تدّي الزرار نفسه اسم بـ [[aria-label]].`,
+          example: R`import { Search, Menu, ChevronLeft, LoaderCircle } from "lucide-react";
+<button className="inline-flex items-center gap-2 text-brand">
+  <Search className="size-4" /> بحث
+</button>
+<button aria-label="افتح القايمة" className="md:hidden">
+  <Menu className="size-6" strokeWidth={1.5} />
+</button>
+<ChevronLeft className="size-4 shrink-0 ltr:rotate-180" />
+<LoaderCircle className="size-4 animate-spin motion-reduce:hidden" />`,
+          try: R`اعمل زرار أيقونة بس من غير [[aria-label]] وافتح DevTools › Elements › Accessibility: اسمه فاضي. ضيف الـ label وشوف الاسم ظهر. وبعدين غيّر [[text-brand]] لـ [[text-red-600]] وشوف الأيقونة اتغيرت معاه.`,
+          flag: "script",
+          deep: {
+            why: "الأيقونات كصور PNG بتتشوّه لما تكبر ومش بتاخد لون الكلام. وكـ font icons بتحمّل الخط كله عشان 10 أيقونات، وقارئ الشاشة ساعات يقرا حروف غريبة. SVG inline كمكون بيحل الاتنين: حاد في أي حجم، ولونه [[currentColor]]، وبتحمّل اللي بتستخدمه بس.",
+            how: R`كل مكون بيرسم [[<svg>]] بـ [[viewBox="0 0 24 24"]] و [[stroke="currentColor"]] و [[fill="none"]]. [[currentColor]] معناها «لون الكلام بتاع العنصر»، فـ [[text-*]] على الأيقونة أو أي أب ليها بيلوّنها. والحجم الافتراضي 24، و [[size-4]] بيغلبه من الـ CSS.
+
+[[strokeWidth]] بيغيّر سُمك الخط، وبيكبر مع الأيقونة. و [[absoluteStrokeWidth]] بيخليه ثابت بالبكسل مهما الأيقونة كبرت.
+
+Tree-shaking: [[import { Search } from "lucide-react"]] مع bundler حديث بيدخّل Search بس. بس لو عملت [[import * as Icons]] واخترت بالاسم وقت التشغيل، الـ bundler مش هيعرف ويدخّل الكل (آلاف الأيقونات).
+
+lucide v1 (2026): شال أيقونات البراندات (GitHub وفيسبوك وغيرهم)، وشال أسماء قديمة كانت متسابة كـ aliases (فلو import مش لاقي أيقونة دوّر على اسمها الجديد)، وبقى بيحط [[aria-hidden="true"]] على الأيقونات لوحده. ولو محتاج شعارات: Simple Icons أو SVG من البراند نفسه.`,
+            when: "أي أيقونة UI في React. و shadcn بيستخدمه افتراضيًا.",
+            mistakes: R`زرار أيقونة من غير اسم: قارئ الشاشة يقول «button» وخلاص. [[<Menu />]] من غير حجم جنب كلام صغير فيبان ضخم. وفي مشروع حقيقي زرار المنيو على الموبايل كان عليه [[aria-label="Toggle menu"]] كويس، بس ناقصه [[aria-expanded]] فقارئ الشاشة مش عارف القايمة مفتوحة ولا مقفولة (درس aria). و [[npm i lucide-react@latest]] من غير ما تقرا الـ changelog: من 0.x لـ 1.x أيقونات البراندات اتشالت والصفحة بقت 500 بـ [[Export Github doesn't exist in target module]].`
+          },
+          teach: R`## كل أيقونة component بيرسم [[<svg>]]
+
+[[<Search />]] مش صورة بتتحمّل: ده component بيرسم [[<svg>]] جوه الصفحة نفسها. حطينا المثال في صفحة Vite ([[lucide-react]] 1.52، و Tailwind 4.3.3، و [[--color-brand]] متعرّف) وقسنا في Chrome، وزودنا زرار تالت فيه [[<Menu />]] من غير [[aria-label]] للمقارنة.
+
+---
+
+## ١. [[import { Search, Menu, ChevronLeft, LoaderCircle } from "lucide-react";]]
+
+بتستورد كل أيقونة باسمها. والأسامي PascalCase (كل كلمة أولها كابيتال) لأنها components.
+
+وده بيفرق في الحجم. عملنا build لـ ٣ صفحات صغيرة بـ Vite وقارنّا ملف الـ JavaScript:
+
+| الصفحة | حجم الـ JS |
+|---|---|
+| React بس، من غير أيقونات | 219.53 kB |
+| [[import { Search, Menu }]] | 222.99 kB: زيادة 3.5 kB بس |
+| [[import * as Icons]] واختيار الأيقونة بالاسم وقت التشغيل | **984.15 kB**: كل الأيقونات دخلت |
+
+الاستيراد بالاسم زوّد 3.5 kB بس. لكن [[import * as Icons]] مع [[Icons[name]]] دخّل كل الأيقونات، لأن الـ bundler مش عارف وقت الـ build انت هتختار أنهي واحدة. ده اسمه tree-shaking: الـ bundler بيشيل الكود اللي محدش استخدمه، بس لازم يقدر يشوف ده من الكود.
+
+## ٢. الـ SVG اللي بيطلع
+
+ده اللي [[<Search className="size-4" />]] رسمه:
+
+~~~text الناتج
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+     class="lucide lucide-search size-4" aria-hidden="true">
+  <path d="m21 21-4.34-4.34"></path>
+  <circle cx="11" cy="11" r="8"></circle>
 </svg>
-<p>رغيف بلدي طالع من الفرن.</p>
 ~~~
 
-~~~text من Chrome
-image "رغيف عيش بلدي"
-paragraph   "رغيف بلدي طالع من الفرن."
-~~~
-
-صورة، وبعدها فقرة. مفيش حاجة بتقول إن الفقرة دي وصف الصورة: ممكن تكون بداية الكلام اللي بعدها. ونفس المحتوى جوه [[<figure>]]:
-
-~~~live 150 نفس الصورة جوه figure
-<figure>
-  <svg role="img" aria-label="رغيف عيش بلدي" width="120" height="80" viewBox="0 0 120 80">
-    <ellipse cx="60" cy="40" rx="55" ry="30" fill="#d9a441"/>
-  </svg>
-  <figcaption>رغيف بلدي طالع من الفرن.</figcaption>
-</figure>
-~~~
-
----
-
-## ٢. قواعد [[<figcaption>]]
-
-- **مكانه:** أول ابن أو آخر ابن للـ [[<figure>]]. فوق المحتوى أو تحته، مش في النص.
-- **عدده:** واحد بس.
-- **اختياري:** [[<figure>]] من غير [[<figcaption>]] سليم.
-- **جواه:** أي محتوى: نص، لينك، [[<cite>]]، فقرتين.
-- **برّه [[<figure>]] ملوش معنى.**
-
-جرّبت أكسر كل قاعدة:
-
-| الكود | Nu Html Checker |
+| الـ attribute | يعني |
 |---|---|
-| [[<figcaption>]] بين فقرتين جوه الـ [[<figure>]] | الـ validator رفضه كده: [[Element “p” not allowed as child of element “figure” in this context.]] |
-| اتنين [[<figcaption>]] في نفس الـ [[<figure>]] | الـ validator رفضه كده: [[Element “figcaption” not allowed as child of element “figure” in this context.]] |
-| [[<figcaption>]] جوه [[<div>]] عادي | الـ validator رفضه كده: [[Element “figcaption” not allowed as child of element “div” in this context.]] |
+| [[width="24" height="24"]] | الحجم الافتراضي 24px |
+| [[viewBox="0 0 24 24"]] | الرسمة مرسومة على شبكة 24×24، وبتكبر وتصغر من غير ما تبوظ |
+| [[fill="none"]] | مفيش تلوين جوه الأشكال، خطوط بس |
+| [[stroke="currentColor"]] | لون الخط = لون الكلام ([[color]]) بتاع العنصر |
+| [[stroke-width="2"]] | تخانة الخط 2 من 24 |
+| [[aria-hidden="true"]] | قارئ الشاشة يتجاهلها. lucide v1 بيحطه لوحده |
 
-المتصفح بيعرض التلاتة عادي من غير أي تصليح، فالـ validator هو اللي بيمسكهم.
+و [[className]] بتاعك اتضاف جنب [[lucide lucide-search]].
 
----
+## ٣. الزرار الأول: أيقونة وكلام
 
-## ٣. إيه اللي بيتحط في [[<figure>]]؟
-
-مش صور بس. المواصفة بتقول: رسومات، ومخططات، وصور، وكود، وغيرهم.
-
-### مقولة وصاحبها
-
-~~~live 154 رأي عميلة
-<figure>
-  <blockquote>
-    <p>أول مرة أفهم الـ HTML من غير ما أحفظ.</p>
-  </blockquote>
-  <figcaption>سلمى فؤاد، طالبة في <cite>كورس الويب من الصفر</cite></figcaption>
-</figure>
+~~~text App.tsx
+<button className="inline-flex items-center gap-2 text-brand">
+  <Search className="size-4" /> بحث
+</button>
 ~~~
 
-ده حل مشكلة الدرس اللي فات: اسم القائل لازم يبقى برّه [[<blockquote>]]، بس عايزه مربوط بيه. الـ [[<figure>]] بيلمّ الاتنين، و [[<figcaption>]] فيه الاسم. وده المثال اللي المواصفة نفسها بتستخدمه.
+- [[inline-flex items-center gap-2]]: الأيقونة والكلمة جنب بعض، في النص رأسيًا، و 8px بينهم.
+- [[text-brand]] على الزرار: لون الكلام. والأيقونة جوه الزرار، فـ [[currentColor]] بتاعها بياخد نفس اللون.
+- [[size-4]]: 16×16. الـ CSS بيغلب [[width="24"]] اللي على الـ svg.
 
-### كود
+القياس: الأيقونة 16px و [[stroke]] بتاعها [[oklch(0.55 0.2 265)]]، نفس لون الـ brand. غيّرنا [[text-brand]] لـ [[text-red-600]]: الكلام والأيقونة الاتنين بقوا [[oklch(0.577 0.245 27.325)]].
 
-~~~live 124 كود ووصفه فوقه
-<figure>
-  <figcaption>كود ١: أصغر قايمة ممكنة.</figcaption>
-  <pre><code>&lt;ul&gt;
-  &lt;li&gt;عيش&lt;/li&gt;
-&lt;/ul&gt;</code></pre>
-</figure>
+## ٤. الزرار التاني: أيقونة بس
+
+~~~text App.tsx
+<button aria-label="افتح القايمة" className="md:hidden">
+  <Menu className="size-6" strokeWidth={1.5} />
+</button>
 ~~~
 
-هنا [[<figcaption>]] **أول** ابن، فالعنوان طلع فوق الكود. [[<pre>]] بيعرض اللي جواه بسطوره ومسافاته زي ما هي، و [[<code>]] بيقول إن ده كود (اتشرح في وحدة «معنى الكلام جوه الفقرة»)، و [[&lt;]] هي طريقة كتابة علامة [[<]] عشان المتصفح ميفتكرهاش بداية tag.
+- [[aria-label]]: اسم الزرار لقارئ الشاشة، لأن مفيش كلام جواه والأيقونة [[aria-hidden]].
+- [[md:hidden]]: مستخبي من 768px وطالع. على عرض 800 الزرار كان [[display: none]]، وعلى 375 ظهر 24×24.
+- [[size-6]] = 24px. و [[strokeWidth={1.5}]] = خط أرفع من الافتراضي، وطلع على الـ svg [[stroke-width="1.5"]].
 
-### قايمة ليها عنوان
-
-~~~live 136 قايمة جوه figure
-<figure>
-  <figcaption>أكتر ٣ أصناف اتباعت في مارس</figcaption>
-  <ol>
-    <li>عيش بلدي</li>
-    <li>فينو</li>
-    <li>بقسماط</li>
-  </ol>
-</figure>
-~~~
-
-القوايم ملهاش عنصر عنوان خاص بيها. لو القايمة «شكل» الكلام بيشاور عليه (أكتر ٣ أصناف، ترتيب)، [[<figure>]] بيدّيها عنوان مربوط بيها. ده مثال من المواصفة برضه. ولو القايمة جزء عادي من الكلام، عنوان [[<h2>]] قبلها كفاية.
-
-### مجموعة أشكال
-
-[[<figure>]] جوه [[<figure>]]: وصف للمجموعة ووصف لكل واحد.
-
-~~~live 360 تلات أشكال ووصف واحد للكل
-<figure>
-  <figcaption>العيش في ٣ مراحل</figcaption>
-  <figure>
-    <svg role="img" aria-label="كورة عجينة بيضا" width="80" height="60" viewBox="0 0 80 60">
-      <circle cx="40" cy="30" r="24" fill="#f5e6c8" stroke="#999"/>
-    </svg>
-    <figcaption>١. العجينة</figcaption>
-  </figure>
-  <figure>
-    <svg role="img" aria-label="رغيف مفرود فاتح اللون" width="80" height="60" viewBox="0 0 80 60">
-      <ellipse cx="40" cy="30" rx="36" ry="14" fill="#ecd9a8" stroke="#999"/>
-    </svg>
-    <figcaption>٢. بعد الفرد</figcaption>
-  </figure>
-  <figure>
-    <svg role="img" aria-label="رغيف منفوخ لونه دهبي" width="80" height="60" viewBox="0 0 80 60">
-      <ellipse cx="40" cy="30" rx="36" ry="22" fill="#d9a441" stroke="#999"/>
-    </svg>
-    <figcaption>٣. بعد الخبز</figcaption>
-  </figure>
-</figure>
-~~~
-
----
-
-## ٤. [[alt]] ولا [[<figcaption>]]؟
-
-الاتنين، وكل واحد ليه شغلة:
-
-| | [[alt]] | [[<figcaption>]] |
-|---|---|---|
-| بيظهر لمين | اللي مش شايف الصورة (قارئ شاشة، أو الصورة محمّلتش) | الكل |
-| بيقول إيه | **اللي في الصورة**: بديل عنها | **معلومة عن الصورة**: عنوانها، مكانها، مصدرها، اللي تطلع بيه منها |
-| لازم؟ | أيوه على كل صورة ليها معنى | اختياري |
-
-في أول معاينة: البديل «تلات أعمدة بتعلى: السبت ٤٠...» بيوصف الرسم، والوصف «شكل ١: مبيعات العيش في أول ٣ أيام» بيقول هو عن إيه. متكتبش نفس الجملة في الاتنين: قارئ الشاشة هيقراها مرتين.
-
-(في المعاينة البديل مكتوب [[aria-label]] على [[<svg role="img">]] لأنه مش [[<img>]]. مع [[<img>]] بتكتب [[alt]].)
-
----
-
-## ٥. اسم الـ [[<figure>]] عند قارئ الشاشة
-
-MDN بيقول إن [[<figcaption>]] بيدّي الـ [[<figure>]] الـ accessible name بتاعه (الاسم اللي قارئ الشاشة بيقوله). قست ده في Chrome 157:
+الـ Accessibility tree على عرض 375:
 
 ~~~text الناتج
-figure وجواه figcaption:   role=figure   computedName=""   وفي الشجرة: figure وجواه ابن نوعه Figcaption
-figure عليه aria-label:    role=figure   computedName="اسم يدوي"
+- button "بحث"
+- button "افتح القايمة"
+- button
 ~~~
 
-يعني في Chrome الـ [[figcaption]] ظاهر كابن للـ [[figure]] بنوعه، بس خانة الاسم نفسها فاضية. فاللي أكيد: العلاقة بين الوصف والشكل موجودة في الشجرة. أما «قارئ الشاشة هينطق الوصف كاسم للشكل» فده كلام MDN ومتجرّبش هنا.
+التالت هو اللي زودناه من غير [[aria-label]]: [[button]] من غير اسم. قارئ الشاشة هيقول «button» وخلاص.
 
----
+## ٥. [[<ChevronLeft className="size-4 shrink-0 ltr:rotate-180" />]]
 
-## ٦. إمتى **لأ**
+- [[ChevronLeft]]: سهم صغير بيشاور شمال، يعني «التالي» في صفحة عربي.
+- [[shrink-0]]: في flex ميتصغرش لو الكلام اللي جنبه طويل.
+- [[ltr:rotate-180]]: في صفحة إنجليزي لفّه نص لفة فيشاور يمين.
 
-المواصفة بتفرّق: الجملة جوه الفقرة «قايمة بذاتها» برضه، بس الصورة اللي جزء من جملة مش figure.
+| [[lang]] و [[dir]] على html | [[rotate]] المحسوب |
+|---|---|
+| [[ar]] و [[rtl]] | [[none]]: السهم زي ما هو بيشاور شمال |
+| [[en]] و [[ltr]] | [[180deg]]: اتلف نص لفة فبيشاور يمين |
 
-| الحاجة | figure؟ | بدلها |
-|---|---|---|
-| لوجو الموقع في الـ header | لأ | [[<img>]] جوه اللينك |
-| أيقونة جوه جملة أو زرار | لأ | [[<img>]] أو [[<svg>]] في مكانها |
-| صورة زينة (خلفية، فاصل) | لأ | [[alt=""]]، أو CSS |
-| صورة منتج في كارت، من غير وصف، ومحدش بيشاور عليها | مش لازم | [[<img>]] كفاية |
-| جملة مكررة من المقال بخط كبير عشان تشد القارئ (pull quote) | لأ | [[<aside>]]: المواصفة بتقول ده تكرار مش جزء من المحتوى |
-| رسم بياني المقال بيقول عليه «شكل ٢» | أيوه | |
-| كود بتقول عليه «كود ١» | أيوه | |
-| مقولة واسم صاحبها | أيوه | |
+## ٦. [[<LoaderCircle className="size-4 animate-spin motion-reduce:hidden" />]]
 
-و [[<figure>]] مش غلاف لكل [[<img>]]. لو مفيش وصف ومفيش حد بيشاور عليها، الغلاف مبيضيفش حاجة.
+- [[animate-spin]]: animation اسمها [[spin]] مدتها 1s، بتلف على طول.
+- [[motion-reduce:hidden]]: لو المستخدم مفعّل «حركة أقل» في نظامه ([[prefers-reduced-motion: reduce]])، اخفيها.
 
-### شاور بالاسم مش بالمكان
-
-المواصفة بتنصح: اكتب «شكل ١» مش «الصورة اللي فوق». لأن الـ [[<figure>]] ممكن يتنقل (على الموبايل ينزل تحت، أو في الطباعة يروح آخر الصفحة)، و «اللي فوق» تبقى غلط. ولو ادّيته [[id]] تقدر تعمل اللينك [[<a href="#fig-1">شكل ١</a>]].
-
----
+حاكينا الإعداد ده في Chrome: الأيقونة بقت [[display: none]] ومقاسها 0×0.
 
 ## الخلاصة
 
-- [[<figure>]] لحاجة قايمة بذاتها الكلام بيشاور عليها: صورة، رسم، كود، قايمة، مقولة.
-- [[<figcaption>]] وصفها: واحد بس، وأول ابن أو آخر ابن، واختياري.
-- الشكل الافتراضي: 16px فوق وتحت و 40px من الجنبين، والوصف نص عادي.
-- مقولة وصاحبها: [[<blockquote>]] جوه [[<figure>]]، والاسم في [[<figcaption>]].
-- [[alt]] بيوصف اللي في الصورة، و [[<figcaption>]] بيقول معلومة عنها. متكررش.
-- مش كل صورة figure: اللوجو والأيقونة وصورة الزينة لأ.`,
-          try: R`اعمل ملف [[review.html]] فيه رأي عميل: [[<figure>]] جواه [[<blockquote>]] فيه جملة، و [[<figcaption>]] فيه اسم العميل. افتحه وافتح DevTools › Elements › Accessibility على الـ [[<figure>]] وشوف الـ role. وبعدين انقل الـ [[<figcaption>]] وحطه **جوه** الـ [[<blockquote>]]، وحط الكود في الـ validator.`,
-          sol: R`~~~live 182 review.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>رأي عميل</title>
-</head>
-<body>
-<h1>رأي عميل</h1>
-<figure>
-  <blockquote>
-    <p>الطلب وصل سخن وفي ميعاده.</p>
-  </blockquote>
-  <figcaption>منى سامي، عميلة من ٢٠٢٤</figcaption>
-</figure>
-</body>
-</html>
+| عايز | اكتب |
+|---|---|
+| الحجم | [[size-4]] أو [[size-6]] |
+| اللون | [[text-*]] على الأيقونة أو أي أب |
+| تخانة الخط | [[strokeWidth={1.5}]] |
+| زرار أيقونة بس | [[aria-label]] على الزرار |
+| حجم bundle صغير | [[import { Name }]] مش [[import *]] |
+
+- الأيقونة [[aria-hidden]] لوحدها، فالاسم لازم ييجي من الزرار.
+- متلوّنهاش بـ [[fill-*]]: دي خطوط، لونها [[stroke]].
+
+---
+
+## فخ: ترقية major شالت أيقونة GitHub والصفحة بقت 500
+
+### العَرَض
+
+مشروع Next 16.4.4 فيه footer بأيقونة GitHub من [[lucide-react@0.577.0]] (آخر نسخة 0.x). حد عمل [[npm i lucide-react@latest]] (عشان أيقونة جديدة)، وفجأة **كل** الصفحات اللي فيها الـ footer:
+
+~~~text curl -s -o /dev/null -w "HTTP: %{http_code}\n" http://localhost:4311/ar
+HTTP: 500
 ~~~
 
-الاقتباس متدخّل مرتين: 40px من الـ [[<figure>]] و 40px كمان من الـ [[<blockquote>]] اللي جواه. والاسم تحته على حد الـ [[<figure>]]. والـ role بتاع الـ [[<figure>]] هو [[figure]]، وجواه [[blockquote]] و Figcaption.
+~~~text sed 's/\x1b\[[0-9;]*m//g' dev.log | tail -20
+⨯ ./app/components/Footer.tsx:1:1
+Error: Export Github doesn't exist in target module
+> 1 | import { Github, Mail } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-لما تنقل الـ [[<figcaption>]] جوه الـ [[<blockquote>]]: الشكل بيتغيّر حاجة بسيطة (الاسم بيدخل مع الاقتباس)، والمتصفح مبيشتكيش. بس دلوقتي اسم العميل بقى جزء من الكلام المنقول، والـ [[<figure>]] بقى من غير وصف.
+The export Github was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.mjs [app-rsc] (ecmascript).
+Did you mean to import Gift?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
 
-~~~text الناتج
-الصح:   figure=1  blockquote=1  figcaption=1     role=figure
-        بداية الـ figure من اليمين: 48px   وبداية الـ blockquote: 88px
-        Nu Html Checker: صفر errors
-بعد النقل:  Nu Html Checker: error: Element “figcaption” not allowed as child of element “blockquote” in this context.
-~~~`,
-          deep: {
-            why: R`في أي مقال أو وثيقة فيه حاجات مش من مجرى الكلام نفسه: صورة، جدول، كود، مقولة. الكلام بيشاور عليها وهي بتوضّحه. من غير [[<figure>]] بتبقى [[<div>]] جواه صورة وفقرة، ومفيش حاجة بتربط الوصف بالصورة غير إنهم جنب بعض. [[<figure>]] و [[<figcaption>]] بيقولوا العلاقة دي للمتصفح، وبيدّوك غلاف واحد تنسّقه وتنقله.`,
-            how: R`[[<figure>]] عنصر block ليه margin افتراضي 16px فوق وتحت و 40px يمين وشمال، وبياخد role اسمه [[figure]]. و [[<figcaption>]] عنصر block من غير أي تنسيق. المتصفح بيعتبر **أول** [[<figcaption>]] ابن مباشر للـ [[<figure>]] هو الوصف.
+Import trace:
+  Server Component:
+    ./app/components/Footer.tsx
+    ./app/[lang]/page.tsx
 
-الـ [[<figure>]] جزء من مجرى الصفحة العادي: بيتعرض في مكانه في الكود. إنه «ممكن يتنقل» ده معنى انت بتقوله، والـ CSS هو اللي بينقله فعلًا لو عايز.`,
-            when: R`صورة أو رسم بياني في مقال، كود في شرح، جدول أو قايمة بتشاور عليها باسمها، مقولة واسم صاحبها (آراء العملا)، قصيدة أو مقطع من نص. ومتستخدمهوش للوجو والأيقونات وصور الزينة، ولا كغلاف تلقائي لكل صورة.`,
-            mistakes: R`[[<figcaption>]] في النص بين المحتوى. [[<figcaption>]] برّه [[<figure>]] أو جوه [[<blockquote>]]. نفس الجملة في [[alt]] وفي [[<figcaption>]]. تعتبر الـ [[<figcaption>]] بديل عن [[alt]] وتسيب الصورة من غيره. تلف اللوجو بـ [[<figure>]]. تكتب الوصف [[<p>]] تحت الصورة. تشاور على الشكل بـ «الصورة اللي فوق». تنسى إن [[<blockquote>]] جوه [[<figure>]] بيتدخّل مرتين (40 و 40) وتستغرب الشكل.`
-          },
+ GET /ar 500 in 1345ms (next.js: 1187ms, application-code: 158ms)
+~~~
+
+- [[Export Github doesn't exist]]: الاسم مش موجود في الباكدج.
+- [[Did you mean to import Gift?]]: Turbopack بيقترح أقرب اسم بالحروف. **متصدّقوش**: Gift أيقونة هدية، ملهاش علاقة.
+- [[Import trace]]: مين استورد الملف ده، لحد الصفحة.
+
+و TypeScript بيقول نفس الكلام من غير ما تشغّل حاجة:
+
+~~~text npx tsc --noEmit
+app/components/Footer.tsx(1,10): error TS2305: Module '"lucide-react"' has no exported member 'Github'.
+~~~
+
+ورقم الخروج [[2]]. يعني لو [[tsc --noEmit]] أو [[next build]] في الـ CI، كان اتمسك قبل ما يوصل لحد.
+
+### التشخيص بالترتيب
+
+١. **إيه اللي اتغيّر في [[package.json]]؟**
+
+~~~text grep lucide package.json   (قبل ← بعد)
+    "lucide-react": "^0.577.0",
+    "lucide-react": "^1.67.0",
+~~~
+
+نسخة **major** جديدة (0 ← 1). والـ major معناها «فيه حاجات اتشالت أو اتغيّرت».
+
+٢. **النسخ المتاحة، والمتسطبة فعلًا:**
+
+~~~text npm view lucide-react versions --json | tail -5
+  "1.64.0",
+  "1.65.0",
+  "1.66.0",
+  "1.67.0"
+]
+~~~
+
+~~~text head -5 node_modules/lucide-react/package.json
+{
+  "name": "lucide-react",
+  "description": "A Lucide icon library package for React applications.",
+  "version": "1.67.0",
+~~~
+
+٣. **الأيقونة موجودة في الباكدج الجديد؟**
+
+~~~text grep -ciE "github" node_modules/lucide-react/dist/lucide-react.d.ts
+0
+~~~
+
+ولا مرة. وعدد الأيقونات:
+
+~~~text ls node_modules/lucide-react/dist/esm/icons | grep -c '\.mjs$'
+2296
+~~~
+
+يعني الأيقونات **زادت** (في 0.577.0 كانوا 1951 ملف)، بس GitHub مش منهم.
+
+٤. **إيه اللي اتشال بالظبط؟** من غير ما تسطّب القديمة، نزّل الباكدج كملف واقرا منه:
+
+~~~bash
+npm pack lucide-react@0.577.0
+tar -xzf lucide-react-0.577.0.tgz package/dist/lucide-react.d.ts
+grep -oE "declare const (Github|Gitlab|Facebook|Instagram|Linkedin|Twitter|Youtube|Figma|Slack)\b" package/dist/lucide-react.d.ts | sort -u
+~~~
+
+[[npm pack]] بينزّل الـ [[.tgz]] بتاع النسخة دي بس (مش بيسطّب)، و [[tar -xzf ... مسار]] بيطلّع الملف ده بس. وقارنّا قايمة أكبر بين النسختين: اتشالوا [[Codepen]] و [[Codesandbox]] و [[Dribbble]] و [[Facebook]] و [[Figma]] و [[Framer]] و [[Github]] و [[Gitlab]] و [[Instagram]] و [[Linkedin]] و [[Pocket]] و [[Slack]] و [[Trello]] و [[Twitch]] و [[Twitter]] و [[Youtube]]، وفضل [[Rss]]. يعني v1 شال **أيقونات البراندات** كلها.
+
+### ازاي حصل القفز ده؟ [[^]] على 0.x
+
+[[^0.577.0]] معناها «أي 0.577.x»: في نسخ 0.x الـ caret بيقفل الرقم التاني كمان. اتأكدنا:
+
+~~~text npm outdated lucide-react
+Package       Current   Wanted  Latest  Location                   Depended by
+lucide-react  0.577.0  0.577.0  1.67.0  node_modules/lucide-react  shop2
+~~~
+
+~~~text npm update lucide-react
+up to date in 764ms
+~~~
+
+[[Wanted]] (أعلى نسخة الـ range بيسمح بيها) = 0.577.0، و [[npm update]] مغيّرش حاجة. القفز لـ 1.x محتاج حد يطلبه صريح: [[npm i lucide-react@latest]] أو [[npm i lucide-react]] من غير رقم (اللي بيكتب [[^1.67.0]])، أو أداة بتعمل كده.
+
+### الحل (اختار واحد)
+
+**(أ) ارجع واقفل النسخة بالظبط:**
+
+~~~text npm i --save-exact lucide-react@0.577.0 && grep lucide package.json
+    "lucide-react": "0.577.0",
+~~~
+
+[[--save-exact]] بيكتب الرقم من غير [[^]]، فمحدش هيرقّي غير لما يغيّر الرقم بإيده. سريع، بس انت كده فضلت على نسخة مش هتاخد أيقونات وتصليحات جديدة.
+
+**(ب) خليك على 1.x، والبراند SVG من مصدر للبراندات:** [[simple-icons]] (16.36.0) فيه path البراندات الرسمية:
+
+~~~tsx app/components/BrandIcon.tsx
+import type { SimpleIcon } from "simple-icons";
+
+export function BrandIcon({ icon, className }: { icon: SimpleIcon; className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d={icon.path} />
+    </svg>
+  );
+}
+~~~
+
+~~~tsx app/components/Footer.tsx
+import { Mail } from "lucide-react";
+import { siGithub } from "simple-icons";
+import { BrandIcon } from "./BrandIcon";
+...
+<a href="https://github.com/acme" aria-label="GitHub"><BrandIcon icon={siGithub} className="size-5" /></a>
+~~~
+
+- [[fill="currentColor"]] مش [[stroke]]: أيقونات البراندات **مليانة**، عكس lucide (خطوط).
+- [[siGithub.path]]: الـ [[d]] بتاع الشعار، و [[siGithub.hex]] لونه الرسمي ([[181717]]) لو احتجته.
+- [[aria-hidden]] على الـ SVG و [[aria-label]] على اللينك (نفس قاعدة lucide).
+
+بعدها: [[HTTP: 200]]، و [[npx tsc --noEmit]] خرج [[0]]. والـ footer server component، فالـ SVG بيتبعت HTML ومفيش JavaScript زيادة للمتصفح.
+
+**ليه مش البدايل دي؟**
+
+| البديل | ليه لأ |
+|---|---|
+| تصدّق [[Did you mean Gift?]] | أيقونة تانية خالص |
+| تنسخ ملف الأيقونة من 0.577.0 جوه مشروعك | شغّال، بس انت كده بتصون نسخة من مكتبة. لو هتنسخ SVG، انسخه من مصدر للبراندات |
+| تفضل على 0.x للأبد | مفيش أيقونات جديدة ولا تصليحات. اختار (أ) وانت عارف إنه مؤقت |
+| تشيل الأيقونة وتحط كلمة «GitHub» | بيحل الـ 500، بس الديزاين اتغيّر من غير ما حد يقرر |
+
+### إزاي متتكررش
+
+- قبل أي ترقية major: اقرا الـ changelog أو صفحة الـ releases بتاعة المكتبة، ودوّر على «removed» أو «breaking».
+- [[npm outdated]] بيوريك [[Latest]] أكبر من [[Wanted]] بـ major = محتاجة قرار، مش [[npm update]].
+- [[npm i --save-exact]]، أو مرة واحدة للمشروع [[.npmrc]] فيه [[save-exact=true]] (جربنا: [[npm config get save-exact]] طلّع [[true]] جوه الفولدر).
+- [[npx tsc --noEmit]] أو [[next build]] في الـ CI: كان هيقف بـ [[TS2305]] قبل الـ merge.`,
+          lines: [
+            "استورد الأيقونات بالاسم. اللي مش مستورد مش بيدخل الـ bundle.",
+            R`زرار فيه أيقونة وكلام: اللون من [[text-brand]] بيوصل للأيقونة.`,
+            "16px، والكلام اللي جنبها هو اسم الزرار.",
+            R`قفلة الزرار الأول: الأيقونة والكلمة جواه، فالكلمة هي اسمه.`,
+            R`زرار أيقونة بس: [[aria-label]] هو اسمه لقارئ الشاشة.`,
+            "الأيقونة نفسها مخفية عن قارئ الشاشة، وخطها أرفع من الافتراضي (2).",
+            R`قفلة الزرار التاني: مفيهوش كلام، فاسمه جاي من [[aria-label]] بس.`,
+            R`سهم «التالي» في صفحة عربي بيشاور شمال، وفي الإنجليزي بيلف لليمين. و [[shrink-0]] عشان ميتزنقش جنب كلام طويل.`,
+            "loader بيلف، ويختفي عند اللي طالبين حركة أقل."
+          ],
+          sol: R`زرار الأيقونة من غير [[aria-label]]: في Accessibility pane هتلاقي Role [[button]] و Name فاضي، وقارئ الشاشة بيقول «button» بس، و Lighthouse بيطلّعه في «Buttons do not have an accessible name». بعد [[aria-label="افتح القايمة"]] الـ Name بقى «افتح القايمة» وجنبه إنه جاي من [[aria-label]].
+
+لما تغيّر [[text-brand]] لـ [[text-red-600]] على الزرار: الأيقونة والكلمة الاتنين بقوا أحمر مع بعض، لأن الـ SVG بتاع lucide مرسوم بـ [[stroke="currentColor"]]، يعني بياخد لون الـ [[color]] من الأب. لو فتحت الـ SVG في Elements هتلاقي [[stroke="currentColor"]] و [[fill="none"]].
+
+الغلط الشائع: تحاول تلوّن الأيقونة بـ [[fill-red-600]] فتطلع مليانة ومشوّهة، لأن lucide أيقونات خطوط. اللون بالـ [[text-*]] والتخانة بـ [[strokeWidth]].
+
+ولو الصفحة بقت 500 بعد ترقية lucide واللوج فيه [[Export Github doesn't exist in target module]]: v1 شال أيقونات البراندات. [[grep lucide package.json]] هتلاقي [[^1.x]]. ارجع بـ [[npm i --save-exact lucide-react@0.577.0]]، أو خليك على 1.x وحط الشعار من [[simple-icons]] بـ [[fill="currentColor"]].`,
           practice: [
-            { lvl: 'سريع', t: R`**صنّف:** أنهي من دول [[<figure>]] وأنهي لأ، وليه: (١) أيقونة سلة جوه جملة «اضغط على … عشان تشوف طلبك». (٢) خريطة الفرع والمقال بيقول «شوف خريطة ١». (٣) لوجو الموقع. (٤) كود من ٥ سطور الشرح بيقول عليه «كود ٢». (٥) صورة خلفية ورا العنوان. (٦) رأي عميل واسمه.`, done: R`إجابتك: (٢) و (٤) و (٦) figure. و (١) و (٣) و (٥) لأ. وكل «لأ» ليها بديل: الأيقونة في مكانها جوه الجملة، واللوجو [[<img>]] جوه لينك، والخلفية CSS.`, sol: R`| الحالة | figure؟ | السبب |
-|---|---|---|
-| أيقونة جوه جملة | لأ | جزء من الجملة. لو اتنقلت الجملة تبوظ |
-| خريطة بيتشاور عليها | أيوه | قايمة بذاتها وليها اسم |
-| اللوجو | لأ | مش محتوى بيتشاور عليه |
-| كود بيتشاور عليه | أيوه | [[<figure>]] جواه [[<pre>]] |
-| صورة خلفية | لأ | زينة، مكانها الـ CSS |
-| رأي عميل واسمه | أيوه | [[<blockquote>]] و [[<figcaption>]] |
-
-الحالتين (١) و (٢) مبنيين:
-
-~~~live 196 أيقونة جوه جملة، وخريطة في figure
-<p>اضغط على <svg role="img" aria-label="علامة السلة" width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="5" width="12" height="9" fill="#444"/></svg> عشان تشوف طلبك.</p>
-<figure>
-  <svg role="img" aria-label="خريطة: المخبز على ناصية شارعين" width="200" height="90" viewBox="0 0 200 90">
-    <rect width="200" height="90" fill="#e5e7eb"/>
-    <rect x="0" y="38" width="200" height="14" fill="#fff"/>
-    <rect x="93" y="0" width="14" height="90" fill="#fff"/>
-    <circle cx="120" cy="25" r="7" fill="#c2410c"/>
-  </svg>
-  <figcaption>خريطة ١: مكان الفرع الرئيسي.</figcaption>
-</figure>
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[package.json]] فيه [[lucide-react: "^0.577.0"]] و [[react: "^19.2.0"]]. لو آخر نسخ متاحة 0.577.3 و 1.67.0 لـ lucide، و 19.3.1 و 20.0.0 لـ react، [[npm update]] هيسطّب إيه لكل واحدة؟ اكتب، وبعدين اعرف من [[npm outdated]] على مشروع حقيقي إن عمود [[Wanted]] بيقول نفس الكلام.`, done: R`كتبت 0.577.3 لـ lucide (الـ caret على 0.x بيقفل الرقم التاني) و 19.3.1 لـ react (مش 20)، وتقدر تشاور على عمود [[Wanted]] في [[npm outdated]] وتشرحه.`, sol: R`~~~bash
+npx semver -r "^0.577.0" 0.577.0 0.577.3 1.67.0
+npx semver -r "^19.2.0" 19.2.0 19.3.1 20.0.0
+npm outdated
 ~~~
 
-**الاختبار:** انقلها ذهنيًا لآخر الصفحة. الخريطة تفضل مفهومة، والجملة تقول «شوف خريطة ١» وخلاص. الأيقونة لو اتنقلت الجملة هتبقى «اضغط على عشان تشوف طلبك».
+**الإجابة:** lucide هتبقى 0.577.3، و react هتبقى 19.3.1.
 
-**الغلطة الشائعة:** «أي صورة يبقى figure». الصورة اللي جزء من جملة أو من واجهة مش figure.
+**ليه:** الـ caret [[^]] بيسمح بأي تحديث مش كاسر، والتعريف معتمد على أول رقم مش صفر:
+
+- [[^19.2.0]]: أول رقم مش صفر هو 19، فبيسمح بأي 19.x.x، ومش 20.
+- [[^0.577.0]]: الرقم الأول صفر، فأول رقم مش صفر هو 577، فبيسمح بـ 0.577.x بس.
+
+و semver بتعتبر كل [[0.x]] غير ثابتة، فأي زيادة في الرقم التاني ممكن تكسر. عشان كده 1.67.0 مش هتوصل.
+
+في [[npm outdated]]: [[Wanted]] أعلى نسخة بتطابق الـ range، و [[Latest]] أحدث نسخة منشورة. لو الاتنين مختلفين، [[npm update]] مش هيوصلك لـ Latest.
+
+**الغلطة الشائعة:** تفتكر إن [[npm update]] بيجيب آخر نسخة. لازم [[npm install pkg@latest]].
 
 ~~~text الناتج
-figure=1  figcaption=1
-شجرة الـ accessibility:
-paragraph   "اضغط على "  image "علامة السلة"  " عشان تشوف طلبك."
-figure
-  image "خريطة: المخبز على ناصية شارعين"
-  Figcaption   "خريطة ١: مكان الفرع الرئيسي."
+^0.577.0 بيطابق: 0.577.0 ، 0.577.3
+^19.2.0 بيطابق: 19.2.0 ، 19.3.1
+
+npm outdated (lab بنسخة 0.577.0 ، و latest وقت التجربة 1.68.0):
+Package       Current  Wanted   Latest
+lucide-react  0.577.0  0.577.0  1.68.0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** مقال قصير «ليه العيش بينفش؟» فيه ٣ أشكال، كل واحد [[<figure>]] ليه [[id]] ووصف: رسم (SVG بسيط: ٣ دواير بتكبر)، وكود (قايمة مكونات)، ومقولة واسم صاحبها. وكل شكل الكلام اللي قبله بيشاور عليه بلينك [[href="#..."]].`, done: R`فيه ٣ [[<figure>]] وكل واحد ليه [[<figcaption>]] واحد و [[id]]، و ٣ لينكات كل واحد بينزل لشكله، ومفيش في الكلام «اللي فوق» ولا «اللي تحت»، والـ validator صفر errors.`, work: { h: 480, start: R`<h1>ليه العيش بينفش؟</h1>
-الخميرة بتاكل السكر وبتطلّع غاز، والغاز هو اللي بينفخ العجينة. شكل ١ بيورّي حجم العجينة مع الوقت.
-شكل ١: العجينة بعد ٠ و ٣٠ و ٦٠ دقيقة.
-ولو كتبت الوصفة في صفحة، المكونات بتبقى قايمة زي كود ١.
-كود ١: مكونات العجينة.
-وزي ما مكتوب في المقولة اللي تحت، الصبر نص الشغل.
-العجينة اللي بتستعجلها بتطلع ناشفة.
-الحاج سيد، في دفتر الخبّاز`, checks: [
-              { say: R`فيه ٣ أشكال كل واحد [[<figure>]]`, q: "figure", n: 3 },
-              { say: R`كل [[<figure>]] ليه [[id]]`, q: "figure[id]", n: 3 },
-              { say: R`كل [[<figure>]] ليه [[<figcaption>]] واحد`, q: "figure > figcaption", n: 3 },
-              { say: R`الكلام قبل كل شكل بيشاور عليه بلينك [[href="#..."]]: ٣ لينكات`, q: 'a[href^="#"]', n: 3 },
-              { say: R`الرسم [[<svg>]] جوه [[<figure>]]`, q: "figure svg", n: 1 },
-              { say: R`المقولة [[<blockquote>]] جوه [[<figure>]]`, q: "figure blockquote", n: 1 },
-            ] }, sol: R`~~~live 480 ليه العيش بينفش؟
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه العيش بينفش؟</title>
-</head>
-<body>
-<main>
-  <article>
-    <h1>ليه العيش بينفش؟</h1>
-    <p>الخميرة بتاكل السكر وبتطلّع غاز، والغاز هو اللي بينفخ العجينة. <a href="#fig-1">شكل ١</a> بيورّي حجم العجينة مع الوقت.</p>
-    <figure id="fig-1">
-      <svg role="img" aria-label="تلات دواير بتكبر: بعد ٠ دقيقة، و٣٠، و٦٠" width="240" height="100" viewBox="0 0 240 100">
-        <circle cx="35" cy="65" r="18" fill="#f5e6c8" stroke="#999"/>
-        <circle cx="110" cy="58" r="27" fill="#f5e6c8" stroke="#999"/>
-        <circle cx="195" cy="50" r="38" fill="#f5e6c8" stroke="#999"/>
-      </svg>
-      <figcaption>شكل ١: العجينة بعد ٠ و ٣٠ و ٦٠ دقيقة.</figcaption>
-    </figure>
-    <p>ولو كتبت الوصفة في صفحة، المكونات بتبقى قايمة زي <a href="#code-1">كود ١</a>.</p>
-    <figure id="code-1">
-      <figcaption>كود ١: مكونات العجينة.</figcaption>
-      <pre><code>&lt;ul&gt;
-  &lt;li&gt;دقيق&lt;/li&gt;
-  &lt;li&gt;خميرة&lt;/li&gt;
-  &lt;li&gt;مية دافية&lt;/li&gt;
-&lt;/ul&gt;</code></pre>
-    </figure>
-    <p>وزي ما مكتوب في <a href="#quote-1">المقولة</a> اللي تحت، الصبر نص الشغل.</p>
-    <figure id="quote-1">
-      <blockquote>
-        <p>العجينة اللي بتستعجلها بتطلع ناشفة.</p>
-      </blockquote>
-      <figcaption>الحاج سيد، في <cite>دفتر الخبّاز</cite></figcaption>
-    </figure>
-  </article>
-</main>
-</body>
-</html>
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صلّح المكوّن البايظ ده بعد الترقية لـ lucide 1.x من غير ما ترجع النسخة: [[import { Github, Youtube, Mail } from "lucide-react"]]. استخدم [[simple-icons]] للبراندين و [[BrandIcon]] زي الدرس، وأثبت بـ [[npx tsc --noEmit]] و [[curl -w "%{http_code}"]].`, done: R`[[tsc]] خرج 0، والصفحة [[200]]، و [[curl | grep -o "<svg" | wc -l]] بيعدّ ٣ أيقونات، واللينكات عليها [[aria-label]].`, sol: R`~~~tsx BrandIcon.tsx
+import type { SimpleIcon } from "simple-icons";
+
+export function BrandIcon({ icon, className }: { icon: SimpleIcon; className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d={icon.path} />
+    </svg>
+  );
+}
 ~~~
 
-**ليه كده:**
+~~~tsx Footer.tsx
+import { Mail } from "lucide-react";
+import { siGithub, siYoutube } from "simple-icons";
+import { BrandIcon } from "./BrandIcon";
 
-- كل [[<figure>]] ليه [[id]] ([[fig-1]] و [[code-1]] و [[quote-1]])، والكلام بيشاور عليه بلينك. لو الشكل اتنقل، اللينك لسه شغال.
-- في الرسم الـ [[<figcaption>]] آخر ابن (تحت)، وفي الكود أول ابن (فوق). الاتنين مسموحين، والعادة: وصف الصورة تحتها وعنوان الكود أو الجدول فوقه.
-- الرسم ليه [[aria-label]] بيوصف اللي فيه (٣ دواير بتكبر)، والـ [[<figcaption>]] بيقول هو عن إيه. مش نفس الجملة.
-- في المقولة: الكلام جوه [[<blockquote>]]، والاسم واسم الدفتر (جوه [[<cite>]]) في [[<figcaption>]].
-- جوه [[<pre>]] علامة [[<]] مكتوبة [[&lt;]] وعلامة [[>]] مكتوبة [[&gt;]]. لو اتكتبوا عادي المتصفح هيعمل قايمة حقيقية بدل ما يعرض الكود.
+export function Footer() {
+  return (
+    <footer className="flex gap-4 p-4">
+      <a href="https://github.com/acme" aria-label="GitHub"><BrandIcon icon={siGithub} className="size-5" /></a>
+      <a href="https://www.youtube.com/@acme" aria-label="YouTube"><BrandIcon icon={siYoutube} className="size-5" /></a>
+      <a href="mailto:hello@example.com" aria-label="الإيميل"><Mail className="size-5" aria-hidden="true" /></a>
+    </footer>
+  );
+}
+~~~
 
-**الغلطة الشائعة:** تنسخ الكود جوه [[<pre>]] زي ما هو. جرّبها: القايمة هتترسم، والكود مش هيبان.
+~~~bash
+npx tsc --noEmit
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/
+curl -s http://localhost:3000/ | grep -o "<svg" | wc -l
+~~~
+
+**ليه:** lucide 1.x شالت أيقونات البراندات، و [[Mail]] لسه موجودة لأنها أيقونة عامة. فبنسيب [[Mail]] من lucide، ونجيب البراند من [[simple-icons]].
+
+[[BrandIcon]] بيرسم [[icon.path]] بـ [[fill="currentColor"]]، فاللون جاي من اللينك. و simple-icons أشكال ملية، عكس lucide اللي خطوط. عشان كده [[fill]] مش [[stroke]].
+
+و [[aria-label]] على اللينك هو الاسم، والأيقونة [[aria-hidden]].
+
+**انتبه لحاجتين:** [[siLinkedin]] مش موجودة في simple-icons 16.36.0 ([[tsc]] بيقول [[has no exported member]])، فـ LinkedIn محتاج SVG من ملفات الشركة الرسمية. و [[grep -c]] بيعدّ سطور مش تطابقات، و React بيطلّع الصفحة في سطر واحد، فلازم [[grep -o]] مع [[wc -l]].
+
+**الغلطة الشائعة:** ترجّع lucide لـ 0.x عشان ترتاح. كده انت قفلت على نسخة قديمة.
 
 ~~~text الناتج
-figure=3  figcaption=3  a=3  blockquote=1  cite=1
-كل href ليه id موجود: true   (#fig-1 #code-1 #quote-1)
-مكان figcaption:  fig-1 آخر ابن   code-1 أول ابن   quote-1 آخر ابن
-Nu Html Checker: صفر errors
-على عرض 360: مفيش scroll أفقي
+npx tsc --noEmit        exit 0
+curl                    200
+grep -o "<svg" | wc -l  3
+aria-label:             GitHub ، YouTube ، الإيميل
+
+(اتقاس بـ renderToString من React 19.3.1 وسيرفر Node صغير.)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود في أول الحل فيه ٤ غلطات: اللوجو ملفوف بـ [[<figure>]]، وصورة الفرع الـ [[<figcaption>]] بتاعها في النص بين فقرة والصورة، والصورة نفسها من غير نص بديل، ورأي العميل الـ [[<figcaption>]] بتاعه جوه الـ [[<blockquote>]]. صلّحهم.`, done: R`الـ validator قبل التصليح طلّع errors وبعده صفر، واللوجو بقى من غير [[<figure>]]، وكل [[<figcaption>]] آخر ابن لـ [[<figure>]]، والصورة ليها نص بديل مختلف عن الوصف.`, work: { h: 322, solAt: 1, start: R`<header>
-  <figure>
-    <svg role="img" aria-label="لوجو مخبز السنابل" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#c2410c"/></svg>
-  </figure>
-</header>
-<figure>
-  <p>صورة الفرع الجديد:</p>
-  <figcaption>الفرع الجديد</figcaption>
-  <svg width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="#d9a441"/><rect x="60" y="45" width="40" height="45" fill="#7c2d12"/></svg>
-</figure>
-<blockquote>
-  <p>أحسن عيش في المنطقة.</p>
-  <figcaption>كريم عادل</figcaption>
-</blockquote>`, checks: [
-              { say: R`اللوجو من غير [[<figure>]]`, q: "header figure", n: 0 },
-              { say: R`صورة الفرع الرسم جواها [[<svg>]] ليه [[aria-label]] (نص بديل)`, q: "figure svg[aria-label]", n: 1 },
-              { say: R`كل [[<figcaption>]] آخر ابن في [[<figure>]] بتاعه`, q: "figure > figcaption:last-child", n: 2 },
-              { say: R`مفيش [[<figcaption>]] جوه [[<blockquote>]]`, q: "blockquote figcaption", n: 0 },
-              { say: R`مفيش فقرة [[<p>]] تايهة جوه [[<figure>]] قبل الصورة`, q: "figure > p", n: 0 },
-            ] }, sol: R`قبل:
-
-~~~live 322 قبل
-<header>
-  <figure>
-    <svg role="img" aria-label="لوجو مخبز السنابل" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#c2410c"/></svg>
-  </figure>
-</header>
-<figure>
-  <p>صورة الفرع الجديد:</p>
-  <figcaption>الفرع الجديد</figcaption>
-  <svg width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="#d9a441"/><rect x="60" y="45" width="40" height="45" fill="#7c2d12"/></svg>
-</figure>
-<blockquote>
-  <p>أحسن عيش في المنطقة.</p>
-  <figcaption>كريم عادل</figcaption>
-</blockquote>
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من غير ما تسطّب، بـ [[npm pack]] و [[tar]] طلّع [[dist/lucide-react.d.ts]] من 0.577.0 ومن آخر نسخة، وطلّع قايمة الأسامي اللي في القديمة ومش في الجديدة ([[comm -23]] على لستتين مترتبين، أو سكربت Node).`, done: R`عندك لستة فيها [[Github]] و [[Facebook]] و [[Youtube]] على الأقل، وعارف تشرح [[npm pack]] بيعمل إيه في سطر.`, sol: R`~~~bash
+npm pack lucide-react@0.577.0 --silent
+npm pack lucide-react@latest --silent
+mkdir old new
+tar -xzf lucide-react-0.577.0.tgz -C old package/dist/lucide-react.d.ts
+tar -xzf lucide-react-1.68.0.tgz -C new package/dist/lucide-react.d.ts
+node gone.mjs old/package/dist/lucide-react.d.ts new/package/dist/lucide-react.d.ts
 ~~~
 
-~~~text Nu Html Checker على «قبل»
-error: Element “svg” not allowed as child of element “figure” in this context.
-error: Element “figcaption” not allowed as child of element “blockquote” in this context.
+~~~js gone.mjs
+import { readFileSync } from "node:fs";
+
+function exportsOf(file) {
+  const text = readFileSync(file, "utf8");
+  const start = text.lastIndexOf("export {");
+  const body = text.slice(start + "export {".length, text.indexOf("}", start));
+  return new Set(body.split(",").map((s) => s.trim().split(" as ").pop()).filter(Boolean));
+}
+
+const [oldFile, newFile] = process.argv.slice(2);
+const before = exportsOf(oldFile);
+const after = exportsOf(newFile);
+const gone = [...before].filter((name) => !after.has(name)).sort();
+console.log(before.size, after.size, gone.length);
+console.log(gone.join(" "));
 ~~~
 
-أول error صياغته غريبة: هو بيشتكي من الـ [[<svg>]] اللي جه **بعد** الـ [[<figcaption>]]. معناه إن الـ [[<figcaption>]] مبقاش آخر ابن.
+**[[npm pack]] بيعمل إيه:** بينزّل الملف المضغوط اللي npm هيسطّبه، ويحطه في الفولدر، من غير ما يلمس [[node_modules]] أو [[package.json]].
 
-بعد:
+**ليه السكربت بيقرا [[export { ... }]]:** شكل الملف اتغيّر بين النسختين: القديمة [[declare const Github: react.Forward…]]، والجديدة [[declare const Mail: LucideIcon]]. وأول محاولة بـ [[comm -23]] على أسماء [[declare]] طلّعت 61 اسم، منهم أسماء لسه موجودة زي [[Trash2]] كـ alias. سطر [[export]] هو الحقيقة، لأنه اللي بتعمل منه import.
 
-~~~live 298 بعد
-<header>
-  <svg role="img" aria-label="لوجو مخبز السنابل" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#c2410c"/></svg>
-</header>
-<figure>
-  <svg role="img" aria-label="واجهة محل لونها دهبي وبابها بني" width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="#d9a441"/><rect x="60" y="45" width="40" height="45" fill="#7c2d12"/></svg>
-  <figcaption>الفرع الجديد في شارع النخيل.</figcaption>
-</figure>
-<figure>
-  <blockquote>
-    <p>أحسن عيش في المنطقة.</p>
-  </blockquote>
-  <figcaption>كريم عادل</figcaption>
-</figure>
-~~~
-
-**الأربع تصليحات:**
-
-- **اللوجو:** الـ [[<figure>]] اتشال. اللوجو مش شكل بيتشاور عليه. والـ validator مكانش بيشتكي منه، لأن الكود سليم والمعنى هو اللي غلط.
-- **مكان الوصف:** الصورة الأول وبعدها [[<figcaption>]] آخر ابن. وفقرة «صورة الفرع الجديد:» اتشالت لأنها تكرار للوصف.
-- **النص البديل:** الصورة خدت [[role="img"]] و [[aria-label]] بيوصف اللي فيها («واجهة محل لونها دهبي وبابها بني»)، والوصف بيقول هي إيه («الفرع الجديد في شارع النخيل»). في «قبل» الصورة مكانتش ظاهرة لقارئ الشاشة باسم خالص، والـ validator ممسكهاش.
-- **المقولة:** اتلفّت بـ [[<figure>]]، والـ [[<figcaption>]] خرج من الـ [[<blockquote>]] وبقى أخوه.
-
-**الغلطة الشائعة:** تصلّح الـ errors الاتنين وتقف. الغلطتين التانيين (اللوجو والنص البديل) مش errors، ومحدش هيقولك عليهم.
+**الغلطة الشائعة:** تعمل [[comm]] من غير [[sort]] بنفس الـ locale. [[comm]] لازم ملفين مترتبين، فاكتب [[LC_ALL=C]] قبل الاتنين.
 
 ~~~text الناتج
-قبل:  شجرة الـ accessibility:
-      banner › figure › image "لوجو مخبز السنابل"
-      figure › paragraph ، Figcaption "الفرع الجديد" ، image (من غير اسم)
-      blockquote › paragraph ، Figcaption "كريم عادل"
-      Nu Html Checker: 2 errors
-بعد:  banner › image "لوجو مخبز السنابل"
-      figure › image "واجهة محل لونها دهبي وبابها بني" ، Figcaption "الفرع الجديد في شارع النخيل."
-      figure › blockquote ، Figcaption "كريم عادل"
-      Nu Html Checker: صفر errors
+5844 6932 57
+
+(5844 اسم قديم ، 6932 جديد ، 57 راحوا: كل أيقونة باسم و Icon و Lucide)
+
+الأيقونات الـ 19:
+Chrome Chromium Codepen Codesandbox Dribbble Facebook Figma Framer Github
+Gitlab Instagram Linkedin Pocket RailSymbol Slack Trello Twitch Twitter Youtube
 ~~~` },
-            { lvl: 'تحدي', t: R`**أشكال:** معرض من ٣ أعلام إشارة لنادي مراكب متخيل، مرسومين بـ [[<svg>]] من مستطيلات ودواير بس: علم أحمر كله، وعلم نصه أصفر ونصه أزرق، وعلم أخضر في نصه دايرة بيضا. كل علم [[<figure>]] بوصفه، والتلاتة جوه [[<figure>]] واحد ليه وصف للمجموعة.`, done: R`فيه ٤ [[<figure>]] (واحد خارجي وتلاتة جواه) و ٤ [[<figcaption>]]، وكل علم ليه نص بديل بيوصف شكله ووصف بيقول معناه، ووصف المجموعة أول ابن للـ [[<figure>]] الخارجي، والـ validator صفر errors.`, work: { h: 460, start: R`<h1>معرض أعلام الإشارة</h1>
-تلات أعلام بيستخدمهم نادي المراكب (اسم متخيل)
-علم ١: ممنوع النزول. (علم أحمر كله)
-علم ٢: انزل بحذر. (نصه الفوقاني أصفر ونصه التحتاني أزرق)
-علم ٣: البحر هادي. (أخضر في نصه دايرة بيضا)`, checks: [
-              { say: R`فيه ٤ [[<figure>]]: واحد خارجي وتلاتة جواه`, q: "figure", n: 4 },
-              { say: R`الـ [[<figure>]] التلاتة الصغيرين جوه الخارجي`, q: "figure figure", n: 3 },
-              { say: R`كل علم رسمة [[<svg>]] ليها [[aria-label]]`, q: "figure figure svg[aria-label]", n: 3 },
-              { say: R`٤ [[<figcaption>]]: وصف لكل علم ووصف للمجموعة`, q: "figcaption", n: 4 },
-              { say: R`وصف المجموعة أول ابن للـ [[<figure>]] الخارجي`, q: "figure > figcaption:first-child", n: 1 },
-              { say: R`العلم الأخضر فيه [[<circle>]] واحدة`, q: "svg circle", n: 1 },
-            ] }, sol: R`~~~live 460 معرض أعلام الإشارة
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>معرض أعلام الإشارة</title>
-</head>
-<body>
-<main>
-  <h1>معرض أعلام الإشارة</h1>
-  <figure>
-    <figcaption>تلات أعلام بيستخدمهم نادي المراكب (اسم متخيل)</figcaption>
-    <figure>
-      <svg role="img" aria-label="علم أحمر كله" width="90" height="60" viewBox="0 0 90 60">
-        <rect width="90" height="60" fill="#b91c1c"/>
-      </svg>
-      <figcaption>علم ١: ممنوع النزول.</figcaption>
-    </figure>
-    <figure>
-      <svg role="img" aria-label="علم نصه الفوقاني أصفر ونصه التحتاني أزرق" width="90" height="60" viewBox="0 0 90 60">
-        <rect width="90" height="30" fill="#facc15"/>
-        <rect y="30" width="90" height="30" fill="#1d4ed8"/>
-      </svg>
-      <figcaption>علم ٢: انزل بحذر.</figcaption>
-    </figure>
-    <figure>
-      <svg role="img" aria-label="علم أخضر في نصه دايرة بيضا" width="90" height="60" viewBox="0 0 90 60">
-        <rect width="90" height="60" fill="#15803d"/>
-        <circle cx="45" cy="30" r="14" fill="#fff"/>
-      </svg>
-      <figcaption>علم ٣: البحر هادي.</figcaption>
-    </figure>
-  </figure>
-</main>
-</body>
-</html>
+            { lvl: 'تحدي', t: R`**ابني:** اكتب [[majors.mjs]]: بيقرا [[package.json]] وملف JSON فيه آخر نسخة لكل باكدج (اعمله بإيدك أو من [[npm view <pkg> version]])، ويطبع كل باكدج الـ range بتاعه مش هيوصل لآخر نسخة لأن الفرق major، ويخرج بـ 1 لو فيه. (شكل فحص الـ ci في الدرس.)`, done: R`على [[{"lucide-react":"^0.577.0","react":"^19.2.0"}]] وآخر نسخ [[1.67.0]] و [[19.3.1]] بيطبع [[lucide-react: ^0.577.0 -> 1.67.0 (major)]] بس ويخرج 1.`, sol: R`~~~js majors.mjs
+import { readFileSync } from "node:fs";
+
+const [pkgFile = "package.json", latestFile = "latest.json"] = process.argv.slice(2);
+const { dependencies = {}, devDependencies = {} } = JSON.parse(readFileSync(pkgFile, "utf8"));
+const latest = JSON.parse(readFileSync(latestFile, "utf8"));
+const all = { ...dependencies, ...devDependencies };
+
+// نفس منطق الـ caret: أول رقم مش صفر هو الـ major الفعلي
+function lockedPart(version) {
+  const [major, minor, patch] = version.replace(/^[\^~]/, "").split(".").map(Number);
+  if (major > 0) return $__bt$__{major}$__bt;
+  if (minor > 0) return $__bt0.$__{minor}$__bt;
+  return $__bt0.0.$__{patch}$__bt;
+}
+
+let found = 0;
+for (const [name, range] of Object.entries(all)) {
+  const newest = latest[name];
+  if (!newest) continue;
+  if (!range.startsWith("^")) continue;
+  if (lockedPart(range) !== lockedPart(newest)) {
+    console.log($__bt$__{name}: $__{range} -> $__{newest} (major)$__bt);
+    found++;
+  }
+}
+process.exit(found ? 1 : 0);
 ~~~
 
-**الرسم:** كل [[<svg>]] عرضه 90 وارتفاعه 60. [[<rect>]] مستطيل ([[width]] و [[height]] و [[y]] لبدايته من فوق) و [[<circle>]] دايرة ([[cx]] و [[cy]] مركزها و [[r]] نصف قطرها) و [[fill]] اللون. التفاصيل في درس «SVG».
-
-**الهيكل:**
-
-- الـ [[<figure>]] الخارجي الـ [[<figcaption>]] بتاعه **أول** ابن، فوصف المجموعة طالع فوق.
-- كل علم [[<figure>]] جواه، والـ [[<figcaption>]] بتاعه آخر ابن.
-- النص البديل بيقول الشكل («نصه الفوقاني أصفر ونصه التحتاني أزرق») لأن اللي مش شايف محتاج يعرف العلم شكله إيه. والوصف بيقول المعنى («انزل بحذر»).
-- كل [[<figure>]] جواني بيتدخّل 40px كمان عن الخارجي، فالأعلام طالعة داخلة 80px. ده الـ margin الافتراضي، وبيتصفّر بالـ CSS.
-
-**الغلطة الشائعة:** تحط التلات أوصاف في [[<figcaption>]] واحد طويل. مش غلط (والمواصفة فيها مثال كده)، بس مش هتعرف تربط كل وصف بعَلَمه.
-
-~~~text الناتج
-figure=4  figcaption=4
-شجرة الـ accessibility:
-figure
-  Figcaption   "تلات أعلام بيستخدمهم نادي المراكب (اسم متخيل)"
-  figure › image "علم أحمر كله" ، Figcaption "علم ١: ممنوع النزول."
-  figure › image "علم نصه الفوقاني أصفر ونصه التحتاني أزرق" ، Figcaption "علم ٢: انزل بحذر."
-  figure › image "علم أخضر في نصه دايرة بيضا" ، Figcaption "علم ٣: البحر هادي."
-Nu Html Checker: صفر errors
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب [[<img alt="شكل ٢: الاشتراكات اتضاعفت">]] وتحتها [[<figcaption>]] فيه نفس الجملة بالظبط. اشرح له في ٣ سطور الفرق بين [[alt]] و [[<figcaption>]]، واكتب نسخة صح لرسم فيه ٣ أعمدة: يناير ٢٠، فبراير ٣٥، مارس ٦٠.`, done: R`شرحك فيه: مين بيشوف كل واحد، وكل واحد بيقول إيه، وليه التكرار وحش. والنسخة الصح البديل فيها بيقول الأرقام والوصف بيقول الخلاصة.`, sol: R`إجابة نموذجية:
-
-1. [[alt]] بديل الصورة للي مش شايفها: بيقول **اللي فيها**. و [[<figcaption>]] ظاهر للكل: بيقول **هي عن إيه** أو تطلع منها بإيه.
-2. لو الاتنين نفس الجملة، قارئ الشاشة هيقراها مرتين ورا بعض، واللي شايف مخدش أي معلومة زيادة.
-3. والبديل اللي بيبدأ بـ «شكل ٢:» بيضيّع أهم حاجة: اللي مش شايف الرسم لسه ميعرفش الأرقام.
-
-~~~live 178 النسخة الصح
-<figure>
-  <svg role="img" aria-label="تلات أعمدة: يناير ٢٠، فبراير ٣٥، مارس ٦٠" width="180" height="90" viewBox="0 0 180 90">
-    <rect x="15" y="60" width="35" height="30" fill="#0f766e"/>
-    <rect x="72" y="38" width="35" height="52" fill="#0f766e"/>
-    <rect x="130" y="0" width="35" height="90" fill="#0f766e"/>
-  </svg>
-  <figcaption>شكل ٢: الاشتراكات اتضاعفت ٣ مرات من يناير لمارس.</figcaption>
-</figure>
+~~~json package.json
+{"dependencies":{"lucide-react":"^0.577.0","react":"^19.2.0"}}
 ~~~
 
-البديل: «تلات أعمدة: يناير ٢٠، فبراير ٣٥، مارس ٦٠» (البيانات نفسها). والوصف: «شكل ٢: الاشتراكات اتضاعفت ٣ مرات من يناير لمارس» (الاسم والخلاصة).
+~~~json latest.json
+{"lucide-react":"1.67.0","react":"19.3.1"}
+~~~
 
-**الغلطة الشائعة:** تسيب [[alt]] فاضي وتقول «الوصف موجود في الـ [[<figcaption>]]». الوصف مبيقولش اللي في الصورة، فاللي مش شايف خد العنوان من غير المحتوى.
+~~~bash
+node majors.mjs package.json latest.json
+echo "exit: $?"
+~~~
+
+**ليه [[lockedPart]]:** مقارنة الرقم الأول لوحدها غلط مع [[0.x]]. الدالة بترجع الجزء اللي الـ caret قافل عليه: [[19]] لـ [[^19.2.0]]، و [[0.577]] لـ [[^0.577.0]]. لو الجزء ده اختلف عن آخر نسخة، الـ range مش هيوصلها.
+
+وآخر نسخة فيها [[lockedPart]] بتتحسب بنفس الطريقة: [[1.67.0]] بتدّي [[1]]، و [[19.3.1]] بتدّي [[19]].
+
+**السكربت بيتجاهل** أي range مش بيبدأ بـ [[^]]، و [[process.exit(found ? 1 : 0)]] بيخليه يشتغل في CI.
+
+**الغلطة الشائعة:** تعمل [[parseInt]] على الـ range بالكامل. أو تعتبر 0.577 و 0.578 نفس الـ major.
 
 ~~~text الناتج
-شجرة الـ accessibility:
-figure
-  image "تلات أعمدة: يناير ٢٠، فبراير ٣٥، مارس ٦٠"
-  Figcaption   "شكل ٢: الاشتراكات اتضاعفت ٣ مرات من يناير لمارس."
-النص البديل ≠ نص الوصف: true
+lucide-react: ^0.577.0 -> 1.67.0 (major)
+exit: 1
 ~~~` },
-          ]
-        },
+          ],
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const deps = { "lucide-react": "^0.577.0", "react": "^19.2.0", "simple-icons": "16.36.0" };
+const latest = { "lucide-react": "1.67.0", "react": "19.3.1", "simple-icons": "16.36.0" };
+const parse = v => v.replace(/^[\^~]/, "").split(".").map(Number);
+function caretAllows(range, v) {
+  if (!range.startsWith("^")) return range === v;
+  const [a, b, c] = parse(range), [x, y, z] = parse(v);
+  if (a > 0) return x === a && (y > b || (y === b && z >= c));
+  return x === 0 && y === b && z >= c;
+}
+let bad = 0;
+for (const [name, range] of Object.entries(deps)) {
+  const ok = caretAllows(range, latest[name]);
+  console.log(name + ": " + range + " -> " + latest[name] + (ok ? " ok" : " (major)"));
+  if (!ok) bad++;
+}
+console.log("needs decision: " + bad);`, expect: [R`lucide-react: ^0.577.0 -> 1.67.0 (major)`, R`react: ^19.2.0 -> 19.3.1 ok`, R`simple-icons: 16.36.0 -> 16.36.0 ok`, R`needs decision: 1`] },
+          ],
+        }
       ]
     }
 ]);

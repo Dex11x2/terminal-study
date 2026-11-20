@@ -1,5710 +1,5706 @@
-// CSS: الـ flow والمقاسات والـ overflow (وحدة من منهج syllabus/css.json)
-// كل القياسات والمعاينات في الوحدة دي من Chrome 157 headless على Windows 11: getBoundingClientRect (مكان ومقاس كل صندوق بالبكسل) و getComputedStyle و scrollWidth/clientWidth و CSS.supports، في frame عرضه 800px زي معاينة الموقع.
-// اللي متقاسش هنا ومكتوب جنبه إنه من MDN أو المواصفة: المتصفحات التانية (Safari و Firefox)، وسلوك اللمس على موبايل حقيقي (touch-action و overscroll-behavior)، وشكل الـ scrollbar على ماك، وخطوات واجهة DevTools (من وثائق Chrome DevTools).
+// تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "CSS: الـ flow والمقاسات والـ overflow",
-      l: 1,
-      n: "الـ normal flow والـ margin collapsing والـ BFC، و float و clear و flow-root و shape-outside، و min/max-width و min-content و fit-content والمقاسات المنطقية، و overflow بكل قيمه والـ scrollbars و touch-action، وجدول الخصايص المنطقية (margin-block و inset-inline و scroll-margin)، والمحاذاة كلها (place-items و align-self)، و flex-flow و grid-template، والأعمدة (columns)، و table-layout، و content-visibility و will-change، وتنسيق الفورم بـ appearance، وفحص الـ CSS بالـ validator و DevTools",
+      t: R`مشروع كامل: portfolio و dashboard`,
       pre: [
-        { to: "css/box model", why: R`الوحدة كلها عن مقاس الصندوق ومكانه: لازم تبقى عارف الـ content والـ padding والـ border والـ margin و [[box-sizing]]` },
-        { to: "css/display", why: R`الفرق بين [[block]] و [[inline]] هو أساس الـ normal flow اللي الوحدة بتبدأ بيه` }
+        { to: "css/landing page: الصورة الكبيرة", why: R`نفس طريقة الشغل والأدوات: serve و lint و contrast` },
+        { to: "css/table", why: R`جدول الأعضاء والحصص` },
       ],
+      l: 3,
+      time: R`حوالي ١٠ ساعات على كذا يوم: ساعة للخريطة والمعمل، وحوالي ٤ ساعات للـ portfolio (٣ خطوات)، و ٤ للـ dashboard (٣ خطوات)، وساعة للمراجعة النهائية والنشر. والتمارين والمشاريع فوق كده`,
       goal: [
-        R`تشرح الـ normal flow (block فوق بعض، و inline في سطور)، وتتوقع المسافة لما اتنين margin رأسي يتقابلوا، وتمنع الـ margin إنه يخرج من أبوه بـ [[display: flow-root]].`,
-        R`تلف الكلام حوالين صورة بـ [[float]]، وتوقف اللف بـ [[clear]]، وتخلي الأب يحضن الـ float من غير clearfix، وتلف الكلام على شكل دايرة بـ [[shape-outside]].`,
-        R`تحط حدود للمقاسات بـ [[min-width]] و [[max-width]] و [[min-height]] و [[max-height]]، وتستخدم [[min-content]] و [[max-content]] و [[fit-content]]، وتكتبهم منطقي ([[inline-size]] و [[max-inline-size]]) عشان يشتغلوا في أي اتجاه كتابة.`,
-        R`تتحكم في المحتوى اللي بيفيض بـ [[overflow]] وكل قيمه ([[clip]] ولا [[hidden]])، وتنسّق الـ scrollbar ([[scrollbar-width]] و [[scrollbar-color]] و [[scrollbar-gutter]])، وتعرف [[touch-action]] و [[overscroll-behavior]] و [[overflow-anchor]].`,
-        R`تكتب أي margin أو padding أو inset أو scroll-margin بالشكل المنطقي، وتعرف إيه اللي بيتقلب مع [[dir="rtl"]] وإيه اللي لأ.`,
-        R`تحاذي أي عنصر في flex أو grid بـ [[align-self]] و [[justify-self]] و [[place-items]] و [[place-content]]، وتعرف أنهي خاصية ملهاش أثر في أنهي layout.`,
-        R`تقسم مقال لأعمدة جرايد بـ [[columns]] و [[column-rule]] و [[column-span]] و [[break-inside]]، وتثبّت جدول بـ [[table-layout: fixed]].`,
-        R`تسرّع صفحة طويلة بـ [[content-visibility: auto]] و [[contain-intrinsic-size]]، وتعرف إمتى [[will-change]] بتضر.`,
-        R`تنسّق فورم من الصفر: [[font: inherit]] للخانات، و [[appearance: none]] لـ checkbox بشكلك، وتعرف ليه بعض الخانات صعب تتنسّق.`,
-        R`تلاقي غلطة الـ CSS بنفسك: الـ validator، و Styles في DevTools (المشطوب والمتطفي)، ورسمة الـ box model، و overlays الـ flex والـ grid، و responsive mode.`
+        R`تبني منتجين حقيقيين من فولدر فاضي بـ HTML و CSS حديث و JavaScript صغير من غير framework: **portfolio** لمطوّرة متخيلة بالعربي والإنجليزي، و **dashboard** لصالة تسلق متخيلة فيها أرقام وجدول أعضاء وجدول حصص.`,
+        R`تستخدم أفكار التصميم اللي بتتكرر في المواقع الحقيقية في مكانها الصح: design tokens، و [[:has()]] كفلتر من غير JS، و grid areas للـ app shell، و sidebar بيصغر ويبقى drawer، و sparkline و progress ring بـ SVG، و skeleton، و [[<dialog>]]، و toasts بـ [[aria-live]]، و dark mode من غير وميض، و View Transitions بين الصفحات، و CV بيتطبع صفحة A4 واحدة.`,
+        R`تقيس كل حاجة بـ Chrome الحقيقي (playwright-core و axe): مفيش scroll أفقي من 360 لـ 1440، و axe صفر violations في الثيمين واللغتين، و CLS صفر، و LCP متقاس قبل وبعد كل غلطة.`,
+        R`تعرف الغلطات اللي حصلت فعلًا وانا ببني (٢٢ غلطة، و ٨ تجارب متعمّدة، كل واحدة برقمها)، وإزاي اتلقت واتصلحت، عشان لما تحصلك تعرفها من أول نظرة.`,
+        R`تنشر الاتنين على GitHub Pages برابط، وتعرف بيكبروا إزاي وبيتكلفوا كام، وتخليهم بتوعك في الـ portfolio.`,
       ],
+      use: {
+        prog: R`آخر وحدة في التاب: كل اللي اتعلمته (semantic HTML، و grid و flex، و responsive، و RTL، و accessibility، والحركة، والأداء، و SEO) بيشتغل مع بعض في صفحات بجد. ده الفرق بين «عارف [[:has()]]» و «عارف أحطه فين ومتى مينفعش».`,
+        work: R`أغلب شغل الـ front-end مقسوم نوعين: صفحات تعريف وتسويق (زي الـ portfolio) ولوحات تحكم داخلية (زي الـ dashboard). اللي بيطلب منك واحد فيهم هيسأل: «بيتفتح على الموبايل؟ بيشتغل بالكيبورد؟ الرابط بيحفظ الفلتر؟ بيتطبع؟». الوحدة دي بتجاوب على كل سؤال بقياس.`,
+        cs: R`الحالة في الـ URL كمصدر واحد للحقيقة (single source of truth)، و progressive enhancement (الصفحة شغالة من غير JS والـ JS بيزوّد)، والفصل بين الدوال النقية (بتتختبر في Node) والكود اللي بيلمس الـ DOM، و stacking context و containing block، و bidi algorithm بتاع العربي.`,
+      },
+      lab: R`mkdir pd-lab && cd pd-lab
+npm init -y
+npm pkg set type=module
+npm i playwright-core@1.64.1 @axe-core/playwright@4.14.0
+node serve.mjs`,
+      n: R`مشروعين كاملين بيتبنوا خطوة خطوة: portfolio بلغتين (٣ صفحات) و dashboard لصالة تسلق (صفحة فيها ٣ أجزاء). حوالي ١,١٨٠ سطر في ٢٢ ملف، من غير framework ولا مكتبة في المتصفح. كل رقم هنا اتقاس فعلًا بـ Chrome 156 و Node 24.22 و playwright-core 1.64.1 و axe-core 4.14 على ويندوز ١١، والنشر نفسه خطوات من وثائق GitHub Pages`,
       projects: [
-        { lvl: 'صغير', dir: "hay-news", t: R`خبر بصورة مدورة واقتباس على الجنب`, what: R`أول صفحة لـ «جريدة الحي» (جريدة متخيلة لأهل حي): خبر افتتاح المكتبة. [[index.html]] فيه [[<article class="story">]] جواه بالترتيب: [[<p class="kicker">]] «محليات»، و [[<h1>]] العنوان، و [[<p class="byline">]] الكاتب والوقت، و [[<div class="photo" role="img" aria-label="...">]] (دايرة بتدرّج بدل صورة)، وتلات فقرات، وبين الأولى والتانية [[<blockquote class="pull">]] جملة من الخبر، وفي الآخر [[<p class="meta">]] القسم ووقت القراية. وفي [[style.css]]: المقال [[max-inline-size: 65ch]] ومتوسّط و [[display: flow-root]]، والصورة [[float: inline-start]] والكلام يلف عليها كدايرة ([[shape-outside]] و [[shape-margin]])، والاقتباس [[float: inline-end]] وعرضه 40% بخط فوق وتحت، وسطر الـ meta [[clear: both]]، والشارة على قد كلمتها ([[fit-content]]). وعلى الموبايل الاقتباس يرجع سطر عادي. من دروس «float و clear» و «normal flow و margin collapsing» و «min-width و max-width».`, done: R`في Computed: [[.story]] ‏[[display: flow-root]]، و [[.photo]] ‏[[float: inline-start]] و [[shape-outside: circle(50%)]]، و [[.pull]] ‏[[float: inline-end]]، و [[.meta]] ‏[[clear: both]] وبيبدأ تحت آخر الصورة. وأول سطر وآخر سطر جنب الدايرة أقرب ليها من اللي في النص.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي: المكتبة الجديدة</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-~~~
-
-~~~view 560 900 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي: المكتبة الجديدة</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-</style>
-</head>
-<body>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** كارت أبيض على خلفية كريمي: شارة حمرا صغيرة «محليات»، وعنوان كبير، وسطر الكاتب رمادي. على اليمين دايرة دهبي والكلام لافف عليها، وعلى الشمال الاقتباس الأخضر بخطين فوق وتحت. وفي الآخر خط رفيع وتحته «اتنشر في قسم المحليات». على «موبايل» الاقتباس بيبقى سطر بالعرض كله والدايرة أصغر.
-
-**ليه كده:** الصورة والاقتباس الاتنين float، واحد في أول السطر وواحد في آخره، فالكلام بيعدّي بينهم (ولو ضاق جدًا بيكمّل تحتهم). [[flow-root]] على المقال عشان الخلفية البيضا تحضن الصورة لو الكلام قصير. و [[clear: both]] على سطر الـ meta عشان يبقى تحت الاتنين دايمًا. **الغلطة الشائعة:** [[float: right]] و [[float: left]]: الصفحة لو اتعملت بالإنجليزي مش هتتقلب.
-
-~~~text القياس من Chrome
-.story   display: flow-root   width: 595.66px (65ch بخط 17px + padding)
-.photo   float: inline-start   shape-outside: circle(50%)
-.pull    float: inline-end     .meta   clear: both   (meta.top ≥ photo.bottom)
-~~~` },
-        { lvl: 'صغير', dir: "hay-news", cont: true, t: R`كروت «أخبار تانية» متطلعش برّه أبدًا على 360`, what: R`زي المشروع اللي فات (نفس الفولدر والملفين)، وزوّد تحت المقال [[<section class="more">]] فيه [[<h2>]] «أخبار تانية» و [[<div class="cards">]] فيه تلات [[<article class="card">]]، كل واحد فيه [[<img>]] بـ [[width]] و [[height]] (صورة SVG صغيرة [[data:]])، و [[<p class="tag">]] القسم، و [[<h3>]] العنوان، وواحد منهم عنوانه لينك طويل من غير مسافات. في الـ CSS: الكروت grid بـ [[repeat(auto-fit, minmax(min(200px, 100%), 1fr))]]، والكارت [[min-inline-size: 0]]، والصورة [[max-inline-size: 100%]] و [[block-size: auto]]، والشارة [[fit-content]]، والعنوان الطويل [[overflow-wrap: anywhere]]. المطلوب: على أي عرض من 320 لفوق مفيش scroll أفقي. من دروس «min-width و max-width» و «overflow» و «auto-fit و minmax».`, done: R`على 360 (Device toolbar أو زرار «موبايل»): [[document.documentElement.scrollWidth]] = [[clientWidth]] (اتقاس 360 و 360)، والكروت عمود واحد عرضه 328px، والصور مش متمطوطة، واللينك الطويل بيلف.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-<section class="more" aria-labelledby="more-h">
-  <h2 id="more-h">أخبار تانية</h2>
-  <div class="cards">
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230f766e'/%3E%3Ccircle cx='450' cy='120' r='70' fill='%23fde68a'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">رياضة</p>
-      <h3>نادي الحي يكسب ماتش الأسبوع ٢ - ١</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%23b45309'/%3E%3Crect x='80' y='200' width='440' height='60' fill='%23fef3c7'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">اقتصاد</p>
-      <h3>أسعار الخضار في سوق الخميس</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230369a1'/%3E%3Cpath d='M0 260 L200 140 L360 230 L600 90 L600 340 L0 340Z' fill='%23bae6fd'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">طقس</p>
-      <h3>اللينك الكامل للتنبيه: https://example.test/weather/alerts/this-week-rain</h3>
-    </article>
-  </div>
-</section>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-
-.more { max-inline-size: 65ch; margin: 24px auto 0; }
-.more h2 { margin: 0 0 12px; font-size: 22px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-.card { min-inline-size: 0; padding: 10px; background: white; border-radius: 12px; }
-.card img { display: block; max-inline-size: 100%; block-size: auto; border-radius: 8px; }
-.card .tag { width: fit-content; margin: 8px 0 4px; padding: 0 8px; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 13px; font-weight: 700; }
-.card h3 { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
-~~~
-
-~~~view 900 1300 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-
-.more { max-inline-size: 65ch; margin: 24px auto 0; }
-.more h2 { margin: 0 0 12px; font-size: 22px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-.card { min-inline-size: 0; padding: 10px; background: white; border-radius: 12px; }
-.card img { display: block; max-inline-size: 100%; block-size: auto; border-radius: 8px; }
-.card .tag { width: fit-content; margin: 8px 0 4px; padding: 0 8px; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 13px; font-weight: 700; }
-.card h3 { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
-</style>
-</head>
-<body>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-<section class="more" aria-labelledby="more-h">
-  <h2 id="more-h">أخبار تانية</h2>
-  <div class="cards">
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230f766e'/%3E%3Ccircle cx='450' cy='120' r='70' fill='%23fde68a'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">رياضة</p>
-      <h3>نادي الحي يكسب ماتش الأسبوع ٢ - ١</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%23b45309'/%3E%3Crect x='80' y='200' width='440' height='60' fill='%23fef3c7'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">اقتصاد</p>
-      <h3>أسعار الخضار في سوق الخميس</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230369a1'/%3E%3Cpath d='M0 260 L200 140 L360 230 L600 90 L600 340 L0 340Z' fill='%23bae6fd'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">طقس</p>
-      <h3>اللينك الكامل للتنبيه: https://example.test/weather/alerts/this-week-rain</h3>
-    </article>
-  </div>
-</section>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** نفس الخبر، وتحته «أخبار تانية»: كروت بيضا فيها صورة ملوّنة وشارة القسم الزرقا والعنوان. على الشاشة الكبيرة جنب بعض، وعلى «موبايل» تحت بعض، والعنوان اللي فيه لينك طويل بيلف لسطور جوه الكارت بدل ما يطلع برّه.
-
-**ليه كده:** [[min(200px, 100%)]] بتخلي أصغر عمود متعدّيش الشاشة، و [[min-inline-size: 0]] بيلغي الـ [[min-width: auto]] بتاع أولاد الـ grid اللي كان هيخلي الكارت قد أطول كلمة، و [[overflow-wrap: anywhere]] بيكسر اللينك. **الغلطة الشائعة:** [[minmax(200px, 1fr)]] من غير [[min()]]: على شاشة أضيق من 200 + الـ padding بيطلع برّه، وعلاجها بـ [[overflow-x: hidden]] بيقص الكارت.
-
-~~~text القياس من Chrome
-على 360:   scrollWidth: 360   clientWidth: 360   .cards grid-template-columns: 328px
-.card img  max-inline-size: 100%     .tag  width: 49.66px (على قد الكلمة)
-~~~` },
-        { lvl: 'متوسط', dir: "hay-news", cont: true, t: R`شريط «أهم الأخبار» بيتسحب ويقف على كل خبر`, what: R`زي المشروع اللي فات، وزوّد فوق المقال [[<section class="top">]] فيه [[<h2>]] «أهم الأخبار» و [[<ol class="strip" tabindex="0" aria-label="...">]] فيه خمس [[<li>]] جوه كل واحد لينك. في الـ CSS: الشريط flex بيعمل scroll **أفقي بس** ([[overflow-x: auto]] و [[overflow-y: hidden]])، والـ scroll مبيعدّيش للصفحة ([[overscroll-behavior-inline: contain]])، ويقف على أول كل خبر ([[scroll-snap-type: x mandatory]] و [[scroll-snap-align: start]] و [[scroll-padding-inline]])، والـ scrollbar رفيع بلون الجريدة ([[scrollbar-width]] و [[scrollbar-color]])، وكل خبر عرضه [[min(240px, 75%)]] عشان دايمًا حتة من اللي بعده تبان، وفيه [[:focus-visible]] للكيبورد. من دروس «overflow» و «margin-block و inset-inline» و «scroll-snap و scroll-margin».`, done: R`الشريط بيتسحب يمين وشمال وبيقف على أول كل كارت، والصفحة نفسها مفيهاش scroll أفقي. في Computed: [[overflow-x: auto]] و [[scroll-snap-type: x mandatory]] و [[scrollbar-width: thin]]. وبالكيبورد: Tab يقف على الشريط والأسهم تحرّكه.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<section class="top" aria-labelledby="top-h">
-  <h2 id="top-h">أهم الأخبار</h2>
-  <ol class="strip" tabindex="0" aria-label="أهم الأخبار، اسحب للمزيد">
-    <li><a href="#">المكتبة الجديدة بتفتح أبوابها</a></li>
-    <li><a href="#">نادي الحي يكسب ماتش الأسبوع</a></li>
-    <li><a href="#">قطع المياه بكرة من ١٠ لـ ٢</a></li>
-    <li><a href="#">سوق الخميس: الطماطم نزلت</a></li>
-    <li><a href="#">حفلة المدرسة يوم السبت</a></li>
-  </ol>
-</section>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-<section class="more" aria-labelledby="more-h">
-  <h2 id="more-h">أخبار تانية</h2>
-  <div class="cards">
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230f766e'/%3E%3Ccircle cx='450' cy='120' r='70' fill='%23fde68a'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">رياضة</p>
-      <h3>نادي الحي يكسب ماتش الأسبوع ٢ - ١</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%23b45309'/%3E%3Crect x='80' y='200' width='440' height='60' fill='%23fef3c7'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">اقتصاد</p>
-      <h3>أسعار الخضار في سوق الخميس</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230369a1'/%3E%3Cpath d='M0 260 L200 140 L360 230 L600 90 L600 340 L0 340Z' fill='%23bae6fd'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">طقس</p>
-      <h3>اللينك الكامل للتنبيه: https://example.test/weather/alerts/this-week-rain</h3>
-    </article>
-  </div>
-</section>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-
-.more { max-inline-size: 65ch; margin: 24px auto 0; }
-.more h2 { margin: 0 0 12px; font-size: 22px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-.card { min-inline-size: 0; padding: 10px; background: white; border-radius: 12px; }
-.card img { display: block; max-inline-size: 100%; block-size: auto; border-radius: 8px; }
-.card .tag { width: fit-content; margin: 8px 0 4px; padding: 0 8px; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 13px; font-weight: 700; }
-.card h3 { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
-
-.top { max-inline-size: 65ch; margin: 0 auto 16px; }
-.top h2 { margin: 0 0 8px; font-size: 18px; }
-.strip { display: flex; gap: 10px; margin: 0; padding: 4px 0 10px; list-style: none;
-         overflow-x: auto; overflow-y: hidden; overscroll-behavior-inline: contain;
-         scroll-snap-type: x mandatory; scroll-padding-inline: 4px;
-         scrollbar-width: thin; scrollbar-color: #0f766e #ccfbf1; }
-.strip li { flex: 0 0 min(240px, 75%); scroll-snap-align: start; }
-.strip a { display: block; block-size: 100%; padding: 12px; border-radius: 10px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
-.strip a:focus-visible, .strip:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-~~~
-
-~~~view 1000 1500 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-
-.more { max-inline-size: 65ch; margin: 24px auto 0; }
-.more h2 { margin: 0 0 12px; font-size: 22px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-.card { min-inline-size: 0; padding: 10px; background: white; border-radius: 12px; }
-.card img { display: block; max-inline-size: 100%; block-size: auto; border-radius: 8px; }
-.card .tag { width: fit-content; margin: 8px 0 4px; padding: 0 8px; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 13px; font-weight: 700; }
-.card h3 { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
-
-.top { max-inline-size: 65ch; margin: 0 auto 16px; }
-.top h2 { margin: 0 0 8px; font-size: 18px; }
-.strip { display: flex; gap: 10px; margin: 0; padding: 4px 0 10px; list-style: none;
-         overflow-x: auto; overflow-y: hidden; overscroll-behavior-inline: contain;
-         scroll-snap-type: x mandatory; scroll-padding-inline: 4px;
-         scrollbar-width: thin; scrollbar-color: #0f766e #ccfbf1; }
-.strip li { flex: 0 0 min(240px, 75%); scroll-snap-align: start; }
-.strip a { display: block; block-size: 100%; padding: 12px; border-radius: 10px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
-.strip a:focus-visible, .strip:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-</style>
-</head>
-<body>
-<section class="top" aria-labelledby="top-h">
-  <h2 id="top-h">أهم الأخبار</h2>
-  <ol class="strip" tabindex="0" aria-label="أهم الأخبار، اسحب للمزيد">
-    <li><a href="#">المكتبة الجديدة بتفتح أبوابها</a></li>
-    <li><a href="#">نادي الحي يكسب ماتش الأسبوع</a></li>
-    <li><a href="#">قطع المياه بكرة من ١٠ لـ ٢</a></li>
-    <li><a href="#">سوق الخميس: الطماطم نزلت</a></li>
-    <li><a href="#">حفلة المدرسة يوم السبت</a></li>
-  </ol>
-</section>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-<section class="more" aria-labelledby="more-h">
-  <h2 id="more-h">أخبار تانية</h2>
-  <div class="cards">
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230f766e'/%3E%3Ccircle cx='450' cy='120' r='70' fill='%23fde68a'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">رياضة</p>
-      <h3>نادي الحي يكسب ماتش الأسبوع ٢ - ١</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%23b45309'/%3E%3Crect x='80' y='200' width='440' height='60' fill='%23fef3c7'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">اقتصاد</p>
-      <h3>أسعار الخضار في سوق الخميس</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230369a1'/%3E%3Cpath d='M0 260 L200 140 L360 230 L600 90 L600 340 L0 340Z' fill='%23bae6fd'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">طقس</p>
-      <h3>اللينك الكامل للتنبيه: https://example.test/weather/alerts/this-week-rain</h3>
-    </article>
-  </div>
-</section>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** فوق الخبر عنوان «أهم الأخبار» وتحته صف كروت خضرا كل واحد فيه عنوان خبر، وآخر كارت باين نصه على الشمال عشان تعرف إن فيه أكتر، وتحتهم scrollbar رفيع أخضر. اسحب الشريط: بيقف على أول كل كارت.
-
-**ليه كده:** الشريط هو اللي فيه scroll مش الصفحة، و [[overflow-y: hidden]] لأن [[overflow-x: auto]] لوحدها بتخلي الرأسي [[auto]]. [[tabindex="0"]] و [[aria-label]] عشان زائر الكيبورد وقارئ الشاشة يوصلوا للشريط ويعرفوا بيعمل إيه. وفي العربي الشريط بيبدأ من اليمين والـ scroll بيمشي ناحية الشمال لوحده. **الغلطة الشائعة:** [[scrollbar-width: none]]: الكمبيوتر من غير لمس مش هيعرف إن فيه أخبار تانية.
-
-~~~text القياس من Chrome
-على 360:   .strip scrollWidth: 1214   clientWidth: 313   ← بيتسحب جواه بس
-كل li عرضه 234.75px (75%)   scroll-snap-type: x mandatory
-~~~` },
-        { lvl: 'متوسط', dir: "hay-news", cont: true, t: R`فورم «النشرة الصبح» متنسّق من الصفر`, what: R`زي المشروع اللي فات، وزوّد في الآخر [[<section class="news-letter">]] فيه [[<h2>]] «النشرة الصبح» و [[<form class="nl-form">]] جواه: خانة إيميل [[required]] بـ [[label]]، و [[<fieldset>]] بـ [[<legend>]] «عايز إيه؟» فيه تلات checkboxes (محليات متعلّم عليها)، و [[<textarea>]] للملاحظات، وزرار «اشترك». في الـ CSS: الـ reset ([[font: inherit]])، والخانات بعرض 100% بحد ورُكن مدوّر و [[:focus-visible]] بهالة و [[:user-invalid]] أحمر، والـ checkboxes بـ [[appearance: none]] مربعات خضرا فيها ✓ لما تتعلّم، والـ textarea [[field-sizing: content]] بأقل طول تلات سطور، والـ checkboxes جنب بعض بـ [[flex-flow: row wrap]]، والزرار في أول السطر بـ [[justify-self: start]]. من دروس «appearance وتنسيق الفورم» و «flex-flow و grid-template» و «place-items و align-self».`, done: R`في Computed: [[.field]] ‏[[font-size: 17px]] (زي الصفحة)، و [[.opt input]] ‏[[appearance: none]] والمتعلّم عليه خلفيته [[rgb(15, 118, 110)]]، و [[.grow]] ‏[[field-sizing: content]]. وبالكيبورد: Tab بيوصل لكل checkbox وعليه حلقة صفرا، و Space بيعلّم.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<section class="top" aria-labelledby="top-h">
-  <h2 id="top-h">أهم الأخبار</h2>
-  <ol class="strip" tabindex="0" aria-label="أهم الأخبار، اسحب للمزيد">
-    <li><a href="#">المكتبة الجديدة بتفتح أبوابها</a></li>
-    <li><a href="#">نادي الحي يكسب ماتش الأسبوع</a></li>
-    <li><a href="#">قطع المياه بكرة من ١٠ لـ ٢</a></li>
-    <li><a href="#">سوق الخميس: الطماطم نزلت</a></li>
-    <li><a href="#">حفلة المدرسة يوم السبت</a></li>
-  </ol>
-</section>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-<section class="more" aria-labelledby="more-h">
-  <h2 id="more-h">أخبار تانية</h2>
-  <div class="cards">
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230f766e'/%3E%3Ccircle cx='450' cy='120' r='70' fill='%23fde68a'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">رياضة</p>
-      <h3>نادي الحي يكسب ماتش الأسبوع ٢ - ١</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%23b45309'/%3E%3Crect x='80' y='200' width='440' height='60' fill='%23fef3c7'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">اقتصاد</p>
-      <h3>أسعار الخضار في سوق الخميس</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230369a1'/%3E%3Cpath d='M0 260 L200 140 L360 230 L600 90 L600 340 L0 340Z' fill='%23bae6fd'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">طقس</p>
-      <h3>اللينك الكامل للتنبيه: https://example.test/weather/alerts/this-week-rain</h3>
-    </article>
-  </div>
-</section>
-<section class="news-letter" aria-labelledby="nl-h">
-  <h2 id="nl-h">النشرة الصبح</h2>
-  <form class="nl-form">
-    <label>الإيميل <input class="field" type="email" name="email" required placeholder="name@example.test" autocomplete="email"></label>
-    <fieldset>
-      <legend>عايز إيه؟</legend>
-      <label class="opt"><input type="checkbox" name="s" value="local" checked> محليات</label>
-      <label class="opt"><input type="checkbox" name="s" value="sport"> رياضة</label>
-      <label class="opt"><input type="checkbox" name="s" value="prices"> أسعار السوق</label>
-    </fieldset>
-    <label>عايز تقولنا حاجة؟ <textarea class="field grow" name="note"></textarea></label>
-    <button class="btn">اشترك</button>
-  </form>
-</section>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-
-.more { max-inline-size: 65ch; margin: 24px auto 0; }
-.more h2 { margin: 0 0 12px; font-size: 22px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-.card { min-inline-size: 0; padding: 10px; background: white; border-radius: 12px; }
-.card img { display: block; max-inline-size: 100%; block-size: auto; border-radius: 8px; }
-.card .tag { width: fit-content; margin: 8px 0 4px; padding: 0 8px; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 13px; font-weight: 700; }
-.card h3 { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
-
-.top { max-inline-size: 65ch; margin: 0 auto 16px; }
-.top h2 { margin: 0 0 8px; font-size: 18px; }
-.strip { display: flex; gap: 10px; margin: 0; padding: 4px 0 10px; list-style: none;
-         overflow-x: auto; overflow-y: hidden; overscroll-behavior-inline: contain;
-         scroll-snap-type: x mandatory; scroll-padding-inline: 4px;
-         scrollbar-width: thin; scrollbar-color: #0f766e #ccfbf1; }
-.strip li { flex: 0 0 min(240px, 75%); scroll-snap-align: start; }
-.strip a { display: block; block-size: 100%; padding: 12px; border-radius: 10px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
-.strip a:focus-visible, .strip:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-
-input, button, select, textarea { font: inherit; }
-.news-letter { max-inline-size: 65ch; margin: 24px auto 0; padding: 20px; background: #f0fdfa; border-radius: 12px; }
-.news-letter h2 { margin: 0 0 12px; font-size: 22px; color: #0f766e; }
-.nl-form { display: grid; gap: 12px; }
-.field { display: block; inline-size: 100%; margin-block-start: 4px; padding: 8px 12px; border: 2px solid #d6d3d1; border-radius: 8px; background: white; }
-.field:focus-visible { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px #99f6e4; }
-.field:user-invalid { border-color: #b91c1c; }
-.grow { field-sizing: content; min-block-size: 3lh; resize: vertical; }
-fieldset { display: flex; flex-flow: row wrap; gap: 8px 16px; margin: 0; padding: 0; border: 0; }
-legend { padding: 0; margin-block-end: 4px; font-weight: 700; }
-.opt { display: flex; align-items: center; gap: 6px; }
-.opt input { appearance: none; display: grid; place-content: center; margin: 0; inline-size: 22px; block-size: 22px; border: 2px solid #0f766e; border-radius: 6px; background: white; }
-.opt input::before { content: "✓"; color: white; font-size: 14px; font-weight: 700; transform: scale(0); }
-.opt input:checked { background: #0f766e; }
-.opt input:checked::before { transform: scale(1); }
-.opt input:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-.btn { justify-self: start; padding: 10px 24px; border: 0; border-radius: 8px; background: #0f766e; color: white; font-weight: 700; cursor: pointer; }
-~~~
-
-~~~view 1000 1800 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-
-.more { max-inline-size: 65ch; margin: 24px auto 0; }
-.more h2 { margin: 0 0 12px; font-size: 22px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-.card { min-inline-size: 0; padding: 10px; background: white; border-radius: 12px; }
-.card img { display: block; max-inline-size: 100%; block-size: auto; border-radius: 8px; }
-.card .tag { width: fit-content; margin: 8px 0 4px; padding: 0 8px; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 13px; font-weight: 700; }
-.card h3 { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
-
-.top { max-inline-size: 65ch; margin: 0 auto 16px; }
-.top h2 { margin: 0 0 8px; font-size: 18px; }
-.strip { display: flex; gap: 10px; margin: 0; padding: 4px 0 10px; list-style: none;
-         overflow-x: auto; overflow-y: hidden; overscroll-behavior-inline: contain;
-         scroll-snap-type: x mandatory; scroll-padding-inline: 4px;
-         scrollbar-width: thin; scrollbar-color: #0f766e #ccfbf1; }
-.strip li { flex: 0 0 min(240px, 75%); scroll-snap-align: start; }
-.strip a { display: block; block-size: 100%; padding: 12px; border-radius: 10px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
-.strip a:focus-visible, .strip:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-
-input, button, select, textarea { font: inherit; }
-.news-letter { max-inline-size: 65ch; margin: 24px auto 0; padding: 20px; background: #f0fdfa; border-radius: 12px; }
-.news-letter h2 { margin: 0 0 12px; font-size: 22px; color: #0f766e; }
-.nl-form { display: grid; gap: 12px; }
-.field { display: block; inline-size: 100%; margin-block-start: 4px; padding: 8px 12px; border: 2px solid #d6d3d1; border-radius: 8px; background: white; }
-.field:focus-visible { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px #99f6e4; }
-.field:user-invalid { border-color: #b91c1c; }
-.grow { field-sizing: content; min-block-size: 3lh; resize: vertical; }
-fieldset { display: flex; flex-flow: row wrap; gap: 8px 16px; margin: 0; padding: 0; border: 0; }
-legend { padding: 0; margin-block-end: 4px; font-weight: 700; }
-.opt { display: flex; align-items: center; gap: 6px; }
-.opt input { appearance: none; display: grid; place-content: center; margin: 0; inline-size: 22px; block-size: 22px; border: 2px solid #0f766e; border-radius: 6px; background: white; }
-.opt input::before { content: "✓"; color: white; font-size: 14px; font-weight: 700; transform: scale(0); }
-.opt input:checked { background: #0f766e; }
-.opt input:checked::before { transform: scale(1); }
-.opt input:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-.btn { justify-self: start; padding: 10px 24px; border: 0; border-radius: 8px; background: #0f766e; color: white; font-weight: 700; cursor: pointer; }
-</style>
-</head>
-<body>
-<section class="top" aria-labelledby="top-h">
-  <h2 id="top-h">أهم الأخبار</h2>
-  <ol class="strip" tabindex="0" aria-label="أهم الأخبار، اسحب للمزيد">
-    <li><a href="#">المكتبة الجديدة بتفتح أبوابها</a></li>
-    <li><a href="#">نادي الحي يكسب ماتش الأسبوع</a></li>
-    <li><a href="#">قطع المياه بكرة من ١٠ لـ ٢</a></li>
-    <li><a href="#">سوق الخميس: الطماطم نزلت</a></li>
-    <li><a href="#">حفلة المدرسة يوم السبت</a></li>
-  </ol>
-</section>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-<section class="more" aria-labelledby="more-h">
-  <h2 id="more-h">أخبار تانية</h2>
-  <div class="cards">
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230f766e'/%3E%3Ccircle cx='450' cy='120' r='70' fill='%23fde68a'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">رياضة</p>
-      <h3>نادي الحي يكسب ماتش الأسبوع ٢ - ١</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%23b45309'/%3E%3Crect x='80' y='200' width='440' height='60' fill='%23fef3c7'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">اقتصاد</p>
-      <h3>أسعار الخضار في سوق الخميس</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230369a1'/%3E%3Cpath d='M0 260 L200 140 L360 230 L600 90 L600 340 L0 340Z' fill='%23bae6fd'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">طقس</p>
-      <h3>اللينك الكامل للتنبيه: https://example.test/weather/alerts/this-week-rain</h3>
-    </article>
-  </div>
-</section>
-<section class="news-letter" aria-labelledby="nl-h">
-  <h2 id="nl-h">النشرة الصبح</h2>
-  <form class="nl-form">
-    <label>الإيميل <input class="field" type="email" name="email" required placeholder="name@example.test" autocomplete="email"></label>
-    <fieldset>
-      <legend>عايز إيه؟</legend>
-      <label class="opt"><input type="checkbox" name="s" value="local" checked> محليات</label>
-      <label class="opt"><input type="checkbox" name="s" value="sport"> رياضة</label>
-      <label class="opt"><input type="checkbox" name="s" value="prices"> أسعار السوق</label>
-    </fieldset>
-    <label>عايز تقولنا حاجة؟ <textarea class="field grow" name="note"></textarea></label>
-    <button class="btn">اشترك</button>
-  </form>
-</section>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** تحت الكروت صندوق أخضر فاتح «النشرة الصبح»: خانة إيميل عريضة بأركان مدورة، و «عايز إيه؟» وتحتها تلات مربعات خضرا («محليات» متعلّم عليه بـ ✓)، وخانة ملاحظات، وزرار «اشترك» أخضر في أول السطر.
-
-**ليه كده:** [[font: inherit]] أول سطر، وإلا الخانات بخط 13px. الـ checkbox لسه checkbox حقيقي بيتبعت مع الفورم، [[appearance: none]] شالت الرسم بس. و [[field-sizing]] Baseline 2026، فالمتصفح القديم بيعرض textarea عادي، ومفيش ضرر. **الغلطة الشائعة:** [[outline: none]] على الخانات من غير الهالة: زائر الكيبورد مش هيعرف هو فين.
-
-~~~text القياس من Chrome
-.field   font-size: 17px   inline-size: 100%
-.opt input   appearance: none   (checked) background-color: rgb(15, 118, 110)
-.grow    field-sizing: content
-~~~` },
-        { lvl: 'كبير', dir: "hay-news", cont: true, t: R`الصفحة الأولى كاملة لـ «جريدة الحي»`, what: R`المشروع اللي بيقفل الوحدة: نفس الفولدر، والصفحة الأولى كلها بكل اللي بنيته. استخدم تاني: الخبر بالصورة المدورة (المشروع ١)، والكروت (٢)، وشريط أهم الأخبار (٣)، والفورم (٤)، وزوّد: [[<header class="mast">]] فيه اسم الجريدة والتاريخ و [[<nav class="sections">]] بيعمل scroll أفقي على الموبايل، و [[<div class="front">]] بـ [[grid-template]] فيه منطقتين [[main]] و [[side]] (عمود 320px)، والجنب [[position: sticky]] فيه جدول «أسعار سوق الخميس» ([[table-layout: fixed]] و [[caption-side: bottom]] و [[empty-cells: hide]] لصنف سعره لسه منزلش) وتحته الفورم، وفي الـ main قسم «رأي» بأعمدة جرايد ([[columns: 220px]] و [[column-rule]] والعنوان [[column-span: all]] والفقرات [[break-inside: avoid]])، وقسم «الأرشيف» كل شهر فيه [[content-visibility: auto]] و [[contain-intrinsic-size]]، وفوتر لينكاته في أعمدة. وتحت 800px الصفحة عمود واحد. كل المسافات الجنبية منطقية. من كل دروس الوحدة.`, done: R`على 1200: عمودين والجنب ثابت وانت نازل. على 700: عمود واحد والجنب تحت ([[grid-template-areas: "main" "side"]] و [[position: static]]). على 360: مفيش scroll أفقي (اتقاس [[scrollWidth]] = [[clientWidth]]). الـ validator من غير أخطاء غير اللي في الخصايص الجديدة جدًا، و Styles مفيهاش سطر مشطوب بعلامة تحذير.`, ext: R`زوّد نسخة إنجليزي من الصفحة بـ [[dir="ltr"]] و [[lang="en"]] من غير ما تغيّر ولا سطر CSS، واتأكد إن الصورة والاقتباس والجنب والشريط اتقلبوا لوحدهم. وبعدين زوّد ١٠٠ شهر في الأرشيف بالـ JavaScript وقيس وقت الـ layout في Performance مع وبدون [[content-visibility]].`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي: الصفحة الأولى</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header class="mast">
-  <p class="logo">جريدة الحي</p>
-  <p class="date">الخميس ١٩ نوفمبر</p>
-  <nav class="sections" aria-label="الأقسام"><a href="#">محليات</a><a href="#">رياضة</a><a href="#">اقتصاد</a><a href="#">طقس</a><a href="#">رأي</a><a href="#">مطبخ</a><a href="#">كتب</a></nav>
-</header>
-<div class="front">
-<main class="main">
-<section class="top" aria-labelledby="top-h">
-  <h2 id="top-h">أهم الأخبار</h2>
-  <ol class="strip" tabindex="0" aria-label="أهم الأخبار، اسحب للمزيد">
-    <li><a href="#">المكتبة الجديدة بتفتح أبوابها</a></li>
-    <li><a href="#">نادي الحي يكسب ماتش الأسبوع</a></li>
-    <li><a href="#">قطع المياه بكرة من ١٠ لـ ٢</a></li>
-    <li><a href="#">سوق الخميس: الطماطم نزلت</a></li>
-    <li><a href="#">حفلة المدرسة يوم السبت</a></li>
-  </ol>
-</section>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-<section class="more" aria-labelledby="more-h">
-  <h2 id="more-h">أخبار تانية</h2>
-  <div class="cards">
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230f766e'/%3E%3Ccircle cx='450' cy='120' r='70' fill='%23fde68a'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">رياضة</p>
-      <h3>نادي الحي يكسب ماتش الأسبوع ٢ - ١</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%23b45309'/%3E%3Crect x='80' y='200' width='440' height='60' fill='%23fef3c7'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">اقتصاد</p>
-      <h3>أسعار الخضار في سوق الخميس</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230369a1'/%3E%3Cpath d='M0 260 L200 140 L360 230 L600 90 L600 340 L0 340Z' fill='%23bae6fd'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">طقس</p>
-      <h3>اللينك الكامل للتنبيه: https://example.test/weather/alerts/this-week-rain</h3>
-    </article>
-  </div>
-</section>
-<section class="opinion" aria-labelledby="op-h">
-  <h2 id="op-h">رأي: الحي محتاج مكتبة تانية</h2>
-  <p>المكتبة الجديدة اتملت من أول يوم، والطوابير على ركن الأطفال وصلت للشارع. ده معناه إن الحي كان مستني حاجة زي دي من سنين.</p>
-  <p>الحل مش صعب: الجمعية عندها أوضتين فاضيين في المبنى التاني، ولو كل بيت اتبرع بكتابين هيبقى عندنا مكتبة تانية في شهر.</p>
-  <p>واللي مش عنده كتب يقدر يتبرع بساعة في الأسبوع يرتّب الرفوف أو يقرا للصغيرين. المكتبة مش كتب بس، المكتبة ناس.</p>
-</section>
-<section class="archive" aria-labelledby="ar-h">
-  <h2 id="ar-h">الأرشيف</h2>
-  <article><h3>أكتوبر</h3><p>٣١ خبر: افتتاح السوق الجديد، ودوري المدارس، وتصليح الشارع الرئيسي.</p></article>
-  <article><h3>سبتمبر</h3><p>٢٨ خبر: أول يوم دراسة، وحملة النضافة، ومهرجان الأكل البيتي.</p></article>
-  <article><h3>أغسطس</h3><p>٣٠ خبر: الصيف والمياه، ومعسكر الشباب، وحفلة الجمعية.</p></article>
-</section>
-</main>
-<aside class="side">
-<section class="box" aria-labelledby="pr-h">
-  <h2 id="pr-h">أسعار سوق الخميس</h2>
-  <table class="prices">
-    <caption>بالجنيه للكيلو · المصدر: باعة السوق</caption>
-    <thead><tr><th>الصنف</th><th>الأسبوع اللي فات</th><th>النهارده</th></tr></thead>
-    <tbody>
-      <tr><td>طماطم</td><td>٢٠</td><td>١٥</td></tr>
-      <tr><td>بطاطس</td><td>١٨</td><td>١٨</td></tr>
-      <tr><td>فلفل ألوان مستورد</td><td>٦٠</td><td></td></tr>
-    </tbody>
-  </table>
-</section>
-<section class="news-letter" aria-labelledby="nl-h">
-  <h2 id="nl-h">النشرة الصبح</h2>
-  <form class="nl-form">
-    <label>الإيميل <input class="field" type="email" name="email" required placeholder="name@example.test" autocomplete="email"></label>
-    <fieldset>
-      <legend>عايز إيه؟</legend>
-      <label class="opt"><input type="checkbox" name="s" value="local" checked> محليات</label>
-      <label class="opt"><input type="checkbox" name="s" value="sport"> رياضة</label>
-      <label class="opt"><input type="checkbox" name="s" value="prices"> أسعار السوق</label>
-    </fieldset>
-    <label>عايز تقولنا حاجة؟ <textarea class="field grow" name="note"></textarea></label>
-    <button class="btn">اشترك</button>
-  </form>
-</section>
-</aside>
-</div>
-<footer class="foot">
-  <ul class="links">
-    <li><a href="#">من إحنا</a></li><li><a href="#">اكتب لنا</a></li><li><a href="#">إعلانات</a></li><li><a href="#">الأرشيف</a></li>
-    <li><a href="#">محليات</a></li><li><a href="#">رياضة</a></li><li><a href="#">اقتصاد</a></li><li><a href="#">طقس</a></li>
-  </ul>
-  <p>© ٢٠٢٦ جريدة الحي</p>
-</footer>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-
-.more { max-inline-size: 65ch; margin: 24px auto 0; }
-.more h2 { margin: 0 0 12px; font-size: 22px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-.card { min-inline-size: 0; padding: 10px; background: white; border-radius: 12px; }
-.card img { display: block; max-inline-size: 100%; block-size: auto; border-radius: 8px; }
-.card .tag { width: fit-content; margin: 8px 0 4px; padding: 0 8px; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 13px; font-weight: 700; }
-.card h3 { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
-
-.top { max-inline-size: 65ch; margin: 0 auto 16px; }
-.top h2 { margin: 0 0 8px; font-size: 18px; }
-.strip { display: flex; gap: 10px; margin: 0; padding: 4px 0 10px; list-style: none;
-         overflow-x: auto; overflow-y: hidden; overscroll-behavior-inline: contain;
-         scroll-snap-type: x mandatory; scroll-padding-inline: 4px;
-         scrollbar-width: thin; scrollbar-color: #0f766e #ccfbf1; }
-.strip li { flex: 0 0 min(240px, 75%); scroll-snap-align: start; }
-.strip a { display: block; block-size: 100%; padding: 12px; border-radius: 10px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
-.strip a:focus-visible, .strip:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-
-input, button, select, textarea { font: inherit; }
-.news-letter { max-inline-size: 65ch; margin: 24px auto 0; padding: 20px; background: #f0fdfa; border-radius: 12px; }
-.news-letter h2 { margin: 0 0 12px; font-size: 22px; color: #0f766e; }
-.nl-form { display: grid; gap: 12px; }
-.field { display: block; inline-size: 100%; margin-block-start: 4px; padding: 8px 12px; border: 2px solid #d6d3d1; border-radius: 8px; background: white; }
-.field:focus-visible { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px #99f6e4; }
-.field:user-invalid { border-color: #b91c1c; }
-.grow { field-sizing: content; min-block-size: 3lh; resize: vertical; }
-fieldset { display: flex; flex-flow: row wrap; gap: 8px 16px; margin: 0; padding: 0; border: 0; }
-legend { padding: 0; margin-block-end: 4px; font-weight: 700; }
-.opt { display: flex; align-items: center; gap: 6px; }
-.opt input { appearance: none; display: grid; place-content: center; margin: 0; inline-size: 22px; block-size: 22px; border: 2px solid #0f766e; border-radius: 6px; background: white; }
-.opt input::before { content: "✓"; color: white; font-size: 14px; font-weight: 700; transform: scale(0); }
-.opt input:checked { background: #0f766e; }
-.opt input:checked::before { transform: scale(1); }
-.opt input:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-.btn { justify-self: start; padding: 10px 24px; border: 0; border-radius: 8px; background: #0f766e; color: white; font-weight: 700; cursor: pointer; }
-
-/* الصفحة الأولى: الهيدر */
-.mast { max-inline-size: 1100px; margin: 0 auto 16px; padding-block-end: 8px; border-block-end: 4px double #292524; }
-.logo { margin: 0; font-size: 34px; font-weight: 800; text-align: center; }
-.date { margin: 0 0 8px; text-align: center; color: #78716c; font-size: 14px; }
-.sections { display: flex; gap: 18px; justify-content: center; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-.sections a { color: #0f766e; font-weight: 700; text-decoration: none; }
-
-/* الصفحة الأولى: الـ grid */
-.front { display: grid; gap: 24px; max-inline-size: 1100px; margin-inline: auto;
-         grid-template: "main side" auto / minmax(0, 1fr) 320px; }
-.main { grid-area: main; min-inline-size: 0; }
-.side { grid-area: side; display: flex; flex-flow: column; gap: 16px; align-self: start; position: sticky; inset-block-start: 8px; }
-.main .story, .main .more, .main .top { max-inline-size: none; }
-.side .news-letter { margin: 0; }
-.box { padding: 16px; background: white; border-radius: 12px; }
-.box h2 { margin: 0 0 8px; font-size: 18px; }
-
-/* الجدول */
-.prices { inline-size: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0 4px; empty-cells: hide; caption-side: bottom; font-size: 15px; }
-.prices th:first-child { inline-size: 45%; }
-.prices th, .prices td { padding: 6px; text-align: start; }
-.prices td { background: #f5f5f4; }
-.prices caption { padding-block-start: 6px; color: #78716c; font-size: 13px; text-align: start; }
-
-/* الرأي: أعمدة جرايد */
-.opinion { margin-block-start: 24px; padding: 20px; background: white; border-radius: 12px;
-           columns: 220px; column-gap: 28px; column-rule: 1px solid #e7e5e4; }
-.opinion h2 { column-span: all; margin: 0 0 8px; font-size: 22px; }
-.opinion p { margin: 0 0 10px; break-inside: avoid; }
-
-/* الأرشيف: يتأجّل لحد ما يقرب */
-.archive { margin-block-start: 24px; }
-.archive h2 { font-size: 22px; margin: 0 0 8px; }
-.archive article { content-visibility: auto; contain-intrinsic-size: auto 110px; margin-block-end: 8px; padding: 12px; background: white; border-radius: 10px; }
-.archive h3 { margin: 0 0 4px; font-size: 17px; }
-.archive p { margin: 0; }
-
-/* الفوتر */
-.foot { max-inline-size: 1100px; margin: 32px auto 0; padding: 20px; background: #292524; color: #e7e5e4; border-radius: 12px 12px 0 0; }
-.links { columns: 120px; column-gap: 24px; margin: 0 0 12px; padding: 0; list-style: none; }
-.links li { break-inside: avoid; padding-block: 2px; }
-.links a { color: #fde68a; }
-.foot p { margin: 0; font-size: 14px; }
-
-@media (max-width: 800px) {
-  .front { grid-template: "main" auto "side" auto / minmax(0, 1fr); }
-  .side { position: static; }
-}
-~~~
-
-~~~view 1300 2600 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جريدة الحي: الصفحة الأولى</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #faf7f2; color: #292524; font: 17px/1.7 system-ui, "Segoe UI", Tahoma, sans-serif; }
-
-.story { display: flow-root; max-inline-size: 65ch; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; }
-.kicker { width: fit-content; margin: 0; padding: 0 10px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: 14px; font-weight: 700; }
-.story h1 { margin: 8px 0 4px; font-size: 28px; line-height: 1.3; }
-.byline { margin: 0 0 16px; color: #78716c; font-size: 14px; }
-.story p { margin: 0 0 12px; }
-
-.photo { float: inline-start; inline-size: 160px; block-size: 160px; margin-inline-end: 4px;
-         border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-         shape-outside: circle(50%); shape-margin: 12px; }
-
-.pull { float: inline-end; inline-size: 40%; margin: 4px 0 8px; margin-inline-start: 16px; padding-block: 8px;
-        border-block: 3px solid #0f766e; color: #0f766e; font-size: 20px; font-weight: 700; line-height: 1.4; }
-
-.meta { clear: both; padding-top: 8px; border-top: 1px solid #e7e5e4; color: #78716c; font-size: 14px; }
-
-@media (max-width: 480px) {
-  .photo { inline-size: 110px; block-size: 110px; }
-  .pull { float: none; inline-size: auto; margin-inline-start: 0; }
-}
-
-.more { max-inline-size: 65ch; margin: 24px auto 0; }
-.more h2 { margin: 0 0 12px; font-size: 22px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
-.card { min-inline-size: 0; padding: 10px; background: white; border-radius: 12px; }
-.card img { display: block; max-inline-size: 100%; block-size: auto; border-radius: 8px; }
-.card .tag { width: fit-content; margin: 8px 0 4px; padding: 0 8px; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 13px; font-weight: 700; }
-.card h3 { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
-
-.top { max-inline-size: 65ch; margin: 0 auto 16px; }
-.top h2 { margin: 0 0 8px; font-size: 18px; }
-.strip { display: flex; gap: 10px; margin: 0; padding: 4px 0 10px; list-style: none;
-         overflow-x: auto; overflow-y: hidden; overscroll-behavior-inline: contain;
-         scroll-snap-type: x mandatory; scroll-padding-inline: 4px;
-         scrollbar-width: thin; scrollbar-color: #0f766e #ccfbf1; }
-.strip li { flex: 0 0 min(240px, 75%); scroll-snap-align: start; }
-.strip a { display: block; block-size: 100%; padding: 12px; border-radius: 10px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
-.strip a:focus-visible, .strip:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-
-input, button, select, textarea { font: inherit; }
-.news-letter { max-inline-size: 65ch; margin: 24px auto 0; padding: 20px; background: #f0fdfa; border-radius: 12px; }
-.news-letter h2 { margin: 0 0 12px; font-size: 22px; color: #0f766e; }
-.nl-form { display: grid; gap: 12px; }
-.field { display: block; inline-size: 100%; margin-block-start: 4px; padding: 8px 12px; border: 2px solid #d6d3d1; border-radius: 8px; background: white; }
-.field:focus-visible { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px #99f6e4; }
-.field:user-invalid { border-color: #b91c1c; }
-.grow { field-sizing: content; min-block-size: 3lh; resize: vertical; }
-fieldset { display: flex; flex-flow: row wrap; gap: 8px 16px; margin: 0; padding: 0; border: 0; }
-legend { padding: 0; margin-block-end: 4px; font-weight: 700; }
-.opt { display: flex; align-items: center; gap: 6px; }
-.opt input { appearance: none; display: grid; place-content: center; margin: 0; inline-size: 22px; block-size: 22px; border: 2px solid #0f766e; border-radius: 6px; background: white; }
-.opt input::before { content: "✓"; color: white; font-size: 14px; font-weight: 700; transform: scale(0); }
-.opt input:checked { background: #0f766e; }
-.opt input:checked::before { transform: scale(1); }
-.opt input:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-.btn { justify-self: start; padding: 10px 24px; border: 0; border-radius: 8px; background: #0f766e; color: white; font-weight: 700; cursor: pointer; }
-
-/* الصفحة الأولى: الهيدر */
-.mast { max-inline-size: 1100px; margin: 0 auto 16px; padding-block-end: 8px; border-block-end: 4px double #292524; }
-.logo { margin: 0; font-size: 34px; font-weight: 800; text-align: center; }
-.date { margin: 0 0 8px; text-align: center; color: #78716c; font-size: 14px; }
-.sections { display: flex; gap: 18px; justify-content: center; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-.sections a { color: #0f766e; font-weight: 700; text-decoration: none; }
-
-/* الصفحة الأولى: الـ grid */
-.front { display: grid; gap: 24px; max-inline-size: 1100px; margin-inline: auto;
-         grid-template: "main side" auto / minmax(0, 1fr) 320px; }
-.main { grid-area: main; min-inline-size: 0; }
-.side { grid-area: side; display: flex; flex-flow: column; gap: 16px; align-self: start; position: sticky; inset-block-start: 8px; }
-.main .story, .main .more, .main .top { max-inline-size: none; }
-.side .news-letter { margin: 0; }
-.box { padding: 16px; background: white; border-radius: 12px; }
-.box h2 { margin: 0 0 8px; font-size: 18px; }
-
-/* الجدول */
-.prices { inline-size: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0 4px; empty-cells: hide; caption-side: bottom; font-size: 15px; }
-.prices th:first-child { inline-size: 45%; }
-.prices th, .prices td { padding: 6px; text-align: start; }
-.prices td { background: #f5f5f4; }
-.prices caption { padding-block-start: 6px; color: #78716c; font-size: 13px; text-align: start; }
-
-/* الرأي: أعمدة جرايد */
-.opinion { margin-block-start: 24px; padding: 20px; background: white; border-radius: 12px;
-           columns: 220px; column-gap: 28px; column-rule: 1px solid #e7e5e4; }
-.opinion h2 { column-span: all; margin: 0 0 8px; font-size: 22px; }
-.opinion p { margin: 0 0 10px; break-inside: avoid; }
-
-/* الأرشيف: يتأجّل لحد ما يقرب */
-.archive { margin-block-start: 24px; }
-.archive h2 { font-size: 22px; margin: 0 0 8px; }
-.archive article { content-visibility: auto; contain-intrinsic-size: auto 110px; margin-block-end: 8px; padding: 12px; background: white; border-radius: 10px; }
-.archive h3 { margin: 0 0 4px; font-size: 17px; }
-.archive p { margin: 0; }
-
-/* الفوتر */
-.foot { max-inline-size: 1100px; margin: 32px auto 0; padding: 20px; background: #292524; color: #e7e5e4; border-radius: 12px 12px 0 0; }
-.links { columns: 120px; column-gap: 24px; margin: 0 0 12px; padding: 0; list-style: none; }
-.links li { break-inside: avoid; padding-block: 2px; }
-.links a { color: #fde68a; }
-.foot p { margin: 0; font-size: 14px; }
-
-@media (max-width: 800px) {
-  .front { grid-template: "main" auto "side" auto / minmax(0, 1fr); }
-  .side { position: static; }
-}
-</style>
-</head>
-<body>
-<header class="mast">
-  <p class="logo">جريدة الحي</p>
-  <p class="date">الخميس ١٩ نوفمبر</p>
-  <nav class="sections" aria-label="الأقسام"><a href="#">محليات</a><a href="#">رياضة</a><a href="#">اقتصاد</a><a href="#">طقس</a><a href="#">رأي</a><a href="#">مطبخ</a><a href="#">كتب</a></nav>
-</header>
-<div class="front">
-<main class="main">
-<section class="top" aria-labelledby="top-h">
-  <h2 id="top-h">أهم الأخبار</h2>
-  <ol class="strip" tabindex="0" aria-label="أهم الأخبار، اسحب للمزيد">
-    <li><a href="#">المكتبة الجديدة بتفتح أبوابها</a></li>
-    <li><a href="#">نادي الحي يكسب ماتش الأسبوع</a></li>
-    <li><a href="#">قطع المياه بكرة من ١٠ لـ ٢</a></li>
-    <li><a href="#">سوق الخميس: الطماطم نزلت</a></li>
-    <li><a href="#">حفلة المدرسة يوم السبت</a></li>
-  </ol>
-</section>
-<article class="story">
-  <p class="kicker">محليات</p>
-  <h1>الحي بيفتح أول مكتبة عامة</h1>
-  <p class="byline">كتبت: منى سامي · ٩ الصبح</p>
-  <div class="photo" role="img" aria-label="رسم لواجهة المكتبة"></div>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، في الدور الأرضي من مبنى الجمعية القديم. المكتبة فيها حوالي ألفين كتاب، وركن للأطفال بسجادة ومخدات، وقهوة صغيرة بتقدّم شاي وينسون.</p>
-  <blockquote class="pull">«الكتب كلها جت من أهل الحي، وده اللي فرّحني أكتر من أي حاجة»</blockquote>
-  <p>وقال صاحب الفكرة إن التبرعات بدأت من شهرين بصندوق قدام الجامع، وبعد أسبوعين بقى عندهم كتب أكتر من الرفوف. والدخول ببلاش طول الشهر ده، وبعدها اشتراك رمزي.</p>
-  <p>والمكتبة مفتوحة كل يوم من ١٠ الصبح لـ ١٠ بالليل، ويوم الجمعة بعد الصلاة. وفيه يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-  <p class="meta">اتنشر في قسم المحليات · ٣ دقايق قراية</p>
-</article>
-<section class="more" aria-labelledby="more-h">
-  <h2 id="more-h">أخبار تانية</h2>
-  <div class="cards">
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230f766e'/%3E%3Ccircle cx='450' cy='120' r='70' fill='%23fde68a'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">رياضة</p>
-      <h3>نادي الحي يكسب ماتش الأسبوع ٢ - ١</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%23b45309'/%3E%3Crect x='80' y='200' width='440' height='60' fill='%23fef3c7'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">اقتصاد</p>
-      <h3>أسعار الخضار في سوق الخميس</h3>
-    </article>
-    <article class="card">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340'%3E%3Crect width='600' height='340' fill='%230369a1'/%3E%3Cpath d='M0 260 L200 140 L360 230 L600 90 L600 340 L0 340Z' fill='%23bae6fd'/%3E%3C/svg%3E" width="600" height="340" alt="">
-      <p class="tag">طقس</p>
-      <h3>اللينك الكامل للتنبيه: https://example.test/weather/alerts/this-week-rain</h3>
-    </article>
-  </div>
-</section>
-<section class="opinion" aria-labelledby="op-h">
-  <h2 id="op-h">رأي: الحي محتاج مكتبة تانية</h2>
-  <p>المكتبة الجديدة اتملت من أول يوم، والطوابير على ركن الأطفال وصلت للشارع. ده معناه إن الحي كان مستني حاجة زي دي من سنين.</p>
-  <p>الحل مش صعب: الجمعية عندها أوضتين فاضيين في المبنى التاني، ولو كل بيت اتبرع بكتابين هيبقى عندنا مكتبة تانية في شهر.</p>
-  <p>واللي مش عنده كتب يقدر يتبرع بساعة في الأسبوع يرتّب الرفوف أو يقرا للصغيرين. المكتبة مش كتب بس، المكتبة ناس.</p>
-</section>
-<section class="archive" aria-labelledby="ar-h">
-  <h2 id="ar-h">الأرشيف</h2>
-  <article><h3>أكتوبر</h3><p>٣١ خبر: افتتاح السوق الجديد، ودوري المدارس، وتصليح الشارع الرئيسي.</p></article>
-  <article><h3>سبتمبر</h3><p>٢٨ خبر: أول يوم دراسة، وحملة النضافة، ومهرجان الأكل البيتي.</p></article>
-  <article><h3>أغسطس</h3><p>٣٠ خبر: الصيف والمياه، ومعسكر الشباب، وحفلة الجمعية.</p></article>
-</section>
-</main>
-<aside class="side">
-<section class="box" aria-labelledby="pr-h">
-  <h2 id="pr-h">أسعار سوق الخميس</h2>
-  <table class="prices">
-    <caption>بالجنيه للكيلو · المصدر: باعة السوق</caption>
-    <thead><tr><th>الصنف</th><th>الأسبوع اللي فات</th><th>النهارده</th></tr></thead>
-    <tbody>
-      <tr><td>طماطم</td><td>٢٠</td><td>١٥</td></tr>
-      <tr><td>بطاطس</td><td>١٨</td><td>١٨</td></tr>
-      <tr><td>فلفل ألوان مستورد</td><td>٦٠</td><td></td></tr>
-    </tbody>
-  </table>
-</section>
-<section class="news-letter" aria-labelledby="nl-h">
-  <h2 id="nl-h">النشرة الصبح</h2>
-  <form class="nl-form">
-    <label>الإيميل <input class="field" type="email" name="email" required placeholder="name@example.test" autocomplete="email"></label>
-    <fieldset>
-      <legend>عايز إيه؟</legend>
-      <label class="opt"><input type="checkbox" name="s" value="local" checked> محليات</label>
-      <label class="opt"><input type="checkbox" name="s" value="sport"> رياضة</label>
-      <label class="opt"><input type="checkbox" name="s" value="prices"> أسعار السوق</label>
-    </fieldset>
-    <label>عايز تقولنا حاجة؟ <textarea class="field grow" name="note"></textarea></label>
-    <button class="btn">اشترك</button>
-  </form>
-</section>
-</aside>
-</div>
-<footer class="foot">
-  <ul class="links">
-    <li><a href="#">من إحنا</a></li><li><a href="#">اكتب لنا</a></li><li><a href="#">إعلانات</a></li><li><a href="#">الأرشيف</a></li>
-    <li><a href="#">محليات</a></li><li><a href="#">رياضة</a></li><li><a href="#">اقتصاد</a></li><li><a href="#">طقس</a></li>
-  </ul>
-  <p>© ٢٠٢٦ جريدة الحي</p>
-</footer>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** الصفحة الأولى كاملة: اسم الجريدة كبير في النص وتحته التاريخ والأقسام، وخط مزدوج. تحته عمودين: الكبير على اليمين فيه شريط أهم الأخبار، والخبر بالصورة المدورة، والكروت، و «رأي» في تلات أعمدة بخطوط رفيعة بينها، والأرشيف. والعمود الصغير على الشمال فيه جدول الأسعار (الفلفل من غير سعر النهارده، والمصدر تحت الجدول) والفورم، وبيفضل ثابت وانت نازل. وتحت فوتر غامق لينكاته الصفرا في أعمدة. على «موبايل» كله عمود واحد.
-
-**ترتيب البناء:** (١) الهيدر. (٢) الـ grid بالمنطقتين وانقل الأقسام القديمة جوه [[main]]. (٣) الجنب: الجدول ثم الفورم، و sticky. (٤) الرأي بالأعمدة. (٥) الأرشيف. (٦) الفوتر. (٧) الـ media query. (٨) افحص: validator، و Styles، و Device toolbar على 360، والـ snippet بتاع العنصر العريض (درس «فحص الـ CSS: validator و DevTools»).
-
-**ليه كده:** [[minmax(0, 1fr)]] للعمود الكبير و [[min-inline-size: 0]] على [[main]] عشان الشريط اللي جواه ميوسّعش العمود. الجنب [[align-self: start]] عشان sticky يشتغل (لو اتمط بطول الصف مش هيلاقي مكان يلزق فيه). والجدول [[fixed]] عشان الأعمدة متتهزش لما الأسعار تتغيّر. **الغلطة الشائعة:** [[overflow: hidden]] على [[.front]] عشان يخفي حاجة طالعة: بيبوّظ [[sticky]] بتاع الجنب.
-
-~~~text القياس من Chrome
-على 1200:  .front grid-template-areas: "main side"   .side position: sticky
-           .prices table-layout: fixed   caption-side: bottom
-           .opinion column-width: 220px   h2 column-span: all
-           .archive article content-visibility: auto   contain-intrinsic-height: auto 110px
-على 700:   grid-template-areas: "main" "side"   .side position: static
-على 360:   scrollWidth = clientWidth (اللينكات اللي برّه جوه nav بيعمل scroll بس)
-~~~` },
-        { lvl: 'فكرة', dir: "hay-magazine", t: R`صفحة «حوار العدد» في مجلة الحي`, what: R`فولدر جديد: صفحة واحدة من مجلة شهرية للحي فيها حوار. غلاف فوق فيه رقم العدد والعنوان وجملة تعريف، وتحته الحوار نفسه (أسئلة وإجابات) في أعمدة مجلة، وفي أوله صورة الضيفة مدورة والكلام لافف عليها، وصندوق «رقم العدد» مبيتقسمش بين عمودين. فكّر في الألوان والخطوط بنفسك، واستخدم [[columns]] و [[column-rule]] و [[shape-outside]] و [[break-inside]] والخصايص المنطقية.`, done: R`على الشاشة الكبيرة الحوار تلات أعمدة بخطوط بينها، والصورة دايرة والكلام لافف عليها، وصندوق الرقم كامل في عمود واحد. على 360 عمود واحد ومفيش scroll أفقي (اتقاس).`, ext: R`زوّد صفحة تانية «وصفة العدد» بنفس الـ CSS: المقادير في قايمة بأعمدة، والخطوات مرقّمة بعدّاد (درس «list-style و ::marker»).`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مجلة الحي: حوار العدد</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<article class="spread">
-  <header class="cover">
-    <p class="issue">العدد ١٢ · نوفمبر</p>
-    <h1>«الأكل البيتي محتاج صبر»</h1>
-    <p class="lede">حوار مع صاحبة أشهر مطبخ في الحي، من أوضة صغيرة لطابور كل جمعة.</p>
-  </header>
-  <div class="body">
-    <span class="portrait" role="img" aria-label="رسم لصورة الضيفة"></span>
-    <p><b>بدأتي إزاي؟</b> بدأت من مطبخ البيت. كنت بطبخ للجيران في المناسبات، وبعدين الطلبات زادت لدرجة إن الأوضة بقت مخزن.</p>
-    <p><b>إيه أصعب حاجة؟</b> الصبر. الطبخة الحلوة محتاجة نار هادية ووقت، والناس دايمًا مستعجلة.</p>
-    <figure class="note"><b>رقم العدد:</b> ١٢٠ طبق كل جمعة، والطابور بيبدأ الساعة ١١.</figure>
-    <p><b>نصيحة للي عايز يبدأ؟</b> ابدأ صغير، واطبخ الحاجة اللي بتعرفها كويس، واسمع كلام الزباين حتى لو كان صعب.</p>
-    <p><b>وبعدين؟</b> نفسي أفتح ركن تعليم طبخ للبنات والولاد في الجمعية، كل سبت الصبح.</p>
-  </div>
-</article>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #1c1917; color: #292524; font: 16px/1.7 Georgia, "Times New Roman", serif; }
-
-.spread { max-inline-size: 900px; margin-inline: auto; background: #fffbeb; border-radius: 4px; overflow: clip; }
-.cover { padding: 32px 24px 24px; background: linear-gradient(135deg, #7c2d12, #b45309); color: #fef3c7; }
-.issue { margin: 0; font: 700 13px/1 system-ui, sans-serif; letter-spacing: 0; }
-.cover h1 { margin: 12px 0 8px; font-size: clamp(28px, 6vw, 48px); line-height: 1.15; }
-.lede { max-inline-size: 45ch; margin: 0; font-size: 18px; }
-
-.body { padding: 24px; columns: 240px; column-gap: 32px; column-rule: 1px solid #e7d7b8; }
-.body p { margin: 0 0 12px; }
-.portrait { float: inline-start; inline-size: 130px; block-size: 130px; margin-block-end: 8px; border-radius: 50%;
-            background: radial-gradient(circle at 40% 35%, #fde68a, #9a3412); shape-outside: circle(50%); shape-margin: 10px; }
-.note { break-inside: avoid; margin: 0 0 12px; padding: 12px; border-inline-start: 4px solid #b45309; background: #fef3c7; font-family: system-ui, sans-serif; }
-~~~
-
-~~~view 720 1000 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مجلة الحي: حوار العدد</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #1c1917; color: #292524; font: 16px/1.7 Georgia, "Times New Roman", serif; }
-
-.spread { max-inline-size: 900px; margin-inline: auto; background: #fffbeb; border-radius: 4px; overflow: clip; }
-.cover { padding: 32px 24px 24px; background: linear-gradient(135deg, #7c2d12, #b45309); color: #fef3c7; }
-.issue { margin: 0; font: 700 13px/1 system-ui, sans-serif; letter-spacing: 0; }
-.cover h1 { margin: 12px 0 8px; font-size: clamp(28px, 6vw, 48px); line-height: 1.15; }
-.lede { max-inline-size: 45ch; margin: 0; font-size: 18px; }
-
-.body { padding: 24px; columns: 240px; column-gap: 32px; column-rule: 1px solid #e7d7b8; }
-.body p { margin: 0 0 12px; }
-.portrait { float: inline-start; inline-size: 130px; block-size: 130px; margin-block-end: 8px; border-radius: 50%;
-            background: radial-gradient(circle at 40% 35%, #fde68a, #9a3412); shape-outside: circle(50%); shape-margin: 10px; }
-.note { break-inside: avoid; margin: 0 0 12px; padding: 12px; border-inline-start: 4px solid #b45309; background: #fef3c7; font-family: system-ui, sans-serif; }
-</style>
-</head>
-<body>
-<article class="spread">
-  <header class="cover">
-    <p class="issue">العدد ١٢ · نوفمبر</p>
-    <h1>«الأكل البيتي محتاج صبر»</h1>
-    <p class="lede">حوار مع صاحبة أشهر مطبخ في الحي، من أوضة صغيرة لطابور كل جمعة.</p>
-  </header>
-  <div class="body">
-    <span class="portrait" role="img" aria-label="رسم لصورة الضيفة"></span>
-    <p><b>بدأتي إزاي؟</b> بدأت من مطبخ البيت. كنت بطبخ للجيران في المناسبات، وبعدين الطلبات زادت لدرجة إن الأوضة بقت مخزن.</p>
-    <p><b>إيه أصعب حاجة؟</b> الصبر. الطبخة الحلوة محتاجة نار هادية ووقت، والناس دايمًا مستعجلة.</p>
-    <figure class="note"><b>رقم العدد:</b> ١٢٠ طبق كل جمعة، والطابور بيبدأ الساعة ١١.</figure>
-    <p><b>نصيحة للي عايز يبدأ؟</b> ابدأ صغير، واطبخ الحاجة اللي بتعرفها كويس، واسمع كلام الزباين حتى لو كان صعب.</p>
-    <p><b>وبعدين؟</b> نفسي أفتح ركن تعليم طبخ للبنات والولاد في الجمعية، كل سبت الصبح.</p>
-  </div>
-</article>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** صفحة مجلة على خلفية غامقة: غلاف بتدرّج بني فيه «العدد ١٢» والعنوان الكبير بين علامات تنصيص وجملة تعريف. تحته الحوار في تلات أعمدة على ورق كريمي بخطوط رفيعة، وفي أول عمود دايرة دهبي والكلام لافف عليها، وصندوق «رقم العدد» الأصفر بخط بني على جنبه كامل في عمود.
-
-**ليه التصميم ده:** المجلة بتتقري على مهل، فالأعمدة مناسبة على الشاشة العريضة بس، و [[columns: 240px]] بيرجّعها عمود واحد على الموبايل لوحده. الغلاف بتدرّج غامق عشان العنوان الكبير يبقى زي غلاف المجلات، وخط Georgia للحوار عشان إحساس المطبوع. الصورة float جوه أول عمود، والكلام لافف عليها بـ [[shape-outside]]. و [[overflow: clip]] على الصفحة عشان الأركان المدورة تقص الغلاف من غير ما تعمل scroll container.
-
-~~~text القياس من Chrome
-.body   column-width: 240px     .portrait   shape-outside: circle(50%)     .note   break-inside: avoid
-على 360: scrollWidth = clientWidth = 360
-~~~` },
+        {
+          lvl: R`صغير`,
+          t: R`زرار الثيم للـ portfolio`,
+          what: R`الـ portfolio بيتبع ثيم الجهاز بس، والـ tokens فيها [[[data-theme="dark"]]] جاهزة. زوّد زرار في الـ header بـ [[aria-pressed]] بيبدّل الثيم ويحفظه، و [[boot.js]] بيقراه قبل الرسم، زي الـ dashboard بالظبط. من درسين «بورتفوليو ١» و «داشبورد ٣».`,
+          done: R`الزرار بيتقري «الوضع الداكن، pressed/not pressed» في تاب Accessibility، والاختيار بيفضل بعد refresh، و [[vitals.mjs]] بيقول CLS صفر في الحالتين، و axe صفر في الثيمين.`,
+        },
+        {
+          lvl: R`صغير`,
+          t: R`رسالة «مفيش مشاريع» في الفلتر`,
+          what: R`زوّد فلتر سادس «موبايل» مفيش ولا كارت عليه، واعرض فقرة «مفيش مشاريع من النوع ده لسه» بـ CSS بس: [[.work:has(input[value="mobile"]:checked) .empty]] تظهر. وبعدين اكتبها بشكل عام بـ [[:not(:has(...))]] عشان متكتبش قاعدة لكل فلتر. من درس «بورتفوليو ٢».`,
+          done: R`لما تختار «موبايل» الكروت كلها بتختفي والفقرة بتظهر، ولما تختار أي فلتر تاني الفقرة بتستخبى، ومن غير ولا سطر JavaScript جديد.`,
+        },
+        {
+          lvl: R`متوسط`,
+          t: R`صفحة دراسة حالة تانية بـ View Transition`,
+          what: R`اعمل [[work/bus-board.html]] لمشروع لوحة الأتوبيس بنفس هيكل [[tide-notes.html]]، و [[view-transition-name]] مختلف للصورة، وحوّل كارتها في الرئيسية للينك. وزوّد في [[i18n.js]] الكلمات الإنجليزي بتاعتها، وفي [[check-portfolio.mjs]] الصفحة الجديدة في الـ matrix و axe. من دروس «بورتفوليو ٢» و «بورتفوليو ٣».`,
+          done: R`الضغط على الكارت بيعمل انتقال (المتغير [[__vt]] = yes)، والاسم مش متكرر في نفس الصفحة (لو اتكرر الانتقال بيتلغي)، والـ matrix صفر overflow، و axe صفر في اللغتين.`,
+        },
+        {
+          lvl: R`متوسط`,
+          t: R`تصدير الأعضاء CSV من نفس الفلتر`,
+          what: R`زرار «نزّل CSV» فوق جدول الأعضاء بيصدّر **كل** الصفوف اللي بتطابق الفلتر الحالي (مش الصفحة الحالية بس) من [[view()]] بـ [[size: Infinity]]، ومعاه BOM عشان Excel يقرا العربي. من درس «داشبورد ٢».`,
+          done: R`مع [[?status=frozen]] الملف فيه ٥ صفوف وسطر عناوين، وبيتفتح في Excel بالعربي سليم، واسم الملف فيه الفلتر والتاريخ، واختبار Node بيتأكد إن الفاصلة جوه اسم بتتحط بين علامتين تنصيص.`,
+        },
+        {
+          lvl: R`كبير`,
+          t: R`الـ dashboard على API حقيقي`,
+          what: R`بدّل [[data/*.json]] بـ API صغير (من تاب «Backend بـ Node» أو FastAPI): [[GET /members?status=&q=&sort=&page=]] بيعمل الفلترة والترتيب في السيرفر ويرجّع [[total]]، و [[POST /members]] و [[POST /classes/:id/book]] بيرجّعوا 409 لو الحصة اتملت. الواجهة نفسها متتغيرش غير في [[loadMembers]]: نفس [[parseState]] بيبني الـ query. ومعاه optimistic update للحجز بيرجع لورا لو السيرفر رفض.`,
+          done: R`تفتح رابط [[?status=active&page=3]] في تاب جديد فتلاقي نفس الصفحة، وحجز حصة كاملة من تابين في نفس اللحظة: واحد بيكسب والتاني بيشوف toast «الحصة اتملت» والعداد بيرجع، و [[check-dashboard.mjs]] و [[audit-dashboard.mjs]] لسه بيعدّوا كلهم، والسيرفر بيكتب لوج لكل طلب.`,
+          ext: R`زوّد تسجيل دخول للأدمن (cookie [[HttpOnly]]) وخلي إخفاء زرار «عضو جديد» عن الموظف مش هو الحماية: السيرفر هو اللي يرفض بـ 403.`,
+        },
+        {
+          lvl: R`كبير`,
+          t: R`نسخة الـ portfolio الثابتة بلغتين للـ SEO`,
+          what: R`الـ dictionary بيبدّل النص في المتصفح، بس جوجل بيشوف العربي بس. اكتب [[build.mjs]] بيقرا نفس [[dict]] ويطلّع نسختين ثابتين: [[/]] بالعربي و [[/en/]] بالإنجليزي، وكل نسخة فيها [[lang]] و [[dir]] صح من السيرفر، و [[<link rel="alternate" hreflang>]] للتانية، وزرار اللغة يبقى لينك عادي. ومعاه فحص بيفشل لو كلمة ناقصة في أي لغة.`,
+          done: R`[[curl -s .../en/ | grep "<html"]] بيطلّع [[lang="en" dir="ltr"]] من غير JS، والنسختين صفر violations، و CLS صفر من غير [[boot.js]] (مفيش تبديل بعد الرسم أصلًا)، وتشغيل [[build.mjs]] مرتين بيطلّع نفس الملفات بالظبط.`,
+          ext: R`زوّد لغة تالتة، وخلي [[sitemap.xml]] يتولد لوحده فيه كل الصفحات باللغات.`,
+        },
+        {
+          lvl: R`فكرة`,
+          t: R`لوحة لحاجة بتعرفها`,
+          what: R`خد هيكل الـ dashboard (shell و KPI و جدول بحالته في الرابط و جدول مواعيد و dialog و toasts و dark mode) وابنيه لحاجة انت عارف تفاصيلها: عيادة، أو مدرسة سواقة، أو ملعب، أو مكتبة، أو كورس أونلاين. الأرقام اللي في الكروت انت اللي بتختار ليه هي اللي مهمة لصاحب المكان.`,
+          done: R`صاحب المكان (أو حد بيشتغل فيه) استخدمها ١٠ دقايق من موبايله من غير ما تشرحله، وقال أنهي رقم بيبص عليه الأول، والـ matrix و axe و CLS زي الوحدة دي.`,
+          ext: R`ارفعها برابط، واكتب README فيه «ليه الأدوات دي» واللقطات على ٣ مقاسات، وحطها في الـ portfolio اللي بنيته هنا كدراسة حالة.`,
+        },
       ],
       items: [
         {
-          cmd: "normal flow و margin collapsing",
-          title: "تفهم المتصفح بيرص العناصر إزاي من غير أي CSS (الـ normal flow)، وليه الـ margins الرأسية بتتداخل ومين بيمنع ده",
-          pre: ["css/box model", "css/display"],
+          cmd: R`مشروع portfolio و dashboard: الخريطة`,
           ref: [
-            { t: "MDN: Introduction to formatting contexts", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Display/Formatting_contexts" },
-            { t: "MDN: Block and inline layout in normal flow", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Display/Block_and_inline_layout" },
-            { t: "MDN: Mastering margin collapsing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Margin_collapsing" },
-            { t: "MDN Learn: Normal flow", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Introduction" },
-            { t: "CSS 2.2: Visual formatting model", url: "https://www.w3.org/TR/CSS22/visuren.html#normal-flow" },
-            { t: "CSS 2.2: Collapsing margins", url: "https://www.w3.org/TR/CSS22/box.html#collapsing-margins" }
+            { t: "MDN: URL", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL" },
+            { t: "MDN: dir attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/dir" },
+            { t: "Playwright: Library", url: "https://playwright.dev/docs/library" },
           ],
-          desc: R`الـ **normal flow** هو الطريقة اللي المتصفح بيرص بيها العناصر لو انت مكتبتش أي layout: عناصر الـ **block** ([[<p>]] و [[<h2>]] و [[<div>]]) فوق بعض، كل واحد واخد عرض أبوه كله، وعناصر الـ **inline** ([[<a>]] و [[<b>]] والكلام) جنب بعض في السطر، ولما السطر يخلص بيكمّلوا تحت. وفي العربي السطر بيبدأ من اليمين.
-والـ **margin collapsing**: لما margin رأسي يقابل margin رأسي تاني في الـ normal flow مبيتجمعوش، الأكبر بس اللي بيكسب. ده بيحصل بين أخين، وبين أب وأول أو آخر ابن (فالـ margin بتاع الابن «بيخرج» برّه أبوه)، وجوه عنصر فاضي. و [[display]] و [[float]] و [[position]] هم التلاتة اللي بيغيّروا الـ flow ده.`,
-          example: R`<style>
-  .box { background: #fef3c7; }
-  .box h2 { margin: 24px 0; color: #92400e; }
-  .fixed { display: flow-root; }
-  .a { margin: 0 0 30px; background: #e0f2fe; }
-  .b { margin: 20px 0 0; background: #e0f2fe; }
-</style>
-<div class="box"><h2>خبر عاجل</h2></div>
-<div class="box fixed"><h2>خبر عاجل</h2></div>
-<p class="a">الفقرة الأولى</p>
-<p class="b">الفقرة التانية</p>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`صندوق الخبر خلفيته صفرا فاتحة، عشان نشوف حدوده بعينينا.`,
-            R`العنوان اللي جوه الصندوق ليه margin فوق وتحت 24px.`,
-            R`الصندوق التاني بس عليه [[display: flow-root]]: بيعمل «منطقة رص» جديدة جواه، فالـ margin بتاع العنوان بيفضل جواه.`,
-            R`الفقرة الأولى ليها margin تحت 30px بس، وخلفيتها زرقا فاتحة.`,
-            R`الفقرة التانية ليها margin فوق 20px بس.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`الصندوق الأول: الخلفية الصفرا لازقة في العنوان من فوق ومن تحت، والـ 24px طلعوا برّه الصندوق.`,
-            R`الصندوق التاني: الخلفية الصفرا فيها 24px فاضيين فوق العنوان وتحته، لأن الـ margin فضل جوه.`,
-            R`الفقرة الأولى، و margin بتاعها اللي تحت (30px) هو اللي هيكسب.`,
-            R`الفقرة التانية: المسافة بينها وبين الأولى 30px مش 50px، لأن الـ margin الأكبر بس اللي بيكسب.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-قبل ما تكتب ولا سطر layout (flex ولا grid ولا position)، المتصفح عنده طريقة رص جاهزة اسمها **normal flow**. أغلب الصفحة بتفضل ماشية بيها، فلازم تعرف قواعدها: مين بياخد سطر لوحده، ومين بيمشي جنب التاني، وليه المسافات الرأسية ساعات بتطلع أصغر من اللي كتبته.
-
-درس «box model» وريك بسرعة إن الـ margin الرأسي بيتداخل، ودرس «display» فرّق بين [[block]] و [[inline]]. هنا القواعد كاملة بالأرقام. كل القياسات في الوحدة دي من Chrome 157 (headless على Windows 11) بـ [[getBoundingClientRect()]] (مكان الصندوق ومقاسه بالبكسل) و [[getComputedStyle()]]، في صفحة عرضها 800px زي معاينة الموقع.
-
----
-
-## ١. الـ normal flow: البلوكات فوق بعض، والكلام جوه السطور
-
-~~~live 210 الصفحة من غير أي layout
-<style>
-  .page { width: 300px; background: #f5f5f4; padding: 8px; }
-  .page p { background: #e0f2fe; margin: 8px 0; }
-  .tag { background: #fde68a; }
-</style>
-<div class="page">
-  <h3>أخبار الصبح</h3>
-  <p>الفقرة دي <b class="tag">block</b> بتاخد العرض كله، وجواها كلام <a href="#" class="tag">ولينك</a> ماشيين جنب بعض في السطر ولما السطر يخلص بيكمّلوا تحت.</p>
-  <p>وفقرة تانية تحتها على طول.</p>
-</div>
-~~~
-
-**هتشوف إيه:** صندوق رمادي فيه عنوان، وتحته فقرتين بخلفية زرقا كل واحدة واخدة عرض الصندوق كله لحد آخره، حتى لو كلامها قصير. وجوه الفقرة الأولى كلمة «block» واللينك بخلفية صفرا على قد كلامهم بس، ماشيين في السطر مع الكلام.
-
-~~~text القياس من Chrome
-p و h3        width: 300px    ← عرض الأب كله (block)
-b و a         display: inline ← على قد الكلام، جوه السطر
-p2.top - p1.bottom = 8px     ← المسافة اللي بينهم من الـ margin
-~~~
-
-القواعد اللي بتتطبق هنا اسمها في المواصفة **formatting context** (سياق الرص):
-
-| النوع | مين | بيترصّوا إزاي |
-|---|---|---|
-| **block formatting context** | أولاد الـ block اللي هم block ([[<p>]] و [[<h3>]] و [[<div>]] و [[<ul>]]…) | فوق بعض بالترتيب، كل واحد بيبدأ من حافة أبوه، والـ margins الرأسية بينهم بتتداخل (قسم ٣) |
-| **inline formatting context** | الكلام والعناصر الـ inline ([[<a>]] و [[<b>]] و [[<span>]] و [[<img>]]) | جنب بعض في **سطر** (line box)، ولما العرض يخلص بيكمّلوا في سطر جديد. الاتجاه من [[dir]]: في [[rtl]] من اليمين |
-
-### الكلام اللي جنب بلوك
-
-لو [[<div>]] فيه كلام مباشر وجنبه [[<p>]]، المتصفح بيلف الكلام في صندوق block مستخبي (اسمه **anonymous block box**) عشان كل أولاد الـ div يبقوا block. مش هتشوفه في DevTools، بس ده اللي بيخلي الكلام ياخد سطر لوحده فوق الـ p.
-
-### الـ inline مبيزقّش السطور
-
-~~~live 90 padding رأسي على span جوه فقرة
-<div style="width: 300px; background: #f5f5f4">سطر فيه <span style="padding: 20px; margin: 30px; background: #fde68a">padding و margin</span> وبعده كلام كتير عشان يلف لسطر تاني ونشوف الـ padding هيزق السطور ولا لأ والسطر التاني هنا.</div>
-~~~
-
-**هتشوف إيه:** الخلفية الصفرا كبيرة وراكبة على السطر اللي فوقها واللي تحتها، بس السطور نفسها **ماتحركتش**: الفقرة كلها نفس طولها كأن الـ padding مش موجود. والـ margin الرأسي (30px) ملوش أي أثر.
-
-~~~text القياس من Chrome
-span   height: 57px  (السطر 17 + padding 20 فوق و 20 تحت)
-div    height: 54px  = 3 سطور × 18، نفس الطول من غير الـ padding
-~~~
-
-عشان كده زرار مصنوع من [[<a>]] بـ padding بيركب على السطور اللي حواليه. الحل [[display: inline-block]] (درس «display»).
-
----
-
-## ٢. التلاتة اللي بيغيّروا الـ flow: [[display]] و [[float]] و [[position]]
-
-أي layout انت بتكتبه هو تغيير للـ normal flow بواحدة من التلاتة دول:
-
-| الخاصية | بتعمل إيه في الـ flow | الدرس |
-|---|---|---|
-| [[display]] | بتغيّر نوع الصندوق نفسه ([[block]] و [[inline]] و [[inline-block]])، أو بتغيّر طريقة رص **أولاده** ([[flex]] و [[grid]] و [[table]] و [[flow-root]]) | «display» و «flexbox» و «grid» |
-| [[float]] | بتطلّع العنصر لجنب (يمين أو شمال) والكلام **يلف حواليه** | «float و clear» الجاي |
-| [[position]] | [[relative]] و [[sticky]] العنصر بيفضل في الـ flow وبيتزق بس. [[absolute]] و [[fixed]] بيطلّعوه من الـ flow خالص، والباقي بيتصرف كأنه مش موجود | «position: absolute» و «sticky و fixed» |
-
-العنصر اللي **out of flow** (برّه الـ flow: float، أو absolute، أو fixed) مبيحجزش مكان في الرص العادي. ده سبب أشهر مشكلة في الـ float: الأب بيبقى طوله صفر (الدرس الجاي).
-
----
-
-## ٣. الـ margin collapsing: لما اتنين margin رأسي يتقابلوا
-
-القاعدة: في الـ block formatting context، لو margin تحت عنصر قابل margin فوق اللي بعده **من غير أي حاجة بينهم** (لا border، ولا padding، ولا كلام)، المتصفح بيعمل منهم margin واحد = **الأكبر**. ده بيحصل في **الاتجاه الرأسي بس**؛ الـ margins الأفقية عمرها ما بتتداخل.
-
-### الحالة ١: أخين ورا بعض
-
-~~~live 120 فقرة margin تحتها 30 وبعدها فقرة margin فوقها 20
-<style>
-  .a { margin: 0 0 30px; background: #e0f2fe; }
-  .b { margin: 20px 0 0; background: #e0f2fe; }
-</style>
-<p class="a">الفقرة الأولى</p>
-<p class="b">الفقرة التانية</p>
-~~~
-
-**هتشوف إيه:** فقرتين زرق بينهم مسافة فاضية. المسافة دي 30px، مش 50.
-
-| margin الأول | margin التاني | المسافة اللي اتقاست | القاعدة |
-|---|---|---|---|
-| 30px | 20px | **30px** | الأكبر |
-| 30px | -10px | **20px** | موجب + سالب = بيتجمعوا (30 − 10) |
-| -20px | -10px | **-20px** | الاتنين سالب = الأصغر (الأبعد عن الصفر) |
-
-### الحالة ٢: الأب وأول ابن (أو آخر ابن)
-
-لو الأب **ملوش** border ولا padding من فوق، الـ margin بتاع أول ابن بيتقابل مع الـ margin بتاع الأب نفسه، فبيخرج **برّه** الأب:
-
-~~~live 210 العنوان جوه صندوق أصفر: من غير ومع flow-root
-<style>
-  .box { background: #fef3c7; }
-  .box h2 { margin: 24px 0; color: #92400e; }
-  .fixed { display: flow-root; }
-</style>
-<div class="box"><h2>خبر عاجل</h2></div>
-<div class="box fixed"><h2>خبر عاجل</h2></div>
-~~~
-
-**هتشوف إيه:** الصندوق الأول الأصفر على قد العنوان بالظبط، والمسافة الفاضية فوقه بيضا (برّه الصندوق). الصندوق التاني أطول بكتير، والمسافة الفاضية فوق العنوان وتحته صفرا (جوه الصندوق). نفس الـ HTML، والفرق سطر [[display: flow-root]].
-
-~~~text القياس من Chrome
-الصندوق الأول   height: 27px    العنوان.top = الصندوق.top = 24px
-الصندوق التاني  height: 75px    العنوان.top − الصندوق.top = 24px  (27 + 24 + 24)
-~~~
-
-وخد بالك من رقم «24» فوق الصندوق الأول: الـ [[body]] عنده margin 8px من المتصفح، و [[<div>]] ملوش margin، و [[<h2>]] عنده 24. التلاتة اتقابلوا وطلعوا margin واحد 24 (مش 32). عشان كده كتير بتلاقي «مسافة بيضا فوق الهيدر مش عارف جاية منين»: هي الـ margin بتاع أول عنوان خرج لحد فوق.
-
-### الحالة ٣: عنصر فاضي
-
-[[<div>]] فاضي (ملوش طول ولا padding ولا border) الـ margin اللي فوقه واللي تحته بيتقابلوا **مع بعض**، ومع اللي قبله واللي بعده:
-
-~~~text القياس من Chrome
-<p margin-bottom: 10px>  <div margin: 40px 0 (فاضي)>  <p margin-top: 15px>
-المسافة بين الفقرتين = 40px   (مش 10 + 40 + 40 + 15 = 105)    الـ div طوله 0
-~~~
-
----
-
-## ٤. إمتى الـ margins **مبتتداخلش**
-
-اتقاست كلها: أب فيه [[<h2 style="margin-top: 24px">]] كأول ابن، أو أخين margin 30 و 20:
-
-| اللي على الأب | العنوان.top − الأب.top | أو المسافة بين الأخين | ليه |
-|---|---|---|---|
-| مفيش حاجة | 0 (خرج برّه) | 30 | الحالة العادية |
-| [[padding-top: 1px]] | 25 | | الـ padding فصل بينهم |
-| [[border-top: 1px solid]] | 25 | | الـ border فصل بينهم |
-| [[display: flow-root]] | 24 | | الأب بقى ليه block formatting context لوحده |
-| [[overflow: hidden]] (أو [[auto]]) | 24 | | برضه بيعمل BFC، بس بيقص اللي يطلع برّه (درس «overflow») |
-| [[display: flex]] و [[flex-direction: column]] | | **50** | جوه flex مفيش collapsing خالص |
-| [[display: grid]] | | **50** | نفس الكلام في grid |
-| [[display: inline-block]] على الأول | | **50** | الـ inline-block مبيتداخلش مع اللي حواليه |
-
-**BFC** = Block Formatting Context: «منطقة رص» جديدة. أي عنصر بيعمل BFC جديد الـ margins اللي جواه مبتخرجش منه، والـ floats اللي جواه بتتحسب في طوله (الدرس الجاي). اللي بيعمل BFC: [[display: flow-root]]، و [[overflow]] غير [[visible]] و [[clip]]، و [[float]]، و [[position: absolute]] و [[fixed]]، و [[inline-block]]، وأولاد الـ flex والـ grid، و [[contain: layout]]. أنضفهم [[flow-root]]: معمول للغرض ده بس، ومبيقصّش حاجة.
-
----
-
-## ٥. تعيش معاه إزاي
-
-- **margin في اتجاه واحد:** خلّي كل العناصر ليها margin تحت بس (أو فوق بس). المسافات بتبقى متوقعة ومش محتاج تحسب مين بيكسب.
-- **[[gap]] جوه flex و grid:** مفيش collapsing ولا margins أصلًا، والمسافة مكتوبة في مكان واحد.
-- **[[.stack > * + *]]** من درس «box model»: margin فوق كل عنصر إلا الأول، فمفيش margin يخرج من أول ابن.
-- **[[padding]] على الأقسام** بدل margin على أول عنوان جواها، أو [[display: flow-root]].
-
----
-
-## ٦. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| margin-top على أول عنوان جوه hero ليه خلفية | الخلفية مبتبدأش من فوق: فيه شريط أبيض فوق الـ hero |
-| مستني 30 + 20 = 50 بين فقرتين | المسافة 30 |
-| بتحل خروج الـ margin بـ [[overflow: hidden]] | اتحلت، بس أي ظل أو dropdown بيطلع برّه الصندوق اتقص. [[flow-root]] أحسن |
-| [[padding]] و [[margin]] رأسي على [[<a>]] أو [[<span>]] | الـ margin ملوش أثر، والـ padding بيركب على السطور |
-| بتحوّل الأب لـ flex والمسافات اتضاعفت فجأة | جوه flex الـ margins بتتجمع (50 بدل 30). امسح واحد منهم أو استخدم [[gap]] |
-
----
-
-## الخلاصة
-
-- الـ normal flow: الـ block فوق بعض بعرض الأب، والـ inline جنب بعض في سطور، والاتجاه من [[dir]].
-- [[display]] و [[float]] و [[position]] هم اللي بيغيّروه. الـ float والـ absolute والـ fixed برّه الـ flow.
-- الـ margins الرأسية بتتداخل: الأكبر بيكسب، والسالب بيتطرح. بين أخين، وبين أب وأول/آخر ابن، وجوه عنصر فاضي.
-- بيمنعه: padding أو border بينهم، أو BFC ([[flow-root]] أنضفهم)، أو flex/grid.`,
-          try: R`اعمل [[flow.html]] فيه [[<header style="background: #fef3c7">]] جواه [[<h1>]] بس. افتحه: فيه شريط أبيض فوق الهيدر؟ افتح DevTools وحط الماوس على الـ h1 وشوف الـ margin البرتقالي طالع لحد فين. بعدين زوّد [[display: flow-root]] على الـ header وقارن.`,
-          sol: R`~~~live 170 flow.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>الـ flow</title>
-<style>
-  header { background: #fef3c7; }
-  .fixed { display: flow-root; }
-</style>
-</head>
-<body>
-<header><h1>قبل: الشريط الأبيض فوق</h1></header>
-<header class="fixed"><h1>بعد: الأصفر بيبدأ من فوق</h1></header>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** الهيدر الأول الأصفر على قد العنوان، وفوقه مسافة بيضا. التاني فيه مسافة صفرا فوق العنوان وتحته.
-
-في DevTools لما تقف على الـ [[<h1>]] الأول، اللون البرتقالي (الـ margin) طالع فوق الهيدر الأصفر. ده الـ margin اللي خرج. ومع [[flow-root]] البرتقالي بقى جوه الأصفر.
-
-~~~text القياس من Chrome
-header الأول   top: 21.44px  height: 37px    ← margin الـ h1 (0.67em = 21.44px) خرج فوقه
-header التاني  الـ h1 جواه على بعد 21.44px من فوق
-~~~`,
-          deep: {
-            why: R`الـ normal flow معمول للمستندات: فقرات وعناوين ورا بعض، والكلام بيلف لوحده على أي عرض شاشة. ولو انت فاهمه مش هتكتب flex على كل حاجة. والـ margin collapsing اتعمل عشان المسافات تطلع منطقية من غير حساب: فقرة ليها margin تحت وفقرة ليها margin فوق، المسافة بينهم تبقى مسافة فقرة واحدة مش اتنين.`,
-            how: R`المتصفح بيمشي على شجرة العناصر: كل أب block بيبص على أولاده، لو كلهم block بيرصّهم فوق بعض (block formatting context)، ولو كلهم inline بيكوّن منهم سطور (inline formatting context)، ولو خليط بيلف الـ inline في صناديق مستخبية. وهو بيرص البلوكات بيلم الـ margins الرأسية اللي «بتلمس» بعض (مفيش بينهم border ولا padding ولا كلام ولا BFC) ويحسب منهم قيمة واحدة: أكبر موجب + أصغر سالب.`,
-            when: R`كل صفحة: المقالات والأخبار والفورم ماشيين بالـ normal flow. ارجع للدرس ده لما تلاقي مسافة بيضا مش مفهومة فوق قسم ليه خلفية، أو مسافة طلعت أصغر أو أكبر من المكتوب بعد ما غيّرت [[display]]. وقبل ما تكتب layout اسأل: الـ flow العادي مش كفاية؟`,
-            mistakes: R`margin على أول ابن جوه قسم ليه خلفية فيخرج. حساب المسافة كمجموع. حل الخروج بـ [[overflow: hidden]] فيتقص ظل أو قايمة. padding رأسي على عنصر inline. نسيان إن flex و grid بيلغوا الـ collapsing فالمسافات تتضاعف لما تغيّر الأب.`
+          title: R`بنبني إيه ولمين، وشكل الأجزاء، وليه HTML و CSS و JS من غير framework، والمعمل اللي هنقيس بيه كل خطوة`,
+          learn: R`تبدأ مشروع واجهة صح من أول ساعة: تعرف بتبني إيه ولمين، وترسم الأجزاء، وتختار كل أداة بسبب مكتوب، وتعمل معمل (سيرفر صغير وسكربتات قياس بـ Chrome الحقيقي) قبل ما تكتب أول سطر CSS.`,
+          out: R`فولدر [[pd-lab/]] فيه [[serve.mjs]] شغال على بورتين، و [[contrast.mjs]] بيطبع نسبة التباين لكل زوج ألوان ويقول AA ولا FAIL.`,
+          use: {
+            prog: R`هنا بتشوف إن الـ CSS اللي اتعلمته (tokens، و grid، و :has، و logical properties) هو أدوات لقرارات، مش حاجات تتحفظ. والدرس ده هو القرارات نفسها: إيه بنبنيه، وبإيه، وإزاي نعرف إنه سليم.`,
+            work: R`أول يوم في أي مشروع واجهة: «اعمل الهيكل، واتفق على الألوان والمسافات، وحط طريقة تتأكد بيها إن الشغل سليم». جدول «ليه الأدوات دي» ده نفسه اللي بيتكتب في الـ README، واللي بيسأل عنه اللي بيراجع شغلك.`,
+            cs: R`نسبة التباين معادلة رياضية (relative luminance) مش إحساس، فتتحسب وتتختبر في CI. والمعمل اللي بيقلّد بطء البيانات وفشلها هو نفس فكرة الـ test double: بتتحكم في الظروف عشان تختبر كل حالة.`,
           },
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فقرة [[margin-bottom: 40px]] وبعدها فقرة [[margin-top: 25px]]. المسافة بينهم كام؟ ولو الأب بقى [[display: flex; flex-direction: column]]؟ (من قسم ٣ و ٤)`, done: R`كتبت الرقمين قبل ما تفتح الحل.`, sol: R`**الإجابة:** في الـ normal flow ‏**40px** (الأكبر بس). وجوه flex ‏**65px** (40 + 25)، لأن flex مفيهوش margin collapsing.
+          desc: R`الوحدة دي بتبني **منتجين كاملين** خطوة خطوة، بـ HTML و CSS حديث و JavaScript صغير (من غير framework ولا مكتبة في المتصفح):
 
-~~~live 230 الاتنين جنب بعض
-<style>
-  p { background: #e0f2fe; }
-  .x { margin: 0 0 40px; } .y { margin: 25px 0 0; }
-  .col { display: flex; flex-direction: column; margin-top: 16px; outline: 1px dashed #a8a29e; }
-</style>
-<div><p class="x">normal flow: الأولى</p><p class="y">التانية</p></div>
-<div class="col"><p class="x">flex: الأولى</p><p class="y">التانية</p></div>
-~~~
+• **Portfolio** لمطوّرة واجهات متخيلة اسمها «نادين فؤاد»: صفحة رئيسية بالعربي والإنجليزي وزرار بيقلب [[dir]]، وكروت مشاريع بفلتر بـ [[:has()]]، وصفحة دراسة حالة بانتقال View Transition، و CV بيتطبع صفحة A4 واحدة، و Open Graph عشان اللينك يبان كويس لما يتبعت.
+• **Dashboard** لصالة تسلق متخيلة اسمها «صالة الصخرة»: app shell بـ grid areas و sidebar بيصغر على الكمبيوتر ويبقى drawer على الموبايل، وكروت أرقام فيها sparkline و progress ring بـ SVG، وجدول أعضاء بترتيب وفلتر وصفحات **محفوظين في الرابط**، وحالات التحميل والخطأ والفاضي، وجدول حصص أسبوعي، و [[<dialog>]] للإضافة والحجز، و toasts بتتقري لقارئ الشاشة، و dark mode.
 
-**هتشوف إيه:** في الجزء الأول المسافة بين الفقرتين الزرق أصغر، وفي الجزء اللي جوه الإطار المتقطع أكبر بشكل واضح.
+الدرس ده هو الخريطة: لمين، والأجزاء، وشجرة الملفات، وجدول «ليه الأدوات دي تحديدًا؟»، والألوان كـ tokens، والمعمل: سيرفر Node بيقدر **يبطّأ البيانات أو يفشّلها** عشان نشوف حالات التحميل والخطأ، وسكربت تباين بيحسب كل زوج ألوان. وفي آخره أول غلطة حقيقية: لون «نشط» الأخضر كان 4.35:1 (أقل من 4.5)، و axe مقالش حاجة (الدرس الأخير بيشرح ليه).
 
-~~~text القياس من Chrome
-normal flow   y.top − x.bottom = 40px
-flex column   y.top − x.bottom = 65px
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الـ hero بتاع موقع الأخبار ليه خلفية صفرا، بس فوقه شريط أبيض والأصفر مبيبدأش من أول الصفحة. صلّحه **من غير** ما تشيل الـ margin بتاع العنوان ومن غير padding، بالقيمة اللي بتعمل BFC ومعمولة للغرض ده بس. (من قسم ٣ «الحالة ٢» وقسم ٤)`, done: R`الأصفر بيبدأ من فوق والعنوان جواه بمسافة، وكل الشروط ✓.`, work: { h: 170, start: R`<style>
-  body { margin: 0; }
-  .hero { background: #fef3c7; }
-  .hero h1 { margin: 32px 16px; color: #92400e; }
-</style>
-<section class="hero">
-  <h1>جريدة الصبح</h1>
-  <p style="margin: 0 16px 16px">كل الأخبار المهمة في خمس دقايق.</p>
-</section>`, checks: [
-              { say: R`الـ hero بقى [[display: flow-root]]`, q: ".hero", style: ["display", "flow-root"] },
-              { say: R`العنوان لسه ليه [[margin-top]] ‏32px`, q: ".hero h1", style: ["margin-top", "32px"] },
-              { say: R`مفيش padding على الـ hero`, q: ".hero", style: ["padding-top", "0px"] }
-            ] }, sol: R`~~~live 150 بعد التصليح
-<style>
-  body { margin: 0; }
-  .hero { background: #fef3c7; display: flow-root; }
-  .hero h1 { margin: 32px 16px; color: #92400e; }
-</style>
-<section class="hero">
-  <h1>جريدة الصبح</h1>
-  <p style="margin: 0 16px 16px">كل الأخبار المهمة في خمس دقايق.</p>
-</section>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 150 قبل
-<style>
-  body { margin: 0; }
-  .hero { background: #fef3c7; }
-  .hero h1 { margin: 32px 16px; color: #92400e; }
-</style>
-<section class="hero">
-  <h1>جريدة الصبح</h1>
-  <p style="margin: 0 16px 16px">كل الأخبار المهمة في خمس دقايق.</p>
-</section>
-~~~
-
-**هتشوف إيه:** في الحل الأصفر من أول الصفحة، وفوق العنوان مسافة صفرا. في «قبل» فيه شريط أبيض فوق، والأصفر بيبدأ عند العنوان.
-
-**ليه كده:** الـ [[<h1>]] أول ابن والـ [[<section>]] ملوش border ولا padding من فوق، فالـ 32px خرجوا برّه. [[flow-root]] بيعمل BFC، فالـ margin يفضل جوه. **الغلطة الشائعة:** [[overflow: hidden]]: بتحلها، بس لو حطيت بعدين قايمة أو ظل بيطلع برّه الـ hero هيتقص.
-
-~~~text القياس من Chrome
-قبل:  hero.top = 32px   h1.top = 32px
-بعد:  hero.top = 0      h1.top = 32px   display: flow-root
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** عمود الأخبار كان المسافة بين كل خبر والتاني 24px. حد حوّل [[.list]] لـ flex column عشان يرتّب حاجة، فالمسافات بقت 48px. خليها 24px تاني بـ [[gap]] وصفّر الـ margins. (من قسم ٤ و ٥)`, done: R`بين كل كارت والتاني 24px، وكل الشروط ✓.`, work: { h: 230, start: R`<style>
-  .list { display: flex; flex-direction: column; }
-  .card { margin: 24px 0; padding: 10px; background: #f5f5f4; border-radius: 8px; }
-</style>
-<div class="list">
-  <article class="card">افتتاح مكتبة جديدة في الحي</article>
-  <article class="card">نتيجة ماتش الأمس</article>
-  <article class="card">حالة الطقس بكرة</article>
-</div>`, checks: [
-              { say: R`المسافة بالـ [[gap]]: [[row-gap]] ‏24px`, q: ".list", style: ["row-gap", "24px"] },
-              { say: R`الكروت ملهاش margin فوق`, q: ".card", style: ["margin-top", "0px"] },
-              { say: R`ولا تحت`, q: ".card", style: ["margin-bottom", "0px"] }
-            ] }, sol: R`~~~live 180 بعد التصليح
-<style>
-  .list { display: flex; flex-direction: column; gap: 24px; }
-  .card { margin: 0; padding: 10px; background: #f5f5f4; border-radius: 8px; }
-</style>
-<div class="list">
-  <article class="card">افتتاح مكتبة جديدة في الحي</article>
-  <article class="card">نتيجة ماتش الأمس</article>
-  <article class="card">حالة الطقس بكرة</article>
-</div>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 250 قبل
-<style>
-  .list { display: flex; flex-direction: column; }
-  .card { margin: 24px 0; padding: 10px; background: #f5f5f4; border-radius: 8px; }
-</style>
-<div class="list">
-  <article class="card">افتتاح مكتبة جديدة في الحي</article>
-  <article class="card">نتيجة ماتش الأمس</article>
-  <article class="card">حالة الطقس بكرة</article>
-</div>
-~~~
-
-**هتشوف إيه:** في الحل تلات كروت رمادي قريبين من بعض بمسافات متساوية. في «قبل» المسافات بينهم الضعف، وفيه مسافة فاضية فوق أول كارت كمان.
-
-**ليه كده:** جوه flex الـ 24 بتاع التحت والـ 24 بتاع الفوق اتجمعوا (48). [[gap]] بيحط المسافة **بين** الكروت بس، فمفيش مسافة زيادة فوق الأول ولا تحت الأخير.
-
-~~~text القياس من Chrome
-قبل:  card2.top − card1.bottom = 48px
-بعد:  card2.top − card1.bottom = 24px   row-gap: 24px
-~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** في DevTools، افتح الـ live اللي في قسم ١ «الـ inline مبيزقّش السطور»، وقف على الـ [[<span>]] وشوف الـ box model في تاب Computed. بعدين غيّر الـ span لـ [[display: inline-block]] من Styles. السطور اتحركت؟ والـ div بقى طوله كام؟ (من قسم ١)`, done: R`كتبت الطولين قبل وبعد.`, sol: R`**الإجابة:** قبل: الـ div طوله 54px والسطور مكانها، والخلفية راكبة عليهم. بعد [[inline-block]]: الـ span بقى صندوق بياخد مكانه في السطر، فالسطر اللي هو فيه طوله زاد والسطور اللي بعده نزلت.
-
-~~~live 160 بعد inline-block
-<div style="width: 300px; background: #f5f5f4">سطر فيه <span style="display: inline-block; padding: 20px; margin: 30px; background: #fde68a">padding و margin</span> وبعده كلام كتير عشان يلف لسطر تاني ونشوف الـ padding هيزق السطور ولا لأ والسطر التاني هنا.</div>
-~~~
-
-**هتشوف إيه:** الصندوق الأصفر واخد مكان واضح، والكلام اللي بعده نزل لتحت، ومفيش حاجة راكبة على حاجة.
-
-~~~text القياس من Chrome
-inline        div height: 54px
-inline-block  div height: 154px، لأن الـ padding (20 + 20) والـ margin (30 + 30) دخلوا في طول السطر
-~~~` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميلك عنده [[<body>]] جواه [[<header>]] بخلفية زرقا، وأول حاجة في الهيدر [[<h1>]]. بيقول «مسحت margin الـ body بـ [[body { margin: 0 }]] ولسه فيه أبيض فوق الهيدر!». اشرحله في ٣ سطور ليه، واقترح حلّين. (من قسم ٣ «الحالة ٢» وقسم ٥)`, done: R`كتبت الشرح والحلّين.`, sol: R`**إجابة نموذجية:**
-
-١. الأبيض ده مش margin الـ body، ده margin الـ [[<h1>]] (0.67em = 21.44px من المتصفح).
-٢. الـ h1 أول ابن في الـ header، والـ header ملوش border ولا padding من فوق، فالـ margin بتاعه «خرج» من الهيدر وبقى فوقه، والخلفية الزرقا بتبدأ تحته.
-٣. الحل: [[header { display: flow-root }]]، أو [[header { padding-top: 1rem }]] بدل الـ margin، أو [[h1 { margin-top: 0 }]].
-
-~~~live 120 الحل الأول
-<style>
-  body { margin: 0; }
-  header { background: #dbeafe; display: flow-root; }
-</style>
-<header><h1>أخبار البلد</h1></header>
-~~~
-
-**هتشوف إيه:** الأزرق بيبدأ من أول الصفحة، وفوق العنوان مسافة زرقا.` }
-          ]
-        },
-        {
-          cmd: "float و clear",
-          title: "تخلي الكلام يلف حوالين صورة بـ float، وتوقف اللف بـ clear، وتخلي الأب يحضن الـ float بـ flow-root، وتلف الكلام على شكل دايرة بـ shape-outside",
-          pre: ["css/normal flow و margin collapsing"],
-          ref: [
-            { t: "MDN: float", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/float" },
-            { t: "MDN: clear", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/clear" },
-            { t: "MDN: display (flow-root)", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/display" },
-            { t: "MDN Learn: Floats", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Floats" },
-            { t: "MDN: shape-outside", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/shape-outside" },
-            { t: "MDN: shape-margin", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/shape-margin" },
-            { t: "MDN: shape-image-threshold", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/shape-image-threshold" },
-            { t: "CSS Shapes Level 1", url: "https://www.w3.org/TR/css-shapes-1/" }
-          ],
-          desc: R`[[float]] بيطلّع العنصر (صورة غالبًا) لجنب الأب، والكلام اللي بعده **يلف حواليه** زي صور الجرايد. القيم: [[inline-start]] و [[inline-end]] (بيتقلبوا مع [[dir]]: في العربي [[inline-start]] = يمين)، و [[left]] و [[right]] (ثابتين)، و [[none]].
-و [[clear]] على عنصر بيقوله «متقعدش جنب أي float، انزل تحته». والـ float برّه الـ flow، فالأب مبيحسبوش في طوله: الحل [[display: flow-root]]. و [[shape-outside]] بيخلي الكلام يلف على شكل (دايرة، أو مضلع، أو صورة) بدل المستطيل، و [[shape-margin]] المسافة حوالين الشكل.`,
-          example: R`<style>
-  .story { display: flow-root; width: 340px; line-height: 1.5; }
-  .pic { float: inline-start; width: 150px; height: 150px; border-radius: 50%;
-         background: radial-gradient(circle at 35% 35%, #fbbf24, #b45309); }
-  .round .pic { shape-outside: circle(50%); shape-margin: 8px; }
-</style>
-<p class="story round"><span class="pic"></span>الكلام بيلف على الدايرة نفسها، فأول سطر وآخر سطر بيقربوا منها. افتتح الحي امبارح مكتبة صغيرة فيها ركن للأطفال وقهوة، والناس قعدت تقرا لحد بالليل. وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي.</p>`,
-          flag: "script",
+الدروس اللي بعده بالترتيب: «بورتفوليو ١: الهيكل واللغتين و dir»، و «بورتفوليو ٢: الكروت والفلتر والظهور بالسكرول»، و «بورتفوليو ٣: دراسة الحالة والطباعة و OG»، و «داشبورد ١: الـ shell والـ sidebar والأرقام»، و «داشبورد ٢: جدول الأعضاء والحالة في الرابط»، و «داشبورد ٣: جدول الحصص و dialog والتنبيهات»، و «المراجعة النهائية: مقاسات و a11y وأداء ونشر».`,
+          example: R`npm init -y
+npm pkg set type=module
+npm i playwright-core@1.64.1 @axe-core/playwright@4.14.0
+node serve.mjs
+curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:5502/data/members.json?fail=1"
+node contrast.mjs`,
           lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`فقرة الخبر: [[flow-root]] عشان تحضن الصورة اللي جواها بطولها، وعرضها 340px، والمسافة بين السطور مرة ونص حجم الخط.`,
-            R`«الصورة» (span بخلفية متدرجة بدل صورة حقيقية) طالعة لأول السطر ([[inline-start]] = يمين في العربي)، ومقاسها 150 في 150، ومدورة بـ [[border-radius: 50%]].`,
-            R`تكملة نفس القاعدة: الخلفية متدرجة دايرية من أصفر لبني عشان تبان كرة.`,
-            R`لما الفقرة يبقى عليها [[.round]]: الكلام يلف على دايرة نصف قطرها نص الصندوق، وبينه وبين الدايرة 8px.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`الفقرة نفسها، والـ span الفاضي في أولها هو اللي بيطلع يمين والكلام بيلف حواليه.`
+            R`بيعمل [[package.json]] بالقيم الافتراضية من غير أسئلة ([[-y]] = yes لكل سؤال). في npm 11 الملف بيطلع فيه [[ "type": "commonjs" ]] صريحة، ودي هتعمل مشكلة في السطر الجاي.`,
+            R`بيغيّر [[type]] لـ [[module]]: كل ملف [[.js]] في الفولدر بيتقري كـ ES module ([[import]] و [[export]]). من غيرها تجربة [[state.js]] في Node وقعت بـ [[Named export 'parseState' not found ... is a CommonJS module]] (اتقابل في المعمل).`,
+            R`أداتين القياس بس، ومش بيتحطوا في الموقع: [[playwright-core]] بيتحكم في Chrome المتسطّب عندك (مبينزّلش متصفح، ده الفرق بينه وبين [[playwright]])، و [[@axe-core/playwright]] بيشغّل فحص accessibility جوه الصفحة. الأرقام بعد [[@]] نفس النسخ اللي اتجرّبت.`,
+            R`السيرفر (الكود في الشرح): الـ portfolio على [[5501]] والـ dashboard على [[5502]]، و [[?delay=1200]] بيأخر البيانات و [[?fail=1]] بيرجّع 500 عشان نشوف الـ skeleton ورسالة الخطأ. سيبه شغال في ترمنال لوحده.`,
+            R`بيتأكد إن الفشل المتعمّد شغال: [[-s]] من غير progress، و [[-o /dev/null]] ارمي الجسم، و [[-w "%{http_code}"]] اطبع كود الرد بس، فالمفروض يطبع [[500]]. على PowerShell اكتب [[curl.exe]] (في Windows PowerShell 5.1 كلمة [[curl]] لوحدها اسم تاني لـ [[Invoke-WebRequest]]) و [[-o NUL]].`,
+            R`بيحسب نسبة التباين لكل زوج ألوان (نص على خلفية) من الـ tokens ويقول [[AA]] لو 4.5 أو أكتر و [[FAIL]] لو أقل. ده الفحص اللي مسك الأخضر الضعيف قبل axe.`,
           ],
-          teach: R`## الفكرة في سطرين
-
-[[float]] اتعمل عشان حاجة واحدة: صورة على جنب والكلام يلف حواليها، زي المجلات والجرايد. الدرس اللي فات قال إن [[float]] من التلاتة اللي بيغيّروا الـ normal flow. هنا هتشوف بيغيّره إزاي بالظبط، والمشكلتين اللي بيعملهم ([[clear]] وطول الأب)، وإزاي الكلام يلف على دايرة.
-
----
-
-## ١. [[float: inline-start]]: الصورة لجنب والكلام حواليها
-
-~~~live 200 صورة الخبر على اليمين والكلام لافف حواليها
-<style>
-  .news { display: flow-root; width: 360px; line-height: 1.6; background: #f5f5f4; padding: 8px; }
-  .photo { float: inline-start; width: 120px; height: 90px; margin-inline-end: 12px; border-radius: 6px;
-           background: linear-gradient(135deg, #0f766e, #99f6e4); }
-</style>
-<article class="news">
-  <div class="photo"></div>
-  <p style="margin: 0">افتتح الحي امبارح مكتبة صغيرة فيها ركن للأطفال وقهوة، والناس قعدت تقرا لحد بالليل. وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي، وإنه هيعمل يوم في الأسبوع للقراية بصوت عالي للصغيرين.</p>
-</article>
-~~~
-
-**هتشوف إيه:** مستطيل أخضر في الركن اللي فوق على اليمين، والكلام جنبه على الشمال، ولما الكلام يعدّي تحت المستطيل بيرجع ياخد العرض كله.
-
-### القيم
-
-| القيمة | في صفحة [[dir="rtl"]] | في صفحة [[dir="ltr"]] |
-|---|---|---|
-| [[float: inline-start]] | **يمين** (أول السطر) | شمال |
-| [[float: inline-end]] | شمال (آخر السطر) | يمين |
-| [[float: left]] | شمال دايمًا | شمال |
-| [[float: right]] | يمين دايمًا | يمين |
-| [[float: none]] | مفيش float (الافتراضي) | |
-
-~~~text القياس من Chrome (صندوق عرضه 400px على يمين الصفحة)
-dir=rtl  float: inline-start   الصورة.right = الصندوق.right = 792   ← يمين
-dir=ltr  float: inline-start   الصورة.left  = الصندوق.left  = 392   ← شمال
-getComputedStyle → float: inline-start   (Chrome بيرجّع القيمة زي ما هي)
-~~~
-
-في موقع عربي (أو بلغتين) اكتب [[inline-start]] و [[inline-end]]: الصفحة الإنجليزي هتتقلب لوحدها. و [[left]] و [[right]] لما الاتجاه نفسه هو المعنى (سهم بيشاور على حاجة على الشمال).
-
-### اللي بيحصل للعناصر
-
-- **الـ float بيبقى block:** [[<span style="float: right">]] الـ [[display]] المحسوب بتاعه [[block]]، فتقدر تديله عرض وطول.
-- **لازم عرض:** float من غير [[width]] بياخد على قد محتواه (shrink to fit).
-- **floats ورا بعض بيترصّوا جنب بعض:** صورتين [[float: right]] بعرض 120: الأولى عند الحافة، والتانية جنبها على الشمال (اتقاس: الأولى right = 782 مع margin 10، التانية right = 652).
-- **الـ block اللي بعده بيعدّي تحته، والسطور بس اللي بتقصر:** الفقرة اللي جنب الـ float عرضها لسه كامل (اتقاس 400 من 400)، بس سطور الكلام جواها بتقف عند حافة الصورة (اتقاس: آخر الكلام عند 672 = الصورة.left). عشان كده لو الفقرة ليها خلفية، الخلفية بتروح **تحت** الصورة.
-
----
-
-## ٢. الأب مبيشوفش الـ float: [[display: flow-root]]
-
-الـ float برّه الـ flow (الدرس اللي فات)، فلو الأب مفيهوش غير float، طوله **صفر**:
-
-~~~live 220 نفس الكارت: من غير ومع flow-root
-<style>
-  .card { width: 300px; background: #fef3c7; border: 2px solid #b45309; margin-bottom: 40px; }
-  .thumb { float: inline-start; width: 80px; height: 80px; background: #0f766e; }
-  .ok { display: flow-root; }
-</style>
-<div class="card"><div class="thumb"></div>الكارت مش حاضن الصورة</div>
-<div class="card ok"><div class="thumb"></div>الكارت حاضن الصورة</div>
-~~~
-
-**هتشوف إيه:** الكارت الأول خلفيته الصفرا وحدوده على قد سطر الكلام بس، والمربع الأخضر نازل برّه تحته. الكارت التاني الصفرا والحدود حوالين المربع كله.
-
-~~~text القياس من Chrome
-أب فيه float بس           height: 0
-نفس الأب + flow-root      height: 90px (طول الـ float)
-~~~
-
-[[flow-root]] بيعمل BFC (الدرس اللي فات قسم ٤)، والـ BFC بيحسب الـ floats اللي جواه في طوله. نفس الكلام [[overflow: hidden]] بس بيقص أي حاجة تطلع برّه.
-
-### الـ clearfix: تاريخ في فقرة
-
-قبل ما [[flow-root]] ييجي (قيمة أحدث بسنين كتير من الـ float نفسه، و Baseline النهارده)، الناس كانت بتحط على الأب class اسمه [[.clearfix]] بالشكل ده: [[.clearfix::after { content: ""; display: table; clear: both; }]]: حتة فاضية في آخر الأب عليها [[clear]] (القسم الجاي) فبتنزل تحت الـ float، والأب بيطول لحدها. هتلاقيه في كود قديم كتير ومكتبات زي Bootstrap 3. في كود جديد اكتب [[display: flow-root]] وخلاص.
-
----
-
-## ٣. [[clear]]: «انزل تحت الـ float»
-
-~~~live 200 الفوتر بتاع الخبر نازل تحت الصورة
-<style>
-  .news { width: 360px; background: #f5f5f4; }
-  .photo { float: inline-start; width: 120px; height: 110px; margin-inline-end: 10px; background: #0f766e; }
-  .meta { clear: both; margin: 0; padding-top: 6px; color: #78716c; border-top: 1px solid #d6d3d1; }
-</style>
-<article class="news">
-  <div class="photo"></div>
-  <p style="margin: 0">خبر قصير جنب الصورة.</p>
-  <p class="meta">نُشر الساعة ٩ الصبح · قسم المحليات</p>
-</article>
-~~~
-
-**هتشوف إيه:** سطر «نُشر الساعة…» بالخط الرمادي فوقه، نازل تحت المربع الأخضر كله، مش جنبه.
-
-| القيمة | بينزل تحت أنهي floats |
-|---|---|
-| [[clear: inline-start]] | اللي طالعين لأول السطر (يمين في العربي) |
-| [[clear: inline-end]] | اللي طالعين لآخر السطر |
-| [[clear: left]] و [[clear: right]] | اللي على الشمال، أو اللي على اليمين، بغض النظر عن [[dir]] |
-| [[clear: both]] | أي float من الناحيتين. ده الأشهر |
-| [[clear: none]] | الافتراضي: يقعد جنب أي float |
-
-~~~text القياس من Chrome
-.meta.top = .photo.bottom   ← اتزق لحد آخر الصورة بالظبط
-~~~
-
-[[clear]] بيشتغل على عناصر الـ block بس، وبيبص على الـ floats اللي **قبله** في نفس الـ BFC.
-
----
-
-## ٤. [[shape-outside]]: الكلام يلف على شكل
-
-الـ float دايمًا مستطيل، فحتى لو الصورة دايرة، الكلام بيبعد عن المربع كله. [[shape-outside]] بيدّي للكلام شكل تاني يلف عليه (على **float بس**، على غيره ملوش أثر):
-
-~~~live 420 نفس الدايرة: من غير ومع shape-outside
-<style>
-  .story { display: flow-root; width: 340px; line-height: 1.5; margin: 0 0 12px; }
-  .pic { float: inline-start; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fbbf24, #b45309); }
-  .round .pic { shape-outside: circle(50%); shape-margin: 8px; }
-</style>
-<p class="story"><span class="pic"></span>من غير shape: الكلام بيبعد عن المربع اللي حوالين الدايرة كله، فبيفضل فراغ أبيض في الأركان. افتتح الحي امبارح مكتبة صغيرة فيها ركن للأطفال وقهوة، والناس قعدت تقرا لحد بالليل. وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي.</p>
-<p class="story round"><span class="pic"></span>مع shape-outside: الكلام بيلف على الدايرة نفسها، فأول سطر وآخر سطر بيقربوا منها. افتتح الحي امبارح مكتبة صغيرة فيها ركن للأطفال وقهوة، والناس قعدت تقرا لحد بالليل. وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي.</p>
-~~~
-
-**هتشوف إيه:** في الفقرة الأولى السطور اللي جنب الدايرة كلها واقفة عند نفس الخط المستقيم. في التانية أول سطر وآخر سطرين داخلين ناحية الدايرة ومتبعين انحناءها.
-
-~~~text القياس من Chrome (حافة آخر الكلام في كل سطر، بالبكسل من شمال الصفحة)
-من غير shape   642, 642, 642, 642, 642, 642, 642   ← خط مستقيم عند حافة المربع
-مع shape        652, 642, 642, 642, 642, 647, 671   ← أول سطر وآخر سطرين قربوا
-~~~
-
-السطور اللي في النص فضلت 642: الكلام عمره ما بيدخل جوه صندوق الـ float نفسه، الشكل بيقدر **يصغّر** المساحة اللي الكلام بيبعد عنها بس.
-
-### القيم
-
-| القيمة | الشكل |
-|---|---|
-| [[shape-outside: circle(50%)]] | دايرة نصف قطرها نص الصندوق. [[circle(40% at 30% 50%)]] بمركز تاني |
-| [[shape-outside: ellipse(50% 40%)]] | بيضاوي |
-| [[shape-outside: inset(10px round 20px)]] | مستطيل جوه الصندوق بأركان مدورة |
-| [[shape-outside: polygon(0 0, 100% 0, 100% 100%)]] | مضلّع بنقط (هنا مثلث) |
-| [[shape-outside: url(cutout.png)]] | شكل الصورة نفسها: الحتت الشفافة الكلام يدخلها |
-| [[shape-outside: linear-gradient(...)]] | زي الصورة، من تدرّج |
-| [[shape-outside: margin-box]] | الصندوق (الافتراضي إن الشكل بيتحسب منه). وفيه [[border-box]] و [[padding-box]] و [[content-box]] |
-| [[shape-outside: none]] | الافتراضي: المستطيل |
-
-### [[shape-margin]]
-
-المسافة بين الشكل والكلام، زي margin بس ماشي مع الانحنا. اتقاست [[shape-margin: 8px]] في المثال. والمسافة دي مبتطلعش برّه صندوق الـ float نفسه (الـ margin box).
-
-### [[shape-image-threshold]]
-
-لما الشكل جاي من صورة أو تدرّج: البكسل اللي شفافيته (alpha) **أكبر** من الرقم ده بيتحسب جزء من الشكل. الافتراضي [[0]] (أي بكسل مش شفاف خالص).
-
-~~~live 140 نص الـ float ملوّن ونصه شفاف
-<style>
-  .half { float: inline-start; width: 120px; height: 120px;
-          background: linear-gradient(to left, #0f766e 50%, transparent 50%);
-          shape-outside: linear-gradient(to left, black 50%, transparent 50%); shape-image-threshold: 0.5; }
-</style>
-<div style="width: 360px; line-height: 1.6"><span class="half"></span>الخلفية نصها لون ونصها شفاف، والكلام بيلف على الجزء الملوّن بس، ويدخل في الجزء الشفاف كأن الصندوق نص عرضه.</div>
-~~~
-
-**هتشوف إيه:** مربع نصه اليمين أخضر ونصه الشمال فاضي، والكلام داخل في النص الفاضي لحد حافة الأخضر.
-
-~~~text القياس من Chrome
-آخر الكلام عند 732 = حافة الجزء الأخضر (الصندوق من 672 لـ 792)
-~~~
-
-> الصور من [[url()]] لازم تبقى من نفس الموقع أو عليها CORS، وإلا المتصفح بيتجاهل الشكل (MDN). عشان كده الأمثلة هنا بالتدرّجات.
-
----
-
-## ٥. الـ float مش للـ layout
-
-من حوالي 2005 لـ 2015 المواقع كلها كانت بتعمل الأعمدة بالـ float: [[.col { float: left; width: 33.33% }]] وجنبه clearfix. كان حل مؤقت لأن مكنش فيه غيره، وكان بيبوظ بسهولة: عمود أطول من التاني يزق اللي تحته، والأب يتقفل، والترتيب يتقلب في العربي. دلوقتي الأعمدة بـ **flex** و **grid** (درس «flexbox» و «grid»)، والـ float رجع لشغلته الأصلية: صورة جوه كلام، و drop cap (درس «::first-letter و ::selection»)، وصندوق «اقرا كمان» جنب الفقرة.
-
----
-
-## ٦. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| float جوه أب ملوش [[flow-root]] | الأب طوله صفر: الخلفية والحدود مبيحضنوش الصورة |
-| [[float: left]] في موقع بلغتين | الصفحة الإنجليزي والعربي الصورة في نفس المكان. اكتب [[inline-start]] |
-| فقرة بخلفية جنب float | الخلفية بتروح تحت الصورة لأن الفقرة عرضها كامل |
-| [[shape-outside]] على عنصر مش float | ملوش أي أثر |
-| [[shape-outside: url()]] لصورة من موقع تاني | المتصفح بيتجاهله من غير ما يقول |
-| أعمدة الصفحة بالـ float | اكتبها بـ flex أو grid |
-
----
-
-## الخلاصة
-
-- [[float: inline-start]] (يمين في العربي) و [[inline-end]] و [[left]] و [[right]]: الصورة لجنب والكلام حواليها.
-- [[clear: both]] (أو [[inline-start]] أو [[inline-end]]): انزل تحت الـ float.
-- الأب بيحضن الـ float بـ [[display: flow-root]]. الـ clearfix تاريخ.
-- [[shape-outside]] و [[shape-margin]] و [[shape-image-threshold]]: الكلام يلف على شكل، على float بس.`,
-          try: R`اعمل [[float.html]] فيه خبر: [[<article>]] جواه صورة مربعة (div بخلفية لون) و ٣ فقرات. خلّي الصورة [[float: inline-start]] و [[margin-inline-end: 12px]]، وزوّد [[dir="ltr"]] على الـ article مرة وشوف الصورة راحت فين. وبعدين امسح الـ [[flow-root]] من الـ article وشوف الخلفية.`,
-          sol: R`~~~live 260 float.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>float</title>
-<style>
-  body { font-family: system-ui, Tahoma, sans-serif; }
-  article { display: flow-root; max-width: 420px; padding: 10px; background: #f5f5f4; line-height: 1.6; margin-bottom: 12px; }
-  .photo { float: inline-start; width: 110px; height: 90px; margin-inline-end: 12px; background: linear-gradient(135deg, #0f766e, #99f6e4); border-radius: 6px; }
-  p { margin: 0 0 8px; }
-</style>
-</head>
-<body>
-<article>
-  <div class="photo"></div>
-  <p>الصورة على اليمين، أول السطر في العربي.</p>
-  <p>والكلام لافف حواليها لحد ما يعدّيها.</p>
-</article>
-<article dir="ltr">
-  <div class="photo"></div>
-  <p>Same CSS, but dir="ltr": the photo moved to the left.</p>
-</article>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** في الخبر العربي المربع الأخضر يمين والكلام شماله. في الخبر الإنجليزي نفس الـ CSS والمربع راح الشمال لوحده، لأن [[inline-start]] معناها «أول السطر».
-
-ولو مسحت [[display: flow-root]]: الخلفية الرمادي بتبقى على قد الكلام بس، والمربع ممكن ينزل برّه تحتها.
-
-~~~text القياس من Chrome
-rtl: .photo.right = article.right − 10 (الـ padding)
-ltr: .photo.left  = article.left + 10
-~~~`,
+          try: R`اعمل الفولدر ونفّذ أوامر المثال واحد واحد. حط [[serve.mjs]] من الشرح، وشغّله، وافتح [[http://127.0.0.1:5502/data/members.json?delay=2000]] في المتصفح وعدّ الثواني قبل ما يرد. وبعدين اكتب [[contrast.mjs]] وجرّب فيه زوج ألوان من موقع عاجبك (خد اللون من DevTools بالـ color picker).`,
+          flag: R`term`,
           deep: {
-            why: R`الجرايد والمجلات بقالها مية سنة بتلف الكلام حوالين الصور، والويب كان محتاج نفس الحاجة، فاتعمل [[float]]. ولما مكنش فيه flex ولا grid، الناس استخدمته للأعمدة كمان، وطلع منه مشاكل طول الأب والـ clearfix. دلوقتي ليه مكانه: صورة أو صندوق جوه كلام. و [[shape-outside]] جه عشان المجلات بتلف الكلام على شكل الصورة مش على مربعها.`,
-            how: R`المتصفح بيشيل الـ float من الـ flow ويحطه على حافة الأب (أو جنب float قبله)، وبعدين بيرص الباقي كأنه مش موجود، بس سطور الكلام (line boxes) اللي بتقابله بتتقصر عشان متدخلش تحته. [[clear]] بيزوّد مسافة فوق العنصر (اسمها clearance) لحد ما يبقى تحت الـ floats اللي قبله. والـ BFC ([[flow-root]]) بيحسب الـ floats في طوله. و [[shape-outside]] بيغيّر المساحة اللي السطور بتبعد عنها، جوه صندوق الـ float بس.`,
-            when: R`صورة في مقال أو خبر، وصورة كاتب مدورة في حوار ([[shape-outside: circle()]])، وصندوق «اقرا كمان» جنب فقرة، و drop cap. [[clear]] لفوتر الخبر أو لعنوان القسم اللي بعد صورة. [[flow-root]] على أي أب جواه float. مش للأعمدة ولا للـ navbar ولا للكروت: دي flex و grid.`,
-            mistakes: R`الأب من غير [[flow-root]] فطوله صفر. [[left]] و [[right]] في موقع بلغتين. float من غير عرض. خلفية فقرة بتعدّي تحت الصورة. [[shape-outside]] على عنصر مش float، أو بصورة من موقع تاني. استخدام float للأعمدة في كود جديد.`
+            why: R`أغلب مشاريع الواجهة اللي بتبوظ بتبوظ في أول ساعة: حد بدأ يكتب CSS من غير ما يعرف الصفحة فيها إيه، وحط ألوان hex في ٤٠ مكان، ومفيش طريقة يعرف بيها إن الصفحة سليمة غير «شكلها حلو عندي». الخريطة والـ tokens والمعمل بيخلّوا كل قرار بعد كده سهل: تغيير لون = سطر واحد، ورقم الـ CLS بيتقاس في ثانية بدل ما تخمّن.`,
+            how: R`المعمل ٣ حاجات: **سيرفر** static صغير بـ [[node:http]] (بيقرا الملف من الفولدر ويبعته بالـ content-type الصح، وبيأخر أو يفشّل أي رابط تحت [[/data/]] لو الرابط فيه [[delay]] أو [[fail]])، و **سكربتات قياس** بـ playwright-core بتفتح Chrome الحقيقي على مقاسات وثيمات ولغات مختلفة وتقيس (scrollWidth و PerformanceObserver و axe)، و **دوال نقية** (حساب التباين، والحالة في الرابط، ونقط الـ sparkline) بتتختبر في Node من غير متصفح أصلًا. والتباين بيتحسب بمعادلة WCAG: كل لون بيتحول لـ relative luminance (القناة على 255، وبعدين gamma، وبعدين وزن 0.2126 للأحمر و 0.7152 للأخضر و 0.0722 للأزرق)، والنسبة = (الأفتح + 0.05) ÷ (الأغمق + 0.05).`,
+            when: R`أي موقع أو لوحة هتتسلم لحد: الخريطة والجدول والـ tokens قبل أول سطر CSS، والمعمل قبل أول خطوة بناء. والمشروع ده نفسه ينفع يبقى أول حاجتين في الـ portfolio بتاعك. وكل جزء هنا ليه درس في التاب لو عايز تتعمق: «CSS variables»، و «contrast ratio»، و «axe و Lighthouse»، و «مصفوفة مقاسات».`,
+            mistakes: R`تبدأ بالتصميم من غير ما تحدد الصفحة لمين (الـ dashboard للأدمن على كمبيوتر المكتب والموبايل، والـ portfolio لحد بيقرر يكلّمك في ٣٠ ثانية). تختار framework «عشان الكل بيستخدمه» لمشروع ٢٠ ملف. تحط الألوان hex جوه كل قاعدة فالـ dark mode يبقى ١٠٠ تعديل. تختبر بالعين على مقاس واحد. تفتكر إن axe صفر = التباين سليم (هنا كان فيه زوج 4.35:1 و axe عدّاه). تخلي [[?fail=1]] يأثر على الصفحة نفسها مش البيانات بس (حصل: الصفحة رجعت JSON والاختبار علّق ٣٠ ثانية).`,
           },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** صورة الخبر [[.photo]] لازم تطلع لأول السطر (يمين في العربي، وشمال لو الصفحة اتقلبت إنجليزي)، وبينها وبين الكلام 12px من ناحية الكلام. (من قسم ١)`, done: R`المربع الأخضر يمين والكلام لافف شماله، وكل الشروط ✓.`, work: { h: 190, start: R`<style>
-  .news { display: flow-root; width: 360px; line-height: 1.6; }
-  .photo { width: 110px; height: 90px; background: #0f766e; border-radius: 6px; }
-</style>
-<article class="news">
-  <div class="photo"></div>
-  <p style="margin: 0">اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة، والدخول ببلاش طول الشهر ده.</p>
-</article>`, checks: [
-              { say: R`الصورة [[float: inline-start]] (مش [[right]])`, q: ".photo", style: ["float", "inline-start"] },
-              { say: R`المسافة من ناحية الكلام بـ [[margin-inline-end: 12px]]`, q: ".photo", style: ["margin-inline-end", "12px"] },
-              { say: R`مفيش margin من ناحية الحافة`, q: ".photo", style: ["margin-inline-start", "0px"] }
-            ] }, sol: R`~~~live 160 الحل
-<style>
-  .news { display: flow-root; width: 360px; line-height: 1.6; }
-  .photo { float: inline-start; margin-inline-end: 12px; width: 110px; height: 90px; background: #0f766e; border-radius: 6px; }
-</style>
-<article class="news">
-  <div class="photo"></div>
-  <p style="margin: 0">اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة، والدخول ببلاش طول الشهر ده.</p>
-</article>
-~~~
+          teach: R`## الصورة الكبيرة
 
-**هتشوف إيه:** المربع الأخضر في الركن اليمين فوق، والكلام على شماله وبينهم مسافة صغيرة، ولما الكلام يعدّي المربع بيرجع ياخد العرض كله.
+### بنبني إيه ولمين
 
-**ليه كده:** [[inline-start]] و [[margin-inline-end]] الاتنين منطقيين: لو حد غيّر الصفحة لـ [[dir="ltr"]] الصورة تروح شمال والمسافة تروح يمينها لوحدهم. **الغلطة الشائعة:** [[float: right; margin-left: 12px]]: شغالة في العربي بس، وفي الإنجليزي الصورة هتفضل يمين.
-
-~~~text القياس من Chrome
-.photo   float: inline-start   margin-inline-end: 12px   margin-left: 12px  ← في rtl الـ end هو الشمال
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كارت «كاتب المقال» الخلفية الصفرا والحد بتوعه مش حاضنين الصورة: الصورة نازلة برّه الكارت. صلّحه بالقيمة الحديثة، من غير clearfix ومن غير [[overflow]]. (من قسم ٢)`, done: R`الكارت حاضن الصورة كلها، وكل الشروط ✓.`, work: { h: 160, start: R`<style>
-  .author { width: 320px; padding: 8px; background: #fef3c7; border: 2px solid #b45309; }
-  .avatar { float: inline-start; width: 70px; height: 70px; margin-inline-end: 10px; border-radius: 50%; background: #0f766e; }
-</style>
-<div class="author">
-  <div class="avatar"></div>
-  <b>منى سامي</b> محررة قسم التكنولوجيا
-</div>`, checks: [
-              { say: R`الكارت [[display: flow-root]]`, q: ".author", style: ["display", "flow-root"] },
-              { say: R`مفيش [[overflow: hidden]]`, q: ".author", style: ["overflow-x", "visible"] },
-              { say: R`الصورة لسه float`, q: ".avatar", style: ["float", "inline-start"] }
-            ] }, sol: R`~~~live 120 بعد التصليح
-<style>
-  .author { display: flow-root; width: 320px; padding: 8px; background: #fef3c7; border: 2px solid #b45309; }
-  .avatar { float: inline-start; width: 70px; height: 70px; margin-inline-end: 10px; border-radius: 50%; background: #0f766e; }
-</style>
-<div class="author">
-  <div class="avatar"></div>
-  <b>منى سامي</b> محررة قسم التكنولوجيا
-</div>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 120 قبل
-<style>
-  .author { width: 320px; padding: 8px; background: #fef3c7; border: 2px solid #b45309; }
-  .avatar { float: inline-start; width: 70px; height: 70px; margin-inline-end: 10px; border-radius: 50%; background: #0f766e; }
-</style>
-<div class="author">
-  <div class="avatar"></div>
-  <b>منى سامي</b> محررة قسم التكنولوجيا
-</div>
-~~~
-
-**هتشوف إيه:** في الحل الدايرة الخضرا جوه الكارت الأصفر والحد البني حواليهم. في «قبل» الكارت على قد سطر الكلام والدايرة نازلة برّه تحت الحد.
-
-**ليه كده:** الـ float برّه الـ flow، فالأب كان بيحسب طوله من الكلام بس. [[flow-root]] بيعمل BFC، والـ BFC بيحسب الـ floats. **الغلطة الشائعة:** [[height: 86px]] على الكارت: بتتظبط لحد ما الاسم يطول أو الخط يكبر.
-
-~~~text القياس من Chrome
-قبل: .author height (المحتوى) = سطر واحد = 18px
-بعد: .author height (المحتوى) = 70px    display: flow-root
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** سطر «نُشر الساعة…» طالع جنب الصورة، والمفروض ينزل تحتها ويبقى عرضه كامل. صلّحه بخاصية واحدة على [[.meta]]. (من قسم ٣)`, done: R`سطر النشر تحت الصورة، وكل الشروط ✓.`, work: { h: 190, start: R`<style>
-  .news { display: flow-root; width: 360px; }
-  .photo { float: inline-start; width: 120px; height: 110px; margin-inline-end: 10px; background: #0f766e; }
-  .meta { margin: 0; color: #78716c; border-top: 1px solid #d6d3d1; }
-</style>
-<article class="news">
-  <div class="photo"></div>
-  <p style="margin: 0">خبر قصير جنب الصورة.</p>
-  <p class="meta">نُشر الساعة ٩ الصبح · قسم المحليات</p>
-</article>`, checks: [
-              { say: R`[[.meta]] عليها [[clear: both]]`, q: ".meta", style: ["clear", "both"] },
-              { say: R`الصورة لسه float`, q: ".photo", style: ["float", "inline-start"] }
-            ] }, sol: R`~~~live 170 بعد التصليح
-<style>
-  .news { display: flow-root; width: 360px; }
-  .photo { float: inline-start; width: 120px; height: 110px; margin-inline-end: 10px; background: #0f766e; }
-  .meta { clear: both; margin: 0; padding-top: 4px; color: #78716c; border-top: 1px solid #d6d3d1; }
-</style>
-<article class="news">
-  <div class="photo"></div>
-  <p style="margin: 0">خبر قصير جنب الصورة.</p>
-  <p class="meta">نُشر الساعة ٩ الصبح · قسم المحليات</p>
-</article>
-~~~
-
-**هتشوف إيه:** المربع الأخضر وجنبه السطر القصير، وتحت المربع خط رمادي وتحته «نُشر الساعة ٩ الصبح».
-
-**ليه كده:** [[clear: both]] بيقول للعنصر ينزل تحت أي float قبله. **[[inline-start]] برضه صح هنا** لأن الصورة [[inline-start]]، بس [[both]] أأمن لو حد غيّر ناحية الصورة. **الغلطة الشائعة:** [[margin-top: 100px]]: بتتظبط على مقاس صورة واحد بس.
-
-~~~text القياس من Chrome
-.meta.top = .photo.bottom
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** صورة الضيف في الحوار دايرة. خلّي الكلام يلف على **الدايرة** مش على المربع، ويسيب بينه وبينها 10px. (من قسم ٤)`, done: R`أول سطر وآخر سطر قريبين من الدايرة، وكل الشروط ✓.`, work: { h: 230, start: R`<style>
-  .talk { display: flow-root; width: 340px; line-height: 1.5; }
-  .guest { float: inline-start; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309); }
-</style>
-<p class="talk"><span class="guest"></span>قالت الطبّاخة في حوارها معانا إن أهم حاجة في الأكل البيتي هي الصبر، وإن الطبخة الحلوة محتاجة نار هادية ووقت. وحكت إزاي بدأت من مطبخ صغير في البيت لحد ما بقى عندها مطعم في وسط البلد بيقف عليه طابور كل جمعة.</p>`, checks: [
-              { say: R`الشكل دايرة: [[shape-outside: circle(50%)]]`, q: ".guest", style: ["shape-outside", "circle(50%)"] },
-              { say: R`المسافة حوالين الشكل [[shape-margin: 10px]]`, q: ".guest", style: ["shape-margin", "10px"] },
-              { say: R`الصورة لسه float (من غيره الشكل ملوش أثر)`, q: ".guest", style: ["float", "inline-start"] }
-            ] }, sol: R`~~~live 230 الحل
-<style>
-  .talk { display: flow-root; width: 340px; line-height: 1.5; }
-  .guest { float: inline-start; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #b45309);
-           shape-outside: circle(50%); shape-margin: 10px; }
-</style>
-<p class="talk"><span class="guest"></span>قالت الطبّاخة في حوارها معانا إن أهم حاجة في الأكل البيتي هي الصبر، وإن الطبخة الحلوة محتاجة نار هادية ووقت. وحكت إزاي بدأت من مطبخ صغير في البيت لحد ما بقى عندها مطعم في وسط البلد بيقف عليه طابور كل جمعة.</p>
-~~~
-
-**هتشوف إيه:** دايرة برتقالي على اليمين، والسطور اللي جنب أولها وآخرها داخلة ناحية الدايرة ومتبعة الانحنا، واللي في النص على مسافة من الدايرة.
-
-**ليه كده:** [[border-radius]] بيغيّر **الرسم** بس، والـ float لسه مربع بالنسبة للكلام. [[shape-outside]] هو اللي بيغيّر المساحة اللي الكلام بيبعد عنها. **الغلطة الشائعة:** تحط [[shape-outside]] على الفقرة نفسها مش على الـ float.
-
-~~~text القياس من Chrome
-.guest   shape-outside: circle(50%)   shape-margin: 10px   float: inline-start
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة [[dir="rtl"]] فيها صورتين: الأولى [[float: left]] والتانية [[float: inline-end]]. وصفحة [[dir="ltr"]] فيها نفس الصورتين. كل صورة هتطلع فين في كل صفحة؟ (من قسم ١ «القيم»)`, done: R`كتبت الأربع أماكن.`, sol: R`**الإجابة:**
-
-| | [[dir="rtl"]] | [[dir="ltr"]] |
+| المنتج | لمين | لازم يعمل إيه في أول ٣٠ ثانية |
 |---|---|---|
-| [[float: left]] | شمال | شمال |
-| [[float: inline-end]] | شمال (آخر السطر العربي) | يمين (آخر السطر الإنجليزي) |
+| portfolio «نادين فؤاد» | حد بيدوّر على مطوّرة واجهات (شركة أو عميل) وفتح اللينك من رسالة | يعرف هي مين وبتعمل إيه، ويشوف شغل حقيقي، ويلاقي الإيميل، ولو عايز يطبع الـ CV يطلع صفحة واحدة |
+| dashboard «صالة الصخرة للتسلق» | مدير الصالة والموظف اللي على الاستقبال، على كمبيوتر المكتب والموبايل | يشوف الأرقام المهمة، ويلاقي عضو بالاسم أو الحالة، ويبعت الرابط لزميله فيفتح على نفس الفلتر، ويحجز مكان في حصة |
 
-يعني في الصفحة العربي الاتنين شمال وهيترصّوا جنب بعض. [[left]] ثابتة، و [[inline-end]] بتتبع اتجاه الكتابة.
+الأسماء والأرقام كلها متخيلة: «نادين فؤاد» و «صالة الصخرة» والأعضاء الـ ٥٧ اتولدوا بسكربت (درس «داشبورد ٢»).
 
-~~~live 130 الصفحتين
-<style>
-  .box { display: flow-root; width: 300px; background: #f5f5f4; margin-bottom: 8px; padding: 4px; }
-  .a, .b { width: 60px; height: 40px; color: white; text-align: center; }
-  .a { float: left; background: #0f766e; } .b { float: inline-end; background: #b45309; }
-</style>
-<div class="box"><div class="a">left</div><div class="b">end</div>rtl</div>
-<div class="box" dir="ltr"><div class="a">left</div><div class="b">end</div>ltr</div>
+### الأجزاء وإزاي البيانات بتمشي
+
+~~~text الـ portfolio: ٣ صفحات ثابتة
+ index.html ──(لينك + View Transition)──▶ work/tide-notes.html
+     │  boot.js  في الـ head: اللغة والثيم قبل الرسم
+     │  i18n.js  آخر الـ body: dictionary ← كل [data-i18n]
+     │  reveal.js: IntersectionObserver ← .in
+     └──▶ cv.html  (@media print + @page A4)
+ og.png  ◀── make-og.mjs (Chrome بيصوّر og.html على 1200×630)
 ~~~
 
-**هتشوف إيه:** في الصندوق الأول المربعين الأخضر والبني الاتنين على الشمال جنب بعض. في التاني الأخضر شمال والبني يمين.` }
-          ]
-        },
-        {
-          cmd: "min-width و max-width",
-          title: "تحط حدود للمقاسات بـ min و max، وتخلي الصندوق على قد كلامه بـ min-content و max-content و fit-content، وتكتب المقاسات منطقي بـ inline-size و block-size",
-          pre: ["css/box model", "css/أنواع القيم: length و percentage"],
-          ref: [
-            { t: "MDN: min-width", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-width" },
-            { t: "MDN: max-width", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/max-width" },
-            { t: "MDN: min-height", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-height" },
-            { t: "MDN: max-height", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/max-height" },
-            { t: "MDN Learn: Sizing items in CSS", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Sizing" },
-            { t: "MDN: min-content", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/min-content" },
-            { t: "MDN: max-content", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/max-content" },
-            { t: "MDN: fit-content", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/fit-content" },
-            { t: "MDN: fit-content()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/fit-content_function" },
-            { t: "MDN: inline-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inline-size" },
-            { t: "MDN: block-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/block-size" },
-            { t: "MDN: max-block-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/max-block-size" },
-            { t: "MDN: zoom", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/zoom" },
-            { t: "CSS Box Sizing Level 3", url: "https://www.w3.org/TR/css-sizing-3/" }
-          ],
-          desc: R`[[width]] بيقول «العرض كذا» بالظبط. [[max-width]] بيقول «متعدّيش كذا» (الصندوق يصغر على الموبايل ويقف عند الحد على الشاشة الكبيرة)، و [[min-width]] «متقلّش عن كذا». ونفس الكلام للطول: [[min-height]] و [[max-height]]. ولو اتخانقوا: [[min]] بيكسب على [[max]]، و [[max]] بيكسب على [[width]].
-وفيه مقاسات من المحتوى نفسه (**intrinsic sizes**): [[min-content]] (عرض أطول كلمة)، و [[max-content]] (الكلام كله في سطر واحد)، و [[fit-content]] (على قد الكلام بس من غير ما يعدّي المكان المتاح). وكلهم ليهم شكل منطقي: [[inline-size]] و [[block-size]] و [[min-inline-size]] و [[max-block-size]]… بيمشوا مع اتجاه الكتابة.`,
-          example: R`<style>
-  .article { max-width: 40ch; margin-inline: auto; padding: 12px; background: #f5f5f4; }
-  .tag { width: fit-content; padding: 2px 10px; background: #fde68a; border-radius: 999px; }
-  .btn { min-width: 120px; padding: 6px; }
-  img { max-width: 100%; height: auto; }
-</style>
-<article class="article">
-  <p class="tag">محليات</p>
-  <p>المقال عمره ما بيعدّي 40 حرف في السطر، وعلى الموبايل بيصغر لوحده.</p>
-  <button class="btn">اقرا</button>
-</article>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`المقال: أقصى عرض 40ch (حوالي 40 حرف)، و [[margin-inline: auto]] بيحطه في النص لما الشاشة تبقى أعرض، وله padding وخلفية رمادي.`,
-            R`شارة القسم: [[fit-content]] بتخليها على قد كلمتها بدل ما تاخد السطر كله زي أي block.`,
-            R`الزرار: مهما كان كلامه قصير مش هيقل عن 120px، عشان الزراير جنب بعض تبقى قد بعض وسهل تتداس.`,
-            R`أي صورة: متعدّيش عرض أبوها، والطول يتحسب من العرض عشان متتمطّش.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`المقال نفسه: [[<article>]] عليه الـ class اللي بيحدد أقصى عرض.`,
-            R`الشارة: [[<p>]] عادي، والـ CSS هو اللي مصغّره على قد الكلمة.`,
-            R`فقرة المقال: على الشاشة العريضة بتتكسر بعد حوالي 40 حرف.`,
-            R`الزرار: كلمة «اقرا» قصيرة، بس عرضه 120px.`,
-            R`قفلة المقال، وكل اللي فوقها جوه العمود اللي عرضه 40ch.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-[[width]] رقم ثابت بيكسر الصفحة على الموبايل: [[width: 700px]] على شاشة 360 يعمل scroll أفقي. الحل إنك متقولش المقاس، تقول **الحدود**: «متعدّيش 700» ([[max-width]]) أو «متقلّش عن 120» ([[min-width]])، والمتصفح يختار المقاس جوه الحدود دي حسب المكان. ده كمان أول خطوة في أي صفحة responsive من غير media queries.
-
-الـ [[width]] و [[height]] والنسب المئوية اتشرحوا في درس «box model» و «أنواع القيم: length و percentage»، و [[aspect-ratio]] في نفس الدرس قسم [[<ratio>]]. هنا الحدود والمقاسات اللي جاية من المحتوى.
+~~~text الـ dashboard: صفحة واحدة، ٣ أجزاء
+                 ┌─────────── location.search (?status=&sort=&page=) ───────────┐
+                 ▼                                                              │
+  state.js  parseState ─▶ view(rows, state) ─▶ table.js يرسم ─▶ toQuery ─▶ history.pushState
+                                ▲
+  serve.mjs ── data/members.json  (?delay ?fail للمعمل بس)
+            ── data/kpi.json ─▶ kpi.js  (أرقام + sparkline + ring)
+            ── data/classes.json ─▶ schedule.js ─▶ <dialog> ─▶ toast (aria-live)
+  shell.js: sidebar (collapse ≥ 64rem، drawer أقل) + الثيم
+~~~
 
 ---
 
-## ١. [[max-width]]: صندوق بيصغر ويقف عند حد
+## ليه الأدوات دي تحديدًا؟
 
-~~~live 170 230 مقال: على الشاشة الكبيرة وعلى الموبايل
-<style>
-  .article { max-width: 40ch; margin-inline: auto; padding: 12px; background: #f5f5f4; line-height: 1.6; }
-</style>
-<article class="article">السطر الطويل جدًا صعب يتقري: العين بتتوه وهي راجعة لأول السطر اللي بعده. عشان كده المقالات بتتحط في عمود مش أعرض من حوالي 60 لـ 75 حرف، وهنا 40 عشان المثال يبان.</article>
-~~~
-
-**هتشوف إيه:** في العرض الكامل عمود رمادي في نص الصفحة وحواليه أبيض من الناحيتين. دوس زرار «موبايل»: العمود بقى واخد عرض الشاشة كله ومفيش scroll أفقي.
-
-~~~text القياس من Chrome
-max-width: 40ch  →  computed 320px   (الـ ch في الخط الافتراضي = 8px)
-على 800px: الصندوق 344px (320 + 24 padding) ومتوسّط، والفاضي من الناحيتين 220px
-على 360px: المكان المتاح 344px بالظبط، فالصندوق بياخده كله ومفيش scroll
-~~~
-
-- **[[margin-inline: auto]]** هو اللي بيوسّطه: الـ margin الأفقي اللي فاضل بيتقسم نصين (درس «box model»). من غير [[max-width]] مفيش حاجة تتقسم.
-- **[[img { max-width: 100%; height: auto; }]]** أشهر سطر في الـ CSS: الصورة متعدّيش أبوها. و [[height: auto]] ضروري لو الصورة عليها attribute [[height]]: اتقاس [[<img width="600" height="100">]] جوه صندوق 200px: من غير [[height: auto]] طلعت 200 × 100 (متمطوطة)، ومعاه 200 × 33.
-
----
-
-## ٢. [[min-width]]: صندوق مبيقلّش عن حد
-
-~~~live 70 زراير بعرض أدنى
-<style>
-  .btn { min-width: 120px; padding: 6px 12px; border: 0; border-radius: 6px; background: #0f766e; color: white; }
-</style>
-<button class="btn">اقرا</button> <button class="btn">شارك</button> <button class="btn">احفظ الخبر للقراية بعدين</button>
-~~~
-
-**هتشوف إيه:** «اقرا» و «شارك» زرارين بنفس العرض رغم إن الكلمتين مختلفين، و «احفظ الخبر للقراية بعدين» أعرض منهم لأن كلامه أطول من 120.
-
-- القيمة الافتراضية [[min-width: auto]]: على block عادي بتتحسب صفر (اتقاس: computed [[0px]])، بس على **ابن flex أو grid** معناها «مش أصغر من أطول كلمة جواك». ده سبب ليه كلام طويل بيفضل يزق الكارت برّه الـ flex، والحل [[min-width: 0]] (درس «flex: 1» قسم ٤).
-
----
-
-## ٣. [[min-height]] و [[max-height]]
-
-نفس الفكرة على الطول. والطول أخطر من العرض: الكلام بيطول لما الشاشة تضيق، فـ [[height]] ثابت تقريبًا دايمًا غلط على صندوق فيه كلام.
-
-~~~live 230 hero بـ height وبـ min-height
-<style>
-  .hero { width: 180px; padding: 8px; margin-bottom: 12px; background: #fef3c7; }
-  .fixed { height: 60px; }
-  .min { min-height: 60px; }
-</style>
-<div class="hero fixed">height: 60px. بس الكلام هنا أطول من 60 بكسل، فبيطلع برّه الصندوق الأصفر ويركب على الصندوق اللي تحته، وده بيحصل كل ما الشاشة تضيق.</div>
-<div class="hero min">min-height: 60px. الكلام هنا كمان أطول من 60 بكسل، فالصندوق طوّل معاه وحضنه كله، مهما الشاشة ضاقت.</div>
-~~~
-
-**هتشوف إيه:** الصندوق الأول الأصفر قصير والكلام نازل برّه تحته وراكب على الصندوق التاني. الصندوق التاني أطول وحاضن الكلام كله.
-
-~~~text القياس من Chrome
-height: 60px      الصندوق 76px (60 + 16 padding)، والكلام محتاج 98px (scrollHeight) ← 22px طالعين برّه
-min-height: 60px  الصندوق 88px: طوّل على قد الكلام
-~~~
-
-- [[min-height: 100dvh]] (أو [[60vh]]) للـ hero: على الأقل الشاشة كلها، ولو الكلام أكتر يطول (درس «dvh»).
-- [[max-height]] مع [[overflow: auto]]: صندوق بيطول لحد حد وبعدين يعمل scroll جواه (قايمة، أو جدول، درس «overflow» الجاي و «جدول responsive»).
-
----
-
-## ٤. مين بيكسب لما يتخانقوا
-
-| [[width]] | [[max-width]] | [[min-width]] | العرض اللي اتقاس |
-|---|---|---|---|
-| 500px | 300px | | **300** (الـ max بيكسب على الـ width) |
-| 500px | 300px | 400px | **400** (الـ min بيكسب على الاتنين) |
-| [[auto]] | 300px | | 300 لو المكان أكبر، أقل لو المكان أصغر |
-
-القاعدة: الـ **min** فوق الكل. عشان كده [[min-width: 400px]] على كارت جوه شاشة 360 بيعمل scroll أفقي حتى لو عليه [[max-width: 100%]].
-
----
-
-## ٥. المقاسات من المحتوى: [[min-content]] و [[max-content]] و [[fit-content]]
-
-بدل رقم، تقدر تقول للصندوق «اتحسب من الكلام اللي جواك»:
-
-~~~live 200 نفس الكلام بتلات مقاسات
-<style>
-  .k { margin: 6px 0; padding: 4px 8px; background: #e0f2fe; border-inline-start: 4px solid #0369a1; }
-  .mn { width: min-content; } .mx { width: max-content; } .ft { width: fit-content; }
-</style>
-<div class="k mn">أهم أخبار النهارده</div>
-<div class="k mx">أهم أخبار النهارده</div>
-<div class="k ft">أهم أخبار النهارده</div>
-<div class="k ft">fit-content مع كلام طويل: لما الكلام أطول من المكان المتاح، الصندوق بيقف عند عرض أبوه والكلام بيلف لسطر تاني بدل ما يطلع برّه زي max-content.</div>
-~~~
-
-**هتشوف إيه:** الأول ضيق وكل كلمة في سطر لوحدها. التاني والتالت على قد الجملة بالظبط في سطر واحد. الرابع (كلام طويل) واخد عرض الصفحة كله وبيلف لسطور.
-
-| القيمة | المعنى | المقاس اللي اتقاس للجملة القصيرة |
-|---|---|---|
-| [[width: min-content]] | أصغر عرض من غير ما حاجة تطلع برّه = أطول كلمة | 38px + padding |
-| [[width: max-content]] | الكلام كله في سطر واحد مهما طال (ممكن يطلع برّه) | 89px + padding |
-| [[width: fit-content]] | [[max-content]] لو فيه مكان، وإلا عرض الأب. يعني «على قد الكلام، بس متطلعش برّه» | 89px + padding. والجملة الطويلة: عرض الأب |
-
-- [[fit-content]] هو اللي بتستخدمه غالبًا: شارة، أو عنوان عليه خط تحت على قد كلامه، أو [[<figure>]] على قد صورته. وبيمشي مع [[margin-inline: auto]] عشان يتوسط.
-- [[max-content]] خطر في الموبايل: الكلام الطويل مبيلفش.
-
-### [[fit-content()]]: الدالة
-
-[[fit-content(150px)]] معناها «على قد المحتوى، بس متعدّيش 150px». **بتشتغل في أعمدة الـ grid بس** ([[grid-template-columns: fit-content(150px) 1fr]]): اتقاس [[CSS.supports("width: fit-content(200px)")]] في Chrome 157 = false. وفي الـ grid: عمود فيه «كلام قصير» طلع 55px، وعمود فيه جملة طويلة وقف عند 150px والكلام لف.
-
----
-
-## ٦. المقاسات المنطقية: [[inline-size]] و [[block-size]]
-
-[[width]] = الاتجاه الأفقي دايمًا. بس في الكتابة الرأسية (ياباني، أو عنوان جانبي بـ [[writing-mode: vertical-rl]]) السطر نفسه رأسي. المقاسات المنطقية بتتكلم عن **اتجاه السطر** (inline) و **اتجاه رص البلوكات** (block):
-
-| منطقي | في العربي والإنجليزي (أفقي) | في [[writing-mode: vertical-rl]] |
-|---|---|---|
-| [[inline-size]] | [[width]] | [[height]] |
-| [[block-size]] | [[height]] | [[width]] |
-| [[min-inline-size]] و [[max-inline-size]] | [[min-width]] و [[max-width]] | [[min-height]] و [[max-height]] |
-| [[min-block-size]] و [[max-block-size]] | [[min-height]] و [[max-height]] | [[min-width]] و [[max-width]] |
-
-~~~live 150 نفس الـ CSS على صندوق عادي وصندوق رأسي
-<style>
-  .s { inline-size: 120px; block-size: 50px; margin: 6px; padding: 4px; background: #fde68a; display: inline-block; vertical-align: top; }
-  .vertical { writing-mode: vertical-rl; }
-</style>
-<div class="s">عادي</div>
-<div class="s vertical">رأسي</div>
-~~~
-
-**هتشوف إيه:** صندوق أصفر عريض وقصير فيه «عادي»، وجنبه صندوق طويل وضيق والكلمة «رأسي» مكتوبة من فوق لتحت.
-
-~~~text القياس من Chrome
-عادي   المحتوى 120 عرض × 50 طول  (الصندوق 128 × 58 مع الـ padding)
-رأسي   المحتوى 50 عرض × 120 طول  (الصندوق 58 × 128)   ← inline-size بقى الطول
-~~~
-
-**العربي والإنجليزي الاتنين أفقي**، فـ [[inline-size]] = [[width]] فيهم الاتنين: [[dir="rtl"]] مبيقلبش المقاسات، بيقلب اليمين والشمال بس (درس «margin-block و inset-inline»). بس اكتب المنطقي لو الموقع ممكن يتعرض رأسي، أو عشان تبقى الطريقة واحدة مع [[margin-inline]] و [[padding-inline]]. [[max-inline-size: 65ch]] هي نفس [[max-width: 65ch]] بالظبط في الصفحة العادية.
-
----
-
-## ٧. [[zoom]]: تكبير بيغيّر الـ layout
-
-[[zoom: 2]] بيكبّر العنصر وكل اللي جواه مرتين، **والمكان اللي بياخده في الصفحة بيكبر معاه**. ده الفرق بينه وبين [[transform: scale(2)]] اللي بيكبّر الرسم بس والصفحة مش حاسة:
-
-~~~text القياس من Chrome (صندوق 100 × 30)
-zoom: 2              المرسوم 200 × 60   الفقرة اللي بعده نزلت 60px    computed width لسه 100px
-transform: scale(2)  المرسوم 200 × 60   الفقرة اللي بعده نزلت 30px بس (ممكن تتغطى)
-~~~
-
-[[zoom]] كان زمان Chrome و Safari بس، وبقى Baseline في مايو 2024 (MDN). مفيد لتكبير widget كامل (خريطة، أو مثال كود) من غير ما تعيد حساب كل المقاسات. **مش** بديل لتكبير الخط للقراية: ده بـ [[rem]] (درس «rem و em»).
-
----
-
-## ٨. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[width: 700px]] على المقال | scroll أفقي على الموبايل. اكتب [[max-width]] |
-| [[height]] ثابت على صندوق فيه كلام | الكلام بيطلع برّه أول ما الشاشة تضيق. اكتب [[min-height]] |
-| [[img { max-width: 100% }]] من غير [[height: auto]] | الصورة بتتمط لو عليها attribute [[height]] |
-| [[min-width]] كبير على كارت | بيغلب [[max-width: 100%]] ويعمل scroll أفقي |
-| [[width: max-content]] على كلام طويل | مبيلفش، بيطلع برّه الشاشة |
-| [[width: fit-content(200px)]] | مش صالحة، المتصفح بيتجاهلها. استخدم [[max-width: 200px]] مع [[width: fit-content]] |
-
----
-
-## الخلاصة
-
-- [[max-width]] للحد الأعلى، و [[min-width]] للحد الأدنى، ونفس الكلام [[min-height]] و [[max-height]]. الـ min بيكسب.
-- [[min-content]] = أطول كلمة، و [[max-content]] = سطر واحد، و [[fit-content]] = على قد الكلام من غير ما يطلع برّه. [[fit-content()]] في الـ grid بس.
-- [[inline-size]] و [[block-size]] و [[min-/max-inline-size]] و [[min-/max-block-size]] بيتبعوا اتجاه الكتابة.
-- [[zoom]] بيكبّر وبياخد مكان، و [[scale()]] بيكبّر الرسم بس.`,
-          try: R`اعمل [[sizes.html]] فيه مقال طويل وصورة عليها [[width="1200" height="600"]]. حط على المقال [[max-width: 65ch; margin-inline: auto]] وعلى الصورة [[max-width: 100%]] بس. افتح الصفحة وصغّر الشباك: الصورة اتمطت؟ زوّد [[height: auto]] وقارن. وبعدين اكتب [[width: fit-content]] على عنوان عليه خط تحت ([[border-bottom]]).`,
-          sol: R`~~~live 340 300 sizes.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>المقاسات</title>
-<style>
-  body { margin: 0; padding: 12px; font-family: system-ui, Tahoma, sans-serif; line-height: 1.7; }
-  article { max-width: 65ch; margin-inline: auto; }
-  h1 { width: fit-content; margin: 0 0 8px; border-bottom: 4px solid #b45309; font-size: 24px; }
-  img { display: block; max-width: 100%; height: auto; border-radius: 8px; }
-</style>
-</head>
-<body>
-<article>
-  <h1>مكتبة الحي</h1>
-  <img width="1200" height="600" alt="رسم لمكتبة" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='600'%3E%3Crect width='1200' height='600' fill='%230f766e'/%3E%3Ccircle cx='900' cy='200' r='120' fill='%23fde68a'/%3E%3C/svg%3E">
-  <p>اتفتحت المكتبة امبارح، وفيها ركن للأطفال وقهوة صغيرة. والمقال عمره ما بيعدّي 65 حرف في السطر على الشاشة الكبيرة.</p>
-</article>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** عنوان «مكتبة الحي» والخط البني تحته على قد الكلمتين بس. تحته صورة خضرا فيها دايرة صفرا، عرضها عرض المقال ونسبتها 2 لـ 1 من غير مط، حتى على زرار «موبايل».
-
-~~~text القياس من Chrome
-article   max-width: 65ch → 520px
-img       على 360 من غير height: auto: العرض صغر (321) والطول فضل 600 من الـ attribute ← متمطوطة
-          ومع height: auto: ‏321 × 160.5 ← نص العرض بالظبط زي الصورة الأصلية
-h1        width: على قد «مكتبة الحي»
-~~~`,
-          deep: {
-            why: R`الشاشات من 320 لـ 2560 بكسل، ومستحيل تكتب مقاس واحد ينفع كله. الحدود بتخلي المتصفح يختار: أكبر ما يمكن لحد الحد. والمقاسات من المحتوى بتخليك متكتبش رقم أصلًا: الشارة على قد كلمتها مهما اتغيّرت الكلمة أو الخط أو اللغة. والمنطقية عشان نفس الـ CSS يشتغل في أي اتجاه كتابة.`,
-            how: R`المتصفح بيحسب [[width]] الأول (أو [[auto]] = المكان المتاح لـ block)، وبعدين لو طلع أكبر من [[max-width]] بياخد الـ max، ولو أصغر من [[min-width]] بياخد الـ min. للمقاسات من المحتوى بيرص الكلام مرتين في دماغه: مرة بيكسر عند كل فرصة (min-content) ومرة من غير كسر (max-content)، و [[fit-content]] = [[min(max-content, max(min-content, المكان المتاح))]]. والمنطقية بتتحوّل لـ width أو height حسب [[writing-mode]] وقت الحساب.`,
-            when: R`[[max-width]] على كل حاوية محتوى ([[main]] و [[article]] و الفورم)، وعلى كل صورة وفيديو. [[min-width]] للزراير والخانات وأعمدة الجدول. [[min-height]] للـ hero والكروت اللي عايزها قد بعض. [[fit-content]] للشارات والعناوين المتسطّرة والـ figure. [[max-inline-size]] لو بتكتب منطقي في كل حاجة. [[zoom]] نادر: تكبير widget جاهز.`,
-            mistakes: R`[[width]] ثابت أكبر من الموبايل. [[height]] ثابت على كلام. صورة من غير [[height: auto]]. [[min-width]] كبير بيغلب الـ max. [[max-content]] على كلام طويل. [[fit-content()]] برّه الـ grid. افتكار إن [[dir="rtl"]] بيقلب [[inline-size]] (لأ، الاتنين أفقي).`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** عمود المقال [[.article]] متعدّيش 60 حرف ([[60ch]]) ويتوسّط في الصفحة. (من قسم ١)`, done: R`العمود في النص وحواليه أبيض، وكل الشروط ✓.`, work: { h: 200, start: R`<style>
-  .article { padding: 12px; background: #f5f5f4; line-height: 1.7; }
-</style>
-<article class="article">
-  <h2 style="margin-top: 0">مكتبة جديدة في الحي</h2>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة، والدخول ببلاش طول الشهر ده. وقال صاحبها إن الكتب كلها متبرّع بيها من أهل المنطقة.</p>
-</article>`, checks: [
-              { say: R`أقصى عرض [[60ch]] (يعني 480px في الخط ده)`, q: ".article", style: ["max-width", "480px"] },
-              { say: R`متوسّط: [[margin-inline: auto]] (الفاضي من كل ناحية 140px)`, q: ".article", style: ["margin-left", "140px"] },
-              { say: R`مفيش [[width]] ثابت`, nosrc: "width: 480" }
-            ] }, sol: R`~~~live 230 الحل
-<style>
-  .article { max-width: 60ch; margin-inline: auto; padding: 12px; background: #f5f5f4; line-height: 1.7; }
-</style>
-<article class="article">
-  <h2 style="margin-top: 0">مكتبة جديدة في الحي</h2>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة، والدخول ببلاش طول الشهر ده. وقال صاحبها إن الكتب كلها متبرّع بيها من أهل المنطقة.</p>
-</article>
-~~~
-
-**هتشوف إيه:** عمود رمادي في النص، ومن الناحيتين أبيض. على «موبايل» واخد الشاشة كلها.
-
-**ليه كده:** [[max-width]] بيسيب الصندوق يصغر على الموبايل، و [[margin-inline: auto]] بيقسم الفاضي نصين. **الغلطة الشائعة:** [[width: 60ch]]: شكلها نفس الحاجة على الكمبيوتر، بس على شاشة أضيق من 480 + padding بيعمل scroll أفقي.
-
-~~~text القياس من Chrome (صفحة 800)
-max-width: 60ch → 480px    الصندوق 504 (مع الـ padding)    margin-left = margin-right = 140px  ((784 − 504) ÷ 2)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صورة الخبر بتطلع برّه الكارت وعلى الموبايل بتعمل scroll أفقي، ولما حد كتب [[width: 100%]] بقت متمطوطة. خليها متعدّيش الكارت ونسبتها تفضل صح. (من قسم ١ «img»)`, done: R`الصورة جوه الكارت ومش متمطوطة، وكل الشروط ✓.`, work: { h: 220, start: R`<style>
-  .card { width: 260px; padding: 8px; border: 1px solid #d6d3d1; border-radius: 8px; }
-  .card img { display: block; }
-</style>
-<article class="card">
-  <img width="600" height="300" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300'%3E%3Crect width='600' height='300' fill='%230f766e'/%3E%3C/svg%3E">
-  <h3>ماتش الأمس</h3>
-</article>`, checks: [
-              { say: R`الصورة متعدّيش أبوها: [[max-width: 100%]]`, q: ".card img", style: ["max-width", "100%"] },
-              { say: R`الطول من العرض: [[height: auto]] (الطول المحسوب 130px)`, q: ".card img", style: ["height", "130px"] },
-              { say: R`العرض المحسوب 260px`, q: ".card img", style: ["width", "260px"] }
-            ] }, sol: R`~~~live 230 بعد التصليح
-<style>
-  .card { width: 260px; padding: 8px; border: 1px solid #d6d3d1; border-radius: 8px; }
-  .card img { display: block; max-width: 100%; height: auto; }
-</style>
-<article class="card">
-  <img width="600" height="300" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300'%3E%3Crect width='600' height='300' fill='%230f766e'/%3E%3C/svg%3E">
-  <h3>ماتش الأمس</h3>
-</article>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 380 قبل
-<style>
-  .card { width: 260px; padding: 8px; border: 1px solid #d6d3d1; border-radius: 8px; }
-  .card img { display: block; }
-</style>
-<article class="card">
-  <img width="600" height="300" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300'%3E%3Crect width='600' height='300' fill='%230f766e'/%3E%3C/svg%3E">
-  <h3>ماتش الأمس</h3>
-</article>
-~~~
-
-**هتشوف إيه:** في الحل مستطيل أخضر على قد الكارت بالظبط ونسبته 2 لـ 1، وتحته العنوان. في «قبل» المستطيل الأخضر ضخم وطالع برّه حدود الكارت.
-
-**ليه كده:** [[max-width: 100%]] = متعدّيش عرض الأب (260)، و [[height: auto]] = الطول من نسبة الصورة (600:300) = 130. **الغلطة الشائعة:** [[max-width: 100%]] لوحدها: العرض 260 والطول يفضل 300 من الـ attribute، فالصورة تتمط.
-
-~~~text القياس من Chrome
-قبل:   img 600 × 300 (برّه الكارت)
-بعد:   img 260 × 130
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شارة القسم [[.tag]] ([[<p>]] عادي) لازم تبقى على قد كلمتها بس، مش واخدة السطر كله، من غير ما تغيّر الـ [[display]]. (من قسم ٥)`, done: R`الشارة الصفرا على قد «رياضة»، وكل الشروط ✓.`, work: { h: 140, start: R`<style>
-  .tag { margin: 0 0 6px; padding: 2px 12px; background: #fde68a; border-radius: 999px; font-size: 14px; }
-</style>
-<p class="tag">رياضة</p>
-<h3 style="margin: 0">الأهلي يكسب ماتش الأمس</h3>`, checks: [
-              { say: R`الشارة لسه [[display: block]]`, q: ".tag", style: ["display", "block"] },
-              { say: R`مكتوب [[width: fit-content]]`, src: "fit-content" }
-            ] }, sol: R`~~~live 90 الحل
-<style>
-  .tag { width: fit-content; margin: 0 0 6px; padding: 2px 12px; background: #fde68a; border-radius: 999px; font-size: 14px; }
-</style>
-<p class="tag">رياضة</p>
-<h3 style="margin: 0">الأهلي يكسب ماتش الأمس</h3>
-~~~
-
-**هتشوف إيه:** كبسولة صفرا صغيرة فيها «رياضة» على اليمين، وتحتها العنوان.
-
-**ليه كده:** الـ block بياخد عرض أبوه، و [[fit-content]] بيقوله «على قد كلامك». وبيفضل block (سطر لوحده). **حلول تانية شغالة:** [[display: inline-block]] (بس ساعتها العنوان ممكن يطلع جنبه)، أو [[width: max-content]] (بس لو الكلمة طويلة مش هتلف).
-
-~~~text القياس من Chrome
-.tag   display: block   width: على قد «رياضة» + 24 padding
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[.box { width: 500px; max-width: 300px; min-width: 400px; }]]. العرض كام؟ وبعدين لو شلت [[min-width]]؟ (من قسم ٤)`, done: R`كتبت الرقمين.`, sol: R`**الإجابة:** **400**، لأن [[min-width]] بيكسب على أي حاجة. ومن غيره **300**، لأن [[max-width]] بيكسب على [[width]].
-
-~~~live 90 الاتنين
-<style>
-  .box { width: 500px; max-width: 300px; height: 30px; margin: 6px 0; background: #fde68a; }
-  .with-min { min-width: 400px; background: #0f766e; color: white; }
-</style>
-<div class="box with-min">بالـ min: 400</div>
-<div class="box">من غير min: 300</div>
-~~~
-
-**هتشوف إيه:** شريط أخضر أطول وتحته شريط أصفر أقصر.
-
-~~~text القياس من Chrome
-with-min  width: 400px     من غير  width: 300px
-~~~` },
-            { lvl: 'تطبيق', t: R`**refactor:** الكارت ده شغال، بس مكتوب بخصايص فيزيائية. اكتبه بالمقاسات المنطقية: [[max-inline-size]] بدل [[max-width]] و [[min-block-size]] بدل [[min-height]] من غير ما شكله يتغيّر. (من قسم ٦)`, done: R`الشكل زي ما هو، وكل الشروط ✓.`, work: { h: 160, start: R`<style>
-  .card { max-width: 300px; min-height: 100px; padding: 10px; background: #e0f2fe; border-radius: 8px; }
-</style>
-<article class="card">ملخص الأخبار: ٣ أخبار مهمة النهارده.</article>`, checks: [
-              { say: R`مكتوب [[max-inline-size]]`, src: "max-inline-size" },
-              { say: R`مكتوب [[min-block-size]]`, src: "min-block-size" },
-              { say: R`مفيش [[max-width]] ولا [[min-height]] في الكود`, nosrc: "max-width" },
-              { say: R`النتيجة نفسها: أقصى عرض 300px`, q: ".card", style: ["max-width", "300px"] },
-              { say: R`وأقل طول 100px`, q: ".card", style: ["min-height", "100px"] }
-            ] }, sol: R`~~~live 140 الحل
-<style>
-  .card { max-inline-size: 300px; min-block-size: 100px; padding: 10px; background: #e0f2fe; border-radius: 8px; }
-</style>
-<article class="card">ملخص الأخبار: ٣ أخبار مهمة النهارده.</article>
-~~~
-
-**هتشوف إيه:** نفس الكارت الأزرق الفاتح بالظبط.
-
-**ليه كده:** في صفحة أفقية (عربي أو إنجليزي) [[max-inline-size]] هي [[max-width]] و [[min-block-size]] هي [[min-height]]، فـ [[getComputedStyle]] بيرجّع نفس القيم للاتنين. الفرق بيبان لو الكارت اتحط في [[writing-mode: vertical-rl]].
-
-~~~text القياس من Chrome
-max-inline-size: 300px  →  max-width: 300px     min-block-size: 100px  →  min-height: 100px
-~~~` }
-          ]
-        },
-        {
-          cmd: "overflow",
-          title: "تقرر تعمل إيه في المحتوى اللي أكبر من صندوقه (يبان، يتقص، أو scroll)، وتنسّق الـ scrollbar، وتعرف touch-action و overscroll-behavior و overflow-anchor",
-          pre: ["css/min-width و max-width"],
-          ref: [
-            { t: "MDN: overflow", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow" },
-            { t: "MDN: overflow-x", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-x" },
-            { t: "MDN: overflow-inline", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-inline" },
-            { t: "MDN: overflow-block", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-block" },
-            { t: "MDN Learn: Overflowing content", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Overflow" },
-            { t: "MDN: scrollbar-gutter", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scrollbar-gutter" },
-            { t: "MDN: scrollbar-width", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scrollbar-width" },
-            { t: "MDN: scrollbar-color", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scrollbar-color" },
-            { t: "MDN: overscroll-behavior", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overscroll-behavior" },
-            { t: "MDN: touch-action", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/touch-action" },
-            { t: "MDN: overflow-anchor", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-anchor" },
-            { t: "CSS Overflow Level 3", url: "https://www.w3.org/TR/css-overflow-3/" }
-          ],
-          desc: R`لما المحتوى أكبر من الصندوق (كلام كتير في صندوق طوله ثابت، أو جدول أعرض من الشاشة)، [[overflow]] بيقرر: [[visible]] (يطلع برّه، الافتراضي)، و [[hidden]] (يتقص، والصندوق لسه بيعمل scroll بالكود)، و [[clip]] (يتقص وخلاص)، و [[scroll]] (scrollbar دايمًا)، و [[auto]] (scrollbar لما يحتاج). و [[overflow-x]] و [[overflow-y]] لكل اتجاه لوحده، و [[overflow-inline]] و [[overflow-block]] شكلهم المنطقي.
-والـ scrollbar نفسه: [[scrollbar-width]] (رفيع أو مخفي)، و [[scrollbar-color]] (لونه)، و [[scrollbar-gutter]] (يحجز مكانه عشان الصفحة متتهزّش). و [[touch-action]] بيقول للمتصفح أنهي حركات لمس يعملها، و [[overscroll-behavior]] بيمنع الـ scroll يعدّي للصفحة اللي ورا، و [[overflow-anchor]] بيتحكم في تثبيت مكان القراية لما حاجة تتزوّد فوق.`,
-          example: R`<style>
-  .comments { max-height: 120px; overflow-y: auto; padding: 8px; background: #f5f5f4;
-              scrollbar-width: thin; scrollbar-color: #b45309 #fef3c7; scrollbar-gutter: stable; }
-  .comments p { margin: 0 0 8px; }
-</style>
-<div class="comments">
-  <p>منى: خبر حلو، مستنية المكتبة تفتح.</p>
-  <p>كريم: هل فيه كتب إنجليزي؟</p>
-  <p>سارة: الركن بتاع الأطفال جميل جدًا.</p>
-  <p>عمر: المواعيد إيه يوم الجمعة؟</p>
-  <p>هبة: أنا هتبرّع بكتبي القديمة.</p>
-</div>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`صندوق التعليقات: يطول لحد 120px بس، ولو التعليقات أكتر يعمل scroll رأسي جواه، ومعاه padding وخلفية رمادي.`,
-            R`تكملة القاعدة: الـ scrollbar رفيع، والجزء اللي بيتسحب بني على مسار كريمي، ومكانه محجوز حتى لو التعليقات قليلة.`,
-            R`كل تعليق تحته مسافة 8px ومن غير مسافة فوق.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`الصندوق نفسه بالـ class اللي فوق.`,
-            R`أول تعليق، والتعليقات كلها [[<p>]] عادي.`,
-            R`التعليق التاني: سؤال من زائر، وكل تعليق في فقرة لوحده.`,
-            R`التالت: لحد هنا الصندوق تقريبًا اتملى.`,
-            R`الرابع: ده اللي هيخلي المحتوى أطول من 120px فيظهر الـ scrollbar.`,
-            R`الخامس: محتاج scroll عشان يبان.`,
-            R`قفلة الصندوق: كل التعليقات اللي فوق جواه وبتتعمل scroll مع بعض.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-أي صندوق ليه حدود (عرض أو طول أو الاتنين) والمحتوى ممكن يبقى أكبر منه: كلام طويل، أو جدول، أو صورة. المتصفح مبيقصّش حاجة من نفسه: الافتراضي إن المحتوى **يطلع برّه** ويركب على اللي حواليه، لأن ده أحسن من إن كلام يختفي من غير ما حد يعرف. [[overflow]] هو اللي بيغيّر ده.
-
-درس «white-space و overflow-wrap» عرّفك على [[text-overflow: ellipsis]] (الـ «…» في آخر سطر مقصوص) وإزاي كلمة طويلة بتطلع برّه، ودرس «جدول responsive» استخدم [[overflow-x: auto]] على الجدول. هنا كل القيم وكل الخصايص اللي حوالين الـ scroll.
-
----
-
-## ١. القيم الخمسة
-
-~~~live 260 كلام أطول من صندوق طوله 45، بالقيم الخمسة
-<style>
-  .b { display: inline-block; vertical-align: top; width: 140px; height: 45px; margin: 6px 6px 80px; border: 2px solid #0f766e; background: #f0fdfa; font-size: 13px; }
-</style>
-<div class="b" style="overflow: visible">visible: الكلام بيطلع برّه الصندوق ويكمّل تحته عادي كأن الحدود مش موجودة. سطر. سطر. سطر. سطر. سطر. سطر. سطر. سطر. سطر.</div>
-<div class="b" style="overflow: hidden">hidden: اللي برّه الصندوق اتقص ومبيبانش ومفيش scrollbar. سطر. سطر. سطر. سطر. سطر. سطر.</div>
-<div class="b" style="overflow: clip">clip: نفس الشكل بالظبط زي hidden، والفرق مش باين بالعين. سطر. سطر. سطر. سطر. سطر. سطر.</div>
-<div class="b" style="overflow: scroll">scroll: scrollbar دايمًا حتى لو مش محتاج.</div>
-<div class="b" style="overflow: auto">auto: scrollbar بس لما الكلام يزيد عن الصندوق. سطر. سطر. سطر. سطر. سطر. سطر. سطر.</div>
-~~~
-
-**هتشوف إيه:** أول صندوق الكلام نازل برّه الإطار الأخضر. التاني والتالت مقصوصين عند الإطار. الرابع فيه scrollbar رغم إن كلامه قصير. الخامس فيه scrollbar لأن كلامه أطول. والـ scrollbar على **الشمال**، لأن الصفحة عربي.
-
-| القيمة | اللي برّه بيتعرض؟ | scrollbar؟ | الصندوق بيتعمله scroll بالكود؟ |
-|---|---|---|---|
-| [[overflow: visible]] | أيوه، فوق اللي حواليه | لأ | لأ |
-| [[overflow: hidden]] | لأ، مقصوص | لأ | **أيوه** ([[scrollTop = 50]] اشتغلت) |
-| [[overflow: clip]] | لأ، مقصوص | لأ | **لأ** ([[scrollTop]] فضلت 0) |
-| [[overflow: scroll]] | بالـ scroll | دايمًا (الاتنين، حتى الأفقي) | أيوه |
-| [[overflow: auto]] | بالـ scroll | لما يحتاج بس | أيوه |
-
-~~~text القياس من Chrome (صندوق 200 × 60 فيه محتوى طوله 200)
-visible / hidden / clip   scrollHeight: 200   clientHeight: 60
-auto                       clientWidth: 185    ← الـ scrollbar واكل 15px من العرض
-scroll وكلامه قصير         clientWidth: 185   clientHeight: 45   ← scrollbar رأسي وأفقي
-~~~
-
-- **الـ scrollbar على Windows عرضه 15px** وبياكل من مساحة المحتوى (من غير ما يغيّر عرض الصندوق نفسه). على الموبايل وعلى ماك (من الإعدادات الافتراضية) الـ scrollbar بيطفو فوق المحتوى ومبياكلش مكان (من MDN).
-- **في [[dir="rtl"]] الـ scrollbar الرأسي على الشمال:** اتقاس [[clientLeft]] = 16 (border 1 + scrollbar 15) في الـ rtl، و 1 في الـ ltr.
-- **[[overflow: scroll]] نادرًا ما تحتاجها:** بتطلّع scrollbar أفقي فاضي كمان. [[auto]] هي اللي بتستخدمها.
-
-### [[clip]] ولا [[hidden]]؟
-
-الاتنين شكلهم واحد، والفرق في اللي مش باين:
-
-| | [[hidden]] | [[clip]] |
-|---|---|---|
-| الصندوق بيبقى «scroll container» | أيوه: الكود يقدر يعمله scroll، والـ focus بالكيبورد على لينك مستخبي بيعمله scroll | لأ خالص |
-| بيعمل BFC (درس «normal flow و margin collapsing») | أيوه: margin أول ابن فضل جواه (20px) | **لأ**: الـ margin خرج برّه (0) |
-| [[position: sticky]] لابن جواه | بيلزق في الصندوق ده مش في الصفحة (غالبًا مش اللي انت عايزه) | بيلزق في الصفحة عادي |
-
-استخدم [[clip]] لما عايز تقص زينة بتطلع برّه (دايرة ديكور في ركن الكارت) من غير آثار جانبية. و [[hidden]] لما عايز الصندوق يبقى scroll container بس من غير scrollbar (slider بالـ JavaScript). وفيه [[overflow-clip-margin: 10px]] بيخلي [[clip]] يقص على بعد 10px برّه الحد (مش Baseline، MDN).
-
----
-
-## ٢. اتجاه واحد: [[overflow-x]] و [[overflow-y]]
-
-[[overflow: auto hidden]] = [[overflow-x: auto]] و [[overflow-y: hidden]] (القيمة الأولى للأفقي). وفيه فخ:
-
-~~~text القياس من Chrome
-overflow-x: hidden    →  overflow-y المحسوب: auto     (مش visible!)
-overflow-x: clip      →  overflow-y المحسوب: visible
-~~~
-
-القاعدة: لو اتجاه واحد [[hidden]] أو [[scroll]] أو [[auto]]، المتصفح مش هيسيب التاني [[visible]]، بيحوّله [[auto]]. عشان كده [[overflow-x: hidden]] على صندوق ساعات بيطلّع scrollbar رأسي مكنتش متوقعه، وبيقص dropdown بيطلع لتحت. لو عايز تقص أفقي بس والرأسي يفضل يبان: [[overflow-x: clip]].
-
-### المنطقي: [[overflow-inline]] و [[overflow-block]]
-
-[[overflow-inline]] = اتجاه السطر، و [[overflow-block]] = اتجاه رص البلوكات. في العربي والإنجليزي [[overflow-inline]] = [[overflow-x]]، وفي الكتابة الرأسية بيبقى [[overflow-y]]:
-
-~~~text القياس من Chrome
-overflow-inline: hidden                           → overflow-x: hidden   overflow-y: auto
-writing-mode: vertical-rl + overflow-inline: hidden → overflow-x: auto    overflow-y: hidden
-~~~
-
-Baseline من سبتمبر 2025 (MDN)، فلسه جديد. [[overflow-x]] و [[overflow-y]] شغالين في كل حتة.
-
----
-
-## ٣. شكل الـ scrollbar
-
-~~~live 130 scrollbar المتصفح و scrollbar بلون الموقع
-<style>
-  .box { height: 90px; width: 200px; overflow: auto; padding: 8px; margin: 6px; display: inline-block; vertical-align: top; background: #f5f5f4; }
-  .box p { margin: 0 0 6px; }
-  .styled { scrollbar-color: #b45309 #fef3c7; scrollbar-width: thin; }
-</style>
-<div class="box"><p>scrollbar المتصفح العادي</p><p>خبر ١</p><p>خبر ٢</p><p>خبر ٣</p><p>خبر ٤</p><p>خبر ٥</p></div>
-<div class="box styled"><p>scrollbar رفيع بلون الموقع</p><p>خبر ١</p><p>خبر ٢</p><p>خبر ٣</p><p>خبر ٤</p><p>خبر ٥</p></div>
-~~~
-
-**هتشوف إيه:** صندوقين على اليمين scrollbar رمادي عادي على شماله، والتاني scrollbar أرفع، الحتة اللي بتتسحب بني والمسار كريمي.
-
-| الخاصية | القيم | اتقاس |
-|---|---|---|
-| [[scrollbar-width: thin]] | [[auto]] (العادي) و [[thin]] (أرفع) و [[none]] (مخفي بس الـ scroll شغال) | auto ‏15px، و thin ‏10px، و none ‏0 |
-| [[scrollbar-color: #b45309 #fef3c7]] | لونين: الأول الحتة اللي بتتسحب (thumb) والتاني المسار (track). أو [[auto]] | المحسوب [[rgb(180, 83, 9) rgb(254, 243, 199)]] |
-| [[scrollbar-gutter: stable]] | [[auto]] و [[stable]] (يحجز مكان الـ scrollbar حتى لو مش ظاهر) و [[stable both-edges]] (يحجز مكان من الناحيتين عشان المحتوى يفضل في النص) | صندوق كلامه قصير: [[clientWidth]] ‏185 بدل 200، ومع [[both-edges]] ‏170 |
-
-- [[scrollbar-width]] بقى Baseline في ديسمبر 2024، و [[scrollbar-color]] في ديسمبر 2025 (MDN)، فالقديم منهم بيتجاهلهم وبيعرض الـ scrollbar العادي. زمان كان التنسيق بـ [[::-webkit-scrollbar]]، وده لسه شغال في Chrome و Safari بس ومش في أي مواصفة، فاكتب الخصايص القياسية.
-- **[[scrollbar-gutter: stable]] على [[html]]:** صفحة قصيرة من غير scrollbar، ولما تفتح صفحة أطول الـ scrollbar بيظهر وكل الصفحة تتزق 15px. [[stable]] بيحجز المكان من الأول فمفيش «هزة».
-- **[[scrollbar-width: none]] بحرص:** الـ scroll شغال، بس الزائر ممكن ميعرفش إن فيه محتوى زيادة، وفيه أجهزة ملهاش طريقة scroll تانية (MDN بيقول تجنّبه). استخدمه بس لو فيه علامة وطريقة تانية (أسهم، أو كارت مقطوع نصه على الحافة). ولو الصندوق بيتعمله scroll بالكود بس، اكتب [[overflow: hidden]] بدله.
-- **التباين:** لون الـ thumb لازم يبان على الـ track (درس «contrast ratio»).
-
----
-
-## ٤. اللمس والـ scroll: [[touch-action]] و [[overscroll-behavior]]
-
-الاتنين عن الموبايل، فالسلوك هنا من MDN (اتقاس في Chrome إنهم بيتقبلوا وقيمهم المحسوبة بس، مش اللمس نفسه).
-
-### [[touch-action]]
-
-بيقول للمتصفح «أنهي حركات لمس انت تتصرف فيها بنفسك (scroll وتكبير)، والباقي سيبه للكود بتاعي»:
-
-| القيمة | المتصفح بيعمل إيه باللمس على العنصر ده |
-|---|---|
-| [[touch-action: auto]] | كل حاجة: scroll وتكبير بصباعين ودبل تاب (الافتراضي) |
-| [[touch-action: pan-y]] | scroll رأسي بس. مثلًا carousel بتسحبه بالـ JavaScript يمين وشمال، والصفحة لسه بتنزل لتحت لما تسحب رأسي |
-| [[touch-action: pan-x]] | scroll أفقي بس |
-| [[touch-action: manipulation]] | scroll وتكبير بصباعين، من غير دبل تاب للتكبير. كان مهم زمان عشان يشيل تأخير 300ms على الزراير |
-| [[touch-action: none]] | ولا حاجة: الكود بيتعامل مع كل لمسة (لوحة رسم، خريطة، لعبة). **متحطهوش على الصفحة كلها**: الزائر مش هيعرف يعمل scroll ولا يكبّر |
-
-Baseline من زمان (MDN).
-
-### [[overscroll-behavior]]
-
-لما تعمل scroll جوه صندوق (قايمة في مودال) وتوصل لآخره، المتصفح بيكمّل الـ scroll في الصفحة اللي ورا (اسمه **scroll chaining**). [[overscroll-behavior: contain]] بيوقفه عند الصندوق. [[none]] كمان بيلغي حركة «اسحب لتحت عشان تعمل refresh» والمط في آخر الصفحة. وفيه [[overscroll-behavior-x]] و [[-y]] لكل اتجاه.
-
-مش Baseline كامل لسه حسب بيانات MDN (فيه متصفحات مدعمة جزء منه)، بس لو مش مدعوم الصفحة بتتصرف زي الأول، فاستخدمه من غير خوف على المودال والقوايم.
-
----
-
-## ٥. [[overflow-anchor]]: مكان القراية ميتنطّش
-
-انت بتقرا خبر في نص الصفحة، وصورة فوق اتحملت متأخر أو إعلان ظهر: الكلام اللي بتقراه كان المفروض يتزق لتحت. Chrome بيمنع ده لوحده (اسمه **scroll anchoring**): بيعدّل الـ scroll بنفس المسافة فالكلام يفضل قدامك.
-
-~~~text القياس من Chrome (صندوق عامل scroll لـ 150px، واتزوّد فوق فقرة طولها 50px)
-العادي                    scrollTop بقى 200   ← اتعدّل لوحده، والكلام فضل مكانه
-overflow-anchor: none     scrollTop فضل 150   ← الكلام اتزق 50px لتحت
-~~~
-
-استخدم [[overflow-anchor: none]] في الحالات القليلة اللي التثبيت بيضايق فيها: شات بيضيف الرسايل الجديدة تحت وانت عايز تفضل فوق، أو صفحة الكود بتاعها بيعمل scroll بنفسه. التثبيت شغال لوحده في أي متصفح بيدعمه، و [[overflow-anchor]] بقى Baseline في سبتمبر 2026 بس (MDN)، فمتعتمدش عليه في الحساب. وده مش بديل لحجز مكان الصور (درس «CLS»).
-
----
-
-## ٦. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[html, body { overflow-x: hidden }]] عشان تخفي scroll أفقي | المشكلة لسه موجودة (عنصر أعرض من الشاشة)، وكمان [[position: sticky]] ممكن يبطل. دوّر على العنصر (درس «فحص الـ CSS: validator و DevTools») أو استخدم [[clip]] |
-| [[overflow: scroll]] بدل [[auto]] | scrollbars فاضية دايمًا، حتى الأفقي |
-| [[overflow-x: hidden]] ومستني الرأسي يفضل يبان | الرأسي بقى [[auto]]: dropdown بيتقص أو scrollbar رأسي غريب |
-| [[overflow: hidden]] على كارت فيه قايمة منسدلة | القايمة اتقصت |
-| [[height]] ثابت من غير [[overflow]] | الكلام بيطلع برّه ويركب على اللي تحته. اكتب [[max-height]] + [[overflow-y: auto]] |
-| [[scrollbar-width: none]] من غير أي علامة | الزائر ميعرفش إن فيه محتوى زيادة |
-| [[touch-action: none]] على الصفحة | محدش يقدر يعمل scroll على الموبايل |
-| صندوق scroll مفيهوش حاجة بتاخد focus | زائر الكيبورد مبيقدرش يعمله scroll في بعض المتصفحات. حط [[tabindex="0"]] واسم (درس «جدول responsive» قسم ٧) |
-
----
-
-## الخلاصة
-
-- [[visible]] (الافتراضي) و [[hidden]] و [[clip]] و [[scroll]] و [[auto]]. استخدم [[auto]] للـ scroll، و [[clip]] للقص من غير آثار.
-- [[overflow-x: hidden]] بيحوّل الرأسي لـ [[auto]]. و [[overflow-inline]] و [[overflow-block]] المنطقيين.
-- الـ scrollbar: [[scrollbar-width]] و [[scrollbar-color]] و [[scrollbar-gutter: stable]]. وفي العربي على الشمال.
-- [[touch-action]] لحركات اللمس، و [[overscroll-behavior: contain]] للمودال، و [[overflow-anchor]] لتثبيت القراية.`,
-          try: R`اعمل [[overflow.html]] فيه صندوق تعليقات [[max-height: 150px]] وجواه ١٠ تعليقات. جرّب [[overflow: visible]] ثم [[hidden]] ثم [[auto]]. بعدين زوّد [[scrollbar-width: thin]] و [[scrollbar-color]] بلونين من عندك، وافتح الـ Console واكتب [[document.querySelector(".comments").scrollHeight]] و [[.clientHeight]].`,
-          sol: R`~~~live 230 overflow.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>التعليقات</title>
-<style>
-  body { font-family: system-ui, Tahoma, sans-serif; padding: 12px; }
-  h2 { margin: 0 0 8px; font-size: 18px; }
-  .comments { max-width: 360px; max-height: 150px; overflow-y: auto; padding: 8px 12px; border: 1px solid #d6d3d1; border-radius: 8px;
-              scrollbar-width: thin; scrollbar-color: #0f766e #ccfbf1; }
-  .comments p { margin: 0; padding: 6px 0; border-bottom: 1px solid #e7e5e4; }
-</style>
-</head>
-<body>
-<h2>التعليقات (١٠)</h2>
-<div class="comments" tabindex="0" role="region" aria-label="التعليقات">
-  <p>منى: خبر حلو.</p><p>كريم: فيه كتب إنجليزي؟</p><p>سارة: الركن جميل.</p><p>عمر: المواعيد إيه؟</p><p>هبة: هتبرّع بكتب.</p>
-  <p>علي: فيه wifi؟</p><p>نور: مستنيين.</p><p>مازن: برافو للحي.</p><p>ريم: فيه ركن مذاكرة؟</p><p>يوسف: هعدّي بكرة.</p>
-</div>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** عنوان «التعليقات (١٠)» وتحته صندوق بإطار رمادي فيه أول ٤ تعليقات تقريبًا، وعلى شماله scrollbar رفيع أخضر على مسار أخضر فاتح. لما تعمل scroll جواه تشوف الباقي.
-
-~~~text القياس من Chrome
-.comments   scrollHeight أكبر من clientHeight (المحتوى كله أطول من 150)   overflow-y: auto
-مع visible: الصندوق نفسه طوله 150 بس التعليقات بتكمّل تحته وتركب على أي حاجة بعده
-~~~
-
-ليه [[tabindex="0"]]: عشان اللي بيستخدم الكيبورد يقدر يقف على الصندوق ويعمله scroll بالأسهم، و [[aria-label]] عشان قارئ الشاشة يقول اسمه، و [[role="region"]] لأن [[aria-label]] مينفعش على [[div]] عادي من غير role (الـ validator بيرفضه، وقارئات شاشة كتير بتتجاهله).`,
-          deep: {
-            why: R`المحتوى على الويب مش معروف طوله: تعليقات المستخدمين، وأسامي طويلة، وجداول بيانات. لازم كل صندوق ليه حدود يقرر يعمل إيه لو المحتوى زاد. والـ scrollbar جزء من شكل الموقع، فاتعملت خصايص قياسية بدل الحيل الخاصة بكل متصفح. و [[touch-action]] و [[overscroll-behavior]] عشان المواقع اللي فيها سحب ومودال تشتغل على الموبايل زي التطبيقات.`,
-            how: R`أي قيمة غير [[visible]] و [[clip]] بتخلي الصندوق «scroll container»: المتصفح بيرسم المحتوى جوه منطقة مقصوصة على الـ padding box، وبيحفظ مكان الـ scroll ([[scrollTop]] و [[scrollLeft]])، وبيعمل BFC. [[clip]] بيقص الرسم بس. والـ scrollbar الكلاسيكي بيتطرح من مساحة المحتوى (15px على Windows)، والـ overlay (موبايل وماك) بيترسم فوق. والـ scroll anchoring: المتصفح بيختار عنصر ظاهر كـ «مرساة»، ولو اتحرك بسبب تغيير فوقه بيعدّل [[scrollTop]] بنفس المسافة.`,
-            when: R`[[overflow-y: auto]] + [[max-height]]: قوايم، وتعليقات، ومودال. [[overflow-x: auto]]: جداول وشرايط أخبار أفقية وكود. [[clip]]: زينة في ركن كارت، أو صورة بأركان مدورة. [[scrollbar-color]] و [[scrollbar-width]]: أي صندوق scroll ظاهر في تصميم الموقع. [[scrollbar-gutter: stable]]: على [[html]] في مواقع صفحاتها مختلفة الطول. [[overscroll-behavior: contain]]: مودال وقايمة جانبية. [[touch-action: pan-y]]: carousel بالـ JavaScript.`,
-            mistakes: R`[[overflow-x: hidden]] على [[body]] بدل ما تلاقي العنصر العريض. [[scroll]] بدل [[auto]]. نسيان إن الاتجاه التاني بيبقى [[auto]]. [[hidden]] على كارت فيه dropdown. [[height]] ثابت من غير overflow. scrollbar مخفي من غير علامة. [[touch-action: none]] على حاجة كبيرة. صندوق scroll الكيبورد مبيوصلوش.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** صندوق «أحدث التعليقات» طوله ثابت، والتعليقات نازلة برّه وراكبة على الفوتر. خليه يطول لحد 120px بس، ولو التعليقات أكتر يعمل scroll رأسي جواه. (من قسم ١)`, done: R`الفوتر ظاهر نضيف تحت الصندوق، وكل الشروط ✓.`, work: { h: 230, start: R`<style>
-  .comments { height: 120px; padding: 8px; background: #f5f5f4; }
-  .comments p { margin: 0 0 8px; }
-  footer { padding: 8px; background: #292524; color: white; }
-</style>
-<div class="comments">
-  <p>منى: خبر حلو.</p><p>كريم: فيه كتب إنجليزي؟</p><p>سارة: الركن جميل.</p><p>عمر: المواعيد إيه؟</p><p>هبة: هتبرّع بكتب.</p><p>علي: فيه wifi؟</p>
-</div>
-<footer>جريدة الحي © ٢٠٢٦</footer>`, checks: [
-              { say: R`مفيش [[height]] ثابت: بقى [[max-height: 120px]]`, q: ".comments", style: ["max-height", "120px"] },
-              { say: R`الـ scroll رأسي لما يحتاج: [[overflow-y: auto]]`, q: ".comments", style: ["overflow-y", "auto"] },
-              { say: R`مفيش [[height: 120px]] في الكود`, nosrc: "height: 120px; padding" }
-            ] }, sol: R`~~~live 230 بعد التصليح
-<style>
-  .comments { max-height: 120px; overflow-y: auto; padding: 8px; background: #f5f5f4; }
-  .comments p { margin: 0 0 8px; }
-  footer { padding: 8px; background: #292524; color: white; }
-</style>
-<div class="comments">
-  <p>منى: خبر حلو.</p><p>كريم: فيه كتب إنجليزي؟</p><p>سارة: الركن جميل.</p><p>عمر: المواعيد إيه؟</p><p>هبة: هتبرّع بكتب.</p><p>علي: فيه wifi؟</p>
-</div>
-<footer>جريدة الحي © ٢٠٢٦</footer>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 230 قبل
-<style>
-  .comments { height: 120px; padding: 8px; background: #f5f5f4; }
-  .comments p { margin: 0 0 8px; }
-  footer { padding: 8px; background: #292524; color: white; }
-</style>
-<div class="comments">
-  <p>منى: خبر حلو.</p><p>كريم: فيه كتب إنجليزي؟</p><p>سارة: الركن جميل.</p><p>عمر: المواعيد إيه؟</p><p>هبة: هتبرّع بكتب.</p><p>علي: فيه wifi؟</p>
-</div>
-<footer>جريدة الحي © ٢٠٢٦</footer>
-~~~
-
-**هتشوف إيه:** في الحل صندوق رمادي فيه أول تعليقات و scrollbar على الشمال، وتحته الفوتر الأسود نضيف. في «قبل» آخر تعليقات نازلة على الفوتر الأسود ومش مقروءة.
-
-**ليه [[max-height]] مش [[height]]:** لو التعليقات اتنين بس، الصندوق يبقى على قدهم ومفيش فراغ. **الغلطة الشائعة:** [[overflow: hidden]]: التعليقات اللي تحت اختفت ومحدش يقدر يوصلها.
-
-~~~text القياس من Chrome
-بعد:  max-height: 120px   overflow-y: auto   scrollHeight > clientHeight ← فيه scroll
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شريط «الأقسام» فيه لينكات كتير جنب بعض ومبيلفش ([[white-space: nowrap]]). خليه يعمل scroll **أفقي** بس جوه الشريط بدل ما يوسّع الصفحة كلها، ومن غير scroll رأسي. (من قسم ٢)`, done: R`الشريط بيتسحب يمين وشمال والصفحة نفسها مفيهاش scroll أفقي، وكل الشروط ✓.`, work: { h: 120, start: R`<style>
-  .sections { white-space: nowrap; padding: 8px; background: #0f766e; }
-  .sections a { display: inline-block; margin-inline-end: 16px; color: white; }
-</style>
-<nav class="sections">
-  <a href="#">محليات</a><a href="#">رياضة</a><a href="#">اقتصاد</a><a href="#">فن</a><a href="#">تكنولوجيا</a><a href="#">صحة</a><a href="#">تعليم</a><a href="#">حوادث</a><a href="#">رأي</a><a href="#">طقس</a><a href="#">سفر</a><a href="#">مطبخ</a><a href="#">كتب</a><a href="#">سيارات</a><a href="#">ألعاب</a>
-</nav>`, checks: [
-              { say: R`أفقي: [[overflow-x: auto]]`, q: ".sections", style: ["overflow-x", "auto"] },
-              { say: R`ومفيش scroll رأسي: [[overflow-y: hidden]]`, q: ".sections", style: ["overflow-y", "hidden"] }
-            ] }, sol: R`~~~live 90 الحل
-<style>
-  .sections { white-space: nowrap; overflow-x: auto; overflow-y: hidden; padding: 8px; background: #0f766e; }
-  .sections a { display: inline-block; margin-inline-end: 16px; color: white; }
-</style>
-<nav class="sections">
-  <a href="#">محليات</a><a href="#">رياضة</a><a href="#">اقتصاد</a><a href="#">فن</a><a href="#">تكنولوجيا</a><a href="#">صحة</a><a href="#">تعليم</a><a href="#">حوادث</a><a href="#">رأي</a><a href="#">طقس</a><a href="#">سفر</a><a href="#">مطبخ</a><a href="#">كتب</a><a href="#">سيارات</a><a href="#">ألعاب</a>
-</nav>
-~~~
-
-**هتشوف إيه:** شريط أخضر فيه اللينكات البيضا في سطر واحد، وعلى «موبايل» تحته scrollbar أفقي والشريط بيتسحب، والصفحة نفسها ثابتة.
-
-**ليه الاتنين:** لو كتبت [[overflow-x: auto]] بس، الرأسي هيتحسب [[auto]] (قسم ٢)، وأي حاجة بتطلع شوية تحت (زي خط focus) هتعمل scrollbar رأسي صغير. **ممكن تكتبها سطر واحد:** [[overflow: auto hidden]].
-
-~~~text القياس من Chrome
-.sections   overflow-x: auto   overflow-y: hidden   scrollWidth أكبر من clientWidth على 360
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت «عاجل» فيه دايرة زينة بتطلع برّه ركنه. اقصها عند حدود الكارت **من غير** ما الكارت يبقى scroll container ومن غير ما الـ margin بتاع العنوان يتحبس جواه (يعني مش [[hidden]]). (من قسم ١ «clip ولا hidden»)`, done: R`الدايرة مقصوصة عند الحد، وكل الشروط ✓.`, work: { h: 170, start: R`<style>
-  .card { position: relative; width: 280px; padding: 12px; background: #fee2e2; border-radius: 10px; }
-  .card::after { content: ""; position: absolute; top: -30px; left: -30px; width: 90px; height: 90px; border-radius: 50%; background: #fca5a5; }
-</style>
-<article class="card"><b>عاجل:</b> قطع المياه عن الحي بكرة من ١٠ لـ ٢ الضهر.</article>`, checks: [
-              { say: R`الكارت [[overflow: clip]] في الاتجاهين`, q: ".card", style: ["overflow-x", "clip"] },
-              { say: R`والرأسي كمان [[clip]]`, q: ".card", style: ["overflow-y", "clip"] }
-            ] }, sol: R`~~~live 120 الحل
-<style>
-  .card { position: relative; width: 280px; padding: 12px; background: #fee2e2; border-radius: 10px; overflow: clip; }
-  .card::after { content: ""; position: absolute; top: -30px; left: -30px; width: 90px; height: 90px; border-radius: 50%; background: #fca5a5; }
-</style>
-<article class="card"><b>عاجل:</b> قطع المياه عن الحي بكرة من ١٠ لـ ٢ الضهر.</article>
-~~~
-
-**هتشوف إيه:** كارت أحمر فاتح، وفي ركنه الشمال فوق ربع دايرة أغمق مقصوصة على شكل الركن المدوّر.
-
-**ليه [[clip]]:** بيقص الرسم بس. [[hidden]] كانت هتقص برضه، بس الكارت كان هيبقى scroll container (لو فيه لينك جواه وعمل focus ممكن المحتوى يتزحلق)، و BFC. **ملاحظة:** الـ [[::after]] لازم مكانه محسوب من الكارت ([[position: relative]] على الكارت، درس «position: absolute»).
-
-~~~text القياس من Chrome
-.card   overflow-x: clip   overflow-y: clip   scrollTop = 50 بالكود → بيفضل 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** نسّق scrollbar قايمة «الأكثر قراءة»: رفيع، والحتة اللي بتتسحب [[#b45309]] على مسار [[#fef3c7]]، ومكانه محجوز. (من قسم ٣)`, done: R`الـ scrollbar رفيع وبني على كريمي، وكل الشروط ✓.`, work: { h: 180, start: R`<style>
-  .top { max-height: 110px; overflow-y: auto; width: 260px; padding: 8px; background: #fffbeb; }
-  .top li { margin-bottom: 6px; }
-</style>
-<ol class="top">
-  <li>مكتبة جديدة في الحي</li><li>ماتش الأمس</li><li>أسعار الخضار</li><li>قطع المياه بكرة</li><li>حفلة المدرسة</li><li>الطقس آخر الأسبوع</li>
-</ol>`, checks: [
-              { say: R`رفيع: [[scrollbar-width: thin]]`, q: ".top", style: ["scrollbar-width", "thin"] },
-              { say: R`الألوان: بني على كريمي`, q: ".top", style: ["scrollbar-color", "rgb(180, 83, 9) rgb(254, 243, 199)"] },
-              { say: R`مكانه محجوز: [[scrollbar-gutter: stable]]`, q: ".top", style: ["scrollbar-gutter", "stable"] }
-            ] }, sol: R`~~~live 150 الحل
-<style>
-  .top { max-height: 110px; overflow-y: auto; width: 260px; padding: 8px; background: #fffbeb;
-         scrollbar-width: thin; scrollbar-color: #b45309 #fef3c7; scrollbar-gutter: stable; }
-  .top li { margin-bottom: 6px; }
-</style>
-<ol class="top">
-  <li>مكتبة جديدة في الحي</li><li>ماتش الأمس</li><li>أسعار الخضار</li><li>قطع المياه بكرة</li><li>حفلة المدرسة</li><li>الطقس آخر الأسبوع</li>
-</ol>
-~~~
-
-**هتشوف إيه:** قايمة مرقّمة بخلفية كريمي، وعلى شمالها scrollbar رفيع بني.
-
-**ليه كده:** أول لون في [[scrollbar-color]] الـ thumb والتاني الـ track. [[scrollbar-gutter: stable]] بيخلي عرض الكلام ميتغيّرش لو القايمة بقت قصيرة والـ scrollbar اختفى. **الغلطة الشائعة:** [[::-webkit-scrollbar]]: مش قياسي ومش شغال في Firefox.
-
-~~~text القياس من Chrome
-scrollbar-width: thin   scrollbar-color: rgb(180, 83, 9) rgb(254, 243, 199)   scrollbar-gutter: stable
-offsetWidth − clientWidth = 10px   ← عرض الـ scrollbar الرفيع
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** قايمة المدن جوه مودال «اختار مدينتك». لما الزائر يوصل لآخر القايمة، الصفحة اللي ورا المودال متتحركش. (من قسم ٤ «overscroll-behavior»)`, done: R`كل الشروط ✓، وعلى الموبايل الصفحة ورا مبتتحركش.`, work: { h: 180, start: R`<style>
-  .cities { max-height: 120px; overflow-y: auto; width: 220px; margin: 0; padding: 8px 24px; border: 1px solid #d6d3d1; border-radius: 8px; }
-</style>
-<ul class="cities">
-  <li>القاهرة</li><li>الجيزة</li><li>الإسكندرية</li><li>المنصورة</li><li>طنطا</li><li>أسيوط</li><li>الأقصر</li><li>أسوان</li>
-</ul>`, checks: [
-              { say: R`الـ scroll مبيعدّيش للصفحة رأسي: [[overscroll-behavior-y]] ‏[[contain]]`, q: ".cities", style: ["overscroll-behavior-y", "contain"] },
-              { say: R`ولا أفقي`, q: ".cities", style: ["overscroll-behavior-x", "contain"] }
-            ] }, sol: R`~~~live 150 الحل
-<style>
-  .cities { max-height: 120px; overflow-y: auto; overscroll-behavior: contain; width: 220px; margin: 0; padding: 8px 24px; border: 1px solid #d6d3d1; border-radius: 8px; }
-</style>
-<ul class="cities">
-  <li>القاهرة</li><li>الجيزة</li><li>الإسكندرية</li><li>المنصورة</li><li>طنطا</li><li>أسيوط</li><li>الأقصر</li><li>أسوان</li>
-</ul>
-~~~
-
-**هتشوف إيه:** نفس القايمة بالشكل ده. الفرق مش في الشكل: في صفحة طويلة على الموبايل، لما تسحب لآخر القايمة الصفحة اللي ورا مش هتنزل.
-
-**ليه كده:** [[overscroll-behavior]] مختصرة للاتنين ([[-x]] و [[-y]]). **ملاحظة:** اللمس نفسه متجرّبش هنا، السلوك من MDN، واللي اتقاس إن Chrome قبل القيمة.
-
-~~~text القياس من Chrome
-overscroll-behavior-x: contain   overscroll-behavior-y: contain
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[.box { overflow-x: hidden; }]] ومفيش أي حاجة تانية. [[getComputedStyle(box).overflowY]] هيرجّع إيه؟ ولو [[overflow-x: clip]]؟ (من قسم ٢)`, done: R`كتبت القيمتين.`, sol: R`**الإجابة:** مع [[hidden]]: ‏**auto** (مش visible). مع [[clip]]: ‏**visible**.
-
-~~~text القياس من Chrome
-overflow-x: hidden  →  overflowY = "auto"
-overflow-x: clip    →  overflowY = "visible"
-~~~
-
-**ليه:** صندوق بيعمل scroll في اتجاه مينفعش يسيب الاتجاه التاني يرسم برّه، فالمتصفح بيحوّل [[visible]] لـ [[auto]]. و [[clip]] مش scroll container أصلًا، فمفيش مشكلة.` }
-          ]
-        },
-        {
-          cmd: "margin-block و inset-inline",
-          title: "تكتب أي margin أو padding أو inset أو scroll-margin بالشكل المنطقي (block و inline، و start و end)، وتعرف بالظبط إيه اللي بيتقلب مع dir=\"rtl\" وإيه اللي لأ",
-          pre: ["css/box model", "css/position: absolute", { to: "css/logical properties", why: R`الدرس ده عرّفك على الفكرة بكلاسات Tailwind ([[ms-4]] و [[pe-2]])، وهنا الخصايص نفسها في CSS عادي كلها` }],
-          ref: [
-            { t: "MDN: CSS logical properties and values", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Logical_properties_and_values" },
-            { t: "MDN: margin-block", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/margin-block" },
-            { t: "MDN: margin-inline", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/margin-inline" },
-            { t: "MDN: inset-inline", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset-inline" },
-            { t: "MDN: inset-block", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset-block" },
-            { t: "MDN: padding-block", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-block" },
-            { t: "MDN: scroll-margin", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-margin" },
-            { t: "MDN: scroll-padding", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-padding" },
-            { t: "MDN: scroll-snap-stop", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-stop" },
-            { t: "CSS Logical Properties Level 1", url: "https://www.w3.org/TR/css-logical-1/" }
-          ],
-          desc: R`الخصايص المنطقية بتتكلم بالاتجاه بتاع الكتابة مش بالشاشة: **inline** = اتجاه السطر (يمين وشمال في العربي)، و **block** = اتجاه رص الفقرات (فوق وتحت). و **start** = أول السطر (يمين في العربي، شمال في الإنجليزي)، و **end** = آخره. فـ [[margin-inline-start]] في صفحة عربي = [[margin-right]]، وفي صفحة إنجليزي = [[margin-left]]، لوحدها.
-عيلة كاملة: [[margin-block]] و [[margin-inline]] و [[padding-block]] و [[padding-inline]] و [[inset-block]] و [[inset-inline]] و [[scroll-margin-block]] و [[scroll-padding-inline]]، وكل واحدة ليها [[-start]] و [[-end]]. اللي بيتقلب مع [[dir="rtl"]] هو الـ **inline** بس؛ والـ block بيتقلب مع [[writing-mode]] (الكتابة الرأسية). و [[left]] و [[right]] و [[margin-left]] عمرهم ما بيتقلبوا.`,
-          example: R`<style>
-  .quote { position: relative; margin-block: 12px; padding-block: 8px; padding-inline: 16px 40px;
-           border-inline-start: 4px solid #b45309; background: #fffbeb; }
-  .quote .tag { position: absolute; inset-block-start: 6px; inset-inline-end: 8px; font-size: 12px; color: #92400e; }
-</style>
-<blockquote class="quote">الشغل الحلو بياخد وقت. <span class="tag">رأي</span></blockquote>
-<blockquote class="quote" dir="ltr">Good work takes time. <span class="tag">Opinion</span></blockquote>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`الاقتباس: مرجع للشارة ([[position: relative]])، و margin فوق وتحت 12px ([[margin-block]])، و padding فوق وتحت 8px، و padding في أول السطر 16 وآخره 40 (مكان للشارة).`,
-            R`تكملة القاعدة: خط بني في **أول** السطر ([[border-inline-start]]): يمين في العربي وشمال في الإنجليزي، وخلفية كريمي.`,
-            R`الشارة: فوق بـ 6px ([[inset-block-start]])، وفي **آخر** السطر بـ 8px ([[inset-inline-end]])، وخطها صغير.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`اقتباس عربي: الخط البني يمين والشارة «رأي» شمال.`,
-            R`نفس الـ CSS على اقتباس إنجليزي ([[dir="ltr"]]): الخط البني اتنقل شمال والشارة يمين، من غير ولا سطر CSS زيادة.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-لو موقعك عربي بس، [[margin-right]] و [[margin-inline-start]] نفس النتيجة. بس أول ما تعمل نسخة إنجليزي، أو تحط اسم إنجليزي جوه صفحة عربي، أو تاخد component من مكتبة، كل [[left]] و [[right]] لازم يتعكس بإيدك. الخصايص المنطقية بتتكتب **مرة واحدة** وبتتقلب لوحدها. درس «logical properties» شرح الفكرة بكلاسات Tailwind؛ هنا كل الخصايص في جدول واحد، وكل واحدة اتقاست في Chrome.
-
----
-
-## ١. الكلمتين: inline و block، و start و end
-
-| الكلمة | المعنى | في العربي ([[dir="rtl"]]) | في الإنجليزي ([[dir="ltr"]]) |
-|---|---|---|---|
-| **inline** | اتجاه السطر | يمين ↔ شمال | يمين ↔ شمال |
-| **block** | اتجاه رص الفقرات | فوق ↔ تحت | فوق ↔ تحت |
-| **inline-start** | أول السطر | **يمين** | شمال |
-| **inline-end** | آخر السطر | **شمال** | يمين |
-| **block-start** | أول فقرة | فوق | فوق |
-| **block-end** | آخر فقرة | تحت | تحت |
-
-يعني بين العربي والإنجليزي **الـ inline بس اللي بيتقلب**. الـ block بيتقلب لو الكتابة رأسية ([[writing-mode: vertical-rl]]، قسم ٤).
-
----
-
-## ٢. الجدول: كل خاصية فيزيائية وأختها المنطقية
-
-| الخاصية المنطقية | في صفحة عربي = | في صفحة إنجليزي = |
-|---|---|---|
-| [[margin-block: 12px]] | [[margin-top]] و [[margin-bottom]] الاتنين 12 | نفسها |
-| [[margin-block: 10px 20px]] | فوق 10 وتحت 20 (اتقاس) | نفسها |
-| [[margin-block-start: 8px]] | [[margin-top: 8px]] | [[margin-top]] |
-| [[margin-block-end: 8px]] | [[margin-bottom: 8px]] | [[margin-bottom]] |
-| [[margin-inline: auto]] | [[margin-left]] و [[margin-right]] auto: يوسّط | نفسها |
-| [[margin-inline-start: 20px]] | [[margin-right: 20px]] (اتقاس) | [[margin-left: 20px]] (اتقاس) |
-| [[margin-inline-end: 20px]] | [[margin-left: 20px]] | [[margin-right]] |
-| [[padding-block: 8px]] | [[padding-top]] و [[padding-bottom]] | نفسها |
-| [[padding-inline: 3px 4px]] | يمين 3 وشمال 4 (اتقاس: [[padding-right: 3px]] و [[padding-left: 4px]]) | شمال 3 ويمين 4 |
-| [[padding-inline-start: 16px]] | [[padding-right]] | [[padding-left]] |
-| [[padding-inline-end: 10px]] | [[padding-left: 10px]] (اتقاس) | [[padding-right: 10px]] (اتقاس) |
-| [[inset-block: 0]] | [[top: 0]] و [[bottom: 0]] | نفسها |
-| [[inset-block-start: 6px]] | [[top: 6px]] | [[top]] |
-| [[inset-block-end: 6px]] | [[bottom: 6px]] | [[bottom]] |
-| [[inset-inline: 0]] | [[left: 0]] و [[right: 0]] | نفسها |
-| [[inset-inline-start: 0]] | [[right: 0]] | [[left: 0]] |
-| [[inset-inline-end: 10px]] | [[left: 10px]] (اتقاس: الشارة بعيدة 10px عن **شمال** الصندوق) | [[right: 10px]] |
-| [[border-inline-start: 4px solid]] | [[border-right]] | [[border-left]] |
-
-والقيمتين في المختصرة: الأولى للـ start والتانية للـ end ([[margin-block: 10px 20px]] = فوق 10 وتحت 20). والـ [[inset]] لوحدها مختصرة للأربعة ([[inset: 0]] = [[top]] و [[right]] و [[bottom]] و [[left]] كلهم صفر)، ودي مش بتتقلب لأنها نفس القيمة في كل حتة.
-
-> [[getComputedStyle]] بيرجّع القيم الفيزيائية والمنطقية الاتنين: [[margin-inline-start]] في صفحة عربي بيرجع 20px و [[margin-right]] برضه 20px، لأنهم نفس الخاصية في الصفحة دي.
-
----
-
-## ٣. شوف إيه اللي اتقلب
-
-~~~live 210 نفس الـ CSS على كارت عربي وكارت إنجليزي
-<style>
-  .card { position: relative; width: 260px; margin-block: 10px; padding-block: 10px 24px; padding-inline: 14px 50px; border-inline-start: 5px solid #0f766e; background: #f0fdfa; }
-  .card .new { position: absolute; inset-block-start: 6px; inset-inline-end: 8px; padding: 0 6px; background: #b45309; color: white; font-size: 12px; border-radius: 4px; }
-  .card .fixed { position: absolute; bottom: 4px; left: 8px; font-size: 11px; color: #78716c; }
-</style>
-<div class="card">خبر: المكتبة فتحت <span class="new">جديد</span><span class="fixed">left</span></div>
-<div class="card" dir="ltr">News: the library opened <span class="new">New</span><span class="fixed">left</span></div>
-~~~
-
-**هتشوف إيه:**
-
-- الخط الأخضر التخين في الكارت العربي على **اليمين**، وفي الإنجليزي على **الشمال** ([[border-inline-start]]).
-- شارة «جديد» البني في العربي على **الشمال** فوق، و «New» في الإنجليزي على **اليمين** فوق ([[inset-inline-end]]).
-- كلمة «left» الرمادي تحت على **الشمال في الاتنين**: [[left: 8px]] فيزيائي، مبيتقلبش.
-
-| بيتقلب مع [[dir="rtl"]] | مبيتقلبش |
-|---|---|
-| كل اللي فيه [[inline]] و [[start]] و [[end]] | [[left]] و [[right]] و [[margin-left]] و [[padding-right]] و [[border-left]] |
-| [[float: inline-start]] و [[clear: inline-end]] (درس «float و clear») | [[float: left]] و [[float: right]]: الصورة في نفس المكان في اللغتين |
-| [[text-align: start]] و [[end]] | [[text-align: left]] و [[right]]: الكلام لازق في نفس الناحية دايمًا |
-| ترتيب أولاد الـ flex والـ grid (الأول بييجي يمين) | [[transform: translateX(10px)]]: بيحرّك يمين دايمًا مهما كانت اللغة |
-| مكان الـ scrollbar الرأسي (درس «overflow») | الخلفية المتدرجة [[to right]]: التدرّج رايح لليمين في اللغتين |
-
----
-
-## ٤. الـ block بيتقلب مع الكتابة الرأسية
-
-[[writing-mode: vertical-rl]] بيخلي السطور رأسية من فوق لتحت، والفقرات بتترص من اليمين للشمال. هنا الـ block هو اللي بقى أفقي:
-
-~~~text القياس من Chrome (جوه أب writing-mode: vertical-rl)
-margin-block-start: 20px   →   margin-right: 20px   margin-top: 0px
-~~~
-
-هتقابل ده في عنوان جانبي مكتوب بالطول، أو موقع ياباني أو صيني. في العربي والإنجليزي الـ block دايمًا فوق وتحت.
-
----
-
-## ٥. عيلة الـ scroll: [[scroll-margin]] و [[scroll-padding]] بكل أشكالهم
-
-درس «scroll-snap و scroll-margin» شرح الفكرة: [[scroll-padding]] على **الحاوية** (المسافة اللي العنصر بيقف عندها جوه الحاوية، زي هيدر ثابت فوق)، و [[scroll-margin]] على **العنصر** نفسه (مسافة حواليه وقت ما يتعمله scroll ليه). الاتنين بيشتغلوا مع الـ snap ومع اللينكات [[#id]] ومع [[scrollIntoView()]]. وليهم نفس الأشكال الفيزيائية والمنطقية:
-
-| الخاصية | على مين | في صفحة عربي أفقية = |
-|---|---|---|
-| [[scroll-margin: 10px]] | العنصر | الأربع جهات |
-| [[scroll-margin-top: 80px]] | العنصر | فوق |
-| [[scroll-margin-bottom: 20px]] | العنصر | تحت |
-| [[scroll-margin-left: 16px]] | العنصر | شمال (مبيتقلبش) |
-| [[scroll-margin-right: 16px]] | العنصر | يمين (مبيتقلبش) |
-| [[scroll-margin-block: 80px 0]] | العنصر | فوق 80 وتحت 0 |
-| [[scroll-margin-block-start: 30px]] | العنصر | فوق (اتقاس: وقف على بعد 30 من أول الحاوية) |
-| [[scroll-margin-block-end: 20px]] | العنصر | تحت |
-| [[scroll-margin-inline: 16px]] | العنصر | يمين وشمال |
-| [[scroll-margin-inline-start: 16px]] | العنصر | يمين |
-| [[scroll-margin-inline-end: 16px]] | العنصر | شمال |
-| [[scroll-padding: 10px]] | الحاوية | الأربع جهات |
-| [[scroll-padding-top: 40px]] | الحاوية | فوق (اتقاس: وقف على بعد 40) |
-| [[scroll-padding-bottom: 20px]] | الحاوية | تحت |
-| [[scroll-padding-left: 16px]] | الحاوية | شمال |
-| [[scroll-padding-right: 16px]] | الحاوية | يمين |
-| [[scroll-padding-block: 60px 0]] | الحاوية | فوق 60 وتحت 0 |
-| [[scroll-padding-block-start: 60px]] | الحاوية | فوق |
-| [[scroll-padding-block-end: 20px]] | الحاوية | تحت |
-| [[scroll-padding-inline: 16px]] | الحاوية | يمين وشمال |
-| [[scroll-padding-inline-start: 20px]] | الحاوية | يمين (اتقاس في شريط أفقي عربي: الكارت وقف على بعد 20px من **يمين** الشريط) |
-| [[scroll-padding-inline-end: 20px]] | الحاوية | شمال |
-
-~~~text القياس من Chrome (scrollIntoView على عنصر مكانه 304px من أول الحاوية)
-عادي                              scrollTop = 304
-scroll-margin-block-start: 30px    scrollTop = 274   (304 − 30)
-scroll-padding-top: 40px (الحاوية) scrollTop = 264   (304 − 40)
-شريط أفقي dir=rtl + scroll-padding-inline-start: 20px    الكارت.right = الشريط.right − 20
-~~~
-
-### [[scroll-snap-stop: always]]
-
-في carousel بـ [[scroll-snap-type: y mandatory]] (أو x)، لو الزائر سحب بقوة ممكن يعدّي كذا كارت مرة واحدة. [[scroll-snap-stop: always]] على الكروت بيقول «لازم تقف على كل كارت، متعدّيش عليه»:
-
-~~~text القياس من Chrome (كروت طولها 202، و scrollBy(0, 500) مرة واحدة)
-scroll-snap-stop: normal (الافتراضي)  وقف عند 406  ← عدّى كارتين
-scroll-snap-stop: always             وقف عند 202  ← وقف على اللي بعده على طول
-~~~
-
-مفيد في قصص (stories) أو خطوات لازم الزائر يشوفها كلها. ومتستخدموش في قايمة طويلة: بيبقى بطيء ومتعب.
-
----
-
-## ٦. تكتب إيه في مشروع جديد
-
-- **margins و paddings الجنبية:** منطقي دايمًا ([[margin-inline]] و [[padding-inline-start]]).
-- **فوق وتحت:** [[margin-block]] و [[padding-block]] أو [[margin-top]] عادي؛ في العربي والإنجليزي هما نفس الحاجة. اختار واحد واكتب بيه في المشروع كله.
-- **[[position]]:** [[inset-inline-end]] بدل [[left]] للشارات والأيقونات، و [[inset: 0]] للطبقات اللي بتغطي الصندوق كله.
-- **فيزيائي بقصد:** حاجة مربوطة بالشاشة مش بالكلام: سهم بيشاور على حاجة على الشمال، أو ظل جاي من فوق.
-
----
-
-## ٧. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[margin-left]] للمسافة بعد أيقونة | في الإنجليزي المسافة في الناحية الغلط |
-| فاكر إن [[margin-block]] بيتقلب في العربي | لأ، فوق وتحت زي ما هما. اللي بيتقلب الـ inline |
-| [[padding-inline: 10px 20px]] ومستني 10 على الشمال | الأولى للـ start: يمين في العربي |
-| خلط منطقي وفيزيائي على نفس الجهة ([[margin-right]] و [[margin-inline-start]]) | الاتنين نفس الخاصية في العربي، والمكتوبة بعد هي اللي بتكسب، وفي الإنجليزي الاتنين بيتفصلوا. متخلطش |
-| [[scroll-padding]] على العنصر أو [[scroll-margin]] على الحاوية | ملوش أثر: الـ padding للحاوية والـ margin للعنصر |
-| [[scroll-snap-stop: always]] على قايمة طويلة | الزائر مضطر يقف على كل عنصر |
-
----
-
-## الخلاصة
-
-- inline = السطر (بيتقلب مع [[dir]])، و block = الفقرات (بيتقلب مع [[writing-mode]] بس). start = أول السطر = يمين في العربي.
-- [[margin-block]] و [[margin-inline]] و [[padding-block]] و [[padding-inline]] و [[inset-block]] و [[inset-inline]]، وكل واحدة ليها [[-start]] و [[-end]].
-- [[left]] و [[right]] و [[margin-left]] مبيتقلبوش أبدًا.
-- [[scroll-margin-*]] على العنصر و [[scroll-padding-*]] على الحاوية بنفس الأشكال، و [[scroll-snap-stop: always]] يوقف على كل عنصر.`,
-          try: R`اعمل [[logical.html]] فيه كارت خبر عليه [[border-inline-start]] وشارة [[position: absolute]] بـ [[inset-inline-end]]. انسخ الكارت مرتين، وحط على التاني [[dir="ltr"]] واكتب فيه كلام إنجليزي. بعدين غيّر في الكارت التالت [[inset-inline-end]] لـ [[left]] وشوف مين اتقلب ومين لأ.`,
-          sol: R`~~~live 260 logical.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>منطقي</title>
-<style>
-  body { font-family: system-ui, Tahoma, sans-serif; padding: 12px; }
-  .card { position: relative; max-width: 320px; margin-block: 0 12px; padding-block: 10px; padding-inline: 14px 60px; border-inline-start: 5px solid #0f766e; background: #f0fdfa; border-radius: 6px; }
-  .tag { position: absolute; inset-block-start: 8px; inset-inline-end: 8px; padding: 0 6px; background: #b45309; color: white; font-size: 12px; border-radius: 4px; }
-  .physical .tag { inset-inline-end: auto; left: 8px; }
-</style>
-</head>
-<body>
-<article class="card">المكتبة فتحت في الحي <span class="tag">جديد</span></article>
-<article class="card" dir="ltr">The library opened <span class="tag">New</span></article>
-<article class="card physical" dir="ltr">Physical left: stays left <span class="tag">left</span></article>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** الكارت العربي: الخط الأخضر يمين والشارة شمال. الكارت الإنجليزي: الخط شمال والشارة يمين. الكارت التالت (إنجليزي برضه): الخط شمال، بس الشارة **شمال** فوق الكلام، لأن [[left]] مبيتقلبش، وبقت راكبة على أول السطر.
-
-~~~text القياس من Chrome
-rtl:  .tag  left: 8px  (inset-inline-end)     border-right-width: 5px
-ltr:  .tag  right: 8px                         border-left-width: 5px
-ltr + left: 8px  →  الشارة على الشمال فوق أول الكلام
-~~~`,
-          deep: {
-            why: R`الويب اتعمل بالإنجليزي، فـ [[left]] و [[right]] كانوا كفاية. لما المواقع بقت بلغات كتير (عربي وعبري من اليمين، وياباني رأسي)، كل موقع بلغتين كان بيكتب CSS تاني يعكس كل حاجة. الخصايص المنطقية بتربط المسافات بالكلام نفسه، فنفس الملف يشتغل في كل اللغات. وده كمان بيخلي مكتبات الـ components تشتغل في العربي من غير تعديل.`,
-            how: R`وقت حساب الستايل، المتصفح بيبص على [[direction]] (من [[dir]]) و [[writing-mode]] بتوع العنصر، ويحوّل كل خاصية منطقية للفيزيائية المقابلة: في [[horizontal-tb]] و [[rtl]] الـ inline-start = right. والاتنين (المنطقي والفيزيائي) بيتعاملوا كخاصية واحدة في الـ cascade، فاللي بعد بيكسب. عشان كده [[getComputedStyle]] بيرجّع نفس القيمة للاسمين.`,
-            when: R`في أي مشروع جديد، وخصوصًا العربي: كل مسافة جنبية، وكل شارة وأيقونة بـ position، وكل border على جنب. [[scroll-padding-block-start]] على [[html]] لما فيه هيدر ثابت، و [[scroll-margin-block-start]] على العناوين اللي ليها [[id]]، و [[scroll-padding-inline]] على شريط أفقي، و [[scroll-snap-stop: always]] للـ stories والخطوات.`,
-            mistakes: R`[[margin-left]] و [[right]] في موقع بلغتين. فاكر إن block بيتقلب في العربي. ترتيب القيمتين في [[padding-inline]]. خلط الفيزيائي والمنطقي على نفس الجهة. [[scroll-padding]] على العنصر بدل الحاوية. [[scroll-snap-stop: always]] على قايمة طويلة.`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**refactor:** كارت الاقتباس ده شغال في العربي بس، لأنه مكتوب بـ right و left. اكتبه منطقي عشان يتقلب لوحده في الإنجليزي، ومن غير ما شكله في العربي يتغيّر. (من قسم ٢)`, done: R`الشكل في العربي زي ما هو، ومفيش [[-left]] ولا [[-right]] في الكود، وكل الشروط ✓.`, work: { h: 140, start: R`<style>
-  .quote { margin-right: 0; margin-left: 40px; padding-right: 16px; border-right: 4px solid #b45309; background: #fffbeb; }
-</style>
-<blockquote class="quote">الشغل الحلو بياخد وقت، والصبر نص الشغل.</blockquote>`, checks: [
-              { say: R`الخط في أول السطر: [[border-inline-start]] ‏4px`, q: ".quote", style: ["border-inline-start-width", "4px"] },
-              { say: R`المسافة من آخر السطر: [[margin-inline-end]] ‏40px`, q: ".quote", style: ["margin-inline-end", "40px"] },
-              { say: R`الـ padding في أول السطر 16px`, q: ".quote", style: ["padding-inline-start", "16px"] },
-              { say: R`مفيش [[-left]] في الكود`, nosrc: "-left" },
-              { say: R`ولا [[-right]]`, nosrc: "-right" }
-            ] }, sol: R`~~~live 120 الحل
-<style>
-  .quote { margin-inline: 0 40px; padding-inline-start: 16px; border-inline-start: 4px solid #b45309; background: #fffbeb; }
-</style>
-<blockquote class="quote">الشغل الحلو بياخد وقت، والصبر نص الشغل.</blockquote>
-<blockquote class="quote" dir="ltr">Good work takes time.</blockquote>
-~~~
-
-**هتشوف إيه:** الاقتباس العربي زي الأول: خط بني يمين ومسافة 40 على الشمال. وزوّدت اقتباس إنجليزي عشان تتأكد: الخط شمال والمسافة يمين.
-
-**ليه كده:** [[margin-right]] في العربي = [[margin-inline-start]]، و [[margin-left]] = [[margin-inline-end]]. [[margin-inline: 0 40px]] = start صفر و end أربعين. **الغلطة الشائعة:** [[margin-inline: 40px 0]]: الأولى للـ start فالمسافة هتروح يمين.
-
-~~~text القياس من Chrome (العربي)
-border-inline-start-width: 4px (= border-right)   margin-inline-end: 40px (= margin-left)   padding-inline-start: 16px
-~~~` },
-            { lvl: 'سريع', t: R`**ابني:** شارة «حصري» لازم تقعد فوق بـ 8px وفي **آخر** السطر بـ 8px (شمال في العربي، يمين لو الصفحة اتقلبت) بالخصايص المنطقية. (من قسم ٢ و ٣)`, done: R`الشارة في الركن الشمال فوق، وكل الشروط ✓.`, work: { h: 120, start: R`<style>
-  .card { position: relative; width: 280px; padding: 12px; background: #f5f5f4; }
-  .badge { position: absolute; padding: 0 6px; background: #b91c1c; color: white; font-size: 12px; }
-</style>
-<article class="card">حوار مع أصغر بطلة شطرنج في البلد <span class="badge">حصري</span></article>`, checks: [
-              { say: R`فوق بـ 8px: [[inset-block-start: 8px]]`, q: ".badge", style: ["inset-block-start", "8px"] },
-              { say: R`في آخر السطر بـ 8px: [[inset-inline-end: 8px]]`, q: ".badge", style: ["inset-inline-end", "8px"] },
-              { say: R`مفيش [[left]] في الكود`, nosrc: "left:" }
-            ] }, sol: R`~~~live 100 الحل
-<style>
-  .card { position: relative; width: 280px; padding: 12px; background: #f5f5f4; }
-  .badge { position: absolute; inset-block-start: 8px; inset-inline-end: 8px; padding: 0 6px; background: #b91c1c; color: white; font-size: 12px; }
-</style>
-<article class="card">حوار مع أصغر بطلة شطرنج في البلد <span class="badge">حصري</span></article>
-~~~
-
-**هتشوف إيه:** كارت رمادي، والشارة الحمرا «حصري» في ركنه الشمال فوق.
-
-**ليه كده:** في العربي [[inset-inline-end]] = [[left]]. **الغلطة الشائعة:** [[inset-inline-start]]: هتروح اليمين فوق أول الكلام.
-
-~~~text القياس من Chrome
-inset-block-start: 8px (= top)    inset-inline-end: 8px (= left في rtl)
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** الموقع عليه هيدر ثابت طوله 64px، فلما الزائر يدوس لينك لعنوان جوه المقال، العنوان بيتدارى تحت الهيدر. خلّي كل [[h2]] ليه [[id]] يقف على بعد 80px من فوق بالخاصية المنطقية اللي على **العنصر**. (من قسم ٥)`, done: R`كل الشروط ✓، ولما تدوس اللينك في صفحة حقيقية العنوان بيبان تحت الهيدر.`, work: { h: 150, start: R`<style>
-  h2 { font-size: 18px; }
-</style>
-<a href="#prices">اقفز لأسعار الخضار</a>
-<h2 id="weather">الطقس</h2>
-<h2 id="prices">أسعار الخضار</h2>`, checks: [
-              { say: R`[[scroll-margin-block-start: 80px]] على العناوين اللي ليها id`, q: "h2[id]", style: ["scroll-margin-block-start", "80px"] },
-              { say: R`(في الصفحة الأفقية ده نفسه [[scroll-margin-top]])`, q: "h2[id]", style: ["scroll-margin-top", "80px"] }
-            ] }, sol: R`~~~live 130 الحل
-<style>
-  h2 { font-size: 18px; }
-  h2[id] { scroll-margin-block-start: 80px; }
-</style>
-<a href="#prices">اقفز لأسعار الخضار</a>
-<h2 id="weather">الطقس</h2>
-<h2 id="prices">أسعار الخضار</h2>
-~~~
-
-**هتشوف إيه:** لينك وعنوانين، بنفس الشكل. الفرق بيبان في صفحة طويلة فيها هيدر ثابت: العنوان بيقف تحت الهيدر بـ 16px.
-
-**ليه على العنصر:** [[scroll-margin]] بيتحط على اللي هيتعمله scroll ليه. والبديل: [[html { scroll-padding-block-start: 80px }]] على الحاوية (هنا الصفحة كلها)، وده بيظبط **كل** اللينكات مرة واحدة. **الغلطة الشائعة:** [[scroll-padding-top]] على الـ h2: ملوش أثر.
-
-~~~text القياس من Chrome
-h2[id]   scroll-margin-block-start: 80px   scroll-margin-top: 80px
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شريط «قصص اليوم» أفقي بـ snap. خليه يوقف كل قصة على بعد 16px من أول الشريط (يمين في العربي)، ومحدش يقدر يعدّي قصة من غير ما يقف عليها. (من قسم ٥ «scroll-snap-stop»)`, done: R`كل الشروط ✓، ولما تسحب الشريط بيقف على كل قصة.`, work: { h: 150, start: R`<style>
-  .stories { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px; background: #f5f5f4; }
-  .story { flex: 0 0 70%; height: 80px; scroll-snap-align: start; background: #0f766e; color: white; padding: 8px; border-radius: 8px; }
-</style>
-<div class="stories">
-  <div class="story">١. المكتبة</div><div class="story">٢. الماتش</div><div class="story">٣. السوق</div><div class="story">٤. الطقس</div>
-</div>`, checks: [
-              { say: R`الحاوية: [[scroll-padding-inline-start: 16px]]`, q: ".stories", style: ["scroll-padding-inline-start", "16px"] },
-              { say: R`كل قصة: [[scroll-snap-stop: always]]`, q: ".story", style: ["scroll-snap-stop", "always"] }
-            ] }, sol: R`~~~live 130 الحل
-<style>
-  .stories { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline-start: 16px; padding: 8px; background: #f5f5f4; }
-  .story { flex: 0 0 70%; height: 80px; scroll-snap-align: start; scroll-snap-stop: always; background: #0f766e; color: white; padding: 8px; border-radius: 8px; }
-</style>
-<div class="stories">
-  <div class="story">١. المكتبة</div><div class="story">٢. الماتش</div><div class="story">٣. السوق</div><div class="story">٤. الطقس</div>
-</div>
-~~~
-
-**هتشوف إيه:** شريط رمادي فيه كروت خضرا، أول كارت على اليمين وجنبه حتة من التاني. لما تسحب، كل كارت بيقف على بعد مسافة من حافة الشريط اليمين.
-
-**ليه كده:** [[scroll-padding-inline-start]] على الحاوية لأنه عن مكان الوقوف جواها، و [[-start]] = يمين في العربي. و [[scroll-snap-stop]] على العناصر.
-
-~~~text القياس من Chrome
-.stories  scroll-padding-inline-start: 16px     .story  scroll-snap-stop: always
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[.icon { margin-inline-start: 20px; margin-block-end: 10px; }]]. في صفحة [[dir="rtl"]]: الـ 20px هيبقوا [[margin-left]] ولا [[margin-right]]؟ والـ 10px؟ وفي [[dir="ltr"]]؟ (من قسم ١ و ٢)`, done: R`كتبت الأربع إجابات.`, sol: R`**الإجابة:**
-
-| | [[dir="rtl"]] | [[dir="ltr"]] |
-|---|---|---|
-| [[margin-inline-start: 20px]] | [[margin-right]] | [[margin-left]] |
-| [[margin-block-end: 10px]] | [[margin-bottom]] | [[margin-bottom]] |
-
-الـ inline بس اللي اتقلب، والـ block فضل تحت في الاتنين.
-
-~~~text القياس من Chrome
-rtl: margin-right 20px   margin-bottom 10px      ltr: margin-left 20px   margin-bottom 10px
-~~~` }
-          ]
-        },
-        {
-          cmd: "place-items و align-self",
-          title: "تحاذي أي عنصر في flex أو grid: الـ content والـ items والـ self على المحورين، والمختصرات place-*، وأنهي خاصية ملهاش أثر في أنهي layout",
-          pre: ["css/flexbox", "css/grid"],
-          ref: [
-            { t: "MDN: Box alignment", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_alignment" },
-            { t: "MDN: align-content", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/align-content" },
-            { t: "MDN: align-self", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/align-self" },
-            { t: "MDN: justify-items", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/justify-items" },
-            { t: "MDN: justify-self", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/justify-self" },
-            { t: "MDN: place-content", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/place-content" },
-            { t: "MDN: place-items", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/place-items" },
-            { t: "MDN: place-self", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/place-self" },
-            { t: "CSS Box Alignment Level 3", url: "https://www.w3.org/TR/css-align-3/" }
-          ],
-          desc: R`خصايص المحاذاة تلات عيلات، وكل عيلة ليها **justify** (المحور الأفقي في grid، والاتجاه الأساسي في flex) و **align** (المحور التاني): [[justify-content]] و [[align-content]] بيوزّعوا **كل المحتوى** جوه الحاوية، و [[justify-items]] و [[align-items]] على الحاوية بيحاذوا **كل ابن** جوه خانته، و [[justify-self]] و [[align-self]] على **ابن واحد** بيغيّروا محاذاته هو بس.
-والمختصرات: [[place-content]] و [[place-items]] و [[place-self]] (القيمة الأولى align والتانية justify). وأهم حاجة: مش كل خاصية بتشتغل في كل layout: [[justify-items]] و [[justify-self]] ملهمش أثر في flex، و [[align-content]] ملهاش أثر في flex بسطر واحد.`,
-          example: R`<style>
-  .icons { display: grid; grid-template-columns: repeat(3, 70px); grid-auto-rows: 70px; gap: 8px; place-items: center; }
-  .icons div { width: 36px; height: 36px; border-radius: 50%; background: #0f766e; }
-  .icons .corner { place-self: start end; background: #b45309; }
-</style>
-<div class="icons">
-  <div></div><div class="corner"></div><div></div>
-</div>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`شبكة من تلات خانات، كل خانة 70 في 70، وبينهم 8px، و [[place-items: center]] بتحط كل دايرة في نص خانتها بالمحورين.`,
-            R`كل دايرة 36 في 36 خضرا. أصغر من الخانة، فالمحاذاة ليها معنى.`,
-            R`الدايرة اللي عليها [[.corner]]: [[place-self: start end]] = فوق ([[align-self: start]]) وفي آخر السطر ([[justify-self: end]]، يعني شمال الخانة في العربي)، وبرتقالي.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`الحاوية: [[<div>]] عليه [[.icons]] فبقى grid.`,
-            R`تلات دواير، والتانية بس مختلفة لأن عليها [[.corner]].`,
-            R`قفلة الحاوية: التلات دواير جواها كل واحدة في خانة.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-درس «flexbox» استخدم [[justify-content]] و [[align-items]]، ودرس «grid» حط العناصر في خانات. بس فيه ست خصايص تانية وتلات مختصرات، والناس بتلخبط بينهم لأن أسماءهم شبه بعض. الطريقة السهلة: كل اسم من حتتين، **محور** و **مين بيتحاذى**:
-
-| | **justify-** (المحور الأفقي / الأساسي) | **align-** (المحور الرأسي / التاني) |
-|---|---|---|
-| **-content** (على الحاوية: وزّع كل المحتوى) | [[justify-content]] | [[align-content]] |
-| **-items** (على الحاوية: كل ابن جوه خانته) | [[justify-items]] | [[align-items]] |
-| **-self** (على ابن واحد: هو بس) | [[justify-self]] | [[align-self]] |
-
-- في **grid**: justify = اتجاه السطر (inline، يمين وشمال)، و align = اتجاه الـ block (فوق وتحت).
-- في **flex**: justify = الاتجاه الأساسي (اللي العناصر ماشية فيه، أفقي في [[row]] ورأسي في [[column]])، و align = الاتجاه التاني.
-
----
-
-## ١. جدول: أنهي خاصية بتشتغل فين
-
-اتقاس: حاوية 300 × 150 فيها مربع 50 × 30، وكل خاصية بقيمة [[center]]. الرقم = المربع اتحرك قد إيه من مكانه الأصلي.
-
-| الخاصية | flex (سطر واحد) | grid (عمودين 100px وصف 50px) | block عادي | ابن [[absolute]] |
+| الحاجة | اخترنا | البدايل الحقيقية | ليه ده هنا | إمتى تختار البديل |
 |---|---|---|---|---|
-| [[justify-content: center]] | ✓ اتحرك 125 | ✓ الأعمدة كلها اتحركت 50 | ✗ ملوش أثر | |
-| [[align-content: center]] | ✗ مع [[nowrap]]. ✓ مع [[flex-wrap: wrap]] (60) | ✓ الصفوف كلها نزلت 50 | ✓ في Chrome 157: المحتوى نزل 60 | |
-| [[justify-items: center]] | ✗ ملوش أثر | ✓ كل ابن في نص خانته (25) | ✓ في Chrome 157 (125) | |
-| [[align-items: center]] | ✓ نزل 60 | ✓ في نص خانته (10) | | |
-| [[justify-self: center]] | ✗ ملوش أثر | ✓ الابن ده بس (25) | ✓ في Chrome 157 (125) | ✓ مع [[inset: 0]] (125) |
-| [[align-self: center]] | ✓ نزل 60 | ✓ (10) | | ✓ مع [[inset: 0]] (60) |
-
-اللي تحفظه من الجدول:
-
-- **في flex مفيش [[justify-items]] ولا [[justify-self]]**: العناصر جنب بعض في سطر، فمفيش «خانة» يتحاذى جواها أفقي. عشان تزق عنصر واحد لآخر السطر في flex استخدم [[margin-inline-start: auto]].
-- **[[align-content]] في flex محتاج أكتر من سطر** ([[flex-wrap: wrap]]). في سطر واحد استخدم [[align-items]].
-- **في grid كل الست بيشتغلوا**: الـ content بيحرّك الشبكة كلها جوه الحاوية (لما الأعمدة أصغر من الحاوية)، والـ items والـ self بيحرّكوا الابن جوه خانته.
-- **block عادي:** Chrome 157 بيطبّق [[align-content]] و [[justify-items]] و [[justify-self]] على أولاد الـ block (اتقاس)، بس ده جزء جديد من المواصفة والدعم فيه بيختلف بين المتصفحات (MDN بيقول «بعض أجزاء الخاصية دعمها مختلف»)، فلتوسيط صندوق أفقي في block فضل [[margin-inline: auto]]، ولتوسيطه رأسي استخدم grid أو flex.
+| الإطار | HTML و CSS و JS عادي | React أو Vue أو Svelte، أو Astro | ٣ صفحات ولوحة واحدة، والـ HTML بيتبعت جاهز (مفيش hydration)، وكل فكرة CSS بتبان من غير طبقة فوقها | لما الواجهة يبقى فيها state كتير بتتشارك بين أجزاء كتير، أو فريق محتاج components موحدة: React (تاب React) أو Astro للمواقع |
+| التنسيق | CSS عادي بـ tokens | Tailwind v4، أو CSS Modules | الدرس عن CSS نفسه: [[:has()]] و grid areas و [[@starting-style]] و [[@page]] باينين زي ما هم | Tailwind لما فريق بيبني صفحات كتير بسرعة ومتفقين على نظام (تاب Tailwind في نفس الصفحة) |
+| اللغتين | dictionary في JS بيبدّل النص | صفحتين ثابتين [[/]] و [[/en/]]، أو مكتبة i18n | ٣ صفحات، ومفيش build step، والتبديل لحظي من غير reload | لو SEO بالإنجليزي مهم: صفحتين ثابتين من نفس الـ dictionary (مشروع كبير في آخر الوحدة) |
+| الرسوم في الكروت | SVG بإيدك (polyline و circle) | Chart.js أو ECharts أو Recharts | sparkline و ring = سطرين، ومفيش ٢٠٠ كيلو مكتبة عشان خط | لما تحتاج محاور وtooltip وتكبير و ١٠ أنواع رسم: مكتبة |
+| النافذة | [[<dialog>]] و [[showModal()]] | مكتبة modal، أو div بـ role=dialog | المتصفح بيعمل الـ focus trap و Esc و [[inert]] للخلفية ورجوع الفوكس | لو لازم تدعم متصفح قديم جدًا، أو drawer بيتسحب بالإصبع |
+| الحالة | الرابط ([[URLSearchParams]] و [[history]]) | localStorage، أو state في الذاكرة | الرابط بيتبعت ويتحفظ في الـ bookmarks، وزرار Back بيرجّع الفلتر | الحاجات الشخصية اللي ملهاش معنى لحد تاني (الثيم، والـ sidebar مقفول): localStorage |
+| السيرفر | [[node:http]] بإيدك (٣٠ سطر) | [[npx serve]]، أو Vite، أو nginx | بنتحكم في التأخير والفشل لكل رابط، ومفيش dependencies | Vite لو هتحتاج HMR وbundling، و nginx في الإنتاج |
+| القياس | playwright-core بـ [[channel: "chrome"]] | Puppeteer، أو Lighthouse CI | بيستخدم Chrome المتسطّب (مبينزّلش ١٥٠ ميجا)، وفيه CDP للـ CPU throttling | Lighthouse CI لو عايز الدرجات والتقرير الكامل في كل PR |
+| الـ a11y الأوتوماتيك | axe-core 4.14 | Lighthouse a11y (هو axe جواه)، و Pa11y | نفس المحرك، وبيرجع JSON نقدر نطبعه ونفشل عليه | Pa11y لو عايز تفحص sitemap كامل من سطر أوامر |
+| الخط | خطوط النظام ([[system-ui]] و Segoe UI و Noto Sans Arabic) | خط من Google Fonts | صفر طلبات، وصفر وميض، والـ LCP مش مستني ملف خط | لما الهوية محتاجة خط معيّن: self-host بـ [[font-display: swap]] و [[preload]] (درس «CLS») |
+| النشر | GitHub Pages | Netlify أو Vercel أو Cloudflare Pages | مجاني، وفي نفس الـ repo، والموقع كله ملفات ثابتة | لو محتاج redirects أو headers أو فورم بيتبعت: Netlify أو Cloudflare |
 
 ---
 
-## ٢. [[place-items: center]]: أقصر توسيط
+## الهيكل
 
-~~~live 170 كارت فيه أيقونة في النص بالظبط
-<style>
-  .box { display: grid; place-items: center; width: 220px; height: 120px; background: #f0fdfa; border: 2px dashed #0f766e; }
-  .icon { width: 50px; height: 50px; border-radius: 12px; background: #0f766e; color: white; display: grid; place-items: center; font-size: 24px; }
-</style>
-<div class="box"><div class="icon">✓</div></div>
+~~~text
+pd-lab/
+├── package.json             "type": "module" (عشان Node يختبر ملفات .js)
+├── serve.mjs                السيرفر: 5501 للـ portfolio و 5502 للـ dashboard
+├── contrast.mjs             نسبة التباين لكل زوج ألوان
+├── og.html, make-og.mjs     صورة المشاركة 1200×630
+├── gen-data.mjs             أعضاء وحصص متخيلين (نفس الـ seed = نفس البيانات)
+├── check-portfolio.mjs      اللغة والفلتر والطباعة و axe والمقاسات و CLS/LCP
+├── check-dashboard.mjs      الرابط والترتيب والحالات والـ dialog والـ sidebar
+├── audit-dashboard.mjs      axe والمقاسات والكيبورد والـ sticky
+├── vitals.mjs               CLS و LCP على موبايل و CPU أبطأ ٤ مرات، ٣ مرات
+├── portfolio/
+│   ├── index.html, cv.html, work/tide-notes.html
+│   ├── css/tokens.css       كل الألوان والمقاسات
+│   ├── css/site.css, case.css, cv.css
+│   ├── js/boot.js           في الـ head: اللغة والثيم قبل الرسم
+│   ├── js/i18n.js           الـ dictionary وزرار اللغة
+│   ├── js/reveal.js, print.js
+│   └── img/og.png, icon.svg
+└── dashboard/
+    ├── index.html
+    ├── css/app.css          tokens والـ shell والجدول والجدول الأسبوعي والـ dialog
+    ├── data/members.json, classes.json, kpi.json
+    └── js/boot.js, app.js, shell.js, kpi.js, table.js, state.js, lib.js, schedule.js, ui.js
 ~~~
 
-**هتشوف إيه:** صندوق بإطار متقطع، وفي نصه بالظبط مربع أخضر بأركان مدورة، وفي نص المربع علامة ✓.
-
-[[place-items: center]] = [[align-items: center]] و [[justify-items: center]]. في grid ده بيحط الابن في نص الخانة (والخانة الوحيدة هنا = الصندوق كله). استخدمناه مرتين: الصندوق بيوسّط المربع، والمربع بيوسّط العلامة.
-
-### المختصرات التلاتة
-
-| المختصرة | = | اتقاس |
-|---|---|---|
-| [[place-content: center space-between]] | [[align-content: center]] و [[justify-content: space-between]] | ✓ |
-| [[place-items: end start]] | [[align-items: end]] و [[justify-items: start]] | ✓ |
-| [[place-self: center end]] | [[align-self: center]] و [[justify-self: end]] | ✓ |
-| [[place-items: center]] | الاتنين [[center]] | قيمة واحدة = للاتنين |
-
-**الترتيب: align الأول ثم justify** (رأسي ثم أفقي)، عكس ما ناس كتير بتتوقع.
+الفصل المهم: [[state.js]] و [[lib.js]] **مفيهمش ولا سطر بيلمس الصفحة** ([[document]] أو [[window]])، فبيتختبروا في Node وفي الـ CI. الباقي بيرسم وبيسمع للأحداث بس.
 
 ---
 
-## ٣. ابن واحد مختلف: [[align-self]] و [[justify-self]]
+## الألوان كـ tokens
 
-~~~live 150 صف أخبار: كلهم فوق، و«عاجل» في النص
-<style>
-  .row { display: flex; gap: 8px; align-items: flex-start; height: 100px; padding: 6px; background: #f5f5f4; }
-  .row > div { padding: 6px 10px; background: #e0f2fe; border-radius: 6px; }
-  .row .urgent { align-self: center; background: #fee2e2; font-weight: 700; }
-</style>
-<div class="row">
-  <div>محليات</div>
-  <div class="urgent">عاجل</div>
-  <div>رياضة<br>ونتايج</div>
-</div>
+كل لون له اسم بمعناه (مش بشكله): [[--ink]] للنص، و [[--muted]] للنص الثانوي، و [[--accent]] أو [[--brand]] للأزرار واللينكات، و [[--ok]] و [[--warn]] و [[--bad]] للحالات، وكل حالة ليها نسخة [[-soft]] للخلفية (badge أخضر فاتح ونص أخضر غامق). الحالات ثابتة ومش بتتغير مع البراند. والـ dark مش «اقلب الألوان»: الخلفية كحلي غامق مش أسود، و [[--brand]] بيبقى **أفتح** عشان يتقري عليها.
+
+| token | portfolio فاتح | portfolio داكن | dashboard فاتح | dashboard داكن |
+|---|---|---|---|---|
+| الخلفية | [[#f7f5f0]] ورقي دافي | [[#12161f]] | [[#f3f5f7]] رمادي بارد | [[#0f1419]] |
+| النص | [[#1c2230]] | [[#e9ecf2]] | [[#17202a]] | [[#e6ebf0]] |
+| الثانوي | [[#535b6b]] | [[#a6aebd]] | [[#56606b]] | [[#9ba6b2]] |
+| الأساسي | [[#0d6b63]] أخضر بحري | [[#5fcfc3]] | [[#1f6f8b]] أزرق بحر | [[#6cc3e0]] |
+
+---
+
+## الخطوة ٠: المعمل
+
+~~~javascript serve.mjs
+// static server for the lab: node serve.mjs  (portfolio on :5501, dashboard on :5502)
+import http from "node:http";
+import fs from "node:fs";
+import path from "node:path";
+
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".webp": "image/webp", ".ico": "image/x-icon" };
+
+function site(dir, port) {
+  const root = path.resolve(dir);
+  http.createServer((req, res) => {
+    const u = new URL(req.url, "http://x");
+    let p = decodeURIComponent(u.pathname);
+    if (p.endsWith("/")) p += "index.html";
+    const file = path.join(root, p);
+    const lab = p.startsWith("/data/");                      // ?delay and ?fail only touch the data, never the page itself
+    const delay = lab ? Number(u.searchParams.get("delay") || 0) : 0;
+    if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
+      res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+      return res.end("404 " + p);
+    }
+    setTimeout(() => {
+      if (lab && u.searchParams.get("fail") === "1") { res.writeHead(500, { "content-type": "application/json" }); return res.end('{"error":"db down"}'); }
+      res.writeHead(200, { "content-type": types[path.extname(file)] || "application/octet-stream", "cache-control": "no-store" });
+      fs.createReadStream(file).pipe(res);
+    }, delay);
+  }).listen(port, "127.0.0.1", () => console.log($__bt$__{dir} -> http://127.0.0.1:$__{port}/$__bt));
+}
+
+site("portfolio", 5501);
+site("dashboard", 5502);
 ~~~
 
-**هتشوف إيه:** صف رمادي، «محليات» و «رياضة ونتايج» لازقين فوق، و «عاجل» بالأحمر الفاتح نازل في نص الصف.
+- [[types]]: كل امتداد ونوعه. من غيره المتصفح ممكن يرفض الـ CSS (بيتطلب [[text/css]]) أو الـ module (بيتطلب نوع JavaScript).
+- [[p.endsWith("/")]]: [[/]] تبقى [[/index.html]]، زي أي سيرفر static.
+- [[!file.startsWith(root + path.sep)]]: يمنع أي طلب يطلع بره الفولدر (path traversal). [[new URL]] بيشيل [[/../]] لوحده، بس [[/..%2fserve.mjs]] بيعدّي منه و [[decodeURIComponent]] بيحوّله [[/../serve.mjs]]: من غير السطر ده رجّع كود السيرفر بكود 200، ومعاه 404 (اتجرّب). و [[path.sep]] عشان [[portfolio-old]] ميعدّيش على إنه جوه [[portfolio]].
+- [[lab]]: التأخير والفشل **للبيانات بس**. أول نسخة كانت بتطبّقهم على أي رابط، فـ [[/?fail=1]] رجّع الصفحة نفسها JSON بكود 500، والاختبار فضل مستني [[#rows]] ٣٠ ثانية ووقع بـ [[Timeout 30000ms exceeded]].
+- [[cache-control: no-store]]: كل ريفريش من جديد، فالقياسات متتأثرش بكاش.
 
-و [[align-self: auto]] (الافتراضي) معناها «خد قيمة [[align-items]] بتاعة أبوك».
-
----
-
-## ٤. [[justify-content]] و [[align-content]] في grid: الشبكة كلها
-
-لما الأعمدة مقاسها ثابت وأصغر من الحاوية، فيه مكان فاضي. الـ content بيقرر الشبكة كلها تقعد فين:
-
-~~~live 170 شبكة 2 × 2 في نص الحاوية، والمسافات بالـ space-between
-<style>
-  .board { display: grid; grid-template-columns: 80px 80px; grid-auto-rows: 40px; gap: 6px; width: 300px; height: 140px; background: #fffbeb; border: 1px solid #d6d3d1;
-           place-content: center space-between; }
-  .board div { background: #b45309; color: white; display: grid; place-items: center; }
-</style>
-<div class="board"><div>١</div><div>٢</div><div>٣</div><div>٤</div></div>
+~~~text اتشغّل فعلًا (Git Bash على ويندوز ١١، Node 24.22.1)
+$ node serve.mjs
+portfolio -> http://127.0.0.1:5501/
+dashboard -> http://127.0.0.1:5502/
+$ curl -s -o /dev/null -w "page %{http_code} " "http://127.0.0.1:5502/?fail=1"; curl -s -o /dev/null -w "data %{http_code}\n" "http://127.0.0.1:5502/data/members.json?fail=1"
+page 200 data 500
 ~~~
 
-**هتشوف إيه:** حاوية كريمي، والأربع مربعات البني في النص رأسي، والعمودين لازقين في الحرفين اليمين والشمال وفاضي بينهم.
+### فحص التباين
 
-~~~text القياس من Chrome
-align-content: center         الصفين نزلوا للنص
-justify-content: space-between  العمود الأول عند اليمين (start في العربي)، والتاني عند الشمال
+~~~javascript contrast.mjs (الأزواج المهمة بس)
+const lum = hex => { const c = hex.match(/\w\w/g).map(h => parseInt(h, 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+const pairs = { "portfolio light muted/paper": ["#535b6b", "#f7f5f0"], "portfolio light accent/paper": ["#0d6b63", "#f7f5f0"], "portfolio dark muted/paper": ["#a6aebd", "#12161f"], "portfolio dark accent/paper": ["#5fcfc3", "#12161f"],
+  "dash light muted/bg": ["#56606b", "#f3f5f7"], "dash light ok/ok-soft": ["#1a7f37", "#dcf3e3"], "dash light warn/warn-soft": ["#8a5a00", "#fbefd5"], "dash light bad/bad-soft": ["#b42318", "#fde4e1"], "dash light brand-ink/brand": ["#ffffff", "#1f6f8b"],
+  "dash dark muted/bg": ["#9ba6b2", "#0f1419"], "dash dark ok/ok-soft": ["#57d07a", "#12301c"], "dash dark warn/warn-soft": ["#f2c063", "#362a10"], "dash dark bad/bad-soft": ["#ff8a7a", "#3a1714"], "dash dark brand-ink/brand": ["#08202a", "#6cc3e0"] };
+for (const [k, [a, b]] of Object.entries(pairs)) { const r = ratio(a, b); console.log(k.padEnd(30), r.toFixed(2), r >= 4.5 ? "AA" : "FAIL"); }
 ~~~
 
+- [[lum]]: كل قناة على 255، وبعدين تحويل gamma (اللي تحت 0.04045 بيتقسم على 12.92، والباقي معادلة الأس 2.4)، وبعدين الوزن: العين بتشوف الأخضر أفتح بكتير من الأزرق، عشان كده 0.7152 مقابل 0.0722.
+- [[ratio]]: الأفتح على الأغمق بعد ما نزوّد 0.05 للاتنين. أقل نسبة 1 (نفس اللون) وأكبر نسبة 21 (أبيض على أسود).
+- WCAG AA: [[4.5]] للنص العادي، و [[3]] للنص الكبير (24px، أو 18.66px bold). الـ badge هنا 13.6px bold، يعني نص عادي، يعني 4.5.
+
+~~~text اتشغّل فعلًا: أول مرة
+portfolio light muted/paper    6.26 AA
+portfolio light accent/paper   5.84 AA
+portfolio dark muted/paper     8.11 AA
+portfolio dark accent/paper    9.65 AA
+dash light muted/bg            5.86 AA
+dash light ok/ok-soft          4.35 FAIL
+dash light warn/warn-soft      5.20 AA
+dash light bad/bad-soft        5.44 AA
+dash light brand-ink/brand     5.67 AA
+dash dark muted/bg             7.49 AA
+...
+~~~
+
+الأخضر [[#1a7f37]] على [[#dcf3e3]] (الـ badge «نشط») = 4.35، و axe كان قايل **صفر violations** على نفس الصفحة. جرّبت ٤ درجات أغمق:
+
+~~~text
+#1a7f37 on soft 4.35 on white 5.08
+#177232 on soft 5.15 on white 6.02
+#156c2f on soft 5.59 on white 6.53
+#146a2e on soft 5.74 on white 6.71
+~~~
+
+اخترت [[#156c2f]]: 5.59 على الخلفية الفاتحة و 6.53 على الأبيض (نفس اللون بيتكتب بيه سهم «+8.8%» على الكارت الأبيض). والتصليح سطر واحد في [[--ok]] لأن اللون token. ليه axe سكت؟ لأنه **مفحصش الكلمة أصلًا**، والسبب غريب ومتعلق بالعربي بالذات (الدرس الأخير).
+
 ---
 
-## ٥. القيم
+## خطة البناء
 
-| القيمة | المعنى |
-|---|---|
-| [[place-items: start]] و [[end]] | أول المحور وآخره. في الأفقي بيتبعوا [[dir]]: [[start]] = يمين في العربي |
-| [[align-items: flex-start]] و [[flex-end]] | زي start و end بس بيتبعوا اتجاه الـ flex ([[row-reverse]] بيقلبهم). للـ flex بس |
-| [[align-items: center]] | النص |
-| [[align-items: stretch]] | يتمط ويملا المكان (لو مالوش مقاس ثابت) |
-| [[align-items: normal]] | الافتراضي: في grid وفي flex معناه stretch. اتقاس: ابن grid من غير مقاس طلع 100 × 50 = الخانة كلها |
-| [[align-items: baseline]] | الكلام في كل العناصر على نفس الخط (لما الخطوط مختلفة الحجم) |
-| [[justify-content: space-between]] و [[space-around]] و [[space-evenly]] | توزيع المسافة: بين بس، أو حوالين كل واحد، أو بالتساوي حتى على الأطراف. للـ content بس |
-| [[justify-content: left]] و [[right]] | فيزيائي، مبيتقلبش. نادر |
-| [[align-items: safe center]] | لو العنصر أكبر من الحاوية، متوسّطوش لدرجة إنه يطلع برّه من الناحيتين ويتقص؛ خليه start |
-
----
-
-## ٦. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[justify-self: end]] على ابن flex | ملوش أثر. استخدم [[margin-inline-start: auto]] |
-| [[justify-items: center]] على حاوية flex | ملوش أثر. استخدم [[justify-content]] أو حوّلها grid |
-| [[align-content: center]] على flex بسطر واحد | ملوش أثر. استخدم [[align-items]] |
-| [[place-items: start center]] ومستني start أفقي | الأولى للـ align (رأسي) |
-| [[align-items: center]] على حاوية ملهاش طول | مفيش مكان زيادة، فمفيش فرق ظاهر |
-| [[flex-start]] في grid | شغالة كـ [[start]]، بس اكتب [[start]] في grid |
-
----
+| الخطوة | الدرس | بتضيف إيه | بتتأكد إزاي |
+|---|---|---|---|
+| ١ | بورتفوليو ١ | الهيكل و tokens واللغتين و [[dir]] | [[lang]] و [[dir]] بيتقلبوا، و CLS صفر بالإنجليزي |
+| ٢ | بورتفوليو ٢ | الكروت والفلتر بـ [[:has()]] والظهور بالسكرول | عدد الكروت لكل فلتر، والصفحة كاملة من غير JS |
+| ٣ | بورتفوليو ٣ | دراسة الحالة والـ CV و OG و View Transitions | صفحة PDF واحدة، و [[pagereveal]] فيه انتقال |
+| ٤ | داشبورد ١ | الـ shell والـ sidebar والكروت | عرض الـ sidebar، و [[inert]]، والـ drawer بره الشاشة |
+| ٥ | داشبورد ٢ | الجدول والحالة في الرابط والـ skeleton | الرابط بعد كل فعل، و Back، و CLS صفر |
+| ٦ | داشبورد ٣ | الجدول الأسبوعي و dialog و toasts و dark | الفوكس بيرجع، و Esc، والـ toast بيتقري |
+| ٧ | المراجعة | المقاسات و axe والكيبورد والأداء والنشر | ٦ عروض صفر overflow، و axe صفر، والمسارات تحت [[/repo/]] |
 
 ## الخلاصة
 
-- اسم من حتتين: justify أو align (المحور)، و content أو items أو self (مين).
-- grid كل الست بيشتغلوا. flex مفيهوش justify-items ولا justify-self، و align-content محتاج wrap.
-- [[place-content]] و [[place-items]] و [[place-self]]: align الأول ثم justify. و [[place-items: center]] أقصر توسيط.
-- ابن واحد مختلف: [[align-self]] (و [[justify-self]] في grid).`,
-          try: R`اعمل [[align.html]] فيه [[<div class="grid">]] بـ [[display: grid; grid-template-columns: repeat(3, 100px); grid-auto-rows: 80px; height: 300px]] وجواه ٦ مربعات صغيرة 40 × 40. جرّب [[place-items: center]]، وبعدين [[place-content: center]]، وبعدين [[place-self: end start]] على مربع واحد. وغيّر الحاوية لـ [[display: flex]] وشوف مين بطّل يشتغل.`,
-          sol: R`~~~live 320 align.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>المحاذاة</title>
-<style>
-  body { font-family: system-ui, Tahoma, sans-serif; padding: 12px; }
-  .grid { display: grid; grid-template-columns: repeat(3, 100px); grid-auto-rows: 80px; gap: 6px; height: 280px; background: #f5f5f4; border: 1px solid #d6d3d1;
-          place-items: center; place-content: center; }
-  .grid div { width: 40px; height: 40px; border-radius: 8px; background: #0f766e; }
-  .grid .odd { place-self: end start; background: #b45309; }
-</style>
-</head>
-<body>
-<div class="grid"><div></div><div></div><div class="odd"></div><div></div><div></div><div></div></div>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** صندوق رمادي في نصه شبكة 3 × 2 من مربعات خضرا كل واحد في نص خانته، ما عدا التالت البني: نازل تحت وعلى **يمين** خانته (start في العربي).
-
-ولو غيّرت [[display: grid]] لـ [[flex]]: المربعات بقوا جنب بعض في سطر، و [[place-items]] بقى بيعمل [[align-items: center]] بس (الـ justify اتجاهل)، و [[place-self]] بيعمل [[align-self: end]] بس.
-
-~~~text القياس من Chrome
-grid:  .odd   align-self: end   justify-self: start   ← تحت ويمين الخانة
-flex:  justify-items و justify-self ملهمش أثر
-~~~`,
-          deep: {
-            why: R`زمان التوسيط الرأسي كان أشهر مشكلة في CSS (حيل بـ [[table-cell]] و [[transform]]). مواصفة Box Alignment جمعت كل المحاذاة في نفس الأسماء لكل الـ layouts، فلو اتعلمتها مرة في grid بتعرفها في flex. والفرق بين content و items و self موجود لأن فيه تلات حاجات ممكن تتحاذى: الشبكة كلها جوه الحاوية، وكل ابن جوه خانته، وابن واحد مختلف.`,
-            how: R`المتصفح بيحسب مقاس الخانات (أو السطور في flex) الأول، وبعدين: لو مجموعهم أصغر من الحاوية بيوزّع الفاضي حسب [[*-content]]. بعد كده جوه كل خانة، لو الابن أصغر منها، بيحطه حسب [[*-self]]، و [[auto]] معناها «خد [[*-items]] من الأب». في flex مفيش خانات على المحور الأساسي (العناصر بتاخد مقاسها وتترص)، فـ [[justify-self]] مالوش معنى هناك.`,
-            when: R`[[place-items: center]] لأي أيقونة أو محتوى في نص صندوق. [[align-items: center]] في الـ navbar. [[align-self]] لعنصر واحد في صف (زرار تحت في كارت، أو شارة في النص). [[justify-self: end]] في grid لزرار في آخر الخانة. [[place-content: center]] لشبكة صغيرة في نص صفحة. [[align-items: baseline]] لعناوين وأرقام بخطوط مختلفة.`,
-            mistakes: R`[[justify-self]] و [[justify-items]] على flex. [[align-content]] على flex بسطر واحد. ترتيب قيمتين المختصرة (align الأول). محاذاة رأسية في حاوية ملهاش طول. [[flex-start]] في grid. نسيان إن [[start]] في العربي يمين.`
-          },
+- اكتب «لمين» و «في ٣٠ ثانية لازم يعمل إيه» قبل أي سطر.
+- كل أداة ليها سبب مكتوب وإمتى تسيبها لغيرها.
+- الألوان tokens بأسماء معناها، والتباين بيتحسب مش بيتشاف.
+- المعمل بيتحكم في البطء والفشل للبيانات بس، والدوال النقية بتتختبر من غير متصفح.`,
+          sol: R`[[node serve.mjs]] بيطبع السطرين بتوع البورتات، و [[?delay=2000]] بياخد حوالي ثانيتين قبل ما الـ JSON يظهر، و [[curl]] على [[?fail=1]] بيطبع [[500]]. و [[contrast.mjs]] على الأزواج اللي في الشرح بيطلّع الـ ١٤ سطر، وكلهم [[AA]] ما عدا [[dash light ok/ok-soft 4.35 FAIL]] قبل التصليح. لو جرّبت رمادي فاتح [[#999999]] على أبيض هتلاقيه [[2.85 FAIL]]: لون شائع جدًا للـ placeholder وهو مش مقروء.`,
           practice: [
-            { lvl: 'سريع', t: R`**ابني:** حرف «ع» (لوجو الجريدة) لازم يبقى في نص المربع بالظبط، بسطر واحد على المربع. (من قسم ٢)`, done: R`الحرف في النص بالظبط، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  .logo { width: 80px; height: 80px; background: #0f766e; color: white; font-size: 40px; font-weight: 700; border-radius: 16px; }
-</style>
-<div class="logo">ع</div>`, checks: [
-              { say: R`المربع [[display: grid]]`, q: ".logo", style: ["display", "grid"] },
-              { say: R`رأسي في النص: [[align-items: center]]`, q: ".logo", style: ["align-items", "center"] },
-              { say: R`وأفقي في النص: [[justify-items: center]]`, q: ".logo", style: ["justify-items", "center"] }
-            ] }, sol: R`~~~live 110 الحل
-<style>
-  .logo { display: grid; place-items: center; width: 80px; height: 80px; background: #0f766e; color: white; font-size: 40px; font-weight: 700; border-radius: 16px; }
-</style>
-<div class="logo">ع</div>
+            {
+              lvl: R`سريع`,
+              t: R`**اشرحها:** اكتب لزميل في ٣ سطور ليه [[state.js]] و [[lib.js]] ممنوع يكون فيهم [[document]] ولا [[window]]، وإيه اللي هيحصل للـ CI لو حد زوّد [[document.title]] جوه [[view()]].`,
+              done: R`الشرح بيقول إن الملفين بيتشغّلوا في Node (في [[ci-run]] والاختبارات) ومفيش [[document]] هناك، فالسطر ده هيوقع الاختبار بـ [[ReferenceError: document is not defined]]، والتصليح إن الرسم يفضل في [[table.js]].`,
+              sol: R`~~~text رسالة لزميل
+state.js و lib.js بيتشغّلوا في Node كمان (ci-run والاختبارات)، و Node مفيهوش document ولا window.
+لو حد زوّد document.title جوه view()، الاختبار هيقع بـ ReferenceError: document is not defined.
+الدالة تفضل نقية تاخد بيانات وترجّع بيانات، وأي لمس للصفحة مكانه table.js.
 ~~~
 
-**هتشوف إيه:** مربع أخضر بأركان مدورة، وحرف «ع» أبيض كبير في نصه بالظبط.
+الفصل ده هو اللي بيخلي الاختبار رخيص. [[view(rows, state)]] دالة عادية: تديها مصفوفة ترجّعلك مصفوفة، فتجرّب ١٠٠ حالة في ثانية من غير متصفح. أول ما تكتب فيها [[document]]، أي اختبار لازم يفتح Chrome، أو يقع.
 
-**ليه كده:** [[display: grid]] بيعمل خانة واحدة قد المربع، و [[place-items: center]] بيحط الحرف في نصها. **حل تاني صح:** [[display: flex; align-items: center; justify-content: center]]، بس الشروط هنا عن الـ grid.
+القاعدة العامة: المنطق في ملف نقي، و DOM في ملف رسم، والملف ده بينادي التاني مش العكس.
 
-~~~text القياس من Chrome
-display: grid   align-items: center   justify-items: center
+الغلطة الشائعة: تحط السطر جوه [[if (typeof document !== "undefined")]] عشان الاختبار يعدّي. ده بيعدّي الاختبار وبيبقي المنطق مخلوط، والصح تنقله لـ [[table.js]].
+
+~~~text الناتج (Node 24: نفس state.js بعد ما زوّدنا السطر)
+ReferenceError: document is not defined
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد عايز الكروت الصغيرة كل واحد في نص خانته، فكتب [[justify-items: center]] على حاوية **flex**، ومحصلش حاجة. صلّحها بتحويل الحاوية لـ grid بتلات أعمدة متساوية. (من قسم ١ والغلطات)`, done: R`كل كارت في نص عموده، وكل الشروط ✓.`, work: { h: 120, start: R`<style>
-  .stats { display: flex; justify-items: center; gap: 8px; background: #f5f5f4; padding: 8px; }
-  .stat { width: 80px; padding: 6px; background: #e0f2fe; text-align: center; border-radius: 6px; }
-</style>
-<div class="stats">
-  <div class="stat">١٢ خبر</div><div class="stat">٣ حوارات</div><div class="stat">٥ صور</div>
-</div>`, checks: [
-              { say: R`الحاوية بقت [[display: grid]]`, q: ".stats", style: ["display", "grid"] },
-              { say: R`الأعمدة متساوية بـ [[1fr]] (مثلًا [[repeat(3, 1fr)]])`, src: "1fr" },
-              { say: R`[[justify-items: center]] لسه موجودة وبقت شغالة`, q: ".stats", style: ["justify-items", "center"] }
-            ] }, sol: R`~~~live 90 بعد التصليح
-<style>
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; gap: 8px; background: #f5f5f4; padding: 8px; }
-  .stat { width: 80px; padding: 6px; background: #e0f2fe; text-align: center; border-radius: 6px; }
-</style>
-<div class="stats">
-  <div class="stat">١٢ خبر</div><div class="stat">٣ حوارات</div><div class="stat">٥ صور</div>
-</div>
+            {
+              lvl: R`سريع`,
+              t: R`**اقرا وتوقّع:** قبل ما تشغّل، توقّع نسبة التباين لـ [[#ffffff]] على [[#1f6f8b]] (زرار «عضو جديد») وهل هي أكتر من 4.5. وبعدين زوّد الزوج في [[contrast.mjs]] وشغّله.`,
+              done: R`كتبت توقّعك، والسكربت طلّع [[5.67 AA]]، وعرفت ليه الأبيض بينفع على الأزرق ده ومش بينفع على [[#6cc3e0]] (الأزرق الفاتح بتاع الداكن: لازم نص غامق [[#08202a]]، 8.41).`,
+              sol: R`~~~js contrast.mjs (جوه pairs)
+"dash button white/brand": ["#ffffff", "#1f6f8b"],
+"dash button white/light-blue": ["#ffffff", "#6cc3e0"],
+"dash dark button ink/light-blue": ["#08202a", "#6cc3e0"],
 ~~~
 
-وده اللي كان باين قبل التصليح:
+اللون الأبيض إضاءته 1، و [[#1f6f8b]] أزرق غامق إضاءته قليلة، فالنسبة بتطلع فوق 4.5. نفس الأبيض على الأزرق الفاتح [[#6cc3e0]]: الخلفية إضاءتها عالية، فالفرق بين الأبيض وبينها صغير، وبيقع. لازم نص غامق هناك، وعشان كده الوضع الداكن فيه [[#08202a]].
 
-~~~live 90 قبل
-<style>
-  .stats { display: flex; justify-items: center; gap: 8px; background: #f5f5f4; padding: 8px; }
-  .stat { width: 80px; padding: 6px; background: #e0f2fe; text-align: center; border-radius: 6px; }
-</style>
-<div class="stats">
-  <div class="stat">١٢ خبر</div><div class="stat">٣ حوارات</div><div class="stat">٥ صور</div>
-</div>
-~~~
+الفكرة: التباين مش عن اللون، عن فرق الإضاءة. أزرق وأزرق ممكن يبقوا عكس بعض.
 
-**هتشوف إيه:** في الحل التلات كروت الزرق متوزعين على عرض الشريط، كل واحد في نص تلته. في «قبل» التلاتة لازقين في بعض على اليمين.
+الغلطة الشائعة: تكتب «الأبيض ماشي على الأزرق» قاعدة عامة. قيس كل زوج.
 
-**ليه كده:** في flex مفيش خانات أفقي، فـ [[justify-items]] بيتجاهل. في grid كل عمود خانة، و [[justify-items: center]] بيحط الكارت في نصها. **حل تاني:** تفضل flex وتكتب [[justify-content: space-around]]، بس المسافات مش هتبقى أتلات بالظبط.
-
-~~~text القياس من Chrome
-grid-template-columns: 250.656px 250.672px 250.672px   (784 − 16 padding − 16 gap = 752 ÷ 3 تقريبًا)
+~~~text الناتج (node contrast.mjs، الأزواج الجديدة)
+dash button white/brand        5.67 AA
+dash button white/light-blue   2.00 FAIL
+dash dark button ink/light-blue 8.41 AA
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** في صف الأقسام كلهم لازقين فوق ([[align-items: flex-start]])، عايز زرار «اشترك» بس ينزل لتحت الصف. (من قسم ٣)`, done: R`«اشترك» تحت والباقي فوق، وكل الشروط ✓.`, work: { h: 140, start: R`<style>
-  .bar { display: flex; gap: 8px; align-items: flex-start; height: 80px; padding: 6px; background: #f5f5f4; }
-  .bar > * { padding: 6px 10px; border-radius: 6px; background: #e0f2fe; }
-  .sub { border: 0; background: #b45309; color: white; }
-</style>
-<div class="bar"><span>محليات</span><span>رياضة</span><button class="sub">اشترك</button></div>`, checks: [
-              { say: R`الزرار [[align-self: flex-end]] (أو [[end]])`, q: ".sub", style: ["align-self", "flex-end"] },
-              { say: R`الباقي لسه [[auto]] (يعني فوق مع الأب)`, q: ".bar span", style: ["align-self", "auto"] }
-            ] }, sol: R`~~~live 110 الحل
-<style>
-  .bar { display: flex; gap: 8px; align-items: flex-start; height: 80px; padding: 6px; background: #f5f5f4; }
-  .bar > * { padding: 6px 10px; border-radius: 6px; background: #e0f2fe; }
-  .sub { align-self: flex-end; border: 0; background: #b45309; color: white; }
-</style>
-<div class="bar"><span>محليات</span><span>رياضة</span><button class="sub">اشترك</button></div>
-~~~
+            {
+              lvl: R`تطبيق`,
+              t: R`**ابني:** زوّد على [[serve.mjs]] باراميتر [[?status=404]] بيرجّع أي كود تختاره للبيانات بس، وباراميتر [[?slow=random]] بيأخر بين ٢٠٠ و ٢٠٠٠ ملي ثانية عشوائي. واتأكد إن الصفحة نفسها مبتتأثرش.`,
+              done: R`[[curl -s -o /dev/null -w "%{http_code}" ".../data/members.json?status=404"]] بيطبع [[404]]، ونفس الباراميتر على [[/?status=404]] بيطبع [[200]]، و ٥ طلبات بـ [[slow=random]] أوقاتها مختلفة (اطبعها بـ [[-w "%{time_total}"]]).`,
+              sol: R`~~~js serve.mjs (جوه createServer)
+const lab = p.startsWith("/data/");
+let delay = lab ? Number(u.searchParams.get("delay") || 0) : 0;
+if (lab && u.searchParams.get("slow") === "random") delay = 200 + Math.floor(Math.random() * 1800);
+const forced = lab ? Number(u.searchParams.get("status")) : 0;
 
-**هتشوف إيه:** «محليات» و «رياضة» فوق على اليمين، وجنبهم زرار «اشترك» البني نازل في آخر الصف تحت.
-
-**ليه كده:** [[align-self]] على ابن واحد بيغلب [[align-items]] بتاع الأب. [[end]] بتدي نفس النتيجة هنا، بس الشرط مكتوب بـ [[flex-end]] لأننا في flex. **الغلطة الشائعة:** [[justify-self: end]]: ملوش أثر في flex.
-
-~~~text القياس من Chrome
-.sub   align-self: flex-end      span   align-self: auto
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شبكة صور 2 × 2 أعمدتها 100px جوه حاوية أعرض وأطول منها. حط الشبكة في النص رأسي، والعمودين على الحرفين وبينهم الفاضي، بسطر واحد. (من قسم ٤)`, done: R`الشبكة في النص رأسي والعمودين على الحرفين، وكل الشروط ✓.`, work: { h: 190, start: R`<style>
-  .gal { display: grid; grid-template-columns: 100px 100px; grid-auto-rows: 50px; gap: 6px; width: 320px; height: 160px; background: #fffbeb; }
-  .gal div { background: #0f766e; border-radius: 6px; }
-</style>
-<div class="gal"><div></div><div></div><div></div><div></div></div>`, checks: [
-              { say: R`رأسي: [[align-content: center]]`, q: ".gal", style: ["align-content", "center"] },
-              { say: R`أفقي: [[justify-content: space-between]]`, q: ".gal", style: ["justify-content", "space-between"] },
-              { say: R`بالمختصرة [[place-content]]`, src: "place-content" }
-            ] }, sol: R`~~~live 180 الحل
-<style>
-  .gal { display: grid; grid-template-columns: 100px 100px; grid-auto-rows: 50px; gap: 6px; width: 320px; height: 160px; background: #fffbeb; place-content: center space-between; }
-  .gal div { background: #0f766e; border-radius: 6px; }
-</style>
-<div class="gal"><div></div><div></div><div></div><div></div></div>
-~~~
-
-**هتشوف إيه:** صندوق كريمي، فيه أربع مستطيلات خضرا: عمود لازق في اليمين وعمود في الشمال، والاتنين في النص رأسي.
-
-**ليه كده:** الأعمدة 100 + 100 أصغر من 320، والصفين 50 + 50 أصغر من 160، فيه مكان فاضي يتوزّع، وده شغل الـ content. **الغلطة الشائعة:** [[place-items]]: بيحرّك كل مستطيل جوه خانته، والخانات نفسها مقاسها قد المستطيل، فمش هتشوف فرق.
-
-~~~text القياس من Chrome
-align-content: center   justify-content: space-between
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ابن grid عليه [[place-self: end start]] في صفحة [[dir="rtl"]]. هيروح أنهي ركن في خانته؟ ولو نفس الكلام على ابن flex؟ (من قسم ١ و ٢)`, done: R`كتبت الركن في grid واللي بيحصل في flex.`, sol: R`**الإجابة:** في grid: [[align-self: end]] = **تحت**، و [[justify-self: start]] = أول السطر = **يمين**. يعني الركن اليمين تحت. في flex: [[justify-self]] بيتجاهل، فبس [[align-self: end]]: تحت، ومكانه الأفقي زي ما هو في الصف.
-
-~~~live 120 الاتنين
-<style>
-  .g { display: grid; grid-template-columns: 120px; grid-template-rows: 80px; background: #f5f5f4; display: inline-grid; margin: 4px; }
-  .f { display: inline-flex; width: 120px; height: 80px; background: #f5f5f4; margin: 4px; }
-  .g div, .f div { width: 30px; height: 30px; background: #b45309; place-self: end start; }
-</style>
-<div class="g"><div></div></div>
-<div class="f"><div></div></div>
-~~~
-
-**هتشوف إيه:** صندوقين رمادي. في الأول المربع البني في الركن اليمين تحت. في التاني المربع تحت وعلى اليمين برضه، لأن أول الصف في flex عربي يمين أصلًا (مش بسبب الـ justify).` }
-          ]
-        },
-        {
-          cmd: "flex-flow و grid-template",
-          title: "تكتب الاتجاه واللف في flex بسطر واحد، وتغيّر ترتيب العرض بـ order وتعرف خطره، وترسم الـ grid كله بـ grid-template، وتحدد بداية ونهاية أي عنصر بـ grid-column-end و grid-row-end",
-          pre: ["css/flexbox", "css/grid-template-areas"],
-          ref: [
-            { t: "MDN: flex-flow", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-flow" },
-            { t: "MDN: order", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/order" },
-            { t: "MDN: flex-line-count", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-line-count" },
-            { t: "MDN: grid-template", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template" },
-            { t: "MDN: grid-column-end", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-column-end" },
-            { t: "MDN: grid-row-end", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-row-end" },
-            { t: "WCAG 2.2: 1.3.2 Meaningful Sequence", url: "https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence.html" }
-          ],
-          desc: R`[[flex-flow]] مختصرة لـ [[flex-direction]] و [[flex-wrap]]: [[flex-flow: row wrap]] = صف وبيلف. و [[order]] بيغيّر ترتيب **العرض** بس (الرقم الأصغر الأول)، والكيبورد وقارئ الشاشة بيمشوا على ترتيب الـ HTML.
-و [[grid-template]] مختصرة لـ [[grid-template-areas]] و [[grid-template-rows]] و [[grid-template-columns]] في سطر واحد: الصفوف بأساميها وطولها، وبعد [[/]] الأعمدة. و [[grid-column-start]] و [[grid-column-end]] (ومعاهم [[grid-row-start]] و [[grid-row-end]]) بيحددوا العنصر بيبدأ من أنهي خط وبيخلص عند أنهي خط، أو [[span 2]] = ياخد خانتين.`,
-          example: R`<style>
-  .page { display: grid; gap: 6px; height: 200px;
-          grid-template: "head head" 40px
-                         "side main" 1fr / 120px 1fr; }
-  .page > * { padding: 6px; background: #e0f2fe; }
-  .page header { grid-area: head; background: #0f766e; color: white; }
-</style>
-<div class="page">
-  <header>جريدة الحي</header>
-  <aside style="grid-area: side">الأقسام</aside>
-  <main style="grid-area: main">الأخبار</main>
-</div>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`الصفحة grid، بين الخانات 6px، وطولها 200px عشان نشوف الصف المرن.`,
-            R`[[grid-template]]: أول صف اسمه [[head]] في الخانتين وطوله 40px.`,
-            R`تاني صف: [[side]] و [[main]] وطوله [[1fr]] (الباقي من الطول). وبعد [[/]] الأعمدة: الأول 120px والتاني الباقي.`,
-            R`كل ابن له padding وخلفية زرقا فاتحة.`,
-            R`الهيدر بياخد منطقة [[head]] (الصف الأول كله)، وخلفيته خضرا.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`الحاوية: [[<div class="page">]] اللي عليها الـ grid.`,
-            R`الهيدر: بيروح فوق بالعرض كله.`,
-            R`الـ aside في منطقة [[side]]: العمود اللي عرضه 120 (يمين في العربي).`,
-            R`الـ main في منطقة [[main]]: الباقي.`,
-            R`قفلة الحاوية: التلات مناطق جواها.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-درس «flexbox» و «grid» و «grid-template-areas» علّموك الخصايص الطويلة. الدرس ده عن **المختصرات** اللي هتلاقيها في أي كود حقيقي، وعن [[order]] اللي شكله بريء وبيكسر الكيبورد، وعن طريقة تحديد مكان عنصر في الـ grid بالبداية والنهاية.
-
----
-
-## ١. [[flex-flow]]: الاتجاه واللف مع بعض
-
-| تكتب | = | اتقاس |
-|---|---|---|
-| [[flex-flow: row wrap]] | [[flex-direction: row]] و [[flex-wrap: wrap]] | |
-| [[flex-flow: column wrap]] | [[flex-direction: column]] و [[flex-wrap: wrap]] | ✓ القيمتين اتقروا كده |
-| [[flex-flow: wrap]] | الاتجاه الافتراضي ([[row]]) و [[wrap]] | قيمة واحدة كفاية، والتانية بترجع لافتراضيها |
-| [[flex-flow: row-reverse]] | من آخر السطر لأوله (شمال لليمين في العربي)، من غير لف | |
-
-~~~live 110 تاجات بتلف لسطر جديد
-<style>
-  .tags { display: flex; flex-flow: row wrap; gap: 6px; width: 260px; padding: 6px; background: #f5f5f4; }
-  .tags span { padding: 2px 10px; background: #fde68a; border-radius: 999px; }
-</style>
-<div class="tags"><span>محليات</span><span>رياضة</span><span>اقتصاد</span><span>تكنولوجيا</span><span>صحة</span><span>فن</span></div>
-~~~
-
-**هتشوف إيه:** صندوق رمادي ضيق، فيه كبسولات صفرا تبدأ من اليمين، ولما السطر يخلص بيكمّلوا في سطر تاني.
-
-### [[flex-wrap: balance]] و [[flex-line-count]]: جديد في Chrome بس
-
-> ميزة جديدة لسه مش في كل المتصفحات. يعني إيه «مش Baseline» و «ورا flag»، وإزاي تتأكد بنفسك قبل ما تستخدم أي ميزة: درس «Baseline و @supports».
-
-لما العناصر بتلف، آخر سطر ممكن يبقى فيه عنصر واحد يتيم. [[flex-wrap: balance]] بيوزّعهم على السطور بالتساوي، و [[flex-line-count]] بيقول أقل عدد سطور:
-
-~~~text القياس من Chrome 157 (٧ مربعات عرض كل واحد 60 في صف عرضه 400)
-flex-wrap: wrap                              السطور: 6 + 1
-flex-wrap: balance; flex-line-count: 3      السطور: 3 + 2 + 2
-CSS.supports("flex-line-count: 2")          true
-~~~
-
-الاتنين **تجريبيين** (MDN: Experimental، من مسودة Flexbox Level 2)، ومش في Firefox ولا Safari. استخدمهم بس كتحسين: لو مش مدعومين العناصر بتلف عادي. ولو عايز ده النهارده في كل المتصفحات: grid بعدد أعمدة.
-
----
-
-## ٢. [[order]]: ترتيب العرض مش ترتيب الصفحة
-
-[[order]] رقم (الافتراضي [[0]]): العناصر بتترص من الأصغر للأكبر، واللي ليهم نفس الرقم بترتيب الـ HTML. بيشتغل على أولاد flex و grid.
-
-~~~live 70 «٢» عليه order: -1 فطلع الأول
-<style>
-  .o { display: flex; gap: 10px; font-size: 20px; }
-  .o .first { order: -1; color: #b45309; font-weight: 700; }
-</style>
-<div class="o"><a href="#">١</a><a href="#" class="first">٢</a><a href="#">٣</a></div>
-~~~
-
-**هتشوف إيه:** من اليمين: «٢» البني، وبعده «١»، وبعده «٣».
-
-**الخطر:** اضغط Tab في الصفحة دي: الـ focus بيروح «١» الأول وبعدين «٢» وبعدين «٣»، يعني بيتنطط في الشاشة. وقارئ الشاشة بيقرا «١ ٢ ٣». ده بيخالف WCAG 1.3.2 (الترتيب ليه معنى) و 2.4.3 (ترتيب الـ focus). القاعدة: **[[order]] للزينة بس** (صورة الكارت تيجي فوق النص على الموبايل وجنبه على الكمبيوتر). لو الترتيب ليه معنى، غيّره في الـ HTML.
-
----
-
-## ٣. [[grid-template]]: الشبكة كلها في سطر
-
-[[grid-template]] بتكتب فيها المناطق والصفوف والأعمدة مرة واحدة:
-
-~~~css
-.page {
-  grid-template:
-    "head head" 40px     /* صف: أسماء الخانات، وبعدها طول الصف */
-    "side main" 1fr      /* صف تاني */
-    / 120px 1fr;         /* بعد الشرطة: الأعمدة */
+// جوه setTimeout، قبل سطر ?fail
+if (forced >= 400 && forced < 600) {
+  res.writeHead(forced, { "content-type": "application/json" });
+  return res.end(JSON.stringify({ error: "lab " + forced }));
 }
 ~~~
 
-~~~live 230 صفحة الجريدة بـ grid-template
-<style>
-  .page { display: grid; gap: 6px; height: 200px;
-          grid-template: "head head" 40px
-                         "side main" 1fr / 120px 1fr; }
-  .page > * { padding: 6px; background: #e0f2fe; }
-  .page header { grid-area: head; background: #0f766e; color: white; }
-</style>
-<div class="page">
-  <header>جريدة الحي</header>
-  <aside style="grid-area: side">الأقسام</aside>
-  <main style="grid-area: main">الأخبار</main>
-</div>
+~~~bash
+curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:5502/data/members.json?status=404"
+curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:5502/?status=404"
+for i in 1 2 3 4 5; do curl -s -o /dev/null -w "%{time_total}\n" "http://127.0.0.1:5502/data/members.json?slow=random"; done
 ~~~
 
-**هتشوف إيه:** شريط أخضر فوق بالعرض كله فيه «جريدة الحي»، وتحته عمود ضيق على اليمين «الأقسام» وجنبه الجزء الكبير «الأخبار» لحد تحت.
+بيبني على [[serve.mjs]] بتاع الخريطة. أهم حاجة [[lab]]: الباراميترات بتأثر على [[/data/]] بس، فالصفحة نفسها بتفتح عادي وتختبر إيه اللي بيحصل لما البيانات تقع. لو كل طلب اتأثر، مش هتشوف حالة الخطأ.
 
-~~~text القياس من Chrome (الحاوية 400 × 200)
-grid-template-areas:   "head head" "side main"
-grid-template-rows:    40px 160px         ← الـ 1fr بقى 160 (200 − 40)
-grid-template-columns: 120px 280px        ← الـ 1fr بقى 280 (400 − 120)
-~~~
+- [[forced >= 400 && forced < 600]] بيقبل أكواد الخطأ بس، فقيمة غريبة زي [[?status=abc]] بتعدّي من غير ضرر.
+- [[200 + Math.floor(Math.random() * 1800)]] بيدّي رقم من 200 لـ 1999.
+- [[-w "%{http_code}"]] في curl بيطبع الكود بس، و [[-o /dev/null]] بيرمي الجسم.
 
-الأشكال التانية:
+الغلطة الشائعة: تحط تأخير ثابت. التأخير العشوائي هو اللي بيكشف ترتيب الردود لما طلبين يتسابقوا.
 
-| تكتب | المعنى |
-|---|---|
-| [[grid-template: 60px 1fr / 200px 1fr]] | من غير مناطق: صفين (60 والباقي) / عمودين (200 والباقي) |
-| [[grid-template: none]] | يمسح الاتنين ويرجعهم للافتراضي |
-| [[grid: ...]] | المختصرة الأكبر: نفس [[grid-template]] وكمان [[grid-auto-flow]] و [[grid-auto-rows]]. نادرًا ما تحتاجها، وبتمسح أي قيم auto كاتبها قبلها |
-
-وفي media query بتغيّر سطر واحد بس عشان الموبايل يبقى عمود واحد (زي درس «grid-template-areas»).
-
----
-
-## ٤. [[grid-column-end]] و [[grid-row-end]]: البداية والنهاية
-
-خطوط الـ grid متمرقمة: 3 أعمدة = 4 خطوط، أولهم [[1]] عند البداية (يمين في العربي)، وآخرهم [[-1]]. [[grid-column]] اللي في درس «grid» مختصرة لاتنين:
-
-| الخاصية | المعنى |
-|---|---|
-| [[grid-column-start: 2]] | العنصر يبدأ من الخط 2 |
-| [[grid-column-end: 4]] | ويخلص عند الخط 4 (يعني عمودين) |
-| [[grid-column-end: span 2]] | ياخد عمودين من مكان ما بدأ |
-| [[grid-column-end: -1]] | يكمّل لآخر خط (آخر الشبكة) |
-| [[grid-row-start: 1]] و [[grid-row-end: span 2]] | نفس الكلام للصفوف: ياخد صفين |
-| [[grid-column: 2 / 4]] | = start 2 و end 4 |
-| [[grid-row: span 2]] | = end [[span 2]] و start [[auto]] |
-
-~~~live 290 صفحة أخبار: الخبر الرئيسي واخد عمودين وصفين
-<style>
-  .news { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 60px; gap: 6px; width: 420px; }
-  .news div { background: #e0f2fe; padding: 4px; }
-  .news .big { grid-column-start: 1; grid-column-end: span 2; grid-row-end: span 2; background: #0f766e; color: white; }
-  .news .wide { grid-column-start: 2; grid-column-end: -1; background: #fde68a; }
-</style>
-<div class="news"><div class="big">الخبر الرئيسي</div><div>١</div><div>٢</div><div class="wide">عريض</div><div>٣</div></div>
-~~~
-
-**هتشوف إيه:** مربع أخضر كبير على اليمين واخد عمودين وصفين. على شماله «١» و «٢» فوق بعض. تحت «عريض» الأصفر بادئ من العمود التاني لحد الشمال، وتحته «٣» في أول عمود.
-
-~~~text القياس من Chrome
-.big    278 × 126   ← عمودين (136 + 6 + 136) وصفين (60 + 6 + 60)
-.wide   start 2  end -1   ← عرضه 278، من العمود التاني للآخر
-~~~
-
----
-
-## ٥. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[order]] عشان زرار مهم يطلع الأول | بيطلع الأول بالعين، بس الكيبورد وقارئ الشاشة بيوصلوله آخر حاجة |
-| [[flex-flow: wrap row]] | شغالة برضه (الترتيب مش مهم هنا لأن القيم مختلفة النوع) |
-| ناسي [[/]] في [[grid-template]] | الأعمدة بتتقري كأنها صف وكل حاجة بتبوظ (السطر كله بيتجاهل لو مش صالح) |
-| [[grid-column-end: 3]] وفاكر إنها «3 أعمدة» | ده رقم **خط**. «تلات أعمدة» = [[span 3]] |
-| [[grid-column-end: -1]] في grid بأعمدة auto ([[grid-auto-columns]]) | [[-1]] = آخر خط **صريح** بس، مش آخر عمود اتعمل لوحده |
-| [[flex-line-count]] في موقع لازم يبقى شكله واحد في كل المتصفحات | تجريبي، Chrome بس |
-
----
-
-## الخلاصة
-
-- [[flex-flow]] = [[flex-direction]] + [[flex-wrap]].
-- [[order]] للعرض بس، والكيبورد ماشي بالـ HTML. متستخدموش لترتيب ليه معنى.
-- [[grid-template]] = المناطق والصفوف [[/]] الأعمدة.
-- [[grid-column-start]] و [[grid-column-end]] و [[grid-row-start]] و [[grid-row-end]] أرقام خطوط، و [[span]] عدد خانات، و [[-1]] آخر خط.
-- [[flex-wrap: balance]] و [[flex-line-count]] تجريبيين في Chrome بس.`,
-          try: R`اعمل [[template.html]] فيه صفحة بـ [[grid-template]]: هيدر فوق، و sidebar ومحتوى، وفوتر تحت. بعدين زوّد جوه المحتوى grid من 3 أعمدة، وخلّي أول خبر [[grid-column-end: span 2]] و [[grid-row-end: span 2]]. وجرّب [[order: -1]] على آخر خبر واضغط Tab.`,
-          sol: R`~~~live 330 template.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>grid-template</title>
-<style>
-  body { margin: 0; font-family: system-ui, Tahoma, sans-serif; }
-  .page { display: grid; min-height: 300px; gap: 8px; padding: 8px;
-          grid-template: "head head" auto "side main" 1fr "foot foot" auto / 140px 1fr; }
-  header { grid-area: head; padding: 8px; background: #0f766e; color: white; }
-  aside { grid-area: side; padding: 8px; background: #f0fdfa; }
-  main { grid-area: main; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 50px; gap: 6px; }
-  main a { padding: 6px; background: #e0f2fe; color: inherit; }
-  main .lead { grid-column-end: span 2; grid-row-end: span 2; background: #fde68a; }
-  footer { grid-area: foot; padding: 8px; background: #292524; color: white; }
-</style>
-</head>
-<body>
-<div class="page">
-  <header>جريدة الحي</header>
-  <aside>الأقسام</aside>
-  <main><a href="#" class="lead">الخبر الرئيسي</a><a href="#">خبر ١</a><a href="#">خبر ٢</a><a href="#">خبر ٣</a></main>
-  <footer>© ٢٠٢٦</footer>
-</div>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** هيدر أخضر فوق، وعلى اليمين عمود فاتح «الأقسام»، وفي الباقي شبكة أخبار: «الخبر الرئيسي» الأصفر واخد عمودين وصفين، وجنبه «خبر ١» و «خبر ٢» فوق بعض، وتحت «خبر ٣». وفي الآخر فوتر غامق.
-
-ولو حطيت [[order: -1]] على «خبر ٣»: هيطلع الأول بالعين (مكان الخبر الرئيسي)، بس Tab هيوصله رابع واحد.
-
-~~~text القياس من Chrome
-.page   grid-template-areas: "head head" "side main" "foot foot"   grid-template-columns: 140px …
-.lead   grid-column-end: span 2   grid-row-end: span 2
-~~~`,
-          deep: {
-            why: R`المختصرات بتخلي الـ layout كله في مكان واحد تقراه بعينك ([[grid-template]] بيبان زي رسمة الصفحة). و [[order]] اتعمل عشان تغيّر الشكل من غير ما تغيّر الـ HTML (الصورة فوق أو جنب)، بس اتساء استخدامه. والبداية والنهاية بالخطوط بتخليك تحط عنصر في أي مكان في الشبكة، حتى لو مش بالترتيب.`,
-            how: R`[[flex-flow]] بيتفك لخاصيتين وقت القراية، وأي واحدة مش مكتوبة بترجع للافتراضي. [[grid-template]] بيتفك لتلاتة: كل string صف في [[grid-template-areas]]، والطول اللي بعده في [[grid-template-rows]]، واللي بعد [[/]] في [[grid-template-columns]]. والـ grid بيحط العناصر اللي ليها start و end الأول، وبعدين بيملا الباقي بالترتيب (auto-placement). و [[order]] بيغيّر ترتيب الرص بس، والـ DOM زي ما هو، فالـ Tab وقارئ الشاشة ماشيين على الـ DOM.`,
-            when: R`[[flex-flow: row wrap]] لتاجات وكروت بتلف. [[grid-template]] لهيكل الصفحة (هيدر وسايدبار ومحتوى وفوتر) ولكارت فيه مناطق. [[grid-column-end: span 2]] لخبر مميز أو صورة عريضة. [[grid-row-end: span 2]] لصورة طويلة. [[order]] لتبديل صورة ونص حسب المقاس بس.`,
-            mistakes: R`[[order]] لترتيب ليه معنى. نسيان [[/]] في [[grid-template]]. فاكر رقم [[grid-column-end]] عدد أعمدة. [[-1]] مع أعمدة ضمنية. [[grid]] المختصرة الكبيرة بتمسح قيم auto. [[flex-line-count]] كأنه شغال في كل حتة.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**refactor:** اكتب السطرين دول في سطر واحد بالمختصرة، من غير ما الشكل يتغيّر. (من قسم ١)`, done: R`الشكل زي ما هو، وكل الشروط ✓.`, work: { h: 120, start: R`<style>
-  .tags { display: flex; flex-direction: row; flex-wrap: wrap; gap: 6px; width: 240px; }
-  .tags span { padding: 2px 10px; background: #fde68a; border-radius: 999px; }
-</style>
-<div class="tags"><span>محليات</span><span>رياضة</span><span>اقتصاد</span><span>تكنولوجيا</span><span>صحة</span></div>`, checks: [
-              { say: R`مكتوب [[flex-flow]]`, src: "flex-flow" },
-              { say: R`مفيش [[flex-wrap]] لوحدها في الكود`, nosrc: "flex-wrap" },
-              { say: R`النتيجة: [[flex-wrap: wrap]]`, q: ".tags", style: ["flex-wrap", "wrap"] },
-              { say: R`و [[flex-direction: row]]`, q: ".tags", style: ["flex-direction", "row"] }
-            ] }, sol: R`~~~live 90 الحل
-<style>
-  .tags { display: flex; flex-flow: row wrap; gap: 6px; width: 240px; }
-  .tags span { padding: 2px 10px; background: #fde68a; border-radius: 999px; }
-</style>
-<div class="tags"><span>محليات</span><span>رياضة</span><span>اقتصاد</span><span>تكنولوجيا</span><span>صحة</span></div>
-~~~
-
-**هتشوف إيه:** كبسولات صفرا من اليمين، وبتلف لسطر تاني.
-
-**ليه كده:** [[flex-flow: row wrap]] = الاتنين. و [[flex-flow: wrap]] بس برضه صح لأن [[row]] الافتراضي. **الغلطة الشائعة:** تسيب [[flex-direction: row]] وتكتب [[flex-flow: wrap]] تحتها: شغالة، بس دلوقتي الاتجاه مكتوب مرتين.
-
-~~~text القياس من Chrome
-flex-direction: row   flex-wrap: wrap
+~~~text الناتج (curl على ويندوز)
+data?status=404  ← 404
+/?status=404     ← 200
+5 طلبات slow=random: 1.075798 0.870632 1.090576 0.540761 0.878370
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة المقال: صف فوق اسمه [[head]] بالعرض كله طوله 50px، وتحته [[side]] (عمود 150px) و [[main]] (الباقي). اكتبها بـ [[grid-template]] بس. (من قسم ٣)`, done: R`الهيدر فوق والعمودين تحته، وكل الشروط ✓.`, work: { h: 200, start: R`<style>
-  .page { display: grid; gap: 6px; height: 180px; }
-  .page > * { padding: 6px; background: #e0f2fe; }
-</style>
-<div class="page">
-  <header style="grid-area: head">جريدة الحي</header>
-  <aside style="grid-area: side">الأقسام</aside>
-  <main style="grid-area: main">المقال</main>
-</div>`, checks: [
-              { say: R`المناطق: [[head head]] ثم [[side main]]`, q: ".page", style: ["grid-template-areas", "\"head head\" \"side main\""] },
-              { say: R`أول صف 50px`, src: "50px" },
-              { say: R`أول عمود 150px`, q: "aside", style: ["width", "138px"] },
-              { say: R`مكتوبة بـ [[grid-template]]`, src: "grid-template:" }
-            ] }, sol: R`~~~live 200 الحل
-<style>
-  .page { display: grid; gap: 6px; height: 180px;
-          grid-template: "head head" 50px "side main" 1fr / 150px 1fr; }
-  .page > * { padding: 6px; background: #e0f2fe; }
-</style>
-<div class="page">
-  <header style="grid-area: head">جريدة الحي</header>
-  <aside style="grid-area: side">الأقسام</aside>
-  <main style="grid-area: main">المقال</main>
-</div>
+            {
+              lvl: R`تطبيق`,
+              t: R`**صلّح الكود البايظ:** النسخة دي من السيرفر بتسيب أي حد يقرا ملفات بره الفولدر: [[const file = path.join(root, p); if (!fs.existsSync(file)) ...]]. ابعت طلب يثبت المشكلة، وبعدين صلّحها.`,
+              done: R`عرفت إن [[/../serve.mjs]] بيرجع [[404]] حتى من غير الحماية (لأن [[new URL]] بيشيل [[..]] من الـ pathname)، بس [[curl -s --path-as-is -o /dev/null -w "%{http_code}" "http://127.0.0.1:5501/..%2fserve.mjs"]] رجّع [[200]] وكود السيرفر نفسه: [[%2f]] مش بيتحسب فاصل في الـ URL، و [[decodeURIComponent]] بيحوّله [[/]] بعدها. وبعد ما رجّعت [[file.startsWith(root + path.sep)]] بقى [[404]] (اتجرّب في المعمل: 200 قبل و 404 بعد).`,
+              sol: R`~~~bash الطلب اللي بيثبت المشكلة
+curl -s --path-as-is -o /dev/null -w "%{http_code}" "http://127.0.0.1:5501/..%2fserve.mjs"
 ~~~
 
-**هتشوف إيه:** شريط أزرق فاتح فوق «جريدة الحي»، وتحته عمود على اليمين «الأقسام» وجنبه «المقال» واخد الباقي.
+~~~js التصليح (زي serve.mjs في الدرس)
+const root = path.resolve(dir);
+const file = path.join(root, p);
+if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
+  res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+  return res.end("404 " + p);
+}
+~~~
 
-**ليه كده:** كل string صف، والرقم بعده طوله، وبعد [[/]] الأعمدة. **الغلطة الشائعة:** نسيان [[/]]: المتصفح بيرفض القيمة كلها.
+ده path traversal: السيرفر بيضم المسار اللي جاي من اليوزر على الفولدر، فـ [[..]] بيطلّعه برا.
 
-~~~text القياس من Chrome
-grid-template-areas: "head head" "side main"   grid-template-rows: 50px 124px   grid-template-columns: 150px …
-aside width: 138px (150 − 12 padding)
+ليه [[/../serve.mjs]] مش كفاية لإثباته؟ لأن [[new URL]] بينضّف الـ pathname قبل ما كودك يشوفه، فـ [[..]] بتختفي. لكن [[%2f]] مش فاصل في الـ URL، فـ [[new URL]] بيسيبه زي ما هو، وبعدين [[decodeURIComponent]] في كودك بيفكه لـ [[/]]، و [[path.join]] يطلع برا.
+
+[[--path-as-is]] بيخلي curl يبعت المسار زي ما هو.
+
+الحماية: [[path.join]] الأول، وبعدين اتأكد إن الناتج لسه جوه [[root]]. و [[root + path.sep]] مش [[root]] لوحده، عشان فولدر اسمه [[portfolio-secret]] يبدأ بنفس النص.
+
+الغلطة الشائعة: تمسح [[..]] من النص بـ [[replace]]. فيه أشكال كتير، وأي واحد ينسى يعدّي.
+
+~~~text الناتج (Node 24 على ويندوز)
+من غير الحماية: 200، وأول سطر رجع: // static server for the lab: node serve.mjs  (por
+مع الحماية:     404
+/../serve.mjs من غير الحماية: 404
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** في شبكة الأخبار (3 أعمدة)، خلّي «الخبر الرئيسي» ياخد عمودين وصفين بـ [[grid-column-end]] و [[grid-row-end]]. (من قسم ٤)`, done: R`الخبر الرئيسي مربع كبير، وكل الشروط ✓.`, work: { h: 230, start: R`<style>
-  .news { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 60px; gap: 6px; }
-  .news div { padding: 4px; background: #e0f2fe; }
-  .news .lead { background: #0f766e; color: white; }
-</style>
-<div class="news"><div class="lead">الخبر الرئيسي</div><div>١</div><div>٢</div><div>٣</div><div>٤</div></div>`, checks: [
-              { say: R`[[grid-column-end: span 2]]`, q: ".lead", style: ["grid-column-end", "span 2"] },
-              { say: R`[[grid-row-end: span 2]]`, q: ".lead", style: ["grid-row-end", "span 2"] }
-            ] }, sol: R`~~~live 210 الحل
-<style>
-  .news { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 60px; gap: 6px; }
-  .news div { padding: 4px; background: #e0f2fe; }
-  .news .lead { grid-column-end: span 2; grid-row-end: span 2; background: #0f766e; color: white; }
-</style>
-<div class="news"><div class="lead">الخبر الرئيسي</div><div>١</div><div>٢</div><div>٣</div><div>٤</div></div>
-~~~
-
-**هتشوف إيه:** مستطيل أخضر كبير على اليمين واخد تلتين العرض وصفين، وجنبه «١» و «٢»، وتحت «٣» و «٤».
-
-**ليه [[span]]:** [[grid-column-end: 3]] كانت هتشتغل هنا برضه لأن الخبر بادئ من الخط 1، بس [[span 2]] بتفضل صح لو الخبر اتنقل لأي مكان. **ممكن تكتبها:** [[grid-column: span 2; grid-row: span 2]].
-
-~~~text القياس من Chrome
-.lead   grid-column-end: span 2   grid-row-end: span 2
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شريط «عاجل» الأصفر لازم يبدأ من العمود التاني ويكمّل لآخر الشبكة مهما كان عدد الأعمدة، بالخط [[-1]]. (من قسم ٤)`, done: R`الشريط من العمود التاني للآخر، وكل الشروط ✓.`, work: { h: 160, start: R`<style>
-  .news { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 40px; gap: 6px; }
-  .news div { padding: 4px; background: #e0f2fe; }
-  .news .alert { background: #fde68a; }
-</style>
-<div class="news"><div>١</div><div class="alert">عاجل: قطع المياه بكرة</div><div>٢</div></div>`, checks: [
-              { say: R`يبدأ من الخط 2`, q: ".alert", style: ["grid-column-start", "2"] },
-              { say: R`ويخلص عند [[-1]]`, q: ".alert", style: ["grid-column-end", "-1"] }
-            ] }, sol: R`~~~live 120 الحل
-<style>
-  .news { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 40px; gap: 6px; }
-  .news div { padding: 4px; background: #e0f2fe; }
-  .news .alert { grid-column-start: 2; grid-column-end: -1; background: #fde68a; }
-</style>
-<div class="news"><div>١</div><div class="alert">عاجل: قطع المياه بكرة</div><div>٢</div></div>
-~~~
-
-**هتشوف إيه:** «١» في أول خانة على اليمين، وجنبه الشريط الأصفر لحد آخر الشمال، و «٢» نزل الصف اللي بعده.
-
-**ليه [[-1]]:** لو بعدين بقت الشبكة 5 أو 6 أعمدة، الشريط لسه بيكمّل للآخر. **ممكن تكتبها:** [[grid-column: 2 / -1]].
-
-~~~text القياس من Chrome
-.alert   grid-column-start: 2   grid-column-end: -1
-~~~` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميلك حط [[order: -1]] على لينك «اشترك» في الـ navbar عشان يطلع أول واحد. الشكل بقى زي ما هو عايز. اكتبله ٣ سطور: ليه ده مشكلة، ومين بيتضرر، والحل. (من قسم ٢)`, done: R`كتبت الشرح والحل.`, sol: R`**إجابة نموذجية:**
-
-١. [[order]] بيغيّر مكان «اشترك» على الشاشة بس؛ في الـ HTML لسه آخر لينك.
-٢. اللي بيستخدم الكيبورد بيضغط Tab فالـ focus بيروح للينكات بترتيب الـ HTML: يبدأ من اللينك التاني على الشاشة، وبعدين بيتنطط لأول واحد في الآخر. وقارئ الشاشة بيقول «اشترك» آخر واحد. ده بيخالف WCAG 1.3.2 و 2.4.3.
-٣. الحل: انقل [[<a>]] بتاع «اشترك» لأول الـ [[<nav>]] في الـ HTML نفسه، وامسح [[order]].
-
-~~~live 70 الصح: الترتيب في الـ HTML
-<style>
-  nav { display: flex; gap: 12px; }
-  nav .cta { font-weight: 700; color: #b45309; }
-</style>
-<nav><a href="#" class="cta">اشترك</a><a href="#">محليات</a><a href="#">رياضة</a></nav>
-~~~
-
-**هتشوف إيه:** «اشترك» البني التقيل أول واحد على اليمين، وبعده اللينكين، و Tab ماشي بنفس الترتيب.` }
-          ]
-        },
-        {
-          cmd: "columns",
-          title: "تقسم مقال لأعمدة زي الجرايد بـ columns، بخط بين الأعمدة، وعنوان بيعدّي فوقهم كلهم، وكروت متتقسمش نصين",
-          pre: ["css/normal flow و margin collapsing"],
-          ref: [
-            { t: "MDN: CSS multi-column layout", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Multicol_layout" },
-            { t: "MDN Learn: Multiple-column layout", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Multiple-column_Layout" },
-            { t: "MDN: columns", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/columns" },
-            { t: "MDN: column-count", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/column-count" },
-            { t: "MDN: column-width", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/column-width" },
-            { t: "MDN: column-rule", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/column-rule" },
-            { t: "MDN: column-span", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/column-span" },
-            { t: "MDN: column-fill", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/column-fill" },
-            { t: "MDN: break-inside", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/break-inside" },
-            { t: "MDN: break-before", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/break-before" },
-            { t: "CSS Multi-column Layout Level 1", url: "https://www.w3.org/TR/css-multicol-1/" }
-          ],
-          desc: R`[[columns]] بيقسم **محتوى صندوق واحد** على أعمدة زي الجرايد: الكلام بيملا العمود الأول، ولما يخلص بيكمّل في التاني. [[column-count: 3]] = تلات أعمدة بالظبط، و [[column-width: 200px]] = «كل عمود حوالي 200px، وخلّي عددهم على قد المكان» (أحسن للموبايل)، و [[columns]] مختصرة للاتنين.
-و [[column-gap]] المسافة، و [[column-rule]] خط بين الأعمدة (زي border: [[column-rule-width]] و [[column-rule-style]] و [[column-rule-color]])، و [[column-span: all]] عنوان بيعدّي فوق الأعمدة كلها، و [[column-fill]] بيوزّع بالتساوي ولا يملا بالترتيب، و [[break-inside: avoid]] بيمنع كارت أو صورة يتقسموا بين عمودين، و [[break-before: column]] يبدأ عمود جديد.`,
-          example: R`<style>
-  .story { columns: 160px; column-gap: 24px; column-rule: 1px solid #d6d3d1; line-height: 1.6; }
-  .story h3 { column-span: all; margin: 0 0 6px; border-bottom: 3px double #292524; }
-  .story p { margin: 0 0 8px; }
-  .story figure { break-inside: avoid; margin: 0 0 8px; height: 60px; background: #0f766e; }
-</style>
-<article class="story">
-  <h3>المكتبة الجديدة بتفتح أبوابها</h3>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة، والدخول ببلاش طول الشهر ده.</p>
-  <figure></figure>
-  <p>وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي، وإنه هيعمل يوم في الأسبوع للقراية بصوت عالي.</p>
-  <p>والمكتبة مفتوحة من عشرة الصبح لعشرة بالليل، ما عدا يوم الجمعة بتفتح بعد الصلاة.</p>
-</article>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`المقال: أعمدة عرض كل واحد حوالي 160px وعددهم على قد المكان، وبينهم 24px وخط رمادي رفيع، والمسافة بين السطور مرة ونص.`,
-            R`العنوان: بيعدّي فوق كل الأعمدة ([[column-span: all]])، وتحته خط مزدوج زي الجرايد.`,
-            R`الفقرات: من غير margin فوق، و 8px تحت.`,
-            R`مكان الصورة (مربع أخضر): مبيتقسمش بين عمودين ([[break-inside: avoid]]).`,
-            R`قفلة بلوك الـ CSS.`,
-            R`المقال نفسه، و [[columns]] بيقسم كل اللي جواه.`,
-            R`العنوان فوق الأعمدة كلها.`,
-            R`أول فقرة: بتبدأ في العمود اللي على اليمين (أول عمود في العربي).`,
-            R`الصورة: لو مكانها جه على آخر عمود، بتنزل كلها للعمود اللي بعده بدل ما تتقطع.`,
-            R`تاني فقرة: بتكمّل بعد الصورة.`,
-            R`آخر فقرة: بتقفل آخر عمود، والأعمدة متوزعة بحيث تبقى قد بعض في الطول.`,
-            R`قفلة المقال: كل اللي جواه اتقسم على الأعمدة.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-flex و grid بيرصّوا **عناصر** جنب بعض. الـ multi-column حاجة تانية: صندوق واحد فيه كلام طويل، والمتصفح **بيقطّعه** على أعمدة زي صفحة جرنال، والكلام بيسيل من عمود للتاني. مفيد لقوايم طويلة (روابط الفوتر، وأسامي، وتاجات)، ولكروت متفاوتة الطول (masonry بسيط). وللمقالات على شاشة عريضة بس، لأن القارئ بيضطر يطلع وينزل.
-
----
-
-## ١. [[column-count]] و [[column-width]] و [[columns]]
-
-~~~live 220 صفحة الجرنال: عنوان فوق، وأعمدة بخط بينها
-<style>
-  .story { columns: 160px; column-gap: 24px; column-rule: 1px solid #d6d3d1; line-height: 1.6; }
-  .story h3 { column-span: all; margin: 0 0 6px; border-bottom: 3px double #292524; }
-  .story p { margin: 0 0 8px; }
-  .story figure { break-inside: avoid; margin: 0 0 8px; height: 60px; background: #0f766e; }
-</style>
-<article class="story">
-  <h3>المكتبة الجديدة بتفتح أبوابها</h3>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة، والدخول ببلاش طول الشهر ده.</p>
-  <figure></figure>
-  <p>وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي، وإنه هيعمل يوم في الأسبوع للقراية بصوت عالي.</p>
-  <p>والمكتبة مفتوحة من عشرة الصبح لعشرة بالليل، ما عدا يوم الجمعة بتفتح بعد الصلاة.</p>
-</article>
-~~~
-
-**هتشوف إيه:** عنوان عريض وتحته خط مزدوج بعرض الصفحة كلها. تحته الكلام مقسوم على كذا عمود بينهم خطوط رمادي رفيعة، والكلام بيبدأ من العمود اللي على **اليمين**. المربع الأخضر كامل في عمود واحد. ودوس «موبايل»: بقى عمود واحد بس.
-
-| الخاصية | المعنى | اتقاس |
-|---|---|---|
-| [[column-count: 3]] | تلات أعمدة بالظبط مهما كان العرض | على 360 كمان 3 (ضيقة جدًا) |
-| [[column-width: 200px]] | «أقل عرض للعمود حوالي 200»، والعدد على قد المكان، والعرض الفعلي بيتمد | في 769px طلعوا 3 أعمدة كل واحد 245.66px |
-| [[columns: 3]] | مختصرة: رقم من غير وحدة = count | count 3، width auto |
-| [[columns: 200px]] | مختصرة: طول = width | count auto، width 200px |
-| [[columns: 200px 3]] | الاتنين: على قد المكان بس مش أكتر من 3 | |
-
-[[column-width]] هو اللي يخلّي الأعمدة responsive لوحدها من غير media query: على الموبايل عمود واحد، وعلى الكمبيوتر تلاتة.
-
-**في العربي الأعمدة بتبدأ من اليمين:** اتقاس أول فقرة right = 792 (حافة الصفحة اليمين).
-
----
-
-## ٢. المسافة والخط: [[column-gap]] و [[column-rule]]
-
-- [[column-gap]] هي نفس [[gap]] اللي في flex و grid (درس «flexbox»). الافتراضي [[normal]] = [[1em]] في الأعمدة (16px).
-- [[column-rule]] خط في نص المسافة، شبه [[border]] بالظبط، ومبياخدش مكان (لو أعرض من الـ gap بيركب على الكلام):
-
-| الخاصية | القيمة | اتقاس |
-|---|---|---|
-| [[column-rule: 2px dashed #b45309]] | المختصرة: التخانة والشكل واللون | |
-| [[column-rule-width: 2px]] | التخانة | 2px |
-| [[column-rule-style: dashed]] | الشكل: [[solid]] و [[dashed]] و [[dotted]] و [[double]]…، والافتراضي [[none]] (مفيش خط) | dashed |
-| [[column-rule-color: #b45309]] | اللون، والافتراضي [[currentColor]] | rgb(180, 83, 9) |
-
----
-
-## ٣. [[column-span: all]]: عنوان فوق الأعمدة
-
-عنصر جوه الأعمدة عليه [[column-span: all]] بيقطع الأعمدة: اللي قبله بيتقسم فوقه، وهو بيعدّي بالعرض كله، واللي بعده بيبدأ أعمدة جديدة تحته (اتقاس: العنوان عرضه 769 = الحاوية كلها). القيم: [[none]] (الافتراضي) و [[all]] بس.
-
----
-
-## ٤. [[column-fill]]: بالتساوي ولا بالترتيب
-
-| القيمة | بيعمل إيه | اتقاس (عمودين، ٣ فقرات قصيرة) |
-|---|---|---|
-| [[column-fill: balance]] | الافتراضي: بيوزّع الكلام بحيث الأعمدة تبقى قد بعض في الطول | الفقرات اتقسمت على العمودين |
-| [[column-fill: auto]] | بيملا العمود الأول لآخره وبعدين التاني. معمول للحاوية اللي ليها [[height]]: من غيره العمود طوله مفتوح، فكل الكلام بيقعد في العمود الأول | مع [[height: 220px]] أو من غير طول: الأربع فقرات في العمود الأول (اتقاس)، والتاني فاضي |
-
-[[auto]] مفيد لما الحاوية طولها ثابت (شاشة عرض، أو صفحة مطبوعة) وعايز الكلام يملا بالترتيب.
-
----
-
-## ٥. التقطيع: [[break-inside]] و [[break-before]] و [[break-after]]
-
-الكلام بيتقطع في أي حتة، وده كويس للفقرات. بس كارت أو صورة أو سؤال وإجابته لو اتقسموا نصين بيبقى شكلهم وحش:
-
-~~~live 210 كروت في 3 أعمدة: من غير ومع break-inside: avoid
-<style>
-  .cols { column-count: 3; column-gap: 10px; margin-bottom: 14px; }
-  .card { height: 70px; margin: 0 0 8px; padding: 4px; background: #e0f2fe; border: 2px solid #0369a1; }
-  .keep .card { break-inside: avoid; background: #dcfce7; border-color: #15803d; }
-</style>
-<div class="cols"><div class="card">١</div><div class="card">٢</div><div class="card">٣</div><div class="card">٤</div></div>
-<div class="cols keep"><div class="card">١</div><div class="card">٢</div><div class="card">٣</div><div class="card">٤</div></div>
-~~~
-
-**هتشوف إيه:** في المجموعة الزرقا كارت «٢» و «٣» مقطوعين: نصهم في آخر عمود والنص التاني في أول اللي بعده، والإطار مفتوح. في المجموعة الخضرا كل كارت كامل، وده سايب فاضي تحت بعض الأعمدة.
-
-~~~text القياس من Chrome (getClientRects بيرجّع حتة لكل جزء من الكارت)
-من غير    ١: حتة واحدة   ٢: حتتين   ٣: حتتين   ٤: حتة
-avoid     الأربعة: حتة واحدة لكل كارت
-~~~
-
-| الخاصية | القيم المهمة في الأعمدة |
-|---|---|
-| [[break-inside: avoid]] | متقطّعش العنصر ده. ([[avoid-column]] للأعمدة بس، و [[avoid-page]] للطباعة) |
-| [[break-before: column]] | ابدأ العنصر ده في عمود جديد (اتقاس: الفقرة التانية نطّت للعمود الشمال) |
-| [[break-after: column]] | اللي بعد العنصر ده يبدأ في عمود جديد |
-| [[break-before: page]] و [[break-after: avoid]] | للطباعة: درس «@media print» |
-
-الخصايص دي من مواصفة **Fragmentation** (التقطيع)، ونفسها بتشتغل في الطباعة (صفحات) وفي الأعمدة.
-
----
-
-## ٦. إمتى الأعمدة وإمتى grid
-
-| عايز | استخدم |
-|---|---|
-| كلام طويل يسيل من عمود للتاني | [[columns]] |
-| قايمة لينكات أو أسامي طويلة تتقسم أعمدة | [[columns]] (الترتيب بيمشي من فوق لتحت في كل عمود) |
-| كروت مختلفة الطول من غير فراغات (masonry) | [[columns]] + [[break-inside: avoid]]. الترتيب بيبقى بالعمود مش بالصف |
-| كروت في صفوف، الترتيب من اليمين للشمال | grid أو flex |
-| مقال طويل على الموبايل | عمود واحد. الأعمدة على شاشة قصيرة بتخلي القارئ يطلع وينزل |
-
----
-
-## ٧. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[column-count: 3]] على الموبايل | تلات أعمدة ضيقة جدًا كل سطر فيه كلمتين. استخدم [[column-width]] |
-| مقال طويل كله أعمدة على صفحة طويلة | القارئ بيعمل scroll لتحت ويرجع لفوق في كل عمود |
-| كروت من غير [[break-inside: avoid]] | الكارت بيتقطع نصين |
-| [[column-fill: auto]] من غير [[height]] | كل الكلام في العمود الأول والباقي فاضي (اتقاس) |
-| [[column-rule]] أعرض من [[column-gap]] | الخط بيركب على الكلام |
-| مستني ترتيب الكروت بالصف | الترتيب من فوق لتحت في العمود الأول، وبعدين التاني |
-
----
-
-## الخلاصة
-
-- [[columns]] = [[column-width]] + [[column-count]]. اكتب العرض عشان يبقى responsive.
-- [[column-gap]] المسافة، و [[column-rule]] (width و style و color) الخط.
-- [[column-span: all]] عنوان فوق الأعمدة، و [[column-fill]] بالتساوي أو بالترتيب.
-- [[break-inside: avoid]] للكروت والصور، و [[break-before: column]] لعمود جديد.
-- في العربي الأعمدة بتبدأ من اليمين.`,
-          try: R`اعمل [[columns.html]] فيه قايمة لينكات الفوتر ([[<ul>]] فيها ١٥ [[<li>]]) وحط عليها [[columns: 120px]]. صغّر الشباك وشوف عدد الأعمدة بيتغيّر. بعدين زوّد [[column-rule]] و [[column-gap: 32px]]، وخلّي الـ [[<li>]] [[break-inside: avoid]].`,
-          sol: R`~~~live 200 columns.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أعمدة</title>
-<style>
-  body { font-family: system-ui, Tahoma, sans-serif; margin: 0; padding: 12px; background: #292524; color: #e7e5e4; }
-  h2 { margin: 0 0 8px; font-size: 16px; }
-  .links { columns: 120px; column-gap: 32px; column-rule: 1px solid #57534e; margin: 0; padding: 0; list-style: none; }
-  .links li { break-inside: avoid; padding: 3px 0; }
-  .links a { color: #fde68a; }
-</style>
-</head>
-<body>
-<h2>أقسام الجريدة</h2>
-<ul class="links">
-  <li><a href="#">محليات</a></li><li><a href="#">رياضة</a></li><li><a href="#">اقتصاد</a></li><li><a href="#">فن</a></li><li><a href="#">تكنولوجيا</a></li>
-  <li><a href="#">صحة</a></li><li><a href="#">تعليم</a></li><li><a href="#">حوادث</a></li><li><a href="#">رأي</a></li><li><a href="#">طقس</a></li>
-  <li><a href="#">سفر</a></li><li><a href="#">مطبخ</a></li><li><a href="#">كتب</a></li><li><a href="#">سيارات</a></li><li><a href="#">ألعاب</a></li>
-</ul>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** فوتر غامق، عنوان «أقسام الجريدة»، وتحته اللينكات الصفرا في أعمدة بينها خطوط رمادي. الترتيب من فوق لتحت في العمود اليمين وبعدين اللي بعده. على «موبايل» العدد بيقل.
-
-~~~text القياس من Chrome
-.links   column-width: 120px   column-count: auto   column-gap: 32px   column-rule-style: solid
-li       break-inside: avoid
-~~~`,
-          deep: {
-            why: R`الجرايد بتستخدم أعمدة عشان السطر القصير أسهل في القراية، والصفحة العريضة فيها مكان لأكتر من عمود. الـ multi-column بيعمل ده للويب من غير ما تقسم الكلام بإيدك في كذا [[<div>]]: الكلام بيسيل لوحده، ولو اتغيّر طوله التقسيم بيتغيّر. وخصايص الـ break جت عشان التقطيع ده (وتقطيع الطباعة) يحترم العناصر اللي متتقطعش.`,
-            how: R`المتصفح بيحسب عدد الأعمدة وعرضها من [[column-width]] و [[column-count]] والمكان المتاح (العدد = أكبر عدد أعمدة بعرض [[column-width]] على الأقل يدخلوا مع الـ gaps، وبعدين العرض بيتمد عشان يملا). بعدين بيرص المحتوى كأنه عمود واحد طويل، ويقطّعه لحتت (fragments) بطول الصندوق، وكل حتة في عمود. مع [[balance]] بيدوّر على أقل طول يخلي الأعمدة قد بعض. [[break-inside: avoid]] بيقول له ميقطعش جوه العنصر لو فيه حل تاني.`,
-            when: R`قايمة لينكات الفوتر، وقايمة أسامي أو مدن أو تاجات، وكروت بطول مختلف (آراء القراء، أو صور)، ومقال على شاشة عريضة أو في نسخة الطباعة، وصفحة «الشروط» الطويلة بخط صغير. مش للـ layout الأساسي ولا للمقال على الموبايل.`,
-            mistakes: R`[[column-count]] ثابت على الموبايل. أعمدة لمقال طويل على شاشة قصيرة. كروت بتتقطع. [[column-fill: auto]] من غير طول. [[column-rule]] أعرض من الـ gap. مستني ترتيب بالصف.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** قايمة «كل الأقسام» تتقسم أعمدة كل واحد حوالي 140px، وعددهم على قد المكان (مش رقم ثابت). (من قسم ١)`, done: R`على الكمبيوتر كذا عمود وعلى الموبايل أقل، وكل الشروط ✓.`, work: { h: 160, start: R`<style>
-  .all { margin: 0; padding: 0; list-style: none; }
-  .all li { padding: 3px 0; }
-</style>
-<ul class="all">
-  <li>محليات</li><li>رياضة</li><li>اقتصاد</li><li>فن</li><li>تكنولوجيا</li><li>صحة</li><li>تعليم</li><li>حوادث</li><li>رأي</li><li>طقس</li>
-</ul>`, checks: [
-              { say: R`عرض العمود [[140px]]`, q: ".all", style: ["column-width", "140px"] },
-              { say: R`العدد مش ثابت ([[column-count: auto]])`, q: ".all", style: ["column-count", "auto"] }
-            ] }, sol: R`~~~live 110 الحل
-<style>
-  .all { columns: 140px; margin: 0; padding: 0; list-style: none; }
-  .all li { padding: 3px 0; }
-</style>
-<ul class="all">
-  <li>محليات</li><li>رياضة</li><li>اقتصاد</li><li>فن</li><li>تكنولوجيا</li><li>صحة</li><li>تعليم</li><li>حوادث</li><li>رأي</li><li>طقس</li>
-</ul>
-~~~
-
-**هتشوف إيه:** الأقسام في كذا عمود جنب بعض، بادئة من اليمين، كل عمود فيه كلمتين أو تلاتة فوق بعض.
-
-**ليه كده:** [[columns: 140px]] = [[column-width: 140px]] والعدد [[auto]]. **الغلطة الشائعة:** [[column-count: 5]]: على الموبايل خمس أعمدة ضيقة.
-
-~~~text القياس من Chrome
-column-width: 140px   column-count: auto
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** أعمدة المقال محتاجة مسافة 32px بينها، وفي نص المسافة خط رفيع 1px [[solid]] لونه [[#a8a29e]]. (من قسم ٢)`, done: R`فيه خط رمادي بين العمودين، وكل الشروط ✓.`, work: { h: 170, start: R`<style>
-  .story { column-count: 2; line-height: 1.6; }
-  .story p { margin: 0 0 8px; }
-</style>
-<article class="story">
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة، والدخول ببلاش طول الشهر ده.</p>
-  <p>وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي، وإنه هيعمل يوم في الأسبوع للقراية بصوت عالي.</p>
-</article>`, checks: [
-              { say: R`المسافة 32px`, q: ".story", style: ["column-gap", "32px"] },
-              { say: R`الخط [[solid]]`, q: ".story", style: ["column-rule-style", "solid"] },
-              { say: R`تخانته 1px`, q: ".story", style: ["column-rule-width", "1px"] },
-              { say: R`لونه [[#a8a29e]]`, q: ".story", style: ["column-rule-color", "rgb(168, 162, 158)"] }
-            ] }, sol: R`~~~live 130 الحل
-<style>
-  .story { column-count: 2; column-gap: 32px; column-rule: 1px solid #a8a29e; line-height: 1.6; }
-  .story p { margin: 0 0 8px; }
-</style>
-<article class="story">
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة، والدخول ببلاش طول الشهر ده.</p>
-  <p>وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي، وإنه هيعمل يوم في الأسبوع للقراية بصوت عالي.</p>
-</article>
-~~~
-
-**هتشوف إيه:** عمودين، بينهم مسافة واسعة وفي نصها خط رمادي رفيع.
-
-**ليه كده:** [[column-rule]] مختصرة زي [[border]]. **الغلطة الشائعة:** [[border-left]] على الفقرات: بيترسم على كل فقرة لوحدها وفي الناحية الغلط في العربي.
-
-~~~text القياس من Chrome
-column-gap: 32px   column-rule: 1px solid rgb(168, 162, 158)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** آراء القراء في 3 أعمدة، وبعض الكروت متقطعة نصين بين عمودين. خلّي كل كارت يفضل كامل. (من قسم ٥)`, done: R`كل كارت كامل في عمود، وكل الشروط ✓.`, work: { h: 220, start: R`<style>
-  .reviews { column-count: 3; column-gap: 10px; }
-  .review { height: 70px; margin: 0 0 8px; padding: 6px; background: #e0f2fe; border: 2px solid #0369a1; border-radius: 6px; }
-</style>
-<div class="reviews">
-  <div class="review">«الجريدة بقت أحسن»</div><div class="review">«عايزين أخبار رياضة أكتر»</div><div class="review">«التطبيق سريع»</div><div class="review">«شكرًا على الحوار»</div>
-</div>`, checks: [
-              { say: R`الكروت [[break-inside: avoid]]`, q: ".review", style: ["break-inside", "avoid"] },
-              { say: R`الأعمدة لسه 3`, q: ".reviews", style: ["column-count", "3"] }
-            ] }, sol: R`~~~live 130 بعد التصليح
-<style>
-  .reviews { column-count: 3; column-gap: 10px; }
-  .review { break-inside: avoid; height: 70px; margin: 0 0 8px; padding: 6px; background: #e0f2fe; border: 2px solid #0369a1; border-radius: 6px; }
-</style>
-<div class="reviews">
-  <div class="review">«الجريدة بقت أحسن»</div><div class="review">«عايزين أخبار رياضة أكتر»</div><div class="review">«التطبيق سريع»</div><div class="review">«شكرًا على الحوار»</div>
-</div>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 130 قبل
-<style>
-  .reviews { column-count: 3; column-gap: 10px; }
-  .review { height: 70px; margin: 0 0 8px; padding: 6px; background: #e0f2fe; border: 2px solid #0369a1; border-radius: 6px; }
-</style>
-<div class="reviews">
-  <div class="review">«الجريدة بقت أحسن»</div><div class="review">«عايزين أخبار رياضة أكتر»</div><div class="review">«التطبيق سريع»</div><div class="review">«شكرًا على الحوار»</div>
-</div>
-~~~
-
-**هتشوف إيه:** في الحل كل كارت أزرق صندوق كامل بإطاره. في «قبل» فيه كروت مقطوعة: حتة تحت في عمود والحتة التانية فوق في العمود اللي بعده.
-
-**ليه كده:** المتصفح بيقطّع في أي حتة عشان الأعمدة تبقى قد بعض. [[break-inside: avoid]] بيقوله يدوّر على مكان تاني للقطع. **الغلطة الشائعة:** [[display: inline-block; width: 100%]] على الكروت: حيلة قديمة بتشتغل، بس [[break-inside]] هي الطريقة القياسية.
-
-~~~text القياس من Chrome
-قبل:  كارت ٢ و ٣ كل واحد حتتين (getClientRects)      بعد:  كل كارت حتة واحدة
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** عنوان المقال جوه الأعمدة لازم يعدّي فوقهم كلهم بالعرض الكامل. (من قسم ٣)`, done: R`العنوان بالعرض كله والكلام تحته في عمودين، وكل الشروط ✓.`, work: { h: 170, start: R`<style>
-  .story { column-count: 2; column-gap: 24px; }
-  .story h2 { margin: 0 0 6px; font-size: 20px; }
-  .story p { margin: 0 0 8px; }
-</style>
-<article class="story">
-  <h2>الحي بيحتفل بالمكتبة</h2>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة.</p>
-  <p>وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي.</p>
-</article>`, checks: [
-              { say: R`العنوان [[column-span: all]]`, q: ".story h2", style: ["column-span", "all"] }
-            ] }, sol: R`~~~live 130 الحل
-<style>
-  .story { column-count: 2; column-gap: 24px; }
-  .story h2 { column-span: all; margin: 0 0 6px; font-size: 20px; }
-  .story p { margin: 0 0 8px; }
-</style>
-<article class="story">
-  <h2>الحي بيحتفل بالمكتبة</h2>
-  <p>اتفتحت امبارح أول مكتبة عامة في الحي، فيها ركن للأطفال وقهوة صغيرة.</p>
-  <p>وقال صاحب المكتبة إن الكتب كلها متبرّع بيها من أهل الحي.</p>
-</article>
-~~~
-
-**هتشوف إيه:** العنوان فوق بالعرض كله، وتحته الفقرتين في عمودين.
-
-**ليه كده:** من غير [[column-span]] العنوان بيبقى أول حاجة في العمود اليمين بس، والعمود الشمال يبدأ بالكلام من فوق، فالعنوان بيبان كأنه عنوان العمود الأول بس. **حل تاني:** تطلّع العنوان برّه الـ [[<article>]] اللي عليه الأعمدة.
-
-~~~text القياس من Chrome
-h2   column-span: all   العرض = عرض المقال كله
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صندوقين فيهم نفس الأربع فقرات القصيرة و [[column-count: 2]]. الأول [[column-fill: balance]]، والتاني [[column-fill: auto]] و [[height: 220px]] (والفقرات طولها كلها أقل من 220). الفقرات هتتوزّع إزاي في كل واحد؟ (من قسم ٤)`, done: R`كتبت التوزيع في الحالتين.`, sol: R`**الإجابة:** في [[balance]]: فقرتين في كل عمود، عشان الطول يبقى واحد. في [[auto]]: الأربعة في العمود اليمين، والشمال فاضي، لأن [[auto]] بيملا العمود لآخره الأول، والعمود طوله 220 فيساع الكل.
-
-~~~live 300 الحالتين
-<style>
-  .box { column-count: 2; column-rule: 1px dashed #a8a29e; margin-bottom: 10px; background: #f5f5f4; }
-  .bal { column-fill: balance; }
-  .tall { column-fill: auto; height: 220px; }
-  .box p { margin: 0 0 6px; }
-</style>
-<div class="box bal"><p>١. خبر</p><p>٢. خبر</p><p>٣. خبر</p><p>٤. خبر</p></div>
-<div class="box tall"><p>١. خبر</p><p>٢. خبر</p><p>٣. خبر</p><p>٤. خبر</p></div>
-~~~
-
-**هتشوف إيه:** في الصندوق الأول الأخبار متقسمة: ١ و ٢ يمين، و ٣ و ٤ شمال. في التاني (الطويل) الأربعة في العمود اليمين فوق بعض، والشمال فاضي.
-
-~~~text القياس من Chrome (left بتاع كل فقرة)
-balance              416, 416, 23, 23    ← عمودين
-auto + height 220    416, 416, 416, 416  ← عمود واحد
-auto من غير height   416, 416, 416, 416  ← برضه عمود واحد، لأن العمود طوله مفتوح
-~~~` }
-          ]
-        },
-        {
-          cmd: "table-layout و caption-side",
-          title: "تثبّت عرض أعمدة الجدول بـ table-layout: fixed، وتحط عنوانه تحت بـ caption-side، وتخفي الخانات الفاضية بـ empty-cells، وتختار بين border-collapse و border-spacing",
-          pre: ["css/table", "css/جدول responsive"],
-          ref: [
-            { t: "MDN: table-layout", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/table-layout" },
-            { t: "MDN: caption-side", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/caption-side" },
-            { t: "MDN: empty-cells", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/empty-cells" },
-            { t: "MDN: border-collapse", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/border-collapse" },
-            { t: "MDN: border-spacing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/border-spacing" },
-            { t: "MDN Learn: Styling tables", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Tables" },
-            { t: "CSS 2.2: Tables", url: "https://www.w3.org/TR/CSS22/tables.html" }
-          ],
-          desc: R`الجدول عنده خوارزمية مقاسات لوحده. [[table-layout: auto]] (الافتراضي) بيقرا **كل** الخانات الأول ويدّي العمود اللي كلامه أطول عرض أكبر. [[table-layout: fixed]] بيحسب الأعمدة من **أول صف** بس (أو من [[width]] الأعمدة)، فبيترسم أسرع ومبيتهزّش لما البيانات تتغيّر، بس محتاج [[width]] على الجدول.
-و [[caption-side: bottom]] بيحط الـ [[<caption>]] تحت الجدول، و [[empty-cells: hide]] بيخفي حدود وخلفية الخانة الفاضية (مع [[separate]] بس)، و [[border-collapse]] بيختار بين حدود منفصلة بينها [[border-spacing]] ولا حدود ملزوقة في خط واحد.`,
-          example: R`<style>
-  .scores { width: 100%; table-layout: fixed; border-collapse: collapse; caption-side: bottom; }
-  .scores th:first-child { width: 40%; }
-  .scores th, .scores td { padding: 6px; border: 1px solid #d6d3d1; text-align: start; }
-  .scores caption { padding-top: 6px; font-size: 13px; color: #78716c; }
-</style>
-<table class="scores">
-  <caption>آخر تحديث: الساعة ١٠ بالليل</caption>
-  <tr><th>الفريق</th><th>لعب</th><th>نقط</th></tr>
-  <tr><td>نادي الحي</td><td>٥</td><td>١٣</td></tr>
-  <tr><td>شباب المدينة الرياضي</td><td>٥</td><td>١٠</td></tr>
-</table>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`جدول الترتيب: بعرض أبوه كله، والأعمدة ثابتة ([[fixed]])، والحدود ملزوقة في خط واحد، والـ caption تحت الجدول.`,
-            R`أول عمود (الفريق) عرضه 40%، والباقي يتقسم على العمودين التانيين بالتساوي.`,
-            R`كل الخانات ليها padding وحد رمادي، والكلام في أول السطر ([[start]] = يمين في العربي).`,
-            R`الـ caption: مسافة فوقه، وخط صغير رمادي، لأنه ملاحظة مش عنوان كبير.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`الجدول: [[<table>]] عليه [[.scores]] اللي فوق.`,
-            R`الـ [[<caption>]] مكتوب أول حاجة في الـ HTML (ده مكانه الصح)، بس الـ CSS بيرسمه تحت.`,
-            R`صف العناوين: أول [[th]] هو اللي واخد 40%، وده اللي [[fixed]] بيقرا منه.`,
-            R`صف فريق اسمه قصير.`,
-            R`صف فريق اسمه طويل: عمود الفريق مبيوسعش عشانه، الاسم بيلف لسطرين جوه الـ 40%.`,
-            R`قفلة الجدول: الـ caption بيترسم تحت السطر ده.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-درس «table» علّمك عناصر الجدول وشكله الافتراضي، ودرس «جدول responsive» خلاه يعمل scroll على الموبايل واستخدم [[border-collapse: separate]] و [[border-spacing: 0]] عشان العناوين اللازقة. هنا الخصايص الأربعة اللي بتتحكم في الجدول نفسه كـ layout.
-
----
-
-## ١. [[table-layout]]: مين بيقرر عرض الأعمدة
-
-~~~live 170 نفس الجدول: auto وتحته fixed
-<style>
-  table { width: 400px; margin-bottom: 10px; }
-  td { border: 1px solid #a8a29e; padding: 4px; }
-  .fx { table-layout: fixed; background: #f0fdfa; }
-</style>
-<table><tr><td>قصير</td><td>كلام طويل جدًا جدًا جدًا جدًا جدًا جدًا جدًا جدًا جدًا</td></tr></table>
-<table class="fx"><tr><td>قصير</td><td>كلام طويل جدًا جدًا جدًا جدًا جدًا جدًا جدًا جدًا جدًا</td></tr></table>
-~~~
-
-**هتشوف إيه:** في الجدول الأول خانة «قصير» ضيقة على قد كلمتها، والخانة التانية واخدة الباقي كله. في التاني (الأخضر الفاتح) الخانتين نص ونص، والكلام الطويل بيلف لسطور.
-
-~~~text القياس من Chrome (جدول عرضه 400)
-table-layout: auto    «قصير» 49px     الطويل 345px   ← على قد المحتوى
-table-layout: fixed   «قصير» 197px    الطويل 197px   ← بالتساوي، المحتوى ملوش دعوة
-~~~
-
-| | [[table-layout: auto]] | [[table-layout: fixed]] |
-|---|---|---|
-| العرض بيتحسب من | كل خانات الجدول | [[width]] الجدول، وأول صف (أو [[<col>]]) بس |
-| محتاج [[width]] على الجدول؟ | لأ | **أيوه**، من غيره بيتصرف زي auto |
-| لو كلمة طويلة جدًا في خانة | العمود بيوسع (وممكن الجدول يطلع برّه) | العمود ثابت والكلمة **بتطلع برّه** الخانة (اتقاس: [[scrollWidth]] ‏393 في خانة عرضها 210). حط [[overflow-wrap: anywhere]] |
-| السرعة | لازم يستنى الجدول كله يتحمّل | بيرسم أول ما أول صف يوصل (MDN) |
-| لما البيانات تتغيّر (أرقام بتتحدّث) | الأعمدة بتتهز | ثابتة |
-
-### عرض عمود معيّن في [[fixed]]
-
-اكتب [[width]] على خانات أول صف (أو على [[<col>]] من درس «colspan و rowspan و colgroup»). اتقاس: [[th:first-child { width: 200px }]] في جدول 400 بتلات أعمدة: الأول 210 (200 + padding وborder)، والاتنين التانيين 91 لكل واحد.
-
----
-
-## ٢. [[caption-side]]: العنوان فوق ولا تحت
-
-[[<caption>]] لازم يبقى **أول** ابن في [[<table>]] في الـ HTML (درس «table»)، بس مكانه في الرسم من الـ CSS:
-
-| القيمة | المكان |
-|---|---|
-| [[caption-side: top]] | فوق الجدول (الافتراضي، اتقاس) |
-| [[caption-side: bottom]] | تحت الجدول (اتقاس: الـ caption.top = 208 والصف فوقه عند 178) |
-
-وفيه قيم منطقية في المواصفة ([[block-start]] و [[block-end]])، بس Chrome 157 مبيقبلهاش (اتقاس: [[CSS.supports("caption-side: block-end")]] = false)، فاكتب [[top]] و [[bottom]]. قارئ الشاشة بيقرا الـ caption كاسم للجدول في الحالتين، لأن مكانه في الـ HTML ما اتغيّرش.
-
----
-
-## ٣. [[empty-cells]] و [[border-collapse]] و [[border-spacing]]
-
-~~~live 150 خانة فاضية: show، و hide، و hide مع collapse
-<style>
-  table { width: 360px; margin-bottom: 10px; border-collapse: separate; border-spacing: 4px; }
-  td { padding: 4px; background: #e0f2fe; border: 1px solid #0369a1; }
-  .hide { empty-cells: hide; }
-  .coll { border-collapse: collapse; empty-cells: hide; }
-</style>
-<table><tr><td>السبت</td><td></td><td>ماتش</td></tr></table>
-<table class="hide"><tr><td>السبت</td><td></td><td>ماتش</td></tr></table>
-<table class="coll"><tr><td>السبت</td><td></td><td>ماتش</td></tr></table>
-~~~
-
-**هتشوف إيه:** الجدول الأول تلات خانات زرق كل واحدة بحدها، والنص فاضية بس ليها حد وخلفية. التاني: الخانة الفاضية مختفية خالص (فاضي أبيض مكانها). التالت (collapse): الخانة الفاضية رجعت بحدودها، لأن [[empty-cells]] ملوش أثر مع [[collapse]].
-
-| الخاصية | القيم | اتقاس |
-|---|---|---|
-| [[empty-cells: hide]] | [[show]] (الافتراضي) و [[hide]]: يخفي حد وخلفية الخانة اللي مفيهاش أي محتوى. مع [[separate]] بس | [[empty-cells: hide]] والخانة لسه طولها 28px (المكان محجوز) |
-| [[border-collapse: separate]] | كل خانة ليها حدودها، وبينهم [[border-spacing]]. الافتراضي | |
-| [[border-collapse: collapse]] | الحدود المتجاورة بتبقى خط واحد، و [[border-spacing]] بيتجاهل | |
-| [[border-spacing: 6px 2px]] | المسافة بين الخانات: أفقي ثم رأسي. قيمة واحدة للاتنين. الافتراضي 2px | المسافة بين الخانتين 6px |
-
-**تختار إيه:** [[collapse]] لجداول البيانات العادية (خطوط رفيعة نضيفة). [[separate]] لما عايز أركان مدورة على الخانات أو عناوين لازقة بحدود (درس «جدول responsive» قسم ٥) أو مسافات بين الخانات (جدول مواعيد بكروت).
-
----
-
-## ٤. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[table-layout: fixed]] من غير [[width]] على الجدول | ملوش أثر، بيفضل auto |
-| [[fixed]] والكلام فيه لينكات أو إيميلات طويلة | الكلام بيطلع برّه الخانة ويركب على اللي جنبها |
-| [[width]] على خانة في تاني صف في [[fixed]] | متجاهل: أول صف بس |
-| [[<caption>]] بعد الصفوف في الـ HTML عشان يبان تحت | غلط في الـ HTML (الـ validator بيقول). اكتبه أول واحد واستخدم [[caption-side: bottom]] |
-| [[empty-cells: hide]] مع [[collapse]] | ملوش أثر |
-| [[border-spacing]] مع [[collapse]] | ملوش أثر |
-
----
-
-## الخلاصة
-
-- [[table-layout: fixed]] + [[width]]: أعمدة ثابتة من أول صف، وأسرع. [[auto]]: على قد المحتوى.
-- [[caption-side: bottom]] للـ caption تحت، والـ HTML زي ما هو.
-- [[empty-cells: hide]] و [[border-spacing]] مع [[separate]] بس، و [[collapse]] خط واحد.`,
-          try: R`اعمل [[table.html]] فيه جدول مواعيد ماتشات (٤ صفوف) فيه خانة نتيجة فاضية لماتش لسه ملعبش. جرّب [[table-layout: auto]] و [[fixed]] مع [[width: 100%]] وغيّر اسم فريق لاسم طويل جدًا. وبعدين [[border-collapse: separate; border-spacing: 4px; empty-cells: hide]] و [[caption-side: bottom]].`,
-          sol: R`~~~live 230 table.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>المواعيد</title>
-<style>
-  body { font-family: system-ui, Tahoma, sans-serif; padding: 12px; }
-  .matches { width: 100%; max-width: 480px; table-layout: fixed; border-collapse: separate; border-spacing: 4px; empty-cells: hide; caption-side: bottom; }
-  .matches th:first-child { width: 50%; }
-  .matches th, .matches td { padding: 6px; background: #f0fdfa; border-radius: 4px; text-align: start; overflow-wrap: anywhere; }
-  .matches th { background: #0f766e; color: white; }
-  .matches caption { padding-top: 4px; font-size: 13px; color: #78716c; }
-</style>
-</head>
-<body>
-<table class="matches">
-  <caption>الماتشات اللي لسه ملعبتش نتيجتها فاضية</caption>
-  <tr><th>الماتش</th><th>اليوم</th><th>النتيجة</th></tr>
-  <tr><td>نادي الحي × شباب المدينة</td><td>السبت</td><td>٢ - ١</td></tr>
-  <tr><td>النجوم × الاتحاد الرياضي لشباب الضواحي</td><td>الاتنين</td><td>٠ - ٠</td></tr>
-  <tr><td>نادي الحي × النجوم</td><td>الجمعة</td><td></td></tr>
-</table>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** جدول عناوينه خضرا غامقة، وخاناته خضرا فاتحة بأركان مدورة ومسافات صغيرة بينها. عمود الماتش نص الجدول، والاسم الطويل بيلف لسطرين. خانة نتيجة ماتش الجمعة مختفية (فاضي أبيض). وتحت الجدول ملاحظة رمادي صغيرة.
-
-~~~text القياس من Chrome
-.matches   table-layout: fixed   border-collapse: separate   border-spacing: 4px   empty-cells: hide   caption-side: bottom
-~~~`,
-          deep: {
-            why: R`الجدول اتعمل قبل الـ CSS بسنين، وخوارزميته بتحاول تدّي كل عمود اللي محتاجه، وده كويس لجدول صغير. بس في جداول كبيرة أو بتتحدّث (أسعار، ونتايج، وأسهم) القراية بتستنى الجدول كله وكل تحديث بيهز الأعمدة. [[fixed]] جه عشان المطوّر يقرر العرض. وباقي الخصايص عشان الجدول يتنسّق من غير ما تلعب في الـ HTML.`,
-            how: R`في [[auto]] المتصفح بيعدّي على كل الخانات ويحسب لكل عمود أقل وأكبر عرض (min-content و max-content من درس «min-width و max-width») ويوزّع عرض الجدول على أساسهم. في [[fixed]] بيقرا [[width]] الجدول، و [[width]] الـ [[<col>]] أو خانات أول صف، ويقسم الباقي بالتساوي، ومبيبصّش على أي صف تاني. [[caption-side]] بيغيّر مكان صندوق الـ caption جنب صندوق الجدول. [[empty-cells]] بيقرر يرسم ولا لأ خلفية وحد الخانة اللي مفيهاش محتوى ظاهر.`,
-            when: R`[[fixed]]: جداول البيانات الكبيرة، والجداول اللي بتتحدّث، وجدول عايز عمود فيه نسبة ثابتة. [[auto]]: جدول صغير محتواه معروف. [[caption-side: bottom]]: ملاحظة أو مصدر تحت الجدول. [[empty-cells: hide]]: جدول مواعيد أو تقويم فيه خانات فاضية. [[collapse]] للبيانات، و [[separate]] للأركان المدورة والعناوين اللازقة.`,
-            mistakes: R`[[fixed]] من غير [[width]]. [[fixed]] مع كلام طويل من غير [[overflow-wrap]]. [[width]] على صف غير الأول. نقل الـ caption في الـ HTML بدل [[caption-side]]. [[empty-cells]] أو [[border-spacing]] مع [[collapse]].`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** جدول الأسعار عمود «المنتج» بيكبر ويصغر كل ما الأسماء تتغيّر، والمطلوب أعمدة ثابتة: عمود المنتج 50% والباقي بالتساوي. فيه حاجة ناقصة على الجدول وحاجة ناقصة على أول عنوان. (من قسم ١)`, done: R`عمود المنتج نص الجدول بالظبط، وكل الشروط ✓.`, work: { h: 170, start: R`<style>
-  .prices { border-collapse: collapse; width: 100%; }
-  .prices th, .prices td { padding: 6px; border: 1px solid #d6d3d1; text-align: start; }
-</style>
-<table class="prices">
-  <tr><th>المنتج</th><th>امبارح</th><th>النهارده</th></tr>
-  <tr><td>طماطم</td><td>١٥</td><td>١٨</td></tr>
-  <tr><td>بطاطس الشيبسي الحمرا المستوردة</td><td>٢٠</td><td>٢٠</td></tr>
-</table>`, checks: [
-              { say: R`الجدول [[table-layout: fixed]]`, q: ".prices", style: ["table-layout", "fixed"] },
-              { say: R`أول عنوان عليه [[width: 50%]]`, src: "width: 50%" },
-              { say: R`الحدود لسه [[collapse]]`, q: ".prices", style: ["border-collapse", "collapse"] }
-            ] }, sol: R`~~~live 150 بعد التصليح
-<style>
-  .prices { border-collapse: collapse; width: 100%; table-layout: fixed; }
-  .prices th:first-child { width: 50%; }
-  .prices th, .prices td { padding: 6px; border: 1px solid #d6d3d1; text-align: start; }
-</style>
-<table class="prices">
-  <tr><th>المنتج</th><th>امبارح</th><th>النهارده</th></tr>
-  <tr><td>طماطم</td><td>١٥</td><td>١٨</td></tr>
-  <tr><td>بطاطس الشيبسي الحمرا المستوردة</td><td>٢٠</td><td>٢٠</td></tr>
-</table>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 150 قبل
-<style>
-  .prices { border-collapse: collapse; width: 100%; }
-  .prices th, .prices td { padding: 6px; border: 1px solid #d6d3d1; text-align: start; }
-</style>
-<table class="prices">
-  <tr><th>المنتج</th><th>امبارح</th><th>النهارده</th></tr>
-  <tr><td>طماطم</td><td>١٥</td><td>١٨</td></tr>
-  <tr><td>بطاطس الشيبسي الحمرا المستوردة</td><td>٢٠</td><td>٢٠</td></tr>
-</table>
-~~~
-
-**هتشوف إيه:** في الحل عمود «المنتج» على اليمين نص الجدول، والعمودين التانيين ربع ربع. في «قبل» عمود المنتج واخد أكتر لأن فيه اسم طويل، والأرقام متزنقة.
-
-**ليه كده:** [[fixed]] بياخد العرض من أول صف، و [[width: 50%]] على أول [[th]].
-
-~~~text القياس من Chrome
-.prices   table-layout: fixed     عمود المنتج = نص عرض الجدول بالظبط
-~~~` },
-            { lvl: 'سريع', t: R`**ابني:** الـ caption «المصدر: غرفة التجارة» لازم يبان **تحت** الجدول، من غير ما تنقله في الـ HTML. (من قسم ٢)`, done: R`الملاحظة تحت الجدول، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  table { border-collapse: collapse; }
-  td, th { padding: 4px 8px; border: 1px solid #d6d3d1; }
-  caption { font-size: 13px; color: #78716c; }
-</style>
-<table>
-  <caption>المصدر: غرفة التجارة</caption>
-  <tr><th>السلعة</th><th>السعر</th></tr>
-  <tr><td>رز</td><td>٣٥</td></tr>
-</table>`, checks: [
-              { say: R`[[caption-side: bottom]]`, q: "caption", style: ["caption-side", "bottom"] },
-              { say: R`الـ caption لسه أول ابن في الجدول`, q: "table > caption:first-child" }
-            ] }, sol: R`~~~live 110 الحل
-<style>
-  table { border-collapse: collapse; }
-  td, th { padding: 4px 8px; border: 1px solid #d6d3d1; }
-  caption { caption-side: bottom; padding-top: 4px; font-size: 13px; color: #78716c; }
-</style>
-<table>
-  <caption>المصدر: غرفة التجارة</caption>
-  <tr><th>السلعة</th><th>السعر</th></tr>
-  <tr><td>رز</td><td>٣٥</td></tr>
-</table>
-~~~
-
-**هتشوف إيه:** جدول صغير بصفين، وتحته سطر رمادي «المصدر: غرفة التجارة».
-
-**ليه كده:** [[caption-side]] بتتكتب على الـ caption نفسه (أو على الجدول وبتتورث). **الغلطة الشائعة:** نقل الـ [[<caption>]] لآخر الجدول في الـ HTML: المتصفح بيعرضه، بس ده HTML غلط.
-
-~~~text القياس من Chrome
-caption   caption-side: bottom
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** جدول مواعيد فيه خانات فاضية. خلّي الخانات منفصلة بينها 4px، والفاضية تختفي خالص. (من قسم ٣)`, done: R`الخانة الفاضية مختفية والباقي كروت صغيرة، وكل الشروط ✓.`, work: { h: 140, start: R`<style>
-  .week { border-collapse: collapse; }
-  .week td { padding: 6px 10px; background: #e0f2fe; border: 1px solid #0369a1; }
-</style>
-<table class="week"><tr><td>السبت: ماتش</td><td></td><td>الاتنين: تمرين</td><td></td></tr></table>`, checks: [
-              { say: R`الحدود منفصلة: [[separate]]`, q: ".week", style: ["border-collapse", "separate"] },
-              { say: R`المسافة 4px`, q: ".week", style: ["border-spacing", "4px"] },
-              { say: R`الفاضية تختفي: [[empty-cells: hide]]`, q: ".week td", style: ["empty-cells", "hide"] }
-            ] }, sol: R`~~~live 90 الحل
-<style>
-  .week { border-collapse: separate; border-spacing: 4px; empty-cells: hide; }
-  .week td { padding: 6px 10px; background: #e0f2fe; border: 1px solid #0369a1; }
-</style>
-<table class="week"><tr><td>السبت: ماتش</td><td></td><td>الاتنين: تمرين</td><td></td></tr></table>
-~~~
-
-**هتشوف إيه:** صندوقين أزرق فاتح «السبت: ماتش» و «الاتنين: تمرين»، وبينهم فراغ أبيض مكان الخانة الفاضية.
-
-**ليه كده:** [[empty-cells]] بيشتغل مع [[separate]] بس، فلازم تغيّر الاتنين. وبتتورث، فكتبتها على الجدول. **الغلطة الشائعة:** تسيب [[collapse]]: الخانة الفاضية هتفضل ظاهرة.
-
-~~~text القياس من Chrome
-border-collapse: separate   border-spacing: 4px   td  empty-cells: hide
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[table { table-layout: fixed; }]] ومفيش [[width]] على الجدول. الأعمدة هتبقى ثابتة؟ (من قسم ١ والغلطات)`, done: R`كتبت الإجابة والسبب.`, sol: R`**الإجابة:** لأ. من غير [[width]] الجدول بيتصرف زي [[auto]]: الأعمدة على قد المحتوى. [[fixed]] محتاج عرض يقسمه.
-
-~~~live 90 من غير width ومع width
-<style>
-  table { table-layout: fixed; margin-bottom: 6px; }
-  td { border: 1px solid #a8a29e; padding: 4px; }
-  .w { width: 300px; }
-</style>
-<table><tr><td>قصير</td><td>كلام أطول شوية</td></tr></table>
-<table class="w"><tr><td>قصير</td><td>كلام أطول شوية</td></tr></table>
-~~~
-
-**هتشوف إيه:** الجدول الأول على قد كلامه والخانتين مختلفين. التاني عرضه 300 والخانتين قد بعض.` }
-          ]
-        },
-        {
-          cmd: "content-visibility و will-change",
-          title: "تخلي المتصفح يأجّل رسم الأجزاء اللي لسه برّه الشاشة بـ content-visibility و contain-intrinsic-size، وتعرف contain، وإمتى will-change بتفيد وإمتى بتضر",
-          pre: ["css/CLS", "css/layout thrashing"],
-          ref: [
-            { t: "MDN: content-visibility", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/content-visibility" },
-            { t: "MDN: contain-intrinsic-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/contain-intrinsic-size" },
-            { t: "MDN: contain-intrinsic-block-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/contain-intrinsic-block-size" },
-            { t: "MDN: contain-intrinsic-inline-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/contain-intrinsic-inline-size" },
-            { t: "MDN: contain", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/contain" },
-            { t: "MDN: will-change", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/will-change" },
-            { t: "MDN: Using CSS containment", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Containment/Using" },
-            { t: "CSS Containment Level 2", url: "https://www.w3.org/TR/css-contain-2/" }
-          ],
-          desc: R`[[content-visibility: auto]] بيقول للمتصفح: «الجزء ده لو برّه الشاشة متحسبش الـ layout بتاعه ومترسموش لحد ما الزائر يقرب منه». في صفحة طويلة (أرشيف أخبار، تعليقات) ده بيوفّر وقت كبير: اتقاس ٣٠٠٠ خبر: ‏403ms من غيره و 12ms معاه. بس الجزء المتأجّل طوله بيبقى **صفر**، فلازم [[contain-intrinsic-size]] (طول تقديري) عشان الـ scrollbar ميتنطّش، ومعاها أربع longhands: [[contain-intrinsic-width]] و [[contain-intrinsic-height]] و [[contain-intrinsic-inline-size]] و [[contain-intrinsic-block-size]].
-و [[contain]] الخاصية الأقدم اللي [[content-visibility]] مبني عليها. و [[will-change: transform]] بتقول للمتصفح «العنصر ده هيتحرك قريب، جهّز له طبقة»: مفيدة قبل حركة تقيلة، ومضرة لو اتحطت على كل حاجة.`,
-          example: R`<style>
-  .archive article { content-visibility: auto; contain-intrinsic-size: auto 180px;
-                     padding: 10px; margin-block-end: 8px; border: 1px solid #d6d3d1; border-radius: 8px; }
-  .archive h3 { margin: 0 0 4px; font-size: 16px; }
-</style>
-<section class="archive">
-  <article><h3>أرشيف: يناير</h3><p>٣١ خبر عن المكتبة والماتشات والأسعار.</p></article>
-  <article><h3>أرشيف: فبراير</h3><p>٢٨ خبر عن الطقس والمدارس.</p></article>
-  <article><h3>أرشيف: مارس</h3><p>٣٠ خبر عن رمضان والأسواق.</p></article>
-</section>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`كل خبر في الأرشيف: لو برّه الشاشة المتصفح يأجّل رسمه ([[content-visibility: auto]])، ويعتبر طوله 180px لحد ما يترسم مرة، وبعدها يفتكر طوله الحقيقي ([[auto]]).`,
-            R`تكملة نفس القاعدة: padding ومسافة تحت وحد وأركان مدورة. مالهمش علاقة بالأداء، شكل بس.`,
-            R`عناوين الأرشيف: من غير margin فوق وخطها 16px.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`حاوية الأرشيف: [[<section>]] عليه [[.archive]] فكل [[article]] جواه بيتأجّل.`,
-            R`أول شهر: ظاهر في الشاشة فبيترسم عادي.`,
-            R`تاني شهر: في صفحة طويلة حقيقية (مئات الشهور) أغلبهم برّه الشاشة وبيتأجّلوا.`,
-            R`تالت شهر: نفس الفكرة، وكل شهر بيتحسب لوحده.`,
-            R`قفلة الحاوية: الأرشيف كله جواها.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-المتصفح بيحسب مكان ومقاس **كل** عنصر في الصفحة قبل ما يرسم، حتى اللي في آخر الصفحة والزائر ممكن ميوصلوش أبدًا. في صفحة فيها آلاف العناصر ده بياخد وقت، والصفحة تبان تقيلة. الدرس ده عن تلات خصايص بتقول للمتصفح «وفّر هنا». درس «CLS» شرح حجز المكان، ودرس «layout thrashing» شرح إمتى الـ layout بيتعاد. هنا الأدوات.
-
----
-
-## ١. [[content-visibility: auto]]: أجّل اللي برّه الشاشة
-
-~~~text القياس من Chrome 157 (٣٠٠٠ خبر، كل واحد عنوان وفقرة طويلة وقايمة، الوقت لحساب الـ layout أول مرة، الوسيط من ٥ مرات)
-من غير content-visibility          403ms
-content-visibility: auto            11.6ms      ← المتصفح حسب اللي في الشاشة بس
-~~~
-
-القيم:
-
-| القيمة | بيعمل إيه |
-|---|---|
-| [[content-visibility: visible]] | الافتراضي: كل حاجة بتتحسب وتترسم |
-| [[content-visibility: auto]] | اللي برّه الشاشة (ومش عليه focus ومش متحدد) بيتأجّل. الكلام لسه موجود: Ctrl+F بيلاقيه، وقارئ الشاشة بيقراه، واللينكات بتاخد focus (MDN) |
-| [[content-visibility: hidden]] | المحتوى مش بيترسم خالص زي [[display: none]]، بس العنصر نفسه لسه واخد مكان (من [[contain-intrinsic-size]])، وحالة اللي جواه محفوظة (مكان الـ scroll مثلًا). اتقاس: صندوق [[hidden]] بـ [[contain-intrinsic-size: 300px 120px]] طوله 120 |
-
-Baseline من سبتمبر 2024 (MDN). لو المتصفح مش بيدعمه، الصفحة بتترسم عادي، فاستخدمه من غير خوف.
-
----
-
-## ٢. [[contain-intrinsic-size]]: الطول التقديري
-
-الجزء المتأجّل المتصفح مبيعرفش طوله، فبيعتبره **صفر**:
-
-~~~text القياس من Chrome (قسم فيه محتوى طوله 800px، برّه الشاشة)
-content-visibility: auto  لوحدها                                  height: 0      ← الصفحة كلها أقصر من الحقيقة
-content-visibility: auto + contain-intrinsic-size: auto 500px     height: 500
-~~~
-
-من غيرها: الـ scrollbar بيبقى طويل وصغير، ولما تنزل والأقسام تترسم وتطوّل فجأة، الـ scrollbar بيتنطّط والمحتوى بيتزق (ده layout shift، درس «CLS»).
-
-| الخاصية | المعنى | اتقاس |
-|---|---|---|
-| [[contain-intrinsic-size: auto 500px]] | المختصرة: قيمة واحدة للعرض والطول. [[auto]] = «بعد ما يترسم مرة، افتكر مقاسه الحقيقي واستخدمه بدل 500» | الأربع longhands بقوا [[auto 500px]] |
-| [[contain-intrinsic-size: 300px 120px]] | عرض ثم طول | |
-| [[contain-intrinsic-width: 300px]] | العرض التقديري بس | |
-| [[contain-intrinsic-height: auto 500px]] | الطول التقديري بس (ده اللي بيفرق غالبًا) | |
-| [[contain-intrinsic-inline-size: 300px]] | المنطقي: اتجاه السطر (= العرض في العربي) | |
-| [[contain-intrinsic-block-size: auto 500px]] | المنطقي: اتجاه الفقرات (= الطول في العربي). أنضف طريقة | |
-| [[contain-intrinsic-size: none]] | الافتراضي: صفر | |
-
-**الرقم منين؟** افتح الصفحة، وقيس طول قسم عادي في DevTools (درس «فحص الـ CSS: validator و DevTools»)، واكتب رقم قريب. مش لازم يبقى مظبوط: [[auto]] بيصلّحه بعد أول رسم.
-
----
-
-## ٣. [[contain]]: الخاصية اللي تحت
-
-[[content-visibility]] بيستخدم «containment» من جوه. [[contain]] بيخليك تقول ده بنفسك:
-
-| القيمة | الوعد اللي بتديه للمتصفح |
-|---|---|
-| [[contain: layout]] | اللي جوه مبيأثرش على layout اللي برّه، وبيعمل formatting context مستقل (زي BFC) |
-| [[contain: paint]] | اللي جوه مبيترسمش برّه الصندوق: بيتقص زي [[overflow: clip]] (اتقاس: ابن عرضه 300 جوه صندوق 100: مقصوص) |
-| [[contain: size]] | مقاس الصندوق مش من محتواه (لازم تديله مقاس، وإلا بيبقى صفر) |
-| [[contain: style]] | العدّادات و [[quotes]] جواه متطلعش برّه |
-| [[contain: content]] | = layout و paint و style. الأأمن للاستخدام العادي |
-| [[contain: strict]] | = content + size |
-| [[contain: inline-size]] | ده اللي بيستخدمه [[container-type: inline-size]] (درس «container queries») |
-
-غالبًا مش هتكتب [[contain]] بنفسك: [[content-visibility]] و [[container-type]] بيعملوه. هتقابله في widget مستقل (إعلان، أو شات) عايز تعزله عن باقي الصفحة.
-
----
-
-## ٤. [[will-change]]: جهّز لحركة جاية
-
-[[will-change: transform]] (أو [[opacity]]) بيخلي المتصفح يحط العنصر في طبقة لوحده من دلوقتي، فلما الحركة تبدأ متتأخرش أول frame. بس له تمن:
-
-- **ذاكرة:** كل طبقة صورة في كارت الشاشة. لو حطيتها على كل حاجة الموبايل بيتقل بدل ما يسرع (MDN بيقول: «آخر حل» لمشكلة أداء موجودة فعلًا).
-- **بيغيّر الـ layout:** [[will-change: transform]] بيعمل stacking context وبيخلي العنصر **containing block** لأي ابن [[position: fixed]] جواه، زي [[transform]] نفسه (درس «sticky و fixed» قسم «فخ الـ fixed»):
-
-~~~text القياس من Chrome
-ابن position: fixed; top: 0 جوه أب عليه will-change: transform   → top الابن = top الأب (2648)، مش أول الشاشة
-~~~
-
-القواعد:
-
-| اعمل | متعملش |
-|---|---|
-| [[.drawer:hover { will-change: transform; }]] أو تحطها بالـ JavaScript قبل الحركة وتشيلها بعدها | [[* { will-change: transform; }]] |
-| على عنصر بيتحرك كتير ودايمًا (slider بيلف لوحده) | على عنصر عادي «احتياطي» |
-| [[will-change: transform, opacity]] للخصايص اللي فعلًا هتتغيّر | [[will-change: all]] أو خاصية مش هتتحرك |
-
-الحركة نفسها ([[transition]] و [[@keyframes]]) في درس «transition و @keyframes»، ودرس «مراحل الرسم» بيشرح ليه [[transform]] و [[opacity]] أرخص من [[top]] و [[width]].
-
----
-
-## ٥. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[content-visibility: auto]] من غير [[contain-intrinsic-size]] | الأقسام طولها صفر، والـ scrollbar بيتنطّط وانت نازل |
-| [[content-visibility: auto]] على الهيدر أو أول جزء في الصفحة | مفيش مكسب: هو في الشاشة أصلًا |
-| [[content-visibility: hidden]] عشان تخفي حاجة عن الكل | مستخبية عن العين بس؛ للإخفاء الحقيقي [[hidden]] أو [[display: none]] (درس «display») |
-| [[contain: size]] من غير مقاس | الصندوق طوله صفر |
-| [[will-change]] على كل حاجة | ذاكرة أكتر وأبطأ |
-| [[will-change: transform]] على أب فيه زرار [[fixed]] | الزرار بيتثبت في الأب مش في الشاشة |
-
----
-
-## الخلاصة
-
-- [[content-visibility: auto]] + [[contain-intrinsic-size: auto <طول>]] على الأقسام الطويلة اللي تحت: نفس الشكل، و layout أسرع بكتير (403ms ← 12ms في القياس).
-- [[contain-intrinsic-size]] و [[-width]] و [[-height]] و [[-inline-size]] و [[-block-size]]: الطول التقديري، و [[auto]] بيفتكر الحقيقي.
-- [[contain]] الأساس، وغالبًا بيتكتب لوحده من خصايص تانية.
-- [[will-change]] قبل حركة تقيلة بس، ومش على كل حاجة.`,
-          try: R`اعمل [[archive.html]] وولّد فيه بالـ JavaScript ٢٠٠٠ [[<article>]] (عنوان وفقرة). افتح DevTools ‹ Performance واعمل Reload وشوف وقت «Layout». بعدين زوّد [[article { content-visibility: auto; contain-intrinsic-size: auto 150px; }]] وقارن، وانزل بسرعة لتحت وشوف الـ scrollbar بيتنطّط ولا لأ. وجرّب تشيل [[contain-intrinsic-size]].`,
-          sol: R`~~~live 260 archive.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>الأرشيف</title>
-<style>
-  body { font-family: system-ui, Tahoma, sans-serif; margin: 0; padding: 12px; }
-  #timing { position: sticky; top: 0; padding: 6px; background: #fef3c7; }
-  article { content-visibility: auto; contain-intrinsic-size: auto 90px; padding: 8px; margin-block-end: 6px; border: 1px solid #d6d3d1; border-radius: 6px; }
-  article h3 { margin: 0 0 4px; font-size: 15px; }
-  article p { margin: 0; }
-</style>
-</head>
-<body>
-<p id="timing">بيحسب...</p>
-<main id="list"></main>
-<script>
-  let html = "";
-  for (let i = 1; i <= 2000; i++) html += "<article><h3>خبر رقم " + i + "</h3><p>ملخص الخبر في سطر أو اتنين عشان الصفحة تبقى طويلة.</p></article>";
-  const list = document.getElementById("list");
-  list.innerHTML = html;
-  const t = performance.now(); list.offsetHeight;
-  document.getElementById("timing").textContent = "حساب الـ layout خد " + (performance.now() - t).toFixed(1) + "ms";
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** شريط أصفر فوق مكتوب فيه الوقت اللي الـ layout خده، وتحته أخبار مرقّمة بإطارات رمادي. لو مسحت سطر [[content-visibility]] وعملت Reload، الرقم هيكبر كتير (الرقم بيختلف حسب جهازك).
-
-~~~text القياس من Chrome (نفس الفكرة بـ 3000 خبر أطول، في headless)
-من غير   403ms        مع content-visibility: auto   11.6ms
-~~~
-
-وفي Performance هتلاقي مستطيلات «Layout» البنفسجي أقصر بكتير. ولو مسحت [[contain-intrinsic-size]] وانت نازل بسرعة، الـ scrollbar بيصغر ويتنطّط لأن الأخبار اللي بتترسم بتطوّل الصفحة فجأة.`,
-          deep: {
-            why: R`الصفحات بقت طويلة جدًا (أرشيف، وتعليقات، وفيد)، والموبايل بطيء. المتصفح من غير مساعدة لازم يحسب كل حاجة عشان يعرف الصفحة طولها كام ومكان كل عنصر. [[content-visibility]] بيدّيله إذن يتجاهل اللي برّه الشاشة، و [[contain-intrinsic-size]] بيدّيله رقم يحط بداله. و [[will-change]] اتعمل عشان المطوّر يقول للمتصفح عن حركة قبل ما تحصل، بدل الحيلة القديمة [[transform: translateZ(0)]].`,
-            how: R`مع [[auto]]، العنصر بياخد [[contain: layout style paint]] دايمًا، ولما يبقى برّه الشاشة بياخد كمان [[size]] ويتجاهل أولاده: مقاسه من [[contain-intrinsic-size]] بس. لما يقرب من الشاشة (Chrome بيبص على مسافة قبل ما يوصل)، بيترسم عادي، ولو [[auto]] مكتوبة في [[contain-intrinsic-size]] المتصفح بيحفظ مقاسه الحقيقي ويستخدمه لو خرج تاني. و [[will-change]] بيعمل طبقة compositor من الأول، فالـ [[transform]] بعد كده بيتعمل في كارت الشاشة من غير layout ولا رسم.`,
-            when: R`[[content-visibility: auto]]: أقسام تحت في صفحة طويلة، وأرشيف، وتعليقات، وصفحة وثائق طويلة. مش على أول شاشة. [[content-visibility: hidden]]: تابات مستخبية عايز تحتفظ بحالتها وتفتحها بسرعة. [[contain: content]]: widget مستقل. [[will-change]]: قبل حركة تقيلة معروفة (درج جانبي بيتفتح، slider)، وتشيلها بعدها.`,
-            mistakes: R`[[content-visibility]] من غير [[contain-intrinsic-size]]. على أول جزء في الصفحة. [[hidden]] كأنها إخفاء للكل. [[contain: size]] من غير مقاس. [[will-change]] على كل حاجة أو دايمًا. نسيان إنها بتحبس أي ابن [[fixed]].`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** أقسام الأرشيف [[.month]] كتير جدًا وتحت في الصفحة. خلّي المتصفح يأجّل رسم اللي برّه الشاشة، ويعتبر طول كل قسم 300px لحد ما يترسم ويفتكر طوله الحقيقي بعدها. (من قسم ١ و ٢)`, done: R`كل الشروط ✓.`, work: { h: 170, start: R`<style>
-  .month { padding: 10px; margin-block-end: 8px; border: 1px solid #d6d3d1; border-radius: 8px; }
-</style>
-<section class="month"><h3>يناير</h3><p>٣١ خبر.</p></section>
-<section class="month"><h3>فبراير</h3><p>٢٨ خبر.</p></section>`, checks: [
-              { say: R`[[content-visibility: auto]]`, q: ".month", style: ["content-visibility", "auto"] },
-              { say: R`الطول التقديري [[auto 300px]]`, q: ".month", style: ["contain-intrinsic-height", "auto 300px"] }
-            ] }, sol: R`~~~live 210 الحل
-<style>
-  .month { content-visibility: auto; contain-intrinsic-size: auto 300px; padding: 10px; margin-block-end: 8px; border: 1px solid #d6d3d1; border-radius: 8px; }
-</style>
-<section class="month"><h3>يناير</h3><p>٣١ خبر.</p></section>
-<section class="month"><h3>فبراير</h3><p>٢٨ خبر.</p></section>
-~~~
-
-**هتشوف إيه:** نفس الصندوقين بالظبط، لأنهم في الشاشة فبيترسموا عادي. الفرق بيبان لما يبقى عندك مئات الأقسام تحت.
-
-**ليه [[auto]] قبل الرقم:** بعد ما القسم يترسم مرة، المتصفح بيفتكر طوله الحقيقي بدل 300. **ممكن تكتبها:** [[contain-intrinsic-block-size: auto 300px]] (الطول بس، منطقي).
-
-~~~text القياس من Chrome
-content-visibility: auto   contain-intrinsic-height: auto 300px
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد حط [[content-visibility: auto]] على التعليقات، والزوار بيشتكوا إن الـ scrollbar بيتنطّط وهما نازلين. صلّحها بالطول التقديري المنطقي ([[contain-intrinsic-block-size]]) بـ [[auto 120px]]. (من قسم ٢)`, done: R`كل الشروط ✓.`, work: { h: 150, start: R`<style>
-  .comment { content-visibility: auto; padding: 8px; border-bottom: 1px solid #e7e5e4; }
-</style>
-<div class="comment">منى: خبر حلو جدًا.</div>
-<div class="comment">كريم: مستنيين التفاصيل.</div>`, checks: [
-              { say: R`[[contain-intrinsic-block-size: auto 120px]]`, q: ".comment", style: ["contain-intrinsic-block-size", "auto 120px"] },
-              { say: R`[[content-visibility]] لسه [[auto]]`, q: ".comment", style: ["content-visibility", "auto"] }
-            ] }, sol: R`~~~live 110 بعد التصليح
-<style>
-  .comment { content-visibility: auto; contain-intrinsic-block-size: auto 120px; padding: 8px; border-bottom: 1px solid #e7e5e4; }
-</style>
-<div class="comment">منى: خبر حلو جدًا.</div>
-<div class="comment">كريم: مستنيين التفاصيل.</div>
-~~~
-
-**هتشوف إيه:** تعليقين بخط رمادي بينهم، زي الأول.
-
-**ليه كده:** من غير طول تقديري، كل تعليق برّه الشاشة طوله صفر، فالصفحة «فاكرة» نفسها أقصر، ولما التعليقات تترسم وانت نازل الصفحة بتطوّل فجأة. **الغلطة الشائعة:** تشيل [[content-visibility]] خالص: المشكلة اتحلت بس السرعة راحت.
-
-~~~text القياس من Chrome
-contain-intrinsic-block-size: auto 120px   (= contain-intrinsic-height في صفحة أفقية)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زرار «لفوق ↑» [[position: fixed]] المفروض يبقى في ركن الشاشة، بس طالع لازق في الكارت اللي هو جواه. السبب سطر في الكارت حد حطه «عشان الأداء». شيله (رجّعه للافتراضي). (من قسم ٤)`, done: R`كل الشروط ✓، والزرار في ركن الشاشة.`, work: { h: 170, start: R`<style>
-  .card { will-change: transform; margin-top: 60px; padding: 12px; background: #f5f5f4; }
-  .top { position: fixed; bottom: 10px; left: 10px; padding: 4px 10px; background: #0f766e; color: white; border-radius: 999px; }
-</style>
-<article class="card">خبر طويل… <a href="#" class="top">لفوق ↑</a></article>`, checks: [
-              { say: R`الكارت [[will-change: auto]]`, q: ".card", style: ["will-change", "auto"] },
-              { say: R`الزرار لسه [[fixed]]`, q: ".top", style: ["position", "fixed"] }
-            ] }, sol: R`~~~live 150 بعد التصليح
-<style>
-  .card { margin-top: 60px; padding: 12px; background: #f5f5f4; }
-  .top { position: fixed; bottom: 10px; left: 10px; padding: 4px 10px; background: #0f766e; color: white; border-radius: 999px; }
-</style>
-<article class="card">خبر طويل… <a href="#" class="top">لفوق ↑</a></article>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 150 قبل
-<style>
-  .card { will-change: transform; margin-top: 60px; padding: 12px; background: #f5f5f4; }
-  .top { position: fixed; bottom: 10px; left: 10px; padding: 4px 10px; background: #0f766e; color: white; border-radius: 999px; }
-</style>
-<article class="card">خبر طويل… <a href="#" class="top">لفوق ↑</a></article>
-~~~
-
-**هتشوف إيه:** في الحل الزرار الأخضر في الركن الشمال تحت في الصفحة كلها. في «قبل» الزرار لازق في ركن الكارت الرمادي نفسه.
-
-**ليه كده:** [[will-change: transform]] بيخلي الكارت containing block لأي [[fixed]] جواه، زي [[transform]] بالظبط. والكارت مش هيتحرك أصلًا، فالسطر ملوش فايدة. **الغلطة الشائعة:** تنقل الزرار برّه الكارت وتسيب [[will-change]]: الزرار هيتظبط، بس الطبقة الزيادة لسه بتاكل ذاكرة.
-
-~~~text القياس من Chrome
-قبل:  الزرار محسوب من الكارت       بعد:  will-change: auto، الزرار محسوب من الشاشة
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صندوق عليه [[content-visibility: hidden; contain-intrinsic-size: 300px 120px]] وجواه فقرة. هتشوف الفقرة؟ والصندوق طوله كام؟ وإيه الفرق لو كان [[display: none]]؟ (من قسم ١)`, done: R`كتبت التلات إجابات.`, sol: R`**الإجابة:** الفقرة **مش ظاهرة**. الصندوق نفسه موجود وطوله **120px** (من [[contain-intrinsic-size]]). مع [[display: none]] الصندوق كله مش موجود ومكانه صفر.
-
-~~~live 190 الاتنين
-<style>
-  .b { margin-bottom: 8px; border: 2px dashed #b45309; }
-  .h { content-visibility: hidden; contain-intrinsic-size: 300px 120px; }
-  .n { display: none; }
-</style>
-<div class="b h"><p>فقرة مستخبية بـ content-visibility</p></div>
-<div class="b n"><p>فقرة مستخبية بـ display: none</p></div>
-<p>بعدهم</p>
-~~~
-
-**هتشوف إيه:** مستطيل فاضي بإطار متقطع بني طوله 120، وتحته على طول «بعدهم». الصندوق التاني مش ظاهر خالص.
-
-~~~text القياس من Chrome
-content-visibility: hidden   المحتوى مش مرسوم، والصندوق طوله 120 وعرضه عرض الأب (block عادي)
-والمحتوى المستخبي بـ hidden مبيتلاقيش بـ Ctrl+F ومبياخدش focus (MDN)، عكس auto
-~~~` }
-          ]
-        },
-        {
-          cmd: "appearance وتنسيق الفورم",
-          title: "تنسّق فورم من الصفر: reset للخط والمقاس، وخانة نص بشكل الموقع، و checkbox و radio بشكلك بـ appearance: none، وتعرف ليه التاريخ واللون صعبين، و field-sizing",
-          pre: ["css/form و label", "css/:checked و :invalid", "css/color-mix و currentColor"],
-          ref: [
-            { t: "MDN Learn: Styling web forms", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Styling_web_forms" },
-            { t: "MDN Learn: Advanced form styling", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Advanced_form_styling" },
-            { t: "MDN: appearance", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/appearance" },
-            { t: "MDN: field-sizing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/field-sizing" },
-            { t: "MDN: ::file-selector-button", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::file-selector-button" },
-            { t: "MDN: accent-color", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/accent-color" },
-            { t: "Chrome DevTools: Show user agent shadow DOM", url: "https://developer.chrome.com/docs/devtools/settings/preferences" }
-          ],
-          desc: R`خانات الفورم مش زي باقي العناصر: المتصفح (أو نظام التشغيل) بيرسمها بشكله ([[appearance: auto]])، وخطها **مش بيتورث** من الصفحة (اتقاس: [[13.3333px Arial]] في Chrome على Windows حتى لو الصفحة 18px)، و [[box-sizing]] بتاعها مختلف من خانة للتانية. فأول سطر في أي فورم: [[input, button, select, textarea { font: inherit; }]].
-خانة النص و [[<button>]] سهل يتنسّقوا (border و padding و radius). الـ checkbox والـ radio بتشيل شكلهم بـ [[appearance: none]] وترسمهم بنفسك. التاريخ واللون والملف والـ range جواهم حتت مخفية (shadow DOM) مش كلها بتتنسّق، فبتنسّق الصندوق اللي برّه و [[accent-color]]. و [[field-sizing: content]] بيخلي الخانة تكبر على قد الكلام.`,
-          example: R`<style>
-  input, button, select, textarea { font: inherit; }
-  .field { display: block; box-sizing: border-box; width: 100%; padding: 8px 12px; border: 2px solid #d6d3d1; border-radius: 8px; }
-  .field:focus-visible { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px #99f6e4; }
-  .check { appearance: none; width: 22px; height: 22px; border: 2px solid #0f766e; border-radius: 6px; vertical-align: middle; }
-  .check:checked { background: #0f766e; }
-</style>
-<label>الإيميل <input class="field" type="email" placeholder="name@example.test"></label>
-<label><input class="check" type="checkbox" checked> ابعتلي الأخبار العاجلة</label>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`الـ reset: كل الخانات والزراير تاخد خط الصفحة (العيلة والحجم والتقل) بدل خط المتصفح الصغير.`,
-            R`خانة النص: سطر لوحدها، و [[border-box]] عشان [[width: 100%]] متطلعش برّه، و padding وحد رمادي 2px وأركان مدورة.`,
-            R`لما تاخد focus من الكيبورد: الحد يخضر وحواليه هالة فاتحة بـ [[box-shadow]] بدل الـ outline الافتراضي.`,
-            R`الـ checkbox: [[appearance: none]] بتشيل شكل المتصفح، وبعدين ترسمه: مربع 22px بحد أخضر وأركان مدورة، وفي نص السطر.`,
-            R`لما يتعلّم عليه ([[:checked]]): المربع يتملي أخضر.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`label فيه الخانة جواه، فالضغط على الكلمة بيحط الـ focus في الخانة.`,
-            R`label فيه الـ checkbox المتعلّم عليه من الأول، والضغط على الكلام بيعلّم ويشيل.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-الفورم أكتر حتة الناس بتتعب في تنسيقها، لأن الخانات مش صناديق عادية: كل واحدة فيها أجزاء المتصفح بيرسمها، وكل متصفح ونظام شكله مختلف. الطريقة: **reset** صغير يخلي كل الخانات تبدأ من نفس النقطة، وبعدين تنسّق السهل عادي، والصعب بالحيل اللي في الدرس ده. HTML الفورم نفسه في درس «form و label» و «أنواع input كلها»، وحالات الفورم في درس «:checked و :invalid»، و [[accent-color]] في درس «color-mix و currentColor».
-
----
-
-## ١. الخانات مش بتاخد خط الصفحة
-
-~~~text القياس من Chrome 157 على Windows (الصفحة body { font: 18px Georgia })
-input      13.3333px Arial      box-sizing: content-box
-button     13.3333px Arial      box-sizing: border-box
-select     13.3333px Arial      box-sizing: border-box
-textarea   13.3333px monospace  box-sizing: content-box
-بعد font: inherit   input   18px Georgia
-~~~
-
-يعني الخانة بخط أصغر من الكلام اللي جنبها، و [[width: 100%]] ليها نتيجة مختلفة في كل نوع. الـ reset:
-
-~~~css
-input, button, select, textarea { font: inherit; }       /* الخط من الصفحة */
-*, *::before, *::after { box-sizing: border-box; }       /* المقاس شامل الـ padding والـ border (درس «box model») */
-~~~
-
-~~~text القياس من Chrome (صندوق 300px، والخانة width: 100%; padding: 10px; border: 2px)
-content-box (الافتراضي في input)   الخانة 324px   ← طالعة برّه بـ 24
-border-box                          الخانة 300px
-~~~
-
----
-
-## ٢. خانة النص: السهلة
-
-[[<input type="text">]] و [[email]] و [[search]] و [[<textarea>]] و [[<button>]] صناديق بتقبل [[border]] و [[padding]] و [[border-radius]] و [[background]] عادي:
-
-~~~live 180 فورم النشرة بعد التنسيق
-<style>
-  input, button { font: inherit; }
-  .form { display: grid; gap: 8px; max-width: 320px; }
-  .field { box-sizing: border-box; width: 100%; padding: 8px 12px; border: 2px solid #d6d3d1; border-radius: 8px; background: #fafaf9; }
-  .field:focus-visible { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px #99f6e4; }
-  .field:user-invalid { border-color: #b91c1c; }
-  .btn { padding: 8px 12px; border: 0; border-radius: 8px; background: #0f766e; color: white; font-weight: 700; cursor: pointer; }
-</style>
-<form class="form">
-  <label>الإيميل <input class="field" type="email" required placeholder="name@example.test"></label>
-  <button class="btn">اشترك في النشرة</button>
-</form>
-~~~
-
-**هتشوف إيه:** خانة عريضة بحد رمادي وأركان مدورة وخط بحجم الكلام اللي حواليها، وتحتها زرار أخضر عريض. دوس في الخانة بالكيبورد (Tab): الحد يخضر وحواليه هالة. اكتب إيميل غلط واطلع: الحد يحمر.
-
-- **متشيلش الـ outline من غير بديل:** [[outline: none]] لوحدها بتخلي زائر الكيبورد ميعرفش هو فين. هنا الهالة بـ [[box-shadow]] هي البديل (درس «focus-visible»).
-- [[:user-invalid]] بيحمّر بعد ما الزائر يتعامل مع الخانة بس، مش من أول ما الصفحة تفتح (درس «:checked و :invalid»).
-- الـ placeholder بـ [[::placeholder]] (درس «::before و ::after»).
-
----
-
-## ٣. ليه بعض الخانات صعبة: الـ shadow DOM
-
-[[<input type="date">]] شكله خانة، بس جواه حتت: الأيام والشهور والسنة كل واحد لوحده، وأيقونة الكالندر، والكالندر اللي بيفتح. الحتت دي متبنية جوه **shadow DOM** بتاع المتصفح: شجرة عناصر مستخبية جوه العنصر، والـ selectors بتاعتك **مبتوصلهاش**. نفس الكلام في [[color]] و [[range]] و [[file]] و [[<select>]] وأسهم [[number]].
-
-تشوفها إزاي (من وثائق Chrome DevTools): Settings (⚙) ‹ Preferences ‹ Elements ‹ علّم **Show user agent shadow DOM**، وبعدين في Elements افتح الخانة: هتلاقي [[#shadow-root (user-agent)]] وتحته الحتت.
-
-| النوع | تقدر تنسّق | مبتقدرش (أو بحيل غير قياسية) |
-|---|---|---|
-| [[text]] و [[email]] و [[textarea]] و [[button]] | كل حاجة تقريبًا | |
-| [[checkbox]] و [[radio]] | اللون بـ [[accent-color]]، أو كله بـ [[appearance: none]] (قسم ٤) | الشكل الأصلي نفسه |
-| [[<select>]] | الصندوق المقفول (border و padding و خط) | القايمة اللي بتفتح، إلا بـ [[appearance: base-select]] الجديد في Chrome (درس «readonly و disabled و checked» قسم [[<selectedcontent>]]) |
-| [[date]] و [[time]] و [[datetime-local]] | الصندوق: border و padding و radius والخط (اتقاس: padding 8px و border 2px اتطبقوا والخانة بقت 139 × 37) | الكالندر اللي بيفتح، والأيقونة إلا بـ [[::-webkit-calendar-picker-indicator]] (Chrome و Safari بس) |
-| [[color]] | المقاس والـ border | المربع الملوّن جوه إلا بـ [[::-webkit-color-swatch]] (Chrome و Safari بس)، ونافذة اختيار اللون |
-| [[file]] | الزرار بـ [[::file-selector-button]] (قياسي، درس «::before و ::after») | الكلام «No file chosen» |
-| [[range]] | [[accent-color]] | الـ thumb والـ track إلا بـ pseudo-elements لكل متصفح |
-
-**تتعامل معاها إزاي:**
-
-1. نسّق الصندوق اللي برّه زي خانة النص، و [[accent-color]] بلون الموقع، و [[color-scheme: light dark]] عشان الكالندر يبقى غامق في الوضع الغامق (درس «dark mode»).
-2. اقبل إن النافذة اللي بتفتح شكلها من النظام: ده كويس للزائر (متعوّد عليها، وشغالة بالكيبورد وقارئ الشاشة).
-3. الـ pseudo-elements اللي بتبدأ بـ [[-webkit-]] مش في أي مواصفة: لو استخدمتها، الشكل لازم يفضل كويس من غيرها.
-4. لو لازم شكل مختلف خالص (كالندر بتصميم الموقع)، ده component بالـ JavaScript، ولازم يبقى accessible (كورس JavaScript).
-
----
-
-## ٤. [[appearance: none]]: checkbox و radio بشكلك
-
-[[appearance: none]] بتشيل الرسم بتاع المتصفح، والخانة بتبقى صندوق فاضي تنسّقه زي ما انت عايز، وهي لسه **checkbox حقيقي**: بتتعلّم بالكيبورد (Space)، وبتتبعت مع الفورم، وقارئ الشاشة بيقول «checkbox، متعلّم عليه».
-
-~~~live 160 checkbox و radio بشكل الموقع
-<style>
-  .opt { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
-  .opt input { appearance: none; margin: 0; width: 22px; height: 22px; border: 2px solid #0f766e; border-radius: 6px; display: grid; place-content: center; background: white; }
-  .opt input::before { content: "✓"; font-size: 15px; font-weight: 700; color: white; transform: scale(0); }
-  .opt input:checked { background: #0f766e; }
-  .opt input:checked::before { transform: scale(1); }
-  .opt input:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-  .opt input[type="radio"] { border-radius: 50%; }
-  .opt input[type="radio"]::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: white; }
-</style>
-<label class="opt"><input type="checkbox" checked> ابعتلي الأخبار العاجلة</label>
-<label class="opt"><input type="checkbox"> ابعتلي ملخص الأسبوع</label>
-<label class="opt"><input type="radio" name="f" checked> كل يوم</label>
-<label class="opt"><input type="radio" name="f"> كل أسبوع</label>
-~~~
-
-**هتشوف إيه:** مربعين بأركان مدورة وحد أخضر: الأول مليان أخضر وفيه ✓ أبيض، والتاني فاضي. وتحتهم دايرتين: الأولى مليانة أخضر وفي نصها نقطة بيضا، والتانية فاضية. دوس على أي كلمة: بتتعلّم.
-
-نفك الكود:
-
-| السطر | بيعمل إيه |
-|---|---|
-| [[appearance: none; margin: 0;]] | يشيل الرسم والـ margin الافتراضي |
-| [[width: 22px; height: 22px; border: 2px solid #0f766e;]] | المربع بتاعك |
-| [[display: grid; place-content: center;]] | عشان العلامة اللي جواه تيجي في النص (درس «place-items و align-self») |
-| [[::before { content: "✓"; transform: scale(0); }]] | العلامة موجودة بس مصغّرة لصفر. Chrome بيرسم [[::before]] على الـ checkbox بعد [[appearance: none]] (اتقاس: [[content]] = "✓")، وده مكتوب في MDN كطريقة شائعة |
-| [[:checked { background: #0f766e; }]] و [[:checked::before { transform: scale(1); }]] | لما يتعلّم: يتملي وتظهر العلامة |
-| [[:focus-visible { outline: 3px solid #fbbf24; }]] | **لازم**: زائر الكيبورد يشوف هو واقف فين |
-
-~~~text القياس من Chrome
-checkbox عادي       appearance: auto   13 × 13
-بعد appearance: none                   22 × 22    background-color (checked): rgb(15, 118, 110)
-::before (checked)  transform: matrix(1, 0, 0, 1, 0, 0)    (مش checked) matrix(0, 0, 0, 0, 0, 0)
-~~~
-
-### قيم [[appearance]]
-
-| القيمة | المعنى |
-|---|---|
-| [[appearance: auto]] | الافتراضي: المتصفح يرسم الخانة بشكلها الأصلي |
-| [[appearance: none]] | من غير رسم المتصفح: صندوق عادي تنسّقه |
-| [[appearance: textfield]] | على [[type="search"]] أو [[number]]: يرسمها كخانة نص عادية (من غير زينة البحث في Safari) |
-| [[appearance: menulist-button]] | على [[<select>]]: شكل القايمة المقفولة بس بتقبل تنسيق أكتر |
-| [[appearance: base-select]] | على [[<select>]]: القايمة كلها (حتى اللي بتفتح) بتتنسّق. جديد في Chrome (اتقاس: [[CSS.supports]] ‏true)، مش Baseline |
-
-> **متخبيش الخانة بـ [[display: none]]** وترسم شكل بـ [[label::before]] (حيلة قديمة): الكيبورد مبيوصلهاش وقارئ الشاشة مبيشوفهاش. [[appearance: none]] بتحل المشكلة من غير ما الخانة تختفي.
-
----
-
-## ٥. [[field-sizing: content]]: الخانة على قد الكلام
-
-الخانة عرضها ثابت من المتصفح (اتقاس: 177px لـ [[<input>]] عادي)، والـ [[<textarea>]] طوله ثابت ([[rows]]). [[field-sizing: content]] بيخليها تكبر وتصغر مع الكلام:
-
-~~~text القياس من Chrome (field-sizing: content; min-width: 4ch)
-«قصير»                          37.6px
-«كلام أطول بكتير من اللي قبله»   131.8px
-input عادي                       177px مهما كان الكلام
-~~~
-
-اكتبها مع [[min-width]] و [[max-width]] (درس «min-width و max-width») عشان متبقاش صغيرة جدًا ولا تطلع برّه. وعلى [[<textarea>]] ده يخلي خانة التعليق تطوّل لوحدها وانت بتكتب. **Baseline من يونيو 2026 بس (MDN)**: في المتصفحات القديمة الخانة بترجع لمقاسها الثابت، فمفيش ضرر.
-
----
-
-## ٦. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| من غير [[font: inherit]] | الخانات والزراير بخط أصغر وعيلة تانية |
-| [[width: 100%]] على input من غير [[border-box]] | الخانة أعرض من أبوها بالـ padding والـ border |
-| [[outline: none]] من غير بديل | زائر الكيبورد تايه |
-| [[display: none]] على الـ checkbox ورسم بديل | الكيبورد وقارئ الشاشة مبيوصلوش |
-| [[appearance: none]] على checkbox ونسيت تنسّق [[:checked]] | الخانة بتتعلّم بس مفيش أي فرق في الشكل |
-| [[::-webkit-calendar-picker-indicator]] كأنه قياسي | مش شغال في Firefox |
-| placeholder بدل label | بيختفي أول ما تكتب (درس «form و label») |
-
----
-
-## الخلاصة
-
-- الخانات خطها ومقاسها من المتصفح: [[font: inherit]] و [[box-sizing: border-box]] أول سطرين.
-- النص والزراير سهلين، ومتنساش [[:focus-visible]].
-- الصعب (تاريخ ولون و select و range) جواه shadow DOM: نسّق الصندوق و [[accent-color]] و [[color-scheme]]، واقبل النافذة.
-- [[appearance: none]] للـ checkbox والـ radio بشكلك وهما لسه حقيقيين.
-- [[field-sizing: content]] للخانة اللي بتكبر مع الكلام (Baseline 2026).`,
-          try: R`اعمل [[newsletter.html]] فيه فورم: خانة اسم، وخانة إيميل، و [[<input type="date">]] لتاريخ الميلاد، و [[<input type="color">]] للون المفضل، وتلات checkboxes للأقسام، وزرار. افتحه من غير CSS وقيس خط الخانة في Computed. بعدين زوّد الـ reset، ونسّق خانات النص، واعمل الـ checkboxes بـ [[appearance: none]]. وفعّل Show user agent shadow DOM وافتح خانة التاريخ في Elements.`,
-          sol: R`~~~live 380 newsletter.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>النشرة</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; font: 16px/1.5 system-ui, Tahoma, sans-serif; color: #292524; background: #faf7f2; color-scheme: light; accent-color: #0f766e; }
-  input, button { font: inherit; }
-  form { display: grid; gap: 10px; max-width: 360px; padding: 16px; background: white; border-radius: 12px; }
-  .field { width: 100%; padding: 8px 12px; border: 2px solid #d6d3d1; border-radius: 8px; }
-  .field:focus-visible { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px #99f6e4; }
-  fieldset { border: 0; padding: 0; margin: 0; }
-  .opt { display: flex; align-items: center; gap: 8px; }
-  .opt input { appearance: none; margin: 0; width: 20px; height: 20px; border: 2px solid #0f766e; border-radius: 5px; display: grid; place-content: center; }
-  .opt input::before { content: "✓"; font-size: 13px; font-weight: 700; color: white; transform: scale(0); }
-  .opt input:checked { background: #0f766e; }
-  .opt input:checked::before { transform: scale(1); }
-  .opt input:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-  button { padding: 10px; border: 0; border-radius: 8px; background: #0f766e; color: white; font-weight: 700; }
-</style>
-</head>
-<body>
-<form>
-  <label>الاسم <input class="field" name="name" autocomplete="name"></label>
-  <label>الإيميل <input class="field" type="email" name="email" required></label>
-  <label>تاريخ الميلاد <input class="field" type="date" name="birthday"></label>
-  <label>لونك المفضل <input type="color" name="color" value="#0f766e"></label>
-  <fieldset>
-    <legend>الأقسام</legend>
-    <label class="opt"><input type="checkbox" name="s" value="local" checked> محليات</label>
-    <label class="opt"><input type="checkbox" name="s" value="sport"> رياضة</label>
-  </fieldset>
-  <button>اشترك</button>
-</form>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** كارت أبيض على خلفية كريمي. خانات الاسم والإيميل والتاريخ بنفس الشكل: حد رمادي وأركان مدورة وخط بحجم الكلام. خانة التاريخ فيها الأيام والشهور وأيقونة الكالندر من المتصفح. خانة اللون مربع أخضر. الأقسام مربعات خضرا بشكلك (محليات متعلّم عليها). وزرار «اشترك» أخضر عريض.
-
-~~~text القياس من Chrome
-input.field   font-size: 16px (من الصفحة)   box-sizing: border-box
-.opt input    appearance: none   20 × 20   checked: rgb(15, 118, 110)
-~~~
-
-وفي Elements مع Show user agent shadow DOM: تحت [[<input type="date">]] هتلاقي [[#shadow-root (user-agent)]] وجواه حتت اليوم والشهر والسنة (من وثائق DevTools، والأسماء بتختلف من نسخة لنسخة).`,
-          deep: {
-            why: R`الخانات اتعملت زمان على إنها «أدوات النظام» جوه الصفحة، فكل نظام يرسمها بشكله والمستخدم يتعرّف عليها. ده خلّى تنسيقها صعب ومختلف بين المتصفحات. المواصفات بتحاول تحل ده بالتدريج: [[appearance]] لشيل الرسم، و [[accent-color]] للون، و [[field-sizing]] للمقاس، و [[base-select]] للقايمة. والـ reset بيحل الجزء الأكبر من الاختلاف بسطرين.`,
-            how: R`ستايل المتصفح الافتراضي فيه [[font: -webkit-small-control]] أو شبهها على الخانات (عشان كده 13.333px)، وده بيكسب على الوراثة لأنه قاعدة مكتوبة على العنصر نفسه، و [[font: inherit]] بتكسبه لأنها قاعدة منك. [[appearance: auto]] معناها المتصفح يرسم الخانة بكود خاص، و [[none]] بتخليه يعاملها كصندوق عادي بيترسم بالـ CSS، والسلوك (التعليم، والإرسال، والـ role) زي ما هو. الحتت الداخلية جوه shadow root المتصفح، والـ selectors العادية مبتعدّيش حدوده.`,
-            when: R`الـ reset في كل مشروع. تنسيق النص والزراير في كل فورم. [[appearance: none]] لما تصميم الموقع محتاج checkbox أو radio أو switch بشكل معيّن، و [[accent-color]] لما اللون كفاية. [[field-sizing: content]] لخانة تعليق أو بحث بتكبر. للتاريخ واللون: نسّق الصندوق وسيب الباقي.`,
-            mistakes: R`نسيان [[font: inherit]]. [[width: 100%]] من غير [[border-box]]. [[outline: none]] من غير بديل. إخفاء الخانة بـ [[display: none]]. نسيان [[:checked]] بعد [[appearance: none]]. الاعتماد على [[-webkit-]] pseudo-elements. placeholder بدل label.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** الصفحة خطها 18px، بس الخانة والزرار بخط المتصفح الصغير. خليهم ياخدوا خط الصفحة بسطر واحد. (من قسم ١)`, done: R`الخانة والزرار بنفس حجم الكلام، وكل الشروط ✓.`, work: { h: 110, start: R`<style>
-  body { font-size: 18px; }
-</style>
-<label>ابحث في الأخبار <input></label> <button>ابحث</button>`, checks: [
-              { say: R`الخانة 18px`, q: "input", style: ["font-size", "18px"] },
-              { say: R`والزرار 18px`, q: "button", style: ["font-size", "18px"] },
-              { say: R`بـ [[font: inherit]]`, src: "font: inherit" }
-            ] }, sol: R`~~~live 80 الحل
-<style>
-  body { font-size: 18px; }
-  input, button, select, textarea { font: inherit; }
-</style>
-<label>ابحث في الأخبار <input></label> <button>ابحث</button>
-~~~
-
-**هتشوف إيه:** «ابحث في الأخبار» وجنبها الخانة والزرار، والكلام اللي هتكتبه في الخانة وكلمة «ابحث» بنفس حجم الكلام اللي جنبهم.
-
-**ليه [[font]] مش [[font-size]] بس:** [[font]] المختصرة بتورّث العيلة والحجم والتقل والـ line-height مرة واحدة. **الغلطة الشائعة:** [[body { font-size: 18px }]] بس وتستنى الخانات تاخده: ستايل المتصفح على الخانة بيكسب.
-
-~~~text القياس من Chrome
-قبل: input 13.3333px Arial      بعد: input 18px (عيلة الصفحة)
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** خانة الإيميل في النشرة: عرضها 100% من غير ما تطلع برّه، و padding 10px، وحد 2px [[solid]] لونه [[#d6d3d1]]، وأركان 8px. (من قسم ١ و ٢)`, done: R`الخانة جوه الكارت بالظبط، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  .card { width: 300px; padding: 12px; background: #f5f5f4; }
-  input { font: inherit; }
-</style>
-<div class="card"><label>الإيميل <input class="field" type="email"></label></div>`, checks: [
-              { say: R`[[box-sizing: border-box]]`, q: ".field", style: ["box-sizing", "border-box"] },
-              { say: R`العرض 300px (عرض الكارت من جوه)`, q: ".field", style: ["width", "300px"] },
-              { say: R`padding 10px`, q: ".field", style: ["padding-top", "10px"] },
-              { say: R`حد 2px رمادي`, q: ".field", style: ["border-top", "2px solid rgb(214, 211, 209)"] },
-              { say: R`أركان 8px`, q: ".field", style: ["border-top-left-radius", "8px"] }
-            ] }, sol: R`~~~live 110 الحل
-<style>
-  .card { width: 300px; padding: 12px; background: #f5f5f4; }
-  input { font: inherit; }
-  .field { display: block; box-sizing: border-box; width: 100%; padding: 10px; border: 2px solid #d6d3d1; border-radius: 8px; }
-</style>
-<div class="card"><label>الإيميل <input class="field" type="email"></label></div>
-~~~
-
-**هتشوف إيه:** كارت رمادي فاتح، فيه «الإيميل» وتحته خانة بيضا بعرض الكارت كله بالظبط، حدها رمادي وأركانها مدورة.
-
-**ليه [[border-box]]:** من غيرها الخانة 300 + 20 padding + 4 border = 324، يعني طالعة برّه الكارت. و [[display: block]] عشان تنزل سطر لوحدها تحت الكلمة.
-
-~~~text القياس من Chrome
-.field   width: 300px   box-sizing: border-box   padding: 10px   border: 2px solid rgb(214, 211, 209)
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** checkboxes الأقسام بشكل الموقع: [[appearance: none]]، ومربع 22px بحد 2px أخضر [[#0f766e]]، ولما يتعلّم عليه يتملي بنفس الأخضر. (من قسم ٤)`, done: R`المتعلّم عليه أخضر والتاني فاضي، وكل الشروط ✓.`, work: { h: 120, start: R`<style>
-  label { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
-</style>
-<label><input type="checkbox" class="c" checked> محليات</label>
-<label><input type="checkbox" class="c"> رياضة</label>`, checks: [
-              { say: R`[[appearance: none]]`, q: ".c", style: ["appearance", "none"] },
-              { say: R`عرضه 22px`, q: ".c", style: ["width", "22px"] },
-              { say: R`الحد أخضر 2px`, q: ".c", style: ["border-top", "2px solid rgb(15, 118, 110)"] },
-              { say: R`المتعلّم عليه مليان أخضر`, q: ".c:checked", style: ["background-color", "rgb(15, 118, 110)"] }
-            ] }, sol: R`~~~live 100 الحل
-<style>
-  label { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
-  .c { appearance: none; margin: 0; width: 22px; height: 22px; border: 2px solid #0f766e; border-radius: 6px; }
-  .c:checked { background: #0f766e; }
-  .c:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-</style>
-<label><input type="checkbox" class="c" checked> محليات</label>
-<label><input type="checkbox" class="c"> رياضة</label>
-~~~
-
-**هتشوف إيه:** مربعين بحد أخضر وأركان مدورة: «محليات» مليان أخضر، و «رياضة» فاضي. دوس على «رياضة» يتملي.
-
-**ليه كده:** [[appearance: none]] بتشيل المربع الصغير بتاع المتصفح، وكل اللي بعدها رسمك. ولو عايز علامة ✓ جواه: [[::before]] زي القسم ٤. **الغلطة الشائعة:** تنسى [[:checked]]: الخانة بتتعلّم فعلًا بس شكلها مبيتغيّرش.
-
-~~~text القياس من Chrome
-.c   appearance: none   width: 22px   .c:checked   background-color: rgb(15, 118, 110)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد خبّى الـ checkbox بـ [[display: none]] ورسم مربع بـ [[label::before]]. الشكل حلو، بس بالكيبورد مستحيل توصله. خلّي الخانة نفسها ظاهرة بـ [[appearance: none]] و [[display: grid]] وارسم عليها، وامسح الـ [[::before]] اللي على الـ label. (من قسم ٤ «متخبيش الخانة»)`, done: R`Tab بيوصل للمربع، وكل الشروط ✓.`, work: { h: 120, start: R`<style>
-  .terms input { display: none; }
-  .terms label::before { content: ""; display: inline-block; width: 18px; height: 18px; margin-inline-end: 6px; border: 2px solid #0f766e; vertical-align: middle; }
-</style>
-<div class="terms"><input type="checkbox" id="t"><label for="t">موافق على الشروط</label></div>`, checks: [
-              { say: R`الخانة مش [[display: none]]: بقت [[grid]]`, q: ".terms input", style: ["display", "grid"] },
-              { say: R`[[appearance: none]]`, q: ".terms input", style: ["appearance", "none"] },
-              { say: R`مفيش [[::before]] على الـ label`, q: ".terms label", pseudo: "::before", style: ["content", "none"] }
-            ] }, sol: R`~~~live 90 بعد التصليح
-<style>
-  .terms { display: flex; align-items: center; gap: 6px; }
-  .terms input { appearance: none; display: grid; place-content: center; margin: 0; width: 22px; height: 22px; border: 2px solid #0f766e; border-radius: 4px; }
-  .terms input::before { content: "✓"; color: white; font-weight: 700; transform: scale(0); }
-  .terms input:checked { background: #0f766e; }
-  .terms input:checked::before { transform: scale(1); }
-  .terms input:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
-</style>
-<div class="terms"><input type="checkbox" id="t"><label for="t">موافق على الشروط</label></div>
-~~~
-
-**هتشوف إيه:** مربع فاضي بحد أخضر وجنبه «موافق على الشروط». دوس الكلمة: المربع يخضر وتظهر ✓. ودوس Tab: حلقة صفرا حوالين المربع.
-
-**ليه كده:** [[display: none]] بيشيل الخانة من الكيبورد ومن قارئ الشاشة خالص، فاللي بيستخدمهم مش هيعرف يوافق ويكمل. بـ [[appearance: none]] الخانة الحقيقية هي اللي بتترسم.
-
-~~~text القياس من Chrome
-قبل: input display: none        بعد: input display: grid   appearance: none   label::before content: none
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** خانة «اكتب تعليقك» ([[<textarea>]]) تطوّل لوحدها مع الكلام بدل ما يطلع scrollbar، ومتقلّش عن سطرين ([[min-block-size: 3lh]]). (من قسم ٥)`, done: R`كل الشروط ✓، والخانة بتطوّل وانت بتكتب (في Chrome).`, work: { h: 140, start: R`<style>
-  textarea { font: inherit; box-sizing: border-box; width: 100%; padding: 8px; border: 2px solid #d6d3d1; border-radius: 8px; }
-</style>
-<label>اكتب تعليقك <textarea rows="2"></textarea></label>`, checks: [
-              { say: R`[[field-sizing: content]]`, q: "textarea", style: ["field-sizing", "content"] },
-              { say: R`حد أدنى للطول بـ [[min-block-size]]`, src: "min-block-size" }
-            ] }, sol: R`~~~live 120 الحل
-<style>
-  textarea { font: inherit; box-sizing: border-box; width: 100%; padding: 8px; border: 2px solid #d6d3d1; border-radius: 8px;
-             field-sizing: content; min-block-size: 3lh; }
-</style>
-<label>اكتب تعليقك <textarea rows="2"></textarea></label>
-~~~
-
-**هتشوف إيه:** خانة تعليق عريضة. اكتب فيها سطور كتير: بتطوّل معاك من غير scrollbar.
-
-**ليه [[min-block-size]]:** مع [[field-sizing: content]] الخانة الفاضية بتبقى سطر واحد بس، و [[rows]] بيتجاهل. و [[3lh]] = تلات أضعاف ارتفاع السطر (سطرين + الـ padding تقريبًا، درس «الوحدات كلها»). **ملاحظة:** Baseline 2026، فمتصفح قديم هيعرض الخانة بطول [[rows]] العادي.
-
-~~~text القياس من Chrome
-textarea   field-sizing: content
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** في DevTools فعّل «Show user agent shadow DOM» (من Settings ‹ Preferences ‹ Elements)، وافتح [[<input type="range">]] و [[<input type="color">]] في Elements. إيه اللي لقيته تحت كل واحد؟ وليه [[input[type=range] div]] مش هيمسك أي حاجة منهم؟ (من قسم ٣)`, done: R`كتبت اللي لقيته والسبب.`, sol: R`**إجابة نموذجية:** تحت كل واحد سطر [[#shadow-root (user-agent)]] وجواه عناصر [[<div>]] بأسماء زي track و thumb للـ range، و swatch للون (الأسماء بالظبط بتختلف حسب نسخة Chrome، وده من وثائق DevTools).
-
-الـ selector بتاعك [[input[type=range] div]] مش هيمسكهم لأنهم جوه **shadow root**: شجرة منفصلة، والـ selectors العادية مبتعدّيش حدودها. عشان كده المتصفحات عاملة pseudo-elements خاصة بيها ([[::-webkit-slider-thumb]] في Chrome و Safari، و [[::-moz-range-thumb]] في Firefox)، ومفيش منهم قياسي لحد دلوقتي. القياسي اللي تقدر تعتمد عليه: [[accent-color]].
-
-~~~live 60 accent-color على range و checkbox
-<style>
-  .brand { accent-color: #b45309; }
-</style>
-<div class="brand"><input type="range" value="70"> <input type="checkbox" checked></div>
-~~~
-
-**هتشوف إيه:** شريط range الجزء المليان منه بني، و checkbox متعلّم عليه بني.` }
-          ]
-        },
-        {
-          cmd: "فحص الـ CSS: validator و DevTools",
-          title: "تلاقي غلطة الـ CSS بنفسك بترتيب: الـ validator، وبعدين Styles في DevTools (المشطوب والباهت)، والتعديل الحي، و Computed ورسمة الـ box model، و overlays الـ grid والـ flex، و responsive mode",
-          pre: ["css/View Source و validator", "css/specificity"],
-          ref: [
-            { t: "MDN Learn: Debugging CSS", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Debugging_CSS" },
-            { t: "W3C CSS Validation Service", url: "https://jigsaw.w3.org/css-validator/" },
-            { t: "Chrome DevTools: CSS features reference", url: "https://developer.chrome.com/docs/devtools/css/reference" },
-            { t: "Chrome DevTools: Find invalid, overridden, inactive CSS", url: "https://developer.chrome.com/docs/devtools/css/issues" },
-            { t: "Chrome DevTools: Inspect CSS grid", url: "https://developer.chrome.com/docs/devtools/css/grid" },
-            { t: "Chrome DevTools: Inspect and debug flexbox", url: "https://developer.chrome.com/docs/devtools/css/flexbox" },
-            { t: "Chrome DevTools: Device mode", url: "https://developer.chrome.com/docs/devtools/device-mode" }
-          ],
-          desc: R`لما الـ CSS «مش شغال»، دوّر بالترتيب ده: (١) **الـ validator** يقولك على غلطات الكتابة (فاصلة منقوطة ناقصة، أو اسم خاصية غلط) برقم السطر. (٢) **Styles** في DevTools: القاعدة واصلة للعنصر أصلًا؟ ولو واصلة: مشطوبة (قاعدة تانية كسبتها أو قيمة غلط) ولا باهتة (ملهاش أثر بسبب خاصية تانية)؟ (٣) **عدّل حي:** طفّي وشغّل وغيّر القيم وزوّد لحد ما تلاقي الصح، وانقله للملف. (٤) **Computed** ورسمة الـ **box model**: القيمة النهائية والمقاسات. (٥) **overlays** الـ grid والـ flex. (٦) **Device toolbar** للموبايل.
-فاصلة منقوطة واحدة ناقصة بتضيّع **خاصيتين**: اتقاس [[padding: 12px]] من غير [[;]] قبل [[background]]: الاتنين اتجاهلوا.`,
-          example: R`<style>
-  .card {
-    padding: 12px
-    background: #fef3c7;
-    border-radius: 8px;
+            {
+              lvl: R`تحدي`,
+              t: R`**مسألة:** اكتب [[pick(fg, bg)]] بتاخد لون نص ولون خلفية، ولو النسبة أقل من 4.5 بتغمّق النص (أو تفتّحه لو الخلفية غامقة) خطوة خطوة لحد ما يعدّي، وترجّع أول لون بيعدّي. جرّبها على [[#1a7f37]] و [[#dcf3e3]].`,
+              done: R`[[pick("#1a7f37", "#dcf3e3")]] بترجّع لون نسبته 4.5 أو أكتر وقريب من الأصلي (في المعمل التلات درجات الأغمق كلهم عدّوا)، وعلى خلفية غامقة بتفتّح مش بتغمّق، وفيه اختبار بيتأكد إن اللون اللي اتنقى عدّى فعلًا.`,
+              sol: R`~~~js pick.mjs
+const rgb = (h) => h.match(/\w\w/g).map((x) => parseInt(x, 16));
+const hex = (c) => "#" + c.map((v) => Math.round(v).toString(16).padStart(2, "0")).join("");
+const lum = (h) => {
+  const c = rgb(h).map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+};
+export const ratio = (a, b) => {
+  const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
+  return (x + 0.05) / (y + 0.05);
+};
+
+export function pick(fg, bg, min = 4.5) {
+  if (ratio(fg, bg) >= min) return fg;
+  const toward = lum(bg) < 0.18 ? 255 : 0;           // خلفية غامقة: نفتّح، فاتحة: نغمّق
+  const c = rgb(fg);
+  for (let t = 0.01; t <= 1; t += 0.01) {
+    const next = hex(c.map((v) => v + (toward - v) * t));
+    if (ratio(next, bg) >= min) return next;
   }
-  .title {
-    colr: #92400e;
-    font-size: 20px;
-  }
-</style>
-<div class="card"><h2 class="title">خبر عاجل</h2></div>`,
-          flag: "script",
-          lines: [
-            R`بداية بلوك الـ CSS.`,
-            R`قاعدة الكارت بتبدأ: الـ selector [[.card]] وبعده القوس.`,
-            R`**الغلطة الأولى:** مفيش [[;]] في الآخر، فالمتصفح بيقرا [[12px background: #fef3c7]] كلها قيمة لـ [[padding]].`,
-            R`السطر ده بقى جزء من قيمة الـ padding الغلط، فالخلفية مش هتتطبق.`,
-            R`الأركان المدورة: سليمة واتطبقت (8px).`,
-            R`قفلة قاعدة الكارت.`,
-            R`قاعدة العنوان بتبدأ: الـ selector [[.title]] وبعده القوس.`,
-            R`**الغلطة التانية:** [[colr]] مش خاصية، فالمتصفح بيتجاهل السطر ده وبس.`,
-            R`حجم الخط سليم واتطبق (20px)، لأن كل سطر بيتقري لوحده بعد الـ [[;]].`,
-            R`قفلة قاعدة العنوان.`,
-            R`قفلة بلوك الـ CSS.`,
-            R`الكارت والعنوان: هيطلعوا من غير خلفية صفرا ولا padding، والعنوان أسود مش بني.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-المتصفح مش بيقولك «فيه غلطة في الـ CSS». بيتجاهل الحتة اللي مش فاهمها ويكمّل، فالصفحة بتطلع شكلها غلط من غير أي رسالة. عشان كده محتاج طريقة ثابتة تمشي عليها. درس «View Source و validator» علّمك الـ HTML validator وتاب Elements، والدرس ده نفس الفكرة للـ CSS. خطوات DevTools هنا من وثائق Chrome DevTools (مكتوبة جنب كل جزء)، والأرقام اتقاست في Chrome 157.
-
----
-
-## ١. الـ validator: غلطات الكتابة برقم السطر
-
-المثال اللي فوق فيه غلطتين. اتبعت للـ **W3C CSS Validator** (jigsaw.w3.org/css-validator، تاب «By direct input»، الصق الـ CSS واضغط Check). ده الرد الحقيقي بالنص:
-
-~~~text رد الـ validator (CSS level 3 + SVG)
-Sorry! We found the following errors (2)
-
-Line : 3 .card
-       (Value Error : padding)
-       Missing a semicolon before the property name “background”
-Line : 7 .title
-       Property “colr” doesn't exist. The closest matching property name is “color” :
-       #92400e
+  return hex([toward, toward, toward]);
+}
 ~~~
 
-نقرا الرد:
+~~~js pick.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { pick, ratio } from "./pick.mjs";
 
-| السطر في الرد | معناه | التصليح |
-|---|---|---|
-| [[Line : 3 .card]] | الغلطة في السطر 3، جوه القاعدة اللي الـ selector بتاعها [[.card]] | |
-| [[Value Error : padding]] | قيمة [[padding]] بقت غلط | |
-| [[Missing a semicolon before the property name “background”]] | السبب: [[;]] ناقصة قبل [[background]]، فالسطرين اتلزقوا | [[padding: 12px;]] |
-| [[Property “colr” doesn't exist]] | اسم الخاصية مش موجود | |
-| [[The closest matching property name is “color”]] | اقتراح: يمكن قصدك [[color]] | [[color: #92400e;]] |
-
-~~~text القياس من Chrome (المثال من غير تصليح)
-.card    padding-top: 0px    background-color: rgba(0, 0, 0, 0)   ← الاتنين ضاعوا بسبب ; واحدة
-.card    border-radius: 8px                                        ← السطر اللي بعدهم سليم
-.title   color: rgb(0, 0, 0)    font-size: 20px                    ← colr اتجاهلت بس
-~~~
-
-**المهم:** الغلطة بتأثر على **الـ declaration** اللي هي فيه بس (لحد الـ [[;]] الجاية)، مش على القاعدة كلها. إلا لو الغلطة في الـ selector: ساعتها القاعدة كلها بتتجاهل (درس «[attr] و combinators» قسم الـ selector list).
-
-**الـ validator مش بيعرف:** إن الـ selector مش ماسك العنصر، ولا إن قاعدة تانية كسبت، ولا إن [[justify-content]] ملهاش أثر على block. دي شغل DevTools. وبيعلّم خصايص جديدة جدًا كغلط أحيانًا لأنه متأخر عن المتصفحات، فاقرا الرسالة قبل ما تصدّقها.
-
----
-
-## ٢. Styles: القاعدة واصلة؟ ولا مشطوبة؟ ولا باهتة؟
-
-افتح DevTools (F12 أو كليك يمين ‹ Inspect)، واختار العنصر في Elements، وبص على تاب **Styles**. كل القواعد اللي بتمسك العنصر مترصوصة من الأقوى للأضعف (درس «cascade»). حسب وثائق DevTools «Find invalid, overridden, inactive CSS»:
-
-| اللي بتشوفه | معناه | تعمل إيه |
-|---|---|---|
-| القاعدة **مش موجودة** خالص في Styles | الـ selector مش ماسك العنصر (اسم class غلط، أو الملف مش متحمّل) | راجع الـ selector والـ class في الـ HTML، وتاب Network للملف |
-| declaration **مشطوب** وجنبه **علامة تحذير** ⚠ | قيمة أو اسم خاصية غلط (زي [[colr]]): لو الاسم غلط السطر كله مشطوب، ولو القيمة بس اللي غلط القيمة بس | صلّح الكتابة. ده نفس اللي الـ validator قاله |
-| declaration **مشطوب** من غير علامة | صحيح، بس قاعدة تانية أقوى كسبته | دوّر فوقه على اللي كسب: specificity أو ترتيب أو [[!important]] (درس «specificity») |
-| declaration **باهت** وجنبه علامة ⓘ | صحيح، بس **ملوش أثر** بسبب خاصية تانية. حط الماوس على العلامة: بيقولك السبب | مثال الوثائق: [[justify-content]] على عنصر [[display: block]]. صلّح الخاصية التانية |
-
----
-
-## ٣. عدّل حي لحد ما تلاقي الصح
-
-كله في Styles، وبيتمسح لما تعمل Reload، فبعد ما تلاقي الصح انقله لملف الـ CSS بإيدك (من وثائق DevTools «CSS features reference»):
-
-1. **طفّي وشغّل:** حط الماوس على القاعدة، هيظهر مربع جنب كل declaration. شيل العلامة: السطر بيتشطب وبيبطل. مفيد عشان تعرف مين السبب.
-2. **غيّر قيمة:** دبل كليك على القيمة واكتب. وانت جوه رقم: سهم فوق وتحت بيزوّد 1، و Shift + سهم 10، و Alt + سهم 0.1. شوف الصفحة بتتغيّر وانت بتدوس.
-3. **زوّد declaration:** كليك في الفاضي قبل [[}]] بتاع القاعدة، اكتب اسم الخاصية، Enter، القيمة، Enter.
-4. **قاعدة جديدة:** زرار **New Style Rule** (علامة +) بيعمل قاعدة جديدة بالـ selector بتاع العنصر.
-5. **حالات:** زرار **:hov** بيخليك تثبّت [[:hover]] أو [[:focus]] أو [[:focus-visible]] عشان تنسّقها من غير ما تفضل حاطط الماوس.
-6. **classes:** زرار **.cls** بيعرض الـ classes بتاعة العنصر بمربعات: شيل علامة class عشان تشوف الصفحة من غيره، أو زوّد class جديد.
-
-### Elements: نفس الكلام للـ HTML
-
-في Elements (المدخل [[2.9.3]] في منهج MDN، ودرس «View Source و validator» قسم ٣): دبل كليك على اسم عنصر أو attribute يعدّله، وكليك يمين ‹ **Edit as HTML** يعدّل حتة كاملة، وكليك يمين ‹ **Add attribute**، و Delete يمسح العنصر. كده تجرّب «لو الـ div ده بقى section» أو «لو شلت الـ class ده» قبل ما تكتبه.
-
----
-
-## ٤. Computed ورسمة الـ box model
-
-تاب **Computed** جنب Styles: القيمة **النهائية** لكل خاصية بعد كل الخناقات (نفس اللي [[getComputedStyle()]] بيرجّعه)، و **Show all** بيعرض كل الخصايص حتى الموروثة، و **Filter** للبحث. اضغط السهم جنب أي خاصية: بيوديك للقاعدة اللي كسبت.
-
-وفوق التاب رسمة **الـ box model**: مربعات جوه بعض بالأرقام: الـ content في النص (العرض × الطول)، وحواليه padding (أخضر)، و border (أصفر)، و margin (برتقالي). دبل كليك على أي رقم يغيّره. ولما تحط الماوس على عنصر في Elements، نفس الألوان بتنوّر على الصفحة: كده تشوف الـ margin اللي «خرج» من أبوه (درس «normal flow و margin collapsing») بعينك.
-
----
-
-## ٥. overlays الـ grid والـ flex
-
-جنب أي عنصر [[display: grid]] في Elements فيه كلمة صغيرة **grid** (badge)، وجنب [[display: flex]] كلمة **flex**. اضغط عليها: الصفحة بيترسم عليها خطوط الشبكة أو حدود العناصر والمسافات (من وثائق «Inspect CSS grid» و «Inspect and debug flexbox»).
-
-تاب **Layout** (جنب Styles و Computed) فيه لكل grid: أرقام الخطوط أو أساميها (مفيد مع [[grid-column-end: -1]] و [[span]]، درس «flex-flow و grid-template»)، ومقاسات الأعمدة، وأسامي المناطق. وجنب [[display: flex]] في Styles فيه زرار **flexbox editor** بيوريك قيم [[justify-content]] و [[align-items]] كرسومات وتختار منها.
-
----
-
-## ٦. responsive mode: الصفحة على موبايل
-
-زرار **Toggle device toolbar** (أيقونة موبايل وتابلت) فوق في DevTools. فوق الصفحة بيظهر شريط: **Responsive** تكتب فيه العرض والطول أو تسحب الحافة، أو تختار جهاز من القايمة. جرّب 360 دايمًا (درس «View Source و validator» قسم ٥ و «مصفوفة مقاسات»). والوثائق نفسها بتقول إنه «تقريب أول» للموبايل: المعالج والخطوط واللمس الحقيقي مختلفين، فجرّب على موبايل حقيقي قبل ما تنشر.
-
-### حالة: الصفحة فيها scroll أفقي على 360
-
-السؤال: مين العنصر اللي أعرض من الشاشة؟ الصق ده في Console:
-
-~~~js
-[...document.querySelectorAll("body *")].filter(e => {
-  const b = e.getBoundingClientRect();
-  return b.left < 0 || b.right > document.documentElement.clientWidth;
+test("على خلفية فاتحة: أول لون بيعدّي", () => {
+  const c = pick("#1a7f37", "#dcf3e3");
+  assert.ok(ratio(c, "#dcf3e3") >= 4.5);
+});
+test("على خلفية غامقة بتفتّح", () => {
+  const c = pick("#2e6b45", "#0f1419");
+  assert.ok(parseInt(c.slice(1, 3), 16) > 0x2e);
+  assert.ok(ratio(c, "#0f1419") >= 4.5);
 });
 ~~~
 
-~~~text القياس من Chrome (صفحة 360 فيها header عرضه 500px)
-document.documentElement.scrollWidth = 528   clientWidth = 360   ← فيه 168 زيادة
-الناتج: header.banner  (عرضه 520 بالـ padding)
+الدالة بتشتغل زي [[fixContrast]] في مشروع الـ landing: تمزج ناحية الأسود أو الأبيض بخطوات صغيرة، وأول لون بيعدّي بترجّعه.
+
+- لو اللون عدّى من الأول، بيرجع زي ما هو.
+- [[lum(bg) < 0.18]] بيحدد الاتجاه.
+- [[v + (toward - v) * t]] المزج، و [[t]] خطوة ١٪ عشان يفضل قريب من الأصلي.
+- آخر سطر احتياطي، لو مفيش ولا لون عدّى يرجّع الأسود أو الأبيض.
+
+الغلطة الشائعة: الاختبار بيسأل عن لون معين بالحرف، فأي تغيير صغير في الخطوة يوقعه. اختبر الخاصية: «عدّى»، و «اتجه الناحية الصح».
+
+~~~text الناتج (Node 24)
+ratio("#1a7f37", "#dcf3e3") قبل: 4.35
+pick("#1a7f37", "#dcf3e3") = #197c36  بنسبة 4.52
+node --test: pass 2، fail 0
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**قارن وقيس:** نزّل [[playwright]] (الكامل) في فولدر تجربة تاني و [[playwright-core]] في فولدر، وقارن مساحة [[node_modules]] والفولدر اللي بيتنزّل فيه المتصفح بعد [[npx playwright install chromium]]. اكتب الرقمين وامسح الفولدر التجريبي.`,
+              done: R`عندك رقمين بالميجا (المكتبة لوحدها صغيرة، والمتصفح المنزّل أكبر بكتير)، ومكتوب ليه المعمل ده بيستخدم [[channel: "chrome"]]، وفولدر التجربة اتمسح.`,
+              sol: R`~~~bash Git Bash
+mkdir a b
+(cd a && npm init -y >/dev/null && npm i playwright-core)
+(cd b && npm init -y >/dev/null && npm i playwright)
+du -sh a/node_modules b/node_modules
+(cd b && PLAYWRIGHT_BROWSERS_PATH="$PWD/browsers" npx playwright install chromium)
+du -sh b/browsers
+rm -rf a b
 ~~~
 
-في العربي العنصر العريض بيطلع من **الشمال** ([[left < 0]])، عشان كده الشرط بيبص على الناحيتين. والتصليح في العنصر نفسه ([[max-width: 100%]] أو [[min-width: 0]] أو [[overflow-wrap]])، مش [[overflow-x: hidden]] على الـ body (درس «overflow»).
+الحزمتين فيهم نفس الكود تقريبًا. الفرق إن [[playwright]] معاها أمر [[install]] وبتشاور على متصفحات بتنزل منفصلة. [[playwright-core]] مكتبة بس: بتتوصل بأي متصفح عندك.
+
+[[channel: "chrome"]] بيقول «استخدم Chrome المنزّل على الجهاز». فالمعمل بيوفر تنزيل مئات الميجا، ومشتغل على نفس المتصفح اللي الناس بتستخدمه. العيب: النسخة بتتغير مع تحديث Chrome، فالـ CI ممكن يبقى نسخة مختلفة.
+
+[[PLAYWRIGHT_BROWSERS_PATH]] بيحدد مكان التنزيل، عشان الفولدر ينمسح مع الباقي ومايفضلش في [[AppData]].
+
+الغلطة الشائعة: تمسح فولدر المشروع وتفتكر إن المتصفح اتمسح. مكانه الافتراضي برا المشروع، وبيفضل ماكل المساحة.
+
+~~~text الناتج (ويندوز، Chrome headless shell و Chromium)
+node_modules بـ playwright-core: 13.0 MB
+node_modules بـ playwright:      17.8 MB
+فولدر المتصفح:                   718.0 MB
+بعد rm -rf: الفولدر موجود؟ لأ
+~~~` },
+          ],
+          ci: [
+            {
+              os: [
+                R`ubuntu`,
+                R`macos`,
+                R`windows`,
+              ],
+              sh: R`node`,
+              run: R`const lum = hex => { const c = hex.match(/\w\w/g).map(h => parseInt(h, 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+const pairs = { "ok/ok-soft old": ["#1a7f37", "#dcf3e3"], "ok/ok-soft new": ["#156c2f", "#dcf3e3"], "muted/bg": ["#56606b", "#f3f5f7"], "dark muted/bg": ["#9ba6b2", "#0f1419"] };
+let fail = 0;
+for (const [k, [a, b]] of Object.entries(pairs)) { const r = ratio(a, b); if (r < 4.5) fail++; console.log(k + " " + r.toFixed(2) + (r >= 4.5 ? " AA" : " FAIL")); }
+console.log("failing pairs: " + fail);`,
+              expect: [
+                R`ok/ok-soft old 4.35 FAIL`,
+                R`ok/ok-soft new 5.59 AA`,
+                R`muted/bg 5.86 AA`,
+                R`dark muted/bg 7.49 AA`,
+                R`failing pairs: 1`,
+              ],
+            },
+          ],
+        },
+        {
+          cmd: R`بورتفوليو ١: الهيكل واللغتين و dir`,
+          ref: [
+            { t: "W3C i18n: Structural markup and right-to-left text", url: "https://www.w3.org/International/questions/qa-html-dir" },
+            { t: "MDN: lang attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/lang" },
+            { t: "MDN: data-* attributes", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/data-*" },
+          ],
+          title: R`صفحة رئيسية بالعربي والإنجليزي: زرار بيقلب lang و dir، و tokens، وخطوط النظام، ونص إنجليزي جوه العربي من غير ما يتلخبط، ومن غير ما الصفحة تتنطط`,
+          learn: R`تبني هيكل صفحة بلغتين صح: [[lang]] و [[dir]] على [[<html>]]، و logical properties عشان الـ CSS ميتغيرش لما الاتجاه يتقلب، و dictionary بيبدّل النصوص والـ [[aria-label]] و [[<title>]]، واختيار اللغة بيتحفظ ويتطبق قبل الرسم، والأرقام والإنجليزي جوه سطر عربي بيتعرضوا صح.`,
+          out: R`[[index.html]] و [[tokens.css]] و [[boot.js]] و [[i18n.js]]: الزرار بيقلب الصفحة كلها، والـ refresh بيفتكر اللغة، و CLS بالإنجليزي صفر، و [[keys.mjs]] بيقول [[missing in en: none]] للتلات صفحات.`,
+          use: {
+            prog: R`هنا بتشوف درس «lang و dir» ودرس «logical properties» شغالين مع بعض: سطر [[dir="ltr"]] واحد على [[<html>]] بيقلب الـ header والكروت والمسافات من غير ولا قاعدة CSS زيادة، لأن كل القواعد مكتوبة بـ [[inline-start]] و [[margin-inline]] مش [[left]] و [[right]].`,
+            work: R`أي موقع لشركة أو شخص في المنطقة بيتطلب بلغتين. والأسئلة اللي بتيجي بعد التسليم: «ليه الصفحة بتتنطط لما بفتحها بالإنجليزي؟» و «ليه الرقم +40 مقلوب؟» و «ليه قارئ الشاشة بيقرا English بلكنة عربي؟». الدرس ده بيجاوب عليهم بأرقام.`,
+            cs: R`الـ Unicode Bidirectional Algorithm: كل حرف ليه اتجاه (العربي قوي RTL، والإنجليزي قوي LTR، والأرقام ضعيفة، والعلامات زي [[+]] محايدة بتاخد اتجاه اللي حواليها). وترتيب تحميل السكربتات: classic مقابل module (اللي بيستنى لحد ما الصفحة تتقري كلها).`,
+          },
+          desc: R`أول خطوة في الـ portfolio: الصفحة الرئيسية بهيكلها الكامل (skip link، و header فيه nav وزرار اللغة، و hero، والمشاريع، و «عني»، والتواصل، و footer)، والـ tokens، واللغتين.
+
+**اللغتين من غير ما تكتب الكلام مرتين:** العربي هو اللي مكتوب في الـ HTML، وكل عنصر بيتترجم عليه [[data-i18n="key"]] (أو [[data-i18n-label]] للـ [[aria-label]]). [[i18n.js]] بيقرا العربي من الصفحة مرة واحدة، والإنجليزي من [[dict.en]]، والزرار بيحط النص الصح ويغيّر [[lang]] و [[dir]] على [[<html>]] ويحفظ الاختيار في localStorage. و [[<title>]] نفسه عليه [[data-i18n]]، فاسم التاب بيتغير كمان.
+
+**من غير ما الصفحة تتنطط:** [[boot.js]] صغير في الـ head بيقرا اللغة المحفوظة ويحط [[dir]] **قبل الرسم**. أول نسخة كان فيها [[i18n.js]] كـ [[type="module"]]: الـ module بيتأجل لحد ما الصفحة تتقري، فالمتصفح رسم الكلام العربي في اتجاه LTR وبعدين بدّله إنجليزي: **CLS = 0.1402** (فوق 0.1 = «محتاج تحسين»). لما بقى classic script في آخر الـ body: **CLS = 0** (الوسط بتاع ٣ مرات، موبايل 390 و CPU أبطأ ٤ مرات).
+
+**الإنجليزي جوه العربي:** [[40+]] جوه [[<dd>]] في صفحة RTL اتعرض **[[+40]]** (الـ [[+]] محايد فراح على الشمال). التصليح [[<span dir="ltr">40+</span>]]، واتقاس بمكان الحرف. وزرار «English» عليه [[lang="en"]] عشان قارئ الشاشة ينطقه إنجليزي.`,
+          example: R`<html lang="ar" dir="rtl">
+<title data-i18n="tHome">نادين فؤاد | مطوّرة واجهات</title>
+<script src="js/boot.js"></script>
+<button class="lang" type="button" id="lang" lang="en">English</button>
+<dd><span dir="ltr">40+</span></dd>
+<script src="js/i18n.js"></script>`,
+          lines: [
+            R`اللغة والاتجاه للصفحة كلها: [[lang="ar"]] بيقول لقارئ الشاشة والمتصفح (الخط، والـ hyphenation، والترجمة) إن الكلام عربي، و [[dir="rtl"]] بيقلب ترتيب العناصر والنص. الزرار بيغيّر الاتنين مع بعض.`,
+            R`اسم التاب والنتيجة في جوجل. عليه [[data-i18n]] زي أي عنصر، لأن [[textContent]] بتاع [[<title>]] هو نفسه [[document.title]]، فالسكربت مش محتاج حالة خاصة.`,
+            R`سكربت عادي (مش [[defer]] ولا module) في الـ head، فبيشتغل قبل ما أي حاجة تترسم: بيقرا [[localStorage]] ويحط [[lang="en" dir="ltr"]] لو آخر زيارة كانت إنجليزي، ويزوّد class [[js]] (درس «بورتفوليو ٢» بيستخدمه).`,
+            R`زرار اللغة مكتوب بالإنجليزي وعليه [[lang="en"]] عشان قارئ الشاشة العربي ينطق «English» صح بدل ما يتهجّاه حروف. ولما الصفحة تبقى إنجليزي الزرار بيبقى «عربي» و [[lang="ar"]].`,
+            R`رقم وبعده علامة جوه سطر RTL: من غير [[dir="ltr"]] الـ [[+]] بيروح على الشمال ويتقري «+40». الـ span بيعزل اتجاهه، والـ [[<dd>]] نفسه لسه RTL فالمحاذاة متتغيرش.`,
+            R`الـ dictionary وزرار اللغة كـ classic script في آخر الـ body (مش [[type="module"]]): بيشتغل وانت لسه بتقرا الصفحة، فالنص الإنجليزي بيتحط قبل أول رسم في المعمل، و CLS نزل من 0.1402 لـ 0.`,
+          ],
+          try: R`ابني الصفحة من الشرح بالملفات الأربعة وافتحها من [[http://127.0.0.1:5501/]]. دوس على «English» وشوف الـ header اتقلب، واعمل refresh واتأكد إنها فضلت إنجليزي. بعدين حوّل [[<script src="js/i18n.js">]] لـ [[type="module"]] (وامسح [[function t]] من غير export مش هيفرق)، وشغّل [[node rep.mjs]] وقارن الـ CLS بتاع [[en]] قبل وبعد.`,
+          flag: R`script`,
+          deep: {
+            why: R`لو الموقع بلغتين والـ CSS مكتوب بـ [[left]] و [[right]]، كل قاعدة بتتكتب مرتين ([[[dir=rtl] .x]]) وأول ما حد ينسى واحدة الصفحة تتكسر في لغة. ولو اللغة بتتطبق بعد الرسم، كل زائر إنجليزي بيشوف الصفحة بتتقلب قدامه (CLS 0.14 هنا، وده بيتحسب على الموقع في Core Web Vitals). وأي رقم أو كلمة إنجليزي جوه العربي ممكن تتعرض مقلوبة، وده أكتر حاجة بتبان «مش احترافي» في موقع عربي.`,
+            how: R`المتصفح بيحدد اتجاه كل سطر من [[dir]]، وجوه السطر بيرتب الحروف بالـ bidi algorithm: الحروف العربي «قوية RTL»، والإنجليزي «قوي LTR»، والأرقام «ضعيفة» (بتتكتب من الشمال لليمين بس مكانها بيتحدد من اللي حواليها)، والعلامات زي [[+]] و [[:]] و [[|]] «محايدة» بتاخد اتجاه السطر لو مفيش جنبها حرف قوي. عشان كده [[40+]] لوحده في سطر RTL بيبقى [[+40]]. و [[dir="ltr"]] على span (أو [[<bdi>]]) بيعمل «جزيرة» ليها اتجاهها. وترتيب السكربتات: classic في الـ head بيوقف القراية لحد ما يخلص (فبيلحق قبل الرسم، وعشان كده [[boot.js]] صغير جدًا)، و [[type="module"]] بيتأجل لحد ما الـ HTML كله يتقري (زي [[defer]])، والمتصفح ممكن يرسم قبله، وده اللي عمل الـ CLS.`,
+            when: R`أي صفحة فيها لغتين أو فيها إنجليزي وأرقام جوه العربي (أسعار، وأكواد، وإيميلات، وروابط). [[boot.js]] لأي إعداد لازم يبان من أول رسمة (اللغة والثيم). والـ dictionary في المتصفح ينفع لموقع صغير؛ لو الـ SEO بالإنجليزي مهم اعمل صفحتين ثابتين من نفس الـ dictionary (المشروع الكبير في آخر الوحدة). وكل جزء ليه درس: «lang و dir»، و «logical properties»، و «CLS».`,
+            mistakes: R`تحط [[i18n.js]] كـ module أو [[defer]] وتفتكر إن «الصفحة صغيرة فمش هيبان» (اتقاس: 0.1402). تكتب [[left]] و [[margin-left]] وتصلّح الإنجليزي بـ [[[dir=ltr]]] لكل قاعدة. تنسى [[aria-label]] و [[<title>]] فقارئ الشاشة بيقرا عربي في صفحة إنجليزي. تحط [[letter-spacing]] سالب على العنوان كله فالحروف العربي بتنفصل (هنا [[:lang(en) .hero h1]] بس). تقرا localStorage من غير try فالصفحة بتقع في وضع الخصوصية لما المتصفح بيرمي [[SecurityError]]. تحط علم بلد كإيموجي للغة (مبيظهرش على ويندوز) بدل اسم اللغة نفسها.`,
+          },
+          teach: R`## الخطوة ١: الهيكل واللغتين
+
+### الصفحة كاملة
+
+~~~html portfolio/index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="tHome">نادين فؤاد | مطوّرة واجهات</title>
+  <meta name="description" content="نادين فؤاد، مطوّرة واجهات: مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي.">
+  <link rel="canonical" href="https://nadine.example/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="نادين فؤاد | مطوّرة واجهات">
+  <meta property="og:description" content="مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي.">
+  <meta property="og:url" content="https://nadine.example/">
+  <meta property="og:image" content="https://nadine.example/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <script src="js/boot.js"></script>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
+  <header class="top">
+    <a class="brand" href="./" data-i18n="name">نادين فؤاد</a>
+    <nav aria-label="الأقسام" data-i18n-label="navLabel">
+      <a href="#work" data-i18n="navWork">الشغل</a>
+      <a href="#about" data-i18n="navAbout">عني</a>
+      <a href="#contact" data-i18n="navContact">تواصل</a>
+      <a href="cv.html" data-i18n="navCv">السيرة الذاتية</a>
+    </nav>
+    <button class="lang" type="button" id="lang" lang="en">English</button>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <p class="eyebrow" data-i18n="role">مطوّرة واجهات</p>
+      <h1 data-i18n="heroTitle">بابني مواقع سريعة، وأي حد يقدر يستخدمها.</h1>
+      <p class="lead" data-i18n="heroLead">٦ سنين بكتب HTML و CSS و JavaScript لمواقع عربي وإنجليزي، ومهتمة بالأداء وسهولة الوصول.</p>
+      <div class="actions">
+        <a class="btn" href="#work" data-i18n="ctaWork">شوف الشغل</a>
+        <a class="btn ghost" href="#contact" data-i18n="ctaContact">كلّمني</a>
+      </div>
+    </section>
+
+    <section id="work" class="work" aria-labelledby="work-h">
+      <h2 id="work-h" data-i18n="workTitle">مشاريع مختارة</h2>
+      <fieldset class="filters">
+        <legend data-i18n="filterBy">فلتر حسب النوع</legend>
+        <label><input type="radio" name="f" value="all" checked> <span data-i18n="fAll">الكل</span></label>
+        <label><input type="radio" name="f" value="web"> <span data-i18n="fWeb">مواقع</span></label>
+        <label><input type="radio" name="f" value="a11y"> <span data-i18n="fA11y">سهولة الوصول</span></label>
+        <label><input type="radio" name="f" value="api"> <span data-i18n="fApi">API</span></label>
+        <label><input type="radio" name="f" value="design"> <span data-i18n="fDesign">تصميم</span></label>
+      </fieldset>
+      <ul class="cards" role="list">
+        <li class="card" data-tags="web a11y" data-reveal>
+          <div class="thumb t1" aria-hidden="true"></div>
+          <h3><a href="work/tide-notes.html" data-i18n="p1">Tide Notes: ملاحظات من غير نت</a></h3>
+          <p data-i18n="p1d">تطبيق ملاحظات بيشتغل offline، وبيتزامن لما النت يرجع.</p>
+          <ul class="tags" role="list"><li>PWA</li><li>IndexedDB</li></ul>
+        </li>
+        <li class="card" data-tags="web" data-reveal>
+          <div class="thumb t2" aria-hidden="true"></div>
+          <h3 data-i18n="p2">لوحة مواعيد الأتوبيس</h3>
+          <p data-i18n="p2d">شاشة محطة بتتحدّث كل ٣٠ ثانية، مقروءة من ٥ متر.</p>
+          <ul class="tags" role="list"><li>SSE</li><li>CSS Grid</li></ul>
+        </li>
+        <li class="card" data-tags="a11y" data-reveal>
+          <div class="thumb t3" aria-hidden="true"></div>
+          <h3 data-i18n="p3">فورم حجز لعيادة</h3>
+          <p data-i18n="p3d">٧ خطوات بقت ٣، والأخطاء بتتقري بقارئ الشاشة.</p>
+          <ul class="tags" role="list"><li>WCAG 2.2</li><li>Forms</li></ul>
+        </li>
+        <li class="card" data-tags="api" data-reveal>
+          <div class="thumb t4" aria-hidden="true"></div>
+          <h3 data-i18n="p4">API وصفات أكل</h3>
+          <p data-i18n="p4d">بحث بالمكوّنات، و pagination، وكاش ٦٠ ثانية.</p>
+          <ul class="tags" role="list"><li>Node</li><li>PostgreSQL</li></ul>
+        </li>
+        <li class="card" data-tags="design web" data-reveal>
+          <div class="thumb t5" aria-hidden="true"></div>
+          <h3 data-i18n="p5">مكتبة design tokens</h3>
+          <p data-i18n="p5d">ألوان ومسافات وخطوط لـ ٣ مواقع من ملف واحد.</p>
+          <ul class="tags" role="list"><li>CSS variables</li><li>Figma</li></ul>
+        </li>
+      </ul>
+    </section>
+
+    <section id="about" class="about" aria-labelledby="about-h">
+      <h2 id="about-h" data-i18n="aboutTitle">عني</h2>
+      <p data-i18n="aboutText">بدأت بمواقع لمحلات صغيرة، ودلوقتي بشتغل مع فرق منتج على واجهات بيستخدمها آلاف الناس كل يوم. بحب الكود اللي يتقري، والصفحة اللي تفتح في أقل من ثانية.</p>
+      <dl class="facts">
+        <div><dt data-i18n="f1t">سنين خبرة</dt><dd>6</dd></div>
+        <div><dt data-i18n="f2t">مشروع اتسلّم</dt><dd><span dir="ltr">40+</span></dd></div>
+        <div><dt data-i18n="f3t">Lighthouse a11y</dt><dd>100</dd></div>
+      </dl>
+    </section>
+
+    <section id="contact" class="contact" aria-labelledby="contact-h">
+      <h2 id="contact-h" data-i18n="contactTitle">نشتغل سوا؟</h2>
+      <p data-i18n="contactText">ابعتلي فكرة المشروع وميعاده، وهرد عليك خلال يومين شغل.</p>
+      <p><a class="btn" href="mailto:hello@nadine.example" dir="ltr">hello@nadine.example</a>
+        <button class="btn ghost" type="button" id="copy" data-i18n="copy">انسخ الإيميل</button></p>
+      <p class="sr-status" role="status" id="status"></p>
+    </section>
+  </main>
+
+  <footer class="foot"><p><span data-i18n="rights">كل الحقوق محفوظة</span> © 2026</p></footer>
+  <script src="js/i18n.js"></script>
+  <script src="js/reveal.js" type="module"></script>
+</body>
+</html>
+~~~
+
+فك الأجزاء المهمة من فوق لتحت:
+
+- [[<meta name="color-scheme" content="light dark">]]: بيقول للمتصفح إن الصفحة عندها ثيم داكن، فالـ scrollbar والـ inputs بتتلون صح من أول لحظة، قبل ما الـ CSS يتحمّل.
+- الـ Open Graph في الـ head (السطور اللي بتبدأ بـ [[og:]]) بيتشرحوا في «بورتفوليو ٣»، ومعاهم [[canonical]].
+- [[<a class="skip" href="#main">]]: أول حاجة بيوصلها الـ Tab. بيبقى مستخبي فوق الشاشة ويظهر أول ما يتعمله فوكس، ويودّي على [[<main id="main">]] على طول. في المعمل: Tab ثم Enter، والـ Tab اللي بعدها راح لـ «شوف الشغل» (أول لينك جوه main) مش للـ nav.
+- [[<nav aria-label="الأقسام" data-i18n-label="navLabel">]]: اسم الـ nav لقارئ الشاشة، وبيتترجم هو كمان من [[data-i18n-label]].
+- [[<section aria-labelledby="work-h">]]: كل section اسمه هو العنوان بتاعه، فقارئ الشاشة بيقول «مشاريع مختارة، region».
+- [[<ul class="cards" role="list">]]: Safari بيشيل role القايمة لما تعمل [[list-style: none]]، فبنرجّعها صريحة (سلوك WebKit موثّق، متجرّبش هنا: المعمل Chrome بس).
+- [[<a href="mailto:..." dir="ltr">]]: الإيميل نص إنجليزي، فبيتعرض LTR عشان [[@]] و [[.]] ميتلخبطوش.
+- [[<p class="sr-status" role="status" id="status">]]: مكان فاضي موجود من الأول، وزرار «انسخ الإيميل» بيكتب فيه «الإيميل اتنسخ»، فقارئ الشاشة بيقولها (لازم يبقى موجود قبل ما النص يتحط، وده بيتشرح في «داشبورد ٣»).
+- [[<script src="js/reveal.js" type="module">]]: ده بس اللي module (مش مهم يشتغل قبل الرسم).
+
+### الـ tokens
+
+~~~css portfolio/css/tokens.css
+/* every colour, size and curve the site uses lives here; the rest of the CSS only reads var(--x) */
+:root {
+  color-scheme: light dark;
+  --paper: #f7f5f0;
+  --surface: #ffffff;
+  --ink: #1c2230;
+  --muted: #535b6b;
+  --line: #dcd8cf;
+  --accent: #0d6b63;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefec;
+  --warm: #9c4f12;
+  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --step-3: clamp(2rem, 1.4rem + 3vw, 3.6rem);
+  --gutter: clamp(16px, 4vw, 48px);
+  --r: 14px;
+  --r-sm: 8px;
+  --shadow: 0 1px 2px rgb(20 24 33 / 0.06), 0 8px 24px rgb(20 24 33 / 0.08);
+  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+    --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+  --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+}
+~~~
+
+- [[--step-0]] و [[--step-1]] و [[--step-3]]: أحجام الخط بـ [[clamp(أقل, مفضّل, أكبر)]]: النص بيكبر مع الشاشة بين حدين من غير ولا media query (درس «clamp()»). القيمة المفضلة [[rem + vw]] عشان الـ zoom لسه يأثر (لو [[vw]] لوحدها الـ zoom مبيكبّرش الخط، وده بيوقع WCAG 1.4.4، من الوثائق).
+- [[--gutter: clamp(16px, 4vw, 48px)]]: المسافة الجانبية، 16 على الموبايل و 48 على الشاشة الكبيرة.
+- [[--shadow]] طبقتين: ظل صغير حاد (الحافة) وظل كبير ناعم (العمق). طبقة واحدة بتبان «مرسومة».
+- [[--ease: cubic-bezier(0.22, 0.7, 0.2, 1)]]: منحنى واحد لكل الحركة في الموقع، بيبدأ سريع ويهدى.
+- الداكن مكتوب مرتين: مرة جوه [[@media (prefers-color-scheme: dark)]] على [[:root:not([data-theme="light"])]] (الجهاز داكن واليوزر مختارش فاتح)، ومرة على [[:root[data-theme="dark"]]] (اليوزر اختار داكن بزرار). كده الثلاث حالات شغالة: نظام، واختيار فاتح، واختيار داكن.
+
+### قبل الرسم
+
+~~~javascript portfolio/js/boot.js
+// runs in <head> before the first paint: language and theme from last visit, so the page never flips after it shows
+try {
+  const lang = localStorage.getItem("lang");
+  if (lang === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
+  const theme = localStorage.getItem("theme");
+  if (theme) document.documentElement.dataset.theme = theme;
+} catch {}
+document.documentElement.classList.add("js");
+~~~
+
+- [[try { ... } catch {}]]: [[localStorage]] ممكن **يرمي** error (Safari في وضع الخصوصية القديم، أو لما الكوكيز ممنوعة للموقع؛ من الوثائق): من غير try السطر اللي بعده مش هيشتغل والصفحة تفضل من غير class [[js]].
+- [[catch {}]] من غير متغير: بنتجاهل الخطأ عن قصد (الصفحة تفتح بالعربي، وده افتراضي سليم).
+- [[classList.add("js")]] بره الـ try: لازم يتحط دايمًا لو الـ JS شغال.
+
+### الـ dictionary والزرار
+
+~~~javascript portfolio/js/i18n.js
+// dictionary + switch: every [data-i18n] gets its text from the current language, and <html> gets lang and dir
+const dict = {
+  en: {
+    tHome: "Nadine Fouad | Front-end developer", tCase: "Tide Notes case study | Nadine Fouad", tCv: "CV | Nadine Fouad",
+    skip: "Skip to content", name: "Nadine Fouad", navLabel: "Sections", navWork: "Work", navAbout: "About", navContact: "Contact", navCv: "CV",
+    role: "Front-end developer", heroTitle: "I build fast websites anyone can use.",
+    heroLead: "6 years writing HTML, CSS and JavaScript for Arabic and English sites, with a focus on performance and accessibility.",
+    ctaWork: "See the work", ctaContact: "Get in touch", workTitle: "Selected projects", filterBy: "Filter by type",
+    fAll: "All", fWeb: "Websites", fA11y: "Accessibility", fApi: "API", fDesign: "Design",
+    p1: "Tide Notes: notes without internet", p1d: "A notes app that works offline and syncs when the connection is back.",
+    p2: "Bus departures board", p2d: "A station screen that refreshes every 30 seconds, readable from 5 metres.",
+    p3: "Clinic booking form", p3d: "7 steps became 3, and errors are announced to screen readers.",
+    p4: "Recipes API", p4d: "Search by ingredient, pagination, and a 60-second cache.",
+    p5: "Design tokens library", p5d: "Colours, spacing and type for 3 sites from one file.",
+    aboutTitle: "About", aboutText: "I started with sites for small shops, and now I work with product teams on interfaces thousands of people use every day. I like code you can read, and pages that open in under a second.",
+    f1t: "Years of experience", f2t: "Projects shipped", f3t: "Lighthouse a11y",
+    contactTitle: "Work together?", contactText: "Send me the idea and the deadline, and I'll reply within two working days.",
+    copy: "Copy email", copied: "Email copied", rights: "All rights reserved",
+    caseKind: "Case study · 2025", caseTitle: "Tide Notes: notes that work without internet",
+    mRole: "My role", mRoleV: "The whole front end and offline", mTime: "Duration", mTimeV: "10 weeks", mStack: "Stack",
+    cProblem: "The problem", cProblemT: "The sales team writes visit notes in places with weak signal, so a note is lost if the page closes before it is sent.",
+    cDecisions: "Decisions", d1: "Every note is saved to IndexedDB first, and sent in the background.",
+    d2: "A Service Worker caches the page itself, so it opens offline.", d3: "A clear mark on each note: sent or not yet.",
+    cResults: "Results", rCap: "Before and after (3-week average)", rMetric: "Metric", rBefore: "Before", rAfter: "After",
+    r1: "Page open time on 3G", r2: "Notes lost per week", back: "Back to projects",
+    print: "Print or save PDF", exp: "Experience", skills: "Skills",
+    j1: "Senior front-end developer · Trips platform company", j1a: "Cut search page LCP on mobile from 3.2 to 1.4 seconds.", j1b: "Built a shared component library for 3 teams.",
+    j2: "Front-end developer · Small design agency", j2a: "25 sites for shops and clinics, all in Arabic and English.", j2b: "Ran the agency's first accessibility audit; it became a step in every delivery.",
+  },
+};
+const ar = {};                                   // Arabic is what the HTML already says: read it once, so it isn't written twice
+document.querySelectorAll("[data-i18n]").forEach(el => (ar[el.dataset.i18n] = el.textContent));
+document.querySelectorAll("[data-i18n-label]").forEach(el => (ar[el.dataset.i18nLabel] = el.getAttribute("aria-label")));
+ar.copied = "الإيميل اتنسخ";
+dict.ar = ar;
+
+function t(key) { return dict[document.documentElement.lang]?.[key] ?? ar[key] ?? key; }
+
+function apply(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll("[data-i18n-label]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nLabel)));
+  const btn = document.getElementById("lang");
+  if (btn) { btn.textContent = lang === "ar" ? "English" : "عربي"; btn.lang = lang === "ar" ? "en" : "ar"; }
+  try { localStorage.setItem("lang", lang); } catch {}
+}
+
+if (document.documentElement.lang === "en") apply("en");   // boot.js set it from the last visit; now fill the texts
+document.getElementById("lang")?.addEventListener("click", () => apply(document.documentElement.lang === "ar" ? "en" : "ar"));
+
+const copy = document.getElementById("copy");
+copy?.addEventListener("click", async () => {
+  const status = document.getElementById("status");
+  try { await navigator.clipboard.writeText("hello@nadine.example"); status.textContent = t("copied"); }
+  catch { status.textContent = "hello@nadine.example"; }
+});
+~~~
+
+- [[dict.en]]: كل الكلام الإنجليزي للتلات صفحات في مكان واحد. العربي مش مكتوب هنا أصلًا.
+- [[document.querySelectorAll("[data-i18n]").forEach(el => (ar[el.dataset.i18n] = el.textContent))]]: بيقرا العربي من الصفحة **قبل** أي تبديل ويحفظه، فلما ترجع للعربي يرجع نفس الكلام. [[el.dataset.i18n]] هو قيمة [[data-i18n]] ([[dataset]] بيحوّل [[data-i18n-label]] لـ [[i18nLabel]]).
+- [[t(key)]]: الكلمة بلغة الصفحة دلوقتي، ولو مش موجودة العربي، ولو مش موجود المفتاح نفسه (فتشوف [[p6]] على الصفحة بدل فراغ، وده بيبيّن الناقص).
+- [[apply(lang)]]: [[html.lang]] و [[html.dir]]، وكل النصوص، وكل الـ [[aria-label]]، ونص الزرار و [[lang]] بتاعه، والحفظ.
+- [[if (document.documentElement.lang === "en") apply("en")]]: [[boot.js]] غيّر [[lang]] قبل الرسم، فهنا بنحط الكلام الإنجليزي.
+- [[navigator.clipboard.writeText]]: بيشتغل على [[https]] و [[localhost]] و [[127.0.0.1]] بس، ولو اتمنع ([[catch]]) بنكتب الإيميل نفسه في الـ status عشان يتنسخ بإيدك.
+
+### اتشغّل فعلًا
+
+~~~text node check-portfolio.mjs (أول ٣ سطور، Chrome 156)
+lang before: ar | rtl | بابني مواقع سريعة، وأي حد يقدر يستخدمها.
+lang after:  en | ltr | I build fast websites anyone can use. | Nadine Fouad | Front-end developer | brand x = 48
+after reload: en I build fast websites anyone can use.
+~~~
+
+[[brand x = 48]]: الاسم بقى على الشمال (48 = الـ gutter على 1280) من غير ولا قاعدة CSS للإنجليزي، لأن [[.brand]] عليه [[margin-inline-end: auto]] (بيزق الباقي لآخر السطر في الاتجاهين).
+
+~~~javascript keys.mjs: كل مفتاح في الصفحات موجود في dict.en؟
+// every data-i18n key in the pages must exist in dict.en
+import fs from "node:fs";
+const src = fs.readFileSync("js/i18n.js", "utf8");
+const en = new Set([...src.slice(src.indexOf("en: {"), src.indexOf("},\n};")).matchAll(/(\w+): "/g)].map(m => m[1]));
+let bad = 0;
+for (const f of ["index.html", "work/tide-notes.html", "cv.html"]) {
+  const keys = [...fs.readFileSync(f, "utf8").matchAll(/data-i18n(?:-label)?="([^"]+)"/g)].map(m => m[1]);
+  const missing = [...new Set(keys)].filter(k => !en.has(k));
+  bad += missing.length;
+  console.log(f.padEnd(22), keys.length, "keys, missing in en:", missing.join(", ") || "none");
+}
+process.exitCode = bad ? 1 : 0;
+~~~
+
+~~~text
+index.html             39 keys, missing in en: none
+work/tide-notes.html   28 keys, missing in en: none
+cv.html                14 keys, missing in en: none
+~~~
 
 ---
 
-## ٧. الترتيب كله في جدول
+## الغلطات اللي حصلت في الخطوة دي
 
-| الخطوة | السؤال | الأداة |
-|---|---|---|
-| ١ | فيه غلطة كتابة؟ | الـ validator |
-| ٢ | القاعدة ماسكة العنصر؟ | Styles: موجودة ولا لأ |
-| ٣ | اتطبقت؟ | Styles: مشطوبة ⚠ (غلط)، مشطوبة (اتغلبت)، باهتة ⓘ (ملهاش أثر) |
-| ٤ | إيه القيمة اللي هتصلّح؟ | تعديل حي: checkbox، والأسهم، و New Style Rule، و :hov، و .cls |
-| ٥ | القيمة النهائية والمقاس كام؟ | Computed والـ box model |
-| ٦ | الـ grid والـ flex راصّين صح؟ | badge grid / flex والـ Layout |
-| ٧ | الموبايل؟ | Device toolbar على 360، والـ snippet بتاع العنصر العريض |
+### ١. الصفحة بتتنطط بالإنجليزي: CLS 0.1402
+
+أول نسخة كان آخرها [[<script src="js/i18n.js" type="module">]]. قست بـ [[PerformanceObserver]] على [[layout-shift]]، ومعاه [[MutationObserver]] بيسجّل إمتى [[dir]] اتغيّر، على موبايل 390 و CPU أبطأ ٤ مرات واللغة المحفوظة إنجليزي:
+
+~~~text
+B2: boot.js in place, English saved CLS 0.1402 FCP 2364 dir changed at 2468 ... shift sources: SECTION,DIV,NAV,UL
+~~~
+
+يعني: أول رسمة (FCP) حصلت عند 2364ms، والـ module اشتغل عند 2468ms وحط الكلام الإنجليزي، فالأقسام اتحركت (السطور الإنجليزي أقصر من العربي). [[boot.js]] كان عامل شغله (الاتجاه اتقلب قبل الرسم)، بس الكلام نفسه اتبدّل بعده. الـ module بيتأجل لحد ما الـ HTML كله يتقري، والمتصفح مش ملزم يستنّاه قبل ما يرسم.
+
+التصليح: [[<script src="js/i18n.js">]] عادي في آخر الـ body (ومن غير [[export]]، لأن الـ classic script مبيفهمش [[export]]). والقياس بالسكربت ده، ٣ مرات والوسط، لأن أول تشغيل لـ Chrome دايمًا أبطأ:
+
+~~~javascript rep.mjs
+// median of 3 runs: CLS, FCP, LCP for Arabic and for saved English
+import { chromium } from "playwright-core";
+const browser = await chromium.launch({ channel: "chrome" });
+const url = process.argv[2] || "http://127.0.0.1:5501/";
+for (const lang of ["ar", "en"]) {
+  const runs = [];
+  for (let i = 0; i < 3; i++) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const page = await ctx.newPage();
+    await (await ctx.newCDPSession(page)).send("Emulation.setCPUThrottlingRate", { rate: 4 });
+    await page.addInitScript(l => {
+      if (l === "en") localStorage.setItem("lang", "en");
+      window.__cls = 0;
+      new PerformanceObserver(x => x.getEntries().forEach(e => { if (!e.hadRecentInput) window.__cls += e.value; })).observe({ type: "layout-shift", buffered: true });
+      new PerformanceObserver(x => { window.__fcp = x.getEntries()[0].startTime; }).observe({ type: "paint", buffered: true });
+      new PerformanceObserver(x => { window.__lcp = x.getEntries().at(-1).startTime; }).observe({ type: "largest-contentful-paint", buffered: true });
+    }, lang);
+    await page.goto(url); await page.waitForTimeout(1500);
+    runs.push(await page.evaluate(() => [window.__cls, window.__fcp, window.__lcp]));
+    await ctx.close();
+  }
+  const med = k => runs.map(r => r[k]).sort((a, b) => a - b)[1];
+  console.log(lang, "CLS", med(0).toFixed(4), "FCP", Math.round(med(1)), "LCP", Math.round(med(2)), "(median of 3)");
+}
+await browser.close();
+~~~
+
+- [[Emulation.setCPUThrottlingRate]] بـ [[rate: 4]]: أمر DevTools Protocol بيخلي الـ CPU أبطأ ٤ مرات (زي موبايل متوسط). نفس الاختيار اللي في تاب Performance.
+- [[addInitScript]]: بيشتغل في الصفحة قبل أي سكربت بتاعها، فالـ observers بيلحقوا أول shift. و [[buffered: true]] بيجيب اللي حصل قبل ما الـ observer يتعمل.
+- [[hadRecentInput]]: الـ shift اللي بيحصل بعد ضغطة بنص ثانية مبيتحسبش (اليوزر هو اللي عمله).
+- [[sort]] و [[[1]]]: الوسط من ٣ (مش المتوسط)، عشان قياس واحد شاذ ميغيّرش النتيجة.
+
+~~~text node rep.mjs (الوسط بتاع ٣ مرات)
+ar CLS 0.0000 FCP 376 LCP 376 (median of 3)
+en CLS 0.0000 FCP 272 LCP 272 (median of 3)
+~~~
+
+> ده مش ضمان ١٠٠٪: لو ملف [[i18n.js]] اتأخر في الشبكة، المتصفح ممكن يرسم العربي الأول. الحل المضمون صفحتين ثابتين لكل لغة (المشروع الكبير في آخر الوحدة). وفي المعمل الأول كان فيه نسخة «من غير boot.js» خالص: اللغة المحفوظة **اتجاهلت** لأن [[i18n.js]] بيسأل [[lang]] اللي [[boot.js]] هو اللي بيحطها. الاتنين محتاجين بعض.
+
+### ٢. «40+» بقت «+40»
+
+في لقطة الصفحة على 1280 كارت «مشروع اتسلّم» كان مكتوب فيه [[+40]]. قست مكان الحرف بـ [[Range.getBoundingClientRect]]:
+
+~~~text
+<dd>40+</dd>          + on the left: reads +40
+<span dir="ltr">40+</span> + on the right: reads 40+
+~~~
+
+نفس الحاجة بتحصل في «٥٠٪+» و «C++» و «.NET» و «(2025)» في آخر سطر عربي. أي كلمة أو رقم إنجليزي فيها علامة في الطرف: حطه في [[dir="ltr"]] (أو [[<bdi>]] لو المحتوى جاي من المستخدم ومتعرفش اتجاهه).
+
+### ٣. اسم التاب فضل عربي
+
+أول نسخة كانت بتبدّل كل الكلام ما عدا [[<title>]]، فالتاب واللي بيعمل bookmark بيشوف العربي. التصليح [[data-i18n="tHome"]] على [[<title>]] نفسه (من غير كود زيادة)، ومفتاح لكل صفحة ([[tHome]] و [[tCase]] و [[tCv]]).
 
 ---
 
 ## الخلاصة
 
-- الـ CSS مبيقولش على غلطاته: الـ validator للكتابة، و DevTools للباقي.
-- [[;]] ناقصة بتضيّع خاصيتين، واسم غلط بيضيّع سطره بس، و selector غلط بيضيّع القاعدة كلها.
-- مشطوب + ⚠ = غلط، مشطوب = اتغلب، باهت + ⓘ = ملوش أثر.
-- عدّل حي، وبعدين انقل للملف. و Computed والـ box model للأرقام، والـ badges للـ layout، و Device toolbar للموبايل.`,
-          try: R`انسخ المثال في [[debug.html]] وافتحه. (١) الصق الـ CSS في الـ validator واقرا الرسالتين. (٢) في DevTools اختار الكارت وشوف [[padding]] في Styles: شكله إيه؟ (٣) صلّح الـ [[;]] من Styles نفسه (دبل كليك على القيمة)، وشوف الخلفية رجعت. (٤) زوّد [[justify-content: center]] على الكارت وشوف شكله باهت، وحط الماوس على ⓘ. (٥) افتح Device toolbar على 360.`,
-          sol: R`~~~live 130 debug.html بعد التصليح
+| الحاجة | الطريقة |
+|---|---|
+| الاتجاه | [[lang]] و [[dir]] على [[<html>]] بس، والـ CSS كله logical |
+| الترجمة | [[data-i18n]] على النص و [[data-i18n-label]] على [[aria-label]]، والعربي من الصفحة نفسها |
+| قبل الرسم | [[boot.js]] classic في الـ head، و [[i18n.js]] classic في آخر الـ body |
+| إنجليزي جوه عربي | [[dir="ltr"]] على الحتة نفسها، و [[lang="en"]] على الكلمة الإنجليزي |
+| الفحص | [[keys.mjs]]: كل مفتاح موجود، و [[rep.mjs]]: CLS بالإنجليزي صفر |`,
+          sol: R`بعد الزرار [[document.documentElement.dir]] بيبقى [[ltr]] و [[document.title]] بيبقى [[Nadine Fouad | Front-end developer]]، والـ refresh بيفضل إنجليزي. ولما تحوّل [[i18n.js]] لـ module، [[rep.mjs]] بيطلّع CLS للإنجليزي فوق الصفر (في المعمل 0.1402 في قياس واحد)، ولما ترجّعه classic بيرجع [[en CLS 0.0000]]. لو الرقم عندك طلع صفر حتى مع الـ module، زوّد [[setCPUThrottlingRate]] لـ 6: الفرق بيبان أكتر على جهاز أبطأ.`,
+          practice: [
+            {
+              lvl: R`سريع`,
+              t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]، الكلمات دي هتتعرض إزاي؟ [[<p>السعر 250+</p>]]، و [[<p>اتعلمت C++</p>]]، و [[<p>الإصدار (v2)</p>]]. اكتب توقّعك وبعدين افتحهم.`,
+              done: R`اتوقعت إن الـ [[+]] في الأول والتاني بيروح على الشمال من الرقم أو الكلمة، والقوس في التالت بيتلخبط، وشفت ده فعلًا، وصلّحت التلاتة بـ [[<span dir="ltr">]] حوالين الحتة الإنجليزي بس.`,
+              sol: R`~~~live 290 290 bidi.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>bidi</title></head>
+<body>
+  <main><h1>التلات حالات</h1>
+    <p id="a">السعر 250+</p>
+    <p id="b">اتعلمت C++</p>
+    <p id="c">الإصدار (v2)</p>
+    <p id="a2">السعر <span dir="ltr">250+</span></p>
+    <p id="b2">اتعلمت <span dir="ltr">C++</span></p>
+    <p id="c2">الإصدار <span dir="ltr">(v2)</span></p>
+  </main>
+</body></html>
+~~~
+
+المتصفح بيرتب النص حرف حرف بخوارزمية bidi. الحروف العربي والإنجليزي ليهم اتجاه قوي، والأرقام ليها اتجاه ضعيف، لكن [[+]] والأقواس **محايدة**: مالهاش اتجاه، فبتاخد اتجاه السطر لو واقفة في الآخر.
+
+- [[250+]]: الـ [[+]] في آخر سطر RTL، فبتروح لأقصى الشمال، قبل الرقم في الشكل: [[+250]].
+- [[C++]]: نفس الكلام، الـ [[++]] بتطلع على شمال الـ C.
+- [[(v2)]]: القوس الأخير محايد في آخر السطر، فبيتزق، والقوسين بيطلعوا في مكان غريب.
+
+[[<span dir="ltr">]] حوالين الحتة الإنجليزي بيعمل لها جزيرة ليها اتجاهها، فالعلامات جواها بتاخد LTR. وفي الـ HTML مش محتاج تحرّك حاجة: الترتيب في الملف زي ما بتقراه.
+
+الغلطة الشائعة: تقلب النص في الملف عشان يبان صح ([[+250]])، فالبحث والنسخ والقارئ يبوظوا.
+
+~~~text الناتج (Chrome 156: مكان العلامة بالنسبة للحرف اللي جنبها، من Range.getClientRects)
+250+                   العلامة على شمال 2
+250+ بـ dir            العلامة على يمين 2
+C++                    العلامة على شمال C
+C++ بـ dir             العلامة على يمين C
+القوس الأخير في (v2)   العلامة على شمال v
+(v2) بـ dir            العلامة على يمين v
+~~~` },
+            {
+              lvl: R`سريع`,
+              t: R`**دوّر بنفسك:** من صفحة [[<bdi>]] على MDN اعرف الفرق بينه وبين [[<span dir="ltr">]]، وإمتى كل واحد أنسب. جاوب بمثال من الـ dashboard: اسم عضو ممكن يبقى عربي أو إنجليزي.`,
+              done: R`كتبت إن [[<bdi>]] بيحدد اتجاهه من محتواه (زي [[dir="auto"]]) فمناسب للنص اللي مش عارف اتجاهه زي أسماء الأعضاء، و [[dir="ltr"]] لما انت متأكد إنه إنجليزي (إيميل، رقم بعلامة).`,
+              sol: R`~~~live 190 190 bdi-table.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>bdi</title></head>
+<body>
+  <main><h1>الأعضاء</h1>
+    <ul>
+      <li><bdi>Mona Adel</bdi>: 12 زيارة</li>
+      <li><bdi>منى عادل</bdi>: 12 زيارة</li>
+      <li>Mona Adel: 12 زيارة</li>
+    </ul>
+    <p>الإيميل: <span dir="ltr">mona+gym@example.com</span></p>
+  </main>
+</body></html>
+~~~
+
+الفرق في إنك **تعرف** الاتجاه ولا لأ:
+
+- [[<bdi>]] بيحدد اتجاهه من محتواه، زي [[dir="auto"]]، ومبيأثرش على النص اللي حواليه. ده اللي ينفع لأسماء الأعضاء في الـ dashboard، لأن اسم ممكن يبقى عربي أو إنجليزي، وانت مش عارف قبل التشغيل.
+- [[<span dir="ltr">]] لما انت متأكد إنه إنجليزي: إيميل، أو رقم بعلامة، أو [[C++]].
+
+المثال الأخير في اللستة هو المشكلة: اسم إنجليزي من غير عزل في سطر عربي، فالنقطتين والرقم بيبقوا جزء من السطر، و «12» ممكن تنط جنب الاسم.
+
+المصدر: MDN صفحة [[<bdi>]].
+
+الغلطة الشائعة: تحط [[dir="ltr"]] على كل الأسماء، فالاسم العربي يتكسر.
+
+~~~text الناتج (Chrome 156: الاتجاه المحسوب، direction لكل عنصر)
+<bdi>Mona Adel</bdi>   المحتوى LTR، و left لـ M < left لـ d: true
+<bdi>منى عادل</bdi>    أول حرف على اليمين: true
+unicode-bidi بتاع bdi: isolate
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**صلّح الكود البايظ:** النسخة دي من الـ header بتتكسر بالإنجليزي: [[.brand { margin-left: auto }]] و [[.skip { left: 1rem }]] و [[.lang { margin-left: 0.5rem }]]. اعرف بتتكسر إزاي من غير ما تشغّل، وبعدين صلّحها بـ logical properties.`,
+              done: R`عرفت إن [[margin-left: auto]] في LTR بيزق الاسم لليمين (عكس المطلوب)، وإن الـ skip link بيظهر على الشمال في العربي، وبدّلتهم بـ [[margin-inline-end]] و [[inset-inline-start]] و [[margin-inline-start]]، و [[brand x]] في الإنجليزي بقى 48 تاني.`,
+              sol: R`~~~css بعد التصليح
+.brand { margin-inline-end: auto; }
+.skip  { inset-inline-start: 1rem; }
+.lang  { margin-inline-start: 0.5rem; }
+~~~
+
+~~~view 200 240 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>debug</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  .card {
-    padding: 12px;
-    background: #fef3c7;
-    border-radius: 8px;
-  }
-  .title {
-    color: #92400e;
-    font-size: 20px;
-    margin: 0;
-  }
+/* صفحة التجربة بس */
+body { font-family: system-ui, sans-serif; margin: 1rem; } header { position: relative; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; margin-bottom: 0.75rem; border: 1px solid #cbd5e1; border-radius: 10px; }
+.skip { position: absolute; top: 0.25rem; padding: 0.25rem 0.5rem; background: #0f172a; color: #fff; border-radius: 6px; }
+.skip:not(:focus) { width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } .brand { font-weight: 800; }
+</style>
+<style>
+/* من الحل */
+.brand { margin-inline-end: auto; }
+.skip  { inset-inline-start: 1rem; }
+.lang  { margin-inline-start: 0.5rem; }
 </style>
 </head>
 <body>
-<div class="card"><h2 class="title">خبر عاجل</h2></div>
+<header dir="rtl"><a class="skip" href="#">اتخطّى للمحتوى</a><a class="brand" href="#">البراند</a><a href="#">الشغل</a><a class="lang" href="#">English</a></header>
+<header dir="ltr"><a class="skip" href="#">Skip to content</a><a class="brand" href="#">Brand</a><a href="#">Work</a><a class="lang" href="#">عربي</a></header>
+<p>نفس الـ CSS في الاتجاهين: البراند في أول السطر واللينكات في آخره. دوس Tab: «اتخطّى» بيظهر في بداية السطر (يمين في العربي، شمال في الإنجليزي).</p>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** كارت أصفر فاتح بأركان مدورة ومسافة جواه، وفيه «خبر عاجل» بالبني.
+بيبني على [[site.css]] في خطوة الهيكل. قبل ما تشغّل: [[margin-left: auto]] بياخد كل المساحة الفاضية على **شمال** العنصر.
 
-اللي هتلاقيه في كل خطوة:
+- في العربي الاسم على اليمين، والفراغ على شماله، فالكود شغال بالصدفة. وفي الإنجليزي الاسم أول السطر على الشمال، والـ auto margin بيزقه لليمين خالص، عكس المطلوب تمامًا.
+- [[.skip { left: 1rem }]] بيظهر شمال دايمًا، حتى في العربي.
+- [[.lang { margin-left }]] فيه نفس الفكرة.
 
-1. الـ validator: نفس الرسالتين في قسم ١ (سطر 3 و سطر 7).
-2. Styles قبل التصليح: سطر [[padding]] مشطوب وجنبه علامة تحذير، وقيمته [[12px background: #fef3c7]] (السطرين ملزوقين). وسطر [[colr]] مشطوب كله.
-3. بعد ما تكتب [[12px]] بس في القيمة وتزوّد [[background]] في سطر جديد: الأصفر بيرجع على طول.
-4. [[justify-content: center]] على الكارت: باهت، والـ ⓘ بيقول إن الخاصية محتاجة الأب يبقى flex أو grid (الصياغة بالظبط بتختلف حسب نسخة Chrome).
-5. على 360 الكارت بياخد العرض كله ومفيش scroll أفقي.
+الـ logical properties بتقول المعنى مش المكان: [[inline-end]] = «نهاية السطر»، فيمين الاسم في الإنجليزي وشماله في العربي. بتكتب مرة، وتشتغل في الاتجاهين، وده اللي خلى [[dir]] وحده يقلب الصفحة.
 
-~~~text القياس من Chrome (بعد التصليح)
-.card    padding-top: 12px    background-color: rgb(254, 243, 199)
-.title   color: rgb(146, 64, 14)
-~~~`,
-          deep: {
-            why: R`الـ CSS اتصمم «يسامح»: أي حاجة المتصفح مش فاهمها بيتجاهلها ويكمّل، عشان المواقع القديمة متبوظش لما خصايص جديدة تطلع، والمواقع الجديدة تشتغل في المتصفحات القديمة. التمن إن الغلطة بتبقى ساكتة. عشان كده المحترف عنده ترتيب ثابت للفحص بدل ما يغيّر حاجات عشوائي ويستنى.`,
-            how: R`المتصفح بيقرا الـ CSS: الـ selector لحد [[{]]، وبعدين declarations مفصولة بـ [[;]]. لو declaration مش صالح (اسم مش معروف أو قيمة متنفعش) بيترمي لوحده، وده سبب إن [[;]] ناقصة بتلزق declaration في اللي بعده فالاتنين يترموا. لو الـ selector نفسه مش صالح بترمي القاعدة كلها. DevTools بيعرض القواعد اللي القرايه نجحت فيها ومسكت العنصر، ويعلّم على اللي اترمى (⚠) واللي اتغلب في الـ cascade (شطب) واللي بيحسب إنه ملوش أثر في الـ layout الحالي (ⓘ).`,
-            when: R`كل مرة الشكل مش زي ما انت متوقع: قبل ما تغيّر أي حاجة في الملف، افتح DevTools. الـ validator قبل ما تسلّم مشروع، أو لما الـ CSS كله «مش شغال» فجأة. Device toolbar مع كل صفحة. والـ snippet لما يظهر scroll أفقي.`,
-            mistakes: R`تغيّر الملف عشوائي من غير ما تشوف Styles. تعدّل في DevTools وتنسى تنقل للملف. [[!important]] بدل ما تعرف مين كسب. تصدّق الـ validator في خاصية جديدة جدًا. [[overflow-x: hidden]] بدل ما تلاقي العنصر العريض. تعتمد على Device toolbar بس من غير موبايل حقيقي.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** الـ validator قال: [[Line : 2 .alert  Missing a semicolon before the property name “border-radius”]]. صلّح الغلطة، وبعدها الخلفية الحمرا الفاتحة والأركان المدورة يرجعوا. (من قسم ١)`, done: R`الشريط أحمر فاتح بأركان مدورة، وكل الشروط ✓.`, work: { h: 110, start: R`<style>
-  .alert { padding: 10px; background: #fee2e2
-    border-radius: 8px; color: #991b1b; }
-</style>
-<p class="alert">عاجل: قطع المياه بكرة من ١٠ لـ ٢</p>`, checks: [
-              { say: R`الخلفية رجعت [[#fee2e2]]`, q: ".alert", style: ["background-color", "rgb(254, 226, 226)"] },
-              { say: R`الأركان 8px`, q: ".alert", style: ["border-top-left-radius", "8px"] }
-            ] }, sol: R`~~~live 90 بعد التصليح
-<style>
-  .alert { padding: 10px; background: #fee2e2;
-    border-radius: 8px; color: #991b1b; }
-</style>
-<p class="alert">عاجل: قطع المياه بكرة من ١٠ لـ ٢</p>
-~~~
+الغلطة الشائعة: تكتب [[[dir="rtl"] .brand { ... }]] لكل قاعدة، فالملف يتضاعف.
 
-وده اللي كان باين قبل التصليح:
-
-~~~live 90 قبل
-<style>
-  .alert { padding: 10px; background: #fee2e2
-    border-radius: 8px; color: #991b1b; }
-</style>
-<p class="alert">عاجل: قطع المياه بكرة من ١٠ لـ ٢</p>
-~~~
-
-**هتشوف إيه:** في الحل شريط أحمر فاتح بأركان مدورة والكلام أحمر غامق. في «قبل» الكلام الأحمر الغامق بس من غير خلفية.
-
-**ليه الاتنين اختفوا:** من غير [[;]] المتصفح قرا [[background: #fee2e2 border-radius: 8px]] كقيمة واحدة لـ [[background]]، والقيمة دي غلط، فاترمت كلها. واللي قبلها ([[padding]]) واللي بعدها ([[color]]) اتطبقوا عادي.
-
-~~~text القياس من Chrome
-قبل:  background-color: rgba(0, 0, 0, 0)   border-top-left-radius: 0px   color: rgb(153, 27, 27)
-بعد:  background-color: rgb(254, 226, 226)  border-top-left-radius: 8px
+~~~text الناتج (Chrome 156، عرض 1280، صفحة en: مكان اسم البراند)
+margin-left: auto:        brand x = 783
+margin-inline-end: auto:  brand x = 48
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في Styles فيه سطرين مشطوبين وجنبهم علامة تحذير: اسمين خصايص متكتبين غلط. لاقيهم وصلّحهم. (من قسم ١ و ٢)`, done: R`العنوان بني وتقيل، وكل الشروط ✓.`, work: { h: 100, start: R`<style>
-  .headline { colr: #92400e; font-wieght: 800; font-size: 22px; }
-</style>
-<h2 class="headline">الحي بيحتفل بالمكتبة</h2>`, checks: [
-              { say: R`اللون بني [[#92400e]]`, q: ".headline", style: ["color", "rgb(146, 64, 14)"] },
-              { say: R`التقل 800`, q: ".headline", style: ["font-weight", "800"] }
-            ] }, sol: R`~~~live 70 بعد التصليح
-<style>
-  .headline { color: #92400e; font-weight: 800; font-size: 22px; }
-</style>
-<h2 class="headline">الحي بيحتفل بالمكتبة</h2>
+            {
+              lvl: R`تطبيق`,
+              t: R`**ابني:** زوّد لغة تالتة (فرنساوي مثلًا، [[dir="ltr"]]) في [[dict]]، وخلي الزرار [[<select>]] بـ label بدل زرار تبديل، وكل اختيار مكتوب بلغته هو ([[lang]] على كل [[<option>]]).`,
+              done: R`الـ select بيقلب الصفحة للغات التلاتة، و [[keys.mjs]] (بعد ما تخليه يفحص [[fr]] كمان) بيقول [[none]]، والـ refresh بيفتكر الاختيار، و axe صفر في التلات لغات.`,
+              sol: R`~~~live 120 120 portfolio/index.html (مكان زرار اللغة)
+<label class="lang-pick">
+  <span class="sr-only">اللغة</span>
+  <select id="lang">
+    <option value="ar" lang="ar">العربية</option>
+    <option value="en" lang="en">English</option>
+    <option value="fr" lang="fr">Français</option>
+  </select>
+</label>
 ~~~
 
-**هتشوف إيه:** العنوان بني وتقيل جدًا.
+~~~js portfolio/js/i18n.js
+// ١. جوه dict، جنب en:
+fr: { tHome: "Nadine Fouad | Développeuse front-end", skip: "Aller au contenu", navWork: "Projets", /* باقي المفاتيح */ },
 
-**ليه:** [[colr]] و [[font-wieght]] مش خصايص، فالمتصفح رماهم. والعنوان كان أسود و [[bold]] بس (700 من ستايل [[<h2>]] الافتراضي)، وده اللي بيخلي الغلطة صعب تتشاف بالعين: الشكل «قريب». الـ validator كان هيقول: [[Property “colr” doesn't exist. The closest matching property name is “color”]].
+// ٢. جوه apply(lang): مكان سطور الزرار
+const sel = document.getElementById("lang");
+if (sel) sel.value = lang;
 
-~~~text القياس من Chrome
-قبل:  color: rgb(0, 0, 0)   font-weight: 700      بعد:  color: rgb(146, 64, 14)   font-weight: 800
+// ٣. مكان addEventListener بتاع الزرار
+document.getElementById("lang")?.addEventListener("change", (e) => apply(e.target.value));
+~~~
+
+~~~js portfolio/js/boot.js (قيمة تالتة)
+if (lang === "en" || lang === "fr") { document.documentElement.lang = lang; document.documentElement.dir = "ltr"; }
+~~~
+
+~~~js keys.mjs (يفحص لغتين)
+for (const lang of ["en", "fr"]) {
+  const start = src.indexOf(lang + ": {");
+  const end = src.indexOf("},", start);
+  const have = new Set([...src.slice(start, end).matchAll(/(\w+): "/g)].map((m) => m[1]));
+  // ... نفس الفحص لكل صفحة
+}
+~~~
+
+بيبني على [[i18n.js]]. [[html.dir = lang === "ar" ? "rtl" : "ltr"]] موجود من الأول، فالفرنساوي بيقلب LTR لوحده.
+
+- الزرار كان بدّالة بين اتنين. مع ٣ لغات لازم اختيار، و [[<select>]] جاهز بالكيبورد.
+- [[<span class="sr-only">]] هو الـ label، مخفي بصريًا.
+- كل [[<option>]] مكتوب بلغته، و [[lang]] عليه عشان قارئ الشاشة ينطقه صح، والزائر يلاقي لغته باسمها.
+- [[boot.js]] لازم يعرف [[fr]]، وإلا الـ refresh يرجع عربي.
+
+ترجمة المفاتيح كلها شغلك (حوالي ٨٠ مفتاح). في التشغيل تحت القيم اللي مش مترجمة كانت منسوخة من [[en]]، عشان نتأكد إن الآلية نفسها شغالة، ولا تعتبرها ترجمة.
+
+الغلطة الشائعة: تضيف اللغة في [[dict]] وتنسى [[boot.js]]، فالصفحة ترجع عربي وتومض عند الفتح.
+
+~~~text الناتج (Chrome 156)
+اختيار Français: lang = fr، و dir = ltr
+بعد refresh: lang = fr، وقيمة الـ select = fr
+keys.mjs: en index.html missing: none | en work/tide-notes.html missing: none | en cv.html missing: none | fr index.html missing: none | fr work/tide-notes.html missing: none | fr cv.html missing: none
+axe: ar 0، و en 0، و fr 0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فقرة المقدمة [[.lead]] المفروض لونها أخضر، بس في Styles سطر [[color]] بتاعها مشطوب (من غير علامة تحذير): قاعدة تانية كسبت. صلّحها من غير [[!important]]، بإنك تخلي القاعدة اللي كسبت أضعف ([[:where()]]). (من قسم ٢ «مشطوب من غير علامة»)`, done: R`المقدمة خضرا والفقرة العادية رمادي، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  #story p { color: #57534e; }
-  .lead { color: #0f766e; font-size: 18px; }
-</style>
-<article id="story">
-  <p class="lead">المقدمة: الحي اتجمع امبارح في افتتاح المكتبة.</p>
-  <p>باقي الخبر بالتفاصيل.</p>
-</article>`, checks: [
-              { say: R`المقدمة خضرا`, q: ".lead", style: ["color", "rgb(15, 118, 110)"] },
-              { say: R`الفقرة العادية لسه رمادي`, q: "#story p:not(.lead)", style: ["color", "rgb(87, 83, 78)"] },
-              { say: R`من غير [[!important]]`, nosrc: "!important" }
-            ] }, sol: R`~~~live 110 بعد التصليح
-<style>
-  :where(#story) p { color: #57534e; }
-  .lead { color: #0f766e; font-size: 18px; }
-</style>
-<article id="story">
-  <p class="lead">المقدمة: الحي اتجمع امبارح في افتتاح المكتبة.</p>
-  <p>باقي الخبر بالتفاصيل.</p>
-</article>
+            {
+              lvl: R`تحدي`,
+              t: R`**مسألة:** اكتب [[missingKeys(html, dict)]] بترجّع لكل لغة في [[dict]] المفاتيح اللي في الـ HTML ومش فيها، والمفاتيح اللي فيها ومش مستخدمة، وتخرج بـ 1 لو فيه ناقص. (شكل فحص الـ ci في الدرس.)`,
+              done: R`على صفحة فيها ٥ مفاتيح وقاموس ناقصه [[contactText]] وزيادة فيه [[oldKey]] بتطبع [[missing in en: contactText]] و [[unused in en: oldKey]] وتخرج بـ 1، ولما تزوّد المفتاح بتخرج بـ 0.`,
+              sol: R`~~~js missing-keys.mjs
+export function missingKeys(html, dict) {
+  const used = [...new Set([...html.matchAll(/data-i18n(?:-label)?="([^"]+)"/g)].map((m) => m[1]))];
+  const out = {};
+  for (const [lang, table] of Object.entries(dict)) {
+    out[lang] = {
+      missing: used.filter((k) => !(k in table)),
+      unused: Object.keys(table).filter((k) => !used.includes(k)),
+    };
+  }
+  return out;
+}
+
+const html = '<title data-i18n="tHome">x</title><a data-i18n="skip">x</a><nav data-i18n-label="navLabel"></nav><h1 data-i18n="heroTitle">x</h1><p data-i18n="contactText">x</p>';
+const dict = { en: { tHome: "Nadine Fouad", skip: "Skip to content", navLabel: "Sections", heroTitle: "I build fast websites", oldKey: "not used" } };
+
+const r = missingKeys(html, dict);
+for (const [lang, { missing, unused }] of Object.entries(r)) {
+  for (const k of missing) console.log($__btmissing in $__{lang}: $__{k}$__bt);
+  for (const k of unused) console.log($__btunused in $__{lang}: $__{k}$__bt);
+}
+process.exit(Object.values(r).some((x) => x.missing.length) ? 1 : 0);
 ~~~
 
-**هتشوف إيه:** المقدمة أخضر وأكبر شوية، وتحتها فقرة رمادي.
+- [[(?:-label)?]] بيمسك [[data-i18n]] و [[data-i18n-label]] بنفس الـ regex. [[(?:...)]] مجموعة مش بتتعد في [[m[1]]].
+- [[new Set]] لأن نفس المفتاح ممكن يتكرر في الصفحة.
+- [[k in table]] مش [[table[k]]]: الترجمة الفاضية [[""]] موجودة، و [[table[k]]] هيعتبرها ناقصة.
+- exit code بيتبني على الناقص بس. المفتاح الزيادة تنضيف، مش عطل، فبيتطبع ومبيوقعش الـ CI.
 
-**ليه:** [[#story p]] وزنها (1,0,1) والـ [[.lead]] وزنها (0,1,0)، فالـ id كسب (درس «specificity»). [[:where(#story) p]] وزنها (0,0,1) بس، فالـ class بيكسبها. **حلول تانية صح:** [[#story .lead]] (أقوى)، أو تكتب [[.story p]] بـ class بدل الـ id. **الغلطة الشائعة:** [[!important]]: بتكسب النهارده وبتعمل خناقة أصعب بكرة.
+الغلطة الشائعة: تخلي الزيادة توقع الفحص، فكل حد يمسح نص لازم يمسح المفتاح في نفس اللحظة، والناس تبدأ تتجاهله.
 
-~~~text القياس من Chrome
-قبل:  .lead color: rgb(87, 83, 78)  (في Styles: سطر color في .lead مشطوب)
-بعد:  .lead color: rgb(15, 118, 110)
+~~~text الناتج (Node 24)
+ناقص contactText:
+missing in en: contactText
+unused in en: oldKey
+exit code 1
+
+بعد ما زوّدنا contactText:
+unused in en: oldKey
+exit code 0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في Styles سطرين [[justify-content]] و [[align-items]] على شريط الأقسام **باهتين** وجنبهم ⓘ. الـ ⓘ بيقول إن الأب لازم يبقى flex أو grid. صلّحها بـ flex. (من قسم ٢ «باهت»)`, done: R`اللينكات في صف وفي النص، وكل الشروط ✓.`, work: { h: 110, start: R`<style>
-  .bar { justify-content: center; align-items: center; gap: 16px; height: 50px; background: #0f766e; }
-  .bar a { color: white; }
-</style>
-<nav class="bar"><a href="#">محليات</a><a href="#">رياضة</a><a href="#">فن</a></nav>`, checks: [
-              { say: R`الشريط [[display: flex]]`, q: ".bar", style: ["display", "flex"] },
-              { say: R`[[justify-content: center]] لسه موجودة وبقت شغالة`, q: ".bar", style: ["justify-content", "center"] }
-            ] }, sol: R`~~~live 80 بعد التصليح
-<style>
-  .bar { display: flex; justify-content: center; align-items: center; gap: 16px; height: 50px; background: #0f766e; }
-  .bar a { color: white; }
-</style>
-<nav class="bar"><a href="#">محليات</a><a href="#">رياضة</a><a href="#">فن</a></nav>
+            {
+              lvl: R`تحدي`,
+              t: R`**قارن وقيس:** قيس CLS بالإنجليزي بتلات طرق لتحميل [[i18n.js]]: classic في آخر الـ body، و [[defer]] في الـ head، و [[type="module"]]، كل واحدة ٥ مرات على 390 و CPU أبطأ ٦ مرات. اكتب الوسط لكل طريقة وليه.`,
+              done: R`عندك جدول ٣ صفوف بالوسط في ظرفين (سيرفر محلي وشبكة بطيئة)، وعرفت إن الطرق التلاتة اتساوت في كل ظرف (صفر محليًا، ونفس الرقم لما الملف اتأخر): اللي بيقرر الـ shift هو هل [[i18n.js]] وصل قبل أول رسمة، مش نوع السكربت، والحل المضمون صفحة ثابتة لكل لغة.`,
+              sol: R`~~~js cls-load.mjs
+import { chromium } from "playwright-core";
+const url = process.argv[2];
+const browser = await chromium.launch({ channel: "chrome" });
+const run = async () => {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 800 } });
+  await ctx.addInitScript(() => {
+    localStorage.setItem("lang", "en");
+    window.__c = 0;
+    new PerformanceObserver((l) => l.getEntries().forEach((e) => { window.__c += e.value; })).observe({ type: "layout-shift", buffered: true });
+  });
+  const page = await ctx.newPage();
+  const cdp = await ctx.newCDPSession(page);
+  if (process.env.SLOW) {
+    await cdp.send("Network.enable");
+    await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 1.6 * 1024 * 1024 / 8, uploadThroughput: 750 * 1024 / 8 });
+  }
+  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 6 });
+  await page.goto(url);
+  await page.waitForTimeout(800);
+  const c = await page.evaluate(() => window.__c);
+  await ctx.close();
+  return c;
+};
+const v = [];
+for (let i = 0; i < 5; i++) v.push(await run());
+v.sort((a, b) => a - b);
+console.log("median", v[2].toFixed(4), " all", v.map((x) => x.toFixed(4)).join(" "));
+await browser.close();
 ~~~
 
-**هتشوف إيه:** شريط أخضر والتلات لينكات البيض في نصه بالظبط أفقي ورأسي.
+الصفحة بالعربي في الـ HTML، و [[i18n.js]] بيبدّل النص للإنجليزي. لو المتصفح رسم قبل التبديل، الأسطر بتتغير والمحتوى يتحرك، وده CLS.
 
-**ليه:** [[justify-content]] و [[align-items]] و [[gap]] خصايص flex و grid، وعلى block عادي ملهمش أثر (درس «place-items و align-self»). مش غلط كتابة، فالـ validator مش هيقول حاجة؛ DevTools بس اللي بيعلّم عليهم بالـ ⓘ.
+النظرية: [[defer]] و [[type="module"]] بيتأجلوا لحد ما الـ HTML يتقري كله، والـ classic في آخر الـ body بيتنفذ قبل كده. فالمتوقع classic صفر والتانيين shift.
 
-~~~text القياس من Chrome
-قبل:  display: block   (الخصايص التلاتة ملهاش أثر)      بعد:  display: flex   justify-content: center
+القياس قال حاجة تانية: الطرق التلاتة **اتساوت** في الظرفين. على سيرفر محلي سريع صفر للكل، حتى بـ CPU ×6، لأن الملف بيوصل قبل أول رسمة. ولما الشبكة بطيئة الكل نفس الرقم، لأن المتصفح مبيستناش سكربت في آخر الـ body عشان يرسم اللي فوقه، فالعربي بيترسم الأول، حتى مع classic. يعني اللي بيقرر الـ shift هو **هل الملف وصل قبل أول رسمة**، مش نوع السكربت. والدرس نفسه قال ده: مش ضمان ١٠٠٪.
+
+الحل المضمون: صفحتين ثابتتين، واحدة لكل لغة، أو السيرفر يطلّع الـ HTML باللغة الصح. والوسط [[v[2]]] بعد الترتيب، لأن رقم واحد ممكن يبقى صدفة، وأول تشغيلة في الشبكة البطيئة طلعت صفر.
+
+الغلطة الشائعة: تقرا النظرية وتكتب الجدول من دماغك. وتقيس على جهازك بسيرفر محلي بس، فالكل صفر، وتستنتج إن مفيش مشكلة.
+
+~~~text الناتج (Chrome 156، 390، CPU ×6، الوسط من 5 مرات)
+                         سيرفر محلي    شبكة 150ms و 1.6Mbps
+classic في آخر الـ body: 0.0000        0.1394
+defer في الـ head:       0.0000        0.1394
+type="module":           0.0000        0.1394
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** على موبايل 360 الصفحة فيها scroll أفقي. الـ snippet بتاع قسم ٦ طلّع [[header.promo]]. صلّحه في العنصر نفسه: عرضه يبقى متعدّيش أبوه، من غير ما تلمس الـ body. (من قسم ٦ «حالة»)`, done: R`على «موبايل» مفيش scroll أفقي، وكل الشروط ✓.`, work: { h: 110, start: R`<style>
-  .promo { width: 500px; padding: 10px; background: #fde68a; }
-</style>
-<header class="promo">عرض خاص: اشترك سنة وخد شهرين ببلاش</header>`, checks: [
-              { say: R`[[max-width: 100%]]`, q: ".promo", style: ["max-width", "100%"] },
-              { say: R`[[box-sizing: border-box]] عشان الـ padding ميزوّدش`, q: ".promo", style: ["box-sizing", "border-box"] },
-              { say: R`مفيش [[overflow-x]] على الـ body`, q: "body", style: ["overflow-x", "visible"] }
-            ] }, sol: R`~~~live 80 بعد التصليح
-<style>
-  .promo { box-sizing: border-box; width: 500px; max-width: 100%; padding: 10px; background: #fde68a; }
-</style>
-<header class="promo">عرض خاص: اشترك سنة وخد شهرين ببلاش</header>
-~~~
-
-**هتشوف إيه:** شريط أصفر عرضه 500 على الشاشة الكبيرة. دوس «موبايل»: بقى بعرض الشاشة والكلام بيلف، ومفيش scroll.
-
-**ليه:** [[max-width: 100%]] بيغلب [[width]] (درس «min-width و max-width»)، و [[border-box]] عشان الـ 20 padding يبقوا جوه الـ 100%. **الغلطة الشائعة:** [[body { overflow-x: hidden }]]: الـ scroll اختفى، بس آخر الشريط اتقص ومحدش يقدر يقراه.
-
-~~~text القياس من Chrome (على 360 قبل التصليح)
-scrollWidth: 528   clientWidth: 360   العنصر العريض: header.promo (520)
-~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** افتح الـ live بتاع درس «flex-flow و grid-template» قسم ٤ (الخبر الرئيسي واخد عمودين وصفين) في DevTools. اضغط badge الـ grid، وافتح تاب Layout وعلّم أرقام الخطوط. الخبر الرئيسي بيبدأ وبيخلص عند أنهي خطوط؟ و «عريض»؟ وشوف في رسمة الـ box model بتاعة «عريض» عرضه كام. (من قسم ٤ و ٥)`, done: R`كتبت أرقام الخطوط والعرض.`, sol: R`**الإجابة:** الخبر الرئيسي: أعمدة من الخط **1** للخط **3** (اتنين)، وصفوف من **1** لـ **3**. «عريض»: أعمدة من **2** لـ **4** (و [[-1]] = نفس الخط 4، لأن فيه 3 أعمدة = 4 خطوط)، في الصف التالت. وفي الـ box model: المحتوى 270 × 52 تقريبًا (278 × 60 ناقص الـ padding 4 من كل ناحية).
-
-~~~text القياس من Chrome
-.big    278 × 126   grid-column: 1 / span 2   grid-row-end: span 2
-.wide   278 × 60    grid-column-start: 2   grid-column-end: -1
-~~~
-
-ولاحظ في الـ overlay إن الخط **1** على **اليمين**: الصفحة عربي، فأول خط في أول السطر. أرقام الخطوط والألوان من الـ overlay نفسه (وثائق «Inspect CSS grid»)، والأرقام اللي فوق من [[getBoundingClientRect]].` }
-          ]
+          ],
+          ci: [
+            {
+              os: [
+                R`ubuntu`,
+                R`macos`,
+                R`windows`,
+              ],
+              sh: R`node`,
+              run: R`const html = '<title data-i18n="tHome">x</title><a data-i18n="skip">x</a><nav data-i18n-label="navLabel"></nav><h1 data-i18n="heroTitle">x</h1><p data-i18n="contactText">x</p>';
+const en = { tHome: "Nadine Fouad", skip: "Skip to content", navLabel: "Sections", heroTitle: "I build fast websites", oldKey: "not used" };
+const keys = [...html.matchAll(/data-i18n(?:-label)?="([^"]+)"/g)].map(m => m[1]);
+const missing = keys.filter(k => !(k in en));
+const unused = Object.keys(en).filter(k => !keys.includes(k));
+console.log("keys in page: " + keys.length);
+console.log("missing in en: " + (missing.join(", ") || "none"));
+console.log("unused in en: " + (unused.join(", ") || "none"));
+process.exitCode = missing.length ? 1 : 0;`,
+              code: 1,
+              expect: [
+                R`keys in page: 5`,
+                R`missing in en: contactText`,
+                R`unused in en: oldKey`,
+              ],
+            },
+          ],
         },
-      ]
+        {
+          cmd: R`بورتفوليو ٢: الكروت والفلتر والظهور بالسكرول`,
+          ref: [
+            { t: "MDN: Intersection Observer API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API" },
+            { t: "MDN: :has()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has" },
+            { t: "MDN: prefers-reduced-motion", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion" },
+          ],
+          title: R`شبكة كروت بتتظبط لوحدها، وفلتر بـ :has() من غير ولا سطر JS، وكارت كله لينك، وظهور بالسكرول بيحترم reduced motion وبيشتغل من غير JS ومش بيأخر الـ LCP`,
+          learn: R`تبني الـ CSS كله للصفحة: header زجاجي sticky، وأزرار بمتغيرات، و grid بـ [[auto-fill]] و [[minmax(min(100%, …))]]، وفلتر بـ radios و [[:has()]]، وكارت كله قابل للضغط من غير ما تلف الكارت في [[<a>]]، وظهور بالسكرول بـ IntersectionObserver بيتلغي مع reduced motion ومن غير JS.`,
+          out: R`[[site.css]] و [[reveal.js]]: كل فلتر بيعرض عدد الكروت الصح (5 و 3 و 2 و 1 و 1)، والكروت بتظهر بالسكرول، ومن غير JS أو مع reduced motion كلها ظاهرة من الأول، و LCP مش متأخر.`,
+          use: {
+            prog: R`درس «:has()» ودرس «auto-fit و minmax» ودرس «motion» في حتة واحدة، ومعاهم سؤال «إمتى الـ CSS لوحده كفاية وإمتى محتاج JS»: الفلتر CSS بس، والظهور محتاج JS بس الصفحة لازم تشتغل من غيره.`,
+            work: R`كروت بفلتر موجودة في كل portfolio ومتجر وصفحة خدمات. والحركة بالسكرول أكتر حاجة بتتطلب في التصميم وأكتر حاجة بتبوّظ الأداء والـ accessibility لو اتعملت غلط: هنا اتقاس إنها ممكن تأخر الـ LCP من 380 لـ 1200ms.`,
+            cs: R`progressive enhancement: المحتوى والوظيفة الأساسية من HTML و CSS، والـ JS طبقة زيادة. و [[:has()]] أول «parent selector» في CSS: القاعدة بتتطبق على عنصر حسب حالة عنصر جواه.`,
+          },
+          desc: R`الخطوة التانية في الـ portfolio: **الـ CSS كله** للصفحة الرئيسية (اللي بيتشارك مع الصفحتين التانيين)، و [[reveal.js]].
+
+**الفلتر من غير JS:** ٥ radios في [[<fieldset>]] (الكل، ومواقع، وسهولة الوصول، و API، وتصميم)، وكل كارت عليه [[data-tags="web a11y"]]. القاعدة: [[.work:has(input[value="web"]:checked) .card:not([data-tags~="web"])]] بتخفي أي كارت مش فيه الكلمة. [[~=]] معناها «من ضمن الكلمات المفصولة بمسافات»، فـ [[web]] متطابقش [[webgl]]. والـ radios عادية، فالأسهم بتتنقل بينهم والفلتر بيتغير (اتجرّب: ArrowLeft على «الكل» في صفحة RTL راح لـ «مواقع» و 3 كروت).
+
+**الكارت كله لينك:** [[.card h3 a::after { content: ""; position: absolute; inset: 0 }]] بيمد مساحة اللينك على الكارت كله، واللينك نفسه لسه جوه العنوان، فقارئ الشاشة بيقرا اسم المشروع بس مش الكارت كله، والـ Tab بيقف عليه مرة واحدة.
+
+**الظهور بالسكرول:** الكروت بتبدأ [[opacity: 0]] **بس لو** على [[<html>]] class [[js]] (من [[boot.js]])، و IntersectionObserver بيزوّد [[.in]] أول ما الكارت يدخل الشاشة ويبطّل يراقبه. مع [[prefers-reduced-motion: reduce]] السكربت بيظهّرهم كلهم على طول والـ CSS بيلغي الـ transition. **والغلطة اللي اتقاست:** لما حطيت [[data-reveal]] على الـ hero نفسه، الـ LCP بقى **1200ms بدل 380** (الوسط بتاع ٣)، لأن Chrome مبيحسبش عنصر [[opacity: 0]] كـ «اترسم».
+
+**الشبكة:** [[repeat(auto-fill, minmax(min(100%, 17rem), 1fr))]]. من غير [[min(100%, …)]]، كارت [[22rem]] على موبايل 360 عمل scroll أفقي: [[scrollWidth 368 / 360]].`,
+          example: R`.cards { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.filters label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); }
+.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]) { display: none; }
+.card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r); }
+.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease) var(--d, 0s), transform 0.6s var(--ease) var(--d, 0s); }
+@media (prefers-reduced-motion: reduce) { .js [data-reveal] { opacity: 1; transform: none; transition: none; } }`,
+          lines: [
+            R`الشبكة: [[auto-fill]] = «حط أعمدة على قد ما يكفي»، وكل عمود أقله [[17rem]] وأكتره [[1fr]] (جزء متساوي من الباقي). و [[min(100%, 17rem)]] بيخلي الحد الأدنى عرض الشاشة لو هي أصغر من 17rem، فمفيش scroll أفقي على أي موبايل.`,
+            R`الـ label اللي جواه radio متختار بيتلوّن: [[:has(input:checked)]] بيختار الأب حسب حالة الابن. من غير [[:has()]] كنت محتاج الـ input يبقى **قبل** الـ label ([[input:checked + label]]) أو JS.`,
+            R`الفلتر نفسه: لو جوه [[.work]] فيه radio قيمته [[web]] ومتختار، اخفي أي [[.card]] الـ [[data-tags]] بتاعه مفيهوش [[web]] ككلمة كاملة ([[~=]]). سطر زيه لكل فلتر، و «الكل» ملوش سطر فبيعرض كله.`,
+            R`الكارت كله بيتضغط: عنصر وهمي فاضي فوق الكارت كله ([[inset: 0]] = top و right و bottom و left صفر) جوه اللينك، فالضغطة في أي حتة بتروح للينك. الكارت لازم عليه [[position: relative]] عشان الوهمي يتقاس عليه.`,
+            R`الحالة الأولى للظهور: شفاف ونازل 16px، و [[transition]] بتأخير [[--d]] (السكربت بيحط 0 و 80 و 160ms عشان الكروت تظهر ورا بعض). مربوطة بـ [[.js]] فلو JS مشتغلش الكروت ظاهرة عادي.`,
+            R`لو اليوزر مختار «قلّل الحركة» في النظام: الكروت ظاهرة من الأول ومن غير transition. [[transform]] و [[opacity]] بس اللي بيتحركوا، والاتنين مبيعملوش layout فمبيعملوش CLS.`,
+          ],
+          try: R`حط [[site.css]] و [[reveal.js]] من الشرح، وافتح الصفحة وجرّب كل فلتر بالماوس وبعدين بالكيبورد (Tab لحد الفلتر، وبعدين الأسهم). بعدين من DevTools: Rendering ← [[prefers-reduced-motion: reduce]] واعمل refresh، وبعدين Settings ← Debugger ← Disable JavaScript واعمل refresh. وفي الآخر حط [[data-reveal]] على [[<section class="hero">]] وقيس بـ [[node rep.mjs]].`,
+          flag: R`script`,
+          deep: {
+            why: R`الفلتر بـ JS معناه state وlisteners وحالة «لسه بيحمّل»، وكل ده عشان تخفي كروت موجودة أصلًا في الصفحة. [[:has()]] بيعملها بسطر لكل فلتر، والـ radios بتدّيك الكيبورد والـ semantics ببلاش. والظهور بالسكرول حلو لما يتعمل صح، ووحش جدًا لما يخبّي المحتوى لو JS وقع، أو يحرّك حد عنده دوخة من الحركة، أو يأخر أكبر عنصر في الصفحة فجوجل يحسب الصفحة بطيئة.`,
+            how: R`[[:has()]] بيتقيّم من جوه لبرة: المتصفح بيلاقي [[.work]] اللي جواه [[input[value="web"]:checked]]، وبعدين بيطبّق على أي [[.card]] جواه مش متطابق مع [[[data-tags~="web"]]]. [[display: none]] بيشيل الكارت من الشبكة كلها، فـ [[auto-fill]] بيرتب الباقي من غير فراغات. والـ IntersectionObserver بيبلّغك لما عنصر يدخل أو يخرج من الشاشة من غير ما تسمع لـ scroll خالص (مفيش شغل مع كل حركة)، و [[rootMargin: "0px 0px -10% 0px"]] بيعتبر الشاشة أقصر بـ 10% من تحت فالكارت بيظهر لما يطلع شوية مش أول بكسل. و [[unobserve]] بعد أول ظهور عشان ميتراقبش تاني. والـ LCP: Chrome بيسجّل أكبر عنصر **اترسم فعلًا**، والعنصر الشفاف مش محسوب، فلما يبقى ظاهر بعد الـ transition بيتسجّل وقتها.`,
+            when: R`[[:has()]] لأي حالة الأب بيتغير فيها حسب ابنه: كارت فيه checkbox متعلّم، وفورم فيه حقل غلط ([[form:has(:invalid)]])، وlayout فيه sidebar ولا لأ. مدعوم في كل المتصفحات من ديسمبر ٢٠٢٣ (درس «Baseline و @supports»). والظهور بالسكرول للحاجات اللي **تحت** أول شاشة بس، ومش للمحتوى اللي اليوزر جاي عشانه. ولو الفلتر هيبقى بحث بالكلام أو ترتيب، ده محتاج JS (زي جدول الـ dashboard).`,
+            mistakes: R`تحط [[data-reveal]] على الـ hero (اتقاس: LCP 380 ← 1200ms). تخبّي بـ [[opacity: 0]] من غير [[.js]] فالصفحة فاضية لو الـ JS وقع أو اتمنع. تنسى reduced motion. تستخدم [[minmax(22rem, 1fr)]] من غير [[min(100%, …)]] (اتقاس: 368 على 360). تلف الكارت كله في [[<a>]] فقارئ الشاشة بيقرا الكارت كله كاسم لينك واحد طويل. تعمل الفلتر بـ [[[data-tags*="web"]]] ([[*=]] = جزء من النص) فـ [[webgl]] يعدّي. تحط [[display: none]] على الـ radio نفسه للتصميم فيضيع من الكيبورد وقارئ الشاشة.`,
+          },
+          teach: R`## الخطوة ٢: الـ CSS كله
+
+~~~css portfolio/css/site.css
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 5rem; -webkit-text-size-adjust: 100%; }
+body { margin: 0; font: var(--step-0)/1.7 var(--font); color: var(--ink); background: var(--paper); }
+:lang(en) body, body:lang(en) { line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: var(--accent); text-underline-offset: 0.2em; }
+img, svg { max-width: 100%; height: auto; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+main > section { padding: clamp(48px, 8vw, 96px) var(--gutter); max-width: 72rem; margin-inline: auto; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; padding: 0.5rem 1rem; background: var(--ink); color: var(--paper); z-index: 100; }
+.skip:focus { top: 1rem; }
+.sr-status { min-height: 1.7em; color: var(--muted); }
+
+/* ---------- header: sticky glass ---------- */
+.top {
+  position: sticky; top: 0; z-index: var(--z-header);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem;
+  padding: 0.75rem var(--gutter);
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border-block-end: 1px solid var(--line);
+}
+.brand { font-weight: 700; color: var(--ink); text-decoration: none; margin-inline-end: auto; }
+.top nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
+.top nav a { color: var(--ink); text-decoration: none; padding-block: 0.5rem; }
+.top nav a:hover { color: var(--accent); }
+.lang { font: inherit; padding: 0.4rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); cursor: pointer; min-height: 44px; }
+
+/* ---------- hero ---------- */
+.hero { padding-block-start: clamp(56px, 12vw, 140px); }
+.eyebrow { color: var(--warm); font-weight: 600; margin: 0; }
+.hero h1 { font-size: var(--step-3); margin: 0.25em 0 0.4em; max-width: 18ch; }
+:lang(en) .hero h1 { letter-spacing: -0.02em; }
+.lead { font-size: var(--step-1); color: var(--muted); max-width: 46ch; margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 2rem; }
+.btn {
+  --bg: var(--accent); --fg: var(--accent-ink);
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.25rem;
+  border: 2px solid var(--bg); border-radius: 999px; background: var(--bg); color: var(--fg);
+  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.btn.ghost { --bg: transparent; --fg: var(--accent); border-color: var(--accent); }
+
+/* ---------- work: cards + :has() filter ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; border: 0; padding: 0; margin: 0 0 1.5rem; }
+.filters legend { width: 100%; margin-block-end: 0.5rem; color: var(--muted); }
+.filters label {
+  display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0.25rem 0.9rem;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer;
+}
+.filters input { accent-color: var(--accent); }
+.filters label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.card { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); }
+.card h3 { font-size: var(--step-1); margin: 0.75rem 0 0.25rem; }
+.card h3 a { color: var(--ink); }
+.card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r); }
+.card:has(a:hover) { border-color: var(--accent); }
+.card p { margin: 0 0 0.75rem; color: var(--muted); }
+.thumb { aspect-ratio: 16 / 9; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--a, #0d6b63), var(--b, #9c4f12)); }
+.t1 { --a: #0d6b63; --b: #4aa79d; view-transition-name: tide-thumb; }
+.t2 { --a: #2f4b7c; --b: #6b8fd1; }
+.t3 { --a: #7a3e65; --b: #c97fa9; }
+.t4 { --a: #6b5b1d; --b: #c2a64a; }
+.t5 { --a: #3c3c3c; --b: #9a9a9a; }
+.tags { list-style: none; padding: 0; margin: auto 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tags li { font-size: 0.85rem; padding: 0.1rem 0.6rem; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); direction: ltr; }
+
+.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),
+.work:has(input[value="a11y"]:checked) .card:not([data-tags~="a11y"]),
+.work:has(input[value="api"]:checked) .card:not([data-tags~="api"]),
+.work:has(input[value="design"]:checked) .card:not([data-tags~="design"]) { display: none; }
+
+/* ---------- scroll reveal (only when JS runs) ---------- */
+.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease) var(--d, 0s), transform 0.6s var(--ease) var(--d, 0s); }
+.js [data-reveal].in { opacity: 1; transform: none; }
+
+/* ---------- about + contact ---------- */
+.about p, .contact p { max-width: 60ch; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1rem; margin: 2rem 0 0; }
+.facts div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-size: var(--step-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+.contact p:has(.btn) { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.foot { padding: 2rem var(--gutter); border-block-start: 1px solid var(--line); color: var(--muted); text-align: center; }
+
+/* ---------- page to page: View Transitions (Chrome/Edge 126+, Safari 18.2+; others just navigate) ---------- */
+@view-transition { navigation: auto; }
+::view-transition-group(tide-thumb) { animation-duration: 0.35s; animation-timing-function: var(--ease); }
+
+/* ---------- reduced motion: no reveal, no page animation ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; transform: none; transition: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* ---------- print: any page prints as plain document ---------- */
+@media print {
+  .top, .skip, .actions, .filters, .lang, #copy, .foot, .thumb { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  main > section { padding: 0 0 12pt; max-width: none; }
+  .card { box-shadow: none; break-inside: avoid; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+  a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: 0.85em; color: #333; }
+}
+~~~
+
+### فك الأجزاء
+
+**الأساس:**
+- [[scroll-padding-top: 5rem]] على [[html]]: لما تدوس على [[#work]] الصفحة بتنزل للقسم بس بتسيب 5rem فوقه، عشان الـ header الـ sticky ميغطيش العنوان.
+- [[:lang(en) body, body:lang(en)]]: الإنجليزي بيحتاج line-height أقل من العربي (الحروف العربي فيها نقط وتشكيل فوق وتحت). [[:lang()]] بيقرا [[lang]] من أقرب أب.
+- [[text-wrap: balance]] للعناوين (السطور بأطوال قريبة من بعض) و [[pretty]] للفقرات (مفيش كلمة لوحدها في آخر سطر). درس «text-wrap».
+- [[:focus-visible]] بدل [[:focus]]: الإطار بيظهر بالكيبورد بس، مش لما تضغط بالماوس.
+
+**الـ header الزجاجي:**
+- [[position: sticky; top: 0]] و [[z-index: var(--z-header)]]: بيفضل فوق وانت بتنزل، والطبقة من token مش رقم عشوائي.
+- [[color-mix(in srgb, var(--paper) 82%, transparent)]]: لون الخلفية بشفافية 18% من الـ token نفسه، فبيشتغل في الثيمين من غير لون تاني.
+- [[backdrop-filter: blur(10px)]]: اللي تحت الـ header بيبان مغبّش.
+- [[flex-wrap: wrap]] و [[margin-inline-end: auto]] على الاسم: على 360 الـ nav بينزل سطر لوحده بدل ما يخرج بره الشاشة.
+
+**الأزرار:**
+- [[--bg]] و [[--fg]] على [[.btn]]، و [[.btn.ghost]] بيغيّر المتغيرين بس. ده نمط «variant بمتغير»: بتغيّر متغير مش خصائص.
+- [[min-height: 44px]]: أقل مساحة ضغط مريحة (WCAG 2.5.8 بيطلب 24 كحد أدنى، و 44 هي التوصية الأقوى).
+
+**الكروت:**
+- [[.thumb]] بـ [[aspect-ratio: 16 / 9]]: المكان محجوز قبل أي صورة، فمفيش CLS. والصور هنا gradients (مفيش صور حقيقية للمشاريع المتخيلة) بلونين من [[--a]] و [[--b]] لكل كارت.
+- [[.t1 { view-transition-name: tide-thumb }]]: الاسم ده نفسه موجود على صورة صفحة دراسة الحالة، فالمتصفح بيحرّك الصورة من الكارت لمكانها في الصفحة التانية («بورتفوليو ٣»).
+- [[.tags li { direction: ltr }]]: الكلمات الإنجليزي جوه الـ chips زي «CSS Grid».
+- [[margin: auto 0 0]] على [[.tags]]: الـ tags بتنزل لآخر الكارت حتى لو الوصف قصير، فكل الكروت في الصف آخرها في نفس الخط.
+
+**الطباعة** في آخر الملف (لكل الصفحات): بتخفي الـ header والأزرار والفلتر والصور، وبتكتب الرابط جنب كل لينك خارجي ([[a[href^="http"]::after]]). اتشرحت في «بورتفوليو ٣» مع الـ CV.
+
+### الظهور بالسكرول
+
+~~~javascript portfolio/js/reveal.js
+// cards fade in once when they reach the screen; nothing hides without JS (the .js class), and nothing moves with reduced motion
+const items = document.querySelectorAll("[data-reveal]");
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (still || !("IntersectionObserver" in window)) {
+  items.forEach(el => el.classList.add("in"));
+} else {
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  }, { rootMargin: "0px 0px -10% 0px" });
+  items.forEach((el, i) => { el.style.setProperty("--d", (i % 3) * 80 + "ms"); io.observe(el); });
+}
+~~~
+
+- [[matchMedia("(prefers-reduced-motion: reduce)").matches]]: نفس الـ media query بتاعة CSS من JS، [[true]] لو اليوزر مختار «قلّل الحركة».
+- [[!("IntersectionObserver" in window)]]: متصفح قديم: ظهّر كله بدل ما يفضل مستخبي.
+- [[e.isIntersecting]]: العنصر دخل الشاشة (ولو جزء). و [[io.unobserve(e.target)]]: خلاص ظهر، متراقبوش تاني.
+- [[(i % 3) * 80 + "ms"]]: الكروت اللي في نفس الصف (لحد ٣) بتتأخر 0 و 80 و 160ms، فبتظهر ورا بعض.
+
+### اتشغّل فعلًا
+
+~~~text node check-portfolio.mjs (Chrome 156، 1280×800)
+filter all    visible cards: 5
+filter web    visible cards: 3
+filter a11y   visible cards: 2
+filter api    visible cards: 1
+filter design visible cards: 1
+card opacity at load: 0 0 0 0 0
+after scroll: 1 1 1 1 1
+reduced motion at load: 1/0s 1/0s 1/0s 1/0s 1/0s
+no JS: 1 1 1 1 1
+~~~
+
+- [[0 0 0 0 0]]: الكروت كلها تحت أول شاشة (الـ hero طويل)، فلسه مظهرتش.
+- [[1/0s]]: opacity 1 و transition صفر مع reduced motion (اتعمل بـ [[browser.newContext({ reducedMotion: "reduce" })]]).
+- [[no JS: 1 ...]]: [[javaScriptEnabled: false]]، فمفيش class [[js]]، فمفيش إخفاء أصلًا.
+
+والكيبورد (من [[kb-port.mjs]] في الدرس الأخير):
+
+~~~text
+ArrowLeft on «الكل» → radio:web | visible cards: 3
+Tab from the group → Tide Notes: ملاح
+~~~
+
+في صفحة RTL السهم الشمال بيروح للاختيار **اللي بعده** (الترتيب من اليمين). وبعد المجموعة، الـ Tab راح للكارت الوحيد اللي فيه لينك، مش لكل radio (المجموعة وقفة واحدة في الـ Tab).
+
+---
+
+## الغلطات اللي حصلت في الخطوة دي
+
+### ١. الـ hero بيظهر بالسكرول: LCP من 380 لـ 1200ms
+
+كان شكلها حلو إن العنوان «يطلع» أول ما الصفحة تفتح، فحطيت [[data-reveal]] على [[<section class="hero">]]:
+
+~~~text node rep.mjs (390، CPU ×4، الوسط بتاع ٣)
+قبل:  ar CLS 0.0000 FCP 380 LCP 380
+بعد:  ar CLS 0.0000 FCP 484 LCP 1200
+~~~
+
+الـ FCP (أول حاجة اترسمت) لسه بدري، بس الـ LCP (أكبر حاجة) بقى بعد الـ transition. وده الرقم اللي جوجل بيحسبه. التصليح: الـ hero من غير [[data-reveal]]، والحركة للحاجات اللي تحت بس.
+
+### ٢. scroll أفقي على 360 من [[minmax]]
+
+جرّبت أكبّر الكروت لـ [[22rem]] (352px) عشان تبان أعرض:
+
+~~~text
+D: minmax(22rem, 1fr) at 360          scrollWidth 368 / 360
+D fixed: minmax(min(100%, 22rem)) 360 scrollWidth 360 / 360
+~~~
+
+المساحة المتاحة على 360 = 360 ناقص 16 من كل ناحية = 328، والعمود مش قادر يبقى أقل من 352. [[min(100%, 22rem)]] بيقول «22rem أو العرض كله، اللي أصغر».
+
+### ٣. ليه [[~=]] مش [[*=]]
+
+[[[data-tags*="web"]]] بيطابق أي نص **فيه** [[web]]: لو زوّدت tag اسمه [[webgl]] الكارت هيظهر في «مواقع» غلط. [[~=]] بيطابق كلمة كاملة من ضمن كلمات مفصولة بمسافات. (اتجرّب في Console: [[document.querySelectorAll('[data-tags~="web"]').length]] بيرجّع 3، وده نفس عدد «مواقع» في الجدول فوق.)
+
+---
+
+## الخلاصة
+
+| الفكرة | السطر |
+|---|---|
+| شبكة من غير media queries ومن غير overflow | [[repeat(auto-fill, minmax(min(100%, 17rem), 1fr))]] |
+| حالة الأب من ابنه | [[label:has(input:checked)]] |
+| فلتر من غير JS | [[.work:has(input[value="x"]:checked) .card:not([data-tags~="x"])]] |
+| كارت كله بيتضغط واسمه قصير | [[h3 a::after { position: absolute; inset: 0 }]] |
+| ظهور بالسكرول بأمان | [[.js]] + IntersectionObserver + [[unobserve]] + reduced motion، ومش على الـ hero |`,
+          sol: R`الفلتر بيعرض 5 و 3 و 2 و 1 و 1، والأسهم بتغيّر الفلتر، و Tab بيعدّي المجموعة كلها مرة واحدة. مع reduced motion الكروت ظاهرة من غير حركة، ومن غير JS ظاهرة كلها. ومع [[data-reveal]] على الـ hero، [[rep.mjs]] بيطلّع LCP أعلى بكتير من FCP (في المعمل 1200 مقابل 484)؛ امسحه يرجع LCP = FCP.`,
+          practice: [
+            {
+              lvl: R`سريع`,
+              t: R`**اقرا وتوقّع:** كارت عليه [[data-tags="webgl design"]] وانت اخترت «مواقع» ([[web]]). هيظهر مع [[~=]]؟ ومع [[*=]]؟ ومع [[|=]]؟ اكتب الإجابة وبعدين جرّب في Console بـ [[querySelectorAll]].`,
+              done: R`[[~=]] لأ (مفيش كلمة [[web]] كاملة)، و [[*=]] أيوه (النص فيه [[web]])، و [[|=]] لأ ([[|=]] = القيمة كلها [[web]] أو بتبدأ بـ [[web-]])، والأرقام في Console مطابقة.`,
+              sol: R`~~~live 120 120 attr.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>attribute selectors</title></head>
+<body>
+  <main><h1>كارت</h1><div class="card" data-tags="webgl design">مشروع</div></main>
+  <script>
+    for (const s of ['[data-tags~="web"]', '[data-tags*="web"]', '[data-tags|="web"]'])
+      console.log(s, document.querySelectorAll(s).length);
+  $__lt/script>
+</body></html>
+~~~
+
+الـ ٣ operators بيسألوا ٣ أسئلة مختلفة:
+
+- [[~=]]: «هل [[web]] **كلمة كاملة** في لستة مفصولة بمسافات؟» الكلمات هنا [[webgl]] و [[design]]، فلأ.
+- [[*=]]: «هل النص فيه [[web]] في أي حتة؟» أيوه، جوه [[webgl]]. ده بالظبط سبب إنه غلط للفلتر: كارت WebGL هيظهر تحت «مواقع».
+- [[|=]]: «هل القيمة كلها [[web]] أو بتبدأ بـ [[web-]]؟» لأ. ده معمول أساسًا للغات زي [[[lang|="ar"]]].
+
+الغلطة الشائعة: [[*=]] عشان أقصر تفكير، فتطلع نتايج غلط من غير ما تحس.
+
+~~~text الناتج (querySelectorAll في Chrome 156)
+~=  0
+*=  1
+|=  0
+~~~` },
+            {
+              lvl: R`سريع`,
+              t: R`**اشرحها:** اكتب لزميل في ٣ سطور ليه [[.js [data-reveal]]] أحسن من [[[data-reveal]]] لوحده، بمثال حصل فعلًا في الدرس.`,
+              done: R`الشرح بيقول إن الإخفاء بيحصل بس لو JS اشتغل (class [[js]] من [[boot.js]])، وإن من غيرها الكروت هتفضل [[opacity: 0]] للأبد لو السكربت وقع، والدليل سطر [[no JS: 1 1 1 1 1]].`,
+              sol: R`~~~text رسالة لزميل
+[data-reveal] لوحده بيخفي الكروت من الـ CSS، حتى لو السكربت اللي بيظهرها موقعش خالص.
+.js [data-reveal] بيخفي بس لو boot.js اشتغل وحط class js، فمن غير JS الكروت ظاهرة.
+الدليل من الدرس: سطر no JS: 1 1 1 1 1، يعني الخمس كروت opacity بتاعتهم 1 والـ JS مقفول.
+~~~
+
+القاعدة العامة: إخفاء بيعتمد على JS عشان يتلغي، لازم يعتمد على JS عشان يحصل أصلًا. لو القاعدة في الـ CSS لوحدها، أي مشكلة في السكربت (ملف واقع، أو خطأ قبله، أو حاجب إعلانات) بتسيب الصفحة فاضية.
+
+[[boot.js]] بيتحمل في الـ head، فالـ class موجودة قبل أول رسمة، ومفيش وميض.
+
+الغلطة الشائعة: تختبر بالـ JS شغال بس، فمتشوفش المشكلة أبدًا.
+
+~~~text الناتج (Chrome 156، JS مقفول، opacity لكل كارت)
+.js [data-reveal]:   1 1 1 1 1
+[data-reveal] لوحده: 0 0 0 0 0
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**ابني:** اعمل رسالة «مفيش مشاريع من النوع ده» بـ CSS بس: [[<p class="empty">]] مستخبية، وبتظهر لما يبقى الفلتر المختار مفيش كارت عليه. اكتبها بقاعدة واحدة لكل فلتر الأول، وبعدين حاول تكتبها عامة.`,
+              done: R`زوّدت فلتر «موبايل» من غير كروت، والرسالة بتظهر معاه بس، وكاتب القاعدة بـ [[.work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty]]، وعارف ليه القاعدة العامة لكل القيم مستحيلة في CSS (مفيش متغير بيمسك قيمة الـ radio).`,
+              sol: R`~~~html portfolio/index.html
+<!-- مع باقي الـ radios -->
+<label><input type="radio" name="f" value="mobile"> <span>موبايل</span></label>
+
+<!-- بعد ul.cards -->
+<p class="empty">مفيش مشاريع من النوع ده لسه.</p>
+~~~
+
+~~~css portfolio/css/site.css
+.empty { display: none; color: var(--muted); }
+.work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty { display: block; }
+~~~
+
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+.empty { display: none; color: var(--muted); }
+.work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty { display: block; }
+</style>
+<!-- مع باقي الـ radios -->
+<label><input type="radio" name="f" value="mobile"> <span>موبايل</span></label>
+
+<!-- بعد ul.cards -->
+<p class="empty">مفيش مشاريع من النوع ده لسه.</p>
+</body></html>
+~~~
+
+القاعدة بتتقرا كده: «في [[.work]] لو الفلتر المختار موبايل، و **مفيش** جواها كارت عليه تاج موبايل، اعرض الرسالة». [[:not(:has(...))]] هو «مفيش».
+
+لو ضفت بكرة كارت عليه [[mobile]]، الرسالة تختفي لوحدها، من غير ما تعدّل CSS.
+
+ليه القاعدة العامة مستحيلة؟ لأن CSS مقدرش يقرا قيمة الـ radio ويستخدمها في selector تاني: مفيش متغير يمسك [[value]]. يعني مقدرش تقول «أي كارت تاجه = القيمة المختارة». فكل فلتر محتاج قاعدة، وعشان كده التمرين الجاي بيولّدهم بسكربت.
+
+وكمان [[<p class="empty">]] لازم يكون جوه [[.work]] عشان الـ selector يوصله.
+
+الغلطة الشائعة: [[.cards:empty]]. الكروت موجودة في الـ DOM ومخفية بـ [[display: none]]، فـ [[:empty]] عمره ما هيطابق.
+
+~~~text الناتج (Chrome 156)
+على «الكل»: .empty = none
+على «موبايل»: .empty = block، والكروت الظاهرة 5
+على «مواقع»: .empty = none
+لو كارت عليه mobile: .empty = none
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**صلّح الكود البايظ:** النسخة دي من الفلتر مش شغالة بالكيبورد: [[.filters input { display: none }]] و [[.filters label { cursor: pointer }]]. الماوس شغال. اعرف ليه وصلّحها من غير ما الدواير ترجع تبان لو مش عايزها.`,
+              done: R`عرفت إن [[display: none]] بيشيل الـ input من الـ Tab ومن قارئ الشاشة، وبدّلته بإخفاء بصري ([[position: absolute; opacity: 0; width: 1px; height: 1px]] أو clip)، والفوكس بيبان على الـ label بـ [[label:has(input:focus-visible)]]، والأسهم رجعت شغالة.`,
+              sol: R`~~~css بعد التصليح
+.filters input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 1px;
+  block-size: 1px;
+}
+.filters label { position: relative; cursor: pointer; }
+.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+~~~
+
+~~~view 140 160 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+:root { --accent: #7c3aed; } body { font-family: system-ui, sans-serif; margin: 1rem; } .filters { display: flex; gap: 8px; border: 0; padding: 0; } .filters legend { margin-bottom: 0.5rem; }
+.filters label { padding: 6px 16px; border: 1px solid #cbd5e1; border-radius: 999px; } .filters label:has(:checked) { background: var(--accent); color: #fff; border-color: var(--accent); }
+</style>
+<style>
+/* من الحل */
+.filters input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 1px;
+  block-size: 1px;
+}
+.filters label { position: relative; cursor: pointer; }
+.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<fieldset class="filters"><legend>اعرض</legend>
+<label><input type="radio" name="f" checked> الكل</label><label><input type="radio" name="f"> مواقع</label><label><input type="radio" name="f"> تطبيقات</label></fieldset>
+<p>بالكيبورد: Tab للفلتر والأسهم بتبدّل، والإطار على الاختيار.</p>
+</body>
+</html>
+~~~
+
+[[display: none]] بيشيل العنصر من الـ layout ومن الـ accessibility tree. فالـ radio مبياخدش focus، و Tab بيعدّي المجموعة، والأسهم مش بتشتغل، وقارئ الشاشة مبيعرفش إنها اختيارات. الماوس شغال لأن الضغط على الـ [[label]] بيحدد الـ input حتى لو مخفي.
+
+الإخفاء البصري بيسيب الـ input موجود وبياخد focus، و [[opacity: 0]] بيخفيه، و [[1px]] بيخليه ميغطيش حاجة. [[position: relative]] على الـ label عشان الـ input يفضل جواه، فالصفحة متقفزش لما ياخد focus.
+
+ولأن الدايرة مش ظاهرة، لازم تعرض الـ focus بنفسك: [[label:has(input:focus-visible)]].
+
+الغلطة الشائعة: تخلي [[pointer-events: none]] أو [[tabindex="-1"]] معاه. ده نفس المشكلة بشكل تاني.
+
+~~~text الناتج (Chrome 156)
+                        display: none      الإخفاء البصري
+Tab من الـ h2 بيقف على   A Tide Notes:        radio all
+سهم يسار بيغيّر الفلتر    لأ             آه (web)
+حلقة الـ focus           none               solid
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**مسألة:** اكتب سكربت Node بياخد الـ HTML ويطلّع قواعد [[:has()]] لكل فلتر لوحده، ويطبع الـ tags اللي على كروت ومالهاش فلتر، والفلاتر اللي مفيش عليها كارت. (شكل فحص الـ ci في الدرس.)`,
+              done: R`على صفحة فيها فلاتر [[web]] و [[api]] و [[mobile]] وكروت [[web a11y]] و [[api]]، السكربت بيطبع ٣ قواعد، و [[tags without a filter: a11y]]، و [[filters without a card: mobile]].`,
+              sol: R`~~~js filter-css.mjs
+import fs from "node:fs";
+const html = fs.readFileSync(process.argv[2], "utf8");
+
+const filters = [...html.matchAll(/name="f" value="([^"]+)"/g)].map((m) => m[1]).filter((v) => v !== "all");
+const tags = new Set([...html.matchAll(/data-tags="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)));
+
+const css = filters.map((f) => $__bt.work:has(input[value="$__{f}"]:checked) .card:not([data-tags~="$__{f}"])$__bt);
+console.log(css.join(",\n") + " { display: none; }");
+
+const noFilter = [...tags].filter((t) => !filters.includes(t));
+const noCard = filters.filter((f) => !tags.has(f));
+console.log("tags without a filter:", noFilter.join(", ") || "none");
+console.log("filters without a card:", noCard.join(", ") || "none");
+~~~
+
+ده الحل بتاع «CSS مقدرش يقرا قيمة»: القواعد نفسها بتتولّد. الـ HTML هو مصدر الحقيقة، والسكربت بيطلّع منه قاعدة لكل فلتر.
+
+- [[.filter((v) => v !== "all")]]: «الكل» ملوش قاعدة، لأنه مبيخفيش حاجة.
+- [[flatMap]] بيفرد قايمة قوايم لقايمة واحدة، و [[Set]] يشيل التكرار.
+- الفرقين هما الفايدة: تاج مش ليه زرار معناه كارت مش هتعرف تفلتره، وفلتر من غير كارت معناه زرار بيعرض لستة فاضية.
+
+الغلطة الشائعة: regex تتوقع ترتيب attributes معين. الـ HTML اللي انت كاتبه ثابت، فده مقبول في فحص لمشروعك، ومش مقبول لـ HTML من برا.
+
+~~~text الناتج (Node 24 على صفحة التمرين)
+.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),
+.work:has(input[value="api"]:checked) .card:not([data-tags~="api"]),
+.work:has(input[value="mobile"]:checked) .card:not([data-tags~="mobile"]) { display: none; }
+tags without a filter: a11y
+filters without a card: mobile
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**قارن وقيس:** اعمل نفس الفلتر بـ JS (listener على [[change]] بيحط [[hidden]] على الكروت) وقارنه بنسخة [[:has()]]: عدد السطور، والوقت من الضغطة لحد ما الكروت تتغير (Performance ← Interactions، أو [[PerformanceObserver]] على [[event]])، وإيه اللي بيحصل من غير JS.`,
+              done: R`عندك جدول فيه السطور والوقت للنسختين، والفرق في الوقت صغير على ٥ كروت، والفرق الحقيقي إن نسخة [[:has()]] شغالة من غير JS ومن غير state.`,
+              sol: R`~~~js portfolio/js/filter.js (نسخة JavaScript)
+const cards = [...document.querySelectorAll(".card")];
+document.querySelector(".filters").addEventListener("change", (e) => {
+  const v = e.target.value;
+  for (const c of cards) c.hidden = v !== "all" && !c.dataset.tags.split(" ").includes(v);
+});
+~~~
+
+~~~js قياس الوقت من الضغطة لحد الرسم
+new PerformanceObserver((l) => {
+  for (const e of l.getEntries()) if (e.name === "click") console.log(e.name, e.duration);
+}).observe({ type: "event", durationThreshold: 16, buffered: true });
+~~~
+
+على ٥ كروت الفرق في الوقت صغير، والقياس [[event]] بيتقرب لأقرب 8ms أصلًا، فالرقم مش حجة. الفرق الحقيقي:
+
+- نسخة [[:has()]] شغالة من غير JS، والحالة في الـ radio نفسه، فمفيش حاجة تتزامن. ولو رجعت بـ Back المتصفح بيرجّع اختيار الـ radio والـ CSS يطبق لوحده.
+- نسخة JS سطر واحد لأي عدد فلاتر، لكن لو الملف وقع، الفلتر ميت، والـ radios شكلها شغال.
+
+[[durationThreshold: 16]] أقل حد مسموح. لو عايز تقرا أي click، ممكن ميتسجلش لو أقل من كده، وده نفسه معلومة: أسرع من frame.
+
+و [[.card]] عليها [[display: flex]]، فلازم [[.card[hidden] { display: none }]]، وإلا [[hidden]] مش هيخفي، زي درس الـ landing.
+
+الغلطة الشائعة: تختار JS عشان «أسرع». اختار حسب إيه اللي بيحصل لما يقع.
+
+~~~text الناتج (Chrome 156، ٥ كروت، click على «مواقع»)
+النسخة     سطور      duration للضغطة   JS مقفول: كروت على «مواقع»
+:has()     4 قواعد CSS         أقل من 16ms             3
+JS         5 سطور JS         أقل من 16ms             5
+~~~` },
+          ],
+          ci: [
+            {
+              os: [
+                R`ubuntu`,
+                R`macos`,
+                R`windows`,
+              ],
+              sh: R`node`,
+              run: R`const html = '<input type="radio" name="f" value="all"><input type="radio" name="f" value="web"><input type="radio" name="f" value="api"><input type="radio" name="f" value="mobile"><li class="card" data-tags="web a11y"></li><li class="card" data-tags="api"></li>';
+const filters = [...html.matchAll(/name="f" value="([^"]+)"/g)].map(m => m[1]).filter(v => v !== "all");
+const tags = new Set([...html.matchAll(/data-tags="([^"]+)"/g)].flatMap(m => m[1].split(" ")));
+const css = filters.map(f => '.work:has(input[value="' + f + '"]:checked) .card:not([data-tags~="' + f + '"])').join(",\n") + " { display: none; }";
+console.log(css);
+console.log("tags without a filter: " + ([...tags].filter(t => !filters.includes(t)).join(", ") || "none"));
+console.log("filters without a card: " + (filters.filter(f => !tags.has(f)).join(", ") || "none"));`,
+              expect: [
+                R`.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),`,
+                R`.work:has(input[value="mobile"]:checked) .card:not([data-tags~="mobile"]) { display: none; }`,
+                R`tags without a filter: a11y`,
+                R`filters without a card: mobile`,
+              ],
+            },
+          ],
+        },
+        {
+          cmd: R`بورتفوليو ٣: دراسة الحالة والطباعة و OG`,
+          ref: [
+            { t: "MDN: Printing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Printing" },
+            { t: "MDN: @page", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@page" },
+            { t: "The Open Graph protocol", url: "https://ogp.me/" },
+            { t: "MDN: View Transition API", url: "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API" },
+            { t: "Playwright: page.pdf()", url: "https://playwright.dev/docs/api/class-page#page-pdf" },
+          ],
+          title: R`صفحة دراسة حالة بانتقال View Transition من الكارت، و CV بيتطبع صفحة A4 واحدة بـ @media print و @page، وصورة مشاركة 1200×630 بيعملها Chrome، و Open Graph صح`,
+          learn: R`تكمّل الـ portfolio: صفحة دراسة حالة (المشكلة والقرارات والنتيجة بجدول)، وانتقال بين الصفحتين بـ [[@view-transition]] و [[view-transition-name]] بيتلغي مع reduced motion، و CV شكله سليم على الشاشة وبيطلع صفحة واحدة على الورق، وصورة [[og.png]] من HTML، و meta tags بتخلي اللينك يبان بكارت لما يتبعت.`,
+          out: R`[[work/tide-notes.html]] و [[case.css]] و [[cv.html]] و [[cv.css]] و [[print.js]] و [[make-og.mjs]]: [[pagereveal]] بيقول إن فيه انتقال، والـ CV = صفحة PDF واحدة من غير header، و [[og.png]] مقاسه 1200×630.`,
+          use: {
+            prog: R`دروس «View Transitions» و «@media print» و «meta و Open Graph» في منتج واحد. ودراسة الحالة نفسها تمرين كتابة: المشكلة بأرقام، والقرار بسببه، والنتيجة بجدول قبل وبعد.`,
+            work: R`اللي بيوظّف بيفتح مشروع واحد بس غالبًا، فصفحة دراسة الحالة هي اللي بتقنعه. والـ CV بيتطلب PDF في كل تقديم، والأحسن إنه يطلع من نفس الصفحة بدل ملف Word بيتنسي يتحدّث. واللينك اللي بيتبعت في واتساب أو LinkedIn من غير صورة وعنوان صح بيتعدّى.`,
+            cs: R`الـ paged media: الورق ليه صفحات ومقاس وهوامش، والـ CSS عنده قواعد للتقطيع ([[break-inside]] و [[break-after]]). والـ View Transitions بتاخد لقطة للصفحة القديمة والجديدة وتحرّك بينهم بـ pseudo-elements، يعني الحركة مش بتأثر على الـ DOM نفسه.`,
+          },
+          desc: R`آخر خطوة في الـ portfolio: ٣ حاجات بتتعمل مرة وبتفرق كتير.
+
+**صفحة دراسة الحالة** ([[work/tide-notes.html]]): نفس الـ header والـ tokens، وعمود واحد للقراية ([[max-width: 46rem]])، ومعلومات المشروع في [[<dl>]]، وجدول قبل وبعد بـ [[<caption>]] و [[scope]]. وصورة المشروع عليها نفس [[view-transition-name: tide-thumb]] اللي على الكارت في الرئيسية، و [[@view-transition { navigation: auto; }]] في الصفحتين، فلما تدوس على الكارت المتصفح **بيحرّك الصورة** من مكانها في الكارت لمكانها فوق في الصفحة الجديدة. ده لينك عادي، مفيش JS. اتقاس بحدث [[pagereveal]]: [[view transition on the case page: yes]]. ومع reduced motion القواعد بتلغي الحركة ([[animation: none]]).
+
+**الـ CV** ([[cv.html]]): بيتقري كويس على الشاشة، وجواه [[@page { size: A4; margin: 14mm 16mm; }]] و [[@media print]] بيخفي الـ header والأزرار، ويمنع وظيفة تتقطع بين صفحتين ([[break-inside: avoid]])، وعنوان يفضل لوحده آخر الصفحة ([[break-after: avoid]]). اتقاس بـ [[page.pdf()]]: **صفحة واحدة**. ومن غير CSS الطباعة: **صفحتين** والـ header ظاهر.
+
+**المشاركة:** [[og:title]] و [[og:description]] و [[og:image]] (رابط **كامل** بـ [[https://]]) و [[og:image:width/height/alt]] و [[twitter:card = summary_large_image]]، و [[<link rel="canonical">]]. والصورة نفسها HTML بيتصوّر بـ Chrome على 1200×630 بالظبط.`,
+          example: R`@view-transition { navigation: auto; }
+.t1 { view-transition-name: tide-thumb; }
+@page { size: A4; margin: 14mm 16mm; }
+.job { break-inside: avoid; }
+a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; }
+<meta property="og:image" content="https://nadine.example/img/og.png">`,
+          lines: [
+            R`في الصفحتين: أي تنقّل عادي بين صفحات نفس الموقع (same-origin) يعمل انتقال. من غيرها في الاتنين مفيش انتقال خالص. المتصفح اللي مش بيدعمها بيتجاهل السطر ويتنقل عادي (Chrome و Edge 126+ و Safari 18.2+، من الوثائق).`,
+            R`نفس الاسم على صورة الكارت في الرئيسية وعلى صورة الـ hero في دراسة الحالة: المتصفح بيعتبرهم «نفس العنصر» ويحرّكه من مكان ومقاس لمكان ومقاس. الاسم لازم يبقى مش متكرر في نفس الصفحة، وإلا الانتقال كله بيتلغي.`,
+            R`مقاس الورق والهوامش للطباعة وللـ PDF. [[preferCSSPageSize: true]] في [[page.pdf()]] بيحترمها، وزرار «حفظ كـ PDF» في Chrome كمان.`,
+            R`وظيفة كاملة (العنوان والسنين والنقط) ميتقطعش نصها في آخر صفحة ونصها في اللي بعدها: بتنزل كلها للصفحة الجاية.`,
+            R`على الورق مفيش ضغط، فبنكتب الرابط نفسه جنب أي لينك خارجي أو إيميل: [[attr(href)]] بيجيب قيمة الـ attribute كنص. في الـ CV اتلغت للينكات اللي نصها هو الرابط أصلًا.`,
+            R`صورة المشاركة برابط كامل: [[og:image]] لازم URL مطلق (البروتوكول OG بيقول كده، والمواقع اللي بتقرا الكارت مش بتحل المسار النسبي، من الوثائق)، ومعاه العرض والطول والـ alt.`,
+          ],
+          try: R`حط الملفات من الشرح، وافتح الرئيسية ودوس على كارت Tide Notes وشوف الصورة بتتحرك. اعمل نفس الحاجة مع Rendering ← [[prefers-reduced-motion: reduce]]. بعدين افتح [[cv.html]] واضغط Ctrl+P وشوف عدد الصفحات، وامسح [[@media print]] من [[cv.css]] و [[site.css]] وشوف تاني. وفي الآخر شغّل [[node make-og.mjs]] وافتح [[portfolio/img/og.png]].`,
+          flag: R`script`,
+          deep: {
+            why: R`الانتقال بين الصفحات كان محتاج SPA (router وJS كتير) عشان يحصل؛ دلوقتي بسطرين CSS على موقع ملفات ثابتة. والـ CV اللي بيطلع من نفس الصفحة بيفضل محدّث، والـ PDF بتاعه صفحة واحدة لو اتظبط، وصفحتين ونص بالـ header والأزرار لو اتساب. واللينك من غير OG بيظهر كرابط أزرق بس في أغلب التطبيقات.`,
+            how: R`View Transitions بين صفحتين: لما الرابط يتداس، المتصفح بياخد لقطة لكل عنصر عليه [[view-transition-name]] في الصفحة القديمة، ويحمّل الجديدة، ويدوّر على نفس الأسامي فيها، ويعمل شجرة pseudo-elements ([[::view-transition-group(tide-thumb)]] وجواها [[old]] و [[new]]) بتتحرك من المكان والمقاس القديم للجديد، وكل حاجة تانية بتعمل crossfade. والـ DOM الحقيقي للصفحة الجديدة موجود من الأول، فمفيش تأخير في التفاعل. والطباعة: [[@media print]] بيتطبق وقت الطباعة بس، و [[@page]] بيحدد صندوق الصفحة، والمتصفح بيقطّع المحتوى في صفحات ويحترم [[break-*]] لو يقدر. و OG: لما اللينك يتبعت، السيرفر بتاع التطبيق بيجيب الـ HTML ويقرا الـ meta (من غير JS غالبًا)، فلازم تكون مكتوبة في الـ HTML نفسه، وبيجيب الصورة من الرابط الكامل.`,
+            when: R`View Transition لموقع صفحات ثابتة فيه عنصر بيتكرر بين صفحتين (صورة منتج، أو كارت، أو عنوان)، ومش لكل حاجة (الحركة الكتير بتتعب). [[@media print]] لأي صفحة حد ممكن يطبعها: CV، وفاتورة، وتذكرة، ووصفة، وتقرير. و OG لأي صفحة ممكن تتبعت، ولكل صفحة قيمها (دراسة الحالة [[og:type = article]]). كل جزء ليه درس: «View Transitions»، و «@media print»، و «meta و Open Graph».`,
+            mistakes: R`تحط نفس [[view-transition-name]] على كذا كارت في نفس الصفحة (الانتقال بيتلغي). تنسى [[@view-transition]] في الصفحة الجديدة. تنسى reduced motion. تطبع من غير [[@media print]] (اتقاس: صفحتين والـ header ظاهر). تكتب الرابط جنب كل لينك حتى اللي نصه رابط فيتكرر (اتقاس: [[" (mailto:hello@nadine.example)"]] اتكتب بعد الإيميل). تحط [[og:image]] مسار نسبي، أو صورة أصغر من 1200×630، أو تحط الـ meta بـ JS. تنسى [[canonical]] فنسختين من نفس الصفحة (بـ [[?ref=]] مثلًا) بيتحسبوا صفحتين.`,
+          },
+          teach: R`## الخطوة ٣: دراسة الحالة
+
+~~~html portfolio/work/tide-notes.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="tCase">دراسة حالة Tide Notes | نادين فؤاد</title>
+  <meta name="description" content="إزاي تطبيق ملاحظات بقى يشتغل من غير نت: المشكلة، والقرارات، والأرقام.">
+  <link rel="canonical" href="https://nadine.example/work/tide-notes.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="دراسة حالة: Tide Notes">
+  <meta property="og:description" content="تطبيق ملاحظات بيشتغل offline: من ٤٫١ ثانية لـ ٠٫٩ ثانية.">
+  <meta property="og:url" content="https://nadine.example/work/tide-notes.html">
+  <meta property="og:image" content="https://nadine.example/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="../img/icon.svg" type="image/svg+xml">
+  <script src="../js/boot.js"></script>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/site.css">
+  <link rel="stylesheet" href="../css/case.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
+  <header class="top">
+    <a class="brand" href="../" data-i18n="name">نادين فؤاد</a>
+    <nav aria-label="الأقسام" data-i18n-label="navLabel">
+      <a href="../#work" data-i18n="navWork">الشغل</a>
+      <a href="../#contact" data-i18n="navContact">تواصل</a>
+    </nav>
+    <button class="lang" type="button" id="lang" lang="en">English</button>
+  </header>
+
+  <main id="main">
+    <article class="case">
+      <header class="case-head">
+        <p class="eyebrow" data-i18n="caseKind">دراسة حالة · ٢٠٢٥</p>
+        <h1 data-i18n="caseTitle">Tide Notes: ملاحظات بتشتغل من غير نت</h1>
+        <div class="thumb t1" aria-hidden="true"></div>
+      </header>
+      <dl class="meta">
+        <div><dt data-i18n="mRole">دوري</dt><dd data-i18n="mRoleV">الواجهة كلها والـ offline</dd></div>
+        <div><dt data-i18n="mTime">المدة</dt><dd data-i18n="mTimeV">١٠ أسابيع</dd></div>
+        <div><dt data-i18n="mStack">الأدوات</dt><dd dir="ltr">HTML · CSS · Service Worker · IndexedDB</dd></div>
+      </dl>
+      <h2 data-i18n="cProblem">المشكلة</h2>
+      <p data-i18n="cProblemT">فريق المبيعات بيكتب ملاحظات الزيارات في مواقع النت فيها ضعيف، فالملاحظة بتضيع لو الصفحة اتقفلت قبل ما تتبعت.</p>
+      <h2 data-i18n="cDecisions">القرارات</h2>
+      <ol>
+        <li data-i18n="d1">كل ملاحظة بتتحفظ في IndexedDB الأول، والإرسال في الخلفية.</li>
+        <li data-i18n="d2">Service Worker بيخزّن الصفحة نفسها، فبتفتح من غير نت.</li>
+        <li data-i18n="d3">علامة واضحة على كل ملاحظة: اتبعتت ولا لسه.</li>
+      </ol>
+      <h2 data-i18n="cResults">النتيجة</h2>
+      <table class="results">
+        <caption data-i18n="rCap">قبل وبعد (متوسط ٣ أسابيع)</caption>
+        <thead><tr><th scope="col" data-i18n="rMetric">المقياس</th><th scope="col" data-i18n="rBefore">قبل</th><th scope="col" data-i18n="rAfter">بعد</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" data-i18n="r1">وقت فتح الصفحة على 3G</th><td dir="ltr">4.1 s</td><td dir="ltr">0.9 s</td></tr>
+          <tr><th scope="row" data-i18n="r2">ملاحظات ضاعت في الأسبوع</th><td>23</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <p><a href="../#work" data-i18n="back">ارجع للمشاريع</a></p>
+    </article>
+  </main>
+  <footer class="foot"><p><span data-i18n="rights">كل الحقوق محفوظة</span> © 2026</p></footer>
+  <script src="../js/i18n.js"></script>
+</body>
+</html>
+~~~
+
+- كل المسارات بـ [[../]]: الصفحة في فولدر [[work/]]. ده مهم في النشر (الدرس الأخير): مسارات تبدأ بـ [[/]] بتقع لو الموقع على [[/repo-name/]].
+- [[og:type = article]] و [[og:url]] و [[canonical]] بتاعة الصفحة دي هي، مش الرئيسية.
+- [[<dl class="meta">]]: «دوري، المدة، الأدوات» أزواج اسم وقيمة، وده بالظبط معنى [[<dl>]] (description list). وكل زوج جوه [[<div>]] (مسموح في HTML) عشان الـ grid يرتّبهم.
+- [[<table class="results">]] بـ [[<caption>]] (اسم الجدول لقارئ الشاشة) و [[scope="col"]] و [[scope="row"]]: «4.1 s» بتتقري «وقت فتح الصفحة على 3G، قبل، 4.1 s».
+- [[<td dir="ltr">4.1 s</td>]]: رقم ووحدة إنجليزي.
+
+~~~css portfolio/css/case.css
+/* case study page: one readable column, the same thumbnail as the card (it morphs between the pages) */
+.case { max-width: 46rem; margin-inline: auto; padding: clamp(32px, 6vw, 72px) var(--gutter); }
+.case-head h1 { font-size: var(--step-3); margin: 0.2em 0 0.6em; }
+.case-head .thumb { margin-block-end: 2rem; }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1rem; margin: 0 0 2rem; }
+.meta dt { color: var(--muted); font-size: 0.9rem; }
+.meta dd { margin: 0; font-weight: 600; }
+.results { width: 100%; border-collapse: collapse; margin-block: 1rem 2rem; }
+.results caption { text-align: start; color: var(--muted); padding-block-end: 0.5rem; }
+.results th, .results td { padding: 0.6rem; border-block-end: 1px solid var(--line); text-align: start; }
+.results td { font-variant-numeric: tabular-nums; }
+~~~
+
+### الانتقال
+
+القاعدتين في [[site.css]] (الدرس اللي فات):
+
+~~~css
+@view-transition { navigation: auto; }
+::view-transition-group(tide-thumb) { animation-duration: 0.35s; animation-timing-function: var(--ease); }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+~~~
+
+والقياس: [[pagereveal]] حدث بيحصل أول ما الصفحة الجديدة بتظهر، و [[e.viewTransition]] بيبقى object لو فيه انتقال و [[null]] لو مفيش:
+
+~~~javascript من check-portfolio.mjs
+await page.addInitScript(() => addEventListener("pagereveal", e => { window.__vt = e.viewTransition ? "yes" : "no"; }));
+await page.goto(B);
+await page.click('a[href="work/tide-notes.html"]');
+await page.waitForLoadState("load");
+console.log("view transition on the case page:", await page.evaluate(() => window.__vt));
+~~~
+
+~~~text اتشغّل فعلًا
+view transition on the case page: yes
+with reduced motion: transition object = yes (the CSS sets animation: none)
+~~~
+
+مع reduced motion الانتقال لسه «بيحصل» كـ object (المتصفح بيبدّل اللقطات)، بس من غير حركة: التبديل لحظي. لو عايز تلغيه خالص حط [[@view-transition { navigation: auto; }]] نفسها جوه [[@media (prefers-reduced-motion: no-preference)]]: اتجرّب، و [[__vt]] بقى [[no]] مع reduced motion.
+
+~~~text vt.mjs: نفس الضغطة بـ ٣ نسخ
+shipped                              vt: yes
+same name on 5 cards                 vt: no | error: Unexpected duplicate view-transition-name: card
+rule inside no-preference, reduced   vt: no
+~~~
+
+---
+
+## الـ CV
+
+~~~html portfolio/cv.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="tCv">السيرة الذاتية | نادين فؤاد</title>
+  <meta name="description" content="السيرة الذاتية لنادين فؤاد، مطوّرة واجهات. الصفحة دي بتتطبع A4 في صفحة واحدة.">
+  <link rel="canonical" href="https://nadine.example/cv.html">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <script src="js/boot.js"></script>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/cv.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
+  <header class="top">
+    <a class="brand" href="./" data-i18n="name">نادين فؤاد</a>
+    <button class="btn" type="button" id="print" data-i18n="print">اطبع أو احفظ PDF</button>
+    <button class="lang" type="button" id="lang" lang="en">English</button>
+  </header>
+  <main id="main" class="cv">
+    <header class="cv-head">
+      <h1 data-i18n="name">نادين فؤاد</h1>
+      <p data-i18n="role">مطوّرة واجهات</p>
+      <ul class="contact-line" role="list">
+        <li><a href="mailto:hello@nadine.example" dir="ltr">hello@nadine.example</a></li>
+        <li><a href="https://nadine.example/" dir="ltr">https://nadine.example/</a></li>
+      </ul>
+    </header>
+    <section aria-labelledby="exp-h">
+      <h2 id="exp-h" data-i18n="exp">الخبرة</h2>
+      <article class="job">
+        <h3 data-i18n="j1">مطوّرة واجهات أولى · شركة منصة الرحلات</h3>
+        <p class="when" dir="ltr">2023 – 2026</p>
+        <ul>
+          <li data-i18n="j1a">نزّلت LCP لصفحة البحث من ٣٫٢ لـ ١٫٤ ثانية على الموبايل.</li>
+          <li data-i18n="j1b">بنيت مكتبة components مشتركة لـ ٣ فرق.</li>
+        </ul>
+      </article>
+      <article class="job">
+        <h3 data-i18n="j2">مطوّرة واجهات · وكالة تصميم صغيرة</h3>
+        <p class="when" dir="ltr">2020 – 2023</p>
+        <ul>
+          <li data-i18n="j2a">٢٥ موقع لمحلات وعيادات، كلها بالعربي والإنجليزي.</li>
+          <li data-i18n="j2b">أول فحص accessibility في الوكالة، وبقى خطوة في كل تسليم.</li>
+        </ul>
+      </article>
+    </section>
+    <section aria-labelledby="skills-h">
+      <h2 id="skills-h" data-i18n="skills">المهارات</h2>
+      <ul class="skills" role="list" dir="ltr"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>TypeScript</li><li>React</li><li>Accessibility</li><li>Performance</li></ul>
+    </section>
+  </main>
+  <script src="js/i18n.js"></script>
+  <script src="js/print.js" type="module"></script>
+</body>
+</html>
+~~~
+
+~~~css portfolio/css/cv.css
+/* CV: readable on screen, and one A4 page on paper */
+.cv { max-width: 46rem; margin-inline: auto; padding: clamp(24px, 5vw, 56px) var(--gutter); }
+.cv-head h1 { font-size: var(--step-3); margin: 0; }
+.cv-head p { margin: 0; color: var(--warm); font-weight: 600; }
+.contact-line { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; }
+.job { padding-block: 0.5rem; border-block-end: 1px solid var(--line); }
+.job h3 { margin: 0; font-size: var(--step-1); }
+.when { margin: 0; color: var(--muted); font-variant-numeric: tabular-nums; text-align: start; }
+.skills { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.skills li { padding: 0.15rem 0.7rem; border: 1px solid var(--line); border-radius: 999px; }
+.top .btn { min-height: 40px; }
+
+@page { size: A4; margin: 14mm 16mm; }
+@media print {
+  #print { display: none !important; }
+  .cv { padding: 0; max-width: none; }
+  .cv-head h1 { font-size: 22pt; }
+  .job { break-inside: avoid; border-color: #bbb; }
+  h2 { break-after: avoid; font-size: 13pt; margin-block: 10pt 4pt; }
+  .contact-line a::after { content: none !important; }
+  .skills li { border-color: #999; }
+}
+~~~
+
+~~~javascript portfolio/js/print.js
+document.getElementById("print")?.addEventListener("click", () => window.print());
+~~~
+
+- [[<button id="print">]]: [[window.print()]] بيفتح نافذة الطباعة (ومنها «Save as PDF»). ملف لوحده عشان مفيش [[onclick=""]] في الـ HTML (أسهل في CSP).
+- [[@page { size: A4; margin: 14mm 16mm; }]] بره الـ media: بيتطبق وقت الطباعة بس أصلًا.
+- [[.cv-head h1 { font-size: 22pt }]]: على الورق [[pt]] هي الوحدة الطبيعية (1pt = 1/72 بوصة)، و [[clamp()]] بالـ [[vw]] ملوش معنى.
+- [[h2 { break-after: avoid }]]: عنوان «المهارات» ميفضلش لوحده في آخر صفحة والقايمة في اللي بعدها.
+- [[.contact-line a::after { content: none !important; }]]: الإيميل والموقع مكتوبين كنص أصلًا، فمش محتاجين الرابط جنبهم تاني.
+
+~~~javascript print-mistakes.mjs
+import { chromium } from "playwright-core";
+const B = "http://127.0.0.1:5501/cv.html";
+const browser = await chromium.launch({ channel: "chrome" });
+const pages = pdf => (pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g) || []).length;
+async function run(name, strip) {
+  const page = await browser.newPage();
+  if (strip) await page.route(strip.url, async r => { const res = await r.fetch(); r.fulfill({ response: res, body: strip.fn(await res.text()) }); });
+  await page.goto(B); await page.emulateMedia({ media: "print" });
+  const after = await page.$eval(".contact-line a", a => getComputedStyle(a, "::after").content);
+  const top = await page.$eval(".top", e => getComputedStyle(e).display);
+  console.log(name.padEnd(40), "pages", pages(await page.pdf({ format: "A4", preferCSSPageSize: true })), "| header", top, "| link ::after", after);
+  await page.close();
+}
+const cut = s => s.replace(/@media print \{[\s\S]*?\n\}\n?/g, "").replace(/@page \{[^}]*\}/, "");
+await run("shipped");
+await run("no print CSS at all", { url: /\/css\/(site|cv)\.css/, fn: cut });
+await run("without content: none on the contact line", { url: /\/css\/cv\.css/, fn: s => s.replace("  .contact-line a::after { content: none !important; }\n", "") });
+await browser.close();
+~~~
+
+- [[page.emulateMedia({ media: "print" })]]: الصفحة بتتعامل كأنها بتتطبع (زي Rendering ← Emulate CSS media type في DevTools).
+- [[page.pdf({ format: "A4", preferCSSPageSize: true })]]: بيطلّع PDF حقيقي (headless بس)، و [[/Type /Page]] بيتعد جواه = عدد الصفحات.
+- [[cut]]: بيشيل كل بلوكات [[@media print]] و [[@page]] من الـ CSS قبل ما يوصل للصفحة ([[page.route]])، فبنقيس «من غير CSS طباعة» من غير ما نعدّل الملفات.
+
+~~~text اتشغّل فعلًا
+shipped                                  pages 1 | header none | link ::after none
+no print CSS at all                      pages 2 | header flex | link ::after none
+without content: none on the contact line pages 1 | header none | link ::after " (mailto:hello@nadine.example)"
+~~~
+
+والرئيسية نفسها بتتطبع صفحتين (المحتوى أطول)، والـ header مستخبي فيها كمان ([[print index.html pages: 2 header display: none,none]]).
+
+---
+
+## صورة المشاركة
+
+~~~html og.html
+<!doctype html>
+<html lang="ar" dir="rtl"><meta charset="utf-8"><title>كارت المشاركة</title>
+<style>
+  body { margin: 0; width: 1200px; height: 630px; display: grid; place-content: center; gap: 12px;
+    font-family: system-ui, "Segoe UI", sans-serif; background: radial-gradient(circle at 80% 20%, #dcefec, #f7f5f0 60%); color: #1c2230; }
+  h1 { font-size: 96px; margin: 0; } p { font-size: 44px; margin: 0; color: #0d6b63; }
+</style>
+<h1>نادين فؤاد</h1><p>مطوّرة واجهات · Front-end developer</p>
+</html>
+~~~
+
+~~~javascript make-og.mjs
+// renders og.html at exactly 1200x630 and saves it as the share image
+import { chromium } from "playwright-core";
+import { pathToFileURL } from "node:url";
+const browser = await chromium.launch({ channel: "chrome" });
+const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
+await page.goto(pathToFileURL("og.html").href);
+await page.screenshot({ path: "portfolio/img/og.png" });
+await browser.close();
+console.log("saved portfolio/img/og.png");
+~~~
+
+~~~text اتشغّل فعلًا
+saved portfolio/img/og.png
+127353 bytes 1200x630
+~~~
+
+الرقمين اتقروا من الملف نفسه: في PNG العرض والطول مكتوبين في البايتات من 16 لـ 23 ([[readUInt32BE(16)]] و [[readUInt32BE(20)]]). و 1200×630 هو المقاس اللي أغلب التطبيقات بتعرضه كبير (نسبة 1.91:1)، و [[summary_large_image]] بيطلب الشكل الكبير ده. الـ HTML أسهل من برنامج تصميم: لو اسمك أو وظيفتك اتغيرت، تعدّل سطر وتشغّل السكربت.
+
+> الـ meta نفسها اتكتبت في الـ head بتاع الصفحتين (اتشرحت في الدرس الأول من الـ portfolio). اختبار الكارت على تطبيق حقيقي (واتساب أو LinkedIn) محتاج رابط منشور، فده من الوثائق: LinkedIn عنده Post Inspector بيقرا الـ meta ويوريك الكارت.
+
+---
+
+## الخلاصة
+
+| الحاجة | السطر | اتأكدت إزاي |
+|---|---|---|
+| انتقال بين صفحتين | [[@view-transition]] في الاتنين + نفس [[view-transition-name]] | [[pagereveal]] → [[yes]] |
+| من غير حركة | [[::view-transition-*(*) { animation: none }]] مع reduced motion | انتقال من غير حركة |
+| A4 صفحة واحدة | [[@page]] + [[break-inside: avoid]] + إخفاء الـ UI | [[page.pdf()]] → 1 |
+| الرابط على الورق | [[a[href^="http"]::after]] ما عدا اللي نصه رابط | [[::after]] = none في الـ CV |
+| المشاركة | OG برابط كامل + 1200×630 + [[summary_large_image]] | [[og.png]] 1200x630، وفحص الـ ci |`,
+          sol: R`الصورة بتتحرك من الكارت لفوق الصفحة الجديدة، ومع reduced motion الصفحة بتتبدّل على طول. الـ CV في Ctrl+P صفحة واحدة من غير header ولا زرار الطباعة، ولما تشيل CSS الطباعة بيبقى صفحتين والـ header ظاهر (زي [[print-mistakes.mjs]]). و [[make-og.mjs]] بيطبع [[saved portfolio/img/og.png]] والصورة 1200×630.`,
+          practice: [
+            {
+              lvl: R`سريع`,
+              t: R`**اقرا وتوقّع:** حطيت [[view-transition-name: card]] على [[.card]] (الكروت الخمسة كلها). إيه اللي هيحصل لما تدوس على Tide Notes؟ جرّب وشوف Console.`,
+              done: R`الانتقال اتلغى كله لأن الاسم متكرر ٥ مرات في نفس الصفحة، وشفت في Console [[Unexpected duplicate view-transition-name: card]] (نفس اللي طلع في المعمل)، ورجّعت الاسم على [[.t1]] بس (أو [[view-transition-name: match-element]] لو عايز اسم لكل عنصر لوحده، من الوثائق).`,
+              sol: R`~~~css السطر الغلط
+.card { view-transition-name: card; }
+~~~
+
+~~~css الصح (زي الدرس)
+.t1 { view-transition-name: tide-thumb; }
+~~~
+
+المتصفح بيربط العنصر القديم بالجديد بالاسم، والاسم لازم يبقى فريد في الصفحة في لحظة الصورة. خمس كروت بنفس الاسم يعني تعارض، والمتصفح مبيحاولش يخمّن: بيلغي الانتقال كله، والصفحة التانية بتفتح عادي من غير حركة. يعني الموقع لسه شغال، والخسارة في الحركة بس، وعشان كده الغلطة دي بتتنسي.
+
+الاسم على [[.t1]] بس، لأن كارت Tide Notes هو الوحيد اللي ليه دراسة حالة. ولو عايز اسم لكل عنصر تلقائيًا، الوثائق فيها [[view-transition-name: match-element]]، بس ده اسم مش بيعدّي بين صفحتين، فمش بينفع هنا.
+
+الغلطة الشائعة: تتوقع error أحمر. ده تحذير، فافتح Console وانت بتجرّب.
+
+~~~text الناتج (Chrome 156: Console بعد الضغط على الكارت)
+Unexpected duplicate view-transition-name: card
+~~~` },
+            {
+              lvl: R`سريع`,
+              t: R`**دوّر بنفسك:** من صفحة [[@page]] على MDN طلّع إزاي تحط رقم الصفحة في أسفل كل صفحة ([[@bottom-center]] و [[counter(page)]])، وجرّبه في الـ CV، وقول هل Chrome 156 بيطلعه في [[page.pdf()]].`,
+              done: R`عندك القاعدة مكتوبة، وجرّبتها على نسخة الـ CV بمحتوى أطول (صفحتين)، وكتبت اللي طلع فعلًا في الـ PDF (ظهر ولا لأ) من غير ما تفترض.`,
+              sol: R`~~~css portfolio/css/cv.css
+@page {
+  size: A4;
+  margin: 14mm 16mm;
+  @bottom-center {
+    content: "صفحة " counter(page) " من " counter(pages);
+    font-size: 9pt;
+    color: #555;
+  }
+}
+~~~
+
+[[@bottom-center]] من صناديق هامش الصفحة: ١٦ صندوق حوالين الصفحة. بيتكتب **جوه** [[@page]]، و [[content]] فيه [[counter(page)]] رقم الصفحة و [[counter(pages)]] عددهم.
+
+لازم هامش سفلي كافي، لأن الصندوق بيتحط في الهامش نفسه. لو [[margin: 0]] مش هيظهر.
+
+الجديد إنها بقت شغالة في Chrome من غير برامج تانية. قبل كده كان لازم Paged.js أو تحويل بالسيرفر. وعشان ما نفترضش، قرينا نص الـ PDF نفسه بـ [[pdfjs-dist]]، وبصينا على الهامش السفلي بس. (النص العربي في PDF بيتقري حروف منفصلة، فالقياس بيدوّر على الأرقام.)
+
+الغلطة الشائعة: [[page.pdf({ displayHeaderFooter: true })]] من Playwright: ده هيدر Playwright مش CSS، ومبيشتغلش من زرار اطبع في المتصفح.
+
+~~~text الناتج (Chrome 156: page.pdf على الـ CV بمحتوى مكرر، وقراية نص كل صفحة)
+عدد الصفحات: 3
+صفحة 1: الأرقام في الهامش السفلي: 3 و 1
+صفحة 2: الأرقام في الهامش السفلي: 3 و 2
+صفحة 3: الأرقام في الهامش السفلي: 3 و 3
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**ابني:** فاتورة لمحل متخيل بتتطبع A4: جدول أصناف بـ [[thead { display: table-header-group }]] (العناوين بتتكرر في كل صفحة)، و [[tr { break-inside: avoid }]]، و [[print-color-adjust: exact]] عشان لون الهيدر يتطبع، و ٤٠ صنف عشان تطلع صفحتين.`,
+              done: R`[[page.pdf()]] بيطلّع صفحتين، والعناوين في أول كل صفحة، ومفيش صف متقطع، ولون الهيدر ظاهر في الـ PDF، ومن غير [[print-color-adjust]] اللون بيختفي (جرّبته).`,
+              sol: R`~~~live 600 720 invoice.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>فاتورة</title>
+<style>
+  @page { size: A4; margin: 15mm; }
+  body { font-family: system-ui, sans-serif; font-size: 12pt; }
+  table { inline-size: 100%; border-collapse: collapse; }
+  th, td { padding: 8pt; border-block-end: 1px solid #bbb; text-align: start; }
+  thead { display: table-header-group; }
+  thead th { background: #1f2937; color: #fff; print-color-adjust: exact; }
+  tr { break-inside: avoid; }
+</style></head>
+<body>
+  <main><h1>فاتورة رقم 1042</h1>
+    <table>
+      <thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th></tr></thead>
+      <tbody id="b"></tbody>
+    </table>
+  </main>
+  <script>
+    b.innerHTML = Array.from({ length: 40 }, (_, i) =>
+      $__bt<tr><td>صنف رقم $__{i + 1}</td><td>$__{(i % 5) + 1}</td><td>$__{(i + 1) * 15} جنيه</td></tr>$__bt).join("");
+  $__lt/script>
+</body></html>
+~~~
+
+الطباعة ليها قواعد خاصة، والـ ٣ سطور دول هم الفاتورة:
+
+- [[thead { display: table-header-group }]]: ده الافتراضي في المتصفحات، وكتابته صراحة بتحميك من reset بيغيّر [[display]]. بيخلي العناوين تتكرر في أول كل صفحة.
+- [[tr { break-inside: avoid }]]: الصف ميتقسمش بين صفحتين.
+- [[print-color-adjust: exact]]: المتصفح بيشيل الخلفيات في الطباعة عشان يوفر حبر، ودي بتقوله «اللون ده مقصود». من غيرها العنوان نص أبيض على ورق أبيض، يعني اختفى.
+
+[[@page]] بيحدد مقاس الورقة والهامش.
+
+الغلطة الشائعة: تجرب على الشاشة بس. [[page.pdf()]] أو Ctrl+P هو الاختبار الحقيقي.
+
+~~~text الناتج (Chrome 156: page.pdf وقراية الملف بـ pdfjs)
+عدد الصفحات: 2
+صفحة 1: خلفية الهيدر موجودة آه، وعدد الصفوف 20
+صفحة 2: خلفية الهيدر موجودة آه، وعدد الصفوف 20
+مجموع الصفوف: 40 من 40 (كل صف ٣ أرقام، فمفيش صف اتقسم)
+لون خلفية الهيدر في الـ PDF: مع print-color-adjust موجود، ومن غيرها مش موجود
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**صلّح الكود البايظ:** الـ meta دي في صفحة مشروع: [[<meta property="og:image" content="img/og.png">]] و [[<meta name="twitter:card" content="summary">]] ومفيش [[og:url]] ولا [[og:image:alt]]. اكتب فحص بيطلّع كل المشاكل، وصلّحها.`,
+              done: R`الفحص (شكل الـ ci في الدرس) طلّع ٤ مشاكل: [[og:url]] و [[og:image:alt]] ناقصين، والصورة مش رابط كامل، و [[summary]] بدل [[summary_large_image]]، وبعد التصليح طبع [[ok]] وخرج بـ 0.`,
+              sol: R`~~~js check-meta.mjs
+import fs from "node:fs";
+const html = fs.readFileSync(process.argv[2], "utf8");
+const get = (k) => html.match(new RegExp($__bt<meta (?:property|name)="$__{k}" content="([^"]*)"$__bt))?.[1];
+const bad = [];
+if (!get("og:url")) bad.push("og:url ناقص");
+if (!get("og:image:alt")) bad.push("og:image:alt ناقص");
+if (!/^https:\/\//.test(get("og:image") ?? "")) bad.push("og:image مش رابط كامل: " + get("og:image"));
+if (get("twitter:card") !== "summary_large_image") bad.push("twitter:card لازم summary_large_image: " + get("twitter:card"));
+bad.forEach((b) => console.log("FAIL", b));
+console.log(bad.length ? bad.length + " problems" : "ok");
+process.exit(bad.length ? 1 : 0);
+~~~
+
+~~~html الـ meta بعد التصليح
+<meta property="og:url" content="https://nadine.example/work/tide-notes.html">
+<meta property="og:image" content="https://nadine.example/img/og.png">
+<meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
+<meta name="twitter:card" content="summary_large_image">
+~~~
+
+٤ مشاكل، وكل واحدة سببها مختلف:
+
+- [[og:image]] نسبي: واتساب وفيسبوك بيقروا النص زي ما هو، ومبيكملوش من الدومين.
+- [[og:url]] ناقص: الكراولر مش عارف الرابط الأساسي، فالمشاركات بتتقسم بين أشكال الرابط.
+- [[og:image:alt]] ناقص: قارئ الشاشة مش هيعرف الصورة دي إيه.
+- [[summary]]: كارت صغير بصورة مربعة صغيرة. [[summary_large_image]] هو اللي بيعرض الصورة 1200×630 كاملة.
+
+[[(?:property|name)]] لأن OG بتستخدم [[property]] و Twitter بتستخدم [[name]].
+
+الغلطة الشائعة: regex بتفترض ترتيب [[property]] قبل [[content]]. ده مقبول هنا لأن انت كاتب الملف، بس لو هتفحص مواقع تانية افصل الـ tag الأول زي تمرين [[meta-check.mjs]].
+
+~~~text الناتج (Node 24)
+قبل:
+FAIL og:url ناقص
+FAIL og:image:alt ناقص
+FAIL og:image مش رابط كامل: img/og.png
+FAIL twitter:card لازم summary_large_image: summary
+4 problems
+exit 1
+
+بعد:
+ok
+exit 0
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**ابني:** خلي [[make-og.mjs]] يعمل صورة لكل صفحة: بيقرا [[og:title]] من كل HTML في [[portfolio/]]، ويحطه في القالب، ويحفظ [[img/og-<اسم الصفحة>.png]]، ويغيّر [[og:image]] في الصفحة نفسها للرابط الجديد.`,
+              done: R`تشغيل السكربت بيطلّع ٣ صور 1200×630 (اقرا المقاس من البايتات زي الشرح)، وكل صفحة بتشاور على صورتها، وتشغيله مرتين ورا بعض مبيغيّرش الـ HTML التاني مرة.`,
+              sol: R`~~~js make-og.mjs
+import { chromium } from "playwright-core";
+import { pathToFileURL } from "node:url";
+import fs from "node:fs";
+import path from "node:path";
+
+const pages = ["index.html", "cv.html", "work/tide-notes.html"];
+const site = "https://nadine.example/img/";
+const browser = await chromium.launch({ channel: "chrome" });
+const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
+await page.goto(pathToFileURL("og.html").href);
+
+for (const rel of pages) {
+  const file = path.join("portfolio", rel);
+  let html = fs.readFileSync(file, "utf8");
+  const title = html.match(/<meta property="og:title" content="([^"]*)"/)?.[1]
+    ?? html.match(/<title[^>]*>([^<]*)/)[1];
+  await page.evaluate((t) => { document.querySelector("h1").textContent = t; document.querySelector("h1").style.fontSize = "64px"; }, title);
+  const name = "og-" + path.basename(rel, ".html") + ".png";
+  await page.screenshot({ path: "portfolio/img/" + name });
+
+  const tag = $__bt<meta property="og:image" content="$__{site}$__{name}">$__bt;
+  const next = /<meta property="og:image" content="[^"]*">/.test(html)
+    ? html.replace(/<meta property="og:image" content="[^"]*">/, tag)
+    : html.replace("</head>", $__bt  $__{tag}\n</head>$__bt);
+  if (next !== html) fs.writeFileSync(file, next);
+  console.log(name, title);
+}
+await browser.close();
+~~~
+
+بيبني على [[make-og.mjs]] و [[og.html]]. بدل صورة واحدة، حلقة على الصفحات:
+
+- العنوان بيتقري من [[og:title]]، أو [[<title>]] لو مش موجود، فمفيش نص بيتكتب مرتين.
+- [[page.evaluate]] بيغيّر النص جوه نفس القالب، فالتصميم مكان واحد.
+- اسم الملف من اسم الصفحة، و [[viewport]] ثابت 1200×630.
+- [[if (next !== html)]] هو اللي بيخليه idempotent: تشغيله تاني مبيكتبش حاجة، فـ git مش هيشوف تغيير.
+
+بنقرا المقاس من بايتات الـ PNG: أول [[IHDR]] بعد التوقيع، العرض عند البايت 16 والارتفاع عند 20.
+
+الغلطة الشائعة: تضيف [[<meta>]] جديد في كل تشغيل، فتلاقي ٥ نسخ. لازم [[replace]] لو موجود.
+
+~~~text الناتج
+og-cv.png: 1200×630
+og-index.png: 1200×630
+og-tide-notes.png: 1200×630
+HTML اتغيّر في التشغيل التاني؟ لأ
+كل صفحة بتشاور على صورتها: og-index.png و og-cv.png و og-tide-notes.png
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**قارن وقيس:** اعمل نفس الانتقال بـ JS (SPA صغير: [[fetch]] للصفحة و [[document.startViewTransition]] و [[history.pushState]]) وقارنه بـ [[@view-transition]]: عدد السطور، وزرار Back، وفتح الرابط في تاب جديد، وإيه اللي بيحصل من غير JS.`,
+              done: R`عندك جدول بالأربع حاجات، ونسخة الـ CSS ٣ سطور وزرار Back والتاب الجديد شغالين من غير كود، ونسخة الـ JS محتاجة [[popstate]] عشان Back يشتغل، وكتبت إمتى نسخة الـ JS تستاهل (SPA أصلًا).`,
+              sol: R`~~~js portfolio/js/spa.js (نسخة JavaScript)
+async function go(url, push = true) {
+  const html = await (await fetch(url)).text();
+  const next = new DOMParser().parseFromString(html, "text/html");
+  const swap = () => {
+    document.querySelector("main").replaceWith(next.querySelector("main"));
+    document.title = next.title;
+    if (push) history.pushState(null, "", url);
+  };
+  if (document.startViewTransition) await document.startViewTransition(swap).finished;
+  else swap();
+}
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[href]");
+  if (!a || a.origin !== location.origin || a.hash) return;
+  e.preventDefault();
+  go(a.href);
+});
+addEventListener("popstate", () => go(location.href, false));
+~~~
+
+~~~css نسخة CSS (زي الدرس)
+@view-transition { navigation: auto; }
+.t1 { view-transition-name: tide-thumb; }
+::view-transition-group(tide-thumb) { animation-duration: 0.35s; }
+~~~
+
+نسخة CSS بتخلي المتصفح يعمل كل حاجة: تنقّل حقيقي بين صفحتين، والانتقال فوقه. فـ Back والتاب الجديد والرابط المنسوخ شغالين ببلاش. من غير دعم، تنقّل عادي.
+
+نسخة JS بتعيد كتابة التنقّل: لازم [[fetch]] و [[pushState]]، و [[popstate]] عشان Back يشتغل، وبدونه الرابط بيتغير والصفحة لأ. وكمان تعدّي على [[title]] و [[focus]] وعمق السكرول بإيدك، والـ CSS اللي الصفحة التانية محتاجاه ([[case.css]]) مش بيتحمل: ده باج ظاهر في النسخة دي، لأن [[<link>]] في الـ head مش بينتقل.
+
+إمتى JS تستاهل؟ في SPA أصلًا (React Router مثلًا)، أو لو عايز تحافظ على مشغّل صوت شغال بين الصفحات.
+
+الغلطة الشائعة: تعمل SPA عشان الحركة بس، وتخسر كل اللي المتصفح كان بيديهولك.
+
+~~~text الناتج (Chrome 156)
+                   CSS                     JS
+سطور               3                       18
+Back               شغال من غير كود             شغال بـ popstate
+JS مقفول           /work/tide-notes.html       /work/tide-notes.html
+تاب جديد           يفتح الصفحة عادي        يفتح الصفحة عادي (الرابط حقيقي)
+case.css اتحمّل     آه                     لأ
+~~~` },
+          ],
+          ci: [
+            {
+              os: [
+                R`ubuntu`,
+                R`macos`,
+                R`windows`,
+              ],
+              sh: R`node`,
+              run: R`const html = '<meta property="og:title" content="Tide Notes"><meta property="og:description" content="Offline notes"><meta property="og:image" content="img/og.png"><meta name="twitter:card" content="summary">';
+const meta = Object.fromEntries([...html.matchAll(/<meta (?:property|name)="([^"]+)" content="([^"]*)"/g)].map(m => [m[1], m[2]]));
+const need = ["og:title", "og:description", "og:url", "og:image", "og:image:alt", "twitter:card"];
+const problems = need.filter(k => !meta[k]).map(k => "missing " + k);
+if (meta["og:image"] && !/^https:\/\//.test(meta["og:image"])) problems.push("og:image must be an absolute https URL: " + meta["og:image"]);
+if (meta["twitter:card"] && meta["twitter:card"] !== "summary_large_image") problems.push("twitter:card is " + meta["twitter:card"] + " (a 1200x630 image wants summary_large_image)");
+console.log(problems.join("\n") || "ok");
+console.log("problems: " + problems.length);
+process.exitCode = problems.length ? 1 : 0;`,
+              code: 1,
+              expect: [
+                R`missing og:url`,
+                R`missing og:image:alt`,
+                R`og:image must be an absolute https URL: img/og.png`,
+                R`twitter:card is summary (a 1200x630 image wants summary_large_image)`,
+                R`problems: 4`,
+              ],
+            },
+          ],
+        },
+        {
+          cmd: R`داشبورد ١: الـ shell والـ sidebar والأرقام`,
+          ref: [
+            { t: "MDN: inert", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inert" },
+            { t: "MDN: visibility", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/visibility" },
+            { t: "MDN: <dialog>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog" },
+          ],
+          title: R`App shell بـ grid-template-areas، و sidebar بيصغر لأيقونات على الكمبيوتر ويبقى drawer على الموبايل بـ inert ورجوع الفوكس، وكروت أرقام فيها sparkline و progress ring بـ SVG من غير مكتبة`,
+          learn: R`تبني هيكل أي لوحة تحكم: sidebar و topbar و main بـ grid areas، و sidebar بيتقفل لأيقونات (والأسامي لسه بتتقري) وبيتحول drawer تحت 64rem بـ [[visibility]] و [[inert]] و Esc، وكروت KPI بأرقام [[Intl]] و sparkline بـ [[<polyline>]] و ring بـ [[pathLength="100"]]، ومن غير ما الكروت تتنطط لما الأرقام توصل.`,
+          out: R`[[index.html]] و [[boot.js]] و [[shell.js]] و [[kpi.js]] و [[lib.js]] وأول نص [[app.css]]: الـ sidebar بيبقى 76px وأسامي اللينكات لسه موجودة، والـ drawer بيفتح والفوكس جواه و [[main.inert = true]]، و Esc بيرجّع الفوكس لزرار القايمة، والكروت فيها 44 و 73 و 186,400 ج.م. و 78%.`,
+          use: {
+            prog: R`درس «grid-template-areas» ودرس «sticky و fixed» ودرس «SVG» ودرس «focus-visible» شغالين في نفس الشاشة. والمهم هنا إن نفس الـ markup بيتعرض بـ ٣ أشكال (كمبيوتر مفتوح، وكمبيوتر مقفول، وموبايل) بالـ CSS بس، والـ JS بيغيّر attributes مش styles.`,
+            work: R`كل لوحة تحكم (أدمن، و CRM، و SaaS، ولوحة مدرّس) بتبدأ بالهيكل ده. والأسئلة اللي بتيجي: «الـ sidebar مخبّي الجدول على الموبايل»، و «الـ Tab بيروح لينكات مستخبية»، و «الرسم محتاج مكتبة؟». هنا كل واحدة ليها رقم.`,
+            cs: R`الـ accessibility tree مختلف عن اللي على الشاشة: لينك أيقونة لازم ليه اسم، والعنصر المستخبي بـ [[transform]] لسه في الـ Tab. و [[inert]] بيشيل جزء كامل من التفاعل والـ tree مرة واحدة. والـ sparkline تحويل خطي من مدى القيم لمدى البكسل (normalization).`,
+          },
+          desc: R`أول خطوة في الـ dashboard بتاع «صالة الصخرة»: الهيكل والقايمة والكروت.
+
+**الهيكل:** [[.shell]] grid فيه منطقتين في كل صف: [[grid-template-areas: "side top" "side main"]]، والعمود الأول [[var(--side-w)]] (15rem). الـ sidebar [[position: sticky; top: 0; height: 100dvh]] فبيفضل مكانه والصفحة بتتسكرول، والـ topbar sticky وزجاجي.
+
+**القايمة بـ ٣ أشكال:**
+• **مفتوحة** (كمبيوتر): أيقونة واسم.
+• **مقفولة** (زرار [[aria-expanded]] بيحط [[data-collapsed]]): [[--side-w]] بيبقى 4.75rem (اتقاس 76px)، والأسامي **مستخبية بالشكل بس** (clip-path) فقارئ الشاشة لسه بيقرا «نظرة عامة، الأعضاء، جدول الحصص». والاختيار بيتحفظ و [[boot.js]] بيطبقه قبل الرسم.
+• **drawer** تحت 64rem: [[position: fixed]] بره الشاشة بـ [[transform]] و [[visibility: hidden]] (فمش في الـ Tab)، وزرار القايمة بيفتحه، والفوكس بيروح لأول لينك، والـ topbar والـ main بيبقوا [[inert]]، و Esc أو الضغط على الخلفية بيقفل ويرجّع الفوكس لزرار القايمة.
+
+**الفخ اللي اتقاس:** في RTL الـ inline-start يمين، فالـ drawer بيستخبى بـ [[translateX(100%)]] (يمين). لو استخدمت [[-100%]] زي الإنجليزي: الـ drawer المقفول بقى عند **[[-154 / 118]]** يعني فوق الصفحة. [[transform]] مش logical، فبيتعكس بمتغير [[--out]].
+
+**الكروت:** ٤ كروت بـ [[auto-fit]]: أعضاء نشطين، ودخول النهارده ومعاه **sparkline** لآخر ١٤ يوم ([[<polyline>]] بنقط بيحسبها [[sparkPoints()]])، وإيراد الشهر بـ [[Intl.NumberFormat]] ومعاه نسبة التغيير بسهم **ونص** (مش لون بس)، ونسبة التجديد **ring** ([[<circle pathLength="100">]] فالـ [[stroke-dashoffset]] = 100 ناقص النسبة).`,
+          example: R`.shell { display: grid; grid-template-columns: var(--side-w) minmax(0, 1fr); grid-template-areas: "side top" "side main"; }
+.shell[data-collapsed] .side .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+[dir="rtl"] .side { --out: 100%; }
+behind.forEach(el => (el.inert = open));
+<circle class="ring-fg" id="ring" cx="18" cy="18" r="15.9" pathLength="100"/>
+document.getElementById("spark").setAttribute("points", sparkPoints(k.checkins));`,
+          lines: [
+            R`الهيكل: عمودين (الـ sidebar بعرض متغير، والباقي [[minmax(0, 1fr)]])، والمنطقة [[side]] واخدة الصفين فالـ sidebar طوله الصفحة كلها. [[minmax(0, 1fr)]] مش [[1fr]] لوحدها عشان جدول عريض جوه main ميزقش العمود ويعمل scroll أفقي للصفحة.`,
+            R`إخفاء بالشكل بس: العنصر 1×1 ومقصوص، بس لسه في الـ accessibility tree، فاللينك اسمه «الأعضاء» حتى والقايمة مقفولة (اتقاس). [[display: none]] كان هيخلي اللينك أيقونة من غير اسم (axe: [[link-name]]).`,
+            R`المسافة اللي الـ drawer بيستخبى بيها: [[--out: -100%]] افتراضي (LTR: على الشمال)، و [[100%]] في RTL (على اليمين). [[translateX]] مش بيفهم الاتجاه زي [[inset-inline-start]]، فلازم تعكسه بإيدك.`,
+            R`لما الـ drawer مفتوح: الـ topbar والـ main [[inert]]، يعني مفيش Tab ولا ضغط ولا قارئ شاشة بيوصلهم، فالفوكس متحبس في القايمة من غير ما تكتب focus trap. ولما يتقفل بيرجعوا.`,
+            R`الـ ring: [[pathLength="100"]] بيقول للمتصفح «اعتبر طول الدايرة 100» مهما كان نصف القطر، فـ [[stroke-dasharray: 100]] و [[stroke-dashoffset: 22]] = 78% مرسومة. والـ SVG [[rotate(-90deg)]] عشان الرسم يبدأ من فوق.`,
+            R`الـ sparkline: [[sparkPoints]] (في [[lib.js]]) بتحوّل الـ ١٤ رقم لنقط [[x,y]] جوه [[viewBox="0 0 100 32"]]، و [[polyline]] بيوصّلهم. [[preserveAspectRatio="none"]] بيمطّه على عرض الكارت، و [[vector-effect: non-scaling-stroke]] بيخلي الخط سمكه ثابت.`,
+          ],
+          try: R`حط الملفات من الشرح، وافتح [[http://127.0.0.1:5502/]]. اضغط زرار تصغير القايمة وافتح تاب Accessibility في DevTools على لينك «الأعضاء» واتأكد إن اسمه لسه موجود. صغّر الشاشة لأقل من 1024 وافتح القايمة بالكيبورد بس (Tab لحد الزرار، Enter، Tab جوه القايمة، Esc). وبعدين غيّر [[[dir="rtl"] .side { --out: 100% }]] لـ [[-100%]] وشوف القايمة المقفولة فين.`,
+          flag: R`script`,
+          deep: {
+            why: R`الـ sidebar هو أول حاجة بتبوظ في أي dashboard على الموبايل: يا إما مغطي المحتوى، يا إما مستخبي بس لينكاته لسه في الـ Tab (فاليوزر بالكيبورد بيدوس Tab ٥ مرات على حاجات مش شايفها)، يا إما اتعمل فيه focus trap بـ ٤٠ سطر JS. و [[inert]] و [[visibility]] بيحلوا ده بسطرين. والكروت: مكتبة رسوم ٢٠٠ كيلو عشان خط صغير ودايرة غالية على الأداء وعلى التحكم في الشكل.`,
+            how: R`الـ grid areas بتسمّي المناطق، والـ media query تحت 64rem بتغيّر الـ template لعمود واحد [[grid-template-areas: "top" "main"]] والـ sidebar بيخرج من الـ grid خالص بـ [[position: fixed]]. [[visibility: hidden]] مع [[transition: visibility 0s 0.25s]] (تأخير ربع ثانية) بيخلي الـ drawer يستخبى **بعد** ما الحركة تخلص، ولما يفتح [[transition: transform 0.25s]] بس فبيبقى visible على طول. [[matchMedia(...).addEventListener("change")]] بيقفل الـ drawer لو الشاشة كبرت (عشان الـ main ميفضلش inert). والـ sparkline: كل قيمة بتتحول من المدى [[min..max]] لـ [[pad..h-pad]]، ومقلوبة لأن y في SVG بيكبر لتحت. والـ ring: [[stroke-dasharray]] شرطة طولها 100 وفراغ 100، و [[stroke-dashoffset]] بيزق الشرطة، فالمرسوم = 100 ناقص الـ offset.`,
+            when: R`أي لوحة فيها أكتر من ٣ أقسام. القايمة المقفولة للشاشات المتوسطة لما الجدول محتاج عرض، والـ drawer للموبايل. ولو الأقسام ٣ أو ٤ بس على الموبايل، bottom nav (شريط تحت فيه أيقونات وأسامي) أسهل من drawer. والـ SVG بإيدك لـ sparkline و ring و bar بسيط؛ ولو محتاج محاور و tooltips وتكبير، مكتبة. دروس للتعمق: «grid-template-areas»، و «SVG»، و «aria»، و «Dialog».`,
+            mistakes: R`[[translateX(-100%)]] في RTL (اتقاس: الـ drawer المقفول فوق الصفحة). تخبّي الـ drawer بـ [[transform]] بس من غير [[visibility]] فلينكاته لسه في الـ Tab. تنسى [[inert]] فالـ Tab بيهرب للصفحة اللي ورا. متقفلش الـ drawer لما الشاشة تكبر فالصفحة تفضل inert. تخبّي أسامي القايمة المقفولة بـ [[display: none]]. تكتب الـ label جنب أيقونة زرار التصغير (حصل: «صغّر القايمة» كان مزنوق تحت الأيقونة؛ بقى [[aria-label]]). تقارن ناتج [[Intl]] بنص عادي في اختبار (فيه [[U+200F]] مخفي). تلوّن السهم بس من غير نص.`,
+          },
+          teach: R`## الخطوة ٤: الـ shell
+
+~~~html dashboard/index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>لوحة صالة الصخرة للتسلق</title>
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 28 14 6l6 12 3-5 5 15z' fill='%231f6f8b'/%3E%3C/svg%3E">
+  <script src="js/boot.js"></script>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <svg width="0" height="0" class="sprite" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M1 21c0-4 4-7 8-7s8 3 8 7zM16 4a4 4 0 0 1 0 8m3 9c0-3-1-5-3-6 3 0 7 2 7 6z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><path d="M4 5h16v16H4zM4 9h16M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-side" viewBox="0 0 24 24"><path d="M3 4h18v16H3zM9 4v16" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15A8 8 0 1 1 9 4a7 7 0 0 0 11 11z"/></symbol>
+  </svg>
+  <a class="skip" href="#main">اتخطّى للمحتوى</a>
+  <div class="shell" id="shell">
+    <aside class="side" id="side" aria-label="القايمة الرئيسية">
+      <div class="side-head">
+        <span class="logo" aria-hidden="true">▲</span><span class="label">الصخرة</span>
+        <button class="icon-btn collapse" id="collapse" type="button" aria-expanded="true" aria-controls="side" aria-label="القايمة الجانبية">
+          <svg aria-hidden="true"><use href="#i-side"/></svg>
+        </button>
+      </div>
+      <nav>
+        <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg><span class="label">نظرة عامة</span></a>
+        <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg><span class="label">الأعضاء</span></a>
+        <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg><span class="label">جدول الحصص</span></a>
+      </nav>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+
+    <header class="topbar">
+      <button class="icon-btn menu" id="menu" type="button" aria-expanded="false" aria-controls="side" aria-label="افتح القايمة">
+        <svg aria-hidden="true"><use href="#i-side"/></svg>
+      </button>
+      <h1>صالة الصخرة للتسلق</h1>
+      <button class="icon-btn" id="theme" type="button" aria-pressed="false" aria-label="الوضع الداكن"><svg aria-hidden="true"><use href="#i-moon"/></svg></button>
+      <button class="btn" id="add" type="button">عضو جديد</button>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section id="overview" aria-labelledby="ov-h">
+        <h2 id="ov-h">نظرة عامة</h2>
+        <ul class="kpis" role="list">
+          <li class="kpi"><p class="k-label">أعضاء نشطين</p><p class="k-num" id="k-active">—</p><p class="k-sub">من <span id="k-total">—</span> مسجّل</p></li>
+          <li class="kpi"><p class="k-label">دخول النهارده</p><p class="k-num" id="k-in">—</p>
+            <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" role="img" aria-labelledby="spark-t"><title id="spark-t">دخول آخر ١٤ يوم</title><polyline id="spark" points=""/></svg></li>
+          <li class="kpi"><p class="k-label">إيراد الشهر</p><p class="k-num" id="k-rev">—</p><p class="k-sub"><span class="delta" id="k-delta">—</span> عن الشهر اللي فات</p></li>
+          <li class="kpi ring-card"><p class="k-label">نسبة التجديد</p>
+            <svg class="ring" viewBox="0 0 36 36" role="img" aria-labelledby="ring-t"><title id="ring-t">نسبة التجديد</title>
+              <circle class="ring-bg" cx="18" cy="18" r="15.9" pathLength="100"/><circle class="ring-fg" id="ring" cx="18" cy="18" r="15.9" pathLength="100"/></svg>
+            <p class="k-num ring-num" id="k-ren">—</p></li>
+        </ul>
+      </section>
+
+      <section id="members" aria-labelledby="mem-h">
+        <h2 id="mem-h">الأعضاء</h2>
+        <form class="filters" id="filters" role="search" aria-label="فلترة الأعضاء">
+          <label>دوّر بالاسم أو الرقم <input type="search" name="q" autocomplete="off"></label>
+          <label>الحالة
+            <select name="status"><option value="all">الكل</option><option value="active">نشط</option><option value="frozen">متجمّد</option><option value="expired">منتهي</option></select></label>
+          <label>الباقة
+            <select name="plan"><option value="all">الكل</option><option value="monthly">شهري</option><option value="quarterly">3 شهور</option><option value="yearly">سنوي</option><option value="pass10">10 زيارات</option></select></label>
+          <button class="btn ghost" type="reset">امسح الفلاتر</button>
+        </form>
+        <p class="count" id="count" aria-live="polite"></p>
+        <div class="table-wrap">
+          <table class="members" id="table" aria-labelledby="mem-h" aria-busy="true">
+            <thead><tr>
+              <th scope="col" data-sort="name"><button type="button">الاسم</button></th>
+              <th scope="col" data-sort="plan"><button type="button">الباقة</button></th>
+              <th scope="col" data-sort="status"><button type="button">الحالة</button></th>
+              <th scope="col" data-sort="lastVisit"><button type="button">آخر زيارة</button></th>
+              <th scope="col" data-sort="visits"><button type="button">زيارات الشهر</button></th>
+            </tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <nav class="pager" id="pager" aria-label="صفحات الأعضاء"></nav>
+      </section>
+
+      <section id="schedule" aria-labelledby="sch-h">
+        <h2 id="sch-h">جدول الحصص</h2>
+        <p class="hint">اضغط على حصة عشان تشوف تفاصيلها وتحجز مكان.</p>
+        <div class="week-wrap" tabindex="0" role="region" aria-label="جدول الأسبوع، بيتسكرول بالعرض">
+          <div class="week" id="week"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="dlg-member" aria-labelledby="dm-h">
+    <form method="dialog" id="member-form">
+      <h2 id="dm-h">عضو جديد</h2>
+      <label>الاسم <input name="name" required minlength="3" autocomplete="off" autofocus></label>
+      <label>الباقة <select name="plan"><option value="monthly">شهري</option><option value="quarterly">3 شهور</option><option value="yearly">سنوي</option><option value="pass10">10 زيارات</option></select></label>
+      <div class="dlg-actions">
+        <button class="btn" value="save">ضيف</button>
+        <button class="btn ghost" value="cancel" formnovalidate>إلغاء</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-class" aria-labelledby="dc-h">
+    <form method="dialog">
+      <h2 id="dc-h"></h2>
+      <p id="dc-body"></p>
+      <div class="dlg-actions">
+        <button class="btn" value="book" id="dc-book">احجز مكان</button>
+        <button class="btn ghost" value="cancel">اقفل</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
+~~~
+
+الأجزاء المهمة:
+
+- [[<meta name="robots" content="noindex">]]: لوحة داخلية، متتحطش في جوجل (ده مش حماية! الحماية تسجيل دخول في السيرفر).
+- الـ icon كـ [[data:image/svg+xml,...]]: مفيش طلب [[favicon.ico]] بـ 404 (في الـ portfolio أول تشغيل طلّع [[Failed to load resource: ... 404]] لحد ما زوّدت [[icon.svg]]).
+- [[<svg class="sprite">]] فيه [[<symbol>]] لكل أيقونة، وكل مكان بيستخدمها بـ [[<svg><use href="#i-home"/></svg>]]: الأيقونة متكتبتش ٣ مرات، و [[fill: currentColor]] بيخليها بلون النص.
+- [[aria-hidden="true"]] على كل SVG أيقونة: الاسم جاي من النص اللي جنبها أو من [[aria-label]].
+- [[<aside class="side" aria-label="القايمة الرئيسية">]] و [[<nav>]] جواه، و [[aria-current="page"]] على اللينك الحالي.
+- [[#collapse]] عليه [[aria-expanded]] و [[aria-controls="side"]] و [[aria-label="القايمة الجانبية"]]: الاسم ثابت، والحالة (مفتوحة/مقفولة) في [[aria-expanded]]، فقارئ الشاشة بيقول «القايمة الجانبية، زرار، expanded».
+- [[#menu]] (للموبايل) اسمه بيتغير «افتح القايمة» / «اقفل القايمة».
+- [[#theme]] بـ [[aria-pressed]]: زرار تبديل (toggle) مش checkbox.
+- [[<main id="main" tabindex="-1">]]: الـ skip link بيودّي هنا، و [[tabindex="-1"]] بيخليه ياخد الفوكس بالكود من غير ما يبقى في الـ Tab.
+- الـ KPI في [[<ul role="list">]]، وكل رقم يبدأ [[—]] لحد ما البيانات توصل.
+- الـ sparkline: [[role="img"]] و [[aria-labelledby]] على [[<title>]] جوه الـ SVG، و [[kpi.js]] بيكتب فيه الملخص بالكلام («من 51 لـ 81، والنهارده 73»)، لأن الخط نفسه ملوش معنى لقارئ الشاشة.
+- الـ [[<dialog>]] الاتنين و [[#toasts]] في آخر الصفحة، بيتشرحوا في «داشبورد ٣».
+
+### الـ CSS: الـ tokens والـ shell والكروت (أول نص app.css)
+
+~~~css dashboard/css/app.css (السطور 1–91)
+/* ---------- tokens: light, then dark (system default or the saved choice) ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f3f5f7; --surface: #ffffff; --ink: #17202a; --muted: #56606b; --line: #d9dee4;
+  --brand: #1f6f8b; --brand-ink: #ffffff; --brand-soft: #dceef4;
+  --ok: #156c2f; --ok-soft: #dcf3e3; --warn: #8a5a00; --warn-soft: #fbefd5; --bad: #b42318; --bad-soft: #fde4e1;
+  --skel: #e6eaee; --skel-hi: #f5f7f9;
+  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --r: 12px; --side-w: 15rem; --top-h: 4rem;
+  --shadow: 0 1px 2px rgb(16 24 32 / 0.06), 0 4px 16px rgb(16 24 32 / 0.06);
+  --z-top: 20; --z-drawer: 40; --z-toast: 60;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  color-scheme: dark;
+  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
+  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
+  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
+  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+} }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
+  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
+  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
+  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font: 1rem/1.6 var(--font); color: var(--ink); background: var(--bg); }
+h1, h2 { line-height: 1.3; margin: 0; }
+h1 { font-size: 1.15rem; }
+h2 { font-size: 1.3rem; margin-block-end: 1rem; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: 100; padding: 0.5rem 1rem; background: var(--ink); color: var(--bg); }
+.skip:focus { top: 1rem; }
+.sprite { position: absolute; }
+svg { width: 1.4rem; height: 1.4rem; fill: currentColor; flex: none; }
+.btn { --b: var(--brand); --f: var(--brand-ink); min-height: 44px; padding: 0.4rem 1.1rem; border: 2px solid var(--b); border-radius: 10px; background: var(--b); color: var(--f); font: inherit; font-weight: 600; cursor: pointer; }
+.btn.ghost { --b: transparent; --f: var(--brand); border-color: var(--line); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.icon-btn { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.icon-btn[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); }
+
+/* ---------- app shell: grid areas ---------- */
+.shell {
+  display: grid; min-height: 100dvh;
+  grid-template-columns: var(--side-w) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "side top" "side main";
+  transition: grid-template-columns 0.2s ease;
+}
+.shell[data-collapsed] { --side-w: 4.75rem; }
+.side { grid-area: side; position: sticky; top: 0; height: 100dvh; overflow-y: auto; background: var(--surface); border-inline-end: 1px solid var(--line); padding: 0.75rem; }
+.side-head { display: flex; align-items: center; gap: 0.5rem; min-height: 44px; margin-block-end: 1rem; font-weight: 700; }
+.logo { color: var(--brand); font-size: 1.4rem; width: 2rem; text-align: center; }
+.collapse { margin-inline-start: auto; }
+.side nav { display: grid; gap: 0.25rem; }
+.side nav a { display: flex; align-items: center; gap: 0.75rem; min-height: 44px; padding: 0.4rem 0.75rem; border-radius: 10px; color: var(--ink); text-decoration: none; }
+.side nav a:hover { background: var(--bg); }
+.side nav a[aria-current="page"] { background: var(--brand-soft); color: var(--ink); font-weight: 600; }
+.shell[data-collapsed] .side .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.shell[data-collapsed] .side-head { flex-direction: column; }
+.shell[data-collapsed] .collapse { margin: 0; }
+.shell[data-collapsed] .collapse svg { transform: scaleX(-1); }
+
+.topbar { grid-area: top; position: sticky; top: 0; z-index: var(--z-top); display: flex; align-items: center; gap: 0.75rem; min-height: var(--top-h); padding: 0.5rem 1.25rem; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(8px); border-block-end: 1px solid var(--line); }
+.topbar h1 { margin-inline-end: auto; }
+.menu { display: none; }
+main { grid-area: main; min-width: 0; padding: 1.25rem; display: grid; gap: 2rem; align-content: start; }
+main section { scroll-margin-top: calc(var(--top-h) + 1rem); min-width: 0; }   /* a grid item never shrinks below its content without this */
+.scrim { position: fixed; inset: 0; background: rgb(10 14 20 / 0.5); z-index: calc(var(--z-drawer) - 1); }
+
+/* ---------- KPI cards ---------- */
+.kpis { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); min-height: 8.5rem; display: grid; align-content: start; gap: 0.25rem; }
+.kpi p { margin: 0; }
+.k-label { color: var(--muted); font-size: 0.9rem; }
+.k-num { font-size: 1.8rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; min-height: 1.2em; }
+.k-sub { color: var(--muted); font-size: 0.9rem; }
+.delta { font-weight: 600; display: inline-block; min-width: 5em; }   /* "—" then "▲ +8.8%": same box, so the words after it stay put */
+.delta.up { color: var(--ok); } .delta.down { color: var(--bad); }
+.spark { width: 100%; height: 2.25rem; }
+.spark polyline { fill: none; stroke: var(--brand); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.ring-card { grid-template-columns: auto 1fr; align-items: center; column-gap: 1rem; }
+.ring-card .k-label { grid-column: 1 / -1; }
+.ring { width: 4.5rem; height: 4.5rem; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 3.5; }
+.ring-bg { stroke: var(--line); }
+.ring-fg { stroke: var(--brand); stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+
+~~~
+
+~~~css dashboard/css/app.css (السطور 152–163): تحت 64rem
+/* ---------- under 64rem: sidebar becomes a drawer ---------- */
+@media (max-width: 63.99rem) {
+  .shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "main"; }
+  .side { --out: -100%; position: fixed; inset-block: 0; inset-inline-start: 0; z-index: var(--z-drawer); width: min(17rem, 85vw);
+    transform: translateX(var(--out)); visibility: hidden; transition: transform 0.25s ease, visibility 0s 0.25s; }
+  [dir="rtl"] .side { --out: 100%; }
+  .shell[data-open] .side { transform: none; visibility: visible; transition: transform 0.25s ease; }
+  .collapse { display: none; }
+  .menu { display: inline-grid; }
+  .shell[data-collapsed] .side .label { position: static; width: auto; height: auto; clip-path: none; }
+}
+
+~~~
+
+- [[color-scheme: light]] و [[dark]] جوه الـ tokens: الـ select والـ scrollbar والـ date picker بتتلوّن مع الثيم.
+- [[--z-top: 20; --z-drawer: 40; --z-toast: 60]]: طبقات بأسامي، مش [[z-index: 9999]].
+- [[transition: grid-template-columns 0.2s ease]]: Chrome بيحرّك تغيير عرض الأعمدة لما [[--side-w]] يتغير، لأن القيمة الجديدة نفس عدد الأعمدة (الحركة نفسها من الوثائق؛ اللي اتقاس هو العرض بعد 400ms: 76px).
+- [[.shell[data-collapsed] .collapse svg { transform: scaleX(-1) }]]: الأيقونة بتتقلب عشان تبان «افتح».
+- [[.kpi { min-height: 8.5rem }]] و [[.k-num { min-height: 1.2em }]] و [[.delta { min-width: 5em }]]: المكان محجوز قبل الأرقام، فمفيش CLS (الأخيرة اتزوّدت بعد قياس، تحت).
+- [[.ring-fg { transition: stroke-dashoffset 0.8s }]]: الدايرة بتتملي لما الرقم يوصل.
+- تحت 64rem: [[--out]] و [[visibility: hidden]] و [[transition: transform 0.25s ease, visibility 0s 0.25s]] (اتشرحوا في deep)، و [[#collapse]] بيختفي و [[#menu]] بيظهر، والأسامي المقفولة بترجع (الـ drawer دايمًا مفتوح بالأسامي).
+
+### قبل الرسم
+
+~~~javascript dashboard/js/boot.js
+// before the first paint: saved theme and saved sidebar state, so nothing flips after the page shows
+try {
+  const t = localStorage.getItem("theme");
+  if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+  if (localStorage.getItem("side") === "collapsed") document.documentElement.dataset.side = "collapsed";
+} catch {}
+~~~
+
+الثيم والقايمة المقفولة: لو اتطبقوا بعد الرسم، الصفحة بتنوّر أبيض ثانية لليوزر اللي مختار داكن، والجدول بيتنطط لما الـ sidebar يصغر. [[dataset.side]] على [[<html>]] و [[shell.js]] بيحوّله لـ [[data-collapsed]].
+
+### الـ sidebar والثيم
+
+~~~javascript dashboard/js/shell.js
+// sidebar: collapses on wide screens, becomes a drawer on narrow ones; plus the theme switch
+const shell = document.getElementById("shell"), side = document.getElementById("side");
+const menu = document.getElementById("menu"), collapse = document.getElementById("collapse"), scrim = document.getElementById("scrim");
+const narrow = matchMedia("(max-width: 63.99rem)");
+const behind = [document.querySelector(".topbar"), document.getElementById("main")];
+
+function setCollapsed(on) {
+  shell.toggleAttribute("data-collapsed", on);
+  collapse.setAttribute("aria-expanded", String(!on));
+  try { localStorage.setItem("side", on ? "collapsed" : "open"); } catch {}
+}
+if (document.documentElement.dataset.side === "collapsed") setCollapsed(true);
+collapse.addEventListener("click", () => setCollapsed(!shell.hasAttribute("data-collapsed")));
+
+function setDrawer(open) {
+  shell.toggleAttribute("data-open", open);
+  menu.setAttribute("aria-expanded", String(open));
+  menu.setAttribute("aria-label", open ? "اقفل القايمة" : "افتح القايمة");
+  scrim.hidden = !open;
+  behind.forEach(el => (el.inert = open));                 // while the drawer is open, Tab can't wander behind it
+  if (open) side.querySelector("a").focus();
+  else if (side.contains(document.activeElement) || document.activeElement === document.body) menu.focus();
+}
+menu.addEventListener("click", () => setDrawer(true));
+scrim.addEventListener("click", () => setDrawer(false));
+document.addEventListener("keydown", e => { if (e.key === "Escape" && shell.hasAttribute("data-open")) setDrawer(false); });
+side.addEventListener("click", e => {
+  const a = e.target.closest("a");
+  if (!a) return;
+  side.querySelectorAll("a").forEach(x => x.toggleAttribute("aria-current", x === a));
+  if (a.hasAttribute("aria-current")) a.setAttribute("aria-current", "page");
+  if (narrow.matches) setDrawer(false);
+});
+narrow.addEventListener("change", () => setDrawer(false)); // rotate or resize to wide: never leave the page inert
+
+const theme = document.getElementById("theme");
+const isDark = () => document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+theme.setAttribute("aria-pressed", String(isDark()));
+theme.addEventListener("click", () => {
+  const next = isDark() ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  theme.setAttribute("aria-pressed", String(next === "dark"));
+  try { localStorage.setItem("theme", next); } catch {}
+});
+~~~
+
+- [[narrow = matchMedia("(max-width: 63.99rem)")]]: نفس الـ breakpoint بتاع CSS بالظبط. [[63.99]] مش [[64]] عشان [[min-width: 64rem]] و [[max-width: 64rem]] الاتنين بيتطبقوا على 1024 بالظبط.
+- [[setDrawer(open)]]: الـ attribute، و [[aria-expanded]]، والاسم، والخلفية ([[scrim.hidden]])، و [[inert]]، والفوكس. لما يتقفل الفوكس بيرجع للزرار **بس** لو كان جوه القايمة أو ضاع على [[body]] (لو اليوزر داس على لينك، الفوكس رايح للقسم).
+- [[keydown]] على [[Escape]]: بيقفل لو مفتوح بس.
+- الضغط على لينك: [[aria-current]] بينتقل، وعلى الموبايل القايمة بتتقفل.
+- [[narrow.addEventListener("change", ...)]]: لف الموبايل أو كبّر الشاشة والقايمة مفتوحة: اقفلها، وإلا [[main]] هيفضل inert على الكمبيوتر.
+- الثيم: [[isDark()]] بيبص على الاختيار المحفوظ الأول، ولو مفيش على [[prefers-color-scheme]]. والزرار بيحفظ [[light]] أو [[dark]] صريح.
+
+### الأرقام
+
+~~~javascript dashboard/js/lib.js
+// small pure helpers: sparkline points, ring offset, schedule rows, number formats. No DOM, Node can test them.
+export function sparkPoints(values, w = 100, h = 32, pad = 2) {
+  if (!values.length) return "";
+  const min = Math.min(...values), max = Math.max(...values), span = max - min;
+  const step = values.length > 1 ? (w - pad * 2) / (values.length - 1) : 0;
+  return values.map((v, i) => {
+    const x = pad + i * step;
+    const y = span ? h - pad - ((v - min) / span) * (h - pad * 2) : h / 2;   // SVG y grows downward; a flat line sits in the middle
+    return +x.toFixed(1) + "," + +y.toFixed(1);
+  }).join(" ");
+}
+
+export const ringOffset = pct => 100 - Math.min(100, Math.max(0, pct));   // with pathLength="100" the dash is just the percent
+
+export const DAY0 = 7 * 60, SLOT = 30;                                     // the grid starts at 07:00, one row = 30 minutes
+export const toMin = hhmm => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
+export function gridRow(start, end) {
+  const row = (toMin(start) - DAY0) / SLOT + 1;
+  const span = Math.ceil((toMin(end) - toMin(start)) / SLOT);
+  return { row, span };
+}
+export function overlaps(a, b) { return a.day === b.day && toMin(a.start) < toMin(b.end) && toMin(b.start) < toMin(a.end); }
+
+export const num = new Intl.NumberFormat("ar-EG", { numberingSystem: "latn" });
+export const money = new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP", maximumFractionDigits: 0, numberingSystem: "latn" });
+export const shortDate = new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "short", timeZone: "UTC", numberingSystem: "latn" });
+export function delta(now, prev) {
+  const pct = prev ? ((now - prev) / prev) * 100 : 0;
+  return { pct: Math.round(pct * 10) / 10, up: pct >= 0 };
+}
+~~~
+
+~~~javascript dashboard/js/kpi.js
+// KPI cards: numbers, sparkline, ring. The cards keep their size while loading, so nothing jumps.
+import { sparkPoints, ringOffset, num, money, delta } from "./lib.js";
+export async function loadKpis(members) {
+  const k = await (await fetch("data/kpi.json")).json();
+  document.getElementById("k-active").textContent = num.format(k.active);
+  document.getElementById("k-total").textContent = num.format(members.length);
+  document.getElementById("k-in").textContent = num.format(k.checkins.at(-1));
+  document.getElementById("spark").setAttribute("points", sparkPoints(k.checkins));
+  document.getElementById("spark-t").textContent = "دخول آخر ١٤ يوم: من " + Math.min(...k.checkins) + " لـ " + Math.max(...k.checkins) + "، والنهارده " + k.checkins.at(-1);
+  document.getElementById("k-rev").textContent = money.format(k.revenue);
+  const d = delta(k.revenue, k.revenuePrev), el = document.getElementById("k-delta");
+  el.textContent = (d.up ? "▲ +" : "▼ ") + d.pct + "%";
+  el.className = "delta " + (d.up ? "up" : "down");
+  document.getElementById("k-ren").textContent = k.renewal + "%";
+  document.getElementById("ring-t").textContent = "نسبة التجديد " + k.renewal + "%";
+  requestAnimationFrame(() => (document.getElementById("ring").style.strokeDashoffset = ringOffset(k.renewal)));
+}
+~~~
+
+- [[numberingSystem: "latn"]]: أرقام لاتيني (186,400) جوه كلام عربي. [[new Intl.NumberFormat("ar-EG")]] من غيرها بيطلّع [[١٨٦٬٤٠٠]]. الاتنين صح؛ المهم تختار واحد للوحة كلها (الدرس الجاي فيه غلطة الخلط).
+- [[style: "currency", currency: "EGP", maximumFractionDigits: 0]]: [[‏186,400 ج.م.‏]] من غير قروش.
+- [[timeZone: "UTC"]] في التاريخ: التاريخ [[2026-10-25]] من غير ساعة بيتقري UTC، ولو اتعرض بتوقيت الجهاز في منطقة غرب جرينتش بيبقى ٢٤ أكتوبر.
+- [[requestAnimationFrame(...)]] للـ ring: لو اتغير في نفس اللحظة اللي العنصر اترسم فيها، الـ transition مش هيشتغل (المتصفح ميشوفش «قيمة قديمة»).
+
+### اتشغّل فعلًا
+
+~~~text node check-dashboard.mjs (Chrome 156)
+kpi: 44 | 73 | ‏186,400 ج.م.‏ | 78% | delta: ▲ +8.8%
+spark points: 14 | ring offset: 100px
+collapsed: side width 76 | link names: نظرة عامة, الأعضاء, جدول الحصص | aria-expanded: false
+narrow: side visibility hidden | menu shown: grid
+drawer open: focus نظرة عامة | main inert: true | side x: 390
+Esc: focus on menu | main inert: false | side visibility: hidden
+theme: dark | bg: rgb(15, 20, 25) | pressed: true
+after reload: dark | pressed: true
+~~~
+
+- [[ring offset: 100px]]: اتقرا وهو لسه بيتحرك (أول لحظة في الـ transition). بعد 0.8 ثانية بيبقى 22.
+- [[side x: 390]]: الحافة اليمين للـ drawer المفتوح = عرض الشاشة (RTL، داخل من اليمين).
+
+~~~text node: نفس دوال lib.js
+2,22.5 18,5.7 34,21.6 50,9.5 66,8.5 82,30 98,2
+22 0 100
+186,400 | ‏186,400 ج.م.‏ | 25 أكتوبر | ١٨٦٬٤٠٠
+{ pct: 8.8, up: true } { pct: 0, up: true }
+~~~
+
+---
+
+## الغلطات اللي حصلت في الخطوة دي
+
+### ١. الـ drawer المقفول فوق الصفحة في RTL
+
+~~~text drawer.mjs (390، الـ drawer مقفول)
+shipped (--out: 100% in RTL)   closed drawer left/right: 390 / 662 | on screen: false
+same -100% for both            closed drawer left/right: -154 / 118 | on screen: true
+~~~
+
+الـ drawer عرضه 272 و [[inset-inline-start: 0]] حطه على اليمين (من 118 لـ 390)، و [[-100%]] زقّه 272 للشمال فبقى من [[-154]] لـ [[118]]: نصه على الشاشة. مكانش باين بس لأن [[visibility: hidden]]، بس أول ما الحركة تشتغل كان هيدخل من الناحية الغلط.
+
+### ٢. الخط المستوي بينزل لتحت
+
+أول نسخة من [[sparkPoints]] كان فيها [[span = max - min || 1]]: لو كل الأيام نفس الرقم ([[[5, 5, 5]]]) الخط بيترسم على الحافة التحتانية ([[2,30 50,30 98,30]])، فيبان كأنه «صفر». بقى [[h / 2]] لو المدى صفر: [[2,16 50,16 98,16]].
+
+### ٣. حروف مخفية في ناتج Intl
+
+~~~text
+16 200f 31 38 36 2c 34 30 30 a0 62c 2e 645 2e 200f
+~~~
+
+[[money.format(186400)]] طوله 16 حرف مش 13: فيه [[U+200F]] (Right-to-Left Mark) في الأول والآخر، و [[U+00A0]] (مسافة مبتتقسمش) قبل [[ج.م.]]. أي اختبار بيقارن بـ [[=== "186,400 ج.م."]] هيفشل وانت مش شايف ليه. الحل: قارن بـ [[includes("186,400")]]، أو نضّف بـ [[replace(/[\u200f\u00a0]/g, ...)]].
+
+### ٤. الكلام جنب النسبة بيتحرك: CLS 0.0010
+
+~~~text vitals.mjs "?delay=1200" (قبل)
+run 2 CLS 0.0010 LCP 276ms H1 | 0.0010 "عن الشهر اللي فات" in k-sub
+~~~
+
+[[—]] بقت [[▲ +8.8%]] فالكلام اللي بعدها اتزق. صغير، بس في لوحة بتتفتح ١٠٠ مرة في اليوم بيتجمّع. [[.delta { display: inline-block; min-width: 5em }]] حجز المكان: [[CLS 0.0000]] في التلات مرات.
+
+### ٥. زرار التصغير مزنوق
+
+في اللقطة على 1280 الزرار كان فيه أيقونة وتحتها «صغّر القايمة» بخط صغير، شكله مكسور. الاسم بقى [[aria-label]] والزرار أيقونة بس (44×44). ولقطة الشاشة كانت هي اللي مسكتها، مش أي فحص أوتوماتيك.
+
+---
+
+## الخلاصة
+
+| الحاجة | الطريقة |
+|---|---|
+| الهيكل | [[grid-template-areas: "side top" "side main"]] و [[minmax(0, 1fr)]] |
+| قايمة مقفولة بأسامي | [[--side-w]] أصغر + الأسامي مستخبية بـ [[clip-path]] مش [[display: none]] |
+| drawer | [[fixed]] + [[translateX(var(--out))]] بيتعكس في RTL + [[visibility]] + [[inert]] للباقي + Esc + رجوع الفوكس |
+| أرقام | [[Intl.NumberFormat("ar-EG", { numberingSystem: "latn" })]] ونظام أرقام واحد للوحة |
+| sparkline و ring | [[<polyline points>]] من دالة نقية، و [[pathLength="100"]] |
+| من غير تنطيط | مقاسات محجوزة للكروت والأرقام والنسبة |`,
+          sol: R`لينك «الأعضاء» في تاب Accessibility اسمه «الأعضاء» والقايمة مقفولة. على أقل من 1024 الـ Tab بيعدّي القايمة المقفولة خالص، و Enter على زرار القايمة بيحط الفوكس على «نظرة عامة»، و Tab بيلف جوه القايمة بس (الباقي inert)، و Esc بيقفل والفوكس على الزرار. ومع [[-100%]] في RTL، [[document.getElementById("side").getBoundingClientRect()]] بيطلّع [[left]] سالب و [[right]] جوه الشاشة.`,
+          practice: [
+            {
+              lvl: R`سريع`,
+              t: R`**اقرا وتوقّع:** [[sparkPoints([10, 20])]] بـ [[w = 100, h = 32, pad = 2]]. احسب النقطتين بإيدك قبل ما تشغّل.`,
+              done: R`حسبت [[2,30 98,2]] (الأصغر تحت عند [[h - pad]] والأكبر فوق عند [[pad]]، و x من 2 لـ 98)، والدالة طلّعت نفس الناتج.`,
+              sol: R`~~~text الحساب
+القيم 10 و 20، و min = 10، و max = 20، و span = 10، و step = (100 − 4) ÷ 1 = 96
+
+النقطة الأولى: x = 2 + 0 × 96 = 2
+               y = 32 − 2 − ((10 − 10) ÷ 10) × 28 = 30
+
+النقطة التانية: x = 2 + 1 × 96 = 98
+                y = 32 − 2 − ((20 − 10) ÷ 10) × 28 = 2
+
+الناتج: 2,30 98,2
+~~~
+
+الفكرة كلها سطر واحد: في SVG الـ [[y]] بيكبر لتحت، فالقيمة الأصغر لازم تبقى [[y]] الأكبر. عشان كده بنطرح من [[h - pad]]. و [[pad]] هامش عشان الخط ميتقصش عند الحد.
+
+و [[step]] بيوزع النقط على العرض بعد الهامش. مع قيمتين، النقطتين عند الطرفين.
+
+الغلطة الشائعة: تنسى إن y معكوس، فالرسم يطلع مقلوب: الزيادة تنزل لتحت.
+
+~~~text الناتج (sparkPoints من lib.js في Node 24)
+sparkPoints([10, 20]) = 2,30 98,2
+~~~` },
+            {
+              lvl: R`سريع`,
+              t: R`**دوّر بنفسك:** من صفحة [[inert]] على MDN اعرف ٤ حاجات بتتمنع عن العنصر الـ inert، وهل [[<dialog>]] بـ [[showModal()]] بيحط [[inert]] على باقي الصفحة لوحده.`,
+              done: R`كتبت إن الـ inert مبياخدش فوكس ولا ضغط ولا بيتختار نصه ولا بيظهر في الـ accessibility tree، وإن [[showModal()]] بيعمل نفس الأثر على كل اللي بره الـ dialog من غير ما يحط attribute.`,
+              sol: R`~~~text الإجابة النموذجية
+العنصر الـ inert وكل اللي جواه:
+١. مبياخدش focus، فـ Tab بيعدّيه.
+٢. مبيستقبلش ضغطات: الضغطة بتروح للي تحته.
+٣. نصه مبيتختارش ومبيتبحثش فيه بـ Ctrl+F.
+٤. بيختفي من الـ accessibility tree، فقارئ الشاشة مبيشوفوش.
+
+<dialog> بـ showModal() بيعمل نفس الأثر على كل اللي برا الـ dialog لوحده،
+من غير ما يكتب attribute اسمه inert في الـ HTML.
+~~~
+
+[[inert]] attribute بتكتبه انت، و [[showModal()]] حالة داخلية في المتصفح: عشان كده [[el.hasAttribute("inert")]] بيرجّع [[false]] والعنصر فعلًا مش بياخد focus. فمتختبرش بالـ attribute، اختبر بالسلوك.
+
+عشان كده الـ drawer في الدرس لازم يحط [[inert]] بنفسه، لأنه مش [[<dialog>]]، و [[<dialog>]] مش محتاج.
+
+المصدر: MDN صفحة [[HTMLElement.inert]] و [[<dialog>]].
+
+الغلطة الشائعة: تكتب [[inert]] على [[body]] وتفتح dialog جواه. الـ dialog نفسه هيبقى inert.
+
+~~~text الناتج (Chrome 156، جربنا السلوك)
+زرار جوه inert: focus اتحط عليه؟ false
+قارئ الشاشة (شجرة الـ accessibility): الزرار ظاهر؟ آه
+بعد showModal: hasAttribute("inert") على main = false، و focus على زرار main؟ false
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**صلّح الكود البايظ:** النسخة دي من الـ drawer: [[.side { transform: translateX(100%) } .shell[data-open] .side { transform: none }]] ومن غير [[visibility]] ولا [[inert]]. افتح الصفحة على 390 ودوس Tab ١٠ مرات من أول الصفحة. اكتب فين الفوكس راح، وصلّحها.`,
+              done: R`الـ Tab وقف على لينكات القايمة المستخبية (مش ظاهر أي إطار)، وبعد ما زوّدت [[visibility: hidden]] مع التأخير و [[inert]] للباقي لما تفتح، الـ Tab بيعدّي القايمة وهي مقفولة ومبيطلعش منها وهي مفتوحة.`,
+              sol: R`~~~css dashboard/css/app.css (تحت 64rem)
+.side { transform: translateX(var(--out)); visibility: hidden; transition: transform 0.25s ease, visibility 0s 0.25s; }
+.shell[data-open] .side { transform: none; visibility: visible; transition: transform 0.25s ease; }
+~~~
+
+~~~js dashboard/js/shell.js (جوه setDrawer)
+behind.forEach(el => (el.inert = open));
+~~~
+
+[[transform: translateX(100%)]] بيحرك الرسم بس. العنصر لسه في الصفحة، ولينكاته لسه بتاخد focus، فـ Tab بيقف على حاجة مش باينة: المستخدم مش عارف هو فين.
+
+- [[visibility: hidden]] بيشيله من Tab ومن قارئ الشاشة، وده اللي ناقص.
+- الحيلة في [[visibility 0s 0.25s]]: وهو بيتقفل، الـ visibility بتتغير **بعد** ما الحركة تخلص، عشان القفل يبان. وهو بيتفتح القاعدة التانية من غير تأخير.
+- [[inert]] على الباقي وهو مفتوح، عشان Tab ميطلعش ورا القايمة.
+
+الغلطة الشائعة: [[display: none]]: بيصلّح الـ Tab بس بيكسر الحركة، لأن [[display]] مبيتحركش.
+
+~~~text الناتج (Chrome 156، عرض 390: أماكن الـ focus بعد ١٠ ضغطات Tab من أول الصفحة)
+النسخة البايظة:  اتخطّى للمحت ← نظرة عامة ← الأعضاء ← جدول الحصص ← افتح القايمة ← الوضع الداكن ← عضو جديد ← INPUT ← الكلنشطمتجمّ ← الكلشهري3 شه
+                 لينكات مستخبية وقف عليها: 3
+بعد التصليح:     اتخطّى للمحت ← افتح القايمة ← الوضع الداكن ← عضو جديد ← INPUT ← الكلنشطمتجمّ ← الكلشهري3 شه ← امسح الفلاتر ← الاسم ← الباقة
+                 لينكات مستخبية وقف عليها: 0
+القايمة مفتوحة، ١٠ Tab: طلع برا القايمة؟ لأ
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**ابني:** على الموبايل بدّل الـ drawer بـ bottom nav: شريط [[position: fixed; inset-inline: 0; bottom: 0]] فيه الـ ٣ لينكات بأيقونة واسم، و [[padding-bottom: env(safe-area-inset-bottom)]]، و [[main]] عليه padding من تحت بنفس الارتفاع عشان آخر حاجة متستخباش.`,
+              done: R`على 390 الشريط تحت وآخر صف في الجدول الأسبوعي ظاهر فوقه، وكل لينك 44px على الأقل، و axe صفر، و [[aria-current]] على القسم الحالي، والـ drawer مبقاش موجود على الموبايل.`,
+              sol: R`~~~html dashboard/index.html (قبل قفلة #shell)
+<nav class="bottom-nav" aria-label="الأقسام">
+  <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg>نظرة عامة</a>
+  <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg>الأعضاء</a>
+  <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg>الحصص</a>
+</nav>
+~~~
+
+~~~css dashboard/css/app.css (في آخر الملف)
+.bottom-nav { display: none; }
+@media (max-width: 40rem) {
+  .side, .menu { display: none; }
+  .bottom-nav {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+    position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-drawer);
+    background: var(--surface); border-block-start: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav a {
+    display: grid; justify-items: center; align-content: center; gap: 2px;
+    min-block-size: 44px; padding-block: 6px; color: var(--ink); text-decoration: none; font-size: 0.8rem;
+  }
+  .bottom-nav svg { inline-size: 20px; block-size: 20px; }
+  .bottom-nav a[aria-current="page"] { color: var(--brand); font-weight: 700; }
+  main { padding-block-end: calc(4rem + env(safe-area-inset-bottom)); }
+}
+~~~
+
+~~~js dashboard/js/shell.js (آخر الملف)
+document.querySelector(".bottom-nav").addEventListener("click", (e) => {
+  const a = e.target.closest("a");
+  if (!a) return;
+  a.parentElement.querySelectorAll("a").forEach((x) => x.removeAttribute("aria-current"));
+  a.setAttribute("aria-current", "page");
+});
+~~~
+
+بيبني على [[index.html]] و [[app.css]] بتوع الـ shell.
+
+- [[position: fixed; inset-inline: 0; bottom: 0]]: لازق تحت على عرض الشاشة.
+- [[env(safe-area-inset-bottom)]]: مساحة شريط الرجوع على الآيفون، صفر على الباقي. من غيرها اللينكات تبقى تحت الشريط.
+- [[padding-block-end]] على [[main]]: الشريط fixed برا الـ flow، فآخر حاجة في الصفحة هتتغطى. لازم نفس الارتفاع.
+- [[min-block-size: 44px]]: أقل هدف لمس معقول.
+- [[aria-current="page"]] بيتغير مع الضغط، فقارئ الشاشة بيقول «الصفحة الحالية».
+
+الغلطة الشائعة: تعمل [[bottom: 0]] من غير padding على main، فآخر صف مستخبي ومحدش يقدر يوصله.
+
+~~~text الناتج (Chrome 156، عرض 390)
+الشريط: top 789 و bottom 844، و viewport 844
+ارتفاع كل لينك: 54.46875 و 54.46875 و 54.46875
+آخر عنصر في main بعد scroll للآخر: bottom = 780، فوق الشريط؟ آه
+aria-current بعد ضغطة «الأعضاء»: - page -
+الـ drawer: display = none
+axe: 0
+~~~
+
+~~~view 160 230 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+:root { --surface: #ffffff; --line: #e5e7eb; --ink: #0f172a; --brand: #4f46e5; --z-drawer: 50; } body { margin: 0; font-family: system-ui, sans-serif; color: var(--ink); background: #f8fafc; }
+#shell { display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; } .side { padding: 1rem; background: var(--surface); border-inline-end: 1px solid var(--line); } .side a { display: block; padding: 0.4rem 0; color: inherit; }
+.menu { display: none; } main { padding: 1rem; } @media (max-width: 40rem) { #shell { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M3 11 12 4l9 7v9H3z"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M2 21c0-4 3-6 7-6s7 2 7 6"/></symbol><symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" d="M3 10h18M8 3v4M16 3v4"/></symbol></svg>
+<div id="shell"><aside class="side"><a href="#overview">نظرة عامة</a><a href="#members">الأعضاء</a><a href="#schedule">الحصص</a></aside>
+<main><h1>لوحة التحكم</h1><p>على «موبايل» السايدبار بيختفي، وتحت بيظهر شريط فيه الـ ٣ أقسام بأيقونة واسم.</p></main>
+<nav class="bottom-nav" aria-label="الأقسام">
+  <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg>نظرة عامة</a>
+  <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg>الأعضاء</a>
+  <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg>الحصص</a>
+</nav>
+</div>
+<style>
+/* من الحل */
+.bottom-nav { display: none; }
+@media (max-width: 40rem) {
+  .side, .menu { display: none; }
+  .bottom-nav {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+    position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-drawer);
+    background: var(--surface); border-block-start: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav a {
+    display: grid; justify-items: center; align-content: center; gap: 2px;
+    min-block-size: 44px; padding-block: 6px; color: var(--ink); text-decoration: none; font-size: 0.8rem;
+  }
+  .bottom-nav svg { inline-size: 20px; block-size: 20px; }
+  .bottom-nav a[aria-current="page"] { color: var(--brand); font-weight: 700; }
+  main { padding-block-end: calc(4rem + env(safe-area-inset-bottom)); }
+}
+</style>
+<script>
+document.querySelector(".bottom-nav").addEventListener("click", (e) => {
+  const a = e.target.closest("a");
+  if (!a) return;
+  a.parentElement.querySelectorAll("a").forEach((x) => x.removeAttribute("aria-current"));
+  a.setAttribute("aria-current", "page");
+});
+</script>
+</body>
+</html>
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**مسألة:** اكتب [[barPoints(values, w, h, gap)]] بترجّع لكل قيمة [[{ x, y, width, height }]] لـ bar chart جوه [[viewBox]]، والقيمة السالبة بتنزل تحت خط الصفر. (اكتبها نقية جنب [[sparkPoints]] واختبرها في Node.)`,
+              done: R`على [[[3, -1, 2]]] بـ [[w = 30, h = 20, gap = 2]] الأعمدة عرضها متساوي والفراغات 2، والسالب [[y]] بتاعه عند خط الصفر وطوله لتحت، والمجموع [[width + gap]] مبيعدّيش 30، وفيه اختبار لقيم كلها صفر.`,
+              sol: R`~~~js bars.mjs
+export function barPoints(values, w, h, gap) {
+  if (!values.length) return [];
+  const max = Math.max(0, ...values), min = Math.min(0, ...values);
+  const span = max - min || 1;                 // كله صفر: مفيش قسمة على صفر
+  const zero = (max / span) * h;               // خط الصفر من فوق
+  const width = (w - gap * (values.length - 1)) / values.length;
+  return values.map((v, i) => {
+    const height = (Math.abs(v) / span) * h;
+    return { x: i * (width + gap), y: v >= 0 ? zero - height : zero, width, height };
+  });
+}
+~~~
+
+~~~js bars.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { barPoints } from "./bars.mjs";
+
+test("الأعمدة بعرض واحد والفراغ 2 ومجموعهم مبيعدّيش 30", () => {
+  const b = barPoints([3, -1, 2], 30, 20, 2);
+  assert.ok(b.every((x) => x.width === b[0].width));
+  assert.ok(Math.abs(b[1].x - (b[0].x + b[0].width + 2)) < 1e-9);
+  assert.ok(b[2].x + b[2].width <= 30 + 1e-9);
+});
+test("السالب بيبدأ عند خط الصفر ونازل", () => {
+  const b = barPoints([3, -1, 2], 30, 20, 2);
+  assert.equal(b[1].y, b[0].y + b[0].height);
+});
+test("كله صفر مش بيطلّع NaN", () => {
+  for (const x of barPoints([0, 0], 30, 20, 2)) assert.equal(x.height, 0);
+});
+~~~
+
+- [[max]] و [[min]] بيبدأوا من صفر، عشان خط الصفر يبقى جوه الرسم دايمًا، حتى لو كل القيم موجبة.
+- [[zero]] مكان خط الصفر من فوق. في [[[3, -1, 2]]] الـ span = 4، فالصفر عند ثلاث أرباع الارتفاع: 15.
+- عمود موجب: بيبدأ فوق الخط ([[zero - height]]) وينزل له. عمود سالب: بيبدأ عند الخط وينزل.
+- [[|| 1]] بيمنع القسمة على صفر.
+
+نقية تمامًا: مفيش DOM، فالاختبار في Node.
+
+الغلطة الشائعة: تحسب الارتفاع من [[max]] بس، فالسالب يطلع برا الـ viewBox.
+
+~~~text الناتج (Node 24)
+barPoints([3, -1, 2], 30, 20, 2):
+{"x":0,"y":0,"width":8.67,"height":15}
+{"x":10.67,"y":15,"width":8.67,"height":5}
+{"x":21.33,"y":5,"width":8.67,"height":10}
+node --test: pass 3، fail 0
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**قارن وقيس:** ارسم نفس الـ sparkline بـ Chart.js (من CDN) في صفحة تجربة، وقارن بالـ SVG: حجم اللي اتحمّل (Network)، و LCP (بـ [[vitals.mjs]])، وهل قارئ الشاشة بيقرا حاجة (Accessibility tree).`,
+              done: R`عندك جدول ٣ صفوف بالأرقام للطريقتين، وفرق الحجم بالكيلو، وكتبت إن الـ canvas ملوش محتوى في الـ accessibility tree غير لو كتبت [[aria-label]] بإيدك، وإمتى المكتبة تستاهل.`,
+              sol: R`~~~live 170 170 spark-chart.html (نسخة Chart.js)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>sparkline</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4">$__lt/script></head>
+<body>
+  <main><h1>الحضور</h1>
+    <canvas id="c" width="300" height="80" aria-label="الحضور في ١٤ يوم"></canvas>
+  </main>
+  <script>
+    new Chart(document.getElementById("c"), {
+      type: "line",
+      data: { labels: Array(14).fill(""), datasets: [{ data: [59,77,60,73,74,51,81,77,74,64,68,63,79,73], pointRadius: 0 }] },
+      options: { responsive: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } },
+    });
+  $__lt/script>
+</body></html>
+~~~
+
+~~~live 180 180 spark-svg.html (نسخة SVG)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>sparkline</title></head>
+<body>
+  <main><h1>الحضور</h1>
+    <svg viewBox="0 0 100 32" width="300" height="80" role="img" aria-label="الحضور في ١٤ يوم، من 51 لـ 81">
+      <polyline id="l" fill="none" stroke="#1f6f8b" stroke-width="1.5"/>
+    </svg>
+  </main>
+  <script>
+    const v = [59,77,60,73,74,51,81,77,74,64,68,63,79,73];
+    const min = Math.min(...v), max = Math.max(...v), step = 96 / (v.length - 1);
+    document.getElementById("l").setAttribute("points", v.map((n, i) => (2 + i * step).toFixed(1) + "," + (30 - ((n - min) / (max - min)) * 28).toFixed(1)).join(" "));
+  $__lt/script>
+</body></html>
+~~~
+
+الرسم نفس الرسم، بس السؤال: كام بتدفع فيه؟ مكتبة كاملة لخط واحد معناها كل المتصفحات بتحمّل كود محاور وtooltips وأنيميشن مش مستخدمة، وبتنفذها قبل ما الخط يترسم.
+
+والـ accessibility: [[<canvas>]] صورة بكسلات، والشجرة مفيهاش غير الاسم اللي كتبته بإيدك. الـ [[svg]] بـ [[role="img"]] نفس الشيء، بس لو عايز تكتب النص جواها يبقى نص حقيقي. وفي الحالتين لازم [[aria-label]] يقول الخلاصة.
+
+إمتى المكتبة تستاهل؟ لما تحتاج tooltips ومحاور وزووم وأنواع رسم كتير. لخط صغير، ١٠ سطور SVG.
+
+الغلطة الشائعة: تقيس على جهاز سريع وشبكة محلية، فالفرق يتمسح. لاحظ إن الملف هنا اتحمّل من السيرفر المحلي وبـ CPU ×4، ومن CDN الفرق هيبان أكتر مع الشبكة.
+
+~~~text الناتج (Chrome 156: 390، CPU ×4، Chart.js من npm على سيرفر محلي)
+                       SVG            Chart.js
+حجم اللي اتحمّل         0.8KB         205.2KB
+LCP                    112ms          248ms
+شجرة الـ accessibility  - main: / - heading "الحضور" [level=1] / - img "الحضور في ١٤ يوم، من 51 لـ 81"
+                                     - main: / - heading "الحضور" [level=1]
+~~~` },
+          ],
+          ci: [
+            {
+              os: [
+                R`ubuntu`,
+                R`macos`,
+                R`windows`,
+              ],
+              sh: R`node`,
+              run: R`function sparkPoints(values, w = 100, h = 32, pad = 2) {
+  if (!values.length) return "";
+  const min = Math.min(...values), max = Math.max(...values), span = max - min;
+  const step = values.length > 1 ? (w - pad * 2) / (values.length - 1) : 0;
+  return values.map((v, i) => {
+    const x = pad + i * step;
+    const y = span ? h - pad - ((v - min) / span) * (h - pad * 2) : h / 2;
+    return +x.toFixed(1) + "," + +y.toFixed(1);
+  }).join(" ");
+}
+const ringOffset = pct => 100 - Math.min(100, Math.max(0, pct));
+function delta(now, prev) { const pct = prev ? ((now - prev) / prev) * 100 : 0; return { pct: Math.round(pct * 10) / 10, up: pct >= 0 }; }
+console.log("spark: " + sparkPoints([59, 77, 60, 73, 74, 51, 81]));
+console.log("flat: " + sparkPoints([5, 5, 5]) + " | one: " + sparkPoints([7]) + " | empty: [" + sparkPoints([]) + "]");
+console.log("ring: " + [78, 130, -5].map(ringOffset).join(" "));
+const d = delta(186400, 171250);
+console.log("delta: " + (d.up ? "+" : "") + d.pct + "% | from zero: " + delta(5, 0).pct);`,
+              expect: [
+                R`spark: 2,22.5 18,5.7 34,21.6 50,9.5 66,8.5 82,30 98,2`,
+                R`flat: 2,16 50,16 98,16 | one: 2,16 | empty: []`,
+                R`ring: 22 0 100`,
+                R`delta: +8.8% | from zero: 0`,
+              ],
+            },
+          ],
+        },
+        {
+          cmd: R`داشبورد ٢: جدول الأعضاء والحالة في الرابط`,
+          ref: [
+            { t: "MDN: URLSearchParams", url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams" },
+            { t: "MDN: History.pushState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/pushState" },
+            { t: "MDN: popstate event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event" },
+            { t: "MDN: aria-sort", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-sort" },
+          ],
+          title: R`جدول أعضاء بعناوين sticky وترتيب بـ aria-sort وبحث عربي وفلاتر وصفحات محفوظين في الرابط (Back شغال)، وكروت على الموبايل، وحالات التحميل والخطأ والفاضي من غير ما الصفحة تتنطط`,
+          learn: R`تبني جدول بيانات حقيقي: الحالة كلها في [[location.search]] (تتبعت وتتحفظ وتترجع بـ Back)، ودوال نقية بتفلتر وترتب وتقسّم صفحات وبتتختبر في Node، وبحث بيلاقي «آدم» لو كتبت «ادم»، و [[pushState]] للأفعال و [[replaceState]] للكتابة، وعناوين sticky متكسرهاش [[overflow]]، و skeleton بنفس مقاس الصف، ورسالة خطأ بزرار «جرّب تاني» بياخد الفوكس، وكروت بـ [[data-label]] تحت 40rem.`,
+          out: R`[[gen-data.mjs]] و [[state.js]] و [[table.js]] وجزء الجدول في [[app.css]]: [[?status=frozen&sort=visits&dir=desc]] بيفتح على نفس الجدول في أي تاب، و Back بيرجّع الترتيب، و [[?page=99]] بيبقى [[?page=6]]، والبحث مبيزوّدش الـ history، و CLS صفر على 390 والبيانات متأخرة 1.2 ثانية.`,
+          use: {
+            prog: R`درس «table» و «جدول responsive» و «ترتيب وصفحات في الـ URL» و «aria» بيتجمعوا، ومعاهم أهم فكرة في الواجهات: الحالة مكانها فين. هنا مكانها الرابط، والرسم دالة من الحالة.`,
+            work: R`أكتر شاشة في أي لوحة أدمن: جدول بفلاتر. والشكاوى المعروفة كلها هنا: «بعتلك الرابط فتح على الصفحة الأولى»، و «دوست Back خرجت من الصفحة»، و «العناوين بتختفي لما بنزل»، و «على الموبايل لازم أسكرول بالعرض»، و «بيعلّق وانا بكتب».`,
+            cs: R`الدالة النقية [[view(rows, state)]]: نفس المدخلات = نفس الناتج، فبتتختبر لوحدها. و stable sort مع tie-breaker ([[a.id - b.id]]). و normalization للنص قبل المقارنة. و clamping للمدخلات اللي جاية من بره (الرابط مدخل من المستخدم).`,
+          },
+          desc: R`أهم خطوة في الـ dashboard: جدول الـ ٥٧ عضو.
+
+**الحالة في الرابط:** [[parseState(location.search)]] بتقرا [[q]] و [[status]] و [[plan]] و [[sort]] و [[dir]] و [[page]]، وأي قيمة مش معروفة بترجع للافتراضي (الرابط مدخل من اليوزر: [[?sort=password]] مينفعش يوصل للكود). [[toQuery(state)]] بتكتب الرابط **من غير** القيم الافتراضية، فالرابط النضيف [[/]]. وكل تغيير: [[history.pushState]] للفلتر والترتيب والصفحة (Back بيرجّعهم)، و [[replaceState]] للكتابة في البحث (كل حرف مش خطوة في الـ history: اتقاس [[history grew by 0]]). و [[popstate]] بيقرا الرابط تاني ويرسم.
+
+**الرسم دالة:** [[view(rows, state)]] نقية في [[state.js]] (بتتختبر في Node وفي الـ ci): فلتر، وترتيب بـ [[Intl.Collator("ar")]] للأسامي وترتيب منطقي للباقة والحالة (مش أبجدي بالإنجليزي)، و tie-breaker بالـ id، وصفحات، و [[page]] أكبر من الموجود بيتقص لآخر صفحة.
+
+**الجدول:** [[<th>]] فيه [[<button>]] للترتيب و [[aria-sort]] على العمود الحالي، وعناوين [[position: sticky; top: var(--top-h)]] تحت الـ topbar. **وهنا أكبر فخ اتقاس:** لو حطيت [[overflow-x: auto]] على الـ wrapper (الحل المشهور للجداول العريضة)، العنوان بقى عند **[[-75]]** يعني اختفى فوق، لأن الـ sticky بقى بيلزق جوه الـ wrapper. و [[overflow-x: hidden]] على [[body]] كسر الـ topbar نفسه ([[-595]]).
+
+**الحالات:** تحميل (١٠ صفوف skeleton و [[aria-busy="true"]] و «بيحمّل…»)، وخطأ (رسالة فيها كود الـ HTTP وزرار «جرّب تاني» بياخد الفوكس)، وفاضي («مفيش أعضاء بالفلتر ده» وزرار «امسح الفلاتر»). **وتحت 40rem** كل صف كارت بـ [[td::before { content: attr(data-label) }]].
+
+**الـ CLS اللي اتصلّح:** على 390 كان **0.0848**: الـ skeleton كان صفوف قصيرة والكروت الحقيقية أطول، وسهم الترتيب كان بيظهر بعد البيانات فيوسّع العنوان. بعد ما بقى للـ skeleton نفس ارتفاع سطر الكارت والسهم محجوز مكانه بـ [[visibility: hidden]]: صفر.`,
+          example: R`const s = parseState(location.search);
+history.pushState(null, "", toQuery(s) || location.pathname);
+addEventListener("popstate", () => { state = parseState(location.search); syncForm(); render(); });
+.members thead th { position: sticky; top: var(--top-h); z-index: 1; background: var(--surface); }
+.members th button::after { content: "▲" / ""; visibility: hidden; }
+.members td::before { content: attr(data-label); color: var(--muted); }`,
+          lines: [
+            R`الحالة من الرابط: [[location.search]] هو الجزء من [[?]] لآخره، و [[parseState]] بتحوّله object فيه كل القيم، والقيمة الغلط أو الناقصة بتاخد الافتراضي.`,
+            R`الحالة للرابط: [[pushState]] بيغيّر الرابط ويزوّد خطوة في الـ history **من غير** تحميل الصفحة. ولو الحالة كلها افتراضي [[toQuery]] بترجّع [[""]]، فبنكتب [[location.pathname]] عشان [[?]] القديمة تتشال.`,
+            R`Back و Forward: المتصفح بيغيّر الرابط ويبعت [[popstate]]، فبنقرا الحالة تاني ونحط القيم في الفورم ([[syncForm]]) ونرسم. من غير السطر ده Back بيغيّر الرابط بس والجدول مكانه.`,
+            R`العناوين بتفضل ظاهرة وانت نازل: [[top: var(--top-h)]] تحت الـ topbar (64px) مش [[0]] (كانت هتستخبى وراه). وخلفية عشان الصفوف متبانش من تحتها. وأهم شرط: مفيش أب بين الجدول والصفحة عليه [[overflow]] غير [[visible]] (أو [[clip]]).`,
+            R`سهم الترتيب: موجود دايمًا بس مستخبي، فلما يظهر مبيوسّعش العمود (ده كان جزء من الـ CLS). و [[/ ""]] بعد الـ content هو alt text فاضي: من غيره اسم الزرار لقارئ الشاشة كان «الاسم ▲» (اتقاس).`,
+            R`على الموبايل كل خلية بتكتب اسم عمودها قبلها من [[data-label]] اللي [[table.js]] حطه على كل [[<td>]]، فالكارت بيتقري «الحالة: نشط» من غير ما الجدول يتكرر.`,
+          ],
+          try: R`حط الملفات من الشرح وشغّل [[node gen-data.mjs]]. افتح الجدول واعمل فلتر وترتيب وروح صفحة ٣، وانسخ الرابط وافتحه في تاب جديد. دوس Back ٣ مرات وشوف كل مرة إيه اللي رجع. اكتب في البحث «ادم» من غير همزة. افتح [[?delay=2000]] وبعدين [[?fail=1]] وبعدين ابحث عن «zzz». وفي الآخر حط [[.table-wrap { overflow-x: auto }]] في DevTools ونزل تحت.`,
+          flag: R`script`,
+          deep: {
+            why: R`الحالة اللي في الذاكرة بس بتضيع مع أي refresh أو لينك، وده أول حاجة اليوزر بيلاحظها في لوحة أدمن: «بعتلك الرابط بتاع المتجمّدين، فتح على الكل». والرابط ببلاش بيدّيك المشاركة والـ bookmark و Back. والجدول هو أكتر عنصر بيبوظ على الموبايل وبيعمل CLS (الصفوف بتوصل بعد الصفحة) وبيكسر الـ sticky (الـ overflow).`,
+            how: R`الدورة: حدث ← [[update(patch)]] بتدمج التغيير في الحالة ← بتكتب الرابط ([[push]] أو [[replace]]) ← [[render()]] بتنادي [[view(all, state)]] وترسم الصفوف والصفحات و [[aria-sort]] والعدد. والـ popstate بيدخل نفس الدورة من الرابط. البحث بيستنى 250ms من آخر حرف ([[setTimeout]] و [[clearTimeout]] = debounce) فالرسم مش مع كل حرف. والـ sticky: العنصر بيلزق جوه أقرب أب «بيعمل scroll» (أي [[overflow]] غير [[visible]] و [[clip]] بيعمل scroll container حتى لو مبيتسكرولش رأسيًا)، فـ [[overflow-x: auto]] على الـ wrapper بيخلي العنوان يلزق فيه هو، والـ wrapper نفسه بيطلع من الشاشة. [[overflow-x: clip]] بيقص من غير ما يعمل scroll container (اتقاس: 64). والـ skeleton: نفس عدد الصفوف ونفس الارتفاع، فلما البيانات توصل المساحة مبتتغيرش.`,
+            when: R`أي قايمة فيها فلتر أو ترتيب أو صفحات أو بحث: أعضاء، وطلبات، ومنتجات، ولوج. الحالة في الرابط لكل اللي له معنى لحد تاني (فلتر، وصفحة، وترتيب)، و localStorage للحاجات الشخصية (عدد الصفوف في الصفحة، والأعمدة المخفية). والكروت على الموبايل لما الأعمدة ٥ أو أقل؛ لو أكتر، الأحسن scroll أفقي بأول عمود sticky (والـ sticky ساعتها رأسي مش هيشتغل جوه الـ wrapper، فاختار). دروس: «table»، و «جدول responsive»، و «ترتيب وصفحات في الـ URL»، و «sticky و fixed».`,
+            mistakes: R`[[overflow-x: auto]] على wrapper الجدول وتستغرب ليه الـ sticky بطّل (اتقاس: [[-75]]). [[overflow-x: hidden]] على [[html, body]] عشان «تخبّي» scroll أفقي (اتقاس: الـ topbar نفسه بقى [[-595]]). [[pushState]] مع كل حرف بحث (Back بيمسح حرف حرف). تنسى [[popstate]]. تثق في الرابط ([[?page=-3]] أو [[?sort=__proto__]]). ترتب الباقة أبجدي بالإنجليزي ([[monthly]] قبل [[pass10]] قبل [[quarterly]]). skeleton مقاسه مختلف عن الصف (CLS 0.0848). تخلط [[١٠ زيارات]] و [[10]] في نفس اللوحة (حصل، وبقى لاتيني كله). رسالة خطأ من غير زرار ومن غير فوكس. تحط [[display: block]] على الجدول وتفترض إن كل المتصفحات بتسيب الـ roles (Chrome 156 سابها، و Safari كان بيشيلها، من الوثائق).`,
+          },
+          teach: R`## الخطوة ٥: جدول الأعضاء
+
+### البيانات
+
+~~~javascript gen-data.mjs
+// invented members and classes for the climbing gym; same seed = same data every run
+import fs from "node:fs";
+let seed = 42;
+const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+const pick = a => a[Math.floor(rnd() * a.length)];
+const first = ["مريم", "يوسف", "سلمى", "عمر", "هنا", "كريم", "ليلى", "آدم", "نور", "زياد", "فرح", "مالك", "جنى", "سيف", "رنا", "تامر"];
+const last = ["الشاذلي", "منصور", "عبد الحميد", "رشدي", "الجمّال", "سالم", "فهمي", "النجار", "شوقي", "البنا"];
+const plans = ["monthly", "quarterly", "yearly", "pass10"];
+const day = n => new Date(Date.UTC(2026, 9, 31) - n * 864e5).toISOString().slice(0, 10);
+const members = Array.from({ length: 57 }, (_, i) => {
+  const status = rnd() < 0.72 ? "active" : rnd() < 0.5 ? "frozen" : "expired";
+  return { id: 1001 + i, name: pick(first) + " " + pick(last), plan: pick(plans), status,
+    joined: day(30 + Math.floor(rnd() * 700)), lastVisit: day(Math.floor(rnd() * (status === "active" ? 9 : 90))), visits: status === "active" ? 2 + Math.floor(rnd() * 20) : Math.floor(rnd() * 3) };
+});
+const titles = [["بولدرينج للمبتدئين", "رحاب"], ["تسلّق بالحبل", "شادي"], ["قوة الأصابع", "رحاب"], ["مرونة ويوجا", "دينا"], ["أطفال 8–12", "شادي"], ["تقنية متقدمة", "مهاب"]];
+const classes = [];
+let id = 1;
+for (let d = 0; d < 7; d++) {
+  if (d === 6) continue;                                   // Friday: open climbing only, no classes
+  const slots = [["07:00", "08:00"], ["17:00", "18:30"], ["19:00", "20:00"], ["20:30", "22:00"]];
+  for (const [s, e] of slots) if (rnd() < 0.7) { const [t, c] = pick(titles); const spots = 8 + Math.floor(rnd() * 8); classes.push({ id: id++, title: t, coach: c, day: d, start: s, end: e, spots, booked: Math.floor(rnd() * (spots + 1)) }); }
+}
+const checkins = Array.from({ length: 14 }, () => 40 + Math.floor(rnd() * 45));
+fs.writeFileSync("dashboard/data/members.json", JSON.stringify(members, null, 1));
+fs.writeFileSync("dashboard/data/classes.json", JSON.stringify(classes, null, 1));
+fs.writeFileSync("dashboard/data/kpi.json", JSON.stringify({ active: members.filter(m => m.status === "active").length, checkins, revenue: 186400, revenuePrev: 171250, renewal: 78 }, null, 1));
+console.log(members.length, "members,", classes.length, "classes, check-ins:", checkins.join(" "));
+console.log("status:", ["active", "frozen", "expired"].map(s => s + "=" + members.filter(m => m.status === s).length).join(" "));
+~~~
+
+~~~text اتشغّل فعلًا
+57 members, 15 classes, check-ins: 59 77 60 73 74 51 81 77 74 64 68 63 79 73
+status: active=44 frozen=5 expired=8
+~~~
+
+- [[rnd]]: مولّد أرقام عشوائية بـ seed ثابت (LCG: [[seed * 1103515245 + 12345]] باقي القسمة على [[2^31]]). [[Math.random()]] كان هيطلّع بيانات مختلفة كل مرة، فالأرقام اللي في الدرس متتكررش عندك.
+- [[day(n)]]: تاريخ من [[2026-10-31]] لورا [[n]] يوم بـ UTC، و [[toISOString().slice(0, 10)]] = [[YYYY-MM-DD]].
+- العضو النشط آخر زيارة ليه في آخر ٩ أيام، والمتجمّد والمنتهي لحد ٩٠ يوم: البيانات «منطقية» عشان الترتيب يبان صح.
+- اليوم ٦ (الجمعة) مفيش حصص: تسلّق حر بس.
+
+### الحالة: دوال نقية
+
+~~~javascript dashboard/js/state.js
+// table state <-> URL, plus filter/sort/page. No DOM here, so Node can test it.
+export const DEFAULTS = { q: "", status: "all", plan: "all", sort: "name", dir: "asc", page: 1, size: 10 };
+const STATUS = ["active", "frozen", "expired"];
+const PLANS = ["monthly", "quarterly", "yearly", "pass10"];
+const SORTS = ["name", "plan", "status", "lastVisit", "visits"];
+const ORDER = { plan: PLANS, status: STATUS };
+
+export function parseState(search) {
+  const p = new URLSearchParams(search);
+  const s = { ...DEFAULTS };
+  s.q = (p.get("q") || "").trim().slice(0, 50);
+  if (STATUS.includes(p.get("status"))) s.status = p.get("status");
+  if (PLANS.includes(p.get("plan"))) s.plan = p.get("plan");
+  if (SORTS.includes(p.get("sort"))) s.sort = p.get("sort");
+  if (p.get("dir") === "desc") s.dir = "desc";
+  const page = Number.parseInt(p.get("page"), 10);
+  if (page >= 1) s.page = page;
+  return s;
+}
+
+export function toQuery(s) {
+  const p = new URLSearchParams();
+  for (const k of ["q", "status", "plan", "sort", "dir", "page"]) if (s[k] !== DEFAULTS[k] && s[k] !== "") p.set(k, s[k]);
+  const q = p.toString();
+  return q ? "?" + q : "";
+}
+
+// Arabic search: «احمد» should find «أحمد», and «هنا» should find «هنا»/«هناء» typed with ة or ى
+export const norm = t => t.toLowerCase().replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").replace(/[\u064B-\u0652]/g, "");
+const coll = new Intl.Collator("ar");
+
+function compare(k, a, b) {
+  if (ORDER[k]) return ORDER[k].indexOf(a[k]) - ORDER[k].indexOf(b[k]);
+  if (typeof a[k] === "number") return a[k] - b[k];
+  if (k === "name") return coll.compare(a[k], b[k]);
+  return a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0;          // ISO dates sort as text
+}
+
+export function view(rows, s) {
+  const q = norm(s.q);
+  const hit = m => (s.status === "all" || m.status === s.status) && (s.plan === "all" || m.plan === s.plan)
+    && (!q || norm(m.name).includes(q) || String(m.id) === q);
+  const d = s.dir === "desc" ? -1 : 1;
+  const sorted = rows.filter(hit).sort((a, b) => d * compare(s.sort, a, b) || a.id - b.id);
+  const pages = Math.max(1, Math.ceil(sorted.length / s.size));
+  const page = Math.min(s.page, pages);
+  return { total: sorted.length, pages, page, rows: sorted.slice((page - 1) * s.size, page * s.size) };
+}
+~~~
+
+- [[STATUS.includes(p.get("status"))]]: allowlist. أي قيمة مش في اللستة = افتراضي. ده أهم سطر أمان في الملف: الرابط بيكتبه أي حد.
+- [[.trim().slice(0, 50)]]: بحث بحد أقصى 50 حرف ومن غير مسافات في الأطراف.
+- [[Number.parseInt(p.get("page"), 10)]] و [[page >= 1]]: [[parseInt(null)]] = [[NaN]]، و [[NaN >= 1]] = [[false]]، فالافتراضي بيفضل.
+- [[norm]]: [[أ إ آ]] ← [[ا]]، و [[ة]] ← [[ه]]، و [[ى]] ← [[ي]]، ومن غير تشكيل ([[\u064B-\u0652]] = الفتحة لحد السكون). الاتنين (الاسم والبحث) بيتنضّفوا، فـ «ادم» بتلاقي «آدم».
+- [[new Intl.Collator("ar")]]: ترتيب أبجدي عربي صح. [[localeCompare]] بيعمل نفس الحاجة بس بيجهّز الـ collator مع كل مقارنة، فـ MDN بينصح بـ [[Intl.Collator]] لما تقارن نصوص كتير (من الوثائق، مش متقاس هنا).
+- [[ORDER]]: الباقة والحالة بترتيبهم المنطقي (شهري، ٣ شهور، سنوي، ١٠ زيارات) مش بالحروف.
+- [[d * compare(...) || a.id - b.id]]: لو متساويين ([[0]])، الـ id هو اللي بيحسم، فالترتيب ثابت بين كل رسمة والتانية (من غيره صفّين بنفس عدد الزيارات ممكن يبدّلوا مكانهم بين الصفحات).
+- [[Math.min(s.page, pages)]]: [[?page=99]] بيعرض آخر صفحة، و [[table.js]] بيصلّح الرابط بـ [[replaceState]].
+
+~~~text node: نفس الدوال على الـ 57 عضو
+{ q: '', status: 'frozen', plan: 'all', sort: 'visits', dir: 'desc', page: 2, size: 10 }
+"" ?q=%D9%85%D8%B1%D9%8A%D9%85
+57 6 1 يوسف الشاذلي:21, مالك النجار:20, مريم الجمّال:20
+6 آدم الشاذلي, آدم عبد الحميد
+1053 1042 1007 1049 1032
+~~~
+
+- السطر الأول من [[?status=frozen&page=2&sort=visits&dir=desc&evil=1]]: [[evil]] اتجاهل.
+- [[?q=مريم]] بيتكتب [[%D9%85...]]: [[URLSearchParams]] بيعمل percent-encoding للعربي (بايتات UTF-8)، والمتصفح بيعرضه عربي في شريط العنوان.
+
+### الجدول
+
+~~~javascript dashboard/js/table.js
+// members table: the URL is the state. Read it, draw, and write it back on every change.
+import { parseState, toQuery, view, DEFAULTS } from "./state.js";
+import { num, shortDate } from "./lib.js";
+
+const PLAN = { monthly: "شهري", quarterly: "3 شهور", yearly: "سنوي", pass10: "10 زيارات" };
+const STATUS = { active: "نشط", frozen: "متجمّد", expired: "منتهي" };
+const COLS = ["الاسم", "الباقة", "الحالة", "آخر زيارة", "زيارات الشهر"];
+const table = document.getElementById("table"), tbody = document.getElementById("rows");
+const form = document.getElementById("filters"), pager = document.getElementById("pager"), count = document.getElementById("count");
+let all = [], state = parseState(location.search);
+
+const lab = new URLSearchParams(location.search);          // lab only: ?delay=1500 slows the data, ?fail=1 breaks the first try
+let labDelay = lab.get("delay"), labFail = lab.get("fail") === "1";
+
+function td(text, label, cls) {
+  const c = document.createElement("td");
+  c.dataset.label = label;
+  if (cls) c.className = cls;
+  if (text instanceof Node) c.append(text); else c.textContent = text;
+  return c;
+}
+
+function stateRow(kind, text, button) {
+  const tr = document.createElement("tr"), c = document.createElement("td");
+  tr.className = "state-row " + kind;
+  c.colSpan = COLS.length;
+  c.append(text);
+  if (button) { c.append(" "); c.append(button); }
+  tr.append(c);
+  tbody.replaceChildren(tr);
+}
+
+export function skeleton(n = DEFAULTS.size) {
+  table.setAttribute("aria-busy", "true");
+  tbody.replaceChildren(...Array.from({ length: n }, () => {
+    const tr = document.createElement("tr");
+    tr.className = "skel";
+    tr.innerHTML = "<td><span></span></td>".repeat(COLS.length);
+    return tr;
+  }));
+}
+
+function render() {
+  const v = view(all, state);
+  if (v.page !== state.page) { state.page = v.page; history.replaceState(null, "", toQuery(state) || location.pathname); }
+  table.setAttribute("aria-busy", "false");
+  for (const th of table.querySelectorAll("th[data-sort]")) {
+    if (th.dataset.sort === state.sort) th.setAttribute("aria-sort", state.dir === "asc" ? "ascending" : "descending");
+    else th.removeAttribute("aria-sort");
+  }
+  count.textContent = v.total ? $__bt$__{num.format(v.total)} عضو، صفحة $__{num.format(v.page)} من $__{num.format(v.pages)}$__bt : "مفيش نتايج";
+  if (!v.total) {
+    const clear = document.createElement("button");
+    clear.type = "button"; clear.className = "btn ghost"; clear.textContent = "امسح الفلاتر";
+    clear.onclick = () => form.reset();
+    stateRow("empty", "مفيش أعضاء بالفلتر ده.", clear);
+  } else {
+    tbody.replaceChildren(...v.rows.map(m => {
+      const tr = document.createElement("tr");
+      const b = document.createElement("span");
+      b.className = "badge " + m.status; b.textContent = STATUS[m.status];
+      tr.append(td(m.name, COLS[0]), td(PLAN[m.plan], COLS[1]), td(b, COLS[2]),
+        td(shortDate.format(new Date(m.lastVisit)), COLS[3]), td(num.format(m.visits), COLS[4], "num"));
+      return tr;
+    }));
+  }
+  pager.replaceChildren();
+  const btn = (label, page, extra = {}) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label; b.dataset.page = page;
+    Object.assign(b, extra);
+    if (page === v.page && !extra.ariaLabel) b.setAttribute("aria-current", "page");
+    pager.append(b);
+  };
+  btn("‹", v.page - 1, { ariaLabel: "الصفحة اللي فاتت", disabled: v.page === 1 });
+  for (let p = 1; p <= v.pages; p++) btn(num.format(p), p);
+  btn("›", v.page + 1, { ariaLabel: "الصفحة الجاية", disabled: v.page === v.pages });
+}
+
+function update(patch, mode = "push") {
+  state = { ...state, ...patch };
+  const url = toQuery(state) || location.pathname;
+  if (mode === "push") history.pushState(null, "", url); else history.replaceState(null, "", url);
+  render();
+}
+
+function syncForm() {
+  form.q.value = state.q; form.status.value = state.status; form.plan.value = state.plan;
+}
+
+let timer;
+form.addEventListener("input", e => {
+  clearTimeout(timer);
+  const patch = { [e.target.name]: e.target.value, page: 1 };
+  if (e.target.name === "q") timer = setTimeout(() => update({ ...patch, q: e.target.value.trim() }, "replace"), 250);
+  else update(patch, "push");
+});
+form.addEventListener("reset", () => setTimeout(() => update({ q: "", status: "all", plan: "all", page: 1 }, "push")));
+form.addEventListener("submit", e => e.preventDefault());
+table.querySelector("thead").addEventListener("click", e => {
+  const th = e.target.closest("th[data-sort]");
+  if (!th) return;
+  const k = th.dataset.sort;
+  update({ sort: k, dir: state.sort === k && state.dir === "asc" ? "desc" : "asc", page: 1 });
+});
+pager.addEventListener("click", e => {
+  const b = e.target.closest("button[data-page]");
+  if (!b || b.disabled) return;
+  update({ page: Number(b.dataset.page) });
+  document.getElementById("mem-h").scrollIntoView({ block: "start" });
+});
+addEventListener("popstate", () => { state = parseState(location.search); syncForm(); render(); });
+
+export async function loadMembers() {
+  syncForm();
+  skeleton();
+  count.textContent = "بيحمّل…";
+  try {
+    const q = labDelay ? "?delay=" + labDelay + (labFail ? "&fail=1" : "") : labFail ? "?fail=1" : "";
+    const res = await fetch("data/members.json" + q);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    all = await res.json();
+    render();
+    return all;
+  } catch (err) {
+    labFail = false; labDelay = null;
+    table.setAttribute("aria-busy", "false");
+    count.textContent = "حصل خطأ في التحميل";
+    const retry = document.createElement("button");
+    retry.type = "button"; retry.className = "btn"; retry.textContent = "جرّب تاني";
+    retry.onclick = () => loadMembers();
+    stateRow("error", "مقدرناش نجيب الأعضاء (" + err.message + ").", retry);
+    retry.focus();
+    return [];
+  }
+}
+
+export function addMember(m) { all.push(m); render(); }
+export const nextId = () => Math.max(1000, ...all.map(m => m.id)) + 1;
+~~~
+
+- [[td(text, label, cls)]]: كل خلية عليها [[data-label]] باسم العمود (للكروت على الموبايل). و [[textContent]] مش [[innerHTML]] لأي بيانات: اسم عضو فيه [[<img onerror>]] هيتعرض نص.
+- [[skeleton()]]: [[innerHTML]] هنا بس لأنه نص ثابت مننا مش بيانات. و [[aria-busy="true"]] على الجدول: قارئ الشاشة بيستنى.
+- [[render()]]: لو [[view]] قصّ الصفحة، الرابط بيتصلّح بـ [[replaceState]] (مش push: ده تصليح مش فعل). و [[aria-sort]] على عمود واحد بس.
+- العدد في [[<p id="count" aria-live="polite">]]: «57 عضو، صفحة 1 من 6» بيتقري بعد كل فلتر.
+- [[stateRow("empty", ...)]] و [[stateRow("error", ...)]]: صف واحد بـ [[colSpan]] = عدد الأعمدة.
+- [[btn(label, page, extra)]]: أزرار الصفحات، و [[aria-current="page"]] على الحالية، والسهمين ليهم [[aria-label]] («الصفحة اللي فاتت») لأن [[‹]] لوحده ملوش اسم.
+- [[form.addEventListener("input", ...)]]: الـ select بيعمل [[push]] على طول، والبحث [[replace]] بعد 250ms.
+- [[reset]] بـ [[setTimeout]]: الحدث بيحصل **قبل** ما الفورم يفضى، فبنستنى لفة.
+- [[scrollIntoView]] بعد تغيير الصفحة: اليوزر بيرجع لأول الجدول مش يفضل تحت.
+- [[catch]]: الرسالة فيها السبب ([[HTTP 500]])، والزرار بياخد الفوكس (فاليوزر بالكيبورد يدوس Enter على طول)، و [[count]] بيقول «حصل خطأ في التحميل» عشان يتقري.
+- [[lab]] و [[labFail]]: للمعمل بس، بيعدّوا [[?delay]] و [[?fail]] لطلب البيانات أول مرة. احذفهم في نسخة حقيقية.
+
+### الـ CSS بتاع الجدول
+
+~~~css dashboard/css/app.css (السطور 92–120)
+/* ---------- filters + table ---------- */
+.filters { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem 1rem; margin-block-end: 0.75rem; }
+.filters label { display: grid; gap: 0.25rem; color: var(--muted); font-size: 0.9rem; }
+input, select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-height: 44px; padding: 0.3rem 0.6rem; }
+.count { margin: 0 0 0.5rem; color: var(--muted); min-height: 1.6em; }
+.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.members { width: 100%; border-collapse: collapse; }
+.members th, .members td { padding: 0 0.9rem; height: 3rem; text-align: start; border-block-end: 1px solid var(--line); white-space: nowrap; }
+.members thead th { position: sticky; top: var(--top-h); z-index: 1; background: var(--surface); box-shadow: 0 1px 0 var(--line); }
+.members th button { all: unset; cursor: pointer; font-weight: 600; display: inline-flex; gap: 0.3rem; align-items: center; min-height: 44px; }
+.members th button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+.members th button::after { content: "▲" / ""; font-size: 0.7em; color: var(--brand); visibility: hidden; }   /* the space is there before sorting, so nothing moves */
+.members th[aria-sort] button::after { visibility: visible; }
+.members th[aria-sort="descending"] button::after { content: "▼" / ""; }
+.members td.num { font-variant-numeric: tabular-nums; }
+.members tbody tr:last-child td { border-block-end: 0; }
+.badge { display: inline-block; padding: 0.05rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+.badge.active { background: var(--ok-soft); color: var(--ok); }
+.badge.frozen { background: var(--warn-soft); color: var(--warn); }
+.badge.expired { background: var(--bad-soft); color: var(--bad); }
+.skel span { display: block; height: 0.9em; border-radius: 6px; background: linear-gradient(90deg, var(--skel) 25%, var(--skel-hi) 50%, var(--skel) 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.state-row td { height: auto; padding: 2rem 1rem; text-align: center; white-space: normal; }
+.state-row.error td { color: var(--bad); }
+.pager { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-start: 0.75rem; }
+.pager button { min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; font-variant-numeric: tabular-nums; }
+.pager button[aria-current="page"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.pager button:disabled { opacity: 0.5; cursor: default; }
+
+~~~
+
+~~~css dashboard/css/app.css (السطور 164–182): تحت 40rem
+/* ---------- under 40rem: rows become cards ---------- */
+@media (max-width: 40rem) {
+  .topbar { padding-inline: 0.75rem; gap: 0.5rem; }
+  .topbar h1 { font-size: 1rem; }
+  main { padding: 0.75rem; }
+  .filters label, .filters input, .filters select { width: 100%; }
+  .table-wrap { background: none; border: 0; }
+  .members thead tr { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 0.75rem; }
+  .members thead th { position: static; height: auto; padding: 0 0.6rem; border: 1px solid var(--line); border-radius: 999px; box-shadow: none; }
+  .members tbody, .members tr, .members td { display: block; }
+  .members tbody tr { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 0.5rem 0.9rem; margin-block-end: 0.75rem; }
+  .members td { height: auto; padding: 0.3rem 0; border: 0; display: grid; grid-template-columns: 7.5rem 1fr; white-space: normal; }
+  .members td::before { content: attr(data-label); color: var(--muted); }
+  .members td > .badge { justify-self: start; }   /* a grid item stretches by default */
+  .members .state-row td, .members .skel td { display: block; }
+  .members .skel td::before, .members .state-row td::before { content: none; }
+  .members .skel td { height: calc(1.6em + 0.6rem); display: flex; align-items: center; }   /* same height as a real card line */
+}
+
+~~~
+
+- [[.members th button { all: unset; ... }]]: الزرار شكله نص العنوان، بس لسه زرار (Tab و Enter و Space). و [[all: unset]] شال الإطار كمان، فبنرجّعه بـ [[:focus-visible]].
+- [[height: 3rem]] على كل خلية و [[white-space: nowrap]]: كل الصفوف نفس الارتفاع (الـ skeleton كمان).
+- [[.badge.active]] لونها [[--ok]] على [[--ok-soft]]: الحالة بلون **ونص** («نشط»)، مش لون بس.
+- الـ shimmer: gradient عرضه 200% بيتحرك بـ [[background-position]] (مش [[transform]]، بس على مستطيلات صغيرة مبيفرقش).
+- تحت 40rem: [[thead tr]] بقى أزرار ترتيب جنب بعض (لسه شغالين)، والصف [[display: block]] بحدود كارت، والخلية grid عمودين: الاسم والقيمة. و [[.badge { justify-self: start }]] لأن عنصر الـ grid بيتمد بعرض العمود (في اللقطة الأولى «نشط» كانت شريط أخضر بعرض الكارت).
+- [[.skel td { height: calc(1.6em + 0.6rem) }]] تحت 40rem: نفس ارتفاع سطر الكارت الحقيقي.
+
+### اتشغّل فعلًا
+
+~~~text node check-dashboard.mjs
+count: 57 عضو، صفحة 1 من 6
+after status=frozen: /?status=frozen | 5 عضو، صفحة 1 من 1
+after sort visits twice: /?status=frozen&sort=visits&dir=desc | aria-sort: descending
+after Back: /?status=frozen&sort=visits | aria-sort: ascending
+open ?page=4&sort=lastVisit&dir=desc: 57 عضو، صفحة 4 من 6 | first row: سيف منصور
+open ?page=99 -> /?page=6 | 57 عضو، صفحة 6 من 6
+search ادم: /?q=ادم | rows: آدم الشاذلي, آدم عبد الحميد | history grew by 0
+empty state: مفيش أعضاء بالفلتر ده. امسح الفلاتر
+after clear: / | 57 عضو، صفحة 1 من 6
+while loading: 10 skeleton rows, aria-busy = true | count: بيحمّل…
+error: مقدرناش نجيب الأعضاء (HTTP 500). جرّب تاني | focus on: جرّب تاني
+after retry: 57 عضو، صفحة 1 من 6
+~~~
+
+---
+
+## الغلطات اللي حصلت في الخطوة دي
+
+### ١. الـ sticky والـ overflow
+
+~~~javascript sticky.mjs
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ channel: "chrome" });
+for (const [name, extra] of [["shipped", ""], ["wrapper overflow-x: auto", ".table-wrap{overflow-x:auto}"], ["wrapper overflow-x: clip", ".table-wrap{overflow-x:clip}"], ["body overflow-x: hidden", "html,body{overflow-x:hidden}"]]) {
+  const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
+  await p.goto("http://127.0.0.1:5502/"); await p.waitForSelector("#rows tr:not(.skel)");
+  if (extra) await p.addStyleTag({ content: extra });
+  await p.evaluate(() => scrollTo(0, document.getElementById("members").offsetTop + 300));
+  await p.waitForTimeout(150);
+  const r = await p.evaluate(() => [Math.round(document.querySelector(".members thead th").getBoundingClientRect().top), Math.round(document.querySelector(".topbar").getBoundingClientRect().top)]);
+  console.log(name.padEnd(26), "th top:", r[0], "| topbar top:", r[1]);
+  await p.close();
+}
+await b.close();
+~~~
+
+~~~text
+shipped                    th top: 64 | topbar top: 0
+wrapper overflow-x: auto   th top: -75 | topbar top: 0
+wrapper overflow-x: clip   th top: 64 | topbar top: 0
+body overflow-x: hidden    th top: -139 | topbar top: -595
+~~~
+
+الصفحة نازلة لحد 300px بعد أول الجدول. السليم: العنوان عند 64 (تحت الـ topbar بالظبط). مع [[overflow-x: auto]] العنوان بقى بيلزق في الـ wrapper، والـ wrapper نفسه طالع فوق الشاشة. ومع [[body { overflow-x: hidden }]] الـ topbar نفسه طلع (595px فوق)، لأن الـ body بقى scroll container والصفحة بتتسكرول في الـ viewport مش فيه. [[clip]] بيقص من غير ما يعمل scroll container.
+
+### ٢. CLS 0.0848 على الموبايل
+
+~~~text audit-dashboard.mjs (390، قبل)
+vitals fast data    CLS 0.0848 LCP 244ms hint | moved: schedule,TH
+vitals ?delay=1200  CLS 0.0848 LCP 296ms hint | moved: schedule,TH
+~~~
+
+سببين: الـ skeleton كان ١٠ صفوف بارتفاع [[0.9em]] وتحت 40rem الصف الحقيقي كارت فيه ٥ سطور (فالجدول الأسبوعي اتزق لتحت: [[schedule]])، وسهم الترتيب كان [[content]] بيتحط بعد البيانات فبيوسّع العنوان ([[TH]]). بعد التصليحين: [[CLS 0.0010]] (وده كان النسبة جنب الإيراد، في الدرس اللي فات)، وبعدها صفر.
+
+### ٣. اسم الزرار «الاسم ▲»
+
+~~~text aname.mjs (قبل ← بعد [[content: "▲" / ""]])
+- button "الاسم ▲" ...
+- button "الاسم" | - button "الباقة" | - button "الحالة" | - button "آخر زيارة" | - button "زيارات الشهر"
+arrow still drawn: "▲" / ""
+~~~
+
+الـ [[::after]] جزء من اسم الزرار، فقارئ الشاشة كان بيقول «الاسم، مثلث لفوق، زرار». [[content: "▲" / ""]] (alt text فاضي بعد [[/]]) بيرسم السهم ويشيله من الاسم. والاتجاه نفسه بيتقري من [[aria-sort]] على الـ [[<th>]].
+
+### ٤. الجدول لسه جدول على الموبايل؟
+
+~~~text aria at 390
+- table "الأعضاء": / - rowgroup: / - row "الاسم الباقة الحالة آخر زيارة زيارات الشهر": / - columnheader "الاسم": / - button "الاسم" / - columnheader "الباقة": / - button "الباقة" / ...
+~~~
+
+Chrome 156 ساب الـ roles (table و row و columnheader) حتى مع [[display: block]] على الصفوف. Safari كان تاريخيًا بيشيلها (من الوثائق، متجرّبش هنا): لو لازم تضمنها حط [[role="table"]] و [[role="row"]] و [[role="cell"]] صريحة.
+
+### ٥. نظامين أرقام
+
+في لقطة الموبايل كان مكتوب «١٠ زيارات» و «٣ شهور» جنب «29 أكتوبر» و «8». الأسامي كانت مكتوبة بإيدي أرقام هندي، والأرقام من [[Intl]] لاتيني. بقى كله لاتيني ([[10 زيارات]] و [[3 شهور]] و [[أطفال 8–12]] في البيانات).
+
+### ٦. [[?fail=1]] كسر الصفحة نفسها، و [[type: commonjs]]
+
+الاتنين اتشرحوا في درس الخريطة: الفشل والتأخير بقوا للبيانات بس، و [[npm pkg set type=module]] عشان [[state.js]] يتقري في Node.
+
+---
+
+## الخلاصة
+
+| الحاجة | الطريقة |
+|---|---|
+| الحالة | الرابط: [[parseState]] بـ allowlist، و [[toQuery]] من غير الافتراضي |
+| الـ history | [[pushState]] للأفعال، و [[replaceState]] للكتابة والتصليح، و [[popstate]] بيرسم |
+| الفلترة والترتيب | دالة نقية، و [[Collator("ar")]]، و ترتيب منطقي، و tie-breaker |
+| sticky | مفيش [[overflow]] غير [[visible]]/[[clip]] فوقه، و [[top]] = ارتفاع الـ topbar |
+| الحالات | skeleton بنفس المقاس و [[aria-busy]]، وخطأ بزرار وفوكس، وفاضي بزرار |
+| الموبايل | [[data-label]] و [[td::before]]، وأزرار الترتيب فوق |`,
+          sol: R`الرابط بعد الفلتر والترتيب والصفحة شكله [[?status=frozen&sort=visits&dir=desc]] (ومعاه [[page]] لو مش 1)، وبيفتح على نفس الجدول في تاب جديد. Back مرة بيرجّع اتجاه الترتيب، والتانية الترتيب نفسه، والتالتة الفلتر. «ادم» بيلاقي «آدم الشاذلي» و «آدم عبد الحميد». [[?delay=2000]] بيورّي ١٠ صفوف skeleton، و [[?fail=1]] رسالة فيها [[HTTP 500]] والفوكس على «جرّب تاني»، و «zzz» بيورّي «مفيش أعضاء بالفلتر ده». ومع [[overflow-x: auto]] العناوين بتختفي لما تنزل.`,
+          practice: [
+            {
+              lvl: R`سريع`,
+              t: R`**اقرا وتوقّع:** إيه اللي [[parseState]] هترجّعه لـ [[?status=hacked&page=-3&sort=password&dir=up]]؟ وإيه اللي [[toQuery]] هترجّعه لـ [[?status=all&page=1&q=%20%20]]؟ اكتب قبل ما تشغّل.`,
+              done: R`الأولى رجّعت الافتراضي كله (ولا قيمة عدّت)، والتانية رجّعت [[""]] (كلها افتراضي، والبحث بعد [[trim]] فاضي)، زي سطري الـ ci.`,
+              sol: R`~~~text التوقع
+parseState("?status=hacked&page=-3&sort=password&dir=up")
+  status: hacked مش في STATUS  ← all
+  page:   -3 مش ≥ 1            ← 1
+  sort:   password مش في SORTS ← name
+  dir:    up مش desc           ← asc
+  النتيجة: الافتراضي كله.
+
+toQuery(parseState("?status=all&page=1&q=%20%20"))
+  q بعد trim فاضي، و all و 1 هم الافتراضي، فمفيش حاجة تتكتب
+  النتيجة: ""
+~~~
+
+[[parseState]] allowlist: أي قيمة مش في اللستة المسموحة بتتجاهل. الرابط ممكن حد يعدّله بإيده، فالكود لازم ميثقش فيه. يعني [[sort=password]] مش هتوصل لعمود مش موجود، و [[page=-3]] مش هتعمل [[slice]] غريب.
+
+[[toQuery]] بتكتب بس اللي مختلف عن الافتراضي، فالرابط النضيف يفضل نضيف: [[/]] مش [[?status=all&page=1]].
+
+الغلطة الشائعة: تكتب [[Number(p.get("page")) || 1]] من غير حد أدنى، فـ [[-3]] تعدّي. الـ [[>= 1]] هو الحارس.
+
+~~~text الناتج (state.js في Node 24)
+parseState: {"q":"","status":"all","plan":"all","sort":"name","dir":"asc","page":1,"size":10}
+toQuery: ""
+~~~` },
+            {
+              lvl: R`سريع`,
+              t: R`**اشرحها:** اكتب لزميل في ٣ سطور إمتى [[pushState]] وإمتى [[replaceState]] في الجدول ده، وإيه اللي هيحصل لزرار Back لو كل حرف في البحث بقى [[pushState]].`,
+              done: R`الشرح بيقول push للأفعال اللي اليوزر ممكن يرجع منها (فلتر، وترتيب، وصفحة)، و replace للكتابة ولتصليح [[?page=99]]، وإن Back مع push لكل حرف هيمسح حرف حرف بدل ما يرجع للفلتر اللي قبله.`,
+              sol: R`~~~text رسالة لزميل
+push للأفعال اللي اليوزر ممكن يرجع منها: فلتر، أو ترتيب، أو صفحة.
+replace للكتابة في البحث، ولتصليح رابط زي ?page=99 لآخر صفحة موجودة.
+لو كل حرف بقى push، زرار Back هيمسح حرف حرف بدل ما يرجع للفلتر اللي قبله.
+~~~
+
+[[pushState]] بيزوّد سطر في تاريخ المتصفح، و [[replaceState]] بيبدّل السطر الحالي. السؤال اللي بيحدد: «لو داس Back، هل دي خطوة كان عايز يرجع لها؟» فلتر آه، حرف في كلمة لأ.
+
+في [[table.js]] [[update(patch, "replace")]] للبحث، والـ debounce بتاع 250ms بيقلل الكتابة أصلًا. و [[render]] بتصلّح [[?page=99]] بـ [[replaceState]]، عشان الرابط الغلط ميتحفظش في التاريخ، و Back يرجع لمكان معقول.
+
+الغلطة الشائعة: [[push]] في كل حاجة، فـ Back يبقى ١٠ ضغطات عشان يخرج من الصفحة.
+
+~~~text الناتج (Chrome 156 على الداشبورد: history.length)
+البداية:                       2
+اختيار فلتر الحالة:            3
+كتابة 5 حروف في البحث:         3
+Back بيرجع لـ:                 (رابط نضيف)
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**صلّح الكود البايظ:** [[rows.sort((a, b) => a.visits - b.visits)]] جوه [[view]] من غير [[slice]] أو [[filter]] قبلها، ومن غير tie-breaker. ابني حالة بتبيّن المشكلتين (تلميح: اترتّب مرتين بعمودين مختلفين، وصفّين بنفس الزيارات على حدود صفحتين).`,
+              done: R`بيّنت إن [[sort]] بيغيّر المصفوفة الأصلية ([[all]] نفسها اتغير ترتيبها)، وإن صفّين بـ 8 زيارات ممكن يتبادلوا بين صفحة ١ و ٢، وبعد [[filter]] (نسخة جديدة) و [[|| a.id - b.id]] الاتنين اتحلّوا واختبار بيأكد.`,
+              sol: R`~~~js sort-bug.mjs
+const all = [
+  { id: 1, name: "منى", visits: 8 },
+  { id: 2, name: "علي", visits: 8 },
+  { id: 3, name: "هدى", visits: 3 },
+  { id: 4, name: "سامي", visits: 8 },
+];
+const ids = (r) => r.map((m) => m.id).join(" ");
+
+// النسخة البايظة
+const bad = (rows, k) => rows.sort((a, b) => a[k] - b[k]);
+console.log("قبل:", ids(all));
+bad(all, "visits");
+console.log("all نفسها بعد sort:", ids(all));
+
+// النسخة السليمة
+const good = (rows, k, dir = 1) => rows.filter(() => true).sort((a, b) => dir * (a[k] - b[k]) || a.id - b.id);
+const noTie = (rows, k) => rows.filter(() => true).sort((a, b) => a[k] - b[k]);
+const list = [...all].reverse();
+const page = (r, n) => ids(r.slice((n - 1) * 2, n * 2));
+console.log("من غير tie-breaker، ترتيب ١: صفحة ١:", page(noTie(all, "visits"), 1), " صفحة ٢:", page(noTie(all, "visits"), 2));
+console.log("من غير tie-breaker، ترتيب ٢: صفحة ١:", page(noTie(list, "visits"), 1), " صفحة ٢:", page(noTie(list, "visits"), 2));
+console.log("بالـ tie-breaker، ترتيب ١: صفحة ١:", page(good(all, "visits"), 1), " صفحة ٢:", page(good(all, "visits"), 2));
+console.log("بالـ tie-breaker، ترتيب ٢: صفحة ١:", page(good(list, "visits"), 1), " صفحة ٢:", page(good(list, "visits"), 2));
+~~~
+
+المشكلتين:
+
+1. **[[sort]] بيغيّر المصفوفة نفسها.** مش بيرجّع نسخة. فلو [[all]] اتمررت مباشرة، ترتيب البيانات الأصلية بيتغير، وأي حساب بعده بيشتغل على ترتيب غلط. [[filter]] بيرجّع مصفوفة جديدة، فالـ [[sort]] بيقع عليها. وفيه [[toSorted()]] لو عايز من غير [[filter]].
+2. **من غير tie-breaker الصفوف المتساوية ترتيبها بيعتمد على الترتيب اللي قبلها.** صفّين بـ 8 زيارات على حد الصفحة ممكن يتبادلوا لو اترتبوا بعمود تاني الأول، فيتكرر صف في صفحتين، وصف ميظهرش.
+
+[[|| a.id - b.id]] معناها: لو النتيجة صفر (متساويين)، رتّب بالـ id، فالترتيب ثابت دايمًا. وبعد [[dir *]] الـ id بيفضل تصاعدي عمدًا.
+
+الغلطة الشائعة: تفتكر إن [[sort]] المستقر (stable) يكفي. الاستقرار بيحافظ على الترتيب اللي قبله، وده اللي بيتغير.
+
+~~~text الناتج (Node 24)
+قبل: 1 2 3 4
+all نفسها بعد sort: 3 1 2 4
+من غير tie-breaker، ترتيب ١: صفحة ١: 3 1  صفحة ٢: 2 4
+من غير tie-breaker، ترتيب ٢: صفحة ١: 3 4  صفحة ٢: 2 1
+بالـ tie-breaker، ترتيب ١: صفحة ١: 3 1  صفحة ٢: 2 4
+بالـ tie-breaker، ترتيب ٢: صفحة ١: 3 1  صفحة ٢: 2 4
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**ابني:** زرار «نزّل CSV» بيصدّر كل الصفوف اللي بتطابق الفلتر (مش الصفحة بس) بـ [[view(all, { ...state, page: 1, size: Infinity })]]، وفيه [[\uFEFF]] في الأول عشان Excel يقرا العربي، والخلية اللي فيها فاصلة أو علامة تنصيص بتتحط بين [[""]].`,
+              done: R`مع [[?status=frozen]] الملف ٦ سطور (عناوين و ٥)، و Excel بيفتح العربي سليم، واسم فيه [[,]] متقسمش لعمودين، واسم الملف فيه الفلتر.`,
+              sol: R`~~~live 120 120 dashboard/index.html (جنب #add)
+<button class="btn ghost" id="csv" type="button">نزّل CSV</button>
+~~~
+
+~~~js dashboard/js/table.js (آخر الملف)
+const cell = (v) => {
+  const s = String(v);
+  return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+};
+
+document.getElementById("csv").addEventListener("click", () => {
+  const { rows } = view(all, { ...state, page: 1, size: Infinity });
+  const lines = [COLS.join(",")];
+  for (const m of rows) lines.push([m.name, PLAN[m.plan], STATUS[m.status], m.lastVisit, m.visits].map(cell).join(","));
+  const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = $__btmembers-$__{state.status}.csv$__bt;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+~~~
+
+- [[{ ...state, page: 1, size: Infinity }]]: نفس فلتر الشاشة، بس من غير قص لصفحة.  [[view]] دالة نقية، فمش محتاجين نكتب الفلترة تاني.
+- [[\uFEFF]] في أول الملف (BOM): بيقول لـ Excel إن الملف UTF-8، ومن غيره العربي بيطلع رموز.
+- [[cell()]]: الخلية اللي فيها فاصلة أو علامة تنصيص أو سطر جديد بتتحط بين [[""]]، والعلامة جواها بتتكرر. وإلا اسم فيه [[,]] هيتقسم لعمودين.
+- [[Blob]] و [[createObjectURL]]: ملف في الذاكرة من غير سيرفر، و [[a.download]] بيحدد الاسم.
+
+الغلطة الشائعة: تصدّر [[v.rows]] بتوع الصفحة الحالية، فالمستخدم بياخد ١٠ صفوف من غير ما يعرف. وخلايا بتبدأ بـ [[=]] Excel بيعتبرها معادلة، ولو البيانات من مستخدمين برا خليها نص.
+
+Excel نفسه مش متجرّب هنا، و BOM و الاقتباس اتأكدوا من الملف نفسه.
+
+~~~text الناتج (Chrome 156، ‏?status=frozen، واسم فيه فاصلة)
+اسم الملف: members-frozen.csv
+عدد السطور: 6
+أول bytes: efbbbf
+أول سطر: الاسم,الباقة,الحالة,آخر زيارة,زيارات الشهر
+السطر اللي فيه فاصلة: سالم، الجزار,10 زيارات,متجمّد,2026-08-16,0
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**اكتب اختبار:** باستخدام [[node:test]] و [[node:assert]] اكتب ٦ اختبارات لـ [[state.js]]: allowlist، والرابط النضيف، والبحث العربي، والـ tie-breaker، وقص الصفحة، و round trip ([[parseState(toQuery(s))]] = [[s]]).`,
+              done: R`[[node --test]] بيطلّع [[# pass 6]]، ولو بوّظت [[norm]] (شيلت سطر الهمزة) اختبار البحث بيفشل بالاسم، والـ round trip مكتوب على ٣ حالات مختلفة على الأقل.`,
+              sol: R`~~~js dashboard/state.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { parseState, toQuery, view, DEFAULTS } from "./js/state.js";
+
+const m = (id, name, visits = 1) => ({ id, name, plan: "monthly", status: "active", lastVisit: "2026-10-01", visits });
+
+test("allowlist: القيم الغريبة بترجع للافتراضي", () => {
+  assert.deepEqual(parseState("?status=hacked&page=-3&sort=password&dir=up"), DEFAULTS);
+});
+test("الرابط النضيف: الافتراضي مبيتكتبش", () => {
+  assert.equal(toQuery(DEFAULTS), "");
+  assert.equal(toQuery({ ...DEFAULTS, status: "frozen" }), "?status=frozen");
+});
+test("البحث العربي: احمد بيلاقي أحمد، وهنا بيلاقي هنة", () => {
+  const rows = [m(1, "أحمد"), m(2, "هنة"), m(3, "علي")];
+  assert.equal(view(rows, { ...DEFAULTS, q: "احمد" }).total, 1);
+  assert.equal(view(rows, { ...DEFAULTS, q: "هنه" }).total, 1);
+});
+test("tie-breaker: المتساويين مترتبين بالـ id", () => {
+  const rows = [m(3, "ج", 8), m(1, "أ", 8), m(2, "ب", 8)];
+  const r = view(rows, { ...DEFAULTS, sort: "visits", dir: "desc" }).rows.map((x) => x.id);
+  assert.deepEqual(r, [1, 2, 3]);
+});
+test("قص الصفحة: ?page=99 بيرجع لآخر صفحة", () => {
+  const rows = Array.from({ length: 25 }, (_, i) => m(i + 1, "اسم" + i));
+  const v = view(rows, { ...DEFAULTS, page: 99 });
+  assert.equal(v.page, 3);
+  assert.equal(v.rows.length, 5);
+});
+test("round trip على ٣ حالات", () => {
+  for (const s of [DEFAULTS, { ...DEFAULTS, status: "frozen", page: 2 }, { ...DEFAULTS, q: "منى", sort: "visits", dir: "desc" }]) {
+    assert.deepEqual(parseState(toQuery(s)), s);
+  }
+});
+~~~
+
+٦ اختبارات، واحد لكل وعد في [[state.js]]. لأن الملف نقي، مفيش متصفح، وبتخلص في أقل من ثانية.
+
+- [[deepEqual]] بيقارن كل الحقول، فأي مفتاح زيادة يقع.
+- [[m()]] دالة صغيرة بتعمل صف، فالاختبار بيقول اللي يهمه بس.
+- round trip: [[parseState(toQuery(s))]] لازم يرجّع [[s]]. ده بيمسك أي حقل نسيته في [[toQuery]] مرة واحدة.
+
+والمهم تكسر الكود: شيل سطر الهمزة من [[norm]]، واختبار البحث لازم يقع بالاسم.
+
+الغلطة الشائعة: تختبر حالة واحدة في الـ round trip، وهي الافتراضي. ده بيعدّي حتى لو الدالة مش بتكتب حاجة.
+
+~~~text الناتج (node --test)
+النسخة السليمة: # pass 6، # fail 0
+لما بوظنا norm: # pass 5، # fail 1 (البحث العربي: احمد بيلاقي أحمد، وهنا بيلاقي هنة)
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**قارن وقيس:** اعمل نسخة الموبايل بالطريقة التانية: الجدول زي ما هو جوه wrapper بـ [[overflow-x: auto]] وأول عمود [[position: sticky; inset-inline-start: 0]]. قارن على 360: هل فيه scroll أفقي للصفحة، وهل العناوين الـ sticky شغالة، وعدد الصفوف اللي بتبان في أول شاشة.`,
+              done: R`عندك جدول للطريقتين بالـ ٣ أرقام، وعرفت إن الـ sticky الرأسي اتكسر في نسخة الـ wrapper (زي [[-75]]) والأفقي شغال، وإن الكروت بتعرض صفوف أقل في الشاشة، وكتبت تختار أنهي لـ ٥ أعمدة وأنهي لـ ١٢.`,
+              sol: R`~~~css نسخة الـ wrapper (بدل قواعد الكروت تحت 40rem)
+@media (max-width: 40rem) {
+  .table-wrap { overflow-x: auto; }
+  .members { min-inline-size: 40rem; }
+  .members th:first-child, .members td:first-child {
+    position: sticky; inset-inline-start: 0; background: var(--surface); z-index: 2;
+  }
+}
+~~~
+
+~~~view 230 250 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+:root { --surface: #ffffff; } body { font-family: system-ui, sans-serif; margin: 1rem; } .members { border-collapse: collapse; width: 100%; } th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e2e8f0; text-align: start; white-space: nowrap; }
+</style>
+<style>
+/* من الحل */
+@media (max-width: 40rem) {
+  .table-wrap { overflow-x: auto; }
+  .members { min-inline-size: 40rem; }
+  .members th:first-child, .members td:first-child {
+    position: sticky; inset-inline-start: 0; background: var(--surface); z-index: 2;
+  }
+}
+</style>
+</head>
+<body>
+<p>على «موبايل» (360): الجدول بيعمل scroll جوه الإطار، وأول عمود ثابت.</p>
+<div class="table-wrap"><table class="members"><thead><tr><th>الاسم</th><th>الإيميل</th><th>الباقة</th><th>الحالة</th><th>آخر دخول</th></tr></thead>
+<tbody><tr><td>منى سامي</td><td>mona@example.com</td><td>سنوي</td><td>نشط</td><td>النهارده</td></tr><tr><td>كريم علي</td><td>karim@example.com</td><td>شهري</td><td>متوقف</td><td>من أسبوع</td></tr><tr><td>سلمى حسن</td><td>salma@example.com</td><td>شهري</td><td>نشط</td><td>امبارح</td></tr></tbody></table></div>
+</body>
+</html>
+~~~
+
+الطريقتين بيحلوا نفس المشكلة: ٥ أعمدة مش بتتساع في 360.
+
+- **الكروت:** مفيش scroll أفقي خالص، وكل صف واضح ومقري، بس كل عضو بياخد مساحة كبيرة، فصفوف أقل في الشاشة.
+- **الـ wrapper:** صفوف كتير في الشاشة، والمقارنة بين الصفوف سهلة، والعمود الأول لازق بيعرّفك أنت فين.
+
+الثمن في الـ wrapper: [[overflow-x: auto]] بيعمل scroll container، فالعناوين الـ sticky بقت بتلزق جوه الـ wrapper مش في الشاشة، فبتمشي مع الصفحة. وده بالظبط اللي كسر الجدول قبل كده في الدرس.
+
+القرار: ٥ أعمدة: كروت، المعلومات قليلة وكل عضو لوحده. ١٢ عمود: wrapper، الكروت هتبقى طويلة جدًا، والمقارنة هي الهدف.
+
+الغلطة الشائعة: تفتكر إن [[overflow-x]] بيأثر على المحور الأفقي بس. الـ scroll container بيغيّر مرجع الـ sticky في الاتجاهين.
+
+~~~text الناتج (Chrome 156، عرض 360 × 640، بعد scroll 300 للعناوين)
+                     الكروت      الـ wrapper
+scroll أفقي للصفحة   0          0
+العناوين لازقة؟       مفيش عناوين لازقة (position: static)        لأ (top -86)
+صفوف في أول شاشة     1          8
+العمود الأول لازق؟    -           آه
+~~~` },
+          ],
+          ci: [
+            {
+              os: [
+                R`ubuntu`,
+                R`macos`,
+                R`windows`,
+              ],
+              sh: R`node`,
+              run: R`const DEFAULTS = { q: "", status: "all", plan: "all", sort: "name", dir: "asc", page: 1, size: 2 };
+const STATUS = ["active", "frozen", "expired"], PLANS = ["monthly", "quarterly", "yearly", "pass10"], SORTS = ["name", "plan", "status", "lastVisit", "visits"];
+const ORDER = { plan: PLANS, status: STATUS };
+function parseState(search) {
+  const p = new URLSearchParams(search), s = { ...DEFAULTS };
+  s.q = (p.get("q") || "").trim().slice(0, 50);
+  if (STATUS.includes(p.get("status"))) s.status = p.get("status");
+  if (PLANS.includes(p.get("plan"))) s.plan = p.get("plan");
+  if (SORTS.includes(p.get("sort"))) s.sort = p.get("sort");
+  if (p.get("dir") === "desc") s.dir = "desc";
+  const page = Number.parseInt(p.get("page"), 10);
+  if (page >= 1) s.page = page;
+  return s;
+}
+function toQuery(s) {
+  const p = new URLSearchParams();
+  for (const k of ["q", "status", "plan", "sort", "dir", "page"]) if (s[k] !== DEFAULTS[k] && s[k] !== "") p.set(k, s[k]);
+  const q = p.toString();
+  return q ? "?" + q : "";
+}
+const norm = t => t.toLowerCase().replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").replace(/[\u064B-\u0652]/g, "");
+const coll = new Intl.Collator("ar");
+function compare(k, a, b) {
+  if (ORDER[k]) return ORDER[k].indexOf(a[k]) - ORDER[k].indexOf(b[k]);
+  if (typeof a[k] === "number") return a[k] - b[k];
+  if (k === "name") return coll.compare(a[k], b[k]);
+  return a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0;
+}
+function view(rows, s) {
+  const q = norm(s.q);
+  const hit = m => (s.status === "all" || m.status === s.status) && (s.plan === "all" || m.plan === s.plan) && (!q || norm(m.name).includes(q) || String(m.id) === q);
+  const d = s.dir === "desc" ? -1 : 1;
+  const sorted = rows.filter(hit).sort((a, b) => d * compare(s.sort, a, b) || a.id - b.id);
+  const pages = Math.max(1, Math.ceil(sorted.length / s.size)), page = Math.min(s.page, pages);
+  return { total: sorted.length, pages, page, rows: sorted.slice((page - 1) * s.size, page * s.size) };
+}
+const rows = [
+  { id: 1, name: "آدم سالم", plan: "yearly", status: "active", lastVisit: "2026-10-29", visits: 8 },
+  { id: 2, name: "هنا فهمي", plan: "monthly", status: "frozen", lastVisit: "2026-09-02", visits: 0 },
+  { id: 3, name: "زياد النجار", plan: "monthly", status: "active", lastVisit: "2026-10-31", visits: 15 },
+  { id: 4, name: "سلمى منصور", plan: "pass10", status: "expired", lastVisit: "2026-08-07", visits: 1 },
+  { id: 5, name: "ادم شوقي", plan: "quarterly", status: "active", lastVisit: "2026-10-30", visits: 8 },
+];
+const show = v => v.total + " rows, page " + v.page + "/" + v.pages + ": " + v.rows.map(m => m.id).join(",");
+console.log("parse junk: " + JSON.stringify(parseState("?status=hacked&page=-3&sort=password&dir=up")));
+console.log("defaults -> " + JSON.stringify(toQuery(parseState("?status=all&page=1&q=%20%20"))));
+console.log("visits desc: " + show(view(rows, parseState("?sort=visits&dir=desc"))));
+console.log("search ادم: " + show(view(rows, parseState("?q=ادم"))));
+console.log("page 99: " + show(view(rows, parseState("?page=99"))));
+console.log("plan order: " + show(view(rows, { ...parseState("?sort=plan"), size: 5 })));
+console.log("round trip: " + toQuery(parseState("?dir=desc&sort=visits&status=active&page=2")));`,
+              expect: [
+                R`parse junk: {"q":"","status":"all","plan":"all","sort":"name","dir":"asc","page":1,"size":2}`,
+                R`defaults -> ""`,
+                R`visits desc: 5 rows, page 1/3: 3,1`,
+                R`search ادم: 2 rows, page 1/1: 1,5`,
+                R`page 99: 5 rows, page 3/3: 2`,
+                R`plan order: 5 rows, page 1/1: 2,3,5,1,4`,
+                R`round trip: ?status=active&sort=visits&dir=desc&page=2`,
+              ],
+            },
+          ],
+        },
+        {
+          cmd: R`داشبورد ٣: جدول الحصص و dialog والتنبيهات`,
+          ref: [
+            { t: "MDN: <dialog>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog" },
+            { t: "MDN: HTMLDialogElement.requestClose()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/requestClose" },
+            { t: "MDN: HTMLDialogElement cancel event", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/cancel_event" },
+            { t: "MDN: setCustomValidity()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setCustomValidity" },
+          ],
+          title: R`جدول حصص أسبوعي بـ CSS Grid (اليوم عمود والوقت صفوف) بيتسكرول بالعرض على الموبايل، و <dialog> للإضافة والحجز برسايل تحقق عربي، و toasts بتتقري، و dark mode من غير وميض`,
+          learn: R`تبني جدول مواعيد على grid: كل حصة زرار مكانه من custom properties ([[--col]] و [[--row]] و [[--span]])، وعمود الوقت sticky والأيام بـ scroll-snap؛ و [[<dialog>]] بـ [[showModal()]] و [[method="dialog"]] و [[returnValue]] وقفل بالضغط على الخلفية، ورسايل [[setCustomValidity]] بالعربي؛ و toasts في live region موجودة من الأول؛ وثيم داكن بـ tokens بيتحفظ.`,
+          out: R`[[schedule.js]] و [[ui.js]] و [[app.js]] وآخر جزء في [[app.css]]: ١٥ حصة في مكانها، والحجز بيكتب toast «اتحجز مكان في …»، والـ dialog بيرجّع الفوكس للزرار اللي فتحه، و Esc بيقفل، والضغط على padding الـ dialog مبيقفلوش، والصفحة من غير scroll أفقي من 360 لـ 1440 والجدول هو اللي بيتسكرول.`,
+          use: {
+            prog: R`درس «grid» و «Dialog» و «aria» و «dark mode» و «Constraint Validation API» في شاشة واحدة. والدرس المهم: grid بيحط عناصر في أماكن محسوبة من البيانات من غير [[position: absolute]] ولا حسابات بكسل.`,
+            work: R`جداول المواعيد في كل حتة: حصص جيم، ومواعيد عيادة، وحصص مدرسة، وحجز ملاعب. والـ modal أكتر مكوّن بيتعمل غلط (من غير فوكس ومن غير Esc)، والـ toast أكتر رسالة مش بتتقري لقارئ الشاشة.`,
+            cs: R`تحويل الوقت لإحداثيات (دقائق من بداية اليوم ÷ طول الخانة)، وفحص التداخل بين فترتين ([[a.start < b.end && b.start < a.end]])، والـ top layer: الـ dialog والـ backdrop بيترسموا فوق كل حاجة من غير z-index.`,
+          },
+          desc: R`آخر خطوة بناء في الـ dashboard.
+
+**جدول الحصص:** [[.week]] grid فيه عمود للوقت و ٧ أعمدة للأيام ([[minmax(9rem, 1fr)]])، وصف للعناوين و ٣٠ صف كل واحد نص ساعة (من ٧ الصبح لـ ١٠ بالليل). [[gridRow("17:00", "18:30")]] بترجّع [[{ row: 21, span: 3 }]]، و [[schedule.js]] بيحطهم كـ [[--row]] و [[--span]] على الزرار، والـ CSS: [[grid-row: calc(var(--row) + 1) / span var(--span)]] (اتقاس: [[grid-row-start]] = 22). وكل حصة خلفيتها متملية بنسبة الحجز ([[--fill]]). عمود الوقت [[position: sticky; inset-inline-start: 0]] فبيفضل ظاهر وانت بتسكرول بالعرض.
+
+**الغلطة الكبيرة:** الصفحة كلها كان فيها scroll أفقي في **كل** المقاسات من 360 لـ 1280 ([[scrollWidth 1086]] على 360). الجدول عرضه 67rem، والـ wrapper عليه [[overflow-x: auto]]، بس الـ section اللي حواليه **عنصر grid** في [[main]]، وعنصر الـ grid أقل عرض ليه افتراضيًا = أقل عرض لمحتواه ([[min-width: auto]]). سطر واحد: [[main section { min-width: 0 }]] والـ matrix بقى صفر overflow والجدول بس هو اللي بيتسكرول.
+
+**الـ dialog:** [[showModal()]] بيحط الـ dialog في الـ top layer، ويخلي باقي الصفحة inert، ويحط الفوكس على [[autofocus]]، و Esc بيقفله، ولما يتقفل الفوكس بيرجع للزرار اللي فتحه (اتقاس: [[focus back on: add]]). الفورم جواه [[method="dialog"]]: الزرار اللي اتداس قيمته بتبقى [[dialog.returnValue]] ([[save]] أو [[cancel]] أو [[book]]). **غلطتين اتقاسوا:** الضغط على padding الـ dialog كان بيقفله (الـ padding جزء من [[<dialog>]] نفسه، فكان بيتحسب «backdrop»)، ورسالة الحقل الفاضي كانت **[[Please fill out this field.]]** بالإنجليزي في صفحة عربي (لغة المتصفح مش الصفحة).
+
+**التنبيهات والثيم:** [[<div role="status" aria-live="polite">]] موجود في الصفحة من الأول، و [[toast()]] بيزوّد فيه فقرة وبيشيلها بعد ٤ ثواني. والداكن نفس الـ tokens بقيم تانية، و [[boot.js]] بيطبق الاختيار قبل الرسم.`,
+          example: R`.week { display: grid; grid-template-columns: 4.5rem repeat(7, minmax(9rem, 1fr)); grid-template-rows: 2.5rem repeat(30, 1.75rem); }
+.slot { grid-column: calc(var(--col) + 2); grid-row: calc(var(--row) + 1) / span var(--span); }
+main section { scroll-margin-top: calc(var(--top-h) + 1rem); min-width: 0; }
+dlg.showModal();
+document.addEventListener("click", e => { if (e.target instanceof HTMLDialogElement) e.target.close("cancel"); });
+nameIn.addEventListener("invalid", () => nameIn.setCustomValidity(nameIn.validity.valueMissing ? "اكتب اسم العضو" : "الاسم لازم ٣ حروف على الأقل"));`,
+          lines: [
+            R`الشبكة: عمود 4.5rem للوقت و ٧ أيام كل واحد أقله 9rem، وصف 2.5rem لأسامي الأيام و ٣٠ صف كل واحد 1.75rem (نص ساعة). الساعة = صفين = 3.5rem، ونفس الرقم في الـ gradient اللي بيرسم خطوط الساعات.`,
+            R`مكان كل حصة من البيانات: العمود = رقم اليوم + 2 (عمود الوقت هو 1، والسبت 0 بيبقى 2)، والصف = [[--row]] + 1 (صف العناوين هو 1)، و [[span]] = عدد الخانات. [[calc()]] بيطلع رقم صحيح فـ grid بيقبله.`,
+            R`السطر اللي شال الـ scroll الأفقي من الصفحة كلها: عنصر grid ممكن يصغر عن عرض محتواه. من غيره الـ section بيتمد لعرض الجدول (1086px على موبايل 360).`,
+            R`يفتح الـ dialog modal: فوق كل حاجة، والباقي inert، والفوكس جواه، و Esc بيقفل. [[show()]] من غير Modal بيفتحه عادي من غير أي ده.`,
+            R`قفل بالضغط بره: الضغطة على الخلفية [[::backdrop]] بيبقى [[target]] بتاعها الـ dialog نفسه. شغال صح بس لو الـ dialog ملوش padding (الفورم جواه هو اللي عليه الـ padding)، وإلا الضغط على الحافة الداخلية بيقفل كمان.`,
+            R`رسالة التحقق بالعربي: حدث [[invalid]] بيحصل لما الفورم يتبعت والحقل مش سليم، و [[setCustomValidity]] بيحط النص اللي هيظهر. ولازم [[setCustomValidity("")]] مع كل [[input]] (في [[app.js]])، وإلا الحقل يفضل «غلط» حتى بعد ما يتصلّح.`,
+          ],
+          try: R`حط الملفات من الشرح وافتح الجدول. دوس على حصة واحجز، واسمع الـ toast بقارئ الشاشة (Narrator: Win+Ctrl+Enter، أو VoiceOver على الماك). افتح «عضو جديد» ودوس «ضيف» فاضي، وبعدين بحرفين، وبعدين اسم صح. جرّب Esc، والضغط على الخلفية، والضغط على حافة الـ dialog من جوه. وبعدين امسح [[min-width: 0]] من [[main section]] وصغّر الشاشة لـ 360.`,
+          flag: R`script`,
+          deep: {
+            why: R`جدول المواعيد بـ [[<table>]] مستحيل يعمل حصة طولها ساعة ونص من غير rowspan يدوي؛ وبـ [[position: absolute]] كل حاجة بالبكسل وبتتكسر مع أي تغيير مقاس. الـ grid بيحوّل الوقت لصف مباشرة. والـ modal المعمول بـ div محتاج حوالي ٤٠ سطر عشان الفوكس و Esc والخلفية، و [[<dialog>]] بيعملهم. والـ toast اللي بيتحط في عنصر لسه معمول مبيتقريش، فاليوزر الكفيف ميعرفش إن الحجز تم.`,
+            how: R`[[gridRow]]: الدقايق من 7:00 ÷ 30 + 1 = رقم الخانة، والمدة ÷ 30 لفوق = عدد الخانات. والـ sticky الأفقي: عمود الوقت [[inset-inline-start: 0]] جوه الـ wrapper اللي بيتسكرول بالعرض، فبيلزق في أوله (اليمين في RTL). و [[scroll-snap-type: x mandatory]] على الـ wrapper و [[scroll-snap-align: start]] على أسامي الأيام: السكرول بيقف على أول يوم كامل، و [[scroll-padding-inline-start: 4.5rem]] عشان اليوم ميقفش تحت عمود الوقت. والـ dialog: [[showModal()]] بيحطه في الـ top layer (فوق أي z-index)، و [[::backdrop]] طبقة تحته، و [[form method="dialog"]] لما يتبعت بيقفل الـ dialog ويحط [[value]] الزرار في [[returnValue]]، و [[formnovalidate]] على «إلغاء» بيعدّي التحقق. والحركة: [[@starting-style]] بيدّي قيمة البداية لما العنصر يظهر، و [[transition-behavior: allow-discrete]] (هنا جوه الـ shorthand) بيخلي [[display]] و [[overlay]] يستنوا الـ transition وهو بيتقفل. والـ live region: قارئ الشاشة بيراقب العناصر اللي عليها [[aria-live]] **من ساعة ما اتعملت**، فالتغيير جواها بيتقري، أما عنصر جديد معمول وفيه النص على طول غالبًا مش بيتقري.`,
+            when: R`جدول بالأيام والساعات لأي مواعيد ثابتة في الأسبوع. لو المواعيد بتتداخل في نفس اليوم (حصتين في نفس الوقت في أوضتين)، زوّد أعمدة للأوض أو قسّم الخانة ([[overlaps()]] بتكشفها). [[<dialog>]] لأي سؤال أو فورم قصير بيوقف الشغل لحد ما يتجاوب؛ للحاجات الطويلة صفحة لوحدها. و [[role="status"]] للنجاح، و [[role="alert"]] للأخطاء اللي لازم تتقري حالًا. دروس: «grid»، و «Dialog»، و «aria»، و «Constraint Validation API»، و «dark mode».`,
+            mistakes: R`تنسى [[min-width: 0]] على عنصر grid أو flex فيه حاجة عريضة (اتقاس: 1086 على 360). تحط padding على [[<dialog>]] وتقفل بـ [[e.target === dialog]] (اتقاس: الضغط جوه الحافة قفله). تعتمد على رسالة المتصفح (اتقاس: [[Please fill out this field.]]). تنسى [[setCustomValidity("")]] فالحقل يفضل غلط للأبد. تستخدم [[form.name]] (ده اسم الفورم نفسه؛ [[form.elements.name]] هو الحقل). تعمل [[<div aria-live>]] جديد مع كل toast. تحط [[z-index: 9999]] للـ modal بدل [[showModal()]]. الأوقات بخط عادي فالأرقام بتتهز ([[tabular-nums]]). تلوّن الحصة الكاملة بلون بس (هنا: حدود متقطعة والزرار نصه «الحصة كاملة» و [[disabled]]).`,
+          },
+          teach: R`## الخطوة ٦: جدول الحصص
+
+~~~javascript dashboard/js/schedule.js
+// weekly schedule: each class is a button placed on the grid by custom properties (day = column, time = rows)
+import { gridRow, toMin } from "./lib.js";
+import { openDialog, toast } from "./ui.js";
+const DAYS = ["السبت", "الأحد", "الاتنين", "التلات", "الأربع", "الخميس", "الجمعة"];
+const week = document.getElementById("week"), dlg = document.getElementById("dlg-class");
+const ampm = hhmm => { const m = toMin(hhmm), h = Math.floor(m / 60) % 12 || 12; return h + ":" + String(m % 60).padStart(2, "0") + (m < 720 ? " ص" : " م"); };
+
+function cell(cls, text, vars) {
+  const el = document.createElement(cls === "slot" ? "button" : "div");
+  el.className = cls;
+  el.textContent = text;
+  for (const [k, v] of Object.entries(vars)) el.style.setProperty("--" + k, v);
+  return el;
+}
+
+function slot(c) {
+  const { row, span } = gridRow(c.start, c.end);
+  const b = cell("slot", "", { col: c.day, row, span, fill: Math.round((c.booked / c.spots) * 100) + "%" });
+  b.type = "button";
+  b.classList.toggle("full", c.booked >= c.spots);
+  const title = document.createElement("b");
+  title.textContent = c.title;
+  b.append(title, $__bt$__{ampm(c.start)} · $__{c.booked}/$__{c.spots}$__bt);
+  b.setAttribute("aria-label", $__bt$__{c.title}، $__{DAYS[c.day]} $__{ampm(c.start)} لـ $__{ampm(c.end)}، $__{c.booked} من $__{c.spots} محجوز$__bt);
+  b.onclick = () => {
+    document.getElementById("dc-h").textContent = c.title;
+    document.getElementById("dc-body").textContent = $__bt$__{DAYS[c.day]}، من $__{ampm(c.start)} لـ $__{ampm(c.end)} مع الكوتش $__{c.coach}. محجوز $__{c.booked} من $__{c.spots}.$__bt;
+    const book = document.getElementById("dc-book");
+    book.disabled = c.booked >= c.spots;
+    book.textContent = book.disabled ? "الحصة كاملة" : "احجز مكان";
+    openDialog(dlg, v => {
+      if (v !== "book") return;
+      c.booked++;
+      b.replaceWith(slot(c));
+      toast($__btاتحجز مكان في «$__{c.title}» يوم $__{DAYS[c.day]}$__bt);
+    });
+  };
+  return b;
+}
+
+export async function loadSchedule() {
+  const classes = await (await fetch("data/classes.json")).json();
+  const parts = DAYS.map((d, i) => cell("day", d, { col: i }));
+  for (let h = 7; h < 22; h++) parts.push(cell("hour", ampm(String(h).padStart(2, "0") + ":00"), { row: (h - 7) * 2 + 1 }));
+  week.replaceChildren(...parts, ...classes.map(slot));
+}
+~~~
+
+- [[DAYS]] من السبت: الأسبوع في مصر بيبدأ السبت، و [[day: 0]] في البيانات = السبت.
+- [[ampm]]: [[17:00]] ← [[5:00 م]]. [[% 12 || 12]] عشان 12 الضهر و 12 بالليل ميبقوش 0. و [[m < 720]] (قبل 12:00) = ص.
+- [[cell(cls, text, vars)]]: كل الـ custom properties بـ [[style.setProperty("--row", 21)]]، مش [[style="..."]] في HTML. الاتنين بيوصلوا لنفس الحاجة، بس الأولى من CSSOM فمش بتتمنع لو حطيت CSP فيه [[style-src]] من غير [[unsafe-inline]] (من الوثائق).
+- [[aria-label]] على كل حصة: الزرار بيتقري الجملة كاملة «تسلّق بالحبل، الاتنين 5:00 م لـ 6:30 م، 6 من 9 محجوز»، بدل الأرقام المتقطعة اللي على الشاشة.
+- [[b.replaceWith(slot(c))]] بعد الحجز: الزرار بيترسم من جديد بالعدد الجديد. (اتقاس: بعد الحجز [[document.activeElement]] بقى [[BODY]]، لأن الزرار اللي الـ dialog كان هيرجّع له الفوكس اتشال. عيب حقيقي، والتمرين التالت بيصلّحه.)
+- حصص الجمعة: مفيش. والعمود فاضي عن قصد.
+
+### الـ dialog والـ toasts
+
+~~~javascript dashboard/js/ui.js
+// toasts in one live region that exists from the start, and a helper for native <dialog>
+const box = document.getElementById("toasts");
+export function toast(text, ms = 4000) {
+  const el = document.createElement("p");
+  el.className = "toast";
+  el.textContent = text;
+  box.append(el);
+  setTimeout(() => el.remove(), ms);
+}
+
+export function openDialog(dlg, onClose) {
+  dlg.returnValue = "";
+  dlg.showModal();                                         // modal: focus moves in, Esc closes, the rest of the page is inert
+  dlg.addEventListener("close", () => onClose?.(dlg.returnValue), { once: true });
+}
+// a click on the backdrop lands on the <dialog> itself (the form inside covers the box)
+document.addEventListener("click", e => { if (e.target instanceof HTMLDialogElement) e.target.close("cancel"); });
+~~~
+
+~~~javascript dashboard/js/app.js
+// entry: shell first (so the menu works while data loads), then the three data parts in parallel
+import "./shell.js";
+import { loadMembers, addMember, nextId } from "./table.js";
+import { loadKpis } from "./kpi.js";
+import { loadSchedule } from "./schedule.js";
+import { openDialog, toast } from "./ui.js";
+
+const members = loadMembers();
+members.then(m => loadKpis(m)).catch(() => toast("الأرقام مش متاحة دلوقتي"));
+loadSchedule().catch(() => toast("الجدول مش متاح دلوقتي"));
+
+const dlg = document.getElementById("dlg-member"), form = document.getElementById("member-form");
+const nameIn = form.elements.name;                          // form.elements: form.name is also the form's own name attribute
+nameIn.addEventListener("input", () => nameIn.setCustomValidity(""));
+nameIn.addEventListener("invalid", () => nameIn.setCustomValidity(nameIn.validity.valueMissing ? "اكتب اسم العضو" : "الاسم لازم ٣ حروف على الأقل"));
+document.getElementById("add").addEventListener("click", () => {
+  form.reset();
+  openDialog(dlg, v => {
+    if (v !== "save") return;
+    const name = nameIn.value.trim();
+    addMember({ id: nextId(), name, plan: form.elements.plan.value, status: "active", joined: "2026-10-31", lastVisit: "2026-10-31", visits: 0 });
+    toast($__btاتضاف «$__{name}»$__bt);
+  });
+});
+~~~
+
+- [[dlg.returnValue = ""]] قبل الفتح: من غير ده لو قفلت بـ Esc المرة دي، [[returnValue]] هيفضل قيمة المرة اللي فاتت ([[save]])، والعضو يتضاف تاني.
+- [[{ once: true }]]: الـ listener بيتشال بعد أول [[close]]، فمش بيتراكم مع كل فتحة.
+- [[import "./shell.js"]] الأول: القايمة والثيم شغالين وانت لسه بتستنى البيانات.
+- [[members.then(m => loadKpis(m))]]: الكروت محتاجة عدد الأعضاء الكلي، فبتستنى الجدول. والجدول الأسبوعي مش محتاج حاجة، فبيتحمّل بالتوازي.
+- [[form.reset()]] قبل كل فتح: الفورم يبدأ فاضي.
+- [[form.elements.name]]: [[HTMLFormElement]] عنده خاصية [[name]] (اسم الفورم)؛ الحقل اللي اسمه [[name]] بيغطي عليها في Chrome، بس [[elements]] أوضح ومضمون.
+
+### الـ CSS: الجدول الأسبوعي والـ dialog والحركة
+
+~~~css dashboard/css/app.css (السطور 121–151)
+/* ---------- schedule: 7 days x 30 half-hours ---------- */
+.hint { margin: -0.5rem 0 0.75rem; color: var(--muted); }
+.week-wrap { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline-start: 4.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.week {
+  display: grid; grid-template-columns: 4.5rem repeat(7, minmax(9rem, 1fr)); grid-template-rows: 2.5rem repeat(30, 1.75rem);
+  background: repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 3.5rem) 0 2.5rem / 100% calc(100% - 2.5rem) no-repeat;
+}
+.day { grid-row: 1; grid-column: calc(var(--col) + 2); display: grid; place-items: center; font-weight: 600; border-block-end: 1px solid var(--line); scroll-snap-align: start; }
+.hour { white-space: nowrap; grid-column: 1; grid-row: calc(var(--row) + 1) / span 2; position: sticky; inset-inline-start: 0; z-index: 1; background: var(--surface); color: var(--muted); font-size: 0.8rem; padding-inline: 0.5rem; font-variant-numeric: tabular-nums; border-inline-end: 1px solid var(--line); }
+.slot {
+  grid-column: calc(var(--col) + 2); grid-row: calc(var(--row) + 1) / span var(--span);
+  margin: 2px 4px; padding: 0.25rem 0.5rem; border: 1px solid var(--brand); border-radius: 8px; text-align: start; font: inherit; font-size: 0.85rem; line-height: 1.3; color: var(--ink); cursor: pointer; overflow: hidden;
+  background: linear-gradient(to left, var(--brand-soft) var(--fill), var(--surface) 0);
+}
+:dir(ltr) .slot { background: linear-gradient(to right, var(--brand-soft) var(--fill), var(--surface) 0); }
+.slot b { display: block; }
+.slot.full { border-style: dashed; border-color: var(--muted); }
+
+/* ---------- dialog + toasts ---------- */
+dialog { border: 0; border-radius: var(--r); padding: 0; width: min(28rem, calc(100% - 2rem)); background: var(--surface); color: var(--ink); box-shadow: 0 20px 50px rgb(0 0 0 / 0.3);
+  opacity: 0; translate: 0 12px; transition: opacity 0.2s, translate 0.2s, overlay 0.2s allow-discrete, display 0.2s allow-discrete; }
+dialog[open] { opacity: 1; translate: 0 0; }
+@starting-style { dialog[open] { opacity: 0; translate: 0 12px; } }
+dialog::backdrop { background: rgb(10 14 20 / 0.55); }
+dialog form { display: grid; gap: 1rem; padding: 1.5rem; }   /* padding on the form, so a click on the dialog itself = the backdrop */
+dialog label { display: grid; gap: 0.3rem; }
+.dlg-actions { display: flex; gap: 0.75rem; }
+.toasts { position: fixed; inset-block-end: 1rem; inset-inline-end: 1rem; z-index: var(--z-toast); display: grid; gap: 0.5rem; width: min(22rem, calc(100% - 2rem)); }
+.toast { padding: 0.75rem 1rem; border-radius: 10px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); animation: toast-in 0.25s ease; }
+@keyframes toast-in { from { opacity: 0; translate: 0 12px; } }
+
+~~~
+
+~~~css dashboard/css/app.css (آخر 3 سطور)
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+~~~
+
+- [[background: repeating-linear-gradient(...) 0 2.5rem / 100% calc(100% - 2.5rem) no-repeat]]: خط 1px كل 3.5rem (ساعة)، وبيبدأ بعد صف الأيام (2.5rem)، فمفيش ٢١٠ عنصر فاضي للخطوط.
+- [[.hour { white-space: nowrap }]]: «10:00 ص» كانت بتتقسم سطرين في عمود 4rem (باين في اللقطة)، فبقت سطر و 4.5rem.
+- [[linear-gradient(to left, var(--brand-soft) var(--fill), var(--surface) 0)]]: الجزء المحجوز متلوّن من اليمين (بداية السطر في RTL)، و [[:dir(ltr)]] بيعكسه لو الصفحة اتقلبت. [[0]] في آخر stop = «ابدأ على طول من مكان اللي قبله»، فالحد حاد مش متدرّج.
+- [[.slot.full { border-style: dashed }]]: الحصة الكاملة شكلها مختلف من غير ما يبقى اللون هو الفرق الوحيد.
+- [[dialog { padding: 0 }]] و [[dialog form { padding: 1.5rem }]]: التصليح بتاع «الضغط على الحافة بيقفل».
+- [[@starting-style { dialog[open] { opacity: 0; translate: 0 12px; } }]]: لحظة الفتح بيبدأ شفاف ونازل وبيطلع لمكانه. و [[overlay 0.2s allow-discrete, display 0.2s allow-discrete]]: وهو بيتقفل بيفضل في الـ top layer لحد ما الحركة تخلص (Chrome 117+ و Safari 17.5+ و Firefox 129+، من الوثائق؛ المتصفح القديم بيفتح ويقفل من غير حركة).
+- [[.toasts]] بـ [[inset-block-end]] و [[inset-inline-end]]: تحت على الشمال في العربي، وعلى اليمين لو الصفحة LTR.
+- reduced motion في الآخر: كل animation و transition = 0.01ms (مش [[none]]، عشان الأحداث زي [[transitionend]] لسه تحصل).
+
+### اتشغّل فعلًا
+
+~~~text node check-dashboard.mjs
+dialog open: true | focus: name
+2 letters -> message: الاسم لازم ٣ حروف على الأقل
+save with empty name -> still open: true | message: اكتب اسم العضو
+saved -> open: false | focus back on: add | toast: اتضاف «سارة الجندي» | count: 58 عضو، صفحة 1 من 6
+Esc -> open: false | focus: add
+click on the dialog's own padding -> open: true
+click on the backdrop -> open: false
+slots: 15 | first slot --row / grid-row-start / end / column: 21 / 22 / span 3 / 2
+booked toast: اتضاف «سارة الجندي» || اتحجز مكان في «أطفال 8–12» يوم السبت
+~~~
+
+- [[focus back on: add]]: Chrome رجّع الفوكس لزرار «عضو جديد» لوحده بعد [[close()]]، من غير ولا سطر.
+- [[21 / 22 / span 3 / 2]]: [[--row]] = 21 (17:00)، والـ grid حطها في الصف 22 (بعد صف الأيام) لمدة ٣ خانات، في العمود 2 (السبت).
+- [[booked toast]]: التنبيهين لسه موجودين لأن كل واحد بيقعد ٤ ثواني، وبيتشالوا لوحدهم.
+
+---
+
+## الغلطات اللي حصلت في الخطوة دي
+
+### ١. scroll أفقي في كل المقاسات
+
+~~~text audit-dashboard.mjs (قبل)
+matrix: 360 OVERFLOW 1086 | 390 OVERFLOW 1086 | 768 OVERFLOW 1094 | 1024 OVERFLOW 1334 | 1280 OVERFLOW 1334 | 1440 ok
+~~~
+
+~~~text بعد main section { min-width: 0 }
+matrix: 360 ok(week scrolls) | 390 ok(week scrolls) | 768 ok(week scrolls) | 1024 ok(week scrolls) | 1280 ok(week scrolls) | 1440 ok
+~~~
+
+الـ wrapper عليه [[overflow-x: auto]] من الأول، فكنت متأكد إنه «مش ممكن» يعمل overflow. بس [[main]] نفسه [[display: grid]]، والـ section ابنه، وعنصر الـ grid (زي عنصر الـ flex) [[min-width]] الافتراضي بتاعه [[auto]] = «مش أصغر من محتواه». فالـ section اتمد 1086px، والـ wrapper جواه عرضه 1086 برضه فمفيش حاجة يسكرولها. على 1440 بس المساحة كفاية. [[(week scrolls)]] = الـ wrapper هو اللي بيتسكرول دلوقتي، وده المطلوب.
+
+### ٢. الضغط على حافة الـ dialog بيقفله
+
+~~~text قبل ← بعد (padding على الفورم مش الـ dialog)
+click on the dialog's own padding -> open: false
+click on the dialog's own padding -> open: true
+~~~
+
+[[e.target instanceof HTMLDialogElement]] صح للخلفية، بس الـ padding جزء من الـ dialog، فالضغطة على أول 1.5rem جوه الصندوق كانت بتقفل الفورم واليوزر بيكتب. الحل الأول (padding على الفورم) أبسط من حساب [[getBoundingClientRect]] للضغطة.
+
+### ٣. رسالة إنجليزي في فورم عربي
+
+~~~text قبل [[setCustomValidity]]
+save with empty name -> still open: true | message: Please fill out this field.
+~~~
+
+رسالة [[required]] بتيجي بلغة **المتصفح** (هنا Chrome إنجليزي)، مش [[lang]] الصفحة. بقت [[اكتب اسم العضو]] و [[الاسم لازم ٣ حروف على الأقل]] حسب [[validity.valueMissing]].
+
+### ٤. لازم الـ live region يبقى موجود من الأول
+
+[[#toasts]] مكتوب في الـ HTML فاضي وعليه [[role="status"]]، و [[toast()]] بيزوّد فقرة **جواه**. لو كل toast عمل [[<div aria-live>]] جديد فيه النص، أغلب قارئات الشاشة مش هتقراه لأنها مكانتش بتراقب العنصر قبل ما النص يتحط (من الوثائق وتجارب منشورة؛ القراية نفسها متجرّبتش بقارئ شاشة في المعمل ده، اللي اتقاس إن النص اتحط جوه العنصر الموجود). نفس الحاجة اتعملت في [[#status]] في الـ portfolio و [[#count]] في الجدول.
+
+---
+
+## الخلاصة
+
+| الحاجة | الطريقة |
+|---|---|
+| مواعيد على grid | الوقت ← [[--row]] و [[--span]]، واليوم ← [[--col]]، و [[calc()]] في [[grid-row]] |
+| جدول عريض في صفحة grid | [[overflow-x: auto]] على الـ wrapper **و** [[min-width: 0]] على عنصر الـ grid |
+| modal | [[showModal()]] و [[method="dialog"]] و [[returnValue]]، والـ padding على الفورم |
+| رسايل التحقق | [[setCustomValidity]] في [[invalid]] و [[""]] في [[input]] |
+| تنبيهات بتتقري | live region واحدة من الأول، والنص بيتحط جواها |
+| الثيم | نفس الـ tokens بقيم تانية، و [[boot.js]] قبل الرسم، و [[aria-pressed]] |`,
+          sol: R`الحجز بيزوّد العدد في الحصة ويظهر toast تحت، والـ dialog الفاضي بيقول «اكتب اسم العضو»، وبحرفين «الاسم لازم ٣ حروف على الأقل»، وبالاسم الصح بيتقفل والعضو بيتضاف والعدد 58. Esc والخلفية بيقفلوا، والحافة من جوه لأ. ولما تشيل [[min-width: 0]]، [[document.documentElement.scrollWidth]] على 360 بيبقى حوالي 1086.`,
+          practice: [
+            {
+              lvl: R`سريع`,
+              t: R`**اقرا وتوقّع:** حصة من [[21:30]] لـ [[23:00]]. [[gridRow]] هترجّع إيه؟ وهتتعرض فين في الجدول اللي فيه ٣٠ صف بس؟ احسب، وبعدين جرّبها في البيانات.`,
+              done: R`حسبت [[row 30 span 3]] يعني آخر صف 32 بره الـ ٣٠، وشفت إن الـ grid عمل صفوف ضمنية (implicit): في المعمل الصفوف بقت 33 بدل 31 والارتفاع 901 بدل 880، وزوّدت فحص بيطبع [[OUTSIDE]] زي سطر الـ ci.`,
+              sol: R`~~~js check-rows.mjs
+import { gridRow } from "./dashboard/js/lib.js";
+const { row, span } = gridRow("21:30", "23:00");
+console.log("row", row, "span", span, "آخر صف", row + span - 1);
+if (row + span - 1 > 30) console.log("OUTSIDE");
+~~~
+
+الحساب: البداية 21:30 = بعد 07:00 بـ 870 دقيقة، و ÷ 30 = 29، و + 1 = صف **30**. المدة 90 دقيقة = **3** صفوف. يعني الصفوف 30 و 31 و 32.
+
+الجدول فيه 30 صف بس. CSS مبيعملش error: الـ [[grid]] بيعمل صفوف ضمنية (implicit) بعد الآخر عشان يساع العنصر، بارتفاع [[auto]]. فالجدول بيطول شوية، والحصة بتظهر تحت خط الجدول، وشكلها مكسور من غير أي رسالة.
+
+عشان كده السطر اللي بيطبع [[OUTSIDE]]: البيانات اللي برا المدى لازم حد ينبّه عليها، لأن المتصفح مش هيعمل كده.
+
+الغلطة الشائعة: تسيب [[grid-template-rows]] ثابت، وتتفاجئ لما حصة تتأخر. الحل يا إما فحص، يا إما الصفوف تتحسب من البيانات.
+
+~~~text الناتج (Node 24، و Chrome 156 بعد زيادة الحصة)
+row 30 span 3 آخر صف 32
+OUTSIDE
+الصفوف في الـ grid: قبل 31، وبعد 33
+ارتفاع الجدول: قبل 880px، وبعد 901px
+~~~` },
+            {
+              lvl: R`سريع`,
+              t: R`**دوّر بنفسك:** من صفحة [[<dialog>]] على MDN اعرف الفرق بين [[close()]] و [[requestClose()]]، وأنهي واحد بيبعت حدث [[cancel]] اللي ممكن تلغيه (عشان تسأل «متأكد؟ فيه كلام متكتب»).`,
+              done: R`كتبت إن [[requestClose()]] بيبعت [[cancel]] الأول (وتقدر [[preventDefault()]])، و [[close()]] بيقفل على طول، وإن Esc بيبعت [[cancel]] كمان، وجرّبت تمنع القفل لو الحقل فيه كلام.`,
+              sol: R`~~~live 120 120 request-close.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>requestClose</title></head>
+<body>
+  <main><h1>قفل dialog</h1><button id="o">افتح</button></main>
+  <dialog id="d" aria-label="ملاحظة">
+    <label>ملاحظة <input id="t"></label>
+    <button id="r" type="button">قفل (requestClose)</button>
+    <button id="c" type="button">قفل (close)</button>
+  </dialog>
+  <script>
+    const d = document.getElementById("d"), t = document.getElementById("t");
+    window.log = [];
+    document.getElementById("o").onclick = () => d.showModal();
+    document.getElementById("r").onclick = () => d.requestClose();
+    document.getElementById("c").onclick = () => d.close();
+    d.addEventListener("cancel", (e) => {
+      log.push("cancel");
+      if (t.value && !confirmClose()) e.preventDefault();
+    });
+    d.addEventListener("close", () => log.push("close"));
+    const confirmClose = () => false;   // في الحقيقة: اسأل «متأكد؟ فيه كلام متكتب»
+  $__lt/script>
+</body></html>
+~~~
+
+الفرق في السؤال قبل القفل:
+
+- [[close()]]: أمر مباشر. بيقفل على طول، وبيبعت [[close]] بس. مفيش فرصة تعترض.
+- [[requestClose()]]: طلب. بيبعت [[cancel]] الأول، ولو حد عمل [[preventDefault()]] مبيقفلش. لو عدّى، بيبعت [[close]].
+- Esc بيتصرف زي [[requestClose()]]: بيبعت [[cancel]].
+
+فلو عايز «متأكد؟ فيه كلام متكتب»، حط السؤال في [[cancel]]، واستخدم [[requestClose()]] لزرار الإغلاق، فالطريقتين بيمروا بنفس الباب.
+
+المصدر: MDN صفحة [[HTMLDialogElement.requestClose()]]. الدعم: Chrome 134، و Safari 18.4، و Firefox 139 حسب [[browser-compat-data]].
+
+الغلطة الشائعة: تستخدم [[close()]] في زرار X وتحط الفحص في [[cancel]]، فالفحص بيتنفذ مع Esc بس.
+
+~~~text الناتج (Chrome 156، الخانة فيها كلام)
+requestClose: الأحداث cancel، و open = true
+Esc:          الأحداث cancel، و open = true
+close():      الأحداث close، و open = false
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**صلّح الكود البايظ:** بعد الحجز الفوكس بيضيع لأن [[b.replaceWith(slot(c))]] بيشيل الزرار اللي الـ dialog هيرجّع له الفوكس. صلّحها من غير ما ترسم الجدول كله من جديد.`,
+              done: R`بعد الحجز وقفل الـ dialog [[document.activeElement]] هو زرار الحصة الجديد بالعدد الجديد (مش [[body]])، والحل يا إما بتحدّث نص الزرار القديم وخلفيته بدل ما تبدّله، يا إما [[newBtn.focus()]] بعد [[replaceWith]].`,
+              sol: R`~~~js dashboard/js/schedule.js (جوه callback الـ openDialog)
+openDialog(dlg, v => {
+  if (v !== "book") return;
+  c.booked++;
+  const next = slot(c);
+  b.replaceWith(next);
+  next.focus();                 // السطر الجديد
+  toast($__btاتحجز مكان في «$__{c.title}» يوم $__{DAYS[c.day]}$__bt);
+});
+~~~
+
+الـ [[<dialog>]] لما يتقفل بيرجّع الـ focus للعنصر اللي فتحه. بس الكود بعد كده بيبدّل الزرار ده بزرار جديد، فالعنصر اللي الـ focus عليه اتشال من الصفحة، والمتصفح بيوقّع الـ focus على [[body]]. مستخدم الكيبورد بيبدأ من أول الصفحة.
+
+السطر الواحد ده بيحط الـ focus على الزرار الجديد بعد التبديل. والترتيب مهم: [[replaceWith]] الأول، و [[focus()]] بعده، لأن العنصر لازم يبقى في الصفحة.
+
+الحل التاني: متبدّلش الزرار، وحدّث نصه وخلفيته بس. ده أحسن لو الزرار بيتحدّث كتير، لأن العنصر نفسه بيفضل.
+
+الغلطة الشائعة: تختبر بالماوس، فمتحسش بحاجة.
+
+~~~text الناتج (Chrome 156، بعد احجز من الكيبورد)
+قبل التصليح: activeElement = BODY
+بعد التصليح: activeElement = BUTTON.slot، و aria-label = أطفال 8–12، السبت 5:00 م لـ 6:30 م، 13 من 14 محجوز
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**ابني:** على أقل من 48rem اعرض الجدول الأسبوعي كـ agenda: يوم النهارده بس كقايمة حصص بالترتيب، وفوقها ٧ أزرار للأيام ([[aria-pressed]] على اليوم المختار)، واليوم المختار في الرابط ([[?day=2]]) زي فلاتر الجدول.`,
+              done: R`على 390 مفيش scroll أفقي خالص والحصص قايمة، والأيام بتتبدّل وبتتحفظ في الرابط و Back بيرجّع اليوم اللي قبله، وعلى الكمبيوتر الـ grid زي ما هو، و axe صفر.`,
+              sol: R`~~~html dashboard/index.html (بعد .week-wrap)
+<div class="agenda" id="agenda">
+  <div class="days" id="days" role="group" aria-label="اختار اليوم"></div>
+  <ol class="day-list" id="day-list"></ol>
+</div>
+~~~
+
+~~~css dashboard/css/app.css (في آخر الملف)
+.agenda { display: none; }
+@media (max-width: 47.99rem) {
+  .week-wrap { display: none; }
+  .agenda { display: block; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
+  .days button { min-block-size: 44px; font: inherit; font-size: 0.75rem; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .days button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); }
+  .day-list { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; gap: 0.5rem; }
+  .day-list li { padding: 0.75rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+}
+~~~
+
+~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<style>
+.agenda { display: none; }
+@media (max-width: 47.99rem) {
+  .week-wrap { display: none; }
+  .agenda { display: block; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
+  .days button { min-block-size: 44px; font: inherit; font-size: 0.75rem; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .days button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); }
+  .day-list { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; gap: 0.5rem; }
+  .day-list li { padding: 0.75rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+}
+</style>
+<div class="agenda" id="agenda">
+  <div class="days" id="days" role="group" aria-label="اختار اليوم"></div>
+  <ol class="day-list" id="day-list"></ol>
+</div>
+</body></html>
+~~~
+
+~~~js dashboard/js/schedule.js (آخر الملف)
+function drawAgenda(classes, day) {
+  document.querySelectorAll("#days button").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.day) === day)));
+  const list = classes.filter((c) => c.day === day).sort((a, b) => toMin(a.start) - toMin(b.start));
+  document.getElementById("day-list").replaceChildren(...(list.length ? list : [null]).map((c) => {
+    const li = document.createElement("li");
+    li.textContent = c ? $__bt$__{ampm(c.start)} · $__{c.title} · $__{c.booked}/$__{c.spots}$__bt : "مفيش حصص في اليوم ده.";
+    return li;
+  }));
+}
+const dayFromUrl = () => {
+  const d = Number.parseInt(new URLSearchParams(location.search).get("day"), 10);
+  return d >= 0 && d <= 6 ? d : (new Date().getDay() + 1) % 7;      // السبت = 0 في DAYS
+};
+export function initAgenda(classes) {
+  const box = document.getElementById("days");
+  box.replaceChildren(...DAYS.map((d, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.dataset.day = i; b.textContent = d;
+    return b;
+  }));
+  box.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    const u = new URL(location.href);
+    u.searchParams.set("day", b.dataset.day);
+    history.pushState(null, "", u);
+    drawAgenda(classes, Number(b.dataset.day));
+  });
+  addEventListener("popstate", () => drawAgenda(classes, dayFromUrl()));
+  drawAgenda(classes, dayFromUrl());
+}
+~~~
+
+~~~js dashboard/js/schedule.js (آخر سطر في loadSchedule)
+initAgenda(classes);
+~~~
+
+بيبني على [[schedule.js]]. فكرة واحدة: الـ grid فيه ٧ أعمدة كل واحد 9rem، ومفيش طريقة تتساع في 390 غير scroll أفقي. الـ agenda بتعرض يوم واحد كقايمة، فالعرض مبقاش مشكلة.
+
+- نفس [[classes]]، و [[.filter]] و [[.sort]] بالوقت: عرض تاني لنفس البيانات، مش بيانات تانية.
+- اليوم في الرابط بـ [[pushState]]، و [[popstate]] بيخلي Back يرجع لليوم اللي قبله، زي فلاتر الجدول بالظبط.
+- [[aria-pressed]] بيقول أنهي يوم مختار، و [[.days]] مقسوم ٧ أعمدة متساوية.
+- [[(new Date().getDay() + 1) % 7]]: ‏[[getDay]] بيبدأ بالأحد صفر، و [[DAYS]] بيبدأ بالسبت.
+
+الزرار في القايمة مش بيفتح الحجز في النسخة دي: ده تطوير عليك، وأسهل طريقة تنادي نفس [[b.onclick]].
+
+الغلطة الشائعة: تخفي الـ grid بـ [[overflow: hidden]]، فالـ scroll يبقى موجود ومقفول.
+
+~~~text الناتج (Chrome 156، عرض 390)
+scrollWidth − clientWidth: 0
+يوم 2: 3 حصص: 5:00 م · قوة الأصابع · 3/9
+الرابط: ?day=4
+بعد الضغط على يوم 4: 2 حصص: 5:00 م · مرونة ويوجا · 6/11
+Back: aria-pressed على يوم 2، والرابط ?day=2
+على 1280: الـ grid block، والـ agenda none
+axe على 390: 0
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**مسألة:** اكتب [[lanes(classes)]] بتوزّع الحصص المتداخلة في نفس اليوم على «حارات» (أول حارة فاضية في الوقت ده)، وترجّع لكل حصة رقم حارتها وعدد الحارات في يومها، عشان تعرضهم جنب بعض بـ [[grid-column]] فرعي.`,
+              done: R`على ٣ حصص يوم الاتنين (5–6:30، و 6–7، و 7–8) بترجّع حارات 0 و 1 و 0 وعدد 2 (التالتة رجعت للحارة الأولى لأن الأولى خلصت)، والحصص اللي بتلمس بعض بس ([[18:30]] و [[18:30]]) مش متداخلة زي [[overlaps]]، وفيه اختبار للتلات حالات.`,
+              sol: R`~~~js lanes.mjs
+const toMin = (t) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+
+export function lanes(classes) {
+  const byDay = new Map();
+  for (const c of classes) (byDay.get(c.day) ?? byDay.set(c.day, []).get(c.day)).push(c);
+
+  const out = [];
+  for (const list of byDay.values()) {
+    const sorted = [...list].sort((a, b) => toMin(a.start) - toMin(b.start));
+    const ends = [];                                 // ends[i] = وقت خلوص آخر حصة في الحارة i
+    const placed = sorted.map((c) => {
+      let lane = ends.findIndex((end) => end <= toMin(c.start));
+      if (lane === -1) { lane = ends.length; ends.push(0); }
+      ends[lane] = toMin(c.end);
+      return { ...c, lane };
+    });
+    for (const p of placed) out.push({ ...p, laneCount: ends.length });
+  }
+  return out;
+}
+~~~
+
+~~~js lanes.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { lanes } from "./lanes.mjs";
+const c = (start, end, day = 2) => ({ day, start, end });
+
+test("حصص متداخلة: 5–6:30 و 6–7 و 7–8", () => {
+  const r = lanes([c("17:00", "18:30"), c("18:00", "19:00"), c("19:00", "20:00")]);
+  assert.deepEqual(r.map((x) => x.lane), [0, 1, 0]);
+  assert.ok(r.every((x) => x.laneCount === 2));
+});
+test("اللي بيلمسوا بعض مش متداخلين", () => {
+  const r = lanes([c("17:00", "18:30"), c("18:30", "19:00")]);
+  assert.deepEqual(r.map((x) => x.lane), [0, 0]);
+});
+test("كل يوم لوحده", () => {
+  const r = lanes([c("17:00", "18:00", 1), c("17:00", "18:00", 2)]);
+  assert.ok(r.every((x) => x.lane === 0 && x.laneCount === 1));
+});
+~~~
+
+ده تطبيق بسيط لـ interval partitioning: رتّب بالبداية، وحط كل حصة في أول حارة فاضية.
+
+- [[ends]] فيها وقت خلوص آخر حصة في كل حارة. الحارة فاضية لو [[end <= start]].
+- [[<=]] مش [[<]]: اللي بيخلص 18:30 واللي بيبدأ 18:30 مش متداخلين، زي [[overlaps]] في [[lib.js]].
+- [[findIndex]] بيرجّع [[-1]] لو مفيش، فبنفتح حارة جديدة.
+- [[laneCount]] بيتحسب بعد اليوم كله، عشان كل حصة تعرف عرضها: [[grid-column]] فرعي بنسبة [[1 / laneCount]].
+
+الترتيب بالبداية هو اللي بيضمن أقل عدد حارات.
+
+الغلطة الشائعة: تحسب [[laneCount]] وقت وضع الحصة، فالأولى تقول ١ والتانية ٢، فعرضهم يختلف.
+
+~~~text الناتج (Node 24)
+17:00–18:30 lane 0 من 2
+18:00–19:00 lane 1 من 2
+19:00–20:00 lane 0 من 2
+node --test: pass 3، fail 0
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**قارن وقيس:** اعمل نفس الـ modal بـ [[<div role="dialog" aria-modal="true">]] و JS بإيدك (فوكس أول حقل، و Tab متحبس جواه، و Esc، ورجوع الفوكس، والخلفية inert). عدّ السطور، وشغّل [[check-dashboard.mjs]] على الاتنين، وشوف axe.`,
+              done: R`عندك رقمين للسطور (الـ div أكتر بكتير)، والفحوصات بتعدّي على الاتنين أو مكتوب أنهي وقع وليه، وعرفت إن [[<dialog>]] اداك الـ top layer كمان (مفيش z-index بيتغلب عليه).`,
+              sol: R`~~~live 120 120 modal-div.html (بإيدك)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>modal بإيدك</title>
+<style>
+  .backdrop { position: fixed; inset: 0; background: rgb(0 0 0 / .5); z-index: 100; display: grid; place-items: center; }
+  .backdrop[hidden] { display: none; }
+  .box { background: #fff; padding: 1rem; border-radius: 12px; }
+</style></head>
+<body>
+  <main id="page"><h1>مودال</h1><button id="o">افتح</button></main>
+  <div class="backdrop" id="bd" hidden>
+    <div class="box" id="m" role="dialog" aria-modal="true" aria-labelledby="t" tabindex="-1">
+      <h2 id="t">عضو جديد</h2>
+      <label>الاسم <input id="n"></label>
+      <button id="s" type="button">حفظ</button>
+      <button id="x" type="button">إلغاء</button>
+    </div>
+  </div>
+  <script>
+    const bd = document.getElementById("bd"), box = document.getElementById("m"), page = document.getElementById("page");
+    let back = null;
+    const items = () => [...box.querySelectorAll("input, button")];
+    function open() {
+      back = document.activeElement;
+      bd.hidden = false;
+      page.inert = true;
+      items()[0].focus();
+    }
+    function close() {
+      bd.hidden = true;
+      page.inert = false;
+      back?.focus();
+    }
+    document.getElementById("o").onclick = open;
+    document.getElementById("x").onclick = close;
+    document.getElementById("s").onclick = close;
+    box.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") return close();
+      if (e.key !== "Tab") return;
+      const list = items(), first = list[0], last = list[list.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  $__lt/script>
+</body></html>
+~~~
+
+~~~live 120 120 modal-dialog.html (نفس الوظيفة)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>dialog</title></head>
+<body>
+  <main><h1>مودال</h1><button id="o">افتح</button></main>
+  <dialog id="d" aria-labelledby="t">
+    <h2 id="t">عضو جديد</h2>
+    <form method="dialog">
+      <label>الاسم <input id="n"></label>
+      <button value="save">حفظ</button>
+      <button value="cancel">إلغاء</button>
+    </form>
+  </dialog>
+  <script>document.getElementById("o").onclick = () => document.getElementById("d").showModal();$__lt/script>
+</body></html>
+~~~
+
+كل حاجة في نسخة الـ div بتتعمل بإيدك: حفظ مين فتحه، وأول حقل، وحبس Tab (من الطرفين)، و Esc، والخلفية [[inert]]، ورجوع الـ focus. وكل واحدة فيهم مكان لباج: عنصر جديد بيتضاف، أو [[Shift+Tab]] منسي.
+
+و [[<dialog>]] بـ [[showModal()]] بيدّيهم كلهم، وزيادة: **الـ top layer**. المودال بيترسم فوق كل حاجة، مهما كان [[z-index]] أو [[transform]] في الأجداد. نسخة الـ div بتعتمد على [[z-index: 100]]، وأي stacking context تاني يكسرها، زي ما شفنا في درس stacking context.
+
+[[check-dashboard.mjs]] مكتوب على [[#dlg-member]] كـ [[<dialog>]] (بيقرا [[.open]] و [[form method="dialog"]])، فمتشغلش على نسخة div؛ الفحوصات تحت هي نفس الأسئلة، على الاتنين.
+
+الغلطة الشائعة: تكتب [[role="dialog"]] وتعتبر الموضوع خلص. الـ role وعد، والسلوك كله عليك.
+
+~~~text الناتج (Chrome 156: نفس الاختبار على النسختين)
+                    div بإيدك       <dialog>
+سطور HTML + JS      36              11
+focus بعد الفتح     n            n
+Tab ١٠ مرات خرج؟     لأ             لأ
+Esc قفل              آه             آه
+الـ focus رجع لـ     o            o
+فوق أب بـ transform و z-index 200؟  لأ         آه
+axe                 0              0
+~~~` },
+          ],
+          ci: [
+            {
+              os: [
+                R`ubuntu`,
+                R`macos`,
+                R`windows`,
+              ],
+              sh: R`node`,
+              run: R`const DAY0 = 7 * 60, SLOT = 30, ROWS = 30;
+const toMin = hhmm => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
+function gridRow(start, end) { return { row: (toMin(start) - DAY0) / SLOT + 1, span: Math.ceil((toMin(end) - toMin(start)) / SLOT) }; }
+const overlaps = (a, b) => a.day === b.day && toMin(a.start) < toMin(b.end) && toMin(b.start) < toMin(a.end);
+const ampm = hhmm => { const m = toMin(hhmm), h = Math.floor(m / 60) % 12 || 12; return h + ":" + String(m % 60).padStart(2, "0") + (m < 720 ? " ص" : " م"); };
+for (const [s, e] of [["07:00", "08:00"], ["17:00", "18:30"], ["20:30", "22:00"], ["21:30", "23:00"]]) {
+  const g = gridRow(s, e), last = g.row + g.span - 1;
+  console.log(s + "-" + e + " row " + g.row + " span " + g.span + (last > ROWS ? " OUTSIDE (last row " + last + ")" : ""));
+}
+const a = { day: 1, start: "17:00", end: "18:30" };
+console.log("touching: " + overlaps(a, { day: 1, start: "18:30", end: "19:00" }) + " | overlapping: " + overlaps(a, { day: 1, start: "18:00", end: "19:00" }) + " | other day: " + overlaps(a, { day: 2, start: "17:00", end: "18:00" }));
+console.log("ampm: " + ["07:00", "12:30", "00:15", "20:30"].map(ampm).join(" | "));`,
+              expect: [
+                R`07:00-08:00 row 1 span 2`,
+                R`17:00-18:30 row 21 span 3`,
+                R`21:30-23:00 row 30 span 3 OUTSIDE (last row 32)`,
+                R`touching: false | overlapping: true | other day: false`,
+                R`ampm: 7:00 ص | 12:30 م | 12:15 ص | 8:30 م`,
+              ],
+            },
+          ],
+        },
+        {
+          cmd: R`المراجعة النهائية: مقاسات و a11y وأداء ونشر`,
+          ref: [
+            { t: "Playwright: Accessibility testing", url: "https://playwright.dev/docs/accessibility-testing" },
+            { t: "Playwright: page.addInitScript()", url: "https://playwright.dev/docs/api/class-page#page-add-init-script" },
+            { t: "Google Search: canonical URLs", url: "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls" },
+            { t: "GitHub Pages", url: "https://docs.github.com/en/pages" },
+          ],
+          title: R`قبل ما تسلّم: مصفوفة مقاسات من 360 لـ 1440، و axe في الثيمين واللغتين (وليه axe سكت عن كلمة «نشط»)، ومشي بالكيبورد، و CLS و LCP على موبايل بطيء، والنشر على GitHub Pages تحت /repo/، وكل الغلطات في جدول`,
+          learn: R`تعمل مراجعة تسليم كاملة بسكربتات بتتعاد في ثواني: overflow على ٦ مقاسات لكل صفحة، و axe على كل صفحة × ثيمين × لغتين ومع الـ dialog والـ drawer مفتوحين، وترتيب الـ Tab، و CLS و LCP بالوسط بتاع ٣، وتعرف حدود axe (بيعدّي كلمات عربي من غير ما يفحصها)، وتنشر صح تحت مسار فرعي، وتعرف المشروع بيكبر إزاي وبيتكلف كام.`,
+          out: R`٤ سكربتات بتطبع: صفر overflow في ٢٤ خانة، و صفر violations في ٢٠ فحص axe، و CLS = 0 في كل الصفحات، و LCP حوالي 220–320ms (موبايل و CPU ×4)، و [[0]] طلبات 404 تحت [[/nadine-site/]]، وجدول بالـ ٣٠ غلطة وتجربة.`,
+          use: {
+            prog: R`درس «مصفوفة مقاسات» و «axe و Lighthouse» و «كيبورد وقارئ شاشة» و «CLS» بيتطبقوا على المنتجين مع بعض. والفكرة الأهم: الفحص كود بيتعاد، مش «بصّيت عليها».`,
+            work: R`ده اللي بيفرق بين «خلصت» و «اتسلّم»: تقرير فيه أرقام على كل صفحة، وتعرف تقول للعميل «الموقع بيفتح في ثلث ثانية على موبايل متوسط، وبيشتغل بالكيبورد، ومفيش scroll جانبي على أي موبايل». والسكربتات نفسها تتحط في CI.`,
+            cs: R`الأدوات الأوتوماتيك بتلاقي جزء بس من مشاكل الـ accessibility، وليها heuristics ممكن تغلط (هنا: كشف الـ icon ligatures بيغلط في العربي). والقياس الإحصائي: أول تشغيل دايمًا أبطأ (cold start)، فالوسط من ٣ أصدق من رقم واحد.`,
+          },
+          desc: R`المنتجين خلصوا. الدرس ده المراجعة اللي بتتعمل قبل أي تسليم، بالسكربتات اللي اتبنت في الوحدة، وبالأرقام النهائية:
+
+| الفحص | portfolio (٣ صفحات) | dashboard |
+|---|---|---|
+| overflow من 360 لـ 1440 (٦ عروض) | صفر في الـ ١٨ خانة | صفر في الـ ٦، والجدول الأسبوعي بس اللي بيتسكرول |
+| axe (WCAG 2.2 AA) | صفر في ١٢ فحص (٣ صفحات × ثيمين × لغتين) | صفر في ٨ (ثيمين × عرضين، ومع الـ dialog أو الـ drawer مفتوح) |
+| CLS (390، CPU ×4) | 0 | 0 والبيانات متأخرة 1.2 ثانية |
+| LCP (الوسط بتاع ٣) | 304–320ms | 208–220ms |
+| HTML و CSS و JS | 30.5 كيلو | 41 كيلو |
+| الكيبورد | skip link ثم Tab بيدخل main، والفلتر بالأسهم | الـ Tab بيمشي بالترتيب، والـ drawer والـ dialog بيرجّعوا الفوكس |
+
+**والمفاجأة:** axe قال صفر violations، بس لون «نشط» كان 4.35:1. لما غيّرته لـ **1.76:1** (أخضر فاتح جدًا) axe قال **صفر برضه**. السبب في كود axe-core 4.14 نفسه: بيكشف «icon ligatures» (خطوط الأيقونات اللي بتحوّل كلمة لرسمة) بإنه بيقيس عرض الكلمة مكتوبة مرة واحدة مقابل حروفها لوحدها، والحروف العربي **بتتوصل** فالكلمة أقصر من حروفها، فـ «نشط» اتحسبت أيقونة واتشالت من الفحص. «نظرة عامة» اتفحصت، و «نشط» و «الاشتراك نشط» لأ. الدرس: فحص التباين للـ tokens بنفسك (درس الخريطة) مش اختياري في موقع عربي.
+
+**النشر:** GitHub Pages بيحط الـ project site على [[/<اسم الـ repo>/]] مش على [[/]]. اتجرّب بسيرفر بيقلّد ده: المسارات النسبية ([[css/site.css]]) **صفر 404**، والمسارات اللي بتبدأ بـ [[/]] **٥ طلبات 404** والصفحة اتعرضت بـ Times New Roman من غير CSS. وخطوات الرفع نفسها من وثائق GitHub (متعملتش هنا عشان ميتعملش repo حقيقي).`,
+          example: R`node check-portfolio.mjs
+node check-dashboard.mjs
+node audit-dashboard.mjs
+node vitals.mjs "http://127.0.0.1:5502/?delay=1200"
+node subpath.mjs
+gh repo create nadine-site --public --source . --push`,
+          lines: [
+            R`الـ portfolio كله: اللغة، والفلتر، والظهور، والانتقال، والطباعة، و axe على ٣ صفحات × ثيمين × لغتين، والـ matrix، و CLS و LCP. حوالي دقيقة، والسيرفر لازم يكون شغال.`,
+            R`الـ dashboard وظيفيًا: الرابط بعد كل فعل و Back، والحالات، والـ dialog والفوكس، والـ sidebar، والثيم. السطر الوحيد في [[page errors]] هو الـ 500 المتعمّد من [[?fail=1]].`,
+            R`مراجعة الـ dashboard: axe في ٨ حالات، والـ matrix، وترتيب الـ Tab، والـ sticky، والـ roles على الموبايل، و CLS و LCP.`,
+            R`٣ مرات على موبايل 390 و CPU ×4 والبيانات متأخرة 1.2 ثانية، وبيطبع كل shift بالنص اللي اتحرك. أول مرة دايمًا أبطأ (Chrome بارد)، فبص على التانية والتالتة.`,
+            R`بيقلّد GitHub Pages: الموقع تحت [[/nadine-site/]]، وبيعدّ الـ 404 للنسخة المنشورة وللنسخة اللي مساراتها بـ [[/]].`,
+            R`من الوثائق (متشغّلش هنا): بيعمل repo عام على GitHub من الفولدر الحالي ويرفعه. [[--source .]] = الفولدر ده، و [[--push]] = ارفع الـ commits. لازم [[git init]] و commit قبله، و [[gh auth login]] مرة واحدة.`,
+          ],
+          try: R`شغّل السكربتات الأربعة على نسختك واكتب الأرقام في جدول زي اللي في الـ desc. لو أي رقم مختلف، اعرف ليه قبل ما تكمّل. وبعدين جرّب تجربة axe بنفسك: صفحة فيها [[<p style="color:#7fc493;background:#dcf3e3">نشط</p>]] وصفحة فيها نفس اللون على «نظرة عامة»، وشغّل axe على الاتنين. وفي الآخر شغّل [[subpath.mjs]] وغيّر لينك واحد في [[index.html]] لـ [[/css/site.css]] وشوف الـ 404.`,
+          flag: R`term`,
+          deep: {
+            why: R`كل غلطة في الوحدة دي كانت «شكلها سليم» عندي على الكمبيوتر: الـ scroll الأفقي كان في كل المقاسات ما عدا 1440 (المقاس اللي كنت شغال عليه)، والـ CLS كان بالإنجليزي بس، وال 404 تحت المسار الفرعي بس، والتباين الضعيف كان في كلمة axe مبيفحصهاش. المراجعة بسكربت بتلاقي اللي العين مبتلاقيهوش، وبتتعاد بعد كل تعديل في ثواني.`,
+            how: R`كل سكربت بيفتح Chrome المتسطّب بـ playwright-core ([[channel: "chrome"]])، وكل [[browser.newContext()]] جلسة نضيفة (من غير localStorage ولا كاش) بخياراتها: [[viewport]] و [[colorScheme]] و [[reducedMotion]] و [[javaScriptEnabled]]. الـ overflow = [[document.documentElement.scrollWidth > innerWidth]]. axe بيتحقن في الصفحة وبيرجّع [[violations]] و [[passes]] و [[incomplete]] (اللي مقدرش يحكم عليه، زي نص على gradient: ٢١ عنصر هنا) و [[inapplicable]] (القاعدة مش بتنطبق، وده اللي حصل للـ badge). والكيبورد [[page.keyboard.press("Tab")]] و [[document.activeElement]]. والـ CLS و LCP بـ [[PerformanceObserver]] من [[addInitScript]] قبل أي سكربت في الصفحة، والـ CPU بـ [[Emulation.setCPUThrottlingRate]]. والمسار الفرعي: سيرفر صغير بيرد بس على اللي بيبدأ بـ [[/nadine-site/]]، فأي [[/css/...]] بيرجع 404 زي GitHub Pages بالظبط.`,
+            when: R`قبل كل تسليم، وبعد كل تعديل كبير، وفي CI على كل push (السكربتات بترجع exit code لو حوّلتها PASS/FAIL زي [[check.mjs]] في درس «مشروع تشخيص موقع بطيء ومكسور» في تاب المتصفح). وبعد ما الموقع يتنشر شغّل نفس الـ matrix و axe على الرابط الحقيقي، وزوّد Lighthouse مرة. وفحص التباين بالـ tokens في كل مشروع عربي حتى لو axe أخضر.`,
+            mistakes: R`تثق في axe صفر (اتقاس: «نشط» بـ 1.76:1 عدّت). تعمل [[browser.newPage()]] وتدّيها لـ [[AxeBuilder]] (اتقاس: [[Error: Please use browser.newContext()]]). تقيس LCP مرة واحدة (أول مرة 1132–1208ms، والتانية 208–320). تختبر على المقاس اللي بتشتغل عليه بس. تكتب [[href="/css/site.css"]] لأنها شغالة على [[localhost]] (اتقاس: ٥ طلبات 404 تحت [[/repo/]]). تنسى تغيّر [[canonical]] و [[og:url]] و [[og:image]] للدومين الحقيقي بعد النشر. تنشر الـ dashboard للعامة وتفتكر إن [[noindex]] حماية.`,
+          },
+          teach: R`## المراجعة: السكربتات كاملة
+
+~~~javascript check-portfolio.mjs
+// node check-portfolio.mjs : language switch, :has() filter, reveal, View Transition, print, axe, overflow matrix, CLS/LCP
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+const B = "http://127.0.0.1:5501/";
+const browser = await chromium.launch({ channel: "chrome" });
+const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+const page = await ctx.newPage();
+const errors = [];
+page.on("pageerror", e => errors.push(e.message));
+page.on("console", m => m.type() === "error" && errors.push(m.text()));
+
+// 1. language switch
+await page.goto(B);
+const before = await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir, document.querySelector("h1").textContent, getComputedStyle(document.querySelector(".brand")).marginInlineEnd]);
+await page.click("#lang");
+const after = await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir, document.querySelector("h1").textContent, document.title, document.querySelector(".brand").getBoundingClientRect().left]);
+console.log("lang before:", before.slice(0, 3).join(" | "));
+console.log("lang after: ", after.slice(0, 4).join(" | "), "| brand x =", Math.round(after[4]));
+await page.reload();
+console.log("after reload:", await page.evaluate(() => document.documentElement.lang + " " + document.querySelector("h1").textContent));
+await page.click("#lang");   // back to Arabic for the rest
+
+// 2. filter with :has()
+for (const f of ["all", "web", "a11y", "api", "design"]) {
+  await page.check($__btinput[value="$__{f}"]$__bt);
+  const n = await page.$$eval(".card", cs => cs.filter(c => getComputedStyle(c).display !== "none").length);
+  console.log("filter", f.padEnd(6), "visible cards:", n);
+}
+await page.check('input[value="all"]');
+
+// 3. reveal: cards below the fold are hidden until scrolled to
+await page.goto(B);
+const op = await page.$$eval(".card", cs => cs.map(c => getComputedStyle(c).opacity));
+console.log("card opacity at load:", op.join(" "));
+await page.locator(".card").last().scrollIntoViewIfNeeded();
+await page.waitForTimeout(900);
+console.log("after scroll:", (await page.$$eval(".card", cs => cs.map(c => getComputedStyle(c).opacity))).join(" "));
+const still = await browser.newContext({ reducedMotion: "reduce" });
+const sp = await still.newPage(); await sp.goto(B);
+console.log("reduced motion at load:", (await sp.$$eval(".card", cs => cs.map(c => getComputedStyle(c).opacity + "/" + getComputedStyle(c).transitionDuration))).join(" "));
+const nojs = await browser.newContext({ javaScriptEnabled: false });
+const np = await nojs.newPage(); await np.goto(B);
+console.log("no JS:", (await np.$$eval(".card", cs => cs.map(c => getComputedStyle(c).opacity))).join(" "));
+
+// 4. View Transition between the pages
+await page.addInitScript(() => addEventListener("pagereveal", e => { window.__vt = e.viewTransition ? "yes" : "no"; }));
+await page.goto(B);
+await page.click('a[href="work/tide-notes.html"]');
+await page.waitForLoadState("load");
+console.log("view transition on the case page:", await page.evaluate(() => window.__vt));
+await sp.addInitScript(() => addEventListener("pagereveal", e => { window.__vt = e.viewTransition ? "yes" : "no"; }));
+await sp.goto(B); await sp.click('a[href="work/tide-notes.html"]'); await sp.waitForLoadState("load");
+const anim = await sp.evaluate(() => window.__vt);
+console.log("with reduced motion: transition object =", anim, "(the CSS sets animation: none)");
+
+// 5. print: what hides, and how many A4 pages
+for (const p of ["", "cv.html"]) {
+  await page.goto(B + p);
+  await page.emulateMedia({ media: "print" });
+  const hidden = await page.$$eval(".top, .lang, #print", els => els.map(e => getComputedStyle(e).display));
+  const pdf = await page.pdf({ format: "A4", preferCSSPageSize: true });
+  const pages = (pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g) || []).length;
+  console.log("print", (p || "index.html").padEnd(10), "pages:", pages, "header display:", hidden.join(","));
+  await page.emulateMedia({ media: "screen" });
+}
+
+// 6. axe on every page, both languages, both themes
+for (const p of ["", "work/tide-notes.html", "cv.html"]) {
+  for (const scheme of ["light", "dark"]) {
+    for (const lang of ["ar", "en"]) {
+      const c = await browser.newContext({ colorScheme: scheme });
+      const pg = await c.newPage();
+      if (lang === "en") await pg.addInitScript(() => localStorage.setItem("lang", "en"));
+      await pg.goto(B + p);
+      await pg.evaluate(() => document.querySelectorAll("[data-reveal]").forEach(e => e.classList.add("in")));
+      await pg.waitForTimeout(700);
+      const r = await new AxeBuilder({ page: pg }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+      console.log("axe", (p || "index.html").padEnd(20), scheme.padEnd(5), lang, "violations:", r.violations.length, r.violations.map(v => v.id + "(" + v.nodes.length + ")").join(" "));
+      await c.close();
+    }
+  }
+}
+
+// 7. overflow matrix
+for (const p of ["", "work/tide-notes.html", "cv.html"]) {
+  const row = [];
+  for (const w of [360, 390, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width: w, height: 800 });
+    await page.goto(B + p);
+    const [sw, iw] = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
+    row.push(w + (sw > iw ? " OVERFLOW " + sw : " ok"));
+  }
+  console.log("matrix", (p || "index.html").padEnd(20), row.join(" | "));
+}
+
+// 8. CLS and LCP on a mid phone, 4x slower CPU
+const m = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+const mp = await m.newPage();
+const cdp = await m.newCDPSession(mp);
+await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+await mp.addInitScript(() => {
+  window.__cls = 0; window.__lcp = 0; window.__lcpEl = "";
+  new PerformanceObserver(l => l.getEntries().forEach(e => { if (!e.hadRecentInput) window.__cls += e.value; })).observe({ type: "layout-shift", buffered: true });
+  new PerformanceObserver(l => { const e = l.getEntries().at(-1); window.__lcp = e.startTime; window.__lcpEl = e.element?.tagName + "." + (e.element?.className || ""); }).observe({ type: "largest-contentful-paint", buffered: true });
+});
+for (const p of ["", "work/tide-notes.html", "cv.html"]) {
+  await mp.goto(B + p); await mp.waitForTimeout(1500);
+  const r = await mp.evaluate(() => [window.__cls.toFixed(4), Math.round(window.__lcp), window.__lcpEl]);
+  console.log("vitals", (p || "index.html").padEnd(20), "CLS", r[0], "LCP", r[1] + "ms", r[2]);
+}
+console.log("page errors:", errors.length ? errors : "none");
+await browser.close();
+~~~
+
+- [[page.on("pageerror")]] و [[console]] من نوع [[error]]: أي خطأ JS أو طلب فاشل بيتجمع ويتطبع في الآخر. ده اللي مسك الـ 404 بتاع [[favicon.ico]] في أول تشغيل.
+- [[withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])]]: قواعد WCAG بس لحد 2.2 AA (من غير [[best-practice]]).
+- قبل axe: [[classList.add("in")]] على كل الكروت و 700ms: axe بيحسب التباين من اللون المرسوم، والكارت الشفاف كان هيطلّع تباين غلط.
+- [[addInitScript(() => localStorage.setItem("lang", "en"))]]: الجلسة تبدأ إنجليزي من غير ما تدوس الزرار.
+
+~~~javascript check-dashboard.mjs
+// node check-dashboard.mjs : URL state, sort, states, dialog, toasts, sidebar, theme, axe, matrix, vitals
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+const B = "http://127.0.0.1:5502/";
+const browser = await chromium.launch({ channel: "chrome" });
+const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+const page = await ctx.newPage();
+const errors = [];
+page.on("pageerror", e => errors.push(e.message));
+page.on("console", m => m.type() === "error" && errors.push(m.text()));
+const rows = () => page.$$eval("#rows tr", t => t.map(r => r.cells[0].textContent));
+const say = (...a) => console.log(...a);
+
+// 1. data + KPIs
+await page.goto(B);
+await page.waitForSelector("#rows tr:not(.skel)");
+say("count:", await page.textContent("#count"));
+say("kpi:", await page.$$eval(".k-num", e => e.map(x => x.textContent).join(" | ")), "| delta:", await page.textContent("#k-delta"));
+say("spark points:", (await page.getAttribute("#spark", "points")).split(" ").length, "| ring offset:", await page.$eval("#ring", e => getComputedStyle(e).strokeDashoffset));
+
+// 2. URL state: filter, sort, page, back
+await page.selectOption("select[name=status]", "frozen");
+say("after status=frozen:", page.url().replace(B, "/"), "|", await page.textContent("#count"));
+await page.click('th[data-sort="visits"] button');
+await page.click('th[data-sort="visits"] button');
+say("after sort visits twice:", page.url().replace(B, "/"), "| aria-sort:", await page.getAttribute('th[data-sort="visits"]', "aria-sort"));
+await page.goBack();
+say("after Back:", page.url().replace(B, "/"), "| aria-sort:", await page.getAttribute('th[data-sort="visits"]', "aria-sort"));
+await page.goto(B + "?page=4&sort=lastVisit&dir=desc");
+await page.waitForSelector("#rows tr:not(.skel)");
+say("open ?page=4&sort=lastVisit&dir=desc:", await page.textContent("#count"), "| first row:", (await rows())[0]);
+await page.goto(B + "?page=99");
+await page.waitForSelector("#rows tr:not(.skel)");
+say("open ?page=99 ->", page.url().replace(B, "/"), "|", await page.textContent("#count"));
+await page.goto(B);
+await page.waitForSelector("#rows tr:not(.skel)");
+const len0 = await page.evaluate(() => history.length);
+await page.fill("input[name=q]", "ادم");
+await page.waitForTimeout(400);
+say("search ادم:", decodeURIComponent(page.url().replace(B, "/")), "| rows:", (await rows()).join(", "), "| history grew by", (await page.evaluate(() => history.length)) - len0);
+await page.fill("input[name=q]", "zzz");
+await page.waitForTimeout(400);
+say("empty state:", await page.textContent("#rows"));
+await page.click("#rows button");
+await page.waitForTimeout(50);
+say("after clear:", page.url().replace(B, "/"), "|", await page.textContent("#count"));
+
+// 3. loading and error states
+await page.goto(B + "?delay=1200");
+await page.waitForTimeout(300);
+say("while loading:", await page.$$eval("#rows tr.skel", t => t.length), "skeleton rows, aria-busy =", await page.getAttribute("#table", "aria-busy"), "| count:", await page.textContent("#count"));
+await page.goto(B + "?fail=1");
+await page.waitForSelector(".state-row.error");
+say("error:", await page.textContent(".state-row.error"), "| focus on:", await page.evaluate(() => document.activeElement.textContent));
+await page.click(".state-row.error button");
+await page.waitForSelector("#rows tr:not(.skel):not(.state-row)");
+say("after retry:", await page.textContent("#count"));
+
+// 4. dialog + toast
+await page.goto(B);
+await page.waitForSelector("#rows tr:not(.skel)");
+await page.click("#add");
+say("dialog open:", await page.$eval("#dlg-member", d => d.open), "| focus:", await page.evaluate(() => document.activeElement.name));
+await page.click('#member-form button[value="save"]');
+await page.fill("#member-form input[name=name]", "سا");
+await page.click('#member-form button[value="save"]');
+say("2 letters -> message:", await page.$eval("#member-form input[name=name]", i => i.validationMessage));
+await page.fill("#member-form input[name=name]", "");
+await page.click('#member-form button[value="save"]');
+say("save with empty name -> still open:", await page.$eval("#dlg-member", d => d.open), "| message:", await page.$eval("#member-form input[name=name]", i => i.validationMessage));
+await page.fill("#member-form input[name=name]", "سارة الجندي");
+await page.click('#member-form button[value="save"]');
+await page.waitForTimeout(100);
+say("saved -> open:", await page.$eval("#dlg-member", d => d.open), "| focus back on:", await page.evaluate(() => document.activeElement.id), "| toast:", await page.textContent("#toasts"), "| count:", await page.textContent("#count"));
+await page.click("#add");
+await page.keyboard.press("Escape");
+say("Esc -> open:", await page.$eval("#dlg-member", d => d.open), "| focus:", await page.evaluate(() => document.activeElement.id));
+await page.click("#add");
+const box = await page.$eval("#dlg-member", d => { const r = d.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; });
+await page.mouse.click(box.x + box.w / 2, box.y + 8);            // inside the dialog, on its padding
+say("click on the dialog's own padding -> open:", await page.$eval("#dlg-member", d => d.open));
+if (await page.$eval("#dlg-member", d => d.open)) { await page.mouse.click(5, 5); }
+say("click on the backdrop -> open:", await page.$eval("#dlg-member", d => d.open));
+
+// 5. schedule
+const slots = await page.$$eval(".slot", s => s.map(b => [b.style.getPropertyValue("--row"), getComputedStyle(b).gridRowStart, getComputedStyle(b).gridRowEnd, getComputedStyle(b).gridColumnStart]));
+say("slots:", slots.length, "| first slot --row / grid-row-start / end / column:", slots[0].join(" / "));
+await page.click(".slot:not(.full)");
+await page.click("#dc-book");
+await page.waitForTimeout(100);
+say("booked toast:", await page.$$eval(".toast", t => t.map(x => x.textContent).join(" || ")));
+
+// 6. sidebar collapse and the drawer
+await page.click("#collapse");
+await page.waitForTimeout(400);
+say("collapsed: side width", await page.$eval("#side", e => Math.round(e.getBoundingClientRect().width)), "| link names:", await page.$$eval("#side nav a", a => a.map(x => x.textContent.trim()).join(", ")), "| aria-expanded:", await page.getAttribute("#collapse", "aria-expanded"));
+await page.click("#collapse");
+await page.setViewportSize({ width: 390, height: 844 });
+await page.waitForTimeout(400);
+say("narrow: side visibility", await page.$eval("#side", e => getComputedStyle(e).visibility), "| menu shown:", await page.$eval("#menu", e => getComputedStyle(e).display));
+await page.click("#menu");
+await page.waitForTimeout(300);
+say("drawer open: focus", await page.evaluate(() => document.activeElement.textContent.trim()), "| main inert:", await page.$eval("#main", e => e.inert), "| side x:", await page.$eval("#side", e => Math.round(e.getBoundingClientRect().right)));
+await page.keyboard.press("Escape");
+await page.waitForTimeout(300);
+say("Esc: focus on", await page.evaluate(() => document.activeElement.id), "| main inert:", await page.$eval("#main", e => e.inert), "| side visibility:", await page.$eval("#side", e => getComputedStyle(e).visibility));
+
+// 7. theme
+await page.click("#theme");
+say("theme:", await page.evaluate(() => document.documentElement.dataset.theme), "| bg:", await page.$eval("body", e => getComputedStyle(e).backgroundColor), "| pressed:", await page.getAttribute("#theme", "aria-pressed"));
+await page.reload();
+say("after reload:", await page.evaluate(() => document.documentElement.dataset.theme), "| pressed:", await page.getAttribute("#theme", "aria-pressed"));
+say("page errors:", errors.length ? errors : "none");
+await browser.close();
+~~~
+
+~~~javascript audit-dashboard.mjs
+// node audit-dashboard.mjs : axe, overflow matrix, keyboard walk, sticky header, mobile table roles, CLS/LCP
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+const B = "http://127.0.0.1:5502/";
+const browser = await chromium.launch({ channel: "chrome" });
+const ready = p => p.waitForSelector("#rows tr:not(.skel)");
+
+// 1. axe: 2 themes x 2 widths, plus with the dialog open and the drawer open
+for (const scheme of ["light", "dark"]) for (const w of [1280, 390]) {
+  const c = await browser.newContext({ colorScheme: scheme, viewport: { width: w, height: 900 } });
+  const p = await c.newPage(); await p.goto(B); await ready(p); await p.waitForTimeout(900);
+  const r = await new AxeBuilder({ page: p }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  console.log("axe", scheme.padEnd(5), String(w).padEnd(4), "violations:", r.violations.length, r.violations.map(v => v.id + "(" + v.nodes.length + ") " + v.nodes[0].target.join(" ")).join(" ; "));
+  if (w === 1280) { await p.click("#add"); await p.waitForTimeout(300); } else { await p.click("#menu"); await p.waitForTimeout(400); }
+  const r2 = await new AxeBuilder({ page: p }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  console.log("   with", w === 1280 ? "dialog" : "drawer", "open:", r2.violations.length, r2.violations.map(v => v.id + "(" + v.nodes.length + ")").join(" "));
+  await c.close();
+}
+
+// 2. overflow matrix (page) and which parts scroll on purpose
+const page = await browser.newPage();
+const row = [];
+for (const w of [360, 390, 768, 1024, 1280, 1440]) {
+  await page.setViewportSize({ width: w, height: 900 }); await page.goto(B); await ready(page); await page.waitForTimeout(300);
+  const r = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth, document.querySelector(".week-wrap").scrollWidth > document.querySelector(".week-wrap").clientWidth]);
+  row.push(w + (r[0] > r[1] ? " OVERFLOW " + r[0] : " ok") + (r[2] ? "(week scrolls)" : ""));
+}
+console.log("matrix:", row.join(" | "));
+
+// 3. keyboard walk from the top on desktop
+await page.setViewportSize({ width: 1280, height: 900 }); await page.goto(B); await ready(page);
+const stops = [];
+for (let i = 0; i < 16; i++) {
+  await page.keyboard.press("Tab");
+  stops.push(await page.evaluate(() => { const a = document.activeElement; return (a.getAttribute("aria-label") || a.textContent.trim() || a.name || a.tagName).slice(0, 18); }));
+}
+console.log("tab order:", stops.join(" → "));
+
+// 4. sticky header: scroll the page and see where the header row is
+await page.evaluate(() => scrollTo(0, document.getElementById("members").offsetTop + 300));
+await page.waitForTimeout(200);
+console.log("sticky th top after scroll:", await page.$eval(".members thead th", th => Math.round(th.getBoundingClientRect().top)), "| topbar height:", await page.$eval(".topbar", e => Math.round(e.getBoundingClientRect().height)));
+
+// 5. what a screen reader gets from the table at 390 (rows turned into cards with display:block)
+await page.setViewportSize({ width: 390, height: 900 }); await page.goto(B); await ready(page);
+const snap = await page.locator("#table").ariaSnapshot();
+console.log("aria at 390:", snap.split("\n").slice(0, 6).join(" / "));
+
+// 6. CLS and LCP: data 1.2 s late, phone width, 4x CPU
+for (const q of ["", "?delay=1200"]) {
+  const c = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const p = await c.newPage();
+  await (await c.newCDPSession(p)).send("Emulation.setCPUThrottlingRate", { rate: 4 });
+  await p.addInitScript(() => {
+    window.__cls = 0; window.__src = [];
+    new PerformanceObserver(l => l.getEntries().forEach(e => { if (!e.hadRecentInput) { window.__cls += e.value; window.__src.push(...e.sources.map(s => s.node?.id || s.node?.className || s.node?.nodeName)); } })).observe({ type: "layout-shift", buffered: true });
+    new PerformanceObserver(l => { const e = l.getEntries().at(-1); window.__lcp = Math.round(e.startTime); window.__el = e.element?.id || e.element?.className || e.element?.tagName; }).observe({ type: "largest-contentful-paint", buffered: true });
+  });
+  await p.goto(B + q); await p.waitForTimeout(3000);
+  console.log("vitals", (q || "fast data").padEnd(12), await p.evaluate(() => "CLS " + window.__cls.toFixed(4) + " LCP " + window.__lcp + "ms " + window.__el + (window.__src.length ? " | moved: " + [...new Set(window.__src)].join(",") : "")));
+  await c.close();
+}
+await browser.close();
+~~~
+
+~~~javascript vitals.mjs
+// node vitals.mjs <url> : CLS and LCP, phone width, 4x slower CPU, 3 runs, every shift printed with its text
+import { chromium } from "playwright-core";
+const url = process.argv[2];
+const browser = await chromium.launch({ channel: "chrome" });
+for (let i = 1; i <= 3; i++) {
+  const c = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const p = await c.newPage();
+  await (await c.newCDPSession(p)).send("Emulation.setCPUThrottlingRate", { rate: 4 });
+  await p.addInitScript(() => {
+    window.__cls = 0; window.__s = [];
+    new PerformanceObserver(l => l.getEntries().forEach(e => { if (e.hadRecentInput) return; window.__cls += e.value;
+      e.sources.forEach(s => window.__s.push(e.value.toFixed(4) + " " + (s.node?.nodeName === "#text" ? '"' + s.node.textContent.trim().slice(0, 30) + '" in ' + s.node.parentElement?.className : s.node?.id || s.node?.className || s.node?.nodeName))); })).observe({ type: "layout-shift", buffered: true });
+    new PerformanceObserver(l => { const e = l.getEntries().at(-1); window.__lcp = Math.round(e.startTime); window.__el = e.element?.id || e.element?.tagName; }).observe({ type: "largest-contentful-paint", buffered: true });
+  });
+  await p.goto(url); await p.waitForTimeout(3000);
+  console.log("run", i, await p.evaluate(() => "CLS " + window.__cls.toFixed(4) + " LCP " + window.__lcp + "ms " + window.__el + (window.__s.length ? " | " + window.__s.join(" ; ") : "")));
+  await c.close();
+}
+await browser.close();
+~~~
+
+~~~javascript kb-port.mjs
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ channel: "chrome" });
+const p = await (await b.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
+await p.goto("http://127.0.0.1:5501/");
+const name = () => p.evaluate(() => { const a = document.activeElement; return (a.type === "radio" ? "radio:" + a.value : a.textContent.trim()).slice(0, 16); });
+const stops = [];
+for (let i = 0; i < 11; i++) { await p.keyboard.press("Tab"); stops.push(await name()); }
+console.log("tab:", stops.join(" → "));
+await p.focus('input[value="all"]'); await p.keyboard.press("ArrowLeft");
+console.log("ArrowLeft on «الكل» →", await name(), "| visible cards:", await p.$$eval(".card", cs => cs.filter(c => getComputedStyle(c).display !== "none").length));
+await p.keyboard.press("Tab");
+console.log("Tab from the group →", await name());
+await p.goto("http://127.0.0.1:5501/"); await p.keyboard.press("Tab"); await p.keyboard.press("Enter");
+console.log("skip link + Enter → focus in:", await p.evaluate(() => document.activeElement.id || document.activeElement.tagName), "| url:", p.url().split("/").pop());
+await p.keyboard.press("Tab"); console.log("next Tab →", await name());
+await b.close();
+~~~
+
+---
+
+## النتايج
+
+### المقاسات
+
+~~~text
+matrix index.html           360 ok | 390 ok | 768 ok | 1024 ok | 1280 ok | 1440 ok
+matrix work/tide-notes.html 360 ok | 390 ok | 768 ok | 1024 ok | 1280 ok | 1440 ok
+matrix cv.html              360 ok | 390 ok | 768 ok | 1024 ok | 1280 ok | 1440 ok
+dashboard: 360 ok(week scrolls) | 390 ok(week scrolls) | 768 ok(week scrolls) | 1024 ok(week scrolls) | 1280 ok(week scrolls) | 1440 ok
+~~~
+
+### axe
+
+~~~text
+axe index.html           light ar violations: 0      (و light en و dark ar و dark en: 0)
+axe work/tide-notes.html light ar violations: 0      (والتلاتة التانيين: 0)
+axe cv.html              light ar violations: 0      (والتلاتة التانيين: 0)
+axe light 1280 violations: 0 / with dialog open: 0
+axe light 390  violations: 0 / with drawer open: 0
+axe dark  1280 violations: 0 / with dialog open: 0
+axe dark  390  violations: 0 / with drawer open: 0
+~~~
+
+### الكيبورد
+
+~~~text portfolio
+tab: اتخطّى للمحتوى → نادين فؤاد → الشغل → عني → تواصل → السيرة الذاتية → English → شوف الشغل → كلّمني → radio:all → Tide Notes: ملاح
+skip link + Enter → focus in: BODY | url: #main
+next Tab → شوف الشغل
+~~~
+
+~~~text dashboard
+tab order: اتخطّى للمحتوى → القايمة الجانبية → نظرة عامة → الأعضاء → جدول الحصص → الوضع الداكن → عضو جديد → q → الكلنشطمتجمّدمنتهي → الكلشهري3 شهورسنوي → امسح الفلاتر → الاسم → الباقة → الحالة → آخر زيارة → زيارات الشهر
+~~~
+
+- الـ skip link في الـ portfolio: [[activeElement]] فضل [[BODY]] لأن [[<main>]] هناك ملوش [[tabindex="-1"]]، بس Chrome نقل «نقطة بداية الـ Tab» للـ main، فالـ Tab اللي بعدها راح لـ «شوف الشغل». في الـ dashboard [[main]] عليه [[tabindex="-1"]] فبياخد الفوكس نفسه (أوضح لقارئ الشاشة).
+- [[q]] و [[الكلنشط...]]: السكربت بيطبع [[name]] أو [[textContent]] للعنصر؛ قارئ الشاشة بيقرا الـ label («دوّر بالاسم أو الرقم»، و «الحالة، الكل»).
+
+### الأداء
+
+~~~text vitals.mjs (390، CPU ×4)
+dashboard ?delay=1200: run 1 CLS 0.0000 LCP 1208ms H1 | run 2 CLS 0.0000 LCP 220ms H1 | run 3 CLS 0.0000 LCP 208ms H1
+portfolio:             run 1 CLS 0.0000 LCP 1132ms P  | run 2 CLS 0.0000 LCP 320ms P  | run 3 CLS 0.0000 LCP 304ms P
+~~~
+
+- run 1 دايمًا حوالي ثانية: Chrome لسه فاتح (أول ما يحمّل الـ JS والخطوط). مش رقم الموقع.
+- الـ LCP في الـ dashboard هو [[<h1>]] في الـ topbar مش الجدول: الجدول بيترسم skeleton الأول، والـ skeleton مش نص فمبيتحسبش.
+- مفيش خط من بره ولا صورة كبيرة في أول شاشة ولا مكتبة: الصفحة كلها ٣٠–٤١ كيلو HTML و CSS و JS.
+
+---
+
+## ليه axe سكت عن «نشط»؟
+
+~~~javascript axe-iso2.mjs
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+const b = await chromium.launch({ channel: "chrome" });
+const p = await (await b.newContext()).newPage();
+for (const t of ["نشط", "الاشتراك نشط", "نظرة عامة", "مشروع اتسلّم", "Active", "نشط ok", "١٠ زيارات", "10 زيارات"]) {
+  await p.setContent($__bt<html lang="ar" dir="rtl"><body><p style="color:#7fc493;background:#dcf3e3">$__{t}</p></body></html>$__bt);
+  const r = await new AxeBuilder({ page: p }).withRules(["color-contrast"]).analyze();
+  const n = k => r[k].flatMap(x => x.nodes).length;
+  console.log(t.padEnd(14), "checked:", n("violations") + n("passes") + n("incomplete"), "violations:", n("violations"));
+}
+await b.close();
+~~~
+
+~~~text اتشغّل فعلًا (axe-core 4.14.0، Chrome 156)
+نشط            checked: 0 violations: 0
+الاشتراك نشط   checked: 0 violations: 0
+نظرة عامة      checked: 1 violations: 1
+مشروع اتسلّم   checked: 1 violations: 1
+Active         checked: 1 violations: 1
+نشط ok         checked: 0 violations: 0
+١٠ زيارات      checked: 1 violations: 1
+10 زيارات      checked: 1 violations: 1
+~~~
+
+نفس اللون (1.76:1، مقروء بالعافية) على كل الكلمات. أي نص فيه «نشط» **مفحصش خالص** ([[checked: 0]]). وعلى الـ dashboard نفسه:
+
+~~~text axe-badge3.mjs
+shipped                        violations: 0
+.badge.active{color:#7fc493}   violations: 0
+visible rows with a green badge: 6
+~~~
+
+والسبب في [[node_modules/axe-core/axe.js]]: قبل ما يحسب التباين، axe بيشيل النص اللي شكله «icon ligature» ([[if (ignoreIconLigature && _isIconLigature(child, ...)) return '']]). والكشف بيرسم الكلمة على canvas ويقارن عرضها بمجموع عرض حروفها لوحدها ([[expectedWidth]] مقابل [[actualWidth]])، ولو الفرق كبير يبقى «أيقونة». في العربي الحروف بتتوصل وأشكالها بتتغير، فكلمة قصيرة زي «نشط» عرضها أقل بكتير من «ن» و «ش» و «ط» منفصلين، فبتتحسب أيقونة. والحل اللي اتعمل: [[contrast.mjs]] على أزواج الـ tokens (درس الخريطة)، وفحص بالعين في DevTools (اختار العنصر، وفي Styles دوس على مربع اللون: بيكتب الـ contrast ratio) لكل badge وزرار.
+
+وغلطة في الطريق: أول سكربت للتجربة كان [[browser.newPage()]]، و [[AxeBuilder]] وقع بـ [[Error: Please use browser.newContext()]]. axe محتاج يفتح صفحات في نفس الـ context (للـ iframes)، فلازم [[(await browser.newContext()).newPage()]].
+
+---
+
+## النشر على GitHub Pages
+
+~~~javascript subpath.mjs
+// serve portfolio/ under /nadine-site/ like a GitHub Pages project site, and count 404s
+import http from "node:http"; import fs from "node:fs"; import path from "node:path";
+import { chromium } from "playwright-core";
+const root = path.resolve("portfolio"), base = "/nadine-site/";
+const srv = http.createServer((req, res) => {
+  let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
+  if (!p.startsWith(base)) { res.writeHead(404); return res.end(); }
+  p = p.slice(base.length - 1); if (p.endsWith("/")) p += "index.html";
+  const f = path.join(root, p);
+  if (!fs.existsSync(f)) { res.writeHead(404); return res.end(); }
+  res.writeHead(200, { "content-type": { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml" }[path.extname(f)] || "application/octet-stream" });
+  fs.createReadStream(f).pipe(res);
+}).listen(5599);
+const b = await chromium.launch({ channel: "chrome" });
+for (const [name, patch] of [["relative paths (shipped)", null], ['root paths: href="/css/site.css"', s => s.replace(/href="css\//g, 'href="/css/').replace(/src="js\//g, 'src="/js/')]]) {
+  const p = await b.newPage(); const bad = [];
+  p.on("response", r => r.status() === 404 && bad.push(new URL(r.url()).pathname));
+  if (patch) await p.route("**/nadine-site/", async r => { const res = await r.fetch(); r.fulfill({ response: res, body: patch(await res.text()) }); });
+  await p.goto("http://127.0.0.1:5599" + base); await p.waitForTimeout(500);
+  console.log(name.padEnd(34), "404s:", bad.length, bad.join(" "), "| body font:", await p.$eval("body", e => getComputedStyle(e).fontFamily.slice(0, 20)));
+  await p.close();
+}
+await b.close(); srv.close();
+~~~
+
+~~~text اتشغّل فعلًا
+relative paths (shipped)           404s: 0  | body font: system-ui, "Segoe UI
+root paths: href="/css/site.css"   404s: 5 /js/boot.js /css/tokens.css /css/site.css /js/i18n.js /js/reveal.js | body font: "Times New Roman"
+~~~
+
+الخطوات (من وثائق GitHub Pages و GitHub CLI، **متشغّلتش هنا** عشان متتعملش repo حقيقي):
+
+~~~bash من الوثائق
+cd pd-lab
+printf "node_modules/\n" > .gitignore
+git init
+git add portfolio dashboard .gitignore
+git commit -m "portfolio and dashboard"
+gh repo create nadine-site --public --source . --push
+gh api -X POST repos/OWNER/nadine-site/pages -f "source[branch]=main" -f "source[path]=/"
+~~~
+
+- [[.gitignore]] فيه [[node_modules/]]: أدوات القياس متترفعش.
+- [[git add portfolio dashboard]]: الموقعين بس (السكربتات اختيارية؛ لو رفعتها حطها في فولدر [[tools/]]).
+- [[gh api -X POST repos/OWNER/nadine-site/pages]]: بيشغّل Pages من فرع [[main]] من الـ root (نفس اللي بيتعمل من Settings ← Pages ← Deploy from a branch). [[OWNER]] = اسم حسابك.
+- الروابط بعدها: [[https://OWNER.github.io/nadine-site/portfolio/]] و [[.../dashboard/]]. والـ dashboard فيه بيانات متخيلة بس؛ لو اتوصل بـ API حقيقي لازم تسجيل دخول في السيرفر.
+- بعد النشر: غيّر [[canonical]] و [[og:url]] و [[og:image]] للرابط الحقيقي (أو دومين خاص)، وشغّل [[check-portfolio.mjs]] بعد ما تغيّر [[B]] للرابط المنشور.
+
+---
+
+## كل الغلطات في الوحدة
+
+**حصلت فعلًا وانا ببني (٢٢):**
+
+| # | الدرس | العَرَض | الرقم | التصليح |
+|---|---|---|---|---|
+| 1 | الخريطة | [[state.js]] مش بيتقري في Node | [[Named export 'parseState' not found]] | [[npm pkg set type=module]] |
+| 2 | الخريطة | [[?fail=1]] كسر الصفحة نفسها | الاختبار علّق 30000ms | الفشل للبيانات بس |
+| 3 | الخريطة | الأخضر «نشط» ضعيف | 4.35:1 | [[#156c2f]] = 5.59 |
+| 4 | بورتفوليو ١ | الصفحة بتتنطط بالإنجليزي | CLS 0.1402 | [[i18n.js]] classic |
+| 5 | بورتفوليو ١ | «40+» اتقرت «+40» | الـ [[+]] على الشمال | [[<span dir="ltr">]] |
+| 6 | بورتفوليو ١ | اسم التاب فضل عربي | — | [[data-i18n]] على [[<title>]] |
+| 7 | بورتفوليو ١ | طلب فاشل في Console | [[favicon.ico]] 404 | [[icon.svg]] |
+| 8 | داشبورد ١ | الخط المستوي على الأرض | [[2,30 50,30 98,30]] | [[h / 2]] لو المدى صفر |
+| 9 | داشبورد ١ | مقارنة ناتج [[Intl]] بتفشل | 16 حرف بدل 13 ([[U+200F]]) | [[includes]] أو تنضيف |
+| 10 | داشبورد ١ | الكلام جنب النسبة بيتحرك | CLS 0.0010 | [[min-width: 5em]] |
+| 11 | داشبورد ١ | زرار التصغير مزنوق | لقطة الشاشة | [[aria-label]] وأيقونة بس |
+| 12 | داشبورد ٢ | الجدول بيتنطط على الموبايل | CLS 0.0848 | skeleton بنفس المقاس وسهم محجوز |
+| 13 | داشبورد ٢ | اسم زرار الترتيب فيه «▲» | [[button "الاسم ▲"]] | [[content: "▲" / ""]] |
+| 14 | داشبورد ٢ | «١٠ زيارات» جنب «8» | لقطة الشاشة | لاتيني كله |
+| 15 | داشبورد ٢ | badge ممدود بعرض الكارت | لقطة الشاشة | [[justify-self: start]] |
+| 16 | داشبورد ٣ | scroll أفقي في كل المقاسات | 1086 على 360 | [[min-width: 0]] |
+| 17 | داشبورد ٣ | الضغط جوه الحافة بيقفل الـ dialog | [[open: false]] | الـ padding على الفورم |
+| 18 | داشبورد ٣ | رسالة التحقق إنجليزي | [[Please fill out this field.]] | [[setCustomValidity]] |
+| 19 | داشبورد ٣ | الساعة بتتقسم سطرين | لقطة الشاشة | [[nowrap]] و 4.5rem |
+| 20 | داشبورد ٣ | الفوكس بيضيع بعد الحجز | [[BODY]] | تمرين في الدرس |
+| 21 | المراجعة | axe مفحصش «نشط» | 1.76:1 وصفر violations | فحص tokens بنفسك |
+| 22 | المراجعة | [[AxeBuilder]] وقع | [[Please use browser.newContext()]] | [[newContext().newPage()]] |
+
+**تجارب متعمّدة عشان نشوف الرقم (٨):**
+
+| # | التجربة | الرقم | الدرس |
+|---|---|---|---|
+| 1 | [[data-reveal]] على الـ hero | LCP 380 ← 1200ms | بورتفوليو ٢ |
+| 2 | [[minmax(22rem, 1fr)]] على 360 | 368 / 360 | بورتفوليو ٢ |
+| 3 | من غير CSS طباعة | صفحتين والـ header ظاهر | بورتفوليو ٣ |
+| 4 | نفس [[view-transition-name]] على ٥ كروت | [[Unexpected duplicate view-transition-name]] | بورتفوليو ٣ |
+| 5 | [[-100%]] للـ drawer في RTL | -154 / 118 على الشاشة | داشبورد ١ |
+| 6 | [[overflow-x: auto]] على wrapper الجدول | العنوان عند -75 | داشبورد ٢ |
+| 7 | السيرفر من غير فحص المسار | [[/..%2fserve.mjs]] = 200 | الخريطة |
+| 8 | مسارات بـ [[/]] تحت [[/repo/]] | 5 × 404 | المراجعة |
+
+---
+
+## بعد ما يخلص
+
+**بيكبر إزاي:**
+- الـ portfolio: كل مشروع جديد = كارت (سطر في HTML و tags) وصفحة دراسة حالة بنفس الهيكل. لو بقوا أكتر من ١٠، اعمل [[build.mjs]] بيولّد الكروت والصفحات من JSON (ومعاها نسخة إنجليزي ثابتة، المشروع الكبير).
+- الـ dashboard: البيانات من API (المشروع الكبير الأول)، والفلترة والترتيب والصفحات بيروحوا للسيرفر لما الأعضاء يبقوا آلاف (نفس [[parseState]] بيبني الـ query)، وتسجيل دخول بأدوار (مدير وموظف) والسيرفر هو اللي بيرفض.
+- لو الـ state بقت بتتشارك بين شاشات كتير (سلة، وإشعارات، ومحادثة)، ده الوقت اللي framework بيستاهل فيه (تاب React).
+
+**بيتكلف كام تقريبًا (أسعار تقريبية من صفحات الخدمات، بتتغير):**
+
+| الحاجة | التكلفة |
+|---|---|
+| GitHub Pages للموقعين | مجاني (للـ repo العام) |
+| دومين خاص ([[.com]]) | حوالي 10–15 دولار في السنة |
+| الـ dashboard بـ API و قاعدة بيانات | VPS صغير حوالي 5–6 دولار في الشهر، أو خطة مجانية في خدمة managed لحد حجم معيّن |
+
+**خليه بتاعك:**
+- غيّر «نادين فؤاد» لاسمك، والمشاريع لشغلك الحقيقي، والـ tokens لألوانك (وشغّل [[contrast.mjs]] على ألوانك قبل أي حاجة).
+- الـ dashboard: غيّر الصالة لحاجة بتعرفها (المشروع «فكرة» في آخر الوحدة)، وخلي أرقام الكروت هي اللي صاحب المكان بيسأل عنها فعلًا.
+- حط الاتنين في الـ portfolio كدراسات حالة: المشكلة، والقرارات (جدول «ليه الأدوات دي»)، والأرقام (الجداول اللي هنا).
+
+## الخلاصة
+
+- الفحص كود بيتعاد: matrix و axe وكيبورد و CLS/LCP، كل واحد سكربت.
+- axe صفر مش نهاية الفحص: في العربي بيعدّي كلمات من غير ما يفحصها، فالتباين بيتحسب من الـ tokens.
+- الأرقام بالوسط من ٣، وأول تشغيل مش محسوب.
+- المسارات نسبية عشان الموقع يشتغل تحت أي مسار.`,
+          sol: R`لو نسختك زي الشرح: ٢٤ خانة [[ok]] في الـ matrix، و [[violations: 0]] في الـ ٢٠ فحص axe، و CLS [[0.0000]] في كل الصفحات، و LCP في التشغيل التاني والتالت بين 200 و 350ms تقريبًا (جهازك ممكن يختلف). تجربة axe: «نظرة عامة» بتطلع violation و «نشط» [[checked: 0]]. و [[subpath.mjs]] بعد ما تغيّر لينك واحد لـ [[/css/site.css]] بيطلّع 404 واحد على الأقل والصفحة من غير التنسيق بتاعها.`,
+          practice: [
+            {
+              lvl: R`سريع`,
+              t: R`**اقرا وتوقّع:** في الـ ci بتاع الدرس، أنهي من الروابط دي هيتعلّم: [[css/site.css]]، و [[/js/boot.js]]، و [[https://nadine.example/]]، و [[#work]]، و [[/css/cv.css]]، و [[//cdn.example/x.png]]، و [[./]]؟ اكتب ليه كل واحد قبل ما تشغّل.`,
+              done: R`اتنين بس: [[/js/boot.js]] و [[/css/cv.css]] (بيبدأوا بـ [[/]] واحدة). [[//cdn...]] protocol-relative (دومين تاني، مش مسار في الموقع)، والباقي نسبي أو كامل أو anchor، والسكربت طلّع [[root paths: 2]].`,
+              sol: R`~~~js root-paths.mjs (نفس الـ ci بتاع الدرس على القيم السبعة)
+const list = ["css/site.css", "/js/boot.js", "https://nadine.example/", "#work", "/css/cv.css", "//cdn.example/x.png", "./"];
+for (const v of list) {
+  const hit = /^\/(?!\/)/.test(v);
+  console.log((hit ? "يتعلّم " : "عادي  ") + v);
+}
+console.log("root paths:", list.filter((v) => /^\/(?!\/)/.test(v)).length);
+~~~
+
+الـ regex [[^\/(?!\/)]] معناها: بيبدأ بـ [[/]]، و **مش** بعدها [[/]] تانية. الجزء [[(?!\/)]] نظرة لقدام سالبة.
+
+- [[css/site.css]]: نسبي، شغال تحت أي فولدر.
+- [[/js/boot.js]]: من جذر الدومين، فتحت [[/repo/]] هيطلب [[/js/boot.js]] ويقع. يتعلّم.
+- [[https://nadine.example/]]: رابط كامل.
+- [[#work]]: anchor في نفس الصفحة.
+- [[/css/cv.css]]: زي التاني.
+- [[//cdn.example/x.png]]: protocol-relative، يعني دومين تاني بنفس البروتوكول، مش مسار جوه الموقع.
+- [[./]]: نسبي.
+
+الغلطة الشائعة: تكتب [[startsWith("/")]] بس، فتعلّم روابط CDN وهي سليمة.
+
+~~~text الناتج (Node 24)
+عادي  css/site.css
+يتعلّم /js/boot.js
+عادي  https://nadine.example/
+عادي  #work
+يتعلّم /css/cv.css
+عادي  //cdn.example/x.png
+عادي  ./
+root paths: 2
+~~~` },
+            {
+              lvl: R`سريع`,
+              t: R`**اشرحها:** اكتب لزميل في ٣ سطور ليه axe عدّى «نشط» ومعدّاش «نظرة عامة»، وإيه اللي تعمله في كل مشروع عربي بسبب ده.`,
+              done: R`الشرح فيه إن axe بيشيل النص اللي عرضه مكتوب متوصّل أقل بكتير من حروفه لوحدها (فاكره أيقونة)، وإن الحروف العربي بتتوصل فده بيحصل لكلمات قصيرة، وإن الحل حساب التباين لكل زوج tokens بسكربت وفحص العناصر الصغيرة بالعين في DevTools.`,
+              sol: R`~~~text رسالة لزميل
+axe بيتخطى النص اللي عرضه المكتوب متوصّل أقل بكتير من مجموع حروفه لوحدها، لأنه بيحسبه أيقونة.
+الحروف العربي بتتوصل، فكلمة قصيرة زي «نشط» بتتحسب أيقونة، وتباينها مبيتفحصش، و «نظرة عامة» بتعدّي الحد فبتتفحص.
+فأي مشروع عربي: احسب تباين كل زوج tokens بسكربت، وافحص العناصر الصغيرة بعينك في DevTools.
+~~~
+
+ده باج في الافتراض مش في الصفحة: axe عنده دالة بتسأل «هل ده نص ولا ligature أيقونة؟» (زي خطوط الأيقونات اللي بتحوّل كلمة لرمز). بتقيس عرض الكلمة متوصّلة، وتقارنه بعرض حروفها منفصلة. العربي بيتوصل طبيعي، فالمقارنة بتقول «ده مش نص».
+
+النتيجة إن axe ممكن يقول صفر، وفيه نص قصير باهت في الصفحة فعلًا. يعني صفر هنا مش ضمان.
+
+الحل مش تقفل الفحص: [[contrast.mjs]] بيحسب كل زوج ألوان، فمش معتمد على axe، والعناصر الصغيرة بتتفحص بالـ color picker في DevTools.
+
+الغلطة الشائعة: تستنتج إن اللون سليم عشان axe عدّى.
+
+~~~text الناتج (axe 4.14.0، Chrome 156: نص باهت #999 على أبيض)
+«نشط» (#a): مش متفحوص خالص
+«نظرة عامة» (#b): واقع
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**ابني:** حوّل [[check-portfolio.mjs]] و [[audit-dashboard.mjs]] لـ [[check.mjs]] واحد بيطبع [[PASS]] أو [[FAIL]] لكل فحص (overflow، و axe، و CLS ≤ 0.1، و LCP ≤ 2500، وصفر page errors)، ويخرج بـ 1 لو أي واحد وقع. وجرّبه على نسخة فيها [[minmax(22rem, 1fr)]].`,
+              done: R`على النسخة السليمة كل السطور [[PASS]] والـ exit code صفر، وعلى النسخة البايظة [[FAIL]] في الـ overflow على 360 والـ exit code 1، و [[node check.mjs || echo blocked]] بيطبع [[blocked]].`,
+              sol: R`~~~js check.mjs
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+
+const P = process.env.P || "http://127.0.0.1:5501/", D = process.env.D || "http://127.0.0.1:5502/";
+const pages = [["portfolio", P], ["cv", P + "cv.html"], ["case", P + "work/tide-notes.html"], ["dashboard", D]];
+const widths = [360, 390, 768, 1280];
+const browser = await chromium.launch({ channel: "chrome" });
+let fail = 0;
+const line = (ok, text) => { console.log((ok ? "PASS " : "FAIL ") + text); if (!ok) fail++; };
+
+for (const [name, url] of pages) {
+  for (const w of widths) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: 800 } });
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.addInitScript(() => {
+      window.__v = { cls: 0, lcp: 0 };
+      new PerformanceObserver((l) => l.getEntries().forEach((e) => { if (!e.hadRecentInput) window.__v.cls += e.value; })).observe({ type: "layout-shift", buffered: true });
+      new PerformanceObserver((l) => { window.__v.lcp = l.getEntries().at(-1).startTime; }).observe({ type: "largest-contentful-paint", buffered: true });
+    });
+    await page.goto(url, { waitUntil: "load" });
+    await page.waitForTimeout(600);
+    const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    line(over <= 0, $__bt$__{name} $__{w} overflow $__{over}px$__bt);
+    if (w === 390 || w === 1280) {
+      const v = await page.evaluate(() => window.__v);
+      line(v.cls <= 0.1, $__bt$__{name} $__{w} CLS $__{v.cls.toFixed(4)}$__bt);
+      line(v.lcp <= 2500, $__bt$__{name} $__{w} LCP $__{Math.round(v.lcp)}ms$__bt);
+      const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa", "best-practice"]).analyze();
+      line(axe.violations.length === 0, $__bt$__{name} $__{w} axe $__{axe.violations.map((x) => x.id).join(",") || 0}$__bt);
+    }
+    line(errors.length === 0, $__bt$__{name} $__{w} page errors $__{errors.length}$__bt);
+    await ctx.close();
+  }
+}
+await browser.close();
+console.log(fail ? fail + " failed" : "all passed");
+process.exit(fail ? 1 : 0);
+~~~
+
+بيجمع [[check-portfolio.mjs]] و [[audit-dashboard.mjs]] في سكربت واحد، كل سطر فيه PASS أو FAIL، و [[process.exit(1)]] لو أي واحد وقع، فـ CI يقف و [[||]] في الترمنال يشتغل.
+
+- الحلقة الخارجية ٤ صفحات، والداخلية ٤ عروض.
+- [[addInitScript]] بيحط الـ observers قبل أي كود في الصفحة، عشان محدش يفوتهم.
+- CLS و LCP و axe على عرضين بس، لأنهم أغلى، و overflow على كلهم.
+- [[pageerror]] بيمسك أي خطأ JS مش متعامل معاه، ومش بيمسك 404 لملفات. ده فرق حصل فعلًا: favicon الناقص ملوش دعوة بالأخطاء.
+
+على النسخة البايظة [[minmax(22rem, 1fr)]] يعني 352px. على 360 المتاح أقل من كده فالـ overflow بيقع، وعلى 390 لسه بيتساع.
+
+الغلطة الشائعة: طباعة أرقام من غير exit code. CI بيقرا الـ exit code بس، فهيعدّي مهما طبعت.
+
+~~~text الناتج (node check.mjs)
+النسخة السليمة: 56 PASS، و 0 FAIL، و exit 0
+(مفيش)
+
+على minmax(22rem, 1fr):
+FAIL portfolio 360 overflow 8px
+exit 1
+node check.mjs || echo blocked  ← blocked
+~~~` },
+            {
+              lvl: R`تطبيق`,
+              t: R`**دوّر بنفسك:** من وثائق GitHub Pages اعرف إزاي تنشر من GitHub Actions بدل الفرع ([[actions/upload-pages-artifact]] و [[actions/deploy-pages]])، واكتب workflow بيشغّل [[contrast.mjs]] و فحص المسارات قبل النشر وبيوقف لو فشلوا.`,
+              done: R`عندك [[.github/workflows/pages.yml]] فيه job للفحص بيخرج بـ 1 لو لون وقع أو مسار بـ [[/]]، و job للنشر [[needs]] الفحص، والـ permissions فيها [[pages: write]] و [[id-token: write]] (من الوثائق)، ومكتوب إن ده محتاج Settings ← Pages ← Source = GitHub Actions.`,
+              sol: R`~~~yaml .github/workflows/pages.yml
+name: pages
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node contrast.mjs
+      - run: node root-paths.mjs
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: $__{{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: portfolio
+      - id: deployment
+        uses: actions/deploy-pages@v4
+~~~
+
+~~~js contrast.mjs (آخر سطر، عشان يخرج بـ 1)
+process.exitCode = Object.values(pairs).some(([a, b]) => ratio(a, b) < 4.5) ? 1 : 0;
+~~~
+
+~~~js root-paths.mjs (يفحص الملفات الحقيقية)
+import fs from "node:fs";
+let bad = 0;
+for (const f of ["portfolio/index.html", "portfolio/cv.html", "portfolio/work/tide-notes.html", "dashboard/index.html"]) {
+  for (const m of fs.readFileSync(f, "utf8").matchAll(/(?:href|src)="(\/(?!\/)[^"]*)"/g)) { bad++; console.log(f + ": " + m[1]); }
+}
+console.log("root paths:", bad);
+process.exit(bad ? 1 : 0);
+~~~
+
+من وثائق GitHub Pages «Using custom workflows»:
+
+- [[needs: check]]: النشر مبيبدأش إلا لو الفحص نجح.
+- [[permissions]]: [[pages: write]] عشان ينشر، و [[id-token: write]] عشان Pages يتأكد إن الطلب جاي من الـ workflow ده.
+- [[upload-pages-artifact]] بيرفع الفولدر، و [[deploy-pages]] بينشره. فلازم الاتنين بالترتيب.
+- [[environment: github-pages]] هو اللي بيظهر الرابط في صفحة الـ repo.
+- مرة واحدة من الموقع: Settings ← Pages ← Source = GitHub Actions. من غيرها الـ deploy بيقع.
+
+[[contrast.mjs]] بتاع الدرس بيطبع بس، فلازم السطر اللي يحدد الـ exit code. ولو لسه عندك الزوج القديم [[#1a7f37]] على [[#dcf3e3]] (4.35) الفحص هيوقف النشر، وده اللي عايزينه: حدّثه للقيمة النهائية [[#156c2f]] من [[app.css]].
+
+الـ workflow نفسه مش متجرّب هنا (محتاج ريبو على GitHub)، فالجزء ده من الوثائق. اللي اتشغّل هو الفحصين، على السليم وعلى البايظ.
+
+الغلطة الشائعة: تنسى [[Source = GitHub Actions]]، فالـ job يقول deploy failed وانت بتدور في الكود.
+
+~~~text الناتج (الفحصين على الجهاز)
+contrast.mjs على المشروع: exit 0
+لون واقع مضاف: exit 1
+root-paths.mjs على المشروع: root paths: 0، exit 0
+بعد href="/css/x.css": portfolio/cv.html: /css/x.css / root paths: 1، exit 1
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**مسألة:** اكتب [[bidiRisks(html)]] بتلاقي في صفحة [[dir="rtl"]] كل نص قصير بيبدأ أو بيخلص بعلامة محايدة جنب رقم أو حرف لاتيني ([[40+]] و [[C++]] و [[(v2)]] و [[50%]]) ومش جوه عنصر عليه [[dir="ltr"]] أو [[<bdi>]]، وتطبع السطر. جرّبها على [[index.html]] قبل تصليح «40+».`,
+              done: R`على النسخة القديمة بتطلّع [[40+]] من [[<dd>]]، وعلى الحالية مبتطلّعش حاجة، وعلى صفحة تجربة فيها [[C++]] و [[(v2)]] بتطلّعهم الاتنين، ومفيش إنذار كاذب على [[hello@nadine.example]] (عليه [[dir="ltr"]]).`,
+              sol: R`~~~js bidi-risks.mjs
+import fs from "node:fs";
+
+export function bidiRisks(html) {
+  const out = [];
+  html = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "");
+  const lines = html.split("\n");
+  // نص بين > و <، ومش جوه عنصر عليه dir="ltr" أو bdi
+  const re = /<([a-z][a-z0-9]*)\b([^>]*)>([^<>]+)</gi;
+  lines.forEach((line, i) => {
+    for (const [, tag, attrs, text] of line.matchAll(re)) {
+      if (tag.toLowerCase() === "bdi" || /\bdir="ltr"/.test(attrs)) continue;
+      const hits = text.match(/[0-9A-Za-z]+[+%)\]]+|[+(\[]+[0-9A-Za-z]+[)\]]*/g);
+      if (!hits) continue;
+      for (const h of hits) out.push({ line: i + 1, tag, text: h });
+    }
+  });
+  return out;
+}
+
+if (process.argv[2]) {
+  for (const r of bidiRisks(fs.readFileSync(process.argv[2], "utf8")))
+    console.log($__bt$__{r.line}: <$__{r.tag}> $__{r.text}$__bt);
+}
+~~~
+
+بتدوّر على الشكل اللي بيتلخبط في RTL: رقم أو حرف لاتيني لازق فيه علامة محايدة في الأول أو الآخر.
+
+- أول جزء في الـ regex: رقم أو حرف لاتيني بعده علامة، زي [[40+]] و [[C++]] و [[50%]].
+- تاني جزء: علامة قبل رقم أو حرف، زي [[(v2)]].
+- العنصر اللي عليه [[dir="ltr"]] أو [[<bdi>]] بيتعدّى، لأنه معزول، وده اللي بيمنع الإنذار الكاذب على الإيميل.
+- [[script]] و [[style]] بيتشالوا الأول، عشان الكود نفسه مليان أقواس.
+
+فحص سطر بسطر مش بيقرا كل HTML: عنصر متداخل ممكن يفوته، ودي حدود فحص بسيط، وكفاية لصفحاتك انت.
+
+الغلطة الشائعة: تشغّله على ملف فيه [[@media (min-width: 40rem)]] في [[<style>]] من غير الشيل، فكله إنذارات.
+
+~~~text الناتج (Node 24)
+النسخة القديمة (<dd>40+</dd>): 96: <dd> 40+
+الحالية: (مفيش حاجة)
+صفحة تجربة: 1: <p> C++ / 2: <p> (v2)
+إيميل dir="ltr": (مفيش حاجة)
+~~~` },
+            {
+              lvl: R`تحدي`,
+              t: R`**قارن وقيس:** شغّل Lighthouse (Chrome DevTools ← Lighthouse ← Mobile) على الصفحتين الرئيسيتين، وقارن رقم Accessibility و LCP و CLS بأرقام السكربتات هنا. لو اختلفوا، اكتب ليه (Lighthouse بيعمل throttling للشبكة كمان، و Accessibility فيه نفس axe).`,
+              done: R`عندك جدول فيه الأرقام من المصدرين للصفحتين، والـ CLS متطابق (صفر)، والـ LCP مختلف بين المصدرين ومكتوب السبب (Lighthouse بيحسبه تقدير بـ simulated throttling، و vitals.mjs بيبطّأ الـ CPU فعليًا)، ودرجة Accessibility ومكتوب إن «نشط» لسه مش متفحوص فيها لنفس السبب.`,
+              sol: R`~~~bash
+npm i -D lighthouse
+npx lighthouse http://127.0.0.1:5501/ --only-categories=accessibility,performance --form-factor=mobile --output=json --output-path=lh-port.json --chrome-flags="--headless=new" --quiet
+npx lighthouse http://127.0.0.1:5502/ --only-categories=accessibility,performance --form-factor=mobile --output=json --output-path=lh-dash.json --chrome-flags="--headless=new" --quiet
+~~~
+
+~~~js lh-read.mjs
+import fs from "node:fs";
+for (const f of ["lh-port.json", "lh-dash.json"]) {
+  const r = JSON.parse(fs.readFileSync(f, "utf8"));
+  console.log(f, "a11y", Math.round(r.categories.accessibility.score * 100),
+    "LCP", Math.round(r.audits["largest-contentful-paint"].numericValue) + "ms",
+    "CLS", r.audits["cumulative-layout-shift"].numericValue.toFixed(4));
+}
+~~~
+
+الرقمين مش من نفس الظرف، وده المتوقع:
+
+- **CLS:** مبيعتمدش على سرعة الشبكة، لأن الصفحة حاجزة أماكنها، فالمصدرين صفر.
+- **LCP:** الرقمين مختلفين، و Lighthouse هنا **أقل**، مع إنك كنت تتوقع العكس. [[vitals.mjs]] بيبطّأ الـ CPU فعليًا ×4، وكمان بيستنى 3 ثواني ويقرا آخر LCP. Lighthouse بالافتراضي بيعمل simulated throttling: بيحمّل الصفحة بسرعة عادية، وبعدين **يحسب تقدير** لوقتها على موبايل بطيء. فده رقم محسوب، والتاني مقاس.
+- **Accessibility:** Lighthouse بيشغّل axe نفسه، فعنده نفس النقطة العمياء: «نشط» مش متفحوصة، فالـ 100 مش ضمان.
+
+القيمة في Lighthouse إنها مرجع مشترك يقدر أي حد يقارنه، وقيمة السكربتات إنها بتتشغّل في CI وبرقم بتاعك.
+
+الغلطة الشائعة: تعتبر رقم Lighthouse «الحقيقة»، أو تقارن رقم [[perf.mjs]] بيه مباشرة.
+
+~~~text الناتج (Lighthouse على Chrome 156، و vitals.mjs)
+lh-port.json a11y 100 LCP 905ms CLS 0.0000
+lh-dash.json a11y 100 LCP 906ms CLS 0.0000
+vitals.mjs portfolio: run 1 CLS 0.0000 LCP 1124ms P
+vitals.mjs dashboard: run 1 CLS 0.0000 LCP 1180ms k-rev
+~~~` },
+          ],
+          ci: [
+            {
+              os: [
+                R`ubuntu`,
+                R`macos`,
+                R`windows`,
+              ],
+              sh: R`node`,
+              run: R`const pages = {
+  "index.html": '<link rel="stylesheet" href="css/site.css"><script src="/js/boot.js"></script><a href="https://nadine.example/">x</a><a href="#work">w</a>',
+  "cv.html": '<link href="/css/cv.css" rel="stylesheet"><img src="//cdn.example/x.png" alt=""><a href="./">home</a>',
+};
+let bad = 0;
+for (const [file, html] of Object.entries(pages))
+  for (const m of html.matchAll(/(?:href|src)="(\/(?!\/)[^"]*)"/g)) { bad++; console.log(file + ": " + m[1] + " breaks under /repo/"); }
+console.log("root paths: " + bad);
+process.exitCode = bad ? 1 : 0;`,
+              code: 1,
+              expect: [
+                R`index.html: /js/boot.js breaks under /repo/`,
+                R`cv.html: /css/cv.css breaks under /repo/`,
+                R`root paths: 2`,
+              ],
+            },
+          ],
+        },
+      ],
     }
 ]);

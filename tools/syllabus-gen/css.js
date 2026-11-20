@@ -31,7 +31,20 @@ const blLast = name => {
 };
 
 const items = [];
-const add = it => items.push(it);
+// MDN pages that moved or were deleted (every link checked 20 Nov 2026: 200 with no redirect; mdn/data still has the old mdn_url)
+const MD = 'https://developer.mozilla.org/en-US/docs/Web/';
+const MOVED = {
+  [MD + 'CSS/Reference/Properties/-webkit-line-clamp']: MD + 'CSS/Reference/Properties/line-clamp',
+  [MD + 'CSS/Reference/Values/@import/layer_function']: MD + 'CSS/Reference/At-rules/@import#importing_css_rules_into_a_cascade_layer',
+  [MD + 'CSS/Reference/Values/font-palette/palette-mix']: MD + 'CSS/Reference/Properties/font-palette/palette-mix',
+  [MD + 'CSS/Reference/Values/animation-timeline/scroll']: MD + 'CSS/Reference/Properties/animation-timeline/scroll',
+  [MD + 'CSS/Reference/Values/animation-timeline/view']: MD + 'CSS/Reference/Properties/animation-timeline/view',
+  [MD + 'CSS/Reference/Properties/scroll-axis-lock']: 'https://drafts.csswg.org/css-overflow-5/#scroll-axis-lock',
+  [MD + 'CSS/Reference/Properties/window-drag']: 'https://drafts.csswg.org/css-ui-4/#window-drag',
+  // gone from MDN and from Selectors 4 and 5; the nearest live page
+  [MD + 'CSS/Reference/Selectors/:target-within']: MD + 'CSS/Reference/Selectors/:target',
+};
+const add = it => items.push(MOVED[it.url] ? { ...it, url: MOVED[it.url] } : it);
 const W = 'https://html.spec.whatwg.org/multipage/', M = 'https://developer.mozilla.org/en-US/docs/Web/';
 
 // ---- HTML elements: WHATWG index is the authority

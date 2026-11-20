@@ -1,5706 +1,3761 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: R`مشروع كامل: portfolio و dashboard`,
+      t: "HTML: الصوت والفيديو والـ embed",
+      l: 1,
+      n: "مشغّل صوت بأكتر من صيغة، وكابشن وترجمة للفيديو، و iframe مقفول عليه، و PDF جوه الصفحة، وصورة فيها لينكات، و canvas و template، ومعنى replaced element، وتراخيص الميديا",
       pre: [
-        { to: "css/landing page: الصورة الكبيرة", why: R`نفس طريقة الشغل والأدوات: serve و lint و contrast` },
-        { to: "css/table", why: R`جدول الأعضاء والحصص` },
+        { to: "css/img", why: R`[[alt]] و [[width]] و [[height]] و [[loading]] اتشرحوا هناك، والوحدة دي بتبني عليهم في الفيديو والـ iframe والـ image map` },
+        { to: "css/video و iframe", why: R`الوحدة دي تكملته: هناك اتبنى فيديو بـ [[controls]] وأول ملف VTT و iframe بـ [[title]]، وهنا الصوت، وأنواع الـ track، و [[sandbox]] و [[allow]]، وباقي عناصر التضمين` }
       ],
-      l: 3,
-      time: R`حوالي ١٠ ساعات على كذا يوم: ساعة للخريطة والمعمل، وحوالي ٤ ساعات للـ portfolio (٣ خطوات)، و ٤ للـ dashboard (٣ خطوات)، وساعة للمراجعة النهائية والنشر. والتمارين والمشاريع فوق كده`,
       goal: [
-        R`تبني منتجين حقيقيين من فولدر فاضي بـ HTML و CSS حديث و JavaScript صغير من غير framework: **portfolio** لمطوّرة متخيلة بالعربي والإنجليزي، و **dashboard** لصالة تسلق متخيلة فيها أرقام وجدول أعضاء وجدول حصص.`,
-        R`تستخدم أفكار التصميم اللي بتتكرر في المواقع الحقيقية في مكانها الصح: design tokens، و [[:has()]] كفلتر من غير JS، و grid areas للـ app shell، و sidebar بيصغر ويبقى drawer، و sparkline و progress ring بـ SVG، و skeleton، و [[<dialog>]]، و toasts بـ [[aria-live]]، و dark mode من غير وميض، و View Transitions بين الصفحات، و CV بيتطبع صفحة A4 واحدة.`,
-        R`تقيس كل حاجة بـ Chrome الحقيقي (playwright-core و axe): مفيش scroll أفقي من 360 لـ 1440، و axe صفر violations في الثيمين واللغتين، و CLS صفر، و LCP متقاس قبل وبعد كل غلطة.`,
-        R`تعرف الغلطات اللي حصلت فعلًا وانا ببني (٢٢ غلطة، و ٨ تجارب متعمّدة، كل واحدة برقمها)، وإزاي اتلقت واتصلحت، عشان لما تحصلك تعرفها من أول نظرة.`,
-        R`تنشر الاتنين على GitHub Pages برابط، وتعرف بيكبروا إزاي وبيتكلفوا كام، وتخليهم بتوعك في الـ portfolio.`,
+        R`تحط ملف صوت بمشغّل ظاهر وأكتر من صيغة ولينك تحميل، وتعرف ليه [[autoplay]] مبيشتغلش وإمتى [[muted]] بينفع.`,
+        R`تكتب ملف WebVTT وتربطه بـ [[<track>]] بالنوع واللغة والاسم الصح، وتفرّق بين الكابشن والترجمة والنص المكتوب، وتحجز مكان الفيديو بـ [[poster]] و [[width]] و [[height]].`,
+        R`تضمّن صفحة من موقع تاني في [[<iframe>]] وتقفل عليها بـ [[sandbox]] وتدّيها بـ [[allow]] اللي محتاجاه بس، وتقرا رسايل المنع في الـ Console.`,
+        R`تعرض PDF بـ [[<object>]] ببديل ولينك، وتعرف ليه [[<img>]] و [[<iframe>]] أحسن من [[<object>]] و [[<embed>]] في الباقي.`,
+        R`تعمل image map بـ [[<map>]] و [[<area>]]، وتعرف إمتى يبوظ، وتحوّله SVG بلينكات.`,
+        R`تعرف [[<canvas>]] و [[<noscript>]] و [[<template>]] و [[<slot>]] بيعملوا إيه من غير JavaScript، وإيه اللي مستني كورس JavaScript.`,
+        R`تشرح يعني إيه replaced element، وتختار بين [[loading]] و [[decoding]] و [[fetchpriority]]، وتقرا رخصة أي ملف ميديا وتكتب نسبته.`
       ],
-      use: {
-        prog: R`آخر وحدة في التاب: كل اللي اتعلمته (semantic HTML، و grid و flex، و responsive، و RTL، و accessibility، والحركة، والأداء، و SEO) بيشتغل مع بعض في صفحات بجد. ده الفرق بين «عارف [[:has()]]» و «عارف أحطه فين ومتى مينفعش».`,
-        work: R`أغلب شغل الـ front-end مقسوم نوعين: صفحات تعريف وتسويق (زي الـ portfolio) ولوحات تحكم داخلية (زي الـ dashboard). اللي بيطلب منك واحد فيهم هيسأل: «بيتفتح على الموبايل؟ بيشتغل بالكيبورد؟ الرابط بيحفظ الفلتر؟ بيتطبع؟». الوحدة دي بتجاوب على كل سؤال بقياس.`,
-        cs: R`الحالة في الـ URL كمصدر واحد للحقيقة (single source of truth)، و progressive enhancement (الصفحة شغالة من غير JS والـ JS بيزوّد)، والفصل بين الدوال النقية (بتتختبر في Node) والكود اللي بيلمس الـ DOM، و stacking context و containing block، و bidi algorithm بتاع العربي.`,
-      },
-      lab: R`mkdir pd-lab && cd pd-lab
-npm init -y
-npm pkg set type=module
-npm i playwright-core@1.64.1 @axe-core/playwright@4.14.0
-node serve.mjs`,
-      n: R`مشروعين كاملين بيتبنوا خطوة خطوة: portfolio بلغتين (٣ صفحات) و dashboard لصالة تسلق (صفحة فيها ٣ أجزاء). حوالي ١,١٨٠ سطر في ٢٢ ملف، من غير framework ولا مكتبة في المتصفح. كل رقم هنا اتقاس فعلًا بـ Chrome 156 و Node 24.22 و playwright-core 1.64.1 و axe-core 4.14 على ويندوز ١١، والنشر نفسه خطوات من وثائق GitHub Pages`,
       projects: [
-        {
-          lvl: R`صغير`,
-          t: R`زرار الثيم للـ portfolio`,
-          what: R`الـ portfolio بيتبع ثيم الجهاز بس، والـ tokens فيها [[[data-theme="dark"]]] جاهزة. زوّد زرار في الـ header بـ [[aria-pressed]] بيبدّل الثيم ويحفظه، و [[boot.js]] بيقراه قبل الرسم، زي الـ dashboard بالظبط. من درسين «بورتفوليو ١» و «داشبورد ٣».`,
-          done: R`الزرار بيتقري «الوضع الداكن، pressed/not pressed» في تاب Accessibility، والاختيار بيفضل بعد refresh، و [[vitals.mjs]] بيقول CLS صفر في الحالتين، و axe صفر في الثيمين.`,
-        },
-        {
-          lvl: R`صغير`,
-          t: R`رسالة «مفيش مشاريع» في الفلتر`,
-          what: R`زوّد فلتر سادس «موبايل» مفيش ولا كارت عليه، واعرض فقرة «مفيش مشاريع من النوع ده لسه» بـ CSS بس: [[.work:has(input[value="mobile"]:checked) .empty]] تظهر. وبعدين اكتبها بشكل عام بـ [[:not(:has(...))]] عشان متكتبش قاعدة لكل فلتر. من درس «بورتفوليو ٢».`,
-          done: R`لما تختار «موبايل» الكروت كلها بتختفي والفقرة بتظهر، ولما تختار أي فلتر تاني الفقرة بتستخبى، ومن غير ولا سطر JavaScript جديد.`,
-        },
-        {
-          lvl: R`متوسط`,
-          t: R`صفحة دراسة حالة تانية بـ View Transition`,
-          what: R`اعمل [[work/bus-board.html]] لمشروع لوحة الأتوبيس بنفس هيكل [[tide-notes.html]]، و [[view-transition-name]] مختلف للصورة، وحوّل كارتها في الرئيسية للينك. وزوّد في [[i18n.js]] الكلمات الإنجليزي بتاعتها، وفي [[check-portfolio.mjs]] الصفحة الجديدة في الـ matrix و axe. من دروس «بورتفوليو ٢» و «بورتفوليو ٣».`,
-          done: R`الضغط على الكارت بيعمل انتقال (المتغير [[__vt]] = yes)، والاسم مش متكرر في نفس الصفحة (لو اتكرر الانتقال بيتلغي)، والـ matrix صفر overflow، و axe صفر في اللغتين.`,
-        },
-        {
-          lvl: R`متوسط`,
-          t: R`تصدير الأعضاء CSV من نفس الفلتر`,
-          what: R`زرار «نزّل CSV» فوق جدول الأعضاء بيصدّر **كل** الصفوف اللي بتطابق الفلتر الحالي (مش الصفحة الحالية بس) من [[view()]] بـ [[size: Infinity]]، ومعاه BOM عشان Excel يقرا العربي. من درس «داشبورد ٢».`,
-          done: R`مع [[?status=frozen]] الملف فيه ٥ صفوف وسطر عناوين، وبيتفتح في Excel بالعربي سليم، واسم الملف فيه الفلتر والتاريخ، واختبار Node بيتأكد إن الفاصلة جوه اسم بتتحط بين علامتين تنصيص.`,
-        },
-        {
-          lvl: R`كبير`,
-          t: R`الـ dashboard على API حقيقي`,
-          what: R`بدّل [[data/*.json]] بـ API صغير (من تاب «Backend بـ Node» أو FastAPI): [[GET /members?status=&q=&sort=&page=]] بيعمل الفلترة والترتيب في السيرفر ويرجّع [[total]]، و [[POST /members]] و [[POST /classes/:id/book]] بيرجّعوا 409 لو الحصة اتملت. الواجهة نفسها متتغيرش غير في [[loadMembers]]: نفس [[parseState]] بيبني الـ query. ومعاه optimistic update للحجز بيرجع لورا لو السيرفر رفض.`,
-          done: R`تفتح رابط [[?status=active&page=3]] في تاب جديد فتلاقي نفس الصفحة، وحجز حصة كاملة من تابين في نفس اللحظة: واحد بيكسب والتاني بيشوف toast «الحصة اتملت» والعداد بيرجع، و [[check-dashboard.mjs]] و [[audit-dashboard.mjs]] لسه بيعدّوا كلهم، والسيرفر بيكتب لوج لكل طلب.`,
-          ext: R`زوّد تسجيل دخول للأدمن (cookie [[HttpOnly]]) وخلي إخفاء زرار «عضو جديد» عن الموظف مش هو الحماية: السيرفر هو اللي يرفض بـ 403.`,
-        },
-        {
-          lvl: R`كبير`,
-          t: R`نسخة الـ portfolio الثابتة بلغتين للـ SEO`,
-          what: R`الـ dictionary بيبدّل النص في المتصفح، بس جوجل بيشوف العربي بس. اكتب [[build.mjs]] بيقرا نفس [[dict]] ويطلّع نسختين ثابتين: [[/]] بالعربي و [[/en/]] بالإنجليزي، وكل نسخة فيها [[lang]] و [[dir]] صح من السيرفر، و [[<link rel="alternate" hreflang>]] للتانية، وزرار اللغة يبقى لينك عادي. ومعاه فحص بيفشل لو كلمة ناقصة في أي لغة.`,
-          done: R`[[curl -s .../en/ | grep "<html"]] بيطلّع [[lang="en" dir="ltr"]] من غير JS، والنسختين صفر violations، و CLS صفر من غير [[boot.js]] (مفيش تبديل بعد الرسم أصلًا)، وتشغيل [[build.mjs]] مرتين بيطلّع نفس الملفات بالظبط.`,
-          ext: R`زوّد لغة تالتة، وخلي [[sitemap.xml]] يتولد لوحده فيه كل الصفحات باللغات.`,
-        },
-        {
-          lvl: R`فكرة`,
-          t: R`لوحة لحاجة بتعرفها`,
-          what: R`خد هيكل الـ dashboard (shell و KPI و جدول بحالته في الرابط و جدول مواعيد و dialog و toasts و dark mode) وابنيه لحاجة انت عارف تفاصيلها: عيادة، أو مدرسة سواقة، أو ملعب، أو مكتبة، أو كورس أونلاين. الأرقام اللي في الكروت انت اللي بتختار ليه هي اللي مهمة لصاحب المكان.`,
-          done: R`صاحب المكان (أو حد بيشتغل فيه) استخدمها ١٠ دقايق من موبايله من غير ما تشرحله، وقال أنهي رقم بيبص عليه الأول، والـ matrix و axe و CLS زي الوحدة دي.`,
-          ext: R`ارفعها برابط، واكتب README فيه «ليه الأدوات دي» واللقطات على ٣ مقاسات، وحطها في الـ portfolio اللي بنيته هنا كدراسة حالة.`,
-        },
+        { lvl: 'صغير', dir: "mahatta", t: R`صفحة الحلقة الأولى: مشغّل ولينك تحميل`, what: R`أول صفحة في موقع «بودكاست المحطة» (بودكاست متخيل عن تعلّم الويب، بيقدّمه منى وكريم)، للي عايز يسمع الحلقة. [[index.html]] فيها: اسم البودكاست في [[<header>]]، وعنوان الحلقة [[<h1>]] «الحلقة ١: يعني إيه صوت في الصفحة»، وفقرة وصف، ومشغّل [[<audio>]] ظاهر لملف [[media/ep1.mp3]] (بـ [[<source>]] ونوعه، و [[preload="metadata"]]، واسم بـ [[aria-label]]، ومن غير [[autoplay]])، ولينك تحميل برّه المشغّل مكتوب فيه النوع، وقايمة «في الحلقة دي» من تلات نقط. ملف الصوت: سجّل ٣٠ ثانية بموبايلك وحوّلها MP3، أو أي MP3 عندك، وحطه في فولدر [[media]]. من درس «audio و source».`, done: R`الصفحة بتفتح والمشغّل واقف (مفيش صوت لوحده) والمدة مكتوبة عليه. ولما تدوس ▶ الصوت بيشتغل. ولينك التحميل بينزّل الملف. وفي الـ Console: [[document.querySelector("audio").currentSrc]] آخره [[ep1.mp3]].`, sol: R`فولدر [[media]] وملف الصوت الأول. لو معندكش تسجيل، ده أمر بيعمل نغمة تجربة ٣ ثواني (محتاج ffmpeg):
+
+~~~bash
+mkdir media
+ffmpeg -f lavfi -i "sine=frequency=440:duration=3" -c:a libmp3lame -b:a 32k media/ep1.mp3
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الحلقة ١: يعني إيه صوت في الصفحة | بودكاست المحطة</title>
+</head>
+<body>
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+</header>
+<main>
+  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
+  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
+  <audio controls preload="metadata" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
+    <source src="media/ep1.mp3" type="audio/mpeg">
+  </audio>
+  <p><a href="media/ep1.mp3" download>نزّل الحلقة ١ (MP3)</a></p>
+  <h2>في الحلقة دي</h2>
+  <ul>
+    <li>مشغّل الصوت بيظهر إمتى</li>
+    <li>أكتر من صيغة لنفس الملف</li>
+    <li>ليه التشغيل التلقائي ممنوع</li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 384 438 شكل index.html (الصوت هنا صفارة قصيرة مكتوبة جوه الصفحة)
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+</header>
+<main>
+  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
+  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
+  <audio controls preload="metadata" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
+    <source src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA=" type="audio/wav">
+  </audio>
+  <p><a href="#">نزّل الحلقة ١ (MP3)</a></p>
+  <h2>في الحلقة دي</h2>
+  <ul>
+    <li>مشغّل الصوت بيظهر إمتى</li>
+    <li>أكتر من صيغة لنفس الملف</li>
+    <li>ليه التشغيل التلقائي ممنوع</li>
+  </ul>
+</main>
+~~~
+
+**هتشوف إيه:**
+
+- اسم البودكاست، والعنوان، والوصف، وتحتهم المشغّل واقف، وبعده لينك التحميل والقايمة.
+- مفيش أي صوت لحد ما تدوس ▶.
+
+**ليه كده:**
+
+- [[<source>]] ومعاه [[type]] بدل [[src]] على [[<audio>]]: لما تزوّد صيغة تانية (Ogg) هتبقى سطر فوقه وخلاص.
+- [[preload="metadata"]]: المدة بتبان من غير ما الملف كله يتحمّل.
+- لينك التحميل برّه [[<audio>]]: جواه كان هيبقى نص بديل مبيظهرش.
+
+**الغلطة الشائعة:** تنسى [[controls]]، فتفتح الصفحة وتلاقي مكان المشغّل فاضي وتفتكر إن المسار غلط.
+
+~~~text القياس من Chrome (الملف اللي اتعمل بالأمر اللي فوق، من سيرفر محلي)
+currentSrc = .../media/ep1.mp3      paused = true      duration = 3      الحجم 300 × 54
+Audio «الحلقة ١: يعني إيه صوت في الصفحة»
+~~~` },
+        { lvl: 'صغير', dir: "mahatta", cont: true, t: R`النص المكتوب، والكلام بيظهر مع الصوت`, what: R`زي المشروع اللي فات (نفس [[index.html]])، وزوّد عليه حاجتين عشان الحلقة توصل للي مش سامع. **النص المكتوب:** قسم [[<h2>]] «نص الحلقة» تحته أربع فقرات، كل واحدة بتبدأ باسم اللي بيتكلم تقيل، وواحدة منهم وصف صوت بين قوسين. **الكابشن:** ملف [[media/ep1.ar.vtt]] فيه نفس الأربع جمل بتوقيتهم (واسم المتكلم بـ [[<v>]])، وبدّل [[<audio>]] بـ [[<video>]] بيشغّل نفس ملف الصوت، عليه [[poster]] هو غلاف الحلقة [[media/cover.svg]] و [[width]] و [[height]]، وجواه [[<track>]] كابشن عربي شغال من الأول. من درس «track و WebVTT» (قسم ٢ و ٣ و ٥)، والـ [[<audio>]] من المشروع اللي فات.`, done: R`الصفحة مفتوحة من سيرفر ([[npx serve .]]). الغلاف ظاهر مكان المشغّل، ولما تدوس ▶ الصوت بيشتغل والجمل بتظهر فوق الغلاف في وقتها. وفي الـ Console: [[document.querySelector("video").textTracks[0].cues.length]] بيرجّع [[4]]. والنص المكتوب مقري تحت المشغّل من غير تشغيل.`, sol: R`~~~text media/ep1.ar.vtt
+WEBVTT
+
+00:00.000 --> 00:02.000
+<v منى>أهلًا بيكم في المحطة.
+
+00:02.000 --> 00:04.000
+[موسيقى المقدمة]
+
+00:04.000 --> 00:06.000
+<v كريم>النهارده هنحط صوت في صفحة.
+
+00:06.000 --> 00:08.000
+<v منى>ومن غير ما يشتغل لوحده.
+~~~
+
+~~~xml media/cover.svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#0f766e"/>
+  <text x="320" y="170" font-size="48" fill="white" text-anchor="middle">بودكاست المحطة</text>
+  <text x="320" y="230" font-size="28" fill="white" text-anchor="middle">الحلقة ١</text>
+</svg>
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الحلقة ١: يعني إيه صوت في الصفحة | بودكاست المحطة</title>
+</head>
+<body>
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+</header>
+<main>
+  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
+  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
+  <video controls preload="metadata" width="640" height="360" poster="media/cover.svg" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
+    <source src="media/ep1.mp3" type="audio/mpeg">
+    <track default kind="captions" srclang="ar" label="عربي" src="media/ep1.ar.vtt">
+  </video>
+  <p><a href="media/ep1.mp3" download>نزّل الحلقة ١ (MP3)</a></p>
+  <h2>في الحلقة دي</h2>
+  <ul>
+    <li>مشغّل الصوت بيظهر إمتى</li>
+    <li>أكتر من صيغة لنفس الملف</li>
+    <li>ليه التشغيل التلقائي ممنوع</li>
+  </ul>
+  <h2>نص الحلقة</h2>
+  <p><strong>منى:</strong> أهلًا بيكم في المحطة.</p>
+  <p>[موسيقى المقدمة]</p>
+  <p><strong>كريم:</strong> النهارده هنحط صوت في صفحة.</p>
+  <p><strong>منى:</strong> ومن غير ما يشتغل لوحده.</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 576 630 شكل index.html (دوس ▶: الصوت هنا صفارة، والكابشن بيظهر فوق الغلاف)
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+</header>
+<main>
+  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
+  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
+  <video controls preload="metadata" width="320" height="180" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E" aria-label="الحلقة ١: يعني إيه صوت في الصفحة" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+    <track default kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+  </video>
+  <p><a href="#">نزّل الحلقة ١ (MP3)</a></p>
+  <h2>نص الحلقة</h2>
+  <p><strong>منى:</strong> أهلًا بيكم في المحطة.</p>
+  <p>[موسيقى المقدمة]</p>
+  <p><strong>كريم:</strong> النهارده هنحط صوت في صفحة.</p>
+  <p><strong>منى:</strong> ومن غير ما يشتغل لوحده.</p>
+</main>
+~~~
+
+**هتشوف إيه:**
+
+- مكان الشريط الرمادي بقى مستطيل أخضر عليه اسم البودكاست ورقم الحلقة، وعليه أزرار المشغّل.
+- دوس ▶: الصوت بيشتغل، والغلاف بيفضل ظاهر (الملف مفيهوش صورة)، والجمل بتتبدّل في أسفله.
+- تحت: النص كله مكتوب، وده اللي بيتقري من غير تشغيل وبيتدوّر فيه.
+
+**ليه [[<video>]] لملف صوت:** [[<audio>]] مبيرسمش الكابشن (درس «audio و source» قسم ٨). [[<video>]] بيشغّل ملف الصوت عادي، وبيدّي مساحة يترسم عليها الـ [[poster]] والكابشن.
+
+**ليه الاتنين (الكابشن والنص):** الكابشن ماشي مع الصوت. والنص المكتوب بيتقري ويتنسخ ويتدوّر فيه، ومحرك البحث بيقراه.
+
+**ليه [[npx serve .]]:** لو فتحت الملف بدبل كليك ([[file://]])، ملف الـ VTT بيترفض والكابشن مبيظهرش.
+
+**الغلطة الشائعة:** الوقت في الـ VTT أطول من الملف. الجمل اللي توقيتها بعد آخر الصوت عمرها ما هتظهر، ومفيش رسالة.
+
+~~~text القياس من Chrome (من سيرفر محلي، وملف الصوت 3 ثواني)
+video.currentSrc = .../media/ep1.mp3      videoWidth = 0      الحجم 640 × 360 (من width و height)
+textTracks[0]:  kind = captions   mode = showing   cues = 4
+من file:// :    cues = 0    track.readyState = 3 (ERROR)
+~~~` },
+        { lvl: 'متوسط', dir: "mahatta", cont: true, t: R`صفحة «شاهد الدرس»: فيديو بكابشن وترجمة وفصول`, what: R`زي المشروع اللي فات (نفس الفولدر ونفس [[media]])، وزوّد صفحة تانية [[watch.html]] للي عايز يتفرّج على شرح الحلقة. فيها: نفس الـ [[<header>]]، و [[<nav>]] فيه لينكين («الحلقة» لـ [[index.html]] و «شاهد الدرس» لـ [[watch.html]])، وعنوان [[<h1>]]، وفيديو [[media/lesson1.mp4]] بـ [[controls]] و [[preload="metadata"]] و [[width]] و [[height]] و [[poster]] (نفس [[media/cover.svg]])، وجواه [[<source>]] بنوعه، وكابشن عربي [[default]] (نفس [[media/ep1.ar.vtt]] بتاع المشروع اللي فات)، وترجمة إنجليزي [[media/lesson1.en.vtt]] ملف جديد، ونص بديل فيه لينك. وتحت الفيديو قايمة مرقّمة «فصول الدرس» بتوقيت كل فصل في [[<time>]]. وزوّد نفس الـ [[<nav>]] في [[index.html]]. الفيديو: صوّر ١٠ ثواني بموبايلك، أو استخدم الأمر اللي في الحل. من درس «track و WebVTT»، و [[<time>]] من درس «abbr و dfn و time».`, done: R`من السيرفر: [[watch.html]] بتفتح والغلاف ظاهر بمقاس الفيديو قبل ما يشتغل (مفيش قفزة). دوس ▶: الكابشن العربي ظاهر، ومن زرار CC تقدر تبدّل لـ English. وفي الـ Console: [[textTracks.length]] بيرجّع [[2]]، والأول [[showing]] والتاني [[disabled]]. واللينكين في الـ [[<nav>]] بيودّوا بين الصفحتين.`, sol: R`فيديو تجربة ٨ ثواني بصوت (لو معندكش فيديو):
+
+~~~bash
+ffmpeg -f lavfi -i "testsrc2=size=640x360:rate=24" -f lavfi -i "sine=frequency=330" -t 8 -c:v libx264 -pix_fmt yuv420p -c:a aac -movflags +faststart media/lesson1.mp4
+~~~
+
+~~~text media/lesson1.en.vtt
+WEBVTT
+
+00:00.000 --> 00:02.000
+Welcome to El-Mahatta.
+
+00:02.000 --> 00:04.000
+[intro music]
+
+00:04.000 --> 00:06.000
+Today we put a sound on a page.
+
+00:06.000 --> 00:08.000
+And it will not play by itself.
+~~~
+
+~~~html watch.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شاهد الدرس ١ | بودكاست المحطة</title>
+</head>
+<body>
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+  <nav aria-label="صفحات الحلقة">
+    <a href="index.html">الحلقة</a> |
+    <a href="watch.html" aria-current="page">شاهد الدرس</a>
+  </nav>
+</header>
+<main>
+  <h1>شاهد الدرس ١: صوت في الصفحة</h1>
+  <video controls preload="metadata" width="640" height="360" poster="media/cover.svg">
+    <source src="media/lesson1.mp4" type="video/mp4">
+    <track default kind="captions" srclang="ar" label="عربي" src="media/ep1.ar.vtt">
+    <track kind="subtitles" srclang="en" label="English" src="media/lesson1.en.vtt">
+    <p>متصفحك مش بيشغّل الفيديو. <a href="media/lesson1.mp4">نزّل الدرس (MP4)</a></p>
+  </video>
+  <h2>فصول الدرس</h2>
+  <ol>
+    <li><time datetime="PT0S">0:00</time> المقدمة</li>
+    <li><time datetime="PT4S">0:04</time> أول ملف صوت</li>
+    <li><time datetime="PT6S">0:06</time> ليه مبيشتغلش لوحده</li>
+  </ol>
+</main>
+</body>
+</html>
+~~~
+
+وفي [[index.html]] زوّد نفس الـ [[<nav>]] جوه [[<header>]] (و [[aria-current="page"]] على لينك «الحلقة» هناك):
+
+~~~html
+<nav aria-label="صفحات الحلقة">
+  <a href="index.html" aria-current="page">الحلقة</a> |
+  <a href="watch.html">شاهد الدرس</a>
+</nav>
+~~~
+
+~~~view 476 شكل watch.html (دوس ▶ وجرّب زرار CC)
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+  <nav aria-label="صفحات الحلقة">
+    <a href="#">الحلقة</a> |
+    <a href="#" aria-current="page">شاهد الدرس</a>
+  </nav>
+</header>
+<main>
+  <h1>شاهد الدرس ١: صوت في الصفحة</h1>
+  <video controls preload="metadata" width="320" height="180" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+    <track default kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+    <track kind="subtitles" srclang="en" label="English" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
+  </video>
+  <h2>فصول الدرس</h2>
+  <ol>
+    <li><time datetime="PT0S">0:00</time> المقدمة</li>
+    <li><time datetime="PT4S">0:04</time> أول ملف صوت</li>
+    <li><time datetime="PT6S">0:06</time> ليه مبيشتغلش لوحده</li>
+  </ol>
+</main>
+~~~
+
+**هتشوف إيه:**
+
+- الغلاف الأخضر بمقاس الفيديو، ولما تدوس ▶ الفيديو بيبدأ والكابشن العربي تحته.
+- زرار CC فيه «عربي» و «English».
+- تحت الفيديو الفصول مكتوبة بوقتها.
+
+**ليه كده:**
+
+- نفس ملف الكابشن بتاع الحلقة اتستخدم تاني: ملف الـ VTT منفصل عن الفيديو، فبيخدم الصوت والفيديو.
+- [[width]] و [[height]] بنفس نسبة الفيديو (16:9)، فالصفحة مبتتهزّش لما المعلومات توصل.
+- الفصول قايمة HTML عادية: [[kind="chapters"]] مبيترسمش في Chrome (درس «track و WebVTT» قسم ٢)، فالقايمة هي اللي الزائر بيشوفها. و [[datetime="PT4S"]] مدة بصيغة بيقراها البرامج: ٤ ثواني.
+- [[aria-current="page"]] بيقول لقارئ الشاشة «انت في الصفحة دي».
+
+**الغلطة الشائعة:** [[label="إنجليزي"]] على الترجمة. اللي محتاجها بيقرا إنجليزي: اكتب [[English]].
+
+~~~text القياس من Chrome (من سيرفر محلي، بالفيديو اللي اتعمل بالأمر اللي فوق)
+قبل التشغيل:   الحجم 640 × 360      videoWidth × videoHeight = 640 × 360      duration = 8
+textTracks.length = 2
+[0] captions   ar   mode = showing    cues = 4
+[1] subtitles  en   mode = disabled   cues = null      (ملفه متطلبش من السيرفر)
+~~~` },
+        { lvl: 'متوسط', dir: "mahatta", cont: true, t: R`صفحة «إضافات الحلقة»: iframe مقفول عليه، وملخص PDF`, what: R`زي المشروع اللي فات، وزوّد صفحة تالتة [[extras.html]] ولينكها في الـ [[<nav>]] بتاع التلات صفحات. فيها حاجتين. **بطاقة الحلقة في iframe:** صفحة صغيرة [[card.html]] (فيها اسم الحلقة وزرار «👏 صفّق» بيعدّ الضغطات بسطر [[onclick]])، ومعروضة في [[extras.html]] جوه [[<iframe>]] ليه [[title]] ومقاس و [[loading="lazy"]] و [[sandbox]] بيسمح بالسكربتات بس. دي نفس طريقة تضمين أي مشغّل أو خريطة من مزوّد، والبطاقة هنا واقفة مكان المزوّد. وتحتها iframe تاني بـ [[srcdoc]] فيه تعليق مستمع، و [[sandbox]] فاضي. **الملخص PDF:** [[<object>]] لملف [[media/ep1-notes.pdf]] بنوعه ومقاسه و [[title]]، وجواه بديل بلينك، وتحته لينك تحميل. الـ PDF: افتح [[index.html]] في Chrome ودوس [[Ctrl+P]] واختار «Save as PDF» واحفظه بالاسم ده. من دروس «iframe sandbox و allow» و «object و embed».`, done: R`زرار التصفيق جوه البطاقة بيعدّ. ولو شلت [[allow-scripts]] مؤقتًا، بيبطّل والـ Console فيه رسالة «Blocked script execution». والتعليق ظاهر في صندوقه. والـ PDF معروض جوه الصفحة، ولو غيّرت اسمه في [[data]] لاسم غلط بيظهر البديل بلينكه.`, sol: R`~~~html card.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>بطاقة الحلقة ١</title>
+</head>
+<body>
+<p><strong>الحلقة ١: يعني إيه صوت في الصفحة</strong></p>
+<p><button type="button" onclick="n.textContent++">👏 صفّق</button> <b id="n">0</b></p>
+</body>
+</html>
+~~~
+
+~~~html extras.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إضافات الحلقة ١ | بودكاست المحطة</title>
+</head>
+<body>
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+  <nav aria-label="صفحات الحلقة">
+    <a href="index.html">الحلقة</a> |
+    <a href="watch.html">شاهد الدرس</a> |
+    <a href="extras.html" aria-current="page">إضافات</a>
+  </nav>
+</header>
+<main>
+  <h1>إضافات الحلقة ١</h1>
+  <h2>بطاقة الحلقة</h2>
+  <iframe src="card.html" title="بطاقة الحلقة ١ وعدّاد التصفيق" width="320" height="110"
+          loading="lazy" sandbox="allow-scripts"></iframe>
+  <h2>تعليق من مستمع</h2>
+  <iframe sandbox title="تعليق من مستمع على الحلقة ١" width="320" height="70"
+          srcdoc="<p>حلقة جميلة، كمّلوا!</p>"></iframe>
+  <h2>ملخص الحلقة</h2>
+  <object data="media/ep1-notes.pdf" type="application/pdf" width="320" height="400" title="ملخص الحلقة ١ (PDF)">
+    <p>المتصفح مش عارض الملف هنا. <a href="media/ep1-notes.pdf">افتح ملخص الحلقة ١ (PDF)</a></p>
+  </object>
+  <p><a href="media/ep1-notes.pdf" download>نزّل ملخص الحلقة ١ (PDF)</a></p>
+</main>
+</body>
+</html>
+~~~
+
+وزوّد لينك «إضافات» في الـ [[<nav>]] بتاع [[index.html]] و [[watch.html]]:
+
+~~~html
+<a href="extras.html">إضافات</a>
+~~~
+
+~~~view 598 شكل extras.html (البطاقة هنا مكتوبة بـ srcdoc، والـ PDF مبيتعرضش في المعاينة فظاهر بديله)
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+  <nav aria-label="صفحات الحلقة">
+    <a href="#">الحلقة</a> |
+    <a href="#">شاهد الدرس</a> |
+    <a href="#" aria-current="page">إضافات</a>
+  </nav>
+</header>
+<main>
+  <h1>إضافات الحلقة ١</h1>
+  <h2>بطاقة الحلقة</h2>
+  <iframe title="بطاقة الحلقة ١ وعدّاد التصفيق" width="320" height="110" loading="lazy" sandbox="allow-scripts"
+          srcdoc="<html dir=rtl><p><strong>الحلقة ١: يعني إيه صوت في الصفحة</strong></p><p><button type=button onclick='n.textContent++'>👏 صفّق</button> <b id=n>0</b></p>"></iframe>
+  <h2>تعليق من مستمع</h2>
+  <iframe sandbox title="تعليق من مستمع على الحلقة ١" width="320" height="70"
+          srcdoc="<p>حلقة جميلة، كمّلوا!</p>"></iframe>
+  <h2>ملخص الحلقة</h2>
+  <object data="media/ep1-notes.pdf" type="application/pdf" width="320" height="400" title="ملخص الحلقة ١ (PDF)">
+    <p>المتصفح مش عارض الملف هنا. <a href="#">افتح ملخص الحلقة ١ (PDF)</a></p>
+  </object>
+  <p><a href="#">نزّل ملخص الحلقة ١ (PDF)</a></p>
+</main>
+~~~
+
+**هتشوف إيه:**
+
+- صندوق فيه اسم الحلقة وزرار، والرقم بيزيد مع كل ضغطة.
+- صندوق تاني فيه التعليق.
+- في مشروعك: صندوق 320 × 400 فيه صفحة الـ PDF، وتحته لينك التحميل.
+
+**ليه كده:**
+
+- [[sandbox="allow-scripts"]] على البطاقة: العدّاد محتاج سكربت، ومش محتاج فورم ولا نوافذ ولا يقرا صفحتك. ومفيش [[allow-same-origin]]، لأن البطاقة من نفس موقعك والاتنين مع بعض بيلغوا القفل.
+- التعليق كلام من زائر: [[sandbox]] فاضي، فلو كتب كود مش هيشتغل.
+- البديل اللي جوه [[<object>]] بيظهر لما الـ PDF ميتعرضش، واللينك اللي برّه موجود دايمًا.
+
+**لما تبدّل البطاقة بمزوّد حقيقي:** [[src]] يبقى عنوان التضمين بتاعه، وغالبًا هتحتاج تزوّد [[allow-same-origin]] (ساعتها آمن لأنه موقع تاني) و [[allow="fullscreen"]] لو فيديو.
+
+**الغلطة الشائعة:** تحط [[sandbox]] على الـ [[<object>]]. مفيش: [[sandbox]] على [[<iframe>]] بس. وده سبب إن الصفحات بتتحط في iframe مش object.
+
+~~~text القياس من Chrome (من سيرفر محلي)
+البطاقة:      Iframe «بطاقة الحلقة ١ وعدّاد التصفيق»      بعد ضغطتين: الرقم 2
+من غير allow-scripts، بعد ضغطة:
+   Blocked script execution in 'http://127.0.0.1:8731/p4/card.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+الـ PDF:      الحجم 320 × 400      ارتفاع البديل = 0      PluginObject «ملخص الحلقة ١ (PDF)»
+data غلط:     ارتفاع البديل = 18 (ظاهر)
+~~~` },
+        { lvl: 'كبير', dir: "mahatta", cont: true, t: R`موقع «المحطة» كامل: الحلقة، والدرس، والإضافات، والاستوديو، والمصادر`, what: R`موقع البودكاست كله، بيكمّل على اللي بنيته: [[index.html]] (المشغّل والكابشن والنص المكتوب من المشروعين الأول والتاني)، و [[watch.html]] (من التالت)، و [[extras.html]] و [[card.html]] (من الرابع). وزوّد صفحتين و ٣ تحسينات. **[[studio.html]]:** مسقط الاستوديو مرسوم SVG ([[viewBox]]) فيه تلات أشكال، كل شكل جوه [[<a>]] بـ [[aria-label]] بيودّي لقسم في نفس الصفحة ([[#rec]] و [[#mix]] و [[#wait]])، وتحته التلات أقسام، كل قسم [[<h2>]] بـ [[id]] وفقرة. **[[credits.html]]:** «مصادر الميديا»: قايمة بكل ملف مش من صنعك (صورة، وموسيقى، وأيقونة) بنسبته الكاملة: الاسم لينك للمصدر، وصاحبه، والرخصة لينك عليه [[rel="license"]]، والتعديل. **التحسينات:** (١) [[<nav>]] واحد بالخمس لينكات في كل الصفحات. (٢) في [[index.html]]: صورة للاستوديو تحت النص المكتوب، جوه [[<figure>]] بنسبتها، وعليها [[width]] و [[height]] و [[loading="lazy"]] و [[decoding="async"]]. (٣) في [[index.html]]: [[<noscript>]] بيقول إن عدّاد التصفيق في صفحة الإضافات محتاج JavaScript. من كل دروس الوحدة: «audio و source» و «track و WebVTT» و «iframe sandbox و allow» و «object و embed» و «map و area» (البديل الحديث) و «canvas و noscript و template» و «replaced elements والتراخيص».`, done: R`الخمس صفحات بيتنقّل بينهم من الـ [[<nav>]]. في [[studio.html]] كل شكل بيودّي لقسمه، ولما تصغّر النافذة لـ 360 الأشكال بتصغر ولينكاتها لسه في مكانها. في [[credits.html]] كل بند فيه اسم ومصدر ورخصة. وصورة الاستوديو في [[index.html]] مكانها محجوز، وفي الـ Console: [[document.querySelector("img").loading]] بيرجّع [[lazy]]. و validator.w3.org مبيطلّعش أخطاء في الخمس صفحات.`, ext: R`زوّد حلقة تانية ([[ep2.html]]) بنفس الهيكل، وخلّي [[index.html]] قايمة حلقات، كل حلقة مشغّلها [[preload="none"]]. وزوّد في [[studio.html]] نسخة image map من نفس المسقط ([[<img usemap>]] و [[<map>]] و [[<area>]]) وقارن الاتنين على عرض 360. وزوّد [[<canvas>]] في صفحة الإضافات بيرسم عمود لكل حلقة، ببديل نصي فيه الأرقام.`, sol: R`شجرة الملفات:
+
+~~~text
+mahatta/
+├── index.html        الحلقة: المشغّل، والكابشن، والنص المكتوب، وصورة الاستوديو
+├── watch.html        شاهد الدرس (من المشروع التالت، والـ nav بس اللي اتغيّر)
+├── extras.html       الإضافات (من المشروع الرابع، والـ nav بس اللي اتغيّر)
+├── card.html         البطاقة اللي جوه الـ iframe (زي ما هي)
+├── studio.html       جديد: مسقط الاستوديو SVG بلينكات
+├── credits.html      جديد: مصادر الميديا
+└── media/
+    ├── ep1.mp3   ep1.ar.vtt   cover.svg          (من المشروعين الأول والتاني)
+    ├── lesson1.mp4   lesson1.en.vtt              (من التالت)
+    ├── ep1-notes.pdf                             (من الرابع)
+    └── studio.svg                                جديد: صورة الاستوديو
+~~~
+
+ترتيب البناء: الـ [[<nav>]] الجديد في الصفحات التلاتة الموجودة، وبعده [[studio.html]]، وبعده [[credits.html]]، وآخر حاجة الصورة والـ [[<noscript>]] في [[index.html]] (عشان نسبة الصورة بتشاور على صفحة المصادر).
+
+الـ [[<nav>]] اللي في الخمس صفحات (و [[aria-current="page"]] بيتنقل للينك الصفحة اللي انت فيها):
+
+~~~html
+<nav aria-label="صفحات الموقع">
+  <a href="index.html">الحلقة</a> |
+  <a href="watch.html">شاهد الدرس</a> |
+  <a href="extras.html">إضافات</a> |
+  <a href="studio.html">الاستوديو</a> |
+  <a href="credits.html">المصادر</a>
+</nav>
+~~~
+
+~~~xml media/studio.svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#e2e8f0"/>
+  <rect x="80" y="220" width="480" height="30" fill="#92400e"/>
+  <circle cx="220" cy="150" r="46" fill="#334155"/>
+  <circle cx="420" cy="150" r="46" fill="#334155"/>
+  <rect x="212" y="196" width="16" height="24" fill="#334155"/>
+  <rect x="412" y="196" width="16" height="24" fill="#334155"/>
+</svg>
+~~~
+
+~~~html studio.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الاستوديو | بودكاست المحطة</title>
+<style>
+  svg { display: block; width: 100%; max-width: 600px; height: auto; }
+  svg a:hover, svg a:focus-visible { opacity: 0.7; }
+</style>
+</head>
+<body>
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+  <nav aria-label="صفحات الموقع">
+    <a href="index.html">الحلقة</a> |
+    <a href="watch.html">شاهد الدرس</a> |
+    <a href="extras.html">إضافات</a> |
+    <a href="studio.html" aria-current="page">الاستوديو</a> |
+    <a href="credits.html">المصادر</a>
+  </nav>
+</header>
+<main>
+  <h1>استوديو المحطة</h1>
+  <p>دوس على أي غرفة في المسقط، أو اختار من القايمة اللي تحته.</p>
+  <svg viewBox="0 0 300 150" role="group" aria-label="مسقط استوديو المحطة">
+    <rect width="300" height="150" fill="#e2e8f0"/>
+    <a href="#rec" aria-label="غرفة التسجيل"><rect x="10" y="10" width="130" height="130" fill="#0f766e"/></a>
+    <a href="#mix" aria-label="غرفة المكساج"><circle cx="220" cy="50" r="40" fill="#b45309"/></a>
+    <a href="#wait" aria-label="الاستقبال"><polygon points="160,140 220,100 280,140" fill="#1d4ed8"/></a>
+  </svg>
+  <ul>
+    <li><a href="#rec">غرفة التسجيل</a> (المربع الأخضر)</li>
+    <li><a href="#mix">غرفة المكساج</a> (الدايرة البرتقالي)</li>
+    <li><a href="#wait">الاستقبال</a> (المثلث الأزرق)</li>
+  </ul>
+  <h2 id="rec">غرفة التسجيل</h2>
+  <p>مايكين وترابيزة خشب، والحيطان مبطّنة عشان الصدى.</p>
+  <h2 id="mix">غرفة المكساج</h2>
+  <p>هنا الحلقة بتتقصّ وبيتزوّد عليها الموسيقى.</p>
+  <h2 id="wait">الاستقبال</h2>
+  <p>الضيوف بيستنوا هنا قبل التسجيل.</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~html credits.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصادر الميديا | بودكاست المحطة</title>
+</head>
+<body>
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+  <nav aria-label="صفحات الموقع">
+    <a href="index.html">الحلقة</a> |
+    <a href="watch.html">شاهد الدرس</a> |
+    <a href="extras.html">إضافات</a> |
+    <a href="studio.html">الاستوديو</a> |
+    <a href="credits.html" aria-current="page">المصادر</a>
+  </nav>
+</header>
+<main>
+  <h1>مصادر الميديا</h1>
+  <p>كل ملف في الموقع مش من صنعنا مكتوب هنا بصاحبه ورخصته.</p>
+  <h2>الصور</h2>
+  <ul>
+    <li id="studio-photo">«<a href="https://photos.example.test/p/4821">استوديو صغير</a>» رسم سلمى فؤاد، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتغيّرت ألوانها.</li>
+  </ul>
+  <h2>الموسيقى</h2>
+  <ul>
+    <li>«<a href="https://music.example.test/t/307">صباح هادي</a>» تأليف نادر حلمي، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتقصّ منها أول ٥ ثواني لمقدمة الحلقة.</li>
+  </ul>
+  <h2>الأيقونات</h2>
+  <ul>
+    <li>أيقونة السماعة 🎧: من حروف النظام (emoji)، مش ملف.</li>
+  </ul>
+  <h2>من صنعنا</h2>
+  <p>التسجيلات، والفيديو، وغلاف الحلقة، ومسقط الاستوديو، وملفات الكابشن: فريق المحطة.</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الحلقة ١: يعني إيه صوت في الصفحة | بودكاست المحطة</title>
+<style>
+  img, video { max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+  <nav aria-label="صفحات الموقع">
+    <a href="index.html" aria-current="page">الحلقة</a> |
+    <a href="watch.html">شاهد الدرس</a> |
+    <a href="extras.html">إضافات</a> |
+    <a href="studio.html">الاستوديو</a> |
+    <a href="credits.html">المصادر</a>
+  </nav>
+</header>
+<main>
+  <h1>الحلقة ١: يعني إيه صوت في الصفحة</h1>
+  <p>منى وكريم بيحطوا أول ملف صوت في صفحة، وبيشرحوا ليه المتصفح بيرفض يشغّله لوحده.</p>
+  <video controls preload="metadata" width="640" height="360" poster="media/cover.svg" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
+    <source src="media/ep1.mp3" type="audio/mpeg">
+    <track default kind="captions" srclang="ar" label="عربي" src="media/ep1.ar.vtt">
+  </video>
+  <p><a href="media/ep1.mp3" download>نزّل الحلقة ١ (MP3)</a></p>
+  <noscript><p>عدّاد التصفيق في صفحة «إضافات» محتاج JavaScript. باقي الموقع شغال من غيره.</p></noscript>
+  <h2>في الحلقة دي</h2>
+  <ul>
+    <li>مشغّل الصوت بيظهر إمتى</li>
+    <li>أكتر من صيغة لنفس الملف</li>
+    <li>ليه التشغيل التلقائي ممنوع</li>
+  </ul>
+  <h2>نص الحلقة</h2>
+  <p><strong>منى:</strong> أهلًا بيكم في المحطة.</p>
+  <p>[موسيقى المقدمة]</p>
+  <p><strong>كريم:</strong> النهارده هنحط صوت في صفحة.</p>
+  <p><strong>منى:</strong> ومن غير ما يشتغل لوحده.</p>
+  <figure>
+    <img src="media/studio.svg" alt="رسم لاستوديو المحطة: مايكين على ترابيزة خشب" width="640" height="360" loading="lazy" decoding="async">
+    <figcaption>«استوديو صغير» رسم سلمى فؤاد، <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. <a href="credits.html#studio-photo">التفاصيل في صفحة المصادر</a>.</figcaption>
+  </figure>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 828 714 شكل studio.html (صغّر العرض بزرار «موبايل»: اللينكات لسه في مكانها)
+<style>
+  svg { display: block; width: 100%; max-width: 600px; height: auto; }
+  svg a:hover, svg a:focus-visible { opacity: 0.7; }
+</style>
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+  <nav aria-label="صفحات الموقع">
+    <a href="#">الحلقة</a> | <a href="#">شاهد الدرس</a> | <a href="#">إضافات</a> | <a href="#" aria-current="page">الاستوديو</a> | <a href="#">المصادر</a>
+  </nav>
+</header>
+<main>
+  <h1>استوديو المحطة</h1>
+  <p>دوس على أي غرفة في المسقط، أو اختار من القايمة اللي تحته.</p>
+  <svg viewBox="0 0 300 150" role="group" aria-label="مسقط استوديو المحطة">
+    <rect width="300" height="150" fill="#e2e8f0"/>
+    <a href="#rec" aria-label="غرفة التسجيل"><rect x="10" y="10" width="130" height="130" fill="#0f766e"/></a>
+    <a href="#mix" aria-label="غرفة المكساج"><circle cx="220" cy="50" r="40" fill="#b45309"/></a>
+    <a href="#wait" aria-label="الاستقبال"><polygon points="160,140 220,100 280,140" fill="#1d4ed8"/></a>
+  </svg>
+  <ul>
+    <li><a href="#rec">غرفة التسجيل</a> (المربع الأخضر)</li>
+    <li><a href="#mix">غرفة المكساج</a> (الدايرة البرتقالي)</li>
+    <li><a href="#wait">الاستقبال</a> (المثلث الأزرق)</li>
+  </ul>
+  <h2 id="rec">غرفة التسجيل</h2>
+  <p>مايكين وترابيزة خشب، والحيطان مبطّنة عشان الصدى.</p>
+  <h2 id="mix">غرفة المكساج</h2>
+  <p>هنا الحلقة بتتقصّ وبيتزوّد عليها الموسيقى.</p>
+  <h2 id="wait">الاستقبال</h2>
+  <p>الضيوف بيستنوا هنا قبل التسجيل.</p>
+</main>
+~~~
+
+~~~view 408 462 شكل credits.html
+<header>
+  <p><strong>بودكاست المحطة</strong></p>
+</header>
+<main>
+  <h1>مصادر الميديا</h1>
+  <p>كل ملف في الموقع مش من صنعنا مكتوب هنا بصاحبه ورخصته.</p>
+  <h2>الصور</h2>
+  <ul>
+    <li>«<a href="#">استوديو صغير</a>» رسم سلمى فؤاد، رخصة <a href="#" rel="license">CC BY 4.0</a>. اتغيّرت ألوانها.</li>
+  </ul>
+  <h2>الموسيقى</h2>
+  <ul>
+    <li>«<a href="#">صباح هادي</a>» تأليف نادر حلمي، رخصة <a href="#" rel="license">CC BY 4.0</a>. اتقصّ منها أول ٥ ثواني لمقدمة الحلقة.</li>
+  </ul>
+  <h2>من صنعنا</h2>
+  <p>التسجيلات، والفيديو، وغلاف الحلقة، ومسقط الاستوديو، وملفات الكابشن: فريق المحطة.</p>
+</main>
+~~~
+
+**هتشوف إيه:**
+
+- شريط تنقّل واحد في كل الصفحات، واللينك بتاع الصفحة الحالية هو اللي عليه [[aria-current]].
+- [[studio.html]]: المسقط واخد عرض الصفحة (لحد 600)، وكل شكل بيبهت لما الماوس يعدّي عليه، وبيودّي لقسمه. وتحته نفس اللينكات قايمة.
+- [[credits.html]]: كل بند سطر فيه لينكين.
+- [[index.html]]: صورة الاستوديو تحت النص، وتحتها نسبتها.
+
+**ليه التصميم ده:**
+
+- المسقط SVG مش image map: الصفحة بتتصغّر على الموبايل، وإحداثيات [[<area>]] مبتتصغّرش (درس «map و area» قسم ٤). والقايمة اللي تحته للي مش هيدوس على رسم.
+- النسبة في مكانين: مختصرة تحت الصورة، وكاملة في صفحة المصادر. لما الملفات تكتر، صفحة واحدة بتتراجع أسهل.
+- الصورة تحت أول الشاشة: [[loading="lazy"]] و [[decoding="async"]]. والغلاف (الـ [[poster]]) أول الشاشة ومفيهوش الاتنين. في صفحة قصيرة زي دي الـ lazy مش هيبان في Network (القياس تحت)، وهيفرق لما الصفحة تطول بحلقات أكتر.
+- [[<noscript>]] بيقول الحقيقة: حاجة واحدة بس محتاجة JavaScript. باقي الموقع HTML شغال من غيره.
+- السطرين CSS في [[studio.html]]: [[width: 100%]] و [[max-width]] و [[height: auto]] بيخلّوا الـ SVG يتصغّر مع الصفحة بنسبته، و [[opacity]] مع [[:hover]] و [[:focus-visible]] بيبيّن الشكل اللي الماوس أو الـ Tab عليه (درس «selectors»).
+
+**الأخطاء اللي المشروع بيتعامل معاها:** الـ PDF مبيتعرضش: فيه بديل ولينك. الكابشن مبيتحمّلش: النص المكتوب موجود. JavaScript مقفول: [[<noscript>]]، والعدّاد بس اللي واقف. الصورة متحمّلتش: [[alt]] ومكانها محجوز.
+
+**الغلطة الشائعة:** تنسخ الـ [[<nav>]] وتنسى تنقل [[aria-current="page"]]، فكل الصفحات بتقول إنك في «الحلقة».
+
+~~~text القياس من Chrome (الخمس صفحات من سيرفر محلي)
+studio.html بعرض 800:   الـ SVG 600 × 300       نص الدايرة → circle جوه a[href="#mix"]
+studio.html بعرض 360:   الـ SVG 344 × 172       نص الدايرة برده → circle جوه a[href="#mix"]
+شجرة الـ accessibility: group «مسقط استوديو المحطة»   link «غرفة التسجيل»   link «غرفة المكساج»   link «الاستقبال»
+index.html:             img.loading = "lazy". الصفحة قصيرة، فـ Chrome طلب media/studio.svg مع فتح الصفحة (نافذة 800 × 600):
+                        المتصفح بيبدأ يحمّل الصورة الـ lazy قبل ما توصل الشاشة بمسافة. على بعد 6000px (قياس درس «iframe sandbox و allow») التحميل اتأجّل
+credits.html:           document.querySelectorAll('a[rel~="license"]').length = 2
+~~~` },
+        { lvl: 'فكرة', dir: "my-recording", t: R`صفحة لتسجيل من عندك: صوت، ونصه، وصورة بنسبتها`, what: R`اختار حاجة حقيقية حواليك تتسجّل صوت: حكاية بيحكيها حد كبير في العيلة، أو شرح درس لزميلك، أو وصفة بتتقال، أو تعريف بمحل في شارعكم. سجّلها بموبايلك (دقيقة كفاية) واعمللها صفحة [[index.html]] فيها: عنوان، وجملة مين بيتكلم وإمتى اتسجّلت، والمشغّل (بكل اللي اتعلمته: [[controls]] و [[<source>]] بنوعه و [[aria-label]] ومن غير [[autoplay]])، ولينك تحميل، والنص المكتوب كامل، وصورة واحدة من تصويرك في [[<figure>]] بنسبتها ورخصة انت اللي تختارها. مفيش حل واحد صح: اللي تحت نسخة نموذجية.`, done: R`حد غيرك يقدر يسمع التسجيل، ويقدر يقراه من غير ما يسمعه، ويعرف من الصفحة مين صاحب التسجيل والصورة ومسموحله يعمل بيهم إيه. والمشغّل واقف لحد ما يتداس، وليه اسم في شجرة الـ accessibility.`, ext: R`اكتب ملف [[.vtt]] للتسجيل وشغّله في [[<video>]] بغلاف زي المشروع التاني. وزوّد تسجيل تاني في نفس الصفحة، كل واحد [[preload="none"]] وتحته نصه. واسأل صاحب الحكاية: يوافق تتنشر بأنهي رخصة؟ واكتب اللي اتفقتوا عليه.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حكاية الساقية: تسجيل من بيتنا</title>
+<style>
+  img { max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<main>
+  <h1>حكاية الساقية</h1>
+  <p>جدتي فاطمة بتحكي عن الساقية اللي كانت جنب بيتهم. اتسجّلت في البيت، في <time datetime="2026-11">نوفمبر 2026</time>.</p>
+  <audio controls preload="metadata" aria-label="حكاية الساقية بصوت جدتي فاطمة">
+    <source src="media/saqia.mp3" type="audio/mpeg">
+  </audio>
+  <p><a href="media/saqia.mp3" download>نزّل التسجيل (MP3، دقيقة)</a></p>
+  <h2>نص الحكاية</h2>
+  <p><strong>جدتي:</strong> الساقية كانت بتلف من الفجر، وصوتها يوصل لآخر الغيط.</p>
+  <p><strong>جدتي:</strong> وكنا نقعد جنبها نستنى أبويا يرجع.</p>
+  <p>[ضحكة]</p>
+  <p><strong>جدتي:</strong> دلوقتي مكانها عمارة.</p>
+  <figure>
+    <img src="media/garden.jpg" alt="شجرة توت قديمة قدام بيت من دور واحد" width="800" height="600" loading="lazy" decoding="async">
+    <figcaption>«شجرة التوت» تصوير هشام نبيل، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>.</figcaption>
+  </figure>
+  <h2>حقوق التسجيل</h2>
+  <p>التسجيل والنص: هشام نبيل، بموافقة صاحبة الحكاية. مسموح بالنشر مع ذكر المصدر (<a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>).</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 618 672 شكل الصفحة (الصوت صفارة قصيرة، والصورة بانر مكان صورتك)
+<main>
+  <h1>حكاية الساقية</h1>
+  <p>جدتي فاطمة بتحكي عن الساقية اللي كانت جنب بيتهم. اتسجّلت في البيت، في <time datetime="2026-11">نوفمبر 2026</time>.</p>
+  <audio controls preload="metadata" aria-label="حكاية الساقية بصوت جدتي فاطمة">
+    <source src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA=" type="audio/wav">
+  </audio>
+  <p><a href="#">نزّل التسجيل (MP3، دقيقة)</a></p>
+  <h2>نص الحكاية</h2>
+  <p><strong>جدتي:</strong> الساقية كانت بتلف من الفجر، وصوتها يوصل لآخر الغيط.</p>
+  <p><strong>جدتي:</strong> وكنا نقعد جنبها نستنى أبويا يرجع.</p>
+  <p>[ضحكة]</p>
+  <p><strong>جدتي:</strong> دلوقتي مكانها عمارة.</p>
+  <figure>
+    <img alt="شجرة توت قديمة قدام بيت من دور واحد" width="320" height="80" loading="lazy" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+    <figcaption>«شجرة التوت» تصوير هشام نبيل، رخصة <a href="#" rel="license">CC BY 4.0</a>.</figcaption>
+  </figure>
+  <h2>حقوق التسجيل</h2>
+  <p>التسجيل والنص: هشام نبيل، بموافقة صاحبة الحكاية. مسموح بالنشر مع ذكر المصدر (<a href="#" rel="license">CC BY 4.0</a>).</p>
+</main>
+~~~
+
+**هتشوف إيه:** العنوان، وسطر مين وإمتى، والمشغّل، واللينك، والنص، والصورة بنسبتها، وفي الآخر حقوق التسجيل.
+
+**ليه اخترت التصميم ده:**
+
+- **النص تحت المشغّل مباشرة:** اللي مش هيسمع (أو مش فاهم لهجة جدتي) بيلاقي الكلام على طول.
+- **«[ضحكة]» مكتوبة:** جزء من الحكاية، والنص من غيرها ناقص.
+- **قسم لحقوق التسجيل:** الصوت بتاع حد تاني (جدتي)، فمكتوب إن النشر بموافقتها، وبأنهي رخصة.
+- **صورة من تصويري:** مفيش مصدر خارجي، فالنسبة اسم ورخصة بس.
+- **[[<audio>]] مش [[<video>]]:** مفيش كابشن في النسخة دي. لما تكتب ملف الـ VTT (بند «زوّد عليه»)، بدّله.
+
+**الغلطة الشائعة:** تنشر صوت حد من غير ما تسأله. الرخصة بتنظّم حق صاحب العمل، وصاحب الصوت ليه حق تاني: إنه يوافق.
+
+~~~text القياس من Chrome (بملف صوت تجربة 3 ثواني مكان التسجيل، من سيرفر محلي)
+Audio «حكاية الساقية بصوت جدتي فاطمة»      paused = true      duration = 3
+document.querySelectorAll('a[rel~="license"]').length = 2
+~~~` }
       ],
       items: [
         {
-          cmd: R`مشروع portfolio و dashboard: الخريطة`,
+          cmd: "audio و source",
+          title: "ملف صوت بيشتغل في الصفحة: مشغّل، وأكتر من صيغة، ومن غير تشغيل مفاجئ",
+          pre: [{ to: "css/video و iframe", why: R`[[<video>]] و [[<source>]] و [[preload]] اتشرحوا هناك على الفيديو، وهنا نفس الأفكار على الصوت، ومعاها اللي متقالش: سياسة الـ autoplay بالتفصيل، و [[media]] على [[<source>]]، والنص البديل` }],
           ref: [
-            { t: "MDN: URL", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL" },
-            { t: "MDN: dir attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/dir" },
-            { t: "Playwright: Library", url: "https://playwright.dev/docs/library" },
+            { t: "MDN: <audio>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/audio" },
+            { t: "MDN: <source>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/source" },
+            { t: "MDN: Autoplay guide for media and Web Audio APIs", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay" },
+            { t: "WHATWG: the audio element", url: "https://html.spec.whatwg.org/multipage/media.html#the-audio-element" },
+            { t: "WHATWG: the source element", url: "https://html.spec.whatwg.org/multipage/embedded-content.html#the-source-element" }
           ],
-          title: R`بنبني إيه ولمين، وشكل الأجزاء، وليه HTML و CSS و JS من غير framework، والمعمل اللي هنقيس بيه كل خطوة`,
-          learn: R`تبدأ مشروع واجهة صح من أول ساعة: تعرف بتبني إيه ولمين، وترسم الأجزاء، وتختار كل أداة بسبب مكتوب، وتعمل معمل (سيرفر صغير وسكربتات قياس بـ Chrome الحقيقي) قبل ما تكتب أول سطر CSS.`,
-          out: R`فولدر [[pd-lab/]] فيه [[serve.mjs]] شغال على بورتين، و [[contrast.mjs]] بيطبع نسبة التباين لكل زوج ألوان ويقول AA ولا FAIL.`,
-          use: {
-            prog: R`هنا بتشوف إن الـ CSS اللي اتعلمته (tokens، و grid، و :has، و logical properties) هو أدوات لقرارات، مش حاجات تتحفظ. والدرس ده هو القرارات نفسها: إيه بنبنيه، وبإيه، وإزاي نعرف إنه سليم.`,
-            work: R`أول يوم في أي مشروع واجهة: «اعمل الهيكل، واتفق على الألوان والمسافات، وحط طريقة تتأكد بيها إن الشغل سليم». جدول «ليه الأدوات دي» ده نفسه اللي بيتكتب في الـ README، واللي بيسأل عنه اللي بيراجع شغلك.`,
-            cs: R`نسبة التباين معادلة رياضية (relative luminance) مش إحساس، فتتحسب وتتختبر في CI. والمعمل اللي بيقلّد بطء البيانات وفشلها هو نفس فكرة الـ test double: بتتحكم في الظروف عشان تختبر كل حالة.`,
-          },
-          desc: R`الوحدة دي بتبني **منتجين كاملين** خطوة خطوة، بـ HTML و CSS حديث و JavaScript صغير (من غير framework ولا مكتبة في المتصفح):
-
-• **Portfolio** لمطوّرة واجهات متخيلة اسمها «نادين فؤاد»: صفحة رئيسية بالعربي والإنجليزي وزرار بيقلب [[dir]]، وكروت مشاريع بفلتر بـ [[:has()]]، وصفحة دراسة حالة بانتقال View Transition، و CV بيتطبع صفحة A4 واحدة، و Open Graph عشان اللينك يبان كويس لما يتبعت.
-• **Dashboard** لصالة تسلق متخيلة اسمها «صالة الصخرة»: app shell بـ grid areas و sidebar بيصغر على الكمبيوتر ويبقى drawer على الموبايل، وكروت أرقام فيها sparkline و progress ring بـ SVG، وجدول أعضاء بترتيب وفلتر وصفحات **محفوظين في الرابط**، وحالات التحميل والخطأ والفاضي، وجدول حصص أسبوعي، و [[<dialog>]] للإضافة والحجز، و toasts بتتقري لقارئ الشاشة، و dark mode.
-
-الدرس ده هو الخريطة: لمين، والأجزاء، وشجرة الملفات، وجدول «ليه الأدوات دي تحديدًا؟»، والألوان كـ tokens، والمعمل: سيرفر Node بيقدر **يبطّأ البيانات أو يفشّلها** عشان نشوف حالات التحميل والخطأ، وسكربت تباين بيحسب كل زوج ألوان. وفي آخره أول غلطة حقيقية: لون «نشط» الأخضر كان 4.35:1 (أقل من 4.5)، و axe مقالش حاجة (الدرس الأخير بيشرح ليه).
-
-الدروس اللي بعده بالترتيب: «بورتفوليو ١: الهيكل واللغتين و dir»، و «بورتفوليو ٢: الكروت والفلتر والظهور بالسكرول»، و «بورتفوليو ٣: دراسة الحالة والطباعة و OG»، و «داشبورد ١: الـ shell والـ sidebar والأرقام»، و «داشبورد ٢: جدول الأعضاء والحالة في الرابط»، و «داشبورد ٣: جدول الحصص و dialog والتنبيهات»، و «المراجعة النهائية: مقاسات و a11y وأداء ونشر».`,
-          example: R`npm init -y
-npm pkg set type=module
-npm i playwright-core@1.64.1 @axe-core/playwright@4.14.0
-node serve.mjs
-curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:5502/data/members.json?fail=1"
-node contrast.mjs`,
+          desc: R`[[<audio>]] بيحط ملف صوت في الصفحة (حلقة بودكاست، تسجيل درس، نطق كلمة). من غير [[controls]] مبيظهرش خالص، وبـ [[controls]] المتصفح بيرسم مشغّل فيه تشغيل وإيقاف وشريط وقت وصوت.
+و [[<source>]] جواه بيدّي المتصفح أكتر من ملف لنفس الصوت، وهو بياخد أول واحد يعرف يشغّله. والتشغيل التلقائي للصوت ([[autoplay]]) المتصفحات بتمنعه، فمتبنيش عليه.`,
+          example: R`<h2>الحلقة ١: يعني إيه صوت في الصفحة</h2>
+<audio controls preload="metadata" aria-label="الحلقة ١: يعني إيه صوت في الصفحة">
+  <source src="media/ep1.ogg" type="audio/ogg; codecs=opus">
+  <source src="media/ep1.mp3" type="audio/mpeg">
+  <p>متصفحك مش بيشغّل الصوت.</p>
+</audio>
+<p><a href="media/ep1.mp3" download>نزّل الحلقة (MP3، ٣ ميجا)</a></p>`,
+          flag: "script",
           lines: [
-            R`بيعمل [[package.json]] بالقيم الافتراضية من غير أسئلة ([[-y]] = yes لكل سؤال). في npm 11 الملف بيطلع فيه [[ "type": "commonjs" ]] صريحة، ودي هتعمل مشكلة في السطر الجاي.`,
-            R`بيغيّر [[type]] لـ [[module]]: كل ملف [[.js]] في الفولدر بيتقري كـ ES module ([[import]] و [[export]]). من غيرها تجربة [[state.js]] في Node وقعت بـ [[Named export 'parseState' not found ... is a CommonJS module]] (اتقابل في المعمل).`,
-            R`أداتين القياس بس، ومش بيتحطوا في الموقع: [[playwright-core]] بيتحكم في Chrome المتسطّب عندك (مبينزّلش متصفح، ده الفرق بينه وبين [[playwright]])، و [[@axe-core/playwright]] بيشغّل فحص accessibility جوه الصفحة. الأرقام بعد [[@]] نفس النسخ اللي اتجرّبت.`,
-            R`السيرفر (الكود في الشرح): الـ portfolio على [[5501]] والـ dashboard على [[5502]]، و [[?delay=1200]] بيأخر البيانات و [[?fail=1]] بيرجّع 500 عشان نشوف الـ skeleton ورسالة الخطأ. سيبه شغال في ترمنال لوحده.`,
-            R`بيتأكد إن الفشل المتعمّد شغال: [[-s]] من غير progress، و [[-o /dev/null]] ارمي الجسم، و [[-w "%{http_code}"]] اطبع كود الرد بس، فالمفروض يطبع [[500]]. على PowerShell اكتب [[curl.exe]] (في Windows PowerShell 5.1 كلمة [[curl]] لوحدها اسم تاني لـ [[Invoke-WebRequest]]) و [[-o NUL]].`,
-            R`بيحسب نسبة التباين لكل زوج ألوان (نص على خلفية) من الـ tokens ويقول [[AA]] لو 4.5 أو أكتر و [[FAIL]] لو أقل. ده الفحص اللي مسك الأخضر الضعيف قبل axe.`,
+            R`عنوان الحلقة قبل المشغّل. المشغّل نفسه مفيهوش أي كلام، فالعنوان هو اللي بيقول للزائر ده صوت إيه.`,
+            R`[[<audio>]] بـ [[controls]] عشان المشغّل يظهر، و [[preload="metadata"]] عشان المتصفح يجيب مدة الملف بس مش الملف كله، و [[aria-label]] اسم المشغّل لقارئ الشاشة.`,
+            R`أول ملف: Ogg بكودك Opus (حجمه أصغر لنفس الجودة). [[type]] بيقول للمتصفح الصيغة من غير ما يحمّل الملف، فلو مش بيعرفها بيعدّي على اللي بعده.`,
+            R`تاني ملف: MP3، وده بيشتغل في كل المتصفحات الحالية، فهو آخر واحد في الترتيب (الاحتياطي).`,
+            R`النص البديل: بيظهر بس في متصفح قديم جدًا ميعرفش [[<audio>]] أصلًا. في المتصفحات الحالية مبيظهرش حتى لو الملفات كلها باظت.`,
+            R`قفلة [[</audio>]]. العنصر ده لازم يتقفل: الـ [[<source>]] والنص البديل بيتحطوا بين الفتحة والقفلة.`,
+            R`لينك تحميل **برّه** المشغّل: ده اللي بيشتغل لو المشغّل مشتغلش، وللي عايز يسمع الحلقة من غير نت. و [[download]] بيخلّي المتصفح ينزّل الملف بدل ما يفتحه.`
           ],
-          try: R`اعمل الفولدر ونفّذ أوامر المثال واحد واحد. حط [[serve.mjs]] من الشرح، وشغّله، وافتح [[http://127.0.0.1:5502/data/members.json?delay=2000]] في المتصفح وعدّ الثواني قبل ما يرد. وبعدين اكتب [[contrast.mjs]] وجرّب فيه زوج ألوان من موقع عاجبك (خد اللون من DevTools بالـ color picker).`,
-          flag: R`term`,
-          deep: {
-            why: R`أغلب مشاريع الواجهة اللي بتبوظ بتبوظ في أول ساعة: حد بدأ يكتب CSS من غير ما يعرف الصفحة فيها إيه، وحط ألوان hex في ٤٠ مكان، ومفيش طريقة يعرف بيها إن الصفحة سليمة غير «شكلها حلو عندي». الخريطة والـ tokens والمعمل بيخلّوا كل قرار بعد كده سهل: تغيير لون = سطر واحد، ورقم الـ CLS بيتقاس في ثانية بدل ما تخمّن.`,
-            how: R`المعمل ٣ حاجات: **سيرفر** static صغير بـ [[node:http]] (بيقرا الملف من الفولدر ويبعته بالـ content-type الصح، وبيأخر أو يفشّل أي رابط تحت [[/data/]] لو الرابط فيه [[delay]] أو [[fail]])، و **سكربتات قياس** بـ playwright-core بتفتح Chrome الحقيقي على مقاسات وثيمات ولغات مختلفة وتقيس (scrollWidth و PerformanceObserver و axe)، و **دوال نقية** (حساب التباين، والحالة في الرابط، ونقط الـ sparkline) بتتختبر في Node من غير متصفح أصلًا. والتباين بيتحسب بمعادلة WCAG: كل لون بيتحول لـ relative luminance (القناة على 255، وبعدين gamma، وبعدين وزن 0.2126 للأحمر و 0.7152 للأخضر و 0.0722 للأزرق)، والنسبة = (الأفتح + 0.05) ÷ (الأغمق + 0.05).`,
-            when: R`أي موقع أو لوحة هتتسلم لحد: الخريطة والجدول والـ tokens قبل أول سطر CSS، والمعمل قبل أول خطوة بناء. والمشروع ده نفسه ينفع يبقى أول حاجتين في الـ portfolio بتاعك. وكل جزء هنا ليه درس في التاب لو عايز تتعمق: «CSS variables»، و «contrast ratio»، و «axe و Lighthouse»، و «مصفوفة مقاسات».`,
-            mistakes: R`تبدأ بالتصميم من غير ما تحدد الصفحة لمين (الـ dashboard للأدمن على كمبيوتر المكتب والموبايل، والـ portfolio لحد بيقرر يكلّمك في ٣٠ ثانية). تختار framework «عشان الكل بيستخدمه» لمشروع ٢٠ ملف. تحط الألوان hex جوه كل قاعدة فالـ dark mode يبقى ١٠٠ تعديل. تختبر بالعين على مقاس واحد. تفتكر إن axe صفر = التباين سليم (هنا كان فيه زوج 4.35:1 و axe عدّاه). تخلي [[?fail=1]] يأثر على الصفحة نفسها مش البيانات بس (حصل: الصفحة رجعت JSON والاختبار علّق ٣٠ ثانية).`,
-          },
-          teach: R`## الصورة الكبيرة
+          teach: R`## الفكرة في سطرين
 
-### بنبني إيه ولمين
+المواصفة بتقول: [[<audio>]] بيمثّل صوت أو stream صوتي. ملوش شكل من عنده: الشكل كله هو المشغّل اللي المتصفح بيرسمه لما تكتب [[controls]].
 
-| المنتج | لمين | لازم يعمل إيه في أول ٣٠ ثانية |
+القياسات كلها من Chrome 157 على Windows 11، بملفات صوت اتعملت بـ ffmpeg (نغمة ٣ ثواني بصيغة MP3 و Ogg) واتفتحت من سيرفر محلي.
+
+> **عن المعاينات في الوحدة دي:** المعاينة الحية مبتقراش ملفات من جهازك، فملف الصوت مكتوب جوه الصفحة نفسها بـ [[data:]] (سطر طويل من حروف وأرقام هو ملف WAV صغير: صفارة خُمس ثانية). في موقعك هتكتب مكانه مسار ملف عادي زي [[src="media/ep1.mp3"]]. المسارات اتشرحت في درس «المسارات: مطلق ونسبي».
+
+---
+
+## ١. [[<audio controls>]]
+
+~~~live 80 مشغّل صوت (دوس ▶ هتسمع صفارة قصيرة)
+<audio controls src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio>
+~~~
+
+**هتشوف إيه:** شريط رمادي فيه زرار ▶، والوقت، وشريط التقدّم، وزرار الصوت، وتلات نقط (قايمة فيها سرعة التشغيل والتحميل). ده شكله في Chrome، وكل متصفح بيرسمه بشكله.
+
+~~~text القياس من Chrome
+<audio src="ep.mp3">            display: none      الحجم: 0 × 0      (موجود في الصفحة ومش باين)
+<audio controls src="ep.mp3">   display: inline    الحجم: 300 × 54
+الاتنين بعد التحميل:            paused = true      (واقف لحد ما حد يدوس)
+~~~
+
+- [[paused]] خاصية بتتقري من JavaScript: [[true]] يعني واقف.
+- من غير [[controls]] العنصر موجود والملف بيتحمّل، بس مفيش حاجة تتشاف ولا تتداس. ده بيتستخدم بس لما JavaScript هو اللي بيشغّل الصوت (زرار «اسمع النطق» مثلًا).
+- [[controls]] من الـ boolean attributes: وجوده يكفي، ومبياخدش قيمة (زي [[required]] في الفورم).
+
+---
+
+## ٢. [[<source src="..." type="...">]]: أكتر من ملف لنفس الصوت
+
+بدل [[src]] على [[<audio>]]، حط جواه [[<source>]] لكل صيغة. المتصفح بيمشي عليهم بالترتيب وياخد **أول** واحد يعرف يشغّله.
+
+~~~html
+<audio controls>
+  <source src="media/ep1.xyz" type="audio/x-nope">
+  <source src="media/ep1.ogg" type="audio/ogg; codecs=opus">
+  <source src="media/ep1.mp3" type="audio/mpeg">
+</audio>
+~~~
+
+~~~text القياس من Chrome (currentSrc = الملف اللي اتاخد فعلًا)
+التلات sources اللي فوق:                          currentSrc = ep1.ogg
+   ← النوع الأول مش معروف فاتعدّى من غير ما ملفه يتطلب، والتاني اتاخد، والتالت متلمسش
+
+<source src="missing.ogg"> وبعده <source src="ep1.mp3">  (من غير type):
+                                                  currentSrc = ep1.mp3
+   ← من غير type المتصفح اضطر يطلب الملف الأول (رجع 404) وبعدين راح للتاني
+~~~
+
+[[type]] هو نوع الملف (MIME type). لما يتكتب، المتصفح بيقرر من غير ما يحمّل حاجة. ولما ميتكتبش، بيجرّب كل ملف بطلب حقيقي.
+
+المتصفح بيعرف يشغّل إيه؟ ده اللي Chrome 157 رد بيه لما اتسأل بـ [[canPlayType()]]:
+
+| [[type]] | رد Chrome | معناه |
 |---|---|---|
-| portfolio «نادين فؤاد» | حد بيدوّر على مطوّرة واجهات (شركة أو عميل) وفتح اللينك من رسالة | يعرف هي مين وبتعمل إيه، ويشوف شغل حقيقي، ويلاقي الإيميل، ولو عايز يطبع الـ CV يطلع صفحة واحدة |
-| dashboard «صالة الصخرة للتسلق» | مدير الصالة والموظف اللي على الاستقبال، على كمبيوتر المكتب والموبايل | يشوف الأرقام المهمة، ويلاقي عضو بالاسم أو الحالة، ويبعت الرابط لزميله فيفتح على نفس الفلتر، ويحجز مكان في حصة |
+| [[audio/mpeg]] (MP3) | [[probably]] | هيشتغل غالبًا |
+| [[audio/ogg; codecs=opus]] | [[probably]] | هيشتغل غالبًا |
+| [[audio/ogg]] و [[audio/wav]] و [[audio/mp4]] | [[maybe]] | النوع معروف، والكودك اللي جواه متحددش |
+| [[audio/x-nope]] | نص فاضي | مش هيشتغل |
 
-الأسماء والأرقام كلها متخيلة: «نادين فؤاد» و «صالة الصخرة» والأعضاء الـ ٥٧ اتولدوا بسكربت (درس «داشبورد ٢»).
-
-### الأجزاء وإزاي البيانات بتمشي
-
-~~~text الـ portfolio: ٣ صفحات ثابتة
- index.html ──(لينك + View Transition)──▶ work/tide-notes.html
-     │  boot.js  في الـ head: اللغة والثيم قبل الرسم
-     │  i18n.js  آخر الـ body: dictionary ← كل [data-i18n]
-     │  reveal.js: IntersectionObserver ← .in
-     └──▶ cv.html  (@media print + @page A4)
- og.png  ◀── make-og.mjs (Chrome بيصوّر og.html على 1200×630)
-~~~
-
-~~~text الـ dashboard: صفحة واحدة، ٣ أجزاء
-                 ┌─────────── location.search (?status=&sort=&page=) ───────────┐
-                 ▼                                                              │
-  state.js  parseState ─▶ view(rows, state) ─▶ table.js يرسم ─▶ toQuery ─▶ history.pushState
-                                ▲
-  serve.mjs ── data/members.json  (?delay ?fail للمعمل بس)
-            ── data/kpi.json ─▶ kpi.js  (أرقام + sparkline + ring)
-            ── data/classes.json ─▶ schedule.js ─▶ <dialog> ─▶ toast (aria-live)
-  shell.js: sidebar (collapse ≥ 64rem، drawer أقل) + الثيم
-~~~
+- **MP3** بيشتغل في كل المتصفحات الحالية (MDN). لو هتحط صيغة واحدة، هي دي.
+- الصيغ الأحدث (Opus) حجمها أصغر. حطها الأول، و MP3 في الآخر كاحتياطي.
+- [[<source>]] عنصر فاضي (void): ملوش قفلة، زي [[<img>]].
+- لو كتبت [[src]] على [[<audio>]] نفسه، الـ [[<source>]] اللي جواه بيتجاهلوا.
 
 ---
 
-## ليه الأدوات دي تحديدًا؟
+## ٣. [[<source media="...">]]: ملف مختلف حسب الشاشة
 
-| الحاجة | اخترنا | البدايل الحقيقية | ليه ده هنا | إمتى تختار البديل |
-|---|---|---|---|---|
-| الإطار | HTML و CSS و JS عادي | React أو Vue أو Svelte، أو Astro | ٣ صفحات ولوحة واحدة، والـ HTML بيتبعت جاهز (مفيش hydration)، وكل فكرة CSS بتبان من غير طبقة فوقها | لما الواجهة يبقى فيها state كتير بتتشارك بين أجزاء كتير، أو فريق محتاج components موحدة: React (تاب React) أو Astro للمواقع |
-| التنسيق | CSS عادي بـ tokens | Tailwind v4، أو CSS Modules | الدرس عن CSS نفسه: [[:has()]] و grid areas و [[@starting-style]] و [[@page]] باينين زي ما هم | Tailwind لما فريق بيبني صفحات كتير بسرعة ومتفقين على نظام (تاب Tailwind في نفس الصفحة) |
-| اللغتين | dictionary في JS بيبدّل النص | صفحتين ثابتين [[/]] و [[/en/]]، أو مكتبة i18n | ٣ صفحات، ومفيش build step، والتبديل لحظي من غير reload | لو SEO بالإنجليزي مهم: صفحتين ثابتين من نفس الـ dictionary (مشروع كبير في آخر الوحدة) |
-| الرسوم في الكروت | SVG بإيدك (polyline و circle) | Chart.js أو ECharts أو Recharts | sparkline و ring = سطرين، ومفيش ٢٠٠ كيلو مكتبة عشان خط | لما تحتاج محاور وtooltip وتكبير و ١٠ أنواع رسم: مكتبة |
-| النافذة | [[<dialog>]] و [[showModal()]] | مكتبة modal، أو div بـ role=dialog | المتصفح بيعمل الـ focus trap و Esc و [[inert]] للخلفية ورجوع الفوكس | لو لازم تدعم متصفح قديم جدًا، أو drawer بيتسحب بالإصبع |
-| الحالة | الرابط ([[URLSearchParams]] و [[history]]) | localStorage، أو state في الذاكرة | الرابط بيتبعت ويتحفظ في الـ bookmarks، وزرار Back بيرجّع الفلتر | الحاجات الشخصية اللي ملهاش معنى لحد تاني (الثيم، والـ sidebar مقفول): localStorage |
-| السيرفر | [[node:http]] بإيدك (٣٠ سطر) | [[npx serve]]، أو Vite، أو nginx | بنتحكم في التأخير والفشل لكل رابط، ومفيش dependencies | Vite لو هتحتاج HMR وbundling، و nginx في الإنتاج |
-| القياس | playwright-core بـ [[channel: "chrome"]] | Puppeteer، أو Lighthouse CI | بيستخدم Chrome المتسطّب (مبينزّلش ١٥٠ ميجا)، وفيه CDP للـ CPU throttling | Lighthouse CI لو عايز الدرجات والتقرير الكامل في كل PR |
-| الـ a11y الأوتوماتيك | axe-core 4.14 | Lighthouse a11y (هو axe جواه)، و Pa11y | نفس المحرك، وبيرجع JSON نقدر نطبعه ونفشل عليه | Pa11y لو عايز تفحص sitemap كامل من سطر أوامر |
-| الخط | خطوط النظام ([[system-ui]] و Segoe UI و Noto Sans Arabic) | خط من Google Fonts | صفر طلبات، وصفر وميض، والـ LCP مش مستني ملف خط | لما الهوية محتاجة خط معيّن: self-host بـ [[font-display: swap]] و [[preload]] (درس «CLS») |
-| النشر | GitHub Pages | Netlify أو Vercel أو Cloudflare Pages | مجاني، وفي نفس الـ repo، والموقع كله ملفات ثابتة | لو محتاج redirects أو headers أو فورم بيتبعت: Netlify أو Cloudflare |
+[[media]] بياخد شرط زي بتاع [[<picture>]] (درس «picture»). الـ [[<source>]] اللي شرطه مش متحقق بيتعدّى.
+
+~~~html
+<audio controls>
+  <source src="media/ep1-hq.ogg" type="audio/ogg" media="(min-width: 2000px)">
+  <source src="media/ep1.mp3" type="audio/mpeg">
+</audio>
+~~~
+
+~~~text القياس من Chrome (نافذة عرضها 800)
+media="(min-width: 2000px)"  ← الشرط مش متحقق      currentSrc = ep1.mp3
+media="(min-width: 600px)"   ← الشرط متحقق          currentSrc = ep1-hq.ogg
+~~~
+
+الاختيار بيحصل **مرة واحدة** وقت التحميل. تكبير النافذة بعد كده مبيغيّرش الملف. والاستخدام الحقيقي ليه في الفيديو أكتر (فيديو صغير للموبايل وكبير للديسكتوب). اتقاس في Chrome بس، ودعم المتصفحات التانية راجعه في صفحة [[<source>]] على MDN قبل ما تعتمد عليه.
 
 ---
 
-## الهيكل
+## ٤. النص البديل، ولينك التحميل
 
-~~~text
-pd-lab/
-├── package.json             "type": "module" (عشان Node يختبر ملفات .js)
-├── serve.mjs                السيرفر: 5501 للـ portfolio و 5502 للـ dashboard
-├── contrast.mjs             نسبة التباين لكل زوج ألوان
-├── og.html, make-og.mjs     صورة المشاركة 1200×630
-├── gen-data.mjs             أعضاء وحصص متخيلين (نفس الـ seed = نفس البيانات)
-├── check-portfolio.mjs      اللغة والفلتر والطباعة و axe والمقاسات و CLS/LCP
-├── check-dashboard.mjs      الرابط والترتيب والحالات والـ dialog والـ sidebar
-├── audit-dashboard.mjs      axe والمقاسات والكيبورد والـ sticky
-├── vitals.mjs               CLS و LCP على موبايل و CPU أبطأ ٤ مرات، ٣ مرات
-├── portfolio/
-│   ├── index.html, cv.html, work/tide-notes.html
-│   ├── css/tokens.css       كل الألوان والمقاسات
-│   ├── css/site.css, case.css, cv.css
-│   ├── js/boot.js           في الـ head: اللغة والثيم قبل الرسم
-│   ├── js/i18n.js           الـ dictionary وزرار اللغة
-│   ├── js/reveal.js, print.js
-│   └── img/og.png, icon.svg
-└── dashboard/
-    ├── index.html
-    ├── css/app.css          tokens والـ shell والجدول والجدول الأسبوعي والـ dialog
-    ├── data/members.json, classes.json, kpi.json
-    └── js/boot.js, app.js, shell.js, kpi.js, table.js, state.js, lib.js, schedule.js, ui.js
+اللي بين [[<audio>]] و [[</audio>]] (غير الـ [[<source>]]) هو النص البديل. MDN: بيظهر في المتصفحات اللي **مبتعرفش العنصر**. يعني مش بيظهر لما الملف يبوظ.
+
+~~~live 122 ملف مش موجود: المشغّل رمادي، والنص البديل اللي جواه مش ظاهر
+<audio controls>
+  <source src="media/missing.mp3" type="audio/mpeg">
+  <p>النص ده جوه audio: مش هتشوفه.</p>
+</audio>
+<p><a href="media/ep1.mp3" download>نزّل الحلقة (MP3)</a> ← ده برّه، فباين.</p>
 ~~~
 
-الفصل المهم: [[state.js]] و [[lib.js]] **مفيهمش ولا سطر بيلمس الصفحة** ([[document]] أو [[window]])، فبيتختبروا في Node وفي الـ CI. الباقي بيرسم وبيسمع للأحداث بس.
+**هتشوف إيه:** مشغّل باهت زراره مبيتداسش، وتحته اللينك. الجملة اللي جوه [[<audio>]] مش موجودة في الصفحة.
+
+~~~text القياس من Chrome (ملف مش موجود)
+ارتفاع النص البديل: 0      networkState = 3  (NO_SOURCE: مفيش ملف ينفع)
+~~~
+
+عشان كده لينك التحميل بيتحط **برّه** المشغّل. هو اللي بينقذ الزائر لما المشغّل ميشتغلش.
 
 ---
 
-## الألوان كـ tokens
+## ٥. [[<audio loop muted>]]
 
-كل لون له اسم بمعناه (مش بشكله): [[--ink]] للنص، و [[--muted]] للنص الثانوي، و [[--accent]] أو [[--brand]] للأزرار واللينكات، و [[--ok]] و [[--warn]] و [[--bad]] للحالات، وكل حالة ليها نسخة [[-soft]] للخلفية (badge أخضر فاتح ونص أخضر غامق). الحالات ثابتة ومش بتتغير مع البراند. والـ dark مش «اقلب الألوان»: الخلفية كحلي غامق مش أسود، و [[--brand]] بيبقى **أفتح** عشان يتقري عليها.
+- [[loop]]: لما الصوت يخلص يرجع من الأول لوحده. لصوت خلفية قصير، مش لحلقة.
+- [[muted]]: يبدأ مكتوم. الزائر يقدر يفتح الصوت من المشغّل.
 
-| token | portfolio فاتح | portfolio داكن | dashboard فاتح | dashboard داكن |
-|---|---|---|---|---|
-| الخلفية | [[#f7f5f0]] ورقي دافي | [[#12161f]] | [[#f3f5f7]] رمادي بارد | [[#0f1419]] |
-| النص | [[#1c2230]] | [[#e9ecf2]] | [[#17202a]] | [[#e6ebf0]] |
-| الثانوي | [[#535b6b]] | [[#a6aebd]] | [[#56606b]] | [[#9ba6b2]] |
-| الأساسي | [[#0d6b63]] أخضر بحري | [[#5fcfc3]] | [[#1f6f8b]] أزرق بحر | [[#6cc3e0]] |
+الاتنين boolean. والغلطة المشهورة فيهم:
+
+~~~text القياس من Chrome
+<audio controls muted="false">     muted = true     ← لسه مكتوم!
+<audio controls loop muted>        loop = true      muted = true
+~~~
+
+[[muted="false"]] مبتفتحش الصوت. الـ boolean attribute شغال طول ما هو مكتوب، بأي قيمة. عشان تلغيه امسحه كله.
 
 ---
 
-## الخطوة ٠: المعمل
+## ٦. [[<audio autoplay>]] وسياسة المتصفح
 
-~~~javascript serve.mjs
-// static server for the lab: node serve.mjs  (portfolio on :5501, dashboard on :5502)
-import http from "node:http";
-import fs from "node:fs";
-import path from "node:path";
+[[autoplay]] بيطلب من المتصفح يشغّل الصوت أول ما الصفحة تفتح. المتصفحات بترفض الطلب ده لو فيه صوت مسموع والزائر لسه ملمسش الصفحة.
 
-const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8",
-  ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".webp": "image/webp", ".ico": "image/x-icon" };
+~~~text القياس من Chrome 157 (صفحة لسه مفتوحة، ومحدش داس على حاجة)
+<audio autoplay>                         paused = true    اتمنع
+<audio autoplay muted>                   paused = true    اتمنع برده
+<video autoplay>          (فيه صوت)      paused = true    اتمنع
+<video autoplay muted>                   paused = false   اشتغل
+<video autoplay>          (ملف من غير صوت خالص، ومن غير muted)
+                                         paused = true    اتمنع
 
-function site(dir, port) {
-  const root = path.resolve(dir);
-  http.createServer((req, res) => {
-    const u = new URL(req.url, "http://x");
-    let p = decodeURIComponent(u.pathname);
-    if (p.endsWith("/")) p += "index.html";
-    const file = path.join(root, p);
-    const lab = p.startsWith("/data/");                      // ?delay and ?fail only touch the data, never the page itself
-    const delay = lab ? Number(u.searchParams.get("delay") || 0) : 0;
-    if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
-      res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
-      return res.end("404 " + p);
-    }
-    setTimeout(() => {
-      if (lab && u.searchParams.get("fail") === "1") { res.writeHead(500, { "content-type": "application/json" }); return res.end('{"error":"db down"}'); }
-      res.writeHead(200, { "content-type": types[path.extname(file)] || "application/octet-stream", "cache-control": "no-store" });
-      fs.createReadStream(file).pipe(res);
-    }, delay);
-  }).listen(port, "127.0.0.1", () => console.log($__bt$__{dir} -> http://127.0.0.1:$__{port}/$__bt));
-}
+audio.play() من JavaScript من غير ضغطة:
+NotAllowedError: play() failed because the user didn't interact with the document first.
 
-site("portfolio", 5501);
-site("dashboard", 5502);
+بعد ضغطة حقيقية بالماوس في الصفحة:    audio.play() اشتغل   (paused = false)
 ~~~
 
-- [[types]]: كل امتداد ونوعه. من غيره المتصفح ممكن يرفض الـ CSS (بيتطلب [[text/css]]) أو الـ module (بيتطلب نوع JavaScript).
-- [[p.endsWith("/")]]: [[/]] تبقى [[/index.html]]، زي أي سيرفر static.
-- [[!file.startsWith(root + path.sep)]]: يمنع أي طلب يطلع بره الفولدر (path traversal). [[new URL]] بيشيل [[/../]] لوحده، بس [[/..%2fserve.mjs]] بيعدّي منه و [[decodeURIComponent]] بيحوّله [[/../serve.mjs]]: من غير السطر ده رجّع كود السيرفر بكود 200، ومعاه 404 (اتجرّب). و [[path.sep]] عشان [[portfolio-old]] ميعدّيش على إنه جوه [[portfolio]].
-- [[lab]]: التأخير والفشل **للبيانات بس**. أول نسخة كانت بتطبّقهم على أي رابط، فـ [[/?fail=1]] رجّع الصفحة نفسها JSON بكود 500، والاختبار فضل مستني [[#rows]] ٣٠ ثانية ووقع بـ [[Timeout 30000ms exceeded]].
-- [[cache-control: no-store]]: كل ريفريش من جديد، فالقياسات متتأثرش بكاش.
+اللي يطلع من الجدول:
 
-~~~text اتشغّل فعلًا (Git Bash على ويندوز ١١، Node 24.22.1)
-$ node serve.mjs
-portfolio -> http://127.0.0.1:5501/
-dashboard -> http://127.0.0.1:5502/
-$ curl -s -o /dev/null -w "page %{http_code} " "http://127.0.0.1:5502/?fail=1"; curl -s -o /dev/null -w "data %{http_code}\n" "http://127.0.0.1:5502/data/members.json?fail=1"
-page 200 data 500
-~~~
+1. **الصوت بـ [[autoplay]] مبيشتغلش.** ومفيش رسالة خطأ: المشغّل بيفضل واقف وخلاص.
+2. **[[muted]] بينفع مع [[<video>]] بس.** في Chrome، [[<audio autoplay muted>]] فضل واقف. الاستثناء معمول لفيديو الخلفية الصامت.
+3. **الفيديو لازم عليه [[muted]] مكتوبة**، حتى لو ملفه مفيهوش صوت أصلًا.
+4. **بعد أول ضغطة من الزائر** التشغيل من JavaScript بيبقى مسموح. عشان كده زرار «شغّل» بيشتغل دايمًا.
 
-### فحص التباين
+الـ headless هنا زي Chrome العادي: نفس السياسة ([[document-user-activation-required]]) من غير ما نغيّر حاجة. ولما شغّلنا Chrome بـ [[--autoplay-policy=no-user-gesture-required]] الخمسة اشتغلوا، وده إعداد للاختبار مش عند أي زائر.
 
-~~~javascript contrast.mjs (الأزواج المهمة بس)
-const lum = hex => { const c = hex.match(/\w\w/g).map(h => parseInt(h, 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
-const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
-const pairs = { "portfolio light muted/paper": ["#535b6b", "#f7f5f0"], "portfolio light accent/paper": ["#0d6b63", "#f7f5f0"], "portfolio dark muted/paper": ["#a6aebd", "#12161f"], "portfolio dark accent/paper": ["#5fcfc3", "#12161f"],
-  "dash light muted/bg": ["#56606b", "#f3f5f7"], "dash light ok/ok-soft": ["#1a7f37", "#dcf3e3"], "dash light warn/warn-soft": ["#8a5a00", "#fbefd5"], "dash light bad/bad-soft": ["#b42318", "#fde4e1"], "dash light brand-ink/brand": ["#ffffff", "#1f6f8b"],
-  "dash dark muted/bg": ["#9ba6b2", "#0f1419"], "dash dark ok/ok-soft": ["#57d07a", "#12301c"], "dash dark warn/warn-soft": ["#f2c063", "#362a10"], "dash dark bad/bad-soft": ["#ff8a7a", "#3a1714"], "dash dark brand-ink/brand": ["#08202a", "#6cc3e0"] };
-for (const [k, [a, b]] of Object.entries(pairs)) { const r = ratio(a, b); console.log(k.padEnd(30), r.toFixed(2), r >= 4.5 ? "AA" : "FAIL"); }
-~~~
+باقي المتصفحات (من دليل Autoplay في MDN، مش متقاس هنا): التشغيل التلقائي مسموح لو الصوت مكتوم، أو الزائر اتفاعل مع الموقع، أو الموقع في قايمة مسموح ليها (المتصفح بيضيفه لوحده لو الزائر بيشغّل ميديا عليه كتير، أو الزائر يضيفه بإيده)، أو الصفحة جوه [[<iframe>]] واخد الإذن بـ [[allow="autoplay"]] (درس «iframe sandbox و allow»). و Firefox فيه إعداد يمنع الكل، و Safari محتاج [[playsinline]] للفيديو.
 
-- [[lum]]: كل قناة على 255، وبعدين تحويل gamma (اللي تحت 0.04045 بيتقسم على 12.92، والباقي معادلة الأس 2.4)، وبعدين الوزن: العين بتشوف الأخضر أفتح بكتير من الأزرق، عشان كده 0.7152 مقابل 0.0722.
-- [[ratio]]: الأفتح على الأغمق بعد ما نزوّد 0.05 للاتنين. أقل نسبة 1 (نفس اللون) وأكبر نسبة 21 (أبيض على أسود).
-- WCAG AA: [[4.5]] للنص العادي، و [[3]] للنص الكبير (24px، أو 18.66px bold). الـ badge هنا 13.6px bold، يعني نص عادي، يعني 4.5.
-
-~~~text اتشغّل فعلًا: أول مرة
-portfolio light muted/paper    6.26 AA
-portfolio light accent/paper   5.84 AA
-portfolio dark muted/paper     8.11 AA
-portfolio dark accent/paper    9.65 AA
-dash light muted/bg            5.86 AA
-dash light ok/ok-soft          4.35 FAIL
-dash light warn/warn-soft      5.20 AA
-dash light bad/bad-soft        5.44 AA
-dash light brand-ink/brand     5.67 AA
-dash dark muted/bg             7.49 AA
-...
-~~~
-
-الأخضر [[#1a7f37]] على [[#dcf3e3]] (الـ badge «نشط») = 4.35، و axe كان قايل **صفر violations** على نفس الصفحة. جرّبت ٤ درجات أغمق:
-
-~~~text
-#1a7f37 on soft 4.35 on white 5.08
-#177232 on soft 5.15 on white 6.02
-#156c2f on soft 5.59 on white 6.53
-#146a2e on soft 5.74 on white 6.71
-~~~
-
-اخترت [[#156c2f]]: 5.59 على الخلفية الفاتحة و 6.53 على الأبيض (نفس اللون بيتكتب بيه سهم «+8.8%» على الكارت الأبيض). والتصليح سطر واحد في [[--ok]] لأن اللون token. ليه axe سكت؟ لأنه **مفحصش الكلمة أصلًا**، والسبب غريب ومتعلق بالعربي بالذات (الدرس الأخير).
+**الخلاصة العملية:** متكتبش [[autoplay]] على [[<audio>]]. الزائر هو اللي يدوس.
 
 ---
 
-## خطة البناء
+## ٧. [[<audio preload="none">]]
 
-| الخطوة | الدرس | بتضيف إيه | بتتأكد إزاي |
+[[preload]] تلميح للمتصفح: يحمّل قد إيه قبل ما حد يدوس ▶.
+
+| القيمة | المتصفح بيحمّل |
+|---|---|
+| [[none]] | ولا حاجة لحد ما الزائر يدوس |
+| [[metadata]] | معلومات الملف (المدة) |
+| [[auto]] | ممكن يحمّل الملف كله |
+
+~~~text القياس من Chrome (ملف 3 ثواني، من سيرفر محلي)
+من غير preload:        الخاصية preload = "metadata"   (الافتراضي في Chrome)
+preload="none":        duration = NaN    readyState = 0    ← المشغّل بيعرض 0:00
+preload="metadata":    duration = 3      readyState = 4
+preload="auto":        duration = 3      readyState = 4
+~~~
+
+- [[duration]] مدة الملف بالثواني. [[NaN]] معناها «لسه مش معروفة».
+- [[readyState]] رقم من ٠ لـ ٤: ٠ مفيش أي بيانات، و ٤ فيه اللي يكفي للتشغيل. الملف هنا صغير فاتحمّل كله مع [[metadata]].
+- MDN: الافتراضي بيختلف من متصفح لمتصفح، والمواصفة بتنصح بـ [[metadata]]. والقيمة دي تلميح، المتصفح مش مجبر عليها.
+- صفحة فيها ٢٠ حلقة: [[preload="none"]] على الكل. صفحة حلقة واحدة: [[metadata]].
+
+قياس الـ bytes لكل قيمة موجود في درس «video و iframe» (قسم «preload بيفرق قد إيه؟»).
+
+---
+
+## ٨. اسم المشغّل، والنص المكتوب
+
+~~~text القياس من Chrome (شجرة الـ accessibility)
+<audio controls>                                        →  Audio «»        (من غير اسم)
+<audio controls aria-label="الحلقة ١: يعني إيه صوت">    →  Audio «الحلقة ١: يعني إيه صوت»
+<figure><figcaption>الحلقة ٢</figcaption><audio controls></figure>
+                                                        →  Audio «»        (الـ figcaption مسمّاش المشغّل)
+~~~
+
+شجرة الـ accessibility هي النسخة اللي قارئ الشاشة بيقراها من الصفحة. المشغّل فيها من غير اسم، فلو الصفحة فيها ٥ حلقات، القارئ هيسمع «Audio» خمس مرات. الحل: عنوان ([[<h2>]]) قبل كل مشغّل، و [[aria-label]] عليه. ونطق قارئ الشاشة نفسه متقاسش هنا.
+
+والأهم: **الصوت لوحده مبيوصلش للكل.** الأصم، واللي في مكان دوشة، ومحرك البحث، محتاجين الكلام مكتوب (transcript) في الصفحة. MDN: أي صوت فيه كلام محتاج نص مكتوب.
+
+و [[<audio>]] مبيعرضش كابشن: جرّبنا [[<track>]] جواه، الملف اتحمّل ([[cues = 3]]) ومفيش أي حاجة ظهرت، والمشغّل فضل 300 × 54. لو عايز كلام بيظهر مع الصوت، شغّل الملف في [[<video>]] (الدرس الجاي).
+
+---
+
+## ٩. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[<audio src="ep.mp3">]] من غير [[controls]] | مفيش حاجة في الصفحة: [[display: none]] |
+| [[autoplay]] على الصوت | مبيشتغلش، ومن غير أي رسالة |
+| [[muted="false"]] | الصوت مكتوم: الـ attribute موجود |
+| [[<audio src="a.mp3">]] وجواه [[<source>]] | الـ sources بيتجاهلوا |
+| [[<source>]] من غير [[type]] | المتصفح بيطلب كل ملف عشان يجرّبه |
+| MP3 أول واحد وبعده Ogg | Ogg عمره ما هيتاخد: الأول اللي بيشتغل هو اللي بيكسب |
+| لينك التحميل جوه [[<audio>]] بس | محدش هيشوفه في متصفح حديث |
+| حلقة من غير نص مكتوب | الأصم ومحرك البحث مش واصلهم حاجة |
+
+---
+
+## الخلاصة
+
+- [[<audio controls>]]: من غير [[controls]] مفيش مشغّل.
+- [[<source src type>]]: أول صيغة المتصفح يعرفها. الأحدث الأول و MP3 الآخر، ودايمًا [[type]].
+- [[autoplay]] على الصوت بيتمنع، و [[muted]] مبينقذش غير [[<video>]].
+- [[preload="none"]] لصفحة فيها مشغّلات كتير، و [[metadata]] لواحد.
+- عنوان و [[aria-label]]، ولينك تحميل برّه، ونص مكتوب للحلقة.`,
+          try: R`اعمل ملف [[player.html]] فيه عنوان «تجربة الصوت» ومشغّلين لنفس الملف (أي ملف MP3 عندك، سمّيه [[test.mp3]] وحطه جنب الصفحة): الأول [[<audio controls>]] عادي، والتاني [[<audio controls autoplay muted="false" loop>]]. افتح الصفحة في Chrome من غير ما تدوس على حاجة: مين فيهم اشتغل؟ وبعدين دوس ▶ على التاني: فيه صوت؟ وبيعيد لما يخلص؟`,
+          sol: R`~~~html player.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تجربة الصوت</title>
+</head>
+<body>
+<h1>تجربة الصوت</h1>
+<p>الأول: <audio controls src="test.mp3"></audio></p>
+<p>التاني: <audio controls autoplay muted="false" loop src="test.mp3"></audio></p>
+</body>
+</html>
+~~~
+
+~~~view 234 نفس الصفحة (الملف هنا صفارة قصيرة مكتوبة جوه الصفحة)
+<h1>تجربة الصوت</h1>
+<p>الأول: <audio controls src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio></p>
+<p>التاني: <audio controls autoplay muted="false" loop src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio></p>
+~~~
+
+**هتشوف إيه:**
+
+- ولا واحد اشتغل لوحده. التاني عليه [[autoplay]]، و Chrome منعه في سكوت.
+- التاني أيقونة الصوت عليها شرطة: مكتوم، مع إن المكتوب [[muted="false"]].
+- لما تدوس ▶ على التاني: الشريط بيتحرك ومفيش صوت، ولما يخلص بيرجع من الأول ([[loop]]).
+
+**ليه كده:** [[autoplay]] طلب والمتصفح بيرفضه للصوت. و [[muted]] boolean: أي قيمة معناها «مكتوم». امسح [[muted="false"]] خالص وجرّب تاني: الصوت هيطلع.
+
+~~~text القياس من Chrome
+الأول:    paused = true    muted = false
+التاني:   paused = true    muted = true     loop = true
+~~~`,
+          deep: {
+            why: R`قبل [[<audio>]] الصوت في الصفحة كان محتاج plugin (Flash)، ومكانش بيشتغل على الموبايل. العنصر ده بيشتغل في كل متصفح من غير أي حاجة تتسطّب، وبيدّي مشغّل الكيبورد وقارئ الشاشة بيعرفوا يستخدموه. وسياسة الـ autoplay اتعملت لأن المواقع كانت بتشغّل إعلانات بصوت أول ما الصفحة تفتح.`,
+            how: R`المتصفح بيمشي على الـ [[<source>]] بالترتيب. اللي [[media]] بتاعه مش متحقق أو [[type]] بتاعه مش معروف بيتعدّى من غير طلب، وأول واحد ينفع بيبقى [[currentSrc]]. بعدها بيحمّل حسب [[preload]]، وبيرفع [[readyState]] من ٠ لـ ٤. ولما حاجة تطلب التشغيل ([[autoplay]] أو [[play()]]) بيسأل السياسة: فيه ضغطة من الزائر على الصفحة؟ لو لأ والصوت مسموع، [[autoplay]] بيتجاهل و [[play()]] بيرجّع Promise مرفوض بـ [[NotAllowedError]].`,
+            when: R`حلقة بودكاست، تسجيل محاضرة، نطق كلمة في قاموس، مقطع من كتاب صوتي، رسالة صوتية في صفحة «عن الشركة». لو فيه صورة بتتحرك مع الصوت يبقى [[<video>]]. ولو الصوت مستضاف عند خدمة تانية، هتاخد منها [[<iframe>]] (درس «iframe sandbox و allow»).`,
+            mistakes: R`نسيان [[controls]] فالمشغّل ميظهرش. [[autoplay]] على صوت والاعتماد عليه. [[muted="false"]] على أساس إنها بتفتح الصوت. [[<source>]] من غير [[type]]. ترتيب الصيغ بالعكس (MP3 الأول). لينك التحميل جوه العنصر. وصفحة حلقات من غير نص مكتوب ولا أسامي للمشغّلات.`
+          },
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** مشغّل الحلقة ٢ في بودكاست «المحطة». المطلوب: مشغّل ظاهر، جواه ملفين بالترتيب الصح (Ogg الأول وبعده MP3) وكل واحد بنوعه، ومن غير تشغيل تلقائي، واسم للمشغّل بـ [[aria-label]]، ولينك تحميل للـ MP3 برّه المشغّل. (من قسم ١ و ٢ و ٤ و ٨ في الشرح)`, done: R`المشغّل ظاهر تحت العنوان، واللينك تحته، وكل الشروط ✓. (المشغّل هيبان باهت لأن الملفين مش موجودين في المعاينة، والمطلوب هنا الكود.)`, work: { h: 170, start: R`<h2>الحلقة ٢: الكابشن والترجمة</h2>
+<p>ملفات الحلقة: media/ep2.ogg و media/ep2.mp3</p>`, checks: [
+              { say: R`فيه [[<audio>]] عليه [[controls]]`, q: "audio[controls]" },
+              { say: R`جواه اتنين [[<source>]]`, q: "audio > source", n: 2 },
+              { say: R`الأول Ogg ومعاه [[type]] بتاعه`, q: "audio > source:first-of-type[src$=\".ogg\"][type^=\"audio/ogg\"]" },
+              { say: R`التاني MP3 ونوعه [[audio/mpeg]]`, q: "audio > source:last-of-type[src$=\".mp3\"][type=\"audio/mpeg\"]" },
+              { say: R`المشغّل ليه [[aria-label]] ومفيهوش [[autoplay]]`, q: "audio[aria-label]:not([autoplay])" },
+              { say: R`لينك [[download]] للـ MP3 برّه المشغّل`, q: ":not(audio) > a[download][href$=\".mp3\"]" },
+            ] }, sol: R`~~~live 182 الحل
+<h2>الحلقة ٢: الكابشن والترجمة</h2>
+<audio controls preload="metadata" aria-label="الحلقة ٢: الكابشن والترجمة">
+  <source src="media/ep2.ogg" type="audio/ogg; codecs=opus">
+  <source src="media/ep2.mp3" type="audio/mpeg">
+</audio>
+<p><a href="media/ep2.mp3" download>نزّل الحلقة ٢ (MP3)</a></p>
+~~~
+
+**هتشوف إيه:**
+
+- العنوان، وتحته المشغّل (باهت هنا لأن الملفين مش موجودين في المعاينة)، وتحته لينك التحميل.
+- في فولدر مشروعك، بالملفين في [[media/]]، المشغّل هيبان عادي والمدة مكتوبة.
+
+**ليه كده:**
+
+- Ogg/Opus الأول لأن حجمه أصغر، و MP3 الآخر لأنه بيشتغل في كل حتة.
+- [[type]] على الاتنين: المتصفح اللي مبيعرفش Ogg بيعدّيه من غير ما يطلب الملف.
+- اللينك برّه [[<audio>]]: جواه مكانش هيبان.
+
+**الغلطة الشائعة:** [[<audio controls src="media/ep2.mp3">]] ومعاه الـ sources. الـ [[src]] اللي على العنصر بيكسب، والـ Ogg مش هيتاخد أبدًا.
+
+~~~text القياس من Chrome (بالملفين موجودين على سيرفر محلي)
+currentSrc = ep2.ogg      paused = true      الحجم: 300 × 54
+Audio «الحلقة ٢: الكابشن والترجمة»
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مشغّل «نشرة المحطة» فيه ٤ مشاكل: مش ظاهر في الصفحة، وعليه تشغيل تلقائي، ومكتوب عليه [[muted="false"]] «عشان الصوت يطلع»، ولينك التحميل محطوط جواه. (من قسم ١ و ٤ و ٥ و ٦ في الشرح)`, done: R`المشغّل ظاهر، ومفيهوش [[autoplay]] ولا [[muted]]، واللينك برّه وباين، وكل الشروط ✓.`, work: { h: 150, start: R`<h2>نشرة المحطة: أخبار الأسبوع</h2>
+<audio autoplay muted="false" src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA=">
+  <a href="media/news.mp3" download>نزّل النشرة</a>
+</audio>`, checks: [
+              { say: R`المشغّل عليه [[controls]]`, q: "audio[controls]" },
+              { say: R`مفيش [[autoplay]]`, q: "audio[autoplay]", n: 0 },
+              { say: R`مفيش [[muted]] بأي قيمة`, q: "audio[muted]", n: 0 },
+              { say: R`مفيش لينك جوه [[<audio>]]`, q: "audio a", n: 0 },
+              { say: R`لينك التحميل موجود برّه المشغّل`, q: ":not(audio) > a[download]" },
+            ] }, sol: R`~~~live 182 بعد التصليح
+<h2>نشرة المحطة: أخبار الأسبوع</h2>
+<audio controls src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio>
+<p><a href="media/news.mp3" download>نزّل النشرة</a></p>
+~~~
+
+وده اللي كان باين قبل التصليح:
+
+~~~live 74 قبل
+<h2>نشرة المحطة: أخبار الأسبوع</h2>
+<audio autoplay muted="false" src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA=">
+  <a href="media/news.mp3" download>نزّل النشرة</a>
+</audio>
+~~~
+
+**هتشوف إيه:**
+
+- قبل: العنوان لوحده. مفيش مشغّل، ومفيش لينك، ومفيش صوت.
+- بعد: المشغّل ظاهر وواقف، واللينك تحته.
+
+| المشكلة | التصليح | ليه |
+|---|---|---|
+| من غير [[controls]] | زوّدناه | من غيره [[display: none]] |
+| [[autoplay]] | اتمسح | Chrome بيمنعه، والزائر مبيحبوش |
+| [[muted="false"]] | اتمسح كله | أي قيمة معناها «مكتوم» |
+| اللينك جوه [[<audio>]] | طلع برّه في [[<p>]] | اللي جوه نص بديل مبيظهرش |
+
+**الغلطة الشائعة:** تغيّر [[muted="false"]] لـ [[muted="no"]] أو [[muted="0"]]. كلهم مكتوم. الحل الوحيد إن الكلمة تتمسح.
+
+~~~text القياس من Chrome
+قبل:   display = none    paused = true    muted = true
+بعد:   display = inline  paused = true    muted = false    300 × 54
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** اكتب على ورقة: Chrome هياخد أنهي ملف من التلاتة؟ وليه الـ Opus (الأصغر) عمره ما هيتاخد؟ وبعدين رتّبهم صح: الأصغر الأول، والنوع اللي مفيش متصفح يعرفه يتمسح. (من قسم ٢ في الشرح)`, done: R`كتبت توقّعك، والـ sources بقوا اتنين: Opus الأول و MP3 الآخر، وكل الشروط ✓.`, work: { h: 110, start: R`<audio controls>
+  <source src="media/ep3.mp3" type="audio/mpeg">
+  <source src="media/ep3.opus.ogg" type="audio/ogg; codecs=opus">
+  <source src="media/ep3.rm" type="audio/x-realaudio">
+</audio>`, checks: [
+              { say: R`الـ sources بقوا اتنين بس`, q: "audio > source", n: 2 },
+              { say: R`مفيش [[audio/x-realaudio]]`, q: "source[type=\"audio/x-realaudio\"]", n: 0 },
+              { say: R`Opus هو الأول`, q: "audio > source:first-of-type[type*=\"opus\"]" },
+              { say: R`MP3 هو الآخر`, q: "audio > source:last-of-type[type=\"audio/mpeg\"]" },
+            ] }, sol: R`~~~live 80 بعد الترتيب
+<audio controls>
+  <source src="media/ep3.opus.ogg" type="audio/ogg; codecs=opus">
+  <source src="media/ep3.mp3" type="audio/mpeg">
+</audio>
+~~~
+
+**التوقّع:** Chrome هياخد [[ep3.mp3]]. هو أول واحد في الترتيب وبيعرف يشغّله، فبيقف عنده ومبيبصش على اللي بعده. الـ Opus كان تاني واحد، فعمره ما هيتوصله في أي متصفح بيشغّل MP3 (يعني كلهم).
+
+**هتشوف إيه:** نفس المشغّل قبل وبعد (باهت هنا لأن الملفات مش في المعاينة). الفرق في الملف اللي بيتحمّل، وده بيتشاف في DevTools › Network مش في الصفحة.
+
+**ليه كده:** الترتيب هو الأولوية. «الأحسن الأول، والمضمون الآخر». و [[audio/x-realaudio]] صيغة قديمة مفيش متصفح حالي بيشغّلها، فسطرها ملوش فايدة.
+
+**الغلطة الشائعة:** تفتكر المتصفح بيختار «أحسن» ملف. هو بيختار **أول** ملف ينفع.
+
+~~~text القياس من Chrome
+قبل:   currentSrc = ep3.mp3
+بعد:   currentSrc = ep3.opus.ogg
+canPlayType("audio/x-realaudio") = ""      (مش هيشتغل)
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** صاحب بودكاست «المحطة» طلب منك «أول ما الصفحة تفتح، مقدمة البودكاست تشتغل لوحدها». اشرحله في ٣ سطور: ليه ده مش هيحصل، وإيه البديل اللي بيشتغل فعلًا. (من قسم ٦ في الشرح)`, done: R`كتبت ٣ سطور فيهم: المتصفح بيمنع، و [[muted]] مبينفعش مع الصوت، والبديل زرار الزائر يدوسه.`, sol: R`إجابة نموذجية:
+
+1. المتصفحات بتمنع أي صوت يشتغل قبل ما الزائر يلمس الصفحة. [[<audio autoplay>]] بيفضل واقف، ومن غير أي رسالة خطأ.
+2. حيلة [[muted]] بتشتغل مع فيديو الخلفية بس، والصوت المكتوم ملوش معنى أصلًا.
+3. البديل: مشغّل ظاهر في أول الصفحة وجنبه «اسمع المقدمة (٣٠ ثانية)». أول ضغطة من الزائر بتسمح بالتشغيل.
+
+~~~text القياس من Chrome 157 (من غير أي ضغطة)
+<audio autoplay>           paused = true
+<audio autoplay muted>     paused = true
+بعد ضغطة حقيقية:          audio.play() اشتغل
+~~~
+
+**الغلطة الشائعة:** إنك تجرّب على جهازك وتلاقيها اشتغلت، لأنك دوست في الصفحة قبل كده أو بتفتح الموقع ده كتير (Chrome بيحسب تفاعلك معاه). جرّب دايمًا في نافذة Incognito.` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** افتح صفحة [[<audio>]] على MDN (اللينك تحت الدرس) ودوّر على [[controlslist]]: بياخد أنهي تلات قيم؟ وأنهي واحدة بتشيل «تحميل» من قايمة التلات نقط؟ وهل ده بيمنع الزائر ينزّل الملف فعلًا؟ (بيكمّل قسم ١ في الشرح)`, done: R`كتبت التلات قيم، واللي بتشيل التحميل، وجملة عن ليه ده مش حماية.`, sol: R`من MDN: [[controlslist]] بيساعد المتصفح يختار أنهي أزرار تظهر في المشغّل، وقيمه [[nodownload]] و [[nofullscreen]] و [[noremoteplayback]].
+
+~~~live 80 من غير «تحميل» في قايمة التلات نقط
+<audio controls controlslist="nodownload" src="data:audio/wav;base64,UklGRnwCAABXQVZFZm10IBAAAAABAAEAuAsAALgLAAABAAgAZGF0YVgCAABgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKBgYGBgYGCgoKCgoKA="></audio>
+~~~
+
+**هتشوف إيه:** نفس المشغّل. افتح التلات نقط وقارن بمشغّل قسم ١: بند «تحميل» مش موجود هنا.
+
+**هل ده حماية؟** لأ. الملف لسه بيتحمّل للمتصفح عشان يتسمع، وعنوانه مكتوب في الكود وفي DevTools › Network. [[nodownload]] بيشيل الزرار بس.
+
+~~~text القياس من Chrome 157
+audio.controlsList.supports("nodownload")        = true
+audio.controlsList.supports("nofullscreen")      = true
+audio.controlsList.supports("noremoteplayback")  = true
+~~~
+
+دعم المتصفحات التانية للـ attribute ده راجعه في جدول MDN قبل ما تعتمد عليه.` },
+          ]
+        },
+        {
+          cmd: "track و WebVTT",
+          title: "كلام بيظهر مع الفيديو في وقته: كابشن وترجمة، وصورة قبل التشغيل",
+          pre: [
+            { to: "css/video و iframe", why: R`الـ [[<video>]] و [[controls]] و [[preload]] وأول ملف VTT اتشرحوا هناك (قسم «ملف الـ VTT»). الدرس ده بيكمّل: أنواع الـ track الخمسة، وباقي صيغة WebVTT، و [[poster]] و [[playsinline]]` },
+            "css/audio و source"
+          ],
+          ref: [
+            { t: "MDN: <track>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/track" },
+            { t: "MDN: <video>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/video" },
+            { t: "MDN: WebVTT format", url: "https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API/Web_Video_Text_Tracks_Format" },
+            { t: "WHATWG: the track element", url: "https://html.spec.whatwg.org/multipage/media.html#the-track-element" },
+            { t: "WHATWG: the video element", url: "https://html.spec.whatwg.org/multipage/media.html#the-video-element" }
+          ],
+          desc: R`[[<track>]] بيربط الفيديو بملف نص فيه كلام بتوقيت (WebVTT): كل جملة بتظهر فوق الفيديو في ثوانيها. [[kind]] بيقول الكلام ده إيه (كابشن للي مش سامع، ولا ترجمة للغة تانية، ولا فصول)، و [[srclang]] لغته، و [[label]] اسمه في قايمة المشغّل، و [[default]] بيشغّله من الأول.
+ومعاه في الدرس باقي attributes الفيديو: [[poster]] (الصورة اللي قبل التشغيل)، و [[width]] و [[height]] اللي بيحجزوا مكانه، و [[playsinline]] و [[muted]] و [[loop]].`,
+          example: R`<video controls preload="metadata" width="640" height="360" poster="media/lesson1.jpg">
+  <source src="media/lesson1.webm" type="video/webm">
+  <source src="media/lesson1.mp4" type="video/mp4">
+  <track kind="captions" srclang="ar" label="عربي (كابشن)" src="media/lesson1.ar.vtt" default>
+  <track kind="subtitles" srclang="en" label="English" src="media/lesson1.en.vtt">
+  <track kind="chapters" srclang="ar" label="الفصول" src="media/lesson1.chapters.vtt">
+  <p>متصفحك مش بيشغّل الفيديو. <a href="media/lesson1.mp4">نزّل الدرس</a></p>
+</video>`,
+          flag: "script",
+          lines: [
+            R`الفيديو: [[controls]] للأزرار، و [[preload="metadata"]] يجيب المدة والمقاس بس، و [[width]] و [[height]] بيحجزوا مكانه قبل ما يتحمّل، و [[poster]] صورة بتتعرض لحد ما الزائر يدوس ▶.`,
+            R`الصيغة الأولى WebM. [[<source>]] هنا زي ما هو في [[<audio>]]: أول نوع المتصفح يعرفه بيتاخد.`,
+            R`MP4 كاحتياطي للمتصفح اللي مبيشغّلش WebM.`,
+            R`الكابشن العربي: [[kind="captions"]] يعني كل اللي بيتسمع مكتوب (الكلام والأصوات)، و [[srclang="ar"]] لغة الملف، و [[label]] اسمه في القايمة، و [[default]] بيخلّيه شغال من أول ما الفيديو يفتح.`,
+            R`ترجمة إنجليزي: [[kind="subtitles"]] للي سامع ومش فاهم اللغة. من غير [[default]]، فبتفضل مقفولة وملفها مبيتحمّلش لحد ما الزائر يختارها.`,
+            R`الفصول: [[kind="chapters"]] عناوين أجزاء الفيديو بتوقيتها. مبتترسمش فوق الفيديو، وبتتقري من JavaScript أو من مشغّل بيدعمها.`,
+            R`النص البديل ولينك تحميل، للمتصفح اللي ميعرفش [[<video>]] خالص.`,
+            R`قفلة [[</video>]]. الـ [[<source>]] الأول، وبعدهم الـ [[<track>]]، وبعدهم النص البديل: ده الترتيب اللي المواصفة بتطلبه.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+المواصفة: [[<track>]] بيحدد «text track» للفيديو أو الصوت، يعني نص مربوط بالوقت. الملف نفسه بصيغة WebVTT (Web Video Text Tracks)، ملف نص عادي امتداده [[.vtt]].
+
+القياسات من Chrome 157 على Windows 11. الفيديوهات وملفات الـ VTT اتفتحت من سيرفر محلي.
+
+> في المعاينات: الفيديو تيل أخضر ٤ ثواني من غير صوت، مكتوب جوه الصفحة بـ [[data:]] زي ملف الصوت في الدرس اللي فات، وكذلك ملف الـ VTT والـ poster. في موقعك دي كلها مسارات ملفات.
+
+---
+
+## ١. [[<track>]] جوه [[<video>]]
+
+~~~live 206 دوس ▶ وبص على أسفل الفيديو
+<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+  <track default kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+</video>
+~~~
+
+**هتشوف إيه:** أول ما تدوس ▶، في أسفل الفيديو بيظهر «أهلًا بيكم في المحطة» على خلفية سودا، وبعد ثانيتين بيتبدّل بـ «[موسيقى هادية]». وفي أزرار المشغّل زرار **CC**: منه بتقفل الكابشن وتفتحه.
+
+~~~text القياس من Chrome
+video.textTracks.length = 1
+textTracks[0]:   kind = captions   language = "ar"   label = "عربي"   mode = showing   cues = 2
+~~~
+
+- [[textTracks]]: قايمة الـ tracks بتاعة الفيديو، بتتقري من JavaScript.
+- [[cues]]: الجمل اللي في الملف. كل جملة بتوقيتها اسمها cue.
+- [[mode]]: حالة الـ track. [[showing]] يعني ظاهر.
+
+[[<track>]] عنصر فاضي (void) ملوش قفلة، ومكانه جوه [[<video>]] أو [[<audio>]] بس. لما حطيناه برّه الفيديو: [[textTracks.length = 0]] والملف متطلبش.
+
+---
+
+## ٢. [[<track kind="captions" srclang="ar" label="عربي" default>]]
+
+### [[kind]]: الكلام ده إيه
+
+| [[kind]] | لمين (من MDN) | Chrome عمل إيه (متقاس) |
+|---|---|---|
+| [[subtitles]] | سامع الصوت ومش فاهم اللغة: ترجمة الحوار | بيترسم فوق الفيديو |
+| [[captions]] | مش سامع (أصم، أو الصوت مقفول، أو دوشة): الحوار **ومعاه** الأصوات المهمة ومين بيتكلم | بيترسم فوق الفيديو |
+| [[descriptions]] | مش شايف: وصف مكتوب للي في الصورة، المفروض يتنطق | مترسمش |
+| [[chapters]] | عناوين أجزاء الفيديو للتنقّل | مترسمش |
+| [[metadata]] | بيانات للسكربتات، مش للزائر | مترسمش، و [[mode = hidden]] |
+
+~~~text القياس من Chrome
+من غير kind:        kind = subtitles     (ده الافتراضي)
+kind="banana":      kind = metadata      (قيمة غلط بتتحوّل metadata: مش هتتعرض!)
+kind="caption":     kind = metadata      (غلطة حرف واحد، والكابشن اختفى من غير أي رسالة)
+~~~
+
+**captions ولا subtitles؟** الترجمة بتفترض إنك سامع، فمبتكتبش «[باب بيتقفل]». الكابشن بيفترض إنك مش سامع، فبيكتب كل صوت ليه معنى. فيديو عربي لجمهور عربي: اكتبله [[captions]] بالعربي.
+
+### [[srclang]] و [[label]]
+
+- [[srclang]]: لغة الكلام اللي في الملف، بنفس أكواد [[lang]] (درس «lang و dir»): [[ar]] و [[en]]. MDN: لو [[kind="subtitles"]] يبقى [[srclang]] **إجباري**.
+- [[label]]: الاسم اللي الزائر بيشوفه في قايمة CC. اكتبه بلغة الترجمة نفسها: «English» مش «إنجليزي»، لأن اللي هيختارها بيقرا إنجليزي.
+
+### [[default]]
+
+~~~text القياس من Chrome
+track عليه default:              mode = showing     الملف اتحمّل (readyState = LOADED)
+track من غير default:            mode = disabled    cues = null    الملف متطلبش من السيرفر خالص
+اتنين عليهم default:             الأول showing، والتاني disabled
+مفيش default على أي واحد:        الكل disabled لحد ما الزائر يختار من زرار CC
+~~~
+
+- [[disabled]]: مقفول، وملفه مبيتحمّلش. يعني ١٠ لغات في الفيديو مبيكلّفوش حاجة لحد ما حد يختار واحدة.
+- [[default]] على واحد بس لكل فيديو (MDN). وهو «شغّله إلا لو إعدادات الزائر بتفضّل track تاني».
+
+---
+
+## ٣. ملف WebVTT: اللي بعد الأساسيات
+
+الأساس (سطر [[WEBVTT]]، وسطر فاضي، وكل cue سطر توقيت وتحته الكلام) في درس «video و iframe». ده ملف فيه الباقي:
+
+~~~text media/lesson1.ar.vtt
+WEBVTT
+
+NOTE الملف ده كابشن الحلقة الأولى. السطر ده تعليق ومبيتعرضش.
+
+intro
+00:00:00.000 --> 00:00:02.000
+<v منى>أهلًا بيكم في الحلقة الأولى.
+
+2
+00:00:02.000 --> 00:00:04.000 line:0 align:start
+[موسيقى هادية]
+
+00:04.000 --> 00:06.000
+<v كريم>النهارده هنتكلم عن <i>الصوت</i> في الصفحة.
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[NOTE ...]] | تعليق ليك انت. مبيتعرضش، وبعده سطر فاضي |
+| [[intro]] أو [[2]] فوق سطر التوقيت | اسم الـ cue (اختياري). بيتقري من JavaScript في [[cue.id]] |
+| [[00:00:02.000]] | ساعات:دقايق:ثواني.أجزاء من ألف. الساعات اختيارية: [[00:04.000]] زيها |
+| [[-->]] | سهم من شرطتين وعلامة أكبر، وحواليه مسافة من كل ناحية |
+| [[<v منى>]] | مين بيتكلم (voice). مبيتكتبش على الشاشة، وبيتقري من السكربتات والتنسيق |
+| «[موسيقى هادية]» | وصف صوت بين قوسين مربعين: ده اللي بيخلّي الملف captions مش subtitles |
+| [[line:0 align:start]] | إعدادات الـ cue بعد التوقيت: [[line:0]] يعني أول سطر فوق بدل تحت (لو فيه كلام مكتوب في أسفل الصورة)، و [[align:start]] بيبدأ الكلام من أول السطر |
+| [[<i>]] و [[<b>]] و [[<u>]] | مايل وتقيل وتحته خط، جوه الكلام |
+
+~~~text القياس من Chrome (الملف اللي فوق)
+cues = 3
+cue 1:  id = "intro"   0 → 2    text = "<v منى>أهلًا بيكم في الحلقة الأولى."    line = auto   align = center
+cue 2:  id = "2"       2 → 4    text = "[موسيقى هادية]"                         line = 0      align = start
+cue 3:  id = ""        4 → 6    text = "<v كريم>النهارده هنتكلم عن <i>الصوت</i> في الصفحة."
+~~~
+
+### الملف البايظ بيتصرف إزاي
+
+المتصفح مبيقولش حاجة لما ملف الـ VTT يبقى فيه غلط. الجملة بتختفي وخلاص.
+
+~~~text القياس من Chrome (كل سطر ملف فيه غلطة واحدة)
+أول سطر "VTT" بدل "WEBVTT":                 cues = 0    readyState = ERROR   (الملف كله اترفض)
+ملف SRT (أرقام وفواصل، ومن غير WEBVTT):      cues = 0    readyState = ERROR
+الملف مش موجود (404):                       cues = 0    readyState = ERROR
+00:00:02,000 (فاصلة بدل النقطة، زي SRT):     الـ cue ده اتشال، والباقي اشتغل
+00:04.000 -> 00:06.000 (شرطة واحدة):        الـ cue ده اتشال
+0:06.000 (الدقايق رقم واحد):                الـ cue ده اتشال
+00:02.00 (جزئين بدل تلاتة بعد النقطة):       الـ cue ده اتشال
+الملف من دومين تاني من غير CORS:            readyState = ERROR، وفي الـ Console:
+   Unsafe attempt to load URL http://127.0.0.1:8732/ar.vtt from frame with URL http://127.0.0.1:8731/t1.html. Domains, protocols and ports must match.
+~~~
+
+- عشان تتأكد: في DevTools › Console اكتب [[document.querySelector("video").textTracks[0].cues.length]] وقارن بعدد الجمل اللي كتبتها.
+- ملف الـ VTT لازم يبقى من نفس الموقع. لو من دومين تاني: [[crossorigin]] على [[<video>]] والسيرفر التاني يسمح بـ CORS (MDN).
+- ملفات الترجمة اللي بتتنزّل من النت غالبًا SRT: التوقيت فيها بفاصلة، وفيها رقم فوق كل جملة، ومفيهاش [[WEBVTT]]. بتتحوّل بإنك تزوّد السطر الأول وتغيّر الفواصل اللي في التوقيت لنقط.
+
+---
+
+## ٤. كابشن، ولا ترجمة، ولا وصف، ولا نص مكتوب؟
+
+| الزائر | محتاج | بيتعمل بإيه |
+|---|---|---|
+| أصم أو ضعيف السمع، أو الصوت مقفول | كل اللي بيتسمع، مكتوب في وقته | [[<track kind="captions">]] |
+| سامع ومش فاهم اللغة | ترجمة الحوار | [[<track kind="subtitles">]] |
+| كفيف | وصف للي في الصورة | [[kind="descriptions"]] مبيتنطقش في Chrome (متقاس: مترسمش ومفيش صوت)، فالعملي: الوصف يتقال في الفيديو نفسه، أو يتكتب في الصفحة |
+| أي حد عايز يقرا أو يدوّر، ومحرك البحث | الكلام كله مكتوب في الصفحة | نص مكتوب (transcript) تحت الفيديو: HTML عادي |
+
+الكابشن والنص المكتوب مش بدل بعض: الأول ماشي مع الصورة، والتاني بيتقري لوحده وبيتدوّر فيه.
+
+---
+
+## ٥. [[<video poster="media/lesson1.jpg" width="640" height="360">]]
+
+[[poster]] عنوان صورة بتتعرض مكان الفيديو لحد ما يشتغل. من غيرها بيتعرض أول frame (بعد ما يتحمّل)، وده غالبًا أسود أو لقطة ملهاش معنى.
+
+~~~live 206 poster وعليه عنوان الحلقة، ولما تدوس ▶ بيختفي
+<video controls width="320" height="180" preload="none" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED"></video>
+~~~
+
+**هتشوف إيه:** صورة خضرا مكتوب عليها «الحلقة ١» وفوقها أزرار المشغّل. دوس ▶: الصورة بتروح والفيديو بيبدأ.
+
+و [[width]] و [[height]] بيعملوا إيه؟ نفس اللي بيعملوه في [[<img>]]: بيحجزوا المكان.
+
+~~~text القياس من Chrome (فيديو مقاسه الحقيقي 320 × 180، وقبل ما أي بيانات توصل)
+من غير width/height ولا poster:          الحجم 300 × 150    ← المقاس الافتراضي
+من غير width/height ومعاه poster 480×270: الحجم 480 × 270    ← خد مقاس الصورة
+width="640" height="360":                الحجم 640 × 360    aspect-ratio: auto 640 / 360
+بعد ما معلومات الفيديو وصلت (من غير width/height):  الحجم بقى 320 × 180
+~~~
+
+يعني من غير [[width]] و [[height]] الفيديو بيبدأ 300 × 150 وبعدين بيقفز لمقاسه الحقيقي، وكل اللي تحته بيتزق. دي نفس مشكلة الصور اللي في درس «CLS»، ونفس الحل.
+
+---
+
+## ٦. [[<video playsinline muted loop>]]
+
+التلاتة دول مع [[autoplay]] هما فيديو الخلفية الصامت (اتبنى في درس «video و iframe»). كل واحد لوحده:
+
+| attribute | بيعمل إيه |
+|---|---|
+| [[muted]] | يبدأ مكتوم. وهو الشرط اللي بيخلّي [[autoplay]] يشتغل على الفيديو (القياس في درس «audio و source» قسم ٦) |
+| [[loop]] | يعيد من الأول لما يخلص |
+| [[playsinline]] | على iPhone: الفيديو يشتغل في مكانه جوه الصفحة بدل ما يفتح ملو الشاشة. المواصفة بتقول إنه «بيشجّع» المتصفح على كده |
+
+~~~text القياس من Chrome
+<video playsinline muted loop>     playsInline = true    muted = true    loop = true
+~~~
+
+[[playsinline]] مبيغيّرش حاجة في Chrome على الكمبيوتر (الفيديو أصلًا بيشتغل في مكانه)، ووجوده مبيضرّش. تأثيره على iPhone من MDN، متقاسش هنا.
+
+والفيديو اللي فيه كلام محدش بيحط عليه [[muted]] ولا [[loop]] ولا [[autoplay]]: الزائر يدوس ▶ بنفسه.
+
+---
+
+## ٧. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[kind="caption"]] (من غير s) | بقى [[metadata]]: مفيش كابشن، ومفيش رسالة |
+| [[default]] على اتنين | الأول بس اللي بيشتغل |
+| نسيان [[default]] خالص | الكابشن موجود ومقفول، ومعظم الزوار مش هيعرفوا |
+| [[kind="subtitles"]] من غير [[srclang]] | مخالف للمواصفة، والمتصفح مش عارف لغة الملف |
+| [[label="إنجليزي"]] على ترجمة إنجليزي | اللي محتاجها مش هيعرف يقرا اسمها |
+| فاصلة في التوقيت [[00:00:02,000]] | الجملة دي بتختفي |
+| [[<track>]] برّه [[<video>]] | بيتجاهل، والملف مبيتطلبش |
+| فيديو من غير [[width]] و [[height]] | بيبدأ 300 × 150 وبعدين يقفز |
+| الكلام محروق في الفيديو نفسه بدل [[<track>]] | مبيتقفلش، ومبيتكبرش، ومبيتدوّرش فيه |
+
+---
+
+## الخلاصة
+
+- [[<track kind srclang label default>]] جوه [[<video>]]، وملفه [[.vtt]] من نفس الموقع.
+- [[captions]] للي مش سامع (بالأصوات)، و [[subtitles]] للي مش فاهم اللغة. دول الاتنين اللي Chrome بيرسمهم.
+- [[default]] على واحد بس، والباقي ملفاتهم مبتتحمّلش لحد ما حد يختارهم.
+- غلطة في الـ VTT معناها جملة بتختفي في سكوت: عدّ الـ [[cues]] من الـ Console.
+- [[poster]] للصورة، و [[width]] و [[height]] للمكان، و [[playsinline muted loop]] لفيديو الخلفية بس.`,
+          try: R`في فولدر فيه فيديو قصير عندك (سمّيه [[clip.mp4]]): اكتب ملف [[clip.ar.vtt]] فيه تلات جمل (كل واحدة ثانيتين)، والتانية وصف صوت بين قوسين مربعين. واكتب [[watch.html]] فيها الفيديو بالـ track ده شغال من الأول. شغّل [[npx serve .]] وافتح الصفحة، وعدّ الـ cues من الـ Console. وبعدين غيّر النقطة في توقيت الجملة التانية لفاصلة، واعمل Ctrl+R وعدّ تاني.`,
+          sol: R`~~~text clip.ar.vtt
+WEBVTT
+
+00:00.000 --> 00:02.000
+أهلًا بيكم في المحطة.
+
+00:02.000 --> 00:04.000
+[موسيقى هادية]
+
+00:04.000 --> 00:06.000
+النهارده أول حلقة.
+~~~
+
+~~~html watch.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تجربة الكابشن</title>
+</head>
+<body>
+<h1>تجربة الكابشن</h1>
+<video controls width="640" height="360" src="clip.mp4">
+  <track default kind="captions" srclang="ar" label="عربي" src="clip.ar.vtt">
+</video>
+</body>
+</html>
+~~~
+
+~~~view 278 شكل watch.html (الفيديو والملف هنا مكتوبين جوه الصفحة)
+<h1>تجربة الكابشن</h1>
+<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+  <track default kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة.%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]%0A%0A00:04.000 --> 00:06.000%0Aالنهارده أول حلقة.">
+</video>
+~~~
+
+**هتشوف إيه:**
+
+- دوس ▶: «أهلًا بيكم في المحطة» في أسفل الفيديو، وبعدها «[موسيقى هادية]»، وبعدها «النهارده أول حلقة» (الفيديو اللي في المعاينة ٤ ثواني، فالجملة التالتة مش هتلحق تظهر).
+- بعد ما تغيّر [[00:02.000]] لـ [[00:02,000]]: الجملة التانية مبتظهرش، والأولى والتالتة زي ما هم.
+
+**ليه [[npx serve .]]:** المتصفح بيرفض يقرا ملف VTT من [[file://]]، فلازم الصفحة تتفتح من سيرفر (اتشرح في درس «video و iframe»).
+
+**الغلطة الشائعة:** تفضل تدوّر على رسالة خطأ. مفيش. الطريقة الوحيدة: تعدّ.
+
+~~~text القياس من Chrome (في الـ Console)
+> document.querySelector("video").textTracks[0].cues.length
+3                                    ← الملف السليم
+2                                    ← بعد الفاصلة: الجملة التانية اتشالت
+~~~`,
+          deep: {
+            why: R`فيديو من غير كابشن مقفول قدام الأصم، وقدام كل اللي فاتحين الموبايل والصوت مقفول (في المواصلات، أو جنب حد نايم). والكلام المحروق جوه الصورة مبيحلّش: مبيتقفلش، ومبيتترجمش، ومحرك البحث مبيقراهوش. [[<track>]] بيخلّي الكلام ملف نص منفصل: يتصلّح في دقيقة، ويتعمل منه ١٠ لغات، والزائر يختار.`,
+            how: R`المتصفح بيعمل لكل [[<track>]] كائن text track وبيحدد الـ [[mode]] بتاعه: اللي عليه [[default]] (ونوعه captions أو subtitles) بيبقى [[showing]]، والباقي [[disabled]]. الملف بيتطلب بس لما الـ mode ميبقاش [[disabled]]. الـ parser بيقرا [[WEBVTT]] وبعدين cue ورا cue، واللي سطر توقيته مش مظبوط بيتشال لوحده. ووقت التشغيل، مع كل تغيير في [[currentTime]] المتصفح بيشوف أنهي cues وقتها دلوقتي (اسمها [[activeCues]]) وبيرسمها في صندوق فوق الفيديو، وبيبعت حدث [[cuechange]].`,
+            when: R`أي فيديو فيه كلام: [[captions]] بلغة الفيديو، و [[subtitles]] لكل لغة تانية جمهورك بيتكلمها. فيديو تعليمي طويل: [[chapters]] ومعاها قايمة فصول مكتوبة في الصفحة. [[poster]] دايمًا. و [[width]] و [[height]] دايمًا.`,
+            mistakes: R`[[kind]] مكتوب غلط فالـ track بيبقى [[metadata]]. [[default]] على أكتر من واحد أو ولا واحد. ملف SRT متسمّي [[.vtt]]. فاصلة في التوقيت. فتح الصفحة من [[file://]] والاستغراب إن الكابشن مش ظاهر. ملف VTT من دومين تاني. و [[label]] بلغة غير لغة الترجمة.`
+          },
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** فيديو «الدرس ١» في «المحطة» محطوط ومعاه ملفين نص جاهزين (العربي الأول والإنجليزي التاني)، بس الـ [[<track>]] ناقصهم كل حاجة غير [[src]]. كمّلهم: العربي كابشن وشغال من الأول، والإنجليزي ترجمة، وكل واحد بلغته واسمه. (من قسم ٢ في الشرح)`, done: R`لما تدوس ▶ الكابشن العربي بيظهر لوحده، وزرار CC فيه الاسمين، وكل الشروط ✓.`, work: { h: 250, start: R`<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+  <track src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+  <track src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
+</video>`, checks: [
+              { say: R`الأول [[kind="captions"]] ولغته [[ar]]`, q: "video > track:first-of-type[kind=\"captions\"][srclang=\"ar\"]" },
+              { say: R`التاني [[kind="subtitles"]] ولغته [[en]]`, q: "video > track:last-of-type[kind=\"subtitles\"][srclang=\"en\"]" },
+              { say: R`الاتنين ليهم [[label]]`, q: "video > track[label]", n: 2 },
+              { say: R`[[label]] بتاع الإنجليزي مكتوب إنجليزي`, q: "track[srclang=\"en\"][label=\"English\"]" },
+              { say: R`[[default]] على العربي بس`, q: "track[default]", n: 1 },
+              { say: R`العربي هو اللي عليه [[default]]`, q: "track[srclang=\"ar\"][default]" },
+            ] }, sol: R`~~~live 206 الحل (دوس ▶)
+<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+  <track kind="captions" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+  <track kind="subtitles" srclang="en" label="English" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
+</video>
+~~~
+
+**هتشوف إيه:**
+
+- دوس ▶: «أهلًا بيكم في المحطة» بالعربي في أسفل الفيديو.
+- دوس CC: القايمة فيها «عربي» و «English». اختار English: الجملة بتبقى «Welcome to El-Mahatta».
+
+**ليه كده:**
+
+- العربي [[captions]] لأن فيه «[موسيقى هادية]»: وصف صوت. الإنجليزي ترجمة حوار بس.
+- [[default]] على لغة الفيديو الأصلية. الإنجليزي مقفول وملفه مبيتحمّلش لحد ما يتختار.
+
+**الغلطة الشائعة:** [[default]] على الاتنين «عشان يبقوا جاهزين». الأول بس اللي هيشتغل.
+
+~~~text القياس من Chrome
+[0]  kind = captions    language = "ar"   label = "عربي"      mode = showing    cues = 2
+[1]  kind = subtitles   language = "en"   label = "English"   mode = disabled   cues = null
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فيديو «جولة في الاستوديو» كابشنه مش بيظهر. فيه ٤ مشاكل: [[kind]] مكتوب غلط، و [[default]] على الاتنين، والترجمة الإنجليزي من غير لغة، والـ track التالت برّه الفيديو. (من قسم ١ و ٢ و ٧ في الشرح)`, done: R`التلاتة جوه الفيديو، والعربي [[captions]] وعليه [[default]] لوحده، والإنجليزي ليه [[srclang]]، وكل الشروط ✓.`, work: { h: 250, start: R`<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+  <track kind="caption" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+  <track kind="subtitles" label="English" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
+</video>
+<track kind="chapters" srclang="ar" label="الفصول" src="media/tour.chapters.vtt">`, checks: [
+              { say: R`العربي [[kind="captions"]]`, q: "track[srclang=\"ar\"][kind=\"captions\"]" },
+              { say: R`مفيش [[kind="caption"]]`, q: "track[kind=\"caption\"]", n: 0 },
+              { say: R`[[default]] على واحد بس، وهو العربي`, q: "track[default]", n: 1 },
+              { say: R`الإنجليزي ليه [[srclang="en"]]`, q: "track[kind=\"subtitles\"][srclang=\"en\"]" },
+              { say: R`التلاتة جوه [[<video>]]`, q: "video > track", n: 3 },
+            ] }, sol: R`~~~live 206 بعد التصليح (دوس ▶)
+<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+  <track kind="captions" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+  <track kind="subtitles" srclang="en" label="English" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
+  <track kind="chapters" srclang="ar" label="الفصول" src="media/tour.chapters.vtt">
+</video>
+~~~
+
+وده اللي كان باين قبل التصليح:
+
+~~~live 206 قبل (دوس ▶)
+<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+  <track kind="caption" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+  <track kind="subtitles" label="English" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
+</video>
+<track kind="chapters" srclang="ar" label="الفصول" src="media/tour.chapters.vtt">
+~~~
+
+**هتشوف إيه:**
+
+- قبل: لما تدوس ▶ بيظهر الإنجليزي «Welcome to El-Mahatta». العربي مش بيظهر.
+- بعد: العربي هو اللي بيظهر، والإنجليزي في القايمة.
+
+| المشكلة | التصليح | ليه |
+|---|---|---|
+| [[kind="caption"]] | [[captions]] | القيمة الغلط بتتحوّل [[metadata]]، وده مبيترسمش |
+| [[default]] على الاتنين | اتشال من الإنجليزي | واحد بس لكل فيديو |
+| ترجمة من غير [[srclang]] | [[srclang="en"]] | إجباري مع [[subtitles]] |
+| [[<track>]] برّه [[<video>]] | دخل جواه | برّه بيتجاهل |
+
+**الغلطة الشائعة:** تدوّر على الغلط في ملف الـ VTT وهو سليم. لما الكابشن ميظهرش، بص على [[kind]] الأول.
+
+~~~text القياس من Chrome
+قبل:   [0] kind = metadata   mode = hidden       [1] kind = subtitles  language = ""  mode = showing
+       التالت (برّه الفيديو): مش في textTracks، وملفه متطلبش
+بعد:   [0] kind = captions   mode = showing      [1] subtitles  en  disabled      [2] chapters  disabled
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ (ملف VTT):** ملف كابشن مقدمة «المحطة» فيه ٤ جمل، ومبيظهرش منه ولا واحدة. صلّحه لحد ما الأربعة يظهروا، وزوّد مين بيتكلم في آخر جملتين. (من قسم ٣ في الشرح)
+
+~~~text intro.ar.vtt (البايظ)
+VTT
+
+00:00.000 --> 00:02.000
+أهلًا بيكم في المحطة.
+
+00:00:02,000 --> 00:00:04,000
+[موسيقى المقدمة]
+
+00:04.000 -> 00:06.000
+معاكم منى.
+
+0:06.000 --> 0:08.000
+ومعاكم كريم.
+~~~`, done: R`في الـ Console: [[textTracks[0].cues.length]] بقى [[4]] بعد ما كان [[0]].`, sol: R`~~~text intro.ar.vtt
+WEBVTT
+
+00:00.000 --> 00:02.000
+أهلًا بيكم في المحطة.
+
+00:00:02.000 --> 00:00:04.000
+[موسيقى المقدمة]
+
+00:04.000 --> 00:06.000
+<v منى>معاكم منى.
+
+00:06.000 --> 00:08.000
+<v كريم>ومعاكم كريم.
+~~~
+
+| السطر | الغلطة | التصليح |
+|---|---|---|
+| ١ | [[VTT]] | [[WEBVTT]] بالظبط. دي اللي كانت مانعة الملف كله |
+| ٦ | [[00:00:02,000]] فاصلة | نقطة: [[00:00:02.000]] |
+| ٩ | [[->]] شرطة واحدة | [[-->]] شرطتين |
+| ١٢ | [[0:06.000]] الدقايق رقم واحد | رقمين: [[00:06.000]] |
+
+**ليه بالترتيب ده:** صلّح السطر الأول الأول. طول ما هو غلط، الملف كله مرفوض ومش هتعرف باقي الغلطات اتصلّحت ولا لأ. بعده، كل غلطة بتشيل جملتها بس.
+
+**الغلطة الشائعة:** تصلّح [[WEBVTT]] وتلاقي جملة واحدة ظهرت، فتفتكر إن الباقي «لسه بيتحمّل». هو مش هييجي: عدّ الـ cues.
+
+~~~text القياس من Chrome
+الملف البايظ:                         cues = 0    readyState = ERROR
+بعد تصليح السطر الأول بس:             cues = 1    (أهلًا بيكم في المحطة.)
+بعد تصليح الأربعة:                    cues = 4    readyState = LOADED
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** الفيديو ده عليه تلات tracks. اكتب على ورقة: أنهي واحد هيظهر لما تدوس ▶؟ وأنهي ملف مش هيتحمّل خالص؟ وبعدين خلّي العربي هو اللي يظهر من الأول. (من قسم ٢ في الشرح، جزء [[default]])`, done: R`كتبت توقّعك، والعربي بقى عليه [[default]] لوحده من الـ tracks اللي بتترسم، وكل الشروط ✓.`, work: { h: 250, start: R`<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+  <track kind="captions" srclang="ar" label="عربي" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+  <track kind="subtitles" srclang="en" label="English" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
+  <track kind="chapters" srclang="ar" label="الفصول" default src="media/ep1.chapters.vtt">
+</video>`, checks: [
+              { say: R`العربي عليه [[default]]`, q: "track[kind=\"captions\"][srclang=\"ar\"][default]" },
+              { say: R`الإنجليزي مفيهوش [[default]]`, q: "track[srclang=\"en\"][default]", n: 0 },
+              { say: R`التلاتة لسه موجودين جوه الفيديو`, q: "video > track", n: 3 },
+            ] }, sol: R`~~~live 206 بعد التعديل (دوس ▶)
+<video controls width="320" height="180" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED">
+  <track kind="captions" srclang="ar" label="عربي" default src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0Aأهلًا بيكم في المحطة%0A%0A00:02.000 --> 00:04.000%0A[موسيقى هادية]">
+  <track kind="subtitles" srclang="en" label="English" src="data:text/vtt,WEBVTT%0A%0A00:00.000 --> 00:02.000%0AWelcome to El-Mahatta%0A%0A00:02.000 --> 00:04.000%0A[soft music]">
+  <track kind="chapters" srclang="ar" label="الفصول" default src="media/ep1.chapters.vtt">
+</video>
+~~~
+
+**التوقّع:** قبل التعديل الإنجليزي هو اللي بيظهر (عليه [[default]])، وملف العربي مبيتطلبش من السيرفر خالص. والفصول عليها [[default]] برده، فملفها بيتحمّل، بس مبتترسمش.
+
+**هتشوف إيه:** قبل: «Welcome to El-Mahatta». بعد: «أهلًا بيكم في المحطة».
+
+**ليه [[default]] على الفصول مش مشكلة:** قاعدة «واحد بس» في Chrome طلعت بتتحسب لكل مجموعة: الكابشن والترجمة مجموعة، والفصول مجموعة لوحدها. بس MDN بيقول واحد لكل فيديو، فالأضمن تشيله من الفصول لو مش محتاجه.
+
+**الغلطة الشائعة:** تفتكر إن لغة المتصفح هي اللي بتختار. من غير [[default]] مفيش حاجة بتظهر لوحدها في Chrome.
+
+~~~text القياس من Chrome (قبل التعديل)
+[0] captions  ar   mode = disabled   cues = null   (الملف متطلبش)
+[1] subtitles en   mode = showing    cues = 2
+[2] chapters  ar   mode = showing    cues = 2      (محمّل، ومش مرسوم)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت «شاهد الدرس ٢»: الفيديو محتاج يحجز مكانه (320 × 180) قبل ما يتحمّل، ويعرض صورة لحد ما حد يدوس، وميحمّلش أي حاجة من الملف قبلها، ومن غير تشغيل تلقائي. الصورة جاهزة في البداية في [[<img>]] صغير: انقل عنوانها ([[src]]) لمكانها الصح على الفيديو وامسح الـ [[<img>]]. (من قسم ٥ و ٦ في الشرح)`, done: R`الصورة «الحلقة ١» ظاهرة مكان الفيديو بمقاس 320 × 180، وكل الشروط ✓.`, work: { h: 250, start: R`<h2>شاهد الدرس ٢</h2>
+<img alt="" width="96" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E">
+<video src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED"></video>`, checks: [
+              { say: R`الفيديو عليه [[controls]]`, q: "video[controls]" },
+              { say: R`ليه [[width="320"]] و [[height="180"]]`, q: "video[width=\"320\"][height=\"180\"]" },
+              { say: R`ليه [[poster]]`, q: "video[poster^=\"data:image\"]" },
+              { say: R`[[preload="none"]]`, q: "video[preload=\"none\"]" },
+              { say: R`مفيش [[autoplay]]`, q: "video[autoplay]", n: 0 },
+              { say: R`الـ [[<img>]] الصغير اتمسح`, q: "img", n: 0 },
+            ] }, sol: R`~~~live 266 الحل
+<h2>شاهد الدرس ٢</h2>
+<video controls width="320" height="180" preload="none" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%230f766e'/%3E%3Ctext x='160' y='100' font-size='30' fill='white' text-anchor='middle'%3Eالحلقة ١%3C/text%3E%3C/svg%3E" src="data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAKjEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggKN7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjMuMS4xMDJXQYxMYXZmNjMuMS4xMDJEiYhAr0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WImSL+3MoIdEScgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QdzWUA4JCwgaC6gVqagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/5zc59jwIBnyJlFo4dFTkNPREVSRIeMTGF2ZjYzLjEuMTAyc3PZY8CLY8WImSL+3MoIdERnyKRFo4dFTkNPREVSRIeXTGF2YzYzLjEuMTAyIGxpYnZweC12cDlnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjA0LjAwMDAwMDAwMAAfQ7Z1QNLngQCjrIEAAICCSYNCAAnwBZYAOCQcGU4AADBgAAATv/QgAAI/+zz///46VuMndD5Ao5WBAfQAhgBAkhwAXgAAAyAAAFn5huCjlYED6ACGAECSHABdAAADIAAAWfmG4KOVgQXcAIYAQJIcAF4AAAMgAABZ+Ybgo5WBB9AAhgBAkhwAW8AAAyAAAFn5huCjlYEJxACGAECSHABeAAADIAAAWfmG4KOVgQu4AIYAQJIcAF0AAAMgAABZ+Ybgo5WBDawAhgBAkhwAXgAAAyAAAFn5huAcU7trkbuPs4EAt4r3gQHxggG18IED"></video>
+~~~
+
+**هتشوف إيه:** تحت العنوان مستطيل أخضر مكتوب عليه «الحلقة ١» وعليه أزرار المشغّل. في البداية كانت الصورة لوحدها صغيرة، وتحتها فيديو من غير أزرار.
+
+**ليه كده:**
+
+- [[width]] و [[height]]: المكان محجوز من أول لحظة، فاللي تحت الفيديو مبيتزقش.
+- [[poster]]: مع [[preload="none"]] مفيش أول frame يتعرض، فمن غيرها المكان يبقى أسود.
+- [[preload="none"]]: مناسب لصفحة فيها دروس كتير.
+
+**الغلطة الشائعة:** [[poster]] مقاسه غير مقاس الفيديو، ومن غير [[width]] و [[height]]. الفيديو بياخد مقاس الصورة الأول، وبعدين يتغيّر لما يشتغل.
+
+~~~text القياس من Chrome
+قبل التحميل:   الحجم 320 × 180    readyState = 0    aspect-ratio: auto 320 / 180
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** لكل حالة قول محتاجة إيه (captions ولا subtitles ولا نص مكتوب في الصفحة ولا أكتر من واحد) وليه، في سطر: (١) درس طبخ بالعربي لجمهور عربي. (٢) نفس الدرس وعايز توصل لناس بتتكلم إنجليزي. (٣) حلقة بودكاست صوت بس. (من قسم ٤ في الشرح)`, done: R`تلات إجابات، كل واحدة فيها النوع والسبب.`, sol: R`إجابة نموذجية:
+
+1. **captions بالعربي.** اللغة مفهومة، فالمحتاج هو اللي مش سامع: يتكتب الكلام ومعاه الأصوات اللي ليها معنى («[صوت الزيت بيطشّ]»). ومعاه المقادير مكتوبة في الصفحة.
+2. **subtitles بالإنجليزي، ومعاها الـ captions العربي.** الترجمة للي سامع ومش فاهم. والاتنين مع بعض في نفس الفيديو: [[default]] على العربي.
+3. **نص مكتوب (transcript) في الصفحة.** [[<audio>]] مبيرسمش كابشن (درس «audio و source» قسم ٨)، فالكلام كله يتكتب HTML تحت المشغّل. ولو عايز الكلام يظهر مع الصوت في وقته: شغّل الملف في [[<video>]] بـ [[poster]] وحط عليه [[<track>]].
+
+**الغلطة الشائعة:** تعتبر الترجمة الإنجليزي «كابشن» وتقول الفيديو accessible. الأصم العربي لسه مش واصله حاجة.` },
+          ]
+        },
+        {
+          cmd: "iframe sandbox و allow",
+          title: "صفحة من موقع تاني جوه صفحتك: تقفل عليها إيه وتسمحلها بإيه",
+          pre: [{ to: "css/video و iframe", why: R`[[<iframe>]] نفسه و [[title]] و [[loading="lazy"]] والـ facade بتاع يوتيوب اتشرحوا هناك. الدرس ده بيكمّل بالأمان: [[sandbox]] و [[allow]] و [[srcdoc]] و [[referrerpolicy]]` }],
+          ref: [
+            { t: "MDN: <iframe>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe" },
+            { t: "MDN: Permissions Policy", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Permissions_Policy" },
+            { t: "WHATWG: the iframe element", url: "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element" },
+            { t: "WHATWG: sandboxing", url: "https://html.spec.whatwg.org/multipage/browsers.html#sandboxing" }
+          ],
+          desc: R`[[<iframe>]] بيفتح صفحة كاملة جوه صفحتك: مشغّل فيديو، خريطة، فورم دفع. الصفحة دي كود مش بتاعك، فالسؤال: مسموحلها تعمل إيه؟ [[sandbox]] بيقفل عليها كل حاجة (سكربتات، فورم، نوافذ) وانت بتفتح اللي محتاجاه بالاسم. و [[allow]] بيدّيها صلاحيات الجهاز (ملو الشاشة، الكاميرا، المكان).
+ومعاهم: [[srcdoc]] (محتوى الـ iframe مكتوب في نفس الملف)، و [[loading="lazy"]]، و [[referrerpolicy]]، و [[title]] اللي من غيره قارئ الشاشة مش عارف الصندوق ده إيه.`,
+          example: R`<iframe src="https://player.example.test/embed/ep1"
+        title="فيديو الحلقة ١ من بودكاست المحطة"
+        width="560" height="315"
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-presentation"
+        allow="fullscreen; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<iframe srcdoc="<p>أهلًا من جوه الـ iframe</p>" title="بطاقة ترحيب" width="300" height="80" sandbox></iframe>`,
+          flag: "script",
+          lines: [
+            R`[[src]] عنوان الصفحة اللي هتتفتح جوه. هنا مشغّل فيديو عند مزوّد متخيل ([[player.example.test]])، وده الشكل اللي بييجي في «كود التضمين» من أي خدمة فيديو.`,
+            R`[[title]] اسم الـ iframe. قارئ الشاشة بيقراه قبل ما يدخل جوه، فاكتب فيه المحتوى مش «iframe» ولا «فيديو».`,
+            R`المقاس بالبيكسل. من غيره الـ iframe بيبقى 300 × 150 مهما كان اللي جواه.`,
+            R`[[loading="lazy"]]: الصفحة اللي جوه متتحمّلش غير لما الزائر يقرّب منها بالـ scroll.`,
+            R`[[sandbox]] بيقفل كل حاجة، والتلات كلمات بيفتحوا: السكربتات، وإن الصفحة تفضل على الـ origin بتاعها (عشان الـ cookies والتخزين بتوع المزوّد يشتغلوا)، والعرض على شاشة خارجية.`,
+            R`[[allow]] صلاحيات الجهاز: ملو الشاشة، وصورة جوه صورة. كل صلاحية باسمها وبينهم [[;]].`,
+            R`[[referrerpolicy]]: المزوّد يعرف إيه عن الصفحة اللي الطلب جاي منها. القيمة دي بتبعت اسم موقعك بس من غير مسار الصفحة، وهي الافتراضية، ومكتوبة هنا عشان تبان. وبعدها قفلة [[</iframe>]]، وهي إجبارية.`,
+            R`iframe محتواه مكتوب في [[srcdoc]] بدل ما ييجي من عنوان، وعليه [[sandbox]] فاضي: كل القيود شغالة، وده كفاية لمحتوى ثابت.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+المواصفة: [[<iframe>]] بيمثّل «navigable» جوه الصفحة، يعني نافذة متصفح صغيرة ليها صفحتها وعنوانها وسكربتاتها. والقاعدة الأمنية اللي فوق كل ده اسمها same-origin policy: صفحتين من موقعين مختلفين مبيقروش بعض.
+
+القياسات من Chrome 157 على Windows 11، على صفحتين من سيرفر Node محلي على بورتين ([[127.0.0.1:8731]] للصفحة الأم، و [[127.0.0.1:8732]] كـ «موقع تاني»: بورت مختلف يعني origin مختلف). الصفحة اللي جوه بتبعت للأم اللي قدرت تعمله، والسيرفر بيكتب كل طلب وصله.
+
+---
+
+## ١. الـ iframe صفحة لوحدها
+
+~~~live 132 iframe محتواه مكتوب جوه الكود
+<p>ده كلام في الصفحة الأم.</p>
+<iframe srcdoc="<p>وده كلام في صفحة تانية جوه iframe.</p>" title="مثال iframe" width="300" height="60"></iframe>
+~~~
+
+**هتشوف إيه:** السطر الأول، وتحته صندوق ليه برواز رفيع جواه السطر التاني. الخط جوه الصندوق مختلف واتجاهه من الشمال: دي صفحة تانية، مبتورّثش أي CSS ولا [[dir]] من صفحتك.
+
+~~~text القياس من Chrome
+<iframe> من غير أي attribute:     المحتوى 300 × 150    البرواز 2px inset    display: inline
+الصفحة الأم بتقرا iframe من نفس الموقع:     contentDocument موجود
+الصفحة الأم بتقرا iframe من موقع تاني:      contentDocument = null
+الصفحة اللي جوه (من موقع تاني) بتقرا الأم:  SecurityError
+~~~
+
+- [[contentDocument]]: صفحة الـ iframe زي ما الأم شايفاها من JavaScript. [[null]] يعني ممنوع.
+- الـ iframe مبيكبرش على قد اللي جواه. المقاس منك انت: [[width]] و [[height]]، أو CSS (تمرين الـ [[aspect-ratio]] في درس «video و iframe»).
+- البرواز بيتشال بـ [[border: 0]] في الـ CSS.
+
+---
+
+## ٢. [[<iframe srcdoc="...">]]
+
+[[srcdoc]] بياخد HTML مكتوب، والمتصفح بيعمل منه صفحة الـ iframe من غير أي طلب للسيرفر.
+
+~~~text القياس من Chrome
+<iframe src="far.html" srcdoc="<p>من srcdoc</p>">
+   اللي اتعرض: «من srcdoc»       far.html متطلبش من السيرفر خالص   ← srcdoc بيكسب
+جوه الـ iframe:
+   location.href = about:srcdoc
+   origin        = http://127.0.0.1:8731     ← نفس origin الصفحة الأم
+   والصفحة اللي جوه قرت عنوان الأم (parent.document.title) عادي
+مع sandbox="allow-scripts":
+   origin        = null
+~~~
+
+- [[srcdoc]] من غير [[sandbox]] **جزء من موقعك**: نفس الـ origin، ويقدر يقرا صفحتك ويغيّرها. فلو المحتوى جاي من مستخدم (تعليق، إيميل، معاينة كود)، لازم معاه [[sandbox]].
+- علامة [["]] جوه [[srcdoc]] بتتكتب [[&quot;]]، و [[&]] بتتكتب [[&amp;]]، لأن القيمة كلها جوه علامتين تنصيص.
+- المعاينات الحية في الموقع ده معمولة بالظبط كده: [[<iframe sandbox="allow-scripts allow-forms" srcdoc="...">]].
+
+---
+
+## ٣. [[<iframe sandbox>]]: اقفل كل حاجة، وافتح اللي محتاجه
+
+[[sandbox]] لوحده (من غير قيمة) بيشغّل **كل** القيود. وكل كلمة تتكتب في قيمته بتشيل قيد واحد.
+
+~~~live 86 150 نفس الصفحة مرتين: بـ sandbox فاضي، وبـ allow-scripts
+<iframe sandbox title="sandbox فاضي" width="230" height="56"
+  srcdoc="<noscript>السكربتات مقفولة</noscript><script>document.write('السكربت اشتغل')</script>"></iframe>
+<iframe sandbox="allow-scripts" title="sandbox مع allow-scripts" width="230" height="56"
+  srcdoc="<noscript>السكربتات مقفولة</noscript><script>document.write('السكربت اشتغل')</script>"></iframe>
+~~~
+
+**هتشوف إيه:** صندوقين جواهم نفس الكود. الأول مكتوب فيه «السكربتات مقفولة» (ده محتوى [[<noscript>]]، درس «canvas و noscript و template»)، والتاني «السكربت اشتغل».
+
+ده اللي اتقاس لكل قيد، على صفحة من نفس السيرفر:
+
+| الحاجة | من غير [[sandbox]] | بـ [[sandbox]] فاضي | الكلمة اللي بتفتحها |
 |---|---|---|---|
-| ١ | بورتفوليو ١ | الهيكل و tokens واللغتين و [[dir]] | [[lang]] و [[dir]] بيتقلبوا، و CLS صفر بالإنجليزي |
-| ٢ | بورتفوليو ٢ | الكروت والفلتر بـ [[:has()]] والظهور بالسكرول | عدد الكروت لكل فلتر، والصفحة كاملة من غير JS |
-| ٣ | بورتفوليو ٣ | دراسة الحالة والـ CV و OG و View Transitions | صفحة PDF واحدة، و [[pagereveal]] فيه انتقال |
-| ٤ | داشبورد ١ | الـ shell والـ sidebar والكروت | عرض الـ sidebar، و [[inert]]، والـ drawer بره الشاشة |
-| ٥ | داشبورد ٢ | الجدول والحالة في الرابط والـ skeleton | الرابط بعد كل فعل، و Back، و CLS صفر |
-| ٦ | داشبورد ٣ | الجدول الأسبوعي و dialog و toasts و dark | الفوكس بيرجع، و Esc، والـ toast بيتقري |
-| ٧ | المراجعة | المقاسات و axe والكيبورد والأداء والنشر | ٦ عروض صفر overflow، و axe صفر، والمسارات تحت [[/repo/]] |
+| السكربتات | بتشتغل | مقفولة | [[allow-scripts]] |
+| إرسال فورم | بيتبعت | مبيتبعتش | [[allow-forms]] |
+| الـ origin | [[http://127.0.0.1:8731]] | [[null]]: مفيش cookies ولا [[localStorage]] (بيرموا [[SecurityError]]) | [[allow-same-origin]] |
+| [[alert()]] و [[confirm()]] و [[print()]] | بيظهروا | بيتجاهلوا | [[allow-modals]] |
+| إنها تنقل الصفحة الأم لعنوان تاني ([[top.location]]) | مسموح بشروط | [[SecurityError]] | [[allow-top-navigation-by-user-activation]] |
+| نافذة جديدة ([[target="_blank"]]) | مسموح | بيفشل في سكوت (MDN) | [[allow-popups]] |
+| تنزيل ملف | مسموح | ممنوع (MDN) | [[allow-downloads]] |
 
-## الخلاصة
+~~~text رسايل Chrome بنصها (من الـ Console)
+Blocked script execution in 'http://127.0.0.1:8731/child.html?t=s5' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 
-- اكتب «لمين» و «في ٣٠ ثانية لازم يعمل إيه» قبل أي سطر.
-- كل أداة ليها سبب مكتوب وإمتى تسيبها لغيرها.
-- الألوان tokens بأسماء معناها، والتباين بيتحسب مش بيتشاف.
-- المعمل بيتحكم في البطء والفشل للبيانات بس، والدوال النقية بتتختبر من غير متصفح.`,
-          sol: R`[[node serve.mjs]] بيطبع السطرين بتوع البورتات، و [[?delay=2000]] بياخد حوالي ثانيتين قبل ما الـ JSON يظهر، و [[curl]] على [[?fail=1]] بيطبع [[500]]. و [[contrast.mjs]] على الأزواج اللي في الشرح بيطلّع الـ ١٤ سطر، وكلهم [[AA]] ما عدا [[dash light ok/ok-soft 4.35 FAIL]] قبل التصليح. لو جرّبت رمادي فاتح [[#999999]] على أبيض هتلاقيه [[2.85 FAIL]]: لون شائع جدًا للـ placeholder وهو مش مقروء.`,
-          practice: [
-            {
-              lvl: R`سريع`,
-              t: R`**اشرحها:** اكتب لزميل في ٣ سطور ليه [[state.js]] و [[lib.js]] ممنوع يكون فيهم [[document]] ولا [[window]]، وإيه اللي هيحصل للـ CI لو حد زوّد [[document.title]] جوه [[view()]].`,
-              done: R`الشرح بيقول إن الملفين بيتشغّلوا في Node (في [[ci-run]] والاختبارات) ومفيش [[document]] هناك، فالسطر ده هيوقع الاختبار بـ [[ReferenceError: document is not defined]]، والتصليح إن الرسم يفضل في [[table.js]].`,
-              sol: R`~~~text رسالة لزميل
-state.js و lib.js بيتشغّلوا في Node كمان (ci-run والاختبارات)، و Node مفيهوش document ولا window.
-لو حد زوّد document.title جوه view()، الاختبار هيقع بـ ReferenceError: document is not defined.
-الدالة تفضل نقية تاخد بيانات وترجّع بيانات، وأي لمس للصفحة مكانه table.js.
+Blocked form submission to 'http://127.0.0.1:8731/submitted?tag=s3' because the form's frame is sandboxed and the 'allow-forms' permission is not set.
+
+Ignored call to 'alert()'. The document is sandboxed, and the 'allow-modals' keyword is not set.
+
+Unsafe attempt to initiate navigation for frame with URL 'http://127.0.0.1:8731/if1.html' from frame with URL 'http://127.0.0.1:8731/child.html?t=s3'. The frame attempting navigation of the top-level window is sandboxed, but the flag of 'allow-top-navigation' or 'allow-top-navigation-by-user-activation' is not set.
 ~~~
 
-الفصل ده هو اللي بيخلي الاختبار رخيص. [[view(rows, state)]] دالة عادية: تديها مصفوفة ترجّعلك مصفوفة، فتجرّب ١٠٠ حالة في ثانية من غير متصفح. أول ما تكتب فيها [[document]]، أي اختبار لازم يفتح Chrome، أو يقع.
+وملاحظة من القياس: بـ [[sandbox="allow-scripts"]] الصفحة اتعاملت كـ origin مجهول، **حتى وهي من نفس السيرفر**. يعني مش قادرة تقرا صفحتك، ولا الـ cookies بتاعة موقعك.
 
-القاعدة العامة: المنطق في ملف نقي، و DOM في ملف رسم، والملف ده بينادي التاني مش العكس.
+### [[allow-scripts]] مع [[allow-same-origin]]: إمتى خطر
 
-الغلطة الشائعة: تحط السطر جوه [[if (typeof document !== "undefined")]] عشان الاختبار يعدّي. ده بيعدّي الاختبار وبيبقي المنطق مخلوط، والصح تنقله لـ [[table.js]].
-
-~~~text الناتج (Node 24: نفس state.js بعد ما زوّدنا السطر)
-ReferenceError: document is not defined
-~~~` },
-            {
-              lvl: R`سريع`,
-              t: R`**اقرا وتوقّع:** قبل ما تشغّل، توقّع نسبة التباين لـ [[#ffffff]] على [[#1f6f8b]] (زرار «عضو جديد») وهل هي أكتر من 4.5. وبعدين زوّد الزوج في [[contrast.mjs]] وشغّله.`,
-              done: R`كتبت توقّعك، والسكربت طلّع [[5.67 AA]]، وعرفت ليه الأبيض بينفع على الأزرق ده ومش بينفع على [[#6cc3e0]] (الأزرق الفاتح بتاع الداكن: لازم نص غامق [[#08202a]]، 8.41).`,
-              sol: R`~~~js contrast.mjs (جوه pairs)
-"dash button white/brand": ["#ffffff", "#1f6f8b"],
-"dash button white/light-blue": ["#ffffff", "#6cc3e0"],
-"dash dark button ink/light-blue": ["#08202a", "#6cc3e0"],
+~~~text القياس من Chrome (صفحة من نفس موقعك، وعليها الاتنين)
+جوه الـ iframe:   origin = http://127.0.0.1:8731    parent.document.title = "parent page"   ← قرت الصفحة الأم
+تحذير Chrome:
+An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing.
 ~~~
 
-اللون الأبيض إضاءته 1، و [[#1f6f8b]] أزرق غامق إضاءته قليلة، فالنسبة بتطلع فوق 4.5. نفس الأبيض على الأزرق الفاتح [[#6cc3e0]]: الخلفية إضاءتها عالية، فالفرق بين الأبيض وبينها صغير، وبيقع. لازم نص غامق هناك، وعشان كده الوضع الداكن فيه [[#08202a]].
+صفحة **من موقعك** معاها الاتنين تقدر توصل لعنصر الـ [[<iframe>]] نفسه في الصفحة الأم وتمسح منه [[sandbox]]. يعني القفل ملوش لازمة. MDN: ده «strongly discouraged».
 
-الفكرة: التباين مش عن اللون، عن فرق الإضاءة. أزرق وأزرق ممكن يبقوا عكس بعض.
+أما صفحة **من موقع تاني** (مشغّل فيديو، خريطة) فالاتنين مع بعض عادي ومطلوب غالبًا: [[allow-same-origin]] بيخلّيها على الـ origin **بتاعها هي** (مش بتاعك)، فتقدر تستخدم الـ cookies والتخزين بتوعها، ولسه مش قادرة تقرا صفحتك.
 
-الغلطة الشائعة: تكتب «الأبيض ماشي على الأزرق» قاعدة عامة. قيس كل زوج.
+### تختار الكلمات إزاي
 
-~~~text الناتج (node contrast.mjs، الأزواج الجديدة)
-dash button white/brand        5.67 AA
-dash button white/light-blue   2.00 FAIL
-dash dark button ink/light-blue 8.41 AA
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**ابني:** زوّد على [[serve.mjs]] باراميتر [[?status=404]] بيرجّع أي كود تختاره للبيانات بس، وباراميتر [[?slow=random]] بيأخر بين ٢٠٠ و ٢٠٠٠ ملي ثانية عشوائي. واتأكد إن الصفحة نفسها مبتتأثرش.`,
-              done: R`[[curl -s -o /dev/null -w "%{http_code}" ".../data/members.json?status=404"]] بيطبع [[404]]، ونفس الباراميتر على [[/?status=404]] بيطبع [[200]]، و ٥ طلبات بـ [[slow=random]] أوقاتها مختلفة (اطبعها بـ [[-w "%{time_total}"]]).`,
-              sol: R`~~~js serve.mjs (جوه createServer)
-const lab = p.startsWith("/data/");
-let delay = lab ? Number(u.searchParams.get("delay") || 0) : 0;
-if (lab && u.searchParams.get("slow") === "random") delay = 200 + Math.floor(Math.random() * 1800);
-const forced = lab ? Number(u.searchParams.get("status")) : 0;
+1. ابدأ بـ [[sandbox]] فاضي.
+2. افتح الصفحة و DevTools › Console. كل حاجة اتمنعت ليها رسالة فيها اسم الكلمة الناقصة.
+3. زوّد الكلمة دي بس، وجرّب تاني.
 
-// جوه setTimeout، قبل سطر ?fail
-if (forced >= 400 && forced < 600) {
-  res.writeHead(forced, { "content-type": "application/json" });
-  return res.end(JSON.stringify({ error: "lab " + forced }));
-}
-~~~
-
-~~~bash
-curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:5502/data/members.json?status=404"
-curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:5502/?status=404"
-for i in 1 2 3 4 5; do curl -s -o /dev/null -w "%{time_total}\n" "http://127.0.0.1:5502/data/members.json?slow=random"; done
-~~~
-
-بيبني على [[serve.mjs]] بتاع الخريطة. أهم حاجة [[lab]]: الباراميترات بتأثر على [[/data/]] بس، فالصفحة نفسها بتفتح عادي وتختبر إيه اللي بيحصل لما البيانات تقع. لو كل طلب اتأثر، مش هتشوف حالة الخطأ.
-
-- [[forced >= 400 && forced < 600]] بيقبل أكواد الخطأ بس، فقيمة غريبة زي [[?status=abc]] بتعدّي من غير ضرر.
-- [[200 + Math.floor(Math.random() * 1800)]] بيدّي رقم من 200 لـ 1999.
-- [[-w "%{http_code}"]] في curl بيطبع الكود بس، و [[-o /dev/null]] بيرمي الجسم.
-
-الغلطة الشائعة: تحط تأخير ثابت. التأخير العشوائي هو اللي بيكشف ترتيب الردود لما طلبين يتسابقوا.
-
-~~~text الناتج (curl على ويندوز)
-data?status=404  ← 404
-/?status=404     ← 200
-5 طلبات slow=random: 1.075798 0.870632 1.090576 0.540761 0.878370
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**صلّح الكود البايظ:** النسخة دي من السيرفر بتسيب أي حد يقرا ملفات بره الفولدر: [[const file = path.join(root, p); if (!fs.existsSync(file)) ...]]. ابعت طلب يثبت المشكلة، وبعدين صلّحها.`,
-              done: R`عرفت إن [[/../serve.mjs]] بيرجع [[404]] حتى من غير الحماية (لأن [[new URL]] بيشيل [[..]] من الـ pathname)، بس [[curl -s --path-as-is -o /dev/null -w "%{http_code}" "http://127.0.0.1:5501/..%2fserve.mjs"]] رجّع [[200]] وكود السيرفر نفسه: [[%2f]] مش بيتحسب فاصل في الـ URL، و [[decodeURIComponent]] بيحوّله [[/]] بعدها. وبعد ما رجّعت [[file.startsWith(root + path.sep)]] بقى [[404]] (اتجرّب في المعمل: 200 قبل و 404 بعد).`,
-              sol: R`~~~bash الطلب اللي بيثبت المشكلة
-curl -s --path-as-is -o /dev/null -w "%{http_code}" "http://127.0.0.1:5501/..%2fserve.mjs"
-~~~
-
-~~~js التصليح (زي serve.mjs في الدرس)
-const root = path.resolve(dir);
-const file = path.join(root, p);
-if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
-  res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
-  return res.end("404 " + p);
-}
-~~~
-
-ده path traversal: السيرفر بيضم المسار اللي جاي من اليوزر على الفولدر، فـ [[..]] بيطلّعه برا.
-
-ليه [[/../serve.mjs]] مش كفاية لإثباته؟ لأن [[new URL]] بينضّف الـ pathname قبل ما كودك يشوفه، فـ [[..]] بتختفي. لكن [[%2f]] مش فاصل في الـ URL، فـ [[new URL]] بيسيبه زي ما هو، وبعدين [[decodeURIComponent]] في كودك بيفكه لـ [[/]]، و [[path.join]] يطلع برا.
-
-[[--path-as-is]] بيخلي curl يبعت المسار زي ما هو.
-
-الحماية: [[path.join]] الأول، وبعدين اتأكد إن الناتج لسه جوه [[root]]. و [[root + path.sep]] مش [[root]] لوحده، عشان فولدر اسمه [[portfolio-secret]] يبدأ بنفس النص.
-
-الغلطة الشائعة: تمسح [[..]] من النص بـ [[replace]]. فيه أشكال كتير، وأي واحد ينسى يعدّي.
-
-~~~text الناتج (Node 24 على ويندوز)
-من غير الحماية: 200، وأول سطر رجع: // static server for the lab: node serve.mjs  (por
-مع الحماية:     404
-/../serve.mjs من غير الحماية: 404
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**مسألة:** اكتب [[pick(fg, bg)]] بتاخد لون نص ولون خلفية، ولو النسبة أقل من 4.5 بتغمّق النص (أو تفتّحه لو الخلفية غامقة) خطوة خطوة لحد ما يعدّي، وترجّع أول لون بيعدّي. جرّبها على [[#1a7f37]] و [[#dcf3e3]].`,
-              done: R`[[pick("#1a7f37", "#dcf3e3")]] بترجّع لون نسبته 4.5 أو أكتر وقريب من الأصلي (في المعمل التلات درجات الأغمق كلهم عدّوا)، وعلى خلفية غامقة بتفتّح مش بتغمّق، وفيه اختبار بيتأكد إن اللون اللي اتنقى عدّى فعلًا.`,
-              sol: R`~~~js pick.mjs
-const rgb = (h) => h.match(/\w\w/g).map((x) => parseInt(x, 16));
-const hex = (c) => "#" + c.map((v) => Math.round(v).toString(16).padStart(2, "0")).join("");
-const lum = (h) => {
-  const c = rgb(h).map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
-};
-export const ratio = (a, b) => {
-  const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
-  return (x + 0.05) / (y + 0.05);
-};
-
-export function pick(fg, bg, min = 4.5) {
-  if (ratio(fg, bg) >= min) return fg;
-  const toward = lum(bg) < 0.18 ? 255 : 0;           // خلفية غامقة: نفتّح، فاتحة: نغمّق
-  const c = rgb(fg);
-  for (let t = 0.01; t <= 1; t += 0.01) {
-    const next = hex(c.map((v) => v + (toward - v) * t));
-    if (ratio(next, bg) >= min) return next;
-  }
-  return hex([toward, toward, toward]);
-}
-~~~
-
-~~~js pick.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { pick, ratio } from "./pick.mjs";
-
-test("على خلفية فاتحة: أول لون بيعدّي", () => {
-  const c = pick("#1a7f37", "#dcf3e3");
-  assert.ok(ratio(c, "#dcf3e3") >= 4.5);
-});
-test("على خلفية غامقة بتفتّح", () => {
-  const c = pick("#2e6b45", "#0f1419");
-  assert.ok(parseInt(c.slice(1, 3), 16) > 0x2e);
-  assert.ok(ratio(c, "#0f1419") >= 4.5);
-});
-~~~
-
-الدالة بتشتغل زي [[fixContrast]] في مشروع الـ landing: تمزج ناحية الأسود أو الأبيض بخطوات صغيرة، وأول لون بيعدّي بترجّعه.
-
-- لو اللون عدّى من الأول، بيرجع زي ما هو.
-- [[lum(bg) < 0.18]] بيحدد الاتجاه.
-- [[v + (toward - v) * t]] المزج، و [[t]] خطوة ١٪ عشان يفضل قريب من الأصلي.
-- آخر سطر احتياطي، لو مفيش ولا لون عدّى يرجّع الأسود أو الأبيض.
-
-الغلطة الشائعة: الاختبار بيسأل عن لون معين بالحرف، فأي تغيير صغير في الخطوة يوقعه. اختبر الخاصية: «عدّى»، و «اتجه الناحية الصح».
-
-~~~text الناتج (Node 24)
-ratio("#1a7f37", "#dcf3e3") قبل: 4.35
-pick("#1a7f37", "#dcf3e3") = #197c36  بنسبة 4.52
-node --test: pass 2، fail 0
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**قارن وقيس:** نزّل [[playwright]] (الكامل) في فولدر تجربة تاني و [[playwright-core]] في فولدر، وقارن مساحة [[node_modules]] والفولدر اللي بيتنزّل فيه المتصفح بعد [[npx playwright install chromium]]. اكتب الرقمين وامسح الفولدر التجريبي.`,
-              done: R`عندك رقمين بالميجا (المكتبة لوحدها صغيرة، والمتصفح المنزّل أكبر بكتير)، ومكتوب ليه المعمل ده بيستخدم [[channel: "chrome"]]، وفولدر التجربة اتمسح.`,
-              sol: R`~~~bash Git Bash
-mkdir a b
-(cd a && npm init -y >/dev/null && npm i playwright-core)
-(cd b && npm init -y >/dev/null && npm i playwright)
-du -sh a/node_modules b/node_modules
-(cd b && PLAYWRIGHT_BROWSERS_PATH="$PWD/browsers" npx playwright install chromium)
-du -sh b/browsers
-rm -rf a b
-~~~
-
-الحزمتين فيهم نفس الكود تقريبًا. الفرق إن [[playwright]] معاها أمر [[install]] وبتشاور على متصفحات بتنزل منفصلة. [[playwright-core]] مكتبة بس: بتتوصل بأي متصفح عندك.
-
-[[channel: "chrome"]] بيقول «استخدم Chrome المنزّل على الجهاز». فالمعمل بيوفر تنزيل مئات الميجا، ومشتغل على نفس المتصفح اللي الناس بتستخدمه. العيب: النسخة بتتغير مع تحديث Chrome، فالـ CI ممكن يبقى نسخة مختلفة.
-
-[[PLAYWRIGHT_BROWSERS_PATH]] بيحدد مكان التنزيل، عشان الفولدر ينمسح مع الباقي ومايفضلش في [[AppData]].
-
-الغلطة الشائعة: تمسح فولدر المشروع وتفتكر إن المتصفح اتمسح. مكانه الافتراضي برا المشروع، وبيفضل ماكل المساحة.
-
-~~~text الناتج (ويندوز، Chrome headless shell و Chromium)
-node_modules بـ playwright-core: 13.0 MB
-node_modules بـ playwright:      17.8 MB
-فولدر المتصفح:                   718.0 MB
-بعد rm -rf: الفولدر موجود؟ لأ
-~~~` },
-          ],
-          ci: [
-            {
-              os: [
-                R`ubuntu`,
-                R`macos`,
-                R`windows`,
-              ],
-              sh: R`node`,
-              run: R`const lum = hex => { const c = hex.match(/\w\w/g).map(h => parseInt(h, 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
-const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
-const pairs = { "ok/ok-soft old": ["#1a7f37", "#dcf3e3"], "ok/ok-soft new": ["#156c2f", "#dcf3e3"], "muted/bg": ["#56606b", "#f3f5f7"], "dark muted/bg": ["#9ba6b2", "#0f1419"] };
-let fail = 0;
-for (const [k, [a, b]] of Object.entries(pairs)) { const r = ratio(a, b); if (r < 4.5) fail++; console.log(k + " " + r.toFixed(2) + (r >= 4.5 ? " AA" : " FAIL")); }
-console.log("failing pairs: " + fail);`,
-              expect: [
-                R`ok/ok-soft old 4.35 FAIL`,
-                R`ok/ok-soft new 5.59 AA`,
-                R`muted/bg 5.86 AA`,
-                R`dark muted/bg 7.49 AA`,
-                R`failing pairs: 1`,
-              ],
-            },
-          ],
-        },
-        {
-          cmd: R`بورتفوليو ١: الهيكل واللغتين و dir`,
-          ref: [
-            { t: "W3C i18n: Structural markup and right-to-left text", url: "https://www.w3.org/International/questions/qa-html-dir" },
-            { t: "MDN: lang attribute", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/lang" },
-            { t: "MDN: data-* attributes", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/data-*" },
-          ],
-          title: R`صفحة رئيسية بالعربي والإنجليزي: زرار بيقلب lang و dir، و tokens، وخطوط النظام، ونص إنجليزي جوه العربي من غير ما يتلخبط، ومن غير ما الصفحة تتنطط`,
-          learn: R`تبني هيكل صفحة بلغتين صح: [[lang]] و [[dir]] على [[<html>]]، و logical properties عشان الـ CSS ميتغيرش لما الاتجاه يتقلب، و dictionary بيبدّل النصوص والـ [[aria-label]] و [[<title>]]، واختيار اللغة بيتحفظ ويتطبق قبل الرسم، والأرقام والإنجليزي جوه سطر عربي بيتعرضوا صح.`,
-          out: R`[[index.html]] و [[tokens.css]] و [[boot.js]] و [[i18n.js]]: الزرار بيقلب الصفحة كلها، والـ refresh بيفتكر اللغة، و CLS بالإنجليزي صفر، و [[keys.mjs]] بيقول [[missing in en: none]] للتلات صفحات.`,
-          use: {
-            prog: R`هنا بتشوف درس «lang و dir» ودرس «logical properties» شغالين مع بعض: سطر [[dir="ltr"]] واحد على [[<html>]] بيقلب الـ header والكروت والمسافات من غير ولا قاعدة CSS زيادة، لأن كل القواعد مكتوبة بـ [[inline-start]] و [[margin-inline]] مش [[left]] و [[right]].`,
-            work: R`أي موقع لشركة أو شخص في المنطقة بيتطلب بلغتين. والأسئلة اللي بتيجي بعد التسليم: «ليه الصفحة بتتنطط لما بفتحها بالإنجليزي؟» و «ليه الرقم +40 مقلوب؟» و «ليه قارئ الشاشة بيقرا English بلكنة عربي؟». الدرس ده بيجاوب عليهم بأرقام.`,
-            cs: R`الـ Unicode Bidirectional Algorithm: كل حرف ليه اتجاه (العربي قوي RTL، والإنجليزي قوي LTR، والأرقام ضعيفة، والعلامات زي [[+]] محايدة بتاخد اتجاه اللي حواليها). وترتيب تحميل السكربتات: classic مقابل module (اللي بيستنى لحد ما الصفحة تتقري كلها).`,
-          },
-          desc: R`أول خطوة في الـ portfolio: الصفحة الرئيسية بهيكلها الكامل (skip link، و header فيه nav وزرار اللغة، و hero، والمشاريع، و «عني»، والتواصل، و footer)، والـ tokens، واللغتين.
-
-**اللغتين من غير ما تكتب الكلام مرتين:** العربي هو اللي مكتوب في الـ HTML، وكل عنصر بيتترجم عليه [[data-i18n="key"]] (أو [[data-i18n-label]] للـ [[aria-label]]). [[i18n.js]] بيقرا العربي من الصفحة مرة واحدة، والإنجليزي من [[dict.en]]، والزرار بيحط النص الصح ويغيّر [[lang]] و [[dir]] على [[<html>]] ويحفظ الاختيار في localStorage. و [[<title>]] نفسه عليه [[data-i18n]]، فاسم التاب بيتغير كمان.
-
-**من غير ما الصفحة تتنطط:** [[boot.js]] صغير في الـ head بيقرا اللغة المحفوظة ويحط [[dir]] **قبل الرسم**. أول نسخة كان فيها [[i18n.js]] كـ [[type="module"]]: الـ module بيتأجل لحد ما الصفحة تتقري، فالمتصفح رسم الكلام العربي في اتجاه LTR وبعدين بدّله إنجليزي: **CLS = 0.1402** (فوق 0.1 = «محتاج تحسين»). لما بقى classic script في آخر الـ body: **CLS = 0** (الوسط بتاع ٣ مرات، موبايل 390 و CPU أبطأ ٤ مرات).
-
-**الإنجليزي جوه العربي:** [[40+]] جوه [[<dd>]] في صفحة RTL اتعرض **[[+40]]** (الـ [[+]] محايد فراح على الشمال). التصليح [[<span dir="ltr">40+</span>]]، واتقاس بمكان الحرف. وزرار «English» عليه [[lang="en"]] عشان قارئ الشاشة ينطقه إنجليزي.`,
-          example: R`<html lang="ar" dir="rtl">
-<title data-i18n="tHome">نادين فؤاد | مطوّرة واجهات</title>
-<script src="js/boot.js"></script>
-<button class="lang" type="button" id="lang" lang="en">English</button>
-<dd><span dir="ltr">40+</span></dd>
-<script src="js/i18n.js"></script>`,
-          lines: [
-            R`اللغة والاتجاه للصفحة كلها: [[lang="ar"]] بيقول لقارئ الشاشة والمتصفح (الخط، والـ hyphenation، والترجمة) إن الكلام عربي، و [[dir="rtl"]] بيقلب ترتيب العناصر والنص. الزرار بيغيّر الاتنين مع بعض.`,
-            R`اسم التاب والنتيجة في جوجل. عليه [[data-i18n]] زي أي عنصر، لأن [[textContent]] بتاع [[<title>]] هو نفسه [[document.title]]، فالسكربت مش محتاج حالة خاصة.`,
-            R`سكربت عادي (مش [[defer]] ولا module) في الـ head، فبيشتغل قبل ما أي حاجة تترسم: بيقرا [[localStorage]] ويحط [[lang="en" dir="ltr"]] لو آخر زيارة كانت إنجليزي، ويزوّد class [[js]] (درس «بورتفوليو ٢» بيستخدمه).`,
-            R`زرار اللغة مكتوب بالإنجليزي وعليه [[lang="en"]] عشان قارئ الشاشة العربي ينطق «English» صح بدل ما يتهجّاه حروف. ولما الصفحة تبقى إنجليزي الزرار بيبقى «عربي» و [[lang="ar"]].`,
-            R`رقم وبعده علامة جوه سطر RTL: من غير [[dir="ltr"]] الـ [[+]] بيروح على الشمال ويتقري «+40». الـ span بيعزل اتجاهه، والـ [[<dd>]] نفسه لسه RTL فالمحاذاة متتغيرش.`,
-            R`الـ dictionary وزرار اللغة كـ classic script في آخر الـ body (مش [[type="module"]]): بيشتغل وانت لسه بتقرا الصفحة، فالنص الإنجليزي بيتحط قبل أول رسم في المعمل، و CLS نزل من 0.1402 لـ 0.`,
-          ],
-          try: R`ابني الصفحة من الشرح بالملفات الأربعة وافتحها من [[http://127.0.0.1:5501/]]. دوس على «English» وشوف الـ header اتقلب، واعمل refresh واتأكد إنها فضلت إنجليزي. بعدين حوّل [[<script src="js/i18n.js">]] لـ [[type="module"]] (وامسح [[function t]] من غير export مش هيفرق)، وشغّل [[node rep.mjs]] وقارن الـ CLS بتاع [[en]] قبل وبعد.`,
-          flag: R`script`,
-          deep: {
-            why: R`لو الموقع بلغتين والـ CSS مكتوب بـ [[left]] و [[right]]، كل قاعدة بتتكتب مرتين ([[[dir=rtl] .x]]) وأول ما حد ينسى واحدة الصفحة تتكسر في لغة. ولو اللغة بتتطبق بعد الرسم، كل زائر إنجليزي بيشوف الصفحة بتتقلب قدامه (CLS 0.14 هنا، وده بيتحسب على الموقع في Core Web Vitals). وأي رقم أو كلمة إنجليزي جوه العربي ممكن تتعرض مقلوبة، وده أكتر حاجة بتبان «مش احترافي» في موقع عربي.`,
-            how: R`المتصفح بيحدد اتجاه كل سطر من [[dir]]، وجوه السطر بيرتب الحروف بالـ bidi algorithm: الحروف العربي «قوية RTL»، والإنجليزي «قوي LTR»، والأرقام «ضعيفة» (بتتكتب من الشمال لليمين بس مكانها بيتحدد من اللي حواليها)، والعلامات زي [[+]] و [[:]] و [[|]] «محايدة» بتاخد اتجاه السطر لو مفيش جنبها حرف قوي. عشان كده [[40+]] لوحده في سطر RTL بيبقى [[+40]]. و [[dir="ltr"]] على span (أو [[<bdi>]]) بيعمل «جزيرة» ليها اتجاهها. وترتيب السكربتات: classic في الـ head بيوقف القراية لحد ما يخلص (فبيلحق قبل الرسم، وعشان كده [[boot.js]] صغير جدًا)، و [[type="module"]] بيتأجل لحد ما الـ HTML كله يتقري (زي [[defer]])، والمتصفح ممكن يرسم قبله، وده اللي عمل الـ CLS.`,
-            when: R`أي صفحة فيها لغتين أو فيها إنجليزي وأرقام جوه العربي (أسعار، وأكواد، وإيميلات، وروابط). [[boot.js]] لأي إعداد لازم يبان من أول رسمة (اللغة والثيم). والـ dictionary في المتصفح ينفع لموقع صغير؛ لو الـ SEO بالإنجليزي مهم اعمل صفحتين ثابتين من نفس الـ dictionary (المشروع الكبير في آخر الوحدة). وكل جزء ليه درس: «lang و dir»، و «logical properties»، و «CLS».`,
-            mistakes: R`تحط [[i18n.js]] كـ module أو [[defer]] وتفتكر إن «الصفحة صغيرة فمش هيبان» (اتقاس: 0.1402). تكتب [[left]] و [[margin-left]] وتصلّح الإنجليزي بـ [[[dir=ltr]]] لكل قاعدة. تنسى [[aria-label]] و [[<title>]] فقارئ الشاشة بيقرا عربي في صفحة إنجليزي. تحط [[letter-spacing]] سالب على العنوان كله فالحروف العربي بتنفصل (هنا [[:lang(en) .hero h1]] بس). تقرا localStorage من غير try فالصفحة بتقع في وضع الخصوصية لما المتصفح بيرمي [[SecurityError]]. تحط علم بلد كإيموجي للغة (مبيظهرش على ويندوز) بدل اسم اللغة نفسها.`,
-          },
-          teach: R`## الخطوة ١: الهيكل واللغتين
-
-### الصفحة كاملة
-
-~~~html portfolio/index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title data-i18n="tHome">نادين فؤاد | مطوّرة واجهات</title>
-  <meta name="description" content="نادين فؤاد، مطوّرة واجهات: مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي.">
-  <link rel="canonical" href="https://nadine.example/">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="نادين فؤاد | مطوّرة واجهات">
-  <meta property="og:description" content="مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي.">
-  <meta property="og:url" content="https://nadine.example/">
-  <meta property="og:image" content="https://nadine.example/img/og.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
-  <script src="js/boot.js"></script>
-  <link rel="stylesheet" href="css/tokens.css">
-  <link rel="stylesheet" href="css/site.css">
-</head>
-<body>
-  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
-  <header class="top">
-    <a class="brand" href="./" data-i18n="name">نادين فؤاد</a>
-    <nav aria-label="الأقسام" data-i18n-label="navLabel">
-      <a href="#work" data-i18n="navWork">الشغل</a>
-      <a href="#about" data-i18n="navAbout">عني</a>
-      <a href="#contact" data-i18n="navContact">تواصل</a>
-      <a href="cv.html" data-i18n="navCv">السيرة الذاتية</a>
-    </nav>
-    <button class="lang" type="button" id="lang" lang="en">English</button>
-  </header>
-
-  <main id="main">
-    <section class="hero">
-      <p class="eyebrow" data-i18n="role">مطوّرة واجهات</p>
-      <h1 data-i18n="heroTitle">بابني مواقع سريعة، وأي حد يقدر يستخدمها.</h1>
-      <p class="lead" data-i18n="heroLead">٦ سنين بكتب HTML و CSS و JavaScript لمواقع عربي وإنجليزي، ومهتمة بالأداء وسهولة الوصول.</p>
-      <div class="actions">
-        <a class="btn" href="#work" data-i18n="ctaWork">شوف الشغل</a>
-        <a class="btn ghost" href="#contact" data-i18n="ctaContact">كلّمني</a>
-      </div>
-    </section>
-
-    <section id="work" class="work" aria-labelledby="work-h">
-      <h2 id="work-h" data-i18n="workTitle">مشاريع مختارة</h2>
-      <fieldset class="filters">
-        <legend data-i18n="filterBy">فلتر حسب النوع</legend>
-        <label><input type="radio" name="f" value="all" checked> <span data-i18n="fAll">الكل</span></label>
-        <label><input type="radio" name="f" value="web"> <span data-i18n="fWeb">مواقع</span></label>
-        <label><input type="radio" name="f" value="a11y"> <span data-i18n="fA11y">سهولة الوصول</span></label>
-        <label><input type="radio" name="f" value="api"> <span data-i18n="fApi">API</span></label>
-        <label><input type="radio" name="f" value="design"> <span data-i18n="fDesign">تصميم</span></label>
-      </fieldset>
-      <ul class="cards" role="list">
-        <li class="card" data-tags="web a11y" data-reveal>
-          <div class="thumb t1" aria-hidden="true"></div>
-          <h3><a href="work/tide-notes.html" data-i18n="p1">Tide Notes: ملاحظات من غير نت</a></h3>
-          <p data-i18n="p1d">تطبيق ملاحظات بيشتغل offline، وبيتزامن لما النت يرجع.</p>
-          <ul class="tags" role="list"><li>PWA</li><li>IndexedDB</li></ul>
-        </li>
-        <li class="card" data-tags="web" data-reveal>
-          <div class="thumb t2" aria-hidden="true"></div>
-          <h3 data-i18n="p2">لوحة مواعيد الأتوبيس</h3>
-          <p data-i18n="p2d">شاشة محطة بتتحدّث كل ٣٠ ثانية، مقروءة من ٥ متر.</p>
-          <ul class="tags" role="list"><li>SSE</li><li>CSS Grid</li></ul>
-        </li>
-        <li class="card" data-tags="a11y" data-reveal>
-          <div class="thumb t3" aria-hidden="true"></div>
-          <h3 data-i18n="p3">فورم حجز لعيادة</h3>
-          <p data-i18n="p3d">٧ خطوات بقت ٣، والأخطاء بتتقري بقارئ الشاشة.</p>
-          <ul class="tags" role="list"><li>WCAG 2.2</li><li>Forms</li></ul>
-        </li>
-        <li class="card" data-tags="api" data-reveal>
-          <div class="thumb t4" aria-hidden="true"></div>
-          <h3 data-i18n="p4">API وصفات أكل</h3>
-          <p data-i18n="p4d">بحث بالمكوّنات، و pagination، وكاش ٦٠ ثانية.</p>
-          <ul class="tags" role="list"><li>Node</li><li>PostgreSQL</li></ul>
-        </li>
-        <li class="card" data-tags="design web" data-reveal>
-          <div class="thumb t5" aria-hidden="true"></div>
-          <h3 data-i18n="p5">مكتبة design tokens</h3>
-          <p data-i18n="p5d">ألوان ومسافات وخطوط لـ ٣ مواقع من ملف واحد.</p>
-          <ul class="tags" role="list"><li>CSS variables</li><li>Figma</li></ul>
-        </li>
-      </ul>
-    </section>
-
-    <section id="about" class="about" aria-labelledby="about-h">
-      <h2 id="about-h" data-i18n="aboutTitle">عني</h2>
-      <p data-i18n="aboutText">بدأت بمواقع لمحلات صغيرة، ودلوقتي بشتغل مع فرق منتج على واجهات بيستخدمها آلاف الناس كل يوم. بحب الكود اللي يتقري، والصفحة اللي تفتح في أقل من ثانية.</p>
-      <dl class="facts">
-        <div><dt data-i18n="f1t">سنين خبرة</dt><dd>6</dd></div>
-        <div><dt data-i18n="f2t">مشروع اتسلّم</dt><dd><span dir="ltr">40+</span></dd></div>
-        <div><dt data-i18n="f3t">Lighthouse a11y</dt><dd>100</dd></div>
-      </dl>
-    </section>
-
-    <section id="contact" class="contact" aria-labelledby="contact-h">
-      <h2 id="contact-h" data-i18n="contactTitle">نشتغل سوا؟</h2>
-      <p data-i18n="contactText">ابعتلي فكرة المشروع وميعاده، وهرد عليك خلال يومين شغل.</p>
-      <p><a class="btn" href="mailto:hello@nadine.example" dir="ltr">hello@nadine.example</a>
-        <button class="btn ghost" type="button" id="copy" data-i18n="copy">انسخ الإيميل</button></p>
-      <p class="sr-status" role="status" id="status"></p>
-    </section>
-  </main>
-
-  <footer class="foot"><p><span data-i18n="rights">كل الحقوق محفوظة</span> © 2026</p></footer>
-  <script src="js/i18n.js"></script>
-  <script src="js/reveal.js" type="module"></script>
-</body>
-</html>
-~~~
-
-فك الأجزاء المهمة من فوق لتحت:
-
-- [[<meta name="color-scheme" content="light dark">]]: بيقول للمتصفح إن الصفحة عندها ثيم داكن، فالـ scrollbar والـ inputs بتتلون صح من أول لحظة، قبل ما الـ CSS يتحمّل.
-- الـ Open Graph في الـ head (السطور اللي بتبدأ بـ [[og:]]) بيتشرحوا في «بورتفوليو ٣»، ومعاهم [[canonical]].
-- [[<a class="skip" href="#main">]]: أول حاجة بيوصلها الـ Tab. بيبقى مستخبي فوق الشاشة ويظهر أول ما يتعمله فوكس، ويودّي على [[<main id="main">]] على طول. في المعمل: Tab ثم Enter، والـ Tab اللي بعدها راح لـ «شوف الشغل» (أول لينك جوه main) مش للـ nav.
-- [[<nav aria-label="الأقسام" data-i18n-label="navLabel">]]: اسم الـ nav لقارئ الشاشة، وبيتترجم هو كمان من [[data-i18n-label]].
-- [[<section aria-labelledby="work-h">]]: كل section اسمه هو العنوان بتاعه، فقارئ الشاشة بيقول «مشاريع مختارة، region».
-- [[<ul class="cards" role="list">]]: Safari بيشيل role القايمة لما تعمل [[list-style: none]]، فبنرجّعها صريحة (سلوك WebKit موثّق، متجرّبش هنا: المعمل Chrome بس).
-- [[<a href="mailto:..." dir="ltr">]]: الإيميل نص إنجليزي، فبيتعرض LTR عشان [[@]] و [[.]] ميتلخبطوش.
-- [[<p class="sr-status" role="status" id="status">]]: مكان فاضي موجود من الأول، وزرار «انسخ الإيميل» بيكتب فيه «الإيميل اتنسخ»، فقارئ الشاشة بيقولها (لازم يبقى موجود قبل ما النص يتحط، وده بيتشرح في «داشبورد ٣»).
-- [[<script src="js/reveal.js" type="module">]]: ده بس اللي module (مش مهم يشتغل قبل الرسم).
-
-### الـ tokens
-
-~~~css portfolio/css/tokens.css
-/* every colour, size and curve the site uses lives here; the rest of the CSS only reads var(--x) */
-:root {
-  color-scheme: light dark;
-  --paper: #f7f5f0;
-  --surface: #ffffff;
-  --ink: #1c2230;
-  --muted: #535b6b;
-  --line: #dcd8cf;
-  --accent: #0d6b63;
-  --accent-ink: #ffffff;
-  --accent-soft: #dcefec;
-  --warm: #9c4f12;
-  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
-  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
-  --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
-  --step-3: clamp(2rem, 1.4rem + 3vw, 3.6rem);
-  --gutter: clamp(16px, 4vw, 48px);
-  --r: 14px;
-  --r-sm: 8px;
-  --shadow: 0 1px 2px rgb(20 24 33 / 0.06), 0 8px 24px rgb(20 24 33 / 0.08);
-  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
-  --z-header: 10;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
-    --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
-  --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
-}
-~~~
-
-- [[--step-0]] و [[--step-1]] و [[--step-3]]: أحجام الخط بـ [[clamp(أقل, مفضّل, أكبر)]]: النص بيكبر مع الشاشة بين حدين من غير ولا media query (درس «clamp()»). القيمة المفضلة [[rem + vw]] عشان الـ zoom لسه يأثر (لو [[vw]] لوحدها الـ zoom مبيكبّرش الخط، وده بيوقع WCAG 1.4.4، من الوثائق).
-- [[--gutter: clamp(16px, 4vw, 48px)]]: المسافة الجانبية، 16 على الموبايل و 48 على الشاشة الكبيرة.
-- [[--shadow]] طبقتين: ظل صغير حاد (الحافة) وظل كبير ناعم (العمق). طبقة واحدة بتبان «مرسومة».
-- [[--ease: cubic-bezier(0.22, 0.7, 0.2, 1)]]: منحنى واحد لكل الحركة في الموقع، بيبدأ سريع ويهدى.
-- الداكن مكتوب مرتين: مرة جوه [[@media (prefers-color-scheme: dark)]] على [[:root:not([data-theme="light"])]] (الجهاز داكن واليوزر مختارش فاتح)، ومرة على [[:root[data-theme="dark"]]] (اليوزر اختار داكن بزرار). كده الثلاث حالات شغالة: نظام، واختيار فاتح، واختيار داكن.
-
-### قبل الرسم
-
-~~~javascript portfolio/js/boot.js
-// runs in <head> before the first paint: language and theme from last visit, so the page never flips after it shows
-try {
-  const lang = localStorage.getItem("lang");
-  if (lang === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
-  const theme = localStorage.getItem("theme");
-  if (theme) document.documentElement.dataset.theme = theme;
-} catch {}
-document.documentElement.classList.add("js");
-~~~
-
-- [[try { ... } catch {}]]: [[localStorage]] ممكن **يرمي** error (Safari في وضع الخصوصية القديم، أو لما الكوكيز ممنوعة للموقع؛ من الوثائق): من غير try السطر اللي بعده مش هيشتغل والصفحة تفضل من غير class [[js]].
-- [[catch {}]] من غير متغير: بنتجاهل الخطأ عن قصد (الصفحة تفتح بالعربي، وده افتراضي سليم).
-- [[classList.add("js")]] بره الـ try: لازم يتحط دايمًا لو الـ JS شغال.
-
-### الـ dictionary والزرار
-
-~~~javascript portfolio/js/i18n.js
-// dictionary + switch: every [data-i18n] gets its text from the current language, and <html> gets lang and dir
-const dict = {
-  en: {
-    tHome: "Nadine Fouad | Front-end developer", tCase: "Tide Notes case study | Nadine Fouad", tCv: "CV | Nadine Fouad",
-    skip: "Skip to content", name: "Nadine Fouad", navLabel: "Sections", navWork: "Work", navAbout: "About", navContact: "Contact", navCv: "CV",
-    role: "Front-end developer", heroTitle: "I build fast websites anyone can use.",
-    heroLead: "6 years writing HTML, CSS and JavaScript for Arabic and English sites, with a focus on performance and accessibility.",
-    ctaWork: "See the work", ctaContact: "Get in touch", workTitle: "Selected projects", filterBy: "Filter by type",
-    fAll: "All", fWeb: "Websites", fA11y: "Accessibility", fApi: "API", fDesign: "Design",
-    p1: "Tide Notes: notes without internet", p1d: "A notes app that works offline and syncs when the connection is back.",
-    p2: "Bus departures board", p2d: "A station screen that refreshes every 30 seconds, readable from 5 metres.",
-    p3: "Clinic booking form", p3d: "7 steps became 3, and errors are announced to screen readers.",
-    p4: "Recipes API", p4d: "Search by ingredient, pagination, and a 60-second cache.",
-    p5: "Design tokens library", p5d: "Colours, spacing and type for 3 sites from one file.",
-    aboutTitle: "About", aboutText: "I started with sites for small shops, and now I work with product teams on interfaces thousands of people use every day. I like code you can read, and pages that open in under a second.",
-    f1t: "Years of experience", f2t: "Projects shipped", f3t: "Lighthouse a11y",
-    contactTitle: "Work together?", contactText: "Send me the idea and the deadline, and I'll reply within two working days.",
-    copy: "Copy email", copied: "Email copied", rights: "All rights reserved",
-    caseKind: "Case study · 2025", caseTitle: "Tide Notes: notes that work without internet",
-    mRole: "My role", mRoleV: "The whole front end and offline", mTime: "Duration", mTimeV: "10 weeks", mStack: "Stack",
-    cProblem: "The problem", cProblemT: "The sales team writes visit notes in places with weak signal, so a note is lost if the page closes before it is sent.",
-    cDecisions: "Decisions", d1: "Every note is saved to IndexedDB first, and sent in the background.",
-    d2: "A Service Worker caches the page itself, so it opens offline.", d3: "A clear mark on each note: sent or not yet.",
-    cResults: "Results", rCap: "Before and after (3-week average)", rMetric: "Metric", rBefore: "Before", rAfter: "After",
-    r1: "Page open time on 3G", r2: "Notes lost per week", back: "Back to projects",
-    print: "Print or save PDF", exp: "Experience", skills: "Skills",
-    j1: "Senior front-end developer · Trips platform company", j1a: "Cut search page LCP on mobile from 3.2 to 1.4 seconds.", j1b: "Built a shared component library for 3 teams.",
-    j2: "Front-end developer · Small design agency", j2a: "25 sites for shops and clinics, all in Arabic and English.", j2b: "Ran the agency's first accessibility audit; it became a step in every delivery.",
-  },
-};
-const ar = {};                                   // Arabic is what the HTML already says: read it once, so it isn't written twice
-document.querySelectorAll("[data-i18n]").forEach(el => (ar[el.dataset.i18n] = el.textContent));
-document.querySelectorAll("[data-i18n-label]").forEach(el => (ar[el.dataset.i18nLabel] = el.getAttribute("aria-label")));
-ar.copied = "الإيميل اتنسخ";
-dict.ar = ar;
-
-function t(key) { return dict[document.documentElement.lang]?.[key] ?? ar[key] ?? key; }
-
-function apply(lang) {
-  const html = document.documentElement;
-  html.lang = lang;
-  html.dir = lang === "ar" ? "rtl" : "ltr";
-  document.querySelectorAll("[data-i18n]").forEach(el => (el.textContent = t(el.dataset.i18n)));
-  document.querySelectorAll("[data-i18n-label]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nLabel)));
-  const btn = document.getElementById("lang");
-  if (btn) { btn.textContent = lang === "ar" ? "English" : "عربي"; btn.lang = lang === "ar" ? "en" : "ar"; }
-  try { localStorage.setItem("lang", lang); } catch {}
-}
-
-if (document.documentElement.lang === "en") apply("en");   // boot.js set it from the last visit; now fill the texts
-document.getElementById("lang")?.addEventListener("click", () => apply(document.documentElement.lang === "ar" ? "en" : "ar"));
-
-const copy = document.getElementById("copy");
-copy?.addEventListener("click", async () => {
-  const status = document.getElementById("status");
-  try { await navigator.clipboard.writeText("hello@nadine.example"); status.textContent = t("copied"); }
-  catch { status.textContent = "hello@nadine.example"; }
-});
-~~~
-
-- [[dict.en]]: كل الكلام الإنجليزي للتلات صفحات في مكان واحد. العربي مش مكتوب هنا أصلًا.
-- [[document.querySelectorAll("[data-i18n]").forEach(el => (ar[el.dataset.i18n] = el.textContent))]]: بيقرا العربي من الصفحة **قبل** أي تبديل ويحفظه، فلما ترجع للعربي يرجع نفس الكلام. [[el.dataset.i18n]] هو قيمة [[data-i18n]] ([[dataset]] بيحوّل [[data-i18n-label]] لـ [[i18nLabel]]).
-- [[t(key)]]: الكلمة بلغة الصفحة دلوقتي، ولو مش موجودة العربي، ولو مش موجود المفتاح نفسه (فتشوف [[p6]] على الصفحة بدل فراغ، وده بيبيّن الناقص).
-- [[apply(lang)]]: [[html.lang]] و [[html.dir]]، وكل النصوص، وكل الـ [[aria-label]]، ونص الزرار و [[lang]] بتاعه، والحفظ.
-- [[if (document.documentElement.lang === "en") apply("en")]]: [[boot.js]] غيّر [[lang]] قبل الرسم، فهنا بنحط الكلام الإنجليزي.
-- [[navigator.clipboard.writeText]]: بيشتغل على [[https]] و [[localhost]] و [[127.0.0.1]] بس، ولو اتمنع ([[catch]]) بنكتب الإيميل نفسه في الـ status عشان يتنسخ بإيدك.
-
-### اتشغّل فعلًا
-
-~~~text node check-portfolio.mjs (أول ٣ سطور، Chrome 156)
-lang before: ar | rtl | بابني مواقع سريعة، وأي حد يقدر يستخدمها.
-lang after:  en | ltr | I build fast websites anyone can use. | Nadine Fouad | Front-end developer | brand x = 48
-after reload: en I build fast websites anyone can use.
-~~~
-
-[[brand x = 48]]: الاسم بقى على الشمال (48 = الـ gutter على 1280) من غير ولا قاعدة CSS للإنجليزي، لأن [[.brand]] عليه [[margin-inline-end: auto]] (بيزق الباقي لآخر السطر في الاتجاهين).
-
-~~~javascript keys.mjs: كل مفتاح في الصفحات موجود في dict.en؟
-// every data-i18n key in the pages must exist in dict.en
-import fs from "node:fs";
-const src = fs.readFileSync("js/i18n.js", "utf8");
-const en = new Set([...src.slice(src.indexOf("en: {"), src.indexOf("},\n};")).matchAll(/(\w+): "/g)].map(m => m[1]));
-let bad = 0;
-for (const f of ["index.html", "work/tide-notes.html", "cv.html"]) {
-  const keys = [...fs.readFileSync(f, "utf8").matchAll(/data-i18n(?:-label)?="([^"]+)"/g)].map(m => m[1]);
-  const missing = [...new Set(keys)].filter(k => !en.has(k));
-  bad += missing.length;
-  console.log(f.padEnd(22), keys.length, "keys, missing in en:", missing.join(", ") || "none");
-}
-process.exitCode = bad ? 1 : 0;
-~~~
-
-~~~text
-index.html             39 keys, missing in en: none
-work/tide-notes.html   28 keys, missing in en: none
-cv.html                14 keys, missing in en: none
-~~~
-
----
-
-## الغلطات اللي حصلت في الخطوة دي
-
-### ١. الصفحة بتتنطط بالإنجليزي: CLS 0.1402
-
-أول نسخة كان آخرها [[<script src="js/i18n.js" type="module">]]. قست بـ [[PerformanceObserver]] على [[layout-shift]]، ومعاه [[MutationObserver]] بيسجّل إمتى [[dir]] اتغيّر، على موبايل 390 و CPU أبطأ ٤ مرات واللغة المحفوظة إنجليزي:
-
-~~~text
-B2: boot.js in place, English saved CLS 0.1402 FCP 2364 dir changed at 2468 ... shift sources: SECTION,DIV,NAV,UL
-~~~
-
-يعني: أول رسمة (FCP) حصلت عند 2364ms، والـ module اشتغل عند 2468ms وحط الكلام الإنجليزي، فالأقسام اتحركت (السطور الإنجليزي أقصر من العربي). [[boot.js]] كان عامل شغله (الاتجاه اتقلب قبل الرسم)، بس الكلام نفسه اتبدّل بعده. الـ module بيتأجل لحد ما الـ HTML كله يتقري، والمتصفح مش ملزم يستنّاه قبل ما يرسم.
-
-التصليح: [[<script src="js/i18n.js">]] عادي في آخر الـ body (ومن غير [[export]]، لأن الـ classic script مبيفهمش [[export]]). والقياس بالسكربت ده، ٣ مرات والوسط، لأن أول تشغيل لـ Chrome دايمًا أبطأ:
-
-~~~javascript rep.mjs
-// median of 3 runs: CLS, FCP, LCP for Arabic and for saved English
-import { chromium } from "playwright-core";
-const browser = await chromium.launch({ channel: "chrome" });
-const url = process.argv[2] || "http://127.0.0.1:5501/";
-for (const lang of ["ar", "en"]) {
-  const runs = [];
-  for (let i = 0; i < 3; i++) {
-    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    const page = await ctx.newPage();
-    await (await ctx.newCDPSession(page)).send("Emulation.setCPUThrottlingRate", { rate: 4 });
-    await page.addInitScript(l => {
-      if (l === "en") localStorage.setItem("lang", "en");
-      window.__cls = 0;
-      new PerformanceObserver(x => x.getEntries().forEach(e => { if (!e.hadRecentInput) window.__cls += e.value; })).observe({ type: "layout-shift", buffered: true });
-      new PerformanceObserver(x => { window.__fcp = x.getEntries()[0].startTime; }).observe({ type: "paint", buffered: true });
-      new PerformanceObserver(x => { window.__lcp = x.getEntries().at(-1).startTime; }).observe({ type: "largest-contentful-paint", buffered: true });
-    }, lang);
-    await page.goto(url); await page.waitForTimeout(1500);
-    runs.push(await page.evaluate(() => [window.__cls, window.__fcp, window.__lcp]));
-    await ctx.close();
-  }
-  const med = k => runs.map(r => r[k]).sort((a, b) => a - b)[1];
-  console.log(lang, "CLS", med(0).toFixed(4), "FCP", Math.round(med(1)), "LCP", Math.round(med(2)), "(median of 3)");
-}
-await browser.close();
-~~~
-
-- [[Emulation.setCPUThrottlingRate]] بـ [[rate: 4]]: أمر DevTools Protocol بيخلي الـ CPU أبطأ ٤ مرات (زي موبايل متوسط). نفس الاختيار اللي في تاب Performance.
-- [[addInitScript]]: بيشتغل في الصفحة قبل أي سكربت بتاعها، فالـ observers بيلحقوا أول shift. و [[buffered: true]] بيجيب اللي حصل قبل ما الـ observer يتعمل.
-- [[hadRecentInput]]: الـ shift اللي بيحصل بعد ضغطة بنص ثانية مبيتحسبش (اليوزر هو اللي عمله).
-- [[sort]] و [[[1]]]: الوسط من ٣ (مش المتوسط)، عشان قياس واحد شاذ ميغيّرش النتيجة.
-
-~~~text node rep.mjs (الوسط بتاع ٣ مرات)
-ar CLS 0.0000 FCP 376 LCP 376 (median of 3)
-en CLS 0.0000 FCP 272 LCP 272 (median of 3)
-~~~
-
-> ده مش ضمان ١٠٠٪: لو ملف [[i18n.js]] اتأخر في الشبكة، المتصفح ممكن يرسم العربي الأول. الحل المضمون صفحتين ثابتين لكل لغة (المشروع الكبير في آخر الوحدة). وفي المعمل الأول كان فيه نسخة «من غير boot.js» خالص: اللغة المحفوظة **اتجاهلت** لأن [[i18n.js]] بيسأل [[lang]] اللي [[boot.js]] هو اللي بيحطها. الاتنين محتاجين بعض.
-
-### ٢. «40+» بقت «+40»
-
-في لقطة الصفحة على 1280 كارت «مشروع اتسلّم» كان مكتوب فيه [[+40]]. قست مكان الحرف بـ [[Range.getBoundingClientRect]]:
-
-~~~text
-<dd>40+</dd>          + on the left: reads +40
-<span dir="ltr">40+</span> + on the right: reads 40+
-~~~
-
-نفس الحاجة بتحصل في «٥٠٪+» و «C++» و «.NET» و «(2025)» في آخر سطر عربي. أي كلمة أو رقم إنجليزي فيها علامة في الطرف: حطه في [[dir="ltr"]] (أو [[<bdi>]] لو المحتوى جاي من المستخدم ومتعرفش اتجاهه).
-
-### ٣. اسم التاب فضل عربي
-
-أول نسخة كانت بتبدّل كل الكلام ما عدا [[<title>]]، فالتاب واللي بيعمل bookmark بيشوف العربي. التصليح [[data-i18n="tHome"]] على [[<title>]] نفسه (من غير كود زيادة)، ومفتاح لكل صفحة ([[tHome]] و [[tCase]] و [[tCv]]).
-
----
-
-## الخلاصة
-
-| الحاجة | الطريقة |
+| المحتوى | [[sandbox]] المناسب |
 |---|---|
-| الاتجاه | [[lang]] و [[dir]] على [[<html>]] بس، والـ CSS كله logical |
-| الترجمة | [[data-i18n]] على النص و [[data-i18n-label]] على [[aria-label]]، والعربي من الصفحة نفسها |
-| قبل الرسم | [[boot.js]] classic في الـ head، و [[i18n.js]] classic في آخر الـ body |
-| إنجليزي جوه عربي | [[dir="ltr"]] على الحتة نفسها، و [[lang="en"]] على الكلمة الإنجليزي |
-| الفحص | [[keys.mjs]]: كل مفتاح موجود، و [[rep.mjs]]: CLS بالإنجليزي صفر |`,
-          sol: R`بعد الزرار [[document.documentElement.dir]] بيبقى [[ltr]] و [[document.title]] بيبقى [[Nadine Fouad | Front-end developer]]، والـ refresh بيفضل إنجليزي. ولما تحوّل [[i18n.js]] لـ module، [[rep.mjs]] بيطلّع CLS للإنجليزي فوق الصفر (في المعمل 0.1402 في قياس واحد)، ولما ترجّعه classic بيرجع [[en CLS 0.0000]]. لو الرقم عندك طلع صفر حتى مع الـ module، زوّد [[setCPUThrottlingRate]] لـ 6: الفرق بيبان أكتر على جهاز أبطأ.`,
-          practice: [
-            {
-              lvl: R`سريع`,
-              t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]، الكلمات دي هتتعرض إزاي؟ [[<p>السعر 250+</p>]]، و [[<p>اتعلمت C++</p>]]، و [[<p>الإصدار (v2)</p>]]. اكتب توقّعك وبعدين افتحهم.`,
-              done: R`اتوقعت إن الـ [[+]] في الأول والتاني بيروح على الشمال من الرقم أو الكلمة، والقوس في التالت بيتلخبط، وشفت ده فعلًا، وصلّحت التلاتة بـ [[<span dir="ltr">]] حوالين الحتة الإنجليزي بس.`,
-              sol: R`~~~live 290 290 bidi.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>bidi</title></head>
-<body>
-  <main><h1>التلات حالات</h1>
-    <p id="a">السعر 250+</p>
-    <p id="b">اتعلمت C++</p>
-    <p id="c">الإصدار (v2)</p>
-    <p id="a2">السعر <span dir="ltr">250+</span></p>
-    <p id="b2">اتعلمت <span dir="ltr">C++</span></p>
-    <p id="c2">الإصدار <span dir="ltr">(v2)</span></p>
-  </main>
-</body></html>
+| HTML ثابت (معاينة رسالة، بطاقة) | [[sandbox]] فاضي |
+| ويدجت فيه JavaScript، ومش محتاج يحفظ حاجة | [[allow-scripts]] |
+| مشغّل فيديو أو خريطة من مزوّد | [[allow-scripts allow-same-origin]] وغالبًا [[allow-popups]] للينك «افتح في الموقع» |
+| فورم دفع أو اشتراك من مزوّد | [[allow-scripts allow-same-origin allow-forms]] |
+
+---
+
+## ٤. [[<iframe allow="fullscreen; geolocation">]]: صلاحيات الجهاز
+
+[[sandbox]] عن اللي الصفحة تعمله **في المتصفح**. [[allow]] عن **مزايا الجهاز**: الكاميرا، المايك، المكان، ملو الشاشة، التشغيل التلقائي. اسمه الرسمي Permissions Policy.
+
+~~~text القياس من Chrome (document.featurePolicy.allowsFeature جوه الـ iframe)
+                                           geolocation   camera   fullscreen   autoplay
+iframe من نفس الموقع، من غير allow:         true          true     true         true
+iframe من موقع تاني، من غير allow:          false         false    false        false
+   + allow="geolocation; camera; fullscreen; autoplay":
+                                           true          true     true         true
+   + allowfullscreen بس:                   false         false    true         false
+iframe من نفس الموقع + allow="geolocation 'none'":
+                                           false         true     true         true
 ~~~
 
-المتصفح بيرتب النص حرف حرف بخوارزمية bidi. الحروف العربي والإنجليزي ليهم اتجاه قوي، والأرقام ليها اتجاه ضعيف، لكن [[+]] والأقواس **محايدة**: مالهاش اتجاه، فبتاخد اتجاه السطر لو واقفة في الآخر.
+- صفحة من موقع تاني **مبتاخدش أي حاجة** لحد ما تسمّيها في [[allow]]. عشان كده كود التضمين بتاع أي مشغّل فيديو فيه [[allow="..."]] طويل.
+- الصلاحيات بينها [[;]]. و [['none']] بعد الاسم بتمنعها حتى عن صفحة من موقعك.
+- [[allow]] مبيدّيش الصلاحية للصفحة مباشرة. هو بيسمحلها **تطلب**. الزائر لسه هيشوف «الموقع عايز يعرف مكانك» ويوافق أو يرفض.
+- [[autoplay]] هنا هو البند الرابع في شروط التشغيل التلقائي (درس «audio و source» قسم ٦).
 
-- [[250+]]: الـ [[+]] في آخر سطر RTL، فبتروح لأقصى الشمال، قبل الرقم في الشكل: [[+250]].
-- [[C++]]: نفس الكلام، الـ [[++]] بتطلع على شمال الـ C.
-- [[(v2)]]: القوس الأخير محايد في آخر السطر، فبيتزق، والقوسين بيطلعوا في مكان غريب.
+الأسامي اللي بتقابلها: [[fullscreen]] و [[autoplay]] و [[picture-in-picture]] و [[encrypted-media]] و [[camera]] و [[microphone]] و [[geolocation]] و [[clipboard-write]]. القايمة الكاملة في صفحة Permissions Policy على MDN.
 
-[[<span dir="ltr">]] حوالين الحتة الإنجليزي بيعمل لها جزيرة ليها اتجاهها، فالعلامات جواها بتاخد LTR. وفي الـ HTML مش محتاج تحرّك حاجة: الترتيب في الملف زي ما بتقراه.
+### [[<iframe allowfullscreen>]]
 
-الغلطة الشائعة: تقلب النص في الملف عشان يبان صح ([[+250]])، فالبحث والنسخ والقارئ يبوظوا.
+ده الشكل القديم لـ [[allow="fullscreen"]]. MDN: «legacy»، واتعرّف من جديد على إنه [[allow="fullscreen *"]]. القياس اللي فوق بيأكد: فتح [[fullscreen]] بس. لسه موجود في كود التضمين بتاع خدمات كتير، ووجوده مع [[allow]] مبيضرّش. في كود جديد اكتب [[allow="fullscreen"]].
 
-~~~text الناتج (Chrome 156: مكان العلامة بالنسبة للحرف اللي جنبها، من Range.getClientRects)
-250+                   العلامة على شمال 2
-250+ بـ dir            العلامة على يمين 2
-C++                    العلامة على شمال C
-C++ بـ dir             العلامة على يمين C
-القوس الأخير في (v2)   العلامة على شمال v
-(v2) بـ dir            العلامة على يمين v
-~~~` },
-            {
-              lvl: R`سريع`,
-              t: R`**دوّر بنفسك:** من صفحة [[<bdi>]] على MDN اعرف الفرق بينه وبين [[<span dir="ltr">]]، وإمتى كل واحد أنسب. جاوب بمثال من الـ dashboard: اسم عضو ممكن يبقى عربي أو إنجليزي.`,
-              done: R`كتبت إن [[<bdi>]] بيحدد اتجاهه من محتواه (زي [[dir="auto"]]) فمناسب للنص اللي مش عارف اتجاهه زي أسماء الأعضاء، و [[dir="ltr"]] لما انت متأكد إنه إنجليزي (إيميل، رقم بعلامة).`,
-              sol: R`~~~live 190 190 bdi-table.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>bdi</title></head>
-<body>
-  <main><h1>الأعضاء</h1>
-    <ul>
-      <li><bdi>Mona Adel</bdi>: 12 زيارة</li>
-      <li><bdi>منى عادل</bdi>: 12 زيارة</li>
-      <li>Mona Adel: 12 زيارة</li>
-    </ul>
-    <p>الإيميل: <span dir="ltr">mona+gym@example.com</span></p>
-  </main>
-</body></html>
+---
+
+## ٥. [[<iframe loading="lazy">]]
+
+~~~text القياس من Chrome (الاتنين تحت الشاشة بـ 6000px، والسيرفر بيكتب الطلبات)
+<iframe src="far.html?eager">                    GET /far.html?eager     ← اتطلب مع الصفحة
+<iframe loading="lazy" src="far.html?lazy">      (مفيش أي طلب)           ← مستني الـ scroll
 ~~~
 
-الفرق في إنك **تعرف** الاتجاه ولا لأ:
+مشغّل فيديو من مزوّد بيحمّل معاه سكربتات كتير (الأرقام في درس «video و iframe»). لو تحت في الصفحة، [[loading="lazy"]] بيأجّل ده كله. MDN: التأجيل بيحصل بس لما JavaScript شغال في المتصفح.
 
-- [[<bdi>]] بيحدد اتجاهه من محتواه، زي [[dir="auto"]]، ومبيأثرش على النص اللي حواليه. ده اللي ينفع لأسماء الأعضاء في الـ dashboard، لأن اسم ممكن يبقى عربي أو إنجليزي، وانت مش عارف قبل التشغيل.
-- [[<span dir="ltr">]] لما انت متأكد إنه إنجليزي: إيميل، أو رقم بعلامة، أو [[C++]].
+---
 
-المثال الأخير في اللستة هو المشكلة: اسم إنجليزي من غير عزل في سطر عربي، فالنقطتين والرقم بيبقوا جزء من السطر، و «12» ممكن تنط جنب الاسم.
+## ٦. [[<iframe referrerpolicy="no-referrer">]]
 
-المصدر: MDN صفحة [[<bdi>]].
+كل طلب بيخرج من صفحتك معاه header اسمه [[Referer]]: «الطلب ده جاي من الصفحة الفلانية». [[referrerpolicy]] بيحدد يتبعت منه قد إيه.
 
-الغلطة الشائعة: تحط [[dir="ltr"]] على كل الأسماء، فالاسم العربي يتكسر.
-
-~~~text الناتج (Chrome 156: الاتجاه المحسوب، direction لكل عنصر)
-<bdi>Mona Adel</bdi>   المحتوى LTR، و left لـ M < left لـ d: true
-<bdi>منى عادل</bdi>    أول حرف على اليمين: true
-unicode-bidi بتاع bdi: isolate
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**صلّح الكود البايظ:** النسخة دي من الـ header بتتكسر بالإنجليزي: [[.brand { margin-left: auto }]] و [[.skip { left: 1rem }]] و [[.lang { margin-left: 0.5rem }]]. اعرف بتتكسر إزاي من غير ما تشغّل، وبعدين صلّحها بـ logical properties.`,
-              done: R`عرفت إن [[margin-left: auto]] في LTR بيزق الاسم لليمين (عكس المطلوب)، وإن الـ skip link بيظهر على الشمال في العربي، وبدّلتهم بـ [[margin-inline-end]] و [[inset-inline-start]] و [[margin-inline-start]]، و [[brand x]] في الإنجليزي بقى 48 تاني.`,
-              sol: R`~~~css بعد التصليح
-.brand { margin-inline-end: auto; }
-.skip  { inset-inline-start: 1rem; }
-.lang  { margin-inline-start: 0.5rem; }
+~~~text القياس من Chrome (الـ Referer اللي وصل السيرفر، والصفحة الأم http://127.0.0.1:8731/if1.html)
+iframe لموقع تاني، من غير referrerpolicy:      Referer: http://127.0.0.1:8731/           ← اسم الموقع بس
+iframe لنفس الموقع، من غير referrerpolicy:     Referer: http://127.0.0.1:8731/if1.html   ← العنوان كامل
+referrerpolicy="no-referrer":                  (مفيش Referer)
+referrerpolicy="unsafe-url":                   Referer: http://127.0.0.1:8731/if1.html   ← كامل، حتى لموقع تاني
 ~~~
 
-~~~view 200 240 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+- الافتراضي [[strict-origin-when-cross-origin]]: الموقع التاني بيعرف اسم موقعك ومبيعرفش الصفحة. ده كويس في أغلب الحالات.
+- [[no-referrer]]: لو عنوان الصفحة نفسه فيه حاجة خاصة (رقم طلب، اسم مستخدم) أو مش عايز المزوّد يعرف موقعك.
+- [[unsafe-url]]: متستخدمهاش.
+- نفس الـ attribute على [[<a>]] و [[<img>]] و [[<area>]] بنفس القيم.
+
+---
+
+## ٧. [[<iframe title="...">]]
+
+~~~text القياس من Chrome (شجرة الـ accessibility)
+<iframe src="..." title="خريطة فرع المعادي">     →  Iframe «خريطة فرع المعادي»
+<iframe src="...">                               →  Iframe «»
+<iframe src="..." name="byname">                 →  Iframe «»       ← name مش اسم للقارئ
+~~~
+
+MDN: من غير [[title]] مستخدم قارئ الشاشة لازم يدخل جوه الـ iframe عشان يعرف هو إيه، وده متعب في صفحة فيها كذا واحد. اكتب المحتوى: «خريطة: استوديو المحطة في المعادي»، مش «خريطة» ولا «iframe».
+
+---
+
+## ٨. الحالة الحقيقية: مشغّل أو خريطة من مزوّد
+
+المزوّد بيدّيك «كود التضمين» جاهز. ده شكله (بعنوان متخيل):
+
+~~~html
+<iframe width="560" height="315" src="https://player.example.test/embed/ep1"
+        frameborder="0" allowfullscreen></iframe>
+~~~
+
+قبل ما تلزقه، عدّي عليه:
+
+| البند | تعمل إيه |
+|---|---|
+| [[title]] | مش موجود في أغلب الأكواد الجاهزة: زوّده |
+| [[loading="lazy"]] | زوّده لو الـ iframe مش في أول الشاشة |
+| [[allow]] | سيب اللي المشغّل محتاجه بس. كود جاهز فيه [[camera; microphone]] لمشغّل فيديو: امسحهم |
+| [[sandbox]] | جرّبه بالترتيب اللي في قسم ٣. لو المزوّد مش بيشتغل بيه خالص، انت بتثق فيه بالكامل: قرار، مش تفصيلة |
+| [[frameborder="0"]] | attribute قديم. مكانه [[border: 0]] في الـ CSS |
+| [[width]] و [[height]] | سيبهم، وخلّيه يتصغّر بـ [[aspect-ratio]] (درس «video و iframe») |
+
+### «الموقع رفض يتعرض»
+
+مش كل موقع بيقبل يتحط في iframe. الموقع نفسه بيقرر، بـ header في رد السيرفر:
+
+~~~text القياس من Chrome (صفحة سيرفرها بيبعت الـ header ده)
+X-Frame-Options: DENY
+   → مكان الـ iframe: صندوق رمادي في نصه أيقونة ورقة حزينة      contentDocument = null
+
+Content-Security-Policy: frame-ancestors 'none'
+   → نفس الصندوق، وفي الـ Console:
+Framing 'http://127.0.0.1:8731/' violates the following Content Security Policy directive: "frame-ancestors 'none'". The request has been blocked.
+~~~
+
+ده مش غلط في كودك ومفيش attribute بيحلّه. البنوك وصفحات تسجيل الدخول بتعمل كده عشان محدش يحطها جوه صفحة مزيّفة. الحل: لينك عادي للموقع، أو صفحة التضمين الرسمية لو المزوّد عنده واحدة (العنوان اللي فيه [[/embed/]]).
+
+---
+
+## ٩. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| iframe من غير [[title]] | قارئ الشاشة بيقول «Iframe» وبس |
+| محتوى من مستخدم في [[srcdoc]] من غير [[sandbox]] | الكود ده بيشتغل كأنه صفحتك: يقرا ويغيّر أي حاجة |
+| [[allow-scripts allow-same-origin]] على صفحة من موقعك | تقدر تشيل الـ sandbox عن نفسها |
+| [[sandbox]] على مشغّل فيديو من غير [[allow-scripts]] | صندوق فاضي: المشغّل كله JavaScript |
+| [[allowfullscreen="false"]] | attribute boolean: وجوده معناه «مسموح» |
+| لصق كود التضمين زي ما هو | صلاحيات زيادة، ومن غير [[title]]، ومن غير lazy |
+| تحاول تحط موقع بيبعت [[X-Frame-Options]] | صندوق رمادي، ومفيش حل من ناحيتك |
+| تستنى الـ iframe يكبر على قد محتواه | بيفضل 300 × 150 أو المقاس اللي كتبته |
+
+---
+
+## الخلاصة
+
+- الـ iframe صفحة تانية: مبتورّثش CSS، ومن موقع تاني مبتقراش صفحتك ولا انت بتقراها.
+- [[sandbox]] فاضي بيقفل الكل، وكل كلمة [[allow-...]] بتفتح حاجة. ابدأ فاضي وزوّد.
+- [[allow-scripts]] مع [[allow-same-origin]]: عادي لمزوّد من موقع تاني، وممنوع لمحتوى من موقعك.
+- [[allow]] لمزايا الجهاز، و iframe من موقع تاني مبياخدش أي واحدة من غيره.
+- [[srcdoc]] للمحتوى المكتوب، و [[loading="lazy"]] للي تحت، و [[title]] دايمًا.`,
+          try: R`اعمل [[frames.html]] فيها نفس الـ iframe تلات مرات: مرة من غير [[sandbox]]، ومرة بـ [[sandbox]] فاضي، ومرة بـ [[sandbox="allow-scripts"]]. والمحتوى في [[srcdoc]]: زرار عليه [[onclick]] بيغيّر الكلام اللي جنبه من «لسه» لـ «اتداس». وكل واحد ليه [[title]] مختلف. افتحها ودوس على التلات أزرار: مين اشتغل؟ وافتح الـ Console وشوف الرسالة.`,
+          sol: R`~~~live 162 298 frames.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-body { font-family: system-ui, sans-serif; margin: 1rem; } header { position: relative; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; margin-bottom: 0.75rem; border: 1px solid #cbd5e1; border-radius: 10px; }
-.skip { position: absolute; top: 0.25rem; padding: 0.25rem 0.5rem; background: #0f172a; color: #fff; border-radius: 6px; }
-.skip:not(:focus) { width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } .brand { font-weight: 800; }
-</style>
-<style>
-/* من الحل */
-.brand { margin-inline-end: auto; }
-.skip  { inset-inline-start: 1rem; }
-.lang  { margin-inline-start: 0.5rem; }
-</style>
+<title>تجربة sandbox</title>
 </head>
 <body>
-<header dir="rtl"><a class="skip" href="#">اتخطّى للمحتوى</a><a class="brand" href="#">البراند</a><a href="#">الشغل</a><a class="lang" href="#">English</a></header>
-<header dir="ltr"><a class="skip" href="#">Skip to content</a><a class="brand" href="#">Brand</a><a href="#">Work</a><a class="lang" href="#">عربي</a></header>
-<p>نفس الـ CSS في الاتجاهين: البراند في أول السطر واللينكات في آخره. دوس Tab: «اتخطّى» بيظهر في بداية السطر (يمين في العربي، شمال في الإنجليزي).</p>
+<h1>تجربة sandbox</h1>
+<iframe title="من غير sandbox" width="210" height="60"
+  srcdoc="<button onclick=&quot;s.textContent='اتداس'&quot;>دوس</button> <span id=s>لسه</span>"></iframe>
+<iframe sandbox title="sandbox فاضي" width="210" height="60"
+  srcdoc="<button onclick=&quot;s.textContent='اتداس'&quot;>دوس</button> <span id=s>لسه</span>"></iframe>
+<iframe sandbox="allow-scripts" title="sandbox مع allow-scripts" width="210" height="60"
+  srcdoc="<button onclick=&quot;s.textContent='اتداس'&quot;>دوس</button> <span id=s>لسه</span>"></iframe>
 </body>
 </html>
 ~~~
 
-بيبني على [[site.css]] في خطوة الهيكل. قبل ما تشغّل: [[margin-left: auto]] بياخد كل المساحة الفاضية على **شمال** العنصر.
+**هتشوف إيه:**
 
-- في العربي الاسم على اليمين، والفراغ على شماله، فالكود شغال بالصدفة. وفي الإنجليزي الاسم أول السطر على الشمال، والـ auto margin بيزقه لليمين خالص، عكس المطلوب تمامًا.
-- [[.skip { left: 1rem }]] بيظهر شمال دايمًا، حتى في العربي.
-- [[.lang { margin-left }]] فيه نفس الفكرة.
+- الأول والتالت: الكلمة بتتغيّر لـ «اتداس».
+- التاني ([[sandbox]] فاضي): الزرار بيتداس ومفيش حاجة بتحصل.
 
-الـ logical properties بتقول المعنى مش المكان: [[inline-end]] = «نهاية السطر»، فيمين الاسم في الإنجليزي وشماله في العربي. بتكتب مرة، وتشتغل في الاتجاهين، وده اللي خلى [[dir]] وحده يقلب الصفحة.
+**ليه كده:** [[onclick]] سكربت. [[sandbox]] الفاضي بيمنع السكربتات كلها، ومنها اللي مكتوب في attribute. و [[allow-scripts]] بيرجّعها، والصفحة لسه مقفول عليها الباقي (فورم، نوافذ، origin).
 
-الغلطة الشائعة: تكتب [[[dir="rtl"] .brand { ... }]] لكل قاعدة، فالملف يتضاعف.
+**لاحظ [[&quot;]]:** قيمة [[srcdoc]] بين علامتين تنصيص، فأي علامة تنصيص جواها بتتكتب [[&quot;]].
 
-~~~text الناتج (Chrome 156، عرض 1280، صفحة en: مكان اسم البراند)
-margin-left: auto:        brand x = 783
-margin-inline-end: auto:  brand x = 48
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**ابني:** زوّد لغة تالتة (فرنساوي مثلًا، [[dir="ltr"]]) في [[dict]]، وخلي الزرار [[<select>]] بـ label بدل زرار تبديل، وكل اختيار مكتوب بلغته هو ([[lang]] على كل [[<option>]]).`,
-              done: R`الـ select بيقلب الصفحة للغات التلاتة، و [[keys.mjs]] (بعد ما تخليه يفحص [[fr]] كمان) بيقول [[none]]، والـ refresh بيفتكر الاختيار، و axe صفر في التلات لغات.`,
-              sol: R`~~~live 120 120 portfolio/index.html (مكان زرار اللغة)
-<label class="lang-pick">
-  <span class="sr-only">اللغة</span>
-  <select id="lang">
-    <option value="ar" lang="ar">العربية</option>
-    <option value="en" lang="en">English</option>
-    <option value="fr" lang="fr">Français</option>
-  </select>
-</label>
-~~~
+**الغلطة الشائعة:** تحل المشكلة بإنك تمسح [[sandbox]] كله. اللي ناقص كلمة واحدة.
 
-~~~js portfolio/js/i18n.js
-// ١. جوه dict، جنب en:
-fr: { tHome: "Nadine Fouad | Développeuse front-end", skip: "Aller au contenu", navWork: "Projets", /* باقي المفاتيح */ },
-
-// ٢. جوه apply(lang): مكان سطور الزرار
-const sel = document.getElementById("lang");
-if (sel) sel.value = lang;
-
-// ٣. مكان addEventListener بتاع الزرار
-document.getElementById("lang")?.addEventListener("change", (e) => apply(e.target.value));
-~~~
-
-~~~js portfolio/js/boot.js (قيمة تالتة)
-if (lang === "en" || lang === "fr") { document.documentElement.lang = lang; document.documentElement.dir = "ltr"; }
-~~~
-
-~~~js keys.mjs (يفحص لغتين)
-for (const lang of ["en", "fr"]) {
-  const start = src.indexOf(lang + ": {");
-  const end = src.indexOf("},", start);
-  const have = new Set([...src.slice(start, end).matchAll(/(\w+): "/g)].map((m) => m[1]));
-  // ... نفس الفحص لكل صفحة
-}
-~~~
-
-بيبني على [[i18n.js]]. [[html.dir = lang === "ar" ? "rtl" : "ltr"]] موجود من الأول، فالفرنساوي بيقلب LTR لوحده.
-
-- الزرار كان بدّالة بين اتنين. مع ٣ لغات لازم اختيار، و [[<select>]] جاهز بالكيبورد.
-- [[<span class="sr-only">]] هو الـ label، مخفي بصريًا.
-- كل [[<option>]] مكتوب بلغته، و [[lang]] عليه عشان قارئ الشاشة ينطقه صح، والزائر يلاقي لغته باسمها.
-- [[boot.js]] لازم يعرف [[fr]]، وإلا الـ refresh يرجع عربي.
-
-ترجمة المفاتيح كلها شغلك (حوالي ٨٠ مفتاح). في التشغيل تحت القيم اللي مش مترجمة كانت منسوخة من [[en]]، عشان نتأكد إن الآلية نفسها شغالة، ولا تعتبرها ترجمة.
-
-الغلطة الشائعة: تضيف اللغة في [[dict]] وتنسى [[boot.js]]، فالصفحة ترجع عربي وتومض عند الفتح.
-
-~~~text الناتج (Chrome 156)
-اختيار Français: lang = fr، و dir = ltr
-بعد refresh: lang = fr، وقيمة الـ select = fr
-keys.mjs: en index.html missing: none | en work/tide-notes.html missing: none | en cv.html missing: none | fr index.html missing: none | fr work/tide-notes.html missing: none | fr cv.html missing: none
-axe: ar 0، و en 0، و fr 0
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**مسألة:** اكتب [[missingKeys(html, dict)]] بترجّع لكل لغة في [[dict]] المفاتيح اللي في الـ HTML ومش فيها، والمفاتيح اللي فيها ومش مستخدمة، وتخرج بـ 1 لو فيه ناقص. (شكل فحص الـ ci في الدرس.)`,
-              done: R`على صفحة فيها ٥ مفاتيح وقاموس ناقصه [[contactText]] وزيادة فيه [[oldKey]] بتطبع [[missing in en: contactText]] و [[unused in en: oldKey]] وتخرج بـ 1، ولما تزوّد المفتاح بتخرج بـ 0.`,
-              sol: R`~~~js missing-keys.mjs
-export function missingKeys(html, dict) {
-  const used = [...new Set([...html.matchAll(/data-i18n(?:-label)?="([^"]+)"/g)].map((m) => m[1]))];
-  const out = {};
-  for (const [lang, table] of Object.entries(dict)) {
-    out[lang] = {
-      missing: used.filter((k) => !(k in table)),
-      unused: Object.keys(table).filter((k) => !used.includes(k)),
-    };
-  }
-  return out;
-}
-
-const html = '<title data-i18n="tHome">x</title><a data-i18n="skip">x</a><nav data-i18n-label="navLabel"></nav><h1 data-i18n="heroTitle">x</h1><p data-i18n="contactText">x</p>';
-const dict = { en: { tHome: "Nadine Fouad", skip: "Skip to content", navLabel: "Sections", heroTitle: "I build fast websites", oldKey: "not used" } };
-
-const r = missingKeys(html, dict);
-for (const [lang, { missing, unused }] of Object.entries(r)) {
-  for (const k of missing) console.log($__btmissing in $__{lang}: $__{k}$__bt);
-  for (const k of unused) console.log($__btunused in $__{lang}: $__{k}$__bt);
-}
-process.exit(Object.values(r).some((x) => x.missing.length) ? 1 : 0);
-~~~
-
-- [[(?:-label)?]] بيمسك [[data-i18n]] و [[data-i18n-label]] بنفس الـ regex. [[(?:...)]] مجموعة مش بتتعد في [[m[1]]].
-- [[new Set]] لأن نفس المفتاح ممكن يتكرر في الصفحة.
-- [[k in table]] مش [[table[k]]]: الترجمة الفاضية [[""]] موجودة، و [[table[k]]] هيعتبرها ناقصة.
-- exit code بيتبني على الناقص بس. المفتاح الزيادة تنضيف، مش عطل، فبيتطبع ومبيوقعش الـ CI.
-
-الغلطة الشائعة: تخلي الزيادة توقع الفحص، فكل حد يمسح نص لازم يمسح المفتاح في نفس اللحظة، والناس تبدأ تتجاهله.
-
-~~~text الناتج (Node 24)
-ناقص contactText:
-missing in en: contactText
-unused in en: oldKey
-exit code 1
-
-بعد ما زوّدنا contactText:
-unused in en: oldKey
-exit code 0
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**قارن وقيس:** قيس CLS بالإنجليزي بتلات طرق لتحميل [[i18n.js]]: classic في آخر الـ body، و [[defer]] في الـ head، و [[type="module"]]، كل واحدة ٥ مرات على 390 و CPU أبطأ ٦ مرات. اكتب الوسط لكل طريقة وليه.`,
-              done: R`عندك جدول ٣ صفوف بالوسط في ظرفين (سيرفر محلي وشبكة بطيئة)، وعرفت إن الطرق التلاتة اتساوت في كل ظرف (صفر محليًا، ونفس الرقم لما الملف اتأخر): اللي بيقرر الـ shift هو هل [[i18n.js]] وصل قبل أول رسمة، مش نوع السكربت، والحل المضمون صفحة ثابتة لكل لغة.`,
-              sol: R`~~~js cls-load.mjs
-import { chromium } from "playwright-core";
-const url = process.argv[2];
-const browser = await chromium.launch({ channel: "chrome" });
-const run = async () => {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 800 } });
-  await ctx.addInitScript(() => {
-    localStorage.setItem("lang", "en");
-    window.__c = 0;
-    new PerformanceObserver((l) => l.getEntries().forEach((e) => { window.__c += e.value; })).observe({ type: "layout-shift", buffered: true });
-  });
-  const page = await ctx.newPage();
-  const cdp = await ctx.newCDPSession(page);
-  if (process.env.SLOW) {
-    await cdp.send("Network.enable");
-    await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 1.6 * 1024 * 1024 / 8, uploadThroughput: 750 * 1024 / 8 });
-  }
-  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 6 });
-  await page.goto(url);
-  await page.waitForTimeout(800);
-  const c = await page.evaluate(() => window.__c);
-  await ctx.close();
-  return c;
-};
-const v = [];
-for (let i = 0; i < 5; i++) v.push(await run());
-v.sort((a, b) => a - b);
-console.log("median", v[2].toFixed(4), " all", v.map((x) => x.toFixed(4)).join(" "));
-await browser.close();
-~~~
-
-الصفحة بالعربي في الـ HTML، و [[i18n.js]] بيبدّل النص للإنجليزي. لو المتصفح رسم قبل التبديل، الأسطر بتتغير والمحتوى يتحرك، وده CLS.
-
-النظرية: [[defer]] و [[type="module"]] بيتأجلوا لحد ما الـ HTML يتقري كله، والـ classic في آخر الـ body بيتنفذ قبل كده. فالمتوقع classic صفر والتانيين shift.
-
-القياس قال حاجة تانية: الطرق التلاتة **اتساوت** في الظرفين. على سيرفر محلي سريع صفر للكل، حتى بـ CPU ×6، لأن الملف بيوصل قبل أول رسمة. ولما الشبكة بطيئة الكل نفس الرقم، لأن المتصفح مبيستناش سكربت في آخر الـ body عشان يرسم اللي فوقه، فالعربي بيترسم الأول، حتى مع classic. يعني اللي بيقرر الـ shift هو **هل الملف وصل قبل أول رسمة**، مش نوع السكربت. والدرس نفسه قال ده: مش ضمان ١٠٠٪.
-
-الحل المضمون: صفحتين ثابتتين، واحدة لكل لغة، أو السيرفر يطلّع الـ HTML باللغة الصح. والوسط [[v[2]]] بعد الترتيب، لأن رقم واحد ممكن يبقى صدفة، وأول تشغيلة في الشبكة البطيئة طلعت صفر.
-
-الغلطة الشائعة: تقرا النظرية وتكتب الجدول من دماغك. وتقيس على جهازك بسيرفر محلي بس، فالكل صفر، وتستنتج إن مفيش مشكلة.
-
-~~~text الناتج (Chrome 156، 390، CPU ×6، الوسط من 5 مرات)
-                         سيرفر محلي    شبكة 150ms و 1.6Mbps
-classic في آخر الـ body: 0.0000        0.1394
-defer في الـ head:       0.0000        0.1394
-type="module":           0.0000        0.1394
-~~~` },
-          ],
-          ci: [
-            {
-              os: [
-                R`ubuntu`,
-                R`macos`,
-                R`windows`,
-              ],
-              sh: R`node`,
-              run: R`const html = '<title data-i18n="tHome">x</title><a data-i18n="skip">x</a><nav data-i18n-label="navLabel"></nav><h1 data-i18n="heroTitle">x</h1><p data-i18n="contactText">x</p>';
-const en = { tHome: "Nadine Fouad", skip: "Skip to content", navLabel: "Sections", heroTitle: "I build fast websites", oldKey: "not used" };
-const keys = [...html.matchAll(/data-i18n(?:-label)?="([^"]+)"/g)].map(m => m[1]);
-const missing = keys.filter(k => !(k in en));
-const unused = Object.keys(en).filter(k => !keys.includes(k));
-console.log("keys in page: " + keys.length);
-console.log("missing in en: " + (missing.join(", ") || "none"));
-console.log("unused in en: " + (unused.join(", ") || "none"));
-process.exitCode = missing.length ? 1 : 0;`,
-              code: 1,
-              expect: [
-                R`keys in page: 5`,
-                R`missing in en: contactText`,
-                R`unused in en: oldKey`,
-              ],
-            },
-          ],
-        },
-        {
-          cmd: R`بورتفوليو ٢: الكروت والفلتر والظهور بالسكرول`,
-          ref: [
-            { t: "MDN: Intersection Observer API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API" },
-            { t: "MDN: :has()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has" },
-            { t: "MDN: prefers-reduced-motion", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion" },
-          ],
-          title: R`شبكة كروت بتتظبط لوحدها، وفلتر بـ :has() من غير ولا سطر JS، وكارت كله لينك، وظهور بالسكرول بيحترم reduced motion وبيشتغل من غير JS ومش بيأخر الـ LCP`,
-          learn: R`تبني الـ CSS كله للصفحة: header زجاجي sticky، وأزرار بمتغيرات، و grid بـ [[auto-fill]] و [[minmax(min(100%, …))]]، وفلتر بـ radios و [[:has()]]، وكارت كله قابل للضغط من غير ما تلف الكارت في [[<a>]]، وظهور بالسكرول بـ IntersectionObserver بيتلغي مع reduced motion ومن غير JS.`,
-          out: R`[[site.css]] و [[reveal.js]]: كل فلتر بيعرض عدد الكروت الصح (5 و 3 و 2 و 1 و 1)، والكروت بتظهر بالسكرول، ومن غير JS أو مع reduced motion كلها ظاهرة من الأول، و LCP مش متأخر.`,
-          use: {
-            prog: R`درس «:has()» ودرس «auto-fit و minmax» ودرس «motion» في حتة واحدة، ومعاهم سؤال «إمتى الـ CSS لوحده كفاية وإمتى محتاج JS»: الفلتر CSS بس، والظهور محتاج JS بس الصفحة لازم تشتغل من غيره.`,
-            work: R`كروت بفلتر موجودة في كل portfolio ومتجر وصفحة خدمات. والحركة بالسكرول أكتر حاجة بتتطلب في التصميم وأكتر حاجة بتبوّظ الأداء والـ accessibility لو اتعملت غلط: هنا اتقاس إنها ممكن تأخر الـ LCP من 380 لـ 1200ms.`,
-            cs: R`progressive enhancement: المحتوى والوظيفة الأساسية من HTML و CSS، والـ JS طبقة زيادة. و [[:has()]] أول «parent selector» في CSS: القاعدة بتتطبق على عنصر حسب حالة عنصر جواه.`,
-          },
-          desc: R`الخطوة التانية في الـ portfolio: **الـ CSS كله** للصفحة الرئيسية (اللي بيتشارك مع الصفحتين التانيين)، و [[reveal.js]].
-
-**الفلتر من غير JS:** ٥ radios في [[<fieldset>]] (الكل، ومواقع، وسهولة الوصول، و API، وتصميم)، وكل كارت عليه [[data-tags="web a11y"]]. القاعدة: [[.work:has(input[value="web"]:checked) .card:not([data-tags~="web"])]] بتخفي أي كارت مش فيه الكلمة. [[~=]] معناها «من ضمن الكلمات المفصولة بمسافات»، فـ [[web]] متطابقش [[webgl]]. والـ radios عادية، فالأسهم بتتنقل بينهم والفلتر بيتغير (اتجرّب: ArrowLeft على «الكل» في صفحة RTL راح لـ «مواقع» و 3 كروت).
-
-**الكارت كله لينك:** [[.card h3 a::after { content: ""; position: absolute; inset: 0 }]] بيمد مساحة اللينك على الكارت كله، واللينك نفسه لسه جوه العنوان، فقارئ الشاشة بيقرا اسم المشروع بس مش الكارت كله، والـ Tab بيقف عليه مرة واحدة.
-
-**الظهور بالسكرول:** الكروت بتبدأ [[opacity: 0]] **بس لو** على [[<html>]] class [[js]] (من [[boot.js]])، و IntersectionObserver بيزوّد [[.in]] أول ما الكارت يدخل الشاشة ويبطّل يراقبه. مع [[prefers-reduced-motion: reduce]] السكربت بيظهّرهم كلهم على طول والـ CSS بيلغي الـ transition. **والغلطة اللي اتقاست:** لما حطيت [[data-reveal]] على الـ hero نفسه، الـ LCP بقى **1200ms بدل 380** (الوسط بتاع ٣)، لأن Chrome مبيحسبش عنصر [[opacity: 0]] كـ «اترسم».
-
-**الشبكة:** [[repeat(auto-fill, minmax(min(100%, 17rem), 1fr))]]. من غير [[min(100%, …)]]، كارت [[22rem]] على موبايل 360 عمل scroll أفقي: [[scrollWidth 368 / 360]].`,
-          example: R`.cards { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
-.filters label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); }
-.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]) { display: none; }
-.card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r); }
-.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease) var(--d, 0s), transform 0.6s var(--ease) var(--d, 0s); }
-@media (prefers-reduced-motion: reduce) { .js [data-reveal] { opacity: 1; transform: none; transition: none; } }`,
-          lines: [
-            R`الشبكة: [[auto-fill]] = «حط أعمدة على قد ما يكفي»، وكل عمود أقله [[17rem]] وأكتره [[1fr]] (جزء متساوي من الباقي). و [[min(100%, 17rem)]] بيخلي الحد الأدنى عرض الشاشة لو هي أصغر من 17rem، فمفيش scroll أفقي على أي موبايل.`,
-            R`الـ label اللي جواه radio متختار بيتلوّن: [[:has(input:checked)]] بيختار الأب حسب حالة الابن. من غير [[:has()]] كنت محتاج الـ input يبقى **قبل** الـ label ([[input:checked + label]]) أو JS.`,
-            R`الفلتر نفسه: لو جوه [[.work]] فيه radio قيمته [[web]] ومتختار، اخفي أي [[.card]] الـ [[data-tags]] بتاعه مفيهوش [[web]] ككلمة كاملة ([[~=]]). سطر زيه لكل فلتر، و «الكل» ملوش سطر فبيعرض كله.`,
-            R`الكارت كله بيتضغط: عنصر وهمي فاضي فوق الكارت كله ([[inset: 0]] = top و right و bottom و left صفر) جوه اللينك، فالضغطة في أي حتة بتروح للينك. الكارت لازم عليه [[position: relative]] عشان الوهمي يتقاس عليه.`,
-            R`الحالة الأولى للظهور: شفاف ونازل 16px، و [[transition]] بتأخير [[--d]] (السكربت بيحط 0 و 80 و 160ms عشان الكروت تظهر ورا بعض). مربوطة بـ [[.js]] فلو JS مشتغلش الكروت ظاهرة عادي.`,
-            R`لو اليوزر مختار «قلّل الحركة» في النظام: الكروت ظاهرة من الأول ومن غير transition. [[transform]] و [[opacity]] بس اللي بيتحركوا، والاتنين مبيعملوش layout فمبيعملوش CLS.`,
-          ],
-          try: R`حط [[site.css]] و [[reveal.js]] من الشرح، وافتح الصفحة وجرّب كل فلتر بالماوس وبعدين بالكيبورد (Tab لحد الفلتر، وبعدين الأسهم). بعدين من DevTools: Rendering ← [[prefers-reduced-motion: reduce]] واعمل refresh، وبعدين Settings ← Debugger ← Disable JavaScript واعمل refresh. وفي الآخر حط [[data-reveal]] على [[<section class="hero">]] وقيس بـ [[node rep.mjs]].`,
-          flag: R`script`,
+~~~text القياس من Chrome (الـ Console بعد ما دوست على التاني)
+Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+~~~`,
           deep: {
-            why: R`الفلتر بـ JS معناه state وlisteners وحالة «لسه بيحمّل»، وكل ده عشان تخفي كروت موجودة أصلًا في الصفحة. [[:has()]] بيعملها بسطر لكل فلتر، والـ radios بتدّيك الكيبورد والـ semantics ببلاش. والظهور بالسكرول حلو لما يتعمل صح، ووحش جدًا لما يخبّي المحتوى لو JS وقع، أو يحرّك حد عنده دوخة من الحركة، أو يأخر أكبر عنصر في الصفحة فجوجل يحسب الصفحة بطيئة.`,
-            how: R`[[:has()]] بيتقيّم من جوه لبرة: المتصفح بيلاقي [[.work]] اللي جواه [[input[value="web"]:checked]]، وبعدين بيطبّق على أي [[.card]] جواه مش متطابق مع [[[data-tags~="web"]]]. [[display: none]] بيشيل الكارت من الشبكة كلها، فـ [[auto-fill]] بيرتب الباقي من غير فراغات. والـ IntersectionObserver بيبلّغك لما عنصر يدخل أو يخرج من الشاشة من غير ما تسمع لـ scroll خالص (مفيش شغل مع كل حركة)، و [[rootMargin: "0px 0px -10% 0px"]] بيعتبر الشاشة أقصر بـ 10% من تحت فالكارت بيظهر لما يطلع شوية مش أول بكسل. و [[unobserve]] بعد أول ظهور عشان ميتراقبش تاني. والـ LCP: Chrome بيسجّل أكبر عنصر **اترسم فعلًا**، والعنصر الشفاف مش محسوب، فلما يبقى ظاهر بعد الـ transition بيتسجّل وقتها.`,
-            when: R`[[:has()]] لأي حالة الأب بيتغير فيها حسب ابنه: كارت فيه checkbox متعلّم، وفورم فيه حقل غلط ([[form:has(:invalid)]])، وlayout فيه sidebar ولا لأ. مدعوم في كل المتصفحات من ديسمبر ٢٠٢٣ (درس «Baseline و @supports»). والظهور بالسكرول للحاجات اللي **تحت** أول شاشة بس، ومش للمحتوى اللي اليوزر جاي عشانه. ولو الفلتر هيبقى بحث بالكلام أو ترتيب، ده محتاج JS (زي جدول الـ dashboard).`,
-            mistakes: R`تحط [[data-reveal]] على الـ hero (اتقاس: LCP 380 ← 1200ms). تخبّي بـ [[opacity: 0]] من غير [[.js]] فالصفحة فاضية لو الـ JS وقع أو اتمنع. تنسى reduced motion. تستخدم [[minmax(22rem, 1fr)]] من غير [[min(100%, …)]] (اتقاس: 368 على 360). تلف الكارت كله في [[<a>]] فقارئ الشاشة بيقرا الكارت كله كاسم لينك واحد طويل. تعمل الفلتر بـ [[[data-tags*="web"]]] ([[*=]] = جزء من النص) فـ [[webgl]] يعدّي. تحط [[display: none]] على الـ radio نفسه للتصميم فيضيع من الكيبورد وقارئ الشاشة.`,
+            why: R`أي [[<iframe>]] معناه إنك شغّلت كود حد تاني جوه صفحتك، قدام زوارك. لو المزوّد اتخترق، أو الإعلان طلع خبيث، من غير [[sandbox]] يقدر يفتح نوافذ، وينقل الزائر لموقع تاني، ويطلب الكاميرا باسم موقعك. [[sandbox]] و [[allow]] بيخلّوا القاعدة «ممنوع إلا اللي سمحت بيه» بدل «مسموح إلا اللي منعته».`,
+            how: R`لما المتصفح بيعمل الـ iframe بيحسبله مجموعة «sandboxing flags» من قيمة [[sandbox]]: كل flag قيد، وكل كلمة [[allow-...]] بتشيل flag. الـ flags دي بتتورّث لأي iframe أو نافذة تتفتح من جوه (إلا مع [[allow-popups-to-escape-sandbox]]). ومن غير [[allow-same-origin]] الصفحة بتاخد origin فريد «opaque» بيتكتب [[null]]، فكل فحص same-origin بيفشل. و [[allow]] بيتحوّل لـ policy بتتحط على الـ iframe: كل ميزة ليها قايمة origins مسموح ليها، والافتراضي لمعظمها [[self]]، يعني موقعك بس.`,
+            when: R`[[sandbox]]: أي محتوى مش انت اللي كاتبه (تعليقات، معاينة إيميل أو كود، إعلانات، ويدجت من طرف تالت). [[allow]]: أي مزوّد محتاج ميزة جهاز (فيديو ملو الشاشة، خريطة عايزة مكانك، مكالمة فيديو عايزة الكاميرا). [[srcdoc]]: معاينة أو محتوى صغير بيتولّد في نفس الصفحة. ولو المحتوى بتاعك ومن موقعك: متستخدمش iframe أصلًا، اكتبه في الصفحة.`,
+            mistakes: R`iframe من غير [[title]]. [[srcdoc]] فيه كلام من مستخدم من غير [[sandbox]]. [[allow-same-origin]] مع [[allow-scripts]] على صفحة من نفس الموقع. نسخ كود التضمين بكل الصلاحيات اللي فيه. [[allowfullscreen="false"]]. والاستغراب من صندوق رمادي سببه [[X-Frame-Options]] عند الموقع التاني.`
           },
-          teach: R`## الخطوة ٢: الـ CSS كله
-
-~~~css portfolio/css/site.css
-/* ---------- base ---------- */
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-padding-top: 5rem; -webkit-text-size-adjust: 100%; }
-body { margin: 0; font: var(--step-0)/1.7 var(--font); color: var(--ink); background: var(--paper); }
-:lang(en) body, body:lang(en) { line-height: 1.6; }
-h1, h2, h3 { line-height: 1.25; text-wrap: balance; }
-p { text-wrap: pretty; }
-a { color: var(--accent); text-underline-offset: 0.2em; }
-img, svg { max-width: 100%; height: auto; }
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-main > section { padding: clamp(48px, 8vw, 96px) var(--gutter); max-width: 72rem; margin-inline: auto; }
-
-.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; padding: 0.5rem 1rem; background: var(--ink); color: var(--paper); z-index: 100; }
-.skip:focus { top: 1rem; }
-.sr-status { min-height: 1.7em; color: var(--muted); }
-
-/* ---------- header: sticky glass ---------- */
-.top {
-  position: sticky; top: 0; z-index: var(--z-header);
-  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem;
-  padding: 0.75rem var(--gutter);
-  background: color-mix(in srgb, var(--paper) 82%, transparent);
-  backdrop-filter: blur(10px);
-  border-block-end: 1px solid var(--line);
-}
-.brand { font-weight: 700; color: var(--ink); text-decoration: none; margin-inline-end: auto; }
-.top nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
-.top nav a { color: var(--ink); text-decoration: none; padding-block: 0.5rem; }
-.top nav a:hover { color: var(--accent); }
-.lang { font: inherit; padding: 0.4rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); cursor: pointer; min-height: 44px; }
-
-/* ---------- hero ---------- */
-.hero { padding-block-start: clamp(56px, 12vw, 140px); }
-.eyebrow { color: var(--warm); font-weight: 600; margin: 0; }
-.hero h1 { font-size: var(--step-3); margin: 0.25em 0 0.4em; max-width: 18ch; }
-:lang(en) .hero h1 { letter-spacing: -0.02em; }
-.lead { font-size: var(--step-1); color: var(--muted); max-width: 46ch; margin: 0; }
-.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 2rem; }
-.btn {
-  --bg: var(--accent); --fg: var(--accent-ink);
-  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.25rem;
-  border: 2px solid var(--bg); border-radius: 999px; background: var(--bg); color: var(--fg);
-  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
-}
-.btn.ghost { --bg: transparent; --fg: var(--accent); border-color: var(--accent); }
-
-/* ---------- work: cards + :has() filter ---------- */
-.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; border: 0; padding: 0; margin: 0 0 1.5rem; }
-.filters legend { width: 100%; margin-block-end: 0.5rem; color: var(--muted); }
-.filters label {
-  display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0.25rem 0.9rem;
-  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer;
-}
-.filters input { accent-color: var(--accent); }
-.filters label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
-.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
-
-.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
-.card { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); }
-.card h3 { font-size: var(--step-1); margin: 0.75rem 0 0.25rem; }
-.card h3 a { color: var(--ink); }
-.card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r); }
-.card:has(a:hover) { border-color: var(--accent); }
-.card p { margin: 0 0 0.75rem; color: var(--muted); }
-.thumb { aspect-ratio: 16 / 9; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--a, #0d6b63), var(--b, #9c4f12)); }
-.t1 { --a: #0d6b63; --b: #4aa79d; view-transition-name: tide-thumb; }
-.t2 { --a: #2f4b7c; --b: #6b8fd1; }
-.t3 { --a: #7a3e65; --b: #c97fa9; }
-.t4 { --a: #6b5b1d; --b: #c2a64a; }
-.t5 { --a: #3c3c3c; --b: #9a9a9a; }
-.tags { list-style: none; padding: 0; margin: auto 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.tags li { font-size: 0.85rem; padding: 0.1rem 0.6rem; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); direction: ltr; }
-
-.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),
-.work:has(input[value="a11y"]:checked) .card:not([data-tags~="a11y"]),
-.work:has(input[value="api"]:checked) .card:not([data-tags~="api"]),
-.work:has(input[value="design"]:checked) .card:not([data-tags~="design"]) { display: none; }
-
-/* ---------- scroll reveal (only when JS runs) ---------- */
-.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease) var(--d, 0s), transform 0.6s var(--ease) var(--d, 0s); }
-.js [data-reveal].in { opacity: 1; transform: none; }
-
-/* ---------- about + contact ---------- */
-.about p, .contact p { max-width: 60ch; }
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1rem; margin: 2rem 0 0; }
-.facts div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; }
-.facts dt { color: var(--muted); }
-.facts dd { margin: 0; font-size: var(--step-3); font-weight: 700; font-variant-numeric: tabular-nums; }
-.contact p:has(.btn) { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-.foot { padding: 2rem var(--gutter); border-block-start: 1px solid var(--line); color: var(--muted); text-align: center; }
-
-/* ---------- page to page: View Transitions (Chrome/Edge 126+, Safari 18.2+; others just navigate) ---------- */
-@view-transition { navigation: auto; }
-::view-transition-group(tide-thumb) { animation-duration: 0.35s; animation-timing-function: var(--ease); }
-
-/* ---------- reduced motion: no reveal, no page animation ---------- */
-@media (prefers-reduced-motion: reduce) {
-  .js [data-reveal] { opacity: 1; transform: none; transition: none; }
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
-}
-
-/* ---------- print: any page prints as plain document ---------- */
-@media print {
-  .top, .skip, .actions, .filters, .lang, #copy, .foot, .thumb { display: none !important; }
-  body { background: #fff; color: #000; font-size: 11pt; }
-  main > section { padding: 0 0 12pt; max-width: none; }
-  .card { box-shadow: none; break-inside: avoid; }
-  .js [data-reveal] { opacity: 1; transform: none; }
-  a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: 0.85em; color: #333; }
-}
-~~~
-
-### فك الأجزاء
-
-**الأساس:**
-- [[scroll-padding-top: 5rem]] على [[html]]: لما تدوس على [[#work]] الصفحة بتنزل للقسم بس بتسيب 5rem فوقه، عشان الـ header الـ sticky ميغطيش العنوان.
-- [[:lang(en) body, body:lang(en)]]: الإنجليزي بيحتاج line-height أقل من العربي (الحروف العربي فيها نقط وتشكيل فوق وتحت). [[:lang()]] بيقرا [[lang]] من أقرب أب.
-- [[text-wrap: balance]] للعناوين (السطور بأطوال قريبة من بعض) و [[pretty]] للفقرات (مفيش كلمة لوحدها في آخر سطر). درس «text-wrap».
-- [[:focus-visible]] بدل [[:focus]]: الإطار بيظهر بالكيبورد بس، مش لما تضغط بالماوس.
-
-**الـ header الزجاجي:**
-- [[position: sticky; top: 0]] و [[z-index: var(--z-header)]]: بيفضل فوق وانت بتنزل، والطبقة من token مش رقم عشوائي.
-- [[color-mix(in srgb, var(--paper) 82%, transparent)]]: لون الخلفية بشفافية 18% من الـ token نفسه، فبيشتغل في الثيمين من غير لون تاني.
-- [[backdrop-filter: blur(10px)]]: اللي تحت الـ header بيبان مغبّش.
-- [[flex-wrap: wrap]] و [[margin-inline-end: auto]] على الاسم: على 360 الـ nav بينزل سطر لوحده بدل ما يخرج بره الشاشة.
-
-**الأزرار:**
-- [[--bg]] و [[--fg]] على [[.btn]]، و [[.btn.ghost]] بيغيّر المتغيرين بس. ده نمط «variant بمتغير»: بتغيّر متغير مش خصائص.
-- [[min-height: 44px]]: أقل مساحة ضغط مريحة (WCAG 2.5.8 بيطلب 24 كحد أدنى، و 44 هي التوصية الأقوى).
-
-**الكروت:**
-- [[.thumb]] بـ [[aspect-ratio: 16 / 9]]: المكان محجوز قبل أي صورة، فمفيش CLS. والصور هنا gradients (مفيش صور حقيقية للمشاريع المتخيلة) بلونين من [[--a]] و [[--b]] لكل كارت.
-- [[.t1 { view-transition-name: tide-thumb }]]: الاسم ده نفسه موجود على صورة صفحة دراسة الحالة، فالمتصفح بيحرّك الصورة من الكارت لمكانها في الصفحة التانية («بورتفوليو ٣»).
-- [[.tags li { direction: ltr }]]: الكلمات الإنجليزي جوه الـ chips زي «CSS Grid».
-- [[margin: auto 0 0]] على [[.tags]]: الـ tags بتنزل لآخر الكارت حتى لو الوصف قصير، فكل الكروت في الصف آخرها في نفس الخط.
-
-**الطباعة** في آخر الملف (لكل الصفحات): بتخفي الـ header والأزرار والفلتر والصور، وبتكتب الرابط جنب كل لينك خارجي ([[a[href^="http"]::after]]). اتشرحت في «بورتفوليو ٣» مع الـ CV.
-
-### الظهور بالسكرول
-
-~~~javascript portfolio/js/reveal.js
-// cards fade in once when they reach the screen; nothing hides without JS (the .js class), and nothing moves with reduced motion
-const items = document.querySelectorAll("[data-reveal]");
-const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-if (still || !("IntersectionObserver" in window)) {
-  items.forEach(el => el.classList.add("in"));
-} else {
-  const io = new IntersectionObserver(entries => {
-    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-  }, { rootMargin: "0px 0px -10% 0px" });
-  items.forEach((el, i) => { el.style.setProperty("--d", (i % 3) * 80 + "ms"); io.observe(el); });
-}
-~~~
-
-- [[matchMedia("(prefers-reduced-motion: reduce)").matches]]: نفس الـ media query بتاعة CSS من JS، [[true]] لو اليوزر مختار «قلّل الحركة».
-- [[!("IntersectionObserver" in window)]]: متصفح قديم: ظهّر كله بدل ما يفضل مستخبي.
-- [[e.isIntersecting]]: العنصر دخل الشاشة (ولو جزء). و [[io.unobserve(e.target)]]: خلاص ظهر، متراقبوش تاني.
-- [[(i % 3) * 80 + "ms"]]: الكروت اللي في نفس الصف (لحد ٣) بتتأخر 0 و 80 و 160ms، فبتظهر ورا بعض.
-
-### اتشغّل فعلًا
-
-~~~text node check-portfolio.mjs (Chrome 156، 1280×800)
-filter all    visible cards: 5
-filter web    visible cards: 3
-filter a11y   visible cards: 2
-filter api    visible cards: 1
-filter design visible cards: 1
-card opacity at load: 0 0 0 0 0
-after scroll: 1 1 1 1 1
-reduced motion at load: 1/0s 1/0s 1/0s 1/0s 1/0s
-no JS: 1 1 1 1 1
-~~~
-
-- [[0 0 0 0 0]]: الكروت كلها تحت أول شاشة (الـ hero طويل)، فلسه مظهرتش.
-- [[1/0s]]: opacity 1 و transition صفر مع reduced motion (اتعمل بـ [[browser.newContext({ reducedMotion: "reduce" })]]).
-- [[no JS: 1 ...]]: [[javaScriptEnabled: false]]، فمفيش class [[js]]، فمفيش إخفاء أصلًا.
-
-والكيبورد (من [[kb-port.mjs]] في الدرس الأخير):
-
-~~~text
-ArrowLeft on «الكل» → radio:web | visible cards: 3
-Tab from the group → Tide Notes: ملاح
-~~~
-
-في صفحة RTL السهم الشمال بيروح للاختيار **اللي بعده** (الترتيب من اليمين). وبعد المجموعة، الـ Tab راح للكارت الوحيد اللي فيه لينك، مش لكل radio (المجموعة وقفة واحدة في الـ Tab).
-
----
-
-## الغلطات اللي حصلت في الخطوة دي
-
-### ١. الـ hero بيظهر بالسكرول: LCP من 380 لـ 1200ms
-
-كان شكلها حلو إن العنوان «يطلع» أول ما الصفحة تفتح، فحطيت [[data-reveal]] على [[<section class="hero">]]:
-
-~~~text node rep.mjs (390، CPU ×4، الوسط بتاع ٣)
-قبل:  ar CLS 0.0000 FCP 380 LCP 380
-بعد:  ar CLS 0.0000 FCP 484 LCP 1200
-~~~
-
-الـ FCP (أول حاجة اترسمت) لسه بدري، بس الـ LCP (أكبر حاجة) بقى بعد الـ transition. وده الرقم اللي جوجل بيحسبه. التصليح: الـ hero من غير [[data-reveal]]، والحركة للحاجات اللي تحت بس.
-
-### ٢. scroll أفقي على 360 من [[minmax]]
-
-جرّبت أكبّر الكروت لـ [[22rem]] (352px) عشان تبان أعرض:
-
-~~~text
-D: minmax(22rem, 1fr) at 360          scrollWidth 368 / 360
-D fixed: minmax(min(100%, 22rem)) 360 scrollWidth 360 / 360
-~~~
-
-المساحة المتاحة على 360 = 360 ناقص 16 من كل ناحية = 328، والعمود مش قادر يبقى أقل من 352. [[min(100%, 22rem)]] بيقول «22rem أو العرض كله، اللي أصغر».
-
-### ٣. ليه [[~=]] مش [[*=]]
-
-[[[data-tags*="web"]]] بيطابق أي نص **فيه** [[web]]: لو زوّدت tag اسمه [[webgl]] الكارت هيظهر في «مواقع» غلط. [[~=]] بيطابق كلمة كاملة من ضمن كلمات مفصولة بمسافات. (اتجرّب في Console: [[document.querySelectorAll('[data-tags~="web"]').length]] بيرجّع 3، وده نفس عدد «مواقع» في الجدول فوق.)
-
----
-
-## الخلاصة
-
-| الفكرة | السطر |
-|---|---|
-| شبكة من غير media queries ومن غير overflow | [[repeat(auto-fill, minmax(min(100%, 17rem), 1fr))]] |
-| حالة الأب من ابنه | [[label:has(input:checked)]] |
-| فلتر من غير JS | [[.work:has(input[value="x"]:checked) .card:not([data-tags~="x"])]] |
-| كارت كله بيتضغط واسمه قصير | [[h3 a::after { position: absolute; inset: 0 }]] |
-| ظهور بالسكرول بأمان | [[.js]] + IntersectionObserver + [[unobserve]] + reduced motion، ومش على الـ hero |`,
-          sol: R`الفلتر بيعرض 5 و 3 و 2 و 1 و 1، والأسهم بتغيّر الفلتر، و Tab بيعدّي المجموعة كلها مرة واحدة. مع reduced motion الكروت ظاهرة من غير حركة، ومن غير JS ظاهرة كلها. ومع [[data-reveal]] على الـ hero، [[rep.mjs]] بيطلّع LCP أعلى بكتير من FCP (في المعمل 1200 مقابل 484)؛ امسحه يرجع LCP = FCP.`,
           practice: [
-            {
-              lvl: R`سريع`,
-              t: R`**اقرا وتوقّع:** كارت عليه [[data-tags="webgl design"]] وانت اخترت «مواقع» ([[web]]). هيظهر مع [[~=]]؟ ومع [[*=]]؟ ومع [[|=]]؟ اكتب الإجابة وبعدين جرّب في Console بـ [[querySelectorAll]].`,
-              done: R`[[~=]] لأ (مفيش كلمة [[web]] كاملة)، و [[*=]] أيوه (النص فيه [[web]])، و [[|=]] لأ ([[|=]] = القيمة كلها [[web]] أو بتبدأ بـ [[web-]])، والأرقام في Console مطابقة.`,
-              sol: R`~~~live 120 120 attr.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>attribute selectors</title></head>
-<body>
-  <main><h1>كارت</h1><div class="card" data-tags="webgl design">مشروع</div></main>
-  <script>
-    for (const s of ['[data-tags~="web"]', '[data-tags*="web"]', '[data-tags|="web"]'])
-      console.log(s, document.querySelectorAll(s).length);
-  $__lt/script>
-</body></html>
+            { lvl: 'تطبيق', t: R`**ابني:** مشغّل فيديو الحلقة ١ من مزوّد خارجي في صفحة «المحطة». (عشان المعاينة، صفحة المزوّد مكتوبة في [[srcdoc]] بدل [[src]]، وده السطر الوحيد اللي متغيّروش.) كمّل الـ iframe: اسم يوصف المحتوى، ومقاس 320 × 180، وتحميل متأجّل، وقفل بيسمح بالسكربتات بس، وصلاحية ملو الشاشة. (من قسم ٣ و ٤ و ٥ و ٧ في الشرح)`, done: R`الصندوق بقى 320 × 180 والسكربت اللي جواه لسه شغال (مكتوب «المشغّل جاهز»)، وكل الشروط ✓.`, work: { h: 250, start: R`<h2>شاهد الحلقة ١</h2>
+<iframe srcdoc="<body style='margin:0;background:#0f766e;color:#fff;font:16px sans-serif;text-align:center'><p>▶ فيديو الحلقة ١</p><script>document.body.append('المشغّل جاهز')</script>"></iframe>`, checks: [
+              { say: R`الـ iframe ليه [[title]] فيه كلمة «الحلقة»`, q: "iframe[title*=\"الحلقة\"]" },
+              { say: R`المقاس [[width="320"]] و [[height="180"]]`, q: "iframe[width=\"320\"][height=\"180\"]" },
+              { say: R`[[loading="lazy"]]`, q: "iframe[loading=\"lazy\"]" },
+              { say: R`عليه [[sandbox]] فيه [[allow-scripts]]`, q: "iframe[sandbox~=\"allow-scripts\"]" },
+              { say: R`الـ sandbox مفيهوش [[allow-top-navigation]]`, q: "iframe[sandbox~=\"allow-top-navigation\"]", n: 0 },
+              { say: R`[[allow]] فيه [[fullscreen]]`, q: "iframe[allow*=\"fullscreen\"]" },
+            ] }, sol: R`~~~live 270 الحل
+<h2>شاهد الحلقة ١</h2>
+<iframe title="فيديو الحلقة ١ من بودكاست المحطة" width="320" height="180" loading="lazy"
+  sandbox="allow-scripts" allow="fullscreen"
+  srcdoc="<body style='margin:0;background:#0f766e;color:#fff;font:16px sans-serif;text-align:center'><p>▶ فيديو الحلقة ١</p><script>document.body.append('المشغّل جاهز')</script>"></iframe>
 ~~~
 
-الـ ٣ operators بيسألوا ٣ أسئلة مختلفة:
+**هتشوف إيه:** صندوق أخضر 320 × 180 فيه «▶ فيديو الحلقة ١» وتحتها «المشغّل جاهز». الجملة التانية كتبها سكربت، فوجودها معناه إن [[allow-scripts]] شغال. لو كتبت [[sandbox]] فاضي كانت هتختفي.
 
-- [[~=]]: «هل [[web]] **كلمة كاملة** في لستة مفصولة بمسافات؟» الكلمات هنا [[webgl]] و [[design]]، فلأ.
-- [[*=]]: «هل النص فيه [[web]] في أي حتة؟» أيوه، جوه [[webgl]]. ده بالظبط سبب إنه غلط للفلتر: كارت WebGL هيظهر تحت «مواقع».
-- [[|=]]: «هل القيمة كلها [[web]] أو بتبدأ بـ [[web-]]؟» لأ. ده معمول أساسًا للغات زي [[[lang|="ar"]]].
+**ليه كده:**
 
-الغلطة الشائعة: [[*=]] عشان أقصر تفكير، فتطلع نتايج غلط من غير ما تحس.
+- [[title]] فيه رقم الحلقة واسم البودكاست: في صفحة فيها ٥ فيديوهات كل واحد ليه اسم مختلف.
+- [[sandbox="allow-scripts"]]: المشغّل محتاج JavaScript، ومش محتاج يبعت فورم ولا يفتح نوافذ.
+- [[allow="fullscreen"]]: من غيره زرار ملو الشاشة جوه المشغّل مش هيشتغل، لأن المزوّد موقع تاني.
 
-~~~text الناتج (querySelectorAll في Chrome 156)
-~=  0
-*=  1
-|=  0
+**في موقعك** السطر الأخير هيبقى [[src="https://player.example.test/embed/ep1"]]، والمزوّد الحقيقي غالبًا هيحتاج [[allow-same-origin]] كمان عشان الـ cookies بتاعته.
+
+**الغلطة الشائعة:** [[sandbox="allow-scripts; allow-forms"]] بـ [[;]]. الكلمات في [[sandbox]] بينها **مسافة**، والـ [[;]] بتاعة [[allow]].
+
+~~~text القياس من Chrome
+Iframe «فيديو الحلقة ١ من بودكاست المحطة»      الحجم 324 × 184 (بالبرواز)
 ~~~` },
-            {
-              lvl: R`سريع`,
-              t: R`**اشرحها:** اكتب لزميل في ٣ سطور ليه [[.js [data-reveal]]] أحسن من [[[data-reveal]]] لوحده، بمثال حصل فعلًا في الدرس.`,
-              done: R`الشرح بيقول إن الإخفاء بيحصل بس لو JS اشتغل (class [[js]] من [[boot.js]])، وإن من غيرها الكروت هتفضل [[opacity: 0]] للأبد لو السكربت وقع، والدليل سطر [[no JS: 1 1 1 1 1]].`,
-              sol: R`~~~text رسالة لزميل
-[data-reveal] لوحده بيخفي الكروت من الـ CSS، حتى لو السكربت اللي بيظهرها موقعش خالص.
-.js [data-reveal] بيخفي بس لو boot.js اشتغل وحط class js، فمن غير JS الكروت ظاهرة.
-الدليل من الدرس: سطر no JS: 1 1 1 1 1، يعني الخمس كروت opacity بتاعتهم 1 والـ JS مقفول.
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة الحلقة بتعرض «تعليق المستمع» في iframe، والتعليق كلام بيكتبه أي زائر. المبرمج نسخ الـ attributes من مشغّل الفيديو. فيه ٤ مشاكل: الصلاحيات أكتر من اللازم لمحتوى ثابت، و [[allow]] بيدّي الكاميرا والمكان، و [[allowfullscreen="false"]]، ومفيش اسم. (من قسم ٣ و ٤ و ٧ و ٩ في الشرح)`, done: R`التعليق بيتعرض، والـ [[sandbox]] فاضي، ومفيش [[allow]] ولا [[allowfullscreen]]، وفيه [[title]]، وكل الشروط ✓.`, work: { h: 150, start: R`<h2>تعليق المستمع</h2>
+<iframe sandbox="allow-scripts allow-same-origin allow-top-navigation allow-forms"
+  allow="camera; geolocation" allowfullscreen="false" width="320" height="70"
+  srcdoc="<p>حلقة جميلة، كمّلوا!</p>"></iframe>`, checks: [
+              { say: R`[[sandbox]] موجود وفاضي`, q: "iframe[sandbox=\"\"]" },
+              { say: R`مفيش [[allow]]`, q: "iframe[allow]", n: 0 },
+              { say: R`مفيش [[allowfullscreen]]`, q: "iframe[allowfullscreen]", n: 0 },
+              { say: R`فيه [[title]]`, q: "iframe[title]" },
+              { say: R`التعليق لسه في [[srcdoc]]`, q: "iframe[srcdoc*=\"حلقة جميلة\"]" },
+            ] }, sol: R`~~~live 160 بعد التصليح
+<h2>تعليق المستمع</h2>
+<iframe sandbox title="تعليق من مستمع على الحلقة ١" width="320" height="70"
+  srcdoc="<p>حلقة جميلة، كمّلوا!</p>"></iframe>
 ~~~
 
-القاعدة العامة: إخفاء بيعتمد على JS عشان يتلغي، لازم يعتمد على JS عشان يحصل أصلًا. لو القاعدة في الـ CSS لوحدها، أي مشكلة في السكربت (ملف واقع، أو خطأ قبله، أو حاجب إعلانات) بتسيب الصفحة فاضية.
+**هتشوف إيه:** نفس الصندوق ونفس التعليق قبل وبعد. الفرق مش في الشكل: الفرق في اللي التعليق **يقدر يعمله** لو زائر كتب فيه كود بدل الكلام.
 
-[[boot.js]] بيتحمل في الـ head، فالـ class موجودة قبل أول رسمة، ومفيش وميض.
-
-الغلطة الشائعة: تختبر بالـ JS شغال بس، فمتشوفش المشكلة أبدًا.
-
-~~~text الناتج (Chrome 156، JS مقفول، opacity لكل كارت)
-.js [data-reveal]:   1 1 1 1 1
-[data-reveal] لوحده: 0 0 0 0 0
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**ابني:** اعمل رسالة «مفيش مشاريع من النوع ده» بـ CSS بس: [[<p class="empty">]] مستخبية، وبتظهر لما يبقى الفلتر المختار مفيش كارت عليه. اكتبها بقاعدة واحدة لكل فلتر الأول، وبعدين حاول تكتبها عامة.`,
-              done: R`زوّدت فلتر «موبايل» من غير كروت، والرسالة بتظهر معاه بس، وكاتب القاعدة بـ [[.work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty]]، وعارف ليه القاعدة العامة لكل القيم مستحيلة في CSS (مفيش متغير بيمسك قيمة الـ radio).`,
-              sol: R`~~~html portfolio/index.html
-<!-- مع باقي الـ radios -->
-<label><input type="radio" name="f" value="mobile"> <span>موبايل</span></label>
-
-<!-- بعد ul.cards -->
-<p class="empty">مفيش مشاريع من النوع ده لسه.</p>
-~~~
-
-~~~css portfolio/css/site.css
-.empty { display: none; color: var(--muted); }
-.work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty { display: block; }
-~~~
-
-~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
-<style>
-.empty { display: none; color: var(--muted); }
-.work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty { display: block; }
-</style>
-<!-- مع باقي الـ radios -->
-<label><input type="radio" name="f" value="mobile"> <span>موبايل</span></label>
-
-<!-- بعد ul.cards -->
-<p class="empty">مفيش مشاريع من النوع ده لسه.</p>
-</body></html>
-~~~
-
-القاعدة بتتقرا كده: «في [[.work]] لو الفلتر المختار موبايل، و **مفيش** جواها كارت عليه تاج موبايل، اعرض الرسالة». [[:not(:has(...))]] هو «مفيش».
-
-لو ضفت بكرة كارت عليه [[mobile]]، الرسالة تختفي لوحدها، من غير ما تعدّل CSS.
-
-ليه القاعدة العامة مستحيلة؟ لأن CSS مقدرش يقرا قيمة الـ radio ويستخدمها في selector تاني: مفيش متغير يمسك [[value]]. يعني مقدرش تقول «أي كارت تاجه = القيمة المختارة». فكل فلتر محتاج قاعدة، وعشان كده التمرين الجاي بيولّدهم بسكربت.
-
-وكمان [[<p class="empty">]] لازم يكون جوه [[.work]] عشان الـ selector يوصله.
-
-الغلطة الشائعة: [[.cards:empty]]. الكروت موجودة في الـ DOM ومخفية بـ [[display: none]]، فـ [[:empty]] عمره ما هيطابق.
-
-~~~text الناتج (Chrome 156)
-على «الكل»: .empty = none
-على «موبايل»: .empty = block، والكروت الظاهرة 5
-على «مواقع»: .empty = none
-لو كارت عليه mobile: .empty = none
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**صلّح الكود البايظ:** النسخة دي من الفلتر مش شغالة بالكيبورد: [[.filters input { display: none }]] و [[.filters label { cursor: pointer }]]. الماوس شغال. اعرف ليه وصلّحها من غير ما الدواير ترجع تبان لو مش عايزها.`,
-              done: R`عرفت إن [[display: none]] بيشيل الـ input من الـ Tab ومن قارئ الشاشة، وبدّلته بإخفاء بصري ([[position: absolute; opacity: 0; width: 1px; height: 1px]] أو clip)، والفوكس بيبان على الـ label بـ [[label:has(input:focus-visible)]]، والأسهم رجعت شغالة.`,
-              sol: R`~~~css بعد التصليح
-.filters input {
-  position: absolute;
-  opacity: 0;
-  inline-size: 1px;
-  block-size: 1px;
-}
-.filters label { position: relative; cursor: pointer; }
-.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
-~~~
-
-~~~view 140 160 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-:root { --accent: #7c3aed; } body { font-family: system-ui, sans-serif; margin: 1rem; } .filters { display: flex; gap: 8px; border: 0; padding: 0; } .filters legend { margin-bottom: 0.5rem; }
-.filters label { padding: 6px 16px; border: 1px solid #cbd5e1; border-radius: 999px; } .filters label:has(:checked) { background: var(--accent); color: #fff; border-color: var(--accent); }
-</style>
-<style>
-/* من الحل */
-.filters input {
-  position: absolute;
-  opacity: 0;
-  inline-size: 1px;
-  block-size: 1px;
-}
-.filters label { position: relative; cursor: pointer; }
-.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
-</style>
-</head>
-<body>
-<fieldset class="filters"><legend>اعرض</legend>
-<label><input type="radio" name="f" checked> الكل</label><label><input type="radio" name="f"> مواقع</label><label><input type="radio" name="f"> تطبيقات</label></fieldset>
-<p>بالكيبورد: Tab للفلتر والأسهم بتبدّل، والإطار على الاختيار.</p>
-</body>
-</html>
-~~~
-
-[[display: none]] بيشيل العنصر من الـ layout ومن الـ accessibility tree. فالـ radio مبياخدش focus، و Tab بيعدّي المجموعة، والأسهم مش بتشتغل، وقارئ الشاشة مبيعرفش إنها اختيارات. الماوس شغال لأن الضغط على الـ [[label]] بيحدد الـ input حتى لو مخفي.
-
-الإخفاء البصري بيسيب الـ input موجود وبياخد focus، و [[opacity: 0]] بيخفيه، و [[1px]] بيخليه ميغطيش حاجة. [[position: relative]] على الـ label عشان الـ input يفضل جواه، فالصفحة متقفزش لما ياخد focus.
-
-ولأن الدايرة مش ظاهرة، لازم تعرض الـ focus بنفسك: [[label:has(input:focus-visible)]].
-
-الغلطة الشائعة: تخلي [[pointer-events: none]] أو [[tabindex="-1"]] معاه. ده نفس المشكلة بشكل تاني.
-
-~~~text الناتج (Chrome 156)
-                        display: none      الإخفاء البصري
-Tab من الـ h2 بيقف على   A Tide Notes:        radio all
-سهم يسار بيغيّر الفلتر    لأ             آه (web)
-حلقة الـ focus           none               solid
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**مسألة:** اكتب سكربت Node بياخد الـ HTML ويطلّع قواعد [[:has()]] لكل فلتر لوحده، ويطبع الـ tags اللي على كروت ومالهاش فلتر، والفلاتر اللي مفيش عليها كارت. (شكل فحص الـ ci في الدرس.)`,
-              done: R`على صفحة فيها فلاتر [[web]] و [[api]] و [[mobile]] وكروت [[web a11y]] و [[api]]، السكربت بيطبع ٣ قواعد، و [[tags without a filter: a11y]]، و [[filters without a card: mobile]].`,
-              sol: R`~~~js filter-css.mjs
-import fs from "node:fs";
-const html = fs.readFileSync(process.argv[2], "utf8");
-
-const filters = [...html.matchAll(/name="f" value="([^"]+)"/g)].map((m) => m[1]).filter((v) => v !== "all");
-const tags = new Set([...html.matchAll(/data-tags="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)));
-
-const css = filters.map((f) => $__bt.work:has(input[value="$__{f}"]:checked) .card:not([data-tags~="$__{f}"])$__bt);
-console.log(css.join(",\n") + " { display: none; }");
-
-const noFilter = [...tags].filter((t) => !filters.includes(t));
-const noCard = filters.filter((f) => !tags.has(f));
-console.log("tags without a filter:", noFilter.join(", ") || "none");
-console.log("filters without a card:", noCard.join(", ") || "none");
-~~~
-
-ده الحل بتاع «CSS مقدرش يقرا قيمة»: القواعد نفسها بتتولّد. الـ HTML هو مصدر الحقيقة، والسكربت بيطلّع منه قاعدة لكل فلتر.
-
-- [[.filter((v) => v !== "all")]]: «الكل» ملوش قاعدة، لأنه مبيخفيش حاجة.
-- [[flatMap]] بيفرد قايمة قوايم لقايمة واحدة، و [[Set]] يشيل التكرار.
-- الفرقين هما الفايدة: تاج مش ليه زرار معناه كارت مش هتعرف تفلتره، وفلتر من غير كارت معناه زرار بيعرض لستة فاضية.
-
-الغلطة الشائعة: regex تتوقع ترتيب attributes معين. الـ HTML اللي انت كاتبه ثابت، فده مقبول في فحص لمشروعك، ومش مقبول لـ HTML من برا.
-
-~~~text الناتج (Node 24 على صفحة التمرين)
-.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),
-.work:has(input[value="api"]:checked) .card:not([data-tags~="api"]),
-.work:has(input[value="mobile"]:checked) .card:not([data-tags~="mobile"]) { display: none; }
-tags without a filter: a11y
-filters without a card: mobile
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**قارن وقيس:** اعمل نفس الفلتر بـ JS (listener على [[change]] بيحط [[hidden]] على الكروت) وقارنه بنسخة [[:has()]]: عدد السطور، والوقت من الضغطة لحد ما الكروت تتغير (Performance ← Interactions، أو [[PerformanceObserver]] على [[event]])، وإيه اللي بيحصل من غير JS.`,
-              done: R`عندك جدول فيه السطور والوقت للنسختين، والفرق في الوقت صغير على ٥ كروت، والفرق الحقيقي إن نسخة [[:has()]] شغالة من غير JS ومن غير state.`,
-              sol: R`~~~js portfolio/js/filter.js (نسخة JavaScript)
-const cards = [...document.querySelectorAll(".card")];
-document.querySelector(".filters").addEventListener("change", (e) => {
-  const v = e.target.value;
-  for (const c of cards) c.hidden = v !== "all" && !c.dataset.tags.split(" ").includes(v);
-});
-~~~
-
-~~~js قياس الوقت من الضغطة لحد الرسم
-new PerformanceObserver((l) => {
-  for (const e of l.getEntries()) if (e.name === "click") console.log(e.name, e.duration);
-}).observe({ type: "event", durationThreshold: 16, buffered: true });
-~~~
-
-على ٥ كروت الفرق في الوقت صغير، والقياس [[event]] بيتقرب لأقرب 8ms أصلًا، فالرقم مش حجة. الفرق الحقيقي:
-
-- نسخة [[:has()]] شغالة من غير JS، والحالة في الـ radio نفسه، فمفيش حاجة تتزامن. ولو رجعت بـ Back المتصفح بيرجّع اختيار الـ radio والـ CSS يطبق لوحده.
-- نسخة JS سطر واحد لأي عدد فلاتر، لكن لو الملف وقع، الفلتر ميت، والـ radios شكلها شغال.
-
-[[durationThreshold: 16]] أقل حد مسموح. لو عايز تقرا أي click، ممكن ميتسجلش لو أقل من كده، وده نفسه معلومة: أسرع من frame.
-
-و [[.card]] عليها [[display: flex]]، فلازم [[.card[hidden] { display: none }]]، وإلا [[hidden]] مش هيخفي، زي درس الـ landing.
-
-الغلطة الشائعة: تختار JS عشان «أسرع». اختار حسب إيه اللي بيحصل لما يقع.
-
-~~~text الناتج (Chrome 156، ٥ كروت، click على «مواقع»)
-النسخة     سطور      duration للضغطة   JS مقفول: كروت على «مواقع»
-:has()     4 قواعد CSS         أقل من 16ms             3
-JS         5 سطور JS         أقل من 16ms             5
-~~~` },
-          ],
-          ci: [
-            {
-              os: [
-                R`ubuntu`,
-                R`macos`,
-                R`windows`,
-              ],
-              sh: R`node`,
-              run: R`const html = '<input type="radio" name="f" value="all"><input type="radio" name="f" value="web"><input type="radio" name="f" value="api"><input type="radio" name="f" value="mobile"><li class="card" data-tags="web a11y"></li><li class="card" data-tags="api"></li>';
-const filters = [...html.matchAll(/name="f" value="([^"]+)"/g)].map(m => m[1]).filter(v => v !== "all");
-const tags = new Set([...html.matchAll(/data-tags="([^"]+)"/g)].flatMap(m => m[1].split(" ")));
-const css = filters.map(f => '.work:has(input[value="' + f + '"]:checked) .card:not([data-tags~="' + f + '"])').join(",\n") + " { display: none; }";
-console.log(css);
-console.log("tags without a filter: " + ([...tags].filter(t => !filters.includes(t)).join(", ") || "none"));
-console.log("filters without a card: " + (filters.filter(f => !tags.has(f)).join(", ") || "none"));`,
-              expect: [
-                R`.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),`,
-                R`.work:has(input[value="mobile"]:checked) .card:not([data-tags~="mobile"]) { display: none; }`,
-                R`tags without a filter: a11y`,
-                R`filters without a card: mobile`,
-              ],
-            },
-          ],
-        },
-        {
-          cmd: R`بورتفوليو ٣: دراسة الحالة والطباعة و OG`,
-          ref: [
-            { t: "MDN: Printing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Printing" },
-            { t: "MDN: @page", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@page" },
-            { t: "The Open Graph protocol", url: "https://ogp.me/" },
-            { t: "MDN: View Transition API", url: "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API" },
-            { t: "Playwright: page.pdf()", url: "https://playwright.dev/docs/api/class-page#page-pdf" },
-          ],
-          title: R`صفحة دراسة حالة بانتقال View Transition من الكارت، و CV بيتطبع صفحة A4 واحدة بـ @media print و @page، وصورة مشاركة 1200×630 بيعملها Chrome، و Open Graph صح`,
-          learn: R`تكمّل الـ portfolio: صفحة دراسة حالة (المشكلة والقرارات والنتيجة بجدول)، وانتقال بين الصفحتين بـ [[@view-transition]] و [[view-transition-name]] بيتلغي مع reduced motion، و CV شكله سليم على الشاشة وبيطلع صفحة واحدة على الورق، وصورة [[og.png]] من HTML، و meta tags بتخلي اللينك يبان بكارت لما يتبعت.`,
-          out: R`[[work/tide-notes.html]] و [[case.css]] و [[cv.html]] و [[cv.css]] و [[print.js]] و [[make-og.mjs]]: [[pagereveal]] بيقول إن فيه انتقال، والـ CV = صفحة PDF واحدة من غير header، و [[og.png]] مقاسه 1200×630.`,
-          use: {
-            prog: R`دروس «View Transitions» و «@media print» و «meta و Open Graph» في منتج واحد. ودراسة الحالة نفسها تمرين كتابة: المشكلة بأرقام، والقرار بسببه، والنتيجة بجدول قبل وبعد.`,
-            work: R`اللي بيوظّف بيفتح مشروع واحد بس غالبًا، فصفحة دراسة الحالة هي اللي بتقنعه. والـ CV بيتطلب PDF في كل تقديم، والأحسن إنه يطلع من نفس الصفحة بدل ملف Word بيتنسي يتحدّث. واللينك اللي بيتبعت في واتساب أو LinkedIn من غير صورة وعنوان صح بيتعدّى.`,
-            cs: R`الـ paged media: الورق ليه صفحات ومقاس وهوامش، والـ CSS عنده قواعد للتقطيع ([[break-inside]] و [[break-after]]). والـ View Transitions بتاخد لقطة للصفحة القديمة والجديدة وتحرّك بينهم بـ pseudo-elements، يعني الحركة مش بتأثر على الـ DOM نفسه.`,
-          },
-          desc: R`آخر خطوة في الـ portfolio: ٣ حاجات بتتعمل مرة وبتفرق كتير.
-
-**صفحة دراسة الحالة** ([[work/tide-notes.html]]): نفس الـ header والـ tokens، وعمود واحد للقراية ([[max-width: 46rem]])، ومعلومات المشروع في [[<dl>]]، وجدول قبل وبعد بـ [[<caption>]] و [[scope]]. وصورة المشروع عليها نفس [[view-transition-name: tide-thumb]] اللي على الكارت في الرئيسية، و [[@view-transition { navigation: auto; }]] في الصفحتين، فلما تدوس على الكارت المتصفح **بيحرّك الصورة** من مكانها في الكارت لمكانها فوق في الصفحة الجديدة. ده لينك عادي، مفيش JS. اتقاس بحدث [[pagereveal]]: [[view transition on the case page: yes]]. ومع reduced motion القواعد بتلغي الحركة ([[animation: none]]).
-
-**الـ CV** ([[cv.html]]): بيتقري كويس على الشاشة، وجواه [[@page { size: A4; margin: 14mm 16mm; }]] و [[@media print]] بيخفي الـ header والأزرار، ويمنع وظيفة تتقطع بين صفحتين ([[break-inside: avoid]])، وعنوان يفضل لوحده آخر الصفحة ([[break-after: avoid]]). اتقاس بـ [[page.pdf()]]: **صفحة واحدة**. ومن غير CSS الطباعة: **صفحتين** والـ header ظاهر.
-
-**المشاركة:** [[og:title]] و [[og:description]] و [[og:image]] (رابط **كامل** بـ [[https://]]) و [[og:image:width/height/alt]] و [[twitter:card = summary_large_image]]، و [[<link rel="canonical">]]. والصورة نفسها HTML بيتصوّر بـ Chrome على 1200×630 بالظبط.`,
-          example: R`@view-transition { navigation: auto; }
-.t1 { view-transition-name: tide-thumb; }
-@page { size: A4; margin: 14mm 16mm; }
-.job { break-inside: avoid; }
-a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; }
-<meta property="og:image" content="https://nadine.example/img/og.png">`,
-          lines: [
-            R`في الصفحتين: أي تنقّل عادي بين صفحات نفس الموقع (same-origin) يعمل انتقال. من غيرها في الاتنين مفيش انتقال خالص. المتصفح اللي مش بيدعمها بيتجاهل السطر ويتنقل عادي (Chrome و Edge 126+ و Safari 18.2+، من الوثائق).`,
-            R`نفس الاسم على صورة الكارت في الرئيسية وعلى صورة الـ hero في دراسة الحالة: المتصفح بيعتبرهم «نفس العنصر» ويحرّكه من مكان ومقاس لمكان ومقاس. الاسم لازم يبقى مش متكرر في نفس الصفحة، وإلا الانتقال كله بيتلغي.`,
-            R`مقاس الورق والهوامش للطباعة وللـ PDF. [[preferCSSPageSize: true]] في [[page.pdf()]] بيحترمها، وزرار «حفظ كـ PDF» في Chrome كمان.`,
-            R`وظيفة كاملة (العنوان والسنين والنقط) ميتقطعش نصها في آخر صفحة ونصها في اللي بعدها: بتنزل كلها للصفحة الجاية.`,
-            R`على الورق مفيش ضغط، فبنكتب الرابط نفسه جنب أي لينك خارجي أو إيميل: [[attr(href)]] بيجيب قيمة الـ attribute كنص. في الـ CV اتلغت للينكات اللي نصها هو الرابط أصلًا.`,
-            R`صورة المشاركة برابط كامل: [[og:image]] لازم URL مطلق (البروتوكول OG بيقول كده، والمواقع اللي بتقرا الكارت مش بتحل المسار النسبي، من الوثائق)، ومعاه العرض والطول والـ alt.`,
-          ],
-          try: R`حط الملفات من الشرح، وافتح الرئيسية ودوس على كارت Tide Notes وشوف الصورة بتتحرك. اعمل نفس الحاجة مع Rendering ← [[prefers-reduced-motion: reduce]]. بعدين افتح [[cv.html]] واضغط Ctrl+P وشوف عدد الصفحات، وامسح [[@media print]] من [[cv.css]] و [[site.css]] وشوف تاني. وفي الآخر شغّل [[node make-og.mjs]] وافتح [[portfolio/img/og.png]].`,
-          flag: R`script`,
-          deep: {
-            why: R`الانتقال بين الصفحات كان محتاج SPA (router وJS كتير) عشان يحصل؛ دلوقتي بسطرين CSS على موقع ملفات ثابتة. والـ CV اللي بيطلع من نفس الصفحة بيفضل محدّث، والـ PDF بتاعه صفحة واحدة لو اتظبط، وصفحتين ونص بالـ header والأزرار لو اتساب. واللينك من غير OG بيظهر كرابط أزرق بس في أغلب التطبيقات.`,
-            how: R`View Transitions بين صفحتين: لما الرابط يتداس، المتصفح بياخد لقطة لكل عنصر عليه [[view-transition-name]] في الصفحة القديمة، ويحمّل الجديدة، ويدوّر على نفس الأسامي فيها، ويعمل شجرة pseudo-elements ([[::view-transition-group(tide-thumb)]] وجواها [[old]] و [[new]]) بتتحرك من المكان والمقاس القديم للجديد، وكل حاجة تانية بتعمل crossfade. والـ DOM الحقيقي للصفحة الجديدة موجود من الأول، فمفيش تأخير في التفاعل. والطباعة: [[@media print]] بيتطبق وقت الطباعة بس، و [[@page]] بيحدد صندوق الصفحة، والمتصفح بيقطّع المحتوى في صفحات ويحترم [[break-*]] لو يقدر. و OG: لما اللينك يتبعت، السيرفر بتاع التطبيق بيجيب الـ HTML ويقرا الـ meta (من غير JS غالبًا)، فلازم تكون مكتوبة في الـ HTML نفسه، وبيجيب الصورة من الرابط الكامل.`,
-            when: R`View Transition لموقع صفحات ثابتة فيه عنصر بيتكرر بين صفحتين (صورة منتج، أو كارت، أو عنوان)، ومش لكل حاجة (الحركة الكتير بتتعب). [[@media print]] لأي صفحة حد ممكن يطبعها: CV، وفاتورة، وتذكرة، ووصفة، وتقرير. و OG لأي صفحة ممكن تتبعت، ولكل صفحة قيمها (دراسة الحالة [[og:type = article]]). كل جزء ليه درس: «View Transitions»، و «@media print»، و «meta و Open Graph».`,
-            mistakes: R`تحط نفس [[view-transition-name]] على كذا كارت في نفس الصفحة (الانتقال بيتلغي). تنسى [[@view-transition]] في الصفحة الجديدة. تنسى reduced motion. تطبع من غير [[@media print]] (اتقاس: صفحتين والـ header ظاهر). تكتب الرابط جنب كل لينك حتى اللي نصه رابط فيتكرر (اتقاس: [[" (mailto:hello@nadine.example)"]] اتكتب بعد الإيميل). تحط [[og:image]] مسار نسبي، أو صورة أصغر من 1200×630، أو تحط الـ meta بـ JS. تنسى [[canonical]] فنسختين من نفس الصفحة (بـ [[?ref=]] مثلًا) بيتحسبوا صفحتين.`,
-          },
-          teach: R`## الخطوة ٣: دراسة الحالة
-
-~~~html portfolio/work/tide-notes.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title data-i18n="tCase">دراسة حالة Tide Notes | نادين فؤاد</title>
-  <meta name="description" content="إزاي تطبيق ملاحظات بقى يشتغل من غير نت: المشكلة، والقرارات، والأرقام.">
-  <link rel="canonical" href="https://nadine.example/work/tide-notes.html">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="دراسة حالة: Tide Notes">
-  <meta property="og:description" content="تطبيق ملاحظات بيشتغل offline: من ٤٫١ ثانية لـ ٠٫٩ ثانية.">
-  <meta property="og:url" content="https://nadine.example/work/tide-notes.html">
-  <meta property="og:image" content="https://nadine.example/img/og.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="../img/icon.svg" type="image/svg+xml">
-  <script src="../js/boot.js"></script>
-  <link rel="stylesheet" href="../css/tokens.css">
-  <link rel="stylesheet" href="../css/site.css">
-  <link rel="stylesheet" href="../css/case.css">
-</head>
-<body>
-  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
-  <header class="top">
-    <a class="brand" href="../" data-i18n="name">نادين فؤاد</a>
-    <nav aria-label="الأقسام" data-i18n-label="navLabel">
-      <a href="../#work" data-i18n="navWork">الشغل</a>
-      <a href="../#contact" data-i18n="navContact">تواصل</a>
-    </nav>
-    <button class="lang" type="button" id="lang" lang="en">English</button>
-  </header>
-
-  <main id="main">
-    <article class="case">
-      <header class="case-head">
-        <p class="eyebrow" data-i18n="caseKind">دراسة حالة · ٢٠٢٥</p>
-        <h1 data-i18n="caseTitle">Tide Notes: ملاحظات بتشتغل من غير نت</h1>
-        <div class="thumb t1" aria-hidden="true"></div>
-      </header>
-      <dl class="meta">
-        <div><dt data-i18n="mRole">دوري</dt><dd data-i18n="mRoleV">الواجهة كلها والـ offline</dd></div>
-        <div><dt data-i18n="mTime">المدة</dt><dd data-i18n="mTimeV">١٠ أسابيع</dd></div>
-        <div><dt data-i18n="mStack">الأدوات</dt><dd dir="ltr">HTML · CSS · Service Worker · IndexedDB</dd></div>
-      </dl>
-      <h2 data-i18n="cProblem">المشكلة</h2>
-      <p data-i18n="cProblemT">فريق المبيعات بيكتب ملاحظات الزيارات في مواقع النت فيها ضعيف، فالملاحظة بتضيع لو الصفحة اتقفلت قبل ما تتبعت.</p>
-      <h2 data-i18n="cDecisions">القرارات</h2>
-      <ol>
-        <li data-i18n="d1">كل ملاحظة بتتحفظ في IndexedDB الأول، والإرسال في الخلفية.</li>
-        <li data-i18n="d2">Service Worker بيخزّن الصفحة نفسها، فبتفتح من غير نت.</li>
-        <li data-i18n="d3">علامة واضحة على كل ملاحظة: اتبعتت ولا لسه.</li>
-      </ol>
-      <h2 data-i18n="cResults">النتيجة</h2>
-      <table class="results">
-        <caption data-i18n="rCap">قبل وبعد (متوسط ٣ أسابيع)</caption>
-        <thead><tr><th scope="col" data-i18n="rMetric">المقياس</th><th scope="col" data-i18n="rBefore">قبل</th><th scope="col" data-i18n="rAfter">بعد</th></tr></thead>
-        <tbody>
-          <tr><th scope="row" data-i18n="r1">وقت فتح الصفحة على 3G</th><td dir="ltr">4.1 s</td><td dir="ltr">0.9 s</td></tr>
-          <tr><th scope="row" data-i18n="r2">ملاحظات ضاعت في الأسبوع</th><td>23</td><td>0</td></tr>
-        </tbody>
-      </table>
-      <p><a href="../#work" data-i18n="back">ارجع للمشاريع</a></p>
-    </article>
-  </main>
-  <footer class="foot"><p><span data-i18n="rights">كل الحقوق محفوظة</span> © 2026</p></footer>
-  <script src="../js/i18n.js"></script>
-</body>
-</html>
-~~~
-
-- كل المسارات بـ [[../]]: الصفحة في فولدر [[work/]]. ده مهم في النشر (الدرس الأخير): مسارات تبدأ بـ [[/]] بتقع لو الموقع على [[/repo-name/]].
-- [[og:type = article]] و [[og:url]] و [[canonical]] بتاعة الصفحة دي هي، مش الرئيسية.
-- [[<dl class="meta">]]: «دوري، المدة، الأدوات» أزواج اسم وقيمة، وده بالظبط معنى [[<dl>]] (description list). وكل زوج جوه [[<div>]] (مسموح في HTML) عشان الـ grid يرتّبهم.
-- [[<table class="results">]] بـ [[<caption>]] (اسم الجدول لقارئ الشاشة) و [[scope="col"]] و [[scope="row"]]: «4.1 s» بتتقري «وقت فتح الصفحة على 3G، قبل، 4.1 s».
-- [[<td dir="ltr">4.1 s</td>]]: رقم ووحدة إنجليزي.
-
-~~~css portfolio/css/case.css
-/* case study page: one readable column, the same thumbnail as the card (it morphs between the pages) */
-.case { max-width: 46rem; margin-inline: auto; padding: clamp(32px, 6vw, 72px) var(--gutter); }
-.case-head h1 { font-size: var(--step-3); margin: 0.2em 0 0.6em; }
-.case-head .thumb { margin-block-end: 2rem; }
-.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1rem; margin: 0 0 2rem; }
-.meta dt { color: var(--muted); font-size: 0.9rem; }
-.meta dd { margin: 0; font-weight: 600; }
-.results { width: 100%; border-collapse: collapse; margin-block: 1rem 2rem; }
-.results caption { text-align: start; color: var(--muted); padding-block-end: 0.5rem; }
-.results th, .results td { padding: 0.6rem; border-block-end: 1px solid var(--line); text-align: start; }
-.results td { font-variant-numeric: tabular-nums; }
-~~~
-
-### الانتقال
-
-القاعدتين في [[site.css]] (الدرس اللي فات):
-
-~~~css
-@view-transition { navigation: auto; }
-::view-transition-group(tide-thumb) { animation-duration: 0.35s; animation-timing-function: var(--ease); }
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
-}
-~~~
-
-والقياس: [[pagereveal]] حدث بيحصل أول ما الصفحة الجديدة بتظهر، و [[e.viewTransition]] بيبقى object لو فيه انتقال و [[null]] لو مفيش:
-
-~~~javascript من check-portfolio.mjs
-await page.addInitScript(() => addEventListener("pagereveal", e => { window.__vt = e.viewTransition ? "yes" : "no"; }));
-await page.goto(B);
-await page.click('a[href="work/tide-notes.html"]');
-await page.waitForLoadState("load");
-console.log("view transition on the case page:", await page.evaluate(() => window.__vt));
-~~~
-
-~~~text اتشغّل فعلًا
-view transition on the case page: yes
-with reduced motion: transition object = yes (the CSS sets animation: none)
-~~~
-
-مع reduced motion الانتقال لسه «بيحصل» كـ object (المتصفح بيبدّل اللقطات)، بس من غير حركة: التبديل لحظي. لو عايز تلغيه خالص حط [[@view-transition { navigation: auto; }]] نفسها جوه [[@media (prefers-reduced-motion: no-preference)]]: اتجرّب، و [[__vt]] بقى [[no]] مع reduced motion.
-
-~~~text vt.mjs: نفس الضغطة بـ ٣ نسخ
-shipped                              vt: yes
-same name on 5 cards                 vt: no | error: Unexpected duplicate view-transition-name: card
-rule inside no-preference, reduced   vt: no
-~~~
-
----
-
-## الـ CV
-
-~~~html portfolio/cv.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title data-i18n="tCv">السيرة الذاتية | نادين فؤاد</title>
-  <meta name="description" content="السيرة الذاتية لنادين فؤاد، مطوّرة واجهات. الصفحة دي بتتطبع A4 في صفحة واحدة.">
-  <link rel="canonical" href="https://nadine.example/cv.html">
-  <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
-  <script src="js/boot.js"></script>
-  <link rel="stylesheet" href="css/tokens.css">
-  <link rel="stylesheet" href="css/site.css">
-  <link rel="stylesheet" href="css/cv.css">
-</head>
-<body>
-  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
-  <header class="top">
-    <a class="brand" href="./" data-i18n="name">نادين فؤاد</a>
-    <button class="btn" type="button" id="print" data-i18n="print">اطبع أو احفظ PDF</button>
-    <button class="lang" type="button" id="lang" lang="en">English</button>
-  </header>
-  <main id="main" class="cv">
-    <header class="cv-head">
-      <h1 data-i18n="name">نادين فؤاد</h1>
-      <p data-i18n="role">مطوّرة واجهات</p>
-      <ul class="contact-line" role="list">
-        <li><a href="mailto:hello@nadine.example" dir="ltr">hello@nadine.example</a></li>
-        <li><a href="https://nadine.example/" dir="ltr">https://nadine.example/</a></li>
-      </ul>
-    </header>
-    <section aria-labelledby="exp-h">
-      <h2 id="exp-h" data-i18n="exp">الخبرة</h2>
-      <article class="job">
-        <h3 data-i18n="j1">مطوّرة واجهات أولى · شركة منصة الرحلات</h3>
-        <p class="when" dir="ltr">2023 – 2026</p>
-        <ul>
-          <li data-i18n="j1a">نزّلت LCP لصفحة البحث من ٣٫٢ لـ ١٫٤ ثانية على الموبايل.</li>
-          <li data-i18n="j1b">بنيت مكتبة components مشتركة لـ ٣ فرق.</li>
-        </ul>
-      </article>
-      <article class="job">
-        <h3 data-i18n="j2">مطوّرة واجهات · وكالة تصميم صغيرة</h3>
-        <p class="when" dir="ltr">2020 – 2023</p>
-        <ul>
-          <li data-i18n="j2a">٢٥ موقع لمحلات وعيادات، كلها بالعربي والإنجليزي.</li>
-          <li data-i18n="j2b">أول فحص accessibility في الوكالة، وبقى خطوة في كل تسليم.</li>
-        </ul>
-      </article>
-    </section>
-    <section aria-labelledby="skills-h">
-      <h2 id="skills-h" data-i18n="skills">المهارات</h2>
-      <ul class="skills" role="list" dir="ltr"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>TypeScript</li><li>React</li><li>Accessibility</li><li>Performance</li></ul>
-    </section>
-  </main>
-  <script src="js/i18n.js"></script>
-  <script src="js/print.js" type="module"></script>
-</body>
-</html>
-~~~
-
-~~~css portfolio/css/cv.css
-/* CV: readable on screen, and one A4 page on paper */
-.cv { max-width: 46rem; margin-inline: auto; padding: clamp(24px, 5vw, 56px) var(--gutter); }
-.cv-head h1 { font-size: var(--step-3); margin: 0; }
-.cv-head p { margin: 0; color: var(--warm); font-weight: 600; }
-.contact-line { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; }
-.job { padding-block: 0.5rem; border-block-end: 1px solid var(--line); }
-.job h3 { margin: 0; font-size: var(--step-1); }
-.when { margin: 0; color: var(--muted); font-variant-numeric: tabular-nums; text-align: start; }
-.skills { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.skills li { padding: 0.15rem 0.7rem; border: 1px solid var(--line); border-radius: 999px; }
-.top .btn { min-height: 40px; }
-
-@page { size: A4; margin: 14mm 16mm; }
-@media print {
-  #print { display: none !important; }
-  .cv { padding: 0; max-width: none; }
-  .cv-head h1 { font-size: 22pt; }
-  .job { break-inside: avoid; border-color: #bbb; }
-  h2 { break-after: avoid; font-size: 13pt; margin-block: 10pt 4pt; }
-  .contact-line a::after { content: none !important; }
-  .skills li { border-color: #999; }
-}
-~~~
-
-~~~javascript portfolio/js/print.js
-document.getElementById("print")?.addEventListener("click", () => window.print());
-~~~
-
-- [[<button id="print">]]: [[window.print()]] بيفتح نافذة الطباعة (ومنها «Save as PDF»). ملف لوحده عشان مفيش [[onclick=""]] في الـ HTML (أسهل في CSP).
-- [[@page { size: A4; margin: 14mm 16mm; }]] بره الـ media: بيتطبق وقت الطباعة بس أصلًا.
-- [[.cv-head h1 { font-size: 22pt }]]: على الورق [[pt]] هي الوحدة الطبيعية (1pt = 1/72 بوصة)، و [[clamp()]] بالـ [[vw]] ملوش معنى.
-- [[h2 { break-after: avoid }]]: عنوان «المهارات» ميفضلش لوحده في آخر صفحة والقايمة في اللي بعدها.
-- [[.contact-line a::after { content: none !important; }]]: الإيميل والموقع مكتوبين كنص أصلًا، فمش محتاجين الرابط جنبهم تاني.
-
-~~~javascript print-mistakes.mjs
-import { chromium } from "playwright-core";
-const B = "http://127.0.0.1:5501/cv.html";
-const browser = await chromium.launch({ channel: "chrome" });
-const pages = pdf => (pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g) || []).length;
-async function run(name, strip) {
-  const page = await browser.newPage();
-  if (strip) await page.route(strip.url, async r => { const res = await r.fetch(); r.fulfill({ response: res, body: strip.fn(await res.text()) }); });
-  await page.goto(B); await page.emulateMedia({ media: "print" });
-  const after = await page.$eval(".contact-line a", a => getComputedStyle(a, "::after").content);
-  const top = await page.$eval(".top", e => getComputedStyle(e).display);
-  console.log(name.padEnd(40), "pages", pages(await page.pdf({ format: "A4", preferCSSPageSize: true })), "| header", top, "| link ::after", after);
-  await page.close();
-}
-const cut = s => s.replace(/@media print \{[\s\S]*?\n\}\n?/g, "").replace(/@page \{[^}]*\}/, "");
-await run("shipped");
-await run("no print CSS at all", { url: /\/css\/(site|cv)\.css/, fn: cut });
-await run("without content: none on the contact line", { url: /\/css\/cv\.css/, fn: s => s.replace("  .contact-line a::after { content: none !important; }\n", "") });
-await browser.close();
-~~~
-
-- [[page.emulateMedia({ media: "print" })]]: الصفحة بتتعامل كأنها بتتطبع (زي Rendering ← Emulate CSS media type في DevTools).
-- [[page.pdf({ format: "A4", preferCSSPageSize: true })]]: بيطلّع PDF حقيقي (headless بس)، و [[/Type /Page]] بيتعد جواه = عدد الصفحات.
-- [[cut]]: بيشيل كل بلوكات [[@media print]] و [[@page]] من الـ CSS قبل ما يوصل للصفحة ([[page.route]])، فبنقيس «من غير CSS طباعة» من غير ما نعدّل الملفات.
-
-~~~text اتشغّل فعلًا
-shipped                                  pages 1 | header none | link ::after none
-no print CSS at all                      pages 2 | header flex | link ::after none
-without content: none on the contact line pages 1 | header none | link ::after " (mailto:hello@nadine.example)"
-~~~
-
-والرئيسية نفسها بتتطبع صفحتين (المحتوى أطول)، والـ header مستخبي فيها كمان ([[print index.html pages: 2 header display: none,none]]).
-
----
-
-## صورة المشاركة
-
-~~~html og.html
-<!doctype html>
-<html lang="ar" dir="rtl"><meta charset="utf-8"><title>كارت المشاركة</title>
-<style>
-  body { margin: 0; width: 1200px; height: 630px; display: grid; place-content: center; gap: 12px;
-    font-family: system-ui, "Segoe UI", sans-serif; background: radial-gradient(circle at 80% 20%, #dcefec, #f7f5f0 60%); color: #1c2230; }
-  h1 { font-size: 96px; margin: 0; } p { font-size: 44px; margin: 0; color: #0d6b63; }
-</style>
-<h1>نادين فؤاد</h1><p>مطوّرة واجهات · Front-end developer</p>
-</html>
-~~~
-
-~~~javascript make-og.mjs
-// renders og.html at exactly 1200x630 and saves it as the share image
-import { chromium } from "playwright-core";
-import { pathToFileURL } from "node:url";
-const browser = await chromium.launch({ channel: "chrome" });
-const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
-await page.goto(pathToFileURL("og.html").href);
-await page.screenshot({ path: "portfolio/img/og.png" });
-await browser.close();
-console.log("saved portfolio/img/og.png");
-~~~
-
-~~~text اتشغّل فعلًا
-saved portfolio/img/og.png
-127353 bytes 1200x630
-~~~
-
-الرقمين اتقروا من الملف نفسه: في PNG العرض والطول مكتوبين في البايتات من 16 لـ 23 ([[readUInt32BE(16)]] و [[readUInt32BE(20)]]). و 1200×630 هو المقاس اللي أغلب التطبيقات بتعرضه كبير (نسبة 1.91:1)، و [[summary_large_image]] بيطلب الشكل الكبير ده. الـ HTML أسهل من برنامج تصميم: لو اسمك أو وظيفتك اتغيرت، تعدّل سطر وتشغّل السكربت.
-
-> الـ meta نفسها اتكتبت في الـ head بتاع الصفحتين (اتشرحت في الدرس الأول من الـ portfolio). اختبار الكارت على تطبيق حقيقي (واتساب أو LinkedIn) محتاج رابط منشور، فده من الوثائق: LinkedIn عنده Post Inspector بيقرا الـ meta ويوريك الكارت.
-
----
-
-## الخلاصة
-
-| الحاجة | السطر | اتأكدت إزاي |
+| المشكلة | التصليح | ليه |
 |---|---|---|
-| انتقال بين صفحتين | [[@view-transition]] في الاتنين + نفس [[view-transition-name]] | [[pagereveal]] → [[yes]] |
-| من غير حركة | [[::view-transition-*(*) { animation: none }]] مع reduced motion | انتقال من غير حركة |
-| A4 صفحة واحدة | [[@page]] + [[break-inside: avoid]] + إخفاء الـ UI | [[page.pdf()]] → 1 |
-| الرابط على الورق | [[a[href^="http"]::after]] ما عدا اللي نصه رابط | [[::after]] = none في الـ CV |
-| المشاركة | OG برابط كامل + 1200×630 + [[summary_large_image]] | [[og.png]] 1200x630، وفحص الـ ci |`,
-          sol: R`الصورة بتتحرك من الكارت لفوق الصفحة الجديدة، ومع reduced motion الصفحة بتتبدّل على طول. الـ CV في Ctrl+P صفحة واحدة من غير header ولا زرار الطباعة، ولما تشيل CSS الطباعة بيبقى صفحتين والـ header ظاهر (زي [[print-mistakes.mjs]]). و [[make-og.mjs]] بيطبع [[saved portfolio/img/og.png]] والصورة 1200×630.`,
-          practice: [
-            {
-              lvl: R`سريع`,
-              t: R`**اقرا وتوقّع:** حطيت [[view-transition-name: card]] على [[.card]] (الكروت الخمسة كلها). إيه اللي هيحصل لما تدوس على Tide Notes؟ جرّب وشوف Console.`,
-              done: R`الانتقال اتلغى كله لأن الاسم متكرر ٥ مرات في نفس الصفحة، وشفت في Console [[Unexpected duplicate view-transition-name: card]] (نفس اللي طلع في المعمل)، ورجّعت الاسم على [[.t1]] بس (أو [[view-transition-name: match-element]] لو عايز اسم لكل عنصر لوحده، من الوثائق).`,
-              sol: R`~~~css السطر الغلط
-.card { view-transition-name: card; }
-~~~
+| [[allow-scripts allow-same-origin]] على محتوى من موقعك | [[sandbox]] فاضي | الاتنين مع بعض بيلغوا القفل، والتعليق مش محتاج سكربتات أصلًا |
+| [[allow-top-navigation]] و [[allow-forms]] | اتمسحوا | تعليق خبيث كان يقدر ينقل الزائر لموقع تاني |
+| [[allow="camera; geolocation"]] | اتمسح | تعليق مش محتاج كاميرا |
+| [[allowfullscreen="false"]] | اتمسح | boolean: وجوده معناه «مسموح» |
+| من غير [[title]] | زوّدناه | قارئ الشاشة كان بيقول «Iframe» بس |
 
-~~~css الصح (زي الدرس)
-.t1 { view-transition-name: tide-thumb; }
-~~~
+**الغلطة الشائعة:** تسيب [[allow-scripts]] «احتياطي». لو زائر كتب [[<script>]] في تعليقه، هيشتغل عند كل اللي يفتحوا الصفحة.
 
-المتصفح بيربط العنصر القديم بالجديد بالاسم، والاسم لازم يبقى فريد في الصفحة في لحظة الصورة. خمس كروت بنفس الاسم يعني تعارض، والمتصفح مبيحاولش يخمّن: بيلغي الانتقال كله، والصفحة التانية بتفتح عادي من غير حركة. يعني الموقع لسه شغال، والخسارة في الحركة بس، وعشان كده الغلطة دي بتتنسي.
-
-الاسم على [[.t1]] بس، لأن كارت Tide Notes هو الوحيد اللي ليه دراسة حالة. ولو عايز اسم لكل عنصر تلقائيًا، الوثائق فيها [[view-transition-name: match-element]]، بس ده اسم مش بيعدّي بين صفحتين، فمش بينفع هنا.
-
-الغلطة الشائعة: تتوقع error أحمر. ده تحذير، فافتح Console وانت بتجرّب.
-
-~~~text الناتج (Chrome 156: Console بعد الضغط على الكارت)
-Unexpected duplicate view-transition-name: card
+~~~text القياس من Chrome (نفس الـ attributes القديمة على صفحة من نفس السيرفر)
+قبل:   origin = http://127.0.0.1:8731     parent.document.title = "parent page"   (قرت الصفحة الأم)
+       An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing.
+بعد:   السكربتات مقفولة:  Blocked script execution in '...' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 ~~~` },
-            {
-              lvl: R`سريع`,
-              t: R`**دوّر بنفسك:** من صفحة [[@page]] على MDN طلّع إزاي تحط رقم الصفحة في أسفل كل صفحة ([[@bottom-center]] و [[counter(page)]])، وجرّبه في الـ CV، وقول هل Chrome 156 بيطلعه في [[page.pdf()]].`,
-              done: R`عندك القاعدة مكتوبة، وجرّبتها على نسخة الـ CV بمحتوى أطول (صفحتين)، وكتبت اللي طلع فعلًا في الـ PDF (ظهر ولا لأ) من غير ما تفترض.`,
-              sol: R`~~~css portfolio/css/cv.css
-@page {
-  size: A4;
-  margin: 14mm 16mm;
-  @bottom-center {
-    content: "صفحة " counter(page) " من " counter(pages);
-    font-size: 9pt;
-    color: #555;
-  }
-}
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** ويدجت «عدّاد التصفيق» في iframe. اكتب على ورقة: لما تدوس 👏 الرقم هيزيد؟ ليه؟ وبعدين خلّيه يشتغل بأقل صلاحية ممكنة. (من قسم ٣ في الشرح، جزء «تختار الكلمات إزاي»)`, done: R`كتبت توقّعك، والرقم بيزيد مع كل ضغطة، والـ [[sandbox]] فيه [[allow-scripts]] بس، وكل الشروط ✓.`, work: { h: 130, start: R`<iframe sandbox title="عدّاد التصفيق للحلقة ١" width="240" height="60"
+  srcdoc="<button onclick='n.textContent++'>👏 صفّق</button> <b id=n>0</b>"></iframe>`, checks: [
+              { say: R`الـ [[sandbox]] فيه [[allow-scripts]]`, q: "iframe[sandbox~=\"allow-scripts\"]" },
+              { say: R`مفيهوش [[allow-same-origin]]`, q: "iframe[sandbox~=\"allow-same-origin\"]", n: 0 },
+              { say: R`[[sandbox]] لسه موجود (متمسحش)`, q: "iframe[sandbox]" },
+              { say: R`الـ iframe لسه ليه [[title]]`, q: "iframe[title]" },
+            ] }, sol: R`~~~live 90 بعد التعديل (دوس 👏)
+<iframe sandbox="allow-scripts" title="عدّاد التصفيق للحلقة ١" width="240" height="60"
+  srcdoc="<button onclick='n.textContent++'>👏 صفّق</button> <b id=n>0</b>"></iframe>
 ~~~
 
-[[@bottom-center]] من صناديق هامش الصفحة: ١٦ صندوق حوالين الصفحة. بيتكتب **جوه** [[@page]]، و [[content]] فيه [[counter(page)]] رقم الصفحة و [[counter(pages)]] عددهم.
+وده اللي كان باين قبل التعديل:
 
-لازم هامش سفلي كافي، لأن الصندوق بيتحط في الهامش نفسه. لو [[margin: 0]] مش هيظهر.
+~~~live 90 قبل (دوس 👏: مفيش حاجة)
+<iframe sandbox title="عدّاد التصفيق للحلقة ١" width="240" height="60"
+  srcdoc="<button onclick='n.textContent++'>👏 صفّق</button> <b id=n>0</b>"></iframe>
+~~~
 
-الجديد إنها بقت شغالة في Chrome من غير برامج تانية. قبل كده كان لازم Paged.js أو تحويل بالسيرفر. وعشان ما نفترضش، قرينا نص الـ PDF نفسه بـ [[pdfjs-dist]]، وبصينا على الهامش السفلي بس. (النص العربي في PDF بيتقري حروف منفصلة، فالقياس بيدوّر على الأرقام.)
+**التوقّع:** لأ، الرقم هيفضل ٠. [[sandbox]] الفاضي بيقفل السكربتات، و [[onclick]] سكربت.
 
-الغلطة الشائعة: [[page.pdf({ displayHeaderFooter: true })]] من Playwright: ده هيدر Playwright مش CSS، ومبيشتغلش من زرار اطبع في المتصفح.
+**هتشوف إيه:** قبل: الزرار بيتداس والرقم ٠. بعد: ١ و ٢ و ٣ مع كل ضغطة.
 
-~~~text الناتج (Chrome 156: page.pdf على الـ CV بمحتوى مكرر، وقراية نص كل صفحة)
-عدد الصفحات: 3
-صفحة 1: الأرقام في الهامش السفلي: 3 و 1
-صفحة 2: الأرقام في الهامش السفلي: 3 و 2
-صفحة 3: الأرقام في الهامش السفلي: 3 و 3
+**ليه [[allow-scripts]] لوحدها:** العدّاد بيغيّر رقم جوه صفحته بس. مش بيبعت فورم، ولا بيحفظ في [[localStorage]]، ولا بيفتح نافذة. فكلمة واحدة تكفي.
+
+**الغلطة الشائعة:** تمسح [[sandbox]] خالص «عشان يشتغل». هيشتغل، وهيبقى [[srcdoc]] من غير قفل: جزء من صفحتك بكل صلاحياتها.
+
+~~~text القياس من Chrome (الـ Console قبل التعديل، بعد ضغطة)
+Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 ~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**ابني:** فاتورة لمحل متخيل بتتطبع A4: جدول أصناف بـ [[thead { display: table-header-group }]] (العناوين بتتكرر في كل صفحة)، و [[tr { break-inside: avoid }]]، و [[print-color-adjust: exact]] عشان لون الهيدر يتطبع، و ٤٠ صنف عشان تطلع صفحتين.`,
-              done: R`[[page.pdf()]] بيطلّع صفحتين، والعناوين في أول كل صفحة، ومفيش صف متقطع، ولون الهيدر ظاهر في الـ PDF، ومن غير [[print-color-adjust]] اللون بيختفي (جرّبته).`,
-              sol: R`~~~live 600 720 invoice.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>فاتورة</title>
-<style>
-  @page { size: A4; margin: 15mm; }
-  body { font-family: system-ui, sans-serif; font-size: 12pt; }
-  table { inline-size: 100%; border-collapse: collapse; }
-  th, td { padding: 8pt; border-block-end: 1px solid #bbb; text-align: start; }
-  thead { display: table-header-group; }
-  thead th { background: #1f2937; color: #fff; print-color-adjust: exact; }
-  tr { break-inside: avoid; }
-</style></head>
-<body>
-  <main><h1>فاتورة رقم 1042</h1>
-    <table>
-      <thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th></tr></thead>
-      <tbody id="b"></tbody>
-    </table>
-  </main>
-  <script>
-    b.innerHTML = Array.from({ length: 40 }, (_, i) =>
-      $__bt<tr><td>صنف رقم $__{i + 1}</td><td>$__{(i % 5) + 1}</td><td>$__{(i + 1) * 15} جنيه</td></tr>$__bt).join("");
-  $__lt/script>
-</body></html>
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ده لوج سيرفر مزوّد الخرايط، فيه تلات طلبات جاية من تلات iframes في صفحة [[https://mahatta.example.test/orders/7731/track]] (صفحة تتبّع طلب، ورقم الطلب في العنوان). لكل سطر: أنهي [[referrerpolicy]] كان على الـ iframe؟ وأنهي واحد فيهم سرّب رقم الطلب للمزوّد؟ (من قسم ٦ في الشرح)
+
+~~~text لوج المزوّد
+GET /embed?place=studio    Referer: https://mahatta.example.test/
+GET /embed?place=branch    Referer: https://mahatta.example.test/orders/7731/track
+GET /embed?place=depot     (من غير Referer)
+~~~`, done: R`كتبت القيمة لكل سطر، وحددت السطر اللي فيه التسريب، وكتبت الـ iframe الأنسب لصفحة زي دي.`, sol: R`| الطلب | الـ [[Referer]] اللي وصل | [[referrerpolicy]] |
+|---|---|---|
+| [[place=studio]] | اسم الموقع بس | مفيش (الافتراضي [[strict-origin-when-cross-origin]]) أو [[origin]] |
+| [[place=branch]] | العنوان كامل برقم الطلب | [[unsafe-url]] |
+| [[place=depot]] | مفيش | [[no-referrer]] |
+
+**التسريب في السطر التاني:** المزوّد عرف إن فيه طلب رقمه 7731 وعرف عنوان صفحة تتبّعه. لو الصفحة دي بتتفتح باللينك من غير تسجيل دخول، أي حد عند المزوّد يقدر يفتحها.
+
+الأنسب لصفحة عنوانها فيه بيانات:
+
+~~~html
+<iframe src="https://maps.example.test/embed?place=depot" title="خريطة: مخزن التسليم"
+        width="400" height="300" loading="lazy" referrerpolicy="no-referrer"></iframe>
 ~~~
 
-الطباعة ليها قواعد خاصة، والـ ٣ سطور دول هم الفاتورة:
+**ليه مش الافتراضي وخلاص:** الافتراضي كان هيبعت اسم الموقع بس، وده كفاية هنا برده. [[no-referrer]] أضمن لما مفيش سبب يخلّي المزوّد يعرف موقعك أصلًا. المهم إن محدش يكتب [[unsafe-url]].
 
-- [[thead { display: table-header-group }]]: ده الافتراضي في المتصفحات، وكتابته صراحة بتحميك من reset بيغيّر [[display]]. بيخلي العناوين تتكرر في أول كل صفحة.
-- [[tr { break-inside: avoid }]]: الصف ميتقسمش بين صفحتين.
-- [[print-color-adjust: exact]]: المتصفح بيشيل الخلفيات في الطباعة عشان يوفر حبر، ودي بتقوله «اللون ده مقصود». من غيرها العنوان نص أبيض على ورق أبيض، يعني اختفى.
+**الغلطة الشائعة:** تفتكر إن [[sandbox]] بيمنع الـ [[Referer]]. ملوش علاقة: الـ header ده بيتبعت مع طلب تحميل الصفحة نفسه.
 
-[[@page]] بيحدد مقاس الورقة والهامش.
-
-الغلطة الشائعة: تجرب على الشاشة بس. [[page.pdf()]] أو Ctrl+P هو الاختبار الحقيقي.
-
-~~~text الناتج (Chrome 156: page.pdf وقراية الملف بـ pdfjs)
-عدد الصفحات: 2
-صفحة 1: خلفية الهيدر موجودة آه، وعدد الصفوف 20
-صفحة 2: خلفية الهيدر موجودة آه، وعدد الصفوف 20
-مجموع الصفوف: 40 من 40 (كل صف ٣ أرقام، فمفيش صف اتقسم)
-لون خلفية الهيدر في الـ PDF: مع print-color-adjust موجود، ومن غيرها مش موجود
+~~~text القياس من Chrome (على السيرفر المحلي، والصفحة الأم http://127.0.0.1:8731/if1.html)
+الافتراضي لموقع تاني:    Referer: http://127.0.0.1:8731/
+unsafe-url:              Referer: http://127.0.0.1:8731/if1.html
+no-referrer:             (مفيش)
 ~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**صلّح الكود البايظ:** الـ meta دي في صفحة مشروع: [[<meta property="og:image" content="img/og.png">]] و [[<meta name="twitter:card" content="summary">]] ومفيش [[og:url]] ولا [[og:image:alt]]. اكتب فحص بيطلّع كل المشاكل، وصلّحها.`,
-              done: R`الفحص (شكل الـ ci في الدرس) طلّع ٤ مشاكل: [[og:url]] و [[og:image:alt]] ناقصين، والصورة مش رابط كامل، و [[summary]] بدل [[summary_large_image]]، وبعد التصليح طبع [[ok]] وخرج بـ 0.`,
-              sol: R`~~~js check-meta.mjs
-import fs from "node:fs";
-const html = fs.readFileSync(process.argv[2], "utf8");
-const get = (k) => html.match(new RegExp($__bt<meta (?:property|name)="$__{k}" content="([^"]*)"$__bt))?.[1];
-const bad = [];
-if (!get("og:url")) bad.push("og:url ناقص");
-if (!get("og:image:alt")) bad.push("og:image:alt ناقص");
-if (!/^https:\/\//.test(get("og:image") ?? "")) bad.push("og:image مش رابط كامل: " + get("og:image"));
-if (get("twitter:card") !== "summary_large_image") bad.push("twitter:card لازم summary_large_image: " + get("twitter:card"));
-bad.forEach((b) => console.log("FAIL", b));
-console.log(bad.length ? bad.length + " problems" : "ok");
-process.exit(bad.length ? 1 : 0);
-~~~
+            { lvl: 'سريع', t: R`**اشرحها:** صاحب «المحطة» عايز صفحة «ادفع اشتراكك» فيها صفحة البنك نفسها جوه iframe «عشان الزائر ميخرجش من موقعنا». جرّبتها وطلع صندوق رمادي. اشرحله في ٣ سطور: ليه، وليه ده في مصلحته، والبديل. (من قسم ٨ في الشرح، جزء «الموقع رفض يتعرض»)`, done: R`٣ سطور فيهم: الـ header، وسبب وجوده، والبديل.`, sol: R`إجابة نموذجية:
 
-~~~html الـ meta بعد التصليح
-<meta property="og:url" content="https://nadine.example/work/tide-notes.html">
-<meta property="og:image" content="https://nadine.example/img/og.png">
-<meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
-<meta name="twitter:card" content="summary_large_image">
-~~~
+1. موقع البنك بيبعت مع صفحته header ([[X-Frame-Options: DENY]] أو [[Content-Security-Policy: frame-ancestors 'none']]) بيقول للمتصفح «متعرضنيش جوه أي صفحة تانية»، والمتصفح بيلتزم. مفيش attribute عندنا بيلغي ده.
+2. ده حماية للعميل: لو الصفحة بتتعرض في iframe، أي موقع مزيّف يقدر يحطها ويرسم فوقها أزرار مخفية (clickjacking). فالبنك اللي بيرفض ده بنك بياخد باله.
+3. البديل: زرار «ادفع» بيودّي الزائر لصفحة الدفع عند البنك أو شركة الدفع وبيرجّعه لموقعنا بعدها، أو ويدجت الدفع الرسمي لو الشركة عندها واحد معمول للتضمين.
 
-٤ مشاكل، وكل واحدة سببها مختلف:
-
-- [[og:image]] نسبي: واتساب وفيسبوك بيقروا النص زي ما هو، ومبيكملوش من الدومين.
-- [[og:url]] ناقص: الكراولر مش عارف الرابط الأساسي، فالمشاركات بتتقسم بين أشكال الرابط.
-- [[og:image:alt]] ناقص: قارئ الشاشة مش هيعرف الصورة دي إيه.
-- [[summary]]: كارت صغير بصورة مربعة صغيرة. [[summary_large_image]] هو اللي بيعرض الصورة 1200×630 كاملة.
-
-[[(?:property|name)]] لأن OG بتستخدم [[property]] و Twitter بتستخدم [[name]].
-
-الغلطة الشائعة: regex بتفترض ترتيب [[property]] قبل [[content]]. ده مقبول هنا لأن انت كاتب الملف، بس لو هتفحص مواقع تانية افصل الـ tag الأول زي تمرين [[meta-check.mjs]].
-
-~~~text الناتج (Node 24)
-قبل:
-FAIL og:url ناقص
-FAIL og:image:alt ناقص
-FAIL og:image مش رابط كامل: img/og.png
-FAIL twitter:card لازم summary_large_image: summary
-4 problems
-exit 1
-
-بعد:
-ok
-exit 0
+~~~text القياس من Chrome (صفحة سيرفرها بيبعت الـ header)
+مكان الـ iframe: صندوق رمادي فيه أيقونة ورقة حزينة        contentDocument = null
+Framing 'http://127.0.0.1:8731/' violates the following Content Security Policy directive: "frame-ancestors 'none'". The request has been blocked.
 ~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**ابني:** خلي [[make-og.mjs]] يعمل صورة لكل صفحة: بيقرا [[og:title]] من كل HTML في [[portfolio/]]، ويحطه في القالب، ويحفظ [[img/og-<اسم الصفحة>.png]]، ويغيّر [[og:image]] في الصفحة نفسها للرابط الجديد.`,
-              done: R`تشغيل السكربت بيطلّع ٣ صور 1200×630 (اقرا المقاس من البايتات زي الشرح)، وكل صفحة بتشاور على صورتها، وتشغيله مرتين ورا بعض مبيغيّرش الـ HTML التاني مرة.`,
-              sol: R`~~~js make-og.mjs
-import { chromium } from "playwright-core";
-import { pathToFileURL } from "node:url";
-import fs from "node:fs";
-import path from "node:path";
-
-const pages = ["index.html", "cv.html", "work/tide-notes.html"];
-const site = "https://nadine.example/img/";
-const browser = await chromium.launch({ channel: "chrome" });
-const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
-await page.goto(pathToFileURL("og.html").href);
-
-for (const rel of pages) {
-  const file = path.join("portfolio", rel);
-  let html = fs.readFileSync(file, "utf8");
-  const title = html.match(/<meta property="og:title" content="([^"]*)"/)?.[1]
-    ?? html.match(/<title[^>]*>([^<]*)/)[1];
-  await page.evaluate((t) => { document.querySelector("h1").textContent = t; document.querySelector("h1").style.fontSize = "64px"; }, title);
-  const name = "og-" + path.basename(rel, ".html") + ".png";
-  await page.screenshot({ path: "portfolio/img/" + name });
-
-  const tag = $__bt<meta property="og:image" content="$__{site}$__{name}">$__bt;
-  const next = /<meta property="og:image" content="[^"]*">/.test(html)
-    ? html.replace(/<meta property="og:image" content="[^"]*">/, tag)
-    : html.replace("</head>", $__bt  $__{tag}\n</head>$__bt);
-  if (next !== html) fs.writeFileSync(file, next);
-  console.log(name, title);
-}
-await browser.close();
-~~~
-
-بيبني على [[make-og.mjs]] و [[og.html]]. بدل صورة واحدة، حلقة على الصفحات:
-
-- العنوان بيتقري من [[og:title]]، أو [[<title>]] لو مش موجود، فمفيش نص بيتكتب مرتين.
-- [[page.evaluate]] بيغيّر النص جوه نفس القالب، فالتصميم مكان واحد.
-- اسم الملف من اسم الصفحة، و [[viewport]] ثابت 1200×630.
-- [[if (next !== html)]] هو اللي بيخليه idempotent: تشغيله تاني مبيكتبش حاجة، فـ git مش هيشوف تغيير.
-
-بنقرا المقاس من بايتات الـ PNG: أول [[IHDR]] بعد التوقيع، العرض عند البايت 16 والارتفاع عند 20.
-
-الغلطة الشائعة: تضيف [[<meta>]] جديد في كل تشغيل، فتلاقي ٥ نسخ. لازم [[replace]] لو موجود.
-
-~~~text الناتج
-og-cv.png: 1200×630
-og-index.png: 1200×630
-og-tide-notes.png: 1200×630
-HTML اتغيّر في التشغيل التاني؟ لأ
-كل صفحة بتشاور على صورتها: og-index.png و og-cv.png و og-tide-notes.png
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**قارن وقيس:** اعمل نفس الانتقال بـ JS (SPA صغير: [[fetch]] للصفحة و [[document.startViewTransition]] و [[history.pushState]]) وقارنه بـ [[@view-transition]]: عدد السطور، وزرار Back، وفتح الرابط في تاب جديد، وإيه اللي بيحصل من غير JS.`,
-              done: R`عندك جدول بالأربع حاجات، ونسخة الـ CSS ٣ سطور وزرار Back والتاب الجديد شغالين من غير كود، ونسخة الـ JS محتاجة [[popstate]] عشان Back يشتغل، وكتبت إمتى نسخة الـ JS تستاهل (SPA أصلًا).`,
-              sol: R`~~~js portfolio/js/spa.js (نسخة JavaScript)
-async function go(url, push = true) {
-  const html = await (await fetch(url)).text();
-  const next = new DOMParser().parseFromString(html, "text/html");
-  const swap = () => {
-    document.querySelector("main").replaceWith(next.querySelector("main"));
-    document.title = next.title;
-    if (push) history.pushState(null, "", url);
-  };
-  if (document.startViewTransition) await document.startViewTransition(swap).finished;
-  else swap();
-}
-document.addEventListener("click", (e) => {
-  const a = e.target.closest("a[href]");
-  if (!a || a.origin !== location.origin || a.hash) return;
-  e.preventDefault();
-  go(a.href);
-});
-addEventListener("popstate", () => go(location.href, false));
-~~~
-
-~~~css نسخة CSS (زي الدرس)
-@view-transition { navigation: auto; }
-.t1 { view-transition-name: tide-thumb; }
-::view-transition-group(tide-thumb) { animation-duration: 0.35s; }
-~~~
-
-نسخة CSS بتخلي المتصفح يعمل كل حاجة: تنقّل حقيقي بين صفحتين، والانتقال فوقه. فـ Back والتاب الجديد والرابط المنسوخ شغالين ببلاش. من غير دعم، تنقّل عادي.
-
-نسخة JS بتعيد كتابة التنقّل: لازم [[fetch]] و [[pushState]]، و [[popstate]] عشان Back يشتغل، وبدونه الرابط بيتغير والصفحة لأ. وكمان تعدّي على [[title]] و [[focus]] وعمق السكرول بإيدك، والـ CSS اللي الصفحة التانية محتاجاه ([[case.css]]) مش بيتحمل: ده باج ظاهر في النسخة دي، لأن [[<link>]] في الـ head مش بينتقل.
-
-إمتى JS تستاهل؟ في SPA أصلًا (React Router مثلًا)، أو لو عايز تحافظ على مشغّل صوت شغال بين الصفحات.
-
-الغلطة الشائعة: تعمل SPA عشان الحركة بس، وتخسر كل اللي المتصفح كان بيديهولك.
-
-~~~text الناتج (Chrome 156)
-                   CSS                     JS
-سطور               3                       18
-Back               شغال من غير كود             شغال بـ popstate
-JS مقفول           /work/tide-notes.html       /work/tide-notes.html
-تاب جديد           يفتح الصفحة عادي        يفتح الصفحة عادي (الرابط حقيقي)
-case.css اتحمّل     آه                     لأ
-~~~` },
-          ],
-          ci: [
-            {
-              os: [
-                R`ubuntu`,
-                R`macos`,
-                R`windows`,
-              ],
-              sh: R`node`,
-              run: R`const html = '<meta property="og:title" content="Tide Notes"><meta property="og:description" content="Offline notes"><meta property="og:image" content="img/og.png"><meta name="twitter:card" content="summary">';
-const meta = Object.fromEntries([...html.matchAll(/<meta (?:property|name)="([^"]+)" content="([^"]*)"/g)].map(m => [m[1], m[2]]));
-const need = ["og:title", "og:description", "og:url", "og:image", "og:image:alt", "twitter:card"];
-const problems = need.filter(k => !meta[k]).map(k => "missing " + k);
-if (meta["og:image"] && !/^https:\/\//.test(meta["og:image"])) problems.push("og:image must be an absolute https URL: " + meta["og:image"]);
-if (meta["twitter:card"] && meta["twitter:card"] !== "summary_large_image") problems.push("twitter:card is " + meta["twitter:card"] + " (a 1200x630 image wants summary_large_image)");
-console.log(problems.join("\n") || "ok");
-console.log("problems: " + problems.length);
-process.exitCode = problems.length ? 1 : 0;`,
-              code: 1,
-              expect: [
-                R`missing og:url`,
-                R`missing og:image:alt`,
-                R`og:image must be an absolute https URL: img/og.png`,
-                R`twitter:card is summary (a 1200x630 image wants summary_large_image)`,
-                R`problems: 4`,
-              ],
-            },
-          ],
+          ]
         },
         {
-          cmd: R`داشبورد ١: الـ shell والـ sidebar والأرقام`,
+          cmd: "object و embed",
+          title: "ملف PDF جوه الصفحة، والعنصرين اللي فضلوا من أيام الـ plugins",
+          pre: ["css/iframe sandbox و allow", "css/img"],
           ref: [
-            { t: "MDN: inert", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inert" },
-            { t: "MDN: visibility", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/visibility" },
-            { t: "MDN: <dialog>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog" },
+            { t: "MDN: <object>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/object" },
+            { t: "MDN: <embed>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/embed" },
+            { t: "WHATWG: the object element", url: "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-object-element" },
+            { t: "WHATWG: the embed element", url: "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-embed-element" }
           ],
-          title: R`App shell بـ grid-template-areas، و sidebar بيصغر لأيقونات على الكمبيوتر ويبقى drawer على الموبايل بـ inert ورجوع الفوكس، وكروت أرقام فيها sparkline و progress ring بـ SVG من غير مكتبة`,
-          learn: R`تبني هيكل أي لوحة تحكم: sidebar و topbar و main بـ grid areas، و sidebar بيتقفل لأيقونات (والأسامي لسه بتتقري) وبيتحول drawer تحت 64rem بـ [[visibility]] و [[inert]] و Esc، وكروت KPI بأرقام [[Intl]] و sparkline بـ [[<polyline>]] و ring بـ [[pathLength="100"]]، ومن غير ما الكروت تتنطط لما الأرقام توصل.`,
-          out: R`[[index.html]] و [[boot.js]] و [[shell.js]] و [[kpi.js]] و [[lib.js]] وأول نص [[app.css]]: الـ sidebar بيبقى 76px وأسامي اللينكات لسه موجودة، والـ drawer بيفتح والفوكس جواه و [[main.inert = true]]، و Esc بيرجّع الفوكس لزرار القايمة، والكروت فيها 44 و 73 و 186,400 ج.م. و 78%.`,
-          use: {
-            prog: R`درس «grid-template-areas» ودرس «sticky و fixed» ودرس «SVG» ودرس «focus-visible» شغالين في نفس الشاشة. والمهم هنا إن نفس الـ markup بيتعرض بـ ٣ أشكال (كمبيوتر مفتوح، وكمبيوتر مقفول، وموبايل) بالـ CSS بس، والـ JS بيغيّر attributes مش styles.`,
-            work: R`كل لوحة تحكم (أدمن، و CRM، و SaaS، ولوحة مدرّس) بتبدأ بالهيكل ده. والأسئلة اللي بتيجي: «الـ sidebar مخبّي الجدول على الموبايل»، و «الـ Tab بيروح لينكات مستخبية»، و «الرسم محتاج مكتبة؟». هنا كل واحدة ليها رقم.`,
-            cs: R`الـ accessibility tree مختلف عن اللي على الشاشة: لينك أيقونة لازم ليه اسم، والعنصر المستخبي بـ [[transform]] لسه في الـ Tab. و [[inert]] بيشيل جزء كامل من التفاعل والـ tree مرة واحدة. والـ sparkline تحويل خطي من مدى القيم لمدى البكسل (normalization).`,
-          },
-          desc: R`أول خطوة في الـ dashboard بتاع «صالة الصخرة»: الهيكل والقايمة والكروت.
-
-**الهيكل:** [[.shell]] grid فيه منطقتين في كل صف: [[grid-template-areas: "side top" "side main"]]، والعمود الأول [[var(--side-w)]] (15rem). الـ sidebar [[position: sticky; top: 0; height: 100dvh]] فبيفضل مكانه والصفحة بتتسكرول، والـ topbar sticky وزجاجي.
-
-**القايمة بـ ٣ أشكال:**
-• **مفتوحة** (كمبيوتر): أيقونة واسم.
-• **مقفولة** (زرار [[aria-expanded]] بيحط [[data-collapsed]]): [[--side-w]] بيبقى 4.75rem (اتقاس 76px)، والأسامي **مستخبية بالشكل بس** (clip-path) فقارئ الشاشة لسه بيقرا «نظرة عامة، الأعضاء، جدول الحصص». والاختيار بيتحفظ و [[boot.js]] بيطبقه قبل الرسم.
-• **drawer** تحت 64rem: [[position: fixed]] بره الشاشة بـ [[transform]] و [[visibility: hidden]] (فمش في الـ Tab)، وزرار القايمة بيفتحه، والفوكس بيروح لأول لينك، والـ topbar والـ main بيبقوا [[inert]]، و Esc أو الضغط على الخلفية بيقفل ويرجّع الفوكس لزرار القايمة.
-
-**الفخ اللي اتقاس:** في RTL الـ inline-start يمين، فالـ drawer بيستخبى بـ [[translateX(100%)]] (يمين). لو استخدمت [[-100%]] زي الإنجليزي: الـ drawer المقفول بقى عند **[[-154 / 118]]** يعني فوق الصفحة. [[transform]] مش logical، فبيتعكس بمتغير [[--out]].
-
-**الكروت:** ٤ كروت بـ [[auto-fit]]: أعضاء نشطين، ودخول النهارده ومعاه **sparkline** لآخر ١٤ يوم ([[<polyline>]] بنقط بيحسبها [[sparkPoints()]])، وإيراد الشهر بـ [[Intl.NumberFormat]] ومعاه نسبة التغيير بسهم **ونص** (مش لون بس)، ونسبة التجديد **ring** ([[<circle pathLength="100">]] فالـ [[stroke-dashoffset]] = 100 ناقص النسبة).`,
-          example: R`.shell { display: grid; grid-template-columns: var(--side-w) minmax(0, 1fr); grid-template-areas: "side top" "side main"; }
-.shell[data-collapsed] .side .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-[dir="rtl"] .side { --out: 100%; }
-behind.forEach(el => (el.inert = open));
-<circle class="ring-fg" id="ring" cx="18" cy="18" r="15.9" pathLength="100"/>
-document.getElementById("spark").setAttribute("points", sparkPoints(k.checkins));`,
+          desc: R`[[<object>]] و [[<embed>]] بيحطوا «ملف خارجي» في الصفحة والمتصفح هو اللي يقرر يعرضه بإيه. اتعملوا لأيام الـ plugins (Flash و Java)، والـ plugins راحت. اللي فضل ليهم في الشغل الحقيقي حاجة واحدة تقريبًا: عرض ملف **PDF** جوه الصفحة.
+الفرق بينهم: [[<object>]] ليه محتوى بديل بيظهر لو الملف متعرضش، و [[<embed>]] عنصر فاضي ملوش بديل. وللصور والصفحات والفيديو: [[<img>]] و [[<iframe>]] و [[<video>]] أحسن منهم دايمًا.`,
+          example: R`<object data="media/ep1-notes.pdf" type="application/pdf" width="600" height="400" title="ملخص الحلقة ١ (PDF)">
+  <p>المتصفح مش عارض الملف هنا.</p>
+</object>
+<p><a href="media/ep1-notes.pdf" download>نزّل ملخص الحلقة ١ (PDF، صفحتين)</a></p>
+<embed src="media/ep1-notes.pdf" type="application/pdf" width="600" height="400" title="ملخص الحلقة ١ (PDF)">`,
+          flag: "script",
           lines: [
-            R`الهيكل: عمودين (الـ sidebar بعرض متغير، والباقي [[minmax(0, 1fr)]])، والمنطقة [[side]] واخدة الصفين فالـ sidebar طوله الصفحة كلها. [[minmax(0, 1fr)]] مش [[1fr]] لوحدها عشان جدول عريض جوه main ميزقش العمود ويعمل scroll أفقي للصفحة.`,
-            R`إخفاء بالشكل بس: العنصر 1×1 ومقصوص، بس لسه في الـ accessibility tree، فاللينك اسمه «الأعضاء» حتى والقايمة مقفولة (اتقاس). [[display: none]] كان هيخلي اللينك أيقونة من غير اسم (axe: [[link-name]]).`,
-            R`المسافة اللي الـ drawer بيستخبى بيها: [[--out: -100%]] افتراضي (LTR: على الشمال)، و [[100%]] في RTL (على اليمين). [[translateX]] مش بيفهم الاتجاه زي [[inset-inline-start]]، فلازم تعكسه بإيدك.`,
-            R`لما الـ drawer مفتوح: الـ topbar والـ main [[inert]]، يعني مفيش Tab ولا ضغط ولا قارئ شاشة بيوصلهم، فالفوكس متحبس في القايمة من غير ما تكتب focus trap. ولما يتقفل بيرجعوا.`,
-            R`الـ ring: [[pathLength="100"]] بيقول للمتصفح «اعتبر طول الدايرة 100» مهما كان نصف القطر، فـ [[stroke-dasharray: 100]] و [[stroke-dashoffset: 22]] = 78% مرسومة. والـ SVG [[rotate(-90deg)]] عشان الرسم يبدأ من فوق.`,
-            R`الـ sparkline: [[sparkPoints]] (في [[lib.js]]) بتحوّل الـ ١٤ رقم لنقط [[x,y]] جوه [[viewBox="0 0 100 32"]]، و [[polyline]] بيوصّلهم. [[preserveAspectRatio="none"]] بيمطّه على عرض الكارت، و [[vector-effect: non-scaling-stroke]] بيخلي الخط سمكه ثابت.`,
+            R`[[<object>]]: [[data]] عنوان الملف، و [[type]] نوعه (PDF)، و [[width]] و [[height]] مقاس الصندوق، و [[title]] اسمه لقارئ الشاشة.`,
+            R`المحتوى البديل: اللي بين الفتحة والقفلة بيتعرض **بس** لو المتصفح معرفش يعرض الملف (مش موجود، أو النوع مش مدعوم، أو المتصفح مبيعرضش PDF).`,
+            R`قفلة [[</object>]]. إجبارية، لأن العنصر بياخد محتوى.`,
+            R`لينك تحميل برّه العنصر: بيفضل موجود في كل الحالات، حتى لو العارض اشتغل والملف نفسه فيه مشكلة.`,
+            R`[[<embed>]] لنفس الملف: [[src]] بدل [[data]]، ومن غير قفلة ولا محتوى بديل. مكتوب هنا للمقارنة، وفي صفحة حقيقية بتختار واحد منهم.`
           ],
-          try: R`حط الملفات من الشرح، وافتح [[http://127.0.0.1:5502/]]. اضغط زرار تصغير القايمة وافتح تاب Accessibility في DevTools على لينك «الأعضاء» واتأكد إن اسمه لسه موجود. صغّر الشاشة لأقل من 1024 وافتح القايمة بالكيبورد بس (Tab لحد الزرار، Enter، Tab جوه القايمة، Esc). وبعدين غيّر [[[dir="rtl"] .side { --out: 100% }]] لـ [[-100%]] وشوف القايمة المقفولة فين.`,
-          flag: R`script`,
-          deep: {
-            why: R`الـ sidebar هو أول حاجة بتبوظ في أي dashboard على الموبايل: يا إما مغطي المحتوى، يا إما مستخبي بس لينكاته لسه في الـ Tab (فاليوزر بالكيبورد بيدوس Tab ٥ مرات على حاجات مش شايفها)، يا إما اتعمل فيه focus trap بـ ٤٠ سطر JS. و [[inert]] و [[visibility]] بيحلوا ده بسطرين. والكروت: مكتبة رسوم ٢٠٠ كيلو عشان خط صغير ودايرة غالية على الأداء وعلى التحكم في الشكل.`,
-            how: R`الـ grid areas بتسمّي المناطق، والـ media query تحت 64rem بتغيّر الـ template لعمود واحد [[grid-template-areas: "top" "main"]] والـ sidebar بيخرج من الـ grid خالص بـ [[position: fixed]]. [[visibility: hidden]] مع [[transition: visibility 0s 0.25s]] (تأخير ربع ثانية) بيخلي الـ drawer يستخبى **بعد** ما الحركة تخلص، ولما يفتح [[transition: transform 0.25s]] بس فبيبقى visible على طول. [[matchMedia(...).addEventListener("change")]] بيقفل الـ drawer لو الشاشة كبرت (عشان الـ main ميفضلش inert). والـ sparkline: كل قيمة بتتحول من المدى [[min..max]] لـ [[pad..h-pad]]، ومقلوبة لأن y في SVG بيكبر لتحت. والـ ring: [[stroke-dasharray]] شرطة طولها 100 وفراغ 100، و [[stroke-dashoffset]] بيزق الشرطة، فالمرسوم = 100 ناقص الـ offset.`,
-            when: R`أي لوحة فيها أكتر من ٣ أقسام. القايمة المقفولة للشاشات المتوسطة لما الجدول محتاج عرض، والـ drawer للموبايل. ولو الأقسام ٣ أو ٤ بس على الموبايل، bottom nav (شريط تحت فيه أيقونات وأسامي) أسهل من drawer. والـ SVG بإيدك لـ sparkline و ring و bar بسيط؛ ولو محتاج محاور و tooltips وتكبير، مكتبة. دروس للتعمق: «grid-template-areas»، و «SVG»، و «aria»، و «Dialog».`,
-            mistakes: R`[[translateX(-100%)]] في RTL (اتقاس: الـ drawer المقفول فوق الصفحة). تخبّي الـ drawer بـ [[transform]] بس من غير [[visibility]] فلينكاته لسه في الـ Tab. تنسى [[inert]] فالـ Tab بيهرب للصفحة اللي ورا. متقفلش الـ drawer لما الشاشة تكبر فالصفحة تفضل inert. تخبّي أسامي القايمة المقفولة بـ [[display: none]]. تكتب الـ label جنب أيقونة زرار التصغير (حصل: «صغّر القايمة» كان مزنوق تحت الأيقونة؛ بقى [[aria-label]]). تقارن ناتج [[Intl]] بنص عادي في اختبار (فيه [[U+200F]] مخفي). تلوّن السهم بس من غير نص.`,
-          },
-          teach: R`## الخطوة ٤: الـ shell
+          teach: R`## الفكرة في سطرين
 
-~~~html dashboard/index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>لوحة صالة الصخرة للتسلق</title>
-  <meta name="robots" content="noindex">
-  <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 28 14 6l6 12 3-5 5 15z' fill='%231f6f8b'/%3E%3C/svg%3E">
-  <script src="js/boot.js"></script>
-  <link rel="stylesheet" href="css/app.css">
-</head>
-<body>
-  <svg width="0" height="0" class="sprite" aria-hidden="true">
-    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></symbol>
-    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M1 21c0-4 4-7 8-7s8 3 8 7zM16 4a4 4 0 0 1 0 8m3 9c0-3-1-5-3-6 3 0 7 2 7 6z"/></symbol>
-    <symbol id="i-cal" viewBox="0 0 24 24"><path d="M4 5h16v16H4zM4 9h16M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <symbol id="i-side" viewBox="0 0 24 24"><path d="M3 4h18v16H3zM9 4v16" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15A8 8 0 1 1 9 4a7 7 0 0 0 11 11z"/></symbol>
-  </svg>
-  <a class="skip" href="#main">اتخطّى للمحتوى</a>
-  <div class="shell" id="shell">
-    <aside class="side" id="side" aria-label="القايمة الرئيسية">
-      <div class="side-head">
-        <span class="logo" aria-hidden="true">▲</span><span class="label">الصخرة</span>
-        <button class="icon-btn collapse" id="collapse" type="button" aria-expanded="true" aria-controls="side" aria-label="القايمة الجانبية">
-          <svg aria-hidden="true"><use href="#i-side"/></svg>
-        </button>
-      </div>
-      <nav>
-        <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg><span class="label">نظرة عامة</span></a>
-        <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg><span class="label">الأعضاء</span></a>
-        <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg><span class="label">جدول الحصص</span></a>
-      </nav>
-    </aside>
-    <div class="scrim" id="scrim" hidden></div>
+المواصفة: [[<object>]] بيمثّل «مورد خارجي» بيتعامل معاه حسب نوعه: كصورة، أو كصفحة جوه الصفحة، أو كحاجة بيعرضها plugin. و [[<embed>]] «نقطة دمج» لمحتوى خارجي. MDN: المتصفحات الحالية مبقتش بتدعم الـ plugins زي Flash، والعنصرين لسه بيعرضوا اللي المتصفح نفسه بيعرف يعرضه، زي الـ PDF في العارض اللي جواه.
 
-    <header class="topbar">
-      <button class="icon-btn menu" id="menu" type="button" aria-expanded="false" aria-controls="side" aria-label="افتح القايمة">
-        <svg aria-hidden="true"><use href="#i-side"/></svg>
-      </button>
-      <h1>صالة الصخرة للتسلق</h1>
-      <button class="icon-btn" id="theme" type="button" aria-pressed="false" aria-label="الوضع الداكن"><svg aria-hidden="true"><use href="#i-moon"/></svg></button>
-      <button class="btn" id="add" type="button">عضو جديد</button>
-    </header>
+القياسات من Chrome 157 على Windows 11، بملف PDF صفحة واحدة (590 byte) وملف SVG من سيرفر محلي.
 
-    <main id="main" tabindex="-1">
-      <section id="overview" aria-labelledby="ov-h">
-        <h2 id="ov-h">نظرة عامة</h2>
-        <ul class="kpis" role="list">
-          <li class="kpi"><p class="k-label">أعضاء نشطين</p><p class="k-num" id="k-active">—</p><p class="k-sub">من <span id="k-total">—</span> مسجّل</p></li>
-          <li class="kpi"><p class="k-label">دخول النهارده</p><p class="k-num" id="k-in">—</p>
-            <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" role="img" aria-labelledby="spark-t"><title id="spark-t">دخول آخر ١٤ يوم</title><polyline id="spark" points=""/></svg></li>
-          <li class="kpi"><p class="k-label">إيراد الشهر</p><p class="k-num" id="k-rev">—</p><p class="k-sub"><span class="delta" id="k-delta">—</span> عن الشهر اللي فات</p></li>
-          <li class="kpi ring-card"><p class="k-label">نسبة التجديد</p>
-            <svg class="ring" viewBox="0 0 36 36" role="img" aria-labelledby="ring-t"><title id="ring-t">نسبة التجديد</title>
-              <circle class="ring-bg" cx="18" cy="18" r="15.9" pathLength="100"/><circle class="ring-fg" id="ring" cx="18" cy="18" r="15.9" pathLength="100"/></svg>
-            <p class="k-num ring-num" id="k-ren">—</p></li>
-        </ul>
-      </section>
+---
 
-      <section id="members" aria-labelledby="mem-h">
-        <h2 id="mem-h">الأعضاء</h2>
-        <form class="filters" id="filters" role="search" aria-label="فلترة الأعضاء">
-          <label>دوّر بالاسم أو الرقم <input type="search" name="q" autocomplete="off"></label>
-          <label>الحالة
-            <select name="status"><option value="all">الكل</option><option value="active">نشط</option><option value="frozen">متجمّد</option><option value="expired">منتهي</option></select></label>
-          <label>الباقة
-            <select name="plan"><option value="all">الكل</option><option value="monthly">شهري</option><option value="quarterly">3 شهور</option><option value="yearly">سنوي</option><option value="pass10">10 زيارات</option></select></label>
-          <button class="btn ghost" type="reset">امسح الفلاتر</button>
-        </form>
-        <p class="count" id="count" aria-live="polite"></p>
-        <div class="table-wrap">
-          <table class="members" id="table" aria-labelledby="mem-h" aria-busy="true">
-            <thead><tr>
-              <th scope="col" data-sort="name"><button type="button">الاسم</button></th>
-              <th scope="col" data-sort="plan"><button type="button">الباقة</button></th>
-              <th scope="col" data-sort="status"><button type="button">الحالة</button></th>
-              <th scope="col" data-sort="lastVisit"><button type="button">آخر زيارة</button></th>
-              <th scope="col" data-sort="visits"><button type="button">زيارات الشهر</button></th>
-            </tr></thead>
-            <tbody id="rows"></tbody>
-          </table>
-        </div>
-        <nav class="pager" id="pager" aria-label="صفحات الأعضاء"></nav>
-      </section>
+## ١. [[<object data="..." type="...">]]
 
-      <section id="schedule" aria-labelledby="sch-h">
-        <h2 id="sch-h">جدول الحصص</h2>
-        <p class="hint">اضغط على حصة عشان تشوف تفاصيلها وتحجز مكان.</p>
-        <div class="week-wrap" tabindex="0" role="region" aria-label="جدول الأسبوع، بيتسكرول بالعرض">
-          <div class="week" id="week"></div>
-        </div>
-      </section>
-    </main>
-  </div>
+| attribute | بيعمل إيه |
+|---|---|
+| [[data]] | عنوان الملف. ده مكان [[src]] في العناصر التانية |
+| [[type]] | نوع الملف (MIME type): [[application/pdf]] و [[image/svg+xml]]. MDN: لازم واحد على الأقل من [[data]] و [[type]]، والأحسن الاتنين |
+| [[width]] و [[height]] | مقاس الصندوق بالبيكسل |
+| [[title]] | الاسم اللي قارئ الشاشة بيقراه |
 
-  <dialog id="dlg-member" aria-labelledby="dm-h">
-    <form method="dialog" id="member-form">
-      <h2 id="dm-h">عضو جديد</h2>
-      <label>الاسم <input name="name" required minlength="3" autocomplete="off" autofocus></label>
-      <label>الباقة <select name="plan"><option value="monthly">شهري</option><option value="quarterly">3 شهور</option><option value="yearly">سنوي</option><option value="pass10">10 زيارات</option></select></label>
-      <div class="dlg-actions">
-        <button class="btn" value="save">ضيف</button>
-        <button class="btn ghost" value="cancel" formnovalidate>إلغاء</button>
-      </div>
-    </form>
-  </dialog>
-
-  <dialog id="dlg-class" aria-labelledby="dc-h">
-    <form method="dialog">
-      <h2 id="dc-h"></h2>
-      <p id="dc-body"></p>
-      <div class="dlg-actions">
-        <button class="btn" value="book" id="dc-book">احجز مكان</button>
-        <button class="btn ghost" value="cancel">اقفل</button>
-      </div>
-    </form>
-  </dialog>
-
-  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
-  <script type="module" src="js/app.js"></script>
-</body>
-</html>
+~~~text القياس من Chrome
+<object></object>                                   الحجم 300 × 150    display: inline
+<object data="notes.pdf" type="application/pdf" width="300" height="200">
+   الـ PDF اتعرض في عارض Chrome (شريط أدوات غامق والصفحة تحته)      ارتفاع المحتوى البديل = 0
+   navigator.pdfViewerEnabled = true
 ~~~
 
-الأجزاء المهمة:
+[[navigator.pdfViewerEnabled]] خاصية المتصفح بيقول بيها هو بيعرض PDF جوه الصفحة ولا لأ. في Chrome على الكمبيوتر [[true]]. مش كل متصفح كده (خصوصًا على الموبايل)، وده سبب وجود البديل ولينك التحميل.
 
-- [[<meta name="robots" content="noindex">]]: لوحة داخلية، متتحطش في جوجل (ده مش حماية! الحماية تسجيل دخول في السيرفر).
-- الـ icon كـ [[data:image/svg+xml,...]]: مفيش طلب [[favicon.ico]] بـ 404 (في الـ portfolio أول تشغيل طلّع [[Failed to load resource: ... 404]] لحد ما زوّدت [[icon.svg]]).
-- [[<svg class="sprite">]] فيه [[<symbol>]] لكل أيقونة، وكل مكان بيستخدمها بـ [[<svg><use href="#i-home"/></svg>]]: الأيقونة متكتبتش ٣ مرات، و [[fill: currentColor]] بيخليها بلون النص.
-- [[aria-hidden="true"]] على كل SVG أيقونة: الاسم جاي من النص اللي جنبها أو من [[aria-label]].
-- [[<aside class="side" aria-label="القايمة الرئيسية">]] و [[<nav>]] جواه، و [[aria-current="page"]] على اللينك الحالي.
-- [[#collapse]] عليه [[aria-expanded]] و [[aria-controls="side"]] و [[aria-label="القايمة الجانبية"]]: الاسم ثابت، والحالة (مفتوحة/مقفولة) في [[aria-expanded]]، فقارئ الشاشة بيقول «القايمة الجانبية، زرار، expanded».
-- [[#menu]] (للموبايل) اسمه بيتغير «افتح القايمة» / «اقفل القايمة».
-- [[#theme]] بـ [[aria-pressed]]: زرار تبديل (toggle) مش checkbox.
-- [[<main id="main" tabindex="-1">]]: الـ skip link بيودّي هنا، و [[tabindex="-1"]] بيخليه ياخد الفوكس بالكود من غير ما يبقى في الـ Tab.
-- الـ KPI في [[<ul role="list">]]، وكل رقم يبدأ [[—]] لحد ما البيانات توصل.
-- الـ sparkline: [[role="img"]] و [[aria-labelledby]] على [[<title>]] جوه الـ SVG، و [[kpi.js]] بيكتب فيه الملخص بالكلام («من 51 لـ 81، والنهارده 73»)، لأن الخط نفسه ملوش معنى لقارئ الشاشة.
-- الـ [[<dialog>]] الاتنين و [[#toasts]] في آخر الصفحة، بيتشرحوا في «داشبورد ٣».
-
-### الـ CSS: الـ tokens والـ shell والكروت (أول نص app.css)
-
-~~~css dashboard/css/app.css (السطور 1–91)
-/* ---------- tokens: light, then dark (system default or the saved choice) ---------- */
-:root {
-  color-scheme: light;
-  --bg: #f3f5f7; --surface: #ffffff; --ink: #17202a; --muted: #56606b; --line: #d9dee4;
-  --brand: #1f6f8b; --brand-ink: #ffffff; --brand-soft: #dceef4;
-  --ok: #156c2f; --ok-soft: #dcf3e3; --warn: #8a5a00; --warn-soft: #fbefd5; --bad: #b42318; --bad-soft: #fde4e1;
-  --skel: #e6eaee; --skel-hi: #f5f7f9;
-  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
-  --r: 12px; --side-w: 15rem; --top-h: 4rem;
-  --shadow: 0 1px 2px rgb(16 24 32 / 0.06), 0 4px 16px rgb(16 24 32 / 0.06);
-  --z-top: 20; --z-drawer: 40; --z-toast: 60;
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  color-scheme: dark;
-  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
-  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
-  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
-  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
-} }
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
-  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
-  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
-  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
-}
-
-/* ---------- base ---------- */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font: 1rem/1.6 var(--font); color: var(--ink); background: var(--bg); }
-h1, h2 { line-height: 1.3; margin: 0; }
-h1 { font-size: 1.15rem; }
-h2 { font-size: 1.3rem; margin-block-end: 1rem; }
-:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
-.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: 100; padding: 0.5rem 1rem; background: var(--ink); color: var(--bg); }
-.skip:focus { top: 1rem; }
-.sprite { position: absolute; }
-svg { width: 1.4rem; height: 1.4rem; fill: currentColor; flex: none; }
-.btn { --b: var(--brand); --f: var(--brand-ink); min-height: 44px; padding: 0.4rem 1.1rem; border: 2px solid var(--b); border-radius: 10px; background: var(--b); color: var(--f); font: inherit; font-weight: 600; cursor: pointer; }
-.btn.ghost { --b: transparent; --f: var(--brand); border-color: var(--line); }
-.btn:disabled { opacity: 0.55; cursor: not-allowed; }
-.icon-btn { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
-.icon-btn[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); }
-
-/* ---------- app shell: grid areas ---------- */
-.shell {
-  display: grid; min-height: 100dvh;
-  grid-template-columns: var(--side-w) minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
-  grid-template-areas: "side top" "side main";
-  transition: grid-template-columns 0.2s ease;
-}
-.shell[data-collapsed] { --side-w: 4.75rem; }
-.side { grid-area: side; position: sticky; top: 0; height: 100dvh; overflow-y: auto; background: var(--surface); border-inline-end: 1px solid var(--line); padding: 0.75rem; }
-.side-head { display: flex; align-items: center; gap: 0.5rem; min-height: 44px; margin-block-end: 1rem; font-weight: 700; }
-.logo { color: var(--brand); font-size: 1.4rem; width: 2rem; text-align: center; }
-.collapse { margin-inline-start: auto; }
-.side nav { display: grid; gap: 0.25rem; }
-.side nav a { display: flex; align-items: center; gap: 0.75rem; min-height: 44px; padding: 0.4rem 0.75rem; border-radius: 10px; color: var(--ink); text-decoration: none; }
-.side nav a:hover { background: var(--bg); }
-.side nav a[aria-current="page"] { background: var(--brand-soft); color: var(--ink); font-weight: 600; }
-.shell[data-collapsed] .side .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.shell[data-collapsed] .side-head { flex-direction: column; }
-.shell[data-collapsed] .collapse { margin: 0; }
-.shell[data-collapsed] .collapse svg { transform: scaleX(-1); }
-
-.topbar { grid-area: top; position: sticky; top: 0; z-index: var(--z-top); display: flex; align-items: center; gap: 0.75rem; min-height: var(--top-h); padding: 0.5rem 1.25rem; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(8px); border-block-end: 1px solid var(--line); }
-.topbar h1 { margin-inline-end: auto; }
-.menu { display: none; }
-main { grid-area: main; min-width: 0; padding: 1.25rem; display: grid; gap: 2rem; align-content: start; }
-main section { scroll-margin-top: calc(var(--top-h) + 1rem); min-width: 0; }   /* a grid item never shrinks below its content without this */
-.scrim { position: fixed; inset: 0; background: rgb(10 14 20 / 0.5); z-index: calc(var(--z-drawer) - 1); }
-
-/* ---------- KPI cards ---------- */
-.kpis { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
-.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); min-height: 8.5rem; display: grid; align-content: start; gap: 0.25rem; }
-.kpi p { margin: 0; }
-.k-label { color: var(--muted); font-size: 0.9rem; }
-.k-num { font-size: 1.8rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; min-height: 1.2em; }
-.k-sub { color: var(--muted); font-size: 0.9rem; }
-.delta { font-weight: 600; display: inline-block; min-width: 5em; }   /* "—" then "▲ +8.8%": same box, so the words after it stay put */
-.delta.up { color: var(--ok); } .delta.down { color: var(--bad); }
-.spark { width: 100%; height: 2.25rem; }
-.spark polyline { fill: none; stroke: var(--brand); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
-.ring-card { grid-template-columns: auto 1fr; align-items: center; column-gap: 1rem; }
-.ring-card .k-label { grid-column: 1 / -1; }
-.ring { width: 4.5rem; height: 4.5rem; transform: rotate(-90deg); }
-.ring circle { fill: none; stroke-width: 3.5; }
-.ring-bg { stroke: var(--line); }
-.ring-fg { stroke: var(--brand); stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
-
+~~~live 56 object لملف PDF (المعاينة هنا معزولة ومبتعرضش PDF، فهتشوف البديل)
+<object data="media/ep1-notes.pdf" type="application/pdf" width="300" height="120" title="ملخص الحلقة ١ (PDF)">
+  <p>المتصفح مش عارض الملف هنا. <a href="media/ep1-notes.pdf">افتح ملخص الحلقة ١ (PDF)</a></p>
+</object>
 ~~~
 
-~~~css dashboard/css/app.css (السطور 152–163): تحت 64rem
-/* ---------- under 64rem: sidebar becomes a drawer ---------- */
-@media (max-width: 63.99rem) {
-  .shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "main"; }
-  .side { --out: -100%; position: fixed; inset-block: 0; inset-inline-start: 0; z-index: var(--z-drawer); width: min(17rem, 85vw);
-    transform: translateX(var(--out)); visibility: hidden; transition: transform 0.25s ease, visibility 0s 0.25s; }
-  [dir="rtl"] .side { --out: 100%; }
-  .shell[data-open] .side { transform: none; visibility: visible; transition: transform 0.25s ease; }
-  .collapse { display: none; }
-  .menu { display: inline-grid; }
-  .shell[data-collapsed] .side .label { position: static; width: auto; height: auto; clip-path: none; }
-}
+**هتشوف إيه:** في المعاينة دي: الجملة البديلة واللينك (العارض مقفول جوه المعاينة، واتقاس: حتى PDF مكتوب بـ [[data:]] مبيتعرضش فيها والبديل هو اللي بيظهر). في فولدر مشروعك، بملف PDF حقيقي في [[media/]]: صندوق 300 × 120 جواه صفحة الـ PDF وفوقها شريط العارض.
 
+---
+
+## ٢. المحتوى البديل
+
+هنا [[<object>]] مختلف عن [[<audio>]] و [[<video>]]: البديل بتاعه بيظهر فعلًا لما الملف يفشل.
+
+~~~live 90 نوع المتصفح مبيعرفوش، وملف مش موجود
+<object data="media/game.swf" type="application/x-shockwave-flash">
+  <p>اللعبة دي كانت Flash، و Flash اتقفل. <a href="games.html">جرّب الألعاب الجديدة</a></p>
+</object>
+<object data="media/missing.pdf" type="application/pdf">
+  <p>الملف مش موجود. <a href="index.html">ارجع للحلقات</a></p>
+</object>
 ~~~
 
-- [[color-scheme: light]] و [[dark]] جوه الـ tokens: الـ select والـ scrollbar والـ date picker بتتلوّن مع الثيم.
-- [[--z-top: 20; --z-drawer: 40; --z-toast: 60]]: طبقات بأسامي، مش [[z-index: 9999]].
-- [[transition: grid-template-columns 0.2s ease]]: Chrome بيحرّك تغيير عرض الأعمدة لما [[--side-w]] يتغير، لأن القيمة الجديدة نفس عدد الأعمدة (الحركة نفسها من الوثائق؛ اللي اتقاس هو العرض بعد 400ms: 76px).
-- [[.shell[data-collapsed] .collapse svg { transform: scaleX(-1) }]]: الأيقونة بتتقلب عشان تبان «افتح».
-- [[.kpi { min-height: 8.5rem }]] و [[.k-num { min-height: 1.2em }]] و [[.delta { min-width: 5em }]]: المكان محجوز قبل الأرقام، فمفيش CLS (الأخيرة اتزوّدت بعد قياس، تحت).
-- [[.ring-fg { transition: stroke-dashoffset 0.8s }]]: الدايرة بتتملي لما الرقم يوصل.
-- تحت 64rem: [[--out]] و [[visibility: hidden]] و [[transition: transform 0.25s ease, visibility 0s 0.25s]] (اتشرحوا في deep)، و [[#collapse]] بيختفي و [[#menu]] بيظهر، والأسامي المقفولة بترجع (الـ drawer دايمًا مفتوح بالأسامي).
+**هتشوف إيه:** سطرين كلام عاديين بلينكاتهم. مفيش صندوق فاضي ولا أيقونة مكسورة: البديل أخد مكان العنصر.
 
-### قبل الرسم
-
-~~~javascript dashboard/js/boot.js
-// before the first paint: saved theme and saved sidebar state, so nothing flips after the page shows
-try {
-  const t = localStorage.getItem("theme");
-  if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
-  if (localStorage.getItem("side") === "collapsed") document.documentElement.dataset.side = "collapsed";
-} catch {}
+~~~text القياس من Chrome
+type="application/x-shockwave-flash":     البديل اتعرض (ارتفاعه 18px)
+data="nofile.pdf" (404):                  البديل اتعرض (ارتفاعه 18px)
+data="notes.pdf" موجود:                   البديل متعرضش (ارتفاعه 0)
 ~~~
 
-الثيم والقايمة المقفولة: لو اتطبقوا بعد الرسم، الصفحة بتنوّر أبيض ثانية لليوزر اللي مختار داكن، والجدول بيتنطط لما الـ sidebar يصغر. [[dataset.side]] على [[<html>]] و [[shell.js]] بيحوّله لـ [[data-collapsed]].
+والبديل ممكن يبقى [[<object>]] تاني: المتصفح بيجرّب البرّاني، ولو فشل بيجرّب اللي جواه، وهكذا. اتقاس: [[<object>]] لفيديو مش موجود وجواه [[<object>]] لـ SVG، فاللي اتعرض الـ SVG.
 
-### الـ sidebar والثيم
+---
 
-~~~javascript dashboard/js/shell.js
-// sidebar: collapses on wide screens, becomes a drawer on narrow ones; plus the theme switch
-const shell = document.getElementById("shell"), side = document.getElementById("side");
-const menu = document.getElementById("menu"), collapse = document.getElementById("collapse"), scrim = document.getElementById("scrim");
-const narrow = matchMedia("(max-width: 63.99rem)");
-const behind = [document.querySelector(".topbar"), document.getElementById("main")];
+## ٣. [[<object>]] بيعرض صورة أو صفحة كمان
 
-function setCollapsed(on) {
-  shell.toggleAttribute("data-collapsed", on);
-  collapse.setAttribute("aria-expanded", String(!on));
-  try { localStorage.setItem("side", on ? "collapsed" : "open"); } catch {}
-}
-if (document.documentElement.dataset.side === "collapsed") setCollapsed(true);
-collapse.addEventListener("click", () => setCollapsed(!shell.hasAttribute("data-collapsed")));
-
-function setDrawer(open) {
-  shell.toggleAttribute("data-open", open);
-  menu.setAttribute("aria-expanded", String(open));
-  menu.setAttribute("aria-label", open ? "اقفل القايمة" : "افتح القايمة");
-  scrim.hidden = !open;
-  behind.forEach(el => (el.inert = open));                 // while the drawer is open, Tab can't wander behind it
-  if (open) side.querySelector("a").focus();
-  else if (side.contains(document.activeElement) || document.activeElement === document.body) menu.focus();
-}
-menu.addEventListener("click", () => setDrawer(true));
-scrim.addEventListener("click", () => setDrawer(false));
-document.addEventListener("keydown", e => { if (e.key === "Escape" && shell.hasAttribute("data-open")) setDrawer(false); });
-side.addEventListener("click", e => {
-  const a = e.target.closest("a");
-  if (!a) return;
-  side.querySelectorAll("a").forEach(x => x.toggleAttribute("aria-current", x === a));
-  if (a.hasAttribute("aria-current")) a.setAttribute("aria-current", "page");
-  if (narrow.matches) setDrawer(false);
-});
-narrow.addEventListener("change", () => setDrawer(false)); // rotate or resize to wide: never leave the page inert
-
-const theme = document.getElementById("theme");
-const isDark = () => document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
-theme.setAttribute("aria-pressed", String(isDark()));
-theme.addEventListener("click", () => {
-  const next = isDark() ? "light" : "dark";
-  document.documentElement.dataset.theme = next;
-  theme.setAttribute("aria-pressed", String(next === "dark"));
-  try { localStorage.setItem("theme", next); } catch {}
-});
+~~~live 106 SVG جوه object
+<object type="image/svg+xml" title="بانر بودكاست المحطة" data="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+  <p>بودكاست المحطة</p>
+</object>
 ~~~
 
-- [[narrow = matchMedia("(max-width: 63.99rem)")]]: نفس الـ breakpoint بتاع CSS بالظبط. [[63.99]] مش [[64]] عشان [[min-width: 64rem]] و [[max-width: 64rem]] الاتنين بيتطبقوا على 1024 بالظبط.
-- [[setDrawer(open)]]: الـ attribute، و [[aria-expanded]]، والاسم، والخلفية ([[scrim.hidden]])، و [[inert]]، والفوكس. لما يتقفل الفوكس بيرجع للزرار **بس** لو كان جوه القايمة أو ضاع على [[body]] (لو اليوزر داس على لينك، الفوكس رايح للقسم).
-- [[keydown]] على [[Escape]]: بيقفل لو مفتوح بس.
-- الضغط على لينك: [[aria-current]] بينتقل، وعلى الموبايل القايمة بتتقفل.
-- [[narrow.addEventListener("change", ...)]]: لف الموبايل أو كبّر الشاشة والقايمة مفتوحة: اقفلها، وإلا [[main]] هيفضل inert على الكمبيوتر.
-- الثيم: [[isDark()]] بيبص على الاختيار المحفوظ الأول، ولو مفيش على [[prefers-color-scheme]]. والزرار بيحفظ [[light]] أو [[dark]] صريح.
+**هتشوف إيه:** مستطيل أخضر مكتوب عليه «بودكاست المحطة». شكله زي [[<img>]] بالظبط.
 
-### الأرقام
-
-~~~javascript dashboard/js/lib.js
-// small pure helpers: sparkline points, ring offset, schedule rows, number formats. No DOM, Node can test them.
-export function sparkPoints(values, w = 100, h = 32, pad = 2) {
-  if (!values.length) return "";
-  const min = Math.min(...values), max = Math.max(...values), span = max - min;
-  const step = values.length > 1 ? (w - pad * 2) / (values.length - 1) : 0;
-  return values.map((v, i) => {
-    const x = pad + i * step;
-    const y = span ? h - pad - ((v - min) / span) * (h - pad * 2) : h / 2;   // SVG y grows downward; a flat line sits in the middle
-    return +x.toFixed(1) + "," + +y.toFixed(1);
-  }).join(" ");
-}
-
-export const ringOffset = pct => 100 - Math.min(100, Math.max(0, pct));   // with pathLength="100" the dash is just the percent
-
-export const DAY0 = 7 * 60, SLOT = 30;                                     // the grid starts at 07:00, one row = 30 minutes
-export const toMin = hhmm => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
-export function gridRow(start, end) {
-  const row = (toMin(start) - DAY0) / SLOT + 1;
-  const span = Math.ceil((toMin(end) - toMin(start)) / SLOT);
-  return { row, span };
-}
-export function overlaps(a, b) { return a.day === b.day && toMin(a.start) < toMin(b.end) && toMin(b.start) < toMin(a.end); }
-
-export const num = new Intl.NumberFormat("ar-EG", { numberingSystem: "latn" });
-export const money = new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP", maximumFractionDigits: 0, numberingSystem: "latn" });
-export const shortDate = new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "short", timeZone: "UTC", numberingSystem: "latn" });
-export function delta(now, prev) {
-  const pct = prev ? ((now - prev) / prev) * 100 : 0;
-  return { pct: Math.round(pct * 10) / 10, up: pct >= 0 };
-}
+~~~text القياس من Chrome
+<object data="pic.svg" type="image/svg+xml">   الحجم 120 × 60 (مقاس الـ SVG)
+     contentDocument موجود، والـ <script> اللي جوه ملف الـ SVG اشتغل
+<img src="pic.svg">                            نفس الشكل، والسكربت اللي جوه الملف مبيشتغلش
+<object data="far.html">                       الحجم 300 × 150، وجواه الصفحة: زي iframe
 ~~~
 
-~~~javascript dashboard/js/kpi.js
-// KPI cards: numbers, sparkline, ring. The cards keep their size while loading, so nothing jumps.
-import { sparkPoints, ringOffset, num, money, delta } from "./lib.js";
-export async function loadKpis(members) {
-  const k = await (await fetch("data/kpi.json")).json();
-  document.getElementById("k-active").textContent = num.format(k.active);
-  document.getElementById("k-total").textContent = num.format(members.length);
-  document.getElementById("k-in").textContent = num.format(k.checkins.at(-1));
-  document.getElementById("spark").setAttribute("points", sparkPoints(k.checkins));
-  document.getElementById("spark-t").textContent = "دخول آخر ١٤ يوم: من " + Math.min(...k.checkins) + " لـ " + Math.max(...k.checkins) + "، والنهارده " + k.checkins.at(-1);
-  document.getElementById("k-rev").textContent = money.format(k.revenue);
-  const d = delta(k.revenue, k.revenuePrev), el = document.getElementById("k-delta");
-  el.textContent = (d.up ? "▲ +" : "▼ ") + d.pct + "%";
-  el.className = "delta " + (d.up ? "up" : "down");
-  document.getElementById("k-ren").textContent = k.renewal + "%";
-  document.getElementById("ring-t").textContent = "نسبة التجديد " + k.renewal + "%";
-  requestAnimationFrame(() => (document.getElementById("ring").style.strokeDashoffset = ringOffset(k.renewal)));
-}
+يعني [[<object>]] بيفتح الـ SVG كـ **مستند** (بسكربتاته)، و [[<img>]] بيعرضه كـ **صورة** وبس. ده كان بيتستخدم لـ SVG تفاعلي، والنهارده الـ SVG بيتكتب inline في الصفحة (درس «SVG»).
+
+وللصفحات: [[<object>]] معندوش [[sandbox]] ولا [[allow]] ولا [[loading]]. يعني صفحة جوه [[<object>]] ملهاش أي قفل من اللي في الدرس اللي فات. استخدم [[<iframe>]].
+
+---
+
+## ٤. [[<embed src="..." type="...">]]
+
+~~~html
+<embed src="media/ep1-notes.pdf" type="application/pdf" width="600" height="400" title="ملخص الحلقة ١ (PDF)">
 ~~~
 
-- [[numberingSystem: "latn"]]: أرقام لاتيني (186,400) جوه كلام عربي. [[new Intl.NumberFormat("ar-EG")]] من غيرها بيطلّع [[١٨٦٬٤٠٠]]. الاتنين صح؛ المهم تختار واحد للوحة كلها (الدرس الجاي فيه غلطة الخلط).
-- [[style: "currency", currency: "EGP", maximumFractionDigits: 0]]: [[‏186,400 ج.م.‏]] من غير قروش.
-- [[timeZone: "UTC"]] في التاريخ: التاريخ [[2026-10-25]] من غير ساعة بيتقري UTC، ولو اتعرض بتوقيت الجهاز في منطقة غرب جرينتش بيبقى ٢٤ أكتوبر.
-- [[requestAnimationFrame(...)]] للـ ring: لو اتغير في نفس اللحظة اللي العنصر اترسم فيها، الـ transition مش هيشتغل (المتصفح ميشوفش «قيمة قديمة»).
+- عنصر فاضي (void): ملوش قفلة، يعني **ملوش محتوى بديل**.
+- [[src]] للعنوان (مش [[data]])، و [[type]] و [[width]] و [[height]] زي [[<object>]]. MDN: المقاس بالبيكسل بس، من غير نسب مئوية.
 
-### اتشغّل فعلًا
-
-~~~text node check-dashboard.mjs (Chrome 156)
-kpi: 44 | 73 | ‏186,400 ج.م.‏ | 78% | delta: ▲ +8.8%
-spark points: 14 | ring offset: 100px
-collapsed: side width 76 | link names: نظرة عامة, الأعضاء, جدول الحصص | aria-expanded: false
-narrow: side visibility hidden | menu shown: grid
-drawer open: focus نظرة عامة | main inert: true | side x: 390
-Esc: focus on menu | main inert: false | side visibility: hidden
-theme: dark | bg: rgb(15, 20, 25) | pressed: true
-after reload: dark | pressed: true
+~~~text القياس من Chrome
+<embed>  من غير أي حاجة:                      الحجم 0 × 0
+<embed src="notes.pdf" type="application/pdf" width="300" height="200">     الـ PDF اتعرض
+<embed src="nofile.pdf" type="application/pdf">
+     صندوق 300 × 150 غامق جواه نص رد السيرفر «not found»      ← مفيش بديل يتعرض
 ~~~
 
-- [[ring offset: 100px]]: اتقرا وهو لسه بيتحرك (أول لحظة في الـ transition). بعد 0.8 ثانية بيبقى 22.
-- [[side x: 390]]: الحافة اليمين للـ drawer المفتوح = عرض الشاشة (RTL، داخل من اليمين).
+لما الملف يفشل، [[<embed>]] بيسيب صندوق بايظ قدام الزائر، و [[<object>]] بيعرض البديل اللي انت كاتبه. عشان كده MDN بيقول: لعرض PDF فكّر في [[<object>]] أو [[<iframe>]].
 
-~~~text node: نفس دوال lib.js
-2,22.5 18,5.7 34,21.6 50,9.5 66,8.5 82,30 98,2
-22 0 100
-186,400 | ‏186,400 ج.م.‏ | 25 أكتوبر | ١٨٦٬٤٠٠
-{ pct: 8.8, up: true } { pct: 0, up: true }
+---
+
+## ٥. PDF في الصفحة: أنهي عنصر؟
+
+| الطريقة | لو الملف متعرضش | قفل وتحكّم | إمتى |
+|---|---|---|---|
+| لينك [[<a href="x.pdf">]] | مفيش حاجة تبوظ | مش محتاج | **دايمًا موجود**، لوحده أو مع أي طريقة تانية |
+| [[<object data type>]] | بيعرض البديل اللي جواه | مفيش | معاينة PDF جوه الصفحة |
+| [[<iframe src="x.pdf">]] | صندوق فاضي أو رسالة المتصفح | [[loading="lazy"]] و [[title]] | PDF تحت في صفحة طويلة |
+| [[<embed src type>]] | صندوق بايظ | مفيش | كود قديم بتصونه |
+
+والقواعد اللي فوق الجدول:
+
+1. **لينك التحميل مش اختياري.** الموبايل، وقارئ الشاشة، واللي عايز يطبع، كلهم محتاجينه. واكتب فيه النوع والحجم: «(PDF، صفحتين)».
+2. **الـ PDF مش بديل عن الصفحة.** لو المحتوى مهم (منيو، أسعار، ملخص حلقة)، اكتبه HTML والـ PDF نسخة للتحميل. الـ PDF مبيتظبطش على عرض الموبايل، ومحرك البحث بيفضّل الصفحة.
+3. **[[title]] على العنصر.**
+
+~~~text القياس من Chrome (شجرة الـ accessibility)
+<object data="notes.pdf" type="application/pdf">                            →  PluginObject «»
+<object ... title="ملخص الحلقة ١ (PDF)">                                    →  PluginObject «ملخص الحلقة ١ (PDF)»
+<embed src="notes.pdf" type="application/pdf" title="ملخص في embed">        →  EmbeddedObject «ملخص في embed»
 ~~~
 
 ---
 
-## الغلطات اللي حصلت في الخطوة دي
+## ٦. ليه [[<img>]] و [[<iframe>]] أحسن في الغالب
 
-### ١. الـ drawer المقفول فوق الصفحة في RTL
+| عايز تحط | العنصر | اللي [[<object>]] و [[<embed>]] معندهمش |
+|---|---|---|
+| صورة (ومنها SVG) | [[<img>]] | [[alt]] و [[srcset]] و [[loading="lazy"]] و [[decoding]] |
+| صفحة من موقع تاني | [[<iframe>]] | [[sandbox]] و [[allow]] و [[loading]] و [[referrerpolicy]] |
+| فيديو أو صوت | [[<video>]] و [[<audio>]] | [[controls]] و [[<track>]] و [[<source>]] |
+| PDF | [[<object>]] مع لينك | ده مكانهم |
+| Flash أو Java applet | مفيش | اتقفلوا. المحتوى لازم يتعمل من جديد بـ HTML |
 
-~~~text drawer.mjs (390، الـ drawer مقفول)
-shipped (--out: 100% in RTL)   closed drawer left/right: 390 / 662 | on screen: false
-same -100% for both            closed drawer left/right: -154 / 118 | on screen: true
-~~~
+---
 
-الـ drawer عرضه 272 و [[inset-inline-start: 0]] حطه على اليمين (من 118 لـ 390)، و [[-100%]] زقّه 272 للشمال فبقى من [[-154]] لـ [[118]]: نصه على الشاشة. مكانش باين بس لأن [[visibility: hidden]]، بس أول ما الحركة تشتغل كان هيدخل من الناحية الغلط.
+## ٧. الغلطات اللي بتحصل فعلًا
 
-### ٢. الخط المستوي بينزل لتحت
-
-أول نسخة من [[sparkPoints]] كان فيها [[span = max - min || 1]]: لو كل الأيام نفس الرقم ([[[5, 5, 5]]]) الخط بيترسم على الحافة التحتانية ([[2,30 50,30 98,30]])، فيبان كأنه «صفر». بقى [[h / 2]] لو المدى صفر: [[2,16 50,16 98,16]].
-
-### ٣. حروف مخفية في ناتج Intl
-
-~~~text
-16 200f 31 38 36 2c 34 30 30 a0 62c 2e 645 2e 200f
-~~~
-
-[[money.format(186400)]] طوله 16 حرف مش 13: فيه [[U+200F]] (Right-to-Left Mark) في الأول والآخر، و [[U+00A0]] (مسافة مبتتقسمش) قبل [[ج.م.]]. أي اختبار بيقارن بـ [[=== "186,400 ج.م."]] هيفشل وانت مش شايف ليه. الحل: قارن بـ [[includes("186,400")]]، أو نضّف بـ [[replace(/[\u200f\u00a0]/g, ...)]].
-
-### ٤. الكلام جنب النسبة بيتحرك: CLS 0.0010
-
-~~~text vitals.mjs "?delay=1200" (قبل)
-run 2 CLS 0.0010 LCP 276ms H1 | 0.0010 "عن الشهر اللي فات" in k-sub
-~~~
-
-[[—]] بقت [[▲ +8.8%]] فالكلام اللي بعدها اتزق. صغير، بس في لوحة بتتفتح ١٠٠ مرة في اليوم بيتجمّع. [[.delta { display: inline-block; min-width: 5em }]] حجز المكان: [[CLS 0.0000]] في التلات مرات.
-
-### ٥. زرار التصغير مزنوق
-
-في اللقطة على 1280 الزرار كان فيه أيقونة وتحتها «صغّر القايمة» بخط صغير، شكله مكسور. الاسم بقى [[aria-label]] والزرار أيقونة بس (44×44). ولقطة الشاشة كانت هي اللي مسكتها، مش أي فحص أوتوماتيك.
+| الغلطة | اللي بيحصل |
+|---|---|
+| PDF في [[<embed>]] ومن غير لينك | على متصفح مبيعرضش PDF: صندوق فاضي، ومفيش طريقة للملف |
+| كلام بين [[<embed>]] و [[</embed>]] على إنه بديل | [[<embed>]] ملوش قفلة: الكلام بيتعرض دايمًا تحته كنص عادي |
+| [[<object src="x.pdf">]] | مفيش [[src]] على object: اسمه [[data]] |
+| [[<object>]] من غير [[type]] | المتصفح بيستنى رد السيرفر عشان يعرف النوع |
+| صورة عادية في [[<object>]] | ضاع [[alt]] و lazy و [[srcset]] |
+| صفحة موقع تاني في [[<object>]] | من غير أي [[sandbox]] |
+| المنيو كله PDF | مبيتقريش على الموبايل، ومبيظهرش في البحث |
 
 ---
 
 ## الخلاصة
 
-| الحاجة | الطريقة |
-|---|---|
-| الهيكل | [[grid-template-areas: "side top" "side main"]] و [[minmax(0, 1fr)]] |
-| قايمة مقفولة بأسامي | [[--side-w]] أصغر + الأسامي مستخبية بـ [[clip-path]] مش [[display: none]] |
-| drawer | [[fixed]] + [[translateX(var(--out))]] بيتعكس في RTL + [[visibility]] + [[inert]] للباقي + Esc + رجوع الفوكس |
-| أرقام | [[Intl.NumberFormat("ar-EG", { numberingSystem: "latn" })]] ونظام أرقام واحد للوحة |
-| sparkline و ring | [[<polyline points>]] من دالة نقية، و [[pathLength="100"]] |
-| من غير تنطيط | مقاسات محجوزة للكروت والأرقام والنسبة |`,
-          sol: R`لينك «الأعضاء» في تاب Accessibility اسمه «الأعضاء» والقايمة مقفولة. على أقل من 1024 الـ Tab بيعدّي القايمة المقفولة خالص، و Enter على زرار القايمة بيحط الفوكس على «نظرة عامة»، و Tab بيلف جوه القايمة بس (الباقي inert)، و Esc بيقفل والفوكس على الزرار. ومع [[-100%]] في RTL، [[document.getElementById("side").getBoundingClientRect()]] بيطلّع [[left]] سالب و [[right]] جوه الشاشة.`,
-          practice: [
-            {
-              lvl: R`سريع`,
-              t: R`**اقرا وتوقّع:** [[sparkPoints([10, 20])]] بـ [[w = 100, h = 32, pad = 2]]. احسب النقطتين بإيدك قبل ما تشغّل.`,
-              done: R`حسبت [[2,30 98,2]] (الأصغر تحت عند [[h - pad]] والأكبر فوق عند [[pad]]، و x من 2 لـ 98)، والدالة طلّعت نفس الناتج.`,
-              sol: R`~~~text الحساب
-القيم 10 و 20، و min = 10، و max = 20، و span = 10، و step = (100 − 4) ÷ 1 = 96
-
-النقطة الأولى: x = 2 + 0 × 96 = 2
-               y = 32 − 2 − ((10 − 10) ÷ 10) × 28 = 30
-
-النقطة التانية: x = 2 + 1 × 96 = 98
-                y = 32 − 2 − ((20 − 10) ÷ 10) × 28 = 2
-
-الناتج: 2,30 98,2
-~~~
-
-الفكرة كلها سطر واحد: في SVG الـ [[y]] بيكبر لتحت، فالقيمة الأصغر لازم تبقى [[y]] الأكبر. عشان كده بنطرح من [[h - pad]]. و [[pad]] هامش عشان الخط ميتقصش عند الحد.
-
-و [[step]] بيوزع النقط على العرض بعد الهامش. مع قيمتين، النقطتين عند الطرفين.
-
-الغلطة الشائعة: تنسى إن y معكوس، فالرسم يطلع مقلوب: الزيادة تنزل لتحت.
-
-~~~text الناتج (sparkPoints من lib.js في Node 24)
-sparkPoints([10, 20]) = 2,30 98,2
-~~~` },
-            {
-              lvl: R`سريع`,
-              t: R`**دوّر بنفسك:** من صفحة [[inert]] على MDN اعرف ٤ حاجات بتتمنع عن العنصر الـ inert، وهل [[<dialog>]] بـ [[showModal()]] بيحط [[inert]] على باقي الصفحة لوحده.`,
-              done: R`كتبت إن الـ inert مبياخدش فوكس ولا ضغط ولا بيتختار نصه ولا بيظهر في الـ accessibility tree، وإن [[showModal()]] بيعمل نفس الأثر على كل اللي بره الـ dialog من غير ما يحط attribute.`,
-              sol: R`~~~text الإجابة النموذجية
-العنصر الـ inert وكل اللي جواه:
-١. مبياخدش focus، فـ Tab بيعدّيه.
-٢. مبيستقبلش ضغطات: الضغطة بتروح للي تحته.
-٣. نصه مبيتختارش ومبيتبحثش فيه بـ Ctrl+F.
-٤. بيختفي من الـ accessibility tree، فقارئ الشاشة مبيشوفوش.
-
-<dialog> بـ showModal() بيعمل نفس الأثر على كل اللي برا الـ dialog لوحده،
-من غير ما يكتب attribute اسمه inert في الـ HTML.
-~~~
-
-[[inert]] attribute بتكتبه انت، و [[showModal()]] حالة داخلية في المتصفح: عشان كده [[el.hasAttribute("inert")]] بيرجّع [[false]] والعنصر فعلًا مش بياخد focus. فمتختبرش بالـ attribute، اختبر بالسلوك.
-
-عشان كده الـ drawer في الدرس لازم يحط [[inert]] بنفسه، لأنه مش [[<dialog>]]، و [[<dialog>]] مش محتاج.
-
-المصدر: MDN صفحة [[HTMLElement.inert]] و [[<dialog>]].
-
-الغلطة الشائعة: تكتب [[inert]] على [[body]] وتفتح dialog جواه. الـ dialog نفسه هيبقى inert.
-
-~~~text الناتج (Chrome 156، جربنا السلوك)
-زرار جوه inert: focus اتحط عليه؟ false
-قارئ الشاشة (شجرة الـ accessibility): الزرار ظاهر؟ آه
-بعد showModal: hasAttribute("inert") على main = false، و focus على زرار main؟ false
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**صلّح الكود البايظ:** النسخة دي من الـ drawer: [[.side { transform: translateX(100%) } .shell[data-open] .side { transform: none }]] ومن غير [[visibility]] ولا [[inert]]. افتح الصفحة على 390 ودوس Tab ١٠ مرات من أول الصفحة. اكتب فين الفوكس راح، وصلّحها.`,
-              done: R`الـ Tab وقف على لينكات القايمة المستخبية (مش ظاهر أي إطار)، وبعد ما زوّدت [[visibility: hidden]] مع التأخير و [[inert]] للباقي لما تفتح، الـ Tab بيعدّي القايمة وهي مقفولة ومبيطلعش منها وهي مفتوحة.`,
-              sol: R`~~~css dashboard/css/app.css (تحت 64rem)
-.side { transform: translateX(var(--out)); visibility: hidden; transition: transform 0.25s ease, visibility 0s 0.25s; }
-.shell[data-open] .side { transform: none; visibility: visible; transition: transform 0.25s ease; }
-~~~
-
-~~~js dashboard/js/shell.js (جوه setDrawer)
-behind.forEach(el => (el.inert = open));
-~~~
-
-[[transform: translateX(100%)]] بيحرك الرسم بس. العنصر لسه في الصفحة، ولينكاته لسه بتاخد focus، فـ Tab بيقف على حاجة مش باينة: المستخدم مش عارف هو فين.
-
-- [[visibility: hidden]] بيشيله من Tab ومن قارئ الشاشة، وده اللي ناقص.
-- الحيلة في [[visibility 0s 0.25s]]: وهو بيتقفل، الـ visibility بتتغير **بعد** ما الحركة تخلص، عشان القفل يبان. وهو بيتفتح القاعدة التانية من غير تأخير.
-- [[inert]] على الباقي وهو مفتوح، عشان Tab ميطلعش ورا القايمة.
-
-الغلطة الشائعة: [[display: none]]: بيصلّح الـ Tab بس بيكسر الحركة، لأن [[display]] مبيتحركش.
-
-~~~text الناتج (Chrome 156، عرض 390: أماكن الـ focus بعد ١٠ ضغطات Tab من أول الصفحة)
-النسخة البايظة:  اتخطّى للمحت ← نظرة عامة ← الأعضاء ← جدول الحصص ← افتح القايمة ← الوضع الداكن ← عضو جديد ← INPUT ← الكلنشطمتجمّ ← الكلشهري3 شه
-                 لينكات مستخبية وقف عليها: 3
-بعد التصليح:     اتخطّى للمحت ← افتح القايمة ← الوضع الداكن ← عضو جديد ← INPUT ← الكلنشطمتجمّ ← الكلشهري3 شه ← امسح الفلاتر ← الاسم ← الباقة
-                 لينكات مستخبية وقف عليها: 0
-القايمة مفتوحة، ١٠ Tab: طلع برا القايمة؟ لأ
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**ابني:** على الموبايل بدّل الـ drawer بـ bottom nav: شريط [[position: fixed; inset-inline: 0; bottom: 0]] فيه الـ ٣ لينكات بأيقونة واسم، و [[padding-bottom: env(safe-area-inset-bottom)]]، و [[main]] عليه padding من تحت بنفس الارتفاع عشان آخر حاجة متستخباش.`,
-              done: R`على 390 الشريط تحت وآخر صف في الجدول الأسبوعي ظاهر فوقه، وكل لينك 44px على الأقل، و axe صفر، و [[aria-current]] على القسم الحالي، والـ drawer مبقاش موجود على الموبايل.`,
-              sol: R`~~~html dashboard/index.html (قبل قفلة #shell)
-<nav class="bottom-nav" aria-label="الأقسام">
-  <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg>نظرة عامة</a>
-  <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg>الأعضاء</a>
-  <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg>الحصص</a>
-</nav>
-~~~
-
-~~~css dashboard/css/app.css (في آخر الملف)
-.bottom-nav { display: none; }
-@media (max-width: 40rem) {
-  .side, .menu { display: none; }
-  .bottom-nav {
-    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
-    position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-drawer);
-    background: var(--surface); border-block-start: 1px solid var(--line);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  .bottom-nav a {
-    display: grid; justify-items: center; align-content: center; gap: 2px;
-    min-block-size: 44px; padding-block: 6px; color: var(--ink); text-decoration: none; font-size: 0.8rem;
-  }
-  .bottom-nav svg { inline-size: 20px; block-size: 20px; }
-  .bottom-nav a[aria-current="page"] { color: var(--brand); font-weight: 700; }
-  main { padding-block-end: calc(4rem + env(safe-area-inset-bottom)); }
-}
-~~~
-
-~~~js dashboard/js/shell.js (آخر الملف)
-document.querySelector(".bottom-nav").addEventListener("click", (e) => {
-  const a = e.target.closest("a");
-  if (!a) return;
-  a.parentElement.querySelectorAll("a").forEach((x) => x.removeAttribute("aria-current"));
-  a.setAttribute("aria-current", "page");
-});
-~~~
-
-بيبني على [[index.html]] و [[app.css]] بتوع الـ shell.
-
-- [[position: fixed; inset-inline: 0; bottom: 0]]: لازق تحت على عرض الشاشة.
-- [[env(safe-area-inset-bottom)]]: مساحة شريط الرجوع على الآيفون، صفر على الباقي. من غيرها اللينكات تبقى تحت الشريط.
-- [[padding-block-end]] على [[main]]: الشريط fixed برا الـ flow، فآخر حاجة في الصفحة هتتغطى. لازم نفس الارتفاع.
-- [[min-block-size: 44px]]: أقل هدف لمس معقول.
-- [[aria-current="page"]] بيتغير مع الضغط، فقارئ الشاشة بيقول «الصفحة الحالية».
-
-الغلطة الشائعة: تعمل [[bottom: 0]] من غير padding على main، فآخر صف مستخبي ومحدش يقدر يوصله.
-
-~~~text الناتج (Chrome 156، عرض 390)
-الشريط: top 789 و bottom 844، و viewport 844
-ارتفاع كل لينك: 54.46875 و 54.46875 و 54.46875
-آخر عنصر في main بعد scroll للآخر: bottom = 780، فوق الشريط؟ آه
-aria-current بعد ضغطة «الأعضاء»: - page -
-الـ drawer: display = none
-axe: 0
-~~~
-
-~~~view 160 230 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+- [[<object data type>]] ليه بديل بيظهر لما الملف يفشل. [[<embed src type>]] فاضي وملوش بديل.
+- استخدامهم الحقيقي النهارده: معاينة PDF. ومعاها دايمًا لينك تحميل و [[title]].
+- صورة ← [[<img>]]، صفحة ← [[<iframe>]]، فيديو ← [[<video>]].`,
+          try: R`اعمل [[notes.html]] وجنبها أي ملف PDF عندك باسم [[notes.pdf]]. حط الملف مرتين: مرة في [[<object>]] ببديل فيه لينك، ومرة في [[<embed>]]، وتحتهم لينك تحميل. افتح الصفحة: الاتنين عرضوا الملف؟ وبعدين غيّر اسم الملف في الاتنين لـ [[nofile.pdf]] واعمل Ctrl+R: مين فيهم اتصرف أحسن؟`,
+          sol: R`~~~html notes.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-:root { --surface: #ffffff; --line: #e5e7eb; --ink: #0f172a; --brand: #4f46e5; --z-drawer: 50; } body { margin: 0; font-family: system-ui, sans-serif; color: var(--ink); background: #f8fafc; }
-#shell { display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; } .side { padding: 1rem; background: var(--surface); border-inline-end: 1px solid var(--line); } .side a { display: block; padding: 0.4rem 0; color: inherit; }
-.menu { display: none; } main { padding: 1rem; } @media (max-width: 40rem) { #shell { grid-template-columns: 1fr; } }
-</style>
+<title>ملخص الحلقة</title>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M3 11 12 4l9 7v9H3z"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M2 21c0-4 3-6 7-6s7 2 7 6"/></symbol><symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" d="M3 10h18M8 3v4M16 3v4"/></symbol></svg>
-<div id="shell"><aside class="side"><a href="#overview">نظرة عامة</a><a href="#members">الأعضاء</a><a href="#schedule">الحصص</a></aside>
-<main><h1>لوحة التحكم</h1><p>على «موبايل» السايدبار بيختفي، وتحت بيظهر شريط فيه الـ ٣ أقسام بأيقونة واسم.</p></main>
-<nav class="bottom-nav" aria-label="الأقسام">
-  <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg>نظرة عامة</a>
-  <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg>الأعضاء</a>
-  <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg>الحصص</a>
-</nav>
-</div>
-<style>
-/* من الحل */
-.bottom-nav { display: none; }
-@media (max-width: 40rem) {
-  .side, .menu { display: none; }
-  .bottom-nav {
-    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
-    position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-drawer);
-    background: var(--surface); border-block-start: 1px solid var(--line);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  .bottom-nav a {
-    display: grid; justify-items: center; align-content: center; gap: 2px;
-    min-block-size: 44px; padding-block: 6px; color: var(--ink); text-decoration: none; font-size: 0.8rem;
-  }
-  .bottom-nav svg { inline-size: 20px; block-size: 20px; }
-  .bottom-nav a[aria-current="page"] { color: var(--brand); font-weight: 700; }
-  main { padding-block-end: calc(4rem + env(safe-area-inset-bottom)); }
-}
-</style>
+<h1>ملخص الحلقة</h1>
+<object data="notes.pdf" type="application/pdf" width="400" height="300" title="ملخص الحلقة (PDF) في object">
+  <p>المتصفح مش عارض الملف. <a href="notes.pdf">افتح الملخص (PDF)</a></p>
+</object>
+<embed src="notes.pdf" type="application/pdf" width="400" height="300" title="ملخص الحلقة (PDF) في embed">
+<p><a href="notes.pdf" download>نزّل الملخص (PDF)</a></p>
+</body>
+</html>
+~~~
+
+~~~view 274 شكلها والملف مش موجود (وده برده شكلها جوه المعاينة المعزولة)
+<h1>ملخص الحلقة</h1>
+<object data="nofile.pdf" type="application/pdf" width="300" height="200" title="ملخص الحلقة (PDF) في object">
+  <p>المتصفح مش عارض الملف. <a href="notes.pdf">افتح الملخص (PDF)</a></p>
+</object>
+<embed src="nofile.pdf" type="application/pdf" width="300" height="100" title="ملخص الحلقة (PDF) في embed">
+<p><a href="notes.pdf" download>نزّل الملخص (PDF)</a></p>
+~~~
+
+**هتشوف إيه:**
+
+- **والملف موجود** (على جهازك): صندوقين جنب بعض أو تحت بعض، في كل واحد صفحة الـ PDF وشريط العارض. مفيش فرق في الشكل.
+- **والملف مش موجود:** [[<object>]] اختفى وظهر مكانه «المتصفح مش عارض الملف» باللينك. و [[<embed>]] ساب صندوق فاضي (ومن سيرفر بيظهر جواه نص الخطأ).
+
+**ليه كده:** [[<object>]] ليه محتوى، والمتصفح بيعرضه لما الملف يفشل. [[<embed>]] ملوش.
+
+**الغلطة الشائعة:** تجرّب والملف موجود بس، وتقرر إن الاتنين زي بعض.
+
+~~~text القياس من Chrome (من سيرفر محلي)
+notes.pdf:      object 400 × 300 (البديل ارتفاعه 0)        embed 400 × 300
+nofile.pdf:     object: البديل ظاهر (ارتفاعه 18)            embed: صندوق جواه «not found»
+~~~`,
+          deep: {
+            why: R`زمان المتصفح مكانش بيعرف يشغّل فيديو ولا صوت ولا حتى PDF، فكان لازم عنصر يقول «الملف ده، وهاتله البرنامج اللي يشغّله». ده كان [[<object>]] (القياسي) و [[<embed>]] (اللي المتصفحات عملته الأول). لما [[<video>]] و [[<audio>]] و [[<canvas>]] و SVG دخلوا HTML، والـ plugins اتقفلت لأسباب أمان، العنصرين فضلوا من غير شغل تقريبًا. بتتعلمهم عشان تعرف تقرا الكود القديم، وتعرف الحالة الوحيدة اللي لسه ليهم.`,
+            how: R`المتصفح بياخد [[type]] (أو نوع الرد من السيرفر) ويقرر: لو صورة بيعرضها كصورة، ولو نوع بيفتحه كمستند (HTML أو SVG أو PDF في العارض) بيعمل جوه العنصر navigable زي بتاع [[<iframe>]]، ولو مفيش حاجة تنفع بيعرض أولاد العنصر كمحتوى بديل. [[<embed>]] بيمشي نفس الطريق من غير الخطوة الأخيرة، لأنه ملوش أولاد.`,
+            when: R`[[<object>]]: معاينة PDF (ملخص، منيو، فاتورة) مع لينك تحميل. [[<embed>]]: مفيش سبب لكود جديد. ولما تلاقي واحد فيهم في موقع قديم حواليه Flash أو [[<param>]]: المحتوى ده مبيشتغلش عند حد دلوقتي، وبيتشال أو بيتعمل من جديد.`,
+            mistakes: R`الاعتماد على معاينة الـ PDF من غير لينك. بديل مكتوب «جوه» [[<embed>]]. [[src]] على [[<object>]] أو [[data]] على [[<embed>]]. صور وصفحات في [[<object>]] بدل [[<img>]] و [[<iframe>]]. ونسيان [[title]].`
+          },
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** قسم «ملخص الحلقة ٢» في صفحة الحلقة: معاينة للملف [[media/ep2-notes.pdf]] بمقاس 320 × 200، واسم لقارئ الشاشة، وبديل جواه جملة ولينك للملف، ولينك تحميل تحت المعاينة مكتوب فيه النوع. (من قسم ١ و ٢ و ٥ في الشرح)`, done: R`في المعاينة هنا هتشوف البديل (الـ PDF مبيتعرضش فيها)، وتحته لينك التحميل، وكل الشروط ✓.`, work: { h: 190, start: R`<h2>ملخص الحلقة ٢</h2>
+<p>الملف: media/ep2-notes.pdf (صفحتين)</p>`, checks: [
+              { say: R`فيه [[<object>]] بـ [[data]] بيشاور على الـ PDF`, q: "object[data$=\"ep2-notes.pdf\"]" },
+              { say: R`نوعه [[application/pdf]]`, q: "object[type=\"application/pdf\"]" },
+              { say: R`مقاسه 320 × 200`, q: "object[width=\"320\"][height=\"200\"]" },
+              { say: R`ليه [[title]]`, q: "object[title]" },
+              { say: R`البديل اللي جواه فيه لينك للملف`, q: "object a[href$=\".pdf\"]" },
+              { say: R`لينك [[download]] برّه الـ object`, q: ":not(object) > a[download][href$=\".pdf\"]" },
+            ] }, sol: R`~~~live 142 الحل
+<h2>ملخص الحلقة ٢</h2>
+<object data="media/ep2-notes.pdf" type="application/pdf" width="320" height="200" title="ملخص الحلقة ٢ (PDF)">
+  <p>المتصفح مش عارض الملف هنا. <a href="media/ep2-notes.pdf">افتح ملخص الحلقة ٢ (PDF)</a></p>
+</object>
+<p><a href="media/ep2-notes.pdf" download>نزّل ملخص الحلقة ٢ (PDF، صفحتين)</a></p>
+~~~
+
+**هتشوف إيه:**
+
+- هنا: «المتصفح مش عارض الملف هنا» واللينك، وتحتهم لينك التحميل.
+- في مشروعك والملف موجود: صندوق 320 × 200 فيه الـ PDF، وتحته لينك التحميل، والجملة البديلة مش ظاهرة.
+
+**ليه لينكين:** اللي جوه بديل: بيظهر بس لما المعاينة تفشل. واللي برّه ثابت: للي عايز الملف على جهازه حتى والمعاينة شغالة.
+
+**الغلطة الشائعة:** [[<object src="...">]]. المتصفح بيتجاهل [[src]] هنا: اتقاس إن الملف مبيتطلبش من السيرفر أصلًا، وبيفضل صندوق فاضي بالمقاس المكتوب (والبديل كمان مبيظهرش)، فتفتكر إن الملف هو اللي فيه مشكلة.
+
+~~~text القياس من Chrome (الملف موجود، سيرفر محلي)
+الحجم 320 × 200      ارتفاع البديل = 0      PluginObject «ملخص الحلقة ٢ (PDF)»
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «جدول الحلقات» فيها ٣ مشاكل: الجدول PDF في [[<embed>]] ومكتوب «جواه» بديل، ومن غير نوع ولا اسم، ولوجو البودكاست محطوط في [[<object>]]. (من قسم ٤ و ٦ و ٧ في الشرح)`, done: R`الـ PDF بقى [[<object>]] ببديل حقيقي ونوع واسم، واللوجو [[<img>]] بـ [[alt]]، ومفيش [[<embed>]]، وكل الشروط ✓.`, work: { h: 230, start: R`<object data="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E"></object>
+<h2>جدول حلقات الشهر</h2>
+<embed src="media/schedule.pdf" width="320" height="100">
+  <p>مش شايف الجدول؟ <a href="media/schedule.pdf">افتحه من هنا</a></p>
+</embed>`, checks: [
+              { say: R`مفيش [[<embed>]]`, q: "embed", n: 0 },
+              { say: R`الجدول في [[<object>]] بـ [[data]] ونوعه PDF`, q: "object[data$=\"schedule.pdf\"][type=\"application/pdf\"]" },
+              { say: R`الـ object ليه [[title]]`, q: "object[data$=\"schedule.pdf\"][title]" },
+              { say: R`البديل ولينكه **جوه** الـ object`, q: "object > p > a[href$=\"schedule.pdf\"]" },
+              { say: R`اللوجو [[<img>]] ليه [[alt]] فيه كلام`, q: "img[src^=\"data:image/svg\"][alt]:not([alt=\"\"])" },
+              { say: R`مفيش object للصورة`, q: "object[data^=\"data:image\"]", n: 0 },
+            ] }, sol: R`~~~live 200 بعد التصليح
+<img alt="بودكاست المحطة" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+<h2>جدول حلقات الشهر</h2>
+<object data="media/schedule.pdf" type="application/pdf" width="320" height="100" title="جدول حلقات الشهر (PDF)">
+  <p>مش شايف الجدول؟ <a href="media/schedule.pdf">افتحه من هنا</a></p>
+</object>
+~~~
+
+وده اللي كان باين قبل التصليح:
+
+~~~live 320 قبل
+<object data="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E"></object>
+<h2>جدول حلقات الشهر</h2>
+<embed src="media/schedule.pdf" width="320" height="100">
+  <p>مش شايف الجدول؟ <a href="media/schedule.pdf">افتحه من هنا</a></p>
+</embed>
+~~~
+
+**هتشوف إيه:**
+
+- قبل: تحت العنوان صندوق فاضي 320 × 100 (الـ [[<embed>]])، **وتحته** جملة «مش شايف الجدول؟». الجملة دي كانت هتفضل ظاهرة حتى لو الـ PDF اتعرض.
+- بعد: الصندوق الفاضي راح، والجملة ظاهرة لأنها بقت بديل حقيقي والملف مش بيتعرض هنا. في مشروعك والملف موجود: الـ PDF يظهر والجملة تختفي.
+- اللوجو نفس الشكل في الاتنين.
+
+| المشكلة | التصليح | ليه |
+|---|---|---|
+| بديل «جوه» [[<embed>]] | [[<object>]] والبديل جواه | [[<embed>]] void: اللي بعده أخ ليه مش ابنه |
+| من غير [[type]] ولا [[title]] | اتكتبوا | النوع عشان المتصفح يقرر بدري، والاسم للقارئ |
+| لوجو في [[<object>]] | [[<img alt>]] بمقاسه | صورة: محتاجة [[alt]] ومقاس يحجز مكانها |
+
+**الغلطة الشائعة:** تسيب [[</embed>]] في الكود. المتصفح بيتجاهلها في سكوت، والـ validator بيعلّم عليها.
+
+~~~text القياس من Chrome
+قبل:   embed.children.length = 0      الفقرة أخت الـ embed مش ابنه       اللوجو: PluginObject «»
+بعد:   object > p > a موجود           اللوجو: image «بودكاست المحطة»
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** ده كود بانر من نسخة ٢٠١٠ من موقع «المحطة»: Flash، ولو مشتغلش يبقى SVG، ولو مشتغلش يبقى نص. اكتب على ورقة: إيه اللي هيتعرض في متصفح النهارده؟ وبعدين اكتبه زي ما يتكتب دلوقتي: الصورة لوحدها بنص بديل. (من قسم ٢ و ٦ في الشرح)`, done: R`كتبت توقّعك، ومفيش [[<object>]] خالص، والبانر [[<img>]] بـ [[alt]]، وكل الشروط ✓.`, work: { h: 130, start: R`<object data="media/banner.swf" type="application/x-shockwave-flash" width="320" height="80">
+  <object data="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E" type="image/svg+xml" width="320" height="80">
+    <p>بودكاست المحطة</p>
+  </object>
+</object>`, checks: [
+              { say: R`مفيش [[<object>]]`, q: "object", n: 0 },
+              { say: R`البانر [[<img>]]`, q: "img[src^=\"data:image/svg\"]" },
+              { say: R`[[alt]] فيه «بودكاست المحطة»`, q: "img[alt*=\"بودكاست المحطة\"]" },
+              { say: R`الصورة ليها [[width]] و [[height]]`, q: "img[width][height]" },
+            ] }, sol: R`~~~live 106 الحل
+<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E" alt="بودكاست المحطة" width="320" height="80">
+~~~
+
+**التوقّع:** هيتعرض الـ SVG. Flash مش مدعوم في أي متصفح حالي، فالـ [[<object>]] البرّاني بيفشل ويعرض بديله، وبديله [[<object>]] تاني بيشتغل. والنص «بودكاست المحطة» مبيظهرش لأن اللي قبله نجح.
+
+**هتشوف إيه:** نفس البانر الأخضر قبل وبعد. الكود نزل من ٥ سطور لسطر.
+
+**ليه [[<img>]]:** الملف صورة. و [[alt]] بياخد مكان النص البديل القديم، وبيتقري لقارئ الشاشة.
+
+**الغلطة الشائعة:** تسيب سطر الـ Flash «يمكن حد لسه عنده». محدش: المتصفحات شالت الدعم، وأول طلب للملف ده وقت ضايع.
+
+~~~text القياس من Chrome
+قبل:   البرّاني (Flash) فشل ← الجوّاني (SVG) اتعرض 320 × 80       PluginObject «»
+بعد:   image «بودكاست المحطة»      320 × 80
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** لكل حاجة من الخمسة قول العنصر المناسب وسبب في كلمتين: (١) لوجو SVG. (٢) منيو المطعم PDF. (٣) خريطة من مزوّد خرايط. (٤) تسجيل صوتي. (٥) لعبة Flash قديمة. (من قسم ٥ و ٦ في الشرح)`, done: R`خمس إجابات، كل واحدة عنصر وسبب.`, sol: R`| الحاجة | العنصر | السبب |
+|---|---|---|
+| لوجو SVG | [[<img>]] (أو SVG inline لو هيتلوّن بالـ CSS) | صورة: [[alt]] ومقاس |
+| منيو PDF | المنيو نفسه HTML، ومعاه لينك للـ PDF. ولو لازم معاينة: [[<object>]] ببديل | الـ PDF مبيتقريش على الموبايل |
+| خريطة من مزوّد | [[<iframe>]] بـ [[title]] و [[loading="lazy"]] و [[sandbox]] | صفحة موقع تاني: محتاجة قفل |
+| تسجيل صوتي | [[<audio controls>]] | مشغّل، وكيبورد، وقارئ شاشة |
+| لعبة Flash | ولا واحد | Flash اتقفل. تتعمل من جديد بـ [[<canvas>]] و JavaScript |
+
+**الغلطة الشائعة:** «كله ينفع في [[<object>]]». ينفع يتعرض، بس بيضيّع كل اللي العنصر المتخصص بيدّيه.` },
+          ]
+        },
+        {
+          cmd: "map و area",
+          title: "صورة واحدة فيها كذا لينك، كل لينك على حتة منها",
+          pre: ["css/img", { to: "css/a و button", why: R`كل [[<area>]] هو لينك زي [[<a>]]: نفس [[href]] ونفس قواعد النص اللي بيوصفه` }],
+          ref: [
+            { t: "MDN: <map>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/map" },
+            { t: "MDN: <area>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/area" },
+            { t: "MDN: <img> (usemap, ismap)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img" },
+            { t: "WHATWG: image maps", url: "https://html.spec.whatwg.org/multipage/image-maps.html" }
+          ],
+          desc: R`الـ image map بيخلّي أجزاء من صورة واحدة تتداس، وكل جزء يودّي لعنوان: مسقط مبنى، خريطة محافظات، صورة فريق. [[<map>]] بيجمع المناطق وليه اسم، و [[<area>]] منطقة واحدة بشكلها ([[shape]]) وإحداثياتها ([[coords]]) وعنوانها ([[href]]) ونصها البديل ([[alt]])، و [[usemap]] على [[<img>]] بيربط الصورة بالخريطة.
+وعيبه الكبير: الإحداثيات بالبيكسل ومبتتصغّرش مع الصورة، فعلى الموبايل اللينكات بتروح في غير مكانها. البديل الحديث SVG بلينكات جواه.`,
+          example: R`<img src="media/studio-plan.png" alt="مسقط استوديو المحطة: غرفة التسجيل، وغرفة المكساج، والاستقبال" width="300" height="150" usemap="#studio">
+<map name="studio">
+  <area shape="rect" coords="10,10,140,140" href="rooms.html#rec" alt="غرفة التسجيل">
+  <area shape="circle" coords="220,50,40" href="rooms.html#mix" alt="غرفة المكساج">
+  <area shape="poly" coords="160,140,220,100,280,140" href="rooms.html#wait" alt="الاستقبال">
+  <area shape="default" href="rooms.html" alt="كل الغرف">
+</map>`,
+          flag: "script",
+          lines: [
+            R`الصورة: [[alt]] بيوصفها كلها، و [[width]] و [[height]] مقاسها (الإحداثيات محسوبة عليه)، و [[usemap="#studio"]] بيقول «مناطقي في الخريطة اللي اسمها studio». علامة [[#]] إجبارية.`,
+            R`[[<map name="studio">]]: الحاوية بتاعة المناطق. الاسم في [[name]] من غير [[#]]، ولازم يطابق اللي في [[usemap]].`,
+            R`مستطيل: [[coords]] فيها ركنين، فوق-شمال (10,10) وتحت-يمين (140,140). و [[href]] اللينك، و [[alt]] اسمه.`,
+            R`دايرة: المركز (220,50) ونص القطر 40.`,
+            R`مضلّع: نقطة ورا نقطة (x,y)، هنا تلات نقط يعني مثلث. المتصفح بيقفل الشكل من آخر نقطة لأول نقطة.`,
+            R`[[shape="default"]]: كل اللي فاضل من الصورة برّه المناطق التانية. من غير [[coords]].`,
+            R`قفلة [[</map>]]. الـ [[<map>]] نفسه مبيترسمش، فمكانه في الكود مش مهم، والمعتاد بعد الصورة على طول.`
+          ],
+          teach: R`## الفكرة في سطرين
+
+المواصفة: الـ image map بيخلّي مناطق هندسية على صورة مربوطة بلينكات. الصورة [[<img>]] عادية، والمناطق متعرّفة في عنصر تاني اسمه [[<map>]]، والاتنين مربوطين بالاسم.
+
+القياسات من Chrome 157 على Windows 11. الصورة في المعاينات مسقط 300 × 150 مرسوم SVG: مربع أخضر (غرفة التسجيل)، ودايرة برتقالي (المكساج)، ومثلث أزرق (الاستقبال).
+
+---
+
+## ١. [[<img usemap="#studio">]] و [[<map name="studio">]]
+
+~~~live 176 حرّك الماوس على الأشكال، أو دوس Tab
+<img alt="مسقط استوديو المحطة: غرفة التسجيل، وغرفة المكساج، والاستقبال" width="300" height="150" usemap="#studio" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="studio">
+  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
+  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
+  <area shape="poly" coords="160,140,220,100,280,140" href="#wait" alt="الاستقبال">
+</map>
+~~~
+
+**هتشوف إيه:** الصورة عادية، ومفيش أي حاجة بتقول إن فيها لينكات. لما الماوس يعدّي على المربع أو الدايرة أو المثلث بيبقى إيد، وعلى الرمادي بيفضل سهم. ولما تدوس Tab، حدود الشكل بتترسم حواليه (ده الـ focus).
+
+~~~text القياس من Chrome (document.elementFromPoint: العنصر اللي تحت النقطة)
+النقطة (50,50)    →  AREA  (المستطيل)
+النقطة (220,50)   →  AREA  (الدايرة)
+النقطة (220,125)  →  AREA  (المثلث)
+النقطة (150,5)    →  IMG   (مفيش منطقة هنا)
+
+<map>:   display: inline     <area>:  display: none
+document.links.length بيعدّ كل <area> ليه href
+~~~
+
+- [[usemap]] بياخد [[#]] وبعدها اسم الخريطة. اتقاس: [[usemap="studio"]] من غير [[#]] مبيشتغلش خالص (النقطة رجّعت [[IMG]]).
+- الاسم بيتكتب في [[name]] على [[<map>]]. (Chrome قِبل [[id]] لوحده كمان، بس المواصفة بتطلب [[name]].)
+- نفس الخريطة ممكن تتربط بأكتر من صورة.
+- MDN: [[usemap]] مينفعش على صورة جوه [[<a>]] أو [[<button>]].
+
+---
+
+## ٢. [[<area shape="rect" coords="10,10,140,140" href="..." alt="...">]]
+
+### [[shape]] و [[coords]]
+
+الإحداثيات بالبيكسل (CSS pixels)، محسوبة من **الركن فوق-شمال** للصورة: x بيزيد ناحية اليمين، و y بيزيد لتحت. ده حتى في صفحة عربي RTL.
+
+| [[shape]] | [[coords]] | معناها |
+|---|---|---|
+| [[rect]] | [[x1,y1,x2,y2]] | ركن فوق-شمال، وركن تحت-يمين |
+| [[circle]] | [[x,y,r]] | المركز، ونص القطر |
+| [[poly]] | [[x1,y1,x2,y2,x3,y3,...]] | نقط الشكل بالترتيب، وبيتقفل لوحده |
+| [[default]] | (من غير) | كل الصورة اللي مش تبع منطقة تانية |
+
+من غير [[shape]] المتصفح بيعتبرها [[rect]].
+
+بتجيب الأرقام منين؟ افتح الصورة في أي برنامج رسم وحرّك الماوس: الإحداثيات بتتكتب تحت. أو ارسم الأشكال في برنامج بيطلّع كود الـ [[<map>]] جاهز.
+
+### لما منطقتين يركبوا على بعض
+
+~~~text القياس من Chrome
+<area rect 0,0,100,50  href="/big">  وبعده  <area rect 0,0,30,30  href="/small">
+   النقطة (10,10)  →  big          ← اللي مكتوب الأول هو اللي فوق، والصغير مبيتوصلوش
+<area shape="default">  وبعده  <area rect 0,0,50,50>
+   النقطة (20,20)  →  rect         ← default دايمًا آخر واحد، مهما كان مكانه في الكود
+~~~
+
+القاعدة: **الصغير الأول والكبير بعده.**
+
+### [[href]] و [[alt]]
+
+- [[<area href>]] لينك كامل: بياخد [[target]] و [[rel]] و [[download]] و [[referrerpolicy]] زي [[<a>]].
+- [[alt]] هو **نص اللينك**: [[<area>]] عنصر فاضي ملوش كلام جواه، فالاسم كله من [[alt]]. MDN: إجباري طول ما فيه [[href]].
+- [[<area>]] من غير [[href]] منطقة ميتة: مبتتداسش. بتتستخدم عشان «تخرم» حتة من منطقة أكبر مكتوبة بعدها.
+
+~~~text القياس من Chrome (شجرة الـ accessibility)
+image «مسقط استوديو المحطة: غرفة التسجيل، وغرفة المكساج، والاستقبال»
+link «غرفة التسجيل»
+link «غرفة المكساج»
+link «الاستقبال»
+<area> من غير href:   مش في الشجرة      computedRole فاضي
+~~~
+
+قارئ الشاشة بيشوف صورة وبعدها تلات لينكات بأساميهم من [[alt]]. من غير [[alt]] بيبقوا تلات لينكات من غير اسم.
+
+---
+
+## ٣. [[<img ismap>]]: الخريطة اللي السيرفر بيحسبها
+
+[[ismap]] شكل تاني أقدم: الصورة جوه [[<a>]]، والمتصفح بيزوّد مكان الضغطة على آخر العنوان، والسيرفر هو اللي يقرر.
+
+~~~html
+<a href="/pick"><img src="media/studio-plan.png" alt="اختار مكان في الاستوديو" width="300" height="150" ismap></a>
+~~~
+
+~~~text القياس من Chrome (ضغطة حقيقية على النقطة 120,40 من الصورة، والسيرفر كتب الطلب)
+GET /pick?120,40
+~~~
+
+- MDN: [[ismap]] مسموح بس على صورة جوه [[<a>]] ليه [[href]].
+- اللي بيدوس Enter بالكيبورد مبيبعتش مكان، وقارئ الشاشة بيشوف لينك واحد. عشان كده مبقاش بيتستخدم: [[usemap]] (المتصفح بيحسب) أحسن منه في كل حاجة.
+
+---
+
+## ٤. المشكلة: الصورة بتتصغّر، والإحداثيات لأ
+
+دي نفس الخريطة، والصورة معروضة بنص المقاس (150 × 75) زي ما بيحصل على شاشة ضيقة مع [[max-width: 100%]]:
+
+~~~live 102 نفس الـ coords على صورة متصغّرة: الماوس بيبقى إيد في أماكن غلط
+<img alt="مسقط استوديو المحطة" style="width:150px;height:75px" usemap="#small" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="small">
+  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
+  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
+  <area shape="poly" coords="160,140,220,100,280,140" href="#wait" alt="الاستقبال">
+</map>
+~~~
+
+**هتشوف إيه:** الصورة الصغيرة كلها تقريبًا بقت لينك واحد: حرّك الماوس على الدايرة البرتقالي، هتلاقيه إيد، والعنوان اللي بيظهر تحت في المتصفح بتاع «غرفة التسجيل» مش «المكساج».
+
+~~~text القياس من Chrome (الصورة 150 × 75)
+النقطة (25,25)    مكان المربع الأخضر      →  المستطيل   ✓
+النقطة (110,25)   مكان الدايرة البرتقالي  →  المستطيل   ✗ لينك غلط
+النقطة (145,70)   جنب المثلث              →  مفيش منطقة
+~~~
+
+الإحداثيات مكتوبة لصورة 300 × 150. المستطيل (من 10 لـ 140) لسه واخد نفس البيكسلات، يعني غطّى الصورة الصغيرة كلها تقريبًا، والدايرة اللي مركزها عند 220 بقت برّه الصورة خالص. HTML معندوش طريقة يكتب بيها الإحداثيات كنسبة.
+
+---
+
+## ٥. البديل الحديث: SVG بلينكات
+
+في SVG، [[viewBox]] بيعرّف مساحة الرسم بأرقامها (هنا 300 × 150)، والأشكال بتتكتب بالأرقام دي، وكل حاجة بتكبر وتصغر مع بعض. واللينك [[<a>]] عادي حوالين الشكل.
+
+~~~live 102 نفس المسقط SVG بنص المقاس: كل لينك في مكانه
+<svg viewBox="0 0 300 150" width="150" role="group" aria-label="مسقط استوديو المحطة">
+  <rect width="300" height="150" fill="#e2e8f0"/>
+  <a href="#rec" aria-label="غرفة التسجيل"><rect x="10" y="10" width="130" height="130" fill="#0f766e"/></a>
+  <a href="#mix" aria-label="غرفة المكساج"><circle cx="220" cy="50" r="40" fill="#b45309"/></a>
+  <a href="#wait" aria-label="الاستقبال"><polygon points="160,140 220,100 280,140" fill="#1d4ed8"/></a>
+</svg>
+~~~
+
+**هتشوف إيه:** نفس الرسم متصغّر، والماوس بيبقى إيد على كل شكل لوحده، والعنوان اللي تحت صح.
+
+~~~text القياس من Chrome (الـ SVG معروض بعرض 150)
+النقطة (30,30)    →  rect جوه <a href="#rec">      ✓
+النقطة (110,25)   →  circle جوه <a href="#mix">    ✓
+شجرة الـ accessibility:   group «مسقط استوديو المحطة»   link «غرفة التسجيل»   link «غرفة المكساج»   link «الاستقبال»
+~~~
+
+والمكسب التاني: الأشكال عناصر حقيقية، فالـ CSS بيلوّنها مع [[:hover]] و [[:focus-visible]] والزائر يشوف هو فوق إيه. الـ [[<area>]] مبيتلوّنش. شرح SVG نفسه في درس «SVG».
+
+ولو الصورة فوتوغرافية ومش هتتحوّل SVG: قايمة لينكات عادية تحت الصورة، وده أبسط وأضمن حل.
+
+---
+
+## ٦. إمتى الـ image map فكرة وحشة؟
+
+| الحالة | الحكم |
+|---|---|
+| صفحة responsive والصورة بتتصغّر | لأ: اللينكات هتروح في غير مكانها (قسم ٤) |
+| المناطق صغيرة أو لازقة في بعض | لأ: الصباع على الموبايل محتاج هدف كبير |
+| محتاج المنطقة تتلوّن لما الماوس يعدّي عليها | لأ: [[<area>]] مبيتنسّقش بالـ CSS |
+| قايمة تنقّل أو أزرار معمولة صورة واحدة | لأ: دي لينكات عادية بـ CSS |
+| صورة مقاسها ثابت فعلًا (إيميل، كشك عرض) | ممكن |
+| موقع قديم بتصونه | سيبه شغال، وزوّد قايمة لينكات نصية تحته |
+
+---
+
+## ٧. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[usemap="studio"]] من غير [[#]] | الخريطة مش مربوطة: الصورة مفيهاش ولا لينك |
+| [[<area href>]] من غير [[alt]] | لينك من غير اسم لقارئ الشاشة |
+| منطقة كبيرة مكتوبة قبل صغيرة جواها | الصغيرة عمرها ما بتتداس |
+| [[coords]] محسوبة على مقاس الملف، والصورة معروضة بمقاس تاني | كل اللينكات مزحزحة |
+| [[coords="10%,10%,50%,50%"]] أو [[coords="10px,10px,140px,140px"]] | أرقام بيكسل بس، من غير [[px]] ولا [[%]] |
+| الاعتماد على الصورة لوحدها | محدش عارف إن فيها لينكات: مفيش أي علامة |
+
+---
+
+## الخلاصة
+
+- [[<img usemap="#اسم">]] + [[<map name="اسم">]] + [[<area shape coords href alt>]].
+- [[rect]] ركنين، و [[circle]] مركز ونص قطر، و [[poly]] نقط، و [[default]] الباقي. من فوق-شمال وبالبيكسل.
+- [[alt]] هو نص اللينك، والصغير يتكتب قبل الكبير.
+- الإحداثيات مبتتصغّرش: في صفحة responsive استخدم SVG بـ [[<a>]]، أو لينكات عادية.
+- [[ismap]] بيبعت مكان الضغطة للسيرفر، ومبقاش ليه استخدام.`,
+          try: R`انسخ كود قسم ١ في ملف [[plan.html]] (الصورة بـ [[data:]] زي ما هي) وزوّد منطقة رابعة [[shape="default"]] بتودّي لـ [[#all]] واسمها «باقي الاستوديو». افتحها وحرّك الماوس على الرمادي: بقى إيد؟ وبعدين انقل سطر الـ [[default]] لأول الـ [[<map>]] وجرّب المربع الأخضر: لسه بيودّي لـ [[#rec]]؟`,
+          sol: R`~~~live 176 plan.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مسقط الاستوديو</title>
+</head>
+<body>
+<img alt="مسقط استوديو المحطة: غرفة التسجيل، وغرفة المكساج، والاستقبال" width="300" height="150" usemap="#studio" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="studio">
+  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
+  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
+  <area shape="poly" coords="160,140,220,100,280,140" href="#wait" alt="الاستقبال">
+  <area shape="default" href="#all" alt="باقي الاستوديو">
+</map>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:**
+
+- الماوس بقى إيد على **كل** الصورة: الأشكال التلاتة كل واحد بلينكه، والرمادي بيودّي لـ [[#all]].
+- بعد ما تنقل [[default]] لأول سطر: مفيش أي تغيير. المربع لسه [[#rec]].
+
+**ليه كده:** [[default]] معناه «اللي فاضل»، فالمتصفح بيحسبه آخر واحد مهما كان ترتيبه في الكود. الترتيب بيفرق بين المناطق اللي ليها [[coords]] بس.
+
+**الغلطة الشائعة:** [[<area shape="default" coords="0,0,300,150">]]. MDN: [[coords]] ممنوع مع [[default]].
+
+~~~text القياس من Chrome
+النقطة (150,5) قبل ما تزوّد default:   IMG
+بعد default:                           AREA (باقي الاستوديو)
+default مكتوب الأول، والنقطة (20,20) جوه مستطيل بعده:   AREA (المستطيل)
+~~~`,
+          deep: {
+            why: R`أول الويب، قايمة التنقّل كانت صورة واحدة مرسوم عليها الأزرار، والـ image map كان الطريقة الوحيدة تخلّي كل زرار يودّي لمكان. الـ CSS شال الحاجة دي. اللي فضل: صورة فعلًا فيها أماكن (خريطة، مسقط، صورة جماعية) وعايز كل مكان يتداس. وحتى ده، SVG بيعمله أحسن.`,
+            how: R`لما الماوس يتحرك فوق صورة عليها [[usemap]]، المتصفح بيدوّر على [[<map>]] بالاسم، وبيمشي على الـ [[<area>]] بالترتيب: أول واحدة النقطة تقع جوه شكلها هي اللي بتاخد الضغطة، و [[default]] بيتجرّب في الآخر. الإحداثيات بتتحسب من ركن الصورة فوق-شمال بالـ CSS pixels من غير أي تحويل، وعشان كده تصغير الصورة بيبوّظها. وكل [[<area href>]] بيدخل ترتيب الـ Tab وشجرة الـ accessibility كلينك اسمه من [[alt]].`,
+            when: R`صورة بمقاس ثابت فيها مناطق واضحة وكبيرة: مسقط في صفحة داخلية للديسكتوب، أو قالب إيميل (الإيميل مبيدعمش SVG كويس). في أي حاجة responsive: SVG inline بلينكات، أو صورة وتحتها قايمة لينكات.`,
+            mistakes: R`نسيان [[#]] في [[usemap]]. [[alt]] ناقص على المناطق. إحداثيات على مقاس غير المعروض. منطقة كبيرة قبل الصغيرة. والاعتماد على image map في صفحة بتتصغّر على الموبايل.`
+          },
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** مسقط الاستوديو محطوط صورة عادية. خلّي غرفتين يتداسوا: المربع الأخضر (ركنه فوق-شمال 10,10 وتحت-يمين 140,140) يودّي لـ [[#rec]] واسمه «غرفة التسجيل»، والدايرة البرتقالي (مركزها 220,50 ونص قطرها 40) تودّي لـ [[#mix]] واسمها «غرفة المكساج». سمّي الخريطة [[plan]]. (من قسم ١ و ٢ في الشرح)`, done: R`الماوس بيبقى إيد على المربع والدايرة بس، وكل الشروط ✓.`, work: { h: 200, start: R`<img alt="مسقط استوديو المحطة" width="300" height="150" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">`, checks: [
+              { say: R`الصورة عليها [[usemap="#plan"]]`, q: "img[usemap=\"#plan\"]" },
+              { say: R`فيه [[<map name="plan">]]`, q: "map[name=\"plan\"]" },
+              { say: R`جواه منطقتين`, q: "map[name=\"plan\"] > area", n: 2 },
+              { say: R`المستطيل بإحداثياته ولينكه`, q: "area[shape=\"rect\"][coords=\"10,10,140,140\"][href=\"#rec\"]" },
+              { say: R`الدايرة بإحداثياتها ولينكها`, q: "area[shape=\"circle\"][coords=\"220,50,40\"][href=\"#mix\"]" },
+              { say: R`كل منطقة ليها [[alt]] فيه كلام`, q: "area[alt]:not([alt=\"\"])", n: 2 },
+            ] }, sol: R`~~~live 176 الحل
+<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="#plan" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="plan">
+  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
+  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
+</map>
+~~~
+
+**هتشوف إيه:** الصورة زي ما هي. الماوس إيد على المربع والدايرة، وسهم على المثلث والرمادي. و Tab بيقف مرتين.
+
+**ليه كده:**
+
+- [[usemap="#plan"]] بالـ [[#]]، و [[name="plan"]] من غيرها.
+- [[rect]] أربع أرقام، و [[circle]] تلاتة، بينهم فواصل من غير مسافات.
+- المثلث مالوش [[<area>]]، فمبيتداسش.
+
+**الغلطة الشائعة:** تكتب إحداثيات الدايرة أربع أرقام زي المستطيل. [[circle]] مركز ونص قطر بس.
+
+~~~text القياس من Chrome
+(50,50) → AREA      (220,50) → AREA      (220,125) → IMG
+link «غرفة التسجيل»      link «غرفة المكساج»
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** خريطة مسقط الاستوديو مفيش فيها ولا حتة بتتداس. فيه ٤ مشاكل: الربط بين الصورة والخريطة ناقصه حرف، والأسامي مش زي بعض، والمناطق من غير أسامي، وشكل مكتوب غلط. (من قسم ١ و ٢ و ٧ في الشرح)`, done: R`الماوس بيبقى إيد على المربع والدايرة، وكل الشروط ✓.`, work: { h: 200, start: R`<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="studio" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="studio-map">
+  <area shape="rectangle" coords="10,10,140,140" href="#rec">
+  <area shape="circle" coords="220,50,40" href="#mix">
+</map>`, checks: [
+              { say: R`[[usemap]] بيبدأ بـ [[#]]`, q: "img[usemap^=\"#\"]" },
+              { say: R`اسم الخريطة هو نفسه اللي في [[usemap]]`, q: "img[usemap=\"#studio\"] ~ map[name=\"studio\"], img[usemap=\"#studio-map\"] ~ map[name=\"studio-map\"]" },
+              { say: R`المستطيل [[shape="rect"]]`, q: "area[shape=\"rect\"][href=\"#rec\"]" },
+              { say: R`مفيش [[shape="rectangle"]]`, q: "area[shape=\"rectangle\"]", n: 0 },
+              { say: R`المنطقتين ليهم [[alt]] فيه كلام`, q: "area[alt]:not([alt=\"\"])", n: 2 },
+            ] }, sol: R`~~~live 176 بعد التصليح
+<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="#studio" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="studio">
+  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
+  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
+</map>
+~~~
+
+**هتشوف إيه:** الصورة نفسها قبل وبعد (الخريطة مبتترسمش، فمفيش فرق في الشكل). الفرق في الماوس: قبل سهم في كل حتة، وبعد إيد على المربع والدايرة.
+
+| المشكلة | التصليح | ليه |
+|---|---|---|
+| [[usemap="studio"]] | [[usemap="#studio"]] | من غير [[#]] الربط مبيحصلش |
+| [[name="studio-map"]] | [[name="studio"]] | الاسمين لازم يتطابقوا بالحرف |
+| من غير [[alt]] | زوّدناه | هو اسم اللينك |
+| [[shape="rectangle"]] | [[rect]] | القيم أربعة بس: [[rect]] و [[circle]] و [[poly]] و [[default]] |
+
+**الغلطة الشائعة:** تصلّح الاسم وتنسى الـ [[#]] أو العكس. الاتنين لازم مع بعض.
+
+~~~text القياس من Chrome
+usemap="studio" (من غير #):    النقطة (20,20) → IMG       ولا لينك
+usemap="#studio" واسم مطابق:   النقطة (20,20) → AREA      link «غرفة التسجيل»
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** في خريطة الاستوديو منطقة صغيرة «باب الطوارئ» (30 × 30 في ركن غرفة التسجيل) ومنطقة غرفة التسجيل كلها. اكتب على ورقة: لما تدوس على ركن الباب (النقطة 20,20) هتروح فين؟ وبعدين رتّبهم عشان الباب يتداس. (من قسم ٢ في الشرح، جزء «لما منطقتين يركبوا على بعض»)`, done: R`كتبت توقّعك، ومنطقة الباب بقت مكتوبة قبل غرفة التسجيل، وكل الشروط ✓.`, work: { h: 200, start: R`<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="#s" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="s">
+  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
+  <area shape="rect" coords="10,10,40,40" href="#exit" alt="باب الطوارئ">
+</map>`, checks: [
+              { say: R`الباب هو أول [[<area>]]`, q: "map > area:first-child[href=\"#exit\"]" },
+              { say: R`غرفة التسجيل بعده`, q: "map > area:last-child[href=\"#rec\"]" },
+              { say: R`الإحداثيات متغيّرتش`, q: "area[coords=\"10,10,40,40\"][href=\"#exit\"]" },
+            ] }, sol: R`~~~live 176 بعد الترتيب
+<img alt="مسقط استوديو المحطة" width="300" height="150" usemap="#s" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="s">
+  <area shape="rect" coords="10,10,40,40" href="#exit" alt="باب الطوارئ">
+  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
+</map>
+~~~
+
+**التوقّع:** هتروح [[#rec]]. غرفة التسجيل مكتوبة الأول وبتغطّي النقطة، فالمتصفح بيقف عندها ومبيوصلش للباب.
+
+**هتشوف إيه:** الصورة واحدة. بعد الترتيب: حرّك الماوس على ركن المربع الأخضر فوق-شمال، العنوان اللي بيظهر تحت في المتصفح آخره [[#exit]]، وفي باقي المربع [[#rec]].
+
+**ليه كده:** أول [[<area>]] النقطة تقع جواها هي اللي بتكسب. فالمنطقة اللي جوه منطقة تانية لازم تتكتب قبلها.
+
+**الغلطة الشائعة:** تحاول تحلها بـ [[z-index]]. الـ [[<area>]] مبيترسمش، فالـ CSS ملوش كلمة هنا: الترتيب في الكود بس.
+
+~~~text القياس من Chrome (مستطيل كبير 0,0,100,50 وصغير 0,0,30,30)
+الكبير الأول:    النقطة (10,10) → big
+الصغير الأول:    النقطة (10,10) → small      النقطة (60,25) → big
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** الخريطة دي شغالة، بس الصفحة بقت responsive والصورة بتتصغّر. حوّلها لـ SVG بلينكات: نفس المربع ونفس الدايرة بنفس الأرقام، وكل شكل جوه [[<a>]] بنفس الـ [[href]] واسمه في [[aria-label]]، والـ SVG بـ [[viewBox="0 0 300 150"]] ومعروض بعرض 150. (من قسم ٥ في الشرح)`, done: R`مفيش [[<img>]] ولا [[<map>]]، والرسم بنص المقاس وكل شكل بيتداس في مكانه، وكل الشروط ✓.`, work: { h: 200, start: R`<img alt="مسقط استوديو المحطة" style="width:150px;height:75px" usemap="#plan" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="plan">
+  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
+  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
+</map>`, checks: [
+              { say: R`مفيش [[<map>]] ولا [[<area>]]`, q: "map, area", n: 0 },
+              { say: R`فيه [[<svg>]] بـ [[viewBox="0 0 300 150"]]`, q: "svg[viewBox=\"0 0 300 150\"]" },
+              { say: R`المربع [[<rect>]] جوه لينك [[#rec]]`, q: "svg a[href=\"#rec\"] > rect[x=\"10\"][y=\"10\"][width=\"130\"][height=\"130\"]" },
+              { say: R`الدايرة [[<circle>]] جوه لينك [[#mix]]`, q: "svg a[href=\"#mix\"] > circle[cx=\"220\"][cy=\"50\"][r=\"40\"]" },
+              { say: R`اللينكين ليهم [[aria-label]]`, q: "svg a[aria-label]", n: 2 },
+              { say: R`الـ SVG كله ليه اسم ([[aria-label]])`, q: "svg[aria-label]" },
+            ] }, sol: R`~~~live 102 الحل
+<svg viewBox="0 0 300 150" width="150" role="group" aria-label="مسقط استوديو المحطة">
+  <rect width="300" height="150" fill="#e2e8f0"/>
+  <a href="#rec" aria-label="غرفة التسجيل"><rect x="10" y="10" width="130" height="130" fill="#0f766e"/></a>
+  <a href="#mix" aria-label="غرفة المكساج"><circle cx="220" cy="50" r="40" fill="#b45309"/></a>
+</svg>
+~~~
+
+وده اللي كان قبل (جرّب الماوس على الدايرة في الاتنين):
+
+~~~live 102 قبل
+<img alt="مسقط استوديو المحطة" style="width:150px;height:75px" usemap="#plan" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150'%3E%3Crect width='300' height='150' fill='%23e2e8f0'/%3E%3Crect x='10' y='10' width='130' height='130' fill='%230f766e'/%3E%3Ccircle cx='220' cy='50' r='40' fill='%23b45309'/%3E%3Cpolygon points='160,140 220,100 280,140' fill='%231d4ed8'/%3E%3C/svg%3E">
+<map name="plan">
+  <area shape="rect" coords="10,10,140,140" href="#rec" alt="غرفة التسجيل">
+  <area shape="circle" coords="220,50,40" href="#mix" alt="غرفة المكساج">
+</map>
+~~~
+
+**هتشوف إيه:**
+
+- قبل: الدايرة البرتقالي بتودّي لـ [[#rec]] (لينك المربع)، لأن إحداثيات المربع غطّت الصورة الصغيرة.
+- بعد: نفس الرسم (من غير المثلث)، والدايرة بتودّي لـ [[#mix]].
+
+**التحويل:**
+
+| في الـ map | في الـ SVG |
+|---|---|
+| [[rect]] و [[coords="10,10,140,140"]] (ركنين) | [[<rect x="10" y="10" width="130" height="130">]] (ركن وعرض وارتفاع: 140 − 10 = 130) |
+| [[circle]] و [[coords="220,50,40"]] | [[<circle cx="220" cy="50" r="40">]] |
+| [[href]] على [[<area>]] | [[<a href>]] حوالين الشكل |
+| [[alt]] | [[aria-label]] على [[<a>]] |
+
+**الغلطة الشائعة:** تكتب [[width="140" height="140"]] للمربع. [[coords]] فيها ركنين، و SVG عايز عرض وارتفاع: اطرح.
+
+~~~text القياس من Chrome (الاتنين معروضين بعرض 150)
+map:   النقطة (110,25) → المستطيل (غلط)
+SVG:   النقطة (110,25) → circle جوه a[href="#mix"]      link «غرفة المكساج»
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** لكل حالة قول: image map ولا SVG بلينكات ولا لينكات عادية؟ وسبب في سطر: (١) خريطة مصر، كل محافظة تودّي لصفحة فروعها، والموقع بيتفتح على الموبايل. (٢) شريط تنقّل فيه خمس كلمات، المصمم بعته صورة واحدة. (٣) قالب إيميل فيه صورة عرض، نصها الشمال يودّي لمنتج ونصها اليمين لمنتج تاني. (من قسم ٦ في الشرح)`, done: R`تلات إجابات بأسبابها.`, sol: R`إجابة نموذجية:
+
+1. **SVG بلينكات، ومعاه قايمة المحافظات نص.** الصفحة responsive فالإحداثيات هتبوظ، والمحافظات الصغيرة صعب تتداس بالصباع، فالقايمة النصية هي اللي هتتستخدم فعلًا على الموبايل.
+2. **لينكات عادية بـ CSS.** ده نص، ومكانه [[<nav>]] فيه [[<a>]]. الصورة مبتتترجمش ومبتتكبرش مع الخط ومحرك البحث مبيقراش اللي فيها.
+3. **image map (أو صورتين جنب بعض، كل واحدة جوه [[<a>]]).** برامج الإيميل دعمها لـ SVG والـ CSS ضعيف، والمقاس ثابت. والصورتين أبسط وأضمن من الخريطة.
+
+**الغلطة الشائعة:** تختار image map «عشان أسرع». كتابته أسرع فعلًا، وبعدين أول شاشة موبايل بتكشفه.` },
+          ]
+        },
+        {
+          cmd: "canvas و noscript و template",
+          title: "تلات عناصر مستنيين JavaScript: لوحة رسم، ورسالة للي مقفّله، وقالب مستخبي",
+          pre: [{ to: "css/iframe sandbox و allow", why: R`معاينة [[<noscript>]] هنا معمولة بـ [[<iframe sandbox>]] اللي بيقفل السكربتات، واتشرح هناك` }],
+          ref: [
+            { t: "MDN: <canvas>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/canvas" },
+            { t: "MDN: <noscript>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/noscript" },
+            { t: "MDN: <template>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/template" },
+            { t: "MDN: <slot>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/slot" },
+            { t: "WHATWG: the canvas element", url: "https://html.spec.whatwg.org/multipage/canvas.html#the-canvas-element" },
+            { t: "WHATWG: scripting (noscript, template, slot)", url: "https://html.spec.whatwg.org/multipage/scripting.html" }
+          ],
+          desc: R`التلاتة دول HTML شغله بيبدأ لما JavaScript ييجي. [[<canvas>]] مساحة فاضية السكربت بيرسم عليها بالبيكسل. [[<noscript>]] محتوى بيظهر بس عند اللي JavaScript مقفول عنده. و [[<template>]] حتة HTML المتصفح بيقراها وميعرضهاش، لحد ما سكربت ينسخها ويحطها في الصفحة.
+ومعاهم [[<slot>]]: فتحة جوه component بيتحط فيها محتوى من برّه. الدرس ده بيشرح جزء الـ HTML بس: العنصر بيعمل إيه لوحده، وإيه اللي بيتكتب جواه. الرسم والنسخ والـ components في كورس JavaScript.`,
+          example: R`<canvas id="chart" width="300" height="120">عدد مرات سماع الحلقات: الأولى ٤٠، والتانية ٦٥، والتالتة ٩٠.</canvas>
 <script>
-document.querySelector(".bottom-nav").addEventListener("click", (e) => {
-  const a = e.target.closest("a");
-  if (!a) return;
-  a.parentElement.querySelectorAll("a").forEach((x) => x.removeAttribute("aria-current"));
-  a.setAttribute("aria-current", "page");
-});
+  const ctx = document.getElementById("chart").getContext("2d");
+  ctx.fillStyle = "teal";
+  ctx.fillRect(20, 20, 100, 60);
 </script>
-</body>
-</html>
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**مسألة:** اكتب [[barPoints(values, w, h, gap)]] بترجّع لكل قيمة [[{ x, y, width, height }]] لـ bar chart جوه [[viewBox]]، والقيمة السالبة بتنزل تحت خط الصفر. (اكتبها نقية جنب [[sparkPoints]] واختبرها في Node.)`,
-              done: R`على [[[3, -1, 2]]] بـ [[w = 30, h = 20, gap = 2]] الأعمدة عرضها متساوي والفراغات 2، والسالب [[y]] بتاعه عند خط الصفر وطوله لتحت، والمجموع [[width + gap]] مبيعدّيش 30، وفيه اختبار لقيم كلها صفر.`,
-              sol: R`~~~js bars.mjs
-export function barPoints(values, w, h, gap) {
-  if (!values.length) return [];
-  const max = Math.max(0, ...values), min = Math.min(0, ...values);
-  const span = max - min || 1;                 // كله صفر: مفيش قسمة على صفر
-  const zero = (max / span) * h;               // خط الصفر من فوق
-  const width = (w - gap * (values.length - 1)) / values.length;
-  return values.map((v, i) => {
-    const height = (Math.abs(v) / span) * h;
-    return { x: i * (width + gap), y: v >= 0 ? zero - height : zero, width, height };
-  });
-}
-~~~
-
-~~~js bars.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { barPoints } from "./bars.mjs";
-
-test("الأعمدة بعرض واحد والفراغ 2 ومجموعهم مبيعدّيش 30", () => {
-  const b = barPoints([3, -1, 2], 30, 20, 2);
-  assert.ok(b.every((x) => x.width === b[0].width));
-  assert.ok(Math.abs(b[1].x - (b[0].x + b[0].width + 2)) < 1e-9);
-  assert.ok(b[2].x + b[2].width <= 30 + 1e-9);
-});
-test("السالب بيبدأ عند خط الصفر ونازل", () => {
-  const b = barPoints([3, -1, 2], 30, 20, 2);
-  assert.equal(b[1].y, b[0].y + b[0].height);
-});
-test("كله صفر مش بيطلّع NaN", () => {
-  for (const x of barPoints([0, 0], 30, 20, 2)) assert.equal(x.height, 0);
-});
-~~~
-
-- [[max]] و [[min]] بيبدأوا من صفر، عشان خط الصفر يبقى جوه الرسم دايمًا، حتى لو كل القيم موجبة.
-- [[zero]] مكان خط الصفر من فوق. في [[[3, -1, 2]]] الـ span = 4، فالصفر عند ثلاث أرباع الارتفاع: 15.
-- عمود موجب: بيبدأ فوق الخط ([[zero - height]]) وينزل له. عمود سالب: بيبدأ عند الخط وينزل.
-- [[|| 1]] بيمنع القسمة على صفر.
-
-نقية تمامًا: مفيش DOM، فالاختبار في Node.
-
-الغلطة الشائعة: تحسب الارتفاع من [[max]] بس، فالسالب يطلع برا الـ viewBox.
-
-~~~text الناتج (Node 24)
-barPoints([3, -1, 2], 30, 20, 2):
-{"x":0,"y":0,"width":8.67,"height":15}
-{"x":10.67,"y":15,"width":8.67,"height":5}
-{"x":21.33,"y":5,"width":8.67,"height":10}
-node --test: pass 3، fail 0
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**قارن وقيس:** ارسم نفس الـ sparkline بـ Chart.js (من CDN) في صفحة تجربة، وقارن بالـ SVG: حجم اللي اتحمّل (Network)، و LCP (بـ [[vitals.mjs]])، وهل قارئ الشاشة بيقرا حاجة (Accessibility tree).`,
-              done: R`عندك جدول ٣ صفوف بالأرقام للطريقتين، وفرق الحجم بالكيلو، وكتبت إن الـ canvas ملوش محتوى في الـ accessibility tree غير لو كتبت [[aria-label]] بإيدك، وإمتى المكتبة تستاهل.`,
-              sol: R`~~~live 170 170 spark-chart.html (نسخة Chart.js)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>sparkline</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4">$__lt/script></head>
-<body>
-  <main><h1>الحضور</h1>
-    <canvas id="c" width="300" height="80" aria-label="الحضور في ١٤ يوم"></canvas>
-  </main>
-  <script>
-    new Chart(document.getElementById("c"), {
-      type: "line",
-      data: { labels: Array(14).fill(""), datasets: [{ data: [59,77,60,73,74,51,81,77,74,64,68,63,79,73], pointRadius: 0 }] },
-      options: { responsive: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } },
-    });
-  $__lt/script>
-</body></html>
-~~~
-
-~~~live 180 180 spark-svg.html (نسخة SVG)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>sparkline</title></head>
-<body>
-  <main><h1>الحضور</h1>
-    <svg viewBox="0 0 100 32" width="300" height="80" role="img" aria-label="الحضور في ١٤ يوم، من 51 لـ 81">
-      <polyline id="l" fill="none" stroke="#1f6f8b" stroke-width="1.5"/>
-    </svg>
-  </main>
-  <script>
-    const v = [59,77,60,73,74,51,81,77,74,64,68,63,79,73];
-    const min = Math.min(...v), max = Math.max(...v), step = 96 / (v.length - 1);
-    document.getElementById("l").setAttribute("points", v.map((n, i) => (2 + i * step).toFixed(1) + "," + (30 - ((n - min) / (max - min)) * 28).toFixed(1)).join(" "));
-  $__lt/script>
-</body></html>
-~~~
-
-الرسم نفس الرسم، بس السؤال: كام بتدفع فيه؟ مكتبة كاملة لخط واحد معناها كل المتصفحات بتحمّل كود محاور وtooltips وأنيميشن مش مستخدمة، وبتنفذها قبل ما الخط يترسم.
-
-والـ accessibility: [[<canvas>]] صورة بكسلات، والشجرة مفيهاش غير الاسم اللي كتبته بإيدك. الـ [[svg]] بـ [[role="img"]] نفس الشيء، بس لو عايز تكتب النص جواها يبقى نص حقيقي. وفي الحالتين لازم [[aria-label]] يقول الخلاصة.
-
-إمتى المكتبة تستاهل؟ لما تحتاج tooltips ومحاور وزووم وأنواع رسم كتير. لخط صغير، ١٠ سطور SVG.
-
-الغلطة الشائعة: تقيس على جهاز سريع وشبكة محلية، فالفرق يتمسح. لاحظ إن الملف هنا اتحمّل من السيرفر المحلي وبـ CPU ×4، ومن CDN الفرق هيبان أكتر مع الشبكة.
-
-~~~text الناتج (Chrome 156: 390، CPU ×4، Chart.js من npm على سيرفر محلي)
-                       SVG            Chart.js
-حجم اللي اتحمّل         0.8KB         205.2KB
-LCP                    112ms          248ms
-شجرة الـ accessibility  - main: / - heading "الحضور" [level=1] / - img "الحضور في ١٤ يوم، من 51 لـ 81"
-                                     - main: / - heading "الحضور" [level=1]
-~~~` },
-          ],
-          ci: [
-            {
-              os: [
-                R`ubuntu`,
-                R`macos`,
-                R`windows`,
-              ],
-              sh: R`node`,
-              run: R`function sparkPoints(values, w = 100, h = 32, pad = 2) {
-  if (!values.length) return "";
-  const min = Math.min(...values), max = Math.max(...values), span = max - min;
-  const step = values.length > 1 ? (w - pad * 2) / (values.length - 1) : 0;
-  return values.map((v, i) => {
-    const x = pad + i * step;
-    const y = span ? h - pad - ((v - min) / span) * (h - pad * 2) : h / 2;
-    return +x.toFixed(1) + "," + +y.toFixed(1);
-  }).join(" ");
-}
-const ringOffset = pct => 100 - Math.min(100, Math.max(0, pct));
-function delta(now, prev) { const pct = prev ? ((now - prev) / prev) * 100 : 0; return { pct: Math.round(pct * 10) / 10, up: pct >= 0 }; }
-console.log("spark: " + sparkPoints([59, 77, 60, 73, 74, 51, 81]));
-console.log("flat: " + sparkPoints([5, 5, 5]) + " | one: " + sparkPoints([7]) + " | empty: [" + sparkPoints([]) + "]");
-console.log("ring: " + [78, 130, -5].map(ringOffset).join(" "));
-const d = delta(186400, 171250);
-console.log("delta: " + (d.up ? "+" : "") + d.pct + "% | from zero: " + delta(5, 0).pct);`,
-              expect: [
-                R`spark: 2,22.5 18,5.7 34,21.6 50,9.5 66,8.5 82,30 98,2`,
-                R`flat: 2,16 50,16 98,16 | one: 2,16 | empty: []`,
-                R`ring: 22 0 100`,
-                R`delta: +8.8% | from zero: 0`,
-              ],
-            },
-          ],
-        },
-        {
-          cmd: R`داشبورد ٢: جدول الأعضاء والحالة في الرابط`,
-          ref: [
-            { t: "MDN: URLSearchParams", url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams" },
-            { t: "MDN: History.pushState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/pushState" },
-            { t: "MDN: popstate event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event" },
-            { t: "MDN: aria-sort", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-sort" },
-          ],
-          title: R`جدول أعضاء بعناوين sticky وترتيب بـ aria-sort وبحث عربي وفلاتر وصفحات محفوظين في الرابط (Back شغال)، وكروت على الموبايل، وحالات التحميل والخطأ والفاضي من غير ما الصفحة تتنطط`,
-          learn: R`تبني جدول بيانات حقيقي: الحالة كلها في [[location.search]] (تتبعت وتتحفظ وتترجع بـ Back)، ودوال نقية بتفلتر وترتب وتقسّم صفحات وبتتختبر في Node، وبحث بيلاقي «آدم» لو كتبت «ادم»، و [[pushState]] للأفعال و [[replaceState]] للكتابة، وعناوين sticky متكسرهاش [[overflow]]، و skeleton بنفس مقاس الصف، ورسالة خطأ بزرار «جرّب تاني» بياخد الفوكس، وكروت بـ [[data-label]] تحت 40rem.`,
-          out: R`[[gen-data.mjs]] و [[state.js]] و [[table.js]] وجزء الجدول في [[app.css]]: [[?status=frozen&sort=visits&dir=desc]] بيفتح على نفس الجدول في أي تاب، و Back بيرجّع الترتيب، و [[?page=99]] بيبقى [[?page=6]]، والبحث مبيزوّدش الـ history، و CLS صفر على 390 والبيانات متأخرة 1.2 ثانية.`,
-          use: {
-            prog: R`درس «table» و «جدول responsive» و «ترتيب وصفحات في الـ URL» و «aria» بيتجمعوا، ومعاهم أهم فكرة في الواجهات: الحالة مكانها فين. هنا مكانها الرابط، والرسم دالة من الحالة.`,
-            work: R`أكتر شاشة في أي لوحة أدمن: جدول بفلاتر. والشكاوى المعروفة كلها هنا: «بعتلك الرابط فتح على الصفحة الأولى»، و «دوست Back خرجت من الصفحة»، و «العناوين بتختفي لما بنزل»، و «على الموبايل لازم أسكرول بالعرض»، و «بيعلّق وانا بكتب».`,
-            cs: R`الدالة النقية [[view(rows, state)]]: نفس المدخلات = نفس الناتج، فبتتختبر لوحدها. و stable sort مع tie-breaker ([[a.id - b.id]]). و normalization للنص قبل المقارنة. و clamping للمدخلات اللي جاية من بره (الرابط مدخل من المستخدم).`,
-          },
-          desc: R`أهم خطوة في الـ dashboard: جدول الـ ٥٧ عضو.
-
-**الحالة في الرابط:** [[parseState(location.search)]] بتقرا [[q]] و [[status]] و [[plan]] و [[sort]] و [[dir]] و [[page]]، وأي قيمة مش معروفة بترجع للافتراضي (الرابط مدخل من اليوزر: [[?sort=password]] مينفعش يوصل للكود). [[toQuery(state)]] بتكتب الرابط **من غير** القيم الافتراضية، فالرابط النضيف [[/]]. وكل تغيير: [[history.pushState]] للفلتر والترتيب والصفحة (Back بيرجّعهم)، و [[replaceState]] للكتابة في البحث (كل حرف مش خطوة في الـ history: اتقاس [[history grew by 0]]). و [[popstate]] بيقرا الرابط تاني ويرسم.
-
-**الرسم دالة:** [[view(rows, state)]] نقية في [[state.js]] (بتتختبر في Node وفي الـ ci): فلتر، وترتيب بـ [[Intl.Collator("ar")]] للأسامي وترتيب منطقي للباقة والحالة (مش أبجدي بالإنجليزي)، و tie-breaker بالـ id، وصفحات، و [[page]] أكبر من الموجود بيتقص لآخر صفحة.
-
-**الجدول:** [[<th>]] فيه [[<button>]] للترتيب و [[aria-sort]] على العمود الحالي، وعناوين [[position: sticky; top: var(--top-h)]] تحت الـ topbar. **وهنا أكبر فخ اتقاس:** لو حطيت [[overflow-x: auto]] على الـ wrapper (الحل المشهور للجداول العريضة)، العنوان بقى عند **[[-75]]** يعني اختفى فوق، لأن الـ sticky بقى بيلزق جوه الـ wrapper. و [[overflow-x: hidden]] على [[body]] كسر الـ topbar نفسه ([[-595]]).
-
-**الحالات:** تحميل (١٠ صفوف skeleton و [[aria-busy="true"]] و «بيحمّل…»)، وخطأ (رسالة فيها كود الـ HTTP وزرار «جرّب تاني» بياخد الفوكس)، وفاضي («مفيش أعضاء بالفلتر ده» وزرار «امسح الفلاتر»). **وتحت 40rem** كل صف كارت بـ [[td::before { content: attr(data-label) }]].
-
-**الـ CLS اللي اتصلّح:** على 390 كان **0.0848**: الـ skeleton كان صفوف قصيرة والكروت الحقيقية أطول، وسهم الترتيب كان بيظهر بعد البيانات فيوسّع العنوان. بعد ما بقى للـ skeleton نفس ارتفاع سطر الكارت والسهم محجوز مكانه بـ [[visibility: hidden]]: صفر.`,
-          example: R`const s = parseState(location.search);
-history.pushState(null, "", toQuery(s) || location.pathname);
-addEventListener("popstate", () => { state = parseState(location.search); syncForm(); render(); });
-.members thead th { position: sticky; top: var(--top-h); z-index: 1; background: var(--surface); }
-.members th button::after { content: "▲" / ""; visibility: hidden; }
-.members td::before { content: attr(data-label); color: var(--muted); }`,
+<noscript><p>الرسم محتاج JavaScript. الأرقام مكتوبة في الجدول تحت.</p></noscript>
+<template id="episode-row">
+  <li><a href="#">عنوان الحلقة</a></li>
+</template>`,
+          flag: "script",
           lines: [
-            R`الحالة من الرابط: [[location.search]] هو الجزء من [[?]] لآخره، و [[parseState]] بتحوّله object فيه كل القيم، والقيمة الغلط أو الناقصة بتاخد الافتراضي.`,
-            R`الحالة للرابط: [[pushState]] بيغيّر الرابط ويزوّد خطوة في الـ history **من غير** تحميل الصفحة. ولو الحالة كلها افتراضي [[toQuery]] بترجّع [[""]]، فبنكتب [[location.pathname]] عشان [[?]] القديمة تتشال.`,
-            R`Back و Forward: المتصفح بيغيّر الرابط ويبعت [[popstate]]، فبنقرا الحالة تاني ونحط القيم في الفورم ([[syncForm]]) ونرسم. من غير السطر ده Back بيغيّر الرابط بس والجدول مكانه.`,
-            R`العناوين بتفضل ظاهرة وانت نازل: [[top: var(--top-h)]] تحت الـ topbar (64px) مش [[0]] (كانت هتستخبى وراه). وخلفية عشان الصفوف متبانش من تحتها. وأهم شرط: مفيش أب بين الجدول والصفحة عليه [[overflow]] غير [[visible]] (أو [[clip]]).`,
-            R`سهم الترتيب: موجود دايمًا بس مستخبي، فلما يظهر مبيوسّعش العمود (ده كان جزء من الـ CLS). و [[/ ""]] بعد الـ content هو alt text فاضي: من غيره اسم الزرار لقارئ الشاشة كان «الاسم ▲» (اتقاس).`,
-            R`على الموبايل كل خلية بتكتب اسم عمودها قبلها من [[data-label]] اللي [[table.js]] حطه على كل [[<td>]]، فالكارت بيتقري «الحالة: نشط» من غير ما الجدول يتكرر.`,
+            R`[[<canvas>]] بمقاس 300 × 120 بيكسل و [[id]] عشان السكربت يلاقيه. والكلام اللي جواه هو المحتوى البديل: نفس المعلومة اللي الرسم هيقولها، مكتوبة.`,
+            R`فتحة [[<script>]]: من هنا JavaScript. التلات سطور الجايين هم كل الرسم.`,
+            R`[[getElementById("chart")]] بيجيب الـ canvas، و [[getContext("2d")]] بيرجّع «أداة الرسم» بتاعته (اسمها context). كل أمر رسم بيتنادى عليها.`,
+            R`[[fillStyle]] لون التعبئة لأي شكل هيترسم بعد كده.`,
+            R`[[fillRect(x, y, العرض, الارتفاع)]]: مستطيل مليان، ركنه فوق-شمال عند (20,20)، وعرضه 100 وارتفاعه 60.`,
+            R`قفلة السكربت. لازم ييجي **بعد** الـ canvas في الكود، عشان يلاقيه موجود.`,
+            R`[[<noscript>]]: الفقرة دي بتظهر بس لو JavaScript مقفول في المتصفح. عند باقي الناس كأنها مش مكتوبة.`,
+            R`[[<template>]] بـ [[id]]: اللي جواه قالب، مبيتعرضش.`,
+            R`صف حلقة جوه القالب. موجود في الكود ومش موجود في الصفحة: لا بيترسم، ولا لينكه بيتداس، ولا [[querySelector]] بيلاقيه.`,
+            R`قفلة القالب. سكربت في الصفحة هينسخ اللي جواه مرة لكل حلقة ويملاه.`
           ],
-          try: R`حط الملفات من الشرح وشغّل [[node gen-data.mjs]]. افتح الجدول واعمل فلتر وترتيب وروح صفحة ٣، وانسخ الرابط وافتحه في تاب جديد. دوس Back ٣ مرات وشوف كل مرة إيه اللي رجع. اكتب في البحث «ادم» من غير همزة. افتح [[?delay=2000]] وبعدين [[?fail=1]] وبعدين ابحث عن «zzz». وفي الآخر حط [[.table-wrap { overflow-x: auto }]] في DevTools ونزل تحت.`,
-          flag: R`script`,
-          deep: {
-            why: R`الحالة اللي في الذاكرة بس بتضيع مع أي refresh أو لينك، وده أول حاجة اليوزر بيلاحظها في لوحة أدمن: «بعتلك الرابط بتاع المتجمّدين، فتح على الكل». والرابط ببلاش بيدّيك المشاركة والـ bookmark و Back. والجدول هو أكتر عنصر بيبوظ على الموبايل وبيعمل CLS (الصفوف بتوصل بعد الصفحة) وبيكسر الـ sticky (الـ overflow).`,
-            how: R`الدورة: حدث ← [[update(patch)]] بتدمج التغيير في الحالة ← بتكتب الرابط ([[push]] أو [[replace]]) ← [[render()]] بتنادي [[view(all, state)]] وترسم الصفوف والصفحات و [[aria-sort]] والعدد. والـ popstate بيدخل نفس الدورة من الرابط. البحث بيستنى 250ms من آخر حرف ([[setTimeout]] و [[clearTimeout]] = debounce) فالرسم مش مع كل حرف. والـ sticky: العنصر بيلزق جوه أقرب أب «بيعمل scroll» (أي [[overflow]] غير [[visible]] و [[clip]] بيعمل scroll container حتى لو مبيتسكرولش رأسيًا)، فـ [[overflow-x: auto]] على الـ wrapper بيخلي العنوان يلزق فيه هو، والـ wrapper نفسه بيطلع من الشاشة. [[overflow-x: clip]] بيقص من غير ما يعمل scroll container (اتقاس: 64). والـ skeleton: نفس عدد الصفوف ونفس الارتفاع، فلما البيانات توصل المساحة مبتتغيرش.`,
-            when: R`أي قايمة فيها فلتر أو ترتيب أو صفحات أو بحث: أعضاء، وطلبات، ومنتجات، ولوج. الحالة في الرابط لكل اللي له معنى لحد تاني (فلتر، وصفحة، وترتيب)، و localStorage للحاجات الشخصية (عدد الصفوف في الصفحة، والأعمدة المخفية). والكروت على الموبايل لما الأعمدة ٥ أو أقل؛ لو أكتر، الأحسن scroll أفقي بأول عمود sticky (والـ sticky ساعتها رأسي مش هيشتغل جوه الـ wrapper، فاختار). دروس: «table»، و «جدول responsive»، و «ترتيب وصفحات في الـ URL»، و «sticky و fixed».`,
-            mistakes: R`[[overflow-x: auto]] على wrapper الجدول وتستغرب ليه الـ sticky بطّل (اتقاس: [[-75]]). [[overflow-x: hidden]] على [[html, body]] عشان «تخبّي» scroll أفقي (اتقاس: الـ topbar نفسه بقى [[-595]]). [[pushState]] مع كل حرف بحث (Back بيمسح حرف حرف). تنسى [[popstate]]. تثق في الرابط ([[?page=-3]] أو [[?sort=__proto__]]). ترتب الباقة أبجدي بالإنجليزي ([[monthly]] قبل [[pass10]] قبل [[quarterly]]). skeleton مقاسه مختلف عن الصف (CLS 0.0848). تخلط [[١٠ زيارات]] و [[10]] في نفس اللوحة (حصل، وبقى لاتيني كله). رسالة خطأ من غير زرار ومن غير فوكس. تحط [[display: block]] على الجدول وتفترض إن كل المتصفحات بتسيب الـ roles (Chrome 156 سابها، و Safari كان بيشيلها، من الوثائق).`,
-          },
-          teach: R`## الخطوة ٥: جدول الأعضاء
+          teach: R`## الفكرة في سطرين
 
-### البيانات
+الصفحة من غير JavaScript هي HTML و CSS وبس. العناصر دي بتحدد اللي بيحصل على الحدود: مكان السكربت بيرسم فيه، ورسالة للي السكربت مش شغال عنده، ومخزن HTML السكربت بياخد منه.
 
-~~~javascript gen-data.mjs
-// invented members and classes for the climbing gym; same seed = same data every run
-import fs from "node:fs";
-let seed = 42;
-const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
-const pick = a => a[Math.floor(rnd() * a.length)];
-const first = ["مريم", "يوسف", "سلمى", "عمر", "هنا", "كريم", "ليلى", "آدم", "نور", "زياد", "فرح", "مالك", "جنى", "سيف", "رنا", "تامر"];
-const last = ["الشاذلي", "منصور", "عبد الحميد", "رشدي", "الجمّال", "سالم", "فهمي", "النجار", "شوقي", "البنا"];
-const plans = ["monthly", "quarterly", "yearly", "pass10"];
-const day = n => new Date(Date.UTC(2026, 9, 31) - n * 864e5).toISOString().slice(0, 10);
-const members = Array.from({ length: 57 }, (_, i) => {
-  const status = rnd() < 0.72 ? "active" : rnd() < 0.5 ? "frozen" : "expired";
-  return { id: 1001 + i, name: pick(first) + " " + pick(last), plan: pick(plans), status,
-    joined: day(30 + Math.floor(rnd() * 700)), lastVisit: day(Math.floor(rnd() * (status === "active" ? 9 : 90))), visits: status === "active" ? 2 + Math.floor(rnd() * 20) : Math.floor(rnd() * 3) };
-});
-const titles = [["بولدرينج للمبتدئين", "رحاب"], ["تسلّق بالحبل", "شادي"], ["قوة الأصابع", "رحاب"], ["مرونة ويوجا", "دينا"], ["أطفال 8–12", "شادي"], ["تقنية متقدمة", "مهاب"]];
-const classes = [];
-let id = 1;
-for (let d = 0; d < 7; d++) {
-  if (d === 6) continue;                                   // Friday: open climbing only, no classes
-  const slots = [["07:00", "08:00"], ["17:00", "18:30"], ["19:00", "20:00"], ["20:30", "22:00"]];
-  for (const [s, e] of slots) if (rnd() < 0.7) { const [t, c] = pick(titles); const spots = 8 + Math.floor(rnd() * 8); classes.push({ id: id++, title: t, coach: c, day: d, start: s, end: e, spots, booked: Math.floor(rnd() * (spots + 1)) }); }
-}
-const checkins = Array.from({ length: 14 }, () => 40 + Math.floor(rnd() * 45));
-fs.writeFileSync("dashboard/data/members.json", JSON.stringify(members, null, 1));
-fs.writeFileSync("dashboard/data/classes.json", JSON.stringify(classes, null, 1));
-fs.writeFileSync("dashboard/data/kpi.json", JSON.stringify({ active: members.filter(m => m.status === "active").length, checkins, revenue: 186400, revenuePrev: 171250, renewal: 78 }, null, 1));
-console.log(members.length, "members,", classes.length, "classes, check-ins:", checkins.join(" "));
-console.log("status:", ["active", "frozen", "expired"].map(s => s + "=" + members.filter(m => m.status === s).length).join(" "));
-~~~
-
-~~~text اتشغّل فعلًا
-57 members, 15 classes, check-ins: 59 77 60 73 74 51 81 77 74 64 68 63 79 73
-status: active=44 frozen=5 expired=8
-~~~
-
-- [[rnd]]: مولّد أرقام عشوائية بـ seed ثابت (LCG: [[seed * 1103515245 + 12345]] باقي القسمة على [[2^31]]). [[Math.random()]] كان هيطلّع بيانات مختلفة كل مرة، فالأرقام اللي في الدرس متتكررش عندك.
-- [[day(n)]]: تاريخ من [[2026-10-31]] لورا [[n]] يوم بـ UTC، و [[toISOString().slice(0, 10)]] = [[YYYY-MM-DD]].
-- العضو النشط آخر زيارة ليه في آخر ٩ أيام، والمتجمّد والمنتهي لحد ٩٠ يوم: البيانات «منطقية» عشان الترتيب يبان صح.
-- اليوم ٦ (الجمعة) مفيش حصص: تسلّق حر بس.
-
-### الحالة: دوال نقية
-
-~~~javascript dashboard/js/state.js
-// table state <-> URL, plus filter/sort/page. No DOM here, so Node can test it.
-export const DEFAULTS = { q: "", status: "all", plan: "all", sort: "name", dir: "asc", page: 1, size: 10 };
-const STATUS = ["active", "frozen", "expired"];
-const PLANS = ["monthly", "quarterly", "yearly", "pass10"];
-const SORTS = ["name", "plan", "status", "lastVisit", "visits"];
-const ORDER = { plan: PLANS, status: STATUS };
-
-export function parseState(search) {
-  const p = new URLSearchParams(search);
-  const s = { ...DEFAULTS };
-  s.q = (p.get("q") || "").trim().slice(0, 50);
-  if (STATUS.includes(p.get("status"))) s.status = p.get("status");
-  if (PLANS.includes(p.get("plan"))) s.plan = p.get("plan");
-  if (SORTS.includes(p.get("sort"))) s.sort = p.get("sort");
-  if (p.get("dir") === "desc") s.dir = "desc";
-  const page = Number.parseInt(p.get("page"), 10);
-  if (page >= 1) s.page = page;
-  return s;
-}
-
-export function toQuery(s) {
-  const p = new URLSearchParams();
-  for (const k of ["q", "status", "plan", "sort", "dir", "page"]) if (s[k] !== DEFAULTS[k] && s[k] !== "") p.set(k, s[k]);
-  const q = p.toString();
-  return q ? "?" + q : "";
-}
-
-// Arabic search: «احمد» should find «أحمد», and «هنا» should find «هنا»/«هناء» typed with ة or ى
-export const norm = t => t.toLowerCase().replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").replace(/[\u064B-\u0652]/g, "");
-const coll = new Intl.Collator("ar");
-
-function compare(k, a, b) {
-  if (ORDER[k]) return ORDER[k].indexOf(a[k]) - ORDER[k].indexOf(b[k]);
-  if (typeof a[k] === "number") return a[k] - b[k];
-  if (k === "name") return coll.compare(a[k], b[k]);
-  return a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0;          // ISO dates sort as text
-}
-
-export function view(rows, s) {
-  const q = norm(s.q);
-  const hit = m => (s.status === "all" || m.status === s.status) && (s.plan === "all" || m.plan === s.plan)
-    && (!q || norm(m.name).includes(q) || String(m.id) === q);
-  const d = s.dir === "desc" ? -1 : 1;
-  const sorted = rows.filter(hit).sort((a, b) => d * compare(s.sort, a, b) || a.id - b.id);
-  const pages = Math.max(1, Math.ceil(sorted.length / s.size));
-  const page = Math.min(s.page, pages);
-  return { total: sorted.length, pages, page, rows: sorted.slice((page - 1) * s.size, page * s.size) };
-}
-~~~
-
-- [[STATUS.includes(p.get("status"))]]: allowlist. أي قيمة مش في اللستة = افتراضي. ده أهم سطر أمان في الملف: الرابط بيكتبه أي حد.
-- [[.trim().slice(0, 50)]]: بحث بحد أقصى 50 حرف ومن غير مسافات في الأطراف.
-- [[Number.parseInt(p.get("page"), 10)]] و [[page >= 1]]: [[parseInt(null)]] = [[NaN]]، و [[NaN >= 1]] = [[false]]، فالافتراضي بيفضل.
-- [[norm]]: [[أ إ آ]] ← [[ا]]، و [[ة]] ← [[ه]]، و [[ى]] ← [[ي]]، ومن غير تشكيل ([[\u064B-\u0652]] = الفتحة لحد السكون). الاتنين (الاسم والبحث) بيتنضّفوا، فـ «ادم» بتلاقي «آدم».
-- [[new Intl.Collator("ar")]]: ترتيب أبجدي عربي صح. [[localeCompare]] بيعمل نفس الحاجة بس بيجهّز الـ collator مع كل مقارنة، فـ MDN بينصح بـ [[Intl.Collator]] لما تقارن نصوص كتير (من الوثائق، مش متقاس هنا).
-- [[ORDER]]: الباقة والحالة بترتيبهم المنطقي (شهري، ٣ شهور، سنوي، ١٠ زيارات) مش بالحروف.
-- [[d * compare(...) || a.id - b.id]]: لو متساويين ([[0]])، الـ id هو اللي بيحسم، فالترتيب ثابت بين كل رسمة والتانية (من غيره صفّين بنفس عدد الزيارات ممكن يبدّلوا مكانهم بين الصفحات).
-- [[Math.min(s.page, pages)]]: [[?page=99]] بيعرض آخر صفحة، و [[table.js]] بيصلّح الرابط بـ [[replaceState]].
-
-~~~text node: نفس الدوال على الـ 57 عضو
-{ q: '', status: 'frozen', plan: 'all', sort: 'visits', dir: 'desc', page: 2, size: 10 }
-"" ?q=%D9%85%D8%B1%D9%8A%D9%85
-57 6 1 يوسف الشاذلي:21, مالك النجار:20, مريم الجمّال:20
-6 آدم الشاذلي, آدم عبد الحميد
-1053 1042 1007 1049 1032
-~~~
-
-- السطر الأول من [[?status=frozen&page=2&sort=visits&dir=desc&evil=1]]: [[evil]] اتجاهل.
-- [[?q=مريم]] بيتكتب [[%D9%85...]]: [[URLSearchParams]] بيعمل percent-encoding للعربي (بايتات UTF-8)، والمتصفح بيعرضه عربي في شريط العنوان.
-
-### الجدول
-
-~~~javascript dashboard/js/table.js
-// members table: the URL is the state. Read it, draw, and write it back on every change.
-import { parseState, toQuery, view, DEFAULTS } from "./state.js";
-import { num, shortDate } from "./lib.js";
-
-const PLAN = { monthly: "شهري", quarterly: "3 شهور", yearly: "سنوي", pass10: "10 زيارات" };
-const STATUS = { active: "نشط", frozen: "متجمّد", expired: "منتهي" };
-const COLS = ["الاسم", "الباقة", "الحالة", "آخر زيارة", "زيارات الشهر"];
-const table = document.getElementById("table"), tbody = document.getElementById("rows");
-const form = document.getElementById("filters"), pager = document.getElementById("pager"), count = document.getElementById("count");
-let all = [], state = parseState(location.search);
-
-const lab = new URLSearchParams(location.search);          // lab only: ?delay=1500 slows the data, ?fail=1 breaks the first try
-let labDelay = lab.get("delay"), labFail = lab.get("fail") === "1";
-
-function td(text, label, cls) {
-  const c = document.createElement("td");
-  c.dataset.label = label;
-  if (cls) c.className = cls;
-  if (text instanceof Node) c.append(text); else c.textContent = text;
-  return c;
-}
-
-function stateRow(kind, text, button) {
-  const tr = document.createElement("tr"), c = document.createElement("td");
-  tr.className = "state-row " + kind;
-  c.colSpan = COLS.length;
-  c.append(text);
-  if (button) { c.append(" "); c.append(button); }
-  tr.append(c);
-  tbody.replaceChildren(tr);
-}
-
-export function skeleton(n = DEFAULTS.size) {
-  table.setAttribute("aria-busy", "true");
-  tbody.replaceChildren(...Array.from({ length: n }, () => {
-    const tr = document.createElement("tr");
-    tr.className = "skel";
-    tr.innerHTML = "<td><span></span></td>".repeat(COLS.length);
-    return tr;
-  }));
-}
-
-function render() {
-  const v = view(all, state);
-  if (v.page !== state.page) { state.page = v.page; history.replaceState(null, "", toQuery(state) || location.pathname); }
-  table.setAttribute("aria-busy", "false");
-  for (const th of table.querySelectorAll("th[data-sort]")) {
-    if (th.dataset.sort === state.sort) th.setAttribute("aria-sort", state.dir === "asc" ? "ascending" : "descending");
-    else th.removeAttribute("aria-sort");
-  }
-  count.textContent = v.total ? $__bt$__{num.format(v.total)} عضو، صفحة $__{num.format(v.page)} من $__{num.format(v.pages)}$__bt : "مفيش نتايج";
-  if (!v.total) {
-    const clear = document.createElement("button");
-    clear.type = "button"; clear.className = "btn ghost"; clear.textContent = "امسح الفلاتر";
-    clear.onclick = () => form.reset();
-    stateRow("empty", "مفيش أعضاء بالفلتر ده.", clear);
-  } else {
-    tbody.replaceChildren(...v.rows.map(m => {
-      const tr = document.createElement("tr");
-      const b = document.createElement("span");
-      b.className = "badge " + m.status; b.textContent = STATUS[m.status];
-      tr.append(td(m.name, COLS[0]), td(PLAN[m.plan], COLS[1]), td(b, COLS[2]),
-        td(shortDate.format(new Date(m.lastVisit)), COLS[3]), td(num.format(m.visits), COLS[4], "num"));
-      return tr;
-    }));
-  }
-  pager.replaceChildren();
-  const btn = (label, page, extra = {}) => {
-    const b = document.createElement("button");
-    b.type = "button"; b.textContent = label; b.dataset.page = page;
-    Object.assign(b, extra);
-    if (page === v.page && !extra.ariaLabel) b.setAttribute("aria-current", "page");
-    pager.append(b);
-  };
-  btn("‹", v.page - 1, { ariaLabel: "الصفحة اللي فاتت", disabled: v.page === 1 });
-  for (let p = 1; p <= v.pages; p++) btn(num.format(p), p);
-  btn("›", v.page + 1, { ariaLabel: "الصفحة الجاية", disabled: v.page === v.pages });
-}
-
-function update(patch, mode = "push") {
-  state = { ...state, ...patch };
-  const url = toQuery(state) || location.pathname;
-  if (mode === "push") history.pushState(null, "", url); else history.replaceState(null, "", url);
-  render();
-}
-
-function syncForm() {
-  form.q.value = state.q; form.status.value = state.status; form.plan.value = state.plan;
-}
-
-let timer;
-form.addEventListener("input", e => {
-  clearTimeout(timer);
-  const patch = { [e.target.name]: e.target.value, page: 1 };
-  if (e.target.name === "q") timer = setTimeout(() => update({ ...patch, q: e.target.value.trim() }, "replace"), 250);
-  else update(patch, "push");
-});
-form.addEventListener("reset", () => setTimeout(() => update({ q: "", status: "all", plan: "all", page: 1 }, "push")));
-form.addEventListener("submit", e => e.preventDefault());
-table.querySelector("thead").addEventListener("click", e => {
-  const th = e.target.closest("th[data-sort]");
-  if (!th) return;
-  const k = th.dataset.sort;
-  update({ sort: k, dir: state.sort === k && state.dir === "asc" ? "desc" : "asc", page: 1 });
-});
-pager.addEventListener("click", e => {
-  const b = e.target.closest("button[data-page]");
-  if (!b || b.disabled) return;
-  update({ page: Number(b.dataset.page) });
-  document.getElementById("mem-h").scrollIntoView({ block: "start" });
-});
-addEventListener("popstate", () => { state = parseState(location.search); syncForm(); render(); });
-
-export async function loadMembers() {
-  syncForm();
-  skeleton();
-  count.textContent = "بيحمّل…";
-  try {
-    const q = labDelay ? "?delay=" + labDelay + (labFail ? "&fail=1" : "") : labFail ? "?fail=1" : "";
-    const res = await fetch("data/members.json" + q);
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    all = await res.json();
-    render();
-    return all;
-  } catch (err) {
-    labFail = false; labDelay = null;
-    table.setAttribute("aria-busy", "false");
-    count.textContent = "حصل خطأ في التحميل";
-    const retry = document.createElement("button");
-    retry.type = "button"; retry.className = "btn"; retry.textContent = "جرّب تاني";
-    retry.onclick = () => loadMembers();
-    stateRow("error", "مقدرناش نجيب الأعضاء (" + err.message + ").", retry);
-    retry.focus();
-    return [];
-  }
-}
-
-export function addMember(m) { all.push(m); render(); }
-export const nextId = () => Math.max(1000, ...all.map(m => m.id)) + 1;
-~~~
-
-- [[td(text, label, cls)]]: كل خلية عليها [[data-label]] باسم العمود (للكروت على الموبايل). و [[textContent]] مش [[innerHTML]] لأي بيانات: اسم عضو فيه [[<img onerror>]] هيتعرض نص.
-- [[skeleton()]]: [[innerHTML]] هنا بس لأنه نص ثابت مننا مش بيانات. و [[aria-busy="true"]] على الجدول: قارئ الشاشة بيستنى.
-- [[render()]]: لو [[view]] قصّ الصفحة، الرابط بيتصلّح بـ [[replaceState]] (مش push: ده تصليح مش فعل). و [[aria-sort]] على عمود واحد بس.
-- العدد في [[<p id="count" aria-live="polite">]]: «57 عضو، صفحة 1 من 6» بيتقري بعد كل فلتر.
-- [[stateRow("empty", ...)]] و [[stateRow("error", ...)]]: صف واحد بـ [[colSpan]] = عدد الأعمدة.
-- [[btn(label, page, extra)]]: أزرار الصفحات، و [[aria-current="page"]] على الحالية، والسهمين ليهم [[aria-label]] («الصفحة اللي فاتت») لأن [[‹]] لوحده ملوش اسم.
-- [[form.addEventListener("input", ...)]]: الـ select بيعمل [[push]] على طول، والبحث [[replace]] بعد 250ms.
-- [[reset]] بـ [[setTimeout]]: الحدث بيحصل **قبل** ما الفورم يفضى، فبنستنى لفة.
-- [[scrollIntoView]] بعد تغيير الصفحة: اليوزر بيرجع لأول الجدول مش يفضل تحت.
-- [[catch]]: الرسالة فيها السبب ([[HTTP 500]])، والزرار بياخد الفوكس (فاليوزر بالكيبورد يدوس Enter على طول)، و [[count]] بيقول «حصل خطأ في التحميل» عشان يتقري.
-- [[lab]] و [[labFail]]: للمعمل بس، بيعدّوا [[?delay]] و [[?fail]] لطلب البيانات أول مرة. احذفهم في نسخة حقيقية.
-
-### الـ CSS بتاع الجدول
-
-~~~css dashboard/css/app.css (السطور 92–120)
-/* ---------- filters + table ---------- */
-.filters { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem 1rem; margin-block-end: 0.75rem; }
-.filters label { display: grid; gap: 0.25rem; color: var(--muted); font-size: 0.9rem; }
-input, select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-height: 44px; padding: 0.3rem 0.6rem; }
-.count { margin: 0 0 0.5rem; color: var(--muted); min-height: 1.6em; }
-.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
-.members { width: 100%; border-collapse: collapse; }
-.members th, .members td { padding: 0 0.9rem; height: 3rem; text-align: start; border-block-end: 1px solid var(--line); white-space: nowrap; }
-.members thead th { position: sticky; top: var(--top-h); z-index: 1; background: var(--surface); box-shadow: 0 1px 0 var(--line); }
-.members th button { all: unset; cursor: pointer; font-weight: 600; display: inline-flex; gap: 0.3rem; align-items: center; min-height: 44px; }
-.members th button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
-.members th button::after { content: "▲" / ""; font-size: 0.7em; color: var(--brand); visibility: hidden; }   /* the space is there before sorting, so nothing moves */
-.members th[aria-sort] button::after { visibility: visible; }
-.members th[aria-sort="descending"] button::after { content: "▼" / ""; }
-.members td.num { font-variant-numeric: tabular-nums; }
-.members tbody tr:last-child td { border-block-end: 0; }
-.badge { display: inline-block; padding: 0.05rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
-.badge.active { background: var(--ok-soft); color: var(--ok); }
-.badge.frozen { background: var(--warn-soft); color: var(--warn); }
-.badge.expired { background: var(--bad-soft); color: var(--bad); }
-.skel span { display: block; height: 0.9em; border-radius: 6px; background: linear-gradient(90deg, var(--skel) 25%, var(--skel-hi) 50%, var(--skel) 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
-@keyframes shimmer { to { background-position: -200% 0; } }
-.state-row td { height: auto; padding: 2rem 1rem; text-align: center; white-space: normal; }
-.state-row.error td { color: var(--bad); }
-.pager { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-start: 0.75rem; }
-.pager button { min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; font-variant-numeric: tabular-nums; }
-.pager button[aria-current="page"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
-.pager button:disabled { opacity: 0.5; cursor: default; }
-
-~~~
-
-~~~css dashboard/css/app.css (السطور 164–182): تحت 40rem
-/* ---------- under 40rem: rows become cards ---------- */
-@media (max-width: 40rem) {
-  .topbar { padding-inline: 0.75rem; gap: 0.5rem; }
-  .topbar h1 { font-size: 1rem; }
-  main { padding: 0.75rem; }
-  .filters label, .filters input, .filters select { width: 100%; }
-  .table-wrap { background: none; border: 0; }
-  .members thead tr { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 0.75rem; }
-  .members thead th { position: static; height: auto; padding: 0 0.6rem; border: 1px solid var(--line); border-radius: 999px; box-shadow: none; }
-  .members tbody, .members tr, .members td { display: block; }
-  .members tbody tr { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 0.5rem 0.9rem; margin-block-end: 0.75rem; }
-  .members td { height: auto; padding: 0.3rem 0; border: 0; display: grid; grid-template-columns: 7.5rem 1fr; white-space: normal; }
-  .members td::before { content: attr(data-label); color: var(--muted); }
-  .members td > .badge { justify-self: start; }   /* a grid item stretches by default */
-  .members .state-row td, .members .skel td { display: block; }
-  .members .skel td::before, .members .state-row td::before { content: none; }
-  .members .skel td { height: calc(1.6em + 0.6rem); display: flex; align-items: center; }   /* same height as a real card line */
-}
-
-~~~
-
-- [[.members th button { all: unset; ... }]]: الزرار شكله نص العنوان، بس لسه زرار (Tab و Enter و Space). و [[all: unset]] شال الإطار كمان، فبنرجّعه بـ [[:focus-visible]].
-- [[height: 3rem]] على كل خلية و [[white-space: nowrap]]: كل الصفوف نفس الارتفاع (الـ skeleton كمان).
-- [[.badge.active]] لونها [[--ok]] على [[--ok-soft]]: الحالة بلون **ونص** («نشط»)، مش لون بس.
-- الـ shimmer: gradient عرضه 200% بيتحرك بـ [[background-position]] (مش [[transform]]، بس على مستطيلات صغيرة مبيفرقش).
-- تحت 40rem: [[thead tr]] بقى أزرار ترتيب جنب بعض (لسه شغالين)، والصف [[display: block]] بحدود كارت، والخلية grid عمودين: الاسم والقيمة. و [[.badge { justify-self: start }]] لأن عنصر الـ grid بيتمد بعرض العمود (في اللقطة الأولى «نشط» كانت شريط أخضر بعرض الكارت).
-- [[.skel td { height: calc(1.6em + 0.6rem) }]] تحت 40rem: نفس ارتفاع سطر الكارت الحقيقي.
-
-### اتشغّل فعلًا
-
-~~~text node check-dashboard.mjs
-count: 57 عضو، صفحة 1 من 6
-after status=frozen: /?status=frozen | 5 عضو، صفحة 1 من 1
-after sort visits twice: /?status=frozen&sort=visits&dir=desc | aria-sort: descending
-after Back: /?status=frozen&sort=visits | aria-sort: ascending
-open ?page=4&sort=lastVisit&dir=desc: 57 عضو، صفحة 4 من 6 | first row: سيف منصور
-open ?page=99 -> /?page=6 | 57 عضو، صفحة 6 من 6
-search ادم: /?q=ادم | rows: آدم الشاذلي, آدم عبد الحميد | history grew by 0
-empty state: مفيش أعضاء بالفلتر ده. امسح الفلاتر
-after clear: / | 57 عضو، صفحة 1 من 6
-while loading: 10 skeleton rows, aria-busy = true | count: بيحمّل…
-error: مقدرناش نجيب الأعضاء (HTTP 500). جرّب تاني | focus on: جرّب تاني
-after retry: 57 عضو، صفحة 1 من 6
-~~~
+القياسات من Chrome 157 على Windows 11.
 
 ---
 
-## الغلطات اللي حصلت في الخطوة دي
+## ١. [[<canvas>]]
 
-### ١. الـ sticky والـ overflow
+المواصفة: [[<canvas>]] بيدّي السكربتات «لوحة bitmap» ترسم عليها: رسوم بيانية، ألعاب، تعديل صور. bitmap يعني شبكة بيكسلات، زي صورة PNG، مش عناصر.
 
-~~~javascript sticky.mjs
-import { chromium } from "playwright-core";
-const b = await chromium.launch({ channel: "chrome" });
-for (const [name, extra] of [["shipped", ""], ["wrapper overflow-x: auto", ".table-wrap{overflow-x:auto}"], ["wrapper overflow-x: clip", ".table-wrap{overflow-x:clip}"], ["body overflow-x: hidden", "html,body{overflow-x:hidden}"]]) {
-  const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
-  await p.goto("http://127.0.0.1:5502/"); await p.waitForSelector("#rows tr:not(.skel)");
-  if (extra) await p.addStyleTag({ content: extra });
-  await p.evaluate(() => scrollTo(0, document.getElementById("members").offsetTop + 300));
-  await p.waitForTimeout(150);
-  const r = await p.evaluate(() => [Math.round(document.querySelector(".members thead th").getBoundingClientRect().top), Math.round(document.querySelector(".topbar").getBoundingClientRect().top)]);
-  console.log(name.padEnd(26), "th top:", r[0], "| topbar top:", r[1]);
-  await p.close();
-}
-await b.close();
+~~~live 148 canvas وعليه مستطيل اترسم بتلات سطور
+<canvas id="chart" width="300" height="120" style="border:1px solid #94a3b8">عدد مرات سماع الحلقات: الأولى ٤٠، والتانية ٦٥، والتالتة ٩٠.</canvas>
+<script>
+  const ctx = document.getElementById("chart").getContext("2d");
+  ctx.fillStyle = "teal";
+  ctx.fillRect(20, 20, 100, 60);
+</script>
 ~~~
 
-~~~text
-shipped                    th top: 64 | topbar top: 0
-wrapper overflow-x: auto   th top: -75 | topbar top: 0
-wrapper overflow-x: clip   th top: 64 | topbar top: 0
-body overflow-x: hidden    th top: -139 | topbar top: -595
+**هتشوف إيه:** صندوق ليه خط رمادي رفيع (ده من [[border]] اللي مكتوب في [[style]] عشان حدود اللوحة تبان، والـ CSS ده بيتشرح في درس «box model»)، وجواه مستطيل أخضر مزرق. والجملة اللي جوه [[<canvas>]] مش ظاهرة.
+
+~~~text القياس من Chrome
+<canvas></canvas>                   width = 300   height = 150   display: inline     (فاضي وشفاف)
+بعد fillRect(20, 10, 100, 50):
+   البيكسل (30,20)  = 0,128,128,255      ← teal، و 255 يعني مش شفاف
+   البيكسل (150,80) = 0,0,0,0            ← شفاف: مفيش حاجة مرسومة هنا
 ~~~
 
-الصفحة نازلة لحد 300px بعد أول الجدول. السليم: العنوان عند 64 (تحت الـ topbar بالظبط). مع [[overflow-x: auto]] العنوان بقى بيلزق في الـ wrapper، والـ wrapper نفسه طالع فوق الشاشة. ومع [[body { overflow-x: hidden }]] الـ topbar نفسه طلع (595px فوق)، لأن الـ body بقى scroll container والصفحة بتتسكرول في الـ viewport مش فيه. [[clip]] بيقص من غير ما يعمل scroll container.
+- من غير سكربت، [[<canvas>]] مستطيل شفاف 300 × 150 مفيهوش أي حاجة.
+- الإحداثيات من فوق-شمال: x لليمين و y لتحت (زي [[coords]] في الدرس اللي فات).
+- اللي اترسم بقى بيكسلات. مفيش «عنصر مستطيل» تدوس عليه أو تلوّنه بالـ CSS أو قارئ الشاشة يشوفه. ده الفرق بينه وبين SVG.
 
-### ٢. CLS 0.0848 على الموبايل
+### [[width]] و [[height]] هنا مش زي الـ CSS
 
-~~~text audit-dashboard.mjs (390، قبل)
-vitals fast data    CLS 0.0848 LCP 244ms hint | moved: schedule,TH
-vitals ?delay=1200  CLS 0.0848 LCP 296ms hint | moved: schedule,TH
+~~~text القياس من Chrome
+<canvas width="200" height="100" style="width:400px; height:100px">
+   اللوحة (bitmap):  200 × 100          الصندوق في الصفحة:  400 × 100
 ~~~
 
-سببين: الـ skeleton كان ١٠ صفوف بارتفاع [[0.9em]] وتحت 40rem الصف الحقيقي كارت فيه ٥ سطور (فالجدول الأسبوعي اتزق لتحت: [[schedule]])، وسهم الترتيب كان [[content]] بيتحط بعد البيانات فبيوسّع العنوان ([[TH]]). بعد التصليحين: [[CLS 0.0010]] (وده كان النسبة جنب الإيراد، في الدرس اللي فات)، وبعدها صفر.
+الـ attributes بيحددوا **عدد بيكسلات اللوحة**. والـ CSS بيحدد **المقاس المعروض**. لو مختلفين، الرسم بيتمط زي صورة اتكبّرت: هنا كل حاجة هتبان عرضها الضعف ومهزوزة. فالمقاس يتكتب في الـ attributes.
 
-### ٣. اسم الزرار «الاسم ▲»
+### المحتوى البديل
 
-~~~text aname.mjs (قبل ← بعد [[content: "▲" / ""]])
-- button "الاسم ▲" ...
-- button "الاسم" | - button "الباقة" | - button "الحالة" | - button "آخر زيارة" | - button "زيارات الشهر"
-arrow still drawn: "▲" / ""
+MDN: اللي بين [[<canvas>]] و [[</canvas>]] بيتعرض في المتصفحات اللي مبتدعمش canvas. دي مبقتش موجودة، بس المحتوى ده ليه شغل تاني اتقاس:
+
+~~~text القياس من Chrome (شجرة الـ accessibility)
+<canvas width="200" height="100">رسم بياني: ... <a href="#t">الجدول</a></canvas>
+   على الشاشة: ارتفاع اللينك = 0 (مش مرسوم)
+   في الشجرة:  Canvas «»   وجواه   link «الجدول»          ← قارئ الشاشة شايف اللينك
+
+<canvas role="img" aria-label="رسم: ٣ أعمدة">      →  image «رسم: ٣ أعمدة»
 ~~~
 
-الـ [[::after]] جزء من اسم الزرار، فقارئ الشاشة كان بيقول «الاسم، مثلث لفوق، زرار». [[content: "▲" / ""]] (alt text فاضي بعد [[/]]) بيرسم السهم ويشيله من الاسم. والاتجاه نفسه بيتقري من [[aria-sort]] على الـ [[<th>]].
+يعني البديل هو اللي قارئ الشاشة بياخده بدل الرسم. اكتب فيه المعلومة اللي الرسم بيقولها (الأرقام، أو لينك لجدول)، مش «متصفحك لا يدعم canvas». ولرسم بسيط: [[role="img"]] و [[aria-label]] بيخلّوه يتقري كصورة باسمها.
 
-### ٤. الجدول لسه جدول على الموبايل؟
+| عايز | العنصر |
+|---|---|
+| صورة جاهزة | [[<img>]] |
+| رسم من أشكال (أيقونة، مسقط، رسم بياني بسيط) بيتكبّر ويتداس ويتلوّن | SVG |
+| رسم بيتغيّر بسرعة أو فيه آلاف القطع (لعبة، تعديل صورة، رسم بياني تقيل) | [[<canvas>]] |
 
-~~~text aria at 390
-- table "الأعضاء": / - rowgroup: / - row "الاسم الباقة الحالة آخر زيارة زيارات الشهر": / - columnheader "الاسم": / - button "الاسم" / - columnheader "الباقة": / - button "الباقة" / ...
+باقي أوامر الرسم (خطوط، دواير، نص، صور، حركة) في كورس JavaScript، درس «canvas: ارسم أشكال وحرّكها».
+
+---
+
+## ٢. [[<noscript>]]
+
+~~~live 126 230 نفس الكود في صفحتين: واحدة JavaScript مقفول فيها، وواحدة شغال
+<iframe sandbox title="JavaScript مقفول" width="250" height="96"
+  srcdoc="<noscript><p>الصفحة دي محتاجة JavaScript.</p></noscript><p>باقي الصفحة.</p>"></iframe>
+<iframe sandbox="allow-scripts" title="JavaScript شغال" width="250" height="96"
+  srcdoc="<noscript><p>الصفحة دي محتاجة JavaScript.</p></noscript><p>باقي الصفحة.</p>"></iframe>
 ~~~
 
-Chrome 156 ساب الـ roles (table و row و columnheader) حتى مع [[display: block]] على الصفوف. Safari كان تاريخيًا بيشيلها (من الوثائق، متجرّبش هنا): لو لازم تضمنها حط [[role="table"]] و [[role="row"]] و [[role="cell"]] صريحة.
+**هتشوف إيه:** الصندوق الأول فيه سطرين: «الصفحة دي محتاجة JavaScript» و «باقي الصفحة». والتاني فيه «باقي الصفحة» بس. ([[sandbox]] الفاضي بيقفل السكربتات في الصندوق الأول، وده بيخلّي المتصفح يعامله كصفحة JavaScript مقفول فيها.)
 
-### ٥. نظامين أرقام
+MDN: لو السكربتات مقفولة، [[<noscript>]] بيمثّل أولاده كـ HTML عادي. ولو شغالة، بيمثّلهم كـ **نص**.
 
-في لقطة الموبايل كان مكتوب «١٠ زيارات» و «٣ شهور» جنب «29 أكتوبر» و «8». الأسامي كانت مكتوبة بإيدي أرقام هندي، والأرقام من [[Intl]] لاتيني. بقى كله لاتيني ([[10 زيارات]] و [[3 شهور]] و [[أطفال 8–12]] في البيانات).
+~~~text القياس من Chrome (JavaScript شغال)
+<noscript><p>...</p><img src="/ns-pixel.gif"></noscript>
+   مش مرسوم في الصفحة       children.length = 0       childNodes.length = 1 (نص واحد)
+   textContent = "<p>الصفحة محتاجة JavaScript. ..."     ← الكود نفسه كحروف، مش عناصر
+   الصورة اللي جواه: متطلبتش من السيرفر
+~~~
 
-### ٦. [[?fail=1]] كسر الصفحة نفسها، و [[type: commonjs]]
+يعني عند زائر JavaScript شغال عنده، اللي جوه [[<noscript>]] مبيتحوّلش لعناصر أصلًا: لا بيترسم، ولا صوره بتتحمّل، ولا [[querySelector]] بيلاقيه.
 
-الاتنين اتشرحوا في درس الخريطة: الفشل والتأخير بقوا للبيانات بس، و [[npm pkg set type=module]] عشان [[state.js]] يتقري في Node.
+- في [[<body>]]: بياخد أي محتوى (فقرة، لينك لنسخة أبسط، صورة).
+- في [[<head>]]: بياخد [[<link>]] و [[<style>]] و [[<meta>]] بس. مثلًا CSS بيظهر محتوى كان مستخبي ومستني سكربت.
+
+**اللي مبيعملوش:** [[<noscript>]] بيشتغل لما JavaScript **مقفول**. لو السكربت بتاعك محمّلش (النت قطع، أو فيه error، أو اتمنع)، JavaScript لسه «شغال» في المتصفح، فالـ [[<noscript>]] مش هيظهر. الحل الحقيقي: الصفحة الأساسية تبقى HTML شغال من غير سكربت، والسكربت يزوّد عليها.
+
+---
+
+## ٣. [[<template>]]
+
+المواصفة: [[<template>]] بيعرّف حتة HTML السكربت يقدر ينسخها ويحطها في الصفحة. MDN: محتواه مبيتعرضش.
+
+~~~live 170 القالب مستخبي، وكل ضغطة بتنسخ منه صف
+<template id="row">
+  <li>🎧 <a href="#">حلقة جديدة</a></li>
+</template>
+<ul id="list">
+  <li>🎧 <a href="#">الحلقة ١ (مكتوبة في الصفحة)</a></li>
+</ul>
+<button type="button" onclick="list.append(row.content.cloneNode(true))">زوّد حلقة من القالب</button>
+~~~
+
+**هتشوف إيه:** قايمة فيها حلقة واحدة وزرار. الصف اللي جوه [[<template>]] مش ظاهر. كل ضغطة على الزرار بتزوّد صف «حلقة جديدة».
+
+السطر الوحيد من JavaScript هنا: [[list.append(row.content.cloneNode(true))]].
+
+- [[row.content]]: محتوى القالب. مش أولاد عاديين: «قطعة مستند» منفصلة (DocumentFragment).
+- [[cloneNode(true)]]: نسخة منه بكل اللي جواه. القالب نفسه بيفضل زي ما هو للمرة الجاية.
+- [[list.append(...)]]: النسخة بتتحط في آخر القايمة، ومن اللحظة دي بقت عناصر حقيقية.
+
+~~~text القياس من Chrome
+<template id="row"><li class="ep"><img src="/tpl-img.gif"><a>عنوان</a><script>window.tplRan = true</script></li></template>
+
+قبل النسخ:    display: none      template.childNodes.length = 0      template.content.children.length = 1
+              document.querySelectorAll(".ep").length = 0
+              الصورة: متطلبتش من السيرفر          السكربت اللي جواه: متشغّلش
+بعد نسختين:   querySelectorAll(".ep").length = 2
+              الصورة اتطلبت                       السكربت اشتغل       القالب لسه فيه نسخته
+~~~
+
+ده معنى «خامل» (inert): المتصفح قرا الـ HTML واتأكد إنه سليم، وحطه على جنب. لا صور بتتحمّل، ولا سكربتات بتشتغل، ولا CSS بيطبّق، لحد ما نسخة تدخل الصفحة.
+
+**ليه مش [[<div hidden>]]؟** الـ [[<div>]] المستخبي جزء من الصفحة: صوره بتتحمّل، وسكربتاته بتشتغل، و [[querySelectorAll]] بيلاقي اللي جواه، وقارئ الشاشة ممكن يوصله. [[<template>]] برّه ده كله.
+
+---
+
+## ٤. [[<slot>]]
+
+[[<slot>]] «فتحة» جوه الـ shadow tree بتاع component: مكان بيقول «المحتوى اللي صاحب الصفحة هيكتبه جوه الـ component يتعرض هنا». والـ shadow tree شجرة عناصر خاصة بالـ component، مستخبية عن باقي الصفحة والـ CSS بتاعها.
+
+الـ HTML يقدر يعمل shadow tree من غير JavaScript: [[<template shadowrootmode="open">]] كأول ابن لعنصر. اسمها Declarative Shadow DOM.
+
+~~~live 86 كارت حلقة: القالب فيه فتحتين، والمحتوى بييجي من برّه
+<article>
+  <template shadowrootmode="open">
+    <style>h3 { color: teal; margin: 0; }</style>
+    <h3><slot name="title">حلقة من غير عنوان</slot></h3>
+    <p><slot>مفيش وصف لسه.</slot></p>
+  </template>
+  <span slot="title">الحلقة ٣: التراخيص</span>
+  نجيب الصور والموسيقى منين من غير مشاكل.
+</article>
+~~~
+
+**هتشوف إيه:** «الحلقة ٣: التراخيص» عنوان بلون أخضر مزرق، وتحته الوصف في فقرة. الـ [[<span>]] اللي كتبته اتعرض **جوه** الـ [[<h3>]] اللي في القالب.
+
+| الحتة | معناها |
+|---|---|
+| [[<slot name="title">]] | فتحة ليها اسم. اللي جواها («حلقة من غير عنوان») محتوى افتراضي بيظهر لو محدش ملا الفتحة |
+| [[<span slot="title">]] | الـ attribute [[slot]] على عنصر برّه القالب: «حطني في الفتحة اللي اسمها title» |
+| [[<slot>]] من غير اسم | الفتحة الافتراضية: بتاخد كل اللي ملوش [[slot]] (هنا جملة الوصف) |
+
+~~~text القياس من Chrome
+article.shadowRoot.mode = "open"        عدد الـ <template> اللي فضلت في الصفحة = 0
+الفتحة title  ←  <span>                 الفتحة الافتراضية  ←  النص "نجيب الصور والموسيقى منين من غير مشاكل."
+لون الـ <h3> اللي جوه القالب = rgb(0, 128, 128)    (الـ style اللي جوه القالب طبّق جواه بس)
+
+<slot>نص</slot> برّه أي shadow tree:     display: contents      النص ظاهر عادي
+<template shadowrootmode="banana">:      مفيش shadow root، والقالب فضل template عادي (مستخبي)، وفي الـ Console:
+   Invalid declarative shadowrootmode attribute value. Valid values are "open" and "closed".
+~~~
+
+- المتصفح لما قابل القالب ده، **شاله** من الصفحة وعمل مكانه shadow root للعنصر الأب.
+- [[<slot>]] لوحده برّه shadow tree ملوش أي تأثير: محتواه بيتعرض كأنه مش موجود.
+- الـ CSS اللي جوه القالب مبيخرجش برّه، والـ CSS بتاع الصفحة مبيدخلش جوه.
+
+### attributes الـ shadow root على [[<template>]]
+
+| attribute | بيعمل إيه (من MDN) | القياس في Chrome 157 | الحالة |
+|---|---|---|---|
+| [[<template shadowrootmode="open">]] | بيعمل shadow root للأب. [[open]] بيخلّيه يتقري من JavaScript، و [[closed]] بيخبّيه | [[shadowRoot.mode = "open"]]، ومع [[closed]]: [[shadowRoot = null]] | Baseline |
+| [[<template shadowrootclonable>]] | نسخ العنصر الأب ([[cloneNode]]) ياخد الـ shadow root معاه | [[clonable = true]] | Baseline جديد |
+| [[<template shadowrootdelegatesfocus>]] | الضغط على حتة مبتاخدش focus جوه القالب بيودّي الـ focus لأول عنصر ياخده | [[delegatesFocus = true]] | Baseline جديد |
+| [[<template shadowrootserializable>]] | [[getHTML()]] يقدر يكتب الـ shadow root كنص تاني | [[serializable = true]] | Baseline جديد |
+| [[<template shadowrootslotassignment="manual">]] | الفتحات مبتتملاش لوحدها، والسكربت بيوزّع بـ [[slot.assign()]]. الافتراضي [[named]] | [[slotAssignment = "manual"]]، ومفيش حاجة اتوزّعت | مش Baseline |
+| [[<template shadowrootcustomelementregistry>]] | الـ shadow root يبدأ من غير سجل custom elements، وسكربت يركّبله سجل خاص بعدين | [[customElementRegistry = null]] | Baseline جديد |
+
+«Baseline» يعني شغال في كل المتصفحات الأساسية من سنين، و «Baseline جديد» يعني شغال في آخر نسخة من كل واحد ولسه مش في النسخ الأقدم. الحالة من بيانات المنهج (web-features)، مش متقاسة هنا: احنا قسنا Chrome بس. في كود للناس كلها: [[shadowrootmode]] آمن، والباقي راجع جدول الدعم في MDN قبله.
+
+دول كلهم إعدادات لـ component بيتبني بـ JavaScript. شرحهم الكامل في كورس JavaScript: دروس «shadow DOM» و «slots» و «Declarative Shadow DOM و :defined».
+
+---
+
+## ٥. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| مقاس الـ canvas في الـ CSS بس | اللوحة لسه 300 × 150 والرسم بيتمط |
+| السكربت مكتوب قبل [[<canvas>]] | [[getElementById]] بيرجّع [[null]]، والـ Console فيه error |
+| canvas من غير محتوى بديل ولا [[aria-label]] | قارئ الشاشة: «Canvas» من غير اسم ولا معلومة |
+| الاعتماد على [[<noscript>]] لما السكربت يقع | مبيظهرش: JavaScript مش مقفول، السكربت بس اللي فشل |
+| رسالة «جاري التحميل» جوه [[<template>]] | عمرها ما بتظهر: القالب مبيتعرضش |
+| [[document.querySelector]] على عنصر جوه القالب | [[null]]: لازم [[template.content.querySelector]] |
+| [[<slot>]] في صفحة عادية من غير shadow tree | ملوش تأثير |
+| [[shadowrootmode]] على قالب مش أول ابن، أو بقيمة غلط | بيفضل قالب عادي مستخبي |
 
 ---
 
 ## الخلاصة
 
-| الحاجة | الطريقة |
-|---|---|
-| الحالة | الرابط: [[parseState]] بـ allowlist، و [[toQuery]] من غير الافتراضي |
-| الـ history | [[pushState]] للأفعال، و [[replaceState]] للكتابة والتصليح، و [[popstate]] بيرسم |
-| الفلترة والترتيب | دالة نقية، و [[Collator("ar")]]، و ترتيب منطقي، و tie-breaker |
-| sticky | مفيش [[overflow]] غير [[visible]]/[[clip]] فوقه، و [[top]] = ارتفاع الـ topbar |
-| الحالات | skeleton بنفس المقاس و [[aria-busy]]، وخطأ بزرار وفوكس، وفاضي بزرار |
-| الموبايل | [[data-label]] و [[td::before]]، وأزرار الترتيب فوق |`,
-          sol: R`الرابط بعد الفلتر والترتيب والصفحة شكله [[?status=frozen&sort=visits&dir=desc]] (ومعاه [[page]] لو مش 1)، وبيفتح على نفس الجدول في تاب جديد. Back مرة بيرجّع اتجاه الترتيب، والتانية الترتيب نفسه، والتالتة الفلتر. «ادم» بيلاقي «آدم الشاذلي» و «آدم عبد الحميد». [[?delay=2000]] بيورّي ١٠ صفوف skeleton، و [[?fail=1]] رسالة فيها [[HTTP 500]] والفوكس على «جرّب تاني»، و «zzz» بيورّي «مفيش أعضاء بالفلتر ده». ومع [[overflow-x: auto]] العناوين بتختفي لما تنزل.`,
-          practice: [
-            {
-              lvl: R`سريع`,
-              t: R`**اقرا وتوقّع:** إيه اللي [[parseState]] هترجّعه لـ [[?status=hacked&page=-3&sort=password&dir=up]]؟ وإيه اللي [[toQuery]] هترجّعه لـ [[?status=all&page=1&q=%20%20]]؟ اكتب قبل ما تشغّل.`,
-              done: R`الأولى رجّعت الافتراضي كله (ولا قيمة عدّت)، والتانية رجّعت [[""]] (كلها افتراضي، والبحث بعد [[trim]] فاضي)، زي سطري الـ ci.`,
-              sol: R`~~~text التوقع
-parseState("?status=hacked&page=-3&sort=password&dir=up")
-  status: hacked مش في STATUS  ← all
-  page:   -3 مش ≥ 1            ← 1
-  sort:   password مش في SORTS ← name
-  dir:    up مش desc           ← asc
-  النتيجة: الافتراضي كله.
-
-toQuery(parseState("?status=all&page=1&q=%20%20"))
-  q بعد trim فاضي، و all و 1 هم الافتراضي، فمفيش حاجة تتكتب
-  النتيجة: ""
-~~~
-
-[[parseState]] allowlist: أي قيمة مش في اللستة المسموحة بتتجاهل. الرابط ممكن حد يعدّله بإيده، فالكود لازم ميثقش فيه. يعني [[sort=password]] مش هتوصل لعمود مش موجود، و [[page=-3]] مش هتعمل [[slice]] غريب.
-
-[[toQuery]] بتكتب بس اللي مختلف عن الافتراضي، فالرابط النضيف يفضل نضيف: [[/]] مش [[?status=all&page=1]].
-
-الغلطة الشائعة: تكتب [[Number(p.get("page")) || 1]] من غير حد أدنى، فـ [[-3]] تعدّي. الـ [[>= 1]] هو الحارس.
-
-~~~text الناتج (state.js في Node 24)
-parseState: {"q":"","status":"all","plan":"all","sort":"name","dir":"asc","page":1,"size":10}
-toQuery: ""
-~~~` },
-            {
-              lvl: R`سريع`,
-              t: R`**اشرحها:** اكتب لزميل في ٣ سطور إمتى [[pushState]] وإمتى [[replaceState]] في الجدول ده، وإيه اللي هيحصل لزرار Back لو كل حرف في البحث بقى [[pushState]].`,
-              done: R`الشرح بيقول push للأفعال اللي اليوزر ممكن يرجع منها (فلتر، وترتيب، وصفحة)، و replace للكتابة ولتصليح [[?page=99]]، وإن Back مع push لكل حرف هيمسح حرف حرف بدل ما يرجع للفلتر اللي قبله.`,
-              sol: R`~~~text رسالة لزميل
-push للأفعال اللي اليوزر ممكن يرجع منها: فلتر، أو ترتيب، أو صفحة.
-replace للكتابة في البحث، ولتصليح رابط زي ?page=99 لآخر صفحة موجودة.
-لو كل حرف بقى push، زرار Back هيمسح حرف حرف بدل ما يرجع للفلتر اللي قبله.
-~~~
-
-[[pushState]] بيزوّد سطر في تاريخ المتصفح، و [[replaceState]] بيبدّل السطر الحالي. السؤال اللي بيحدد: «لو داس Back، هل دي خطوة كان عايز يرجع لها؟» فلتر آه، حرف في كلمة لأ.
-
-في [[table.js]] [[update(patch, "replace")]] للبحث، والـ debounce بتاع 250ms بيقلل الكتابة أصلًا. و [[render]] بتصلّح [[?page=99]] بـ [[replaceState]]، عشان الرابط الغلط ميتحفظش في التاريخ، و Back يرجع لمكان معقول.
-
-الغلطة الشائعة: [[push]] في كل حاجة، فـ Back يبقى ١٠ ضغطات عشان يخرج من الصفحة.
-
-~~~text الناتج (Chrome 156 على الداشبورد: history.length)
-البداية:                       2
-اختيار فلتر الحالة:            3
-كتابة 5 حروف في البحث:         3
-Back بيرجع لـ:                 (رابط نضيف)
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**صلّح الكود البايظ:** [[rows.sort((a, b) => a.visits - b.visits)]] جوه [[view]] من غير [[slice]] أو [[filter]] قبلها، ومن غير tie-breaker. ابني حالة بتبيّن المشكلتين (تلميح: اترتّب مرتين بعمودين مختلفين، وصفّين بنفس الزيارات على حدود صفحتين).`,
-              done: R`بيّنت إن [[sort]] بيغيّر المصفوفة الأصلية ([[all]] نفسها اتغير ترتيبها)، وإن صفّين بـ 8 زيارات ممكن يتبادلوا بين صفحة ١ و ٢، وبعد [[filter]] (نسخة جديدة) و [[|| a.id - b.id]] الاتنين اتحلّوا واختبار بيأكد.`,
-              sol: R`~~~js sort-bug.mjs
-const all = [
-  { id: 1, name: "منى", visits: 8 },
-  { id: 2, name: "علي", visits: 8 },
-  { id: 3, name: "هدى", visits: 3 },
-  { id: 4, name: "سامي", visits: 8 },
-];
-const ids = (r) => r.map((m) => m.id).join(" ");
-
-// النسخة البايظة
-const bad = (rows, k) => rows.sort((a, b) => a[k] - b[k]);
-console.log("قبل:", ids(all));
-bad(all, "visits");
-console.log("all نفسها بعد sort:", ids(all));
-
-// النسخة السليمة
-const good = (rows, k, dir = 1) => rows.filter(() => true).sort((a, b) => dir * (a[k] - b[k]) || a.id - b.id);
-const noTie = (rows, k) => rows.filter(() => true).sort((a, b) => a[k] - b[k]);
-const list = [...all].reverse();
-const page = (r, n) => ids(r.slice((n - 1) * 2, n * 2));
-console.log("من غير tie-breaker، ترتيب ١: صفحة ١:", page(noTie(all, "visits"), 1), " صفحة ٢:", page(noTie(all, "visits"), 2));
-console.log("من غير tie-breaker، ترتيب ٢: صفحة ١:", page(noTie(list, "visits"), 1), " صفحة ٢:", page(noTie(list, "visits"), 2));
-console.log("بالـ tie-breaker، ترتيب ١: صفحة ١:", page(good(all, "visits"), 1), " صفحة ٢:", page(good(all, "visits"), 2));
-console.log("بالـ tie-breaker، ترتيب ٢: صفحة ١:", page(good(list, "visits"), 1), " صفحة ٢:", page(good(list, "visits"), 2));
-~~~
-
-المشكلتين:
-
-1. **[[sort]] بيغيّر المصفوفة نفسها.** مش بيرجّع نسخة. فلو [[all]] اتمررت مباشرة، ترتيب البيانات الأصلية بيتغير، وأي حساب بعده بيشتغل على ترتيب غلط. [[filter]] بيرجّع مصفوفة جديدة، فالـ [[sort]] بيقع عليها. وفيه [[toSorted()]] لو عايز من غير [[filter]].
-2. **من غير tie-breaker الصفوف المتساوية ترتيبها بيعتمد على الترتيب اللي قبلها.** صفّين بـ 8 زيارات على حد الصفحة ممكن يتبادلوا لو اترتبوا بعمود تاني الأول، فيتكرر صف في صفحتين، وصف ميظهرش.
-
-[[|| a.id - b.id]] معناها: لو النتيجة صفر (متساويين)، رتّب بالـ id، فالترتيب ثابت دايمًا. وبعد [[dir *]] الـ id بيفضل تصاعدي عمدًا.
-
-الغلطة الشائعة: تفتكر إن [[sort]] المستقر (stable) يكفي. الاستقرار بيحافظ على الترتيب اللي قبله، وده اللي بيتغير.
-
-~~~text الناتج (Node 24)
-قبل: 1 2 3 4
-all نفسها بعد sort: 3 1 2 4
-من غير tie-breaker، ترتيب ١: صفحة ١: 3 1  صفحة ٢: 2 4
-من غير tie-breaker، ترتيب ٢: صفحة ١: 3 4  صفحة ٢: 2 1
-بالـ tie-breaker، ترتيب ١: صفحة ١: 3 1  صفحة ٢: 2 4
-بالـ tie-breaker، ترتيب ٢: صفحة ١: 3 1  صفحة ٢: 2 4
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**ابني:** زرار «نزّل CSV» بيصدّر كل الصفوف اللي بتطابق الفلتر (مش الصفحة بس) بـ [[view(all, { ...state, page: 1, size: Infinity })]]، وفيه [[\uFEFF]] في الأول عشان Excel يقرا العربي، والخلية اللي فيها فاصلة أو علامة تنصيص بتتحط بين [[""]].`,
-              done: R`مع [[?status=frozen]] الملف ٦ سطور (عناوين و ٥)، و Excel بيفتح العربي سليم، واسم فيه [[,]] متقسمش لعمودين، واسم الملف فيه الفلتر.`,
-              sol: R`~~~live 120 120 dashboard/index.html (جنب #add)
-<button class="btn ghost" id="csv" type="button">نزّل CSV</button>
-~~~
-
-~~~js dashboard/js/table.js (آخر الملف)
-const cell = (v) => {
-  const s = String(v);
-  return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
-};
-
-document.getElementById("csv").addEventListener("click", () => {
-  const { rows } = view(all, { ...state, page: 1, size: Infinity });
-  const lines = [COLS.join(",")];
-  for (const m of rows) lines.push([m.name, PLAN[m.plan], STATUS[m.status], m.lastVisit, m.visits].map(cell).join(","));
-  const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = $__btmembers-$__{state.status}.csv$__bt;
-  a.click();
-  URL.revokeObjectURL(a.href);
-});
-~~~
-
-- [[{ ...state, page: 1, size: Infinity }]]: نفس فلتر الشاشة، بس من غير قص لصفحة.  [[view]] دالة نقية، فمش محتاجين نكتب الفلترة تاني.
-- [[\uFEFF]] في أول الملف (BOM): بيقول لـ Excel إن الملف UTF-8، ومن غيره العربي بيطلع رموز.
-- [[cell()]]: الخلية اللي فيها فاصلة أو علامة تنصيص أو سطر جديد بتتحط بين [[""]]، والعلامة جواها بتتكرر. وإلا اسم فيه [[,]] هيتقسم لعمودين.
-- [[Blob]] و [[createObjectURL]]: ملف في الذاكرة من غير سيرفر، و [[a.download]] بيحدد الاسم.
-
-الغلطة الشائعة: تصدّر [[v.rows]] بتوع الصفحة الحالية، فالمستخدم بياخد ١٠ صفوف من غير ما يعرف. وخلايا بتبدأ بـ [[=]] Excel بيعتبرها معادلة، ولو البيانات من مستخدمين برا خليها نص.
-
-Excel نفسه مش متجرّب هنا، و BOM و الاقتباس اتأكدوا من الملف نفسه.
-
-~~~text الناتج (Chrome 156، ‏?status=frozen، واسم فيه فاصلة)
-اسم الملف: members-frozen.csv
-عدد السطور: 6
-أول bytes: efbbbf
-أول سطر: الاسم,الباقة,الحالة,آخر زيارة,زيارات الشهر
-السطر اللي فيه فاصلة: سالم، الجزار,10 زيارات,متجمّد,2026-08-16,0
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**اكتب اختبار:** باستخدام [[node:test]] و [[node:assert]] اكتب ٦ اختبارات لـ [[state.js]]: allowlist، والرابط النضيف، والبحث العربي، والـ tie-breaker، وقص الصفحة، و round trip ([[parseState(toQuery(s))]] = [[s]]).`,
-              done: R`[[node --test]] بيطلّع [[# pass 6]]، ولو بوّظت [[norm]] (شيلت سطر الهمزة) اختبار البحث بيفشل بالاسم، والـ round trip مكتوب على ٣ حالات مختلفة على الأقل.`,
-              sol: R`~~~js dashboard/state.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { parseState, toQuery, view, DEFAULTS } from "./js/state.js";
-
-const m = (id, name, visits = 1) => ({ id, name, plan: "monthly", status: "active", lastVisit: "2026-10-01", visits });
-
-test("allowlist: القيم الغريبة بترجع للافتراضي", () => {
-  assert.deepEqual(parseState("?status=hacked&page=-3&sort=password&dir=up"), DEFAULTS);
-});
-test("الرابط النضيف: الافتراضي مبيتكتبش", () => {
-  assert.equal(toQuery(DEFAULTS), "");
-  assert.equal(toQuery({ ...DEFAULTS, status: "frozen" }), "?status=frozen");
-});
-test("البحث العربي: احمد بيلاقي أحمد، وهنا بيلاقي هنة", () => {
-  const rows = [m(1, "أحمد"), m(2, "هنة"), m(3, "علي")];
-  assert.equal(view(rows, { ...DEFAULTS, q: "احمد" }).total, 1);
-  assert.equal(view(rows, { ...DEFAULTS, q: "هنه" }).total, 1);
-});
-test("tie-breaker: المتساويين مترتبين بالـ id", () => {
-  const rows = [m(3, "ج", 8), m(1, "أ", 8), m(2, "ب", 8)];
-  const r = view(rows, { ...DEFAULTS, sort: "visits", dir: "desc" }).rows.map((x) => x.id);
-  assert.deepEqual(r, [1, 2, 3]);
-});
-test("قص الصفحة: ?page=99 بيرجع لآخر صفحة", () => {
-  const rows = Array.from({ length: 25 }, (_, i) => m(i + 1, "اسم" + i));
-  const v = view(rows, { ...DEFAULTS, page: 99 });
-  assert.equal(v.page, 3);
-  assert.equal(v.rows.length, 5);
-});
-test("round trip على ٣ حالات", () => {
-  for (const s of [DEFAULTS, { ...DEFAULTS, status: "frozen", page: 2 }, { ...DEFAULTS, q: "منى", sort: "visits", dir: "desc" }]) {
-    assert.deepEqual(parseState(toQuery(s)), s);
-  }
-});
-~~~
-
-٦ اختبارات، واحد لكل وعد في [[state.js]]. لأن الملف نقي، مفيش متصفح، وبتخلص في أقل من ثانية.
-
-- [[deepEqual]] بيقارن كل الحقول، فأي مفتاح زيادة يقع.
-- [[m()]] دالة صغيرة بتعمل صف، فالاختبار بيقول اللي يهمه بس.
-- round trip: [[parseState(toQuery(s))]] لازم يرجّع [[s]]. ده بيمسك أي حقل نسيته في [[toQuery]] مرة واحدة.
-
-والمهم تكسر الكود: شيل سطر الهمزة من [[norm]]، واختبار البحث لازم يقع بالاسم.
-
-الغلطة الشائعة: تختبر حالة واحدة في الـ round trip، وهي الافتراضي. ده بيعدّي حتى لو الدالة مش بتكتب حاجة.
-
-~~~text الناتج (node --test)
-النسخة السليمة: # pass 6، # fail 0
-لما بوظنا norm: # pass 5، # fail 1 (البحث العربي: احمد بيلاقي أحمد، وهنا بيلاقي هنة)
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**قارن وقيس:** اعمل نسخة الموبايل بالطريقة التانية: الجدول زي ما هو جوه wrapper بـ [[overflow-x: auto]] وأول عمود [[position: sticky; inset-inline-start: 0]]. قارن على 360: هل فيه scroll أفقي للصفحة، وهل العناوين الـ sticky شغالة، وعدد الصفوف اللي بتبان في أول شاشة.`,
-              done: R`عندك جدول للطريقتين بالـ ٣ أرقام، وعرفت إن الـ sticky الرأسي اتكسر في نسخة الـ wrapper (زي [[-75]]) والأفقي شغال، وإن الكروت بتعرض صفوف أقل في الشاشة، وكتبت تختار أنهي لـ ٥ أعمدة وأنهي لـ ١٢.`,
-              sol: R`~~~css نسخة الـ wrapper (بدل قواعد الكروت تحت 40rem)
-@media (max-width: 40rem) {
-  .table-wrap { overflow-x: auto; }
-  .members { min-inline-size: 40rem; }
-  .members th:first-child, .members td:first-child {
-    position: sticky; inset-inline-start: 0; background: var(--surface); z-index: 2;
-  }
-}
-~~~
-
-~~~view 230 250 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+- [[<canvas width height>]]: لوحة بيكسلات فاضية، والرسم بـ JavaScript. المقاس في الـ attributes، والمعلومة في المحتوى البديل.
+- [[<noscript>]]: بيظهر بس لما JavaScript مقفول، مش لما السكربت يفشل.
+- [[<template>]]: HTML خامل، بيتنسخ بـ [[content.cloneNode(true)]].
+- [[<slot>]]: فتحة جوه shadow tree، بتتملي بالـ attribute [[slot]] من برّه.
+- الباقي في كورس JavaScript.`,
+          try: R`اعمل [[lab.html]] فيها: (١) [[<canvas>]] 200 × 100 وسكربت بيرسم مستطيلين بلونين مختلفين. (٢) [[<noscript>]] فيه جملة. (٣) [[<template>]] فيه [[<p>]] مكتوب فيه «أنا في القالب»، وبرّه القالب [[<p>]] مكتوب فيه «أنا في الصفحة». افتحها في Chrome، وفي الـ Console اكتب [[document.querySelectorAll("p").length]]. الرقم كام؟ وليه مش ٣؟`,
+          sol: R`~~~live 168 lab.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-:root { --surface: #ffffff; } body { font-family: system-ui, sans-serif; margin: 1rem; } .members { border-collapse: collapse; width: 100%; } th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e2e8f0; text-align: start; white-space: nowrap; }
-</style>
-<style>
-/* من الحل */
-@media (max-width: 40rem) {
-  .table-wrap { overflow-x: auto; }
-  .members { min-inline-size: 40rem; }
-  .members th:first-child, .members td:first-child {
-    position: sticky; inset-inline-start: 0; background: var(--surface); z-index: 2;
-  }
-}
-</style>
+<title>معمل العناصر</title>
 </head>
 <body>
-<p>على «موبايل» (360): الجدول بيعمل scroll جوه الإطار، وأول عمود ثابت.</p>
-<div class="table-wrap"><table class="members"><thead><tr><th>الاسم</th><th>الإيميل</th><th>الباقة</th><th>الحالة</th><th>آخر دخول</th></tr></thead>
-<tbody><tr><td>منى سامي</td><td>mona@example.com</td><td>سنوي</td><td>نشط</td><td>النهارده</td></tr><tr><td>كريم علي</td><td>karim@example.com</td><td>شهري</td><td>متوقف</td><td>من أسبوع</td></tr><tr><td>سلمى حسن</td><td>salma@example.com</td><td>شهري</td><td>نشط</td><td>امبارح</td></tr></tbody></table></div>
+<canvas id="c" width="200" height="100" role="img" aria-label="مستطيلين: أخضر وبرتقالي"></canvas>
+<script>
+  const ctx = document.getElementById("c").getContext("2d");
+  ctx.fillStyle = "teal";
+  ctx.fillRect(10, 10, 80, 80);
+  ctx.fillStyle = "orange";
+  ctx.fillRect(110, 30, 80, 40);
+</script>
+<noscript><p>JavaScript مقفول عندك.</p></noscript>
+<template><p>أنا في القالب</p></template>
+<p>أنا في الصفحة</p>
 </body>
 </html>
 ~~~
 
-الطريقتين بيحلوا نفس المشكلة: ٥ أعمدة مش بتتساع في 360.
+**هتشوف إيه:** مربع أخضر مزرق ومستطيل برتقالي جنب بعض، وتحتهم «أنا في الصفحة». الجملتين التانيين مش ظاهرين.
 
-- **الكروت:** مفيش scroll أفقي خالص، وكل صف واضح ومقري، بس كل عضو بياخد مساحة كبيرة، فصفوف أقل في الشاشة.
-- **الـ wrapper:** صفوف كتير في الشاشة، والمقارنة بين الصفوف سهلة، والعمود الأول لازق بيعرّفك أنت فين.
+**الرقم:** [[1]]. فيه تلات [[<p>]] مكتوبين في الملف، وواحد بس في الصفحة:
 
-الثمن في الـ wrapper: [[overflow-x: auto]] بيعمل scroll container، فالعناوين الـ sticky بقت بتلزق جوه الـ wrapper مش في الشاشة، فبتمشي مع الصفحة. وده بالظبط اللي كسر الجدول قبل كده في الدرس.
+- اللي جوه [[<noscript>]]: JavaScript شغال، فمحتواه نص مش عناصر.
+- اللي جوه [[<template>]]: في [[template.content]]، مش في الصفحة.
 
-القرار: ٥ أعمدة: كروت، المعلومات قليلة وكل عضو لوحده. ١٢ عمود: wrapper، الكروت هتبقى طويلة جدًا، والمقارنة هي الهدف.
+**الغلطة الشائعة:** تغيّر [[fillStyle]] بعد [[fillRect]]. اللون بيتحدد قبل الرسم، وبيفضل ماشي على كل اللي بعده لحد ما تغيّره.
 
-الغلطة الشائعة: تفتكر إن [[overflow-x]] بيأثر على المحور الأفقي بس. الـ scroll container بيغيّر مرجع الـ sticky في الاتجاهين.
-
-~~~text الناتج (Chrome 156، عرض 360 × 640، بعد scroll 300 للعناوين)
-                     الكروت      الـ wrapper
-scroll أفقي للصفحة   0          0
-العناوين لازقة؟       مفيش عناوين لازقة (position: static)        لأ (top -86)
-صفوف في أول شاشة     1          8
-العمود الأول لازق؟    -           آه
-~~~` },
-          ],
-          ci: [
-            {
-              os: [
-                R`ubuntu`,
-                R`macos`,
-                R`windows`,
-              ],
-              sh: R`node`,
-              run: R`const DEFAULTS = { q: "", status: "all", plan: "all", sort: "name", dir: "asc", page: 1, size: 2 };
-const STATUS = ["active", "frozen", "expired"], PLANS = ["monthly", "quarterly", "yearly", "pass10"], SORTS = ["name", "plan", "status", "lastVisit", "visits"];
-const ORDER = { plan: PLANS, status: STATUS };
-function parseState(search) {
-  const p = new URLSearchParams(search), s = { ...DEFAULTS };
-  s.q = (p.get("q") || "").trim().slice(0, 50);
-  if (STATUS.includes(p.get("status"))) s.status = p.get("status");
-  if (PLANS.includes(p.get("plan"))) s.plan = p.get("plan");
-  if (SORTS.includes(p.get("sort"))) s.sort = p.get("sort");
-  if (p.get("dir") === "desc") s.dir = "desc";
-  const page = Number.parseInt(p.get("page"), 10);
-  if (page >= 1) s.page = page;
-  return s;
-}
-function toQuery(s) {
-  const p = new URLSearchParams();
-  for (const k of ["q", "status", "plan", "sort", "dir", "page"]) if (s[k] !== DEFAULTS[k] && s[k] !== "") p.set(k, s[k]);
-  const q = p.toString();
-  return q ? "?" + q : "";
-}
-const norm = t => t.toLowerCase().replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").replace(/[\u064B-\u0652]/g, "");
-const coll = new Intl.Collator("ar");
-function compare(k, a, b) {
-  if (ORDER[k]) return ORDER[k].indexOf(a[k]) - ORDER[k].indexOf(b[k]);
-  if (typeof a[k] === "number") return a[k] - b[k];
-  if (k === "name") return coll.compare(a[k], b[k]);
-  return a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0;
-}
-function view(rows, s) {
-  const q = norm(s.q);
-  const hit = m => (s.status === "all" || m.status === s.status) && (s.plan === "all" || m.plan === s.plan) && (!q || norm(m.name).includes(q) || String(m.id) === q);
-  const d = s.dir === "desc" ? -1 : 1;
-  const sorted = rows.filter(hit).sort((a, b) => d * compare(s.sort, a, b) || a.id - b.id);
-  const pages = Math.max(1, Math.ceil(sorted.length / s.size)), page = Math.min(s.page, pages);
-  return { total: sorted.length, pages, page, rows: sorted.slice((page - 1) * s.size, page * s.size) };
-}
-const rows = [
-  { id: 1, name: "آدم سالم", plan: "yearly", status: "active", lastVisit: "2026-10-29", visits: 8 },
-  { id: 2, name: "هنا فهمي", plan: "monthly", status: "frozen", lastVisit: "2026-09-02", visits: 0 },
-  { id: 3, name: "زياد النجار", plan: "monthly", status: "active", lastVisit: "2026-10-31", visits: 15 },
-  { id: 4, name: "سلمى منصور", plan: "pass10", status: "expired", lastVisit: "2026-08-07", visits: 1 },
-  { id: 5, name: "ادم شوقي", plan: "quarterly", status: "active", lastVisit: "2026-10-30", visits: 8 },
-];
-const show = v => v.total + " rows, page " + v.page + "/" + v.pages + ": " + v.rows.map(m => m.id).join(",");
-console.log("parse junk: " + JSON.stringify(parseState("?status=hacked&page=-3&sort=password&dir=up")));
-console.log("defaults -> " + JSON.stringify(toQuery(parseState("?status=all&page=1&q=%20%20"))));
-console.log("visits desc: " + show(view(rows, parseState("?sort=visits&dir=desc"))));
-console.log("search ادم: " + show(view(rows, parseState("?q=ادم"))));
-console.log("page 99: " + show(view(rows, parseState("?page=99"))));
-console.log("plan order: " + show(view(rows, { ...parseState("?sort=plan"), size: 5 })));
-console.log("round trip: " + toQuery(parseState("?dir=desc&sort=visits&status=active&page=2")));`,
-              expect: [
-                R`parse junk: {"q":"","status":"all","plan":"all","sort":"name","dir":"asc","page":1,"size":2}`,
-                R`defaults -> ""`,
-                R`visits desc: 5 rows, page 1/3: 3,1`,
-                R`search ادم: 2 rows, page 1/1: 1,5`,
-                R`page 99: 5 rows, page 3/3: 2`,
-                R`plan order: 5 rows, page 1/1: 2,3,5,1,4`,
-                R`round trip: ?status=active&sort=visits&dir=desc&page=2`,
-              ],
-            },
-          ],
-        },
-        {
-          cmd: R`داشبورد ٣: جدول الحصص و dialog والتنبيهات`,
-          ref: [
-            { t: "MDN: <dialog>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog" },
-            { t: "MDN: HTMLDialogElement.requestClose()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/requestClose" },
-            { t: "MDN: HTMLDialogElement cancel event", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/cancel_event" },
-            { t: "MDN: setCustomValidity()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setCustomValidity" },
-          ],
-          title: R`جدول حصص أسبوعي بـ CSS Grid (اليوم عمود والوقت صفوف) بيتسكرول بالعرض على الموبايل، و <dialog> للإضافة والحجز برسايل تحقق عربي، و toasts بتتقري، و dark mode من غير وميض`,
-          learn: R`تبني جدول مواعيد على grid: كل حصة زرار مكانه من custom properties ([[--col]] و [[--row]] و [[--span]])، وعمود الوقت sticky والأيام بـ scroll-snap؛ و [[<dialog>]] بـ [[showModal()]] و [[method="dialog"]] و [[returnValue]] وقفل بالضغط على الخلفية، ورسايل [[setCustomValidity]] بالعربي؛ و toasts في live region موجودة من الأول؛ وثيم داكن بـ tokens بيتحفظ.`,
-          out: R`[[schedule.js]] و [[ui.js]] و [[app.js]] وآخر جزء في [[app.css]]: ١٥ حصة في مكانها، والحجز بيكتب toast «اتحجز مكان في …»، والـ dialog بيرجّع الفوكس للزرار اللي فتحه، و Esc بيقفل، والضغط على padding الـ dialog مبيقفلوش، والصفحة من غير scroll أفقي من 360 لـ 1440 والجدول هو اللي بيتسكرول.`,
-          use: {
-            prog: R`درس «grid» و «Dialog» و «aria» و «dark mode» و «Constraint Validation API» في شاشة واحدة. والدرس المهم: grid بيحط عناصر في أماكن محسوبة من البيانات من غير [[position: absolute]] ولا حسابات بكسل.`,
-            work: R`جداول المواعيد في كل حتة: حصص جيم، ومواعيد عيادة، وحصص مدرسة، وحجز ملاعب. والـ modal أكتر مكوّن بيتعمل غلط (من غير فوكس ومن غير Esc)، والـ toast أكتر رسالة مش بتتقري لقارئ الشاشة.`,
-            cs: R`تحويل الوقت لإحداثيات (دقائق من بداية اليوم ÷ طول الخانة)، وفحص التداخل بين فترتين ([[a.start < b.end && b.start < a.end]])، والـ top layer: الـ dialog والـ backdrop بيترسموا فوق كل حاجة من غير z-index.`,
-          },
-          desc: R`آخر خطوة بناء في الـ dashboard.
-
-**جدول الحصص:** [[.week]] grid فيه عمود للوقت و ٧ أعمدة للأيام ([[minmax(9rem, 1fr)]])، وصف للعناوين و ٣٠ صف كل واحد نص ساعة (من ٧ الصبح لـ ١٠ بالليل). [[gridRow("17:00", "18:30")]] بترجّع [[{ row: 21, span: 3 }]]، و [[schedule.js]] بيحطهم كـ [[--row]] و [[--span]] على الزرار، والـ CSS: [[grid-row: calc(var(--row) + 1) / span var(--span)]] (اتقاس: [[grid-row-start]] = 22). وكل حصة خلفيتها متملية بنسبة الحجز ([[--fill]]). عمود الوقت [[position: sticky; inset-inline-start: 0]] فبيفضل ظاهر وانت بتسكرول بالعرض.
-
-**الغلطة الكبيرة:** الصفحة كلها كان فيها scroll أفقي في **كل** المقاسات من 360 لـ 1280 ([[scrollWidth 1086]] على 360). الجدول عرضه 67rem، والـ wrapper عليه [[overflow-x: auto]]، بس الـ section اللي حواليه **عنصر grid** في [[main]]، وعنصر الـ grid أقل عرض ليه افتراضيًا = أقل عرض لمحتواه ([[min-width: auto]]). سطر واحد: [[main section { min-width: 0 }]] والـ matrix بقى صفر overflow والجدول بس هو اللي بيتسكرول.
-
-**الـ dialog:** [[showModal()]] بيحط الـ dialog في الـ top layer، ويخلي باقي الصفحة inert، ويحط الفوكس على [[autofocus]]، و Esc بيقفله، ولما يتقفل الفوكس بيرجع للزرار اللي فتحه (اتقاس: [[focus back on: add]]). الفورم جواه [[method="dialog"]]: الزرار اللي اتداس قيمته بتبقى [[dialog.returnValue]] ([[save]] أو [[cancel]] أو [[book]]). **غلطتين اتقاسوا:** الضغط على padding الـ dialog كان بيقفله (الـ padding جزء من [[<dialog>]] نفسه، فكان بيتحسب «backdrop»)، ورسالة الحقل الفاضي كانت **[[Please fill out this field.]]** بالإنجليزي في صفحة عربي (لغة المتصفح مش الصفحة).
-
-**التنبيهات والثيم:** [[<div role="status" aria-live="polite">]] موجود في الصفحة من الأول، و [[toast()]] بيزوّد فيه فقرة وبيشيلها بعد ٤ ثواني. والداكن نفس الـ tokens بقيم تانية، و [[boot.js]] بيطبق الاختيار قبل الرسم.`,
-          example: R`.week { display: grid; grid-template-columns: 4.5rem repeat(7, minmax(9rem, 1fr)); grid-template-rows: 2.5rem repeat(30, 1.75rem); }
-.slot { grid-column: calc(var(--col) + 2); grid-row: calc(var(--row) + 1) / span var(--span); }
-main section { scroll-margin-top: calc(var(--top-h) + 1rem); min-width: 0; }
-dlg.showModal();
-document.addEventListener("click", e => { if (e.target instanceof HTMLDialogElement) e.target.close("cancel"); });
-nameIn.addEventListener("invalid", () => nameIn.setCustomValidity(nameIn.validity.valueMissing ? "اكتب اسم العضو" : "الاسم لازم ٣ حروف على الأقل"));`,
-          lines: [
-            R`الشبكة: عمود 4.5rem للوقت و ٧ أيام كل واحد أقله 9rem، وصف 2.5rem لأسامي الأيام و ٣٠ صف كل واحد 1.75rem (نص ساعة). الساعة = صفين = 3.5rem، ونفس الرقم في الـ gradient اللي بيرسم خطوط الساعات.`,
-            R`مكان كل حصة من البيانات: العمود = رقم اليوم + 2 (عمود الوقت هو 1، والسبت 0 بيبقى 2)، والصف = [[--row]] + 1 (صف العناوين هو 1)، و [[span]] = عدد الخانات. [[calc()]] بيطلع رقم صحيح فـ grid بيقبله.`,
-            R`السطر اللي شال الـ scroll الأفقي من الصفحة كلها: عنصر grid ممكن يصغر عن عرض محتواه. من غيره الـ section بيتمد لعرض الجدول (1086px على موبايل 360).`,
-            R`يفتح الـ dialog modal: فوق كل حاجة، والباقي inert، والفوكس جواه، و Esc بيقفل. [[show()]] من غير Modal بيفتحه عادي من غير أي ده.`,
-            R`قفل بالضغط بره: الضغطة على الخلفية [[::backdrop]] بيبقى [[target]] بتاعها الـ dialog نفسه. شغال صح بس لو الـ dialog ملوش padding (الفورم جواه هو اللي عليه الـ padding)، وإلا الضغط على الحافة الداخلية بيقفل كمان.`,
-            R`رسالة التحقق بالعربي: حدث [[invalid]] بيحصل لما الفورم يتبعت والحقل مش سليم، و [[setCustomValidity]] بيحط النص اللي هيظهر. ولازم [[setCustomValidity("")]] مع كل [[input]] (في [[app.js]])، وإلا الحقل يفضل «غلط» حتى بعد ما يتصلّح.`,
-          ],
-          try: R`حط الملفات من الشرح وافتح الجدول. دوس على حصة واحجز، واسمع الـ toast بقارئ الشاشة (Narrator: Win+Ctrl+Enter، أو VoiceOver على الماك). افتح «عضو جديد» ودوس «ضيف» فاضي، وبعدين بحرفين، وبعدين اسم صح. جرّب Esc، والضغط على الخلفية، والضغط على حافة الـ dialog من جوه. وبعدين امسح [[min-width: 0]] من [[main section]] وصغّر الشاشة لـ 360.`,
-          flag: R`script`,
+~~~text القياس من Chrome
+document.querySelectorAll("p").length = 1
+document.querySelector("template").content.querySelectorAll("p").length = 1
+البيكسل (20,20) = 0,128,128,255 (teal)      البيكسل (120,40) = 255,165,0,255 (orange)
+~~~`,
           deep: {
-            why: R`جدول المواعيد بـ [[<table>]] مستحيل يعمل حصة طولها ساعة ونص من غير rowspan يدوي؛ وبـ [[position: absolute]] كل حاجة بالبكسل وبتتكسر مع أي تغيير مقاس. الـ grid بيحوّل الوقت لصف مباشرة. والـ modal المعمول بـ div محتاج حوالي ٤٠ سطر عشان الفوكس و Esc والخلفية، و [[<dialog>]] بيعملهم. والـ toast اللي بيتحط في عنصر لسه معمول مبيتقريش، فاليوزر الكفيف ميعرفش إن الحجز تم.`,
-            how: R`[[gridRow]]: الدقايق من 7:00 ÷ 30 + 1 = رقم الخانة، والمدة ÷ 30 لفوق = عدد الخانات. والـ sticky الأفقي: عمود الوقت [[inset-inline-start: 0]] جوه الـ wrapper اللي بيتسكرول بالعرض، فبيلزق في أوله (اليمين في RTL). و [[scroll-snap-type: x mandatory]] على الـ wrapper و [[scroll-snap-align: start]] على أسامي الأيام: السكرول بيقف على أول يوم كامل، و [[scroll-padding-inline-start: 4.5rem]] عشان اليوم ميقفش تحت عمود الوقت. والـ dialog: [[showModal()]] بيحطه في الـ top layer (فوق أي z-index)، و [[::backdrop]] طبقة تحته، و [[form method="dialog"]] لما يتبعت بيقفل الـ dialog ويحط [[value]] الزرار في [[returnValue]]، و [[formnovalidate]] على «إلغاء» بيعدّي التحقق. والحركة: [[@starting-style]] بيدّي قيمة البداية لما العنصر يظهر، و [[transition-behavior: allow-discrete]] (هنا جوه الـ shorthand) بيخلي [[display]] و [[overlay]] يستنوا الـ transition وهو بيتقفل. والـ live region: قارئ الشاشة بيراقب العناصر اللي عليها [[aria-live]] **من ساعة ما اتعملت**، فالتغيير جواها بيتقري، أما عنصر جديد معمول وفيه النص على طول غالبًا مش بيتقري.`,
-            when: R`جدول بالأيام والساعات لأي مواعيد ثابتة في الأسبوع. لو المواعيد بتتداخل في نفس اليوم (حصتين في نفس الوقت في أوضتين)، زوّد أعمدة للأوض أو قسّم الخانة ([[overlaps()]] بتكشفها). [[<dialog>]] لأي سؤال أو فورم قصير بيوقف الشغل لحد ما يتجاوب؛ للحاجات الطويلة صفحة لوحدها. و [[role="status"]] للنجاح، و [[role="alert"]] للأخطاء اللي لازم تتقري حالًا. دروس: «grid»، و «Dialog»، و «aria»، و «Constraint Validation API»، و «dark mode».`,
-            mistakes: R`تنسى [[min-width: 0]] على عنصر grid أو flex فيه حاجة عريضة (اتقاس: 1086 على 360). تحط padding على [[<dialog>]] وتقفل بـ [[e.target === dialog]] (اتقاس: الضغط جوه الحافة قفله). تعتمد على رسالة المتصفح (اتقاس: [[Please fill out this field.]]). تنسى [[setCustomValidity("")]] فالحقل يفضل غلط للأبد. تستخدم [[form.name]] (ده اسم الفورم نفسه؛ [[form.elements.name]] هو الحقل). تعمل [[<div aria-live>]] جديد مع كل toast. تحط [[z-index: 9999]] للـ modal بدل [[showModal()]]. الأوقات بخط عادي فالأرقام بتتهز ([[tabular-nums]]). تلوّن الحصة الكاملة بلون بس (هنا: حدود متقطعة والزرار نصه «الحصة كاملة» و [[disabled]]).`,
+            why: R`[[<canvas>]] اتعمل عشان الرسم السريع اللي الـ DOM مبيقدرش عليه. [[<noscript>]] من أيام ما JavaScript كان اختياري، ولسه مفيد لرسالة واضحة أو بديل. و [[<template>]] حل مشكلة قديمة: المبرمجين كانوا بيخبّوا قوالب الـ HTML في [[<div style="display:none">]] أو جوه [[<script type="text/template">]] كنص، والاتنين ليهم مشاكل (الأول صوره بتتحمّل، والتاني مبيتفحصش).`,
+            how: R`الـ parser بيعامل كل واحد معاملة خاصة. [[<canvas>]]: بيعمل bitmap بمقاس الـ attributes، وأولاده بيدخلوا الـ DOM من غير ما يترسموا. [[<noscript>]]: لو السكربتات شغالة بيقرا اللي جواه كنص خام لحد القفلة، ولو مقفولة بيقراه HTML. [[<template>]]: أولاده بيتحطوا في DocumentFragment تابع لمستند تاني خامل، وده اللي بيمنع التحميل والتشغيل. ولو عليه [[shadowrootmode]] وهو أول ابن: بيتعمل shadow root للأب والمحتوى بيتحط فيه، والقالب نفسه مبيدخلش الصفحة.`,
+            when: R`[[<canvas>]]: رسم بياني تقيل، لعبة، توقيع بالماوس، تعديل صور. [[<noscript>]]: جملة «الجزء ده محتاج JavaScript» أو لينك لنسخة بسيطة. [[<template>]]: صف أو كارت بيتكرر والسكربت بيملاه ببيانات (قايمة حلقات، نتايج بحث). [[<slot>]]: جوه web component بتكتبه.`,
+            mistakes: R`مقاس canvas بالـ CSS. سكربت الرسم قبل العنصر. canvas من غير بديل. انتظار [[<noscript>]] لما السكربت يفشل. محتوى مهم جوه [[<template>]] على أمل إنه يظهر. و [[<slot>]] من غير shadow tree.`
           },
-          teach: R`## الخطوة ٦: جدول الحصص
-
-~~~javascript dashboard/js/schedule.js
-// weekly schedule: each class is a button placed on the grid by custom properties (day = column, time = rows)
-import { gridRow, toMin } from "./lib.js";
-import { openDialog, toast } from "./ui.js";
-const DAYS = ["السبت", "الأحد", "الاتنين", "التلات", "الأربع", "الخميس", "الجمعة"];
-const week = document.getElementById("week"), dlg = document.getElementById("dlg-class");
-const ampm = hhmm => { const m = toMin(hhmm), h = Math.floor(m / 60) % 12 || 12; return h + ":" + String(m % 60).padStart(2, "0") + (m < 720 ? " ص" : " م"); };
-
-function cell(cls, text, vars) {
-  const el = document.createElement(cls === "slot" ? "button" : "div");
-  el.className = cls;
-  el.textContent = text;
-  for (const [k, v] of Object.entries(vars)) el.style.setProperty("--" + k, v);
-  return el;
-}
-
-function slot(c) {
-  const { row, span } = gridRow(c.start, c.end);
-  const b = cell("slot", "", { col: c.day, row, span, fill: Math.round((c.booked / c.spots) * 100) + "%" });
-  b.type = "button";
-  b.classList.toggle("full", c.booked >= c.spots);
-  const title = document.createElement("b");
-  title.textContent = c.title;
-  b.append(title, $__bt$__{ampm(c.start)} · $__{c.booked}/$__{c.spots}$__bt);
-  b.setAttribute("aria-label", $__bt$__{c.title}، $__{DAYS[c.day]} $__{ampm(c.start)} لـ $__{ampm(c.end)}، $__{c.booked} من $__{c.spots} محجوز$__bt);
-  b.onclick = () => {
-    document.getElementById("dc-h").textContent = c.title;
-    document.getElementById("dc-body").textContent = $__bt$__{DAYS[c.day]}، من $__{ampm(c.start)} لـ $__{ampm(c.end)} مع الكوتش $__{c.coach}. محجوز $__{c.booked} من $__{c.spots}.$__bt;
-    const book = document.getElementById("dc-book");
-    book.disabled = c.booked >= c.spots;
-    book.textContent = book.disabled ? "الحصة كاملة" : "احجز مكان";
-    openDialog(dlg, v => {
-      if (v !== "book") return;
-      c.booked++;
-      b.replaceWith(slot(c));
-      toast($__btاتحجز مكان في «$__{c.title}» يوم $__{DAYS[c.day]}$__bt);
-    });
-  };
-  return b;
-}
-
-export async function loadSchedule() {
-  const classes = await (await fetch("data/classes.json")).json();
-  const parts = DAYS.map((d, i) => cell("day", d, { col: i }));
-  for (let h = 7; h < 22; h++) parts.push(cell("hour", ampm(String(h).padStart(2, "0") + ":00"), { row: (h - 7) * 2 + 1 }));
-  week.replaceChildren(...parts, ...classes.map(slot));
-}
-~~~
-
-- [[DAYS]] من السبت: الأسبوع في مصر بيبدأ السبت، و [[day: 0]] في البيانات = السبت.
-- [[ampm]]: [[17:00]] ← [[5:00 م]]. [[% 12 || 12]] عشان 12 الضهر و 12 بالليل ميبقوش 0. و [[m < 720]] (قبل 12:00) = ص.
-- [[cell(cls, text, vars)]]: كل الـ custom properties بـ [[style.setProperty("--row", 21)]]، مش [[style="..."]] في HTML. الاتنين بيوصلوا لنفس الحاجة، بس الأولى من CSSOM فمش بتتمنع لو حطيت CSP فيه [[style-src]] من غير [[unsafe-inline]] (من الوثائق).
-- [[aria-label]] على كل حصة: الزرار بيتقري الجملة كاملة «تسلّق بالحبل، الاتنين 5:00 م لـ 6:30 م، 6 من 9 محجوز»، بدل الأرقام المتقطعة اللي على الشاشة.
-- [[b.replaceWith(slot(c))]] بعد الحجز: الزرار بيترسم من جديد بالعدد الجديد. (اتقاس: بعد الحجز [[document.activeElement]] بقى [[BODY]]، لأن الزرار اللي الـ dialog كان هيرجّع له الفوكس اتشال. عيب حقيقي، والتمرين التالت بيصلّحه.)
-- حصص الجمعة: مفيش. والعمود فاضي عن قصد.
-
-### الـ dialog والـ toasts
-
-~~~javascript dashboard/js/ui.js
-// toasts in one live region that exists from the start, and a helper for native <dialog>
-const box = document.getElementById("toasts");
-export function toast(text, ms = 4000) {
-  const el = document.createElement("p");
-  el.className = "toast";
-  el.textContent = text;
-  box.append(el);
-  setTimeout(() => el.remove(), ms);
-}
-
-export function openDialog(dlg, onClose) {
-  dlg.returnValue = "";
-  dlg.showModal();                                         // modal: focus moves in, Esc closes, the rest of the page is inert
-  dlg.addEventListener("close", () => onClose?.(dlg.returnValue), { once: true });
-}
-// a click on the backdrop lands on the <dialog> itself (the form inside covers the box)
-document.addEventListener("click", e => { if (e.target instanceof HTMLDialogElement) e.target.close("cancel"); });
-~~~
-
-~~~javascript dashboard/js/app.js
-// entry: shell first (so the menu works while data loads), then the three data parts in parallel
-import "./shell.js";
-import { loadMembers, addMember, nextId } from "./table.js";
-import { loadKpis } from "./kpi.js";
-import { loadSchedule } from "./schedule.js";
-import { openDialog, toast } from "./ui.js";
-
-const members = loadMembers();
-members.then(m => loadKpis(m)).catch(() => toast("الأرقام مش متاحة دلوقتي"));
-loadSchedule().catch(() => toast("الجدول مش متاح دلوقتي"));
-
-const dlg = document.getElementById("dlg-member"), form = document.getElementById("member-form");
-const nameIn = form.elements.name;                          // form.elements: form.name is also the form's own name attribute
-nameIn.addEventListener("input", () => nameIn.setCustomValidity(""));
-nameIn.addEventListener("invalid", () => nameIn.setCustomValidity(nameIn.validity.valueMissing ? "اكتب اسم العضو" : "الاسم لازم ٣ حروف على الأقل"));
-document.getElementById("add").addEventListener("click", () => {
-  form.reset();
-  openDialog(dlg, v => {
-    if (v !== "save") return;
-    const name = nameIn.value.trim();
-    addMember({ id: nextId(), name, plan: form.elements.plan.value, status: "active", joined: "2026-10-31", lastVisit: "2026-10-31", visits: 0 });
-    toast($__btاتضاف «$__{name}»$__bt);
-  });
-});
-~~~
-
-- [[dlg.returnValue = ""]] قبل الفتح: من غير ده لو قفلت بـ Esc المرة دي، [[returnValue]] هيفضل قيمة المرة اللي فاتت ([[save]])، والعضو يتضاف تاني.
-- [[{ once: true }]]: الـ listener بيتشال بعد أول [[close]]، فمش بيتراكم مع كل فتحة.
-- [[import "./shell.js"]] الأول: القايمة والثيم شغالين وانت لسه بتستنى البيانات.
-- [[members.then(m => loadKpis(m))]]: الكروت محتاجة عدد الأعضاء الكلي، فبتستنى الجدول. والجدول الأسبوعي مش محتاج حاجة، فبيتحمّل بالتوازي.
-- [[form.reset()]] قبل كل فتح: الفورم يبدأ فاضي.
-- [[form.elements.name]]: [[HTMLFormElement]] عنده خاصية [[name]] (اسم الفورم)؛ الحقل اللي اسمه [[name]] بيغطي عليها في Chrome، بس [[elements]] أوضح ومضمون.
-
-### الـ CSS: الجدول الأسبوعي والـ dialog والحركة
-
-~~~css dashboard/css/app.css (السطور 121–151)
-/* ---------- schedule: 7 days x 30 half-hours ---------- */
-.hint { margin: -0.5rem 0 0.75rem; color: var(--muted); }
-.week-wrap { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline-start: 4.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
-.week {
-  display: grid; grid-template-columns: 4.5rem repeat(7, minmax(9rem, 1fr)); grid-template-rows: 2.5rem repeat(30, 1.75rem);
-  background: repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 3.5rem) 0 2.5rem / 100% calc(100% - 2.5rem) no-repeat;
-}
-.day { grid-row: 1; grid-column: calc(var(--col) + 2); display: grid; place-items: center; font-weight: 600; border-block-end: 1px solid var(--line); scroll-snap-align: start; }
-.hour { white-space: nowrap; grid-column: 1; grid-row: calc(var(--row) + 1) / span 2; position: sticky; inset-inline-start: 0; z-index: 1; background: var(--surface); color: var(--muted); font-size: 0.8rem; padding-inline: 0.5rem; font-variant-numeric: tabular-nums; border-inline-end: 1px solid var(--line); }
-.slot {
-  grid-column: calc(var(--col) + 2); grid-row: calc(var(--row) + 1) / span var(--span);
-  margin: 2px 4px; padding: 0.25rem 0.5rem; border: 1px solid var(--brand); border-radius: 8px; text-align: start; font: inherit; font-size: 0.85rem; line-height: 1.3; color: var(--ink); cursor: pointer; overflow: hidden;
-  background: linear-gradient(to left, var(--brand-soft) var(--fill), var(--surface) 0);
-}
-:dir(ltr) .slot { background: linear-gradient(to right, var(--brand-soft) var(--fill), var(--surface) 0); }
-.slot b { display: block; }
-.slot.full { border-style: dashed; border-color: var(--muted); }
-
-/* ---------- dialog + toasts ---------- */
-dialog { border: 0; border-radius: var(--r); padding: 0; width: min(28rem, calc(100% - 2rem)); background: var(--surface); color: var(--ink); box-shadow: 0 20px 50px rgb(0 0 0 / 0.3);
-  opacity: 0; translate: 0 12px; transition: opacity 0.2s, translate 0.2s, overlay 0.2s allow-discrete, display 0.2s allow-discrete; }
-dialog[open] { opacity: 1; translate: 0 0; }
-@starting-style { dialog[open] { opacity: 0; translate: 0 12px; } }
-dialog::backdrop { background: rgb(10 14 20 / 0.55); }
-dialog form { display: grid; gap: 1rem; padding: 1.5rem; }   /* padding on the form, so a click on the dialog itself = the backdrop */
-dialog label { display: grid; gap: 0.3rem; }
-.dlg-actions { display: flex; gap: 0.75rem; }
-.toasts { position: fixed; inset-block-end: 1rem; inset-inline-end: 1rem; z-index: var(--z-toast); display: grid; gap: 0.5rem; width: min(22rem, calc(100% - 2rem)); }
-.toast { padding: 0.75rem 1rem; border-radius: 10px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); animation: toast-in 0.25s ease; }
-@keyframes toast-in { from { opacity: 0; translate: 0 12px; } }
-
-~~~
-
-~~~css dashboard/css/app.css (آخر 3 سطور)
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
-}
-~~~
-
-- [[background: repeating-linear-gradient(...) 0 2.5rem / 100% calc(100% - 2.5rem) no-repeat]]: خط 1px كل 3.5rem (ساعة)، وبيبدأ بعد صف الأيام (2.5rem)، فمفيش ٢١٠ عنصر فاضي للخطوط.
-- [[.hour { white-space: nowrap }]]: «10:00 ص» كانت بتتقسم سطرين في عمود 4rem (باين في اللقطة)، فبقت سطر و 4.5rem.
-- [[linear-gradient(to left, var(--brand-soft) var(--fill), var(--surface) 0)]]: الجزء المحجوز متلوّن من اليمين (بداية السطر في RTL)، و [[:dir(ltr)]] بيعكسه لو الصفحة اتقلبت. [[0]] في آخر stop = «ابدأ على طول من مكان اللي قبله»، فالحد حاد مش متدرّج.
-- [[.slot.full { border-style: dashed }]]: الحصة الكاملة شكلها مختلف من غير ما يبقى اللون هو الفرق الوحيد.
-- [[dialog { padding: 0 }]] و [[dialog form { padding: 1.5rem }]]: التصليح بتاع «الضغط على الحافة بيقفل».
-- [[@starting-style { dialog[open] { opacity: 0; translate: 0 12px; } }]]: لحظة الفتح بيبدأ شفاف ونازل وبيطلع لمكانه. و [[overlay 0.2s allow-discrete, display 0.2s allow-discrete]]: وهو بيتقفل بيفضل في الـ top layer لحد ما الحركة تخلص (Chrome 117+ و Safari 17.5+ و Firefox 129+، من الوثائق؛ المتصفح القديم بيفتح ويقفل من غير حركة).
-- [[.toasts]] بـ [[inset-block-end]] و [[inset-inline-end]]: تحت على الشمال في العربي، وعلى اليمين لو الصفحة LTR.
-- reduced motion في الآخر: كل animation و transition = 0.01ms (مش [[none]]، عشان الأحداث زي [[transitionend]] لسه تحصل).
-
-### اتشغّل فعلًا
-
-~~~text node check-dashboard.mjs
-dialog open: true | focus: name
-2 letters -> message: الاسم لازم ٣ حروف على الأقل
-save with empty name -> still open: true | message: اكتب اسم العضو
-saved -> open: false | focus back on: add | toast: اتضاف «سارة الجندي» | count: 58 عضو، صفحة 1 من 6
-Esc -> open: false | focus: add
-click on the dialog's own padding -> open: true
-click on the backdrop -> open: false
-slots: 15 | first slot --row / grid-row-start / end / column: 21 / 22 / span 3 / 2
-booked toast: اتضاف «سارة الجندي» || اتحجز مكان في «أطفال 8–12» يوم السبت
-~~~
-
-- [[focus back on: add]]: Chrome رجّع الفوكس لزرار «عضو جديد» لوحده بعد [[close()]]، من غير ولا سطر.
-- [[21 / 22 / span 3 / 2]]: [[--row]] = 21 (17:00)، والـ grid حطها في الصف 22 (بعد صف الأيام) لمدة ٣ خانات، في العمود 2 (السبت).
-- [[booked toast]]: التنبيهين لسه موجودين لأن كل واحد بيقعد ٤ ثواني، وبيتشالوا لوحدهم.
-
----
-
-## الغلطات اللي حصلت في الخطوة دي
-
-### ١. scroll أفقي في كل المقاسات
-
-~~~text audit-dashboard.mjs (قبل)
-matrix: 360 OVERFLOW 1086 | 390 OVERFLOW 1086 | 768 OVERFLOW 1094 | 1024 OVERFLOW 1334 | 1280 OVERFLOW 1334 | 1440 ok
-~~~
-
-~~~text بعد main section { min-width: 0 }
-matrix: 360 ok(week scrolls) | 390 ok(week scrolls) | 768 ok(week scrolls) | 1024 ok(week scrolls) | 1280 ok(week scrolls) | 1440 ok
-~~~
-
-الـ wrapper عليه [[overflow-x: auto]] من الأول، فكنت متأكد إنه «مش ممكن» يعمل overflow. بس [[main]] نفسه [[display: grid]]، والـ section ابنه، وعنصر الـ grid (زي عنصر الـ flex) [[min-width]] الافتراضي بتاعه [[auto]] = «مش أصغر من محتواه». فالـ section اتمد 1086px، والـ wrapper جواه عرضه 1086 برضه فمفيش حاجة يسكرولها. على 1440 بس المساحة كفاية. [[(week scrolls)]] = الـ wrapper هو اللي بيتسكرول دلوقتي، وده المطلوب.
-
-### ٢. الضغط على حافة الـ dialog بيقفله
-
-~~~text قبل ← بعد (padding على الفورم مش الـ dialog)
-click on the dialog's own padding -> open: false
-click on the dialog's own padding -> open: true
-~~~
-
-[[e.target instanceof HTMLDialogElement]] صح للخلفية، بس الـ padding جزء من الـ dialog، فالضغطة على أول 1.5rem جوه الصندوق كانت بتقفل الفورم واليوزر بيكتب. الحل الأول (padding على الفورم) أبسط من حساب [[getBoundingClientRect]] للضغطة.
-
-### ٣. رسالة إنجليزي في فورم عربي
-
-~~~text قبل [[setCustomValidity]]
-save with empty name -> still open: true | message: Please fill out this field.
-~~~
-
-رسالة [[required]] بتيجي بلغة **المتصفح** (هنا Chrome إنجليزي)، مش [[lang]] الصفحة. بقت [[اكتب اسم العضو]] و [[الاسم لازم ٣ حروف على الأقل]] حسب [[validity.valueMissing]].
-
-### ٤. لازم الـ live region يبقى موجود من الأول
-
-[[#toasts]] مكتوب في الـ HTML فاضي وعليه [[role="status"]]، و [[toast()]] بيزوّد فقرة **جواه**. لو كل toast عمل [[<div aria-live>]] جديد فيه النص، أغلب قارئات الشاشة مش هتقراه لأنها مكانتش بتراقب العنصر قبل ما النص يتحط (من الوثائق وتجارب منشورة؛ القراية نفسها متجرّبتش بقارئ شاشة في المعمل ده، اللي اتقاس إن النص اتحط جوه العنصر الموجود). نفس الحاجة اتعملت في [[#status]] في الـ portfolio و [[#count]] في الجدول.
-
----
-
-## الخلاصة
-
-| الحاجة | الطريقة |
-|---|---|
-| مواعيد على grid | الوقت ← [[--row]] و [[--span]]، واليوم ← [[--col]]، و [[calc()]] في [[grid-row]] |
-| جدول عريض في صفحة grid | [[overflow-x: auto]] على الـ wrapper **و** [[min-width: 0]] على عنصر الـ grid |
-| modal | [[showModal()]] و [[method="dialog"]] و [[returnValue]]، والـ padding على الفورم |
-| رسايل التحقق | [[setCustomValidity]] في [[invalid]] و [[""]] في [[input]] |
-| تنبيهات بتتقري | live region واحدة من الأول، والنص بيتحط جواها |
-| الثيم | نفس الـ tokens بقيم تانية، و [[boot.js]] قبل الرسم، و [[aria-pressed]] |`,
-          sol: R`الحجز بيزوّد العدد في الحصة ويظهر toast تحت، والـ dialog الفاضي بيقول «اكتب اسم العضو»، وبحرفين «الاسم لازم ٣ حروف على الأقل»، وبالاسم الصح بيتقفل والعضو بيتضاف والعدد 58. Esc والخلفية بيقفلوا، والحافة من جوه لأ. ولما تشيل [[min-width: 0]]، [[document.documentElement.scrollWidth]] على 360 بيبقى حوالي 1086.`,
           practice: [
-            {
-              lvl: R`سريع`,
-              t: R`**اقرا وتوقّع:** حصة من [[21:30]] لـ [[23:00]]. [[gridRow]] هترجّع إيه؟ وهتتعرض فين في الجدول اللي فيه ٣٠ صف بس؟ احسب، وبعدين جرّبها في البيانات.`,
-              done: R`حسبت [[row 30 span 3]] يعني آخر صف 32 بره الـ ٣٠، وشفت إن الـ grid عمل صفوف ضمنية (implicit): في المعمل الصفوف بقت 33 بدل 31 والارتفاع 901 بدل 880، وزوّدت فحص بيطبع [[OUTSIDE]] زي سطر الـ ci.`,
-              sol: R`~~~js check-rows.mjs
-import { gridRow } from "./dashboard/js/lib.js";
-const { row, span } = gridRow("21:30", "23:00");
-console.log("row", row, "span", span, "آخر صف", row + span - 1);
-if (row + span - 1 > 30) console.log("OUTSIDE");
+            { lvl: 'تطبيق', t: R`**ابني:** رسم «مرات سماع الحلقة ١» في صفحة «المحطة». السكربت جاهز وبيرسم على عنصر [[id]] بتاعه [[plays]]. اكتب الـ [[<canvas>]] اللي ناقص: 300 × 100، وبيتقري لقارئ الشاشة كصورة اسمها «رسم بياني: الحلقة ١ اتسمعت ٤٠ مرة»، وجواه نفس المعلومة كنص بديل. وحطه في المكان اللي يخلّي السكربت يلاقيه. (من قسم ١ في الشرح)`, done: R`المستطيل الأخضر بيترسم تحت العنوان، وكل الشروط ✓.`, work: { h: 200, start: R`<h2>مرات السماع</h2>
+<script>
+  const ctx = document.getElementById("plays").getContext("2d");
+  ctx.fillStyle = "teal";
+  ctx.fillRect(10, 30, 160, 40);
+</script>`, checks: [
+              { say: R`فيه [[<canvas id="plays">]]`, q: "canvas#plays" },
+              { say: R`مقاسه 300 × 100 في الـ attributes`, q: "canvas[width=\"300\"][height=\"100\"]" },
+              { say: R`[[role="img"]] و [[aria-label]]`, q: "canvas[role=\"img\"][aria-label]" },
+              { say: R`جواه نص بديل فيه الرقم «٤٠»`, q: "canvas", has: "٤٠" },
+              { say: R`الـ canvas مكتوب قبل السكربت`, q: "canvas#plays ~ script" },
+            ] }, sol: R`~~~live 186 الحل
+<h2>مرات السماع</h2>
+<canvas id="plays" width="300" height="100" role="img" aria-label="رسم بياني: الحلقة ١ اتسمعت ٤٠ مرة">الحلقة ١ اتسمعت ٤٠ مرة.</canvas>
+<script>
+  const ctx = document.getElementById("plays").getContext("2d");
+  ctx.fillStyle = "teal";
+  ctx.fillRect(10, 30, 160, 40);
+</script>
 ~~~
 
-الحساب: البداية 21:30 = بعد 07:00 بـ 870 دقيقة، و ÷ 30 = 29، و + 1 = صف **30**. المدة 90 دقيقة = **3** صفوف. يعني الصفوف 30 و 31 و 32.
+**هتشوف إيه:** تحت العنوان شريط أخضر مزرق عرضه 160. في البداية مكانش فيه حاجة: السكربت كان بيدوّر على [[plays]] وميلاقيهوش.
 
-الجدول فيه 30 صف بس. CSS مبيعملش error: الـ [[grid]] بيعمل صفوف ضمنية (implicit) بعد الآخر عشان يساع العنصر، بارتفاع [[auto]]. فالجدول بيطول شوية، والحصة بتظهر تحت خط الجدول، وشكلها مكسور من غير أي رسالة.
+**ليه كده:**
 
-عشان كده السطر اللي بيطبع [[OUTSIDE]]: البيانات اللي برا المدى لازم حد ينبّه عليها، لأن المتصفح مش هيعمل كده.
+- [[id="plays"]] هو اللي السكربت بيدوّر عليه.
+- المقاس في الـ attributes عشان اللوحة تبقى 300 × 100 بيكسل فعلًا.
+- الـ canvas قبل السكربت: المتصفح بيقرا من فوق لتحت، والسكربت بيشتغل أول ما يتقري.
 
-الغلطة الشائعة: تسيب [[grid-template-rows]] ثابت، وتتفاجئ لما حصة تتأخر. الحل يا إما فحص، يا إما الصفوف تتحسب من البيانات.
+**الغلطة الشائعة:** تحط الـ canvas تحت السكربت. في الـ Console: [[TypeError: Cannot read properties of null (reading 'getContext')]].
 
-~~~text الناتج (Node 24، و Chrome 156 بعد زيادة الحصة)
-row 30 span 3 آخر صف 32
-OUTSIDE
-الصفوف في الـ grid: قبل 31، وبعد 33
-ارتفاع الجدول: قبل 880px، وبعد 901px
+~~~text القياس من Chrome
+canvas: 300 × 100      البيكسل (20,40) = 0,128,128,255      image «رسم بياني: الحلقة ١ اتسمعت ٤٠ مرة»
 ~~~` },
-            {
-              lvl: R`سريع`,
-              t: R`**دوّر بنفسك:** من صفحة [[<dialog>]] على MDN اعرف الفرق بين [[close()]] و [[requestClose()]]، وأنهي واحد بيبعت حدث [[cancel]] اللي ممكن تلغيه (عشان تسأل «متأكد؟ فيه كلام متكتب»).`,
-              done: R`كتبت إن [[requestClose()]] بيبعت [[cancel]] الأول (وتقدر [[preventDefault()]])، و [[close()]] بيقفل على طول، وإن Esc بيبعت [[cancel]] كمان، وجرّبت تمنع القفل لو الحقل فيه كلام.`,
-              sol: R`~~~live 120 120 request-close.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>requestClose</title></head>
-<body>
-  <main><h1>قفل dialog</h1><button id="o">افتح</button></main>
-  <dialog id="d" aria-label="ملاحظة">
-    <label>ملاحظة <input id="t"></label>
-    <button id="r" type="button">قفل (requestClose)</button>
-    <button id="c" type="button">قفل (close)</button>
-  </dialog>
-  <script>
-    const d = document.getElementById("d"), t = document.getElementById("t");
-    window.log = [];
-    document.getElementById("o").onclick = () => d.showModal();
-    document.getElementById("r").onclick = () => d.requestClose();
-    document.getElementById("c").onclick = () => d.close();
-    d.addEventListener("cancel", (e) => {
-      log.push("cancel");
-      if (t.value && !confirmClose()) e.preventDefault();
-    });
-    d.addEventListener("close", () => log.push("close"));
-    const confirmClose = () => false;   // في الحقيقة: اسأل «متأكد؟ فيه كلام متكتب»
-  $__lt/script>
-</body></html>
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «إحصائيات المحطة» فيها ٣ مشاكل: المربع المرسوم طالع مبطّط مش مربع، وجملة «الأرقام بتتحدّث كل ساعة» مش ظاهرة لحد، والـ canvas ملوش أي اسم. (من قسم ١ و ٣ و ٥ في الشرح)`, done: R`المربع بقى مربع، والجملة ظاهرة، والـ canvas ليه اسم، وكل الشروط ✓.`, work: { h: 200, start: R`<canvas id="c" style="width:300px;height:60px;border:1px solid #94a3b8"></canvas>
+<script>
+  const ctx = document.getElementById("c").getContext("2d");
+  ctx.fillStyle = "teal";
+  ctx.fillRect(10, 5, 50, 50);
+</script>
+<template><p>الأرقام بتتحدّث كل ساعة.</p></template>`, checks: [
+              { say: R`الـ canvas مقاسه في الـ attributes: 300 × 60`, q: "canvas[width=\"300\"][height=\"60\"]" },
+              { say: R`مفيش [[width]] ولا [[height]] في [[style]] بتاعه`, q: "canvas[style*=\"width\"], canvas[style*=\"height\"]", n: 0 },
+              { say: R`الجملة في [[<p>]] ظاهر في الصفحة`, q: "p", has: "الأرقام بتتحدّث كل ساعة" },
+              { say: R`مفيش [[<template>]]`, q: "template", n: 0 },
+              { say: R`الـ canvas ليه [[aria-label]] أو نص بديل`, q: "canvas[aria-label], canvas:not(:empty)" },
+            ] }, sol: R`~~~live 130 بعد التصليح
+<canvas id="c" width="300" height="60" role="img" aria-label="مربع أخضر: عدد الحلقات" style="border:1px solid #94a3b8"></canvas>
+<script>
+  const ctx = document.getElementById("c").getContext("2d");
+  ctx.fillStyle = "teal";
+  ctx.fillRect(10, 5, 50, 50);
+</script>
+<p>الأرقام بتتحدّث كل ساعة.</p>
 ~~~
 
-الفرق في السؤال قبل القفل:
+وده اللي كان باين قبل التصليح:
 
-- [[close()]]: أمر مباشر. بيقفل على طول، وبيبعت [[close]] بس. مفيش فرصة تعترض.
-- [[requestClose()]]: طلب. بيبعت [[cancel]] الأول، ولو حد عمل [[preventDefault()]] مبيقفلش. لو عدّى، بيبعت [[close]].
-- Esc بيتصرف زي [[requestClose()]]: بيبعت [[cancel]].
-
-فلو عايز «متأكد؟ فيه كلام متكتب»، حط السؤال في [[cancel]]، واستخدم [[requestClose()]] لزرار الإغلاق، فالطريقتين بيمروا بنفس الباب.
-
-المصدر: MDN صفحة [[HTMLDialogElement.requestClose()]]. الدعم: Chrome 134، و Safari 18.4، و Firefox 139 حسب [[browser-compat-data]].
-
-الغلطة الشائعة: تستخدم [[close()]] في زرار X وتحط الفحص في [[cancel]]، فالفحص بيتنفذ مع Esc بس.
-
-~~~text الناتج (Chrome 156، الخانة فيها كلام)
-requestClose: الأحداث cancel، و open = true
-Esc:          الأحداث cancel، و open = true
-close():      الأحداث close، و open = false
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**صلّح الكود البايظ:** بعد الحجز الفوكس بيضيع لأن [[b.replaceWith(slot(c))]] بيشيل الزرار اللي الـ dialog هيرجّع له الفوكس. صلّحها من غير ما ترسم الجدول كله من جديد.`,
-              done: R`بعد الحجز وقفل الـ dialog [[document.activeElement]] هو زرار الحصة الجديد بالعدد الجديد (مش [[body]])، والحل يا إما بتحدّث نص الزرار القديم وخلفيته بدل ما تبدّله، يا إما [[newBtn.focus()]] بعد [[replaceWith]].`,
-              sol: R`~~~js dashboard/js/schedule.js (جوه callback الـ openDialog)
-openDialog(dlg, v => {
-  if (v !== "book") return;
-  c.booked++;
-  const next = slot(c);
-  b.replaceWith(next);
-  next.focus();                 // السطر الجديد
-  toast($__btاتحجز مكان في «$__{c.title}» يوم $__{DAYS[c.day]}$__bt);
-});
+~~~live 88 قبل
+<canvas id="c" style="width:300px;height:60px;border:1px solid #94a3b8"></canvas>
+<script>
+  const ctx = document.getElementById("c").getContext("2d");
+  ctx.fillStyle = "teal";
+  ctx.fillRect(10, 5, 50, 50);
+</script>
+<template><p>الأرقام بتتحدّث كل ساعة.</p></template>
 ~~~
 
-الـ [[<dialog>]] لما يتقفل بيرجّع الـ focus للعنصر اللي فتحه. بس الكود بعد كده بيبدّل الزرار ده بزرار جديد، فالعنصر اللي الـ focus عليه اتشال من الصفحة، والمتصفح بيوقّع الـ focus على [[body]]. مستخدم الكيبورد بيبدأ من أول الصفحة.
+**هتشوف إيه:**
 
-السطر الواحد ده بيحط الـ focus على الزرار الجديد بعد التبديل. والترتيب مهم: [[replaceWith]] الأول، و [[focus()]] بعده، لأن العنصر لازم يبقى في الصفحة.
+- قبل: مستطيل مبطّط (عرضه 50 وارتفاعه 20) وحوافه مهزوزة شوية، ومفيش أي جملة.
+- بعد: مربع 50 × 50 حاد، وتحته الجملة.
 
-الحل التاني: متبدّلش الزرار، وحدّث نصه وخلفيته بس. ده أحسن لو الزرار بيتحدّث كتير، لأن العنصر نفسه بيفضل.
-
-الغلطة الشائعة: تختبر بالماوس، فمتحسش بحاجة.
-
-~~~text الناتج (Chrome 156، بعد احجز من الكيبورد)
-قبل التصليح: activeElement = BODY
-بعد التصليح: activeElement = BUTTON.slot، و aria-label = أطفال 8–12، السبت 5:00 م لـ 6:30 م، 13 من 14 محجوز
-~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**ابني:** على أقل من 48rem اعرض الجدول الأسبوعي كـ agenda: يوم النهارده بس كقايمة حصص بالترتيب، وفوقها ٧ أزرار للأيام ([[aria-pressed]] على اليوم المختار)، واليوم المختار في الرابط ([[?day=2]]) زي فلاتر الجدول.`,
-              done: R`على 390 مفيش scroll أفقي خالص والحصص قايمة، والأيام بتتبدّل وبتتحفظ في الرابط و Back بيرجّع اليوم اللي قبله، وعلى الكمبيوتر الـ grid زي ما هو، و axe صفر.`,
-              sol: R`~~~html dashboard/index.html (بعد .week-wrap)
-<div class="agenda" id="agenda">
-  <div class="days" id="days" role="group" aria-label="اختار اليوم"></div>
-  <ol class="day-list" id="day-list"></ol>
-</div>
-~~~
-
-~~~css dashboard/css/app.css (في آخر الملف)
-.agenda { display: none; }
-@media (max-width: 47.99rem) {
-  .week-wrap { display: none; }
-  .agenda { display: block; }
-  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
-  .days button { min-block-size: 44px; font: inherit; font-size: 0.75rem; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
-  .days button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); }
-  .day-list { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; gap: 0.5rem; }
-  .day-list li { padding: 0.75rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
-}
-~~~
-
-~~~view 120 120 الشكل في المتصفح (من ملفات الحل)
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
-<style>
-.agenda { display: none; }
-@media (max-width: 47.99rem) {
-  .week-wrap { display: none; }
-  .agenda { display: block; }
-  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
-  .days button { min-block-size: 44px; font: inherit; font-size: 0.75rem; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
-  .days button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); }
-  .day-list { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; gap: 0.5rem; }
-  .day-list li { padding: 0.75rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
-}
-</style>
-<div class="agenda" id="agenda">
-  <div class="days" id="days" role="group" aria-label="اختار اليوم"></div>
-  <ol class="day-list" id="day-list"></ol>
-</div>
-</body></html>
-~~~
-
-~~~js dashboard/js/schedule.js (آخر الملف)
-function drawAgenda(classes, day) {
-  document.querySelectorAll("#days button").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.day) === day)));
-  const list = classes.filter((c) => c.day === day).sort((a, b) => toMin(a.start) - toMin(b.start));
-  document.getElementById("day-list").replaceChildren(...(list.length ? list : [null]).map((c) => {
-    const li = document.createElement("li");
-    li.textContent = c ? $__bt$__{ampm(c.start)} · $__{c.title} · $__{c.booked}/$__{c.spots}$__bt : "مفيش حصص في اليوم ده.";
-    return li;
-  }));
-}
-const dayFromUrl = () => {
-  const d = Number.parseInt(new URLSearchParams(location.search).get("day"), 10);
-  return d >= 0 && d <= 6 ? d : (new Date().getDay() + 1) % 7;      // السبت = 0 في DAYS
-};
-export function initAgenda(classes) {
-  const box = document.getElementById("days");
-  box.replaceChildren(...DAYS.map((d, i) => {
-    const b = document.createElement("button");
-    b.type = "button"; b.dataset.day = i; b.textContent = d;
-    return b;
-  }));
-  box.addEventListener("click", (e) => {
-    const b = e.target.closest("button");
-    if (!b) return;
-    const u = new URL(location.href);
-    u.searchParams.set("day", b.dataset.day);
-    history.pushState(null, "", u);
-    drawAgenda(classes, Number(b.dataset.day));
-  });
-  addEventListener("popstate", () => drawAgenda(classes, dayFromUrl()));
-  drawAgenda(classes, dayFromUrl());
-}
-~~~
-
-~~~js dashboard/js/schedule.js (آخر سطر في loadSchedule)
-initAgenda(classes);
-~~~
-
-بيبني على [[schedule.js]]. فكرة واحدة: الـ grid فيه ٧ أعمدة كل واحد 9rem، ومفيش طريقة تتساع في 390 غير scroll أفقي. الـ agenda بتعرض يوم واحد كقايمة، فالعرض مبقاش مشكلة.
-
-- نفس [[classes]]، و [[.filter]] و [[.sort]] بالوقت: عرض تاني لنفس البيانات، مش بيانات تانية.
-- اليوم في الرابط بـ [[pushState]]، و [[popstate]] بيخلي Back يرجع لليوم اللي قبله، زي فلاتر الجدول بالظبط.
-- [[aria-pressed]] بيقول أنهي يوم مختار، و [[.days]] مقسوم ٧ أعمدة متساوية.
-- [[(new Date().getDay() + 1) % 7]]: ‏[[getDay]] بيبدأ بالأحد صفر، و [[DAYS]] بيبدأ بالسبت.
-
-الزرار في القايمة مش بيفتح الحجز في النسخة دي: ده تطوير عليك، وأسهل طريقة تنادي نفس [[b.onclick]].
-
-الغلطة الشائعة: تخفي الـ grid بـ [[overflow: hidden]]، فالـ scroll يبقى موجود ومقفول.
-
-~~~text الناتج (Chrome 156، عرض 390)
-scrollWidth − clientWidth: 0
-يوم 2: 3 حصص: 5:00 م · قوة الأصابع · 3/9
-الرابط: ?day=4
-بعد الضغط على يوم 4: 2 حصص: 5:00 م · مرونة ويوجا · 6/11
-Back: aria-pressed على يوم 2، والرابط ?day=2
-على 1280: الـ grid block، والـ agenda none
-axe على 390: 0
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**مسألة:** اكتب [[lanes(classes)]] بتوزّع الحصص المتداخلة في نفس اليوم على «حارات» (أول حارة فاضية في الوقت ده)، وترجّع لكل حصة رقم حارتها وعدد الحارات في يومها، عشان تعرضهم جنب بعض بـ [[grid-column]] فرعي.`,
-              done: R`على ٣ حصص يوم الاتنين (5–6:30، و 6–7، و 7–8) بترجّع حارات 0 و 1 و 0 وعدد 2 (التالتة رجعت للحارة الأولى لأن الأولى خلصت)، والحصص اللي بتلمس بعض بس ([[18:30]] و [[18:30]]) مش متداخلة زي [[overlaps]]، وفيه اختبار للتلات حالات.`,
-              sol: R`~~~js lanes.mjs
-const toMin = (t) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-
-export function lanes(classes) {
-  const byDay = new Map();
-  for (const c of classes) (byDay.get(c.day) ?? byDay.set(c.day, []).get(c.day)).push(c);
-
-  const out = [];
-  for (const list of byDay.values()) {
-    const sorted = [...list].sort((a, b) => toMin(a.start) - toMin(b.start));
-    const ends = [];                                 // ends[i] = وقت خلوص آخر حصة في الحارة i
-    const placed = sorted.map((c) => {
-      let lane = ends.findIndex((end) => end <= toMin(c.start));
-      if (lane === -1) { lane = ends.length; ends.push(0); }
-      ends[lane] = toMin(c.end);
-      return { ...c, lane };
-    });
-    for (const p of placed) out.push({ ...p, laneCount: ends.length });
-  }
-  return out;
-}
-~~~
-
-~~~js lanes.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { lanes } from "./lanes.mjs";
-const c = (start, end, day = 2) => ({ day, start, end });
-
-test("حصص متداخلة: 5–6:30 و 6–7 و 7–8", () => {
-  const r = lanes([c("17:00", "18:30"), c("18:00", "19:00"), c("19:00", "20:00")]);
-  assert.deepEqual(r.map((x) => x.lane), [0, 1, 0]);
-  assert.ok(r.every((x) => x.laneCount === 2));
-});
-test("اللي بيلمسوا بعض مش متداخلين", () => {
-  const r = lanes([c("17:00", "18:30"), c("18:30", "19:00")]);
-  assert.deepEqual(r.map((x) => x.lane), [0, 0]);
-});
-test("كل يوم لوحده", () => {
-  const r = lanes([c("17:00", "18:00", 1), c("17:00", "18:00", 2)]);
-  assert.ok(r.every((x) => x.lane === 0 && x.laneCount === 1));
-});
-~~~
-
-ده تطبيق بسيط لـ interval partitioning: رتّب بالبداية، وحط كل حصة في أول حارة فاضية.
-
-- [[ends]] فيها وقت خلوص آخر حصة في كل حارة. الحارة فاضية لو [[end <= start]].
-- [[<=]] مش [[<]]: اللي بيخلص 18:30 واللي بيبدأ 18:30 مش متداخلين، زي [[overlaps]] في [[lib.js]].
-- [[findIndex]] بيرجّع [[-1]] لو مفيش، فبنفتح حارة جديدة.
-- [[laneCount]] بيتحسب بعد اليوم كله، عشان كل حصة تعرف عرضها: [[grid-column]] فرعي بنسبة [[1 / laneCount]].
-
-الترتيب بالبداية هو اللي بيضمن أقل عدد حارات.
-
-الغلطة الشائعة: تحسب [[laneCount]] وقت وضع الحصة، فالأولى تقول ١ والتانية ٢، فعرضهم يختلف.
-
-~~~text الناتج (Node 24)
-17:00–18:30 lane 0 من 2
-18:00–19:00 lane 1 من 2
-19:00–20:00 lane 0 من 2
-node --test: pass 3، fail 0
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**قارن وقيس:** اعمل نفس الـ modal بـ [[<div role="dialog" aria-modal="true">]] و JS بإيدك (فوكس أول حقل، و Tab متحبس جواه، و Esc، ورجوع الفوكس، والخلفية inert). عدّ السطور، وشغّل [[check-dashboard.mjs]] على الاتنين، وشوف axe.`,
-              done: R`عندك رقمين للسطور (الـ div أكتر بكتير)، والفحوصات بتعدّي على الاتنين أو مكتوب أنهي وقع وليه، وعرفت إن [[<dialog>]] اداك الـ top layer كمان (مفيش z-index بيتغلب عليه).`,
-              sol: R`~~~live 120 120 modal-div.html (بإيدك)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>modal بإيدك</title>
-<style>
-  .backdrop { position: fixed; inset: 0; background: rgb(0 0 0 / .5); z-index: 100; display: grid; place-items: center; }
-  .backdrop[hidden] { display: none; }
-  .box { background: #fff; padding: 1rem; border-radius: 12px; }
-</style></head>
-<body>
-  <main id="page"><h1>مودال</h1><button id="o">افتح</button></main>
-  <div class="backdrop" id="bd" hidden>
-    <div class="box" id="m" role="dialog" aria-modal="true" aria-labelledby="t" tabindex="-1">
-      <h2 id="t">عضو جديد</h2>
-      <label>الاسم <input id="n"></label>
-      <button id="s" type="button">حفظ</button>
-      <button id="x" type="button">إلغاء</button>
-    </div>
-  </div>
-  <script>
-    const bd = document.getElementById("bd"), box = document.getElementById("m"), page = document.getElementById("page");
-    let back = null;
-    const items = () => [...box.querySelectorAll("input, button")];
-    function open() {
-      back = document.activeElement;
-      bd.hidden = false;
-      page.inert = true;
-      items()[0].focus();
-    }
-    function close() {
-      bd.hidden = true;
-      page.inert = false;
-      back?.focus();
-    }
-    document.getElementById("o").onclick = open;
-    document.getElementById("x").onclick = close;
-    document.getElementById("s").onclick = close;
-    box.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") return close();
-      if (e.key !== "Tab") return;
-      const list = items(), first = list[0], last = list[list.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    });
-  $__lt/script>
-</body></html>
-~~~
-
-~~~live 120 120 modal-dialog.html (نفس الوظيفة)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>dialog</title></head>
-<body>
-  <main><h1>مودال</h1><button id="o">افتح</button></main>
-  <dialog id="d" aria-labelledby="t">
-    <h2 id="t">عضو جديد</h2>
-    <form method="dialog">
-      <label>الاسم <input id="n"></label>
-      <button value="save">حفظ</button>
-      <button value="cancel">إلغاء</button>
-    </form>
-  </dialog>
-  <script>document.getElementById("o").onclick = () => document.getElementById("d").showModal();$__lt/script>
-</body></html>
-~~~
-
-كل حاجة في نسخة الـ div بتتعمل بإيدك: حفظ مين فتحه، وأول حقل، وحبس Tab (من الطرفين)، و Esc، والخلفية [[inert]]، ورجوع الـ focus. وكل واحدة فيهم مكان لباج: عنصر جديد بيتضاف، أو [[Shift+Tab]] منسي.
-
-و [[<dialog>]] بـ [[showModal()]] بيدّيهم كلهم، وزيادة: **الـ top layer**. المودال بيترسم فوق كل حاجة، مهما كان [[z-index]] أو [[transform]] في الأجداد. نسخة الـ div بتعتمد على [[z-index: 100]]، وأي stacking context تاني يكسرها، زي ما شفنا في درس stacking context.
-
-[[check-dashboard.mjs]] مكتوب على [[#dlg-member]] كـ [[<dialog>]] (بيقرا [[.open]] و [[form method="dialog"]])، فمتشغلش على نسخة div؛ الفحوصات تحت هي نفس الأسئلة، على الاتنين.
-
-الغلطة الشائعة: تكتب [[role="dialog"]] وتعتبر الموضوع خلص. الـ role وعد، والسلوك كله عليك.
-
-~~~text الناتج (Chrome 156: نفس الاختبار على النسختين)
-                    div بإيدك       <dialog>
-سطور HTML + JS      36              11
-focus بعد الفتح     n            n
-Tab ١٠ مرات خرج؟     لأ             لأ
-Esc قفل              آه             آه
-الـ focus رجع لـ     o            o
-فوق أب بـ transform و z-index 200؟  لأ         آه
-axe                 0              0
-~~~` },
-          ],
-          ci: [
-            {
-              os: [
-                R`ubuntu`,
-                R`macos`,
-                R`windows`,
-              ],
-              sh: R`node`,
-              run: R`const DAY0 = 7 * 60, SLOT = 30, ROWS = 30;
-const toMin = hhmm => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
-function gridRow(start, end) { return { row: (toMin(start) - DAY0) / SLOT + 1, span: Math.ceil((toMin(end) - toMin(start)) / SLOT) }; }
-const overlaps = (a, b) => a.day === b.day && toMin(a.start) < toMin(b.end) && toMin(b.start) < toMin(a.end);
-const ampm = hhmm => { const m = toMin(hhmm), h = Math.floor(m / 60) % 12 || 12; return h + ":" + String(m % 60).padStart(2, "0") + (m < 720 ? " ص" : " م"); };
-for (const [s, e] of [["07:00", "08:00"], ["17:00", "18:30"], ["20:30", "22:00"], ["21:30", "23:00"]]) {
-  const g = gridRow(s, e), last = g.row + g.span - 1;
-  console.log(s + "-" + e + " row " + g.row + " span " + g.span + (last > ROWS ? " OUTSIDE (last row " + last + ")" : ""));
-}
-const a = { day: 1, start: "17:00", end: "18:30" };
-console.log("touching: " + overlaps(a, { day: 1, start: "18:30", end: "19:00" }) + " | overlapping: " + overlaps(a, { day: 1, start: "18:00", end: "19:00" }) + " | other day: " + overlaps(a, { day: 2, start: "17:00", end: "18:00" }));
-console.log("ampm: " + ["07:00", "12:30", "00:15", "20:30"].map(ampm).join(" | "));`,
-              expect: [
-                R`07:00-08:00 row 1 span 2`,
-                R`17:00-18:30 row 21 span 3`,
-                R`21:30-23:00 row 30 span 3 OUTSIDE (last row 32)`,
-                R`touching: false | overlapping: true | other day: false`,
-                R`ampm: 7:00 ص | 12:30 م | 12:15 ص | 8:30 م`,
-              ],
-            },
-          ],
-        },
-        {
-          cmd: R`المراجعة النهائية: مقاسات و a11y وأداء ونشر`,
-          ref: [
-            { t: "Playwright: Accessibility testing", url: "https://playwright.dev/docs/accessibility-testing" },
-            { t: "Playwright: page.addInitScript()", url: "https://playwright.dev/docs/api/class-page#page-add-init-script" },
-            { t: "Google Search: canonical URLs", url: "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls" },
-            { t: "GitHub Pages", url: "https://docs.github.com/en/pages" },
-          ],
-          title: R`قبل ما تسلّم: مصفوفة مقاسات من 360 لـ 1440، و axe في الثيمين واللغتين (وليه axe سكت عن كلمة «نشط»)، ومشي بالكيبورد، و CLS و LCP على موبايل بطيء، والنشر على GitHub Pages تحت /repo/، وكل الغلطات في جدول`,
-          learn: R`تعمل مراجعة تسليم كاملة بسكربتات بتتعاد في ثواني: overflow على ٦ مقاسات لكل صفحة، و axe على كل صفحة × ثيمين × لغتين ومع الـ dialog والـ drawer مفتوحين، وترتيب الـ Tab، و CLS و LCP بالوسط بتاع ٣، وتعرف حدود axe (بيعدّي كلمات عربي من غير ما يفحصها)، وتنشر صح تحت مسار فرعي، وتعرف المشروع بيكبر إزاي وبيتكلف كام.`,
-          out: R`٤ سكربتات بتطبع: صفر overflow في ٢٤ خانة، و صفر violations في ٢٠ فحص axe، و CLS = 0 في كل الصفحات، و LCP حوالي 220–320ms (موبايل و CPU ×4)، و [[0]] طلبات 404 تحت [[/nadine-site/]]، وجدول بالـ ٣٠ غلطة وتجربة.`,
-          use: {
-            prog: R`درس «مصفوفة مقاسات» و «axe و Lighthouse» و «كيبورد وقارئ شاشة» و «CLS» بيتطبقوا على المنتجين مع بعض. والفكرة الأهم: الفحص كود بيتعاد، مش «بصّيت عليها».`,
-            work: R`ده اللي بيفرق بين «خلصت» و «اتسلّم»: تقرير فيه أرقام على كل صفحة، وتعرف تقول للعميل «الموقع بيفتح في ثلث ثانية على موبايل متوسط، وبيشتغل بالكيبورد، ومفيش scroll جانبي على أي موبايل». والسكربتات نفسها تتحط في CI.`,
-            cs: R`الأدوات الأوتوماتيك بتلاقي جزء بس من مشاكل الـ accessibility، وليها heuristics ممكن تغلط (هنا: كشف الـ icon ligatures بيغلط في العربي). والقياس الإحصائي: أول تشغيل دايمًا أبطأ (cold start)، فالوسط من ٣ أصدق من رقم واحد.`,
-          },
-          desc: R`المنتجين خلصوا. الدرس ده المراجعة اللي بتتعمل قبل أي تسليم، بالسكربتات اللي اتبنت في الوحدة، وبالأرقام النهائية:
-
-| الفحص | portfolio (٣ صفحات) | dashboard |
+| المشكلة | التصليح | ليه |
 |---|---|---|
-| overflow من 360 لـ 1440 (٦ عروض) | صفر في الـ ١٨ خانة | صفر في الـ ٦، والجدول الأسبوعي بس اللي بيتسكرول |
-| axe (WCAG 2.2 AA) | صفر في ١٢ فحص (٣ صفحات × ثيمين × لغتين) | صفر في ٨ (ثيمين × عرضين، ومع الـ dialog أو الـ drawer مفتوح) |
-| CLS (390، CPU ×4) | 0 | 0 والبيانات متأخرة 1.2 ثانية |
-| LCP (الوسط بتاع ٣) | 304–320ms | 208–220ms |
-| HTML و CSS و JS | 30.5 كيلو | 41 كيلو |
-| الكيبورد | skip link ثم Tab بيدخل main، والفلتر بالأسهم | الـ Tab بيمشي بالترتيب، والـ drawer والـ dialog بيرجّعوا الفوكس |
+| المقاس في [[style]] بس | [[width="300" height="60"]] | اللوحة كانت 300 × 150 واتضغطت في 60: كل ارتفاع اتضرب في 0.4 |
+| جملة جوه [[<template>]] | [[<p>]] عادي | القالب مبيتعرضش أبدًا |
+| canvas من غير اسم | [[role="img"]] و [[aria-label]] | قارئ الشاشة كان بيقول «Canvas» بس |
 
-**والمفاجأة:** axe قال صفر violations، بس لون «نشط» كان 4.35:1. لما غيّرته لـ **1.76:1** (أخضر فاتح جدًا) axe قال **صفر برضه**. السبب في كود axe-core 4.14 نفسه: بيكشف «icon ligatures» (خطوط الأيقونات اللي بتحوّل كلمة لرسمة) بإنه بيقيس عرض الكلمة مكتوبة مرة واحدة مقابل حروفها لوحدها، والحروف العربي **بتتوصل** فالكلمة أقصر من حروفها، فـ «نشط» اتحسبت أيقونة واتشالت من الفحص. «نظرة عامة» اتفحصت، و «نشط» و «الاشتراك نشط» لأ. الدرس: فحص التباين للـ tokens بنفسك (درس الخريطة) مش اختياري في موقع عربي.
+**الغلطة الشائعة:** تصلّح التبطيط بإنك تغيّر أرقام [[fillRect]] لحد ما يبان مربع. الرسم هيفضل مهزوز، وأي شكل تاني هيتبطّط برده.
 
-**النشر:** GitHub Pages بيحط الـ project site على [[/<اسم الـ repo>/]] مش على [[/]]. اتجرّب بسيرفر بيقلّد ده: المسارات النسبية ([[css/site.css]]) **صفر 404**، والمسارات اللي بتبدأ بـ [[/]] **٥ طلبات 404** والصفحة اتعرضت بـ Times New Roman من غير CSS. وخطوات الرفع نفسها من وثائق GitHub (متعملتش هنا عشان ميتعملش repo حقيقي).`,
-          example: R`node check-portfolio.mjs
-node check-dashboard.mjs
-node audit-dashboard.mjs
-node vitals.mjs "http://127.0.0.1:5502/?delay=1200"
-node subpath.mjs
-gh repo create nadine-site --public --source . --push`,
-          lines: [
-            R`الـ portfolio كله: اللغة، والفلتر، والظهور، والانتقال، والطباعة، و axe على ٣ صفحات × ثيمين × لغتين، والـ matrix، و CLS و LCP. حوالي دقيقة، والسيرفر لازم يكون شغال.`,
-            R`الـ dashboard وظيفيًا: الرابط بعد كل فعل و Back، والحالات، والـ dialog والفوكس، والـ sidebar، والثيم. السطر الوحيد في [[page errors]] هو الـ 500 المتعمّد من [[?fail=1]].`,
-            R`مراجعة الـ dashboard: axe في ٨ حالات، والـ matrix، وترتيب الـ Tab، والـ sticky، والـ roles على الموبايل، و CLS و LCP.`,
-            R`٣ مرات على موبايل 390 و CPU ×4 والبيانات متأخرة 1.2 ثانية، وبيطبع كل shift بالنص اللي اتحرك. أول مرة دايمًا أبطأ (Chrome بارد)، فبص على التانية والتالتة.`,
-            R`بيقلّد GitHub Pages: الموقع تحت [[/nadine-site/]]، وبيعدّ الـ 404 للنسخة المنشورة وللنسخة اللي مساراتها بـ [[/]].`,
-            R`من الوثائق (متشغّلش هنا): بيعمل repo عام على GitHub من الفولدر الحالي ويرفعه. [[--source .]] = الفولدر ده، و [[--push]] = ارفع الـ commits. لازم [[git init]] و commit قبله، و [[gh auth login]] مرة واحدة.`,
+~~~text القياس من Chrome
+قبل:   اللوحة 300 × 150    الصندوق 300 × 60     المربع المرسوم 50 × 50 باين 50 × 20
+بعد:   اللوحة 300 × 60     الصندوق 300 × 60     باين 50 × 50
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** اكتب على ورقة: كام حلقة هتظهر في القايمة؟ وبعدين خلّي التلات حلقات يظهروا من غير أي JavaScript، وسيب القالب فيه صف واحد فاضي للحلقات الجاية. (من قسم ٣ في الشرح)`, done: R`كتبت توقّعك، والقايمة فيها تلات حلقات ظاهرين، والقالب لسه موجود، وكل الشروط ✓.`, work: { h: 170, start: R`<ul>
+  <li>الحلقة ١: الصوت</li>
+  <template id="row">
+    <li>الحلقة ٢: الكابشن</li>
+    <li>الحلقة ٣: التراخيص</li>
+  </template>
+</ul>`, checks: [
+              { say: R`القايمة فيها تلات [[<li>]] ظاهرين`, q: "ul > li", n: 3 },
+              { say: R`الحلقة ٢ ظاهرة`, q: "ul > li", has: "الحلقة ٢" },
+              { say: R`الحلقة ٣ ظاهرة`, q: "ul > li", has: "الحلقة ٣" },
+              { say: R`القالب [[<template id="row">]] لسه موجود`, q: "template#row" },
+            ] }, sol: R`~~~live 92 بعد التعديل
+<ul>
+  <li>الحلقة ١: الصوت</li>
+  <li>الحلقة ٢: الكابشن</li>
+  <li>الحلقة ٣: التراخيص</li>
+  <template id="row">
+    <li></li>
+  </template>
+</ul>
+~~~
+
+وده اللي كان باين قبل التعديل:
+
+~~~live 56 قبل
+<ul>
+  <li>الحلقة ١: الصوت</li>
+  <template id="row">
+    <li>الحلقة ٢: الكابشن</li>
+    <li>الحلقة ٣: التراخيص</li>
+  </template>
+</ul>
+~~~
+
+**التوقّع:** حلقة واحدة. الاتنين التانيين جوه [[<template>]]، فمش في الصفحة.
+
+**هتشوف إيه:** قبل: نقطة واحدة. بعد: تلات نقط، والصف الفاضي اللي في القالب مش ظاهر.
+
+**ليه كده:** المحتوى اللي الزائر لازم يشوفه يتكتب HTML عادي. القالب للي **هيتكرر** بسكربت: شكل الصف من غير بيانات. ([[<template>]] مسموح جوه [[<ul>]].)
+
+**الغلطة الشائعة:** تسيب بيانات حقيقية في القالب «والسكربت يطلّعها». لو السكربت محمّلش، الزائر ومحرك البحث مش شايفين غير حلقة واحدة.
+
+~~~text القياس من Chrome
+قبل:   document.querySelectorAll("li").length = 1      template.content.children.length = 2
+بعد:   document.querySelectorAll("li").length = 3      template.content.children.length = 1
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت حلقة معمول بقالب فيه فتحتين: [[title]] للعنوان، وفتحة افتراضية للوصف. الكارت فاضي دلوقتي فبيعرض الكلام الافتراضي. املاه **من برّه القالب**: العنوان «الحلقة ٤: الخرايط» في [[<span>]] رايح للفتحة [[title]]، والوصف «صورة فيها كذا لينك.» كنص عادي. ومتغيّرش حاجة جوه [[<template>]]. (من قسم ٤ في الشرح)`, done: R`الكارت بيعرض «الحلقة ٤: الخرايط» بالأخضر وتحته الوصف، بدل «حلقة من غير عنوان»، وكل الشروط ✓.`, work: { h: 150, start: R`<article>
+  <template shadowrootmode="open">
+    <style>h3 { color: teal; margin: 0; }</style>
+    <h3><slot name="title">حلقة من غير عنوان</slot></h3>
+    <p><slot>مفيش وصف لسه.</slot></p>
+  </template>
+</article>`, checks: [
+              { say: R`فيه [[<span slot="title">]] ابن مباشر للـ [[<article>]]`, q: "article > span[slot=\"title\"]" },
+              { say: R`العنوان فيه «الحلقة ٤»`, q: "article > span[slot=\"title\"]", has: "الحلقة ٤" },
+              { say: R`الوصف مكتوب جوه الـ [[<article>]]`, q: "article", has: "صورة فيها كذا لينك" },
+              { say: R`القالب لسه أول ابن وعليه [[shadowrootmode="open"]]`, q: "article > template[shadowrootmode=\"open\"]:first-child" },
+            ] }, sol: R`~~~live 86 الحل
+<article>
+  <template shadowrootmode="open">
+    <style>h3 { color: teal; margin: 0; }</style>
+    <h3><slot name="title">حلقة من غير عنوان</slot></h3>
+    <p><slot>مفيش وصف لسه.</slot></p>
+  </template>
+  <span slot="title">الحلقة ٤: الخرايط</span>
+  صورة فيها كذا لينك.
+</article>
+~~~
+
+وده اللي كان باين قبل:
+
+~~~live 52 قبل
+<article>
+  <template shadowrootmode="open">
+    <style>h3 { color: teal; margin: 0; }</style>
+    <h3><slot name="title">حلقة من غير عنوان</slot></h3>
+    <p><slot>مفيش وصف لسه.</slot></p>
+  </template>
+</article>
+~~~
+
+**هتشوف إيه:** قبل: «حلقة من غير عنوان» و «مفيش وصف لسه». بعد: «الحلقة ٤: الخرايط» بنفس اللون والحجم (جوه الـ [[<h3>]] بتاع القالب)، وتحتها الوصف.
+
+**ليه كده:**
+
+- [[slot="title"]] على الـ [[<span>]] بيودّيه للفتحة اللي [[name]] بتاعها [[title]].
+- النص اللي ملوش [[slot]] بيروح للفتحة اللي من غير اسم.
+- الكلام اللي جوه [[<slot>]] في القالب افتراضي: بيتعرض بس لو الفتحة فضلت فاضية.
+
+**الغلطة الشائعة:** تكتب العنوان جوه القالب مكان [[<slot>]]. هيظهر، بس كده القالب بقى لكارت واحد، وفكرته إن نفس القالب يخدم كل الكروت.
+
+~~~text القياس من Chrome
+قبل:   الفتحتين فاضيين ← المحتوى الافتراضي معروض
+بعد:   title ← <span>      الافتراضية ← النص       article.shadowRoot.mode = "open"
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب في الصفحة [[<noscript>الموقع محتاج JavaScript</noscript>]]، وبعدين ملف [[app.js]] اتمسح من السيرفر بالغلط، فالصفحة فتحت فاضية عند الكل **ومن غير** الرسالة. اشرحله في ٣ سطور ليه الرسالة مظهرتش، وإيه اللي كان المفروض يتعمل. (من قسم ٢ في الشرح، جزء «اللي مبيعملوش»)`, done: R`٣ سطور: شرط ظهور [[<noscript>]]، وليه مش متحقق، والحل.`, sol: R`إجابة نموذجية:
+
+1. [[<noscript>]] بيظهر في حالة واحدة: JavaScript **مقفول** في المتصفح (من الإعدادات، أو إضافة بتمنعه، أو [[sandbox]] من غير [[allow-scripts]]).
+2. عند زوارك JavaScript شغال. اللي حصل إن ملف واحد رجع 404. المتصفح لسه «بيدعم السكربتات»، فاعتبر محتوى [[<noscript>]] نص ومرسمهوش.
+3. الحل إن الصفحة متبقاش فاضية من غير السكربت: المحتوى الأساسي (العناوين، قايمة الحلقات، المشغّلات) HTML مكتوب، والسكربت يزوّد الإضافات. ساعتها لو الملف وقع، الزائر يشوف الصفحة ناقصة ميزة، مش فاضية.
+
+~~~text القياس من Chrome (JavaScript شغال)
+noscript:   مش مرسوم      children.length = 0      الصور اللي جواه متطلبتش
+iframe بـ sandbox فاضي (السكربتات مقفولة):   محتوى noscript اتعرض واتحمّلت صورته
+~~~` },
+          ]
+        },
+        {
+          cmd: "replaced elements والتراخيص",
+          title: "ليه الصورة والفيديو بيتصرفوا غير باقي العناصر، وتجيب الميديا منين من غير مشاكل",
+          pre: [
+            { to: "css/img", why: R`[[loading]] و [[fetchpriority]] و [[width]] و [[height]] اتشرحوا هناك. الدرس ده بيزوّد [[decoding]] وبيجمع التلاتة في جدول` },
+            { to: "css/figure و figcaption", why: R`سطر «مصدر الصورة ورخصتها» بيتكتب في [[<figcaption>]]` }
           ],
-          try: R`شغّل السكربتات الأربعة على نسختك واكتب الأرقام في جدول زي اللي في الـ desc. لو أي رقم مختلف، اعرف ليه قبل ما تكمّل. وبعدين جرّب تجربة axe بنفسك: صفحة فيها [[<p style="color:#7fc493;background:#dcf3e3">نشط</p>]] وصفحة فيها نفس اللون على «نظرة عامة»، وشغّل axe على الاتنين. وفي الآخر شغّل [[subpath.mjs]] وغيّر لينك واحد في [[index.html]] لـ [[/css/site.css]] وشوف الـ 404.`,
-          flag: R`term`,
-          deep: {
-            why: R`كل غلطة في الوحدة دي كانت «شكلها سليم» عندي على الكمبيوتر: الـ scroll الأفقي كان في كل المقاسات ما عدا 1440 (المقاس اللي كنت شغال عليه)، والـ CLS كان بالإنجليزي بس، وال 404 تحت المسار الفرعي بس، والتباين الضعيف كان في كلمة axe مبيفحصهاش. المراجعة بسكربت بتلاقي اللي العين مبتلاقيهوش، وبتتعاد بعد كل تعديل في ثواني.`,
-            how: R`كل سكربت بيفتح Chrome المتسطّب بـ playwright-core ([[channel: "chrome"]])، وكل [[browser.newContext()]] جلسة نضيفة (من غير localStorage ولا كاش) بخياراتها: [[viewport]] و [[colorScheme]] و [[reducedMotion]] و [[javaScriptEnabled]]. الـ overflow = [[document.documentElement.scrollWidth > innerWidth]]. axe بيتحقن في الصفحة وبيرجّع [[violations]] و [[passes]] و [[incomplete]] (اللي مقدرش يحكم عليه، زي نص على gradient: ٢١ عنصر هنا) و [[inapplicable]] (القاعدة مش بتنطبق، وده اللي حصل للـ badge). والكيبورد [[page.keyboard.press("Tab")]] و [[document.activeElement]]. والـ CLS و LCP بـ [[PerformanceObserver]] من [[addInitScript]] قبل أي سكربت في الصفحة، والـ CPU بـ [[Emulation.setCPUThrottlingRate]]. والمسار الفرعي: سيرفر صغير بيرد بس على اللي بيبدأ بـ [[/nadine-site/]]، فأي [[/css/...]] بيرجع 404 زي GitHub Pages بالظبط.`,
-            when: R`قبل كل تسليم، وبعد كل تعديل كبير، وفي CI على كل push (السكربتات بترجع exit code لو حوّلتها PASS/FAIL زي [[check.mjs]] في درس «مشروع تشخيص موقع بطيء ومكسور» في تاب المتصفح). وبعد ما الموقع يتنشر شغّل نفس الـ matrix و axe على الرابط الحقيقي، وزوّد Lighthouse مرة. وفحص التباين بالـ tokens في كل مشروع عربي حتى لو axe أخضر.`,
-            mistakes: R`تثق في axe صفر (اتقاس: «نشط» بـ 1.76:1 عدّت). تعمل [[browser.newPage()]] وتدّيها لـ [[AxeBuilder]] (اتقاس: [[Error: Please use browser.newContext()]]). تقيس LCP مرة واحدة (أول مرة 1132–1208ms، والتانية 208–320). تختبر على المقاس اللي بتشتغل عليه بس. تكتب [[href="/css/site.css"]] لأنها شغالة على [[localhost]] (اتقاس: ٥ طلبات 404 تحت [[/repo/]]). تنسى تغيّر [[canonical]] و [[og:url]] و [[og:image]] للدومين الحقيقي بعد النشر. تنشر الـ dashboard للعامة وتفتكر إن [[noindex]] حماية.`,
-          },
-          teach: R`## المراجعة: السكربتات كاملة
+          ref: [
+            { t: "MDN Glossary: Replaced elements", url: "https://developer.mozilla.org/en-US/docs/Glossary/Replaced_elements" },
+            { t: "MDN: <img> (decoding, fetchpriority, loading)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img" },
+            { t: "MDN Curriculum: Semantic HTML (2.6 Media)", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
+            { t: "Creative Commons: About CC Licenses", url: "https://creativecommons.org/cc-licenses/" },
+            { t: "Creative Commons: Recommended practices for attribution", url: "https://wiki.creativecommons.org/Recommended_practices_for_attribution" },
+            { t: "WHATWG: the img element (decoding)", url: "https://html.spec.whatwg.org/multipage/embedded-content.html#attr-img-decoding" }
+          ],
+          desc: R`«replaced element» اسم المجموعة اللي فيها [[<img>]] و [[<video>]] و [[<iframe>]] وإخواتهم: عناصر محتواها مش من كلام الصفحة، المتصفح «بيبدّل» مكانها حاجة جاية من برّه (صورة، فيديو، صفحة). وده بيفسّر تصرفات غريبة عليها: inline وبتاخد عرض وارتفاع، وليها مقاس من نفسها، وتحتها فراغ صغير.
+والنص التاني من الدرس عن الميديا نفسها: [[decoding]] آخر تلميحات الصورة، وبعدها السؤال اللي قبل أي كود: الصورة أو الصوت ده بتاع مين، ومسموحلي أستخدمه إزاي؟`,
+          example: R`<figure>
+  <img src="media/studio.jpg" alt="استوديو المحطة: مايكين على ترابيزة خشب" width="800" height="450" loading="lazy" decoding="async">
+  <figcaption>«استوديو صغير» تصوير سلمى فؤاد، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتقصّت من الأصل.</figcaption>
+</figure>`,
+          flag: "script",
+          lines: [
+            R`[[<figure>]] بيجمع الصورة وسطر الكلام اللي تحتها في وحدة واحدة.`,
+            R`الصورة: [[alt]] بيوصفها، و [[width]] و [[height]] بيحجزوا مكانها، و [[loading="lazy"]] بيأجّل تحميلها لحد ما تقرّب، و [[decoding="async"]] بيقول للمتصفح «فكّ الصورة على مهلك، ومتعطّلش رسم باقي الصفحة عشانها».`,
+            R`سطر النسبة (attribution): اسم العمل، وصاحبه، ورخصته بلينك لنص الرخصة، وإنك عدّلت فيه. [[rel="license"]] بيقول إن اللينك ده هو رخصة المحتوى.`,
+            R`قفلة [[</figure>]]: الصورة ونسبتها مع بعض، فلو الصورة اتنقلت في الصفحة النسبة تتنقل معاها.`
+          ],
+          teach: R`## الفكرة في سطرين
 
-~~~javascript check-portfolio.mjs
-// node check-portfolio.mjs : language switch, :has() filter, reveal, View Transition, print, axe, overflow matrix, CLS/LCP
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-const B = "http://127.0.0.1:5501/";
-const browser = await chromium.launch({ channel: "chrome" });
-const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
-const page = await ctx.newPage();
-const errors = [];
-page.on("pageerror", e => errors.push(e.message));
-page.on("console", m => m.type() === "error" && errors.push(m.text()));
+معظم العناصر محتواها هو الكلام والعناصر اللي جواها في ملف الـ HTML. شوية عناصر محتواها بييجي من ملف تاني، والـ CSS بيتعامل مع «الصندوق» بتاعها بس من غير ما يعرف اللي جواه. دول الـ replaced elements.
 
-// 1. language switch
-await page.goto(B);
-const before = await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir, document.querySelector("h1").textContent, getComputedStyle(document.querySelector(".brand")).marginInlineEnd]);
-await page.click("#lang");
-const after = await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir, document.querySelector("h1").textContent, document.title, document.querySelector(".brand").getBoundingClientRect().left]);
-console.log("lang before:", before.slice(0, 3).join(" | "));
-console.log("lang after: ", after.slice(0, 4).join(" | "), "| brand x =", Math.round(after[4]));
-await page.reload();
-console.log("after reload:", await page.evaluate(() => document.documentElement.lang + " " + document.querySelector("h1").textContent));
-await page.click("#lang");   // back to Arabic for the rest
-
-// 2. filter with :has()
-for (const f of ["all", "web", "a11y", "api", "design"]) {
-  await page.check($__btinput[value="$__{f}"]$__bt);
-  const n = await page.$$eval(".card", cs => cs.filter(c => getComputedStyle(c).display !== "none").length);
-  console.log("filter", f.padEnd(6), "visible cards:", n);
-}
-await page.check('input[value="all"]');
-
-// 3. reveal: cards below the fold are hidden until scrolled to
-await page.goto(B);
-const op = await page.$$eval(".card", cs => cs.map(c => getComputedStyle(c).opacity));
-console.log("card opacity at load:", op.join(" "));
-await page.locator(".card").last().scrollIntoViewIfNeeded();
-await page.waitForTimeout(900);
-console.log("after scroll:", (await page.$$eval(".card", cs => cs.map(c => getComputedStyle(c).opacity))).join(" "));
-const still = await browser.newContext({ reducedMotion: "reduce" });
-const sp = await still.newPage(); await sp.goto(B);
-console.log("reduced motion at load:", (await sp.$$eval(".card", cs => cs.map(c => getComputedStyle(c).opacity + "/" + getComputedStyle(c).transitionDuration))).join(" "));
-const nojs = await browser.newContext({ javaScriptEnabled: false });
-const np = await nojs.newPage(); await np.goto(B);
-console.log("no JS:", (await np.$$eval(".card", cs => cs.map(c => getComputedStyle(c).opacity))).join(" "));
-
-// 4. View Transition between the pages
-await page.addInitScript(() => addEventListener("pagereveal", e => { window.__vt = e.viewTransition ? "yes" : "no"; }));
-await page.goto(B);
-await page.click('a[href="work/tide-notes.html"]');
-await page.waitForLoadState("load");
-console.log("view transition on the case page:", await page.evaluate(() => window.__vt));
-await sp.addInitScript(() => addEventListener("pagereveal", e => { window.__vt = e.viewTransition ? "yes" : "no"; }));
-await sp.goto(B); await sp.click('a[href="work/tide-notes.html"]'); await sp.waitForLoadState("load");
-const anim = await sp.evaluate(() => window.__vt);
-console.log("with reduced motion: transition object =", anim, "(the CSS sets animation: none)");
-
-// 5. print: what hides, and how many A4 pages
-for (const p of ["", "cv.html"]) {
-  await page.goto(B + p);
-  await page.emulateMedia({ media: "print" });
-  const hidden = await page.$$eval(".top, .lang, #print", els => els.map(e => getComputedStyle(e).display));
-  const pdf = await page.pdf({ format: "A4", preferCSSPageSize: true });
-  const pages = (pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g) || []).length;
-  console.log("print", (p || "index.html").padEnd(10), "pages:", pages, "header display:", hidden.join(","));
-  await page.emulateMedia({ media: "screen" });
-}
-
-// 6. axe on every page, both languages, both themes
-for (const p of ["", "work/tide-notes.html", "cv.html"]) {
-  for (const scheme of ["light", "dark"]) {
-    for (const lang of ["ar", "en"]) {
-      const c = await browser.newContext({ colorScheme: scheme });
-      const pg = await c.newPage();
-      if (lang === "en") await pg.addInitScript(() => localStorage.setItem("lang", "en"));
-      await pg.goto(B + p);
-      await pg.evaluate(() => document.querySelectorAll("[data-reveal]").forEach(e => e.classList.add("in")));
-      await pg.waitForTimeout(700);
-      const r = await new AxeBuilder({ page: pg }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
-      console.log("axe", (p || "index.html").padEnd(20), scheme.padEnd(5), lang, "violations:", r.violations.length, r.violations.map(v => v.id + "(" + v.nodes.length + ")").join(" "));
-      await c.close();
-    }
-  }
-}
-
-// 7. overflow matrix
-for (const p of ["", "work/tide-notes.html", "cv.html"]) {
-  const row = [];
-  for (const w of [360, 390, 768, 1024, 1280, 1440]) {
-    await page.setViewportSize({ width: w, height: 800 });
-    await page.goto(B + p);
-    const [sw, iw] = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
-    row.push(w + (sw > iw ? " OVERFLOW " + sw : " ok"));
-  }
-  console.log("matrix", (p || "index.html").padEnd(20), row.join(" | "));
-}
-
-// 8. CLS and LCP on a mid phone, 4x slower CPU
-const m = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
-const mp = await m.newPage();
-const cdp = await m.newCDPSession(mp);
-await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
-await mp.addInitScript(() => {
-  window.__cls = 0; window.__lcp = 0; window.__lcpEl = "";
-  new PerformanceObserver(l => l.getEntries().forEach(e => { if (!e.hadRecentInput) window.__cls += e.value; })).observe({ type: "layout-shift", buffered: true });
-  new PerformanceObserver(l => { const e = l.getEntries().at(-1); window.__lcp = e.startTime; window.__lcpEl = e.element?.tagName + "." + (e.element?.className || ""); }).observe({ type: "largest-contentful-paint", buffered: true });
-});
-for (const p of ["", "work/tide-notes.html", "cv.html"]) {
-  await mp.goto(B + p); await mp.waitForTimeout(1500);
-  const r = await mp.evaluate(() => [window.__cls.toFixed(4), Math.round(window.__lcp), window.__lcpEl]);
-  console.log("vitals", (p || "index.html").padEnd(20), "CLS", r[0], "LCP", r[1] + "ms", r[2]);
-}
-console.log("page errors:", errors.length ? errors : "none");
-await browser.close();
-~~~
-
-- [[page.on("pageerror")]] و [[console]] من نوع [[error]]: أي خطأ JS أو طلب فاشل بيتجمع ويتطبع في الآخر. ده اللي مسك الـ 404 بتاع [[favicon.ico]] في أول تشغيل.
-- [[withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])]]: قواعد WCAG بس لحد 2.2 AA (من غير [[best-practice]]).
-- قبل axe: [[classList.add("in")]] على كل الكروت و 700ms: axe بيحسب التباين من اللون المرسوم، والكارت الشفاف كان هيطلّع تباين غلط.
-- [[addInitScript(() => localStorage.setItem("lang", "en"))]]: الجلسة تبدأ إنجليزي من غير ما تدوس الزرار.
-
-~~~javascript check-dashboard.mjs
-// node check-dashboard.mjs : URL state, sort, states, dialog, toasts, sidebar, theme, axe, matrix, vitals
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-const B = "http://127.0.0.1:5502/";
-const browser = await chromium.launch({ channel: "chrome" });
-const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
-const page = await ctx.newPage();
-const errors = [];
-page.on("pageerror", e => errors.push(e.message));
-page.on("console", m => m.type() === "error" && errors.push(m.text()));
-const rows = () => page.$$eval("#rows tr", t => t.map(r => r.cells[0].textContent));
-const say = (...a) => console.log(...a);
-
-// 1. data + KPIs
-await page.goto(B);
-await page.waitForSelector("#rows tr:not(.skel)");
-say("count:", await page.textContent("#count"));
-say("kpi:", await page.$$eval(".k-num", e => e.map(x => x.textContent).join(" | ")), "| delta:", await page.textContent("#k-delta"));
-say("spark points:", (await page.getAttribute("#spark", "points")).split(" ").length, "| ring offset:", await page.$eval("#ring", e => getComputedStyle(e).strokeDashoffset));
-
-// 2. URL state: filter, sort, page, back
-await page.selectOption("select[name=status]", "frozen");
-say("after status=frozen:", page.url().replace(B, "/"), "|", await page.textContent("#count"));
-await page.click('th[data-sort="visits"] button');
-await page.click('th[data-sort="visits"] button');
-say("after sort visits twice:", page.url().replace(B, "/"), "| aria-sort:", await page.getAttribute('th[data-sort="visits"]', "aria-sort"));
-await page.goBack();
-say("after Back:", page.url().replace(B, "/"), "| aria-sort:", await page.getAttribute('th[data-sort="visits"]', "aria-sort"));
-await page.goto(B + "?page=4&sort=lastVisit&dir=desc");
-await page.waitForSelector("#rows tr:not(.skel)");
-say("open ?page=4&sort=lastVisit&dir=desc:", await page.textContent("#count"), "| first row:", (await rows())[0]);
-await page.goto(B + "?page=99");
-await page.waitForSelector("#rows tr:not(.skel)");
-say("open ?page=99 ->", page.url().replace(B, "/"), "|", await page.textContent("#count"));
-await page.goto(B);
-await page.waitForSelector("#rows tr:not(.skel)");
-const len0 = await page.evaluate(() => history.length);
-await page.fill("input[name=q]", "ادم");
-await page.waitForTimeout(400);
-say("search ادم:", decodeURIComponent(page.url().replace(B, "/")), "| rows:", (await rows()).join(", "), "| history grew by", (await page.evaluate(() => history.length)) - len0);
-await page.fill("input[name=q]", "zzz");
-await page.waitForTimeout(400);
-say("empty state:", await page.textContent("#rows"));
-await page.click("#rows button");
-await page.waitForTimeout(50);
-say("after clear:", page.url().replace(B, "/"), "|", await page.textContent("#count"));
-
-// 3. loading and error states
-await page.goto(B + "?delay=1200");
-await page.waitForTimeout(300);
-say("while loading:", await page.$$eval("#rows tr.skel", t => t.length), "skeleton rows, aria-busy =", await page.getAttribute("#table", "aria-busy"), "| count:", await page.textContent("#count"));
-await page.goto(B + "?fail=1");
-await page.waitForSelector(".state-row.error");
-say("error:", await page.textContent(".state-row.error"), "| focus on:", await page.evaluate(() => document.activeElement.textContent));
-await page.click(".state-row.error button");
-await page.waitForSelector("#rows tr:not(.skel):not(.state-row)");
-say("after retry:", await page.textContent("#count"));
-
-// 4. dialog + toast
-await page.goto(B);
-await page.waitForSelector("#rows tr:not(.skel)");
-await page.click("#add");
-say("dialog open:", await page.$eval("#dlg-member", d => d.open), "| focus:", await page.evaluate(() => document.activeElement.name));
-await page.click('#member-form button[value="save"]');
-await page.fill("#member-form input[name=name]", "سا");
-await page.click('#member-form button[value="save"]');
-say("2 letters -> message:", await page.$eval("#member-form input[name=name]", i => i.validationMessage));
-await page.fill("#member-form input[name=name]", "");
-await page.click('#member-form button[value="save"]');
-say("save with empty name -> still open:", await page.$eval("#dlg-member", d => d.open), "| message:", await page.$eval("#member-form input[name=name]", i => i.validationMessage));
-await page.fill("#member-form input[name=name]", "سارة الجندي");
-await page.click('#member-form button[value="save"]');
-await page.waitForTimeout(100);
-say("saved -> open:", await page.$eval("#dlg-member", d => d.open), "| focus back on:", await page.evaluate(() => document.activeElement.id), "| toast:", await page.textContent("#toasts"), "| count:", await page.textContent("#count"));
-await page.click("#add");
-await page.keyboard.press("Escape");
-say("Esc -> open:", await page.$eval("#dlg-member", d => d.open), "| focus:", await page.evaluate(() => document.activeElement.id));
-await page.click("#add");
-const box = await page.$eval("#dlg-member", d => { const r = d.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; });
-await page.mouse.click(box.x + box.w / 2, box.y + 8);            // inside the dialog, on its padding
-say("click on the dialog's own padding -> open:", await page.$eval("#dlg-member", d => d.open));
-if (await page.$eval("#dlg-member", d => d.open)) { await page.mouse.click(5, 5); }
-say("click on the backdrop -> open:", await page.$eval("#dlg-member", d => d.open));
-
-// 5. schedule
-const slots = await page.$$eval(".slot", s => s.map(b => [b.style.getPropertyValue("--row"), getComputedStyle(b).gridRowStart, getComputedStyle(b).gridRowEnd, getComputedStyle(b).gridColumnStart]));
-say("slots:", slots.length, "| first slot --row / grid-row-start / end / column:", slots[0].join(" / "));
-await page.click(".slot:not(.full)");
-await page.click("#dc-book");
-await page.waitForTimeout(100);
-say("booked toast:", await page.$$eval(".toast", t => t.map(x => x.textContent).join(" || ")));
-
-// 6. sidebar collapse and the drawer
-await page.click("#collapse");
-await page.waitForTimeout(400);
-say("collapsed: side width", await page.$eval("#side", e => Math.round(e.getBoundingClientRect().width)), "| link names:", await page.$$eval("#side nav a", a => a.map(x => x.textContent.trim()).join(", ")), "| aria-expanded:", await page.getAttribute("#collapse", "aria-expanded"));
-await page.click("#collapse");
-await page.setViewportSize({ width: 390, height: 844 });
-await page.waitForTimeout(400);
-say("narrow: side visibility", await page.$eval("#side", e => getComputedStyle(e).visibility), "| menu shown:", await page.$eval("#menu", e => getComputedStyle(e).display));
-await page.click("#menu");
-await page.waitForTimeout(300);
-say("drawer open: focus", await page.evaluate(() => document.activeElement.textContent.trim()), "| main inert:", await page.$eval("#main", e => e.inert), "| side x:", await page.$eval("#side", e => Math.round(e.getBoundingClientRect().right)));
-await page.keyboard.press("Escape");
-await page.waitForTimeout(300);
-say("Esc: focus on", await page.evaluate(() => document.activeElement.id), "| main inert:", await page.$eval("#main", e => e.inert), "| side visibility:", await page.$eval("#side", e => getComputedStyle(e).visibility));
-
-// 7. theme
-await page.click("#theme");
-say("theme:", await page.evaluate(() => document.documentElement.dataset.theme), "| bg:", await page.$eval("body", e => getComputedStyle(e).backgroundColor), "| pressed:", await page.getAttribute("#theme", "aria-pressed"));
-await page.reload();
-say("after reload:", await page.evaluate(() => document.documentElement.dataset.theme), "| pressed:", await page.getAttribute("#theme", "aria-pressed"));
-say("page errors:", errors.length ? errors : "none");
-await browser.close();
-~~~
-
-~~~javascript audit-dashboard.mjs
-// node audit-dashboard.mjs : axe, overflow matrix, keyboard walk, sticky header, mobile table roles, CLS/LCP
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-const B = "http://127.0.0.1:5502/";
-const browser = await chromium.launch({ channel: "chrome" });
-const ready = p => p.waitForSelector("#rows tr:not(.skel)");
-
-// 1. axe: 2 themes x 2 widths, plus with the dialog open and the drawer open
-for (const scheme of ["light", "dark"]) for (const w of [1280, 390]) {
-  const c = await browser.newContext({ colorScheme: scheme, viewport: { width: w, height: 900 } });
-  const p = await c.newPage(); await p.goto(B); await ready(p); await p.waitForTimeout(900);
-  const r = await new AxeBuilder({ page: p }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
-  console.log("axe", scheme.padEnd(5), String(w).padEnd(4), "violations:", r.violations.length, r.violations.map(v => v.id + "(" + v.nodes.length + ") " + v.nodes[0].target.join(" ")).join(" ; "));
-  if (w === 1280) { await p.click("#add"); await p.waitForTimeout(300); } else { await p.click("#menu"); await p.waitForTimeout(400); }
-  const r2 = await new AxeBuilder({ page: p }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
-  console.log("   with", w === 1280 ? "dialog" : "drawer", "open:", r2.violations.length, r2.violations.map(v => v.id + "(" + v.nodes.length + ")").join(" "));
-  await c.close();
-}
-
-// 2. overflow matrix (page) and which parts scroll on purpose
-const page = await browser.newPage();
-const row = [];
-for (const w of [360, 390, 768, 1024, 1280, 1440]) {
-  await page.setViewportSize({ width: w, height: 900 }); await page.goto(B); await ready(page); await page.waitForTimeout(300);
-  const r = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth, document.querySelector(".week-wrap").scrollWidth > document.querySelector(".week-wrap").clientWidth]);
-  row.push(w + (r[0] > r[1] ? " OVERFLOW " + r[0] : " ok") + (r[2] ? "(week scrolls)" : ""));
-}
-console.log("matrix:", row.join(" | "));
-
-// 3. keyboard walk from the top on desktop
-await page.setViewportSize({ width: 1280, height: 900 }); await page.goto(B); await ready(page);
-const stops = [];
-for (let i = 0; i < 16; i++) {
-  await page.keyboard.press("Tab");
-  stops.push(await page.evaluate(() => { const a = document.activeElement; return (a.getAttribute("aria-label") || a.textContent.trim() || a.name || a.tagName).slice(0, 18); }));
-}
-console.log("tab order:", stops.join(" → "));
-
-// 4. sticky header: scroll the page and see where the header row is
-await page.evaluate(() => scrollTo(0, document.getElementById("members").offsetTop + 300));
-await page.waitForTimeout(200);
-console.log("sticky th top after scroll:", await page.$eval(".members thead th", th => Math.round(th.getBoundingClientRect().top)), "| topbar height:", await page.$eval(".topbar", e => Math.round(e.getBoundingClientRect().height)));
-
-// 5. what a screen reader gets from the table at 390 (rows turned into cards with display:block)
-await page.setViewportSize({ width: 390, height: 900 }); await page.goto(B); await ready(page);
-const snap = await page.locator("#table").ariaSnapshot();
-console.log("aria at 390:", snap.split("\n").slice(0, 6).join(" / "));
-
-// 6. CLS and LCP: data 1.2 s late, phone width, 4x CPU
-for (const q of ["", "?delay=1200"]) {
-  const c = await browser.newContext({ viewport: { width: 390, height: 844 } });
-  const p = await c.newPage();
-  await (await c.newCDPSession(p)).send("Emulation.setCPUThrottlingRate", { rate: 4 });
-  await p.addInitScript(() => {
-    window.__cls = 0; window.__src = [];
-    new PerformanceObserver(l => l.getEntries().forEach(e => { if (!e.hadRecentInput) { window.__cls += e.value; window.__src.push(...e.sources.map(s => s.node?.id || s.node?.className || s.node?.nodeName)); } })).observe({ type: "layout-shift", buffered: true });
-    new PerformanceObserver(l => { const e = l.getEntries().at(-1); window.__lcp = Math.round(e.startTime); window.__el = e.element?.id || e.element?.className || e.element?.tagName; }).observe({ type: "largest-contentful-paint", buffered: true });
-  });
-  await p.goto(B + q); await p.waitForTimeout(3000);
-  console.log("vitals", (q || "fast data").padEnd(12), await p.evaluate(() => "CLS " + window.__cls.toFixed(4) + " LCP " + window.__lcp + "ms " + window.__el + (window.__src.length ? " | moved: " + [...new Set(window.__src)].join(",") : "")));
-  await c.close();
-}
-await browser.close();
-~~~
-
-~~~javascript vitals.mjs
-// node vitals.mjs <url> : CLS and LCP, phone width, 4x slower CPU, 3 runs, every shift printed with its text
-import { chromium } from "playwright-core";
-const url = process.argv[2];
-const browser = await chromium.launch({ channel: "chrome" });
-for (let i = 1; i <= 3; i++) {
-  const c = await browser.newContext({ viewport: { width: 390, height: 844 } });
-  const p = await c.newPage();
-  await (await c.newCDPSession(p)).send("Emulation.setCPUThrottlingRate", { rate: 4 });
-  await p.addInitScript(() => {
-    window.__cls = 0; window.__s = [];
-    new PerformanceObserver(l => l.getEntries().forEach(e => { if (e.hadRecentInput) return; window.__cls += e.value;
-      e.sources.forEach(s => window.__s.push(e.value.toFixed(4) + " " + (s.node?.nodeName === "#text" ? '"' + s.node.textContent.trim().slice(0, 30) + '" in ' + s.node.parentElement?.className : s.node?.id || s.node?.className || s.node?.nodeName))); })).observe({ type: "layout-shift", buffered: true });
-    new PerformanceObserver(l => { const e = l.getEntries().at(-1); window.__lcp = Math.round(e.startTime); window.__el = e.element?.id || e.element?.tagName; }).observe({ type: "largest-contentful-paint", buffered: true });
-  });
-  await p.goto(url); await p.waitForTimeout(3000);
-  console.log("run", i, await p.evaluate(() => "CLS " + window.__cls.toFixed(4) + " LCP " + window.__lcp + "ms " + window.__el + (window.__s.length ? " | " + window.__s.join(" ; ") : "")));
-  await c.close();
-}
-await browser.close();
-~~~
-
-~~~javascript kb-port.mjs
-import { chromium } from "playwright-core";
-const b = await chromium.launch({ channel: "chrome" });
-const p = await (await b.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
-await p.goto("http://127.0.0.1:5501/");
-const name = () => p.evaluate(() => { const a = document.activeElement; return (a.type === "radio" ? "radio:" + a.value : a.textContent.trim()).slice(0, 16); });
-const stops = [];
-for (let i = 0; i < 11; i++) { await p.keyboard.press("Tab"); stops.push(await name()); }
-console.log("tab:", stops.join(" → "));
-await p.focus('input[value="all"]'); await p.keyboard.press("ArrowLeft");
-console.log("ArrowLeft on «الكل» →", await name(), "| visible cards:", await p.$$eval(".card", cs => cs.filter(c => getComputedStyle(c).display !== "none").length));
-await p.keyboard.press("Tab");
-console.log("Tab from the group →", await name());
-await p.goto("http://127.0.0.1:5501/"); await p.keyboard.press("Tab"); await p.keyboard.press("Enter");
-console.log("skip link + Enter → focus in:", await p.evaluate(() => document.activeElement.id || document.activeElement.tagName), "| url:", p.url().split("/").pop());
-await p.keyboard.press("Tab"); console.log("next Tab →", await name());
-await b.close();
-~~~
+القياسات من Chrome 157 على Windows 11. وجزء التراخيص من موقع Creative Commons ومن منهج MDN، ومفيش فيه حاجة تتقاس.
 
 ---
 
-## النتايج
+## ١. يعني إيه replaced element
 
-### المقاسات
+MDN: عناصر HTML محتواها «بيتبدّل» بمورد خارجي أو بمحتوى متعرّف برّه بنية المستند، وشكلها مستقل عن نموذج التنسيق بتاع CSS.
 
-~~~text
-matrix index.html           360 ok | 390 ok | 768 ok | 1024 ok | 1280 ok | 1440 ok
-matrix work/tide-notes.html 360 ok | 390 ok | 768 ok | 1024 ok | 1280 ok | 1440 ok
-matrix cv.html              360 ok | 390 ok | 768 ok | 1024 ok | 1280 ok | 1440 ok
-dashboard: 360 ok(week scrolls) | 390 ok(week scrolls) | 768 ok(week scrolls) | 1024 ok(week scrolls) | 1280 ok(week scrolls) | 1440 ok
+| العنصر | replaced؟ (من MDN) | مقاسه من غير أي CSS (متقاس) |
+|---|---|---|
+| [[<img>]] | دايمًا | مقاس ملف الصورة نفسه (صورة 120 × 60 خدت 120 × 60) |
+| [[<video>]] | دايمًا | 300 × 150 لحد ما معلومات الفيديو توصل |
+| [[<iframe>]] | دايمًا | 300 × 150 (و 2px برواز) |
+| [[<embed>]] | دايمًا | 0 × 0 من غير ملف |
+| [[<audio>]] | في حالات | 300 × 54 بـ [[controls]]، ومن غيره مبيترسمش |
+| [[<canvas>]] | في حالات | 300 × 150 |
+| [[<object>]] | في حالات | 300 × 150 |
+| [[<input type="image">]] | الوحيد من عناصر الفورم | مقاس صورته |
+
+وباقي عناصر الفورم ([[<input>]] و [[<button>]] و [[<textarea>]])؟ MDN: دي «widgets» مش replaced، ما عدا [[<input type="image">]].
+
+### ده بيفرق في إيه
+
+**١. inline، وبياخد عرض وارتفاع.**
+
+~~~live 76 صورة وكلمة، الاتنين inline، وعلى الاتنين نفس الـ CSS: width 200px و height 50px
+<img alt="" style="width:200px; height:50px" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+<span style="width:200px; height:50px; background:#fde68a">كلمة</span>
 ~~~
 
-### axe
+**هتشوف إيه:** الصورة بقت 200 × 50 (واتمطّت). والكلمة فضلت بحجمها، وخلفيتها الصفرا على قدها بس.
 
-~~~text
-axe index.html           light ar violations: 0      (و light en و dark ar و dark en: 0)
-axe work/tide-notes.html light ar violations: 0      (والتلاتة التانيين: 0)
-axe cv.html              light ar violations: 0      (والتلاتة التانيين: 0)
-axe light 1280 violations: 0 / with dialog open: 0
-axe light 390  violations: 0 / with drawer open: 0
-axe dark  1280 violations: 0 / with dialog open: 0
-axe dark  390  violations: 0 / with drawer open: 0
+~~~text القياس من Chrome
+<img style="width:200px; height:50px">     display: inline     الحجم 200 × 50
+<span style="width:200px; height:50px">    display: inline     الحجم 21.9 × 17      ← اتجاهلهم
 ~~~
 
-### الكيبورد
+العنصر الـ inline العادي بيتجاهل [[width]] و [[height]] (درس «display»). الـ replaced element inline برده، بس بيحترمهم، لأن ليه صندوق بمقاس.
 
-~~~text portfolio
-tab: اتخطّى للمحتوى → نادين فؤاد → الشغل → عني → تواصل → السيرة الذاتية → English → شوف الشغل → كلّمني → radio:all → Tide Notes: ملاح
-skip link + Enter → focus in: BODY | url: #main
-next Tab → شوف الشغل
+**٢. ليه مقاس من نفسه.** الصورة عارفة عرضها وارتفاعها ونسبتهم من الملف. واللي ملوش مقاس (iframe، أو فيديو لسه متحمّلش) بياخد 300 × 150. عشان كده [[width]] و [[height]] في الـ HTML مهمين: بيدّوا المتصفح المقاس قبل ما الملف يوصل (درس «CLS»).
+
+**٣. اللي جواه بيتظبط بـ [[object-fit]].** لما الصندوق نسبته غير نسبة المحتوى، [[object-fit]] و [[object-position]] بيقرروا المحتوى يتقص ولا يتمط (درس «object-fit»). الخاصيتين دول للـ replaced elements بس.
+
+**٤. تحته فراغ صغير.**
+
+~~~live 198 نفس الصورة مرتين جوه صندوق أصفر: الأولى inline، والتانية display: block
+<div style="background:#fde68a; width:320px; margin-bottom:12px"><img alt="" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E"></div>
+<div style="background:#fde68a; width:320px"><img alt="" width="320" height="80" style="display:block" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E"></div>
 ~~~
 
-~~~text dashboard
-tab order: اتخطّى للمحتوى → القايمة الجانبية → نظرة عامة → الأعضاء → جدول الحصص → الوضع الداكن → عضو جديد → q → الكلنشطمتجمّدمنتهي → الكلشهري3 شهورسنوي → امسح الفلاتر → الاسم → الباقة → الحالة → آخر زيارة → زيارات الشهر
+**هتشوف إيه:** تحت الصورة الأولى شريط أصفر رفيع. تحت التانية مفيش.
+
+~~~text القياس من Chrome (صورة ارتفاعها 60)
+الصورة inline:            ارتفاع الصندوق اللي حواليها = 64     ← 4px زيادة
+الصورة display: block:    ارتفاع الصندوق = 60
 ~~~
 
-- الـ skip link في الـ portfolio: [[activeElement]] فضل [[BODY]] لأن [[<main>]] هناك ملوش [[tabindex="-1"]]، بس Chrome نقل «نقطة بداية الـ Tab» للـ main، فالـ Tab اللي بعدها راح لـ «شوف الشغل». في الـ dashboard [[main]] عليه [[tabindex="-1"]] فبياخد الفوكس نفسه (أوضح لقارئ الشاشة).
-- [[q]] و [[الكلنشط...]]: السكربت بيطبع [[name]] أو [[textContent]] للعنصر؛ قارئ الشاشة بيقرا الـ label («دوّر بالاسم أو الرقم»، و «الحالة، الكل»).
+الصورة الـ inline قاعدة على سطر الكتابة (baseline) زي الحرف، والسطر سايب تحتها مكان لديل الحروف اللي بتنزل (زي «ج» و «ع»). [[display: block]] بيطلّعها من السطر. ده سبب الفراغ اللي بيظهر تحت أي صورة في كارت.
 
-### الأداء
-
-~~~text vitals.mjs (390، CPU ×4)
-dashboard ?delay=1200: run 1 CLS 0.0000 LCP 1208ms H1 | run 2 CLS 0.0000 LCP 220ms H1 | run 3 CLS 0.0000 LCP 208ms H1
-portfolio:             run 1 CLS 0.0000 LCP 1132ms P  | run 2 CLS 0.0000 LCP 320ms P  | run 3 CLS 0.0000 LCP 304ms P
-~~~
-
-- run 1 دايمًا حوالي ثانية: Chrome لسه فاتح (أول ما يحمّل الـ JS والخطوط). مش رقم الموقع.
-- الـ LCP في الـ dashboard هو [[<h1>]] في الـ topbar مش الجدول: الجدول بيترسم skeleton الأول، والـ skeleton مش نص فمبيتحسبش.
-- مفيش خط من بره ولا صورة كبيرة في أول شاشة ولا مكتبة: الصفحة كلها ٣٠–٤١ كيلو HTML و CSS و JS.
+**٥. الـ CSS مبيدخلش جواه.** متقدرش تلوّن أزرار [[<video controls>]] ولا تنسّق صفحة جوه [[<iframe>]] من صفحتك. و [[::before]] و [[::after]] مبيشتغلوش على [[<img>]] (من مواصفة CSS، متقاسش هنا): مفيش «جوه» يتحط فيه محتوى.
 
 ---
 
-## ليه axe سكت عن «نشط»؟
+## ٢. [[<img decoding="async">]]
 
-~~~javascript axe-iso2.mjs
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-const b = await chromium.launch({ channel: "chrome" });
-const p = await (await b.newContext()).newPage();
-for (const t of ["نشط", "الاشتراك نشط", "نظرة عامة", "مشروع اتسلّم", "Active", "نشط ok", "١٠ زيارات", "10 زيارات"]) {
-  await p.setContent($__bt<html lang="ar" dir="rtl"><body><p style="color:#7fc493;background:#dcf3e3">$__{t}</p></body></html>$__bt);
-  const r = await new AxeBuilder({ page: p }).withRules(["color-contrast"]).analyze();
-  const n = k => r[k].flatMap(x => x.nodes).length;
-  console.log(t.padEnd(14), "checked:", n("violations") + n("passes") + n("incomplete"), "violations:", n("violations"));
-}
-await b.close();
-~~~
+ملف الصورة (JPEG أو WebP) مضغوط. عشان يترسم، المتصفح لازم «يفكّه» (decode) لبيكسلات، وده بياخد وقت في الصور الكبيرة. [[decoding]] تلميح: الفكّ ده يحصل إمتى بالنسبة لرسم باقي الصفحة.
 
-~~~text اتشغّل فعلًا (axe-core 4.14.0، Chrome 156)
-نشط            checked: 0 violations: 0
-الاشتراك نشط   checked: 0 violations: 0
-نظرة عامة      checked: 1 violations: 1
-مشروع اتسلّم   checked: 1 violations: 1
-Active         checked: 1 violations: 1
-نشط ok         checked: 0 violations: 0
-١٠ زيارات      checked: 1 violations: 1
-10 زيارات      checked: 1 violations: 1
-~~~
-
-نفس اللون (1.76:1، مقروء بالعافية) على كل الكلمات. أي نص فيه «نشط» **مفحصش خالص** ([[checked: 0]]). وعلى الـ dashboard نفسه:
-
-~~~text axe-badge3.mjs
-shipped                        violations: 0
-.badge.active{color:#7fc493}   violations: 0
-visible rows with a green badge: 6
-~~~
-
-والسبب في [[node_modules/axe-core/axe.js]]: قبل ما يحسب التباين، axe بيشيل النص اللي شكله «icon ligature» ([[if (ignoreIconLigature && _isIconLigature(child, ...)) return '']]). والكشف بيرسم الكلمة على canvas ويقارن عرضها بمجموع عرض حروفها لوحدها ([[expectedWidth]] مقابل [[actualWidth]])، ولو الفرق كبير يبقى «أيقونة». في العربي الحروف بتتوصل وأشكالها بتتغير، فكلمة قصيرة زي «نشط» عرضها أقل بكتير من «ن» و «ش» و «ط» منفصلين، فبتتحسب أيقونة. والحل اللي اتعمل: [[contrast.mjs]] على أزواج الـ tokens (درس الخريطة)، وفحص بالعين في DevTools (اختار العنصر، وفي Styles دوس على مربع اللون: بيكتب الـ contrast ratio) لكل badge وزرار.
-
-وغلطة في الطريق: أول سكربت للتجربة كان [[browser.newPage()]]، و [[AxeBuilder]] وقع بـ [[Error: Please use browser.newContext()]]. axe محتاج يفتح صفحات في نفس الـ context (للـ iframes)، فلازم [[(await browser.newContext()).newPage()]].
-
----
-
-## النشر على GitHub Pages
-
-~~~javascript subpath.mjs
-// serve portfolio/ under /nadine-site/ like a GitHub Pages project site, and count 404s
-import http from "node:http"; import fs from "node:fs"; import path from "node:path";
-import { chromium } from "playwright-core";
-const root = path.resolve("portfolio"), base = "/nadine-site/";
-const srv = http.createServer((req, res) => {
-  let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
-  if (!p.startsWith(base)) { res.writeHead(404); return res.end(); }
-  p = p.slice(base.length - 1); if (p.endsWith("/")) p += "index.html";
-  const f = path.join(root, p);
-  if (!fs.existsSync(f)) { res.writeHead(404); return res.end(); }
-  res.writeHead(200, { "content-type": { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml" }[path.extname(f)] || "application/octet-stream" });
-  fs.createReadStream(f).pipe(res);
-}).listen(5599);
-const b = await chromium.launch({ channel: "chrome" });
-for (const [name, patch] of [["relative paths (shipped)", null], ['root paths: href="/css/site.css"', s => s.replace(/href="css\//g, 'href="/css/').replace(/src="js\//g, 'src="/js/')]]) {
-  const p = await b.newPage(); const bad = [];
-  p.on("response", r => r.status() === 404 && bad.push(new URL(r.url()).pathname));
-  if (patch) await p.route("**/nadine-site/", async r => { const res = await r.fetch(); r.fulfill({ response: res, body: patch(await res.text()) }); });
-  await p.goto("http://127.0.0.1:5599" + base); await p.waitForTimeout(500);
-  console.log(name.padEnd(34), "404s:", bad.length, bad.join(" "), "| body font:", await p.$eval("body", e => getComputedStyle(e).fontFamily.slice(0, 20)));
-  await p.close();
-}
-await b.close(); srv.close();
-~~~
-
-~~~text اتشغّل فعلًا
-relative paths (shipped)           404s: 0  | body font: system-ui, "Segoe UI
-root paths: href="/css/site.css"   404s: 5 /js/boot.js /css/tokens.css /css/site.css /js/i18n.js /js/reveal.js | body font: "Times New Roman"
-~~~
-
-الخطوات (من وثائق GitHub Pages و GitHub CLI، **متشغّلتش هنا** عشان متتعملش repo حقيقي):
-
-~~~bash من الوثائق
-cd pd-lab
-printf "node_modules/\n" > .gitignore
-git init
-git add portfolio dashboard .gitignore
-git commit -m "portfolio and dashboard"
-gh repo create nadine-site --public --source . --push
-gh api -X POST repos/OWNER/nadine-site/pages -f "source[branch]=main" -f "source[path]=/"
-~~~
-
-- [[.gitignore]] فيه [[node_modules/]]: أدوات القياس متترفعش.
-- [[git add portfolio dashboard]]: الموقعين بس (السكربتات اختيارية؛ لو رفعتها حطها في فولدر [[tools/]]).
-- [[gh api -X POST repos/OWNER/nadine-site/pages]]: بيشغّل Pages من فرع [[main]] من الـ root (نفس اللي بيتعمل من Settings ← Pages ← Deploy from a branch). [[OWNER]] = اسم حسابك.
-- الروابط بعدها: [[https://OWNER.github.io/nadine-site/portfolio/]] و [[.../dashboard/]]. والـ dashboard فيه بيانات متخيلة بس؛ لو اتوصل بـ API حقيقي لازم تسجيل دخول في السيرفر.
-- بعد النشر: غيّر [[canonical]] و [[og:url]] و [[og:image]] للرابط الحقيقي (أو دومين خاص)، وشغّل [[check-portfolio.mjs]] بعد ما تغيّر [[B]] للرابط المنشور.
-
----
-
-## كل الغلطات في الوحدة
-
-**حصلت فعلًا وانا ببني (٢٢):**
-
-| # | الدرس | العَرَض | الرقم | التصليح |
-|---|---|---|---|---|
-| 1 | الخريطة | [[state.js]] مش بيتقري في Node | [[Named export 'parseState' not found]] | [[npm pkg set type=module]] |
-| 2 | الخريطة | [[?fail=1]] كسر الصفحة نفسها | الاختبار علّق 30000ms | الفشل للبيانات بس |
-| 3 | الخريطة | الأخضر «نشط» ضعيف | 4.35:1 | [[#156c2f]] = 5.59 |
-| 4 | بورتفوليو ١ | الصفحة بتتنطط بالإنجليزي | CLS 0.1402 | [[i18n.js]] classic |
-| 5 | بورتفوليو ١ | «40+» اتقرت «+40» | الـ [[+]] على الشمال | [[<span dir="ltr">]] |
-| 6 | بورتفوليو ١ | اسم التاب فضل عربي | — | [[data-i18n]] على [[<title>]] |
-| 7 | بورتفوليو ١ | طلب فاشل في Console | [[favicon.ico]] 404 | [[icon.svg]] |
-| 8 | داشبورد ١ | الخط المستوي على الأرض | [[2,30 50,30 98,30]] | [[h / 2]] لو المدى صفر |
-| 9 | داشبورد ١ | مقارنة ناتج [[Intl]] بتفشل | 16 حرف بدل 13 ([[U+200F]]) | [[includes]] أو تنضيف |
-| 10 | داشبورد ١ | الكلام جنب النسبة بيتحرك | CLS 0.0010 | [[min-width: 5em]] |
-| 11 | داشبورد ١ | زرار التصغير مزنوق | لقطة الشاشة | [[aria-label]] وأيقونة بس |
-| 12 | داشبورد ٢ | الجدول بيتنطط على الموبايل | CLS 0.0848 | skeleton بنفس المقاس وسهم محجوز |
-| 13 | داشبورد ٢ | اسم زرار الترتيب فيه «▲» | [[button "الاسم ▲"]] | [[content: "▲" / ""]] |
-| 14 | داشبورد ٢ | «١٠ زيارات» جنب «8» | لقطة الشاشة | لاتيني كله |
-| 15 | داشبورد ٢ | badge ممدود بعرض الكارت | لقطة الشاشة | [[justify-self: start]] |
-| 16 | داشبورد ٣ | scroll أفقي في كل المقاسات | 1086 على 360 | [[min-width: 0]] |
-| 17 | داشبورد ٣ | الضغط جوه الحافة بيقفل الـ dialog | [[open: false]] | الـ padding على الفورم |
-| 18 | داشبورد ٣ | رسالة التحقق إنجليزي | [[Please fill out this field.]] | [[setCustomValidity]] |
-| 19 | داشبورد ٣ | الساعة بتتقسم سطرين | لقطة الشاشة | [[nowrap]] و 4.5rem |
-| 20 | داشبورد ٣ | الفوكس بيضيع بعد الحجز | [[BODY]] | تمرين في الدرس |
-| 21 | المراجعة | axe مفحصش «نشط» | 1.76:1 وصفر violations | فحص tokens بنفسك |
-| 22 | المراجعة | [[AxeBuilder]] وقع | [[Please use browser.newContext()]] | [[newContext().newPage()]] |
-
-**تجارب متعمّدة عشان نشوف الرقم (٨):**
-
-| # | التجربة | الرقم | الدرس |
-|---|---|---|---|
-| 1 | [[data-reveal]] على الـ hero | LCP 380 ← 1200ms | بورتفوليو ٢ |
-| 2 | [[minmax(22rem, 1fr)]] على 360 | 368 / 360 | بورتفوليو ٢ |
-| 3 | من غير CSS طباعة | صفحتين والـ header ظاهر | بورتفوليو ٣ |
-| 4 | نفس [[view-transition-name]] على ٥ كروت | [[Unexpected duplicate view-transition-name]] | بورتفوليو ٣ |
-| 5 | [[-100%]] للـ drawer في RTL | -154 / 118 على الشاشة | داشبورد ١ |
-| 6 | [[overflow-x: auto]] على wrapper الجدول | العنوان عند -75 | داشبورد ٢ |
-| 7 | السيرفر من غير فحص المسار | [[/..%2fserve.mjs]] = 200 | الخريطة |
-| 8 | مسارات بـ [[/]] تحت [[/repo/]] | 5 × 404 | المراجعة |
-
----
-
-## بعد ما يخلص
-
-**بيكبر إزاي:**
-- الـ portfolio: كل مشروع جديد = كارت (سطر في HTML و tags) وصفحة دراسة حالة بنفس الهيكل. لو بقوا أكتر من ١٠، اعمل [[build.mjs]] بيولّد الكروت والصفحات من JSON (ومعاها نسخة إنجليزي ثابتة، المشروع الكبير).
-- الـ dashboard: البيانات من API (المشروع الكبير الأول)، والفلترة والترتيب والصفحات بيروحوا للسيرفر لما الأعضاء يبقوا آلاف (نفس [[parseState]] بيبني الـ query)، وتسجيل دخول بأدوار (مدير وموظف) والسيرفر هو اللي بيرفض.
-- لو الـ state بقت بتتشارك بين شاشات كتير (سلة، وإشعارات، ومحادثة)، ده الوقت اللي framework بيستاهل فيه (تاب React).
-
-**بيتكلف كام تقريبًا (أسعار تقريبية من صفحات الخدمات، بتتغير):**
-
-| الحاجة | التكلفة |
+| القيمة | معناها (من MDN) |
 |---|---|
-| GitHub Pages للموقعين | مجاني (للـ repo العام) |
-| دومين خاص ([[.com]]) | حوالي 10–15 دولار في السنة |
-| الـ dashboard بـ API و قاعدة بيانات | VPS صغير حوالي 5–6 دولار في الشهر، أو خطة مجانية في خدمة managed لحد حجم معيّن |
+| [[sync]] | فكّ الصورة مع رسم باقي المحتوى، واعرض الكل مرة واحدة |
+| [[async]] | ارسم باقي المحتوى الأول، وفكّ الصورة واعرضها بعده |
+| [[auto]] | المتصفح يقرر. ده الافتراضي |
 
-**خليه بتاعك:**
-- غيّر «نادين فؤاد» لاسمك، والمشاريع لشغلك الحقيقي، والـ tokens لألوانك (وشغّل [[contrast.mjs]] على ألوانك قبل أي حاجة).
-- الـ dashboard: غيّر الصالة لحاجة بتعرفها (المشروع «فكرة» في آخر الوحدة)، وخلي أرقام الكروت هي اللي صاحب المكان بيسأل عنها فعلًا.
-- حط الاتنين في الـ portfolio كدراسات حالة: المشكلة، والقرارات (جدول «ليه الأدوات دي»)، والأرقام (الجداول اللي هنا).
+~~~text القياس من Chrome
+<img>                       decoding = "auto"
+<img decoding="async">      decoding = "async"
+<img decoding="banana">     decoding = "auto"      ← القيمة الغلط بترجع للافتراضي
+~~~
+
+MDN صريح في ده: على صورة عادية مكتوبة في الـ HTML، الفرق صعب يتشاف بالعين (بيتقاس بالأدوات). الفرق بيبان أكتر لما JavaScript بيزوّد صور كبيرة للصفحة. فاستخدامه العملي: [[decoding="async"]] على الصور الكبيرة اللي مش أهم حاجة في الشاشة، ومش هيضرّ. تأثيره على الوقت متقاسش هنا.
+
+---
+
+## ٣. تلميحات الصورة التلاتة في جدول
+
+| | [[loading]] | [[decoding]] | [[fetchpriority]] |
+|---|---|---|---|
+| بيتحكم في | **إمتى** الملف يتطلب | **إمتى** الملف يتفكّ بالنسبة للرسم | **ترتيب** الملف في طابور التحميل |
+| القيم | [[eager]] و [[lazy]] | [[sync]] و [[async]] و [[auto]] | [[high]] و [[low]] و [[auto]] |
+| من غيره (الخاصية في Chrome) | [[auto]] (يعني يتحمّل على طول) | [[auto]] | [[auto]] |
+| صورة الهيرو (أول الشاشة) | متكتبوش | متكتبوش | [[high]] |
+| صور تحت في الصفحة | [[lazy]] | [[async]] | متكتبوش |
+| اتشرح في | درس «img» قسم ٢ | هنا | درس «img» |
+
+التلاتة «تلميحات»: المتصفح ممكن ميلتزمش. والقاعدة اللي بتجمعهم: الصورة الأهم في أول الشاشة تاخد [[fetchpriority="high"]] ومتاخدش [[lazy]]، وكل اللي تحت ياخد [[loading="lazy" decoding="async"]]. وكلهم محتاجين [[width]] و [[height]].
+
+---
+
+## ٤. الميديا بتيجي منين: التراخيص
+
+كل صورة وصوت وفيديو وخط ليه صاحب. «لقيتها على النت» مش إذن. اللي بيحدد مسموحلك بإيه هو **الرخصة** (license): الشروط اللي صاحب العمل حاططها لاستخدامه.
+
+### أنواع التراخيص
+
+| النوع | معناه | محتاج منك |
+|---|---|---|
+| ملكية عامة (public domain) و CC0 | صاحبه اتنازل عن حقوقه، أو مدتها خلصت | ولا حاجة. موقع CC عن CC0: من غير إذن، ومن غير نسبة إجبارية |
+| رخص حرة بشروط (Creative Commons، و MIT للكود والأيقونات) | مسموح بشروط مكتوبة | تنفّذ الشروط، وأولها تكتب اسم صاحبه |
+| royalty-free | بتدفع مرة (أو بتاخده مجانًا من موقع) وتستخدمه كتير بشروط الموقع | تقرا شروط الموقع: «royalty-free» مش معناها «مجاني» ولا «من غير شروط» |
+| rights-managed | بتدفع على كل استخدام محدد (المدة، والبلد، وعدد النسخ) | عقد لكل استخدام |
+| «كل الحقوق محفوظة»، أو مفيش رخصة مكتوبة | ممنوع من غير إذن مكتوب من صاحبه | متستخدموش |
+
+### رخص Creative Commons
+
+كل رخصة CC مركّبة من حروف، وكل حرف شرط:
+
+| الحرف | الشرط |
+|---|---|
+| **BY** | لازم تنسب العمل لصاحبه. في كل الرخص الستة |
+| **SA** (ShareAlike) | لو عدّلت فيه، اللي تطلّعه لازم يتنشر بنفس الرخصة |
+| **NC** (NonCommercial) | للاستخدام غير التجاري بس |
+| **ND** (NoDerivatives) | من غير تعديل: تستخدمه زي ما هو |
+
+| الرخصة | تجاري؟ | تعدّل فيه؟ | مناسبة لموقع شركة أو بودكاست بإعلانات؟ |
+|---|---|---|---|
+| CC BY | آه | آه | آه |
+| CC BY-SA | آه | آه، وتنشر تعديلك بنفس الرخصة | آه، مع الشرط ده |
+| CC BY-ND | آه | لأ | آه لو هتستخدمه من غير أي تعديل |
+| CC BY-NC | لأ | آه | لأ |
+| CC BY-NC-SA | لأ | آه، بنفس الرخصة | لأ |
+| CC BY-NC-ND | لأ | لأ | لأ |
+
+(الجدول من صفحة «About CC Licenses» على موقع Creative Commons. وتعريفهم لـ «غير تجاري»: مش مقصود بيه أساسًا مكسب تجاري أو مقابل مادي.)
+
+### بتدوّر فين
+
+منهج MDN بيسمّي أمثلة: بحث الصور في Google (فيه فلتر «حقوق الاستخدام»)، و Flickr (فيه فلتر بالرخصة)، و The Noun Project للأيقونات. والقاعدة مع أي موقع: الرخصة بتتقري من **صفحة العمل نفسه**، مش من الفلتر. الفلتر بيقرّبك، والصفحة هي اللي بتقول.
+
+والأضمن من ده كله: صوّر وسجّل وارسم بنفسك. ساعتها انت صاحب الحق.
+
+### تلتزم بالرخصة إزاي: النسبة (attribution)
+
+Creative Commons بتنصح بأربع حاجات، اختصارهم **TASL**:
+
+| الحرف | إيه | مثال |
+|---|---|---|
+| **T**itle | اسم العمل (لو ليه اسم) | «استوديو صغير» |
+| **A**uthor | صاحبه، بالاسم اللي هو طالبه | سلمى فؤاد |
+| **S**ource | لينك للمكان الأصلي اللي العمل منشور فيه | صفحة الصورة |
+| **L**icense | اسم الرخصة بالظبط، ولينك لنصها | CC BY 4.0 |
+
+ولو عدّلت: اكتب إيه اللي اتغيّر («اتقصّت من الأصل»).
+
+~~~live 140 158 صورة ونسبتها
+<figure>
+  <img alt="بانر أخضر مكتوب عليه بودكاست المحطة" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+  <figcaption>«<a href="https://photos.example.test/p/4821">استوديو صغير</a>» تصوير سلمى فؤاد، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتقصّت من الأصل.</figcaption>
+</figure>
+~~~
+
+**هتشوف إيه:** الصورة وتحتها سطر فيه لينكين: اسم العمل بيودّي لمصدره، واسم الرخصة بيودّي لنصها.
+
+- CC: مفيش شكل واحد إجباري للنسبة، المهم الأربع معلومات يوصلوا «بطريقة معقولة» حسب المكان. تحت الصورة، أو في صفحة «المصادر» لو الصور كتير.
+- [[<a rel="license">]] بيقول للمتصفح ومحركات البحث إن اللينك ده رخصة المحتوى (جدول [[rel]] في درس «target و rel»).
+- الموسيقى في حلقة بودكاست: النسبة بتتقال في آخر الحلقة وبتتكتب في صفحتها.
+
+---
+
+## ٥. الغلطات اللي بتحصل فعلًا
+
+| الغلطة | اللي بيحصل |
+|---|---|
+| [[span { width: 200px }]] وتستغرب إنه مشتغلش زي الصورة | الـ span مش replaced: بيتجاهل العرض |
+| فراغ تحت الصورة في الكارت وتحاول تشيله بـ [[margin]] | سببه سطر الكتابة: [[display: block]] |
+| [[img::before]] | مبيظهرش |
+| [[decoding="lazy"]] أو [[loading="async"]] | القيمتين متبدّلين: كل واحد بيرجع للافتراضي في سكوت |
+| صورة من بحث الصور من غير ما تفتح صفحتها | مفيش رخصة يعني ممنوع |
+| CC BY-NC في موقع تجاري | مخالفة للرخصة |
+| تقصّ صورة رخصتها ND | التعديل ممنوع |
+| «الصورة من النت» كنسبة | لا اسم، ولا مصدر، ولا رخصة: مش نسبة |
+
+---
 
 ## الخلاصة
 
-- الفحص كود بيتعاد: matrix و axe وكيبورد و CLS/LCP، كل واحد سكربت.
-- axe صفر مش نهاية الفحص: في العربي بيعدّي كلمات من غير ما يفحصها، فالتباين بيتحسب من الـ tokens.
-- الأرقام بالوسط من ٣، وأول تشغيل مش محسوب.
-- المسارات نسبية عشان الموقع يشتغل تحت أي مسار.`,
-          sol: R`لو نسختك زي الشرح: ٢٤ خانة [[ok]] في الـ matrix، و [[violations: 0]] في الـ ٢٠ فحص axe، و CLS [[0.0000]] في كل الصفحات، و LCP في التشغيل التاني والتالت بين 200 و 350ms تقريبًا (جهازك ممكن يختلف). تجربة axe: «نظرة عامة» بتطلع violation و «نشط» [[checked: 0]]. و [[subpath.mjs]] بعد ما تغيّر لينك واحد لـ [[/css/site.css]] بيطلّع 404 واحد على الأقل والصفحة من غير التنسيق بتاعها.`,
+- replaced element: محتواه من برّه ([[<img>]] و [[<video>]] و [[<iframe>]] و [[<embed>]] دايمًا، و [[<audio>]] و [[<canvas>]] و [[<object>]] في حالات). inline وبياخد مقاس، وليه مقاس من نفسه أو 300 × 150، وبيتظبط بـ [[object-fit]].
+- [[decoding="async"]] للصور اللي تحت، مع [[loading="lazy"]]. و [[fetchpriority="high"]] للهيرو لوحده.
+- قبل أي ملف ميديا: مين صاحبه، وإيه رخصته. مفيش رخصة يعني لأ.
+- CC: [[BY]] انسب، [[SA]] انشر بنفس الرخصة، [[NC]] غير تجاري، [[ND]] من غير تعديل.
+- النسبة: الاسم، وصاحبه، والمصدر، والرخصة، واللي غيّرته.`,
+          try: R`اعمل [[credit.html]] فيها صورة من تصويرك انت (أي صورة على جهازك، سمّيها [[photo.jpg]])، جوه [[<figure>]]، وتحتها نسبة كأنك بتنشرها برخصة CC BY 4.0: اسم للصورة، واسمك، واسم الرخصة بلينك لنصها. وعلى الصورة [[width]] و [[height]] و [[loading="lazy"]] و [[decoding="async"]]. وبعدين في الـ Console اكتب [[document.querySelector("img").decoding]] وشوف الرد، وغيّر القيمة في الملف لـ [[fast]] واعمل Ctrl+R واسأل تاني.`,
+          sol: R`~~~html credit.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صورة ونسبتها</title>
+</head>
+<body>
+<figure>
+  <img src="photo.jpg" alt="كوباية شاي على سور البلكونة وقت الغروب" width="800" height="600" loading="lazy" decoding="async">
+  <figcaption>«شاي المغرب» تصوير هشام نبيل، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>.</figcaption>
+</figure>
+</body>
+</html>
+~~~
+
+~~~view 140 158 شكل الصفحة (الصورة هنا بانر مكان صورتك)
+<figure>
+  <img alt="كوباية شاي على سور البلكونة وقت الغروب" width="320" height="80" loading="lazy" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+  <figcaption>«شاي المغرب» تصوير هشام نبيل، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>.</figcaption>
+</figure>
+~~~
+
+**هتشوف إيه:** الصورة وتحتها سطر النسبة، و «CC BY 4.0» لينك.
+
+**ليه مفيش لينك «مصدر»:** الصورة أول مرة تتنشر هنا، فالصفحة دي هي المصدر. لو كانت من موقع تاني كان اسمها هيبقى لينك ليه.
+
+**الغلطة الشائعة:** تكتب «رخصة Creative Commons» وخلاص. فيه ست رخص شروطهم مختلفة: الاسم بالظبط والنسخة (CC BY 4.0).
+
+~~~text القياس من Chrome (في الـ Console)
+> document.querySelector("img").decoding
+"async"
+بعد ما القيمة بقت decoding="fast":
+"auto"                 ← قيمة مش معروفة، فرجعت للافتراضي
+~~~`,
+          deep: {
+            why: R`اسم «replaced element» بيظهر في كل وثائق CSS: [[object-fit]] «بتشتغل على replaced elements»، و [[width]] «مبتشتغلش على inline non-replaced elements». من غير ما تعرف المصطلح، الجمل دي ملهاش معنى، والتصرفات اللي وراها بتبان عشوائية. والتراخيص: موقع العميل اللي عليه صورة من غير حق ممكن يجيله إنذار قانوني وفاتورة، والمسؤولية على اللي حط الصورة.`,
+            how: R`في الـ layout، المتصفح بيسأل الـ replaced element عن «مقاسه الطبيعي» (العرض، والارتفاع، والنسبة) ويحسب الصندوق منهم ومن الـ CSS، وبعدين يرسم المحتوى جوه الصندوق حسب [[object-fit]]. العنصر العادي العكس: مقاسه بيتحسب من محتواه وأولاده. والصورة بتعدّي بتلات مراحل: طلب الملف (بيتحكم فيه [[loading]] و [[fetchpriority]])، وفكّه لبيكسلات ([[decoding]])، ورسمه.`,
+            when: R`المصطلح: كل ما تقرا عن خاصية CSS وتلاقي «replaced». [[decoding="async"]]: صور المحتوى الكبيرة تحت أول الشاشة، والمعارض. والتراخيص: قبل ما أي ملف مش من صنعك يدخل فولدر المشروع. واعمل ملف أو صفحة «المصادر» من أول يوم.`,
+            mistakes: R`معاملة [[<img>]] كأنها [[<span>]] أو [[<div>]]. محاولة شيل الفراغ اللي تحت الصورة بالـ margin. تبديل قيم [[loading]] و [[decoding]]. استخدام صور من غير رخصة مكتوبة. رخصة NC في شغل تجاري. تعديل عمل رخصته ND. ونسبة ناقصة من غير اسم الرخصة.`
+          },
           practice: [
-            {
-              lvl: R`سريع`,
-              t: R`**اقرا وتوقّع:** في الـ ci بتاع الدرس، أنهي من الروابط دي هيتعلّم: [[css/site.css]]، و [[/js/boot.js]]، و [[https://nadine.example/]]، و [[#work]]، و [[/css/cv.css]]، و [[//cdn.example/x.png]]، و [[./]]؟ اكتب ليه كل واحد قبل ما تشغّل.`,
-              done: R`اتنين بس: [[/js/boot.js]] و [[/css/cv.css]] (بيبدأوا بـ [[/]] واحدة). [[//cdn...]] protocol-relative (دومين تاني، مش مسار في الموقع)، والباقي نسبي أو كامل أو anchor، والسكربت طلّع [[root paths: 2]].`,
-              sol: R`~~~js root-paths.mjs (نفس الـ ci بتاع الدرس على القيم السبعة)
-const list = ["css/site.css", "/js/boot.js", "https://nadine.example/", "#work", "/css/cv.css", "//cdn.example/x.png", "./"];
-for (const v of list) {
-  const hit = /^\/(?!\/)/.test(v);
-  console.log((hit ? "يتعلّم " : "عادي  ") + v);
-}
-console.log("root paths:", list.filter((v) => /^\/(?!\/)/.test(v)).length);
+            { lvl: 'تطبيق', t: R`**ابني:** صورة غلاف الحلقة ٣ محتاجة نسبة. البيانات في البداية. اكتبها: الصورة والنسبة في [[<figure>]]، والنسبة في [[<figcaption>]] فيها اسم العمل لينك للمصدر، واسم المصوّر، واسم الرخصة لينك لنصها وعليه [[rel="license"]]، وإن الصورة اتعدّلت. (من قسم ٤ في الشرح، جزء «النسبة»)`, done: R`الصورة وتحتها سطر فيه لينكين، وكل الشروط ✓.`, work: { h: 250, start: R`<img alt="غلاف الحلقة ٣" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+<p>اسم العمل: موجة خضرا</p>
+<p>المصوّر: طارق سامي</p>
+<p>المصدر: https://photos.example.test/p/9012</p>
+<p>الرخصة: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)</p>
+<p>التعديل: اتكتب عليها اسم البودكاست</p>`, checks: [
+              { say: R`الصورة جوه [[<figure>]]`, q: "figure > img" },
+              { say: R`النسبة في [[<figcaption>]] فيه اسم المصوّر`, q: "figure > figcaption", has: "طارق سامي" },
+              { say: R`اسم العمل لينك للمصدر`, q: "figcaption a[href=\"https://photos.example.test/p/9012\"]", has: "موجة خضرا" },
+              { say: R`اسم الرخصة لينك لنصها وعليه [[rel="license"]]`, q: "figcaption a[rel~=\"license\"][href=\"https://creativecommons.org/licenses/by-sa/4.0/\"]", has: "CC BY-SA 4.0" },
+              { say: R`مكتوب إيه اللي اتعدّل`, q: "figcaption", has: "اسم البودكاست" },
+              { say: R`مفيش فقرات البيانات الخام`, q: "p", n: 0 },
+            ] }, sol: R`~~~live 140 158 الحل
+<figure>
+  <img alt="غلاف الحلقة ٣" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+  <figcaption>«<a href="https://photos.example.test/p/9012">موجة خضرا</a>» تصوير طارق سامي، رخصة <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>. اتكتب عليها اسم البودكاست.</figcaption>
+</figure>
 ~~~
 
-الـ regex [[^\/(?!\/)]] معناها: بيبدأ بـ [[/]]، و **مش** بعدها [[/]] تانية. الجزء [[(?!\/)]] نظرة لقدام سالبة.
+**هتشوف إيه:** الصورة، وتحتها سطر واحد: «موجة خضرا» لينك، واسم المصوّر، و «CC BY-SA 4.0» لينك، وجملة التعديل.
 
-- [[css/site.css]]: نسبي، شغال تحت أي فولدر.
-- [[/js/boot.js]]: من جذر الدومين، فتحت [[/repo/]] هيطلب [[/js/boot.js]] ويقع. يتعلّم.
-- [[https://nadine.example/]]: رابط كامل.
-- [[#work]]: anchor في نفس الصفحة.
-- [[/css/cv.css]]: زي التاني.
-- [[//cdn.example/x.png]]: protocol-relative، يعني دومين تاني بنفس البروتوكول، مش مسار جوه الموقع.
-- [[./]]: نسبي.
+**ليه كده:** دي الـ TASL بالترتيب: الاسم (Title)، وصاحبه (Author)، ولينك المصدر (Source) على الاسم، والرخصة (License) بلينكها.
 
-الغلطة الشائعة: تكتب [[startsWith("/")]] بس، فتعلّم روابط CDN وهي سليمة.
+**خد بالك من SA:** الغلاف ده عمل معدّل من صورة رخصتها BY-SA، فالغلاف نفسه لازم يتنشر بـ CC BY-SA 4.0. لو مش عايز كده، دوّر على صورة CC BY أو CC0.
 
-~~~text الناتج (Node 24)
-عادي  css/site.css
-يتعلّم /js/boot.js
-عادي  https://nadine.example/
-عادي  #work
-يتعلّم /css/cv.css
-عادي  //cdn.example/x.png
-عادي  ./
-root paths: 2
+**الغلطة الشائعة:** تحط لينك الرخصة على كلمة «هنا». اسم الرخصة نفسه هو اللي يتكتب ويبقى اللينك.
+
+~~~text القياس من Chrome (شجرة الـ accessibility)
+figure     image «غلاف الحلقة ٣»     link «موجة خضرا»     link «CC BY-SA 4.0»
 ~~~` },
-            {
-              lvl: R`سريع`,
-              t: R`**اشرحها:** اكتب لزميل في ٣ سطور ليه axe عدّى «نشط» ومعدّاش «نظرة عامة»، وإيه اللي تعمله في كل مشروع عربي بسبب ده.`,
-              done: R`الشرح فيه إن axe بيشيل النص اللي عرضه مكتوب متوصّل أقل بكتير من حروفه لوحدها (فاكره أيقونة)، وإن الحروف العربي بتتوصل فده بيحصل لكلمات قصيرة، وإن الحل حساب التباين لكل زوج tokens بسكربت وفحص العناصر الصغيرة بالعين في DevTools.`,
-              sol: R`~~~text رسالة لزميل
-axe بيتخطى النص اللي عرضه المكتوب متوصّل أقل بكتير من مجموع حروفه لوحدها، لأنه بيحسبه أيقونة.
-الحروف العربي بتتوصل، فكلمة قصيرة زي «نشط» بتتحسب أيقونة، وتباينها مبيتفحصش، و «نظرة عامة» بتعدّي الحد فبتتفحص.
-فأي مشروع عربي: احسب تباين كل زوج tokens بسكربت، وافحص العناصر الصغيرة بعينك في DevTools.
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة الحلقة فيها صورتين: الغلاف الكبير أول الشاشة، وصورة الضيف تحت خالص. التلميحات عليهم متلخبطة: القيم متبدّلة بين الـ attributes، والغلاف متأجّل، وصورة الضيف واخدة أولوية عالية. (من قسم ٢ و ٣ في الشرح)`, done: R`الغلاف عليه [[fetchpriority="high"]] بس، وصورة الضيف [[loading="lazy"]] و [[decoding="async"]]، وكل الشروط ✓.`, work: { h: 230, start: R`<img id="cover" alt="غلاف الحلقة ٣" width="320" height="80" loading="lazy" decoding="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+<p>وصف الحلقة...</p>
+<img id="guest" alt="ضيفة الحلقة: المصوّرة سلمى فؤاد" width="320" height="80" loading="async" fetchpriority="high" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">`, checks: [
+              { say: R`الغلاف [[fetchpriority="high"]]`, q: "#cover[fetchpriority=\"high\"]" },
+              { say: R`الغلاف مفيهوش [[loading="lazy"]]`, q: "#cover[loading=\"lazy\"]", n: 0 },
+              { say: R`صورة الضيف [[loading="lazy"]]`, q: "#guest[loading=\"lazy\"]" },
+              { say: R`صورة الضيف [[decoding="async"]]`, q: "#guest[decoding=\"async\"]" },
+              { say: R`صورة الضيف مفيهاش [[fetchpriority="high"]]`, q: "#guest[fetchpriority=\"high\"]", n: 0 },
+              { say: R`مفيش قيم متبدّلة ([[decoding="lazy"]] أو [[loading="async"]])`, q: "img[decoding=\"lazy\"], img[loading=\"async\"]", n: 0 },
+            ] }, sol: R`~~~live 240 بعد التصليح
+<img id="cover" alt="غلاف الحلقة ٣" width="320" height="80" fetchpriority="high" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+<p>وصف الحلقة...</p>
+<img id="guest" alt="ضيفة الحلقة: المصوّرة سلمى فؤاد" width="320" height="80" loading="lazy" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
 ~~~
 
-ده باج في الافتراض مش في الصفحة: axe عنده دالة بتسأل «هل ده نص ولا ligature أيقونة؟» (زي خطوط الأيقونات اللي بتحوّل كلمة لرمز). بتقيس عرض الكلمة متوصّلة، وتقارنه بعرض حروفها منفصلة. العربي بيتوصل طبيعي، فالمقارنة بتقول «ده مش نص».
+**هتشوف إيه:** نفس الصفحة قبل وبعد: التلميحات مبتغيّرش الشكل، بتغيّر ترتيب ووقت التحميل (بيتشاف في DevTools › Network عمود Priority).
 
-النتيجة إن axe ممكن يقول صفر، وفيه نص قصير باهت في الصفحة فعلًا. يعني صفر هنا مش ضمان.
+| المشكلة | التصليح | ليه |
+|---|---|---|
+| [[decoding="lazy"]] على الغلاف | اتمسح | [[lazy]] قيمة [[loading]] مش [[decoding]]، فكانت بترجع [[auto]] |
+| [[loading="lazy"]] على الغلاف | اتمسح، وزوّدنا [[fetchpriority="high"]] | أول صورة في الشاشة: التأجيل بيأخّر أهم حاجة |
+| [[loading="async"]] على صورة الضيف | [[loading="lazy"]] و [[decoding="async"]] | القيمتين كانوا متبدّلين |
+| [[fetchpriority="high"]] على صورة تحت | اتمسح | لو كل الصور «عالية» محدش فيهم عالي |
 
-الحل مش تقفل الفحص: [[contrast.mjs]] بيحسب كل زوج ألوان، فمش معتمد على axe، والعناصر الصغيرة بتتفحص بالـ color picker في DevTools.
+**الغلطة الشائعة:** تحط التلاتة على كل الصور «للأداء». [[lazy]] و [[high]] على نفس الصورة عكس بعض.
 
-الغلطة الشائعة: تستنتج إن اللون سليم عشان axe عدّى.
-
-~~~text الناتج (axe 4.14.0، Chrome 156: نص باهت #999 على أبيض)
-«نشط» (#a): مش متفحوص خالص
-«نظرة عامة» (#b): واقع
+~~~text القياس من Chrome
+decoding="lazy"   →  الخاصية decoding = "auto"
+loading="async"   →  الخاصية loading  = "auto"
 ~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**ابني:** حوّل [[check-portfolio.mjs]] و [[audit-dashboard.mjs]] لـ [[check.mjs]] واحد بيطبع [[PASS]] أو [[FAIL]] لكل فحص (overflow، و axe، و CLS ≤ 0.1، و LCP ≤ 2500، وصفر page errors)، ويخرج بـ 1 لو أي واحد وقع. وجرّبه على نسخة فيها [[minmax(22rem, 1fr)]].`,
-              done: R`على النسخة السليمة كل السطور [[PASS]] والـ exit code صفر، وعلى النسخة البايظة [[FAIL]] في الـ overflow على 360 والـ exit code 1، و [[node check.mjs || echo blocked]] بيطبع [[blocked]].`,
-              sol: R`~~~js check.mjs
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-
-const P = process.env.P || "http://127.0.0.1:5501/", D = process.env.D || "http://127.0.0.1:5502/";
-const pages = [["portfolio", P], ["cv", P + "cv.html"], ["case", P + "work/tide-notes.html"], ["dashboard", D]];
-const widths = [360, 390, 768, 1280];
-const browser = await chromium.launch({ channel: "chrome" });
-let fail = 0;
-const line = (ok, text) => { console.log((ok ? "PASS " : "FAIL ") + text); if (!ok) fail++; };
-
-for (const [name, url] of pages) {
-  for (const w of widths) {
-    const ctx = await browser.newContext({ viewport: { width: w, height: 800 } });
-    const page = await ctx.newPage();
-    const errors = [];
-    page.on("pageerror", (e) => errors.push(e.message));
-    await page.addInitScript(() => {
-      window.__v = { cls: 0, lcp: 0 };
-      new PerformanceObserver((l) => l.getEntries().forEach((e) => { if (!e.hadRecentInput) window.__v.cls += e.value; })).observe({ type: "layout-shift", buffered: true });
-      new PerformanceObserver((l) => { window.__v.lcp = l.getEntries().at(-1).startTime; }).observe({ type: "largest-contentful-paint", buffered: true });
-    });
-    await page.goto(url, { waitUntil: "load" });
-    await page.waitForTimeout(600);
-    const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-    line(over <= 0, $__bt$__{name} $__{w} overflow $__{over}px$__bt);
-    if (w === 390 || w === 1280) {
-      const v = await page.evaluate(() => window.__v);
-      line(v.cls <= 0.1, $__bt$__{name} $__{w} CLS $__{v.cls.toFixed(4)}$__bt);
-      line(v.lcp <= 2500, $__bt$__{name} $__{w} LCP $__{Math.round(v.lcp)}ms$__bt);
-      const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa", "best-practice"]).analyze();
-      line(axe.violations.length === 0, $__bt$__{name} $__{w} axe $__{axe.violations.map((x) => x.id).join(",") || 0}$__bt);
-    }
-    line(errors.length === 0, $__bt$__{name} $__{w} page errors $__{errors.length}$__bt);
-    await ctx.close();
-  }
-}
-await browser.close();
-console.log(fail ? fail + " failed" : "all passed");
-process.exit(fail ? 1 : 0);
+            { lvl: 'سريع', t: R`**اقرا وتوقّع، وبعدين صلّح:** صندوق أصفر جواه صورة ارتفاعها 80 وبس. اكتب على ورقة: ارتفاع الصندوق كام؟ ٨٠ بالظبط؟ وبعدين خلّي الصندوق على قد الصورة بالظبط بسطر CSS واحد على الصورة. (من قسم ١ في الشرح، بند ٤)`, done: R`كتبت توقّعك، والشريط الأصفر اللي تحت الصورة اختفى، وكل الشروط ✓.`, work: { h: 130, start: R`<div style="background:#fde68a; width:320px">
+  <img alt="بودكاست المحطة" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+</div>`, checks: [
+              { say: R`الصورة عليها [[display: block]]`, q: "img[style*=\"display:block\"], img[style*=\"display: block\"]" },
+              { say: R`الصورة لسه جوه الـ [[<div>]] الأصفر`, q: "div[style*=\"background\"] > img" },
+              { say: R`المقاس في الـ HTML زي ما هو`, q: "img[width=\"320\"][height=\"80\"]" },
+            ] }, sol: R`~~~live 102 بعد التعديل
+<div style="background:#fde68a; width:320px">
+  <img alt="بودكاست المحطة" width="320" height="80" style="display:block" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+</div>
 ~~~
 
-بيجمع [[check-portfolio.mjs]] و [[audit-dashboard.mjs]] في سكربت واحد، كل سطر فيه PASS أو FAIL، و [[process.exit(1)]] لو أي واحد وقع، فـ CI يقف و [[||]] في الترمنال يشتغل.
+وده اللي كان باين قبل:
 
-- الحلقة الخارجية ٤ صفحات، والداخلية ٤ عروض.
-- [[addInitScript]] بيحط الـ observers قبل أي كود في الصفحة، عشان محدش يفوتهم.
-- CLS و LCP و axe على عرضين بس، لأنهم أغلى، و overflow على كلهم.
-- [[pageerror]] بيمسك أي خطأ JS مش متعامل معاه، ومش بيمسك 404 لملفات. ده فرق حصل فعلًا: favicon الناقص ملوش دعوة بالأخطاء.
+~~~live 106 قبل
+<div style="background:#fde68a; width:320px">
+  <img alt="بودكاست المحطة" width="320" height="80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80'%3E%3Crect width='320' height='80' fill='%230f766e'/%3E%3Ctext x='160' y='48' font-size='24' fill='white' text-anchor='middle'%3Eبودكاست المحطة%3C/text%3E%3C/svg%3E">
+</div>
+~~~
 
-على النسخة البايظة [[minmax(22rem, 1fr)]] يعني 352px. على 360 المتاح أقل من كده فالـ overflow بيقع، وعلى 390 لسه بيتساع.
+**التوقّع:** أكتر من ٨٠ بكام بيكسل. الصورة inline، فقاعدة على سطر الكتابة والسطر سايب تحتها مكان لديل الحروف.
 
-الغلطة الشائعة: طباعة أرقام من غير exit code. CI بيقرا الـ exit code بس، فهيعدّي مهما طبعت.
+**هتشوف إيه:** قبل: شريط أصفر رفيع تحت البانر. بعد: مفيش أصفر باين خالص، الصندوق على قد الصورة.
 
-~~~text الناتج (node check.mjs)
-النسخة السليمة: 56 PASS، و 0 FAIL، و exit 0
-(مفيش)
+**ليه [[display: block]]:** بيطلّع الصورة من السطر، فمبقاش فيه baseline ولا مكان تحته. ([[vertical-align: bottom]] بيحلها برده والصورة تفضل inline.)
 
-على minmax(22rem, 1fr):
-FAIL portfolio 360 overflow 8px
-exit 1
-node check.mjs || echo blocked  ← blocked
+**الغلطة الشائعة:** [[margin-bottom: -4px]]. الرقم بيتغيّر مع حجم الخط ونوعه، فهيبوظ أول ما الخط يتغيّر.
+
+~~~text القياس من Chrome (صورة 120 × 60، والخط الافتراضي 16px)
+inline:   ارتفاع الصندوق = 64
+block:    ارتفاع الصندوق = 60
 ~~~` },
-            {
-              lvl: R`تطبيق`,
-              t: R`**دوّر بنفسك:** من وثائق GitHub Pages اعرف إزاي تنشر من GitHub Actions بدل الفرع ([[actions/upload-pages-artifact]] و [[actions/deploy-pages]])، واكتب workflow بيشغّل [[contrast.mjs]] و فحص المسارات قبل النشر وبيوقف لو فشلوا.`,
-              done: R`عندك [[.github/workflows/pages.yml]] فيه job للفحص بيخرج بـ 1 لو لون وقع أو مسار بـ [[/]]، و job للنشر [[needs]] الفحص، والـ permissions فيها [[pages: write]] و [[id-token: write]] (من الوثائق)، ومكتوب إن ده محتاج Settings ← Pages ← Source = GitHub Actions.`,
-              sol: R`~~~yaml .github/workflows/pages.yml
-name: pages
-on:
-  push:
-    branches: [main]
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - run: node contrast.mjs
-      - run: node root-paths.mjs
-  deploy:
-    needs: check
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: $__{{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: portfolio
-      - id: deployment
-        uses: actions/deploy-pages@v4
-~~~
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** فريق «المحطة» جمع خمس ملفات لصفحة الحلقة (البودكاست فيه إعلانات، يعني استخدام تجاري). لكل ملف قول: يتستخدم ولا لأ؟ وبأنهي شرط؟ (من قسم ٤ في الشرح)
 
-~~~js contrast.mjs (آخر سطر، عشان يخرج بـ 1)
-process.exitCode = Object.values(pairs).some(([a, b]) => ratio(a, b) < 4.5) ? 1 : 0;
-~~~
+~~~text ملفات الحلقة
+1. صورة استوديو    CC BY 4.0           هتتقصّ مربع
+2. موسيقى المقدمة  CC BY-NC 4.0        زي ما هي
+3. أيقونة مايك     CC0                 هيتغيّر لونها
+4. صورة الضيفة     CC BY-ND 4.0        هتتقصّ دايرة
+5. صورة غلاف       من بحث الصور، ومفيش أي رخصة مكتوبة في صفحتها
+~~~`, done: R`خمس أحكام، كل واحد بسببه من حروف الرخصة.`, sol: R`| الملف | الحكم | السبب |
+|---|---|---|
+| ١. صورة الاستوديو، CC BY | **آه** | تجاري وتعديل مسموحين. الشرط: نسبة كاملة، وتكتب «اتقصّت» |
+| ٢. الموسيقى، CC BY-NC | **لأ** | NC = غير تجاري، والبودكاست فيه إعلانات |
+| ٣. الأيقونة، CC0 | **آه** | من غير أي شرط، والنسبة اختيارية |
+| ٤. صورة الضيفة، CC BY-ND | **لأ بالشكل ده** | ND = من غير تعديل، والقصّ دايرة بيغيّر شكل العمل. تتستخدم زي ما هي مع النسبة، أو تطلبوا من الضيفة صورة |
+| ٥. صورة من غير رخصة | **لأ** | مفيش رخصة معناها كل الحقوق محفوظة. الحل: إذن مكتوب من صاحبها، أو صورة تانية |
 
-~~~js root-paths.mjs (يفحص الملفات الحقيقية)
-import fs from "node:fs";
-let bad = 0;
-for (const f of ["portfolio/index.html", "portfolio/cv.html", "portfolio/work/tide-notes.html", "dashboard/index.html"]) {
-  for (const m of fs.readFileSync(f, "utf8").matchAll(/(?:href|src)="(\/(?!\/)[^"]*)"/g)) { bad++; console.log(f + ": " + m[1]); }
-}
-console.log("root paths:", bad);
-process.exit(bad ? 1 : 0);
-~~~
+**القاعدة:** اقرا الحروف واحد واحد وقارنها باللي هتعمله: هتكسب منه؟ (NC). هتعدّل فيه؟ (ND و SA). وفي كل الحالات BY: انسب.
 
-من وثائق GitHub Pages «Using custom workflows»:
+**الغلطة الشائعة:** تعتبر القصّ «مش تعديل». CC نفسها بتعتبر القصّ تغيير بسيط لازم يتذكر، ومع ND الأضمن متلمسش العمل.
 
-- [[needs: check]]: النشر مبيبدأش إلا لو الفحص نجح.
-- [[permissions]]: [[pages: write]] عشان ينشر، و [[id-token: write]] عشان Pages يتأكد إن الطلب جاي من الـ workflow ده.
-- [[upload-pages-artifact]] بيرفع الفولدر، و [[deploy-pages]] بينشره. فلازم الاتنين بالترتيب.
-- [[environment: github-pages]] هو اللي بيظهر الرابط في صفحة الـ repo.
-- مرة واحدة من الموقع: Settings ← Pages ← Source = GitHub Actions. من غيرها الـ deploy بيقع.
+النسبة للملف الأول زي ما تتكتب في الصفحة:
 
-[[contrast.mjs]] بتاع الدرس بيطبع بس، فلازم السطر اللي يحدد الـ exit code. ولو لسه عندك الزوج القديم [[#1a7f37]] على [[#dcf3e3]] (4.35) الفحص هيوقف النشر، وده اللي عايزينه: حدّثه للقيمة النهائية [[#156c2f]] من [[app.css]].
-
-الـ workflow نفسه مش متجرّب هنا (محتاج ريبو على GitHub)، فالجزء ده من الوثائق. اللي اتشغّل هو الفحصين، على السليم وعلى البايظ.
-
-الغلطة الشائعة: تنسى [[Source = GitHub Actions]]، فالـ job يقول deploy failed وانت بتدور في الكود.
-
-~~~text الناتج (الفحصين على الجهاز)
-contrast.mjs على المشروع: exit 0
-لون واقع مضاف: exit 1
-root-paths.mjs على المشروع: root paths: 0، exit 0
-بعد href="/css/x.css": portfolio/cv.html: /css/x.css / root paths: 1، exit 1
+~~~live 56 نسبة الملف ١
+<p><small>«<a href="https://photos.example.test/p/4821">استوديو صغير</a>» تصوير سلمى فؤاد، رخصة <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. اتقصّت من الأصل.</small></p>
 ~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**مسألة:** اكتب [[bidiRisks(html)]] بتلاقي في صفحة [[dir="rtl"]] كل نص قصير بيبدأ أو بيخلص بعلامة محايدة جنب رقم أو حرف لاتيني ([[40+]] و [[C++]] و [[(v2)]] و [[50%]]) ومش جوه عنصر عليه [[dir="ltr"]] أو [[<bdi>]]، وتطبع السطر. جرّبها على [[index.html]] قبل تصليح «40+».`,
-              done: R`على النسخة القديمة بتطلّع [[40+]] من [[<dd>]]، وعلى الحالية مبتطلّعش حاجة، وعلى صفحة تجربة فيها [[C++]] و [[(v2)]] بتطلّعهم الاتنين، ومفيش إنذار كاذب على [[hello@nadine.example]] (عليه [[dir="ltr"]]).`,
-              sol: R`~~~js bidi-risks.mjs
-import fs from "node:fs";
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** افتح صفحة «Replaced elements» في قاموس MDN (اللينك تحت الدرس). طلّع منها: (١) أنهي عناصر مكتوب إنها replaced دايمًا، وأنهي «في حالات معينة». (٢) إيه اللي بيتقال عليه «anonymous replaced element»؟ (بيكمّل قسم ١ في الشرح)`, done: R`كتبت القايمتين، وجملة عن الـ anonymous replaced elements.`, sol: R`من صفحة MDN:
 
-export function bidiRisks(html) {
-  const out = [];
-  html = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "");
-  const lines = html.split("\n");
-  // نص بين > و <، ومش جوه عنصر عليه dir="ltr" أو bdi
-  const re = /<([a-z][a-z0-9]*)\b([^>]*)>([^<>]+)</gi;
-  lines.forEach((line, i) => {
-    for (const [, tag, attrs, text] of line.matchAll(re)) {
-      if (tag.toLowerCase() === "bdi" || /\bdir="ltr"/.test(attrs)) continue;
-      const hits = text.match(/[0-9A-Za-z]+[+%)\]]+|[+(\[]+[0-9A-Za-z]+[)\]]*/g);
-      if (!hits) continue;
-      for (const h of hits) out.push({ line: i + 1, tag, text: h });
-    }
-  });
-  return out;
-}
+1. **دايمًا:** [[<img>]] و [[<video>]] و [[<iframe>]] و [[<embed>]] (ومعاهم [[<fencedframe>]]، عنصر تجريبي مش في الكورس). **في حالات معينة:** [[<audio>]] و [[<canvas>]] و [[<object>]] و [[<input>]] من نوع [[image]] بس.
+2. **anonymous replaced elements:** الحاجات اللي بتتحط في الصفحة بخاصية [[content]] في الـ CSS (زي صورة في [[::before]]). «anonymous» لأنها مش موجودة في كود الـ HTML.
 
-if (process.argv[2]) {
-  for (const r of bidiRisks(fs.readFileSync(process.argv[2], "utf8")))
-    console.log($__bt$__{r.line}: <$__{r.tag}> $__{r.text}$__bt);
-}
+~~~text القياس من Chrome (بيأكد الجدول)
+<audio> من غير controls:   display: none   (مش replaced: مفيش صندوق أصلًا)
+<audio controls>:          300 × 54
+<canvas>:                  300 × 150       <object>: 300 × 150       <embed>: 0 × 0
 ~~~
 
-بتدوّر على الشكل اللي بيتلخبط في RTL: رقم أو حرف لاتيني لازق فيه علامة محايدة في الأول أو الآخر.
-
-- أول جزء في الـ regex: رقم أو حرف لاتيني بعده علامة، زي [[40+]] و [[C++]] و [[50%]].
-- تاني جزء: علامة قبل رقم أو حرف، زي [[(v2)]].
-- العنصر اللي عليه [[dir="ltr"]] أو [[<bdi>]] بيتعدّى، لأنه معزول، وده اللي بيمنع الإنذار الكاذب على الإيميل.
-- [[script]] و [[style]] بيتشالوا الأول، عشان الكود نفسه مليان أقواس.
-
-فحص سطر بسطر مش بيقرا كل HTML: عنصر متداخل ممكن يفوته، ودي حدود فحص بسيط، وكفاية لصفحاتك انت.
-
-الغلطة الشائعة: تشغّله على ملف فيه [[@media (min-width: 40rem)]] في [[<style>]] من غير الشيل، فكله إنذارات.
-
-~~~text الناتج (Node 24)
-النسخة القديمة (<dd>40+</dd>): 96: <dd> 40+
-الحالية: (مفيش حاجة)
-صفحة تجربة: 1: <p> C++ / 2: <p> (v2)
-إيميل dir="ltr": (مفيش حاجة)
-~~~` },
-            {
-              lvl: R`تحدي`,
-              t: R`**قارن وقيس:** شغّل Lighthouse (Chrome DevTools ← Lighthouse ← Mobile) على الصفحتين الرئيسيتين، وقارن رقم Accessibility و LCP و CLS بأرقام السكربتات هنا. لو اختلفوا، اكتب ليه (Lighthouse بيعمل throttling للشبكة كمان، و Accessibility فيه نفس axe).`,
-              done: R`عندك جدول فيه الأرقام من المصدرين للصفحتين، والـ CLS متطابق (صفر)، والـ LCP مختلف بين المصدرين ومكتوب السبب (Lighthouse بيحسبه تقدير بـ simulated throttling، و vitals.mjs بيبطّأ الـ CPU فعليًا)، ودرجة Accessibility ومكتوب إن «نشط» لسه مش متفحوص فيها لنفس السبب.`,
-              sol: R`~~~bash
-npm i -D lighthouse
-npx lighthouse http://127.0.0.1:5501/ --only-categories=accessibility,performance --form-factor=mobile --output=json --output-path=lh-port.json --chrome-flags="--headless=new" --quiet
-npx lighthouse http://127.0.0.1:5502/ --only-categories=accessibility,performance --form-factor=mobile --output=json --output-path=lh-dash.json --chrome-flags="--headless=new" --quiet
-~~~
-
-~~~js lh-read.mjs
-import fs from "node:fs";
-for (const f of ["lh-port.json", "lh-dash.json"]) {
-  const r = JSON.parse(fs.readFileSync(f, "utf8"));
-  console.log(f, "a11y", Math.round(r.categories.accessibility.score * 100),
-    "LCP", Math.round(r.audits["largest-contentful-paint"].numericValue) + "ms",
-    "CLS", r.audits["cumulative-layout-shift"].numericValue.toFixed(4));
-}
-~~~
-
-الرقمين مش من نفس الظرف، وده المتوقع:
-
-- **CLS:** مبيعتمدش على سرعة الشبكة، لأن الصفحة حاجزة أماكنها، فالمصدرين صفر.
-- **LCP:** الرقمين مختلفين، و Lighthouse هنا **أقل**، مع إنك كنت تتوقع العكس. [[vitals.mjs]] بيبطّأ الـ CPU فعليًا ×4، وكمان بيستنى 3 ثواني ويقرا آخر LCP. Lighthouse بالافتراضي بيعمل simulated throttling: بيحمّل الصفحة بسرعة عادية، وبعدين **يحسب تقدير** لوقتها على موبايل بطيء. فده رقم محسوب، والتاني مقاس.
-- **Accessibility:** Lighthouse بيشغّل axe نفسه، فعنده نفس النقطة العمياء: «نشط» مش متفحوصة، فالـ 100 مش ضمان.
-
-القيمة في Lighthouse إنها مرجع مشترك يقدر أي حد يقارنه، وقيمة السكربتات إنها بتتشغّل في CI وبرقم بتاعك.
-
-الغلطة الشائعة: تعتبر رقم Lighthouse «الحقيقة»، أو تقارن رقم [[perf.mjs]] بيه مباشرة.
-
-~~~text الناتج (Lighthouse على Chrome 156، و vitals.mjs)
-lh-port.json a11y 100 LCP 905ms CLS 0.0000
-lh-dash.json a11y 100 LCP 906ms CLS 0.0000
-vitals.mjs portfolio: run 1 CLS 0.0000 LCP 1124ms P
-vitals.mjs dashboard: run 1 CLS 0.0000 LCP 1180ms k-rev
-~~~` },
-          ],
-          ci: [
-            {
-              os: [
-                R`ubuntu`,
-                R`macos`,
-                R`windows`,
-              ],
-              sh: R`node`,
-              run: R`const pages = {
-  "index.html": '<link rel="stylesheet" href="css/site.css"><script src="/js/boot.js"></script><a href="https://nadine.example/">x</a><a href="#work">w</a>',
-  "cv.html": '<link href="/css/cv.css" rel="stylesheet"><img src="//cdn.example/x.png" alt=""><a href="./">home</a>',
-};
-let bad = 0;
-for (const [file, html] of Object.entries(pages))
-  for (const m of html.matchAll(/(?:href|src)="(\/(?!\/)[^"]*)"/g)) { bad++; console.log(file + ": " + m[1] + " breaks under /repo/"); }
-console.log("root paths: " + bad);
-process.exitCode = bad ? 1 : 0;`,
-              code: 1,
-              expect: [
-                R`index.html: /js/boot.js breaks under /repo/`,
-                R`cv.html: /css/cv.css breaks under /repo/`,
-                R`root paths: 2`,
-              ],
-            },
-          ],
-        },
-      ],
+**ليه «في حالات»:** [[<audio>]] من غير [[controls]] مبيترسمش خالص، و [[<object>]] اللي ملفه فشل بيعرض أولاده (محتوى عادي)، و [[<canvas>]] في متصفح مبيدعمهوش بيعرض بديله. في الحالات دي العنصر مبقاش «محتوى من برّه».` },
+          ]
+        }
+      ]
     }
 ]);

@@ -1,35 +1,253 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "widgets و scroll وميزات جديدة",
+      t: "position و responsive",
       pre: [
-        { to: "css/aria", why: R`الأدوار و aria-expanded اللي الـ widgets محتاجاها` },
-        { to: "css/focus-visible", why: R`الـ focus اللي الـ widgets بتنقله` },
+        { to: "css/display", why: R`الـ flow العادي اللي position بيطلّع منه` },
+        { to: "css/grid", why: R`الـ layouts اللي الـ media queries بتغيّرها` },
       ],
-      l: 3,
-      n: "accordion و tabs من غير مكتبة، و scroll مظبوط، وحركة بين الصفحات، وإزاي تعرف الميزة الجديدة تنفع ولا لسه",
+      l: 1,
+      n: "position بيطلّع العنصر من الترتيب العادي، و media queries بتغيّر الشكل حسب الشاشة",
       projects: [
-        { lvl: 'صغير', dir: "faq", t: R`FAQ لشركة شحن متخيلة «سِكّة»`, what: R`١٠ أسئلة بـ [[<details name="faq">]]، والفتح والقفل بيتحركوا بـ [[::details-content]] و [[interpolate-size: allow-keywords]]، وسهم بيلف مع [[details[open]]]، وخانة بحث فوق بتخفي الأسئلة اللي مش فيها الكلمة. من درس details و summary.`, done: R`سؤال واحد بس مفتوح في المرة، والحركة شغالة في Chrome وفي المتصفح اللي مش بيدعمها بيفتح من غير حركة، والسهم في الناحية الصح في العربي، ومع reduce مفيش حركة، والبحث بيلاقي كلمة جوه إجابة مقفولة.`, sol: R`~~~html index.html (أول سؤالين، والـ ١٠ زيهم)
+        { lvl: 'صغير', dir: "float-contact", t: R`زرار تواصل عايم مبيغطّيش حاجة`, what: R`زرار [[fixed]] على [[inset-inline-end]] و [[bottom: calc(1rem + env(safe-area-inset-bottom))]]، والكلام جنبه يختفي تحت 640، ولو فيه شريط CTA تحت على الموبايل الزرار يطلع فوقه. من درس [[sticky و fixed]].`, done: R`في rtl و ltr الزرار في ركن النهاية تحت، وعلى 360 مش فوق زرار «احجز» (قيس الاتنين بـ [[getBoundingClientRect]] ومفيش تداخل)، وبعد scroll 2000 لسه في نفس المكان.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مركز ريشة للعلاج الطبيعي</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="page">
+  <h1>مركز ريشة للعلاج الطبيعي</h1>
+  <p>جلسات للضهر والركبة والرقبة، ومتابعة بعد العمليات. الصفحة طويلة عشان تجرّب الـ scroll: الزرار الأخضر فاضل في مكانه.</p>
+  <h2>الخدمات</h2>
+  <p>علاج آلام الضهر بالتمارين والأجهزة، وتأهيل الركبة بعد الإصابات، وجلسات للرقبة والكتف لأصحاب الشغل على الكمبيوتر.</p>
+  <h2>المواعيد</h2>
+  <p>كل يوم من ١٠ الصبح لـ ١٠ بالليل ما عدا الجمعة. الجلسة ٤٥ دقيقة.</p>
+  <h2>الأسعار</h2>
+  <p>الكشف ٣٠٠ جنيه، والجلسة ٢٥٠، وباقة ١٠ جلسات بـ ٢٠٠٠.</p>
+  <h2>العنوان</h2>
+  <p>٤ شارع النخيل، الدور التاني، فوق الصيدلية.</p>
+  <div class="spacer" aria-hidden="true"></div>
+  <p>آخر الصفحة. الزرار لسه في الركن، وشريط «احجز» على الموبايل مغطّاش الكلام ده لأن الـ body ليه مسافة تحت.</p>
+</main>
+
+<aside aria-label="تواصل سريع">
+<a class="contact" href="https://wa.me/201000000000">
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+  <span class="contact__text">كلّمنا واتساب</span>
+</a>
+
+<div class="cta-bar">
+  <a class="cta-bar__btn" href="#book">احجز جلسة</a>
+</div>
+</aside>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --safe-bottom: env(safe-area-inset-bottom, 0px);   /* the iPhone home bar; 0 everywhere else */
+  --cta-h: 0px;                                       /* the bottom bar's height, 0 while it is hidden */
+}
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #f8fafc; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 6rem; }
+.spacer { height: 250vh; }   /* empty filler so the page scrolls */
+
+/* the floating button: fixed to the end corner, above the bar if there is one */
+.contact {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: calc(1rem + var(--cta-h) + var(--safe-bottom));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.1rem;
+  border-radius: 999px;
+  background: #166534;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 18px #0003;
+}
+.contact:focus-visible, .cta-bar__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+.cta-bar { display: none; }
+
+@media (max-width: 39.98rem) {
+  :root { --cta-h: 4.5rem; }
+  /* phone: the text hides (still read by screen readers), only the icon stays */
+  .contact { padding: 0.8rem; }
+  .contact__text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  .cta-bar {
+    display: flex;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 10;
+    height: calc(var(--cta-h) + var(--safe-bottom));
+    padding: 0.75rem 1rem calc(0.75rem + var(--safe-bottom));
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+  }
+  .cta-bar__btn { flex: 1; display: grid; place-items: center; border-radius: 0.75rem; background: #1d4ed8; color: #fff; font-weight: 700; text-decoration: none; }
+  /* the bar covers the last part of the page, so the page gets that much space at the bottom */
+  body { padding-bottom: calc(var(--cta-h) + var(--safe-bottom)); }
+}
+~~~
+
+~~~view 560 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مركز ريشة للعلاج الطبيعي</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --safe-bottom: env(safe-area-inset-bottom, 0px);   /* the iPhone home bar; 0 everywhere else */
+  --cta-h: 0px;                                       /* the bottom bar's height, 0 while it is hidden */
+}
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #f8fafc; }
+.page { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 6rem; }
+.spacer { height: 250vh; }   /* empty filler so the page scrolls */
+
+/* the floating button: fixed to the end corner, above the bar if there is one */
+.contact {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: calc(1rem + var(--cta-h) + var(--safe-bottom));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.1rem;
+  border-radius: 999px;
+  background: #166534;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 18px #0003;
+}
+.contact:focus-visible, .cta-bar__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+.cta-bar { display: none; }
+
+@media (max-width: 39.98rem) {
+  :root { --cta-h: 4.5rem; }
+  /* phone: the text hides (still read by screen readers), only the icon stays */
+  .contact { padding: 0.8rem; }
+  .contact__text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  .cta-bar {
+    display: flex;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 10;
+    height: calc(var(--cta-h) + var(--safe-bottom));
+    padding: 0.75rem 1rem calc(0.75rem + var(--safe-bottom));
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+  }
+  .cta-bar__btn { flex: 1; display: grid; place-items: center; border-radius: 0.75rem; background: #1d4ed8; color: #fff; font-weight: 700; text-decoration: none; }
+  /* the bar covers the last part of the page, so the page gets that much space at the bottom */
+  body { padding-bottom: calc(var(--cta-h) + var(--safe-bottom)); }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>مركز ريشة للعلاج الطبيعي</h1>
+  <p>جلسات للضهر والركبة والرقبة، ومتابعة بعد العمليات. الصفحة طويلة عشان تجرّب الـ scroll: الزرار الأخضر فاضل في مكانه.</p>
+  <h2>الخدمات</h2>
+  <p>علاج آلام الضهر بالتمارين والأجهزة، وتأهيل الركبة بعد الإصابات، وجلسات للرقبة والكتف لأصحاب الشغل على الكمبيوتر.</p>
+  <h2>المواعيد</h2>
+  <p>كل يوم من ١٠ الصبح لـ ١٠ بالليل ما عدا الجمعة. الجلسة ٤٥ دقيقة.</p>
+  <h2>الأسعار</h2>
+  <p>الكشف ٣٠٠ جنيه، والجلسة ٢٥٠، وباقة ١٠ جلسات بـ ٢٠٠٠.</p>
+  <h2>العنوان</h2>
+  <p>٤ شارع النخيل، الدور التاني، فوق الصيدلية.</p>
+  <div class="spacer" aria-hidden="true"></div>
+  <p>آخر الصفحة. الزرار لسه في الركن، وشريط «احجز» على الموبايل مغطّاش الكلام ده لأن الـ body ليه مسافة تحت.</p>
+</main>
+
+<aside aria-label="تواصل سريع">
+<a class="contact" href="https://wa.me/201000000000">
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+  <span class="contact__text">كلّمنا واتساب</span>
+</a>
+
+<div class="cta-bar">
+  <a class="cta-bar__btn" href="#book">احجز جلسة</a>
+</div>
+</aside>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** صفحة مركز علاج طبيعي، وزرار أخضر «كلّمنا واتساب» في الركن تحت على الشمال (في العربي النهاية هي الشمال). انزل في الصفحة: الزرار مبيتحركش. على الموبايل الكلام بيستخبى والأيقونة بس اللي بتفضل، ويظهر تحت خالص شريط أبيض فيه زرار «احجز جلسة» أزرق، والزرار الأخضر بيطلع فوقه.
+
+**[[position: fixed]]:** الزرار بيتقاس من الشاشة نفسها مش من الصفحة، فالـ scroll مبيحركوش.
+- [[inset-inline-end: 1rem]]: ناحية نهاية الكلام. في العربي شمال، ولو قلبت [[dir="ltr"]] بيروح يمين لوحده.
+- [[bottom: calc(1rem + var(--cta-h) + var(--safe-bottom))]]: المسافة من تحت فيها ٣ حاجات: مسافة عادية، وطول شريط «احجز» لو موجود، ومنطقة شريط الـ home في iPhone.
+
+**[[env(safe-area-inset-bottom)]]:** في iPhone اللي من غير زرار home فيه شريط تحت الشاشة. [[env()]] بترجّع ارتفاعه، والـ [[0px]] بعد الفاصلة هي القيمة لو مش موجود. ومن غير [[viewport-fit=cover]] في الـ meta viewport، المتصفح بيحط الصفحة كلها فوق الشريط ده والقيمة بتطلع صفر. على الكمبيوتر وأندرويد قيمتها 0، فالسطر ده مش بيغيّر حاجة هناك.
+
+**الزرار والشريط مبيتداخلوش:** الاتنين [[fixed]] تحت، فالحل إن المسافة اللي تحت الزرار تشيل طول الشريط. [[--cta-h]] صفر برّه الـ media query (مفيش شريط)، و 4.5rem جواها، والزرار والشريط والـ [[padding-bottom]] بتاع الـ body بيقروا نفس المتغير. لو غيّرت طول الشريط، الـ ٣ بيتظبطوا.
+
+**[[padding-bottom]] على الـ body:** الشريط [[fixed]] مش بياخد مكان في الصفحة، فآخر سطر كان هيستخبى تحته. المسافة دي بتخلي آخر الصفحة يطلع فوقه.
+
+**الكلام اللي اتشال على الموبايل:** متشالش بـ [[display: none]]. اتشال بالطريقة اللي بتخفيه من العين بس، عشان قارئ الشاشة يفضل يقول «كلّمنا واتساب». من غيره اللينك كان هيبقى أيقونة من غير اسم.
+
+**غلطة اتصلحت:** axe قال [[region]] مرتين: الزرار والشريط برّه أي landmark. اتحطوا جوه [[<aside aria-label="تواصل سريع">]].
+
+~~~text الناتج (Chrome 157، [يسار، فوق، يمين، تحت])
+360 rtl:   الزرار 31,562,81,612   زرار «احجز» 31,641,344,688   تداخل: لأ (الزرار بيخلص 612 والشريط بيبدأ 641)
+360 ltr:   الزرار 279,562,329,612   زرار «احجز» 16,641,329,688   تداخل: لأ
+1280 rtl:  الزرار 31,731,184,784 (الكلام ظاهر، عرضه 85.9)، مفيش شريط
+1280 ltr:  الزرار 1096,731,1249,784
+بعد scrollTo(0, 2000): scrollY = 2000 والزرار في نفس المكان بالظبط (في الـ 4)
+scrollWidth = عرض الشاشة   axe: 0 violations (كان region ×2 قبل الـ aside)   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**الـ safe area اتجرّبتش هنا:** مفيش iPhone في التجربة. القيمة 0 على Chrome و Windows زي ما الوثائق بتقول، والجزء ده من MDN (env() و viewport-fit).` },
+        { lvl: 'صغير', dir: "badge-card", t: R`كارت منتج بشارات ولينك واحد`, what: R`كارت فيه شارة خصم وشارة «جديد» وزرار مفضّلة كلهم absolute على أركان logical، والكارت كله لينك بـ [[::after]]. من درس [[position: absolute]].`, done: R`في rtl و ltr الشارات في الأركان الصح، و [[elementFromPoint]] فوق زرار المفضّلة بيرجّع BUTTON وفوق الباقي A، وقارئ الشاشة بيقرا لينك واحد بس.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أسئلة «سِكّة» للشحن</title>
+<title>شنط مشغل خيط</title>
 <link rel="stylesheet" href="style.css">
-<script src="search.js" defer></script>
+<script src="fav.js" defer></script>
 </head>
 <body>
-<main class="wrap">
-  <h1>أسئلة بتتسأل كتير</h1>
-  <label for="q">دوّر في الأسئلة والإجابات</label>
-  <input id="q" type="search" autocomplete="off" aria-describedby="count">
-  <p id="count" class="count" role="status"></p>
-  <div class="faq">
-    <details name="faq"><summary>الشحنة بتوصل في قد إيه؟</summary><p>جوه القاهرة والجيزة يوم شغل، والمحافظات من ٢ لـ ٤ أيام.</p></details>
-    <details name="faq"><summary>أتابع شحنتي إزاي؟</summary><p>من صفحة «تتبّع» برقم البوليصة اللي جالك في رسالة.</p></details>
-    …
-  </div>
+<main class="page">
+  <h1>شنط يدوي</h1>
+  <ul class="cards">
+    <li class="card">
+      <img class="card__img" src="img/bag.svg" alt="" width="400" height="300">
+      <p class="badges"><span class="badge badge--sale">خصم ٢٠٪</span><span class="badge badge--new">جديد</span></p>
+      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة الكروشيه للمفضّلة">♡</button>
+      <h2 class="card__title"><a class="card__link" href="#bag-1">شنطة كروشيه بيج</a></h2>
+      <p class="card__price"><del>٤٥٠ ج</del> ٣٦٠ ج</p>
+    </li>
+    <li class="card">
+      <img class="card__img" src="img/bag.svg" alt="" width="400" height="300">
+      <p class="badges"><span class="badge badge--new">جديد</span></p>
+      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة القماش للمفضّلة">♡</button>
+      <h2 class="card__title"><a class="card__link" href="#bag-2">شنطة قماش مطرّزة</a></h2>
+      <p class="card__price">٣٢٠ ج</p>
+    </li>
+  </ul>
 </main>
 </body>
 </html>
@@ -37,184 +255,356 @@ MORE("css", [
 
 ~~~css style.css
 *, *::before, *::after { box-sizing: border-box; }
-:root { interpolate-size: allow-keywords; }      /* lets height go from 0 to "auto" smoothly (Chrome); ignored elsewhere */
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #fafaf9; }
-.wrap { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem; }
-h1 { margin: 0 0 1rem; font-size: 1.5rem; }
-label { display: block; font-weight: 700; }
-input { width: 100%; margin-block: 0.25rem; padding: 0.55rem 0.75rem; border: 1px solid #78716c; border-radius: 0.5rem; font: inherit; }
-.count { min-height: 1.7em; margin: 0 0 0.5rem; color: #57534e; }
-:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fdf8f3; color: #292524; }
+.page { max-width: 48rem; margin-inline: auto; padding: 1rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
 
-details { border-block-end: 1px solid #d6d3d1; }
-summary { display: flex; justify-content: space-between; gap: 1rem; padding: 0.9rem 0.25rem; font-weight: 700; cursor: pointer; list-style: none; }
-summary::-webkit-details-marker { display: none; }
-/* our own arrow, at the end of the line (left in Arabic): it points down when open */
-summary::after { content: "‹" / ""; font-size: 1.4rem; line-height: 1; transition: rotate 0.25s; }
-details[open] summary::after { rotate: -90deg; }
-details p { margin: 0; padding: 0 0.25rem 1rem; color: #44403c; }
+/* the card is the reference box for everything absolute inside it */
+.card { position: relative; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e7e5e4; }
+.card__img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
+.card__title { margin: 0.75rem 0 0.25rem; font-size: 1.1rem; }
+.card__price { margin: 0; font-weight: 700; color: #9a3412; }
+.card__price del { color: #78716c; font-weight: 400; }
 
-/* the opening motion: only where ::details-content exists; elsewhere it just opens */
-@supports selector(::details-content) {
-  details::details-content {
-    block-size: 0; overflow: clip;
-    transition: block-size 0.3s ease, content-visibility 0.3s allow-discrete;
-  }
-  details[open]::details-content { block-size: auto; }
+/* the whole card is one link: the title's link stretches a layer over the card */
+.card__link { color: inherit; text-decoration: none; }
+.card__link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.card:has(.card__link:focus-visible) { outline: 3px solid #c2410c; outline-offset: 3px; }
+.card__link:focus-visible { outline: none; }
+
+/* badges: one box on the start corner, the badges inside it one under the other */
+.badges { position: absolute; inset-block-start: 1.25rem; inset-inline-start: 1.25rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; margin: 0; }
+.badge { padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; color: #fff; }
+.badge--sale { background: #b91c1c; }
+.badge--new { background: #1d4ed8; }
+
+/* the button on the end corner, ABOVE the link's layer, so a click on it is not a click on the card */
+.fav {
+  position: absolute;
+  inset-block-start: 1.25rem;
+  inset-inline-end: 1.25rem;
+  z-index: 1;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #b91c1c;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0002;
 }
-@media (prefers-reduced-motion: reduce) {
-  details::details-content, summary::after { transition: none; }
-}
+.fav[aria-pressed="true"] { background: #b91c1c; color: #fff; }
+.fav:focus-visible { outline: 3px solid #c2410c; outline-offset: 2px; }
 ~~~
 
-~~~js search.js
-// filters the questions by what's typed; the answer counts too, even when it's closed
-const input = document.getElementById("q"), count = document.getElementById("count");
-const items = [...document.querySelectorAll(".faq details")];
-input.addEventListener("input", () => {
-  const word = input.value.trim();
-  let shown = 0;
-  for (const d of items) {
-    const hit = !word || d.textContent.includes(word);     // textContent reads the closed <p> too
-    d.hidden = !hit;
-    if (hit) shown++;
-  }
-  const n = shown === 1 ? "سؤال واحد" : shown.toLocaleString("ar-EG") + " أسئلة";          // 1 = واحد، 2 and up = أسئلة
-  count.textContent = word ? (shown ? n + " فيها «" + word + "»" : "مفيش سؤال فيه «" + word + "»") : "";
+~~~js fav.js
+document.querySelectorAll(".fav").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const on = btn.getAttribute("aria-pressed") !== "true";
+    btn.setAttribute("aria-pressed", String(on));
+    btn.textContent = on ? "♥" : "♡";
+  });
 });
 ~~~
 
-~~~view 800 800 الشكل النهائي
+~~~svg img/bag.svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#fde7d2"/>
+  <path d="M150 110a50 50 0 0 1 100 0" fill="none" stroke="#9a3412" stroke-width="10"/>
+  <rect x="110" y="110" width="180" height="140" rx="20" fill="#ea580c"/>
+  <rect x="110" y="150" width="180" height="12" fill="#fdba74"/>
+</svg>
+~~~
+
+~~~view 470 780 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أسئلة «سِكّة» للشحن</title>
+<title>شنط مشغل خيط</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-:root { interpolate-size: allow-keywords; }      /* lets height go from 0 to "auto" smoothly (Chrome); ignored elsewhere */
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #fafaf9; }
-.wrap { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem; }
-h1 { margin: 0 0 1rem; font-size: 1.5rem; }
-label { display: block; font-weight: 700; }
-input { width: 100%; margin-block: 0.25rem; padding: 0.55rem 0.75rem; border: 1px solid #78716c; border-radius: 0.5rem; font: inherit; }
-.count { min-height: 1.7em; margin: 0 0 0.5rem; color: #57534e; }
-:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fdf8f3; color: #292524; }
+.page { max-width: 48rem; margin-inline: auto; padding: 1rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
 
-details { border-block-end: 1px solid #d6d3d1; }
-summary { display: flex; justify-content: space-between; gap: 1rem; padding: 0.9rem 0.25rem; font-weight: 700; cursor: pointer; list-style: none; }
-summary::-webkit-details-marker { display: none; }
-/* our own arrow, at the end of the line (left in Arabic): it points down when open */
-summary::after { content: "‹" / ""; font-size: 1.4rem; line-height: 1; transition: rotate 0.25s; }
-details[open] summary::after { rotate: -90deg; }
-details p { margin: 0; padding: 0 0.25rem 1rem; color: #44403c; }
+/* the card is the reference box for everything absolute inside it */
+.card { position: relative; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e7e5e4; }
+.card__img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
+.card__title { margin: 0.75rem 0 0.25rem; font-size: 1.1rem; }
+.card__price { margin: 0; font-weight: 700; color: #9a3412; }
+.card__price del { color: #78716c; font-weight: 400; }
 
-/* the opening motion: only where ::details-content exists; elsewhere it just opens */
-@supports selector(::details-content) {
-  details::details-content {
-    block-size: 0; overflow: clip;
-    transition: block-size 0.3s ease, content-visibility 0.3s allow-discrete;
-  }
-  details[open]::details-content { block-size: auto; }
+/* the whole card is one link: the title's link stretches a layer over the card */
+.card__link { color: inherit; text-decoration: none; }
+.card__link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.card:has(.card__link:focus-visible) { outline: 3px solid #c2410c; outline-offset: 3px; }
+.card__link:focus-visible { outline: none; }
+
+/* badges: one box on the start corner, the badges inside it one under the other */
+.badges { position: absolute; inset-block-start: 1.25rem; inset-inline-start: 1.25rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; margin: 0; }
+.badge { padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; color: #fff; }
+.badge--sale { background: #b91c1c; }
+.badge--new { background: #1d4ed8; }
+
+/* the button on the end corner, ABOVE the link's layer, so a click on it is not a click on the card */
+.fav {
+  position: absolute;
+  inset-block-start: 1.25rem;
+  inset-inline-end: 1.25rem;
+  z-index: 1;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #b91c1c;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0002;
 }
-@media (prefers-reduced-motion: reduce) {
-  details::details-content, summary::after { transition: none; }
-}
+.fav[aria-pressed="true"] { background: #b91c1c; color: #fff; }
+.fav:focus-visible { outline: 3px solid #c2410c; outline-offset: 2px; }
 </style>
 </head>
 <body>
-<main class="wrap">
-  <h1>أسئلة بتتسأل كتير</h1>
-  <label for="q">دوّر في الأسئلة والإجابات</label>
-  <input id="q" type="search" autocomplete="off" aria-describedby="count">
-  <p id="count" class="count" role="status"></p>
-  <div class="faq">
-    <details name="faq"><summary>الشحنة بتوصل في قد إيه؟</summary><p>جوه القاهرة والجيزة يوم شغل، والمحافظات من ٢ لـ ٤ أيام.</p></details>
-    <details name="faq"><summary>أتابع شحنتي إزاي؟</summary><p>من صفحة «تتبّع» برقم البوليصة اللي جالك في رسالة.</p></details>
-    <details name="faq"><summary>الدفع عند الاستلام متاح؟</summary><p>أيوه، كاش أو كارت مع المندوب.</p></details>
-    <details name="faq"><summary>المندوب جه وأنا مش موجود؟</summary><p>بيكلمك ويحاول تاني اليوم اللي بعده، وبعد محاولتين الشحنة بترجع المخزن.</p></details>
-    <details name="faq"><summary>أقدر أغيّر العنوان بعد الطلب؟</summary><p>أيوه قبل ما الشحنة تخرج مع المندوب، من صفحة «طلباتي».</p></details>
-    <details name="faq"><summary>فيه شحن دولي؟</summary><p>لسه، بنوصّل جوه مصر بس.</p></details>
-    <details name="faq"><summary>الشحنة وصلت مكسورة؟</summary><p>صوّرها قبل ما تمضي، وكلّمنا في نفس اليوم ونرجّعلك فلوسك.</p></details>
-    <details name="faq"><summary>أقصى وزن كام؟</summary><p>٣٠ كيلو للشحنة الواحدة، والأتقل محتاج عربية نقل.</p></details>
-    <details name="faq"><summary>بتشحنوا يوم الجمعة؟</summary><p>أيوه في القاهرة بس، من ١٢ الضهر.</p></details>
-    <details name="faq"><summary>أكلّم خدمة العملاء إزاي؟</summary><p>واتساب أو الخط الساخن من ٩ الصبح لـ ٩ بالليل.</p></details>
-  </div>
+<main class="page">
+  <h1>شنط يدوي</h1>
+  <ul class="cards">
+    <li class="card">
+      <img class="card__img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMzAwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCI+CiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZGU3ZDIiLz4KICA8cGF0aCBkPSJNMTUwIDExMGE1MCA1MCAwIDAgMSAxMDAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWEzNDEyIiBzdHJva2Utd2lkdGg9IjEwIi8+CiAgPHJlY3QgeD0iMTEwIiB5PSIxMTAiIHdpZHRoPSIxODAiIGhlaWdodD0iMTQwIiByeD0iMjAiIGZpbGw9IiNlYTU4MGMiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjE1MCIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxMiIgZmlsbD0iI2ZkYmE3NCIvPgo8L3N2Zz4=" alt="" width="400" height="300">
+      <p class="badges"><span class="badge badge--sale">خصم ٢٠٪</span><span class="badge badge--new">جديد</span></p>
+      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة الكروشيه للمفضّلة">♡</button>
+      <h2 class="card__title"><a class="card__link" href="#bag-1">شنطة كروشيه بيج</a></h2>
+      <p class="card__price"><del>٤٥٠ ج</del> ٣٦٠ ج</p>
+    </li>
+    <li class="card">
+      <img class="card__img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMzAwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCI+CiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZGU3ZDIiLz4KICA8cGF0aCBkPSJNMTUwIDExMGE1MCA1MCAwIDAgMSAxMDAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWEzNDEyIiBzdHJva2Utd2lkdGg9IjEwIi8+CiAgPHJlY3QgeD0iMTEwIiB5PSIxMTAiIHdpZHRoPSIxODAiIGhlaWdodD0iMTQwIiByeD0iMjAiIGZpbGw9IiNlYTU4MGMiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjE1MCIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxMiIgZmlsbD0iI2ZkYmE3NCIvPgo8L3N2Zz4=" alt="" width="400" height="300">
+      <p class="badges"><span class="badge badge--new">جديد</span></p>
+      <button class="fav" type="button" aria-pressed="false" aria-label="ضيف شنطة القماش للمفضّلة">♡</button>
+      <h2 class="card__title"><a class="card__link" href="#bag-2">شنطة قماش مطرّزة</a></h2>
+      <p class="card__price">٣٢٠ ج</p>
+    </li>
+  </ul>
 </main>
 <script>
-// filters the questions by what's typed; the answer counts too, even when it's closed
-const input = document.getElementById("q"), count = document.getElementById("count");
-const items = [...document.querySelectorAll(".faq details")];
-input.addEventListener("input", () => {
-  const word = input.value.trim();
-  let shown = 0;
-  for (const d of items) {
-    const hit = !word || d.textContent.includes(word);     // textContent reads the closed <p> too
-    d.hidden = !hit;
-    if (hit) shown++;
-  }
-  const n = shown === 1 ? "سؤال واحد" : shown.toLocaleString("ar-EG") + " أسئلة";          // 1 = واحد، 2 and up = أسئلة
-  count.textContent = word ? (shown ? n + " فيها «" + word + "»" : "مفيش سؤال فيه «" + word + "»") : "";
+document.querySelectorAll(".fav").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const on = btn.getAttribute("aria-pressed") !== "true";
+    btn.setAttribute("aria-pressed", String(on));
+    btn.textContent = on ? "♥" : "♡";
+  });
 });
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** «أسئلة بتتسأل كتير» وخانة بحث، وتحتها ١٠ أسئلة، كل واحد آخره سهم «‹». الضغط على سؤال بيفتحه بحركة ناعمة، والسهم بيلف لتحت، والمفتوح اللي قبله بيتقفل لوحده. والبحث بيخفي الأسئلة اللي مفيهاش الكلمة.
+**هتشوف إيه:** كارتين شنط. على الركن اليمين فوق شارة حمرا «خصم ٢٠٪» وتحتها زرقا «جديد»، وعلى الشمال فوق دايرة بيضا فيها ♡. الكارت كله بيفتح المنتج لو دوست في أي حتة فيه، ما عدا القلب: القلب بيتملي ♥ ومبيفتحش حاجة.
 
-**سؤال واحد في المرة من غير JS:** [[<details name="faq">]]. كل الـ details اللي ليهم نفس الـ [[name]] مجموعة، والمتصفح بيقفل القديم لما تفتح جديد. زي radio.
+**[[position: relative]] على الكارت:** أي ابن [[absolute]] بيتقاس من أقرب جد عليه position. من غيرها الشارات كانت هتتقاس من الصفحة كلها وتطلع في ركنها.
 
-**الحركة:**
-- [[::details-content]] هو الجزء اللي بيتفتح ويتقفل (كل حاجة غير الـ summary).
-- [[interpolate-size: allow-keywords]] بيسمح للـ height إنها تتحرك لحد [[auto]]، وده كان مستحيل بـ CSS.
-- [[content-visibility … allow-discrete]] لأن المتصفح بيخبي المحتوى بـ [[content-visibility]]، والـ [[allow-discrete]] بيخلّيها تتغير بعد الحركة مش قبلها.
-- كله جوه [[@supports selector(::details-content)]]. المتصفح اللي مبيعرفهوش بيفتح على طول، واتقاس كده.
+**الشارات:** صندوق واحد [[.badges]] absolute على [[inset-inline-start]]، والشارات جواه flex عمودي. أول نسخة كانت كل شارة absolute لوحدها بـ [[top]] بتاعها، وده محتاج قواعد زيادة: لو مفيش خصم، «جديد» لازم تطلع مكانه. الصندوق الواحد حل ده: الشارات بترص نفسها، واللي مش موجودة مبتسيبش مكان.
 
-**السهم في آخر السطر:** [[summary]] بقى [[flex]] و [[justify-content: space-between]]، فالسهم بيروح لآخر السطر في أي اتجاه (شمال في العربي). و [[list-style: none]] و [[::-webkit-details-marker]] بيشيلوا مثلث المتصفح. والسهم [[content: "‹" / ""]]: نص بديل فاضي عشان مبيتقريش.
+**الكارت كله لينك واحد:** اللينك على العنوان بس، و [[.card__link::after]] طبقة شفافة [[absolute; inset: 0]] بتغطي الكارت كله. يعني فيه لينك واحد بس في الكارت، وقارئ الشاشة بيقول «شنطة كروشيه بيج، لينك» مرة واحدة. لو كنت لفّيت الكارت كله بـ [[<a>]]، كان هيقرا الصورة والشارات والسعر كلهم جوه اسم اللينك، ومينفعش زرار جوه لينك أصلًا.
 
-**البحث في الإجابات المقفولة:** [[textContent]] بيقرا كل النص حتى اللي جوه [[details]] مقفول. والنتيجة في [[role="status"]]: «٣ أسئلة فيها «المندوب»». أول نسخة قالت «٣ سؤال»، فبقى «سؤال واحد» للواحد و «أسئلة» لاتنين وأكتر.
+**القلب فوق طبقة اللينك:** [[z-index: 1]] على [[.fav]] بيحطه فوق الـ [[::after]]، فالضغطة بتروحله هو. الشارات تحت الطبقة، فالضغط عليها بيفتح المنتج، وده المطلوب.
 
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-١. سؤال ١: مقفول 57px ← بعد 100ms 86px ← بعد 500ms 100px
-   فتحت سؤال ٣: المفتوح 3 بس (١ اتقفل لوحده)
-   السهم: "‹" / ""، rotate -90deg | الكلام يمين والسهم شمال
-٢. «المندوب»: الدفع عند الاستلام متاح؟ / المندوب جه وأنا مش موجود؟ / أقدر أغيّر العنوان بعد الطلب؟
-   (أول وتالت واحد الكلمة في إجابتهم المقفولة) | «٣ أسئلة فيها «المندوب»»
-   «طيارة»: «مفيش سؤال فيه «طيارة»» | ظاهر 0
-٣. من غير ::details-content (الـ @supports وقع): بعد 30ms 100px، بيتفتح على طول
-٤. reduce: بعد 30ms 100px | transitions: 0
-axe: 0   الـ validator: مفيش رسايل   CSS validator (W3C) مبيعرفش لسه interpolate-size و allow-discrete
-~~~` },
-        { lvl: 'صغير', dir: "carousel", t: R`carousel منتجات بأزرار ونقط`, what: R`carousel بـ [[scroll-snap]] (من الدرس)، وزرارين «اللي قبله» و«اللي بعده» بيعملوا [[scrollBy]] بعرض كارت في الاتجاه الصح في RTL ([[scrollLeft]] بيبقى بالسالب)، ونقط تحت بتعلّم الكارت الظاهر بـ IntersectionObserver على الـ carousel نفسه. من درس scroll-snap و scroll-margin.`, done: R`الزراير بتمشي صح في العربي والإنجليزي، وبتتعطّل في الأول والآخر، والنقطة الحالية عليها [[aria-current="true"]]، والسحب باللمس والأسهم شغالين.`, sol: R`~~~html index.html (أول منتج، والـ ٦ زيه)
+**[[aria-pressed]]:** زرار بيتشغل ويتقفل. قارئ الشاشة بيقول «مضغوط» أو «مش مضغوط»، والـ JS بيغيّره مع شكل القلب.
+
+~~~text الناتج (Chrome 157، كارت عرضه 326)
+         القلب من حافة النهاية   الشارات من حافة البداية   تحت القلب   تحت الشارة   تحت الصورة   تحت السعر
+rtl      21                     21                         BUTTON      A            A             A
+ltr      21                     21                         BUTTON      A            A             A
+(elementFromPoint في نص كل حاجة)
+
+لينكات جوه الكارت: 1   بعد الضغط على القلب: aria-pressed = true
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**الـ focus على الكارت كله:** [[.card:has(.card__link:focus-visible)]] بيرسم الحلقة على الكارت لما اللينك ياخد focus من الكيبورد، عشان الحلقة حوالين العنوان بس كانت هتبان صغيرة ومش واضح إن الكارت كله لينك.` },
+        { lvl: 'صغير', dir: "watermark", t: R`علامة مائية «نسخة تجريبية» مبتمنعش الضغط`, what: R`صفحة عرض سعر لمطبعة متخيلة، وفوقها كلها علامة مائية «نسخة تجريبية» مايلة ومتكررة وباهتة. العلامة طبقة واحدة [[::after]] على الـ body بـ [[position: fixed; inset: 0]] وخلفية SVG متكررة، و [[pointer-events: none]] عشان الضغط والتحديد يعدّوا منها للي تحتها. من دروس [[sticky و fixed]] و [[z-index]].`, done: R`العلامة فوق الكارت الأبيض كمان (مش وراه)، والكلام تحتها مقروء، و [[elementFromPoint]] فوق زرار «وافق» بيرجّع الزرار والضغط بيشتغل، وتحديد كلام الجدول بيشتغل، ولو شلت [[pointer-events: none]] نفس الـ [[elementFromPoint]] بيرجّع الـ body.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>منتجات مختارة</title>
+<title>عرض سعر: مطبعة سطور</title>
 <link rel="stylesheet" href="style.css">
-<script src="carousel.js" defer></script>
+</head>
+<body class="draft">
+<main class="quote">
+  <h1>عرض سعر رقم ١٠٤</h1>
+  <p>لـ: كافيه الركن. صالح لحد آخر الشهر.</p>
+  <table>
+    <thead><tr><th scope="col">البند</th><th scope="col">الكمية</th><th scope="col">السعر</th></tr></thead>
+    <tbody>
+      <tr><td>منيو مقوّى A4</td><td>٥٠</td><td>١٬٢٥٠ ج</td></tr>
+      <tr><td>كروت بزنس</td><td>٥٠٠</td><td>٤٠٠ ج</td></tr>
+      <tr><td>ستيكر لوجو</td><td>٢٠٠</td><td>٣٠٠ ج</td></tr>
+    </tbody>
+    <tfoot><tr><th scope="row" colspan="2">الإجمالي</th><td>١٬٩٥٠ ج</td></tr></tfoot>
+  </table>
+  <p class="note">العرض ده مسودة لحد ما توافق عليه. العلامة المائية بتختفي في النسخة النهائية.</p>
+  <button class="approve" type="button">وافق على العرض</button>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding-inline: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #f5f5f4; }
+.quote { max-width: 40rem; margin: 1.5rem auto; padding: 1.5rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 20px #0001; }
+.quote h1 { margin-top: 0; font-size: 1.6rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.5rem; text-align: start; border-bottom: 1px solid #e7e5e4; }
+tfoot th, tfoot td { font-weight: 800; border-bottom: 0; }
+.note { color: #57534e; font-size: 0.95rem; }
+.approve { padding: 0.7rem 1.4rem; border: 0; border-radius: 0.5rem; background: #166534; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.approve:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+/* the watermark: one layer over the whole screen, repeated, faint, and transparent to the mouse */
+.draft::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;                       /* above the content, so it shows on top of the white paper too */
+  background: url("watermark.svg") repeat;
+  opacity: 0.12;                      /* faint: the text under it stays readable */
+  pointer-events: none;               /* clicks, hover and text selection go through it to what is under it */
+}
+
+/* printing keeps it: a draft on paper is still a draft */
+@media print {
+  body { background: #fff; }
+  .quote { box-shadow: none; margin: 0; }
+}
+~~~
+
+~~~svg watermark.svg
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="160" viewBox="0 0 260 160">
+  <text x="130" y="90" text-anchor="middle" transform="rotate(-25 130 80)" font-family="Tahoma, sans-serif" font-size="26" font-weight="700" fill="#7f1d1d">نسخة تجريبية</text>
+</svg>
+~~~
+
+~~~view 540 560 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عرض سعر: مطبعة سطور</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding-inline: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #f5f5f4; }
+.quote { max-width: 40rem; margin: 1.5rem auto; padding: 1.5rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 20px #0001; }
+.quote h1 { margin-top: 0; font-size: 1.6rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.5rem; text-align: start; border-bottom: 1px solid #e7e5e4; }
+tfoot th, tfoot td { font-weight: 800; border-bottom: 0; }
+.note { color: #57534e; font-size: 0.95rem; }
+.approve { padding: 0.7rem 1.4rem; border: 0; border-radius: 0.5rem; background: #166534; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.approve:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+/* the watermark: one layer over the whole screen, repeated, faint, and transparent to the mouse */
+.draft::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;                       /* above the content, so it shows on top of the white paper too */
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNjAiIGhlaWdodD0iMTYwIiB2aWV3Qm94PSIwIDAgMjYwIDE2MCI+CiAgPHRleHQgeD0iMTMwIiB5PSI5MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgdHJhbnNmb3JtPSJyb3RhdGUoLTI1IDEzMCA4MCkiIGZvbnQtZmFtaWx5PSJUYWhvbWEsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPtmG2LPYrtipINiq2KzYsdmK2KjZitipPC90ZXh0Pgo8L3N2Zz4=") repeat;
+  opacity: 0.12;                      /* faint: the text under it stays readable */
+  pointer-events: none;               /* clicks, hover and text selection go through it to what is under it */
+}
+
+/* printing keeps it: a draft on paper is still a draft */
+@media print {
+  body { background: #fff; }
+  .quote { box-shadow: none; margin: 0; }
+}
+</style>
+</head>
+<body class="draft">
+<main class="quote">
+  <h1>عرض سعر رقم ١٠٤</h1>
+  <p>لـ: كافيه الركن. صالح لحد آخر الشهر.</p>
+  <table>
+    <thead><tr><th scope="col">البند</th><th scope="col">الكمية</th><th scope="col">السعر</th></tr></thead>
+    <tbody>
+      <tr><td>منيو مقوّى A4</td><td>٥٠</td><td>١٬٢٥٠ ج</td></tr>
+      <tr><td>كروت بزنس</td><td>٥٠٠</td><td>٤٠٠ ج</td></tr>
+      <tr><td>ستيكر لوجو</td><td>٢٠٠</td><td>٣٠٠ ج</td></tr>
+    </tbody>
+    <tfoot><tr><th scope="row" colspan="2">الإجمالي</th><td>١٬٩٥٠ ج</td></tr></tfoot>
+  </table>
+  <p class="note">العرض ده مسودة لحد ما توافق عليه. العلامة المائية بتختفي في النسخة النهائية.</p>
+  <button class="approve" type="button">وافق على العرض</button>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** عرض سعر في كارت أبيض: جدول ٣ بنود وإجمالي وزرار أخضر «وافق على العرض». وفوق الصفحة كلها، حتى فوق الكارت، كلمة «نسخة تجريبية» مايلة ومكررة بلون أحمر باهت.
+
+**الطبقة:** [[.draft::after]] من غير ولا عنصر في الـ HTML. [[position: fixed; inset: 0]] بيخليها بمقاس الشاشة، فبتغطي أي حتة انت فيها وانت بتنزل. و [[z-index: 100]] بيحطها فوق الكارت، لأن العلامة اللي ورا الكارت الأبيض مبتبانش.
+
+**[[pointer-events: none]] أهم سطر:** الطبقة فوق كل حاجة، فمن غيره أي ضغطة كانت هتقع عليها هي: الزرار مبيدوسش، والكلام مبيتحددش. السطر ده بيخلي الماوس «يعدّي» منها كأنها مش موجودة. اتقاس: من غيره [[elementFromPoint]] فوق الزرار رجّع [[BODY]] (الـ [[::after]] تبع الـ body).
+
+**الكلام لسه مقروء:** [[opacity: 0.12]]. والـ SVG نفسه كلمة واحدة مايلة بـ [[rotate(-25)]] في مربع 260×160، و [[background: url(...) repeat]] بيكرره على الشاشة كلها.
+
+**الطباعة:** مفيش قاعدة بتخفي العلامة في [[@media print]]، فالمسودة المطبوعة عليها العلامة برضه.
+
+~~~text الناتج (Chrome 157، 600)
+::after:  position fixed، z-index 100، opacity 0.12، pointer-events none
+elementFromPoint في نص زرار «وافق»: approve، والضغط اشتغل (clicked = 1)
+تحديد أول خانة في الجدول: «منيو مقوّى A4»
+من غير pointer-events: none: نفس النقطة = BODY.draft
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'متوسط', dir: "nav-drawer", t: R`navbar بحالتين و drawer للموبايل`, what: R`هيدر sticky شفاف فوق الهيرو وبيبقى مصمت بظل بعد أول 40px scroll (class بـ listener [[{ passive: true }]])، وتحت 768 زرار ☰ بيفتح drawer من ناحية النهاية فوق scrim، و z-index من توكنز. بيجمع [[sticky و fixed]] و [[z-index]] و [[media queries]].`, done: R`الـ drawer بيدخل من الناحية الصح في rtl و ltr، والـ scrim بيقفله، و Escape بيقفله، والـ toggle عليه [[aria-expanded]] صح، و [[elementFromPoint]] فوق الـ drawer بيرجّع الـ drawer مش الهيدر، ومفيش scroll أفقي وهو مقفول.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رحلات وادي النجوم</title>
+<link rel="stylesheet" href="style.css">
+<script src="nav.js" defer></script>
 </head>
 <body>
-<main class="wrap">
-  <section class="carousel" aria-roledescription="carousel" aria-labelledby="c-title">
-    <div class="head">
-      <h1 id="c-title">منتجات مختارة</h1>
-      <div class="arrows">
-        <button type="button" class="prev" aria-controls="track">اللي قبله</button>
-        <button type="button" class="next" aria-controls="track">اللي بعده</button>
-      </div>
-    </div>
-    <ul class="track" id="track" tabindex="0" aria-label="المنتجات (اعمل scroll أو استخدم الأسهم)">
-      <li class="slide" id="s1" aria-label="1 من 6"><div class="pic" style="--c: #fde68a" aria-hidden="true"></div><h2>سماعة لاسلكي</h2><p>٨٥٠ ج</p></li>
-      <!-- والـ ٥ التانيين زيه -->
+<header class="header" id="header">
+  <a class="header__logo" href="#top">وادي النجوم</a>
+  <button class="header__toggle" type="button" aria-expanded="false" aria-controls="drawer">☰ <span class="visually-hidden">القايمة</span></button>
+  <!-- the scrim lives INSIDE the header, next to the drawer: the header is its own layer (sticky + z-index),
+       so a z-index inside it only counts against things inside it too -->
+  <div class="scrim" id="scrim" hidden></div>
+  <nav class="drawer" id="drawer" aria-label="الرئيسية">
+    <ul>
+      <li><a href="#trips">الرحلات</a></li>
+      <li><a href="#camp">المخيم</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#contact">تواصل</a></li>
     </ul>
-    <div class="dots" role="group" aria-label="اختار منتج">
-      <button type="button" class="dot" data-to="s1" aria-label="منتج ١" aria-current="true"></button>
-      <!-- والـ ٥ التانيين زيه -->
-    </div>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>ليلة تحت النجوم في الصحرا</h1>
+    <p>رحلات مشي بالليل، ومخيم، وتلسكوب.</p>
+  </section>
+  <section class="content">
+    <h2 id="trips">الرحلات</h2>
+    <p>رحلة الويك إند: نطلع الخميس العصر ونرجع الجمعة الضهر. ٦ ساعات مشي على مراحل.</p>
+    <h2 id="camp">المخيم</h2>
+    <p>خيم لشخصين، وأكل، ونار، ومرشد بيشرح النجوم والكواكب.</p>
+    <h2 id="prices">الأسعار</h2>
+    <p>الفرد ١٢٠٠ جنيه شامل الأكل والمواصلات.</p>
+    <h2 id="contact">تواصل</h2>
+    <p>ابعتلنا على الواتساب أو كلّمنا من ٩ لـ ٩.</p>
   </section>
 </main>
 </body>
@@ -223,1406 +613,729 @@ axe: 0   الـ validator: مفيش رسايل   CSS validator (W3C) مبيعر�
 
 ~~~css style.css
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #f9fafb; }
-.wrap { max-width: 56rem; margin: 0 auto; padding: 1.5rem 1rem; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 3px; }
-.head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
-.head h1 { margin: 0; font-size: 1.4rem; }
-.arrows { display: flex; gap: 0.5rem; }
-.arrows button { padding: 0.45rem 1rem; border: 1px solid #111827; border-radius: 999px; background: #fff; font: inherit; }
-.arrows button:disabled { border-color: #d1d5db; color: #6b7280; }
-
-/* the track scrolls by itself (touch, trackpad, arrow keys); snap stops each card at the start edge */
-.track {
-  display: grid; grid-auto-flow: column; grid-auto-columns: min(16rem, 80%); gap: 1rem;
-  margin: 1rem 0 0; padding: 0.25rem; list-style: none;
-  overflow-x: auto; overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory; scroll-padding-inline: 0.25rem; scrollbar-width: thin;
+:root {
+  /* every layer has a name: no random 9999 */
+  --z-header: 10;
+  --z-scrim: 20;
+  --z-drawer: 30;
+  --header-h: 4rem;
+  --off: 100%;          /* where the drawer hides: past the end edge. In rtl the end is the left, so it goes the other way */
 }
-.slide { scroll-snap-align: start; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e5e7eb; }
-.pic { aspect-ratio: 4 / 3; border-radius: 0.75rem; background: radial-gradient(circle at 30% 30%, #fff8, transparent 50%), var(--c); }
-.slide h2 { margin: 0.5rem 0 0; font-size: 1.05rem; }
-.slide p { margin: 0; color: #047857; font-weight: 700; }
+[dir="rtl"] { --off: -100%; }
 
-.dots { display: flex; justify-content: center; gap: 0.25rem; margin-block-start: 0.75rem; }
-.dot { width: 24px; height: 24px; padding: 0; border: 0; background: none; display: grid; place-items: center; }   /* 24px: the target, not the dot */
-.dot::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #d1d5db; transition: width 0.2s; }
-.dot[aria-current="true"]::before { width: 22px; border-radius: 999px; background: #111827; }
-@media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } .dot::before { transition: none; } }
-~~~
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+a:focus-visible, button:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
 
-~~~js carousel.js
-const track = document.getElementById("track");
-const prev = document.querySelector(".prev"), next = document.querySelector(".next");
-const dots = [...document.querySelectorAll(".dot")];
-const smooth = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-
-// in RTL, scrollLeft starts at 0 and goes NEGATIVE toward the end; "next" is toward the end in both directions
-const forward = () => (getComputedStyle(track).direction === "rtl" ? -1 : 1);
-const step = () => track.querySelector(".slide").getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap);
-
-next.addEventListener("click", () => track.scrollBy({ left: forward() * step(), behavior: smooth }));
-prev.addEventListener("click", () => track.scrollBy({ left: -forward() * step(), behavior: smooth }));
-
-// disabled at the ends: Math.abs makes the same test work for 0..max (LTR) and 0..-max (RTL)
-function updateButtons() {
-  const pos = Math.abs(track.scrollLeft), max = track.scrollWidth - track.clientWidth;
-  prev.disabled = pos <= 1;
-  next.disabled = pos >= max - 1;
-  setCurrent();
+/* the header: sticky, transparent over the hero, then solid */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: var(--header-h);
+  padding-inline: 1rem;
+  color: #fff;
+  background: transparent;
+  transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
 }
-track.addEventListener("scroll", updateButtons, { passive: true });
-addEventListener("resize", updateButtons);
+.header.is-solid { background: #fff; color: #0f172a; box-shadow: 0 2px 12px #0002; }
+.header__logo { color: inherit; font-weight: 800; text-decoration: none; }
+.header__toggle { display: none; margin-inline-start: auto; padding: 0.3rem 0.7rem; border: 1px solid currentColor; border-radius: 0.5rem; background: transparent; color: inherit; font-size: 1.25rem; cursor: pointer; }
 
-// the dot of the FIRST card that is mostly inside the track (2 or 3 can be visible together).
-// The observer watches the track (root: track), not the page
-const visible = new Set();
-const slides = [...track.querySelectorAll(".slide")];
-// at the very end the last card counts, even if the one before it is also visible
-function setCurrent() {
-  const current = next.disabled ? slides.at(-1) : slides.find(s => visible.has(s.id));
-  if (!current) return;
-  dots.forEach(d => (d.dataset.to === current.id ? d.setAttribute("aria-current", "true") : d.removeAttribute("aria-current")));
-}
-const io = new IntersectionObserver(entries => {
-  for (const e of entries) e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id);
-  setCurrent();
-}, { root: track, threshold: 0.6 });
-slides.forEach(s => io.observe(s));
+.drawer { margin-inline-start: auto; }
+.drawer ul { display: flex; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
+.drawer a { color: inherit; text-decoration: none; font-weight: 600; }
 
-dots.forEach(d => d.addEventListener("click", () => {
-  document.getElementById(d.dataset.to).scrollIntoView({ behavior: smooth, block: "nearest", inline: "start" });
-}));
+/* the hero goes UNDER the header: it starts at the top of the page */
+.hero { margin-top: calc(-1 * var(--header-h)); padding: calc(var(--header-h) + 4rem) 1rem 5rem; background: linear-gradient(160deg, #1e1b4b, #312e81 60%, #7c3aed); color: #fff; text-align: center; }
+.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 60vh; }
+.content h2 { scroll-margin-top: calc(var(--header-h) + 1rem); }
 
-updateButtons();
-~~~
-
-~~~js measure.mjs
-import { browser } from "../lab.mjs";
-import AxeBuilder from "@axe-core/playwright";
-const b = await browser();
-const st = p => p.evaluate(() => {
-  const t = document.getElementById("track");
-  return "scrollLeft " + Math.round(t.scrollLeft) + " | prev " + (document.querySelector(".prev").disabled ? "معطّل" : "شغال") + "، next " + (document.querySelector(".next").disabled ? "معطّل" : "شغال") +
-    " | النقطة: " + ([...document.querySelectorAll(".dot")].findIndex(d => d.getAttribute("aria-current") === "true") + 1);
-});
-for (const dir of ["rtl", "ltr"]) {
-  const ctx = await b.newContext({ viewport: { width: 700, height: 700 }, reducedMotion: "reduce" });   // reduce = instant scroll, easier to read
-  const p = await ctx.newPage();
-  await p.goto("http://127.0.0.1:8818/carousel/index.html");
-  if (dir === "ltr") await p.evaluate(() => { document.documentElement.dir = "ltr"; dispatchEvent(new Event("resize")); });
-  await p.waitForTimeout(200);
-  console.log("== " + dir + "\n  البداية: " + await st(p));
-  await p.click(".next"); await p.waitForTimeout(200); console.log("  next: " + await st(p));
-  for (let i = 0; i < 6; i++) { if (await p.$eval(".next", e => !e.disabled)) await p.click(".next"); await p.waitForTimeout(150); }
-  console.log("  لحد الآخر: " + await st(p));
-  await p.click(".prev"); await p.waitForTimeout(200); console.log("  prev: " + await st(p));
-  if (dir === "rtl") {
-    await p.evaluate(() => document.getElementById("track").scrollTo({ left: 0 })); await p.waitForTimeout(200);
-    await p.focus("#track"); await p.keyboard.press("ArrowLeft"); await p.keyboard.press("ArrowLeft"); await p.waitForTimeout(400);
-    console.log("  سهمين ← على الـ track: " + await st(p));
-    await p.click(".dot:nth-child(5)"); await p.waitForTimeout(300); console.log("  ضغطة على النقطة ٥: " + await st(p));
-    console.log("  axe: " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id).join(",") || "0"));
+/* ---------- phone: the links move into a drawer from the end side ---------- */
+@media (max-width: 47.98rem) {
+  .header__toggle { display: block; }
+  .drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-end: 0;
+    z-index: var(--z-drawer);
+    width: min(80vw, 18rem);
+    margin: 0;
+    padding: 4.5rem 1.25rem 1rem;
+    background: #fff;
+    color: #0f172a;
+    box-shadow: 0 0 24px #0004;
+    transform: translateX(var(--off));
+    visibility: hidden;           /* hidden for the keyboard and screen readers too, not only moved away */
+    transition: transform 0.25s, visibility 0s 0.25s;
   }
-  await ctx.close();
+  .drawer.is-open { transform: none; visibility: visible; transition: transform 0.25s; }
+  .drawer ul { flex-direction: column; gap: 0; }
+  .drawer a { display: block; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; }
+
+  .scrim { position: fixed; inset: 0; z-index: var(--z-scrim); background: #0f172a99; }
+  .scrim[hidden] { display: none; }
 }
-// a touch swipe can't be synthesized here (CDP touch gestures didn't move even the page); a trackpad swipe instead
-const ctx = await b.newContext({ viewport: { width: 412, height: 800 } });
-const p = await ctx.newPage();
-await p.goto("http://127.0.0.1:8818/carousel/index.html"); await p.waitForTimeout(200);
-const cdp = await ctx.newCDPSession(p);
-const box = await p.locator("#track").boundingBox();
-await cdp.send("Input.synthesizeScrollGesture", { x: Math.round(box.x + box.width / 2), y: Math.round(box.y + box.height / 2), xDistance: 250, yDistance: 0, gestureSourceType: "mouse", speed: 600 });
-await p.waitForTimeout(900);
-console.log("== سحب بالـ trackpad (412px، 250px): " + await st(p));
-await b.close();
+
+@media (prefers-reduced-motion: reduce) {
+  .header, .drawer, .drawer.is-open { transition: none; }
+}
 ~~~
 
-~~~view 420 460 جرّب الأزرار والنقط
+~~~js nav.js
+const header = document.getElementById("header");
+const toggle = document.querySelector(".header__toggle");
+const drawer = document.getElementById("drawer");
+const scrim = document.getElementById("scrim");
+
+// solid after the first 40px of scroll. passive: we never call preventDefault, so the browser can scroll without waiting for us
+function onScroll() { header.classList.toggle("is-solid", scrollY > 40); }
+addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+function setOpen(open) {
+  drawer.classList.toggle("is-open", open);
+  scrim.hidden = !open;
+  toggle.setAttribute("aria-expanded", String(open));
+  if (open) drawer.querySelector("a").focus();
+}
+toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+scrim.addEventListener("click", () => setOpen(false));
+drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+addEventListener("keydown", e => {
+  if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { setOpen(false); toggle.focus(); }
+});
+~~~
+
+~~~view 560 600 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>منتجات مختارة</title>
+<title>رحلات وادي النجوم</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #f9fafb; }
-.wrap { max-width: 56rem; margin: 0 auto; padding: 1.5rem 1rem; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 3px; }
-.head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
-.head h1 { margin: 0; font-size: 1.4rem; }
-.arrows { display: flex; gap: 0.5rem; }
-.arrows button { padding: 0.45rem 1rem; border: 1px solid #111827; border-radius: 999px; background: #fff; font: inherit; }
-.arrows button:disabled { border-color: #d1d5db; color: #6b7280; }
-
-/* the track scrolls by itself (touch, trackpad, arrow keys); snap stops each card at the start edge */
-.track {
-  display: grid; grid-auto-flow: column; grid-auto-columns: min(16rem, 80%); gap: 1rem;
-  margin: 1rem 0 0; padding: 0.25rem; list-style: none;
-  overflow-x: auto; overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory; scroll-padding-inline: 0.25rem; scrollbar-width: thin;
+:root {
+  /* every layer has a name: no random 9999 */
+  --z-header: 10;
+  --z-scrim: 20;
+  --z-drawer: 30;
+  --header-h: 4rem;
+  --off: 100%;          /* where the drawer hides: past the end edge. In rtl the end is the left, so it goes the other way */
 }
-.slide { scroll-snap-align: start; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e5e7eb; }
-.pic { aspect-ratio: 4 / 3; border-radius: 0.75rem; background: radial-gradient(circle at 30% 30%, #fff8, transparent 50%), var(--c); }
-.slide h2 { margin: 0.5rem 0 0; font-size: 1.05rem; }
-.slide p { margin: 0; color: #047857; font-weight: 700; }
+[dir="rtl"] { --off: -100%; }
 
-.dots { display: flex; justify-content: center; gap: 0.25rem; margin-block-start: 0.75rem; }
-.dot { width: 24px; height: 24px; padding: 0; border: 0; background: none; display: grid; place-items: center; }   /* 24px: the target, not the dot */
-.dot::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #d1d5db; transition: width 0.2s; }
-.dot[aria-current="true"]::before { width: 22px; border-radius: 999px; background: #111827; }
-@media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } .dot::before { transition: none; } }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f8fafc; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+a:focus-visible, button:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
+
+/* the header: sticky, transparent over the hero, then solid */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: var(--header-h);
+  padding-inline: 1rem;
+  color: #fff;
+  background: transparent;
+  transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.header.is-solid { background: #fff; color: #0f172a; box-shadow: 0 2px 12px #0002; }
+.header__logo { color: inherit; font-weight: 800; text-decoration: none; }
+.header__toggle { display: none; margin-inline-start: auto; padding: 0.3rem 0.7rem; border: 1px solid currentColor; border-radius: 0.5rem; background: transparent; color: inherit; font-size: 1.25rem; cursor: pointer; }
+
+.drawer { margin-inline-start: auto; }
+.drawer ul { display: flex; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
+.drawer a { color: inherit; text-decoration: none; font-weight: 600; }
+
+/* the hero goes UNDER the header: it starts at the top of the page */
+.hero { margin-top: calc(-1 * var(--header-h)); padding: calc(var(--header-h) + 4rem) 1rem 5rem; background: linear-gradient(160deg, #1e1b4b, #312e81 60%, #7c3aed); color: #fff; text-align: center; }
+.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem 1rem 60vh; }
+.content h2 { scroll-margin-top: calc(var(--header-h) + 1rem); }
+
+/* ---------- phone: the links move into a drawer from the end side ---------- */
+@media (max-width: 47.98rem) {
+  .header__toggle { display: block; }
+  .drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-end: 0;
+    z-index: var(--z-drawer);
+    width: min(80vw, 18rem);
+    margin: 0;
+    padding: 4.5rem 1.25rem 1rem;
+    background: #fff;
+    color: #0f172a;
+    box-shadow: 0 0 24px #0004;
+    transform: translateX(var(--off));
+    visibility: hidden;           /* hidden for the keyboard and screen readers too, not only moved away */
+    transition: transform 0.25s, visibility 0s 0.25s;
+  }
+  .drawer.is-open { transform: none; visibility: visible; transition: transform 0.25s; }
+  .drawer ul { flex-direction: column; gap: 0; }
+  .drawer a { display: block; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; }
+
+  .scrim { position: fixed; inset: 0; z-index: var(--z-scrim); background: #0f172a99; }
+  .scrim[hidden] { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header, .drawer, .drawer.is-open { transition: none; }
+}
 </style>
 </head>
 <body>
-<main class="wrap">
-  <section class="carousel" aria-roledescription="carousel" aria-labelledby="c-title">
-    <div class="head">
-      <h1 id="c-title">منتجات مختارة</h1>
-      <div class="arrows">
-        <button type="button" class="prev" aria-controls="track">اللي قبله</button>
-        <button type="button" class="next" aria-controls="track">اللي بعده</button>
-      </div>
-    </div>
-    <ul class="track" id="track" tabindex="0" aria-label="المنتجات (اعمل scroll أو استخدم الأسهم)">
-      <li class="slide" id="s1" aria-label="1 من 6"><div class="pic" style="--c: #fde68a" aria-hidden="true"></div><h2>سماعة لاسلكي</h2><p>٨٥٠ ج</p></li>
-      <li class="slide" id="s2" aria-label="2 من 6"><div class="pic" style="--c: #bfdbfe" aria-hidden="true"></div><h2>ساعة رياضة</h2><p>١٬٢٠٠ ج</p></li>
-      <li class="slide" id="s3" aria-label="3 من 6"><div class="pic" style="--c: #bbf7d0" aria-hidden="true"></div><h2>شاحن سريع</h2><p>٣٢٠ ج</p></li>
-      <li class="slide" id="s4" aria-label="4 من 6"><div class="pic" style="--c: #fbcfe8" aria-hidden="true"></div><h2>باور بانك</h2><p>٦٥٠ ج</p></li>
-      <li class="slide" id="s5" aria-label="5 من 6"><div class="pic" style="--c: #ddd6fe" aria-hidden="true"></div><h2>كابل مضفّر</h2><p>١٢٠ ج</p></li>
-      <li class="slide" id="s6" aria-label="6 من 6"><div class="pic" style="--c: #fed7aa" aria-hidden="true"></div><h2>ستاند موبايل</h2><p>١٩٠ ج</p></li>
+<header class="header" id="header">
+  <a class="header__logo" href="#top">وادي النجوم</a>
+  <button class="header__toggle" type="button" aria-expanded="false" aria-controls="drawer">☰ <span class="visually-hidden">القايمة</span></button>
+  <!-- the scrim lives INSIDE the header, next to the drawer: the header is its own layer (sticky + z-index),
+       so a z-index inside it only counts against things inside it too -->
+  <div class="scrim" id="scrim" hidden></div>
+  <nav class="drawer" id="drawer" aria-label="الرئيسية">
+    <ul>
+      <li><a href="#trips">الرحلات</a></li>
+      <li><a href="#camp">المخيم</a></li>
+      <li><a href="#prices">الأسعار</a></li>
+      <li><a href="#contact">تواصل</a></li>
     </ul>
-    <div class="dots" role="group" aria-label="اختار منتج">
-      <button type="button" class="dot" data-to="s1" aria-label="منتج ١" aria-current="true"></button>
-      <button type="button" class="dot" data-to="s2" aria-label="منتج ٢"></button>
-      <button type="button" class="dot" data-to="s3" aria-label="منتج ٣"></button>
-      <button type="button" class="dot" data-to="s4" aria-label="منتج ٤"></button>
-      <button type="button" class="dot" data-to="s5" aria-label="منتج ٥"></button>
-      <button type="button" class="dot" data-to="s6" aria-label="منتج ٦"></button>
-    </div>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>ليلة تحت النجوم في الصحرا</h1>
+    <p>رحلات مشي بالليل، ومخيم، وتلسكوب.</p>
+  </section>
+  <section class="content">
+    <h2 id="trips">الرحلات</h2>
+    <p>رحلة الويك إند: نطلع الخميس العصر ونرجع الجمعة الضهر. ٦ ساعات مشي على مراحل.</p>
+    <h2 id="camp">المخيم</h2>
+    <p>خيم لشخصين، وأكل، ونار، ومرشد بيشرح النجوم والكواكب.</p>
+    <h2 id="prices">الأسعار</h2>
+    <p>الفرد ١٢٠٠ جنيه شامل الأكل والمواصلات.</p>
+    <h2 id="contact">تواصل</h2>
+    <p>ابعتلنا على الواتساب أو كلّمنا من ٩ لـ ٩.</p>
   </section>
 </main>
 <script>
-const track = document.getElementById("track");
-const prev = document.querySelector(".prev"), next = document.querySelector(".next");
-const dots = [...document.querySelectorAll(".dot")];
-const smooth = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+const header = document.getElementById("header");
+const toggle = document.querySelector(".header__toggle");
+const drawer = document.getElementById("drawer");
+const scrim = document.getElementById("scrim");
 
-// in RTL, scrollLeft starts at 0 and goes NEGATIVE toward the end; "next" is toward the end in both directions
-const forward = () => (getComputedStyle(track).direction === "rtl" ? -1 : 1);
-const step = () => track.querySelector(".slide").getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap);
+// solid after the first 40px of scroll. passive: we never call preventDefault, so the browser can scroll without waiting for us
+function onScroll() { header.classList.toggle("is-solid", scrollY > 40); }
+addEventListener("scroll", onScroll, { passive: true });
+onScroll();
 
-next.addEventListener("click", () => track.scrollBy({ left: forward() * step(), behavior: smooth }));
-prev.addEventListener("click", () => track.scrollBy({ left: -forward() * step(), behavior: smooth }));
-
-// disabled at the ends: Math.abs makes the same test work for 0..max (LTR) and 0..-max (RTL)
-function updateButtons() {
-  const pos = Math.abs(track.scrollLeft), max = track.scrollWidth - track.clientWidth;
-  prev.disabled = pos <= 1;
-  next.disabled = pos >= max - 1;
-  setCurrent();
+function setOpen(open) {
+  drawer.classList.toggle("is-open", open);
+  scrim.hidden = !open;
+  toggle.setAttribute("aria-expanded", String(open));
+  if (open) drawer.querySelector("a").focus();
 }
-track.addEventListener("scroll", updateButtons, { passive: true });
-addEventListener("resize", updateButtons);
-
-// the dot of the FIRST card that is mostly inside the track (2 or 3 can be visible together).
-// The observer watches the track (root: track), not the page
-const visible = new Set();
-const slides = [...track.querySelectorAll(".slide")];
-// at the very end the last card counts, even if the one before it is also visible
-function setCurrent() {
-  const current = next.disabled ? slides.at(-1) : slides.find(s => visible.has(s.id));
-  if (!current) return;
-  dots.forEach(d => (d.dataset.to === current.id ? d.setAttribute("aria-current", "true") : d.removeAttribute("aria-current")));
-}
-const io = new IntersectionObserver(entries => {
-  for (const e of entries) e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id);
-  setCurrent();
-}, { root: track, threshold: 0.6 });
-slides.forEach(s => io.observe(s));
-
-dots.forEach(d => d.addEventListener("click", () => {
-  document.getElementById(d.dataset.to).scrollIntoView({ behavior: smooth, block: "nearest", inline: "start" });
-}));
-
-updateButtons();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** «منتجات مختارة» وزرارين «اللي قبله» و «اللي بعده». تحتهم صف كروت ملوّنة (سماعة، وساعة، وشاحن…) بيقف كل كارت عند الحافة، وتحت نقط، والحالية أطول وغامقة.
-
-**أهم حاجة في RTL: [[scrollLeft]] بالسالب.** في العربي الـ scroll بيبدأ من 0 وبيقل (-272، -956…). فـ:
-- «اللي بعده» = [[scrollBy({ left: -272 })]] في العربي و [[+272]] في الإنجليزي. الكود بيقرا [[direction]] من الـ track.
-- «وصلنا الآخر؟» = [[Math.abs(scrollLeft) >= max - 1]]. [[Math.abs]] بيخلّي نفس السطر صح في الاتجاهين، و [[- 1]] عشان الأرقام بتطلع كسور.
-
-**الـ scroll نفسه من المتصفح:** [[overflow-x: auto]] و [[scroll-snap-type: x mandatory]]، فاللمس والـ trackpad والأسهم (الـ track عليه [[tabindex="0"]]) شغالين لوحدهم، والـ snap بيوقف كل حركة على كارت.
-
-**النقطة الحالية:** [[IntersectionObserver]] بـ [[root: track]] (الـ track مش الصفحة) و [[threshold: 0.6]]. وعلى شاشة واسعة ٢ أو ٣ كروت ظاهرين مع بعض، فالحالي = **أول** واحد ظاهر. أول نسخة كانت بتعلّم آخر واحد الـ observer عدّى عليه. وفي الآخر خالص الحالي = آخر كارت. من غير كده، النقطة الأخيرة مكانتش بتتعلّم أبدًا على الشاشة الواسعة.
-
-**النقط:** [[<button>]] عرضه 24px (مساحة الضغط) والدايرة جواه 10px. و [[aria-current="true"]] على الحالية، والمجموعة [[role="group"]]. كان [[div]] عليه [[aria-label]] من غير role، والـ validator رفضه.
-
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows) (reduce عشان الـ scroll يبقى فوري ويتقري)
-rtl:
-  البداية: scrollLeft 0 | prev معطّل، next شغال | النقطة 1
-  next: -272 | النقطة 2
-  لحد الآخر: -956 | next معطّل | النقطة 6
-  prev: -816 | النقطة 4 (الـ snap وقف على أقرب كارت)
-  سهمين ← على الـ track: -272 | النقطة 2
-  ضغطة على النقطة ٥: -956 | النقطة 6 (كارت ٥ ميقدرش يوصل للحافة، والـ scroll وقف في الآخر)
-ltr: نفس الحركات بالموجب: 0 ← 272 ← 956 ← 816
-سحب بالـ trackpad (412px، 250px): -272 | النقطة 2
-axe: 0 (بعد h1 بدل h2، والكروت h2 بدل h3: «page-has-heading-one» ثم «heading-order»)
-الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**اللي ماتقاسش:** السحب بالصباع. [[Input.synthesizeScrollGesture]] بـ [[touch]] ماحرّكش حاجة هنا، ولا حتى scroll الصفحة نفسها، فالأداة هي اللي مش شغالة، مش الـ carousel. الـ track scroll عادي من المتصفح، فاللمس شغال زي أي صفحة. والـ trackpad (نفس الأمر بـ [[mouse]]) اتقاس.` },
-        { lvl: 'متوسط', dir: "product", t: R`صفحة منتج بـ tabs ومعرض`, what: R`صفحة منتج متخيل: معرض صور بـ scroll-snap، والضغط على صورة صغيرة بيكبّرها بـ View Transition (الصورتين ليهم نفس [[view-transition-name]] لحظة التبديل بس)، وتحتها tabs (الوصف، والمواصفات، والتقييمات) بـ roving tabindex، و FAQ بـ details. بيجمع دروس الوحدة.`, done: R`كل حاجة بالكيبورد (Tab بيدخل الـ tabs مرة واحدة والأسهم جواها)، والصورة بتطير لمكانها ومفيش في الكونسول «Unexpected duplicate view-transition-name»، ومع reduce التبديل فوري، و axe صفر مشاكل.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لمبة «ضي» الذكية</title>
-<link rel="stylesheet" href="style.css">
-<script src="product.js" defer></script>
-</head>
-<body>
-<main class="wrap">
-  <div class="product">
-    <section class="gallery" aria-label="صور المنتج">
-      <img class="main-img" id="main-img" src="img/v0-800.webp" alt="لمبة «ضي» بنور دافي" width="800" height="800">
-      <ul class="thumbs">
-        <li><button type="button" class="thumb" aria-pressed="true" data-src="img/v0-800.webp" data-alt="لمبة «ضي» بنور دافي"><img src="img/v0-160.webp" alt="نور دافي" width="160" height="160"></button></li>
-        <li><button type="button" class="thumb" aria-pressed="false" data-src="img/v1-800.webp" data-alt="لمبة «ضي» بنور أبيض"><img src="img/v1-160.webp" alt="نور أبيض" width="160" height="160"></button></li>
-        <li><button type="button" class="thumb" aria-pressed="false" data-src="img/v2-800.webp" data-alt="لمبة «ضي» بنور ملوّن"><img src="img/v2-160.webp" alt="نور ملوّن" width="160" height="160"></button></li>
-        <li><button type="button" class="thumb" aria-pressed="false" data-src="img/v3-800.webp" data-alt="لمبة «ضي» في الصالة"><img src="img/v3-160.webp" alt="في الصالة" width="160" height="160"></button></li>
-      </ul>
-    </section>
-
-    <section class="info" aria-labelledby="p-title">
-      <h1 id="p-title">لمبة «ضي» الذكية</h1>
-      <p class="price">٤٥٠ ج</p>
-      <button type="button" class="buy">أضف للسلة</button>
-
-      <div class="tabs">
-        <div role="tablist" aria-label="عن المنتج">
-          <button type="button" role="tab" id="t-desc" aria-controls="p-desc" aria-selected="true">الوصف</button>
-          <button type="button" role="tab" id="t-spec" aria-controls="p-spec" aria-selected="false" tabindex="-1">المواصفات</button>
-          <button type="button" role="tab" id="t-rev" aria-controls="p-rev" aria-selected="false" tabindex="-1">التقييمات</button>
-        </div>
-        <div role="tabpanel" id="p-desc" aria-labelledby="t-desc" tabindex="0"><p>لمبة بتتحكم فيها من الموبايل: ١٦ مليون لون، ومواعيد تشغيل، ووضع النوم.</p></div>
-        <div role="tabpanel" id="p-spec" aria-labelledby="t-spec" tabindex="0" hidden><ul><li>٩ وات (زي ٦٠ وات العادية)</li><li>قاعدة E27</li><li>Wi-Fi ‏2.4GHz</li></ul></div>
-        <div role="tabpanel" id="p-rev" aria-labelledby="t-rev" tabindex="0" hidden><p>٤٫٦ من ٥ (١٢٨ تقييم): «النور الدافي مريح جدًا بالليل.»</p></div>
-      </div>
-
-      <h2>أسئلة</h2>
-      <details name="pfaq"><summary>بتشتغل من غير إنترنت؟</summary><p>أيوه بالزرار العادي، والتحكم من الموبايل محتاج Wi-Fi.</p></details>
-      <details name="pfaq"><summary>الضمان كام؟</summary><p>سنتين ضد عيوب الصناعة.</p></details>
-    </section>
-  </div>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #fffbf5; }
-.wrap { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1rem; }
-:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
-.product { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); align-items: start; }
-
-/* gallery: the big image, and a row of thumbnails that snaps */
-.main-img { display: block; width: 100%; height: auto; border-radius: 1rem; }
-.thumbs { display: flex; gap: 0.5rem; margin: 0.75rem 0 0; padding: 0.25rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
-.thumbs li { flex: 0 0 5rem; scroll-snap-align: start; }
-.thumb { display: block; padding: 0; border: 3px solid transparent; border-radius: 0.75rem; background: none; cursor: pointer; }
-.thumb img { display: block; width: 100%; height: auto; border-radius: 0.5rem; }
-.thumb[aria-pressed="true"] { border-color: #b45309; }
-
-/* the flying picture: a little slower than the default 0.25s, with the site's easing */
-::view-transition-group(product) { animation-duration: 0.4s; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-
-.info h1 { margin: 0; font-size: 1.8rem; }
-.price { margin: 0.25rem 0 1rem; font-size: 1.4rem; font-weight: 800; color: #047857; }
-.buy { padding: 0.7rem 1.6rem; border: 0; border-radius: 999px; background: #1c1917; color: #fff; font: inherit; font-weight: 700; }
-
-.tabs { margin-block: 1.5rem; }
-[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid #e7e5e4; }
-[role="tab"] { padding: 0.5rem 1rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: #57534e; font: inherit; }
-[role="tab"][aria-selected="true"] { border-color: #b45309; color: #1c1917; font-weight: 700; }
-[role="tabpanel"] { padding: 0.75rem 0.25rem; }
-[role="tabpanel"] p, [role="tabpanel"] ul { margin: 0; }
-
-h2 { font-size: 1.2rem; margin: 1.5rem 0 0.25rem; }
-details { border-block-end: 1px solid #e7e5e4; }
-summary { padding: 0.6rem 0; font-weight: 700; cursor: pointer; }
-details p { margin: 0 0 0.75rem; color: #44403c; }
-~~~
-
-~~~js product.js
-const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-
-// ---- gallery: the clicked thumbnail flies into the big image ----
-const main = document.getElementById("main-img");
-const thumbs = [...document.querySelectorAll(".thumb")];
-
-function show(thumb) {
-  main.src = thumb.dataset.src;
-  main.alt = thumb.dataset.alt;
-  thumbs.forEach(t => t.setAttribute("aria-pressed", String(t === thumb)));
-}
-
-thumbs.forEach(thumb => thumb.addEventListener("click", async () => {
-  if (thumb.getAttribute("aria-pressed") === "true") return;
-  // no View Transitions, or less motion: just swap
-  if (!document.startViewTransition || reduce.matches) return show(thumb);
-
-  // a view-transition-name must be on ONE element at a time.
-  // Before the swap: the small image has it. After the swap: the big image has it. Then nobody does.
-  const small = thumb.querySelector("img");
-  small.style.viewTransitionName = "product";
-  const t = document.startViewTransition(() => {
-    small.style.viewTransitionName = "";
-    main.style.viewTransitionName = "product";
-    show(thumb);
-  });
-  await t.finished;
-  main.style.viewTransitionName = "";
-}));
-
-// ---- tabs (APG): one Tab stop, arrows move; in RTL the next tab is on the left ----
-const tabs = [...document.querySelectorAll('[role="tab"]')];
-function select(tab) {
-  for (const t of tabs) {
-    const on = t === tab;
-    t.setAttribute("aria-selected", String(on));
-    t.tabIndex = on ? 0 : -1;
-    document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
-  }
-  tab.focus();
-}
-tabs.forEach((tab, i) => {
-  tab.addEventListener("click", () => select(tab));
-  tab.addEventListener("keydown", e => {
-    const rtl = getComputedStyle(tab).direction === "rtl";
-    const move = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
-    let to = move !== undefined ? (i + move + tabs.length) % tabs.length : null;
-    if (e.key === "Home") to = 0;
-    if (e.key === "End") to = tabs.length - 1;
-    if (to === null) return;
-    e.preventDefault();
-    select(tabs[to]);
-  });
-});
-~~~
-
-الصور من [[gen-images.mjs]] (‏800 و 160).
-
-~~~js measure.mjs
-import { browser } from "../lab.mjs";
-import AxeBuilder from "@axe-core/playwright";
-const b = await browser();
-const U = "http://127.0.0.1:8818/product/index.html";
-async function page(opts = {}) {
-  const p = await (await b.newContext({ viewport: { width: 1000, height: 900 }, ...opts })).newPage();
-  const logs = [];
-  p.on("console", m => { if (m.type() !== "log") logs.push(m.type() + ": " + m.text()); });
-  await p.goto(U); await p.waitForTimeout(200);
-  return { p, logs };
-}
-let { p, logs } = await page();
-// Tab order: who gets focus, in order
-const stops = [];
-for (let i = 0; i < 9; i++) { await p.keyboard.press("Tab"); stops.push(await p.evaluate(() => { const e = document.activeElement; return (e.getAttribute("role") || e.tagName.toLowerCase()) + ":" + (e.textContent.trim() || e.querySelector("img")?.alt || "").slice(0, 12); })); }
-console.log("Tab: " + stops.join(" → "));
-await p.focus("#t-desc"); await p.keyboard.press("ArrowLeft");
-console.log("سهم ← على التابز: focus=" + await p.evaluate(() => document.activeElement.textContent) + " | selected=" + await p.$eval('[aria-selected="true"]', e => e.textContent) + " | الظاهر: " + await p.$eval('[role="tabpanel"]:not([hidden])', e => e.id));
-// the transition: count the names at the moment the snapshot is taken, and catch the pseudo-elements
-await p.evaluate(() => {
-  const orig = document.startViewTransition.bind(document);
-  document.startViewTransition = cb => { window.__namesBefore = document.querySelectorAll('[style*="view-transition-name: product"]').length; const t = orig(() => { cb(); window.__namesAfter = document.querySelectorAll('[style*="view-transition-name: product"]').length; }); t.ready.then(() => { window.__pseudo = document.getAnimations().map(a => a.effect.pseudoElement).filter(Boolean).join(" "); }); return t; };
-});
-await p.click(".thumb >> nth=2"); await p.waitForTimeout(700);
-console.log("الانتقال: أسامي قبل " + await p.evaluate(() => window.__namesBefore) + "، بعد " + await p.evaluate(() => window.__namesAfter) + " | الـ pseudo: " + await p.evaluate(() => window.__pseudo) + " | الصورة: " + await p.$eval("#main-img", i => i.getAttribute("src")) + " | أسامي فاضلة: " + await p.evaluate(() => document.querySelectorAll('[style*="view-transition-name: product"]').length));
-console.log("الكونسول: " + (logs.filter(l => !/favicon|404/.test(l)).join(" | ") || "مفيش تحذيرات"));
-console.log("axe: " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id + ":" + v.nodes.length).join(",") || "0"));
-
-// the wrong way: the same name on every thumbnail and on the big image
-({ p, logs } = await page());
-await p.addStyleTag({ content: ".thumb img, .main-img { view-transition-name: product; }" });
-await p.evaluate(() => document.startViewTransition(() => {})); await p.waitForTimeout(300);
-console.log("الطريقة الغلط: " + (logs.filter(l => /view-transition/i.test(l)).join(" | ") || "مفيش"));
-
-({ p, logs } = await page({ reducedMotion: "reduce" }));
-await p.click(".thumb >> nth=1"); await p.waitForTimeout(20);
-console.log("reduce: الصورة اتبدّلت على طول: " + await p.$eval("#main-img", i => i.getAttribute("src")) + " | animations: " + await p.evaluate(() => document.getAnimations().length));
-await b.close();
-~~~
-
-~~~view 520 980 دوس على صورة صغيرة (الصور في المعاينة نسخة أصغر)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لمبة «ضي» الذكية</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #fffbf5; }
-.wrap { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1rem; }
-:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
-.product { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); align-items: start; }
-
-/* gallery: the big image, and a row of thumbnails that snaps */
-.main-img { display: block; width: 100%; height: auto; border-radius: 1rem; }
-.thumbs { display: flex; gap: 0.5rem; margin: 0.75rem 0 0; padding: 0.25rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
-.thumbs li { flex: 0 0 5rem; scroll-snap-align: start; }
-.thumb { display: block; padding: 0; border: 3px solid transparent; border-radius: 0.75rem; background: none; cursor: pointer; }
-.thumb img { display: block; width: 100%; height: auto; border-radius: 0.5rem; }
-.thumb[aria-pressed="true"] { border-color: #b45309; }
-
-/* the flying picture: a little slower than the default 0.25s, with the site's easing */
-::view-transition-group(product) { animation-duration: 0.4s; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-
-.info h1 { margin: 0; font-size: 1.8rem; }
-.price { margin: 0.25rem 0 1rem; font-size: 1.4rem; font-weight: 800; color: #047857; }
-.buy { padding: 0.7rem 1.6rem; border: 0; border-radius: 999px; background: #1c1917; color: #fff; font: inherit; font-weight: 700; }
-
-.tabs { margin-block: 1.5rem; }
-[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid #e7e5e4; }
-[role="tab"] { padding: 0.5rem 1rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: #57534e; font: inherit; }
-[role="tab"][aria-selected="true"] { border-color: #b45309; color: #1c1917; font-weight: 700; }
-[role="tabpanel"] { padding: 0.75rem 0.25rem; }
-[role="tabpanel"] p, [role="tabpanel"] ul { margin: 0; }
-
-h2 { font-size: 1.2rem; margin: 1.5rem 0 0.25rem; }
-details { border-block-end: 1px solid #e7e5e4; }
-summary { padding: 0.6rem 0; font-weight: 700; cursor: pointer; }
-details p { margin: 0 0 0.75rem; color: #44403c; }
-</style>
-</head>
-<body>
-<main class="wrap">
-  <div class="product">
-    <section class="gallery" aria-label="صور المنتج">
-      <img class="main-img" id="main-img" src="data:image/webp;base64,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" alt="لمبة «ضي» بنور دافي" width="800" height="800">
-      <ul class="thumbs">
-        <li><button type="button" class="thumb" aria-pressed="true" data-src="data:image/webp;base64,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" data-alt="لمبة «ضي» بنور دافي"><img src="data:image/webp;base64,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" alt="نور دافي" width="160" height="160"></button></li>
-        <li><button type="button" class="thumb" aria-pressed="false" data-src="data:image/webp;base64,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" data-alt="لمبة «ضي» بنور أبيض"><img src="data:image/webp;base64,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" alt="نور أبيض" width="160" height="160"></button></li>
-        <li><button type="button" class="thumb" aria-pressed="false" data-src="data:image/webp;base64,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" data-alt="لمبة «ضي» بنور ملوّن"><img src="data:image/webp;base64,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" alt="نور ملوّن" width="160" height="160"></button></li>
-        <li><button type="button" class="thumb" aria-pressed="false" data-src="data:image/webp;base64,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" data-alt="لمبة «ضي» في الصالة"><img src="data:image/webp;base64,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" alt="في الصالة" width="160" height="160"></button></li>
-      </ul>
-    </section>
-
-    <section class="info" aria-labelledby="p-title">
-      <h1 id="p-title">لمبة «ضي» الذكية</h1>
-      <p class="price">٤٥٠ ج</p>
-      <button type="button" class="buy">أضف للسلة</button>
-
-      <div class="tabs">
-        <div role="tablist" aria-label="عن المنتج">
-          <button type="button" role="tab" id="t-desc" aria-controls="p-desc" aria-selected="true">الوصف</button>
-          <button type="button" role="tab" id="t-spec" aria-controls="p-spec" aria-selected="false" tabindex="-1">المواصفات</button>
-          <button type="button" role="tab" id="t-rev" aria-controls="p-rev" aria-selected="false" tabindex="-1">التقييمات</button>
-        </div>
-        <div role="tabpanel" id="p-desc" aria-labelledby="t-desc" tabindex="0"><p>لمبة بتتحكم فيها من الموبايل: ١٦ مليون لون، ومواعيد تشغيل، ووضع النوم.</p></div>
-        <div role="tabpanel" id="p-spec" aria-labelledby="t-spec" tabindex="0" hidden><ul><li>٩ وات (زي ٦٠ وات العادية)</li><li>قاعدة E27</li><li>Wi-Fi ‏2.4GHz</li></ul></div>
-        <div role="tabpanel" id="p-rev" aria-labelledby="t-rev" tabindex="0" hidden><p>٤٫٦ من ٥ (١٢٨ تقييم): «النور الدافي مريح جدًا بالليل.»</p></div>
-      </div>
-
-      <h2>أسئلة</h2>
-      <details name="pfaq"><summary>بتشتغل من غير إنترنت؟</summary><p>أيوه بالزرار العادي، والتحكم من الموبايل محتاج Wi-Fi.</p></details>
-      <details name="pfaq"><summary>الضمان كام؟</summary><p>سنتين ضد عيوب الصناعة.</p></details>
-    </section>
-  </div>
-</main>
-<script>
-const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-
-// ---- gallery: the clicked thumbnail flies into the big image ----
-const main = document.getElementById("main-img");
-const thumbs = [...document.querySelectorAll(".thumb")];
-
-function show(thumb) {
-  main.src = thumb.dataset.src;
-  main.alt = thumb.dataset.alt;
-  thumbs.forEach(t => t.setAttribute("aria-pressed", String(t === thumb)));
-}
-
-thumbs.forEach(thumb => thumb.addEventListener("click", async () => {
-  if (thumb.getAttribute("aria-pressed") === "true") return;
-  // no View Transitions, or less motion: just swap
-  if (!document.startViewTransition || reduce.matches) return show(thumb);
-
-  // a view-transition-name must be on ONE element at a time.
-  // Before the swap: the small image has it. After the swap: the big image has it. Then nobody does.
-  const small = thumb.querySelector("img");
-  small.style.viewTransitionName = "product";
-  const t = document.startViewTransition(() => {
-    small.style.viewTransitionName = "";
-    main.style.viewTransitionName = "product";
-    show(thumb);
-  });
-  await t.finished;
-  main.style.viewTransitionName = "";
-}));
-
-// ---- tabs (APG): one Tab stop, arrows move; in RTL the next tab is on the left ----
-const tabs = [...document.querySelectorAll('[role="tab"]')];
-function select(tab) {
-  for (const t of tabs) {
-    const on = t === tab;
-    t.setAttribute("aria-selected", String(on));
-    t.tabIndex = on ? 0 : -1;
-    document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
-  }
-  tab.focus();
-}
-tabs.forEach((tab, i) => {
-  tab.addEventListener("click", () => select(tab));
-  tab.addEventListener("keydown", e => {
-    const rtl = getComputedStyle(tab).direction === "rtl";
-    const move = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
-    let to = move !== undefined ? (i + move + tabs.length) % tabs.length : null;
-    if (e.key === "Home") to = 0;
-    if (e.key === "End") to = tabs.length - 1;
-    if (to === null) return;
-    e.preventDefault();
-    select(tabs[to]);
-  });
-});
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** صفحة «لمبة «ضي» الذكية». على اليمين صورة كبيرة وتحتها ٤ صور صغيرة، والمختارة حواليها برتقالي. الضغط على صغيرة بيخلّيها تطير وتكبر مكان الكبيرة. على الشمال السعر، و «أضف للسلة»، و tabs (الوصف، والمواصفات، والتقييمات)، وسؤالين.
-
-**الصورة اللي بتطير:** [[document.startViewTransition()]] بياخد صورة للصفحة قبل وبعد التغيير، ويحرّك بينهم. والعناصر اللي ليها [[view-transition-name]] بتتحرك لوحدها (‏[[::view-transition-group(product)]]) بدل fade للصفحة كلها.
-
-**القاعدة: الاسم على عنصر واحد بس في كل لحظة.**
-1. **قبل:** الصورة الصغيرة اسمها [[product]].
-2. **جوه الـ callback:** الاسم يتشال منها ويتحط على الكبيرة، وبعدين الصورة تتبدّل.
-3. **بعد [[t.finished]]:** الاسم يتشال من الكبيرة.
-
-لو كل الصور عليها نفس الاسم من الـ CSS، Chrome بيطلّع «Unexpected duplicate view-transition-name: product» ومفيش حركة، واتجرّب.
-
-**من غير دعم أو مع reduce:** [[show(thumb)]] على طول.
-
-**الـ tabs (نمط APG):** [[tabindex="0"]] على المختار بس و [[-1]] على الباقي (roving tabindex)، فالـ Tab بيدخل الـ tabs مرة واحدة، والأسهم جواها. وفي العربي ← = اللي بعده. والـ [[tabpanel]] عليه [[tabindex="0"]] عشان Tab يوصل للكلام لو مفيهوش لينكات.
-
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-Tab: نور دافي → نور أبيض → نور ملوّن → في الصالة → أضف للسلة → tab:الوصف → tabpanel → summary → summary
-سهم ← على التابز: focus=المواصفات | selected=المواصفات | الظاهر: p-spec
-الانتقال (ضغطة على الصورة ٣): عناصر عليها الاسم قبل 1، بعد 1 | الأجزاء: …group(product) old(product) new(product)
-  الصورة: img/v2-800.webp | عناصر عليها الاسم بعد الانتقال: 0
-الكونسول: مفيش تحذيرات
-الطريقة الغلط (الاسم على كل الصور): error: Unexpected duplicate view-transition-name: product
-reduce: الصورة اتبدّلت على طول، animations: 0
-axe: 0   الـ validator: مفيش رسايل   CSS validator (W3C) مبيعرفش لسه ::view-transition-group («Parse Error»)
-~~~` },
-        { lvl: 'متوسط', dir: "palette", t: R`command palette بـ Ctrl+K`, what: R`[[<dialog>]] بيفتح بـ Ctrl+K، فيه input ولستة نتايج [[role="listbox"]]. الـ focus بيفضل في الـ input، والأسهم بتغيّر [[aria-activedescendant]] للنتيجة المختارة (بدل roving tabindex)، و Enter بيفتحها، والنتايج بتتفلتر وانت بتكتب، والكلمة المطابقة بتتعلّم بـ [[<mark>]].`, done: R`[[document.activeElement]] هو الـ input طول الوقت والأسهم بتمشي في النتايج، وقارئ الشاشة بيقول النتيجة المختارة، و Escape بيقفل ويرجّع الـ focus، ونتيجة «مفيش» بتتقري في [[role="status"]].`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لوحة «دفتر»</title>
-<link rel="stylesheet" href="style.css">
-<script src="palette.js" defer></script>
-</head>
-<body>
-<main class="wrap">
-  <h1>لوحة «دفتر»</h1>
-  <p>اضغط <kbd>Ctrl</kbd> + <kbd>K</kbd> (أو <kbd>⌘</kbd> + <kbd>K</kbd> على الماك) عشان تدوّر على أي أمر.</p>
-  <button type="button" class="open">دوّر على أمر</button>
-  <p class="result" role="status"></p>
-</main>
-
-<dialog class="palette" aria-label="الأوامر">
-  <input class="q" type="text" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="cmds"
-         aria-label="اكتب اسم الأمر" placeholder="اكتب اسم الأمر…" autocomplete="off">
-  <ul id="cmds" role="listbox" aria-label="النتايج"></ul>
-  <p class="empty" role="status"></p>
-</dialog>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f1f5f9; }
-.wrap { max-width: 40rem; margin: 0 auto; padding: 2rem 1rem; }
-kbd { padding: 0 0.4em; border: 1px solid #94a3b8; border-block-end-width: 2px; border-radius: 0.3rem; background: #fff; font: inherit; font-size: 0.9em; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-.open { padding: 0.5rem 1.2rem; border: 1px solid #0f172a; border-radius: 999px; background: #fff; font: inherit; }
-.result { font-weight: 700; color: #047857; }
-
-.palette { width: min(34rem, calc(100vw - 2rem)); margin-block-start: 12vh; padding: 0; border: 0; border-radius: 1rem; box-shadow: 0 25px 60px #0004; }
-.palette::backdrop { background: rgb(15 23 42 / 0.5); }
-.q { width: 100%; padding: 1rem 1.25rem; border: 0; border-block-end: 1px solid #e2e8f0; font: inherit; font-size: 1.1rem; outline: none; }
-#cmds { max-height: 18rem; overflow-y: auto; margin: 0; padding: 0.5rem; list-style: none; }
-[role="option"] { display: flex; justify-content: space-between; padding: 0.55rem 0.75rem; border-radius: 0.5rem; cursor: pointer; }
-[role="option"] small { color: #64748b; }
-/* the chosen option: the focus stays in the input, so this is the "focus" the eye sees */
-[role="option"][aria-selected="true"] { background: #1e293b; color: #fff; }
-[role="option"][aria-selected="true"] small { color: #cbd5e1; }
-mark { background: #fde68a; color: inherit; border-radius: 0.2rem; }
-[aria-selected="true"] mark { background: #f59e0b; color: #0f172a; }
-.empty { margin: 0; padding: 0 1.25rem; color: #64748b; }
-.empty:not(:empty) { padding-block: 1rem; }
-~~~
-
-~~~js palette.js
-const commands = [
-  { name: "فاتورة جديدة", hint: "N" }, { name: "كل الفواتير", hint: "" }, { name: "عميل جديد", hint: "" },
-  { name: "تقرير الشهر", hint: "" }, { name: "الإعدادات", hint: "," }, { name: "الوضع الغامق", hint: "" },
-  { name: "المساعدة", hint: "?" }, { name: "تسجيل خروج", hint: "" },
-];
-const dialog = document.querySelector(".palette"), input = dialog.querySelector(".q");
-const list = document.getElementById("cmds"), empty = dialog.querySelector(".empty");
-const result = document.querySelector(".result");
-let shown = [], active = -1;
-
-// the match is wrapped in <mark> with DOM nodes, not innerHTML: whatever is typed stays text
-function label(name, word) {
-  const frag = document.createDocumentFragment(), at = word ? name.indexOf(word) : -1;
-  if (at < 0) { frag.append(name); return frag; }
-  const m = document.createElement("mark");
-  m.textContent = name.slice(at, at + word.length);
-  frag.append(name.slice(0, at), m, name.slice(at + word.length));
-  return frag;
-}
-
-function render() {
-  const word = input.value.trim();
-  shown = commands.filter(c => !word || c.name.includes(word));
-  list.replaceChildren(...shown.map((c, i) => {
-    const li = document.createElement("li");
-    li.id = "cmd-" + i; li.setAttribute("role", "option");
-    const span = document.createElement("span"); span.append(label(c.name, word));
-    li.append(span);
-    if (c.hint) { const s = document.createElement("small"); s.textContent = "Ctrl+" + c.hint; li.append(s); }
-    li.addEventListener("click", () => run(i));
-    li.addEventListener("mousemove", () => move(i));
-    return li;
-  }));
-  empty.textContent = shown.length ? "" : "مفيش أمر فيه «" + word + "»";   // role=status: a screen reader says it
-  move(shown.length ? 0 : -1);
-}
-
-// the focus never leaves the input: aria-activedescendant points at the chosen option instead
-function move(i) {
-  active = i;
-  [...list.children].forEach((li, n) => li.setAttribute("aria-selected", String(n === i)));
-  if (i >= 0) { input.setAttribute("aria-activedescendant", "cmd-" + i); list.children[i].scrollIntoView({ block: "nearest" }); }
-  else input.removeAttribute("aria-activedescendant");
-}
-
-function run(i) {
-  if (i < 0) return;
-  const c = shown[i];
-  dialog.close();
-  result.textContent = "اتنفّذ: " + c.name;
-}
-
-input.addEventListener("input", render);
-input.addEventListener("keydown", e => {
-  if (!shown.length) return;
-  if (e.key === "ArrowDown") { e.preventDefault(); move((active + 1) % shown.length); }
-  if (e.key === "ArrowUp") { e.preventDefault(); move((active - 1 + shown.length) % shown.length); }
-  if (e.key === "Home") { e.preventDefault(); move(0); }
-  if (e.key === "End") { e.preventDefault(); move(shown.length - 1); }
-  if (e.key === "Enter") { e.preventDefault(); run(active); }
-});
-
-function openPalette() {
-  if (dialog.open) return;
-  input.value = "";
-  render();
-  dialog.showModal();          // Escape closes it and puts focus back where it was (the browser does both)
-  input.focus();
-}
-document.querySelector(".open").addEventListener("click", openPalette);
+toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+scrim.addEventListener("click", () => setOpen(false));
+drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
 addEventListener("keydown", e => {
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); openPalette(); }   // ⌘K on a Mac
-});
-~~~
-
-~~~js measure.mjs
-import { browser } from "../lab.mjs";
-import AxeBuilder from "@axe-core/playwright";
-const b = await browser();
-const p = await (await b.newContext({ viewport: { width: 900, height: 800 } })).newPage();
-await p.goto("http://127.0.0.1:8818/palette/index.html");
-const st = () => p.evaluate(() => {
-  const i = document.querySelector(".q"), a = i.getAttribute("aria-activedescendant");
-  return "activeElement=" + (document.activeElement === i ? "الـ input" : document.activeElement.tagName) + " | activedescendant=" + a + " («" + (a ? document.getElementById(a).textContent : "") + "»)";
-});
-await p.focus(".open"); await p.keyboard.press("Control+k");
-console.log("Ctrl+K: مفتوح=" + await p.$eval("dialog", d => d.open) + " | " + await st());
-await p.keyboard.press("ArrowDown"); await p.keyboard.press("ArrowDown");
-console.log("سهمين لتحت: " + await st());
-console.log("الشجرة:\n" + (await p.locator("dialog").ariaSnapshot()).split("\n").slice(0, 5).map(l => "  " + l).join("\n"));
-await p.keyboard.type("فاتورة");
-console.log("«فاتورة»: " + await p.$$eval('[role="option"]', o => o.map(x => x.querySelector("span").innerHTML).join(" | ")) + " | " + await st());
-await p.keyboard.press("Enter");
-console.log("Enter: مفتوح=" + await p.$eval("dialog", d => d.open) + " | " + await p.textContent(".result") + " | الـ focus رجع لـ: " + await p.evaluate(() => document.activeElement.className));
-await p.keyboard.press("Control+k"); await p.keyboard.type("طيارة");
-console.log("«طيارة»: options=" + await p.$$eval('[role="option"]', o => o.length) + " | status: " + await p.textContent(".empty") + " | " + await st());
-await p.fill(".q", ""); await p.keyboard.type("<b>x</b>");
-console.log("كتبت <b>x</b>: " + await p.textContent(".empty") + " | <b> اتعمل كعنصر؟ " + await p.evaluate(() => !!document.querySelector(".palette b")));
-console.log("axe (مفتوح): " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id + ":" + v.nodes.length).join(",") || "0"));
-await p.keyboard.press("Escape");
-console.log("Escape: مفتوح=" + await p.$eval("dialog", d => d.open) + " | الـ focus رجع لـ: " + await p.evaluate(() => document.activeElement.className));
-await b.close();
-~~~
-
-~~~view 460 480 دوس «دوّر على أمر» أو Ctrl+K جوه المعاينة
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لوحة «دفتر»</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f1f5f9; }
-.wrap { max-width: 40rem; margin: 0 auto; padding: 2rem 1rem; }
-kbd { padding: 0 0.4em; border: 1px solid #94a3b8; border-block-end-width: 2px; border-radius: 0.3rem; background: #fff; font: inherit; font-size: 0.9em; }
-:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
-.open { padding: 0.5rem 1.2rem; border: 1px solid #0f172a; border-radius: 999px; background: #fff; font: inherit; }
-.result { font-weight: 700; color: #047857; }
-
-.palette { width: min(34rem, calc(100vw - 2rem)); margin-block-start: 12vh; padding: 0; border: 0; border-radius: 1rem; box-shadow: 0 25px 60px #0004; }
-.palette::backdrop { background: rgb(15 23 42 / 0.5); }
-.q { width: 100%; padding: 1rem 1.25rem; border: 0; border-block-end: 1px solid #e2e8f0; font: inherit; font-size: 1.1rem; outline: none; }
-#cmds { max-height: 18rem; overflow-y: auto; margin: 0; padding: 0.5rem; list-style: none; }
-[role="option"] { display: flex; justify-content: space-between; padding: 0.55rem 0.75rem; border-radius: 0.5rem; cursor: pointer; }
-[role="option"] small { color: #64748b; }
-/* the chosen option: the focus stays in the input, so this is the "focus" the eye sees */
-[role="option"][aria-selected="true"] { background: #1e293b; color: #fff; }
-[role="option"][aria-selected="true"] small { color: #cbd5e1; }
-mark { background: #fde68a; color: inherit; border-radius: 0.2rem; }
-[aria-selected="true"] mark { background: #f59e0b; color: #0f172a; }
-.empty { margin: 0; padding: 0 1.25rem; color: #64748b; }
-.empty:not(:empty) { padding-block: 1rem; }
-</style>
-</head>
-<body>
-<main class="wrap">
-  <h1>لوحة «دفتر»</h1>
-  <p>اضغط <kbd>Ctrl</kbd> + <kbd>K</kbd> (أو <kbd>⌘</kbd> + <kbd>K</kbd> على الماك) عشان تدوّر على أي أمر.</p>
-  <button type="button" class="open">دوّر على أمر</button>
-  <p class="result" role="status"></p>
-</main>
-
-<dialog class="palette" aria-label="الأوامر">
-  <input class="q" type="text" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="cmds"
-         aria-label="اكتب اسم الأمر" placeholder="اكتب اسم الأمر…" autocomplete="off">
-  <ul id="cmds" role="listbox" aria-label="النتايج"></ul>
-  <p class="empty" role="status"></p>
-</dialog>
-<script>
-const commands = [
-  { name: "فاتورة جديدة", hint: "N" }, { name: "كل الفواتير", hint: "" }, { name: "عميل جديد", hint: "" },
-  { name: "تقرير الشهر", hint: "" }, { name: "الإعدادات", hint: "," }, { name: "الوضع الغامق", hint: "" },
-  { name: "المساعدة", hint: "?" }, { name: "تسجيل خروج", hint: "" },
-];
-const dialog = document.querySelector(".palette"), input = dialog.querySelector(".q");
-const list = document.getElementById("cmds"), empty = dialog.querySelector(".empty");
-const result = document.querySelector(".result");
-let shown = [], active = -1;
-
-// the match is wrapped in <mark> with DOM nodes, not innerHTML: whatever is typed stays text
-function label(name, word) {
-  const frag = document.createDocumentFragment(), at = word ? name.indexOf(word) : -1;
-  if (at < 0) { frag.append(name); return frag; }
-  const m = document.createElement("mark");
-  m.textContent = name.slice(at, at + word.length);
-  frag.append(name.slice(0, at), m, name.slice(at + word.length));
-  return frag;
-}
-
-function render() {
-  const word = input.value.trim();
-  shown = commands.filter(c => !word || c.name.includes(word));
-  list.replaceChildren(...shown.map((c, i) => {
-    const li = document.createElement("li");
-    li.id = "cmd-" + i; li.setAttribute("role", "option");
-    const span = document.createElement("span"); span.append(label(c.name, word));
-    li.append(span);
-    if (c.hint) { const s = document.createElement("small"); s.textContent = "Ctrl+" + c.hint; li.append(s); }
-    li.addEventListener("click", () => run(i));
-    li.addEventListener("mousemove", () => move(i));
-    return li;
-  }));
-  empty.textContent = shown.length ? "" : "مفيش أمر فيه «" + word + "»";   // role=status: a screen reader says it
-  move(shown.length ? 0 : -1);
-}
-
-// the focus never leaves the input: aria-activedescendant points at the chosen option instead
-function move(i) {
-  active = i;
-  [...list.children].forEach((li, n) => li.setAttribute("aria-selected", String(n === i)));
-  if (i >= 0) { input.setAttribute("aria-activedescendant", "cmd-" + i); list.children[i].scrollIntoView({ block: "nearest" }); }
-  else input.removeAttribute("aria-activedescendant");
-}
-
-function run(i) {
-  if (i < 0) return;
-  const c = shown[i];
-  dialog.close();
-  result.textContent = "اتنفّذ: " + c.name;
-}
-
-input.addEventListener("input", render);
-input.addEventListener("keydown", e => {
-  if (!shown.length) return;
-  if (e.key === "ArrowDown") { e.preventDefault(); move((active + 1) % shown.length); }
-  if (e.key === "ArrowUp") { e.preventDefault(); move((active - 1 + shown.length) % shown.length); }
-  if (e.key === "Home") { e.preventDefault(); move(0); }
-  if (e.key === "End") { e.preventDefault(); move(shown.length - 1); }
-  if (e.key === "Enter") { e.preventDefault(); run(active); }
-});
-
-function openPalette() {
-  if (dialog.open) return;
-  input.value = "";
-  render();
-  dialog.showModal();          // Escape closes it and puts focus back where it was (the browser does both)
-  input.focus();
-}
-document.querySelector(".open").addEventListener("click", openPalette);
-addEventListener("keydown", e => {
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); openPalette(); }   // ⌘K on a Mac
+  if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") { setOpen(false); toggle.focus(); }
 });
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** صفحة «لوحة «دفتر»» وزرار. Ctrl+K بيفتح صندوق أبيض في نص الشاشة فيه خانة كتابة و ٨ أوامر. الأول متعلّم بخلفية غامقة، والأسهم بتنقل العلامة، والكتابة بتفلتر وتلوّن الكلمة بالأصفر. Enter بينفّذ ويقفل، ويظهر في الصفحة «اتنفّذ: فاتورة جديدة».
+**هتشوف إيه:** فوق هيرو بنفسجي، والهيدر شفاف فوقه وكلامه أبيض. انزل شوية: الهيدر بيبقى أبيض بظل. على الموبايل فيه ☰، ولما تدوس عليه بيدخل درج أبيض من الشمال (النهاية في العربي) فيه الروابط، والصفحة وراه بتغمق.
 
-**الـ focus مبيسيبش الخانة: [[aria-activedescendant]].** في الـ tabs الـ focus بيتنقل بين الزراير (roving tabindex). هنا لأ: لازم تفضل تكتب. فالخانة [[role="combobox"]] و [[aria-activedescendant="cmd-2"]] بيقول لقارئ الشاشة «المختار دلوقتي هو العنصر ده»، وكل [[option]] عليه [[aria-selected]]. والشكل (الخلفية الغامقة) جاي من [[aria-selected="true"]].
+**الهيدر:** [[position: sticky; top: 0]]، والهيرو [[margin-top]] بالسالب بطول الهيدر عشان يبدأ من فوق الصفحة ويبان من ورا الهيدر الشفاف. الـ JS بيحط [[is-solid]] لما [[scrollY > 40]].
 
-**[[<mark>]] من غير [[innerHTML]]:** الكلمة المطابقة بتتقسم 3 حتت نص، والنص بيتحط بـ [[textContent]]. لو كان [[innerHTML]]، كتابة [[<b>x</b>]] كانت هتبقى عنصر حقيقي. اتجرّب: مفيش [[<b>]] اتعمل.
+**[[{ passive: true }]]:** بيقول للمتصفح «مش هعمل [[preventDefault]] على الـ scroll»، فالمتصفح بيحرّك الصفحة على طول من غير ما يستنى الدالة تخلص.
 
-**[[<dialog>]] بـ [[showModal()]]:** الـ Tab جواه، و Escape بيقفله، والمتصفح بيرجّع الـ focus للزرار اللي كان عليه. و Ctrl+K و ⌘K الاتنين ([[e.ctrlKey || e.metaKey]]) و [[preventDefault]] عشان Ctrl+K في Chrome بيروح لشريط البحث.
+**الدرج على الموبايل:** [[fixed]] على [[inset-inline-end: 0]] بطول الشاشة، ومستخبي بـ [[transform: translateX(var(--off))]].
+- [[translateX]] مش logical: 100% دايمًا يمين. عشان كده [[--off]] بـ 100% في ltr (النهاية يمين) و -100% في rtl (النهاية شمال).
+- [[visibility: hidden]] مع التحريك: من غيرها الروابط اللي برّه الشاشة كانت هتاخد focus بالـ Tab ويقراها قارئ الشاشة. و [[transition: visibility 0s 0.25s]] بيأخّر الإخفا لحد ما الحركة تخلص.
 
-**«مفيش»:** [[<p role="status">]] جوه الـ dialog بيتقري لوحده لما يتملي.
+**الـ z-index من توكنز:** [[--z-header]] و [[--z-scrim]] و [[--z-drawer]] (10 و 20 و 30) بدل أرقام عشوائية زي 9999.
 
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-Ctrl+K (والـ focus على الزرار): مفتوح | activeElement=الـ input | activedescendant=cmd-0 («فاتورة جديدة»)
-سهمين لتحت: activeElement=الـ input | activedescendant=cmd-2 («عميل جديد»)
-الشجرة:
-  - dialog "الأوامر":
-    - combobox "اكتب اسم الأمر" [expanded]
-    - listbox "النتايج":
-      - option "فاتورة جديدة Ctrl+N"
-«فاتورة»: <mark>فاتورة</mark> جديدة | activeElement=الـ input
-Enter: اتقفل | «اتنفّذ: فاتورة جديدة» | الـ focus رجع لـ: open (الزرار)
-«طيارة»: options=0 | status: «مفيش أمر فيه «طيارة»» | activedescendant اتشال
-كتبت <b>x</b>: «مفيش أمر فيه «<b>x</b>»» | <b> اتعمل كعنصر؟ false
-Escape: اتقفل | الـ focus رجع للزرار
-axe (مفتوح): 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~` },
-        { lvl: 'كبير', dir: "shop", t: R`متجر صغير بانتقالات «ركن القهوة»`, what: R`موقع متعدد الصفحات (MPA عادي من غير framework): صفحة لستة فيها فلتر chips بيحرّك الكروت لأماكنها الجديدة بـ View Transitions، وصفحة منتج الانتقال ليها بـ [[@view-transition { navigation: auto; }]] وصورة المنتج بتطير بين الصفحتين، وفيها tabs و FAQ و carousel، وهيدر sticky و [[scroll-margin-top]] للعناوين، و [[text-wrap: balance]] للعناوين. كل ميزة جديدة جوه [[@supports]] أو بتقع بهدوء. بيجمع الوحدة دي مع الثيم والـ Accessibility والحركة.`, done: R`في Chrome الانتقالات شغالة بين الصفحات، وفي متصفح من غير cross-document view transitions الصفحات بتفتح عادي من غير أخطاء. كل حاجة بالكيبورد، و axe صفر في كل الصفحات، و Lighthouse Performance ‏90 أو أكتر، و reduce بيلغي الانتقالات. وفيه جدول Baseline بكل ميزة اتستخدمت (من MDN) والـ fallback بتاعها.`, ext: R`زوّد سلة بـ drawer بيطلع من ناحية النهاية، وحوّل الموقع لثنائي اللغة، وانشره على GitHub Pages.`, sol: R`موقع صفحات عادي (MPA): صفحة لستة، وصفحة لكل منتج. الصفحات بتتولّد من لستة بيانات واحدة بسكربت صغير، فاسم الصورة ([[img-yirga]]) واحد في الصفحتين.
+**الغلطة اللي القياس مسكها (stacking context):** أول نسخة كان الـ scrim (الغطا الغامق) برّه الهيدر، والدرج جوه الهيدر. الأرقام كانت صح على الورق: الدرج 30 والـ scrim 20. بس [[elementFromPoint]] في نص الدرج المفتوح رجّع [[DIV.scrim]]: الغطا كان فوق الدرج، ومينفعش تدوس على أي لينك.
 
-~~~js build.mjs
-// node shop/build.mjs: the list page and one page per product, from one list of data (a tiny static site generator)
-import fs from "node:fs";
+السبب: الهيدر [[sticky]] وعليه [[z-index: 10]]، وده بيعمل منه «طبقة» لوحدها (stacking context). كل اللي جواه بيترتب جوه الطبقة دي بس، فالـ 30 بتاع الدرج معناه «فوق اللي معايا جوه الهيدر». والهيدر كله (10) تحت الـ scrim (20). التصليح: الـ scrim جوه الهيدر جنب الدرج، فالاتنين بيتقارنوا في نفس الطبقة.
 
-const products = [
-  { slug: "yirga", name: "يرقاتشيفي", kind: "beans", price: 320, img: "c0", desc: "إثيوبي فاتح، فيه ليمون وورد." },
-  { slug: "santos", name: "سانتوس", kind: "beans", price: 260, img: "c1", desc: "برازيلي متوسط، شوكولاتة وبندق." },
-  { slug: "harazi", name: "حرازي", kind: "beans", price: 410, img: "c2", desc: "يمني غامق، توابل وزبيب." },
-  { slug: "v60", name: "قمع تقطير V60", kind: "tools", price: 450, img: "c3", desc: "بلاستيك متين، مقاس 02." },
-  { slug: "grinder", name: "مطحنة يدوي", kind: "tools", price: 980, img: "c4", desc: "سنون سيراميك، ١٢ درجة طحن." },
-  { slug: "kettle", name: "غلاية بمنقار", kind: "tools", price: 1200, img: "c5", desc: "منقار رفيع لصب مظبوط." },
-];
-const ar = n => n.toLocaleString("ar-EG");
-const head = (title, depth) => $__bt<!doctype html>
+**القفل:** الضغط على الـ scrim، أو Escape، أو اختيار لينك. ولما بيتقفل بـ Escape، الـ focus بيرجع لزرار ☰ عشان اللي بيستخدم الكيبورد ميتوهش.
+
+~~~text الناتج (Chrome 157، موبايل 360)
+                              rtl                     ltr
+الهيدر scrollY 0 / 41         شفاف / أبيض             شفاف / أبيض
+الدرج مقفول                   -273 لحد 15 (برّه يسار)   345 لحد 633 (برّه يمين)
+الدرج مفتوح                   15 لحد 303              57 لحد 345
+elementFromPoint نص الدرج     DIV.scrim (قبل التصليح)  DIV.scrim (قبل التصليح)
+                              NAV (بعد)               NAV (بعد)
+الضغط برّه الدرج              scrim ← aria-expanded = false
+Escape                        aria-expanded = false
+الـ focus بعد الفتح           «الرحلات»
+الـ focus بعد Escape          زرار ☰
+scrollWidth وهو مقفول         345 = العرض              345 = العرض
+1280: الـ ☰ مستخبي والروابط الـ 4 في سطر واحد (top 21)
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+في الـ rtl الدرج بيبدأ من 15 مش 0 لأن الـ scrollbar في الصفحات العربي على الشمال، والقياس كان جوه iframe فيه scrollbar.` },
+        { lvl: 'متوسط', dir: "docs-toc", t: R`صفحة docs بفهرس لازق`, what: R`صفحة توثيق متخيلة: grid بعمودين، والفهرس [[sticky; top]] مع [[align-self: start]]، والعناوين [[scroll-margin-top]]، وتحت 1024 الفهرس يبقى [[<details>]] فوق المحتوى. من درس [[sticky و fixed]] و [[media queries]].`, done: R`على 1280 الفهرس فاضل ظاهر لحد آخر الصفحة، والضغط على أي لينك بيوصل للعنوان من غير ما يستخبى، وعلى 768 الفهرس مقفول فوق، ومفيش [[overflow: hidden]] على أي جد للفهرس.`, sol: R`~~~html index.html
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>$__{title}</title>
-<link rel="stylesheet" href="$__{depth}style.css">$__bt;
-const header = depth => $__bt<header class="top"><a class="logo" href="$__{depth}index.html">ركن القهوة</a><nav aria-label="الأقسام"><a href="$__{depth}index.html#beans">البن</a> <a href="$__{depth}index.html#tools">الأدوات</a></nav></header>$__bt;
-
-// the list page
-const cards = products.map(p => $__bt      <li class="card" data-kind="$__{p.kind}" style="view-transition-name: card-$__{p.slug}">
-        <a href="products/$__{p.slug}.html"><img src="img/$__{p.img}-300.webp" alt="" width="300" height="300" style="view-transition-name: img-$__{p.slug}"><h2>$__{p.name}</h2></a>
-        <p>$__{p.desc}</p><p class="price">$__{ar(p.price)} ج</p>
-      </li>$__bt).join("\n");
-fs.writeFileSync("shop/index.html", $__bt$__{head("ركن القهوة: بن وأدوات", "")}
-<script src="list.js" defer></script>
+<title>دليل مكتبة «رف»: التثبيت والاستخدام</title>
+<link rel="stylesheet" href="style.css">
+<script src="toc.js" defer></script>
 </head>
 <body>
-$__{header("")}
-<main class="wrap">
-  <h1>كل حاجة لفنجان مظبوط</h1>
-  <div class="chips" role="group" aria-label="اعرض">
-    <button type="button" aria-pressed="true" data-kind="all">الكل</button>
-    <button type="button" aria-pressed="false" data-kind="beans" id="beans">البن</button>
-    <button type="button" aria-pressed="false" data-kind="tools" id="tools">الأدوات</button>
-  </div>
-  <p class="count" role="status"></p>
-  <ul class="grid">
-$__{cards}
-  </ul>
-  <h2 class="baseline-t" id="baseline">الميزات اللي في الموقع ده شغالة فين</h2>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th scope="col">الميزة</th><th scope="col">Baseline (web-features)</th><th scope="col">لو مش موجودة</th></tr></thead>
-      <tbody>
-        <tr><td>View Transitions بين الصفحات (<code>@view-transition</code>)</td><td>limited: Chrome 126، Safari 18.2</td><td>الصفحة بتفتح عادي من غير حركة</td></tr>
-        <tr><td>View Transitions في نفس الصفحة (<code>startViewTransition</code>)</td><td>low (أكتوبر ٢٠٢٥)</td><td>الفلتر بيشتغل على طول من غير حركة</td></tr>
-        <tr><td><code>text-wrap: balance</code></td><td>low (مايو ٢٠٢٤)</td><td>العنوان بيتقسم عادي</td></tr>
-        <tr><td><code>details name</code></td><td>low (سبتمبر ٢٠٢٤)</td><td>أكتر من سؤال يتفتح مع بعض</td></tr>
-        <tr><td>scroll-snap</td><td>high (يناير ٢٠٢٠)</td><td>الـ scroll بيقف في أي مكان</td></tr>
-      </tbody>
-    </table>
-  </div>
-</main>
-</body>
-</html>
-$__bt);
-
-// one page per product
-fs.mkdirSync("shop/products", { recursive: true });
-for (const p of products) {
-  const related = products.filter(o => o.kind === p.kind && o !== p).concat(products.filter(o => o.kind !== p.kind));
-  fs.writeFileSync($__btshop/products/$__{p.slug}.html$__bt, $__bt$__{head(p.name + ": ركن القهوة", "../")}
-<script src="../product.js" defer></script>
-</head>
-<body>
-$__{header("../")}
-<main class="wrap product">
-  <img class="hero-img" src="../img/$__{p.img}-600.webp" alt="$__{p.name}" width="600" height="600" style="view-transition-name: img-$__{p.slug}">
-  <div>
-    <h1>$__{p.name}</h1>
-    <p class="price">$__{ar(p.price)} ج</p>
-    <p>$__{p.desc}</p>
-    <div class="tabs">
-      <div role="tablist" aria-label="عن المنتج">
-        <button type="button" role="tab" id="t1" aria-controls="p1" aria-selected="true">الوصف</button>
-        <button type="button" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">التحضير</button>
-      </div>
-      <div role="tabpanel" id="p1" aria-labelledby="t1" tabindex="0"><p>$__{p.desc} بنجهّزه بعد ما تطلب.</p></div>
-      <div role="tabpanel" id="p2" aria-labelledby="t2" tabindex="0" hidden><p>١٥ جرام بن لـ ٢٥٠ مل مية، حرارة ٩٣ درجة.</p></div>
-    </div>
+<header class="top"><a href="#intro">رف: التوثيق</a></header>
+<div class="layout">
+  <details class="toc" id="toc">
+    <summary>المحتويات</summary>
+    <nav aria-label="محتويات الصفحة">
+      <ol>
+        <li><a href="#intro">مقدمة</a></li>
+        <li><a href="#install">التثبيت</a></li>
+        <li><a href="#first">أول رف</a></li>
+        <li><a href="#options">الخيارات</a></li>
+        <li><a href="#themes">الثيمات</a></li>
+        <li><a href="#faq">أسئلة</a></li>
+      </ol>
+    </nav>
+  </details>
+  <main class="doc">
+    <h1 id="intro">مكتبة «رف»</h1>
+    <p>«رف» مكتبة متخيلة بتعرض كتب على رفوف في صفحة ويب. الصفحة دي بتشرح إزاي تثبتها وتستخدمها.</p>
+    <h2 id="install">التثبيت</h2>
+    <p>انسخ ملف المكتبة جنب صفحتك وحطه في آخر الـ body.</p>
+    <pre><code>&lt;script src="raf.js"&gt;&lt;/script&gt;</code></pre>
+    <h2 id="first">أول رف</h2>
+    <p>اعمل عنصر فاضي بـ id، وبعدين نادي الدالة باسمه وبقايمة الكتب.</p>
+    <pre><code>raf("#shelf", ["مدينة من ورق", "بيت على البحر"]);</code></pre>
+    <h2 id="options">الخيارات</h2>
+    <p>عدد الكتب في الرف، وحجم الغلاف، ولون الخشب، وهل الكتب تتقلب لما الماوس ييجي عليها.</p>
+    <h2 id="themes">الثيمات</h2>
+    <p>فيه ٣ ثيمات جاهزة: خشب فاتح، وخشب غامق، ومعدن. وتقدر تعمل ثيم بمتغيرات CSS.</p>
     <h2 id="faq">أسئلة</h2>
-    <details name="faq"><summary>بيوصل إمتى؟</summary><p>جوه القاهرة يوم شغل.</p></details>
-    <details name="faq"><summary>أرجّعه إزاي؟</summary><p>خلال ١٤ يوم وهو مقفول.</p></details>
-  </div>
-</main>
-<section class="wrap related" aria-labelledby="rel">
-  <h2 id="rel">ممكن يعجبك كمان</h2>
-  <ul class="rail" tabindex="0" aria-label="منتجات تانية (اعمل scroll)">
-$__{related.map(o => $__bt    <li><a href="$__{o.slug}.html"><img src="../img/$__{o.img}-300.webp" alt="" width="300" height="300"><span>$__{o.name}</span></a></li>$__bt).join("\n")}
-  </ul>
-</section>
+    <p>هل بتشتغل من غير إنترنت؟ أيوه، الملف كله عندك.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </main>
+</div>
 </body>
 </html>
-$__bt);
-}
-console.log("index.html + " + products.length + " product pages");
 ~~~
 
 ~~~css style.css
 *, *::before, *::after { box-sizing: border-box; }
-:root { --bean: #3b2416; --cream: #fdf6ec; --crema: #b45309; --muted: #6b5444; --line: #e8d9c5; --header-h: 3.5rem; }
-html { scroll-padding-top: calc(var(--header-h) + 1rem); }       /* anchors (#beans, #faq) stop under the sticky header */
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--bean); background: var(--cream); }
-a { color: var(--crema); }
-:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
-h1, h2 { text-wrap: balance; }
-.wrap { max-width: 60rem; margin: 0 auto; padding: 1.25rem 1rem; }
+:root { --top-h: 3.5rem; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1e293b; background: #fff; }
+a { color: #1d4ed8; }
+a:focus-visible, summary:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
 
-.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; min-height: var(--header-h); padding: 0 1rem; background: #fdf6ecf2; border-block-end: 1px solid var(--line); view-transition-name: header; }
-.logo { font-weight: 800; color: var(--bean); text-decoration: none; }
-.top nav a { margin-inline-start: 1rem; }
+/* the site bar stays on top */
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; height: var(--top-h); padding-inline: 1rem; background: #0f172a; }
+.top a { color: #fff; font-weight: 800; text-decoration: none; }
 
-/* ---- the list ---- */
-h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1.2rem + 2vw, 2.4rem); line-height: 1.3; }
-.chips { display: flex; gap: 0.5rem; }
-.chips button { padding: 0.35rem 1rem; border: 1px solid var(--bean); border-radius: 999px; background: #fff; color: var(--bean); font: inherit; }
-.chips button[aria-pressed="true"] { background: var(--bean); color: #fff; }
-.count { min-height: 1.7em; margin: 0.5rem 0; color: var(--muted); }
-.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-.card { padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid var(--line); }
-.card a { color: inherit; text-decoration: none; }
-.card img, .hero-img, .rail img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
-.card h2 { margin: 0.5rem 0 0; font-size: 1.1rem; }
-.card p { margin: 0; color: var(--muted); }
-.card .price, .price { color: #047857; font-weight: 800; }
-.baseline-t { margin-block: 2.5rem 0.5rem; font-size: 1.2rem; }
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-th, td { padding: 0.5rem; border-block-end: 1px solid var(--line); text-align: start; }
+.layout { max-width: 70rem; margin-inline: auto; padding: 1rem; }
+.doc { min-width: 0; }
+.doc h1, .doc h2 { scroll-margin-top: calc(var(--top-h) + 1rem); }   /* a jump stops below the sticky bar, not under it */
+pre { overflow-x: auto; padding: 0.75rem; border-radius: 0.5rem; background: #f1f5f9; }
+.filler { height: 150vh; }
 
-/* ---- the product page ---- */
-.product { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); align-items: start; }
-[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid var(--line); }
-[role="tab"] { padding: 0.45rem 1rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: var(--muted); font: inherit; }
-[role="tab"][aria-selected="true"] { border-color: var(--crema); color: var(--bean); font-weight: 700; }
-[role="tabpanel"] p { margin: 0.5rem 0; }
-details { border-block-end: 1px solid var(--line); }
-summary { padding: 0.5rem 0; font-weight: 700; cursor: pointer; }
-details p { margin: 0 0 0.5rem; }
-.related h2 { font-size: 1.2rem; }
-.rail { display: grid; grid-auto-flow: column; grid-auto-columns: min(11rem, 45%); gap: 0.75rem; margin: 0; padding: 0.25rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
-.rail li { scroll-snap-align: start; }
-.rail a { display: grid; gap: 0.25rem; color: inherit; text-decoration: none; font-weight: 700; }
+/* phone and tablet: the table of contents is a closed box above the text */
+.toc { margin-bottom: 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
+.toc summary { padding: 0.5rem 0.75rem; font-weight: 700; cursor: pointer; }
+.toc ol { margin: 0; padding: 0 2rem 0.75rem; }
 
-/* ---- transitions ---- */
-/* between pages: both pages must opt in. Without support the rule is ignored and the page just opens */
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition { navigation: auto; }
-  ::view-transition-group(*) { animation-duration: 0.35s; }
-}
-/* less motion: the in-page filter jumps too */
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
-}
-~~~
-
-~~~js list.js
-// the chips filter the cards; with View Transitions every card slides to its new place
-const chips = [...document.querySelectorAll(".chips button")];
-const cards = [...document.querySelectorAll(".card")];
-const count = document.querySelector(".count");
-
-function apply(kind) {
-  chips.forEach(c => c.setAttribute("aria-pressed", String(c.dataset.kind === kind)));
-  let n = 0;
-  for (const card of cards) { const show = kind === "all" || card.dataset.kind === kind; card.hidden = !show; if (show) n++; }
-  count.textContent = n.toLocaleString("ar-EG") + " منتجات";
-}
-chips.forEach(chip => chip.addEventListener("click", () => {
-  // every card already has its own view-transition-name (card-yirga, card-santos…), so they move, not just fade
-  if (document.startViewTransition) document.startViewTransition(() => apply(chip.dataset.kind));
-  else apply(chip.dataset.kind);
-}));
-// the header links #beans / #tools pick the chip too
-if (location.hash === "#beans" || location.hash === "#tools") apply(location.hash.slice(1));
-~~~
-
-~~~js product.js
-// tabs (APG): one Tab stop, arrows move (in RTL the next tab is on the left)
-const tabs = [...document.querySelectorAll('[role="tab"]')];
-function select(tab) {
-  for (const t of tabs) {
-    const on = t === tab;
-    t.setAttribute("aria-selected", String(on));
-    t.tabIndex = on ? 0 : -1;
-    document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+/* computer: two columns, the table of contents sticks while the text scrolls */
+@media (min-width: 64rem) {
+  .layout { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 2.5rem; }
+  .toc {
+    position: sticky;
+    top: calc(var(--top-h) + 1rem);
+    align-self: start;   /* without it the grid stretches the box to the full row height, and a box as tall as its parent has nowhere to stick */
+    margin: 0;
+    border: 0;
   }
-  tab.focus();
+  .toc summary { display: none; }   /* always open here, toc.js sets open */
+  .toc ol { padding-inline-start: 1.25rem; }
 }
-tabs.forEach((tab, i) => {
-  tab.addEventListener("click", () => select(tab));
-  tab.addEventListener("keydown", e => {
-    const rtl = getComputedStyle(tab).direction === "rtl";
-    const move = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
-    if (move === undefined) return;
-    e.preventDefault();
-    select(tabs[(i + move + tabs.length) % tabs.length]);
-  });
-});
 ~~~
 
-~~~html products/yirga.html (الناتج، واحدة من الـ ٦)
+~~~js toc.js
+// a closed <details> hides its content whatever the CSS says, so on a big screen it has to be opened
+const toc = document.getElementById("toc");
+const wide = matchMedia("(min-width: 64rem)");
+function sync() { toc.open = wide.matches; }   // open on a computer, closed on smaller screens
+wide.addEventListener("change", sync);
+sync();
+~~~
+
+~~~view 560 600 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>يرقاتشيفي: ركن القهوة</title>
-<link rel="stylesheet" href="../style.css">
-<script src="../product.js" defer></script>
-</head>
-<body>
-<header class="top"><a class="logo" href="../index.html">ركن القهوة</a><nav aria-label="الأقسام"><a href="../index.html#beans">البن</a> <a href="../index.html#tools">الأدوات</a></nav></header>
-<main class="wrap product">
-  <img class="hero-img" src="../img/c0-600.webp" alt="يرقاتشيفي" width="600" height="600" style="view-transition-name: img-yirga">
-  <div>
-    <h1>يرقاتشيفي</h1>
-    <p class="price">٣٢٠ ج</p>
-    <p>إثيوبي فاتح، فيه ليمون وورد.</p>
-    <div class="tabs">
-      <div role="tablist" aria-label="عن المنتج">
-        <button type="button" role="tab" id="t1" aria-controls="p1" aria-selected="true">الوصف</button>
-        <button type="button" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">التحضير</button>
-      </div>
-      <div role="tabpanel" id="p1" aria-labelledby="t1" tabindex="0"><p>إثيوبي فاتح، فيه ليمون وورد. بنجهّزه بعد ما تطلب.</p></div>
-      <div role="tabpanel" id="p2" aria-labelledby="t2" tabindex="0" hidden><p>١٥ جرام بن لـ ٢٥٠ مل مية، حرارة ٩٣ درجة.</p></div>
-    </div>
-    <h2 id="faq">أسئلة</h2>
-    <details name="faq"><summary>بيوصل إمتى؟</summary><p>جوه القاهرة يوم شغل.</p></details>
-    <details name="faq"><summary>أرجّعه إزاي؟</summary><p>خلال ١٤ يوم وهو مقفول.</p></details>
-  </div>
-</main>
-<section class="wrap related" aria-labelledby="rel">
-  <h2 id="rel">ممكن يعجبك كمان</h2>
-  <ul class="rail" tabindex="0" aria-label="منتجات تانية (اعمل scroll)">
-    <li><a href="santos.html"><img src="../img/c1-300.webp" alt="" width="300" height="300"><span>سانتوس</span></a></li>
-    <li><a href="harazi.html"><img src="../img/c2-300.webp" alt="" width="300" height="300"><span>حرازي</span></a></li>
-    <li><a href="v60.html"><img src="../img/c3-300.webp" alt="" width="300" height="300"><span>قمع تقطير V60</span></a></li>
-    <li><a href="grinder.html"><img src="../img/c4-300.webp" alt="" width="300" height="300"><span>مطحنة يدوي</span></a></li>
-    <li><a href="kettle.html"><img src="../img/c5-300.webp" alt="" width="300" height="300"><span>غلاية بمنقار</span></a></li>
-  </ul>
-</section>
-</body>
-</html>
-~~~
-
-~~~js measure.mjs
-// node shop/measure.mjs: cross-document transitions, the filter, keyboard, anchors, reduce, axe on every page
-import { browser } from "../lab.mjs";
-import AxeBuilder from "@axe-core/playwright";
-const B = "http://127.0.0.1:8818/shop/";
-const b = await browser();
-
-// on every new page: did a view transition arrive, and which named parts took part?
-const spy = () => addEventListener("pagereveal", e => {
-  window.__vt = !!e.viewTransition;
-  if (e.viewTransition) e.viewTransition.ready.then(() => {
-    window.__parts = [...new Set(document.getAnimations().map(a => (a.effect.pseudoElement || "").match(/\(([^)]+)\)/)?.[1]).filter(Boolean))].join(", ");
-  }).catch(() => {});
-});
-
-async function ctx(opts = {}, cssPatch) {
-  const c = await b.newContext({ viewport: { width: 1000, height: 800 }, ...opts });
-  await c.addInitScript(spy);
-  if (cssPatch) await c.route("**/shop/style.css", async r => { const res = await r.fetch(); await r.fulfill({ response: res, body: cssPatch(await res.text()) }); });
-  const p = await c.newPage();
-  const errs = []; p.on("pageerror", e => errs.push(e.message)); p.on("console", m => m.type() === "error" && !/404/.test(m.text()) && errs.push(m.text()));
-  return { c, p, errs };
-}
-
-// 1. list → product page
-let { c, p, errs } = await ctx();
-await p.goto(B + "index.html"); await p.waitForTimeout(300);
-await p.click('a[href="products/yirga.html"]'); await p.waitForLoadState("load"); await p.waitForTimeout(500);
-console.log("١. لستة ← يرقاتشيفي: viewTransition=" + await p.evaluate(() => window.__vt) + " | الأجزاء: " + await p.evaluate(() => window.__parts) + " | errors: " + (errs.join(";") || "0"));
-await p.goBack(); await p.waitForLoadState("load"); await p.waitForTimeout(500);
-console.log("   رجوع (Back): viewTransition=" + await p.evaluate(() => window.__vt) + " | الأجزاء: " + await p.evaluate(() => window.__parts));
-
-// 2. the filter (same page)
-await p.evaluate(() => { const o = document.startViewTransition.bind(document); document.startViewTransition = cb => { const t = o(cb); t.ready.then(() => (window.__fparts = [...new Set(document.getAnimations().map(a => (a.effect.pseudoElement || "").match(/\(([^)]+)\)/)?.[1]).filter(Boolean))].join(", "))); return t; }; });
-await p.click('.chips [data-kind="tools"]'); await p.waitForTimeout(500);
-console.log("٢. فلتر «الأدوات»: " + await p.textContent(".count") + " | ظاهر: " + await p.$$eval(".card:not([hidden]) h2", h => h.map(x => x.textContent).join("، ")) + " | الأجزاء اللي اتحركت: " + await p.evaluate(() => window.__fparts));
-
-// 3. keyboard + anchors
-await p.goto(B + "index.html"); await p.waitForTimeout(200);
-const stops = []; for (let i = 0; i < 7; i++) { await p.keyboard.press("Tab"); stops.push(await p.evaluate(() => document.activeElement.textContent.trim().slice(0, 14))); }
-console.log("٣. Tab في اللستة: " + stops.join(" → "));
-await p.goto(B + "products/santos.html#faq"); await p.waitForTimeout(300);
-console.log("   #faq: العنوان top=" + await p.$eval("#faq", h => Math.round(h.getBoundingClientRect().top)) + " والهيدر بيخلص عند " + await p.$eval(".top", h => Math.round(h.getBoundingClientRect().bottom)));
-await p.focus("#t1"); await p.keyboard.press("ArrowLeft");
-console.log("   التابز: ← بقى «" + await p.evaluate(() => document.activeElement.textContent) + "» | الظاهر " + await p.$eval('[role="tabpanel"]:not([hidden])', e => e.id));
-await c.close();
-
-// 4. a browser without cross-document view transitions: the at-rule removed on the way
-({ c, p, errs } = await ctx({}, css => css.replace("@view-transition { navigation: auto; }", "")));
-await p.goto(B + "index.html"); await p.click('a[href="products/v60.html"]'); await p.waitForLoadState("load"); await p.waitForTimeout(300);
-console.log("٤. من غير @view-transition: viewTransition=" + await p.evaluate(() => window.__vt) + " | الصفحة: " + await p.textContent("h1") + " | errors: " + (errs.join(";") || "0"));
-await c.close();
-
-// 5. reduce
-({ c, p, errs } = await ctx({ reducedMotion: "reduce" }));
-await p.goto(B + "index.html"); await p.click('a[href="products/harazi.html"]'); await p.waitForLoadState("load"); await p.waitForTimeout(300);
-console.log("٥. reduce: viewTransition=" + await p.evaluate(() => window.__vt));
-await c.close();
-
-// 6. axe on all 7 pages
-({ c, p } = await ctx());
-const pages = ["index.html", "products/yirga.html", "products/santos.html", "products/harazi.html", "products/v60.html", "products/grinder.html", "products/kettle.html"];
-const res = [];
-for (const u of pages) { await p.goto(B + u); res.push(u.replace("products/", "") + ":" + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id).join("+") || "0")); }
-console.log("٦. axe: " + res.join(" | "));
-await b.close();
-~~~
-
-~~~view 760 900 صفحة اللستة (اللينكات للمنتجات محتاجة السيرفر)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ركن القهوة: بن وأدوات</title>
+<title>دليل مكتبة «رف»: التثبيت والاستخدام</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-:root { --bean: #3b2416; --cream: #fdf6ec; --crema: #b45309; --muted: #6b5444; --line: #e8d9c5; --header-h: 3.5rem; }
-html { scroll-padding-top: calc(var(--header-h) + 1rem); }       /* anchors (#beans, #faq) stop under the sticky header */
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--bean); background: var(--cream); }
-a { color: var(--crema); }
-:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
-h1, h2 { text-wrap: balance; }
-.wrap { max-width: 60rem; margin: 0 auto; padding: 1.25rem 1rem; }
+:root { --top-h: 3.5rem; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1e293b; background: #fff; }
+a { color: #1d4ed8; }
+a:focus-visible, summary:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
 
-.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; min-height: var(--header-h); padding: 0 1rem; background: #fdf6ecf2; border-block-end: 1px solid var(--line); view-transition-name: header; }
-.logo { font-weight: 800; color: var(--bean); text-decoration: none; }
-.top nav a { margin-inline-start: 1rem; }
+/* the site bar stays on top */
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; height: var(--top-h); padding-inline: 1rem; background: #0f172a; }
+.top a { color: #fff; font-weight: 800; text-decoration: none; }
 
-/* ---- the list ---- */
-h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1.2rem + 2vw, 2.4rem); line-height: 1.3; }
-.chips { display: flex; gap: 0.5rem; }
-.chips button { padding: 0.35rem 1rem; border: 1px solid var(--bean); border-radius: 999px; background: #fff; color: var(--bean); font: inherit; }
-.chips button[aria-pressed="true"] { background: var(--bean); color: #fff; }
-.count { min-height: 1.7em; margin: 0.5rem 0; color: var(--muted); }
-.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
-.card { padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid var(--line); }
-.card a { color: inherit; text-decoration: none; }
-.card img, .hero-img, .rail img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
-.card h2 { margin: 0.5rem 0 0; font-size: 1.1rem; }
-.card p { margin: 0; color: var(--muted); }
-.card .price, .price { color: #047857; font-weight: 800; }
-.baseline-t { margin-block: 2.5rem 0.5rem; font-size: 1.2rem; }
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-th, td { padding: 0.5rem; border-block-end: 1px solid var(--line); text-align: start; }
+.layout { max-width: 70rem; margin-inline: auto; padding: 1rem; }
+.doc { min-width: 0; }
+.doc h1, .doc h2 { scroll-margin-top: calc(var(--top-h) + 1rem); }   /* a jump stops below the sticky bar, not under it */
+pre { overflow-x: auto; padding: 0.75rem; border-radius: 0.5rem; background: #f1f5f9; }
+.filler { height: 150vh; }
 
-/* ---- the product page ---- */
-.product { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); align-items: start; }
-[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid var(--line); }
-[role="tab"] { padding: 0.45rem 1rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: var(--muted); font: inherit; }
-[role="tab"][aria-selected="true"] { border-color: var(--crema); color: var(--bean); font-weight: 700; }
-[role="tabpanel"] p { margin: 0.5rem 0; }
-details { border-block-end: 1px solid var(--line); }
-summary { padding: 0.5rem 0; font-weight: 700; cursor: pointer; }
-details p { margin: 0 0 0.5rem; }
-.related h2 { font-size: 1.2rem; }
-.rail { display: grid; grid-auto-flow: column; grid-auto-columns: min(11rem, 45%); gap: 0.75rem; margin: 0; padding: 0.25rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
-.rail li { scroll-snap-align: start; }
-.rail a { display: grid; gap: 0.25rem; color: inherit; text-decoration: none; font-weight: 700; }
+/* phone and tablet: the table of contents is a closed box above the text */
+.toc { margin-bottom: 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
+.toc summary { padding: 0.5rem 0.75rem; font-weight: 700; cursor: pointer; }
+.toc ol { margin: 0; padding: 0 2rem 0.75rem; }
 
-/* ---- transitions ---- */
-/* between pages: both pages must opt in. Without support the rule is ignored and the page just opens */
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition { navigation: auto; }
-  ::view-transition-group(*) { animation-duration: 0.35s; }
-}
-/* less motion: the in-page filter jumps too */
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+/* computer: two columns, the table of contents sticks while the text scrolls */
+@media (min-width: 64rem) {
+  .layout { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 2.5rem; }
+  .toc {
+    position: sticky;
+    top: calc(var(--top-h) + 1rem);
+    align-self: start;   /* without it the grid stretches the box to the full row height, and a box as tall as its parent has nowhere to stick */
+    margin: 0;
+    border: 0;
+  }
+  .toc summary { display: none; }   /* always open here, toc.js sets open */
+  .toc ol { padding-inline-start: 1.25rem; }
 }
 </style>
 </head>
 <body>
-<header class="top"><a class="logo" href="index.html">ركن القهوة</a><nav aria-label="الأقسام"><a href="index.html#beans">البن</a> <a href="index.html#tools">الأدوات</a></nav></header>
-<main class="wrap">
-  <h1>كل حاجة لفنجان مظبوط</h1>
-  <div class="chips" role="group" aria-label="اعرض">
-    <button type="button" aria-pressed="true" data-kind="all">الكل</button>
-    <button type="button" aria-pressed="false" data-kind="beans" id="beans">البن</button>
-    <button type="button" aria-pressed="false" data-kind="tools" id="tools">الأدوات</button>
-  </div>
-  <p class="count" role="status"></p>
-  <ul class="grid">
-      <li class="card" data-kind="beans" style="view-transition-name: card-yirga">
-        <a href="products/yirga.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-yirga"><h2>يرقاتشيفي</h2></a>
-        <p>إثيوبي فاتح، فيه ليمون وورد.</p><p class="price">٣٢٠ ج</p>
-      </li>
-      <li class="card" data-kind="beans" style="view-transition-name: card-santos">
-        <a href="products/santos.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-santos"><h2>سانتوس</h2></a>
-        <p>برازيلي متوسط، شوكولاتة وبندق.</p><p class="price">٢٦٠ ج</p>
-      </li>
-      <li class="card" data-kind="beans" style="view-transition-name: card-harazi">
-        <a href="products/harazi.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-harazi"><h2>حرازي</h2></a>
-        <p>يمني غامق، توابل وزبيب.</p><p class="price">٤١٠ ج</p>
-      </li>
-      <li class="card" data-kind="tools" style="view-transition-name: card-v60">
-        <a href="products/v60.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-v60"><h2>قمع تقطير V60</h2></a>
-        <p>بلاستيك متين، مقاس 02.</p><p class="price">٤٥٠ ج</p>
-      </li>
-      <li class="card" data-kind="tools" style="view-transition-name: card-grinder">
-        <a href="products/grinder.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-grinder"><h2>مطحنة يدوي</h2></a>
-        <p>سنون سيراميك، ١٢ درجة طحن.</p><p class="price">٩٨٠ ج</p>
-      </li>
-      <li class="card" data-kind="tools" style="view-transition-name: card-kettle">
-        <a href="products/kettle.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-kettle"><h2>غلاية بمنقار</h2></a>
-        <p>منقار رفيع لصب مظبوط.</p><p class="price">١٬٢٠٠ ج</p>
-      </li>
-  </ul>
-  <h2 class="baseline-t" id="baseline">الميزات اللي في الموقع ده شغالة فين</h2>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th scope="col">الميزة</th><th scope="col">Baseline (web-features)</th><th scope="col">لو مش موجودة</th></tr></thead>
-      <tbody>
-        <tr><td>View Transitions بين الصفحات (<code>@view-transition</code>)</td><td>limited: Chrome 126، Safari 18.2</td><td>الصفحة بتفتح عادي من غير حركة</td></tr>
-        <tr><td>View Transitions في نفس الصفحة (<code>startViewTransition</code>)</td><td>low (أكتوبر ٢٠٢٥)</td><td>الفلتر بيشتغل على طول من غير حركة</td></tr>
-        <tr><td><code>text-wrap: balance</code></td><td>low (مايو ٢٠٢٤)</td><td>العنوان بيتقسم عادي</td></tr>
-        <tr><td><code>details name</code></td><td>low (سبتمبر ٢٠٢٤)</td><td>أكتر من سؤال يتفتح مع بعض</td></tr>
-        <tr><td>scroll-snap</td><td>high (يناير ٢٠٢٠)</td><td>الـ scroll بيقف في أي مكان</td></tr>
-      </tbody>
-    </table>
-  </div>
-</main>
+<header class="top"><a href="#intro">رف: التوثيق</a></header>
+<div class="layout">
+  <details class="toc" id="toc">
+    <summary>المحتويات</summary>
+    <nav aria-label="محتويات الصفحة">
+      <ol>
+        <li><a href="#intro">مقدمة</a></li>
+        <li><a href="#install">التثبيت</a></li>
+        <li><a href="#first">أول رف</a></li>
+        <li><a href="#options">الخيارات</a></li>
+        <li><a href="#themes">الثيمات</a></li>
+        <li><a href="#faq">أسئلة</a></li>
+      </ol>
+    </nav>
+  </details>
+  <main class="doc">
+    <h1 id="intro">مكتبة «رف»</h1>
+    <p>«رف» مكتبة متخيلة بتعرض كتب على رفوف في صفحة ويب. الصفحة دي بتشرح إزاي تثبتها وتستخدمها.</p>
+    <h2 id="install">التثبيت</h2>
+    <p>انسخ ملف المكتبة جنب صفحتك وحطه في آخر الـ body.</p>
+    <pre><code>&lt;script src="raf.js"&gt;&lt;/script&gt;</code></pre>
+    <h2 id="first">أول رف</h2>
+    <p>اعمل عنصر فاضي بـ id، وبعدين نادي الدالة باسمه وبقايمة الكتب.</p>
+    <pre><code>raf("#shelf", ["مدينة من ورق", "بيت على البحر"]);</code></pre>
+    <h2 id="options">الخيارات</h2>
+    <p>عدد الكتب في الرف، وحجم الغلاف، ولون الخشب، وهل الكتب تتقلب لما الماوس ييجي عليها.</p>
+    <h2 id="themes">الثيمات</h2>
+    <p>فيه ٣ ثيمات جاهزة: خشب فاتح، وخشب غامق، ومعدن. وتقدر تعمل ثيم بمتغيرات CSS.</p>
+    <h2 id="faq">أسئلة</h2>
+    <p>هل بتشتغل من غير إنترنت؟ أيوه، الملف كله عندك.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </main>
+</div>
 <script>
-// the chips filter the cards; with View Transitions every card slides to its new place
-const chips = [...document.querySelectorAll(".chips button")];
-const cards = [...document.querySelectorAll(".card")];
-const count = document.querySelector(".count");
-
-function apply(kind) {
-  chips.forEach(c => c.setAttribute("aria-pressed", String(c.dataset.kind === kind)));
-  let n = 0;
-  for (const card of cards) { const show = kind === "all" || card.dataset.kind === kind; card.hidden = !show; if (show) n++; }
-  count.textContent = n.toLocaleString("ar-EG") + " منتجات";
-}
-chips.forEach(chip => chip.addEventListener("click", () => {
-  // every card already has its own view-transition-name (card-yirga, card-santos…), so they move, not just fade
-  if (document.startViewTransition) document.startViewTransition(() => apply(chip.dataset.kind));
-  else apply(chip.dataset.kind);
-}));
-// the header links #beans / #tools pick the chip too
-if (location.hash === "#beans" || location.hash === "#tools") apply(location.hash.slice(1));
+// a closed <details> hides its content whatever the CSS says, so on a big screen it has to be opened
+const toc = document.getElementById("toc");
+const wide = matchMedia("(min-width: 64rem)");
+function sync() { toc.open = wide.matches; }   // open on a computer, closed on smaller screens
+wide.addEventListener("change", sync);
+sync();
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** هيدر «ركن القهوة» لازق فوق، وعنوان «كل حاجة لفنجان مظبوط»، وفلتر (الكل، البن، الأدوات)، و ٦ كروت بصور. الفلتر بيحرّك الكروت لأماكنها الجديدة. والضغط على كارت بيفتح صفحته، والصورة بتطير من الكارت لمكانها الكبير. وفي الآخر جدول الميزات.
+**هتشوف إيه:** شريط غامق فوق فيه «رف: التوثيق». على الشاشة الكبيرة فهرس على اليمين بـ ٦ روابط، والكلام على الشمال، ولما تنزل الفهرس بيفضل مكانه. على الشاشة الأصغر الفهرس صندوق مقفول فوق الكلام مكتوب عليه «المحتويات»، بيتفتح لما تدوس عليه.
 
-**انتقال بين صفحتين من غير JavaScript:** [[@view-transition { navigation: auto; }]] في الـ CSS **بتاع الصفحتين**. لما تنتقل في نفس الموقع، المتصفح بياخد صورة للقديمة، ويفتح الجديدة، ويحرّك بينهم. واللي ليه نفس [[view-transition-name]] في الصفحتين بيطير:
-- [[img-yirga]] على صورة الكارت وعلى صورة صفحة المنتج.
-- [[header]] على الهيدر في كل الصفحات، فبيفضل ثابت ومبيعملش fade.
+**الفهرس اللازق:** [[position: sticky; top: calc(var(--top-h) + 1rem)]]: بيقف تحت الشريط بمسافة. و [[align-self: start]] هو أهم سطر: من غيره الـ grid بيمط الفهرس لطول الصف كله (طول الكلام)، وصندوق طوله قد أبوه ملوش مكان يتحرك فيه، فالـ sticky مبيبانش إنه شغال.
 
-**الأسامي لازم تبقى فريدة في الصفحة:** كل كارت [[card-<slug>]] وكل صورة [[img-<slug>]]، وصور «ممكن يعجبك» في صفحة المنتج **من غير** أسامي، عشان صورة يرقاتشيفي هناك متتكررش مع الصورة الكبيرة.
+**الـ [[overflow]] على أي جد:** لو أي عنصر فوق الفهرس عليه [[overflow: hidden]] أو [[auto]]، الـ sticky بيلزق جوه العنصر ده بدل الصفحة، وغالبًا مبيلزقش خالص. اتقاس: مفيش ولا جد عليه overflow.
 
-**الفلتر:** [[startViewTransition(() => apply(kind))]]. ولأن كل كارت ليه اسم، كل واحد بيتحرك لمكانه الجديد بدل ما الصفحة كلها تعمل fade.
+**[[scroll-margin-top]] على العناوين:** لما تدوس لينك من الفهرس، المتصفح بيجيب العنوان لأول الشاشة، يعني تحت الشريط اللازق ومش باين. [[scroll-margin-top]] بيقوله «سيب المسافة دي فوقي»، فالعنوان بيقف تحت الشريط.
 
-**Back شغال كمان:** الرجوع من صفحة المنتج للستة بيعمل نفس الانتقال بالعكس، واتقاس.
+**[[<details>]] تحت 1024:** نفس العنصر في الحالتين. على الشاشة الكبيرة [[toc.js]] بيفتحه و [[summary]] مستخبي، فبيبان فهرس عادي. ليه JS؟ لأن [[<details>]] المقفول بيخبّي اللي جواه مهما الـ CSS قال، فلازم يتفتح فعلًا. و [[matchMedia]] بيتابع لو الشاشة اتغيّرت (لفّيت التابلت مثلًا).
 
-**reduce:** [[@view-transition]] جوه [[(prefers-reduced-motion: no-preference)]]، فمفيش انتقال بين الصفحات. والفلتر، [[animation: none]] على كل الـ pseudo-elements.
-
-**[[scroll-padding-top]]:** لينك [[#faq]] بيوقف العنوان تحت الهيدر اللازق مش وراه. و [[text-wrap: balance]] بيوزّع العنوان على السطور بالتساوي.
-
-~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
-١. لستة ← يرقاتشيفي: viewTransition=true | الأجزاء: root، img-yirga، header، card-*… | errors: 0
-   Back: viewTransition=true | الأجزاء: header، root، img-yirga…
-٢. فلتر «الأدوات»: ٣ منتجات | ظاهر: قمع تقطير V60، مطحنة يدوي، غلاية بمنقار | اتحرك: card-grinder، card-v60، card-kettle…
-٣. Tab في اللستة: ركن القهوة → البن → الأدوات → الكل → البن → الأدوات → يرقاتشيفي
-   #faq: العنوان top=260 والهيدر بيخلص عند 56 (مش مستخبي)
-   التابز: ← بقى «التحضير» | الظاهر p2
-٤. من غير @view-transition (شلته من الـ CSS في السكة): viewTransition=false | الصفحة فتحت عادي | errors: 0
-٥. reduce: viewTransition=false
-٦. axe: index 0 | yirga 0 | santos 0 | harazi 0 | v60 0 | grinder 0 | kettle 0
-Lighthouse 13.6.0 Mobile: اللستة 100 (LCP 1.2 s، CLS 0) | صفحة منتج 100 (LCP 1.5 s، CLS 0)
-الـ validator: مفيش رسايل غير «view-transition-name doesn't exist» (الـ validator لسه مبيعرفهاش)
-CSS validator (W3C) مبيعرفش لسه @view-transition و ::view-transition-group
+~~~text الناتج (Chrome 157)
+1280: الفهرس مفتوح، وبعد scroll لآخر الصفحة (scrollY 1319) الفهرس top = 72 (لسه ظاهر)
+      الضغط على الـ 6 لينكات: كل عنوان top = 72، والشريط بيخلص عند 56 (العنوان تحته بـ 16)
+      جدود الفهرس اللي عليهم overflow غير visible: ولا واحد
+768:  الفهرس مقفول، فوق الكلام (الفهرس top 72، الكلام top 140)، والضغط على «المحتويات» بيفتحه
+      scrollWidth = العرض
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
+        { lvl: 'متوسط', dir: "sticky-fix", t: R`صلّح ملخص طلب sticky مغطّي الشاشة`, what: R`**صلّح الكود البايظ:** صفحة باقات نت متخيلة فيها ملخص الطلب [[position: sticky; top: 0]] على كل الشاشات. على الموبايل الملخص بيغطي أغلب الشاشة والباقات بتعدّي من تحته، فالـ scroll بيحسّسك إن الصفحة واقفة. وعلى شاشة كمبيوتر قصيرة الملخص أطول من الشاشة، وزرار «كمّل الطلب» اللي في آخره مبيبانش. قيس العطلين، وصلّحهم من غير ما تشيل الـ sticky من الكمبيوتر. من درس [[sticky و fixed]] و [[media queries]].`, done: R`على 360×640: [[elementFromPoint]] في نص الشاشة بيرجّع باقة مش الملخص بعد scroll 300 و 600 و 900، وعلى 1280×400 بعد scroll 600 الملخص لسه ظاهر وزرار «كمّل الطلب» بتوصله بـ scroll جوه الملخص، و axe صفر مشاكل.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مقارنة باقات النت</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="layout">
+  <aside class="summary" aria-label="ملخص اختيارك">
+    <h2>اختيارك</h2>
+    <p>باقة ٢٠٠ جيجا</p>
+    <ul>
+      <li>سرعة لحد ١٠٠ ميجا</li>
+      <li>راوتر مجاني</li>
+      <li>تركيب خلال ٤٨ ساعة</li>
+      <li>دعم فني ٢٤ ساعة</li>
+      <li>مكالمات أرضي مجانًا</li>
+      <li>تجديد تلقائي كل شهر</li>
+      <li>إلغاء في أي وقت</li>
+      <li>خصم ١٠٪ لو دفعت سنة</li>
+    </ul>
+    <p class="summary__total">الإجمالي: ٤٥٠ ج / شهر</p>
+    <a class="summary__btn" href="#checkout">كمّل الطلب</a>
+  </aside>
+  <section class="plans">
+    <h1>اختار باقة النت</h1>
+    <article class="plan"><h2>١٠٠ جيجا</h2><p>٣٠٠ ج في الشهر. مناسبة لشخص واحد.</p></article>
+    <article class="plan"><h2>٢٠٠ جيجا</h2><p>٤٥٠ ج في الشهر. مناسبة لبيت صغير.</p></article>
+    <article class="plan"><h2>٤٠٠ جيجا</h2><p>٧٠٠ ج في الشهر. للبيت اللي فيه ألعاب وأفلام.</p></article>
+    <article class="plan"><h2>من غير حد</h2><p>١١٠٠ ج في الشهر. للشغل من البيت.</p></article>
+  </section>
+</main>
+</body>
+</html>
 ~~~
 
-**ازاي تعرف إن الانتقال حصل:** صفحة جديدة بتطلّع event اسمه [[pagereveal]]، و [[e.viewTransition]] بيبقى موجود لو فيه انتقال. ده اللي [[measure.mjs]] بيسمعله في كل صفحة.` },
-        { lvl: 'فكرة', dir: "range-slider", t: R`widget من الصفر بـ APG`, what: R`اختار widget من WAI-ARIA Authoring Practices مش اتشرح هنا (combobox، أو tree، أو slider بمقبضين، أو carousel بـ autoplay)، وابنيه من الصفر بالـ HTML والـ CSS والـ JavaScript، ماشي على الكيبورد والـ aria اللي الصفحة بتطلبها بالظبط.`, done: R`كل اختصار في جدول APG بتاع الـ widget شغال، وقارئ الشاشة بيقول الحالة الصح، وفيه اختبار Playwright بيجرّب كل اختصار.`, ext: R`قارنه بنسخة مكتبة (Radix أو React Aria): الحجم، والسلوك، وإيه اللي المكتبة عملته وانت نسيته.`, sol: R`**اللي اخترته:** «Slider (Multi-Thumb)» من APG: فلتر سعر بمقبضين، من ولحد. مااتشرحش في الكورس، وموجود في أي متجر.
+~~~css broken.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
+.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
+
+/* the order summary sticks at the top on EVERY screen: on a phone it covers 3/4 of it,
+   and on a short screen it is taller than the screen, so its bottom never shows */
+.summary { position: sticky; top: 0; z-index: 1; padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
+.summary h2 { margin-top: 0; }
+.summary__total { font-weight: 800; }
+.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
+
+.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
+
+@media (min-width: 48rem) {
+  .layout { flex-direction: row-reverse; align-items: flex-start; }
+  .summary { flex: 0 0 18rem; }
+  .plans { flex: 1; }
+}
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
+.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
+
+/* phone: the summary is a normal box at the top, it scrolls away like everything else */
+.summary { padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
+.summary h2 { margin-top: 0; }
+.summary__total { font-weight: 800; }
+.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
+.summary__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
+
+/* computer: a column beside the plans, sticky, and NEVER taller than the screen */
+@media (min-width: 48rem) {
+  .layout { flex-direction: row-reverse; align-items: flex-start; }
+  .plans { flex: 1; }
+  .summary {
+    flex: 0 0 18rem;
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100dvh - 2rem);   /* the screen minus the top gap and the same at the bottom */
+    overflow-y: auto;                  /* if the screen is short, the summary scrolls inside itself */
+  }
+}
+~~~
+
+[[broken.html]] هو نفس [[index.html]] بـ [[href="broken.css"]].
+
+~~~view 500 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مقارنة باقات النت</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
+.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
+
+/* phone: the summary is a normal box at the top, it scrolls away like everything else */
+.summary { padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
+.summary h2 { margin-top: 0; }
+.summary__total { font-weight: 800; }
+.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
+.summary__btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
+
+/* computer: a column beside the plans, sticky, and NEVER taller than the screen */
+@media (min-width: 48rem) {
+  .layout { flex-direction: row-reverse; align-items: flex-start; }
+  .plans { flex: 1; }
+  .summary {
+    flex: 0 0 18rem;
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100dvh - 2rem);   /* the screen minus the top gap and the same at the bottom */
+    overflow-y: auto;                  /* if the screen is short, the summary scrolls inside itself */
+  }
+}
+</style>
+</head>
+<body>
+<main class="layout">
+  <aside class="summary" aria-label="ملخص اختيارك">
+    <h2>اختيارك</h2>
+    <p>باقة ٢٠٠ جيجا</p>
+    <ul>
+      <li>سرعة لحد ١٠٠ ميجا</li>
+      <li>راوتر مجاني</li>
+      <li>تركيب خلال ٤٨ ساعة</li>
+      <li>دعم فني ٢٤ ساعة</li>
+      <li>مكالمات أرضي مجانًا</li>
+      <li>تجديد تلقائي كل شهر</li>
+      <li>إلغاء في أي وقت</li>
+      <li>خصم ١٠٪ لو دفعت سنة</li>
+    </ul>
+    <p class="summary__total">الإجمالي: ٤٥٠ ج / شهر</p>
+    <a class="summary__btn" href="#checkout">كمّل الطلب</a>
+  </aside>
+  <section class="plans">
+    <h1>اختار باقة النت</h1>
+    <article class="plan"><h2>١٠٠ جيجا</h2><p>٣٠٠ ج في الشهر. مناسبة لشخص واحد.</p></article>
+    <article class="plan"><h2>٢٠٠ جيجا</h2><p>٤٥٠ ج في الشهر. مناسبة لبيت صغير.</p></article>
+    <article class="plan"><h2>٤٠٠ جيجا</h2><p>٧٠٠ ج في الشهر. للبيت اللي فيه ألعاب وأفلام.</p></article>
+    <article class="plan"><h2>من غير حد</h2><p>١١٠٠ ج في الشهر. للشغل من البيت.</p></article>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 500 600 النسخة البايظة (انزل فيها على الموبايل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مقارنة باقات النت (النسخة البايظة)</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #0f172a; background: #f1f5f9; }
+.layout { display: flex; flex-direction: column; gap: 1rem; max-width: 64rem; margin-inline: auto; padding: 1rem; }
+
+/* the order summary sticks at the top on EVERY screen: on a phone it covers 3/4 of it,
+   and on a short screen it is taller than the screen, so its bottom never shows */
+.summary { position: sticky; top: 0; z-index: 1; padding: 1rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 16px #0002; }
+.summary h2 { margin-top: 0; }
+.summary__total { font-weight: 800; }
+.summary__btn { display: block; padding: 0.7rem; border-radius: 0.5rem; background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; text-decoration: none; }
+
+.plan { min-height: 14rem; margin-bottom: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: #fff; }
+
+@media (min-width: 48rem) {
+  .layout { flex-direction: row-reverse; align-items: flex-start; }
+  .summary { flex: 0 0 18rem; }
+  .plans { flex: 1; }
+}
+</style>
+</head>
+<body>
+<main class="layout">
+  <aside class="summary" aria-label="ملخص اختيارك">
+    <h2>اختيارك</h2>
+    <p>باقة ٢٠٠ جيجا</p>
+    <ul>
+      <li>سرعة لحد ١٠٠ ميجا</li>
+      <li>راوتر مجاني</li>
+      <li>تركيب خلال ٤٨ ساعة</li>
+      <li>دعم فني ٢٤ ساعة</li>
+      <li>مكالمات أرضي مجانًا</li>
+      <li>تجديد تلقائي كل شهر</li>
+      <li>إلغاء في أي وقت</li>
+      <li>خصم ١٠٪ لو دفعت سنة</li>
+    </ul>
+    <p class="summary__total">الإجمالي: ٤٥٠ ج / شهر</p>
+    <a class="summary__btn" href="#checkout">كمّل الطلب</a>
+  </aside>
+  <section class="plans">
+    <h1>اختار باقة النت</h1>
+    <article class="plan"><h2>١٠٠ جيجا</h2><p>٣٠٠ ج في الشهر. مناسبة لشخص واحد.</p></article>
+    <article class="plan"><h2>٢٠٠ جيجا</h2><p>٤٥٠ ج في الشهر. مناسبة لبيت صغير.</p></article>
+    <article class="plan"><h2>٤٠٠ جيجا</h2><p>٧٠٠ ج في الشهر. للبيت اللي فيه ألعاب وأفلام.</p></article>
+    <article class="plan"><h2>من غير حد</h2><p>١١٠٠ ج في الشهر. للشغل من البيت.</p></article>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** على الموبايل: كارت «اختيارك» فوق، وبعده ٤ باقات. في البايظة الكارت بيلزق فوق وبياخد أغلب الشاشة، والباقات بتعدّي من تحته. في المصلّحة الكارت بيطلع لفوق مع الصفحة. على الكمبيوتر الكارت عمود على الشمال بيفضل ظاهر وانت بتنزل.
+
+**العطل الأول: sticky على الموبايل.** الملخص 482px والشاشة 640، فاللي فاضل للباقات 158px بس، وكل scroll بيحرّك حتة صغيرة ورا الملخص. اتقاس: نص الشاشة الملخص في كل مكان. على الموبايل الملخص مش محتاج يلزق أصلًا: بقى عادي بره الـ media query، والـ sticky جوه [[min-width: 48rem]] بس.
+
+**العطل التاني: sticky أطول من الشاشة.** الـ sticky بيلزق الحافة اللي فوق، فلو الصندوق أطول من الشاشة، اللي تحت مش هيبان غير لما أبوه يخلص. على 1280×400 زرار «كمّل الطلب» كان تحت الشاشة (409 لحد 460، والشاشة 400). التصليح: [[max-height: calc(100dvh - 2rem)]] و [[overflow-y: auto]]: الملخص مبيعدّيش الشاشة أبدًا، ولو مش مكفّي بيعمل scroll جواه.
+
+**[[dvh]] مش [[vh]]:** على الموبايل [[100vh]] أطول من الجزء الظاهر لما شريط العنوان يبقى ظاهر. هنا الـ sticky على الكمبيوتر بس، فالاتنين واحد، بس [[dvh]] أسلم لو القاعدة اتنقلت.
+
+**الكيبورد:** الملخص بقى بيتسكرول جواه، و axe بيطلب إن أي صندوق بيتسكرول يتوصله بالكيبورد. هنا جواه لينك «كمّل الطلب»، فالـ Tab بيوصله والمتصفح بيسكرول الصندوق للينك لوحده.
+
+~~~text الناتج (Chrome 157)
+360×640، نص الشاشة بعد scroll:        300        600        900
+  broken.html                           summary    summary    summary   (الملخص top = 0 وطوله 482)
+  index.html                            plan       plan       plan      (الملخص top = -284، -584، -884)
+
+1280×400، بعد scroll 600:
+  broken.html   الملخص -6 لحد 476 (طوله 482)، الزرار 409 لحد 460: برّه الشاشة
+  index.html    الملخص 16 لحد 384 (طوله 368)، الزرار 431 لحد 482 برّه، وبعد scroll جوه الملخص: 317 لحد 368 ظاهر
+  focus على «كمّل الطلب» (زي Tab): الملخص اتسكرول جواه 114px لوحده والزرار 317 لحد 368
+axe (360 و 1280): 0 violations   الـ validator: مفيش رسايل (النسختين)   CSS validator: No Error Found (الملفين)
+~~~` },
+        { lvl: 'كبير', dir: "dental-landing", t: R`landing page لعيادة أسنان متخيلة`, what: R`أقسام بـ id وروابط (خدمات، وقبل وبعد، وأسعار، وأسئلة)، و nav زجاجي sticky، وهيرو بعنوان [[clamp()]]، وسلايدر قبل وبعد بـ range و [[clip-path]]، وأسئلة بـ [[<details>]]، وزرار حجز عايم بيختفي لما توصل لقسم الأسعار، و z-index من توكنز. واختبار المقاسات بسكربت درس [[مصفوفة مقاسات]] بالعربي والإنجليزي. بيجمع الوحدة دي مع وحدة Flexbox و Grid والوحدات والمتغيرات.`, done: R`[[node matrix.js]] بيطلّع [[all sizes OK]] على ١٥ عرض × لغتين، والسكربت بيخرج بـ 0، والسلايدر بيشتغل بالكيبورد، وكل لينك في الـ nav بيوصل لعنوانه ظاهر، و axe صفر مشاكل بالعربي والإنجليزي، والصفحة اتشغّلت مرتين ورا بعض بنفس النتيجة.`, ext: R`زوّد quiz «محتاج إيه؟» بخطوات، ونسخة إنجليزي كاملة بزرار لغة، و dark mode، وحط [[matrix.js]] في GitHub Actions يفشل لو أي مقاس اتكسر.`, sol: R`**شجرة الملفات:**
+
+~~~text dental-landing/
+index.html     الصفحة (العربي جواها، والإنجليزي في data-en)
+style.css      التصميم
+lang.js        ?lang=en بيقلب الصفحة إنجليزي (في الـ head)
+page.js        طول الهيدر، والسلايدر، وزرار الحجز (defer)
+img/logo.svg  img/before.svg  img/after.svg
+matrix.js      اختبار المقاسات (درس «مصفوفة مقاسات»)
+shots/         بيتعمل لوحده: لقطة لكل مقاس
+~~~
 
 ~~~html index.html
 <!doctype html>
@@ -1630,2414 +1343,3104 @@ CSS validator (W3C) مبيعرفش لسه @view-transition و ::view-transition-
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فلتر السعر</title>
-<link rel="stylesheet" href="range.css">
-<script src="range.js" defer></script>
+<title>عيادة ابتسامة للأسنان</title>
+<link rel="stylesheet" href="style.css">
+<script src="lang.js"></script>
+<script src="page.js" defer></script>
 </head>
 <body>
-<main class="wrap">
-  <h1>موبايلات</h1>
-  <div class="range" data-min="0" data-max="20000" data-step="500" role="group" aria-labelledby="price-label">
-    <p id="price-label" class="range__label">السعر</p>
-    <div class="range__track">
-      <div class="range__fill"></div>
-      <div class="range__thumb" role="slider" tabindex="0" aria-label="أقل سعر" data-value="3000"
-           aria-valuemin="0" aria-valuemax="12000" aria-valuenow="3000" aria-valuetext="٣٬٠٠٠ ج"></div>
-      <div class="range__thumb" role="slider" tabindex="0" aria-label="أعلى سعر" data-value="12000"
-           aria-valuemin="3000" aria-valuemax="20000" aria-valuenow="12000" aria-valuetext="١٢٬٠٠٠ ج"></div>
-    </div>
-    <p class="range__out" aria-hidden="true"></p>
-  </div>
+<a class="skip" href="#main" data-en="Skip to content">اتخطى للمحتوى</a>
+<header class="header" id="header">
+  <a class="brand" href="#main"><img class="logo" src="img/logo.svg" alt="" width="36" height="36"><span data-en="Ebtesama Dental">عيادة ابتسامة</span></a>
+  <a class="lang" href="?lang=en" data-en="عربي" data-en-href="?lang=ar" lang="en" data-en-lang="ar">EN</a>
+  <nav class="nav" aria-label="أقسام الصفحة" data-en-label="Page sections">
+    <a href="#services" data-en="Services">الخدمات</a>
+    <a href="#before-after" data-en="Before &amp; after">قبل وبعد</a>
+    <a href="#prices" data-en="Prices">الأسعار</a>
+    <a href="#faq" data-en="FAQ">أسئلة</a>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1">
+  <section class="hero">
+    <h1 data-en="A smile you are not shy of">ابتسامة مش هتتكسف منها</h1>
+    <p data-en="Cleaning, whitening, fillings and braces. Same-week appointments.">تنضيف وتبييض وحشو وتقويم، ومواعيد في نفس الأسبوع.</p>
+    <a class="btn" href="#prices" data-en="See prices">شوف الأسعار</a>
+  </section>
+
+  <section class="section" aria-labelledby="services">
+    <h2 id="services" data-en="Services">الخدمات</h2>
+    <ul class="cards">
+      <li class="card"><h3 data-en="Cleaning">تنضيف</h3><p data-en="Scaling and polishing in one 40-minute visit.">إزالة الجير وتلميع في زيارة واحدة ٤٠ دقيقة.</p></li>
+      <li class="card"><h3 data-en="Whitening">تبييض</h3><p data-en="Two to four shades lighter, checked with a colour guide.">من درجتين لأربعة أفتح، بنقيسها بدليل ألوان.</p></li>
+      <li class="card"><h3 data-en="Fillings">حشو</h3><p data-en="Tooth-coloured fillings that don't show.">حشو بلون السنة مبيبانش.</p></li>
+      <li class="card"><h3 data-en="Braces">تقويم</h3><p data-en="Clear aligners or metal braces, with monthly follow-up.">شفاف أو معدن، ومتابعة كل شهر.</p></li>
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="before-after">
+    <h2 id="before-after" data-en="Before &amp; after">قبل وبعد</h2>
+    <!-- the comparison always goes left to right (before on the left), in both languages -->
+    <figure class="compare" dir="ltr" style="--pos: 50%">
+      <div class="compare__pics">
+      <img src="img/before.svg" alt="الأسنان قبل التبييض: لونها أصفر" data-en-alt="Teeth before whitening: yellow" width="800" height="450">
+      <img class="compare__after" src="img/after.svg" alt="نفس الأسنان بعد التبييض: لونها أبيض" data-en-alt="The same teeth after whitening: white" width="800" height="450">
+      </div>
+      <figcaption>
+        <label for="pos" data-en="Drag to compare">اسحب عشان تقارن</label>
+        <input id="pos" type="range" min="0" max="100" value="50">
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="section" aria-labelledby="prices">
+    <h2 id="prices" data-en="Prices">الأسعار</h2>
+    <ul class="cards">
+      <li class="card price"><h3 data-en="Check-up">كشف</h3><p class="price__n" data-en="EGP 300">٣٠٠ ج</p></li>
+      <li class="card price"><h3 data-en="Cleaning">تنضيف</h3><p class="price__n" data-en="EGP 600">٦٠٠ ج</p></li>
+      <li class="card price"><h3 data-en="Whitening">تبييض</h3><p class="price__n" data-en="EGP 2,500">٢٬٥٠٠ ج</p></li>
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="faq">
+    <h2 id="faq" data-en="FAQ">أسئلة</h2>
+    <details><summary data-en="Does whitening hurt?">التبييض بيوجع؟</summary><p data-en="Some people feel sensitivity for a day or two. We use a calming gel.">ممكن حساسية يوم أو اتنين، وبنستخدم جل مهدّي.</p></details>
+    <details><summary data-en="Do you work on Fridays?">بتشتغلوا الجمعة؟</summary><p data-en="Yes, from 2 pm to 10 pm.">أيوه، من ٢ الضهر لـ ١٠ بالليل.</p></details>
+    <details><summary data-en="Can I pay in instalments?">ينفع أقسّط؟</summary><p data-en="Braces only, over 6 or 12 months.">التقويم بس، على ٦ أو ١٢ شهر.</p></details>
+  </section>
 </main>
+
+<footer class="footer"><p data-en="12 Garden St. · 0100 000 0000">١٢ شارع الجنينة، ٠١٠٠٠٠٠٠٠٠٠</p></footer>
+
+<a class="book" id="book" href="#prices" data-en="Book now">احجز دلوقتي</a>
 </body>
 </html>
 ~~~
 
-~~~css range.css
+~~~css style.css
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #f9fafb; }
-.wrap { max-width: 36rem; margin: 0 auto; padding: 2rem 1rem; }
-h1 { margin: 0 0 1.5rem; font-size: 1.5rem; }
-.range__label { margin: 0 0 1rem; font-weight: 700; }
-
-/* --a and --b are the two thumbs' places, 0% to 100%, written by range.js */
-.range__track { position: relative; height: 6px; margin: 1.25rem 12px; border-radius: 999px; background: #d1d5db; touch-action: none; }
-.range__fill { position: absolute; inset-block: 0; inset-inline-start: var(--a); inset-inline-end: calc(100% - var(--b)); border-radius: 999px; background: #1d4ed8; }
-
-/* the thumb: 24px for the finger and the mouse, a 20px circle inside */
-.range__thumb {
-  position: absolute; top: 50%; inset-inline-start: var(--pos); translate: 0 -50%; margin-inline-start: -12px;
-  width: 24px; height: 24px; display: grid; place-items: center; cursor: grab; outline: none;
+:root {
+  --z-header: 10;
+  --z-book: 20;
+  --z-skip: 30;
+  --header-h: 4rem;              /* page.js writes the real height here */
+  --brand: #0e7490;
+  --brand-dark: #155e75;
+  --ink: #0f172a;
+  --muted: #475569;
+  --bg: #f0f9ff;
+  --surface: #ffffff;
+  --radius: 1rem;
 }
-.range__thumb::before { content: ""; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid #1d4ed8; box-shadow: 0 1px 4px #0003; }
-.range__thumb:focus-visible::before { outline: 3px solid #b45309; outline-offset: 2px; }
-.range__thumb:active { cursor: grabbing; }
-.range__out { margin: 0.75rem 0 0; font-weight: 700; }
-~~~
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--ink); background: var(--bg); }
+img { max-width: 100%; height: auto; }
+a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+h2, h1 { scroll-margin-top: calc(var(--header-h) + 1rem); }
+main:focus { outline: none; }
 
-~~~js range.js
-// a two-thumb price slider, following WAI-ARIA APG "Slider (Multi-Thumb)"
-for (const range of document.querySelectorAll(".range")) {
-  const min = Number(range.dataset.min), max = Number(range.dataset.max), step = Number(range.dataset.step);
-  const big = step * 4;                                         // PageUp / PageDown jump
-  const track = range.querySelector(".range__track");
-  const [lo, hi] = range.querySelectorAll(".range__thumb");
-  const out = range.querySelector(".range__out");
-  const money = v => v.toLocaleString("ar-EG") + " ج";
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: var(--z-skip); padding: 0.5rem 1rem; background: var(--ink); color: #fff; }
+.skip:focus { top: 1rem; }
 
-  // each thumb's limits depend on the other one: the low can't pass the high
-  function limits(t) { return t === lo ? [min, Number(hi.dataset.value)] : [Number(lo.dataset.value), max]; }
-
-  function set(t, v) {
-    const [a, b] = limits(t);
-    v = Math.min(b, Math.max(a, Math.round(v / step) * step));
-    t.dataset.value = v;
-    render();
-  }
-
-  function render() {
-    const a = Number(lo.dataset.value), b = Number(hi.dataset.value);
-    const pct = v => ((v - min) / (max - min)) * 100 + "%";
-    track.style.setProperty("--a", pct(a));
-    track.style.setProperty("--b", pct(b));
-    for (const t of [lo, hi]) {
-      const [tmin, tmax] = limits(t), v = Number(t.dataset.value);
-      t.style.setProperty("--pos", pct(v));
-      t.setAttribute("aria-valuemin", tmin);
-      t.setAttribute("aria-valuemax", tmax);
-      t.setAttribute("aria-valuenow", v);
-      t.setAttribute("aria-valuetext", money(v));             // "٣٬٠٠٠ ج", not just "3000"
-    }
-    out.textContent = "من " + money(a) + " لـ " + money(b);
-  }
-
-  for (const t of [lo, hi]) {
-    t.addEventListener("keydown", e => {
-      const v = Number(t.dataset.value);
-      // horizontal arrows follow the direction: in Arabic the bigger values are on the LEFT
-      const rtl = getComputedStyle(range).direction === "rtl";
-      const keys = {
-        ArrowUp: v + step, ArrowDown: v - step,
-        ArrowRight: v + (rtl ? -step : step), ArrowLeft: v + (rtl ? step : -step),
-        PageUp: v + big, PageDown: v - big,
-        Home: limits(t)[0], End: limits(t)[1],
-      };
-      if (!(e.key in keys)) return;
-      e.preventDefault();
-      set(t, keys[e.key]);
-    });
-
-    // dragging: pointer capture keeps the thumb even when the pointer leaves it
-    t.addEventListener("pointerdown", e => { t.setPointerCapture(e.pointerId); t.focus(); });
-    t.addEventListener("pointermove", e => {
-      if (!t.hasPointerCapture(e.pointerId)) return;
-      const r = track.getBoundingClientRect();
-      const rtl = getComputedStyle(range).direction === "rtl";
-      let f = (e.clientX - r.left) / r.width;
-      if (rtl) f = 1 - f;
-      set(t, min + f * (max - min));
-    });
-  }
-  render();
+/* ---------- glass header: sticky, see-through, blurs what scrolls under it ---------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  padding: 0.5rem 1rem;
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #0e749033;
 }
+.brand { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); font-weight: 800; text-decoration: none; }
+.logo { display: block; width: 36px; height: 36px; }
+.nav { display: flex; flex-wrap: wrap; gap: 0 0.25rem; }
+.nav a { display: inline-block; padding: 0.4rem 0.6rem; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 600; text-decoration: none; }
+.nav a:hover { background: #0e74901a; }
+/* the language link sits next to the name; the section links take the second line on a small screen */
+.lang { padding: 0.3rem 0.6rem; border: 1px solid currentColor; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 700; text-decoration: none; }
+.nav { flex-basis: 100%; }
+@media (min-width: 56rem) {
+  .nav { flex-basis: auto; margin-inline-start: auto; }
+  .lang { order: 1; }   /* on a wide screen: name, links, then the language at the end */
+}
+
+/* ---------- hero ---------- */
+.hero { padding: clamp(2.5rem, 1rem + 6vw, 6rem) 1rem; text-align: center; background: radial-gradient(circle at 70% 20%, #cffafe, transparent 60%), var(--bg); }
+.hero h1 { margin: 0 auto 0.75rem; max-width: 18ch; font-size: clamp(1.9rem, 1.1rem + 4vw, 3.6rem); line-height: 1.2; }
+.hero p { margin: 0 auto 1.5rem; max-width: 40ch; color: var(--muted); font-size: 1.1rem; }
+.btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 999px; background: var(--brand-dark); color: #fff; font-weight: 700; text-decoration: none; }
+
+.section { max-width: 64rem; margin-inline: auto; padding: 2.5rem 1rem; }
+.section h2 { margin-top: 0; font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); }
+.cards { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
+.card { padding: 1.25rem; border-radius: var(--radius); background: var(--surface); box-shadow: 0 4px 16px #0e74901a; }
+.card h3 { margin: 0 0 0.25rem; }
+.card p { margin: 0; color: var(--muted); }
+.card .price__n { font-size: 1.6rem; font-weight: 800; color: var(--brand-dark); }   /* .card p is (0,1,1): this has to be at least that */
+
+/* ---------- before / after: both pictures in one cell, the "after" one clipped ---------- */
+.compare { margin: 0; max-width: 50rem; }
+.compare__pics { position: relative; display: grid; }
+.compare__pics > img { grid-area: 1 / 1; display: block; width: 100%; border-radius: var(--radius); }
+/* the "after" picture shows only from --pos to the right edge */
+.compare__after { clip-path: inset(0 0 0 var(--pos)); }
+/* the dividing line, at the same --pos */
+.compare__pics::after { content: ""; position: absolute; inset-block: 0; left: var(--pos); width: 3px; translate: -50% 0; background: #fff; box-shadow: 0 0 6px #0006; pointer-events: none; }
+.compare figcaption { display: flex; align-items: center; gap: 0.75rem; padding-top: 0.75rem; }
+.compare input { flex: 1; min-width: 0; accent-color: var(--brand-dark); height: 2rem; }
+
+/* ---------- FAQ ---------- */
+details { margin-bottom: 0.5rem; border-radius: 0.75rem; background: var(--surface); }
+summary { padding: 0.75rem 1rem; font-weight: 700; cursor: pointer; }
+details p { margin: 0; padding: 0 1rem 1rem; color: var(--muted); }
+
+.footer { padding: 2rem 1rem 6rem; text-align: center; background: var(--ink); color: #e2e8f0; }
+.footer p { margin: 0; }
+
+/* ---------- floating booking button: hides while the prices are on screen ---------- */
+.book {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: var(--z-book);
+  padding: 0.8rem 1.4rem;
+  border-radius: 999px;
+  background: #b45309;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 8px 20px #0004;
+  transition: opacity 0.2s, translate 0.2s, visibility 0s;
+}
+.book.is-hidden { opacity: 0; translate: 0 1rem; visibility: hidden; transition: opacity 0.2s, translate 0.2s, visibility 0s 0.2s; }
+@media (prefers-reduced-motion: reduce) { .book, .book.is-hidden { transition: none; } }
 ~~~
 
-~~~js playwright.config.js
-import { defineConfig } from "@playwright/test";
-export default defineConfig({
-  testDir: "tests",
-  use: {
-    baseURL: "http://127.0.0.1:8818",
-    channel: process.env.CI ? undefined : "chrome",
-    launchOptions: { args: ["--no-proxy-server"] },
-  },
-  webServer: { command: "node ../serve.mjs .. 8818", url: "http://127.0.0.1:8818/range-slider/index.html", reuseExistingServer: true },
-});
-~~~
-
-~~~js tests/range.spec.js
-// every keyboard row of the APG "Slider (Multi-Thumb)" table, plus aria, Tab, and dragging
-import { test, expect } from "@playwright/test";
-
-const lo = page => page.getByRole("slider", { name: "أقل سعر" });
-const hi = page => page.getByRole("slider", { name: "أعلى سعر" });
-const val = async s => Number(await s.getAttribute("aria-valuenow"));
-
-test.beforeEach(async ({ page }) => { await page.goto("/range-slider/index.html"); });
-
-test("الحالة الأولى: الأسامي والقيم والحدود", async ({ page }) => {
-  await expect(lo(page)).toHaveAttribute("aria-valuenow", "3000");
-  await expect(lo(page)).toHaveAttribute("aria-valuetext", "٣٬٠٠٠ ج");
-  await expect(lo(page)).toHaveAttribute("aria-valuemax", "12000");   // the low thumb stops at the high one
-  await expect(hi(page)).toHaveAttribute("aria-valuemin", "3000");
-  await expect(page.locator(".range__out")).toHaveText("من ٣٬٠٠٠ ج لـ ١٢٬٠٠٠ ج");
-});
-
-test("Tab: الأقل ثم الأعلى", async ({ page }) => {
-  await page.keyboard.press("Tab");
-  await expect(lo(page)).toBeFocused();
-  await page.keyboard.press("Tab");
-  await expect(hi(page)).toBeFocused();
-});
-
-for (const [key, delta] of [["ArrowUp", 500], ["ArrowDown", -500], ["PageUp", 2000], ["PageDown", -2000]]) {
-  test($__bt$__{key}: $__{delta > 0 ? "+" : ""}$__{delta}$__bt, async ({ page }) => {
-    await lo(page).focus();
-    await page.keyboard.press(key);
-    expect(await val(lo(page))).toBe(3000 + delta);
+~~~js lang.js
+// ?lang=en switches the page to English before it is drawn (this file runs in <head>, so there is no Arabic flash)
+// every element with data-en has its English text in that attribute; data-en-alt, data-en-label and data-en-href likewise
+if (new URLSearchParams(location.search).get("lang") === "en") {
+  document.documentElement.lang = "en";
+  document.documentElement.dir = "ltr";
+  document.title = "Ebtesama Dental Clinic";
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const el of document.querySelectorAll("[data-en]")) el.textContent = el.dataset.en;
+    for (const el of document.querySelectorAll("[data-en-alt]")) el.alt = el.dataset.enAlt;
+    for (const el of document.querySelectorAll("[data-en-label]")) el.setAttribute("aria-label", el.dataset.enLabel);
+    for (const el of document.querySelectorAll("[data-en-href]")) el.setAttribute("href", el.dataset.enHref);
+    for (const el of document.querySelectorAll("[data-en-lang]")) el.lang = el.dataset.enLang;
   });
 }
-
-test("في العربي: ← بيزوّد و → بيقلّل", async ({ page }) => {
-  await lo(page).focus();
-  await page.keyboard.press("ArrowLeft");
-  expect(await val(lo(page))).toBe(3500);
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.press("ArrowRight");
-  expect(await val(lo(page))).toBe(2500);
-});
-
-test("في الإنجليزي: → بيزوّد", async ({ page }) => {
-  await page.evaluate(() => (document.documentElement.dir = "ltr"));
-  await lo(page).focus();
-  await page.keyboard.press("ArrowRight");
-  expect(await val(lo(page))).toBe(3500);
-});
-
-test("Home و End: لحد الحد، والحد هو الـ thumb التاني", async ({ page }) => {
-  await lo(page).focus();
-  await page.keyboard.press("End");
-  expect(await val(lo(page))).toBe(12000);                 // not 20000: the high thumb is in the way
-  await page.keyboard.press("Home");
-  expect(await val(lo(page))).toBe(0);
-  await hi(page).focus();
-  await page.keyboard.press("Home");
-  expect(await val(hi(page))).toBe(0);                     // the low one is at 0 now
-  await page.keyboard.press("End");
-  expect(await val(hi(page))).toBe(20000);
-});
-
-test("الأقل ميعدّيش الأعلى بالأسهم", async ({ page }) => {
-  await lo(page).focus();
-  for (let i = 0; i < 30; i++) await page.keyboard.press("ArrowUp");
-  expect(await val(lo(page))).toBe(12000);
-  await expect(hi(page)).toHaveAttribute("aria-valuemin", "12000");
-});
-
-test("السحب بالماوس (في العربي الشمال أغلى)", async ({ page }) => {
-  const track = await page.locator(".range__track").boundingBox();
-  const box = await hi(page).boundingBox();
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(track.x + track.width * 0.1, box.y + box.height / 2, { steps: 5 });   // near the left end
-  await page.mouse.up();
-  expect(await val(hi(page))).toBe(18000);
-  await expect(hi(page)).toBeFocused();
-});
 ~~~
 
-~~~view 240 240 اسحب أو استخدم الأسهم
+~~~js page.js
+// 1. the header's real height goes into --header-h (it gets taller when the links wrap on a small screen),
+//    and the headings use it in scroll-margin-top, so a jump never hides a heading under the header
+const header = document.getElementById("header");
+const setHeaderH = () => document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+// once right away, before the first jump: a ResizeObserver only reports at the next frame, and a link opened
+// as page.html#prices jumps before that. DOMContentLoaded, because lang.js swaps the English text then (its listener is first)
+document.addEventListener("DOMContentLoaded", setHeaderH);
+new ResizeObserver(setHeaderH).observe(header);   // and again whenever the header changes height (links wrap, font size)
+
+// 2. before / after: the range moves --pos, the CSS clips the "after" picture at that point
+const compare = document.querySelector(".compare");
+const range = document.getElementById("pos");
+range.addEventListener("input", () => compare.style.setProperty("--pos", range.value + "%"));
+
+// 3. the floating button hides while the prices are on screen (the booking info is right there)
+const book = document.getElementById("book");
+new IntersectionObserver(([entry]) => {
+  book.classList.toggle("is-hidden", entry.isIntersecting);
+}).observe(document.getElementById("prices").closest("section"));
+~~~
+
+~~~js matrix.js
+// node matrix.js : 15 widths × 2 languages. Exit code 0 only if every size is OK
+const { chromium } = require("playwright-core");
+const fs = require("fs");
+const BASE = "http://127.0.0.1:8931/";
+const widths = [320, 360, 375, 414, 600, 761, 768, 820, 900, 1000, 1024, 1100, 1280, 1440, 1920];
+fs.mkdirSync("shots", { recursive: true });
+
+(async () => {
+  const browser = await chromium.launch({ channel: "chrome" });
+  const page = await browser.newPage();
+  const bad = [];
+  for (const lang of ["ar", "en"]) {
+    for (const w of widths) {
+      await page.setViewportSize({ width: w, height: 800 });
+      await page.goto(BASE + "?lang=" + lang);
+      const r = await page.evaluate(async () => {
+        const iw = innerWidth, sw = document.documentElement.scrollWidth;
+        // anything sticking out of the screen sideways, by name
+        const out = [...document.querySelectorAll("body *")]
+          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.right > iw + 0.5 || b.left < -0.5); })
+          .map(e => e.className || e.tagName.toLowerCase());
+        // touch targets smaller than 24×24 (WCAG 2.5.8)
+        const small = [...document.querySelectorAll("a, button, summary, input")]
+          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.width < 24 || b.height < 24); })
+          .map(e => (e.className || e.tagName) + " " + Math.round(e.getBoundingClientRect().height) + "px");
+        const logo = Math.round(document.querySelector(".logo").getBoundingClientRect().height);
+        // every nav link: after the jump, the heading starts below the sticky header
+        const hidden = [];
+        for (const a of document.querySelectorAll(".nav a[href^='#']")) {
+          document.querySelector(a.getAttribute("href")).scrollIntoView();
+          await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+          const top = document.querySelector(a.getAttribute("href")).getBoundingClientRect().top;
+          const headerBottom = document.getElementById("header").getBoundingClientRect().bottom;
+          if (top < headerBottom) hidden.push(a.getAttribute("href") + " " + Math.round(top) + "<" + Math.round(headerBottom));
+        }
+        scrollTo(0, 0);
+        return { iw, sw, out: [...new Set(out)], small, logo, hidden };
+      });
+      await page.screenshot({ path: "shots/" + lang + "-" + w + ".png" });
+      const ok = r.sw <= r.iw && !r.out.length && !r.small.length && r.logo <= 40 && !r.hidden.length;
+      if (!ok) bad.push(lang + "-" + w);
+      console.log(lang, String(w).padStart(4), "scrollWidth=" + r.sw, ok ? "OK" : "BROKEN",
+        r.out.length ? "out: " + r.out.join(",") : "", r.small.length ? "small: " + r.small.join(",") : "", r.hidden.length ? "hidden: " + r.hidden.join(",") : "");
+    }
+  }
+  // the slider works from the keyboard: focus it, press → three times
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto(BASE);
+  await page.focus("#pos");
+  for (let i = 0; i < 3; i++) await page.keyboard.press("ArrowRight");
+  const pos = await page.$eval(".compare", e => e.style.getPropertyValue("--pos"));
+  const keyOk = pos === "53%";
+  console.log("slider after → ×3:", pos, keyOk ? "OK" : "BROKEN");
+  if (!keyOk) bad.push("slider");
+
+  console.log(bad.length ? "broken: " + bad.join(" ") : "all sizes OK");
+  await browser.close();
+  process.exitCode = bad.length ? 1 : 0;
+})();
+~~~
+
+~~~svg img/logo.svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="18" fill="#0e7490"/><path d="M11 10c3-2 5 0 7 0s4-2 7 0c2 2 1 7-1 10l-1 7c0 2-2 2-2 0l-1-5c0-2-3-2-3 0l-1 5c0 2-2 2-2 0l-1-7c-2-3-3-8-1-10Z" fill="#fff"/></svg>
+~~~
+
+[[before.svg]] و [[after.svg]]: نفس الرسمة (لثة غامقة و ١٦ سنة)، الأولى السنان لونها [[#e3c770]] (أصفر) والتانية [[#fbfbf7]] (أبيض). أو حط صورتين حقيقيتين بنفس المقاس.
+
+~~~view 640 640 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فلتر السعر</title>
+<title>عيادة ابتسامة للأسنان</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #f9fafb; }
-.wrap { max-width: 36rem; margin: 0 auto; padding: 2rem 1rem; }
-h1 { margin: 0 0 1.5rem; font-size: 1.5rem; }
-.range__label { margin: 0 0 1rem; font-weight: 700; }
-
-/* --a and --b are the two thumbs' places, 0% to 100%, written by range.js */
-.range__track { position: relative; height: 6px; margin: 1.25rem 12px; border-radius: 999px; background: #d1d5db; touch-action: none; }
-.range__fill { position: absolute; inset-block: 0; inset-inline-start: var(--a); inset-inline-end: calc(100% - var(--b)); border-radius: 999px; background: #1d4ed8; }
-
-/* the thumb: 24px for the finger and the mouse, a 20px circle inside */
-.range__thumb {
-  position: absolute; top: 50%; inset-inline-start: var(--pos); translate: 0 -50%; margin-inline-start: -12px;
-  width: 24px; height: 24px; display: grid; place-items: center; cursor: grab; outline: none;
+:root {
+  --z-header: 10;
+  --z-book: 20;
+  --z-skip: 30;
+  --header-h: 4rem;              /* page.js writes the real height here */
+  --brand: #0e7490;
+  --brand-dark: #155e75;
+  --ink: #0f172a;
+  --muted: #475569;
+  --bg: #f0f9ff;
+  --surface: #ffffff;
+  --radius: 1rem;
 }
-.range__thumb::before { content: ""; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid #1d4ed8; box-shadow: 0 1px 4px #0003; }
-.range__thumb:focus-visible::before { outline: 3px solid #b45309; outline-offset: 2px; }
-.range__thumb:active { cursor: grabbing; }
-.range__out { margin: 0.75rem 0 0; font-weight: 700; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--ink); background: var(--bg); }
+img { max-width: 100%; height: auto; }
+a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+h2, h1 { scroll-margin-top: calc(var(--header-h) + 1rem); }
+main:focus { outline: none; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: var(--z-skip); padding: 0.5rem 1rem; background: var(--ink); color: #fff; }
+.skip:focus { top: 1rem; }
+
+/* ---------- glass header: sticky, see-through, blurs what scrolls under it ---------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  padding: 0.5rem 1rem;
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #0e749033;
+}
+.brand { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); font-weight: 800; text-decoration: none; }
+.logo { display: block; width: 36px; height: 36px; }
+.nav { display: flex; flex-wrap: wrap; gap: 0 0.25rem; }
+.nav a { display: inline-block; padding: 0.4rem 0.6rem; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 600; text-decoration: none; }
+.nav a:hover { background: #0e74901a; }
+/* the language link sits next to the name; the section links take the second line on a small screen */
+.lang { padding: 0.3rem 0.6rem; border: 1px solid currentColor; border-radius: 0.5rem; color: var(--brand-dark); font-weight: 700; text-decoration: none; }
+.nav { flex-basis: 100%; }
+@media (min-width: 56rem) {
+  .nav { flex-basis: auto; margin-inline-start: auto; }
+  .lang { order: 1; }   /* on a wide screen: name, links, then the language at the end */
+}
+
+/* ---------- hero ---------- */
+.hero { padding: clamp(2.5rem, 1rem + 6vw, 6rem) 1rem; text-align: center; background: radial-gradient(circle at 70% 20%, #cffafe, transparent 60%), var(--bg); }
+.hero h1 { margin: 0 auto 0.75rem; max-width: 18ch; font-size: clamp(1.9rem, 1.1rem + 4vw, 3.6rem); line-height: 1.2; }
+.hero p { margin: 0 auto 1.5rem; max-width: 40ch; color: var(--muted); font-size: 1.1rem; }
+.btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 999px; background: var(--brand-dark); color: #fff; font-weight: 700; text-decoration: none; }
+
+.section { max-width: 64rem; margin-inline: auto; padding: 2.5rem 1rem; }
+.section h2 { margin-top: 0; font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); }
+.cards { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
+.card { padding: 1.25rem; border-radius: var(--radius); background: var(--surface); box-shadow: 0 4px 16px #0e74901a; }
+.card h3 { margin: 0 0 0.25rem; }
+.card p { margin: 0; color: var(--muted); }
+.card .price__n { font-size: 1.6rem; font-weight: 800; color: var(--brand-dark); }   /* .card p is (0,1,1): this has to be at least that */
+
+/* ---------- before / after: both pictures in one cell, the "after" one clipped ---------- */
+.compare { margin: 0; max-width: 50rem; }
+.compare__pics { position: relative; display: grid; }
+.compare__pics > img { grid-area: 1 / 1; display: block; width: 100%; border-radius: var(--radius); }
+/* the "after" picture shows only from --pos to the right edge */
+.compare__after { clip-path: inset(0 0 0 var(--pos)); }
+/* the dividing line, at the same --pos */
+.compare__pics::after { content: ""; position: absolute; inset-block: 0; left: var(--pos); width: 3px; translate: -50% 0; background: #fff; box-shadow: 0 0 6px #0006; pointer-events: none; }
+.compare figcaption { display: flex; align-items: center; gap: 0.75rem; padding-top: 0.75rem; }
+.compare input { flex: 1; min-width: 0; accent-color: var(--brand-dark); height: 2rem; }
+
+/* ---------- FAQ ---------- */
+details { margin-bottom: 0.5rem; border-radius: 0.75rem; background: var(--surface); }
+summary { padding: 0.75rem 1rem; font-weight: 700; cursor: pointer; }
+details p { margin: 0; padding: 0 1rem 1rem; color: var(--muted); }
+
+.footer { padding: 2rem 1rem 6rem; text-align: center; background: var(--ink); color: #e2e8f0; }
+.footer p { margin: 0; }
+
+/* ---------- floating booking button: hides while the prices are on screen ---------- */
+.book {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: var(--z-book);
+  padding: 0.8rem 1.4rem;
+  border-radius: 999px;
+  background: #b45309;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 8px 20px #0004;
+  transition: opacity 0.2s, translate 0.2s, visibility 0s;
+}
+.book.is-hidden { opacity: 0; translate: 0 1rem; visibility: hidden; transition: opacity 0.2s, translate 0.2s, visibility 0s 0.2s; }
+@media (prefers-reduced-motion: reduce) { .book, .book.is-hidden { transition: none; } }
 </style>
 </head>
 <body>
-<main class="wrap">
-  <h1>موبايلات</h1>
-  <div class="range" data-min="0" data-max="20000" data-step="500" role="group" aria-labelledby="price-label">
-    <p id="price-label" class="range__label">السعر</p>
-    <div class="range__track">
-      <div class="range__fill"></div>
-      <div class="range__thumb" role="slider" tabindex="0" aria-label="أقل سعر" data-value="3000"
-           aria-valuemin="0" aria-valuemax="12000" aria-valuenow="3000" aria-valuetext="٣٬٠٠٠ ج"></div>
-      <div class="range__thumb" role="slider" tabindex="0" aria-label="أعلى سعر" data-value="12000"
-           aria-valuemin="3000" aria-valuemax="20000" aria-valuenow="12000" aria-valuetext="١٢٬٠٠٠ ج"></div>
-    </div>
-    <p class="range__out" aria-hidden="true"></p>
-  </div>
+<a class="skip" href="#main" data-en="Skip to content">اتخطى للمحتوى</a>
+<header class="header" id="header">
+  <a class="brand" href="#main"><img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iIzBlNzQ5MCIvPjxwYXRoIGQ9Ik0xMSAxMGMzLTIgNSAwIDcgMHM0LTIgNyAwYzIgMiAxIDctMSAxMGwtMSA3YzAgMi0yIDItMiAwbC0xLTVjMC0yLTMtMi0zIDBsLTEgNWMwIDItMiAyLTIgMGwtMS03Yy0yLTMtMy04LTEtMTBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+" alt="" width="36" height="36"><span data-en="Ebtesama Dental">عيادة ابتسامة</span></a>
+  <a class="lang" href="?lang=en" data-en="عربي" data-en-href="?lang=ar" lang="en" data-en-lang="ar">EN</a>
+  <nav class="nav" aria-label="أقسام الصفحة" data-en-label="Page sections">
+    <a href="#services" data-en="Services">الخدمات</a>
+    <a href="#before-after" data-en="Before &amp; after">قبل وبعد</a>
+    <a href="#prices" data-en="Prices">الأسعار</a>
+    <a href="#faq" data-en="FAQ">أسئلة</a>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1">
+  <section class="hero">
+    <h1 data-en="A smile you are not shy of">ابتسامة مش هتتكسف منها</h1>
+    <p data-en="Cleaning, whitening, fillings and braces. Same-week appointments.">تنضيف وتبييض وحشو وتقويم، ومواعيد في نفس الأسبوع.</p>
+    <a class="btn" href="#prices" data-en="See prices">شوف الأسعار</a>
+  </section>
+
+  <section class="section" aria-labelledby="services">
+    <h2 id="services" data-en="Services">الخدمات</h2>
+    <ul class="cards">
+      <li class="card"><h3 data-en="Cleaning">تنضيف</h3><p data-en="Scaling and polishing in one 40-minute visit.">إزالة الجير وتلميع في زيارة واحدة ٤٠ دقيقة.</p></li>
+      <li class="card"><h3 data-en="Whitening">تبييض</h3><p data-en="Two to four shades lighter, checked with a colour guide.">من درجتين لأربعة أفتح، بنقيسها بدليل ألوان.</p></li>
+      <li class="card"><h3 data-en="Fillings">حشو</h3><p data-en="Tooth-coloured fillings that don't show.">حشو بلون السنة مبيبانش.</p></li>
+      <li class="card"><h3 data-en="Braces">تقويم</h3><p data-en="Clear aligners or metal braces, with monthly follow-up.">شفاف أو معدن، ومتابعة كل شهر.</p></li>
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="before-after">
+    <h2 id="before-after" data-en="Before &amp; after">قبل وبعد</h2>
+    <!-- the comparison always goes left to right (before on the left), in both languages -->
+    <figure class="compare" dir="ltr" style="--pos: 50%">
+      <div class="compare__pics">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDUwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiM5ZjEyMzkiLz48cmVjdCB4PSIwIiB5PSIxMjAiIHdpZHRoPSI4MDAiIGhlaWdodD0iMjEwIiBmaWxsPSIjNGMwNTE5Ii8+PHJlY3QgeD0iNDAiIHk9IjE0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTgiIGZpbGw9IiNlM2M3NzAiLz48cmVjdCB4PSI0MCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjEzMiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjEzMiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjIyNCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjIyNCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjMxNiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjMxNiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjQwOCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjQwOCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjUwMCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjUwMCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjU5MiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjU5MiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjY4NCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjxyZWN0IHg9IjY4NCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2UzYzc3MCIvPjwvc3ZnPg==" alt="الأسنان قبل التبييض: لونها أصفر" data-en-alt="Teeth before whitening: yellow" width="800" height="450">
+      <img class="compare__after" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDUwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiM5ZjEyMzkiLz48cmVjdCB4PSIwIiB5PSIxMjAiIHdpZHRoPSI4MDAiIGhlaWdodD0iMjEwIiBmaWxsPSIjNGMwNTE5Ii8+PHJlY3QgeD0iNDAiIHk9IjE0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTgiIGZpbGw9IiNmYmZiZjciLz48cmVjdCB4PSI0MCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjEzMiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjEzMiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjIyNCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjIyNCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjMxNiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjMxNiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjQwOCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjQwOCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjUwMCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjUwMCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjU5MiIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjU5MiIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjY4NCIgeT0iMTQwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjxyZWN0IHg9IjY4NCIgeT0iMjMyIiB3aWR0aD0iODAiIGhlaWdodD0iNzgiIHJ4PSIxOCIgZmlsbD0iI2ZiZmJmNyIvPjwvc3ZnPg==" alt="نفس الأسنان بعد التبييض: لونها أبيض" data-en-alt="The same teeth after whitening: white" width="800" height="450">
+      </div>
+      <figcaption>
+        <label for="pos" data-en="Drag to compare">اسحب عشان تقارن</label>
+        <input id="pos" type="range" min="0" max="100" value="50">
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="section" aria-labelledby="prices">
+    <h2 id="prices" data-en="Prices">الأسعار</h2>
+    <ul class="cards">
+      <li class="card price"><h3 data-en="Check-up">كشف</h3><p class="price__n" data-en="EGP 300">٣٠٠ ج</p></li>
+      <li class="card price"><h3 data-en="Cleaning">تنضيف</h3><p class="price__n" data-en="EGP 600">٦٠٠ ج</p></li>
+      <li class="card price"><h3 data-en="Whitening">تبييض</h3><p class="price__n" data-en="EGP 2,500">٢٬٥٠٠ ج</p></li>
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="faq">
+    <h2 id="faq" data-en="FAQ">أسئلة</h2>
+    <details><summary data-en="Does whitening hurt?">التبييض بيوجع؟</summary><p data-en="Some people feel sensitivity for a day or two. We use a calming gel.">ممكن حساسية يوم أو اتنين، وبنستخدم جل مهدّي.</p></details>
+    <details><summary data-en="Do you work on Fridays?">بتشتغلوا الجمعة؟</summary><p data-en="Yes, from 2 pm to 10 pm.">أيوه، من ٢ الضهر لـ ١٠ بالليل.</p></details>
+    <details><summary data-en="Can I pay in instalments?">ينفع أقسّط؟</summary><p data-en="Braces only, over 6 or 12 months.">التقويم بس، على ٦ أو ١٢ شهر.</p></details>
+  </section>
 </main>
+
+<footer class="footer"><p data-en="12 Garden St. · 0100 000 0000">١٢ شارع الجنينة، ٠١٠٠٠٠٠٠٠٠٠</p></footer>
+
+<a class="book" id="book" href="#prices" data-en="Book now">احجز دلوقتي</a>
 <script>
-// a two-thumb price slider, following WAI-ARIA APG "Slider (Multi-Thumb)"
-for (const range of document.querySelectorAll(".range")) {
-  const min = Number(range.dataset.min), max = Number(range.dataset.max), step = Number(range.dataset.step);
-  const big = step * 4;                                         // PageUp / PageDown jump
-  const track = range.querySelector(".range__track");
-  const [lo, hi] = range.querySelectorAll(".range__thumb");
-  const out = range.querySelector(".range__out");
-  const money = v => v.toLocaleString("ar-EG") + " ج";
-
-  // each thumb's limits depend on the other one: the low can't pass the high
-  function limits(t) { return t === lo ? [min, Number(hi.dataset.value)] : [Number(lo.dataset.value), max]; }
-
-  function set(t, v) {
-    const [a, b] = limits(t);
-    v = Math.min(b, Math.max(a, Math.round(v / step) * step));
-    t.dataset.value = v;
-    render();
-  }
-
-  function render() {
-    const a = Number(lo.dataset.value), b = Number(hi.dataset.value);
-    const pct = v => ((v - min) / (max - min)) * 100 + "%";
-    track.style.setProperty("--a", pct(a));
-    track.style.setProperty("--b", pct(b));
-    for (const t of [lo, hi]) {
-      const [tmin, tmax] = limits(t), v = Number(t.dataset.value);
-      t.style.setProperty("--pos", pct(v));
-      t.setAttribute("aria-valuemin", tmin);
-      t.setAttribute("aria-valuemax", tmax);
-      t.setAttribute("aria-valuenow", v);
-      t.setAttribute("aria-valuetext", money(v));             // "٣٬٠٠٠ ج", not just "3000"
-    }
-    out.textContent = "من " + money(a) + " لـ " + money(b);
-  }
-
-  for (const t of [lo, hi]) {
-    t.addEventListener("keydown", e => {
-      const v = Number(t.dataset.value);
-      // horizontal arrows follow the direction: in Arabic the bigger values are on the LEFT
-      const rtl = getComputedStyle(range).direction === "rtl";
-      const keys = {
-        ArrowUp: v + step, ArrowDown: v - step,
-        ArrowRight: v + (rtl ? -step : step), ArrowLeft: v + (rtl ? step : -step),
-        PageUp: v + big, PageDown: v - big,
-        Home: limits(t)[0], End: limits(t)[1],
-      };
-      if (!(e.key in keys)) return;
-      e.preventDefault();
-      set(t, keys[e.key]);
-    });
-
-    // dragging: pointer capture keeps the thumb even when the pointer leaves it
-    t.addEventListener("pointerdown", e => { t.setPointerCapture(e.pointerId); t.focus(); });
-    t.addEventListener("pointermove", e => {
-      if (!t.hasPointerCapture(e.pointerId)) return;
-      const r = track.getBoundingClientRect();
-      const rtl = getComputedStyle(range).direction === "rtl";
-      let f = (e.clientX - r.left) / r.width;
-      if (rtl) f = 1 - f;
-      set(t, min + f * (max - min));
-    });
-  }
-  render();
+// ?lang=en switches the page to English before it is drawn (this file runs in <head>, so there is no Arabic flash)
+// every element with data-en has its English text in that attribute; data-en-alt, data-en-label and data-en-href likewise
+if (new URLSearchParams(location.search).get("lang") === "en") {
+  document.documentElement.lang = "en";
+  document.documentElement.dir = "ltr";
+  document.title = "Ebtesama Dental Clinic";
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const el of document.querySelectorAll("[data-en]")) el.textContent = el.dataset.en;
+    for (const el of document.querySelectorAll("[data-en-alt]")) el.alt = el.dataset.enAlt;
+    for (const el of document.querySelectorAll("[data-en-label]")) el.setAttribute("aria-label", el.dataset.enLabel);
+    for (const el of document.querySelectorAll("[data-en-href]")) el.setAttribute("href", el.dataset.enHref);
+    for (const el of document.querySelectorAll("[data-en-lang]")) el.lang = el.dataset.enLang;
+  });
 }
+</script>
+<script>
+// 1. the header's real height goes into --header-h (it gets taller when the links wrap on a small screen),
+//    and the headings use it in scroll-margin-top, so a jump never hides a heading under the header
+const header = document.getElementById("header");
+const setHeaderH = () => document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+// once right away, before the first jump: a ResizeObserver only reports at the next frame, and a link opened
+// as page.html#prices jumps before that. DOMContentLoaded, because lang.js swaps the English text then (its listener is first)
+document.addEventListener("DOMContentLoaded", setHeaderH);
+new ResizeObserver(setHeaderH).observe(header);   // and again whenever the header changes height (links wrap, font size)
+
+// 2. before / after: the range moves --pos, the CSS clips the "after" picture at that point
+const compare = document.querySelector(".compare");
+const range = document.getElementById("pos");
+range.addEventListener("input", () => compare.style.setProperty("--pos", range.value + "%"));
+
+// 3. the floating button hides while the prices are on screen (the booking info is right there)
+const book = document.getElementById("book");
+new IntersectionObserver(([entry]) => {
+  book.classList.toggle("is-hidden", entry.isIntersecting);
+}).observe(document.getElementById("prices").closest("section"));
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** «موبايلات» و «السعر»، وتحتهم خط رمادي عليه جزء أزرق بين مقبضين أبيض، ومكتوب تحت «من ٣٬٠٠٠ ج لـ ١٢٬٠٠٠ ج». المقبض الأرخص يمين والأغلى شمال.
+**هتشوف إيه:** هيدر أبيض شبه شفاف فيه اسم العيادة واللوجو وزرار EN والروابط، والكلام اللي بيعدّي تحته بيبان مموّه. بعده عنوان كبير، و ٤ كروت خدمات، وصورة قبل وبعد عليها خط أبيض بتحركه بشريط تحتها، و ٣ أسعار، و ٣ أسئلة بتتفتح، وزرار برتقاني «احجز دلوقتي» عايم تحت بيختفي لما توصل للأسعار.
 
-**جدول الكيبورد من APG، وكل سطر عليه اختبار:**
-- ↑ و ↓: ٥٠٠ ج.
-- PageUp و PageDown: ٢٠٠٠ ج.
-- Home و End: لحد الحد.
-- ← و →: على حسب الاتجاه. في العربي الأغلى على الشمال، فـ ← بيزوّد.
+**ترتيب البناء:** (١) الـ HTML بالعربي والأقسام بـ id. (٢) الهيدر sticky والـ scroll-margin. (٣) الأقسام والكروت بـ grid. (٤) السلايدر. (٥) زرار الحجز. (٦) الإنجليزي. (٧) [[matrix.js]] وصلّح اللي يطلع.
 
-**الحد بيتحرك مع المقبض التاني:** [[aria-valuemax]] بتاع الأرخص = قيمة الأغلى دلوقتي، و [[aria-valuemin]] بتاع الأغلى = قيمة الأرخص. فـ End على الأرخص بيوقف عند ١٢٬٠٠٠ مش ٢٠٬٠٠٠، وقارئ الشاشة بيقول الحدود الحقيقية.
+**الهيدر الزجاجي:** [[background: #ffffffcc]] (أبيض 80%) و [[backdrop-filter: blur(10px)]]: بيموّه اللي وراه. خلي بالك: [[backdrop-filter]] بيخلي العنصر «مرجع» لأي ابن [[position: fixed]]، فأي حاجة fixed جوه الهيدر هتتقاس منه مش من الشاشة. عشان كده زرار الحجز برّه الهيدر.
 
-**[[aria-valuetext]]:** «٣٬٠٠٠ ج» بدل «3000»، فقارئ الشاشة بيقول المبلغ بالعملة.
+**الهيدر على الموبايل:** اسم العيادة و EN في سطر، والروابط في سطر تاني ([[.nav { flex-basis: 100% }]]). على 56rem وأكبر كله سطر واحد، و [[order: 1]] بيودّي EN للآخر. أول نسخة كان EN جوه الروابط، فعلى 320 الهيدر بقى ٣ سطور (138px، خُمس الشاشة).
 
-**القيم في الـ HTML نفسه:** الـ validator رفض [[role="slider"]] من غير [[aria-valuenow]]، لأن السكربت هو اللي كان بيحطها. لو السكربت وقع، الـ slider من غير قيمة. دلوقتي الـ HTML فيه القيم الأولى، والسكربت بيحدّثها.
+**طول الهيدر بيتغيّر، فالـ scroll-margin لازم يتغيّر معاه:** [[page.js]] بيكتب طوله الحقيقي في [[--header-h]]، والعناوين [[scroll-margin-top: calc(var(--header-h) + 1rem)]].
 
-**السحب:** [[setPointerCapture]] بيخلّي المقبض ماسك في الماوس حتى لو خرج منه وانت بتسحب، و [[touch-action: none]] على الخط عشان الصباع ميعملش scroll للصفحة بدل ما يسحب.
+**الغلطة اللي [[matrix.js]] مسكها:** أول نسخة كانت بتكتب الطول بـ [[ResizeObserver]] بس. المصفوفة قالت [[BROKEN]] على عرضين (ar-320 و en-414): أول عنوان طلع تحت الهيدر ([[#services 80<139]]). السبب إن [[ResizeObserver]] بيبلّغ في الفريم الجاي، وأول قفزة حصلت قبله والقيمة لسه الافتراضية (4rem = 64). ولو حد فتح [[index.html#prices]] كان هيحصل نفس الكلام. التصليح: قياس مرة على طول في [[DOMContentLoaded]]، والـ observer بعدها للتغييرات.
 
-**الاختبار بيمسك الغلط فعلًا:** شلت [[Home]] من الكود، فوقع اختبار واحد بالظبط («Expected: 0، Received: 12000»)، ورجّعته فنجحوا الـ ١١.
+**السلايدر:** الصورتين في نفس الخانة ([[grid-area: 1 / 1]])، و «بعد» عليها [[clip-path: inset(0 0 0 var(--pos))]]: بتتقص من الشمال لحد [[--pos]]. الـ range بيغيّر [[--pos]]، والخط الأبيض [[::after]] على نفس [[--pos]]. والسلايدر [[dir="ltr"]] في اللغتين: المقارنة صورة، و «قبل» على الشمال في أي لغة.
 
-~~~text npx playwright test (Chrome 157)
-ok  1 › الحالة الأولى: الأسامي والقيم والحدود
-ok  2 › Tab: الأقل ثم الأعلى
-ok  3 › ArrowUp: +500
-ok  4 › ArrowDown: -500
-ok  5 › PageUp: +2000
-ok  6 › PageDown: -2000
-ok  7 › في العربي: ← بيزوّد و → بيقلّل
-ok  8 › في الإنجليزي: → بيزوّد
-ok  9 › Home و End: لحد الحد، والحد هو الـ thumb التاني
-ok 10 › الأقل ميعدّيش الأعلى بالأسهم
-ok 11 › السحب بالماوس (في العربي الشمال أغلى)
-11 passed (3.2s)
+**زرار الحجز:** [[IntersectionObserver]] بيقول إمتى قسم الأسعار على الشاشة، والزرار بياخد [[is-hidden]]: شفاف و [[visibility: hidden]] (عشان الكيبورد ميوصلوش وهو مش باين).
 
-من غير Home في الكود:
-x   9 › Home و End …   Expected: 0   Received: 12000
-1 failed، 10 passed
-الشجرة: group "السعر" ← slider "أقل سعر" و slider "أعلى سعر"
-الـ fill من 208 لـ 442 من 520 (المقبض الأرخص عند 442 = ١٥٪ من اليمين)
-axe: 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~` },
+**الإنجليزي:** [[lang.js]] في الـ head (من غير defer) بيقلب [[lang]] و [[dir]] قبل ما الصفحة تترسم، فمفيش ومضة عربي. والكلام بيتبدّل من [[data-en]] في [[DOMContentLoaded]].
+
+~~~text node matrix.js (مرتين ورا بعض، نفس الناتج)
+ar  320 scrollWidth=320 OK
+ar  360 scrollWidth=360 OK
+... (كل العروض)
+ar 1920 scrollWidth=1920 OK
+en  320 scrollWidth=320 OK
+... (كل العروض)
+en 1920 scrollWidth=1920 OK
+slider after → ×3: 53% OK
+all sizes OK
+(exit code 0)
+
+قبل تصليح DOMContentLoaded:
+ar  320 scrollWidth=320 BROKEN   hidden: #services 80<139
+en  414 scrollWidth=414 BROKEN   hidden: #services 80<99
+broken: ar-320 en-414   (exit code 1)
+~~~
+
+~~~text قياسات تانية (Chrome 157)
+فتح index.html#prices على موبايل 320: العنوان top = 154، والهيدر بيخلص 138
+زرار الحجز: ظاهر فوق، ومستخبي عند الأسعار (visibility: hidden)، بالعربي (على الشمال) والإنجليزي (على اليمين)
+الهيدر: rgba(255, 255, 255, 0.8) و blur(10px)
+عنصر fixed; bottom: 0 حطيته جوه الهيدر للتجربة: آخره 56 (آخر الهيدر) مش 800 (آخر الشاشة). من غير backdrop-filter: 800
+axe بالعربي والإنجليزي: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**تشغيله:** في فولدر المشروع [[npm i -D playwright-core@1.64.1]]، وسيرفر على 8931 ([[python -m http.server 8931]])، وبعدين [[node matrix.js]] في ترمنال تاني. شرح السكربت سطر سطر في درس «مصفوفة مقاسات».` },
+        { lvl: 'فكرة', dir: "rescue-page", t: R`صفحة إنقاذ: ٦ أعطال responsive`, what: R`اعمل صفحة فيها ٦ أعطال مقصودة: [[html, body { overflow-x: hidden }]] بيموّت الـ sticky، وعنصر مايل [[width: 106%]]، وأيقونة [[left]] في rtl، وقايمة [[z-index: 9999]] مستخبية، و meta viewport ناقص، وهيدر لازق فوق بيغطي العنوان لما تدوس على لينك. وبعدين صلّحهم واحد واحد.`, done: R`لكل عطل: سطر «العَرَض / إزاي لقيته / التصليح / إزاي اتأكدت» برقم متقاس (scrollWidth أو top أو elementFromPoint)، والمصفوفة بعد التصليح كلها OK.`, ext: R`ابعت الصفحة البايظة لزميل يحلّها وانت تراجع تشخيصه، وحوّل الفحص لسكربت CI بيفشل لو أي عطل رجع.`, sol: R`المثال اللي عملته: «نشرة الحي»، صفحة أخبار حي متخيل. ملف HTML واحد بنسختين ([[broken.html]] من غير meta viewport وبيقرا [[broken.css]]، و [[index.html]] بيقرا [[style.css]])، وجدول [[FIXES.md]].
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نشرة الحي</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+  <a class="header__name" href="#top">نشرة الحي</a>
+  <details class="menu">
+    <summary>الأقسام</summary>
+    <ul class="menu__list">
+      <li><a href="#news">أخبار</a></li>
+      <li><a href="#events">فعاليات</a></li>
+      <li><a href="#ads">إعلانات</a></li>
+    </ul>
+  </details>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>كل اللي بيحصل في الحي، في صفحة واحدة</h1>
+    <form class="search" role="search" action="#news">
+      <label class="visually-hidden" for="q">دوّر في النشرة</label>
+      <span class="search__icon" aria-hidden="true">⌕</span>
+      <input class="search__input" id="q" name="q" type="search" placeholder="دوّر في النشرة">
+    </form>
+  </section>
+  <div class="stripe-wrap"><p class="stripe">عدد جديد كل خميس</p></div>
+  <section class="content">
+    <h2 id="news">أخبار</h2>
+    <p>المكتبة العامة هتفتح يوم السبت كمان من الشهر الجاي.</p>
+    <h2 id="events">فعاليات</h2>
+    <p>دوري كورة للأطفال في الساحة، كل جمعة الساعة ٥.</p>
+    <h2 id="ads">إعلانات</h2>
+    <p>شقة للإيجار في العمارة ٧، الدور التالت.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~css broken.css
+*, *::before, *::after { box-sizing: border-box; }
+/* عطل ١: hides the sideways scroll... and kills position: sticky (body becomes the scroll box) */
+html, body { overflow-x: hidden; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* the header stays on top while you scroll */
+.header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; padding-inline: 1rem; background: #7c2d12; color: #fff; }
+.header__name { color: inherit; font-weight: 800; text-decoration: none; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; font-weight: 700; }
+/* عطل ٤: a huge number that does nothing: the header's layer is 1, the hero's is 2 */
+.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: 9999; min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
+.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
+
+.hero { position: relative; z-index: 2; padding: 2rem 1rem 3rem; background: #fed7aa; }
+.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
+
+/* عطل ٣: the icon on the LEFT, in a right-to-left page: it sits on the end of the text */
+.search { position: relative; max-width: 28rem; }
+.search__icon { position: absolute; left: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
+.search__input { width: 100%; padding: 0.7rem 2.5rem 0.7rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
+
+/* عطل ٢: a tilted band, 6% wider than the page */
+.stripe-wrap { padding-block: 1.5rem; }
+.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
+
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+/* عطل ٦: nothing tells a jump about the header, so the heading lands under it */
+.filler { height: 120vh; }
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --header-h: 3.5rem;
+  --z-header: 10;    /* the header (and its menu) above everything in the page */
+  --z-menu: 1;       /* inside the header: only has to beat the header's own content */
+}
+/* تصليح ١: no overflow on html/body. The band that stuck out is clipped where it lives (تصليح ٢) */
+/* تصليح ٦: every jump stops below the header */
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.header { position: sticky; top: 0; z-index: var(--z-header); display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: 1rem; background: #7c2d12; color: #fff; }
+.header__name { color: inherit; font-weight: 800; text-decoration: none; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; font-weight: 700; }
+/* تصليح ٤: a small number from a token; it was the header that needed to be higher, not the list */
+.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: var(--z-menu); min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
+.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
+a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.hero { padding: 2rem 1rem 3rem; background: #fed7aa; }   /* no z-index: it never needed one */
+.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
+
+/* تصليح ٣: the start side, whatever the language */
+.search { position: relative; max-width: 28rem; }
+.search__icon { position: absolute; inset-inline-start: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
+.search__input { width: 100%; padding-block: 0.7rem; padding-inline: 2.5rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
+
+/* تصليح ٢: the band is clipped by its own wrapper. clip, not hidden: hidden would make the wrapper a scroll box */
+.stripe-wrap { padding-block: 1.5rem; overflow-x: clip; }
+.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
+
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.filler { height: 120vh; }
+~~~
+
+[[broken.html]] هو نفس [[index.html]] من غير سطر [[<meta name="viewport">]]، و [[href="broken.css"]] بدل [[style.css]].
+
+~~~view 560 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نشرة الحي</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --header-h: 3.5rem;
+  --z-header: 10;    /* the header (and its menu) above everything in the page */
+  --z-menu: 1;       /* inside the header: only has to beat the header's own content */
+}
+/* تصليح ١: no overflow on html/body. The band that stuck out is clipped where it lives (تصليح ٢) */
+/* تصليح ٦: every jump stops below the header */
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.header { position: sticky; top: 0; z-index: var(--z-header); display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: 1rem; background: #7c2d12; color: #fff; }
+.header__name { color: inherit; font-weight: 800; text-decoration: none; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; font-weight: 700; }
+/* تصليح ٤: a small number from a token; it was the header that needed to be higher, not the list */
+.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: var(--z-menu); min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
+.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
+a:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.hero { padding: 2rem 1rem 3rem; background: #fed7aa; }   /* no z-index: it never needed one */
+.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
+
+/* تصليح ٣: the start side, whatever the language */
+.search { position: relative; max-width: 28rem; }
+.search__icon { position: absolute; inset-inline-start: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
+.search__input { width: 100%; padding-block: 0.7rem; padding-inline: 2.5rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
+
+/* تصليح ٢: the band is clipped by its own wrapper. clip, not hidden: hidden would make the wrapper a scroll box */
+.stripe-wrap { padding-block: 1.5rem; overflow-x: clip; }
+.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
+
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+.filler { height: 120vh; }
+</style>
+</head>
+<body>
+<header class="header">
+  <a class="header__name" href="#top">نشرة الحي</a>
+  <details class="menu">
+    <summary>الأقسام</summary>
+    <ul class="menu__list">
+      <li><a href="#news">أخبار</a></li>
+      <li><a href="#events">فعاليات</a></li>
+      <li><a href="#ads">إعلانات</a></li>
+    </ul>
+  </details>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>كل اللي بيحصل في الحي، في صفحة واحدة</h1>
+    <form class="search" role="search" action="#news">
+      <label class="visually-hidden" for="q">دوّر في النشرة</label>
+      <span class="search__icon" aria-hidden="true">⌕</span>
+      <input class="search__input" id="q" name="q" type="search" placeholder="دوّر في النشرة">
+    </form>
+  </section>
+  <div class="stripe-wrap"><p class="stripe">عدد جديد كل خميس</p></div>
+  <section class="content">
+    <h2 id="news">أخبار</h2>
+    <p>المكتبة العامة هتفتح يوم السبت كمان من الشهر الجاي.</p>
+    <h2 id="events">فعاليات</h2>
+    <p>دوري كورة للأطفال في الساحة، كل جمعة الساعة ٥.</p>
+    <h2 id="ads">إعلانات</h2>
+    <p>شقة للإيجار في العمارة ٧، الدور التالت.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 560 600 النسخة البايظة (افتح «الأقسام»، وانزل، وجرّب العرض)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>نشرة الحي (النسخة البايظة)</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+/* عطل ١: hides the sideways scroll... and kills position: sticky (body becomes the scroll box) */
+html, body { overflow-x: hidden; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; color: #1f2937; background: #fafaf9; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* the header stays on top while you scroll */
+.header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; padding-inline: 1rem; background: #7c2d12; color: #fff; }
+.header__name { color: inherit; font-weight: 800; text-decoration: none; }
+.menu { position: relative; }
+.menu summary { cursor: pointer; font-weight: 700; }
+/* عطل ٤: a huge number that does nothing: the header's layer is 1, the hero's is 2 */
+.menu__list { position: absolute; inset-inline-end: 0; top: 2.25rem; z-index: 9999; min-width: 10rem; margin: 0; padding: 0.5rem; list-style: none; background: #fff; border-radius: 0.5rem; box-shadow: 0 8px 24px #0003; }
+.menu__list a { display: block; padding: 0.4rem 0.6rem; color: #7c2d12; }
+
+.hero { position: relative; z-index: 2; padding: 2rem 1rem 3rem; background: #fed7aa; }
+.hero h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem); }
+
+/* عطل ٣: the icon on the LEFT, in a right-to-left page: it sits on the end of the text */
+.search { position: relative; max-width: 28rem; }
+.search__icon { position: absolute; left: 0.75rem; top: 50%; translate: 0 -50%; font-size: 1.25rem; color: #78350f; }
+.search__input { width: 100%; padding: 0.7rem 2.5rem 0.7rem 0.75rem; border: 1px solid #9a3412; border-radius: 0.5rem; font: inherit; }
+
+/* عطل ٢: a tilted band, 6% wider than the page */
+.stripe-wrap { padding-block: 1.5rem; }
+.stripe { width: 106%; margin: 0 -3%; padding: 0.75rem; rotate: -2deg; background: #7c2d12; color: #fff; text-align: center; font-weight: 800; }
+
+.content { max-width: 44rem; margin-inline: auto; padding: 1rem; }
+/* عطل ٦: nothing tells a jump about the header, so the heading lands under it */
+.filler { height: 120vh; }
+</style>
+</head>
+<body>
+<header class="header">
+  <a class="header__name" href="#top">نشرة الحي</a>
+  <details class="menu">
+    <summary>الأقسام</summary>
+    <ul class="menu__list">
+      <li><a href="#news">أخبار</a></li>
+      <li><a href="#events">فعاليات</a></li>
+      <li><a href="#ads">إعلانات</a></li>
+    </ul>
+  </details>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>كل اللي بيحصل في الحي، في صفحة واحدة</h1>
+    <form class="search" role="search" action="#news">
+      <label class="visually-hidden" for="q">دوّر في النشرة</label>
+      <span class="search__icon" aria-hidden="true">⌕</span>
+      <input class="search__input" id="q" name="q" type="search" placeholder="دوّر في النشرة">
+    </form>
+  </section>
+  <div class="stripe-wrap"><p class="stripe">عدد جديد كل خميس</p></div>
+  <section class="content">
+    <h2 id="news">أخبار</h2>
+    <p>المكتبة العامة هتفتح يوم السبت كمان من الشهر الجاي.</p>
+    <h2 id="events">فعاليات</h2>
+    <p>دوري كورة للأطفال في الساحة، كل جمعة الساعة ٥.</p>
+    <h2 id="ads">إعلانات</h2>
+    <p>شقة للإيجار في العمارة ٧، الدور التالت.</p>
+    <div class="filler" aria-hidden="true"></div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+~~~text FIXES.md
+# نشرة الحي: ٦ أعطال وتصليحها
+
+الأرقام من Chrome على عرض 360 (الـ iframe فيه scrollbar، فالعرض المتاح 345). $__btbroken.html$__bt قبل، و $__btindex.html$__bt بعد.
+
+| # | العَرَض | إزاي لقيته | التصليح | إزاي اتأكدت |
+|---|---|---|---|---|
+| ١ | الهيدر بيمشي مع الصفحة رغم $__btsticky$__bt | بعد scroll 500: $__btheader.getBoundingClientRect().top$__bt = -500 | شلت $__btoverflow-x: hidden$__bt من $__bthtml, body$__bt | بعد scroll 500: top = 0 |
+| ٢ | شريط «عدد جديد» أعرض من الشاشة | العطل ١ كان مخبّيه (345 = 345). بعد ما شلت ١: $__btscrollWidth$__bt = 356 والعرض 345 | $__btoverflow-x: clip$__bt على $__bt.stripe-wrap$__bt بس | $__btscrollWidth$__bt = 345 |
+| ٣ | أيقونة البحث على الشمال فوق آخر الكلام | الأيقونة على بعد 12 من شمال الخانة، والـ padding الفاضي على اليمين | $__btinset-inline-start$__bt و $__btpadding-inline$__bt | الأيقونة على بعد 12 من يمين الخانة (بداية الكلام) |
+| ٤ | القايمة بتفتح ومحدش شايفها | $__btelementFromPoint$__bt فوق أول لينك فيها = $__btSECTION.hero$__bt | $__btz-index$__bt للهيدر من توكن (10)، وشلت $__btz-index: 2$__bt من الهيرو و 9999 من القايمة | $__btelementFromPoint$__bt = $__btA$__bt |
+| ٥ | الصفحة صغيرة جدًا على الموبايل | موبايل 360 (DevTools): $__btinnerWidth$__bt = 980، والصفحة متصغّرة لـ 0.367، والعنوان 15.3px على الشاشة | $__bt<meta name="viewport" content="width=device-width, initial-scale=1">$__bt | $__btinnerWidth$__bt = 360، و scale = 1، والعنوان 26.8px |
+| ٦ | لينك «فعاليات» بيودّي العنوان تحت الهيدر | بعد تصليح ١: العنوان top = 0 والهيدر لحد 56 | $__btscroll-padding-top$__bt على $__bthtml$__bt | العنوان top = 72 (تحت الهيدر بـ 16) |
+
+**الترتيب مهم:** العطل ١ كان مخبّي ٢ و ٦. الـ $__btoverflow-x: hidden$__bt بيخفي الـ scroll الأفقي، فمكنتش شايف إن فيه حاجة طالعة برّه. والهيدر ما كانش بيلزق أصلًا، فمكنش بيغطّي حاجة. اقفل العطل اللي بيخبّي غيره الأول، وبعدين قيس تاني.
+
+axe على النسخة المصلّحة: 0 violations.
+~~~
+
+**هتشوف إيه:** النسخة المصلّحة: هيدر بني بيفضل فوق، و «الأقسام» بتفتح قايمة بيضا فوق الهيرو، وخانة بحث الأيقونة على يمينها، وشريط مايل «عدد جديد كل خميس» مبيعملش scroll أفقي. والبايظة: الهيدر بيمشي مع الصفحة، والقايمة بتفتح ورا الهيرو، والأيقونة على الشمال.
+
+**ليه [[overflow-x: hidden]] على [[body]] بيموّت الـ sticky:** لما [[html]] و [[body]] الاتنين عليهم overflow، الـ body بيبقى «صندوق scroll» لوحده. الـ sticky بيلزق في أقرب صندوق scroll، يعني الـ body. والـ body نفسه مبيتحركش (الصفحة هي اللي بتتحرك)، فالهيدر بيمشي مع الصفحة. اتقاس: بعد scroll 500 الهيدر top = -500.
+
+**ليه [[clip]] مش [[hidden]] في التصليح ٢:** الاتنين بيقصوا اللي طالع برّه. بس [[hidden]] بيخلي العنصر صندوق scroll (نفس المشكلة اللي فوق لو فيه sticky جواه)، و [[clip]] بيقص وبس.
+
+**ليه 9999 مكانش بيعمل حاجة:** الهيدر [[z-index: 1]] والهيرو [[z-index: 2]]. القايمة جوه الهيدر، فالـ 9999 بتاعها بيتحسب جوه طبقة الهيدر بس، والهيدر كله تحت الهيرو. الحل إن الهيدر نفسه يعلى، والقايمة تاخد رقم صغير.
+
+**القاعدة اللي طلعت من المشروع:** عطل بيخبّي غيره. [[overflow-x: hidden]] كان مخبّي الشريط العريض (الـ scroll الأفقي مش باين)، والهيدر اللي مبيلزقش كان مخبّي إنه بيغطي العناوين. اقفل اللي بيخبّي الأول، وقيس تاني.
+
+~~~text الناتج (Chrome 157، 360)
+                                         broken.html          index.html
+١ الهيدر بعد scroll 500 (top)             -500                 0
+٢ scrollWidth / clientWidth               345 / 345 (مخبّي)    345 / 345
+  البايظة من غير عطل ١                    356 / 345
+٣ الأيقونة من حافة الخانة                  12 من الشمال         12 من اليمين
+٤ elementFromPoint فوق لينك القايمة        SECTION.hero         A
+٥ موبايل 360 (DevTools): innerWidth        980 (scale 0.367)    360 (scale 1)
+  العنوان على الشاشة                      15.3px               26.8px
+٦ «فعاليات» بعد القفزة (البايظة بعد ١)    top 0، الهيدر لحد 56   top 72
+axe على المصلّحة: 0 violations   الـ validator: مفيش رسايل (النسختين)   CSS validator: No Error Found (الملفين)
+~~~
+
+**العطل ٥ مبيظهرش جوه iframe ولا في شباك عادي:** الـ meta viewport بيأثّر على الموبايل بس. جرّبه في DevTools بـ Device toolbar (موبايل)، أو على موبايلك.` },
       ],
       items: [
         {
-          cmd: "details و summary",
+          cmd: "position: absolute",
           ref: [
-            { t: "WHATWG: the details element", url: "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-details-element" },
-            { t: "MDN: <details>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/details" },
-            { t: "WHATWG: the summary element", url: "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-summary-element" },
-            { t: "MDN: <summary>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/summary" },
-            { t: "MDN: border-block-end", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/border-block-end" },
-            { t: "MDN: cursor", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/cursor" },
+            { t: "MDN: position", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position" },
+            { t: "MDN: inset", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset" },
+            { t: "MDN: inset-inline-end", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset-inline-end" },
+            { t: "MDN: top", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/top" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
           ],
-          title: "accordion و FAQ من غير ولا سطر JavaScript",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سؤالين [[<details name="f">]] والأول [[open]]. دوست على الـ summary بتاع التاني: الأول هيبقى إيه؟ وبعدين من الكونسول عملت [[a.open = true]] للأول: التاني هيبقى إيه؟`, done: R`بعد الضغطة: الأول اتقفل والتاني اتفتح. وبعد [[a.open = true]]: الأول اتفتح والتاني اتقفل لوحده، يعني الـ [[name]] بيشتغل حتى من JavaScript. اتقاس في Chrome 156.`,
-              sol: R`~~~live 150 150 details-name.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>مجموعة details</title></head>
-<body>
-  <main><h1>أسئلة</h1>
-    <details name="f" id="a" open><summary>السؤال الأول</summary>إجابة الأول</details>
-    <details name="f" id="b"><summary>السؤال التاني</summary>إجابة التاني</details>
-  </main>
-</body></html>
-~~~
+          title: "حط شارة على ركن الكارت بالظبط",
+          desc: R`[[position: relative]] العنصر في مكانه العادي، بس بيبقى «مرجع» لأي ابن [[absolute]]. [[position: absolute]] بيطلّع العنصر من الترتيب خالص (الباقي بيتصرف كأنه مش موجود)، ومكانه بيتحسب من أقرب جد عليه position غير [[static]].
 
-[[name]] بيحوّل كل الـ [[details]] اللي ليهم نفس القيمة لمجموعة: واحد بس مفتوح في أي لحظة، زي الـ radio. والقاعدة دي مربوطة بحالة العنصر [[open]] نفسها، مش بالضغطة:
-
-1. دوست على summary التاني: التاني اتفتح، والمتصفح قفل الأول.
-2. [[a.open = true]] من JavaScript: الأول اتفتح، والمتصفح قفل التاني برضه، لأن تغيير [[open]] بيمشي على نفس قواعد المجموعة.
-
-عشان كده مش محتاج أي JavaScript تقفل بيه الباقي، وأي كود بيفتح سؤال من الرابط (مثلًا [[#q3]]) هيتصرف صح.
-
-الغلطة الشائعة: تستخدم [[name]] وتحط [[open]] على اتنين في الـ HTML، وتستغرب. لما الصفحة بتتبني المتصفح بيسيب أول واحد مفتوح ويقفل الباقي.
-
-~~~text الناتج (Chrome 156)
-الأول قبل أي حاجة:           a.open = true   b.open = false
-بعد الضغط على summary التاني: a.open = false  b.open = true
-بعد a.open = true:           a.open = true   b.open = false
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** حركة فتح وقفل للـ FAQ من غير JavaScript: [[:root { interpolate-size: allow-keywords }]] و [[details::details-content { block-size: 0; overflow: clip; transition: block-size .4s, content-visibility .4s allow-discrete }]] و [[details[open]::details-content { block-size: auto }]].`, done: R`الإجابة بتنزل بنعومة: قسناها على إجابة 200px في Chrome 156، بعد 200ms من الفتح ارتفاع الـ details كان حوالي 178px (اقراه في كل frame بـ requestAnimationFrame) وفي الآخر 218px. وفي المتصفح اللي مش بيدعم [[::details-content]] أو [[interpolate-size]] بتفتح عادي من غير حركة، ومع reduce من غير حركة.`,
-              sol: R`~~~live 120 120 faq-anim.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>FAQ بحركة</title>
+عشان كده النمط المشهور: الأب [[relative]] والابن [[absolute]] بـ [[top: 0]] و [[inset-inline-end: 0]].`,
+          example: R`<article class="card">
+  <span class="badge">جديد</span>
+  <img src="/p.webp" alt="سماعة" width="400" height="300">
+  <a class="stretched" href="/products/42">سماعة لاسلكي</a>
+</article>
 <style>
-  :root { interpolate-size: allow-keywords; }
-  details::details-content {
-    block-size: 0;
-    overflow: clip;
-    transition: block-size .4s, content-visibility .4s allow-discrete;
-  }
-  details[open]::details-content { block-size: auto; }
-  @media (prefers-reduced-motion: reduce) {
-    details::details-content { transition: none; }
-  }
-  .a { block-size: 200px; margin: 0; }
-</style></head>
-<body>
-  <main><h1>أسئلة</h1>
-    <details id="d"><summary>الشحن بياخد قد إيه؟</summary><p class="a">من ٣ لـ ٥ أيام.</p></details>
-  </main>
-</body></html>
-~~~
-
-المتصفح مكانش بيعرف يحرّك من [[0]] لـ [[auto]] لأن [[auto]] مش رقم. السطور دي بتحل ده:
-
-- [[interpolate-size: allow-keywords]] بيسمح بالـ interpolation مع كلمات زي [[auto]]، وعلى [[:root]] عشان يورث لكل الصفحة.
-- [[::details-content]] هو الصندوق اللي فيه كل حاجة ماعدا الـ summary. ده اللي بنحرّك ارتفاعه.
-- [[overflow: clip]] عشان المحتوى ميطلعش برا وهو بيصغر.
-- [[content-visibility .4s allow-discrete]] أهم سطر: المتصفح بيخفي المحتوى بـ [[content-visibility: hidden]] لما يتقفل. [[allow-discrete]] بيأخر التبديل لآخر الـ transition، فمن غيره القفل بيختفي مرة واحدة من غير حركة.
-
-الغلطة الشائعة: تحط الحركة على [[details]] نفسه أو على [[p]]، فمبتشتغلش لأن المحتوى مخفي قبل ما تبدأ. وبيبقى progressive enhancement طبيعي: أي متصفح مش بيفهم السطور دي بيفتح من غير حركة (و Safari و Firefox لسه من غير [[interpolate-size]] حسب بيانات MDN).
-
-~~~text الناتج (Chrome 156، إجابة 200px، قراية الارتفاع في كل frame)
-ارتفاع details مقفول:   18px
-قرب 200ms من الفتح:     178.5 (عند 201ms)
-في الآخر:               218px
-مع reduce بعد 50ms:     218px
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** FAQ معمول بـ [[<div class="q" onclick="this.classList.toggle('open')">]] والإجابة [[display: none]] لحد ما الكلاس يتحط. حوّله لـ details و summary.`, done: R`مفيش ولا سطر JavaScript، والسؤال بيتفتح بـ Enter و Space، وقارئ الشاشة بيقول collapsed و expanded، و axe صفر مشاكل، والـ CSS بقى بيستخدم [[details[open]]] بدل [[.open]].`,
-              sol: R`~~~live 160 160 faq-fixed.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>الأسئلة</title>
-<style>
-  summary { cursor: pointer; font-weight: 700; padding: .5rem; }
-  details[open] summary { color: #1d4ed8; }
-  details p { margin: 0; padding: .5rem; }
-</style></head>
-<body>
-  <main><h1>الأسئلة الشائعة</h1>
-    <details>
-      <summary>بتوصلوا فين؟</summary>
-      <p>كل المحافظات.</p>
-    </details>
-    <details>
-      <summary>ينفع أرجّع المنتج؟</summary>
-      <p>خلال ١٤ يوم.</p>
-    </details>
-  </main>
-</body></html>
-~~~
-
-القديم كان ٣ مشاكل مستخبية: [[div]] مبياخدش focus فالكيبورد مبيوصلوش، وقارئ الشاشة مش عارف إنه زرار ولا إنه مفتوح أو مقفول، و [[onclick]] بيعمل شغل المتصفح بيعمله ببلاش.
-
-- [[<details>]] هو الحاوية، و [[<summary>]] زرار جاهز: Tab بيوصله، و Enter و Space بيفتحوه، وقارئ الشاشة بيقول collapsed أو expanded.
-- المتصفح بيحط attribute اسمه [[open]] بنفسه، فالـ CSS بقى [[details[open] summary]] بدل [[.q.open]].
-- الإجابة مش محتاجة [[display: none]]: المتصفح بيخفيها.
-
-الغلطة الشائعة: تسيب [[onclick]] على [[details]] «عشان يتزامن»، أو تكتب [[list-style: none]] على summary وتشيل المثلث من غير ما تحط علامة تانية، فمحدش يعرف إنها بتتفتح.
-
-~~~text الناتج (Chrome 156)
-Tab: الـ focus على SUMMARY بتوصلوا فين؟
-Enter: open = true
-Space: open = false
-شجرة الـ accessibility للـ summary وهو مفتوح: DisclosureTriangle expanded=true
-script في الصفحة: 0، و axe: 0
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** دوّر في MDN على: البحث بـ Ctrl+F بيلاقي كلام جوه [[<details>]] مقفول؟ وإيه هو [[hidden="until-found"]]؟ وفين الدعم بتاع [[name]] على details؟`, done: R`كتبت: Chrome بيفتح الـ details لوحده لما البحث يلاقي كلام جواه، و [[hidden="until-found"]] بيعمل نفس الحكاية لأي عنصر مخفي، وجدول دعم [[name]] من MDN (Chrome 120، و Safari 17.2، و Firefox 130)، وجرّبت البحث بإيدك في Chrome.`,
-              sol: R`~~~text الإجابة النموذجية
-Ctrl+F على كلام جوه details مقفول:
-  المتصفح اللي بيدعم بيفتح الـ details لوحده ويوديك على الكلمة.
-  الدعم ده اتربط بـ hidden="until-found" في نفس الميزة.
-
-hidden="until-found":
-  نفس الحكاية لأي عنصر مخفي، مش details بس.
-  العنصر بياخد content-visibility: hidden فمحتواه موجود وقابل للبحث.
-  لما البحث يلاقي جواه، المتصفح بيبعت حدث beforematch ويشيل الـ hidden.
-
-دعم name على details (بيانات MDN):
-~~~
-
-| المتصفح | [[name]] على details | [[hidden="until-found"]] |
-|---|---|---|
-| Chrome | 120 | 102 |
-| Safari | 17.2 | 26.2 (جزئي) |
-| Firefox | 130 | 148 |
-
-الفرق المهم: [[hidden]] العادي بيعمل [[display: none]]، فالكلام مش موجود للبحث ولا لـ Ctrl+F. [[until-found]] بيخليه مخفي للعين بس، والبحث بيوصله، ولينك [[#id]] بيوصله كمان. ده ممتاز للصفحات الطويلة أو FAQ كبير.
-
-الغلطة الشائعة: تقفل FAQ بـ [[display: none]] و JavaScript، فأي حد بيدوّر في الصفحة مش هيلاقي الإجابة وهي قدامه.
-
-الأرقام من [[@mdn/browser-compat-data]] 8.1.8 (نفس البيانات اللي في جداول MDN). والبحث نفسه جرّبه بإيدك في Chrome، لأن Ctrl+F شريط في المتصفح ومبيتحرّكش من الأتمتة. اللي اتشغّل هنا بس:
-
-~~~text الناتج (Chrome 156)
-"name" in HTMLDetailsElement.prototype = true
-"onbeforematch" in document.body       = true
-hidden="until-found": display = block، و content-visibility = hidden
-~~~` },
-          ],
-          desc: R`[[<details>]] بيتفتح ويتقفل لوحده، و [[<summary>]] جواه هو الجزء اللي بتدوس عليه. والباقي بيظهر لما يتفتح. شغال بالماوس والكيبورد (Enter و Space)، وقارئ الشاشة بيقول «collapsed» و «expanded» من غير aria.
-
-و [[open]] بيخليه مفتوح من الأول، و [[details[open] > summary]] في CSS للشكل وهو مفتوح. ولو اديت كذا details نفس [[name]]، يبقوا accordion حصري: فتح واحد بيقفل الباقي.`,
-          example: R`<section aria-labelledby="faq-title">
-  <h2 id="faq-title">أسئلة متكررة</h2>
-  <details name="faq" open>
-    <summary>التوصيل بياخد قد إيه؟</summary>
-    <p>من يومين لـ 4 أيام عمل جوه القاهرة والجيزة.</p>
-  </details>
-  <details name="faq">
-    <summary>أقدر أرجّع المنتج؟</summary>
-    <p>أيوه، خلال 14 يوم وهو في علبته.</p>
-  </details>
-</section>
-// styles.css
-details { border-block-end: 1px solid var(--color-border); padding-block: 0.75rem; }
-summary { cursor: pointer; font-weight: 600; }
-details[open] > summary { margin-block-end: 0.5rem; color: var(--color-brand); }`,
-          try: R`اعمل الـ FAQ بـ 4 أسئلة. امشي بـ Tab بس وافتح واقفل بـ Enter و Space. افتح سؤال والتاني مفتوح: حصل إيه؟ وبعدين شيل [[name]] وجرّب تاني. وأخيرًا اقفل كل الأسئلة ودوّر بـ Ctrl+F على كلمة في إجابة مقفولة.`,
+  .card { position: relative; }
+  .badge { position: absolute; top: 0.5rem; inset-inline-end: 0.5rem; }
+  .stretched::after { content: ""; position: absolute; inset: 0; }
+  .overlay { position: absolute; inset: 0; background: rgb(0 0 0 / 0.5); }
+</style>`,
+          try: R`امسح [[position: relative]] من الكارت وشوف الشارة طارت لركن الصفحة (أو لأقرب جد relative). وبعدين دوس على أي مكان في الكارت: اللينك بيشتغل بسبب [[::after]].`,
           flag: "script",
-          deep: {
-            why: R`الـ FAQ والإعدادات المتقدمة و «اعرف أكتر» في كل موقع. ناس كتير بتعملها بـ useState و div و onClick، وبتنسى الكيبورد والـ aria-expanded. details بيعمل كل ده صح ببلاش، وبيشتغل حتى لو الـ JavaScript لسه متحمّلش.`,
-            how: R`الـ summary بياخد focus لوحده، و role بتاعه عند قارئ الشاشة زرار بـ expanded أو collapsed. الـ [[open]] attribute بيتضاف ويتشال مع كل ضغطة، وفيه حدث [[toggle]] على الـ details لو محتاج تعمل حاجة (تحفظ الحالة مثلًا).
-
-الـ [[name]] (accordion حصري) بقى مدعوم في كل المتصفحات الحديثة من 2024، والمتصفح القديم بيتجاهله فكل واحد بيتفتح لوحده، يعني progressive enhancement من غير ما حاجة تبوظ.
-
-البحث في الصفحة (Ctrl+F) بيلاقي الكلام جوه details مقفول ويفتحه لوحده في Chrome ومتصفحات تانية، بعكس [[display: none]] اللي البحث مبيشوفوش.
-
-السهم اللي جنب الـ summary هو [[::marker]] (أو [[::-webkit-details-marker]] في Safari القديم). وتقدر تشيله بـ [[list-style: none]] على الـ summary وتحط أيقونة بتلف مع [[details[open] summary]]. وتحريك الفتح والقفل بقى ممكن بـ [[::details-content]] و [[interpolate-size]]، بس لسه مش في كل المتصفحات، فخليه تحسين إضافي.`,
-            when: R`FAQ، و «تفاصيل إضافية»، وفلاتر في sidebar على الموبايل، وأي محتوى بيتفتح ويتقفل وملوش علاقة بباقي الصفحة. ومش لمنيو التنقل ولا الـ dropdowns (بتتقفل لما تدوس برا، و details مبيعملش كده)، ولا للـ tabs.`,
-            mistakes: R`زرار أو لينك جوه الـ summary (عنصر تفاعلي جوه عنصر تفاعلي). تعمل details كمنيو في الـ header وتستغرب إنه مبيتقفلش. تشيل الـ marker ومتحطش أي علامة إنه بيتفتح. و [[<h3>]] جوه الـ summary: مسموح، بس قارئات شاشة كتير بتقراه زرار وخلاص فالعنوان بيضيع من لستة العناوين، فلو العناوين مهمة للتنقل حط الـ h3 قبل الـ details.`
-          },
-          teach: R`## صندوق بيتفتح ويتقفل، والمتصفح عامل كل الشغل
-
-المثال جزء FAQ فيه سؤالين: كل سؤال [[<details>]]، والسطر اللي بتدوس عليه [[<summary>]]، والإجابة هي أي حاجة بعده. مفيش ولا سطر JavaScript، والكيبورد وقارئ الشاشة شغالين لوحدهم. حطينا المثال في صفحة وفتحناها في Chrome 154 (headless، عن طريق playwright)، وكل رقم تحت متقاس منها.
-
----
-
-## ١. الحاوية: [[<section aria-labelledby="faq-title">]]
-
-[[<section>]] جزء من الصفحة ليه موضوع واحد. و [[aria-labelledby]] معناها «اسم الجزء ده هو الكلام اللي جوه العنصر اللي الـ id بتاعه كذا»، و [[faq-title]] هو الـ id بتاع الـ [[<h2>]] اللي تحته على طول. فقارئ الشاشة بيعرّف الجزء باسمه، وده اللي طلع في الـ accessibility tree (الشجرة اللي المتصفح بيبعتها لقارئ الشاشة):
-
-~~~text الـ accessibility tree (أول سطرين)
-region   "أسئلة متكررة"
-heading  "أسئلة متكررة"
-~~~
-
-[[region]] هو الدور اللي [[<section>]] بياخده لما يبقى ليه اسم. من غير اسم بيبقى مجرد صندوق ملوش دور.
-
-## ٢. السؤال الأول: [[<details name="faq" open>]]
-
-فيه حاجتين جديدين:
-
-| الـ attribute | معناه |
-|---|---|
-| [[open]] | الصندوق مفتوح من أول ما الصفحة تحمّل. ملوش قيمة: وجوده بس معناه «مفتوح» (boolean attribute) |
-| [[name="faq"]] | أي [[<details>]] ليهم نفس الـ name بقوا مجموعة: واحد بس يتفتح في نفس الوقت (accordion حصري) |
-
-قبل أي ضغطة سألنا المتصفح عن [[open]] بتاع الاتنين:
-
-~~~text الناتج
-[ true, false ]
-~~~
-
-الأول مفتوح (عشان [[open]]) والتاني مقفول.
-
-## ٣. [[<summary>]]: الجزء اللي بيتداس عليه
-
-[[<summary>]] لازم يبقى **أول ابن** للـ [[<details>]]، وهو الحاجة الوحيدة اللي بتفضل باينة والصندوق مقفول. المتصفح بيدّيه ٣ حاجات ببلاش:
-
-1. **focus بالكيبورد**: دوسنا Tab مرتين، والـ focus وقف على الـ summary الأول وبعدين التاني، من غير [[tabindex]].
-2. **فتح وقفل بـ Enter و Space**، زي أي زرار.
-3. **حالة لقارئ الشاشة**: في الـ accessibility tree بتاع Chrome الـ summary دوره [[DisclosureTriangle]] (يعني «زرار بيفتح ويقفل حاجة»)، ومعاه [[expanded=true]] أو [[false]]، فقارئ الشاشة بيقول «expanded» أو «collapsed» من غير ما تكتب [[aria-expanded]].
-
-## ٤. [[<p>]] الإجابة و [[</details>]]
-
-الإجابة أي حاجة بعد الـ summary. لما الصندوق مقفول المتصفح مش بيرسمها: سألناه [[checkVisibility()]] على إجابة السؤال التاني (المقفول) فرجّع [[false]].
-
-## ٥. السؤال التاني: [[<details name="faq">]]
-
-نفس الـ name، ومن غير [[open]]. ده اللي جرّبناه بالكيبورد، والـ focus على الـ summary التاني:
-
-| الضغطة | [[open]] للاتنين |
-|---|---|
-| البداية | [[true, false]] |
-| Enter | [[false, true]] |
-| Space | [[false, false]] |
-| Space تاني | [[false, true]] |
-
-أول Enter فتح التاني **وقفل الأول لوحده**، وده شغل [[name="faq"]]. ولما شلنا الـ name من الاتنين وفتحناهم، الاتنين فضلوا مفتوحين: [[true, true]].
-
-> المتصفح القديم اللي مش فاهم [[name]] بيتجاهله، فكل سؤال بيتفتح لوحده. مفيش حاجة بتبوظ.
-
-ولما الحالة بتتغير، الـ details بيبعت حدث اسمه [[toggle]]. قفلنا الأول من الكود والحدث وصل بـ [[open->closed]] (الحالة القديمة والجديدة)، فلو عايز تحفظ أنهي سؤال مفتوح، ده مكانه.
-
----
-
-## ٦. الـ CSS سطر سطر
-
-### [[details { border-block-end: 1px solid var(--color-border); padding-block: 0.75rem; }]]
-
-- [[border-block-end]]: خط في **آخر** الصندوق في اتجاه الكتابة الرأسي، يعني تحت. ده logical property: بيتبع اتجاه الكتابة بدل ما تقول [[bottom]].
-- [[var(--color-border)]]: لون جاي من CSS variable اسمه [[--color-border]] متعرّف في مكان تاني (في التجربة عرّفناه [[#ccc]]).
-- [[padding-block: 0.75rem]]: مسافة فوق وتحت. [[rem]] مضروبة في خط الـ html (16px)، فطلعت:
-
-~~~text getComputedStyle على أول details
-border-bottom: 1px solid rgb(204, 204, 204)
-padding-top: 12px   padding-bottom: 12px
-~~~
-
-### [[summary { cursor: pointer; font-weight: 600; }]]
-
-[[cursor: pointer]] الماوس يبقى إيد فالمستخدم يعرف إنه بيتداس. و [[font-weight: 600]] تخانة الخط (400 عادي و 700 bold)، فالسؤال يبان أتقل من الإجابة.
-
-### [[details[open] > summary { ... }]]
-
-نفكّ الـ selector:
-
-| الحتة | معناها |
-|---|---|
-| [[details]] | أي عنصر details |
-| [[[open]]] | ... بس اللي عليه attribute اسمه open، يعني المفتوح دلوقتي |
-| [[>]] | ابن **مباشر** |
-| [[summary]] | الـ summary بتاعه |
-
-يعني «السؤال بتاع الصندوق المفتوح بس». ولأن المتصفح بيحط ويشيل [[open]] مع كل ضغطة، الشكل بيتغير لوحده. والقيم:
-
-~~~text getComputedStyle وأول سؤال مفتوح
-summary 1 (مفتوح):  color: rgb(37, 99, 235)   margin-block-end: 8px
-summary 2 (مقفول):  color: rgb(0, 0, 0)
-~~~
-
-[[0.5rem]] بقت [[8px]]، واللون جه من [[--color-brand]] (عرّفناه أزرق في التجربة).
-
----
-
-## ٧. السهم اللي جنب السؤال
-
-الـ summary الـ [[display]] بتاعه طلع [[list-item]]، وعشان كده ليه علامة زي بنود القوايم، وهي السهم. اسمها [[::marker]]. لو عايز تغيّرها: [[summary { list-style: none; }]] وحط أيقونة بنفسك بتلف مع [[details[open]]]. ولو شلتها حط علامة تانية، وإلا المستخدم مش هيعرف إنه بيتفتح.
-
-وتحريك الفتح والقفل: Chrome 154 رجّع [[true]] لـ [[CSS.supports('selector(::details-content)')]] و [[CSS.supports('interpolate-size', 'allow-keywords')]]، بس دول لسه مش في كل المتصفحات، فخليهم تحسين إضافي.
-
-> البحث بـ Ctrl+F جوه إجابة مقفولة (المتصفح بيفتح الـ details لوحده) مقدرناش نجرّبه في headless، والكلام عنه من الـ docs بتاعة Chrome.
-
----
-
-## الخلاصة
-
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[<details>]] | الصندوق كله |
-| [[<summary>]] | أول ابن: السؤال، بياخد focus، و Enter و Space بيفتحوه |
-| [[open]] | مفتوح دلوقتي (بتحطه للبداية، والمتصفح بيغيّره) |
-| [[name]] | نفس الاسم = واحد بس مفتوح |
-| [[details[open] > summary]] | شكل السؤال وهو مفتوح |
-| حدث [[toggle]] | لو محتاج تعرف من الكود |
-
-- مش محتاج [[aria-expanded]] ولا JavaScript: المتصفح بيعمل الاتنين.
-- متحطش زرار أو لينك جوه الـ summary، ومتستخدموش لمنيو بيتقفل لما تدوس برا.`,
-          lines: [
-            "الجزء كله ليه اسم من العنوان.",
-            R`عنوان القسم، و [[id]] بتاعه هو اللي [[aria-labelledby]] بيشاور عليه.`,
-            R`سؤال مفتوح من الأول، و [[name="faq"]] بيربطه بالباقي.`,
-            "الجزء اللي بيتداس عليه، وبياخد focus لوحده.",
-            "الإجابة: بتبان بس وهو مفتوح.",
-            R`قفلة أول سؤال؛ أي حاجة جوه [[details]] بعد الـ summary هي الإجابة.`,
-            "سؤال تاني بنفس الـ name: فتحه بيقفل الأول.",
-            R`نص السؤال التاني، وقارئ الشاشة بيقوله ومعاه «collapsed».`,
-            R`إجابة السؤال التاني: مخفية لحد ما يتفتح، بس البحث في الصفحة بيلاقيها.`,
-            R`قفلة السؤال التاني؛ ممكن تزوّد أسئلة بنفس الـ name من غير أي كود.`,
-            R`قفلة الـ section اللي اسمه جاي من العنوان، فقارئ الشاشة بيعدّه region.`,
-            "خط بين الأسئلة ومسافة.",
-            R`السؤال شكله بيتداس: الماوس بيبقى إيد، والخط أتقل من الإجابة.`,
-            "السؤال المفتوح بلون البراند ومسافة تحته."
-          ],
-          sol: R`بالكيبورد: Tab بيقف على كل summary، و Enter أو Space بيفتحوا ويقفلوا، وقارئ الشاشة بيقول «التوصيل بياخد قد إيه؟، button، expanded».
-
-مع [[name="faq"]]: فتح السؤال التاني قفل الأول لوحده. من غير name: الاتنين يفضلوا مفتوحين.
-
-Ctrl+F على كلمة في إجابة مقفولة: في Chrome و Edge الـ details بيتفتح لوحده ويظلل الكلمة. لو متصفحك مبيعملش كده، دي ميزة لسه بتتنشر، والباقي شغال عادي.`
-        },
-        {
-          cmd: "roving tabindex",
-          ref: [
-            { t: "WAI-ARIA APG: roving tabindex", url: "https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_roving_tabindex" },
-            { t: "WHATWG: tabindex attribute", url: "https://html.spec.whatwg.org/multipage/interaction.html#attr-tabindex" },
-            { t: "WHATWG: step attribute", url: "https://html.spec.whatwg.org/multipage/input.html#attr-input-step" },
-            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
-          ],
-          title: "tabs بتتحرك بالأسهم زي البرامج الحقيقية",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٤ tabs في صفحة RTL، والـ focus على الأول (اللي على اليمين خالص). دوست سهم شمال: هيروح فين؟ وسهم يمين؟ و End؟`, done: R`سهم شمال = التاني (اللي بعده في القراية)، وسهم يمين = الرابع (لف من الأول للآخر)، و End = الرابع. وكل مرة المحتوى اتغير و [[aria-selected]] اتنقل. واتأكدت بالكيبورد.`,
-              sol: R`~~~live 130 130 tabs-rtl.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** شارة [[position: absolute; top: 8px; inset-inline-end: 8px]] جوه كارت **مش** عليه [[relative]]، بس جد الكارت (div حواليه) عليه [[transform: translateY(0)]]. الشارة هتتحسب من مين؟ وبعدين قيس.`, done: R`الشارة اتحسبت من الجد اللي عليه transform مش من الصفحة: في المعمل الجد بيبدأ عند (400، 100) والشارة عند (408، 108) في rtl. عرفت إن [[transform]] بيعمل containing block للـ absolute زي ما بيعمل للـ fixed.`, sol: R`~~~live 300 300
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>tabs RTL</title></head>
-<body>
-  <main><h1>الحساب</h1>
-    <div role="tablist" aria-label="أقسام الحساب" id="list">
-      <button role="tab" id="t1" aria-controls="p1" aria-selected="true">البيانات</button>
-      <button role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">الطلبات</button>
-      <button role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">العناوين</button>
-      <button role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1">الأمان</button>
-    </div>
-    <section role="tabpanel" id="p1" aria-labelledby="t1" tabindex="0">بيانات</section>
-    <section role="tabpanel" id="p2" aria-labelledby="t2" tabindex="0" hidden>طلبات</section>
-    <section role="tabpanel" id="p3" aria-labelledby="t3" tabindex="0" hidden>عناوين</section>
-    <section role="tabpanel" id="p4" aria-labelledby="t4" tabindex="0" hidden>أمان</section>
-  </main>
-  <script>
-    const list = document.getElementById("list");
-    const tabs = [...list.querySelectorAll("[role=tab]")];
-    function select(tab) {
-      for (const t of tabs) {
-        const on = t === tab;
-        t.setAttribute("aria-selected", on);
-        t.tabIndex = on ? 0 : -1;
-        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
-      }
-      tab.focus();
-    }
-    list.addEventListener("keydown", e => {
-      const i = tabs.indexOf(document.activeElement);
-      const rtl = getComputedStyle(list).direction === "rtl";
-      const next = rtl ? "ArrowLeft" : "ArrowRight";
-      const prev = rtl ? "ArrowRight" : "ArrowLeft";
-      let to = null;
-      if (e.key === next) to = (i + 1) % tabs.length;
-      if (e.key === prev) to = (i - 1 + tabs.length) % tabs.length;
-      if (e.key === "Home") to = 0;
-      if (e.key === "End") to = tabs.length - 1;
-      if (to === null) return;
-      e.preventDefault();
-      select(tabs[to]);
-    });
-    tabs.forEach(t => t.addEventListener("click", () => select(t)));
-  $__lt/script>
-</body></html>
-~~~
-
-في RTL أول tab على اليمين، و «اللي بعده في القراية» على شماله. فسهم شمال = التالي، وسهم يمين = السابق:
-
-- سهم شمال من الأول: التاني.
-- سهم يمين من الأول: مفيش قبله، فبيلف للرابع. [[(i - 1 + tabs.length) % tabs.length]] هي اللي بتعمل اللفة، و [[+ tabs.length]] عشان [[-1 % 4]] في JavaScript بيطلع [[-1]] مش [[3]].
-- End: آخر واحد، أي الرابع، مش مرتبط بالاتجاه.
-
-[[getComputedStyle(list).direction]] بيقرا الاتجاه الحقيقي، فالكود نفسه يشتغل في صفحة إنجليزي من غير تغيير. و [[tabIndex = on ? 0 : -1]] هو الـ roving نفسه: وقفة Tab واحدة على المختار.
-
-الغلطة الشائعة: تربط سهم يمين بالتالي دايمًا، فالعربي يتعكس.
-
-~~~text الناتج (Chrome 156، كل مرة من t1)
-سهم شمال ← الطلبات و aria-selected = true، واللوحة الظاهرة p2
-سهم يمين ← الأمان (لف من الأول للآخر)
-End       ← الأمان
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كل الـ tabs عليها [[tabindex="0"]]، فـ Tab بيعدّي على الـ ٦ tabs قبل ما يوصل للمحتوى. وواحد فيهم [[aria-controls]] بتاعه بيشاور على id مش موجود، فالاختيار بيوقع بـ «Cannot set properties of null (setting 'hidden')».`, done: R`Tab بيوقف مرة واحدة على الـ tab المختار وبعده على طول المحتوى، وكل [[aria-controls]] ليه لوحة موجودة، ومفيش errors في الكونسول.`,
-              sol: R`~~~live 120 120 السطور اللي اتغيرت
-<!-- كان كل tab من غير tabindex، و t3 بيشاور على p9 -->
-<button role="tab" id="t1" aria-controls="p1" aria-selected="true">البيانات</button>
-<button role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">الطلبات</button>
-<button role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">العناوين</button>
-<!-- ... -->
-<section role="tabpanel" id="p3" aria-labelledby="t3" tabindex="0" hidden>عناوين</section>
-~~~
-
-~~~js فحص يتحط في الكود وقت التطوير
-for (const t of document.querySelectorAll("[role=tab]")) {
-  const id = t.getAttribute("aria-controls");
-  if (!document.getElementById(id)) console.error("tab من غير لوحة:", t.id, "->", id);
-}
-~~~
-
-المشكلتين مختلفين:
-
-- الـ [[tabindex="0"]] على الكل (أو الـ buttons من غير tabindex، لأنها focusable أصلًا) بيخلي كل tab وقفة في Tab. الـ tablist لازم وقفة واحدة: [[tabindex="-1"]] على غير المختار، والأسهم هي اللي بتتحرك جوه. الكود في [[select()]] لازم يبدّل الـ tabindex كل مرة.
-- [[Cannot set properties of null (setting 'hidden')]] معناها إن [[getElementById]] رجّعت [[null]]، أي اللوحة مش موجودة: الـ [[id]] في [[aria-controls]] غلط. الفحص ده بيقولك على أي واحد بالاسم بدل ما تدوّر.
-
-الغلطة الشائعة: تتجنب الـ error بـ [[?.hidden]] فيسكت الكونسول، والـ tab يفضل شغال من غير لوحة. صلّح الرابط نفسه.
-
-~~~text الناتج (Chrome 156، صفحة ٦ tabs)
-قبل التصليح: عدد ضغطات Tab من الـ h1 لحد اللوحة = 7، و errors عند اختيار t3 = 1
-             "Cannot set properties of null (setting 'hidden')"
-بعد التصليح: عدد ضغطات Tab من الـ h1 لحد اللوحة = 2، و errors = 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بـ Playwright في صفحة RTL: Tab بيدخل على الـ tab المختار، وسهم شمال بيختار التاني ولوحته بتبان واللوحة القديمة [[hidden]]، و Tab تاني بيروح للوحة مش للـ tab اللي بعده.`, done: R`الاختبار بيعدّي، ولو رجّعت كل الـ tabs [[tabindex="0"]] بيقع على آخر خطوة، ولو شلت حساب الـ [[rtl]] بيقع على السهم.`,
-              sol: R`~~~js tabs.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { chromium } from "playwright-core";
-
-const FILE = new URL("./tabs-rtl.html", import.meta.url).href;
-
-test("التنقل بالكيبورد في tabs عربي", async t => {
-  const browser = await chromium.launch({ channel: "chrome" });
-  t.after(() => browser.close());      // بيتقفل حتى لو assert وقع
-  const page = await browser.newPage();
-  await page.goto(FILE);
-  const active = () => page.evaluate(() => document.activeElement.id);
-
-  await page.keyboard.press("Tab");
-  assert.equal(await active(), "t1", "Tab لازم يدخل على المختار");
-
-  await page.keyboard.press("ArrowLeft");
-  assert.equal(await active(), "t2", "سهم شمال لازم يروح للتاني");
-  assert.equal(await page.isVisible("#p2"), true);
-  assert.equal(await page.getAttribute("#p1", "hidden"), "");
-
-  await page.keyboard.press("Tab");
-  assert.equal(await active(), "p2", "Tab لازم يروح للوحة مش للـ tab اللي بعده");
-});
-~~~
-
-الاختبار بيتكلم زي المستخدم: مفتاح وبعدين يسأل «الـ focus فين؟». [[page.keyboard.press]] بيبعت المفتاح الحقيقي، و [[document.activeElement.id]] هي الحقيقة، مش كلاس على الشكل. و [[assert.equal(a, b, "رسالة")]] بيطبع الجملة دي لو وقع، فتعرف الخطوة من غير ما تدوّر. حط الملف ده جنب [[tabs-rtl.html]] بتاع التمرين الأول، و [[node --test]] بيشغّله.
-
-الاختبار الجيد هو اللي بيقع لما الكود يبوظ، فلازم تكسّر الكود بإيدك وتشوفه وقع:
-
-- رجّع كل الـ tabs [[tabindex="0"]]: آخر خطوة بتقع.
-- شيل حساب [[rtl]]: سهم شمال بيرجع للأخير بدل التاني.
-
-الغلطة الشائعة: تختبر [[aria-selected]] بس، وهي ممكن تتحدّث والـ focus واقف مكانه. وغلطة تانية حصلت فعلًا وإحنا بنكتب الحل: [[browser.close()]] في آخر الاختبار. أول [[assert]] يقع، السطر ده ميتنفذش، والمتصفح يفضل مفتوح و [[node --test]] يعلّق للأبد. [[t.after()]] بيتنفذ في كل الحالات.
-
-~~~text الناتج (node --test، Node 24)
-الكود السليم:              pass 1, fail 0
-كل الـ tabs tabindex="0":  pass 0, fail 1 (Tab لازم يروح للوحة مش للـ tab اللي بعده)
-من غير حساب rtl:           pass 0, fail 1 (سهم شمال لازم يروح للتاني)
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** لستة نتايج بحث بـ [[aria-activedescendant]] بدل roving: الـ focus فاضل في الـ input، والأسهم بتغيّر الـ option المختار ([[aria-selected]] وكلاس للشكل)، و Enter بيختاره.`, done: R`[[document.activeElement]] هو الـ input وانت بتمشي بالأسهم، وكل option ليه id، و [[aria-activedescendant]] بيتغير معاه، وقارئ الشاشة بيقول اسم الـ option. وكتبت إمتى ده أحسن من roving (لما الكتابة لازم تفضل شغالة).`,
-              sol: R`~~~live 260 260 search-list.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>بحث</title>
-<style>
-  ul { list-style: none; margin: 0; padding: 0; border: 1px solid #9ca3af; max-inline-size: 20rem; }
-  li { padding: .5rem; }
-  li.on { background: #1d4ed8; color: #fff; }
-</style></head>
-<body>
-  <main><h1>المدن</h1>
-    <label for="q">دوّر على مدينة</label>
-    <input id="q" role="combobox" aria-expanded="true" aria-controls="list" aria-autocomplete="list">
-    <ul id="list" role="listbox" aria-label="النتايج">
-      <li role="option" id="o1" aria-selected="false">القاهرة</li>
-      <li role="option" id="o2" aria-selected="false">الإسكندرية</li>
-      <li role="option" id="o3" aria-selected="false">أسوان</li>
-    </ul>
-    <p>اختيارك: <output id="res">لسه</output></p>
-  </main>
-  <script>
-    const q = document.getElementById("q");
-    const opts = [...document.querySelectorAll("[role=option]")];
-    let i = -1;
-    function move(to) {
-      i = (to + opts.length) % opts.length;
-      opts.forEach((o, k) => {
-        o.classList.toggle("on", k === i);
-        o.setAttribute("aria-selected", k === i);
-      });
-      q.setAttribute("aria-activedescendant", opts[i].id);
-    }
-    q.addEventListener("keydown", e => {
-      if (e.key === "ArrowDown") { e.preventDefault(); move(i + 1); }
-      if (e.key === "ArrowUp")   { e.preventDefault(); move(i - 1); }
-      if (e.key === "Enter" && i >= 0) { e.preventDefault(); res.textContent = opts[i].textContent; }
-    });
-  $__lt/script>
-</body></html>
-~~~
-
-في roving الـ focus نفسه بيتنقل بين العناصر. هنا الـ focus مش بيتحرك خالص: بيفضل في الـ input، و [[aria-activedescendant]] بيقول لقارئ الشاشة «العنصر النشط دلوقتي هو ده»، والقارئ بينطق اسمه.
-
-- [[role="combobox"]] مع [[aria-controls]] بيوصل الـ input باللستة.
-- كل [[option]] لازم ليه [[id]]، لأن [[aria-activedescendant]] بياخد id.
-- [[e.preventDefault()]] مع الأسهم عشان المؤشر ميتحركش جوه النص.
-- [[(to + opts.length) % opts.length]] بتلف من الأول للآخر، وبتحل [[-1]].
-
-إمتى ده أحسن من roving؟ لما الكتابة لازم تفضل شغالة: لو الـ focus راح لـ [[option]] المستخدم مش هيعرف يكمّل كتابة. للـ tabs والـ toolbars roving أبسط.
-
-الغلطة الشائعة: تغيّر الكلاس بس وتنسى [[aria-activedescendant]]، فالشكل بيتغير وقارئ الشاشة ساكت. وفي النسخة دي قارئ الشاشة اتجرّبش حقيقي، فافتحها بـ NVDA واسمع.
-
-~~~text الناتج (Chrome 156)
-بعد سهم تحت مرتين: activeElement = q، و aria-activedescendant = o2، و aria-selected لـ o2 = true
-بعد Enter: اختيارك = الإسكندرية
-الكتابة لسه شغالة: قيمة الـ input بعد حرف = ق
-axe: 0
-~~~` },
-          ],
-          desc: R`الـ tabs widget واحد: Tab بيدخله مرة واحدة ويطلع منه مرة واحدة، وجواه بتتحرك بالأسهم. عشان كده roving tabindex: الـ tab المختار بس عليه [[tabindex="0"]]، والباقي [[tabindex="-1"]]. ولما تدوس سهم، بتنقل الـ 0 والـ focus للي بعده.
-
-الـ roles: [[tablist]] على الحاوية، و [[tab]] على كل زرار ومعاه [[aria-selected]] و [[aria-controls]]، و [[tabpanel]] على كل محتوى ومعاه [[aria-labelledby]].
-
-وفي العربي (RTL) الأسهم بتتقلب: السهم الشمال هو «اللي بعده».`,
-          example: R`const list = document.querySelector('[role=tablist]');
-const tabs = [...list.querySelectorAll('[role=tab]')];
-function select(tab) {
-  for (const t of tabs) {
-    const on = t === tab;
-    t.setAttribute('aria-selected', String(on));
-    t.tabIndex = on ? 0 : -1;
-    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-  }
-  tab.focus();
-}
-list.addEventListener('keydown', (e) => {
-  const i = tabs.indexOf(document.activeElement);
-  const rtl = getComputedStyle(list).direction === 'rtl';
-  const step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
-  if (step) select(tabs[(i + step + tabs.length) % tabs.length]);
-  else if (e.key === 'Home') select(tabs[0]);
-  else if (e.key === 'End') select(tabs.at(-1));
-  else return;
-  e.preventDefault();
-});
-list.addEventListener('click', (e) => {
-  const t = e.target.closest('[role=tab]');
-  if (t) select(t);
-});`,
-          try: R`اكتب الـ HTML بتاع 3 tabs (الحساب، والأمان، والفواتير) بالـ roles والـ attributes اللي في الشرح، وحط السكربت في صفحة [[dir="rtl"]]. دوس Tab: بيقف على كام tab؟ جرّب الأسهم و Home و End، وبعدين Tab تاني: راح فين؟`,
-          flag: "script",
-          deep: {
-            why: R`لو كل tab بياخد Tab، مستخدم الكيبورد لازم يعدّي 8 tabs عشان يوصل للمحتوى. والأسهم هي اللي مستخدم قارئ الشاشة متوقعها، لأن ده سلوك الـ tabs في كل برنامج. ونفس الفكرة في toolbar، و radio group، و listbox، و menu، و grid.`,
-            how: R`[[tabindex="-1"]] بيشيل العنصر من ترتيب الـ Tab بس بيسيبه يقبل [[focus()]] من الكود. فالـ widget كله بيبان في الـ Tab كعنصر واحد (اللي عليه 0)، ولما ترجع له بتلاقي آخر tab كنت عليه.
-
-[[(i + step + tabs.length) % tabs.length]] بيلف: من الأخير للأول ومن الأول للأخير. و [[getComputedStyle(list).direction]] بيعرف الاتجاه من الـ CSS الحقيقي (موروث من [[dir]] على الـ html)، فنفس الكود يشتغل في العربي والإنجليزي.
-
-ده «automatic activation»: السهم بيختار ويعرض على طول. لو عرض المحتوى تقيل (بيجيب بيانات)، الأحسن «manual activation»: السهم بينقل الـ focus بس، و Enter أو Space بيختار.
-
-و [[hidden]] على الـ panels بيشيلهم من الشاشة وقارئ الشاشة. والـ tabpanel ممكن ياخد [[tabindex="0"]] لو مفيهوش أي عنصر بياخد focus، عشان Tab يوصل للمحتوى.
-
-الـ combobox (حقل بحث بقايمة اقتراحات) أصعب بكتير: [[aria-activedescendant]]، والكتابة، والفلترة، والإعلان عن عدد النتايج. متكتبوش بإيدك: استخدم مكتبة headless زي React Aria أو Headless UI أو Base UI، ولو الاقتراحات بسيطة فيه [[<datalist>]] الأصلي.`,
-            when: R`اكتب roving tabindex بإيدك لو مش بتستخدم مكتبة، أو عشان تفهم إيه اللي بيحصل. في مشروع React عادي استخدم Radix Tabs (أو shadcn Tabs) اللي عاملين كل ده صح، واعرف تختبرهم بالكيبورد.`,
-            mistakes: R`كل الـ tabs [[tabindex="0"]]. الأسهم في RTL بالعكس. tabs من divs من غير roles. تعمل tabs بـ [[<a href="#">]] بتغيّر المحتوى (ده تنقل لو كل tab صفحة فعلًا، فيبقى nav عادي مش tabs). تنسى [[e.preventDefault()]] فالسهم يعمل scroll للصفحة كمان. وسؤال انترفيو: «إيه roving tabindex وليه؟» والإجابة: وقفة Tab واحدة للـ widget، والأسهم جواه، زي الـ radio group.`
-          },
-          teach: R`## الفكرة في سطرين
-
-الـ tabs كلها «وقفة Tab» واحدة: الـ tab المختار بس عليه [[tabindex="0"]] والباقي [[-1]]، والأسهم هي اللي بتتنقّل جوه. والـ [[0]] ده «بيلف» (roving) مع الاختيار، ومن هنا جه الاسم. المثال هو الـ JavaScript بس، والـ HTML اللي بيشتغل عليه في الحل (solCode). حطينا الاتنين في صفحة [[dir="rtl"]] بين لينكين («قبل» و «بعد») وجرّبناهم بالكيبورد في Chrome 154 (headless عن طريق playwright).
-
----
-
-## ١. الـ HTML الأول (من الحل)
-
-~~~text الـ HTML (مختصر)
-<div role="tablist" aria-label="الإعدادات">
-  <button type="button" role="tab" id="tab-1" aria-selected="true"  aria-controls="panel-1" tabindex="0">الحساب</button>
-  <button type="button" role="tab" id="tab-2" aria-selected="false" aria-controls="panel-2" tabindex="-1">الأمان</button>
-  ...
-</div>
-<div role="tabpanel" id="panel-1" aria-labelledby="tab-1">بيانات الحساب...</div>
-<div role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden>...</div>
-~~~
-
-| الحاجة | معناها |
-|---|---|
-| [[role="tablist"]] | الحاوية: «دي مجموعة tabs». و [[aria-label]] اسمها |
-| [[role="tab"]] | كل زرار tab. زرار حقيقي ([[<button>]]) عشان ياخد focus ويتداس |
-| [[type="button"]] | عشان لو الزرار جوه form ميبعتوش |
-| [[aria-selected]] | مختار ولا لأ (نص: [[true]] أو [[false]]) |
-| [[aria-controls="panel-1"]] | الـ id بتاع المحتوى اللي الـ tab ده بيعرضه |
-| [[tabindex="0"]] / [[-1]] | 0 = بيقف عليه Tab. و -1 = Tab بيعدّيه، بس الكود يقدر يعمل له [[focus()]] |
-| [[role="tabpanel"]] + [[aria-labelledby]] | المحتوى، واسمه هو كلام الـ tab بتاعه |
-| [[hidden]] | مستخبي من الشاشة ومن قارئ الشاشة |
-
-ده الـ accessibility tree بعد ما اخترنا «الفواتير»:
-
-~~~text الـ accessibility tree
-tablist  "الإعدادات"
-tabpanel "الفواتير"
-tab      "الحساب"    selected=false
-tab      "الأمان"    selected=false
-tab      "الفواتير"  selected=true
-~~~
-
-الـ panel اسمه «الفواتير» عشان [[aria-labelledby]]، وباقي الـ panels مش ظاهرين خالص عشان [[hidden]].
-
----
-
-## ٢. أول سطرين: نمسك العناصر
-
-~~~javascript
-const list = document.querySelector('[role=tablist]');
-const tabs = [...list.querySelectorAll('[role=tab]')];
-~~~
-
-- [[const]] متغير مش هيتغير. و [[document.querySelector]] بيرجّع **أول** عنصر بيطابق selector، و [[[role=tablist]]] selector بالـ attribute: «العنصر اللي role بتاعه tablist».
-- [[list.querySelectorAll]] بيرجّع **كل** اللي بيطابق، بس جوه [[list]] بس.
-- [[[...]]]: الـ [[...]] اسمها spread، بتفرد العناصر جوه array حقيقية. ليه؟ [[querySelectorAll]] بيرجّع NodeList، ومفيهاش [[indexOf]] ولا [[at]] اللي هنحتاجهم تحت.
-
-## ٣. الدالة [[select(tab)]]: كل التغيير في مكان واحد
-
-~~~javascript
-function select(tab) {
-  for (const t of tabs) {
-    const on = t === tab;
-    t.setAttribute('aria-selected', String(on));
-    t.tabIndex = on ? 0 : -1;
-    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-  }
-  tab.focus();
-}
-~~~
-
-بتاخد الـ tab الجديد وتلف على **كل** الـ tabs ([[for (const t of tabs)]]: [[t]] كل واحد بالدور):
-
-1. [[const on = t === tab;]]: [[===]] مقارنة، فـ [[on]] بتبقى [[true]] للـ tab الجديد بس و [[false]] للباقي.
-2. [[setAttribute('aria-selected', String(on))]]: بيكتب الـ attribute. و [[String(on)]] بيحوّل [[true]] لنص [[«true»]]، لأن قيم الـ aria نصوص.
-3. [[t.tabIndex = on ? 0 : -1;]]: [[? :]] اسمه ternary: «لو on يبقى 0، غير كده -1». ده قلب الفكرة: الـ [[0]] بينتقل للجديد.
-4. السطر الطويل من جوه لبرة: [[t.getAttribute('aria-controls')]] بيرجّع [[«panel-2»]] مثلًا، و [[document.getElementById(...)]] بيجيب العنصر ده، و [[.hidden = !on]] ([[!]] = عكس) بيخفيه لو مش مختار ويظهره لو مختار.
-
-وبعد اللفة: [[tab.focus()]] بينقل الـ focus للجديد. ده شغال رغم إن الـ tabindex كان -1، لأن -1 بيمنع Tab بس مش الكود.
-
-## ٤. الأسهم: [[list.addEventListener('keydown', (e) => { ... })]]
-
-[[addEventListener]] بيقول «لما يحصل حدث كذا شغّل الدالة دي». و [[keydown]] = زرار في الكيبورد اتداس. و [[(e) => {...}]] دالة (arrow function)، و [[e]] الحدث نفسه وفيه [[e.key]] اسم الزرار. الحدث متسجّل على الـ tablist مرة واحدة، والضغطة على أي tab جواه بتوصله (اسمها event delegation).
-
-### [[const i = tabs.indexOf(document.activeElement);]]
-
-[[document.activeElement]] العنصر اللي عليه الـ focus دلوقتي، و [[indexOf]] رقمه في الـ array (من 0).
-
-### [[const rtl = getComputedStyle(list).direction === 'rtl';]]
-
-[[getComputedStyle]] بيرجّع الـ CSS النهائي اللي المتصفح طبّقه، و [[direction]] موروث من [[dir]] على الـ html. في صفحة [[dir="rtl"]] رجّع [[rtl]]، وفي صفحة [[ltr]] رجّع [[ltr]].
-
-### [[const step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];]]
-
-ده object صغير بنستخدمه كجدول، وبعده على طول [[[e.key]]] بيطلّع منه القيمة بتاعة الزرار اللي اتداس:
-
-| الزرار | في RTL | في LTR |
-|---|---|---|
-| [[ArrowRight]] | [[-1]] (اللي قبله) | [[1]] (اللي بعده) |
-| [[ArrowLeft]] | [[1]] (اللي بعده) | [[-1]] |
-| أي زرار تاني | [[undefined]] | [[undefined]] |
-
-في العربي الترتيب من اليمين للشمال، فالشمال هو «اللي بعده».
-
-### [[if (step) select(tabs[(i + step + tabs.length) % tabs.length]);]]
-
-[[undefined]] بيتحسب false، فالـ if دي بتشتغل للأسهم بس. والحسبة بتلف: [[%]] باقي القسمة.
-
-~~~text الحسبة على ٣ tabs (اتحسبت في المتصفح)
-من الأخير (2) لقدام:  (2 + 1 + 3) % 3 = 0   ← الأول
-من الأول (0) لورا:    (0 - 1 + 3) % 3 = 2   ← الأخير
-من غير + tabs.length:  -1 % 3 = -1          ← مفيش عنصر رقمه -1
-~~~
-
-عشان كده بنزوّد [[tabs.length]] قبل الـ [[%]]: في JavaScript باقي قسمة رقم سالب بيطلع سالب.
-
-### Home و End و [[else return]]
-
-[[tabs[0]]] الأول، و [[tabs.at(-1)]] الأخير ([[at]] بتقبل رقم سالب يعدّ من الآخر). وأي زرار تاني: [[return]] نخرج من الدالة ونسيبه للمتصفح (Tab مثلًا لازم يشتغل عادي).
-
-### [[e.preventDefault();]]
-
-بيمنع الشغل الافتراضي للزرار: السهم كان هيعمل scroll للصفحة كمان. اتأكدنا: بعد سهم [[e.defaultPrevented]] بقى [[true]]، وبعد حرف [[a]] فضل [[false]] (خرج من [[return]] قبلها).
-
-## ٥. الماوس: [[click]] و [[closest]]
-
-[[e.target]] العنصر اللي اتداس عليه بالظبط، و [[closest('[role=tab]')]] بيطلع لفوق لحد ما يلاقي أقرب عنصر (هو نفسه أو جد) role بتاعه tab، ولو مفيش يرجّع [[null]] فالـ [[if (t)]] بتتجاهل الضغطة.
-
----
-
-## ٦. اللي حصل فعلًا بالكيبورد (RTL)
-
-| الضغطة | الـ focus | [[tabIndex]] للتلاتة | الـ panel الظاهر |
-|---|---|---|---|
-| Tab مرتين (من أول الصفحة) | الحساب | [[0,-1,-1]] | panel-1 |
-| ← (ArrowLeft) | الأمان | [[-1,0,-1]] | panel-2 |
-| ← | الفواتير | [[-1,-1,0]] | panel-3 |
-| ← | الحساب (لفّ) | [[0,-1,-1]] | panel-1 |
-| → (ArrowRight) | الفواتير (لفّ لورا) | [[-1,-1,0]] | panel-3 |
-| Home | الحساب | [[0,-1,-1]] | panel-1 |
-| ← ثم Tab | لينك «بعد» | [[-1,0,-1]] | panel-2 |
-| Shift+Tab | الأمان | [[-1,0,-1]] | panel-2 |
-
-- Tab مرتين بس: مرة للينك «قبل» ومرة للـ tabs كلهم، والـ tabs التانيين اتعدّوا.
-- Tab من جوه خرج على طول للينك «بعد»، لأن الـ panel ملوش tabindex ومفيهوش حاجة بتاخد focus.
-- Shift+Tab رجع على «الأمان» (آخر واحد كنا عليه) مش على الأول.
-
-وفي صفحة [[ltr]] نفس الكود: أول ← راح لـ «الفواتير» (لفّ لورا)، و → راح للي بعده. يعني الاتجاه بيتقلب لوحده من الـ CSS.
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| [[tabindex]] 0 على واحد و -1 على الباقي | وقفة Tab واحدة للـ widget |
-| [[select()]] | aria-selected و tabIndex و hidden و focus مع بعض |
-| [[direction]] من [[getComputedStyle]] | الأسهم تتقلب في العربي |
-| [[(i + step + n) % n]] | اللف من الأخير للأول والعكس |
-| [[preventDefault]] | السهم ميعملش scroll |
-
-- ده «automatic activation»: السهم بيعرض المحتوى على طول. لو العرض تقيل خلي السهم ينقل الـ focus بس و Enter يختار.
-- في مشروع React حقيقي استخدم Radix Tabs، بس اختبره بنفس الجدول اللي فوق.`,
-          lines: [
-            R`الحاوية اللي عليها [[role=tablist]]، وعليها هنسمع للأسهم والضغط.`,
-            "كل الـ tabs في مصفوفة.",
-            R`دالة بتختار tab: بتحدّث الكل وبتنقل الـ focus، وبيستخدمها الكيبورد والماوس.`,
-            R`بتلف على كل الـ tabs، المختار والباقي...`,
-            R`...و [[on]] بتبقى [[true]] للـ tab المختار بس.`,
-            "aria-selected بـ true أو false.",
-            "المختار بس عليه 0 والباقي -1: وقفة Tab واحدة.",
-            "المحتوى بتاعه يبان والباقي يستخبى.",
-            "قفلة الـ for.",
-            "الـ focus على الـ tab الجديد.",
-            "قفلة.",
-            R`listener واحد على الحاوية بيمسك الأسهم لأي tab جواها.`,
-            R`رقم الـ tab اللي عليه الـ focus دلوقتي في المصفوفة.`,
-            "الاتجاه الحقيقي من الـ CSS.",
-            "في RTL اليمين = اللي قبله والشمال = اللي بعده.",
-            "سهم: روح للي بعده أو قبله ولف في الآخر.",
-            R`Home: روح لأول tab في الترتيب.`,
-            R`End: روح لآخر tab، و [[at(-1)]] = آخر عنصر في المصفوفة.`,
-            "أي زرار تاني: سيبه للمتصفح.",
-            "منع الـ scroll بالأسهم.",
-            "قفلة.",
-            R`الضغط بالماوس على الحاوية كلها (listener واحد بدل واحد لكل tab)...`,
-            R`...[[closest]] بيطلع من العنصر اللي اتداس لحد أقرب [[role=tab]]، حتى لو دوست على أيقونة جواه...`,
-            R`...ولو لقى tab بيختاره بنفس دالة الكيبورد.`,
-            "قفلة."
-          ],
-          sol: R`Tab من برا بيقف على «الحساب» بس (الوحيد اللي عليه 0). في [[dir="rtl"]]: السهم الشمال بيروح لـ «الأمان» والمحتوى بتاعه يظهر، والسهم اليمين يرجع (ومن الأول بيلف للأخير)، و Home و End للأول والآخر. و Tab بعد كده بيخرج من الـ tabs على طول للـ panel أو اللي بعده.
-
-جربنا الكود ده في jsdom: بعد ArrowLeft في RTL الـ focus على t2 والـ tabIndex بقوا [[-1,0,-1]] والـ panel التاني ظهر.
-
-لو كل tab واقف عليه Tab: نسيت [[tabindex="-1"]] على الباقي في الـ HTML. لو الأسهم بالعكس: الـ [[dir]] مش متحط، أو بتقرا [[document.dir]] بدل الـ CSS.`,
-          solCode: R`<div role="tablist" aria-label="الإعدادات">
-  <button type="button" role="tab" id="tab-1" aria-selected="true" aria-controls="panel-1" tabindex="0">الحساب</button>
-  <button type="button" role="tab" id="tab-2" aria-selected="false" aria-controls="panel-2" tabindex="-1">الأمان</button>
-  <button type="button" role="tab" id="tab-3" aria-selected="false" aria-controls="panel-3" tabindex="-1">الفواتير</button>
-</div>
-<div role="tabpanel" id="panel-1" aria-labelledby="tab-1">بيانات الحساب...</div>
-<div role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden>كلمة السر والـ 2FA...</div>
-<div role="tabpanel" id="panel-3" aria-labelledby="tab-3" hidden>الفواتير...</div>`
-        },
-        {
-          cmd: "scroll-snap و scroll-margin",
-          ref: [
-            { t: "MDN: Basic concepts of scroll snap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll_snap/Basic_concepts" },
-            { t: "MDN: scroll-margin", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-margin" },
-            { t: "MDN: scroll-behavior", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-behavior" },
-            { t: "MDN: scroll-margin-top", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-margin-top" },
-            { t: "MDN: scroll-snap-align", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-align" },
-            { t: "MDN: overscroll-behavior-x", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overscroll-behavior-x" },
-            { t: "MDN: scroll-snap-type", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-type" },
-          ],
-          title: "carousel من CSS بس، وعنوان ميستخباش تحت الـ header",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** carousel في صفحة [[dir="rtl"]]. [[scrollLeft]] بيبدأ بكام؟ ولو عملت [[scrollBy({ left: -100 })]] بيبقى كام؟ وإيه اللي ده بيعنيه لزرار «اللي بعده»؟`, done: R`بيبدأ 0 وبعد الـ scrollBy بقى -100 (اتقاس في Chrome 156): في RTL الـ scroll للشمال بالسالب. فزرار «اللي بعده» في العربي لازم [[scrollBy({ left: -width })]]، والأحسن تضرب في [[dir === "rtl" ? -1 : 1]].`,
-              sol: R`~~~live 170 170 rtl-scroll.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>scrollLeft في RTL</title>
-<style>
-  #c { display: flex; overflow-x: auto; inline-size: 300px; }
-  #c > * { flex: 0 0 200px; block-size: 80px; background: #bfdbfe; margin-inline-end: 8px; }
-</style></head>
-<body>
-  <main><h1>carousel</h1>
-    <div id="c" tabindex="0" role="group" aria-label="شرايح"><div>١</div><div>٢</div><div>٣</div></div>
-  </main>
-  <script>
-    console.log(c.scrollLeft);
-    c.scrollBy({ left: -100 });
-    console.log(c.scrollLeft);
-  $__lt/script>
-</body></html>
-~~~
-
-في RTL نقطة البداية هي أقصى اليمين، والمحتوى الزيادة على الشمال. فـ [[scrollLeft]] بيبدأ من 0 وبيقل بالسالب كل ما تروح شمال، لحد [[-(scrollWidth - clientWidth)]]. [[scrollBy({ left: -100 })]] يعني «100px شمال» بغض النظر عن اللغة.
-
-ده معناه إن زرار «اللي بعده» في العربي لازم يروح **شمال**، يعني بالسالب. لو اتكتب [[left: width]] هيحاول يروح يمين، ومفيش مكان، فميعملش حاجة:
-
-~~~js
-const dir = getComputedStyle(c).direction === "rtl" ? -1 : 1;
-c.scrollBy({ left: dir * width, behavior: "smooth" });
-~~~
-
-الغلطة الشائعة: تشيك [[scrollLeft === 0]] على إنها «في الآخر». في RTL صفر معناها في الأول، والأخر رقم سالب، فاستخدم [[Math.abs(scrollLeft)]].
-
-~~~text الناتج (Chrome 156)
-scrollLeft في الأول: 0
-بعد scrollBy({ left: -100 }): -100
-بعد scrollBy({ left: 100 }) من الأول: 0 (معملش حاجة)
-أقصى قيمة: -324
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** زرارين قبل وبعد للـ carousel بـ [[scrollBy]] بعرض كارت + الـ gap، وبيتعطّلوا لما توصل للأول أو الآخر (من [[scrollLeft]] و [[scrollWidth - clientWidth]] بالقيمة المطلقة)، وليهم أسامي عربي.`, done: R`الزراير بتمشي صح في الاتجاهين، والـ snap بيقف على أول الكارت بالظبط، والزرار بيبقى [[disabled]] في الأطراف، وقارئ الشاشة بيقول «اللي بعده، زرار».`,
-              sol: R`~~~live 230 230 carousel-buttons.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>carousel بزراير</title>
-<style>
-  .track { display: flex; gap: 16px; overflow-x: auto; inline-size: 320px; scroll-snap-type: x mandatory; }
-  .track > * { flex: 0 0 240px; block-size: 120px; scroll-snap-align: start; background: #bfdbfe; }
-  button:disabled { opacity: .5; }
-</style></head>
-<body>
-  <main><h1>منتجات</h1>
-    <div class="track" id="t" tabindex="0" role="group" aria-label="المنتجات">
-      <article>١</article><article>٢</article><article>٣</article><article>٤</article>
-    </div>
-    <button id="prev">اللي قبله</button>
-    <button id="next">اللي بعده</button>
-  </main>
-  <script>
-    const t = document.getElementById("t");
-    const step = () => t.firstElementChild.offsetWidth + parseFloat(getComputedStyle(t).columnGap);
-    const dir = () => getComputedStyle(t).direction === "rtl" ? -1 : 1;
-    function update() {
-      const pos = Math.abs(t.scrollLeft);
-      const max = t.scrollWidth - t.clientWidth;
-      prev.disabled = pos < 1;
-      next.disabled = pos > max - 1;
-    }
-    prev.onclick = () => t.scrollBy({ left: -dir() * step() });
-    next.onclick = () => t.scrollBy({ left:  dir() * step() });
-    t.addEventListener("scroll", update, { passive: true });
-    update();
-  $__lt/script>
-</body></html>
-~~~
-
-- [[step()]] بيحسب خطوة واحدة = عرض الكارت + الـ gap، من الـ CSS مش رقم مكتوب، فلو غيّرت المقاس الزرار مبيبوظش. [[columnGap]] هو القيمة اللي [[gap]] حطها.
-- [[dir()]] بترجّع [[-1]] في العربي، فـ «اللي بعده» بيروح شمال. نفس الكود يشتغل في الإنجليزي.
-- [[Math.abs(t.scrollLeft)]] بيحوّل السالب لمسافة، فالمقارنة واحدة في الاتجاهين.
-- [[pos < 1]] و [[max - 1]] مش [[=== 0]]: مع zoom أو شاشة بكثافة عالية [[scrollLeft]] بيبقى كسر، و [[=== max]] مش هتتحقق أبدًا.
-- الاسم في [[<button>]] نص حقيقي، فقارئ الشاشة بيقول «اللي بعده، زرار».
-
-الغلطة الشائعة: تقارن بـ [[=== max]] من غير هامش، فالزرار ميتعطلش على شاشات معينة.
-
-~~~text الناتج (Chrome 156، عرض 320 والكارت 240 و gap 16)
-أول الصفحة: prev.disabled = true، و next.disabled = false
-بعد «اللي بعده»: scrollLeft = -256
-بعد ما وصلت الآخر: scrollLeft = -688، و next.disabled = true
-«اللي قبله» مرة: scrollLeft = -512
-axe: 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** carousel بيقلب لوحده كل ٣ ثواني بـ [[setInterval]] ومفيش طريقة توقّفه (WCAG 2.2.2). زوّد زرار وقوف وتشغيل، ووقّف مع [[:hover]] و [[:focus-within]] (من JavaScript بـ [[matches]])، وما يشتغلش خالص مع reduce.`, done: R`الزرار بيبدّل [[aria-pressed]] وكلمته، والـ carousel بيقف لما الماوس عليه أو الـ focus جواه، ومع reduce مفيش autoplay من الأول.`,
-              sol: R`~~~live 230 230 carousel-auto.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>carousel بيتوقف</title>
-<style>
-  .track { display: flex; overflow-x: auto; inline-size: 320px; scroll-snap-type: x mandatory; }
-  .track > * { flex: 0 0 100%; block-size: 120px; scroll-snap-align: start; background: #bfdbfe; }
-</style></head>
-<body>
-  <main><h1>عروض</h1>
-    <div class="track" id="t" tabindex="0" role="group" aria-label="العروض">
-      <article>١</article><article>٢</article><article>٣</article>
-    </div>
-    <button id="toggle" aria-pressed="true">وقّف</button>
-  </main>
-  <script>
-    const t = document.getElementById("t");
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let playing = !reduce;
-
-    function paint() {
-      toggle.setAttribute("aria-pressed", playing);
-      toggle.textContent = playing ? "وقّف" : "شغّل";
-    }
-    function tick() {
-      if (!playing) return;
-      if (t.matches(":hover") || t.matches(":focus-within")) return;
-      const max = t.scrollWidth - t.clientWidth;
-      const atEnd = Math.abs(t.scrollLeft) >= max - 1;
-      t.scrollTo({ left: atEnd ? 0 : t.scrollLeft - t.clientWidth });
-    }
-    toggle.onclick = () => { playing = !playing; paint(); };
-    paint();
-    if (!reduce) setInterval(tick, 3000);
-  $__lt/script>
-</body></html>
-~~~
-
-WCAG 2.2.2 بيقول: أي حركة بتبدأ لوحدها وبتطول أكتر من ٥ ثواني لازم يبقى ليها طريقة توقف. ٣ طبقات هنا:
-
-- زرار بيبدّل [[playing]]، والكلمة نفسها بتتغير و [[aria-pressed]] معاها، فقارئ الشاشة يعرف الحالة.
-- [[t.matches(":hover")]] و [[":focus-within"]] جوه [[tick]]: المؤقت لسه شغال، بس الدورة دي بتعدّي. فالمستخدم بيقرا من غير ما الشريحة تتغير تحت إيده.
-- مع reduce [[playing]] بيبدأ [[false]] و [[setInterval]] مبيتعملش خالص. الزرار بيقول «شغّل» لو حد عايز.
-- [[t.scrollLeft - t.clientWidth]] بالسالب لأن الصفحة عربي، ولو هتدعم اللغتين اضرب في [[dir()]] زي التمرين اللي فات.
-
-الغلطة الشائعة: توقف بـ [[clearInterval]] على [[mouseenter]] وتنسى [[focusin]]، فالكيبورد يفضل بيتحرك والمستخدم بيقرا.
-
-~~~text الناتج (Chrome 156، بعد 3.2 ثانية)
-عادي: scrollLeft = -320
-الماوس عليه: scrollLeft = 0
-الـ focus جواه: scrollLeft = 0
-بعد الزرار: aria-pressed = false والكلمة شغّل، و scrollLeft = 0
-مع reduce: scrollLeft = 0، و aria-pressed = false
-axe: 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة بهيدر sticky ارتفاعه 64px، ولينك [[#prices]] لعنوان تحت. دوس اللينك من غير [[scroll-margin-top]] واطبع [[document.querySelector("#prices").getBoundingClientRect().top]]، وبعدين حطه وقيس تاني.`, done: R`قبل: الرقم أقل من 64 (العنوان تحت الهيدر)، وبعد: أكبر من 64 والعنوان باين كله.`,
-              sol: R`~~~live 600 720 scroll-margin.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>scroll-margin</title>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الشارة</title>
 <style>
   body { margin: 0; }
-  header { position: sticky; top: 0; block-size: 64px; background: #1f2937; color: #fff; }
-  main { padding-block: 1000px; }
-  #prices { scroll-margin-top: 72px; }
-</style></head>
+  .grand { width: 300px; height: 200px; margin-block-start: 100px; margin-inline-start: 580px; background: #f4f4f5; transform: translateY(0); }
+  .card { height: 100px; background: #bfdbfe; }
+  .badge { position: absolute; top: 8px; inset-inline-end: 8px; width: 20px; height: 20px; background: #dc2626; }
+</style>
+</head>
 <body>
-  <header><a href="#prices" style="color:#fff">الأسعار</a></header>
-  <main><h1>المنتج</h1><h2 id="prices">الأسعار</h2></main>
-</body></html>
+<div class="grand">
+  <div class="card"><span class="badge"></span></div>
+</div>
+</body>
+</html>
 ~~~
 
-لينك [[#prices]] بيحط العنصر في أول الـ scrollport، يعني عند [[top = 0]]. الهيدر الـ sticky واقف هناك، فبيغطي العنوان. [[scroll-margin-top]] بيقول «لما تعمل scroll لحد العنصر ده، سيب المسافة دي فوقه». 72 = ارتفاع الهيدر 64 + نفس.
+**الإجابة:** الشارة بتتحسب من الجد، مش من الصفحة ومش من الكارت.
 
-ده أحسن من [[padding-top]] أو عنصر فاضي فوق العنوان، لأنه مبيغيرش الـ layout، ومش محتاج JavaScript. ولو الهيدر ارتفاعه متغير اكتب [[scroll-margin-top: calc(var(--nav-h) + 1rem)]].
+[[absolute]] بتطلع لفوق تدوّر على أول أب يكون containing block. والأب ده مش لازم يكون عليه [[position]]. أي عنصر عليه [[transform]] أو [[filter]] أو [[perspective]] بيعمل نفس الحكاية، حتى لو القيمة [[translateY(0)]] ومش بتحرّك حاجة.
 
-الغلطة الشائعة: تحطها على الهيدر بدل الهدف. دي خاصية على العنصر اللي بتوصله.
+**ليه الرقم 408:** الصفحة RTL، فـ [[inset-inline-end]] معناها الشمال. الجد شماله عند 400، زائد 8.
 
-~~~text الناتج (Chrome 156، getBoundingClientRect().top بعد الضغط على اللينك)
-من غير scroll-margin-top: top = -0.125 (تحت الهيدر)
-بعد scroll-margin-top: 72px: top = 71.875 (باين كله)
+**الغلطة الشائعة:** تزوّد animation فيها [[transform]] على أب بعيد، فكل [[absolute]] و [[fixed]] جواه يتحرك مكانه فجأة، وتدوّر على الغلط في العنصر نفسه.
+
+~~~text الناتج
+الجد عند (400, 100)
+الشارة عند (408, 108)
+
+بعد ما شيلنا transform من الجد:
+الشارة عند (8, 8)  (اتحسبت من الصفحة)
+
+والحل المقصود: position: relative على الكارت:
+الشارة عند (408, 108)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت منتج لمحل ورد متخيل: صورتين فوق بعض (التانية [[absolute; inset: 0; opacity: 0]] وتظهر مع [[:hover]] و [[:focus-within]])، وشارة خصم على ناحية النهاية، وزرار مفضّلة على ناحية البداية، والكارت كله لينك بـ [[::after]]، بس زرار المفضّلة لسه بيتضغط لوحده.`, done: R`[[document.elementFromPoint]] فوق زرار المفضّلة بيرجّع [[BUTTON]]، وفوق أي حتة تانية في الكارت بيرجّع [[A]]. بـ Tab على اللينك الصورة التانية بتظهر من غير ماوس. ولما تقلب [[dir]] الشارة والزرار بيبدّلوا الناحية.`, sol: R`~~~live 360 360
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محل الورد</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: system-ui; margin: 16px; }
+  .card { position: relative; max-width: 280px; border: 1px solid #e7e5e4; border-radius: 12px; overflow: hidden; }
+  .card__media { position: relative; aspect-ratio: 4 / 3; }
+  .card__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .card__media img + img { position: absolute; inset: 0; opacity: 0; transition: opacity .2s; }
+  .card:hover img + img, .card:focus-within img + img { opacity: 1; }
+  .card__badge { position: absolute; top: 8px; inset-inline-end: 8px; padding: 2px 8px; background: #b91c1c; color: #fff; border-radius: 999px; }
+  .card__fav { position: absolute; z-index: 1; top: 8px; inset-inline-start: 8px; width: 44px; height: 44px; font: inherit; }
+  .card__body { padding: 12px; }
+  .card__title { margin: 0; font-size: 1.125rem; }
+  .card__link::after { content: ""; position: absolute; inset: 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>الورد</h1>
+<article class="card">
+  <div class="card__media">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%' height='100%' fill='%23fda4af'/></svg>" alt="باقة ورد أحمر" width="400" height="300">
+    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%' height='100%' fill='%23fde68a'/></svg>" alt="" width="400" height="300">
+  </div>
+  <span class="card__badge">خصم ٢٠٪</span>
+  <button class="card__fav" type="button" aria-label="أضف للمفضلة">♡</button>
+  <div class="card__body">
+    <h2 class="card__title"><a class="card__link" href="#rose">باقة ورد أحمر</a></h2>
+  </div>
+</article>
+</main>
+</body>
+</html>
+~~~
+
+**الفكرة:** اللينك عنصر صغير، بس [[::after]] بتاعه [[absolute]] و [[inset: 0]]، فبيغطي الكارت كله لأن [[.card]] هو الأقرب اللي عليه [[position: relative]]. فالكارت كله بيتداس، والـ HTML فيه لينك واحد بس.
+
+- [[.card__fav]]: [[z-index: 1]] بيطلّعه فوق الـ [[::after]]، فبيتضغط لوحده. ومن غيره الضغطة هتروح للينك.
+- [[:focus-within]]: الكارت بياخد الحالة لما اللي جواه عليه focus، فالكيبورد بيشوف نفس اللي الماوس بيشوفه.
+- [[alt=""]] على الصورة التانية: زينة، نفس المنتج.
+- [[inset-inline-end]] و [[inset-inline-start]]: يبدّلوا الناحية مع [[dir]].
+
+**الغلطة الشائعة:** تلف الكارت كله في [[<a>]] وتحط جواه [[<button>]]. عنصر تفاعلي جوه عنصر تفاعلي، والـ validator بيرفضه.
+
+~~~text الناتج
+elementFromPoint فوق زرار المفضلة: BUTTON
+elementFromPoint فوق الصورة:      A
+elementFromPoint فوق الشارة:      A
+بـ Tab على اللينك: opacity الصورة التانية = 1
+الـ Tab الأول وقف عند: card__fav
+
+            الشارة x     الزرار x
+rtl         993        1211
+ltr         209        25
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل بحث في صفحة عربي: الأيقونة [[position: absolute; left: 12px]] والحقل [[padding-left: 40px]]. الكلام اللي بتكتبه بيبدأ تحت الأيقونة. صلّحه بحيث نفس الـ CSS يشتغل في العربي والإنجليزي.`, done: R`بعد [[inset-inline-start: 12px]] و [[padding-inline-start: 40px]]: في rtl الأيقونة يمين والكلام بيبدأ بعدها، وفي ltr الأيقونة شمال، ومفيش ولا [[left]] ولا [[right]] في الـ CSS.`, sol: R`~~~live 130 130
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>البحث</title>
+<style>
+  .search { position: relative; max-width: 300px; }
+  .search__icon { position: absolute; inset-inline-start: 12px; top: 50%; translate: 0 -50%; }
+  .search input { width: 100%; box-sizing: border-box; padding-block: 8px; padding-inline-start: 40px; padding-inline-end: 8px; font: inherit; }
+</style>
+</head>
+<body>
+<main>
+<h1>المتجر</h1>
+<div class="search">
+  <span class="search__icon" aria-hidden="true">⌕</span>
+  <input type="search" aria-label="ابحث" value="قهوة">
+</div>
+</main>
+</body>
+</html>
+~~~
+
+**السبب:** في صفحة عربي الكلام بيبدأ من اليمين. و [[left: 12px]] و [[padding-left: 40px]] بيحطوا الأيقونة والمسافة على الشمال، وهي نهاية السطر. فالبداية مفيهاش مسافة، وكلام طويل هيوصل تحت الأيقونة.
+
+**التصليح:** [[inline-start]] معناها «ناحية بداية السطر»، أيًا كانت. سطرين، ومن غير [[[dir="rtl"]]] ومن غير نسخة تانية.
+
+- [[top: 50%]] و [[translate: 0 -50%]]: توسيط رأسي لعنصر [[absolute]] من غير ما تعرف ارتفاعه.
+- [[aria-hidden="true"]]: الأيقونة زينة.
+
+**الغلطة الشائعة:** تكتب [[[dir="rtl"] .search input { padding-right: 40px }]] وتسيب الأصلية. ده سطر لكل اتجاه لكل عنصر.
+
+~~~text الناتج
+                 بداية الحقل     الأيقونة من البداية    padding-inline-start
+rtl              يمين            12px                  40px
+ltr              شمال            12px                  40px
+
+left أو right في الـ CSS: 0
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** فقاعة كلام (tooltip) بديل مثلث بـ [[::after]] و [[border]] شفاف من ٣ نواحي، والمثلث تحت الفقاعة على ناحية البداية، بـ [[inset-inline-start]].`, done: R`المثلث لازق في الفقاعة من غير خط أبيض بينهم، ولما تقلب [[dir]] بيروح للناحية التانية لوحده، والفقاعة مبتأثرش على مكان أي عنصر حواليها (absolute).`, sol: R`~~~live 320 320
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الفقاعة</title>
+<style>
+  body { font-family: system-ui; margin: 80px 40px; }
+  .tip { position: relative; display: inline-block; }
+  .tip__bubble {
+    --bg: #1c1917;
+    position: absolute;
+    bottom: calc(100% + 12px);
+    inset-inline-start: 0;
+    width: max-content;
+    max-width: 200px;
+    padding: 8px 12px;
+    background: var(--bg);
+    color: #fff;
+    border-radius: 8px;
+  }
+  .tip__bubble::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    inset-inline-start: 16px;
+    border: 8px solid transparent;
+    border-top-color: var(--bg);
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>الشحن</h1>
+<p class="tip">
+  <a href="#ship">الشحن المجاني</a>
+  <span class="tip__bubble" role="tooltip">فوق ٥٠٠ جنيه</span>
+</p>
+<p>الفقرة اللي بعدها</p>
+</main>
+</body>
+</html>
+~~~
+
+**المثلث:** عنصر مقاسه صفر و [[border: 8px]]، والحدود الأربعة مثلثات متقابلة. بنخلي التلاتة شفافين ونلوّن اللي فوق بس، فيفضل مثلث راسه تحت.
+
+- [[top: 100%]]: يبدأ من آخر الفقاعة بالظبط، فمفيش مسافة بينهم.
+- [[bottom: calc(100% + 12px)]]: الفقاعة فوق العنصر بمسافة قد المثلث.
+- [[width: max-content]] مع [[max-width]]: الفقاعة قد كلامها، ومن غيرها بتتزنق على عرض أبوها.
+- [[--bg]]: المثلث والفقاعة نفس اللون من مكان واحد.
+
+**الغلطة الشائعة:** تستخدم [[left: 16px]] للمثلث. في RTL هيبقى في الناحية الغلط.
+
+~~~text الناتج
+آخر الفقاعة y = 148.4375   وبداية المثلث y = 148.4375   (لازقين)
+لون حد المثلث = rgb(28, 25, 23)   ولون الفقاعة = rgb(28, 25, 23)
+
+المثلث من اليمين في rtl: 16px
+المثلث من الشمال في ltr: 16px
+
+مكان الفقرة اللي بعدها، مع الفقاعة ومن غيرها: 213.44 و 213.44
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** سلايدر «قبل وبعد» لصور ترميم متخيلة: صورتين فوق بعض في أب [[relative]]، والعليا [[clip-path: inset(0 0 0 var(--pos))]]، وفوقهم [[<input type="range">]] شفاف [[absolute; inset: 0]] بيكتب قيمته في [[--pos]]، وخط رأسي عند [[--pos]].`, done: R`الأسهم من الكيبورد بتحرّك الخط (لأن الـ range input حقيقي)، وعند 50 الخط في نص الصورة بالظبط، وعلى 360 الصورتين بعرض الشاشة ومفيش scroll أفقي، وكتبت إن [[clip-path]] و [[left]] مش logical فلازم تختبر في rtl.`, sol: R`~~~live 470 290
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الترميم</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 16px; font-family: system-ui; }
+  .ba { --pos: 50%; position: relative; direction: ltr; max-width: 640px; margin-inline: auto; aspect-ratio: 16 / 9; }
+  .ba img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .ba__after { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--pos)); }
+  .ba__line { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; translate: -50% 0; background: #fff; box-shadow: 0 0 0 1px #000; pointer-events: none; }
+  .ba input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+  .ba:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+<h1>الترميم</h1>
+<div class="ba">
+  <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360'><rect width='100%' height='100%' fill='%2378716c'/></svg>" alt="الحيطة قبل الترميم" width="640" height="360">
+  <div class="ba__after"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360'><rect width='100%' height='100%' fill='%23fde68a'/></svg>" alt="الحيطة بعد الترميم" width="640" height="360"></div>
+  <span class="ba__line"></span>
+  <input type="range" min="0" max="100" value="50" aria-label="قارن قبل وبعد الترميم">
+</div>
+</main>
+<script>
+  const box = document.querySelector('.ba');
+  const range = box.querySelector('input');
+  range.addEventListener('input', () => box.style.setProperty('--pos', range.value + '%'));
+$__lt/script>
+</body>
+</html>
+~~~
+
+**كل قطعة:**
+
+- [[clip-path: inset(0 0 0 var(--pos))]]: اقطع من الشمال بمقدار [[--pos]]. فـ 50% يبان نص الصورة العليا اليمين.
+- [[<input type="range">]] شفاف فوق كل حاجة: كيبورد وسحب وقارئ شاشة ببلاش، بدل JavaScript طويل للسحب.
+- [[opacity: 0]] مش [[display: none]]: عشان يفضل بيتوصله.
+- [[:has(input:focus-visible)]]: الـ range شفاف، فالحلقة لازم تترسم على الأب.
+- [[direction: ltr]] على الصندوق، وده الجزء اللي بيحل مشكلة RTL.
+
+**فخ RTL:** [[clip-path]] و [[left]] مش logical، بس الـ range بيتقلب في RTL: القيمة 25 تبقى ناحية اليمين، و [[--pos: 25%]] من الشمال. فالخط بيمشي عكس إيدك. [[direction: ltr]] بيثبّت الاتنين على نفس الاتجاه.
+
+**الغلطة الشائعة:** تختبر بالعربي بالماوس عند النص بس. عند 50 الاتجاهين بيتقابلوا، فالمشكلة مش هتبان.
+
+~~~text الناتج
+عند 50: الخط x = 640   ونص الصورة x = 640
+سهم يمين ٥ مرات: القيمة = 55   الخط من شمال الصورة = 55%
+Tab وقف عند: INPUT type=range
+ضغط عند 80% من العرض: القيمة = 81
+على 360: عرض الصورتين 328px   overflow 0px
+من غير direction: ltr، الضغط عند 80%: القيمة = 19  (عكس مكان الضغطة)
+axe: 0 violations
 ~~~` },
           ],
-          desc: R`[[scroll-snap-type: x mandatory]] على الحاوية و [[scroll-snap-align: start]] على العناصر: لما المستخدم يسيب الـ scroll، بيقف على أول كارت بالظبط بدل ما يقف في النص. carousel كامل بـ swipe على الموبايل من غير مكتبة.
-
-و [[scroll-margin-top]] على العنصر بيسيب مسافة فوقه لما المتصفح يعمل scroll ليه (لينك [[#pricing]]، أو [[scrollIntoView]])، فالعنوان ميستخباش تحت الـ header الثابت. و [[scroll-padding-top]] على الـ html نفس الفكرة بس لكل العناصر مرة واحدة، وبيشمل الـ focus بالـ Tab.`,
-          example: R`<ul class="carousel" tabindex="0" aria-label="منتجات مقترحة">
-  <li><img src="/p/1.webp" alt="سماعة" width="300" height="300"></li>
-  <li><img src="/p/2.webp" alt="ماوس" width="300" height="300"></li>
-</ul>
-// styles.css
-.carousel { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scroll-padding-inline: 1rem; padding-inline: 1rem; }
-.carousel > li { flex: 0 0 80%; scroll-snap-align: start; list-style: none; }
-html { scroll-padding-top: 5rem; }
-h2[id] { scroll-margin-top: 6rem; }
-@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }`,
-          try: R`اعمل carousel بـ 6 كروت وافتحه في وضع الموبايل واسحب: بيقف فين؟ شيل [[scroll-snap-type]] واسحب تاني. وبعدين اعمل header ثابت ارتفاعه 64px ولينك لـ [[#faq]] تحت، ودوس عليه مع وبدون [[scroll-padding-top]].`,
-          flag: "script",
           deep: {
-            why: R`الـ carousels مكتبات JavaScript تقيلة عشان حاجة الـ CSS بيعملها أحسن (الـ swipe طبيعي وبنفس إحساس النظام). والـ header الثابت اللي بياكل العنوان اللي رحتله بلينك، أو الحقل اللي عليه focus، مشكلة في كل موقع تقريبًا، ودي قاعدة 2.4.11 في WCAG 2.2.`,
-            how: R`[[mandatory]] بيجبر الوقوف على نقطة snap دايمًا، و [[proximity]] بيقف عليها بس لو قريب منها (أحسن لو العناصر أطول من الشاشة، لأن mandatory ممكن يمنعك تشوف نص عنصر طويل). و [[scroll-snap-align]] بيحدد نقطة الوقوف: [[start]] أو [[center]] أو [[end]]، وبتتقلب لوحدها في RTL لأنها logical.
+            why: "فيه حاجات لازم تبقى فوق حاجات: شارة على صورة، وأيقونة جوه input، وطبقة غامقة على هيرو، وزرار X في ركن المودال. الترتيب العادي (flow) مش بيعمل ده، و absolute بيعمله بالظبط.",
+            how: R`[[static]] الافتراضي: العنصر في الـ flow، و top و left ملهمش تأثير. [[relative]]: في الـ flow ومكانه محجوز، و top و left بيزقوه بصريًا بس من غير ما يأثروا على الباقي. [[absolute]]: برا الـ flow، ومكانه بيتحسب من الـ containing block، اللي هو أقرب جد position بتاعه مش static. لو مفيش، بيتحسب من أول الصفحة.
 
-[[scroll-padding-inline]] على الحاوية بيخلي نقطة الوقوف بعد مسافة من الحافة، فالكارت ميلزقش في الطرف. و [[flex: 0 0 80%]] بيخلي جزء من الكارت اللي بعده باين، ودا اللي بيقول للمستخدم «فيه حاجة كمان، اسحب».
+[[inset]] اختصار للأربعة، و [[inset: 0]] مع absolute = غطّي الأب كله. و [[inset-inline-start]] و [[inset-inline-end]] بيتقلبوا مع [[dir]]، فالشارة تفضل في ركن «النهاية» في العربي والإنجليزي من غير تعديل.
 
-[[overscroll-behavior-x: contain]] بيمنع إن الـ scroll لما يخلص يكمّل في الصفحة، أو يعمل «رجوع» في Safari و Chrome على الموبايل.
+العنصر الـ absolute عرضه بيبقى قد محتواه مش قد الأب، إلا لو حددت left و right الاتنين أو width.
 
-[[scroll-margin-top]] على العنصر و [[scroll-padding-top]] على الـ scroll container (هنا [[html]]) الاتنين بيتجمعوا. والـ [[scroll-behavior: smooth]] جوه [[prefers-reduced-motion: no-preference]] عشان اللي طالب حركة أقل ميتعبش.
+وفيه حاجات تانية بتعمل containing block للـ absolute: [[transform]] و [[filter]] على الجد. ودا مهم أكتر مع [[fixed]] (الدرس الجاي).
 
-و [[tabindex="0"]] على الـ carousel عشان مستخدم الكيبورد يقدر يعمل scroll بالأسهم (زي درس الجدول). ولو عايز أزرار «التالي والسابق»، [[scrollBy({ left: el.clientWidth })]] سطر واحد، والـ snap بيظبط الوقفة.`,
-            when: R`carousel منتجات أو صور أو testimonials، و galleries، و onboarding screens على الموبايل. و scroll-padding-top في أي موقع فيه header ثابت. ولو محتاج autoplay أو loop لا نهائي أو thumbnails متزامنة، ساعتها مكتبة (Embla مثلًا).`,
-            mistakes: R`[[mandatory]] مع عناصر أطول من الشاشة فالمستخدم ميعرفش يوصل لنصها. [[scroll-behavior: smooth]] من غير احترام reduced motion. carousel بيتحرك لوحده ومفيهوش إيقاف. كل الكروت بعرض 100% فالمستخدم مش عارف إن فيه غيرهم. و [[scroll-margin-top]] بقيمة ثابتة والـ header ارتفاعه بيتغير على الموبايل، فخليها CSS variable بارتفاع الـ header.`
+في Tailwind: [[relative]] و [[absolute]] و [[inset-0]] و [[top-2]] و [[inset-e-2]] (من v4.2 بدل [[end-2]] اللي بقت deprecated).`,
+            when: "عنصر فوق عنصر جوه حدود الأب: شارات، وأيقونات جوه حقول، و overlays، وزرار إغلاق، وكارت كله clickable.",
+            mistakes: R`absolute من غير أب relative فالعنصر يروح مكان غريب. absolute للـ layout العادي (أعمدة وكروت) فأي تغيير في الكلام يبوّظ كل حاجة: ده شغل flex و grid. و [[right: 0]] في موقع عربي وإنجليزي فالشارة في نفس الناحية في اللغتين.`
           },
-          teach: R`## حاجتين في درس واحد
+          teach: R`## الشارة بتتحط بالأرقام، بس من أنهي نقطة؟
 
-1. **scroll-snap**: الـ scroll الأفقي في الـ carousel يقف دايمًا على بداية كارت، مش في النص.
-2. **scroll-padding و scroll-margin**: لما المتصفح يعمل scroll لعنصر (لينك [[#faq]] مثلًا)، يسيب مسافة فوقه عشان الـ header الثابت ميغطيهوش.
-
-حطينا المثال في صفحة فيها header ثابت ارتفاعه 64px، وخلينا الـ carousel عرضه 400px بـ 6 كروت، وقسنا كل حاجة في Chrome 154 (headless عن طريق playwright).
+[[position: absolute]] بيقول للعنصر: «اطلع من الترتيب العادي، واتحط على بُعد كذا من حافة **مرجع**». والسؤال كله: مين المرجع؟ حطينا المثال في صفحة عرضها 1200 وارتفاعها 800، والكارت عرضه 400 ونازل 100px من فوق، وقسنا كل حاجة بـ [[getBoundingClientRect()]].
 
 ---
 
 ## ١. الـ HTML
 
 ~~~text index.html
-<ul class="carousel" tabindex="0" aria-label="منتجات مقترحة">
-  <li><img src="/p/1.webp" alt="سماعة" width="300" height="300"></li>
-  <li><img src="/p/2.webp" alt="ماوس" width="300" height="300"></li>
-</ul>
+<article class="card">
+  <span class="badge">جديد</span>
+  <img src="/p.webp" alt="سماعة" width="400" height="300">
+  <a class="stretched" href="/products/42">سماعة لاسلكي</a>
+</article>
 ~~~
 
-- [[<ul>]] لستة، و [[<li>]] كل كارت. لستة عشان قارئ الشاشة يقول «لستة فيها كذا عنصر».
-- [[tabindex="0"]]: الـ [[<ul>]] مش بياخد focus لوحده. الـ 0 بيحطه في ترتيب الـ Tab، فمستخدم الكيبورد يقف عليه ويعمل scroll بالأسهم.
-- [[aria-label]]: اسم اللستة لقارئ الشاشة، لأن مفيش عنوان جنبها.
-- [[width]] و [[height]] على الصورة: المتصفح يحجز مكانها قبل ما توصل (درس «احجز المكان» تحت).
+[[<article>]] عنصر لمحتوى قايم بذاته (كارت منتج). جواه شارة، وصورة، ولينك واحد.
 
----
+## ٢. [[.card { position: relative; }]]
 
-## ٢. سطر الحاوية: [[.carousel { ... }]]
+[[relative]] لوحدها مش بتحرك الكارت ولا مليمتر: هو لسه في مكانه، والكارت فضل عند left = 50 و top = 100. فايدتها إنها بتخلي الكارت **مرجع** لأي ابن absolute. والمرجع ده اسمه containing block.
 
-السطر طويل، فنفكّه خاصية خاصية:
+## ٣. [[.badge { position: absolute; top: 0.5rem; inset-inline-end: 0.5rem; }]]
 
-| الخاصية | بتعمل إيه |
-|---|---|
-| [[display: flex]] | الكروت جنب بعض في صف |
-| [[gap: 1rem]] | 16px بين كل كارت والتاني |
-| [[overflow-x: auto]] | الكروت أعرض من الحاوية؟ اعمل scroll أفقي (x = أفقي) |
-| [[scroll-snap-type: x mandatory]] | الوقوف على نقط الـ snap في الاتجاه الأفقي، و [[mandatory]] = إجباري دايمًا |
-| [[overscroll-behavior-x: contain]] | لما الـ scroll يوصل للآخر ميكمّلش في الصفحة ولا يعمل «رجوع» |
-| [[scroll-padding-inline: 1rem]] | نقطة الوقوف بعد 16px من الحافة مش لازقة فيها |
-| [[padding-inline: 1rem]] | مسافة 16px يمين وشمال جوه الحاوية |
+- [[absolute]]: الشارة طلعت من الترتيب، والصورة طلعت لفوق مكانها كأنها مش موجودة.
+- [[top: 0.5rem]]: 8px تحت حافة الكارت اللي فوق.
+- [[inset-inline-end: 0.5rem]]: 8px من حافة **نهاية السطر**. [[inline]] = اتجاه الكلام، و [[end]] = نهايته: يمين في الإنجليزي، شمال في العربي.
 
-[[inline]] في [[scroll-padding-inline]] و [[padding-inline]] معناها اتجاه السطر (الأفقي في العربي والإنجليزي)، يعني الجنبين مع بعض.
-
-## ٣. سطر الكارت: [[.carousel > li { flex: 0 0 80%; scroll-snap-align: start; list-style: none; }]]
-
-- [[flex: 0 0 80%]] تلات أرقام: [[0]] ميكبرش، و [[0]] ميصغرش، و [[80%]] عرضه 80% من الحاوية. فالكارت اللي بعده بيبان طرفه، وده بيقول للمستخدم «اسحب، فيه كمان».
-- [[scroll-snap-align: start]]: نقطة الوقوف هي **بداية** الكارت (في العربي بدايته اليمين، لأن start logical).
-- [[list-style: none]]: يشيل النقطة اللي قبل كل [[<li>]].
-
-اللي اتقاس:
-
-~~~text getBoundingClientRect و offsetLeft
-عرض الكارت:              320   (80% من 400)
-بداية كل كارت:           16, 352, 688, 1024, 1360, 1696
-~~~
-
-الأول بيبدأ عند 16 (الـ padding)، وكل واحد بعده بـ 336 = 320 عرض + 16 gap.
-
-### التجربة: قلنا للـ carousel يروح لمكان، ووقف فين؟
-
-| [[scrollTo]] لـ | مع [[scroll-snap-type]] | من غيره |
+| الصفحة | الكارت | الشارة |
 |---|---|---|
-| 100 | 0 | 100 |
-| 200 | 336 | 200 |
-| 400 | 336 | 400 |
+| ltr | من 50 لـ 450 | من 418.81 لـ 442، و top = 108 |
+| rtl | من 750 لـ 1150 | من 758، و top = 108 |
 
-من غير snap بيقف مكان ما قلتله بالظبط، ممكن في نص كارتين. مع الـ snap بيروح لأقرب نقطة وقوف: 0 (الكارت الأول) أو 336 (التاني). و 336 دي بداية الكارت التاني (352) ناقص الـ [[scroll-padding-inline]] (16).
+في ltr الشارة آخرها 442 = 450 - 8، وفي rtl أولها 758 = 750 + 8. نفس السطر، والناحية اتقلبت لوحدها.
 
-وبالكيبورد: Tab وقف على الـ carousel، وكل سهم يمين نقله كارت بالظبط:
+## ٤. [[.stretched::after { content: ""; position: absolute; inset: 0; }]]
 
-~~~text scrollLeft بعد كل ArrowRight
-336
-672
-1008
-~~~
+- [[::after]] اسمه pseudo-element: عنصر وهمي المتصفح بيعمله جوه اللينك، بعد كلامه. ومبيظهرش إلا لو ليه [[content]]، حتى لو فاضي [[""]].
+- [[inset: 0]] اختصار [[top: 0; right: 0; bottom: 0; left: 0]]: اتمد على المرجع كله.
 
-وفي صفحة [[dir="rtl"]] نفس الكود: الكارت الأول لازق في الحافة اليمين بعد 16px، وبعد [[scrollTo]] لـ -200 (في RTL الـ scrollLeft بيبقى سالب) وقف عند [[-336]] والكارت التاني بقى على بعد 16px من اليمين. يعني [[start]] اتقلبت لوحدها.
-
----
-
-## ٤. [[html { scroll-padding-top: 5rem; }]] و [[h2[id] { scroll-margin-top: 6rem; }]]
-
-الاتنين بيسيبوا مسافة فوق العنصر لما المتصفح يعمل scroll ليه، بس من مكانين مختلفين:
-
-| الخاصية | بتتحط على | معناها |
-|---|---|---|
-| [[scroll-padding-top]] | الحاوية اللي بتعمل scroll (هنا [[html]] = الصفحة كلها) | «أي عنصر تروحله، سيب فوقه كذا» |
-| [[scroll-margin-top]] | العنصر نفسه | «لما تروحلي أنا، سيب فوقي كذا» |
-
-و [[h2[id]]] يعني «أي h2 عليه id»، لأن دول بس اللي بيبقى ليهم لينك [[#]].
-
-جرّبنا بلينك [[#faq]] (على h2 عليه [[id="faq"]]) وبـ [[scrollIntoView()]] على فقرة عادية، وقسنا بُعد العنصر من فوق الشاشة:
-
-| | h2 بعد [[#faq]] | فقرة بعد [[scrollIntoView]] |
-|---|---|---|
-| المثال زي ما هو | 176px | 80px |
-| من غير الاتنين | 0px (تحت الـ header) | 0px |
-
-- الفقرة: 80 = [[5rem]] بتاعة [[scroll-padding-top]] بس.
-- الـ h2: 176 = 80 + 96 ([[6rem]]): **الاتنين بيتجمعوا**. فلو حطيت الاتنين خليهم مع بعض قد ارتفاع الـ header ومسافة صغيرة، مش كل واحد لوحده قد الـ header.
-- من غيرهم: العنصر بيبقى عند 0، يعني ورا الـ header اللي ارتفاعه 64.
-
-## ٥. [[@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }]]
-
-- [[scroll-behavior: smooth]]: الـ scroll للينكات بيبقى ناعم بدل ما ينط.
-- [[@media (prefers-reduced-motion: no-preference)]]: «بس لو المستخدم **مش** طالب حركة أقل من إعدادات نظامه».
-
-اتأكدنا: الـ [[scroll-behavior]] المحسوب على الـ html كان [[smooth]] في الوضع العادي، ولما شغّلنا المتصفح بـ reduced motion بقى [[auto]] (ينط على طول).
-
-> [[overscroll-behavior-x: contain]] وإحساس الـ swipe على الموبايل محتاجين تليفون حقيقي، والكلام عنهم من الـ docs بتاعة MDN.
-
----
-
-## الخلاصة
-
-| الخاصية | على مين | ليه |
-|---|---|---|
-| [[scroll-snap-type: x mandatory]] | الحاوية اللي عليها [[overflow]] | يقف على نقط |
-| [[scroll-snap-align: start]] | الأولاد المباشرين | النقطة = بداية الكارت |
-| [[scroll-padding-inline]] | الحاوية | الوقفة بعد مسافة من الحافة |
-| [[scroll-padding-top]] | [[html]] | مسافة فوق أي عنصر بتروحله |
-| [[scroll-margin-top]] | العنصر | مسافة زيادة ليه هو، وبتتجمع مع اللي فوق |
-
-- الـ snap شغال بس لو [[overflow]] و [[scroll-snap-type]] على **نفس** العنصر.
-- [[mandatory]] مع كروت أطول من الشاشة غلط: استخدم [[proximity]].`,
-          lines: [
-            "القايمة الأفقية: ليها اسم وبتاخد focus للـ scroll بالكيبورد.",
-            R`كارت: [[li]] جواه صورة بمقاسات و alt، فالقايمة بتتقري «لستة فيها ٢».`,
-            R`كارت تاني بنفس الشكل؛ في الحقيقة دول بيتولدوا من بيانات.`,
-            R`قفلة القايمة؛ الـ snap كله في الـ CSS، مفيش JavaScript.`,
-            R`flex أفقي، و scroll أفقي، والوقوف إجباري على نقط الـ snap، والـ scroll ميكمّلش للصفحة، ونقطة الوقوف بعد 1rem من الحافة.`,
-            "كل كارت 80% من العرض (فاللي بعده باين)، والوقوف على بدايته.",
-            "أي scroll لعنصر (لينك # أو focus) يسيب 5rem للـ header الثابت.",
-            "والعناوين اللي ليها id مسافة زيادة.",
-            "scroll ناعم للينكات، بس للي مش طالب حركة أقل."
-          ],
-          sol: R`مع [[scroll-snap-type]]: لما تسيب إيدك في أي مكان، الـ carousel بيكمّل لحد ما بداية كارت تبقى على الحافة (بعد 1rem). من غيره: بيقف مكان ما سبته، ممكن في نص كارتين.
-
-اللينك لـ [[#faq]] من غير scroll-padding: العنوان بيبقى تحت الـ header الثابت ومش باين. مع [[scroll-padding-top: 5rem]]: العنوان باين تحت الـ header على طول. ونفس الحكاية مع Tab على حقل تحت الـ header وانت طالع لفوق.
-
-لو الـ snap مش شغال: اتأكد إن [[overflow-x: auto]] على نفس العنصر اللي عليه [[scroll-snap-type]]، وإن [[scroll-snap-align]] على الأولاد المباشرين.`
-        },
-        {
-          cmd: "View Transitions",
-          ref: [
-            { t: "MDN: View Transition API", url: "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API" },
-            { t: "Chrome: Cross-document view transitions", url: "https://developer.chrome.com/docs/web-platform/view-transitions/cross-document" },
-            { t: "MDN: animation-duration", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-duration" },
-            { t: "MDN: view-transition-name", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/view-transition-name" },
-            { t: "MDN: ::view-transition-group()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::view-transition-group" },
-            { t: "MDN: ::view-transition-new()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::view-transition-new" },
-            { t: "MDN: ::view-transition-old()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::view-transition-old" },
-            { t: "MDN: @view-transition", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@view-transition" },
-          ],
-          title: "حركة ناعمة بين حالتين أو صفحتين",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين في الصفحة عليهم نفس [[view-transition-name: product-42]] في نفس الوقت، وبدأت [[document.startViewTransition()]]. هيحصل إيه؟`, done: R`مفيش حركة خالص: الكونسول طلّع «Unexpected duplicate view-transition-name: product-42»، و [[transition.ready]] اترفض بـ «InvalidStateError: Transition was aborted because of invalid state. Snapshot capture failed» (Chrome 156). الاسم لازم يبقى فريد في كل لحظة.`,
-              sol: R`~~~live 130 130 vt-dup.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>اسم مكرر</title>
-<style>.x { view-transition-name: product-42; }</style></head>
-<body>
-  <main><h1>منتج</h1><div class="x">أ</div><div class="x">ب</div></main>
-  <script>
-    const tr = document.startViewTransition(() => {});
-    tr.ready.catch(e => console.log(e.name + ": " + e.message));
-  $__lt/script>
-</body></html>
-~~~
-
-الـ view transition بتاخد صورة لكل اسم قبل وبعد التغيير، وبتربط صورة «قبل» بصورة «بعد» بالاسم. لو الاسم على عنصرين في نفس اللحظة، المتصفح مش عارف يربط أنهي بأنهي، فبيلغي الانتقال كله: مش العنصرين بس.
-
-اللي بيحصل: التغيير نفسه بيتطبق عادي (الـ callback بيشتغل)، بس من غير أي حركة، و [[transition.ready]] بيترفض. عشان كده لازم [[catch]]، وإلا هتشوف unhandled rejection.
-
-الحل: كل كارت اسمه من الـ id ([[card-42]])، أو في الكروت اللي بتيجي بعدد كبير [[view-transition-name: match-element]] لو المتصفح بيدعمها.
-
-الغلطة الشائعة: تحط الاسم على كلاس بيتكرر ([[.card]])، فتشتغل على كارت واحد وتقع لما يبقوا اتنين.
-
-~~~text الناتج (Chrome 156)
-الكونسول: Unexpected duplicate view-transition-name: product-42
-transition.ready: InvalidStateError: Transition was aborted because of invalid state. Snapshot capture failed
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شبكة كروت فيها فلتر chips، وكل كارت [[view-transition-name: card-<id>]] (اسم فريد). الفلتر بيتطبق جوه [[startViewTransition]]، فالكروت الفاضلة بتتزحلق لأماكنها الجديدة واللي اتشالت بتختفي.`, done: R`الكروت بتتحرك لأماكنها بدل ما تقفز، ومفيش duplicate في الكونسول، والفلتر شغال من غير حركة في المتصفح اللي مش بيدعم ومع reduce، والـ focus فاضل على الـ chip.`,
-              sol: R`~~~live 290 290 vt-filter.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>فلتر بحركة</title>
-<style>
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-  .card { padding: 2rem 1rem; background: #dbeafe; border-radius: 10px; }
-  .card[hidden] { display: none; }
-  @media (prefers-reduced-motion: reduce) {
-    ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none; }
-  }
-</style></head>
-<body>
-  <main><h1>الأعمال</h1>
-    <div role="group" aria-label="الفلتر">
-      <button data-f="all">الكل</button>
-      <button data-f="web">مواقع</button>
-      <button data-f="app">تطبيقات</button>
-    </div>
-    <div class="grid" id="grid">
-      <article class="card" data-tag="web" style="view-transition-name: card-1">متجر</article>
-      <article class="card" data-tag="app" style="view-transition-name: card-2">مفكرة</article>
-      <article class="card" data-tag="web" style="view-transition-name: card-3">مدونة</article>
-      <article class="card" data-tag="app" style="view-transition-name: card-4">منبّه</article>
-    </div>
-  </main>
-  <script>
-    const cards = [...document.querySelectorAll(".card")];
-    function apply(f) {
-      cards.forEach(c => { c.hidden = f !== "all" && c.dataset.tag !== f; });
-    }
-    document.querySelectorAll("[data-f]").forEach(b => {
-      b.addEventListener("click", () => {
-        const f = b.dataset.f;
-        const quiet = matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (!document.startViewTransition || quiet) return apply(f);
-        document.startViewTransition(() => apply(f));
-      });
-    });
-  $__lt/script>
-</body></html>
-~~~
-
-الـ [[startViewTransition]] بياخد صورة، يشغّل الـ callback اللي بيغيّر الـ DOM، ياخد صورة تانية، ويحرّك بينهم. كل كارت ليه اسم فريد، فالمتصفح بيعرف إن ده نفس الكارت في مكان جديد، ويزحلقه:
-
-- [[view-transition-name: card-1]] لازم يبقى فريد، و [[style]] هنا لأن الاسم من البيانات (في الحقيقة من الـ id).
-- [[if (!document.startViewTransition || quiet) return apply(f)]] هو الـ fallback: المتصفح اللي مش بيدعم أو reduce بيطبق الفلتر على طول، والوظيفة نفسها مبتتأثرش.
-- الـ focus بيفضل على الزرار لأن الزرار نفسه مبيتغيرش.
-- [[hidden]] مش [[display: none]] في JavaScript، و [[.card[hidden]]] لأن [[.card]] ممكن يبقى عليه [[display]].
-
-الغلطة الشائعة: تكتب [[apply(f)]] برا الـ callback وتنادي [[startViewTransition]] بعده، فالصورة الأولى تتاخد بعد التغيير ومفيش حركة.
-
-~~~text الناتج (Chrome 156)
-على «مواقع»: كروت ظاهرة 2، وحركات شغالة وقت الانتقال 17
-رسايل duplicate في الكونسول: 0
-الـ focus بعد الضغط: مواقع
-مع reduce: كروت ظاهرة 2، وحركات 0
-من غير startViewTransition: كروت ظاهرة 2
-axe: 0
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[document.startViewTransition(() => { fetch("/api/p/42").then(r => r.json()).then(render) })]]: الحركة بتحصل بين الصفحة القديمة والقديمة، وبعدين المحتوى الجديد بيقفز. صلّحه.`, done: R`الدالة بقت [[async]] وبترجّع الـ promise ([[await]] للـ fetch والـ render جواها)، فالمتصفح بيستنى المحتوى الجديد قبل ما ياخد الصورة التانية، والحركة بقت بين القديم والجديد فعلًا.`,
-              sol: R`~~~js بعد التصليح
-document.startViewTransition(async () => {
-  const r = await fetch("/api/p/42");
-  const p = await r.json();
-  render(p);
-});
-~~~
-
-الدالة اللي بتتبعت لـ [[startViewTransition]] لازم تقول للمتصفح «خلصت». المتصفح بيستنى الـ promise اللي بترجعها، وبعدها بياخد صورة «بعد». في الكود القديم الدالة مش بترجّع حاجة، لأن الأقواس [[{ }]] من غير [[return]] معناها [[undefined]]. فالمتصفح افتكر إنها خلصت فورًا، وأخد الصورة التانية قبل الـ fetch، فالحركة بقت بين القديم والقديم، وبعدين المحتوى الجديد نط.
-
-[[async]] بتخلّي الدالة ترجّع promise لوحدها، و [[await]] جواها بيخليها متخلصش غير بعد الـ [[render]]. وكان ممكن تحل بكلمة [[return]] قبل [[fetch(...)]].
-
-الصفحة بتتجمد في الصورة القديمة طول ما الـ promise مش خلص (المتصفح بيوقف الرسم)، فلو الـ API بطيء، هات البيانات **قبل** [[startViewTransition]] وخلّي الـ callback يعمل [[render]] بس. وفيه timeout حوالي ٤ ثواني بيلغي الانتقال.
-
-الغلطة الشائعة: تنسى [[await]] قدام [[fetch]] جوه [[async]]، فنفس المشكلة بتحصل بشكل أهدى.
-
-~~~text الناتج (Chrome 156، API بيرد بعد 200ms)
-اللي مكتوب في الصفحة لحظة transition.ready (بعد ما الصورة التانية اتاخدت):
-الكود القديم: قديم
-الكود الجديد: جديد
-~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف دعم الـ View Transitions داخل نفس الصفحة ([[startViewTransition]]) والـ View Transitions بين صفحتين ([[@view-transition]]) في Chrome و Safari و Firefox.`, done: R`جدول: داخل الصفحة Chrome 111 و Safari 18 و Firefox 144، وبين الصفحات Chrome 126 و Safari 18.2 و Firefox لسه (حسب MDN وقت ما دوّرت، واكتب التاريخ)، ومكتوب إن الكود اللي في الدرس بيشتغل من غير حركة في أي متصفح مش بيدعم.`,
-              sol: R`الإجابة النموذجية (بيانات MDN، تاريخ البحث 2026-11-04):
-
-| الميزة | Chrome | Safari | Firefox |
-|---|---|---|---|
-| داخل نفس الصفحة ([[document.startViewTransition]]) | 111 | 18 | 144 |
-| بين صفحتين ([[@view-transition]]) | 126 | 18.2 | لسه |
-
-الكود اللي في الدرس بيشتغل في أي متصفح مش بيدعم، لأن كل نداء محمي بـ [[if (!document.startViewTransition)]]، وبين الصفحات الـ CSS اللي مش مفهوم بيتجاهل: التنقل عادي من غير حركة. ده معنى إن الـ View Transitions ميزة progressive enhancement: غيابها مش بيكسر حاجة.
-
-ازاي تدوّر بنفسك: افتح صفحة [[Document: startViewTransition() method]] على MDN وانزل لجدول Browser compatibility، وبعدين صفحة [[@view-transition]]. الجداول دي نفسها طالعة من باكدج [[@mdn/browser-compat-data]]، وده اللي اتقري هنا (نسخة 8.1.8). البيانات بتتغير، فاكتب تاريخ بحثك.
-
-الغلطة الشائعة: تشوف Chrome بيدعم وتفترض إن الكل بيدعم، أو تخلي الوظيفة نفسها معتمدة على الحركة.
-
-~~~text الناتج (من browser-compat-data، وتأكيد في Chrome 156)
-same-document: Chrome 111، Safari 18، Firefox 144
-cross-document: Chrome 126، Safari 18.2، Firefox لسه
-"startViewTransition" in document = true، و CSSViewTransitionRule موجود = true
-~~~` },
-          ],
-          desc: R`[[document.startViewTransition(update)]] بياخد صورة للصفحة قبل، ويشغّل الدالة اللي بتغيّر الـ DOM، وياخد صورة بعد، ويعمل crossfade بينهم. ولو عنصر ليه [[view-transition-name]] في الحالتين، بيتحرك ويكبر من مكانه القديم للجديد (صورة المنتج في اللستة بتطير لصفحة التفاصيل).
-
-وبين صفحات حقيقية (MPA): [[@view-transition { navigation: auto; }]] في CSS الصفحتين، من غير JavaScript.
-
-دي progressive enhancement: لو المتصفح مش بيدعمها، التغيير بيحصل عادي من غير حركة.`,
-          example: R`function show(view) {
-  const update = () => document.querySelector('main').replaceChildren(view);
-  if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return update();
-  document.startViewTransition(update);
-}
-// styles.css
-.product-42 .thumb { view-transition-name: product-42; }
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
-@view-transition { navigation: auto; }
-@media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation: none; } }`,
-          try: R`اعمل لستة منتجات وصفحة تفاصيل في نفس الـ HTML، وبدّل بينهم بـ [[show()]]. جرّب من غير [[view-transition-name]]، وبعدين حطه على صورة المنتج في الحالتين بنفس الاسم. وفي DevTools › More tools › Animations بطّأ الحركة لـ 10% وشوف إيه اللي بيتحرك.`,
-          flag: "script",
-          deep: {
-            why: R`الحركة بين الحالات بتوضح للمستخدم إيه اللي حصل: الصورة اللي داس عليها بقت الصورة الكبيرة، مش صفحة جديدة ظهرت فجأة. قبل كده ده كان محتاج مكتبات animation وحسابات أماكن بإيدك. دلوقتي سطر.`,
-            how: R`المتصفح بيعمل snapshot للعناصر اللي ليها أسماء (والصفحة كلها اسمها [[root]])، ويبني شجرة pseudo-elements فوق الصفحة: [[::view-transition-group(name)]] جواه [[::view-transition-old]] و [[::view-transition-new]]. الـ group بيتحرك ويتغير مقاسه من المكان القديم للجديد، والـ old والـ new بيعملوا crossfade. وكله animations عادية تقدر تغيّرها في CSS.
-
-[[view-transition-name]] لازم يبقى فريد في الصفحة وقت الحركة: لو عنصرين بنفس الاسم الحركة بتتلغي. عشان كده في اللستات بيتحط اسم لكل عنصر (inline style بالـ id)، أو بيتحط على العنصر اللي اتداس بس قبل الحركة.
-
-الدعم: الـ same-document ([[startViewTransition]]) بقى في كل المتصفحات الأساسية من أواخر 2025. الـ cross-document ([[@view-transition]]) في Chrome و Edge و Safari، ولسه مش في كل المتصفحات وقت كتابة الدرس، فراجع caniuse. وفي الحالتين الكود بيشتغل عادي من غير الحركة لو مش مدعوم.
-
-في React و Next: فيه شغل على مكون [[<ViewTransition>]] في React و flag تجريبي في Next.js، اتأكد من حالتهم في الدوكس بتاعة النسخة اللي عندك قبل ما تعتمد عليهم.`,
-            when: R`لستة لتفاصيل، وتبديل الـ tabs أو الـ views، وتغيير ترتيب لستة، وفتح صورة كبيرة. وخليها قصيرة (200 لـ 300ms) وقليلة، واحترم reduced motion دايمًا.`,
-            mistakes: R`نفس الـ view-transition-name على كذا عنصر فمفيش حركة خالص. حركة طويلة بتخلي الموقع يحس إنه بطيء. تنسى reduced motion. تستدعي [[startViewTransition]] من غير ما تتأكد إنه موجود فالموقع يقع في المتصفحات اللي مش بتدعمه. والدالة اللي جوه async وبتجيب بيانات من السيرفر: الصفحة بتبقى متجمدة لحد ما تخلص، فهات البيانات الأول وبعدين ابدأ الحركة.`
-          },
-          teach: R`## صورة قبل، وصورة بعد، والمتصفح بيحرّك بينهم
-
-انت بتغيّر الـ DOM عادي، والمتصفح هو اللي بيعمل الحركة: بياخد لقطة للصفحة قبل التغيير، ويشغّل التغيير، وياخد لقطة بعده، ويعمل fade بينهم. المثال فيه دالة JavaScript للتغيير جوه نفس الصفحة، و ٤ سطور CSS. جرّبناه في Chrome 154 (headless عن طريق playwright): لستة فيها مربع صغير (الصورة) بنبدّلها بصفحة تفاصيل فيها نفس المربع كبير.
-
----
-
-## ١. الدالة [[show(view)]]
-
-~~~javascript
-function show(view) {
-  const update = () => document.querySelector('main').replaceChildren(view);
-  if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return update();
-  document.startViewTransition(update);
-}
-~~~
-
-### السطر ١: [[const update = () => ...]]
-
-[[update]] دالة صغيرة (arrow function) فيها التغيير نفسه ومبتتنفّذش دلوقتي. [[document.querySelector('main')]] بيجيب عنصر [[<main>]]، و [[replaceChildren(view)]] بيشيل كل اللي جواه ويحط [[view]] مكانه. شايلينها في متغير عشان نديها للمتصفح، وهو يقرر إمتى يشغّلها.
-
-### السطر ٢: الشرط الطويل
-
-نفكّه حتة حتة:
-
-| الحتة | معناها |
-|---|---|
-| [[document.startViewTransition]] | الدالة نفسها. لو المتصفح مش بيدعمها بتبقى [[undefined]] |
-| [[!]] | عكس: «لو مش موجودة» |
-| [[||]] | «أو» |
-| [[matchMedia('(prefers-reduced-motion: reduce)')]] | بيسأل: المستخدم طالب حركة أقل من إعدادات نظامه؟ |
-| [[.matches]] | [[true]] لو أيوه |
-| [[return update();]] | غيّر على طول من غير حركة واخرج من الدالة |
-
-### السطر ٣: [[document.startViewTransition(update)]]
-
-ده اللي بيشغّل الحركة. اختبرناه:
+المرجع هنا الكارت (اللينك نفسه مش عليه position)، فالـ ::after بقى طبقة شفافة فوق الكارت كله:
 
 ~~~text الناتج
-startViewTransition موجودة:              function
-مباشرة بعد show() هل المحتوى اتغيّر؟     false
-بعد ما الحركة خلصت:                       true
+::after  position: absolute   width: 400px   height: 318px
+العنصر اللي تحت الماوس فوق الصورة: A.stretched
 ~~~
 
-يعني [[update]] مبتتنفذش في نفس اللحظة: المتصفح بياخد اللقطة الأولى الأول وبعدين يشغّلها.
+[[document.elementFromPoint(x, y)]] دالة بترجع العنصر اللي فوق خالص عند النقطة دي. فوق الصورة رجعت اللينك، يعني الضغطة هناك بتفتح المنتج.
 
-وشغّلنا المتصفح تاني بإعداد reduced motion: مفيش transition اتعمل خالص، والمحتوى اتغيّر **في نفس اللحظة** ([[true]] مباشرة بعد [[show()]]).
+## ٥. [[.overlay { position: absolute; inset: 0; background: rgb(0 0 0 / 0.5); }]]
+
+طبقة غامقة على الأب كله. [[rgb(0 0 0 / 0.5)]] = أسود (أحمر وأخضر وأزرق صفر)، والرقم بعد [[/]] الشفافية: 0.5 يعني نص. جربناها في أب 300 × 200 relative: طلعت 300 × 200 بالظبط من نقطة (0، 0)، ولونها [[rgba(0, 0, 0, 0.5)]].
 
 ---
 
-## ٢. الـ CSS
+## التجربة: نشيل [[position: relative]] من الكارت
 
-### [[.product-42 .thumb { view-transition-name: product-42; }]]
+| | مع relative | من غيره |
+|---|---|---|
+| الشارة (ltr) | left 418.81، top 108 | left 1168.81، top 8 |
+| الشارة (rtl) | left 758، top 108 | left 8، top 8 |
+| مقاس الـ ::after | 400 × 318 | 1200 × 800 |
+| ضغطة برا الكارت خالص | div عادي | A.stretched |
 
-[[view-transition-name]] بيدّي العنصر اسم. لو عنصر ليه **نفس الاسم** قبل وبعد التغيير، المتصفح بيعتبرهم نفس الحاجة: بيحرّكه ويكبّره من مكانه القديم لمكانه الجديد بدل الـ fade. هنا الصورة الصغيرة في اللستة والكبيرة في التفاصيل الاتنين جوه عنصر عليه [[product-42]].
+من غير مرجع، الاتنين اتحسبوا من أول شاشة في الصفحة (اسمها initial containing block، قد الـ viewport): الشارة طارت لركن الصفحة، واللينك الوهمي غطى أول شاشة كلها.
 
-### الشجرة اللي المتصفح بيبنيها
+## الخلاصة
 
-أثناء الحركة سألنا المتصفح [[document.getAnimations()]] (كل الـ animations الشغالة دلوقتي):
+| القيمة | في الترتيب؟ | top و left بيتحسبوا من |
+|---|---|---|
+| [[static]] (الافتراضي) | آه | ملهمش تأثير |
+| [[relative]] | آه، ومكانه محجوز | مكانه هو |
+| [[absolute]] | لأ | أقرب جد position بتاعه مش static |
 
-~~~text الناتج (مختصر)
-::view-transition-group(root)        250ms
-::view-transition-group(product-42)  250ms
-::view-transition-old(root)          fade-out  200ms
-::view-transition-new(root)          fade-in   200ms
-::view-transition-old(product-42)    fade-out  250ms
-::view-transition-new(product-42)    fade-in   250ms
+- النمط: الأب [[relative]] والابن [[absolute]].
+- [[inset-inline-end]] بدل [[right]] عشان العربي والإنجليزي.`,
+          lines: [
+            R`الكارت: [[<article>]] لأنه منتج قايم بذاته، وهو اللي هيبقى المرجع للشارة.`,
+            R`الشارة «جديد»: [[<span>]] هيتطلّع من الترتيب ويتحط في ركن الكارت.`,
+            R`صورة المنتج بمقاسها الأصلي (400 × 300) عشان المتصفح يحجز مكانها قبل ما تتحمّل.`,
+            R`اسم المنتج لينك واحد بس، والـ [[::after]] بتاعه هيغطي الكارت كله.`,
+            R`قفلة الكارت، وبعدها الـ CSS اللي بيحط كل حاجة مكانها.`,
+            R`بداية الـ CSS: ٤ قواعد، كل واحدة لعنصر من اللي فوق.`,
+            "الكارت مرجع للأولاد الـ absolute، ومكانه هو متغيرش.",
+            "الشارة: فوق بنص rem، وعلى ناحية النهاية (يمين في الإنجليزي، شمال في العربي).",
+            "الكارت كله يبقى clickable: طبقة شفافة من اللينك مغطية الكارت، والـ HTML لسه لينك واحد صح.",
+            R`طبقة غامقة على الأب كله. [[inset: 0]] = top و right و bottom و left كلهم صفر.`,
+            R`قفلة الـ [[<style>]]، وكده المثال خلص.`
+          ],
+          sol: R`بـ [[position: relative]]: شارة «جديد» في ركن الكارت فوق، ناحية نهاية السطر (الشمال في صفحة rtl، واليمين في ltr) لأن [[inset-inline-end]] منطقية. بعد ما تمسحه: الشارة بتطير لركن الصفحة فوق خالص (أو لركن أقرب جد عليه position غير static)، لأن الـ absolute بيتحسب من أقرب أب positioned، ولو مفيش بيتحسب من الصفحة.
+
+والحاجة اللي ممكن متاخدش بالك منها: الـ [[::after]] بتاع اللينك برضه بقى [[inset: 0]] على أول شاشة من الصفحة كلها (الـ initial containing block)، يعني أي ضغطة في أي حتة فيها بتفتح المنتج، حتى برا الكارت. ترجّع الـ relative وتدوس على الصورة أو على فراغ في الكارت: اللينك بيشتغل والماوس بيبقى إيد، وده من [[::after]] اللي مغطي الكارت.
+
+لو اللينك مش بيشتغل لما تدوس على الصورة، غالبًا فيه عنصر تاني عليه position وجاي بعد اللينك في الـ HTML فهو فوقه، أو الـ card ناقصها relative.`
+        },
+        {
+          cmd: "sticky و fixed",
+          ref: [
+            { t: "MDN: position", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
+          title: "هيدر ثابت وانت بتعمل scroll",
+          desc: R`[[position: fixed]] ثابت في الشاشة نفسها مهما عملت scroll (هيدر، أو زرار واتساب في الركن). وبيطلع من الـ flow، فلازم تسيب مكانه بـ padding.
+
+[[position: sticky]] عادي في مكانه لحد ما يوصل لحد معين ([[top: 0]])، ساعتها يلزق وانت نازل، ويفضل لازق لحد ما أبوه يخلص. مش بياخد مكان حد ومش محتاج padding.`,
+          example: R`.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgb(255 255 255 / 0.8);
+  backdrop-filter: blur(12px);
+}
+.whatsapp {
+  position: fixed;
+  bottom: 1rem;
+  inset-inline-end: 1rem;
+}
+.table th { position: sticky; top: 0; }`,
+          try: R`اعمل صفحة طويلة بالهيدر ده، وبعدين حط [[overflow: hidden]] على div بيلف الصفحة كلها: الـ sticky هيبطّل. غيّره لـ [[overflow: clip]] وشوفه رجع يشتغل.`,
+          flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** صفحة تفاصيل كورس: grid بعمودين ([[1fr 22rem]])، والـ aside فيه كارت الحجز عليه [[position: sticky; top: 6rem]]، ومش بيلزق. الـ CSS مفيهوش overflow خالص. لاقي السبب.`, done: R`الـ aside بيتمطّ لطول الصف كله (align الافتراضي stretch)، فمفيش مكان يتحرك فيه: في المعمل طوله 3000 وبعد scroll 800 الـ top بقى -800. بعد [[align-self: start]] طوله قد محتواه وفضل لازق عند 96 (6rem).`, sol: R`~~~live 600 720
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكورس</title>
+<style>
+  body { margin: 0; font-family: system-ui; }
+  .page { display: grid; grid-template-columns: 1fr 22rem; gap: 16px; }
+  .content { height: 3000px; background: #f4f4f5; }
+  aside { align-self: start; position: sticky; top: 6rem; }
+  .book { padding: 16px; border: 1px solid #d4d4d8; }
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="content"><h1>الكورس</h1></div>
+  <aside aria-label="الحجز"><div class="book">احجز مكانك</div></aside>
+</main>
+</body>
+</html>
 ~~~
 
-| الاسم | هو إيه |
-|---|---|
-| [[root]] | اسم الصفحة كلها، موجود لوحده |
-| [[::view-transition-group(اسم)]] | الصندوق اللي بيتحرك ويتغير مقاسه من القديم للجديد |
-| [[::view-transition-old(اسم)]] | اللقطة القديمة، بتختفي (fade-out) |
-| [[::view-transition-new(اسم)]] | اللقطة الجديدة، بتظهر (fade-in) |
+**السبب:** الـ sticky بيتحرك جوه أبوه بس. وعناصر الـ grid افتراضيًا [[align-self: stretch]]، فالـ aside بيتمد قد الصف كله، 3000. فمفيش مكان فاضي يتحرك فيه، وهو لازق من الأول لآخر الصفحة بس مش ماشي معاك.
 
-دول pseudo-elements (عناصر وهمية المتصفح بيعملها فوق الصفحة، وتقدر تستايلها بـ CSS) وكل حركة فيهم animation عادية.
+**التصليح:** [[align-self: start]] بيخلي الـ aside قد محتواه، فبقى عنده مكان طويل يتحرك فيه جوه الصف.
 
-### [[::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }]]
+والمشكلة مش [[overflow]]، ده أول سبب الكل بيدوّر عليه. ولو عايز تفحص: اطبع ارتفاع الأب والعنصر. لو متساويين، مفيش sticky ممكن يحصل.
 
-الفاصلة بين selectorين = نفس القاعدة للاتنين. [[animation-duration]] مدة الحركة. والناتج فوق بيأكدها: الـ old والـ new بتوع [[root]] بقوا [[200ms]]، والباقي فضل على الافتراضي [[250ms]].
+و [[position: sticky]] هنا على الـ [[aside]] نفسه. ولو سبت الـ aside يتمد وحطيت sticky على [[.book]] هيشتغل برضه، لأن [[.book]] جوه أب طويل.
 
-### [[@view-transition { navigation: auto; }]]
-
-ده لحركة بين **صفحتين حقيقيتين** (لينك عادي بيفتح صفحة تانية، MPA). لازم يبقى في CSS الصفحتين، وهما على نفس الـ origin (نفس الدومين والبروتوكول والبورت). عملنا صفحتين على نفس السيرفر فيهم السطر ده ودوسنا على لينك: الصفحة الجديدة وصلها حدث [[pagereveal]] وفيه [[viewTransition]] موجود ([[true]])، يعني الحركة اشتغلت من غير ولا سطر JavaScript. و Chrome فهم السطر ده كـ [[CSSViewTransitionRule]].
-
-### [[@media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation: none; } }]]
-
-[[*]] = أي اسم. «لو المستخدم طالب حركة أقل، بطّل حركة كل الـ groups». الـ JavaScript فوق بيحمي الحركة اللي جوه الصفحة، والسطر ده بيحمي الحركة بين الصفحات (اللي مفيهاش JavaScript).
-
----
-
-## ٣. الغلطة اللي بتلغي كل حاجة: اسم متكرر
-
-حطينا عنصرين عليهم [[product-42]] في نفس الوقت وشغّلنا transition:
+**الغلطة الشائعة:** تحط [[height: 100%]] على الـ aside. نفس المشكلة.
 
 ~~~text الناتج
-[console] Unexpected duplicate view-transition-name: product-42
-ready ← InvalidStateError
-المحتوى اتغيّر؟ true
-~~~
-
-الحركة اتلغت، بس التغيير نفسه حصل. عشان كده في لستة منتجات كل عنصر لازم ياخد اسم مختلف ([[product-42]] و [[product-43]]...)، أو تحط الاسم على العنصر اللي اتداس بس قبل الحركة.
-
----
-
-## الخلاصة
-
-| الحتة | دورها |
-|---|---|
-| [[startViewTransition(update)]] | لقطة قبل، شغّل update، لقطة بعد، حرّك |
-| الشرط قبلها | متصفح قديم أو reduced motion: غيّر من غير حركة |
-| [[view-transition-name]] | اسم فريد = العنصر بيطير من مكان لمكان |
-| [[::view-transition-old/new/group]] | الحركة نفسها، وتتغير بـ CSS |
-| [[@view-transition]] | نفس الكلام بين صفحتين، في CSS الاتنين |
-
-- الحركة قصيرة (200 لـ 300ms) واحترم reduced motion دايمًا.
-- هات البيانات قبل [[startViewTransition]]، مش جوه [[update]]، عشان الصفحة متتجمدش.`,
-          lines: [
-            "بتعرض view جديد (لستة أو تفاصيل).",
-            "التغيير نفسه: بدّل محتوى الـ main.",
-            "المتصفح مش بيدعم، أو المستخدم طالب حركة أقل؟ غيّر من غير حركة.",
-            "غير كده: غيّر جوه view transition.",
-            "قفلة.",
-            "صورة المنتج ليها نفس الاسم في اللستة والتفاصيل، فبتطير من مكان للتاني.",
-            "الـ crossfade بتاع الصفحة كلها أسرع من الافتراضي.",
-            "حركة بين الصفحات الحقيقية (لازم في الصفحتين ونفس الـ origin).",
-            "اللي طالب حركة أقل: من غير animation."
-          ],
-          sol: R`من غير [[view-transition-name]]: الصفحة كلها بتعمل fade من اللستة للتفاصيل. مع الاسم على الصورة في الحالتين: الصورة بتتحرك وتكبر من مكانها في اللستة لمكانها في التفاصيل، والباقي fade. في Animations panel بـ 10% هتشوف الـ group بيتحرك والـ old والـ new بيتبدّلوا.
-
-لو مفيش أي حركة: غالبًا الاسم متكرر (كل صور اللستة عليها نفس الاسم)، أو متصفحك مش بيدعم، أو إعداد reduce motion شغال في نظامك. ولو الصفحة وقفت ثانية قبل الحركة: الـ update فيه fetch، هات البيانات قبل.`
-        },
-        {
-          cmd: "text-wrap",
-          ref: [
-            { t: "MDN: text-wrap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-wrap" },
-            { t: "MDN: line-clamp", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/line-clamp" },
-            { t: "MDN: text-wrap-style", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-wrap-style" },
-          ],
-          title: "عنوان سطره الأخير كلمة لوحدها",
-          practice: [
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** عنوان عربي طويل في كارت عرضه 260 و 300 و 340px، مرة من غير [[text-wrap]] ومرة بـ [[balance]]. قيس عرض كل سطر بـ [[Range.getClientRects()]] (أو بعينك من DevTools).`, done: R`جدول بعرض كل سطر في الحالات الست. ولاحظت إن في مقاسات العنوان أصلًا متوازن فمفيش فرق، وفي مقاسات تانية السطر الأخير بقى أطول بكتير مع [[balance]]، فالخاصية بتفرق في حالات معينة مش كلها.`,
-              sol: R`~~~live 600 720 wrap-compare.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>balance</title>
-<style>
-  h2 { font: 700 22px/1.5 system-ui, sans-serif; margin: 0 0 1rem; }
-  .bal { text-wrap: balance; }
-</style></head>
-<body>
-  <main id="m"><h1>قياس السطور</h1></main>
-  <script>
-    const text = "اتعلم إزاي تبني موقعك الأول من الصفر وتنشره للناس في أسبوع واحد بس";
-    function lines(el) {
-      const r = document.createRange();
-      r.selectNodeContents(el);
-      const rows = new Map();
-      for (const b of r.getClientRects()) {
-        const y = Math.round(b.top);
-        const old = rows.get(y) ?? [Infinity, -Infinity];
-        rows.set(y, [Math.min(old[0], b.left), Math.max(old[1], b.right)]);
-      }
-      return [...rows.values()].map(([a, b]) => Math.round(b - a));
-    }
-    for (const w of [260, 300, 340]) for (const cls of ["", "bal"]) {
-      const h = document.createElement("h2");
-      h.className = cls; h.style.inlineSize = w + "px"; h.textContent = text;
-      m.append(h);
-      console.log(w, cls || "عادي", lines(h).join(" | "));
-    }
-  $__lt/script>
-</body></html>
-~~~
-
-[[Range.getClientRects()]] بيرجّع مستطيل لكل قطعة نص، فبنجمّعهم حسب الـ [[top]] (نفس السطر)، وعرض السطر = أكبر [[right]] − أصغر [[left]].
-
-في [[text-wrap: balance]] المتصفح بيدوّر على أقل عرض يخلي النص يفضل في نفس عدد السطور، فكل السطور تبقى قريبة من بعض، والكلمة اليتيمة في الآخر بتختفي. عدد السطور مبيتغيرش.
-
-النتيجة تحت مش نفس الأثر في التلات مقاسات: عند 340 العادي ساب كلمة يتيمة 33px والـ balance رفعها لـ 236، وده فرق كبير. وعند 260 السطر الأخير كان 141 أصلًا، فالفرق أقل بكتير. وعنوان تاني اتجرّب على 260 ([[دليلك الكامل لتصميم صفحات الويب الحديثة]]) كان متوازن أصلًا، فالخاصية مغيّرتش فيه ولا بكسل. فمتعتبرهاش سحر: دي بتفرق في حالات معينة، وأهمها عنوان بيسيب كلمة لوحدها.
-
-الغلطة الشائعة: تحطها على [[body]] كله. الخاصية مكلفة ومتحددة بعدد سطور، فمحلها العناوين.
-
-~~~text الناتج (Chrome 156، عرض كل سطر بالبكسل، بخط system-ui)
-260 عادي    256 | 250 | 141
-260 balance 206 | 206 | 236
-300 عادي    289 | 278 | 80
-300 balance 206 | 206 | 236
-340 عادي    289 | 324 | 33
-340 balance 206 | 206 | 236
-عنوان تاني على 260: عادي 190 | 200، و balance 190 | 200
+                       ارتفاع aside     top بعد scroll 800
+قبل (stretch)          3000            -800
+بعد (align-self: start) 55            96   (6rem = 96)
+axe: 0 violations
 ~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** [[text-wrap: balance]] حطيته على فقرة ١٢ سطر ومفيش فرق. دوّر في MDN أو وثائق Chrome ليه.`, done: R`عرفت إن المتصفحات بتحدد عدد سطور للـ balance (في Chrome حوالي ٦ سطور، و Firefox أكتر) عشان الحساب تقيل، وإن الفقرات ليها [[pretty]] مش [[balance]]، وكتبت المصدر.`,
-              sol: R`~~~live 120 120 balance-limit.html
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** ٣ صفحات فيها نفس الهيدر [[sticky; top: 0]]: (١) [[body { overflow-x: hidden }]]، (٢) [[html, body { overflow-x: hidden }]]، (٣) [[html, body { overflow-x: clip }]]. بعد [[scrollTo(0, 1000)]] الهيدر هيبقى فين في كل واحدة؟`, done: R`(١) [[top]] = 0 (لازق، لأن overflow الـ body لوحده بيتنقل للـ viewport)، (٢) [[top]] = -1000 (الـ body بقى scroll container مبيعملش scroll، فالهيدر مشي مع الصفحة)، (٣) [[top]] = 0. وعرفت ليه [[overflow-x: clip]] هو البديل الآمن.`, sol: R`~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>حد الـ balance</title>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الهيدر</title>
 <style>
-  body { margin: 1rem; }
-  p { inline-size: 300px; font: 18px/1.5 system-ui, sans-serif; }
-  .b { text-wrap: balance; }
-</style></head>
-<body><main id="m"><h1>كام سطر؟</h1></main></body></html>
-~~~
-
-الإجابة: [[text-wrap: balance]] بيحسب بأكتر من محاولة (binary search على العرض)، وده مكلف، فالمتصفحات عاملة حد لعدد السطور. وثائق Chrome بتقول [[6]] سطور، و MDN بتقول إن المتصفحات بتحدد الحد عشان الأداء، و Firefox حده أكبر (حوالي 10). لو النص أطول من الحد، بيترصّ عادي كأن الخاصية مش موجودة، ومن غير أي تحذير.
-
-القياس تحت بيأكد الرقم في Chrome: فقرة 6 سطور اتغيرت، وفقرة 7 سطور لأ. فالفقرة الـ ١٢ سطر مفيهاش فرق.
-
-للفقرات استخدم [[text-wrap: pretty]]: أخف، ومبيحاولش يساوي كل السطور، وبيهتم بآخر السطور بس عشان ميبقاش كلمة يتيمة. و [[balance]] للعناوين.
-
-الغلطة الشائعة: تفتكر الخاصية «باظت» لأن المتصفح مش بيدعمها، فتزوّد JavaScript. بص الأول على عدد السطور. (حد الـ 6 اتقاس تحت، وحد Firefox من الوثائق ومتقاسش.)
-
-المصدر: Chrome for Developers «CSS text-wrap: balance» و MDN [[text-wrap]].
-
-~~~text الناتج (Chrome 156، عرض أطول سطر مع balance مقابل من غيره)
-3 سطور: آخر سطر من غير balance 88px، ومعاه 180px ← اتغيرت
-4 سطور: آخر سطر من غير balance 88px، ومعاه 233px ← اتغيرت
-5 سطور: آخر سطر من غير balance 88px، ومعاه 233px ← اتغيرت
-6 سطور: آخر سطر من غير balance 88px، ومعاه 233px ← اتغيرت
-7 سطور: آخر سطر من غير balance 88px، ومعاه 88px ← مفيش فرق
-8 سطور: آخر سطر من غير balance 88px، ومعاه 88px ← مفيش فرق
-12 سطور: آخر سطر من غير balance 88px، ومعاه 88px ← مفيش فرق
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت منتج: الاسم [[line-clamp-2]]، والسعر [[white-space: nowrap]] برقم وعملة ([[Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" })]])، والوصف [[text-wrap: pretty]]. جرّبه باسم ٣ سطور وسعر كبير.`, done: R`الاسم بيقف على سطرين بـ «…» وقارئ الشاشة لسه بيقرا الاسم كامل (القص شكل بس)، والسعر والعملة على سطر واحد مبيتقسموش، والكارت ارتفاعه ثابت مهما الاسم طال.`,
-              sol: R`~~~live 330 330 product-text.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>كارت منتج</title>
-<style>
-  body { font-family: system-ui, sans-serif; }
-  .card { inline-size: 240px; block-size: 200px; padding: 1rem; border: 1px solid #d1d5db; border-radius: 10px;
-          display: grid; grid-template-rows: auto auto 1fr; gap: .5rem; overflow: hidden; }
-  h2 { margin: 0; font-size: 1.1rem; line-height: 1.5;
-       display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-  .price { white-space: nowrap; font-weight: 700; margin: 0; }
-  .desc { margin: 0; text-wrap: pretty; color: #4b5563; }
-</style></head>
+  body { margin: 0; }
+  header { position: sticky; top: 0; background: #124; color: #fff; padding: 12px; }
+  main { height: 3000px; }
+</style>
+</head>
 <body>
-  <main><h1>المنتجات</h1>
-    <article class="card">
-      <h2 id="n">سماعة لاسلكية بعزل ضوضاء وبطارية طويلة وميكروفون واضح وعلبة شحن صغيرة</h2>
-      <p class="price" id="p"></p>
-      <p class="desc">صوت نقي ومريحة طول اليوم.</p>
-    </article>
-  </main>
-  <script>
-    p.textContent = new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(1234567.5);
-  $__lt/script>
-</body></html>
+<header>الهيدر</header>
+<main><h1>المحتوى</h1></main>
+</body>
+</html>
 ~~~
 
-- [[line-clamp-2]] في Tailwind بيطلع السطور دي بالظبط: [[display: -webkit-box]] و [[-webkit-box-orient: vertical]] و [[-webkit-line-clamp: 2]] و [[overflow: hidden]]. الأربعة لازم مع بعض. النص كله لسه في الـ DOM، و «…» رسم بس، فقارئ الشاشة بيقرا الاسم كامل.
-- [[white-space: nowrap]] بيمنع السعر والعملة ينقسموا على سطرين. [[Intl.NumberFormat]] بيدّي الأرقام العربي والفاصلة والعملة صح من غير ما تكتبهم بإيدك.
-- [[block-size: 200px]] ثابت، و [[grid-template-rows: auto auto 1fr]] بيحجز الباقي للوصف، فالكارت مبيطولش مع الاسم.
-- [[text-wrap: pretty]] بيتجنب كلمة يتيمة في آخر الوصف.
-
-الغلطة الشائعة: تقص الاسم بـ [[text.slice(0, 40) + "..."]] في JavaScript. قارئ الشاشة والبحث بيخسروا باقي الاسم، والقص مبيراعيش عرض الكارت.
-
-~~~text الناتج (Chrome 156)
-النص الكامل في الـ DOM: 69 حرف
-ارتفاع الاسم: 52.78125px (سطرين بـ line-height 1.5 على 17.6px)، و scrollHeight الحقيقي: 79px
-السعر: ١٬٢٣٤٬٥٦٧٫٥٠ ج.م.، وعدد سطوره: 1
-ارتفاع الكارت باسم قصير وطويل: 234 و 234
-axe: 0
-~~~` },
-          ],
-          desc: R`[[text-wrap: balance]] بيوزّع كلام العنوان على السطور بالتساوي، بدل سطر مليان وسطر فيه كلمة واحدة. و [[text-wrap: pretty]] للفقرات: بيحاول ميخليش كلمة لوحدها في آخر سطر.
-
-وفي Tailwind v4: [[text-balance]] و [[text-pretty]]. ومعاهم [[line-clamp-2]] لو عايز تقطع الكلام بعد سطرين بـ «…».`,
-          example: R`h1, h2, h3 { text-wrap: balance; }
-p, li, figcaption { text-wrap: pretty; }
-.price { white-space: nowrap; }
-.card-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-<h2 className="text-balance">عرض الصيف: خصم على كل السماعات والشواحن الأصلية</h2>
-<p className="text-pretty max-w-prose">...</p>
-<h3 className="line-clamp-2">اسم منتج طويل جدًا جاي من الداتابيز ومحدش عارف طوله</h3>`,
-          try: R`اعمل عنوان طويل في كارت عرضه 20rem، وغيّر عرض الشاشة لحد ما السطر الأخير يبقى كلمة واحدة. ضيف [[text-wrap: balance]] وشوف الفرق. وبعدين في DevTools اكتب في Console [[CSS.supports('text-wrap', 'pretty')]].`,
-          flag: "script",
-          deep: {
-            why: R`العناوين في الكروت والهيرو بتتقسم وحش على بعض الشاشات، والمصممين كانوا بيحطوا [[<br>]] بإيدهم (وده بيبوظ على شاشة تانية). سطر CSS بيحلها لكل المقاسات.`,
-            how: R`[[balance]] بيجرب عروض مختلفة ويختار اللي يخلي السطور قريبة من بعض، وعشان ده مكلّف المتصفحات بتطبقه على عدد سطور محدود (في Chrome حوالي 6)، فهو للعناوين والكلام القصير بس. والصندوق نفسه عرضه مبيتغيرش، الكلام بس اللي بيتوزع جواه.
-
-[[pretty]] أرخص: بيبص على آخر كام سطر ويحاول يتجنب كلمة لوحدها. ودعمه لسه مش في كل المتصفحات وقت كتابة الدرس، واللي مش بيدعمه بيتجاهله ويكسر عادي، فحطه من غير قلق.
-
-[[white-space: nowrap]] على حاجة مينفعش تتقسم (سعر بعملته، رقم تليفون). و [[line-clamp]] بيقطع بعد عدد سطور ويحط «…»، والصيغة الـ [[-webkit-]] هي اللي شغالة في كل المتصفحات لحد دلوقتي، و Tailwind بيكتبها لك.
-
-وكل ده بيشتغل مع العربي عادي لأنه بيكسر عند المسافات.`,
-            when: R`balance: كل العناوين (ممكن في الـ base styles مرة واحدة). pretty: الفقرات والـ captions. line-clamp: عناوين الكروت ووصف المنتجات اللي طولها مش معروف.`,
-            mistakes: R`balance على فقرات طويلة (مش هيشتغل أو هيبطّأ). [[<br>]] يدوي في العناوين. line-clamp من غير [[overflow: hidden]]. تقطع الكلام بـ JavaScript (substring) فيتقطع في نص كلمة، وقارئ الشاشة يقرا نص الكلام بس، مع line-clamp الكلام كله موجود وبيتقري.`
-          },
-          teach: R`## المتصفح هو اللي بيقرر الكلام يتكسر فين
-
-لما الكلام ميكفيش في سطر، المتصفح بيملا السطر الأول على الآخر، واللي فاضل ينزل تحت، حتى لو كلمة واحدة. المثال فيه ٤ سطور CSS بتغيّر ده، و ٣ سطور JSX بنفس الكلام بكلاسات Tailwind. قسنا الـ CSS في Chrome 154 (headless عن طريق playwright) بخط Arial، وبنينا كلاسات Tailwind في مشروع Vite 8 و Tailwind 4.3.3 حقيقي.
-
----
-
-## ١. [[h1, h2, h3 { text-wrap: balance; }]]
-
-الفواصل بين الـ selectors = نفس القاعدة للتلاتة. و [[text-wrap]] بتقول للمتصفح يكسر السطور إزاي، و [[balance]] = «وزّع الكلام على السطور بحيث تبقى قريبة من بعض في الطول».
-
-حطينا العنوان «عرض الصيف: خصم على كل السماعات والشواحن الأصلية» (24px) في كارت، وقسنا عرض كل سطر:
-
-| عرض الكارت | من غير balance | مع balance |
-|---|---|---|
-| 320px | سطر 311 وسطر 142 | سطر 229 وسطر 224 |
-| 300px | 229 و 224 | 229 و 224 |
-
-على 320 من غير balance السطر الأول مليان والتاني نصه فاضي. مع balance السطرين تقريبًا قد بعض. ولما الكارت بقى 300 الكسر الطبيعي جه متوازن لوحده، فالـ balance ملوش تأثير. وعرض الكارت نفسه فضل 320 في الحالتين: الكلام بس اللي بيتوزع جواه.
-
-المتصفح بيعمل ده بإنه يجرّب أكتر من عرض، وده مكلّف، فبيطبّقه على عدد سطور قليل بس (الـ docs بتاعة Chrome بتقول حوالي ٦). عشان كده للعناوين بس.
-
-## ٢. [[p, li, figcaption { text-wrap: pretty; }]]
-
-[[pretty]] للفقرات: بيبص على آخر السطور ويحاول ميسيبش كلمة لوحدها في الآخر. أرخص من balance فينفع على كلام طويل. [[li]] بند في لستة، و [[figcaption]] الكلام اللي تحت صورة.
-
-~~~text في Console بتاع Chrome 154
-CSS.supports('text-wrap', 'pretty')    → true
-CSS.supports('text-wrap', 'balance')   → true
-~~~
-
-[[CSS.supports]] بيسأل المتصفح «انت فاهم الخاصية دي بالقيمة دي؟». المتصفح اللي يرجّع [[false]] بيتجاهل السطر ويكسر عادي، فمفيش حاجة بتبوظ.
-
-> [[text-wrap]] في الحقيقة اختصار لخاصيتين: Chrome رجّع [[text-wrap-mode: wrap]] و [[text-wrap-style: balance]] لما حطينا [[text-wrap: balance]].
-
-## ٣. [[.price { white-space: nowrap; }]]
-
-[[white-space: nowrap]] = «متكسرش السطر جوه العنصر ده خالص». حطينا «1,250 جنيه» جوه جملة في صندوق ضيق (88px):
-
-| | السعر اتقسم على كام سطر؟ |
-|---|---|
-| من غير [[nowrap]] | 2 (الرقم في سطر و «جنيه» في سطر) |
-| مع [[nowrap]] | 1 |
-
-للسعر بعملته، ورقم التليفون، وأي حاجة معناها يبوظ لو اتقسمت.
-
-## ٤. [[.card-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }]]
-
-ده «اقطع بعد سطرين وحط …». ٤ خصائص لازم مع بعض:
-
-| الخاصية | ليه |
-|---|---|
-| [[display: -webkit-box]] | نوع صندوق قديم، هو اللي الـ line-clamp بيشتغل عليه |
-| [[-webkit-box-orient: vertical]] | العناصر جواه فوق بعض |
-| [[-webkit-line-clamp: 2]] | سطرين بس، وآخرهم «…» |
-| [[overflow: hidden]] | اللي بعد السطرين يستخبى |
-
-[[-webkit-]] اسمها prefix: اسم قديم بدأ في متصفحات WebKit، والصيغة دي هي اللي شغالة في كل المتصفحات.
-
-حطينا اسم منتج طويل (خط 20px و [[line-height: 1.5]]، يعني السطر 30px):
-
-~~~text getBoundingClientRect و scrollHeight
-الارتفاع الظاهر:     60   (سطرين × 30)
-الارتفاع الحقيقي:    90   (الكلام محتاج 3 سطور)
-~~~
-
-والكلام كله لسه موجود: اسم العنوان في الـ accessibility tree طلع الجملة كاملة، فقارئ الشاشة بيقرا كل حاجة. ده الفرق عن إنك تقطع بـ [[substring]] في JavaScript.
-
----
-
-## ٥. نفس الكلام بـ Tailwind
-
-~~~text JSX
-<h2 className="text-balance">...</h2>
-<p className="text-pretty max-w-prose">...</p>
-<h3 className="line-clamp-2">...</h3>
-~~~
-
-[[className]] هو [[class]] بس في React (لأن [[class]] كلمة محجوزة في JavaScript). بنينا الملف ده في مشروع Vite و Tailwind 4.3.3، وده الـ CSS اللي Tailwind طلّعه للكلاسات دي بالظبط:
-
-~~~text CSS الناتج من vite build
-.line-clamp-2 {
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-  overflow: hidden;
-}
-.max-w-prose {
-  max-width: 65ch;
-}
-.text-balance {
-  text-wrap: balance;
-}
-.text-pretty {
-  text-wrap: pretty;
-}
-~~~
-
-نفس الـ CSS اللي كتبناه بإيدنا فوق. وزيادة [[max-w-prose]]: أقصى عرض [[65ch]]، و [[ch]] عرض حرف الصفر في الخط ده، يعني حوالي ٦٥ حرف في السطر، وده عرض مريح للقراية.
-
----
-
-## الخلاصة
-
-| الحاجة | لمين | Tailwind |
-|---|---|---|
-| [[text-wrap: balance]] | العناوين والكلام القصير | [[text-balance]] |
-| [[text-wrap: pretty]] | الفقرات | [[text-pretty]] |
-| [[white-space: nowrap]] | سعر، تليفون | [[whitespace-nowrap]] |
-| line-clamp (٤ خصائص) | عنوان كارت طوله مش معروف | [[line-clamp-2]] |
-
-- balance مش بيغيّر عرض الصندوق، بيوزّع الكلام جواه بس.
-- متحطش [[<br>]] بإيدك في العناوين: بيبوظ على شاشة تانية.`,
-          lines: [
-            "كل العناوين: السطور متوازنة.",
-            "الفقرات: من غير كلمة يتيمة في الآخر (لو المتصفح بيدعم).",
-            "السعر ميتقسمش على سطرين.",
-            "العنوان سطرين بالكتير وبعدين «…».",
-            "نفس balance بـ Tailwind.",
-            R`نفس pretty، و [[max-w-prose]] عرض مريح للقراية.`,
-            "نفس القطع بعد سطرين بـ Tailwind."
-          ],
-          sol: R`من غير balance: على بعض العروض هتلاقي سطر مليان وتحته «الأصلية» لوحدها. مع balance: سطرين قريبين من بعض في الطول، وعرض الكارت زي ما هو.
-
-[[CSS.supports('text-wrap', 'pretty')]] بيرجع true في Chrome و Edge (ومتصفحات تانية حسب النسخة)، ولو رجع false ده معناه إن المتصفح هيتجاهل السطر، مش إن الصفحة هتبوظ.
-
-لو balance ملوش أي تأثير: غالبًا الكلام أطول من الحد اللي المتصفح بيطبقه عليه، أو العنصر [[display: inline]].`
-        },
-        {
-          cmd: "Baseline و @supports",
-          ref: [
-            { t: "web.dev: Baseline", url: "https://web.dev/baseline" },
-            { t: "web-features (GitHub)", url: "https://github.com/web-platform-dx/web-features" },
-            { t: "MDN: CSS.supports()", url: "https://developer.mozilla.org/en-US/docs/Web/API/CSS/supports_static" },
-            { t: "MDN: @supports", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@supports" },
-            { t: "MDN: anchor-name", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/anchor-name" },
-          ],
-          title: "الميزة دي أستخدمها ولا لسه؟ Baseline و caniuse و @supports",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[CSS.supports("(:has(a))")]] و [[CSS.supports("selector(:has(a))")]]: كل واحد بيرجّع إيه في Chrome 156؟ وليه؟`, done: R`الأول [[false]] والتاني [[true]] (اتقاس). الـ selectors لازم تتسأل بـ [[selector()]]، و [[@supports (:has(a))]] من غيرها دايمًا false فالـ fallback بيشتغل حتى في المتصفح اللي بيدعم.`,
-              sol: R`~~~live 120 120 supports.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>supports</title></head>
-<body>
-  <main><h1>افتح الكونسول</h1></main>
-  <script>
-    console.log(CSS.supports("(:has(a))"));
-    console.log(CSS.supports("selector(:has(a))"));
-  $__lt/script>
-</body></html>
-~~~
-
-[[CSS.supports("(...)")]] بيسأل عن تصريح [[property: value]]. [[:has(a)]] مش تصريح، فالمتصفح بيقرا الجملة كـ سؤال غلط ويرجّع [[false]]، حتى لو بيدعم [[:has()]]. عشان تسأل عن selector لازم تقول كده صراحة: [[selector(:has(a))]].
-
-في الـ CSS نفس الكلام:
+وضيف واحد من التلاتة في كل نسخة:
 
 ~~~css
-@supports selector(:has(a)) { /* هنا بيشتغل */ }
-@supports (:has(a))         { /* مبيشتغلش أبدًا */ }
+body { overflow-x: hidden; }             /* ١ */
+html, body { overflow-x: hidden; }       /* ٢ */
+html, body { overflow-x: clip; }         /* ٣ */
 ~~~
 
-الغلطة الخطيرة إن النسخة الغلط مبتكسرش حاجة ظاهرة: الـ fallback بيشتغل على طول، فكل الناس بتشوف الشكل القديم وانت فاكر إن الميزة شغالة. والعكس في [[@supports not (:has(a))]]: بتبقى دايمًا [[true]].
+**ليه الأولى شغالة والتانية لأ:** فيه قاعدة قديمة في CSS: لو [[html]] مفيهوش overflow، الـ overflow بتاع [[body]] بيتنقل للشاشة نفسها، والـ body بيفضل عادي. فالسطر ١ مبيعملش scroll container على الـ body.
 
-~~~text الناتج (Chrome 156)
-CSS.supports("(:has(a))")          false
-CSS.supports("selector(:has(a))")  true
+في السطر ٢: [[html]] عليه overflow، فده اللي بيتنقل للشاشة، و overflow الـ [[body]] بيفضل عليه. فالـ body بقى scroll container، طوله قد محتواه فمبيتحركش جواه، والهيدر لازق فيه ومش في الشاشة. فبيمشي مع الصفحة.
+
+و [[clip]] بيقص من غير ما يعمل scroll container خالص.
+
+**الغلطة الشائعة:** تكتب [[html, body]] مع بعض «عشان تضمن»، فتكسر كل sticky في الموقع.
+
+~~~text الناتج
+بعد scrollTo(0, 1000):
+١  body { overflow-x: hidden }        top = 0
+٢  html, body { overflow-x: hidden }  top = -1000
+٣  html, body { overflow-x: clip }    top = 0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** جدول بحالة Baseline من MDN لـ ٦ ميزات من الوحدات دي: [[:has()]]، و container queries، و [[@property]]، و [[animation-timeline]]، و View Transitions بين الصفحات، و [[text-wrap: pretty]].`, done: R`جدول فيه لكل ميزة: Widely ولا Newly ولا Limited، وأول نسخة في كل متصفح، وقرارك: «استخدمها عادي» أو «بـ fallback» أو «لسه»، وتاريخ اليوم اللي دوّرت فيه.`,
-              sol: R`الإجابة النموذجية (web-features 3.45 و browser-compat-data 8.1.8، تاريخ البحث 2026-11-04):
-
-| الميزة | Baseline | Chrome | Safari | Firefox | القرار |
-|---|---|---|---|---|---|
-| [[:has()]] | Widely | 105 | 15.4 | 121 | استخدمها عادي |
-| container queries | Widely | 105 | 16 | 110 | استخدمها عادي |
-| [[@property]] | Newly | 85 | 16.4 | 128 | عادي، والحركة تحسين |
-| [[animation-timeline]] | Newly | 115 | 26 | 159 | بـ [[@supports]] و fallback |
-| View Transitions بين الصفحات | Limited | 126 | 18.2 | لسه | تحسين بس، مفيش ضرر |
-| [[text-wrap: pretty]] | Limited | 117 | 26 | لسه | تحسين بس، مفيش ضرر |
-
-[[Widely]] يعني الميزة في كل المتصفحات الرئيسية من ٣٠ شهر على الأقل. [[Newly]] يعني لسه داخلة كل المتصفحات. [[Limited]] يعني لسه ناقصة في متصفح.
-
-القرار مش من الجدول لوحده، بيعتمد على إيه اللي بيحصل لو الميزة مش موجودة:
-
-- لو غيابها بيكسر حاجة (layout كامل معتمد على [[:has()]] مثلًا): لازم Widely أو fallback.
-- لو غيابها معناه شكل أبسط (حركة، توازن نص): استخدمها حتى لو Limited.
-
-الغلطة الشائعة: تقرا «Limited» فتشيل الميزة. [[text-wrap: pretty]] مفيهاش خطر: المتصفح اللي مش بيفهمها بيتجاهلها.
-
-القيم دي بتتغير بمرور الوقت، فاكتب تاريخ البحث جنب الجدول دايمًا.
-
-~~~text الناتج (من باكدج web-features)
-:has()             Widely (Newly من 2023-12-19، و Widely من 2026-06-19)
-container queries  Widely (Newly من 2023-02-14، و Widely من 2025-08-14)
-@property          Newly (Newly من 2024-07-09)
-animation-timeline Newly (Newly من 2026-10-27)
-cross-document VT  Limited
-text-wrap: pretty  Limited
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** navbar زجاجي: [[backdrop-filter: blur(12px)]] وخلفية شبه شفافة، و [[@supports not (backdrop-filter: blur(1px))]] بيدّيه خلفية شبه مصمتة. جرّب الـ fallback بإنك تشيل الخاصية من DevTools.`, done: R`في الحالتين الكلام 4.5:1 أو أكتر فوق أفتح وأغمق جزء في الصفحة تحته (اتقاس من DevTools)، والـ fallback شكله مقصود مش مكسور.`,
-              sol: R`~~~live 260 260 glass-nav.html
+            { lvl: 'تطبيق', t: R`**ابني:** navbar كبسولة عايمة لمدونة رحالة متخيلة: [[position: fixed; inset-inline: 0; top: 0.75rem]]، وجواه صندوق [[max-width]] ومدوّر بالكامل وخلفيته نص شفافة و [[backdrop-filter: blur(16px)]]، ومعاه [[@supports not (backdrop-filter: blur(1px))]] بخلفية مصمتة. والأقسام عليها [[scroll-margin-top]] قد الـ nav.`, done: R`لما تدوس على لينك [[#الأقسام]] العنوان بيبان كله تحت الـ nav مش مستخبي وراه (الـ top بتاع العنوان أكبر من أو يساوي bottom بتاع الـ nav)، والـ nav فاضل على بعد 12 من فوق بعد أي scroll، وأول محتوى في الصفحة مش مستخبي (padding-top على الـ main).`, sol: R`~~~live 370 370
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>navbar زجاجي</title>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الرحالة</title>
 <style>
-  body { margin: 0; font-family: system-ui, sans-serif; color: #111827; }
-  nav {
-    position: sticky; top: 0; padding: 1rem; color: #111827;
-    background: rgb(255 255 255 / .72);
-    backdrop-filter: blur(12px);
+  :root { --nav-h: 3.5rem; --nav-top: 0.75rem; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body { margin: 0; font-family: system-ui; }
+  .nav { position: fixed; inset-inline: 0; top: var(--nav-top); z-index: 10; padding-inline: 16px; }
+  .nav__box {
+    display: flex; align-items: center; gap: 16px;
+    max-width: 720px; height: var(--nav-h); margin-inline: auto; padding-inline: 20px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / .6);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 2px 8px rgb(0 0 0 / .15);
   }
   @supports not (backdrop-filter: blur(1px)) {
-    nav { background: rgb(255 255 255 / .94); }
+    .nav__box { background: #fff; }
   }
-  .sec { block-size: 60vh; }
-  .light { background: #ffffff; }
-  .dark  { background: #111827; }
-</style></head>
+  main { padding-block-start: calc(var(--nav-h) + var(--nav-top) * 2); padding-inline: 16px; }
+  section { min-height: 90vh; scroll-margin-top: calc(var(--nav-h) + var(--nav-top) * 2); }
+</style>
+</head>
 <body>
-  <nav aria-label="الرئيسية"><a href="#x">الرئيسية</a></nav>
-  <main id="x"><h1>صفحة</h1><div class="sec light"></div><div class="sec dark"></div></main>
-</body></html>
+<header class="nav">
+  <nav class="nav__box" aria-label="الأقسام">
+    <a href="#asia">آسيا</a>
+    <a href="#africa">أفريقيا</a>
+  </nav>
+</header>
+<main>
+  <h1>مدونة رحالة</h1>
+  <section id="asia"><h2>آسيا</h2></section>
+  <section id="africa"><h2>أفريقيا</h2></section>
+</main>
+</body>
+</html>
 ~~~
 
-الخلفية شبه شفافة، فالنص فوق خلفية بتتغير مع الـ scroll. القياس لازم يتعمل على أسوأ حالة: أغمق جزء تحت الـ navbar. الخلفية النهائية = [[.72 × أبيض + .28 × اللي تحت]]، فلما يعدّي فوق [[#111827]]:
+**اللي بيحل مشكلة العنصر الـ fixed:** أي عنصر [[fixed]] بيخرج من الصفحة، فالمحتوى بيبدأ تحته.
 
-- مع الـ blur: ‏rgb(188, 190, 195) تقريبًا، والنص [[#111827]] عليها 9.54:1.
-- الـ fallback ‏.94: ‏rgb(241, 241, 242) تقريبًا، والنسبة 15.72:1.
-- فوق الجزء الأبيض: 17.74:1.
+- [[padding-block-start]] على [[main]]: أول محتوى يبدأ بعد الـ nav.
+- [[scroll-margin-top]] على الأقسام: لما لينك [[#asia]] ينزل، المتصفح بيسيب المسافة دي. من غيرها العنوان بيقف تحت الـ nav ومستخبي.
+- [[--nav-h]] متغير واحد، فلو الارتفاع اتغيّر كله يمشي معاه.
+- [[@supports not (backdrop-filter: blur(1px))]]: المتصفح اللي مش بيدعم البلور ياخد خلفية مصمتة، عشان الكلام يفضل مقروء.
 
-[[@supports not (...)]] بيتطبق بس في المتصفح اللي مش بيدعم، وبيرفع الشفافية عشان النص يفضل مقري من غير الـ blur. اللي عايز يجرّبه: احذف [[backdrop-filter]] من DevTools، أو بدّل [[not]] مؤقتًا.
+**الغلطة الشائعة:** تحط الـ [[max-width]] والتدوير على [[.nav]] نفسه. [[inset-inline: 0]] هو اللي بيعرّضه، والصندوق جواه هو الكبسولة.
 
-الغلطة الشائعة: تقيس التباين فوق الجزء الأبيض بس، وتسيب النص يضيع فوق صورة غامقة.
-
-~~~text الناتج (محسوب بمعادلة WCAG، ومقروء من Chrome 156)
-background الـ nav: rgba(255, 255, 255, 0.72)
-backdrop-filter: blur(12px)
-مع إجبار الـ fallback: background = rgba(255, 255, 255, 0.94)
-axe: 0
+~~~text الناتج
+بعد الضغط على «أفريقيا»:
+bottom الـ nav = 68   top عنوان القسم = 79.78   (العنوان ظاهر)
+top الـ nav بعد الـ scroll = 12   (0.75rem = 12)
+top أول h1 قبل أي scroll = 101.44   وbottom الـ nav = 68
+الـ URL: #africa
+overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل [[npx browserslist "baseline widely available"]] و [[npx browserslist "defaults"]] في مشروع، وقارن اللستتين.`, done: R`عدد المتصفحات والنسخ في كل واحدة، وأقدم نسخة Safari في كل لستة، وجملة: الفرق ده بيأثر على إيه (prefixes من autoprefixer، وتحويل CSS في Lightning CSS أو Vite).`,
-              sol: R`~~~bash
-mkdir bl-test && cd bl-test && npm init -y
-npm i -D browserslist baseline-browser-mapping
-npx browserslist "baseline widely available"
-npx browserslist "defaults"
+            { lvl: 'تطبيق', t: R`**ابني:** جدول طلبات طويل جوه صندوق [[max-height: 20rem; overflow: auto]] ورأسه [[th { position: sticky; top: 0 }]] بخلفية، وتحت الشاشة على الموبايل شريط تنقل [[fixed]] بـ [[padding-bottom: env(safe-area-inset-bottom)]].`, done: R`لما تعمل scroll **جوه** صندوق الجدول، الـ th بيفضل فوق الصندوق (هنا الـ overflow هو المقصود: الصندوق نفسه بيعمل scroll). وآخر صف في الصفحة باين فوق الشريط اللي تحت مش مستخبي تحته.`, sol: R`~~~live 540 540
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الطلبات</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px 16px calc(64px + env(safe-area-inset-bottom)); font-family: system-ui; }
+  .scroll { max-height: 20rem; overflow: auto; border: 1px solid #d4d4d8; }
+  table { border-collapse: separate; border-spacing: 0; width: 100%; }
+  th, td { padding: 8px; text-align: start; }
+  th { position: sticky; top: 0; background: #f4f4f5; }
+  .tabs {
+    position: fixed; inset-inline: 0; bottom: 0;
+    display: flex; justify-content: space-around;
+    padding-block: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    background: #fff; border-block-start: 1px solid #d4d4d8;
+  }
+  .tabs a { padding: 10px; }
+</style>
+</head>
+<body>
+<main>
+<h1>الطلبات</h1>
+<div class="scroll" tabindex="0" role="region" aria-label="جدول الطلبات">
+  <table>
+    <thead><tr><th scope="col">الرقم</th><th scope="col">العميل</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+<p id="last">آخر سطر في الصفحة</p>
+</main>
+<nav class="tabs" aria-label="التنقل">
+  <a href="#a">الرئيسية</a><a href="#b">الطلبات</a><a href="#c">حسابي</a>
+</nav>
+<script>
+  let html = '';
+  for (let i = 1; i <= 40; i++) html += '<tr><td>' + i + '</td><td>عميل ' + i + '</td></tr>';
+  document.querySelector('#rows').innerHTML = html;
+$__lt/script>
+</body>
+</html>
 ~~~
 
-~~~js compare.mjs: يعدّ ويقارن اللستتين
-import browserslist from "browserslist";
-const a = browserslist("baseline widely available");
-const b = browserslist("defaults");
-const old = l => l.filter(x => x.startsWith("safari ")).map(x => x.split(" ")[1]).sort((p, q) => parseFloat(p) - parseFloat(q))[0];
-console.log("baseline:", a.length, "نسخة، أقدم Safari", old(a));
-console.log("defaults:", b.length, "نسخة، أقدم Safari", old(b));
-console.log("في defaults بس:", b.filter(x => !a.includes(x)).length);
-console.log("في baseline بس:", a.filter(x => !b.includes(x)).length);
+**مين بيلزق في مين:** الـ sticky بيلزق في أقرب أب بيعمل scroll. وهنا [[.scroll]] هو اللي بيعمل scroll فعلًا، فالعنوان بيلزق فوقه، وده المقصود. نفس الـ [[overflow]] اللي بيكسر هيدر الصفحة بيبقى هو الحل هنا.
+
+- [[env(safe-area-inset-bottom)]]: المسافة اللي نظام الموبايل بيحجزها لخط الـ home. على كمبيوتر قيمتها 0. الرقم الحقيقي مبيتشافش غير على جهاز فيه الخط ده.
+- [[padding-bottom]] على الـ [[body]]: عشان آخر سطر في الصفحة ميستخباش تحت الشريط.
+
+**الغلطة الشائعة:** تنسى المسافة دي، فآخر زرار في الصفحة يبقى تحت الشريط ومستحيل يتضغط.
+
+~~~text الناتج
+على 360×640:
+top العنوان قبل وبعد scroll 300 جوه الصندوق: 102.88 و 102.88
+بعد ما نزلنا لآخر الصفحة:
+bottom آخر سطر = 458.88   top الشريط = 582   (السطر فوق الشريط)
+overflow: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الهيدر (ارتفاعه 64) مرة [[fixed]] ومرة [[sticky]]، وتحته [[<h1>]]. قيس [[top]] بتاع الـ h1 قبل أي scroll في الاتنين، وصلّح نسخة الـ fixed.`, done: R`مع sticky الـ h1 بيبدأ تحت الهيدر (top أكبر من أو يساوي 64). مع fixed الـ h1 بيبدأ من فوق خالص تحت الهيدر ومستخبي (top أقل من 64)، والتصليح [[padding-top: 64px]] على الـ body أو متغير [[--nav-h]] بيرجّعه 64 أو أكتر.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الهيدر</title>
+<style>
+  :root { --nav-h: 64px; }
+  body { margin: 0; padding-block-start: var(--nav-h); }
+  header { position: fixed; inset-inline: 0; top: 0; height: var(--nav-h); background: #124; color: #fff; }
+  h1 { margin: 0; }
+</style>
+</head>
+<body>
+<header>الهيدر</header>
+<main><h1>العنوان</h1></main>
+</body>
+</html>
 ~~~
 
-[[browserslist]] بيحوّل جملة لستة نسخ متصفحات حقيقية من بيانات caniuse. [[defaults]] معناها: [[> 0.5%, last 2 versions, Firefox ESR, not dead]]. [[baseline widely available]] معناها: كل النسخ اللي بتدعم اللي بقى Widely، أي من حوالي ٣٠ شهر.
+**الفرق:**
 
-الفرق ده مش رقم نظري: Autoprefixer بيحدد منه أي [[-webkit-]] يتكتب، و Lightning CSS و Vite بيحددوا منه أي CSS حديث يتحوّل لشكل قديم، فلستة أقدم معناها ملف CSS أكبر وتحويلات أكتر. والملاحظة اللي بتفاجئ: لستة baseline هنا أكبر وأقدم من [[defaults]]، لأن [[defaults]] بتجري ورا النسخ الحديثة والمنتشرة، و baseline بتشمل كل نسخة دعمت الميزات دي من ٣٠ شهر.
+- [[sticky]] لسه واخد مكانه في الصفحة، فاللي بعده بييجي تحته. وبيلزق بس لما توصل له.
+- [[fixed]] طالع من الصفحة خالص، فالعناصر بتتصرف كأنه مش موجود، والعنوان بيبدأ من فوق خالص ومستخبي تحته.
 
-الغلطة الشائعة: تكتب اللستة في [[package.json]] ومتراجعهاش، أو تفترض إن [[defaults]] هي الأمان. اتفق مع الفريق على رقم، وراجعه مرة في السنة.
+**التصليح:** مسافة قد ارتفاع الهيدر على [[body]]، ومن متغير واحد. لو الارتفاع رقم في مكان ورقم في مكان تاني، هيختلفوا أول تعديل.
 
-~~~text الناتج (على الجهاز، browserslist من الـ npm)
-baseline: 136 نسخة، أقدم Safari 17.4
-defaults: 36 نسخة، أقدم Safari 26.6
-في defaults بس: 12
-في baseline بس: 112
+و [[inset-inline: 0]] لازمة: الـ fixed عرضه قد محتواه لو مفيش طرفين محددين.
+
+**الغلطة الشائعة:** تستخدم [[fixed]] وانت عايز [[sticky]]. لو الهيدر في أول الصفحة ومش عايز حاجة خاصة، [[sticky]] أبسط ومن غير تعويض.
+
+~~~text الناتج
+                        top الـ h1
+sticky                  64
+fixed من غير تعويض      0  (مستخبي تحت الهيدر)
+fixed بعد التصليح       64
 ~~~` },
           ],
-          desc: R`Baseline علامة بتلاقيها في MDN و caniuse: «Newly available» يعني الميزة شغالة في آخر نسخة من Chrome و Edge و Firefox و Safari (ديسكتوب وموبايل)، و «Widely available» يعني عدّى على ده 30 شهر، فأغلب الناس عندهم نسخة بتدعمها.
-
-caniuse.com بيدّيك التفاصيل: أنهي نسخة، ونسبة المستخدمين، والمشاكل المعروفة. و [[@supports]] في CSS (و [[CSS.supports()]] في JavaScript) بيسأل المتصفح نفسه: لو بتدعم الحاجة دي طبّق ده.
-
-و browserslist (في [[package.json]]) بيقول لأدوات الـ build (autoprefixer و Lightning CSS و Babel وغيرهم) إنت بتدعم أنهي متصفحات، فيضيفوا fallbacks على قدها.`,
-          example: R`.card { background: white; }
-@supports (background: color-mix(in oklch, red, blue)) {
-  .card { background: color-mix(in oklch, var(--color-brand) 8%, white); }
-}
-@supports not selector(:has(a)) {
-  .has-fallback { display: block; }
-}
-if (CSS.supports('anchor-name', '--x')) document.documentElement.classList.add('has-anchor');
-// package.json
-"browserslist": ["baseline widely available"]`,
-          try: R`في أي فولدر فيه Node شغّل [[npx browserslist "baseline widely available"]] و [[npx browserslist --coverage "baseline widely available"]] و [[npx browserslist "defaults"]]. وبعدين افتح MDN لـ [[text-wrap]] و [[:has()]] وبص على علامة Baseline فوق كل صفحة.`,
-          flag: "script",
           deep: {
-            why: R`كل شهر فيه ميزة CSS جديدة، وسؤال «أستخدمها في الشغل؟» كان محتاج تفتح caniuse وتحسب نسب. Baseline بتدّيك إجابة سريعة، و @supports بيخليك تستخدم الجديد النهارده من غير ما تكسر القديم. ودا بيتسأل في الانترفيو: «بتتعامل إزاي مع ميزة مش مدعومة في كل المتصفحات؟»`,
-            how: R`progressive enhancement: اكتب الأساس اللي شغال في كل حتة الأول (خلفية بيضا)، وبعدين جوه [[@supports]] التحسين. المتصفح اللي مش فاهم الشرط بيتجاهل البلوك كله. و [[selector()]] جوه @supports بيسأل عن selector (زي [[:has()]]). و [[not]] للـ fallback.
+            why: R`الهيدر الثابت والأزرار العايمة موجودين في كل موقع تقريبًا. وأشهر شكوى: «الـ sticky مش شغال»، وليها أسباب محددة لو عرفتها مش هتضيّع ساعة.`,
+            how: R`[[fixed]]: الـ containing block بتاعه الشاشة، فبيفضل مكانه والصفحة بتتحرك تحته. وبيطلع من الـ flow، فلو هيدر fixed ارتفاعه 64، أول 64 من المحتوى هتستخبى تحته، ولازم [[padding-top]] على الـ body أو الـ main. والاستثناء المهم: لو أي جد عليه [[transform]] أو [[filter]] أو [[backdrop-filter]] أو [[will-change: transform]]، الـ fixed بيتحسب منه هو مش من الشاشة. ودا بيحصل كتير لما تحط مودال fixed جوه عنصر عليه animation بـ framer-motion (بيستخدم transform)، فالمودال يطلع جوه الكارت. الحل portal لآخر الـ body (Radix بيعمل ده).
 
-في CSS أصلًا المتصفح بيتجاهل أي خاصية مش فاهمها، فكتير كفاية تكتب السطرين ورا بعض: [[color: red; color: oklch(...)]] والقديم ياخد الأول والجديد ياخد التاني. @supports بتحتاجها لما التحسين محتاج أكتر من خاصية أو بيغيّر الـ layout.
+[[sticky]]: هجين. بيتصرف relative لحد ما الـ scroll يوصّله للحد اللي حددته (لازم [[top]] أو [[bottom]]، من غيرهم مش هيلزق). وبيلزق جوه حدود أبوه بس: لما الأب يخلص يمشي معاه، عشان كده sticky جوه div قد ارتفاعه بالظبط مش هيعمل حاجة.
 
-browserslist بيقبل queries زي [[defaults]] (أكتر من 0.5% استخدام وآخر نسختين ومتصفحات مش ميتة)، و [[baseline widely available]]، و [[baseline 2024]]. البيانات جاية من caniuse-lite، فحدّثها كل فترة بـ [[npx update-browserslist-db@latest]].
+والسبب التاني: sticky بيلزق بالنسبة لأقرب جد «بيعمل scroll». أي جد عليه [[overflow: hidden]] أو [[auto]] بيبقى هو الـ scroll container، ولو هو نفسه مش بيعمل scroll، الـ sticky مش هيتحرك. [[overflow: clip]] بيقص زي hidden بس مش بيعمل scroll container.
 
-و Vite من نسخة 7 الـ build target الافتراضي بتاعه [[baseline-widely-available]]. و Tailwind v4 نفسه مبني على CSS حديث (cascade layers و [[@property]] و [[color-mix]])، فمحتاج متصفحات حديثة (Safari 16.4 و Chrome 111 و Firefox 128 تقريبًا وطالع)، ولو لازم تدعم أقدم من كده خليك على v3.`,
-            when: R`قبل ما تستخدم أي ميزة CSS أو JavaScript جديدة في مشروع حقيقي: Widely available استخدمها عادي. Newly available استخدمها كتحسين مع fallback. لسه مش Baseline: @supports أو استنى. وحط browserslist في أول المشروع عشان كل الأدوات تتفق.`,
-            mistakes: R`تستخدم ميزة لأنها شغالة في Chrome عندك (نص مستخدمين الموبايل في مصر وغيرها على Safari أو متصفحات قديمة). @supports على حاجة كل المتصفحات بتدعمها (كود زيادة على الفاضي). تنسى تحدّث caniuse-lite فالـ build يستهدف متصفحات قديمة. تكتب الـ fallback بعد الجديد (الترتيب مهم: الأساس الأول). وتفتكر إن autoprefixer بيضيف الميزة نفسها: هو بيضيف prefixes بس، مش polyfills.`
+و [[backdrop-filter]] على الهيدر شكله حلو بس تقيل على الموبايلات الضعيفة، لأن المتصفح بيعيد حساب الـ blur مع كل scroll.`,
+            when: "sticky للهيدر والـ sidebar وعناوين الجداول وعناوين الأقسام في قايمة طويلة. fixed للأزرار العايمة، والمودال والـ overlay (أحسن في portal)، والإشعارات.",
+            mistakes: R`sticky من غير [[top]]. جد عليه [[overflow-x: hidden]] (اتحط عشان يمنع scroll أفقي) فالـ sticky يموت: استخدم [[overflow-x: clip]]. وهيدر fixed من غير padding فأول عنوان في الصفحة مستخبي تحته.`
           },
-          teach: R`## ٣ أدوات لسؤال واحد: «الميزة دي أستخدمها؟»
+          teach: R`## عنصرين بيفضلوا ظاهرين وانت بتعمل scroll
 
-| الأداة | بتسأل مين | إمتى |
+حطينا المثال في صفحة [[dir="rtl"]] عرضها 1200 وارتفاعها 800، فيها الهيدر، وبعده محتوى طوله 3000، وزرار الواتساب. وقسنا مكان كل عنصر **على الشاشة** بـ [[getBoundingClientRect()]] قبل الـ scroll وبعد [[scrollTo(0, 1000)]] (يعني نزلنا 1000px).
+
+---
+
+## ١. الهيدر
+
+~~~text style.css
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgb(255 255 255 / 0.8);
+  backdrop-filter: blur(12px);
+}
+~~~
+
+- [[position: sticky]]: العنصر في مكانه العادي، لحد ما الـ scroll يوصّله للحد اللي تحت.
+- [[top: 0]]: الحد = أول الشاشة. لما الهيدر يوصل له يلزق. من غير [[top]] الـ sticky مبيعملش حاجة.
+- [[z-index: 10]]: يبقى فوق المحتوى اللي بيعدّي تحته (الدرس الجاي).
+- [[rgb(255 255 255 / 0.8)]]: أبيض شفافيته 80%.
+- [[backdrop-filter: blur(12px)]]: يغبّش اللي **ورا** العنصر بـ 12px. أبيض نص شفاف + blur = الشكل «الزجاجي».
+
+~~~text الناتج
+قبل الـ scroll:      header top: 0
+بعد scroll 1000:    header top: 0   (لازق)
+~~~
+
+## ٢. زرار الواتساب
+
+~~~text style.css
+.whatsapp {
+  position: fixed;
+  bottom: 1rem;
+  inset-inline-end: 1rem;
+}
+~~~
+
+[[fixed]] = المرجع الشاشة نفسها. [[bottom: 1rem]] = 16px من تحت، و [[inset-inline-end]] = 16px من نهاية السطر (الشمال في rtl).
+
+~~~text الناتج (قبل وبعد الـ scroll)
+whatsapp left: 16   top: 766   width: 37.72   height: 18
+~~~
+
+766 + 18 = 784 = 800 - 16. ونفس الرقم بعد ما نزلنا 1000: مبيتحركش.
+
+## ٣. [[.table th { position: sticky; top: 0; }]]
+
+[[th]] خانة العنوان في الجدول. sticky عليها = رأس الجدول يفضل ظاهر وانت نازل في الصفوف، بس جوه حدود الجدول (sticky بيلزق جوه أبوه بس).
+
+---
+
+## التجربة: [[overflow]] على div بيلف الصفحة
+
+لفّينا كل حاجة في [[<div class="wrap">]] وجربنا ٣ قيم:
+
+| الـ wrap | header top بعد scroll 1000 | النتيجة |
 |---|---|---|
-| Baseline و caniuse | بيانات عن كل المتصفحات | قبل ما تكتب الكود |
-| [[@supports]] و [[CSS.supports()]] | المتصفح اللي فاتح الصفحة دلوقتي | وقت التشغيل |
-| browserslist | أدوات الـ build | وقت الـ build |
+| من غير overflow | 0 | لازق |
+| [[overflow: hidden]] | -1000 | مشي مع الصفحة واختفى |
+| [[overflow: clip]] | 0 | لازق |
 
-المثال فيه الـ ٣. شغّلنا الـ CSS والـ JavaScript في Chrome 154 (headless عن طريق playwright)، و browserslist 4.29.3 من الترمنال (بيانات caniuse-lite نسخة 1.0.30001814).
+ليه؟ [[overflow: hidden]] بيخلي الـ div ده **scroll container** (عنصر ممكن يعمل scroll جواه)، والـ sticky بيلزق بالنسبة لأقرب scroll container. والـ div نفسه مبيعملش scroll (الصفحة هي اللي بتتحرك)، فالهيدر مالقاش حاجة يلزق فيها. [[overflow: clip]] بيقص زي hidden بالظبط، بس مش بيعمل scroll container.
+
+## فخ الـ fixed: [[transform]] على جد
+
+حطينا عنصر [[position: fixed; inset: 0]] جوه div عليه [[transform: translateY(0)]] (transform مبيحركش حاجة، بس موجود):
+
+~~~text الناتج
+المتوقع:  0، 0، 1200 × 800 (الشاشة كلها)
+الفعلي:   left 100، top 300، 300 × 200 (قد الـ div)
+~~~
+
+أي [[transform]] أو [[filter]] على جد بيخليه هو المرجع بدل الشاشة. عشان كده المودال بيتحط في portal في آخر الـ body.
+
+## الخلاصة
+
+| | في الترتيب؟ | بيلزق في |
+|---|---|---|
+| [[sticky]] | آه، ومحتاج [[top]] | أقرب scroll container، جوه حدود أبوه |
+| [[fixed]] | لأ، فاحجز مكانه بـ padding | الشاشة (إلا لو جد عليه transform أو filter) |
+
+- sticky مش شغال؟ دوّر على [[top]] ناقص، أو أب قد الهيدر بس، أو [[overflow]] على جد. وبدل [[overflow-x: hidden]] استخدم [[overflow-x: clip]].`,
+          lines: [
+            R`هيدر الموقع: هنخليه يلزق فوق وانت نازل من غير ما ياخد مكان حد.`,
+            "sticky: في مكانه العادي لحد ما يوصل للحد...",
+            "...اللي هو أول الشاشة، وساعتها يلزق.",
+            "فوق المحتوى اللي بيعدّي تحته.",
+            "خلفية بيضا نص شفافة.",
+            "blur للي تحته: الشكل «الزجاجي» المشهور.",
+            R`قفلة [[.site-header]]، والزرار العايم جاي بعده.`,
+            R`زرار واتساب عايم: هيفضل في ركن الشاشة مهما عملت scroll.`,
+            "ثابت في الشاشة مهما عملت scroll.",
+            R`16px من تحت الشاشة (وعلى موبايل فيه شق زوّد [[env(safe-area-inset-bottom)]] عليها).`,
+            "وعلى ناحية النهاية (بيتقلب في العربي).",
+            R`قفلة [[.whatsapp]]، وآخر سطر لعناوين الجداول.`,
+            "رأس الجدول يفضل ظاهر وانت نازل في الصفوف."
+          ],
+          sol: R`الأول الهيدر بيلزق فوق وانت بتعمل scroll، ولما تنزل تحته الكلام بيبان مغبّش ورا الخلفية النص شفافة. بعد [[overflow: hidden]] على الـ div اللي بيلف الصفحة: الهيدر بيمشي مع الصفحة ويختفي فوق زي أي عنصر عادي. السبب إن [[overflow: hidden]] بيخلي الـ div ده scroll container، فالـ sticky بيلزق جواه هو، وهو نفسه مش بيعمل scroll (الصفحة هي اللي بتعمل)، فمفيش حاجة تحصل.
+
+مع [[overflow: clip]]: الهيدر رجع يلزق. [[clip]] بيقص اللي طالع برا زي hidden بالظبط، بس من غير ما يعمل scroll container. زرار الواتساب ([[fixed]]) في الحالات التلاتة ثابت في ركن الشاشة (تحت ناحية الشمال في rtl).
+
+لو الـ sticky مش شغال من الأول خالص، الأسباب المعتادة: ناسي [[top: 0]]، أو الأب المباشر للهيدر طوله قد الهيدر بس (sticky بيلزق جوه أبوه بس)، أو فيه [[overflow]] على أي جد فوق.`
+        },
+        {
+          cmd: "z-index",
+          ref: [
+            { t: "MDN: z-index", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/z-index" },
+            { t: "MDN: translateY()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/transform-function/translateY" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
+          title: "مين فوق مين: الطبقات في الصفحة",
+          desc: R`[[z-index]] بيحدد مين فوق مين، بس بيشتغل على عنصر position بتاعه مش static (أو ابن flex أو grid). والأهم: المقارنة بتحصل جوه نفس الـ stacking context بس.
+
+الـ stacking context زي «طبقة مقفولة»: كل اللي جواها بيترتب مع بعض، وبعدين الطبقة كلها بتترتب مع اللي برا كوحدة واحدة. فابن عليه 9999 جوه أب عليه [[z-index: 1]] عمره ما هيطلع فوق عنصر برا عليه 2.`,
+          example: R`<header class="header">
+  <div class="dropdown">قايمة</div>
+</header>
+<main class="hero">...</main>
+<style>
+  .header { position: relative; z-index: 1; }
+  .dropdown { position: absolute; z-index: 9999; }
+  .hero { position: relative; z-index: 2; }
+  .card { isolation: isolate; }
+  .fade-in { opacity: 0.99; transform: translateY(0); }
+</style>`,
+          try: R`اعمل الكود ده وشوف القايمة مستخبية تحت الهيرو رغم الـ 9999. غيّر z-index الهيدر لـ 3 وشوفها ظهرت. وبعدين ضيف [[opacity: 0.99]] على الهيدر من غير z-index وشوف إنه عمل طبقة جديدة برضه.`,
+          flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** كارت عليه [[transform: translateY(-4px)]] عند الـ hover، وجواه قايمة [[absolute; z-index: 50]] بتنزل على الكارت اللي بعده (اللي عليه نفس الـ hover). لما تقف على الكارت الأول القايمة هتبان؟ ولما الماوس يروح على القايمة نفسها؟`, done: R`كتبت توقعك، وجرّبت: الـ transform عمل stacking context للكارت، فالقايمة اتحبست جواه، والكارت اللي بعده (جاي بعده في الـ HTML وفي نفس المستوى) بيغطيها. والحل [[position: relative; z-index: 1]] على الكارت اللي عليه hover أو [[:focus-within]]، أو portal.`, sol: R`~~~live 240 240
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكروت</title>
+<style>
+  body { margin: 16px; font-family: system-ui; }
+  .card { position: relative; height: 80px; margin-block-end: 8px; padding: 8px; background: #f4f4f5; }
+  .card:hover { transform: translateY(-4px); }
+  .menu { display: none; position: absolute; z-index: 50; top: 100%; inset-inline-start: 8px; width: 160px; height: 60px; background: #fde68a; }
+  .card:hover .menu { display: block; }
+</style>
+</head>
+<body>
+<article class="card" id="a">الكارت الأول <div class="menu">القايمة</div></article>
+<article class="card" id="b">الكارت التاني <div class="menu">قايمة تانية</div></article>
+</body>
+</html>
+~~~
+
+**اللي بيحصل:**
+
+- وقت الـ hover، الـ [[transform]] بيعمل stacking context للكارت. فـ [[z-index: 50]] بقى معناه «50 جوه الكارت الأول بس»، والكارت كله طبقة واحدة.
+- الكارت التاني [[position: relative]]، وجاي بعده في الـ HTML، ففوقه. فالقايمة بتتغطى عند الجزء المتداخل.
+- ولما الماوس يتحرك للجزء ده، هو فعليًا فوق الكارت التاني، فالـ hover بيروح منه، والقايمة بتختفي.
+
+**الحل:** ارفع الكارت نفسه:
+
+~~~css
+.card:hover, .card:focus-within { z-index: 1; }
+~~~
+
+**الغلطة الشائعة:** تزوّد الرقم لـ 9999. الرقم محبوس جوه الكارت، ومش هيفرق مهما كبر.
+
+~~~text الناتج
+hover على الأول، نقطة جوه القايمة فوق الكارت التاني:
+قبل:   elementFromPoint = ARTICLE#b.card   (الكارت التاني غطاها)
+       z-index: 9999 بدل 50 = ARTICLE#b.card
+       بعد تحريك الماوس لنفس النقطة: القايمة ظاهرة؟ false
+من غير transform خالص: DIV.menu
+بعد الحل: elementFromPoint = DIV.menu
+       بعد تحريك الماوس لنفس النقطة: القايمة ظاهرة؟ true
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** المثال بتاع الدرس بالظبط (هيدر [[z-index: 1]] وجواه قايمة [[9999]] وهيرو [[2]]). صلّحه بـ **تلات** طرق مختلفة ومن غير ما تزوّد أي رقم على القايمة.`, done: R`في التلات طرق [[document.elementFromPoint(50, 150)]] بيرجّع [[DIV.dropdown]]: (١) الهيدر [[z-index: 3]]، (٢) شيل الـ z-index من الهيدر، (٣) شيل [[z-index]] من الهيرو أو خليه [[auto]]. وكتبت أنهي واحدة أأمن لما الصفحة تكبر.`, sol: R`~~~live 390 390
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الطبقات</title>
+<style>
+  body { margin: 0; }
+  .header { position: relative; z-index: 1; height: 60px; background: #bfdbfe; }
+  .dropdown { position: absolute; top: 100%; left: 0; z-index: 9999; width: 200px; height: 200px; background: #fde68a; }
+  .hero { position: relative; z-index: 2; height: 300px; background: #bbf7d0; }
+</style>
+</head>
+<body>
+<header class="header"><div class="dropdown">قايمة</div></header>
+<main class="hero"><h1>الهيرو</h1></main>
+</body>
+</html>
+~~~
+
+**المشكلة:** الهيدر stacking context برقم 1، والقايمة محبوسة جواه. فـ 9999 بتتقارن بإخواتها جوه الهيدر بس، والهيرو 2 فوق الهيدر كله.
+
+**التلات طرق:**
+
+~~~css
+/* ١: ارفع الهيدر فوق الهيرو */
+.header { z-index: 3; }
+
+/* ٢: شيل z-index من الهيدر، فمبقاش stacking context */
+.header { z-index: auto; }
+
+/* ٣: شيل z-index من الهيرو */
+.hero { z-index: auto; }
+~~~
+
+**أنهي أأمن:** الأولى، وبتوكن زي [[--z-header]]. السبب إن الترتيب بقى مكتوب صريح. الطريقة التانية بتحرر القايمة، فـ 9999 بتتقارن في الصفحة كلها، وده بيفتح نفس الحرب بعد كده. والتالتة بتعتمد على إن محدش هيدي الهيرو رقم تاني.
+
+**الغلطة الشائعة:** تزوّد 99999 على القايمة. أي رقم جواها ميعدّيش حدود الهيدر.
+
+~~~text الناتج
+elementFromPoint(50, 150):
+قبل:                       MAIN.hero
+١  الهيدر z-index: 3:       DIV.dropdown
+٢  الهيدر z-index: auto:    DIV.dropdown
+٣  الهيرو z-index: auto:    DIV.dropdown
+قايمة 99999:                MAIN.hero
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** scale طبقات كتوكنز: [[--z-sticky: 10]] و [[--z-dropdown: 40]] و [[--z-modal: 50]] و [[--z-toast: 100]]، وصفحة فيها هيدر sticky وقايمة ومودال و toast كلهم فوق نفس النقطة.`, done: R`[[elementFromPoint]] عند النقطة اللي فيها الأربعة بيرجّع الـ toast، ولما تقفل الـ toast بيرجّع المودال، و grep على الـ CSS مفيهوش [[z-index:]] برقم مكتوب غير في تعريف التوكنز.`, sol: R`~~~live 290 290
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الطبقات</title>
+<style>
+  :root {
+    --z-sticky: 10;
+    --z-dropdown: 40;
+    --z-modal: 50;
+    --z-toast: 100;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui; }
+  .head { position: sticky; top: 0; z-index: var(--z-sticky); height: 200px; background: #bfdbfe; }
+  .drop { position: fixed; top: 20px; left: 20px; z-index: var(--z-dropdown); width: 200px; height: 200px; background: #fde68a; }
+  .modal { position: fixed; top: 40px; left: 40px; z-index: var(--z-modal); width: 200px; height: 200px; background: #bbf7d0; }
+  .toast { position: fixed; top: 60px; left: 60px; z-index: var(--z-toast); width: 200px; height: 100px; background: #fecaca; }
+</style>
+</head>
+<body>
+<header class="head">هيدر</header>
+<main><h1>الصفحة</h1></main>
+<div class="drop">قايمة</div>
+<div class="modal">مودال</div>
+<div class="toast">toast</div>
+</body>
+</html>
+~~~
+
+**ليه scale:** بدل ما كل واحد يختار رقم، الأرقام في مكان واحد، وبأسماء بتقول الترتيب. فمحدش محتاج يخمّن.
+
+**ليه أرقام متباعدة:** مش محتاجة تبقى متتالية، بس المسافة بتسيب مكان لطبقة جديدة من غير ما تعدّل الباقي.
+
+**شرط أساسي:** الأربعة لازم يبقوا في نفس stacking context. لو المودال جوه عنصر عليه [[transform]]، توكن 50 مش هيساعده. عشان كده المودالات والـ toasts غالبًا بتتحط آخر [[body]].
+
+**الغلطة الشائعة:** تكتب [[z-index: 50]] مباشرة مرة واحدة «على السريع». في الآخر الملف فيه ١٥ رقم محدش فاهمهم.
+
+~~~text الناتج
+النقطة (100, 100):
+كلهم موجودين  → toast
+قفلنا الـ toast → modal
+قفلنا المودال  → drop
+قفلنا القايمة  → head
+
+z-index برقم مكتوب برّه تعريف التوكنز: 0
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** كوتشينة ٣ كروت فوق بعض متفرّدين بـ [[rotate]] و [[translate]]، والكارت اللي الماوس عليه يطلع فوق الكل من غير ما الباقيين يتحركوا.`, done: R`الكارت اللي عليه hover أو focus هو اللي [[elementFromPoint]] بيرجّعه في المكان اللي متداخل فيه، والترتيب بيرجع زي ما كان لما الماوس يمشي، وكل الـ z-index أرقام صغيرة (1 لـ 3).`, sol: R`~~~live 350 350
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكوتشينة</title>
+<style>
+  body { margin: 40px; font-family: system-ui; }
+  .deck { position: relative; width: 320px; height: 200px; margin-inline: auto; }
+  .play {
+    position: absolute;
+    top: 0;
+    left: 80px;
+    width: 120px;
+    height: 170px;
+    z-index: 1;
+    border: 1px solid #44403c;
+    border-radius: 10px;
+    background: #fff;
+    font: 700 1.5rem system-ui;
+    cursor: pointer;
+  }
+  .play:nth-child(1) { rotate: -12deg; translate: -48px 8px; }
+  .play:nth-child(3) { rotate: 12deg; translate: 48px 8px; }
+  .play:hover, .play:focus-visible { z-index: 2; }
+</style>
+</head>
+<body>
+<main>
+<h1>الكوتشينة</h1>
+<div class="deck">
+  <button class="play" type="button">٩</button>
+  <button class="play" type="button">١٠</button>
+  <button class="play" type="button">آس</button>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+**ليه بيطلع فوق من غير ما يتحرك:** [[z-index]] بيغيّر ترتيب الرسم بس، مش المكان. والـ [[rotate]] و [[translate]] ثابتين. فالكارت بيطلع قدام، والباقيين مكانهم.
+
+- [[rotate]] و [[translate]] خصائص منفصلة، فالقاعدة دي مش بتلغي غيرها.
+- [[position: absolute]]: عشان [[z-index]] يشتغل، وعشان الكروت يبقوا فوق بعض.
+- [[:focus-visible]]: نفس الحركة بالكيبورد.
+- كل الكروت [[z-index: 1]]، فالترتيب بينهم جاي من ترتيب الـ HTML، و hover بيبقى 2. رقمين كفاية، فمفيش سباق أرقام.
+
+**الغلطة الشائعة:** تستخدم [[transform: scale()]] في الـ hover فوق [[transform: rotate()]]. القيمة الجديدة بتشيل القديمة، فالكارت بيتعدل فجأة.
+
+~~~text الناتج
+النقطة المتداخلة بين التاني والتالت (642, 189):
+من غير hover: الكارت آس
+بعد hover على التاني: الكارت ١٠
+نفس النقطة والماوس فيها: z-index الكارت التاني = 2
+بعد ما الماوس مشي: الكارت آس
+rotate الكارت الأول قبل وبعد: -12deg و -12deg
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN (صفحة «Stacking context») لاقي ٣ خصائص بتعمل stacking context ومش مذكورة في الدرس، وجرّب كل واحدة على الهيدر بتاع المثال من غير z-index.`, done: R`عندك ٣ خصائص (مثلًا [[mix-blend-mode]] و [[contain: layout]] و [[perspective]] و [[view-transition-name]]) والرابط، ولكل واحدة ناتج [[elementFromPoint]] في نقطة جوه الهيدر نفسه (عشان القص ميلخبطش النتيجة): لو رجّعت [[MAIN.hero]] يبقى عملت context وحبست القايمة. ولو خاصية مكتوبة في MDN ومطلعتش context عندك (في Chrome 156 جربنا [[container-type: inline-size]] ومعملش) اكتب ده.`, sol: R`~~~live 300 300
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الطبقات</title>
+<style>
+  body { margin: 0; }
+  .header { position: relative; height: 60px; background: #bfdbfe; }
+  .dropdown { position: absolute; top: 0; left: 0; z-index: 9999; width: 200px; height: 60px; background: #fde68a; }
+  .hero { position: relative; z-index: 2; height: 300px; margin-block-start: -60px; background: rgb(187 247 208 / .9); }
+</style>
+</head>
+<body>
+<header class="header"><div class="dropdown">قايمة</div></header>
+<main class="hero"></main>
+</body>
+</html>
+~~~
+
+**طريقة التجربة:** كل خاصية بتتحط على [[.header]] لوحدها. الهيدر مفيهوش [[z-index]] والقايمة 9999. والهيرو طالع فوق الهيدر بـ margin سالب. والنقطة (50, 30) جوه الهيدر نفسه. لو القايمة حرة، هترجع [[DIV.dropdown]]. لو الخاصية عملت context، القايمة اتحبست، والهيرو هيغطيها، فهترجع [[MAIN.hero]].
+
+و [[isolation: isolate]] و [[opacity]] مش في الجدول لأنهم في الدرس. دي الخصائص الجديدة، من صفحة Stacking context في MDN.
+
+**الغلطة الشائعة:** تعتبر كل حاجة مكتوبة في مرجع هتتصرف زي ما هو قايل. نفس الصفحة بتتحدّث، فجرّب. و [[container-type: inline-size]] زمان كانت بتعمل context، والصف بتاعها تحت بيقول إيه في Chrome 156.
+
+~~~text الناتج
+elementFromPoint(50, 30):
+
+(من غير أي خاصية)               DIV.dropdown   
+mix-blend-mode: multiply;       MAIN.hero   عملت context
+contain: layout;                MAIN.hero   عملت context
+perspective: 100px;             MAIN.hero   عملت context
+view-transition-name: head;     MAIN.hero   عملت context
+will-change: opacity;           MAIN.hero   عملت context
+container-type: inline-size;    DIV.dropdown   معملتش context
+clip-path: inset(0);            MAIN.hero   عملت context
+~~~` },
+          ],
+          deep: {
+            why: "الـ dropdown اللي مستخبي تحت السكشن اللي بعده، والمودال اللي تحت الهيدر، مشاكل كل مشروع. والحل الغلط إنك تزوّد أصفار في الـ z-index، ومش هيشتغل مهما زوّدت، لأن المشكلة في الطبقات مش في الرقم.",
+            how: R`الصفحة نفسها stacking context. وأي عنصر بيعمل context جديد لو: position (relative أو absolute) ومعاه z-index مش auto، أو position fixed أو sticky، أو ابن flex أو grid عليه z-index، أو [[opacity]] أقل من 1، أو [[transform]] أو [[filter]] أو [[backdrop-filter]] أو [[clip-path]] أو [[mask]] مش none، أو [[isolation: isolate]]، أو [[will-change]] على حاجة منهم.
+
+جوه أي context، الترتيب من تحت لفوق: خلفية وحدود صاحب الـ context، وبعدين الأولاد اللي z-index بتاعهم سالب، وبعدين العناصر العادية، وبعدين الـ floats، وبعدين الـ inline، وبعدين الـ positioned اللي z-index بتاعهم auto أو 0 بترتيب الـ HTML، وبعدين الموجب بالترتيب.
+
+الـ context بيتعامل كوحدة: الـ z-index بتاع أي حد جواه ملوش معنى برا. عشان كده الحل دايمًا إنك ترفع العنصر صاحب الـ context (الهيدر)، أو تطلّع العنصر برا خالص بـ portal، زي ما Radix و shadcn بيعملوا للمودال والـ dropdown: بيحطوهم في آخر الـ body.
+
+framer-motion بيحط transform على العناصر اللي بيحركها، فبيعمل context جديد. قايمة جوه كارت متحرك ممكن تستخبى فجأة بسبب ده.`,
+            when: R`خلي عندك scale صغير ثابت: 10 للـ sticky، و 40 للـ dropdown، و 50 للمودال، و 100 للـ toast. وفي Tailwind [[z-10]] و [[z-50]]. واستخدم portal لأي حاجة لازم تبقى فوق كل حاجة.`,
+            mistakes: R`[[z-index: 99999]] بدل ما تفهم الطبقات. z-index على عنصر static (مش بيعمل حاجة، إلا لو ابن flex أو grid). وتنسى إن opacity و transform بيعملوا context، فبعد ما تضيف animation الترتيب يتلخبط.`
+          },
+          teach: R`## ليه 9999 خسرت قدام 2؟
+
+[[z-index]] رقم بيقول مين فوق مين لما عنصرين يقعوا على نفس المكان. بس الرقم بيتقارن **جوه مجموعة** بس، والمجموعة دي اسمها stacking context. حطينا المثال في Chrome: هيدر ارتفاعه 60، وجواه قايمة حمرا 200 × 150 نازلة من top = 40 (يعني نازلة على الهيرو)، وتحته هيرو ارتفاعه 400. وسألنا المتصفح بـ [[document.elementFromPoint(50, 150)]]: مين العنصر اللي فوق خالص عند النقطة دي؟ النقطة دي جوه القايمة وجوه الهيرو في نفس الوقت.
 
 ---
 
-## ١. [[.card { background: white; }]]: الأساس الأول
+## ١. الـ HTML
 
-ده السطر اللي **أي** متصفح فاهمه. بيتكتب الأول، عشان المتصفح القديم ياخده ويقف.
-
-## ٢. [[@supports (background: color-mix(in oklch, red, blue)) { ... }]]
-
-[[@supports]] بيسأل المتصفح: «انت فاهم الخاصية دي بالقيمة دي؟». لو أيوه بيطبّق اللي جوه الأقواس، لو لأ بيتجاهل البلوك كله.
-
-والسؤال هنا عن [[color-mix()]]: دالة بتخلط لونين. جوه البلوك:
-
-~~~text styles.css
-.card { background: color-mix(in oklch, var(--color-brand) 8%, white); }
+~~~text index.html
+<header class="header">
+  <div class="dropdown">قايمة</div>
+</header>
+<main class="hero">...</main>
 ~~~
 
-| الحتة | معناها |
+القايمة **ابن** الهيدر، والهيرو **أخو** الهيدر.
+
+## ٢. [[.header { position: relative; z-index: 1; }]]
+
+[[z-index]] بيشتغل على عنصر عليه position (أو ابن flex أو grid). و [[relative]] مع [[z-index]] رقم = الهيدر عمل stacking context جديد. من دلوقتي الهيدر وكل اللي جواه بيتعاملوا **كطبقة واحدة رقمها 1** قدام أي حد برا.
+
+## ٣. [[.dropdown { position: absolute; z-index: 9999; }]]
+
+الـ 9999 بتتقارن مع إخوات القايمة جوه الهيدر بس. بالنسبة للصفحة القايمة جزء من طبقة الهيدر (1).
+
+## ٤. [[.hero { position: relative; z-index: 2; }]]
+
+الهيرو في نفس مستوى الهيدر (الاتنين أولاد body)، فالمقارنة 2 ضد 1: الهيرو فوق، وبيغطي القايمة.
+
+~~~text الناتج
+elementFromPoint(50, 150) → MAIN.hero
+~~~
+
+## ٥. [[.card { isolation: isolate; }]]
+
+[[isolation: isolate]] بيعمل stacking context **من غير** z-index ومن غير ما يغيّر أي حاجة في الشكل. فايدته: الـ z-index اللي جوه الكارت ميأثرش على اللي برا.
+
+## ٦. [[.fade-in { opacity: 0.99; transform: translateY(0); }]]
+
+[[opacity]] الشفافية من 0 لـ 1، و [[translateY(0)]] تحريك رأسي بصفر. الاتنين مش بيغيّروا الشكل تقريبًا، بس كل واحد منهم لوحده بيعمل stacking context. ده الفخ.
+
+---
+
+## التجربة: غيّرنا اللي على الهيدر بس
+
+| على [[.header]] | مين فوق عند (50، 150) | ليه |
+|---|---|---|
+| [[z-index: 1]] (المثال) | MAIN.hero | الهيدر طبقة رقمها 1 والهيرو 2 |
+| [[z-index: 3]] | DIV.dropdown | الطبقة كلها بقت أعلى من الهيرو |
+| من غير z-index خالص | DIV.dropdown | مفيش طبقة، فالـ 9999 بتتقارن مع الهيرو مباشرة |
+| [[opacity: 0.99]] من غير z-index | MAIN.hero | opacity عمل طبقة لوحده |
+| [[transform: translateY(0)]] من غير z-index | MAIN.hero | transform عمل طبقة لوحده |
+| [[isolation: isolate]] من غير z-index | MAIN.hero | isolation عمل طبقة مقصودة |
+
+- [[z-index: 3]]: الطبقة كلها بقت أعلى من 2، فالقايمة طلعت معاها.
+- من غير z-index: مفيش context، فالقايمة بتتقارن بالـ 9999 مع الهيرو مباشرة وتكسب.
+- opacity و transform و isolation: كل واحد عمل context (رقمه زي 0)، فالقايمة اتحبست تاني تحت الهيرو.
+
+## الخلاصة
+
+- الـ z-index بيتقارن جوه نفس الـ stacking context بس.
+- الأب اللي عليه z-index أو opacity أقل من 1 أو transform أو filter أو isolation بيحبس أولاده جواه.
+- القايمة مستخبية؟ متزوّدش أصفار: ارفع الأب صاحب الـ context، أو طلّع القايمة برا بـ portal.`,
+          lines: [
+            R`الهيدر: هيعمل stacking context لما ناخد عليه [[z-index]] في الـ CSS.`,
+            "قايمة بتنزل من الهيدر فوق الهيرو.",
+            R`قفلة الهيدر: القايمة **ابن** الهيدر، ودي النقطة اللي هتفرق.`,
+            R`الهيرو جاي بعد الهيدر، وهو **أخو** الهيدر مش أخو القايمة.`,
+            R`بداية الـ CSS: كل سطر بيحط طبقة لعنصر واحد.`,
+            "الهيدر عمل stacking context بـ z-index 1.",
+            "9999 بس جوه طبقة الهيدر. بالنسبة للصفحة هو «1» زي أبوه.",
+            "الهيرو 2 فبيغطّي الهيدر كله بما فيه القايمة. الحل: ارفع الهيدر نفسه، مش القايمة.",
+            R`[[isolation: isolate]]: اعمل stacking context مقصود من غير z-index، عشان الـ z-index اللي جوه الكارت ميهربش برا.`,
+            "خد بالك: opacity أقل من 1 و transform بيعملوا stacking context من غير ما تاخد بالك.",
+            R`قفلة الـ [[<style>]]، وكده المثال خلص.`
+          ],
+          sol: R`بالكود زي ما هو: القايمة الحمرا اللي تحت الهيدر مستخبية ورا الهيرو، رغم الـ 9999. الهيدر عنده [[z-index: 1]] فعمل stacking context، وكل اللي جواه محبوس في الطبقة 1 كوحدة واحدة، والهيرو بـ 2 فوقها كلها. الـ 9999 بتتقارن بس مع إخوات القايمة جوه الهيدر.
+
+غيّر الهيدر لـ 3: القايمة ظهرت فوق الهيرو، لأن الطبقة كلها بقت أعلى من 2. امسح الـ z-index من الهيدر خالص: القايمة برضه بتظهر (مفيش context، فالـ 9999 بتتقارن مع الهيرو مباشرة). ضيف [[opacity: 0.99]] من غير z-index: القايمة استخبت تاني، لأن opacity أقل من 1 بتعمل stacking context لوحدها، وكذلك [[transform]] و [[filter]] و [[isolation: isolate]].
+
+الغلط الشائع إنك تزوّد القايمة لـ 99999: مش هيفرق أبدًا. ابحث عن الأب اللي عامل الـ context (في DevTools › Layers أو بإنك تشيل خصائص من الأب واحدة واحدة).`
+        },
+        {
+          cmd: "media queries",
+          ref: [
+            { t: "MDN: Using media queries", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Using" },
+            { t: "MDN: @media", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media" },
+            { t: "WHATWG: media attribute", url: "https://html.spec.whatwg.org/multipage/semantics.html#attr-link-media" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
+          title: "تصميم يبدأ من الموبايل ويكبر",
+          desc: R`[[@media (min-width: 48rem) { ... }]] = القواعد دي تشتغل بس لما الشاشة 768 أو أكبر. mobile-first معناها تكتب الـ CSS العادي للموبايل الأول (عمود واحد، وخط أصغر)، وتضيف بـ [[min-width]] للشاشات الأكبر.
+
+ودا نفس اللي Tailwind بيعمله: [[md:grid-cols-3]] = من md وطالع. والكلاس من غير prefix = الموبايل وكل حاجة فوقه.`,
+          example: R`.products { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 40rem) {
+  .products { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 64rem) {
+  .products { grid-template-columns: repeat(4, 1fr); }
+}
+@media (hover: hover) {
+  .card:hover { transform: translateY(-4px); }
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: oklch(0.17 0.03 265); }
+}`,
+          try: R`افتح DevTools وضع الموبايل (Ctrl+Shift+M) واسحب العرض ببطء، وشوف عدد الأعمدة بيتغير عند 640 و 1024. وبعدين من DevTools › Rendering › Emulate CSS media feature جرّب prefers-color-scheme: dark.`,
+          flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[@media (max-width: 768px) { .x { color: red } }]] وبعدها [[@media (min-width: 768px) { .x { color: blue } }]]. اللون هيبقى إيه على 767 و 768 و 769؟`, done: R`على 767 أحمر، وعلى 768 أزرق (الشرطين اتحققوا، والأخير في الملف كسب)، وعلى 769 أزرق. وعرفت ليه خلط [[max-width]] و [[min-width]] بنفس الرقم بيعمل نقطة فيها القاعدتين.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الحد</title>
+<style>
+  @media (max-width: 768px) { .x { color: red; } }
+  @media (min-width: 768px) { .x { color: blue; } }
+</style>
+</head>
+<body>
+<p class="x">كلام</p>
+</body>
+</html>
+~~~
+
+**الإجابة:**
+
+| العرض | [[max-width: 768px]] | [[min-width: 768px]] | اللون |
+|---|---|---|---|
+| 767 | متحقق | لأ | أحمر |
+| 768 | متحقق | متحقق | أزرق |
+| 769 | لأ | متحقق | أزرق |
+
+**السبب:** [[min-width]] و [[max-width]] بيشملوا الرقم نفسه، فعند 768 الاتنين شغالين، والأخير في الملف بيكسب.
+
+هنا الفرق لون، بس لو قاعدتين بيحطوا [[padding]] و [[display]] مختلفين، عند 768 بالظبط هيتخلطوا، وده باج بيظهر في مقاس واحد بس.
+
+**الحل:** [[(width < 768px)]] و [[(width >= 768px)]]، أو [[max-width: 767px]].
+
+**الغلطة الشائعة:** تختبر على 767 و 769 بس. iPad الكلاسيكي عرضه 768 بالظبط.
+
+~~~text الناتج
+767 → rgb(255, 0, 0)
+768 → rgb(0, 0, 255)
+769 → rgb(0, 0, 255)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** قسم باقات mobile-first: عمود واحد، ومن [[40rem]] عمودين، ومن [[64rem]] ٣. على الموبايل الباقة المميزة تيجي الأول بـ [[order: -1]]، وعلى الديسكتوب ترجع في النص.`, done: R`على 360 المميزة أول كارت، وعلى 768 عمودين، وعلى 1280 ٣ أعمدة والمميزة في النص. والـ CSS مفيهوش ولا [[max-width]]، ومفيش scroll أفقي في التلاتة.`, sol: R`~~~live 370 500
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الباقات</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font-family: system-ui; }
+  .plans { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); max-width: 1000px; margin-inline: auto; }
+  .plan { padding: 20px; border: 1px solid #d4d4d8; border-radius: 12px; }
+  .plan--best { order: -1; border-color: #0f766e; border-width: 2px; }
+
+  @media (min-width: 40rem) {
+    .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .plans { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .plan--best { order: 0; }
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>الباقات</h1>
+<section class="plans" aria-label="الباقات">
+  <article class="plan"><h2>أساسي</h2></article>
+  <article class="plan plan--best"><h2>ذهبي</h2></article>
+  <article class="plan"><h2>سنوي</h2></article>
+</section>
+</main>
+</body>
+</html>
+~~~
+
+**mobile-first:** الأساس بدون media query للموبايل، وكل [[min-width]] بتضيف بس. فالموبايل بياخد CSS أقل، والقواعد مش بتلغي بعضها.
+
+- الباقة المميزة في النص في الـ HTML. [[order: -1]] بتقدّمها في الموبايل، و [[order: 0]] بترجّعها على الكبير. الترتيب ده شكل بس.
+- 40rem = 640، و 64rem = 1024.
+
+**فخ [[order]]:** ترتيب Tab بيتبع الـ HTML مش الشكل. فعلى الموبايل الباقة الأولى في الشكل هي التانية في Tab. هنا مقبول لأن الاختلاف بسيط، بس متبالغش.
+
+**الغلطة الشائعة:** تكتب [[order: -1]] جوه [[max-width]]. كده رجعت تخلط اتجاهين.
+
+~~~text الناتج
+العرض    الأعمدة    الأول بالشكل      المميزة في العمود    scrollWidth
+360      1          ذهبي              1                  360
+768      2          ذهبي              1                  768
+1280     3          أساسي              2                  1280
+
+max-width في الـ CSS: 0
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة الـ media queries بتاعتها صح بس على الموبايل الحقيقي بتظهر بشكل الديسكتوب. شغّلها في DevTools وضع الموبايل (أو Playwright بـ [[isMobile: true]] وعرض 390) واقرا [[innerWidth]].`, done: R`قبل: [[innerWidth]] = 980 وقاعدة [[min-width: 48rem]] متحققة على موبايل 390. بعد ما ضفت [[<meta name="viewport" content="width=device-width, initial-scale=1">]]: [[innerWidth]] = 390 والقاعدة مش متحققة.`, sol: R`الصفحة بعد التصليح:
+
+~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الموقع</title>
+<style>
+  body { font-family: system-ui; }
+  .desk { display: none; }
+  @media (min-width: 48rem) { .desk { display: block; } }
+</style>
+</head>
+<body>
+<main>
+<h1>الموقع</h1>
+<p class="desk">شكل الكمبيوتر</p>
+</main>
+</body>
+</html>
+~~~
+
+والسطر اللي كان ناقص هو السطر اللي في قالب [[#HEAD]] فوق:
+
+~~~html
+<meta name="viewport" content="width=device-width, initial-scale=1">
+~~~
+
+**ليه الموبايل عمل كده:** من غير السطر ده، المتصفح بيفترض إن الصفحة قديمة ومعمولة لكمبيوتر، فبيرسمها على عرض وهمي 980 ويصغّرها عشان تكفي الشاشة. فالـ [[innerWidth]] 980، وكل الـ media queries بتتحسب عليه.
+
+**ليه بيخدع في DevTools:** لو صغّرت نافذة الكمبيوتر بس، الصفحة بتشتغل صح، فالمشكلة مش هتبان. لازم وضع الموبايل أو جهاز حقيقي.
+
+- [[width=device-width]]: العرض = عرض الجهاز.
+- [[initial-scale=1]]: من غير تكبير أو تصغير.
+
+**الغلطة الشائعة:** تزوّد [[user-scalable=no]] معاه. ده بيمنع التكبير، وهي مشكلة accessibility حقيقية.
+
+~~~text الناتج
+موبايل عرضه 390 (isMobile: true):
+
+                     innerWidth     min-width: 48rem
+من غير viewport      980           true
+بالـ viewport        390           false
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ملف CSS قديم فيه الـ breakpoints دي بـ [[max-width]] متوزعة: 1024 و 768 و 600 و 480 و 768 و 320 و 1024 و 600 و 768. اعدّهم واعمل جدول، وبعدين حوّلهم لـ ٣ أو ٤ breakpoints mobile-first بـ [[min-width]].`, done: R`عندك جدول فيه ٥ قيم فريدة وعدد كل واحدة (768 ×٣، و 1024 ×٢، و 600 ×٢، و 480 و 320 ×١)، والملف الجديد فيه ٤ [[min-width]] أو أقل، ولقطات 320 و 768 و 1280 قبل وبعد شبه بعض.`, sol: R`~~~js count.js
+const list = [1024, 768, 600, 480, 768, 320, 1024, 600, 768];
+const count = {};
+for (const w of list) count[w] = (count[w] ?? 0) + 1;
+console.table(Object.entries(count).sort((a, b) => b[0] - a[0]));
+~~~
+
+قبل، نموذج مختصر من الملف:
+
+~~~css old.css
+.g { display: grid; grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 1024px) { .g { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px) { .g { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .g { grid-template-columns: 1fr; } }
+~~~
+
+بعد، mobile-first:
+
+~~~css new.css
+.g { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 481px) { .g { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 769px) { .g { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1025px) { .g { grid-template-columns: repeat(4, 1fr); } }
+~~~
+
+والصفحة:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>التحويل</title>
+<link rel="stylesheet" href="new.css">
+</head>
+<body>
+<main class="g"><h1>أ</h1><p>ب</p><p>ج</p><p>د</p></main>
+</body>
+</html>
+~~~
+
+~~~view 150 250 الشكل في المتصفح (من ملفات الحل)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>التحويل</title>
+<style>
+.g { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 481px) { .g { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 769px) { .g { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1025px) { .g { grid-template-columns: repeat(4, 1fr); } }
+</style>
+</head>
+<body>
+<main class="g"><h1>أ</h1><p>ب</p><p>ج</p><p>د</p></main>
+</body>
+</html>
+~~~
+
+**إزاي بنختصر:** ناخد القيم الأكتر استخدامًا (768 و 1024) ونسيب 480. أما 320 فعرض قليل جدًا، و 600 قريب من 480 و 768، فالقواعد بتاعتهم تتدمج في الأقرب.
+
+**ليه** [[481]] **مش** [[480]]**:** [[max-width: 480px]] بتشمل 480، فأول عرض «فوقها» 481. لو كتبت 480 هيبقى فيه عرض واحد بقاعدة مختلفة عن القديم.
+
+**الغلطة الشائعة:** تستبدل [[max-width]] بـ [[min-width]] بنفس الرقم. عند الحد بالظبط هتتغيّر النتيجة.
+
+~~~text الناتج
+القيمة   العدد
+1024    ×2
+768     ×3
+600     ×2
+480     ×1
+320     ×1
+قيم فريدة: 5
+عدد min-width في الملف الجديد: 3
+
+مقارنة الأعمدة قبل وبعد:
+320    قبل 1  بعد 1  متطابق
+480    قبل 1  بعد 1  متطابق
+481    قبل 2  بعد 2  متطابق
+768    قبل 2  بعد 2  متطابق
+769    قبل 3  بعد 3  متطابق
+1024   قبل 3  بعد 3  متطابق
+1025   قبل 4  بعد 4  متطابق
+1280   قبل 4  بعد 4  متطابق
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** ٣ شروط مش للعرض: [[(hover: none)]] أزرار «أضف للسلة» تبان دايمًا على اللمس، و [[(prefers-reduced-motion: reduce)]] يلغي حركة الكروت، و [[print]] يخفي الـ nav والفوتر.`, done: R`من DevTools › Rendering جرّبت [[prefers-reduced-motion]] والحركة وقفت، ومن وضع الموبايل الأزرار باينة من غير hover، و Ctrl+P بيطلّع صفحة من غير nav.`, sol: R`~~~live 290 290
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>المتجر</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  .card { position: relative; padding: 16px; border: 1px solid #d4d4d8; transition: transform .3s; }
+  .card:hover { transform: translateY(-4px); }
+  .add { opacity: 0; transition: opacity .2s; }
+  .card:hover .add, .add:focus-visible { opacity: 1; }
+
+  @media (hover: none) {
+    .add { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card, .add { transition: none; }
+    .card:hover { transform: none; }
+  }
+  @media print {
+    nav, footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav aria-label="الرئيسية"><a href="#a">الرئيسية</a></nav>
+<main>
+<h1>المنتجات</h1>
+<article class="card"><h2>قهوة</h2><button class="add" type="button">أضف للسلة</button></article>
+</main>
+<footer>كل الحقوق محفوظة</footer>
+</body>
+</html>
+~~~
+
+**التلات شروط:**
+
+- [[(hover: none)]]: الجهاز مفيهوش ماوس. الزرار اللي بيظهر بالـ hover مش هيظهر خالص على اللمس، فلازم يبان دايمًا.
+- [[(prefers-reduced-motion: reduce)]]: المستخدم مختار تقليل الحركة من إعدادات جهازه، غالبًا لأنها بتتعبه.
+- [[print]]: القايمة والفوتر مالهمش لازمة على ورق.
+
+والتجربة من DevTools: تاب Rendering فيه «Emulate CSS media feature prefers-reduced-motion».
+
+**الغلطة الشائعة:** تعتبر كل شاشة صغيرة لمس. [[(hover: none)]] بيسأل عن الجهاز فعلًا، والعرض مش دليل: تابلت كبير برضه لمس.
+
+~~~text الناتج
+الزرار على ماوس:         opacity = 0
+الزرار على لمس (موبايل): opacity = 1
+transition عادي:         0.3s
+بعد reduced-motion:      0s
+hover مع reduced-motion: transform = none
+طباعة: nav = none   footer = none
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**refactor:** حوّل الـ media queries بتاعة المثال للشكل الجديد [[(width >= 40rem)]] و [[(40rem <= width < 64rem)]] وشيل أي تداخل.`, done: R`على 639 و 640 و 1023 و 1024 عدد الأعمدة نفسه زي قبل التحويل (1 و 2 و 2 و 4 في [[gridTemplateColumns]])، ومفيش عرض بتتحقق فيه قاعدتين متعارضتين.`, sol: R`~~~live 210 340
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الشكل الجديد</title>
+<style>
+  .products { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  @media (40rem <= width < 64rem) {
+    .products { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (width >= 64rem) {
+    .products { grid-template-columns: repeat(4, 1fr); }
+  }
+</style>
+</head>
+<body>
+<main><h1>المنتجات</h1><div class="products"><p>١</p><p>٢</p><p>٣</p><p>٤</p></div></main>
+</body>
+</html>
+~~~
+
+**الفرق:**
+
+- [[(width >= 64rem)]] بديل [[(min-width: 64rem)]]، بس [[<]] و [[>]] بيسمحوا بحد مش شامل، وده كان محتاج [[max-width: 63.99rem]] زمان.
+- [[(40rem <= width < 64rem)]] نطاق واحد مكتوب في سطر، فمفيش عرض بيتحقق فيه قاعدتين.
+
+**ليه القديم كان فيه تداخل:** من 1024 وفوق، [[min-width: 40rem]] و [[min-width: 64rem]] الاتنين متحققين، والأخير بيكسب بالترتيب. لو حد بدّل ترتيب الملف، النتيجة تتغيّر. مع النطاقات الترتيب مبيفرقش.
+
+**التوافق:** الصيغة دي مدعومة في Chrome 104 و Firefox 63 و Safari 16.4، حسب caniuse.
+
+**الغلطة الشائعة:** تكتب [[(width => 40rem)]]. العلامة [[>=]] بالترتيب ده، والعكس بيخلي الشرط كله غلط.
+
+~~~text الناتج
+العرض     قبل    بعد
+639     1      1
+640     2      2
+1023    2      2
+1024    4      4
+
+عرض 1024: قبل بيتحقق 2 شرط، وبعد بيتحقق 1 شرط
+~~~` },
+          ],
+          deep: {
+            why: "أكتر من نص الزيارات من الموبايل. لو بدأت من الديسكتوب، هتقعد تكتب قواعد تلغي قواعد (float none، و width auto، و display none) لحد ما الموبايل يبان كويس. من الموبايل، الأبسط هو الأساس، والشاشات الكبيرة بتضيف بس.",
+            how: R`الـ media query بتتقيّم على الـ viewport (بعد meta viewport). و [[min-width: 40rem]] الـ rem فيها من خط المتصفح الافتراضي، فلو المستخدم كبّر الخط، الـ breakpoint بيتنقل معاه، ودا صح (الشاشة «بقت أضيق» بالنسبة للكلام).
+
+الشكل الجديد [[@media (width >= 48rem)]] نفس المعنى وأوضح، وبيدعم ranges: [[(40rem <= width < 64rem)]]. و Tailwind v4 بيطلّع الشكل ده.
+
+مش كل media queries للعرض: [[hover: hover]] و [[pointer: coarse]] بيفرّقوا الماوس عن اللمس، و [[prefers-color-scheme]] للثيم، و [[prefers-reduced-motion]] للحركة، و [[print]] للطباعة. و Tailwind v4 بيلف [[hover:]] في [[@media (hover: hover)]] لوحده، عشان على الموبايل الـ hover بيعلق بعد اللمس.
+
+الـ breakpoints بتختارها حسب المحتوى مش حسب أجهزة معينة: صغّر الشاشة لحد ما الشكل يبوظ، وهناك حط breakpoint. وافتراضي Tailwind: [[sm]] 40rem، و [[md]] 48rem، و [[lg]] 64rem، و [[xl]] 80rem، و [[2xl]] 96rem.`,
+            when: "أي موقع. ابدأ من 375px، وكبّر، وضيف breakpoint لما الشكل يحتاج. ولو المكون نفسه لازم يتغير حسب مكانه مش حسب الشاشة، استخدم container queries (المستوى التالت).",
+            mistakes: R`تكتب desktop-first بـ [[max-width]] وبعدين تخلطه مع min-width، فعند 768 بالظبط قاعدتين بيشتغلوا. وفي Tailwind تفتكر [[sm:]] = الموبايل: لأ، sm = من 640 وطالع، والموبايل هو الكلاس من غير prefix. وتنسى meta viewport فالـ media queries مش بتشتغل على الموبايل أصلًا.`
+          },
+          teach: R`## قواعد بتشتغل بشرط
+
+[[@media (شرط) { ... }]] = القواعد اللي جوه تشتغل بس لما الشرط يتحقق. والشرط ممكن يبقى عرض الشاشة، أو نوع الماوس، أو ثيم الجهاز. فتحنا المثال في Chrome بعروض مختلفة، وقرينا الأعمدة بـ [[getComputedStyle(...).gridTemplateColumns]]، والشروط نفسها بـ [[matchMedia("(شرط)").matches]]، ودي دالة بترجع true لو الشرط متحقق دلوقتي.
+
+---
+
+## ١. الأساس للموبايل (من غير أي شرط)
+
+~~~text style.css
+.products { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+~~~
+
+عمود واحد. السطر ده بيشتغل على **كل** الشاشات، والشروط اللي تحت بتغطي عليه في الشاشات الأكبر.
+
+## ٢. من 640 وطالع
+
+~~~text style.css
+@media (min-width: 40rem) {
+  .products { grid-template-columns: repeat(2, 1fr); }
+}
+~~~
+
+[[min-width: 40rem]] = «العرض 40rem **أو أكتر**». والـ rem جوه الـ media query بيتحسب من خط المتصفح الافتراضي (16)، يعني 640px. والقاعدة اللي جوه ليها نفس الـ specificity بتاعة الأساس وجاية بعده، فبتكسب.
+
+## ٣. من 1024 وطالع
+
+~~~text style.css
+@media (min-width: 64rem) {
+  .products { grid-template-columns: repeat(4, 1fr); }
+}
+~~~
+
+64 × 16 = 1024. فوق 1024 الشرطين متحققين، والأخير في الملف بيكسب: ٤ أعمدة.
+
+| العرض | الأعمدة المتقاسة |
 |---|---|
-| [[in oklch]] | اخلط في مساحة ألوان اسمها oklch (الخلط فيها شكله طبيعي للعين) |
-| [[var(--color-brand) 8%]] | 8% من لون البراند |
-| [[white]] | والباقي (92%) أبيض |
+| 375 | 375px |
+| 639 | 639px |
+| 640 | 312px 312px |
+| 1023 | 503.5px 503.5px |
+| 1024 | 244px 244px 244px 244px |
+| 1440 | 348px 348px 348px 348px |
 
-في التجربة لون البراند أزرق، والخلفية المحسوبة طلعت:
+التغيير حصل عند 640 و 1024 بالظبط. و 312 = (640 - 16) ÷ 2، و 244 = (1024 - 3 × 16) ÷ 4.
 
-~~~text getComputedStyle(.card).backgroundColor
-oklch(0.963685 0.0172613 262.885)
+## ٤. [[@media (hover: hover)]]
+
+~~~text style.css
+@media (hover: hover) {
+  .card:hover { transform: translateY(-4px); }
+}
 ~~~
 
-يعني أبيض فيه لمسة زرقا خفيفة: الـ [[0.96]] إضاءة عالية جدًا، و [[0.017]] تشبّع قليل، و [[262]] درجة اللون (أزرق). والمتصفح اللي مش بيدعم [[color-mix]] كان هياخد [[white]] من السطر الأول.
+[[hover: hover]] = الجهاز عنده حاجة تقدر «تقف» فوق العناصر (ماوس). و [[translateY(-4px)]] = حرّك العنصر 4px لفوق (السالب لفوق).
 
-## ٣. [[@supports not selector(:has(a)) { .has-fallback { display: block; } }]]
+| الجهاز في التجربة | [[(hover: hover)]] | [[(pointer: coarse)]] | transform بعد الوقوف على الكارت |
+|---|---|---|---|
+| ديسكتوب بماوس | true | false | matrix(1, 0, 0, 1, 0, -4) |
+| موبايل باللمس | false | true | none |
 
-- [[selector(...)]]: السؤال هنا عن **selector** مش خاصية: «انت فاهم [[:has()]]؟».
-- [[not]]: اعكس السؤال: البلوك يتطبق بس لو المتصفح **مش** فاهم.
+[[matrix(1, 0, 0, 1, 0, -4)]] هي الطريقة اللي المتصفح بيكتب بيها [[translateY(-4px)]]: آخر رقم هو التحريك الرأسي. و [[pointer: coarse]] = مؤشر «تخين» (صباع). على اللمس الكارت متحركش، فمفيش hover يعلق بعد اللمس.
 
-فده الـ fallback: يظهر بس في المتصفحات القديمة. في Chrome 154 [[:has()]] مدعوم، فالبلوك اتجاهل والـ display فضل [[none]] (اللي حطيناه للعنصر برا).
+## ٥. [[@media (prefers-color-scheme: dark)]]
 
-## ٤. [[if (CSS.supports('anchor-name', '--x')) document.documentElement.classList.add('has-anchor');]]
-
-نفس السؤال من JavaScript:
-
-- [[CSS.supports('anchor-name', '--x')]]: اسم الخاصية وقيمة ليها. [[anchor-name]] من ميزة anchor positioning، وقيمتها لازم تبدأ بـ [[--]].
-- [[document.documentElement]]: عنصر [[<html>]]، و [[classList.add]] بيضيف له كلاس.
-
-~~~text الناتج في Chrome 154
-CSS.supports('anchor-name', '--x')   → true
-CSS.supports('anchor-name', 'x')     → false   (قيمة غلط)
-<html class="has-anchor">
+~~~text style.css
+@media (prefers-color-scheme: dark) {
+  :root { --bg: oklch(0.17 0.03 265); }
+}
 ~~~
 
-السطر التاني بيوضح إن السؤال عن الخاصية **والقيمة** مع بعض. وبعد كده في CSS تقدر تكتب [[.has-anchor .tooltip { ... }]].
+الشرط متحقق لو نظام التشغيل على الوضع الغامق. فتحنا الصفحة مرة بثيم فاتح ومرة غامق (والـ body فيه [[background: var(--bg, white)]]):
 
-## ٥. ليه ساعات مش محتاج [[@supports]] خالص
-
-المتصفح بيتجاهل أي سطر مش فاهمه ويكمّل. جرّبنا:
-
-~~~text styles.css
-.x { color: red; color: oklch(0.6 0.2 30); width: 10px; width: foo(1); }
-~~~
-
-Chrome طلّع اللون [[oklch(0.6 0.2 30)]] (فهم التاني فكسب)، والعرض [[10px]] (مفهمش [[foo(1)]] فرجع للي قبله). فلو التحسين خاصية واحدة، سطرين ورا بعض كفاية. [[@supports]] لما التحسين أكتر من خاصية أو بيغيّر الـ layout.
-
----
-
-## ٦. browserslist في [[package.json]]
-
-~~~json
-"browserslist": ["baseline widely available"]
-~~~
-
-ده سطر في ملف إعدادات المشروع بيقول لكل أدوات الـ build (Vite و autoprefixer و Babel وغيرهم) «أنا بدعم المتصفحات دي». و [[baseline widely available]] = كل نسخة متصفح فيها الميزات اللي بقالها 30 شهر أو أكتر في كل المتصفحات الأساسية.
-
-جرّب تشوف اللستة دي بنفسك (شغّلناها في PowerShell على ويندوز):
-
-~~~powershell
-npx browserslist "baseline widely available"
-npx browserslist --coverage "baseline widely available"
-~~~
-
-~~~text الناتج (مختصر)
-and_chr 154
-and_ff 157
-chrome 154
-...
-chrome 123
-...
-firefox 124
-...
-safari 17.4
-These browsers account for 87.4% of all users globally
-~~~
-
-- [[npx]] بيشغّل أداة من npm من غير ما تتسطب global.
-- الأسامي: [[and_chr]] كروم أندرويد، و [[ios_saf]] سفاري الآيفون.
-- اللستة طلعت 134 نسخة، أقدمها Chrome و Edge 123 و Firefox 124 و Safari 17.4.
-- [[--coverage]]: نسبة المستخدمين اللي عندهم النسخ دي، بيانات caniuse.
-
-وقارن بـ [[defaults]]:
-
-~~~powershell
-npx browserslist "defaults"
-~~~
-
-طلع 35 نسخة بس، بس فيها [[chrome 109]] و [[op_mini all]] (Opera Mini) و [[kaios 2.5]]. ليه؟ [[defaults]] مبني على **نسبة الاستخدام** (أكتر من 0.5% وآخر نسختين)، مش على الميزات، فبيجيب نسخ قديمة لسه ناس كتير عليها.
-
-> الأرقام دي بتتغير مع كل نسخة من caniuse-lite. حدّثها بـ [[npx update-browserslist-db@latest]].
+| ثيم الجهاز | [[--bg]] | خلفية الـ body |
+|---|---|---|
+| light | (مش متعرّف) | rgb(255, 255, 255) |
+| dark | oklch(0.17 0.03 265) | oklch(0.17 0.03 265) |
 
 ---
 
 ## الخلاصة
 
-| الحالة في MDN | تعمل إيه |
-|---|---|
-| Widely available | استخدمها عادي |
-| Newly available | استخدمها كتحسين، والأساس قبلها |
-| مش Baseline | [[@supports]] أو استنى |
-
-- الترتيب مهم: الأساس الأول، والجديد بعده أو جوه [[@supports]].
-- autoprefixer بيضيف prefixes بس، مش بيعمل الميزة في المتصفح اللي معندوش.`,
+- mobile-first: الأساس من غير شرط للموبايل، و [[min-width]] بيضيف للأكبر.
+- لما كذا شرط يتحققوا، الأخير في الملف بيكسب، فرتّبهم من الصغير للكبير.
+- [[40rem]] = 640 و [[64rem]] = 1024 لو خط المتصفح 16.
+- [[hover: hover]] للماوس بس، و [[prefers-color-scheme]] لثيم الجهاز.`,
           lines: [
-            "الأساس: شغال في كل المتصفحات.",
-            R`لو المتصفح بيدعم [[color-mix]]...`,
-            "...خلفية فيها لمسة خفيفة من لون البراند.",
-            "قفلة.",
-            R`لو المتصفح مش بيدعم [[:has()]]...`,
-            R`...اعرض النسخة البديلة اللي بتعمل نفس الشغل من غير [[:has()]].`,
-            "قفلة.",
-            R`نفس السؤال من JavaScript: لو بيدعم anchor positioning علّم الـ html بكلاس.`,
-            "الأدوات كلها تستهدف المتصفحات اللي فيها الميزات المنتشرة من 30 شهر أو أكتر."
+            "الأساس للموبايل: عمود واحد.",
+            "من 640px (sm في Tailwind)...",
+            R`...المنتجات تبقى عمودين متساويين جنب بعض.`,
+            R`قفلة أول media query، والتانية بتكمّل عليها.`,
+            R`ومن 1024px وطالع (lg في Tailwind)...`,
+            R`...المنتجات تبقى ٤ أعمدة، والقاعدة دي بتكسب لأنها جاية آخر الملف.`,
+            R`قفلة التانية، وبعدها شروط مش للعرض خالص.`,
+            "بس على أجهزة فيها ماوس بجد (مش شاشات لمس)...",
+            "...الكارت يطلع لفوق عند الـ hover.",
+            R`قفلة شرط الـ hover، وآخر شرط للثيم.`,
+            "لو نظام التشغيل على الوضع الغامق...",
+            R`...غيّر متغير الخلفية [[--bg]]، وكل اللي بيستخدمه بيتغيّر معاه.`,
+            R`قفلة آخر media query، وكده المثال خلص.`
           ],
-          sol: R`وقت كتابة الدرس (بيانات caniuse-lite في سبتمبر 2026)، [[baseline widely available]] طلّع 133 نسخة متصفح، أقدمها تقريبًا Chrome 123 و Firefox 124 و Safari 17.4، و [[--coverage]] قال إنهم حوالي 87% من المستخدمين في العالم. الأرقام عندك هتختلف حسب نسخة البيانات، ودا الطبيعي.
+          sol: R`وانت بتسحب العرض: من الأصغر لحد 639px عمود واحد (كل كارت بعرض الشاشة). عند 640 بالظبط (يعني [[40rem]] لو خط المتصفح 16px) بيبقوا عمودين. عند 1024 ([[64rem]]) أربعة أعمدة. العرض الحالي بيظهر فوق الشاشة في وضع الموبايل، وشريط الـ media queries (من قايمة الـ ⋮ › Show media queries) بيرسم الـ breakpoints ألوان تدوس عليها.
 
-[[defaults]] بيطلّع لستة مختلفة: فيها متصفحات أقدم بكتير (زي Chrome 109 و Opera Mini) لأنه مبني على نسبة الاستخدام مش على الميزات.
+من Rendering › Emulate CSS media feature prefers-color-scheme اختار [[dark]]: متغيّر [[--bg]] على [[:root]] اتغير؛ لو الـ body بيستخدم [[var(--bg)]] الخلفية هتغمق فورًا من غير ما تغيّر ثيم الجهاز. وتأثير الـ hover على الكروت مش هيشتغل في وضع الموبايل بالـ touch، لأن [[(hover: hover)]] مش متحققة.
 
-في MDN: [[:has()]] عليه Baseline (متاح في كل المتصفحات الأساسية)، و [[text-wrap]] ممكن تلاقي قيمه مختلفة الحالة (balance منتشرة، و pretty لسه مش في كل حتة). ودا بالظبط المكان اللي تقرر منه: balance استخدمها عادي، و pretty كتحسين.`
+لو عدد الأعمدة اتغير عند أرقام تانية، غالبًا خط المتصفح مش 16px (الـ rem في الـ media query بيتحسب من إعداد المتصفح، مش من [[html { font-size }]]). ولو مفيش أي تغيير، اتأكد إن الـ viewport meta موجود.`
+        },
+        {
+          cmd: "مصفوفة مقاسات",
+          ref: [
+            { t: "MDN: Responsive design", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design" },
+            { t: "MDN: Element.scrollWidth", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollWidth" },
+            { t: "MDN: FontFaceSet.ready", url: "https://developer.mozilla.org/en-US/docs/Web/API/FontFaceSet/ready" },
+            { t: "Playwright: page.setViewportSize()", url: "https://playwright.dev/docs/api/class-page#page-set-viewport-size" },
+          ],
+          title: "اختبار responsive بجد: كل العروض × العربي والإنجليزي، وقياس الـ scroll الأفقي، ولقطة لكل مقاس",
+          desc: R`سحب حافة المتصفح بإيدك بيفوّت حاجات: بتبص على ٣ عروض بلغة واحدة. الطريقة اللي بتمسك المقاسات اللي بتتكسر **فعلًا**: سكربت Playwright بيلف على مصفوفة عروض ([[320]] و [[360]] و [[375]] و [[414]] و [[600]] و [[761]] لحد [[1024]] و [[1100]] و [[1440]] و [[1920]]) × لغتين (عربي RTL وإنجليزي)، ولكل واحدة: [[page.setViewportSize]]، ويقيس [[document.documentElement.scrollWidth]] مقابل [[innerWidth]] (أكبر = فيه scroll أفقي)، ويطلّع العناصر اللي خارجة برا الشاشة بالاسم، ويقيس أهداف اللمس الصغيرة، وياخد لقطة.
+
+والأهم: **بعد كل تصليح شغّل المصفوفة كلها تاني**. في المعمل تصليح اللوجو على التابلت ([[flex: none]]) كسر الموبايل من 320 لـ 414، ومحدش كان هيشوفه لو اختبر التابلت بس. وكمان المصفوفة بتقولك أنهي قاعدة CSS بقت ملهاش لازمة.`,
+          example: R`npm i -D playwright-core@1.64.1
+node matrix.js
+node matrix.js "fix=menu,touch,logo,phone"
+# في Console المتصفح على أي صفحة:
+document.documentElement.scrollWidth > innerWidth
+[...document.querySelectorAll("body *")].filter(e => { const b = e.getBoundingClientRect(); return b.right > innerWidth || b.left < 0; })`,
+          lines: [
+            R`باكدج Playwright من غير المتصفحات ([[-D]] للتطوير بس). هنستخدم Chrome المتسطب على الجهاز بـ [[channel: "chrome"]] بدل ما ننزّل متصفح.`,
+            R`شغّل السكربت اللي في الشرح على الصفحة زي ما هي: ٣٠ سطر (١٥ عرض × لغتين)، و [[OK]] أو [[BROKEN]] لكل واحد، ولقطة في [[shots/]].`,
+            R`نفس المصفوفة على الصفحة بالتصليحات (المعمل بيشغّل كل تصليح بكلاس على [[<html>]] عشان نقارن). رقم الخروج [[0]] لو كله تمام، و [[1]] لو فيه مقاس مكسور: ينفع في CI.`,
+            R`في Console: [[true]] = الصفحة أعرض من الشاشة، يعني فيه scroll أفقي.`,
+            R`مين اللي خارج؟ كل عنصر في الـ body، اطلب مستطيله ([[getBoundingClientRect]])، وسيب اللي حافته اليمين بعد عرض الشاشة أو حافته الشمال قبل صفر (ده اللي بيحصل في RTL).`,
+          ],
+          try: R`خد صفحة عندك فيها navbar (أو ابني المعمل اللي في الشرح)، وشغّل المصفوفة عليها بالعربي والإنجليزي. اكتب كل مقاس [[BROKEN]] والعنصر اللي خارج. صلّح واحد بس، وشغّل المصفوفة كلها تاني: فيه مقاس كان سليم واتكسر؟`,
+          flag: "term",
+          teach: R`## العَرَض
+
+الـ navbar «شغّال على الموبايل والديسكتوب»: جربته على 375 و 1440 من DevTools. وبعدين حد فتح الموقع على تابلت بالعربي، وزرار تغيير اللغة و «اشترك» مش ظاهرين خالص، والصفحة بتتسحب يمين وشمال. وحد تاني على موبايل صغير (320) زرار القايمة نصه برا الشاشة.
+
+---
+
+## المعمل
+
+صفحة navbar فيها: لوجو (صورة 40×40 واسم)، و ٦ روابط، وزرار لغة، وزرار «اشترك الآن»، وزرار قايمة (☰) بيظهر على الموبايل. والصفحة بتشتغل بالعربي ([[dir="rtl"]]) وبـ [[?lang=en]] بالإنجليزي. واتشغّلت على ويندوز 11 بـ [[playwright-core]] 1.64.1 و Chrome 156 المتسطب (Node 24.22).
+
+~~~css style.css (قبل)
+.nav { display: flex; align-items: center; gap: 24px; padding: 12px 24px; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 20px; }
+.links { display: flex; gap: 20px; white-space: nowrap; }
+.actions { display: flex; align-items: center; gap: 12px; margin-inline-start: auto; white-space: nowrap; }
+.lang { font-size: 14px; }
+.cta { padding: 10px 18px; border-radius: 8px; }
+.menu-btn { display: none; font-size: 22px; padding: 8px 14px; }
+@media (max-width: 760px) {
+  .links { display: none; }
+  .menu-btn { display: inline-flex; }
+}
+~~~
+
+والسكربت:
+
+~~~js matrix.js
+const { chromium } = require("playwright-core");
+const BASE = "http://127.0.0.1:8931/";
+const widths = [320, 360, 375, 414, 600, 761, 768, 820, 900, 1000, 1024, 1100, 1280, 1440, 1920];
+const extra = process.argv[2] ? "&" + process.argv[2] : "";
+(async () => {
+  const browser = await chromium.launch({ channel: "chrome" });
+  const page = await browser.newPage();
+  const bad = [];
+  for (const lang of ["ar", "en"]) {
+    for (const w of widths) {
+      await page.setViewportSize({ width: w, height: 800 });
+      await page.goto(BASE + "?lang=" + lang + extra);
+      const r = await page.evaluate(() => {
+        const iw = innerWidth, sw = document.documentElement.scrollWidth;
+        const out = [...document.querySelectorAll("body *")]
+          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.right > iw + 0.5 || b.left < -0.5); })
+          .map(e => e.className || e.tagName.toLowerCase());
+        const logo = Math.round(document.querySelector(".logo").getBoundingClientRect().height);
+        const small = [...document.querySelectorAll("a, button")]
+          .filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.width < 24 || b.height < 24); })
+          .map(e => e.className + " " + Math.round(e.getBoundingClientRect().height) + "px");
+        return { iw, sw, out: [...new Set(out)], logo, small };
+      });
+      await page.screenshot({ path: "shots/" + lang + "-" + w + ".png" });
+      const ok = r.sw <= r.iw && r.logo <= 40 && !r.small.length;
+      if (!ok) bad.push(lang + "-" + w);
+      console.log(lang, String(w).padStart(4), "scrollWidth=" + r.sw, "logo=" + r.logo + "px", ok ? "OK" : "BROKEN", r.out.join(","), r.small.length ? "small: " + r.small.join(",") : "");
+    }
+  }
+  console.log(bad.length ? "broken: " + bad.join(" ") : "all sizes OK");
+  await browser.close();
+  process.exitCode = bad.length ? 1 : 0;
+})();
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[widths]] | العروض: موبايلات صغيرة (320 و 360) وشائعة (375 و 414)، وتابلت (761 لحد 1024)، و [[1100]] حدود القايمة، وديسكتوب. ومعاها حدود كل breakpoint (760 و 761) |
+| [[channel: "chrome"]] | Chrome المتسطب. من غير [[npx playwright install]] |
+| [[setViewportSize]] | غيّر عرض الصفحة. ده اللي الـ media queries بتشوفه |
+| [[scrollWidth]] مقابل [[innerWidth]] | الصفحة أعرض من الشاشة = scroll أفقي. وده بيمسك RTL كمان (العنصر بيخرج شمال) |
+| [[out]] | أسامي العناصر اللي حافتها برا الشاشة. [[0.5]] سماح للكسور |
+| [[logo]] | ارتفاع اللوجو. أكتر من 40 = الاسم اتكسر على سطرين (اللوجو «اتضغط») |
+| [[small]] | روابط وزراير أصغر من 24px في أي اتجاه (الحد الأدنى في WCAG 2.2، معيار 2.5.8، من الوثائق) |
+| [[process.exitCode]] | [[1]] لو فيه مقاس مكسور، فينفع يتحط في CI |
+
+---
+
+## ١. أول تشغيل: كل حاجة مكسورة، بس بأشكال مختلفة
+
+~~~text node matrix.js (مختصر)
+ar  320 scrollWidth=363 logo=60px BROKEN actions,menu-btn small: lang 21px
+ar  375 scrollWidth=375 logo=60px BROKEN  small: lang 21px
+ar  600 scrollWidth=600 logo=40px BROKEN  small: lang 21px
+ar  761 scrollWidth=924 logo=60px BROKEN actions,lang,cta small: lang 21px
+ar  900 scrollWidth=924 logo=60px BROKEN actions,cta small: lang 21px
+ar 1000 scrollWidth=1000 logo=40px BROKEN  small: lang 21px
+en  320 scrollWidth=366 logo=60px BROKEN actions,menu-btn small: lang 21px
+en  761 scrollWidth=761 logo=60px BROKEN  small: lang 21px
+en  820 scrollWidth=820 logo=40px BROKEN  small: lang 21px
+~~~
+
+نقرا المشاكل الأربعة:
+
+| المشكلة | فين | الدليل |
+|---|---|---|
+| (أ) اللوجو بيتضغط | إنجليزي 761 و 768، والموبايل في الاتنين | [[logo=60px]]: الاسم نزل سطر تاني لأن [[.logo]] بيتصغّر عشان يدّي مكان للروابط |
+| (ب) الأزرار برا الشاشة | **عربي** من 761 لحد 900 | [[scrollWidth=924]] والخارج [[lang]] و [[cta]]. الكلام العربي أطول ([[الصفحة الرئيسية]] مقابل [[Home]])، فالروابط ([[nowrap]]) زقّت الأزرار برا |
+| (ج) زرار القايمة برا | 320 و 360 في الاتنين | [[scrollWidth=363]] و [[366]]، والخارج [[menu-btn]] |
+| (د) هدف لمس صغير | كل المقاسات | [[lang 21px]]: زرار اللغة ارتفاعه 21 بس |
+
+لاحظ إن (ب) **مش موجودة بالإنجليزي** على نفس العرض (en 761 الـ [[scrollWidth=761]] سليم). لو جربت بلغة واحدة، كنت هتفوّتها. ولاحظ إن [[scrollWidth]] بالعربي سليم على 1000 ومكسور على 900 (و 1000 مكتوب عليه [[BROKEN]] بسبب زرار اللغة بس): الكسر في **نطاق** (761 لحد 900 تقريبًا)، مش عند breakpoint واحد.
+
+> في RTL العنصر اللي بيخرج بيخرج **شمال** ([[left]] بالسالب). الشرط [[b.left < -0.5]] هو اللي مسكه. ولو كنت بتدوّر على [[right > innerWidth]] بس، هتقول «سليم».
+
+---
+
+## ٢. التصليح الأول: القايمة من 1100، و 359، واللمس
+
+~~~css
+.lang { padding-block: 10px; }
+@media (max-width: 1100px) {
+  .links { display: none; }
+  .menu-btn { display: inline-flex; }
+}
+@media (max-width: 359px) {
+  .nav { gap: 12px; padding-inline: 12px; }
+  .actions { gap: 8px; }
+  .cta { padding: 8px 12px; font-size: 14px; }
+  .menu-btn { padding: 6px 10px; }
+}
+~~~
+
+- (ب): بدل ما الروابط تستخبى تحت 761، تستخبى تحت 1100 ويظهر ☰. الحد اتاخد من المصفوفة: العربي مكسور لحد 900 وسليم من 1000، و 1100 فيه هامش للكلام الأطول.
+- (ج): الشاشات اللي أصغر من 360: مسافات وأحجام أصغر.
+- (د): [[padding-block: 10px]] على زرار اللغة يكبّر مساحة اللمس من غير ما يكبّر الكلام.
+
+~~~text node matrix.js "fix=menu,small,touch" (اللي فضل مكسور بس)
+ar  320 scrollWidth=320 logo=60px BROKEN
+ar  360 scrollWidth=363 logo=60px BROKEN actions,menu-btn
+ar  375 scrollWidth=375 logo=60px BROKEN
+ar  414 scrollWidth=414 logo=60px BROKEN
+en  320 scrollWidth=320 logo=60px BROKEN
+en  360 scrollWidth=366 logo=60px BROKEN actions,menu-btn
+en  375 scrollWidth=375 logo=60px BROKEN
+en  414 scrollWidth=414 logo=60px BROKEN
+broken: ar-320 ar-360 ar-375 ar-414 en-320 en-360 en-375 en-414
+~~~
+
+التابلت كله سليم، واللمس اتحل في كل المقاسات. بس شوف 320 و 360: قاعدة 359 صلّحت 320 ([[scrollWidth=320]])، و **360 لسه مكسور** ([[363]]) لأن 360 مش أقل من 359. الحد اتحط بالتخمين، والمصفوفة كشفته.
+
+---
+
+## ٣. التصليح التاني: اللوجو [[flex: none]]... وكسر الموبايل
+
+~~~css
+.logo { flex: none; }
+~~~
+
+[[flex: none]] = [[flex: 0 0 auto]]: متكبرش، ومتصغرش، وعرضك قد محتواك. فالاسم مش هينزل سطر تاني.
+
+~~~text node matrix.js "fix=menu,small,touch,logo" (اللي فضل مكسور بس)
+ar  320 scrollWidth=346 logo=40px BROKEN actions,menu-btn
+ar  360 scrollWidth=407 logo=40px BROKEN actions,menu-btn
+ar  375 scrollWidth=407 logo=40px BROKEN actions,menu-btn
+en  320 scrollWidth=360 logo=40px BROKEN actions,menu-btn
+en  360 scrollWidth=420 logo=40px BROKEN actions,menu-btn
+en  375 scrollWidth=420 logo=40px BROKEN actions,menu-btn
+en  414 scrollWidth=420 logo=40px BROKEN actions,menu-btn
+~~~
+
+اللوجو بقى 40 في كل حتة، **بس** الموبايل بقى أسوأ: 375 و 414 كانوا من غير scroll أفقي، دلوقتي [[407]] و [[420]]. اللوجو كان بيتصغّر عشان يدّي مكان للأزرار على الموبايل، ولما منعناه، الأزرار اتزقّت برا. ده **بالظبط** اللي سحب الحافة بالإيد مبيمسكوش: صلّحت التابلت وانت بتبص على التابلت.
+
+---
+
+## ٤. التصليح التالت: الموبايل يشيل اسم اللوجو بصريًا
+
+~~~css
+@media (max-width: 480px) {
+  .logo span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+~~~
+
+ده نمط «sr-only»: الاسم مستخبي من الشاشة بس قارئ الشاشة لسه بيقراه (درس aria)، فاللينك لسه اسمه «متجر أكمي». والصورة 40px كفاية كلوجو على الموبايل.
+
+~~~text node matrix.js "fix=menu,small,touch,logo,phone"
+all sizes OK
+~~~
+
+ورقم الخروج [[0]].
+
+## ٥. وقاعدة 359؟ المصفوفة بتقول إنها مبقتش لازمة
+
+شلنا قاعدة [[max-width: 359px]] وشغّلنا تاني:
+
+~~~text node matrix.js "fix=menu,touch,logo,phone"
+all sizes OK
+~~~
+
+لما الاسم اتشال على الموبايل، اتوفّر مكان كفاية لـ 320. فالقاعدة دي بقت كود ميت: امسحها. (في الحالة الأصلية قاعدة [[max-width: 359px]] كانت هي اللي صلّحت 320، لأن ترتيب التصليحات كان مختلف. المصفوفة هي اللي بتقرر، مش الذاكرة.)
+
+---
+
+## اللي المصفوفة دي **مبتقولهوش**
+
+- Chromium مش Safari. وأجهزة آيفون في Playwright بتشتغل على WebKit (محتاج [[npx playwright install webkit]]، مش متسطب هنا). فالـ [[100vh]] في Safari، والفيديو، و [[env(safe-area-inset-top)]] (النوتش) محتاجين جهاز حقيقي أو على الأقل WebKit.
+- الخطوط: لو الخط بيتحمّل من النت والسكربت صوّر قبل ما يحمّل، العرض هيختلف. استنى [[document.fonts.ready]] قبل القياس.
+- التفاعل: القايمة لما تتفتح، والـ hover، والكيبورد. ده اختبار تاني.
+- الشكل: [[scrollWidth]] سليم ميعنيش إن الشكل حلو. عشان كده فيه لقطة لكل مقاس في [[shots/]]: ٣٠ صورة تبص عليهم في دقيقة.
+
+## الخلاصة
+
+| | |
+|---|---|
+| المصفوفة | عروض الموبايل والتابلت والديسكتوب **وحدود كل breakpoint** × كل لغة |
+| scroll أفقي | [[document.documentElement.scrollWidth > innerWidth]] |
+| مين خارج | [[getBoundingClientRect()]]: [[right > innerWidth]] **أو** [[left < 0]] (RTL) |
+| اللمس | أصغر من 24px = مشكلة (WCAG 2.2، معيار 2.5.8) |
+| بعد كل تصليح | المصفوفة **كلها** تاني. تصليح مقاس بيكسر مقاس |
+| رقم الخروج | [[0]] أو [[1]]: حطها في CI |
+
+> سحب الحافة بالإيد بيوريك المقاسات اللي انت بتبص عليها. المصفوفة بتوريك المقاسات اللي الزوار عليها.`,
+          deep: {
+            why: R`أغلب كسر الـ responsive بيحصل في نطاقات مش عند أرقام مشهورة: تابلت بالعربي، أو موبايل صغير، أو حد الـ breakpoint بالظبط. والعربي والإنجليزي بيتكسروا في أماكن مختلفة لأن طول الكلام مختلف. والأخطر: التصليح بيتعمل وانت بتبص على مقاس واحد، فبيكسر مقاس تاني مش قدامك. المصفوفة بتخلّي «سليم» رقم بيتقاس، مش إحساس.`,
+            how: R`[[setViewportSize]] بيغيّر عرض الـ viewport اللي الـ media queries بتتقيّم عليه، وبعد [[goto]] الصفحة بتتبني من جديد بالعرض ده. [[scrollWidth]] بتاع [[documentElement]] هو عرض المحتوى كله بما فيه اللي خارج، فلو أكبر من [[innerWidth]] فيه scroll أفقي. وفي RTL الصفحة بتبدأ من اليمين، فالعنصر اللي بيفيض بيروح شمال ([[left]] سالب)، وده بيزوّد [[scrollWidth]] برضه. و [[flex: none]] بيلغي [[flex-shrink]]، فالعنصر مبيتنازلش عن مكانه، فاللي جنبه هو اللي بيتزق. والـ sr-only بيشيل العنصر من حساب العرض ([[position: absolute]]) من غير ما يشيله من الـ accessibility tree.`,
+            when: R`قبل أي إطلاق، وبعد أي تعديل في الـ header أو الـ navbar أو أي حاجة [[nowrap]] أو [[flex]]، وبعد إضافة لغة. وكخطوة في CI: السكربت بيخرج [[1]] لو فيه مقاس مكسور، فالـ PR بيقف. ولو الصفحة طويلة، اعمل المصفوفة على أهم ٣ صفحات بس (الرئيسية، والمنتج، والدفع).`,
+            mistakes: R`تختبر ٣ عروض بلغة واحدة. تدوّر على [[right > innerWidth]] بس فتفوّت RTL. تحط breakpoint بالتخمين (359) من غير ما تجرّب الرقم اللي بعده (360). تصلّح مقاس ومتعيدش الباقي. تسيب قواعد بقت ميتة بعد تصليح تاني. تفتكر Chromium = Safari. وتشيل اسم اللوجو بـ [[display: none]] فيضيع اسم اللينك عند قارئ الشاشة.`
+          },
+          sol: R`أول تشغيل على صفحة فيها navbar طويل غالبًا هيطلع [[BROKEN]] في: الموبايلات الصغيرة (عنصر في [[actions]] برا)، والتابلت بالعربي ([[scrollWidth]] أكبر من العرض)، وأي رابط ارتفاعه أقل من 24. على المعمل: [[broken:]] فيها الـ ٣٠ مقاس في أول تشغيل (بسبب زرار اللغة 21px)، و ٨ بعد التصليح الأول (الموبايل)، و ٧ بعد [[flex: none]] على اللوجو، وصفر ([[all sizes OK]]) بعد قاعدة 480.
+
+والإجابة على السؤال: أيوه. تصليح اللوجو على التابلت ([[flex: none]]) خلّى 375 و 414 (اللي كانوا من غير scroll أفقي) يطلّعوا [[scrollWidth=407]] و [[420]]. ده اللي بيحصل لما تصلّح وانت بتبص على مقاس واحد.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة RTL فيها زرار [[position: absolute; left: -40px]]. [[document.documentElement.scrollWidth > innerWidth]] هيرجّع إيه؟ والفلتر اللي بيدوّر على [[b.right > innerWidth]] بس هيلاقي الزرار؟ جرّب في Console.`, done: R`كتبت توقعك للاتنين، وجربت: الفلتر بـ [[right]] بس ملقاش الزرار، والفلتر بـ [[left < 0]] لقاه.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الزرار</title>
+<style>
+  body { margin: 0; }
+  .btn { position: absolute; left: -40px; top: 8px; width: 100px; height: 40px; }
+</style>
+</head>
+<body>
+<main><h1>الصفحة</h1><button class="btn">زرار</button></main>
+</body>
+</html>
+~~~
+
+~~~js
+document.documentElement.scrollWidth > innerWidth;
+
+const all = [...document.querySelectorAll('body *')];
+all.filter((e) => e.getBoundingClientRect().right > innerWidth);
+all.filter((e) => e.getBoundingClientRect().left < 0);
+~~~
+
+**اللي بيفرق:** في RTL الصفحة بتبدأ من اليمين، والـ scroll الأفقي بيتمد ناحية الشمال. فالعنصر اللي طالع من الشمال بيعمل scroll فعلًا، وعشان كده السطر الأول [[true]]. بس الفلتر بـ [[right]] بيدوّر على اليمين بس، وده مش مكان المشكلة.
+
+وعشان كده فلتر السكربت في الدرس فيه الشرطين: [[b.right > iw + 0.5 || b.left < -0.5]].
+
+**الفرق في LTR:** نفس الزرار طالع من الشمال، بس في LTR مفيش scroll ناحية الشمال خالص، فالجزء ده بيضيع، و [[scrollWidth]] مبيبيّنهوش. وده باج أخبث.
+
+**الغلطة الشائعة:** تنقل سكربت فحص من موقع إنجليزي، وتشغّله على موقع عربي، فيقولك «سليم».
+
+~~~text الناتج
+عرض 800:
+                          rtl             ltr
+scrollWidth > innerWidth  true           false
+scrollWidth               840          800
+الفلتر بـ right           0 عنصر      0 عنصر
+الفلتر بـ left < 0        1 عنصر      1 عنصر
+left الزرار               -40          -40
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة navbar بالعربي والإنجليزي (٦ روابط وزرارين ولوجو)، وشغّل عليها [[matrix.js]] من غير تعديل. اكتب جدول: كل مقاس [[BROKEN]] والعنصر الخارج، ومجمّعة في «نطاقات» (من كام لكام).`, done: R`عندك جدول فيه نطاق واحد على الأقل بيختلف بين العربي والإنجليزي، وكل سطر فيه اسم العنصر الخارج من ناتج السكربت.`, sol: R`الصفحة، وبتفتح بـ [[?lang=ar]] أو [[?lang=en]]. وشغّل عليها [[matrix.js]] من الدرس زي ما هو:
+
+~~~live 150 150
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الموقع</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui; }
+  .bar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; }
+  .logo { flex: none; height: 32px; font-weight: 800; line-height: 32px; text-decoration: none; }
+  .links { display: flex; gap: 12px; }
+  .links a { padding: 6px 4px; white-space: nowrap; }
+  .actions { display: flex; gap: 8px; margin-inline-start: auto; }
+  .cta { padding: 8px 12px; font: inherit; white-space: nowrap; }
+</style>
+</head>
+<body>
+<header class="bar">
+  <a class="logo" href="#home" data-t="logo"></a>
+  <nav class="links" aria-label="الرئيسية">
+    <a href="#1" data-t="a"></a><a href="#2" data-t="b"></a><a href="#3" data-t="c"></a>
+    <a href="#4" data-t="d"></a><a href="#5" data-t="e"></a><a href="#6" data-t="f"></a>
+  </nav>
+  <div class="actions">
+    <button class="cta" type="button" data-t="g"></button>
+    <button class="cta" type="button" data-t="h"></button>
+  </div>
+</header>
+<main><h1 data-t="logo"></h1></main>
+<script>
+  const T = {
+    ar: { logo: 'متجر', a: 'الرئيسية', b: 'المنتجات', c: 'العروض', d: 'الفروع', e: 'المدونة', f: 'تواصل', g: 'ادخل', h: 'سجّل' },
+    en: { logo: 'Store', a: 'Home', b: 'Products', c: 'Special offers', d: 'Our branches', e: 'The blog', f: 'Contact us', g: 'Sign in', h: 'Create account' },
+  };
+  const lang = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ar';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  for (const el of document.querySelectorAll('[data-t]')) el.textContent = T[lang][el.dataset.t];
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه النطاق بيختلف بين اللغتين:** الكلام الإنجليزي هنا أطول، فبيعدّي عرض الشاشة عند مقاس أكبر. عشان كده المصفوفة لازم تجرب اللغتين، مش واحدة.
+
+**إزاي تطلّع النطاقات:** اقرا السطور [[BROKEN]] المتتالية. أول عرض وآخر عرض هم النطاق. والعنصر الخارج آخر السطر، وده اللي هتصلّحه.
+
+**الغلطة الشائعة:** تصلّح عند أول مقاس مكسور بس. النطاق كله لازم يتصلّح، و [[.actions]] هو اللي بيطلع برّه هنا في الحالتين.
+
+~~~text الناتج
+آخر سطر من matrix.js:
+broken: ar-320 ar-360 ar-375 ar-414 en-320 en-360 en-375 en-414 en-600 en-761 en-768 en-820
+
+النطاقات:
+اللغة     من      لحد      العنصر الخارج
+ar        320     414      links , a , actions , cta
+en        320     820      links , a , actions , cta
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[@media (max-width: 359px) { .menu-btn { padding: 4px } }]] اتكتب عشان زرار القايمة برا الشاشة على «الموبايلات الصغيرة»، والمصفوفة لسه بتقول [[360 BROKEN]]. ليه؟ صلّحه بقيمة متقاسة مش متخمّنة، وأثبت بالمصفوفة.`, done: R`شرحت إن 360 مش أقل من 359، ولقيت أصغر عرض سليم بالمصفوفة، والحد الجديد بيخلّي 320 و 360 و 375 [[OK]] من غير ما يكسر الباقي.`, sol: R`~~~live 150 150
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الموقع</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui; }
+  .bar { display: flex; align-items: center; gap: 12px; padding: 8px; }
+  .logo { flex: none; width: 120px; height: 32px; line-height: 32px; font-weight: 800; }
+  .phone { flex: none; width: 110px; padding-block: 6px; white-space: nowrap; }
+  .menu-btn { flex: none; padding: 10px 28px; font: inherit; white-space: nowrap; }
+  @media (max-width: 365px) {
+    .menu-btn { padding: 10px 4px; }
+  }
+</style>
+</head>
+<body>
+<header class="bar">
+  <a class="logo" href="#home">المتجر</a>
+  <a class="phone" href="tel:+200000000000">اتصل بينا</a>
+  <button class="menu-btn" type="button">القايمة</button>
+</header>
+<main><h1>المتجر</h1></main>
+</body>
+</html>
+~~~
+
+**ليه القاعدة ماتطبّقتش:** [[max-width: 359px]] معناها «359 وأقل». والشاشة 360، فمش متحقق. الرقم اتخمّن من اسم «موبايلات صغيرة» مش من قياس.
+
+**الطريقة الصح:** اسأل المصفوفة، مش خيالك. جرّب عروض متتالية حوالين النقطة، ولاقي أصغر عرض سليم، واكتب الحد قبله برقم واحد.
+
+**ليه مش نختار رقم «مريح» زي 400:** هيشتغل، بس هيصغّر الزرار على عروض مش محتاجة. الحد المتقاس بيغيّر اللي لازم بس.
+
+**الغلطة الشائعة:** تعدّل الحد بعد ما تجرب 360 بس. لازم تشغّل المصفوفة كلها، لأن الحد الجديد ممكن يكسر عرض تاني.
+
+~~~text الناتج
+قبل (max-width: 359px):
+ar  320 scrollWidth=320 logo=32px OK
+ar  360 scrollWidth=366 logo=32px BROKEN menu-btn
+ar  375 scrollWidth=375 logo=32px OK
+ar  414 scrollWidth=414 logo=32px OK
+
+البحث عن الحد، من غير أي media query:
+360 → scrollWidth 366 BROKEN
+365 → scrollWidth 366 BROKEN
+366 → scrollWidth 366 OK
+375 → scrollWidth 375 OK
+أصغر عرض سليم = 366، فالحد = 365
+
+بعد (max-width: 365px):
+ar  320 scrollWidth=320 logo=32px OK
+ar  360 scrollWidth=360 logo=32px OK
+ar  375 scrollWidth=375 logo=32px OK
+ar  414 scrollWidth=414 logo=32px OK
+آخر سطر: all sizes OK
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** زوّد على السكربت: لكل مقاس مكسور، احفظ لقطة للعنصر الخارج بس ([[element.screenshot]]) في [[shots/broken/]]، واطبع حجم الصفحة الكلي ([[scrollWidth]]) جنب العرض.`, done: R`بعد التشغيل [[shots/broken/]] فيه صورة لكل مقاس [[BROKEN]] (وفاضي لو [[all sizes OK]])، والناتج فيه العرضين جنب بعض.`, sol: R`~~~js matrix-shots.js
+const fs = require("fs");
+const { chromium } = require("playwright-core");
+const BASE = "http://127.0.0.1:8931/";
+const widths = [320, 360, 375, 414, 600, 768, 1024, 1280];
+
+(async () => {
+  fs.rmSync("shots/broken", { recursive: true, force: true });
+  fs.mkdirSync("shots/broken", { recursive: true });
+
+  const browser = await chromium.launch({ channel: "chrome" });
+  const page = await browser.newPage();
+  const bad = [];
+
+  for (const lang of ["ar", "en"]) {
+    for (const w of widths) {
+      await page.setViewportSize({ width: w, height: 800 });
+      await page.goto(BASE + "?lang=" + lang);
+
+      const r = await page.evaluate(() => {
+        const iw = innerWidth;
+        const sw = document.documentElement.scrollWidth;
+        const out = [...document.querySelectorAll("body *")]
+          .filter((e) => {
+            const b = e.getBoundingClientRect();
+            return b.width && (b.right > iw + 0.5 || b.left < -0.5);
+          })
+          .map((e) => (e.className ? "." + e.className.split(" ")[0] : e.tagName.toLowerCase()));
+        return { iw, sw, out: [...new Set(out)] };
+      });
+
+      const ok = r.sw <= r.iw;
+      if (!ok) {
+        bad.push(lang + "-" + w);
+        await page.locator(r.out[0]).first().screenshot({
+          path: "shots/broken/" + lang + "-" + w + ".png",
+        });
+      }
+      console.log(lang, String(w).padStart(4), "width=" + r.iw, "scrollWidth=" + r.sw, ok ? "OK" : "BROKEN", r.out.join(","));
+    }
+  }
+
+  console.log(bad.length ? "broken: " + bad.join(" ") : "all sizes OK");
+  await browser.close();
+  process.exitCode = bad.length ? 1 : 0;
+})();
+~~~
+
+**اللي اتزوّد على [[matrix.js]]:**
+
+- [[fs.rmSync]] ثم [[fs.mkdirSync]]: الفولدر يبدأ فاضي كل مرة، فالصور اللي فيه بتاعة التشغيلة دي بس.
+- [[.map(...)]] بقت بترجّع selector جاهز: [[.actions]] أو اسم العنصر.
+- [[page.locator(r.out[0]).first().screenshot()]]: لقطة للعنصر نفسه، مش الصفحة كلها.
+- [[.first()]]: عشان لو الـ class مكرر.
+- [[r.out[0]]]: أول عنصر طالع، وده غالبًا الأب اللي فيه المشكلة.
+- [[process.exitCode]]: الـ CI يفشل لو فيه كسر.
+
+**الغلطة الشائعة:** تستخدم الـ class كـ selector من غير نقطة. [[.actions]] و [[actions]] حاجتين مختلفتين، والتانية هتدوّر على عنصر اسمه actions.
+
+~~~text الناتج
+ar  320 width=320 scrollWidth=520 BROKEN .actions
+ar  360 width=360 scrollWidth=520 BROKEN .actions
+ar  375 width=375 scrollWidth=520 BROKEN .actions
+broken: ar-320 ar-360 ar-375 ar-414 en-320 en-360 en-375 en-414
+
+عدد الصور في shots/broken/: 8
+عدد سطور BROKEN: 8
+ar-320.png , ar-360.png , ar-375.png , ar-414.png ...
+بعد تصليح الصفحة: all sizes OK، وعدد الصور = 0
+~~~` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[bounds.js]]: بياخد ملف CSS ويطلّع كل [[min-width]] و [[max-width]] بالبكسل، ويطبع لكل واحد العرض اللي عنده والعرض اللي بعده أو قبله (يعني [[max-width: 359px]] = 359 و 360)، ويدمجهم مع المصفوفة الأساسية مترتبين ومن غير تكرار. وبعدين خلي [[matrix.js]] يقرا المصفوفة منه.`, done: R`[[node bounds.js style.css]] على المعمل بيطبع لستة فيها [[359 360]] و [[760 761]] و [[1100 1101]] جنب 320 و 1440، و [[matrix.js]] بيلف عليهم.`, sol: R`~~~js bounds.js
+const fs = require("fs");
+
+const BASE = [320, 375, 414, 768, 1024, 1280, 1440];
+
+// كل حد في الملف بيدّي عرضين: آخر عرض قبل التغيير وأول عرض بعده
+function widthsFrom(file) {
+  const css = fs.readFileSync(file, "utf8");
+  const pairs = [];
+  for (const [, kind, px] of css.matchAll(/\((min|max)-width:\s*(\d+)px\)/g)) {
+    const n = Number(px);
+    pairs.push(kind === "max" ? [n, n + 1] : [n - 1, n]);
+  }
+  const all = [...BASE, ...pairs.flat()];
+  return { pairs, widths: [...new Set(all)].sort((a, b) => a - b) };
+}
+
+if (require.main === module) {
+  const { pairs, widths } = widthsFrom(process.argv[2]);
+  for (const [a, b] of pairs) console.log(a, b);
+  console.log("matrix:", widths.join(" "));
+}
+
+module.exports = { widthsFrom };
+~~~
+
+و [[style.css]] المعمل:
+
+~~~css style.css
+.menu-btn { padding: 12px; }
+@media (max-width: 359px) { .menu-btn { padding: 4px; } }
+@media (max-width: 760px) { .links { display: none; } }
+@media (max-width: 1100px) { .cta { display: none; } }
+@media (min-width: 1440px) { .wrap { max-width: 1200px; } }
+~~~
+
+والتغيير في [[matrix.js]]، بدل سطر [[const widths]]:
+
+~~~js
+const { widthsFrom } = require("./bounds.js");
+const { widths } = widthsFrom("style.css");
+~~~
+
+**الفكرة:** الكسر غالبًا عند الحدود بالظبط، فبدل لستة ثابتة بنسأل ملف الـ CSS نفسه. فكل حد جديد بيتختبر من غير ما حد يفتكر.
+
+- [[matchAll]]: كل التطابقات في الملف، مع المجموعتين (النوع والرقم).
+- [[max]] بيدّي [[n]] و [[n + 1]]، و [[min]] بيدّي [[n - 1]] و [[n]]. لأن [[max-width: 359px]] آخر عرض متحقق فيه 359، وأول عرض مش متحقق 360.
+- [[new Set]]: يشيل المكرر. و [[sort((a, b) => a - b)]] عشان الأرقام تترتب كأرقام، لأن [[sort()]] لوحدها بتحط 1024 قبل 320.
+- [[require.main === module]]: الجزء ده يشتغل لما تشغّل الملف مباشرة بس، مش لما [[matrix.js]] يعمله require.
+
+**القيد:** ده بيقرا القيم بالـ px بس. [[40rem]] هتحتاج تحويل، وده الخطوة الجاية لو ملفك بالـ rem.
+
+**الغلطة الشائعة:** تعمل [[.sort()]] من غير دالة مقارنة.
+
+~~~text الناتج
+$ node bounds.js style.css
+359 360
+760 761
+1100 1101
+1439 1440
+matrix: 320 359 360 375 414 760 761 768 1024 1100 1101 1280 1439 1440
+
+matrix.js بعد التعديل لف على 14 عرض، وآخر سطر: all sizes OK
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الصفحة بخط من Google Fonts. شغّل المصفوفة مرة من غير انتظار الخط، ومرة بعد [[await page.evaluate(() => document.fonts.ready)]]. فيه مقاس نتيجته اختلفت؟ اكتب ليه.`, done: R`عندك نتيجتين، ولو فيه فرق مكتوب المقاس واللي اتغيّر (عرض أو ارتفاع اللوجو)، ولو مفيش مكتوب ليه (الخط كان متخزّن، أو مقاساته قريبة من الافتراضي).`, sol: R`~~~live 140 160
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر الخط</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@800&display=swap">
+<style>
+  body { margin: 0; font-family: system-ui; }
+  .bar { display: flex; padding: 8px; }
+  .logo { font: 800 28px Cairo, system-ui; white-space: nowrap; }
+</style>
+</head>
+<body>
+<header class="bar"><a class="logo" href="#home">متجر الخط الجميل</a></header>
+<main><h1>الصفحة</h1></main>
+</body>
+</html>
+~~~
+
+والتغيير في السكربت، بعد [[page.goto]]:
+
+~~~js
+await page.evaluate(() => document.fonts.ready);
+~~~
+
+**ليه بيفرق:** مع [[display=swap]] المتصفح بيعرض الكلام بخط بديل، وبعد ما الخط يتحمّل بيبدّل. فالقياس قبل التبديل بيقيس خط تاني خالص، بعرض وارتفاع مختلفين.
+
+[[document.fonts.ready]] بيرجّع Promise بيخلص لما كل الخطوط المطلوبة تتحمّل. ولازم الصفحة تكون طلبت الخط فعلًا، وده بيحصل أول ما عنصر يستخدمه.
+
+**لو طلعت النتيجتين زي بعض:** الخط ممكن يكون اتخزّن في الـ cache، أو تم تحميله قبل القياس. عشان كده التجربة هنا بتمسح الـ cache وبتأخر الخط صناعيًا.
+
+**الغلطة الشائعة:** تستخدم [[waitForTimeout(1000)]] بدل [[document.fonts.ready]]. رقم عشوائي، بيفشل على نت بطيء، وبيضيّع وقت على نت سريع.
+
+~~~text الناتج
+                       font-family المعروض    عرض اللوجو    ارتفاع اللوجو
+من غير انتظار          الخط البديل           162.64px       37px
+بعد fonts.ready        Cairo                 221.91px       52px
+
+الخط اتحمّل فعلًا: document.fonts.check = true
+المقاس اللي نتيجته اختلفت: عرض 360، اللوجو اتغيّر 59.27px في العرض
+~~~` },
+          ],
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import fs from "node:fs";
+fs.writeFileSync("style.css", ".a{}\n@media (max-width: 760px) { .x{} }\n@media (max-width: 1100px) { .y{} }\n@media (max-width: 359px) { .z{} }\n@media (min-width: 48rem) { .w{} }\n");
+const base = [320, 375, 414, 768, 1024, 1440];
+const css = fs.readFileSync("style.css", "utf8");
+const extra = [];
+for (const m of css.matchAll(/\((min|max)-width:\s*([\d.]+)(px|rem)\)/g)) {
+  const px = m[3] === "rem" ? Number(m[2]) * 16 : Number(m[2]);
+  extra.push(...(m[1] === "max" ? [px, px + 1] : [px - 1, px]));
+}
+const widths = [...new Set([...base, ...extra])].sort((a, b) => a - b);
+console.log("widths: " + widths.join(" "));
+const rows = [{ w: 360, sw: 363, iw: 360 }, { w: 375, sw: 375, iw: 375 }, { w: 761, sw: 924, iw: 761 }];
+console.log("broken: " + rows.filter(r => r.sw > r.iw).map(r => r.w).join(" "));`, expect: [R`widths: 320 359 360 375 414 760 761 767 768 1024 1100 1101 1440`, R`broken: 360 761`] },
+          ],
         }
       ]
     }

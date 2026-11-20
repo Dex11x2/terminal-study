@@ -1,7340 +1,4044 @@
-// CSS: الخطوط والنص (وحدة من منهج syllabus/css.json)
-// كل القياسات والمعاينات في الوحدة دي من Chrome 157 headless على Windows 11 (قيم getComputedStyle، وعرض وارتفاع العناصر، وصور للصفحة لما الشكل هو المهم).
-// تحميل خطوط الويب (font-display و unicode-range و preload و CORS) اتقاس على سيرفر Node محلي (127.0.0.1) بيأخّر ملف الخط وبيكتب كل طلب وصله.
-// اللي متقاسش هنا ومكتوب جنبه إنه من MDN: المتصفحات التانية، وشكل لينك «اتزار» (الـ headless مبيحفظش history)، والنص المخفي في أول font-display، و hyphens: auto (قاموس التقطيع مش محمّل في الـ headless).
+// تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "CSS: الخطوط والنص",
-      l: 1,
-      n: "الخط وحجمه ووزنه ومسافة السطور، وخطوط الويب، ومحاذاة النص وتكسير السطور، والخط اللي تحت الكلام والضل، والقوايم والعدّادات، وحالات اللينكات، وأول حرف والنص المتحدد، وخصائص الخط المتقدمة",
+      t: "widgets و scroll وميزات جديدة",
       pre: [
-        { to: "css/مقدمة CSS وتنسيق العناصر", why: R`لازم تبقى عارف القاعدة بتتكتب إزاي ([[selector { property: value; }]]) وبتتربط بالصفحة إزاي` },
-        { to: "css/selectors", why: R`الوحدة دي بتستخدم الـ class والـ pseudo-classes ([[:hover]]) والـ pseudo-elements ([[::before]]) اللي اتشرحوا هناك، وبتزوّد عليهم` }
+        { to: "css/aria", why: R`الأدوار و aria-expanded اللي الـ widgets محتاجاها` },
+        { to: "css/focus-visible", why: R`الـ focus اللي الـ widgets بتنقله` },
       ],
-      goal: [
-        R`تختار خط لصفحة عربي من خطوط الجهاز بـ [[font-family]] وبدايل مترتبة، وتظبط الحجم ومسافة السطور ولون الكلام عشان الفقرة تتقري براحة.`,
-        R`تتحكم في الوزن والميل بـ [[font-weight]] و [[font-style]]، وتعرف إمتى المتصفح «بيفبرك» التقيل والمايل وإزاي توقفه، وتكتب [[font]] المختصرة من غير ما تمسح حاجة بالغلط.`,
-        R`تحمّل خط ويب من موقعك بـ [[@font-face]]، وتختار [[font-display]]، وتقسّم الخط بـ [[unicode-range]]، وتقرا أخطاء تحميل الخط في الـ Console.`,
-        R`تحاذي النص بـ [[text-align: start]] اللي بتشتغل في العربي والإنجليزي، وتمنع أي كلمة أو لينك طويل يكسر الصفحة على الموبايل بـ [[overflow-wrap]]، وتقص العنوان الطويل بـ [[text-overflow]].`,
-        R`تشكّل الخط اللي تحت الكلام بـ [[text-decoration]] وإخواتها، وتزوّد ضل بـ [[text-shadow]] من غير ما القراية تبوظ.`,
-        R`تغيّر شكل علامة القايمة بـ [[list-style]] و [[::marker]]، وترقّم أي حاجة بـ [[counter()]] و [[counters()]] و [[@counter-style]]، بأرقام عربي لو عايز.`,
-        R`تنسّق حالات اللينك الخمسة بالترتيب الصح ([[:link]] و [[:visited]] و [[:hover]] و [[:focus-visible]] و [[:active]]) من غير ما اللينك يبطّل يبان إنه لينك.`,
-        R`تستخدم [[::first-letter]] و [[::first-line]] و [[::selection]] و [[writing-mode]]، وتشغّل خصائص الخط المتقدمة ([[font-variant-numeric: tabular-nums]]) لما الجدول يحتاجها.`
-      ],
+      l: 3,
+      n: "accordion و tabs من غير مكتبة، و scroll مظبوط، وحركة بين الصفحات، وإزاي تعرف الميزة الجديدة تنفع ولا لسه",
       projects: [
-        { lvl: 'صغير', dir: "hebr-blog", t: R`صفحة مقال تتقري`, what: R`أول صفحة في «مدوّنة حبر» (مدوّنة متخيلة عن التعلّم)، للي هيقرا مقال من أوله لآخره على موبايل أو لابتوب. [[index.html]] فيها [[<main>]] جواه [[<article>]]: عنوان المقال [[<h1>]]، وسطر باسم الكاتبة، وتلات فقرات. و [[style.css]] فيه قاعدة واحدة على [[body]] (خطوط النظام وآخرها [[sans-serif]]، وحجم 18px، وسطور 1.8، ولون [[#1f2937]])، وعمود عرضه بحد أقصى 640px في نص الصفحة، وسطر للعنوان أضيق (1.3). من درس «font-family و font-size».`, done: R`في Computed: الفقرة 18px وسطرها 32.4px ولونها [[rgb(31, 41, 55)]]، والعنوان سطره 1.3 من حجمه. والعمود مبيزيدش عن 640px، وعلى عرض 360px مفيش سكرول بالعرض. ومفيش أي CSS جوه الـ HTML.`, sol: R`~~~html index.html
+        { lvl: 'صغير', dir: "faq", t: R`FAQ لشركة شحن متخيلة «سِكّة»`, what: R`١٠ أسئلة بـ [[<details name="faq">]]، والفتح والقفل بيتحركوا بـ [[::details-content]] و [[interpolate-size: allow-keywords]]، وسهم بيلف مع [[details[open]]]، وخانة بحث فوق بتخفي الأسئلة اللي مش فيها الكلمة. من درس details و summary.`, done: R`سؤال واحد بس مفتوح في المرة، والحركة شغالة في Chrome وفي المتصفح اللي مش بيدعمها بيفتح من غير حركة، والسهم في الناحية الصح في العربي، ومع reduce مفيش حركة، والبحث بيلاقي كلمة جوه إجابة مقفولة.`, sol: R`~~~html index.html (أول سؤالين، والـ ١٠ زيهم)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
+<title>أسئلة «سِكّة» للشحن</title>
 <link rel="stylesheet" href="style.css">
+<script src="search.js" defer></script>
 </head>
 <body>
-<main>
-  <article>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p>كتبت: سلمى فؤاد</p>
-    <p>أول مرة حلّيت مشكلة قعدت فيها يوم كامل، قلت لنفسي: مش هنساها أبدًا. وبعد شهرين قابلتها تاني، ومكنتش فاكرة غير إني «حلّيتها قبل كده».</p>
-    <p>من يومها بقيت أكتب. سطرين في ملف، وبعدين فقرة، وبعدين مقال. الكتابة مش للناس بس، هي لنفسك اللي هتيجي بعد شهرين.</p>
-    <p>والغريب إن أكتر حاجة بتتعلمها وإنت بتكتب هي إنك مكنتش فاهم قد ما إنت فاكر.</p>
-  </article>
+<main class="wrap">
+  <h1>أسئلة بتتسأل كتير</h1>
+  <label for="q">دوّر في الأسئلة والإجابات</label>
+  <input id="q" type="search" autocomplete="off" aria-describedby="count">
+  <p id="count" class="count" role="status"></p>
+  <div class="faq">
+    <details name="faq"><summary>الشحنة بتوصل في قد إيه؟</summary><p>جوه القاهرة والجيزة يوم شغل، والمحافظات من ٢ لـ ٤ أيام.</p></details>
+    <details name="faq"><summary>أتابع شحنتي إزاي؟</summary><p>من صفحة «تتبّع» برقم البوليصة اللي جالك في رسالة.</p></details>
+    …
+  </div>
 </main>
 </body>
 </html>
 ~~~
 
 ~~~css style.css
-body {
-  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
-  font-size: 18px;
-  line-height: 1.8;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-}
+*, *::before, *::after { box-sizing: border-box; }
+:root { interpolate-size: allow-keywords; }      /* lets height go from 0 to "auto" smoothly (Chrome); ignored elsewhere */
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #fafaf9; }
+.wrap { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem; }
+h1 { margin: 0 0 1rem; font-size: 1.5rem; }
+label { display: block; font-weight: 700; }
+input { width: 100%; margin-block: 0.25rem; padding: 0.55rem 0.75rem; border: 1px solid #78716c; border-radius: 0.5rem; font: inherit; }
+.count { min-height: 1.7em; margin: 0 0 0.5rem; color: #57534e; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
-}
+details { border-block-end: 1px solid #d6d3d1; }
+summary { display: flex; justify-content: space-between; gap: 1rem; padding: 0.9rem 0.25rem; font-weight: 700; cursor: pointer; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+/* our own arrow, at the end of the line (left in Arabic): it points down when open */
+summary::after { content: "‹" / ""; font-size: 1.4rem; line-height: 1; transition: rotate 0.25s; }
+details[open] summary::after { rotate: -90deg; }
+details p { margin: 0; padding: 0 0.25rem 1rem; color: #44403c; }
 
-h1 {
-  line-height: 1.3;
+/* the opening motion: only where ::details-content exists; elsewhere it just opens */
+@supports selector(::details-content) {
+  details::details-content {
+    block-size: 0; overflow: clip;
+    transition: block-size 0.3s ease, content-visibility 0.3s allow-discrete;
+  }
+  details[open]::details-content { block-size: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  details::details-content, summary::after { transition: none; }
 }
 ~~~
 
-~~~view 393 602 شكل الصفحة
+~~~js search.js
+// filters the questions by what's typed; the answer counts too, even when it's closed
+const input = document.getElementById("q"), count = document.getElementById("count");
+const items = [...document.querySelectorAll(".faq details")];
+input.addEventListener("input", () => {
+  const word = input.value.trim();
+  let shown = 0;
+  for (const d of items) {
+    const hit = !word || d.textContent.includes(word);     // textContent reads the closed <p> too
+    d.hidden = !hit;
+    if (hit) shown++;
+  }
+  const n = shown === 1 ? "سؤال واحد" : shown.toLocaleString("ar-EG") + " أسئلة";          // 1 = واحد، 2 and up = أسئلة
+  count.textContent = word ? (shown ? n + " فيها «" + word + "»" : "مفيش سؤال فيه «" + word + "»") : "";
+});
+~~~
+
+~~~view 800 800 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
+<title>أسئلة «سِكّة» للشحن</title>
 <style>
-body {
-  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
-  font-size: 18px;
-  line-height: 1.8;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-}
+*, *::before, *::after { box-sizing: border-box; }
+:root { interpolate-size: allow-keywords; }      /* lets height go from 0 to "auto" smoothly (Chrome); ignored elsewhere */
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #fafaf9; }
+.wrap { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem; }
+h1 { margin: 0 0 1rem; font-size: 1.5rem; }
+label { display: block; font-weight: 700; }
+input { width: 100%; margin-block: 0.25rem; padding: 0.55rem 0.75rem; border: 1px solid #78716c; border-radius: 0.5rem; font: inherit; }
+.count { min-height: 1.7em; margin: 0 0 0.5rem; color: #57534e; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
-}
+details { border-block-end: 1px solid #d6d3d1; }
+summary { display: flex; justify-content: space-between; gap: 1rem; padding: 0.9rem 0.25rem; font-weight: 700; cursor: pointer; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+/* our own arrow, at the end of the line (left in Arabic): it points down when open */
+summary::after { content: "‹" / ""; font-size: 1.4rem; line-height: 1; transition: rotate 0.25s; }
+details[open] summary::after { rotate: -90deg; }
+details p { margin: 0; padding: 0 0.25rem 1rem; color: #44403c; }
 
-h1 {
-  line-height: 1.3;
+/* the opening motion: only where ::details-content exists; elsewhere it just opens */
+@supports selector(::details-content) {
+  details::details-content {
+    block-size: 0; overflow: clip;
+    transition: block-size 0.3s ease, content-visibility 0.3s allow-discrete;
+  }
+  details[open]::details-content { block-size: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  details::details-content, summary::after { transition: none; }
 }
 </style>
 </head>
 <body>
-<main>
-  <article>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p>كتبت: سلمى فؤاد</p>
-    <p>أول مرة حلّيت مشكلة قعدت فيها يوم كامل، قلت لنفسي: مش هنساها أبدًا. وبعد شهرين قابلتها تاني، ومكنتش فاكرة غير إني «حلّيتها قبل كده».</p>
-    <p>من يومها بقيت أكتب. سطرين في ملف، وبعدين فقرة، وبعدين مقال. الكتابة مش للناس بس، هي لنفسك اللي هتيجي بعد شهرين.</p>
-    <p>والغريب إن أكتر حاجة بتتعلمها وإنت بتكتب هي إنك مكنتش فاهم قد ما إنت فاكر.</p>
-  </article>
+<main class="wrap">
+  <h1>أسئلة بتتسأل كتير</h1>
+  <label for="q">دوّر في الأسئلة والإجابات</label>
+  <input id="q" type="search" autocomplete="off" aria-describedby="count">
+  <p id="count" class="count" role="status"></p>
+  <div class="faq">
+    <details name="faq"><summary>الشحنة بتوصل في قد إيه؟</summary><p>جوه القاهرة والجيزة يوم شغل، والمحافظات من ٢ لـ ٤ أيام.</p></details>
+    <details name="faq"><summary>أتابع شحنتي إزاي؟</summary><p>من صفحة «تتبّع» برقم البوليصة اللي جالك في رسالة.</p></details>
+    <details name="faq"><summary>الدفع عند الاستلام متاح؟</summary><p>أيوه، كاش أو كارت مع المندوب.</p></details>
+    <details name="faq"><summary>المندوب جه وأنا مش موجود؟</summary><p>بيكلمك ويحاول تاني اليوم اللي بعده، وبعد محاولتين الشحنة بترجع المخزن.</p></details>
+    <details name="faq"><summary>أقدر أغيّر العنوان بعد الطلب؟</summary><p>أيوه قبل ما الشحنة تخرج مع المندوب، من صفحة «طلباتي».</p></details>
+    <details name="faq"><summary>فيه شحن دولي؟</summary><p>لسه، بنوصّل جوه مصر بس.</p></details>
+    <details name="faq"><summary>الشحنة وصلت مكسورة؟</summary><p>صوّرها قبل ما تمضي، وكلّمنا في نفس اليوم ونرجّعلك فلوسك.</p></details>
+    <details name="faq"><summary>أقصى وزن كام؟</summary><p>٣٠ كيلو للشحنة الواحدة، والأتقل محتاج عربية نقل.</p></details>
+    <details name="faq"><summary>بتشحنوا يوم الجمعة؟</summary><p>أيوه في القاهرة بس، من ١٢ الضهر.</p></details>
+    <details name="faq"><summary>أكلّم خدمة العملاء إزاي؟</summary><p>واتساب أو الخط الساخن من ٩ الصبح لـ ٩ بالليل.</p></details>
+  </div>
 </main>
+<script>
+// filters the questions by what's typed; the answer counts too, even when it's closed
+const input = document.getElementById("q"), count = document.getElementById("count");
+const items = [...document.querySelectorAll(".faq details")];
+input.addEventListener("input", () => {
+  const word = input.value.trim();
+  let shown = 0;
+  for (const d of items) {
+    const hit = !word || d.textContent.includes(word);     // textContent reads the closed <p> too
+    d.hidden = !hit;
+    if (hit) shown++;
+  }
+  const n = shown === 1 ? "سؤال واحد" : shown.toLocaleString("ar-EG") + " أسئلة";          // 1 = واحد، 2 and up = أسئلة
+  count.textContent = word ? (shown ? n + " فيها «" + word + "»" : "مفيش سؤال فيه «" + word + "»") : "";
+});
+</script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:**
+**هتشوف إيه:** «أسئلة بتتسأل كتير» وخانة بحث، وتحتها ١٠ أسئلة، كل واحد آخره سهم «‹». الضغط على سؤال بيفتحه بحركة ناعمة، والسهم بيلف لتحت، والمفتوح اللي قبله بيتقفل لوحده. والبحث بيخفي الأسئلة اللي مفيهاش الكلمة.
 
-- عمود كلام في نص الصفحة، مش ممدود على عرض الشاشة كله.
-- الخط بقى خط واجهة النظام بدل Times New Roman، وأكبر شوية، والسطور واخدة راحتها.
-- الكلام رمادي غامق، والعنوان سطوره أضيق من سطور الفقرات.
+**سؤال واحد في المرة من غير JS:** [[<details name="faq">]]. كل الـ details اللي ليهم نفس الـ [[name]] مجموعة، والمتصفح بيقفل القديم لما تفتح جديد. زي radio.
 
-**ليه كده:**
+**الحركة:**
+- [[::details-content]] هو الجزء اللي بيتفتح ويتقفل (كل حاجة غير الـ summary).
+- [[interpolate-size: allow-keywords]] بيسمح للـ height إنها تتحرك لحد [[auto]]، وده كان مستحيل بـ CSS.
+- [[content-visibility … allow-discrete]] لأن المتصفح بيخبي المحتوى بـ [[content-visibility]]، والـ [[allow-discrete]] بيخلّيها تتغير بعد الحركة مش قبلها.
+- كله جوه [[@supports selector(::details-content)]]. المتصفح اللي مبيعرفهوش بيفتح على طول، واتقاس كده.
 
-- القاعدة كلها على [[body]] لأن الأربع خصائص بيتورّثوا (درس «font-family و font-size»).
-- [[line-height: 1.8]] من غير وحدة عشان العنوان يحسبها من حجمه، وبعدها [[h1]] خد [[1.3]] لوحده لأن 1.8 كتير على خط كبير.
-- [[max-width: 640px]] مع [[margin: 0 auto]]: السطر الطويل قوي متعب للعين زي السطور اللازقة. العمود ده بيطلع حوالي 12 لـ 15 كلمة عربي في السطر. (الاتنين من درس «box model».)
+**السهم في آخر السطر:** [[summary]] بقى [[flex]] و [[justify-content: space-between]]، فالسهم بيروح لآخر السطر في أي اتجاه (شمال في العربي). و [[list-style: none]] و [[::-webkit-details-marker]] بيشيلوا مثلث المتصفح. والسهم [[content: "‹" / ""]]: نص بديل فاضي عشان مبيتقريش.
 
-**الغلطة الشائعة:** تحط [[font-size]] و [[line-height]] على [[p]]. القوايم والجداول اللي هتيجي في المشاريع الجاية هيطلعوا بالخط الافتراضي.
+**البحث في الإجابات المقفولة:** [[textContent]] بيقرا كل النص حتى اللي جوه [[details]] مقفول. والنتيجة في [[role="status"]]: «٣ أسئلة فيها «المندوب»». أول نسخة قالت «٣ سؤال»، فبقى «سؤال واحد» للواحد و «أسئلة» لاتنين وأكتر.
 
-~~~text القياس من Chrome
-p      font-size: 18px     line-height: 32.4px     color: rgb(31, 41, 55)
-h1     font-size: 36px     line-height: 46.8px
-main   العرض 640px على شاشة واسعة، وعلى موبايل 360px: 328px (الشاشة ناقص 16px من كل ناحية)
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+١. سؤال ١: مقفول 57px ← بعد 100ms 86px ← بعد 500ms 100px
+   فتحت سؤال ٣: المفتوح 3 بس (١ اتقفل لوحده)
+   السهم: "‹" / ""، rotate -90deg | الكلام يمين والسهم شمال
+٢. «المندوب»: الدفع عند الاستلام متاح؟ / المندوب جه وأنا مش موجود؟ / أقدر أغيّر العنوان بعد الطلب؟
+   (أول وتالت واحد الكلمة في إجابتهم المقفولة) | «٣ أسئلة فيها «المندوب»»
+   «طيارة»: «مفيش سؤال فيه «طيارة»» | ظاهر 0
+٣. من غير ::details-content (الـ @supports وقع): بعد 30ms 100px، بيتفتح على طول
+٤. reduce: بعد 30ms 100px | transitions: 0
+axe: 0   الـ validator: مفيش رسايل   CSS validator (W3C) مبيعرفش لسه interpolate-size و allow-discrete
 ~~~` },
-        { lvl: 'صغير', dir: "hebr-blog", cont: true, t: R`العناوين وسلّم الأحجام`, what: R`زي المشروع اللي فات (نفس الملفين)، وزوّد عليه ترتيب بصري. في الـ HTML: سطر تصنيف [[.kicker]] فوق العنوان، وسطر بيانات [[.meta]] تحته (الكاتبة والتاريخ ومدة القراية)، وفقرة مقدمة [[.lead]]، وعنوانين [[<h2>]] وعنوان [[<h3>]]، وكلمة جوه [[<em>]] وجملة جوه [[<strong>]]. في الـ CSS: [[font]] المختصرة على [[body]]، وسلّم أحجام بنسبة 1.25 بين كل درجة ([[h3]] 1.25em و [[h2]] 1.56em و [[h1]] 1.95em)، وارتفاع سطر بيقل كل ما الخط يكبر، وأوزان 300 للمقدمة و 600 لـ [[h3]] و [[.kicker]]، و [[.meta]] أصغر ورمادي. وامنع الميل المفبرك على العربي وادّي [[em]] لون. من درس «font-weight و font-style».`, done: R`المحسوب: [[h1]] 35.1px و [[h2]] 28.08px و [[h3]] 22.5px. و [[.lead]] سطرها 36px. و [[em]] عليه [[font-synthesis-style: none]] ولونه بني، والكلمة العربي اللي جواه معدولة. ولو غيّرت [[18px]] على [[body]] لـ [[20px]] كل الأحجام تكبر معاها.`, sol: R`~~~html index.html
+        { lvl: 'صغير', dir: "carousel", t: R`carousel منتجات بأزرار ونقط`, what: R`carousel بـ [[scroll-snap]] (من الدرس)، وزرارين «اللي قبله» و«اللي بعده» بيعملوا [[scrollBy]] بعرض كارت في الاتجاه الصح في RTL ([[scrollLeft]] بيبقى بالسالب)، ونقط تحت بتعلّم الكارت الظاهر بـ IntersectionObserver على الـ carousel نفسه. من درس scroll-snap و scroll-margin.`, done: R`الزراير بتمشي صح في العربي والإنجليزي، وبتتعطّل في الأول والآخر، والنقطة الحالية عليها [[aria-current="true"]]، والسحب باللمس والأسهم شغالين.`, sol: R`~~~html index.html (أول منتج، والـ ٦ زيه)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
+<title>منتجات مختارة</title>
 <link rel="stylesheet" href="style.css">
+<script src="carousel.js" defer></script>
 </head>
 <body>
-<main>
-  <article>
-    <p class="kicker">تجارب</p>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p class="meta">كتبت: سلمى فؤاد · ١٢ نوفمبر · ٤ دقايق قراية</p>
-    <p class="lead">الكتابة مش للناس بس. هي لنفسك اللي هتيجي بعد شهرين ومش فاكرة حاجة.</p>
-    <h2>المشكلة</h2>
-    <p>أول مرة حلّيت مشكلة قعدت فيها يوم كامل، قلت لنفسي: مش هنساها <em>أبدًا</em>. وبعد شهرين قابلتها تاني، ومكنتش فاكرة غير إني «حلّيتها قبل كده».</p>
-    <h2>الحل</h2>
-    <p>من يومها بقيت أكتب. سطرين في ملف، وبعدين فقرة، وبعدين مقال. <strong>مش لازم تبقى حاجة كبيرة.</strong></p>
-    <h3>ملحوظة</h3>
-    <p>أكتر حاجة بتتعلمها وإنت بتكتب هي إنك مكنتش فاهم قد ما إنت فاكر.</p>
-  </article>
+<main class="wrap">
+  <section class="carousel" aria-roledescription="carousel" aria-labelledby="c-title">
+    <div class="head">
+      <h1 id="c-title">منتجات مختارة</h1>
+      <div class="arrows">
+        <button type="button" class="prev" aria-controls="track">اللي قبله</button>
+        <button type="button" class="next" aria-controls="track">اللي بعده</button>
+      </div>
+    </div>
+    <ul class="track" id="track" tabindex="0" aria-label="المنتجات (اعمل scroll أو استخدم الأسهم)">
+      <li class="slide" id="s1" aria-label="1 من 6"><div class="pic" style="--c: #fde68a" aria-hidden="true"></div><h2>سماعة لاسلكي</h2><p>٨٥٠ ج</p></li>
+      <!-- والـ ٥ التانيين زيه -->
+    </ul>
+    <div class="dots" role="group" aria-label="اختار منتج">
+      <button type="button" class="dot" data-to="s1" aria-label="منتج ١" aria-current="true"></button>
+      <!-- والـ ٥ التانيين زيه -->
+    </div>
+  </section>
 </main>
 </body>
 </html>
 ~~~
 
 ~~~css style.css
-body {
-  font: 18px/1.8 system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-  font-synthesis-style: none;
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #f9fafb; }
+.wrap { max-width: 56rem; margin: 0 auto; padding: 1.5rem 1rem; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 3px; }
+.head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.head h1 { margin: 0; font-size: 1.4rem; }
+.arrows { display: flex; gap: 0.5rem; }
+.arrows button { padding: 0.45rem 1rem; border: 1px solid #111827; border-radius: 999px; background: #fff; font: inherit; }
+.arrows button:disabled { border-color: #d1d5db; color: #6b7280; }
+
+/* the track scrolls by itself (touch, trackpad, arrow keys); snap stops each card at the start edge */
+.track {
+  display: grid; grid-auto-flow: column; grid-auto-columns: min(16rem, 80%); gap: 1rem;
+  margin: 1rem 0 0; padding: 0.25rem; list-style: none;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: 0.25rem; scrollbar-width: thin;
 }
+.slide { scroll-snap-align: start; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e5e7eb; }
+.pic { aspect-ratio: 4 / 3; border-radius: 0.75rem; background: radial-gradient(circle at 30% 30%, #fff8, transparent 50%), var(--c); }
+.slide h2 { margin: 0.5rem 0 0; font-size: 1.05rem; }
+.slide p { margin: 0; color: #047857; font-weight: 700; }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-/* سلّم الأحجام: كل درجة 1.25 من اللي تحتها */
-h1 { font-size: 1.95em; line-height: 1.25; font-weight: 700; margin: 0 0 8px; }
-h2 { font-size: 1.56em; line-height: 1.3; font-weight: 700; margin: 32px 0 8px; }
-h3 { font-size: 1.25em; line-height: 1.4; font-weight: 600; margin: 24px 0 4px; }
-
-.kicker { font-size: 0.8em; font-weight: 600; color: #b45309; margin: 0; }
-.meta { font-size: 0.8em; color: #6b7280; margin: 0 0 24px; }
-.lead { font-size: 1.25em; line-height: 1.6; font-weight: 300; }
-
-em { color: #b45309; }
+.dots { display: flex; justify-content: center; gap: 0.25rem; margin-block-start: 0.75rem; }
+.dot { width: 24px; height: 24px; padding: 0; border: 0; background: none; display: grid; place-items: center; }   /* 24px: the target, not the dot */
+.dot::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #d1d5db; transition: width 0.2s; }
+.dot[aria-current="true"]::before { width: 22px; border-radius: 999px; background: #111827; }
+@media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } .dot::before { transition: none; } }
 ~~~
 
-~~~view 658 868 شكل الصفحة
+~~~js carousel.js
+const track = document.getElementById("track");
+const prev = document.querySelector(".prev"), next = document.querySelector(".next");
+const dots = [...document.querySelectorAll(".dot")];
+const smooth = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+
+// in RTL, scrollLeft starts at 0 and goes NEGATIVE toward the end; "next" is toward the end in both directions
+const forward = () => (getComputedStyle(track).direction === "rtl" ? -1 : 1);
+const step = () => track.querySelector(".slide").getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap);
+
+next.addEventListener("click", () => track.scrollBy({ left: forward() * step(), behavior: smooth }));
+prev.addEventListener("click", () => track.scrollBy({ left: -forward() * step(), behavior: smooth }));
+
+// disabled at the ends: Math.abs makes the same test work for 0..max (LTR) and 0..-max (RTL)
+function updateButtons() {
+  const pos = Math.abs(track.scrollLeft), max = track.scrollWidth - track.clientWidth;
+  prev.disabled = pos <= 1;
+  next.disabled = pos >= max - 1;
+  setCurrent();
+}
+track.addEventListener("scroll", updateButtons, { passive: true });
+addEventListener("resize", updateButtons);
+
+// the dot of the FIRST card that is mostly inside the track (2 or 3 can be visible together).
+// The observer watches the track (root: track), not the page
+const visible = new Set();
+const slides = [...track.querySelectorAll(".slide")];
+// at the very end the last card counts, even if the one before it is also visible
+function setCurrent() {
+  const current = next.disabled ? slides.at(-1) : slides.find(s => visible.has(s.id));
+  if (!current) return;
+  dots.forEach(d => (d.dataset.to === current.id ? d.setAttribute("aria-current", "true") : d.removeAttribute("aria-current")));
+}
+const io = new IntersectionObserver(entries => {
+  for (const e of entries) e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id);
+  setCurrent();
+}, { root: track, threshold: 0.6 });
+slides.forEach(s => io.observe(s));
+
+dots.forEach(d => d.addEventListener("click", () => {
+  document.getElementById(d.dataset.to).scrollIntoView({ behavior: smooth, block: "nearest", inline: "start" });
+}));
+
+updateButtons();
+~~~
+
+~~~js measure.mjs
+import { browser } from "../lab.mjs";
+import AxeBuilder from "@axe-core/playwright";
+const b = await browser();
+const st = p => p.evaluate(() => {
+  const t = document.getElementById("track");
+  return "scrollLeft " + Math.round(t.scrollLeft) + " | prev " + (document.querySelector(".prev").disabled ? "معطّل" : "شغال") + "، next " + (document.querySelector(".next").disabled ? "معطّل" : "شغال") +
+    " | النقطة: " + ([...document.querySelectorAll(".dot")].findIndex(d => d.getAttribute("aria-current") === "true") + 1);
+});
+for (const dir of ["rtl", "ltr"]) {
+  const ctx = await b.newContext({ viewport: { width: 700, height: 700 }, reducedMotion: "reduce" });   // reduce = instant scroll, easier to read
+  const p = await ctx.newPage();
+  await p.goto("http://127.0.0.1:8818/carousel/index.html");
+  if (dir === "ltr") await p.evaluate(() => { document.documentElement.dir = "ltr"; dispatchEvent(new Event("resize")); });
+  await p.waitForTimeout(200);
+  console.log("== " + dir + "\n  البداية: " + await st(p));
+  await p.click(".next"); await p.waitForTimeout(200); console.log("  next: " + await st(p));
+  for (let i = 0; i < 6; i++) { if (await p.$eval(".next", e => !e.disabled)) await p.click(".next"); await p.waitForTimeout(150); }
+  console.log("  لحد الآخر: " + await st(p));
+  await p.click(".prev"); await p.waitForTimeout(200); console.log("  prev: " + await st(p));
+  if (dir === "rtl") {
+    await p.evaluate(() => document.getElementById("track").scrollTo({ left: 0 })); await p.waitForTimeout(200);
+    await p.focus("#track"); await p.keyboard.press("ArrowLeft"); await p.keyboard.press("ArrowLeft"); await p.waitForTimeout(400);
+    console.log("  سهمين ← على الـ track: " + await st(p));
+    await p.click(".dot:nth-child(5)"); await p.waitForTimeout(300); console.log("  ضغطة على النقطة ٥: " + await st(p));
+    console.log("  axe: " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id).join(",") || "0"));
+  }
+  await ctx.close();
+}
+// a touch swipe can't be synthesized here (CDP touch gestures didn't move even the page); a trackpad swipe instead
+const ctx = await b.newContext({ viewport: { width: 412, height: 800 } });
+const p = await ctx.newPage();
+await p.goto("http://127.0.0.1:8818/carousel/index.html"); await p.waitForTimeout(200);
+const cdp = await ctx.newCDPSession(p);
+const box = await p.locator("#track").boundingBox();
+await cdp.send("Input.synthesizeScrollGesture", { x: Math.round(box.x + box.width / 2), y: Math.round(box.y + box.height / 2), xDistance: 250, yDistance: 0, gestureSourceType: "mouse", speed: 600 });
+await p.waitForTimeout(900);
+console.log("== سحب بالـ trackpad (412px، 250px): " + await st(p));
+await b.close();
+~~~
+
+~~~view 420 460 جرّب الأزرار والنقط
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
+<title>منتجات مختارة</title>
 <style>
-body {
-  font: 18px/1.8 system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-  font-synthesis-style: none;
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #f9fafb; }
+.wrap { max-width: 56rem; margin: 0 auto; padding: 1.5rem 1rem; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 3px; }
+.head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.head h1 { margin: 0; font-size: 1.4rem; }
+.arrows { display: flex; gap: 0.5rem; }
+.arrows button { padding: 0.45rem 1rem; border: 1px solid #111827; border-radius: 999px; background: #fff; font: inherit; }
+.arrows button:disabled { border-color: #d1d5db; color: #6b7280; }
+
+/* the track scrolls by itself (touch, trackpad, arrow keys); snap stops each card at the start edge */
+.track {
+  display: grid; grid-auto-flow: column; grid-auto-columns: min(16rem, 80%); gap: 1rem;
+  margin: 1rem 0 0; padding: 0.25rem; list-style: none;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: 0.25rem; scrollbar-width: thin;
 }
+.slide { scroll-snap-align: start; padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid #e5e7eb; }
+.pic { aspect-ratio: 4 / 3; border-radius: 0.75rem; background: radial-gradient(circle at 30% 30%, #fff8, transparent 50%), var(--c); }
+.slide h2 { margin: 0.5rem 0 0; font-size: 1.05rem; }
+.slide p { margin: 0; color: #047857; font-weight: 700; }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-/* سلّم الأحجام: كل درجة 1.25 من اللي تحتها */
-h1 { font-size: 1.95em; line-height: 1.25; font-weight: 700; margin: 0 0 8px; }
-h2 { font-size: 1.56em; line-height: 1.3; font-weight: 700; margin: 32px 0 8px; }
-h3 { font-size: 1.25em; line-height: 1.4; font-weight: 600; margin: 24px 0 4px; }
-
-.kicker { font-size: 0.8em; font-weight: 600; color: #b45309; margin: 0; }
-.meta { font-size: 0.8em; color: #6b7280; margin: 0 0 24px; }
-.lead { font-size: 1.25em; line-height: 1.6; font-weight: 300; }
-
-em { color: #b45309; }
+.dots { display: flex; justify-content: center; gap: 0.25rem; margin-block-start: 0.75rem; }
+.dot { width: 24px; height: 24px; padding: 0; border: 0; background: none; display: grid; place-items: center; }   /* 24px: the target, not the dot */
+.dot::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #d1d5db; transition: width 0.2s; }
+.dot[aria-current="true"]::before { width: 22px; border-radius: 999px; background: #111827; }
+@media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } .dot::before { transition: none; } }
 </style>
 </head>
 <body>
-<main>
-  <article>
-    <p class="kicker">تجارب</p>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p class="meta">كتبت: سلمى فؤاد · ١٢ نوفمبر · ٤ دقايق قراية</p>
-    <p class="lead">الكتابة مش للناس بس. هي لنفسك اللي هتيجي بعد شهرين ومش فاكرة حاجة.</p>
-    <h2>المشكلة</h2>
-    <p>أول مرة حلّيت مشكلة قعدت فيها يوم كامل، قلت لنفسي: مش هنساها <em>أبدًا</em>. وبعد شهرين قابلتها تاني، ومكنتش فاكرة غير إني «حلّيتها قبل كده».</p>
-    <h2>الحل</h2>
-    <p>من يومها بقيت أكتب. سطرين في ملف، وبعدين فقرة، وبعدين مقال. <strong>مش لازم تبقى حاجة كبيرة.</strong></p>
-    <h3>ملحوظة</h3>
-    <p>أكتر حاجة بتتعلمها وإنت بتكتب هي إنك مكنتش فاهم قد ما إنت فاكر.</p>
-  </article>
+<main class="wrap">
+  <section class="carousel" aria-roledescription="carousel" aria-labelledby="c-title">
+    <div class="head">
+      <h1 id="c-title">منتجات مختارة</h1>
+      <div class="arrows">
+        <button type="button" class="prev" aria-controls="track">اللي قبله</button>
+        <button type="button" class="next" aria-controls="track">اللي بعده</button>
+      </div>
+    </div>
+    <ul class="track" id="track" tabindex="0" aria-label="المنتجات (اعمل scroll أو استخدم الأسهم)">
+      <li class="slide" id="s1" aria-label="1 من 6"><div class="pic" style="--c: #fde68a" aria-hidden="true"></div><h2>سماعة لاسلكي</h2><p>٨٥٠ ج</p></li>
+      <li class="slide" id="s2" aria-label="2 من 6"><div class="pic" style="--c: #bfdbfe" aria-hidden="true"></div><h2>ساعة رياضة</h2><p>١٬٢٠٠ ج</p></li>
+      <li class="slide" id="s3" aria-label="3 من 6"><div class="pic" style="--c: #bbf7d0" aria-hidden="true"></div><h2>شاحن سريع</h2><p>٣٢٠ ج</p></li>
+      <li class="slide" id="s4" aria-label="4 من 6"><div class="pic" style="--c: #fbcfe8" aria-hidden="true"></div><h2>باور بانك</h2><p>٦٥٠ ج</p></li>
+      <li class="slide" id="s5" aria-label="5 من 6"><div class="pic" style="--c: #ddd6fe" aria-hidden="true"></div><h2>كابل مضفّر</h2><p>١٢٠ ج</p></li>
+      <li class="slide" id="s6" aria-label="6 من 6"><div class="pic" style="--c: #fed7aa" aria-hidden="true"></div><h2>ستاند موبايل</h2><p>١٩٠ ج</p></li>
+    </ul>
+    <div class="dots" role="group" aria-label="اختار منتج">
+      <button type="button" class="dot" data-to="s1" aria-label="منتج ١" aria-current="true"></button>
+      <button type="button" class="dot" data-to="s2" aria-label="منتج ٢"></button>
+      <button type="button" class="dot" data-to="s3" aria-label="منتج ٣"></button>
+      <button type="button" class="dot" data-to="s4" aria-label="منتج ٤"></button>
+      <button type="button" class="dot" data-to="s5" aria-label="منتج ٥"></button>
+      <button type="button" class="dot" data-to="s6" aria-label="منتج ٦"></button>
+    </div>
+  </section>
 </main>
+<script>
+const track = document.getElementById("track");
+const prev = document.querySelector(".prev"), next = document.querySelector(".next");
+const dots = [...document.querySelectorAll(".dot")];
+const smooth = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+
+// in RTL, scrollLeft starts at 0 and goes NEGATIVE toward the end; "next" is toward the end in both directions
+const forward = () => (getComputedStyle(track).direction === "rtl" ? -1 : 1);
+const step = () => track.querySelector(".slide").getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap);
+
+next.addEventListener("click", () => track.scrollBy({ left: forward() * step(), behavior: smooth }));
+prev.addEventListener("click", () => track.scrollBy({ left: -forward() * step(), behavior: smooth }));
+
+// disabled at the ends: Math.abs makes the same test work for 0..max (LTR) and 0..-max (RTL)
+function updateButtons() {
+  const pos = Math.abs(track.scrollLeft), max = track.scrollWidth - track.clientWidth;
+  prev.disabled = pos <= 1;
+  next.disabled = pos >= max - 1;
+  setCurrent();
+}
+track.addEventListener("scroll", updateButtons, { passive: true });
+addEventListener("resize", updateButtons);
+
+// the dot of the FIRST card that is mostly inside the track (2 or 3 can be visible together).
+// The observer watches the track (root: track), not the page
+const visible = new Set();
+const slides = [...track.querySelectorAll(".slide")];
+// at the very end the last card counts, even if the one before it is also visible
+function setCurrent() {
+  const current = next.disabled ? slides.at(-1) : slides.find(s => visible.has(s.id));
+  if (!current) return;
+  dots.forEach(d => (d.dataset.to === current.id ? d.setAttribute("aria-current", "true") : d.removeAttribute("aria-current")));
+}
+const io = new IntersectionObserver(entries => {
+  for (const e of entries) e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id);
+  setCurrent();
+}, { root: track, threshold: 0.6 });
+slides.forEach(s => io.observe(s));
+
+dots.forEach(d => d.addEventListener("click", () => {
+  document.getElementById(d.dataset.to).scrollIntoView({ behavior: smooth, block: "nearest", inline: "start" });
+}));
+
+updateButtons();
+</script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:**
+**هتشوف إيه:** «منتجات مختارة» وزرارين «اللي قبله» و «اللي بعده». تحتهم صف كروت ملوّنة (سماعة، وساعة، وشاحن…) بيقف كل كارت عند الحافة، وتحت نقط، والحالية أطول وغامقة.
 
-- «تجارب» صغيرة وبنية فوق العنوان، وتحت العنوان سطر رمادي صغير فيه الكاتب والتاريخ.
-- فقرة المقدمة أكبر وأرفع من باقي الفقرات.
-- تلات مستويات عناوين واضحين من حجمهم: [[h1]] ثم [[h2]] ثم [[h3]].
-- «أبدًا» بنية ومعدولة (مش مايلة)، و «مش لازم تبقى حاجة كبيرة» تقيلة.
+**أهم حاجة في RTL: [[scrollLeft]] بالسالب.** في العربي الـ scroll بيبدأ من 0 وبيقل (-272، -956…). فـ:
+- «اللي بعده» = [[scrollBy({ left: -272 })]] في العربي و [[+272]] في الإنجليزي. الكود بيقرا [[direction]] من الـ track.
+- «وصلنا الآخر؟» = [[Math.abs(scrollLeft) >= max - 1]]. [[Math.abs]] بيخلّي نفس السطر صح في الاتجاهين، و [[- 1]] عشان الأرقام بتطلع كسور.
 
-**ليه كده:**
+**الـ scroll نفسه من المتصفح:** [[overflow-x: auto]] و [[scroll-snap-type: x mandatory]]، فاللمس والـ trackpad والأسهم (الـ track عليه [[tabindex="0"]]) شغالين لوحدهم، والـ snap بيوقف كل حركة على كارت.
 
-- **السلّم.** الأحجام مش أرقام عشوائية: كل درجة 1.25 مرة من اللي قبلها (1 ثم 1.25 ثم 1.56 ثم 1.95). النسبة الثابتة هي اللي بتخلّي العناوين تبان «عيلة واحدة». وكلها [[em]] عشان لو غيّرت [[18px]] على [[body]] السلّم كله يتحرك معاه.
-- **ارتفاع السطر بيقل لما الخط يكبر:** 1.8 للفقرة، و 1.6 للمقدمة، و 1.4 و 1.3 و 1.25 للعناوين.
-- **[[font]] المختصرة** على [[body]] شالت تلات سطور، و [[line-height]] جواها بعد الشرطة (درس «font-weight و font-style»).
-- **[[font-synthesis-style: none]]:** [[<em>]] مايل افتراضيًا، والميل على العربي مفبرك. منعناه وادّينا [[em]] لون.
-- **[[font-weight: 300]]** للمقدمة و [[600]] لـ [[h3]] بيبانوا لو خط النظام فيه الأوزان دي (Segoe UI فيه). على خط بوزنين هيتعرضوا عادي وتقيل، والصفحة تفضل سليمة.
+**النقطة الحالية:** [[IntersectionObserver]] بـ [[root: track]] (الـ track مش الصفحة) و [[threshold: 0.6]]. وعلى شاشة واسعة ٢ أو ٣ كروت ظاهرين مع بعض، فالحالي = **أول** واحد ظاهر. أول نسخة كانت بتعلّم آخر واحد الـ observer عدّى عليه. وفي الآخر خالص الحالي = آخر كارت. من غير كده، النقطة الأخيرة مكانتش بتتعلّم أبدًا على الشاشة الواسعة.
 
-**الغلطة الشائعة:** [[font-synthesis-style]] قبل سطر [[font]]. المختصرة مبتمسحهاش (مش من خصائصها)، بس [[line-height]] لو اتكتبت قبلها هتتمسح. خلّي [[font]] أول سطر دايمًا.
+**النقط:** [[<button>]] عرضه 24px (مساحة الضغط) والدايرة جواه 10px. و [[aria-current="true"]] على الحالية، والمجموعة [[role="group"]]. كان [[div]] عليه [[aria-label]] من غير role، والـ validator رفضه.
 
-~~~text القياس من Chrome
-h1      35.1px  / سطر 43.875px   وزن 700
-h2      28.08px / سطر 36.504px
-h3      22.5px  / سطر 31.5px     وزن 600
-.lead   22.5px  / سطر 36px       وزن 300
-.meta   14.4px                   color: rgb(107, 114, 128)
-em      font-style: italic       font-synthesis-style: none       color: rgb(180, 83, 9)
-~~~` },
-        { lvl: 'متوسط', dir: "hebr-blog", cont: true, t: R`القوايم والخطوات المرقّمة`, what: R`كمّل على نفس المقال: بدّل جزء من الكلام بقايمتين. قايمة «اللي هتحتاجه» [[<ul class="needs">]] من تلات بنود، علامتها [["✓ "]] خضرا. وقايمة «الطريقة» [[<ol class="steps">]] من تلات خطوات بأرقام عربي ([[arabic-indic]]) بنية وتقيلة. وحط على [[<article>]] الـ class [[post]]، ورقّم عناوين [[<h2>]] بعدّاد CSS اسمه [[sec]] يطلّع «١. » قبل كل عنوان من غير ما تكتب الرقم. وظبّط المسافات: القوايم [[padding-inline-start: 1.5em]]، وبين كل بند والتاني نص حجم الخط. من درس «list-style و ::marker».`, done: R`العناوين مرقّمة ١ و ٢ و ٣، ولو نقلت عنوان مكان التاني في الـ HTML الأرقام بتتظبط لوحدها. والـ [[::marker]] في القايمتين ملوّن والكلام بلون الصفحة. والخطوات [[<ol>]] حقيقي (حدد الصفحة وانسخها: أرقام الخطوات بتتنسخ، وأرقام العناوين لأ).`, sol: R`~~~html index.html
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows) (reduce عشان الـ scroll يبقى فوري ويتقري)
+rtl:
+  البداية: scrollLeft 0 | prev معطّل، next شغال | النقطة 1
+  next: -272 | النقطة 2
+  لحد الآخر: -956 | next معطّل | النقطة 6
+  prev: -816 | النقطة 4 (الـ snap وقف على أقرب كارت)
+  سهمين ← على الـ track: -272 | النقطة 2
+  ضغطة على النقطة ٥: -956 | النقطة 6 (كارت ٥ ميقدرش يوصل للحافة، والـ scroll وقف في الآخر)
+ltr: نفس الحركات بالموجب: 0 ← 272 ← 956 ← 816
+سحب بالـ trackpad (412px، 250px): -272 | النقطة 2
+axe: 0 (بعد h1 بدل h2، والكروت h2 بدل h3: «page-has-heading-one» ثم «heading-order»)
+الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**اللي ماتقاسش:** السحب بالصباع. [[Input.synthesizeScrollGesture]] بـ [[touch]] ماحرّكش حاجة هنا، ولا حتى scroll الصفحة نفسها، فالأداة هي اللي مش شغالة، مش الـ carousel. الـ track scroll عادي من المتصفح، فاللمس شغال زي أي صفحة. والـ trackpad (نفس الأمر بـ [[mouse]]) اتقاس.` },
+        { lvl: 'متوسط', dir: "product", t: R`صفحة منتج بـ tabs ومعرض`, what: R`صفحة منتج متخيل: معرض صور بـ scroll-snap، والضغط على صورة صغيرة بيكبّرها بـ View Transition (الصورتين ليهم نفس [[view-transition-name]] لحظة التبديل بس)، وتحتها tabs (الوصف، والمواصفات، والتقييمات) بـ roving tabindex، و FAQ بـ details. بيجمع دروس الوحدة.`, done: R`كل حاجة بالكيبورد (Tab بيدخل الـ tabs مرة واحدة والأسهم جواها)، والصورة بتطير لمكانها ومفيش في الكونسول «Unexpected duplicate view-transition-name»، ومع reduce التبديل فوري، و axe صفر مشاكل.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
+<title>لمبة «ضي» الذكية</title>
 <link rel="stylesheet" href="style.css">
+<script src="product.js" defer></script>
 </head>
 <body>
-<main>
-  <article class="post">
-    <p class="kicker">تجارب</p>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p class="meta">كتبت: سلمى فؤاد · ١٢ نوفمبر · ٤ دقايق قراية</p>
-    <p class="lead">الكتابة مش للناس بس. هي لنفسك اللي هتيجي بعد شهرين ومش فاكرة حاجة.</p>
-    <h2>المشكلة</h2>
-    <p>أول مرة حلّيت مشكلة قعدت فيها يوم كامل، قلت لنفسي: مش هنساها <em>أبدًا</em>. وبعد شهرين قابلتها تاني.</p>
-    <h2>اللي هتحتاجه</h2>
-    <ul class="needs">
-      <li>ملف نصي واحد، في مكان إنت عارفه</li>
-      <li>خمس دقايق بعد كل مشكلة تتحل</li>
-      <li>عنوان يتدوّر عليه بعدين</li>
-    </ul>
-    <h2>الطريقة</h2>
-    <ol class="steps">
-      <li>اكتب المشكلة زي ما ظهرتلك، برسالة الخطأ بنصها.</li>
-      <li>اكتب اللي جرّبته ومنفعش. ده بيوفّر عليك تجربه تاني.</li>
-      <li>اكتب الحل، وليه اشتغل.</li>
-    </ol>
-  </article>
+<main class="wrap">
+  <div class="product">
+    <section class="gallery" aria-label="صور المنتج">
+      <img class="main-img" id="main-img" src="img/v0-800.webp" alt="لمبة «ضي» بنور دافي" width="800" height="800">
+      <ul class="thumbs">
+        <li><button type="button" class="thumb" aria-pressed="true" data-src="img/v0-800.webp" data-alt="لمبة «ضي» بنور دافي"><img src="img/v0-160.webp" alt="نور دافي" width="160" height="160"></button></li>
+        <li><button type="button" class="thumb" aria-pressed="false" data-src="img/v1-800.webp" data-alt="لمبة «ضي» بنور أبيض"><img src="img/v1-160.webp" alt="نور أبيض" width="160" height="160"></button></li>
+        <li><button type="button" class="thumb" aria-pressed="false" data-src="img/v2-800.webp" data-alt="لمبة «ضي» بنور ملوّن"><img src="img/v2-160.webp" alt="نور ملوّن" width="160" height="160"></button></li>
+        <li><button type="button" class="thumb" aria-pressed="false" data-src="img/v3-800.webp" data-alt="لمبة «ضي» في الصالة"><img src="img/v3-160.webp" alt="في الصالة" width="160" height="160"></button></li>
+      </ul>
+    </section>
+
+    <section class="info" aria-labelledby="p-title">
+      <h1 id="p-title">لمبة «ضي» الذكية</h1>
+      <p class="price">٤٥٠ ج</p>
+      <button type="button" class="buy">أضف للسلة</button>
+
+      <div class="tabs">
+        <div role="tablist" aria-label="عن المنتج">
+          <button type="button" role="tab" id="t-desc" aria-controls="p-desc" aria-selected="true">الوصف</button>
+          <button type="button" role="tab" id="t-spec" aria-controls="p-spec" aria-selected="false" tabindex="-1">المواصفات</button>
+          <button type="button" role="tab" id="t-rev" aria-controls="p-rev" aria-selected="false" tabindex="-1">التقييمات</button>
+        </div>
+        <div role="tabpanel" id="p-desc" aria-labelledby="t-desc" tabindex="0"><p>لمبة بتتحكم فيها من الموبايل: ١٦ مليون لون، ومواعيد تشغيل، ووضع النوم.</p></div>
+        <div role="tabpanel" id="p-spec" aria-labelledby="t-spec" tabindex="0" hidden><ul><li>٩ وات (زي ٦٠ وات العادية)</li><li>قاعدة E27</li><li>Wi-Fi ‏2.4GHz</li></ul></div>
+        <div role="tabpanel" id="p-rev" aria-labelledby="t-rev" tabindex="0" hidden><p>٤٫٦ من ٥ (١٢٨ تقييم): «النور الدافي مريح جدًا بالليل.»</p></div>
+      </div>
+
+      <h2>أسئلة</h2>
+      <details name="pfaq"><summary>بتشتغل من غير إنترنت؟</summary><p>أيوه بالزرار العادي، والتحكم من الموبايل محتاج Wi-Fi.</p></details>
+      <details name="pfaq"><summary>الضمان كام؟</summary><p>سنتين ضد عيوب الصناعة.</p></details>
+    </section>
+  </div>
 </main>
 </body>
 </html>
 ~~~
 
 ~~~css style.css
-body {
-  font: 18px/1.8 system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-  font-synthesis-style: none;
-}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #fffbf5; }
+.wrap { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1rem; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+.product { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); align-items: start; }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
-}
+/* gallery: the big image, and a row of thumbnails that snaps */
+.main-img { display: block; width: 100%; height: auto; border-radius: 1rem; }
+.thumbs { display: flex; gap: 0.5rem; margin: 0.75rem 0 0; padding: 0.25rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
+.thumbs li { flex: 0 0 5rem; scroll-snap-align: start; }
+.thumb { display: block; padding: 0; border: 3px solid transparent; border-radius: 0.75rem; background: none; cursor: pointer; }
+.thumb img { display: block; width: 100%; height: auto; border-radius: 0.5rem; }
+.thumb[aria-pressed="true"] { border-color: #b45309; }
 
-/* سلّم الأحجام: كل درجة 1.25 من اللي تحتها */
-h1 { font-size: 1.95em; line-height: 1.25; font-weight: 700; margin: 0 0 8px; }
-h2 { font-size: 1.56em; line-height: 1.3; font-weight: 700; margin: 32px 0 8px; }
-h3 { font-size: 1.25em; line-height: 1.4; font-weight: 600; margin: 24px 0 4px; }
+/* the flying picture: a little slower than the default 0.25s, with the site's easing */
+::view-transition-group(product) { animation-duration: 0.4s; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
 
-.kicker { font-size: 0.8em; font-weight: 600; color: #b45309; margin: 0; }
-.meta { font-size: 0.8em; color: #6b7280; margin: 0 0 24px; }
-.lead { font-size: 1.25em; line-height: 1.6; font-weight: 300; }
+.info h1 { margin: 0; font-size: 1.8rem; }
+.price { margin: 0.25rem 0 1rem; font-size: 1.4rem; font-weight: 800; color: #047857; }
+.buy { padding: 0.7rem 1.6rem; border: 0; border-radius: 999px; background: #1c1917; color: #fff; font: inherit; font-weight: 700; }
 
-em { color: #b45309; }
+.tabs { margin-block: 1.5rem; }
+[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid #e7e5e4; }
+[role="tab"] { padding: 0.5rem 1rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: #57534e; font: inherit; }
+[role="tab"][aria-selected="true"] { border-color: #b45309; color: #1c1917; font-weight: 700; }
+[role="tabpanel"] { padding: 0.75rem 0.25rem; }
+[role="tabpanel"] p, [role="tabpanel"] ul { margin: 0; }
 
-/* القوايم */
-ul, ol { padding-inline-start: 1.5em; margin: 8px 0 24px; }
-li + li { margin-block-start: 0.5em; }
-
-.needs { list-style-type: "✓ "; }
-.needs li::marker { color: #059669; }
-
-.steps { list-style-type: arabic-indic; }
-.steps li::marker { color: #b45309; font-weight: 700; }
-
-/* ترقيم عناوين المقال */
-.post { counter-reset: sec; }
-.post h2 { counter-increment: sec; }
-.post h2::before { content: counter(sec, arabic-indic) ". "; color: #b45309; }
+h2 { font-size: 1.2rem; margin: 1.5rem 0 0.25rem; }
+details { border-block-end: 1px solid #e7e5e4; }
+summary { padding: 0.6rem 0; font-weight: 700; cursor: pointer; }
+details p { margin: 0 0 0.75rem; color: #44403c; }
 ~~~
 
-~~~view 790 967 شكل الصفحة
+~~~js product.js
+const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+
+// ---- gallery: the clicked thumbnail flies into the big image ----
+const main = document.getElementById("main-img");
+const thumbs = [...document.querySelectorAll(".thumb")];
+
+function show(thumb) {
+  main.src = thumb.dataset.src;
+  main.alt = thumb.dataset.alt;
+  thumbs.forEach(t => t.setAttribute("aria-pressed", String(t === thumb)));
+}
+
+thumbs.forEach(thumb => thumb.addEventListener("click", async () => {
+  if (thumb.getAttribute("aria-pressed") === "true") return;
+  // no View Transitions, or less motion: just swap
+  if (!document.startViewTransition || reduce.matches) return show(thumb);
+
+  // a view-transition-name must be on ONE element at a time.
+  // Before the swap: the small image has it. After the swap: the big image has it. Then nobody does.
+  const small = thumb.querySelector("img");
+  small.style.viewTransitionName = "product";
+  const t = document.startViewTransition(() => {
+    small.style.viewTransitionName = "";
+    main.style.viewTransitionName = "product";
+    show(thumb);
+  });
+  await t.finished;
+  main.style.viewTransitionName = "";
+}));
+
+// ---- tabs (APG): one Tab stop, arrows move; in RTL the next tab is on the left ----
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function select(tab) {
+  for (const t of tabs) {
+    const on = t === tab;
+    t.setAttribute("aria-selected", String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+  }
+  tab.focus();
+}
+tabs.forEach((tab, i) => {
+  tab.addEventListener("click", () => select(tab));
+  tab.addEventListener("keydown", e => {
+    const rtl = getComputedStyle(tab).direction === "rtl";
+    const move = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
+    let to = move !== undefined ? (i + move + tabs.length) % tabs.length : null;
+    if (e.key === "Home") to = 0;
+    if (e.key === "End") to = tabs.length - 1;
+    if (to === null) return;
+    e.preventDefault();
+    select(tabs[to]);
+  });
+});
+~~~
+
+الصور من [[gen-images.mjs]] (‏800 و 160).
+
+~~~js measure.mjs
+import { browser } from "../lab.mjs";
+import AxeBuilder from "@axe-core/playwright";
+const b = await browser();
+const U = "http://127.0.0.1:8818/product/index.html";
+async function page(opts = {}) {
+  const p = await (await b.newContext({ viewport: { width: 1000, height: 900 }, ...opts })).newPage();
+  const logs = [];
+  p.on("console", m => { if (m.type() !== "log") logs.push(m.type() + ": " + m.text()); });
+  await p.goto(U); await p.waitForTimeout(200);
+  return { p, logs };
+}
+let { p, logs } = await page();
+// Tab order: who gets focus, in order
+const stops = [];
+for (let i = 0; i < 9; i++) { await p.keyboard.press("Tab"); stops.push(await p.evaluate(() => { const e = document.activeElement; return (e.getAttribute("role") || e.tagName.toLowerCase()) + ":" + (e.textContent.trim() || e.querySelector("img")?.alt || "").slice(0, 12); })); }
+console.log("Tab: " + stops.join(" → "));
+await p.focus("#t-desc"); await p.keyboard.press("ArrowLeft");
+console.log("سهم ← على التابز: focus=" + await p.evaluate(() => document.activeElement.textContent) + " | selected=" + await p.$eval('[aria-selected="true"]', e => e.textContent) + " | الظاهر: " + await p.$eval('[role="tabpanel"]:not([hidden])', e => e.id));
+// the transition: count the names at the moment the snapshot is taken, and catch the pseudo-elements
+await p.evaluate(() => {
+  const orig = document.startViewTransition.bind(document);
+  document.startViewTransition = cb => { window.__namesBefore = document.querySelectorAll('[style*="view-transition-name: product"]').length; const t = orig(() => { cb(); window.__namesAfter = document.querySelectorAll('[style*="view-transition-name: product"]').length; }); t.ready.then(() => { window.__pseudo = document.getAnimations().map(a => a.effect.pseudoElement).filter(Boolean).join(" "); }); return t; };
+});
+await p.click(".thumb >> nth=2"); await p.waitForTimeout(700);
+console.log("الانتقال: أسامي قبل " + await p.evaluate(() => window.__namesBefore) + "، بعد " + await p.evaluate(() => window.__namesAfter) + " | الـ pseudo: " + await p.evaluate(() => window.__pseudo) + " | الصورة: " + await p.$eval("#main-img", i => i.getAttribute("src")) + " | أسامي فاضلة: " + await p.evaluate(() => document.querySelectorAll('[style*="view-transition-name: product"]').length));
+console.log("الكونسول: " + (logs.filter(l => !/favicon|404/.test(l)).join(" | ") || "مفيش تحذيرات"));
+console.log("axe: " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id + ":" + v.nodes.length).join(",") || "0"));
+
+// the wrong way: the same name on every thumbnail and on the big image
+({ p, logs } = await page());
+await p.addStyleTag({ content: ".thumb img, .main-img { view-transition-name: product; }" });
+await p.evaluate(() => document.startViewTransition(() => {})); await p.waitForTimeout(300);
+console.log("الطريقة الغلط: " + (logs.filter(l => /view-transition/i.test(l)).join(" | ") || "مفيش"));
+
+({ p, logs } = await page({ reducedMotion: "reduce" }));
+await p.click(".thumb >> nth=1"); await p.waitForTimeout(20);
+console.log("reduce: الصورة اتبدّلت على طول: " + await p.$eval("#main-img", i => i.getAttribute("src")) + " | animations: " + await p.evaluate(() => document.getAnimations().length));
+await b.close();
+~~~
+
+~~~view 520 980 دوس على صورة صغيرة (الصور في المعاينة نسخة أصغر)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
+<title>لمبة «ضي» الذكية</title>
 <style>
-body {
-  font: 18px/1.8 system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-  font-synthesis-style: none;
-}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #fffbf5; }
+.wrap { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1rem; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+.product { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); align-items: start; }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
-}
+/* gallery: the big image, and a row of thumbnails that snaps */
+.main-img { display: block; width: 100%; height: auto; border-radius: 1rem; }
+.thumbs { display: flex; gap: 0.5rem; margin: 0.75rem 0 0; padding: 0.25rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
+.thumbs li { flex: 0 0 5rem; scroll-snap-align: start; }
+.thumb { display: block; padding: 0; border: 3px solid transparent; border-radius: 0.75rem; background: none; cursor: pointer; }
+.thumb img { display: block; width: 100%; height: auto; border-radius: 0.5rem; }
+.thumb[aria-pressed="true"] { border-color: #b45309; }
 
-/* سلّم الأحجام: كل درجة 1.25 من اللي تحتها */
-h1 { font-size: 1.95em; line-height: 1.25; font-weight: 700; margin: 0 0 8px; }
-h2 { font-size: 1.56em; line-height: 1.3; font-weight: 700; margin: 32px 0 8px; }
-h3 { font-size: 1.25em; line-height: 1.4; font-weight: 600; margin: 24px 0 4px; }
+/* the flying picture: a little slower than the default 0.25s, with the site's easing */
+::view-transition-group(product) { animation-duration: 0.4s; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
 
-.kicker { font-size: 0.8em; font-weight: 600; color: #b45309; margin: 0; }
-.meta { font-size: 0.8em; color: #6b7280; margin: 0 0 24px; }
-.lead { font-size: 1.25em; line-height: 1.6; font-weight: 300; }
+.info h1 { margin: 0; font-size: 1.8rem; }
+.price { margin: 0.25rem 0 1rem; font-size: 1.4rem; font-weight: 800; color: #047857; }
+.buy { padding: 0.7rem 1.6rem; border: 0; border-radius: 999px; background: #1c1917; color: #fff; font: inherit; font-weight: 700; }
 
-em { color: #b45309; }
+.tabs { margin-block: 1.5rem; }
+[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid #e7e5e4; }
+[role="tab"] { padding: 0.5rem 1rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: #57534e; font: inherit; }
+[role="tab"][aria-selected="true"] { border-color: #b45309; color: #1c1917; font-weight: 700; }
+[role="tabpanel"] { padding: 0.75rem 0.25rem; }
+[role="tabpanel"] p, [role="tabpanel"] ul { margin: 0; }
 
-/* القوايم */
-ul, ol { padding-inline-start: 1.5em; margin: 8px 0 24px; }
-li + li { margin-block-start: 0.5em; }
-
-.needs { list-style-type: "✓ "; }
-.needs li::marker { color: #059669; }
-
-.steps { list-style-type: arabic-indic; }
-.steps li::marker { color: #b45309; font-weight: 700; }
-
-/* ترقيم عناوين المقال */
-.post { counter-reset: sec; }
-.post h2 { counter-increment: sec; }
-.post h2::before { content: counter(sec, arabic-indic) ". "; color: #b45309; }
+h2 { font-size: 1.2rem; margin: 1.5rem 0 0.25rem; }
+details { border-block-end: 1px solid #e7e5e4; }
+summary { padding: 0.6rem 0; font-weight: 700; cursor: pointer; }
+details p { margin: 0 0 0.75rem; color: #44403c; }
 </style>
 </head>
 <body>
-<main>
-  <article class="post">
-    <p class="kicker">تجارب</p>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p class="meta">كتبت: سلمى فؤاد · ١٢ نوفمبر · ٤ دقايق قراية</p>
-    <p class="lead">الكتابة مش للناس بس. هي لنفسك اللي هتيجي بعد شهرين ومش فاكرة حاجة.</p>
-    <h2>المشكلة</h2>
-    <p>أول مرة حلّيت مشكلة قعدت فيها يوم كامل، قلت لنفسي: مش هنساها <em>أبدًا</em>. وبعد شهرين قابلتها تاني.</p>
-    <h2>اللي هتحتاجه</h2>
-    <ul class="needs">
-      <li>ملف نصي واحد، في مكان إنت عارفه</li>
-      <li>خمس دقايق بعد كل مشكلة تتحل</li>
-      <li>عنوان يتدوّر عليه بعدين</li>
-    </ul>
-    <h2>الطريقة</h2>
-    <ol class="steps">
-      <li>اكتب المشكلة زي ما ظهرتلك، برسالة الخطأ بنصها.</li>
-      <li>اكتب اللي جرّبته ومنفعش. ده بيوفّر عليك تجربه تاني.</li>
-      <li>اكتب الحل، وليه اشتغل.</li>
-    </ol>
-  </article>
+<main class="wrap">
+  <div class="product">
+    <section class="gallery" aria-label="صور المنتج">
+      <img class="main-img" id="main-img" src="data:image/webp;base64,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" alt="لمبة «ضي» بنور دافي" width="800" height="800">
+      <ul class="thumbs">
+        <li><button type="button" class="thumb" aria-pressed="true" data-src="data:image/webp;base64,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" data-alt="لمبة «ضي» بنور دافي"><img src="data:image/webp;base64,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" alt="نور دافي" width="160" height="160"></button></li>
+        <li><button type="button" class="thumb" aria-pressed="false" data-src="data:image/webp;base64,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" data-alt="لمبة «ضي» بنور أبيض"><img src="data:image/webp;base64,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" alt="نور أبيض" width="160" height="160"></button></li>
+        <li><button type="button" class="thumb" aria-pressed="false" data-src="data:image/webp;base64,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" data-alt="لمبة «ضي» بنور ملوّن"><img src="data:image/webp;base64,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" alt="نور ملوّن" width="160" height="160"></button></li>
+        <li><button type="button" class="thumb" aria-pressed="false" data-src="data:image/webp;base64,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" data-alt="لمبة «ضي» في الصالة"><img src="data:image/webp;base64,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" alt="في الصالة" width="160" height="160"></button></li>
+      </ul>
+    </section>
+
+    <section class="info" aria-labelledby="p-title">
+      <h1 id="p-title">لمبة «ضي» الذكية</h1>
+      <p class="price">٤٥٠ ج</p>
+      <button type="button" class="buy">أضف للسلة</button>
+
+      <div class="tabs">
+        <div role="tablist" aria-label="عن المنتج">
+          <button type="button" role="tab" id="t-desc" aria-controls="p-desc" aria-selected="true">الوصف</button>
+          <button type="button" role="tab" id="t-spec" aria-controls="p-spec" aria-selected="false" tabindex="-1">المواصفات</button>
+          <button type="button" role="tab" id="t-rev" aria-controls="p-rev" aria-selected="false" tabindex="-1">التقييمات</button>
+        </div>
+        <div role="tabpanel" id="p-desc" aria-labelledby="t-desc" tabindex="0"><p>لمبة بتتحكم فيها من الموبايل: ١٦ مليون لون، ومواعيد تشغيل، ووضع النوم.</p></div>
+        <div role="tabpanel" id="p-spec" aria-labelledby="t-spec" tabindex="0" hidden><ul><li>٩ وات (زي ٦٠ وات العادية)</li><li>قاعدة E27</li><li>Wi-Fi ‏2.4GHz</li></ul></div>
+        <div role="tabpanel" id="p-rev" aria-labelledby="t-rev" tabindex="0" hidden><p>٤٫٦ من ٥ (١٢٨ تقييم): «النور الدافي مريح جدًا بالليل.»</p></div>
+      </div>
+
+      <h2>أسئلة</h2>
+      <details name="pfaq"><summary>بتشتغل من غير إنترنت؟</summary><p>أيوه بالزرار العادي، والتحكم من الموبايل محتاج Wi-Fi.</p></details>
+      <details name="pfaq"><summary>الضمان كام؟</summary><p>سنتين ضد عيوب الصناعة.</p></details>
+    </section>
+  </div>
 </main>
+<script>
+const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+
+// ---- gallery: the clicked thumbnail flies into the big image ----
+const main = document.getElementById("main-img");
+const thumbs = [...document.querySelectorAll(".thumb")];
+
+function show(thumb) {
+  main.src = thumb.dataset.src;
+  main.alt = thumb.dataset.alt;
+  thumbs.forEach(t => t.setAttribute("aria-pressed", String(t === thumb)));
+}
+
+thumbs.forEach(thumb => thumb.addEventListener("click", async () => {
+  if (thumb.getAttribute("aria-pressed") === "true") return;
+  // no View Transitions, or less motion: just swap
+  if (!document.startViewTransition || reduce.matches) return show(thumb);
+
+  // a view-transition-name must be on ONE element at a time.
+  // Before the swap: the small image has it. After the swap: the big image has it. Then nobody does.
+  const small = thumb.querySelector("img");
+  small.style.viewTransitionName = "product";
+  const t = document.startViewTransition(() => {
+    small.style.viewTransitionName = "";
+    main.style.viewTransitionName = "product";
+    show(thumb);
+  });
+  await t.finished;
+  main.style.viewTransitionName = "";
+}));
+
+// ---- tabs (APG): one Tab stop, arrows move; in RTL the next tab is on the left ----
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function select(tab) {
+  for (const t of tabs) {
+    const on = t === tab;
+    t.setAttribute("aria-selected", String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+  }
+  tab.focus();
+}
+tabs.forEach((tab, i) => {
+  tab.addEventListener("click", () => select(tab));
+  tab.addEventListener("keydown", e => {
+    const rtl = getComputedStyle(tab).direction === "rtl";
+    const move = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
+    let to = move !== undefined ? (i + move + tabs.length) % tabs.length : null;
+    if (e.key === "Home") to = 0;
+    if (e.key === "End") to = tabs.length - 1;
+    if (to === null) return;
+    e.preventDefault();
+    select(tabs[to]);
+  });
+});
+</script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:**
+**هتشوف إيه:** صفحة «لمبة «ضي» الذكية». على اليمين صورة كبيرة وتحتها ٤ صور صغيرة، والمختارة حواليها برتقالي. الضغط على صغيرة بيخلّيها تطير وتكبر مكان الكبيرة. على الشمال السعر، و «أضف للسلة»، و tabs (الوصف، والمواصفات، والتقييمات)، وسؤالين.
 
-- العناوين التلاتة قدامهم «١.» و «٢.» و «٣.» بلون بني، من غير ما الأرقام تتكتب في الـ HTML.
-- «اللي هتحتاجه»: تلات بنود قدام كل واحد علامة صح خضرا.
-- «الطريقة»: خطوات مرقّمة ١ و ٢ و ٣ بأرقام بنية تقيلة، والكلام نفسه بلون الصفحة.
-- بين كل بند والتاني فراغ أوضح من الفراغ بين سطور البند الواحد.
+**الصورة اللي بتطير:** [[document.startViewTransition()]] بياخد صورة للصفحة قبل وبعد التغيير، ويحرّك بينهم. والعناصر اللي ليها [[view-transition-name]] بتتحرك لوحدها (‏[[::view-transition-group(product)]]) بدل fade للصفحة كلها.
 
-**ليه كده:**
+**القاعدة: الاسم على عنصر واحد بس في كل لحظة.**
+1. **قبل:** الصورة الصغيرة اسمها [[product]].
+2. **جوه الـ callback:** الاسم يتشال منها ويتحط على الكبيرة، وبعدين الصورة تتبدّل.
+3. **بعد [[t.finished]]:** الاسم يتشال من الكبيرة.
 
-- **الخطوات [[<ol>]] حقيقي** ورقمه متنسّق بـ [[::marker]]: الترتيب جزء من المعنى، فلازم يوصل لقارئ الشاشة ويتنسخ مع النص.
-- **العناوين بعدّاد:** دي عناصر متفرقة في الصفحة مش قايمة، فالعدّاد هو الأداة الصح. [[counter-reset]] على [[.post]] (الأب)، و [[counter-increment]] على كل [[h2]]، و [[counter()]] جوه [[::before]] (درس «list-style و ::marker»).
-- **[[arabic-indic]] في المكانين** عشان القايمة والعناوين وكلام المقال («١٢ نوفمبر») يبقوا نظام أرقام واحد.
-- **[[padding-inline-start: 1.5em]]** بدل الـ 40px الافتراضية، والعلامات لسه ليها مكان تترسم فيه.
-- **[[li + li]]** بتدّي المسافة للبنود اللي قبلها بند، فالقايمة متبعدش عن اللي فوقها.
+لو كل الصور عليها نفس الاسم من الـ CSS، Chrome بيطلّع «Unexpected duplicate view-transition-name: product» ومفيش حركة، واتجرّب.
 
-**الغلطة الشائعة:** [[counter-reset: sec]] على [[h2]] نفسه. كل عنوان هيصفّر العدّاد، والتلاتة هيطلعوا «١».
+**من غير دعم أو مع reduce:** [[show(thumb)]] على طول.
 
-~~~text القياس من Chrome
-ul و ol              padding-inline-start: 27px     (1.5em من 18px)
-.needs               list-style-type: "✓ "         li::marker  color: rgb(5, 150, 105)
-.steps               list-style-type: arabic-indic  li::marker  font-weight: 700
-.post                counter-reset: sec 0
-.post h2::before     content: counter(sec, arabic-indic) ". "
+**الـ tabs (نمط APG):** [[tabindex="0"]] على المختار بس و [[-1]] على الباقي (roving tabindex)، فالـ Tab بيدخل الـ tabs مرة واحدة، والأسهم جواها. وفي العربي ← = اللي بعده. والـ [[tabpanel]] عليه [[tabindex="0"]] عشان Tab يوصل للكلام لو مفيهوش لينكات.
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+Tab: نور دافي → نور أبيض → نور ملوّن → في الصالة → أضف للسلة → tab:الوصف → tabpanel → summary → summary
+سهم ← على التابز: focus=المواصفات | selected=المواصفات | الظاهر: p-spec
+الانتقال (ضغطة على الصورة ٣): عناصر عليها الاسم قبل 1، بعد 1 | الأجزاء: …group(product) old(product) new(product)
+  الصورة: img/v2-800.webp | عناصر عليها الاسم بعد الانتقال: 0
+الكونسول: مفيش تحذيرات
+الطريقة الغلط (الاسم على كل الصور): error: Unexpected duplicate view-transition-name: product
+reduce: الصورة اتبدّلت على طول، animations: 0
+axe: 0   الـ validator: مفيش رسايل   CSS validator (W3C) مبيعرفش لسه ::view-transition-group («Parse Error»)
 ~~~` },
-        { lvl: 'متوسط', dir: "hebr-blog", cont: true, t: R`اللينكات والهيدر والفوتر`, what: R`كمّل على نفس الصفحة عشان تبقى صفحة في موقع. في الـ HTML: [[<header class="site">]] فيه اسم المدوّنة لينك [[.brand]] و [[<nav>]] جواه [[<ul role="list">]] بتلات لينكات، و [[<footer class="site">]] فيه سطر حقوق وإيميل [[mailto:]]، ولينكين جوه فقرة في المقال (واحد داخلي وواحد بيبدأ بـ [[https://]]). في الـ CSS: لينكات المقال بالحالات الأربعة بترتيب L-V-H-A وخط رفيع نازل [[0.3em]] بيتخن في الـ hover، وسهم بعد اللينك الخارجي، و [[:focus-visible]] بإطار لكل اللينكات. ولينكات التنقل من غير خط ولا علامات قايمة وجنب بعض، والخط بيرجع في الـ hover. والفوتر صغير ورمادي ومتوسّط. و [[overflow-wrap: break-word]] على [[body]]. من دروس «:link و :visited و :hover» و «text-decoration و text-shadow» و «white-space و overflow-wrap».`, done: R`بـ Tab بتعدّي على كل اللينكات بإطار واضح. ولينكات المقال زرقا بخط تحتها، ولينكات القايمة من غير خط لحد ما تقف عليها. وفي DevTools مع [[:visited]] و [[:hover]] مع بعض لون الـ hover هو اللي بيكسب. ولو حطيت عنوان طويل من غير مسافات كنص لينك، الصفحة على 360px مبتسكرولش بالعرض.`, sol: R`~~~html index.html
+        { lvl: 'متوسط', dir: "palette", t: R`command palette بـ Ctrl+K`, what: R`[[<dialog>]] بيفتح بـ Ctrl+K، فيه input ولستة نتايج [[role="listbox"]]. الـ focus بيفضل في الـ input، والأسهم بتغيّر [[aria-activedescendant]] للنتيجة المختارة (بدل roving tabindex)، و Enter بيفتحها، والنتايج بتتفلتر وانت بتكتب، والكلمة المطابقة بتتعلّم بـ [[<mark>]].`, done: R`[[document.activeElement]] هو الـ input طول الوقت والأسهم بتمشي في النتايج، وقارئ الشاشة بيقول النتيجة المختارة، و Escape بيقفل ويرجّع الـ focus، ونتيجة «مفيش» بتتقري في [[role="status"]].`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
+<title>لوحة «دفتر»</title>
 <link rel="stylesheet" href="style.css">
+<script src="palette.js" defer></script>
 </head>
 <body>
-<header class="site">
-  <a class="brand" href="index.html">مدوّنة حبر</a>
-  <nav aria-label="الرئيسية">
-    <ul role="list">
-      <li><a href="index.html">المقالات</a></li>
-      <li><a href="about.html">عن المدوّنة</a></li>
-      <li><a href="contact.html">تواصل</a></li>
-    </ul>
-  </nav>
-</header>
-<main>
-  <article class="post">
-    <p class="kicker">تجارب</p>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p class="meta">كتبت: سلمى فؤاد · ١٢ نوفمبر · ٤ دقايق قراية</p>
-    <p class="lead">الكتابة مش للناس بس. هي لنفسك اللي هتيجي بعد شهرين ومش فاكرة حاجة.</p>
-    <h2>المشكلة</h2>
-    <p>أول مرة حلّيت مشكلة قعدت فيها يوم كامل، قلت لنفسي: مش هنساها <em>أبدًا</em>. الفكرة دي يجب أن تبدأ من <a href="notes.html">ملف ملاحظات بسيط</a>، وفيه شرح أطول في <a href="https://example.test/guides/learning_in_public_a_practical_guide">الدليل ده</a>.</p>
-    <h2>الطريقة</h2>
-    <ol class="steps">
-      <li>اكتب المشكلة زي ما ظهرتلك، برسالة الخطأ بنصها.</li>
-      <li>اكتب اللي جرّبته ومنفعش.</li>
-      <li>اكتب الحل، وليه اشتغل.</li>
-    </ol>
-  </article>
+<main class="wrap">
+  <h1>لوحة «دفتر»</h1>
+  <p>اضغط <kbd>Ctrl</kbd> + <kbd>K</kbd> (أو <kbd>⌘</kbd> + <kbd>K</kbd> على الماك) عشان تدوّر على أي أمر.</p>
+  <button type="button" class="open">دوّر على أمر</button>
+  <p class="result" role="status"></p>
 </main>
-<footer class="site">
-  <p>مدوّنة حبر · كل الحقوق محفوظة · <a href="mailto:hello@example.test">hello@example.test</a></p>
-</footer>
+
+<dialog class="palette" aria-label="الأوامر">
+  <input class="q" type="text" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="cmds"
+         aria-label="اكتب اسم الأمر" placeholder="اكتب اسم الأمر…" autocomplete="off">
+  <ul id="cmds" role="listbox" aria-label="النتايج"></ul>
+  <p class="empty" role="status"></p>
+</dialog>
 </body>
 </html>
 ~~~
 
 ~~~css style.css
-body {
-  font: 18px/1.8 system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-  font-synthesis-style: none;
-}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f1f5f9; }
+.wrap { max-width: 40rem; margin: 0 auto; padding: 2rem 1rem; }
+kbd { padding: 0 0.4em; border: 1px solid #94a3b8; border-block-end-width: 2px; border-radius: 0.3rem; background: #fff; font: inherit; font-size: 0.9em; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+.open { padding: 0.5rem 1.2rem; border: 1px solid #0f172a; border-radius: 999px; background: #fff; font: inherit; }
+.result { font-weight: 700; color: #047857; }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-/* سلّم الأحجام: كل درجة 1.25 من اللي تحتها */
-h1 { font-size: 1.95em; line-height: 1.25; font-weight: 700; margin: 0 0 8px; }
-h2 { font-size: 1.56em; line-height: 1.3; font-weight: 700; margin: 32px 0 8px; }
-h3 { font-size: 1.25em; line-height: 1.4; font-weight: 600; margin: 24px 0 4px; }
-
-.kicker { font-size: 0.8em; font-weight: 600; color: #b45309; margin: 0; }
-.meta { font-size: 0.8em; color: #6b7280; margin: 0 0 24px; }
-.lead { font-size: 1.25em; line-height: 1.6; font-weight: 300; }
-
-em { color: #b45309; }
-
-/* القوايم */
-ul, ol { padding-inline-start: 1.5em; margin: 8px 0 24px; }
-li + li { margin-block-start: 0.5em; }
-
-.needs { list-style-type: "✓ "; }
-.needs li::marker { color: #059669; }
-
-.steps { list-style-type: arabic-indic; }
-.steps li::marker { color: #b45309; font-weight: 700; }
-
-/* ترقيم عناوين المقال */
-.post { counter-reset: sec; }
-.post h2 { counter-increment: sec; }
-.post h2::before { content: counter(sec, arabic-indic) ". "; color: #b45309; }
-
-/* شبكة أمان: أي كلمة طويلة تتكسر بدل ما تطلع برّه */
-body { overflow-wrap: break-word; }
-
-/* لينكات المقال */
-.post a { text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
-.post a:link { color: #0b57d0; }
-.post a:visited { color: #6d28d9; }
-.post a:hover { color: #1e40af; text-decoration-thickness: 3px; }
-.post a:active { color: #b91c1c; }
-.post a[href^="https://"]::after { content: " ↗"; }
-
-a:focus-visible { outline: 2px solid #0b57d0; outline-offset: 2px; }
-
-/* الهيدر وقايمة التنقل */
-header.site, footer.site { max-width: 640px; margin: 0 auto; }
-header.site { border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 24px; }
-.brand { font-size: 1.25em; font-weight: 700; color: #1f2937; text-decoration: none; }
-header.site ul { list-style: none; padding: 0; margin: 4px 0 0; }
-header.site li { display: inline-block; margin: 0; margin-inline-end: 16px; }
-header.site nav a:any-link { color: #374151; text-decoration: none; }
-header.site nav a:hover, header.site nav a:focus-visible { text-decoration: underline; text-underline-offset: 0.3em; }
-
-/* الفوتر */
-footer.site { border-top: 1px solid #e5e7eb; margin-top: 48px; padding-top: 8px; font-size: 0.8em; color: #6b7280; text-align: center; }
-footer.site a { color: inherit; }
+.palette { width: min(34rem, calc(100vw - 2rem)); margin-block-start: 12vh; padding: 0; border: 0; border-radius: 1rem; box-shadow: 0 25px 60px #0004; }
+.palette::backdrop { background: rgb(15 23 42 / 0.5); }
+.q { width: 100%; padding: 1rem 1.25rem; border: 0; border-block-end: 1px solid #e2e8f0; font: inherit; font-size: 1.1rem; outline: none; }
+#cmds { max-height: 18rem; overflow-y: auto; margin: 0; padding: 0.5rem; list-style: none; }
+[role="option"] { display: flex; justify-content: space-between; padding: 0.55rem 0.75rem; border-radius: 0.5rem; cursor: pointer; }
+[role="option"] small { color: #64748b; }
+/* the chosen option: the focus stays in the input, so this is the "focus" the eye sees */
+[role="option"][aria-selected="true"] { background: #1e293b; color: #fff; }
+[role="option"][aria-selected="true"] small { color: #cbd5e1; }
+mark { background: #fde68a; color: inherit; border-radius: 0.2rem; }
+[aria-selected="true"] mark { background: #f59e0b; color: #0f172a; }
+.empty { margin: 0; padding: 0 1.25rem; color: #64748b; }
+.empty:not(:empty) { padding-block: 1rem; }
 ~~~
 
-~~~view 796 999 شكل الصفحة
+~~~js palette.js
+const commands = [
+  { name: "فاتورة جديدة", hint: "N" }, { name: "كل الفواتير", hint: "" }, { name: "عميل جديد", hint: "" },
+  { name: "تقرير الشهر", hint: "" }, { name: "الإعدادات", hint: "," }, { name: "الوضع الغامق", hint: "" },
+  { name: "المساعدة", hint: "?" }, { name: "تسجيل خروج", hint: "" },
+];
+const dialog = document.querySelector(".palette"), input = dialog.querySelector(".q");
+const list = document.getElementById("cmds"), empty = dialog.querySelector(".empty");
+const result = document.querySelector(".result");
+let shown = [], active = -1;
+
+// the match is wrapped in <mark> with DOM nodes, not innerHTML: whatever is typed stays text
+function label(name, word) {
+  const frag = document.createDocumentFragment(), at = word ? name.indexOf(word) : -1;
+  if (at < 0) { frag.append(name); return frag; }
+  const m = document.createElement("mark");
+  m.textContent = name.slice(at, at + word.length);
+  frag.append(name.slice(0, at), m, name.slice(at + word.length));
+  return frag;
+}
+
+function render() {
+  const word = input.value.trim();
+  shown = commands.filter(c => !word || c.name.includes(word));
+  list.replaceChildren(...shown.map((c, i) => {
+    const li = document.createElement("li");
+    li.id = "cmd-" + i; li.setAttribute("role", "option");
+    const span = document.createElement("span"); span.append(label(c.name, word));
+    li.append(span);
+    if (c.hint) { const s = document.createElement("small"); s.textContent = "Ctrl+" + c.hint; li.append(s); }
+    li.addEventListener("click", () => run(i));
+    li.addEventListener("mousemove", () => move(i));
+    return li;
+  }));
+  empty.textContent = shown.length ? "" : "مفيش أمر فيه «" + word + "»";   // role=status: a screen reader says it
+  move(shown.length ? 0 : -1);
+}
+
+// the focus never leaves the input: aria-activedescendant points at the chosen option instead
+function move(i) {
+  active = i;
+  [...list.children].forEach((li, n) => li.setAttribute("aria-selected", String(n === i)));
+  if (i >= 0) { input.setAttribute("aria-activedescendant", "cmd-" + i); list.children[i].scrollIntoView({ block: "nearest" }); }
+  else input.removeAttribute("aria-activedescendant");
+}
+
+function run(i) {
+  if (i < 0) return;
+  const c = shown[i];
+  dialog.close();
+  result.textContent = "اتنفّذ: " + c.name;
+}
+
+input.addEventListener("input", render);
+input.addEventListener("keydown", e => {
+  if (!shown.length) return;
+  if (e.key === "ArrowDown") { e.preventDefault(); move((active + 1) % shown.length); }
+  if (e.key === "ArrowUp") { e.preventDefault(); move((active - 1 + shown.length) % shown.length); }
+  if (e.key === "Home") { e.preventDefault(); move(0); }
+  if (e.key === "End") { e.preventDefault(); move(shown.length - 1); }
+  if (e.key === "Enter") { e.preventDefault(); run(active); }
+});
+
+function openPalette() {
+  if (dialog.open) return;
+  input.value = "";
+  render();
+  dialog.showModal();          // Escape closes it and puts focus back where it was (the browser does both)
+  input.focus();
+}
+document.querySelector(".open").addEventListener("click", openPalette);
+addEventListener("keydown", e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); openPalette(); }   // ⌘K on a Mac
+});
+~~~
+
+~~~js measure.mjs
+import { browser } from "../lab.mjs";
+import AxeBuilder from "@axe-core/playwright";
+const b = await browser();
+const p = await (await b.newContext({ viewport: { width: 900, height: 800 } })).newPage();
+await p.goto("http://127.0.0.1:8818/palette/index.html");
+const st = () => p.evaluate(() => {
+  const i = document.querySelector(".q"), a = i.getAttribute("aria-activedescendant");
+  return "activeElement=" + (document.activeElement === i ? "الـ input" : document.activeElement.tagName) + " | activedescendant=" + a + " («" + (a ? document.getElementById(a).textContent : "") + "»)";
+});
+await p.focus(".open"); await p.keyboard.press("Control+k");
+console.log("Ctrl+K: مفتوح=" + await p.$eval("dialog", d => d.open) + " | " + await st());
+await p.keyboard.press("ArrowDown"); await p.keyboard.press("ArrowDown");
+console.log("سهمين لتحت: " + await st());
+console.log("الشجرة:\n" + (await p.locator("dialog").ariaSnapshot()).split("\n").slice(0, 5).map(l => "  " + l).join("\n"));
+await p.keyboard.type("فاتورة");
+console.log("«فاتورة»: " + await p.$$eval('[role="option"]', o => o.map(x => x.querySelector("span").innerHTML).join(" | ")) + " | " + await st());
+await p.keyboard.press("Enter");
+console.log("Enter: مفتوح=" + await p.$eval("dialog", d => d.open) + " | " + await p.textContent(".result") + " | الـ focus رجع لـ: " + await p.evaluate(() => document.activeElement.className));
+await p.keyboard.press("Control+k"); await p.keyboard.type("طيارة");
+console.log("«طيارة»: options=" + await p.$$eval('[role="option"]', o => o.length) + " | status: " + await p.textContent(".empty") + " | " + await st());
+await p.fill(".q", ""); await p.keyboard.type("<b>x</b>");
+console.log("كتبت <b>x</b>: " + await p.textContent(".empty") + " | <b> اتعمل كعنصر؟ " + await p.evaluate(() => !!document.querySelector(".palette b")));
+console.log("axe (مفتوح): " + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id + ":" + v.nodes.length).join(",") || "0"));
+await p.keyboard.press("Escape");
+console.log("Escape: مفتوح=" + await p.$eval("dialog", d => d.open) + " | الـ focus رجع لـ: " + await p.evaluate(() => document.activeElement.className));
+await b.close();
+~~~
+
+~~~view 460 480 دوس «دوّر على أمر» أو Ctrl+K جوه المعاينة
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
+<title>لوحة «دفتر»</title>
 <style>
-body {
-  font: 18px/1.8 system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-  font-synthesis-style: none;
-}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #0f172a; background: #f1f5f9; }
+.wrap { max-width: 40rem; margin: 0 auto; padding: 2rem 1rem; }
+kbd { padding: 0 0.4em; border: 1px solid #94a3b8; border-block-end-width: 2px; border-radius: 0.3rem; background: #fff; font: inherit; font-size: 0.9em; }
+:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+.open { padding: 0.5rem 1.2rem; border: 1px solid #0f172a; border-radius: 999px; background: #fff; font: inherit; }
+.result { font-weight: 700; color: #047857; }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-/* سلّم الأحجام: كل درجة 1.25 من اللي تحتها */
-h1 { font-size: 1.95em; line-height: 1.25; font-weight: 700; margin: 0 0 8px; }
-h2 { font-size: 1.56em; line-height: 1.3; font-weight: 700; margin: 32px 0 8px; }
-h3 { font-size: 1.25em; line-height: 1.4; font-weight: 600; margin: 24px 0 4px; }
-
-.kicker { font-size: 0.8em; font-weight: 600; color: #b45309; margin: 0; }
-.meta { font-size: 0.8em; color: #6b7280; margin: 0 0 24px; }
-.lead { font-size: 1.25em; line-height: 1.6; font-weight: 300; }
-
-em { color: #b45309; }
-
-/* القوايم */
-ul, ol { padding-inline-start: 1.5em; margin: 8px 0 24px; }
-li + li { margin-block-start: 0.5em; }
-
-.needs { list-style-type: "✓ "; }
-.needs li::marker { color: #059669; }
-
-.steps { list-style-type: arabic-indic; }
-.steps li::marker { color: #b45309; font-weight: 700; }
-
-/* ترقيم عناوين المقال */
-.post { counter-reset: sec; }
-.post h2 { counter-increment: sec; }
-.post h2::before { content: counter(sec, arabic-indic) ". "; color: #b45309; }
-
-/* شبكة أمان: أي كلمة طويلة تتكسر بدل ما تطلع برّه */
-body { overflow-wrap: break-word; }
-
-/* لينكات المقال */
-.post a { text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
-.post a:link { color: #0b57d0; }
-.post a:visited { color: #6d28d9; }
-.post a:hover { color: #1e40af; text-decoration-thickness: 3px; }
-.post a:active { color: #b91c1c; }
-.post a[href^="https://"]::after { content: " ↗"; }
-
-a:focus-visible { outline: 2px solid #0b57d0; outline-offset: 2px; }
-
-/* الهيدر وقايمة التنقل */
-header.site, footer.site { max-width: 640px; margin: 0 auto; }
-header.site { border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 24px; }
-.brand { font-size: 1.25em; font-weight: 700; color: #1f2937; text-decoration: none; }
-header.site ul { list-style: none; padding: 0; margin: 4px 0 0; }
-header.site li { display: inline-block; margin: 0; margin-inline-end: 16px; }
-header.site nav a:any-link { color: #374151; text-decoration: none; }
-header.site nav a:hover, header.site nav a:focus-visible { text-decoration: underline; text-underline-offset: 0.3em; }
-
-/* الفوتر */
-footer.site { border-top: 1px solid #e5e7eb; margin-top: 48px; padding-top: 8px; font-size: 0.8em; color: #6b7280; text-align: center; }
-footer.site a { color: inherit; }
+.palette { width: min(34rem, calc(100vw - 2rem)); margin-block-start: 12vh; padding: 0; border: 0; border-radius: 1rem; box-shadow: 0 25px 60px #0004; }
+.palette::backdrop { background: rgb(15 23 42 / 0.5); }
+.q { width: 100%; padding: 1rem 1.25rem; border: 0; border-block-end: 1px solid #e2e8f0; font: inherit; font-size: 1.1rem; outline: none; }
+#cmds { max-height: 18rem; overflow-y: auto; margin: 0; padding: 0.5rem; list-style: none; }
+[role="option"] { display: flex; justify-content: space-between; padding: 0.55rem 0.75rem; border-radius: 0.5rem; cursor: pointer; }
+[role="option"] small { color: #64748b; }
+/* the chosen option: the focus stays in the input, so this is the "focus" the eye sees */
+[role="option"][aria-selected="true"] { background: #1e293b; color: #fff; }
+[role="option"][aria-selected="true"] small { color: #cbd5e1; }
+mark { background: #fde68a; color: inherit; border-radius: 0.2rem; }
+[aria-selected="true"] mark { background: #f59e0b; color: #0f172a; }
+.empty { margin: 0; padding: 0 1.25rem; color: #64748b; }
+.empty:not(:empty) { padding-block: 1rem; }
 </style>
 </head>
 <body>
-<header class="site">
-  <a class="brand" href="index.html">مدوّنة حبر</a>
-  <nav aria-label="الرئيسية">
-    <ul role="list">
-      <li><a href="index.html">المقالات</a></li>
-      <li><a href="about.html">عن المدوّنة</a></li>
-      <li><a href="contact.html">تواصل</a></li>
-    </ul>
-  </nav>
-</header>
-<main>
-  <article class="post">
-    <p class="kicker">تجارب</p>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p class="meta">كتبت: سلمى فؤاد · ١٢ نوفمبر · ٤ دقايق قراية</p>
-    <p class="lead">الكتابة مش للناس بس. هي لنفسك اللي هتيجي بعد شهرين ومش فاكرة حاجة.</p>
-    <h2>المشكلة</h2>
-    <p>أول مرة حلّيت مشكلة قعدت فيها يوم كامل، قلت لنفسي: مش هنساها <em>أبدًا</em>. الفكرة دي يجب أن تبدأ من <a href="notes.html">ملف ملاحظات بسيط</a>، وفيه شرح أطول في <a href="https://example.test/guides/learning_in_public_a_practical_guide">الدليل ده</a>.</p>
-    <h2>الطريقة</h2>
-    <ol class="steps">
-      <li>اكتب المشكلة زي ما ظهرتلك، برسالة الخطأ بنصها.</li>
-      <li>اكتب اللي جرّبته ومنفعش.</li>
-      <li>اكتب الحل، وليه اشتغل.</li>
-    </ol>
-  </article>
+<main class="wrap">
+  <h1>لوحة «دفتر»</h1>
+  <p>اضغط <kbd>Ctrl</kbd> + <kbd>K</kbd> (أو <kbd>⌘</kbd> + <kbd>K</kbd> على الماك) عشان تدوّر على أي أمر.</p>
+  <button type="button" class="open">دوّر على أمر</button>
+  <p class="result" role="status"></p>
 </main>
-<footer class="site">
-  <p>مدوّنة حبر · كل الحقوق محفوظة · <a href="mailto:hello@example.test">hello@example.test</a></p>
-</footer>
+
+<dialog class="palette" aria-label="الأوامر">
+  <input class="q" type="text" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="cmds"
+         aria-label="اكتب اسم الأمر" placeholder="اكتب اسم الأمر…" autocomplete="off">
+  <ul id="cmds" role="listbox" aria-label="النتايج"></ul>
+  <p class="empty" role="status"></p>
+</dialog>
+<script>
+const commands = [
+  { name: "فاتورة جديدة", hint: "N" }, { name: "كل الفواتير", hint: "" }, { name: "عميل جديد", hint: "" },
+  { name: "تقرير الشهر", hint: "" }, { name: "الإعدادات", hint: "," }, { name: "الوضع الغامق", hint: "" },
+  { name: "المساعدة", hint: "?" }, { name: "تسجيل خروج", hint: "" },
+];
+const dialog = document.querySelector(".palette"), input = dialog.querySelector(".q");
+const list = document.getElementById("cmds"), empty = dialog.querySelector(".empty");
+const result = document.querySelector(".result");
+let shown = [], active = -1;
+
+// the match is wrapped in <mark> with DOM nodes, not innerHTML: whatever is typed stays text
+function label(name, word) {
+  const frag = document.createDocumentFragment(), at = word ? name.indexOf(word) : -1;
+  if (at < 0) { frag.append(name); return frag; }
+  const m = document.createElement("mark");
+  m.textContent = name.slice(at, at + word.length);
+  frag.append(name.slice(0, at), m, name.slice(at + word.length));
+  return frag;
+}
+
+function render() {
+  const word = input.value.trim();
+  shown = commands.filter(c => !word || c.name.includes(word));
+  list.replaceChildren(...shown.map((c, i) => {
+    const li = document.createElement("li");
+    li.id = "cmd-" + i; li.setAttribute("role", "option");
+    const span = document.createElement("span"); span.append(label(c.name, word));
+    li.append(span);
+    if (c.hint) { const s = document.createElement("small"); s.textContent = "Ctrl+" + c.hint; li.append(s); }
+    li.addEventListener("click", () => run(i));
+    li.addEventListener("mousemove", () => move(i));
+    return li;
+  }));
+  empty.textContent = shown.length ? "" : "مفيش أمر فيه «" + word + "»";   // role=status: a screen reader says it
+  move(shown.length ? 0 : -1);
+}
+
+// the focus never leaves the input: aria-activedescendant points at the chosen option instead
+function move(i) {
+  active = i;
+  [...list.children].forEach((li, n) => li.setAttribute("aria-selected", String(n === i)));
+  if (i >= 0) { input.setAttribute("aria-activedescendant", "cmd-" + i); list.children[i].scrollIntoView({ block: "nearest" }); }
+  else input.removeAttribute("aria-activedescendant");
+}
+
+function run(i) {
+  if (i < 0) return;
+  const c = shown[i];
+  dialog.close();
+  result.textContent = "اتنفّذ: " + c.name;
+}
+
+input.addEventListener("input", render);
+input.addEventListener("keydown", e => {
+  if (!shown.length) return;
+  if (e.key === "ArrowDown") { e.preventDefault(); move((active + 1) % shown.length); }
+  if (e.key === "ArrowUp") { e.preventDefault(); move((active - 1 + shown.length) % shown.length); }
+  if (e.key === "Home") { e.preventDefault(); move(0); }
+  if (e.key === "End") { e.preventDefault(); move(shown.length - 1); }
+  if (e.key === "Enter") { e.preventDefault(); run(active); }
+});
+
+function openPalette() {
+  if (dialog.open) return;
+  input.value = "";
+  render();
+  dialog.showModal();          // Escape closes it and puts focus back where it was (the browser does both)
+  input.focus();
+}
+document.querySelector(".open").addEventListener("click", openPalette);
+addEventListener("keydown", e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); openPalette(); }   // ⌘K on a Mac
+});
+</script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:**
+**هتشوف إيه:** صفحة «لوحة «دفتر»» وزرار. Ctrl+K بيفتح صندوق أبيض في نص الشاشة فيه خانة كتابة و ٨ أوامر. الأول متعلّم بخلفية غامقة، والأسهم بتنقل العلامة، والكتابة بتفلتر وتلوّن الكلمة بالأصفر. Enter بينفّذ ويقفل، ويظهر في الصفحة «اتنفّذ: فاتورة جديدة».
 
-- فوق: اسم المدوّنة تقيل، وتحته تلات لينكات جنب بعض من غير نقط ومن غير خط. قف على واحد: بيظهر تحته خط.
-- في المقال: لينكين أزرق تحتهم خط رفيع نازل عن نقط الحروف (بص على «يجب» قبل اللينك وقارن). الخط بيتخن لما تقف. واللينك الخارجي بعده سهم.
-- العنوان الطويل بتاع «الدليل ده» مش ظاهر، بس جرّب تحطه كنص لينك: هيتكسر جوه العمود بدل ما يعمل سكرول.
-- تحت: سطر صغير رمادي في النص، والإيميل بنفس لون الكلام وتحته خط.
-- دوس Tab: إطار أزرق بيتنقل بين اللينكات كلها بالترتيب.
+**الـ focus مبيسيبش الخانة: [[aria-activedescendant]].** في الـ tabs الـ focus بيتنقل بين الزراير (roving tabindex). هنا لأ: لازم تفضل تكتب. فالخانة [[role="combobox"]] و [[aria-activedescendant="cmd-2"]] بيقول لقارئ الشاشة «المختار دلوقتي هو العنصر ده»، وكل [[option]] عليه [[aria-selected]]. والشكل (الخلفية الغامقة) جاي من [[aria-selected="true"]].
 
-**ليه كده:**
+**[[<mark>]] من غير [[innerHTML]]:** الكلمة المطابقة بتتقسم 3 حتت نص، والنص بيتحط بـ [[textContent]]. لو كان [[innerHTML]]، كتابة [[<b>x</b>]] كانت هتبقى عنصر حقيقي. اتجرّب: مفيش [[<b>]] اتعمل.
 
-- **نوعين لينكات، بقاعدتين.** لينكات المقال ([[.post a]]) وسط كلام، فلازم خط ولون. لينكات التنقل مكانها بيقول إنها لينكات، فشيلنا الخط ورجّعناه في الـ hover والـ focus (درس «:link و :visited و :hover»).
-- **الترتيب L-V-H-A** في لينكات المقال، و [[:focus-visible]] قاعدة عامة لوحدها لأنها بتغيّر [[outline]] مش اللون.
-- **[[header.site nav a:any-link]]:** اللي اتزار واللي متزارش بنفس اللون في القايمة، وده مقصود هنا.
-- **قايمة التنقل [[<ul>]]** من غير علامات و padding، ومعاها [[role="list"]]. البنود [[inline-block]] فمبقاش ليهم marker أصلًا.
-- **[[overflow-wrap: break-word]] على [[body]]:** المدوّنة هيبقى فيها لينكات وأكواد، وسطر واحد بيحمي كل الصفحات (درس «white-space و overflow-wrap»).
-- **الفوتر [[text-align: center]]:** سطر قصير واحد. فقرات المقال فضلت [[start]].
+**[[<dialog>]] بـ [[showModal()]]:** الـ Tab جواه، و Escape بيقفله، والمتصفح بيرجّع الـ focus للزرار اللي كان عليه. و Ctrl+K و ⌘K الاتنين ([[e.ctrlKey || e.metaKey]]) و [[preventDefault]] عشان Ctrl+K في Chrome بيروح لشريط البحث.
 
-**الغلطة الشائعة:** [[a { text-decoration: none; }]] مرة واحدة للموقع كله «وبعدين نرجّعها». لينكات المقال بتتنسى، والقارئ مبيشوفهاش.
+**«مفيش»:** [[<p role="status">]] جوه الـ dialog بيتقري لوحده لما يتملي.
 
-~~~text القياس من Chrome
-.post a                 color: rgb(11, 87, 208)    underline    text-underline-offset: 5.4px
-.post a[href^="https://"]::after     content: " ↗"
-header.site nav a       color: rgb(55, 65, 81)     text-decoration-line: none
-header.site ul          list-style-type: none      padding-inline-start: 0px
-footer.site             font-size: 14.4px          text-align: center
-صفحة 360px:             عرض الصفحة 360px (مفيش سكرول بالعرض)
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+Ctrl+K (والـ focus على الزرار): مفتوح | activeElement=الـ input | activedescendant=cmd-0 («فاتورة جديدة»)
+سهمين لتحت: activeElement=الـ input | activedescendant=cmd-2 («عميل جديد»)
+الشجرة:
+  - dialog "الأوامر":
+    - combobox "اكتب اسم الأمر" [expanded]
+    - listbox "النتايج":
+      - option "فاتورة جديدة Ctrl+N"
+«فاتورة»: <mark>فاتورة</mark> جديدة | activeElement=الـ input
+Enter: اتقفل | «اتنفّذ: فاتورة جديدة» | الـ focus رجع لـ: open (الزرار)
+«طيارة»: options=0 | status: «مفيش أمر فيه «طيارة»» | activedescendant اتشال
+كتبت <b>x</b>: «مفيش أمر فيه «<b>x</b>»» | <b> اتعمل كعنصر؟ false
+Escape: اتقفل | الـ focus رجع للزرار
+axe (مفتوح): 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
 ~~~` },
-        { lvl: 'كبير', dir: "hebr-blog", cont: true, t: R`قالب المقال الكامل وخطة خط من موقعك`, what: R`آخر محطة: القالب اللي كل مقالات «مدوّنة حبر» هتتكتب عليه. خد الهيدر والفوتر واللينكات من المشروع الرابع، والقوايم والعدّاد من التالت، وسلّم الأحجام من التاني، وزوّد: (١) خطة خط من موقعك: تعريفين [[@font-face]] لعيلة [["Hebr"]] (ملف 400 وملف 700 في فولدر [[fonts/]]، و [[font-display: swap]])، و [[<link rel="preload">]] للملف الأساسي في الـ [[<head>]]، و «Hebr» أول قايمة [[font-family]] وبعده خطوط النظام، و [[font-synthesis: none]]. (٢) اقتباس [[<blockquote>]] بخط أكبر وشريط على ناحية البداية. (٣) سطر كود طويل جوه [[<pre><code>]] بيلف وميطلعش برّه. (٤) جدول صغير بأرقام محاذية للنهاية وبعرض موحّد. (٥) أول سطر من المقدمة تقيل، وأول حرف من أول فقرة ملوّن من غير ما الكلمة العربي تتفك. (٦) لون [[::selection]] للموقع. ملفات الخط نفسها مش مطلوبة عشان تخلّص: من غيرها لازم الصفحة تفضل سليمة بالبدايل. من كل دروس الوحدة.`, done: R`الصفحة من غير فولدر [[fonts]] بتتعرض كاملة بخط النظام، و Console مفيهوش غير خطأ ملفين الخط. وعلى 360px مفيش سكرول بالعرض مع الأمر الطويل والجدول. وأرقام الجدول متراصة. وأول كلمة في الفقرة الأولى متصلة وأول حرف فيها ملوّن. وبالكيبورد كل لينك ليه إطار. وفي ملف الـ CSS مفيش [[letter-spacing]] ولا [[text-align: right]] ولا [[left]].`, ext: R`حط ملفين woff2 حقيقيين لخط رخصته OFL وجرّب: Network ثم Font لازم يوريك طلبين بس. وبعدين عرّف بديل متظبّط ([[@font-face]] بـ [[local()]] و [[size-adjust]]) لحد ما التبديل ميحرّكش السطور. واعمل صفحة تانية [[about.html]] بنفس [[style.css]] وتأكد إن مفيش قاعدة محتاجة تتعدّل.`, sol: R`~~~html index.html
-<!doctype html>
+        { lvl: 'كبير', dir: "shop", t: R`متجر صغير بانتقالات «ركن القهوة»`, what: R`موقع متعدد الصفحات (MPA عادي من غير framework): صفحة لستة فيها فلتر chips بيحرّك الكروت لأماكنها الجديدة بـ View Transitions، وصفحة منتج الانتقال ليها بـ [[@view-transition { navigation: auto; }]] وصورة المنتج بتطير بين الصفحتين، وفيها tabs و FAQ و carousel، وهيدر sticky و [[scroll-margin-top]] للعناوين، و [[text-wrap: balance]] للعناوين. كل ميزة جديدة جوه [[@supports]] أو بتقع بهدوء. بيجمع الوحدة دي مع الثيم والـ Accessibility والحركة.`, done: R`في Chrome الانتقالات شغالة بين الصفحات، وفي متصفح من غير cross-document view transitions الصفحات بتفتح عادي من غير أخطاء. كل حاجة بالكيبورد، و axe صفر في كل الصفحات، و Lighthouse Performance ‏90 أو أكتر، و reduce بيلغي الانتقالات. وفيه جدول Baseline بكل ميزة اتستخدمت (من MDN) والـ fallback بتاعها.`, ext: R`زوّد سلة بـ drawer بيطلع من ناحية النهاية، وحوّل الموقع لثنائي اللغة، وانشره على GitHub Pages.`, sol: R`موقع صفحات عادي (MPA): صفحة لستة، وصفحة لكل منتج. الصفحات بتتولّد من لستة بيانات واحدة بسكربت صغير، فاسم الصورة ([[img-yirga]]) واحد في الصفحتين.
+
+~~~js build.mjs
+// node shop/build.mjs: the list page and one page per product, from one list of data (a tiny static site generator)
+import fs from "node:fs";
+
+const products = [
+  { slug: "yirga", name: "يرقاتشيفي", kind: "beans", price: 320, img: "c0", desc: "إثيوبي فاتح، فيه ليمون وورد." },
+  { slug: "santos", name: "سانتوس", kind: "beans", price: 260, img: "c1", desc: "برازيلي متوسط، شوكولاتة وبندق." },
+  { slug: "harazi", name: "حرازي", kind: "beans", price: 410, img: "c2", desc: "يمني غامق، توابل وزبيب." },
+  { slug: "v60", name: "قمع تقطير V60", kind: "tools", price: 450, img: "c3", desc: "بلاستيك متين، مقاس 02." },
+  { slug: "grinder", name: "مطحنة يدوي", kind: "tools", price: 980, img: "c4", desc: "سنون سيراميك، ١٢ درجة طحن." },
+  { slug: "kettle", name: "غلاية بمنقار", kind: "tools", price: 1200, img: "c5", desc: "منقار رفيع لصب مظبوط." },
+];
+const ar = n => n.toLocaleString("ar-EG");
+const head = (title, depth) => $__bt<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
-<link rel="preload" href="fonts/hebr-regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="style.css">
+<title>$__{title}</title>
+<link rel="stylesheet" href="$__{depth}style.css">$__bt;
+const header = depth => $__bt<header class="top"><a class="logo" href="$__{depth}index.html">ركن القهوة</a><nav aria-label="الأقسام"><a href="$__{depth}index.html#beans">البن</a> <a href="$__{depth}index.html#tools">الأدوات</a></nav></header>$__bt;
+
+// the list page
+const cards = products.map(p => $__bt      <li class="card" data-kind="$__{p.kind}" style="view-transition-name: card-$__{p.slug}">
+        <a href="products/$__{p.slug}.html"><img src="img/$__{p.img}-300.webp" alt="" width="300" height="300" style="view-transition-name: img-$__{p.slug}"><h2>$__{p.name}</h2></a>
+        <p>$__{p.desc}</p><p class="price">$__{ar(p.price)} ج</p>
+      </li>$__bt).join("\n");
+fs.writeFileSync("shop/index.html", $__bt$__{head("ركن القهوة: بن وأدوات", "")}
+<script src="list.js" defer></script>
 </head>
 <body>
-<header class="site">
-  <a class="brand" href="index.html">مدوّنة حبر</a>
-  <nav aria-label="الرئيسية">
-    <ul role="list">
-      <li><a href="index.html">المقالات</a></li>
-      <li><a href="about.html">عن المدوّنة</a></li>
-      <li><a href="contact.html">تواصل</a></li>
-    </ul>
-  </nav>
-</header>
-<main>
-  <article class="post">
-    <p class="kicker">تجارب</p>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p class="meta">كتبت: سلمى فؤاد · ١٢ نوفمبر · ٤ دقايق قراية</p>
-    <p class="lead">الكتابة مش للناس بس. هي لنفسك اللي هتيجي بعد شهرين ومش فاكرة حاجة.</p>
-    <h2>المشكلة</h2>
-    <p class="first">كل مرة بحل مشكلة بقول لنفسي: مش هنساها <em>أبدًا</em>. وبعد شهرين بقابلها تاني. الفكرة يجب أن تبدأ من <a href="notes.html">ملف ملاحظات بسيط</a>، وفيه شرح أطول في <a href="https://example.test/guides/learning_in_public">الدليل ده</a>.</p>
-    <blockquote>
-      <p>اللي متكتبش، محصلش.</p>
-    </blockquote>
-    <h2>الطريقة</h2>
-    <ol class="steps">
-      <li>اكتب المشكلة زي ما ظهرتلك، برسالة الخطأ بنصها.</li>
-      <li>اكتب اللي جرّبته ومنفعش.</li>
-      <li>اكتب الحل، وليه اشتغل.</li>
-    </ol>
-    <p>وأول ملاحظة ممكن تبقى أمر واحد:</p>
-<pre><code>git log --oneline --since="2 weeks ago" --author="salma" -- notes/</code></pre>
-    <h2>بعد شهر</h2>
-    <table>
-      <caption>عدد الملاحظات والوقت اللي اتوفّر</caption>
-      <tr><th>الأسبوع</th><th>ملاحظات</th><th>دقايق اتوفّرت</th></tr>
-      <tr><td>الأول</td><td class="num">4</td><td class="num">35</td></tr>
-      <tr><td>التاني</td><td class="num">11</td><td class="num">110</td></tr>
-      <tr><td>التالت</td><td class="num">18</td><td class="num">1,015</td></tr>
-    </table>
-  </article>
-</main>
-<footer class="site">
-  <p>مدوّنة حبر · كل الحقوق محفوظة · <a href="mailto:hello@example.test">hello@example.test</a></p>
-</footer>
-</body>
-</html>
-~~~
-
-~~~css style.css
-/* ١. خط المدوّنة: ملفين woff2 في فولدر fonts/ جنب الملف ده */
-@font-face {
-  font-family: "Hebr";
-  src: url("fonts/hebr-regular.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Hebr";
-  src: url("fonts/hebr-bold.woff2") format("woff2");
-  font-weight: 700;
-  font-display: swap;
-}
-
-/* ٢. الأساس */
-body {
-  font: 18px/1.8 "Hebr", system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-  font-synthesis: none;
-  overflow-wrap: break-word;
-}
-::selection { background: #fde68a; color: #111; }
-main, header.site, footer.site { max-width: 640px; margin: 0 auto; }
-
-/* ٣. سلّم الأحجام */
-h1 { font-size: 1.95em; line-height: 1.25; margin: 0 0 8px; }
-h2 { font-size: 1.56em; line-height: 1.3; margin: 32px 0 8px; }
-.kicker { font-size: 0.8em; font-weight: 700; color: #b45309; margin: 0; }
-.meta { font-size: 0.8em; color: #6b7280; margin: 0 0 24px; }
-.lead { font-size: 1.25em; line-height: 1.6; }
-.lead::first-line { font-weight: 700; }
-.first::first-letter { color: #b45309; font-weight: 700; }
-em { color: #b45309; }
-
-/* ٤. القوايم والعدّاد */
-ul, ol { padding-inline-start: 1.5em; margin: 8px 0 24px; }
-li + li { margin-block-start: 0.5em; }
-.steps { list-style-type: arabic-indic; }
-.steps li::marker { color: #b45309; font-weight: 700; }
-.post { counter-reset: sec; }
-.post h2 { counter-increment: sec; }
-.post h2::before { content: counter(sec, arabic-indic) ". "; color: #b45309; }
-
-/* ٥. اللينكات */
-.post a { text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
-.post a:link { color: #0b57d0; }
-.post a:visited { color: #6d28d9; }
-.post a:hover { color: #1e40af; text-decoration-thickness: 3px; }
-.post a:active { color: #b91c1c; }
-.post a[href^="https://"]::after { content: " ↗"; }
-a:focus-visible { outline: 2px solid #0b57d0; outline-offset: 2px; }
-
-/* ٦. الاقتباس والكود والجدول */
-blockquote { margin: 24px 0; padding-inline-start: 16px; border-inline-start: 4px solid #b45309; font-size: 1.25em; line-height: 1.6; }
-blockquote p { margin: 0; }
-pre { background: #f3f4f6; padding: 12px; direction: ltr; text-align: left; white-space: pre-wrap; tab-size: 2; }
-code { font-family: Consolas, "Courier New", monospace; font-size: 0.85em; font-variant-ligatures: none; }
-table { border-collapse: collapse; width: 100%; }
-caption { text-align: start; font-size: 0.8em; color: #6b7280; padding-bottom: 4px; }
-th, td { border-bottom: 1px solid #e5e7eb; padding: 6px 8px; text-align: start; }
-td.num { text-align: end; font-variant-numeric: tabular-nums; }
-
-/* ٧. الهيدر والفوتر */
-header.site { border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 24px; }
-.brand { font-size: 1.25em; font-weight: 700; color: #1f2937; text-decoration: none; }
-header.site ul { list-style: none; padding: 0; margin: 4px 0 0; }
-header.site li { display: inline-block; margin: 0; margin-inline-end: 16px; }
-header.site nav a:any-link { color: #374151; text-decoration: none; }
-header.site nav a:hover, header.site nav a:focus-visible { text-decoration: underline; text-underline-offset: 0.3em; }
-footer.site { border-top: 1px solid #e5e7eb; margin-top: 48px; padding-top: 8px; font-size: 0.8em; color: #6b7280; text-align: center; }
-footer.site a { color: inherit; }
-~~~
-
-~~~view 1275 1510 شكل القالب (بخط النظام: المعاينة مفيهاش ملفات خطوط)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه بنكتب اللي اتعلمناه؟ | مدوّنة حبر</title>
-<style>
-/* ١. خط المدوّنة: ملفين woff2 في فولدر fonts/ جنب الملف ده */
-@font-face {
-  font-family: "Hebr";
-  src: url("fonts/hebr-regular.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Hebr";
-  src: url("fonts/hebr-bold.woff2") format("woff2");
-  font-weight: 700;
-  font-display: swap;
-}
-
-/* ٢. الأساس */
-body {
-  font: 18px/1.8 "Hebr", system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  margin: 0;
-  padding: 16px;
-  font-synthesis: none;
-  overflow-wrap: break-word;
-}
-::selection { background: #fde68a; color: #111; }
-main, header.site, footer.site { max-width: 640px; margin: 0 auto; }
-
-/* ٣. سلّم الأحجام */
-h1 { font-size: 1.95em; line-height: 1.25; margin: 0 0 8px; }
-h2 { font-size: 1.56em; line-height: 1.3; margin: 32px 0 8px; }
-.kicker { font-size: 0.8em; font-weight: 700; color: #b45309; margin: 0; }
-.meta { font-size: 0.8em; color: #6b7280; margin: 0 0 24px; }
-.lead { font-size: 1.25em; line-height: 1.6; }
-.lead::first-line { font-weight: 700; }
-.first::first-letter { color: #b45309; font-weight: 700; }
-em { color: #b45309; }
-
-/* ٤. القوايم والعدّاد */
-ul, ol { padding-inline-start: 1.5em; margin: 8px 0 24px; }
-li + li { margin-block-start: 0.5em; }
-.steps { list-style-type: arabic-indic; }
-.steps li::marker { color: #b45309; font-weight: 700; }
-.post { counter-reset: sec; }
-.post h2 { counter-increment: sec; }
-.post h2::before { content: counter(sec, arabic-indic) ". "; color: #b45309; }
-
-/* ٥. اللينكات */
-.post a { text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
-.post a:link { color: #0b57d0; }
-.post a:visited { color: #6d28d9; }
-.post a:hover { color: #1e40af; text-decoration-thickness: 3px; }
-.post a:active { color: #b91c1c; }
-.post a[href^="https://"]::after { content: " ↗"; }
-a:focus-visible { outline: 2px solid #0b57d0; outline-offset: 2px; }
-
-/* ٦. الاقتباس والكود والجدول */
-blockquote { margin: 24px 0; padding-inline-start: 16px; border-inline-start: 4px solid #b45309; font-size: 1.25em; line-height: 1.6; }
-blockquote p { margin: 0; }
-pre { background: #f3f4f6; padding: 12px; direction: ltr; text-align: left; white-space: pre-wrap; tab-size: 2; }
-code { font-family: Consolas, "Courier New", monospace; font-size: 0.85em; font-variant-ligatures: none; }
-table { border-collapse: collapse; width: 100%; }
-caption { text-align: start; font-size: 0.8em; color: #6b7280; padding-bottom: 4px; }
-th, td { border-bottom: 1px solid #e5e7eb; padding: 6px 8px; text-align: start; }
-td.num { text-align: end; font-variant-numeric: tabular-nums; }
-
-/* ٧. الهيدر والفوتر */
-header.site { border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 24px; }
-.brand { font-size: 1.25em; font-weight: 700; color: #1f2937; text-decoration: none; }
-header.site ul { list-style: none; padding: 0; margin: 4px 0 0; }
-header.site li { display: inline-block; margin: 0; margin-inline-end: 16px; }
-header.site nav a:any-link { color: #374151; text-decoration: none; }
-header.site nav a:hover, header.site nav a:focus-visible { text-decoration: underline; text-underline-offset: 0.3em; }
-footer.site { border-top: 1px solid #e5e7eb; margin-top: 48px; padding-top: 8px; font-size: 0.8em; color: #6b7280; text-align: center; }
-footer.site a { color: inherit; }
-</style>
-</head>
-<body>
-<header class="site">
-  <a class="brand" href="index.html">مدوّنة حبر</a>
-  <nav aria-label="الرئيسية">
-    <ul role="list">
-      <li><a href="index.html">المقالات</a></li>
-      <li><a href="about.html">عن المدوّنة</a></li>
-      <li><a href="contact.html">تواصل</a></li>
-    </ul>
-  </nav>
-</header>
-<main>
-  <article class="post">
-    <p class="kicker">تجارب</p>
-    <h1>ليه بنكتب اللي اتعلمناه؟</h1>
-    <p class="meta">كتبت: سلمى فؤاد · ١٢ نوفمبر · ٤ دقايق قراية</p>
-    <p class="lead">الكتابة مش للناس بس. هي لنفسك اللي هتيجي بعد شهرين ومش فاكرة حاجة.</p>
-    <h2>المشكلة</h2>
-    <p class="first">كل مرة بحل مشكلة بقول لنفسي: مش هنساها <em>أبدًا</em>. وبعد شهرين بقابلها تاني. الفكرة يجب أن تبدأ من <a href="notes.html">ملف ملاحظات بسيط</a>، وفيه شرح أطول في <a href="https://example.test/guides/learning_in_public">الدليل ده</a>.</p>
-    <blockquote>
-      <p>اللي متكتبش، محصلش.</p>
-    </blockquote>
-    <h2>الطريقة</h2>
-    <ol class="steps">
-      <li>اكتب المشكلة زي ما ظهرتلك، برسالة الخطأ بنصها.</li>
-      <li>اكتب اللي جرّبته ومنفعش.</li>
-      <li>اكتب الحل، وليه اشتغل.</li>
-    </ol>
-    <p>وأول ملاحظة ممكن تبقى أمر واحد:</p>
-<pre><code>git log --oneline --since="2 weeks ago" --author="salma" -- notes/</code></pre>
-    <h2>بعد شهر</h2>
-    <table>
-      <caption>عدد الملاحظات والوقت اللي اتوفّر</caption>
-      <tr><th>الأسبوع</th><th>ملاحظات</th><th>دقايق اتوفّرت</th></tr>
-      <tr><td>الأول</td><td class="num">4</td><td class="num">35</td></tr>
-      <tr><td>التاني</td><td class="num">11</td><td class="num">110</td></tr>
-      <tr><td>التالت</td><td class="num">18</td><td class="num">1,015</td></tr>
-    </table>
-  </article>
-</main>
-<footer class="site">
-  <p>مدوّنة حبر · كل الحقوق محفوظة · <a href="mailto:hello@example.test">hello@example.test</a></p>
-</footer>
-</body>
-</html>
-~~~
-
-**شجرة الملفات:**
-
-~~~text hebr-blog/
-hebr-blog/
-├── index.html
-├── style.css
-└── fonts/
-    ├── hebr-regular.woff2      (الوزن 400)
-    ├── hebr-bold.woff2         (الوزن 700)
-    └── OFL.txt                 (رخصة الخط)
-~~~
-
-**هتشوف إيه (في المعاينة هنا، ومن غير ملفات الخط):**
-
-- الصفحة كاملة: هيدر، ومقال، وفوتر، بخط النظام. «Hebr» مش موجود في المعاينة، فالبدايل اللي في القايمة هي اللي اتعرضت. ده بالظبط اللي الزائر هيشوفه في أول لحظة قبل ما الخط ينزل، أو لو الخط فشل.
-- أول سطر من المقدمة تقيل، وأول حرف في الفقرة الأولى (الكاف) بني والكلمة لسه متصلة.
-- اقتباس بخط أكبر وعلى يمينه شريط بني.
-- أمر [[git]] الطويل لف جوه الصندوق الرمادي ومخرجش برّه.
-- في الجدول الأرقام محاذية للشمال ومتراصة: آحاد تحت آحاد.
-- حدد أي كلام: خلفية صفرا.
-
-**ترتيب البناء:**
-
-1. انسخ [[index.html]] و [[style.css]] من المشروع اللي فات.
-2. زوّد في الـ HTML: الاقتباس، والـ [[<pre>]]، والجدول، و class [[first]] على أول فقرة، وسطر الـ preload في الـ [[<head>]].
-3. في الـ CSS: القسم ١ (الخط) فوق كل حاجة، وغيّر أول اسم في [[font]] بتاعة [[body]].
-4. زوّد القسم ٦ (الاقتباس والكود والجدول) و [[::selection]] و [[::first-line]] و [[::first-letter]].
-5. اعمل فولدر [[fonts]] وحط فيه ملفين woff2 لخط رخصته بتسمح (وغيّر أساميهم لنفس الأسامي). من غيرهم الصفحة شغالة بخط النظام.
-
-**خطة الخط، وليه كل قرار:**
-
-| القرار | السبب | الدرس |
-|---|---|---|
-| ملفين بس (400 و 700) | كل ملف بيتحمّل. العناوين و [[<strong>]] ياخدوا 700، والباقي 400 | «@font-face و font-display» |
-| [[font-weight]] على كل تعريف | من غيره الملفين يبقوا «400» والأخير يغلب | نفس الدرس |
-| [[font-display: swap]] | الكلام يتقري فورًا بخط النظام | نفس الدرس |
-| preload للـ regular ومعاه [[crossorigin]] | الخط الأساسي يبدأ ينزل بدري. من غير [[crossorigin]] ينزل مرتين | نفس الدرس |
-| البدايل بعد «Hebr» | أول ثانية، ولو الخط فشل | «font-family و font-size» |
-| [[font-synthesis: none]] | مفيش ملف مايل ولا 300 ولا 600، فمنعنا أي فبركة. عشان كده [[.kicker]] بقى 700 والمقدمة 400 | «font-weight و font-style» |
-| مفيش [[letter-spacing]] ولا drop cap بـ [[float]] | بيبوّظوا العربي | «text-align و text-transform» و «::first-letter و ::selection» |
-
-**الفرق عن المشروع اللي فات في الأوزان:** هناك استخدمنا 300 و 600 لأن خط النظام فيه الأوزان دي. هنا الخط ملفين بس، فالتصميم اتظبط على وزنين. ده قرار بيتاخد مع الخط، مش بعده.
-
-**الغلطة الشائعة:** تجرّب الصفحة على جهازك والخط متسطّب عندك، فتفتكر إن [[@font-face]] شغالة والمسار غلط. افتح Network، ثم Font: لازم تشوف الطلبين بحالة 200.
-
-~~~text القياس من Chrome (من غير ملفات الخط)
-body          font-family: Hebr, system-ui, "Segoe UI", Tahoma, sans-serif      font-synthesis: none
-.lead::first-line     font-weight: 700
-.first::first-letter  color: rgb(180, 83, 9)     float: none
-pre           white-space: pre-wrap      tab-size: 2
-td.num        text-align: end            font-variant-numeric: tabular-nums
-document.fonts:  "Hebr" 400 error ،  "Hebr" 700 error     ← متوقّع هنا: مفيش ملفات. والصفحة سليمة بالبدايل
-صفحة 360px:   عرض الصفحة 360px (مفيش سكرول بالعرض)
-~~~
-
-~~~text ترتيب الطلبات المتوقّع بملفين حقيقيين (من قياسات درس «@font-face و font-display» على السيرفر المحلي)
-GET /index.html
-GET /fonts/hebr-regular      ← بالـ preload، قبل أي حاجة تانية
-GET /fonts/hebr-bold         ← لما المتصفح لقى العناوين
-~~~` },
-        { lvl: 'فكرة', dir: "poem-card", t: R`دعوة لأمسية شعرية`, what: R`صفحة واحدة بتتبعت لينك في رسالة: دعوة لأمسية شعرية في مكتبة (متخيلة). كارت في نص الصفحة فيه: كلمة «دعوة» صغيرة، وعنوان الأمسية، وأربع أبيات (مكتوبين في الـ HTML كل بيت في سطر **من غير** [[<br>]])، وتلات معلومات (اليوم والساعة والمكان) في قايمة، ولينك «أكّد حضورك» بيفتح إيميل. القرار قرارك في الشكل، بشرط: كل تنسيق نص من الوحدة دي، ومفيش حاجة بتبوّظ العربي ([[letter-spacing]]، drop cap بـ [[float]]، ميل مفبرك). الحل نسخة واحدة ممكنة وليه اتعملت كده.`, done: R`الأبيات على أربع سطور ومفيش [[<br>]] في الكود. والمعلومات التلاتة بادئين من نفس الحافة. واللينك باين إنه بيتداس من غير ما تقف عليه، وليه شكل في الـ hover والـ focus. وعلى 360px الكارت جوه الشاشة.`, ext: R`اعمل نسخة إنجليزي من نفس الدعوة بـ [[dir="ltr"]] و [[lang="en"]] على [[<html>]] ومن غير ما تغيّر ولا سطر في [[style.css]]: لو فيه حاجة راحت للناحية الغلط، يبقى فيه [[left]] أو [[right]] لازم تتبدّل بـ [[start]] أو [[end]]. وبعدين زوّد للنسخة الإنجليزي بس عنوان بحروف كبيرة ومسافة بين الحروف بـ [[:lang(en)]].`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>دعوة: أمسية شعرية</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main class="card">
-  <p class="kind">دعوة</p>
-  <h1>أمسية شعرية</h1>
-  <p class="poem">على قدّ الورق بنكتب
-وعلى قدّ الحلم بنطير
-والكلمة لو طلعت من القلب
-تعدّي البحر من غير جسور</p>
-  <ul class="info" role="list">
-    <li><span>اليوم</span> الخميس ٢٠ نوفمبر</li>
-    <li><span>الساعة</span> ٧ مساءً</li>
-    <li><span>المكان</span> مكتبة الورّاق، ٧ شارع المحطة</li>
+$__{header("")}
+<main class="wrap">
+  <h1>كل حاجة لفنجان مظبوط</h1>
+  <div class="chips" role="group" aria-label="اعرض">
+    <button type="button" aria-pressed="true" data-kind="all">الكل</button>
+    <button type="button" aria-pressed="false" data-kind="beans" id="beans">البن</button>
+    <button type="button" aria-pressed="false" data-kind="tools" id="tools">الأدوات</button>
+  </div>
+  <p class="count" role="status"></p>
+  <ul class="grid">
+$__{cards}
   </ul>
-  <p class="rsvp"><a href="mailto:evening@example.test">أكّد حضورك</a></p>
+  <h2 class="baseline-t" id="baseline">الميزات اللي في الموقع ده شغالة فين</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">الميزة</th><th scope="col">Baseline (web-features)</th><th scope="col">لو مش موجودة</th></tr></thead>
+      <tbody>
+        <tr><td>View Transitions بين الصفحات (<code>@view-transition</code>)</td><td>limited: Chrome 126، Safari 18.2</td><td>الصفحة بتفتح عادي من غير حركة</td></tr>
+        <tr><td>View Transitions في نفس الصفحة (<code>startViewTransition</code>)</td><td>low (أكتوبر ٢٠٢٥)</td><td>الفلتر بيشتغل على طول من غير حركة</td></tr>
+        <tr><td><code>text-wrap: balance</code></td><td>low (مايو ٢٠٢٤)</td><td>العنوان بيتقسم عادي</td></tr>
+        <tr><td><code>details name</code></td><td>low (سبتمبر ٢٠٢٤)</td><td>أكتر من سؤال يتفتح مع بعض</td></tr>
+        <tr><td>scroll-snap</td><td>high (يناير ٢٠٢٠)</td><td>الـ scroll بيقف في أي مكان</td></tr>
+      </tbody>
+    </table>
+  </div>
 </main>
 </body>
 </html>
+$__bt);
+
+// one page per product
+fs.mkdirSync("shop/products", { recursive: true });
+for (const p of products) {
+  const related = products.filter(o => o.kind === p.kind && o !== p).concat(products.filter(o => o.kind !== p.kind));
+  fs.writeFileSync($__btshop/products/$__{p.slug}.html$__bt, $__bt$__{head(p.name + ": ركن القهوة", "../")}
+<script src="../product.js" defer></script>
+</head>
+<body>
+$__{header("../")}
+<main class="wrap product">
+  <img class="hero-img" src="../img/$__{p.img}-600.webp" alt="$__{p.name}" width="600" height="600" style="view-transition-name: img-$__{p.slug}">
+  <div>
+    <h1>$__{p.name}</h1>
+    <p class="price">$__{ar(p.price)} ج</p>
+    <p>$__{p.desc}</p>
+    <div class="tabs">
+      <div role="tablist" aria-label="عن المنتج">
+        <button type="button" role="tab" id="t1" aria-controls="p1" aria-selected="true">الوصف</button>
+        <button type="button" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">التحضير</button>
+      </div>
+      <div role="tabpanel" id="p1" aria-labelledby="t1" tabindex="0"><p>$__{p.desc} بنجهّزه بعد ما تطلب.</p></div>
+      <div role="tabpanel" id="p2" aria-labelledby="t2" tabindex="0" hidden><p>١٥ جرام بن لـ ٢٥٠ مل مية، حرارة ٩٣ درجة.</p></div>
+    </div>
+    <h2 id="faq">أسئلة</h2>
+    <details name="faq"><summary>بيوصل إمتى؟</summary><p>جوه القاهرة يوم شغل.</p></details>
+    <details name="faq"><summary>أرجّعه إزاي؟</summary><p>خلال ١٤ يوم وهو مقفول.</p></details>
+  </div>
+</main>
+<section class="wrap related" aria-labelledby="rel">
+  <h2 id="rel">ممكن يعجبك كمان</h2>
+  <ul class="rail" tabindex="0" aria-label="منتجات تانية (اعمل scroll)">
+$__{related.map(o => $__bt    <li><a href="$__{o.slug}.html"><img src="../img/$__{o.img}-300.webp" alt="" width="300" height="300"><span>$__{o.name}</span></a></li>$__bt).join("\n")}
+  </ul>
+</section>
+</body>
+</html>
+$__bt);
+}
+console.log("index.html + " + products.length + " product pages");
 ~~~
 
 ~~~css style.css
-body {
-  font: 18px/1.8 system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  background: #fffbeb;
-  margin: 0;
-  padding: 16px;
-  overflow-wrap: break-word;
+*, *::before, *::after { box-sizing: border-box; }
+:root { --bean: #3b2416; --cream: #fdf6ec; --crema: #b45309; --muted: #6b5444; --line: #e8d9c5; --header-h: 3.5rem; }
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }       /* anchors (#beans, #faq) stop under the sticky header */
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--bean); background: var(--cream); }
+a { color: var(--crema); }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+h1, h2 { text-wrap: balance; }
+.wrap { max-width: 60rem; margin: 0 auto; padding: 1.25rem 1rem; }
+
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; min-height: var(--header-h); padding: 0 1rem; background: #fdf6ecf2; border-block-end: 1px solid var(--line); view-transition-name: header; }
+.logo { font-weight: 800; color: var(--bean); text-decoration: none; }
+.top nav a { margin-inline-start: 1rem; }
+
+/* ---- the list ---- */
+h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1.2rem + 2vw, 2.4rem); line-height: 1.3; }
+.chips { display: flex; gap: 0.5rem; }
+.chips button { padding: 0.35rem 1rem; border: 1px solid var(--bean); border-radius: 999px; background: #fff; color: var(--bean); font: inherit; }
+.chips button[aria-pressed="true"] { background: var(--bean); color: #fff; }
+.count { min-height: 1.7em; margin: 0.5rem 0; color: var(--muted); }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid var(--line); }
+.card a { color: inherit; text-decoration: none; }
+.card img, .hero-img, .rail img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
+.card h2 { margin: 0.5rem 0 0; font-size: 1.1rem; }
+.card p { margin: 0; color: var(--muted); }
+.card .price, .price { color: #047857; font-weight: 800; }
+.baseline-t { margin-block: 2.5rem 0.5rem; font-size: 1.2rem; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { padding: 0.5rem; border-block-end: 1px solid var(--line); text-align: start; }
+
+/* ---- the product page ---- */
+.product { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); align-items: start; }
+[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid var(--line); }
+[role="tab"] { padding: 0.45rem 1rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: var(--muted); font: inherit; }
+[role="tab"][aria-selected="true"] { border-color: var(--crema); color: var(--bean); font-weight: 700; }
+[role="tabpanel"] p { margin: 0.5rem 0; }
+details { border-block-end: 1px solid var(--line); }
+summary { padding: 0.5rem 0; font-weight: 700; cursor: pointer; }
+details p { margin: 0 0 0.5rem; }
+.related h2 { font-size: 1.2rem; }
+.rail { display: grid; grid-auto-flow: column; grid-auto-columns: min(11rem, 45%); gap: 0.75rem; margin: 0; padding: 0.25rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
+.rail li { scroll-snap-align: start; }
+.rail a { display: grid; gap: 0.25rem; color: inherit; text-decoration: none; font-weight: 700; }
+
+/* ---- transitions ---- */
+/* between pages: both pages must opt in. Without support the rule is ignored and the page just opens */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-group(*) { animation-duration: 0.35s; }
 }
-
-.card {
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 24px;
-  border: 1px solid #b45309;
-  background: white;
-  text-align: center;
+/* less motion: the in-page filter jumps too */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
-
-.kind { margin: 0; font-size: 0.8em; font-weight: 700; color: #b45309; word-spacing: 0.3em; }
-
-h1 { margin: 0 0 16px; font-size: 2em; line-height: 1.3; text-shadow: 0 2px 0 #fde68a; }
-
-.poem {
-  white-space: pre-line;
-  font-size: 1.1em;
-  line-height: 2.1;
-  margin: 0 0 16px;
-}
-.poem::first-line { font-weight: 700; }
-
-.info {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 16px;
-  text-align: start;
-  border-block: 1px solid #e5e7eb;
-  padding-block: 8px;
-}
-.info li + li { margin-block-start: 4px; }
-.info span { display: inline-block; min-width: 4em; font-size: 0.8em; color: #6b7280; }
-
-.rsvp { margin: 0; }
-.rsvp a:link, .rsvp a:visited { color: #b45309; }
-.rsvp a { font-weight: 700; text-decoration: underline 2px; text-underline-offset: 0.35em; }
-.rsvp a:hover { text-decoration-thickness: 4px; }
-.rsvp a:focus-visible { outline: 2px solid #b45309; outline-offset: 4px; }
 ~~~
 
-~~~view 525 557 شكل الدعوة
+~~~js list.js
+// the chips filter the cards; with View Transitions every card slides to its new place
+const chips = [...document.querySelectorAll(".chips button")];
+const cards = [...document.querySelectorAll(".card")];
+const count = document.querySelector(".count");
+
+function apply(kind) {
+  chips.forEach(c => c.setAttribute("aria-pressed", String(c.dataset.kind === kind)));
+  let n = 0;
+  for (const card of cards) { const show = kind === "all" || card.dataset.kind === kind; card.hidden = !show; if (show) n++; }
+  count.textContent = n.toLocaleString("ar-EG") + " منتجات";
+}
+chips.forEach(chip => chip.addEventListener("click", () => {
+  // every card already has its own view-transition-name (card-yirga, card-santos…), so they move, not just fade
+  if (document.startViewTransition) document.startViewTransition(() => apply(chip.dataset.kind));
+  else apply(chip.dataset.kind);
+}));
+// the header links #beans / #tools pick the chip too
+if (location.hash === "#beans" || location.hash === "#tools") apply(location.hash.slice(1));
+~~~
+
+~~~js product.js
+// tabs (APG): one Tab stop, arrows move (in RTL the next tab is on the left)
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function select(tab) {
+  for (const t of tabs) {
+    const on = t === tab;
+    t.setAttribute("aria-selected", String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+  }
+  tab.focus();
+}
+tabs.forEach((tab, i) => {
+  tab.addEventListener("click", () => select(tab));
+  tab.addEventListener("keydown", e => {
+    const rtl = getComputedStyle(tab).direction === "rtl";
+    const move = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
+    if (move === undefined) return;
+    e.preventDefault();
+    select(tabs[(i + move + tabs.length) % tabs.length]);
+  });
+});
+~~~
+
+~~~html products/yirga.html (الناتج، واحدة من الـ ٦)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>دعوة: أمسية شعرية</title>
+<title>يرقاتشيفي: ركن القهوة</title>
+<link rel="stylesheet" href="../style.css">
+<script src="../product.js" defer></script>
+</head>
+<body>
+<header class="top"><a class="logo" href="../index.html">ركن القهوة</a><nav aria-label="الأقسام"><a href="../index.html#beans">البن</a> <a href="../index.html#tools">الأدوات</a></nav></header>
+<main class="wrap product">
+  <img class="hero-img" src="../img/c0-600.webp" alt="يرقاتشيفي" width="600" height="600" style="view-transition-name: img-yirga">
+  <div>
+    <h1>يرقاتشيفي</h1>
+    <p class="price">٣٢٠ ج</p>
+    <p>إثيوبي فاتح، فيه ليمون وورد.</p>
+    <div class="tabs">
+      <div role="tablist" aria-label="عن المنتج">
+        <button type="button" role="tab" id="t1" aria-controls="p1" aria-selected="true">الوصف</button>
+        <button type="button" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">التحضير</button>
+      </div>
+      <div role="tabpanel" id="p1" aria-labelledby="t1" tabindex="0"><p>إثيوبي فاتح، فيه ليمون وورد. بنجهّزه بعد ما تطلب.</p></div>
+      <div role="tabpanel" id="p2" aria-labelledby="t2" tabindex="0" hidden><p>١٥ جرام بن لـ ٢٥٠ مل مية، حرارة ٩٣ درجة.</p></div>
+    </div>
+    <h2 id="faq">أسئلة</h2>
+    <details name="faq"><summary>بيوصل إمتى؟</summary><p>جوه القاهرة يوم شغل.</p></details>
+    <details name="faq"><summary>أرجّعه إزاي؟</summary><p>خلال ١٤ يوم وهو مقفول.</p></details>
+  </div>
+</main>
+<section class="wrap related" aria-labelledby="rel">
+  <h2 id="rel">ممكن يعجبك كمان</h2>
+  <ul class="rail" tabindex="0" aria-label="منتجات تانية (اعمل scroll)">
+    <li><a href="santos.html"><img src="../img/c1-300.webp" alt="" width="300" height="300"><span>سانتوس</span></a></li>
+    <li><a href="harazi.html"><img src="../img/c2-300.webp" alt="" width="300" height="300"><span>حرازي</span></a></li>
+    <li><a href="v60.html"><img src="../img/c3-300.webp" alt="" width="300" height="300"><span>قمع تقطير V60</span></a></li>
+    <li><a href="grinder.html"><img src="../img/c4-300.webp" alt="" width="300" height="300"><span>مطحنة يدوي</span></a></li>
+    <li><a href="kettle.html"><img src="../img/c5-300.webp" alt="" width="300" height="300"><span>غلاية بمنقار</span></a></li>
+  </ul>
+</section>
+</body>
+</html>
+~~~
+
+~~~js measure.mjs
+// node shop/measure.mjs: cross-document transitions, the filter, keyboard, anchors, reduce, axe on every page
+import { browser } from "../lab.mjs";
+import AxeBuilder from "@axe-core/playwright";
+const B = "http://127.0.0.1:8818/shop/";
+const b = await browser();
+
+// on every new page: did a view transition arrive, and which named parts took part?
+const spy = () => addEventListener("pagereveal", e => {
+  window.__vt = !!e.viewTransition;
+  if (e.viewTransition) e.viewTransition.ready.then(() => {
+    window.__parts = [...new Set(document.getAnimations().map(a => (a.effect.pseudoElement || "").match(/\(([^)]+)\)/)?.[1]).filter(Boolean))].join(", ");
+  }).catch(() => {});
+});
+
+async function ctx(opts = {}, cssPatch) {
+  const c = await b.newContext({ viewport: { width: 1000, height: 800 }, ...opts });
+  await c.addInitScript(spy);
+  if (cssPatch) await c.route("**/shop/style.css", async r => { const res = await r.fetch(); await r.fulfill({ response: res, body: cssPatch(await res.text()) }); });
+  const p = await c.newPage();
+  const errs = []; p.on("pageerror", e => errs.push(e.message)); p.on("console", m => m.type() === "error" && !/404/.test(m.text()) && errs.push(m.text()));
+  return { c, p, errs };
+}
+
+// 1. list → product page
+let { c, p, errs } = await ctx();
+await p.goto(B + "index.html"); await p.waitForTimeout(300);
+await p.click('a[href="products/yirga.html"]'); await p.waitForLoadState("load"); await p.waitForTimeout(500);
+console.log("١. لستة ← يرقاتشيفي: viewTransition=" + await p.evaluate(() => window.__vt) + " | الأجزاء: " + await p.evaluate(() => window.__parts) + " | errors: " + (errs.join(";") || "0"));
+await p.goBack(); await p.waitForLoadState("load"); await p.waitForTimeout(500);
+console.log("   رجوع (Back): viewTransition=" + await p.evaluate(() => window.__vt) + " | الأجزاء: " + await p.evaluate(() => window.__parts));
+
+// 2. the filter (same page)
+await p.evaluate(() => { const o = document.startViewTransition.bind(document); document.startViewTransition = cb => { const t = o(cb); t.ready.then(() => (window.__fparts = [...new Set(document.getAnimations().map(a => (a.effect.pseudoElement || "").match(/\(([^)]+)\)/)?.[1]).filter(Boolean))].join(", "))); return t; }; });
+await p.click('.chips [data-kind="tools"]'); await p.waitForTimeout(500);
+console.log("٢. فلتر «الأدوات»: " + await p.textContent(".count") + " | ظاهر: " + await p.$$eval(".card:not([hidden]) h2", h => h.map(x => x.textContent).join("، ")) + " | الأجزاء اللي اتحركت: " + await p.evaluate(() => window.__fparts));
+
+// 3. keyboard + anchors
+await p.goto(B + "index.html"); await p.waitForTimeout(200);
+const stops = []; for (let i = 0; i < 7; i++) { await p.keyboard.press("Tab"); stops.push(await p.evaluate(() => document.activeElement.textContent.trim().slice(0, 14))); }
+console.log("٣. Tab في اللستة: " + stops.join(" → "));
+await p.goto(B + "products/santos.html#faq"); await p.waitForTimeout(300);
+console.log("   #faq: العنوان top=" + await p.$eval("#faq", h => Math.round(h.getBoundingClientRect().top)) + " والهيدر بيخلص عند " + await p.$eval(".top", h => Math.round(h.getBoundingClientRect().bottom)));
+await p.focus("#t1"); await p.keyboard.press("ArrowLeft");
+console.log("   التابز: ← بقى «" + await p.evaluate(() => document.activeElement.textContent) + "» | الظاهر " + await p.$eval('[role="tabpanel"]:not([hidden])', e => e.id));
+await c.close();
+
+// 4. a browser without cross-document view transitions: the at-rule removed on the way
+({ c, p, errs } = await ctx({}, css => css.replace("@view-transition { navigation: auto; }", "")));
+await p.goto(B + "index.html"); await p.click('a[href="products/v60.html"]'); await p.waitForLoadState("load"); await p.waitForTimeout(300);
+console.log("٤. من غير @view-transition: viewTransition=" + await p.evaluate(() => window.__vt) + " | الصفحة: " + await p.textContent("h1") + " | errors: " + (errs.join(";") || "0"));
+await c.close();
+
+// 5. reduce
+({ c, p, errs } = await ctx({ reducedMotion: "reduce" }));
+await p.goto(B + "index.html"); await p.click('a[href="products/harazi.html"]'); await p.waitForLoadState("load"); await p.waitForTimeout(300);
+console.log("٥. reduce: viewTransition=" + await p.evaluate(() => window.__vt));
+await c.close();
+
+// 6. axe on all 7 pages
+({ c, p } = await ctx());
+const pages = ["index.html", "products/yirga.html", "products/santos.html", "products/harazi.html", "products/v60.html", "products/grinder.html", "products/kettle.html"];
+const res = [];
+for (const u of pages) { await p.goto(B + u); res.push(u.replace("products/", "") + ":" + ((await new AxeBuilder({ page: p }).analyze()).violations.map(v => v.id).join("+") || "0")); }
+console.log("٦. axe: " + res.join(" | "));
+await b.close();
+~~~
+
+~~~view 760 900 صفحة اللستة (اللينكات للمنتجات محتاجة السيرفر)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ركن القهوة: بن وأدوات</title>
 <style>
-body {
-  font: 18px/1.8 system-ui, "Segoe UI", Tahoma, sans-serif;
-  color: #1f2937;
-  background: #fffbeb;
-  margin: 0;
-  padding: 16px;
-  overflow-wrap: break-word;
+*, *::before, *::after { box-sizing: border-box; }
+:root { --bean: #3b2416; --cream: #fdf6ec; --crema: #b45309; --muted: #6b5444; --line: #e8d9c5; --header-h: 3.5rem; }
+html { scroll-padding-top: calc(var(--header-h) + 1rem); }       /* anchors (#beans, #faq) stop under the sticky header */
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: var(--bean); background: var(--cream); }
+a { color: var(--crema); }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+h1, h2 { text-wrap: balance; }
+.wrap { max-width: 60rem; margin: 0 auto; padding: 1.25rem 1rem; }
+
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; min-height: var(--header-h); padding: 0 1rem; background: #fdf6ecf2; border-block-end: 1px solid var(--line); view-transition-name: header; }
+.logo { font-weight: 800; color: var(--bean); text-decoration: none; }
+.top nav a { margin-inline-start: 1rem; }
+
+/* ---- the list ---- */
+h1 { margin: 0 0 1rem; font-size: clamp(1.6rem, 1.2rem + 2vw, 2.4rem); line-height: 1.3; }
+.chips { display: flex; gap: 0.5rem; }
+.chips button { padding: 0.35rem 1rem; border: 1px solid var(--bean); border-radius: 999px; background: #fff; color: var(--bean); font: inherit; }
+.chips button[aria-pressed="true"] { background: var(--bean); color: #fff; }
+.count { min-height: 1.7em; margin: 0.5rem 0; color: var(--muted); }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 0.75rem; border-radius: 1rem; background: #fff; border: 1px solid var(--line); }
+.card a { color: inherit; text-decoration: none; }
+.card img, .hero-img, .rail img { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
+.card h2 { margin: 0.5rem 0 0; font-size: 1.1rem; }
+.card p { margin: 0; color: var(--muted); }
+.card .price, .price { color: #047857; font-weight: 800; }
+.baseline-t { margin-block: 2.5rem 0.5rem; font-size: 1.2rem; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { padding: 0.5rem; border-block-end: 1px solid var(--line); text-align: start; }
+
+/* ---- the product page ---- */
+.product { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); align-items: start; }
+[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid var(--line); }
+[role="tab"] { padding: 0.45rem 1rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: var(--muted); font: inherit; }
+[role="tab"][aria-selected="true"] { border-color: var(--crema); color: var(--bean); font-weight: 700; }
+[role="tabpanel"] p { margin: 0.5rem 0; }
+details { border-block-end: 1px solid var(--line); }
+summary { padding: 0.5rem 0; font-weight: 700; cursor: pointer; }
+details p { margin: 0 0 0.5rem; }
+.related h2 { font-size: 1.2rem; }
+.rail { display: grid; grid-auto-flow: column; grid-auto-columns: min(11rem, 45%); gap: 0.75rem; margin: 0; padding: 0.25rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
+.rail li { scroll-snap-align: start; }
+.rail a { display: grid; gap: 0.25rem; color: inherit; text-decoration: none; font-weight: 700; }
+
+/* ---- transitions ---- */
+/* between pages: both pages must opt in. Without support the rule is ignored and the page just opens */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-group(*) { animation-duration: 0.35s; }
 }
-
-.card {
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 24px;
-  border: 1px solid #b45309;
-  background: white;
-  text-align: center;
+/* less motion: the in-page filter jumps too */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
-
-.kind { margin: 0; font-size: 0.8em; font-weight: 700; color: #b45309; word-spacing: 0.3em; }
-
-h1 { margin: 0 0 16px; font-size: 2em; line-height: 1.3; text-shadow: 0 2px 0 #fde68a; }
-
-.poem {
-  white-space: pre-line;
-  font-size: 1.1em;
-  line-height: 2.1;
-  margin: 0 0 16px;
-}
-.poem::first-line { font-weight: 700; }
-
-.info {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 16px;
-  text-align: start;
-  border-block: 1px solid #e5e7eb;
-  padding-block: 8px;
-}
-.info li + li { margin-block-start: 4px; }
-.info span { display: inline-block; min-width: 4em; font-size: 0.8em; color: #6b7280; }
-
-.rsvp { margin: 0; }
-.rsvp a:link, .rsvp a:visited { color: #b45309; }
-.rsvp a { font-weight: 700; text-decoration: underline 2px; text-underline-offset: 0.35em; }
-.rsvp a:hover { text-decoration-thickness: 4px; }
-.rsvp a:focus-visible { outline: 2px solid #b45309; outline-offset: 4px; }
 </style>
 </head>
 <body>
-<main class="card">
-  <p class="kind">دعوة</p>
-  <h1>أمسية شعرية</h1>
-  <p class="poem">على قدّ الورق بنكتب
-وعلى قدّ الحلم بنطير
-والكلمة لو طلعت من القلب
-تعدّي البحر من غير جسور</p>
-  <ul class="info" role="list">
-    <li><span>اليوم</span> الخميس ٢٠ نوفمبر</li>
-    <li><span>الساعة</span> ٧ مساءً</li>
-    <li><span>المكان</span> مكتبة الورّاق، ٧ شارع المحطة</li>
+<header class="top"><a class="logo" href="index.html">ركن القهوة</a><nav aria-label="الأقسام"><a href="index.html#beans">البن</a> <a href="index.html#tools">الأدوات</a></nav></header>
+<main class="wrap">
+  <h1>كل حاجة لفنجان مظبوط</h1>
+  <div class="chips" role="group" aria-label="اعرض">
+    <button type="button" aria-pressed="true" data-kind="all">الكل</button>
+    <button type="button" aria-pressed="false" data-kind="beans" id="beans">البن</button>
+    <button type="button" aria-pressed="false" data-kind="tools" id="tools">الأدوات</button>
+  </div>
+  <p class="count" role="status"></p>
+  <ul class="grid">
+      <li class="card" data-kind="beans" style="view-transition-name: card-yirga">
+        <a href="products/yirga.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-yirga"><h2>يرقاتشيفي</h2></a>
+        <p>إثيوبي فاتح، فيه ليمون وورد.</p><p class="price">٣٢٠ ج</p>
+      </li>
+      <li class="card" data-kind="beans" style="view-transition-name: card-santos">
+        <a href="products/santos.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-santos"><h2>سانتوس</h2></a>
+        <p>برازيلي متوسط، شوكولاتة وبندق.</p><p class="price">٢٦٠ ج</p>
+      </li>
+      <li class="card" data-kind="beans" style="view-transition-name: card-harazi">
+        <a href="products/harazi.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-harazi"><h2>حرازي</h2></a>
+        <p>يمني غامق، توابل وزبيب.</p><p class="price">٤١٠ ج</p>
+      </li>
+      <li class="card" data-kind="tools" style="view-transition-name: card-v60">
+        <a href="products/v60.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-v60"><h2>قمع تقطير V60</h2></a>
+        <p>بلاستيك متين، مقاس 02.</p><p class="price">٤٥٠ ج</p>
+      </li>
+      <li class="card" data-kind="tools" style="view-transition-name: card-grinder">
+        <a href="products/grinder.html"><img src="data:image/webp;base64,UklGRpggAABXRUJQVlA4WAoAAAAgAAAAKwEAKwEASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZWUDggqh4AAPBgAJ0BKiwBLAE+kUicS6WkIqGktKmAsBIJZ1gH4EUfwMML+j/+9JaY/83N4dd/m5w+WX/o6ZnPz/o88v//87P+lFiXGJItkvK5OaZGw2gzzFHE/Qx75f9zhRkWiDpzmZ93Qmn3F/mJ89H0i/9D01cmQxif9H5GfvfUM/t+exgP/X7z3de7ecTT/93txV3//pW/5X//6dP8P//hY4dC4SFJXBkXg0844kjiFgpvGGUNSC4TOMyMsWmUNSAWV5ohaZQ1GkMV8ZJGrbtR+nJrHNa+q1noLoY8rihMPwnzpaFIx4LVSDB9PwGtcnOYvosCov9foVUQXCcSUQNr/v5NErCzuMH2OQciy5SF3PBuRADNi9BDXfkFTUW7o+dm0Zb9csWmUNSCsJAjoTgZ5fOpTdb2CpxdjGJ6kebLmDcqGlqfB14logWwKaiNOupmjs4p1lMMD28UWzhbJ9rBd8QC1XJvwIweGkE9LP6Qi01Lg94zgKmjhwMewHroet/uTjvtQvHBPF17ATBnnqVLiuo0VpJ6iSgzRCm6rZykr6JDlwQH+5eFyLoegH7rr/8LVIWIMEKVKGfGzVVSEceQI1B74rpWp89bZAvP8z5BVq/t3as5LEZXMuZsoUnxoSKFQSybupiZe4nBvc6MoCodtwSTi+eOh+4L8CT1/TKRbTr/KbJ9lnx3MYWmY1ZvNVpRFIwn7up9maHyG4t1lM/L/I6bFw81RVt6AiyhQffxXYdP7vCNma+LUgRKjp1Cw9P79O/aP1mWj2K8YvzwhNdUzvmxdtZVzMtZDs6CamClQlheGqEnFCbx2XtufG6s3DmpNZ9rvxsnneMEgFY5HhjjTvjk1XKk6uWlEC6fMlK3ffeSEnpRsgV5s50Ks/nNvXK9+xZ0UwBs1qpZE7A5k/leJGVHyyrkM9yu/5OGxJWPebx9rSsqEM4/RcoMGlJ0EC7NHDFl1e98rzz/mB+kl9sejt58WirpeRiIkXBP8zU2XVRyUagnoSHFPAuGhuOxyocBG9k2EH69veylIiSRo8jTdPcHhkAA/u0iAAGhwWXEPhH/Vfx972RX4iM63uUidH7Kj5Dg9+iURly0BOwu6W66izn65nnG8emiuREvuFzORvKhjFpntVlBkKczRVtrIeSR4RC2HVurr7UQaXW/kTZ+iubD2QT0fUskMMfd5r7icYyCr10tBFG599lZFBky1s7FW2sE1GHhM8pvCUfiyNnZykVj8dQnwmw1otDEhsCLajrmmn0Czf066+GavA+LzUsvSfjl8MZkXQA4RyZnYu0qy/OHjgGfIfy9l+HyzSXJii+G2/KKkrmbMP0ur81UI2Abwf3vz1KO3Zf9yKsfSb8wqwUgwV7tb1+wPOKPE5brx6cnYGbqj1TpJVynwGasG3wmyNtrc18YAk3nAc/g6mtfZKpvYYEL3aPGWxwzO5orYjAyqp1zEzngjMMKLk1OSai7I6PBGt88jgrkNftW9IYYhOQ33R5NVXzxixyqmXclew2zrrDvuIFqr90ZaFOmQwmutnWoGVtETZ29b+Q+nbwapmTmcfcuXaP2oEp+FW4/7/xKD4qQzObVqb2rhhoROS0oz25TyWdUMaV32GEoO9YUC+zNkTIcTGA1XrKQlapBxyx/Gkq7iPlihqpjIO9QkM+ksklotLvvqEbg8MSPxc6hJqKUc8YsUxzq/1jPvczG4ASXSGvUmtQDrDjJlnzm4XxouHZBlID39HRc6TJFPqD49AHIFZX3kHFEgoJctoWFfcG9TwSVzIM+wOzd7v0apkMX/BBdDNDTCfjfPvIR1Zg4rM+dR9eaq3olflY27Zwc0CT2qrWzfpFeIaiu7RTDDuNdSlSRhzg4j4Pej0BIVP16+Hu3PQsCZ1EXwFtpNzbO8ZOppqNiDIEtMMqVxEP5jZr6FtIIB/tntMOXRar51AI7xkYib+bJpxI+sdGXkl1WQsSrjc22bTIJDUgCbJHv2ZUSQbuSfB3Bs15c80JIa7NlcQSoIWllLz+cxAs4Urql5U6ZTnViUzWTSSEdJRrumimqGCgVRm7j6EunkoRdwwJgvVnPtPjyRuT3oVO+PG/+39luHg7YM561gmcrdN9pdBCW1+CC0fFDqq+UhsWs1ICfQPPQFmPtsMYwme9WKzyJpy1bK/58d6uNV1bLzSp5HI61sE1gTLD9QL6TBJFUdnpNlSuhrNMFNa34M+wSRwK9gwWL7pyQqji1IacgM/97UuPnXVwQgaY30KD6O4LvNmv7RS/NOvBR6PawugrvsenhHAi5w7u8qXLZ26DB+nqE5AdKwdaYcYTx9UhR2dlWVEzWrZZNE/8ZrGcjRFcFxGImrDfM4dGZl428w3YjJTx7xSfrePOrbmkqf8vkhswpnqxLMzIVV3oOKKUtKZ2ZuieqWQc6ccgtYYE4rVJ2pV8Orvfc7205eL5bVMbvbg0OgQEAoVOKLZxt6Dbj+/MFvGWCHmJe9Y/M2nGHbyO+c/FqvBk4CMPb4lBCV9iiD8RVTTKiUe38F/bVJz8J4VXMEwwTH46vrZj7FMiFbDzcCeNa2K7Mf/js5aiylRRgLynEfhTf8NG8yD7XoqAFDZNFZf53+rFeCHuwaBOVu7MdnL+vHqQvk9oJT/JmcxEC78YRvyUsLAM1TwZhvQ2MHWd2p36SZnprsNtsmWbRk8EEqrSx17MXkxaw0+XY47HZl+L51ODchkwDfA8KNHxFrDaHCGHo5UMfdwvhOg9QAm4ZsQL1yhx42V7BjnR5kA1oeyhLn+03NVFxur9pirSHtQotBugZIN43sxb4uywMymoDr1ci/BEt+oaPxpHrOxAIG+AE5bLTd4Fqoka80mqsaymbKA9iR2xTYGZI7swPf9iIVIFWLg9ozUVGhBxuc4YyYXlYeuHpJyZm62U5Dph9qle6GxUpmCXAl2Ni506uMise5naJzB9rkaF6YMqef4nq+i9NX++oATVtAd0AlHlvev54wNp70B0K8xeRWkKr0r4RFn1udxDcASasTgNCkgdTdSZv6r0fwfwCYfpRWqLiQkvFT/blzBC3iPRDwTOrNPs736qPMcO+8sQ0kmAdK/Jm15gnuqOHmwgw+dmCeIutrgAtsgu9E37Ch/wFhIWd85vFg72RRdJUHvQOORPZl1JFpFrIpB3I8YUICWcdII6NHgUKzhmmZTjAGQdxPxDogeuNHO8NKARzQDRd0GNYR2DKh6obVAwBzj9iuAv0U9a5HEvtRpY5NAiqHAMuELXiKWuVjgYnh4lprpmkwDdNzz0rEgHF3MpABjYf/hpji6xU7QvWhZmVTN0+qopWIUKRyF7gl4zDKvFTuivaO6oBxsz9hfVIVZZQ42jVKUxRryK53tlY172MmtMHcmlNl3HXAGhHAaAnpKuO3BEYzz+9270F8S8+5+ERcIXM1SgdiOVhIDwFsJ6/YtSKAVfV99TKtaTqoM8P2pvjqZHtfmRpbyPtdrKBMCJc4pbgZKVZNnj/HL1UxQnnNuM00TMpjsOcj3pWBr72CxiNkk6n25qdwrSLzbHJjjiK+KzUz0BOQELTOORmcZi2waovQc6iqmDk9hLQ+7CVUnaUAMrqGt1RKqUXsC/EhCX+UjbISw7qIEqEwVJAoCJEqv4yJzqK9L5Ei28QfoHAx9iDOyKNMOE0wfoHkupoMcJfF4mGK9QsIQVAF1qIMmymoNuoCMn5VgIf8AtTyDBatnPp0JeYfSkqsrQfoLkx7sw8vLRZOuwmmIj7SAH1CsLu9qUclDMyACdHqQUnpkWWyfA2W8fFGRT71cpCh4NAYuf2u/924fY8Holhbcf8xnHKFtUGEACUhvxBvIfzq35y/BlNYVt42VkJ5V4nna3KQScySXAcpdCyBYoVYB4+Io60yv/In+8Cobd6zsgm2LxbX74H3Z/8qTLB5tDYzNo+K3Q1S3snBG6/APyroSYZISwao87NPWPyjnRJLzqbRVXWNMwVL4BiosrVsJVSGtUHwr7SayC5gfjmcpkBenrSNhCPcSIzmCkVx5eGLuBiYik8kKiLLmCMrNmQ3/cww8sME2vvnI7fd4Mr5yd3GTDBlGO+MTKBgzNws5QOeLzXbIWlEaSJ6jBElekBd2/7UDl/9vLhktd9SGk7evgLxGbx8PaspcTtfChBVn63VpZd/SZ7OARykfzerfpFLrtjLVfoPPRyTPfDmgWjAo6qscFtSEnEeGuOg9w59qatIbGzcekYgdJ1Au1/+idO4rh6+dZyXnZiisVGdpS0fz82pS7I05but1VTL9Wq5nSnlF8ju2m4uyOSsOdR2dFr4RaHa/+D20ACs5LyzWrdaBr3LXTicNSwiAietLT6R6nAUDeyXz2CK5XIIBy164XofBluRhC89Fn1Bli/LZNKkUZghRWamDWIDSpJwKRrt8lii0J7fCk68EBYIuzWHk9BOgy3m8n36sm++zR18e3KUi09NlI/Zy5jakC0Xus6/fb16XkwkOgU7g4KbzJ/1vUzrLobW1l3cZLkYBPyjkx3+vP35fESbRORq2+0Cj/ENAAhfhWWiHg8Fz+OjGo3i65pNkEJXtEeC70Y87+FgLrs7OJxhmQ1SW/1+nLrgRu5YFgAV6psmNkT0GP/geVeXlD6ko0c7H6B6R0tAnRvyKxHdnEqKLu+Ct1BfPjc03NP55c71VjW9TT2YdQ5nWHybUbKrmvjpJmue0L6RbAKb+0dyp2p1axQtK1X2RtHxZXYgMuGW7LRDQepGpnk+2Jt5d4EUHJRVJRRn2e2G9DN76YkO6PDBzTBQ8an31GZXRofpER4JV2nQNqPzdqjUe/QoG0KzKLYo/BiAKBwffVpbcqQZ7TVTETNBNDZn95Gf5U4mCIPrbSeUuOBeR07sdx/EQ1rrOcN1s6J9NfpBopsXz5W+KEPl/1mBJjnMlItlqTu4cNyP9h4+oOM/5hugXIHXN6TTZ/91IztfUfxcJsYJtA/PJ5/tbemFXvp9NYqZDZY9Pi07yB34Lih0oBIQSaqMXRUoZ7ybQxBW6+wZ7x2H3GLQp3KP/UYYqhmZp+6sJEfOxjxCBAihNml19iW6ErsW+PbUMzYM0mvOYuhtQy3heFkeC/YiYoZgjrtZTvLCMp4p64HckC+jz9GjAhnHr1+jGazPlMFgesA04ewY4dVGssTdQgc5FWOYIXtbMAo4XQfyxbV0kX7ucFfFBbeL8Z+WWE90g8KDvZprF3GFp0wFw4dY2WwHcYpWUkxjgvw8vyC+v1VMdGrSmNAx1NXfi//3TQlfGtkFqy4RUN85/qCc0EYiOY6Rl7BWaWhvZ7De835EtvjZ4bvSPn0NGQPVeu2nU6pijf20JU3R0RO09qMsONrwr/38AmI5E4AZyT8l1a46epokNoPZ2xRvxJtoQ/gYZ2U/kt+FzFv/XjnQKOs57y3TIvzGvhRkgxAlC5vJdwp5/DOziG6usLky65nnQPqSLf8/eej23SsFQ/GKNJwqJ5l5IBUCSfqDVptCSRGW7Vxekn+A5KKw6mojPS3ABUhATyWPHrqDCc/avRrHQajdwdngvYba7RJXg+cDLBKIvLVVS16eOgaM7KiL6EQo/rNTuk4rQiT34NwTyLlNAziHAMvSbij5zVVsFotQEBSKFKtxKtZ8gZqYKC9m5fISt+8hNnv1qzSmKSJbdiqQZHCiIlm92PpdNcCBxwBsOsxvT/XEHVEHTtSn+sP+8buoNq4Sl0ydiBC/Mgh16c0IeJQWI6UZ+T0pUPGybVsTfNNtwv9vXNcz1aibF4PlsjGbHpvE1hzHdswSr/EkGa2qDkehWKUQwXXNSm+W4zS2KwvJbsRAzuRDQmUXKwbzinEJRL2ywiCCa/NQTJ+2xprDjMqZxo5KAaOjTF1d/ojpmuDuAhHxabr3CxU7Xox5bfYbYQJAEaiN/jQ3yLgAdg4H1XLOiAmmD/zX/9VrKYPcy3WWqsyWdCLqN0E8Hh0kxZf9n/3lfHJNb1Jq1fnhoknfmebfeyQ5JNoXR1y9EZjT/7zRIuV9Wtw71Db7ydzOlfCoMHs2k7UYnmV+DJTLPrnhAPMW/BDOedu02SNAPqh7frU2kKh5mfqpHOnk2OR87f0JWVsNNYImrNSSucdN5/JoyC4v9zQef3HoIdhwFzmD+AG0Tv8/HHr3f7Ann/ZbS4gU2P+mogZ6hXs4CeRKvviS+li54KzBuQn49WExtgPp/yh58SsreAsV/HQbwVeg5Q5LVhUakJTLl51g1dUuC0qIiy3q7VJtcApTJA9YVptOXxoqy2EV/QS/f8PaCjgYOCQeJftYm97E7mlJRBRQS38W5w0LPbcTgqqswlaCsg69AGbCRIWDdgi5+gsWZOqOGh3dYrkYkoUaAgk8mA3URk4sauf6jhT+ATgaX8HlbD2IyXPagDBE6GKYfRgbKeDwAqU9iprpv6VIkEEsOr1l6Ls88FIJiwNDuJoyPQ9J9WlDdrJOS8ZUvyvLwINdvehwKFZGwx8a6sGI5zTh7uNmJb57Sndmxg/3tEcfdZrIwCIwTrUXxc7t5iiovRu+nGDb3f9c2mw3scE9uNxQinyX8IzcdpusShsYh0KVIx3ZNWJ1EPfVU0Dzj4yR0Z/qexHqOUG4rbpIsz9/UTXB8dMKoiU8thNGW669HIXQTV5OpOpp0XTQPQR3FUWXxGMbtI4SUNP06oeXY0R/uEFjHuo/4pP+jR1I3YWScPboDxSUeuUvbjITldHCeem4NHbhlFkhmJFWd+mGf7+DS9SLPRjp7e6Eww7PRjtkuPEC4u4H/7Dk71uYBpq7q9n+xGLhx8UaRbNlloXcaZDrcPSR/hxpGO7zcTfCvf9N5bPZhdLHY2JJUNIGRoS2k9LQUla6GO0UoCrhvSw4KdTcJsEjAr0ma0LdXzAR9MkFm87Bk25DISNnQpdPuIKD3LfkRx+RcfnKo63YUlmxOwsMGaIWFIp7Gp+SvwDcLAyDPMmGA+AbxrCxIp/1IfD6uwNq5a2PEbCgBqqkM8r0csriiiXkFzxYu8kGuVWbInTEWxtrsWIzl7FHfcaj+uJfJvqR61r+ZRpLga3NghtZxTtE4Ji2moyYK3i3GJAuGQZMvDN2ZHheA9BnllYNJqBYokyS0YD4W4ggzKeHfQw34lP7gjAJiJmLe9WPCI+hSu4l3Pev+FpCTdpGx4f1MRvv0IGSPbtdX3FyfFuqRvzpFXc7rGNVabp2MQg060OWX1krYVYhFI5Zjkz8/Cj3XzHSe6uKQtMkg4JMbFM+dnYcQC8u2VNnK77HVEy3APp2G06t/yKNAj3qbZjur8ZUAG/lv+lEgCq3bmvuB818tTiDYfahxOJux+ADDKqcnL5mt0NWHOvoqG9hFJ9kWXlPSzEVh73ZNaD3p2fYWVQSbOp0ULD87thfwc9xlm8XCjlLN44zT2TtXADFIkvciBvSN4ZBu/bQnJKCTWS6d4FTRUPwku6mjN1diIc/nicO2eQzG6WEcXnxEWyks9zgafTX+lsyJXrCbJ91160rcHbN8r9y/+CQ99XI5dp9qwtq/Eqn/dJxGrIrJhIOFCY5yp8lKbhUtIFZ0IXlrstF6JoUw5sx5fWNsItG2i+3BMJJfa0eFoOpWs5lrP4TdBvCUZV4pskHMkH4eiL+oL46zx10CZRDC++2M3rTFzVCyqASdbfC84iYh9J5kDd5VWUXBvJQdBKbDphEbNhkPX5jfbKxUaC+LYB/xh2J8F+0F2Zst8JPwJaWoXVPTN1wjGhiodjI9sG91RHhlb7EsY+eLz2jffX5XmMMYO5peLhtbtRNAyGuCzVt+ED3B59QJLXInQ5tMqudnn56hB02cIeKQ8OxC6VeyWvnV1I9SueEwsWVLj/6xYfPrWBIMeQqUzQGv5D16ofvjv75Z8fN1yZgo8b1OfxilEXCcbt3suFunxzE99D1NerA/poWQtQgOCluBUCRkWFFRUH/DVgk68SAMdak8ApzPJQ+kqPFTvhwiyB1efhNpka6scQ2axqovOqyYplCSckqa+lzdF457eUPHq3vnfyfEM4f8cWqIHolktnYDFjBLBN6BTNP/9rKB5LrLJT0EPhEMO0Qt7O6bABv7UBkS3drpTc3g6Z0MppKq6wphyl3VAUBWE8yQZIaGsPRJBy9ISqbN3rRktmD1zHQqeJDqfKrqZjDrSFL0lJX9Orxz735Ny3BFw0FYerc06f9kO6dem850+Z1/YbMsz8T3Thh5t14GVcZ1jkzHdhLno2/Fo7Yupb3zztIKQdp6DerljQrkjNsktI58OVjwxu76d0Ep47bbsJGUFrbaYxeJyMTKYTqeBPEgwWRBESH3VgxXWBrEyGYTjwSqEH+CrB49xdZtATguN8eZ5Y23BYRabt0QB5b1Q9bLDEhyenhGtoJFbLkZgRYYnamANf5hk6Gu3eRlGPv/SE4fJ35QzVcRMBQ6myiNmKLzbvQPlYpyK5eirjXR1PX0P+YnF1L0rqNHfGN8v9fckyRXlgvokZfkczEL8pNtKb82sI+oI2EiDIBDf63/bFl1qhSYiZJGcCfPQ5CQq7luKuwel6sg7ct4YuWAkgiEjyr+p0j5ihQ0WSBal/aU71zRnLZXWuwGB3Hp+P36ASYLKU6yMtBxd06iNbIcZMC+NoVTcy+SCJsEssoqwTo27KCtFyOpmDzwCHWnbn+6fNECRRi3FjI+MIk2BdeS3kQxv1nmXwECNvfOGboY7A7T2Xqd2pgI13P/JXBjNtIvR8A679Aqs7DtB9VNc35mBxomFwcEdD96hsrNCqweKJnUJo8xogetFD8CjZ4rrF4LexrjrsMFD2KrY/isF0L4w1XV5WmpFC5i3+vzcCJBGu++xix1xqGw+qIypWKwXjZs56FPyNFNlYaOVvcUfOHXxWliWrrjBE9jfAYBb3lgx4lLOzatoWFj0xxdiccjeRCPV9IE1V5dE0QARfoFehHPW5s87Z62nSSnHWge9jzIB6th4gniLsdzfwkJWLSZ1JSOAvUAmbjXP/rImzZnigJwGVZERpQMXDWX5bJYMEeQ9nC4bxtg3rp6dZqt1hKuwj9IiR05/aCcve6TmwCzUvfiq1fQVe3aYqvwhjbe8g9EipUNtgnFCGf+NatwnOWa2zFDHqiOARFVuXqPvkb/d1PbcoqspIa05Rul5QCU/g/uo3wgfb+7tatSVo6ziEXeIYVyTW+RkAXYY0wBWqwWdyxEKbcGoGOuDxH9Xag34VGK1U3xs6MN/ByV3lxchfGywfps8d/d8TpimInc47mpMiMKvNhqvlrzqLIB3cjtLNhOjroIkQ4lVXMPEp77CzzQHAYx0XzgVQ9MUPZbOX4aCRsj2qV1ZoEPe3B8VuRCVYE9anNOj88ZAjtqxtOHOx+BhhQ9vxtzUmHEyYhdl41PgfDMbnPhJATbp3tIJuavSov1+E/v6MIKwneJcClB+xYfFKVjiEvHOx3VNTX1ZT5jp5ShdorTIABC454+S/ykXWBTKLeAcak+p3uNXuQEn1yDNFl3NVLeWAe40JZdwkkCx2UNjaV9nr7fU2he7a7vNk64iJTzONyghLXElSFKRZWgIimRVKNbdU6l+YXHcuL2XpK58Y2ZgZKtgstRtF4QsyWqzMDEwcXNXmabeV3QzCqPOCfMIkNjf8GhW4/ATWVprXH1vshikjGRAKR4o50GS8qGz2Qeg5yxoiqCjEUZ+IPRtVl3x3QPIsBTjpYjoKx3TG8s6EjPa949k9ovcdlepoDxRA4vX84t6iiK3BqbfB6kVCt2ffS4qZuhPVMsUr6xsKIBfQ1Xx540taxjEyfBO6AjhAA+WuQLu6NA2AyWq0QhRRX6hkZpd5BstmNnYcHazN0YUOsKgBTeIDSYaVirKy51AJtYm2LSWY2XlJR4IJbVuHDNbyMcJ196YUCdCXdeWODflD2h2Y2WP5JS9Wjn1sp9axj3IIgA1VplLhP/LhCi/BJxnKcRIcdi90+cGWG0AzOvKJ+jeyWNTgshipfKjaUpkTEH/fxSdWLOdrl+mNot7XT750xnilepuf89MxnDTRWhW8UHy4OI55k3WHuv1sghP9xSIdYYnuPMfgPwSLSLgi6WxcC7Z7ncRUnlrLxtuPXBDFb6ZrwCHHOQaTAsWmbgyY9Su0AARqBvLX7AjZPS4u11QRoGYiqvxXfjMdJACv08uOvJqBoAWLDtGGTd/oggxyrQT6IOfS/iyR+TWMvrS6QCoA8d+dwOY3w4Ez6riKds5iKZR+Tm1AbTe3XbZC6VvfB1dcrgfO2ZsrTLngXIVjW2B5HQQln0ogNdyjPbTey0hPM3Mpb5LW6YeZjoRhYUBUkAUL8VvQRoU2ypsEo+FhBSgVtCjq+B053jgOAKz54m5Nc+Cq2EAIGZU7OfWDs2PltjLsDyNMpLFVHXQjNe2ddKnGfiXzGEbIi906ODO1RjPs23Tb43d3oYqnaI++g/tkZORioF8zq5kwB/tME5LuU0kKWTOc0TM9F4KDzM4IPIU4DquhkHhuMh5xAAAA" alt="" width="300" height="300" style="view-transition-name: img-grinder"><h2>مطحنة يدوي</h2></a>
+        <p>سنون سيراميك، ١٢ درجة طحن.</p><p class="price">٩٨٠ ج</p>
+      </li>
+      <li class="card" data-kind="tools" style="view-transition-name: card-kettle">
+        <a href="products/kettle.html"><img src="data:image/webp;base64,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" alt="" width="300" height="300" style="view-transition-name: img-kettle"><h2>غلاية بمنقار</h2></a>
+        <p>منقار رفيع لصب مظبوط.</p><p class="price">١٬٢٠٠ ج</p>
+      </li>
   </ul>
-  <p class="rsvp"><a href="mailto:evening@example.test">أكّد حضورك</a></p>
+  <h2 class="baseline-t" id="baseline">الميزات اللي في الموقع ده شغالة فين</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">الميزة</th><th scope="col">Baseline (web-features)</th><th scope="col">لو مش موجودة</th></tr></thead>
+      <tbody>
+        <tr><td>View Transitions بين الصفحات (<code>@view-transition</code>)</td><td>limited: Chrome 126، Safari 18.2</td><td>الصفحة بتفتح عادي من غير حركة</td></tr>
+        <tr><td>View Transitions في نفس الصفحة (<code>startViewTransition</code>)</td><td>low (أكتوبر ٢٠٢٥)</td><td>الفلتر بيشتغل على طول من غير حركة</td></tr>
+        <tr><td><code>text-wrap: balance</code></td><td>low (مايو ٢٠٢٤)</td><td>العنوان بيتقسم عادي</td></tr>
+        <tr><td><code>details name</code></td><td>low (سبتمبر ٢٠٢٤)</td><td>أكتر من سؤال يتفتح مع بعض</td></tr>
+        <tr><td>scroll-snap</td><td>high (يناير ٢٠٢٠)</td><td>الـ scroll بيقف في أي مكان</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<script>
+// the chips filter the cards; with View Transitions every card slides to its new place
+const chips = [...document.querySelectorAll(".chips button")];
+const cards = [...document.querySelectorAll(".card")];
+const count = document.querySelector(".count");
+
+function apply(kind) {
+  chips.forEach(c => c.setAttribute("aria-pressed", String(c.dataset.kind === kind)));
+  let n = 0;
+  for (const card of cards) { const show = kind === "all" || card.dataset.kind === kind; card.hidden = !show; if (show) n++; }
+  count.textContent = n.toLocaleString("ar-EG") + " منتجات";
+}
+chips.forEach(chip => chip.addEventListener("click", () => {
+  // every card already has its own view-transition-name (card-yirga, card-santos…), so they move, not just fade
+  if (document.startViewTransition) document.startViewTransition(() => apply(chip.dataset.kind));
+  else apply(chip.dataset.kind);
+}));
+// the header links #beans / #tools pick the chip too
+if (location.hash === "#beans" || location.hash === "#tools") apply(location.hash.slice(1));
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** هيدر «ركن القهوة» لازق فوق، وعنوان «كل حاجة لفنجان مظبوط»، وفلتر (الكل، البن، الأدوات)، و ٦ كروت بصور. الفلتر بيحرّك الكروت لأماكنها الجديدة. والضغط على كارت بيفتح صفحته، والصورة بتطير من الكارت لمكانها الكبير. وفي الآخر جدول الميزات.
+
+**انتقال بين صفحتين من غير JavaScript:** [[@view-transition { navigation: auto; }]] في الـ CSS **بتاع الصفحتين**. لما تنتقل في نفس الموقع، المتصفح بياخد صورة للقديمة، ويفتح الجديدة، ويحرّك بينهم. واللي ليه نفس [[view-transition-name]] في الصفحتين بيطير:
+- [[img-yirga]] على صورة الكارت وعلى صورة صفحة المنتج.
+- [[header]] على الهيدر في كل الصفحات، فبيفضل ثابت ومبيعملش fade.
+
+**الأسامي لازم تبقى فريدة في الصفحة:** كل كارت [[card-<slug>]] وكل صورة [[img-<slug>]]، وصور «ممكن يعجبك» في صفحة المنتج **من غير** أسامي، عشان صورة يرقاتشيفي هناك متتكررش مع الصورة الكبيرة.
+
+**الفلتر:** [[startViewTransition(() => apply(kind))]]. ولأن كل كارت ليه اسم، كل واحد بيتحرك لمكانه الجديد بدل ما الصفحة كلها تعمل fade.
+
+**Back شغال كمان:** الرجوع من صفحة المنتج للستة بيعمل نفس الانتقال بالعكس، واتقاس.
+
+**reduce:** [[@view-transition]] جوه [[(prefers-reduced-motion: no-preference)]]، فمفيش انتقال بين الصفحات. والفلتر، [[animation: none]] على كل الـ pseudo-elements.
+
+**[[scroll-padding-top]]:** لينك [[#faq]] بيوقف العنوان تحت الهيدر اللازق مش وراه. و [[text-wrap: balance]] بيوزّع العنوان على السطور بالتساوي.
+
+~~~text القياس بـ Playwright 1.64.1 على Chrome 157 (Windows)
+١. لستة ← يرقاتشيفي: viewTransition=true | الأجزاء: root، img-yirga، header، card-*… | errors: 0
+   Back: viewTransition=true | الأجزاء: header، root، img-yirga…
+٢. فلتر «الأدوات»: ٣ منتجات | ظاهر: قمع تقطير V60، مطحنة يدوي، غلاية بمنقار | اتحرك: card-grinder، card-v60، card-kettle…
+٣. Tab في اللستة: ركن القهوة → البن → الأدوات → الكل → البن → الأدوات → يرقاتشيفي
+   #faq: العنوان top=260 والهيدر بيخلص عند 56 (مش مستخبي)
+   التابز: ← بقى «التحضير» | الظاهر p2
+٤. من غير @view-transition (شلته من الـ CSS في السكة): viewTransition=false | الصفحة فتحت عادي | errors: 0
+٥. reduce: viewTransition=false
+٦. axe: index 0 | yirga 0 | santos 0 | harazi 0 | v60 0 | grinder 0 | kettle 0
+Lighthouse 13.6.0 Mobile: اللستة 100 (LCP 1.2 s، CLS 0) | صفحة منتج 100 (LCP 1.5 s، CLS 0)
+الـ validator: مفيش رسايل غير «view-transition-name doesn't exist» (الـ validator لسه مبيعرفهاش)
+CSS validator (W3C) مبيعرفش لسه @view-transition و ::view-transition-group
+~~~
+
+**ازاي تعرف إن الانتقال حصل:** صفحة جديدة بتطلّع event اسمه [[pagereveal]]، و [[e.viewTransition]] بيبقى موجود لو فيه انتقال. ده اللي [[measure.mjs]] بيسمعله في كل صفحة.` },
+        { lvl: 'فكرة', dir: "range-slider", t: R`widget من الصفر بـ APG`, what: R`اختار widget من WAI-ARIA Authoring Practices مش اتشرح هنا (combobox، أو tree، أو slider بمقبضين، أو carousel بـ autoplay)، وابنيه من الصفر بالـ HTML والـ CSS والـ JavaScript، ماشي على الكيبورد والـ aria اللي الصفحة بتطلبها بالظبط.`, done: R`كل اختصار في جدول APG بتاع الـ widget شغال، وقارئ الشاشة بيقول الحالة الصح، وفيه اختبار Playwright بيجرّب كل اختصار.`, ext: R`قارنه بنسخة مكتبة (Radix أو React Aria): الحجم، والسلوك، وإيه اللي المكتبة عملته وانت نسيته.`, sol: R`**اللي اخترته:** «Slider (Multi-Thumb)» من APG: فلتر سعر بمقبضين، من ولحد. مااتشرحش في الكورس، وموجود في أي متجر.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فلتر السعر</title>
+<link rel="stylesheet" href="range.css">
+<script src="range.js" defer></script>
+</head>
+<body>
+<main class="wrap">
+  <h1>موبايلات</h1>
+  <div class="range" data-min="0" data-max="20000" data-step="500" role="group" aria-labelledby="price-label">
+    <p id="price-label" class="range__label">السعر</p>
+    <div class="range__track">
+      <div class="range__fill"></div>
+      <div class="range__thumb" role="slider" tabindex="0" aria-label="أقل سعر" data-value="3000"
+           aria-valuemin="0" aria-valuemax="12000" aria-valuenow="3000" aria-valuetext="٣٬٠٠٠ ج"></div>
+      <div class="range__thumb" role="slider" tabindex="0" aria-label="أعلى سعر" data-value="12000"
+           aria-valuemin="3000" aria-valuemax="20000" aria-valuenow="12000" aria-valuetext="١٢٬٠٠٠ ج"></div>
+    </div>
+    <p class="range__out" aria-hidden="true"></p>
+  </div>
 </main>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:**
+~~~css range.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #f9fafb; }
+.wrap { max-width: 36rem; margin: 0 auto; padding: 2rem 1rem; }
+h1 { margin: 0 0 1.5rem; font-size: 1.5rem; }
+.range__label { margin: 0 0 1rem; font-weight: 700; }
 
-- كارت أبيض بإطار بني في نص الصفحة على خلفية كريمي، وكل اللي فيه متوسّط.
-- «دعوة» صغيرة وبنية، وتحتها العنوان كبير وتحته ضل أصفر حاد.
-- القصيدة أربع سطور تحت بعض، والسطر الأول تقيل.
-- تلات سطور معلومات محاذية لليمين بين خطّين، وأول كلمة في كل سطر رمادي صغيرة والتلاتة بنفس العرض.
-- «أكّد حضورك» بني وتحته خط تخين نازل، وبيتخن أكتر لما تقف عليه.
+/* --a and --b are the two thumbs' places, 0% to 100%, written by range.js */
+.range__track { position: relative; height: 6px; margin: 1.25rem 12px; border-radius: 999px; background: #d1d5db; touch-action: none; }
+.range__fill { position: absolute; inset-block: 0; inset-inline-start: var(--a); inset-inline-end: calc(100% - var(--b)); border-radius: 999px; background: #1d4ed8; }
 
-**ليه التصميم ده (نسخة واحدة من نسخ كتير ممكنة):**
+/* the thumb: 24px for the finger and the mouse, a 20px circle inside */
+.range__thumb {
+  position: absolute; top: 50%; inset-inline-start: var(--pos); translate: 0 -50%; margin-inline-start: -12px;
+  width: 24px; height: 24px; display: grid; place-items: center; cursor: grab; outline: none;
+}
+.range__thumb::before { content: ""; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid #1d4ed8; box-shadow: 0 1px 4px #0003; }
+.range__thumb:focus-visible::before { outline: 3px solid #b45309; outline-offset: 2px; }
+.range__thumb:active { cursor: grabbing; }
+.range__out { margin: 0.75rem 0 0; font-weight: 700; }
+~~~
 
-- **[[white-space: pre-line]] للقصيدة:** السطور مكتوبة في الـ HTML كل واحد في سطر، من غير [[<br>]]. تغيير بيت أسهل، والـ HTML يتقري.
-- **[[::first-line]] بدل class على أول بيت:** أول سطر هيفضل هو التقيل حتى لو القصيدة اتغيّرت.
-- **التوسيط على الكارت، و [[text-align: start]] على المعلومات:** سطور قصيرة (عنوان، أبيات) بتتوسّط حلو. معلومات بتتقارن ببعض (يوم، ساعة، مكان) لازم ليها حافة مستقيمة.
-- **[[word-spacing]] مش [[letter-spacing]]** على «دعوة» ولو كانت كلمتين: الأولى آمنة على العربي والتانية لأ. ومفيش [[text-transform]] لأنها ملهاش أثر.
-- **ضل حاد بإزاحة صغيرة** (2px ومن غير تمويه): زينة للعنوان من غير ما النقط تتكرر وتلخبط.
-- **اللينك زرار من غير ما يبقى زرار:** لون ووزن وخط تخين. هو لينك [[mailto:]] فمعناه لينك، وشكله بيقول «دوس هنا».
-- **[[:link]] و [[:visited]] بنفس اللون:** ده لينك فعل (ابعت إيميل) مش لينك صفحة، فـ «اتزار» ملهاش معنى مفيد هنا.
-- **ارتفاع سطر 2.1 للقصيدة:** أوسع من المقال، لأن كل سطر بيت مستقل والعين محتاجة تقف بعده.
+~~~js range.js
+// a two-thumb price slider, following WAI-ARIA APG "Slider (Multi-Thumb)"
+for (const range of document.querySelectorAll(".range")) {
+  const min = Number(range.dataset.min), max = Number(range.dataset.max), step = Number(range.dataset.step);
+  const big = step * 4;                                         // PageUp / PageDown jump
+  const track = range.querySelector(".range__track");
+  const [lo, hi] = range.querySelectorAll(".range__thumb");
+  const out = range.querySelector(".range__out");
+  const money = v => v.toLocaleString("ar-EG") + " ج";
 
-**الغلطة الشائعة:** توسيط سطور المعلومات مع باقي الكارت. «اليوم» و «الساعة» و «المكان» هيبدأوا من تلات أماكن مختلفة، والعين مش هتلاقيهم.
+  // each thumb's limits depend on the other one: the low can't pass the high
+  function limits(t) { return t === lo ? [min, Number(hi.dataset.value)] : [Number(lo.dataset.value), max]; }
 
-~~~text القياس من Chrome
-.poem              white-space: pre-line     line-height: 41.58px    (19.8px × 2.1)
-.poem::first-line  font-weight: 700
-h1                 text-shadow: rgb(253, 230, 138) 0px 2px 0px
-.info              list-style-type: none     text-align: start
-.rsvp a            color: rgb(180, 83, 9)    text-decoration-thickness: 2px    text-underline-offset: 6.3px
-صفحة 360px:        عرض الصفحة 360px
-~~~` }
+  function set(t, v) {
+    const [a, b] = limits(t);
+    v = Math.min(b, Math.max(a, Math.round(v / step) * step));
+    t.dataset.value = v;
+    render();
+  }
+
+  function render() {
+    const a = Number(lo.dataset.value), b = Number(hi.dataset.value);
+    const pct = v => ((v - min) / (max - min)) * 100 + "%";
+    track.style.setProperty("--a", pct(a));
+    track.style.setProperty("--b", pct(b));
+    for (const t of [lo, hi]) {
+      const [tmin, tmax] = limits(t), v = Number(t.dataset.value);
+      t.style.setProperty("--pos", pct(v));
+      t.setAttribute("aria-valuemin", tmin);
+      t.setAttribute("aria-valuemax", tmax);
+      t.setAttribute("aria-valuenow", v);
+      t.setAttribute("aria-valuetext", money(v));             // "٣٬٠٠٠ ج", not just "3000"
+    }
+    out.textContent = "من " + money(a) + " لـ " + money(b);
+  }
+
+  for (const t of [lo, hi]) {
+    t.addEventListener("keydown", e => {
+      const v = Number(t.dataset.value);
+      // horizontal arrows follow the direction: in Arabic the bigger values are on the LEFT
+      const rtl = getComputedStyle(range).direction === "rtl";
+      const keys = {
+        ArrowUp: v + step, ArrowDown: v - step,
+        ArrowRight: v + (rtl ? -step : step), ArrowLeft: v + (rtl ? step : -step),
+        PageUp: v + big, PageDown: v - big,
+        Home: limits(t)[0], End: limits(t)[1],
+      };
+      if (!(e.key in keys)) return;
+      e.preventDefault();
+      set(t, keys[e.key]);
+    });
+
+    // dragging: pointer capture keeps the thumb even when the pointer leaves it
+    t.addEventListener("pointerdown", e => { t.setPointerCapture(e.pointerId); t.focus(); });
+    t.addEventListener("pointermove", e => {
+      if (!t.hasPointerCapture(e.pointerId)) return;
+      const r = track.getBoundingClientRect();
+      const rtl = getComputedStyle(range).direction === "rtl";
+      let f = (e.clientX - r.left) / r.width;
+      if (rtl) f = 1 - f;
+      set(t, min + f * (max - min));
+    });
+  }
+  render();
+}
+~~~
+
+~~~js playwright.config.js
+import { defineConfig } from "@playwright/test";
+export default defineConfig({
+  testDir: "tests",
+  use: {
+    baseURL: "http://127.0.0.1:8818",
+    channel: process.env.CI ? undefined : "chrome",
+    launchOptions: { args: ["--no-proxy-server"] },
+  },
+  webServer: { command: "node ../serve.mjs .. 8818", url: "http://127.0.0.1:8818/range-slider/index.html", reuseExistingServer: true },
+});
+~~~
+
+~~~js tests/range.spec.js
+// every keyboard row of the APG "Slider (Multi-Thumb)" table, plus aria, Tab, and dragging
+import { test, expect } from "@playwright/test";
+
+const lo = page => page.getByRole("slider", { name: "أقل سعر" });
+const hi = page => page.getByRole("slider", { name: "أعلى سعر" });
+const val = async s => Number(await s.getAttribute("aria-valuenow"));
+
+test.beforeEach(async ({ page }) => { await page.goto("/range-slider/index.html"); });
+
+test("الحالة الأولى: الأسامي والقيم والحدود", async ({ page }) => {
+  await expect(lo(page)).toHaveAttribute("aria-valuenow", "3000");
+  await expect(lo(page)).toHaveAttribute("aria-valuetext", "٣٬٠٠٠ ج");
+  await expect(lo(page)).toHaveAttribute("aria-valuemax", "12000");   // the low thumb stops at the high one
+  await expect(hi(page)).toHaveAttribute("aria-valuemin", "3000");
+  await expect(page.locator(".range__out")).toHaveText("من ٣٬٠٠٠ ج لـ ١٢٬٠٠٠ ج");
+});
+
+test("Tab: الأقل ثم الأعلى", async ({ page }) => {
+  await page.keyboard.press("Tab");
+  await expect(lo(page)).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(hi(page)).toBeFocused();
+});
+
+for (const [key, delta] of [["ArrowUp", 500], ["ArrowDown", -500], ["PageUp", 2000], ["PageDown", -2000]]) {
+  test($__bt$__{key}: $__{delta > 0 ? "+" : ""}$__{delta}$__bt, async ({ page }) => {
+    await lo(page).focus();
+    await page.keyboard.press(key);
+    expect(await val(lo(page))).toBe(3000 + delta);
+  });
+}
+
+test("في العربي: ← بيزوّد و → بيقلّل", async ({ page }) => {
+  await lo(page).focus();
+  await page.keyboard.press("ArrowLeft");
+  expect(await val(lo(page))).toBe(3500);
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  expect(await val(lo(page))).toBe(2500);
+});
+
+test("في الإنجليزي: → بيزوّد", async ({ page }) => {
+  await page.evaluate(() => (document.documentElement.dir = "ltr"));
+  await lo(page).focus();
+  await page.keyboard.press("ArrowRight");
+  expect(await val(lo(page))).toBe(3500);
+});
+
+test("Home و End: لحد الحد، والحد هو الـ thumb التاني", async ({ page }) => {
+  await lo(page).focus();
+  await page.keyboard.press("End");
+  expect(await val(lo(page))).toBe(12000);                 // not 20000: the high thumb is in the way
+  await page.keyboard.press("Home");
+  expect(await val(lo(page))).toBe(0);
+  await hi(page).focus();
+  await page.keyboard.press("Home");
+  expect(await val(hi(page))).toBe(0);                     // the low one is at 0 now
+  await page.keyboard.press("End");
+  expect(await val(hi(page))).toBe(20000);
+});
+
+test("الأقل ميعدّيش الأعلى بالأسهم", async ({ page }) => {
+  await lo(page).focus();
+  for (let i = 0; i < 30; i++) await page.keyboard.press("ArrowUp");
+  expect(await val(lo(page))).toBe(12000);
+  await expect(hi(page)).toHaveAttribute("aria-valuemin", "12000");
+});
+
+test("السحب بالماوس (في العربي الشمال أغلى)", async ({ page }) => {
+  const track = await page.locator(".range__track").boundingBox();
+  const box = await hi(page).boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(track.x + track.width * 0.1, box.y + box.height / 2, { steps: 5 });   // near the left end
+  await page.mouse.up();
+  expect(await val(hi(page))).toBe(18000);
+  await expect(hi(page)).toBeFocused();
+});
+~~~
+
+~~~view 240 240 اسحب أو استخدم الأسهم
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فلتر السعر</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #111827; background: #f9fafb; }
+.wrap { max-width: 36rem; margin: 0 auto; padding: 2rem 1rem; }
+h1 { margin: 0 0 1.5rem; font-size: 1.5rem; }
+.range__label { margin: 0 0 1rem; font-weight: 700; }
+
+/* --a and --b are the two thumbs' places, 0% to 100%, written by range.js */
+.range__track { position: relative; height: 6px; margin: 1.25rem 12px; border-radius: 999px; background: #d1d5db; touch-action: none; }
+.range__fill { position: absolute; inset-block: 0; inset-inline-start: var(--a); inset-inline-end: calc(100% - var(--b)); border-radius: 999px; background: #1d4ed8; }
+
+/* the thumb: 24px for the finger and the mouse, a 20px circle inside */
+.range__thumb {
+  position: absolute; top: 50%; inset-inline-start: var(--pos); translate: 0 -50%; margin-inline-start: -12px;
+  width: 24px; height: 24px; display: grid; place-items: center; cursor: grab; outline: none;
+}
+.range__thumb::before { content: ""; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid #1d4ed8; box-shadow: 0 1px 4px #0003; }
+.range__thumb:focus-visible::before { outline: 3px solid #b45309; outline-offset: 2px; }
+.range__thumb:active { cursor: grabbing; }
+.range__out { margin: 0.75rem 0 0; font-weight: 700; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>موبايلات</h1>
+  <div class="range" data-min="0" data-max="20000" data-step="500" role="group" aria-labelledby="price-label">
+    <p id="price-label" class="range__label">السعر</p>
+    <div class="range__track">
+      <div class="range__fill"></div>
+      <div class="range__thumb" role="slider" tabindex="0" aria-label="أقل سعر" data-value="3000"
+           aria-valuemin="0" aria-valuemax="12000" aria-valuenow="3000" aria-valuetext="٣٬٠٠٠ ج"></div>
+      <div class="range__thumb" role="slider" tabindex="0" aria-label="أعلى سعر" data-value="12000"
+           aria-valuemin="3000" aria-valuemax="20000" aria-valuenow="12000" aria-valuetext="١٢٬٠٠٠ ج"></div>
+    </div>
+    <p class="range__out" aria-hidden="true"></p>
+  </div>
+</main>
+<script>
+// a two-thumb price slider, following WAI-ARIA APG "Slider (Multi-Thumb)"
+for (const range of document.querySelectorAll(".range")) {
+  const min = Number(range.dataset.min), max = Number(range.dataset.max), step = Number(range.dataset.step);
+  const big = step * 4;                                         // PageUp / PageDown jump
+  const track = range.querySelector(".range__track");
+  const [lo, hi] = range.querySelectorAll(".range__thumb");
+  const out = range.querySelector(".range__out");
+  const money = v => v.toLocaleString("ar-EG") + " ج";
+
+  // each thumb's limits depend on the other one: the low can't pass the high
+  function limits(t) { return t === lo ? [min, Number(hi.dataset.value)] : [Number(lo.dataset.value), max]; }
+
+  function set(t, v) {
+    const [a, b] = limits(t);
+    v = Math.min(b, Math.max(a, Math.round(v / step) * step));
+    t.dataset.value = v;
+    render();
+  }
+
+  function render() {
+    const a = Number(lo.dataset.value), b = Number(hi.dataset.value);
+    const pct = v => ((v - min) / (max - min)) * 100 + "%";
+    track.style.setProperty("--a", pct(a));
+    track.style.setProperty("--b", pct(b));
+    for (const t of [lo, hi]) {
+      const [tmin, tmax] = limits(t), v = Number(t.dataset.value);
+      t.style.setProperty("--pos", pct(v));
+      t.setAttribute("aria-valuemin", tmin);
+      t.setAttribute("aria-valuemax", tmax);
+      t.setAttribute("aria-valuenow", v);
+      t.setAttribute("aria-valuetext", money(v));             // "٣٬٠٠٠ ج", not just "3000"
+    }
+    out.textContent = "من " + money(a) + " لـ " + money(b);
+  }
+
+  for (const t of [lo, hi]) {
+    t.addEventListener("keydown", e => {
+      const v = Number(t.dataset.value);
+      // horizontal arrows follow the direction: in Arabic the bigger values are on the LEFT
+      const rtl = getComputedStyle(range).direction === "rtl";
+      const keys = {
+        ArrowUp: v + step, ArrowDown: v - step,
+        ArrowRight: v + (rtl ? -step : step), ArrowLeft: v + (rtl ? step : -step),
+        PageUp: v + big, PageDown: v - big,
+        Home: limits(t)[0], End: limits(t)[1],
+      };
+      if (!(e.key in keys)) return;
+      e.preventDefault();
+      set(t, keys[e.key]);
+    });
+
+    // dragging: pointer capture keeps the thumb even when the pointer leaves it
+    t.addEventListener("pointerdown", e => { t.setPointerCapture(e.pointerId); t.focus(); });
+    t.addEventListener("pointermove", e => {
+      if (!t.hasPointerCapture(e.pointerId)) return;
+      const r = track.getBoundingClientRect();
+      const rtl = getComputedStyle(range).direction === "rtl";
+      let f = (e.clientX - r.left) / r.width;
+      if (rtl) f = 1 - f;
+      set(t, min + f * (max - min));
+    });
+  }
+  render();
+}
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** «موبايلات» و «السعر»، وتحتهم خط رمادي عليه جزء أزرق بين مقبضين أبيض، ومكتوب تحت «من ٣٬٠٠٠ ج لـ ١٢٬٠٠٠ ج». المقبض الأرخص يمين والأغلى شمال.
+
+**جدول الكيبورد من APG، وكل سطر عليه اختبار:**
+- ↑ و ↓: ٥٠٠ ج.
+- PageUp و PageDown: ٢٠٠٠ ج.
+- Home و End: لحد الحد.
+- ← و →: على حسب الاتجاه. في العربي الأغلى على الشمال، فـ ← بيزوّد.
+
+**الحد بيتحرك مع المقبض التاني:** [[aria-valuemax]] بتاع الأرخص = قيمة الأغلى دلوقتي، و [[aria-valuemin]] بتاع الأغلى = قيمة الأرخص. فـ End على الأرخص بيوقف عند ١٢٬٠٠٠ مش ٢٠٬٠٠٠، وقارئ الشاشة بيقول الحدود الحقيقية.
+
+**[[aria-valuetext]]:** «٣٬٠٠٠ ج» بدل «3000»، فقارئ الشاشة بيقول المبلغ بالعملة.
+
+**القيم في الـ HTML نفسه:** الـ validator رفض [[role="slider"]] من غير [[aria-valuenow]]، لأن السكربت هو اللي كان بيحطها. لو السكربت وقع، الـ slider من غير قيمة. دلوقتي الـ HTML فيه القيم الأولى، والسكربت بيحدّثها.
+
+**السحب:** [[setPointerCapture]] بيخلّي المقبض ماسك في الماوس حتى لو خرج منه وانت بتسحب، و [[touch-action: none]] على الخط عشان الصباع ميعملش scroll للصفحة بدل ما يسحب.
+
+**الاختبار بيمسك الغلط فعلًا:** شلت [[Home]] من الكود، فوقع اختبار واحد بالظبط («Expected: 0، Received: 12000»)، ورجّعته فنجحوا الـ ١١.
+
+~~~text npx playwright test (Chrome 157)
+ok  1 › الحالة الأولى: الأسامي والقيم والحدود
+ok  2 › Tab: الأقل ثم الأعلى
+ok  3 › ArrowUp: +500
+ok  4 › ArrowDown: -500
+ok  5 › PageUp: +2000
+ok  6 › PageDown: -2000
+ok  7 › في العربي: ← بيزوّد و → بيقلّل
+ok  8 › في الإنجليزي: → بيزوّد
+ok  9 › Home و End: لحد الحد، والحد هو الـ thumb التاني
+ok 10 › الأقل ميعدّيش الأعلى بالأسهم
+ok 11 › السحب بالماوس (في العربي الشمال أغلى)
+11 passed (3.2s)
+
+من غير Home في الكود:
+x   9 › Home و End …   Expected: 0   Received: 12000
+1 failed، 10 passed
+الشجرة: group "السعر" ← slider "أقل سعر" و slider "أعلى سعر"
+الـ fill من 208 لـ 442 من 520 (المقبض الأرخص عند 442 = ١٥٪ من اليمين)
+axe: 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~` },
       ],
       items: [
         {
-          cmd: "font-family و font-size",
-          title: "الخط نفسه وحجمه ومسافة السطور ولون الكلام",
+          cmd: "details و summary",
           ref: [
-            { t: "MDN: font-family", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-family" },
-            { t: "MDN: font-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-size" },
-            { t: "MDN: line-height", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/line-height" },
-            { t: "MDN: color", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color" },
-            { t: "MDN Curriculum: CSS text styling", url: "https://developer.mozilla.org/en-US/curriculum/core/css-text-styling/" }
+            { t: "WHATWG: the details element", url: "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-details-element" },
+            { t: "MDN: <details>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/details" },
+            { t: "WHATWG: the summary element", url: "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-summary-element" },
+            { t: "MDN: <summary>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/summary" },
+            { t: "MDN: border-block-end", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/border-block-end" },
+            { t: "MDN: cursor", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/cursor" },
           ],
-          desc: R`أربع خصائص بتحدد الفقرة هتتقري براحة ولا لأ: [[font-family]] (أنهي خط)، و [[font-size]] (حجمه)، و [[line-height]] (المسافة بين السطور)، و [[color]] (لون الكلام). والأربعة بيتورّثوا: تكتبهم مرة على [[body]] والصفحة كلها تاخدهم.
-من غيرهم المتصفح بيعرض بخط Times New Roman حجمه 16px وسطوره لازقة في بعض، وده مش مريح للعربي.`,
-          example: R`body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; }
-body { font-size: 18px; }
-body { line-height: 1.8; }
-body { color: #1f2937; }
-h1 { font-size: 2em; line-height: 1.3; }
-code { font-family: Consolas, "Courier New", monospace; }
-button, input { font: inherit; }`,
+          title: "accordion و FAQ من غير ولا سطر JavaScript",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سؤالين [[<details name="f">]] والأول [[open]]. دوست على الـ summary بتاع التاني: الأول هيبقى إيه؟ وبعدين من الكونسول عملت [[a.open = true]] للأول: التاني هيبقى إيه؟`, done: R`بعد الضغطة: الأول اتقفل والتاني اتفتح. وبعد [[a.open = true]]: الأول اتفتح والتاني اتقفل لوحده، يعني الـ [[name]] بيشتغل حتى من JavaScript. اتقاس في Chrome 156.`,
+              sol: R`~~~live 150 150 details-name.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>مجموعة details</title></head>
+<body>
+  <main><h1>أسئلة</h1>
+    <details name="f" id="a" open><summary>السؤال الأول</summary>إجابة الأول</details>
+    <details name="f" id="b"><summary>السؤال التاني</summary>إجابة التاني</details>
+  </main>
+</body></html>
+~~~
+
+[[name]] بيحوّل كل الـ [[details]] اللي ليهم نفس القيمة لمجموعة: واحد بس مفتوح في أي لحظة، زي الـ radio. والقاعدة دي مربوطة بحالة العنصر [[open]] نفسها، مش بالضغطة:
+
+1. دوست على summary التاني: التاني اتفتح، والمتصفح قفل الأول.
+2. [[a.open = true]] من JavaScript: الأول اتفتح، والمتصفح قفل التاني برضه، لأن تغيير [[open]] بيمشي على نفس قواعد المجموعة.
+
+عشان كده مش محتاج أي JavaScript تقفل بيه الباقي، وأي كود بيفتح سؤال من الرابط (مثلًا [[#q3]]) هيتصرف صح.
+
+الغلطة الشائعة: تستخدم [[name]] وتحط [[open]] على اتنين في الـ HTML، وتستغرب. لما الصفحة بتتبني المتصفح بيسيب أول واحد مفتوح ويقفل الباقي.
+
+~~~text الناتج (Chrome 156)
+الأول قبل أي حاجة:           a.open = true   b.open = false
+بعد الضغط على summary التاني: a.open = false  b.open = true
+بعد a.open = true:           a.open = true   b.open = false
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** حركة فتح وقفل للـ FAQ من غير JavaScript: [[:root { interpolate-size: allow-keywords }]] و [[details::details-content { block-size: 0; overflow: clip; transition: block-size .4s, content-visibility .4s allow-discrete }]] و [[details[open]::details-content { block-size: auto }]].`, done: R`الإجابة بتنزل بنعومة: قسناها على إجابة 200px في Chrome 156، بعد 200ms من الفتح ارتفاع الـ details كان حوالي 178px (اقراه في كل frame بـ requestAnimationFrame) وفي الآخر 218px. وفي المتصفح اللي مش بيدعم [[::details-content]] أو [[interpolate-size]] بتفتح عادي من غير حركة، ومع reduce من غير حركة.`,
+              sol: R`~~~live 120 120 faq-anim.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>FAQ بحركة</title>
+<style>
+  :root { interpolate-size: allow-keywords; }
+  details::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size .4s, content-visibility .4s allow-discrete;
+  }
+  details[open]::details-content { block-size: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    details::details-content { transition: none; }
+  }
+  .a { block-size: 200px; margin: 0; }
+</style></head>
+<body>
+  <main><h1>أسئلة</h1>
+    <details id="d"><summary>الشحن بياخد قد إيه؟</summary><p class="a">من ٣ لـ ٥ أيام.</p></details>
+  </main>
+</body></html>
+~~~
+
+المتصفح مكانش بيعرف يحرّك من [[0]] لـ [[auto]] لأن [[auto]] مش رقم. السطور دي بتحل ده:
+
+- [[interpolate-size: allow-keywords]] بيسمح بالـ interpolation مع كلمات زي [[auto]]، وعلى [[:root]] عشان يورث لكل الصفحة.
+- [[::details-content]] هو الصندوق اللي فيه كل حاجة ماعدا الـ summary. ده اللي بنحرّك ارتفاعه.
+- [[overflow: clip]] عشان المحتوى ميطلعش برا وهو بيصغر.
+- [[content-visibility .4s allow-discrete]] أهم سطر: المتصفح بيخفي المحتوى بـ [[content-visibility: hidden]] لما يتقفل. [[allow-discrete]] بيأخر التبديل لآخر الـ transition، فمن غيره القفل بيختفي مرة واحدة من غير حركة.
+
+الغلطة الشائعة: تحط الحركة على [[details]] نفسه أو على [[p]]، فمبتشتغلش لأن المحتوى مخفي قبل ما تبدأ. وبيبقى progressive enhancement طبيعي: أي متصفح مش بيفهم السطور دي بيفتح من غير حركة (و Safari و Firefox لسه من غير [[interpolate-size]] حسب بيانات MDN).
+
+~~~text الناتج (Chrome 156، إجابة 200px، قراية الارتفاع في كل frame)
+ارتفاع details مقفول:   18px
+قرب 200ms من الفتح:     178.5 (عند 201ms)
+في الآخر:               218px
+مع reduce بعد 50ms:     218px
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** FAQ معمول بـ [[<div class="q" onclick="this.classList.toggle('open')">]] والإجابة [[display: none]] لحد ما الكلاس يتحط. حوّله لـ details و summary.`, done: R`مفيش ولا سطر JavaScript، والسؤال بيتفتح بـ Enter و Space، وقارئ الشاشة بيقول collapsed و expanded، و axe صفر مشاكل، والـ CSS بقى بيستخدم [[details[open]]] بدل [[.open]].`,
+              sol: R`~~~live 160 160 faq-fixed.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>الأسئلة</title>
+<style>
+  summary { cursor: pointer; font-weight: 700; padding: .5rem; }
+  details[open] summary { color: #1d4ed8; }
+  details p { margin: 0; padding: .5rem; }
+</style></head>
+<body>
+  <main><h1>الأسئلة الشائعة</h1>
+    <details>
+      <summary>بتوصلوا فين؟</summary>
+      <p>كل المحافظات.</p>
+    </details>
+    <details>
+      <summary>ينفع أرجّع المنتج؟</summary>
+      <p>خلال ١٤ يوم.</p>
+    </details>
+  </main>
+</body></html>
+~~~
+
+القديم كان ٣ مشاكل مستخبية: [[div]] مبياخدش focus فالكيبورد مبيوصلوش، وقارئ الشاشة مش عارف إنه زرار ولا إنه مفتوح أو مقفول، و [[onclick]] بيعمل شغل المتصفح بيعمله ببلاش.
+
+- [[<details>]] هو الحاوية، و [[<summary>]] زرار جاهز: Tab بيوصله، و Enter و Space بيفتحوه، وقارئ الشاشة بيقول collapsed أو expanded.
+- المتصفح بيحط attribute اسمه [[open]] بنفسه، فالـ CSS بقى [[details[open] summary]] بدل [[.q.open]].
+- الإجابة مش محتاجة [[display: none]]: المتصفح بيخفيها.
+
+الغلطة الشائعة: تسيب [[onclick]] على [[details]] «عشان يتزامن»، أو تكتب [[list-style: none]] على summary وتشيل المثلث من غير ما تحط علامة تانية، فمحدش يعرف إنها بتتفتح.
+
+~~~text الناتج (Chrome 156)
+Tab: الـ focus على SUMMARY بتوصلوا فين؟
+Enter: open = true
+Space: open = false
+شجرة الـ accessibility للـ summary وهو مفتوح: DisclosureTriangle expanded=true
+script في الصفحة: 0، و axe: 0
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** دوّر في MDN على: البحث بـ Ctrl+F بيلاقي كلام جوه [[<details>]] مقفول؟ وإيه هو [[hidden="until-found"]]؟ وفين الدعم بتاع [[name]] على details؟`, done: R`كتبت: Chrome بيفتح الـ details لوحده لما البحث يلاقي كلام جواه، و [[hidden="until-found"]] بيعمل نفس الحكاية لأي عنصر مخفي، وجدول دعم [[name]] من MDN (Chrome 120، و Safari 17.2، و Firefox 130)، وجرّبت البحث بإيدك في Chrome.`,
+              sol: R`~~~text الإجابة النموذجية
+Ctrl+F على كلام جوه details مقفول:
+  المتصفح اللي بيدعم بيفتح الـ details لوحده ويوديك على الكلمة.
+  الدعم ده اتربط بـ hidden="until-found" في نفس الميزة.
+
+hidden="until-found":
+  نفس الحكاية لأي عنصر مخفي، مش details بس.
+  العنصر بياخد content-visibility: hidden فمحتواه موجود وقابل للبحث.
+  لما البحث يلاقي جواه، المتصفح بيبعت حدث beforematch ويشيل الـ hidden.
+
+دعم name على details (بيانات MDN):
+~~~
+
+| المتصفح | [[name]] على details | [[hidden="until-found"]] |
+|---|---|---|
+| Chrome | 120 | 102 |
+| Safari | 17.2 | 26.2 (جزئي) |
+| Firefox | 130 | 148 |
+
+الفرق المهم: [[hidden]] العادي بيعمل [[display: none]]، فالكلام مش موجود للبحث ولا لـ Ctrl+F. [[until-found]] بيخليه مخفي للعين بس، والبحث بيوصله، ولينك [[#id]] بيوصله كمان. ده ممتاز للصفحات الطويلة أو FAQ كبير.
+
+الغلطة الشائعة: تقفل FAQ بـ [[display: none]] و JavaScript، فأي حد بيدوّر في الصفحة مش هيلاقي الإجابة وهي قدامه.
+
+الأرقام من [[@mdn/browser-compat-data]] 8.1.8 (نفس البيانات اللي في جداول MDN). والبحث نفسه جرّبه بإيدك في Chrome، لأن Ctrl+F شريط في المتصفح ومبيتحرّكش من الأتمتة. اللي اتشغّل هنا بس:
+
+~~~text الناتج (Chrome 156)
+"name" in HTMLDetailsElement.prototype = true
+"onbeforematch" in document.body       = true
+hidden="until-found": display = block، و content-visibility = hidden
+~~~` },
+          ],
+          desc: R`[[<details>]] بيتفتح ويتقفل لوحده، و [[<summary>]] جواه هو الجزء اللي بتدوس عليه. والباقي بيظهر لما يتفتح. شغال بالماوس والكيبورد (Enter و Space)، وقارئ الشاشة بيقول «collapsed» و «expanded» من غير aria.
+
+و [[open]] بيخليه مفتوح من الأول، و [[details[open] > summary]] في CSS للشكل وهو مفتوح. ولو اديت كذا details نفس [[name]]، يبقوا accordion حصري: فتح واحد بيقفل الباقي.`,
+          example: R`<section aria-labelledby="faq-title">
+  <h2 id="faq-title">أسئلة متكررة</h2>
+  <details name="faq" open>
+    <summary>التوصيل بياخد قد إيه؟</summary>
+    <p>من يومين لـ 4 أيام عمل جوه القاهرة والجيزة.</p>
+  </details>
+  <details name="faq">
+    <summary>أقدر أرجّع المنتج؟</summary>
+    <p>أيوه، خلال 14 يوم وهو في علبته.</p>
+  </details>
+</section>
+// styles.css
+details { border-block-end: 1px solid var(--color-border); padding-block: 0.75rem; }
+summary { cursor: pointer; font-weight: 600; }
+details[open] > summary { margin-block-end: 0.5rem; color: var(--color-brand); }`,
+          try: R`اعمل الـ FAQ بـ 4 أسئلة. امشي بـ Tab بس وافتح واقفل بـ Enter و Space. افتح سؤال والتاني مفتوح: حصل إيه؟ وبعدين شيل [[name]] وجرّب تاني. وأخيرًا اقفل كل الأسئلة ودوّر بـ Ctrl+F على كلمة في إجابة مقفولة.`,
           flag: "script",
-          lines: [
-            R`قايمة خطوط بالترتيب: [[system-ui]] (خط واجهة النظام نفسه)، ولو مش موجود [[Segoe UI]]، وبعده [[Tahoma]]، وآخر حاجة [[sans-serif]]: أي خط من غير زوايد يختاره المتصفح. الاسم اللي فيه مسافة بيتحط بين علامتين تنصيص.`,
-            R`حجم الخط الأساسي للصفحة كلها 18px بدل 16px الافتراضي. الحرف العربي بيبان أصغر من اللاتيني في نفس الحجم، فالفقرة العربي بتستريح عند 17 لـ 19.`,
-            R`مسافة السطر 1.8 من حجم الخط، يعني [[18 × 1.8 = 32.4px]]. الرقم من غير وحدة عشان كل عنصر يحسبها من حجم خطه هو.`,
-            R`لون الكلام رمادي غامق قوي بدل الأسود الصريح. بيتورّث لكل اللي جوه [[body]] إلا اللينكات والأزرار (ليهم ألوانهم).`,
-            R`العنوان ضعف حجم خط أبوه ([[2em]] = 36px هنا)، وسطوره أضيق (1.3) لأن الخط الكبير مش محتاج مسافة كبيرة.`,
-            R`الكود بخط كل حروفه نفس العرض: [[Consolas]]، وبديله [[Courier New]]، وآخر حاجة العيلة العامة [[monospace]].`,
-            R`الأزرار والحقول مبياخدوش خط الصفحة لوحدهم (بيفضلوا Arial 13.33px). [[font: inherit]] بتخليهم ياخدوا خط وحجم أبوهم.`
-          ],
-          teach: R`## الفكرة في سطرين
+          deep: {
+            why: R`الـ FAQ والإعدادات المتقدمة و «اعرف أكتر» في كل موقع. ناس كتير بتعملها بـ useState و div و onClick، وبتنسى الكيبورد والـ aria-expanded. details بيعمل كل ده صح ببلاش، وبيشتغل حتى لو الـ JavaScript لسه متحمّلش.`,
+            how: R`الـ summary بياخد focus لوحده، و role بتاعه عند قارئ الشاشة زرار بـ expanded أو collapsed. الـ [[open]] attribute بيتضاف ويتشال مع كل ضغطة، وفيه حدث [[toggle]] على الـ details لو محتاج تعمل حاجة (تحفظ الحالة مثلًا).
 
-المتصفح بيعرض أي كلام بخط وحجم ومسافة سطور ولون، حتى لو مكتبتش ولا سطر CSS. الدرس ده بيغيّر الأربعة دول، ويشرح كل واحد بيتحسب إزاي.
+الـ [[name]] (accordion حصري) بقى مدعوم في كل المتصفحات الحديثة من 2024، والمتصفح القديم بيتجاهله فكل واحد بيتفتح لوحده، يعني progressive enhancement من غير ما حاجة تبوظ.
 
-كل الأرقام من Chrome 157 على Windows 11، والصفحة [[lang="ar"]].
+البحث في الصفحة (Ctrl+F) بيلاقي الكلام جوه details مقفول ويفتحه لوحده في Chrome ومتصفحات تانية، بعكس [[display: none]] اللي البحث مبيشوفوش.
 
-~~~text القياس من Chrome (من غير أي CSS)
-<p>     font-family: "Times New Roman"   font-size: 16px      line-height: normal   color: rgb(0, 0, 0)
-<h1>    font-family: "Times New Roman"   font-size: 32px      font-weight: 700
-<code>  font-family: monospace           font-size: 13px
-<button> و <input>   font-family: Arial  font-size: 13.3333px
-<a>     color: rgb(0, 0, 238)
-~~~
+السهم اللي جنب الـ summary هو [[::marker]] (أو [[::-webkit-details-marker]] في Safari القديم). وتقدر تشيله بـ [[list-style: none]] على الـ summary وتحط أيقونة بتلف مع [[details[open] summary]]. وتحريك الفتح والقفل بقى ممكن بـ [[::details-content]] و [[interpolate-size]]، بس لسه مش في كل المتصفحات، فخليه تحسين إضافي.`,
+            when: R`FAQ، و «تفاصيل إضافية»، وفلاتر في sidebar على الموبايل، وأي محتوى بيتفتح ويتقفل وملوش علاقة بباقي الصفحة. ومش لمنيو التنقل ولا الـ dropdowns (بتتقفل لما تدوس برا، و details مبيعملش كده)، ولا للـ tabs.`,
+            mistakes: R`زرار أو لينك جوه الـ summary (عنصر تفاعلي جوه عنصر تفاعلي). تعمل details كمنيو في الـ header وتستغرب إنه مبيتقفلش. تشيل الـ marker ومتحطش أي علامة إنه بيتفتح. و [[<h3>]] جوه الـ summary: مسموح، بس قارئات شاشة كتير بتقراه زرار وخلاص فالعنوان بيضيع من لستة العناوين، فلو العناوين مهمة للتنقل حط الـ h3 قبل الـ details.`
+          },
+          teach: R`## صندوق بيتفتح ويتقفل، والمتصفح عامل كل الشغل
 
-الأرقام دي نقطة البداية: الفقرة 16px، والعنوان الكبير ضعفها، والكود والأزرار ليهم خط وحجم لوحدهم.
+المثال جزء FAQ فيه سؤالين: كل سؤال [[<details>]]، والسطر اللي بتدوس عليه [[<summary>]]، والإجابة هي أي حاجة بعده. مفيش ولا سطر JavaScript، والكيبورد وقارئ الشاشة شغالين لوحدهم. حطينا المثال في صفحة وفتحناها في Chrome 154 (headless، عن طريق playwright)، وكل رقم تحت متقاس منها.
 
 ---
 
-## ١. [[font-family: system-ui, "Segoe UI", Tahoma, sans-serif]]
+## ١. الحاوية: [[<section aria-labelledby="faq-title">]]
 
-[[font-family]] مش اسم خط واحد. دي **قايمة مترتبة**، بيفصل بين كل اسم والتاني فاصلة. المتصفح بيجرّب الأول، ولو مش موجود على الجهاز بيروح للتاني، وهكذا.
+[[<section>]] جزء من الصفحة ليه موضوع واحد. و [[aria-labelledby]] معناها «اسم الجزء ده هو الكلام اللي جوه العنصر اللي الـ id بتاعه كذا»، و [[faq-title]] هو الـ id بتاع الـ [[<h2>]] اللي تحته على طول. فقارئ الشاشة بيعرّف الجزء باسمه، وده اللي طلع في الـ accessibility tree (الشجرة اللي المتصفح بيبعتها لقارئ الشاشة):
 
-~~~live 131 205 نفس الجملة بأربع خطوط من الجهاز
-<style>
-  .a { font-family: "Times New Roman", serif; }
-  .b { font-family: "Segoe UI", sans-serif; }
-  .c { font-family: Tahoma, sans-serif; }
-  .d { font-family: "Courier New", monospace; }
-  p { font-size: 20px; margin: 6px 0; }
-</style>
-<p class="a">الخط بيغيّر إحساس الصفحة كلها Hello 123</p>
-<p class="b">الخط بيغيّر إحساس الصفحة كلها Hello 123</p>
-<p class="c">الخط بيغيّر إحساس الصفحة كلها Hello 123</p>
-<p class="d">الخط بيغيّر إحساس الصفحة كلها Hello 123</p>
+~~~text الـ accessibility tree (أول سطرين)
+region   "أسئلة متكررة"
+heading  "أسئلة متكررة"
 ~~~
 
-**هتشوف إيه:** أربع سطور بنفس الكلام ونفس الحجم. الأول حروفه ليها زوايد صغيرة في أطرافها (Times New Roman)، والتاني والتالت أنضف وأوضح على الشاشة (Segoe UI و Tahoma)، والرابع كل حروفه نفس العرض (Courier New). لو على موبايل أو ماك، بعض الخطوط دي مش موجودة عندك وهيتعرض البديل اللي بعد الفاصلة.
+[[region]] هو الدور اللي [[<section>]] بياخده لما يبقى ليه اسم. من غير اسم بيبقى مجرد صندوق ملوش دور.
 
-قواعد الكتابة:
+## ٢. السؤال الأول: [[<details name="faq" open>]]
 
-- الاسم اللي فيه مسافة أو أرقام بيتحط بين علامتين تنصيص: [["Segoe UI"]] و [["Times New Roman"]].
-- الكلمات العامة ([[serif]] و [[sans-serif]] و [[monospace]] و [[system-ui]]) **من غير** تنصيص. لو كتبت [["sans-serif"]] بالتنصيص، المتصفح هيدوّر على خط اسمه كده ومش هيلاقيه.
-- **آخر اسم في القايمة دايمًا عيلة عامة.** هي اللي بتضمن إن فيه خط هيتعرض مهما كان الجهاز.
+فيه حاجتين جديدين:
 
-### العيلات العامة (generic families)
-
-دي مش خطوط. دي «أنواع»، والمتصفح بيختار خط من النوع ده موجود على الجهاز.
-
-| العيلة | معناها | Chrome على Windows اختار إيه (صفحة عربي) |
-|---|---|---|
-| [[serif]] | حروف ليها زوايد في أطرافها، شكل الكتب والجرايد | Times New Roman |
-| [[sans-serif]] | من غير زوايد، أوضح على الشاشة | Segoe UI |
-| [[monospace]] | كل الحروف نفس العرض، للكود | Courier New |
-| [[system-ui]] | خط واجهة النظام نفسه (القوايم والإعدادات) | Segoe UI |
-| [[cursive]] | شكل خط الإيد | خط زخرفي للاتيني، والعربي بخط تاني |
-| [[fantasy]] | خطوط زينة للعناوين | خط زينة للاتيني، والعربي بخط تاني |
-| [[math]] | لرموز الرياضيات | Cambria Math |
-| [[ui-serif]] و [[ui-sans-serif]] و [[ui-monospace]] و [[ui-rounded]] | خطوط واجهة النظام بأنواعها | **ولا حاجة**: اتعاملوا كخط مش موجود، والمتصفح كمّل للاسم اللي بعدهم |
-
-السطر الأخير اتقاس كده: [[font-family: ui-rounded, monospace]] اتعرض بخط الـ monospace، يعني [[ui-rounded]] متعرّفش عليه. MDN بيقول إن الأربعة دول شغالين في Safari بس، فمتعتمدش عليهم لوحدهم.
-
-والاختيار ده بيتغيّر مع لغة الصفحة: [[sans-serif]] في صفحة [[lang="ar"]] على Windows بيطلع Segoe UI، وفي صفحة إنجليزي بيطلع Arial. عشان كده [[lang]] مهم (درس «lang و dir»).
-
----
-
-## ٢. المتصفح بيختار الخط **لكل حرف**
-
-دي أهم حتة في الدرس للي بيكتب عربي. القايمة مش «أول خط موجود وخلاص». المتصفح بيمشي على القايمة **لكل حرف لوحده**: لو الخط الأول مفيهوش الحرف ده، بياخده من اللي بعده.
-
-~~~live 122 Georgia مفيهوش حروف عربي
-<style>
-  .g { font-family: Georgia, serif; font-size: 22px; }
-  .s { font-family: Georgia, "Segoe UI", sans-serif; font-size: 22px; }
-</style>
-<p class="g">أهلًا Hello بكم Welcome</p>
-<p class="s">أهلًا Hello بكم Welcome</p>
-~~~
-
-**هتشوف إيه:** في السطرين الكلام الإنجليزي بنفس الخط (Georgia). الكلام العربي مختلف: في السطر الأول بخط Times New Roman (جاي من [[serif]])، وفي التاني بخط Segoe UI. خط واحد في الـ CSS، وخطين على الشاشة.
-
-~~~text القياس من Chrome (عرض الجملة «السلام Hamburg» بحجم 100px)
-font-family: Georgia                 637.8px
-font-family: Georgia, serif          637.8px     (العربي جاي من serif في الحالتين)
-font-family: Georgia, monospace      749.6px     (العربي بقى من monospace فالعرض اتغيّر)
-getComputedStyle(p).fontFamily   →   Georgia, serif      (القايمة زي ما كتبتها، مش الخط اللي اترسم)
-~~~
-
-الرقم الأخير فخ: [[getComputedStyle]] بيرجّع **القايمة اللي كتبتها**، مش الخط اللي اتعرض فعلًا. عشان تعرف الخط الحقيقي: DevTools، ثم Elements، ثم تبويب Computed، وانزل لآخره عند **Rendered Fonts**: هتلاقي اسم كل خط اترسم بيه وعدد الحروف.
-
-النتيجة العملية: لما تختار خط إنجليزي حلو وتحطه أول القايمة، الكلام العربي هيروح للخط اللي بعده. فلازم يبقى في القايمة خط **فيه عربي** إنت اللي اخترته، مش تسيبها للصدفة.
-
----
-
-## ٣. خطوط النظام للعربي
-
-مفيش خط عربي واحد موجود على كل الأجهزة. اللي بيتعمل: قايمة فيها خط لكل نظام.
-
-| النظام | خطوط فيها عربي (موجودة من غير تحميل) |
+| الـ attribute | معناه |
 |---|---|
-| Windows | Segoe UI و Tahoma و Arial و Times New Roman (اتأكدنا إنهم موجودين وبيرسموا عربي على Windows 11) |
-| macOS و iOS | خط النظام [[system-ui]] فيه عربي (SF Arabic)، وقبله Geeza Pro (من وثائق Apple، متقاسش هنا) |
-| Android | Noto Naskh Arabic أو Noto Sans Arabic حسب الجهاز (من وثائق Android، متقاسش هنا) |
+| [[open]] | الصندوق مفتوح من أول ما الصفحة تحمّل. ملوش قيمة: وجوده بس معناه «مفتوح» (boolean attribute) |
+| [[name="faq"]] | أي [[<details>]] ليهم نفس الـ name بقوا مجموعة: واحد بس يتفتح في نفس الوقت (accordion حصري) |
 
-والقايمة اللي بتشتغل على الكل:
+قبل أي ضغطة سألنا المتصفح عن [[open]] بتاع الاتنين:
 
-~~~css
-body {
-  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
-}
+~~~text الناتج
+[ true, false ]
 ~~~
 
-- [[system-ui]]: على كل نظام بيدّيك خط الواجهة بتاعه، وده دايمًا فيه عربي كويس لأن النظام نفسه بيتعرض بيه.
-- [["Segoe UI"]] و [[Tahoma]]: للمتصفح القديم على Windows اللي ميعرفش [[system-ui]].
-- [[sans-serif]]: شبكة الأمان.
+الأول مفتوح (عشان [[open]]) والتاني مقفول.
 
-دي «خطوط الجهاز»: صفر تحميل، وبتظهر فورًا. لو عايز خط معين شكله واحد عند كل الناس (Cairo مثلًا)، لازم تحمّله مع الصفحة: درس «@font-face و font-display» في نفس الوحدة.
+## ٣. [[<summary>]]: الجزء اللي بيتداس عليه
 
-**اسم خط مش موجود مبيعملش خطأ.** المتصفح بيعدّيه في صمت:
+[[<summary>]] لازم يبقى **أول ابن** للـ [[<details>]]، وهو الحاجة الوحيدة اللي بتفضل باينة والصندوق مقفول. المتصفح بيدّيه ٣ حاجات ببلاش:
 
-~~~text القياس من Chrome
-font-family: Cairo, sans-serif     →  اتعرض بـ Segoe UI   (Cairo مش متسطّب على الجهاز)
-font-family: Cairo                 →  اتعرض بـ Times New Roman   (مفيش بديل، فرجع للافتراضي)
-~~~
+1. **focus بالكيبورد**: دوسنا Tab مرتين، والـ focus وقف على الـ summary الأول وبعدين التاني، من غير [[tabindex]].
+2. **فتح وقفل بـ Enter و Space**، زي أي زرار.
+3. **حالة لقارئ الشاشة**: في الـ accessibility tree بتاع Chrome الـ summary دوره [[DisclosureTriangle]] (يعني «زرار بيفتح ويقفل حاجة»)، ومعاه [[expanded=true]] أو [[false]]، فقارئ الشاشة بيقول «expanded» أو «collapsed» من غير ما تكتب [[aria-expanded]].
 
-يعني لو كتبت [[font-family: Cairo]] على جهازك والخط متسطّب عندك، هتشوفه. والزائر اللي معندوش الخط هيشوف Times New Roman. ده أشهر سبب لـ «الموقع شكله مختلف عند العميل».
+## ٤. [[<p>]] الإجابة و [[</details>]]
 
----
+الإجابة أي حاجة بعد الـ summary. لما الصندوق مقفول المتصفح مش بيرسمها: سألناه [[checkVisibility()]] على إجابة السؤال التاني (المقفول) فرجّع [[false]].
 
-## ٤. [[font-size: 18px]]
+## ٥. السؤال التاني: [[<details name="faq">]]
 
-حجم الخط. القيمة بتتكتب بكذا شكل:
+نفس الـ name، ومن غير [[open]]. ده اللي جرّبناه بالكيبورد، والـ focus على الـ summary التاني:
 
-| القيمة | معناها | اتحسبت كام (والأب 16px) |
-|---|---|---|
-| [[font-size: 18px]] | بيكسل ثابت | 18px |
-| [[font-size: 1.5em]] | مرة ونص حجم خط **الأب** | 24px |
-| [[font-size: 120%]] | نسبة من حجم خط الأب (زي [[em]] بالظبط) | 19.2px |
-| [[font-size: 2rem]] | ضعف حجم خط [[<html>]] | 32px |
-| [[font-size: large]] | كلمة من سلّم جاهز | 18px |
-| [[font-size: larger]] | درجة أكبر من الأب | 19.2px |
-
-والسلّم الجاهز بالترتيب:
-
-~~~text القياس من Chrome (والحجم الأساسي 16px)
-xx-small 9px     x-small 10px    small 13px     medium 16px
-large 18px       x-large 24px    xx-large 32px  xxx-large 48px
-smaller 13.3333px                larger 19.2px
-~~~
-
-[[em]] و [[rem]] ليهم درس كامل («rem و em» في الوحدة الجاية). اللي محتاجه دلوقتي حاجتين:
-
-**الأولى: [[em]] بتتضرب في بعضها.** [[em]] نسبة من الأب، فلو عنصر جوه عنصر جوه عنصر وكلهم [[1.2em]]:
-
-~~~live 97 تلات مرات 1.2em جوه بعض
-<style>
-  .box { font-size: 1.2em; border-inline-start: 3px solid silver; padding-inline-start: 8px; }
-</style>
-<div class="box">المستوى الأول
-  <div class="box">المستوى التاني
-    <div class="box">المستوى التالت</div>
-  </div>
-</div>
-~~~
-
-**هتشوف إيه:** كل مستوى خطه أكبر من اللي فوقه، مع إن القاعدة واحدة. الخط الرمادي على الجنب بيبيّن إن كل صندوق جوه اللي قبله.
-
-~~~text القياس من Chrome
-المستوى الأول   19.2px      (16 × 1.2)
-المستوى التاني  23.04px     (19.2 × 1.2)
-المستوى التالت  27.648px    (23.04 × 1.2)
-~~~
-
-**التانية: الحجم بالبيكسل على [[body]] بيتجاهل إعداد المستخدم.** اللي مكبّر خط المتصفح من الإعدادات (ضعاف النظر كتير) مش هيتأثر بيه موقعك لو كاتب [[font-size: 18px]]. البديل [[font-size: 1.125rem]] أو [[112.5%]]، وشرحه في درس «rem و em». في الوحدة دي بنكتب px عشان الأرقام تبقى واضحة.
-
-**الحرف العربي والحجم:** في نفس الـ [[font-size]]، الحروف العربي بتبان أصغر من اللاتيني في أغلب الخطوط، لأن جزء كبير من ارتفاع الحرف رايح للنقط والتشكيل. 16px مقبولة للإنجليزي وصغيرة شوية على العربي. فقرة المقال العربي بتستريح من 17 لـ 20.
-
----
-
-## ٥. [[line-height: 1.8]]
-
-ارتفاع السطر: المسافة من أول السطر لأول السطر اللي بعده. القيمة الافتراضية [[normal]]، ومعناها «اللي مصمم الخط حاطه جوه ملف الخط»، فبتختلف من خط لخط:
-
-~~~text القياس من Chrome (ارتفاع سطر واحد ÷ حجم الخط)
-Times New Roman   1.15        Arial              1.15
-Tahoma            1.21        Segoe UI           1.33
-Sakkal Majalla    1.39        Traditional Arabic 1.49
-Simplified Arabic 1.66        Dubai              1.69
-~~~
-
-يعني لو غيّرت الخط بس، ارتفاع الصفحة كلها بيتغيّر. لما تكتب [[line-height]] بنفسك الرقم بيثبت مهما كان الخط.
-
-~~~live 206 257 نفس الفقرة: normal ثم 1.8
-<style>
-  p { font-family: Tahoma, sans-serif; font-size: 17px; max-width: 420px; }
-  .tight { line-height: normal; }
-  .open { line-height: 1.8; }
-</style>
-<p class="tight">الفقرة دي سطورها لازقة في بعض. النقط اللي تحت الحروف في سطر بتقرّب من التشكيل اللي فوق الحروف في السطر اللي تحته، والعين بتتوه وهي بترجع لأول السطر الجديد.</p>
-<p class="open">الفقرة دي سطورها واخدة راحتها. النقط اللي تحت الحروف في سطر بعيدة عن التشكيل اللي فوق الحروف في السطر اللي تحته، والعين بتلاقي أول السطر الجديد بسهولة.</p>
-~~~
-
-**هتشوف إيه:** فقرتين بنفس الخط والحجم. الأولى مزحومة، والتانية بين سطورها فراغ واضح وأسهل في القراية. الفرق كله في [[line-height]].
-
-العربي محتاج مسافة أكبر من الإنجليزي: فيه نقط تحت السطر وتشكيل فوقه. الإنجليزي بيستريح عند 1.5، والعربي من 1.7 لـ 1.9. والعناوين الكبيرة أقل (1.2 لـ 1.4).
-
-### الرقم من غير وحدة
-
-[[line-height]] بتتكتب بتلات طرق، وواحدة بس فيهم آمنة:
-
-~~~text القياس من Chrome (الأب 16px، وجواه عنوان 32px)
-line-height على الأب    المحسوبة للأب    المحسوبة للعنوان    ارتفاع سطر العنوان
-1.5                     24px             48px                48px     ← صح: 32 × 1.5
-150%                    24px             24px                24px     ← العنوان 32px في سطر 24px
-1.5em                   24px             24px                24px
-24px                    24px             24px                24px
-~~~
-
-- **رقم من غير وحدة** ([[1.5]]): بيتورّث **الرقم**، وكل عنصر بيضربه في حجم خطه هو.
-- **بوحدة أو نسبة** ([[150%]] أو [[1.5em]] أو [[24px]]): بتتحسب مرة عند الأب، وبيتورّث **الناتج** (24px) ثابت. العنوان اللي خطه 32px هياخد سطر 24px، ولو لفّ على سطرين هيركبوا على بعض.
-
-~~~live 176 عنوان على سطرين: الأب line-height: 24px ثم 1.5
-<style>
-  .bad { line-height: 24px; }
-  .good { line-height: 1.5; }
-  h2 { font-size: 32px; margin: 0 0 12px; max-width: 300px; background: #fef3c7; }
-</style>
-<div class="bad"><h2>عنوان طويل بيلف على سطرين</h2></div>
-<div class="good"><h2>عنوان طويل بيلف على سطرين</h2></div>
-~~~
-
-**هتشوف إيه:** العنوان الأول سطرينه داخلين في بعض والحروف طالعة برّه الخلفية الصفرا. التاني كل سطر واخد مكانه. الفرق: [[24px]] اتورّثت زي ما هي، و [[1.5]] اتحسبت من حجم خط العنوان.
-
----
-
-## ٦. [[color: #1f2937]]
-
-[[color]] هي **لون الكلام**. (اسمها مش text-color.) وبتلوّن معاه كل حاجة «تبع الكلام»: الخط اللي تحته، وعلامة القايمة، والـ border اللي ملوش لون مكتوب.
-
-~~~live 120 color بتلوّن الكلام واللي تبعه
-<style>
-  .note { color: #b45309; border: 2px solid; padding: 8px; }
-  .note u { font-weight: 700; }
-</style>
-<div class="note">
-  <p>تنبيه: <u>الحجز بيقفل</u> يوم الخميس.</p>
-  <ul><li>بند في قايمة</li></ul>
-</div>
-~~~
-
-**هتشوف إيه:** الكلام بني، والخط اللي تحت «الحجز بيقفل» بني، ونقطة القايمة بنية، والإطار بني. مكتوب لون واحد بس: [[color]] على الصندوق.
-
-~~~text القياس من Chrome
-div   { color: #1f2937; border: 2px solid; }
-  div      color: rgb(31, 41, 55)      border-color: rgb(31, 41, 55)
-  p جواه   color: rgb(31, 41, 55)      (اتورّث)
-  a جواه   color: rgb(0, 0, 238)       (اللينك ليه لونه، مبيورثش)
-  button   color: rgb(0, 0, 0)         (الزرار كمان)
-~~~
-
-القيمة بتتكتب بأشكال كتير، وكلها بتتحسب لـ [[rgb()]]:
-
-| المكتوب | المحسوب |
+| الضغطة | [[open]] للاتنين |
 |---|---|
-| [[color: red]] | بتتحسب [[rgb(255, 0, 0)]]: أحمر صريح |
-| [[color: #c00]] و [[color: #cc0000]] | الاتنين بيتحسبوا [[rgb(204, 0, 0)]]: التلات حروف اختصار للستة |
-| [[color: rgb(204 0 0)]] | نفس اللون [[rgb(204, 0, 0)]] مكتوب بالدالة |
-| [[color: #1f293780]] (آخر رقمين شفافية) | بتتحسب [[rgba(31, 41, 55, 0.5)]]: نص شفاف |
+| البداية | [[true, false]] |
+| Enter | [[false, true]] |
+| Space | [[false, false]] |
+| Space تاني | [[false, true]] |
 
-دوال الألوان التانية ([[hsl()]] و [[oklch()]]) ليها وحدة لوحدها. هنا يكفي الاسم والـ hex (اتشرح في «مقدمة CSS وتنسيق العناصر»).
+أول Enter فتح التاني **وقفل الأول لوحده**، وده شغل [[name="faq"]]. ولما شلنا الـ name من الاتنين وفتحناهم، الاتنين فضلوا مفتوحين: [[true, true]].
 
-والكلمة [[currentColor]] معناها «نفس قيمة [[color]] بتاعة العنصر»: [[border: 2px solid currentColor]]. وهي الافتراضي للـ border وللخط اللي تحت الكلام، وعشان كده اتلوّنوا فوق من غير ما نكتبها.
+> المتصفح القديم اللي مش فاهم [[name]] بيتجاهله، فكل سؤال بيتفتح لوحده. مفيش حاجة بتبوظ.
 
-**اللون والقراية:** رمادي فاتح على أبيض شكله «شيك» ومحدش بيعرف يقراه في الشمس. الفرق بين لون الكلام ولون الخلفية ليه رقم بيتقاس وحد أدنى (4.5 للنص العادي)، وده درس «contrast ratio». قاعدة سريعة: كلام الفقرة يبقى غامق قوي ([[#1f2937]] أو [[#222]])، مش [[#999]].
-
----
-
-## ٧. الأزرار والحقول: [[font: inherit]]
-
-~~~live 146 الزرار مبياخدش خط الصفحة
-<style>
-  body { font-family: Tahoma, sans-serif; font-size: 18px; }
-  .fixed { font: inherit; }
-</style>
-<p>كلام الصفحة 18px</p>
-<p><button>زرار عادي</button> <input value="حقل عادي" size="8"></p>
-<p><button class="fixed">زرار بـ inherit</button> <input class="fixed" value="حقل بـ inherit" size="12"></p>
-~~~
-
-**هتشوف إيه:** الزرار والحقل في الصف الأول خطهم أصغر وشكله مختلف عن كلام الصفحة. في الصف التاني بقوا بنفس الخط والحجم.
-
-~~~text القياس من Chrome (الأب 18px Tahoma)
-<button>                    font-size: 13.3333px     font-family: Arial
-<input>                     font-size: 13.3333px     font-family: Arial
-<textarea>                  font-size: 13.3333px     font-family: monospace
-<button style="font: inherit">   font-size: 18px     font-family: Tahoma
-~~~
-
-المتصفح حاطط للأزرار والحقول خط وحجم في الـ stylesheet بتاعه، فبيغلبوا الوراثة. [[font: inherit]] بتقول «خد كل خصائص الخط من أبوك». ([[font]] خاصية مختصرة بتجمع الخط والحجم والوزن، وشرحها في الدرس الجاي.)
-
-وحقل أصغر من 16px ليه مشكلة تانية على iPhone: Safari بيعمل zoom للصفحة لما تدوس على حقل خطه أقل من 16px (من وثائق Apple، متقاسش هنا). [[font: inherit]] مع خط صفحة 16px أو أكتر بيحلها.
+ولما الحالة بتتغير، الـ details بيبعت حدث اسمه [[toggle]]. قفلنا الأول من الكود والحدث وصل بـ [[open->closed]] (الحالة القديمة والجديدة)، فلو عايز تحفظ أنهي سؤال مفتوح، ده مكانه.
 
 ---
 
-## ٨. الغلطات اللي بتحصل فعلًا
+## ٦. الـ CSS سطر سطر
 
-| الغلطة | اللي بيحصل |
+### [[details { border-block-end: 1px solid var(--color-border); padding-block: 0.75rem; }]]
+
+- [[border-block-end]]: خط في **آخر** الصندوق في اتجاه الكتابة الرأسي، يعني تحت. ده logical property: بيتبع اتجاه الكتابة بدل ما تقول [[bottom]].
+- [[var(--color-border)]]: لون جاي من CSS variable اسمه [[--color-border]] متعرّف في مكان تاني (في التجربة عرّفناه [[#ccc]]).
+- [[padding-block: 0.75rem]]: مسافة فوق وتحت. [[rem]] مضروبة في خط الـ html (16px)، فطلعت:
+
+~~~text getComputedStyle على أول details
+border-bottom: 1px solid rgb(204, 204, 204)
+padding-top: 12px   padding-bottom: 12px
+~~~
+
+### [[summary { cursor: pointer; font-weight: 600; }]]
+
+[[cursor: pointer]] الماوس يبقى إيد فالمستخدم يعرف إنه بيتداس. و [[font-weight: 600]] تخانة الخط (400 عادي و 700 bold)، فالسؤال يبان أتقل من الإجابة.
+
+### [[details[open] > summary { ... }]]
+
+نفكّ الـ selector:
+
+| الحتة | معناها |
 |---|---|
-| [[font-family: Cairo]] من غير بدايل والخط مش محمّل | عندك شغال (الخط متسطّب)، وعند الزائر Times New Roman |
-| [[font-family: "sans-serif"]] بالتنصيص | المتصفح بيدوّر على خط اسمه كده، ومش بيلاقيه |
-| [[font-family: Segoe UI, Tahoma]] من غير تنصيص | بيشتغل غالبًا، بس اسم فيه رقم أو رمز هيبوّظ السطر كله. التنصيص أضمن |
-| خط إنجليزي أول القايمة ومفيش خط عربي بعده | العربي بياخد خط عشوائي من الجهاز |
-| [[line-height: 24px]] على [[body]] | العناوين الكبيرة سطورها بتركب على بعض |
-| [[font-size: 12px]] لكلام الفقرة | صغير على العربي، ومتعب على الموبايل |
-| [[em]] على عناصر جوه بعض | الحجم بيتضرب في نفسه مع كل مستوى |
-| نسيان الأزرار والحقول | الصفحة بخط والفورم بخط تاني أصغر |
-| [[color: #aaa]] للفقرة | مش مقروء، وبيقع في فحص الـ contrast |
+| [[details]] | أي عنصر details |
+| [[[open]]] | ... بس اللي عليه attribute اسمه open، يعني المفتوح دلوقتي |
+| [[>]] | ابن **مباشر** |
+| [[summary]] | الـ summary بتاعه |
+
+يعني «السؤال بتاع الصندوق المفتوح بس». ولأن المتصفح بيحط ويشيل [[open]] مع كل ضغطة، الشكل بيتغير لوحده. والقيم:
+
+~~~text getComputedStyle وأول سؤال مفتوح
+summary 1 (مفتوح):  color: rgb(37, 99, 235)   margin-block-end: 8px
+summary 2 (مقفول):  color: rgb(0, 0, 0)
+~~~
+
+[[0.5rem]] بقت [[8px]]، واللون جه من [[--color-brand]] (عرّفناه أزرق في التجربة).
+
+---
+
+## ٧. السهم اللي جنب السؤال
+
+الـ summary الـ [[display]] بتاعه طلع [[list-item]]، وعشان كده ليه علامة زي بنود القوايم، وهي السهم. اسمها [[::marker]]. لو عايز تغيّرها: [[summary { list-style: none; }]] وحط أيقونة بنفسك بتلف مع [[details[open]]]. ولو شلتها حط علامة تانية، وإلا المستخدم مش هيعرف إنه بيتفتح.
+
+وتحريك الفتح والقفل: Chrome 154 رجّع [[true]] لـ [[CSS.supports('selector(::details-content)')]] و [[CSS.supports('interpolate-size', 'allow-keywords')]]، بس دول لسه مش في كل المتصفحات، فخليهم تحسين إضافي.
+
+> البحث بـ Ctrl+F جوه إجابة مقفولة (المتصفح بيفتح الـ details لوحده) مقدرناش نجرّبه في headless، والكلام عنه من الـ docs بتاعة Chrome.
 
 ---
 
 ## الخلاصة
 
-- [[font-family]] قايمة، والمتصفح بيختار منها **لكل حرف**. آخرها عيلة عامة، وفيها خط عربي إنت اللي اخترته.
-- للعربي من غير تحميل: [[system-ui, "Segoe UI", Tahoma, sans-serif]].
-- [[font-size]]: الفقرة العربي من 17 لـ 20px. و [[em]] نسبة من الأب وبتتضرب.
-- [[line-height]] رقم من غير وحدة: 1.7 لـ 1.9 للفقرة العربي، و 1.2 لـ 1.4 للعناوين.
-- [[color]] لون الكلام واللي تبعه، وبتتورّث إلا للينكات والأزرار.
-- الأزرار والحقول: [[font: inherit]].`,
-          try: R`اعمل ملف [[type.html]] فيه عنوان [[<h1>]] وفقرتين عربي طوال شوية وزرار. من غير CSS افتحه وشوف شكله. وبعدين زوّد [[<style>]] فيه قاعدة واحدة على [[body]]: خطوط النظام، وحجم 18px، و [[line-height: 1.8]]، ولون [[#1f2937]]، وقاعدة تخلّي الزرار ياخد خط الصفحة. افتح DevTools وشوف في Computed حجم خط الفقرة وارتفاع السطر.`,
-          sol: R`~~~live 325 487 type.html
+| الحاجة | بتعمل إيه |
+|---|---|
+| [[<details>]] | الصندوق كله |
+| [[<summary>]] | أول ابن: السؤال، بياخد focus، و Enter و Space بيفتحوه |
+| [[open]] | مفتوح دلوقتي (بتحطه للبداية، والمتصفح بيغيّره) |
+| [[name]] | نفس الاسم = واحد بس مفتوح |
+| [[details[open] > summary]] | شكل السؤال وهو مفتوح |
+| حدث [[toggle]] | لو محتاج تعرف من الكود |
+
+- مش محتاج [[aria-expanded]] ولا JavaScript: المتصفح بيعمل الاتنين.
+- متحطش زرار أو لينك جوه الـ summary، ومتستخدموش لمنيو بيتقفل لما تدوس برا.`,
+          lines: [
+            "الجزء كله ليه اسم من العنوان.",
+            R`عنوان القسم، و [[id]] بتاعه هو اللي [[aria-labelledby]] بيشاور عليه.`,
+            R`سؤال مفتوح من الأول، و [[name="faq"]] بيربطه بالباقي.`,
+            "الجزء اللي بيتداس عليه، وبياخد focus لوحده.",
+            "الإجابة: بتبان بس وهو مفتوح.",
+            R`قفلة أول سؤال؛ أي حاجة جوه [[details]] بعد الـ summary هي الإجابة.`,
+            "سؤال تاني بنفس الـ name: فتحه بيقفل الأول.",
+            R`نص السؤال التاني، وقارئ الشاشة بيقوله ومعاه «collapsed».`,
+            R`إجابة السؤال التاني: مخفية لحد ما يتفتح، بس البحث في الصفحة بيلاقيها.`,
+            R`قفلة السؤال التاني؛ ممكن تزوّد أسئلة بنفس الـ name من غير أي كود.`,
+            R`قفلة الـ section اللي اسمه جاي من العنوان، فقارئ الشاشة بيعدّه region.`,
+            "خط بين الأسئلة ومسافة.",
+            R`السؤال شكله بيتداس: الماوس بيبقى إيد، والخط أتقل من الإجابة.`,
+            "السؤال المفتوح بلون البراند ومسافة تحته."
+          ],
+          sol: R`بالكيبورد: Tab بيقف على كل summary، و Enter أو Space بيفتحوا ويقفلوا، وقارئ الشاشة بيقول «التوصيل بياخد قد إيه؟، button، expanded».
+
+مع [[name="faq"]]: فتح السؤال التاني قفل الأول لوحده. من غير name: الاتنين يفضلوا مفتوحين.
+
+Ctrl+F على كلمة في إجابة مقفولة: في Chrome و Edge الـ details بيتفتح لوحده ويظلل الكلمة. لو متصفحك مبيعملش كده، دي ميزة لسه بتتنشر، والباقي شغال عادي.`
+        },
+        {
+          cmd: "roving tabindex",
+          ref: [
+            { t: "WAI-ARIA APG: roving tabindex", url: "https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_roving_tabindex" },
+            { t: "WHATWG: tabindex attribute", url: "https://html.spec.whatwg.org/multipage/interaction.html#attr-tabindex" },
+            { t: "WHATWG: step attribute", url: "https://html.spec.whatwg.org/multipage/input.html#attr-input-step" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
+          title: "tabs بتتحرك بالأسهم زي البرامج الحقيقية",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٤ tabs في صفحة RTL، والـ focus على الأول (اللي على اليمين خالص). دوست سهم شمال: هيروح فين؟ وسهم يمين؟ و End؟`, done: R`سهم شمال = التاني (اللي بعده في القراية)، وسهم يمين = الرابع (لف من الأول للآخر)، و End = الرابع. وكل مرة المحتوى اتغير و [[aria-selected]] اتنقل. واتأكدت بالكيبورد.`,
+              sol: R`~~~live 130 130 tabs-rtl.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تجربة الخط</title>
-<style>
-  body {
-    font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
-    font-size: 18px;
-    line-height: 1.8;
-    color: #1f2937;
-  }
-  button { font: inherit; }
-</style>
-</head>
+<head><meta charset="utf-8"><title>tabs RTL</title></head>
 <body>
-<h1>ليه بنحب القهوة الصبح؟</h1>
-<p>أول كوباية في اليوم ليها طعم مختلف. الريحة بتملا المطبخ قبل ما المية تغلي، والدنيا لسه هادية والشارع فاضي.</p>
-<p>ناس كتير بتقول إنها مبتعرفش تبدأ شغل من غيرها، والحقيقة إن نص الموضوع عادة والنص التاني طقس صغير بيقول للدماغ إن اليوم بدأ.</p>
-<button>اقرا المقال اللي بعده</button>
-</body>
-</html>
+  <main><h1>الحساب</h1>
+    <div role="tablist" aria-label="أقسام الحساب" id="list">
+      <button role="tab" id="t1" aria-controls="p1" aria-selected="true">البيانات</button>
+      <button role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">الطلبات</button>
+      <button role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">العناوين</button>
+      <button role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1">الأمان</button>
+    </div>
+    <section role="tabpanel" id="p1" aria-labelledby="t1" tabindex="0">بيانات</section>
+    <section role="tabpanel" id="p2" aria-labelledby="t2" tabindex="0" hidden>طلبات</section>
+    <section role="tabpanel" id="p3" aria-labelledby="t3" tabindex="0" hidden>عناوين</section>
+    <section role="tabpanel" id="p4" aria-labelledby="t4" tabindex="0" hidden>أمان</section>
+  </main>
+  <script>
+    const list = document.getElementById("list");
+    const tabs = [...list.querySelectorAll("[role=tab]")];
+    function select(tab) {
+      for (const t of tabs) {
+        const on = t === tab;
+        t.setAttribute("aria-selected", on);
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      }
+      tab.focus();
+    }
+    list.addEventListener("keydown", e => {
+      const i = tabs.indexOf(document.activeElement);
+      const rtl = getComputedStyle(list).direction === "rtl";
+      const next = rtl ? "ArrowLeft" : "ArrowRight";
+      const prev = rtl ? "ArrowRight" : "ArrowLeft";
+      let to = null;
+      if (e.key === next) to = (i + 1) % tabs.length;
+      if (e.key === prev) to = (i - 1 + tabs.length) % tabs.length;
+      if (e.key === "Home") to = 0;
+      if (e.key === "End") to = tabs.length - 1;
+      if (to === null) return;
+      e.preventDefault();
+      select(tabs[to]);
+    });
+    tabs.forEach(t => t.addEventListener("click", () => select(t)));
+  $__lt/script>
+</body></html>
 ~~~
 
-**هتشوف إيه:**
+في RTL أول tab على اليمين، و «اللي بعده في القراية» على شماله. فسهم شمال = التالي، وسهم يمين = السابق:
 
-- الكلام كله بقى بخط واجهة النظام (على Windows: Segoe UI) بدل Times New Roman.
-- الفقرتين سطورهم بعيدة عن بعض ومريحة.
-- الزرار خطه بنفس حجم وشكل الفقرة.
+- سهم شمال من الأول: التاني.
+- سهم يمين من الأول: مفيش قبله، فبيلف للرابع. [[(i - 1 + tabs.length) % tabs.length]] هي اللي بتعمل اللفة، و [[+ tabs.length]] عشان [[-1 % 4]] في JavaScript بيطلع [[-1]] مش [[3]].
+- End: آخر واحد، أي الرابع، مش مرتبط بالاتجاه.
 
-~~~text القياس من Chrome
-p        font-size: 18px     line-height: 32.4px     color: rgb(31, 41, 55)
-h1       font-size: 36px     line-height: 64.8px     (2em من 18، والسطر 36 × 1.8)
-button   font-size: 18px     font-family: system-ui, "Segoe UI", Tahoma, sans-serif
+[[getComputedStyle(list).direction]] بيقرا الاتجاه الحقيقي، فالكود نفسه يشتغل في صفحة إنجليزي من غير تغيير. و [[tabIndex = on ? 0 : -1]] هو الـ roving نفسه: وقفة Tab واحدة على المختار.
+
+الغلطة الشائعة: تربط سهم يمين بالتالي دايمًا، فالعربي يتعكس.
+
+~~~text الناتج (Chrome 156، كل مرة من t1)
+سهم شمال ← الطلبات و aria-selected = true، واللوحة الظاهرة p2
+سهم يمين ← الأمان (لف من الأول للآخر)
+End       ← الأمان
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كل الـ tabs عليها [[tabindex="0"]]، فـ Tab بيعدّي على الـ ٦ tabs قبل ما يوصل للمحتوى. وواحد فيهم [[aria-controls]] بتاعه بيشاور على id مش موجود، فالاختيار بيوقع بـ «Cannot set properties of null (setting 'hidden')».`, done: R`Tab بيوقف مرة واحدة على الـ tab المختار وبعده على طول المحتوى، وكل [[aria-controls]] ليه لوحة موجودة، ومفيش errors في الكونسول.`,
+              sol: R`~~~live 120 120 السطور اللي اتغيرت
+<!-- كان كل tab من غير tabindex، و t3 بيشاور على p9 -->
+<button role="tab" id="t1" aria-controls="p1" aria-selected="true">البيانات</button>
+<button role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">الطلبات</button>
+<button role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">العناوين</button>
+<!-- ... -->
+<section role="tabpanel" id="p3" aria-labelledby="t3" tabindex="0" hidden>عناوين</section>
 ~~~
 
-- [[32.4px]] هي [[18 × 1.8]]. الـ Computed بيعرض الناتج بالبيكسل، مش الرقم اللي كتبته.
-- العنوان خد [[line-height]] 64.8px لأن الرقم 1.8 اتورّث واتضرب في 36. ده كتير على عنوان، وعشان كده بنكتب للعناوين [[line-height: 1.3]] لوحدهم.
+~~~js فحص يتحط في الكود وقت التطوير
+for (const t of document.querySelectorAll("[role=tab]")) {
+  const id = t.getAttribute("aria-controls");
+  if (!document.getElementById(id)) console.error("tab من غير لوحة:", t.id, "->", id);
+}
+~~~
 
-**الغلطة الشائعة:** تكتب القاعدة على [[p]] بدل [[body]]. الفقرات هتتظبط، والقوايم والجداول والعناوين هيفضلوا بالخط الافتراضي.`,
+المشكلتين مختلفين:
+
+- الـ [[tabindex="0"]] على الكل (أو الـ buttons من غير tabindex، لأنها focusable أصلًا) بيخلي كل tab وقفة في Tab. الـ tablist لازم وقفة واحدة: [[tabindex="-1"]] على غير المختار، والأسهم هي اللي بتتحرك جوه. الكود في [[select()]] لازم يبدّل الـ tabindex كل مرة.
+- [[Cannot set properties of null (setting 'hidden')]] معناها إن [[getElementById]] رجّعت [[null]]، أي اللوحة مش موجودة: الـ [[id]] في [[aria-controls]] غلط. الفحص ده بيقولك على أي واحد بالاسم بدل ما تدوّر.
+
+الغلطة الشائعة: تتجنب الـ error بـ [[?.hidden]] فيسكت الكونسول، والـ tab يفضل شغال من غير لوحة. صلّح الرابط نفسه.
+
+~~~text الناتج (Chrome 156، صفحة ٦ tabs)
+قبل التصليح: عدد ضغطات Tab من الـ h1 لحد اللوحة = 7، و errors عند اختيار t3 = 1
+             "Cannot set properties of null (setting 'hidden')"
+بعد التصليح: عدد ضغطات Tab من الـ h1 لحد اللوحة = 2، و errors = 0
+~~~` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بـ Playwright في صفحة RTL: Tab بيدخل على الـ tab المختار، وسهم شمال بيختار التاني ولوحته بتبان واللوحة القديمة [[hidden]]، و Tab تاني بيروح للوحة مش للـ tab اللي بعده.`, done: R`الاختبار بيعدّي، ولو رجّعت كل الـ tabs [[tabindex="0"]] بيقع على آخر خطوة، ولو شلت حساب الـ [[rtl]] بيقع على السهم.`,
+              sol: R`~~~js tabs.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { chromium } from "playwright-core";
+
+const FILE = new URL("./tabs-rtl.html", import.meta.url).href;
+
+test("التنقل بالكيبورد في tabs عربي", async t => {
+  const browser = await chromium.launch({ channel: "chrome" });
+  t.after(() => browser.close());      // بيتقفل حتى لو assert وقع
+  const page = await browser.newPage();
+  await page.goto(FILE);
+  const active = () => page.evaluate(() => document.activeElement.id);
+
+  await page.keyboard.press("Tab");
+  assert.equal(await active(), "t1", "Tab لازم يدخل على المختار");
+
+  await page.keyboard.press("ArrowLeft");
+  assert.equal(await active(), "t2", "سهم شمال لازم يروح للتاني");
+  assert.equal(await page.isVisible("#p2"), true);
+  assert.equal(await page.getAttribute("#p1", "hidden"), "");
+
+  await page.keyboard.press("Tab");
+  assert.equal(await active(), "p2", "Tab لازم يروح للوحة مش للـ tab اللي بعده");
+});
+~~~
+
+الاختبار بيتكلم زي المستخدم: مفتاح وبعدين يسأل «الـ focus فين؟». [[page.keyboard.press]] بيبعت المفتاح الحقيقي، و [[document.activeElement.id]] هي الحقيقة، مش كلاس على الشكل. و [[assert.equal(a, b, "رسالة")]] بيطبع الجملة دي لو وقع، فتعرف الخطوة من غير ما تدوّر. حط الملف ده جنب [[tabs-rtl.html]] بتاع التمرين الأول، و [[node --test]] بيشغّله.
+
+الاختبار الجيد هو اللي بيقع لما الكود يبوظ، فلازم تكسّر الكود بإيدك وتشوفه وقع:
+
+- رجّع كل الـ tabs [[tabindex="0"]]: آخر خطوة بتقع.
+- شيل حساب [[rtl]]: سهم شمال بيرجع للأخير بدل التاني.
+
+الغلطة الشائعة: تختبر [[aria-selected]] بس، وهي ممكن تتحدّث والـ focus واقف مكانه. وغلطة تانية حصلت فعلًا وإحنا بنكتب الحل: [[browser.close()]] في آخر الاختبار. أول [[assert]] يقع، السطر ده ميتنفذش، والمتصفح يفضل مفتوح و [[node --test]] يعلّق للأبد. [[t.after()]] بيتنفذ في كل الحالات.
+
+~~~text الناتج (node --test، Node 24)
+الكود السليم:              pass 1, fail 0
+كل الـ tabs tabindex="0":  pass 0, fail 1 (Tab لازم يروح للوحة مش للـ tab اللي بعده)
+من غير حساب rtl:           pass 0, fail 1 (سهم شمال لازم يروح للتاني)
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** لستة نتايج بحث بـ [[aria-activedescendant]] بدل roving: الـ focus فاضل في الـ input، والأسهم بتغيّر الـ option المختار ([[aria-selected]] وكلاس للشكل)، و Enter بيختاره.`, done: R`[[document.activeElement]] هو الـ input وانت بتمشي بالأسهم، وكل option ليه id، و [[aria-activedescendant]] بيتغير معاه، وقارئ الشاشة بيقول اسم الـ option. وكتبت إمتى ده أحسن من roving (لما الكتابة لازم تفضل شغالة).`,
+              sol: R`~~~live 260 260 search-list.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>بحث</title>
+<style>
+  ul { list-style: none; margin: 0; padding: 0; border: 1px solid #9ca3af; max-inline-size: 20rem; }
+  li { padding: .5rem; }
+  li.on { background: #1d4ed8; color: #fff; }
+</style></head>
+<body>
+  <main><h1>المدن</h1>
+    <label for="q">دوّر على مدينة</label>
+    <input id="q" role="combobox" aria-expanded="true" aria-controls="list" aria-autocomplete="list">
+    <ul id="list" role="listbox" aria-label="النتايج">
+      <li role="option" id="o1" aria-selected="false">القاهرة</li>
+      <li role="option" id="o2" aria-selected="false">الإسكندرية</li>
+      <li role="option" id="o3" aria-selected="false">أسوان</li>
+    </ul>
+    <p>اختيارك: <output id="res">لسه</output></p>
+  </main>
+  <script>
+    const q = document.getElementById("q");
+    const opts = [...document.querySelectorAll("[role=option]")];
+    let i = -1;
+    function move(to) {
+      i = (to + opts.length) % opts.length;
+      opts.forEach((o, k) => {
+        o.classList.toggle("on", k === i);
+        o.setAttribute("aria-selected", k === i);
+      });
+      q.setAttribute("aria-activedescendant", opts[i].id);
+    }
+    q.addEventListener("keydown", e => {
+      if (e.key === "ArrowDown") { e.preventDefault(); move(i + 1); }
+      if (e.key === "ArrowUp")   { e.preventDefault(); move(i - 1); }
+      if (e.key === "Enter" && i >= 0) { e.preventDefault(); res.textContent = opts[i].textContent; }
+    });
+  $__lt/script>
+</body></html>
+~~~
+
+في roving الـ focus نفسه بيتنقل بين العناصر. هنا الـ focus مش بيتحرك خالص: بيفضل في الـ input، و [[aria-activedescendant]] بيقول لقارئ الشاشة «العنصر النشط دلوقتي هو ده»، والقارئ بينطق اسمه.
+
+- [[role="combobox"]] مع [[aria-controls]] بيوصل الـ input باللستة.
+- كل [[option]] لازم ليه [[id]]، لأن [[aria-activedescendant]] بياخد id.
+- [[e.preventDefault()]] مع الأسهم عشان المؤشر ميتحركش جوه النص.
+- [[(to + opts.length) % opts.length]] بتلف من الأول للآخر، وبتحل [[-1]].
+
+إمتى ده أحسن من roving؟ لما الكتابة لازم تفضل شغالة: لو الـ focus راح لـ [[option]] المستخدم مش هيعرف يكمّل كتابة. للـ tabs والـ toolbars roving أبسط.
+
+الغلطة الشائعة: تغيّر الكلاس بس وتنسى [[aria-activedescendant]]، فالشكل بيتغير وقارئ الشاشة ساكت. وفي النسخة دي قارئ الشاشة اتجرّبش حقيقي، فافتحها بـ NVDA واسمع.
+
+~~~text الناتج (Chrome 156)
+بعد سهم تحت مرتين: activeElement = q، و aria-activedescendant = o2، و aria-selected لـ o2 = true
+بعد Enter: اختيارك = الإسكندرية
+الكتابة لسه شغالة: قيمة الـ input بعد حرف = ق
+axe: 0
+~~~` },
+          ],
+          desc: R`الـ tabs widget واحد: Tab بيدخله مرة واحدة ويطلع منه مرة واحدة، وجواه بتتحرك بالأسهم. عشان كده roving tabindex: الـ tab المختار بس عليه [[tabindex="0"]]، والباقي [[tabindex="-1"]]. ولما تدوس سهم، بتنقل الـ 0 والـ focus للي بعده.
+
+الـ roles: [[tablist]] على الحاوية، و [[tab]] على كل زرار ومعاه [[aria-selected]] و [[aria-controls]]، و [[tabpanel]] على كل محتوى ومعاه [[aria-labelledby]].
+
+وفي العربي (RTL) الأسهم بتتقلب: السهم الشمال هو «اللي بعده».`,
+          example: R`const list = document.querySelector('[role=tablist]');
+const tabs = [...list.querySelectorAll('[role=tab]')];
+function select(tab) {
+  for (const t of tabs) {
+    const on = t === tab;
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+  }
+  tab.focus();
+}
+list.addEventListener('keydown', (e) => {
+  const i = tabs.indexOf(document.activeElement);
+  const rtl = getComputedStyle(list).direction === 'rtl';
+  const step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
+  if (step) select(tabs[(i + step + tabs.length) % tabs.length]);
+  else if (e.key === 'Home') select(tabs[0]);
+  else if (e.key === 'End') select(tabs.at(-1));
+  else return;
+  e.preventDefault();
+});
+list.addEventListener('click', (e) => {
+  const t = e.target.closest('[role=tab]');
+  if (t) select(t);
+});`,
+          try: R`اكتب الـ HTML بتاع 3 tabs (الحساب، والأمان، والفواتير) بالـ roles والـ attributes اللي في الشرح، وحط السكربت في صفحة [[dir="rtl"]]. دوس Tab: بيقف على كام tab؟ جرّب الأسهم و Home و End، وبعدين Tab تاني: راح فين؟`,
+          flag: "script",
           deep: {
-            why: R`الناس بتيجي الصفحة عشان تقرا. لو الخط صغير أو السطور لازقة أو اللون باهت، الزائر بيمشي قبل ما يوصل لتاني فقرة، مهما كان التصميم حلو. والأربع خصائص دول هم اللي بيحددوا القراية، وكلهم بيتورّثوا، فقاعدة واحدة على [[body]] بتظبط الصفحة كلها. وفي العربي الموضوع أهم: الخط الافتراضي (Times New Roman) حروفه العربي رفيعة وصغيرة على الشاشة، ومسافة سطوره مبتكفيش النقط والتشكيل.`,
-            how: R`المتصفح بيحسب [[font-family]] كقايمة، ولكل حرف في النص بيدوّر على أول خط في القايمة **موجود على الجهاز وفيه الحرف ده**. لو مفيش، بيسأل النظام عن أي خط فيه الحرف (system fallback)، ولو مفيش خالص بيرسم مربع فاضي. العيلة العامة بتتحوّل لخط حقيقي حسب إعدادات المتصفح ولغة العنصر ([[lang]]).
+            why: R`لو كل tab بياخد Tab، مستخدم الكيبورد لازم يعدّي 8 tabs عشان يوصل للمحتوى. والأسهم هي اللي مستخدم قارئ الشاشة متوقعها، لأن ده سلوك الـ tabs في كل برنامج. ونفس الفكرة في toolbar، و radio group، و listbox، و menu، و grid.`,
+            how: R`[[tabindex="-1"]] بيشيل العنصر من ترتيب الـ Tab بس بيسيبه يقبل [[focus()]] من الكود. فالـ widget كله بيبان في الـ Tab كعنصر واحد (اللي عليه 0)، ولما ترجع له بتلاقي آخر tab كنت عليه.
 
-[[font-size]] بتتحسب دايمًا لبيكسل: [[em]] و [[%]] بيتضربوا في حجم خط الأب المحسوب، و [[rem]] في حجم خط [[<html>]]. وبعدها [[line-height]]: لو رقم، بيتضرب في حجم خط العنصر نفسه. لو [[normal]]، المتصفح بيقرا من ملف الخط ارتفاع الحروف ونزولها والمسافة اللي المصمم حاططها (ascent و descent و line gap).
+[[(i + step + tabs.length) % tabs.length]] بيلف: من الأخير للأول ومن الأول للأخير. و [[getComputedStyle(list).direction]] بيعرف الاتجاه من الـ CSS الحقيقي (موروث من [[dir]] على الـ html)، فنفس الكود يشتغل في العربي والإنجليزي.
 
-[[color]] بتتورّث كقيمة محسوبة، و [[currentColor]] بيرجع لها وقت الرسم.`,
-            when: R`قاعدة [[body]] دي أول حاجة بتتكتب في أي ملف CSS. خطوط النظام مناسبة للوحات التحكم والمواقع اللي السرعة فيها أهم من الهوية، ولأي مشروع لسه في أوله. لما الهوية البصرية تبقى مهمة (مجلة، براند) بتحمّل خط ويب وتسيب خطوط النظام بدايل بعده. والكود والأرقام اللي لازم تتراص تحت بعض بياخدوا [[monospace]].`,
-            mistakes: R`خط من غير بدايل. خط إنجليزي أول القايمة ومفيش خط عربي مختار بعده. [[line-height]] بوحدة على [[body]] فالعناوين تركب على بعض. خط صغير (12 أو 14px) لفقرة عربي. نسيان إن الأزرار والحقول مبيورثوش الخط. والاعتماد على [[getComputedStyle]] عشان تعرف الخط المعروض: بيرجّع القايمة مش الخط.`
+ده «automatic activation»: السهم بيختار ويعرض على طول. لو عرض المحتوى تقيل (بيجيب بيانات)، الأحسن «manual activation»: السهم بينقل الـ focus بس، و Enter أو Space بيختار.
+
+و [[hidden]] على الـ panels بيشيلهم من الشاشة وقارئ الشاشة. والـ tabpanel ممكن ياخد [[tabindex="0"]] لو مفيهوش أي عنصر بياخد focus، عشان Tab يوصل للمحتوى.
+
+الـ combobox (حقل بحث بقايمة اقتراحات) أصعب بكتير: [[aria-activedescendant]]، والكتابة، والفلترة، والإعلان عن عدد النتايج. متكتبوش بإيدك: استخدم مكتبة headless زي React Aria أو Headless UI أو Base UI، ولو الاقتراحات بسيطة فيه [[<datalist>]] الأصلي.`,
+            when: R`اكتب roving tabindex بإيدك لو مش بتستخدم مكتبة، أو عشان تفهم إيه اللي بيحصل. في مشروع React عادي استخدم Radix Tabs (أو shadcn Tabs) اللي عاملين كل ده صح، واعرف تختبرهم بالكيبورد.`,
+            mistakes: R`كل الـ tabs [[tabindex="0"]]. الأسهم في RTL بالعكس. tabs من divs من غير roles. تعمل tabs بـ [[<a href="#">]] بتغيّر المحتوى (ده تنقل لو كل tab صفحة فعلًا، فيبقى nav عادي مش tabs). تنسى [[e.preventDefault()]] فالسهم يعمل scroll للصفحة كمان. وسؤال انترفيو: «إيه roving tabindex وليه؟» والإجابة: وقفة Tab واحدة للـ widget، والأسهم جواه، زي الـ radio group.`
           },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** مقال «مدوّنة حبر» مكتوب من غير أي تنسيق. اكتب قاعدة واحدة على [[body]] تخلّيه يتقري: خطوط النظام وآخرها [[sans-serif]]، وحجم 18px، وسطور 1.8، ولون [[#1f2937]]. (من قسم ١ و ٤ و ٥ و ٦ في الشرح)`, done: R`الفقرة بقت 18px وسطرها 32.4px ولونها رمادي غامق، والقايمة آخرها [[sans-serif]]، وكل الشروط ✓.`, work: { h: 230, start: R`<style>
-  body {
+          teach: R`## الفكرة في سطرين
 
-  }
-</style>
-<h1>أول يوم في المدوّنة</h1>
-<p>قررت أكتب كل أسبوع عن حاجة اتعلمتها. مش لازم تبقى حاجة كبيرة: أمر جديد في الترمنال، أو غلطة قعدت فيها يوم كامل.</p>
-<p>الكتابة بتثبّت المعلومة، واللي بيقرا بيوفّر على نفسه نفس اليوم ده.</p>`, checks: [
-              { say: R`حجم خط الفقرة 18px`, q: "p", style: ["font-size", "18px"] },
-              { say: R`ارتفاع سطر الفقرة 1.8 من الخط (32.4px)`, q: "p", style: ["line-height", "32.4px"] },
-              { say: R`لون الكلام [[#1f2937]]`, q: "p", style: ["color", "rgb(31, 41, 55)"] },
-              { say: R`قايمة الخطوط آخرها العيلة العامة [[sans-serif]]`, src: "sans-serif" },
-              { say: R`القاعدة على [[body]] مش على [[p]]: العنوان كمان خد اللون`, q: "h1", style: ["color", "rgb(31, 41, 55)"] }
-            ] }, sol: R`~~~live 246 311 الحل
-<style>
-  body {
-    font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
-    font-size: 18px;
-    line-height: 1.8;
-    color: #1f2937;
-  }
-</style>
-<h1>أول يوم في المدوّنة</h1>
-<p>قررت أكتب كل أسبوع عن حاجة اتعلمتها. مش لازم تبقى حاجة كبيرة: أمر جديد في الترمنال، أو غلطة قعدت فيها يوم كامل.</p>
-<p>الكتابة بتثبّت المعلومة، واللي بيقرا بيوفّر على نفسه نفس اليوم ده.</p>
-~~~
+الـ tabs كلها «وقفة Tab» واحدة: الـ tab المختار بس عليه [[tabindex="0"]] والباقي [[-1]]، والأسهم هي اللي بتتنقّل جوه. والـ [[0]] ده «بيلف» (roving) مع الاختيار، ومن هنا جه الاسم. المثال هو الـ JavaScript بس، والـ HTML اللي بيشتغل عليه في الحل (solCode). حطينا الاتنين في صفحة [[dir="rtl"]] بين لينكين («قبل» و «بعد») وجرّبناهم بالكيبورد في Chrome 154 (headless عن طريق playwright).
 
-**هتشوف إيه:**
+---
 
-- الخط اتغيّر من Times New Roman لخط الواجهة.
-- الفقرتين أكبر شوية وسطورهم أبعد.
-- الكلام رمادي غامق بدل الأسود.
+## ١. الـ HTML الأول (من الحل)
 
-**ليه كده:** الأربع خصائص بيتورّثوا، فقاعدة واحدة على [[body]] كفاية. و [[1.8]] من غير وحدة عشان العنوان يحسبها من حجمه.
-
-**الغلطة الشائعة:** [[line-height: 1.8px]]. ده سطر ارتفاعه أقل من بيكسلين، والسطور كلها هتتكوّم فوق بعض. الرقم لازم يبقى من غير وحدة.
-
-~~~text القياس من Chrome
-p     font-size: 18px    line-height: 32.4px    color: rgb(31, 41, 55)
-h1    font-size: 36px    line-height: 64.8px    color: rgb(31, 41, 55)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** عنوان المقال الطويل بيلف على سطرين والسطرين راكبين على بعض. السبب في قاعدة [[body]]. صلّحها من غير ما تلمس قاعدة [[h1]]. (من قسم ٥ في الشرح: «الرقم من غير وحدة»)`, done: R`سطر العنوان بقى 60px (40 × 1.5) وسطر الفقرة فضل 24px، وكل الشروط ✓.`, work: { h: 250, start: R`<style>
-  body { font-family: Tahoma, sans-serif; font-size: 16px; line-height: 24px; }
-  h1 { font-size: 40px; max-width: 320px; background: #fef3c7; }
-</style>
-<h1>سبع حاجات اتعلمتها من أول مشروع</h1>
-<p>الفقرة دي سطورها مظبوطة، والمشكلة في العنوان اللي فوقها بس.</p>`, checks: [
-              { say: R`سطر العنوان بقى 60px (مرة ونص حجم خطه)`, q: "h1", style: ["line-height", "60px"] },
-              { say: R`سطر الفقرة لسه 24px`, q: "p", style: ["line-height", "24px"] },
-              { say: R`حجم العنوان لسه 40px`, q: "h1", style: ["font-size", "40px"] }
-            ] }, sol: R`~~~live 274 298 بعد التصليح
-<style>
-  body { font-family: Tahoma, sans-serif; font-size: 16px; line-height: 1.5; }
-  h1 { font-size: 40px; max-width: 320px; background: #fef3c7; }
-</style>
-<h1>سبع حاجات اتعلمتها من أول مشروع</h1>
-<p>الفقرة دي سطورها مظبوطة، والمشكلة في العنوان اللي فوقها بس.</p>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 166 190 قبل
-<style>
-  body { font-family: Tahoma, sans-serif; font-size: 16px; line-height: 24px; }
-  h1 { font-size: 40px; max-width: 320px; background: #fef3c7; }
-</style>
-<h1>سبع حاجات اتعلمتها من أول مشروع</h1>
-<p>الفقرة دي سطورها مظبوطة، والمشكلة في العنوان اللي فوقها بس.</p>
-~~~
-
-**هتشوف إيه:**
-
-- قبل: سطور العنوان داخلة في بعض، والحروف طالعة برّه الخلفية الصفرا.
-- بعد: كل سطر في العنوان واخد مكانه، والخلفية الصفرا مغطية الكلام كله. والفقرة متغيّرتش.
-
-**ليه:** [[24px]] قيمة ثابتة بتتورّث زي ما هي، فالعنوان اللي خطه 40px خد سطر 24px. [[1.5]] بيتورّث كرقم، والعنوان بيضربه في 40.
-
-**الغلطة الشائعة:** تصلّحها بـ [[line-height: 150%]]. الفقرة هتفضل 24px، والعنوان كمان هيفضل 24px: النسبة بتتحسب عند [[body]] وبيتورّث الناتج.
-
-~~~text القياس من Chrome
-              قبل (24px)     بعد (1.5)
-h1 line-height   24px          60px
-p  line-height   24px          24px
-~~~` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع، وبعدين صلّح:** تعليق جواه رد جواه رد، والتلاتة عليهم [[.reply { font-size: 0.85em; }]]. اكتب على ورقة حجم خط كل مستوى (والأب 20px)، وقارن. وبعدين خلّي الردود كلها بنفس الحجم (17px) مهما كانت جوه بعض. (من قسم ٤ في الشرح: «em بتتضرب في بعضها»)`, done: R`توقّعت 17 ثم 14.45 ثم 12.28 تقريبًا، وبعد التصليح التلات ردود 17px، وكل الشروط ✓.`, work: { h: 200, start: R`<style>
-  body { font-family: Tahoma, sans-serif; font-size: 20px; }
-  .reply { font-size: 0.85em; border-inline-start: 3px solid silver; padding-inline-start: 10px; }
-</style>
-<p>التعليق الأصلي</p>
-<div class="reply">رد أول
-  <div class="reply">رد على الرد
-    <div class="reply">رد تالت</div>
-  </div>
-</div>`, checks: [
-              { say: R`التلات ردود بنفس الحجم: 17px`, q: ".reply", style: ["font-size", "17px"] },
-              { say: R`التعليق الأصلي لسه 20px`, q: "p", style: ["font-size", "20px"] },
-              { say: R`الردود لسه جوه بعض (تلات [[.reply]])`, q: ".reply .reply .reply" }
-            ] }, sol: R`~~~live 135 بعد التصليح
-<style>
-  body { font-family: Tahoma, sans-serif; font-size: 20px; }
-  .reply { font-size: 17px; border-inline-start: 3px solid silver; padding-inline-start: 10px; }
-</style>
-<p>التعليق الأصلي</p>
-<div class="reply">رد أول
-  <div class="reply">رد على الرد
-    <div class="reply">رد تالت</div>
-  </div>
+~~~text الـ HTML (مختصر)
+<div role="tablist" aria-label="الإعدادات">
+  <button type="button" role="tab" id="tab-1" aria-selected="true"  aria-controls="panel-1" tabindex="0">الحساب</button>
+  <button type="button" role="tab" id="tab-2" aria-selected="false" aria-controls="panel-2" tabindex="-1">الأمان</button>
+  ...
 </div>
+<div role="tabpanel" id="panel-1" aria-labelledby="tab-1">بيانات الحساب...</div>
+<div role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden>...</div>
 ~~~
 
-**هتشوف إيه:** قبل التصليح كل رد خطه أصغر من اللي قبله لحد ما التالت بقى صعب يتقري. بعده التلاتة بنفس الحجم، والخط الرمادي على الجنب هو اللي بيبيّن إن ده رد على ده.
-
-**ليه:** [[em]] نسبة من الأب، وأب كل رد هو الرد اللي قبله.
-
-~~~text القياس من Chrome
-              قبل (0.85em)     بعد (17px)
-رد أول        17px             17px
-رد على الرد   14.45px          17px
-رد تالت       12.2825px        17px
-~~~
-
-**حل تاني صح:** [[.reply .reply { font-size: 1em; }]]: الرد اللي جوه رد ياخد حجم أبوه زي ما هو. والحل اللي هتستخدمه بعد الوحدة الجاية: [[font-size: 0.85rem]]، لأن [[rem]] دايمًا من [[<html>]] ومبتتضربش.
-
-**الغلطة الشائعة:** تحط [[font-size: 17px]] على [[body]]. التعليق الأصلي هيصغر معاهم، والردود هتفضل تصغر.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم الاشتراك في النشرة: الصفحة بخط Tahoma 18px، والحقل والزرار طالعين بخط تاني وأصغر. خليهم ياخدوا خط الصفحة بقاعدة واحدة. (من قسم ٧ في الشرح)`, done: R`الحقل والزرار 18px، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  body { font-family: Tahoma, sans-serif; font-size: 18px; }
-</style>
-<p>اشترك في نشرة «حبر» الأسبوعية:</p>
-<p><input type="email" placeholder="بريدك"> <button>اشترك</button></p>`, checks: [
-              { say: R`الحقل خطه 18px`, q: "input", style: ["font-size", "18px"] },
-              { say: R`الزرار خطه 18px`, q: "button", style: ["font-size", "18px"] },
-              { say: R`الزرار بنفس خط الصفحة (Tahoma)`, q: "button", style: ["font-family", "Tahoma, sans-serif"] }
-            ] }, sol: R`~~~live 104 بعد التصليح
-<style>
-  body { font-family: Tahoma, sans-serif; font-size: 18px; }
-  input, button { font: inherit; }
-</style>
-<p>اشترك في نشرة «حبر» الأسبوعية:</p>
-<p><input type="email" placeholder="بريدك"> <button>اشترك</button></p>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 100 قبل
-<style>
-  body { font-family: Tahoma, sans-serif; font-size: 18px; }
-</style>
-<p>اشترك في نشرة «حبر» الأسبوعية:</p>
-<p><input type="email" placeholder="بريدك"> <button>اشترك</button></p>
-~~~
-
-**هتشوف إيه:** قبل: الحقل والزرار صغيرين جنب الكلام. بعد: نفس حجم وشكل خط الجملة اللي فوقهم، والحقل نفسه كبر لأن حجمه بيتبع خطه.
-
-**ليه:** المتصفح مدّي الحقول والأزرار خط وحجم لوحدهم (Arial 13.33px). [[font: inherit]] بترجّعهم للوراثة.
-
-**الغلطة الشائعة:** [[font-size: inherit]] بس. الحجم هيتظبط والخط هيفضل Arial.
-
-~~~text القياس من Chrome
-           قبل                      بعد
-input      13.3333px  Arial         18px  Tahoma, sans-serif
-button     13.3333px  Arial         18px  Tahoma, sans-serif
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل صفحة فيها فقرة «مرحبًا Hello ١٢٣ 123» وعليها [[font-family: Georgia, serif]]. افتح DevTools، ثم Elements، ثم Computed، وانزل لـ Rendered Fonts. كام خط اترسم بيهم السطر ده؟ ومين خد إيه؟ وبعدين غيّر القايمة لـ [[Georgia, Tahoma, serif]] وبص تاني. (من قسم ٢ في الشرح: «المتصفح بيختار الخط لكل حرف»)`, done: R`كتبت اسم الخطين اللي اترسموا في كل حالة، وعرفت مين رسم العربي ومين رسم اللاتيني، وإن خانة [[font-family]] في Computed مبتقولش ده.`, sol: R`~~~live 129 الصفحة
-<style>
-  .a { font-family: Georgia, serif; font-size: 24px; }
-  .b { font-family: Georgia, Tahoma, serif; font-size: 24px; }
-</style>
-<p class="a">مرحبًا Hello ١٢٣ 123</p>
-<p class="b">مرحبًا Hello ١٢٣ 123</p>
-~~~
-
-**إجابة نموذجية (Chrome على Windows 11):**
-
-| القايمة | اللاتيني والأرقام 123 | العربي والأرقام ١٢٣ |
-|---|---|---|
-| [[Georgia, serif]] | Georgia | Times New Roman (جاي من [[serif]]) |
-| [[Georgia, Tahoma, serif]] | Georgia | Tahoma |
-
-يعني السطر الواحد اترسم بخطين. Georgia مفيهوش ولا حرف عربي، فالمتصفح كمّل في القايمة للحروف دي بس.
-
-**هتشوف إيه:** في السطرين «Hello 123» بنفس الشكل. «مرحبًا ١٢٣» في الأول رفيعة وبزوايد، وفي التاني أتخن وأوضح.
-
-**اللي تتعلمه:**
-
-- خانة [[font-family]] في Computed بتعرض القايمة اللي كتبتها. الخط الحقيقي في Rendered Fonts بس.
-- على جهاز تاني (ماك أو موبايل) النتيجة هتختلف، لأن الخطوط المتسطّبة مختلفة. جرّبها على موبايلك من Remote Debugging لو عايز تتأكد.
-
-~~~text القياس من Chrome (عرض «السلام Hamburg» بحجم 100px)
-Georgia, serif         637.8px
-Georgia, monospace     749.6px      ← غيّرنا البديل بس، والعرض اتغيّر: يبقى العربي مش من Georgia
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب [[body { font-family: Cairo; }]] وبيقول «شغال عندي تمام»، والعميل بعتله صورة والموقع بخط تاني خالص. اشرحله في ٣ سطور إيه اللي حصل وإيه التصليح. (من قسم ٣ في الشرح)`, done: R`قلت إن الخط متسطّب على جهازه هو بس، وإن اسم خط مش موجود بيتعدّى في صمت، وكتبت القايمة المتصلّحة ببدايل.`, sol: R`**إجابة نموذجية:**
-
-1. [[font-family]] بتدوّر على الخط **على جهاز الزائر**. Cairo متسطّب على جهازك (غالبًا من برنامج تصميم)، ومش موجود عند العميل.
-2. اسم خط مش موجود مبيعملش خطأ ولا رسالة في الـ Console. المتصفح بيعدّيه للي بعده، ومفيش بعده حاجة، فرجع للخط الافتراضي (Times New Roman).
-3. التصليح على مرحلتين: دلوقتي زوّد بدايل: [[font-family: Cairo, system-ui, "Segoe UI", Tahoma, sans-serif]]. ولو لازم الكل يشوف Cairo، حمّل ملف الخط مع الموقع بـ [[@font-face]] (درس «@font-face و font-display»).
-
-~~~text القياس من Chrome (Cairo مش متسطّب)
-font-family: Cairo                →  Times New Roman
-font-family: Cairo, sans-serif    →  Segoe UI
-~~~
-
-**إزاي تمسكها قبل العميل:** افتح الموقع على جهاز تاني أو موبايل، أو بص على Rendered Fonts في DevTools وشوف مكتوب «Local file» جنب اسم الخط: معناها إنه جاي من جهازك مش من الموقع.` }
-          ]
-        },
-        {
-          cmd: "font-weight و font-style",
-          title: "التقيل والمايل، وخاصية font المختصرة، والخطوط المتغيّرة",
-          pre: [{ to: "css/font-family و font-size", why: R`الدرس ده بيكمّل عليه: هناك اخترت الخط وحجمه، وهنا وزنه وميله وكتابة الكل في سطر واحد` }],
-          ref: [
-            { t: "MDN: font-weight", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-weight" },
-            { t: "MDN: font-style", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-style" },
-            { t: "MDN: font", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font" },
-            { t: "MDN: font-synthesis", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-synthesis" },
-            { t: "MDN: font-stretch", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-stretch" },
-            { t: "MDN: font-variation-settings", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-variation-settings" },
-            { t: "MDN: font-optical-sizing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-optical-sizing" }
-          ],
-          desc: R`[[font-weight]] بتحدد الخط تقيل قد إيه (رقم من 1 لـ 1000، و [[400]] العادي و [[700]] التقيل)، و [[font-style]] بتحدده مايل ولا لأ. الاتنين بيشتغلوا بس لو ملف الخط **فيه** الوزن أو الميل ده. لو مفيهوش، المتصفح بيفبرك واحد: بيتخّن الحروف أو يميّلها بالحساب.
-والخط العربي ملوش مايل أصلًا، فـ [[font-style: italic]] على كلام عربي دايمًا مفبركة. الدرس بيوريك تتحكم في ده بـ [[font-synthesis]]، وتكتب خصائص الخط كلها في سطر بـ [[font]].`,
-          example: R`h1 { font-weight: 800; }
-.lead { font-weight: 300; }
-strong { font-weight: bolder; }
-em { font-style: italic; }
-body { font-synthesis-style: none; }
-.title { font: 700 1.5rem/1.3 system-ui, sans-serif; }
-.narrow { font-stretch: condensed; }
-.fine { font-variation-settings: "wght" 650; }`,
-          flag: "script",
-          lines: [
-            R`العنوان بوزن 800 (Extra Bold). لو الخط مفيهوش 800، المتصفح بياخد أقرب وزن أتقل موجود، ولو مفيش بياخد أتقل حاجة عنده.`,
-            R`فقرة المقدمة بوزن 300 (Light): أرفع من العادي. بتشتغل بس لو الخط فيه نسخة Light.`,
-            R`[[bolder]] معناها «درجة أتقل من أبوك»: جوه فقرة عادية (400) بتبقى 700، وجوه عنوان تقيل (700) بتبقى 900.`,
-            R`الكلام المايل. ده الافتراضي لـ [[<em>]] أصلًا، ومكتوب هنا عشان نشوف اللي بعده بيأثر عليه إزاي.`,
-            R`بتمنع المتصفح يفبرك مايل لما الخط مفيهوش مايل حقيقي. النتيجة: الإنجليزي جوه [[<em>]] بيفضل مايل (ليه نسخة مايلة حقيقية)، والعربي بيفضل معدول.`,
-            R`[[font]] المختصرة: الوزن 700، والحجم [[1.5rem]]، وبعد الشرطة المايلة ارتفاع السطر 1.3، وبعدهم قايمة الخطوط. الحجم والخط إجباريين وبالترتيب ده.`,
-            R`نسخة أضيق من الخط (75٪ من العرض العادي). بتشتغل لو الخط ليه نسخة Condensed.`,
-            R`تحكم مباشر في «محاور» الخط المتغيّر: [[wght]] هو محور الوزن، و 650 رقم بين Semibold و Bold مش موجود كملف لوحده.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-الخط مش ملف واحد. «Segoe UI» على Windows ست ملفات: Light و Semilight و Regular و Semibold و Bold و Black، ومعاهم نسخ مايلة. [[font-weight]] و [[font-style]] بيختاروا **أنهي ملف** من العيلة. ولو الملف المطلوب مش موجود، المتصفح يا بياخد أقرب واحد، يا بيفبرك.
-
-كل القياسات من Chrome 157 على Windows 11.
-
----
-
-## ١. [[font-weight: 700]]
-
-الوزن رقم من 1 لـ 1000. والأرقام المتعارف عليها ليها أسامي:
-
-| الرقم | الاسم في ملفات الخطوط | الكلمة في CSS |
-|---|---|---|
-| 100 | Thin | |
-| 200 | Extra Light | |
-| 300 | Light | |
-| 400 | Regular | [[font-weight: normal]] |
-| 500 | Medium | |
-| 600 | Semibold | |
-| 700 | Bold | [[font-weight: bold]] |
-| 800 | Extra Bold | |
-| 900 | Black | |
-
-~~~live 174 Segoe UI بست أوزان (على Windows)
-<style>
-  p { font-family: "Segoe UI", sans-serif; font-size: 22px; margin: 2px 0; }
-</style>
-<p style="font-weight: 300">300: الخط العربي Light</p>
-<p style="font-weight: 400">400: الخط العربي Regular</p>
-<p style="font-weight: 600">600: الخط العربي Semibold</p>
-<p style="font-weight: 700">700: الخط العربي Bold</p>
-<p style="font-weight: 900">900: الخط العربي Black</p>
-~~~
-
-**هتشوف إيه (على Windows):** السطور بتتقل بالتدريج من فوق لتحت. وبص على السطر الأخير: الإنجليزي «Black» تقيل جدًا، والعربي جنبه **بخط تاني خالص** شكله مختلف. لو على نظام تاني هتشوف أوزان خط نظامك، وممكن يبقوا أقل من ستة.
-
-السطر الأخير ده مش غلط في الكود. ملف «Segoe UI Black» مفيهوش حروف عربي، فالمتصفح راح للخط اللي بعده في القايمة عشان يرسم العربي (نفس قاعدة «لكل حرف» من الدرس اللي فات).
-
-~~~text القياس من Chrome (عرض الكلمة بحجم 100px: لما العرض يتغيّر يبقى الملف اتغيّر)
-font-weight    «Hamburg» بـ Segoe UI        «السلام عليكم» بـ Segoe UI
-100 و 200 و 300    395.8  (Light)            481.9  (Light)
-350                406.0  (Semilight)        507.4  (Semilight)
-400                417.0  (Regular)          520.1
-500 و 600          429.3  (Semibold)         520.1  (أتقل في الشكل، ونفس العرض)
-700                445.9  (Bold)             520.3
-800 و 900          466.0  (Black)            400.6  ← خط تاني: Black مفيهوش عربي
-~~~
-
-اللي الجدول بيقوله:
-
-- **الرقم اللي ملوش ملف بياخد أقرب ملف.** 100 و 200 خدوا Light، و 500 خد Semibold، و 800 خد Black. مفيش خطأ ولا تحذير.
-- **مش كل وزن فيه كل اللغات.** قبل ما تستخدم وزن في عنوان عربي، جرّبه بكلام عربي.
-
-وخط زي Tahoma عنده ملفين بس:
-
-~~~text القياس من Chrome («Hamburg» بـ Tahoma، 100px)
-من 100 لـ 500     405.9    (Regular)
-من 600 لـ 900     465.1    (Bold)
-~~~
-
-يعني [[font-weight: 500]] و [[font-weight: 300]] على Tahoma **مبيعملوش أي حاجة**، و [[600]] و [[900]] الاتنين نفس الـ Bold.
-
-### [[font-weight: bolder]] و [[font-weight: lighter]]
-
-دول نسبيين: «أتقل من أبويا» و «أخف من أبويا». ومبيزوّدوش 100، بيقفزوا على سلّم من أربع درجات:
-
-~~~text القياس من Chrome (المحسوب)
-وزن الأب      bolder      lighter
-100           400         100
-300           400         100
-400           700         100
-500           700         100
-600           900         400
-700           900         400
-900           900         700
-~~~
-
-[[<strong>]] و [[<b>]] الافتراضي بتاعهم [[bolder]] مش [[700]]. عشان كده [[<strong>]] جوه عنوان (وزنه 700) بيبقى 900، ولو الخط مفيهوش 900 مش هتشوف فرق بينه وبين باقي العنوان.
-
-~~~text القياس من Chrome (الافتراضي، جوه body وزنه 400)
-<b> و <strong> و <h1>...<h6>     font-weight: 700
-<em> و <i> و <cite> و <var> و <address> و <dfn>     font-style: italic
-~~~
-
----
-
-## ٢. التقيل المفبرك و [[font-synthesis-weight: none]]
-
-لو الخط ملف واحد بس وطلبت [[700]]، المتصفح بيرسم الحروف نفسها أتخن بالحساب. ده اسمه faux bold أو synthesized bold.
-
-~~~live 133 Arabic Typesetting: خط بوزن واحد
-<style>
-  p { font-family: "Arabic Typesetting", serif; font-size: 34px; margin: 0; }
-  .b { font-weight: 700; }
-  .n { font-weight: 700; font-synthesis-weight: none; }
-</style>
-<p>عادي: الخط العربي جميل</p>
-<p class="b">700: الخط العربي جميل</p>
-<p class="n">700 من غير فبركة: الخط العربي جميل</p>
-~~~
-
-**هتشوف إيه (على Windows، الخط ده بيجي مع النظام):** السطر التاني حروفه أتخن بس «ملطّخة»: الفتحات الصغيرة جوه الحروف (زي عين الميم والعين) قرّبت تتقفل. السطر التالت مطلوب منه 700 برضه وشكله زي الأول بالظبط، لأننا منعنا الفبركة.
-
-التقيل الحقيقي مصمم الخط رسمه حرف حرف. المفبرك تتخين آلي، وشكله أضعف، وفي الخط العربي النسخ والرقعة بيبوّظ تفاصيل الحرف.
-
-[[font-synthesis-weight: none]] بتقول للمتصفح: لو مفيش تقيل حقيقي، سيبه عادي. بتستخدمها لما تبقى محمّل وزن واحد من خط ويب ومش عايز تقيل مشوّه يظهر بالغلط.
-
----
-
-## ٣. [[font-style: italic]] والعربي
-
-المايل (italic) في اللاتيني مش مجرد حروف مايلة: نسخة مرسومة لوحدها بشكل حروف مختلف شوية. والخط العربي **ملوش مايل** في تقاليده، وأغلب الخطوط العربي مفيهاش نسخة مايلة.
-
-~~~live 114 144 مايل حقيقي ومايل مفبرك
-<style>
-  p { font-family: "Segoe UI", Tahoma, sans-serif; font-size: 22px; margin: 4px 0; }
-  .i { font-style: italic; }
-  .no { font-style: italic; font-synthesis-style: none; }
-</style>
-<p>عادي: الخط العربي جميل Hamburg</p>
-<p class="i">italic: الخط العربي جميل Hamburg</p>
-<p class="no">italic من غير فبركة: الخط العربي جميل Hamburg</p>
-~~~
-
-**هتشوف إيه:**
-
-- السطر التاني: الإنجليزي مايل، والعربي كمان مايل.
-- السطر التالت: الإنجليزي لسه مايل، والعربي **رجع معدول**.
-
-~~~text القياس من Chrome (صورة للصفحة + عرض الكلمة)
-Segoe UI، «Hamburg»:   عادي 417.0    italic 409.8     ← العرض اتغيّر: ده ملف تاني (Segoe UI Italic) حقيقي
-Segoe UI، العربي:      عادي 520.1    italic 520.2     ← نفس الملف، والحروف اتميّلت بالحساب
-Tahoma (ملوش ملف مايل خالص):  الإنجليزي والعربي الاتنين مفبركين، ومع font-synthesis-style: none الاتنين معدولين
-~~~
-
-الميل المفبرك على العربي شكله غريب على القارئ: الحروف المتصلة بتتمط، والنقط بتبعد عن مكانها. وده بيحصل من غير ما تطلبه، لأن [[<em>]] و [[<i>]] و [[<cite>]] و [[<address>]] مايلين افتراضيًا (درس «strong و em»).
-
-قدامك حلّين لصفحة عربي:
-
-~~~css
-/* الحل الأول: امنع الفبركة. الإنجليزي يفضل مايل والعربي معدول */
-body { font-synthesis-style: none; }
-
-/* الحل التاني: الغي الميل خالص من العناصر دي */
-em, i, cite, address, dfn { font-style: normal; }
-~~~
-
-في الحالتين [[<em>]] العربي بقى شكله زي الكلام اللي حواليه، فلازم تدّيله تمييز تاني يتشاف: لون، أو وزن، أو خط تحته. المعنى (التشديد) لسه واصل لقارئ الشاشة من العنصر نفسه، والشكل شغلك إنت.
-
-### [[font-style: oblique]]
-
-[[oblique]] معناها «مايل بالحساب» صريحة، وممكن تحدد الزاوية:
-
-~~~text القياس من Chrome (المحسوب)
-font-style: italic            →  italic
-font-style: oblique           →  oblique
-font-style: oblique 20deg     →  oblique 20deg
-font-style: oblique -10deg    →  oblique -10deg
-~~~
-
-المتصفح بيدوّر على نسخة oblique في الخط، ولو مفيش بيميّل النسخة العادية. في الشغل اليومي [[italic]] كفاية، و [[oblique]] بزاوية بتفيد مع الخطوط المتغيّرة اللي فيها محور ميل ([[slnt]]).
-
----
-
-## ٤. [[font-synthesis: none]]
-
-[[font-synthesis]] خاصية مختصرة بتجمع التلاتة اللي بيتفبركوا:
-
-| الخاصية | بتتحكم في | القيم |
-|---|---|---|
-| [[font-synthesis-weight]] | التقيل المفبرك | [[auto]] (الافتراضي: مسموح) أو [[none]] |
-| [[font-synthesis-style]] | المايل المفبرك | [[auto]] أو [[none]] |
-| [[font-synthesis-small-caps]] | الـ small caps المفبركة (درس «font-variant و font-feature-settings») | [[auto]] أو [[none]] |
-
-والمختصرة بتاخد أسامي **المسموح بيه**:
-
-~~~text القياس من Chrome (المحسوب)
-الافتراضي                       font-synthesis: weight style small-caps     (التلاتة مسموحين)
-font-synthesis: none            →  none                                     (مفيش أي فبركة)
-font-synthesis: weight          →  weight                                   (التقيل بس مسموح)
-font-synthesis: style           →  weight = none     style = auto     small-caps = none
-~~~
-
-السطر الأخير فخ: [[font-synthesis: style]] مش معناها «اقفل المايل». معناها «المايل **بس** مسموح»، فبتقفل التقيل معاه. عشان تقفل حاجة واحدة استخدم الخاصية الطويلة بتاعتها.
-
-بتتورّث، فبتتكتب مرة على [[body]]. وفيه خاصية رابعة [[font-synthesis-position]] للحروف العلوية والسفلية، ولسه مش في كل المتصفحات ([[CSS.supports]] رجّع false في Chrome 157).
-
----
-
-## ٥. [[font: 700 1.5rem/1.3 system-ui, sans-serif]]
-
-[[font]] بتكتب خصائص الخط كلها في سطر. الترتيب مش اختياري:
-
-~~~text ترتيب font
-font:  [style] [variant] [weight] [stretch]   size[/line-height]   family
-       └──── اختياريين، بأي ترتيب ────┘       └─── إجباري ───┘     └ إجباري، وآخر حاجة ┘
-~~~
-
-~~~text القياس من Chrome (المحسوب)
-font: italic 700 20px/1.6 Tahoma, sans-serif
-  → font-style: italic   font-weight: 700   font-size: 20px   line-height: 32px   font-family: Tahoma, sans-serif
-
-font: 20px                 (من غير خط)       → السطر كله اترمى: الحجم فضل 16px
-font: Tahoma 20px          (الترتيب مقلوب)   → اترمى
-font: bold Tahoma          (من غير حجم)      → اترمى
-~~~
-
-لو نسيت الحجم أو الخط أو قلبت الترتيب، المتصفح بيرمي السطر كله في صمت (زي أي قيمة غلط، درس «مقدمة CSS وتنسيق العناصر»).
-
-### الفخ: [[font]] بتمسح اللي مكتبتوش
-
-المختصرة بتظبط **كل** خصائص الخط. اللي مكتبتوش بيرجع لقيمته الأولى، حتى لو كنت كاتبه قبلها:
-
-~~~live 170 192 font مسحت line-height
-<style>
-  body { font-family: Tahoma, sans-serif; line-height: 2; }
-  .a { font-size: 18px; }
-  .b { font: 18px Tahoma, sans-serif; }
-  p { max-width: 360px; background: #f3f4f6; }
-</style>
-<p class="a">الفقرة دي عليها font-size بس، فسطورها لسه واخدة line-height: 2 من body.</p>
-<p class="b">الفقرة دي عليها font المختصرة، فسطورها رجعت لازقة في بعض مع إن body لسه بيقول 2.</p>
-~~~
-
-**هتشوف إيه:** فقرتين بنفس الخط والحجم. الأولى سطورها واسعة، والتانية سطورها ضيقة. الفرق إن التانية مكتوبة بـ [[font]].
-
-~~~text القياس من Chrome
-قبلها: line-height: 2;  font-weight: 700;  font-variant-caps: small-caps;
-font: 20px Tahoma;
-  → line-height: normal    font-weight: 400    font-variant-caps: normal     (التلاتة اتمسحوا)
-  → letter-spacing فضلت زي ما هي          (مش من خصائص font)
-~~~
-
-القاعدة: يا تكتب [[font]] وتحط فيها [[/1.8]]، يا تكتب الخصائص الطويلة. ومتكتبش [[font]] **بعد** [[line-height]] على نفس العنصر.
-
-### [[font: inherit]] وكلمات النظام
-
-- [[font: inherit]]: خد كل خصائص الخط من الأب. دي اللي بتتكتب للأزرار والحقول (الدرس اللي فات).
-- [[font: menu]] و [[font: caption]] و [[font: status-bar]] وإخواتهم: خط حتة من واجهة النظام. اتقاس: [[font: menu]] رجّع [[12px "Segoe UI"]]. استخدامها نادر.
-
----
-
-## ٦. [[font-stretch: condensed]]
-
-بتختار نسخة أضيق أو أعرض من الخط، لو العيلة فيها نسخ بعرض مختلف (Condensed أو Expanded).
-
-~~~text الكلمات والنسب (من MDN)
-ultra-condensed  50%       extra-condensed  62.5%     condensed  75%      semi-condensed  87.5%
-normal           100%
-semi-expanded    112.5%    expanded         125%      extra-expanded  150%     ultra-expanded  200%
-~~~
-
-القيمة ممكن تبقى كلمة من دول، أو أي نسبة من 50% لـ 200%.
-
-~~~text القياس من Chrome («Hamburg 123» بحجم 100px)
-                          font-stretch: 100%     font-stretch: condensed
-Arial                     605.9                  496.8     ← اتعرض بـ Arial Narrow (نسخة Condensed من نفس العيلة)
-Segoe UI                  606.2                  606.2     ← مفيش نسخة ضيقة: مفيش تغيير
-Tahoma                    600.9                  600.9
-
-المحسوب: font-stretch: condensed  →  75%
-~~~
-
-العرض **مبيتفبركش**: لو الخط مفيهوش نسخة ضيقة، الخاصية مبتعملش حاجة (عكس التقيل والمايل).
-
-**الاسم:** المواصفة غيّرت اسم الخاصية لـ [[font-width]] وسابت [[font-stretch]] اسم قديم شغال (MDN). في Chrome 157 الجديد لسه مش مدعوم ([[CSS.supports("font-width", "condensed")]] رجّع false)، والمنهج مستبعده لنفس السبب. اكتب [[font-stretch]].
-
----
-
-## ٧. الخطوط المتغيّرة: [[font-variation-settings: "wght" 650]]
-
-الخط العادي (static) ملف لكل وزن: Regular ملف، و Bold ملف. الخط **المتغيّر** (variable font) ملف واحد فيه «محاور»، وكل محور مدى متصل تختار منه أي رقم.
-
-| المحور | بيتحكم في | الخاصية العادية اللي بتحركه |
-|---|---|---|
-| [[wght]] | الوزن | [[font-weight]] |
-| [[wdth]] | العرض | [[font-stretch]] |
-| [[slnt]] | زاوية الميل | [[font-style: oblique 10deg]] |
-| [[ital]] | مايل ولا لأ | [[font-style: italic]] |
-| [[opsz]] | الحجم البصري | [[font-optical-sizing]] |
-
-على Windows فيه خط متغيّر جاي مع النظام اسمه Bahnschrift (لاتيني بس)، محور وزنه من 300 لـ 700 ومحور عرضه من 75 لـ 100. حمّلنا ملفه بـ [[@font-face]] وقسنا:
-
-~~~text القياس من Chrome (كمية الحبر: عدد البيكسلات المرسومة لكلمة «Hamburg» بحجم 100px)
-font-weight     الملف المتغيّر (محمّل بـ @font-face)     Tahoma (ملفين ثابتين)
-300             7305                                    9959
-400             9805                                    9959
-500             10244                                   9959
-550             10712                                   16934
-600             11240                                   16934
-700             12507                                   16934
-~~~
-
-في المتغيّر كل رقم ليه شكله: 550 موجود فعلًا بين 500 و 600. في Tahoma مفيش غير درجتين.
-
-والعرض:
-
-~~~text القياس من Chrome («Hamburg 123» بحجم 100px، الملف المتغيّر)
-font-stretch: 100%                      575.8
-font-stretch: 87.5%                     499.4
-font-stretch: 75%                       423.0
-font-variation-settings: "wdth" 80      453.6
-~~~
-
-### اكتب الخاصية العادية الأول
-
-[[font-variation-settings]] هي الطريقة «الواطية»: بتكتب اسم المحور (أربع حروف بين تنصيص) والرقم. القاعدة في MDN: لو المحور ليه خاصية عادية، استخدمها هي. [[font-weight: 650]] أحسن من [[font-variation-settings: "wght" 650]] لتلات أسباب:
-
-1. الخاصية العادية بتشتغل مع الخط الثابت كمان (بتاخد أقرب وزن). التانية مبتعملش حاجة من غير خط متغيّر.
-2. [[font-variation-settings]] **قيمة واحدة**: لو كتبتها تاني في قاعدة تانية عشان تغيّر محور، المحاور اللي في الأولى بتتمسح.
-3. الوراثة و [[bolder]] و [[<strong>]] كلهم بيفهموا [[font-weight]].
-
-~~~text القياس من Chrome (فخ المسح)
-.a { font-variation-settings: "wdth" 75; }
-.a { font-variation-settings: "wght" 700; }      ← القاعدة التانية كسبت كلها
-  → العرض رجع 575.8 (المحور wdth اتمسح)
-
-الصح:  font-variation-settings: "wght" 700, "wdth" 75;     → 423.0
-~~~
-
-سيب [[font-variation-settings]] للمحاور الخاصة اللي ملهاش خاصية (محاور بيعملها مصمم الخط واسمها بحروف كبيرة زي [["GRAD"]]).
-
-**ملحوظة متقاسة عن الخط المتسطّب:** لما استخدمنا Bahnschrift باسمه من الجهاز (من غير [[@font-face]])، المتصفح خد «النسخ المسمّاة» بس: [[font-weight: 500]] و [[550]] طلعوا زي 600، و [[font-variation-settings: "wdth" 75]] مغيّرتش العرض. المحاور المتصلة اشتغلت بس مع الملف المحمّل. يعني الخط المتغيّر بيبان على حقيقته لما تحمّله إنت (الدرس الجاي).
-
-للعربي: خطوط ويب عربي كتير بتيجي متغيّرة بمحور وزن (وده اللي مشروع «next/font» بيحمّله في وحدة «الثيم والعربي والخطوط والأيقونات»). ملف واحد بدل خمسة.
-
-### [[font-optical-sizing: auto]]
-
-بعض الخطوط المتغيّرة فيها محور [[opsz]]: الحروف نفسها بتتغيّر مع الحجم. في الحجم الصغير بتبقى أعرض ومسافاتها أوسع عشان تتقري، وفي الكبير أدق وأرشق.
-
-~~~text القياس من Chrome (Segoe UI Variable محمّل من ملفه: عرض الكلمة ÷ حجم الخط)
-الحجم     font-optical-sizing: auto     font-optical-sizing: none
-10px      7.7078                        7.6437
-16px      7.6416                        7.6426
-48px      7.6344                        7.6426
-96px      7.6343                        7.6426
-~~~
-
-مع [[auto]] (الافتراضي) النسبة بتتغيّر مع الحجم: الحروف في 10px أعرض نسبيًا من 96px. مع [[none]] النسبة ثابتة: نفس الرسمة بتتكبّر وتتصغّر. سيبها [[auto]]، واقفلها بس لو المصمم طالب شكل واحد في كل الأحجام.
-
----
-
-## ٨. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
+| الحاجة | معناها |
 |---|---|
-| [[font-weight: 500]] على خط فيه 400 و 700 بس | مفيش أي تغيير، أو قفزة للـ Bold |
-| وزن 900 لعنوان عربي من غير تجربة | النسخة دي ممكن متبقاش فيها عربي، فالعنوان يطلع بخط تاني |
-| تحميل وزن واحد من خط ويب واستخدام [[<strong>]] | تقيل مفبرك شكله ملطّخ |
-| [[<em>]] في صفحة عربي من غير أي تعديل | ميل مفبرك على الحروف المتصلة |
-| [[font-synthesis: style]] عشان «تقفل» المايل | قفلت التقيل والـ small caps وسابت المايل |
-| [[font: 18px Tahoma]] بعد [[line-height: 1.8]] | [[line-height]] رجعت [[normal]] والسطور لزقت في بعض |
-| [[font: bold 18px]] من غير خط | السطر كله اترمى |
-| [[font-variation-settings]] في قاعدتين | التانية مسحت محاور الأولى |
-| [[font-stretch: condensed]] على خط ملوش نسخة ضيقة | ولا حاجة: العرض مبيتفبركش |
+| [[role="tablist"]] | الحاوية: «دي مجموعة tabs». و [[aria-label]] اسمها |
+| [[role="tab"]] | كل زرار tab. زرار حقيقي ([[<button>]]) عشان ياخد focus ويتداس |
+| [[type="button"]] | عشان لو الزرار جوه form ميبعتوش |
+| [[aria-selected]] | مختار ولا لأ (نص: [[true]] أو [[false]]) |
+| [[aria-controls="panel-1"]] | الـ id بتاع المحتوى اللي الـ tab ده بيعرضه |
+| [[tabindex="0"]] / [[-1]] | 0 = بيقف عليه Tab. و -1 = Tab بيعدّيه، بس الكود يقدر يعمل له [[focus()]] |
+| [[role="tabpanel"]] + [[aria-labelledby]] | المحتوى، واسمه هو كلام الـ tab بتاعه |
+| [[hidden]] | مستخبي من الشاشة ومن قارئ الشاشة |
+
+ده الـ accessibility tree بعد ما اخترنا «الفواتير»:
+
+~~~text الـ accessibility tree
+tablist  "الإعدادات"
+tabpanel "الفواتير"
+tab      "الحساب"    selected=false
+tab      "الأمان"    selected=false
+tab      "الفواتير"  selected=true
+~~~
+
+الـ panel اسمه «الفواتير» عشان [[aria-labelledby]]، وباقي الـ panels مش ظاهرين خالص عشان [[hidden]].
 
 ---
 
-## الخلاصة
+## ٢. أول سطرين: نمسك العناصر
 
-- [[font-weight]] رقم من 1 لـ 1000. اللي ملوش ملف بياخد أقرب ملف، فاعرف خطك فيه أنهي أوزان.
-- [[bolder]] و [[lighter]] بيقفزوا على سلّم (100 و 400 و 700 و 900) حسب وزن الأب.
-- العربي ملوش مايل: [[font-synthesis-style: none]] أو [[font-style: normal]]، وادّي [[<em>]] تمييز تاني.
-- [[font]] المختصرة: الحجم والخط إجباريين وبالترتيب، وبتمسح [[line-height]] لو مكتبتهاش جواها.
-- [[font-stretch]] محتاجة نسخة ضيقة في الخط، ومبتتفبركش.
-- الخط المتغيّر ملف واحد بمحاور. حرّكه بالخصائص العادية، و [[font-variation-settings]] للمحاور الخاصة بس.`,
-          try: R`في ملف [[weights.html]] اكتب نفس الجملة العربي تسع مرات، كل مرة بوزن من 100 لـ 900، بخط [[Tahoma]]. كام شكل مختلف طلع؟ غيّر الخط لـ [["Segoe UI"]] (لو على Windows) أو [[system-ui]] وعدّ تاني. وبعدين زوّد سطر عاشر فيه [[<em>]] جواه كلمة عربي وكلمة إنجليزي، وجرّب عليه [[font-synthesis-style: none]].`,
-          sol: R`~~~live 278 300 weights.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أوزان الخط</title>
-<style>
-  body { font-family: Tahoma, sans-serif; font-size: 18px; }
-  p { margin: 2px 0; }
-  .keep { font-synthesis-style: none; }
-</style>
-</head>
-<body>
-<p style="font-weight: 100">100 الخط العربي</p>
-<p style="font-weight: 200">200 الخط العربي</p>
-<p style="font-weight: 300">300 الخط العربي</p>
-<p style="font-weight: 400">400 الخط العربي</p>
-<p style="font-weight: 500">500 الخط العربي</p>
-<p style="font-weight: 600">600 الخط العربي</p>
-<p style="font-weight: 700">700 الخط العربي</p>
-<p style="font-weight: 800">800 الخط العربي</p>
-<p style="font-weight: 900">900 الخط العربي</p>
-<p>من غير تعديل: <em>مهم جدًا very important</em></p>
-<p class="keep">بـ font-synthesis-style: none: <em>مهم جدًا very important</em></p>
-</body>
-</html>
+~~~javascript
+const list = document.querySelector('[role=tablist]');
+const tabs = [...list.querySelectorAll('[role=tab]')];
 ~~~
 
-**هتشوف إيه:**
+- [[const]] متغير مش هيتغير. و [[document.querySelector]] بيرجّع **أول** عنصر بيطابق selector، و [[[role=tablist]]] selector بالـ attribute: «العنصر اللي role بتاعه tablist».
+- [[list.querySelectorAll]] بيرجّع **كل** اللي بيطابق، بس جوه [[list]] بس.
+- [[[...]]]: الـ [[...]] اسمها spread، بتفرد العناصر جوه array حقيقية. ليه؟ [[querySelectorAll]] بيرجّع NodeList، ومفيهاش [[indexOf]] ولا [[at]] اللي هنحتاجهم تحت.
 
-- بـ Tahoma: **شكلين بس**. من 100 لـ 500 عادي، ومن 600 لـ 900 تقيل.
-- بـ Segoe UI على Windows: خمس أشكال للعربي (Light و Semilight و Regular و Semibold و Bold)، وعند 800 و 900 العربي بيتحوّل لخط تاني.
-- السطر العاشر: العربي والإنجليزي مايلين. السطر الأخير: الاتنين معدولين، لأن Tahoma ملوش ملف مايل خالص، فكل الميل كان مفبرك.
+## ٣. الدالة [[select(tab)]]: كل التغيير في مكان واحد
 
-~~~text القياس من Chrome (Tahoma، عرض «السلام عليكم» بحجم 100px)
-من 100 لـ 500     571.0
-من 600 لـ 900     627.7
-~~~
-
-**اللي تتعلمه:** قبل ما تكتب [[font-weight: 500]] أو [[300]] في التصميم، اتأكد إن الخط فيه الوزن ده. لو مفيهوش، الرقم بيتكتب وميحصلش حاجة، ومفيش أي رسالة تقولك.`,
-          deep: {
-            why: R`الوزن هو أقوى أداة ترتيب في الصفحة بعد الحجم: العنوان تقيل، والمقدمة خفيفة، والكلمة المهمة تقيلة وسط الفقرة. بس الأداة دي بتعتمد على ملفات الخط الموجودة فعلًا، ومفيش أي رسالة لما الوزن المطلوب مش موجود. فاللي ميعرفش القاعدة بيكتب [[500]] و [[600]] ويفتكر إن المتصفح «مش شغال». وفي العربي فيه مشكلة زيادة: الميل الافتراضي لـ [[<em>]] و [[<cite>]] بيتفبرك على خط ملوش مايل، فالصفحة العربي من غير سطر CSS واحد بتطلع فيها حروف ممطوطة.`,
-            how: R`المتصفح بيجمع كل ملفات العيلة (faces)، كل ملف ليه وزن وميل وعرض. وبعدين بيطابق بالترتيب: العرض الأول، ثم الميل، ثم الوزن. للوزن بيدوّر على المطلوب بالظبط، ولو مش موجود بياخد أقرب واحد حسب قواعد المواصفة (واللي اتقاس على Windows فوق هو نتيجة التطبيق ده مع ملفات النظام). ولو الملف المختار أخف من المطلوب بفرق كبير والفبركة مسموحة، بيتخّن الرسم. ونفس الفكرة للميل: لو مفيش ملف italic أو oblique، بيميّل الحروف بزاوية ثابتة.
-
-في الخط المتغيّر، الملف فيه «أساتذة» (masters) للطرفين والمتصفح بيحسب الشكل اللي بينهم لأي رقم على المحور. [[font-weight]] و [[font-stretch]] و [[font-style]] بيتحولوا لقيم على المحاور [[wght]] و [[wdth]] و [[slnt]]/[[ital]]، و [[font-variation-settings]] بتتكتب فوقهم.`,
-            when: R`[[font-weight]]: في كل صفحة، للعناوين والتأكيد. [[font-synthesis]]: أول ما تحمّل خط ويب بأوزان محدودة، وفي أي صفحة عربي عشان الميل المفبرك. [[font]] المختصرة: في القاعدة الأساسية بتاعة [[body]]، و [[font: inherit]] للفورم. [[font-stretch]]: عناوين ضيقة أو جداول مزحومة، لو الخط ليه نسخة ضيقة. الخطوط المتغيّرة: لما تحتاج أكتر من وزنين أو تلاتة من نفس الخط.`,
-            mistakes: R`وزن مش موجود في الخط. وزن موجود للاتيني ومش موجود للعربي. تقيل مفبرك من خط ويب بوزن واحد. ميل مفبرك على العربي. [[font]] المختصرة بتمسح [[line-height]]. [[font]] من غير حجم أو من غير خط. [[font-synthesis: style]] مفهومة بالعكس. و [[font-variation-settings]] متكررة في قاعدتين.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** رأس مقال في «مدوّنة حبر»: العنوان الفرعي [[.kicker]] خفيف (300)، والعنوان [[h1]] تقيل جدًا (800)، واسم الكاتب [[.by]] نص تقيل (600). الخط Segoe UI أو خط النظام. (من قسم ١ في الشرح)`, done: R`التلات أوزان المحسوبة 300 و 800 و 600، وكل الشروط ✓.`, work: { h: 170, start: R`<style>
-  body { font-family: "Segoe UI", system-ui, sans-serif; }
-  .kicker { }
-  h1 { }
-  .by { }
-</style>
-<p class="kicker">تجارب</p>
-<h1>شهر كامل من غير سوشيال ميديا</h1>
-<p class="by">كتبت: سلمى فؤاد</p>`, checks: [
-              { say: R`[[.kicker]] وزنه 300`, q: ".kicker", style: ["font-weight", "300"] },
-              { say: R`العنوان وزنه 800`, q: "h1", style: ["font-weight", "800"] },
-              { say: R`اسم الكاتب وزنه 600`, q: ".by", style: ["font-weight", "600"] }
-            ] }, sol: R`~~~live 160 203 الحل
-<style>
-  body { font-family: "Segoe UI", system-ui, sans-serif; }
-  .kicker { font-weight: 300; }
-  h1 { font-weight: 800; }
-  .by { font-weight: 600; }
-</style>
-<p class="kicker">تجارب</p>
-<h1>شهر كامل من غير سوشيال ميديا</h1>
-<p class="by">كتبت: سلمى فؤاد</p>
-~~~
-
-**هتشوف إيه (على Windows):** «تجارب» رفيعة، والعنوان تقيل، واسم الكاتب بين الاتنين. وبص على العنوان كويس: طلبنا 800 والخط مفيهوش 800، فالمتصفح راح لـ Black، و Black مفيهوش عربي، فالعنوان العربي اتعرض بخط تاني.
-
-**ليه مهم:** الشروط كلها ✓ (المحسوب 800)، والشكل مش اللي إنت عايزه. [[getComputedStyle]] بيقول اللي طلبته، مش اللي اترسم. في الشغل الحقيقي كنت هتنزّل العنوان لـ [[700]] لحد ما تحمّل خط ويب فيه 800 عربي.
-
-**الغلطة الشائعة:** [[font-weight: 800px]] أو [[font-weight: "bold"]]. الوزن رقم من غير وحدة، أو كلمة من غير تنصيص.
-
-~~~text القياس من Chrome
-.kicker   font-weight: 300
-h1        font-weight: 800
-.by       font-weight: 600
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فقرة المقدمة [[.lead]] المفروض سطورها واسعة زي باقي الصفحة ([[line-height: 1.8]])، وطلعت لازقة. السبب سطر واحد في قاعدة [[.lead]]. صلّحه وخلّي القاعدة لسه بتستخدم [[font]] المختصرة. (من قسم ٥ في الشرح: «font بتمسح اللي مكتبتوش»)`, done: R`سطر [[.lead]] بقى 36px (20 × 1.8) ولسه حجمها 20px، وكل الشروط ✓.`, work: { h: 220, start: R`<style>
-  body { font-family: Tahoma, sans-serif; font-size: 16px; line-height: 1.8; }
-  .lead { font: 20px Tahoma, sans-serif; }
-  p { max-width: 380px; }
-</style>
-<p class="lead">المقدمة دي المفروض تبقى أكبر من باقي المقال وسطورها مريحة زيه بالظبط.</p>
-<p>ودي فقرة عادية من المقال، سطورها واخدة المسافة من body ومفيهاش مشكلة.</p>`, checks: [
-              { say: R`سطر المقدمة 36px (1.8 من حجمها)`, q: ".lead", style: ["line-height", "36px"] },
-              { say: R`حجم المقدمة لسه 20px`, q: ".lead", style: ["font-size", "20px"] },
-              { say: R`القاعدة لسه بتستخدم [[font]] المختصرة`, src: "font: " },
-              { say: R`الفقرة العادية متغيّرتش (28.8px)`, q: "p:not(.lead)", style: ["line-height", "28.8px"] }
-            ] }, sol: R`~~~live 186 222 بعد التصليح
-<style>
-  body { font-family: Tahoma, sans-serif; font-size: 16px; line-height: 1.8; }
-  .lead { font: 20px/1.8 Tahoma, sans-serif; }
-  p { max-width: 380px; }
-</style>
-<p class="lead">المقدمة دي المفروض تبقى أكبر من باقي المقال وسطورها مريحة زيه بالظبط.</p>
-<p>ودي فقرة عادية من المقال، سطورها واخدة المسافة من body ومفيهاش مشكلة.</p>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 162 186 قبل
-<style>
-  body { font-family: Tahoma, sans-serif; font-size: 16px; line-height: 1.8; }
-  .lead { font: 20px Tahoma, sans-serif; }
-  p { max-width: 380px; }
-</style>
-<p class="lead">المقدمة دي المفروض تبقى أكبر من باقي المقال وسطورها مريحة زيه بالظبط.</p>
-<p>ودي فقرة عادية من المقال، سطورها واخدة المسافة من body ومفيهاش مشكلة.</p>
-~~~
-
-**هتشوف إيه:** قبل: المقدمة خطها كبير وسطورها لازقة، والفقرة اللي تحتها سطورها واسعة. بعد: الاتنين سطورهم مريحة.
-
-**ليه:** [[font]] بتظبط [[line-height]] كمان، ولما مبتكتبهاش بترجع [[normal]] وتغلب الوراثة من [[body]]. الحل إنها تتكتب جوه المختصرة بعد الحجم وشرطة مايلة: [[20px/1.8]].
-
-**حل تاني صح:** تسيب المختصرة وتكتب [[font-size: 20px]] بس. بس التمرين طالب المختصرة.
-
-**الغلطة الشائعة:** تزوّد [[line-height: 1.8]] **قبل** سطر [[font]] في نفس القاعدة. المختصرة هتمسحها تاني. لازم تبقى بعدها أو جواها.
-
-~~~text القياس من Chrome
-                قبل          بعد
-.lead line-height   normal       36px
-p     line-height   28.8px       28.8px
-~~~` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع، وبعدين صلّح:** [[strong]] مكتوب له [[font-weight: 700]]. فيه واحد جوه فقرة وواحد جوه [[h2]]. اللي في العنوان هيبان مختلف عن باقي العنوان؟ توقّع، وبعدين غيّر القيمة لكلمة واحدة تخلّي [[strong]] دايمًا أتقل من اللي حواليه. (من قسم ١ في الشرح: «bolder و lighter»)`, done: R`توقّعت إن اللي في العنوان مش هيبان (700 جوه 700)، وبعد التصليح بقى 900 في العنوان و 700 في الفقرة، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  body { font-family: "Segoe UI", system-ui, sans-serif; }
-  strong { font-weight: 700; }
-</style>
-<h2>النسخة الجديدة <strong>مجانية</strong> للكل</h2>
-<p>النسخة الجديدة <strong>مجانية</strong> للكل.</p>`, checks: [
-              { say: R`[[strong]] اللي في العنوان بقى 900`, q: "h2 strong", style: ["font-weight", "900"] },
-              { say: R`[[strong]] اللي في الفقرة 700`, q: "p strong", style: ["font-weight", "700"] },
-              { say: R`القيمة كلمة نسبية مش رقم`, src: "bolder" }
-            ] }, sol: R`~~~live 109 بعد التصليح
-<style>
-  body { font-family: "Segoe UI", system-ui, sans-serif; }
-  strong { font-weight: bolder; }
-</style>
-<h2>النسخة الجديدة <strong>مجانية</strong> للكل</h2>
-<p>النسخة الجديدة <strong>مجانية</strong> للكل.</p>
-~~~
-
-**هتشوف إيه:** في الفقرة «مجانية» تقيلة وسط كلام عادي. في العنوان «مجانية» بقت مختلفة عن باقي العنوان. على Windows بـ Segoe UI الاختلاف إنها بخط تاني (نسخة Black مفيهاش عربي، قسم ١). في خط فيه 900 عربي كانت هتبان أتقل وبس.
-
-**ليه:** [[700]] رقم مطلق: جوه عنوان وزنه 700 مفيش فرق. [[bolder]] بتحسب من الأب: 400 ← 700، و 700 ← 900.
-
-| | [[font-weight: 700]] | [[font-weight: bolder]] |
-|---|---|---|
-| [[strong]] جوه [[p]] (400) | 700 | 700 |
-| [[strong]] جوه [[h2]] (700) | 700: مش باين | 900 |
-
-**اللي تاخد بالك منه:** [[bolder]] هي الافتراضي بتاع المتصفح لـ [[strong]] أصلًا. اللي كتب [[700]] هو اللي بوّظها. و [[900]] محتاجة خط فيه الوزن ده بالعربي، وإلا ميّز الكلمة في العنوان بلون.
-
-~~~text القياس من Chrome
-h2 strong   قبل 700     بعد 900
-p strong    قبل 700     بعد 700
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في مقال عربي، الكلمة اللي جوه [[<em>]] واسم الكتاب اللي جوه [[<cite>]] طالعين مايلين بميل مفبرك. امنع الفبركة من [[body]] بسطر واحد (عشان الإنجليزي يفضل مايل حقيقي)، وادّي [[em]] لون [[#b45309]] عشان التشديد يفضل باين. (من قسم ٣ و ٤ في الشرح)`, done: R`[[font-synthesis-style]] بقت [[none]] على الكل، و [[em]] لسه [[italic]] ولونه بني، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  body { font-family: "Segoe UI", Tahoma, sans-serif; font-size: 18px; line-height: 1.8; }
-  em { }
-</style>
-<p>الكتاب ده <em>لازم</em> يتقري مرتين: <cite>فن الكتابة الواضحة</cite> (Clear Writing).</p>
-<p>وبالإنجليزي: this is <em>really</em> important.</p>`, checks: [
-              { say: R`الفبركة ممنوعة على [[em]] (ورثها من [[body]])`, q: "em", style: ["font-synthesis-style", "none"] },
-              { say: R`وعلى [[cite]] كمان`, q: "cite", style: ["font-synthesis-style", "none"] },
-              { say: R`[[em]] لسه [[italic]] (عشان الإنجليزي)`, q: "em", style: ["font-style", "italic"] },
-              { say: R`[[em]] لونه [[#b45309]]`, q: "em", style: ["color", "rgb(180, 83, 9)"] }
-            ] }, sol: R`~~~live 119 151 بعد التصليح
-<style>
-  body { font-family: "Segoe UI", Tahoma, sans-serif; font-size: 18px; line-height: 1.8; font-synthesis-style: none; }
-  em { color: #b45309; }
-</style>
-<p>الكتاب ده <em>لازم</em> يتقري مرتين: <cite>فن الكتابة الواضحة</cite> (Clear Writing).</p>
-<p>وبالإنجليزي: this is <em>really</em> important.</p>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 119 151 قبل
-<style>
-  body { font-family: "Segoe UI", Tahoma, sans-serif; font-size: 18px; line-height: 1.8; }
-</style>
-<p>الكتاب ده <em>لازم</em> يتقري مرتين: <cite>فن الكتابة الواضحة</cite> (Clear Writing).</p>
-<p>وبالإنجليزي: this is <em>really</em> important.</p>
-~~~
-
-**هتشوف إيه:**
-
-- قبل: «لازم» واسم الكتاب العربي مايلين وممطوطين.
-- بعد: الاتنين معدولين، و «لازم» بنية. و «really» في السطر التاني **لسه مايلة**: Segoe UI ليه ملف مايل حقيقي للاتيني، فمفيش فبركة تتمنع.
-
-**ليه [[font-synthesis-style: none]] ومش [[font-style: normal]]؟** التانية كانت هتشيل الميل من الإنجليزي كمان. الأولى بتشيل المفبرك بس.
-
-**الغلطة الشائعة:** [[font-synthesis: style]]. دي معناها «المايل بس مسموح»، يعني عكس المطلوب، وبتقفل التقيل المفبرك كمان.
-
-**ملحوظة:** اسم الكتاب في [[<cite>]] بقى شكله زي باقي الكلام. لو عايزه يتميّز، ادّيله لون أو حطه بين «» في النص.
-
-~~~text القياس من Chrome
-em     font-style: italic    font-synthesis-style: none    color: rgb(180, 83, 9)
-cite   font-style: italic    font-synthesis-style: none
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** المصمم بعتلك ملف التصميم وكاتب: العناوين «Cairo ExtraBold»، والفقرات «Cairo Regular»، والملاحظات «Cairo Light». وبعتلك ملف خط واحد اسمه [[Cairo-Regular.woff2]]. اكتبله في ٣ سطور إيه اللي هيحصل لو اشتغلت بالملف ده بس، وإيه اللي محتاجه منه. (من قسم ١ و ٢ و ٧ في الشرح)`, done: R`قلت إن 800 هيتفبرك من الـ Regular وإن 300 مش هيبان خالص، وطلبت يا ملف لكل وزن يا النسخة المتغيّرة.`, sol: R`**إجابة نموذجية:**
-
-1. بملف Regular بس: العناوين ([[font-weight: 800]]) هتتعرض بتقيل **مفبرك** (المتصفح هيتخّن الـ Regular بالحساب)، وشكله ملطّخ وأضعف من ExtraBold الحقيقي.
-2. الملاحظات ([[font-weight: 300]]) هتتعرض **Regular زي ما هي**: المتصفح بيعرف يتخّن بالحساب، ومبيعرفش يرفّع.
-3. محتاج واحدة من اتنين: تلات ملفات (Light و Regular و ExtraBold)، أو ملف واحد **متغيّر** فيه محور الوزن ([[wght]]) من 300 لـ 800. المتغيّر أحسن لو هنستخدم أكتر من وزنين.
-
-**وللأمان** أكتب [[font-synthesis-weight: none]] على [[body]]: لو ملف وزن اتأخر أو فشل تحميله، يظهر الكلام عادي بدل تقيل مشوّه.
-
-| المطلوب | بملف Regular بس | اللي بيتشاف |
-|---|---|---|
-| 800 | مفبرك | تقيل ملطّخ |
-| 400 | حقيقي | صح |
-| 300 | مفيش | زي الـ 400 بالظبط |` }
-          ]
-        },
-        {
-          cmd: "@font-face و font-display",
-          title: "خط من موقعك: تحمّله إزاي، وبيظهر إمتى، وتمنع القفزة إزاي",
-          pre: [
-            { to: "css/font-family و font-size", why: R`خط الويب بيتحط أول قايمة [[font-family]]، وباقي القايمة هي اللي بتتعرض لحد ما يوصل` },
-            { to: "css/المسارات: مطلق ونسبي", why: R`[[url()]] جوه [[@font-face]] مسار لملف، بنفس قواعد المسارات` }
-          ],
-          ref: [
-            { t: "MDN: @font-face", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face" },
-            { t: "MDN: font-display", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/font-display" },
-            { t: "MDN: unicode-range", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/unicode-range" },
-            { t: "MDN: src", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/src" },
-            { t: "MDN: size-adjust", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/size-adjust" },
-            { t: "MDN: font-size-adjust", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-size-adjust" },
-            { t: "MDN: rel=preload", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/preload" }
-          ],
-          desc: R`[[@font-face]] بتعرّف المتصفح على خط مش موجود على جهاز الزائر: بتدّيله اسم من عندك، ومسار ملف الخط على موقعك. بعدها الاسم ده بيتكتب في [[font-family]] زي أي خط.
-والملف بياخد وقت لحد ما ينزل. [[font-display]] بتحدد الكلام يتعرض إزاي في الوقت ده: يستخبى، ولا يظهر بخط الجهاز ويتبدّل بعدين.`,
-          example: R`@font-face { font-family: "Hebr"; src: url("fonts/hebr-regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Hebr"; src: url("fonts/hebr-bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
-@font-face { font-family: "Hebr"; src: url("fonts/hebr-latin.woff2") format("woff2"); unicode-range: U+0000-00FF; }
-body { font-family: "Hebr", system-ui, "Segoe UI", Tahoma, sans-serif; }`,
-          flag: "script",
-          lines: [
-            R`تعريف خط اسمه «Hebr» (اسم من عندنا): ملفه [[fonts/hebr-regular.woff2]]، وصيغته woff2، وده ملف الوزن العادي 400، ولحد ما ينزل اعرض الكلام بخط بديل ([[swap]]).`,
-            R`نفس الاسم «Hebr» بملف تاني للوزن 700. المتصفح بيجمع التعريفين في عيلة واحدة، وبياخد الملف ده لما يلاقي كلام تقيل.`,
-            R`ملف تالت لنفس العيلة، ليه [[unicode-range]]: بيتستخدم بس للحروف من [[U+0000]] لـ [[U+00FF]] (اللاتيني والأرقام والمسافة). لو الصفحة مفيهاش ولا حرف منهم، الملف مبينزلش.`,
-            R`استخدام الخط: «Hebr» أول القايمة، وبعده خطوط الجهاز. دول اللي بيتعرضوا لحد ما الملف ينزل، ولو فشل تحميله.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-في درس «font-family و font-size» الخط كان لازم يبقى على جهاز الزائر. [[@font-face]] بتخلّي الخط ينزل **مع الصفحة**، فكل الزوار يشوفوا نفس الخط. التمن: ملف زيادة بينزل، ولحظة في أول التحميل الخط لسه موصلش فيها.
-
-المعاينة الحية في الموقع ده معزولة عن الشبكة، فمفيهاش تحميل خطوط. كل أرقام التحميل في الدرس متقاسة بـ Chrome 157 على سيرفر Node محلي بيأخّر ملف الخط بمدة إحنا محددينها وبيكتب كل طلب بيوصله.
-
----
-
-## ١. القاعدة: [[@font-face { font-family: ...; src: ...; }]]
-
-~~~css style.css
-@font-face {
-  font-family: "Hebr";
-  src: url("fonts/hebr-regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-body {
-  font-family: "Hebr", system-ui, "Segoe UI", Tahoma, sans-serif;
-}
-~~~
-
-اللي جوه [[@font-face]] اسمهم **descriptors** مش خصائص: بيوصفوا الملف، مبينسّقوش عنصر.
-
-| الـ descriptor | معناه |
-|---|---|
-| [[font-family: "Hebr"]] | الاسم اللي هتنادي بيه الخط. **إنت اللي بتختاره**، ومش لازم يبقى اسم الخط الحقيقي |
-| [[src: url("fonts/hebr-regular.woff2") format("woff2")]] | مكان الملف وصيغته |
-| [[font-weight: 400]] | الملف ده هو الوزن 400 من العيلة |
-| [[font-style: normal]] | الملف ده النسخة المعدولة (مش المايلة) |
-| [[font-display: swap]] | الكلام يتعرض إزاي لحد ما الملف ينزل (القسم ٤) |
-
-حاجتين بيتلخبط فيهم المبتدئ:
-
-**[[font-weight]] هنا مش أمر.** جوه [[@font-face]] هي بتقول «الملف ده وزنه كام»، مش «خلّي الخط تقيل». لو كتبت [[font-weight: 700]] على ملف Regular، المتصفح هيصدّقك ويعرضه لما حد يطلب التقيل.
-
-**[[@font-face]] لوحدها مبتنزّلش حاجة.** هي تعريف بس. الملف بينزل لما عنصر في الصفحة **فيه كلام** يستخدم الاسم ده في [[font-family]].
-
-~~~text القياس من Chrome (لوج السيرفر: الطلبات اللي وصلت)
-@font-face "Hebr" متعرّف، و body بيستخدمه، وفي الصفحة كلام      →  GET /fonts/hebr-regular  ✓
-@font-face "Unused" متعرّف، ومفيش عنصر بيستخدمه                 →  مفيش أي طلب
-~~~
-
-يعني تعريف عشر خطوط مش بيتقّل الصفحة. استخدامهم هو اللي بيتقّلها.
-
-**المسار نسبي لملف الـ CSS.** [[url("fonts/hebr-regular.woff2")]] جوه [[css/style.css]] معناها [[css/fonts/hebr-regular.woff2]]، مش فولدر [[fonts]] اللي جنب الصفحة (MDN). لو الـ CSS في فولدر والخطوط في فولدر جنبه: [[url("../fonts/...")]].
-
----
-
-## ٢. صيغ الملفات
-
-| الصيغة | الامتداد | تستخدمها؟ |
-|---|---|---|
-| WOFF2 | [[.woff2]] | **أيوه، وهي بس.** مضغوطة أحسن ضغط، وكل المتصفحات الحالية بتفتحها |
-| WOFF | [[.woff]] | للمتصفحات القديمة جدًا. مبقتش محتاجها |
-| TrueType و OpenType | [[.ttf]] و [[.otf]] | دي صيغة التسطيب على الجهاز. بتشتغل في المتصفح بس حجمها أكبر بكتير |
-
-[[format("woff2")]] تلميح للمتصفح: «الملف ده woff2». لو المتصفح ميعرفش الصيغة، بيعدّي الملف **من غير ما ينزّله** ويروح للي بعده في [[src]]:
-
-~~~text القياس من Chrome (لوج السيرفر)
-src: url("a.ttf") format("made-up"),
-     url("b.ttf") format("truetype");
-
-→  GET /b.ttf        (a.ttf متطلبش خالص: صيغته مش معروفة)
-~~~
-
-عشان كده التلميح مهم: من غيره المتصفح بينزّل الملف الأول عشان يعرف هو إيه.
-
-### [[src]] قايمة بالترتيب، وفيها [[local()]]
-
-~~~css
-@font-face {
-  font-family: "Hebr";
-  src: local("Hebr Naskh"),
-       url("fonts/hebr-regular.woff2") format("woff2");
-}
-~~~
-
-[[local("اسم")]] معناها «لو الخط ده متسطّب على جهاز الزائر، استخدمه ومتنزّلش حاجة».
-
-~~~text القياس من Chrome (لوج السيرفر)
-src: local("Tahoma"), url("x.ttf")             →  مفيش طلب (Tahoma موجود على الجهاز)
-src: local("No Such Font Here"), url("x.ttf")  →  GET /x.ttf
-~~~
-
-بتوفّر تحميل، بس فيها مخاطرة: النسخة اللي على جهاز الزائر ممكن تبقى قديمة أو ناقصة حروف. في المواقع الحقيقية أغلب الناس بتكتب [[url()]] بس.
-
-و [[local()]] ليها استخدام تاني حلو: تعمل اسم واحد لخطوط الجهاز، من غير أي تحميل. ده بيشتغل في المعاينة:
-
-~~~live 122 اسم من عندنا لخط موجود على الجهاز
-<style>
-  @font-face {
-    font-family: "Site Sans";
-    src: local("Segoe UI"), local("Tahoma"), local("Arial");
+~~~javascript
+function select(tab) {
+  for (const t of tabs) {
+    const on = t === tab;
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
   }
-  .a { font-family: "Site Sans", serif; font-size: 22px; }
-  .b { font-family: serif; font-size: 22px; }
-</style>
-<p class="a">الفقرة دي بخط اسمه Site Sans</p>
-<p class="b">ودي بالـ serif الافتراضي للمقارنة</p>
-~~~
-
-**هتشوف إيه (على Windows):** السطر الأول بخط Segoe UI مع إن مفيش خط اسمه «Site Sans» في الدنيا. الاسم من عندنا، والملف من الجهاز. لو مفيش ولا خط من التلاتة عندك، السطرين هيبقوا زي بعض.
-
----
-
-## ٣. عيلة واحدة بكذا ملف
-
-كل وزن أو ميل ملف، وكلهم بنفس [[font-family]]:
-
-~~~css
-@font-face { font-family: "Hebr"; src: url("fonts/hebr-regular.woff2") format("woff2"); font-weight: 400; }
-@font-face { font-family: "Hebr"; src: url("fonts/hebr-bold.woff2") format("woff2"); font-weight: 700; }
-~~~
-
-والمتصفح بينزّل **اللي الصفحة محتاجاه بس**:
-
-~~~text القياس من Chrome (لوج السيرفر)
-الصفحة فيها <p>كلام</p> بس               →  GET hebr-regular      (ملف الـ bold متطلبش)
-الصفحة فيها <p><b>تقيل</b></p> بس        →  GET hebr-bold         (ملف الـ regular متطلبش)
-~~~
-
-لو عرّفت ملف واحد (400) والصفحة فيها [[<strong>]]، المتصفح هيفبرك التقيل من الملف العادي (درس «font-weight و font-style»). يا تزوّد ملف الـ 700، يا تكتب [[font-synthesis-weight: none]].
-
-### الخط المتغيّر: [[font-weight: 300 700]]
-
-لو الملف خط متغيّر (variable)، بتكتب **مدى** بدل رقم:
-
-~~~css
-@font-face {
-  font-family: "Hebr";
-  src: url("fonts/hebr-variable.woff2") format("woff2");
-  font-weight: 300 700;
+  tab.focus();
 }
 ~~~
 
-معناها «الملف ده بيغطي كل الأوزان من 300 لـ 700». ملف واحد وطلب واحد لكل الأوزان. من غير المدى، المتصفح هيعتبر الملف وزن 400 بس ويفبرك الباقي.
+بتاخد الـ tab الجديد وتلف على **كل** الـ tabs ([[for (const t of tabs)]]: [[t]] كل واحد بالدور):
+
+1. [[const on = t === tab;]]: [[===]] مقارنة، فـ [[on]] بتبقى [[true]] للـ tab الجديد بس و [[false]] للباقي.
+2. [[setAttribute('aria-selected', String(on))]]: بيكتب الـ attribute. و [[String(on)]] بيحوّل [[true]] لنص [[«true»]]، لأن قيم الـ aria نصوص.
+3. [[t.tabIndex = on ? 0 : -1;]]: [[? :]] اسمه ternary: «لو on يبقى 0، غير كده -1». ده قلب الفكرة: الـ [[0]] بينتقل للجديد.
+4. السطر الطويل من جوه لبرة: [[t.getAttribute('aria-controls')]] بيرجّع [[«panel-2»]] مثلًا، و [[document.getElementById(...)]] بيجيب العنصر ده، و [[.hidden = !on]] ([[!]] = عكس) بيخفيه لو مش مختار ويظهره لو مختار.
+
+وبعد اللفة: [[tab.focus()]] بينقل الـ focus للجديد. ده شغال رغم إن الـ tabindex كان -1، لأن -1 بيمنع Tab بس مش الكود.
+
+## ٤. الأسهم: [[list.addEventListener('keydown', (e) => { ... })]]
+
+[[addEventListener]] بيقول «لما يحصل حدث كذا شغّل الدالة دي». و [[keydown]] = زرار في الكيبورد اتداس. و [[(e) => {...}]] دالة (arrow function)، و [[e]] الحدث نفسه وفيه [[e.key]] اسم الزرار. الحدث متسجّل على الـ tablist مرة واحدة، والضغطة على أي tab جواه بتوصله (اسمها event delegation).
+
+### [[const i = tabs.indexOf(document.activeElement);]]
+
+[[document.activeElement]] العنصر اللي عليه الـ focus دلوقتي، و [[indexOf]] رقمه في الـ array (من 0).
+
+### [[const rtl = getComputedStyle(list).direction === 'rtl';]]
+
+[[getComputedStyle]] بيرجّع الـ CSS النهائي اللي المتصفح طبّقه، و [[direction]] موروث من [[dir]] على الـ html. في صفحة [[dir="rtl"]] رجّع [[rtl]]، وفي صفحة [[ltr]] رجّع [[ltr]].
+
+### [[const step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];]]
+
+ده object صغير بنستخدمه كجدول، وبعده على طول [[[e.key]]] بيطلّع منه القيمة بتاعة الزرار اللي اتداس:
+
+| الزرار | في RTL | في LTR |
+|---|---|---|
+| [[ArrowRight]] | [[-1]] (اللي قبله) | [[1]] (اللي بعده) |
+| [[ArrowLeft]] | [[1]] (اللي بعده) | [[-1]] |
+| أي زرار تاني | [[undefined]] | [[undefined]] |
+
+في العربي الترتيب من اليمين للشمال، فالشمال هو «اللي بعده».
+
+### [[if (step) select(tabs[(i + step + tabs.length) % tabs.length]);]]
+
+[[undefined]] بيتحسب false، فالـ if دي بتشتغل للأسهم بس. والحسبة بتلف: [[%]] باقي القسمة.
+
+~~~text الحسبة على ٣ tabs (اتحسبت في المتصفح)
+من الأخير (2) لقدام:  (2 + 1 + 3) % 3 = 0   ← الأول
+من الأول (0) لورا:    (0 - 1 + 3) % 3 = 2   ← الأخير
+من غير + tabs.length:  -1 % 3 = -1          ← مفيش عنصر رقمه -1
+~~~
+
+عشان كده بنزوّد [[tabs.length]] قبل الـ [[%]]: في JavaScript باقي قسمة رقم سالب بيطلع سالب.
+
+### Home و End و [[else return]]
+
+[[tabs[0]]] الأول، و [[tabs.at(-1)]] الأخير ([[at]] بتقبل رقم سالب يعدّ من الآخر). وأي زرار تاني: [[return]] نخرج من الدالة ونسيبه للمتصفح (Tab مثلًا لازم يشتغل عادي).
+
+### [[e.preventDefault();]]
+
+بيمنع الشغل الافتراضي للزرار: السهم كان هيعمل scroll للصفحة كمان. اتأكدنا: بعد سهم [[e.defaultPrevented]] بقى [[true]]، وبعد حرف [[a]] فضل [[false]] (خرج من [[return]] قبلها).
+
+## ٥. الماوس: [[click]] و [[closest]]
+
+[[e.target]] العنصر اللي اتداس عليه بالظبط، و [[closest('[role=tab]')]] بيطلع لفوق لحد ما يلاقي أقرب عنصر (هو نفسه أو جد) role بتاعه tab، ولو مفيش يرجّع [[null]] فالـ [[if (t)]] بتتجاهل الضغطة.
 
 ---
 
-## ٤. [[font-display: swap]]
+## ٦. اللي حصل فعلًا بالكيبورد (RTL)
 
-من لحظة ما المتصفح يحتاج الخط لحد ما الملف يوصل، فيه كلام لازم يتعرض. المواصفة بتقسّم الوقت ده تلات فترات:
-
-| الفترة | الكلام بيتعرض إزاي | لو الخط وصل فيها |
-|---|---|---|
-| **block** | **مخفي** (مكانه محجوز والحروف مش باينة) | بيتعرض بيه |
-| **swap** | بالخط البديل (اللي بعده في القايمة) | بيتبدّل للخط الجديد |
-| **failure** | بالخط البديل | **مبيتبدّلش**: اتعامل كإنه فشل |
-
-و [[font-display]] بتحدد طول كل فترة:
-
-| القيمة | فترة الإخفاء | فترة التبديل | اللي بيحصل |
+| الضغطة | الـ focus | [[tabIndex]] للتلاتة | الـ panel الظاهر |
 |---|---|---|---|
-| [[font-display: auto]] | المتصفح يقرر | المتصفح يقرر | في Chrome بتتصرف زي [[block]] |
-| [[font-display: block]] | قصيرة | مفتوحة | الكلام مخفي في الأول (لحد 3 ثواني في Chrome حسب وثائق web.dev)، وبعدها بديل |
-| [[font-display: swap]] | شبه صفر | مفتوحة | البديل فورًا، والتبديل وقت ما الخط يوصل |
-| [[font-display: fallback]] | شبه صفر | قصيرة | البديل فورًا، والتبديل لو الخط وصل بسرعة بس |
-| [[font-display: optional]] | شبه صفر | مفيش | الخط بيتستخدم بس لو جاهز فورًا |
-
-وده اللي اتقاس. خمس جمل، كل واحدة بخط ويب بقيمة مختلفة، والبديل Tahoma. الرقم هو عرض الجملة: لما يتغيّر يبقى الخط اتبدّل.
-
-~~~text القياس من Chrome (الخط اتأخر 1.5 ثانية)
-الوقت      auto     block    swap     fallback   optional
-200ms      224      231      231      254        258       ← كله بمقاس البديل
-1000ms     224      231      231      254        258
-2000ms     120      126      123      140        258       ← الأربعة اتبدّلوا. optional لأ
-6000ms     120      126      123      140        258
-~~~
-
-~~~text القياس من Chrome (الخط اتأخر 4.5 ثانية)
-4000ms     224      231      231      254        258
-5000ms     120      126      123      254        258       ← fallback مبقاش بيتبدّل: فترته خلصت
-~~~
-
-~~~text القياس من Chrome (الخط وصل في أقل من 50ms)
-50ms       120      126      123      140        120       ← optional استخدمه لأنه كان جاهز
-~~~
-
-اللي الأرقام بتقوله:
-
-- [[swap]] و [[block]] و [[auto]]: بيتبدّلوا للخط الجديد مهما اتأخر.
-- [[fallback]]: اتبدّل لما الخط وصل بعد ثانية ونص، وماتبدّلش لما وصل بعد أربع ثواني ونص.
-- [[optional]]: ماتبدّلش ولا مرة لما الخط اتأخر، حتى 300ms. استخدمه بس لما كان جاهز فورًا.
-
-اللي الأرقام **مبتقولوش**: الكلام كان باين ولا مخفي. العرض بيتقاس حتى لو الحروف مخفية. إن [[block]] و [[auto]] بيخفوا الكلام في الأول ده من MDN (تعريف فترة block)، ومتقاسش هنا.
-
-المشكلتين ليهم أسامي:
-
-- **FOIT** (Flash Of Invisible Text): الكلام مخفي لحد ما الخط يوصل. ده [[block]]. على نت ضعيف الزائر بيشوف صفحة فيها صور وألوان ومفيهاش كلام.
-- **FOUT** (Flash Of Unstyled Text): الكلام باين بالبديل وبعدين بيتبدّل قدام عين الزائر. ده [[swap]].
-
-FOUT أهون: الزائر بيقرا من أول لحظة. عشان كده [[swap]] هي الاختيار المعتاد.
-
-| الموقف | القيمة | ليه |
-|---|---|---|
-| خط الفقرات والعناوين | [[swap]] | الكلام يتقري فورًا، والخط ييجي لما ييجي |
-| خط لو اتأخر مش فارق (والقفزة المتأخرة مضايقة) | [[fallback]] | لو مجاش بسرعة، كمّل بالبديل |
-| خط تحسين مش أساسي، والنت ضعيف عند جمهورك | [[optional]] | مفيش قفزة خالص. في الزيارة التانية الخط بيبقى في الـ cache فبيظهر |
-| خط أيقونات (الحرف البديل ملوش معنى) | [[block]] | حرف غلط أسوأ من فراغ |
-
----
-
-## ٥. القفزة وقت التبديل، وتظبيط البديل
-
-[[swap]] ليها تمن: الخط الجديد مقاساته غير البديل، فالفقرة بتاخد عدد سطور مختلف، وكل اللي تحتها بيتحرك.
-
-~~~text القياس من Chrome (نفس الفقرة، عرضها 300px، والخط 18px/1.7)
-بالبديل (Tahoma)            ارتفاعها 122.38px     (4 سطور)
-بخط الويب بعد ما وصل        ارتفاعها 61.19px      (سطرين)
-~~~
-
-الفقرة نزلت من 4 سطور لسطرين قدام عين القارئ، وكل اللي تحتها طلع 61px. ده اسمه layout shift، وبيتحسب ضدك في مقاييس الأداء (وحدة «الأداء»).
-
-الحل: **تظبّط البديل** عشان مقاساته تقرّب من خط الويب. بتعرّف البديل نفسه بـ [[@font-face]] و [[local()]] وتعدّل مقاسه:
-
-~~~css
-@font-face {
-  font-family: "Hebr Fallback";
-  src: local("Tahoma");
-  size-adjust: 58%;
-}
-
-body {
-  font-family: "Hebr", "Hebr Fallback", sans-serif;
-}
-~~~
-
-~~~text القياس من Chrome (نفس الفقرة)
-Tahoma عادي                         122.38px
-Tahoma بـ size-adjust: 58%          61.19px       ← نفس ارتفاع خط الويب: مفيش قفزة
-~~~
-
-[[size-adjust]] بتكبّر أو تصغّر حروف الملف ده بنسبة، من غير ما تغيّر [[font-size]] بتاع العنصر. الرقم (58٪ هنا) بييجي بالتجربة: تغيّره لحد ما الفقرة بالبديل تاخد نفس عدد السطور. ومعاها تلاتة للتظبيط الأدق: [[ascent-override]] و [[descent-override]] و [[line-gap-override]] (بيغيّروا ارتفاع السطر اللي الخط بيطلبه). أدوات زي next/font بتحسب الأربعة لوحدها (درس «next/font»).
-
-~~~live 207 نفس الفقرة بـ Tahoma وبـ Tahoma متصغّر 58%
-<style>
-  @font-face { font-family: "Tahoma Small"; src: local("Tahoma"); size-adjust: 58%; }
-  p { font-size: 18px; line-height: 1.7; max-width: 300px; background: #f3f4f6; }
-  .a { font-family: Tahoma, sans-serif; }
-  .b { font-family: "Tahoma Small", sans-serif; }
-</style>
-<p class="a">الكتابة العربية بتتوصل حروفها ببعض، والسطر الطويل بيتكسر لوحده لما العرض يخلص.</p>
-<p class="b">الكتابة العربية بتتوصل حروفها ببعض، والسطر الطويل بيتكسر لوحده لما العرض يخلص.</p>
-~~~
-
-**هتشوف إيه (على Windows):** نفس الكلام ونفس الـ [[font-size]]. الفقرة التانية حروفها أصغر بوضوح وواخدة سطور أقل، من غير ما نلمس حجم الخط. (58٪ رقم مبالغ فيه عشان الخط التجريبي عندنا كان صغير جدًا. في الحقيقة الأرقام بتبقى بين 90٪ و 110٪.)
-
-### [[font-size-adjust: 0.5]]
-
-خاصية (مش descriptor) بتحل نفس المشكلة من ناحية تانية: بتخلّي **ارتفاع الحروف الصغيرة** (x-height) ثابت مهما كان الخط اللي اتعرض من القايمة.
-
-~~~text القياس من Chrome (ارتفاع الحرف الصغير ÷ حجم الخط، من font-size-adjust: from-font)
-Verdana 0.545     Tahoma 0.545     Arial 0.519     Segoe UI 0.500     Georgia 0.481     Times New Roman 0.447
-
-font-size: 100px ومعاها font-size-adjust: 0.5، عرض «Hamburg»:
-Verdana           463.0  →  424.5     (اتصغّر: حروفه الصغيرة كانت عالية)
-Times New Roman   375.9  →  420.2     (اتكبّر: حروفه الصغيرة كانت واطية)
-~~~
-
-الرقم 0.5 معناه «عايز الحرف الصغير نص حجم الخط». المتصفح بيكبّر أو يصغّر كل خط في القايمة لحد ما يوصل لكده، فالخطين بقوا قريبين من بعض (424 و 420 بدل 463 و 376). بتتكتب على العنصر: [[body { font-size-adjust: 0.5; }]]. المنهج بيقول إنها Baseline حديثة (كل المتصفحات الأساسية، من وقت قريب).
-
----
-
-## ٦. [[unicode-range: U+0600-06FF]]
-
-بتقول «الملف ده للحروف دي بس». المتصفح بينزّل الملف لو الصفحة فيها حرف واحد على الأقل من المدى.
-
-~~~css
-@font-face {
-  font-family: "Hebr";
-  src: url("fonts/hebr-arabic.woff2") format("woff2");
-  unicode-range: U+0600-06FF;
-}
-@font-face {
-  font-family: "Hebr";
-  src: url("fonts/hebr-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF;
-}
-~~~
-
-| المدى | الحروف |
-|---|---|
-| [[U+0600-06FF]] | العربي الأساسي: الحروف والتشكيل والأرقام ٠ لـ ٩ |
-| [[U+0750-077F]] | حروف عربي إضافية (لغات تانية بالحرف العربي) |
-| [[U+FB50-FDFF]] و [[U+FE70-FEFF]] | أشكال العرض العربي (حروف جاهزة متصلة، في نصوص قديمة) |
-| [[U+0000-00FF]] | اللاتيني الأساسي، والأرقام 0 لـ 9، وعلامات الترقيم، **والمسافة** |
-
-~~~text القياس من Chrome (لوج السيرفر، نص الصفحة ← الملفات اللي اتطلبت)
-«كلام»           →  hebr-arabic
-«Hello»          →  hebr-latin
-«سعر 25»         →  hebr-arabic + hebr-latin        (الرقم 25 لاتيني)
-«كلام عربي»      →  hebr-arabic + hebr-latin        ← !
-~~~
-
-السطر الأخير مفاجأة: كلام عربي بس، وملف اللاتيني نزل. السبب **المسافة** بين الكلمتين: كودها [[U+0020]]، وده جوه المدى اللاتيني. فالتقسيم ده بيوفّر فعلًا في صفحة لغة واحدة لو المسافة والترقيم موجودين في ملف العربي ومداه متزوّد بيهم: [[unicode-range: U+0600-06FF, U+0020-002F]].
-
-خدمات الخطوط (وأدوات زي next/font) بتقسّم الخط لملفات صغيرة بالطريقة دي: الزائر العربي بينزّل حتة العربي بس.
-
-**تصغير الملف نفسه (subsetting):** خط عربي كامل فيه آلاف الأشكال. أداة [[pyftsubset]] من مكتبة fonttools بتطلّع ملف فيه المدى اللي إنت عايزه بس. الأمر والخيارات من وثائق fonttools، ومتشغّلش هنا.
-
----
-
-## ٧. [[<link rel="preload" as="font">]]
-
-المتصفح بيعرف إنه محتاج الخط **متأخر**: لازم ينزّل الـ HTML، وبعدين الـ CSS، وبعدين يلاقي عنصر فيه كلام بيستخدم الخط. [[preload]] في الـ [[<head>]] بتخلّيه يبدأ ينزّل الخط من أول لحظة:
-
-~~~html
-<link rel="preload" href="fonts/hebr-regular.woff2" as="font" type="font/woff2" crossorigin>
-~~~
-
-- [[as="font"]]: نوع الملف، عشان المتصفح يدّيه الأولوية الصح.
-- [[type="font/woff2"]]: المتصفح اللي ميعرفش الصيغة ميحمّلش.
-- [[crossorigin]]: **إجبارية للخطوط حتى لو الملف من نفس موقعك.** الخطوط بتتطلب دايمًا بطريقة CORS، والـ preload لازم يطلب بنفس الطريقة عشان الطلبين يتطابقوا.
-
-~~~text القياس من Chrome (لوج السيرفر، بالترتيب)
-من غير preload:
-  GET /page.html
-  GET /image
-  GET /fonts/hebr.ttf                 ← بعد ما المتصفح رسم ولقى كلام محتاج الخط
-
-preload ومعاه crossorigin:
-  GET /page.html
-  GET /fonts/hebr.ttf                 ← قبل الصورة
-  GET /image
-
-preload من غير crossorigin:
-  GET /page.html
-  GET /fonts/hebr.ttf   origin=-      ← طلب الـ preload
-  GET /image
-  GET /fonts/hebr.ttf   origin=http://127.0.0.1:8731     ← الخط اتطلب تاني!
-~~~
-
-ومن غير [[crossorigin]] الملف نزل **مرتين**، وظهر التحذير ده في الـ Console (النص الحقيقي):
-
-~~~text Console
-A preload for 'http://127.0.0.1:8731/arabtype.ttf?n=x' is found, but is not used because the request credentials mode does not match. Consider taking a look at crossorigin attribute.
-~~~
-
-اعمل preload لملف واحد أو اتنين بالكتير (الخط الأساسي بوزنه العادي). كل preload بياخد من سرعة تحميل باقي الصفحة.
-
----
-
-## ٨. أخطاء تحميل الخط بنصها
-
-الخط لما يفشل **الصفحة مبتبوظش**: الكلام بيتعرض بالبديل. الخطأ بيتكتب في الـ Console بس.
-
-~~~live 64 88 ملف خط مش موجود
-<style>
-  @font-face {
-    font-family: "Ghost";
-    src: url("fonts/ghost.woff2") format("woff2");
-  }
-  p { font-family: "Ghost", Tahoma, sans-serif; font-size: 20px; }
-</style>
-<p>الكلام ده ظاهر عادي مع إن ملف الخط مش موجود.</p>
-~~~
-
-**هتشوف إيه:** الجملة ظاهرة بخط Tahoma (أو خط النظام). مفيش أي علامة في الصفحة إن فيه خط فشل. عشان كده لازم تبص في DevTools.
-
-التلات أخطاء اللي بتقابلها، بنصها من Chrome:
-
-**١. الخط من موقع تاني والسيرفر مبيسمحش (CORS):**
-
-~~~text Console
-Access to font at 'http://127.0.0.1:8732/arabtype.ttf' from origin 'http://127.0.0.1:8731' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-~~~
-
-الصور بتتحمّل من أي موقع، والخطوط لأ: لازم السيرفر اللي عليه الخط يبعت الـ header ده. الحل الأسهل: حط ملف الخط على **نفس موقعك** (self-hosting)، وده اللي الدرس بيعمله.
-
-**٢. الملف مش خط (اتحفظ غلط، أو السيرفر رجّع صفحة HTML مكانه):**
-
-~~~text Console
-Failed to decode downloaded font: http://127.0.0.1:8731/bad.woff2
-OTS parsing error: invalid sfntVersion: 1952999795
-~~~
-
-بيحصل كتير لما المسار غلط والسيرفر بيرجّع صفحة «مش موجود» بكود 200 بدل 404، فالمتصفح بيحاول يقراها كخط.
-
-**٣. المسار غلط (404):** الطلب بيظهر أحمر في تبويب Network بحالة 404، وفي حالة الخطوط بالذات مفيش سطر CORS ولا decode. افتح Network، واختار الفلتر Font، وشوف مسار الطلب: غالبًا المسار نسبي لملف الـ CSS وإنت حاسبه من الصفحة.
-
-~~~text القياس من Chrome (document.fonts بعد التلات حالات)
-"Lab"  error      "Bad"  error      "Gone"  error
-عرض الفقرات التلاتة: 28.5 و 28.5 و 28.5        (التلاتة اتعرضوا بالبديل)
-~~~
-
----
-
-## ٩. خطة خط من موقعك (self-hosting)
-
-1. **الرخصة.** اتأكد إن رخصة الخط بتسمح تحطه على موقعك. خطوط SIL Open Font License بتسمح، وملف الرخصة ([[OFL.txt]]) بيتحط جنب الخط.
-2. **الملفات.** woff2 بس، في فولدر [[fonts/]]. وزنين بالكتير (400 و 700)، أو ملف متغيّر واحد.
-3. **التعريف.** [[@font-face]] لكل ملف، بنفس [[font-family]]، وكل واحد بوزنه الحقيقي، و [[font-display: swap]].
-4. **البدايل.** خطوط الجهاز بعد اسم الخط في القايمة. دي اللي الزائر هيشوفها أول ثانية.
-5. **preload** للملف الأساسي، ومعاه [[crossorigin]].
-6. **الفبركة.** [[font-synthesis: none]] لو معرّفتش ملف للتقيل أو المايل.
-7. **الفحص.** DevTools، ثم Network، ثم Font: كام ملف نزل وحجمهم كام. و Console فاضي من أخطاء الخطوط.
-
-ليه من موقعك مش من خدمة خطوط؟ طلب أقل لموقع تاني (اتصال جديد بياخد وقت)، ومفيش CORS، وبيانات زوارك مبتروحش لطرف تالت. والخدمة ميزتها إنها بتقسّم وتضغط الخط لوحدها.
-
----
-
-## ١٠. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| الاسم في [[@font-face]] غير الاسم في [[font-family]] (حرف أو مسافة) | الخط مبيتحمّلش خالص، ومفيش خطأ |
-| ملف Bold متعرّف من غير [[font-weight: 700]] | الملفين بقوا وزن 400، والأخير غلب: الصفحة كلها تقيلة |
-| ملف واحد و [[<strong>]] في الصفحة | تقيل مفبرك |
-| من غير [[font-display]] | Chrome بيخفي الكلام لحد 3 ثواني لو الخط اتأخر (وثائق web.dev) |
-| [[format("woff")]] على ملف [[.woff2]] | التلميح غلط، والنتيجة حسب المتصفح. اكتب الصيغة الحقيقية |
-| preload من غير [[crossorigin]] | الخط بينزل مرتين |
-| خمس أوزان وخطين مختلفين | نص ميجا خطوط قبل ما الزائر يقرا كلمة |
-| مسار الخط محسوب من الصفحة والـ CSS في فولدر تاني | 404 |
-| خط من موقع تاني من غير CORS | الخط بيتمنع، والبديل بيتعرض |
+| Tab مرتين (من أول الصفحة) | الحساب | [[0,-1,-1]] | panel-1 |
+| ← (ArrowLeft) | الأمان | [[-1,0,-1]] | panel-2 |
+| ← | الفواتير | [[-1,-1,0]] | panel-3 |
+| ← | الحساب (لفّ) | [[0,-1,-1]] | panel-1 |
+| → (ArrowRight) | الفواتير (لفّ لورا) | [[-1,-1,0]] | panel-3 |
+| Home | الحساب | [[0,-1,-1]] | panel-1 |
+| ← ثم Tab | لينك «بعد» | [[-1,0,-1]] | panel-2 |
+| Shift+Tab | الأمان | [[-1,0,-1]] | panel-2 |
+
+- Tab مرتين بس: مرة للينك «قبل» ومرة للـ tabs كلهم، والـ tabs التانيين اتعدّوا.
+- Tab من جوه خرج على طول للينك «بعد»، لأن الـ panel ملوش tabindex ومفيهوش حاجة بتاخد focus.
+- Shift+Tab رجع على «الأمان» (آخر واحد كنا عليه) مش على الأول.
+
+وفي صفحة [[ltr]] نفس الكود: أول ← راح لـ «الفواتير» (لفّ لورا)، و → راح للي بعده. يعني الاتجاه بيتقلب لوحده من الـ CSS.
 
 ---
 
 ## الخلاصة
 
-- [[@font-face]] تعريف: اسم من عندك + [[src]]. مبينزّلش حاجة لحد ما كلام في الصفحة يستخدم الاسم.
-- ملف لكل وزن بنفس الاسم، وكل ملف بـ [[font-weight]] الحقيقي بتاعه. المتغيّر: [[font-weight: 300 700]].
-- woff2 بس، ومعاه [[format("woff2")]].
-- [[font-display: swap]] للكلام: يظهر فورًا بالبديل ويتبدّل. [[optional]] لو مش عايز أي قفزة.
-- القفزة بتتعالج بتظبيط البديل: [[size-adjust]]، أو [[font-size-adjust]] على العنصر.
-- [[unicode-range]] بينزّل الملف للحروف الموجودة بس. المسافة لاتيني.
-- preload للملف الأساسي، و [[crossorigin]] إجبارية.
-- فشل الخط صامت في الصفحة. الحقيقة في Console و Network.`,
-          try: R`مش محتاج ملف خط للتجربة دي. اعمل [[alias.html]]: عرّف بـ [[@font-face]] خط اسمه [["My Sans"]] مصدره [[local()]] لتلات خطوط من جهازك بالترتيب، واستخدمه على [[body]] وبعده [[serif]]. وبعدين عرّف خط تاني اسمه [["Missing"]] بمسار ملف مش موجود، واستخدمه على عنوان وبعده [[sans-serif]]. افتح الصفحة، وبعدين افتح DevTools وبص في Console و Network.`,
-          sol: R`~~~live 163 261 alias.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تجربة @font-face</title>
-<style>
-  @font-face {
-    font-family: "My Sans";
-    src: local("Segoe UI"), local("Tahoma"), local("Arial");
-  }
-  @font-face {
-    font-family: "Missing";
-    src: url("fonts/missing.woff2") format("woff2");
-    font-display: swap;
-  }
-  body { font-family: "My Sans", serif; font-size: 18px; line-height: 1.8; }
-  h1 { font-family: "Missing", sans-serif; }
-</style>
-</head>
-<body>
-<h1>العنوان بخط مش موجود</h1>
-<p>والفقرة بخط اسمه My Sans، وهو في الحقيقة خط من الجهاز.</p>
-</body>
-</html>
-~~~
+| الحتة | ليه |
+|---|---|
+| [[tabindex]] 0 على واحد و -1 على الباقي | وقفة Tab واحدة للـ widget |
+| [[select()]] | aria-selected و tabIndex و hidden و focus مع بعض |
+| [[direction]] من [[getComputedStyle]] | الأسهم تتقلب في العربي |
+| [[(i + step + n) % n]] | اللف من الأخير للأول والعكس |
+| [[preventDefault]] | السهم ميعملش scroll |
 
-**هتشوف إيه:**
+- ده «automatic activation»: السهم بيعرض المحتوى على طول. لو العرض تقيل خلي السهم ينقل الـ focus بس و Enter يختار.
+- في مشروع React حقيقي استخدم Radix Tabs، بس اختبره بنفس الجدول اللي فوق.`,
+          lines: [
+            R`الحاوية اللي عليها [[role=tablist]]، وعليها هنسمع للأسهم والضغط.`,
+            "كل الـ tabs في مصفوفة.",
+            R`دالة بتختار tab: بتحدّث الكل وبتنقل الـ focus، وبيستخدمها الكيبورد والماوس.`,
+            R`بتلف على كل الـ tabs، المختار والباقي...`,
+            R`...و [[on]] بتبقى [[true]] للـ tab المختار بس.`,
+            "aria-selected بـ true أو false.",
+            "المختار بس عليه 0 والباقي -1: وقفة Tab واحدة.",
+            "المحتوى بتاعه يبان والباقي يستخبى.",
+            "قفلة الـ for.",
+            "الـ focus على الـ tab الجديد.",
+            "قفلة.",
+            R`listener واحد على الحاوية بيمسك الأسهم لأي tab جواها.`,
+            R`رقم الـ tab اللي عليه الـ focus دلوقتي في المصفوفة.`,
+            "الاتجاه الحقيقي من الـ CSS.",
+            "في RTL اليمين = اللي قبله والشمال = اللي بعده.",
+            "سهم: روح للي بعده أو قبله ولف في الآخر.",
+            R`Home: روح لأول tab في الترتيب.`,
+            R`End: روح لآخر tab، و [[at(-1)]] = آخر عنصر في المصفوفة.`,
+            "أي زرار تاني: سيبه للمتصفح.",
+            "منع الـ scroll بالأسهم.",
+            "قفلة.",
+            R`الضغط بالماوس على الحاوية كلها (listener واحد بدل واحد لكل tab)...`,
+            R`...[[closest]] بيطلع من العنصر اللي اتداس لحد أقرب [[role=tab]]، حتى لو دوست على أيقونة جواه...`,
+            R`...ولو لقى tab بيختاره بنفس دالة الكيبورد.`,
+            "قفلة."
+          ],
+          sol: R`Tab من برا بيقف على «الحساب» بس (الوحيد اللي عليه 0). في [[dir="rtl"]]: السهم الشمال بيروح لـ «الأمان» والمحتوى بتاعه يظهر، والسهم اليمين يرجع (ومن الأول بيلف للأخير)، و Home و End للأول والآخر. و Tab بعد كده بيخرج من الـ tabs على طول للـ panel أو اللي بعده.
 
-- الفقرة بخط Segoe UI (أو أول خط موجود عندك من التلاتة)، مش بالـ serif.
-- العنوان ظاهر عادي بخط الـ sans-serif. مفيش أي أثر في الصفحة للخط اللي فشل.
-- في Network (فلتر Font): طلب واحد لـ [[missing.woff2]] بحالة فشل. ومفيش أي طلب لـ «My Sans»: [[local()]] مبتنزّلش.
+جربنا الكود ده في jsdom: بعد ArrowLeft في RTL الـ focus على t2 والـ tabIndex بقوا [[-1,0,-1]] والـ panel التاني ظهر.
 
-~~~text القياس من Chrome (document.fonts)
-"My Sans"   loaded       (من الجهاز، من غير طلب)
-"Missing"   error        (والعنوان اتعرض بالبديل)
-~~~
-
-**اللي تتعلمه:** [[@font-face]] ليها طرفين: الاسم (من عندك) والمصدر (ملف أو خط من الجهاز). ولو المصدر فشل، القايمة اللي في [[font-family]] هي اللي بتنقذ الصفحة. خط من غير بدايل + ملف فشل = Times New Roman.`,
-          deep: {
-            why: R`خطوط الجهاز بتختلف من نظام لنظام، فنفس الصفحة ليها شكل على Windows وشكل على الموبايل. خط الويب بيوحّد الشكل وبيدّي الموقع هويته، وده مهم في العربي بالذات لأن خطوط النظام العربي قليلة ومش كلها مريحة في القراية. بس الخط ملف بيتحمّل، فلو اتعمل غلط بيبوّظ أهم حاجتين في الصفحة: إن الكلام يظهر بسرعة، وإن الصفحة متتنططش وهي بتحمّل. الدرس كله عن إنك تاخد الميزة من غير ما تدفع التمن ده.`,
-            how: R`المتصفح بيقرا كل [[@font-face]] ويبني لكل [[font-family]] قايمة «وشوش» (faces)، كل وش ليه وزن وميل ومدى حروف ومصدر. وقت الرسم، لكل حتة نص: بيطابق العيلة، ثم الوش المناسب للوزن والميل، ثم بيشوف هل الحروف المطلوبة جوه [[unicode-range]] بتاع الوش. لو أيوه والملف لسه منزلش، بيبدأ التحميل ويشغّل ساعة [[font-display]]: في فترة block بيرسم بخط مخفي، وفي فترة swap بيرسم بالبديل، ولما الملف يوصل ويتفك بيعيد حساب الـ layout بالخط الجديد (ودي القفزة). ملف الخط بيتطلب دايمًا بنظام CORS، حتى من نفس الموقع، وعشان كده الـ preload لازم يبقى [[crossorigin]] عشان يطابقه. والملف بعد أول مرة بيتحفظ في الـ cache، فالزيارة التانية الخط جاهز فورًا.`,
-            when: R`لما الهوية البصرية مهمة (مدوّنة، مجلة، براند)، أو لما خطوط النظام مش كفاية للغة بتاعتك. ولو الموقع لوحة تحكم أو أداة داخلية، خطوط الجهاز (درس «font-family و font-size») أسرع وأبسط. ومع Next.js متكتبش [[@font-face]] بإيدك: [[next/font]] بتعمل التحميل والـ preload وتظبيط البديل لوحدها.`,
-            mistakes: R`اسم مختلف بين التعريف والاستخدام. وزن غلط على الملف. ملف واحد وتقيل مفبرك. نسيان [[font-display]]. preload من غير [[crossorigin]]. أوزان وخطوط كتير. خط من دومين تاني من غير CORS. المسار نسبي للـ CSS مش للصفحة. وافتراض إن «الخط شغال» عشان الصفحة باينة: البديل هو اللي باين.`
-          },
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** «مدوّنة حبر» عندها ملفين خط: [[fonts/hebr-regular.woff2]] و [[fonts/hebr-bold.woff2]]. اكتب تعريفين [[@font-face]] لعيلة اسمها [["Hebr"]] (كل ملف بوزنه، والكلام يظهر فورًا بالبديل)، واستخدمها على [[body]] بالقايمة دي بالظبط: [["Hebr", system-ui, sans-serif]]. (من قسم ١ و ٣ و ٤ في الشرح)`, done: R`فيه تعريفين بنفس الاسم، واحد 400 وواحد 700، والاتنين [[swap]] و woff2، و [[body]] بيستخدم العيلة، وكل الشروط ✓.`, work: { h: 120, start: R`<style>
-  /* اكتب التعريفين هنا */
-
-  body { font-size: 18px; }
-</style>
-<p>فقرة عادية، وفيها <strong>كلمة تقيلة</strong> محتاجة ملف الـ bold.</p>`, checks: [
-              { say: R`فيه [[@font-face]] مصدره [[fonts/hebr-regular.woff2]]`, src: "fonts/hebr-regular.woff2" },
-              { say: R`وتعريف تاني مصدره [[fonts/hebr-bold.woff2]]`, src: "fonts/hebr-bold.woff2" },
-              { say: R`الصيغة مكتوبة: [[format("woff2")]]`, src: "format(\"woff2\")" },
-              { say: R`ملف الـ bold متعرّف بوزنه: [[font-weight: 700]]`, src: "font-weight: 700" },
-              { say: R`[[font-display: swap]] مكتوبة`, src: "font-display: swap" },
-              { say: R`[[body]] بيستخدم العيلة وبعدها البدايل`, q: "p", style: ["font-family", "Hebr, system-ui, sans-serif"] }
-            ] }, sol: R`~~~live 60 84 الحل
-<style>
-  @font-face {
-    font-family: "Hebr";
-    src: url("fonts/hebr-regular.woff2") format("woff2");
-    font-weight: 400;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: "Hebr";
-    src: url("fonts/hebr-bold.woff2") format("woff2");
-    font-weight: 700;
-    font-display: swap;
-  }
-  body { font-family: "Hebr", system-ui, sans-serif; font-size: 18px; }
-</style>
-<p>فقرة عادية، وفيها <strong>كلمة تقيلة</strong> محتاجة ملف الـ bold.</p>
-~~~
-
-**هتشوف إيه:** الفقرة بخط النظام. ده طبيعي هنا: المعاينة معزولة ومفيهاش ملفات خطوط، فالتعريفين فشلوا والبديل ([[system-ui]]) هو اللي اتعرض. على موقع حقيقي فيه الملفين، الفقرة هتتعرض بـ Hebr والكلمة التقيلة بملف الـ bold.
-
-**ليه كده:**
-
-- نفس [[font-family]] في التعريفين: عيلة واحدة بوزنين.
-- [[font-weight]] على كل ملف بتقول للمتصفح مين ياخده: الكلام العادي ياخد الأول، و [[<strong>]] ياخد التاني.
-- [[swap]]: الزائر يقرا من أول لحظة بخط النظام.
-
-**الغلطة الشائعة:** تنسى [[font-weight: 700]] على التعريف التاني. الملفين يبقوا «وزن 400»، والتعريف الأخير يغلب، فالصفحة **كلها** تتعرض بملف الـ bold.
-
-~~~text القياس من Chrome (على السيرفر المحلي، بملفين حقيقيين)
-<p>كلام</p>                →  GET hebr-regular
-<p><b>تقيل</b></p>         →  GET hebr-bold
-المحسوب: font-family: Hebr, system-ui, sans-serif
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الخط مبيظهرش على الموقع والصفحة بخط النظام. في الـ CSS تلات غلطات: الاسم في التعريف غير الاسم في [[body]]، والتلميح بيقول [[woff]] والملف [[woff2]]، ومفيش [[font-display]]. صلّح التلاتة. (من قسم ١ و ٢ و ٤ و ١٠ في الشرح)`, done: R`الاسم واحد في المكانين، والصيغة [[woff2]]، و [[font-display: swap]] موجودة، وكل الشروط ✓.`, work: { h: 110, start: R`<style>
-  @font-face {
-    font-family: "Hebr Naskh";
-    src: url("fonts/hebr-naskh.woff2") format("woff");
-  }
-  body { font-family: "HebrNaskh", system-ui, sans-serif; font-size: 18px; }
-</style>
-<p>المفروض الفقرة دي تتعرض بخط Hebr Naskh.</p>`, checks: [
-              { say: R`[[body]] بيستخدم نفس الاسم اللي في التعريف`, q: "p", style: ["font-family", "\"Hebr Naskh\", system-ui, sans-serif"] },
-              { say: R`التلميح بقى [[format("woff2")]]`, src: "format(\"woff2\")" },
-              { say: R`مفيش [[format("woff")]]`, nosrc: "format(\"woff\")" },
-              { say: R`[[font-display: swap]] اتزوّدت`, src: "font-display: swap" }
-            ] }, sol: R`~~~live 60 84 بعد التصليح
-<style>
-  @font-face {
-    font-family: "Hebr Naskh";
-    src: url("fonts/hebr-naskh.woff2") format("woff2");
-    font-display: swap;
-  }
-  body { font-family: "Hebr Naskh", system-ui, sans-serif; font-size: 18px; }
-</style>
-<p>المفروض الفقرة دي تتعرض بخط Hebr Naskh.</p>
-~~~
-
-**هتشوف إيه:** الشكل هنا قبل وبعد واحد (خط النظام)، لأن المعاينة مفيهاش ملف الخط. الفرق هيبان على الموقع الحقيقي: قبل التصليح المتصفح **مبيطلبش الملف أصلًا**، وبعده بيطلبه ويعرض الخط.
-
-| الغلطة | ليه بتبوّظ | التصليح |
-|---|---|---|
-| [["HebrNaskh"]] في [[body]] و [["Hebr Naskh"]] في التعريف | اسمين مختلفين: المتصفح بيدوّر على خط اسمه «HebrNaskh» ومبيلاقيش، فبيروح للبديل. مفيش خطأ | نفس الاسم بالحرف |
-| [[format("woff")]] | تلميح غلط عن الصيغة | [[format("woff2")]] |
-| مفيش [[font-display]] | الافتراضي [[auto]]، وفي Chrome ده بيخفي الكلام لحد ما الخط ييجي (لحد 3 ثواني، وثائق web.dev) | [[font-display: swap]] |
-
-**إزاي تلاقي الغلطة الأولى في الحقيقة:** Network، ثم فلتر Font: **مفيش أي طلب**. خط متعرّف ومحدش طلبه معناه إن الاسم مش متطابق، أو مفيش عنصر بيستخدمه.
-
-**الغلطة الشائعة:** تدوّر في الـ Console. الاسم الغلط مبيطلّعش أي خطأ.
-
-~~~text القياس من Chrome (المحسوب بعد التصليح)
-p   font-family: "Hebr Naskh", system-ui, sans-serif
-~~~` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** الـ CSS ده فيه أربع تعريفات، والصفحة فيها [[<p>أهلًا بيك</p>]] بس (كلمتين عربي بينهم مسافة، ومفيش تقيل). أنهي ملفات هتتطلب من السيرفر؟ اكتب توقعك وبعدين افتح الحل. (من قسم ١ و ٣ و ٦ في الشرح)
-
-~~~css
-@font-face { font-family: "Hebr"; src: url("ar.woff2"); unicode-range: U+0600-06FF; }
-@font-face { font-family: "Hebr"; src: url("latin.woff2"); unicode-range: U+0000-00FF; }
-@font-face { font-family: "Hebr"; src: url("bold.woff2"); font-weight: 700; }
-@font-face { font-family: "Titles"; src: url("titles.woff2"); }
-body { font-family: "Hebr", sans-serif; }
-~~~`, done: R`قلت إن اللي هيتطلب [[ar.woff2]] و [[latin.woff2]] بس، وعرفت ليه اللاتيني نزل مع إن مفيش ولا حرف إنجليزي.`, sol: R`**الإجابة:** ملفين: [[ar.woff2]] و [[latin.woff2]].
-
-| الملف | اتطلب؟ | ليه |
-|---|---|---|
-| [[ar.woff2]] | أيوه | الصفحة فيها حروف عربي من المدى [[U+0600-06FF]] |
-| [[latin.woff2]] | **أيوه** | المسافة بين «أهلًا» و «بيك» كودها [[U+0020]]، وده جوه [[U+0000-00FF]] |
-| [[bold.woff2]] | لأ | مفيش كلام وزنه 700 في الصفحة |
-| [[titles.woff2]] | لأ | مفيش عنصر بيستخدم العيلة «Titles» |
-
-~~~text القياس من Chrome (لوج السيرفر المحلي بنفس التقسيمة)
-«كلام»          →  ar
-«كلام عربي»     →  ar + latin
-«Hello»         →  latin
-<b>تقيل</b>     →  bold
-عيلة متعرّفة ومش مستخدمة   →  مفيش طلب
-~~~
-
-**اللي تتعلمه:**
-
-- المتصفح كسلان بالمعنى الكويس: مبينزّلش غير اللي النص محتاجه فعلًا.
-- المسافة وعلامات الترقيم حروف زي أي حروف. لو عايز صفحة عربي تنزّل ملف واحد، زوّد المسافة والترقيم لمدى ملف العربي: [[unicode-range: U+0600-06FF, U+0020-002F]] (وده معناه إن الملف نفسه لازم يبقى فيه الحروف دي).
-
-**الغلطة الشائعة:** تفتكر إن [[bold.woff2]] هينزل «احتياطي». لأ، هينزل أول ما يظهر [[<strong>]] أو عنوان في الصفحة، وده ممكن يبقى بعد ما الصفحة اترسمت، فتشوف تبديل تاني.` },
-            { lvl: 'تحدي', t: R`**بيانات حقيقية:** ده لوج سيرفر لصفحة واحدة، وتحته اللي ظهر في الـ Console. إيه المشكلتين؟ وإيه سطر الـ HTML المتصلّح؟ (من قسم ٧ و ٨ في الشرح)
-
-~~~text لوج السيرفر
-GET /index.html
-GET /fonts/hebr.woff2      origin=-
-GET /logo.png
-GET /fonts/hebr.woff2      origin=http://127.0.0.1:8731
-~~~
-
-~~~text Console
-A preload for 'http://127.0.0.1:8731/fonts/hebr.woff2' is found, but is not used because the request credentials mode does not match. Consider taking a look at crossorigin attribute.
-~~~`, done: R`قلت إن الخط نزل مرتين، وإن السبب [[preload]] من غير [[crossorigin]]، وكتبت السطر المتصلّح.`, sol: R`**المشكلة:** ملف الخط اتطلب **مرتين** (السطر التاني والرابع). الزائر دفع حجم الخط مرتين، والـ preload موفّرش أي وقت.
-
-**السبب:** في الـ [[<head>]] مكتوب:
-
-~~~html
-<link rel="preload" href="fonts/hebr.woff2" as="font" type="font/woff2">
-~~~
-
-الطلب الأول ده طلب الـ preload، وبص على [[origin=-]]: اتبعت كطلب عادي. الطلب الرابع طلب الخط الحقيقي من [[@font-face]]، وفيه [[origin=...]]: الخطوط بتتطلب دايمًا بنظام CORS. المتصفح شاف الطلبين مختلفين في النوع، فمقدرش يستخدم اللي نزل بالـ preload، ونزّل تاني. وده بالظبط اللي التحذير بيقوله: «credentials mode does not match».
-
-**التصليح:** كلمة واحدة.
-
-~~~html
-<link rel="preload" href="fonts/hebr.woff2" as="font" type="font/woff2" crossorigin>
-~~~
-
-~~~text القياس من Chrome (لوج السيرفر بعد التصليح)
-GET /index.html
-GET /fonts/hebr.woff2      origin=http://127.0.0.1:8731       ← مرة واحدة، وقبل الصورة
-GET /logo.png
-~~~
-
-**اللي تتعلمه:**
-
-- [[crossorigin]] على preload الخطوط إجبارية **حتى لو الخط على نفس موقعك**. ده مش منطقي من أول نظرة، وعشان كده غلطة منتشرة.
-- اللوج بيتقري بالترتيب وبالتكرار: نفس المسار مرتين في تحميل واحد دايمًا علامة مشكلة.
-- في DevTools هتشوف نفس الحاجة في Network: سطرين لنفس الملف.` },
-            { lvl: 'سريع', t: R`**اشرحها:** اختار [[font-display]] لكل حالة واكتب السبب في جملة: (١) خط فقرات مدوّنة، وجمهورها على موبايلات ونت ضعيف. (٢) خط أيقونات: كل حرف فيه رسمة. (٣) خط زينة لعنوان الصفحة الرئيسية بس، ولو مجاش مفيش مشكلة، والمهم إن الصفحة متتنططش. (من قسم ٤ في الشرح)`, done: R`اخترت [[swap]] ثم [[block]] ثم [[optional]]، وكل واحدة بسببها.`, sol: R`**إجابة نموذجية:**
-
-| الحالة | القيمة | السبب |
-|---|---|---|
-| خط الفقرات، نت ضعيف | [[font-display: swap]] | الكلام لازم يتقري من أول لحظة بالبديل. الخط ييجي بعدين |
-| خط أيقونات | [[font-display: block]] | الحرف البديل هيبقى حرف عادي ملوش علاقة بالرسمة («e» مكان سلة مشتريات). فراغ لحظي أحسن |
-| خط زينة مش أساسي | [[font-display: optional]] | مفيش تبديل متأخر خالص: يا جاهز فورًا يا البديل لآخر الزيارة |
-
-~~~text القياس من Chrome (الخط اتأخر 1.5 ثانية: اتبدّل ولا لأ؟)
-swap       اتبدّل
-block      اتبدّل
-fallback   اتبدّل      (ولو اتأخر 4.5 ثانية: لأ)
-optional   لأ
-~~~
-
-**ملحوظة عن (١):** مع [[swap]] على نت ضعيف التبديل ممكن ييجي بعد 5 ثواني والقارئ في نص الفقرة، فالسطور تتحرك تحت عينه. الحل مش تغيير القيمة، الحل تظبيط البديل بـ [[size-adjust]] عشان التبديل ميحرّكش حاجة (قسم ٥). ولو مش هتظبّط، [[fallback]] حل وسط.
-
-**الغلطة الشائعة:** [[block]] لخط الفقرات «عشان محدش يشوف الخط الغلط». اللي بيحصل إن محدش بيشوف **أي كلام** لحد 3 ثواني.` }
-          ]
+لو كل tab واقف عليه Tab: نسيت [[tabindex="-1"]] على الباقي في الـ HTML. لو الأسهم بالعكس: الـ [[dir]] مش متحط، أو بتقرا [[document.dir]] بدل الـ CSS.`,
+          solCode: R`<div role="tablist" aria-label="الإعدادات">
+  <button type="button" role="tab" id="tab-1" aria-selected="true" aria-controls="panel-1" tabindex="0">الحساب</button>
+  <button type="button" role="tab" id="tab-2" aria-selected="false" aria-controls="panel-2" tabindex="-1">الأمان</button>
+  <button type="button" role="tab" id="tab-3" aria-selected="false" aria-controls="panel-3" tabindex="-1">الفواتير</button>
+</div>
+<div role="tabpanel" id="panel-1" aria-labelledby="tab-1">بيانات الحساب...</div>
+<div role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden>كلمة السر والـ 2FA...</div>
+<div role="tabpanel" id="panel-3" aria-labelledby="tab-3" hidden>الفواتير...</div>`
         },
         {
-          cmd: "text-align و text-transform",
-          title: "محاذاة السطور، وأول السطر، وحالة الحروف، والمسافات بين الحروف والكلمات",
-          pre: [{ to: "css/lang و dir", why: R`[[text-align: start]] بتعتمد على اتجاه الصفحة ([[dir]])، واتشرح هناك` }],
+          cmd: "scroll-snap و scroll-margin",
           ref: [
-            { t: "MDN: text-align", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-align" },
-            { t: "MDN: text-align-last", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-align-last" },
-            { t: "MDN: text-indent", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-indent" },
-            { t: "MDN: text-transform", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-transform" },
-            { t: "MDN: letter-spacing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/letter-spacing" },
-            { t: "MDN: word-spacing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/word-spacing" },
-            { t: "MDN: vertical-align", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/vertical-align" },
-            { t: "MDN: text-autospace", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-autospace" }
+            { t: "MDN: Basic concepts of scroll snap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll_snap/Basic_concepts" },
+            { t: "MDN: scroll-margin", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-margin" },
+            { t: "MDN: scroll-behavior", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-behavior" },
+            { t: "MDN: scroll-margin-top", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-margin-top" },
+            { t: "MDN: scroll-snap-align", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-align" },
+            { t: "MDN: overscroll-behavior-x", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overscroll-behavior-x" },
+            { t: "MDN: scroll-snap-type", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-type" },
           ],
-          desc: R`[[text-align]] بتحدد السطور تلزق في أنهي ناحية جوه العنصر: البداية، ولا النهاية، ولا النص، ولا تتمط تملا العرض. و [[text-transform]] بتغيّر شكل الحروف اللاتيني (كبيرة وصغيرة) من غير ما تغيّر النص نفسه.
-ومعاهم في الدرس: [[text-indent]] لأول سطر، و [[letter-spacing]] و [[word-spacing]] للمسافات، و [[vertical-align]] لمكان أيقونة أو صورة وسط السطر. وكل واحدة فيهم ليها تصرف مختلف مع العربي.`,
-          example: R`h1 { text-align: center; }
-.price { text-align: end; }
-.story p { text-align: justify; text-indent: 2em; }
-.tag { text-transform: uppercase; letter-spacing: 0.08em; }
-.wide { word-spacing: 0.3em; }
-.icon { vertical-align: middle; }`,
-          flag: "script",
-          lines: [
-            R`العنوان في نص العرض. المحاذاة بتتحط على العنصر اللي **فيه** الكلام، وبتتورّث للي جواه.`,
-            R`السعر عند «نهاية» السطر: الشمال في صفحة عربي، واليمين في صفحة إنجليزي. كلمة واحدة بتشتغل في الاتجاهين.`,
-            R`فقرات القصة سطورها ممطوطة تملا العرض من الناحيتين ([[justify]])، وأول سطر في كل فقرة داخل لجوه بمقدار حرفين ([[2em]]).`,
-            R`الوسم الإنجليزي بيتعرض بحروف كبيرة مع مسافة صغيرة بين الحروف. النص في الـ HTML فاضل زي ما اتكتب. الاتنين ملهمش أثر على كلام عربي.`,
-            R`مسافة زيادة بين كل كلمة والتانية بمقدار 0.3 من حجم الخط. بتشتغل على العربي عادي لأنها بتزوّد عند المسافات بس.`,
-            R`الأيقونة (صورة أو [[inline-block]]) تتوسّط ارتفاع الكلام اللي جنبها بدل ما تقعد على خط الكتابة.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-الخصائص دي مبتغيّرش الخط. بتغيّر **مكان** الكلام جوه السطر وشكل حروفه. وكل الأرقام من Chrome 157 على Windows 11.
-
----
-
-## ١. [[text-align: start]]
-
-~~~live 162 خمس قيم على نفس الجملة
-<style>
-  p { margin: 4px 0; padding: 4px 8px; background: #f3f4f6; }
-</style>
-<p style="text-align: start">start: بداية السطر</p>
-<p style="text-align: end">end: نهاية السطر</p>
-<p style="text-align: center">center: في النص</p>
-<p style="text-align: left">left: الشمال دايمًا</p>
-<p style="text-align: right">right: اليمين دايمًا</p>
-~~~
-
-**هتشوف إيه:** الصفحة عربي (من اليمين للشمال)، فـ [[start]] لزقت يمين و [[end]] لزقت شمال. و [[left]] و [[right]] راحوا لناحيتهم الثابتة.
-
-| القيمة | معناها |
-|---|---|
-| [[text-align: start]] | بداية السطر حسب اتجاه الكتابة. **دي الافتراضي** |
-| [[text-align: end]] | نهاية السطر حسب اتجاه الكتابة |
-| [[text-align: left]] و [[text-align: right]] | ناحية ثابتة مهما كان الاتجاه |
-| [[text-align: center]] | في النص |
-| [[text-align: justify]] | السطور تتمط عشان تلمس الحافتين (القسم ٢) |
-
-### [[start]] ولا [[right]]؟
-
-في صفحة عربي الاتنين بيدّوا نفس الشكل. الفرق بيبان أول ما الاتجاه يتغيّر:
-
-~~~text القياس من Chrome (عنصر عرضه 300px وجواه كلمة: الفراغ على شمالها ويمينها)
-                  dir="rtl"                     dir="ltr"
-text-align        فراغ شمال    فراغ يمين        فراغ شمال    فراغ يمين
-start             241          0                0            241       ← اتبعت الاتجاه
-end               0            241              241          0
-right             241          0                241          0         ← يمين في الحالتين
-left              0            241              0            241
-~~~
-
-~~~live 162 تعليق إنجليزي وسط صفحة عربي
-<style>
-  .c { border: 1px solid silver; padding: 6px 10px; margin: 6px 0; }
-  .fixed { text-align: right; }
-  .logical { text-align: start; }
-</style>
-<p class="c fixed">تعليق عربي: text-align: right</p>
-<p class="c fixed" dir="ltr">English comment: text-align: right</p>
-<p class="c logical">تعليق عربي: text-align: start</p>
-<p class="c logical" dir="ltr">English comment: text-align: start</p>
-~~~
-
-**هتشوف إيه:** التعليق الإنجليزي التاني لازق في اليمين، وده غلط: الإنجليزي بيتقري من الشمال، فبداية السطر المفروض تبقى شمال. التعليق الرابع بدأ من الشمال لوحده، بنفس القاعدة اللي خلّت العربي يبدأ من اليمين.
-
-القاعدة: **اكتب [[start]] و [[end]] دايمًا.** [[left]] و [[right]] بس لما الناحية نفسها هي المقصودة مهما كانت اللغة (نادر). والافتراضي أصلًا [[start]]، فالفقرة العربي في صفحة [[dir="rtl"]] بتلزق يمين من غير ما تكتب حاجة.
-
-### المحاذاة على مين؟
-
-[[text-align]] بتتحط على **الصندوق** اللي السطور جواه (فقرة، عنوان، div، خانة جدول)، وبتحرّك اللي جوه السطر: الكلام والصور واللينكات والـ inline-block. مبتحرّكش الصندوق نفسه.
-
-~~~live 86 text-align على span مبتعملش حاجة
-<style>
-  .box { border: 1px solid silver; margin: 6px 0; padding: 6px; }
-  .box span { background: #fde68a; }
-</style>
-<div class="box"><span style="text-align: center">text-align على الـ span نفسه</span></div>
-<div class="box" style="text-align: center"><span>text-align على الأب</span></div>
-~~~
-
-**هتشوف إيه:** الجملة الأولى لسه في مكانها يمين: [[<span>]] عرضه قد كلامه بالظبط، فمفيش فراغ يتحرك جواه. التانية اتوسّطت لأن المحاذاة على الصندوق اللي حواليها.
-
-وبتتورّث: [[text-align: center]] على [[<body>]] بتوسّط كل الصفحة. ولو عايز توسّط **صندوق** (مش الكلام اللي جواه) دي شغلة [[margin: auto]] (درس «box model») أو flexbox.
-
-~~~text القياس من Chrome (الافتراضي)
-<p> و <h1> و <td> و <input>     text-align: start
-<th>                            text-align: center
-<button>                        text-align: center
-~~~
-
-قيمة [[match-parent]] موجودة في المواصفة ومش مدعومة في Chrome 157 ([[CSS.supports]] رجّع false).
-
----
-
-## ٢. [[text-align: justify]] و [[text-align-last]]
-
-[[justify]] بتمط كل سطر عشان أوله وآخره يلمسوا الحافتين، زي أعمدة الجرايد.
-
-~~~live 167 start ثم justify
-<style>
-  p { max-width: 300px; font-size: 17px; line-height: 1.7; background: #f3f4f6; padding: 0 6px; }
-</style>
-<p style="text-align: start">الكتابة العربية بتتوصل حروفها ببعض، والسطر الطويل بيتكسر لوحده لما العرض يخلص، وده اللي بنقيسه هنا.</p>
-<p style="text-align: justify">الكتابة العربية بتتوصل حروفها ببعض، والسطر الطويل بيتكسر لوحده لما العرض يخلص، وده اللي بنقيسه هنا.</p>
-~~~
-
-**هتشوف إيه:** في الفقرة الأولى الحافة الشمال مشرشرة (كل سطر بطول). في التانية الحافتين مستقيمتين، والمسافات بين الكلمات مختلفة من سطر لسطر. والسطر الأخير في الاتنين عادي.
-
-~~~text القياس من Chrome (فقرة عرضها 300px: عرض الكلام في كل سطر)
-text-align: start        265px | 297px | 281px | 90px
-text-align: justify      300px | 300px | 300px | 90px       ← السطر الأخير مبيتمطش
-
-مجموع عرض الكلمات نفسها:   start 687.8px      justify 687.8px     ← الكلمات متمطتش
-~~~
-
-السطر الأخير من الجدول مهم للعربي: Chrome بيمط السطر بإنه **يوسّع المسافات بين الكلمات** بس. الكلمات نفسها عرضها متغيّرش، يعني مفيش «كشيدة» (تطويل الحرف زي «ســلام») زي ما الخطاطين بيعملوا. فلو السطر فيه كلمات قليلة وطويلة، بتطلع فيه فجوات كبيرة.
-
-عشان كده [[justify]] على عمود ضيق (موبايل) بتبوّظ القراية: «أنهار» بيضا بتمشي وسط الفقرة. استخدمها في عمود عريض بس، أو سيب [[start]].
-
-### [[text-align-last: center]]
-
-بتتحكم في **السطر الأخير** لوحده (وأي سطر قبل [[<br>]]):
-
-~~~text القياس من Chrome (نفس الفقرة: السطر الأخير)
-text-align: justify                                    90px، فراغ شمال 210
-text-align: justify; text-align-last: justify          300px        ← اتمط هو كمان
-text-align: justify; text-align-last: center           90px، فراغ 105 من كل ناحية
-text-align: justify; text-align-last: end              90px، فراغ يمين 210
-~~~
-
-القيم: [[auto]] (الافتراضي: يتبع [[text-align]]، ولو [[justify]] يبقى [[start]]) و [[start]] و [[end]] و [[left]] و [[right]] و [[center]] و [[justify]]. استخدامها نادر: قصيدة، أو فقرة ختام في النص.
-
----
-
-## ٣. [[text-indent: 2em]]
-
-بتزق **أول سطر** في الصندوق لجوه. دي طريقة الكتب في تمييز بداية الفقرة.
-
-~~~live 152 أول سطر داخل لجوه
-<style>
-  p { max-width: 320px; margin: 0; line-height: 1.7; background: #f3f4f6; }
-  .in { text-indent: 2em; }
-  .hang { text-indent: -1.5em; padding-inline-start: 1.5em; }
-</style>
-<p class="in">أول سطر في الفقرة دي بادئ بعد فراغ، وباقي السطور بادئة من الحافة عادي.</p>
-<p class="in">ودي فقرة تانية ملزوقة في اللي قبلها، والفراغ في أولها هو اللي بيفصلهم.</p>
-<p class="hang">ودي بالعكس: أول سطر طالع لبرّه وباقي السطور هي اللي داخلة.</p>
-~~~
-
-**هتشوف إيه:** في أول فقرتين السطر الأول بادئ جوه شوية من اليمين. في التالتة السطر الأول عند الحافة والباقي داخل: ده «hanging indent»، وبيتعمل بقيمة سالبة ومعاها [[padding]] بنفس المقدار.
-
-~~~text القياس من Chrome (خط 18px: الفراغ قبل بداية كل سطر)
-                                     السطر 1    السطر 2    السطر 3
-text-indent: 2em                     36px       0          0
-text-indent: 10%                     30px       0          0        (10% من عرض الصندوق 300px)
-text-indent: -1em + padding 1em      0          18px       18px
-text-indent: 2em hanging             0          36px       36px
-~~~
-
-- الفراغ بيتحسب من **بداية** السطر: يمين في العربي وشمال في الإنجليزي، من غير ما تغيّر حاجة.
-- الكلمة [[hanging]] بتعكس التأثير (الكل يدخل إلا الأول)، و [[each-line]] بتطبّقه بعد كل [[<br>]] كمان. الاتنين اشتغلوا في Chrome 157. MDN بينبّه إن مش كل المتصفحات نفّذت كل أجزاء الخاصية، فالطريقة السالبة أضمن.
-- بتتورّث. لو حطيتها على [[<div>]] كل فقرة جواه هتاخدها.
-
----
-
-## ٤. [[text-transform: uppercase]]
-
-بتغيّر حالة الحروف **في العرض بس**. النص في الـ HTML وفي الـ DOM فاضل زي ما اتكتب.
-
-~~~live 78 text-transform على إنجليزي وعلى عربي
-<style>
-  p { margin: 4px 0; }
-</style>
-<p style="text-transform: uppercase">uppercase: new arrivals وصل حديثًا</p>
-<p style="text-transform: lowercase">lowercase: NEW ARRIVALS وصل حديثًا</p>
-<p style="text-transform: capitalize">capitalize: new arrivals وصل حديثًا</p>
-~~~
-
-**هتشوف إيه:** الإنجليزي اتغيّر في التلات سطور: كله كبير، ثم كله صغير، ثم أول حرف من كل كلمة كبير. «وصل حديثًا» زي ما هي في التلاتة.
-
-**العربي ملوش حروف كبيرة وصغيرة**، فالخاصية دي مبتعملش فيه أي حاجة. لو التصميم الإنجليزي فيه عناوين [[uppercase]]، النسخة العربي محتاجة طريقة تمييز تانية (وزن أو لون أو حجم).
-
-~~~text القياس من Chrome (المعروض، والنص في textContent)
-text-transform: uppercase     HELLO WORLD من مصر STRASSE E-MAIL 2ND
-text-transform: lowercase     hello world من مصر straße e-mail 2nd
-text-transform: capitalize    Hello World من مصر Straße E-Mail 2nd
-textContent في التلاتة        hello world من مصر straße e-mail 2nd          ← النص الأصلي متغيّرش
-
-عرض «hello world» بـ Arial 100px:    478.0px  →  بعد uppercase 727.9px
-~~~
-
-حاجات تاخد بالك منها:
-
-- **العرض بيزيد.** الحروف الكبيرة أعرض (478 بقت 728). زرار كان كفاية للكلمة ممكن يتكسر.
-- **اللغة بتفرق.** الحرف الألماني [[ß]] بقى [[SS]]. وفي التركي [[i]] الكبيرة بتاعتها [[İ]] بنقطة: مع [[lang="tr"]] «istanbul» طلعت «İSTANBUL»، ومع [[lang="en"]] طلعت «ISTANBUL» (اتقاس). سبب تاني إن [[lang]] يتكتب صح.
-- **[[capitalize]] مش ذكية.** بتكبّر أول حرف بعد أي فاصل: «e-mail» بقت «E-Mail»، وحروف الجر بتتكبّر. عناوين الإنجليزي الصح بتتكتب بإيدك.
-- **القراية.** MDN بينبّه إن فقرات طويلة كلها حروف كبيرة صعبة في القراية، خصوصًا لمرضى عسر القراية. خليها لكلمة أو اتنين.
-
-القيم التانية: [[none]] (الافتراضي، وبتلغي اللي اتورّث)، و [[full-width]] و [[full-size-kana]] للنصوص اليابانية والصينية ([[CSS.supports]] رجّع false للاتنين في Chrome 157)، و [[math-auto]] للمعادلات.
-
-**ليه CSS ومش تكتبها كبيرة في الـ HTML؟** النص المكتوب «NEW ARRIVALS» قارئ الشاشة ممكن يتهجّاه حرف حرف كأنه اختصار، ولو التصميم اتغيّر هتعدّل كل صفحة. النص يتكتب طبيعي، والشكل في الـ CSS.
-
----
-
-## ٥. [[letter-spacing: 0.08em]]
-
-مسافة زيادة بين كل حرف واللي بعده. بتفيد في الحروف اللاتيني الكبيرة والعناوين الصغيرة.
-
-~~~live 80 letter-spacing على إنجليزي وعلى عربي
-<style>
-  p { font-size: 26px; margin: 4px 0; }
-  .sp { letter-spacing: 8px; }
-</style>
-<p>من غير: محمد علي Type</p>
-<p class="sp">8px: محمد علي Type</p>
-~~~
-
-**هتشوف إيه:** في السطر التاني حروف «Type» بعدت عن بعض بوضوح. الكلمتين العربي حروفهم **لسه متصلة زي ما هي**، واللي زاد المسافة بين الكلمتين بس.
-
-~~~text القياس من Chrome (Tahoma 100px)
-                          «الخط العربي جميل» (16 حرف)     «Arabic type» (11 حرف)
-من غير                    757.0                          492.5
-letter-spacing: 10px      777.0   (+20)                  602.5   (+110)
-letter-spacing: -5px      747.0   (−10)                  437.5   (−55)
-~~~
-
-الإنجليزي زاد 10 لكل حرف (11 × 10). العربي زاد 20 بس: 10 عند كل **مسافة** من الاتنين، وصفر جوه الكلمات. Chrome 157 بيرفض يفصل الحروف العربي المتصلة.
-
-ده تصرف Chrome الحالي. MDN بيحذّر إن الخاصية دي على لغة حروفها متصلة زي العربي ممكن تخلّي النص «يبان مكسور» (حروف مفصولة عن بعض)، وده اللي بيحصل في متصفحات ونسخ تانية. فالقاعدة واحدة في الحالتين: **متحطش [[letter-spacing]] على كلام عربي.** في أحسن الأحوال مش هتعمل حاجة، وفي أسوأها هتفك الكلمة.
-
-وليها أثر جانبي حتى لما «مبتعملش حاجة»: أي قيمة غير الصفر بتقفل الـ ligatures الاختيارية (الأشكال المدمجة زي لفظ الجلالة في بعض الخطوط).
-
-~~~text القياس من Chrome (جملة فيها «الله» و «لا» و «محمد»، بخط Traditional Arabic، 100px)
-من غير                           739.2
-letter-spacing: 0.01px           834.3      ← نفس عرض font-variant-ligatures: none (834.2)
-~~~
-
-واحد على مية من البيكسل غيّر شكل الكلمات. (الـ ligatures في درس «font-variant و font-feature-settings».)
-
-القيمة: طول ([[2px]] أو [[0.08em]]، و [[em]] أحسن لأنها بتكبر مع الخط)، أو [[normal]]. والسالب بيقرّب الحروف، وبيتستخدم في العناوين اللاتيني الكبيرة جدًا. لو الصفحة لغتين، حطها على الإنجليزي بس: [[:lang(en) { letter-spacing: ... }]] أو class.
-
----
-
-## ٦. [[word-spacing: 0.3em]]
-
-مسافة زيادة بين **الكلمات** (بتتزوّد على المسافة العادية).
-
-~~~text القياس من Chrome (Tahoma 100px، جملة من 3 كلمات)
-من غير                    757.0
-word-spacing: 20px        797.0      (+20 عند كل مسافة من الاتنين)
-word-spacing: 0.5em       857.0      (+50 عند كل مسافة)
-~~~
-
-~~~live 72 word-spacing على العربي
-<style>
-  p { font-size: 22px; margin: 4px 0; }
-</style>
-<p>من غير: الخط العربي جميل</p>
-<p style="word-spacing: 0.4em">0.4em: الخط العربي جميل</p>
-~~~
-
-**هتشوف إيه:** الكلمات في السطر التاني بعدت عن بعض، وكل كلمة حروفها زي ما هي.
-
-دي آمنة على العربي لأنها بتشتغل عند المسافات بس. بتفيد في عنوان كبير كلماته لازقة، أو مع خط مسافاته ضيقة. متزوّدهاش في الفقرات: العين بتقرا «كتل» كلمات، والمسافات الواسعة بتفككها.
-
----
-
-## ٧. [[vertical-align: middle]]
-
-المحاذاة **الرأسية** لحاجة جوه السطر: أيقونة، صورة، [[inline-block]]، أو حتة نص. (وليها معنى تاني جوه خانات الجدول.) مبتشتغلش على الصناديق العادية ([[div]] و [[p]]).
-
-~~~live 221 مربع 16px جنب كلام، بخمس قيم
-<style>
-  p { font-size: 20px; line-height: 2; margin: 0; border-bottom: 1px solid silver; }
-  i { display: inline-block; width: 16px; height: 16px; background: #dc2626; }
-</style>
-<p>baseline <i style="vertical-align: baseline"></i> النص</p>
-<p>middle <i style="vertical-align: middle"></i> النص</p>
-<p>top <i style="vertical-align: top"></i> النص</p>
-<p>bottom <i style="vertical-align: bottom"></i> النص</p>
-<p>text-top <i style="vertical-align: text-top"></i> النص</p>
-~~~
-
-**هتشوف إيه:** المربع الأحمر في مكان مختلف في كل سطر: قاعد على خط الكتابة، ثم في نص ارتفاع الحروف، ثم لازق في أعلى السطر، ثم في أسفله، ثم عند أعلى الحروف.
-
-~~~text القياس من Chrome (سطر ارتفاعه 40px وخطه 20px: بُعد أعلى المربع عن أعلى السطر)
-baseline      12.0       المربع قاعد على خط الكتابة (الافتراضي)
-middle        14.5       نص المربع عند نص الحروف الصغيرة
-top           0.0        أعلى السطر
-bottom        24.0       أسفل السطر
-text-top      8.0        أعلى الحروف
-text-bottom   16.0       أسفل الحروف
-sub           17.0       نازل شوية (اللي <sub> بيستخدمه)
-super         4.3        طالع شوية (اللي <sup> بيستخدمه)
-4px           8.0        طالع 4px عن baseline
--0.2em        16.0       نازل 4px
-~~~
-
-| القيمة | بتتحسب من |
-|---|---|
-| [[baseline]] و [[sub]] و [[super]] و [[middle]] و [[text-top]] و [[text-bottom]] | خط كتابة **الأب** وحروفه |
-| [[top]] و [[bottom]] | **السطر كله** (أعلى وأوطى حاجة فيه) |
-| طول أو نسبة ([[4px]] أو [[-0.2em]] أو [[20%]]) | إزاحة عن الـ baseline: الموجب لفوق |
-
-### الفراغ اللي تحت الصورة
-
-أشهر استخدام ليها مش أيقونة. صورة جوه [[div]] بيظهر تحتها فراغ صغير محدش عارف جاي منين:
-
-~~~text القياس من Chrome (div جواه عنصر inline-block ارتفاعه 50px، والخط 16px)
-الافتراضي (baseline)        ارتفاع الـ div = 53px      ← 3px زيادة تحت العنصر
-vertical-align: middle      50px
-vertical-align: top         50px
-display: block              50px
-~~~
-
-الصورة عنصر جوه سطر، فبتقعد على خط الكتابة، وتحت خط الكتابة فيه مكان محجوز لنزلات الحروف (زي ذيل الـ «ج»). التلات بيكسلات دول هم المكان ده. الحل: [[vertical-align: middle]] (أو [[top]])، أو [[display: block]] على الصورة.
-
----
-
-## ٨. [[text-autospace: normal]]
-
-خاصية جديدة بتزوّد مسافة صغيرة لوحدها بين الحروف الصينية أو اليابانية واللاتيني أو الأرقام اللي جنبها («日本語text» بتبقى «日本語 text» في العرض). ملهاش أي أثر على العربي.
-
-~~~text القياس من Chrome 157
-CSS.supports("text-autospace", "normal")           true
-CSS.supports("text-autospace", "no-autospace")     true
-CSS.supports("text-autospace", "ideograph-alpha")  false
-~~~
-
-المنهج شايفها Baseline حديثة. ذكرناها عشان تعرف إنها مش ليك لو صفحتك عربي أو إنجليزي.
-
----
-
-## ٩. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[text-align: right]] في موقع بلغتين | الإنجليزي بيلزق يمين. اكتب [[start]] |
-| [[text-align: center]] على [[<span>]] أو [[<a>]] | ولا حاجة: حطها على الصندوق اللي حواليه |
-| [[text-align: center]] عشان توسّط [[div]] | الكلام اللي جواه هو اللي بيتوسّط، مش الصندوق |
-| [[justify]] على عمود ضيق | فجوات واسعة بين الكلمات |
-| فقرات طويلة متوسّطة ([[center]]) | العين مش لاقية بداية السطر. التوسيط للعناوين والسطور القصيرة |
-| [[letter-spacing]] على عربي | مفيش أثر في Chrome، وحروف مفكوكة في متصفحات تانية، والـ ligatures بتتقفل |
-| [[text-transform: uppercase]] في تصميم هيتترجم عربي | العنوان العربي مفيهوش أي تمييز |
-| كتابة النص كبير في الـ HTML بدل CSS | قارئ الشاشة ممكن يتهجّاه |
-| [[vertical-align]] على [[div]] | مبتشتغلش: هي للي جوه السطر ولخانات الجدول |
-| فراغ تحت صورة | [[vertical-align: middle]] أو [[display: block]] |
-
----
-
-## الخلاصة
-
-- [[text-align: start]] و [[end]] بيتبعوا اتجاه الكتابة. [[left]] و [[right]] ثابتين. الافتراضي [[start]].
-- المحاذاة على الصندوق، وبتحرّك اللي جوه سطوره.
-- [[justify]] في Chrome بتوسّع المسافات بس (مفيش كشيدة). للعمود العريض.
-- [[text-indent]] لأول سطر، ومن ناحية البداية.
-- [[text-transform]] و [[letter-spacing]] للاتيني. على العربي: الأولى ملهاش أثر، والتانية متتحطش.
-- [[word-spacing]] آمنة على العربي.
-- [[vertical-align]] للي جوه السطر: [[middle]] للأيقونات وللفراغ اللي تحت الصور.`,
-          try: R`اعمل [[align.html]] فيه كارت منتج: عنوان متوسّط، وفقرة وصف عادية، وسطر فيه السعر عند نهاية السطر، ووسم إنجليزي صغير [[new]] يتعرض [[NEW]] بمسافة بين الحروف. وبعدين زوّد [[dir="ltr"]] على الكارت كله وشوف مين اتحرك لوحده ومين فضل مكانه.`,
-          sol: R`~~~live 224 align.html
+          title: "carousel من CSS بس، وعنوان ميستخباش تحت الـ header",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** carousel في صفحة [[dir="rtl"]]. [[scrollLeft]] بيبدأ بكام؟ ولو عملت [[scrollBy({ left: -100 })]] بيبقى كام؟ وإيه اللي ده بيعنيه لزرار «اللي بعده»؟`, done: R`بيبدأ 0 وبعد الـ scrollBy بقى -100 (اتقاس في Chrome 156): في RTL الـ scroll للشمال بالسالب. فزرار «اللي بعده» في العربي لازم [[scrollBy({ left: -width })]]، والأحسن تضرب في [[dir === "rtl" ? -1 : 1]].`,
+              sol: R`~~~live 170 170 rtl-scroll.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كارت منتج</title>
+<head><meta charset="utf-8"><title>scrollLeft في RTL</title>
 <style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
-  .card { max-width: 320px; border: 1px solid silver; padding: 12px; }
-  h2 { text-align: center; margin: 0 0 6px; }
-  .tag { text-transform: uppercase; letter-spacing: 0.1em; font-size: 12px; color: #b45309; }
-  .price { text-align: end; font-weight: 700; margin: 0; }
-</style>
-</head>
+  #c { display: flex; overflow-x: auto; inline-size: 300px; }
+  #c > * { flex: 0 0 200px; block-size: 80px; background: #bfdbfe; margin-inline-end: 8px; }
+</style></head>
 <body>
-<div class="card">
-  <span class="tag" lang="en">new</span>
-  <h2>شنطة ضهر</h2>
-  <p>خامة قماش تقيل، وجيب للابتوب 15 بوصة، وتلات ألوان.</p>
-  <p class="price">٤٥٠ جنيه</p>
-</div>
-</body>
-</html>
+  <main><h1>carousel</h1>
+    <div id="c" tabindex="0" role="group" aria-label="شرايح"><div>١</div><div>٢</div><div>٣</div></div>
+  </main>
+  <script>
+    console.log(c.scrollLeft);
+    c.scrollBy({ left: -100 });
+    console.log(c.scrollLeft);
+  $__lt/script>
+</body></html>
 ~~~
 
-**هتشوف إيه:**
+في RTL نقطة البداية هي أقصى اليمين، والمحتوى الزيادة على الشمال. فـ [[scrollLeft]] بيبدأ من 0 وبيقل بالسالب كل ما تروح شمال، لحد [[-(scrollWidth - clientWidth)]]. [[scrollBy({ left: -100 })]] يعني «100px شمال» بغض النظر عن اللغة.
 
-- «NEW» فوق يمين بحروف كبيرة ومتباعدة، مع إن المكتوب في الـ HTML [[new]].
-- العنوان في النص، والوصف من اليمين، والسعر لازق شمال.
-- لما تزوّد [[dir="ltr"]] على [[.card]]: «NEW» والوصف راحوا شمال، والسعر راح **يمين**، والعنوان فضل في النص. مغيّرتش ولا سطر CSS.
+ده معناه إن زرار «اللي بعده» في العربي لازم يروح **شمال**، يعني بالسالب. لو اتكتب [[left: width]] هيحاول يروح يمين، ومفيش مكان، فميعملش حاجة:
 
-~~~text القياس من Chrome
-.tag      text-transform: uppercase     letter-spacing: 1.2px      (0.1em من 12px)
-h2        text-align: center
-.price    text-align: end
-p         text-align: start             (الافتراضي)
+~~~js
+const dir = getComputedStyle(c).direction === "rtl" ? -1 : 1;
+c.scrollBy({ left: dir * width, behavior: "smooth" });
 ~~~
 
-لو كنت كتبت [[text-align: left]] للسعر، كان هيفضل شمال في النسخة الإنجليزي، فوق الوصف بالظبط، والكارت كله هيبقى ناحية واحدة.`,
-          deep: {
-            why: R`المحاذاة هي اللي بتدّي الصفحة «خطوط» العين بتمشي عليها: حافة مستقيمة بتبدأ منها كل السطور. لما الحافة دي تبقى في الناحية الغلط (إنجليزي لازق يمين) أو متبقاش موجودة (فقرة طويلة متوسّطة)، القراية بتتعب. والخصائص دي اتصممت للاتيني الأول: الحروف الكبيرة والمسافة بين الحروف مفاهيم ملهاش مقابل في العربي، فاللي بينقل تصميم إنجليزي زي ما هو بيلاقي نص تأثيراته مختفية والنص التاني بيبوّظ الحروف.`,
-            how: R`المتصفح بيكسّر الكلام لسطور الأول (بعرض الصندوق)، وبعدين لكل سطر بيحسب الفراغ الفاضل ويوزّعه حسب [[text-align]]: كله في الآخر ([[start]])، أو كله في الأول ([[end]])، أو نصين ([[center]])، أو على المسافات بين الكلمات ([[justify]]). [[start]] و [[end]] بيتحولوا ليمين وشمال من [[direction]] بتاع العنصر. [[text-indent]] بيتخصم من عرض السطر الأول قبل التكسير. [[text-transform]] بيتطبق على النص قبل الرسم بقواعد Unicode للغة العنصر، والـ DOM مبيتغيّرش. [[letter-spacing]] بيتزوّد بعد كل «وحدة» حروف، والمتصفح بيستثني الحروف المتصلة. و [[vertical-align]] بيحرّك صندوق العنصر جوه «صندوق السطر»، وده ممكن يطوّل السطر نفسه لو العنصر طلع برّه.`,
-            when: R`[[center]] للعناوين والأزرار والسطور القصيرة. [[end]] للأرقام والأسعار والتواريخ في آخر الصف. [[justify]] لعمود عريض في مقال أو كتاب. [[text-indent]] لفقرات قصة ملزوقة في بعض. [[uppercase]] مع [[letter-spacing]] للوسوم والعناوين الصغيرة الإنجليزي. [[vertical-align: middle]] لأيقونة جنب كلام، وللصور.`,
-            mistakes: R`[[left]] و [[right]] بدل [[start]] و [[end]]. المحاذاة على عنصر inline. توسيط فقرات طويلة. [[justify]] على موبايل. [[letter-spacing]] على عربي. الاعتماد على [[uppercase]] كتمييز وحيد في موقع هيتترجم. و [[vertical-align]] على صندوق block.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** كارت مقال في «مدوّنة حبر»: العنوان في النص، وتاريخ النشر [[.date]] عند نهاية السطر، والوسم الإنجليزي [[.tag]] بحروف كبيرة ومسافة [[2px]] بين الحروف. استخدم القيم اللي بتشتغل في الاتجاهين. (من قسم ١ و ٤ و ٥ في الشرح)`, done: R`العنوان [[center]]، والتاريخ [[end]]، والوسم [[uppercase]] بمسافة 2px، وكل الشروط ✓.`, work: { h: 190, start: R`<style>
-  .card { max-width: 340px; border: 1px solid silver; padding: 10px; }
-  h2 { }
-  .date { }
-  .tag { font-size: 13px; }
-</style>
-<div class="card">
-  <span class="tag" lang="en">tutorial</span>
-  <h2>أول صفحة ليك بالـ CSS</h2>
-  <p>هنبدأ من ملف فاضي ونوصل لصفحة مرتبة في نص ساعة.</p>
-  <p class="date">١٢ نوفمبر</p>
-</div>`, checks: [
-              { say: R`العنوان في النص`, q: "h2", style: ["text-align", "center"] },
-              { say: R`التاريخ عند نهاية السطر ([[end]] مش [[left]])`, q: ".date", style: ["text-align", "end"] },
-              { say: R`الوسم بحروف كبيرة`, q: ".tag", style: ["text-transform", "uppercase"] },
-              { say: R`الوسم بين حروفه 2px`, q: ".tag", style: ["letter-spacing", "2px"] },
-              { say: R`النص في الـ HTML لسه [[tutorial]] بحروف صغيرة`, q: ".tag", has: "tutorial" }
-            ] }, sol: R`~~~live 191 الحل
-<style>
-  .card { max-width: 340px; border: 1px solid silver; padding: 10px; }
-  h2 { text-align: center; }
-  .date { text-align: end; }
-  .tag { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; }
-</style>
-<div class="card">
-  <span class="tag" lang="en">tutorial</span>
-  <h2>أول صفحة ليك بالـ CSS</h2>
-  <p>هنبدأ من ملف فاضي ونوصل لصفحة مرتبة في نص ساعة.</p>
-  <p class="date">١٢ نوفمبر</p>
-</div>
-~~~
+الغلطة الشائعة: تشيك [[scrollLeft === 0]] على إنها «في الآخر». في RTL صفر معناها في الأول، والأخر رقم سالب، فاستخدم [[Math.abs(scrollLeft)]].
 
-**هتشوف إيه:**
-
-- «TUTORIAL» فوق بحروف كبيرة ومتباعدة.
-- العنوان متوسّط، والوصف من اليمين.
-- التاريخ لازق في الشمال (نهاية السطر العربي).
-
-**ليه كده:** [[end]] بتدّي الشمال هنا واليمين في نسخة إنجليزي، من غير تعديل. و [[uppercase]] في الـ CSS عشان النص في الصفحة يفضل طبيعي.
-
-**الغلطة الشائعة:** [[text-align: end]] على الـ [[.tag]] عشان تحركه. [[.tag]] عنصر [[<span>]] (inline) فمش هيتحرك: المحاذاة بتتحط على الصندوق اللي حواليه.
-
-~~~text القياس من Chrome
-h2      text-align: center
-.date   text-align: end
-.tag    text-transform: uppercase     letter-spacing: 2px
+~~~text الناتج (Chrome 156)
+scrollLeft في الأول: 0
+بعد scrollBy({ left: -100 }): -100
+بعد scrollBy({ left: 100 }) من الأول: 0 (معملش حاجة)
+أقصى قيمة: -324
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة تعليقات فيها عربي وإنجليزي. المبرمج كتب [[text-align: right]] «عشان الموقع عربي»، فالتعليق الإنجليزي ([[dir="ltr"]]) لازق يمين وبيتقري بالعكس. صلّح قاعدة واحدة تخلّي كل تعليق يبدأ من ناحية لغته. (من قسم ١ في الشرح: «start ولا right؟»)`, done: R`التعليقين [[text-align: start]]، ومفيش [[right]] في الكود، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  .comment { text-align: right; border: 1px solid silver; padding: 6px 10px; margin: 6px 0; }
-</style>
-<p class="comment">مقال مفيد جدًا، شكرًا.</p>
-<p class="comment" dir="ltr" lang="en">Great article, thanks for sharing.</p>`, checks: [
-              { say: R`التعليقات محاذاتها [[start]]`, q: ".comment", style: ["text-align", "start"] },
-              { say: R`مفيش [[text-align: right]] في الكود`, nosrc: "text-align: right" },
-              { say: R`التعليق الإنجليزي لسه [[dir="ltr"]]`, q: ".comment[dir=\"ltr\"]" }
-            ] }, sol: R`~~~live 86 بعد التصليح
-<style>
-  .comment { text-align: start; border: 1px solid silver; padding: 6px 10px; margin: 6px 0; }
-</style>
-<p class="comment">مقال مفيد جدًا، شكرًا.</p>
-<p class="comment" dir="ltr" lang="en">Great article, thanks for sharing.</p>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 86 قبل
-<style>
-  .comment { text-align: right; border: 1px solid silver; padding: 6px 10px; margin: 6px 0; }
-</style>
-<p class="comment">مقال مفيد جدًا، شكرًا.</p>
-<p class="comment" dir="ltr" lang="en">Great article, thanks for sharing.</p>
-~~~
-
-**هتشوف إيه:** قبل: التعليقين لازقين يمين. بعد: العربي يمين والإنجليزي **شمال**، كل واحد من بداية سطره.
-
-**ليه:** [[right]] ناحية ثابتة. [[start]] بتسأل العنصر عن اتجاهه: [[rtl]] يبقى يمين، و [[ltr]] يبقى شمال.
-
-**حل تاني صح:** تمسح السطر خالص. [[start]] هي الافتراضي. بس لو فيه قاعدة أعم بتوسّط أو بتلزق، لازم تكتبها صريحة.
-
-**الغلطة الشائعة:** تزوّد قاعدة تانية [[.comment[dir="ltr"] { text-align: left; }]]. هتشتغل، بس كل حتة في الموقع هتحتاج قاعدتين بدل واحدة.
-
-~~~text القياس من Chrome (الفراغ على يمين الكلام في صندوق 300px)
-                     العربي     الإنجليزي
-text-align: right    0          0           ← الاتنين يمين
-text-align: start    0          241         ← الإنجليزي راح شمال
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** التصميم الإنجليزي للموقع فيه عناوين [[uppercase]] بمسافة 4px بين الحروف، واتنقل زي ما هو للنسخة العربي. شيل الاتنين من العنوان العربي، وسيبهم على السطر الإنجليزي [[.en]] بس، وادّي العنوان العربي تمييز بديل: وزن 800. (من قسم ٤ و ٥ في الشرح)`, done: R`العنوان العربي [[letter-spacing]] بتاعته [[normal]] ووزنه 800، و [[.en]] لسه 4px و [[uppercase]]، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  h2, .en { text-transform: uppercase; letter-spacing: 4px; }
-</style>
-<h2>وصل حديثًا</h2>
-<p class="en" lang="en" dir="ltr">new arrivals</p>`, checks: [
-              { say: R`العنوان العربي من غير [[letter-spacing]]`, q: "h2", style: ["letter-spacing", "normal"] },
-              { say: R`العنوان العربي من غير [[text-transform]]`, q: "h2", style: ["text-transform", "none"] },
-              { say: R`العنوان العربي وزنه 800`, q: "h2", style: ["font-weight", "800"] },
-              { say: R`السطر الإنجليزي لسه 4px`, q: ".en", style: ["letter-spacing", "4px"] },
-              { say: R`والسطر الإنجليزي لسه [[uppercase]]`, q: ".en", style: ["text-transform", "uppercase"] }
-            ] }, sol: R`~~~live 101 بعد التصليح
-<style>
-  .en { text-transform: uppercase; letter-spacing: 4px; }
-  h2 { font-weight: 800; }
-</style>
-<h2>وصل حديثًا</h2>
-<p class="en" lang="en" dir="ltr">new arrivals</p>
-~~~
-
-**هتشوف إيه:** الشكل قبل وبعد قريب جدًا في Chrome، وده المقصود من التمرين: القاعدتين مكانوش بيعملوا حاجة للعربي هنا، فشيلهم تنضيف مش تغيير شكل. اللي اتغيّر إن العنوان بقى أتقل، و «NEW ARRIVALS» زي ما هي.
-
-**ليه نشيلهم لو مش بيأثروا؟**
-
-- في متصفحات تانية [[letter-spacing]] بتفك الحروف العربي عن بعض (تحذير MDN).
-- حتى في Chrome بتقفل الـ ligatures في الخط.
-- واللي هييجي بعدك هيفتكر إن العنوان العربي «متميّز» بيهم، وهو مش متميّز بحاجة.
-
-**الغلطة الشائعة:** [[letter-spacing: 0]] بدل ما تشيل القاعدة. بتشتغل، بس المحسوب هيبقى [[0px]] مش [[normal]]، و [[normal]] هي اللي بتسيب المتصفح حر في توزيع المسافات مع [[justify]].
-
-~~~text القياس من Chrome
-               قبل                           بعد
-h2             letter-spacing: 4px           normal        font-weight: 800
-.en            letter-spacing: 4px           4px
-عرض «الخط العربي جميل» بـ 10px: +20 بس (عند المسافتين)، وعرض «Arabic type»: +110
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة قصة قصيرة: الفقرات [[justify]] وأول سطر في كل واحدة داخل [[2em]]، ومفيش مسافة بين الفقرات (الفراغ هو الفاصل)، وسطر الختام [[.end]] في النص. الخط 18px. (من قسم ٢ و ٣ في الشرح)`, done: R`الفقرات [[justify]] وأول سطرها 36px، والختام [[center]] من غير فراغ في أوله، وكل الشروط ✓.`, work: { h: 270, start: R`<style>
-  .story { max-width: 380px; font-size: 18px; line-height: 1.8; }
-  .story p { margin: 0; }
-  .end { }
-</style>
-<div class="story">
-  <p>كان البحر هادي في الصبحية دي، والمراكب راجعة واحدة ورا التانية من غير صوت.</p>
-  <p>وقف عم صابر على الرصيف يعدّ الشباك زي كل يوم، وهو عارف إن العدد مش هيتغيّر.</p>
-  <p class="end">تمّت</p>
-</div>`, checks: [
-              { say: R`الفقرات [[justify]]`, q: ".story p:not(.end)", style: ["text-align", "justify"] },
-              { say: R`أول سطر داخل 2em (36px)`, q: ".story p:not(.end)", style: ["text-indent", "36px"] },
-              { say: R`سطر الختام في النص`, q: ".end", style: ["text-align", "center"] },
-              { say: R`سطر الختام من غير فراغ في أوله`, q: ".end", style: ["text-indent", "0px"] }
-            ] }, sol: R`~~~live 178 الحل
-<style>
-  .story { max-width: 380px; font-size: 18px; line-height: 1.8; }
-  .story p { margin: 0; text-align: justify; text-indent: 2em; }
-  .story .end { text-align: center; text-indent: 0; }
-</style>
-<div class="story">
-  <p>كان البحر هادي في الصبحية دي، والمراكب راجعة واحدة ورا التانية من غير صوت.</p>
-  <p>وقف عم صابر على الرصيف يعدّ الشباك زي كل يوم، وهو عارف إن العدد مش هيتغيّر.</p>
-  <p class="end">تمّت</p>
-</div>
-~~~
-
-**هتشوف إيه:**
-
-- فقرتين ملزوقين في بعض، وكل واحدة أول سطر فيها بادئ جوه شوية من اليمين.
-- حافة الشمال مستقيمة (السطور ممطوطة)، إلا آخر سطر في كل فقرة.
-- «تمّت» في نص العرض بالظبط.
-
-**ليه [[text-indent: 0]] على الختام؟** [[.end]] هي كمان [[p]] جوه [[.story]]، فخدت الـ 36px. من غير تصفيرها «تمّت» هتتوسّط في العرض **الباقي بعد الفراغ**، فتطلع مزاحة 18px عن النص.
-
-**ليه [[.story .end]] مش [[.end]]؟** عشان تغلب [[.story p]]: الاتنين class، بس الأولى فيها عنصر كمان (درس «specificity»).
-
-**الغلطة الشائعة:** [[text-indent: 2em]] ومعاها مسافة بين الفقرات. الاتنين علامتين لنفس الحاجة (بداية فقرة)، والكتب بتستخدم واحدة بس.
-
-~~~text القياس من Chrome
-.story p     text-align: justify     text-indent: 36px
-.end         text-align: center      text-indent: 0px
-~~~` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** في شريط الكاتب، الدايرة الملوّنة (مكان صورته) قاعدة على خط الكتابة فشكلها واطي عن الاسم، وتحتها فراغ زيادة. وسّطها رأسيًا مع الكلام بخاصية واحدة. (من قسم ٧ في الشرح)`, done: R`الدايرة [[vertical-align: middle]]، وكل الشروط ✓.`, work: { h: 110, start: R`<style>
-  .by { font-size: 18px; background: #f3f4f6; }
-  .avatar { display: inline-block; width: 40px; height: 40px; border-radius: 50%; background: #0f766e; }
-</style>
-<div class="by"><span class="avatar"></span> كتبت: سلمى فؤاد</div>`, checks: [
-              { say: R`الدايرة متوسّطة رأسيًا مع الكلام`, q: ".avatar", style: ["vertical-align", "middle"] },
-              { say: R`الدايرة لسه [[inline-block]] 40px`, q: ".avatar", style: ["height", "40px"] }
-            ] }, sol: R`~~~live 56 بعد التصليح
-<style>
-  .by { font-size: 18px; background: #f3f4f6; }
-  .avatar { display: inline-block; width: 40px; height: 40px; border-radius: 50%; background: #0f766e; vertical-align: middle; }
-</style>
-<div class="by"><span class="avatar"></span> كتبت: سلمى فؤاد</div>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 61 قبل
-<style>
-  .by { font-size: 18px; background: #f3f4f6; }
-  .avatar { display: inline-block; width: 40px; height: 40px; border-radius: 50%; background: #0f766e; }
-</style>
-<div class="by"><span class="avatar"></span> كتبت: سلمى فؤاد</div>
-~~~
-
-**هتشوف إيه:** قبل: الاسم نازل عند أسفل الدايرة، وتحت الدايرة شريط رمادي رفيع زيادة. بعد: الاسم قصاد نص الدايرة، والشريط الرمادي قد الدايرة بالظبط.
-
-**ليه:** الافتراضي [[baseline]]: أسفل الدايرة بيقعد على خط كتابة الاسم، وتحت خط الكتابة مكان محجوز لنزلات الحروف. [[middle]] بتحط نص الدايرة عند نص الحروف.
-
-**الغلطة الشائعة:** [[vertical-align: middle]] على [[.by]] (الـ div). مبتعملش حاجة: الخاصية بتتحط على العنصر اللي جوه السطر نفسه.
-
-~~~text القياس من Chrome (div جواه inline-block 50px، خط 16px)
-baseline    ارتفاع الـ div 53px
-middle      ارتفاع الـ div 50px
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلتك كتبت في الـ HTML [[<h3>SALE ENDS FRIDAY</h3>]] بحروف كبيرة. اشرحلها في ٣ سطور ليه تكتبها [[Sale ends Friday]] وتكبّرها بالـ CSS، وإيه اللي هيحصل للعنوان ده في النسخة العربي. (من قسم ٤ في الشرح)`, done: R`ذكرت قارئ الشاشة، وسهولة تغيير التصميم، وإن العربي ملوش حروف كبيرة فلازم تمييز تاني.`, sol: R`**إجابة نموذجية:**
-
-1. النص المكتوب كله حروف كبيرة، قارئ الشاشة ممكن يعتبره اختصار ويتهجّاه حرف حرف. المكتوب طبيعي بيتقري ككلام عادي، و [[text-transform: uppercase]] بتغيّر الشكل بس.
-2. لو التصميم اتغيّر بعدين (عناوين عادية)، بتمسحي سطر CSS واحد بدل ما تعيدي كتابة كل عنوان في كل صفحة.
-3. في النسخة العربي «العرض ينتهي الجمعة» مفيهاش حروف كبيرة، فـ [[uppercase]] مش هتعمل حاجة. العنوان العربي محتاج تمييز تاني مكتوب في نفس القاعدة: وزن أتقل أو لون.
-
-~~~text القياس من Chrome
-<h3 style="text-transform: uppercase">Sale ends Friday</h3>
-المعروض:        SALE ENDS FRIDAY
-textContent:    Sale ends Friday          ← النص في الصفحة طبيعي
-~~~
-
-**نقطة زيادة:** الحروف الكبيرة أعرض («hello world» من 478px لـ 728px بنفس الخط)، فجرّبي العنوان في أضيق عرض.` }
-          ]
-        },
-        {
-          cmd: "white-space و overflow-wrap",
-          title: "المسافات والسطور الجديدة، والكلمة الطويلة اللي بتكسر الصفحة، والنقط التلاتة",
-          pre: [{ to: "css/code و pre و kbd", why: R`[[<pre>]] هو العنصر اللي بيحافظ على المسافات والسطور، والدرس ده بيشرح الخاصية اللي وراه` }],
-          ref: [
-            { t: "MDN: white-space", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/white-space" },
-            { t: "MDN: white-space-collapse", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/white-space-collapse" },
-            { t: "MDN: overflow-wrap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-wrap" },
-            { t: "MDN: word-break", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/word-break" },
-            { t: "MDN: hyphens", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/hyphens" },
-            { t: "MDN: text-overflow", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-overflow" },
-            { t: "MDN: tab-size", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/tab-size" },
-            { t: "MDN: line-break", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/line-break" },
-            { t: "MDN: -webkit-line-clamp", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/-webkit-line-clamp" }
-          ],
-          desc: R`المتصفح بيكسّر السطر عند المسافات بس. فكلمة طويلة من غير مسافات (لينك، اسم ملف، «هههههه») مبتتكسرش، وبتطلع برّه الصندوق وتعمل للصفحة سكرول بالعرض على الموبايل. [[overflow-wrap: break-word]] بتسمحله يكسرها لما مفيش حل تاني.
-و [[white-space]] بتتحكم في المسافات والسطور الجديدة اللي في الكود: تتلمّ في مسافة واحدة ولا تفضل زي ما هي. و [[text-overflow: ellipsis]] بتقص العنوان الطويل وتحط «…».`,
-          example: R`p { overflow-wrap: break-word; }
-td { overflow-wrap: anywhere; }
-.title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.summary { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
-.address { white-space: pre-line; }
-pre { white-space: pre-wrap; tab-size: 2; }
-.en { hyphens: auto; }`,
-          flag: "script",
-          lines: [
-            R`لو فيه كلمة أطول من السطر ومفيش مكان تتكسر فيه، اكسرها عند أي حرف بدل ما تطلع برّه الفقرة. الكلمات العادية مبتتأثرش.`,
-            R`[[anywhere]] زي [[break-word]]، وزيادة عليها إن الخانة «تعرف» إنها ممكن تضيق: الجدول مبيتمطش عشان يشيل الكلمة الطويلة.`,
-            R`تلات خصائص مع بعض لعنوان في سطر واحد: امنع التكسير، واخفي اللي طالع برّه، وحط «…» مكان القص. من غير أي واحدة فيهم النقط مبتظهرش.`,
-            R`قص بعد 3 سطور ونقط في آخر التالت. الأربع سطور دول لازم ييجوا مع بعض، وأساميهم القديمة ([[-webkit-]]) هي اللي شغالة في كل المتصفحات.`,
-            R`العنوان البريدي اللي اتكتب على كذا سطر يتعرض على كذا سطر: السطر الجديد في النص بيفضل، والمسافات الكتير بتتلمّ.`,
-            R`الكود جوه [[<pre>]] يحافظ على مسافاته وسطوره، بس يلف لما يوصل لآخر العرض بدل ما يعمل سكرول. والـ tab عرضه مسافتين بدل 8.`,
-            R`الكلمة الإنجليزي الطويلة تتقسم على سطرين بشرطة عند مقطع صح. محتاجة [[lang="en"]] على العنصر، وملهاش أثر على العربي.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-المتصفح بيعمل حاجتين في أي نص قبل ما يرسمه: **بيلمّ** المسافات والسطور الجديدة في مسافة واحدة، و**بيكسّر** السطر عند المسافات لما العرض يخلص. الدرس ده عن الخصائص اللي بتغيّر الاتنين.
-
-الأرقام من Chrome 157 على Windows 11. و «على الموبايل» معناها صفحة عرضها 360px جوه iframe.
-
----
-
-## ١. المشكلة: كلمة طويلة بتكسر الصفحة
-
-~~~live 150 لينك طويل وضحكة طويلة في صندوق ضيق
-<style>
-  .phone { width: 260px; border: 2px solid #111; padding: 8px; overflow: visible; }
-  .phone p { background: #fde68a; margin: 6px 0; }
-</style>
-<div class="phone">
-  <p>حمّل التقرير: https://example.test/downloads/annual_sales_report_final_version_2026.pdf</p>
-  <p>ههههههههههههههههههههههههههههههههههههههههههههههههههه</p>
-  <p>ودي فقرة عادية بتتكسر عند المسافات زي ما المفروض.</p>
-</div>
-~~~
-
-**هتشوف إيه:** الإطار الأسود هو «الموبايل». اللينك والضحكة طالعين برّه الإطار من الشمال، والخلفية الصفرا واقفة عند حد الإطار. الفقرة التالتة جوه الإطار عادي.
-
-المتصفح بيدوّر على **مكان مسموح** يكسر فيه السطر: مسافة، أو بعد شرطة [[-]]، أو بعد [[/]] و [[?]] في اللينكات. اللينك ده فيه [[_]] مش [[-]]، والضحكة حرف واحد متكرر، فمفيش ولا مكان. الكلمة بتفضل حتة واحدة وتطلع برّه.
-
-~~~text القياس من Chrome (صفحة عرضها 360px فيها اللينك ده والضحكة دي)
-عرض الشاشة:          360px
-عرض الصفحة الفعلي:   759px        ← الصفحة بقت أعرض من الشاشة: سكرول بالعرض
-~~~
-
-سكرول بالعرض على الموبايل معناه إن الصفحة كلها بتتزق، والقايمة والزراير بيبقوا برّه الشاشة. والسبب كلمة واحدة في تعليق كتبه زائر.
-
----
-
-## ٢. [[overflow-wrap: break-word]]
-
-~~~live 186 نفس الصندوق بعد overflow-wrap: break-word
-<style>
-  .phone { width: 260px; border: 2px solid #111; padding: 8px; }
-  .phone p { background: #fde68a; margin: 6px 0; overflow-wrap: break-word; }
-</style>
-<div class="phone">
-  <p>حمّل التقرير: https://example.test/downloads/annual_sales_report_final_version_2026.pdf</p>
-  <p>ههههههههههههههههههههههههههههههههههههههههههههههههههه</p>
-  <p>ودي فقرة عادية بتتكسر عند المسافات زي ما المفروض.</p>
-</div>
-~~~
-
-**هتشوف إيه:** اللينك والضحكة اتكسروا على كذا سطر وفضلوا جوه الإطار. والفقرة التالتة زي ما هي: كلماتها متكسرتش من نصها.
-
-[[break-word]] معناها: **جرّب الأماكن العادية الأول. لو الكلمة لسه مش داخلة في سطر لوحدها، اكسرها عند أي حرف.** الكلام العادي مبيتأثرش خالص.
-
-~~~text القياس من Chrome (نفس الصفحة 360px)
-من غير حاجة                         عرض الصفحة 759px
-p { overflow-wrap: break-word; }    عرض الصفحة 360px     ✓
-p { overflow-wrap: anywhere; }      360px                ✓
-body { overflow-wrap: break-word; } 360px                ✓  (بتتورّث: مرة على body تكفي الصفحة)
-body { overflow-x: hidden; }        759px                ✗  (السكرول اتخبّى، والكلام اللي برّه اتقص ومحدش هيقراه)
-~~~
-
-السطر الأخير حل منتشر وغلط: [[overflow-x: hidden]] بيخفي المشكلة مش بيحلها. آخر اللينك مبقاش يتشاف.
-
-القيم:
-
-| القيمة | معناها |
-|---|---|
-| [[overflow-wrap: normal]] | الافتراضي: الكسر في الأماكن العادية بس |
-| [[overflow-wrap: break-word]] | اكسر الكلمة لو مفيش حل تاني |
-| [[overflow-wrap: anywhere]] | زيها، وكمان الصندوق بيتحسب إنه «ممكن يضيق» لحد حرف (القسم ٣) |
-
-### [[word-wrap: break-word]]
-
-[[word-wrap]] الاسم القديم لنفس الخاصية (كان من Internet Explorer). المتصفحات بتعامله كاسم تاني:
-
-~~~text القياس من Chrome
-word-wrap: break-word       →  المحسوب  overflow-wrap: break-word
-overflow-wrap: anywhere     →  المحسوب  word-wrap: anywhere
-~~~
-
-لو قابلته في كود قديم، هو [[overflow-wrap]]. في الجديد اكتب [[overflow-wrap]].
-
----
-
-## ٣. [[break-word]] ولا [[anywhere]]؟
-
-في فقرة عادية الاتنين نفس النتيجة. الفرق بيبان لما الصندوق عرضه **بيتحسب من محتواه**: خانة جدول، أو عنصر جوه flex.
-
-~~~live 142 جدول فيه لينك طويل: break-word ثم anywhere
-<style>
-  .phone { width: 280px; border: 2px solid #111; padding: 8px; margin-bottom: 10px; }
-  table { border-collapse: collapse; }
-  td { border: 1px solid silver; padding: 4px; }
-  .a td { overflow-wrap: break-word; }
-  .b td { overflow-wrap: anywhere; }
-</style>
-<div class="phone"><table class="a"><tr><td>الملف</td><td>https://example.test/downloads/annual_sales_report_final.pdf</td></tr></table></div>
-<div class="phone"><table class="b"><tr><td>الملف</td><td>https://example.test/downloads/annual_sales_report_final.pdf</td></tr></table></div>
-~~~
-
-**هتشوف إيه:** الجدول الأول طالع برّه الإطار مع إن عليه [[break-word]]. التاني اتكسر جوه الإطار.
-
-~~~text القياس من Chrome (مكان عرضه 328px)
-                              جدول          عنصر جوه flex
-من غير حاجة                   785px         823px
-overflow-wrap: break-word     785px  ✗      823px  ✗
-overflow-wrap: anywhere       328px  ✓      328px  ✓
-
-«أقل عرض ممكن» للصندوق (min-content):
-normal و break-word     743px      (طول الكلمة كلها)
-anywhere                13px       (حرف واحد)
-~~~
-
-الجدول بيسأل كل خانة: «أقل عرض تقدري تعيشي فيه كام؟». مع [[break-word]] الخانة بترد «طول الكلمة»، فالجدول بيتمط. مع [[anywhere]] بترد «حرف»، فالجدول بيفضل في مكانه والكلمة تتكسر.
-
-القاعدة:
-
-- فقرات ونصوص عادية: [[overflow-wrap: break-word]] على [[body]].
-- خانات جداول، وعناصر جوه flex أو grid: [[overflow-wrap: anywhere]] على الخانة نفسها. (في flex فيه حل تاني: [[min-width: 0]] على العنصر، وده في درس «flexbox».)
-
----
-
-## ٤. [[word-break: break-all]]
-
-[[word-break]] خاصية تانية بتغيّر قواعد الكسر **العادية** نفسها، مش بس وقت الزنقة.
-
-~~~live 112 break-word ثم break-all على نفس الفقرة
-<style>
-  p { width: 250px; background: #f3f4f6; margin: 6px 0; }
-</style>
-<p style="overflow-wrap: break-word">الملف: https://example.test/annual_sales_report_final.pdf وخلاص.</p>
-<p style="word-break: break-all">الملف: https://example.test/annual_sales_report_final.pdf وخلاص.</p>
-~~~
-
-**هتشوف إيه:** في الأولى اللينك نزل سطر جديد لوحده، وبعدين اتكسر لما مكفّاش. في التانية اللينك بدأ على طول بعد «الملف:» في نفس السطر، واتكسر من أي حتة عشان يملا كل سطر لآخره.
-
-| القيمة | معناها |
-|---|---|
-| [[word-break: normal]] | الافتراضي |
-| [[word-break: break-all]] | الكسر مسموح بين **أي حرفين** في أي كلمة، حتى لو الكلمة كانت هتدخل في السطر اللي بعده |
-| [[word-break: keep-all]] | للصيني والياباني والكوري: متكسرش بين حروفهم (هم بيتكسروا بين أي حرفين في العادي) |
-| [[word-break: break-word]] | قيمة قديمة، MDN بيقول إنها مهجورة. بدلها [[overflow-wrap: anywhere]] |
-
-~~~text القياس من Chrome (فقرة 328px فيها اللينك: ارتفاعها)
-overflow-wrap: break-word     109px     (اللينك بدأ سطر جديد: 4 سطور)
-word-break: break-all         82px      (اللينك كمّل نفس السطر: 3 سطور)
-
-كلمة عربي طويلة «الاستراتيجيات» في صندوق 60px:  normal حتة واحدة طالعة برّه (90px)     break-all اتكسرت على سطرين
-~~~
-
-[[break-all]] بتوفّر سطور، وبتكسر الكلمات العادية من نصها («impor» في سطر و «tant» في اللي بعده، والكلمة العربي كمان بتتكسر من نصها). مناسبة لخانة كلها أكواد وأرقام طويلة. للكلام العادي [[overflow-wrap]] أحسن.
-
-### [[line-break: anywhere]]
-
-[[line-break]] بتحدد «صرامة» الكسر حوالين علامات الترقيم في الصيني والياباني: [[auto]] و [[loose]] و [[normal]] و [[strict]]. ملهاش أثر على العربي. والقيمة [[anywhere]] بتسمح بالكسر عند أي حرف زي [[break-all]] (اتقاس: نفس نتيجتها على اللينك). استخدامها نادر جدًا برّه النصوص الآسيوية.
-
----
-
-## ٥. [[hyphens: auto]]
-
-الإنجليزي ولغات كتير بتكسر الكلمة الطويلة عند **مقطع** وتحط شرطة: «inter-» في سطر و «national» في اللي بعده. ده اسمه hyphenation.
-
-| القيمة | معناها |
-|---|---|
-| [[hyphens: manual]] | الافتراضي: اكسر بس عند الأماكن اللي الكاتب حددها بـ [[&shy;]] |
-| [[hyphens: auto]] | المتصفح بيقرر أماكن المقاطع من قاموس اللغة |
-| [[hyphens: none]] | متكسرش حتى عند [[&shy;]] |
-
-[[&shy;]] (soft hyphen) حرف مخفي بتحطه جوه الكلمة: «لو احتجت تكسر، اكسر هنا». مبيظهرش إلا لو الكسر حصل فعلًا:
-
-~~~live 112 كلمة طويلة فيها &shy;
-<style>
-  p { width: 110px; background: #f3f4f6; direction: ltr; margin: 6px 0; }
-</style>
-<p lang="en">An internationalization demo.</p>
-<p lang="en">An inter&shy;nation&shy;ali&shy;zation demo.</p>
-~~~
-
-**هتشوف إيه:** في الأولى الكلمة الطويلة نزلت سطر لوحدها وطالعة برّه الصندوق الرمادي. في التانية اتقسمت على سطرين وفي آخر السطر الأول شرطة.
-
-~~~text القياس من Chrome (صندوق ضيق)
-من غير &shy;                       مفيش كلمة اتقسمت
-inter&shy;nation&shy;ali&shy;zation      اتقسمت عند واحدة من العلامات
-نفس الكلمة ومعاها hyphens: none          متقسمتش
-~~~
-
-[[hyphens: auto]] ليها شرطين: العنصر عليه [[lang]] صح ([[lang="en"]])، والمتصفح عنده قاموس للغة دي. في التجربة هنا (Chrome headless) القاموس مكانش محمّل، فمفيش كلمة اتقسمت، وده مش دليل على Chrome العادي. MDN بيقول إن القيمة مدعومة في كل المتصفحات الحالية للغات اللي ليها قواميس.
-
-**والعربي؟** العربي مبيتقطّعش بشرطة: الحروف متصلة، وكسر الكلمة في نصها بيغيّر شكل الحروف. [[hyphens: auto]] على فقرة عربي مغيّرتش حاجة في القياس. ومتحطش [[&shy;]] جوه كلمة عربي. السطر العربي بيتظبط بالمسافات.
-
-لو الصفحة عربي وفيها فقرات إنجليزي: [[:lang(en) { hyphens: auto; }]].
-
-### [[hyphenate-character: "="]]
-
-بتغيّر الحرف اللي بيتحط عند الكسر (الافتراضي شرطة اللغة):
-
-~~~css
-p { hyphens: auto; hyphenate-character: "="; }
-~~~
-
-القيمة نص بين تنصيص، أو [[auto]]. استخدامها نادر: لغات بتستخدم علامة غير الشرطة. ([[CSS.supports]] رجّع true في Chrome 157.)
-
----
-
-## ٦. [[white-space: nowrap]] وإخواتها
-
-دي الخاصية اللي بتتحكم في الحاجتين اللي المتصفح بيعملهم في النص: لمّ المسافات، وتكسير السطور.
-
-النص ده في الكود (فيه مسافات كتير، وسطر جديد، وكلام طويل):
-
-~~~text الكود
-أول     كلام
-سطر تاني وبعده كلام طويل شوية عشان يلف
-~~~
-
-~~~live 170 460 نفس النص بست قيم
-<style>
-  div { width: 190px; margin: 4px; padding: 4px; background: #f3f4f6; display: inline-block; vertical-align: top; overflow: hidden; }
-  b { display: block; color: #b45309; font-size: 13px; white-space: normal; }
-</style>
-<div style="white-space: normal"><b>normal</b>أول     كلام
-سطر تاني وبعده كلام طويل شوية عشان يلف</div>
-<div style="white-space: nowrap"><b>nowrap</b>أول     كلام
-سطر تاني وبعده كلام طويل شوية عشان يلف</div>
-<div style="white-space: pre"><b>pre</b>أول     كلام
-سطر تاني وبعده كلام طويل شوية عشان يلف</div>
-<div style="white-space: pre-wrap"><b>pre-wrap</b>أول     كلام
-سطر تاني وبعده كلام طويل شوية عشان يلف</div>
-<div style="white-space: pre-line"><b>pre-line</b>أول     كلام
-سطر تاني وبعده كلام طويل شوية عشان يلف</div>
-<div style="white-space: break-spaces"><b>break-spaces</b>أول     كلام
-سطر تاني وبعده كلام طويل شوية عشان يلف</div>
-~~~
-
-**هتشوف إيه:** ست صناديق بنفس النص. بص على تلات حاجات في كل واحد: المسافة بين «أول» و «كلام» (واسعة ولا مسافة واحدة)، و «سطر تاني» (بدأت سطر جديد ولا كمّلت)، والكلام الطويل (لفّ ولا اتقص عند حد الصندوق).
-
-| القيمة | المسافات الكتير | السطر الجديد في الكود | بيلف عند آخر العرض |
-|---|---|---|---|
-| [[white-space: normal]] | بتتلمّ في واحدة | بيتلمّ (مسافة) | أيوه |
-| [[white-space: nowrap]] | بتتلمّ | بيتلمّ | **لأ** |
-| [[white-space: pre]] | **بتفضل** | **بيفضل** | **لأ** |
-| [[white-space: pre-wrap]] | بتفضل | بيفضل | أيوه |
-| [[white-space: pre-line]] | بتتلمّ | **بيفضل** | أيوه |
-| [[white-space: break-spaces]] | بتفضل | بيفضل | أيوه، والمسافات اللي في آخر السطر بتاخد مكان وبتنزل للسطر اللي بعده |
-
-~~~text القياس من Chrome (الافتراضي)
-<p>          white-space: normal
-<pre>        white-space: pre
-<textarea>   white-space: pre-wrap
-~~~
-
-أشهر استخدام لكل واحدة:
-
-- [[nowrap]]: زرار أو وسم أو رقم تليفون لازم يفضل في سطر واحد.
-- [[pre-wrap]]: كود أو رسالة كتبها المستخدم، وعايز مسافاتها وسطورها ومتطلعش برّه.
-- [[pre-line]]: عنوان بريدي أو قصيدة أو رسالة فيها سطور، من غير ما تحط [[<br>]] في كل سطر.
-
-**فخ [[nowrap]]:** السطر مبيلفش، فلو الكلام أطول من الصندوق بيطلع برّه. اتقاس: صندوق 120px بقى عرض محتواه 341px. استخدمها على حاجة قصيرة، أو مع [[overflow: hidden]] (القسم ٨).
-
-### [[white-space-collapse]] و [[text-wrap-mode]]
-
-المواصفة الجديدة قسمت [[white-space]] لخاصيتين، كل واحدة مسؤولة عن شغلانة:
-
-| الخاصية | مسؤولة عن | القيم |
-|---|---|---|
-| [[white-space-collapse]] | لمّ المسافات والسطور | [[collapse]] و [[preserve]] و [[preserve-breaks]] و [[break-spaces]] |
-| [[text-wrap-mode]] | اللف عند آخر العرض | [[wrap]] و [[nowrap]] |
-
-و [[white-space]] بقت مختصرة ليهم:
-
-~~~text القياس من Chrome (المحسوب)
-white-space      white-space-collapse     text-wrap-mode
-normal           collapse                 wrap
-nowrap           collapse                 nowrap
-pre              preserve                 nowrap
-pre-wrap         preserve                 wrap
-pre-line         preserve-breaks          wrap
-break-spaces     break-spaces             wrap
-
-white-space: preserve nowrap     ← الشكل الجديد (قيمتين) مقبول في Chrome 157
-white-space-collapse: preserve-spaces و discard     ← لسه مش مدعومين (CSS.supports رجّع false)
-~~~
-
-الفايدة: تغيّر حاجة واحدة من غير ما تلمس التانية. [[text-wrap-mode: nowrap]] بتمنع اللف وتسيب المسافات على حالها. المنهج شايف [[text-wrap-mode]] Baseline حديثة، فالقيم الستة القديمة لسه هي الأضمن. (واللف «الشيك» بـ [[text-wrap: balance]] ليه درس: «text-wrap».)
-
-### [[tab-size: 2]]
-
-عرض حرف الـ tab لما المسافات محفوظة ([[pre]] و [[pre-wrap]]). الافتراضي 8 حروف، وده واسع على الكود:
-
-~~~text القياس من Chrome (النص «a ثم tab ثم b» بخط عرض حرفه 9.6px)
-tab-size: 8      عرضه 86.4px     (9 حروف: الـ tab وصّل للعمود 8)
-tab-size: 4      48.0px          (5 حروف)
-tab-size: 2      28.8px          (3 حروف)
-tab-size: 20px   29.6px          (القيمة ممكن تبقى طول)
-~~~
-
-الـ tab مش «8 مسافات». هو «روح للعمود اللي بعده اللي رقمه من مضاعفات 8». بتتكتب مرة: [[pre { tab-size: 2; }]].
-
----
-
-## ٧. الكود الطويل جوه [[<pre>]]
-
-[[<pre>]] افتراضيًا [[white-space: pre]]: مبيلفش. سطر كود طويل بيكسر الصفحة زي اللينك بالظبط. قدامك حلّين:
-
-~~~live 153 سطر كود طويل: سكرول جوه الصندوق، أو لف
-<style>
-  .phone { width: 260px; border: 2px solid #111; padding: 8px; }
-  pre { background: #f3f4f6; padding: 6px; margin: 6px 0; direction: ltr; text-align: left; }
-  .scroll { overflow-x: auto; }
-  .wrap { white-space: pre-wrap; overflow-wrap: break-word; }
-</style>
-<div class="phone">
-<pre class="scroll">git log --oneline --graph --decorate --all --since="2 weeks ago"</pre>
-<pre class="wrap">git log --oneline --graph --decorate --all --since="2 weeks ago"</pre>
-</div>
-~~~
-
-**هتشوف إيه:** الصندوق الأول فيه سكرول بالعرض **جواه هو بس** (اسحبه)، والصفحة نفسها ثابتة. التاني السطر لف على كذا سطر.
-
-- [[overflow-x: auto]]: السطور بتفضل زي ما اتكتبت، ومناسبة للكود اللي شكل السطر فيه مهم (Python، جداول ASCII). السكرول جوه الصندوق مش مشكلة. المشكلة لما **الصفحة** هي اللي تسكرول.
-- [[white-space: pre-wrap]]: مفيش سكرول، بس السطر الملفوف ممكن يتلخبط مع سطر جديد. مناسبة لأوامر ترمنال ورسايل.
-
----
-
-## ٨. [[text-overflow: ellipsis]]
-
-لما الكلام يتقص عند حد الصندوق، بتحط «…» مكان القص.
-
-~~~live 118 عنوان طويل في كارت ضيق
-<style>
-  .card { width: 230px; border: 1px solid silver; padding: 8px; margin: 6px 0; }
-  .card h3 { margin: 0; font-size: 17px; }
-  .cut h3 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-</style>
-<div class="card"><h3>سبع حاجات اتعلمتها من أول مشروع حقيقي اشتغلت عليه</h3></div>
-<div class="card cut"><h3>سبع حاجات اتعلمتها من أول مشروع حقيقي اشتغلت عليه</h3></div>
-~~~
-
-**هتشوف إيه:** الكارت الأول عنوانه واخد تلات سطور. التاني عنوانه سطر واحد وآخره «…» من ناحية الشمال (نهاية السطر العربي).
-
-بتشتغل بس لما **التلاتة مع بعض**:
-
-~~~text القياس من Chrome (صندوق 200px وكلام عرضه 457px)
-text-overflow: ellipsis لوحدها                         الكلام لف على 3 سطور، مفيش قص ولا نقط
-+ overflow: hidden                                     لسه 3 سطور
-+ white-space: nowrap (من غير overflow)                سطر واحد طالع برّه الصندوق، مفيش نقط
-white-space: nowrap + overflow: hidden + ellipsis      سطر واحد، مقصوص، وفي آخره …    ✓
-نفس التلاتة على عنصر inline (span)                     مبتشتغلش: لازم صندوق ليه عرض
-~~~
-
-1. [[white-space: nowrap]]: عشان الكلام يفضل سطر واحد ويزيد عن العرض.
-2. [[overflow: hidden]]: عشان الزيادة تتقص. (أي قيمة غير [[visible]]. شرح [[overflow]] كله في وحدة جاية.)
-3. [[text-overflow: ellipsis]]: عشان مكان القص يبان.
-
-والعنصر لازم يبقى صندوق ليه عرض محدود (block أو inline-block)، مش [[<span>]] عادي.
-
-القيم: [[clip]] (الافتراضي: قص من غير علامة)، و [[ellipsis]]، ونص من عندك [[text-overflow: "…المزيد"]] ([[CSS.supports]] رجّع true في Chrome 157، و MDN بيقول إن دعمه في المتصفحات التانية مش كامل).
-
-**النص المقصوص لسه موجود.** في الـ DOM، ولقارئ الشاشة، ولمحرك البحث. اللي اتقص الرسم بس. والزائر اللي شايف مش هيعرف يقرا الباقي، فحط العنوان الكامل في [[title]] أو خلّي الكارت يودّي لصفحة فيها العنوان كله.
-
-### [[-webkit-line-clamp: 3]]: القص بعد كذا سطر
-
-[[text-overflow]] لسطر واحد بس. لملخّص من تلات سطور وبعدهم «…»:
-
-~~~live 114 ملخّص مقصوص بعد 3 سطور
-<style>
-  .sum { width: 250px; background: #f3f4f6; line-height: 1.7;
-    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
-</style>
-<p class="sum">في المقال ده هنمشي خطوة خطوة من ملف فاضي لحد صفحة مرتبة، وهنشرح كل سطر بنكتبه وليه كتبناه، وفي الآخر هتلاقي تمارين بحلولها ومشروع صغير تبنيه بنفسك.</p>
-~~~
-
-**هتشوف إيه:** تلات سطور بالظبط، والتالت آخره «…»، وباقي الفقرة مش ظاهر.
-
-~~~text القياس من Chrome (سطر ارتفاعه 19px)
-display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden     ارتفاع 38px (سطرين)  ✓
-line-clamp: 2 (الاسم الجديد من غير prefix)                                                    ارتفاع 57px: مشتغلش
-~~~
-
-الأربع سطور دول «وصفة» بتتحفظ زي ما هي. أساميهم بـ [[-webkit-]] من أيام متصفح واحد، وكل المتصفحات بقت تفهمهم بالاسم ده. الاسم النضيف [[line-clamp]] لسه مش في Chrome 157 ([[CSS.supports]] رجّع false).
-
----
-
-## ٩. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| مفيش [[overflow-wrap]] في موقع فيه كلام من المستخدمين | أول لينك طويل بيعمل سكرول بالعرض على الموبايل |
-| [[overflow-x: hidden]] على [[body]] كحل | المشكلة اتخبّت، والكلام اللي برّه اتقص |
-| [[break-word]] على خانة جدول | الجدول لسه بيتمط. الخانة عايزة [[anywhere]] |
-| [[word-break: break-all]] على الفقرات | الكلمات اللاتيني العادية بتتكسر من نصها |
-| [[text-overflow: ellipsis]] لوحدها | مفيش نقط: ناقص [[nowrap]] و [[overflow: hidden]] |
-| [[ellipsis]] على [[<span>]] | مبتشتغلش: عايزة صندوق ليه عرض |
-| [[white-space: nowrap]] على كلام طويل | بيطلع برّه الصندوق |
-| [[<br>]] في كل سطر من عنوان أو قصيدة | [[white-space: pre-line]] بتعملها من غير ما تلمس النص |
-| [[hyphens: auto]] من غير [[lang]] | المتصفح ميعرفش يقطّع بأنهي قاموس |
-| [[&shy;]] في كلمة عربي | الكلمة ممكن تتفك في نصها |
-
----
-
-## الخلاصة
-
-- المتصفح بيكسر عند المسافات (وبعد [[-]] و [[/]]). كلمة من غيرهم بتطلع برّه.
-- [[overflow-wrap: break-word]] على [[body]]: شبكة أمان لكل الصفحة، ومبتأثرش على الكلام العادي.
-- خانات الجداول وعناصر flex: [[overflow-wrap: anywhere]].
-- [[white-space]]: [[nowrap]] لسطر واحد، و [[pre-wrap]] للكود، و [[pre-line]] للسطور المكتوبة.
-- النقط: [[white-space: nowrap]] + [[overflow: hidden]] + [[text-overflow: ellipsis]]. ولكذا سطر: وصفة [[-webkit-line-clamp]].
-- [[hyphens]] للاتيني ومعاها [[lang]]. العربي مبيتقطّعش.`,
-          try: R`اعمل [[wrap.html]] فيه صندوق عرضه 280px بإطار، وجواه: فقرة فيها اسم ملف طويل من غير مسافات، وعنوان [[<h3>]] طويل، وعنوان بريدي من تلات سطور مكتوبين في الكود كل واحد في سطر (من غير [[<br>]]). من غير CSS شوف مين طلع برّه ومين سطوره اتلمّت. وبعدين صلّح التلاتة: الفقرة بـ [[overflow-wrap]]، والعنوان بنقط في سطر واحد، والعنوان البريدي بـ [[white-space: pre-line]].`,
-          sol: R`~~~live 263 wrap.html
+            { lvl: 'تطبيق', t: R`**ابني:** زرارين قبل وبعد للـ carousel بـ [[scrollBy]] بعرض كارت + الـ gap، وبيتعطّلوا لما توصل للأول أو الآخر (من [[scrollLeft]] و [[scrollWidth - clientWidth]] بالقيمة المطلقة)، وليهم أسامي عربي.`, done: R`الزراير بتمشي صح في الاتجاهين، والـ snap بيقف على أول الكارت بالظبط، والزرار بيبقى [[disabled]] في الأطراف، وقارئ الشاشة بيقول «اللي بعده، زرار».`,
+              sol: R`~~~live 230 230 carousel-buttons.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تكسير السطور</title>
+<head><meta charset="utf-8"><title>carousel بزراير</title>
 <style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
-  .box { width: 280px; border: 2px solid #111; padding: 8px; }
-  .box p { overflow-wrap: break-word; }
-  .box h3 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }
-  .box address { white-space: pre-line; font-style: normal; }
-</style>
-</head>
+  .track { display: flex; gap: 16px; overflow-x: auto; inline-size: 320px; scroll-snap-type: x mandatory; }
+  .track > * { flex: 0 0 240px; block-size: 120px; scroll-snap-align: start; background: #bfdbfe; }
+  button:disabled { opacity: .5; }
+</style></head>
 <body>
-<div class="box">
-  <h3>محضر اجتماع مجلس الإدارة الربع سنوي الأخير</h3>
-  <p>الملف: board_meeting_minutes_q4_2026_final_signed_copy.pdf</p>
-  <address>شركة النخيل للتوريدات
-    ١٢ شارع البحر
-    الإسكندرية</address>
-</div>
-</body>
-</html>
+  <main><h1>منتجات</h1>
+    <div class="track" id="t" tabindex="0" role="group" aria-label="المنتجات">
+      <article>١</article><article>٢</article><article>٣</article><article>٤</article>
+    </div>
+    <button id="prev">اللي قبله</button>
+    <button id="next">اللي بعده</button>
+  </main>
+  <script>
+    const t = document.getElementById("t");
+    const step = () => t.firstElementChild.offsetWidth + parseFloat(getComputedStyle(t).columnGap);
+    const dir = () => getComputedStyle(t).direction === "rtl" ? -1 : 1;
+    function update() {
+      const pos = Math.abs(t.scrollLeft);
+      const max = t.scrollWidth - t.clientWidth;
+      prev.disabled = pos < 1;
+      next.disabled = pos > max - 1;
+    }
+    prev.onclick = () => t.scrollBy({ left: -dir() * step() });
+    next.onclick = () => t.scrollBy({ left:  dir() * step() });
+    t.addEventListener("scroll", update, { passive: true });
+    update();
+  $__lt/script>
+</body></html>
 ~~~
 
-**هتشوف إيه:**
+- [[step()]] بيحسب خطوة واحدة = عرض الكارت + الـ gap، من الـ CSS مش رقم مكتوب، فلو غيّرت المقاس الزرار مبيبوظش. [[columnGap]] هو القيمة اللي [[gap]] حطها.
+- [[dir()]] بترجّع [[-1]] في العربي، فـ «اللي بعده» بيروح شمال. نفس الكود يشتغل في الإنجليزي.
+- [[Math.abs(t.scrollLeft)]] بيحوّل السالب لمسافة، فالمقارنة واحدة في الاتجاهين.
+- [[pos < 1]] و [[max - 1]] مش [[=== 0]]: مع zoom أو شاشة بكثافة عالية [[scrollLeft]] بيبقى كسر، و [[=== max]] مش هتتحقق أبدًا.
+- الاسم في [[<button>]] نص حقيقي، فقارئ الشاشة بيقول «اللي بعده، زرار».
 
-- العنوان في سطر واحد وآخره «…».
-- اسم الملف مكسور على سطرين وجوه الإطار.
-- العنوان البريدي على تلات سطور زي ما اتكتب في الكود، من غير [[<br>]]، والمسافات اللي في أول السطرين الأخيرين (بتاعة تنسيق الكود) اختفت.
+الغلطة الشائعة: تقارن بـ [[=== max]] من غير هامش، فالزرار ميتعطلش على شاشات معينة.
 
-~~~text القياس من Chrome
-p        overflow-wrap: break-word
-h3       white-space: nowrap     overflow-x: hidden     text-overflow: ellipsis
-address  white-space: pre-line   (white-space-collapse: preserve-breaks)
-~~~
-
-**ليه [[pre-line]] مش [[pre]]؟** [[pre]] كانت هتحافظ على مسافات أول السطر كمان، فالسطرين الأخيرين يدخلوا لجوه. [[pre-line]] بتحافظ على السطور وبتلمّ المسافات.
-
-**ليه [[font-style: normal]]؟** [[<address>]] مايل افتراضيًا، والميل على العربي مفبرك (درس «font-weight و font-style»).`,
-          deep: {
-            why: R`الصفحة اللي كلامها كله إنت اللي كاتبه ممكن تعيش من غير الدرس ده. أول ما يدخل كلام من برّه (تعليق، اسم ملف مرفوع، لينك، إيميل طويل، كود) هتلاقي كلمة مبتتكسرش، وكلمة واحدة كفاية تعمل سكرول بالعرض للصفحة كلها على الموبايل. دي من أكتر مشاكل الـ responsive انتشارًا، وحلها سطر واحد على [[body]]. والنص التاني من الدرس عكسه: حاجات عايزها **متتكسرش** (زرار، عنوان كارت) وتتقص بشكل نضيف.`,
-            how: R`المتصفح بيمشي على النص بمرحلتين. الأولى معالجة المسافات حسب [[white-space-collapse]]: يلمّ المسافات والـ tabs والسطور الجديدة في مسافة واحدة، أو يسيبهم. التانية تكسير السطور: بيحدد «فرص الكسر» حسب قواعد Unicode للغة ([[word-break]] و [[line-break]] و [[hyphens]] بيغيّروا الفرص دي)، وبيملا السطر لحد آخر فرصة قبل ما العرض يخلص. لو حتة ملهاش ولا فرصة وأطول من السطر، بتطلع برّه (overflow)، إلا لو [[overflow-wrap]] سامحة بكسر طوارئ. والفرق بين [[break-word]] و [[anywhere]] في مرحلة تالتة: حساب الـ min-content (أقل عرض للصندوق)، اللي الجداول و flex بيعتمدوا عليه: [[anywhere]] بتحسب فرص الطوارئ فيه، و [[break-word]] لأ. و [[text-overflow]] مبتغيّرش الـ layout خالص: بتغيّر رسم آخر السطر المقصوص بس.`,
-            when: R`[[overflow-wrap: break-word]] على [[body]] في كل مشروع من أول يوم. [[anywhere]] على خانات الجداول وكروت flex اللي فيها بيانات من المستخدم. [[nowrap]] للأزرار والوسوم والأرقام. [[pre-wrap]] لعرض رسايل وكود. [[pre-line]] للعناوين والقصايد. [[ellipsis]] لعناوين الكروت والقوايم، و [[-webkit-line-clamp]] للملخصات. [[hyphens: auto]] لفقرات إنجليزي في عمود ضيق.`,
-            mistakes: R`الاعتماد على إن «محدش هيكتب كلمة طويلة». [[overflow-x: hidden]] بدل الحل. [[break-all]] على كلام عادي. [[break-word]] في جدول. [[ellipsis]] ناقصها خاصية من التلاتة أو على عنصر inline. [[nowrap]] من غير حد للعرض. ونسيان إن النص المقصوص لازم يبقى له مكان يتقري فيه كامل.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** تعليق زائر في «مدوّنة حبر» فيه لينك طويل وضحكة طويلة، والاتنين طالعين برّه صندوق التعليق (والصفحة بتسكرول بالعرض على الموبايل). صلّحها بخاصية واحدة على [[.comment]] من غير ما تخفي أي كلام. (من قسم ١ و ٢ في الشرح)`, done: R`[[.comment]] عليها [[overflow-wrap: break-word]] ومفيش [[overflow: hidden]]، وكل الشروط ✓.`, work: { h: 190, start: R`<style>
-  .comment { width: 260px; border: 2px solid #111; padding: 8px; background: #fef9c3; }
-</style>
-<div class="comment">
-  <p>شوف ده: https://example.test/files/very_long_file_name_without_any_spaces_2026.zip</p>
-  <p>هههههههههههههههههههههههههههههههههههههههههههههه</p>
-</div>`, checks: [
-              { say: R`الكلمة الطويلة بتتكسر: [[overflow-wrap: break-word]]`, q: ".comment p", style: ["overflow-wrap", "break-word"] },
-              { say: R`مفيش كلام مخفي: [[overflow]] لسه [[visible]]`, q: ".comment", style: ["overflow-x", "visible"] },
-              { say: R`الكلمات العادية مبتتكسرش من نصها: [[word-break]] لسه [[normal]]`, q: ".comment p", style: ["word-break", "normal"] }
-            ] }, sol: R`~~~live 174 بعد التصليح
-<style>
-  .comment { width: 260px; border: 2px solid #111; padding: 8px; background: #fef9c3; overflow-wrap: break-word; }
-</style>
-<div class="comment">
-  <p>شوف ده: https://example.test/files/very_long_file_name_without_any_spaces_2026.zip</p>
-  <p>هههههههههههههههههههههههههههههههههههههههههههههه</p>
-</div>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 138 قبل
-<style>
-  .comment { width: 260px; border: 2px solid #111; padding: 8px; background: #fef9c3; }
-</style>
-<div class="comment">
-  <p>شوف ده: https://example.test/files/very_long_file_name_without_any_spaces_2026.zip</p>
-  <p>هههههههههههههههههههههههههههههههههههههههههههههه</p>
-</div>
-~~~
-
-**هتشوف إيه:** قبل: اللينك والضحكة خارجين من شمال الإطار. بعد: الاتنين مكسورين على كذا سطر جوه الإطار، وكل الحروف باينة.
-
-**ليه كده:** الخاصية بتتورّث، فكتبناها على [[.comment]] والفقرتين خدوها. وبتشتغل وقت الزنقة بس: «شوف ده:» متكسرتش.
-
-**الغلطة الشائعة:** [[overflow: hidden]]. الإطار هيبان نضيف، وآخر اللينك هيتقص، والزائر مش هيعرف ينسخه.
-
-~~~text القياس من Chrome (صفحة 360px فيها نفس النوع من الكلام)
-قبل      عرض الصفحة 759px
-بعد      عرض الصفحة 360px
+~~~text الناتج (Chrome 156، عرض 320 والكارت 240 و gap 16)
+أول الصفحة: prev.disabled = true، و next.disabled = false
+بعد «اللي بعده»: scrollLeft = -256
+بعد ما وصلت الآخر: scrollLeft = -688، و next.disabled = true
+«اللي قبله» مرة: scrollLeft = -512
+axe: 0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت مقال: العنوان [[h3]] لازم يفضل **سطر واحد** وآخره «…» لو طويل، والملخّص [[.sum]] يتقص بعد **سطرين** بنقط. (من قسم ٨ في الشرح)`, done: R`العنوان عليه التلات خصائص، والملخّص عليه [[-webkit-line-clamp: 2]] و [[overflow: hidden]]، وكل الشروط ✓.`, work: { h: 170, start: R`<style>
-  .card { width: 260px; border: 1px solid silver; padding: 10px; line-height: 1.7; }
-  .card h3 { margin: 0; font-size: 17px; }
-  .sum { margin: 4px 0 0; }
-</style>
-<div class="card">
-  <h3>دليلك الكامل لاختيار أول لابتوب للبرمجة بميزانية محدودة</h3>
-  <p class="sum">مش محتاج أغلى جهاز في السوق. هنشوف مع بعض المواصفات اللي بتفرق فعلًا، والحاجات اللي ممكن توفّر فيها، وإمتى المستعمل يبقى اختيار أحسن.</p>
-</div>`, checks: [
-              { say: R`العنوان مبيلفش: [[white-space: nowrap]]`, q: ".card h3", style: ["white-space", "nowrap"] },
-              { say: R`الزيادة بتتقص: [[overflow: hidden]]`, q: ".card h3", style: ["overflow-x", "hidden"] },
-              { say: R`مكان القص عليه نقط: [[text-overflow: ellipsis]]`, q: ".card h3", style: ["text-overflow", "ellipsis"] },
-              { say: R`الملخّص مقصوص عند سطرين`, q: ".sum", style: ["-webkit-line-clamp", "2"] },
-              { say: R`والملخّص [[overflow: hidden]]`, q: ".sum", style: ["overflow-y", "hidden"] }
-            ] }, sol: R`~~~live 125 الحل
-<style>
-  .card { width: 260px; border: 1px solid silver; padding: 10px; line-height: 1.7; }
-  .card h3 { margin: 0; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sum { margin: 4px 0 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-</style>
-<div class="card">
-  <h3>دليلك الكامل لاختيار أول لابتوب للبرمجة بميزانية محدودة</h3>
-  <p class="sum">مش محتاج أغلى جهاز في السوق. هنشوف مع بعض المواصفات اللي بتفرق فعلًا، والحاجات اللي ممكن توفّر فيها، وإمتى المستعمل يبقى اختيار أحسن.</p>
-</div>
-~~~
-
-**هتشوف إيه:**
-
-- العنوان سطر واحد وآخره «…» من ناحية الشمال.
-- الملخّص سطرين بالظبط، والتاني آخره «…».
-- الكارت بقى قصير وثابت الارتفاع مهما كان طول الكلام، وده اللي بيخلّي شبكة كروت تبان مرتبة.
-
-**ليه كده:** سطر واحد: التلاتة ([[nowrap]] و [[hidden]] و [[ellipsis]]). كذا سطر: الوصفة الرباعية بتاعة [[-webkit-line-clamp]].
-
-**الغلطة الشائعة:** تكتب [[text-overflow: ellipsis]] على الملخّص وتستنى نقط بعد سطرين. [[text-overflow]] لسطر واحد بس.
-
-~~~text القياس من Chrome
-h3     white-space: nowrap    overflow-x: hidden    text-overflow: ellipsis
-.sum   -webkit-line-clamp: 2  overflow-y: hidden
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني (refactor):** عنوان المحل مكتوب بـ [[<br>]] في آخر كل سطر. شيل كل الـ [[<br>]] وخلّي السطور تفضل زي ما هي بخاصية واحدة على [[.addr]]، من غير ما المسافات اللي في أول السطور (بتاعة تنسيق الكود) تبان. (من قسم ٦ في الشرح)`, done: R`مفيش [[<br>]] في الكود، و [[.addr]] عليها [[white-space: pre-line]]، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  .addr { background: #f3f4f6; padding: 8px; }
-</style>
-<p class="addr">مكتبة الورّاق<br>
-  ٧ شارع المحطة<br>
-  طنطا</p>`, checks: [
-              { say: R`مفيش [[<br>]] في الكود`, q: "br", n: 0 },
-              { say: R`السطور محفوظة والمسافات ملمومة: [[white-space: pre-line]]`, q: ".addr", style: ["white-space", "pre-line"] },
-              { say: R`الكلام لسه موجود كله`, q: ".addr", has: "طنطا" }
-            ] }, sol: R`~~~live 102 الحل
-<style>
-  .addr { background: #f3f4f6; padding: 8px; white-space: pre-line; }
-</style>
-<p class="addr">مكتبة الورّاق
-  ٧ شارع المحطة
-  طنطا</p>
-~~~
-
-**هتشوف إيه:** تلات سطور تحت بعض، كلهم بادئين من نفس الحافة اليمين. نفس الشكل اللي كان بالـ [[<br>]].
-
-**ليه [[pre-line]]:** بتحافظ على السطر الجديد اللي في الكود، وبتلمّ المسافات. فالمسافتين اللي في أول «٧ شارع المحطة» و «طنطا» اختفوا.
-
-| القيمة | السطور | المسافات اللي في أول السطر |
-|---|---|---|
-| [[normal]] | بتتلمّ: سطر واحد | بتتلمّ |
-| [[pre-line]] | محفوظة ✓ | بتتلمّ ✓ |
-| [[pre-wrap]] أو [[pre]] | محفوظة | **محفوظة**: السطرين الأخيرين داخلين لجوه |
-
-**إمتى [[<br>]] أحسن؟** لما السطر الجديد جزء من **المعنى** والمحتوى ثابت في الـ HTML (درس «sub و sup و br»). [[pre-line]] بتكسب لما النص جاي من حقل كتب فيه المستخدم (textarea): السطور اللي كتبها بتظهر من غير ما حد يحوّلها لـ [[<br>]].
-
-**الغلطة الشائعة:** [[white-space: pre]]. السطور هتفضل، والمسافات كمان، وسطر طويل مش هيلف.
-
-~~~text القياس من Chrome
-.addr   white-space: pre-line     white-space-collapse: preserve-breaks     text-wrap-mode: wrap
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** أمر ترمنال طويل جوه [[<pre>]] طالع برّه عمود المقال على الموبايل. خلّي السطر يلف جوه الصندوق مع الحفاظ على المسافات، وصغّر الـ tab لمسافتين. (من قسم ٦ و ٧ في الشرح)`, done: R`[[<pre>]] بقى [[pre-wrap]] و [[tab-size: 2]] وبيكسر الكلمة الطويلة، وكل الشروط ✓.`, work: { h: 170, start: R`<style>
-  .post { width: 270px; border: 2px solid #111; padding: 8px; }
-  pre { background: #f3f4f6; padding: 6px; direction: ltr; text-align: left; }
-</style>
-<div class="post">
-  <p>شغّل الأمر ده:</p>
-<pre>docker run --rm --name blog-test -p 8080:80 -v /srv/blog/public:/usr/share/nginx/html:ro nginx:alpine</pre>
-</div>`, checks: [
-              { say: R`السطر بيلف والمسافات محفوظة: [[white-space: pre-wrap]]`, q: "pre", style: ["white-space", "pre-wrap"] },
-              { say: R`الحتة الطويلة اللي من غير مسافات بتتكسر`, q: "pre", style: ["overflow-wrap", "break-word"] },
-              { say: R`الـ tab عرضه 2`, q: "pre", style: ["tab-size", "2"] }
-            ] }, sol: R`~~~live 171 بعد التصليح
-<style>
-  .post { width: 270px; border: 2px solid #111; padding: 8px; }
-  pre { background: #f3f4f6; padding: 6px; direction: ltr; text-align: left; white-space: pre-wrap; overflow-wrap: break-word; tab-size: 2; }
-</style>
-<div class="post">
-  <p>شغّل الأمر ده:</p>
-<pre>docker run --rm --name blog-test -p 8080:80 -v /srv/blog/public:/usr/share/nginx/html:ro nginx:alpine</pre>
-</div>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 126 قبل
-<style>
-  .post { width: 270px; border: 2px solid #111; padding: 8px; }
-  pre { background: #f3f4f6; padding: 6px; direction: ltr; text-align: left; }
-</style>
-<div class="post">
-  <p>شغّل الأمر ده:</p>
-<pre>docker run --rm --name blog-test -p 8080:80 -v /srv/blog/public:/usr/share/nginx/html:ro nginx:alpine</pre>
-</div>
-~~~
-
-**هتشوف إيه:** قبل: الأمر سطر واحد خارج من يمين الإطار. بعد: الأمر لف على كذا سطر جوه الصندوق الرمادي، والحتة الطويلة بتاعة المسار اتكسرت.
-
-**ليه الاتنين مع بعض:** [[pre-wrap]] بتلف عند المسافات. المسار [[/srv/blog/public:/usr/share/nginx/html:ro]] حتة واحدة طويلة، فمن غير [[overflow-wrap: break-word]] كانت هتفضل طالعة برّه لو الصندوق أضيق منها.
-
-**حل تاني صح:** [[overflow-x: auto]] على [[<pre>]] وتسيبه [[pre]]: سكرول جوه الصندوق. أحسن لكود شكل السطر فيه مهم. للأوامر اللي بتتنسخ، اللف أريح على الموبايل.
-
-**الغلطة الشائعة:** [[white-space: normal]]. هيلف، بس كل المسافات والسطور في الكود هتتلمّ، وكود متنسّق هيبقى فقرة.
-
-~~~text القياس من Chrome
-pre   white-space: pre-wrap     overflow-wrap: break-word     tab-size: 2
-~~~` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** جدول «الملفات المرفوعة» طالع برّه الصفحة بسبب اسم ملف طويل. المبرمج حط [[overflow-wrap: break-word]] على الخانات وماتغيّرش حاجة. غيّر القيمة للي بتشتغل جوه جدول. (من قسم ٣ في الشرح: «break-word ولا anywhere؟»)`, done: R`الخانات [[overflow-wrap: anywhere]] والجدول بقى جوه الإطار، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  .phone { width: 280px; border: 2px solid #111; padding: 8px; }
-  table { border-collapse: collapse; }
-  td, th { border: 1px solid silver; padding: 4px; overflow-wrap: break-word; }
-</style>
-<div class="phone">
-  <table>
-    <tr><th>الملف</th><th>الحجم</th></tr>
-    <tr><td>invoice_2026_11_customer_0045_final_revised_copy.pdf</td><td>٢ ميجا</td></tr>
-  </table>
-</div>`, checks: [
-              { say: R`الخانات [[overflow-wrap: anywhere]]`, q: "td", style: ["overflow-wrap", "anywhere"] },
-              { say: R`مفيش [[word-break: break-all]]`, q: "td", style: ["word-break", "normal"] },
-              { say: R`الجدول لسه فيه الخانتين`, q: "td", n: 2 }
-            ] }, sol: R`~~~live 127 بعد التصليح
-<style>
-  .phone { width: 280px; border: 2px solid #111; padding: 8px; }
-  table { border-collapse: collapse; }
-  td, th { border: 1px solid silver; padding: 4px; overflow-wrap: anywhere; }
-</style>
-<div class="phone">
-  <table>
-    <tr><th>الملف</th><th>الحجم</th></tr>
-    <tr><td>invoice_2026_11_customer_0045_final_revised_copy.pdf</td><td>٢ ميجا</td></tr>
-  </table>
-</div>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 109 قبل
-<style>
-  .phone { width: 280px; border: 2px solid #111; padding: 8px; }
-  table { border-collapse: collapse; }
-  td, th { border: 1px solid silver; padding: 4px; overflow-wrap: break-word; }
-</style>
-<div class="phone">
-  <table>
-    <tr><th>الملف</th><th>الحجم</th></tr>
-    <tr><td>invoice_2026_11_customer_0045_final_revised_copy.pdf</td><td>٢ ميجا</td></tr>
-  </table>
-</div>
-~~~
-
-**هتشوف إيه:** قبل: الجدول أعرض من الإطار واسم الملف سطر واحد. بعد: الجدول جوه الإطار واسم الملف مكسور على كذا سطر.
-
-**ليه [[break-word]] مشتغلتش:** الجدول بيحدد عرض أعمدته من «أقل عرض» كل خانة تقدر تعيش فيه. [[break-word]] مبتدخلش في الحساب ده، فالخانة قالت «طول الاسم كله»، والجدول اتمط، وبعد ما اتمط مبقاش فيه زنقة تستدعي الكسر. [[anywhere]] بتدخل في الحساب: الخانة بتقول «حرف واحد يكفيني».
-
-**الغلطة الشائعة:** [[word-break: break-all]]. هتحل الجدول، وهتكسر «٢ ميجا» وأي كلمة عادية من نصها عشان تملا السطر.
-
-~~~text القياس من Chrome (مكان عرضه 328px)
-td { overflow-wrap: break-word; }     عرض الجدول 785px
-td { overflow-wrap: anywhere; }       عرض الجدول 328px
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** املا الجدول ده من دماغك وبعدين قارن بالحل: لكل قيمة من [[normal]] و [[nowrap]] و [[pre]] و [[pre-wrap]] و [[pre-line]]: المسافات الكتير بتتلمّ؟ السطر الجديد في الكود بيفضل؟ الكلام بيلف؟ واكتب استخدام واحد حقيقي لكل قيمة. (من قسم ٦ في الشرح)`, done: R`مليت الخمس صفوف صح وكتبت استخدام لكل قيمة.`, sol: R`**إجابة نموذجية:**
-
-| القيمة | المسافات بتتلمّ؟ | السطر الجديد بيفضل؟ | بيلف؟ | استخدام |
-|---|---|---|---|---|
-| [[normal]] | أيوه | لأ | أيوه | كل الكلام العادي |
-| [[nowrap]] | أيوه | لأ | لأ | زرار، وسم، رقم تليفون، عنوان بنقط |
-| [[pre]] | لأ | أيوه | لأ | كود شكل سطوره مهم (مع [[overflow-x: auto]]) |
-| [[pre-wrap]] | لأ | أيوه | أيوه | رسالة أو كود على موبايل، ناتج ترمنال |
-| [[pre-line]] | أيوه | أيوه | أيوه | عنوان بريدي، قصيدة، تعليق كتبه مستخدم بسطور |
-
-**طريقة تفتكرها:** الاسم بيقول.
-
-- [[pre]] = «زي ما هو» (preformatted): كل حاجة محفوظة ومفيش لف.
-- [[-wrap]] = زوّد عليها اللف.
-- [[-line]] = احفظ **السطور** بس.
-- [[nowrap]] = عكس اللف، والباقي عادي.
-
-~~~text القياس من Chrome (المحسوب: الشغلتين منفصلتين)
-normal     collapse          wrap
-nowrap     collapse          nowrap
-pre        preserve          nowrap
-pre-wrap   preserve          wrap
-pre-line   preserve-breaks   wrap
-~~~
-
-**الغلطة الشائعة:** تفتكر إن [[pre-line]] بتحافظ على المسافات. هي بتحافظ على السطور بس. اللي عايز الاتنين ياخد [[pre-wrap]].` }
-          ]
-        },
-        {
-          cmd: "text-decoration و text-shadow",
-          title: "الخط اللي تحت الكلام وشكله ومكانه، والضل، وحدود الحروف",
-          pre: [{ to: "css/font-family و font-size", why: R`لون الخط اللي تحت الكلام بييجي من [[color]] اللي اتشرحت هناك` }],
-          ref: [
-            { t: "MDN: text-decoration", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-decoration" },
-            { t: "MDN: text-decoration-thickness", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-decoration-thickness" },
-            { t: "MDN: text-underline-offset", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-underline-offset" },
-            { t: "MDN: text-decoration-skip-ink", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-decoration-skip-ink" },
-            { t: "MDN: text-shadow", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-shadow" },
-            { t: "MDN: text-emphasis", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-emphasis" },
-            { t: "MDN: -webkit-text-stroke", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/-webkit-text-stroke" },
-            { t: "Compatibility Standard: -webkit-text-fill-color و -webkit-text-stroke", url: "https://compat.spec.whatwg.org/#the-webkit-text-fill-color" }
-          ],
-          desc: R`[[text-decoration]] بترسم خط على الكلام: تحته ([[underline]])، أو فوقه ([[overline]])، أو في نصه ([[line-through]]). وهي مختصرة لأربع خصائص بتتحكم في مكان الخط وشكله ولونه وتُخنه.
-و [[text-shadow]] بتحط ضل ورا الحروف. والاتنين مبيغيّروش مكان أي حاجة في الصفحة: رسم بس.`,
-          example: R`a { text-decoration: underline 2px #b45309; }
-a { text-underline-offset: 0.25em; }
-.old { text-decoration: line-through; }
-.typo { text-decoration: underline wavy red; }
-.plain { text-decoration: none; }
-.hero h1 { text-shadow: 0 2px 4px rgb(0 0 0 / 0.6); }
-.outline { -webkit-text-stroke: 1px #111; }`,
-          flag: "script",
-          lines: [
-            R`خط تحت اللينك تُخنه 2px ولونه بني. المختصرة بتاخد المكان والتُخن واللون (والشكل لو عايز) بأي ترتيب.`,
-            R`الخط ينزل عن الحروف ربع حجم الخط. في العربي ده بيبعده عن النقط اللي تحت الحروف.`,
-            R`خط في نص الكلمة: السعر القديم. (ده شكل بس. المعنى «اتشال» بييجي من [[<del>]] أو [[<s>]].)`,
-            R`خط متموّج أحمر تحت الكلمة، زي علامة الغلطة الإملائية في برامج الكتابة.`,
-            R`بتشيل أي خط عن العنصر. أشهر استخدام: لينكات القايمة الرئيسية والأزرار.`,
-            R`ضل ورا عنوان مكتوب فوق صورة: مفيش إزاحة أفقية، ونازل 2px، ومموّه 4px، ولونه أسود بشفافية 60٪. بيفصل الحروف عن الخلفية.`,
-            R`حد حوالين كل حرف تُخنه 1px. الاسم فيه [[-webkit-]] بس هو شغال في كل المتصفحات ومكتوب في مواصفة.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-الخصائص دي كلها «رسم فوق الكلام»: مبتغيّرش عرض ولا ارتفاع ولا مكان. اتقاس: كلمة عليها ضل إزاحته 30px عرضها وارتفاعها زي ما هم بالظبط.
-
-الأرقام من Chrome 157 على Windows 11، والشكل اتشاف في صور للصفحة.
-
----
-
-## ١. [[text-decoration: underline]] والأربع خصائص اللي جواها
-
-| الخاصية الطويلة | بتحدد | القيم |
-|---|---|---|
-| [[text-decoration-line]] | مكان الخط | [[none]] و [[underline]] و [[overline]] و [[line-through]]، وممكن أكتر من واحدة |
-| [[text-decoration-style]] | شكله | [[solid]] و [[double]] و [[dotted]] و [[dashed]] و [[wavy]] |
-| [[text-decoration-color]] | لونه | أي لون. الافتراضي لون الكلام نفسه |
-| [[text-decoration-thickness]] | تُخنه | [[auto]] أو [[from-font]] أو طول أو نسبة |
-
-~~~live 68 الأماكن والأشكال
-<style>
-  p { font-size: 20px; margin: 6px 0; }
-  span { margin-inline-end: 12px; }
-</style>
-<p>
-  <span style="text-decoration: underline">تحت</span>
-  <span style="text-decoration: overline">فوق</span>
-  <span style="text-decoration: line-through">في النص</span>
-  <span style="text-decoration: underline overline">الاتنين</span>
-</p>
-<p>
-  <span style="text-decoration: underline solid">solid</span>
-  <span style="text-decoration: underline double">double</span>
-  <span style="text-decoration: underline dotted">dotted</span>
-  <span style="text-decoration: underline dashed">dashed</span>
-  <span style="text-decoration: underline wavy red">wavy</span>
-</p>
-~~~
-
-**هتشوف إيه:** السطر الأول: خط تحت، ثم فوق، ثم في النص، ثم تحت وفوق مع بعض. السطر التاني: نفس الخط بخمس أشكال: عادي، ومزدوج، ومنقّط، ومتقطّع، ومتموّج أحمر.
-
-~~~text القياس من Chrome (المحسوب)
-text-decoration: underline wavy red
-  → line: underline    style: wavy    color: rgb(255, 0, 0)    thickness: auto
-
-text-decoration: underline dotted #c00 2px
-  → line: underline    style: dotted  color: rgb(204, 0, 0)    thickness: 2px
-
-الافتراضي على أي عنصر:  line: none   style: solid   color: لون الكلام   thickness: auto
-~~~
-
-وعناصر HTML اللي ليها خط من غير CSS:
-
-~~~text القياس من Chrome (الافتراضي)
-<a href>          underline
-<u> و <ins>       underline
-<s> و <del>       line-through
-<abbr title>      underline dotted
-~~~
-
-### المختصرة بتمسح
-
-زي [[font]]: اللي مكتبتوش في [[text-decoration]] بيرجع لقيمته الأولى.
-
-~~~text القياس من Chrome
-color: red;  text-decoration: underline blue;  text-decoration: underline;
-  → text-decoration-color: rgb(255, 0, 0)        (الأزرق اتمسح بالسطر التاني، ورجع لون الكلام)
-~~~
-
-فلو عايز تغيّر اللون بس في قاعدة تانية (مثلًا وقت الـ hover)، اكتب [[text-decoration-color]] الطويلة.
-
-### [[text-decoration-thickness: 2px]]
-
-- [[auto]]: المتصفح يختار.
-- [[from-font]]: التُخن اللي مصمم الخط حاطه في ملف الخط (لو موجود).
-- طول: [[2px]] أو [[0.1em]] (اتحسبت 1.6px مع خط 16px). [[em]] أحسن: الخط بيتخن مع العنوان الكبير.
-
----
-
-## ٢. الخط والحروف العربي: [[text-underline-offset]] و [[text-decoration-skip-ink]]
-
-الخط اللي تحت الكلام اتصمم للاتيني: الحروف قاعدة على السطر وقليل منها بينزل. العربي نص حروفه ليها نقط أو ذيل تحت السطر (ب ي ج ر و م ع)، فالخط بيعدّي فيها.
-
-~~~live 148 نفس الجملة بأربع إعدادات
-<style>
-  p { font-size: 24px; margin: 8px 0; }
-  .a { text-decoration: underline; }
-  .b { text-decoration: underline; text-decoration-skip-ink: none; }
-  .c { text-decoration: underline; text-underline-offset: 0.35em; }
-  .d { text-decoration: underline; text-underline-position: under; }
-</style>
-<p><span class="a">يجب أن يبقى جميلًا</span> الافتراضي</p>
-<p><span class="b">يجب أن يبقى جميلًا</span> skip-ink: none</p>
-<p><span class="c">يجب أن يبقى جميلًا</span> offset: 0.35em</p>
-<p><span class="d">يجب أن يبقى جميلًا</span> position: under</p>
-~~~
-
-**هتشوف إيه:**
-
-- الأول: الخط **متقطّع** عند كل نقطة وكل ذيل حرف. المتصفح بيسيب فراغ حوالين أي حتة من الحرف بتلمس الخط.
-- التاني: خط واحد مستقيم داخل في النقط والذيول.
-- التالت والرابع: الخط نزل تحت النقط كلها، فبقى مستقيم ومبيلمسش حاجة.
-
-| الخاصية | بتعمل إيه | القيم |
-|---|---|---|
-| [[text-decoration-skip-ink]] | الخط يتقطّع عند الحروف اللي نازلة ولا يعدّي فيها | [[auto]] (الافتراضي: يتقطّع) و [[none]] و [[all]] |
-| [[text-underline-offset]] | بُعد الخط عن مكانه العادي | [[auto]] أو طول ([[0.25em]]) أو نسبة |
-| [[text-underline-position]] | مكان الخط الأساسي | [[auto]] و [[from-font]] و [[under]] (تحت كل نزلات الحروف)، و [[left]] و [[right]] للكتابة الرأسية |
-
-للعربي الخط المتقطّع (الافتراضي) شكله مهلهل لأن النقط كتير. الأنضف: **نزّل الخط** بـ [[text-underline-offset: 0.3em]] أو [[text-underline-position: under]]، فيعدّي تحت النقط.
-
-~~~text القياس من Chrome (المحسوب، خط 16px)
-text-underline-offset: 0.25em     →  4px
-text-underline-position: under    →  under
-text-decoration-skip-ink          →  auto (الافتراضي)
-~~~
-
-فيه كمان [[text-decoration-inset]]: خاصية جديدة بتقصّر الخط من طرفيه ([[CSS.supports]] رجّع true في Chrome 157، والمنهج مش حاططها Baseline لسه). والخاصية القديمة [[text-decoration-skip]] مستبعدة من المنهج ومبتشتغلش ([[CSS.supports]] رجّع false).
-
----
-
-## ٣. الخط مبيتورّثش، بس بيعدّي على الأبناء
-
-دي أغرب حاجة في [[text-decoration]]. الخاصية **مش** بتتورّث (المحسوب عند الابن [[none]])، بس الخط اللي الأب رسمه بيتمد تحت كل الكلام اللي جواه، والابن ميقدرش يشيله.
-
-~~~live 63 86 الابن بيقول none والخط لسه تحته
-<style>
-  p { font-size: 20px; text-decoration: underline 2px #dc2626; }
-  .no { text-decoration: none; background: #fef9c3; }
-  .ib { display: inline-block; background: #d1fae5; }
-  .blue { color: #1d4ed8; }
-</style>
-<p>أب عليه خط <b class="no">ابن none</b> <b class="ib">ابن inline-block</b> <b class="blue">ابن أزرق</b> آخر الجملة</p>
-~~~
-
-**هتشوف إيه:**
-
-- «ابن none» (الأصفر): الخط الأحمر **لسه تحته** مع إن عليه [[text-decoration: none]].
-- «ابن inline-block» (الأخضر): مفيش خط تحته.
-- «ابن أزرق»: كلامه أزرق والخط اللي تحته **أحمر**: الخط بتاع الأب وبلون الأب.
-
-~~~text القياس من Chrome
-p { text-decoration: underline; }
-  span جواه:   المحسوب text-decoration-line: none      ← مورثش حاجة، والخط مرسوم تحته برضه
-~~~
-
-المواصفة بتقول إن الخط «بيتنشر» (propagates) على كل اللي جوه السطر، وبيقف عند: [[inline-block]]، والعناصر الـ floated، والـ absolutely positioned. فعشان تشيل الخط عن حتة:
-
-1. شيله من الأب، وحطه على الحتت اللي عايزاه بس. (الأحسن.)
-2. أو خلّي الحتة [[display: inline-block]].
-
----
-
-## ٤. [[text-shadow: 0 2px 4px rgb(0 0 0 / 0.6)]]
-
-~~~text تشريح القيمة
-text-shadow:   0          2px         4px        rgb(0 0 0 / 0.6)
-               │          │           │          └ اللون
-               │          │           └ التمويه (blur): صفر = ضل حاد
-               │          └ الإزاحة الرأسية: الموجب لتحت
-               └ الإزاحة الأفقية: الموجب لليمين (مبتتعكسش في العربي)
-~~~
-
-~~~live 178 تلات ضلال
-<style>
-  p { font-size: 26px; font-weight: 700; margin: 6px 0; }
-  .hard { text-shadow: 2px 2px 0 #f59e0b; }
-  .soft { text-shadow: 0 2px 6px rgb(0 0 0 / 0.5); }
-  .img { color: white; background: linear-gradient(135deg, #94a3b8, #e2e8f0); padding: 6px 10px; }
-  .img.sh { text-shadow: 0 1px 3px rgb(0 0 0 / 0.8); }
-</style>
-<p class="hard">ضل حاد بلون تاني</p>
-<p class="soft">ضل ناعم تحت الحروف</p>
-<p class="img">أبيض على خلفية فاتحة من غير ضل</p>
-<p class="img sh">أبيض على خلفية فاتحة بضل</p>
-~~~
-
-**هتشوف إيه:** الأول ليه نسخة برتقالي مزاحة تحته (ستايل ملصقات). التاني تحته غباشة رمادي خفيفة. التالت أبيض على رمادي فاتح وصعب يتقري، والرابع نفس الألوان ومقروء أحسن عشان الضل الغامق بيرسم حدود الحروف.
-
-~~~text القياس من Chrome (المحسوب)
-text-shadow: 2px 2px                      →  rgb(0, 0, 0) 2px 2px 0px       (اللون من color، والتمويه صفر)
-text-shadow: 0 0 4px #000, 0 0 12px blue  →  ضلّين: القيمة قايمة بفواصل، والأول فوق
-text-shadow: 1px 1px 2px 3px red          →  مرفوضة: مفيش قيمة رابعة (spread) زي box-shadow
-text-shadow: inset 1px 1px red            →  مرفوضة: مفيش inset
-
-كلمة بضل 30px 30px:  عرضها وارتفاعها زي من غير ضل بالظبط
-~~~
-
-قواعد الاستخدام:
-
-- **الضل مش بديل عن التباين.** لو الكلام فوق صورة، الضل بيساعد. بس لو الصورة فيها حتة فاتحة قوي ورا كلام أبيض، الحل طبقة غامقة فوق الصورة، مش ضل أكبر.
-- **على الفقرات لأ.** ضل على كلام صغير بيخلّيه مغبّش. الضل للعناوين.
-- **العربي:** الضل الحاد بإزاحة كبيرة بيخلّي النقط والتشكيل «يتكرروا» ويلخبطوا. خليه إزاحة صغيرة وتمويه.
-- الإزاحة الأفقية الموجبة دايمًا ناحية اليمين، حتى في [[dir="rtl"]]. لو التصميم ضل «ناحية نهاية السطر»، اعكس الإشارة بإيدك للعربي.
-
----
-
-## ٥. [[text-emphasis: filled dot]]
-
-علامات صغيرة فوق **كل حرف**. دي طريقة التشديد في الصيني والياباني (مكان الخط المايل عندنا).
-
-~~~live 69 علامات التشديد
-<style>
-  p { font-size: 22px; line-height: 2.4; margin: 0; }
-</style>
-<p>
-  <span style="text-emphasis: filled dot #dc2626">تشديد</span> ·
-  <span style="text-emphasis: open circle">دواير</span> ·
-  <span style="text-emphasis: '★' #1d4ed8; text-emphasis-position: under right" lang="en">Stars</span>
-</p>
-~~~
-
-**هتشوف إيه:** نقطة حمرا فوق كل حرف من «تشديد»، ودايرة مفرّغة فوق كل حرف من «دواير»، ونجمة زرقا **تحت** كل حرف من «Stars».
-
-| الخاصية | القيم |
-|---|---|
-| [[text-emphasis-style]] | [[filled]] أو [[open]] مع شكل: [[dot]] و [[circle]] و [[double-circle]] و [[triangle]] و [[sesame]]، أو حرف من عندك بين تنصيص |
-| [[text-emphasis-color]] | لون العلامة. الافتراضي لون الكلام |
-| [[text-emphasis-position]] | [[over]] أو [[under]]، ومعاها [[right]] أو [[left]] للكتابة الرأسية |
-| [[text-emphasis]] | مختصرة للشكل واللون (المكان لوحده) |
-
-~~~text القياس من Chrome
-text-emphasis: open sesame red     →  style: open sesame    color: rgb(255, 0, 0)    position: over
-ارتفاع سطر خطه 20px:   من غير 24px      بالعلامات 30px      ← العلامات بتعلّي السطر لو line-height مش مكفّي
-~~~
-
-على العربي بتشتغل تقنيًا (زي ما شفت)، بس النقط الزيادة فوق الحروف بتتلخبط مع نقط الحروف والتشكيل. دي خاصية للنصوص الآسيوية، وبتتورّث.
-
----
-
-## ٦. [[-webkit-text-stroke]] و [[-webkit-text-fill-color]]
-
-| الخاصية | بتعمل إيه |
-|---|---|
-| [[-webkit-text-stroke: 1px #111]] | حد حوالين كل حرف. مختصرة لـ [[-webkit-text-stroke-width]] و [[-webkit-text-stroke-color]] |
-| [[-webkit-text-fill-color: transparent]] | لون **حشو** الحروف. لو اتكتبت بتغلب [[color]] |
-
-~~~live 138 حد حوالين الحروف
-<style>
-  p { font-size: 34px; font-weight: 700; margin: 4px 0; }
-  .a { -webkit-text-stroke: 1px #dc2626; }
-  .b { -webkit-text-stroke: 1.5px #111; -webkit-text-fill-color: transparent; }
-  .c { color: #dc2626; -webkit-text-fill-color: #1d4ed8; }
-</style>
-<p class="a">عنوان بحد أحمر</p>
-<p class="b">عنوان مفرّغ Outline</p>
-<p class="c">color أحمر و fill أزرق</p>
-~~~
-
-**هتشوف إيه:** الأول حروف سودا حواليها حد أحمر. التاني حروف شفافة مش باين منها غير الحد. التالت أزرق: [[-webkit-text-fill-color]] غلبت [[color]].
-
-بص كويس على «مفرّغ» في السطر التاني: في أماكن اتصال الحروف العربي ببعض الحدود **بتتقاطع جوه الكلمة**. كل حرف عربي رسمة لوحدها بتركب على اللي جنبها، والحشو كان مغطّي التقاطع ده. لما الحشو بقى شفاف، بان. الحروف اللاتيني («Outline») منفصلة فمفيهاش المشكلة دي. فالعنوان المفرّغ بالعربي بيطلع فيه خطوط زيادة: يا تسيب الحشو ملوّن، يا تستخدمه للاتيني بس.
-
-~~~text القياس من Chrome (المحسوب)
--webkit-text-stroke: 2px red            →  width: 2px     color: rgb(255, 0, 0)
-color: red; -webkit-text-fill-color: blue   →  الحشو rgb(0, 0, 255)، و color لسه rgb(255, 0, 0) (بيلوّن الخط اللي تحت الكلام والـ border)
-CSS.supports("text-stroke", "1px red")           false     ← مفيش اسم من غير prefix
-CSS.supports("-webkit-text-stroke", "1px red")   true
-~~~
-
-**ليه الاسم فيه [[-webkit-]]؟** الخاصيتين بدأوا في متصفح واحد، ومواقع كتير اعتمدت عليهم، فباقي المتصفحات اضطرت تدعمهم **بنفس الاسم**. بعدها اتكتبوا في مواصفة اسمها Compatibility Standard بتوثّق الحاجات اللي بقت «معيار بالأمر الواقع». فدول مش تجريبيين، ومفيش ليهم اسم نضيف: [[-webkit-text-stroke]] هو الاسم. والمنهج حاططهم Baseline. (أغلب خصائص [[-webkit-]] التانية مستبعدة عشان مش قياسية.)
-
-الحد بيترسم نصه جوه الحرف ونصه برّه، فحد تخين بياكل من الحرف نفسه. [[paint-order: stroke fill]] بتخلّي الحشو يترسم فوق الحد، فالحرف يفضل بتُخنه.
-
----
-
-## ٧. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[text-decoration: none]] على ابن عشان تشيل خط الأب | الخط لسه موجود. شيله من الأب أو خلّي الابن [[inline-block]] |
-| [[text-decoration: underline]] بعد [[text-decoration-color]] | اللون اتمسح: المختصرة بتصفّر الباقي |
-| خط تحت كلام مش لينك | الناس هتدوس عليه. الخط تحت الكلام علامة اللينك (درس «:link و :visited و :hover») |
-| [[border-bottom]] بدل [[underline]] | بيمتد تحت الصندوق كله مش الكلام، وبيتكسر غلط لما اللينك يلف على سطرين |
-| [[line-through]] على [[<span>]] لسعر قديم | الشكل وصل، والمعنى لأ. استخدم [[<del>]] أو [[<s>]] (درس «mark و small و del و ins») |
-| ضل تخين على فقرة | كلام مغبّش |
-| عنوان عربي مفرّغ بـ [[transparent]] | خطوط متقاطعة عند اتصال الحروف |
-| [[text-shadow]] بأربع أرقام | السطر اترمى: مفيش spread |
-
----
-
-## الخلاصة
-
-- [[text-decoration]] مختصرة: المكان ([[-line]]) والشكل ([[-style]]) واللون ([[-color]]) والتُخن ([[-thickness]]). وبتمسح اللي مكتبتوش.
-- للعربي: نزّل الخط بـ [[text-underline-offset]] أو [[text-underline-position: under]] عشان يعدّي تحت النقط.
-- الخط بيعدّي على الأبناء ومبيتشالش منهم إلا بـ [[inline-block]].
-- [[text-shadow: x y blur color]]: للعناوين وفوق الصور. مفيش spread ولا inset.
-- [[text-emphasis]] للنصوص الآسيوية.
-- [[-webkit-text-stroke]] و [[-webkit-text-fill-color]]: الاسم بالـ prefix هو الاسم الرسمي.`,
-          try: R`اعمل [[deco.html]] فيه فقرة عربي فيها لينك، وسعر قديم جوه [[<del>]] وجنبه السعر الجديد، وعنوان [[<h1>]]. خلّي خط اللينك تُخنه 2px ونازل تحت النقط، وخلّي خط السعر القديم أحمر، وادّي العنوان ضل ناعم. وبعدين جرّب تشيل [[text-underline-offset]] وشوف الخط بيعمل إيه في الحروف اللي ليها نقط تحت.`,
-          sol: R`~~~live 163 196 deco.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** carousel بيقلب لوحده كل ٣ ثواني بـ [[setInterval]] ومفيش طريقة توقّفه (WCAG 2.2.2). زوّد زرار وقوف وتشغيل، ووقّف مع [[:hover]] و [[:focus-within]] (من JavaScript بـ [[matches]])، وما يشتغلش خالص مع reduce.`, done: R`الزرار بيبدّل [[aria-pressed]] وكلمته، والـ carousel بيقف لما الماوس عليه أو الـ focus جواه، ومع reduce مفيش autoplay من الأول.`,
+              sol: R`~~~live 230 230 carousel-auto.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الخطوط والضل</title>
+<head><meta charset="utf-8"><title>carousel بيتوقف</title>
 <style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; font-size: 18px; line-height: 1.8; }
-  h1 { text-shadow: 0 2px 4px rgb(0 0 0 / 0.25); }
-  a { text-decoration: underline 2px; text-underline-offset: 0.3em; }
-  del { text-decoration-color: #dc2626; }
-</style>
-</head>
+  .track { display: flex; overflow-x: auto; inline-size: 320px; scroll-snap-type: x mandatory; }
+  .track > * { flex: 0 0 100%; block-size: 120px; scroll-snap-align: start; background: #bfdbfe; }
+</style></head>
 <body>
-<h1>عرض نهاية الأسبوع</h1>
-<p>الشنطة بقت بـ <del>٦٠٠</del> ٤٥٠ جنيه. <a href="#terms">يجب قراءة شروط العرض</a> قبل الطلب.</p>
-</body>
-</html>
+  <main><h1>عروض</h1>
+    <div class="track" id="t" tabindex="0" role="group" aria-label="العروض">
+      <article>١</article><article>٢</article><article>٣</article>
+    </div>
+    <button id="toggle" aria-pressed="true">وقّف</button>
+  </main>
+  <script>
+    const t = document.getElementById("t");
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let playing = !reduce;
+
+    function paint() {
+      toggle.setAttribute("aria-pressed", playing);
+      toggle.textContent = playing ? "وقّف" : "شغّل";
+    }
+    function tick() {
+      if (!playing) return;
+      if (t.matches(":hover") || t.matches(":focus-within")) return;
+      const max = t.scrollWidth - t.clientWidth;
+      const atEnd = Math.abs(t.scrollLeft) >= max - 1;
+      t.scrollTo({ left: atEnd ? 0 : t.scrollLeft - t.clientWidth });
+    }
+    toggle.onclick = () => { playing = !playing; paint(); };
+    paint();
+    if (!reduce) setInterval(tick, 3000);
+  $__lt/script>
+</body></html>
 ~~~
 
-**هتشوف إيه:**
+WCAG 2.2.2 بيقول: أي حركة بتبدأ لوحدها وبتطول أكتر من ٥ ثواني لازم يبقى ليها طريقة توقف. ٣ طبقات هنا:
 
-- العنوان تحته غباشة رمادي خفيفة.
-- «٦٠٠» عليها خط أحمر في نصها، والرقم نفسه لسه أسود.
-- خط اللينك تخين ومستقيم ونازل تحت نقط «يجب» و «شروط».
-- لو شيلت [[text-underline-offset]]: الخط بيطلع لمكانه العادي ويتقطّع عند كل نقطة وذيل.
+- زرار بيبدّل [[playing]]، والكلمة نفسها بتتغير و [[aria-pressed]] معاها، فقارئ الشاشة يعرف الحالة.
+- [[t.matches(":hover")]] و [[":focus-within"]] جوه [[tick]]: المؤقت لسه شغال، بس الدورة دي بتعدّي. فالمستخدم بيقرا من غير ما الشريحة تتغير تحت إيده.
+- مع reduce [[playing]] بيبدأ [[false]] و [[setInterval]] مبيتعملش خالص. الزرار بيقول «شغّل» لو حد عايز.
+- [[t.scrollLeft - t.clientWidth]] بالسالب لأن الصفحة عربي، ولو هتدعم اللغتين اضرب في [[dir()]] زي التمرين اللي فات.
 
-~~~text القياس من Chrome
-a     text-decoration-line: underline    thickness: 2px    text-underline-offset: 5.4px   (0.3em من 18px)
-del   text-decoration-line: line-through   text-decoration-color: rgb(220, 38, 38)
-h1    text-shadow: rgba(0, 0, 0, 0.25) 0px 2px 4px
-~~~
+الغلطة الشائعة: توقف بـ [[clearInterval]] على [[mouseenter]] وتنسى [[focusin]]، فالكيبورد يفضل بيتحرك والمستخدم بيقرا.
 
-لاحظ إننا كتبنا [[text-decoration-color]] الطويلة على [[<del>]]: الخط نفسه ([[line-through]]) جاي من المتصفح، وإحنا غيّرنا لونه بس. لو كتبنا [[text-decoration: #dc2626]] المختصرة، كانت هتمسح الـ [[line-through]] نفسه.`,
-          deep: {
-            why: R`الخط اللي تحت الكلام أقدم علامة في الويب: «ده لينك». وشكله الافتراضي مش مريح مع العربي لأنه بيعدّي في النقط، فناس كتير بتشيله خالص وتخسر العلامة. الخصائص الجديدة ([[offset]] و [[thickness]] و [[skip-ink]]) بتخلّيك تحتفظ بالعلامة وتظبط شكلها. والضل وحد الحروف أدوات للعناوين، قيمتهم الحقيقية إنهم بيخلّوا كلام فوق صورة يتقري.`,
-            how: R`بعد ما المتصفح يرتّب السطور، بيرسم بالترتيب: الضلال، ثم خطوط التزيين اللي تحت الكلام، ثم الحروف، ثم خط النص ([[line-through]]) فوقها. مكان وتُخن الخط بييجوا من مقاييس جوه ملف الخط (underline position و thickness) لما القيمة [[auto]] أو [[from-font]]، ومع [[skip-ink: auto]] المتصفح بيحسب تقاطع الخط مع رسمة كل حرف ويسيب فراغ. والخط بيتحسب من العنصر اللي أعلنه (لونه وتُخنه)، وبيتمد على كل الصناديق اللي جوه السطر، وعشان كده الابن مبيقدرش يغيّره. [[text-shadow]] نسخة من الحروف مزاحة ومموّهة ومرسومة تحتها. و [[-webkit-text-stroke]] بيرسم محيط كل glyph لوحده، فالحروف المتراكبة (زي العربي) محيطاتها بتتقاطع.`,
-            when: R`[[text-decoration]] وإخواتها: اللينكات أولًا، وبعدها الأسعار القديمة والكلام المشطوب وعلامات الأخطاء. [[text-underline-offset]]: في أي موقع عربي فيه لينكات جوه الفقرات. [[text-shadow]]: عنوان فوق صورة أو خلفية ملوّنة. [[-webkit-text-stroke]]: عناوين زينة كبيرة. [[text-emphasis]]: محتوى صيني أو ياباني.`,
-            mistakes: R`محاولة شيل خط الأب من الابن. المختصرة بتمسح اللون والتُخن. خط تحت كلام مش لينك. [[border-bottom]] كبديل. ضل على نص صغير. الاعتماد على الضل بدل التباين. وعنوان عربي مفرّغ.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** لينكات مقال عربي. خلّي الخط اللي تحتها: تُخنه 2px، ولونه [[#b45309]]، ونازل 5px عن مكانه عشان يعدّي تحت النقط. ولون الكلام نفسه يفضل زي ما هو. (من قسم ١ و ٢ في الشرح)`, done: R`الخط 2px وبني ونازل 5px، وكل الشروط ✓.`, work: { h: 120, start: R`<style>
-  p { font-size: 20px; line-height: 1.9; }
-  a { }
-</style>
-<p>قبل ما تبدأ، <a href="#req">يجب تجهيز البيئة</a> وقراية <a href="#faq">الأسئلة الشائعة</a>.</p>`, checks: [
-              { say: R`اللينك لسه تحته خط`, q: "a", style: ["text-decoration-line", "underline"] },
-              { say: R`تُخن الخط 2px`, q: "a", style: ["text-decoration-thickness", "2px"] },
-              { say: R`لون الخط [[#b45309]]`, q: "a", style: ["text-decoration-color", "rgb(180, 83, 9)"] },
-              { say: R`الخط نازل 5px`, q: "a", style: ["text-underline-offset", "5px"] },
-              { say: R`لون كلام اللينك متغيّرش`, q: "a", style: ["color", "rgb(0, 0, 238)"] }
-            ] }, sol: R`~~~live 78 116 الحل
-<style>
-  p { font-size: 20px; line-height: 1.9; }
-  a { text-decoration: underline 2px #b45309; text-underline-offset: 5px; }
-</style>
-<p>قبل ما تبدأ، <a href="#req">يجب تجهيز البيئة</a> وقراية <a href="#faq">الأسئلة الشائعة</a>.</p>
-~~~
-
-**هتشوف إيه:** اللينكين كلامهم أزرق، وتحتهم خط بني تخين ومستقيم، بعيد عن نقط «يجب» و «تجهيز» و «البيئة».
-
-**ليه كده:** المختصرة شالت التُخن واللون مع المكان في سطر. والـ offset خاصية لوحدها (مش جزء من المختصرة).
-
-**الغلطة الشائعة:** [[color: #b45309]] عشان تلوّن الخط. الكلام نفسه هيتلوّن. لون الخط لوحده اسمه [[text-decoration-color]].
-
-~~~text القياس من Chrome
-a   text-decoration-line: underline   thickness: 2px   color: rgb(180, 83, 9)   text-underline-offset: 5px
-a   color: rgb(0, 0, 238)
+~~~text الناتج (Chrome 156، بعد 3.2 ثانية)
+عادي: scrollLeft = -320
+الماوس عليه: scrollLeft = 0
+الـ focus جواه: scrollLeft = 0
+بعد الزرار: aria-pressed = false والكلمة شغّل، و scrollLeft = 0
+مع reduce: scrollLeft = 0، و aria-pressed = false
+axe: 0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** عنوان القسم عليه خط، وجواه شارة «جديد» المفروض متبقاش تحتها خط. المبرمج كتب [[text-decoration: none]] على الشارة ومحصلش حاجة. صلّحها من غير ما تشيل خط العنوان. (من قسم ٣ في الشرح)`, done: R`الشارة بقت [[inline-block]] ومفيش خط تحتها، والعنوان لسه [[underline]]، وكل الشروط ✓.`, work: { h: 110, start: R`<style>
-  h2 { text-decoration: underline 3px #0f766e; text-underline-offset: 6px; }
-  .badge { text-decoration: none; font-size: 14px; background: #fde68a; padding: 0 8px; border-radius: 999px; }
-</style>
-<h2>دروس الأسبوع <span class="badge">جديد</span></h2>`, checks: [
-              { say: R`الشارة [[inline-block]]: الخط بيقف عندها`, q: ".badge", style: ["display", "inline-block"] },
-              { say: R`العنوان لسه عليه خط`, q: "h2", style: ["text-decoration-line", "underline"] }
-            ] }, sol: R`~~~live 67 بعد التصليح
-<style>
-  h2 { text-decoration: underline 3px #0f766e; text-underline-offset: 6px; }
-  .badge { display: inline-block; font-size: 14px; background: #fde68a; padding: 0 8px; border-radius: 999px; }
-</style>
-<h2>دروس الأسبوع <span class="badge">جديد</span></h2>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 67 قبل
-<style>
-  h2 { text-decoration: underline 3px #0f766e; text-underline-offset: 6px; }
-  .badge { text-decoration: none; font-size: 14px; background: #fde68a; padding: 0 8px; border-radius: 999px; }
-</style>
-<h2>دروس الأسبوع <span class="badge">جديد</span></h2>
-~~~
-
-**هتشوف إيه:** قبل: الخط الأخضر ممدود تحت «دروس الأسبوع» وتحت الشارة الصفرا كمان. بعد: الخط تحت الكلام بس، والشارة نضيفة.
-
-**ليه [[none]] مشتغلتش:** الشارة معندهاش خط أصلًا عشان تشيله. الخط بتاع [[h2]]، وهو اللي راسمه تحت كل اللي جواه. [[inline-block]] بتطلّع الشارة من «سطر» الأب، فالخط بيقف عندها.
-
-**حل تاني صح:** تحط الكلام في [[<span>]] وتحط الخط عليه هو بدل [[h2]].
-
-**الغلطة الشائعة:** [[text-decoration: none !important]]. نفس النتيجة: المشكلة مش أولوية، المشكلة إن مفيش حاجة تتشال.
-
-~~~text القياس من Chrome
-.badge   قبل: display: inline    text-decoration-line: none   (والخط مرسوم تحتها)
-.badge   بعد: display: inline-block                             (مفيش خط)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** المفروض الكلمة الغلط [[.typo]] تحتها خط متموّج **أحمر**. الخط طالع متموّج بس بلون الكلام. السبب ترتيب سطرين في القاعدة. صلّحها. (من قسم ١ في الشرح: «المختصرة بتمسح»)`, done: R`الخط متموّج ولونه [[rgb(220, 38, 38)]]، وكل الشروط ✓.`, work: { h: 100, start: R`<style>
-  p { font-size: 20px; }
-  .typo {
-    text-decoration-color: #dc2626;
-    text-decoration: underline wavy;
-  }
-</style>
-<p>الاجتماع يوم <span class="typo">الثلثاء</span> الساعة عشرة.</p>`, checks: [
-              { say: R`الخط لونه أحمر [[#dc2626]]`, q: ".typo", style: ["text-decoration-color", "rgb(220, 38, 38)"] },
-              { say: R`الخط متموّج`, q: ".typo", style: ["text-decoration-style", "wavy"] },
-              { say: R`كلام الكلمة لسه أسود`, q: ".typo", style: ["color", "rgb(0, 0, 0)"] }
-            ] }, sol: R`~~~live 63 بعد التصليح
-<style>
-  p { font-size: 20px; }
-  .typo {
-    text-decoration: underline wavy #dc2626;
-  }
-</style>
-<p>الاجتماع يوم <span class="typo">الثلثاء</span> الساعة عشرة.</p>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 63 قبل
-<style>
-  p { font-size: 20px; }
-  .typo {
-    text-decoration-color: #dc2626;
-    text-decoration: underline wavy;
-  }
-</style>
-<p>الاجتماع يوم <span class="typo">الثلثاء</span> الساعة عشرة.</p>
-~~~
-
-**هتشوف إيه:** قبل: خط متموّج أسود تحت «الثلثاء». بعد: نفس الخط أحمر.
-
-**ليه:** [[text-decoration]] المختصرة بتظبط الأربعة. مفيهاش لون، فرجّعت اللون لقيمته الأولى (لون الكلام) ومسحت السطر اللي فوقها.
-
-**حل تاني صح:** تبدّل ترتيب السطرين (المختصرة الأول، وبعدها [[text-decoration-color]]).
-
-**الغلطة الشائعة:** [[color: #dc2626]]. الخط هيحمرّ، والكلمة نفسها كمان.
-
-~~~text القياس من Chrome
-قبل   text-decoration-color: rgb(0, 0, 0)        style: wavy
-بعد   text-decoration-color: rgb(220, 38, 38)    style: wavy
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** عنوان أبيض فوق خلفية فاتحة ومش مقروء. ادّيله ضل: من غير إزاحة أفقية، ونازل 2px، وتمويه 4px، ولونه أسود بشفافية 0.6. (من قسم ٤ في الشرح)`, done: R`المحسوب [[rgba(0, 0, 0, 0.6) 0px 2px 4px]] والعنوان لسه أبيض، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  .hero { background: linear-gradient(135deg, #93c5fd, #e0f2fe); padding: 24px 16px; }
-  .hero h1 { color: white; margin: 0; font-size: 30px; }
-</style>
-<div class="hero"><h1>رحلة لشاطئ هادي</h1></div>`, checks: [
-              { say: R`الضل: نازل 2px، وتمويه 4px، وأسود بشفافية 0.6`, q: ".hero h1", style: ["text-shadow", "rgba(0, 0, 0, 0.6) 0px 2px 4px"] },
-              { say: R`العنوان لسه أبيض`, q: ".hero h1", style: ["color", "rgb(255, 255, 255)"] }
-            ] }, sol: R`~~~live 98 الحل
-<style>
-  .hero { background: linear-gradient(135deg, #93c5fd, #e0f2fe); padding: 24px 16px; }
-  .hero h1 { color: white; margin: 0; font-size: 30px; text-shadow: 0 2px 4px rgb(0 0 0 / 0.6); }
-</style>
-<div class="hero"><h1>رحلة لشاطئ هادي</h1></div>
-~~~
-
-وده اللي كان باين قبل الضل:
-
-~~~live 98 قبل
-<style>
-  .hero { background: linear-gradient(135deg, #93c5fd, #e0f2fe); padding: 24px 16px; }
-  .hero h1 { color: white; margin: 0; font-size: 30px; }
-</style>
-<div class="hero"><h1>رحلة لشاطئ هادي</h1></div>
-~~~
-
-**هتشوف إيه:** قبل: حروف بيضا بتدوب في الأزرق الفاتح، خصوصًا ناحية الشمال. بعد: كل حرف ليه حافة غامقة ناعمة تحته، والعنوان بيتقري.
-
-**ليه القيم دي:** إزاحة صغيرة وتمويه = «هالة» حوالين الحرف مش نسخة تانية منه. والشفافية بتخلّي الضل ياخد من لون الخلفية.
-
-**الغلطة الشائعة:** [[text-shadow: 0 2px 4px 0.6]] أو أربع أطوال. اللون لازم يبقى لون كامل، ومفيش قيمة رابعة.
-
-**خليك فاكر:** الضل تحسين. لو التباين الأصلي ضعيف (أبيض على أزرق فاتح)، الحل الحقيقي خلفية أغمق أو كلام غامق.
-
-~~~text القياس من Chrome
-.hero h1   text-shadow: rgba(0, 0, 0, 0.6) 0px 2px 4px      color: rgb(255, 255, 255)
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الفقرة لونها أحمر وعليها [[underline]]، وجواها [[<strong>]] لونه أزرق. الخط اللي تحت الكلمة الزرقا هيبقى لونه إيه؟ اكتب توقعك والسبب في جملة، وبعدين افتح الحل. (من قسم ٣ في الشرح)`, done: R`توقّعت إن الخط أحمر تحت الكلمة الزرقا، وعرفت إن الخط بتاع الأب وبلونه.`, sol: R`~~~live 70 الصفحة
-<style>
-  p { font-size: 22px; color: #dc2626; text-decoration: underline 2px; }
-  strong { color: #1d4ed8; }
-</style>
-<p>العرض ده <strong>لمدة يومين</strong> بس.</p>
-~~~
-
-**الإجابة:** الخط **أحمر** تحت الجملة كلها، وتحت «لمدة يومين» الزرقا كمان.
-
-**هتشوف إيه:** كلام أحمر، وكلمتين زرقا في النص، وخط أحمر واحد متصل تحت الكل.
-
-**السبب:** الخط مش بتاع [[<strong>]]. اللي أعلنه هو [[<p>]]، فبيترسم بلون [[<p>]] وتُخنه، وبيتمد تحت كل اللي جواه. [[<strong>]] غيّر لون **كلامه** بس.
-
-~~~text القياس من Chrome
-p        text-decoration-line: underline     text-decoration-color: rgb(220, 38, 38)
-strong   text-decoration-line: none          ← معندوش خط خاص بيه
-~~~
-
-**لو عايز الخط أزرق تحت الكلمة الزرقا:** ادّي [[<strong>]] خط خاص بيه: [[strong { text-decoration: underline 2px; }]]. ساعتها هيترسم خطّين تحت بعض في نفس المكان، والأزرق (بتاع الابن) فوق.` }
-          ]
-        },
-        {
-          cmd: "list-style و ::marker",
-          title: "علامة القايمة وشكلها ومكانها، والمسافات بين البنود، والعدّادات",
-          pre: [
-            { to: "css/ul و ol", why: R`القايمة نفسها ([[<ul>]] و [[<ol>]] و [[start]] و [[reversed]]) اتشرحت هناك، وهنا بننسّقها` },
-            { to: "css/selectors", why: R`[[::marker]] و [[::before]] pseudo-elements، و [[content]] اتشرحت هناك` }
-          ],
-          ref: [
-            { t: "MDN: list-style", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/list-style" },
-            { t: "MDN: list-style-type", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/list-style-type" },
-            { t: "MDN: ::marker", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::marker" },
-            { t: "MDN: Using CSS counters", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Counter_styles/Using_counters" },
-            { t: "MDN: counter()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/counter" },
-            { t: "MDN: counters()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/counters" },
-            { t: "MDN: @counter-style", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@counter-style" },
-            { t: "MDN: symbols()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/symbols" }
-          ],
-          desc: R`كل بند في قايمة قدامه علامة: نقطة أو رقم. [[list-style]] بتغيّر شكل العلامة ومكانها، و [[::marker]] بتنسّق العلامة نفسها (لونها وخطها ونصها).
-والأرقام مش للقوايم بس: العدّادات ([[counter-reset]] و [[counter-increment]] و [[counter()]]) بترقّم أي حاجة في الصفحة، عناوين أو خطوات أو صور، بالأرقام العربي لو عايز.`,
-          example: R`ol { list-style-type: arabic-indic; }
-ul.done { list-style-type: "✓ "; }
-li::marker { color: #b45309; font-weight: 700; }
-ul { padding-inline-start: 1.5em; }
-li + li { margin-block-start: 0.5em; }
-nav ul { list-style: none; padding: 0; }
-.doc { counter-reset: sec; }
-.doc h2 { counter-increment: sec; }
-.doc h2::before { content: counter(sec, arabic-indic) ". "; }`,
-          flag: "script",
-          lines: [
-            R`أرقام القايمة المرقّمة تبقى ١ و ٢ و ٣ بدل 1 و 2 و 3. [[arabic-indic]] اسم نظام الأرقام المستخدم في مصر والمشرق.`,
-            R`علامة كل بند نص من عندك بدل النقطة: علامة صح وبعدها مسافة. النص بيتكتب بين تنصيص.`,
-            R`تنسيق العلامة نفسها (النقطة أو الرقم) من غير ما كلام البند يتأثر: لون بني وخط تقيل.`,
-            R`المسافة اللي العلامات بتقعد فيها قبل البنود: مرة ونص حجم الخط بدل 40px الافتراضية. [[inline-start]] يعني اليمين في العربي.`,
-            R`مسافة نص حجم الخط فوق كل بند **قبله بند**. الأول ملوش مسافة فوقه، فالقايمة متبعدش عن اللي قبلها.`,
-            R`قايمة التنقل: من غير علامات ومن غير المسافة بتاعتهم. [[list-style: none]] المختصرة بتشيل العلامة.`,
-            R`بتعمل عدّاد اسمه [[sec]] وتبدأه من صفر عند أول الصندوق [[.doc]].`,
-            R`كل عنوان [[h2]] جوه [[.doc]] بيزوّد العدّاد واحد.`,
-            R`قبل كل عنوان بيتكتب رقمه بالأرقام العربي وبعده نقطة ومسافة. [[counter()]] بتطلّع قيمة العدّاد كنص.`
-          ],
-          teach: R`## الفكرة في سطرين
-
-[[<li>]] ليه [[display: list-item]]، وده اللي بيخلّي المتصفح يعمل قدامه صندوق صغير للعلامة اسمه **marker**. الدرس عن الصندوق ده: فيه إيه، ومكانه فين، وشكله إيه. والنص التاني عن العدّادات اللي الأرقام دي بتطلع منها.
-
-الأرقام من Chrome 157 على Windows 11.
-
-~~~text القياس من Chrome (من غير CSS)
-<ul>   list-style-type: disc      list-style-position: outside     padding-inline-start: 40px     margin: 16px فوق وتحت
-<ol>   list-style-type: decimal
-<li>   display: list-item         margin: 0
-<ul> جوه <ul>:  circle      والمستوى التالت:  square
-~~~
-
----
-
-## ١. [[list-style-type: arabic-indic]]
-
-شكل العلامة. بتتحط على القايمة (وبتتورّث للبنود) أو على بند لوحده.
-
-~~~live 110 154 نفس القايمة بست أشكال
-<style>
-  ul, ol { display: inline-block; vertical-align: top; margin: 4px 0; padding-inline-start: 34px; width: 105px; }
-</style>
-<ul style="list-style-type: disc"><li>disc</li><li>بند</li></ul>
-<ul style="list-style-type: square"><li>square</li><li>بند</li></ul>
-<ul style="list-style-type: '✓ '"><li>نص</li><li>بند</li></ul>
-<ol style="list-style-type: decimal"><li>decimal</li><li>بند</li></ol>
-<ol style="list-style-type: arabic-indic"><li>arabic-indic</li><li>بند</li></ol>
-<ol style="list-style-type: lower-alpha"><li>lower-alpha</li><li>بند</li></ol>
-~~~
-
-**هتشوف إيه:** ست قوايم صغيرة: نقطة مليانة، ومربع، وعلامة صح، وأرقام 1 و 2، وأرقام ١ و ٢، وحروف a و b.
-
-| القيمة | العلامة |
-|---|---|
-| [[disc]] و [[circle]] و [[square]] | نقطة مليانة، ودايرة مفرّغة، ومربع |
-| [[decimal]] | 1، 2، 3 |
-| [[decimal-leading-zero]] | 01، 02، 03 |
-| [[arabic-indic]] | ١، ٢، ٣ |
-| [[persian]] | ۱، ۲، ۳ (الأرقام الفارسي: الأربعة والخمسة والستة شكلهم مختلف) |
-| [[lower-alpha]] و [[upper-alpha]] | a، b، c و A، B، C |
-| [[lower-roman]] و [[upper-roman]] | i، ii، iii و I، II، III |
-| [[list-style-type: "✓ "]] | نص من عندك لكل البنود |
-| [[none]] | من غير علامة |
-
-كل القيم دي اتأكدنا إن Chrome 157 بيقبلها ([[CSS.supports]])، ومعاها أنظمة لغات كتير ([[hebrew]] و [[georgian]] و [[thai]] و [[devanagari]]...).
-
-**الأرقام في صفحة عربي:** [[<ol>]] في صفحة [[lang="ar"]] بيطلّع 1 و 2 و 3 برضه. المتصفح مبيغيّرش شكل الأرقام حسب اللغة. لو كلام الصفحة مكتوب بأرقام ١٢٣، خلّي القايمة زيه: [[ol { list-style-type: arabic-indic; }]]. ولو الصفحة بتكتب 123 (وده منتشر في المغرب العربي وفي المواقع التقنية)، سيبها [[decimal]]. المهم يبقوا نظام واحد.
-
-[[<ol>]] ولا [[<ul>]] ده قرار **معنى** (الترتيب مهم ولا لأ) مش شكل. متغيّرش [[<ul>]] لأرقام بالـ CSS عشان «شكلها أحلى»: قارئ الشاشة هيفضل يقول «قايمة نقط».
-
----
-
-## ٢. [[list-style-position: inside]]
-
-العلامة مكانها فين من صندوق البند: برّاه (الافتراضي) ولا جوّاه.
-
-~~~live 94 outside ثم inside
-<style>
-  ul { width: 250px; margin: 6px 0; }
-  li { background: #fef9c3; }
-</style>
-<ul style="list-style-position: outside"><li>بند طويل شوية عشان نشوف السطر التاني بيبدأ منين لما الكلام يلف</li></ul>
-<ul style="list-style-position: inside"><li>بند طويل شوية عشان نشوف السطر التاني بيبدأ منين لما الكلام يلف</li></ul>
-~~~
-
-**هتشوف إيه:** الخلفية الصفرا هي صندوق [[<li>]]. في الأولى النقطة **برّه** الأصفر، والسطرين بادئين من نفس الحافة. في التانية النقطة **جوّه** الأصفر، والسطر التاني راجع تحت النقطة نفسها.
-
-~~~text القياس من Chrome (قايمة عرضها 300px: بُعد بداية الكلام عن حافة القايمة)
-                          السطر الأول     السطر التاني
-outside (الافتراضي)       40px            40px        ← العلامة قاعدة في الـ padding بتاع القايمة
-inside                    62px            40px        ← العلامة (22px) بقت أول حاجة في السطر الأول
-~~~
-
-[[outside]] أحسن للقراية (الكلام متراص). و [[inside]] بتفيد لما تدّي البند خلفية أو border وعايز العلامة جواه.
-
-### الـ 40px والعلامة اللي بتختفي
-
-مع [[outside]] العلامة بتترسم في الـ [[padding]] اللي المتصفح حاطه للقايمة (40px ناحية البداية). فلو صفّرت الـ padding:
-
-~~~live 64 padding: 0 والعلامة برّه
-<style>
-  .wrap { border: 2px solid #111; width: 240px; margin-inline-start: 40px; }
-  ul { padding: 0; margin: 4px 0; }
-</style>
-<div class="wrap"><ul><li>بند أول</li><li>بند تاني</li></ul></div>
-~~~
-
-**هتشوف إيه:** النقطتين **برّه** الإطار الأسود من ناحية اليمين. لو مكانش فيه مسافة هناك (القايمة لازقة في حافة الصفحة، أو الأب [[overflow: hidden]]) كانوا هيختفوا خالص. دي أشهر «العلامات راحت فين؟».
-
-الحلول: [[padding-inline-start: 1.5em]] بدل الصفر (المسافة اللي إنت عايزها مش الـ 40)، أو [[list-style-position: inside]].
-
----
-
-## ٣. [[list-style-image]] والمختصرة [[list-style]]
-
-[[list-style-image]] بتحط صورة مكان العلامة:
-
-~~~live 68 صورة مكان النقطة
-<style>
-  ul { list-style-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Cpath d='M2 7l4 4 6-8' fill='none' stroke='%23059669' stroke-width='2.5'/%3E%3C/svg%3E"); }
-</style>
-<ul><li>الدفع عند الاستلام</li><li>استرجاع خلال ١٤ يوم</li></ul>
-~~~
-
-**هتشوف إيه:** علامة صح خضرا صغيرة قدام كل بند، مرسومة بـ SVG مكتوب جوه الـ CSS نفسه (data URI، درس «img»).
-
-عيبها إنك **متقدرش تتحكم في حجم الصورة ولا مكانها** من الـ CSS: بتترسم بحجمها الأصلي. عشان كده أغلب الناس دلوقتي بتستخدم [[list-style-type: "✓ "]] أو [[::marker]] بدلها. ولو الصورة مش موجودة، المتصفح بيرجع لـ [[list-style-type]].
-
-والمختصرة [[list-style]] بتجمع التلاتة بأي ترتيب:
-
-~~~text القياس من Chrome (المحسوب)
-list-style: square inside     →  type: square    position: inside     image: none
-list-style: none              →  type: none      (ومفيش علامة)
-الافتراضي على <ul>             →  list-style: outside none disc
-~~~
-
-### [[list-style: none]] وقارئ الشاشة
-
-قايمة التنقل وقايمة الكروت بيتشال منهم العلامات. MDN بينبّه إن Safari مع VoiceOver **بيبطّل يعتبرها قايمة** لما [[list-style: none]] تتحط عليها (مبيقولش «قايمة من ٥ بنود»). الحل اللي MDN كاتبه: زوّد [[role="list"]] على [[<ul>]] في الـ HTML. (من MDN، متقاسش هنا.) جوه [[<nav>]] المشكلة دي مبتحصلش حسب نفس المرجع.
-
----
-
-## ٤. المسافات: بين البنود، وقبل القايمة
-
-مفيش خاصية «مسافة البنود». هي نفس [[margin]] و [[padding]] و [[line-height]] على [[<li>]] و [[<ul>]].
-
-~~~live 232 قايمة لازقة وقايمة واخدة راحتها
-<style>
-  ul { width: 260px; }
-  .roomy { padding-inline-start: 1.25em; line-height: 1.4; }
-  .roomy li + li { margin-block-start: 0.7em; }
-</style>
-<ul><li>بند أول طويل شوية بيلف على سطرين عشان نشوف</li><li>بند تاني</li><li>بند تالت</li></ul>
-<ul class="roomy"><li>بند أول طويل شوية بيلف على سطرين عشان نشوف</li><li>بند تاني</li><li>بند تالت</li></ul>
-~~~
-
-**هتشوف إيه:** في الأولى مفيش فرق بين المسافة بين سطرين في نفس البند والمسافة بين بندين، فمش باين البند بيخلص فين. في التانية السطور جوه البند قريبة من بعض، وبين كل بند والتاني فراغ أوضح، والقايمة أقرب للحافة.
-
-| عايز | الخاصية | على مين |
-|---|---|---|
-| مسافة بين البنود | [[margin-block-start]] على [[li + li]] (كل بند قبله بند) | [[<li>]] |
-| مسافة بين سطور البند الواحد | [[line-height]] | القايمة أو [[body]] |
-| بُعد القايمة عن الحافة | [[padding-inline-start]] | [[<ul>]] أو [[<ol>]] |
-| مسافة بين العلامة والكلام | [[padding-inline-start]] على [[<li>]]، أو مسافة جوه نص العلامة ([["✓ "]]) | [[<li>]] |
-| مسافة فوق وتحت القايمة كلها | [[margin-block]] | [[<ul>]] |
-
-القاعدة البصرية: المسافة **بين** البنود لازم تبقى أكبر من المسافة بين سطور البند الواحد. و [[margin-block-start]] و [[padding-inline-start]] هم الأسامي «المنطقية» لـ [[margin-top]] و [[padding-right]]/[[left]]: بيتبعوا اتجاه الكتابة (شرحهم كامل في درس «logical properties»).
-
----
-
-## ٥. [[li::marker { color: ... }]]
-
-[[::marker]] هو صندوق العلامة نفسه. بيخلّيك تنسّق النقطة أو الرقم من غير ما تلمس كلام البند.
-
-~~~live 126 علامات ملوّنة ورقم تقيل
-<style>
-  ol { list-style-type: arabic-indic; }
-  ol li::marker { color: #b45309; font-weight: 700; font-size: 1.2em; }
-  ul li::marker { content: "← "; color: #0f766e; }
-</style>
-<ol><li>سخّن الفرن</li><li>اخلط المقادير</li></ol>
-<ul><li>بند بسهم</li><li>بند تاني</li></ul>
-~~~
-
-**هتشوف إيه:** الأرقام ١ و ٢ بنية وتقيلة وأكبر من الكلام، والكلام نفسه أسود عادي. والقايمة التانية علامتها سهم أخضر.
-
-مش كل الخصائص بتشتغل على [[::marker]]:
-
-~~~text القياس من Chrome (كتبنا 17 خاصية على li::marker)
-اشتغلت:      color   font-size   font-weight   font-family   content   letter-spacing
-             direction   unicode-bidi   white-space   text-shadow   text-transform
-اتجاهلت:     background   padding   margin   border   text-decoration   opacity
-~~~
-
-يعني: الخط واللون والنص آه. الصندوق (خلفية وحدود ومسافات) لأ. لو عايز رقم جوه دايرة ملوّنة، [[::marker]] مش هينفع: شيل العلامة ([[list-style: none]]) وارسم رقمك بـ [[::before]] وعدّاد (القسم ٦).
-
-[[content]] على [[::marker]] بتبدّل نص العلامة كله. وممكن تحط فيها رقم البند: كل [[<li>]] بيزوّد عدّاد جاهز اسمه [[list-item]]:
-
-~~~css
-ol li::marker { content: "الخطوة " counter(list-item, arabic-indic) ": "; }
-~~~
-
-والـ marker الافتراضي عليه [[font-variant-numeric: tabular-nums]] (اتقاس)، عشان الأرقام تتراص تحت بعض.
-
-**فخ [[display]]:** العلامة موجودة عشان [[<li>]] ليه [[display: list-item]]. أول ما تكتب على [[<li>]] حاجة زي [[display: block]] أو [[display: flex]]، العلامة بتختفي ومفيش [[::marker]]. والعكس: أي عنصر تدّيله [[display: list-item]] بيطلعله علامة.
-
----
-
-## ٦. العدّادات: [[counter-reset]] و [[counter-increment]] و [[counter()]]
-
-أرقام [[<ol>]] مش سحر. وراها **عدّاد**، وتقدر تعمل عدّادات بتاعتك لأي حاجة.
-
-~~~live 94 عناوين بترقّم نفسها
-<style>
-  .doc { counter-reset: sec; }
-  .doc h3 { counter-increment: sec; margin: 6px 0; }
-  .doc h3::before { content: counter(sec, arabic-indic) ". "; color: #b45309; }
-</style>
-<div class="doc">
-  <h3>التجهيز</h3>
-  <h3>التسطيب</h3>
-  <h3>أول تشغيل</h3>
-</div>
-~~~
-
-**هتشوف إيه:** تلات عناوين قدامهم «١.» و «٢.» و «٣.» بلون بني. الأرقام مش مكتوبة في الـ HTML. لو زوّدت عنوان في النص، كل اللي بعده هيترقّم من جديد لوحده.
-
-تلات خطوات، كل واحدة بخاصية:
-
-| الخطوة | الخاصية | معناها |
-|---|---|---|
-| ١. اعمل العدّاد | [[counter-reset: sec]] | عدّاد جديد اسمه [[sec]] قيمته 0. ممكن تبدأ من رقم: [[counter-reset: sec 4]] |
-| ٢. زوّده | [[counter-increment: sec]] | كل عنصر بيطابق القاعدة بيزوّد 1. ممكن [[counter-increment: sec 2]] أو [[-1]] |
-| ٣. اعرضه | [[content: counter(sec)]] | بتتكتب جوه [[content]] بتاعة [[::before]] أو [[::after]] أو [[::marker]] |
-
-و [[counter()]] بتاخد شكل الأرقام كقيمة تانية، بنفس أسامي [[list-style-type]]: [[counter(sec, arabic-indic)]] أو [[counter(sec, upper-roman)]].
-
-### [[counter-set]]
-
-بتحط العدّاد على رقم معين في النص، من غير ما تعمل عدّاد جديد:
-
-~~~text القياس من Chrome (ثماني عناوين ورا بعض، والقيمة اللي اتعرضت لكل واحد)
-h2                                  1
-h2                                  2
-h2 { counter-set: sec 10; }         10     ← اتحط على 10
-h2                                  11
-h2 { counter-increment: sec 5; }    16     ← زاد 5
-h2 { counter-increment: none; }     16     ← مزوّدش
-h2 { display: none; }               —      ← العنصر المخفي مبيعدّش
-h2                                  17
-~~~
-
-الفرق: [[counter-reset]] بتعمل عدّاد **جديد** (ليه نطاق: العنصر وولاده واخواته اللي بعده). [[counter-set]] بتغيّر قيمة عدّاد **موجود**.
-
-سطر [[display: none]] مهم: العنصر المخفي مبيزوّدش العدّاد، فالترقيم بيفضل متصل. ([[visibility: hidden]] بيعدّ.)
-
-### [[counters()]]: ترقيم متفرّع ١.٢.٣
-
-[[counter()]] بتعرض قيمة عدّاد واحد. [[counters()]] (بحرف s) بتعرض **كل المستويات** اللي فوق بعض، وبينهم فاصل:
-
-~~~live 158 قايمة جوه قايمة بترقيم متفرّع
-<style>
-  .toc, .toc ol { counter-reset: item; list-style: none; padding-inline-start: 1.5em; }
-  .toc li { counter-increment: item; }
-  .toc li::before { content: counters(item, ".", arabic-indic) " "; color: #b45309; }
-</style>
-<ol class="toc" role="list">
-  <li>المقدمة</li>
-  <li>التسطيب
-    <ol role="list">
-      <li>على Windows</li>
-      <li>على Linux
-        <ol role="list"><li>Ubuntu</li><li>Fedora</li></ol>
-      </li>
-    </ol>
-  </li>
-  <li>الخلاصة</li>
-</ol>
-~~~
-
-**هتشوف إيه:** «١» و «٢» و «٣» للمستوى الأول، و «٢.١» و «٢.٢» للي جوه التاني، و «٢.٢.١» و «٢.٢.٢» للمستوى التالت. زي فهرس كتاب.
-
-السر إن كل [[<ol>]] بيعمل [[counter-reset: item]]، فبيتعمل عدّاد **بنفس الاسم** جوه العدّاد اللي فوقه. [[counters(item, ".")]] بتمشي على كل العدّادات اللي اسمها [[item]] من برّه لجوّه وتلزقهم بالنقطة.
-
-### عدّاد [[<ol>]] نفسه
-
-[[<ol>]] بيستخدم عدّاد جاهز اسمه [[list-item]]، و attributes الـ HTML بتتحكم فيه: [[start]] بتبدأه من رقم، و [[reversed]] بتعدّ بالعكس، و [[value]] على [[<li>]] بتحطه على رقم (درس «ul و ol»). لو الترقيم جزء من المحتوى (خطوات لازم تتعمل بالترتيب)، استخدم [[<ol>]] الحقيقي: الأرقام بتوصل لقارئ الشاشة وبتتنسخ مع النص. أرقام [[::before]] زينة: مبتتحددش بالماوس ومبتتنسخش.
-
----
-
-## ٧. [[@counter-style]]: نظام ترقيم من عندك
-
-لو الأشكال الجاهزة مش كفاية، [[@counter-style]] بتعرّف نظام جديد باسم، وتستخدمه في [[list-style-type]] أو [[counter()]].
-
-~~~live 156 تلات أنظمة من عندنا
-<style>
-  @counter-style abjad {
-    system: alphabetic;
-    symbols: "أ" "ب" "ج" "د" "هـ" "و" "ز" "ح" "ط" "ي";
-    suffix: "- ";
-  }
-  @counter-style step {
-    system: extends arabic-indic;
-    prefix: "الخطوة ";
-    suffix: ": ";
-  }
-  @counter-style done {
-    system: cyclic;
-    symbols: "✓";
-    suffix: " ";
-  }
-  ol, ul { margin: 4px 0; }
-  .wide { padding-inline-start: 5.5em; }
-</style>
-<ol style="list-style-type: abjad"><li>بند</li><li>بند</li><li>بند</li></ol>
-<ol class="wide" style="list-style-type: step"><li>افتح الملف</li><li>احفظ</li></ol>
-<ul style="list-style-type: done"><li>اتعمل</li><li>اتعمل</li></ul>
-~~~
-
-**هتشوف إيه:** الأولى مرقّمة «أ-» و «ب-» و «ج-» (ترقيم أبجد). التانية «الخطوة ١:» و «الخطوة ٢:». التالتة علامة صح قدام كل بند.
-
-| الـ descriptor | معناه |
-|---|---|
-| [[system]] | طريقة العدّ (الجدول اللي تحت) |
-| [[symbols]] | الرموز المستخدمة، بالترتيب |
-| [[additive-symbols]] | رموز ليها قيمة (للنظام [[additive]]): [[10 "X", 5 "V", 1 "I"]] |
-| [[prefix]] و [[suffix]] | نص قبل وبعد كل علامة. الـ suffix الافتراضي نقطة ومسافة |
-| [[pad]] | أقل عدد خانات والحشو: [[pad: 3 "0"]] بتطلّع 001 |
-| [[range]] | الأرقام اللي النظام بيغطيها. برّاها بيروح للـ [[fallback]] |
-| [[fallback]] | النظام البديل (الافتراضي [[decimal]]) |
-| [[negative]] | علامة الأرقام السالبة |
-| [[speak-as]] | قارئ الشاشة ينطق العلامة إزاي (مثلًا [[bullets]] أو [[numbers]]) |
-
-| [[system]] | بيعدّ إزاي | مثال |
-|---|---|---|
-| [[cyclic]] | بيلف على الرموز ويرجع للأول | علامة واحدة لكل البنود، أو نقطة وشرطة بالتبادل |
-| [[fixed]] | الرموز مرة واحدة، وبعدها الـ fallback | ①②③ وبعدها 4 |
-| [[symbolic]] | بيكرر الرمز: * ثم ** ثم *** | هوامش |
-| [[alphabetic]] | زي الحروف: أ، ب... ي، أأ، أب | أبجد |
-| [[numeric]] | الرموز هي «أرقام» نظام عدّ | أرقام بلغة جديدة |
-| [[additive]] | بيجمع رموز ليها قيم | روماني |
-| [[extends]] | خد نظام موجود وغيّر فيه حاجة | [[extends arabic-indic]] مع prefix |
-
-### [[symbols()]]
-
-نسخة سريعة من غير اسم، تتكتب مكان القيمة مباشرة:
-
-~~~css
-ul { list-style-type: symbols(cyclic "◆" "◇"); }
-~~~
-
-معناها: معيّن مليان، ثم مفرّغ، وهكذا بالتبادل. اتأكدنا إن Chrome 157 بيقبلها ([[CSS.supports]] رجّع true). المنهج مش حاططها Baseline، يعني مش كل المتصفحات، ف [[@counter-style]] باسم أضمن.
-
----
-
-## ٨. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| [[padding: 0]] على القايمة وسايب العلامات | العلامات برّه الصندوق، وبتختفي عند حافة الصفحة |
-| [[display: flex]] أو [[block]] على [[<li>]] | العلامة اختفت |
-| [[background]] أو [[padding]] على [[::marker]] | اتجاهلوا |
-| [[<ul>]] بـ [[list-style-type: decimal]] عشان الشكل | المعنى لسه «قايمة نقط». استخدم [[<ol>]] |
-| [[counter-increment]] من غير [[counter-reset]] على أب | كل عنصر بيعمل عدّاد لنفسه: الكل «1» |
-| [[counter-reset]] على نفس العنصر اللي بيزوّد | العدّاد بيتصفّر كل مرة: الكل «1» |
-| [[counter(sec)]] برّه [[content]] | مبتشتغلش: مكانها [[content]] بس |
-| أرقام مهمة معمولة بـ [[::before]] | مبتتنسخش، وممكن متتقريش. الخطوات الحقيقية [[<ol>]] |
-| [[list-style: none]] من غير [[role="list"]] | Safari مع VoiceOver مبيقولش إنها قايمة (MDN) |
-| أرقام القايمة 1 2 3 وكلام الصفحة ١ ٢ ٣ | نظامين في صفحة واحدة |
-
----
-
-## الخلاصة
-
-- [[list-style-type]] شكل العلامة: [[arabic-indic]] للأرقام العربي، ونص بين تنصيص لعلامة من عندك، و [[none]] لشيلها.
-- [[list-style-position]]: [[outside]] (في الـ padding بتاع القايمة) أو [[inside]].
-- العلامة عايشة في [[padding-inline-start]] بتاع القايمة. متصفّروش وإنت سايبها.
-- [[::marker]] بينسّق العلامة: خط ولون ونص. مش صندوق.
-- المسافات: [[li + li { margin-block-start }]] بين البنود.
-- العدّاد: [[counter-reset]] على الأب، و [[counter-increment]] على العنصر، و [[counter()]] جوه [[content]]. و [[counters()]] للترقيم المتفرّع.
-- [[@counter-style]] لنظام من عندك: [[system]] و [[symbols]] و [[prefix]] و [[suffix]].`,
-          try: R`اعمل [[lists.html]] فيه: قايمة مقادير [[<ul>]] بعلامة «•» ملوّنة، وقايمة خطوات [[<ol>]] بأرقام عربي تقيلة، وقايمة تنقل من غير علامات. ظبّط المسافات: القوايم أقرب للحافة من الـ 40px، وبين كل بند والتاني مسافة أوضح من بين السطور. وبعدين اكتب [[display: flex]] على بنود قايمة المقادير وشوف العلامات.`,
-          sol: R`~~~live 443 lists.html
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة بهيدر sticky ارتفاعه 64px، ولينك [[#prices]] لعنوان تحت. دوس اللينك من غير [[scroll-margin-top]] واطبع [[document.querySelector("#prices").getBoundingClientRect().top]]، وبعدين حطه وقيس تاني.`, done: R`قبل: الرقم أقل من 64 (العنوان تحت الهيدر)، وبعد: أكبر من 64 والعنوان باين كله.`,
+              sol: R`~~~live 600 720 scroll-margin.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>قوايم</title>
+<head><meta charset="utf-8"><title>scroll-margin</title>
 <style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; }
-  ul, ol { padding-inline-start: 1.5em; }
-  li + li { margin-block-start: 0.4em; }
-  .items li::marker { color: #b45309; }
-  .steps { list-style-type: arabic-indic; }
-  .steps li::marker { font-weight: 700; }
-  nav ul { list-style: none; padding: 0; }
-</style>
-</head>
+  body { margin: 0; }
+  header { position: sticky; top: 0; block-size: 64px; background: #1f2937; color: #fff; }
+  main { padding-block: 1000px; }
+  #prices { scroll-margin-top: 72px; }
+</style></head>
 <body>
-<nav><ul role="list"><li><a href="#items">المقادير</a></li><li><a href="#steps">الطريقة</a></li></ul></nav>
-<h2 id="items">المقادير</h2>
-<ul class="items"><li>كوبين دقيق</li><li>كوب لبن</li><li>بيضتين</li></ul>
-<h2 id="steps">الطريقة</h2>
-<ol class="steps"><li>اخلط الدقيق واللبن لحد ما الخليط ينعم.</li><li>زوّد البيض وقلّب.</li><li>سيبه يرتاح ربع ساعة.</li></ol>
-</body>
-</html>
+  <header><a href="#prices" style="color:#fff">الأسعار</a></header>
+  <main><h1>المنتج</h1><h2 id="prices">الأسعار</h2></main>
+</body></html>
 ~~~
 
-**هتشوف إيه:**
+لينك [[#prices]] بيحط العنصر في أول الـ scrollport، يعني عند [[top = 0]]. الهيدر الـ sticky واقف هناك، فبيغطي العنوان. [[scroll-margin-top]] بيقول «لما تعمل scroll لحد العنصر ده، سيب المسافة دي فوقه». 72 = ارتفاع الهيدر 64 + نفس.
 
-- قايمة التنقل فوق: لينكين تحت بعض من غير نقط ولازقين في الحافة.
-- المقادير: نقط بنية والكلام أسود.
-- الطريقة: «١.» و «٢.» و «٣.» تقيلة.
-- بعد [[.items li { display: flex; }]]: النقط البنية **اختفت**. [[<li>]] مبقاش [[list-item]] فمبقاش ليه marker.
+ده أحسن من [[padding-top]] أو عنصر فاضي فوق العنوان، لأنه مبيغيرش الـ layout، ومش محتاج JavaScript. ولو الهيدر ارتفاعه متغير اكتب [[scroll-margin-top: calc(var(--nav-h) + 1rem)]].
 
-~~~text القياس من Chrome
-ul و ol           padding-inline-start: 24px      (1.5em من 16px، بدل 40px)
-.steps            list-style-type: arabic-indic
-.steps li::marker font-weight: 700
-nav ul            list-style-type: none           padding: 0px
-~~~`,
+الغلطة الشائعة: تحطها على الهيدر بدل الهدف. دي خاصية على العنصر اللي بتوصله.
+
+~~~text الناتج (Chrome 156، getBoundingClientRect().top بعد الضغط على اللينك)
+من غير scroll-margin-top: top = -0.125 (تحت الهيدر)
+بعد scroll-margin-top: 72px: top = 71.875 (باين كله)
+~~~` },
+          ],
+          desc: R`[[scroll-snap-type: x mandatory]] على الحاوية و [[scroll-snap-align: start]] على العناصر: لما المستخدم يسيب الـ scroll، بيقف على أول كارت بالظبط بدل ما يقف في النص. carousel كامل بـ swipe على الموبايل من غير مكتبة.
+
+و [[scroll-margin-top]] على العنصر بيسيب مسافة فوقه لما المتصفح يعمل scroll ليه (لينك [[#pricing]]، أو [[scrollIntoView]])، فالعنوان ميستخباش تحت الـ header الثابت. و [[scroll-padding-top]] على الـ html نفس الفكرة بس لكل العناصر مرة واحدة، وبيشمل الـ focus بالـ Tab.`,
+          example: R`<ul class="carousel" tabindex="0" aria-label="منتجات مقترحة">
+  <li><img src="/p/1.webp" alt="سماعة" width="300" height="300"></li>
+  <li><img src="/p/2.webp" alt="ماوس" width="300" height="300"></li>
+</ul>
+// styles.css
+.carousel { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scroll-padding-inline: 1rem; padding-inline: 1rem; }
+.carousel > li { flex: 0 0 80%; scroll-snap-align: start; list-style: none; }
+html { scroll-padding-top: 5rem; }
+h2[id] { scroll-margin-top: 6rem; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }`,
+          try: R`اعمل carousel بـ 6 كروت وافتحه في وضع الموبايل واسحب: بيقف فين؟ شيل [[scroll-snap-type]] واسحب تاني. وبعدين اعمل header ثابت ارتفاعه 64px ولينك لـ [[#faq]] تحت، ودوس عليه مع وبدون [[scroll-padding-top]].`,
+          flag: "script",
           deep: {
-            why: R`القوايم في كل صفحة: تنقل، مميزات، خطوات، فهرس، كروت. وشكلها الافتراضي (40px فراغ ونقطة سودا) قليل لما بيناسب التصميم، فأول حاجة أي حد بيعملها إنه «يصفّر» القايمة، ومن هنا بتيجي المشاكل: علامات مختفية، وقوايم فقدت معناها عند قارئ الشاشة. ولصفحة عربي فيه سبب زيادة: الأرقام. القايمة بتطلّع 1 2 3 وكلامك ١ ٢ ٣، وسطر واحد بيوحّدهم. والعدّادات بتشيل عنك ترقيم العناوين والخطوات بإيدك، اللي بيبوظ أول ما تزوّد بند في النص.`,
-            how: R`أي عنصر [[display: list-item]] بيتعمله صندوقين: الصندوق الأساسي، وصندوق marker. نص الـ marker بييجي من [[list-style-image]]، ولو مفيش فمن [[list-style-type]] مطبّق على قيمة العدّاد [[list-item]] بتاع العنصر، إلا لو [[::marker]] عليه [[content]]. مع [[outside]] الـ marker بيتحط برّه صندوق المحتوى ناحية البداية (ومبياخدش مكان في الـ layout، فلازم padding يشيله)، ومع [[inside]] بيبقى أول صندوق inline في السطر الأول.
+            why: R`الـ carousels مكتبات JavaScript تقيلة عشان حاجة الـ CSS بيعملها أحسن (الـ swipe طبيعي وبنفس إحساس النظام). والـ header الثابت اللي بياكل العنوان اللي رحتله بلينك، أو الحقل اللي عليه focus، مشكلة في كل موقع تقريبًا، ودي قاعدة 2.4.11 في WCAG 2.2.`,
+            how: R`[[mandatory]] بيجبر الوقوف على نقطة snap دايمًا، و [[proximity]] بيقف عليها بس لو قريب منها (أحسن لو العناصر أطول من الشاشة، لأن mandatory ممكن يمنعك تشوف نص عنصر طويل). و [[scroll-snap-align]] بيحدد نقطة الوقوف: [[start]] أو [[center]] أو [[end]]، وبتتقلب لوحدها في RTL لأنها logical.
 
-العدّادات بتتحسب والمتصفح ماشي على العناصر بترتيب الـ HTML: عند كل عنصر بينفّذ [[counter-reset]] (عدّاد جديد في نطاق العنصر)، ثم [[counter-increment]]، ثم [[counter-set]]، وبعدها [[counter()]] تقرا القيمة. العدّاد اللي اتعمل على عنصر بيشوفه ولاده واخواته اللي بعده. عشان كده الـ reset بيتحط على الأب.`,
-            when: R`[[list-style-type]] و [[::marker]]: أي قايمة محتوى. [[list-style: none]] مع [[role="list"]]: قوايم التنقل والكروت. [[padding-inline-start]]: دايمًا، عشان تتحكم في الـ 40px. العدّادات: ترقيم عناوين مستند، أرقام خطوات ليها تصميم خاص (رقم في دايرة)، ترقيم صور وجداول («شكل ٣»)، فهرس متفرّع. [[@counter-style]]: ترقيم بحروف عربي، أو بادئة ثابتة قبل الرقم.`,
-            mistakes: R`تصفير الـ padding والعلامات لسه موجودة. [[display: flex]] على [[<li>]]. خصائص صندوق على [[::marker]]. تغيير نوع القايمة بالـ CSS بدل الـ HTML. [[counter-reset]] في المكان الغلط. والاعتماد على أرقام [[::before]] لمحتوى لازم يتقري ويتنسخ.`
+[[scroll-padding-inline]] على الحاوية بيخلي نقطة الوقوف بعد مسافة من الحافة، فالكارت ميلزقش في الطرف. و [[flex: 0 0 80%]] بيخلي جزء من الكارت اللي بعده باين، ودا اللي بيقول للمستخدم «فيه حاجة كمان، اسحب».
+
+[[overscroll-behavior-x: contain]] بيمنع إن الـ scroll لما يخلص يكمّل في الصفحة، أو يعمل «رجوع» في Safari و Chrome على الموبايل.
+
+[[scroll-margin-top]] على العنصر و [[scroll-padding-top]] على الـ scroll container (هنا [[html]]) الاتنين بيتجمعوا. والـ [[scroll-behavior: smooth]] جوه [[prefers-reduced-motion: no-preference]] عشان اللي طالب حركة أقل ميتعبش.
+
+و [[tabindex="0"]] على الـ carousel عشان مستخدم الكيبورد يقدر يعمل scroll بالأسهم (زي درس الجدول). ولو عايز أزرار «التالي والسابق»، [[scrollBy({ left: el.clientWidth })]] سطر واحد، والـ snap بيظبط الوقفة.`,
+            when: R`carousel منتجات أو صور أو testimonials، و galleries، و onboarding screens على الموبايل. و scroll-padding-top في أي موقع فيه header ثابت. ولو محتاج autoplay أو loop لا نهائي أو thumbnails متزامنة، ساعتها مكتبة (Embla مثلًا).`,
+            mistakes: R`[[mandatory]] مع عناصر أطول من الشاشة فالمستخدم ميعرفش يوصل لنصها. [[scroll-behavior: smooth]] من غير احترام reduced motion. carousel بيتحرك لوحده ومفيهوش إيقاف. كل الكروت بعرض 100% فالمستخدم مش عارف إن فيه غيرهم. و [[scroll-margin-top]] بقيمة ثابتة والـ header ارتفاعه بيتغير على الموبايل، فخليها CSS variable بارتفاع الـ header.`
           },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** قايمة «اللي اتعمل» في «مدوّنة حبر»: علامة كل بند [["✓ "]] بدل النقطة، ولون العلامة أخضر [[#059669]]، والكلام يفضل أسود. (من قسم ١ و ٥ في الشرح)`, done: R`العلامة «✓» خضرا والكلام أسود، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  ul { }
-  li::marker { }
-</style>
-<ul>
-  <li>اخترنا خط المدوّنة</li>
-  <li>ظبطنا مسافة السطور</li>
-  <li>كتبنا أول مقال</li>
-</ul>`, checks: [
-              { say: R`علامة القايمة [["✓ "]]`, q: "ul", style: ["list-style-type", "\"✓ \""] },
-              { say: R`لون العلامة أخضر [[#059669]]`, q: "li", pseudo: "::marker", style: ["color", "rgb(5, 150, 105)"] },
-              { say: R`كلام البنود لسه أسود`, q: "li", style: ["color", "rgb(0, 0, 0)"] }
-            ] }, sol: R`~~~live 95 الحل
-<style>
-  ul { list-style-type: "✓ "; }
-  li::marker { color: #059669; }
-</style>
-<ul>
-  <li>اخترنا خط المدوّنة</li>
-  <li>ظبطنا مسافة السطور</li>
-  <li>كتبنا أول مقال</li>
+          teach: R`## حاجتين في درس واحد
+
+1. **scroll-snap**: الـ scroll الأفقي في الـ carousel يقف دايمًا على بداية كارت، مش في النص.
+2. **scroll-padding و scroll-margin**: لما المتصفح يعمل scroll لعنصر (لينك [[#faq]] مثلًا)، يسيب مسافة فوقه عشان الـ header الثابت ميغطيهوش.
+
+حطينا المثال في صفحة فيها header ثابت ارتفاعه 64px، وخلينا الـ carousel عرضه 400px بـ 6 كروت، وقسنا كل حاجة في Chrome 154 (headless عن طريق playwright).
+
+---
+
+## ١. الـ HTML
+
+~~~text index.html
+<ul class="carousel" tabindex="0" aria-label="منتجات مقترحة">
+  <li><img src="/p/1.webp" alt="سماعة" width="300" height="300"></li>
+  <li><img src="/p/2.webp" alt="ماوس" width="300" height="300"></li>
 </ul>
 ~~~
 
-**هتشوف إيه:** تلات بنود، قدام كل واحد علامة صح خضرا، والكلام أسود.
+- [[<ul>]] لستة، و [[<li>]] كل كارت. لستة عشان قارئ الشاشة يقول «لستة فيها كذا عنصر».
+- [[tabindex="0"]]: الـ [[<ul>]] مش بياخد focus لوحده. الـ 0 بيحطه في ترتيب الـ Tab، فمستخدم الكيبورد يقف عليه ويعمل scroll بالأسهم.
+- [[aria-label]]: اسم اللستة لقارئ الشاشة، لأن مفيش عنوان جنبها.
+- [[width]] و [[height]] على الصورة: المتصفح يحجز مكانها قبل ما توصل (درس «احجز المكان» تحت).
 
-**ليه كده:** [[list-style-type]] بتاخد نص بين تنصيص (والمسافة اللي جواه هي الفراغ بين العلامة والكلام). و [[::marker]] بيلوّن العلامة لوحدها.
+---
 
-**الغلطة الشائعة:** [[li { color: #059669; }]]. العلامة هتخضرّ، والكلام كله معاها.
+## ٢. سطر الحاوية: [[.carousel { ... }]]
 
-~~~text القياس من Chrome
-ul           list-style-type: "✓ "
-li::marker   color: rgb(5, 150, 105)
-li           color: rgb(0, 0, 0)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** المبرمج كتب [[padding: 0]] على القايمة عشان «يشيل الفراغ الكبير»، فالأرقام بقت برّه الكارت. رجّع للقايمة مسافة [[1.5em]] ناحية البداية بس (مش الـ 40px الافتراضية)، وخلّي الأرقام عربي. (من قسم ١ و ٢ في الشرح)`, done: R`[[padding-inline-start]] بقت 24px والأرقام [[arabic-indic]]، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  .card { border: 2px solid #111; width: 250px; margin-inline-start: 36px; padding: 6px; }
-  ol { padding: 0; margin: 0; }
-</style>
-<div class="card">
-  <ol>
-    <li>افتح الترمنال</li>
-    <li>ادخل فولدر المشروع</li>
-    <li>شغّل الأمر</li>
-  </ol>
-</div>`, checks: [
-              { say: R`القايمة ليها مسافة 1.5em (24px) ناحية البداية`, q: "ol", style: ["padding-inline-start", "24px"] },
-              { say: R`الأرقام عربي: [[arabic-indic]]`, q: "ol", style: ["list-style-type", "arabic-indic"] },
-              { say: R`العلامات لسه برّه صندوق البند ([[outside]])`, q: "ol", style: ["list-style-position", "outside"] }
-            ] }, sol: R`~~~live 86 بعد التصليح
-<style>
-  .card { border: 2px solid #111; width: 250px; margin-inline-start: 36px; padding: 6px; }
-  ol { padding: 0; padding-inline-start: 1.5em; margin: 0; list-style-type: arabic-indic; }
-</style>
-<div class="card">
-  <ol>
-    <li>افتح الترمنال</li>
-    <li>ادخل فولدر المشروع</li>
-    <li>شغّل الأمر</li>
-  </ol>
-</div>
+السطر طويل، فنفكّه خاصية خاصية:
+
+| الخاصية | بتعمل إيه |
+|---|---|
+| [[display: flex]] | الكروت جنب بعض في صف |
+| [[gap: 1rem]] | 16px بين كل كارت والتاني |
+| [[overflow-x: auto]] | الكروت أعرض من الحاوية؟ اعمل scroll أفقي (x = أفقي) |
+| [[scroll-snap-type: x mandatory]] | الوقوف على نقط الـ snap في الاتجاه الأفقي، و [[mandatory]] = إجباري دايمًا |
+| [[overscroll-behavior-x: contain]] | لما الـ scroll يوصل للآخر ميكمّلش في الصفحة ولا يعمل «رجوع» |
+| [[scroll-padding-inline: 1rem]] | نقطة الوقوف بعد 16px من الحافة مش لازقة فيها |
+| [[padding-inline: 1rem]] | مسافة 16px يمين وشمال جوه الحاوية |
+
+[[inline]] في [[scroll-padding-inline]] و [[padding-inline]] معناها اتجاه السطر (الأفقي في العربي والإنجليزي)، يعني الجنبين مع بعض.
+
+## ٣. سطر الكارت: [[.carousel > li { flex: 0 0 80%; scroll-snap-align: start; list-style: none; }]]
+
+- [[flex: 0 0 80%]] تلات أرقام: [[0]] ميكبرش، و [[0]] ميصغرش، و [[80%]] عرضه 80% من الحاوية. فالكارت اللي بعده بيبان طرفه، وده بيقول للمستخدم «اسحب، فيه كمان».
+- [[scroll-snap-align: start]]: نقطة الوقوف هي **بداية** الكارت (في العربي بدايته اليمين، لأن start logical).
+- [[list-style: none]]: يشيل النقطة اللي قبل كل [[<li>]].
+
+اللي اتقاس:
+
+~~~text getBoundingClientRect و offsetLeft
+عرض الكارت:              320   (80% من 400)
+بداية كل كارت:           16, 352, 688, 1024, 1360, 1696
 ~~~
 
-وده اللي كان باين قبل التصليح:
+الأول بيبدأ عند 16 (الـ padding)، وكل واحد بعده بـ 336 = 320 عرض + 16 gap.
 
-~~~live 86 قبل
-<style>
-  .card { border: 2px solid #111; width: 250px; margin-inline-start: 36px; padding: 6px; }
-  ol { padding: 0; margin: 0; }
-</style>
-<div class="card">
-  <ol>
-    <li>افتح الترمنال</li>
-    <li>ادخل فولدر المشروع</li>
-    <li>شغّل الأمر</li>
-  </ol>
-</div>
+### التجربة: قلنا للـ carousel يروح لمكان، ووقف فين؟
+
+| [[scrollTo]] لـ | مع [[scroll-snap-type]] | من غيره |
+|---|---|---|
+| 100 | 0 | 100 |
+| 200 | 336 | 200 |
+| 400 | 336 | 400 |
+
+من غير snap بيقف مكان ما قلتله بالظبط، ممكن في نص كارتين. مع الـ snap بيروح لأقرب نقطة وقوف: 0 (الكارت الأول) أو 336 (التاني). و 336 دي بداية الكارت التاني (352) ناقص الـ [[scroll-padding-inline]] (16).
+
+وبالكيبورد: Tab وقف على الـ carousel، وكل سهم يمين نقله كارت بالظبط:
+
+~~~text scrollLeft بعد كل ArrowRight
+336
+672
+1008
 ~~~
 
-**هتشوف إيه:** قبل: الأرقام 1 و 2 و 3 راكبة على الإطار الأسود وطالعة برّاه. بعد: «١.» و «٢.» و «٣.» جوه الكارت، والكلام متراص بعدهم.
+وفي صفحة [[dir="rtl"]] نفس الكود: الكارت الأول لازق في الحافة اليمين بعد 16px، وبعد [[scrollTo]] لـ -200 (في RTL الـ scrollLeft بيبقى سالب) وقف عند [[-336]] والكارت التاني بقى على بعد 16px من اليمين. يعني [[start]] اتقلبت لوحدها.
 
-**ليه:** العلامة مع [[outside]] ملهاش مكان في الـ layout. بتترسم في الـ padding اللي ناحية البداية. صفّرته، فاترسمت برّه.
+---
 
-**حل تاني صح:** [[list-style-position: inside]] وتسيب الـ padding صفر. بس السطر التاني من أي بند طويل هيرجع تحت الرقم.
+## ٤. [[html { scroll-padding-top: 5rem; }]] و [[h2[id] { scroll-margin-top: 6rem; }]]
 
-**الغلطة الشائعة:** [[padding-right: 1.5em]]. هتشتغل في العربي، وفي نسخة إنجليزي الأرقام هتطلع برّه من الشمال. [[padding-inline-start]] بتتبع الاتجاه.
+الاتنين بيسيبوا مسافة فوق العنصر لما المتصفح يعمل scroll ليه، بس من مكانين مختلفين:
 
-~~~text القياس من Chrome
-ol   قبل: padding-inline-start: 0px      list-style-type: decimal
-ol   بعد: padding-inline-start: 24px     list-style-type: arabic-indic
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** قايمة تنقل الموقع: شيل العلامات والـ padding، وحط مسافة [[8px]] فوق كل بند قبله بند، وزوّد على [[<ul>]] الـ attribute اللي بيخلّي قارئ الشاشة يفضل يعتبرها قايمة. (من قسم ٣ و ٤ في الشرح)`, done: R`القايمة من غير علامات ولا padding، والبند التاني والتالت فوقهم 8px، وعلى [[<ul>]] [[role="list"]]، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  nav ul { }
-</style>
-<nav aria-label="الرئيسية">
-  <ul>
-    <li><a href="#home">الرئيسية</a></li>
-    <li><a href="#posts">المقالات</a></li>
-    <li><a href="#about">عن المدوّنة</a></li>
-  </ul>
-</nav>`, checks: [
-              { say: R`مفيش علامات`, q: "nav ul", style: ["list-style-type", "none"] },
-              { say: R`مفيش padding ناحية البداية`, q: "nav ul", style: ["padding-inline-start", "0px"] },
-              { say: R`كل بند قبله بند فوقه 8px`, q: "nav li + li", style: ["margin-top", "8px"] },
-              { say: R`أول بند من غير مسافة فوقه`, q: "nav li:first-child", style: ["margin-top", "0px"] },
-              { say: R`[[<ul>]] عليه [[role="list"]]`, q: "nav ul", attr: ["role", "list"] }
-            ] }, sol: R`~~~live 102 الحل
-<style>
-  nav ul { list-style: none; padding: 0; }
-  nav li + li { margin-block-start: 8px; }
-</style>
-<nav aria-label="الرئيسية">
-  <ul role="list">
-    <li><a href="#home">الرئيسية</a></li>
-    <li><a href="#posts">المقالات</a></li>
-    <li><a href="#about">عن المدوّنة</a></li>
-  </ul>
-</nav>
+| الخاصية | بتتحط على | معناها |
+|---|---|---|
+| [[scroll-padding-top]] | الحاوية اللي بتعمل scroll (هنا [[html]] = الصفحة كلها) | «أي عنصر تروحله، سيب فوقه كذا» |
+| [[scroll-margin-top]] | العنصر نفسه | «لما تروحلي أنا، سيب فوقي كذا» |
+
+و [[h2[id]]] يعني «أي h2 عليه id»، لأن دول بس اللي بيبقى ليهم لينك [[#]].
+
+جرّبنا بلينك [[#faq]] (على h2 عليه [[id="faq"]]) وبـ [[scrollIntoView()]] على فقرة عادية، وقسنا بُعد العنصر من فوق الشاشة:
+
+| | h2 بعد [[#faq]] | فقرة بعد [[scrollIntoView]] |
+|---|---|---|
+| المثال زي ما هو | 176px | 80px |
+| من غير الاتنين | 0px (تحت الـ header) | 0px |
+
+- الفقرة: 80 = [[5rem]] بتاعة [[scroll-padding-top]] بس.
+- الـ h2: 176 = 80 + 96 ([[6rem]]): **الاتنين بيتجمعوا**. فلو حطيت الاتنين خليهم مع بعض قد ارتفاع الـ header ومسافة صغيرة، مش كل واحد لوحده قد الـ header.
+- من غيرهم: العنصر بيبقى عند 0، يعني ورا الـ header اللي ارتفاعه 64.
+
+## ٥. [[@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }]]
+
+- [[scroll-behavior: smooth]]: الـ scroll للينكات بيبقى ناعم بدل ما ينط.
+- [[@media (prefers-reduced-motion: no-preference)]]: «بس لو المستخدم **مش** طالب حركة أقل من إعدادات نظامه».
+
+اتأكدنا: الـ [[scroll-behavior]] المحسوب على الـ html كان [[smooth]] في الوضع العادي، ولما شغّلنا المتصفح بـ reduced motion بقى [[auto]] (ينط على طول).
+
+> [[overscroll-behavior-x: contain]] وإحساس الـ swipe على الموبايل محتاجين تليفون حقيقي، والكلام عنهم من الـ docs بتاعة MDN.
+
+---
+
+## الخلاصة
+
+| الخاصية | على مين | ليه |
+|---|---|---|
+| [[scroll-snap-type: x mandatory]] | الحاوية اللي عليها [[overflow]] | يقف على نقط |
+| [[scroll-snap-align: start]] | الأولاد المباشرين | النقطة = بداية الكارت |
+| [[scroll-padding-inline]] | الحاوية | الوقفة بعد مسافة من الحافة |
+| [[scroll-padding-top]] | [[html]] | مسافة فوق أي عنصر بتروحله |
+| [[scroll-margin-top]] | العنصر | مسافة زيادة ليه هو، وبتتجمع مع اللي فوق |
+
+- الـ snap شغال بس لو [[overflow]] و [[scroll-snap-type]] على **نفس** العنصر.
+- [[mandatory]] مع كروت أطول من الشاشة غلط: استخدم [[proximity]].`,
+          lines: [
+            "القايمة الأفقية: ليها اسم وبتاخد focus للـ scroll بالكيبورد.",
+            R`كارت: [[li]] جواه صورة بمقاسات و alt، فالقايمة بتتقري «لستة فيها ٢».`,
+            R`كارت تاني بنفس الشكل؛ في الحقيقة دول بيتولدوا من بيانات.`,
+            R`قفلة القايمة؛ الـ snap كله في الـ CSS، مفيش JavaScript.`,
+            R`flex أفقي، و scroll أفقي، والوقوف إجباري على نقط الـ snap، والـ scroll ميكمّلش للصفحة، ونقطة الوقوف بعد 1rem من الحافة.`,
+            "كل كارت 80% من العرض (فاللي بعده باين)، والوقوف على بدايته.",
+            "أي scroll لعنصر (لينك # أو focus) يسيب 5rem للـ header الثابت.",
+            "والعناوين اللي ليها id مسافة زيادة.",
+            "scroll ناعم للينكات، بس للي مش طالب حركة أقل."
+          ],
+          sol: R`مع [[scroll-snap-type]]: لما تسيب إيدك في أي مكان، الـ carousel بيكمّل لحد ما بداية كارت تبقى على الحافة (بعد 1rem). من غيره: بيقف مكان ما سبته، ممكن في نص كارتين.
+
+اللينك لـ [[#faq]] من غير scroll-padding: العنوان بيبقى تحت الـ header الثابت ومش باين. مع [[scroll-padding-top: 5rem]]: العنوان باين تحت الـ header على طول. ونفس الحكاية مع Tab على حقل تحت الـ header وانت طالع لفوق.
+
+لو الـ snap مش شغال: اتأكد إن [[overflow-x: auto]] على نفس العنصر اللي عليه [[scroll-snap-type]]، وإن [[scroll-snap-align]] على الأولاد المباشرين.`
+        },
+        {
+          cmd: "View Transitions",
+          ref: [
+            { t: "MDN: View Transition API", url: "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API" },
+            { t: "Chrome: Cross-document view transitions", url: "https://developer.chrome.com/docs/web-platform/view-transitions/cross-document" },
+            { t: "MDN: animation-duration", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-duration" },
+            { t: "MDN: view-transition-name", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/view-transition-name" },
+            { t: "MDN: ::view-transition-group()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::view-transition-group" },
+            { t: "MDN: ::view-transition-new()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::view-transition-new" },
+            { t: "MDN: ::view-transition-old()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::view-transition-old" },
+            { t: "MDN: @view-transition", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@view-transition" },
+          ],
+          title: "حركة ناعمة بين حالتين أو صفحتين",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين في الصفحة عليهم نفس [[view-transition-name: product-42]] في نفس الوقت، وبدأت [[document.startViewTransition()]]. هيحصل إيه؟`, done: R`مفيش حركة خالص: الكونسول طلّع «Unexpected duplicate view-transition-name: product-42»، و [[transition.ready]] اترفض بـ «InvalidStateError: Transition was aborted because of invalid state. Snapshot capture failed» (Chrome 156). الاسم لازم يبقى فريد في كل لحظة.`,
+              sol: R`~~~live 130 130 vt-dup.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>اسم مكرر</title>
+<style>.x { view-transition-name: product-42; }</style></head>
+<body>
+  <main><h1>منتج</h1><div class="x">أ</div><div class="x">ب</div></main>
+  <script>
+    const tr = document.startViewTransition(() => {});
+    tr.ready.catch(e => console.log(e.name + ": " + e.message));
+  $__lt/script>
+</body></html>
 ~~~
 
-**هتشوف إيه:** تلات لينكات تحت بعض، من غير نقط، وبادئين من الحافة، وبينهم فراغ بسيط.
+الـ view transition بتاخد صورة لكل اسم قبل وبعد التغيير، وبتربط صورة «قبل» بصورة «بعد» بالاسم. لو الاسم على عنصرين في نفس اللحظة، المتصفح مش عارف يربط أنهي بأنهي، فبيلغي الانتقال كله: مش العنصرين بس.
 
-**ليه كده:**
+اللي بيحصل: التغيير نفسه بيتطبق عادي (الـ callback بيشتغل)، بس من غير أي حركة، و [[transition.ready]] بيترفض. عشان كده لازم [[catch]]، وإلا هتشوف unhandled rejection.
 
-- [[list-style: none]] و [[padding: 0]] مع بعض: شيلنا العلامة **و** مكانها.
-- [[li + li]] بتدّي المسافة للبنود اللي ليها أخ قبلها، فالأول مياخدش فراغ فوقه.
-- [[role="list"]]: احتياط لـ Safari مع VoiceOver (MDN). جوه [[<nav>]] مش ضروري، وموجوده مبيضرّش.
+الحل: كل كارت اسمه من الـ id ([[card-42]])، أو في الكروت اللي بتيجي بعدد كبير [[view-transition-name: match-element]] لو المتصفح بيدعمها.
 
-**الغلطة الشائعة:** [[margin-bottom]] على كل البنود. البند الأخير هيسيب فراغ زيادة تحت القايمة.
+الغلطة الشائعة: تحط الاسم على كلاس بيتكرر ([[.card]])، فتشتغل على كارت واحد وتقع لما يبقوا اتنين.
 
-~~~text القياس من Chrome
-nav ul              list-style-type: none     padding-inline-start: 0px
-nav li + li         margin-top: 8px
-nav li:first-child  margin-top: 0px
+~~~text الناتج (Chrome 156)
+الكونسول: Unexpected duplicate view-transition-name: product-42
+transition.ready: InvalidStateError: Transition was aborted because of invalid state. Snapshot capture failed
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** خطوات شرح معمولة عناوين [[<h3>]] جوه [[.guide]]. رقّمهم بعدّاد اسمه [[step]] من غير ما تكتب رقم في الـ HTML: قبل كل عنوان رقمه بالأرقام العربي وبعده [[". "]]. (من قسم ٦ في الشرح)`, done: R`العدّاد متعمل على [[.guide]]، وكل [[h3]] بيزوّده وبيعرضه بـ [[arabic-indic]]، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  .guide { }
-  .guide h3 { margin: 6px 0; }
-  .guide h3::before { }
-</style>
-<div class="guide">
-  <h3>نزّل الملفات</h3>
-  <h3>فك الضغط</h3>
-  <h3>شغّل البرنامج</h3>
-</div>`, checks: [
-              { say: R`العدّاد [[step]] متعمل على [[.guide]]`, q: ".guide", style: ["counter-reset", "step 0"] },
-              { say: R`كل عنوان بيزوّد [[step]] واحد`, q: ".guide h3", style: ["counter-increment", "step 1"] },
-              { say: R`قبل العنوان: الرقم بالعربي وبعده نقطة ومسافة`, q: ".guide h3", pseudo: "::before", style: ["content", "counter(step, arabic-indic) \". \""] },
-              { say: R`مفيش أرقام مكتوبة بإيدك في العناوين`, q: ".guide h3", has: "نزّل الملفات" }
-            ] }, sol: R`~~~live 94 الحل
+            { lvl: 'تطبيق', t: R`**ابني:** شبكة كروت فيها فلتر chips، وكل كارت [[view-transition-name: card-<id>]] (اسم فريد). الفلتر بيتطبق جوه [[startViewTransition]]، فالكروت الفاضلة بتتزحلق لأماكنها الجديدة واللي اتشالت بتختفي.`, done: R`الكروت بتتحرك لأماكنها بدل ما تقفز، ومفيش duplicate في الكونسول، والفلتر شغال من غير حركة في المتصفح اللي مش بيدعم ومع reduce، والـ focus فاضل على الـ chip.`,
+              sol: R`~~~live 290 290 vt-filter.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>فلتر بحركة</title>
 <style>
-  .guide { counter-reset: step; }
-  .guide h3 { margin: 6px 0; counter-increment: step; }
-  .guide h3::before { content: counter(step, arabic-indic) ". "; }
-</style>
-<div class="guide">
-  <h3>نزّل الملفات</h3>
-  <h3>فك الضغط</h3>
-  <h3>شغّل البرنامج</h3>
-</div>
-~~~
-
-**هتشوف إيه:** «١. نزّل الملفات» و «٢. فك الضغط» و «٣. شغّل البرنامج». انقل عنوان مكان التاني في الكود: الأرقام بتتظبط لوحدها.
-
-**ليه كل سطر في مكانه:**
-
-- [[counter-reset]] على **الأب**: العدّاد بيتعمل مرة عند أول [[.guide]].
-- [[counter-increment]] على **العنوان نفسه**: كل عنوان بيزوّد.
-- [[counter()]] جوه [[content]] بتاعة [[::before]]: المكان الوحيد اللي بتشتغل فيه.
-
-**الغلطة الشائعة:** [[counter-reset: step]] على [[h3]] نفسه. كل عنوان هيصفّر العدّاد ويزوّده واحد، فالتلاتة هيطلعوا «١».
-
-~~~text القياس من Chrome
-.guide              counter-reset: step 0
-.guide h3           counter-increment: step 1
-.guide h3::before   content: counter(step, arabic-indic) ". "
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** عرّف نظام ترقيم اسمه [[abjad]] بـ [[@counter-style]]: النظام [[alphabetic]]، والرموز «أ» «ب» «ج» «د»، وبعد كل علامة [[") "]]. واستخدمه على قايمة اختيارات سؤال. (من قسم ٧ في الشرح)`, done: R`القايمة [[list-style-type: abjad]] والتعريف فيه [[system]] و [[symbols]] و [[suffix]]، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  /* عرّف abjad هنا */
-
-  ol { }
-</style>
-<p>أنهي خاصية بتغيّر شكل علامة القايمة؟</p>
-<ol>
-  <li>list-style-position</li>
-  <li>list-style-type</li>
-  <li>text-indent</li>
-</ol>`, checks: [
-              { say: R`القايمة بتستخدم النظام [[abjad]]`, q: "ol", style: ["list-style-type", "abjad"] },
-              { say: R`فيه تعريف [[@counter-style abjad]]`, src: "@counter-style abjad" },
-              { say: R`النظام [[alphabetic]]`, src: "system: alphabetic" },
-              { say: R`الـ suffix قوس ومسافة`, src: "suffix: \") \"" }
-            ] }, sol: R`~~~live 120 الحل
-<style>
-  @counter-style abjad {
-    system: alphabetic;
-    symbols: "أ" "ب" "ج" "د";
-    suffix: ") ";
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .card { padding: 2rem 1rem; background: #dbeafe; border-radius: 10px; }
+  .card[hidden] { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none; }
   }
-  ol { list-style-type: abjad; }
-</style>
-<p>أنهي خاصية بتغيّر شكل علامة القايمة؟</p>
-<ol>
-  <li>list-style-position</li>
-  <li>list-style-type</li>
-  <li>text-indent</li>
-</ol>
+</style></head>
+<body>
+  <main><h1>الأعمال</h1>
+    <div role="group" aria-label="الفلتر">
+      <button data-f="all">الكل</button>
+      <button data-f="web">مواقع</button>
+      <button data-f="app">تطبيقات</button>
+    </div>
+    <div class="grid" id="grid">
+      <article class="card" data-tag="web" style="view-transition-name: card-1">متجر</article>
+      <article class="card" data-tag="app" style="view-transition-name: card-2">مفكرة</article>
+      <article class="card" data-tag="web" style="view-transition-name: card-3">مدونة</article>
+      <article class="card" data-tag="app" style="view-transition-name: card-4">منبّه</article>
+    </div>
+  </main>
+  <script>
+    const cards = [...document.querySelectorAll(".card")];
+    function apply(f) {
+      cards.forEach(c => { c.hidden = f !== "all" && c.dataset.tag !== f; });
+    }
+    document.querySelectorAll("[data-f]").forEach(b => {
+      b.addEventListener("click", () => {
+        const f = b.dataset.f;
+        const quiet = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!document.startViewTransition || quiet) return apply(f);
+        document.startViewTransition(() => apply(f));
+      });
+    });
+  $__lt/script>
+</body></html>
 ~~~
 
-**هتشوف إيه:** الاختيارات قدامها «أ)» و «ب)» و «ج)» بدل 1 و 2 و 3.
+الـ [[startViewTransition]] بياخد صورة، يشغّل الـ callback اللي بيغيّر الـ DOM، ياخد صورة تانية، ويحرّك بينهم. كل كارت ليه اسم فريد، فالمتصفح بيعرف إن ده نفس الكارت في مكان جديد، ويزحلقه:
 
-**ليه كده:**
+- [[view-transition-name: card-1]] لازم يبقى فريد، و [[style]] هنا لأن الاسم من البيانات (في الحقيقة من الـ id).
+- [[if (!document.startViewTransition || quiet) return apply(f)]] هو الـ fallback: المتصفح اللي مش بيدعم أو reduce بيطبق الفلتر على طول، والوظيفة نفسها مبتتأثرش.
+- الـ focus بيفضل على الزرار لأن الزرار نفسه مبيتغيرش.
+- [[hidden]] مش [[display: none]] في JavaScript، و [[.card[hidden]]] لأن [[.card]] ممكن يبقى عليه [[display]].
 
-- [[alphabetic]]: بيعدّ بالرموز زي الحروف. بعد «د» (البند الخامس) هيكتب «أأ» ثم «أب».
-- [[suffix]]: بدّلنا النقطة الافتراضية بقوس.
-- الاسم [[abjad]] من غير تنصيص في المكانين، زي أي اسم في CSS.
+الغلطة الشائعة: تكتب [[apply(f)]] برا الـ callback وتنادي [[startViewTransition]] بعده، فالصورة الأولى تتاخد بعد التغيير ومفيش حركة.
 
-**الغلطة الشائعة:** [[system: cyclic]]. البند الخامس هيرجع «أ» تاني بدل «أأ»، فاختيارين بنفس الحرف.
-
-**وليه [[<ol>]]؟** الاختيارات ليها ترتيب وأسامي («الإجابة ب»). قارئ الشاشة هيقول إنها قايمة مرقّمة من ٣ بنود.
-
-~~~text القياس من Chrome
-ol   list-style-type: abjad
-CSS.supports("list-style-type", "abjad")   true
+~~~text الناتج (Chrome 156)
+على «مواقع»: كروت ظاهرة 2، وحركات شغالة وقت الانتقال 17
+رسايل duplicate في الكونسول: 0
+الـ focus بعد الضغط: مواقع
+مع reduce: كروت ظاهرة 2، وحركات 0
+من غير startViewTransition: كروت ظاهرة 2
+axe: 0
 ~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك عمل خطوات تسطيب برنامج بـ [[<div>]] لكل خطوة، ورقّمهم بعدّاد CSS و [[::before]]. الشكل تمام. اكتبله ٣ أسباب إن [[<ol>]] أحسن هنا، وحالة واحدة العدّاد فيها هو الاختيار الصح. (من قسم ٦ في الشرح: «عدّاد ol نفسه»)`, done: R`ذكرت قارئ الشاشة، والنسخ، وإن الأرقام محتوى مش زينة، وحالة للعدّاد زي ترقيم العناوين.`, sol: R`**إجابة نموذجية:**
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[document.startViewTransition(() => { fetch("/api/p/42").then(r => r.json()).then(render) })]]: الحركة بتحصل بين الصفحة القديمة والقديمة، وبعدين المحتوى الجديد بيقفز. صلّحه.`, done: R`الدالة بقت [[async]] وبترجّع الـ promise ([[await]] للـ fetch والـ render جواها)، فالمتصفح بيستنى المحتوى الجديد قبل ما ياخد الصورة التانية، والحركة بقت بين القديم والجديد فعلًا.`,
+              sol: R`~~~js بعد التصليح
+document.startViewTransition(async () => {
+  const r = await fetch("/api/p/42");
+  const p = await r.json();
+  render(p);
+});
+~~~
 
-**ليه [[<ol>]]:**
+الدالة اللي بتتبعت لـ [[startViewTransition]] لازم تقول للمتصفح «خلصت». المتصفح بيستنى الـ promise اللي بترجعها، وبعدها بياخد صورة «بعد». في الكود القديم الدالة مش بترجّع حاجة، لأن الأقواس [[{ }]] من غير [[return]] معناها [[undefined]]. فالمتصفح افتكر إنها خلصت فورًا، وأخد الصورة التانية قبل الـ fetch، فالحركة بقت بين القديم والقديم، وبعدين المحتوى الجديد نط.
 
-1. **المعنى.** قارئ الشاشة بيقول «قايمة مرقّمة من ٥ بنود» وبيعلن رقم كل بند. الـ [[<div>]] بيتقري كفقرات ورا بعض.
-2. **النسخ.** لما المستخدم ينسخ الخطوات، أرقام [[<ol>]] بتتنسخ معاها. أرقام [[::before]] مبتتحددش ومبتتنسخش.
-3. **من غير CSS.** لو ملف الـ CSS منزلش، [[<ol>]] لسه مرقّمة. والـ [[<div>]] بقوا فقرات من غير أي ترتيب باين.
+[[async]] بتخلّي الدالة ترجّع promise لوحدها، و [[await]] جواها بيخليها متخلصش غير بعد الـ [[render]]. وكان ممكن تحل بكلمة [[return]] قبل [[fetch(...)]].
 
-وكمان [[start]] و [[reversed]] و [[value]] جاهزين في الـ HTML.
+الصفحة بتتجمد في الصورة القديمة طول ما الـ promise مش خلص (المتصفح بيوقف الرسم)، فلو الـ API بطيء، هات البيانات **قبل** [[startViewTransition]] وخلّي الـ callback يعمل [[render]] بس. وفيه timeout حوالي ٤ ثواني بيلغي الانتقال.
 
-**وتقدر تاخد الاتنين:** [[<ol>]] حقيقي، وتنسّق رقمه بـ [[::marker]]، أو تشيل العلامة وترسم رقمك بـ [[counter(list-item)]] جوه [[::before]] لو عايز رقم في دايرة.
+الغلطة الشائعة: تنسى [[await]] قدام [[fetch]] جوه [[async]]، فنفس المشكلة بتحصل بشكل أهدى.
 
-**إمتى العدّاد هو الصح:** لما الحاجة اللي بتترقّم **مش قايمة**: عناوين أقسام مستند («١. المقدمة» و «٢. التسطيب»)، أو «شكل ٣» تحت كل صورة، أو أرقام سطور كود. دول عناصر متفرقة في الصفحة مينفعش يتلمّوا في [[<ol>]].
+~~~text الناتج (Chrome 156، API بيرد بعد 200ms)
+اللي مكتوب في الصفحة لحظة transition.ready (بعد ما الصورة التانية اتاخدت):
+الكود القديم: قديم
+الكود الجديد: جديد
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف دعم الـ View Transitions داخل نفس الصفحة ([[startViewTransition]]) والـ View Transitions بين صفحتين ([[@view-transition]]) في Chrome و Safari و Firefox.`, done: R`جدول: داخل الصفحة Chrome 111 و Safari 18 و Firefox 144، وبين الصفحات Chrome 126 و Safari 18.2 و Firefox لسه (حسب MDN وقت ما دوّرت، واكتب التاريخ)، ومكتوب إن الكود اللي في الدرس بيشتغل من غير حركة في أي متصفح مش بيدعم.`,
+              sol: R`الإجابة النموذجية (بيانات MDN، تاريخ البحث 2026-11-04):
 
-| | [[<ol>]] | عدّاد + [[::before]] |
-|---|---|---|
-| قارئ الشاشة | بيعلن القايمة والأرقام | حسب المتصفح والقارئ |
-| النسخ | الأرقام بتتنسخ | لأ |
-| من غير CSS | مرقّمة | مش مرقّمة |
-| أي عنصر في أي مكان | لأ | أيوه |` }
-          ]
-        },
-        {
-          cmd: ":link و :visited و :hover",
-          title: "تنسيق اللينك في حالاته الخمسة من غير ما يبطّل يبان إنه لينك",
-          pre: [
-            { to: "css/selectors", why: R`الـ pseudo-classes ([[a:hover]] و [[button:focus-visible]]) بدأت هناك، وهنا بنكمّل حالات اللينك كلها` },
-            { to: "css/text-decoration و text-shadow", why: R`الخط اللي تحت اللينك بيتظبط بالخصائص اللي اتشرحت هناك` }
+| الميزة | Chrome | Safari | Firefox |
+|---|---|---|---|
+| داخل نفس الصفحة ([[document.startViewTransition]]) | 111 | 18 | 144 |
+| بين صفحتين ([[@view-transition]]) | 126 | 18.2 | لسه |
+
+الكود اللي في الدرس بيشتغل في أي متصفح مش بيدعم، لأن كل نداء محمي بـ [[if (!document.startViewTransition)]]، وبين الصفحات الـ CSS اللي مش مفهوم بيتجاهل: التنقل عادي من غير حركة. ده معنى إن الـ View Transitions ميزة progressive enhancement: غيابها مش بيكسر حاجة.
+
+ازاي تدوّر بنفسك: افتح صفحة [[Document: startViewTransition() method]] على MDN وانزل لجدول Browser compatibility، وبعدين صفحة [[@view-transition]]. الجداول دي نفسها طالعة من باكدج [[@mdn/browser-compat-data]]، وده اللي اتقري هنا (نسخة 8.1.8). البيانات بتتغير، فاكتب تاريخ بحثك.
+
+الغلطة الشائعة: تشوف Chrome بيدعم وتفترض إن الكل بيدعم، أو تخلي الوظيفة نفسها معتمدة على الحركة.
+
+~~~text الناتج (من browser-compat-data، وتأكيد في Chrome 156)
+same-document: Chrome 111، Safari 18، Firefox 144
+cross-document: Chrome 126، Safari 18.2، Firefox لسه
+"startViewTransition" in document = true، و CSSViewTransitionRule موجود = true
+~~~` },
           ],
-          ref: [
-            { t: "MDN: :link", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:link" },
-            { t: "MDN: :visited", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:visited" },
-            { t: "MDN: Privacy and the :visited selector", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Selectors/Privacy_and_:visited" },
-            { t: "MDN: :hover", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:hover" },
-            { t: "MDN: :active", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:active" },
-            { t: "MDN: :any-link", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:any-link" },
-            { t: "WHATWG: Rendering, phrasing content (ألوان اللينك الافتراضية)", url: "https://html.spec.whatwg.org/multipage/rendering.html#phrasing-content-3" },
-            { t: "MDN Curriculum: Styling lists and links", url: "https://developer.mozilla.org/en-US/curriculum/core/css-text-styling/" }
-          ],
-          desc: R`اللينك ليه خمس حالات، وكل واحدة ليها pseudo-class: [[:link]] (لسه متزارش)، و [[:visited]] (اتزار)، و [[:hover]] (الماوس عليه)، و [[:focus]] (عليه التركيز بالكيبورد)، و [[:active]] (بيتداس دلوقتي).
-والتنسيق الافتراضي (أزرق وتحته خط، وبنفسجي لما يتزار) شكله قديم، بس كل الناس عارفاه. الدرس بيوريك تغيّره من غير ما الزائر يحتار «هو ده لينك ولا لأ؟».`,
-          example: R`a:link { color: #0b57d0; }
-a:visited { color: #6d28d9; }
-a:hover { text-decoration-thickness: 3px; }
-a:focus-visible { outline: 2px solid #0b57d0; outline-offset: 2px; }
-a:active { color: #b91c1c; }
-nav a:any-link { text-decoration: none; }
-a[href^="https://"]::after { content: " ↗"; }`,
+          desc: R`[[document.startViewTransition(update)]] بياخد صورة للصفحة قبل، ويشغّل الدالة اللي بتغيّر الـ DOM، وياخد صورة بعد، ويعمل crossfade بينهم. ولو عنصر ليه [[view-transition-name]] في الحالتين، بيتحرك ويكبر من مكانه القديم للجديد (صورة المنتج في اللستة بتطير لصفحة التفاصيل).
+
+وبين صفحات حقيقية (MPA): [[@view-transition { navigation: auto; }]] في CSS الصفحتين، من غير JavaScript.
+
+دي progressive enhancement: لو المتصفح مش بيدعمها، التغيير بيحصل عادي من غير حركة.`,
+          example: R`function show(view) {
+  const update = () => document.querySelector('main').replaceChildren(view);
+  if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return update();
+  document.startViewTransition(update);
+}
+// styles.css
+.product-42 .thumb { view-transition-name: product-42; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation: none; } }`,
+          try: R`اعمل لستة منتجات وصفحة تفاصيل في نفس الـ HTML، وبدّل بينهم بـ [[show()]]. جرّب من غير [[view-transition-name]]، وبعدين حطه على صورة المنتج في الحالتين بنفس الاسم. وفي DevTools › More tools › Animations بطّأ الحركة لـ 10% وشوف إيه اللي بيتحرك.`,
           flag: "script",
-          lines: [
-            R`اللينك اللي الزائر لسه مفتحوش: أزرق من اختيارنا. [[:link]] بتمسك [[<a>]] اللي ليه [[href]] ومتزارش.`,
-            R`اللينك اللي اتزار قبل كده: بنفسجي. المتصفح بيسمح بتغيير الألوان بس في الحالة دي.`,
-            R`لما الماوس يقف على اللينك، الخط اللي تحته يتخن. تغيير واضح من غير ما حاجة تتحرك من مكانها.`,
-            R`لما اللينك ياخد التركيز بالكيبورد (Tab): إطار أزرق حواليه وبعيد عنه 2px. [[:focus-visible]] مبتظهرش مع ضغطة الماوس.`,
-            R`في اللحظة اللي اللينك بيتداس فيها: أحمر. بتبان ثانية وتختفي، وبتأكد للزائر إن ضغطته اتحسبت.`,
-            R`لينكات قايمة التنقل من غير خط، سواء اتزاروا أو لأ. [[:any-link]] معناها [[:link]] أو [[:visited]].`,
-            R`أي لينك عنوانه بيبدأ بـ [[https://]] (يعني رايح لموقع تاني) بيتحط بعده سهم صغير. ده attribute selector من درس «selectors».`
-          ],
-          teach: R`## الفكرة في سطرين
+          deep: {
+            why: R`الحركة بين الحالات بتوضح للمستخدم إيه اللي حصل: الصورة اللي داس عليها بقت الصورة الكبيرة، مش صفحة جديدة ظهرت فجأة. قبل كده ده كان محتاج مكتبات animation وحسابات أماكن بإيدك. دلوقتي سطر.`,
+            how: R`المتصفح بيعمل snapshot للعناصر اللي ليها أسماء (والصفحة كلها اسمها [[root]])، ويبني شجرة pseudo-elements فوق الصفحة: [[::view-transition-group(name)]] جواه [[::view-transition-old]] و [[::view-transition-new]]. الـ group بيتحرك ويتغير مقاسه من المكان القديم للجديد، والـ old والـ new بيعملوا crossfade. وكله animations عادية تقدر تغيّرها في CSS.
 
-[[<a href>]] هو العنصر الوحيد اللي المتصفح بيغيّر شكله حسب **تاريخ الزائر** (زاره ولا لأ) وحسب **اللي بيعمله دلوقتي** (واقف عليه، بيدوس). كل حالة ليها اسم، وتقدر تنسّقها.
+[[view-transition-name]] لازم يبقى فريد في الصفحة وقت الحركة: لو عنصرين بنفس الاسم الحركة بتتلغي. عشان كده في اللستات بيتحط اسم لكل عنصر (inline style بالـ id)، أو بيتحط على العنصر اللي اتداس بس قبل الحركة.
 
-الأرقام من Chrome 157 على Windows 11. شكل اللينك «اللي اتزار» متقاسش هنا (المتصفح الـ headless مبيحفظش تاريخ زيارات)، وكل اللي عنه من MDN ومواصفة HTML.
+الدعم: الـ same-document ([[startViewTransition]]) بقى في كل المتصفحات الأساسية من أواخر 2025. الـ cross-document ([[@view-transition]]) في Chrome و Edge و Safari، ولسه مش في كل المتصفحات وقت كتابة الدرس، فراجع caniuse. وفي الحالتين الكود بيشتغل عادي من غير الحركة لو مش مدعوم.
 
----
+في React و Next: فيه شغل على مكون [[<ViewTransition>]] في React و flag تجريبي في Next.js، اتأكد من حالتهم في الدوكس بتاعة النسخة اللي عندك قبل ما تعتمد عليهم.`,
+            when: R`لستة لتفاصيل، وتبديل الـ tabs أو الـ views، وتغيير ترتيب لستة، وفتح صورة كبيرة. وخليها قصيرة (200 لـ 300ms) وقليلة، واحترم reduced motion دايمًا.`,
+            mistakes: R`نفس الـ view-transition-name على كذا عنصر فمفيش حركة خالص. حركة طويلة بتخلي الموقع يحس إنه بطيء. تنسى reduced motion. تستدعي [[startViewTransition]] من غير ما تتأكد إنه موجود فالموقع يقع في المتصفحات اللي مش بتدعمه. والدالة اللي جوه async وبتجيب بيانات من السيرفر: الصفحة بتبقى متجمدة لحد ما تخلص، فهات البيانات الأول وبعدين ابدأ الحركة.`
+          },
+          teach: R`## صورة قبل، وصورة بعد، والمتصفح بيحرّك بينهم
 
-## ١. الشكل الافتراضي، وليه مهم
-
-~~~live 50 68 لينك من غير أي CSS
-<p>اقرا <a href="#guide">دليل البداية</a> قبل ما تسطّب، أو شوف <a>كلمة جوه a من غير href</a>.</p>
-~~~
-
-**هتشوف إيه:** «دليل البداية» أزرق وتحته خط، والماوس بيبقى إيد لما تقف عليه. «كلمة جوه a من غير href» شكلها زي باقي الكلام بالظبط.
-
-~~~text القياس من Chrome (من غير CSS)
-<a href="...">    color: rgb(0, 0, 238)    text-decoration: underline    cursor: pointer     :link ✓
-<a> من غير href   color: rgb(0, 0, 0)      text-decoration: none         cursor: auto        :link ✗
-لينك عليه focus    outline: auto 1px        outline-offset: 1px
-~~~
-
-ومن مواصفة HTML (قسم Rendering): اللينك اللي اتزار [[#551A8B]] (بنفسجي)، واللي بيتداس [[#FF0000]] (أحمر).
-
-الألوان دي عمرها من عمر الويب. والنتيجة إن **كل مستخدم إنترنت في الدنيا** اتعلم قاعدة واحدة من غير ما حد يشرحها له: **كلام أزرق تحته خط = بيتداس**. وبنفسجي = «أنا كنت هنا».
-
-ده اللي MDN Curriculum بيسميه أهمية التنسيق الافتراضي: المألوف بيخلّي الناس تتعرّف على اللينك من غير تفكير. وده معناه:
-
-- لو شيلت الخط **واللون**، الزائر مش هيعرف إن فيه لينك.
-- لو حطيت خط تحت كلام **مش لينك**، الزائر هيدوس عليه ويفتكر الموقع بايظ.
-- لو خلّيت اللينك اللي اتزار زي اللي متزارش، الزائر في صفحة فيها 30 لينك هيفتح نفس الصفحات مرتين.
-
-غيّر الدرجة والتُخن والشكل زي ما تحب. متغيّرش **اللغة**: حاجة تميّزه عن الكلام (ومش اللون لوحده)، وحاجة تتغيّر لما تقف عليه.
+انت بتغيّر الـ DOM عادي، والمتصفح هو اللي بيعمل الحركة: بياخد لقطة للصفحة قبل التغيير، ويشغّل التغيير، وياخد لقطة بعده، ويعمل fade بينهم. المثال فيه دالة JavaScript للتغيير جوه نفس الصفحة، و ٤ سطور CSS. جرّبناه في Chrome 154 (headless عن طريق playwright): لستة فيها مربع صغير (الصورة) بنبدّلها بصفحة تفاصيل فيها نفس المربع كبير.
 
 ---
 
-## ٢. الحالات الخمسة
+## ١. الدالة [[show(view)]]
 
-| الحالة | الـ selector | بتحصل إمتى |
-|---|---|---|
-| متزارش | [[a:link]] | [[<a>]] ليه [[href]] والعنوان مش في تاريخ المتصفح |
-| اتزار | [[a:visited]] | [[<a>]] ليه [[href]] والعنوان اتفتح قبل كده |
-| الماوس عليه | [[a:hover]] | المؤشر واقف فوق العنصر |
-| عليه التركيز | [[a:focus]] و [[a:focus-visible]] | وصلتله بـ Tab أو دوست عليه |
-| بيتداس | [[a:active]] | من لحظة الضغط لحد ما تسيب |
-
-أول اتنين بيلغوا بعض: اللينك يا [[:link]] يا [[:visited]]. التلاتة التانيين «حالات لحظية» ممكن ييجوا فوق أي واحدة منهم، ومع بعض (لينك اتزار، والماوس عليه، وبيتداس).
-
-~~~live 63 جرّب: قف بالماوس، ودوس Tab، ودوس واستنى
-<style>
-  a:link { color: #0b57d0; }
-  a:visited { color: #6d28d9; }
-  a:hover { background: #dbeafe; }
-  a:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-  a:active { color: #b91c1c; }
-  p { font-size: 20px; }
-</style>
-<p><a href="#one">لينك أول</a> · <a href="#two">لينك تاني</a> · <a href="#three">لينك تالت</a></p>
-~~~
-
-**هتشوف إيه:**
-
-- واقف بالماوس على لينك: خلفية أزرق فاتح وراه.
-- دوس جوه المعاينة وبعدين Tab: إطار برتقالي بيتنقل من لينك للتاني.
-- دوس على لينك وخلّي صباعك دايس: الكلام أحمر لحد ما تسيب.
-- بعد ما تدوس على لينك مرة، ممكن يبقى بنفسجي (اتزار). ده بيعتمد على المتصفح وتاريخه.
-
----
-
-## ٣. [[a:link]] ولا [[a]] ولا [[a:any-link]]؟
-
-| الـ selector | بيمسك |
-|---|---|
-| [[a]] | كل [[<a>]]، حتى اللي من غير [[href]] (اللي مش لينك أصلًا) |
-| [[a:link]] | اللي ليه [[href]] ومتزارش بس |
-| [[a:visited]] | اللي ليه [[href]] واتزار |
-| [[a:any-link]] | اللي ليه [[href]]، اتزار أو لأ. يعني [[:link]] و [[:visited]] مع بعض |
-
-~~~text القياس من Chrome (element.matches)
-                         :link     :any-link
-<a href="https://...">   true      true
-<a href="#x">            true      true
-<a> من غير href          false     false
-~~~
-
-في الشغل:
-
-- خصائص مشتركة لكل اللينكات (الخط، التُخن): على [[a]] أو [[a:any-link]].
-- لون مختلف للي اتزار: [[a:link]] و [[a:visited]].
-- [[a]] من غير [[href]] بيتستخدم كـ «مكان لينك مقفول» (مثلًا الصفحة الحالية في القايمة). لو نسّقت [[a]] بلون أزرق، هيبان لينك وهو مبيتداسش. [[a:any-link]] بتتجنب ده.
-
-والـ specificity: [[a:link]] فيها عنصر و pseudo-class، يعني (0,1,1)، أعلى من [[a]] لوحدها (0,0,1). فلو كتبت [[a { color: red }]] ولقيت اللون مبيتغيّرش، غالبًا فيه [[a:link]] في حتة تانية كسبانة (درس «specificity»).
-
----
-
-## ٤. [[a:visited]] وحدود الخصوصية
-
-[[:visited]] الحالة الوحيدة اللي المتصفح بيقيّدها. السبب: لو صفحة تقدر تعرف أنهي لينكات إنت زرتها، تقدر تعرف **تاريخ تصفّحك**: بتحط ألف لينك مخفي لمواقع بنوك ومستشفيات وتشوف مين فيهم بنفسجي.
-
-عشان كده (من MDN):
-
-**الخصائص المسموحة جوه [[:visited]] ألوان بس:**
-
-| مسموح | ممنوع (بيتجاهل) |
-|---|---|
-| [[color]] و [[background-color]] | [[font-size]] و [[font-weight]] وأي خاصية خط |
-| [[border-color]] وأطرافها الأربعة و [[outline-color]] | [[background-image]] و [[display]] وأي خاصية بتغيّر الـ layout |
-| [[text-decoration-color]] و [[text-emphasis-color]] | [[text-decoration-line]] (تشيل أو تحط خط) |
-| [[column-rule-color]]، و [[fill]] و [[stroke]] في SVG | [[content]] بتاعة [[::after]]، وأي حاجة بتغيّر مقاس |
-
-يعني مينفعش تحط علامة «✓» بعد اللينك اللي اتزار، ولا تخلّيه أصغر. لون وبس.
-
-**وكمان:**
-
-- **الشفافية بتتجاهل.** لو لون [[:link]] من غير شفافية، مينفعش [[:visited]] يبقى شفاف. فمتقدرش «تخفي» اللينك اللي اتزار.
-- **JavaScript بيتكدّب عليه.** [[getComputedStyle]] بيرجّع دايمًا لون الحالة **اللي متزارتش**، حتى لو اللينك قدامك بنفسجي. و [[querySelector(":visited")]] بيرجّع فاضي دايمًا.
-- عشان لون يتغيّر في [[:visited]] لازم يبقى له قيمة في الحالة العادية. [[background-color]] اللي مش متحددة أصلًا (شفافة) مش هتتلوّن في [[:visited]].
-
-~~~text القياس من Chrome (صفحة فيها a:visited { color: red; font-size: 40px; })
-getComputedStyle(a).color        →  لون a:link          (مش الأحمر)
-getComputedStyle(a).fontSize     →  الحجم العادي        (font-size جوه :visited اتجاهلت)
-document.querySelectorAll(":visited").length   →  0
-~~~
-
-(القياس ده على لينكات متزارتش، لأن الـ headless ملوش تاريخ. اللي MDN بيقوله إن الأرقام دي بتفضل زي ما هي حتى لو اللينك اتزار.)
-
-ووثائق Chrome بتقول إن المتصفح بقى «بيقسّم» تاريخ الزيارات: اللينك بيتلوّن إنه اتزار بس لو اتداس عليه **من نفس الموقع** قبل كده، مش لمجرد إن العنوان اتفتح من أي مكان. (من وثائق Chrome، متقاسش هنا.)
-
-**العملي:** ادّي [[:visited]] لون مختلف واضح عن [[:link]]، ومن نفس «عيلة» اللون (أزرق ← بنفسجي) عشان الاتنين يفضلوا باينين إنهم لينكات. ده كل اللي تقدر عليه، وكفاية.
-
----
-
-## ٥. [[a:hover]]
-
-بتتفعّل طول ما المؤشر فوق العنصر. بتشتغل على **أي عنصر**، مش اللينكات بس ([[tr:hover]] و [[.card:hover]]).
-
-اللي يتغيّر في الـ hover لازم يبقى:
-
-- **واضح** من غير ما يعتمد على لون بس: خط يتخن أو يظهر، خلفية، مش درجة أزرق أغمق شوية.
-- **مبيحرّكش حاجة.** لو الـ hover بيغيّر [[font-weight]] أو [[font-size]] أو بيزوّد border، عرض اللينك بيتغيّر والكلام اللي حواليه بيتزق، والصفحة «بترعش» تحت الماوس.
-
-~~~live 96 138 hover بيزق الكلام وhover ثابت
-<style>
-  p { font-size: 18px; }
-  .bad a:hover { font-weight: 700; }
-  .good a:hover { text-decoration-thickness: 3px; background: #fef9c3; }
-</style>
-<p class="bad">جرّب تقف على <a href="#x">اللينك ده اللي بيتقل</a> وبص على الكلام اللي بعده.</p>
-<p class="good">وبعدين على <a href="#y">اللينك ده اللي خطه بيتخن</a> وبص على الكلام اللي بعده.</p>
-~~~
-
-**هتشوف إيه:** في السطر الأول الكلام اللي بعد اللينك بيتحرك شمال لما تقف، ويرجع لما تمشي. في التاني مفيش حاجة بتتحرك: الخط والخلفية رسم بس.
-
-**الموبايل ملوش hover.** مفيش مؤشر. المتصفحات بتقلّد: بعد ما تلمس عنصر، [[:hover]] بتفضل «لازقة» عليه لحد ما تلمس حاجة تانية. فأي معلومة أو زرار بيظهروا في الـ hover **بس** مش موجودين لمستخدم الموبايل ولا لمستخدم الكيبورد. القاعدة: [[:hover]] تحسين للشكل، مش مكان لمحتوى. ولو عايز تنسيق hover للأجهزة اللي ليها ماوس بس: [[@media (hover: hover)]] (درس «media queries»).
-
-وأي حاجة بتتكتب لـ [[:hover]] اكتبها لـ [[:focus-visible]] كمان، عشان مستخدم الكيبورد ياخد نفس الإشارة.
-
----
-
-## ٦. [[a:focus]] و [[a:focus-visible]]
-
-التركيز (focus) هو «العنصر اللي الكيبورد هيتعامل معاه لو دوست Enter». بيتنقل بـ Tab.
-
-- [[:focus]]: العنصر عليه التركيز بأي طريقة (كيبورد أو ضغطة ماوس).
-- [[:focus-visible]]: عليه التركيز **والمتصفح شايف إن المستخدم محتاج يشوفه** (يعني وصله بالكيبورد). مع ضغطة الماوس على لينك مبتتفعّلش.
-
-~~~text القياس من Chrome (لينك عليه focus من غير CSS)
-outline: rgb(16, 16, 16) auto 1px      outline-offset: 1px      :focus ✓    :focus-visible ✓
-~~~
-
-الإطار ده هو الطريقة الوحيدة اللي مستخدم الكيبورد بيعرف بيها هو فين في الصفحة. **متكتبش [[outline: none]] من غير بديل.** لو شكل الإطار الافتراضي مش عاجبك، بدّله بواحد أوضح:
-
-~~~css
-a:focus-visible {
-  outline: 2px solid #0b57d0;
-  outline-offset: 2px;
+~~~javascript
+function show(view) {
+  const update = () => document.querySelector('main').replaceChildren(view);
+  if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return update();
+  document.startViewTransition(update);
 }
 ~~~
 
-الدرس الكامل («focus-visible» في وحدة «Accessibility») فيه الأرقام المطلوبة للتباين والتُخن ولينك التخطي. هنا يكفي إنك متشيلوش.
+### السطر ١: [[const update = () => ...]]
 
----
+[[update]] دالة صغيرة (arrow function) فيها التغيير نفسه ومبتتنفّذش دلوقتي. [[document.querySelector('main')]] بيجيب عنصر [[<main>]]، و [[replaceChildren(view)]] بيشيل كل اللي جواه ويحط [[view]] مكانه. شايلينها في متغير عشان نديها للمتصفح، وهو يقرر إمتى يشغّلها.
 
-## ٧. [[a:active]]
+### السطر ٢: الشرط الطويل
 
-من لحظة ما زرار الماوس ينزل (أو الصباع يلمس) لحد ما يتساب. عمرها جزء من ثانية، وبتدّي الزائر تأكيد: «ضغطتك وصلت».
+نفكّه حتة حتة:
 
-الافتراضي أحمر. ممكن تسيبه، أو تخلّيه درجة أغمق من لون اللينك. وزي [[:hover]] بتشتغل على أي عنصر ([[button:active]]).
-
----
-
-## ٨. الترتيب: L-V-H-A
-
-الحالات الخمسة كلهم نفس الـ specificity (عنصر + pseudo-class). ولما قاعدتين بنفس القوة ينطبقوا مع بعض، **اللي مكتوبة بعد التانية بتكسب** (درس «cascade»). ولينك واحد ممكن يبقى [[:visited]] و [[:hover]] و [[:active]] في نفس اللحظة.
-
-~~~css
-a:link    { color: #0b57d0; }    /* L */
-a:visited { color: #6d28d9; }    /* V */
-a:hover   { color: #1e40af; }    /* H */
-a:active  { color: #b91c1c; }    /* A */
-~~~
-
-- [[:hover]] بعد [[:visited]]: عشان لون الـ hover يبان على اللينك اللي اتزار كمان.
-- [[:active]] بعد [[:hover]]: وإنت بتدوس، الماوس لسه فوق اللينك، فالاتنين شغالين. الأخير يكسب.
-
-لو قلبتهم:
-
-~~~text اللي بيحصل لو a:hover اتكتبت قبل a:visited (من قواعد الـ cascade)
-لينك متزارش + الماوس عليه:    hover كسبانة ✓     (visited مش منطبقة أصلًا)
-لينك اتزار  + الماوس عليه:    visited كسبانة ✗   (مكتوبة بعدها): لون الـ hover مبيظهرش
-~~~
-
-الغلطة دي مبتبانش وإنت بتجرّب، لأن لينكاتك لسه متزارتش. بتبان عند المستخدم اللي زار.
-
-طريقة الحفظ المشهورة: **L**o**V**e **HA**te. و [[:focus-visible]] بتتحط بين الـ hover والـ active، أو بعدهم لو بتغيّر خصائص مختلفة (outline) مبتتعارضش مع الألوان.
-
----
-
-## ٩. لينك جوه فقرة غير لينك في قايمة
-
-**جوه الفقرة:** اللينك وسط كلام عادي، فلازم يتميّز عنه. اللون لوحده مش كفاية: ناس كتير مبتفرّقش بين الأزرق والأسود (عمى الألوان، شاشة في الشمس). قاعدة WCAG إن المعلومة متوصلش باللون بس. فلينك الفقرة **يفضل تحته خط**. جمّل الخط (درس «text-decoration و text-shadow»)، متشيلوش.
-
-**في قايمة التنقل والأزرار والكروت:** المكان نفسه بيقول إنها لينكات (شريط فوق، قايمة في الجنب). هنا الخط ممكن يتشال، ويرجع أو يتبدّل بخلفية في الـ hover والـ focus.
-
-~~~live 98 126 قايمة تنقل من غير خط، وفقرة لينكاتها بخط
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.8; }
-  nav a:any-link { text-decoration: none; color: #111; padding: 4px 8px; }
-  nav a:hover, nav a:focus-visible { background: #e5e7eb; }
-  main a:link { color: #0b57d0; }
-  main a:visited { color: #6d28d9; }
-  main a { text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
-  main a:hover { text-decoration-thickness: 3px; }
-</style>
-<nav><a href="#home">الرئيسية</a> <a href="#posts">المقالات</a> <a href="#about">عن المدوّنة</a></nav>
-<main><p>المقال ده تكملة لـ <a href="#part1">الجزء الأول</a>، وفيه إشارة لـ <a href="#tools">صفحة الأدوات</a>.</p></main>
-~~~
-
-**هتشوف إيه:** فوق: تلات لينكات سودا من غير خط، وكل واحد بياخد خلفية رمادي لما تقف عليه. تحت: لينكين أزرق تحتهم خط رفيع نازل عن الحروف، والخط بيتخن لما تقف.
-
----
-
-## ١٠. علامة لنوع اللينك بالـ attribute selector
-
-الـ attribute selectors (درس «selectors») بتخلّيك تميّز أنواع اللينكات من عنوانها، من غير class:
-
-| الـ selector | بيمسك |
+| الحتة | معناها |
 |---|---|
-| [[a[href^="https://"]]] | العنوان **بيبدأ** بـ https: لينك لموقع تاني (لو لينكاتك الداخلية نسبية) |
-| [[a[href$=".pdf"]]] | العنوان **بينتهي** بـ .pdf: ملف |
-| [[a[href^="mailto:"]]] | لينك بيفتح برنامج الإيميل |
-| [[a[target="_blank"]]] | بيفتح في تبويب جديد |
-| [[a[download]]] | لينك بينزّل ملف على الجهاز |
+| [[document.startViewTransition]] | الدالة نفسها. لو المتصفح مش بيدعمها بتبقى [[undefined]] |
+| [[!]] | عكس: «لو مش موجودة» |
+| [[||]] | «أو» |
+| [[matchMedia('(prefers-reduced-motion: reduce)')]] | بيسأل: المستخدم طالب حركة أقل من إعدادات نظامه؟ |
+| [[.matches]] | [[true]] لو أيوه |
+| [[return update();]] | غيّر على طول من غير حركة واخرج من الدالة |
 
-~~~live 60 سهم بعد اللينك الخارجي وكلمة بعد الـ PDF
-<style>
-  a[href^="https://"]::after { content: " ↗"; }
-  a[href$=".pdf"]::after { content: " (PDF)"; font-size: 0.8em; }
-  p { font-size: 18px; }
-</style>
-<p><a href="about.html">عن المدوّنة</a> · <a href="https://example.test/docs">الوثائق الرسمية</a> · <a href="files/guide.pdf">دليل الاستخدام</a></p>
+### السطر ٣: [[document.startViewTransition(update)]]
+
+ده اللي بيشغّل الحركة. اختبرناه:
+
+~~~text الناتج
+startViewTransition موجودة:              function
+مباشرة بعد show() هل المحتوى اتغيّر؟     false
+بعد ما الحركة خلصت:                       true
 ~~~
 
-**هتشوف إيه:** اللينك الأول عادي. التاني بعده سهم مايل. التالت بعده «(PDF)» بخط أصغر. مكتبناش class على ولا واحد.
+يعني [[update]] مبتتنفذش في نفس اللحظة: المتصفح بياخد اللقطة الأولى الأول وبعدين يشغّلها.
 
-الزائر بيعرف قبل ما يدوس إنه هيخرج من الموقع أو هينزّل ملف (درس «target و rel» و «download و نص اللينك» بيشرحوا ليه ده مهم). خلّي بالك إن نص [[::after]] زينة: ممكن ميتقريش لقارئ الشاشة. المعلومة المهمة فعلًا («يفتح في تبويب جديد») تتكتب في نص اللينك.
+وشغّلنا المتصفح تاني بإعداد reduced motion: مفيش transition اتعمل خالص، والمحتوى اتغيّر **في نفس اللحظة** ([[true]] مباشرة بعد [[show()]]).
 
 ---
 
-## ١١. الغلطات اللي بتحصل فعلًا
+## ٢. الـ CSS
 
-| الغلطة | اللي بيحصل |
+### [[.product-42 .thumb { view-transition-name: product-42; }]]
+
+[[view-transition-name]] بيدّي العنصر اسم. لو عنصر ليه **نفس الاسم** قبل وبعد التغيير، المتصفح بيعتبرهم نفس الحاجة: بيحرّكه ويكبّره من مكانه القديم لمكانه الجديد بدل الـ fade. هنا الصورة الصغيرة في اللستة والكبيرة في التفاصيل الاتنين جوه عنصر عليه [[product-42]].
+
+### الشجرة اللي المتصفح بيبنيها
+
+أثناء الحركة سألنا المتصفح [[document.getAnimations()]] (كل الـ animations الشغالة دلوقتي):
+
+~~~text الناتج (مختصر)
+::view-transition-group(root)        250ms
+::view-transition-group(product-42)  250ms
+::view-transition-old(root)          fade-out  200ms
+::view-transition-new(root)          fade-in   200ms
+::view-transition-old(product-42)    fade-out  250ms
+::view-transition-new(product-42)    fade-in   250ms
+~~~
+
+| الاسم | هو إيه |
 |---|---|
-| [[a { text-decoration: none; color: inherit; }]] على الموقع كله | لينكات الفقرات اختفت وسط الكلام |
-| [[:visited]] بنفس لون [[:link]] | الزائر مبيعرفش هو فتح إيه |
-| [[font-weight]] أو [[content]] جوه [[:visited]] | بيتجاهلوا: ألوان بس |
-| [[a:hover]] قبل [[a:visited]] | الـ hover مبيشتغلش على اللي اتزار |
-| [[a:hover { font-weight: bold }]] | الكلام بيتزق تحت الماوس |
-| [[outline: none]] على [[:focus]] | مستخدم الكيبورد تايه |
-| معلومة أو زرار في [[:hover]] بس | مش موجودين على الموبايل ولا بالكيبورد |
-| تنسيق [[a]] بدل [[a:any-link]] | [[<a>]] من غير [[href]] بيبان لينك |
-| خط تحت كلام مش لينك | الناس بتدوس عليه |
-| اللون لوحده هو الفرق بين اللينك والكلام | اللي مبيفرّقش الألوان مش شايف اللينك |
+| [[root]] | اسم الصفحة كلها، موجود لوحده |
+| [[::view-transition-group(اسم)]] | الصندوق اللي بيتحرك ويتغير مقاسه من القديم للجديد |
+| [[::view-transition-old(اسم)]] | اللقطة القديمة، بتختفي (fade-out) |
+| [[::view-transition-new(اسم)]] | اللقطة الجديدة، بتظهر (fade-in) |
+
+دول pseudo-elements (عناصر وهمية المتصفح بيعملها فوق الصفحة، وتقدر تستايلها بـ CSS) وكل حركة فيهم animation عادية.
+
+### [[::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }]]
+
+الفاصلة بين selectorين = نفس القاعدة للاتنين. [[animation-duration]] مدة الحركة. والناتج فوق بيأكدها: الـ old والـ new بتوع [[root]] بقوا [[200ms]]، والباقي فضل على الافتراضي [[250ms]].
+
+### [[@view-transition { navigation: auto; }]]
+
+ده لحركة بين **صفحتين حقيقيتين** (لينك عادي بيفتح صفحة تانية، MPA). لازم يبقى في CSS الصفحتين، وهما على نفس الـ origin (نفس الدومين والبروتوكول والبورت). عملنا صفحتين على نفس السيرفر فيهم السطر ده ودوسنا على لينك: الصفحة الجديدة وصلها حدث [[pagereveal]] وفيه [[viewTransition]] موجود ([[true]])، يعني الحركة اشتغلت من غير ولا سطر JavaScript. و Chrome فهم السطر ده كـ [[CSSViewTransitionRule]].
+
+### [[@media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation: none; } }]]
+
+[[*]] = أي اسم. «لو المستخدم طالب حركة أقل، بطّل حركة كل الـ groups». الـ JavaScript فوق بيحمي الحركة اللي جوه الصفحة، والسطر ده بيحمي الحركة بين الصفحات (اللي مفيهاش JavaScript).
+
+---
+
+## ٣. الغلطة اللي بتلغي كل حاجة: اسم متكرر
+
+حطينا عنصرين عليهم [[product-42]] في نفس الوقت وشغّلنا transition:
+
+~~~text الناتج
+[console] Unexpected duplicate view-transition-name: product-42
+ready ← InvalidStateError
+المحتوى اتغيّر؟ true
+~~~
+
+الحركة اتلغت، بس التغيير نفسه حصل. عشان كده في لستة منتجات كل عنصر لازم ياخد اسم مختلف ([[product-42]] و [[product-43]]...)، أو تحط الاسم على العنصر اللي اتداس بس قبل الحركة.
 
 ---
 
 ## الخلاصة
 
-- خمس حالات: [[:link]] و [[:visited]] و [[:hover]] و [[:focus-visible]] و [[:active]]. والترتيب في الملف L-V-H-A.
-- الشكل الافتراضي لغة الكل عارفها: غيّر الدرجة، ومتشيلش التمييز.
-- [[:visited]] ألوان بس، و JavaScript ميعرفش يقراها. ده لحماية تاريخ التصفّح.
-- [[:hover]] تحسين: واضح، ومبيحرّكش حاجة، ومعاه [[:focus-visible]].
-- لينك الفقرة تحته خط. لينك القايمة ممكن من غيره.
-- [[a:any-link]] للينكات الحقيقية، و attribute selectors لتمييز نوع اللينك.`,
-          try: R`اعمل [[links.html]] فيه قايمة تنقل من تلات لينكات، وفقرة فيها لينكين (واحد داخلي وواحد لموقع تاني). اكتب الحالات الخمسة بالترتيب الصح للينكات الفقرة، وشيل الخط من لينكات القايمة وادّيهم خلفية في الـ hover. وبعدين افتح DevTools، واختار لينك في Elements، ودوس على [[:hov]] في تبويب Styles وعلّم على [[:visited]] و [[:hover]] مع بعض: أنهي لون كسب؟`,
-          sol: R`~~~live 109 141 links.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اللينكات</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; font-size: 18px; line-height: 1.8; }
-  nav a:any-link { text-decoration: none; color: #111; padding: 4px 8px; }
-  nav a:hover, nav a:focus-visible { background: #e5e7eb; }
-  p a { text-underline-offset: 0.3em; }
-  p a:link { color: #0b57d0; }
-  p a:visited { color: #6d28d9; }
-  p a:hover { color: #1e40af; text-decoration-thickness: 3px; }
-  p a:focus-visible { outline: 2px solid #0b57d0; outline-offset: 2px; }
-  p a:active { color: #b91c1c; }
-  a[href^="https://"]::after { content: " ↗"; }
-</style>
-</head>
-<body>
-<nav><a href="#home">الرئيسية</a> <a href="#posts">المقالات</a> <a href="#about">عن المدوّنة</a></nav>
-<p>ابدأ من <a href="#first">أول مقال</a>، ولو عايز المرجع الرسمي ده <a href="https://example.test/css">دليل CSS</a>.</p>
-</body>
-</html>
-~~~
+| الحتة | دورها |
+|---|---|
+| [[startViewTransition(update)]] | لقطة قبل، شغّل update، لقطة بعد، حرّك |
+| الشرط قبلها | متصفح قديم أو reduced motion: غيّر من غير حركة |
+| [[view-transition-name]] | اسم فريد = العنصر بيطير من مكان لمكان |
+| [[::view-transition-old/new/group]] | الحركة نفسها، وتتغير بـ CSS |
+| [[@view-transition]] | نفس الكلام بين صفحتين، في CSS الاتنين |
 
-**هتشوف إيه:**
+- الحركة قصيرة (200 لـ 300ms) واحترم reduced motion دايمًا.
+- هات البيانات قبل [[startViewTransition]]، مش جوه [[update]]، عشان الصفحة متتجمدش.`,
+          lines: [
+            "بتعرض view جديد (لستة أو تفاصيل).",
+            "التغيير نفسه: بدّل محتوى الـ main.",
+            "المتصفح مش بيدعم، أو المستخدم طالب حركة أقل؟ غيّر من غير حركة.",
+            "غير كده: غيّر جوه view transition.",
+            "قفلة.",
+            "صورة المنتج ليها نفس الاسم في اللستة والتفاصيل، فبتطير من مكان للتاني.",
+            "الـ crossfade بتاع الصفحة كلها أسرع من الافتراضي.",
+            "حركة بين الصفحات الحقيقية (لازم في الصفحتين ونفس الـ origin).",
+            "اللي طالب حركة أقل: من غير animation."
+          ],
+          sol: R`من غير [[view-transition-name]]: الصفحة كلها بتعمل fade من اللستة للتفاصيل. مع الاسم على الصورة في الحالتين: الصورة بتتحرك وتكبر من مكانها في اللستة لمكانها في التفاصيل، والباقي fade. في Animations panel بـ 10% هتشوف الـ group بيتحرك والـ old والـ new بيتبدّلوا.
 
-- القايمة: تلات لينكات سودا من غير خط، وخلفية رمادي تحت الماوس.
-- الفقرة: لينكين أزرق بخط نازل، والتاني بعده سهم.
-- في DevTools مع [[:visited]] و [[:hover]] مع بعض: اللون [[#1e40af]] (بتاع الـ hover) هو اللي كسب، وفي Styles قاعدة [[:visited]] لونها متشطّب عليه.
-
-~~~text القياس من Chrome (الحالة العادية)
-nav a       color: rgb(17, 17, 17)       text-decoration-line: none
-p a         color: rgb(11, 87, 208)      text-decoration-line: underline     text-underline-offset: 5.4px
-p a[href^="https://"]::after   content: " ↗"
-~~~
-
-الـ hover كسب عشان مكتوب **بعد** الـ visited، والاتنين بنفس القوة. انقل سطر [[p a:hover]] فوق [[p a:visited]] وجرّب تاني: البنفسجي هيكسب، ولون الـ hover مش هيظهر على اللينك اللي اتزار.`,
-          deep: {
-            why: R`اللينك هو اللي بيخلّي الويب «ويب». وكل زائر بيدوّر عليه بعينه قبل ما يقرا. لما مصمم يشيل الخط ويخلّي اللينك «درجة رمادي أغمق» عشان الصفحة تبقى هادية، الزائر بيبطّل يلاقي اللي يدوس عليه، واللي مبيفرّقش الألوان مبيلاقيش حاجة خالص. والحالات الخمسة مش زينة: كل واحدة بتجاوب سؤال عند الزائر. أروح فين؟ ([[:link]]) كنت فين؟ ([[:visited]]) ده بيتداس؟ ([[:hover]]) أنا فين دلوقتي؟ ([[:focus]]) ضغطتي وصلت؟ ([[:active]]).`,
-            how: R`المتصفح بيعتبر [[<a>]] و [[<area>]] اللي ليهم [[href]] «لينكات»، وكل لينك بياخد واحدة من [[:link]] أو [[:visited]] بعد ما يسأل تاريخ الزيارات عن العنوان. الحالات اللحظية بتتحدّث مع أحداث الماوس والكيبورد: [[:hover]] على العنصر اللي تحت المؤشر وكل آبائه، و [[:active]] من الضغط للإفلات، و [[:focus]] على العنصر اللي معاه التركيز.
-
-لحماية الخصوصية المتصفح بيحسب ستايلين لكل لينك: واحد «كأنه متزارش» وده اللي بيتحسب منه الـ layout واللي JavaScript بيشوفه، وواحد للحالة الحقيقية بياخد منه **الألوان بس** وقت الرسم. عشان كده أي خاصية غير لون في [[:visited]] ملهاش أثر، وعشان كده مفيش توقيت ولا مقاس يفضح الحالة.
-
-والخمس selectors كلهم (0,1,1)، فاللي بيحسم بينهم ترتيب الكتابة.`,
-            when: R`في كل موقع: قاعدة أساسية للينكات المحتوى بالحالات الخمسة، وقاعدة للينكات التنقل. [[:visited]] مهمة في صفحات فيها لينكات كتير (نتايج بحث، فهرس، مدوّنة). attribute selectors لتمييز الخارجي والملفات. و [[:hover]] و [[:active]] و [[:focus-visible]] بنفس الفكرة على الأزرار والكروت.`,
-            mistakes: R`شيل الخط واللون مع بعض. [[:visited]] زي [[:link]]. خصائص غير الألوان في [[:visited]]. ترتيب غلط. hover بيحرّك الـ layout. [[outline: none]]. محتوى في الـ hover بس. والاعتماد على اللون لوحده.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** لينكات مقال «مدوّنة حبر»: اللي متزارش [[#0b57d0]]، والخط نازل [[0.3em]] (الخط 20px). واكتب كمان قاعدة للي اتزار بلون [[#6d28d9]]. (من قسم ٢ و ٤ في الشرح)
-
-لون اللينك اللي اتزار مبيتقاسش من الصفحة (المتصفح بيخبّيه عمدًا)، فالشرط بتاعه بيتأكد إن القاعدة مكتوبة بس.`, done: R`اللينك أزرق [[rgb(11, 87, 208)]] وخطه نازل 6px، وقاعدة [[a:visited]] مكتوبة باللون البنفسجي، وكل الشروط ✓.`, work: { h: 110, start: R`<style>
-  p { font-size: 20px; line-height: 1.9; }
-
-</style>
-<p>لو فاتك، اقرا <a href="#part1">الجزء الأول</a> و <a href="#part2">الجزء التاني</a> بالترتيب.</p>`, checks: [
-              { say: R`اللينك اللي متزارش لونه [[#0b57d0]]`, q: "a", style: ["color", "rgb(11, 87, 208)"] },
-              { say: R`الخط نازل 0.3em (6px)`, q: "a", style: ["text-underline-offset", "6px"] },
-              { say: R`اللينك لسه تحته خط`, q: "a", style: ["text-decoration-line", "underline"] },
-              { say: R`فيه قاعدة [[a:visited]] مكتوبة`, src: "a:visited" },
-              { say: R`ولونها [[#6d28d9]]`, src: "#6d28d9" }
-            ] }, sol: R`~~~live 78 الحل
-<style>
-  p { font-size: 20px; line-height: 1.9; }
-  a { text-underline-offset: 0.3em; }
-  a:link { color: #0b57d0; }
-  a:visited { color: #6d28d9; }
-</style>
-<p>لو فاتك، اقرا <a href="#part1">الجزء الأول</a> و <a href="#part2">الجزء التاني</a> بالترتيب.</p>
-~~~
-
-**هتشوف إيه:** لينكين بأزرق أهدى من الافتراضي، وخطهم نازل تحت الحروف. دوس على واحد: ممكن يتحوّل بنفسجي (حسب المتصفح)، والتاني يفضل أزرق.
-
-**ليه كده:** الـ offset مشترك فاتكتب على [[a]]. اللون بيختلف حسب الحالة فاتكتب مرتين، و [[:visited]] بعد [[:link]].
-
-**الغلطة الشائعة:** [[a { color: #0b57d0; }]] بس. قاعدتك بتغلب قاعدة المتصفح في الحالتين، فاللي اتزار واللي متزارش هيبقوا **نفس الأزرق**، والزائر مش هيعرف هو فتح إيه.
-
-~~~text القياس من Chrome
-a   color: rgb(11, 87, 208)     text-underline-offset: 6px     text-decoration-line: underline
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مستخدم بعت إن لينكات المقالات اللي قراها «مبتنوّرش» لما يقف عليها. القواعد الأربعة مكتوبة صح، وترتيبهم غلط. رتّبهم L-V-H-A (انقل السطور زي ما هي من غير ما تغيّر فيها). (من قسم ٨ في الشرح)
-
-حالة الـ hover والـ visited مبيتقاسوش من الصفحة، فالشروط هنا بتقرا **ترتيب السطور** في الكود.`, done: R`السطور بالترتيب: [[:link]] ثم [[:visited]] ثم [[:hover]] ثم [[:active]]، وكل الشروط ✓.`, work: { h: 100, start: R`<style>
-  p { font-size: 20px; }
-  a:hover { color: #1e40af; }
-  a:active { color: #b91c1c; }
-  a:link { color: #0b57d0; }
-  a:visited { color: #6d28d9; }
-</style>
-<p>مقالات الأسبوع: <a href="#a">الخطوط</a> · <a href="#b">القوايم</a> · <a href="#c">اللينكات</a></p>`, checks: [
-              { say: R`[[:visited]] بعد [[:link]] على طول`, src: "a:link { color: #0b57d0; }\n  a:visited" },
-              { say: R`[[:hover]] بعد [[:visited]] على طول`, src: "a:visited { color: #6d28d9; }\n  a:hover" },
-              { say: R`[[:active]] بعد [[:hover]] على طول`, src: "a:hover { color: #1e40af; }\n  a:active" },
-              { say: R`اللينك العادي لسه [[#0b57d0]]`, q: "a", style: ["color", "rgb(11, 87, 208)"] }
-            ] }, sol: R`~~~live 63 بعد التصليح
-<style>
-  p { font-size: 20px; }
-  a:link { color: #0b57d0; }
-  a:visited { color: #6d28d9; }
-  a:hover { color: #1e40af; }
-  a:active { color: #b91c1c; }
-</style>
-<p>مقالات الأسبوع: <a href="#a">الخطوط</a> · <a href="#b">القوايم</a> · <a href="#c">اللينكات</a></p>
-~~~
-
-**هتشوف إيه:** الشكل وهو واقف زي ما كان. الفرق بيبان بالتجربة: دوس على لينك عشان يبقى «اتزار»، وبعدين قف عليه: لونه بيغمق. قبل التصليح كان بيفضل بنفسجي.
-
-**ليه:** الأربعة بنفس القوة، فالأخير في الملف بيكسب.
-
-| الحالة الفعلية | الترتيب الغلط (H A L V) | الترتيب الصح (L V H A) |
-|---|---|---|
-| متزارش + hover | [[:link]] كسبت (بعد hover): **مفيش hover** | hover ✓ |
-| اتزار + hover | [[:visited]] كسبت: **مفيش hover** | hover ✓ |
-| بيتداس | [[:link]] أو [[:visited]] كسبت: **مفيش active** | active ✓ |
-
-يعني في الترتيب الأصلي الـ hover مكانش شغال على **أي** لينك، مش اللي اتزار بس.
-
-**الغلطة الشائعة:** تزوّد [[!important]] على الـ hover. هتشتغل، وهتكسر الـ active، وهتحتاج [[!important]] تانية.
-
-~~~text القياس من Chrome (الحالة العادية)
-a   color: rgb(11, 87, 208)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف «reset» منقول من النت فيه [[a { color: inherit; text-decoration: none; }]]. قايمة التنقل بقت حلوة، ولينكات المقال **اختفت** وسط الكلام. سيب القايمة زي ما هي، ورجّع للينكات اللي جوه [[.post]] لون [[#0b57d0]] وخط تحتها. (من قسم ١ و ٩ في الشرح)`, done: R`لينكات [[.post]] زرقا وتحتها خط، ولينكات [[nav]] لسه من غير خط، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  body { font-size: 18px; line-height: 1.8; }
-  a { color: inherit; text-decoration: none; }
-</style>
-<nav><a href="#home">الرئيسية</a> · <a href="#posts">المقالات</a></nav>
-<div class="post">
-  <p>الشرح الكامل في صفحة الأدوات، والتحميل من صفحة <a href="#dl">الإصدارات</a>. وقبل ده راجع <a href="#req">المتطلبات</a>.</p>
-</div>`, checks: [
-              { say: R`لينكات المقال تحتها خط`, q: ".post a", style: ["text-decoration-line", "underline"] },
-              { say: R`ولونها [[#0b57d0]]`, q: ".post a", style: ["color", "rgb(11, 87, 208)"] },
-              { say: R`لينكات القايمة لسه من غير خط`, q: "nav a", style: ["text-decoration-line", "none"] },
-              { say: R`ولسه بلون الكلام`, q: "nav a", style: ["color", "rgb(0, 0, 0)"] }
-            ] }, sol: R`~~~live 109 141 بعد التصليح
-<style>
-  body { font-size: 18px; line-height: 1.8; }
-  a { color: inherit; text-decoration: none; }
-  .post a { color: #0b57d0; text-decoration: underline; text-underline-offset: 0.3em; }
-</style>
-<nav><a href="#home">الرئيسية</a> · <a href="#posts">المقالات</a></nav>
-<div class="post">
-  <p>الشرح الكامل في صفحة الأدوات، والتحميل من صفحة <a href="#dl">الإصدارات</a>. وقبل ده راجع <a href="#req">المتطلبات</a>.</p>
-</div>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 109 141 قبل
-<style>
-  body { font-size: 18px; line-height: 1.8; }
-  a { color: inherit; text-decoration: none; }
-</style>
-<nav><a href="#home">الرئيسية</a> · <a href="#posts">المقالات</a></nav>
-<div class="post">
-  <p>الشرح الكامل في صفحة الأدوات، والتحميل من صفحة <a href="#dl">الإصدارات</a>. وقبل ده راجع <a href="#req">المتطلبات</a>.</p>
-</div>
-~~~
-
-**هتشوف إيه:** قبل: حاول تلاقي اللينكين في الفقرة من غير ما تحرّك الماوس. مش هتعرف: «الإصدارات» و «المتطلبات» زي باقي الكلام. بعد: الاتنين أزرق وتحتهم خط، والقايمة فوق زي ما هي.
-
-**ليه:** في القايمة المكان بيقول «دي لينكات». جوه الفقرة مفيش غير شكل اللينك نفسه. والخط مع اللون، مش اللون لوحده، عشان اللي مبيفرّقش الأزرق من الأسود.
-
-**الغلطة الشائعة:** ترجّع اللون بس. اللينك هيبان لأغلب الناس، وهيفضل مختفي على شاشة ضعيفة ولمن عنده عمى ألوان.
-
-**الدرس الأكبر:** أي «reset» بتنقله اقرا هو بيشيل إيه. اللي بيشيل تنسيق اللينك لازم ترجّعه إنت في كل مكان فيه كلام.
-
-~~~text القياس من Chrome
-.post a   قبل: color: rgb(0, 0, 0)  none          بعد: color: rgb(11, 87, 208)  underline
-nav a     قبل وبعد: color: rgb(0, 0, 0)  none
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** من غير ما تزوّد class في الـ HTML، حط سهم [[" ↗"]] بعد أي لينك عنوانه بيبدأ بـ [[https://]]. اللينكات الداخلية (النسبية) متتأثرش. (من قسم ١٠ في الشرح)`, done: R`اللينك الخارجي بعده سهم، والداخلي من غير حاجة، ومفيش class جديد، وكل الشروط ✓.`, work: { h: 110, start: R`<style>
-  p { font-size: 18px; }
-
-</style>
-<p>اقرا <a href="about.html">عن المدوّنة</a>، والمرجع في <a href="https://example.test/spec">المواصفة الرسمية</a>.</p>`, checks: [
-              { say: R`اللينك الخارجي بعده [[" ↗"]]`, q: "a[href^=\"https://\"]", pseudo: "::after", style: ["content", "\" ↗\""] },
-              { say: R`اللينك الداخلي من غير علامة`, q: "a[href=\"about.html\"]", pseudo: "::after", style: ["content", "none"] },
-              { say: R`مفيش class متزوّد على اللينكات`, q: "a[class]", n: 0 }
-            ] }, sol: R`~~~live 60 الحل
-<style>
-  p { font-size: 18px; }
-  a[href^="https://"]::after { content: " ↗"; }
-</style>
-<p>اقرا <a href="about.html">عن المدوّنة</a>، والمرجع في <a href="https://example.test/spec">المواصفة الرسمية</a>.</p>
-~~~
-
-**هتشوف إيه:** «عن المدوّنة» لينك عادي. «المواصفة الرسمية» بعدها سهم مايل لفوق، وهو جزء من اللينك (بيتلوّن وبيتداس معاه).
-
-**ليه كده:** [[^=]] معناها «القيمة بتبدأ بـ». اللينك الداخلي عنوانه [[about.html]] فمبيتطابقش. والقاعدة هتشتغل على أي لينك خارجي يتزوّد بعدين، من غير ما حد يفتكر يحط class.
-
-**الغلطة الشائعة:** [[a[href*="http"]]] ([[*=]] يعني «فيها في أي حتة»). هتمسك لينك داخلي اسمه [[how-http-works.html]] بالغلط.
-
-**حدود الطريقة:** لو لينكاتك الداخلية مكتوبة بعنوان كامل ([[https://myblog.test/about]]) هتاخد سهم هي كمان. ساعتها استثنيها: [[a[href^="https://"]:not([href^="https://myblog.test"])]].
-
-~~~text القياس من Chrome
-a[href^="https://"]::after    content: " ↗"
-a[href="about.html"]::after   content: none
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** المصمم طلب «شيل الإطار الوحش اللي بيظهر حوالين اللينك»، فاتكتب [[a:focus { outline: none; }]]. دلوقتي اللي بيتنقل بـ Tab مش شايف هو فين. شيل السطر ده، وحط مكانه إطار [[2px solid #0b57d0]] بعيد عن اللينك 2px، يظهر مع الكيبورد بس. (من قسم ٦ في الشرح)
-
-التركيز مبيتقاسش من الصفحة وهي واقفة، فالشروط بتقرا الكود.`, done: R`مفيش [[outline: none]]، وفيه قاعدة [[a:focus-visible]] بالإطار المطلوب، وكل الشروط ✓.`, work: { h: 100, start: R`<style>
-  p { font-size: 18px; }
-  a:focus { outline: none; }
-</style>
-<p><a href="#a">الرئيسية</a> · <a href="#b">المقالات</a> · <a href="#c">تواصل</a></p>`, checks: [
-              { say: R`مفيش [[outline: none]]`, nosrc: "outline: none" },
-              { say: R`فيه قاعدة [[a:focus-visible]]`, src: "a:focus-visible" },
-              { say: R`الإطار [[2px solid #0b57d0]]`, src: "outline: 2px solid #0b57d0" },
-              { say: R`وبعيد عن اللينك: [[outline-offset: 2px]]`, src: "outline-offset: 2px" }
-            ] }, sol: R`~~~live 57 بعد التصليح
-<style>
-  p { font-size: 18px; }
-  a:focus-visible { outline: 2px solid #0b57d0; outline-offset: 2px; }
-</style>
-<p><a href="#a">الرئيسية</a> · <a href="#b">المقالات</a> · <a href="#c">تواصل</a></p>
-~~~
-
-**هتشوف إيه:** وهي واقفة: تلات لينكات عادية. دوس جوه المعاينة ثم Tab: إطار أزرق واضح حوالين اللينك الأول، ومع كل Tab بيتنقل. دوس على لينك بالماوس: مفيش إطار.
-
-**ليه [[:focus-visible]]:** المصمم كان متضايق من الإطار اللي بيظهر **بعد ضغطة الماوس**. [[:focus-visible]] بتحل ده من غير ما تحرم مستخدم الكيبورد: بتظهر لما المتصفح يشوف إن التركيز جه من الكيبورد.
-
-**الغلطة الشائعة:** [[a:focus { outline: 0; }]] ومعاها تغيير لون خفيف «كبديل». تغيير اللون لوحده مش إطار، ومش بيتشاف كفاية.
-
-~~~text القياس من Chrome (لينك عليه focus بالكيبورد)
-الافتراضي:     outline: auto 1px      outline-offset: 1px
-بعد التصليح:   outline: rgb(11, 87, 208) solid 2px      outline-offset: 2px
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك عايز يحط علامة «✓ قريته» بعد كل مقال اتزار في فهرس المدوّنة، وكتب [[a:visited::after { content: " ✓"; }]] ومشتغلتش. اشرحله في ٣ سطور ليه، وإيه اللي مسموح، وإزاي يعمل الفكرة بطريقة تانية. (من قسم ٤ في الشرح)`, done: R`قلت إن [[:visited]] ألوان بس وليه (الخصوصية)، وإن JavaScript كمان ميعرفش، واقترحت اللون أو حفظ القراية في الموقع نفسه.`, sol: R`**إجابة نموذجية:**
-
-1. المتصفح بيسمح جوه [[:visited]] بتغيير **ألوان بس** ([[color]] و [[background-color]] و [[border-color]] و [[outline-color]] و [[text-decoration-color]]...). [[content]] بتغيّر مقاس اللينك، وأي حاجة بتغيّر مقاس أو بتتقري بـ JavaScript كانت هتخلّي أي موقع يعرف إنت زرت إيه. فاتمنعت.
-2. ومتحاولش بـ JavaScript: [[getComputedStyle]] بيرجّع لون اللينك «كأنه متزارش» دايمًا، و [[querySelectorAll(":visited")]] بيرجّع فاضي. المتصفح بيكدب عمدًا.
-3. اللي ينفع: **لون مختلف واضح** للي اتزار (ده شغل [[:visited]] الأصلي، وكفاية للفهرس). ولو لازم علامة «✓»، الموقع نفسه يسجّل إن المستخدم فتح المقال (في [[localStorage]] أو في حسابه) ويزوّد class من عنده. ساعتها الموقع عارف اللي حصل **عنده هو** بس، مش تاريخ المتصفح.
-
-~~~css
-/* اللي ينفع */
-.index a:link    { color: #0b57d0; }
-.index a:visited { color: #6b7280; text-decoration-color: #9ca3af; }
-~~~
-
-**الغلطة الشائعة:** تجرّب [[a:visited { opacity: 0.5; }]] أو لون شفاف. الاتنين بيتجاهلوا: [[opacity]] مش لون، والشفافية جوه لون [[:visited]] بتتاخد من حالة [[:link]].` }
-          ]
+لو مفيش أي حركة: غالبًا الاسم متكرر (كل صور اللستة عليها نفس الاسم)، أو متصفحك مش بيدعم، أو إعداد reduce motion شغال في نظامك. ولو الصفحة وقفت ثانية قبل الحركة: الـ update فيه fetch، هات البيانات قبل.`
         },
         {
-          cmd: "::first-letter و ::selection",
-          title: "أول حرف، وأول سطر، والنص المتحدد، والكتابة الرأسية",
-          pre: [
-            { to: "css/selectors", why: R`الـ pseudo-elements ([[::before]] و [[::after]]) اتشرحت هناك: حتة من العنصر بتتنسّق من غير ما يبقى ليها tag` },
-            { to: "css/lang و dir", why: R`اتجاه الكتابة بيتحدد بـ [[dir]] في الـ HTML، والدرس ده بيقول ليه مش بالـ CSS` }
-          ],
+          cmd: "text-wrap",
           ref: [
-            { t: "MDN: ::first-letter", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::first-letter" },
-            { t: "MDN: ::first-line", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::first-line" },
-            { t: "MDN: ::selection", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::selection" },
-            { t: "MDN: writing-mode", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/writing-mode" },
-            { t: "MDN: text-orientation", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-orientation" },
-            { t: "MDN: text-combine-upright", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-combine-upright" },
-            { t: "MDN: direction", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/direction" },
-            { t: "MDN: unicode-bidi", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/unicode-bidi" }
+            { t: "MDN: text-wrap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-wrap" },
+            { t: "MDN: line-clamp", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/line-clamp" },
+            { t: "MDN: text-wrap-style", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-wrap-style" },
           ],
-          desc: R`تلات pseudo-elements بتمسك **حتة من النص** من غير ما تحط حواليها tag: [[::first-letter]] (أول حرف في الفقرة)، و [[::first-line]] (أول سطر، مهما كان عرض الشاشة)، و [[::selection]] (الكلام اللي المستخدم محدده بالماوس).
-ومعاهم في الدرس [[writing-mode]] اللي بتخلّي السطور تتكتب رأسي، وليه اتجاه الكتابة العربي بيتحدد بـ [[dir]] في الـ HTML مش بـ [[direction]] في الـ CSS.`,
-          example: R`.story p:first-of-type::first-letter { color: #b45309; font-weight: 700; }
-.en::first-letter { font-size: 3em; float: left; line-height: 1; }
-.lead::first-line { font-weight: 700; }
-::selection { background: #fde68a; color: #111; }
-th.side { writing-mode: vertical-rl; }
-.year { text-combine-upright: all; }`,
+          title: "عنوان سطره الأخير كلمة لوحدها",
+          practice: [
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** عنوان عربي طويل في كارت عرضه 260 و 300 و 340px، مرة من غير [[text-wrap]] ومرة بـ [[balance]]. قيس عرض كل سطر بـ [[Range.getClientRects()]] (أو بعينك من DevTools).`, done: R`جدول بعرض كل سطر في الحالات الست. ولاحظت إن في مقاسات العنوان أصلًا متوازن فمفيش فرق، وفي مقاسات تانية السطر الأخير بقى أطول بكتير مع [[balance]]، فالخاصية بتفرق في حالات معينة مش كلها.`,
+              sol: R`~~~live 600 720 wrap-compare.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>balance</title>
+<style>
+  h2 { font: 700 22px/1.5 system-ui, sans-serif; margin: 0 0 1rem; }
+  .bal { text-wrap: balance; }
+</style></head>
+<body>
+  <main id="m"><h1>قياس السطور</h1></main>
+  <script>
+    const text = "اتعلم إزاي تبني موقعك الأول من الصفر وتنشره للناس في أسبوع واحد بس";
+    function lines(el) {
+      const r = document.createRange();
+      r.selectNodeContents(el);
+      const rows = new Map();
+      for (const b of r.getClientRects()) {
+        const y = Math.round(b.top);
+        const old = rows.get(y) ?? [Infinity, -Infinity];
+        rows.set(y, [Math.min(old[0], b.left), Math.max(old[1], b.right)]);
+      }
+      return [...rows.values()].map(([a, b]) => Math.round(b - a));
+    }
+    for (const w of [260, 300, 340]) for (const cls of ["", "bal"]) {
+      const h = document.createElement("h2");
+      h.className = cls; h.style.inlineSize = w + "px"; h.textContent = text;
+      m.append(h);
+      console.log(w, cls || "عادي", lines(h).join(" | "));
+    }
+  $__lt/script>
+</body></html>
+~~~
+
+[[Range.getClientRects()]] بيرجّع مستطيل لكل قطعة نص، فبنجمّعهم حسب الـ [[top]] (نفس السطر)، وعرض السطر = أكبر [[right]] − أصغر [[left]].
+
+في [[text-wrap: balance]] المتصفح بيدوّر على أقل عرض يخلي النص يفضل في نفس عدد السطور، فكل السطور تبقى قريبة من بعض، والكلمة اليتيمة في الآخر بتختفي. عدد السطور مبيتغيرش.
+
+النتيجة تحت مش نفس الأثر في التلات مقاسات: عند 340 العادي ساب كلمة يتيمة 33px والـ balance رفعها لـ 236، وده فرق كبير. وعند 260 السطر الأخير كان 141 أصلًا، فالفرق أقل بكتير. وعنوان تاني اتجرّب على 260 ([[دليلك الكامل لتصميم صفحات الويب الحديثة]]) كان متوازن أصلًا، فالخاصية مغيّرتش فيه ولا بكسل. فمتعتبرهاش سحر: دي بتفرق في حالات معينة، وأهمها عنوان بيسيب كلمة لوحدها.
+
+الغلطة الشائعة: تحطها على [[body]] كله. الخاصية مكلفة ومتحددة بعدد سطور، فمحلها العناوين.
+
+~~~text الناتج (Chrome 156، عرض كل سطر بالبكسل، بخط system-ui)
+260 عادي    256 | 250 | 141
+260 balance 206 | 206 | 236
+300 عادي    289 | 278 | 80
+300 balance 206 | 206 | 236
+340 عادي    289 | 324 | 33
+340 balance 206 | 206 | 236
+عنوان تاني على 260: عادي 190 | 200، و balance 190 | 200
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** [[text-wrap: balance]] حطيته على فقرة ١٢ سطر ومفيش فرق. دوّر في MDN أو وثائق Chrome ليه.`, done: R`عرفت إن المتصفحات بتحدد عدد سطور للـ balance (في Chrome حوالي ٦ سطور، و Firefox أكتر) عشان الحساب تقيل، وإن الفقرات ليها [[pretty]] مش [[balance]]، وكتبت المصدر.`,
+              sol: R`~~~live 120 120 balance-limit.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>حد الـ balance</title>
+<style>
+  body { margin: 1rem; }
+  p { inline-size: 300px; font: 18px/1.5 system-ui, sans-serif; }
+  .b { text-wrap: balance; }
+</style></head>
+<body><main id="m"><h1>كام سطر؟</h1></main></body></html>
+~~~
+
+الإجابة: [[text-wrap: balance]] بيحسب بأكتر من محاولة (binary search على العرض)، وده مكلف، فالمتصفحات عاملة حد لعدد السطور. وثائق Chrome بتقول [[6]] سطور، و MDN بتقول إن المتصفحات بتحدد الحد عشان الأداء، و Firefox حده أكبر (حوالي 10). لو النص أطول من الحد، بيترصّ عادي كأن الخاصية مش موجودة، ومن غير أي تحذير.
+
+القياس تحت بيأكد الرقم في Chrome: فقرة 6 سطور اتغيرت، وفقرة 7 سطور لأ. فالفقرة الـ ١٢ سطر مفيهاش فرق.
+
+للفقرات استخدم [[text-wrap: pretty]]: أخف، ومبيحاولش يساوي كل السطور، وبيهتم بآخر السطور بس عشان ميبقاش كلمة يتيمة. و [[balance]] للعناوين.
+
+الغلطة الشائعة: تفتكر الخاصية «باظت» لأن المتصفح مش بيدعمها، فتزوّد JavaScript. بص الأول على عدد السطور. (حد الـ 6 اتقاس تحت، وحد Firefox من الوثائق ومتقاسش.)
+
+المصدر: Chrome for Developers «CSS text-wrap: balance» و MDN [[text-wrap]].
+
+~~~text الناتج (Chrome 156، عرض أطول سطر مع balance مقابل من غيره)
+3 سطور: آخر سطر من غير balance 88px، ومعاه 180px ← اتغيرت
+4 سطور: آخر سطر من غير balance 88px، ومعاه 233px ← اتغيرت
+5 سطور: آخر سطر من غير balance 88px، ومعاه 233px ← اتغيرت
+6 سطور: آخر سطر من غير balance 88px، ومعاه 233px ← اتغيرت
+7 سطور: آخر سطر من غير balance 88px، ومعاه 88px ← مفيش فرق
+8 سطور: آخر سطر من غير balance 88px، ومعاه 88px ← مفيش فرق
+12 سطور: آخر سطر من غير balance 88px، ومعاه 88px ← مفيش فرق
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت منتج: الاسم [[line-clamp-2]]، والسعر [[white-space: nowrap]] برقم وعملة ([[Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" })]])، والوصف [[text-wrap: pretty]]. جرّبه باسم ٣ سطور وسعر كبير.`, done: R`الاسم بيقف على سطرين بـ «…» وقارئ الشاشة لسه بيقرا الاسم كامل (القص شكل بس)، والسعر والعملة على سطر واحد مبيتقسموش، والكارت ارتفاعه ثابت مهما الاسم طال.`,
+              sol: R`~~~live 330 330 product-text.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>كارت منتج</title>
+<style>
+  body { font-family: system-ui, sans-serif; }
+  .card { inline-size: 240px; block-size: 200px; padding: 1rem; border: 1px solid #d1d5db; border-radius: 10px;
+          display: grid; grid-template-rows: auto auto 1fr; gap: .5rem; overflow: hidden; }
+  h2 { margin: 0; font-size: 1.1rem; line-height: 1.5;
+       display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .price { white-space: nowrap; font-weight: 700; margin: 0; }
+  .desc { margin: 0; text-wrap: pretty; color: #4b5563; }
+</style></head>
+<body>
+  <main><h1>المنتجات</h1>
+    <article class="card">
+      <h2 id="n">سماعة لاسلكية بعزل ضوضاء وبطارية طويلة وميكروفون واضح وعلبة شحن صغيرة</h2>
+      <p class="price" id="p"></p>
+      <p class="desc">صوت نقي ومريحة طول اليوم.</p>
+    </article>
+  </main>
+  <script>
+    p.textContent = new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(1234567.5);
+  $__lt/script>
+</body></html>
+~~~
+
+- [[line-clamp-2]] في Tailwind بيطلع السطور دي بالظبط: [[display: -webkit-box]] و [[-webkit-box-orient: vertical]] و [[-webkit-line-clamp: 2]] و [[overflow: hidden]]. الأربعة لازم مع بعض. النص كله لسه في الـ DOM، و «…» رسم بس، فقارئ الشاشة بيقرا الاسم كامل.
+- [[white-space: nowrap]] بيمنع السعر والعملة ينقسموا على سطرين. [[Intl.NumberFormat]] بيدّي الأرقام العربي والفاصلة والعملة صح من غير ما تكتبهم بإيدك.
+- [[block-size: 200px]] ثابت، و [[grid-template-rows: auto auto 1fr]] بيحجز الباقي للوصف، فالكارت مبيطولش مع الاسم.
+- [[text-wrap: pretty]] بيتجنب كلمة يتيمة في آخر الوصف.
+
+الغلطة الشائعة: تقص الاسم بـ [[text.slice(0, 40) + "..."]] في JavaScript. قارئ الشاشة والبحث بيخسروا باقي الاسم، والقص مبيراعيش عرض الكارت.
+
+~~~text الناتج (Chrome 156)
+النص الكامل في الـ DOM: 69 حرف
+ارتفاع الاسم: 52.78125px (سطرين بـ line-height 1.5 على 17.6px)، و scrollHeight الحقيقي: 79px
+السعر: ١٬٢٣٤٬٥٦٧٫٥٠ ج.م.، وعدد سطوره: 1
+ارتفاع الكارت باسم قصير وطويل: 234 و 234
+axe: 0
+~~~` },
+          ],
+          desc: R`[[text-wrap: balance]] بيوزّع كلام العنوان على السطور بالتساوي، بدل سطر مليان وسطر فيه كلمة واحدة. و [[text-wrap: pretty]] للفقرات: بيحاول ميخليش كلمة لوحدها في آخر سطر.
+
+وفي Tailwind v4: [[text-balance]] و [[text-pretty]]. ومعاهم [[line-clamp-2]] لو عايز تقطع الكلام بعد سطرين بـ «…».`,
+          example: R`h1, h2, h3 { text-wrap: balance; }
+p, li, figcaption { text-wrap: pretty; }
+.price { white-space: nowrap; }
+.card-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+<h2 className="text-balance">عرض الصيف: خصم على كل السماعات والشواحن الأصلية</h2>
+<p className="text-pretty max-w-prose">...</p>
+<h3 className="line-clamp-2">اسم منتج طويل جدًا جاي من الداتابيز ومحدش عارف طوله</h3>`,
+          try: R`اعمل عنوان طويل في كارت عرضه 20rem، وغيّر عرض الشاشة لحد ما السطر الأخير يبقى كلمة واحدة. ضيف [[text-wrap: balance]] وشوف الفرق. وبعدين في DevTools اكتب في Console [[CSS.supports('text-wrap', 'pretty')]].`,
           flag: "script",
-          lines: [
-            R`أول حرف من أول فقرة في القصة: بني وتقيل. اللون والوزن بس، عشان الحرف العربي يفضل متصل باللي بعده.`,
-            R`drop cap للفقرة الإنجليزي: أول حرف تلات أضعاف الحجم، وعايم على الشمال ([[float]]) فباقي السطور بتلف حواليه.`,
-            R`أول سطر من فقرة المقدمة تقيل. «السطر» هنا اللي المتصفح كسّره فعلًا: لو الشاشة ضاقت، كلمات أقل هتبقى تقيلة.`,
-            R`لون تحديد النص في الصفحة كلها: خلفية صفرا وكلام غامق، بدل أزرق النظام.`,
-            R`خانة عنوان في جدول كلامها مكتوب رأسي (من فوق لتحت) عشان العمود يبقى ضيق.`,
-            R`جوه نص رأسي: الرقم يتكتب أفقي في مكان حرف واحد بدل ما كل رقم ينزل تحت التاني.`
-          ],
-          teach: R`## الفكرة في سطرين
+          deep: {
+            why: R`العناوين في الكروت والهيرو بتتقسم وحش على بعض الشاشات، والمصممين كانوا بيحطوا [[<br>]] بإيدهم (وده بيبوظ على شاشة تانية). سطر CSS بيحلها لكل المقاسات.`,
+            how: R`[[balance]] بيجرب عروض مختلفة ويختار اللي يخلي السطور قريبة من بعض، وعشان ده مكلّف المتصفحات بتطبقه على عدد سطور محدود (في Chrome حوالي 6)، فهو للعناوين والكلام القصير بس. والصندوق نفسه عرضه مبيتغيرش، الكلام بس اللي بيتوزع جواه.
 
-[[::before]] و [[::after]] بيزوّدوا حتة مش موجودة. التلاتة بتوع الدرس ده بيمسكوا حتة **موجودة** من النص، المتصفح هو اللي بيحدد حدودها: أول حرف، أول سطر، اللي اتحدد.
+[[pretty]] أرخص: بيبص على آخر كام سطر ويحاول يتجنب كلمة لوحدها. ودعمه لسه مش في كل المتصفحات وقت كتابة الدرس، واللي مش بيدعمه بيتجاهله ويكسر عادي، فحطه من غير قلق.
 
-الأرقام من Chrome 157 على Windows 11، والشكل من صور للصفحة.
+[[white-space: nowrap]] على حاجة مينفعش تتقسم (سعر بعملته، رقم تليفون). و [[line-clamp]] بيقطع بعد عدد سطور ويحط «…»، والصيغة الـ [[-webkit-]] هي اللي شغالة في كل المتصفحات لحد دلوقتي، و Tailwind بيكتبها لك.
 
----
+وكل ده بيشتغل مع العربي عادي لأنه بيكسر عند المسافات.`,
+            when: R`balance: كل العناوين (ممكن في الـ base styles مرة واحدة). pretty: الفقرات والـ captions. line-clamp: عناوين الكروت ووصف المنتجات اللي طولها مش معروف.`,
+            mistakes: R`balance على فقرات طويلة (مش هيشتغل أو هيبطّأ). [[<br>]] يدوي في العناوين. line-clamp من غير [[overflow: hidden]]. تقطع الكلام بـ JavaScript (substring) فيتقطع في نص كلمة، وقارئ الشاشة يقرا نص الكلام بس، مع line-clamp الكلام كله موجود وبيتقري.`
+          },
+          teach: R`## المتصفح هو اللي بيقرر الكلام يتكسر فين
 
-## ١. [[p::first-letter]]
-
-بتمسك أول حرف في أول سطر من صندوق (فقرة، عنوان، بند قايمة). أشهر استخدام ليها الـ drop cap: حرف كبير في أول المقال زي الكتب والمجلات.
-
-~~~live 125 drop cap على فقرة إنجليزي
-<style>
-  .en { direction: ltr; text-align: left; font-family: Georgia, serif; font-size: 17px; line-height: 1.6; max-width: 380px; margin: 0; }
-  .en::first-letter { font-size: 3.2em; float: left; line-height: 0.9; margin-right: 6px; color: #b45309; }
-</style>
-<p class="en" lang="en">Once upon a time there was a small town by the sea, where everyone woke up before sunrise and opened their shops while the streets were still quiet.</p>
-~~~
-
-**هتشوف إيه:** حرف «O» بني كبير واخد ارتفاع سطرين تقريبًا، وباقي الكلام بيلف على يمينه وتحته.
-
-- [[font-size: 3.2em]]: الحرف أكبر من النص.
-- [[float: left]]: بيطلّع الحرف من السطر ويحطه على الشمال، والسطور اللي بعده بتلف حواليه. ([[float]] ليها درس في وحدة الـ layout. هنا يكفي إنها «عوّم الحتة دي على جنب».)
-- [[line-height: 0.9]]: عشان صندوق الحرف ميبقاش أطول من الحرف نفسه.
-
-مش كل الخصائص مسموحة:
-
-~~~text القياس من Chrome (كتبنا 15 خاصية على p::first-letter)
-اشتغلت:    font-size   color   font-weight   float   margin   background   border
-           line-height   letter-spacing   text-transform   text-shadow   vertical-align
-اتجاهلت:   position (فضلت static)     display (الحرف بيفضل جزء من السطر أو float بس)     width
-~~~
-
-قواعد صغيرة:
-
-- علامة ترقيم قبل الحرف (قوس، علامة تنصيص «) بتتحسب معاه: [[::first-letter]] بتمسك الاتنين.
-- بتشتغل على الصناديق (block)، مش على [[<span>]] و [[<a>]].
-- لو أول حاجة في الفقرة صورة أو عنصر [[inline-block]]، مفيش first-letter.
-
-### الحرف العربي بيتفك
-
-دي الحتة اللي تهمّنا. الحروف العربي بتتوصل ببعض وشكل كل حرف بيتحدد من اللي جنبه. لما [[::first-letter]] تطلّع أول حرف في صندوق لوحده وتغيّر حجمه أو تعوّمه، الوصلة بتتقطع:
-
-~~~live 168 أول حرف عربي: بـ float وحجم، ثم بلون ووزن بس
-<style>
-  p { font-size: 20px; line-height: 1.7; max-width: 380px; margin: 0 0 12px; }
-  .cap::first-letter { font-size: 3em; float: right; line-height: 1; margin-inline-end: 8px; color: #b45309; font-weight: 700; }
-  .tint::first-letter { color: #b45309; font-weight: 700; }
-</style>
-<p class="cap">كان يا ما كان في قديم الزمان مدينة صغيرة على البحر، أهلها بيصحوا مع الفجر.</p>
-<p class="tint">كان يا ما كان في قديم الزمان مدينة صغيرة على البحر، أهلها بيصحوا مع الفجر.</p>
-~~~
-
-**هتشوف إيه:**
-
-- الفقرة الأولى: حرف «ك» كبير لوحده على اليمين **بشكله المنفصل**، والكلمة بقت «ك» ثم «ان» بعيد عنها. كلمة «كان» اتفكّت.
-- الفقرة التانية: «كان» كلمة واحدة متصلة عادي، والكاف بس لونها بني.
-
-ده اتشاف في صورة للصفحة من Chrome 157: مع [[float]] وتغيير الحجم الحرف اتعرض بشكله المعزول، ومع اللون والوزن بس فضل متصل.
-
-فالـ drop cap الكلاسيكي **مبينفعش مع العربي**. البدايل:
-
-- لوّن أول حرف أو تقّله بس (من غير [[float]] ولا [[font-size]]).
-- أو كبّر **أول كلمة** كلها: حطها في [[<span>]] ونسّقها. الكلمة بتفضل سليمة.
-- أو استخدم [[::first-line]] (القسم الجاي) لتمييز بداية المقال.
-
-فيه خاصية أحدث للـ drop cap اسمها [[initial-letter]] (بتحدد الحرف ياخد كام سطر). المنهج مستبعدها لأنها مش في كل المتصفحات لسه، ونفس مشكلة العربي فيها.
+لما الكلام ميكفيش في سطر، المتصفح بيملا السطر الأول على الآخر، واللي فاضل ينزل تحت، حتى لو كلمة واحدة. المثال فيه ٤ سطور CSS بتغيّر ده، و ٣ سطور JSX بنفس الكلام بكلاسات Tailwind. قسنا الـ CSS في Chrome 154 (headless عن طريق playwright) بخط Arial، وبنينا كلاسات Tailwind في مشروع Vite 8 و Tailwind 4.3.3 حقيقي.
 
 ---
 
-## ٢. [[p::first-line]]
+## ١. [[h1, h2, h3 { text-wrap: balance; }]]
 
-بتمسك أول سطر **زي ما اتكسّر فعلًا**. مش أول جملة، ومش عدد كلمات ثابت.
+الفواصل بين الـ selectors = نفس القاعدة للتلاتة. و [[text-wrap]] بتقول للمتصفح يكسر السطور إزاي، و [[balance]] = «وزّع الكلام على السطور بحيث تبقى قريبة من بعض في الطول».
 
-~~~live 133 166 أول سطر تقيل: غيّر العرض وشوف
-<style>
-  p { font-size: 18px; line-height: 1.8; max-width: 420px; }
-  p::first-line { font-weight: 700; color: #0f766e; }
-</style>
-<p>أول سطر من الفقرة دي لونه مختلف وتقيل، مهما كان عدد الكلمات اللي دخلت فيه. جرّب تدوس على زرار «موبايل» فوق المعاينة وشوف السطر الأول بقى فيه كام كلمة.</p>
-~~~
+حطينا العنوان «عرض الصيف: خصم على كل السماعات والشواحن الأصلية» (24px) في كارت، وقسنا عرض كل سطر:
 
-**هتشوف إيه:** السطر الأول أخضر وتقيل، والباقي عادي. لما العرض يضيق، كلمات أقل بتبقى في السطر الأول، والتنسيق بيمشي مع السطر مش مع الكلمات.
-
-ده اللي ميتعملش بـ [[<span>]]: إنت متعرفش السطر هيتكسر فين على كل شاشة.
-
-~~~text القياس من Chrome (كتبنا 13 خاصية على p::first-line)
-اشتغلت:    font-size   color   font-weight   background   text-transform   letter-spacing
-           text-decoration   line-height   vertical-align
-اتجاهلت:   margin   padding   border   display
-~~~
-
-يعني خصائص الخط واللون والخلفية آه. خصائص الصندوق لأ: السطر مش صندوق.
-
-ولو كبّرت الخط في [[::first-line]]، كلمات أقل هتدخل في السطر، والمتصفح بيعيد الحساب. آمنة تمامًا على العربي: مفيش حرف بيتفصل.
-
----
-
-## ٣. [[::selection]]
-
-الكلام اللي المستخدم سحب عليه بالماوس (أو حدده بـ Ctrl+A). الافتراضي لون النظام: أبيض على أزرق في أغلب الأنظمة.
-
-~~~live 96 حدد الكلام بالماوس
-<style>
-  .brand::selection { background: #fde68a; color: #111; }
-  p { font-size: 18px; }
-</style>
-<p>حدد الجملة دي بالماوس: لون التحديد هو لون النظام.</p>
-<p class="brand">وحدد الجملة دي: خلفية صفرا وكلام غامق.</p>
-~~~
-
-**هتشوف إيه:** اسحب بالماوس على السطرين. الأول بيتحدد بالأزرق المعتاد، والتاني بالأصفر.
-
-- [[::selection]] لوحدها (من غير عنصر قبلها) بتنطبق على الصفحة كلها.
-- الخصائص المسموحة قليلة (MDN): [[color]] و [[background-color]] و [[text-decoration]] وإخواتها و [[text-shadow]] و [[-webkit-text-stroke]] و [[-webkit-text-fill-color]]. مفيش خط ولا حجم ولا مسافات: التحديد مبيغيّرش مكان حاجة.
-- [[background-image]] بتتجاهل: لون بس.
-
-قاعدتين:
-
-1. **التباين.** الكلام المتحدد لازم يتقري. خلفية صفرا فاتحة مع كلام أبيض = الزائر مش شايف هو حدد إيه.
-2. **متخفيش التحديد.** [[::selection { background: transparent; }]] بتخلّي المستخدم مش عارف هو حدد حاجة ولا لأ. التحديد أداة بيستخدمها الناس عشان تنسخ، وناس بتستخدمه عشان تتابع القراية.
-
-المنهج مش حاطط [[::selection]] في Baseline. MDN بيقول إنها شغالة في المتصفحات الحالية، والتفاصيل اللي بتختلف هي الوراثة جوه العناصر. قرارها عند صاحب المنهج.
-
----
-
-## ٤. [[writing-mode: vertical-rl]]
-
-بتغيّر اتجاه **السطور نفسها**: بدل ما السطر أفقي والسطور بتتراص تحت بعض، السطر بيبقى رأسي والسطور بتتراص جنب بعض. اتعملت للصيني والياباني اللي بيتكتبوا كده أصلًا.
-
-| القيمة | السطر ماشي | السطور بتتراص |
+| عرض الكارت | من غير balance | مع balance |
 |---|---|---|
-| [[writing-mode: horizontal-tb]] | أفقي (الافتراضي) | من فوق لتحت |
-| [[writing-mode: vertical-rl]] | رأسي، من فوق لتحت | من اليمين للشمال |
-| [[writing-mode: vertical-lr]] | رأسي، من فوق لتحت | من الشمال لليمين |
-| [[writing-mode: sideways-rl]] | رأسي، وكل الحروف مقلوبة على جنبها | من اليمين للشمال |
-| [[writing-mode: sideways-lr]] | رأسي **من تحت لفوق**، وكل الحروف على جنبها | من الشمال لليمين |
+| 320px | سطر 311 وسطر 142 | سطر 229 وسطر 224 |
+| 300px | 229 و 224 | 229 و 224 |
 
-~~~text القياس من Chrome (صندوق فيه «عنوان العمود Title»، خط 16px وسطر 20px)
-horizontal-tb     118 × 20 px
-vertical-rl       20 × 118 px      ← العرض والارتفاع اتبدّلوا
-sideways-lr       20 × 118 px
+على 320 من غير balance السطر الأول مليان والتاني نصه فاضي. مع balance السطرين تقريبًا قد بعض. ولما الكارت بقى 300 الكسر الطبيعي جه متوازن لوحده، فالـ balance ملوش تأثير. وعرض الكارت نفسه فضل 320 في الحالتين: الكلام بس اللي بيتوزع جواه.
+
+المتصفح بيعمل ده بإنه يجرّب أكتر من عرض، وده مكلّف، فبيطبّقه على عدد سطور قليل بس (الـ docs بتاعة Chrome بتقول حوالي ٦). عشان كده للعناوين بس.
+
+## ٢. [[p, li, figcaption { text-wrap: pretty; }]]
+
+[[pretty]] للفقرات: بيبص على آخر السطور ويحاول ميسيبش كلمة لوحدها في الآخر. أرخص من balance فينفع على كلام طويل. [[li]] بند في لستة، و [[figcaption]] الكلام اللي تحت صورة.
+
+~~~text في Console بتاع Chrome 154
+CSS.supports('text-wrap', 'pretty')    → true
+CSS.supports('text-wrap', 'balance')   → true
 ~~~
 
-استخدامها في صفحة عربي أو إنجليزي: **عنوان عمود ضيق في جدول**، أو كلمة على جنب كارت.
+[[CSS.supports]] بيسأل المتصفح «انت فاهم الخاصية دي بالقيمة دي؟». المتصفح اللي يرجّع [[false]] بيتجاهل السطر ويكسر عادي، فمفيش حاجة بتبوظ.
 
-~~~live 130 جدول عناوين أعمدته رأسية
-<style>
-  table { border-collapse: collapse; }
-  th, td { border: 1px solid silver; padding: 4px 8px; text-align: center; }
-  thead th { writing-mode: vertical-rl; padding: 8px 4px; }
-</style>
-<table>
-  <thead><tr><td></td><th>السبت</th><th>الأحد</th><th>الاثنين</th><th>الثلاثاء</th></tr></thead>
-  <tbody>
-    <tr><th>سباحة</th><td>✓</td><td></td><td>✓</td><td></td></tr>
-    <tr><th>جري</th><td></td><td>✓</td><td></td><td>✓</td></tr>
-  </tbody>
-</table>
-~~~
+> [[text-wrap]] في الحقيقة اختصار لخاصيتين: Chrome رجّع [[text-wrap-mode: wrap]] و [[text-wrap-style: balance]] لما حطينا [[text-wrap: balance]].
 
-**هتشوف إيه:** أسامي الأيام مكتوبة رأسي: كل كلمة مقلوبة على جنبها وبتتقري من فوق لتحت، والحروف لسه متصلة. الأعمدة بقت ضيقة قد علامة الصح.
+## ٣. [[.price { white-space: nowrap; }]]
 
-الحروف العربي (واللاتيني) في [[vertical-rl]] **بتتقلب ربع لفة**: الكلمة بتفضل سليمة ومتصلة، بس نايمة على جنبها. ده مقبول لكلمة أو اتنين في عنوان عمود. متكتبش فقرة كده.
+[[white-space: nowrap]] = «متكسرش السطر جوه العنصر ده خالص». حطينا «1,250 جنيه» جوه جملة في صندوق ضيق (88px):
 
-### [[text-orientation: upright]]
-
-جوه نص رأسي، بتحدد الحروف «اللي أصلها أفقي» تتقلب ولا تفضل واقفة:
-
-| القيمة | معناها |
+| | السعر اتقسم على كام سطر؟ |
 |---|---|
-| [[text-orientation: mixed]] | الافتراضي: الصيني والياباني واقف، واللاتيني والعربي مقلوب على جنبه |
-| [[text-orientation: upright]] | كل الحروف واقفة، كل حرف تحت التاني |
-| [[text-orientation: sideways]] | كل الحروف مقلوبة على جنبها |
+| من غير [[nowrap]] | 2 (الرقم في سطر و «جنيه» في سطر) |
+| مع [[nowrap]] | 1 |
 
-~~~live 140 upright على إنجليزي وعلى عربي
-<style>
-  div { writing-mode: vertical-rl; text-orientation: upright; display: inline-block; height: 110px; margin: 0 14px; font-size: 18px; border: 1px solid silver; padding: 4px; }
-</style>
-<div lang="en">MENU</div>
-<div>قائمة</div>
+للسعر بعملته، ورقم التليفون، وأي حاجة معناها يبوظ لو اتقسمت.
+
+## ٤. [[.card-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }]]
+
+ده «اقطع بعد سطرين وحط …». ٤ خصائص لازم مع بعض:
+
+| الخاصية | ليه |
+|---|---|
+| [[display: -webkit-box]] | نوع صندوق قديم، هو اللي الـ line-clamp بيشتغل عليه |
+| [[-webkit-box-orient: vertical]] | العناصر جواه فوق بعض |
+| [[-webkit-line-clamp: 2]] | سطرين بس، وآخرهم «…» |
+| [[overflow: hidden]] | اللي بعد السطرين يستخبى |
+
+[[-webkit-]] اسمها prefix: اسم قديم بدأ في متصفحات WebKit، والصيغة دي هي اللي شغالة في كل المتصفحات.
+
+حطينا اسم منتج طويل (خط 20px و [[line-height: 1.5]]، يعني السطر 30px):
+
+~~~text getBoundingClientRect و scrollHeight
+الارتفاع الظاهر:     60   (سطرين × 30)
+الارتفاع الحقيقي:    90   (الكلام محتاج 3 سطور)
 ~~~
 
-**هتشوف إيه:** «MENU» حروفها واقفة تحت بعض، وده شكل لافتات مألوف. «قائمة» حروفها **اتفكّت**: كل حرف لوحده بشكله المنفصل تحت التاني، والكلمة مبقتش تتقري.
-
-[[upright]] بتعامل كل حرف كصندوق مستقل، والعربي ميعيش كده. **متستخدمش [[text-orientation: upright]] مع عربي.** سيبها [[mixed]].
-
-### [[text-combine-upright: all]]
-
-في نص رأسي، الأرقام بتتقلب على جنبها زي اللاتيني. الخاصية دي بتاخد مجموعة حروف قصيرة (سنة، يوم) وتكتبها **أفقي جنب بعض** في مكان حرف واحد:
-
-~~~live 140 رقم جوه نص رأسي
-<style>
-  div { writing-mode: vertical-rl; display: inline-block; height: 110px; margin: 0 14px; font-size: 18px; border: 1px solid silver; padding: 4px; }
-  .tcy { text-combine-upright: all; }
-</style>
-<div lang="ja">平成31年</div>
-<div lang="ja">平成<span class="tcy">31</span>年</div>
-~~~
-
-**هتشوف إيه:** في الأول «31» مقلوبة على جنبها وسط الحروف اليابانية. في التاني الرقمين واقفين جنب بعض في خانة واحدة، وده الشكل الصح في الطباعة اليابانية.
-
-القيم: [[none]] و [[all]]. (القيمة [[digits 2]] من المواصفة مش مدعومة في Chrome 157: [[CSS.supports]] رجّع false.) خاصية للنصوص الآسيوية، وذكرناها عشان هي في المنهج.
+والكلام كله لسه موجود: اسم العنوان في الـ accessibility tree طلع الجملة كاملة، فقارئ الشاشة بيقرا كل حاجة. ده الفرق عن إنك تقطع بـ [[substring]] في JavaScript.
 
 ---
 
-## ٥. [[direction: rtl]] و [[unicode-bidi]]: سيبهم للـ HTML
+## ٥. نفس الكلام بـ Tailwind
 
-فيه خاصيتين CSS بيتحكموا في اتجاه النص:
+~~~text JSX
+<h2 className="text-balance">...</h2>
+<p className="text-pretty max-w-prose">...</p>
+<h3 className="line-clamp-2">...</h3>
+~~~
 
-| الخاصية | القيم |
-|---|---|
-| [[direction]] | [[ltr]] و [[rtl]] |
-| [[unicode-bidi]] | [[normal]] و [[embed]] و [[isolate]] و [[bidi-override]] و [[isolate-override]] و [[plaintext]] |
+[[className]] هو [[class]] بس في React (لأن [[class]] كلمة محجوزة في JavaScript). بنينا الملف ده في مشروع Vite و Tailwind 4.3.3، وده الـ CSS اللي Tailwind طلّعه للكلاسات دي بالظبط:
 
-و MDN بيقول صريح: **متستخدمهمش في صفحات الويب.** الاتجاه جزء من **معنى** المحتوى مش من شكله، فمكانه [[dir]] في الـ HTML:
+~~~text CSS الناتج من vite build
+.line-clamp-2 {
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+}
+.max-w-prose {
+  max-width: 65ch;
+}
+.text-balance {
+  text-wrap: balance;
+}
+.text-pretty {
+  text-wrap: pretty;
+}
+~~~
 
-- لو ملف الـ CSS منزلش، [[dir="rtl"]] لسه شغال. [[direction: rtl]] لأ.
-- [[dir]] بيوصل لقارئ الشاشة ولأي برنامج بيقرا الصفحة.
-- [[dir="auto"]] بيقرر الاتجاه من أول حرف في النص (لكلام المستخدمين). ده في CSS اسمه [[unicode-bidi: plaintext]]، والـ attribute أوضح.
-- عزل حتة اتجاهها مختلف (رقم تليفون، اسم إنجليزي) بيتعمل بـ [[<bdi>]] أو [[dir]] على [[<span>]].
-
-المتصفح نفسه بيترجم [[dir="rtl"]] لـ [[direction: rtl]] و [[unicode-bidi: isolate]] في الـ stylesheet بتاعه. فالخاصيتين موجودين وشغالين، بس إنت بتتحكم فيهم من الـ HTML. الشرح الكامل في درس «lang و dir».
-
-الحالة الوحيدة اللي هتكتب فيها [[direction]] بإيدك: خدعة layout (زي عكس ترتيب أعمدة)، وحتى دي ليها طرق أحسن في flexbox و grid.
-
----
-
-## ٦. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| drop cap بـ [[float]] وحجم على فقرة عربي | أول حرف بيتفصل عن كلمته |
-| [[::first-letter]] على [[<span>]] | مبتشتغلش: عايزة صندوق block |
-| [[margin]] أو [[padding]] على [[::first-line]] | بيتجاهلوا |
-| [[<span>]] حوالين «أول سطر» | على شاشة تانية السطر بيتكسر في حتة تانية |
-| [[::selection]] بتباين ضعيف أو شفافة | المستخدم مش شايف هو حدد إيه |
-| [[font-size]] جوه [[::selection]] | بيتجاهل: ألوان وزينة بس |
-| [[text-orientation: upright]] على عربي | الحروف بتتفك وتتراص تحت بعض |
-| فقرة كاملة [[writing-mode: vertical-rl]] بالعربي | الكلام نايم على جنبه ومتعب |
-| [[direction: rtl]] في الـ CSS بدل [[dir]] | من غير CSS الصفحة بتتقلب، وقارئ الشاشة ميعرفش |
+نفس الـ CSS اللي كتبناه بإيدنا فوق. وزيادة [[max-w-prose]]: أقصى عرض [[65ch]]، و [[ch]] عرض حرف الصفر في الخط ده، يعني حوالي ٦٥ حرف في السطر، وده عرض مريح للقراية.
 
 ---
 
 ## الخلاصة
 
-- [[::first-letter]]: أول حرف. للعربي لون ووزن بس، من غير [[float]] ولا حجم.
-- [[::first-line]]: أول سطر زي ما اتكسّر. خصائص خط ولون، وآمنة على العربي.
-- [[::selection]]: لون التحديد. ألوان بس، وبتباين واضح.
-- [[writing-mode: vertical-rl]]: لعناوين أعمدة ضيقة. الكلمة العربي بتتقلب على جنبها وتفضل متصلة.
-- [[text-orientation: upright]] بتفك العربي. [[text-combine-upright]] للأرقام في نص آسيوي.
-- الاتجاه بـ [[dir]] في الـ HTML، مش [[direction]] في الـ CSS.`,
-          try: R`اعمل [[first.html]] فيه فقرتين: واحدة عربي وواحدة إنجليزي ([[lang="en" dir="ltr"]]). اعمل للإنجليزي drop cap بـ [[float]]، وجرّب نفس القاعدة على العربي وشوف الحرف الأول. وبعدين بدّل قاعدة العربي للون ووزن بس. وزوّد [[::selection]] بألوان من عندك وحدد الكلام.`,
-          sol: R`~~~live 184 216 first.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أول حرف</title>
-<style>
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; font-size: 18px; line-height: 1.8; }
-  p { max-width: 420px; }
-  .ar::first-letter { color: #b45309; font-weight: 700; }
-  .en::first-letter { font-size: 3em; float: left; line-height: 1; margin-right: 6px; color: #b45309; }
-  ::selection { background: #fde68a; color: #111; }
-</style>
-</head>
-<body>
-<p class="ar">كان البحر هادي في الصبحية دي، والمراكب راجعة واحدة ورا التانية من غير صوت.</p>
-<p class="en" lang="en" dir="ltr">The sea was calm that morning, and the boats came back one after another without a sound.</p>
-</body>
-</html>
-~~~
+| الحاجة | لمين | Tailwind |
+|---|---|---|
+| [[text-wrap: balance]] | العناوين والكلام القصير | [[text-balance]] |
+| [[text-wrap: pretty]] | الفقرات | [[text-pretty]] |
+| [[white-space: nowrap]] | سعر، تليفون | [[whitespace-nowrap]] |
+| line-clamp (٤ خصائص) | عنوان كارت طوله مش معروف | [[line-clamp-2]] |
 
-**هتشوف إيه:**
+- balance مش بيغيّر عرض الصندوق، بيوزّع الكلام جواه بس.
+- متحطش [[<br>]] بإيدك في العناوين: بيبوظ على شاشة تانية.`,
+          lines: [
+            "كل العناوين: السطور متوازنة.",
+            "الفقرات: من غير كلمة يتيمة في الآخر (لو المتصفح بيدعم).",
+            "السعر ميتقسمش على سطرين.",
+            "العنوان سطرين بالكتير وبعدين «…».",
+            "نفس balance بـ Tailwind.",
+            R`نفس pretty، و [[max-w-prose]] عرض مريح للقراية.`,
+            "نفس القطع بعد سطرين بـ Tailwind."
+          ],
+          sol: R`من غير balance: على بعض العروض هتلاقي سطر مليان وتحته «الأصلية» لوحدها. مع balance: سطرين قريبين من بعض في الطول، وعرض الكارت زي ما هو.
 
-- العربي: الكاف في «كان» بنية وتقيلة، والكلمة متصلة.
-- الإنجليزي: «T» كبيرة على الشمال والسطور بتلف حواليها.
-- حدد أي كلام: خلفية صفرا.
-- لو جرّبت قاعدة الإنجليزي على [[.ar]] (مع [[float: right]]): الكاف هتتفصل عن «ان» وتتعرض بشكلها المنفصل.
+[[CSS.supports('text-wrap', 'pretty')]] بيرجع true في Chrome و Edge (ومتصفحات تانية حسب النسخة)، ولو رجع false ده معناه إن المتصفح هيتجاهل السطر، مش إن الصفحة هتبوظ.
 
-~~~text القياس من Chrome
-.ar::first-letter   color: rgb(180, 83, 9)    font-weight: 700    float: none
-.en::first-letter   font-size: 54px           float: left
-::selection         background-color: rgb(253, 230, 138)
-~~~`,
-          deep: {
-            why: R`فيه تنسيقات مينفعش تتعمل بـ tag: «أول سطر» بيتغيّر مع عرض الشاشة، و «اللي المستخدم حدده» بيتغيّر مع كل حركة ماوس. الـ pseudo-elements دي بتخلّي المتصفح هو اللي يحدد الحتة. وهي كمان أوضح مثال على إن CSS اتصمم حوالين اللاتيني: الـ drop cap والكتابة الواقفة بيفترضوا حروف منفصلة، والحرف العربي المتصل بيتكسر معاهم. فاللي بيكتب عربي لازم يعرف أنهي تأثير آمن وأنهي لأ قبل ما ينقله من تصميم إنجليزي.`,
-            how: R`[[::first-letter]] بتعمل صندوق inline وهمي حوالين أول حرف (ومعاه الترقيم اللي قبله)، كأنك حطيته في [[<span>]]. ولما الصندوق ده ياخد خط بحجم مختلف أو [[float]]، المتصفح بيشكّل الحروف (shaping) على حتتين منفصلتين، فالحرف العربي بيفقد وصلته. مع اللون بس، التشكيل بيحصل على الكلمة كلها والتلوين بيتطبق بعده. [[::first-line]] بتتطبق بعد تكسير السطور، وعشان كده ممنوع فيها أي خاصية بتغيّر مقاس الصندوق. [[::selection]] طبقة رسم بتتحط فوق النص المتحدد، ومسموح فيها ألوان بس عشان التحديد ميغيّرش الـ layout. و [[writing-mode]] بتبدّل المحورين: «inline» بيبقى رأسي و «block» أفقي، وكل الخصائص المنطقية ([[inline-start]] و [[block-start]]) بتلف معاه.`,
-            when: R`[[::first-letter]]: مقالات وقصص بالإنجليزي، ولمسة لون في العربي. [[::first-line]]: مقدمة مقال. [[::selection]]: هوية الموقع، مرة واحدة في الملف. [[writing-mode]]: عناوين أعمدة جداول مزحومة، ووسم على جنب كارت. [[direction]] و [[unicode-bidi]]: تقريبًا أبدًا.`,
-            mistakes: R`drop cap على عربي. [[::first-letter]] على عنصر inline. خصائص صندوق على [[::first-line]]. تحديد من غير تباين. [[upright]] على عربي. و [[direction]] في الـ CSS بدل [[dir]].`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** فقرتين في أول قصة. الإنجليزي [[.en]]: drop cap حجمه [[48px]] وعايم على الشمال. العربي [[.ar]]: أول حرف لونه [[#b45309]] وتقيل (700) **من غير** تغيير حجم ولا [[float]]. (من قسم ١ في الشرح)`, done: R`الحرف الإنجليزي 48px و [[float: left]]، والعربي بني وتقيل و [[float: none]]، وكل الشروط ✓.`, work: { h: 190, start: R`<style>
-  p { font-size: 18px; line-height: 1.7; max-width: 400px; }
-  .en::first-letter { }
-  .ar::first-letter { }
-</style>
-<p class="en" lang="en" dir="ltr">Every morning the fishermen counted their nets, knowing the number would not change.</p>
-<p class="ar">كل يوم الصبح الصيادين بيعدّوا الشباك، وهم عارفين إن العدد مش هيتغيّر.</p>`, checks: [
-              { say: R`الحرف الإنجليزي الأول 48px`, q: ".en", pseudo: "::first-letter", style: ["font-size", "48px"] },
-              { say: R`وعايم على الشمال`, q: ".en", pseudo: "::first-letter", style: ["float", "left"] },
-              { say: R`الحرف العربي الأول بني`, q: ".ar", pseudo: "::first-letter", style: ["color", "rgb(180, 83, 9)"] },
-              { say: R`وتقيل`, q: ".ar", pseudo: "::first-letter", style: ["font-weight", "700"] },
-              { say: R`ومن غير [[float]] (عشان الكلمة تفضل متصلة)`, q: ".ar", pseudo: "::first-letter", style: ["float", "none"] },
-              { say: R`وبنفس حجم باقي الفقرة`, q: ".ar", pseudo: "::first-letter", style: ["font-size", "18px"] }
-            ] }, sol: R`~~~live 176 207 الحل
-<style>
-  p { font-size: 18px; line-height: 1.7; max-width: 400px; }
-  .en::first-letter { font-size: 48px; float: left; line-height: 1; margin-right: 6px; }
-  .ar::first-letter { color: #b45309; font-weight: 700; }
-</style>
-<p class="en" lang="en" dir="ltr">Every morning the fishermen counted their nets, knowing the number would not change.</p>
-<p class="ar">كل يوم الصبح الصيادين بيعدّوا الشباك، وهم عارفين إن العدد مش هيتغيّر.</p>
-~~~
-
-**هتشوف إيه:** «E» كبيرة على شمال الفقرة الإنجليزي والسطرين بيلفوا حواليها. وفي العربي الكاف في «كل» بنية وتقيلة، و «كل» كلمة واحدة متصلة.
-
-**ليه مختلفين:** الحرف اللاتيني مستقل، فينفع يتكبّر ويتعوّم. الحرف العربي جزء من كلمة متصلة، وأي حاجة بتطلّعه في صندوق بمقاس تاني بتقطع الوصلة.
-
-**الغلطة الشائعة:** نفس قاعدة الـ drop cap على الاتنين «عشان التصميم يبقى موحّد». الفقرة العربي هتبدأ بـ «ك» منفصلة وبعدها «ل» لوحدها.
-
-~~~text القياس من Chrome
-.en::first-letter   font-size: 48px    float: left
-.ar::first-letter   color: rgb(180, 83, 9)    font-weight: 700    float: none    font-size: 18px
-~~~` },
-            { lvl: 'سريع', t: R`**ابني:** خلّي أول سطر من مقدمة المقال [[.lead]] تقيل (700) ولونه [[#0f766e]]، من غير أي tag جديد في الـ HTML. وبعدين دوس «موبايل» فوق المعاينة وشوف التنسيق بيمشي مع السطر. (من قسم ٢ في الشرح)`, done: R`أول سطر تقيل وأخضر، ومفيش [[<span>]] ولا [[<strong>]] في الفقرة، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  .lead { font-size: 18px; line-height: 1.8; max-width: 440px; }
-
-</style>
-<p class="lead">الخط الكويس مش اللي بيلفت النظر. الخط الكويس اللي بتنساه وإنت بتقرا، وبتفتكر الكلام نفسه. وده اللي هنحاول نوصله في المقال ده.</p>`, checks: [
-              { say: R`أول سطر تقيل`, q: ".lead", pseudo: "::first-line", style: ["font-weight", "700"] },
-              { say: R`ولونه [[#0f766e]]`, q: ".lead", pseudo: "::first-line", style: ["color", "rgb(15, 118, 110)"] },
-              { say: R`باقي الفقرة وزنها عادي`, q: ".lead", style: ["font-weight", "400"] },
-              { say: R`مفيش tag جديد جوه الفقرة`, q: ".lead *", n: 0 }
-            ] }, sol: R`~~~live 101 133 الحل
-<style>
-  .lead { font-size: 18px; line-height: 1.8; max-width: 440px; }
-  .lead::first-line { font-weight: 700; color: #0f766e; }
-</style>
-<p class="lead">الخط الكويس مش اللي بيلفت النظر. الخط الكويس اللي بتنساه وإنت بتقرا، وبتفتكر الكلام نفسه. وده اللي هنحاول نوصله في المقال ده.</p>
-~~~
-
-**هتشوف إيه:** السطر الأول أخضر وتقيل. على عرض الموبايل السطر بيقصر، والكلمات اللي نزلت للسطر التاني رجعت عادية لوحدها.
-
-**ليه [[::first-line]] مش [[<strong>]]:** [[<strong>]] حوالين أول جملة هيخلّي الجملة تقيلة حتى لو لفّت على تلات سطور في الموبايل. إنت عايز «السطر» مش «الجملة».
-
-**الغلطة الشائعة:** [[.lead:first-line]] بنقطتين واحدة. بتشتغل (المتصفحات بتقبلها للتوافق مع الكود القديم)، بس الكتابة الصح للـ pseudo-elements بنقطتين اتنين [[::]]، عشان تتفرّق عن الـ pseudo-classes.
-
-~~~text القياس من Chrome
-.lead::first-line   font-weight: 700    color: rgb(15, 118, 110)
-.lead               font-weight: 400
-~~~` },
-            { lvl: 'سريع', t: R`**ابني:** لون تحديد النص في «مدوّنة حبر» كلها: خلفية [[#fde68a]] وكلام [[#111]]. قاعدة واحدة من غير اسم عنصر. (من قسم ٣ في الشرح)`, done: R`[[::selection]] على الفقرة والعنوان الاتنين بالخلفية الصفرا، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  body { font-size: 18px; }
-
-</style>
-<h2>حدد الكلام ده</h2>
-<p>وحدد الفقرة دي كمان، وشوف اللون.</p>`, checks: [
-              { say: R`خلفية التحديد في الفقرة [[#fde68a]]`, q: "p", pseudo: "::selection", style: ["background-color", "rgb(253, 230, 138)"] },
-              { say: R`وفي العنوان كمان (القاعدة عامة)`, q: "h2", pseudo: "::selection", style: ["background-color", "rgb(253, 230, 138)"] },
-              { say: R`كلام التحديد [[#111]]`, q: "p", pseudo: "::selection", style: ["color", "rgb(17, 17, 17)"] }
-            ] }, sol: R`~~~live 115 الحل
-<style>
-  body { font-size: 18px; }
-  ::selection { background: #fde68a; color: #111; }
-</style>
-<h2>حدد الكلام ده</h2>
-<p>وحدد الفقرة دي كمان، وشوف اللون.</p>
-~~~
-
-**هتشوف إيه:** اسحب بالماوس على أي كلام: خلفية صفرا وحروف غامقة، في العنوان والفقرة.
-
-**ليه كده:** [[::selection]] من غير عنصر قبلها معناها [[*::selection]]: كل العناصر.
-
-**الغلطة الشائعة:** [[body::selection]]. دي بتنطبق على النص اللي **جوه body مباشرة** بس، وسلوكها مع العناصر اللي جواه بيختلف بين المتصفحات. القاعدة العامة أضمن.
-
-**اختبر التباين:** أصفر فاتح مع [[#111]] واضح. لو كنت سبت [[color]] من غير تحديد وخلفيتك غامقة، الكلام المتحدد ممكن يختفي.
-
-~~~text القياس من Chrome
-p::selection    background-color: rgb(253, 230, 138)    color: rgb(17, 17, 17)
-h2::selection   background-color: rgb(253, 230, 138)
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** جدول حضور عناوين أعمدته رأسية عشان يضيق. المبرمج نقل القاعدة من موقع إنجليزي وفيها [[text-orientation: upright]]، فأسامي الأيام العربي حروفها اتفكّت. صلّحها وسيب العناوين رأسية. (من قسم ٤ في الشرح)`, done: R`العناوين لسه [[vertical-rl]] و [[text-orientation]] رجعت [[mixed]]، وكل الشروط ✓.`, work: { h: 190, start: R`<style>
-  table { border-collapse: collapse; }
-  th, td { border: 1px solid silver; padding: 4px 8px; text-align: center; }
-  thead th { writing-mode: vertical-rl; text-orientation: upright; }
-</style>
-<table>
-  <thead><tr><td></td><th>السبت</th><th>الأحد</th><th>الاثنين</th></tr></thead>
-  <tbody><tr><th>منى</th><td>✓</td><td>✓</td><td></td></tr></tbody>
-</table>`, checks: [
-              { say: R`العناوين لسه رأسية`, q: "thead th", style: ["writing-mode", "vertical-rl"] },
-              { say: R`الحروف مبقتش «واقفة»: [[text-orientation: mixed]]`, q: "thead th", style: ["text-orientation", "mixed"] }
-            ] }, sol: R`~~~live 89 بعد التصليح
-<style>
-  table { border-collapse: collapse; }
-  th, td { border: 1px solid silver; padding: 4px 8px; text-align: center; }
-  thead th { writing-mode: vertical-rl; }
-</style>
-<table>
-  <thead><tr><td></td><th>السبت</th><th>الأحد</th><th>الاثنين</th></tr></thead>
-  <tbody><tr><th>منى</th><td>✓</td><td>✓</td><td></td></tr></tbody>
-</table>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 175 قبل
-<style>
-  table { border-collapse: collapse; }
-  th, td { border: 1px solid silver; padding: 4px 8px; text-align: center; }
-  thead th { writing-mode: vertical-rl; text-orientation: upright; }
-</style>
-<table>
-  <thead><tr><td></td><th>السبت</th><th>الأحد</th><th>الاثنين</th></tr></thead>
-  <tbody><tr><th>منى</th><td>✓</td><td>✓</td><td></td></tr></tbody>
-</table>
-~~~
-
-**هتشوف إيه:** قبل: كل يوم حروفه منفصلة ومتراصة تحت بعض (ا ل س ب ت)، والعمود طويل ومبيتقريش. بعد: كل يوم كلمة واحدة متصلة نايمة على جنبها، والعمود أقصر.
-
-**ليه:** [[upright]] بتوقّف كل حرف لوحده. ده بيشتغل مع «MENU» ومبيشتغلش مع حروف شكلها بيعتمد على اتصالها.
-
-**الغلطة الشائعة:** تشيل [[writing-mode]] كمان. المشكلة مش في الكتابة الرأسية، المشكلة في [[upright]].
-
-~~~text القياس من Chrome
-thead th   قبل: text-orientation: upright      بعد: text-orientation: mixed     writing-mode: vertical-rl
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** في مراجعة كود لقيت [[body { direction: rtl; }]] في ملف الـ CSS، و [[<html lang="ar">]] من غير [[dir]]. اكتب تعليق المراجعة في ٣ سطور: إيه الغلط، وإيه اللي ممكن يحصل، وإيه التصليح. (من قسم ٥ في الشرح)`, done: R`قلت إن الاتجاه معنى مش شكل، وذكرت حالة فشل الـ CSS وقارئ الشاشة، وكتبت السطر المتصلّح.`, sol: R`**تعليق نموذجي:**
-
-1. الاتجاه جزء من معنى المحتوى، فمكانه الـ HTML. MDN بيقول صريح إن [[direction]] و [[unicode-bidi]] مش للاستخدام في صفحات الويب، وإن البديل [[dir]].
-2. بالوضع الحالي: لو ملف الـ CSS اتأخر أو فشل، الصفحة العربي هتتعرض من الشمال لليمين وعلامات الترقيم هتروح في الناحية الغلط. وأي أداة بتقرا الـ HTML (قارئ شاشة، وضع القراية في المتصفح، ترجمة) مش هتعرف إن الصفحة RTL.
-3. التصليح: امسح السطر من الـ CSS، واكتب:
-
-~~~html
-<html lang="ar" dir="rtl">
-~~~
-
-**وللمحتوى المختلط** (اسم إنجليزي وسط عربي، أو تعليقات مستخدمين): [[dir="ltr"]] أو [[dir="auto"]] على العنصر نفسه، أو [[<bdi>]]. مش [[unicode-bidi]].
-
-~~~text اللي المتصفح بيعمله لوحده
-<p dir="rtl">   →   direction: rtl      unicode-bidi: isolate      (من الـ stylesheet بتاع المتصفح)
-~~~
-
-يعني الخاصيتين شغالين في الخلفية، وإنت بتتحكم فيهم من الـ HTML.` }
-          ]
+لو balance ملوش أي تأثير: غالبًا الكلام أطول من الحد اللي المتصفح بيطبقه عليه، أو العنصر [[display: inline]].`
         },
         {
-          cmd: "font-variant و font-feature-settings",
-          title: "الأشكال البديلة جوه الخط: أرقام الجداول، والـ small caps، والـ ligatures، والـ kerning",
-          pre: [
-            { to: "css/font-weight و font-style", why: R`[[font-synthesis-small-caps]] و [[font]] المختصرة اتشرحوا هناك، والدرس ده بيبني عليهم` },
-            { to: "css/@font-face و font-display", why: R`جزء من خصائص الدرس ده بيشتغل بس مع خط محمّل بـ [[@font-face]]` }
-          ],
+          cmd: "Baseline و @supports",
           ref: [
-            { t: "MDN: font-variant", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-variant" },
-            { t: "MDN: font-variant-numeric", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-variant-numeric" },
-            { t: "MDN: font-variant-ligatures", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-variant-ligatures" },
-            { t: "MDN: font-feature-settings", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-feature-settings" },
-            { t: "MDN: font-kerning", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-kerning" },
-            { t: "MDN: @font-feature-values", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-feature-values" },
-            { t: "MDN: font-palette", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-palette" },
-            { t: "MDN: @font-palette-values", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-palette-values" },
-            { t: "MDN: text-box-trim", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-box-trim" }
+            { t: "web.dev: Baseline", url: "https://web.dev/baseline" },
+            { t: "web-features (GitHub)", url: "https://github.com/web-platform-dx/web-features" },
+            { t: "MDN: CSS.supports()", url: "https://developer.mozilla.org/en-US/docs/Web/API/CSS/supports_static" },
+            { t: "MDN: @supports", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@supports" },
+            { t: "MDN: anchor-name", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/anchor-name" },
           ],
-          desc: R`ملف الخط الواحد فيه أكتر من شكل لنفس الحرف: أرقام كلها بعرض واحد للجداول، وحروف كبيرة صغيّرة، وحرفين مدموجين في رسمة واحدة. دي اسمها OpenType features، و [[font-variant]] وإخواتها بيشغّلوها ويقفلوها بأسامي مفهومة. و [[font-feature-settings]] هي الطريقة الواطية لنفس الحاجة.
-أكتر واحدة هتستخدمها فعلًا: [[font-variant-numeric: tabular-nums]] عشان أرقام الجدول تتراص تحت بعض. وفي آخر الدرس جدول مرجعي بخصائص النص النادرة اللي في المنهج.`,
-          example: R`td.num { font-variant-numeric: tabular-nums; }
-.price { font-variant-numeric: proportional-nums; }
-abbr { font-variant-caps: all-small-caps; }
-code { font-variant-ligatures: none; }
-h1 { font-kerning: normal; }
-.fancy { font-feature-settings: "ss01" 1; }`,
+          title: "الميزة دي أستخدمها ولا لسه؟ Baseline و caniuse و @supports",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[CSS.supports("(:has(a))")]] و [[CSS.supports("selector(:has(a))")]]: كل واحد بيرجّع إيه في Chrome 156؟ وليه؟`, done: R`الأول [[false]] والتاني [[true]] (اتقاس). الـ selectors لازم تتسأل بـ [[selector()]]، و [[@supports (:has(a))]] من غيرها دايمًا false فالـ fallback بيشتغل حتى في المتصفح اللي بيدعم.`,
+              sol: R`~~~live 120 120 supports.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>supports</title></head>
+<body>
+  <main><h1>افتح الكونسول</h1></main>
+  <script>
+    console.log(CSS.supports("(:has(a))"));
+    console.log(CSS.supports("selector(:has(a))"));
+  $__lt/script>
+</body></html>
+~~~
+
+[[CSS.supports("(...)")]] بيسأل عن تصريح [[property: value]]. [[:has(a)]] مش تصريح، فالمتصفح بيقرا الجملة كـ سؤال غلط ويرجّع [[false]]، حتى لو بيدعم [[:has()]]. عشان تسأل عن selector لازم تقول كده صراحة: [[selector(:has(a))]].
+
+في الـ CSS نفس الكلام:
+
+~~~css
+@supports selector(:has(a)) { /* هنا بيشتغل */ }
+@supports (:has(a))         { /* مبيشتغلش أبدًا */ }
+~~~
+
+الغلطة الخطيرة إن النسخة الغلط مبتكسرش حاجة ظاهرة: الـ fallback بيشتغل على طول، فكل الناس بتشوف الشكل القديم وانت فاكر إن الميزة شغالة. والعكس في [[@supports not (:has(a))]]: بتبقى دايمًا [[true]].
+
+~~~text الناتج (Chrome 156)
+CSS.supports("(:has(a))")          false
+CSS.supports("selector(:has(a))")  true
+~~~` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** جدول بحالة Baseline من MDN لـ ٦ ميزات من الوحدات دي: [[:has()]]، و container queries، و [[@property]]، و [[animation-timeline]]، و View Transitions بين الصفحات، و [[text-wrap: pretty]].`, done: R`جدول فيه لكل ميزة: Widely ولا Newly ولا Limited، وأول نسخة في كل متصفح، وقرارك: «استخدمها عادي» أو «بـ fallback» أو «لسه»، وتاريخ اليوم اللي دوّرت فيه.`,
+              sol: R`الإجابة النموذجية (web-features 3.45 و browser-compat-data 8.1.8، تاريخ البحث 2026-11-04):
+
+| الميزة | Baseline | Chrome | Safari | Firefox | القرار |
+|---|---|---|---|---|---|
+| [[:has()]] | Widely | 105 | 15.4 | 121 | استخدمها عادي |
+| container queries | Widely | 105 | 16 | 110 | استخدمها عادي |
+| [[@property]] | Newly | 85 | 16.4 | 128 | عادي، والحركة تحسين |
+| [[animation-timeline]] | Newly | 115 | 26 | 159 | بـ [[@supports]] و fallback |
+| View Transitions بين الصفحات | Limited | 126 | 18.2 | لسه | تحسين بس، مفيش ضرر |
+| [[text-wrap: pretty]] | Limited | 117 | 26 | لسه | تحسين بس، مفيش ضرر |
+
+[[Widely]] يعني الميزة في كل المتصفحات الرئيسية من ٣٠ شهر على الأقل. [[Newly]] يعني لسه داخلة كل المتصفحات. [[Limited]] يعني لسه ناقصة في متصفح.
+
+القرار مش من الجدول لوحده، بيعتمد على إيه اللي بيحصل لو الميزة مش موجودة:
+
+- لو غيابها بيكسر حاجة (layout كامل معتمد على [[:has()]] مثلًا): لازم Widely أو fallback.
+- لو غيابها معناه شكل أبسط (حركة، توازن نص): استخدمها حتى لو Limited.
+
+الغلطة الشائعة: تقرا «Limited» فتشيل الميزة. [[text-wrap: pretty]] مفيهاش خطر: المتصفح اللي مش بيفهمها بيتجاهلها.
+
+القيم دي بتتغير بمرور الوقت، فاكتب تاريخ البحث جنب الجدول دايمًا.
+
+~~~text الناتج (من باكدج web-features)
+:has()             Widely (Newly من 2023-12-19، و Widely من 2026-06-19)
+container queries  Widely (Newly من 2023-02-14، و Widely من 2025-08-14)
+@property          Newly (Newly من 2024-07-09)
+animation-timeline Newly (Newly من 2026-10-27)
+cross-document VT  Limited
+text-wrap: pretty  Limited
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** navbar زجاجي: [[backdrop-filter: blur(12px)]] وخلفية شبه شفافة، و [[@supports not (backdrop-filter: blur(1px))]] بيدّيه خلفية شبه مصمتة. جرّب الـ fallback بإنك تشيل الخاصية من DevTools.`, done: R`في الحالتين الكلام 4.5:1 أو أكتر فوق أفتح وأغمق جزء في الصفحة تحته (اتقاس من DevTools)، والـ fallback شكله مقصود مش مكسور.`,
+              sol: R`~~~live 260 260 glass-nav.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>navbar زجاجي</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; color: #111827; }
+  nav {
+    position: sticky; top: 0; padding: 1rem; color: #111827;
+    background: rgb(255 255 255 / .72);
+    backdrop-filter: blur(12px);
+  }
+  @supports not (backdrop-filter: blur(1px)) {
+    nav { background: rgb(255 255 255 / .94); }
+  }
+  .sec { block-size: 60vh; }
+  .light { background: #ffffff; }
+  .dark  { background: #111827; }
+</style></head>
+<body>
+  <nav aria-label="الرئيسية"><a href="#x">الرئيسية</a></nav>
+  <main id="x"><h1>صفحة</h1><div class="sec light"></div><div class="sec dark"></div></main>
+</body></html>
+~~~
+
+الخلفية شبه شفافة، فالنص فوق خلفية بتتغير مع الـ scroll. القياس لازم يتعمل على أسوأ حالة: أغمق جزء تحت الـ navbar. الخلفية النهائية = [[.72 × أبيض + .28 × اللي تحت]]، فلما يعدّي فوق [[#111827]]:
+
+- مع الـ blur: ‏rgb(188, 190, 195) تقريبًا، والنص [[#111827]] عليها 9.54:1.
+- الـ fallback ‏.94: ‏rgb(241, 241, 242) تقريبًا، والنسبة 15.72:1.
+- فوق الجزء الأبيض: 17.74:1.
+
+[[@supports not (...)]] بيتطبق بس في المتصفح اللي مش بيدعم، وبيرفع الشفافية عشان النص يفضل مقري من غير الـ blur. اللي عايز يجرّبه: احذف [[backdrop-filter]] من DevTools، أو بدّل [[not]] مؤقتًا.
+
+الغلطة الشائعة: تقيس التباين فوق الجزء الأبيض بس، وتسيب النص يضيع فوق صورة غامقة.
+
+~~~text الناتج (محسوب بمعادلة WCAG، ومقروء من Chrome 156)
+background الـ nav: rgba(255, 255, 255, 0.72)
+backdrop-filter: blur(12px)
+مع إجبار الـ fallback: background = rgba(255, 255, 255, 0.94)
+axe: 0
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل [[npx browserslist "baseline widely available"]] و [[npx browserslist "defaults"]] في مشروع، وقارن اللستتين.`, done: R`عدد المتصفحات والنسخ في كل واحدة، وأقدم نسخة Safari في كل لستة، وجملة: الفرق ده بيأثر على إيه (prefixes من autoprefixer، وتحويل CSS في Lightning CSS أو Vite).`,
+              sol: R`~~~bash
+mkdir bl-test && cd bl-test && npm init -y
+npm i -D browserslist baseline-browser-mapping
+npx browserslist "baseline widely available"
+npx browserslist "defaults"
+~~~
+
+~~~js compare.mjs: يعدّ ويقارن اللستتين
+import browserslist from "browserslist";
+const a = browserslist("baseline widely available");
+const b = browserslist("defaults");
+const old = l => l.filter(x => x.startsWith("safari ")).map(x => x.split(" ")[1]).sort((p, q) => parseFloat(p) - parseFloat(q))[0];
+console.log("baseline:", a.length, "نسخة، أقدم Safari", old(a));
+console.log("defaults:", b.length, "نسخة، أقدم Safari", old(b));
+console.log("في defaults بس:", b.filter(x => !a.includes(x)).length);
+console.log("في baseline بس:", a.filter(x => !b.includes(x)).length);
+~~~
+
+[[browserslist]] بيحوّل جملة لستة نسخ متصفحات حقيقية من بيانات caniuse. [[defaults]] معناها: [[> 0.5%, last 2 versions, Firefox ESR, not dead]]. [[baseline widely available]] معناها: كل النسخ اللي بتدعم اللي بقى Widely، أي من حوالي ٣٠ شهر.
+
+الفرق ده مش رقم نظري: Autoprefixer بيحدد منه أي [[-webkit-]] يتكتب، و Lightning CSS و Vite بيحددوا منه أي CSS حديث يتحوّل لشكل قديم، فلستة أقدم معناها ملف CSS أكبر وتحويلات أكتر. والملاحظة اللي بتفاجئ: لستة baseline هنا أكبر وأقدم من [[defaults]]، لأن [[defaults]] بتجري ورا النسخ الحديثة والمنتشرة، و baseline بتشمل كل نسخة دعمت الميزات دي من ٣٠ شهر.
+
+الغلطة الشائعة: تكتب اللستة في [[package.json]] ومتراجعهاش، أو تفترض إن [[defaults]] هي الأمان. اتفق مع الفريق على رقم، وراجعه مرة في السنة.
+
+~~~text الناتج (على الجهاز، browserslist من الـ npm)
+baseline: 136 نسخة، أقدم Safari 17.4
+defaults: 36 نسخة، أقدم Safari 26.6
+في defaults بس: 12
+في baseline بس: 112
+~~~` },
+          ],
+          desc: R`Baseline علامة بتلاقيها في MDN و caniuse: «Newly available» يعني الميزة شغالة في آخر نسخة من Chrome و Edge و Firefox و Safari (ديسكتوب وموبايل)، و «Widely available» يعني عدّى على ده 30 شهر، فأغلب الناس عندهم نسخة بتدعمها.
+
+caniuse.com بيدّيك التفاصيل: أنهي نسخة، ونسبة المستخدمين، والمشاكل المعروفة. و [[@supports]] في CSS (و [[CSS.supports()]] في JavaScript) بيسأل المتصفح نفسه: لو بتدعم الحاجة دي طبّق ده.
+
+و browserslist (في [[package.json]]) بيقول لأدوات الـ build (autoprefixer و Lightning CSS و Babel وغيرهم) إنت بتدعم أنهي متصفحات، فيضيفوا fallbacks على قدها.`,
+          example: R`.card { background: white; }
+@supports (background: color-mix(in oklch, red, blue)) {
+  .card { background: color-mix(in oklch, var(--color-brand) 8%, white); }
+}
+@supports not selector(:has(a)) {
+  .has-fallback { display: block; }
+}
+if (CSS.supports('anchor-name', '--x')) document.documentElement.classList.add('has-anchor');
+// package.json
+"browserslist": ["baseline widely available"]`,
+          try: R`في أي فولدر فيه Node شغّل [[npx browserslist "baseline widely available"]] و [[npx browserslist --coverage "baseline widely available"]] و [[npx browserslist "defaults"]]. وبعدين افتح MDN لـ [[text-wrap]] و [[:has()]] وبص على علامة Baseline فوق كل صفحة.`,
           flag: "script",
-          lines: [
-            R`خانات الأرقام في الجدول: كل رقم ياخد نفس العرض، فالآحاد تيجي تحت الآحاد والعشرات تحت العشرات.`,
-            R`السعر وسط جملة: كل رقم بعرضه الطبيعي (الواحد أضيق من الصفر)، فالرقم يبان متماسك جوه الكلام.`,
-            R`الاختصارات اللاتيني بحروف كبيرة مصغّرة (small caps) بدل حروف كبيرة عالية بتزعّق وسط السطر.`,
-            R`الكود من غير دمج حروف: كل حرف يتعرض لوحده زي ما اتكتب، عشان [[!=]] متتحوّلش لرمز واحد.`,
-            R`شغّل تظبيط المسافات بين أزواج الحروف (kerning) حتى لو المتصفح كان هيقفله للسرعة.`,
-            R`تشغيل ميزة باسمها الخام من أربع حروف: [[ss01]] هي «الطقم الشكلي الأول» في الخط، لو موجود.`
-          ],
-          teach: R`## الفكرة في سطرين
+          deep: {
+            why: R`كل شهر فيه ميزة CSS جديدة، وسؤال «أستخدمها في الشغل؟» كان محتاج تفتح caniuse وتحسب نسب. Baseline بتدّيك إجابة سريعة، و @supports بيخليك تستخدم الجديد النهارده من غير ما تكسر القديم. ودا بيتسأل في الانترفيو: «بتتعامل إزاي مع ميزة مش مدعومة في كل المتصفحات؟»`,
+            how: R`progressive enhancement: اكتب الأساس اللي شغال في كل حتة الأول (خلفية بيضا)، وبعدين جوه [[@supports]] التحسين. المتصفح اللي مش فاهم الشرط بيتجاهل البلوك كله. و [[selector()]] جوه @supports بيسأل عن selector (زي [[:has()]]). و [[not]] للـ fallback.
 
-مصمم الخط بيرسم لبعض الحروف أكتر من شكل، وبيحطهم في الملف تحت «ميزات» ليها أسامي من أربع حروف ([[tnum]] و [[smcp]] و [[liga]]). الـ CSS بيشغّلها بطريقتين: خصائص [[font-variant-*]] بأسامي مقروءة، أو [[font-feature-settings]] بالاسم الخام.
+في CSS أصلًا المتصفح بيتجاهل أي خاصية مش فاهمها، فكتير كفاية تكتب السطرين ورا بعض: [[color: red; color: oklch(...)]] والقديم ياخد الأول والجديد ياخد التاني. @supports بتحتاجها لما التحسين محتاج أكتر من خاصية أو بيغيّر الـ layout.
 
-كل ده بيشتغل **لو الخط فيه الميزة**. لو مفيهوش، مفيش خطأ ومفيش تغيير. القياسات من Chrome 157 على Windows 11 بخطوط النظام، وعرض الكلمة هو الدليل: لما يتغيّر يبقى الشكل اتبدّل.
+browserslist بيقبل queries زي [[defaults]] (أكتر من 0.5% استخدام وآخر نسختين ومتصفحات مش ميتة)، و [[baseline widely available]]، و [[baseline 2024]]. البيانات جاية من caniuse-lite، فحدّثها كل فترة بـ [[npx update-browserslist-db@latest]].
 
----
+و Vite من نسخة 7 الـ build target الافتراضي بتاعه [[baseline-widely-available]]. و Tailwind v4 نفسه مبني على CSS حديث (cascade layers و [[@property]] و [[color-mix]])، فمحتاج متصفحات حديثة (Safari 16.4 و Chrome 111 و Firefox 128 تقريبًا وطالع)، ولو لازم تدعم أقدم من كده خليك على v3.`,
+            when: R`قبل ما تستخدم أي ميزة CSS أو JavaScript جديدة في مشروع حقيقي: Widely available استخدمها عادي. Newly available استخدمها كتحسين مع fallback. لسه مش Baseline: @supports أو استنى. وحط browserslist في أول المشروع عشان كل الأدوات تتفق.`,
+            mistakes: R`تستخدم ميزة لأنها شغالة في Chrome عندك (نص مستخدمين الموبايل في مصر وغيرها على Safari أو متصفحات قديمة). @supports على حاجة كل المتصفحات بتدعمها (كود زيادة على الفاضي). تنسى تحدّث caniuse-lite فالـ build يستهدف متصفحات قديمة. تكتب الـ fallback بعد الجديد (الترتيب مهم: الأساس الأول). وتفتكر إن autoprefixer بيضيف الميزة نفسها: هو بيضيف prefixes بس، مش polyfills.`
+          },
+          teach: R`## ٣ أدوات لسؤال واحد: «الميزة دي أستخدمها؟»
 
-## ١. [[font-variant-numeric: tabular-nums]]
-
-الأرقام في أغلب الخطوط ليها عرضين:
-
-- **proportional**: كل رقم بعرضه الطبيعي. الـ 1 رفيع والـ 0 عريض. أحلى وسط الكلام.
-- **tabular**: كل الأرقام بعرض واحد. أحسن في الجداول والعدّادات.
-
-~~~live 146 نفس الأرقام: proportional ثم tabular (Segoe UI على Windows)
-<style>
-  table { font-family: "Segoe UI", system-ui, sans-serif; font-size: 20px; border-collapse: collapse; display: inline-table; margin: 0 12px; direction: ltr; }
-  td { border-bottom: 1px solid silver; padding: 2px 6px; text-align: right; }
-  .p td { font-variant-numeric: proportional-nums; }
-  .t td { font-variant-numeric: tabular-nums; }
-  caption { font-size: 13px; color: #b45309; }
-</style>
-<table class="p"><caption>proportional-nums</caption><tr><td>1,111.10</td></tr><tr><td>8,080.80</td></tr><tr><td>21.15</td></tr></table>
-<table class="t"><caption>tabular-nums</caption><tr><td>1,111.10</td></tr><tr><td>8,080.80</td></tr><tr><td>21.15</td></tr></table>
-~~~
-
-**هتشوف إيه (على Windows):** في الجدول الأول السطر «1,111.10» أقصر بوضوح من «8,080.80»، والفاصلة والنقطة مش تحت بعض. في التاني الصفّين بنفس العرض بالظبط، وكل خانة رقم تحت اللي فوقها.
-
-~~~text القياس من Chrome (عرض «1111» وعرض «0000» بحجم 100px)
-                    الافتراضي          tabular-nums        proportional-nums
-Segoe UI            215.6 / 215.6      215.6 / 215.6       155.9 / 215.6
-Arial               200.2 / 222.5      222.5 / 222.5       154.9 / 222.5
-Calibri             202.7 / 202.7      202.7 / 202.7       139.7 / 233.9
-Candara             139.8 / 219.7      201.8 / 201.8       139.8 / 219.7
-Tahoma              218.4 / 218.4      218.4 / 218.4       218.4 / 218.4       ← ملوش غير شكل واحد
-~~~
-
-اللي الجدول بيقوله: **الافتراضي بيختلف من خط لخط.** Segoe UI أرقامه tabular من الأول، و Candara proportional من الأول. فلو مكتبتش حاجة، جدولك هيتراص مع خط ويتلخبط مع خط تاني. اكتب [[tabular-nums]] على أي أرقام تحت بعض.
-
-باقي القيم، وممكن تتجمع في نفس السطر:
-
-| القيمة | معناها | الميزة |
+| الأداة | بتسأل مين | إمتى |
 |---|---|---|
-| [[lining-nums]] | أرقام بارتفاع الحروف الكبيرة (المعتاد) | [[lnum]] |
-| [[oldstyle-nums]] | أرقام «نازلة وطالعة» زي الحروف الصغيرة، لنص كتاب | [[onum]] |
-| [[proportional-nums]] و [[tabular-nums]] | عرض طبيعي، أو عرض موحّد | [[pnum]] و [[tnum]] |
-| [[diagonal-fractions]] و [[stacked-fractions]] | «1/2» تتعرض كسر حقيقي | [[frac]] و [[afrc]] |
-| [[ordinal]] | «1st» تتعرض والـ st مرفوعة | [[ordn]] |
-| [[slashed-zero]] | صفر جواه شرطة، عشان يتفرّق عن حرف O | [[zero]] |
+| Baseline و caniuse | بيانات عن كل المتصفحات | قبل ما تكتب الكود |
+| [[@supports]] و [[CSS.supports()]] | المتصفح اللي فاتح الصفحة دلوقتي | وقت التشغيل |
+| browserslist | أدوات الـ build | وقت الـ build |
 
-~~~text القياس من Chrome (100px)
-«1/2 3/4» بـ Segoe UI:    321.0  →  diagonal-fractions 207.0      (اتحوّلت لكسور)
-«1st 2nd» بـ Calibri:     300.5  →  ordinal 247.3
-«1st 2nd» بـ Segoe UI:    327.0  →  ordinal 327.0                 (الخط مفيهوش الميزة: مفيش تغيير)
-~~~
-
-### الأرقام العربي ١٢٣
-
-حاجتين لازم تتعرفوا:
-
-**الأولى: CSS مبيحوّلش 123 لـ ١٢٣.** دول حروف مختلفة في Unicode (الـ 1 كوده [[U+0031]] والـ ١ كوده [[U+0661]])، مش شكلين لنفس الحرف. مفيش قيمة في [[font-variant-numeric]] بتبدّل بينهم. الرقم بيتعرض بالنظام اللي **اتكتب** بيه. الاستثناء الوحيد أرقام بيولّدها الـ CSS نفسه: [[list-style-type: arabic-indic]] و [[counter(x, arabic-indic)]] (درس «list-style و ::marker»). تحويل أرقام المحتوى شغل اللي بيكتب أو شغل JavaScript.
-
-**التانية: [[tabular-nums]] مش مضمونة على الأرقام العربي.**
-
-~~~text القياس من Chrome (عرض «١١١١» وعرض «٠٠٠٠» بحجم 100px)
-                 الافتراضي           tabular-nums
-Segoe UI         100.2 / 166.8       100.2 / 166.8      ← الواحد أضيق من الصفر، والخاصية مغيّرتش حاجة
-Tahoma           228.7 / 228.7       228.7 / 228.7      ← عرض موحّد من الأول
-Calibri          203.1 / 203.1       203.1 / 203.1
-~~~
-
-في Segoe UI الأرقام العربي proportional ومفيش ليها نسخة tabular، فعمود أرقام ١٢٣ مش هيتراص مهما كتبت. في Tahoma و Calibri موحّدة أصلًا. يعني جدول بأرقام عربي محتاج تجرّبه بالخط اللي هتستخدمه، مش تفترض.
+المثال فيه الـ ٣. شغّلنا الـ CSS والـ JavaScript في Chrome 154 (headless عن طريق playwright)، و browserslist 4.29.3 من الترمنال (بيانات caniuse-lite نسخة 1.0.30001814).
 
 ---
 
-## ٢. [[font-variant-caps: small-caps]]
+## ١. [[.card { background: white; }]]: الأساس الأول
 
-Small caps: حروف شكلها كبير (A B C) وارتفاعها قد الحروف الصغيرة. بتتستخدم للاختصارات وأول كلمات الفصل في الكتب.
+ده السطر اللي **أي** متصفح فاهمه. بيتكتب الأول، عشان المتصفح القديم ياخده ويقف.
 
-| القيمة | معناها |
+## ٢. [[@supports (background: color-mix(in oklch, red, blue)) { ... }]]
+
+[[@supports]] بيسأل المتصفح: «انت فاهم الخاصية دي بالقيمة دي؟». لو أيوه بيطبّق اللي جوه الأقواس، لو لأ بيتجاهل البلوك كله.
+
+والسؤال هنا عن [[color-mix()]]: دالة بتخلط لونين. جوه البلوك:
+
+~~~text styles.css
+.card { background: color-mix(in oklch, var(--color-brand) 8%, white); }
+~~~
+
+| الحتة | معناها |
 |---|---|
-| [[small-caps]] | الحروف الصغيرة تبقى small caps، والكبيرة تفضل كبيرة |
-| [[all-small-caps]] | الكل small caps، حتى اللي اتكتب كبير |
-| [[petite-caps]] و [[all-petite-caps]] | نسخة أصغر شوية (قليل من الخطوط فيها) |
-| [[unicase]] | خليط: الكبيرة تبقى small caps والصغيرة تفضل |
-| [[titling-caps]] | حروف كبيرة مرسومة للعناوين الكبيرة |
+| [[in oklch]] | اخلط في مساحة ألوان اسمها oklch (الخلط فيها شكله طبيعي للعين) |
+| [[var(--color-brand) 8%]] | 8% من لون البراند |
+| [[white]] | والباقي (92%) أبيض |
 
-~~~live 77 small-caps على إنجليزي وعلى عربي
-<style>
-  p { font-size: 22px; margin: 4px 0; font-variant-caps: small-caps; }
-</style>
-<p lang="en" style="font-family: 'Segoe UI', sans-serif">Hello World من مصر</p>
-<p lang="en" style="font-family: Tahoma, sans-serif">Hello World من مصر</p>
+في التجربة لون البراند أزرق، والخلفية المحسوبة طلعت:
+
+~~~text getComputedStyle(.card).backgroundColor
+oklch(0.963685 0.0172613 262.885)
 ~~~
 
-**هتشوف إيه:** «ello» و «orld» بقوا حروف كبيرة قصيّرة جنب الـ H والـ W العاليين. و «من مصر» زي ما هي: العربي ملوش حروف كبيرة، فمفيش small caps.
+يعني أبيض فيه لمسة زرقا خفيفة: الـ [[0.96]] إضاءة عالية جدًا، و [[0.017]] تشبّع قليل، و [[262]] درجة اللون (أزرق). والمتصفح اللي مش بيدعم [[color-mix]] كان هياخد [[white]] من السطر الأول.
 
-~~~text القياس من Chrome («Hello World» بحجم 100px)
-              عادي      small-caps     small-caps + font-synthesis-small-caps: none
-Segoe UI      523.7     589.6          589.6      ← الخط فيه small caps حقيقية
-Tahoma        506.6     522.1          506.6      ← مفبركة (حروف كبيرة متصغّرة)، ولما منعنا الفبركة رجعت عادي
+## ٣. [[@supports not selector(:has(a)) { .has-fallback { display: block; } }]]
+
+- [[selector(...)]]: السؤال هنا عن **selector** مش خاصية: «انت فاهم [[:has()]]؟».
+- [[not]]: اعكس السؤال: البلوك يتطبق بس لو المتصفح **مش** فاهم.
+
+فده الـ fallback: يظهر بس في المتصفحات القديمة. في Chrome 154 [[:has()]] مدعوم، فالبلوك اتجاهل والـ display فضل [[none]] (اللي حطيناه للعنصر برا).
+
+## ٤. [[if (CSS.supports('anchor-name', '--x')) document.documentElement.classList.add('has-anchor');]]
+
+نفس السؤال من JavaScript:
+
+- [[CSS.supports('anchor-name', '--x')]]: اسم الخاصية وقيمة ليها. [[anchor-name]] من ميزة anchor positioning، وقيمتها لازم تبدأ بـ [[--]].
+- [[document.documentElement]]: عنصر [[<html>]]، و [[classList.add]] بيضيف له كلاس.
+
+~~~text الناتج في Chrome 154
+CSS.supports('anchor-name', '--x')   → true
+CSS.supports('anchor-name', 'x')     → false   (قيمة غلط)
+<html class="has-anchor">
 ~~~
 
-لو الخط مفيهوش small caps، المتصفح بيفبركها بإنه يصغّر الحروف الكبيرة، فبتطلع أرفع من اللي جنبها. [[font-synthesis-small-caps: none]] بتمنع ده (درس «font-weight و font-style»).
+السطر التاني بيوضح إن السؤال عن الخاصية **والقيمة** مع بعض. وبعد كده في CSS تقدر تكتب [[.has-anchor .tooltip { ... }]].
+
+## ٥. ليه ساعات مش محتاج [[@supports]] خالص
+
+المتصفح بيتجاهل أي سطر مش فاهمه ويكمّل. جرّبنا:
+
+~~~text styles.css
+.x { color: red; color: oklch(0.6 0.2 30); width: 10px; width: foo(1); }
+~~~
+
+Chrome طلّع اللون [[oklch(0.6 0.2 30)]] (فهم التاني فكسب)، والعرض [[10px]] (مفهمش [[foo(1)]] فرجع للي قبله). فلو التحسين خاصية واحدة، سطرين ورا بعض كفاية. [[@supports]] لما التحسين أكتر من خاصية أو بيغيّر الـ layout.
 
 ---
 
-## ٣. [[font-variant-ligatures: none]]
+## ٦. browserslist في [[package.json]]
 
-الـ ligature: حرفين أو أكتر بيتدمجوا في رسمة واحدة. في اللاتيني أشهرهم «fi» (نقطة الـ i بتدخل في رأس الـ f).
-
-| القيمة | بتتحكم في |
-|---|---|
-| [[normal]] | الافتراضي: الشائع شغال والباقي مقفول |
-| [[none]] | اقفل كل الاختياري |
-| [[common-ligatures]] و [[no-common-ligatures]] | الشائع ([[liga]]): fi و fl |
-| [[discretionary-ligatures]] و [[no-discretionary-ligatures]] | الزخرفي ([[dlig]]): ct و st |
-| [[historical-ligatures]] و [[no-historical-ligatures]] | أشكال قديمة ([[hlig]]) |
-| [[contextual]] و [[no-contextual]] | أشكال بتتغيّر حسب اللي جنبها ([[calt]])، ومنها دمج [[!=]] في خطوط الكود |
-
-**في العربي الموضوع أكبر.** الخط العربي فيه نوعين:
-
-- **إجباري** ([[rlig]]): زي «لا» (اللام والألف). من غيره الكتابة غلط. [[font-variant-ligatures]] مبتلمسوش.
-- **اختياري** ([[liga]]): زي لفظ الجلالة «الله» في رسمة واحدة، و «لم» و «لج» في خطوط النسخ. ده اللي [[none]] بتقفله.
-
-~~~live 118 Traditional Arabic: عادي ثم ligatures: none (على Windows)
-<style>
-  p { font-family: "Traditional Arabic", serif; font-size: 34px; margin: 0; }
-</style>
-<p>الله لا إله إلا هو · محمد</p>
-<p style="font-variant-ligatures: none">الله لا إله إلا هو · محمد</p>
+~~~json
+"browserslist": ["baseline widely available"]
 ~~~
 
-**هتشوف إيه (على Windows):** في السطر الأول «الله» مرسومة بالشكل المدموج المعروف بالشدّة فوقها، و «محمد» الميم راكبة على الحاء. في التاني «الله» حروف عادية جنب بعض، و «محمد» ممدودة على السطر. و «لا» سليمة في الاتنين.
+ده سطر في ملف إعدادات المشروع بيقول لكل أدوات الـ build (Vite و autoprefixer و Babel وغيرهم) «أنا بدعم المتصفحات دي». و [[baseline widely available]] = كل نسخة متصفح فيها الميزات اللي بقالها 30 شهر أو أكتر في كل المتصفحات الأساسية.
 
-~~~text القياس من Chrome (جملة فيها «الله» و «لا» و «محمد»، 100px)
-                      عادي       ligatures: none     "rlig" 0 (بالقوة)
-Traditional Arabic    739.2      834.2               721.2
-Arabic Typesetting    583.2      661.6               569.6
-Segoe UI              1166.4     1183.1              1166.4
+جرّب تشوف اللستة دي بنفسك (شغّلناها في PowerShell على ويندوز):
+
+~~~powershell
+npx browserslist "baseline widely available"
+npx browserslist --coverage "baseline widely available"
 ~~~
 
-العمود الأخير تجربة بس: قفلنا الإجباري بـ [[font-feature-settings: "rlig" 0]] والعرض اتغيّر، يعني «لا» اتفكّت. متعملهاش.
-
-متى تقفل: الكود ([[code { font-variant-ligatures: none; }]]) عشان كل حرف يبان زي ما اتكتب. وافتكر إن أي [[letter-spacing]] غير الصفر بتقفلهم لوحدها (درس «text-align و text-transform»: اتقاس نفس الرقم 834.3).
-
----
-
-## ٤. [[font-variant-position: sub]]
-
-بتستخدم حروف **مرسومة أصلًا** صغيرة ومرفوعة أو نازلة (للـ H₂O والـ x²)، بدل ما المتصفح يصغّر حرف عادي ويحرّكه زي [[<sub>]] و [[<sup>]].
-
-~~~text القياس من Chrome («H2O x2» بحجم 100px)
-              عادي      font-variant-position: sub      super
-Calibri       295.8     261.6                           206.1      ← الخط فيه الأشكال دي
-Arial         339.0     339.0                           339.0      ← مفيهوش: مفيش أي تغيير
+~~~text الناتج (مختصر)
+and_chr 154
+and_ff 157
+chrome 154
+...
+chrome 123
+...
+firefox 124
+...
+safari 17.4
+These browsers account for 87.4% of all users globally
 ~~~
 
-القيم: [[normal]] و [[sub]] و [[super]]. المواصفة بتقول إن المتصفح المفروض يفبركها لو الخط مفيهوش. Chrome 157 مفبركش (Arial فضل زي ما هو). فالطريق المضمون لسه [[<sub>]] و [[<sup>]] (درس «sub و sup و br»)، والخاصية دي تحسين لو خطك فيه الأشكال.
+- [[npx]] بيشغّل أداة من npm من غير ما تتسطب global.
+- الأسامي: [[and_chr]] كروم أندرويد، و [[ios_saf]] سفاري الآيفون.
+- اللستة طلعت 134 نسخة، أقدمها Chrome و Edge 123 و Firefox 124 و Safari 17.4.
+- [[--coverage]]: نسبة المستخدمين اللي عندهم النسخ دي، بيانات caniuse.
 
----
+وقارن بـ [[defaults]]:
 
-## ٥. [[font-variant-alternates]] و [[@font-feature-values]]
-
-بعض الخطوط فيها «أطقم شكلية» (stylistic sets): نفس الحروف برسمة تانية خالص، مرقّمة من [[ss01]] لـ [[ss20]]. المشكلة إن الرقم ملوش معنى: [[ss06]] في خط زخرفة، وفي خط تاني صفر بشرطة.
-
-[[@font-feature-values]] بتدّي الرقم **اسم** خاص بخط معين، و [[font-variant-alternates]] بتستخدم الاسم:
-
-~~~css
-@font-feature-values "Hebr Display" {
-  @styleset { flourish: 6; }
-}
-
-h1 {
-  font-family: "Hebr Display", serif;
-  font-variant-alternates: styleset(flourish);
-}
+~~~powershell
+npx browserslist "defaults"
 ~~~
 
-| القيمة | الميزة |
-|---|---|
-| [[styleset(اسم)]] | طقم شكلي ([[ss01]] لـ [[ss20]]) |
-| [[character-variant(اسم)]] | شكل بديل لحرف واحد ([[cv01]] لـ [[cv99]]) |
-| [[stylistic(اسم)]] | أشكال بديلة ([[salt]]) |
-| [[swash(اسم)]] | ذيول زخرفية ([[swsh]]) |
-| [[ornaments(اسم)]] و [[annotation(اسم)]] | زخارف، وأرقام في دواير |
-| [[historical-forms]] | أشكال تاريخية ([[hist]])، ودي من غير اسم |
+طلع 35 نسخة بس، بس فيها [[chrome 109]] و [[op_mini all]] (Opera Mini) و [[kaios 2.5]]. ليه؟ [[defaults]] مبني على **نسبة الاستخدام** (أكتر من 0.5% وآخر نسختين)، مش على الميزات، فبيجيب نسخ قديمة لسه ناس كتير عليها.
 
-~~~text القياس من Chrome (خط Gabriola: فيه 7 أطقم. اتشاف في صورة للصفحة)
-الخط محمّل بـ @font-face، و @font-feature-values بنفس الاسم:
-   font-variant-alternates: styleset(flourish)      →  الحروف طلعلها ذيول زخرفية، زي font-feature-settings: "ss06"
-
-نفس الخط باسمه من الجهاز (من غير @font-face):
-   font-variant-alternates: styleset(flourish)      →  مفيش تغيير
-   font-feature-settings: "ss06"                    →  اشتغلت
-~~~
-
-يعني في Chrome 157 الأسامي دي اشتغلت مع الخط **المحمّل** بس. الفايدة منها تنظيم: لو غيّرت الخط، بتغيّر رقم الطقم في مكان واحد.
-
----
-
-## ٦. [[font-variant-east-asian]] والمختصرة [[font-variant]]
-
-[[font-variant-east-asian]] بتختار أشكال الحروف الصينية واليابانية: [[jis78]] و [[jis83]] و [[jis90]] و [[jis04]] (معايير يابانية بسنين مختلفة)، و [[simplified]] و [[traditional]]، و [[full-width]] و [[proportional-width]]، و [[ruby]]. ملهاش أي أثر على عربي أو لاتيني.
-
-و [[font-variant]] المختصرة بتجمع كل اللي فات:
-
-~~~text القياس من Chrome (المحسوب)
-font-variant: small-caps tabular-nums slashed-zero no-common-ligatures
-  → font-variant-caps: small-caps
-    font-variant-numeric: tabular-nums slashed-zero
-    font-variant-ligatures: no-common-ligatures
-    font-variant-east-asian / alternates / position: normal
-
-font-variant-numeric: tabular-nums;  وبعدها  font: 16px Arial;
-  → font-variant-numeric: normal          ← font المختصرة مسحتها
-~~~
-
-السطر الأخير نفس فخ [[line-height]]: [[font]] بتصفّر كل [[font-variant-*]]. اكتبهم **بعدها**.
-
----
-
-## ٧. [[font-feature-settings: "tnum" 1]]
-
-الطريقة الواطية: اسم الميزة بين تنصيص، وبعده [[1]] (شغّل) أو [[0]] (اقفل). الرقم لو مكتبتوش يبقى 1.
-
-~~~css
-.table { font-feature-settings: "tnum" 1, "zero" 1; }
-~~~
-
-MDN بيقول: استخدم [[font-variant-*]] لما يبقى فيه خاصية للميزة، وسيب دي لآخر حل. والسبب الأكبر إنها **قيمة واحدة مبتتجمعش**:
-
-~~~text القياس من Chrome
-.parent { font-feature-settings: "tnum"; }
-.child  { font-feature-settings: "smcp"; }
-  → المحسوب عند الابن: "smcp"          ← "tnum" ضاعت: قيمة الابن بدّلت قيمة الأب كلها
-
-.parent { font-variant-numeric: tabular-nums; }
-.child  { font-variant-caps: small-caps; }
-  → الابن: tabular-nums + small-caps   ← خاصيتين منفصلتين، كل واحدة ورثت لوحدها
-~~~
-
-وكمان [[font-feature-settings]] بتغلب [[font-variant-*]] لو الاتنين على نفس الميزة، وبتغلب القفل التلقائي (زي قفل الـ ligatures مع [[letter-spacing]]).
-
-إمتى تحتاجها: ميزة ملهاش خاصية، زي طقم شكلي في خط من الجهاز ([["ss01"]])، أو ميزة خاصة بخط معين.
-
----
-
-## ٨. [[font-kerning: normal]]
-
-الـ kerning: تظبيط المسافة بين **زوج حروف معين**. «AV» من غيره بينهم فجوة، فالخط بيقرّبهم.
-
-~~~text القياس من Chrome («AVATAR To We.» بحجم 100px)
-              font-kerning: auto     font-kerning: none
-Segoe UI      660.6                  701.0
-Arial         705.8                  750.2
-Georgia       736.8                  736.8        ← الخط مفيهوش جدول kerning
-~~~
-
-| القيمة | معناها |
-|---|---|
-| [[auto]] | الافتراضي: المتصفح يقرر (وفي Chrome شغال) |
-| [[normal]] | شغّله دايمًا حتى لو المتصفح كان هيقفله |
-| [[none]] | اقفله خالص: كل حرف بعرضه الأصلي |
-
-في العربي الـ kerning بيظبط حالات زي الراء والواو لما ينزلوا تحت الحرف اللي بعدهم. سيبه شغال. [[none]] بتفيد بس لما تبقى عايز عرض ثابت متوقّع لكل حرف (عدّاد بيتحرك).
-
----
-
-## ٩. [[font-palette]] و [[@font-palette-values]]
-
-**الخطوط الملوّنة** (color fonts) كل حرف فيها مرسوم بأكتر من لون (إيموجي، خطوط زينة). الملف بيبقى فيه «لوحات ألوان» (palettes) جاهزة.
-
-~~~css
-@font-palette-values --warm {
-  font-family: "Hebr Color";
-  base-palette: 1;
-  override-colors: 0 #b45309, 2 #fde68a;
-}
-
-h1 {
-  font-family: "Hebr Color";
-  font-palette: --warm;
-}
-~~~
-
-- [[font-palette]]: [[normal]] (اللوحة الأساسية)، أو [[light]] أو [[dark]] (لوحة المصمم للخلفية الفاتحة أو الغامقة)، أو اسم لوحة من عندك.
-- [[@font-palette-values --اسم]]: بتعرّف لوحة لخط معين: [[base-palette]] (ابدأ من اللوحة رقم كام) و [[override-colors]] (بدّل اللون رقم كذا).
-
-### [[palette-mix()]]
-
-دالة بتتكتب قيمة لـ [[font-palette]] وبتخلط لوحتين، بنفس فكرة [[color-mix()]]: [[font-palette: palette-mix(in srgb, light, dark)]]. بتفيد في الحركة من لوحة للتانية (من الفاتح للغامق مثلًا). المنهج مش حاططها Baseline.
-
-~~~text القياس من Chrome 157
-CSS.supports("font-palette", "dark")                                    true
-CSS.supports("font-palette", "palette-mix(in srgb, normal, dark)")      true
-المحسوب: font-palette: --warm       (الاسم اتقبل)
-~~~
-
-المتصفح قبل الصيغة. الشكل نفسه **متشافش هنا**: جرّبنا على خط الإيموجي بتاع Windows ومفيش لون اتغيّر (الخط ده مش معمول بلوحات تتبدّل). فشرح النتيجة من MDN، ومحتاج خط ملوّن فيه لوحات عشان تجرّبه. استخدامها قليل جدًا في مواقع النصوص.
-
----
-
-## ١٠. جدول مرجعي: خصائص نص نادرة في المنهج
-
-دي خصائص المنهج ذاكرها، وصعب تحتاجها في صفحة مقالات. اعرف إنها موجودة وبتعمل إيه. عمود الدعم: نتيجة [[CSS.supports]] في Chrome 157، وتصنيف Baseline من المنهج.
-
-| الخاصية | بتعمل إيه | الدعم |
-|---|---|---|
-| [[text-box-trim: trim-both]] | بتقص الفراغ اللي فوق وتحت الحروف جوه صندوق النص، عشان الكلام يتوسّط بالظبط في زرار أو يلزق في حافة | Chrome ✓، Baseline حديثة |
-| [[text-box-edge: cap alphabetic]] | بتحدد القص لحد فين: أعلى الحروف الكبيرة ([[cap]]) وخط الكتابة ([[alphabetic]]) | Chrome ✓، Baseline حديثة |
-| [[text-box: trim-both cap alphabetic]] | مختصرة الاتنين اللي فوق | Chrome ✓، Baseline حديثة |
-| [[dominant-baseline: central]] | في نص SVG: أنهي خط من الحرف يقعد على الإحداثي. [[central]] بتوسّط النص رأسيًا | Chrome ✓، Baseline |
-| [[alignment-baseline: middle]] | لعنصر جوه سطر (وأساسًا في SVG): أنهي خط منه يتحاذى مع خط الأب | Chrome ✓، Baseline حديثة |
-| [[baseline-shift: sub]] | بترفع أو تنزّل خط الكتابة لحتة من النص. في SVG، وهي الجزء «الإزاحة» من [[vertical-align]] | Chrome ✓، Baseline حديثة |
-| [[ruby-position: under]] | مكان شرح النطق في [[<ruby>]] (ياباني وصيني): فوق النص أو تحته | Chrome ✓ ([[alternate]] لأ)، Baseline حديثة |
-| [[ruby-align: center]] | توزيع حروف شرح النطق فوق النص الأساسي | Chrome ✓، Baseline حديثة |
-| [[math-style: compact]] | في MathML: المعادلة بالشكل المضغوط (جوه سطر) ولا العادي | Chrome ✓، Baseline |
-| [[math-depth: add(1)]] | في MathML: مستوى التداخل (الأس جوه الأس)، وبيصغّر الخط معاه | Chrome ✓، Baseline حديثة |
-| [[text-decoration-inset: 2px]] | بتقصّر الخط اللي تحت الكلام من طرفيه | Chrome ✓، مش Baseline |
-| [[font-variant-emoji: text]] | الرمز يتعرض كحرف عادي ولا كإيموجي ملوّن | Chrome ✓، مستبعدة من المنهج |
-
-الوحيدة اللي ليها مستقبل في الشغل اليومي [[text-box-trim]]: بتحل مشكلة «الكلام مش في نص الزرار بالظبط». الباقي تخصصات: SVG، و [[<ruby>]]، و MathML.
-
----
-
-## ١١. الغلطات اللي بتحصل فعلًا
-
-| الغلطة | اللي بيحصل |
-|---|---|
-| جدول أرقام من غير [[tabular-nums]] | بيتراص مع خط ويتلخبط مع خط تاني |
-| افتراض إن [[tabular-nums]] شغالة على ١٢٣ | في خطوط (Segoe UI) الأرقام العربي مش موحّدة العرض |
-| انتظار إن CSS يحوّل 123 لـ ١٢٣ | مبيحصلش: حروف مختلفة |
-| [[font-feature-settings]] على أب وابن | قيمة الابن مسحت قيمة الأب |
-| [[font-variant-*]] قبل [[font]] المختصرة | اتصفّرت كلها ورجعت [[normal]] |
-| [[font-variant-ligatures: none]] على نص عربي | «الله» و «محمد» اتفكّوا |
-| [[small-caps]] على خط مفيهوش | حروف كبيرة متصغّرة وأرفع من اللي حواليها |
-| ميزة مش في الخط | ولا حاجة، ومفيش رسالة |
+> الأرقام دي بتتغير مع كل نسخة من caniuse-lite. حدّثها بـ [[npx update-browserslist-db@latest]].
 
 ---
 
 ## الخلاصة
 
-- الميزات جوه ملف الخط. الخاصية بتشغّلها لو موجودة، وبتسكت لو مش موجودة.
-- [[font-variant-numeric: tabular-nums]] لأي أرقام تحت بعض. وجرّبها لو الأرقام ١٢٣.
-- CSS مبيغيّرش نظام الأرقام في المحتوى.
-- [[font-variant-ligatures: none]] للكود بس. في العربي بتفك «الله».
-- [[font-variant-*]] الأول، و [[font-feature-settings]] لما مفيش خاصية. والتانية مبتتجمعش بين الأب والابن.
-- كل [[font-variant-*]] تتكتب بعد [[font]].`,
-          try: R`اعمل [[nums.html]] فيه جدول من عمودين: اسم المنتج وسعره، وخمس أسعار بأطوال مختلفة فيها أرقام 1 كتير وأرقام 0 و 8 (زي 1,110.10 و 8,080.80). حاذي عمود السعر لنهاية الخانة. جرّب الجدول بخط [[Candara]] أو [[Arial]] من غير حاجة، وبعدين زوّد [[font-variant-numeric: tabular-nums]] على خانات السعر. وبعدين اكتب نفس الأسعار بأرقام ١٢٣ وغيّر الخط بين Segoe UI و Tahoma.`,
-          sol: R`~~~live 202 nums.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أرقام الجدول</title>
-<style>
-  body { font-family: Candara, Arial, sans-serif; font-size: 18px; }
-  table { border-collapse: collapse; }
-  th, td { border-bottom: 1px solid silver; padding: 4px 12px; text-align: start; }
-  td.num { text-align: end; font-variant-numeric: tabular-nums; }
-</style>
-</head>
-<body>
-<table>
-  <tr><th>المنتج</th><th>السعر</th></tr>
-  <tr><td>لابتوب</td><td class="num">21,110.10</td></tr>
-  <tr><td>شاشة</td><td class="num">8,080.80</td></tr>
-  <tr><td>كيبورد</td><td class="num">1,111.00</td></tr>
-  <tr><td>ماوس</td><td class="num">411.50</td></tr>
-  <tr><td>كابل</td><td class="num">71.15</td></tr>
-</table>
-</body>
-</html>
-~~~
+| الحالة في MDN | تعمل إيه |
+|---|---|
+| Widely available | استخدمها عادي |
+| Newly available | استخدمها كتحسين، والأساس قبلها |
+| مش Baseline | [[@supports]] أو استنى |
 
-**هتشوف إيه:**
+- الترتيب مهم: الأساس الأول، والجديد بعده أو جوه [[@supports]].
+- autoprefixer بيضيف prefixes بس، مش بيعمل الميزة في المتصفح اللي معندوش.`,
+          lines: [
+            "الأساس: شغال في كل المتصفحات.",
+            R`لو المتصفح بيدعم [[color-mix]]...`,
+            "...خلفية فيها لمسة خفيفة من لون البراند.",
+            "قفلة.",
+            R`لو المتصفح مش بيدعم [[:has()]]...`,
+            R`...اعرض النسخة البديلة اللي بتعمل نفس الشغل من غير [[:has()]].`,
+            "قفلة.",
+            R`نفس السؤال من JavaScript: لو بيدعم anchor positioning علّم الـ html بكلاس.`,
+            "الأدوات كلها تستهدف المتصفحات اللي فيها الميزات المنتشرة من 30 شهر أو أكتر."
+          ],
+          sol: R`وقت كتابة الدرس (بيانات caniuse-lite في سبتمبر 2026)، [[baseline widely available]] طلّع 133 نسخة متصفح، أقدمها تقريبًا Chrome 123 و Firefox 124 و Safari 17.4، و [[--coverage]] قال إنهم حوالي 87% من المستخدمين في العالم. الأرقام عندك هتختلف حسب نسخة البيانات، ودا الطبيعي.
 
-- بـ [[tabular-nums]]: الفواصل تحت بعض، والنقط العشرية تحت بعض، وكل خانة رقم في عمودها.
-- من غيرها (بـ Candara أو Arial): السطر اللي فيه أرقام 1 كتير أقصر، والفواصل متزحزحة عن اللي تحتها.
-- بأرقام ١٢٣: مع Tahoma متراصة، ومع Segoe UI الواحدات أضيق والعمود متعرّج، و [[tabular-nums]] مبتصلّحوش.
+[[defaults]] بيطلّع لستة مختلفة: فيها متصفحات أقدم بكتير (زي Chrome 109 و Opera Mini) لأنه مبني على نسبة الاستخدام مش على الميزات.
 
-~~~text القياس من Chrome (عرض «1111» وعرض «0000»، 100px)
-Candara   الافتراضي 139.8 / 219.7      tabular-nums 201.8 / 201.8
-Arial     الافتراضي 200.2 / 222.5      tabular-nums 222.5 / 222.5
-~~~
-
-**ليه [[text-align: end]]؟** الأرقام بتتقارن من آخرها (الآحاد والكسور)، فلازم آخر كل رقم يبقى عند نفس الحافة. و [[end]] في جدول عربي هي الشمال، وفي نسخة إنجليزي هتبقى اليمين من غير تعديل.`,
-          deep: {
-            why: R`أغلب خصائص الدرس ده تحسينات صغيرة للشكل، بس واحدة منهم بتفرق في الشغل اليومي: عمود أرقام مش متراص بيخلّي قراية الجدول المالي صعبة ومقارنة رقمين محتاجة تركيز. والدرس كمان بيجاوب سؤالين بيتسألوا كتير من اللي بيعمل مواقع عربي: «أحوّل الأرقام لعربي بالـ CSS إزاي؟» (مينفعش)، و «ليه لفظ الجلالة شكله اتغيّر؟» (حاجة قفلت الـ ligatures).`,
-            how: R`ملف الخط OpenType فيه جداول «استبدال» (GSUB) و «تموضع» (GPOS). كل ميزة مجموعة قواعد: «لو f وبعدها i، حط الرسمة fi»، أو «لو الرقم 1، حط النسخة العريضة». محرك تشكيل النص (shaper) بيمشي على النص بعد ما يتقسّم لحتت بنفس الخط واللغة والاتجاه، ويطبّق الميزات المفعّلة بالترتيب. فيه ميزات مفعّلة افتراضيًا ([[liga]] و [[kern]] و [[calt]]، و [[rlig]] وأشكال الاتصال في العربي)، والباقي مقفول لحد ما CSS يطلبه. [[font-variant-*]] بتتحوّل لقايمة ميزات، وفوقها [[font-feature-settings]]. واللغة ([[lang]]) بتدخل في الاختيار: بعض الخطوط فيها قواعد خاصة بلغة (ميزة [[locl]])، وده سبب تاني إن [[lang]] يتكتب صح.`,
-            when: R`[[tabular-nums]]: جداول، أسعار تحت بعض، عدّادات ومؤقتات بتتغيّر (عشان الرقم ميترعش). [[slashed-zero]]: أكواد وأرقام مسلسلة. [[small-caps]]: اختصارات لاتيني وسط نص. [[font-variant-ligatures: none]]: كود. [[font-feature-settings]]: طقم شكلي في خط معين. والباقي لما مصمم يطلبه بالاسم.`,
-            mistakes: R`نسيان [[tabular-nums]]. افتراضها على الأرقام العربي. [[font-feature-settings]] متكررة في الوراثة. كتابة [[font-variant-*]] قبل [[font]]. قفل الـ ligatures على نص عربي. وافتراض إن ميزة موجودة في خط من غير تجربة.`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** جدول مصاريف الشهر. خلّي خانات المبلغ [[td.num]] أرقامها بعرض موحّد ومحاذية لنهاية الخانة، عشان الأرقام تتراص. (من قسم ١ في الشرح)`, done: R`خانات المبلغ [[tabular-nums]] و [[text-align: end]]، وكل الشروط ✓.`, work: { h: 170, start: R`<style>
-  table { font-family: Arial, sans-serif; font-size: 18px; border-collapse: collapse; }
-  td { border-bottom: 1px solid silver; padding: 4px 12px; }
-  td.num { }
-</style>
-<table>
-  <tr><td>إيجار</td><td class="num">4,111.00</td></tr>
-  <tr><td>كهربا</td><td class="num">880.50</td></tr>
-  <tr><td>نت</td><td class="num">411.10</td></tr>
-</table>`, checks: [
-              { say: R`أرقام المبلغ بعرض موحّد`, q: "td.num", style: ["font-variant-numeric", "tabular-nums"] },
-              { say: R`ومحاذية لنهاية الخانة`, q: "td.num", style: ["text-align", "end"] },
-              { say: R`خانات الاسم متغيّرتش`, q: "td:not(.num)", style: ["font-variant-numeric", "normal"] }
-            ] }, sol: R`~~~live 106 الحل
-<style>
-  table { font-family: Arial, sans-serif; font-size: 18px; border-collapse: collapse; }
-  td { border-bottom: 1px solid silver; padding: 4px 12px; }
-  td.num { font-variant-numeric: tabular-nums; text-align: end; }
-</style>
-<table>
-  <tr><td>إيجار</td><td class="num">4,111.00</td></tr>
-  <tr><td>كهربا</td><td class="num">880.50</td></tr>
-  <tr><td>نت</td><td class="num">411.10</td></tr>
-</table>
-~~~
-
-**هتشوف إيه:** الأرقام لازقة في حافة العمود الشمال، والنقطة العشرية في التلات صفوف على خط رأسي واحد.
-
-**ليه الاتنين مع بعض:** المحاذاة بتخلّي آخر الرقم عند نفس الحافة. والعرض الموحّد بيخلّي كل خانة قبله تيجي تحت أختها. واحدة من غير التانية متكفيش.
-
-**الغلطة الشائعة:** [[font-family: monospace]] للأرقام. هتتراص، بس بخط تاني شكله غريب وسط الجدول. [[tabular-nums]] بتدّيك التراص بنفس الخط.
-
-~~~text القياس من Chrome (Arial: عرض «1111» وعرض «0000» بحجم 100px)
-الافتراضي       200.2 / 222.5
-tabular-nums    222.5 / 222.5
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الجدول عليه [[font-feature-settings: "tnum"]] عشان الأرقام تتراص، وخانة الرمز [[.code]] عليها [[font-feature-settings: "smcp"]] عشان small caps. النتيجة إن خانة الرمز أرقامها مبقتش موحّدة. حوّل الاتنين لخصائص [[font-variant-*]] عشان يتجمعوا. (من قسم ٧ في الشرح)`, done: R`[[.code]] عليها [[tabular-nums]] (ورثتها) و [[small-caps]] مع بعض، ومفيش [[font-feature-settings]] في الكود، وكل الشروط ✓.`, work: { h: 130, start: R`<style>
-  table { font-family: "Segoe UI", Arial, sans-serif; font-size: 18px; border-collapse: collapse; font-feature-settings: "tnum"; }
-  td { border-bottom: 1px solid silver; padding: 4px 12px; }
-  .code { font-feature-settings: "smcp"; }
-</style>
-<table>
-  <tr><td class="code" lang="en">ab-1101</td><td>شنطة ضهر</td></tr>
-  <tr><td class="code" lang="en">cd-8080</td><td>محفظة</td></tr>
-</table>`, checks: [
-              { say: R`خانة الرمز small caps`, q: ".code", style: ["font-variant-caps", "small-caps"] },
-              { say: R`وأرقامها لسه موحّدة العرض (ورثتها من الجدول)`, q: ".code", style: ["font-variant-numeric", "tabular-nums"] },
-              { say: R`مفيش [[font-feature-settings]] في الكود`, nosrc: "font-feature-settings" }
-            ] }, sol: R`~~~live 82 بعد التصليح
-<style>
-  table { font-family: "Segoe UI", Arial, sans-serif; font-size: 18px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-  td { border-bottom: 1px solid silver; padding: 4px 12px; }
-  .code { font-variant-caps: small-caps; }
-</style>
-<table>
-  <tr><td class="code" lang="en">ab-1101</td><td>شنطة ضهر</td></tr>
-  <tr><td class="code" lang="en">cd-8080</td><td>محفظة</td></tr>
-</table>
-~~~
-
-**هتشوف إيه:** الرموز «AB-1101» و «CD-8080» بحروف كبيرة قصيّرة، وأرقامهم تحت بعض بالظبط.
-
-**ليه:** [[font-feature-settings]] خاصية واحدة بقيمة واحدة. [[.code]] كتبت قيمتها، فغلبت القيمة اللي كانت هتتورّث من الجدول كلها، و [["tnum"]] ضاعت. [[font-variant-numeric]] و [[font-variant-caps]] خاصيتين مختلفتين، فكل واحدة بتتورّث وتتحسب لوحدها.
-
-**حل تاني (أضعف):** [[.code { font-feature-settings: "tnum", "smcp"; }]]. هيشتغل، ولازم تفتكر تكرر كل ميزات الأب في كل ابن.
-
-**الغلطة الشائعة:** تفتكر إن القيمتين «بيتجمعوا» زي الـ classes.
-
-~~~text القياس من Chrome
-              قبل: font-feature-settings        بعد
-.code         "smcp"   (tnum ضاعت)             font-variant-numeric: tabular-nums   font-variant-caps: small-caps
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مدوّنة تقنية كتبت [[body { font-variant-ligatures: none; }]] عشان الكود. النتيجة إن الاقتباس العربي اللي فيه لفظ الجلالة اتعرض بحروف مفكوكة. رجّع الـ ligatures للنص، واقفلها للكود بس. (من قسم ٣ في الشرح)`, done: R`الفقرة [[font-variant-ligatures: normal]] و [[code]] لسه [[none]]، وكل الشروط ✓.`, work: { h: 150, start: R`<style>
-  body { font-variant-ligatures: none; }
-  blockquote { font-family: "Traditional Arabic", serif; font-size: 30px; margin: 6px 0; }
-  code { font-size: 18px; }
-</style>
-<blockquote>إن شاء الله خير</blockquote>
-<p>والشرط في الكود: <code>if (a != b)</code></p>`, checks: [
-              { say: R`الاقتباس رجعتله الـ ligatures`, q: "blockquote", style: ["font-variant-ligatures", "normal"] },
-              { say: R`الكود لسه من غير ligatures`, q: "code", style: ["font-variant-ligatures", "none"] }
-            ] }, sol: R`~~~live 105 بعد التصليح
-<style>
-  code { font-variant-ligatures: none; }
-  blockquote { font-family: "Traditional Arabic", serif; font-size: 30px; margin: 6px 0; }
-  code { font-size: 18px; }
-</style>
-<blockquote>إن شاء الله خير</blockquote>
-<p>والشرط في الكود: <code>if (a != b)</code></p>
-~~~
-
-وده اللي كان باين قبل التصليح:
-
-~~~live 105 قبل
-<style>
-  body { font-variant-ligatures: none; }
-  blockquote { font-family: "Traditional Arabic", serif; font-size: 30px; margin: 6px 0; }
-  code { font-size: 18px; }
-</style>
-<blockquote>إن شاء الله خير</blockquote>
-<p>والشرط في الكود: <code>if (a != b)</code></p>
-~~~
-
-**هتشوف إيه (على Windows، بخط Traditional Arabic):** قبل: «الله» ألف ولامين وهاء جنب بعض. بعد: «الله» بالرسمة المدموجة المعروفة. والكود زي ما هو في الحالتين.
-
-**ليه:** الخاصية بتتورّث، فلما اتحطت على [[body]] قفلت الدمج الاختياري في كل نص الصفحة. الكود هو اللي محتاج القفل، فالقاعدة مكانها [[code]].
-
-**الغلطة الشائعة:** تسيب قاعدة [[body]] وتزوّد [[blockquote { font-variant-ligatures: normal; }]]. هيتصلّح الاقتباس، وكل عنوان وفقرة عربي تانية هيفضلوا مفكوكين.
-
-~~~text القياس من Chrome (جملة فيها «الله» و «محمد» بـ Traditional Arabic، 100px)
-normal    739.2
-none      834.2
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** العميل قال: «عايز كل الأرقام في الموقع تبقى عربي ١٢٣، اعملها من الـ CSS عشان منغيّرش المحتوى». اكتب ردّك في ٣ سطور: ليه مينفعش، وإيه اللي الـ CSS يقدر عليه، وإيه الحلول. (من قسم ١ في الشرح: «الأرقام العربي ١٢٣»)`, done: R`قلت إنهم حروف مختلفة في Unicode، وذكرت القوايم والعدّادات كاستثناء، واقترحت حل من المحتوى أو من الكود.`, sol: R`**ردّ نموذجي:**
-
-1. مينفعش من الـ CSS: الـ 1 والـ ١ **حرفين مختلفين** (زي الفرق بين A و أ)، مش شكلين لنفس الحرف. الـ CSS بيغيّر شكل الحرف، مبيبدّلش حرف بحرف. ومفيش قيمة في [[font-variant-numeric]] للموضوع ده.
-2. اللي الـ CSS يقدر عليه: الأرقام اللي **هو** بيولّدها. ترقيم القوايم ([[list-style-type: arabic-indic]]) والعدّادات ([[counter(x, arabic-indic)]]). دول هيبقوا ١ ٢ ٣ بسطر واحد.
-3. لأرقام المحتوى فيه طريقين: تتكتب عربي من الأول في المحتوى (الأنضف، وبيتنسخ ويتبحث عنه صح)، أو الكود اللي بيعرض الأرقام (أسعار، تواريخ، عدّادات) يحوّلها وهو بيطبعها: في JavaScript [[new Intl.NumberFormat("ar-EG").format(1234)]] بترجّع [[١٬٢٣٤]].
-
-**وسؤال لازم يتسأل قبل الشغل:** الأرقام اللي المستخدم هيكتبها (تليفون، كمية) هتتقبل بالنظامين؟ والـ [[<input type="number">]] بيعرض إيه؟ توحيد العرض سهل، وتوحيد الإدخال قرار تاني.
-
-~~~text القياس من Chrome
-عرض «1111» بـ Segoe UI: 215.6       عرض «١١١١»: 100.2        ← رسمتين مختلفتين خالص لحرفين مختلفين
-~~~
-
-**ملحوظة للجداول:** لو الأرقام بقت ١٢٣، جرّب تراصّها بالخط المختار. في Segoe UI مش موحّدة العرض.` }
-          ]
-        },
+في MDN: [[:has()]] عليه Baseline (متاح في كل المتصفحات الأساسية)، و [[text-wrap]] ممكن تلاقي قيمه مختلفة الحالة (balance منتشرة، و pretty لسه مش في كل حتة). ودا بالظبط المكان اللي تقرر منه: balance استخدمها عادي، و pretty كتحسين.`
+        }
       ]
     }
 ]);

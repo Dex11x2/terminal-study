@@ -1,2131 +1,1259 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "Flexbox و Grid",
+      t: "الفورم: كل أنواع الحقول والأخطاء",
       pre: [
-        { to: "css/display", why: R`flex و grid قيم لـ display` },
-        { to: "css/box model", why: R`الـ gap والمقاسات جوه الصندوق` },
+        { to: "css/form و label", why: R`الـ label و for و required والـ submit اللي الوحدة دي بتبني عليهم` },
       ],
-      l: 1,
-      n: "flex لصف أو عمود واحد، و grid لشبكة بصفوف وأعمدة مع بعض",
       projects: [
-        { lvl: 'صغير', dir: "resto-nav", t: R`navbar لمطعم متخيل بـ flex بس`, what: R`لوجو وروابط وزرار «احجز»، و [[margin-inline-start: auto]] بدل left و right، والروابط تستخبى ويظهر ☰ تحت 768. من درس [[flexbox]] و [[flex: 1]].`, done: R`على 360 و 768 و 1280 مفيش scroll أفقي، واللوجو والزرار في حافتين الشاشة، ولما تقلب [[dir]] لـ ltr كل حاجة بتتقلب من غير تعديل CSS.`, sol: R`~~~html index.html
+        { lvl: 'صغير', dir: "bmi-calc", t: R`حاسبة BMI`, what: R`فورم فيه الوزن ([[type="number"]] و [[min="20"]] و [[max="300"]] و [[step="0.1"]]) والطول بالسنتي، والنتيجة في [[<output>]] عليه [[aria-live="polite"]] بتتحدّث مع كل [[input]]، وجنبها التصنيف (نحيف، طبيعي، زيادة). من دروس «textarea و date و number» و «Constraint Validation API».`, done: R`70 كيلو و 175 سم بيطلّعوا 22.9 «طبيعي»، والحقل الفاضي أو 500 كيلو بيطلّع رسالة المتصفح ([[rangeOverflow]]) ومفيش رقم غلط في النتيجة، وكتابة حرف [[e]] لوحده في الوزن مش بتكسر الحساب ([[validity.badInput]]).`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بيت الزعتر</title>
-<link rel="stylesheet" href="style.css">
-<script src="menu.js" defer></script>
-</head>
-<body>
-<header class="site-header">
-  <nav class="nav" aria-label="الرئيسية">
-    <a class="nav__logo" href="#top">بيت الزعتر</a>
-    <ul class="nav__links" id="nav-links">
-      <li><a href="#menu">المنيو</a></li>
-      <li><a href="#offers">العروض</a></li>
-      <li><a href="#branches">الفروع</a></li>
-      <li><a href="#contact">تواصل</a></li>
-    </ul>
-    <a class="nav__cta" href="#book">احجز</a>
-    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="القايمة">☰</button>
-  </nav>
-</header>
-<main id="top">
-  <h1>أكل بيتي على الفحم</h1>
-  <p>غيّر عرض الشاشة: تحت 768 الروابط بتستخبى وزرار ☰ بيظهر.</p>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #1f2937; background: #fffbf5; }
-main { padding: 1rem; }
-
-.site-header { background: #14532d; color: #fff; }
-
-/* one row: logo, links, then the button pushed to the far edge */
-.nav {
-  display: flex;
-  flex-wrap: wrap;              /* lets the opened menu drop to its own row */
-  align-items: center;
-  gap: 0.75rem 1.5rem;
-  max-width: 72rem;
-  margin-inline: auto;
-  padding: 0.75rem 1rem;
-}
-.nav__logo, .nav__links a { color: inherit; text-decoration: none; }
-.nav a:focus-visible, .nav__toggle:focus-visible { outline: 3px solid #fde68a; outline-offset: 3px; }
-
-.nav__logo { font-weight: 800; font-size: 1.25rem; }
-
-.nav__links { display: flex; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
-
-/* auto margin eats all the free space before it, so the button sits at the end edge */
-.nav__cta {
-  margin-inline-start: auto;
-  padding: 0.5rem 1.1rem;
-  border-radius: 999px;
-  background: #fde68a;
-  color: #14532d;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.nav__toggle { display: none; padding: 0.4rem 0.7rem; border: 1px solid #ffffff80; border-radius: 0.5rem; background: transparent; color: inherit; font-size: 1.25rem; cursor: pointer; }
-
-@media (max-width: 767.98px) {
-  .nav__toggle { display: block; }
-  .nav__links { display: none; }
-  /* opened: the list takes the whole next row and stacks */
-  .nav__links.is-open {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 100%;
-    order: 1;
-    gap: 0;
-  }
-  .nav__links.is-open a { display: block; padding: 0.75rem 0; border-top: 1px solid #ffffff33; }
-}
-~~~
-
-~~~js menu.js
-const toggle = document.querySelector(".nav__toggle");
-const links = document.getElementById("nav-links");
-toggle.addEventListener("click", () => {
-  const open = links.classList.toggle("is-open");
-  toggle.setAttribute("aria-expanded", String(open));
-});
-~~~
-
-~~~view 230 300 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بيت الزعتر</title>
+<title>حاسبة BMI</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #1f2937; background: #fffbf5; }
-main { padding: 1rem; }
-
-.site-header { background: #14532d; color: #fff; }
-
-/* one row: logo, links, then the button pushed to the far edge */
-.nav {
-  display: flex;
-  flex-wrap: wrap;              /* lets the opened menu drop to its own row */
-  align-items: center;
-  gap: 0.75rem 1.5rem;
-  max-width: 72rem;
-  margin-inline: auto;
-  padding: 0.75rem 1rem;
-}
-.nav__logo, .nav__links a { color: inherit; text-decoration: none; }
-.nav a:focus-visible, .nav__toggle:focus-visible { outline: 3px solid #fde68a; outline-offset: 3px; }
-
-.nav__logo { font-weight: 800; font-size: 1.25rem; }
-
-.nav__links { display: flex; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
-
-/* auto margin eats all the free space before it, so the button sits at the end edge */
-.nav__cta {
-  margin-inline-start: auto;
-  padding: 0.5rem 1.1rem;
-  border-radius: 999px;
-  background: #fde68a;
-  color: #14532d;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.nav__toggle { display: none; padding: 0.4rem 0.7rem; border: 1px solid #ffffff80; border-radius: 0.5rem; background: transparent; color: inherit; font-size: 1.25rem; cursor: pointer; }
-
-@media (max-width: 767.98px) {
-  .nav__toggle { display: block; }
-  .nav__links { display: none; }
-  /* opened: the list takes the whole next row and stacks */
-  .nav__links.is-open {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 100%;
-    order: 1;
-    gap: 0;
-  }
-  .nav__links.is-open a { display: block; padding: 0.75rem 0; border-top: 1px solid #ffffff33; }
-}
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; }
+  form { max-width: 360px; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; display: grid; gap: 12px; }
+  h1 { margin: 0; font-size: 22px; }
+  label { display: grid; gap: 4px; font-weight: 600; }
+  input { font: inherit; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+  .result { padding: 14px; border-radius: 10px; background: #f0fdfa; font-size: 18px; }
+  output { font-size: 28px; font-weight: 800; color: #0f766e; }
+  .msg { margin: 4px 0 0; color: #b91c1c; font-size: 14px; }
 </style>
 </head>
 <body>
-<header class="site-header">
-  <nav class="nav" aria-label="الرئيسية">
-    <a class="nav__logo" href="#top">بيت الزعتر</a>
-    <ul class="nav__links" id="nav-links">
-      <li><a href="#menu">المنيو</a></li>
-      <li><a href="#offers">العروض</a></li>
-      <li><a href="#branches">الفروع</a></li>
-      <li><a href="#contact">تواصل</a></li>
-    </ul>
-    <a class="nav__cta" href="#book">احجز</a>
-    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="القايمة">☰</button>
-  </nav>
-</header>
-<main id="top">
-  <h1>أكل بيتي على الفحم</h1>
-  <p>غيّر عرض الشاشة: تحت 768 الروابط بتستخبى وزرار ☰ بيظهر.</p>
-</main>
-<script>
-const toggle = document.querySelector(".nav__toggle");
-const links = document.getElementById("nav-links");
-toggle.addEventListener("click", () => {
-  const open = links.classList.toggle("is-open");
-  toggle.setAttribute("aria-expanded", String(open));
-});
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** شريط أخضر: «بيت الزعتر» على اليمين، وجنبه ٤ روابط، وزرار «احجز» أصفر على الشمال خالص. صغّر الشاشة تحت 768: الروابط بتختفي ويظهر ☰ جنب «احجز»، ولما تدوس عليه الروابط بتنزل تحت بعض في سطر لوحدها.
-
-**ليه «احجز» بيروح للحافة التانية:** [[margin-inline-start: auto]]. الـ auto margin في flex بياكل كل المساحة الفاضية اللي قبله، فالزرار بيتزق لآخر السطر. و [[inline-start]] معناها «ناحية بداية الكلام»: في العربي يمين، فالمساحة بتتحط على يمين الزرار وهو يروح للشمال. ولما تقلب [[dir="ltr"]] البداية بتبقى الشمال، فالزرار بيروح لليمين لوحده. لو كتبت [[margin-left: auto]] كان هيشتغل في اتجاه واحد بس.
-
-**القايمة على الموبايل:**
-- [[flex-wrap: wrap]] على الـ nav عشان يسمح بسطر تاني.
-- لما الكلاس [[is-open]] يتحط، اللستة بتاخد [[flex-basis: 100%]] (السطر كله) فبتنزل لوحدها تحت، و [[order: 1]] بيخليها بعد الزرارين حتى لو هي قبلهم في الـ HTML.
-- الـ JavaScript بيقلب الكلاس ويغيّر [[aria-expanded]]، عشان قارئ الشاشة يقول «مفتوحة» أو «مقفولة».
-
-**غلطة اتصلحت أثناء الكتابة:** أول نسخة كان فيها [[.nav a { color: inherit }]]، وده بيلمس «احجز» كمان لأنه لينك. و [[.nav a]] وزنه (0,1,1)، أتقل من [[.nav__cta]] (0,1,0)، فلون الزرار مكانش هيكسب، فكتبت [[color: #14532d !important]]. ده بيداري المشكلة بس. الحل الصح: القاعدة العامة بقت على [[.nav__logo, .nav__links a]] بس، فمبقتش بتلمس الزرار، و [[!important]] اتشال.
-
-~~~text الناتج (Chrome 157، مقاسات من getBoundingClientRect)
-العرض  الاتجاه  اللوجو (يسار-يمين)  احجز (يسار-يمين)  ☰       الروابط  scrollWidth
-360    rtl      249-344            82-147            ظاهر    مستخبية  360
-360    ltr      16-111             213-278           ظاهر    مستخبية  360
-768    rtl      657-752            16-81             مستخبي  ظاهرة    768
-768    ltr      16-111             687-752           مستخبي  ظاهرة    768
-1280   rtl      1105-1200          80-145            مستخبي  ظاهرة    1280
-1280   ltr      80-175             1135-1200         مستخبي  ظاهرة    1280
-
-على 360 بعد ☰: aria-expanded = true، الروابط column بعرض 313، والشريط طوله 262 بدل 65
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-على 360 الـ ☰ هو اللي على الحافة و «احجز» جنبه، لأن الزرار التاني جه بعده في نفس السطر. لو عايز «احجز» على الحافة على الموبايل كمان، حط الـ ☰ قبله في الـ HTML أو ادّيله [[order: -1]].` },
-        { lvl: 'صغير', dir: "coffee-grid", t: R`شبكة منتجات قهوة بعدد متغيّر`, what: R`صفحة منتجات بـ [[repeat(auto-fit, minmax(min(240px, 100%), 1fr))]] بتتجرّب بـ ١ و ٣ و ٨ منتجات، والمنتج الواحد ميتمطّش. من درس [[auto-fit و minmax]].`, done: R`بمنتج واحد على 1280 الكارت مش أعرض من 300، وبـ ٨ الصفوف مليانة، وعلى 320 الكارت بعرض الشاشة ومفيش scroll أفقي.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>منتجات بُن الصباح</title>
-<link rel="stylesheet" href="style.css">
-<script src="count.js" defer></script>
-</head>
-<body>
-<main class="page">
-  <h1>منتجاتنا</h1>
-  <p class="count" role="group" aria-label="عدد المنتجات للتجربة">
-    <button type="button" data-n="1">منتج واحد</button>
-    <button type="button" data-n="3">٣</button>
-    <button type="button" data-n="8" aria-pressed="true">٨</button>
-  </p>
-  <ul class="products">
-    <li class="product"><h2>بُن تركي محوّج</h2><p>ربع كيلو، تحميص وسط</p><p class="product__price">١٨٠ ج</p></li>
-    <li class="product"><h2>إسبريسو بلند</h2><p>ربع كيلو، تحميص غامق</p><p class="product__price">٢٤٠ ج</p></li>
-    <li class="product"><h2>قهوة فلتر</h2><p>ربع كيلو، تحميص فاتح</p><p class="product__price">٢١٠ ج</p></li>
-    <li class="product"><h2>بُن سادة</h2><p>ربع كيلو، تحميص وسط</p><p class="product__price">١٦٠ ج</p></li>
-    <li class="product"><h2>كابتشينو سريع</h2><p>١٠ أكياس</p><p class="product__price">٩٥ ج</p></li>
-    <li class="product"><h2>بُن فرنساوي بالبندق</h2><p>ربع كيلو</p><p class="product__price">٢٢٠ ج</p></li>
-    <li class="product"><h2>هيل مطحون</h2><p>٥٠ جرام</p><p class="product__price">٧٥ ج</p></li>
-    <li class="product"><h2>كوباية سيراميك</h2><p>٣٠٠ مل</p><p class="product__price">١٢٠ ج</p></li>
-  </ul>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #faf7f2; color: #292524; }
-.page { max-width: 80rem; margin-inline: auto; padding: 1rem; }
-
-.count { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.count button { padding: 0.4rem 0.9rem; border: 1px solid #78350f; border-radius: 999px; background: #fff; color: #78350f; font: inherit; cursor: pointer; }
-.count button[aria-pressed="true"] { background: #78350f; color: #fff; }
-
-.products {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 1rem;
-  /* every column: at least 240px (or the whole width if the screen is smaller), at most 300px */
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 300px));
-  justify-content: center;   /* the free space goes to the sides, not into the cards */
-}
-.product { padding: 1rem; border-radius: 0.75rem; background: #fff; border: 1px solid #e7e5e4; }
-.product h2 { margin: 0 0 0.25rem; font-size: 1.1rem; }
-.product p { margin: 0; }
-.product .product__price { margin-top: 0.5rem; font-weight: 800; color: #78350f; }
-~~~
-
-~~~js count.js
-// test helper: show only the first n products
-const items = document.querySelectorAll(".product");
-const buttons = document.querySelectorAll(".count button");
-function show(n) {
-  items.forEach((li, i) => { li.hidden = i >= n; });
-  buttons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.n === String(n))));
-}
-buttons.forEach(b => b.addEventListener("click", () => show(Number(b.dataset.n))));
-show(8);
-~~~
-
-~~~view 690 1200 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>منتجات بُن الصباح</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #faf7f2; color: #292524; }
-.page { max-width: 80rem; margin-inline: auto; padding: 1rem; }
-
-.count { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.count button { padding: 0.4rem 0.9rem; border: 1px solid #78350f; border-radius: 999px; background: #fff; color: #78350f; font: inherit; cursor: pointer; }
-.count button[aria-pressed="true"] { background: #78350f; color: #fff; }
-
-.products {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 1rem;
-  /* every column: at least 240px (or the whole width if the screen is smaller), at most 300px */
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 300px));
-  justify-content: center;   /* the free space goes to the sides, not into the cards */
-}
-.product { padding: 1rem; border-radius: 0.75rem; background: #fff; border: 1px solid #e7e5e4; }
-.product h2 { margin: 0 0 0.25rem; font-size: 1.1rem; }
-.product p { margin: 0; }
-.product .product__price { margin-top: 0.5rem; font-weight: 800; color: #78350f; }
-</style>
-</head>
-<body>
-<main class="page">
-  <h1>منتجاتنا</h1>
-  <p class="count" role="group" aria-label="عدد المنتجات للتجربة">
-    <button type="button" data-n="1">منتج واحد</button>
-    <button type="button" data-n="3">٣</button>
-    <button type="button" data-n="8" aria-pressed="true">٨</button>
-  </p>
-  <ul class="products">
-    <li class="product"><h2>بُن تركي محوّج</h2><p>ربع كيلو، تحميص وسط</p><p class="product__price">١٨٠ ج</p></li>
-    <li class="product"><h2>إسبريسو بلند</h2><p>ربع كيلو، تحميص غامق</p><p class="product__price">٢٤٠ ج</p></li>
-    <li class="product"><h2>قهوة فلتر</h2><p>ربع كيلو، تحميص فاتح</p><p class="product__price">٢١٠ ج</p></li>
-    <li class="product"><h2>بُن سادة</h2><p>ربع كيلو، تحميص وسط</p><p class="product__price">١٦٠ ج</p></li>
-    <li class="product"><h2>كابتشينو سريع</h2><p>١٠ أكياس</p><p class="product__price">٩٥ ج</p></li>
-    <li class="product"><h2>بُن فرنساوي بالبندق</h2><p>ربع كيلو</p><p class="product__price">٢٢٠ ج</p></li>
-    <li class="product"><h2>هيل مطحون</h2><p>٥٠ جرام</p><p class="product__price">٧٥ ج</p></li>
-    <li class="product"><h2>كوباية سيراميك</h2><p>٣٠٠ مل</p><p class="product__price">١٢٠ ج</p></li>
-  </ul>
-</main>
-<script>
-// test helper: show only the first n products
-const items = document.querySelectorAll(".product");
-const buttons = document.querySelectorAll(".count button");
-function show(n) {
-  items.forEach((li, i) => { li.hidden = i >= n; });
-  buttons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.n === String(n))));
-}
-buttons.forEach(b => b.addEventListener("click", () => show(Number(b.dataset.n))));
-show(8);
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** ٨ كروت منتجات في شبكة، وفوقهم ٣ أزرار (منتج واحد، و ٣، و ٨) بيخفوا الباقي عشان تجرّب. الأزرار دي للتجربة بس، مش جزء من التصميم.
-
-**المشكلة اللي المشروع بيختبرها:** لو كتبت السطر زي ما هو في الدرس [[repeat(auto-fit, minmax(min(240px, 100%), 1fr))]] وعندك منتج واحد على 1280، الكارت بياخد السطر كله (اتقاس: 1248px). السبب إن [[auto-fit]] بيلغي الأعمدة الفاضية (بيخليها 0)، و [[1fr]] بيدّي كل المساحة اللي فضلت للعمود الوحيد اللي فيه حاجة.
-
-**الحل: سقف للعمود.** [[minmax(min(240px, 100%), 300px)]]: العمود من 240 لـ 300 بس، فمهما فضل مكان الكارت مش هيعدّي 300. والمكان اللي فاضل بيروح فين؟ [[justify-content: center]] بيوزّعه على الجنبين، فالكروت بتبقى في النص.
-
-**حل تاني:** [[auto-fill]] بدل [[auto-fit]] مع [[1fr]]. [[auto-fill]] بيسيب الأعمدة الفاضية موجودة، فالكارت الواحد بياخد عرض عمود واحد بس (اتقاس: 300px). الفرق إن الكروت هتبقى على البداية مش في النص.
-
-**[[min(240px, 100%)]] ليه:** على شاشة أضيق من 240 + المسافات، 240 لوحدها كانت هتعمل scroll أفقي. [[min()]] بياخد الأصغر، فعلى 320 العمود بيبقى بعرض الصندوق (288).
-
-~~~text الناتج (Chrome 157)
-العرض  عدد المنتجات  الأعمدة اللي اتحسبت          عرض الكارت  عدد الصفوف
-320    1             288px                        288         1
-320    8             272.8px (ظهر scrollbar)      272.8       8
-768    1             300px 0px                    300         1
-768    8             300px 300px                  300         4
-1280   1             300px 0px 0px 0px            300         1   (في نص الصفحة)
-1280   3             300px 300px 300px 0px        300         1
-1280   8             300px 300px 300px 300px      300         2   (الصفين مليانين)
-
-نفس الصفحة بـ 1fr و auto-fit ومنتج واحد على 1280: الكارت 1248
-بـ 1fr و auto-fill: 300
-scrollWidth = عرض الشاشة في كل الحالات   axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-الـ [[0px]] في الأعمدة هي اللي [[auto-fit]] لغاها: الأعمدة لسه محسوبة بس عرضها صفر، والـ gap اللي حواليها كمان بيتلغي.` },
-        { lvl: 'صغير', dir: "split-login", t: R`شاشة دخول متقسمة نصين`, what: R`شاشة دخول لمكتبة قراءة متخيلة: على الشاشة الكبيرة نصين بنفس العرض وبطول الشاشة، نص فيه اسم المكان وجملة ومميزات على خلفية gradient، والنص التاني فيه الفورم في النص بالظبط. على الموبايل الجزء الملون شريط قصير فوق (من غير المميزات) والفورم تحته على طول. من دروس [[grid]] و [[flexbox]].`, done: R`على 1280 النصين 640 و 640 وطولهم = طول الشاشة، والفورم بنفس المسافة من الأربع جهات، وعلى 360 مفيش scroll أفقي والفورم بيبدأ تحت الشريط على طول، وكل حقل ليه [[<label>]] و [[autocomplete]] صح، وحدود الحقل باينة (3:1 على الأقل مع الخلفية).`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ادخل على مكتبة سطر</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="split">
-  <aside class="brand" aria-label="عن مكتبة سطر">
-    <p class="brand__logo">مكتبة سطر</p>
-    <p class="brand__tag">اقرا فصل كل يوم، وكمّل من مكان ما وقفت على أي جهاز.</p>
-    <ul class="brand__perks">
-      <li>أكتر من ٢٠٠ كتاب عربي</li>
-      <li>فصل أول ببلاش من كل كتاب</li>
-      <li>بيفتكر صفحتك</li>
-    </ul>
-  </aside>
-
-  <main class="panel">
-    <form class="form" action="/login" method="post">
-      <h1>أهلًا بيك تاني</h1>
-      <label for="email">الإيميل</label>
-      <input id="email" name="email" type="email" autocomplete="email" required>
-      <label for="password">كلمة السر</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" required>
-      <div class="form__row">
-        <label class="check"><input type="checkbox" name="remember"> افتكرني</label>
-        <a href="/forgot">نسيت كلمة السر؟</a>
-      </div>
-      <button type="submit">ادخل</button>
-      <p class="form__alt">ملكش حساب؟ <a href="/signup">اعمل حساب</a></p>
-    </form>
-  </main>
-</div>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #1e1b4b; background: #fff; }
-
-/* phone: the brand is a short band on top, the form under it */
-.split {
-  display: grid;
-  min-height: 100vh;
-  min-height: 100svh;
-  grid-template-rows: auto 1fr;
-}
-
-.brand {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1.5rem;
-  background: linear-gradient(150deg, #312e81, #6d28d9);
-  color: #fff;
-}
-.brand p { margin: 0; }
-.brand__logo { font-size: 1.5rem; font-weight: 800; }
-.brand__perks { display: none; margin: 0.5rem 0 0; padding-inline-start: 1.25rem; line-height: 1.9; }
-
-/* phone: the form right under the band. Big screen: in the middle of its half (below) */
-.panel { display: grid; place-items: start center; padding: 2rem 1.5rem; }
-.form { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 24rem; }
-.form h1 { margin: 0 0 0.75rem; font-size: 1.6rem; }
-.form input:not([type="checkbox"]) { padding: 0.65rem 0.75rem; border: 1px solid #6366f1; border-radius: 0.5rem; font: inherit; }
-.form input:focus-visible, .form button:focus-visible, .form a:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-.form__row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-block: 0.25rem; }
-.check { display: flex; align-items: center; gap: 0.4rem; }
-.form button { padding: 0.75rem; border: 0; border-radius: 0.5rem; background: #4c1d95; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-.form a { color: #4c1d95; }
-.form__alt { margin: 0.5rem 0 0; text-align: center; }
-
-/* big screen: two halves side by side, each as tall as the screen */
-@media (min-width: 56rem) {
-  .split { grid-template-columns: 1fr 1fr; grid-template-rows: none; }
-  .brand { padding: 3rem; }
-  .panel { place-items: center; }
-  .brand__logo { font-size: 2.5rem; }
-  .brand__tag { font-size: 1.25rem; max-width: 26rem; }
-  .brand__perks { display: block; }
-}
-~~~
-
-~~~view 540 560 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ادخل على مكتبة سطر</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #1e1b4b; background: #fff; }
-
-/* phone: the brand is a short band on top, the form under it */
-.split {
-  display: grid;
-  min-height: 100vh;
-  min-height: 100svh;
-  grid-template-rows: auto 1fr;
-}
-
-.brand {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1.5rem;
-  background: linear-gradient(150deg, #312e81, #6d28d9);
-  color: #fff;
-}
-.brand p { margin: 0; }
-.brand__logo { font-size: 1.5rem; font-weight: 800; }
-.brand__perks { display: none; margin: 0.5rem 0 0; padding-inline-start: 1.25rem; line-height: 1.9; }
-
-/* phone: the form right under the band. Big screen: in the middle of its half (below) */
-.panel { display: grid; place-items: start center; padding: 2rem 1.5rem; }
-.form { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 24rem; }
-.form h1 { margin: 0 0 0.75rem; font-size: 1.6rem; }
-.form input:not([type="checkbox"]) { padding: 0.65rem 0.75rem; border: 1px solid #6366f1; border-radius: 0.5rem; font: inherit; }
-.form input:focus-visible, .form button:focus-visible, .form a:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
-.form__row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; margin-block: 0.25rem; }
-.check { display: flex; align-items: center; gap: 0.4rem; }
-.form button { padding: 0.75rem; border: 0; border-radius: 0.5rem; background: #4c1d95; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-.form a { color: #4c1d95; }
-.form__alt { margin: 0.5rem 0 0; text-align: center; }
-
-/* big screen: two halves side by side, each as tall as the screen */
-@media (min-width: 56rem) {
-  .split { grid-template-columns: 1fr 1fr; grid-template-rows: none; }
-  .brand { padding: 3rem; }
-  .panel { place-items: center; }
-  .brand__logo { font-size: 2.5rem; }
-  .brand__tag { font-size: 1.25rem; max-width: 26rem; }
-  .brand__perks { display: block; }
-}
-</style>
-</head>
-<body>
-<div class="split">
-  <aside class="brand" aria-label="عن مكتبة سطر">
-    <p class="brand__logo">مكتبة سطر</p>
-    <p class="brand__tag">اقرا فصل كل يوم، وكمّل من مكان ما وقفت على أي جهاز.</p>
-    <ul class="brand__perks">
-      <li>أكتر من ٢٠٠ كتاب عربي</li>
-      <li>فصل أول ببلاش من كل كتاب</li>
-      <li>بيفتكر صفحتك</li>
-    </ul>
-  </aside>
-
-  <main class="panel">
-    <form class="form" action="/login" method="post">
-      <h1>أهلًا بيك تاني</h1>
-      <label for="email">الإيميل</label>
-      <input id="email" name="email" type="email" autocomplete="email" required>
-      <label for="password">كلمة السر</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" required>
-      <div class="form__row">
-        <label class="check"><input type="checkbox" name="remember"> افتكرني</label>
-        <a href="/forgot">نسيت كلمة السر؟</a>
-      </div>
-      <button type="submit">ادخل</button>
-      <p class="form__alt">ملكش حساب؟ <a href="/signup">اعمل حساب</a></p>
-    </form>
-  </main>
-</div>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** على الكمبيوتر الشاشة نصين: اليمين بنفسجي غامق فيه «مكتبة سطر» كبير وجملة و ٣ مميزات، والشمال أبيض وفي نصه بالظبط فورم «أهلًا بيك تاني» (إيميل، وكلمة سر، و «افتكرني»، وزرار «ادخل»). على الموبايل شريط بنفسجي قصير فوق، والفورم تحته.
-
-**النصين:** [[.split]] grid. على الموبايل [[grid-template-rows: auto 1fr]]: الشريط على قد كلامه، والباقي للفورم. على الكبير [[grid-template-columns: 1fr 1fr]] والصفوف [[none]]. و [[min-height: 100svh]] (وقبلها [[100vh]]) عشان الشاشة تتملي حتى لو المحتوى قليل.
-
-**الفورم في النص:** [[.panel { display: grid; place-items: center }]]. [[place-items]] اختصار لـ [[align-items]] و [[justify-items]]: سطر واحد بيوسّط العنصر في الاتجاهين. الفورم [[width: 100%]] و [[max-width: 24rem]]: بياخد العرض كله على الموبايل، ويقف عند 24rem على الكبير.
-
-**على الموبايل:** أول نسخة كانت [[center]] برضه، والفورم طلع في نص المساحة اللي تحت الشريط وفوقه فراغ كبير. على الموبايل الفورم لازم يبقى أول حاجة تبان، فبقى [[place-items: start center]] (فوق في الطول، ونص في العرض)، والتوسيط الكامل جوه الـ media query بس.
-
-**حدود الحقل:** أول لون كان [[#a5b4fc]]، وتباينه مع الأبيض 1.99:1. WCAG بيطلب 3:1 لحدود أي حقل (1.4.11)، عشان اللي نظره ضعيف يشوف فين يكتب. axe مبيقيسش ده، فاتحسب باليد. بقى [[#6366f1]]: 4.47:1.
-
-**الفورم نفسه:** [[autocomplete="email"]] و [[autocomplete="current-password"]] عشان المتصفح ومدير كلمات السر يملوه، و [[type="email"]] بيطلّع كيبورد فيه [[@]] على الموبايل.
-
-~~~text الناتج (Chrome 157)
-العرض  scrollWidth  scrollHeight  الجزء الملون (يسار، عرض، طول)  الفورم (فوق، تحت، يمين، شمال من جزئه)  المميزات
-360    360          740 = الشاشة   0، 360، 131                     32، 238، 24، 24                     مستخبية
-1280   1280         800 = الشاشة   640، 640، 800                   231، 231، 128، 128                  ظاهرة
-
-التباين: الأبيض على أول الـ gradient 11.42:1 وعلى آخره 7.10:1، وحدود الحقل 4.47:1 (كانت 1.99)
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**ليه axe قال «incomplete» على كلام الجزء الملون:** axe مبيعرفش يحسب التباين على gradient، فبيسيبه لك. احسبه على أفتح وأغمق لون في الـ gradient: لو الاتنين أكتر من 4.5:1 الكلام مقروء في أي حتة.` },
-        { lvl: 'متوسط', dir: "studio-bento", t: R`bento لصفحة «عني» لاستوديو متخيل`, what: R`شبكة 12 عمود فيها ٦ كروت بأحجام مختلفة ([[span 7]] و [[span 5]] و [[span 4]] و [[grid-row: span 2]])، وكارت هيرو فيه صورة وعنوان فوق بعض بـ [[grid-area: 1 / 1]]، وعلى الموبايل كله [[span 12]]. بيجمع [[grid]] و [[grid-template-areas]] و [[flex: 1]] جوه الكروت.`, done: R`٣ لقطات (360 و 768 و 1280) من غير scroll أفقي، وفي DevTools الشبكة 13 خط، ومفيش ولا [[position: absolute]] في الـ CSS، ولما تطوّل كلام أي كارت الشبكة بتكبر معاه ومحدش بيطلع برا.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عن استوديو نقطة</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main class="bento">
-  <section class="card card--hero">
-    <img src="img/studio.svg" alt="" width="800" height="600">
-    <h1 class="hero__title">استوديو نقطة: تصميم هويات ومواقع</h1>
-  </section>
-  <section class="card card--about">
-    <h2>إحنا مين</h2>
-    <p class="card__body">فريق صغير من ٦ مصممين ومطورين، بنشتغل مع محلات ومشاريع ناشئة من ٢٠١٩.</p>
-    <a class="card__link" href="#work">شوف شغلنا</a>
-  </section>
-  <section class="card card--numbers">
-    <h2>بالأرقام</h2>
-    <ul class="numbers">
-      <li><strong>١٢٠</strong> مشروع</li>
-      <li><strong>٤٥</strong> هوية</li>
-      <li><strong>٦</strong> سنين</li>
-    </ul>
-  </section>
-  <section class="card card--services">
-    <h2>بنعمل إيه</h2>
-    <p class="card__body">لوجو وهوية كاملة، ومواقع سريعة، وتصميم منيوهات ولافتات.</p>
-    <a class="card__link" href="#services">كل الخدمات</a>
-  </section>
-  <section class="card card--team">
-    <h2>الفريق</h2>
-    <p class="card__body">ريم مديرة التصميم، وكريم للمواقع، وسارة للحروف العربي، و٣ تانيين.</p>
-    <a class="card__link" href="#team">قابل الفريق</a>
-  </section>
-  <section class="card card--contact">
-    <h2 class="contact__title">نشتغل سوا؟</h2>
-    <p class="contact__text">ابعتلنا فكرتك ونرد عليك خلال يومين.</p>
-    <a class="contact__mail" href="mailto:hello@example.com">hello@example.com</a>
-    <a class="contact__btn" href="#contact">ابدأ مشروع</a>
-  </section>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; }
-h1, h2 { margin: 0; line-height: 1.3; }
-p { margin: 0; }
-
-/* the bento: 12 equal columns, rows as tall as their content */
-.bento {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 1rem;
-  max-width: 72rem;
-  margin-inline: auto;
-  padding: 1rem;
-}
-
-/* phone: every card takes the 12 columns */
-.card { grid-column: span 12; }
-
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1.25rem;
-  border-radius: 1rem;
-  background: #fff;
-}
-.card__body { flex: 1; }               /* the text takes the extra height, so the link sits at the bottom */
-.card__link { align-self: flex-start; color: #1d4ed8; font-weight: 700; }
-
-/* hero: the image and the title in the SAME cell, on top of each other */
-.card--hero { display: grid; padding: 0; overflow: hidden; background: #1e3a5f; }
-.card--hero > * { grid-area: 1 / 1; }
-.card--hero img { width: 100%; height: 100%; min-height: 14rem; object-fit: cover; }
-.hero__title {
-  align-self: end;
-  margin: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  background: #0f172ae6;
-  color: #fff;
-  font-size: clamp(1.4rem, 1rem + 2vw, 2.25rem);
-}
-
-.numbers { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0; padding: 0; list-style: none; }
-.numbers li { flex: 1; min-width: 5rem; padding: 0.75rem; border-radius: 0.75rem; background: #e0f2fe; text-align: center; }
-.numbers strong { display: block; font-size: 1.75rem; color: #075985; }
-
-/* the contact card arranges its parts by name */
-.card--contact {
-  display: grid;
-  grid-template-areas:
-    "title title"
-    "text  text"
-    "mail  btn";
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  background: #0f172a;
-  color: #fff;
-}
-.contact__title { grid-area: title; }
-.contact__text { grid-area: text; }
-.contact__mail { grid-area: mail; color: #bae6fd; overflow-wrap: anywhere; }
-.contact__btn { grid-area: btn; padding: 0.5rem 1rem; border-radius: 999px; background: #fbbf24; color: #0f172a; font-weight: 700; text-decoration: none; }
-.card a:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-/* tablet: hero across, the rest two by two */
-@media (min-width: 40rem) {
-  .card { grid-column: span 6; }
-  .card--hero { grid-column: span 12; }
-}
-
-/* desktop: the real bento */
-@media (min-width: 64rem) {
-  .card--hero { grid-column: span 7; grid-row: span 2; }
-  .card--about { grid-column: span 5; }
-  .card--numbers { grid-column: span 5; }
-  .card--services, .card--team, .card--contact { grid-column: span 4; }
-}
-~~~
-
-~~~svg img/studio.svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
-  <rect width="800" height="600" fill="#1e3a5f"/>
-  <circle cx="610" cy="150" r="90" fill="#f59e0b"/>
-  <rect x="80" y="300" width="260" height="200" rx="16" fill="#38bdf8"/>
-  <rect x="380" y="260" width="320" height="240" rx="16" fill="#f472b6"/>
-  <rect x="120" y="120" width="180" height="120" rx="12" fill="#a3e635"/>
-</svg>
-~~~
-
-~~~view 1120 1180 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>عن استوديو نقطة</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f1f5f9; color: #0f172a; }
-h1, h2 { margin: 0; line-height: 1.3; }
-p { margin: 0; }
-
-/* the bento: 12 equal columns, rows as tall as their content */
-.bento {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 1rem;
-  max-width: 72rem;
-  margin-inline: auto;
-  padding: 1rem;
-}
-
-/* phone: every card takes the 12 columns */
-.card { grid-column: span 12; }
-
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1.25rem;
-  border-radius: 1rem;
-  background: #fff;
-}
-.card__body { flex: 1; }               /* the text takes the extra height, so the link sits at the bottom */
-.card__link { align-self: flex-start; color: #1d4ed8; font-weight: 700; }
-
-/* hero: the image and the title in the SAME cell, on top of each other */
-.card--hero { display: grid; padding: 0; overflow: hidden; background: #1e3a5f; }
-.card--hero > * { grid-area: 1 / 1; }
-.card--hero img { width: 100%; height: 100%; min-height: 14rem; object-fit: cover; }
-.hero__title {
-  align-self: end;
-  margin: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  background: #0f172ae6;
-  color: #fff;
-  font-size: clamp(1.4rem, 1rem + 2vw, 2.25rem);
-}
-
-.numbers { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0; padding: 0; list-style: none; }
-.numbers li { flex: 1; min-width: 5rem; padding: 0.75rem; border-radius: 0.75rem; background: #e0f2fe; text-align: center; }
-.numbers strong { display: block; font-size: 1.75rem; color: #075985; }
-
-/* the contact card arranges its parts by name */
-.card--contact {
-  display: grid;
-  grid-template-areas:
-    "title title"
-    "text  text"
-    "mail  btn";
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  background: #0f172a;
-  color: #fff;
-}
-.contact__title { grid-area: title; }
-.contact__text { grid-area: text; }
-.contact__mail { grid-area: mail; color: #bae6fd; overflow-wrap: anywhere; }
-.contact__btn { grid-area: btn; padding: 0.5rem 1rem; border-radius: 999px; background: #fbbf24; color: #0f172a; font-weight: 700; text-decoration: none; }
-.card a:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-
-/* tablet: hero across, the rest two by two */
-@media (min-width: 40rem) {
-  .card { grid-column: span 6; }
-  .card--hero { grid-column: span 12; }
-}
-
-/* desktop: the real bento */
-@media (min-width: 64rem) {
-  .card--hero { grid-column: span 7; grid-row: span 2; }
-  .card--about { grid-column: span 5; }
-  .card--numbers { grid-column: span 5; }
-  .card--services, .card--team, .card--contact { grid-column: span 4; }
-}
-</style>
-</head>
-<body>
-<main class="bento">
-  <section class="card card--hero">
-    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNjAwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCI+CiAgPHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiMxZTNhNWYiLz4KICA8Y2lyY2xlIGN4PSI2MTAiIGN5PSIxNTAiIHI9IjkwIiBmaWxsPSIjZjU5ZTBiIi8+CiAgPHJlY3QgeD0iODAiIHk9IjMwMCIgd2lkdGg9IjI2MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzM4YmRmOCIvPgogIDxyZWN0IHg9IjM4MCIgeT0iMjYwIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjI0MCIgcng9IjE2IiBmaWxsPSIjZjQ3MmI2Ii8+CiAgPHJlY3QgeD0iMTIwIiB5PSIxMjAiIHdpZHRoPSIxODAiIGhlaWdodD0iMTIwIiByeD0iMTIiIGZpbGw9IiNhM2U2MzUiLz4KPC9zdmc+" alt="" width="800" height="600">
-    <h1 class="hero__title">استوديو نقطة: تصميم هويات ومواقع</h1>
-  </section>
-  <section class="card card--about">
-    <h2>إحنا مين</h2>
-    <p class="card__body">فريق صغير من ٦ مصممين ومطورين، بنشتغل مع محلات ومشاريع ناشئة من ٢٠١٩.</p>
-    <a class="card__link" href="#work">شوف شغلنا</a>
-  </section>
-  <section class="card card--numbers">
-    <h2>بالأرقام</h2>
-    <ul class="numbers">
-      <li><strong>١٢٠</strong> مشروع</li>
-      <li><strong>٤٥</strong> هوية</li>
-      <li><strong>٦</strong> سنين</li>
-    </ul>
-  </section>
-  <section class="card card--services">
-    <h2>بنعمل إيه</h2>
-    <p class="card__body">لوجو وهوية كاملة، ومواقع سريعة، وتصميم منيوهات ولافتات.</p>
-    <a class="card__link" href="#services">كل الخدمات</a>
-  </section>
-  <section class="card card--team">
-    <h2>الفريق</h2>
-    <p class="card__body">ريم مديرة التصميم، وكريم للمواقع، وسارة للحروف العربي، و٣ تانيين.</p>
-    <a class="card__link" href="#team">قابل الفريق</a>
-  </section>
-  <section class="card card--contact">
-    <h2 class="contact__title">نشتغل سوا؟</h2>
-    <p class="contact__text">ابعتلنا فكرتك ونرد عليك خلال يومين.</p>
-    <a class="contact__mail" href="mailto:hello@example.com">hello@example.com</a>
-    <a class="contact__btn" href="#contact">ابدأ مشروع</a>
-  </section>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** على الكمبيوتر: كارت كبير على اليمين فيه صورة ملونة وفوقها العنوان في صندوق غامق، وجنبه كارتين فوق بعض («إحنا مين» و «بالأرقام»)، وتحتهم ٣ كروت جنب بعض والأخير غامق فيه إيميل وزرار. على التابلت الصورة لوحدها في سطر والباقي اتنين اتنين. على الموبايل كله تحت بعض.
-
-**الشبكة:** [[repeat(12, minmax(0, 1fr))]]. ١٢ عشان بتتقسم على ٢ و ٣ و ٤ و ٦، فأي تقسيمة بتطلع أرقام صحيحة: ٧ + ٥ = ١٢، و ٤ + ٤ + ٤ = ١٢. و [[minmax(0, 1fr)]] بدل [[1fr]] عشان عمود فيه كلمة طويلة (زي الإيميل) ميعرّضش العمود ويكسر الشبكة.
-
-**بنكتب للموبايل الأول:** [[.card { grid-column: span 12 }]] هي القاعدة من غير media query، وبعدين بنكبّر. كده لو الـ media query مشتغلتش، الصفحة لسه مقروءة.
-
-**الهيرو: صورة وكلام في نفس الخانة:** [[.card--hero > * { grid-area: 1 / 1 }]] بيحط الصورة والعنوان الاتنين في الصف ١ والعمود ١ جوه الكارت، فوق بعض. اللي بعده في الـ HTML بيترسم فوق. و [[align-self: end]] بينزّل العنوان لتحت. ده بيغني عن [[position: absolute]]، وكمان الكارت بياخد طول أطول حاجة فيهم، فلو العنوان طوّل الكارت بيطول معاه بدل ما الكلام يطلع برّه.
-
-**[[flex: 1]] جوه الكروت:** الكارت flex عمودي، والفقرة [[flex: 1]] بتاخد أي طول زيادة، فلينك «شوف شغلنا» بيفضل تحت خالص حتى لو الكارت أطول من كلامه (عشان الكارت اللي جنبه أطول).
-
-**[[grid-template-areas]] في كارت التواصل:** ٣ سطور بأسامي: العنوان على العمودين، والكلام على العمودين، والإيميل والزرار جنب بعض. الشكل مكتوب في الـ CSS كأنه رسمة.
-
-~~~text الناتج (Chrome 157، كل كارت: يسار، فوق، عرض، طول)
-1280:  hero 553,16 647×485 (span 7 و span 2)   about 80,16 457×231   numbers 80,263 457×238
-       services 837,517 363×160   team 459,517 363×160   contact 80,517 363×160
-768:   hero 721 عرض (السطر كله)، والباقي 352 اتنين اتنين
-360:   كلهم 313 تحت بعض
-
-عدد الأعمدة في كل المقاسات: 12 (يعني 13 خط في DevTools)
-عناصر position: absolute في الصفحة: 0
-كلام «بنعمل إيه» ×6 على 1280: الكارت بقى 311 بدل 160، وجيرانه في نفس الصف 311 كمان، و scrollHeight = clientHeight (مفيش حاجة طالعة برّه)
-scrollWidth = عرض الشاشة   axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**شوف الـ 13 خط بنفسك:** في DevTools › Elements دوس على كلمة [[grid]] جنب [[<main class="bento">]]، أو من تاب Layout علّم على الـ bento.` },
-        { lvl: 'متوسط', dir: "class-week", t: R`جدول حصص أسبوعي`, what: R`grid ٧ أعمدة (الأيام) × صفوف كل واحد نص ساعة، والحصة الطويلة [[grid-row: span 3]]، وعمود الوقت على البداية. البيانات في array في JS وبتترسم بـ [[style.gridRow]]. من درس [[grid]].`, done: R`حصة من 10:00 لـ 11:30 بتاخد ٣ صفوف بالظبط تحت يومها، وحصتين في نفس الوقت في يومين مختلفين على نفس الخط، وعلى 360 الجدول بيعمل scroll أفقي جوه صندوقه بس (الصفحة نفسها [[scrollWidth]] = 360).`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جدول حصص استوديو حركة</title>
-<link rel="stylesheet" href="style.css">
-<script src="week.js" defer></script>
-</head>
-<body>
-<main class="page">
-  <h1>جدول الأسبوع</h1>
-  <p>الحصص من ٩ الصبح لـ ٢ الضهر. على الموبايل اسحب الجدول بالعرض.</p>
-  <div class="scroll" tabindex="0" role="region" aria-label="جدول الأسبوع، بيتسحب بالعرض">
-    <div class="week" id="week"></div>
+<main>
+<form id="bmi">
+  <h1>احسب الـ BMI</h1>
+  <label>الوزن بالكيلو
+    <input name="weight" type="number" min="20" max="300" step="0.1" inputmode="decimal" required value="70">
+  </label>
+  <label>الطول بالسنتي
+    <input name="height" type="number" min="100" max="250" step="1" inputmode="numeric" required value="175">
+  </label>
+  <div class="result">
+    <output name="bmi" for="weight height" aria-live="polite"></output>
+    <span id="kind"></span>
+    <p class="msg" id="msg"></p>
   </div>
-</main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f8fafc; color: #0f172a; }
-.page { max-width: 72rem; margin-inline: auto; padding: 1rem; }
-
-/* only this box scrolls sideways, never the page */
-.scroll { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 0.75rem; background: #fff; }
-.scroll:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
-
-.week {
-  display: grid;
-  /* time column, then 7 days. minmax keeps a day readable (7.5rem) and lets it grow on big screens */
-  grid-template-columns: 4.5rem repeat(7, minmax(7.5rem, 1fr));
-  /* a header row, then 10 rows: one for every half hour from 9:00 to 14:00 */
-  grid-template-rows: auto repeat(10, 2.75rem);
-  min-width: max-content;
-}
-
-.week__day { grid-row: 1; padding: 0.5rem; background: #1e293b; color: #fff; font-weight: 700; text-align: center; }
-.week__time { grid-column: 1; padding-inline: 0.5rem; border-top: 1px solid #e2e8f0; color: #475569; font-size: 0.85rem; }
-
-.slot {
-  margin: 2px;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.5rem;
-  border-inline-start: 4px solid var(--c, #2563eb);
-  background: color-mix(in srgb, var(--c, #2563eb), white 85%);
-  font-size: 0.9rem;
-  position: relative;   /* keeps the hidden text inside the slot */
-  overflow: hidden;
-}
-.slot b { display: block; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-~~~
-
-~~~js week.js
-const days = ["السبت", "الأحد", "الاتنين", "التلات", "الأربع", "الخميس", "الجمعة"];
-const classes = [
-  { day: 0, from: "10:00", to: "11:30", name: "يوجا", coach: "منى", c: "#16a34a" },
-  { day: 2, from: "10:00", to: "11:00", name: "زومبا", coach: "هبة", c: "#db2777" },
-  { day: 1, from: "09:00", to: "10:00", name: "إطالة", coach: "منى", c: "#0891b2" },
-  { day: 3, from: "12:00", to: "14:00", name: "كروس فيت", coach: "عمر", c: "#ea580c" },
-  { day: 5, from: "09:30", to: "11:00", name: "بيلاتس", coach: "سلمى", c: "#7c3aed" },
-  { day: 4, from: "11:30", to: "12:30", name: "ملاكمة", coach: "عمر", c: "#dc2626" },
-];
-
-const week = document.getElementById("week");
-const START = 9 * 60, STEP = 30;              // the grid starts at 9:00, a row is 30 minutes
-const minutes = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-const row = t => 2 + (minutes(t) - START) / STEP;  // row 1 is the day names
-
-function cell(cls, text, col, rowStart) {
-  const el = document.createElement("div");
-  el.className = cls;
-  el.textContent = text;
-  el.style.gridColumn = col;
-  el.style.gridRow = rowStart;
-  week.append(el);
-}
-
-days.forEach((d, i) => cell("week__day", d, i + 2, 1));
-for (let r = 0; r < 10; r++) {
-  const t = START + r * STEP;
-  const label = String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0");
-  cell("week__time", label, 1, r + 2);
-}
-
-for (const k of classes) {
-  const el = document.createElement("div");
-  el.className = "slot";
-  el.style.setProperty("--c", k.c);
-  el.style.gridColumn = k.day + 2;
-  el.style.gridRow = row(k.from) + " / " + row(k.to);   // from its start line to its end line
-  el.innerHTML = "<b></b> <span></span><span class=\"visually-hidden\"></span>";
-  el.querySelector("b").textContent = k.name;
-  el.querySelector("span").textContent = k.coach;
-  el.querySelector(".visually-hidden").textContent = "، " + days[k.day] + " من " + k.from + " لـ " + k.to;
-  week.append(el);
-}
-~~~
-
-~~~view 660 680 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جدول حصص استوديو حركة</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f8fafc; color: #0f172a; }
-.page { max-width: 72rem; margin-inline: auto; padding: 1rem; }
-
-/* only this box scrolls sideways, never the page */
-.scroll { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 0.75rem; background: #fff; }
-.scroll:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
-
-.week {
-  display: grid;
-  /* time column, then 7 days. minmax keeps a day readable (7.5rem) and lets it grow on big screens */
-  grid-template-columns: 4.5rem repeat(7, minmax(7.5rem, 1fr));
-  /* a header row, then 10 rows: one for every half hour from 9:00 to 14:00 */
-  grid-template-rows: auto repeat(10, 2.75rem);
-  min-width: max-content;
-}
-
-.week__day { grid-row: 1; padding: 0.5rem; background: #1e293b; color: #fff; font-weight: 700; text-align: center; }
-.week__time { grid-column: 1; padding-inline: 0.5rem; border-top: 1px solid #e2e8f0; color: #475569; font-size: 0.85rem; }
-
-.slot {
-  margin: 2px;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.5rem;
-  border-inline-start: 4px solid var(--c, #2563eb);
-  background: color-mix(in srgb, var(--c, #2563eb), white 85%);
-  font-size: 0.9rem;
-  position: relative;   /* keeps the hidden text inside the slot */
-  overflow: hidden;
-}
-.slot b { display: block; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-</style>
-</head>
-<body>
-<main class="page">
-  <h1>جدول الأسبوع</h1>
-  <p>الحصص من ٩ الصبح لـ ٢ الضهر. على الموبايل اسحب الجدول بالعرض.</p>
-  <div class="scroll" tabindex="0" role="region" aria-label="جدول الأسبوع، بيتسحب بالعرض">
-    <div class="week" id="week"></div>
-  </div>
+</form>
 </main>
 <script>
-const days = ["السبت", "الأحد", "الاتنين", "التلات", "الأربع", "الخميس", "الجمعة"];
-const classes = [
-  { day: 0, from: "10:00", to: "11:30", name: "يوجا", coach: "منى", c: "#16a34a" },
-  { day: 2, from: "10:00", to: "11:00", name: "زومبا", coach: "هبة", c: "#db2777" },
-  { day: 1, from: "09:00", to: "10:00", name: "إطالة", coach: "منى", c: "#0891b2" },
-  { day: 3, from: "12:00", to: "14:00", name: "كروس فيت", coach: "عمر", c: "#ea580c" },
-  { day: 5, from: "09:30", to: "11:00", name: "بيلاتس", coach: "سلمى", c: "#7c3aed" },
-  { day: 4, from: "11:30", to: "12:30", name: "ملاكمة", coach: "عمر", c: "#dc2626" },
-];
+  const form = document.getElementById('bmi');
+  const { weight, height, bmi } = form.elements;
+  const kind = document.getElementById('kind');
+  const msg = document.getElementById('msg');
 
-const week = document.getElementById("week");
-const START = 9 * 60, STEP = 30;              // the grid starts at 9:00, a row is 30 minutes
-const minutes = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-const row = t => 2 + (minutes(t) - START) / STEP;  // row 1 is the day names
-
-function cell(cls, text, col, rowStart) {
-  const el = document.createElement("div");
-  el.className = cls;
-  el.textContent = text;
-  el.style.gridColumn = col;
-  el.style.gridRow = rowStart;
-  week.append(el);
-}
-
-days.forEach((d, i) => cell("week__day", d, i + 2, 1));
-for (let r = 0; r < 10; r++) {
-  const t = START + r * STEP;
-  const label = String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0");
-  cell("week__time", label, 1, r + 2);
-}
-
-for (const k of classes) {
-  const el = document.createElement("div");
-  el.className = "slot";
-  el.style.setProperty("--c", k.c);
-  el.style.gridColumn = k.day + 2;
-  el.style.gridRow = row(k.from) + " / " + row(k.to);   // from its start line to its end line
-  el.innerHTML = "<b></b> <span></span><span class=\"visually-hidden\"></span>";
-  el.querySelector("b").textContent = k.name;
-  el.querySelector("span").textContent = k.coach;
-  el.querySelector(".visually-hidden").textContent = "، " + days[k.day] + " من " + k.from + " لـ " + k.to;
-  week.append(el);
-}
+  function update() {
+    // a field that is empty, out of range, or not a number: show the browser's own message, never a wrong number
+    const bad = [weight, height].find(f => !f.checkValidity());
+    if (bad) {
+      bmi.value = '—';
+      kind.textContent = '';
+      msg.textContent = bad.validationMessage;
+      return;
+    }
+    const m = height.valueAsNumber / 100;
+    const n = weight.valueAsNumber / (m * m);
+    bmi.value = n.toFixed(1);
+    kind.textContent = n < 18.5 ? 'نحيف' : n < 25 ? 'طبيعي' : 'زيادة';
+    msg.textContent = '';
+  }
+  form.addEventListener('input', update);
+  form.addEventListener('submit', e => e.preventDefault());
+  update();
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** جدول أبيض: فوق صف غامق فيه الأيام من السبت للجمعة، وعلى اليمين عمود الأوقات من 09:00 لـ 13:30، وجوه الجدول ٦ حصص ملونة. اليوجا يوم السبت طويلة (ساعة ونص)، والكروس فيت ساعتين. على الموبايل الجدول بيتسحب بالعرض جوه صندوقه.
+~~~view 330 360 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حاسبة BMI</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; }
+  form { max-width: 360px; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; display: grid; gap: 12px; }
+  h1 { margin: 0; font-size: 22px; }
+  label { display: grid; gap: 4px; font-weight: 600; }
+  input { font: inherit; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+  .result { padding: 14px; border-radius: 10px; background: #f0fdfa; font-size: 18px; }
+  output { font-size: 28px; font-weight: 800; color: #0f766e; }
+  .msg { margin: 4px 0 0; color: #b91c1c; font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<form id="bmi">
+  <h1>احسب الـ BMI</h1>
+  <label>الوزن بالكيلو
+    <input name="weight" type="number" min="20" max="300" step="0.1" inputmode="decimal" required value="70">
+  </label>
+  <label>الطول بالسنتي
+    <input name="height" type="number" min="100" max="250" step="1" inputmode="numeric" required value="175">
+  </label>
+  <div class="result">
+    <output name="bmi" for="weight height" aria-live="polite"></output>
+    <span id="kind"></span>
+    <p class="msg" id="msg"></p>
+  </div>
+</form>
+</main>
+<script>
+  const form = document.getElementById('bmi');
+  const { weight, height, bmi } = form.elements;
+  const kind = document.getElementById('kind');
+  const msg = document.getElementById('msg');
 
-**الشبكة:** ٨ أعمدة (عمود الوقت و ٧ أيام) و ١١ صف (صف الأيام و ١٠ صفوف، كل واحد نص ساعة). كل صف 2.75rem ثابت، عشان نص الساعة ياخد نفس الطول في كل يوم.
+  function update() {
+    // a field that is empty, out of range, or not a number: show the browser's own message, never a wrong number
+    const bad = [weight, height].find(f => !f.checkValidity());
+    if (bad) {
+      bmi.value = '—';
+      kind.textContent = '';
+      msg.textContent = bad.validationMessage;
+      return;
+    }
+    const m = height.valueAsNumber / 100;
+    const n = weight.valueAsNumber / (m * m);
+    bmi.value = n.toFixed(1);
+    kind.textContent = n < 18.5 ? 'نحيف' : n < 25 ? 'طبيعي' : 'زيادة';
+    msg.textContent = '';
+  }
+  form.addEventListener('input', update);
+  form.addEventListener('submit', e => e.preventDefault());
+  update();
+</script>
+</body>
+</html>
+~~~
 
-**الحصة بتتحط فين:** الـ JavaScript بيحسب رقم الخط مش رقم الصف. الخط ٢ هو بداية 9:00، وكل ٣٠ دقيقة خط. يعني 10:00 = الخط ٤، و 11:30 = الخط ٧. فاليوجا [[grid-row: 4 / 7]]: من الخط ٤ للخط ٧ = ٣ صفوف بالظبط. الدالة [[row()]] هي اللي بتعمل الحساب ده، فأي حصة جديدة بتتكتب في الـ array بوقتها بس.
+**هتشوف إيه:** كارت أبيض فيه حقلين (70 و 175 مكتوبين من الأول)، وتحتهم مربع أخضر فاتح فيه **22.9** كبير وجنبه «طبيعي». غيّر الوزن والرقم بيتغيّر وانت بتكتب. امسح الوزن: الرقم بيبقى «—» وتحته بالأحمر رسالة المتصفح.
 
-**scroll جوه الصندوق بس:** [[.scroll { overflow-x: auto }]] حوالين الجدول، والجدول نفسه [[min-width: max-content]] فمبيتضغطش. الصندوق عليه [[tabindex="0"]] عشان اللي بيستخدم الكيبورد يقدر يسحبه بالأسهم، و [[role="region"]] و [[aria-label]] عشان قارئ الشاشة يقول ده إيه.
+**ليه كده:**
+- [[type="number"]] مع [[min]] و [[max]] و [[step]]: المتصفح نفسه بيعرف إن 500 غلط، فمش محتاج تكتب الشروط دي في JavaScript. و [[inputmode="decimal"]] بيفتح كيبورد فيه علامة عشرية على الموبايل.
+- [[valueAsNumber]] بيرجّع رقم على طول بدل [[Number(value)]].
+- قبل أي حساب: [[checkValidity()]] على الحقلين. لو حقل مش سليم بنعرض [[validationMessage]] (رسالة المتصفح نفسها، بلغة المتصفح) ومبنحسبش. ده اللي بيمنع «BMI = 163» لما حد يكتب 500.
+- [[<output for="weight height">]] بيقول لقارئ الشاشة النتيجة دي جاية من الحقلين دول، و [[aria-live="polite"]] بيخليه يقرا الرقم الجديد لما يتغيّر من غير ما يقطع الكلام.
 
-**قارئ الشاشة:** الجدول مرسوم بـ divs، فالمكان وحده مش بيقول اليوم والوقت. عشان كده كل حصة جواها جملة مستخبية بالشكل ([[.visually-hidden]]) زي «، السبت من 10:00 لـ 11:30».
+**فخ قسته:** لما تكتب حرف [[e]] لوحده في حقل رقم، [[value]] بيرجّع نص فاضي [[""]] زي الحقل الفاضي بالظبط. الفرق في [[validity.badInput]]: [[true]] مع الحرف. عشان كده بنسأل [[checkValidity()]] مش [[value === ""]].
 
-**غلطة اتصلحت:** أول نسخة كانت [[<b></b><span>]] لازقين، فالحصة اتقرت «يوجامنى». الـ [[<b>]] بيبان في سطر لوحده بالـ CSS، بس النص نفسه مفيهوش مسافة. زوّدت مسافة بينهم.
+**وفخ تاني:** [[step="0.1"]] معناه 70.25 غلط، والمتصفح بيقولك أقرب رقمين صح.
 
-~~~text الناتج (Chrome 157)
-                                360          1280
-طول الصف                        44           44
-اليوجا (10:00 لـ 11:30)          grid-row: 4 / 7، طولها 128 + 4 margin = 132 = 3 × 44
-بداية اليوجا / الزومبا (نفس الوقت، يوم تاني)  289 / 289   267 / 267
-الصفحة scrollWidth               360          1280
-الصندوق scrollWidth / clientWidth 912 / 326   1118 / 1118
-
-نص الحصة لقارئ الشاشة: «يوجا منى، السبت من 10:00 لـ 11:30»
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~text الناتج (Chrome، 70 كيلو و 175 سم في الأول)
+70 و 175                      22.9 طبيعي
+55                            18.0 نحيف
+90                            29.4 زيادة
+الوزن فاضي                     —  Please fill out this field.
+500                           —  Value must be less than or equal to 300.   (rangeOverflow = true)
+70.25                         —  Please enter a valid value. The two nearest valid values are 70.2 and 70.3.
+كتبت e بالكيبورد                —  Please enter a number.   (value = "" و badInput = true)
+axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
 ~~~` },
-        { lvl: 'متوسط', dir: "challenge-map", t: R`خريطة تحدي أفقية على الكمبيوتر ورأسية على الموبايل`, what: R`صفحة تحدي مشي ٣٠ يوم متخيل: ٥ مراحل في [[<ol>]]، كل مرحلة دايرة برقمها وتحتها اسمها. على الكمبيوتر المراحل في سطر واحد بعرض متساوي، وعلى الموبايل تحت بعض والكلام جنب الدايرة. خط واصل بين الدواير مرسوم بـ [[::after]] (مفيش ولا عنصر زيادة في الـ HTML)، ولونه أخضر لحد المرحلة الحالية ورمادي بعدها، والمرحلة الحالية عليها [[aria-current="step"]]. من دروس [[flexbox]] و [[flex: 1]] (والـ pseudo-elements من وحدة «مين بيكسب»).`, done: R`الخط بيبدأ من نص دايرة وبيخلص في نص اللي بعدها بالظبط (قيس بـ [[getBoundingClientRect]]) في الوضعين، وفي [[dir="ltr"]] كمان، وآخر مرحلة ملهاش خط، ومفيش [[!important]] ولا scroll أفقي على 360.`, sol: R`~~~html index.html
+        { lvl: 'صغير', dir: "gym-plans", t: R`اختيار باقة جيم بالكروت`, what: R`٣ باقات لـ «جيم الأبطال» (شهري، ٣ شهور، سنوي) كل واحدة [[<label>]] شكلها كارت وجواها radio، والكارت المختار بيتلوّن بـ [[.plan:has(input:checked)]] من غير JavaScript، والـ radio نفسه مخفي بالشكل بس (مش [[display: none]]). من درس «fieldset و radio».`, done: R`الأسهم بتنقّل الاختيار بين الكروت، والكارت اللي عليه الـ focus عليه outline واضح ([[:has(:focus-visible)]])، و [[getComputedStyle]] على الكارت المختار بيرجّع لون الحدود الجديد، و [[new FormData(form).get('plan')]] بيرجّع الباقة.`, sol: R`~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>خريطة تحدي ٣٠ يوم مشي</title>
-<link rel="stylesheet" href="style.css">
+<title>باقات جيم الأبطال</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fafaf9; color: #1c1917; }
+  main { max-width: 760px; margin-inline: auto; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
+  h1 { margin: 0 0 12px; font-size: 26px; }
+  legend { font-size: 18px; font-weight: 800; margin-block-end: 12px; }
+  .plan { position: relative; display: grid; gap: 6px; padding: 18px; background: white; border: 2px solid #d6d3d1; border-radius: 14px; cursor: pointer; }
+  .plan b { font-size: 18px; }
+  .plan .price { font-size: 26px; font-weight: 800; }
+  .plan small { color: #78716c; }
+  /* hidden to the eye only: still reachable with Tab and the arrow keys, still read by a screen reader */
+  .plan input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .plan:has(input:checked) { border-color: rgb(15, 118, 110); background: #f0fdfa; }
+  .plan:has(input:checked) b::after { content: " ✓"; color: rgb(15, 118, 110); }
+  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+  button { margin-block-start: 16px; font: inherit; font-weight: 700; padding: 10px 24px; border: 0; border-radius: 10px; background: #0f766e; color: white; }
+  #chosen { min-height: 1.5em; }
+</style>
 </head>
 <body>
-<main class="page">
-  <h1>تحدي ٣٠ يوم مشي</h1>
-  <p>انت في المرحلة التالتة. كمّل!</p>
-  <ol class="map">
-    <li class="stage stage--done"><span class="stage__dot">١</span><span class="stage__text"><b>البداية</b> ٢٠٠٠ خطوة في اليوم</span></li>
-    <li class="stage stage--done"><span class="stage__dot">٢</span><span class="stage__text"><b>الأسبوع الأول</b> ٤٠٠٠ خطوة</span></li>
-    <li class="stage stage--now" aria-current="step"><span class="stage__dot">٣</span><span class="stage__text"><b>نص التحدي</b> ٦٠٠٠ خطوة ويوم راحة</span></li>
-    <li class="stage"><span class="stage__dot">٤</span><span class="stage__text"><b>الأسبوع الرابع</b> ٨٠٠٠ خطوة</span></li>
-    <li class="stage"><span class="stage__dot">٥</span><span class="stage__text"><b>خط النهاية</b> ١٠٬٠٠٠ خطوة</span></li>
-  </ol>
+<main>
+<h1>باقات جيم الأبطال</h1>
+<form id="plans">
+  <fieldset>
+    <legend>اختار باقتك</legend>
+    <label class="plan"><input type="radio" name="plan" value="month" checked><b>شهر</b><span class="price">٥٠٠ ج</span><small>تجرّب من غير التزام</small></label>
+    <label class="plan"><input type="radio" name="plan" value="quarter"><b>٣ شهور</b><span class="price">١٣٠٠ ج</span><small>بتوفّر ٢٠٠ جنيه</small></label>
+    <label class="plan"><input type="radio" name="plan" value="year"><b>سنة</b><span class="price">٤٥٠٠ ج</span><small>بتوفّر ١٥٠٠ جنيه</small></label>
+  </fieldset>
+  <button>اشترك</button>
+  <p id="chosen" aria-live="polite"></p>
+</form>
 </main>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f0fdf4; color: #052e16; }
-.page { max-width: 64rem; margin-inline: auto; padding: 1rem; }
-
-.map {
-  --dot: 2.5rem;           /* circle size */
-  --gap: 1.5rem;           /* space between stages */
-  --line: 4px;
-  display: flex;
-  flex-direction: column;  /* phone: one stage under the other */
-  gap: var(--gap);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.stage { position: relative; display: flex; align-items: flex-start; gap: 0.75rem; }
-.stage__dot {
-  position: relative;
-  z-index: 1;              /* the circle covers the line that passes behind it */
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: var(--dot);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #fff;
-  border: 3px solid #86efac;
-  font-weight: 800;
-}
-.stage__text b { display: block; }
-
-/* the line: from this circle's center to the next circle's center. The last stage has none */
-.stage:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  /* phone: straight down, from the middle of my circle to the middle of the next one */
-  inset-inline-start: calc(var(--dot) / 2 - var(--line) / 2);
-  top: calc(var(--dot) / 2);
-  bottom: calc(-1 * (var(--gap) + var(--dot) / 2));
-  width: var(--line);
-  background: #bbf7d0;
-}
-
-.stage--done .stage__dot { background: #15803d; border-color: #15803d; color: #fff; }
-.stage--done:not(:last-child)::after { background: #15803d; }   /* same weight as the rule above, later in the file, so it wins */
-.stage--now .stage__dot { border-color: #15803d; box-shadow: 0 0 0 4px #bbf7d0; }
-
-/* computer: one row, every stage the same width, the text under its circle */
-@media (min-width: 48rem) {
-  .map { flex-direction: row; }
-  .stage { flex: 1 1 0; flex-direction: column; align-items: center; text-align: center; }
-  .stage:not(:last-child)::after {
-    /* sideways now: from my center to the next stage's center = my width + the gap */
-    inset-inline-start: 50%;
-    top: calc(var(--dot) / 2 - var(--line) / 2);
-    bottom: auto;
-    width: calc(100% + var(--gap));
-    height: var(--line);
-  }
-}
-~~~
-
-~~~view 480 490 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>خريطة تحدي ٣٠ يوم مشي</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f0fdf4; color: #052e16; }
-.page { max-width: 64rem; margin-inline: auto; padding: 1rem; }
-
-.map {
-  --dot: 2.5rem;           /* circle size */
-  --gap: 1.5rem;           /* space between stages */
-  --line: 4px;
-  display: flex;
-  flex-direction: column;  /* phone: one stage under the other */
-  gap: var(--gap);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.stage { position: relative; display: flex; align-items: flex-start; gap: 0.75rem; }
-.stage__dot {
-  position: relative;
-  z-index: 1;              /* the circle covers the line that passes behind it */
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: var(--dot);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #fff;
-  border: 3px solid #86efac;
-  font-weight: 800;
-}
-.stage__text b { display: block; }
-
-/* the line: from this circle's center to the next circle's center. The last stage has none */
-.stage:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  /* phone: straight down, from the middle of my circle to the middle of the next one */
-  inset-inline-start: calc(var(--dot) / 2 - var(--line) / 2);
-  top: calc(var(--dot) / 2);
-  bottom: calc(-1 * (var(--gap) + var(--dot) / 2));
-  width: var(--line);
-  background: #bbf7d0;
-}
-
-.stage--done .stage__dot { background: #15803d; border-color: #15803d; color: #fff; }
-.stage--done:not(:last-child)::after { background: #15803d; }   /* same weight as the rule above, later in the file, so it wins */
-.stage--now .stage__dot { border-color: #15803d; box-shadow: 0 0 0 4px #bbf7d0; }
-
-/* computer: one row, every stage the same width, the text under its circle */
-@media (min-width: 48rem) {
-  .map { flex-direction: row; }
-  .stage { flex: 1 1 0; flex-direction: column; align-items: center; text-align: center; }
-  .stage:not(:last-child)::after {
-    /* sideways now: from my center to the next stage's center = my width + the gap */
-    inset-inline-start: 50%;
-    top: calc(var(--dot) / 2 - var(--line) / 2);
-    bottom: auto;
-    width: calc(100% + var(--gap));
-    height: var(--line);
-  }
-}
-</style>
-</head>
-<body>
-<main class="page">
-  <h1>تحدي ٣٠ يوم مشي</h1>
-  <p>انت في المرحلة التالتة. كمّل!</p>
-  <ol class="map">
-    <li class="stage stage--done"><span class="stage__dot">١</span><span class="stage__text"><b>البداية</b> ٢٠٠٠ خطوة في اليوم</span></li>
-    <li class="stage stage--done"><span class="stage__dot">٢</span><span class="stage__text"><b>الأسبوع الأول</b> ٤٠٠٠ خطوة</span></li>
-    <li class="stage stage--now" aria-current="step"><span class="stage__dot">٣</span><span class="stage__text"><b>نص التحدي</b> ٦٠٠٠ خطوة ويوم راحة</span></li>
-    <li class="stage"><span class="stage__dot">٤</span><span class="stage__text"><b>الأسبوع الرابع</b> ٨٠٠٠ خطوة</span></li>
-    <li class="stage"><span class="stage__dot">٥</span><span class="stage__text"><b>خط النهاية</b> ١٠٬٠٠٠ خطوة</span></li>
-  </ol>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** على الكمبيوتر ٥ دواير في سطر: الأولى والتانية خضرا مليانة وبينهم خط أخضر تقيل، والتالتة بيضا بحلقة خضرا حواليها (انت هنا)، والرابعة والخامسة باهتين وبينهم خط فاتح. على الموبايل نفس الدواير تحت بعض والخط رأسي.
-
-**المراحل:** [[.map]] flex. على الموبايل [[column]]، وعلى الكمبيوتر [[row]] وكل مرحلة [[flex: 1 1 0]]: كلهم يبدأوا من صفر وياخدوا نصيب متساوي، فعرضهم واحد مهما كان طول الكلام.
-
-**الخط:** كل مرحلة (ما عدا الأخيرة بـ [[:not(:last-child)]]) ليها [[::after]] بـ [[position: absolute]]. المرحلة نفسها [[position: relative]] عشان الخط يتقاس منها. الدايرة [[z-index: 1]] فبتغطي الخط اللي معدّي وراها.
-
-**الحساب (أهم حتة):**
-- **رأسي:** الخط بيبدأ من نص دايرتي: [[top: calc(var(--dot) / 2)]]. وبيخلص في نص الدايرة اللي بعدي، وهي بعد آخري بـ [[--gap]] وبعدين نص دايرة. فـ [[bottom]] بالسالب: [[calc(-1 * (var(--gap) + var(--dot) / 2))]].
-- **أفقي:** نص مرحلتي هو [[50%]]، ونص المرحلة اللي بعدي بعد عرضي كله والـ gap. فالخط [[inset-inline-start: 50%]] وعرضه [[calc(100% + var(--gap))]]. الـ [[inline-start]] بيخليه يمشي ناحية الشمال في العربي واليمين في الإنجليزي من غير تعديل.
-
-علشان كده [[--dot]] و [[--gap]] متغيرين: لو غيّرت حجم الدايرة أو المسافة، الخط بيتظبط لوحده.
-
-**اللون الأخضر للمراحل اللي خلصت:** [[.stage--done:not(:last-child)::after]]. وزنه زي القاعدة العامة بالظبط (كلاس و pseudo-class و pseudo-element)، وجاي بعدها في الملف، فبيكسب من غير [[!important]]. لو كتبت [[.stage--done::after]] بس، وزنه أقل والخط هيفضل رمادي.
-
-~~~text الناتج (Chrome 157، كل خط: [فرق البداية عن نص دايرته، فرق النهاية عن نص اللي بعدها، انحرافه عن الخط المستقيم])
-360  rtl:   [[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-360  ltr:   [[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-1024 rtl:   [[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-1024 ltr:   [[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-ألوان الخطوط الـ 4: rgb(21, 128, 61) rgb(21, 128, 61) rgb(187, 247, 208) rgb(187, 247, 208)
-scrollWidth = عرض الشاشة   axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
-~~~
-
-**قست إزاي:** الـ [[::after]] ملوش [[getBoundingClientRect]]، فعملت [[<span>]] مؤقت جوه نفس المرحلة بنفس قيم [[getComputedStyle(stage, "::after")]] (الـ inset والعرض والطول)، وقست هو، وشلته.` },
-        { lvl: 'كبير', dir: "stock-admin", t: R`لوحة إدارة مخزن متخيل (app shell كامل)`, what: R`shell بـ [[grid-template-areas]] (sidebar و topbar و main)، والـ sidebar يختفي تحت 1024 ويظهر زرار يفتحه، وكروت أرقام بـ auto-fit، وكروت منتجات أجزاؤها متصفة بـ [[subgrid]]، ورسم بياني أعمدة بـ grid و [[--h]] لكل عمود، ومنطقة جدول. الألوان والمسافات من CSS variables (درس [[CSS variables]])، والعناوين بـ [[clamp()]]. بيجمع الوحدة كلها مع وحدة الوحدات والمتغيرات.`, done: R`على 360 و 768 و 1280 و 1920 بالعربي والإنجليزي ([[dir]] بس اللي بيتغيّر) مفيش scroll أفقي، والـ main بس اللي بيعمل scroll، والكروت متصفة، والرسم البياني بيتغيّر لما تغيّر [[--h]] من DevTools، وفيه ملف [[CHECK.md]] فيه لقطة لكل مقاس وجدول بكل جزء ومقاسه المتقاس.`, ext: R`زوّد dark mode بالتوكنز، وخلّي الـ sidebar يتطوى لأيقونات بس بزرار، وحوّل الجدول لكروت تحت 640 (درس [[جدول responsive]])، واعمل نسخة تانية بـ Tailwind بعد وحدته.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مخزن السنبلة: لوحة التحكم</title>
-<link rel="stylesheet" href="tokens.css">
-<link rel="stylesheet" href="style.css">
-<script src="shell.js" defer></script>
-</head>
-<body>
-<div class="app" id="app">
-  <header class="top">
-    <button class="top__menu" type="button" aria-expanded="false" aria-controls="side">☰ القايمة</button>
-    <p class="top__name">مخزن السنبلة</p>
-    <p class="top__user">أهلًا، يوسف</p>
-  </header>
-
-  <nav class="side" id="side" aria-label="أقسام اللوحة">
-    <ul>
-      <li><a href="#kpi" aria-current="page">الملخص</a></li>
-      <li><a href="#products">المنتجات</a></li>
-      <li><a href="#chart">المبيعات</a></li>
-      <li><a href="#orders">الطلبات</a></li>
-    </ul>
-  </nav>
-
-  <main class="main" id="main">
-    <h1>الملخص</h1>
-
-    <ul class="kpis" id="kpi">
-      <li class="kpi"><span class="kpi__label">منتجات في المخزن</span><strong class="kpi__value">١٬٢٤٠</strong></li>
-      <li class="kpi"><span class="kpi__label">قربت تخلص</span><strong class="kpi__value kpi__value--warn">١٨</strong></li>
-      <li class="kpi"><span class="kpi__label">طلبات النهارده</span><strong class="kpi__value">٦٤</strong></li>
-      <li class="kpi"><span class="kpi__label">مبيعات الأسبوع</span><strong class="kpi__value">٨٤٬٥٠٠ ج</strong></li>
-    </ul>
-
-    <h2 id="products">المنتجات</h2>
-    <ul class="products">
-      <li class="product">
-        <h3 class="product__name">غسالة أطباق ١٢ فرد</h3>
-        <p class="product__meta">كود A-104، رف ٣</p>
-        <p class="product__stock">في المخزن: ٧</p>
-        <a class="product__link" href="#p104">التفاصيل</a>
-      </li>
-      <li class="product">
-        <h3 class="product__name">خلاط</h3>
-        <p class="product__meta">كود B-221</p>
-        <p class="product__stock product__stock--low">في المخزن: ٢</p>
-        <a class="product__link" href="#p221">التفاصيل</a>
-      </li>
-      <li class="product">
-        <h3 class="product__name">مكنسة كهربا لاسلكي بخزان كبير وفرشتين</h3>
-        <p class="product__meta">كود C-310، رف ١، بتتشحن في ٤ ساعات</p>
-        <p class="product__stock">في المخزن: ٢٥</p>
-        <a class="product__link" href="#p310">التفاصيل</a>
-      </li>
-      <li class="product">
-        <h3 class="product__name">مكواة بخار</h3>
-        <p class="product__meta">كود D-015</p>
-        <p class="product__stock">في المخزن: ١٤</p>
-        <a class="product__link" href="#p015">التفاصيل</a>
-      </li>
-    </ul>
-
-    <h2 id="chart">مبيعات الأسبوع (بالألف جنيه)</h2>
-    <ol class="chart">
-      <li style="--h: 40"><span class="chart__bar"></span><span class="chart__label">سبت <b>٨</b></span></li>
-      <li style="--h: 65"><span class="chart__bar"></span><span class="chart__label">حد <b>١٣</b></span></li>
-      <li style="--h: 55"><span class="chart__bar"></span><span class="chart__label">اتنين <b>١١</b></span></li>
-      <li style="--h: 90"><span class="chart__bar"></span><span class="chart__label">تلات <b>١٨</b></span></li>
-      <li style="--h: 70"><span class="chart__bar"></span><span class="chart__label">أربع <b>١٤</b></span></li>
-      <li style="--h: 100"><span class="chart__bar"></span><span class="chart__label">خميس <b>٢٠</b></span></li>
-      <li style="--h: 30"><span class="chart__bar"></span><span class="chart__label">جمعة <b>٦</b></span></li>
-    </ol>
-
-    <h2 id="orders">آخر الطلبات</h2>
-    <div class="table-wrap" tabindex="0" role="region" aria-labelledby="orders">
-      <table>
-        <thead><tr><th scope="col">رقم الطلب</th><th scope="col">العميل</th><th scope="col">المنتج</th><th scope="col">الكمية</th><th scope="col">الحالة</th></tr></thead>
-        <tbody>
-          <tr><td>٥٠٢١</td><td>محل الهدى</td><td>غسالة أطباق</td><td>٢</td><td>اتشحن</td></tr>
-          <tr><td>٥٠٢٢</td><td>بيت الأجهزة</td><td>خلاط</td><td>٥</td><td>بيتجهّز</td></tr>
-          <tr><td>٥٠٢٣</td><td>محل النور</td><td>مكواة بخار</td><td>٣</td><td>اتشحن</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
-</div>
-</body>
-</html>
-~~~
-
-~~~css tokens.css
-:root {
-  --bg: #f1f5f9;
-  --surface: #ffffff;
-  --ink: #0f172a;
-  --muted: #475569;
-  --line: #e2e8f0;
-  --brand: #0f766e;
-  --side: #134e4a;
-  --side-ink: #ccfbf1;
-  --warn: #b45309;
-  --focus: #f59e0b;
-
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 1rem;
-  --space-4: 1.5rem;
-  --radius: 0.75rem;
-  --side-w: 15rem;
-
-  --step-1: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
-  --step-2: clamp(1.4rem, 1.1rem + 1.4vw, 2rem);
-}
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: var(--bg); color: var(--ink); }
-h1 { font-size: var(--step-2); margin: 0 0 var(--space-3); }
-h2 { font-size: var(--step-1); margin: var(--space-4) 0 var(--space-3); }
-ul, ol { margin: 0; padding: 0; list-style: none; }
-a:focus-visible, button:focus-visible, .table-wrap:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-
-/* ---------- the shell: the window never scrolls, only main does ---------- */
-.app {
-  display: grid;
-  height: 100vh;
-  height: 100dvh;
-  grid-template-columns: var(--side-w) minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas:
-    "side top"
-    "side main";
-}
-.top  { grid-area: top; }
-.side { grid-area: side; }
-.main { grid-area: main; overflow: auto; padding: var(--space-4); }
-
-.top { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-4); background: var(--surface); border-bottom: 1px solid var(--line); }
-.top p { margin: 0; }
-.top__name { font-weight: 800; }
-.top .top__user { margin-inline-start: auto; color: var(--muted); }
-.top__menu { display: none; padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
-
-.side { padding: var(--space-3); background: var(--side); overflow-y: auto; }
-.side a { display: block; padding: var(--space-2) var(--space-3); border-radius: var(--radius); color: var(--side-ink); text-decoration: none; }
-.side a[aria-current="page"] { background: #ffffff1f; color: #fff; font-weight: 700; }
-
-/* ---------- under 1024: one column, the sidebar hides behind a button ---------- */
-@media (max-width: 63.98rem) {
-  .app {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "top"
-      "main";
-  }
-  .top__menu { display: block; }
-  .side { display: none; }
-  /* opened: the sidebar goes into main's cell, on top of it (same cell, painted later) */
-  .app.is-open .side { display: block; grid-area: main; z-index: 1; }
-}
-
-/* ---------- KPI cards: as many columns as fit ---------- */
-.kpis { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); }
-.kpi { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-3); border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
-.kpi__label { color: var(--muted); }
-.kpi__value { font-size: var(--step-2); }
-.kpi__value--warn { color: var(--warn); }
-
-/* ---------- product cards: 4 rows shared by every card in a row (subgrid) ---------- */
-.products { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr)); }
-.product {
-  display: grid;
-  grid-row: span 4;
-  grid-template-rows: subgrid;   /* name, meta, stock and link line up across the cards */
-  row-gap: var(--space-2);
-  padding: var(--space-3);
-  border-radius: var(--radius);
-  background: var(--surface);
-  border: 1px solid var(--line);
-}
-.product > * { margin: 0; }
-.product__name { font-size: 1rem; }
-.product__meta { color: var(--muted); font-size: 0.9rem; }
-.product__stock--low { color: var(--warn); font-weight: 700; }
-.product__link { justify-self: start; color: var(--brand); font-weight: 700; }
-
-/* ---------- bar chart: 7 columns, every bar is --h percent of its column ---------- */
-.chart {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: var(--space-2);
-  height: 14rem;
-  padding: var(--space-3);
-  border-radius: var(--radius);
-  background: var(--surface);
-  border: 1px solid var(--line);
-}
-.chart li { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: var(--space-1); }
-.chart__bar { align-self: end; height: calc(var(--h) * 1%); border-radius: 0.4rem 0.4rem 0 0; background: var(--brand); }
-.chart__label { font-size: 0.8rem; color: var(--muted); text-align: center; }
-.chart__label b { display: block; color: var(--ink); }
-
-/* ---------- table: scrolls inside its own box ---------- */
-.table-wrap { overflow-x: auto; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-th, td { padding: var(--space-2) var(--space-3); text-align: start; border-bottom: 1px solid var(--line); }
-th { background: #f8fafc; }
-~~~
-
-~~~js shell.js
-const app = document.getElementById("app");
-const btn = document.querySelector(".top__menu");
-btn.addEventListener("click", () => {
-  const open = app.classList.toggle("is-open");
-  btn.setAttribute("aria-expanded", String(open));
-});
-~~~
-
-~~~view 640 640 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مخزن السنبلة: لوحة التحكم</title>
-<style>
-:root {
-  --bg: #f1f5f9;
-  --surface: #ffffff;
-  --ink: #0f172a;
-  --muted: #475569;
-  --line: #e2e8f0;
-  --brand: #0f766e;
-  --side: #134e4a;
-  --side-ink: #ccfbf1;
-  --warn: #b45309;
-  --focus: #f59e0b;
-
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 1rem;
-  --space-4: 1.5rem;
-  --radius: 0.75rem;
-  --side-w: 15rem;
-
-  --step-1: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
-  --step-2: clamp(1.4rem, 1.1rem + 1.4vw, 2rem);
-}
-</style>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: var(--bg); color: var(--ink); }
-h1 { font-size: var(--step-2); margin: 0 0 var(--space-3); }
-h2 { font-size: var(--step-1); margin: var(--space-4) 0 var(--space-3); }
-ul, ol { margin: 0; padding: 0; list-style: none; }
-a:focus-visible, button:focus-visible, .table-wrap:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-
-/* ---------- the shell: the window never scrolls, only main does ---------- */
-.app {
-  display: grid;
-  height: 100vh;
-  height: 100dvh;
-  grid-template-columns: var(--side-w) minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas:
-    "side top"
-    "side main";
-}
-.top  { grid-area: top; }
-.side { grid-area: side; }
-.main { grid-area: main; overflow: auto; padding: var(--space-4); }
-
-.top { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-4); background: var(--surface); border-bottom: 1px solid var(--line); }
-.top p { margin: 0; }
-.top__name { font-weight: 800; }
-.top .top__user { margin-inline-start: auto; color: var(--muted); }
-.top__menu { display: none; padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
-
-.side { padding: var(--space-3); background: var(--side); overflow-y: auto; }
-.side a { display: block; padding: var(--space-2) var(--space-3); border-radius: var(--radius); color: var(--side-ink); text-decoration: none; }
-.side a[aria-current="page"] { background: #ffffff1f; color: #fff; font-weight: 700; }
-
-/* ---------- under 1024: one column, the sidebar hides behind a button ---------- */
-@media (max-width: 63.98rem) {
-  .app {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "top"
-      "main";
-  }
-  .top__menu { display: block; }
-  .side { display: none; }
-  /* opened: the sidebar goes into main's cell, on top of it (same cell, painted later) */
-  .app.is-open .side { display: block; grid-area: main; z-index: 1; }
-}
-
-/* ---------- KPI cards: as many columns as fit ---------- */
-.kpis { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); }
-.kpi { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-3); border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
-.kpi__label { color: var(--muted); }
-.kpi__value { font-size: var(--step-2); }
-.kpi__value--warn { color: var(--warn); }
-
-/* ---------- product cards: 4 rows shared by every card in a row (subgrid) ---------- */
-.products { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr)); }
-.product {
-  display: grid;
-  grid-row: span 4;
-  grid-template-rows: subgrid;   /* name, meta, stock and link line up across the cards */
-  row-gap: var(--space-2);
-  padding: var(--space-3);
-  border-radius: var(--radius);
-  background: var(--surface);
-  border: 1px solid var(--line);
-}
-.product > * { margin: 0; }
-.product__name { font-size: 1rem; }
-.product__meta { color: var(--muted); font-size: 0.9rem; }
-.product__stock--low { color: var(--warn); font-weight: 700; }
-.product__link { justify-self: start; color: var(--brand); font-weight: 700; }
-
-/* ---------- bar chart: 7 columns, every bar is --h percent of its column ---------- */
-.chart {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: var(--space-2);
-  height: 14rem;
-  padding: var(--space-3);
-  border-radius: var(--radius);
-  background: var(--surface);
-  border: 1px solid var(--line);
-}
-.chart li { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: var(--space-1); }
-.chart__bar { align-self: end; height: calc(var(--h) * 1%); border-radius: 0.4rem 0.4rem 0 0; background: var(--brand); }
-.chart__label { font-size: 0.8rem; color: var(--muted); text-align: center; }
-.chart__label b { display: block; color: var(--ink); }
-
-/* ---------- table: scrolls inside its own box ---------- */
-.table-wrap { overflow-x: auto; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-th, td { padding: var(--space-2) var(--space-3); text-align: start; border-bottom: 1px solid var(--line); }
-th { background: #f8fafc; }
-</style>
-</head>
-<body>
-<div class="app" id="app">
-  <header class="top">
-    <button class="top__menu" type="button" aria-expanded="false" aria-controls="side">☰ القايمة</button>
-    <p class="top__name">مخزن السنبلة</p>
-    <p class="top__user">أهلًا، يوسف</p>
-  </header>
-
-  <nav class="side" id="side" aria-label="أقسام اللوحة">
-    <ul>
-      <li><a href="#kpi" aria-current="page">الملخص</a></li>
-      <li><a href="#products">المنتجات</a></li>
-      <li><a href="#chart">المبيعات</a></li>
-      <li><a href="#orders">الطلبات</a></li>
-    </ul>
-  </nav>
-
-  <main class="main" id="main">
-    <h1>الملخص</h1>
-
-    <ul class="kpis" id="kpi">
-      <li class="kpi"><span class="kpi__label">منتجات في المخزن</span><strong class="kpi__value">١٬٢٤٠</strong></li>
-      <li class="kpi"><span class="kpi__label">قربت تخلص</span><strong class="kpi__value kpi__value--warn">١٨</strong></li>
-      <li class="kpi"><span class="kpi__label">طلبات النهارده</span><strong class="kpi__value">٦٤</strong></li>
-      <li class="kpi"><span class="kpi__label">مبيعات الأسبوع</span><strong class="kpi__value">٨٤٬٥٠٠ ج</strong></li>
-    </ul>
-
-    <h2 id="products">المنتجات</h2>
-    <ul class="products">
-      <li class="product">
-        <h3 class="product__name">غسالة أطباق ١٢ فرد</h3>
-        <p class="product__meta">كود A-104، رف ٣</p>
-        <p class="product__stock">في المخزن: ٧</p>
-        <a class="product__link" href="#p104">التفاصيل</a>
-      </li>
-      <li class="product">
-        <h3 class="product__name">خلاط</h3>
-        <p class="product__meta">كود B-221</p>
-        <p class="product__stock product__stock--low">في المخزن: ٢</p>
-        <a class="product__link" href="#p221">التفاصيل</a>
-      </li>
-      <li class="product">
-        <h3 class="product__name">مكنسة كهربا لاسلكي بخزان كبير وفرشتين</h3>
-        <p class="product__meta">كود C-310، رف ١، بتتشحن في ٤ ساعات</p>
-        <p class="product__stock">في المخزن: ٢٥</p>
-        <a class="product__link" href="#p310">التفاصيل</a>
-      </li>
-      <li class="product">
-        <h3 class="product__name">مكواة بخار</h3>
-        <p class="product__meta">كود D-015</p>
-        <p class="product__stock">في المخزن: ١٤</p>
-        <a class="product__link" href="#p015">التفاصيل</a>
-      </li>
-    </ul>
-
-    <h2 id="chart">مبيعات الأسبوع (بالألف جنيه)</h2>
-    <ol class="chart">
-      <li style="--h: 40"><span class="chart__bar"></span><span class="chart__label">سبت <b>٨</b></span></li>
-      <li style="--h: 65"><span class="chart__bar"></span><span class="chart__label">حد <b>١٣</b></span></li>
-      <li style="--h: 55"><span class="chart__bar"></span><span class="chart__label">اتنين <b>١١</b></span></li>
-      <li style="--h: 90"><span class="chart__bar"></span><span class="chart__label">تلات <b>١٨</b></span></li>
-      <li style="--h: 70"><span class="chart__bar"></span><span class="chart__label">أربع <b>١٤</b></span></li>
-      <li style="--h: 100"><span class="chart__bar"></span><span class="chart__label">خميس <b>٢٠</b></span></li>
-      <li style="--h: 30"><span class="chart__bar"></span><span class="chart__label">جمعة <b>٦</b></span></li>
-    </ol>
-
-    <h2 id="orders">آخر الطلبات</h2>
-    <div class="table-wrap" tabindex="0" role="region" aria-labelledby="orders">
-      <table>
-        <thead><tr><th scope="col">رقم الطلب</th><th scope="col">العميل</th><th scope="col">المنتج</th><th scope="col">الكمية</th><th scope="col">الحالة</th></tr></thead>
-        <tbody>
-          <tr><td>٥٠٢١</td><td>محل الهدى</td><td>غسالة أطباق</td><td>٢</td><td>اتشحن</td></tr>
-          <tr><td>٥٠٢٢</td><td>بيت الأجهزة</td><td>خلاط</td><td>٥</td><td>بيتجهّز</td></tr>
-          <tr><td>٥٠٢٣</td><td>محل النور</td><td>مكواة بخار</td><td>٣</td><td>اتشحن</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
-</div>
 <script>
-const app = document.getElementById("app");
-const btn = document.querySelector(".top__menu");
-btn.addEventListener("click", () => {
-  const open = app.classList.toggle("is-open");
-  btn.setAttribute("aria-expanded", String(open));
-});
+  const form = document.getElementById('plans');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    document.getElementById('chosen').textContent = 'الباقة اللي هتتبعت: ' + new FormData(form).get('plan');
+  });
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** على الكمبيوتر: عمود أخضر غامق على اليمين فيه الأقسام، وفوق شريط أبيض فيه اسم المخزن، والباقي ملخص: ٤ كروت أرقام، و ٤ كروت منتجات، ورسم أعمدة لمبيعات الأسبوع، وجدول طلبات. الصفحة نفسها مبتتحركش، الجزء اللي فيه الملخص بس هو اللي بيتسكرول. تحت 1024 العمود الأخضر بيختفي ويظهر زرار «☰ القايمة».
-
-**الهيكل:** [[.app]] شبكة بطول الشاشة ([[100dvh]]، وقبلها [[100vh]] للمتصفحات القديمة) فيها ٣ مناطق بأسامي. [[grid-template-rows: auto minmax(0, 1fr)]]: الشريط بطوله، والباقي للـ main. الـ [[minmax(0, ...)]] مهم: من غيره الصف بيطول على قد محتوى الـ main، فالصفحة كلها تتسكرول بدل الـ main. والـ main عليه [[overflow: auto]]، فهو اللي بيتسكرول جوه مكانه.
-
-**الـ sidebar تحت 1024:** الخريطة بتتغيّر لعمود واحد ([[top]] و [[main]] بس) والـ sidebar [[display: none]]. ولما يتفتح، بيتحط في نفس منطقة الـ main: [[grid-area: main]]. عنصرين في نفس الخانة بيترسموا فوق بعض، و [[z-index: 1]] بيخليه فوق. مفيش [[position]] خالص، واتقاس إنه بياخد نفس مربع الـ main بالظبط.
-
-**كروت المنتجات بـ subgrid:** كل كارت [[grid-row: span 4]] و [[grid-template-rows: subgrid]]، يعني الكارت مبيعملش صفوف لنفسه، بيستخدم ٤ صفوف من الأب. وبما إن كل الكروت اللي في نفس السطر بيستخدموا نفس الصفوف، الصف بياخد طول أطول عنوان، و «في المخزن» و «التفاصيل» بيبقوا على خط واحد في كل الكروت. اتقاس من غير subgrid: «التفاصيل» في كارت المكنسة (عنوانها طويل) نزل 10px عن جيرانه.
-
-**الرسم البياني:** ٧ أعمدة، وكل عمود [[<li style="--h: 65">]]. الـ CSS بيقرا الرقم: [[height: calc(var(--h) * 1%)]]. الرقم في الـ HTML لأنه بيانات (زي الكلام)، والشكل كله في الـ CSS. والأرقام الحقيقية مكتوبة تحت كل عمود، عشان اللي مش شايف الرسم يقراها.
-
-**الألوان والمسافات من [[tokens.css]]:** كل ألوان [[style.css]] من متغيرات ما عدا ٣: خلفية رأس الجدول، والأبيض والشفافية على اللينك الحالي في الـ sidebar. والعناوين [[clamp()]] من [[--step-1]] و [[--step-2]].
-
-~~~text CHECK.md
-# مخزن السنبلة: فحص المقاسات
-
-اللقطات في فولدر $__btshots/$__bt (360.png و 768.png و 1280.png و 1920.png)، متصورة من DevTools بمقاس الجهاز بالظبط.
-الأرقام من الكونسول بـ $__btgetBoundingClientRect()$__bt و $__btscrollWidth$__bt، بالعربي ($__btdir="rtl"$__bt) والإنجليزي ($__btdir="ltr"$__bt) ونفس النتيجة.
-
-| الجزء | 360 | 768 | 1280 | 1920 |
-|---|---|---|---|---|
-| scroll أفقي للصفحة ($__btscrollWidth$__bt = عرض الشاشة) | لأ | لأ | لأ | لأ |
-| الصفحة نفسها بتعمل scroll رأسي؟ | لأ (الـ main بس) | لأ (الـ main بس) | لأ (الـ main بس) | لأ (الـ main بس) |
-| الـ sidebar | مستخبي، وزرار ☰ | مستخبي، وزرار ☰ | 240px على البداية | 240px على البداية |
-| كروت الأرقام في الصف | 1 | 3 | 4 | 4 |
-| كروت المنتجات في الصف | 1 | 3 | 4 | 4 |
-| «في المخزن» و «التفاصيل» على نفس الخط في كل الكروت | ✓ | ✓ | ✓ | ✓ |
-| أطول عمود في الرسم ($__bt--h: 100$__bt) | 153px | 153px | 153px | 153px |
-
-- لما الـ sidebar بيتفتح على 768 بياخد نفس مربع الـ main بالظبط (0، 56، 768×744) وفوقه.
-- غيّرت $__bt--h$__bt لعمود الجمعة من 30 لـ 80 من DevTools: العمود اتغيّر من 46px لـ 122px.
-- axe: 0 violations. الـ HTML validator: مفيش رسايل. الـ CSS validator: No Error Found.
-~~~
-
-~~~text الناتج (Chrome 157، 4 مقاسات × rtl و ltr)
-العرض  scrollWidth  الصفحة scrollHeight  الـ main (scrollHeight / clientHeight)  الـ sidebar        كروت أرقام  منتجات في الصف
-360    360          800 = الشاشة         1723 / 744                              مستخبي             1           1
-768    768          800 = الشاشة         1230 / 744                              مستخبي             3           3
-1280   1280         800 = الشاشة         976 / 762                               rtl 1040-1280، ltr 0-240   4    4
-1920   1920         800 = الشاشة         976 / 762                               rtl 1680-1920، ltr 0-240   4    4
-
-«في المخزن» و «التفاصيل»: خط واحد في كل الكروت (بـ subgrid). من غيره: التفاصيل 425,425,435,425
-أعمدة الرسم: 61,99,84,138,107,153,46 (من --h 40 لحد 100). الجمعة --h 30 → 80: من 46 لـ 122
-الـ sidebar مفتوح على 768: نفس مربع الـ main (0، 56، 768×744)
-axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found للملفين
-~~~
-
-**فخ وقعت فيه وانا بصوّر:** أول مرة صوّرت بـ [[chrome --headless=new --window-size=360,800 --screenshot]]، والصورة طلعت مقصوصة: الكروت اتنين جنب بعض وطالعين برّه. قست [[innerWidth]] جوه نفس الأمر: 504. الـ headless بيرفض شباك أضيق من كده، و [[--window-size]] مقاس الشباك مش الصفحة (768 طلعت 750). اللقطات اللي في [[shots/]] اتصورت من DevTools (Device toolbar بالمقاس بالظبط، وبعدين ⋮ › Capture screenshot).` },
-        { lvl: 'كبير', dir: "photo-landing", t: R`landing page لاستوديو تصوير متخيل`, what: R`hero بعمودين ([[minmax(0, 1fr) minmax(0, 1.08fr)]]) بيبقى عمود على الموبايل والصورة فوق بـ [[order: -1]]، وbento للأعمال، وباقات أسعار بـ subgrid، وخطوات شغل بـ flex، وفوتر أعمدة بـ auto-fit. من غير أي framework، وكل الأقسام بـ id عشان الروابط.`, done: R`الصفحة كلها flex و grid من غير [[float]] ولا [[position]] للـ layout، وعلى ٤ مقاسات مفيش scroll أفقي، وباقات الأسعار زراريرها على خط واحد على 1280، و axe صفر مشاكل، وترتيب Tab منطقي رغم إن الصورة بتتنقل بـ [[order]] (لأنها مش عنصر بياخد focus).`, ext: R`زوّد فلاتر للأعمال بـ [[:has()]] من غير JavaScript، وحركة ظهور للأقسام بتحترم reduced motion، واختبر الصفحة بسكربت درس [[مصفوفة مقاسات]].`, sol: R`~~~html index.html
+~~~view 360 620 الشكل النهائي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>استوديو ضيّ للتصوير</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header class="header">
-  <a class="header__logo" href="#top">استوديو ضيّ</a>
-  <nav aria-label="أقسام الصفحة">
-    <ul class="header__links">
-      <li><a href="#work">أعمالنا</a></li>
-      <li><a href="#pricing">الأسعار</a></li>
-      <li><a href="#steps">إزاي بنشتغل</a></li>
-    </ul>
-  </nav>
-</header>
-
-<main id="top">
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero__text">
-      <h1 id="hero-title">صور منتجاتك وناسك زي ما هي في الحقيقة</h1>
-      <p>تصوير منتجات، وبورتريه، ومناسبات صغيرة. استوديو في وسط البلد وبنيجي لحد عندك.</p>
-      <a class="btn" href="#pricing">شوف الباقات</a>
-    </div>
-    <img class="hero__img" src="img/hero.svg" alt="ركن التصوير في الاستوديو وقت الغروب" width="900" height="700">
-  </section>
-
-  <section id="work" aria-labelledby="work-title">
-    <h2 id="work-title">أعمالنا</h2>
-    <ul class="work">
-      <li class="work__item work__item--big"><img src="img/w1.svg" alt="صينية كنافة على ترابيزة خشب" width="800" height="600"><p>منيو حلواني</p></li>
-      <li class="work__item work__item--tall"><img src="img/w2.svg" alt="بورتريه في جنينة" width="600" height="800"><p>بورتريه</p></li>
-      <li class="work__item"><img src="img/w3.svg" alt="زجاجة برفان على قماش بنفسجي" width="800" height="600"><p>منتجات</p></li>
-      <li class="work__item"><img src="img/w4.svg" alt="مكتب شركة ناشئة بالليل" width="800" height="600"><p>أماكن</p></li>
-    </ul>
-  </section>
-
-  <section id="pricing" aria-labelledby="pricing-title">
-    <h2 id="pricing-title">الباقات</h2>
-    <ul class="plans">
-      <li class="plan">
-        <h3 class="plan__name">بداية</h3>
-        <p class="plan__price">١٬٥٠٠ ج</p>
-        <ul class="plan__features"><li>ساعة تصوير</li><li>١٠ صور متعدّلة</li></ul>
-        <a class="btn plan__btn" href="#book" aria-label="احجز باقة بداية">احجز</a>
-      </li>
-      <li class="plan plan--featured">
-        <h3 class="plan__name">محلات</h3>
-        <p class="plan__price">٣٬٥٠٠ ج</p>
-        <ul class="plan__features"><li>٣ ساعات تصوير</li><li>٤٠ صورة متعدّلة</li><li>خلفيتين بألوان البراند</li><li>صور مقاسات السوشيال</li></ul>
-        <a class="btn plan__btn" href="#book" aria-label="احجز باقة محلات">احجز</a>
-      </li>
-      <li class="plan">
-        <h3 class="plan__name">مناسبة</h3>
-        <p class="plan__price">٢٬٥٠٠ ج</p>
-        <ul class="plan__features"><li>٤ ساعات في مكانك</li><li>كل الصور بعد يومين</li><li>ألبوم أونلاين</li></ul>
-        <a class="btn plan__btn" href="#book" aria-label="احجز باقة مناسبة">احجز</a>
-      </li>
-    </ul>
-  </section>
-
-  <section id="steps" aria-labelledby="steps-title">
-    <h2 id="steps-title">إزاي بنشتغل</h2>
-    <ol class="steps">
-      <li><b>١</b> تكلمنا وتقول عايز إيه</li>
-      <li><b>٢</b> نتفق على اليوم والمكان</li>
-      <li><b>٣</b> نصوّر</li>
-      <li><b>٤</b> تستلم الصور في يومين</li>
-    </ol>
-  </section>
-</main>
-
-<footer class="footer" id="book">
-  <section><h2>العنوان</h2><p>٢٠ شارع الفن، وسط البلد</p></section>
-  <section><h2>المواعيد</h2><p>كل يوم من ١١ لـ ٩، والجمعة إجازة</p></section>
-  <section><h2>احجز</h2><p><a href="tel:+201000000000">٠١٠٠٠٠٠٠٠٠٠</a></p></section>
-</footer>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fafaf9; color: #1c1917; line-height: 1.6; }
-img { display: block; max-width: 100%; height: auto; }
-h1, h2, h3 { line-height: 1.25; }
-main > section { max-width: 72rem; margin-inline: auto; padding: 2rem 1rem; }
-a:focus-visible { outline: 3px solid #0369a1; outline-offset: 3px; }
-
-.btn { display: inline-block; padding: 0.6rem 1.4rem; border-radius: 999px; background: #0c4a6e; color: #fff; font-weight: 700; text-decoration: none; }
-
-/* header: logo and links on one line, they wrap on a small screen */
-.header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1.5rem; padding: 0.75rem max(1rem, (100% - 70rem) / 2); background: #fff; border-bottom: 1px solid #e7e5e4; }
-.header__logo { font-weight: 800; color: inherit; text-decoration: none; }
-.header__links { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0; padding: 0; list-style: none; }
-.header__links a { color: #0c4a6e; }
-
-/* hero: one column on the phone, the image first */
-.hero { display: grid; gap: 1.5rem; align-items: center; }
-.hero__img { order: -1; width: 100%; border-radius: 1rem; }
-.hero h1 { font-size: clamp(1.75rem, 1.2rem + 2.5vw, 3rem); margin: 0 0 0.75rem; }
-.hero p { margin: 0 0 1.25rem; font-size: 1.1rem; }
-
-@media (min-width: 48rem) {
-  /* two columns. minmax(0, ...) lets a column shrink below its content's width */
-  .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); }
-  .hero__img { order: 0; }
-}
-
-/* works: a small bento */
-.work { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.work__item { margin: 0; display: grid; }
-.work__item img { width: 100%; height: 100%; object-fit: cover; border-radius: 0.75rem; }
-.work__item p { margin: 0.25rem 0 0; font-weight: 700; }
-.work__item--big { grid-column: span 2; }
-@media (min-width: 48rem) {
-  .work { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(10rem, auto); }
-  .work__item--big { grid-column: span 2; grid-row: span 2; }
-  .work__item--tall { grid-row: span 2; }
-  .work__item { grid-template-rows: minmax(0, 1fr) auto; }
-}
-
-/* plans: every plan uses the SAME 4 rows of the parent (subgrid), so the buttons line up */
-.plans { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); }
-.plan {
-  display: grid;
-  grid-row: span 4;
-  grid-template-rows: subgrid;
-  row-gap: 0.5rem;
-  padding: 1.25rem;
-  border-radius: 1rem;
-  background: #fff;
-  border: 2px solid #e7e5e4;   /* the same width on every plan, see the featured one */
-}
-.plan > * { margin: 0; }
-.plan--featured { border-color: #0c4a6e; }   /* colour only: a thicker border would push its content down */
-.plan__price { font-size: 1.75rem; font-weight: 800; color: #0c4a6e; }
-.plan__features { padding-inline-start: 1.25rem; }
-.plan__btn { justify-self: start; align-self: end; }
-
-/* steps: one row of equal boxes that wrap */
-.steps { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0; padding: 0; list-style: none; }
-.steps li { flex: 1 1 12rem; display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border-radius: 0.75rem; background: #e0f2fe; }
-.steps b { flex: none; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #0c4a6e; color: #fff; }
-
-/* footer: as many columns as fit */
-/* the same side padding as the header: the content lines up with the 72rem sections */
-.footer { display: grid; gap: 1rem 2rem; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); padding: 2rem max(1rem, (100% - 70rem) / 2); background: #1c1917; color: #e7e5e4; }
-.footer h2 { margin: 0 0 0.25rem; font-size: 1.1rem; }
-.footer p { margin: 0; }
-.footer a { color: #bae6fd; }
-~~~
-
-~~~svg img/hero.svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" width="900" height="700"><rect width="900" height="700" fill="#0c4a6e"/><circle cx="630" cy="210" r="116" fill="#fbbf24"/><rect x="0" y="466" width="900" height="233" fill="#164e63"/></svg>
-~~~
-
-الصور التانية ([[w1.svg]] لحد [[w4.svg]]) نفس شكل [[hero.svg]] بمقاسات وألوان تانية: [[w1]] و [[w3]] و [[w4]] بمقاس 800×600، و [[w2]] بالطول 600×800. أو حط صور حقيقية بنفس الأسامي.
-
-~~~view 900 900 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>استوديو ضيّ للتصوير</title>
+<title>باقات جيم الأبطال</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #fafaf9; color: #1c1917; line-height: 1.6; }
-img { display: block; max-width: 100%; height: auto; }
-h1, h2, h3 { line-height: 1.25; }
-main > section { max-width: 72rem; margin-inline: auto; padding: 2rem 1rem; }
-a:focus-visible { outline: 3px solid #0369a1; outline-offset: 3px; }
-
-.btn { display: inline-block; padding: 0.6rem 1.4rem; border-radius: 999px; background: #0c4a6e; color: #fff; font-weight: 700; text-decoration: none; }
-
-/* header: logo and links on one line, they wrap on a small screen */
-.header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1.5rem; padding: 0.75rem max(1rem, (100% - 70rem) / 2); background: #fff; border-bottom: 1px solid #e7e5e4; }
-.header__logo { font-weight: 800; color: inherit; text-decoration: none; }
-.header__links { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0; padding: 0; list-style: none; }
-.header__links a { color: #0c4a6e; }
-
-/* hero: one column on the phone, the image first */
-.hero { display: grid; gap: 1.5rem; align-items: center; }
-.hero__img { order: -1; width: 100%; border-radius: 1rem; }
-.hero h1 { font-size: clamp(1.75rem, 1.2rem + 2.5vw, 3rem); margin: 0 0 0.75rem; }
-.hero p { margin: 0 0 1.25rem; font-size: 1.1rem; }
-
-@media (min-width: 48rem) {
-  /* two columns. minmax(0, ...) lets a column shrink below its content's width */
-  .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); }
-  .hero__img { order: 0; }
-}
-
-/* works: a small bento */
-.work { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.work__item { margin: 0; display: grid; }
-.work__item img { width: 100%; height: 100%; object-fit: cover; border-radius: 0.75rem; }
-.work__item p { margin: 0.25rem 0 0; font-weight: 700; }
-.work__item--big { grid-column: span 2; }
-@media (min-width: 48rem) {
-  .work { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(10rem, auto); }
-  .work__item--big { grid-column: span 2; grid-row: span 2; }
-  .work__item--tall { grid-row: span 2; }
-  .work__item { grid-template-rows: minmax(0, 1fr) auto; }
-}
-
-/* plans: every plan uses the SAME 4 rows of the parent (subgrid), so the buttons line up */
-.plans { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); }
-.plan {
-  display: grid;
-  grid-row: span 4;
-  grid-template-rows: subgrid;
-  row-gap: 0.5rem;
-  padding: 1.25rem;
-  border-radius: 1rem;
-  background: #fff;
-  border: 2px solid #e7e5e4;   /* the same width on every plan, see the featured one */
-}
-.plan > * { margin: 0; }
-.plan--featured { border-color: #0c4a6e; }   /* colour only: a thicker border would push its content down */
-.plan__price { font-size: 1.75rem; font-weight: 800; color: #0c4a6e; }
-.plan__features { padding-inline-start: 1.25rem; }
-.plan__btn { justify-self: start; align-self: end; }
-
-/* steps: one row of equal boxes that wrap */
-.steps { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0; padding: 0; list-style: none; }
-.steps li { flex: 1 1 12rem; display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border-radius: 0.75rem; background: #e0f2fe; }
-.steps b { flex: none; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #0c4a6e; color: #fff; }
-
-/* footer: as many columns as fit */
-/* the same side padding as the header: the content lines up with the 72rem sections */
-.footer { display: grid; gap: 1rem 2rem; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); padding: 2rem max(1rem, (100% - 70rem) / 2); background: #1c1917; color: #e7e5e4; }
-.footer h2 { margin: 0 0 0.25rem; font-size: 1.1rem; }
-.footer p { margin: 0; }
-.footer a { color: #bae6fd; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fafaf9; color: #1c1917; }
+  main { max-width: 760px; margin-inline: auto; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
+  h1 { margin: 0 0 12px; font-size: 26px; }
+  legend { font-size: 18px; font-weight: 800; margin-block-end: 12px; }
+  .plan { position: relative; display: grid; gap: 6px; padding: 18px; background: white; border: 2px solid #d6d3d1; border-radius: 14px; cursor: pointer; }
+  .plan b { font-size: 18px; }
+  .plan .price { font-size: 26px; font-weight: 800; }
+  .plan small { color: #78716c; }
+  /* hidden to the eye only: still reachable with Tab and the arrow keys, still read by a screen reader */
+  .plan input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .plan:has(input:checked) { border-color: rgb(15, 118, 110); background: #f0fdfa; }
+  .plan:has(input:checked) b::after { content: " ✓"; color: rgb(15, 118, 110); }
+  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+  button { margin-block-start: 16px; font: inherit; font-weight: 700; padding: 10px 24px; border: 0; border-radius: 10px; background: #0f766e; color: white; }
+  #chosen { min-height: 1.5em; }
 </style>
 </head>
 <body>
-<header class="header">
-  <a class="header__logo" href="#top">استوديو ضيّ</a>
-  <nav aria-label="أقسام الصفحة">
-    <ul class="header__links">
-      <li><a href="#work">أعمالنا</a></li>
-      <li><a href="#pricing">الأسعار</a></li>
-      <li><a href="#steps">إزاي بنشتغل</a></li>
-    </ul>
-  </nav>
-</header>
-
-<main id="top">
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero__text">
-      <h1 id="hero-title">صور منتجاتك وناسك زي ما هي في الحقيقة</h1>
-      <p>تصوير منتجات، وبورتريه، ومناسبات صغيرة. استوديو في وسط البلد وبنيجي لحد عندك.</p>
-      <a class="btn" href="#pricing">شوف الباقات</a>
-    </div>
-    <img class="hero__img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNzAwIiB3aWR0aD0iOTAwIiBoZWlnaHQ9IjcwMCI+PHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSI3MDAiIGZpbGw9IiMwYzRhNmUiLz48Y2lyY2xlIGN4PSI2MzAiIGN5PSIyMTAiIHI9IjExNiIgZmlsbD0iI2ZiYmYyNCIvPjxyZWN0IHg9IjAiIHk9IjQ2NiIgd2lkdGg9IjkwMCIgaGVpZ2h0PSIyMzMiIGZpbGw9IiMxNjRlNjMiLz48L3N2Zz4=" alt="ركن التصوير في الاستوديو وقت الغروب" width="900" height="700">
-  </section>
-
-  <section id="work" aria-labelledby="work-title">
-    <h2 id="work-title">أعمالنا</h2>
-    <ul class="work">
-      <li class="work__item work__item--big"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNjAwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiM3YzJkMTIiLz48Y2lyY2xlIGN4PSI1NjAiIGN5PSIxODAiIHI9IjEwMCIgZmlsbD0iI2ZkZTY4YSIvPjxyZWN0IHg9IjAiIHk9IjQwMCIgd2lkdGg9IjgwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM0MzE0MDciLz48L3N2Zz4=" alt="صينية كنافة على ترابيزة خشب" width="800" height="600"><p>منيو حلواني</p></li>
-      <li class="work__item work__item--tall"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MDAgODAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI4MDAiIGZpbGw9IiMxNDUzMmQiLz48Y2lyY2xlIGN4PSI0MjAiIGN5PSIyNDAiIHI9IjEzMyIgZmlsbD0iI2JiZjdkMCIvPjxyZWN0IHg9IjAiIHk9IjUzMyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSIyNjYiIGZpbGw9IiMwNTJlMTYiLz48L3N2Zz4=" alt="بورتريه في جنينة" width="600" height="800"><p>بورتريه</p></li>
-      <li class="work__item"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNjAwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiM1ODFjODciLz48Y2lyY2xlIGN4PSI1NjAiIGN5PSIxODAiIHI9IjEwMCIgZmlsbD0iI2YwYWJmYyIvPjxyZWN0IHg9IjAiIHk9IjQwMCIgd2lkdGg9IjgwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMzYjA3NjQiLz48L3N2Zz4=" alt="زجاجة برفان على قماش بنفسجي" width="800" height="600"><p>منتجات</p></li>
-      <li class="work__item"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNjAwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiMxZTI5M2IiLz48Y2lyY2xlIGN4PSI1NjAiIGN5PSIxODAiIHI9IjEwMCIgZmlsbD0iIzkzYzVmZCIvPjxyZWN0IHg9IjAiIHk9IjQwMCIgd2lkdGg9IjgwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMwZjE3MmEiLz48L3N2Zz4=" alt="مكتب شركة ناشئة بالليل" width="800" height="600"><p>أماكن</p></li>
-    </ul>
-  </section>
-
-  <section id="pricing" aria-labelledby="pricing-title">
-    <h2 id="pricing-title">الباقات</h2>
-    <ul class="plans">
-      <li class="plan">
-        <h3 class="plan__name">بداية</h3>
-        <p class="plan__price">١٬٥٠٠ ج</p>
-        <ul class="plan__features"><li>ساعة تصوير</li><li>١٠ صور متعدّلة</li></ul>
-        <a class="btn plan__btn" href="#book" aria-label="احجز باقة بداية">احجز</a>
-      </li>
-      <li class="plan plan--featured">
-        <h3 class="plan__name">محلات</h3>
-        <p class="plan__price">٣٬٥٠٠ ج</p>
-        <ul class="plan__features"><li>٣ ساعات تصوير</li><li>٤٠ صورة متعدّلة</li><li>خلفيتين بألوان البراند</li><li>صور مقاسات السوشيال</li></ul>
-        <a class="btn plan__btn" href="#book" aria-label="احجز باقة محلات">احجز</a>
-      </li>
-      <li class="plan">
-        <h3 class="plan__name">مناسبة</h3>
-        <p class="plan__price">٢٬٥٠٠ ج</p>
-        <ul class="plan__features"><li>٤ ساعات في مكانك</li><li>كل الصور بعد يومين</li><li>ألبوم أونلاين</li></ul>
-        <a class="btn plan__btn" href="#book" aria-label="احجز باقة مناسبة">احجز</a>
-      </li>
-    </ul>
-  </section>
-
-  <section id="steps" aria-labelledby="steps-title">
-    <h2 id="steps-title">إزاي بنشتغل</h2>
-    <ol class="steps">
-      <li><b>١</b> تكلمنا وتقول عايز إيه</li>
-      <li><b>٢</b> نتفق على اليوم والمكان</li>
-      <li><b>٣</b> نصوّر</li>
-      <li><b>٤</b> تستلم الصور في يومين</li>
-    </ol>
-  </section>
+<main>
+<h1>باقات جيم الأبطال</h1>
+<form id="plans">
+  <fieldset>
+    <legend>اختار باقتك</legend>
+    <label class="plan"><input type="radio" name="plan" value="month" checked><b>شهر</b><span class="price">٥٠٠ ج</span><small>تجرّب من غير التزام</small></label>
+    <label class="plan"><input type="radio" name="plan" value="quarter"><b>٣ شهور</b><span class="price">١٣٠٠ ج</span><small>بتوفّر ٢٠٠ جنيه</small></label>
+    <label class="plan"><input type="radio" name="plan" value="year"><b>سنة</b><span class="price">٤٥٠٠ ج</span><small>بتوفّر ١٥٠٠ جنيه</small></label>
+  </fieldset>
+  <button>اشترك</button>
+  <p id="chosen" aria-live="polite"></p>
+</form>
 </main>
-
-<footer class="footer" id="book">
-  <section><h2>العنوان</h2><p>٢٠ شارع الفن، وسط البلد</p></section>
-  <section><h2>المواعيد</h2><p>كل يوم من ١١ لـ ٩، والجمعة إجازة</p></section>
-  <section><h2>احجز</h2><p><a href="tel:+201000000000">٠١٠٠٠٠٠٠٠٠٠</a></p></section>
-</footer>
+<script>
+  const form = document.getElementById('plans');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    document.getElementById('chosen').textContent = 'الباقة اللي هتتبعت: ' + new FormData(form).get('plan');
+  });
+</script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** فوق شريط أبيض فيه «استوديو ضيّ» وروابط الأقسام. بعده الهيرو: الكلام على اليمين والصورة على الشمال، وعلى الموبايل الصورة فوق والكلام تحتها. بعدين «أعمالنا»: صورة كبيرة، وجنبها صورة طويلة، وجنبهم صورتين صغيرين فوق بعض. بعدين ٣ باقات بزراير «احجز» على خط واحد، و ٤ خطوات بأرقام في دواير، وفوتر غامق ٣ أعمدة.
+**هتشوف إيه:** عنوان «باقات جيم الأبطال» وتحته ٣ كروت بيضا جنب بعض (وعلى الموبايل تحت بعض)، في كل كارت المدة والسعر كبير وسطر صغير رمادي. الكارت المختار حدوده خضرا وخلفيته خضرا فاتحة وجنب اسمه علامة ✓. دوس «اشترك» والسطر اللي تحت بيقول الباقة اللي هتتبعت.
 
-**الهيرو:** [[grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr)]] على 768 وأكبر. والصورة في الـ HTML بعد الكلام، عشان قارئ الشاشة يقرا العنوان الأول. على الموبايل [[order: -1]] بيطلّعها فوق في الشكل بس. ده آمن هنا لأن الصورة مبتاخدش focus، فترتيب Tab زي ما هو. لو كان لينك أو زرار، [[order]] كان هيخلي الـ Tab ينط في الصفحة.
+**ليه كده:**
+- الكارت كله [[<label>]] والـ radio جواه: الضغط على أي حتة في الكارت بيختار.
+- الـ radio **مش** [[display: none]]: مخفي بالشكل بس ([[width: 1px]] و [[clip-path: inset(50%)]])، فالأسهم و Tab شغالين وقارئ الشاشة بيقول «radio button، 2 of 3».
+- [[.plan:has(input:checked)]]: الكارت بيتلوّن حسب اللي جواه، من غير JavaScript.
+- [[.plan:has(input:focus-visible)]]: الدايرة اللي كان عليها الـ focus اختفت، فلازم الكارت كله ياخد الـ outline، وإلا اللي بيستخدم الكيبورد مش هيعرف هو فين.
+- الكروت [[grid]] بـ [[repeat(auto-fit, minmax(min(200px, 100%), 1fr))]]: تلاتة جنب بعض على الكمبيوتر، وواحد في السطر على الموبايل.
 
-**الأعمال:** ٤ أعمدة، والكبيرة [[span 2]] في العرض والطول، والطويلة [[grid-row: span 2]]. كل صورة [[object-fit: cover]] عشان تملا خانتها من غير ما تتمط.
+**الغلطة اللي axe مسكها في نسختي الأولى:** مكانش فيه [[<h1>]] (الـ legend كان هو العنوان الوحيد)، و axe قال [[page-has-heading-one]]. الـ legend اسم للمجموعة مش عنوان للصفحة.
 
-**الباقات بـ subgrid:** زي كروت المخزن: كل باقة بتستخدم ٤ صفوف من الأب، فالاسم والسعر والمميزات والزرار كل واحد في صف مشترك. باقة «محلات» فيها ٤ مميزات، فالصف التالت بياخد طولها، وزراير الباقتين التانيين بتنزل معاها.
+**ملحوظة عن الرقم:** الـ outline مكتوب [[3px]] و Chrome عندي رجّع [[2.4px]]. ده لأن الشاشة عليها تكبير 125% ([[devicePixelRatio = 1.25]]): 3 × 1.25 = 3.75 بكسل حقيقي، و Chrome بيقرّب سُمك الحدود لتحت لبكسل كامل (3)، و 3 ÷ 1.25 = 2.4. على شاشة 100% هتشوف 3px.
 
-**غلطة اتصلحت:** الزراير طلعت على خطين (1486.06 للمميزة و 1486.86 للتانيين). السبب إن الباقة المميزة كان حدّها 2px والتانيين 1px، فمحتواها كله بيبدأ بعد بكسل زيادة. الحل: كل الباقات حدّها 2px، والمميزة بتغيّر اللون بس. بعدها الـ ٣ على 1486.06.
+~~~text الناتج (Chrome، Tab ثم سهم لتحت ثم «اشترك»)
+الـ focus                    radio "quarter" (عرضه في الصفحة 1px)
+حدود الكارت المختار           rgb(15, 118, 110)    وحدود الباقي: rgb(214, 211, 209)
+outline الكارت                solid 2.4px rgb(29, 78, 216)   (devicePixelRatio = 1.25)
+new FormData(form).get('plan')   "quarter"
+السطر تحت الزرار              الباقة اللي هتتبعت: quarter
+axe: 0 violations (كانت page-has-heading-one قبل الـ h1)   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "shifa-booking", t: R`حجز ميعاد في عيادة متخيلة`, what: R`فورم حجز لـ «عيادة الشفاء»: الاسم، والموبايل بـ pattern، والتخصص (select بـ optgroup)، والتاريخ ([[min]] = النهارده بالتوقيت المحلي)، والوقت ([[type="time"]] و [[step="900"]] كل ربع ساعة)، وملاحظات (textarea بـ maxlength وعداد حروف)، وملخص أخطاء فوق. من دروس الوحدة كلها.`, done: R`تاريخ امبارح مقفول في الـ calendar، والإرسال الفاضي بيطلّع ملخص فيه لينك لكل حقل غلط والضغط على اللينك بيحط الـ focus في الحقل، والعداد بيقف عند الـ maxlength. وفي Network › Slow 3G: الدبل كليك على «احجز» بيوصّل request واحد بس للسيرفر (من غير الحماية بيوصل اتنين).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز ميعاد: عيادة الشفاء</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
+  form { max-width: 480px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 24px; }
+  .field { display: grid; gap: 4px; }
+  label { font-weight: 600; }
+  .hint { color: #64748b; font-size: 14px; }
+  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #94a3b8; border-radius: 8px; width: 100%; }
+  [aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+  .summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 10px; background: #fef2f2; }
+  .summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
+  .summary ul { margin: 0; padding-inline-start: 20px; }
+  .summary a { color: #991b1b; }
+  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #0369a1; color: white; }
+  button:disabled { background: #94a3b8; }
+</style>
+</head>
+<body>
+<main>
+<form id="book" action="thanks.html" method="get" novalidate>
+  <h1>احجز ميعاد في عيادة الشفاء</h1>
 
-**الخطوات:** flex بـ [[flex: 1 1 12rem]]: كل خطوة أقلها 12rem، والمساحة الزيادة بتتقسم بالتساوي، ولو مفيش مكان بتلف لسطر جديد. **والفوتر:** [[auto-fit]] و [[minmax(min(14rem, 100%), 1fr)]]، والـ padding [[max(1rem, (100% - 70rem) / 2)]] عشان محتواه (والهيدر) يبدأ من نفس خط الأقسام.
+  <div class="summary" id="summary" tabindex="-1" hidden>
+    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
+    <ul id="errors"></ul>
+  </div>
 
-~~~text الناتج (Chrome 157)
-العرض  scrollWidth  الهيرو                           الصورة            زراير الباقات  أعمدة الفوتر
-360    360          عمود واحد 312.8px                فوق الكلام        3 سطور (كل باقة لوحدها)  1
-768    768          335px 361.8px                   على الشمال        سطرين          2
-1280   1280         526.9px 569.1px                 على الشمال        خط واحد (1486.06 ×3)    3
-1920   1920         526.9px 569.1px                 على الشمال        خط واحد        3
+  <div class="field">
+    <label for="name">الاسم</label>
+    <input id="name" name="name" autocomplete="name" required>
+  </div>
 
-عناصر float أو position غير static: 0
-حافة اللوجو = حافة الهيرو في كل المقاسات (344، 752، 1200، 1520)
-ترتيب Tab: استوديو ضيّ، أعمالنا، الأسعار، إزاي بنشتغل، شوف الباقات، احجز ×3، التليفون
-axe على 360 و 1280: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
+  <div class="field">
+    <label for="phone">الموبايل</label>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required
+           pattern="01[0125][0-9]{8}" aria-describedby="phone-hint">
+    <span class="hint" id="phone-hint">١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015</span>
+  </div>
+
+  <div class="field">
+    <label for="dept">التخصص</label>
+    <select id="dept" name="dept" required>
+      <option value="">اختار…</option>
+      <optgroup label="باطنة">
+        <option value="heart">قلب</option>
+        <option value="stomach">جهاز هضمي</option>
+      </optgroup>
+      <optgroup label="جراحة">
+        <option value="bones">عظام</option>
+        <option value="general">جراحة عامة</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="day">اليوم</label>
+    <input id="day" name="day" type="date" required>
+  </div>
+
+  <div class="field">
+    <label for="time">الساعة</label>
+    <input id="time" name="time" type="time" min="10:00" max="21:00" step="900" required aria-describedby="time-hint">
+    <span class="hint" id="time-hint">من ١٠ الصبح لـ ٩ بالليل، كل ربع ساعة</span>
+  </div>
+
+  <div class="field">
+    <label for="notes">ملاحظات (اختياري)</label>
+    <textarea id="notes" name="notes" rows="3" maxlength="200" aria-describedby="left"></textarea>
+    <span class="hint" id="left">فاضل 200 حرف</span>
+  </div>
+
+  <button id="send">احجز</button>
+</form>
+</main>
+<script>
+  const form = document.getElementById('book');
+  const summary = document.getElementById('summary');
+  const list = document.getElementById('errors');
+  const send = document.getElementById('send');
+
+  // the earliest day is today in the reader's own time zone (toISOString() would give the UTC date: yesterday after midnight in Cairo)
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  document.getElementById('day').min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+
+  const notes = document.getElementById('notes');
+  notes.addEventListener('input', () => {
+    document.getElementById('left').textContent = 'فاضل ' + (notes.maxLength - notes.value.length) + ' حرف';
+  });
+
+  // a summary link moves the focus into its field, not just the scroll
+  list.addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    e.preventDefault();
+    document.querySelector(a.hash).focus();
+  });
+
+  let sent = false;
+  form.addEventListener('submit', e => {
+    const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
+    for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
+    if (bad.length) {
+      e.preventDefault();
+      list.innerHTML = '';
+      for (const f of bad) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + f.id;
+        a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
+        li.append(a);
+        list.append(li);
+      }
+      document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
+      summary.hidden = false;
+      summary.focus();
+      return;
+    }
+    // the second click of a double click: the first one already sent the form
+    if (sent) { e.preventDefault(); return; }
+    sent = true;
+    send.disabled = true;
+    send.textContent = 'بنحجز…';
+  });
+</script>
+</body>
+</html>
 ~~~
 
-**ليه axe مش Lighthouse:** Lighthouse › Accessibility بيشغّل axe نفسه جواه ويحوّل النتيجة لرقم. «صفر violations» من axe أدق من «أكتر من 90».` },
-        { lvl: 'فكرة', dir: "layout-lab", t: R`layout lab: اعمل هيكل موقع بتحبه`, what: R`اختار موقع بتستخدمه كل يوم، واعمل هيكله بس (صناديق رمادي من غير محتوى حقيقي) بـ flex و grid في ٣ مقاسات، وقرّر في كل جزء: flex ولا grid ولا subgrid، واكتب ليه.`, done: R`عندك صفحة فيها الهيكل في ٣ مقاسات، وجدول «الجزء / اخترت إيه / ليه»، ومفيش ولا رقم ارتفاع ثابت على حاجة فيها كلام.`, ext: R`زوّد container queries (درس [[container queries]]) لجزء بيتحط في أماكن مختلفة، وقارن بالـ media queries، وحوّل نفس الهيكل لـ Tailwind بعد الوحدة بتاعته.`, sol: R`الموقع اللي اخترته: موقع فيديوهات (الشكل العام اللي في أي موقع زيه: هيدر فيه بحث، وأقسام على الجنب، وتصنيفات، وشبكة فيديوهات). ده مثال واحد، وانت اختار موقعك.
+~~~html thanks.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اتحجز: عيادة الشفاء</title>
+</head>
+<body>
+<main>
+  <h1>الميعاد اتحجز</h1>
+  <p>هنكلمك على الموبايل قبل الميعاد بيوم. <a href="index.html">احجز ميعاد تاني</a></p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 760 820 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز ميعاد: عيادة الشفاء</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
+  form { max-width: 480px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 24px; }
+  .field { display: grid; gap: 4px; }
+  label { font-weight: 600; }
+  .hint { color: #64748b; font-size: 14px; }
+  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #94a3b8; border-radius: 8px; width: 100%; }
+  [aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+  .summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 10px; background: #fef2f2; }
+  .summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
+  .summary ul { margin: 0; padding-inline-start: 20px; }
+  .summary a { color: #991b1b; }
+  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #0369a1; color: white; }
+  button:disabled { background: #94a3b8; }
+</style>
+</head>
+<body>
+<main>
+<form id="book" method="get" novalidate>
+  <h1>احجز ميعاد في عيادة الشفاء</h1>
+
+  <div class="summary" id="summary" tabindex="-1" hidden>
+    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
+    <ul id="errors"></ul>
+  </div>
+
+  <div class="field">
+    <label for="name">الاسم</label>
+    <input id="name" name="name" autocomplete="name" required>
+  </div>
+
+  <div class="field">
+    <label for="phone">الموبايل</label>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required
+           pattern="01[0125][0-9]{8}" aria-describedby="phone-hint">
+    <span class="hint" id="phone-hint">١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015</span>
+  </div>
+
+  <div class="field">
+    <label for="dept">التخصص</label>
+    <select id="dept" name="dept" required>
+      <option value="">اختار…</option>
+      <optgroup label="باطنة">
+        <option value="heart">قلب</option>
+        <option value="stomach">جهاز هضمي</option>
+      </optgroup>
+      <optgroup label="جراحة">
+        <option value="bones">عظام</option>
+        <option value="general">جراحة عامة</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="day">اليوم</label>
+    <input id="day" name="day" type="date" required>
+  </div>
+
+  <div class="field">
+    <label for="time">الساعة</label>
+    <input id="time" name="time" type="time" min="10:00" max="21:00" step="900" required aria-describedby="time-hint">
+    <span class="hint" id="time-hint">من ١٠ الصبح لـ ٩ بالليل، كل ربع ساعة</span>
+  </div>
+
+  <div class="field">
+    <label for="notes">ملاحظات (اختياري)</label>
+    <textarea id="notes" name="notes" rows="3" maxlength="200" aria-describedby="left"></textarea>
+    <span class="hint" id="left">فاضل 200 حرف</span>
+  </div>
+
+  <button id="send">احجز</button>
+</form>
+</main>
+<script>
+  const form = document.getElementById('book');
+  const summary = document.getElementById('summary');
+  const list = document.getElementById('errors');
+  const send = document.getElementById('send');
+
+  // the earliest day is today in the reader's own time zone (toISOString() would give the UTC date: yesterday after midnight in Cairo)
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  document.getElementById('day').min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+
+  const notes = document.getElementById('notes');
+  notes.addEventListener('input', () => {
+    document.getElementById('left').textContent = 'فاضل ' + (notes.maxLength - notes.value.length) + ' حرف';
+  });
+
+  // a summary link moves the focus into its field, not just the scroll
+  list.addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    e.preventDefault();
+    document.querySelector(a.hash).focus();
+  });
+
+  let sent = false;
+  form.addEventListener('submit', e => {
+    const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
+    for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
+    if (bad.length) {
+      e.preventDefault();
+      list.innerHTML = '';
+      for (const f of bad) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + f.id;
+        a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
+        li.append(a);
+        list.append(li);
+      }
+      document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
+      summary.hidden = false;
+      summary.focus();
+      return;
+    }
+    // the second click of a double click: the first one already sent the form
+    if (sent) { e.preventDefault(); return; }
+    sent = true;
+    send.disabled = true;
+    send.textContent = 'بنحجز…';
+  });
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارت أبيض فيه عنوان وتحته الحقول ورا بعض، وتحت الموبايل والساعة سطر رمادي بيشرح المطلوب. دوس «احجز» والفورم فاضي: فوق بيظهر مربع أحمر «فيه 5 حاجات لازم تتصلّح» وتحته لينك لكل حقل، والحقول الغلط بتبقى حمرا.
+
+**ليه كده:**
+- [[novalidate]] على الفورم: بنقفل فقاعة المتصفح عشان نعرض كل الأخطاء مرة واحدة في الملخص. بس الشروط نفسها ([[required]] و [[pattern]] و [[min]]) لسه شغالة، وبنسألها بـ [[checkValidity()]].
+- **أقل تاريخ = النهارده بتوقيتك:** [[toISOString()]] بيرجّع التاريخ بتوقيت جرينتش، فبعد نص الليل في القاهرة لحد الساعة 2 بيقول امبارح. عشان كده بنبني التاريخ من [[getFullYear()]] و [[getMonth()]] و [[getDate()]].
+- [[step="900"]] في الوقت = 900 ثانية = ربع ساعة. و [[min]] و [[max]] بيحددوا مواعيد العيادة.
+- [[optgroup]] بيجمّع التخصصات تحت عنوان، والاختيار الأول [[value=""]] عشان [[required]] يرفضه.
+- الملخص [[tabindex="-1"]] وبناخد عليه الـ focus: قارئ الشاشة بيقرا عدد الأخطاء على طول. واللينك بيعمل [[focus()]] على الحقل بإيدنا، لأن [[href="#phone"]] لوحده بينزّل الصفحة بس.
+- [[aria-invalid="true"]] على الحقول الغلط: لونها بيتغيّر، وقارئ الشاشة بيقول «invalid entry».
+- [[aria-describedby]]: السطر الرمادي بيتقري مع اسم الحقل.
+
+**الدبل كليك (اتقاس، والنتيجة مش زي ما كنت متوقع):** على سيرفر محلي سريع، حتى **من غير** الحماية، السيرفر استلم طلب واحد: Chrome بيلغي التنقّل الأولاني لما التاني يبدأ قبل ما يتبعت. بس على Slow 3G، من غير الحماية، السيرفر استلم **طلبين** (حجزين لنفس الشخص). ومع المتغير [[sent]] وزرار [[disabled]]: طلب واحد. يعني المشكلة بتظهر عند الناس اللي النت عندهم بطيء بس، ومش هتشوفها على جهازك غير لو جربت Slow 3G.
+
+~~~text الناتج (Chrome، ١٩ نوفمبر)
+day.min                     2026-11-19
+اختيار 2020-01-01           Value must be 11/19/2026 or later.
+الساعة 10:10                Please enter a valid value. The two nearest valid values are 10:00 AM and 10:15 AM.
+الساعة 22:00                Value must be 9:00 PM or earlier.
+
+«احجز» والفورم فاضي          الـ focus على الملخص، و 5 حقول aria-invalid="true":
+  الاسم: Please fill out this field.
+  الموبايل: Please fill out this field.
+  التخصص: Please select an item in the list.
+  اليوم: Please fill out this field.
+  الساعة: Please fill out this field.
+الضغط على لينك «الموبايل»     الـ focus راح لـ #phone
+200 حرف في الملاحظات          فاضل 0 حرف
+
+دبل كليك، Slow 3G، من غير الحماية    السيرفر استلم 2 طلب
+دبل كليك، Slow 3G، بالحماية           السيرفر استلم 1 طلب
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "coffee-quiz", t: R`اختبار «أنسب قهوة ليك» خطوة خطوة`, what: R`٤ أسئلة، كل سؤال fieldset بـ legend و radios، وسؤال واحد بس ظاهر في المرة ([[hidden]] على الباقي)، وزرار «التالي» مبيعدّيش لو السؤال مش متجاوب ([[reportValidity()]] على الـ radio)، وزرار «رجوع»، وفي الآخر كارت نتيجة عليه [[aria-live="polite"]]. فكرة «quiz بيخلص بتوصية» اللي بتتعمل في صفحات الهبوط.`, done: R`بالكيبورد بس تقدر تجاوب الأربعة (الأسهم للاختيار و Enter للتالي)، و «التالي» من غير اختيار بيطلّع رسالة المتصفح على المجموعة، و «رجوع» بيرجّع اختيارك زي ما هو، والنتيجة بتتغيّر لو غيّرت إجابة.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أنسب قهوة ليك</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fdf8f3; color: #292524; }
+  form { max-width: 440px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  .step { margin: 0 0 12px; color: #78716c; font-size: 14px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+  legend { font-size: 18px; font-weight: 700; margin-block-end: 10px; }
+  fieldset label { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border: 1px solid #d6d3d1; border-radius: 10px; cursor: pointer; }
+  fieldset label:has(input:checked) { border-color: #92400e; background: #fef3c7; }
+  .nav { display: flex; gap: 8px; margin-block-start: 16px; }
+  button { font: inherit; font-weight: 700; padding: 10px 18px; border-radius: 10px; border: 1px solid #92400e; background: white; color: #92400e; }
+  button[type="submit"] { background: #92400e; color: white; }
+  .result { margin-block-start: 16px; padding: 16px; border-radius: 12px; background: #292524; color: #fef3c7; }
+  .result b { display: block; font-size: 24px; }
+</style>
+</head>
+<body>
+<main>
+<form id="quiz" novalidate>
+  <h1>أنسب قهوة ليك</h1>
+  <p class="step" id="step">سؤال 1 من 4</p>
+
+  <fieldset>
+    <legend>بتحب طعم القهوة إزاي؟</legend>
+    <label><input type="radio" name="q1" value="strong" required> تقيلة ومُرّة</label>
+    <label><input type="radio" name="q1" value="milk"> بلبن كتير</label>
+    <label><input type="radio" name="q1" value="sweet"> مسكّرة</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>بتشربها إمتى؟</legend>
+    <label><input type="radio" name="q2" value="strong" required> أول ما أصحى</label>
+    <label><input type="radio" name="q2" value="milk"> مع الفطار</label>
+    <label><input type="radio" name="q2" value="sweet"> بالليل مع الحلو</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>سخنة ولا ساقعة؟</legend>
+    <label><input type="radio" name="q3" value="strong" required> سخنة دايمًا</label>
+    <label><input type="radio" name="q3" value="milk"> على حسب الجو</label>
+    <label><input type="radio" name="q3" value="sweet"> ساقعة بتلج</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>كوباية كبيرة ولا صغيرة؟</legend>
+    <label><input type="radio" name="q4" value="strong" required> فنجان صغير</label>
+    <label><input type="radio" name="q4" value="milk"> مج كبير</label>
+    <label><input type="radio" name="q4" value="sweet"> كوباية بشفاطة</label>
+  </fieldset>
+
+  <div class="nav">
+    <button type="button" id="back" hidden>رجوع</button>
+    <button type="submit" id="next">التالي</button>
+  </div>
+
+  <div class="result" id="result" aria-live="polite" hidden></div>
+</form>
+</main>
+<script>
+  const form = document.getElementById('quiz');
+  const steps = [...form.querySelectorAll('fieldset')];
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+  const result = document.getElementById('result');
+  const coffees = {
+    strong: ['إسبريسو', 'فنجان صغير مركّز، من غير سكر ولا لبن.'],
+    milk: ['لاتيه', 'إسبريسو على لبن سخن كتير ورغوة خفيفة.'],
+    sweet: ['آيس موكا', 'قهوة بشوكولاتة وتلج، حلوة وساقعة.'],
+  };
+  let at = 0;
+
+  function show(i) {
+    steps.forEach((s, n) => s.hidden = n !== i);
+    at = i;
+    back.hidden = i === 0;
+    next.textContent = i === steps.length - 1 ? 'شوف النتيجة' : 'التالي';
+    document.getElementById('step').textContent = 'سؤال ' + (i + 1) + ' من ' + steps.length;
+  }
+
+  // Enter on a radio submits the form, so «التالي» works from the keyboard without extra code
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const first = steps[at].querySelector('input');
+    // the group is valid once any radio with this name is checked; reportValidity shows the browser's message on the group
+    if (!first.reportValidity()) return;
+    if (at < steps.length - 1) { show(at + 1); focusStep(); return; }
+    const votes = {};
+    for (const [, v] of new FormData(form)) votes[v] = (votes[v] || 0) + 1;
+    const best = Object.keys(votes).sort((a, b) => votes[b] - votes[a])[0];
+    result.innerHTML = 'أنسب قهوة ليك: <b>' + coffees[best][0] + '</b>' + coffees[best][1];
+    result.hidden = false;
+  });
+
+  // the focus goes to the chosen answer if there is one (coming back), else to the first
+  function focusStep() {
+    (steps[at].querySelector('input:checked') || steps[at].querySelector('input')).focus();
+  }
+
+  back.addEventListener('click', () => { result.hidden = true; show(at - 1); focusStep(); });
+  show(0);
+</script>
+</body>
+</html>
+~~~
+
+~~~view 470 520 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أنسب قهوة ليك</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fdf8f3; color: #292524; }
+  form { max-width: 440px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  .step { margin: 0 0 12px; color: #78716c; font-size: 14px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+  legend { font-size: 18px; font-weight: 700; margin-block-end: 10px; }
+  fieldset label { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border: 1px solid #d6d3d1; border-radius: 10px; cursor: pointer; }
+  fieldset label:has(input:checked) { border-color: #92400e; background: #fef3c7; }
+  .nav { display: flex; gap: 8px; margin-block-start: 16px; }
+  button { font: inherit; font-weight: 700; padding: 10px 18px; border-radius: 10px; border: 1px solid #92400e; background: white; color: #92400e; }
+  button[type="submit"] { background: #92400e; color: white; }
+  .result { margin-block-start: 16px; padding: 16px; border-radius: 12px; background: #292524; color: #fef3c7; }
+  .result b { display: block; font-size: 24px; }
+</style>
+</head>
+<body>
+<main>
+<form id="quiz" novalidate>
+  <h1>أنسب قهوة ليك</h1>
+  <p class="step" id="step">سؤال 1 من 4</p>
+
+  <fieldset>
+    <legend>بتحب طعم القهوة إزاي؟</legend>
+    <label><input type="radio" name="q1" value="strong" required> تقيلة ومُرّة</label>
+    <label><input type="radio" name="q1" value="milk"> بلبن كتير</label>
+    <label><input type="radio" name="q1" value="sweet"> مسكّرة</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>بتشربها إمتى؟</legend>
+    <label><input type="radio" name="q2" value="strong" required> أول ما أصحى</label>
+    <label><input type="radio" name="q2" value="milk"> مع الفطار</label>
+    <label><input type="radio" name="q2" value="sweet"> بالليل مع الحلو</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>سخنة ولا ساقعة؟</legend>
+    <label><input type="radio" name="q3" value="strong" required> سخنة دايمًا</label>
+    <label><input type="radio" name="q3" value="milk"> على حسب الجو</label>
+    <label><input type="radio" name="q3" value="sweet"> ساقعة بتلج</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>كوباية كبيرة ولا صغيرة؟</legend>
+    <label><input type="radio" name="q4" value="strong" required> فنجان صغير</label>
+    <label><input type="radio" name="q4" value="milk"> مج كبير</label>
+    <label><input type="radio" name="q4" value="sweet"> كوباية بشفاطة</label>
+  </fieldset>
+
+  <div class="nav">
+    <button type="button" id="back" hidden>رجوع</button>
+    <button type="submit" id="next">التالي</button>
+  </div>
+
+  <div class="result" id="result" aria-live="polite" hidden></div>
+</form>
+</main>
+<script>
+  const form = document.getElementById('quiz');
+  const steps = [...form.querySelectorAll('fieldset')];
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+  const result = document.getElementById('result');
+  const coffees = {
+    strong: ['إسبريسو', 'فنجان صغير مركّز، من غير سكر ولا لبن.'],
+    milk: ['لاتيه', 'إسبريسو على لبن سخن كتير ورغوة خفيفة.'],
+    sweet: ['آيس موكا', 'قهوة بشوكولاتة وتلج، حلوة وساقعة.'],
+  };
+  let at = 0;
+
+  function show(i) {
+    steps.forEach((s, n) => s.hidden = n !== i);
+    at = i;
+    back.hidden = i === 0;
+    next.textContent = i === steps.length - 1 ? 'شوف النتيجة' : 'التالي';
+    document.getElementById('step').textContent = 'سؤال ' + (i + 1) + ' من ' + steps.length;
+  }
+
+  // Enter on a radio submits the form, so «التالي» works from the keyboard without extra code
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const first = steps[at].querySelector('input');
+    // the group is valid once any radio with this name is checked; reportValidity shows the browser's message on the group
+    if (!first.reportValidity()) return;
+    if (at < steps.length - 1) { show(at + 1); focusStep(); return; }
+    const votes = {};
+    for (const [, v] of new FormData(form)) votes[v] = (votes[v] || 0) + 1;
+    const best = Object.keys(votes).sort((a, b) => votes[b] - votes[a])[0];
+    result.innerHTML = 'أنسب قهوة ليك: <b>' + coffees[best][0] + '</b>' + coffees[best][1];
+    result.hidden = false;
+  });
+
+  // the focus goes to the chosen answer if there is one (coming back), else to the first
+  function focusStep() {
+    (steps[at].querySelector('input:checked') || steps[at].querySelector('input')).focus();
+  }
+
+  back.addEventListener('click', () => { result.hidden = true; show(at - 1); focusStep(); });
+  show(0);
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارت فيه «سؤال 1 من 4» وتحته السؤال و ٣ إجابات كل واحدة في مستطيل. اختار إجابة والمستطيل بيتلوّن أصفر. «التالي» بيوديك للسؤال اللي بعده، وفي الآخر الزرار بيبقى «شوف النتيجة» وبيظهر تحته كارت غامق فيه اسم القهوة.
+
+**ليه كده:**
+- كل سؤال [[<fieldset>]] و [[<legend>]]: قارئ الشاشة بيقرا السؤال قبل كل إجابة.
+- [[hidden]] على كل الأسئلة ماعدا اللي انت فيه.
+- «التالي» زرار [[submit]]: لما تدوس Enter وانت على radio المتصفح بيبعت الفورم، فـ «التالي» بيشتغل من الكيبورد ببلاش.
+- [[novalidate]]: من غيره المتصفح كان هيحاول يتأكد من **كل** الأسئلة مع أول «التالي»، ويقف عند سؤال مخفي ميقدرش يوريهولك. فبنسأل بإيدنا عن سؤال واحد بس: [[reportValidity()]] على أول radio في السؤال الحالي (والمجموعة كلها بتبقى سليمة لو أي واحد فيها متعلّم).
+- «رجوع» بيخفي ويظهر بس، فالإجابة اللي اخترتها بتفضل زي ما هي. والـ focus بيروح على الإجابة المختارة مش أول واحدة.
+- النتيجة: كل إجابة ليها نوع قهوة، والنوع اللي اتختار أكتر بيكسب. ولو حصل تعادل، النوع اللي جه الأول في إجاباتك هو اللي بيكسب.
+
+**الغلطة الشائعة:** «التالي» زرار [[type="button"]] بـ click listener: الماوس شغال بس Enter مبيعملش حاجة.
+
+~~~text الناتج (Chrome، بالكيبورد بس)
+Tab ثم Enter من غير اختيار      فضل في «سؤال 1 من 4»: Please select one of these options.
+سهم لتحت ثم Enter               سؤال 2 من 4
+Space ثم Enter                  سؤال 3 من 4
+سهم لتحت ثم Enter (مرتين)        الإجابات: q1=milk q2=strong q3=milk q4=milk
+                                أنسب قهوة ليك: لاتيه
+«رجوع»                          سؤال 3 من 4، والـ focus على q3=milk (الإجابة زي ما هي)
+غيّرت q3 و q4 لـ sweet          أنسب قهوة ليك: آيس موكا
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "free-chapter", t: R`فورم «اقرا الفصل الأول ببلاش» لرواية متخيلة`, what: R`صفحة غامقة لدار نشر متخيلة اسمها «حبر»: فورم صغير (الاسم، ورقم الواتساب، والإيميل، و checkbox موافقة) بيفتح الفصل الأول في [[thanks.html]]. المطلوب: (١) رسالة الخطأ تحت كل حقل تظهر بس بعد ما الشخص يسيب الحقل أو يدوس الزرار ([[:user-invalid]] و [[:has()]])، مش أول ما الصفحة تفتح. (٢) رقم الموبايل يتقبل بالأرقام العربي ([[٠١٠...]]) ويتحوّل لأرقام إنجليزي وانت بتكتب. (٣) الرقم يتبعت بشكل واحد دايمًا: [[+201012345678]]، سواء اتكتب بـ 0 أو بـ +20. ده نمط صفحات «سيب بياناتك وخد حاجة ببلاش» اللي بيستخدمها أي حد بيبيع منتج رقمي. من دروس «Constraint Validation API» و «textarea و date و number».`, done: R`أول ما الصفحة تفتح مفيش ولا رسالة حمرا رغم إن الحقول فاضية، وكتابة [[٠١٠١٢٣٤٥٦٧٨]] بالكيبورد بتبقى [[01012345678]] والحقل سليم، وكتابة [[0123]] وبعدين Tab بتظهّر «الرقم ده مش رقم موبايل مصري»، والإرسال بيفتح [[thanks.html]] وفي الرابط [[wa=+201012345678]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اقرا الفصل الأول ببلاش: حبر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #1e1b2e; color: #f5f3ff; }
+  .box { max-width: 420px; margin-inline: auto; padding: 24px; border-radius: 18px; background: #2a2640; }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  .lead { margin: 0 0 18px; color: #c4b5fd; }
+  form { display: grid; gap: 14px; }
+  .field { display: grid; gap: 4px; }
+  label { font-weight: 600; }
+  input[type="text"], input[type="tel"], input[type="email"] { font: inherit; padding: 10px 12px; border: 1px solid #6d5fa8; border-radius: 10px; background: #1e1b2e; color: inherit; }
+  .hint { color: #a5a1c7; font-size: 14px; }
+  .err { display: none; color: #fca5a5; font-size: 14px; }
+  /* the message shows after the person left the field or pressed «ابعتلي»: :user-invalid, not :invalid */
+  input:user-invalid { border-color: #f87171; }
+  .field:has(input:user-invalid) .err { display: block; }
+  .agree { display: flex; gap: 8px; align-items: start; font-weight: 400; }
+  button { font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #a78bfa; color: #1e1b2e; }
+</style>
+</head>
+<body>
+<main class="box">
+  <h1>اقرا الفصل الأول ببلاش</h1>
+  <p class="lead">من رواية «ليالي البحر». سيب بياناتك والفصل يفتح على طول.</p>
+
+  <form id="signup" action="thanks.html" method="get">
+    <div class="field">
+      <label for="name">اسمك</label>
+      <input id="name" name="name" type="text" autocomplete="name" required>
+      <span class="err">اكتب اسمك.</span>
+    </div>
+
+    <div class="field">
+      <label for="wa">رقم الواتساب</label>
+      <input id="wa" name="wa" type="tel" autocomplete="tel" dir="ltr" required aria-describedby="wa-hint"
+             pattern="(\+20|0)?1[0125][0-9]{8}">
+      <span class="hint" id="wa-hint">زي 01012345678، وينفع بالأرقام العربي</span>
+      <span class="err">الرقم ده مش رقم موبايل مصري.</span>
+    </div>
+
+    <div class="field">
+      <label for="email">الإيميل</label>
+      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      <span class="err">الإيميل ناقص أو فيه غلط.</span>
+    </div>
+
+    <label class="agree"><input type="checkbox" name="agree" value="yes" required> موافق أستلم رسايل عن الرواية (تقدر تلغي في أي وقت).</label>
+
+    <button>ابعتلي الفصل</button>
+  </form>
+</main>
+<script>
+  const wa = document.getElementById('wa');
+  // ٠١٠ written with Arabic-Indic digits (or Persian ones from some keyboards) becomes 010 before the pattern checks it
+  function latinDigits(s) {
+    return s.replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x0660)
+            .replace(/[۰-۹]/g, d => d.charCodeAt(0) - 0x06F0)
+            .replace(/[\s-]/g, '');
+  }
+  wa.addEventListener('input', () => {
+    const fixed = latinDigits(wa.value);
+    if (fixed !== wa.value) wa.value = fixed;
+  });
+  // what gets sent is one shape: +201012345678
+  document.getElementById('signup').addEventListener('submit', () => {
+    wa.value = '+20' + wa.value.replace(/^(\+20|0)/, '');
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~html thanks.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الفصل الأول: ليالي البحر</title>
+</head>
+<body>
+<main>
+  <h1>الفصل الأول: الرجوع</h1>
+  <p>رجع سالم القرية بعد عشرين سنة، ولقى البحر زي ما هو…</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 520 580 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اقرا الفصل الأول ببلاش: حبر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #1e1b2e; color: #f5f3ff; }
+  .box { max-width: 420px; margin-inline: auto; padding: 24px; border-radius: 18px; background: #2a2640; }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  .lead { margin: 0 0 18px; color: #c4b5fd; }
+  form { display: grid; gap: 14px; }
+  .field { display: grid; gap: 4px; }
+  label { font-weight: 600; }
+  input[type="text"], input[type="tel"], input[type="email"] { font: inherit; padding: 10px 12px; border: 1px solid #6d5fa8; border-radius: 10px; background: #1e1b2e; color: inherit; }
+  .hint { color: #a5a1c7; font-size: 14px; }
+  .err { display: none; color: #fca5a5; font-size: 14px; }
+  /* the message shows after the person left the field or pressed «ابعتلي»: :user-invalid, not :invalid */
+  input:user-invalid { border-color: #f87171; }
+  .field:has(input:user-invalid) .err { display: block; }
+  .agree { display: flex; gap: 8px; align-items: start; font-weight: 400; }
+  button { font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #a78bfa; color: #1e1b2e; }
+</style>
+</head>
+<body>
+<main class="box">
+  <h1>اقرا الفصل الأول ببلاش</h1>
+  <p class="lead">من رواية «ليالي البحر». سيب بياناتك والفصل يفتح على طول.</p>
+
+  <form id="signup" method="get">
+    <div class="field">
+      <label for="name">اسمك</label>
+      <input id="name" name="name" type="text" autocomplete="name" required>
+      <span class="err">اكتب اسمك.</span>
+    </div>
+
+    <div class="field">
+      <label for="wa">رقم الواتساب</label>
+      <input id="wa" name="wa" type="tel" autocomplete="tel" dir="ltr" required aria-describedby="wa-hint"
+             pattern="(\+20|0)?1[0125][0-9]{8}">
+      <span class="hint" id="wa-hint">زي 01012345678، وينفع بالأرقام العربي</span>
+      <span class="err">الرقم ده مش رقم موبايل مصري.</span>
+    </div>
+
+    <div class="field">
+      <label for="email">الإيميل</label>
+      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      <span class="err">الإيميل ناقص أو فيه غلط.</span>
+    </div>
+
+    <label class="agree"><input type="checkbox" name="agree" value="yes" required> موافق أستلم رسايل عن الرواية (تقدر تلغي في أي وقت).</label>
+
+    <button>ابعتلي الفصل</button>
+  </form>
+</main>
+<script>
+  const wa = document.getElementById('wa');
+  // ٠١٠ written with Arabic-Indic digits (or Persian ones from some keyboards) becomes 010 before the pattern checks it
+  function latinDigits(s) {
+    return s.replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x0660)
+            .replace(/[۰-۹]/g, d => d.charCodeAt(0) - 0x06F0)
+            .replace(/[\s-]/g, '');
+  }
+  wa.addEventListener('input', () => {
+    const fixed = latinDigits(wa.value);
+    if (fixed !== wa.value) wa.value = fixed;
+  });
+  // what gets sent is one shape: +201012345678
+  document.getElementById('signup').addEventListener('submit', () => {
+    wa.value = '+20' + wa.value.replace(/^(\+20|0)/, '');
+  });
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خلفية بنفسجي غامق جدًا وكارت أفتح شوية فيه عنوان أبيض وسطر بنفسجي فاتح، والحقول غامقة بحدود بنفسجي. مفيش أي أحمر في الأول. اكتب رقم ناقص وسيب الحقل: الحدود بتبقى حمرا وتحتها «الرقم ده مش رقم موبايل مصري.»
+
+**ليه كده:**
+- **[[:user-invalid]] مع [[:has()]]:** [[.field:has(input:user-invalid) .err]] معناها «رسالة الخطأ اللي في نفس الـ field مع حقل الشخص لمسه وطلع غلط». من غير JavaScript.
+- **الأرقام العربي:** الحرف [[٠]] رقمه في Unicode [[0x0660]]، و [[١]] بعده وهكذا. فـ [[charCodeAt(0) - 0x0660]] بيطلّع الرقم. والأرقام الفارسي ([[۰]] من [[0x06F0]]) بتيجي من بعض الكيبوردات، فبنحوّلها هي كمان. وبنشيل المسافات والشَرط.
+- **[[pattern="(\+20|0)?1[0125][0-9]{8}"]]:** بيقبل [[010...]] و [[+2010...]] و [[10...]]. ووقت الإرسال بنشيل البداية ونحط [[+20]]، فالسيرفر يستلم شكل واحد بس ويقدر يدوّر عليه.
+- **[[autocomplete]]** على الاسم والموبايل والإيميل: الموبايل بيملاهم بضغطة.
+- **checkbox الموافقة [[required]]:** إذن صريح قبل أي رسايل، ومكتوب جنبه إنه يقدر يلغي.
+
+**الغلطة الشائعة:** [[input:invalid { border-color: red }]]: الصفحة بتفتح والحقول كلها حمرا قبل ما الشخص يكتب حرف، وده بيخوّف الناس.
+
+~~~text الناتج (Chrome)
+أول ما الصفحة تفتح                 رسالة الخطأ: display = none (والحقل :invalid فعلًا)
+كتبت ٠١٠١٢٣٤٥٦٧٨ بالكيبورد          value = "01012345678"   checkValidity() = true
+كتبت 0123 وبعدين Tab                :user-invalid = true، والرسالة display = block
+                                   حقل الاسم اللي متلمسش: :invalid = true بس رسالته لسه none
+الإرسال                            /free-chapter/thanks.html?name=سارة&wa=+201012345678&email=sara@example.com&agree=yes
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "pay-tabs", t: R`صفحة دفع بتابات من غير JavaScript`, what: R`صفحة «ادفع تمن الرواية» فيها ٣ تابات (محفظة موبايل، تحويل بنكي، كارت)، والتابات radios حقيقية مخفية بالشكل وكل radio جوه [[<label>]] شكله تاب، والمحتوى بيظهر بـ [[form:has(#t-bank:checked) .bank]] من غير سطر JavaScript. في كل تاب صفوف «الاسم والقيمة وزرار انسخ»، والقيمة ممكن تبقى طويلة جدًا (رقم حساب IBAN من ٢٩ حرف): على 360px لازم القيمة تلف لسطرين والزرار يفضل جنبها، مش يقع تحتها ([[grid-template-columns: minmax(0, 1fr) auto]] و [[overflow-wrap: anywhere]]). وتحت التابات [[<input type="file" accept="image/*">]] لصورة الإيصال. نمط صفحات الدفع اليدوي في المتاجر الصغيرة. من دروس «fieldset و radio» و «ملخص الأخطاء».`, done: R`Tab بيوقف على التابات والأسهم بتنقّل بينها والمحتوى بيتغيّر، والصفحة بتشتغل لو قفلت JavaScript من DevTools (ماعدا زرار انسخ)، وعلى 360px في تاب «تحويل بنكي» رقم الحساب في سطرين وزرار «انسخ» جنبه ومفيش scroll أفقي، و axe صفر violations.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ادفع: رواية ليالي البحر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f3ff; color: #1e1b4b; }
+  main { max-width: 520px; margin-inline: auto; }
+  h1 { font-size: 22px; margin: 0 0 12px; }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  legend { font-weight: 700; margin-block-end: 8px; }
+
+  /* the tabs: real radios (keyboard + screen reader), the label is what you see */
+  .tabs { display: flex; gap: 6px; }
+  .tabs input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .tabs label { flex: 1; text-align: center; padding: 10px 6px; border-radius: 10px 10px 0 0; background: #ddd6fe; cursor: pointer; font-weight: 600; }
+  .tabs label:has(input:checked) { background: white; color: #5b21b6; }
+  .tabs label:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: -3px; }
+
+  .panel { display: none; padding: 16px; background: white; border-radius: 0 0 12px 12px; }
+  /* one rule per tab: the panel whose radio is checked shows */
+  form:has(#t-wallet:checked) .wallet,
+  form:has(#t-bank:checked) .bank,
+  form:has(#t-card:checked) .card { display: block; }
+
+  /* the value can be long (an account number): it wraps, and the copy button stays beside it */
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 0; border-block-end: 1px solid #ede9fe; }
+  .row span { display: block; color: #6d28d9; font-size: 13px; }
+  .row code { font-size: 16px; overflow-wrap: anywhere; }
+  .copy { font: inherit; padding: 6px 12px; border: 1px solid #7c3aed; border-radius: 8px; background: white; color: #7c3aed; }
+
+  .receipt { display: grid; gap: 6px; margin-block-start: 16px; }
+  .receipt label { font-weight: 600; }
+  .send { width: 100%; margin-block-start: 16px; font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #6d28d9; color: white; }
+</style>
+</head>
+<body>
+<main>
+<h1>ادفع تمن الرواية: ٢٥٠ جنيه</h1>
+<form method="get">
+  <fieldset>
+    <legend>هتدفع إزاي؟</legend>
+    <div class="tabs">
+      <label><input type="radio" name="method" id="t-wallet" value="wallet" checked> محفظة موبايل</label>
+      <label><input type="radio" name="method" id="t-bank" value="bank"> تحويل بنكي</label>
+      <label><input type="radio" name="method" id="t-card" value="card"> كارت</label>
+    </div>
+  </fieldset>
+
+  <div class="panel wallet">
+    <p>حوّل على رقم المحفظة ده، وبعدين ارفع صورة الإيصال تحت.</p>
+    <div class="row"><div><span>رقم المحفظة</span><code>01000000000</code></div><button type="button" class="copy">انسخ</button></div>
+    <div class="row"><div><span>المبلغ</span><code>250</code></div><button type="button" class="copy">انسخ</button></div>
+  </div>
+
+  <div class="panel bank">
+    <p>حوّل من تطبيق البنك على الحساب ده.</p>
+    <div class="row"><div><span>اسم الحساب</span><code>دار حبر للنشر</code></div><button type="button" class="copy">انسخ</button></div>
+    <div class="row"><div><span>رقم الحساب (IBAN)</span><code>EG000000000000000000000000000</code></div><button type="button" class="copy">انسخ</button></div>
+  </div>
+
+  <div class="panel card">
+    <p>الدفع بالكارت بيفتح صفحة الدفع الآمنة بتاعة البنك (مش في المشروع ده).</p>
+  </div>
+
+  <div class="receipt">
+    <label for="receipt">صورة الإيصال (لو حوّلت)</label>
+    <input id="receipt" name="receipt" type="file" accept="image/*">
+  </div>
+  <button class="send">بعت</button>
+</form>
+</main>
+<script>
+  // the only JavaScript on the page: the copy buttons (the tabs work without it)
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('.copy');
+    if (!b) return;
+    const text = b.previousElementSibling.querySelector('code').textContent;
+    try { await navigator.clipboard.writeText(text); b.textContent = 'اتنسخ ✓'; }
+    catch { b.textContent = 'انسخ بإيدك'; }
+    setTimeout(() => b.textContent = 'انسخ', 1500);
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~view 520 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ادفع: رواية ليالي البحر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f3ff; color: #1e1b4b; }
+  main { max-width: 520px; margin-inline: auto; }
+  h1 { font-size: 22px; margin: 0 0 12px; }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  legend { font-weight: 700; margin-block-end: 8px; }
+
+  /* the tabs: real radios (keyboard + screen reader), the label is what you see */
+  .tabs { display: flex; gap: 6px; }
+  .tabs input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .tabs label { flex: 1; text-align: center; padding: 10px 6px; border-radius: 10px 10px 0 0; background: #ddd6fe; cursor: pointer; font-weight: 600; }
+  .tabs label:has(input:checked) { background: white; color: #5b21b6; }
+  .tabs label:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: -3px; }
+
+  .panel { display: none; padding: 16px; background: white; border-radius: 0 0 12px 12px; }
+  /* one rule per tab: the panel whose radio is checked shows */
+  form:has(#t-wallet:checked) .wallet,
+  form:has(#t-bank:checked) .bank,
+  form:has(#t-card:checked) .card { display: block; }
+
+  /* the value can be long (an account number): it wraps, and the copy button stays beside it */
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 0; border-block-end: 1px solid #ede9fe; }
+  .row span { display: block; color: #6d28d9; font-size: 13px; }
+  .row code { font-size: 16px; overflow-wrap: anywhere; }
+  .copy { font: inherit; padding: 6px 12px; border: 1px solid #7c3aed; border-radius: 8px; background: white; color: #7c3aed; }
+
+  .receipt { display: grid; gap: 6px; margin-block-start: 16px; }
+  .receipt label { font-weight: 600; }
+  .send { width: 100%; margin-block-start: 16px; font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #6d28d9; color: white; }
+</style>
+</head>
+<body>
+<main>
+<h1>ادفع تمن الرواية: ٢٥٠ جنيه</h1>
+<form method="get">
+  <fieldset>
+    <legend>هتدفع إزاي؟</legend>
+    <div class="tabs">
+      <label><input type="radio" name="method" id="t-wallet" value="wallet" checked> محفظة موبايل</label>
+      <label><input type="radio" name="method" id="t-bank" value="bank"> تحويل بنكي</label>
+      <label><input type="radio" name="method" id="t-card" value="card"> كارت</label>
+    </div>
+  </fieldset>
+
+  <div class="panel wallet">
+    <p>حوّل على رقم المحفظة ده، وبعدين ارفع صورة الإيصال تحت.</p>
+    <div class="row"><div><span>رقم المحفظة</span><code>01000000000</code></div><button type="button" class="copy">انسخ</button></div>
+    <div class="row"><div><span>المبلغ</span><code>250</code></div><button type="button" class="copy">انسخ</button></div>
+  </div>
+
+  <div class="panel bank">
+    <p>حوّل من تطبيق البنك على الحساب ده.</p>
+    <div class="row"><div><span>اسم الحساب</span><code>دار حبر للنشر</code></div><button type="button" class="copy">انسخ</button></div>
+    <div class="row"><div><span>رقم الحساب (IBAN)</span><code>EG000000000000000000000000000</code></div><button type="button" class="copy">انسخ</button></div>
+  </div>
+
+  <div class="panel card">
+    <p>الدفع بالكارت بيفتح صفحة الدفع الآمنة بتاعة البنك (مش في المشروع ده).</p>
+  </div>
+
+  <div class="receipt">
+    <label for="receipt">صورة الإيصال (لو حوّلت)</label>
+    <input id="receipt" name="receipt" type="file" accept="image/*">
+  </div>
+  <button class="send">بعت</button>
+</form>
+</main>
+<script>
+  // the only JavaScript on the page: the copy buttons (the tabs work without it)
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('.copy');
+    if (!b) return;
+    const text = b.previousElementSibling.querySelector('code').textContent;
+    try { await navigator.clipboard.writeText(text); b.textContent = 'اتنسخ ✓'; }
+    catch { b.textContent = 'انسخ بإيدك'; }
+    setTimeout(() => b.textContent = 'انسخ', 1500);
+  });
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** عنوان «ادفع تمن الرواية: ٢٥٠ جنيه» وتحته ٣ تابات بنفسجي فاتح، والتاب المختار أبيض ولازق في المربع الأبيض اللي تحته. في «محفظة موبايل» رقم المحفظة والمبلغ وجنب كل واحد زرار «انسخ». دوس «تحويل بنكي» والمحتوى بيتغيّر. على «موبايل» رقم الحساب الطويل بيلف لسطرين والزرار جنبه.
+
+**ليه كده:**
+- **التابات radios:** [[name="method"]] واحد، فواحد بس مختار، والأسهم بتنقّل بينهم، وقيمته بتتبعت مع الفورم. وكل radio ليه [[id]] عشان الـ CSS يسأل عنه: [[form:has(#t-bank:checked) .bank { display: block; }]].
+- **مفيش JavaScript للتابات:** الزرار الوحيد اللي محتاج سكربت هو «انسخ» ([[navigator.clipboard.writeText]])، ولو النسخ اترفض بيقول «انسخ بإيدك».
+- **القيمة الطويلة:** [[grid-template-columns: minmax(0, 1fr) auto]]: العمود التاني على قد الزرار، والأول ياخد الباقي. و [[minmax(0, …)]] بيسمح للعمود يصغر عن طول الكلمة، و [[overflow-wrap: anywhere]] بيكسر الرقم الطويل.
+- **[[type="file"]] و [[accept="image/*"]]:** المتصفح بيفتح الصور بس. ومع [[method="get"]] اسم الملف بس اللي بيتبعت، مش الصورة. رفع الملف الحقيقي محتاج [[method="post"]] و [[enctype="multipart/form-data"]] وسيرفر (درس «إرسال الفورم» في الوحدة اللي بعدها).
+
+**فخ قسته:** الصفحة [[dir="rtl"]]، فالسهم **الشمال** هو اللي بيروح للتاب اللي بعده، واليمين بيرجع (ومن أول تاب بيلف لآخر واحد). ده صح: الاتجاه بيمشي مع اتجاه الصفحة.
+
+**المشكلة اللي الصفحة دي بتحلها:** الطريقة اللي بتيجي على البال [[.row { display: flex; flex-wrap: wrap; justify-content: space-between; }]]. على 360px رقم الحساب مبيتكسرش، فالزرار بيقع لسطر لوحده تحت القيمة. قستها جنب الحل:
+
+~~~text الناتج (Chrome، 360px، تاب «تحويل بنكي»، رقم الحساب)
+                 overflow أفقي   أعلى القيمة   أعلى الزرار    الزرار فين
+flex + wrap      0               306           333            تحت القيمة
+grid (الحل)      0               306           298            جنبها (والقيمة سطرين، طولها 41px)
+
+Tab ثم سهم يمين    من «محفظة» لـ «كارت» (لفّ لآخر تاب)
+سهم شمال           رجع لـ «محفظة»
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'كبير', dir: "sabah-checkout", t: R`Checkout لمتجر قهوة متخيل (من غير دفع حقيقي)`, what: R`صفحة طلب لـ «بُن الصباح»: بياناتك (autocomplete كامل)، وعنوان الشحن في شبكة عمودين بتبقى عمود واحد على الموبايل والحقل الطويل [[grid-column: 1 / -1]]، وطريقة الدفع radio cards (كارت أو كاش)، وكوبون بتاريخ انتهاء بيتحسب لآخر اليوم مش أوله، وملخص أخطاء، ومنع الإرسال مرتين، ومسودة بتتحفظ في localStorage كل ثانية **من غير** أي حقل حساس (رقم الكارت مثلًا)، وصفحة «اتطلب» بعد النجاح. فكرة «الفورم الطويل اللي بيرجع مكان ما وقفت».`, done: R`على 360px عمود واحد وعلى 800px عمودين، والإرسال الفاضي بيحط الـ focus على أول غلط والملخص فيه عدد الأخطاء، وقفل التاب وفتحه بيرجّع كل الحقول ما عدا الحساسة (اتأكد من Application › Local Storage إن رقم الكارت مش متخزن)، وكوبون بينتهي النهارده لسه شغال الساعة 11 بالليل، و axe صفر violations، والدبل كليك بيبعت طلب واحد، ولو الطلب فشل (Network › Offline) الزرار بيرجع والبيانات متمسحتش.`, ext: R`زوّد رسالة تأكيد بتفتح واتساب برسالة جاهزة ([[wa.me/?text=]] و [[encodeURIComponent]])، ونسخة إنجليزي بـ [[dir="ltr"]] من غير ما تغيّر الـ CSS.`, sol: R`**شجرة الملفات:**
+
+~~~text
+sabah-checkout/
+├── index.html    الفورم والسلة
+├── style.css     الشكل والعمودين
+├── app.js        الدفع والكوبون والمسودة والإرسال
+└── thanks.html   صفحة «اتطلب»
+~~~
+
+**ترتيب البناء:** الـ HTML الأول بكل الحقول وأنواعها و [[autocomplete]]، وبعدين الـ CSS (عمود واحد، وبعدين العمودين)، وبعدين JavaScript حتة حتة بالترتيب ده: الكارت أو الكاش، والكوبون، والمسودة، والملخص، والإرسال. وجرّب كل حتة قبل اللي بعدها.
+
+**مهم:** شغّله من سيرفر محلي (Live Server في VS Code، أو [[python -m http.server]] في الفولدر) مش بفتح الملف على طول، لأن [[fetch]] مبيشتغلش على [[file://]].
 
 ~~~html index.html
 <!doctype html>
@@ -2133,1753 +1261,1955 @@ axe على 360 و 1280: 0 violations   الـ validator: مفيش رسايل   C
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>هيكل موقع فيديوهات</title>
+<title>إتمام الطلب: بُن الصباح</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="shell">
-  <header class="head">
-    <span class="box box--logo">لوجو</span>
-    <span class="box box--search">بحث</span>
-    <span class="box box--avatar" aria-hidden="true"></span>
-  </header>
+<main>
+<h1>إتمام الطلب</h1>
 
-  <nav class="side" aria-label="الأقسام">
-    <span class="box box--nav">الرئيسية</span>
-    <span class="box box--nav">اشتراكات</span>
-    <span class="box box--nav">المكتبة</span>
-    <span class="box box--nav">السجل</span>
-  </nav>
+<div class="layout">
+<form id="checkout" novalidate>
+  <div class="summary" id="summary" tabindex="-1" hidden>
+    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
+    <ul id="errors"></ul>
+  </div>
 
-  <main class="main">
-    <h1 class="visually-hidden">الرئيسية</h1>
-    <div class="chips" tabindex="0" role="region" aria-label="التصنيفات، بتتسحب بالعرض">
-      <span class="box box--chip">الكل</span>
-      <span class="box box--chip">طبخ</span>
-      <span class="box box--chip">برمجة</span>
-      <span class="box box--chip">كورة</span>
-      <span class="box box--chip">مزيكا</span>
-      <span class="box box--chip">سفر</span>
-      <span class="box box--chip">علوم</span>
-      <span class="box box--chip">ألعاب</span>
+  <fieldset>
+    <legend>بياناتك</legend>
+    <div class="grid">
+      <div class="field wide">
+        <label for="name">الاسم بالكامل</label>
+        <input id="name" name="name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">الإيميل</label>
+        <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      </div>
+      <div class="field">
+        <label for="phone">الموبايل</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
+      </div>
     </div>
-    <ul class="videos">
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-    </ul>
-  </main>
+  </fieldset>
+
+  <fieldset>
+    <legend>عنوان الشحن</legend>
+    <div class="grid">
+      <div class="field wide">
+        <label for="street">الشارع ورقم العمارة والشقة</label>
+        <input id="street" name="street" autocomplete="address-line1" required>
+      </div>
+      <div class="field">
+        <label for="city">المدينة</label>
+        <input id="city" name="city" autocomplete="address-level2" required>
+      </div>
+      <div class="field">
+        <label for="area">المحافظة</label>
+        <input id="area" name="area" autocomplete="address-level1" required>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>طريقة الدفع</legend>
+    <div class="pay">
+      <label class="card"><input type="radio" name="pay" value="cash" checked> كاش عند الاستلام</label>
+      <label class="card"><input type="radio" name="pay" value="card"> كارت</label>
+    </div>
+    <!-- disabled while «كاش» is chosen: a disabled field is neither validated nor sent -->
+    <fieldset class="cardbox" id="cardbox" disabled hidden>
+      <legend>بيانات الكارت</legend>
+      <div class="grid">
+        <div class="field wide">
+          <label for="ccnum">رقم الكارت</label>
+          <input id="ccnum" name="ccnum" autocomplete="cc-number" inputmode="numeric" dir="ltr" required pattern="[0-9 ]{12,23}">
+        </div>
+        <div class="field">
+          <label for="ccexp">تاريخ الانتهاء</label>
+          <input id="ccexp" name="ccexp" autocomplete="cc-exp" dir="ltr" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])/[0-9]{2}">
+        </div>
+        <div class="field">
+          <label for="cccsc">CVV</label>
+          <input id="cccsc" name="cccsc" autocomplete="cc-csc" inputmode="numeric" dir="ltr" required pattern="[0-9]{3,4}">
+        </div>
+      </div>
+    </fieldset>
+  </fieldset>
+
+  <fieldset>
+    <legend>كوبون خصم</legend>
+    <div class="coupon">
+      <label for="coupon" class="visually-hidden">كود الكوبون</label>
+      <input id="coupon" name="coupon" dir="ltr" autocomplete="off" aria-describedby="coupon-msg">
+      <button type="button" id="apply">طبّق</button>
+    </div>
+    <p id="coupon-msg" class="hint" aria-live="polite"></p>
+  </fieldset>
+
+  <p id="fail" class="fail" role="alert" hidden>الطلب متبعتش (النت فاصل؟). بياناتك زي ما هي، جرّب تاني.</p>
+  <button id="send" class="send">اطلب</button>
+</form>
+
+<aside class="cart" aria-labelledby="cart-title">
+  <h2 id="cart-title">طلبك</h2>
+  <ul>
+    <li><span>بن محوّج، ربع كيلو</span><span>١٨٠ ج</span></li>
+    <li><span>بن فاتح، ربع كيلو</span><span>١٦٠ ج</span></li>
+    <li><span>الشحن</span><span>٤٠ ج</span></li>
+    <li id="discount-row" hidden><span>الخصم</span><span id="discount"></span></li>
+  </ul>
+  <p class="total"><span>الإجمالي</span><output id="total">٣٨٠ ج</output></p>
+</aside>
 </div>
+</main>
+<script src="app.js"></script>
 </body>
 </html>
 ~~~
 
 ~~~css style.css
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f8fafc; color: #334155; }
-ul { margin: 0; padding: 0; list-style: none; }
+body { margin: 0; padding: 16px; background: #faf6f1; color: #292524; font: 16px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 980px; margin-inline: auto; }
+h1 { margin: 0 0 16px; }
+
+.layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 800px) { .layout { grid-template-columns: 1fr 300px; align-items: start; } }
+
+form { display: grid; gap: 16px; }
+fieldset { margin: 0; padding: 16px; border: 0; border-radius: 14px; background: white; }
+legend { float: inline-start; width: 100%; margin-block-end: 10px; font-weight: 800; font-size: 18px; }
+
+/* two columns from 600px up, the long fields take the whole row */
+.grid { clear: both; display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 600px) { .grid { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
+
+.field { display: grid; gap: 4px; min-width: 0; }
+label { font-weight: 600; }
+input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+
+.pay { clear: both; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.card { display: flex; gap: 8px; align-items: center; padding: 12px; border: 2px solid #d6d3d1; border-radius: 12px; cursor: pointer; }
+.card:has(input:checked) { border-color: #92400e; background: #fef3c7; }
+.card:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+.cardbox { margin-block-start: 12px; padding: 12px; background: #fafaf9; }
+
+.coupon { clear: both; display: flex; gap: 8px; }
+.coupon button { font: inherit; padding: 8px 16px; border: 1px solid #92400e; border-radius: 8px; background: white; color: #92400e; }
+.hint { margin: 6px 0 0; font-size: 14px; color: #57534e; }
+
+.summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 12px; background: #fef2f2; }
+.summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
+.summary a { color: #991b1b; }
+.fail { margin: 0; padding: 10px 14px; border-radius: 10px; background: #fef2f2; color: #991b1b; }
+
+.send { font: inherit; font-weight: 800; padding: 14px; border: 0; border-radius: 12px; background: #92400e; color: white; }
+.send:disabled { background: #a8a29e; }
+
+.cart { padding: 16px; border-radius: 14px; background: #292524; color: #fef3c7; }
+.cart h2 { margin: 0 0 8px; }
+.cart ul { margin: 0; padding: 0; list-style: none; }
+.cart li, .total { display: flex; justify-content: space-between; gap: 8px; padding-block: 6px; border-block-end: 1px solid #44403c; }
+.total { margin: 8px 0 0; border: 0; font-size: 20px; font-weight: 800; }
+
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+~~~
 
-/* a gray box with a label: the size comes from its padding and text, never a fixed height */
-.box { display: block; padding: 0.6rem 0.9rem; border-radius: 0.5rem; background: #cbd5e1; font-size: 0.85rem; }
+~~~js app.js
+const form = document.getElementById('checkout');
+const send = document.getElementById('send');
+const fail = document.getElementById('fail');
+const cardbox = document.getElementById('cardbox');
+const DRAFT = 'sabah-checkout-draft';
+const SUBTOTAL = 380; // 180 + 160 + 40 shipping
 
-/* ---------- the page: grid, because it is rows AND columns ---------- */
-.shell {
-  display: grid;
-  min-height: 100vh;
-  /* phone: the side becomes a bar at the bottom of the page */
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 1fr auto;
-  grid-template-areas:
-    "head"
-    "main"
-    "side";
+// ---------- card or cash ----------
+function payChanged() {
+  const card = form.elements.pay.value === 'card';
+  cardbox.hidden = !card;
+  cardbox.disabled = !card; // disabled: not validated, not sent
 }
-.head { grid-area: head; }
-.side { grid-area: side; }
-.main { grid-area: main; min-width: 0; padding: 1rem; }
+form.addEventListener('change', e => { if (e.target.name === 'pay') payChanged(); });
 
-/* ---------- the header: flex, because it is one row ---------- */
-.head { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: #fff; border-bottom: 1px solid #e2e8f0; }
-.box--search { flex: 1; max-width: 36rem; margin-inline: auto; }   /* takes the free space, centered */
-.box--avatar { flex: none; width: 2.25rem; aspect-ratio: 1; padding: 0; border-radius: 50%; }
+// ---------- coupon: valid until the END of its last day, in the reader's time zone ----------
+const COUPONS = {
+  SABAH10: { pct: 10, until: '2026-12-31' },
+  WINTER5: { pct: 5, until: '2026-01-31' },
+};
+function couponState(code, now = new Date()) {
+  const c = COUPONS[code.trim().toUpperCase()];
+  if (!c) return { ok: false, msg: 'الكود ده مش موجود.' };
+  // new Date('2026-12-31') is midnight UTC: 2 AM in Cairo, and the code would die at the START of the day
+  const [y, m, d] = c.until.split('-').map(Number);
+  const end = new Date(y, m - 1, d, 23, 59, 59, 999);
+  if (now > end) return { ok: false, msg: 'الكود ده خلص يوم ' + c.until + '.' };
+  return { ok: true, pct: c.pct, msg: 'اتطبّق خصم ' + c.pct + '٪.' };
+}
+const money = n => n.toLocaleString('ar-EG') + ' ج';
+function applyCoupon() {
+  const input = form.elements.coupon;
+  const s = input.value ? couponState(input.value) : { ok: false, msg: '' };
+  document.getElementById('coupon-msg').textContent = s.msg;
+  const off = s.ok ? Math.round(SUBTOTAL * s.pct / 100) : 0;
+  document.getElementById('discount-row').hidden = !off;
+  document.getElementById('discount').textContent = '- ' + money(off);
+  document.getElementById('total').textContent = money(SUBTOTAL - off);
+}
+document.getElementById('apply').addEventListener('click', applyCoupon);
 
-/* ---------- the side: one line of items, flex ---------- */
-.side { display: flex; justify-content: space-around; gap: 0.5rem; padding: 0.5rem; background: #fff; border-top: 1px solid #e2e8f0; }
-.box--nav { flex: 1; text-align: center; }
-
-/* ---------- category chips: one row that scrolls inside itself ---------- */
-.chips { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; }
-.box--chip { flex: none; border-radius: 999px; }
-.chips:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
-
-/* ---------- videos: grid with auto-fill, the count follows the width ---------- */
-.videos { display: grid; gap: 1.25rem 1rem; margin-top: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr)); }
-/* every card: the thumbnail across, then the avatar beside the text lines */
-.video { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: 0.6rem; }
-.video__thumb { grid-column: 1 / -1; aspect-ratio: 16 / 9; border-radius: 0.75rem; background: #cbd5e1; }
-.video__avatar { aspect-ratio: 1; border-radius: 50%; background: #cbd5e1; }
-.video__lines { display: flex; flex-direction: column; gap: 0.4rem; padding-top: 0.2rem; }
-.line { display: block; height: 0.75rem; border-radius: 0.25rem; background: #e2e8f0; }   /* empty: no text, so a height is fine */
-.line--short { width: 60%; }
-
-/* ---------- tablet: the side becomes a narrow rail on the start ---------- */
-@media (min-width: 40rem) {
-  .shell {
-    grid-template-columns: 5.5rem minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
-    grid-template-areas:
-      "head head"
-      "side main";
+// ---------- draft: saved every second, never the card fields ----------
+const isPrivate = f => (f.autocomplete || '').startsWith('cc-');
+function saveDraft() {
+  const data = {};
+  for (const f of form.elements) {
+    if (!f.name || isPrivate(f) || f.type === 'button' || f.type === 'submit') continue;
+    if (f.type === 'radio') { if (f.checked) data[f.name] = f.value; }
+    else data[f.name] = f.value;
   }
-  .side { flex-direction: column; justify-content: flex-start; padding: 0.75rem 0.5rem; border-top: 0; border-inline-end: 1px solid #e2e8f0; }
-  .box--nav { flex: none; padding-inline: 0.25rem; font-size: 0.75rem; }
+  try { localStorage.setItem(DRAFT, JSON.stringify(data)); } catch {}
+}
+function loadDraft() {
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(DRAFT)); } catch {}
+  if (!data) return;
+  for (const [k, v] of Object.entries(data)) {
+    // form.elements.pay is a RadioNodeList: setting its value checks the radio with that value
+    if (form.elements[k]) form.elements[k].value = v;
+  }
+}
+loadDraft();
+payChanged();
+applyCoupon();
+const autosave = setInterval(saveDraft, 1000);
+
+// ---------- errors summary ----------
+const summary = document.getElementById('summary');
+const list = document.getElementById('errors');
+list.addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  e.preventDefault();
+  document.querySelector(a.hash).focus();
+});
+function showErrors(bad) {
+  list.innerHTML = '';
+  for (const f of bad) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + f.id;
+    a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
+    li.append(a);
+    list.append(li);
+  }
+  document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
+  summary.hidden = false;
+  summary.focus();
 }
 
-/* ---------- desktop: a full sidebar ---------- */
-@media (min-width: 70rem) {
-  .shell { grid-template-columns: 14rem minmax(0, 1fr); }
-  .box--nav { text-align: start; padding-inline: 0.9rem; font-size: 0.85rem; }
-}
+// ---------- send once ----------
+let sending = false;
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (sending) return;
+  const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
+  for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
+  if (bad.length) { showErrors(bad); return; }
+  summary.hidden = true;
+  fail.hidden = true;
+  sending = true;
+  send.disabled = true;
+  send.textContent = 'بنبعت الطلب…';
+  try {
+    // no server in this project: thanks.html stands in for the API (a real shop sends a POST to its own /api/orders)
+    const res = await fetch('thanks.html', { method: 'HEAD', cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    // stop the autosave FIRST: the next page can take seconds to load, and a save in between writes the draft back
+    clearInterval(autosave);
+    localStorage.removeItem(DRAFT);
+    location.href = 'thanks.html';
+  } catch {
+    fail.hidden = false;
+    sending = false;
+    send.disabled = false;
+    send.textContent = 'اطلب';
+  }
+});
 ~~~
 
-~~~text DECISIONS.md
-# هيكل موقع فيديوهات: اخترت إيه وليه
-
-| الجزء | اخترت | ليه |
-|---|---|---|
-| الصفحة كلها | grid بـ $__btgrid-template-areas$__bt | صفوف وأعمدة مع بعض، وعلى كل مقاس بغيّر الخريطة بس (الشريط تحت على الموبايل، وعمود على التابلت والكمبيوتر) من غير ما ألمس الـ HTML |
-| الهيدر | flex | صف واحد: لوجو، وبحث بياخد المساحة الفاضية ($__btflex: 1$__bt)، وصورة |
-| الأقسام (الجنب) | flex | خط واحد بس، مرة أفقي (موبايل) ومرة رأسي ($__btflex-direction: column$__bt) |
-| التصنيفات | flex بـ $__btoverflow-x: auto$__bt | صف واحد بيتسحب جوه نفسه، والصفحة مبتعملش scroll أفقي |
-| الفيديوهات | grid بـ $__btauto-fill$__bt و $__btminmax$__bt | عدد الأعمدة بيمشي مع العرض لوحده من غير media query |
-| كارت الفيديو | grid عمودين | الصورة على العمودين، وتحتها الصورة الصغيرة جنب السطور |
-| subgrid | مش محتاجه هنا | الكروت كلها نفس الشكل وطول السطور ثابت، فمفيش أجزاء محتاجة تتصف بين الكروت |
-
-**قاعدة الارتفاع:** مفيش $__btheight$__bt على أي حاجة فيها كلام. الصور بـ $__btaspect-ratio$__bt، والسطور الرمادي الفاضية بس ليها ارتفاع لأنها مفيهاش كلام.
-~~~
-
-~~~view 880 900 الشكل النهائي
+~~~html thanks.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>هيكل موقع فيديوهات</title>
+<title>اتطلب: بُن الصباح</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>اتطلب ☕</h1>
+  <p>الطلب هيوصلك خلال يومين، وهنكلمك على الموبايل قبلها.</p>
+  <p><a href="index.html">ارجع للمتجر</a></p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 900 1500 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إتمام الطلب: بُن الصباح</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background: #f8fafc; color: #334155; }
-ul { margin: 0; padding: 0; list-style: none; }
+body { margin: 0; padding: 16px; background: #faf6f1; color: #292524; font: 16px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 980px; margin-inline: auto; }
+h1 { margin: 0 0 16px; }
+
+.layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 800px) { .layout { grid-template-columns: 1fr 300px; align-items: start; } }
+
+form { display: grid; gap: 16px; }
+fieldset { margin: 0; padding: 16px; border: 0; border-radius: 14px; background: white; }
+legend { float: inline-start; width: 100%; margin-block-end: 10px; font-weight: 800; font-size: 18px; }
+
+/* two columns from 600px up, the long fields take the whole row */
+.grid { clear: both; display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 600px) { .grid { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
+
+.field { display: grid; gap: 4px; min-width: 0; }
+label { font-weight: 600; }
+input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+
+.pay { clear: both; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.card { display: flex; gap: 8px; align-items: center; padding: 12px; border: 2px solid #d6d3d1; border-radius: 12px; cursor: pointer; }
+.card:has(input:checked) { border-color: #92400e; background: #fef3c7; }
+.card:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+.cardbox { margin-block-start: 12px; padding: 12px; background: #fafaf9; }
+
+.coupon { clear: both; display: flex; gap: 8px; }
+.coupon button { font: inherit; padding: 8px 16px; border: 1px solid #92400e; border-radius: 8px; background: white; color: #92400e; }
+.hint { margin: 6px 0 0; font-size: 14px; color: #57534e; }
+
+.summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 12px; background: #fef2f2; }
+.summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
+.summary a { color: #991b1b; }
+.fail { margin: 0; padding: 10px 14px; border-radius: 10px; background: #fef2f2; color: #991b1b; }
+
+.send { font: inherit; font-weight: 800; padding: 14px; border: 0; border-radius: 12px; background: #92400e; color: white; }
+.send:disabled { background: #a8a29e; }
+
+.cart { padding: 16px; border-radius: 14px; background: #292524; color: #fef3c7; }
+.cart h2 { margin: 0 0 8px; }
+.cart ul { margin: 0; padding: 0; list-style: none; }
+.cart li, .total { display: flex; justify-content: space-between; gap: 8px; padding-block: 6px; border-block-end: 1px solid #44403c; }
+.total { margin: 8px 0 0; border: 0; font-size: 20px; font-weight: 800; }
+
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* a gray box with a label: the size comes from its padding and text, never a fixed height */
-.box { display: block; padding: 0.6rem 0.9rem; border-radius: 0.5rem; background: #cbd5e1; font-size: 0.85rem; }
-
-/* ---------- the page: grid, because it is rows AND columns ---------- */
-.shell {
-  display: grid;
-  min-height: 100vh;
-  /* phone: the side becomes a bar at the bottom of the page */
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 1fr auto;
-  grid-template-areas:
-    "head"
-    "main"
-    "side";
-}
-.head { grid-area: head; }
-.side { grid-area: side; }
-.main { grid-area: main; min-width: 0; padding: 1rem; }
-
-/* ---------- the header: flex, because it is one row ---------- */
-.head { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: #fff; border-bottom: 1px solid #e2e8f0; }
-.box--search { flex: 1; max-width: 36rem; margin-inline: auto; }   /* takes the free space, centered */
-.box--avatar { flex: none; width: 2.25rem; aspect-ratio: 1; padding: 0; border-radius: 50%; }
-
-/* ---------- the side: one line of items, flex ---------- */
-.side { display: flex; justify-content: space-around; gap: 0.5rem; padding: 0.5rem; background: #fff; border-top: 1px solid #e2e8f0; }
-.box--nav { flex: 1; text-align: center; }
-
-/* ---------- category chips: one row that scrolls inside itself ---------- */
-.chips { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; }
-.box--chip { flex: none; border-radius: 999px; }
-.chips:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
-
-/* ---------- videos: grid with auto-fill, the count follows the width ---------- */
-.videos { display: grid; gap: 1.25rem 1rem; margin-top: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr)); }
-/* every card: the thumbnail across, then the avatar beside the text lines */
-.video { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: 0.6rem; }
-.video__thumb { grid-column: 1 / -1; aspect-ratio: 16 / 9; border-radius: 0.75rem; background: #cbd5e1; }
-.video__avatar { aspect-ratio: 1; border-radius: 50%; background: #cbd5e1; }
-.video__lines { display: flex; flex-direction: column; gap: 0.4rem; padding-top: 0.2rem; }
-.line { display: block; height: 0.75rem; border-radius: 0.25rem; background: #e2e8f0; }   /* empty: no text, so a height is fine */
-.line--short { width: 60%; }
-
-/* ---------- tablet: the side becomes a narrow rail on the start ---------- */
-@media (min-width: 40rem) {
-  .shell {
-    grid-template-columns: 5.5rem minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
-    grid-template-areas:
-      "head head"
-      "side main";
-  }
-  .side { flex-direction: column; justify-content: flex-start; padding: 0.75rem 0.5rem; border-top: 0; border-inline-end: 1px solid #e2e8f0; }
-  .box--nav { flex: none; padding-inline: 0.25rem; font-size: 0.75rem; }
-}
-
-/* ---------- desktop: a full sidebar ---------- */
-@media (min-width: 70rem) {
-  .shell { grid-template-columns: 14rem minmax(0, 1fr); }
-  .box--nav { text-align: start; padding-inline: 0.9rem; font-size: 0.85rem; }
-}
 </style>
 </head>
 <body>
-<div class="shell">
-  <header class="head">
-    <span class="box box--logo">لوجو</span>
-    <span class="box box--search">بحث</span>
-    <span class="box box--avatar" aria-hidden="true"></span>
-  </header>
+<main>
+<h1>إتمام الطلب</h1>
 
-  <nav class="side" aria-label="الأقسام">
-    <span class="box box--nav">الرئيسية</span>
-    <span class="box box--nav">اشتراكات</span>
-    <span class="box box--nav">المكتبة</span>
-    <span class="box box--nav">السجل</span>
-  </nav>
+<div class="layout">
+<form id="checkout" novalidate>
+  <div class="summary" id="summary" tabindex="-1" hidden>
+    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
+    <ul id="errors"></ul>
+  </div>
 
-  <main class="main">
-    <h1 class="visually-hidden">الرئيسية</h1>
-    <div class="chips" tabindex="0" role="region" aria-label="التصنيفات، بتتسحب بالعرض">
-      <span class="box box--chip">الكل</span>
-      <span class="box box--chip">طبخ</span>
-      <span class="box box--chip">برمجة</span>
-      <span class="box box--chip">كورة</span>
-      <span class="box box--chip">مزيكا</span>
-      <span class="box box--chip">سفر</span>
-      <span class="box box--chip">علوم</span>
-      <span class="box box--chip">ألعاب</span>
+  <fieldset>
+    <legend>بياناتك</legend>
+    <div class="grid">
+      <div class="field wide">
+        <label for="name">الاسم بالكامل</label>
+        <input id="name" name="name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">الإيميل</label>
+        <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      </div>
+      <div class="field">
+        <label for="phone">الموبايل</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
+      </div>
     </div>
-    <ul class="videos">
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-      <li class="video"><span class="video__thumb"></span><span class="video__avatar"></span><span class="video__lines"><span class="line"></span><span class="line line--short"></span></span></li>
-    </ul>
-  </main>
+  </fieldset>
+
+  <fieldset>
+    <legend>عنوان الشحن</legend>
+    <div class="grid">
+      <div class="field wide">
+        <label for="street">الشارع ورقم العمارة والشقة</label>
+        <input id="street" name="street" autocomplete="address-line1" required>
+      </div>
+      <div class="field">
+        <label for="city">المدينة</label>
+        <input id="city" name="city" autocomplete="address-level2" required>
+      </div>
+      <div class="field">
+        <label for="area">المحافظة</label>
+        <input id="area" name="area" autocomplete="address-level1" required>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>طريقة الدفع</legend>
+    <div class="pay">
+      <label class="card"><input type="radio" name="pay" value="cash" checked> كاش عند الاستلام</label>
+      <label class="card"><input type="radio" name="pay" value="card"> كارت</label>
+    </div>
+    <!-- disabled while «كاش» is chosen: a disabled field is neither validated nor sent -->
+    <fieldset class="cardbox" id="cardbox" disabled hidden>
+      <legend>بيانات الكارت</legend>
+      <div class="grid">
+        <div class="field wide">
+          <label for="ccnum">رقم الكارت</label>
+          <input id="ccnum" name="ccnum" autocomplete="cc-number" inputmode="numeric" dir="ltr" required pattern="[0-9 ]{12,23}">
+        </div>
+        <div class="field">
+          <label for="ccexp">تاريخ الانتهاء</label>
+          <input id="ccexp" name="ccexp" autocomplete="cc-exp" dir="ltr" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])/[0-9]{2}">
+        </div>
+        <div class="field">
+          <label for="cccsc">CVV</label>
+          <input id="cccsc" name="cccsc" autocomplete="cc-csc" inputmode="numeric" dir="ltr" required pattern="[0-9]{3,4}">
+        </div>
+      </div>
+    </fieldset>
+  </fieldset>
+
+  <fieldset>
+    <legend>كوبون خصم</legend>
+    <div class="coupon">
+      <label for="coupon" class="visually-hidden">كود الكوبون</label>
+      <input id="coupon" name="coupon" dir="ltr" autocomplete="off" aria-describedby="coupon-msg">
+      <button type="button" id="apply">طبّق</button>
+    </div>
+    <p id="coupon-msg" class="hint" aria-live="polite"></p>
+  </fieldset>
+
+  <p id="fail" class="fail" role="alert" hidden>الطلب متبعتش (النت فاصل؟). بياناتك زي ما هي، جرّب تاني.</p>
+  <button id="send" class="send">اطلب</button>
+</form>
+
+<aside class="cart" aria-labelledby="cart-title">
+  <h2 id="cart-title">طلبك</h2>
+  <ul>
+    <li><span>بن محوّج، ربع كيلو</span><span>١٨٠ ج</span></li>
+    <li><span>بن فاتح، ربع كيلو</span><span>١٦٠ ج</span></li>
+    <li><span>الشحن</span><span>٤٠ ج</span></li>
+    <li id="discount-row" hidden><span>الخصم</span><span id="discount"></span></li>
+  </ul>
+  <p class="total"><span>الإجمالي</span><output id="total">٣٨٠ ج</output></p>
+</aside>
 </div>
+</main>
+<script>
+const form = document.getElementById('checkout');
+const send = document.getElementById('send');
+const fail = document.getElementById('fail');
+const cardbox = document.getElementById('cardbox');
+const DRAFT = 'sabah-checkout-draft';
+const SUBTOTAL = 380; // 180 + 160 + 40 shipping
+
+// ---------- card or cash ----------
+function payChanged() {
+  const card = form.elements.pay.value === 'card';
+  cardbox.hidden = !card;
+  cardbox.disabled = !card; // disabled: not validated, not sent
+}
+form.addEventListener('change', e => { if (e.target.name === 'pay') payChanged(); });
+
+// ---------- coupon: valid until the END of its last day, in the reader's time zone ----------
+const COUPONS = {
+  SABAH10: { pct: 10, until: '2026-12-31' },
+  WINTER5: { pct: 5, until: '2026-01-31' },
+};
+function couponState(code, now = new Date()) {
+  const c = COUPONS[code.trim().toUpperCase()];
+  if (!c) return { ok: false, msg: 'الكود ده مش موجود.' };
+  // new Date('2026-12-31') is midnight UTC: 2 AM in Cairo, and the code would die at the START of the day
+  const [y, m, d] = c.until.split('-').map(Number);
+  const end = new Date(y, m - 1, d, 23, 59, 59, 999);
+  if (now > end) return { ok: false, msg: 'الكود ده خلص يوم ' + c.until + '.' };
+  return { ok: true, pct: c.pct, msg: 'اتطبّق خصم ' + c.pct + '٪.' };
+}
+const money = n => n.toLocaleString('ar-EG') + ' ج';
+function applyCoupon() {
+  const input = form.elements.coupon;
+  const s = input.value ? couponState(input.value) : { ok: false, msg: '' };
+  document.getElementById('coupon-msg').textContent = s.msg;
+  const off = s.ok ? Math.round(SUBTOTAL * s.pct / 100) : 0;
+  document.getElementById('discount-row').hidden = !off;
+  document.getElementById('discount').textContent = '- ' + money(off);
+  document.getElementById('total').textContent = money(SUBTOTAL - off);
+}
+document.getElementById('apply').addEventListener('click', applyCoupon);
+
+// ---------- draft: saved every second, never the card fields ----------
+const isPrivate = f => (f.autocomplete || '').startsWith('cc-');
+function saveDraft() {
+  const data = {};
+  for (const f of form.elements) {
+    if (!f.name || isPrivate(f) || f.type === 'button' || f.type === 'submit') continue;
+    if (f.type === 'radio') { if (f.checked) data[f.name] = f.value; }
+    else data[f.name] = f.value;
+  }
+  try { localStorage.setItem(DRAFT, JSON.stringify(data)); } catch {}
+}
+function loadDraft() {
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(DRAFT)); } catch {}
+  if (!data) return;
+  for (const [k, v] of Object.entries(data)) {
+    // form.elements.pay is a RadioNodeList: setting its value checks the radio with that value
+    if (form.elements[k]) form.elements[k].value = v;
+  }
+}
+loadDraft();
+payChanged();
+applyCoupon();
+const autosave = setInterval(saveDraft, 1000);
+
+// ---------- errors summary ----------
+const summary = document.getElementById('summary');
+const list = document.getElementById('errors');
+list.addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  e.preventDefault();
+  document.querySelector(a.hash).focus();
+});
+function showErrors(bad) {
+  list.innerHTML = '';
+  for (const f of bad) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + f.id;
+    a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
+    li.append(a);
+    list.append(li);
+  }
+  document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
+  summary.hidden = false;
+  summary.focus();
+}
+
+// ---------- send once ----------
+let sending = false;
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (sending) return;
+  const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
+  for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
+  if (bad.length) { showErrors(bad); return; }
+  summary.hidden = true;
+  fail.hidden = true;
+  sending = true;
+  send.disabled = true;
+  send.textContent = 'بنبعت الطلب…';
+  try {
+    // no server in this project: thanks.html stands in for the API (a real shop sends a POST to its own /api/orders)
+    const res = await fetch('thanks.html', { method: 'HEAD', cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    // stop the autosave FIRST: the next page can take seconds to load, and a save in between writes the draft back
+    clearInterval(autosave);
+    localStorage.removeItem(DRAFT);
+    location.href = 'thanks.html';
+  } catch {
+    fail.hidden = false;
+    sending = false;
+    send.disabled = false;
+    send.textContent = 'اطلب';
+  }
+});
+</script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** صناديق رمادي بس: هيدر فيه «لوجو» و «بحث» في النص ودايرة، وعلى الجنب ٤ أقسام، وتحت الهيدر سطر تصنيفات بيتسحب، وتحته كروت فيديو (مستطيل الصورة، ودايرة صغيرة، وسطرين). على الموبايل الأقسام بتنزل شريط تحت خالص، وعلى التابلت عمود ضيق، وعلى الكمبيوتر عمود عريض.
+**هتشوف إيه:** على الكمبيوتر عمودين: الفورم على اليمين في كروت بيضا (بياناتك، والعنوان، وطريقة الدفع، والكوبون) وعلى الشمال كارت بني غامق فيه طلبك والإجمالي ٣٨٠ ج. على الموبايل كله عمود واحد والسلة تحت. اختار «كارت» وبيظهر مربع فيه رقم الكارت والتاريخ والـ CVV. اكتب [[sabah10]] ودوس «طبّق»: سطر خصم بيظهر والإجمالي يبقى ٣٤٢ ج. (المعاينة هنا جوه صندوق مقفول، فـ «اطلب» فيها هيطلّع رسالة «الطلب متبعتش». جرّبه عندك من سيرفر محلي.)
 
-**الفكرة من المشروع:** تبص على موقع وتسأل في كل جزء «ده سطر واحد ولا صفوف وأعمدة؟». سطر واحد = flex. صفوف وأعمدة مع بعض = grid. ولو كروت جنب بعض أجزاؤها لازم تتصف = subgrid.
+**الأجزاء المهمة:**
+- **الكارت والكاش:** مربع الكارت [[<fieldset disabled>]] لما تختار كاش. الحقل الـ disabled المتصفح مبيتأكدش منه ومبيبعتوش، فمش محتاج تشيل [[required]] وترجّعه.
+- **[[autocomplete]]:** [[cc-number]] و [[cc-exp]] و [[cc-csc]] للكارت، و [[address-line1]] و [[address-level2]] (المدينة) و [[address-level1]] (المحافظة) للعنوان. كنت كاتب [[street-address]] على [[<input>]] والـ validator قال: [[The autofill field name "street-address" is not allowed in this context.]] لأن [[street-address]] للعنوان كله في سطور كتير، يعني [[<textarea>]] بس.
+- **الكوبون لآخر اليوم:** [[new Date('2026-12-31')]] معناه نص الليل بتوقيت جرينتش = الساعة ٢ الصبح في القاهرة، فالكوبون كان هيخلص في **أول** يومه الأخير. الحل: [[new Date(y, m - 1, d, 23, 59, 59, 999)]] بتوقيت الجهاز.
+- **المسودة:** [[setInterval]] كل ثانية بيحفظ كل الحقول في [[localStorage]] **ماعدا** أي حقل [[autocomplete]] بتاعه بيبدأ بـ [[cc-]]. رقم الكارت مكانه السيرفر بس، ولو اتحفظ في المتصفح أي سكربت على الصفحة يقدر يقراه.
+- **الإرسال مرة واحدة:** المتغير [[sending]] والزرار [[disabled]]. ولو الطلب فشل ([[catch]])، الزرار بيرجع والبيانات بتفضل.
+- **[[fetch('thanks.html', { method: 'HEAD' })]]** بدل السيرفر الحقيقي: المشروع مفيهوش backend، فبنسأل عن صفحة موجودة كأنها الـ API. في متجر حقيقي ده بيبقى [[POST]] لـ [[/api/orders]] (تاب Node).
 
-**نفس الـ HTML بـ ٣ أشكال:** الصفحة [[grid-template-areas]]، وكل media query بتغيّر الخريطة بس: على الموبايل [[head main side]] تحت بعض، فالأقسام بقت تحت رغم إنها قبل الـ main في الـ HTML. والأقسام نفسها flex: أفقي على الموبايل، و [[flex-direction: column]] على الأكبر.
+**باج حقيقي لقيته وانا بجرّب الحل:** بعد طلب ناجح المسودة كانت لسه في [[localStorage]]. اللي حصل: [[removeItem]] اشتغل، وبعدين صفحة «اتطلب» خدت ثانيتين تحمّل على Slow 3G، وفي الوقت ده [[setInterval]] اشتغل تاني وحفظ المسودة من جديد. الحل: [[clearInterval(autosave)]] **قبل** [[removeItem]]. والدرس: أي حاجة شغالة بالتوقيت لازم توقفها قبل ما تمسح اللي بتكتبه.
 
-**قاعدة الارتفاع:** مفيش [[height]] على أي حاجة فيها كلام، لأن الكلام لو كبر (خط أكبر أو ترجمة أطول) هيطلع برّه. الصور الفاضية بـ [[aspect-ratio]]، والسطور الرمادي الفاضية بس ليها [[height]].
+**وفخ في التجربة نفسها:** بعد ما صلّحت [[app.js]] وعملت Refresh، Chrome شغّل النسخة القديمة من الذاكرة ومطلبش الملف أصلًا من السيرفر. علّم **Disable cache** في Network وانت شغال.
 
-**سطر التصنيفات:** [[overflow-x: auto]] بيخليه يتسحب لوحده من غير ما الصفحة تعمل scroll أفقي. axe قال [[scrollable-region-focusable]] في أول نسخة: صندوق بيتسحب والكيبورد مش عارف يوصله. الحل [[tabindex="0"]] و [[role="region"]] و [[aria-label]]. في الموقع الحقيقي التصنيفات هتبقى أزرار، فالكيبورد هيوصلها لوحده.
+~~~text الناتج (Chrome)
+360px      الفورم عمود واحد، والسلة تحته، و overflow = 0
+800px      الصفحة: فورم + سلة 300px، وجوه الفورم عمودين، و overflow = 0
 
-~~~text الناتج (Chrome 157)
-العرض  الخريطة                         الأقسام                 أعمدة الفيديو  التصنيفات (scrollWidth / clientWidth)
-360    "head" "main" "side"            شريط تحت بعرض 345       1              503 / 313 (بتتسحب)
-768    "head head" "side main"         عمود 88px               2              633 / 633
-1280   "head head" "side main"         عمود 224px              3              1024 / 1024
+«اطلب» والفورم فاضي       الـ focus على الملخص: «فيه 6 حاجات»  #name #email #phone #street #city #area
+نفس الكلام والدفع «كارت»   9 حاجات: الـ 6 و #ccnum #ccexp #cccsc
 
-scrollWidth للصفحة = عرض الشاشة في الـ 3
-عناصر فيها كلام وليها height في الـ CSS: ولا واحد (غير .visually-hidden)
-axe: 0 violations (كان scrollable-region-focusable قبل tabindex)   الـ validator: مفيش رسايل   CSS validator: No Error Found
+couponState('SABAH10', 31 ديسمبر 11 بالليل)   ok: true، خصم 10٪
+couponState('sabah10', 1 يناير 12:00:01)     الكود ده خلص يوم 2026-12-31.
+couponState('WINTER5')                       الكود ده خلص يوم 2026-01-31.
+new Date('2026-12-31') في القاهرة             Thu Dec 31 2026 02:00:00
+بعد «طبّق» sabah10                            الإجمالي ٣٤٢ ج، الخصم - ٣٨ ج
+
+المسودة بعد ثانية    {"name":"منى سامي","email":"mona@example.com",...,"pay":"card","coupon":"sabah10"}   (مفيش ccnum ولا cccsc)
+Refresh             الاسم والمدينة والكارت مختار رجعوا، ورقم الكارت فاضي ""
+
+3 ضغطات على «اطلب» (Slow 3G)   السيرفر استلم HEAD واحد، وبعدها thanks.html
+المسودة بعد النجاح               قبل التصليح: لسه موجودة   بعد clearInterval: null
+Offline                          «الطلب متبعتش (النت فاصل؟)...»، الزرار رجع «اطلب»، والاسم زي ما هو
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'فكرة', dir: "tutor-form", t: R`فورم لنشاط حقيقي حواليك`, what: R`اختار نشاط تعرفه (درس خصوصي، ورشة تصليح، ماتش كورة في الحي) واعمل الفورم اللي هيستقبل الطلبات بتاعته: انت اللي تقرر الحقول وأنواعها والقواعد والرسايل.`, done: R`كل حقل ليه سبب مكتوب في تعليق (ليه النوع ده وليه required أو لأ)، و ٣ أصحاب ملوه من موبايلاتهم من غير ما يسألوك حاجة، و axe صفر violations.`, ext: R`اربطه بـ Google Sheets أو بـ backend بسيط من تاب Node، وابعت إيميل تأكيد.`, sol: R`نسخة نموذجية: فورم حجز حصص خصوصي لمدرس رياضيات متخيل. التعليقات في الكود هي الجزء المهم: كل حقل جنبه ليه هو موجود وليه النوع ده.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز حصة رياضيات</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #eef2ff; color: #1e1b4b; }
+  form { max-width: 460px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 22px; }
+  .field { display: grid; gap: 4px; }
+  label, legend { font-weight: 600; }
+  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #a5b4fc; border-radius: 8px; }
+  fieldset { border: 1px solid #c7d2fe; border-radius: 10px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .hint { color: #6366f1; font-size: 14px; }
+  /* red only after the person touched the field, not the moment the page opens */
+  input:user-invalid, select:user-invalid { border-color: #b91c1c; background: #fef2f2; }
+  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #4338ca; color: white; }
+</style>
+</head>
+<body>
+<main>
+<form method="get">
+  <h1>احجز حصة رياضيات مع أستاذ حمدي</h1>
+
+  <!-- الاسم: لازم، عشان المدرس يعرف بيكلم مين -->
+  <div class="field">
+    <label for="student">اسم الطالب</label>
+    <input id="student" name="student" autocomplete="off" required>
+  </div>
+
+  <!-- رقم ولي الأمر مش الطالب: هو اللي بيدفع وبيأكّد الميعاد. tel عشان كيبورد الأرقام -->
+  <div class="field">
+    <label for="parent">موبايل ولي الأمر</label>
+    <input id="parent" name="parent" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
+  </div>
+
+  <!-- select مش radio: ٦ اختيارات كتير على أزرار جنب بعض في الموبايل -->
+  <div class="field">
+    <label for="grade">السنة الدراسية</label>
+    <select id="grade" name="grade" required>
+      <option value="">اختار…</option>
+      <option>أولى إعدادي</option><option>تانية إعدادي</option><option>تالتة إعدادي</option>
+      <option>أولى ثانوي</option><option>تانية ثانوي</option><option>تالتة ثانوي</option>
+    </select>
+  </div>
+
+  <!-- radio: اختيار واحد من ٢ بس، فكله ظاهر من غير ضغط -->
+  <fieldset>
+    <legend>نوع الحصة</legend>
+    <label><input type="radio" name="kind" value="home" required> في البيت</label>
+    <label><input type="radio" name="kind" value="online"> أونلاين</label>
+  </fieldset>
+
+  <!-- checkboxes: الطالب ممكن يختار أكتر من يوم -->
+  <fieldset>
+    <legend>الأيام المناسبة</legend>
+    <label><input type="checkbox" name="days" value="sat"> السبت</label>
+    <label><input type="checkbox" name="days" value="mon"> الاتنين</label>
+    <label><input type="checkbox" name="days" value="wed"> الأربع</label>
+  </fieldset>
+
+  <!-- مش required: مش كل طالب عنده حاجة معيّنة يقولها -->
+  <div class="field">
+    <label for="topic">في درس معيّن صعب عليك؟ (اختياري)</label>
+    <textarea id="topic" name="topic" rows="3" maxlength="300"></textarea>
+    <span class="hint">مثلًا: المعادلات، الهندسة</span>
+  </div>
+
+  <button>ابعت الطلب</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 640 700 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز حصة رياضيات</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #eef2ff; color: #1e1b4b; }
+  form { max-width: 460px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 22px; }
+  .field { display: grid; gap: 4px; }
+  label, legend { font-weight: 600; }
+  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #a5b4fc; border-radius: 8px; }
+  fieldset { border: 1px solid #c7d2fe; border-radius: 10px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .hint { color: #6366f1; font-size: 14px; }
+  /* red only after the person touched the field, not the moment the page opens */
+  input:user-invalid, select:user-invalid { border-color: #b91c1c; background: #fef2f2; }
+  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #4338ca; color: white; }
+</style>
+</head>
+<body>
+<main>
+<form method="get">
+  <h1>احجز حصة رياضيات مع أستاذ حمدي</h1>
+
+  <!-- الاسم: لازم، عشان المدرس يعرف بيكلم مين -->
+  <div class="field">
+    <label for="student">اسم الطالب</label>
+    <input id="student" name="student" autocomplete="off" required>
+  </div>
+
+  <!-- رقم ولي الأمر مش الطالب: هو اللي بيدفع وبيأكّد الميعاد. tel عشان كيبورد الأرقام -->
+  <div class="field">
+    <label for="parent">موبايل ولي الأمر</label>
+    <input id="parent" name="parent" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
+  </div>
+
+  <!-- select مش radio: ٦ اختيارات كتير على أزرار جنب بعض في الموبايل -->
+  <div class="field">
+    <label for="grade">السنة الدراسية</label>
+    <select id="grade" name="grade" required>
+      <option value="">اختار…</option>
+      <option>أولى إعدادي</option><option>تانية إعدادي</option><option>تالتة إعدادي</option>
+      <option>أولى ثانوي</option><option>تانية ثانوي</option><option>تالتة ثانوي</option>
+    </select>
+  </div>
+
+  <!-- radio: اختيار واحد من ٢ بس، فكله ظاهر من غير ضغط -->
+  <fieldset>
+    <legend>نوع الحصة</legend>
+    <label><input type="radio" name="kind" value="home" required> في البيت</label>
+    <label><input type="radio" name="kind" value="online"> أونلاين</label>
+  </fieldset>
+
+  <!-- checkboxes: الطالب ممكن يختار أكتر من يوم -->
+  <fieldset>
+    <legend>الأيام المناسبة</legend>
+    <label><input type="checkbox" name="days" value="sat"> السبت</label>
+    <label><input type="checkbox" name="days" value="mon"> الاتنين</label>
+    <label><input type="checkbox" name="days" value="wed"> الأربع</label>
+  </fieldset>
+
+  <!-- مش required: مش كل طالب عنده حاجة معيّنة يقولها -->
+  <div class="field">
+    <label for="topic">في درس معيّن صعب عليك؟ (اختياري)</label>
+    <textarea id="topic" name="topic" rows="3" maxlength="300"></textarea>
+    <span class="hint">مثلًا: المعادلات، الهندسة</span>
+  </div>
+
+  <button>ابعت الطلب</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خلفية بنفسجي فاتح وكارت أبيض فيه العنوان والحقول. نوع الحصة والأيام كل واحد في مربع بحدود فاتحة والاختيارات جنب بعض. وأول ما تفتح الصفحة **مفيش ولا حقل أحمر**. دوس «ابعت» والفورم فاضي: الحقول الناقصة بتبقى حمرا والـ focus بيروح لأول واحد.
+
+**ليه اخترت كده:**
+- **مين بيملا الفورم؟** ولي الأمر غالبًا، فالموبايل اللي بنطلبه بتاعه هو.
+- **كل نوع بسبب:** ٦ سنين دراسية = [[select]]؛ اختيارين بس = [[radio]] ظاهرين؛ أكتر من يوم = [[checkbox]]؛ كلام حر = [[textarea]] بـ [[maxlength]].
+- **الأيام مش required:** لو مفيش يوم مناسب المدرس يتصل ويتفقوا. الحقل الإجباري اللي ملوش لازمة بيخلي ناس تقفل الصفحة.
+- **[[:user-invalid]] مش [[:invalid]]:** [[:invalid]] بيلوّن الحقول الإجبارية بالأحمر أول ما الصفحة تفتح، قبل ما حد يكتب أي حاجة. [[:user-invalid]] بيستنى لحد ما الشخص يلمس الحقل أو يدوس «ابعت».
+
+~~~text الناتج (Chrome)
+أول ما الصفحة تفتح     7 عناصر :invalid، و 0 منهم :user-invalid (مفيش أحمر)
+«ابعت» والفورم فاضي     5 حقول بقت حمرا (الاسم، والموبايل، والسنة، والاختيارين)، والـ focus على #student
+axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
 ~~~` },
       ],
+      l: 1,
+      n: "اختيارات بـ fieldset، والنوع الصح لكل حقل، و validation المتصفح من JavaScript، وأخطاء واضحة للكل",
       items: [
         {
-          cmd: "flexbox",
+          cmd: "fieldset و radio",
           ref: [
-            { t: "MDN: align-items", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/align-items" },
-            { t: "MDN: justify-content", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/justify-content" },
-            { t: "MDN: min-height", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-height" },
-            { t: "MDN: vh", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Values_and_units/Numeric_data_types" },
-            { t: "MDN: flex-direction", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-direction" },
-            { t: "MDN Curriculum: CSS text styling", url: "https://developer.mozilla.org/en-US/curriculum/core/css-text-styling/" },
-            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+            { t: "WHATWG: the fieldset element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-fieldset-element" },
+            { t: "MDN: <fieldset>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/fieldset" },
+            { t: "MDN: <input type=\"radio\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/radio" },
+            { t: "WHATWG: the legend element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-legend-element" },
+            { t: "MDN: <legend>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/legend" },
+            { t: "WHATWG: the select element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-select-element" },
+            { t: "MDN: <select>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/select" },
+            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
           ],
-          title: "رص عناصر جنب بعض واتحكم في المسافات",
-          desc: R`[[display: flex]] على الأب بيخلي أولاده يترصّوا في صف. [[justify-content]] بيوزّعهم على الاتجاه الأساسي (أفقي)، و [[align-items]] بيظبطهم على الاتجاه التاني (رأسي)، و [[gap]] المسافة بينهم. و [[flex-direction: column]] بيقلب الاتجاه الأساسي لرأسي.
-
-أشهر استخدام: navbar، لوجو في ناحية وروابط في النص وزرار في الناحية التانية.`,
-          example: R`<nav class="nav">
-  <a class="logo" href="/">متجري</a>
-  <ul class="links">
-    <li><a href="/products">المنتجات</a></li>
-    <li><a href="/about">عننا</a></li>
-  </ul>
-  <a class="cta" href="/signup">ابدأ</a>
-</nav>
-<style>
-  .nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-  .links { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; }
-  .center { display: flex; align-items: center; justify-content: center; min-height: 50vh; }
-</style>`,
-          try: R`اعمل الـ nav ده، وغيّر [[justify-content]] لـ [[flex-start]] و [[center]] و [[space-around]]. وبعدين حط [[dir="rtl"]] على html وشوف اللوجو راح يمين لوحده: flex بيمشي مع اتجاه الصفحة.`,
-          flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[.row { display: flex; flex-direction: column; justify-content: center; height: 300px; }]] وجواه ٣ مربعات كل واحد 40 × 40. هيتوسّطوا أفقي ولا رأسي؟ والمربع الأول هيبدأ من top كام؟ اكتب توقعك وبعدين قيس بـ [[getBoundingClientRect()]].`, done: R`عرفت إن [[justify-content]] بقى رأسي لأن الاتجاه column: المربعات فوق بعض في نص الارتفاع، و top بتاعهم 90 و 130 و 170 ((300 - 120) ÷ 2 = 90)، وأفقيًا لازقين في بداية السطر (اليمين في rtl) لأن مفيش [[align-items: center]].`, sol: R`~~~live 300 300
+            { lvl: 'تطبيق', t: R`**أشكال:** اختيار باقة في جيم متخيل بـ ٣ كروت: كل كارت [[<label class="plan">]] جواه radio ونص، والـ radio مخفي بالشكل بس (حجم 1px و [[clip-path: inset(50%)]])، والكارت المختار حدوده بلون مختلف بـ [[.plan:has(input:checked)]].`, done: R`الضغط على أي حتة في الكارت بيختاره، والأسهم بتنقّل بين الكروت، و [[getComputedStyle(card).borderColor]] على المختار بيرجّع اللون اللي حطيته في الـ :has، ومفيش ولا سطر JavaScript.`, sol: R`~~~live 310 310
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>column</title>
-<style>
-  body { margin: 0; }
-  .row { display: flex; flex-direction: column; justify-content: center; height: 300px; background: #f4f4f5; }
-  .row div { width: 40px; height: 40px; background: #0f766e; }
-</style>
-</head>
-<body>
-<div class="row"><div></div><div></div><div></div></div>
-</body>
-</html>
-~~~
-
-**الإجابة:** رأسي. [[justify-content]] مش معناها «أفقي»، معناها «على المحور الرئيسي». والمحور الرئيسي بييجي من [[flex-direction]]: في [[row]] أفقي، وفي [[column]] رأسي. فلما غيّرنا الاتجاه، الخاصيتين بدّلوا شغلهم.
-
-**الحساب:** الفاضي = 300 − 120 = 180، والتوسيط بيسيب نصه فوق: 180 ÷ 2 = 90. وبعدين كل مربع 40.
-
-**وأفقيًا:** المحور التاني شغل [[align-items]]. افتراضيها [[stretch]]، لكن المربعات عرضها محدد، فبتفضل عند بداية السطر، يعني يمين في RTL.
-
-**الغلطة الشائعة:** تحفظ «justify أفقي و align رأسي». الجملة دي صح في [[row]] بس.
-
-~~~text الناتج
-top المربعات: 90 , 130 , 170
-right المربعات: 1280 , 1280 , 1280  (عرض الصفحة 1280، يعني يمين في rtl)
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** navbar لـ «مخبز الريحان» (اسم متخيل): لوجو في البداية، و ٤ روابط، وزرارين («اطلب» و «احجز») في النهاية، بـ flex بس. تحت 768 الروابط تستخبى ويظهر زرار ☰ مكانها.`, done: R`على 1280 و 768: كله في سطر واحد، واللوجو لازق في حافة البداية (يمين في rtl) والزرارين في حافة النهاية. على 360: [[document.documentElement.scrollWidth]] = 360 (مفيش scroll أفقي) والـ ☰ باين كله. وشارة [[flex]] في DevTools › Elements بترسم الأولاد.`, sol: R`~~~live 160 160
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مخبز الريحان</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui; }
-  .nav { display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-block-end: 1px solid #e4e4e7; }
-  .nav__logo { font-weight: 800; color: #14532d; text-decoration: none; }
-  .nav__links { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; }
-  .nav__links a { color: inherit; text-decoration: none; white-space: nowrap; }
-  .nav__actions { display: flex; gap: 8px; margin-inline-start: auto; }
-  .btn { padding: 8px 14px; font: inherit; white-space: nowrap; }
-  .nav__toggle { display: none; min-width: 44px; min-height: 44px; font: inherit; }
-
-  @media (max-width: 767px) {
-    .nav__links { display: none; }
-    .nav__toggle { display: block; }
-  }
-</style>
-</head>
-<body>
-<header>
-  <nav class="nav" aria-label="الرئيسية">
-    <a class="nav__logo" href="#home">مخبز الريحان</a>
-    <ul class="nav__links">
-      <li><a href="#menu">المنيو</a></li>
-      <li><a href="#branches">الفروع</a></li>
-      <li><a href="#offers">العروض</a></li>
-      <li><a href="#contact">تواصل</a></li>
-    </ul>
-    <div class="nav__actions">
-      <button class="btn" type="button">اطلب</button>
-      <button class="btn" type="button">احجز</button>
-    </div>
-    <button class="nav__toggle" type="button" aria-label="افتح القايمة">☰</button>
-  </nav>
-</header>
-<main><h1>عيش طازة كل يوم</h1></main>
-</body>
-</html>
-~~~
-
-**السطر الأهم:** [[margin-inline-start: auto]] على الزرارين. الـ margin التلقائي بياكل كل الفاضي في ناحيته، فبيزق المجموعة لحافة النهاية. ولأنها [[inline-start]] مش [[left]]، بتشتغل في العربي والإنجليزي.
-
-- [[align-items: center]]: كله على نفس الخط، مهما كان ارتفاعه.
-- [[white-space: nowrap]]: الكلمات متتكسرش لما المكان يقل.
-- [[@media (max-width: 767px)]]: تحت 768 بس. فعلى 768 الروابط لسه ظاهرة.
-- [[aria-label="افتح القايمة"]] على ☰: عشان قارئ الشاشة ميقولش اسم الرمز.
-
-**الغلطة الشائعة:** تخفي الروابط بـ [[display: none]] وتنسى إن الزرار لازم يفتح قايمة فعلًا في موقع حقيقي. ده تمرين layout، والفتح نفسه درس تاني.
-
-~~~text الناتج
-العرض    اللوجو right   الزرارين left   السطر واحد   الروابط    ☰       scrollWidth
-1280     1264           16             أيوه         ظاهرة    مخفي    1280
-768      752           16             أيوه         ظاهرة    مخفي    768
-360      344           76             أيوه         مخفية    ظاهر    360
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة [[dir="rtl"]] فيها nav عليه [[display: flex; gap: 16px]]، وزرار «احجز» آخر ابن عليه [[margin-left: auto]] عشان «يروح للآخر». على 1280 الزرار لازق في الروابط مش في حافة الشاشة. ليه؟ صلّحه بسطر واحد يشتغل في العربي والإنجليزي.`, done: R`فهمت إن [[margin-left: auto]] بياكل الفاضي **شمال** الزرار فبيزقه يمين ناحية الروابط (في المعمل الزرار كان من 973.84 لـ 1003.23 والروابط بتبدأ عند 1019.23). بعد [[margin-inline-start: auto]] الزرار راح لحافة النهاية (left = 16 مع padding 16)، ولو قلبت الصفحة [[dir="ltr"]] بيروح يمين من غير أي تعديل.`, sol: R`~~~live 140 140
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الحجز</title>
-<style>
-  body { margin: 0; font-family: system-ui; }
-  nav { display: flex; gap: 16px; padding: 16px; align-items: center; }
-  .book { margin-inline-start: auto; }
-</style>
-</head>
-<body>
-<header>
-<nav aria-label="الرئيسية">
-  <a href="#a">الرئيسية</a>
-  <a href="#b">المنيو</a>
-  <a href="#c">الفروع</a>
-  <a class="book" href="#d">احجز</a>
-</nav>
-</header>
-<main><h1>المطعم</h1></main>
-</body>
-</html>
-~~~
-
-**السبب:** في RTL العناصر بتبدأ من اليمين، فالزرار آخر واحد ناحية الشمال. و [[margin-left: auto]] بياكل الفاضي **على شماله**، يعني بيزقه يمين، ناحية الروابط. فهو واقف مكانه أصلًا.
-
-**التصليح:** [[margin-inline-start: auto]] معناها «الفاضي في ناحية بداية الزرار». والبداية في RTL يمين، فالزرار بينزق شمال لآخر الصف. وفي LTR البداية شمال، فبينزق يمين. نفس السطر للغتين.
-
-**الغلطة الشائعة:** تحل بـ [[margin-right: auto]] لأنها «اشتغلت». هتبوظ في أول نسخة إنجليزي.
-
-~~~text الناتج
-                          left الزرار    right الزرار
-margin-left: auto         1057.02         1086.41      (لازق في الروابط، آخرها 1102.41)
-margin-inline-start، rtl  16         45.39      (حافة النهاية)
-margin-inline-start، ltr  1234.61         1264      (حافة النهاية التانية)
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** قايمة ٥ عناصر عرض كل واحد 100px في flex عليه [[flex-wrap: wrap]] على شاشة 360. نسخة بـ [[li + li { margin-inline-start: 24px }]]، ونسخة بـ [[gap: 0 24px]]. قيس مكان أول عنصر في السطر التاني في الاتنين.`, done: R`في نسخة الـ margin، العنصر الرابع (أول السطر التاني) right بتاعه 336 بدل 360: داخل 24px عن الحافة لأن الـ margin لسه عليه. في نسخة الـ gap لازق في الحافة (360)، لأن gap بيتحط بين العناصر بس.`, sol: R`~~~live 120 200
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>gap</title>
-<style>
-  body { margin: 0; }
-  ul { display: flex; flex-wrap: wrap; list-style: none; margin: 0 0 16px; padding: 0; }
-  li { width: 100px; height: 40px; background: #bfdbfe; }
-  .a li + li { margin-inline-start: 24px; }
-  .b { gap: 0 24px; }
-</style>
-</head>
-<body>
-<ul class="a"><li>١</li><li>٢</li><li>٣</li><li>٤</li><li>٥</li></ul>
-<ul class="b"><li>١</li><li>٢</li><li>٣</li><li>٤</li><li>٥</li></ul>
-</body>
-</html>
-~~~
-
-**الفرق:** [[li + li]] معناها «كل li قبله li»، فده بيتطبق على الرابع برضه، رغم إنه نزل سطر جديد. الـ CSS مبيعرفش مين نزل، فالرابع بيفضل عليه margin من اليمين.
-
-أما [[gap]] فبيتحط **بين** العناصر المتجاورة في السطر بس. وأول عنصر في كل سطر بيفضل لازق في الحافة.
-
-**[[gap: 0 24px]]:** الأول بين الصفوف، والتاني بين الأعمدة.
-
-**الغلطة الشائعة:** تعالجها بـ margin سالب على الأب، زي الأنظمة القديمة. مبقاش فيه داعي.
-
-~~~text الناتج
-العنصر الرابع (أول السطر التاني)، على 360:
-بالـ margin:  right = 336  (داخل عن الحافة 24px)
-بالـ gap:     right = 360  (لازق في الحافة)
-~~~` },
-            { lvl: 'تحدي', t: R`**أشكال:** وشوش زهر الطاولة (من ١ لـ ٦ نقط) بـ flex بس: كل وش مربع 96 × 96، والنقط بتترتّب بـ [[justify-content]] و [[align-items]] و [[align-self]] و [[flex-direction: column]]. ممنوع [[position]] وممنوع grid.`, done: R`الستة وشوش شكلهم صح، وكل وش فيه خاصية flex واحدة على الأقل مختلفة عن اللي قبله، و grep على الـ CSS مفيهوش [[position]] ولا [[grid]]. والستة جوه صف عليه [[flex-wrap: wrap]] فبيبقوا ٣ × ٢ على 360.`, sol: R`~~~live 200 310
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الزهر</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 16px; font-family: system-ui; }
-  .dice { display: flex; flex-wrap: wrap; gap: 16px; }
-  .face {
-    display: flex;
-    width: 96px;
-    height: 96px;
-    padding: 12px;
-    background: #fafaf9;
-    border: 2px solid #44403c;
-    border-radius: 12px;
-  }
-  .dot { display: block; width: 20px; height: 20px; border-radius: 50%; background: #1c1917; }
-  .col { display: flex; flex-direction: column; justify-content: space-between; }
-
-  .one { justify-content: center; align-items: center; }
-  .two, .three { justify-content: space-between; }
-  .two .dot:last-child, .three .dot:last-child { align-self: flex-end; }
-  .three .dot:nth-child(2) { align-self: center; }
-  .four, .six { justify-content: space-between; }
-  .five { justify-content: space-between; }
-  .five .col:nth-child(2) { justify-content: center; }
-</style>
-</head>
-<body>
-<main>
-<h1>وشوش الزهر</h1>
-<div class="dice">
-  <div class="face one" role="img" aria-label="وش ١"><span class="dot"></span></div>
-  <div class="face two" role="img" aria-label="وش ٢"><span class="dot"></span><span class="dot"></span></div>
-  <div class="face three" role="img" aria-label="وش ٣"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-  <div class="face four" role="img" aria-label="وش ٤">
-    <span class="col"><span class="dot"></span><span class="dot"></span></span>
-    <span class="col"><span class="dot"></span><span class="dot"></span></span>
-  </div>
-  <div class="face five" role="img" aria-label="وش ٥">
-    <span class="col"><span class="dot"></span><span class="dot"></span></span>
-    <span class="col"><span class="dot"></span></span>
-    <span class="col"><span class="dot"></span><span class="dot"></span></span>
-  </div>
-  <div class="face six" role="img" aria-label="وش ٦">
-    <span class="col"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-    <span class="col"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-  </div>
-</div>
-</main>
-</body>
-</html>
-~~~
-
-**كل وش بفكرة:**
-
-- ١: توسيط في المحورين.
-- ٢: [[space-between]] يودّي النقطتين للحافتين، و [[align-self: flex-end]] ينزّل التانية.
-- ٣: نفس ٢، والوسطى [[align-self: center]].
-- ٤ و ٦: عمودين، كل عمود flex رأسي بـ [[space-between]].
-- ٥: ٣ أعمدة، والوسطاني [[justify-content: center]].
-
-**الفكرة العامة:** لما شكل يبقى صعب بمستوى واحد، قسّمه لأعمدة، وكل عمود flex جوه flex. ده nesting مش حيلة.
-
-**الغلطة الشائعة:** تستخدم [[margin]] بأرقام لتحريك النقط. أول ما مقاس الوش يتغيّر الشكل يبوظ. هنا لو غيّرت [[.face]] لـ 120 الشكل هيفضل صح.
-
-~~~text الناتج
-عدد النقط في كل وش: 1 , 2 , 3 , 4 , 5 , 6
-مكان نقطة وش ١ من مركز الوش: 0 , 0
-وش ٣: قطر من (62, 14) لـ (14, 62)
-grep "position" و "grid" في الـ CSS: 0 نتيجة
-على 360: الصفوف 3 × 3، و scrollWidth = 360
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** شاشة شات: رسايلك ناحية النهاية ورسايل التاني ناحية البداية، وكل فقاعة [[max-width: 75%]]، بـ [[align-self]] أو [[margin-inline-start: auto]] من غير [[left]] و [[right]].`, done: R`لما تغيّر [[dir]] على الـ html من rtl لـ ltr، الرسايل بتبدّل ناحيتها لوحدها من غير ولا سطر CSS زيادة، وعلى 360 مفيش فقاعة أعرض من 270 (75% من 360) وفقاعة فيها كلمة طويلة بتلف ومبتعملش scroll أفقي.`, sol: R`~~~live 380 400
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الشات</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui; }
-  .chat { display: flex; flex-direction: column; gap: 8px; padding: 12px; }
-  .msg {
-    max-width: 75%;
-    padding: 8px 12px;
-    border-radius: 12px;
-    background: #e4e4e7;
-    align-self: flex-start;
-    overflow-wrap: anywhere;
-  }
-  .msg--me { align-self: flex-end; background: #0f766e; color: #fff; }
-</style>
-</head>
-<body>
-<main>
-<h1>الرسايل</h1>
-<section class="chat" aria-label="المحادثة">
-  <p class="msg">أهلًا، الطلب وصل؟</p>
-  <p class="msg msg--me">أيوه وصل، شكرًا جدًا</p>
-  <p class="msg">ده الكود: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJ</p>
-</section>
-</main>
-</body>
-</html>
-~~~
-
-**ليه مفيش سطر لكل لغة:** [[flex-start]] و [[flex-end]] مرتبطين باتجاه السطر، مش بيمين وشمال. فلما تقلب [[dir]]، المحور كله بيتقلب، والرسايل بتبدّل ناحيتها.
-
-- [[flex-direction: column]]: الرسايل تحت بعض. فـ [[align-self]] بقى أفقي.
-- [[max-width: 75%]] نسبة من عرض الأب، مش الشاشة. عشان كده الرقم هنا أقل من 270.
-- [[overflow-wrap: anywhere]]: الكلمة الطويلة تتكسر، وتتحسب كمان في الحد الأدنى لعرض العنصر.
-
-**الغلطة الشائعة:** تستخدم [[float: left]] أو [[position]] أو [[margin-left]]. كلها بتحتاج سطر تاني للعربي.
-
-~~~text الناتج
-                   أول رسالة (التاني)       رسالتي
-rtl: x بداية       202                   12
-ltr: x بداية       12                   195
-
-أعرض فقاعة على 360: 252px
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-          ],
-          deep: {
-            why: "قبل flex، توسيط حاجة رأسيًا أو عمل navbar كان floats و hacks. flex بيحل كل مشاكل «رص حاجات في خط واحد وتوزيع المسافة بينها»، ودا أغلب أي layout.",
-            how: R`flex ليه محورين: الـ main axis (اتجاه [[flex-direction]]، والافتراضي row) والـ cross axis (العمودي عليه). [[justify-content]] دايمًا على الـ main، و [[align-items]] دايمًا على الـ cross. لما تقلب لـ column، justify بقى رأسي و align بقى أفقي، ودي أكتر حاجة بتلخبط.
-
-[[row]] مش معناها «من الشمال لليمين»: معناها «في اتجاه الكتابة». في صفحة [[dir="rtl"]] الـ row بيبدأ من اليمين، و [[flex-start]] يمين. عشان كده flex بيشتغل في العربي من غير ولا تعديل.
-
-[[align-items]] الافتراضي [[stretch]]: كل الأولاد بياخدوا ارتفاع أطول واحد فيهم. عشان كده كروت جنب بعض بتطلع بنفس الطول لوحدها. لو مش عايز كده حط [[align-items: start]] أو [[center]].
-
-[[gap]] بيحط مسافة بين العناصر بس (مش قبل الأول ولا بعد الآخر)، وأنضف من margin على كل عنصر. و [[flex-wrap: wrap]] بيخلي العناصر تنزل سطر جديد لو المكان مكفاش.`,
-            when: "أي حاجة في اتجاه واحد: navbar، وزراير جنب بعض، وأيقونة جنب كلام، وكارت محتواه فوق بعض، والتوسيط.",
-            mistakes: R`تفتكر [[justify-content: center]] بيوسّط أفقي في column: لأ، ده بقى رأسي، والأفقي بقى [[align-items]]. [[margin-left: auto]] عشان تزق عنصر للآخر، وفي العربي بيروح الناحية الغلط: استخدم [[margin-inline-start: auto]] ([[ms-auto]] في Tailwind). و [[space-between]] مع عنصرين بس وتستغرب ليه مفيش حاجة في النص.`
-          },
-          teach: R`## flex بيرص أولاد العنصر في خط واحد
-
-[[display: flex]] بيتكتب على **الأب**، والتأثير بيبان على **أولاده المباشرين**. حطينا المثال في صفحة عرضها 1200 (من غير margin على الـ body) وقسنا مكان كل عنصر بـ [[getBoundingClientRect()]]، ودي دالة بترجع مكان العنصر على الشاشة: [[left]] (بُعده عن الشمال) و [[width]] (عرضه).
-
----
-
-## ١. الـ HTML
-
-~~~text index.html
-<nav class="nav">
-  <a class="logo" href="/">متجري</a>
-  <ul class="links">
-    <li><a href="/products">المنتجات</a></li>
-    <li><a href="/about">عننا</a></li>
-  </ul>
-  <a class="cta" href="/signup">ابدأ</a>
-</nav>
-~~~
-
-- [[<nav>]] عنصر معناه «قايمة تنقّل». ليه ٣ أولاد مباشرين بس: اللوجو، والـ [[<ul>]]، وزرار «ابدأ». الـ [[<li>]] أولاد الـ ul مش أولاد الـ nav.
-- [[<ul>]] = unordered list (قايمة نقط)، و [[<li>]] = list item.
-
-## ٢. [[.nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }]]
-
-- [[display: flex]]: الأولاد التلاتة يترصّوا جنب بعض في صف (الاتجاه الافتراضي [[row]]).
-- [[justify-content]]: توزيع الأولاد على **اتجاه الصف** (أفقي هنا). [[space-between]] = الأول في البداية، والأخير في النهاية، والفاضي يتقسم بينهم.
-- [[align-items: center]]: توسيط على **الاتجاه التاني** (رأسي).
-- [[gap: 1rem]]: مسافة 16px بين كل ابن واللي بعده.
-
-~~~text الناتج (ltr، عرض 1200)
-logo   left: 0        width: 36.72
-links  left: 566.28   width: 88.22
-cta    left: 1184.06  width: 15.94
-~~~
-
-اللوجو لازق في الشمال، و «ابدأ» آخره عند 1184.06 + 15.94 = 1200 بالظبط، والروابط في النص.
-
-## ٣. [[.links { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; }]]
-
-flex جوه flex: الـ ul نفسه ابن في الـ nav، وفي نفس الوقت أب لـ li بيرصّهم جنب بعض بمسافة 24px. و [[list-style: none]] بيشيل النقط، و [[padding: 0]] و [[margin: 0]] بيشيلوا المسافات اللي المتصفح بيحطها للقوايم من نفسه.
-
-## ٤. [[.center { display: flex; align-items: center; justify-content: center; min-height: 50vh; }]]
-
-التوسيط في الاتجاهين. حطينا جواه كلمة: الـ div ارتفاعه 400 (نص شاشة 800)، والكلمة اتحطت عند top = 209 و left = 577، يعني في النص بالظبط.
-
----
-
-## التجربة: غيّر [[justify-content]]
-
-نفس الـ nav بأربع قيم، والأرقام هي [[left]] لكل ابن:
-
-| القيمة | logo | links | cta | المعنى |
-|---|---|---|---|---|
-| [[space-between]] | 0 | 566.28 | 1184.06 | الفاضي بينهم |
-| [[flex-start]] | 0 | 52.72 | 156.94 | لازقين في البداية والمسافة الـ gap بس |
-| [[center]] | 513.56 | 566.28 | 670.5 | متجمّعين في النص |
-| [[space-around]] | 171.19 | 566.28 | 1012.88 | كل واحد حواليه مسافة متساوية |
-
-في [[flex-start]]: الروابط عند 36.72 + 16 = 52.72، يعني عرض اللوجو + الـ gap. وفي [[space-around]] الفاضي = 1200 - العروض - الـ gap = 1027.12، والطرف خد نص نصيب العنصر: 1027.12 ÷ 3 ÷ 2 = 171.19.
-
-## ومع [[dir="rtl"]]
-
-| القيمة | logo | cta |
-|---|---|---|
-| [[space-between]] | 1163.28 (أقصى اليمين) | 0 (أقصى الشمال) |
-| [[flex-start]] | 1163.28 | 1027.13 |
-
-نفس الـ CSS، بس [[flex-start]] بقت يمين: [[start]] معناها «بداية السطر»، وبداية السطر في العربي يمين.
-
-## الخلاصة
-
-| الخاصية | على مين | بتعمل إيه |
-|---|---|---|
-| [[display: flex]] | الأب | الأولاد في صف |
-| [[justify-content]] | الأب | توزيع على اتجاه الصف |
-| [[align-items]] | الأب | ترتيب على الاتجاه التاني |
-| [[gap]] | الأب | مسافة بين الأولاد بس |
-| [[flex-direction: column]] | الأب | الصف يبقى عمود والاتجاهين يتبدلوا |
-
-- flex بيأثر على الأولاد المباشرين بس، و [[start]] و [[end]] بيتقلبوا مع اتجاه الصفحة لوحدهم.`,
-          lines: [
-            R`بداية الـ navbar: عنصر [[<nav>]] معناه «قايمة تنقّل»، وهو الأب اللي هنكتب عليه [[display: flex]].`,
-            R`اللوجو لينك للرئيسية، وده أول ابن مباشر للـ nav فهيقعد في أول السطر.`,
-            R`الروابط في قايمة [[<ul>]] (semantic)، والقايمة كلها بتتحسب ابن واحد بس من ولاد الـ nav.`,
-            R`أول لينك جوه [[<li>]]: ده ابن الـ ul مش ابن الـ nav، فـ flex بتاع الـ nav مش بيلمسه.`,
-            R`تاني لينك، وهيترص جنب الأول لأن الـ ul نفسه عليه flex في السطر التاني من الـ CSS.`,
-            R`قفلة القايمة: كده الـ nav ليه تلات أولاد مباشرين بس (لوجو وقايمة وزرار).`,
-            R`زرار «ابدأ»: الابن التالت والأخير، و [[space-between]] هيزقه لآخر السطر.`,
-            R`قفلة الـ nav، وبعدها الـ CSS اللي بيرتّب الأولاد.`,
-            R`CSS جوه الصفحة نفسها عشان التجربة تبقى ملف واحد، وفي مشروع حقيقي بيبقى في ملف لوحده.`,
-            "الـ nav: الأولاد في صف ومتوسّطين رأسي، والمساحة الفاضية بينهم (اللوجو في ناحية والزرار في الناحية التانية).",
-            "الروابط نفسها flex تاني جوه الأول، وشيلنا شكل القايمة الافتراضي.",
-            "أشهر 3 خصائص: أي حاجة في النص أفقي ورأسي.",
-            R`قفلة الـ [[<style>]]، وكده المثال خلص.`
-          ],
-          sol: R`على شاشة عرضها 1200 (ltr): [[space-between]] اللوجو لازق في أقصى الشمال، و «ابدأ» في أقصى اليمين، واللينكات في النص. [[flex-start]]: التلاتة لازقين في بعض ناحية الشمال والمسافة بينهم الـ [[gap]] بس (16px). [[center]]: التلاتة متجمّعين في نص الشاشة. [[space-around]]: كل عنصر حواليه مسافة متساوية، فالطرفين بعاد عن الحافة بنص المسافة اللي بين العناصر.
-
-بعد [[dir="rtl"]] على html ومع [[space-between]]: اللوجو بقى على أقصى اليمين و «ابدأ» على أقصى الشمال، ومن غير ما تغيّر ولا سطر CSS. ده لأن [[flex-start]] معناها «بداية السطر» مش «الشمال»، وبداية السطر في العربي يمين.
-
-لو اللوجو فضل على الشمال في rtl، غالبًا عندك [[flex-direction: row-reverse]] أو [[margin-left: auto]] مكتوب صريح، أو حطيت [[dir]] على عنصر تاني مش على الـ html أو الـ nav أو أب ليها.`
-        },
-        {
-          cmd: "flex: 1",
-          ref: [
-            { t: "MDN: flex", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex" },
-            { t: "MDN: flex-wrap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-wrap" },
-            { t: "MDN: flex-basis", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-basis" },
-            { t: "MDN: flex-grow", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-grow" },
-            { t: "MDN: flex-shrink", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-shrink" },
-          ],
-          title: "مين ياخد المساحة الفاضية ومين يتزنق",
-          desc: R`كل ابن في flex ليه 3 قيم: [[flex-grow]] (ياخد من المساحة الفاضية ولا لأ)، و [[flex-shrink]] (يصغر لو المكان مش كفاية ولا لأ)، و [[flex-basis]] (حجمه قبل التوزيع). [[flex: 1]] اختصار لـ [[1 1 0%]]: كبّر وصغّر وابدأ من صفر، فكل اللي عليهم flex: 1 بياخدوا نفس المساحة.
-
-وأشهر bug: كلام طويل جوه عنصر flex مش راضي يصغر وبيطلع برا. الحل [[min-width: 0]].`,
-          example: R`<div class="row">
-  <img class="avatar" src="/u.jpg" alt="" width="48" height="48">
-  <div class="info">
-    <p class="name">اسم طويل جدا جدا ممكن يكسر الشكل لو ملوش حدود</p>
-  </div>
-  <button>متابعة</button>
-</div>
-<style>
-  .row { display: flex; align-items: center; gap: 12px; }
-  .avatar { flex: none; border-radius: 50%; }
-  .info { flex: 1; min-width: 0; }
-  .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cards { display: flex; flex-wrap: wrap; gap: 1rem; }
-  .cards > * { flex: 1 1 250px; }
-</style>`,
-          try: R`امسح [[min-width: 0]] وشوف الاسم بيزق الزرار برا الشاشة على الموبايل. رجّعه وشوف الـ «...» ظهرت. وبعدين غيّر عرض الشاشة وشوف الكروت بتنزل سطر.`,
-          flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أب عرضه 600 فيه ٣ عناصر فاضيين: [[flex: 1]] و [[flex: 2]] و [[flex: 1]]. وأب تاني فيه عنصرين عليهم [[flex-grow: 1]] بس، واحد فيه حرف وواحد فيه جملة طويلة. العروض هتبقى كام؟`, done: R`الأول 150 و 300 و 150 بالظبط. التاني مش متساوي (في المعمل 220.42 و 379.58) لأن الـ basis فضل [[auto]] = حجم المحتوى، والفاضي بس هو اللي اتقسم بالنص. ولما تغيّرهم لـ [[flex: 1]] بيبقوا 300 و 300.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>flex</title>
-<style>
-  .box { display: flex; width: 600px; margin-block-end: 8px; }
-  .box > div { background: #bfdbfe; }
-  .a > div:nth-child(2) { flex: 2; }
-  .a > div:not(:nth-child(2)) { flex: 1; }
-  .b > div { flex-grow: 1; }
-</style>
-</head>
-<body>
-<div class="box a"><div></div><div></div><div></div></div>
-<div class="box b"><div>أ</div><div>جملة طويلة بتاخد مكان أكتر من الحرف</div></div>
-</body>
-</html>
-~~~
-
-**الفرق بين** [[flex: 1]] **و** [[flex-grow: 1]]**:**
-
-| الكتابة | basis | معناها |
-|---|---|---|
-| [[flex: 1]] | 0 | قسّم **كل** المساحة بالنسبة |
-| [[flex-grow: 1]] لوحده | auto | خد حجم محتواك، وقسّم **الفاضي** بس |
-
-في الأب الأول: الكل بيبدأ من صفر، و 600 ÷ 4 = 150 لكل حصة، فـ 150 و 300 و 150.
-
-في الأب التاني: كل عنصر بيبدأ من حجم كلامه، والفاضي بيتقسم بالنص. فالفرق بينهم هو فرق الكلام نفسه.
-
-**الغلطة الشائعة:** تفتكر إن [[flex-grow: 1]] معناها «متساويين». لو عايز أعمدة متساوية مهما كان المحتوى، [[flex: 1]].
-
-~~~text الناتج
-flex: 1 و 2 و 1:    150 و 300 و 150
-flex-grow: 1 بس:    202.06 و 397.94
-بعد flex: 1:        300 و 300
-~~~` },
-            { lvl: 'تطبيق', t: R`**مسألة:** أب 1000 و [[gap: 20px]]، فيه ٣ أولاد: [[flex: 1 1 200px]] و [[flex: 2 1 300px]] و [[flex: 1 1 100px]]. احسب العروض بالورقة والقلم، وبعدين نفس الأولاد في أب عرضه 400. وبعدين قيس.`, done: R`على 1000: الفاضي 1000 - 600 - 40 = 360، بيتقسم 1 : 2 : 1، فالعروض 290 و 480 و 190. على 400: الناقص 240 بيتشال بنسبة basis × shrink (200 : 300 : 100)، فالعروض 120 و 180 و 60. والأرقام دي طلعت بالظبط في Chrome (لو الأولاد عليهم [[min-width: 0]]).`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الحساب</title>
-<style>
-  .box { display: flex; gap: 20px; }
-  .box > div { min-width: 0; background: #bfdbfe; height: 40px; }
-  .x { flex: 1 1 200px; }
-  .y { flex: 2 1 300px; }
-  .z { flex: 1 1 100px; }
-</style>
-</head>
-<body>
-<div class="box" style="width: 1000px"><div class="x"></div><div class="y"></div><div class="z"></div></div>
-<div class="box" style="width: 400px; margin-block-start: 8px"><div class="x"></div><div class="y"></div><div class="z"></div></div>
-</body>
-</html>
-~~~
-
-**على 1000 (فيه فاضي، فـ grow هو اللي بيشتغل):**
-
-| الخطوة | الحساب |
-|---|---|
-| الـ basis والـ gaps | 200 + 300 + 100 + 40 = 640 |
-| الفاضي | 1000 − 640 = 360 |
-| الحصة (1 + 2 + 1 = 4) | 360 ÷ 4 = 90 |
-| العروض | 200+90 = 290 ، 300+180 = 480 ، 100+90 = 190 |
-
-**على 400 (مفيش مكان، فـ shrink هو اللي بيشتغل):**
-
-| الخطوة | الحساب |
-|---|---|
-| الناقص | 640 − 400 = 240 |
-| النسبة basis × shrink | 200 : 300 : 100 = 2 : 3 : 1 |
-| المتشال | 80 و 120 و 40 |
-| العروض | 120 و 180 و 60 |
-
-**الفرق المهم:** الـ grow بيتوزّع بالأرقام بس، أما الـ shrink فبيتضرب في الـ basis. فالعنصر الكبير بيتنازل أكتر.
-
-**الغلطة الشائعة:** تنسى الـ [[gap]] في الحساب. وكمان تنسى [[min-width: 0]]: عناصر flex مبتصغرش عن محتواها من غيره.
-
-~~~text الناتج
-أب 1000: 290 و 480 و 190
-أب 400:  120 و 180 و 60
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** لستة أعضاء: دايرة [[<div class="avatar">]] عليها [[width: 40px; height: 40px; border-radius: 50%; overflow: hidden]] وجواها الصورة، جنب اسم طويل وزرار، والدايرة بتبقى بيضاوي على الموبايل. لاقي السبب وصلّحه، وصلّح كمان الاسم اللي بيزق الزرار برا.`, done: R`على 320 [[getComputedStyle(avatar).width]] = 40px والدايرة مدورة (الحل [[flex: none]] أو [[flex-shrink: 0]])، والاسم مقصوص بـ «…» (الحل [[min-width: 0]] على الـ div بتاعه)، و [[scrollWidth]] = 320.`, sol: R`~~~live 160 160
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الأعضاء</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui; }
-  .member { display: flex; align-items: center; gap: 12px; padding: 12px; }
-  .member__avatar { flex: none; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #a8a29e; }
-  .member__avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
-  .member__info { flex: 1; min-width: 0; }
-  .member__name { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .member button { flex: none; padding: 8px 12px; font: inherit; }
-</style>
-</head>
-<body>
-<main>
-<h1>الأعضاء</h1>
-<div class="member">
-  <div class="member__avatar"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>" alt="" width="40" height="40"></div>
-  <div class="member__info">
-    <p class="member__name">عبد الرحمن محمد عبد الله السيد إبراهيم الشناوي الكبير</p>
-  </div>
-  <button type="button">تواصل</button>
-</div>
-</main>
-</body>
-</html>
-~~~
-
-**المشكلتين وسبب كل واحدة:**
-
-- الدايرة بيضاوي: أي عنصر flex افتراضيًا [[flex-shrink: 1]]، فلما المكان يقل بيصغر، حتى لو [[width]] مكتوبة، والطول لسه 40. الحل [[flex: none]].
-- ليه [[<img>]] مباشر مش بيتزنق: [[min-width: auto]] معناها «ميصغرش عن محتواه»، والصورة محتواها مقاسها نفسه. لكن [[overflow: hidden]] على الـ div بتلغي الحماية دي، وده بالظبط اللي بنكتبه عشان نقص الصورة دايرة.
-- الاسم بيزق الزرار: عناصر flex افتراضيًا [[min-width: auto]]، يعني مبتصغرش عن أطول محتوى. والجملة في سطر واحد طويلة جدًا. الحل [[min-width: 0]] على الأب المباشر للنص.
-
-و [[text-overflow: ellipsis]] محتاجة التلاتة مع بعض: [[white-space: nowrap]] و [[overflow: hidden]] و [[text-overflow]].
-
-**الغلطة الشائعة:** تحط [[min-width: 0]] على الاسم نفسه. لازم على عنصر الـ flex، يعني [[.member__info]].
-
-~~~text الناتج
-على 320:
-                      قبل             بعد
-عرض الدايرة           0px          40px
-ارتفاعها              40px          40px
-scrollWidth           457          320
-الاسم مقصوص بـ …      false          true
-
-اسم متوسط من غير flex: none: الدايرة 6.02px × 40  (بيضاوي)
-اسم طويل: 0px، يعني اختفت خالص
-<img> مباشر من غير الـ div ومن غير flex: none: عرضه 40px  (مبيتزنقش)
-
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شريط بحث: أيقونة ثابتة، و input ياخد الباقي، وزرار «ابحث». وجنبه صف في سلة مشتريات: صورة 64، واسم المنتج (سطر واحد)، و stepper للكمية، والسعر في النهاية بـ [[margin-inline-start: auto]].`, done: R`على 320 و 768 و 1280: الـ input هو الوحيد اللي عرضه بيتغيّر، والزرار والأيقونة نفس العرض في التلاتة. اسم المنتج الطويل بيتقص بـ «…» والسعر باين كله، ومفيش scroll أفقي على 320.`, sol: R`~~~live 240 240
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>السلة</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 12px; font-family: system-ui; }
-  .search { display: flex; align-items: center; gap: 8px; margin-block-end: 16px; }
-  .search__icon { flex: none; width: 24px; text-align: center; }
-  .search input { flex: 1; min-width: 0; padding: 8px; font: inherit; }
-  .search button { flex: none; padding: 8px 12px; font: inherit; }
-
-  .item { display: flex; align-items: center; gap: 8px; }
-  .item__img { flex: none; width: 64px; height: 64px; background: #d6d3d1; border-radius: 8px; }
-  .item__name { min-width: 0; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .qty { flex: none; display: flex; align-items: center; }
-  .qty button { width: 32px; height: 32px; }
-  .qty span { width: 24px; text-align: center; }
-  .item__price { flex: none; margin-block: 0; margin-inline: auto 0; font-weight: 700; }
-</style>
-</head>
-<body>
-<main>
-<h1>السلة</h1>
-<form class="search" role="search">
-  <span class="search__icon" aria-hidden="true">⌕</span>
-  <input type="search" aria-label="ابحث عن منتج">
-  <button>ابحث</button>
-</form>
-<div class="item">
-  <div class="item__img"></div>
-  <p class="item__name">سماعة لاسلكي بعزل الضوضاء ومايك وبطارية ٤٠ ساعة</p>
-  <div class="qty">
-    <button type="button" aria-label="قلل">−</button><span>2</span><button type="button" aria-label="زوّد">+</button>
-  </div>
-  <p class="item__price">1,250 ج</p>
-</div>
-</main>
-</body>
-</html>
-~~~
-
-**القاعدة في الصفين:** عنصر واحد بس بياخد الباقي، والباقيين [[flex: none]].
-
-- [[.search input { flex: 1; min-width: 0 }]]: الحقل هو اللي بيتغيّر. و [[min-width: 0]] لازمة لأن الـ input عنده عرض افتراضي بيمنعه يصغر.
-- [[margin-inline-start: auto]] على السعر: بيزقه لآخر الصف، زي الدرس.
-- [[.item__name]] من غير [[flex: 1]]: عرضه من كلامه، ولما يضيق بيتقص.
-
-**الغلطة الشائعة:** تدي الاسم عرض ثابت بالبكسل. على 320 هيكسر الصف، وعلى 1280 هيسيب فاضي.
-
-~~~text الناتج
-العرض    الحقل    الزرار    الأيقونة    السعر ظاهر كله    scrollWidth
-320      195      61        24          true              320
-768      643      61        24          true              768
-1280     1155      61        24          true              1280
-
-الاسم مقصوص على 320: true
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميلك كتب [[width: 50%]] على كارتين جنب بعض في flex عليه [[gap: 1rem]] و [[flex-wrap: wrap]]، والكارت التاني نزل سطر لوحده. اكتبله ٣ سطور: ليه، وإيه الفرق لو مفيش wrap، والحل.`, done: R`الشرح فيه إن 50% + 50% + 16 أعرض من السطر فالتاني بينزل مع wrap، ومن غير wrap الـ shrink الافتراضي (1) بيصغّرهم شوية فيدخلوا، والحل [[flex: 1]] أو [[calc(50% - 0.5rem)]]. وجرّبت التلاتة وطلعوا زي ما كتبت.`, sol: R`**الرد النموذجي في ٣ سطور:**
-
-~~~text الشرح
-ليه نزل: 50% + 50% + الـ gap 16 أعرض من 100%، فمع wrap المتصفح بينزّل التاني سطر جديد.
-من غير wrap: الـ flex-shrink الافتراضي 1 بيصغّرهم شوية، فالاتنين بيدخلوا في سطر واحد.
-الحل: flex: 1 على الاتنين، أو width: calc(50% - 0.5rem).
-~~~
-
-وصفحة التجربة للتلات حالات:
-
-~~~live 280 280
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكروت</title>
-<style>
-  body { margin: 0; }
-  .row { display: flex; gap: 1rem; margin-block-end: 16px; }
-  .wrap { flex-wrap: wrap; }
-  .row > div { background: #bfdbfe; height: 40px; }
-  .half > div { width: 50%; }
-  .fix1 > div { flex: 1; }
-  .fix2 > div { width: calc(50% - 0.5rem); }
-</style>
-</head>
-<body>
-<div class="row wrap half" id="a"><div></div><div></div></div>
-<div class="row half" id="b"><div></div><div></div></div>
-<div class="row wrap fix1" id="c"><div></div><div></div></div>
-<div class="row wrap fix2" id="d"><div></div><div></div></div>
-</body>
-</html>
-~~~
-
-**ليه [[calc(50% - 0.5rem)]]:** الـ gap الواحد 16، والكارتين بيتقاسموه، فكل كارت بينقص 8 = 0.5rem.
-
-**الغلطة الشائعة:** تصلّحها بـ [[width: 49%]]. على شاشة عريضة هيعدّي، وعلى الموبايل هينزل تاني، لأن الـ gap رقم ثابت والنسبة بتتغيّر.
-
-~~~text الناتج
-على عرض 1000:
-                              عرض كل كارت   سطر واحد
-width: 50% + wrap             500         لأ
-width: 50% من غير wrap        492         أيوه
-flex: 1 + wrap                492         أيوه
-calc(50% - 0.5rem) + wrap     492         أيوه
-~~~` },
-          ],
-          deep: {
-            why: "flex بيوزّع المساحة بحسبة، ولو مش فاهمها هتلاقي عناصر بتصغر لوحدها (الصورة الدايرة بقت بيضاوي) أو مش راضية تصغر (الكلام زق الزرار برا). تلات أرقام بيحلّوا كل ده.",
-            how: R`الحسبة: كل ابن بيبدأ بحجم الـ [[flex-basis]] (أو حجم محتواه لو [[auto]]). لو فيه مساحة فاضية، بتتوزع على اللي عندهم [[flex-grow]] بنسبة أرقامهم (اللي عليه 2 ياخد ضعف اللي عليه 1). لو المساحة ناقصة، اللي عندهم [[flex-shrink]] بيصغروا بنسبة أرقامهم مضروبة في حجمهم.
-
-القيم المختصرة: [[flex: 1]] = [[1 1 0%]] (ابدأ من صفر وخد نصيبك، فالكل متساوي مهما كان محتواه). [[flex: auto]] = [[1 1 auto]] (ابدأ من حجم محتواك وبعدين كبّر). [[flex: none]] = [[0 0 auto]] (ثابت). والافتراضي [[0 1 auto]]: مش بيكبر، بس بيصغر.
-
-ليه min-width: 0؟ ابن الـ flex الافتراضي بتاعه [[min-width: auto]]، يعني «متصغرش عن أطول كلمة أو أطول سطر nowrap جوايا». فالكلام الطويل بيمنعه يصغر ويدفع الباقي برا. [[min-width: 0]] (في Tailwind [[min-w-0]]) بيلغي الحد ده. ونفس المشكلة في grid بتتحل بـ [[minmax(0, 1fr)]].
-
-والصورة اللي بقت بيضاوي: الافتراضي shrink = 1، فلما المكان يضيق بتصغر في العرض بس. الحل [[flex: none]] أو [[shrink-0]] في Tailwind.`,
-            when: R`[[flex-1]] للجزء اللي ياخد الباقي (محتوى جنب sidebar، أو input جنب زرار). [[shrink-0]] للأيقونات والصور. [[min-w-0]] على أي ابن flex فيه كلام ممكن يطول.`,
-            mistakes: R`تنسى [[min-w-0]] فالـ [[truncate]] مش شغال. أيقونة من غير [[shrink-0]] بتتزنق جنب كلام طويل. و [[width: 50%]] على ابنين ومعاهم gap في flex عليه [[flex-wrap: wrap]]: مجموعهم (100% + الـ gap) أعرض من السطر، فالتاني بينزل سطر لوحده (من غير wrap الـ shrink الافتراضي بيصغّرهم شوية فبيدخلوا عادي): استخدم [[flex: 1]].`
-          },
-          teach: R`## مين بياخد المساحة الفاضية
-
-لما الأولاد في flex مجموع عرضهم مش قد عرض الأب بالظبط، المتصفح لازم يقرر: مين يكبر ومين يصغر. الـ [[flex]] اللي على كل ابن هو اللي بيقول. فتحنا المثال في Chrome على عرض 360 (موبايل) وقسنا كل عنصر بـ [[getBoundingClientRect()]].
-
----
-
-## ١. الـ HTML: صف فيه ٣ حاجات
-
-~~~text index.html
-<div class="row">
-  <img class="avatar" src="/u.jpg" alt="" width="48" height="48">
-  <div class="info">
-    <p class="name">اسم طويل جدا جدا ممكن يكسر الشكل لو ملوش حدود</p>
-  </div>
-  <button>متابعة</button>
-</div>
-~~~
-
-صورة 48×48، و div فيه اسم طويل، وزرار. و [[alt=""]] فاضي لأن الصورة زينة جنب الاسم.
-
-## ٢. [[.row { display: flex; align-items: center; gap: 12px; }]]
-
-صف، والأولاد متوسّطين رأسي، و 12px بينهم.
-
-## ٣. [[.avatar { flex: none; border-radius: 50%; }]]
-
-[[flex]] اختصار ٣ أرقام بالترتيب: **grow** (تكبر من الفاضي؟) و **shrink** (تصغر لو المكان ناقص؟) و **basis** (المقاس اللي بتبدأ منه):
-
-| الكتابة | grow | shrink | basis |
-|---|---|---|---|
-| الافتراضي | 0 | 1 | auto |
-| [[flex: none]] | 0 | 0 | auto |
-| [[flex: 1]] | 1 | 1 | 0% |
-| [[flex: 1 1 250px]] | 1 | 1 | 250px |
-
-[[flex: none]] = الصورة متكبرش ولا تصغرش: تفضل 48. و [[border-radius: 50%]] بيدوّرها دايرة.
-
-## ٤. [[.info { flex: 1; min-width: 0; }]]
-
-[[flex: 1]] = ابدأ من صفر وخد **كل** الفاضي (هو الوحيد اللي grow بتاعه 1). والمهم [[min-width: 0]]: أي ابن flex عنده افتراضيًا [[min-width: auto]]، يعني «متصغرش عن محتواك». والاسم جوه مش بيلف (السطر الجاي)، فطوله 265px.
-
-قسنا الحالتين على 360:
-
-| | من غير [[min-width: 0]] | مع [[min-width: 0]] |
-|---|---|---|
-| min-width المحسوب | auto | 0px |
-| عرض [[.info]] | 265.28 | 246.92 |
-| الزرار من / لحد | 337.28 / 378.36 | 318.92 / 360 |
-| عرض الصفحة كلها ([[scrollWidth]]) | 378 (scroll أفقي) | 360 |
-
-من غيره الـ info رفض يصغر عن 265، فالزرار اتزق 18px برا الشاشة. ومعاه صغر لـ 246.92 بالظبط: 360 - 48 - 41.08 (الزرار) - 12 - 12 = 246.92.
-
-## ٥. [[.name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }]]
-
-- [[white-space: nowrap]]: الكلام في سطر واحد، ميلفّش.
-- [[overflow: hidden]]: اللي طالع برا يتقص.
-- [[text-overflow: ellipsis]]: مكان القص يتحط «…».
-
-مع [[min-width: 0]]: عرض الاسم الكامل 265 والظاهر منه 247، فالـ «…» ظهرت. من غيره الاتنين 265، فمفيش حاجة تتقص.
-
-## ٦. الكروت: [[flex-wrap: wrap]] و [[flex: 1 1 250px]]
-
-~~~text style.css
-.cards { display: flex; flex-wrap: wrap; gap: 1rem; }
-.cards > * { flex: 1 1 250px; }
-~~~
-
-[[flex-wrap: wrap]] = اللي مش لاقي مكان ينزل سطر جديد. و [[.cards > *]]: الـ [[>]] معناها «ابن مباشر»، و [[*]] أي عنصر. كل كارت بيبدأ من 250 ويكبر يملا السطر. جربنا ٥ كروت:
-
-| العرض | في كل سطر | عرض الكارت | الكارت الخامس |
-|---|---|---|---|
-| 360 | 1 | 360 | 360 لوحده |
-| 600 | 2 | 292 | 600 لوحده |
-| 1200 | 4 | 288 | 1200 لوحده |
-
-على 1200: ٤ كروت محتاجين 4 × 250 + 3 × 16 = 1048، والخامس هيخلّيها 1314 فنزل. الفاضي 152 اتقسم على الأربعة: 250 + 38 = 288. والخامس لوحده في سطر فخد السطر كله.
-
-## الخلاصة
-
-- [[flex: none]] للحاجات الثابتة (صور، أيقونات)، و [[flex: 1]] للجزء اللي ياخد الباقي.
-- ابن flex مش بيصغر عن محتواه إلا لو كتبت [[min-width: 0]]. ده سبب إن [[text-overflow: ellipsis]] «مش شغال».
-- [[flex: 1 1 250px]] مع [[flex-wrap: wrap]] = كروت بتنزل سطور، بس الأخير بيتمطّ لوحده.`,
-          lines: [
-            "صف: صورة، وكلام، وزرار.",
-            R`الصورة الدايرة 48 × 48، و [[alt=""]] فاضي لأنها زينة جنب الاسم المكتوب.`,
-            R`الـ div اللي في النص: هو اللي هياخد المساحة الفاضية كلها ويصغر لما المكان يضيق.`,
-            R`اسم طويل عمدًا من غير ما يلف، عشان نشوف الكلام بيزق الزرار برا ولا لأ.`,
-            R`قفلة الـ div بتاع الاسم، والابن التالت جاي بعده.`,
-            R`زرار «متابعة»: آخر ابن، ولازم يفضل باين كله حتى على 320.`,
-            R`قفلة الصف، وبعدها الـ CSS اللي بيوزّع المساحة.`,
-            R`بداية الـ CSS: كل سطر فيه قاعدة واحدة لعنصر واحد من اللي فوق.`,
-            R`الصف نفسه: الأولاد جنب بعض ومتوسّطين رأسي، و 12px بين كل واحد واللي بعده.`,
-            R`[[flex: none]] = [[0 0 auto]]: الصورة متكبرش ولا تصغرش أبدًا.`,
-            R`ياخد كل المساحة الفاضية، و [[min-width: 0]] بيسمحله يصغر عن طول الكلام.`,
-            "الكلام في سطر واحد، والزيادة تتقص وتظهر «...».",
-            "كروت بتنزل سطر جديد لو المكان مكفاش.",
-            "كل كارت يبدأ من 250px ويكبر يملا السطر، ولو مفيش مكان ينزل تحت.",
-            R`قفلة الـ [[<style>]]، وكده المثال خلص.`
-          ],
-          sol: R`على موبايل عرضه 360 من غير [[min-width: 0]]: الاسم بيطلع في سطر واحد طويل، والـ [[.info]] بيرفض يصغر عن طول الاسم، فالزرار «متابعة» بيتزق برا الشاشة (في Chrome على ويندوز آخره وصل 378px على شاشة 360، والرقم بيختلف حسب الخط) ويظهر scroll أفقي للصفحة كلها. والـ «...» مش بتظهر لأن الـ div واسع قد الكلام، فمفيش حاجة تتقص.
-
-ترجّع [[min-width: 0]]: الزرار رجع جوه الشاشة لازق في الحافة، والاسم اتقص وفي آخره «...». السبب إن عناصر flex الـ min-width الافتراضي بتاعها [[auto]] يعني «مش أصغر من المحتوى»، و [[0]] بتسمحله يصغر.
-
-الكروت ([[flex: 1 1 250px]]) مع 5 كروت: على 360 كل كارت في سطر لوحده بعرض الشاشة. على 600 اتنين في السطر وكارت خامس لوحده تحت ممطوط بعرض السطر كله. على 1200 أربعة في السطر والخامس برضه ممطوط لوحده. ده الفرق اللي هيخليك تستخدم grid بعدين لو عايز الكارت الأخير بنفس عرض الباقيين.`
-        },
-        {
-          cmd: "grid",
-          ref: [
-            { t: "MDN: grid", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid" },
-            { t: "MDN: grid-column", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-column" },
-            { t: "MDN: grid-row", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-row" },
-            { t: "MDN: grid-auto-flow", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-auto-flow" },
-            { t: "MDN: grid-auto-rows", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-auto-rows" },
-            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
-          ],
-          title: "شبكة صفوف وأعمدة بتتحكم فيها من الأب",
-          desc: R`[[display: grid]] مع [[grid-template-columns]] بيقسّم الأب لأعمدة. [[1fr]] = جزء من المساحة الفاضية، فـ [[1fr 1fr 1fr]] = 3 أعمدة متساوية، و [[250px 1fr]] = sidebar ثابت ومحتوى ياخد الباقي. و [[repeat(3, 1fr)]] اختصار.
-
-و [[grid-column: span 2]] بيخلي عنصر ياخد عمودين. والفرق عن flex: grid بيتحكم في الصفوف والأعمدة مع بعض من الأب، فالعناصر بتتصف تحت بعض بالظبط.`,
-          example: R`.layout {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  gap: 2rem;
-}
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-}
-.gallery .featured { grid-column: span 2; grid-row: span 2; }
-.full { grid-column: 1 / -1; }`,
-          try: R`اعمل gallery فيها 8 صور وجرّب [[.featured]] على أول واحدة. وبعدين في DevTools › Elements اضغط على شارة [[grid]] جنب العنصر: هيرسملك الخطوط وأرقامها فوق الصفحة.`,
-          flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[grid-template-columns: 200px 1fr 2fr; gap: 20px]] على عرض 1000. العمودين التانيين هيبقوا كام؟ وبعدين اقرا [[getComputedStyle(el).gridTemplateColumns]].`, done: R`الحسبة: 1000 - 200 - 40 = 760، والـ fr = 760 ÷ 3، فالناتج [[200px 253.328px 506.672px]] (الكسور من تقسيم المتصفح).`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الأعمدة</title>
-<style>
-  body { margin: 0; }
-  .g { display: grid; grid-template-columns: 200px 1fr 2fr; gap: 20px; width: 1000px; }
-</style>
-</head>
-<body>
-<div class="g"><div>أ</div><div>ب</div><div>ج</div></div>
-</body>
-</html>
-~~~
-
-**الحساب:** [[fr]] بياخد من اللي **فاضل**، مش من العرض كله.
-
-- الثابت: 200، و gapين: 40. الباقي 1000 − 240 = 760.
-- مجموع الحصص 3، فالـ fr = 760 ÷ 3 = 253.33.
-- العمود التاني 253.33، والتالت 506.67.
-
-والكسور جاية من تقسيم المتصفح، وبيخزن الأرقام بدقة 1/64 من البكسل، عشان كده الناتج مش 253.33 بالظبط.
-
-**الغلطة الشائعة:** تحسب [[1fr]] كنسبة من 1000 وتنسى الـ gap.
-
-~~~text الناتج
-gridTemplateColumns = 200px 253.328px 506.672px
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[.gallery { display: grid; grid-template-columns: repeat(4, 25%); gap: 1rem; }]]. على 1000 الصفحة فيها scroll أفقي. قيسه وصلّحه.`, done: R`قبل: الأعمدة [[250px 250px 250px 250px]] و [[scrollWidth]] = 1048 (الـ 25% ×٤ = 100% وفوقهم ٣ gaps). بعد [[repeat(4, minmax(0, 1fr))]]: الأعمدة 238 والـ [[scrollWidth]] = 1000.`, sol: R`~~~live 260 160
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الجاليري</title>
-<style>
-  body { margin: 0; }
-  .gallery { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
-  .gallery div { aspect-ratio: 1; background: #d6d3d1; }
-</style>
-</head>
-<body>
-<main>
-<h1>الجاليري</h1>
-<div class="gallery"><div></div><div></div><div></div><div></div></div>
-</main>
-</body>
-</html>
-~~~
-
-**السبب:** [[25%]] نسبة من عرض الشبكة كله. أربعة منهم 100%، وفوقهم ٣ gaps كل واحد 16، يعني 48 زيادة.
-
-**الحل:** [[fr]] بيتوزّع بعد ما الـ gaps تتخصم، فالمجموع دايمًا بيساوي العرض. و [[minmax(0, 1fr)]] أحسن من [[1fr]] لوحدها، لأن [[1fr]] حدها الأدنى [[auto]]، يعني صورة كبيرة أو كلمة طويلة ممكن تكبّر العمود.
-
-الحساب: (1000 − 48) ÷ 4 = 238.
-
-**الغلطة الشائعة:** تعالجها بـ [[overflow-x: hidden]]، فآخر عمود يتقص من غير ما تعرف.
-
-~~~text الناتج
-على 1000:
-قبل (25%):  الأعمدة 250px 250px 250px 250px
-            scrollWidth = 1048
-بعد:        الأعمدة 238px 238px 238px 238px
-            scrollWidth = 1000
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** bento لصفحة «عني» لاستوديو فخار متخيل: شبكة 12 عمود و ٦ كروت. الكبير [[grid-column: span 7]] و [[grid-row: span 2]]، وجنبه كارتين [[span 5]]، وتحت ٣ كروت [[span 4]]. على الموبايل كل كارت [[span 12]].`, done: R`على 360 الستة فوق بعض وكل واحد بعرض الشبكة. على 768 و 1280 الكبير عرضه حوالي 7 ÷ 12 من الشبكة وطوله قد الكارتين اللي جنبه مع الـ gap، والـ ٣ اللي تحت متساويين. وشارة [[grid]] في DevTools بترسم 13 خط، ومفيش scroll أفقي في التلات مقاسات.`, sol: R`~~~live 550 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>استوديو طين</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; font-family: system-ui; background: #fafaf9; }
-  .bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; max-width: 1100px; margin-inline: auto; }
-  .bento > * { grid-column: span 12; padding: 16px; background: #fff; border: 1px solid #e7e5e4; border-radius: 12px; }
-
-  @media (min-width: 700px) {
-    .big { grid-column: span 7; grid-row: span 2; }
-    .side { grid-column: span 5; }
-    .small { grid-column: span 4; }
-  }
-</style>
-</head>
-<body>
-<main>
-<h1>استوديو طين</h1>
-<section class="bento" aria-label="عن الاستوديو">
-  <article class="big"><h2>حكايتنا</h2><p>بدأنا في ورشة صغيرة بفرن واحد.</p></article>
-  <article class="side"><h2>الورشة</h2><p>كل قطعة بالإيد.</p></article>
-  <article class="side"><h2>المواد</h2><p>طين محلي.</p></article>
-  <article class="small"><h2>الكورسات</h2></article>
-  <article class="small"><h2>المعرض</h2></article>
-  <article class="small"><h2>تواصل</h2></article>
-</section>
-</main>
-</body>
-</html>
-~~~
-
-**اللي بيعمل الشكل:**
-
-- [[repeat(12, ...)]]: ١٢ عمود بيتقسموا على ٢ و ٣ و ٤ و ٦، فمرن لأي تقسيمة.
-- الافتراضي [[span 12]] (موبايل أول)، وبعدين الـ media query بتزوّد.
-- [[.big]]: [[span 7]] و [[grid-row: span 2]]، فالكارتين [[span 5]] بيقعدوا جنبه فوق بعض لوحدهم.
-- [[.small]]: ٣ × 4 = 12، فبيملوا صف.
-
-**ليه** [[minmax(0, 1fr)]]**:** عشان أطول كلمة متكبّرش العمود، وال 13 خط يفضلوا متساويين.
-
-**الغلطة الشائعة:** تكتب [[grid-column: span 12]] في الـ media query بدل الأساس، فعلى الموبايل يبقى فيه ١٢ عمود ضيقين.
-
-~~~text الناتج
-العرض    الكبير      الشبكة     7/12 تقريبًا    الكارتين جنبه    scrollWidth
-360      328       328      1.00          فوق بعض        360
-768      423       736      0.57          طوله قدهم        768
-1280     635       1100      0.58          طوله قدهم        1280
-
-عدد خطوط الأعمدة = 13
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** لوحة شطرنج 8 × 8 بـ grid و [[:nth-child]] للتلوين، مربعة دايمًا بـ [[aspect-ratio: 1]] ومن غير ولا رقم بالبكسل للخانات.`, done: R`على 360 و 768 و 1280 اللوحة مربعة (العرض = الارتفاع في [[getBoundingClientRect]])، و [[gridTemplateColumns]] فيها ٨ قيم متساوية، والألوان متبادلة صح في كل صف (أول خانة في الصف التاني لونها عكس أول خانة في الأول).`, sol: R`~~~live 170 170
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شطرنج</title>
-<style>
-  body { margin: 16px; }
-  .board {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    aspect-ratio: 1;
-    width: min(100%, 70dvh);
-    margin-inline: auto;
-    border: 2px solid #44403c;
-    box-sizing: border-box;
-  }
-  .board > div { background: #f5f5f4; }
-  .board > div:is(
-    :nth-child(16n + 1), :nth-child(16n + 3), :nth-child(16n + 5), :nth-child(16n + 7),
-    :nth-child(16n + 10), :nth-child(16n + 12), :nth-child(16n + 14), :nth-child(16n + 16)
-  ) { background: #57534e; }
-</style>
-</head>
-<body>
-<main><h1>شطرنج</h1><div class="board" id="b" role="img" aria-label="لوحة شطرنج فاضية"></div></main>
-<script>
-  document.querySelector('#b').innerHTML = '<div></div>'.repeat(64);
-$__lt/script>
-</body>
-</html>
-~~~
-
-**تلوين الخانات:** كل صفين هم 16 خانة والنمط بيتكرر. فـ [[16n + 1]] معناها الخانة 1 و 17 و 33. والصف الأول الغامق 1 و 3 و 5 و 7، والتاني 10 و 12 و 14 و 16 (الزوجية عشان اللون يتقلب).
-
-ليه مش [[:nth-child(odd)]] بس؟ لأن كده كل الأعمدة هتطلع خطوط طول: خانة 9 فردية، تحت خانة 1 الغامقة مباشرة.
-
-- [[aspect-ratio: 1]] بيحافظ على المربع مع أي عرض.
-- [[min(100%, 70dvh)]]: أصغر من عرض الأب وارتفاع الشاشة، فاللوحة دايمًا ظاهرة كلها.
-- ومفيش px في الخانات: الـ [[1fr]] هي اللي بتقسم.
-
-**الغلطة الشائعة:** تستخدم [[background-size]] و [[conic-gradient]] هنا. جميلة، بس التمرين عن [[:nth-child]].
-
-~~~text الناتج
-العرض    لوحة W×H             أعمدة متساوية   عدد الأعمدة
-360      328×328        true           8
-768      560×560        true           8
-1280     560×560        true           8
-
-أول خانة: صف ١ = rgb(87, 83, 78)   صف ٢ = rgb(245, 245, 244)   (عكس بعض)
-تاني خانة في صف ١ = rgb(245, 245, 244)
-scrollWidth على 360 = 360   axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** تقويم شهر: ٧ أعمدة (السبت لحد الجمعة)، وأول يوم في الشهر بيقع يوم التلات بـ [[grid-column-start]] على أول خانة بس، وباقي الأيام بتترص لوحدها.`, done: R`يوم 1 تحت عمود التلات، ويوم 2 جنبه، و 30 يوم بيملوا ٥ صفوف، ولما تغيّر رقم [[grid-column-start]] بتاع يوم 1 بس، الشهر كله بيتزحلق صح. ومفيش ولا [[margin]] ولا خانات فاضية في الـ HTML.`, sol: R`~~~live 360 360
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>التقويم</title>
+<title>الباقات</title>
 <style>
   body { font-family: system-ui; margin: 16px; }
-  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 420px; margin-inline: auto; padding: 0; list-style: none; text-align: center; }
-  .cal--head { font-weight: 700; font-size: .75rem; margin-block-end: 4px; }
-  .cal li { padding: 8px 0; background: #f5f5f4; border-radius: 4px; }
-  .first { grid-column-start: 4; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 12px; max-width: 420px; }
+  .plan { display: block; padding: 14px; border: 2px solid #d4d4d8; border-radius: 12px; cursor: pointer; }
+  .plan input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    clip-path: inset(50%);
+  }
+  .plan:has(input:checked) { border-color: rgb(15, 118, 110); background: #f0fdfa; }
+  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
 </style>
 </head>
 <body>
 <main>
-<h1>مارس</h1>
-<ul class="cal cal--head" aria-hidden="true"><li>سبت</li><li>أحد</li><li>اتنين</li><li id="tue">تلات</li><li>أربع</li><li>خميس</li><li>جمعة</li></ul>
-<ol class="cal" id="days"></ol>
+<h1>اختار باقتك</h1>
+<form>
+  <fieldset>
+    <legend>الباقة</legend>
+    <label class="plan"><input type="radio" name="plan" value="month" checked> شهر، ٥٠٠ جنيه</label>
+    <label class="plan"><input type="radio" name="plan" value="quarter"> ٣ شهور، ١٣٠٠ جنيه</label>
+    <label class="plan"><input type="radio" name="plan" value="year"> سنة، ٤٥٠٠ جنيه</label>
+  </fieldset>
+</form>
 </main>
-<script>
-  const days = document.querySelector('#days');
-  for (let d = 1; d <= 30; d++) {
-    const li = document.createElement('li');
-    li.textContent = d;
-    if (d === 1) li.className = 'first';
-    days.append(li);
-  }
-$__lt/script>
 </body>
 </html>
 ~~~
 
-**الفكرة:** سطر واحد بيعمل كل الشغل: [[.first { grid-column-start: 4; }]]. التلات العمود الرابع من السبت. وباقي الأيام بتترص بعده لوحدها، لأن الشبكة بتملا خانة ورا خانة.
+**اللي بيخلي الكارت كله يتداس:** الـ [[input]] جوه الـ [[label]]، فأي ضغطة على الـ label بتعلّم الـ radio من غير [[for]] ولا JavaScript.
 
-- مفيش خانات فاضية في الـ HTML: الفراغ قبل يوم 1 مساحة في الشبكة.
-- الحساب: ٤ أيام في الصف الأول، و 26 ÷ 7 = 3.7، يعني ٤ صفوف تانية، المجموع ٥.
+**ليه الإخفاء بالشكل مش** [[display: none]]**:** الـ [[input]] لازم يفضل موجود عشان يتوصله بالكيبورد وقارئ الشاشة يقراه. [[width: 1px]] و [[height: 1px]] و [[clip-path: inset(50%)]] بيخلوه مش مرئي بس لسه في الصفحة. و [[position: absolute]] عشان ميزقّش النص.
 
-**تغيير الشهر:** رقم واحد. ولو جاي من JavaScript: [[(new Date(y, m, 1).getDay() + 1) % 7 + 1]] بيدّيك عمود أول يوم لأسبوع بيبدأ بالسبت.
+**الجزء الجديد:** [[.plan:has(input:checked)]] معناها «الكارت اللي جواه radio متعلّم». ده اللي بيخلي الأب يتغيّر حسب ابنه.
 
-**الغلطة الشائعة:** تكتب [[<li></li>]] فاضية عشان تزق الأيام. قارئ الشاشة هيقراها خانات فاضية، وتغيير الشهر هيبقى مسح وإضافة.
+**الغلطة الشائعة:** تخفي الـ radio وتنسى السطر بتاع [[:focus-visible]]. اللي بيستخدم الكيبورد مش هيشوف هو واقف فين، لأن الدايرة اللي كان عليها الإطار اختفت.
 
 ~~~text الناتج
-يوم 1: x = 612   وعنوان التلات: x = 612
-يوم 2: x = 551   (جنبه ناحية الأربع)
-عدد الصفوف = 5
-
-بعد grid-column-start: 6: يوم 1 x = 491، وعدد الصفوف = 5
+الضغط على نص الكارت التاني: quarter
+لون حدود المختار: rgb(15, 118, 110)   ولون حدود غير المختار: rgb(212, 212, 216)
+Tab ثم سهم لتحت: quarter   وسهم تاني: year
+عرض الـ radio في الصفحة: 1px، ومفيش ولا سطر JavaScript
 overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**أشكال:** كارت هيرو فيه صورة وفوقها عنوان في الركن تحت، من غير [[position: absolute]]: الصورة والعنوان الاتنين [[grid-area: 1 / 1]] (نفس الخانة)، والعنوان [[align-self: end]].`, done: R`الصورة والعنوان ليهم نفس [[left]] و [[top]] بتاع الخانة في DevTools، والعنوان قاعد تحت جوه الصورة، و grep على الـ CSS مفيهوش [[absolute]]. ولما الكلام يطول الكارت بيطول معاه بدل ما الكلام يطلع برا (ده الفرق عن absolute).`, sol: R`~~~live 400 280
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نفس كروت الباقات بس الـ radio عليه [[display: none]] عشان «ميبانش». جرّب توصل للكروت بالكيبورد بس، وبعدين صلّحها.`, done: R`مع [[display: none]] الـ Tab بيعدّي من غير ما يقف على أي كارت (الـ radio اتشال من الكيبورد وشجرة الـ accessibility)، وبعد ما خبّيته بالشكل بس بقى الـ Tab بيقف على المجموعة والأسهم بتختار.`, sol: R`قبل:
+
+~~~css
+.plan input { display: none; }
+~~~
+
+بعد:
+
+~~~css
+.plan input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+}
+.plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; }
+~~~
+
+والـ HTML كامل عشان تجرب:
+
+~~~live 260 260
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الهيرو</title>
+<title>الباقات</title>
 <style>
-  body { margin: 16px; font-family: system-ui; }
-  .hero { display: grid; max-width: 640px; margin-inline: auto; border-radius: 12px; overflow: hidden; }
-  .hero > * { grid-area: 1 / 1; }
-  .hero img { width: 100%; height: 100%; min-height: 240px; object-fit: cover; display: block; background: #1c1917; }
-  .hero__title { align-self: end; margin: 0; padding: 16px; background: rgb(0 0 0 / .65); color: #fff; }
+  .plan { display: block; padding: 12px; border: 2px solid #999; margin-block-end: 8px; }
+  .plan input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .plan:has(input:checked) { border-color: rgb(15, 118, 110); }
+  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; }
 </style>
 </head>
 <body>
 <main>
-<section class="hero" aria-label="الرحلة">
-  <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360'><rect width='100%' height='100%' fill='%23334155'/></svg>" alt="جبال وقت الغروب" width="640" height="360">
-  <h1 class="hero__title">رحلة الجبال</h1>
-</section>
+<h1>الباقات</h1>
+<form>
+  <fieldset>
+    <legend>الباقة</legend>
+    <label class="plan"><input type="radio" name="plan" value="a"> شهر</label>
+    <label class="plan"><input type="radio" name="plan" value="b"> سنة</label>
+  </fieldset>
+  <button>اشترك</button>
+</form>
 </main>
 </body>
 </html>
 ~~~
 
-**الحيلة:** [[grid-area: 1 / 1]] معناها صف 1 عمود 1. الاتنين في نفس الخانة، فبيتركبوا فوق بعض. والعنوان بعد الصورة في الـ HTML، فهو فوقها.
+**اللي بيحصل:** [[display: none]] مش بس بيخفي العنصر، ده بيشيله من الصفحة كلها: مبيتوصلش بـ Tab، وقارئ الشاشة مبيشوفوش، حتى لو الـ label ظاهر. الماوس بس هو اللي شغال، لأن الضغط بيروح للـ label.
 
-- [[align-self: end]]: العنوان ينزل لآخر الخانة.
-- [[height: 100%]] و [[object-fit: cover]]: الصورة تملا الخانة من غير ما تتمط.
-
-**الفرق عن** [[absolute]]**:** العناصر اللي في الـ grid لسه بتحسب في الـ layout. فالخانة بتكبر قد أكبرهم. لو الكلام طال جدًا الكارت يطول، أما [[absolute]] فكان هيطلع برّه.
-
-**الغلطة الشائعة:** تحط [[position: absolute]] ثم تضطر تحدد ارتفاع ثابت للكارت. ده بالظبط اللي بيكسر على الموبايل مع عنوان طويل.
+**الغلطة الشائعة:** تجرب بالماوس بس، فتلاقيه شغال وتقفل التذكرة. جرّب كل كروت الاختيار بالكيبورد قبل ما تعتبرها خلصت. ونفس المشكلة بتحصل مع [[visibility: hidden]].
 
 ~~~text الناتج
-الخانة: الصورة x=320 y=16، والعنوان x=320
-أسفل العنوان = 376   وأسفل الكارت = 376
-absolute في الـ CSS: 0 مرة
+                       أول Tab وقف عند     الأسهم اختارت    راديوز في شجرة الـ a11y
+display: none          BUTTON               ولا حاجة             0
+مخفي بالشكل بس         INPUT a               b             2
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مجموعة radios اسمها [[pay]] ومفيش ولا واحد متعلّم. [[form.elements.pay.value]] هيرجّع إيه؟ وبعد ما تعلّم «كاش» ([[value="cod"]])؟ وهل [[pay]] هيبقى موجود في [[FormData]] قبل الاختيار؟`, done: R`قبل الاختيار رجّع نص فاضي [[""]] (مش null)، وبعده [[cod]]، و [[new FormData(form).has('pay')]] كان [[false]] قبل الاختيار: المجموعة اللي مفيهاش اختيار مبتتبعتش خالص.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدفع</title>
+</head>
+<body>
+<form id="f">
+  <label><input type="radio" name="pay" value="card"> كارت</label>
+  <label><input type="radio" name="pay" value="cod"> كاش</label>
+</form>
+</body>
+</html>
+~~~
 
-عنوان ٤٠ سطر:
-ارتفاع الكارت من 360 لـ 1752، والعنوان لسه جوه الكارت: true
-نفس العنوان بـ absolute، وارتفاع الكارت: 360 والعنوان طالع برّه: true
+~~~js
+const form = document.querySelector('#f');
+form.elements.pay.value;
+new FormData(form).has('pay');
+form.elements.pay[1].checked = true;   // علّم كاش
+form.elements.pay.value;
+~~~
+
+**الإجابة:** [[form.elements.pay]] مش عنصر واحد، ده مجموعة اسمها [[RadioNodeList]]، و [[.value]] بتاعتها قيمة المتعلّم. ولو مفيش متعلّم بترجّع نص فاضي [[""]]، مش [[null]].
+
+أما [[FormData]] فبيجمع اللي هيتبعت فعلًا، والمجموعة اللي مفيهاش اختيار مش بتتبعت خالص. عشان كده [[has]] رجّعت [[false]].
+
+**الغلطة الشائعة:** تكتب [[if (form.elements.pay.value === null)]]. الشرط ده عمره ما هيتحقق. اكتب [[if (!form.elements.pay.value)]]، أو حط [[required]] على المجموعة.
+
+~~~text الناتج
+قبل الاختيار: value = ""   FormData.has = false
+بعد «كاش»:   value = "cod"   FormData.has = true
+نوع form.elements.pay = RadioNodeList
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم دفع فيه [[<input type="radio" name="pay1" value="card">]] و [[<input type="radio" name="pay2" value="cod">]]، و [[<legend>]] مكتوب برّه الـ fieldset. المستخدم قدر يعلّم الاتنين!`, done: R`بعد ما بقوا نفس الـ [[name]] تعليم واحد بيشيل التاني، و [[FormData]] فيه قيمة واحدة لـ [[pay]]، والـ legend جوه الـ fieldset كأول عنصر فتاب Accessibility بقى بيقول اسم المجموعة «طريقة الدفع».`, sol: R`~~~live 150 150
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدفع</title>
+</head>
+<body>
+<main>
+<h1>الدفع</h1>
+<form id="f">
+  <fieldset>
+    <legend>طريقة الدفع</legend>
+    <label><input type="radio" name="pay" value="card"> كارت</label>
+    <label><input type="radio" name="pay" value="cod"> كاش عند الاستلام</label>
+  </fieldset>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**الغلطتين:**
+
+- الـ radios بتبقى مجموعة واحدة بس لو ليهم نفس [[name]]. [[pay1]] و [[pay2]] يعني مجموعتين، كل واحدة فيها اختيار واحد، فالمستخدم قدر يعلّم الاتنين.
+- [[legend]] لازم يبقى أول ابن جوه [[fieldset]]. برّه الـ fieldset ده مجرد كلام، مش اسم المجموعة.
+
+و [[fieldset]] مهم لقارئ الشاشة: لما يدخل المجموعة بيقول «طريقة الدفع» قبل ما يقرا «كارت»، فالمستخدم يعرف بيختار إيه.
+
+**الغلطة الشائعة:** تكتب JavaScript يلغي تعليم الراديو التاني، بدل ما تصلّح الـ [[name]]. سطر الـ HTML بيعمل ده ببلاش، والأسهم كمان بتتظبط لوحدها.
+
+~~~text الناتج
+قبل: اتعلّم 2 راديو في نفس الوقت
+بعد: اتعلّم 1 راديو، و FormData.getAll('pay') = ["cod"]
+
+تاب Accessibility:
+- group "طريقة الدفع":
+  - text: طريقة الدفع
+  - radio "كارت"
+  - text: كارت
+  - radio "كاش عند الاستلام" [checked]
+  - text: كاش عند الاستلام
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** اختبار صغير «أنسب قهوة ليك» من ٣ أسئلة، كل سؤال fieldset و legend و ٣ radios ليهم [[value]] بنقط (1 و 2 و 3)، وزرار يحسب المجموع ويعرض النتيجة في [[<output aria-live="polite">]].`, done: R`لو سؤال مش متجاوب الإرسال بيقف عنده (حط [[required]] على أول radio في كل مجموعة)، والمجموع 3 بيقول «إسبريسو» و 9 بيقول «لاتيه» مثلًا، والنتيجة بتتغيّر من غير reload.`, sol: R`~~~live 550 550
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أنسب قهوة ليك</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  fieldset { border: 1px solid #d4d4d8; border-radius: 12px; margin-block-end: 12px; }
+  label { display: block; padding: 4px 0; }
+  output { display: block; margin-block-start: 12px; font-size: 1.25rem; font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+<h1>أنسب قهوة ليك</h1>
+<form id="quiz">
+  <fieldset>
+    <legend>بتحبها قد إيه؟</legend>
+    <label><input type="radio" name="q1" value="1" required> تقيلة جدًا</label>
+    <label><input type="radio" name="q1" value="2"> وسط</label>
+    <label><input type="radio" name="q1" value="3"> خفيفة</label>
+  </fieldset>
+  <fieldset>
+    <legend>اللبن؟</legend>
+    <label><input type="radio" name="q2" value="1" required> من غير</label>
+    <label><input type="radio" name="q2" value="2"> شوية</label>
+    <label><input type="radio" name="q2" value="3"> كتير</label>
+  </fieldset>
+  <fieldset>
+    <legend>السكر؟</legend>
+    <label><input type="radio" name="q3" value="1" required> من غير</label>
+    <label><input type="radio" name="q3" value="2"> معلقة</label>
+    <label><input type="radio" name="q3" value="3"> معلقتين</label>
+  </fieldset>
+  <button>شوف النتيجة</button>
+  <output id="result" aria-live="polite"></output>
+</form>
+</main>
+<script>
+  const form = document.querySelector('#quiz');
+  const result = document.querySelector('#result');
+
+  function coffeeFor(score) {
+    if (score <= 4) return 'إسبريسو';
+    if (score <= 7) return 'كابتشينو';
+    return 'لاتيه';
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const score = ['q1', 'q2', 'q3'].reduce((sum, q) => sum + Number(data.get(q)), 0);
+    result.textContent = coffeeFor(score) + ' (مجموعك ' + score + ')';
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**كل جزء بيعمل إيه:**
+
+- [[required]] على راديو واحد كفاية: القاعدة بتتطبق على المجموعة كلها اللي ليها نفس الـ [[name]].
+- [[e.preventDefault()]]: بيوقف إعادة تحميل الصفحة. والفحص بتاع [[required]] بيحصل قبل event الـ submit أصلًا، فالكود بتاعك مش هيشتغل لو فيه سؤال ناقص.
+- [[data.get(q)]] بترجّع نص، فـ [[Number]] لازمة، وإلا [[0 + "1"]] تبقى [[01]].
+- [[reduce]] بتجمع القيم، و [[0]] في آخرها هي بداية العداد.
+- [[aria-live="polite"]]: قارئ الشاشة بيقرا النتيجة لما تتغيّر من غير ما الـ focus يتحرك.
+
+**الغلطة الشائعة:** تستخدم [[click]] على الزرار بدل [[submit]] على الفورم. كده الفحص ممكن يتعدّى، و Enter من الكيبورد مش هيتعامل زي الضغط.
+
+~~~text الناتج
+إرسال من غير إجابة: النتيجة = «»   والـ focus عند q1 value=1
+كل الإجابات 1: إسبريسو (مجموعك 3)
+كل الإجابات 2: كابتشينو (مجموعك 6)
+كل الإجابات 3: لاتيه (مجموعك 9)
+الصفحة اتعمل لها reload: false
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[<select>]] و [[<input list="...">]] مع [[<datalist>]]، واعمل حقل «المدينة» بـ datalist فيه ٥ مدن.`, done: R`تقدر تختار من الاقتراحات أو تكتب مدينة مش في اللستة وتتبعت عادي (ده الفرق: datalist اقتراح مش إجبار)، والـ select مبيقبلش غير اللي فيه.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>المدينة</title>
+</head>
+<body>
+<main>
+<h1>العنوان</h1>
+<form id="f">
+  <label for="city">المدينة</label>
+  <input id="city" name="city" list="cities">
+  <datalist id="cities">
+    <option value="القاهرة"></option>
+    <option value="الإسكندرية"></option>
+    <option value="المنصورة"></option>
+    <option value="أسوان"></option>
+    <option value="طنطا"></option>
+  </datalist>
+
+  <label for="gov">المحافظة</label>
+  <select id="gov" name="gov">
+    <option>القاهرة</option>
+    <option>الجيزة</option>
+  </select>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+| | [[select]] | [[input]] مع [[datalist]] |
+|---|---|---|
+| القيم | لازم من اللستة | أي نص، واللستة اقتراح |
+| الكتابة | مفيش | عادي، والاقتراحات بتتفلتر |
+| الشكل | ثابت | بيختلف من متصفح للتاني |
+| إمتى | اللستة مقفولة: البلد، المقاس | أغلب الناس هيختاروا، والباقي يكتب |
+
+**الربط:** [[list="cities"]] على الـ input لازم يساوي [[id="cities"]] بتاع الـ datalist.
+
+**الغلطة الشائعة:** تستخدم datalist وانت عايز إجبار، فتستقبل في السيرفر مدينة مكتوبة غلط. لو القيمة لازم تبقى من اللستة استخدم select، وافحصها في السيرفر في كل الأحوال.
+
+~~~text الناتج
+كتابة «دمياط» في datalist (مش في اللستة): اتقبلت = true، و FormData = دمياط
+محاولة تعيين select بقيمة مش فيه: القيمة بقت ""
+عدد الاقتراحات = 5
 axe: 0 violations
 ~~~` },
           ],
+          title: "اختيار واحد ولا أكتر؟ radio و checkbox و select",
+          desc: R`[[radio]] لاختيار واحد بس من مجموعة، وكل الـ radios اللي في المجموعة ليهم نفس الـ [[name]]. و [[checkbox]] لصفر أو أكتر. و [[<select>]] لاختيار واحد من قايمة طويلة.
+
+والمجموعة كلها بتتلف في [[<fieldset>]] وأول حاجة جواه [[<legend>]] فيه السؤال. من غيرهم قارئ الشاشة بيقول «كارت، radio button» ومش بيقول السؤال أصلًا. ومعاهم بيقول «طريقة الدفع، مجموعة، كارت، radio button، 1 من 2».
+
+قاعدة سريعة: 5 اختيارات أو أقل يبقى radio (كلهم باينين وضغطة واحدة)، أكتر من كده select.`,
+          example: R`<fieldset>
+  <legend>طريقة الدفع</legend>
+  <label><input type="radio" name="pay" value="card" required> كارت</label>
+  <label><input type="radio" name="pay" value="cod"> كاش عند الاستلام</label>
+</fieldset>
+<fieldset>
+  <legend>ابعتلي إشعارات على</legend>
+  <label><input type="checkbox" name="notify" value="email" checked> الإيميل</label>
+  <label><input type="checkbox" name="notify" value="sms"> SMS</label>
+</fieldset>
+<label for="city">المحافظة</label>
+<select id="city" name="city" required>
+  <option value="">اختار…</option>
+  <optgroup label="الدلتا">
+    <option value="gharbia">الغربية</option>
+    <option value="dakahlia">الدقهلية</option>
+  </optgroup>
+</select>`,
+          try: R`حط الكود في [[<form>]] ومعاه زرار submit، ودوس عليه من غير ما تختار حاجة وشوف المتصفح بيقف فين. وبعدين علّم الـ checkboxes الاتنين، وافتح الـ Console واكتب [[Object.fromEntries(new FormData(document.forms[0]))]] وبعدها [[new FormData(document.forms[0]).getAll('notify')]] وقارن.`,
+          flag: "script",
           deep: {
-            why: "flex بيفكر في سطر واحد، فلما تعمل كروت في صفوف بـ flex-wrap، الكارت الأخير لوحده بيبقى عرضه مختلف والأعمدة مش متصفة. grid بيعرّف الشبكة من الأب، فكل عنصر بيقع في خانة، وتقدر تخلي عنصر ياخد أكتر من خانة.",
-            how: R`[[fr]] بيتحسب بعد المساحات الثابتة والـ gap: في [[250px 1fr]] على عرض 1000 مع gap 32، العمود التاني = 1000 - 250 - 32 = 718. و [[1fr 2fr]] = التاني ضعف الأول.
+            why: R`أي فورم دفع أو تسجيل أو إعدادات فيه اختيارات. ولو المجموعة ملهاش legend، مستخدم قارئ الشاشة بيسمع «نعم، لا» ومش عارف السؤال إيه. ولو الـ radios أسماءهم مختلفة، المستخدم يقدر يختار الاتنين مع بعض والسيرفر يستلم بيانات متناقضة.`,
+            how: R`الـ radios اللي ليهم نفس الـ [[name]] جوه نفس الفورم بقوا مجموعة: تعليم واحد بيشيل التاني، والمجموعة كلها وقفة Tab واحدة، وجواها بتتنقل بالأسهم (والسهم بيختار كمان). و [[required]] على radio واحد بس بيكفي للمجموعة كلها.
 
-الخطوط مترقمة من 1، والسالب من الآخر: [[grid-column: 1 / -1]] = من أول خط لآخر خط. و [[span 2]] = خد خانتين من مكانك. العناصر اللي ملهاش مكان محدد بتتحط لوحدها في أول خانة فاضية (auto-placement)، و [[grid-auto-flow: dense]] بيخليه يرجع يملا الفراغات.
+وقت الإرسال: الـ checkbox اللي مش متعلّم مش بيتبعت خالص (مش [[false]])، والمتعلّم بيتبعت بالـ [[value]] بتاعه (ولو ملوش value بيتبعت [[on]]). ولو كذا checkbox ليهم نفس الـ name بيتبعتوا كذا مرة، فلازم [[formData.getAll('notify')]] مش [[get]].
 
-الصفوف: لو معرّفتش [[grid-template-rows]]، الصفوف بتتعمل لوحدها قد محتواها، وعناصر الصف الواحد بياخدوا ارتفاع أطولهم، فالكروت بنفس الطول.
+في الـ select: أول option بـ [[value=""]] هو اللي بيخلي [[required]] يشتغل، لأن الـ required بيرفض القيمة الفاضية. و [[<optgroup>]] بيقسّم القايمة بعناوين مبتتختارش.
 
-[[1fr]] في الحقيقة = [[minmax(auto, 1fr)]]، يعني العمود مش هيصغر عن أطول كلمة جواه، فممكن عمود «متساوي» يطلع أعرض. [[minmax(0, 1fr)]] بيلغي ده، و Tailwind بيستخدمها في [[grid-cols-4]].
-
-وفي RTL الخط 1 بيبقى على اليمين، فالـ sidebar في [[250px 1fr]] بيبقى يمين لوحده.`,
-            when: "أي layout بصفوف وأعمدة: الصفحة نفسها (sidebar ومحتوى)، وشبكة كروت، وداشبورد، وفورم بعمودين. و flex جوه كل خانة للتفاصيل.",
-            mistakes: R`تستخدم grid لحاجة في سطر واحد بس (flex أسهل). عمود من غير [[minmax(0, …)]] جواه كود طويل أو جدول فيوسّع الصفحة. وتنسى إن [[gap]] بيتحسب قبل الـ fr، فـ [[repeat(4, 25%)]] مع gap يطلع برا.`
+والشكل: [[accent-color: var(--color-brand)]] بيلوّن الـ checkbox والـ radio الأصليين من غير ما تكسرهم. وفيه [[appearance: base-select]] جديد بيخليك تعمل ستايل كامل للـ select، بس لسه مش في كل المتصفحات، فاتأكد من caniuse قبل ما تعتمد عليه.`,
+            when: R`radio: اختيار واحد إجباري وقليل (الجنس، طريقة الدفع، حجم). checkbox لوحده: موافقة أو تشغيل/إطفاء. checkboxes: اختيارات متعددة. select: قايمة طويلة (محافظات، دول). ولو القايمة طويلة جدًا ومحتاجة بحث، ده combobox (مستوى تالت).`,
+            mistakes: R`كل radio بـ name مختلف فيتعلّموا كلهم. checkbox لاختيار واحد من اتنين. select لـ «نعم/لا». option أولاني من غير [[value=""]] فالـ required ميشتغلش. [[Object.fromEntries(formData)]] مع checkboxes بنفس الاسم: بيسيب آخر قيمة بس. وتخفي الـ input بـ [[display: none]] عشان تعمل شكل مخصص: كده اتشال من الكيبورد وقارئ الشاشة. وسؤال انترفيو: «ليه الـ radio group وقفة Tab واحدة؟» لأنها widget واحد، والأسهم للتنقل جواه، ودا نفس فكرة roving tabindex.`
           },
-          teach: R`## grid بيقسّم الأب لخانات، والأولاد بيقعدوا فيها
+          teach: R`## الفكرة في سطرين
 
-في flex الأولاد بيقرروا مقاسهم. في grid **الأب** بيرسم الأعمدة، والأولاد بيتحطوا في الخانات بالترتيب. حطينا المثال في صفحة عرضها 1000 (من غير margin على الـ body)، وقرينا مقاسات الأعمدة من [[getComputedStyle(...).gridTemplateColumns]]، ومكان كل عنصر من [[getBoundingClientRect()]].
+3 أنواع اختيار: radio (واحد بس)، و checkbox (صفر أو أكتر)، و select (واحد من قايمة). والمجموعات ملفوفة في [[fieldset]] عشان يبقى ليها سؤال. حطيت المثال جوه [[<form>]] ومعاه زرار، وجرّبته في Chrome (headless): الكيبورد، ورسايل المتصفح، و [[FormData]].
 
 ---
 
-## ١. صفحة بـ sidebar
+## ١. [[<fieldset>]] و [[<legend>]]
 
-~~~text style.css
-.layout {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  gap: 2rem;
-}
+- [[fieldset]]: صندوق بيجمّع حقول ليها علاقة ببعض. المتصفح بيرسم حواليه برواز.
+- [[legend]]: عنوان الصندوق (السؤال). لازم يبقى أول حاجة جواه.
+
+في شجرة الـ accessibility بتاعة Chrome:
+
+~~~text الناتج
+group "طريقة الدفع"
+  radio "كارت"
+  radio "كاش عند الاستلام"
+group "ابعتلي إشعارات على"
+  checkbox "الإيميل"
+  checkbox "SMS"
 ~~~
 
-- [[display: grid]]: الأولاد يبقوا خانات في شبكة.
-- [[grid-template-columns: 250px 1fr]]: عمودين. الأول 250 ثابت، والتاني [[1fr]]. [[fr]] اختصار **fraction** (جزء): «جزء من المساحة اللي فاضلة» بعد الأطوال الثابتة والـ gap.
-- [[gap: 2rem]]: 32px بين الأعمدة (وبين الصفوف لو فيه).
+الـ fieldset بقى [[group]]، واسمه جه من الـ legend. فقارئ الشاشة لما يدخل على «كارت» يقول السؤال الأول.
 
-حطينا جواه [[<aside>]] و [[<main>]]:
+---
 
-~~~text الناتج (عرض 1000)
-grid-template-columns: 250px 718px
-aside  left: 0     width: 250
-main   left: 282   width: 718
+## ٢. الـ radios
+
+~~~text index.html
+<label><input type="radio" name="pay" value="card" required> كارت</label>
+<label><input type="radio" name="pay" value="cod"> كاش عند الاستلام</label>
 ~~~
 
-الحسبة: 1000 - 250 - 32 = 718. والـ main بدأ عند 250 + 32 = 282.
-
-## ٢. معرض صور
-
-~~~text style.css
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-}
-~~~
-
-- [[repeat(4, X)]] = اكتب X أربع مرات.
-- [[minmax(0, 1fr)]] = العمود أقل حاجة 0 وأكتر حاجة 1fr. ليه مش [[1fr]] بس؟ لأن [[1fr]] لوحدها مش بتصغر عن أطول كلمة جوه العمود. جربنا ٤ أعمدة في عرض 600 وفي أول خانة كلمة طويلة من غير مسافات:
-
-| الكتابة | الأعمدة المتقاسة |
+| الحتة | معناها |
 |---|---|
-| [[repeat(4, 1fr)]] | 269.86 و 110.05 و 110.05 و 110.05 |
-| [[repeat(4, minmax(0, 1fr))]] | 150 و 150 و 150 و 150 |
+| [[type="radio"]] | دايرة، واحدة بس فيها بتتعلّم |
+| [[name="pay"]] | نفس الاسم = نفس المجموعة. ده اللي بيربطهم |
+| [[value="card"]] | اللي بيتبعت للسيرفر لو ده اللي اتختار |
+| [[required]] | على واحد بس، وبيسري على المجموعة كلها |
+| [[cod]] | اختصار cash on delivery: كاش عند الاستلام |
 
-## ٣. [[.gallery .featured { grid-column: span 2; grid-row: span 2; }]]
+اللي اتقاس:
 
-[[span 2]] = «خد خانتين من مكانك». الصورة المميزة بقت عمودين في صفين. حطينا ٨ صور، كل صورة عادية ارتفاعها 100، والمميزة من غير ارتفاع:
-
-~~~text الناتج (عرض 1000)
-grid-template-columns: 238px 238px 238px 238px
-grid-template-rows:    100px 100px 100px
-صورة 1 (featured)  left: 0     width: 492   height: 216
-صورة 2             left: 508   top: 0
-صورة 3             left: 762   top: 0
-صورة 4             left: 508   top: 116
-صورة 5             left: 762   top: 116
-صور 6 و 7 و 8       top: 232   left: 0 و 254 و 508
-~~~
-
-- العمود = (1000 - 3 × 16) ÷ 4 = 238.
-- المميزة عرضها 238 + 16 + 238 = 492، وارتفاعها 100 + 16 + 100 = 216.
-- الصور 2 لـ 5 اتحطت لوحدها في الخانات الفاضية جنبها (ده اسمه auto-placement)، و 6 و 7 و 8 في صف تالت والخانة الرابعة فاضية.
-
-## ٤. [[.full { grid-column: 1 / -1; }]]
-
-خطوط الشبكة مترقمة: ٤ أعمدة ليهم ٥ خطوط، من 1 لـ 5. والرقم السالب بيعدّ من الآخر: [[-1]] = آخر خط. فـ [[1 / -1]] = من أول خط لآخر خط. ضفنا عنصر [[.full]] في آخر المعرض: طلع في صف لوحده بعرض 1000 كامل.
+- دوست «ابعت» من غير ما أختار: الرسالة «Please select one of these options.» والـ focus راح لأول radio. مع إن [[required]] مكتوب على الأولاني بس، الاتنين اتعلّموا [[invalid]].
+- وقفت على «كارت» ودوست السهم لتحت: الـ focus راح لـ «كاش» **واتعلّم كمان** ([[:checked]] بقى [[cod]]). يعني الأسهم بتتنقل وبتختار.
 
 ---
 
-## ومع [[dir="rtl"]]
+## ٣. الـ checkboxes
 
-نفس الكود: الـ aside بقى عند left = 750 (على اليمين) والـ main عند 0، والصورة المميزة في الركن اليمين فوق (left = 508، عرض 492). العمود رقم 1 في العربي على اليمين.
+~~~text index.html
+<label><input type="checkbox" name="notify" value="email" checked> الإيميل</label>
+<label><input type="checkbox" name="notify" value="sms"> SMS</label>
+~~~
+
+[[checked]] attribute من غير قيمة: المربع متعلّم من الأول. والاتنين ليهم نفس الـ [[name]]، بس ده مش بيخليهم مجموعة زي الـ radio: كل واحد بيتعلّم لوحده.
+
+---
+
+## ٤. الـ [[<select>]]
+
+| الحتة | معناها |
+|---|---|
+| [[<select id="city" name="city" required>]] | القايمة. الـ id عشان الـ label، والـ name عشان الإرسال |
+| [[<option value="">اختار…</option>]] | أول اختيار وقيمته فاضية |
+| [[<optgroup label="الدلتا">]] | عنوان مجموعة جوه القايمة، مبيتختارش |
+| [[<option value="gharbia">الغربية</option>]] | المستخدم بيشوف «الغربية»، والسيرفر بيستلم [[gharbia]] |
+
+Chrome سمّى الـ select [[combobox "المحافظة"]] (من الـ label)، والـ optgroup ظهر [[group "الدلتا"]] جواه.
+
+بعد ما اخترت الدفع ودوست «ابعت» تاني، المتصفح وقف عند المحافظة: «Please select an item in the list.». السبب: الاختيار المبدئي قيمته [[""]]، و [[required]] بيرفض القيمة الفاضية.
+
+---
+
+## ٥. الكيبورد: كام وقفة Tab؟
+
+~~~text ترتيب Tab
+radio كارت  →  checkbox الإيميل  →  checkbox SMS  →  select  →  زرار
+~~~
+
+الـ radio group كله وقفة واحدة (الـ «كاش» مظهرش)، والجوه بالأسهم. أما كل checkbox وقفة لوحده.
+
+---
+
+## ٦. إيه اللي بيتبعت؟ ([[FormData]])
+
+[[new FormData(form)]] بيجمّع اللي الفورم هيبعته. اخترت كارت والغربية وعلّمت الـ checkboxes الاتنين:
+
+~~~text Console
+[...new FormData(document.forms[0])]
+Object.fromEntries(new FormData(document.forms[0]))
+new FormData(document.forms[0]).getAll('notify')
+~~~
+
+~~~text الناتج
+pay=card & notify=email & notify=sms & city=gharbia
+{ pay: 'card', notify: 'sms', city: 'gharbia' }
+[ 'email', 'sms' ]
+~~~
+
+- [[document.forms]]: كل الفورمات اللي في الصفحة، و [[0]] بين الأقواس المربعة يعني أولهم.
+- السطر الأول: [[notify]] اتبعتت **مرتين**.
+- [[Object.fromEntries]] بيحوّل الأزواج لـ object، والـ object مينفعش فيه مفتاح مكرر، فاتبقى آخر واحد ([[sms]]) وضاع [[email]].
+- [[getAll('notify')]] بترجّع كل القيم في array.
+
+وشلت العلامة من الاتنين:
+
+~~~text الناتج
+pay=card & city=gharbia
+getAll('notify')  →  []
+get('notify')     →  null
+~~~
+
+[[notify]] اختفت خالص. مش [[false]] ولا [[""]].
+
+---
 
 ## الخلاصة
 
-| الكتابة | المعنى |
-|---|---|
-| [[250px 1fr]] | عمود ثابت والتاني ياخد الباقي |
-| [[repeat(4, minmax(0, 1fr))]] | ٤ أعمدة متساوية فعلًا |
-| [[span 2]] | خد خانتين |
-| [[1 / -1]] | من أول خط لآخر خط |
+| | radio | checkbox | select |
+|---|---|---|---|
+| كام اختيار | واحد | صفر أو أكتر | واحد |
+| اللي بيربطهم | نفس [[name]] | (كل واحد لوحده) | عنصر واحد |
+| [[required]] | على واحد بيكفي | على كل واحد لوحده | محتاج option بـ [[value=""]] |
+| الكيبورد | وقفة واحدة والأسهم جواها | وقفة لكل واحد | وقفة واحدة |
+| لو مش متختار | مش بيتبعت | مش بيتبعت | بيتبعت [[""]] |
 
-- الـ gap بيتطرح الأول، وبعدين الـ fr بيتقسم.
-- grid للحاجات اللي فيها صفوف وأعمدة مع بعض، و flex لخط واحد.`,
+- لفّ أي مجموعة في [[fieldset]] و [[legend]].
+- checkboxes بنفس الاسم: [[getAll]] مش [[get]] ولا [[Object.fromEntries]].`,
           lines: [
-            R`صفحة فيها sidebar جنب المحتوى: الأب اللي هنقسّمه أعمدة.`,
-            R`[[display: grid]]: الأولاد يبقوا خانات في شبكة بيرسمها الأب.`,
-            "عمود 250 ثابت، والتاني ياخد الباقي.",
-            R`مسافة 32px بين الأعمدة (وبين الصفوف لو فيه)، وبتتطرح قبل ما الـ fr يتقسم.`,
-            R`قفلة [[.layout]]، والمعرض جاي بعده.`,
-            R`معرض صور: أب تاني بشبكة أعمدة متساوية.`,
-            R`نفس [[display: grid]]، بس المرة دي هنقسّم لأربعة أعمدة.`,
-            R`4 أعمدة متساوية. [[minmax(0, 1fr)]] بدل [[1fr]] عشان محتوى طويل ميوسّعش عمود.`,
-            R`16px بين الصور في الاتجاهين، والصورة المميزة بتاخدها جواها لما تمتد.`,
-            R`قفلة [[.gallery]]، وبعدها قواعد لأولاد معينين.`,
-            "الصورة المميزة تاخد عمودين وصفين.",
-            "من أول خط لآخر خط: عرض الـ grid كله مهما كان عدد الأعمدة."
+            R`بداية المجموعة الأولى: [[<fieldset>]] بيلف الـ radios اللي بيجاوبوا على نفس السؤال، والمتصفح بيرسم حواليهم برواز لحد ما تشيله بالـ CSS.`,
+            "السؤال. قارئ الشاشة بيقوله قبل أول اختيار.",
+            R`radio متعلّم باسم [[pay]]. [[required]] على واحد بيكفي للمجموعة.`,
+            R`نفس الـ [[name]]، فتعليمه بيشيل التاني.`,
+            R`نهاية مجموعة الدفع: قارئ الشاشة بيعرف إن الاختيارين دول بس اللي تبع سؤال «طريقة الدفع».`,
+            "مجموعة checkboxes: تختار صفر أو أكتر.",
+            R`السؤال بتاع المجموعة التانية: [[<legend>]] لازم يبقى أول عنصر جوه الـ fieldset عشان يتقري كاسمها.`,
+            R`[[checked]] متعلّم من الأول، وهيتبعت [[notify=email]].`,
+            R`نفس الاسم، فلو اتعلّموا الاتنين هيتبعتوا مرتين.`,
+            R`نهاية مجموعة الإشعارات. الـ select اللي بعدها مش محتاج fieldset لأنه حقل واحد وليه label عادي.`,
+            "label الـ select مربوط بالـ id زي أي حقل.",
+            R`قايمة، و [[required]] يرفض القيمة الفاضية.`,
+            R`اختيار مبدئي قيمته فاضية، فالمستخدم مجبر يختار حاجة تانية.`,
+            "عنوان مجموعة جوه القايمة، مبيتختارش.",
+            R`الكلام بالعربي للمستخدم، والـ [[value]] ثابت للسيرفر.`,
+            R`اختيار تاني في نفس المجموعة: [[value="dakahlia"]] هو اللي بيتبعت، و «الدقهلية» اللي بيظهر.`,
+            R`نهاية الـ [[<optgroup>]]: لو عندك مجموعة تانية (الصعيد مثلًا) تبدأ بعدها بـ optgroup جديد.`,
+            R`نهاية الـ select: قيمته وقت الإرسال هي [[value]] الاختيار المتعلّم، ولو لسه على «اختار…» قيمته فاضية والـ [[required]] بيوقف الإرسال.`
           ],
-          sol: R`على عرض 1000: الصورة الأولى ([[.featured]]) واخدة مربع 2×2 في الركن (عرضها عمودين + الـ gap، وطولها صفين)، والصور 2 و 3 على جنبها في الصف الأول، و 4 و 5 تحتهم في الصف التاني، وبعدين 6 و 7 و 8 في صف تالت كامل تحت، والخانة الرابعة في الصف ده فاضية. يعني الـ 8 صور بياخدوا 3 صفوف.
+          sol: R`لما تدوس submit والحقول فاضية: المتصفح بيقف عند أول حقل required فاضي (مجموعة الدفع) ويعرض رسالة جنبها، ومش بيبعت حاجة.
 
-لما تدوس على شارة [[grid]] جنب الـ div في Elements: هيترسم فوق الصفحة خطوط الأعمدة (5 خطوط لأن 4 أعمدة) وأرقامها من 1 لـ 5 ومن -1 لـ -5 من الناحية التانية، والـ gap متظلل. من Layout panel تقدر تشغّل «Show area names» و «Extend grid lines».
+بعد ما تختار وتعلّم الـ checkboxes الاتنين، [[Object.fromEntries(...)]] هيطلّع حاجة زي [[{pay: 'cod', notify: 'sms', city: 'gharbia'}]]: الـ [[notify]] فيها قيمة واحدة بس (آخر واحدة) لأن الـ object مينفعش يبقى فيه نفس المفتاح مرتين. أما [[getAll('notify')]] فبترجّع [[['email', 'sms']]].
 
-لو الصورة الكبيرة طلعت عمودين بس من غير ما تطول صفين، اتأكد إن مفيش [[height]] ثابت على العنصر. ولو الصفحة rtl هتلاقي العمود 1 على اليمين والـ featured في الركن اليمين فوق، وده صح.`
+ولو شلت العلامة من الاتنين، [[notify]] مش هتظهر خالص في الـ FormData. الغلط الشائع: تتوقعها [[false]] أو [[[]]] وتكتب كود في السيرفر على الأساس ده.`
         },
         {
-          cmd: "auto-fit و minmax",
+          cmd: "textarea و date و number",
           ref: [
-            { t: "MDN: <flex>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/flex_value" },
-            { t: "MDN: minmax()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/minmax" },
-            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+            { t: "WHATWG: the textarea element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-textarea-element" },
+            { t: "MDN: <textarea>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/textarea" },
+            { t: "MDN: <input type=\"date\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/date" },
+            { t: "MDN: <input type=\"number\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/number" },
+            { t: "MDN: <input type=\"url\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/url" },
+            { t: "WHATWG: inputmode attribute", url: "https://html.spec.whatwg.org/multipage/interaction.html#attr-inputmode" },
+            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
           ],
-          title: "كروت responsive من غير ولا media query",
-          desc: R`[[repeat(auto-fit, minmax(250px, 1fr))]] معناها: اعمل أعمدة على قد ما تقدر، كل عمود مش أقل من 250، والباقي يتوزّع عليهم. على الموبايل عمود، وعلى التابلت 2 أو 3، وعلى شاشة كبيرة 4 أو أكتر، من غير سطر media query.
-
-الفرق بين [[auto-fit]] و [[auto-fill]] بيبان لما العناصر قليلة: fit بيمطّطهم يملوا السطر، و fill بيسيب أعمدة فاضية.`,
-          example: R`.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
-  gap: 1.5rem;
-}
-.tags {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 0.5rem;
-}`,
-          try: R`اعمل 3 كروت بس في [[.cards]] على شاشة عريضة وشوفهم اتمطّوا. غيّر لـ [[auto-fill]] وشوف الفرق. وبعدين صغّر الشاشة لـ 200px واكتب [[250px]] بدل [[min(250px, 100%)]] وشوف الـ scroll الأفقي.`,
-          flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** عرض 900 و [[gap: 16px]] و [[repeat(auto-fit, minmax(200px, 1fr))]] و ٨ كروت. كام عمود، وعرض كل واحد كام؟ احسب الأول وبعدين اقرا [[gridTemplateColumns]].`, done: R`٤ أعمدة (4 × 200 + 3 × 16 = 848 تدخل، و 5 = 1064 لأ)، وكل عمود (900 - 48) ÷ 4 = 213، والمتصفح طلّع [[213px 213px 213px 213px]].`, sol: R`~~~live 120 260
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكروت</title>
-<style>
-  body { margin: 0; }
-  .g { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-</style>
-</head>
-<body>
-<div class="g" id="g"></div>
-<script>
-  document.querySelector('#g').innerHTML = '<div>كارت</div>'.repeat(8);
-$__lt/script>
-</body>
-</html>
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على جهاز توقيته نيويورك (في DevTools: Sensors › Location، أو [[timezoneId]] في Playwright) إيه ناتج [[new Date('2026-06-26').getDate()]] و [[new Date('2026-06-26T00:00').getDate()]]؟`, done: R`الأول طلع 25 والتاني 26: النص اللي فيه تاريخ بس بيتقري منتصف الليل UTC (ودي الساعة 8 بالليل يوم 25 في نيويورك)، واللي فيه وقت من غير Z بيتقري بالتوقيت المحلي. وده نفس اللي بيرجع من [[date.valueAsDate]] (اتطبع [[2026-06-26T00:00:00.000Z]]).`, sol: R`~~~js
+// في Console على جهاز توقيته نيويورك
+new Date('2026-06-26').getDate();
+new Date('2026-06-26T00:00').getDate();
+
+const i = document.createElement('input');
+i.type = 'date';
+i.value = '2026-06-26';
+i.valueAsDate.toISOString();
 ~~~
 
-**الحساب:** المتصفح بيجرّب أكبر عدد أعمدة بالـ MIN:
+عشان تغيّر التوقيت من غير ما تلمس الجهاز: DevTools، ثم More tools، ثم Sensors، ثم Location واختار نيويورك.
 
-- 4 أعمدة: 4 × 200 + 3 × 16 = 848 ≤ 900، بتدخل.
-- 5 أعمدة: 5 × 200 + 4 × 16 = 1064 > 900، مبتدخلش.
+**ليه مختلفين:** المعيار قايل حاجتين مختلفتين:
 
-فبعد كده [[1fr]] بتوزّع الفاضي: (900 − 48) ÷ 4 = 213.
+- تاريخ بس [[2026-06-26]]: يتقري منتصف الليل **UTC**. ونيويورك في يونيو ورا UTC بـ ٤ ساعات، فده الساعة 8 بالليل يوم 25.
+- تاريخ ووقت من غير Z: يتقري بالتوقيت **المحلي**، فهو 26 فعلًا.
 
-**الغلطة الشائعة:** تنسى الـ gaps في الحساب، فتتوقع 4 أعمدة على 800، والحساب الحقيقي 848.
+و [[getDate()]] بترجّع اليوم بالتوقيت المحلي، فالأول طلع 25.
+
+**الغلطة الشائعة:** تعمل [[new Date(input.value)]] من حقل [[type="date"]] وتعرض اليوم. في مصر مش هتشوف المشكلة لأنها قدام UTC، وأول عميل في أمريكا هيشوف ميعاده قبلها بيوم. لو عايز اليوم نفسه، قارن النص زي ما هو، أو ضيف [[T00:00]].
 
 ~~~text الناتج
-على 900: 213px 213px 213px 213px
-على 800: 256px 256px 256px
+التوقيت: America/New_York
+new Date('2026-06-26').getDate()        = 25
+new Date('2026-06-26T00:00').getDate()  = 26
+input.valueAsDate                       = 2026-06-26T00:00:00.000Z
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** section عليه [[padding-inline: 1.5rem]] وجواه شبكة [[repeat(auto-fit, minmax(300px, 1fr))]]. على موبايل 320 فيه scroll أفقي. قيسه في الاتجاهين وصلّحه.`, done: R`قبل: العمود 300 والمكان 272، و [[scrollWidth]] = 324 في ltr و rtl (في rtl الكارت بيبدأ من -4 فحتة منه مقصوصة شمال). بعد [[min(300px, 100%)]]: العمود 272 و [[scrollWidth]] = 320.`, sol: R`~~~live 130 200
+            { lvl: 'تحدي', t: R`**مسألة:** كوبون فيه حقل «ينتهي في» ([[type="date"]]). اكتب [[isExpired(dateStr, now)]] بترجّع true بس بعد آخر اليوم ده بالتوقيت المحلي، مش من أوله.`, done: R`مع [[isExpired('2026-06-26', new Date('2026-06-26T23:00'))]] بترجّع false، ومع [[new Date('2026-06-27T00:01')]] بترجّع true، ومع [[new Date('2026-06-26T00:30')]] false. والحل بيبني [[new Date(dateStr + 'T23:59:59.999')]] مش [[new Date(dateStr)]].`, sol: R`~~~js
+function isExpired(dateStr, now = new Date()) {
+  const lastMoment = new Date(dateStr + 'T23:59:59.999');
+  return now > lastMoment;
+}
+~~~
+
+**السطر المهم:** [[dateStr + 'T23:59:59.999']] بيبني آخر لحظة في اليوم **بالتوقيت المحلي**، لأن النص فيه وقت ومن غير [[Z]]. والكوبون مكتوب عليه «ينتهي في 26» يعني طول يوم 26 شغال.
+
+**ليه** [[now]] **parameter:** عشان تقدر تختبر الدالة بوقت ثابت. لو جوه الدالة [[new Date()]] مباشرة، النتيجة هتتغيّر كل مرة تشغّلها. و [[= new Date()]] قيمة افتراضية للاستخدام العادي.
+
+و [[>]] بين تاريخين شغالة لأن JavaScript بيحوّلهم لأرقام (milliseconds).
+
+**الغلطة الشائعة:** تكتب [[new Date(dateStr) < now]]. ده بيقرا التاريخ منتصف الليل UTC، يعني الكوبون بينتهي **أول** اليوم، مش آخره. في القاهرة صيفًا بعد الساعة 3 الفجر هيقولك الكوبون انتهى.
+
+~~~text الناتج
+isExpired('2026-06-26', new Date('2026-06-26T23:00'))  → false
+isExpired('2026-06-26', new Date('2026-06-27T00:01'))  → true
+isExpired('2026-06-26', new Date('2026-06-26T00:30'))  → false
+
+الحل الغلط new Date(dateStr) < now في القاهرة 3:01 الفجر يوم 26 → true
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** حاسبة BMI: وزن ([[step="0.1"]] و min و max) وطول بالسنتي، والنتيجة في [[<output>]] بـ [[aria-live="polite"]] بتتحدّث مع كل حرف، وبتستخدم [[valueAsNumber]] مش [[Number(value)]].`, done: R`70 و 175 بيطلّعوا 22.9، والحقل الفاضي بيخلي [[valueAsNumber]] بـ [[NaN]] والنتيجة بتقول «اكتب الوزن» مش NaN، وكتابة 70.55 في الوزن بتطلّع رسالة المتصفح عن أقرب قيمتين.`, sol: R`~~~live 290 290
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكروت</title>
+<title>حاسبة BMI</title>
 <style>
-  body { margin: 0; }
-  section { padding-inline: 1.5rem; }
-  .g { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
-  .g div { background: #bfdbfe; padding: 16px; }
+  body { font-family: system-ui; margin: 16px; }
+  form { display: grid; gap: 8px; max-width: 280px; }
+  input { padding: 8px; font: inherit; }
+  output { font-size: 1.5rem; font-weight: 700; }
 </style>
 </head>
 <body>
 <main>
-<h1>الكروت</h1>
-<section><div class="g"><div>١</div><div>٢</div></div></section>
+<h1>حاسبة BMI</h1>
+<form id="bmi">
+  <label for="w">الوزن (كجم)</label>
+  <input id="w" type="number" step="0.1" min="20" max="300" value="70">
+  <label for="h">الطول (سنتي)</label>
+  <input id="h" type="number" min="100" max="250" value="175">
+  <output id="res" for="w h" aria-live="polite"></output>
+</form>
 </main>
-</body>
-</html>
-~~~
+<script>
+  const w = document.querySelector('#w');
+  const h = document.querySelector('#h');
+  const res = document.querySelector('#res');
 
-**السبب:** الـ MIN في [[minmax(300px, 1fr)]] رقم إلزامي. والمكان المتاح 320 − 48 = 272، يعني أقل من 300، فالعمود بيطلع برّه الصندوق بـ 28، والصفحة بتبقى 324 (الـ 300 + padding البداية 24).
-
-**التصليح:** [[min(300px, 100%)]] معناها «300، بس لو المكان أقل خد المكان كله». فالعمود مبيعدّيش الأب أبدًا. وعلى الشاشات الكبيرة [[min]] بترجّع 300 عادي.
-
-**ليه في الاتجاهين:** في RTL بيبدأ من اليمين، فالزيادة بتطلع من الشمال، و [[left]] بيبقى سالب. يعني حتة من الكارت مقصوصة، والـ scroll مش بيوصلها كويس.
-
-**الغلطة الشائعة:** تصغّر الـ 300 لـ 250 بدل ما تصلّح. المشكلة هترجع مع padding أكبر أو شاشة أصغر.
-
-~~~text الناتج
-على 320:
-                  العمود    scrollWidth    left الكارت
-قبل، ltr          300       324          24
-قبل، rtl          300       324          -4
-بعد، rtl          272       320          24
-بعد، ltr          272       320          24
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة منتجات لـ «بن الصباح» (متخيل) بتتعرض صح بـ ١ و ٢ و ٣ و ٨ منتجات: لو منتج واحد ميتمطّش على الشاشة كلها ويبقى في النص. جرّب [[repeat(auto-fit, minmax(min(240px, 100%), 300px))]] مع [[justify-content: center]]، وبعدين نفس الكلام بـ [[auto-fill]].`, done: R`على 1280 بمنتج واحد و [[auto-fit]]: الكارت عرضه 300 بالظبط وفي نص الشبكة (في المعمل rtl من 490 لـ 790). بـ [[auto-fill]] نفس العرض بس لازق في البداية (من 964 لـ 1264)، لأن الأعمدة الفاضية لسه واخدة مكانها فالتوسيط بيوسّط الصف كله مش الكارت. بـ ٨ منتجات الصفوف مليانة. وعلى 360 كل كارت عرضه 300 (الـ MAX) في النص، ومفيش scroll أفقي في أي حالة.`, sol: R`~~~live 590 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بن الصباح</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; font-family: system-ui; }
-  .products {
-    display: grid;
-    gap: 16px;
-    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 300px));
-    justify-content: center;
+  function update() {
+    const weight = w.valueAsNumber;
+    const height = h.valueAsNumber;
+    if (Number.isNaN(weight)) { res.textContent = 'اكتب الوزن'; return; }
+    if (Number.isNaN(height)) { res.textContent = 'اكتب الطول'; return; }
+    const meters = height / 100;
+    res.textContent = (weight / (meters * meters)).toFixed(1);
   }
-  .product { padding: 16px; border: 1px solid #d6d3d1; border-radius: 12px; }
-</style>
-</head>
-<body>
-<main>
-<h1>المنتجات</h1>
-<section class="products" id="p" aria-label="المنتجات"></section>
-</main>
-<script>
-  const n = Number(new URLSearchParams(location.search).get('n') ?? 8);
-  document.querySelector('#p').innerHTML = Array.from({ length: n }, (_, i) =>
-    '<article class="product"><h2>منتج ' + (i + 1) + '</h2></article>').join('');
+
+  document.querySelector('#bmi').addEventListener('input', update);
+  update();
 $__lt/script>
 </body>
 </html>
 ~~~
 
-افتح الصفحة بـ [[?n=1]] و [[?n=2]] و [[?n=3]]، وغيّر [[auto-fit]] لـ [[auto-fill]].
+**السطور المهمة:**
 
-**كل قطعة بتعمل إيه:**
+- [[valueAsNumber]] بيرجّع رقم جاهز، أو [[NaN]] لو الحقل فاضي. أما [[Number("")]] فبترجّع [[0]]، يعني الحقل الفاضي هيتحسب وزن صفر.
+- [[Number.isNaN]] هي اللي بتمسك الحالة دي قبل الحساب.
+- الـ [[input]] event على الـ form نفسه، لأن الأحداث بتطلع لأعلى (bubbling)، فمستمع واحد بيغطي الحقلين.
+- [[toFixed(1)]] رقم واحد بعد العلامة.
+- [[step="0.1"]] هو اللي بيخلي 70.5 مقبولة، والافتراضي [[step="1"]] كان هيرفضها.
 
-- [[minmax(..., 300px)]]: الـ MAX رقم، فالكارت ميتمطّش مهما زاد المكان.
-- [[min(240px, 100%)]]: مفيش scroll على الموبايل الصغير.
-- [[justify-content: center]]: وسّط الأعمدة كلها. ولازم مكانش [[1fr]]، لأن [[1fr]] مش بيسيب فاضي يتوسّط.
-
-**الفرق:** [[auto-fit]] بيقفل الأعمدة الفاضية لصفر، فمنتج واحد هو الصف كله، والتوسيط بيوسّطه. [[auto-fill]] بيسيبها موجودة بالمكان، فالتوسيط بيوسّط ٤ أعمدة، والمنتج الواحد في أول واحد.
-
-**الغلطة الشائعة:** تستخدم [[1fr]] مع منتج واحد، فالكارت ياخد الشاشة كلها وشكله كارت مفرود.
+**الغلطة الشائعة:** تعرض الناتج من غير فحص الفاضي، فالمستخدم يشوف [[NaN]] أو [[Infinity]] وهو بيمسح الطول عشان يكتبه من الأول.
 
 ~~~text الناتج
-على 1280:
-                      x الكارت الأول           عرض
-auto-fit، منتج واحد   من 490 لـ 790         300   (في الصف 1)
-auto-fill، منتج واحد  من 964 لـ 1264         300   (في الصف 1)
-auto-fit، منتجين      من 648 لـ 948         300   (في الصف 2)
-auto-fit، ٣ منتجات    من 806 لـ 1106         300   (في الصف 3)
-auto-fit، ٨ منتجات    من 964 لـ 1264         300   (في الصف 4)
-
-على 360، ٨ منتجات: عرض الكارت 300 (الـ MAX) في عرض متاح 328   overflow 0px
-axe: 0 violations
+70 و 175            → 22.9
+الوزن فاضي           → اكتب الوزن   (valueAsNumber = NaN)
+الطول فاضي           → اكتب الطول
+الوزن 70.55          → stepMismatch = true
+رسالة المتصفح: Please enter a valid value. The two nearest valid values are 70.5 and 70.6.
+overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** ٥ كروت على 1200: مرة بـ flex ([[flex: 1 1 250px]] و [[flex-wrap: wrap]] و [[gap: 16px]]) ومرة بـ grid ([[repeat(auto-fit, minmax(250px, 1fr))]] و [[gap: 16px]]). قيس عرض الكارت الخامس في الاتنين.`, done: R`في الاتنين ٤ كروت في الصف الأول عرض كل واحد 288. الكارت الخامس في flex عرضه 1200 (اتمطّ لوحده)، وفي grid عرضه 288 زي الباقيين لأنه قاعد في عمود.`, sol: R`~~~live 290 490
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم شكوى فيه [[<textarea name="msg" required value="اكتب هنا">]] وبعده [[</textarea>]] في سطر تاني بعد مسافات. المستخدم بيبعت الشكوى فاضية والـ required ساكت!`, done: R`عرفت إن [[value]] مش attribute على الـ textarea (الكلام بيتكتب بين التاجين)، وإن المسافات اللي بين التاجين بقت قيمة الحقل ([[ta.value]] رجّع [["   "]] فـ [[valueMissing]] بـ false). بعد ما خليت [[<textarea ...></textarea>]] لازقين و [[placeholder]] للتلميح، الإرسال الفاضي بيقف.`, sol: R`قبل (كل المشكلة في السطرين دول):
+
+~~~html
+<textarea name="msg" required value="اكتب هنا">
+   </textarea>
+~~~
+
+بعد:
+
+~~~live 130 130
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>قارن</title>
-<style>
-  body { margin: 0; }
-  .f { display: flex; flex-wrap: wrap; gap: 16px; margin-block-end: 16px; }
-  .f > div { flex: 1 1 250px; background: #bfdbfe; padding: 8px 0; }
-  .g { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-  .g > div { background: #bbf7d0; padding: 8px 0; }
-</style>
+<title>شكوى</title>
 </head>
 <body>
-<div class="f"><div>١</div><div>٢</div><div>٣</div><div>٤</div><div id="f5">٥</div></div>
-<div class="g"><div>١</div><div>٢</div><div>٣</div><div>٤</div><div id="g5">٥</div></div>
+<main>
+<h1>شكوى</h1>
+<form id="f">
+  <label for="msg">الشكوى</label>
+  <textarea id="msg" name="msg" required placeholder="اكتب هنا"></textarea>
+  <button>ابعت</button>
+</form>
+</main>
 </body>
 </html>
 ~~~
 
-**الفرق الجوهري:** flex بيوزّع المساحة **سطر بسطر**. كل سطر بيتحسب لوحده، فالخامس لوحده في سطره، والفاضي كله ليه.
+**المشكلتين:**
 
-أما grid فبيحسب **الأعمدة** الأول، وكل عنصر بيقعد في عمود. فالخامس قد أي عمود.
+- [[textarea]] ملوش [[value]] attribute. الـ [[input]] بيقراه، لكن الـ textarea قيمته هي الكلام اللي **بين** التاجين. فـ [[value="اكتب هنا"]] متجاهلة.
+- اللي بين التاجين كان سطر جديد ومسافات. والمتصفح بيشيل أول سطر جديد بعد الفتحة، والمسافات اللي بعده بتفضل قيمة حقيقية. فالحقل مش فاضي، و [[required]] راضي.
 
-**القاعدة:** عايز كروت متساوية في شبكة: grid. عايز العناصر تاخد قد محتواها وتتوزّع، زي tags أو أزرار: flex.
-
-**الغلطة الشائعة:** تحل كارت flex اليتيم بـ [[max-width]]. ده بيحله شكلًا، بس grid معمول لكده.
+**الغلطة الشائعة:** تشوف الحقل فاضي بالعين وتدوّر على باج في الـ JavaScript. لما حقل [[required]] يعدّي وهو باين فاضي، اطبع [[JSON.stringify(ta.value)]]. وعشان كده [[<textarea></textarea>]] لازم يبقوا لازقين، حتى لو الـ formatter عايز يفصلهم.
 
 ~~~text الناتج
-عرض 1200:
-                 الكروت الأربعة     الخامس
-flex             288              1200
-grid             288              288
+قبل: ta.value = "   "   valueMissing = false   الفورم بيتبعت = true
+بعد: ta.value = ""   valueMissing = true   الفورم بيتبعت = false
+axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميل في ٣ سطور ليه ٨ كروت شكلهم واحد بـ [[auto-fit]] و [[auto-fill]]، بس ٣ كروت لأ. وارسم الأعمدة في الحالتين على عرض 1200.`, done: R`الشرح فيه إن الاتنين بيعملوا نفس عدد الأعمدة، والفرق إن fit بيقفل الأعمدة الفاضية لصفر وبيوزّع مكانها، والرسمة فيها [[384 384 384 0]] للـ fit و [[282 × 4]] للـ fill مع ٣ كروت.`, sol: R`**الرد النموذجي:**
-
-~~~text الشرح
-الاتنين بيحسبوا نفس عدد الأعمدة اللي تكفي في الصف، ولما الكروت تملا كل الأعمدة مفيش فرق خالص.
-الفرق لما الكروت أقل من الأعمدة: auto-fit بيقفل العمود الفاضي لصفر ويدّي مكانه للباقيين، و auto-fill بيسيبه محجوز.
-فـ ٣ كروت على 1200: fit بيفردهم على الصف كله، و fill بيسيب مكان عمود رابع فاضي في الآخر.
+            { lvl: 'سريع', t: R`**قارن وقيس:** حقل [[type="number" step="1"]]: اكتب فيه 2.5 بالكيبورد واقرا [[validity.stepMismatch]] و [[validationMessage]]. وبعدين غيّر لـ [[step="any"]].`, done: R`مع step 1 رجّع [[true]] والرسالة في Chrome «Please enter a valid value. The two nearest valid values are 2 and 3.»، ومع [[step="any"]] بقى سليم. والفلوس والوزن محتاجين [[step="0.01"]] أو any.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>step</title>
+</head>
+<body>
+<label for="n">السعر</label>
+<input id="n" type="number" step="1">
+</body>
+</html>
 ~~~
 
-~~~text الرسمة على عرض 1200 و gap 24 و ٣ كروت
-auto-fit:   [   384   ][   384   ][   384   ]  (العمود الرابع 0)
-auto-fill:  [ 282 ][ 282 ][ 282 ][ فاضي 282 ]
+~~~js
+const n = document.querySelector('#n');
+n.value = '2.5';
+n.validity.stepMismatch;
+n.validationMessage;
+n.step = 'any';
+n.validity.stepMismatch;
 ~~~
 
-والكود اللي قاس الأرقام:
+**معنى** [[step]]**:** القيم المسموحة تبدأ من [[min]] (أو صفر) وتزيد بمقدار الـ step. فـ [[step="1"]] وهو الافتراضي يعني أرقام صحيحة بس، ورقم زي 2.5 مش مسموح.
+
+وعشان كده المتصفح بيقولك أقرب قيمتين مسموحتين.
+
+| القيمة | تستخدمها في |
+|---|---|
+| [[step="1"]] (افتراضي) | عدد قطع، عمر |
+| [[step="0.01"]] | فلوس بقرشين |
+| [[step="any"]] | وزن أو قياس من غير حد للكسور |
+
+**الغلطة الشائعة:** تنسى الـ step في حقل السعر. تجربتك انت بـ 100 هتعدّي، وأول عميل يكتب 99.5 الفورم هيرفض.
+
+~~~text الناتج
+step="1"   القيمة 2.5:
+  stepMismatch = true
+  الرسالة: Please enter a valid value. The two nearest valid values are 2 and 3.
+step="any" القيمة 2.5:
+  stepMismatch = false   valid = true
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف شكل الـ value لـ [[type="time"]] و [[month]] و [[week]] و [[datetime-local]]، وبعدين اتأكد بنفسك في الـ Console.`, done: R`طلعوا [[14:30]] و [[2026-10]] و [[2026-W41]] و [[2026-10-05T14:30]] مهما كان الشكل اللي المستخدم شايفه بالعربي، وعرفت إن السيرفر بيستقبل الصيغ دي بالظبط.`, sol: R`~~~js
+for (const [type, value] of [
+  ['time', '14:30'],
+  ['month', '2026-10'],
+  ['week', '2026-W41'],
+  ['datetime-local', '2026-10-05T14:30'],
+]) {
+  const i = document.createElement('input');
+  i.type = type;
+  i.value = value;
+  console.log(type, JSON.stringify(i.value));
+}
+~~~
+
+| الـ type | شكل الـ value | ملحوظة |
+|---|---|---|
+| [[time]] | [[HH:mm]] | ٢٤ ساعة دايمًا، حتى لو ظاهر 2:30 PM |
+| [[month]] | [[YYYY-MM]] | |
+| [[week]] | [[YYYY-Www]] | حرف W ورقم الأسبوع |
+| [[datetime-local]] | [[YYYY-MM-DDTHH:mm]] | من غير توقيت، يعني مفيش Z |
+
+**ليه ده مهم:** الشكل اللي المستخدم شايفه بيتغيّر حسب لغة جهازه، لكن اللي بيوصل للسيرفر ثابت. فالسيرفر مش محتاج يعرف لغة المستخدم.
+
+**الغلطة الشائعة:** تحوّل [[datetime-local]] لـ UTC من غير ما تفكر. القيمة دي مفيهاش توقيت، فلازم السيرفر يعرف توقيت المستخدم، أو تبعته في حقل تاني. وكمان، لو القيمة شكلها غلط المتصفح بيفضّي الحقل في صمت، زي ما هتشوف في آخر سطر.
+
+~~~text الناتج
+time "14:30"
+month "2026-10"
+week "2026-W41"
+datetime-local "2026-10-05T14:30"
+
+time بقيمة "2:30 PM" → ""
+~~~` },
+          ],
+          title: "كل حقل بنوعه، وإمتى متستخدمش type=\"number\"",
+          desc: R`[[<textarea>]] للكلام اللي أكتر من سطر. و [[type="date"]] بيدّي calendar أصلي، وقيمته دايمًا [[2026-10-05]] مهما كان الشكل اللي المستخدم شايفه. و [[type="number"]] للكميات الحقيقية (كمية، سن) ومعاه [[min]] و [[max]] و [[step]]. و [[email]] و [[tel]] و [[url]] بيغيّروا الكيبورد وبعضهم بيعمل validation.
+
+وإمتى متستخدمش number: أي رقم مش «كمية» (تليفون، كارت، كود OTP، رقم قومي، رمز بريدي). هنا [[inputmode="numeric"]] على حقل نص: كيبورد أرقام من غير أسهم ولا شيل للأصفار.`,
+          example: R`<label for="msg">رسالتك</label>
+<textarea id="msg" name="msg" rows="4" maxlength="500"></textarea>
+<label for="qty">الكمية</label>
+<input id="qty" name="qty" type="number" min="1" max="10" step="1" value="1">
+<label for="date">ميعاد التوصيل</label>
+<input id="date" name="date" type="date" min="2026-10-01">
+<label for="otp">كود التأكيد</label>
+<input id="otp" name="otp" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6">
+<label for="site">موقعك</label>
+<input id="site" name="site" type="url" placeholder="https://" dir="ltr">`,
+          try: R`حط الحقول في صفحة وافتح الـ Console. اختار تاريخ واكتب [[date.value]] و [[date.valueAsDate]]. وبعدين [[qty.value = 'abc']] واقرا [[qty.value]] و [[qty.valueAsNumber]]. وافتح الصفحة من الموبايل وشوف كيبورد كل حقل.`,
+          flag: "script",
+          deep: {
+            why: R`النوع الصح بيوفّر على المستخدم: كيبورد مناسب، و calendar بدل ما يكتب التاريخ بإيده ويغلط في الترتيب، و validation ببلاش. والنوع الغلط بيبوّظ البيانات: [[type="number"]] على تليفون بيشيل الصفر اللي على الشمال، وفيه أسهم، والـ scroll بالماوس فوقه بيغيّر القيمة من غير ما تاخد بالك.`,
+            how: R`[[value]] دايمًا string. للأرقام فيه [[valueAsNumber]] (و [[NaN]] لو فاضي)، وللتاريخ [[valueAsDate]] (Date بتوقيت UTC). و type=number لما تكتب فيه حاجة مش رقم، [[value]] بيرجع [[""]] مش الكلام اللي اتكتب، فمتعرفش من JavaScript المستخدم كتب إيه غلط.
+
+الـ [[date]] بيعرض التاريخ بلغة وشكل جهاز المستخدم، بس القيمة اللي بتتبعت وبتتقري ثابتة [[YYYY-MM-DD]]، ودا اللي خلّي الحقل ده أحسن من نص حر. و [[min]] و [[max]] بيقفلوا الأيام اللي مينفعش تتختار.
+
+[[autocomplete="one-time-code"]] بيخلي الموبايل يقترح الكود اللي جه في SMS. و [[maxlength]] على textarea بيوقف الكتابة عند الحد، واعرض عدّاد جنبه عشان المستخدم ميتفاجئش.
+
+وفيه [[field-sizing: content]] في CSS بيخلي الـ textarea يكبر مع الكلام من غير JavaScript، بس لسه مش في كل المتصفحات، فخليه تحسين إضافي.`,
+            when: R`number: كمية، سن، عدد أفراد. date: ميعاد قريب (توصيل، حجز). تاريخ الميلاد: ناس كتير (زي GOV.UK) بيفضّلوا 3 حقول نص (يوم وشهر وسنة) لأن الـ calendar بيخليك ترجع 30 سنة ورا. tel: أي تليفون. inputmode=numeric: أكواد وأرقام تعريفية.`,
+            mistakes: R`type=number لتليفون أو كارت. [[pattern]] من غير رسالة واضحة جنب الحقل، فالمستخدم يشوف «Please match the requested format» ومش فاهم. تعتمد على [[qty.value]] كرقم فتجمع strings ([[1 + '1']] بيطلّع [[11]]). و date بتحوّله بـ [[new Date(value)]] وتعرضه بتوقيت محلي فيطلع يوم قبله في بعض المناطق: خليه string أو اتعامل معاه كتاريخ من غير وقت. وسؤال انترفيو: «امتى type=number مش مناسب؟» والإجابة: لما القيمة مش حاجة بتتجمع وتطرح.`
+          },
+          teach: R`## الفكرة في سطرين
+
+5 حقول، كل واحد نوعه على قد البيانات اللي فيه. هنفك كل حقل، ونشوف قيمته بتتقري إزاي من JavaScript، والمتصفح بيرفض إيه. كل النتايج من Chrome (headless، لغته إنجليزي)، بقيم حطيتها من الـ Console وبكتابة بالكيبورد المتقلّد.
+
+> أي عنصر ليه [[id]] المتصفح بيعمل له متغير بنفس الاسم، عشان كده [[date.value]] في الـ Console شغالة من غير querySelector. ده للتجربة بس، في الكود الحقيقي امسك العنصر بـ querySelector.
+
+---
+
+## ١. [[<textarea>]]
+
+~~~text index.html
+<textarea id="msg" name="msg" rows="4" maxlength="500"></textarea>
+~~~
+
+- [[textarea]]: حقل كلام متعدد السطور. ليه قفلة، والكلام اللي بين الـ tags هو القيمة المبدئية.
+- [[rows="4"]]: الارتفاع المبدئي 4 سطور. اتقاس 66 بيكسل.
+- [[maxlength="500"]]: أقصى عدد حروف. كتبت 510 حرف بالكيبورد، والقيمة وقفت عند 500: المتصفح بيمنع الكتابة، مش بيعرض غلط.
+
+---
+
+## ٢. [[type="number"]]
+
+~~~text index.html
+<input id="qty" name="qty" type="number" min="1" max="10" step="1" value="1">
+~~~
+
+[[min]] أقل قيمة، و [[max]] أكبر قيمة، و [[step]] الخطوة (القيم المسموحة 1، 2، 3...)، و [[value]] القيمة المبدئية.
+
+### القيمة string مش رقم
+
+~~~text Console
+qty.value
+typeof qty.value
+qty.value + 1
+qty.valueAsNumber + 1
+~~~
+
+~~~text الناتج
+'1'
+'string'
+'11'
+2
+~~~
+
+[[qty.value + 1]] طلعت [[11]] لأن الـ [[+]] بين string ورقم بيلزقهم. [[valueAsNumber]] بيرجّع رقم بجد.
+
+### لما القيمة متبقاش رقم
+
+| اللي حصل | [[value]] | [[valueAsNumber]] |
+|---|---|---|
+| [[qty.value = 'abc']] من الكود | [[""]] | [[NaN]] |
+| كتبت [[1e3abc]] بالكيبورد | [[1e3]] | 1000 |
+
+الحروف اتمنعت وانت بتكتب، بس [[e]] عدّت لأن [[1e3]] رقم سليم (1 × 10 أس 3). و [[NaN]] اختصار Not a Number.
+
+### المتصفح بيرفض إيه؟
+
+| القيمة | الخاصية في [[validity]] | الرسالة |
+|---|---|---|
+| 11 | [[rangeOverflow]] | Value must be less than or equal to 10. |
+| 2.5 | [[stepMismatch]] | Please enter a valid value. The two nearest valid values are 2 and 3. |
+
+---
+
+## ٣. [[type="date"]]
+
+~~~text index.html
+<input id="date" name="date" type="date" min="2026-10-01">
+~~~
+
+### القيمة دايمًا [[YYYY-MM-DD]]
+
+[[YYYY]] السنة 4 أرقام، و [[MM]] الشهر، و [[DD]] اليوم. ده الشكل اللي بيتبعت وبيتقري، مهما كان الشكل اللي المستخدم شايفه. وجرّبت أحط [[05/10/2026]] من الكود: [[date.value]] رجع [[""]]، يعني الحقل رفض أي شكل تاني.
+
+و [[min]] بنفس الشكل: حطيت [[2026-09-30]] فطلع [[rangeUnderflow]] والرسالة «Value must be 10/01/2026 or later.».
+
+### [[valueAsDate]] وفرق التوقيت
+
+حطيت [[2026-10-05]] وقريته في منطقتين زمنيتين:
+
+| المنطقة | [[valueAsDate]] | [[toLocaleDateString()]] |
+|---|---|---|
+| القاهرة | Mon Oct 05 2026 03:00 GMT+0300 | 05/10/2026 |
+| نيويورك | Sun Oct 04 2026 20:00 GMT-0400 | **04/10/2026** |
+
+[[valueAsDate]] بيرجّع [[Date]] الساعة 00:00 بتوقيت UTC (التوقيت العالمي). في نيويورك الساعة دي لسه يوم 4 بالليل، فالتاريخ ظهر يوم قبله. و [[new Date(date.value)]] عمل نفس الغلطة. عشان كده خلي التاريخ string لو مش محتاج الوقت.
+
+---
+
+## ٤. كود التأكيد: نص بكيبورد أرقام
+
+~~~text index.html
+<input id="otp" name="otp" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6">
+~~~
+
+- مفيش [[type]]، فهو [[text]] (اتقاس [[otp.type]] = [[text]]).
+- [[inputmode="numeric"]]: يغيّر كيبورد الموبايل بس لأرقام، من غير ما يغيّر نوع الحقل.
+- [[autocomplete="one-time-code"]]: الموبايل يقترح الكود اللي جه في SMS. [[OTP]] اختصار one-time password.
+- [[pattern="[0-9]{6}"]]: regular expression. [[0-9]] بين القوسين المربعين يعني أي رقم من 0 لـ 9، و [[{6}]] 6 مرات بالظبط. حطيت [[12a]] فطلع [[patternMismatch]] والرسالة «Please match the requested format.» (رسالة عامة، عشان كده اكتب القاعدة جنب الحقل).
+- [[maxlength="6"]]: الكتابة بتقف عند 6 حروف.
+
+ليه مش [[type="number"]]؟ لأن الكود ممكن يبدأ بصفر، ومش حاجة بتتجمع.
+
+---
+
+## ٥. [[type="url"]]
+
+~~~text index.html
+<input id="site" name="site" type="url" placeholder="https://" dir="ltr">
+~~~
+
+| القيمة | سليمة؟ | الرسالة |
+|---|---|---|
+| [[example.com]] | لأ ([[typeMismatch]]) | Please enter a URL. |
+| [[https://example.com]] | أيوه | |
+
+لازم الرابط كامل ومعاه [[https://]]، عشان كده الـ [[placeholder]] بيوريه للمستخدم.
+
+---
+
+## الخلاصة
+
+| الحقل | قيمته | امتى |
+|---|---|---|
+| [[textarea]] | string | كلام أكتر من سطر |
+| [[type="number"]] | string، ورقم من [[valueAsNumber]] | كمية أو سن |
+| [[type="date"]] | [[YYYY-MM-DD]] | ميعاد |
+| [[inputmode="numeric"]] | string | تليفون، كود، رقم قومي |
+| [[type="url"]] | string | رابط كامل |
+
+- [[value]] دايمًا string، حتى في number.
+- [[valueAsDate]] بتوقيت UTC، فممكن يطلع يوم قبله.`,
+          lines: [
+            R`اسم حقل الرسالة: [[for="msg"]] بيربطه بالـ textarea اللي [[id="msg"]] زي أي input بالظبط.`,
+            R`حقل كلام متعدد السطور. [[rows]] الارتفاع المبدئي، و [[maxlength]] أقصى عدد حروف.`,
+            R`اسم حقل الكمية: [[for="qty"]] = [[id]] الـ input، والضغط على الكلمة بيحط المؤشر في الحقل.`,
+            R`رقم حقيقي: أقل حاجة 1 وأكتر حاجة 10 وبيزيد 1، ومبدئيًا 1.`,
+            R`اسم حقل التاريخ: لازم label حتى لو فيه calendar، لأن قارئ الشاشة مش هيعرف «تاريخ إيه» من غيره.`,
+            R`calendar أصلي، والأيام قبل [[min]] مقفولة. القيمة دايمًا [[YYYY-MM-DD]].`,
+            R`اسم حقل كود التأكيد: [[for="otp"]] = [[id="otp"]]. اكتب جنبه «٦ أرقام» عشان المستخدم يعرف الشكل قبل ما يغلط.`,
+            R`نص مش number: كيبورد أرقام، والموبايل يقترح الكود من الـ SMS، و [[pattern]] 6 أرقام بالظبط.`,
+            R`اسم حقل الموقع: [[for="site"]] مربوط بالـ input اللي [[type="url"]] تحته.`,
+            R`[[type="url"]]: كيبورد فيه / و .com، ومبيقبلش غير رابط كامل. و [[dir="ltr"]] عشان الرابط ميتقلبش.`
+          ],
+          sol: R`[[date.value]] بيرجع حاجة زي [[2026-10-05]] حتى لو الحقل بيعرض «٥/١٠/٢٠٢٦» أو بالإنجليزي. و [[date.valueAsDate]] بيرجع Date الساعة 00:00 UTC، فلو عملته [[toLocaleDateString()]] في منطقة غرب جرينتش هيطلع يوم 4.
+
+[[qty.value = 'abc']] وبعدها [[qty.value]] بيرجع [[""]] لأن الحقل رفض القيمة، و [[qty.valueAsNumber]] بيرجع [[NaN]].
+
+على الموبايل: qty و otp كيبورد أرقام، و url كيبورد فيه [[/]]، و date بيفتح calendar. لو otp طلعلك كيبورد حروف يبقى نسيت [[inputmode="numeric"]].`
+        },
+        {
+          cmd: "Constraint Validation API",
+          ref: [
+            { t: "MDN: Constraint validation", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Constraint_validation" },
+            { t: "MDN: ValidityState", url: "https://developer.mozilla.org/en-US/docs/Web/API/ValidityState" },
+            { t: "MDN: setCustomValidity()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setCustomValidity" },
+            { t: "MDN: :user-invalid", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:user-invalid" },
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** حقل [[type="email"]]. أنهي قيمة هتعدّي: [[a@b]] و [[a@b.]] و [[a..b@c.com]] و [[a b@c.com]] و [[أحمد@example.com]] و [[ a@b.com ]] (بمسافات)؟ قول الأول وبعدين اسأل [[validity.valid]].`, done: R`في Chrome عدّوا [[a@b]] (مش لازم .com) و [[a..b@c.com]] واللي بمسافات (المتصفح بيشيل المسافات من الأول والآخر)، ووقعوا [[a@b.]] واللي فيه مسافة في النص والعربي. يعني validation المتصفح شكل بس، والسيرفر لازم يتأكد تاني.`, sol: R`~~~js
+const i = document.createElement('input');
+i.type = 'email';
+for (const v of ['a@b', 'a@b.', 'a..b@c.com', 'a b@c.com', 'أحمد@example.com', ' a@b.com ']) {
+  i.value = v;
+  console.log(JSON.stringify(v), '→', JSON.stringify(i.value), i.validity.valid);
+}
+~~~
+
+**ليه النتيجة كده:** المتصفح بيطبّق regex من المعيار، وهو بسيط عن قصد.
+
+- [[a@b]] يعدّي: الإيميل من غير نقطة صح نظريًا، زي [[admin@localhost]].
+- [[a@b.]] يقع: نقطة في الآخر من غير حاجة بعدها.
+- [[a..b@c.com]] يعدّي: الـ regex مبيفحصش النقطتين ورا بعض.
+- [[a b@c.com]] يقع: مسافة في النص.
+- [[أحمد@example.com]] يقع: الجزء قبل الـ @ حروف لاتيني بس.
+- القيمة بالمسافات تعدّي، لأن المتصفح بيشيل المسافات من الأول والآخر، وده بان في القيمة نفسها.
+
+**الاستنتاج:** الفحص ده شكل بس. ميعرفش الإيميل موجود ولا لأ. السيرفر لازم يفحص تاني، والفحص الوحيد المضمون هو إنك تبعت رسالة تأكيد.
+
+**الغلطة الشائعة:** تكتب regex طويل تبقى فاكر إنه «أدق». هيرفض إيميلات سليمة، وهيعدّي إيميلات مش موجودة.
+
+~~~text الناتج
+القيمة               بعد التنضيف       valid
+"a@b"   "a@b"   true
+"a@b."   "a@b."   false
+"a..b@c.com"   "a..b@c.com"   true
+"a b@c.com"   "a b@c.com"   false
+"أحمد@example.com"   "أحمد@example.com"   false
+" a@b.com "   "a@b.com"   true
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل اسم مستخدم عليه [[pattern="[a-z0-9-]+"]]، والمستخدم كتب [[ABC]] والفورم اتبعت عادي! افتح الـ Console قبل ما تصلّح.`, done: R`الـ Console فيه «Pattern attribute value [a-z0-9-]+ is not a valid regular expression» لأن Chrome بيقرا الـ pattern بفلاج [[v]] وفيه الشَرطة في الآخر لازم تتهرّب، فالـ pattern اتجاهل خالص. بعد [[pattern="[a-z0-9\-]+"]] الـ ABC بقى [[patternMismatch]] و [[ab-1]] بيعدّي.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اسم المستخدم</title>
+</head>
+<body>
+<main>
+<h1>حساب جديد</h1>
+<form id="f">
+  <label for="u">اسم المستخدم</label>
+  <input id="u" name="u" pattern="[a-z0-9\-]+" required>
+  <button>تسجيل</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**اللي حصل:** Chrome بيقرا الـ [[pattern]] بالفلاج [[v]]، وده أكتر تشددًا من الفلاج [[u]] القديم. وفي الوضع ده [[-]] في آخر [[[...]]] لازم تتهرّب بـ [[\-]]. ولو الـ regex غلط، المتصفح **بيتجاهل الـ pattern خالص** ويكتب تحذير في الـ Console، والفورم بيتبعت عادي.
+
+**ليه الـ Console أول حاجة:** من غيره هتقعد تعدّل في الحروف وتدوّر على باج في مكان تاني. الفورم مش بيقول حاجة، ده الـ Console بس.
+
+**الغلطة الشائعة:** تنقل regex من ملف JavaScript للـ [[pattern]] من غير تجربة. والـ [[pattern]] مش محتاج [[^]] و [[$]]، المتصفح بيطابق القيمة كلها لوحده.
+
+~~~text الناتج
+قبل، رسالة الـ Console:
+Pattern attribute value [a-z0-9-]+ is not a valid regular expression: Uncaught SyntaxError: Invalid regular expression: /[a-z0-9-]+/v: Invalid character class
+
+قبل: ABC → patternMismatch = false  valid = true
+
+بعد:
+ABC  → patternMismatch = true  valid = false
+ab-1 → patternMismatch = false  valid = true
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيعرض رسالة عربي: [[email.addEventListener('invalid', () => email.setCustomValidity('اكتب إيميل صح'))]]. المستخدم غلط مرة، وبعدين كتب إيميل سليم، ولسه مش قادر يبعت.`, done: R`عرفت إن [[customError]] فضل [[true]] بعد الإيميل السليم ([[checkValidity()]] رجّع false)، لأن محدش رجّعها فاضية. بعد ما زوّدت [[email.addEventListener('input', () => email.setCustomValidity(''))]] بقى بيبعت.`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اشتراك</title>
+</head>
+<body>
+<main>
+<h1>اشتراك</h1>
+<form id="f">
+  <label for="email">الإيميل</label>
+  <input id="email" type="email" required>
+  <button>اشترك</button>
+</form>
+</main>
+<script>
+  const email = document.querySelector('#email');
+
+  email.addEventListener('invalid', () => {
+    email.setCustomValidity('اكتب إيميل صح');
+  });
+
+  email.addEventListener('input', () => {
+    email.setCustomValidity('');
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**السبب:** [[setCustomValidity('أي كلام')]] مش بس بتغيّر الرسالة، دي بتعلن إن الحقل **غلط**. والحالة دي بتفضل ثابتة لحد ما تنادي نفس الدالة بنص فاضي. المتصفح مبيعيدش الفحص ويشيلها لوحده.
+
+فالترتيب اللي كان بيحصل: الإيميل غلط، فـ [[invalid]] بيتنادي ويحط الرسالة. المستخدم صلّح، بس الحقل لسه عليه [[customError]]. يدوس إرسال، يترفض، و [[invalid]] يتنادي تاني. دايرة مقفولة.
+
+**الحل:** مع كل كتابة فضّي الرسالة، والفحص العادي يشتغل من الأول.
+
+**الغلطة الشائعة:** تحط [[setCustomValidity('')]] جوه [[invalid]] نفسه. الحدث ده بيتنادي بس لو الحقل غلط، فالسطر مش هيتنفّذ في الوقت الصح.
+
+~~~text الناتج
+قبل التصليح، بعد ما كتب a@b.com: customError = true  checkValidity = false
+بعد التصليح، نفس الخطوات:        customError = false  checkValidity = true
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** مقياس قوة كلمة السر: [[<meter min="0" max="4" low="2" high="3" optimum="4">]] بيتحدّث مع كل حرف (نقطة للطول 8+، وللحروف الكبيرة، وللأرقام، وللرموز)، و [[setCustomValidity]] بيرفض أقل من 3 برسالة بتقول ناقص إيه.`, done: R`[[abc]] بيسيب المقياس فاضي (صفر نقطة) و [[abc1]] بيدّيه أحمر، والاتنين ليهم رسالة فيها الناقص، و [[Abcdef12!]] بيدّيه أخضر والفورم بيتبعت، والمقياس ليه label مربوط ([[<label for="strength">]]) فتاب Accessibility بيقول اسمه.`, sol: R`~~~live 260 260
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كلمة السر</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  form { display: grid; gap: 8px; max-width: 320px; }
+  input { padding: 8px; font: inherit; }
+  meter { width: 100%; height: 16px; }
+</style>
+</head>
+<body>
+<main>
+<h1>حساب جديد</h1>
+<form id="f">
+  <label for="pass">كلمة السر</label>
+  <input id="pass" type="password" autocomplete="new-password">
+  <label for="strength">القوة</label>
+  <meter id="strength" min="0" max="4" low="2" high="3" optimum="4" value="0"></meter>
+  <button>تسجيل</button>
+  <p id="ok" hidden>اتسجلت</p>
+</form>
+</main>
+<script>
+  const pass = document.querySelector('#pass');
+  const meter = document.querySelector('#strength');
+
+  const RULES = [
+    { ok: (s) => s.length >= 8, need: '٨ حروف على الأقل' },
+    { ok: (s) => /[A-Z]/.test(s), need: 'حرف كبير' },
+    { ok: (s) => /[0-9]/.test(s), need: 'رقم' },
+    { ok: (s) => /[^A-Za-z0-9]/.test(s), need: 'رمز' },
+  ];
+
+  function check() {
+    const missing = RULES.filter((r) => !r.ok(pass.value));
+    const score = RULES.length - missing.length;
+    meter.value = score;
+    pass.setCustomValidity(score < 3 ? 'ناقص: ' + missing.map((r) => r.need).join('، ') : '');
+  }
+
+  pass.addEventListener('input', check);
+  check();
+
+  document.querySelector('#f').addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.querySelector('#ok').hidden = false;
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**الفكرة:** القواعد في array، كل قاعدة دالة بترجّع true أو false ومعاها الكلام اللي هيظهر لو ناقصة. كده زيادة قاعدة سطر واحد.
+
+- [[RULES.filter]] بيجيب القواعد الفاشلة، والنقط هي الفرق.
+- [[low]] و [[high]] و [[optimum]] هما اللي بيخلوا المتصفح يختار اللون: تحت [[low]] بعيد عن الأمثل فأحمر، وعند [[optimum]] أخضر.
+- [[setCustomValidity]] بنص يرفض، وبنص فاضي يقبل، فالفورم بيقف لوحده.
+- [[check()]] أول ما الصفحة تفتح، عشان الحقل الفاضي يترفض من غير ما حد يكتب.
+- لو القيمة صفر الشريط بيبقى فاضي خالص، مفيهوش لون أصلًا. الأحمر بيبدأ من نقطة واحدة.
+
+**الغلطة الشائعة:** تعمل [[if (score < 3) alert(...)]] في الـ submit. كده الفحص بعيد عن المتصفح، وقارئ الشاشة مش هيربطه بالحقل.
+
+~~~text الناتج
+القيمة       المقياس   اللون          الرسالة
+abc          0/4     فاضي           ناقص: ٨ حروف على الأقل، حرف كبير، رقم، رمز
+abc1         1/4     أحمر           ناقص: ٨ حروف على الأقل، حرف كبير، رمز
+abcD12       2/4     أصفر           ناقص: ٨ حروف على الأقل، رمز
+abcD1234     3/4     أخضر           (مفيش رسالة) و valid = true
+Abcdef12!    4/4     أخضر           (مفيش رسالة) والفورم اتبعت: true
+
+اسم المقياس في تاب Accessibility: - meter "القوة"
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** سكربت للـ Console بيلف على [[form.elements]] ويطبع لكل حقل اسمه وأسماء الـ validity اللي بـ true بس (زي [[email: valueMissing]]).`, done: R`على فورم فاضي فيه required بيطبع [[valueMissing]] للحقول الإجبارية بس، وبعد ما تكتب [[abc]] في الإيميل بيطبع [[typeMismatch]]، ولما كله سليم مبيطبعش غير الحقول اللي [[valid]] بس أو مبيطبعش حاجة.`, sol: R`~~~js
+function report(form) {
+  for (const el of form.elements) {
+    if (!el.name) continue;
+    const bad = [];
+    for (const key in el.validity) {
+      if (key !== 'valid' && el.validity[key]) bad.push(key);
+    }
+    if (bad.length) console.log(el.name + ': ' + bad.join(', '));
+  }
+}
+report(document.forms[0]);
+~~~
+
+وفورم تجرب عليه:
 
 ~~~live 120 120
 <!doctype html>
@@ -3887,1097 +3217,925 @@ auto-fill:  [ 282 ][ 282 ][ 282 ][ فاضي 282 ]
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>fit</title>
-<style>
-  body { margin: 0; }
-  .g { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-  .g > div { background: #bfdbfe; }
-</style>
+<title>الفورم</title>
 </head>
 <body>
-<div class="g" id="g"></div>
-<script>
-  const n = Number(new URLSearchParams(location.search).get('n') ?? 3);
-  document.querySelector('#g').innerHTML = '<div>كارت</div>'.repeat(n);
-$__lt/script>
-</body>
-</html>
-~~~
-
-**الغلطة الشائعة:** تختبر بـ ٨ كروت بس، وتتفاجئ لما البيانات الحقيقية تبقى ٣. جرّب دايمًا بعدد قليل.
-
-~~~text الناتج
-٣ كروت، fit:   384px 384px 384px 0px
-٣ كروت، fill:  282px 282px 282px 282px
-٨ كروت، fit:   282px 282px 282px 282px
-٨ كروت، fill:  282px 282px 282px 282px
-~~~` },
-          ],
-          deep: {
-            why: "شبكة الكروت (منتجات، كورسات، مقالات) موجودة في كل موقع. بدل 4 media queries بعدد أعمدة مختلف، سطر واحد بيخلي الشبكة تتأقلم مع أي عرض، حتى لو الشبكة جوه sidebar ضيق.",
-            how: R`المتصفح بيحسب: كام عمود بعرض 250 (مع الـ gap) يدخلوا في العرض المتاح؟ لو 1000px و gap 24: 3 أعمدة (3×250 + 2×24 = 798)، و 4 مش هيدخلوا (1072). فبيعمل 3، والـ [[1fr]] بيوزّع الـ 202 الباقيين عليهم.
-
-auto-fill بيعمل نفس الحسبة وبيسيب الأعمدة اللي ملهاش عناصر موجودة وفاضية. auto-fit بيصغّر الأعمدة الفاضية لصفر، فالـ 1fr بيوزّع مساحتها على العناصر الموجودة. لو العناصر كفاية تملا السطر، الاتنين زي بعض بالظبط.
-
-[[minmax(250px, 1fr)]] لوحدها فيها مشكلة: لو الأب أضيق من 250 (موبايل صغير فيه padding)، العمود مش هيصغر ويعمل overflow. [[min(250px, 100%)]] بتحل ده. وفي Tailwind: [[grid-cols-[repeat(auto-fit,minmax(min(250px,100%),1fr))]]] (من غير مسافات).`,
-            when: R`أي شبكة عناصر متشابهة عددها بيتغير. ولما عايز تتحكم بالظبط (3 على التابلت و 4 على الديسكتوب) استخدم breakpoints عادي: [[grid-cols-1 md:grid-cols-3 lg:grid-cols-4]].`,
-            mistakes: R`auto-fit مع عنصر واحد بس فيتمطّ على الشاشة كلها وشكله غريب: حط [[max-width]] على الكارت أو استخدم fill. ونسيان [[min()]] فالموبايل الصغير يعمل scroll أفقي.`
-          },
-          teach: R`## سطر واحد بيقرر عدد الأعمدة لوحده
-
-بدل ما تقول «٤ أعمدة»، بتقول «أقل عرض للعمود 250، واعمل أعمدة على قد ما يدخل». فتحنا المثال في Chrome على عروض مختلفة، وقرينا الأعمدة اللي المتصفح عملها من [[getComputedStyle(...).gridTemplateColumns]].
-
----
-
-## ١. نفك القيمة من جوه لبرة
-
-~~~text style.css
-grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
-~~~
-
-### الخطوة ١: [[min(250px, 100%)]]
-
-الأصغر من 250 ومن عرض الشبكة كلها. على شاشة عادية ده 250، وعلى شاشة أضيق من 250 بيبقى عرض الشبكة.
-
-### الخطوة ٢: [[minmax(..., 1fr)]]
-
-العمود أقل حاجة القيمة اللي فوق، وأكتر حاجة [[1fr]] (نصيبه من الفاضي).
-
-### الخطوة ٣: [[repeat(auto-fit, ...)]]
-
-بدل رقم ثابت، [[auto-fit]] بتقول: «احسب كام عمود بأقل عرض يدخلوا». والحسبة مع [[gap: 1.5rem]] (24px):
-
-| العرض | كام عمود يدخل؟ | الأعمدة |
-|---|---|---|
-| 1000 | 3 × 250 + 2 × 24 = 798 يدخل، و 4 = 1072 لأ | 3 |
-| 1200 | 4 × 250 + 3 × 24 = 1072 يدخل، و 5 = 1346 لأ | 4 |
-
-وبعدين الفاضي يتوزع: على 1000 حطينا ٨ كروت، فطلع [[317.328px 317.328px 317.344px]] (الـ 202 الفاضيين اتقسموا على ٣، والكسور اتوزعت).
-
-## ٢. الفرق بين [[auto-fit]] و [[auto-fill]]
-
-جربنا **٣ كروت بس** على 1200، يعني السطر يساع ٤ والعناصر ٣:
-
-| الكتابة | الأعمدة المتقاسة |
-|---|---|
-| [[auto-fit]] | 384px 384px 384px 0px |
-| [[auto-fill]] | 282px 282px 282px 282px |
-
-الاتنين عملوا ٤ أعمدة. [[auto-fill]] ساب العمود الرابع فاضي بعرضه (282)، و [[auto-fit]] قفله لصفر ووزّع مكانه على التلاتة: (1200 - 2 × 24) ÷ 3 = 384.
-
-## ٣. ليه [[min(250px, 100%)]] مش [[250px]] بس؟
-
-على شاشة عرضها 200:
-
-| الكتابة | العمود | عرض الصفحة ([[scrollWidth]]) |
-|---|---|---|
-| [[minmax(min(250px, 100%), 1fr)]] | 200px | 200 |
-| [[minmax(250px, 1fr)]] | 250px | 250 (scroll أفقي 50) |
-
-العمود مبيصغرش عن أقل قيمة، فلو هي 250 والشاشة 200 يطلع برا.
-
-## ٤. التاجات: [[repeat(auto-fill, minmax(120px, 1fr))]] مع [[gap: 0.5rem]]
-
-حطينا ٣ تاجات بس:
-
-| العرض | الأعمدة |
-|---|---|
-| 1000 | ٧ أعمدة × 136px |
-| 1200 | ٩ أعمدة × 126.22px |
-
-على 1000: ٧ × 120 + ٦ × 8 = 888 يدخل، و ٨ = 1016 لأ. فالتاجات التلاتة بعرض 136 والأربعة الباقيين فاضيين. ده المقصود: تاج قصير ميتمطّش على السطر كله.
-
-## الخلاصة
-
-- [[repeat(auto-fit, minmax(min(250px, 100%), 1fr))]] = كروت responsive من غير media query.
-- [[auto-fit]] بيمطّ العناصر لما تبقى قليلة، و [[auto-fill]] بيسيب أعمدة فاضية.
-- لو العناصر كفاية تملا السطر، الاتنين نفس النتيجة.
-- [[min(..., 100%)]] بيحمي الشاشات الأضيق من أقل عرض.`,
-          lines: [
-            R`شبكة كروت (منتجات أو مقالات) عددها بيتغيّر، ومش عايزين media query.`,
-            R`[[display: grid]] على الأب: الكروت خانات، والأعمدة هيحسبها المتصفح لوحده.`,
-            R`أكبر عدد أعمدة كل واحد 250 على الأقل ويتمطّ. [[min(250px, 100%)]] عشان لو الشاشة أصغر من 250 الكارت ميطلعش برا.`,
-            R`24px بين الكروت، وبتدخل في حسبة «كام عمود يدخل» قبل التوزيع.`,
-            R`قفلة [[.cards]]، والتاجات جاية بعدها.`,
-            R`شبكة تاجات: عناصر قصيرة مش عايزينها تتمطّ على السطر كله.`,
-            R`نفس [[display: grid]]، بس المرة دي بـ [[auto-fill]].`,
-            "fill: لو فيه 3 تاجات بس، هيفضلوا بعرض 120 تقريبًا والباقي أعمدة فاضية، مش هيتمطّوا على السطر كله.",
-            R`8px بس بين التاجات لأنها صغيرة، وده بيخلي عدد الأعمدة أكبر.`,
-            R`قفلة [[.tags]]، وكده المثال خلص.`
-          ],
-          sol: R`بـ 3 كروت على شاشة 1200: مع [[auto-fit]] الـ 3 كروت اتمطّوا وكل واحد حوالي 384px ومالين السطر كله. مع [[auto-fill]] كل كارت حوالي 282px وفيه خانة رابعة فاضية على الطرف. في DevTools هتلاقي [[grid-template-columns]] في Computed: [[384px 384px 384px 0px]] للـ fit (العمود الرابع اتقفل لصفر) و [[282px 282px 282px 282px]] للـ fill.
-
-على عرض 200 مع [[min(250px, 100%)]]: كارت واحد في السطر بعرض 200 بالظبط، ومفيش scroll. بـ [[250px]] بس: الشبكة عرضها 250 أكبر من الشاشة، فالصفحة بقى فيها scroll أفقي 50px والكروت مقصوصة.
-
-القاعدة اللي تطلع بيها: الفرق بين fit و fill بيبان بس لما الكروت أقل من اللي يملوا السطر. لو مشفتش فرق، غالبًا عندك كروت كفاية تملا السطر، قللهم.`
-        },
-        {
-          cmd: "grid-template-areas",
-          ref: [
-            { t: "MDN: grid-template-areas", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-areas" },
-          ],
-          title: "ارسم الصفحة بأسماء وغيّر شكلها على الموبايل",
-          desc: R`بدل أرقام الخطوط، بتسمّي كل جزء ([[grid-area: header]]) وترسم الـ layout بالكلام في [[grid-template-areas]]: كل string صف، وكل كلمة خانة.
-
-والحلو إن على الموبايل بتغيّر الرسمة بس في media query، والـ HTML زي ما هو.`,
-          example: R`.page { display: grid; gap: 1rem; grid-template-areas: "header" "main" "aside" "footer"; }
-@media (min-width: 64rem) {
-  .page {
-    grid-template-columns: 1fr 300px;
-    grid-template-areas:
-      "header header"
-      "main   aside"
-      "footer footer";
-  }
-}
-.page > header { grid-area: header; }
-.page > main { grid-area: main; }
-.page > aside { grid-area: aside; }
-.page > footer { grid-area: footer; }`,
-          try: R`غيّر الرسمة بحيث الـ aside يبقى على الناحية التانية ([["aside main"]]) من غير ما تلمس الـ HTML. وبعدين جرّب ترسم منطقة شكلها حرف L (نفس الاسم في خانات مش مستطيل) وشوف الـ layout كله بيبوظ.`,
-          flag: "script",
-          practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[grid-template-areas: "header header" "main aside" "footer";]] والشكل على الديسكتوب رجع عمود واحد. لاقي الغلطة من غير ما تجرّب، وبعدين أكّد بـ [[CSS.supports()]].`, done: R`الصف التالت فيه كلمة واحدة والباقي كلمتين، فالقيمة كلها اترفضت: [[CSS.supports("grid-template-areas", '"header header" "main aside" "footer"')]] رجّعت [[false]]، وبعد [["footer footer"]] رجّعت [[true]] والـ layout رجع عمودين.`, sol: R`~~~css
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas:
-    "header header"
-    "main   aside"
-    "footer footer";
-}
-~~~
-
-~~~view 210 210 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-/* صفحة التجربة بس */
-body { font-family: system-ui, sans-serif; margin: 1rem; } .layout { gap: 8px; } .layout > * { padding: 1rem; background: #e0e7ff; border-radius: 8px; }
-.layout > header { grid-area: header; } .layout > main { grid-area: main; } .layout > aside { grid-area: aside; } .layout > footer { grid-area: footer; }
-</style>
-<style>
-/* من الحل */
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas:
-    "header header"
-    "main   aside"
-    "footer footer";
-}
-</style>
-</head>
-<body>
-<div class="layout"><header>header</header><main>main</main><aside>aside</aside><footer>footer</footer></div>
-</body>
-</html>
-~~~
-
-والفحص من الـ Console:
-
-~~~js
-CSS.supports('grid-template-areas', '"header header" "main aside" "footer"');
-CSS.supports('grid-template-areas', '"header header" "main aside" "footer footer"');
-~~~
-
-**الغلطة:** كل سطر في الرسمة لازم يبقى فيه نفس عدد الخلايا. الصف التالت فيه كلمة واحدة والباقي كلمتين، والقيمة مش بتتصلّح جزئيًا: السطر كله بيترفض، والعناصر بتبان كأن مفيش [[areas]] خالص، فبتبقى عمود واحد.
-
-**ليه مفيش رسالة:** أخطاء CSS مبتظهرش في الـ Console. لكن [[CSS.supports]] أداة سريعة لسؤال المتصفح: القيمة دي سليمة ولا لأ؟ وفي DevTools، السطر متشطّب عليه.
-
-**الغلطة الشائعة:** تعتبر إن [["footer"]] معناها «خد السطر كله». لازم تكتبها مرتين.
-
-~~~text الناتج
-الصف التالت كلمة واحدة: false
-الصف التالت كلمتين:     true
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** holy grail لمجلة متخيلة: header و nav و main و aside و footer. على 1280 ٣ أعمدة ([[nav main aside]])، وعلى 768 عمودين والـ aside ينزل تحت الـ main، وعلى 360 عمود واحد. الـ HTML بالترتيب المنطقي ومش بيتغيّر.`, done: R`في التلات مقاسات الأجزاء في الأماكن المكتوبة (قيس [[left]] و [[top]] لكل جزء)، والـ footer تحت الكل، و Tab بيمشي header ثم nav ثم main ثم aside بنفس ترتيب الـ HTML، ومفيش scroll أفقي.`, sol: R`~~~live 290 350
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>المجلة</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui; }
-  .page { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "header" "nav" "main" "aside" "footer"; }
-  .page > * { padding: 12px; background: #f5f5f4; }
-  .page > header { grid-area: header; }
-  .page > nav { grid-area: nav; }
-  .page > main { grid-area: main; }
-  .page > aside { grid-area: aside; }
-  .page > footer { grid-area: footer; }
-
-  @media (min-width: 700px) {
-    .page {
-      grid-template-columns: 180px minmax(0, 1fr);
-      grid-template-areas:
-        "header header"
-        "nav    main"
-        "nav    aside"
-        "footer footer";
-    }
-  }
-  @media (min-width: 1100px) {
-    .page {
-      grid-template-columns: 200px minmax(0, 1fr) 240px;
-      grid-template-areas:
-        "header header header"
-        "nav    main   aside"
-        "footer footer footer";
-    }
-  }
-</style>
-</head>
-<body>
-<div class="page">
-  <header><a href="#h">المجلة</a></header>
-  <nav aria-label="الأقسام"><a href="#n">الأقسام</a></nav>
-  <main><h1>المقال</h1><a href="#m">اقرا كمان</a></main>
-  <aside aria-label="الأكثر قراءة"><a href="#a">الأكثر قراءة</a></aside>
-  <footer><a href="#f">عن المجلة</a></footer>
-</div>
-</body>
-</html>
-~~~
-
-**الميزة:** الـ HTML بالترتيب المنطقي، والرسمة بتتغيّر من CSS بس. وكل نقطة قطع بتغيّر الرسمة والأعمدة، مش أماكن العناصر.
-
-- [[.page > header { grid-area: header; }]]: تربط العنصر باسمه.
-- الموبايل هو الأساس، والأكبر بيتضاف.
-- الـ [[nav]] مكتوب في صفين في رسمة 768، فبيفضل طوله قد الـ main والـ aside.
-
-**ليه ترتيب Tab ثابت:** الكيبورد بيتبع ترتيب الـ HTML، مش الشكل. فده سبب إن الرسمة لازم تفضل قريبة من ترتيب الـ HTML.
-
-**الغلطة الشائعة:** تستخدم [[order]] أو رسمة بعيدة جدًا عن الـ HTML، فالـ Tab ينط على الشاشة بشكل غريب.
-
-~~~text الناتج
-الأماكن (x , y):
-           nav            main           aside          footer y
-360        0 , 53         0 , 106        0 , 245        298
-768        588 , 53       0 , 53         0 , 192        245
-1280       1080 , 53      248 , 53       0 , 53         192
-
-ترتيب Tab: header ثم nav ثم main ثم aside ثم footer
-overflow: 360 = 0  768 = 0  1280 = 0
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** app shell لصيدلية متخيلة: [[grid-template-areas: "side top" "side main"]] على 1024 وطالع، والـ sidebar عرضه 240 وطوله الشاشة ([[height: 100dvh]] على الـ shell، مش min-height، عشان الـ main يقدر يعمل scroll لوحده)، والـ main لوحده بيعمل scroll بـ [[overflow: auto]]. تحت 1024 الـ sidebar يختفي والرسمة [["top" "main"]].`, done: R`على 1280 الـ sidebar من فوق لتحت والـ topbar جنبه فوق الـ main بس. لما تعمل scroll جوه الـ main الـ sidebar والـ topbar مبيتحركوش. على 768 و 360 الـ topbar فوق والمحتوى تحته، ومفيش scroll أفقي.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الصيدلية</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui; }
-  .shell {
-    height: 100dvh;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
-    grid-template-areas: "top" "main";
-  }
-  .side { grid-area: side; display: none; background: #134e4a; color: #fff; padding: 16px; }
-  .top { grid-area: top; padding: 12px 16px; border-block-end: 1px solid #e4e4e7; }
-  .main { grid-area: main; overflow: auto; padding: 16px; }
-
-  @media (min-width: 1024px) {
-    .shell {
-      grid-template-columns: 240px minmax(0, 1fr);
-      grid-template-areas:
-        "side top"
-        "side main";
-    }
-    .side { display: block; }
-  }
-</style>
-</head>
-<body>
-<div class="shell">
-  <aside class="side" aria-label="القايمة">القايمة</aside>
-  <header class="top">صيدلية النور</header>
-  <main class="main" tabindex="0" id="m"><h1>الطلبات</h1></main>
-</div>
-<script>
-  document.querySelector('#m').insertAdjacentHTML('beforeend', '<p>طلب جديد</p>'.repeat(80));
-$__lt/script>
-</body>
-</html>
-~~~
-
-**ليه** [[height]] **مش** [[min-height]]**:** [[min-height]] بتسمح للـ shell يطول مع المحتوى، فالـ main بيتمد بدل ما يعمل scroll، والصفحة كلها هي اللي بتتحرك والـ sidebar معاها. [[height: 100dvh]] بتدّي الصف [[1fr]] طول محدد، وده اللي بيخلي [[overflow: auto]] يشتغل.
-
-- [[minmax(0, 1fr)]] في الصفوف: تسمح للصف يصغر عن محتواه.
-- [[overflow: auto]] على الـ main: الـ scroll جواه بس.
-- [[tabindex="0"]]: عشان اللي بالكيبورد يقدر يعمل scroll.
-- تحت 1024: [[.side]] مخفي، والرسمة [["top" "main"]].
-
-**الغلطة الشائعة:** تحط الـ [[.side]] في رسمة مفيهاش اسم [[side]]. الـ grid بيعمل خانة ضمنية، والشكل يبوظ. [[display: none]] بيشيله من الشبكة.
-
-~~~text الناتج
-على 1280×700:
-الـ sidebar: x=1040 عرض=240 طول=700
-الـ topbar جنبه: x=0 عرض=1040
-بعد scroll الـ main بـ 500: y الـ sidebar = 0   y الـ topbar = 0   scrollTop = 500
-scrollHeight للصفحة = 700
-
-نفس الصفحة بـ min-height: 100dvh:
-scrollHeight للصفحة = 3124   والـ main بيعمل scroll: false
-
-على 768: display الـ sidebar = none   overflow = 0px
-على 360: display الـ sidebar = none   overflow = 0px
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**refactor:** layout مكتوب بأرقام خطوط ([[grid-column: 1 / 3]] و [[grid-row: 2]] لكل جزء). حوّله لأسماء بـ [[grid-template-areas]] من غير ما الشكل يتغيّر بكسل واحد.`, done: R`قبل وبعد: [[getBoundingClientRect()]] لكل جزء نفس الأرقام على 1280 و 360، و grep على الـ CSS الجديد مفيهوش [[grid-column:]] ولا [[grid-row:]] بأرقام.`, sol: R`قبل:
-
-~~~css before.css
-.page { display: grid; grid-template-columns: 200px 1fr; gap: 8px; }
-.head { grid-column: 1 / 3; grid-row: 1; }
-.side { grid-column: 1; grid-row: 2; }
-.body { grid-column: 2; grid-row: 2; }
-.foot { grid-column: 1 / 3; grid-row: 3; }
-@media (max-width: 600px) {
-  .page { grid-template-columns: 1fr; }
-  .head, .side, .body, .foot { grid-column: 1; grid-row: auto; }
-}
-~~~
-
-بعد:
-
-~~~css after.css
-.page {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 8px;
-  grid-template-areas:
-    "head head"
-    "side body"
-    "foot foot";
-}
-.head { grid-area: head; }
-.side { grid-area: side; }
-.body { grid-area: body; }
-.foot { grid-area: foot; }
-@media (max-width: 600px) {
-  .page {
-    grid-template-columns: 1fr;
-    grid-template-areas: "head" "side" "body" "foot";
-  }
-}
-~~~
-
-والصفحة:
-
-~~~html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الصفحة</title>
-<link rel="stylesheet" href="after.css">
-</head>
-<body>
-<div class="page">
-  <header class="head">الراس</header>
-  <aside class="side" aria-label="جانبي">الجانب</aside>
-  <main class="body"><h1>المحتوى</h1></main>
-  <footer class="foot">الآخر</footer>
-</div>
-</body>
-</html>
-~~~
-
-~~~view 150 180 الشكل في المتصفح (من ملفات الحل)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الصفحة</title>
-<style>
-.page {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 8px;
-  grid-template-areas:
-    "head head"
-    "side body"
-    "foot foot";
-}
-.head { grid-area: head; }
-.side { grid-area: side; }
-.body { grid-area: body; }
-.foot { grid-area: foot; }
-@media (max-width: 600px) {
-  .page {
-    grid-template-columns: 1fr;
-    grid-template-areas: "head" "side" "body" "foot";
-  }
-}
-</style>
-</head>
-<body>
-<div class="page">
-  <header class="head">الراس</header>
-  <aside class="side" aria-label="جانبي">الجانب</aside>
-  <main class="body"><h1>المحتوى</h1></main>
-  <footer class="foot">الآخر</footer>
-</div>
-</body>
-</html>
-~~~
-
-**ليه أوضح:** الرسمة شكلها زي الصفحة نفسها، فأي حد يقراها يفهم الـ layout من غير حساب خطوط. وفي الموبايل كنا بنكرر ٤ عناصر عشان نلغي الأرقام، دلوقتي رسمة واحدة.
-
-**الغلطة الشائعة:** تنسى [[grid-template-columns]] في الـ media query، فالرسمة بعمود واحد والأعمدة لسه اتنين، والعمود التاني يفضل فاضي.
-
-~~~text الناتج
-قبل وبعد متطابقين (x,y,w,h لكل جزء):
-1280: أيوه
-360:  أيوه
-
-الأرقام على 1280:
-.head 8,8,1264,18
-.side 1072,34,200,79.88
-.body 8,34,1056,79.88
-.foot 8,121.88,1264,18
-grep "grid-column:\|grid-row:" after.css: 0 نتيجة
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** [[grid-template-areas: "a a ." "b c c"]] مع [[grid-template-columns: 1fr 1fr 1fr]]. أنهي خانة فاضية؟ وعرض [[c]] قد كام عمود؟ وبعدين شغّل «Show area names» في DevTools › Layout.`, done: R`الخانة الفاضية الصف الأول العمود التالت، و [[a]] عمودين، و [[b]] عمود، و [[c]] عمودين. والأسماء اللي DevTools رسمها فوق الصفحة طابقت توقعك.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الرسمة</title>
-<style>
-  body { margin: 0; }
-  .g {
-    display: grid;
-    width: 600px;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 40px 40px;
-    grid-template-areas: "a a ." "b c c";
-  }
-  .a { grid-area: a; background: #bfdbfe; }
-  .b { grid-area: b; background: #bbf7d0; }
-  .c { grid-area: c; background: #fde68a; }
-</style>
-</head>
-<body>
-<div class="g"><div class="a">a</div><div class="b">b</div><div class="c">c</div></div>
-</body>
-</html>
-~~~
-
-**الإجابة:** النقطة [[.]] معناها خلية فاضية. فالفاضية الصف الأول، العمود التالت. و [[a]] عمودين، و [[b]] عمود، و [[c]] عمودين.
-
-وفي RTL العمود الأول على اليمين، فالفاضي هيبان شمال.
-
-**إزاي تشوفها:** DevTools، تاب Layout، واختار الشبكة في Grid overlays، وعلّم «Show area names». الأسماء هتترسم فوق الصفحة.
-
-**الغلطة الشائعة:** تعتقد إن الرسمة لازم تبقى مستطيلات متصلة بأي شكل. كل اسم لازم يكوّن مستطيل واحد، وشكل L بيرفض السطر كله.
-
-~~~text الناتج
-عرض 600، كل عمود 200 (في rtl من اليمين):
-a: من x=200 بعرض 400   (عمودين)
-b: من x=400 بعرض 200   (عمود)
-c: من x=0 بعرض 400   (عمودين)
-العمود الفاضي: من x=0 لـ 200، صف أول
-
-رسمة L: CSS.supports = false
-~~~` },
-          ],
-          deep: {
-            why: "لما الـ layout بيتغير كتير بين الموبايل والديسكتوب، أرقام الخطوط بتبقى صعبة تتقري وتتعدل. الرسمة بالأسماء بتخلي الـ CSS نفسه شبه الـ wireframe: تقراه تفهم الصفحة شكلها إيه.",
-            how: R`كل string في [[grid-template-areas]] صف، وكل كلمة فيه عمود. نفس الاسم في خانات جنب بعض = العنصر بياخدهم كلهم. لازم المنطقة تبقى مستطيل: شكل L أو خانات مش متلاصقة بيخلي الخاصية كلها invalid وتتجاهل. و [[.]] = خانة فاضية.
-
-عدد الكلمات في كل string لازم يبقى واحد. ومقاسات الأعمدة من [[grid-template-columns]]، والرسمة بتقول بس مين فين.
-
-الترتيب البصري بيتغير بس ترتيب الـ HTML لأ، وقارئ الشاشة والـ Tab بيمشوا على ترتيب الـ HTML. فخلي ترتيب الـ HTML هو الترتيب المنطقي (هيدر، محتوى، جانبي، فوتر)، والـ areas تغيّر الشكل بس.
-
-Tailwind مفيهوش utility للـ areas، فبتكتبها arbitrary property أو في CSS عادي، أو بتستخدم [[col-span-*]] و [[order-*]] بدالها.`,
-            when: "الـ layout الرئيسي للصفحة، أو داشبورد أجزاءه بتتنقل بين المقاسات.",
-            mistakes: "تغيّر الترتيب بالـ areas لحد ما الترتيب البصري يبقى عكس الـ HTML خالص، فمستخدم الكيبورد يلاقي الـ focus بينط. وعدد كلمات مختلف في الصفوف فالقاعدة كلها تتجاهل من غير أي error."
-          },
-          teach: R`## بترسم الصفحة بالكلام
-
-[[grid-template-areas]] بتاخد strings: كل string صف، وكل كلمة جواه خانة. وكل عنصر بيتقاله اسمه بـ [[grid-area]]، فيروح للخانات اللي عليها اسمه. فتحنا المثال على عرض 600 (موبايل) و 1200 (ديسكتوب)، وجواه [[<header>]] و [[<main>]] و [[<aside>]] و [[<footer>]] بالترتيب ده في الـ HTML.
-
----
-
-## ١. الموبايل (السطر الأول)
-
-~~~text style.css
-.page { display: grid; gap: 1rem; grid-template-areas: "header" "main" "aside" "footer"; }
-~~~
-
-٤ strings = ٤ صفوف، وكل string فيه كلمة واحدة = عمود واحد. يعني الأجزاء فوق بعض.
-
-~~~text الناتج (عرض 600)
-header  top: 0     width: 600
-main    top: 34    width: 600
-aside   top: 68    width: 600
-footer  top: 102   width: 600
-~~~
-
-كل جزء ارتفاعه 18 (سطر كلام)، و 16 gap بين كل واحد واللي بعده.
-
-## ٢. الـ media query
-
-~~~text style.css
-@media (min-width: 64rem) {
-  .page {
-    grid-template-columns: 1fr 300px;
-    grid-template-areas:
-      "header header"
-      "main   aside"
-      "footer footer";
-  }
-}
-~~~
-
-- [[@media (min-width: 64rem)]]: القواعد جوه تشتغل بس لما الشاشة 64 × 16 = 1024 أو أكتر.
-- [[1fr 300px]]: عمودين، الثاني 300 ثابت.
-- الرسمة: ٣ صفوف × عمودين. [[header header]] = الهيدر في الخانتين. والمسافات الزيادة في [["main   aside"]] للتنظيم بس، المتصفح بيعتبر أي عدد مسافات فاصل.
-
-## ٣. ربط العناصر بالأسماء
-
-~~~text style.css
-.page > header { grid-area: header; }
-.page > main { grid-area: main; }
-.page > aside { grid-area: aside; }
-.page > footer { grid-area: footer; }
-~~~
-
-[[.page > header]] = الـ header اللي ابن مباشر لـ [[.page]]. و [[grid-area: header]] بتقوله «مكانك الخانات اللي اسمها header».
-
-~~~text الناتج (عرض 1200)
-grid-template-columns: 884px 300px
-header  left: 0     width: 1200
-main    left: 0     width: 884
-aside   left: 900   width: 300
-footer  left: 0     width: 1200
-~~~
-
-1200 - 300 - 16 = 884 للـ main.
-
----
-
-## التجربة الأولى: نبدّل الأماكن
-
-| اللي غيّرناه | main | aside |
-|---|---|---|
-| الرسمة بس [["aside main"]] | left 900، عرض 300 | left 0، عرض 884 |
-| الرسمة + [[300px 1fr]] (الـ solCode) | left 316، عرض 884 | left 0، عرض 300 |
-
-مع الرسمة بس، الـ aside اتنقل فعلًا بس أخد العمود العريض، لأن العرض مربوط بمكان العمود مش بالاسم. لازم تقلب الأعمدة كمان.
-
-## التجربة التانية: منطقة شكلها L
-
-غيّرنا قيمة الـ areas جوه الـ media query لـ [["main aside" "main main"]]: main واخد خانة فوق وخانتين تحت، يعني مش مستطيل. سألنا المتصفح بـ [[CSS.supports()]] (دالة بترجع true لو القيمة صالحة):
-
-~~~text الناتج
-CSS.supports("grid-template-areas", '"main aside" "main main"')    false
-CSS.supports("grid-template-areas", '"main aside" "main footer"')  true
-~~~
-
-القيمة اترفضت، فالمتصفح رجع للرسمة بتاعة الموبايل والأعمدة لسه [[884px 300px]]: الأربع أجزاء فوق بعض، كل واحد عرضه 884، والعمود الـ 300 فاضي على الجنب.
-
-## الخلاصة
-
-- كل string صف، وكل كلمة خانة، و [[.]] خانة فاضية.
-- كل منطقة لازم تبقى مستطيل، وكل الصفوف بنفس عدد الكلمات، وإلا القيمة كلها بتترفض من غير error.
-- عرض الأعمدة من [[grid-template-columns]]، والرسمة بتقول بس مين فين.
-- الترتيب في الـ HTML هو اللي الكيبورد وقارئ الشاشة بيمشوا عليه، فخليه منطقي.`,
-          lines: [
-            "على الموبايل: عمود واحد، والأجزاء فوق بعض بالترتيب ده.",
-            R`القواعد اللي جوه تشتغل بس من 1024px وطالع (64 × 16)، وتغطي على رسمة الموبايل.`,
-            R`نفس العنصر [[.page]]: بنغيّر الرسمة والأعمدة بس، والـ HTML زي ما هو.`,
-            "عمودين: المحتوى ياخد الباقي، والجانبي 300.",
-            R`والرسمة الجديدة: ٣ strings جايين في السطور اللي بعده، كل string صف.`,
-            "الصف الأول: الهيدر واخد العمودين.",
-            "الصف التاني: المحتوى والجانبي جنب بعض. المسافات للتنظيم بس.",
-            "الصف التالت: الفوتر واخد العمودين.",
-            "قفلة .page.",
-            "قفلة الـ media query.",
-            "الهيدر اسمه header في الرسمة.",
-            R`المحتوى بيروح للخانات اللي عليها [[main]] في الرسمة.`,
-            R`الجانبي بيروح للخانات اللي عليها [[aside]]، ومكانه بيتغيّر مع الرسمة بس.`,
-            R`الفوتر بيروح لخانات [[footer]]، واخد العمودين في الرسمة الكبيرة.`
-          ],
-          sol: R`الحل إنك تغيّر الرسمة بس، مع عكس الأعمدة كمان. لو غيّرت [[main aside]] لـ [[aside main]] بس، الـ aside هيروح فعلًا للناحية التانية، بس هيبقى هو العريض (العمود [[1fr]]) والـ main محشور في الـ 300px، لأن عرض الأعمدة مرتبط بمكانها مش بالاسم. عشان كده لازم تقلب [[grid-template-columns]] لـ [[300px 1fr]] (الحل تحت).
-
-شكل L زي [["main aside" "main main"]]: المتصفح بيرفض الـ declaration كلها. في Styles هتلاقيها متشطّب عليها وجنبها علامة تحذير (Invalid property value)، والـ layout بيرجع للرسمة بتاعة الموبايل (عمود واحد) رغم إن الشاشة كبيرة، وعمود الـ 300px بيبقى فاضي على الجنب. كل منطقة لازم تبقى مستطيل (عمود واحد متصل أو صف أو مربع)، فـ [["main aside" "main footer"]] مثلًا تنفع لأن main مستطيل طولي.`,
-          solCode: R`@media (min-width: 64rem) {
-  .page {
-    grid-template-columns: 300px 1fr;
-    grid-template-areas:
-      "header header"
-      "aside  main"
-      "footer footer";
-  }
-}`
-        },
-        {
-          cmd: "subgrid",
-          ref: [
-            { t: "MDN: grid-template-columns", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-columns" },
-            { t: "MDN: grid-template-rows", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-rows" },
-            { t: "MDN: row-gap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/row-gap" },
-          ],
-          title: "كروت أجزاؤها على نفس الخط: subgrid",
-          desc: R`كروت أسعار جنب بعض: الأول وصفه سطر، والتاني وصفه ٣ سطور. كل كارت grid لوحده، فالعنوان والوصف والمميزات والزرار كل واحد بيبدأ من مكان مختلف في كل كارت، والصف كله شكله مايل.
-
-[[grid-template-rows: subgrid]] بيخلي الكارت **ميعملش صفوف بتاعته**، ويستخدم صفوف الأب. فالكارت بياخد ٤ صفوف من الشبكة الكبيرة ([[grid-row: span 4]])، وكل جزء جواه بيقع في صف منهم، والصف بيتمطّ قد أطول جزء في كل الكروت اللي جنب بعض. النتيجة: كل الأجزاء على نفس الخط.
-
-ونفس الفكرة للأعمدة: [[grid-template-columns: subgrid]] في فورم كل سطر فيه div، فالـ labels كلها تبقى عمود واحد بعرض أطول label. و Tailwind: [[grid-rows-subgrid]] و [[grid-cols-subgrid]] و [[row-span-4]].`,
-          example: R`<section class="plans">
-  <article class="plan">
-    <h3>بداية</h3>
-    <p>للي لسه بادئ.</p>
-    <ul><li>مشروع واحد</li><li>دعم بالإيميل</li></ul>
-    <a href="/signup?plan=start">اشترك</a>
-  </article>
-</section>
-<style>
-  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: 1rem; }
-  .plan { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0.5rem; }
-  .form { display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1rem; }
-  .form .row { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; }
-</style>
-<article className="row-span-4 grid grid-rows-subgrid gap-y-2">...</article>`,
-          try: R`اعمل ٣ كروت بوصف وطول مميزات مختلفين. شغّل DevTools › Elements واضغط شارة [[subgrid]] جنب الكارت: هيرسملك خطوط الأب جوه الكارت. وبعدين امسح [[grid-row: span 4]] بس وشوف الأجزاء راحت فين.`,
-          flag: "script",
-          deep: {
-            why: R`كروت الأسعار والمنتجات والمقالات جنب بعض في كل موقع، والمحتوى بتاعها عمره ما بيبقى نفس الطول. من غير subgrid الحلول كانت: ارتفاع ثابت للوصف (والكلام الطويل يتقص أو يطلع برا)، أو [[margin-top: auto]] على الزرار (الزرار بيتظبط بس والمميزات لأ)، أو JavaScript بيقيس ويساوي الارتفاعات. subgrid بيحلها بسطرين CSS ومن غير أرقام.`,
-            how: R`grid عادي جوه grid = شبكتين مالهمش علاقة ببعض: كل كارت بيحسب صفوفه من محتواه هو بس. [[subgrid]] بيقول للشبكة اللي جوه: «متعملش tracks، استعمل tracks الأب في المكان اللي انتي واخداه». عشان كده لازم الكارت ياخد من الأب عدد صفوف قد عدد أجزاءه بالظبط ([[grid-row: span 4]] لأربع أجزاء)، والأب هو اللي بيحسب ارتفاع كل صف: أطول عنوان، وأطول وصف، وأطول قايمة، في كل الكروت اللي في نفس الصف بتاعه.
-
-الـ gap: الـ subgrid بيورث gap الأب، ولو كتبت [[row-gap]] عليه بيغطي عليه **جوه الكارت بس**، والمسافة بين الكروت نفسها بتفضل gap الأب. والـ padding والـ border بتوع الكارت بيتحسبوا كمان، فالأجزاء بتفضل جوه حدوده.
-
-الأجزاء الزيادة: subgrid **مبيعملش صفوف ضمنية** (implicit). لو الكارت فيه ٥ أجزاء و [[span 4]]، الخامس بيتحط فوق الرابع في نفس الصف بدل ما يعمل صف جديد. ونفس الكلام لو نسيت الـ span خالص: الأربعة فوق بعض في صف واحد.
-
-الاتجاه: subgrid ممكن يبقى للصفوف بس، أو للأعمدة بس، أو الاتنين. وفي RTL العمود الأول على اليمين زي أي grid.
-
-الدعم: Baseline من 2023 (Firefox 71 و Safari 16 و Chrome و Edge 117، من MDN و caniuse). لمتصفح قديم: [[@supports not (grid-template-rows: subgrid)]] وجواه [[display: flex; flex-direction: column]] و [[margin-top: auto]] على الزرار، فالشكل يبقى مقبول من غير ما يتصف.`,
-            when: R`أي مجموعة كروت جنب بعض أجزاؤها لازم تتصف: أسعار، ومنتجات بعنوان وسعر، ومقالات بصورة وعنوان وتاريخ، وكروت فريق. وفورم أو جدول وصف (dl) كل سطر فيه wrapper وعايز الأعمدة متصفة. ومش محتاجه لو الكروت تحت بعض في عمود واحد (مفيش حاجة تتصف معاها).`,
-            mistakes: R`تنسى [[grid-row: span 4]] فالأجزاء تتراكب فوق بعض. الـ span أقل من عدد الأجزاء فالأخير يركب على اللي قبله. تحط wrapper زيادة (div حوالين الوصف والمميزات) فبيبقوا جزء واحد في صف واحد. تفتكر الكروت في صفين مختلفين هتتصف مع بعض (لأ: كل صف من الأب ليه tracks بتاعته). و [[display: contents]] كبديل قديم: بيشيل صندوق الكارت (مفيش border ولا خلفية) وكان بيبوّظ الـ accessibility في متصفحات كتير.`
-          },
-          teach: R`## المشكلة: كل كارت بيحسب صفوفه لوحده
-
-عملنا معمل صغير: ٣ كروت أسعار جنب بعض في صفحة rtl، وكل كارت فيه ٤ أجزاء: عنوان، ووصف، وقايمة مميزات، وزرار. الوصف في الكارت التاني سطرين، والمميزات فيه ٤ بدل ٢ و ٣. كل كارت عليه [[padding: 1rem]] وحد 1px، والصفحة [[padding: 16px]]. فتحناه في Chrome على ويندوز بعروض 1280 و 768 و 360، وقسنا [[top]] كل جزء بـ [[getBoundingClientRect()]].
-
----
-
-## ١. من غير subgrid (الحل القديم)
-
-الكارت [[display: flex; flex-direction: column]] والزرار [[margin-top: auto]]:
-
-~~~text الناتج (عرض 1280، top لكل جزء)
-            عنوان   وصف     مميزات   زرار
-كارت ١      33      69.08   101.08   229.08
-كارت ٢      33      69.08   125.08   229.08
-كارت ٣      33      69.08   101.08   229.08
-~~~
-
-الزرار اتصف (بفضل [[margin-top: auto]] والـ grid اللي بيمطّ الكروت لنفس الطول)، بس المميزات في الكارت التاني بادية 24px تحت التانيين: الوصف بتاعه سطرين.
-
-## ٢. الشبكة الكبيرة
-
-~~~css style.css
-.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: 1rem; }
-~~~
-
-نفس شبكة الكروت بتاعة درس [[auto-fit و minmax]]: أعمدة 16rem على الأقل، وعلى 1280 بتبقى ٣ أعمدة. والصفوف هنا مش متعرّفة، فالمتصفح بيعملها لوحده (implicit rows).
-
-## ٣. [[.plan { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0.5rem; }]]
-
-- [[display: grid]]: الكارت نفسه grid.
-- [[grid-row: span 4]]: الكارت ياخد ٤ صفوف من الشبكة الكبيرة، صف لكل جزء.
-- [[grid-template-rows: subgrid]]: متعملش صفوف جديدة، استعمل الـ ٤ دول. فالعنوان في صف ١، والوصف في صف ٢، وهكذا.
-- [[row-gap: 0.5rem]]: المسافة بين الأجزاء جوه الكارت 8px بدل 16 بتاعة الأب.
-
-~~~text الناتج (عرض 1280، من top لـ bottom)
-            عنوان          وصف              مميزات            زرار
-كارت ١      33 - 61.08     69.08 - 117.08    125.08 - 221.08    229.08 - 269.08
-كارت ٢      33 - 61.08     69.08 - 117.08    125.08 - 221.08    229.08 - 269.08
-كارت ٣      33 - 61.08     69.08 - 117.08    125.08 - 221.08    229.08 - 269.08
-~~~
-
-- التلات كروت نفس الأرقام بالظبط في كل جزء.
-- صف الوصف 48 (سطرين، قد أطول وصف)، وصف المميزات 96 (٤ عناصر × 24، قد أطول قايمة).
-- بين كل جزء واللي بعده 8: 61.08 لـ 69.08.
-
-ومن غير [[row-gap: 0.5rem]] جربنا: المسافة بقت 16 (ورثها من الأب)، وكل كارت طوله زاد من 270 لـ 294.
-
-## ٤. على مقاسات تانية
-
-| العرض | الكروت في الصف | اللي حصل |
-|---|---|---|
-| 1280 | ٣ | التلاتة متصفين، وطول كل كارت 270 |
-| 768 | ٢ | الأول والتاني متصفين (270)، والتالت في صف لوحده بطول 222 |
-| 360 | ١ | كل كارت لوحده: 198 و 270 و 222، زي من غير subgrid بالظبط |
-
-الكروت بتتصف مع اللي **في نفس الصف** بس، لأن كل صف من الشبكة الكبيرة ليه ٤ tracks بتوعه.
-
-## ٥. الفورم: [[.form .row { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; }]]
-
-~~~html index.html
-<form class="form">
-  <div class="row"><label for="n">الاسم</label><input id="n"></div>
-  <div class="row"><label for="e">الإيميل الشخصي</label><input id="e"></div>
-  <div class="row"><label for="p">الموبايل</label><input id="p"></div>
+<form>
+  <input name="email" type="email" required aria-label="الإيميل">
+  <input name="age" type="number" min="18" required aria-label="السن">
+  <input name="note" aria-label="ملاحظة">
+  <button>ابعت</button>
 </form>
+</body>
+</html>
 ~~~
 
-- [[.form]]: عمودين، الأول [[max-content]] (قد أعرض label) والتاني الباقي.
-- [[grid-column: 1 / -1]]: كل [[.row]] واخد العمودين.
-- [[grid-template-columns: subgrid]]: الـ label والـ input جوه الـ row بيقعدوا في عمودين الفورم نفسه.
+**إزاي بيشتغل:**
 
-~~~text الناتج (عرض 1280، الحافة اليمين لكل input)
-من غير subgrid (الـ row عليه flex):   1211.92   1142.08   1195.89
-بـ subgrid:                          1142.08   1142.08   1142.08
+- [[form.elements]] فيها كل الحقول، والزرار كمان. و [[if (!el.name) continue]] بتعدّي اللي مالوش اسم زي الزرار.
+- [[el.validity]] object فيه ١١ property. و [[for...in]] بتلف عليها بما فيها اللي جاية من الـ prototype.
+- بنعدّي [[valid]] لأنها مش نوع غلط، هي النتيجة النهائية.
+
+**الغلطة الشائعة:** تعمل [[Object.keys(el.validity)]]. بترجّع لستة فاضية، لأن القيم دي مش properties مباشرة على الـ object، دي getters في الـ prototype. عشان كده [[for...in]] هنا.
+
+~~~text الناتج
+فورم فاضي:
+email: valueMissing
+age: valueMissing
+
+بعد abc في الإيميل:
+email: typeMismatch
+age: valueMissing
+
+بعد ما كله سليم:
+(مطبعش حاجة)
+
+Object.keys(el.validity).length = 0
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** صفحة [[ValidityState]] على MDN فيها ١١ property. اعمل حقل يطلّع [[badInput]] وحقل يطلّع [[rangeOverflow]].`, done: R`[[badInput]] طلع لما كتبت حرف [[e]] لوحده في [[type="number"]] (والـ value بقى [[""]] والرسالة «Please enter a number.»)، و [[rangeOverflow]] لما كتبت 15 في حقل [[max="10"]] (الرسالة «Value must be less than or equal to 10.»).`, sol: R`~~~live 120 120
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>validity</title>
+</head>
+<body>
+<label for="n">الكمية</label>
+<input id="n" type="number">
+<label for="m">التقييم</label>
+<input id="m" type="number" max="10">
+</body>
+</html>
 ~~~
 
-من غير subgrid كل input بيبدأ بعد الـ label بتاعه، فالتلاتة مايلين. بـ subgrid التلاتة بيبدأوا من نفس الخط، وعمود الـ labels بعرض «الإيميل الشخصي» (الأطول).
+اكتب بالكيبورد، مش بالكود: حرف [[e]] لوحده في الأول، و [[15]] في التاني.
 
----
+**الفرق بين الاتنين:**
 
-## التجربة: امسح [[grid-row: span 4]] بس
+- [[badInput]]: اللي مكتوب مش رقم أصلًا. الحرف [[e]] مسموح بيه في الكتابة لأن [[1e5]] رقم، بس لوحده مش رقم. والـ [[value]] بيبقى فاضي، لأن المتصفح مش قادر يحوّله. ده معناه إن JavaScript ميعرفش إن فيه حاجة مكتوبة، غير من [[badInput]].
+- [[rangeOverflow]]: الرقم سليم، بس أكبر من [[max]].
 
-~~~text الناتج (عرض 1280، top: عنوان / وصف / مميزات / زرار)
-كارت ١   33 / 33 / 33 / 89
-~~~
-
-الكارت لسه subgrid، بس واخد صف واحد. الـ subgrid مبيعملش صفوف زيادة، فالعنوان والوصف والمميزات اتحطوا **فوق بعض في نفس الصف**، والزرار ظاهر لوحده تحت لأن عليه [[align-self: end]]. ده أشهر غلط، وشكله زي كلام متراكب.
-
-## الخلاصة
-
-| الكتابة | معناها |
+| الـ property | بتبقى true لما |
 |---|---|
-| [[grid-template-rows: subgrid]] | استعمل صفوف الأب بدل ما تعمل صفوف |
-| [[grid-row: span 4]] | لازم: عدد الصفوف = عدد الأجزاء |
-| [[row-gap]] على الكارت | المسافة جوه الكارت بس، والأب بيحتفظ بتاعته بين الكروت |
-| [[grid-template-columns: subgrid]] | نفس الفكرة للأعمدة: labels متصفة |
-| [[grid-rows-subgrid row-span-4]] | نفس الكلام في Tailwind |
+| [[valueMissing]] | حقل [[required]] فاضي |
+| [[typeMismatch]] | شكل email أو url غلط |
+| [[patternMismatch]] | مش مطابق لـ [[pattern]] |
+| [[tooLong]] و [[tooShort]] | أطول من [[maxlength]] أو أقصر من [[minlength]] |
+| [[rangeUnderflow]] و [[rangeOverflow]] | برّه [[min]] و [[max]] |
+| [[stepMismatch]] | مش على الـ [[step]] |
+| [[badInput]] | المتصفح مش قادر يفهم اللي اتكتب |
+| [[customError]] | عليه [[setCustomValidity]] |
+| [[valid]] | كله سليم |
 
-- الكروت بتتصف مع اللي في نفس الصف بس.
-- جزء زيادة عن الـ span بيركب على اللي قبله، فاعدّ الأجزاء.
-- متحطش wrapper حوالين أجزاء عايزها تتصف لوحدها.`,
-          lines: [
-            R`شبكة الكروت: الأب اللي هيعمل الأعمدة والصفوف للكل.`,
-            R`كارت واحد (وفي المعمل ٣)، [[<article>]] لأنه محتوى قايم بذاته.`,
-            R`الجزء الأول: اسم الباقة، وهيقع في صف ١ من صفوف الأب.`,
-            R`الجزء التاني: الوصف، وطوله بيختلف من كارت للتاني.`,
-            R`الجزء التالت: المميزات، وعددها كمان بيختلف، والقايمة كلها جزء واحد.`,
-            R`الجزء الرابع: زرار الاشتراك، ولينك عادي لصفحة التسجيل.`,
-            R`قفلة الكارت: ٤ أجزاء بالظبط، ودا الرقم اللي هيتكتب في [[span 4]].`,
-            R`قفلة الشبكة، وبعدها الـ CSS.`,
-            R`بداية الـ CSS، وكل سطر فيه قاعدة لعنصر واحد.`,
-            R`أعمدة 16rem على الأقل (أو عرض الشبكة لو أضيق)، والصفوف بيعملها المتصفح لوحده.`,
-            R`الكارت ياخد ٤ صفوف من الأب ويستعملهم هما بدل صفوف جديدة، و 8px بين أجزاءه.`,
-            R`فورم بعمودين: labels بعرض أطول واحد فيهم، والحقول تاخد الباقي.`,
-            R`كل سطر في الفورم واخد العمودين، وبيستعمل أعمدة الفورم نفسها جواه.`,
-            R`قفلة الـ [[<style>]]، والسطر الجاي نفس الكارت بـ Tailwind.`,
-            R`نفس الكارت في React و Tailwind: [[row-span-4]] و [[grid-rows-subgrid]] و [[gap-y-2]] (= 0.5rem).`
+**الغلطة الشائعة:** تفحص [[input.value === '']] عشان تعرف الحقل فاضي. في حالة [[badInput]] الجملة دي true والمستخدم كاتب حاجة فعلًا.
+
+~~~text الناتج
+حرف e لوحده:
+  badInput = true   value = ""
+  الرسالة: Please enter a number.
+
+15 مع max="10":
+  rangeOverflow = true
+  الرسالة: Value must be less than or equal to 10.
+
+عدد الـ properties في ValidityState: 11
+~~~` },
           ],
-          sol: R`من غير subgrid (أو قبل ما تضيفه): العناوين على خط واحد، بس الوصف الطويل بيزق مميزات الكارت بتاعه لتحت، فقوايم المميزات مش على نفس الخط. بعد [[grid-template-rows: subgrid]] و [[grid-row: span 4]]: كل جزء على نفس الخط في كل الكروت اللي في الصف، وفي المعمل على 1280 الأرقام كانت 33 و 69.08 و 125.08 و 229.08 في التلات كروت.
+          title: "validation المتصفح من JavaScript: validity و setCustomValidity",
+          desc: R`كل حقل فيه [[validity]]: object فيه سبب الغلط ([[valueMissing]] و [[typeMismatch]] و [[tooShort]] و [[rangeUnderflow]] و [[patternMismatch]] و [[customError]]) و [[valid]] لو كله تمام. و [[validationMessage]] الرسالة اللي المتصفح هيعرضها.
 
-شارة [[subgrid]] في Elements بترسم خطوط الصفوف جوه الكارت، وهتلاقيها نفس خطوط الكارت اللي جنبه.
+[[checkValidity()]] بترجع true أو false، و [[reportValidity()]] كمان بتعرض الرسالة وتحط الـ focus على الحقل. و [[setCustomValidity('...')]] بتخلي الحقل غلط برسالتك انت (زي «كلمتين السر مش زي بعض»)، و [[setCustomValidity('')]] بترجّعه سليم.
 
-لما تمسح [[grid-row: span 4]]: العنوان والوصف والمميزات بيتراكبوا فوق بعض في أول الكارت (في المعمل الـ top بتاعهم كلهم 33)، لأن الـ subgrid واخد صف واحد ومبيعملش صفوف زيادة. لو اتراكبوا وانت لسه كاتب الـ span، عدّ الأجزاء: غالبًا عندك جزء زيادة أو wrapper.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** كارت عليه [[grid-template-rows: subgrid]] و [[grid-row: span 3]] وجواه ٤ أجزاء. الجزء الرابع هيروح فين؟ اكتب توقعك وبعدين قيس الـ [[top]] بتاع الأربعة.`, done: R`الرابع بيتحط في نفس الصف التالت فوق التالت (نفس الـ [[top]])، مش في صف جديد، لأن الـ subgrid مبيعملش صفوف ضمنية. والحل [[span 4]].`, sol: R`~~~live 140 140
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>subgrid</title>
-<style>
-  body { margin: 0; }
-  .g { display: grid; grid-auto-rows: 40px; gap: 8px; }
-  .card { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
-  .card > div { background: rgb(15 118 110 / .3); }
-</style>
-</head>
-<body>
-<div class="g">
-  <div class="card">
-    <div id="a">١</div><div id="b">٢</div><div id="c">٣</div><div id="d">٤</div>
-  </div>
-</div>
-</body>
-</html>
-~~~
-
-**الإجابة:** الرابع بيتحط في نفس الصف التالت فوق التالت. [[subgrid]] معناها «استخدم صفوف الأب»، والكارت واخد ٣ صفوف بس. وعلى عكس أي grid عادي، الـ subgrid مبيعملش صفوف ضمنية جديدة، فمفيش مكان تاني للرابع.
-
-**الحل:** [[grid-row: span 4]]، يعني عدد الأجزاء لازم يطابق الـ span.
-
-**الغلطة الشائعة:** تزوّد جزء للكارت وتنسى تغيّر الـ span، فجزئين يبانوا فوق بعض، ومن غير أي خطأ.
-
-~~~text الناتج
-span 3:  top = 0 , 48 , 96 , 96
-span 4:  top = 0 , 48 , 96 , 144
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة أسعار لنادي رياضي متخيل: ٣ باقات (اسم، وسعر، ووصف، ومميزات، وزرار)، والوسطانية مميزة بـ badge «الأشهر» وحد ملوّن، والأجزاء متصفة بـ subgrid.`, done: R`على 1280 الزراير التلاتة ليهم نفس [[top]]، والأسعار كمان. على 768 الأولى والتانية متصفين والتالتة لوحدها. على 360 الباقات فوق بعض ومفيش scroll أفقي. والـ badge جوه الكارت مش جزء زيادة بيبوّظ الـ span (حطه absolute أو جوه جزء الاسم).`, sol: R`~~~live 600 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>النادي</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; font-family: system-ui; }
-  .plans { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); max-width: 1000px; margin-inline: auto; }
-  .plan {
-    display: grid;
-    grid-row: span 5;
-    grid-template-rows: subgrid;
-    row-gap: 8px;
-    position: relative;
-    padding: 20px;
-    border: 2px solid #d4d4d8;
-    border-radius: 12px;
+و [[novalidate]] على الفورم بيوقف رسايل المتصفح وقت الإرسال عشان تعرض انت أخطائك، بس الـ API كله لسه شغال. وفي CSS، [[:user-invalid]] بتلوّن الحقل الغلط بعد ما المستخدم يلمسه بس، مش أول ما الصفحة تفتح زي [[:invalid]].`,
+          example: R`const form = document.querySelector('#signup');
+const pass = form.elements.password;
+const confirm = form.elements.confirm;
+confirm.addEventListener('input', () => {
+  confirm.setCustomValidity(confirm.value === pass.value ? '' : 'كلمتين السر مش زي بعض');
+});
+form.addEventListener('submit', (e) => {
+  if (!form.checkValidity()) {
+    e.preventDefault();
+    form.reportValidity();
   }
-  .plan h2, .plan p, .plan ul { margin: 0; }
-  .plan__price { font-size: 1.75rem; font-weight: 700; }
-  .plan__cta { align-self: end; padding: 10px; text-align: center; background: #0f766e; color: #fff; border-radius: 8px; text-decoration: none; }
-  .plan--best { border-color: #0f766e; }
-  .plan__badge { position: absolute; top: -12px; inset-inline-start: 16px; padding: 0 8px; background: #0f766e; color: #fff; border-radius: 999px; font-size: .75rem; }
-</style>
-</head>
-<body>
-<main>
-<h1>الباقات</h1>
-<section class="plans" aria-label="الباقات">
-  <article class="plan">
-    <h2>أساسي</h2>
-    <p class="plan__price">٥٠٠ ج</p>
-    <p>للي بيبدأ.</p>
-    <ul><li>الصالة</li></ul>
-    <a class="plan__cta" href="#a">اشترك في الأساسي</a>
-  </article>
-  <article class="plan plan--best">
-    <span class="plan__badge">الأشهر</span>
-    <h2>ذهبي</h2>
-    <p class="plan__price">٩٠٠ ج</p>
-    <p>الباقة اللي معظم الأعضاء بيختاروها عشان فيها الحصص والمتابعة.</p>
-    <ul><li>الصالة</li><li>الحصص</li><li>متابعة شهرية</li></ul>
-    <a class="plan__cta" href="#b">اشترك في الذهبي</a>
-  </article>
-  <article class="plan">
-    <h2>سنوي</h2>
-    <p class="plan__price">٧٥٠٠ ج</p>
-    <p>وفّر شهرين.</p>
-    <ul><li>الصالة</li><li>الحصص</li></ul>
-    <a class="plan__cta" href="#c">اشترك في السنوي</a>
-  </article>
-</section>
-</main>
-</body>
-</html>
-~~~
+});
+console.log(pass.validity.valueMissing, pass.validity.tooShort, pass.validationMessage);
+// styles.css
+input:user-invalid { border-color: crimson; }`,
+          try: R`اعمل [[<form id="signup" method="post" novalidate>]] فيه [[password]] بـ [[required minlength="8"]] و [[confirm]]، وحط السكربت. اكتب باسورد وتأكيد مختلف ودوس submit. وبعدين في الـ Console اكتب [[confirm.validity]] و [[form.checkValidity()]]. وبعدين غيّر الباسورد الأصلي بس (مش التأكيد) لحد ما يبقوا زي بعض: الرسالة لسه موجودة؟`,
+          flag: "script",
+          deep: {
+            why: R`الـ attributes ([[required]] و [[minlength]] و [[type]]) بتغطي أغلب الحالات، بس فيه قواعد بتعتمد على أكتر من حقل (تأكيد الباسورد، تاريخ النهاية بعد البداية) أو على السيرفر (الإيميل مستخدم قبل كده). الـ API ده بيخليك تحط القواعد دي في نفس نظام المتصفح، فالـ [[:user-invalid]] والرسايل و [[checkValidity]] كلهم يشتغلوا عليها من غير ما تبني نظام validation من الصفر.`,
+            how: R`لو الفورم من غير [[novalidate]]، المتصفح بيعمل validation قبل حدث [[submit]]، ولو فيه غلط حدث submit مش بيحصل أصلًا. ولو بـ [[novalidate]]، حدث submit بيحصل دايمًا وانت اللي بتسأل [[form.checkValidity()]].
 
-**الفخ هنا:** الـ badge. لو كان جزء عادي، الكارت يبقى ٦ أجزاء و [[span 5]]، فيحصل زي التمرين اللي فات. عشان كده [[position: absolute]]، فبيخرج من حسابات الشبكة.
+[[setCustomValidity]] بتلزق في الحقل: طول ما الرسالة مش فاضية الحقل غلط، حتى لو المستخدم صلّح. عشان كده لازم تنادي [[setCustomValidity('')]] (string فاضي) في كل تغيير يخلي الحقل سليم، وعلى الحقلين (الباسورد والتأكيد) مش واحد بس.
 
-- [[grid-row: span 5]]: كل كارت بياخد ٥ صفوف من الأب.
-- [[grid-template-rows: subgrid]]: أجزاؤه بتقعد على صفوف الأب، فكل صف طوله قد أطول جزء فيه من الكروت التلاتة.
-- [[row-gap: 8px]]: الـ subgrid بياخد gap الأب إلا لو غيّرته.
+[[tooShort]] و [[tooLong]] بيتحسبوا بس لما المستخدم هو اللي يكتب، مش لما تحط [[value]] من الكود. ودي تفصيلة بتلخبط في الاختبارات.
 
-**الغلطة الشائعة:** تحط subgrid من غير [[grid-row: span]]، فالكارت ياخد صف واحد والأجزاء فوق بعض.
+[[:user-invalid]] (وأختها [[:user-valid]]) بتشتغل بعد ما المستخدم يعدّل الحقل ويسيبه، أو بعد محاولة submit. ودي Baseline في كل المتصفحات الحديثة، وأحسن بكتير من [[:invalid]] اللي بتلوّن الفورم كله أحمر أول ما يفتح.`,
+            when: R`قواعد بين أكتر من حقل، ورسايل بلغتك بدل رسايل المتصفح، وأخطاء راجعة من السيرفر تحطها على الحقل بتاعها. ولو بتستخدم React Hook Form أو Zod في الفرونت، هما بيعملوا نفس الفكرة بنظامهم، بس الـ attributes الأصلية لسه مفيدة كخط أول.`,
+            mistakes: R`تنادي [[setCustomValidity('غلط')]] ومترجعش تناديها بـ string فاضي لما الغلط يتصلح، فالحقل يفضل غلط للأبد والفورم مبيتبعتش. تسمع على التأكيد بس فلو المستخدم غيّر الباسورد الأصلي الغلط ميتحدثش. تستخدم [[:invalid]] فالحقول تبقى حمرا قبل ما حد يكتب. وتفتكر إن validation المتصفح أمان: أي حد يقدر يبعت request من غير الفورم، فالسيرفر لازم يتأكد تاني.`
+          },
+          teach: R`## الفكرة في سطرين
 
-~~~text الناتج
-على 1280:
-top الأسعار: 163.88 , 163.88 , 163.88
-top الزراير: 329.88 , 329.88 , 329.88
+نفس الـ validation اللي المتصفح بيعمله لوحده من [[required]] و [[minlength]]، بس من JavaScript: تسأله الحقل سليم ولا لأ وليه، وتضيف قواعدك انت (زي «التأكيد = كلمة السر»). جرّبت الكود في Chrome (headless) على الفورم ده:
 
-على 768:
-الكارتين الأولين: top الزرار 329.88 , 329.88 , 594.88   والتالت في صف لوحده: y = 408.88
-
-على 360: x الكروت 16   overflow 0px
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** فورم تسجيل ٥ حقول، كل حقل في [[<div class="row">]] فيه label و input ورسالة مساعدة تحت الـ input. الأعمدة بـ [[grid-template-columns: subgrid]]، والرسالة [[grid-column: 2]].`, done: R`الحافة اللي بتبدأ منها الـ inputs واحدة في الخمس سطور (نفس الرقم في [[getBoundingClientRect]])، والرسايل تحت الـ inputs مش تحت الـ labels، وعلى 360 بتغيّر الفورم لعمود واحد بـ media query وكله مقري.`, sol: R`~~~live 540 660
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>التسجيل</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; font-family: system-ui; }
-  .form { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 12px 16px; max-width: 560px; }
-  .row { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; row-gap: 4px; align-items: center; }
-  .row input { padding: 8px; font: inherit; width: 100%; }
-  .row small { grid-column: 2; color: #52525b; }
-  .form button { grid-column: 2; padding: 10px; font: inherit; }
-
-  @media (max-width: 480px) {
-    .form { grid-template-columns: minmax(0, 1fr); }
-    .row small, .form button { grid-column: 1; }
-  }
-</style>
-</head>
-<body>
-<main>
-<h1>حساب جديد</h1>
-<form class="form">
-  <div class="row"><label for="n">الاسم</label><input id="n" autocomplete="name" aria-describedby="n-h"><small id="n-h">زي البطاقة</small></div>
-  <div class="row"><label for="e">الإيميل</label><input id="e" type="email" autocomplete="email" aria-describedby="e-h"><small id="e-h">هنبعتلك تأكيد</small></div>
-  <div class="row"><label for="p">الموبايل</label><input id="p" type="tel" dir="ltr" autocomplete="tel" aria-describedby="p-h"><small id="p-h">١١ رقم</small></div>
-  <div class="row"><label for="c">العنوان بالتفصيل</label><input id="c" autocomplete="address-line1" aria-describedby="c-h"><small id="c-h">الشارع والمدينة</small></div>
-  <div class="row"><label for="w">كلمة السر</label><input id="w" type="password" autocomplete="new-password" aria-describedby="w-h"><small id="w-h">٨ حروف على الأقل</small></div>
+~~~text index.html
+<form id="signup" method="post" novalidate>
+  <label for="p">كلمة السر</label>
+  <input id="p" name="password" type="password" required minlength="8">
+  <label for="c">التأكيد</label>
+  <input id="c" name="confirm" type="password">
   <button>سجّل</button>
 </form>
+~~~
+
+[[novalidate]] على الفورم: «متعرضش رسايلك لوحدك وقت الإرسال، أنا هقرر». الـ API نفسه بيفضل شغال.
+
+---
+
+## ١. مسك الحقول
+
+~~~text app.js
+const form = document.querySelector('#signup');
+const pass = form.elements.password;
+const confirm = form.elements.confirm;
+~~~
+
+- [[const]]: متغير مش هيتغيّر.
+- [[querySelector('#signup')]]: أول عنصر الـ id بتاعه [[signup]] (الـ [[#]] = id).
+- [[form.elements]]: كل حقول الفورم، وتقدر تجيب الحقل باسمه ([[name]]): [[.password]] و [[.confirm]].
+
+---
+
+## ٢. [[validity]]: الحقل غلط ليه؟
+
+آخر سطر في المثال:
+
+~~~text app.js
+console.log(pass.validity.valueMissing, pass.validity.tooShort, pass.validationMessage);
+~~~
+
+~~~text الناتج أول ما الصفحة فتحت
+true false Please fill out this field.
+~~~
+
+- [[valueMissing]] بـ [[true]]: الحقل [[required]] وفاضي.
+- [[tooShort]] بـ [[false]]: مفيش كلام أصلًا عشان يبقى قصير.
+- [[validationMessage]]: الرسالة اللي المتصفح كان هيعرضها.
+
+[[validity]] فيه خانة لكل سبب. ده اللي رجع لحقل التأكيد بعد ما بقى غلط:
+
+~~~text الناتج
+valueMissing: false   typeMismatch: false   patternMismatch: false
+tooLong: false        tooShort: false       rangeUnderflow: false
+rangeOverflow: false  stepMismatch: false   badInput: false
+customError: true     valid: false
+~~~
+
+[[valid]] بيبقى [[true]] بس لو كل الباقي [[false]].
+
+---
+
+## ٣. [[setCustomValidity]]: قاعدة من عندك
+
+~~~text app.js
+confirm.addEventListener('input', () => {
+  confirm.setCustomValidity(confirm.value === pass.value ? '' : 'كلمتين السر مش زي بعض');
+});
+~~~
+
+فكها من جوه:
+
+1. [[confirm.value === pass.value]]: [[===]] مقارنة، بترجّع true أو false.
+2. [[? '' : '...']]: الـ ternary. لو الشرط true خد اللي بعد [[?]] (string فاضي)، لو false خد اللي بعد [[:]] (الرسالة).
+3. [[setCustomValidity(...)]]: string فاضي = الحقل سليم. أي كلام = الحقل غلط والكلام ده رسالته.
+4. [[addEventListener('input', ...)]]: شغّل ده مع كل حرف بيتكتب في التأكيد.
+
+كتبت [[secret123]] في كلمة السر و [[secret12]] في التأكيد:
+
+~~~text الناتج
+customError: true   valid: false
+validationMessage: كلمتين السر مش زي بعض
+form.checkValidity(): false
+~~~
+
+---
+
+## ٤. الإرسال: [[checkValidity]] و [[reportValidity]]
+
+~~~text app.js
+form.addEventListener('submit', (e) => {
+  if (!form.checkValidity()) {
+    e.preventDefault();
+    form.reportValidity();
+  }
+});
+~~~
+
+| الدالة | بتعمل إيه |
+|---|---|
+| [[form.checkValidity()]] | بترجّع [[true]] لو كل الحقول سليمة. ساكتة |
+| [[!]] قبلها | عكس: «لو مش سليم» |
+| [[e.preventDefault()]] | [[e]] هو الحدث. امنع الإرسال العادي |
+| [[form.reportValidity()]] | اعرض الرسالة على أول حقل غلط وحط الـ focus عليه |
+
+دوست «سجّل»: الصفحة فضلت مكانها، والـ focus راح لحقل التأكيد ([[document.activeElement.name]] = [[confirm]]).
+
+---
+
+## ٥. المشكلة اللي في المثال
+
+مسحت آخر حرف من كلمة السر عشان تبقى [[secret12]] زي التأكيد:
+
+~~~text الناتج
+pass.value === confirm.value   →  true
+confirm.validationMessage      →  كلمتين السر مش زي بعض
+form.checkValidity()           →  false
+~~~
+
+الرسالة لسه لازقة، لأن الـ listener على التأكيد بس، ومحدش نادى [[setCustomValidity('')]]. الحل (الـ solCode): دالة واحدة [[sync]] بتتنادي من الحقلين. جرّبتها بنفس الخطوات: الرسالة بقت [[""]] و [[checkValidity()]] بقت [[true]]، والفورم اتبعت.
+
+> ليه [[method="post"]] في الفورم فوق؟ جرّبته من غيرها: الفورم اتبعت بـ GET (الـ default) والباسوردات ظهرت في الـ URL: [[/ok?password=secret12&confirm=secret12]]، يعني تتسجل في الـ history وفي logs السيرفر. أي فورم فيه كلمة سر لازم [[method="post"]].
+
+---
+
+## ٦. [[tooShort]] بيتحسب إمتى؟
+
+| اللي عملته | [[tooShort]] |
+|---|---|
+| كتبت [[abc]] بالكيبورد | [[true]]، والرسالة: Please lengthen this text to 8 characters or more (you are currently using 3 characters). |
+| [[pass.value = 'abc']] من الكود | [[false]]، و [[valid]] بـ [[true]] |
+
+الطول بيتحسب بس على اللي المستخدم كتبه.
+
+---
+
+## ٧. [[:user-invalid]] في الـ CSS
+
+~~~text style.css
+input:user-invalid { border-color: crimson; }
+~~~
+
+[[crimson]] اسم لون أحمر غامق. قست [[border-top-color]] لحقل كلمة السر:
+
+| الوقت | [[:invalid]] | [[:user-invalid]] | لون البوردر |
+|---|---|---|---|
+| أول ما الصفحة فتحت | أيوه | لأ | [[rgb(118, 118, 118)]] رمادي |
+| كتبت [[abc]] وخرجت من الحقل | أيوه | أيوه | [[rgb(220, 20, 60)]] = crimson |
+
+يعني [[:invalid]] شغال من أول لحظة (الحقل فاضي و required)، و [[:user-invalid]] استنى لحد ما المستخدم لمس الحقل.
+
+---
+
+## الخلاصة
+
+| الأداة | امتى |
+|---|---|
+| [[el.validity]] | تعرف السبب: فاضي ولا قصير ولا شكله غلط |
+| [[el.validationMessage]] | الرسالة الجاهزة بلغة المتصفح، تعرضها جنب الحقل |
+| [[setCustomValidity('msg')]] و [[('')]] | قاعدة من عندك. لازم ترجّعها فاضية لما الغلط يتصلح |
+| [[form.checkValidity()]] | سؤال ساكت: true أو false من غير ما يعرض حاجة |
+| [[form.reportValidity()]] | سؤال ويعرض الرسالة والـ focus |
+| [[:user-invalid]] | تلوين بعد ما المستخدم يلمس الحقل |`,
+          lines: [
+            R`الفورم، وعليه [[novalidate]] في الـ HTML عشان احنا اللي نقرر امتى نعرض.`,
+            R`[[form.elements]] بيجيب الحقل بالـ [[name]] بتاعه.`,
+            R`حقل تأكيد كلمة السر بنفس الطريقة: [[name="confirm"]]. سمّيناه [[confirm]] بس ده بيغطي على [[window.confirm]] جوه السكربت ده، فلو احتجتها سمّيه [[confirmEl]].`,
+            "مع كل حرف في التأكيد...",
+            R`...لو زي الباسورد الرسالة فاضية (الحقل سليم)، غير كده الحقل غلط بالرسالة دي.`,
+            "قفلة.",
+            R`لما المستخدم يدوس «سجّل» أو Enter، الحدث [[submit]] بيوصل هنا قبل ما الفورم تتبعت فعلًا، فلسه تقدر توقفها.`,
+            "لو فيه أي حقل غلط (بما فيهم الـ custom)...",
+            R`...امنع الإرسال: [[e.preventDefault()]] بيلغي الإرسال العادي فالصفحة متتحمّلش والبيانات متروحش.`,
+            "...واعرض رسالة المتصفح على أول حقل غلط وحط الـ focus عليه.",
+            "قفلة الـ if.",
+            "قفلة الـ listener.",
+            R`تقدر تسأل عن أي سبب: فاضي؟ قصير؟ والرسالة بلغة المتصفح.`,
+            R`بوردر أحمر بعد ما المستخدم يلمس الحقل بس، مش أول ما الصفحة تفتح.`
+          ],
+          sol: R`بعد ما تكتب تأكيد مختلف: [[confirm.validity.customError]] بـ true و [[valid]] بـ false، و [[form.checkValidity()]] بـ false، والـ submit بيعرض «كلمتين السر مش زي بعض» على حقل التأكيد.
+
+المشكلة اللي هتلاقيها: لو غيّرت الباسورد الأصلي لحد ما يبقى زي التأكيد، الرسالة لسه موجودة، لأن الـ listener على التأكيد بس. الحل تعمل دالة واحدة وتسمع بيها على الحقلين.
+
+وتفصيلة: لو حطيت [[pass.value = 'abc']] من الـ Console، [[pass.validity.tooShort]] هتفضل false، لأنها بتتحسب بس لما المستخدم يكتب بإيده.`,
+          solCode: R`const form = document.querySelector('#signup');
+const pass = form.elements.password;
+const confirm = form.elements.confirm;
+const sync = () => confirm.setCustomValidity(confirm.value === pass.value ? '' : 'كلمتين السر مش زي بعض');
+pass.addEventListener('input', sync);
+confirm.addEventListener('input', sync);
+form.addEventListener('submit', (e) => {
+  if (!form.checkValidity()) {
+    e.preventDefault();
+    form.reportValidity();
+  }
+});`
+        },
+        {
+          cmd: "ملخص الأخطاء",
+          ref: [
+            { t: "MDN: Client-side form validation", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation" },
+            { t: "WAI Tutorials: User notifications (forms)", url: "https://www.w3.org/WAI/tutorials/forms/notifications/" },
+            { t: "MDN: aria-disabled", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-disabled" },
+            { t: "MDN: aria-invalid", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid" },
+          ],
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** فورم طلب لمتجر قهوة متخيل في شبكة: [[.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }]]، والعنوان حقل طويل [[grid-column: 1 / -1]]، وعلى الموبايل عمود واحد، وفوقه صندوق الملخص.`, done: R`على 800px الاسم والموبايل جنب بعض والعنوان واخد السطر كله، وعلى 360px كله تحت بعض، والملخص بيظهر فوق الشبكة مش جواها، والأخطاء تحت كل حقل مش بتكسر الشبكة.`, sol: R`~~~live 510 620
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>طلب قهوة</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  form { max-width: 720px; margin-inline: auto; }
+  .summary { border: 2px solid #b91c1c; border-radius: 8px; padding: 12px; margin-block-end: 16px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .wide { grid-column: 1 / -1; }
+  .field { display: grid; gap: 4px; align-content: start; min-width: 0; }
+  input { padding: 10px; font: inherit; width: 100%; box-sizing: border-box; }
+  .err { color: #b91c1c; font-size: .875rem; margin: 0; }
+  button { margin-block-start: 12px; padding: 10px 20px; font: inherit; }
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>اطلب قهوتك</h1>
+<form novalidate>
+  <div class="summary" role="alert">
+    <h2>فيه غلطتين</h2>
+    <ul>
+      <li><a href="#name">الاسم مطلوب</a></li>
+      <li><a href="#phone">الموبايل ناقص</a></li>
+    </ul>
+  </div>
+  <div class="row">
+    <div class="field">
+      <label for="name">الاسم</label>
+      <input id="name" name="name" autocomplete="name" aria-describedby="name-e" aria-invalid="true">
+      <p class="err" id="name-e">اكتب اسمك</p>
+    </div>
+    <div class="field">
+      <label for="phone">الموبايل</label>
+      <input id="phone" name="phone" type="tel" dir="ltr" autocomplete="tel" aria-describedby="phone-e" aria-invalid="true">
+      <p class="err" id="phone-e">١١ رقم</p>
+    </div>
+    <div class="field wide">
+      <label for="addr">العنوان</label>
+      <input id="addr" name="addr" autocomplete="address-line1">
+    </div>
+  </div>
+  <button>اطلب</button>
+</form>
 </main>
 </body>
 </html>
 ~~~
 
-**المشكلة اللي بيحلها subgrid:** كل [[.row]] grid لوحده، فأعمدته بتتحسب من label بتاعه، وكل سطر الـ input يبدأ من مكان مختلف.
+**اللي بيعمل الشبكة:**
 
-- [[max-content]] في الأب: عرض العمود قد أطول label في الفورم كله.
-- [[grid-template-columns: subgrid]]: كل صف بيستخدم أعمدة الأب، فأطول label بيحدد الحافة للخمسة.
-- [[grid-column: 2]] على [[small]]: الرسالة تحت الـ input.
-- [[aria-describedby]]: قارئ الشاشة بيقرا الرسالة مع الحقل.
+- [[grid-template-columns: 1fr 1fr]]: عمودين متساويين.
+- [[grid-column: 1 / -1]] معناها من أول خط لآخر خط، يعني السطر كله. و [[-1]] هو آخر خط مهما كان عدد الأعمدة.
+- [[align-content: start]] على الـ field: لو حقل تحته غلطة وحقل تاني لأ، اللي مفيهوش مبيتمطّش.
+- [[min-width: 0]]: من غيرها، الحقول ممكن تعمل overflow لأن الـ grid item مبيصغرش عن محتواه.
+- الملخص برّه [[.row]]، فمبيبقاش خلية في الشبكة.
 
-**الغلطة الشائعة:** تدي الـ labels عرض ثابت بالـ px. أول ترجمة أطول هتكسر الصف.
+**الغلطة الشائعة:** تحط الملخص جوه [[.row]]، فياخد عمود واحد ويزق الحقول. وأي عنصر زيادة في الشبكة بيتحسب خلية.
 
 ~~~text الناتج
 على 800:
-حافة الـ inputs اليمين: 656.73  (نفس الرقم في الخمسة)
-حافة الرسايل اليمين:    656.73  (تحت الـ inputs)
-حافة الـ labels اليمين: 784
-عرض العمود الأول = عرض أطول label = 111.266px
+الاسم x=406 عرض=354، الموبايل x=40 عرض=354، نفس السطر: true
+العنوان عرضه 720  (السطر كله)
 
 على 360:
-الأعمدة: 328px   overflow 0px
+أعمدة الشبكة: 328px
+الترتيب تحت بعض: y = 260 , 365 , 470
+overflow: 0px
 axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس ٣ الكروت بطريقتين: flex عمودي مع [[margin-top: auto]] على الزرار، و subgrid. قيس [[top]] بتاع قايمة المميزات والزرار في كل كارت في الطريقتين على 1280.`, done: R`في flex: الزراير متصفة بس قوايم المميزات لأ (في المعمل 101.08 و 125.08 و 101.08). في subgrid الاتنين متصفين (125.08 و 229.08 في التلاتة). وكتبت سطر بيقول إمتى flex كفاية.`, sol: R`~~~live 590 720
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الملخص لينك [[<a href="#email">الإيميل</a>]]. لما تدوس عليه، الـ focus هيروح فين: اللينك، ولا الحقل نفسه، ولا مفيش؟`, done: R`في Chrome [[document.activeElement]] بقى الحقل نفسه ([[#email]])، فالمستخدم يكتب على طول. ده بيحصل بس لو الهدف عنصر بيتركّز عليه (input)؛ لو اللينك رايح لـ div الـ focus مش بيروح له.`, sol: R`~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>قارن</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; font-family: system-ui; }
-  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-block-end: 32px; }
-  .card { padding: 12px; border: 1px solid #d4d4d8; }
-  .card h2, .card ul { margin: 0; }
-
-  .flex .card { display: flex; flex-direction: column; gap: 8px; }
-  .flex .card a { margin-top: auto; }
-
-  .sub .card { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 8px; }
-</style>
+<title>الملخص</title>
+<style>form { padding-block-start: 900px; }</style>
 </head>
 <body>
 <main>
-<h1>قارن</h1>
-<section class="cards flex" aria-label="flex">
-  <article class="card"><h2>قصير</h2><ul><li>ميزة</li></ul><a href="#a">اشترك في ١</a></article>
-  <article class="card"><h2>عنوان طويل جدًا بينزل سطرين في الكارت ده بالذات</h2><ul><li>ميزة</li></ul><a href="#b">اشترك في ٢</a></article>
-  <article class="card"><h2>قصير</h2><ul><li>ميزة</li><li>ميزة</li><li>ميزة</li></ul><a href="#c">اشترك في ٣</a></article>
-</section>
-<section class="cards sub" aria-label="subgrid">
-  <article class="card"><h2>قصير</h2><ul><li>ميزة</li></ul><a href="#d">اشترك في ٤</a></article>
-  <article class="card"><h2>عنوان طويل جدًا بينزل سطرين في الكارت ده بالذات</h2><ul><li>ميزة</li></ul><a href="#e">اشترك في ٥</a></article>
-  <article class="card"><h2>قصير</h2><ul><li>ميزة</li><li>ميزة</li><li>ميزة</li></ul><a href="#f">اشترك في ٦</a></article>
-</section>
+<h1>الفورم</h1>
+<a id="l1" href="#email">الإيميل</a>
+<a id="l2" href="#box">الصندوق</a>
+<form>
+  <label for="email">الإيميل</label>
+  <input id="email" type="email">
+  <div id="box">صندوق عادي</div>
+</form>
 </main>
 </body>
 </html>
 ~~~
 
-**الفرق:** flex كل كارت بيحسب لوحده، و [[margin-top: auto]] بيزق الزرار لآخره. فالزراير بتتصف، لكن اللي في النص مبيعرفش حاجة عن الكروت التانية. أما subgrid فكل الكروت بتتشارك نفس الصفوف، فكل جزء بيتصف مع نظيره.
+**الإجابة:** الـ focus بيروح للحقل نفسه. لما اللينك يودّي لعنصر بيقبل الـ focus زي [[input]]، المتصفح بينزل له ويركّز فيه، فالمستخدم يكتب على طول. وده اللي بيخلي ملخص الأخطاء مفيد فعلًا.
 
-**إمتى flex كفاية:** لما الجزء اللي عايز تصفّه هو الآخر بس (الزرار)، أو العناوين كلها نفس الطول. و subgrid لما الأجزاء اللي في النص كمان لازم تتصف.
+لو الهدف [[div]] عادي، الصفحة بتنزل له، بس [[document.activeElement]] مش بيبقى الـ div. المتصفح بيحرّك نقطة بداية الـ Tab بس.
 
-**الغلطة الشائعة:** تثبّت [[min-height]] للعناوين عشان تتصف. أول ترجمة أطول هتكسرها.
+**لو محتاج الـ focus يروح لعنصر عادي** (زي عنوان الصفحة): حط عليه [[tabindex="-1"]]. الرقم ده معناه «يقبل الـ focus من الكود واللينكات، بس مش من Tab».
+
+**الغلطة الشائعة:** تكتب JavaScript يعمل [[scrollIntoView]] ثم [[focus()]] لكل لينك. اللينك بيعمل ده لوحده.
 
 ~~~text الناتج
-الأرقام نسبة لأول الكارت، على 1280:
+الضغط على لينك #email:
+document.activeElement = input#email   الـ URL = #email   الحقل نزل لجوه الشاشة: true
 
-              top القايمة في الكروت التلاتة    top الزرار في الكروت التلاتة
-flex          53 و 85 و 53             124 و 124 و 124
-subgrid       85 و 85 و 85             156 و 156 و 156
-axe: 0 violations
+الضغط على لينك #box:
+document.activeElement = body
+
+بعد tabindex="-1" على الصندوق:
+document.activeElement = div#box
 ~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN أو caniuse: subgrid اتدعم من أنهي نسخة في Chrome و Firefox و Safari؟ وبعدين اكتب [[@supports not (grid-template-rows: subgrid)]] بـ fallback بالـ flex، وجرّبه بإنك تغيّر الشرط مؤقتًا لـ [[@supports not (display: grid)]] عشان تتأكد إن الجزء ده مبيشتغلش في Chrome.`, done: R`عندك النسخ الثلاثة مكتوبة مع الرابط (Chrome و Edge 117، و Firefox 71، و Safari 16)، والـ fallback لما تشغّله بالقوة بيطلّع كروت شغالة والزراير تحت، بس من غير ما الأجزاء تتصف.`, sol: R`**النسخ (من caniuse و MDN، مش من تجربة):**
-
-| المتصفح | subgrid من نسخة |
-|---|---|
-| Chrome و Edge | 117 |
-| Firefox | 71 |
-| Safari | 16 |
-
-وده الـ fallback:
-
-~~~live 360 580
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** زرارين «بيبعت…»: واحد [[disabled]] وواحد [[aria-disabled="true"]]. من الحقل اللي قبلهم دوس Tab، وبعدين دوس Enter على اللي وصلت له.`, done: R`الـ Tab عدّى الـ disabled ووقف على الـ aria-disabled، والضغط عليه شغّل الـ onclick عادي (اتعدّ مرتين في التجربة). يعني aria-disabled بيسيب الزرار في الكيبورد ويقول إنه مقفول، بس الكود لازم يتأكد بنفسه بـ flag زي [[sending]] في الدرس.`, sol: R`~~~live 160 160
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الكروت</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; font-family: system-ui; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }
-  .card { display: grid; grid-row: span 3; grid-template-rows: subgrid; padding: 12px; border: 1px solid #d4d4d8; }
+<title>الإرسال</title>
+</head>
+<body>
+<main>
+<h1>تسجيل</h1>
+<label for="n">الاسم</label>
+<input id="n">
+<button id="a" disabled onclick="count()">بيبعت…</button>
+<button id="b" aria-disabled="true" onclick="count()">بيبعت…</button>
+<p id="c">0</p>
+</main>
+<script>
+  let clicks = 0;
+  function count() { clicks++; document.querySelector('#c').textContent = clicks; }
+$__lt/script>
+</body>
+</html>
+~~~
 
-  @supports not (grid-template-rows: subgrid) {
-    .card { display: flex; flex-direction: column; gap: 8px; grid-row: auto; }
-    .card a { margin-top: auto; }
+**اللي طلع:**
+
+| | [[disabled]] | [[aria-disabled="true"]] |
+|---|---|---|
+| Tab بيقف عليه | لأ | أيوه |
+| قارئ الشاشة يعرف إنه مقفول | أيوه، لو وصله | أيوه |
+| الضغط بيشغّل onclick | لأ | **أيوه** |
+
+الـ ARIA مش بتغيّر سلوك العنصر. دي بتقول لقارئ الشاشة معلومة بس. فالزرار لسه زرار عادي، والكود بتاعك لازم يمنع الضغط بنفسه:
+
+~~~js
+let sending = false;
+async function send() {
+  if (sending) return;
+  sending = true;
+  // ...
+}
+~~~
+
+**إمتى كل واحد:** أثناء إرسال بتاخد ثواني، [[aria-disabled]] أحسن، لأن [[disabled]] بيرمي الـ focus من الزرار، واللي بيستخدم الكيبورد بيضيع مكانه. أما زرار مش متاح أصلًا، فـ [[disabled]] أوضح.
+
+**الغلطة الشائعة:** تكتب [[aria-disabled]] وتفتكر إن الضغط اتمنع.
+
+~~~text الناتج
+Tab من الحقل: وقف عند #b
+Enter عليه + Space عليه: العداد = 2
+- button "بيبعت…" [disabled]
+- button "بيبعت…" [disabled]
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** خلي السيرفر بطيء: بدل الـ fetch حط [[await new Promise((r) => setTimeout(r, 2000))]]، وغيّر كلمة الزرار لـ «بيبعت…» وقت الانتظار. اضغط ٥ مرات ورا بعض بسرعة.`, done: R`عداد في الكود بيقول إن الإرسال اتنفّذ مرة واحدة بس، والزرار رجع «سجّل» بعد ثانيتين، ولو رميت error جوه الـ Promise الزرار برضه رجع (بسبب [[finally]]).`, sol: R`~~~live 160 160
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تسجيل</title>
+</head>
+<body>
+<main>
+<h1>تسجيل</h1>
+<form id="f">
+  <label for="n">الاسم</label>
+  <input id="n" value="منى">
+  <button id="send">سجّل</button>
+</form>
+<p>مرات الإرسال: <output id="count">0</output></p>
+</main>
+<script>
+  const button = document.querySelector('#send');
+  let sending = false;
+  let count = 0;
+  window.shouldFail = false;
+
+  async function fakeServer() {
+    await new Promise((r) => setTimeout(r, 2000));
+    if (window.shouldFail) throw new Error('السيرفر وقع');
   }
+
+  document.querySelector('#f').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (sending) return;
+    sending = true;
+    button.textContent = 'بيبعت…';
+    button.setAttribute('aria-disabled', 'true');
+    try {
+      count++;
+      document.querySelector('#count').textContent = count;
+      await fakeServer();
+    } catch (err) {
+      console.error(err.message);
+    } finally {
+      sending = false;
+      button.textContent = 'سجّل';
+      button.removeAttribute('aria-disabled');
+    }
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**السطور اللي بتمنع الإرسال المكرر:**
+
+- [[if (sending) return;]] أول سطر بعد [[preventDefault]]. الـ flag بيتغيّر قبل أي [[await]]، فالضغطة التانية بتلاقيه true.
+- [[finally]]: بيتنفّذ سواء الطلب نجح أو فشل. من غيره، أول خطأ بيسيب الزرار مقفول للأبد.
+- بنعالج الـ [[submit]] مش الـ [[click]]، عشان Enter في الحقل يتعامل نفس المعاملة.
+
+**ليه مش كفاية نعمل** [[button.disabled = true]]**:** ده بيرمي الـ focus من الزرار، والـ Enter في الحقل ممكن يوصل قبل ما السطر يتنفّذ. الـ flag أضمن.
+
+**الغلطة الشائعة:** تحط [[sending = false]] في آخر الـ try. لو الطلب وقع، السطر ده مش هيتنفّذ.
+
+~~~text الناتج
+٥ ضغطات ورا بعض:
+مرات الإرسال = 1
+كلمة الزرار أثناء الانتظار = بيبعت…
+بعد ثانيتين = سجّل
+
+مع رمي error جوه الـ Promise:
+كلمة الزرار بعد الخطأ = سجّل
+الضغط تاني اشتغل: مرات الإرسال = 3
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** فورم حجز لعيادة متخيلة بيفتح واتساب برسالة جاهزة: الاسم والميعاد والملاحظات في سطور، و [[window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener')]].`, done: R`الرسالة بتوصل كاملة بالسطور (الـ [[\n]] اتحوّلت [[%0A]])، واسم زي «سلمى & أحمد» بيوصل كامل. ومن غير [[encodeURIComponent]] الـ [[&]] بتقطع الرسالة: [[new URL('https://wa.me/?text=سلمى & أحمد').searchParams.get('text')]] رجّع [[سلمى ]] بس.`, sol: R`~~~live 390 390
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  form { display: grid; gap: 8px; max-width: 340px; }
+  input, textarea { padding: 10px; font: inherit; }
 </style>
 </head>
 <body>
 <main>
-<h1>الكروت</h1>
-<div class="cards">
-  <article class="card"><h2>قصير</h2><p>وصف</p><a href="#a">اشترك في ١</a></article>
-  <article class="card"><h2>عنوان طويل جدًا بينزل سطرين في الكارت ده</h2><p>وصف</p><a href="#b">اشترك في ٢</a></article>
-</div>
+<h1>احجز عند عيادة الشفاء</h1>
+<form id="f">
+  <label for="n">الاسم</label>
+  <input id="n" name="name" required autocomplete="name">
+  <label for="d">الميعاد</label>
+  <input id="d" name="when" type="datetime-local" required>
+  <label for="m">ملاحظات</label>
+  <textarea id="m" name="notes"></textarea>
+  <button>افتح واتساب</button>
+</form>
+</main>
+<script>
+  document.querySelector('#f').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const msg = [
+      'حجز جديد',
+      'الاسم: ' + data.get('name'),
+      'الميعاد: ' + data.get('when'),
+      'ملاحظات: ' + (data.get('notes') || 'مفيش'),
+    ].join('\n');
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**السطور المهمة:**
+
+- [[.join('\n')]]: بيحط سطر جديد بين كل جزء.
+- [[encodeURIComponent]]: بيحوّل أي حرف ليه معنى في الـ URL لشكل آمن. السطر الجديد بقى [[%0A]]، و [[&]] بقت [[%26]].
+- [[data.get('notes') || 'مفيش']]: لو الحقل فاضي، اكتب «مفيش».
+- [[noopener]]: الصفحة الجديدة متقدرش توصل لصفحتك.
+
+**ليه** [[encodeURIComponent]] **لازم:** الـ [[&]] في الـ URL معناها «اللي بعدي parameter جديد». فمن غيرها، اسم زي «سلمى & أحمد» بيقطع الرسالة عند الـ &، وباقيها بيتفهم كـ parameter تاني.
+
+**الغلطة الشائعة:** تستخدم [[encodeURI]] بدل [[encodeURIComponent]]. الأولى بتسيب [[&]] زي ما هي، لأنها معمولة لـ URL كامل مش لقيمة جواه.
+
+~~~text الناتج
+الـ URL اللي اتفتح (أوله):
+https://wa.me/?text=%D8%AD%D8%AC%D8%B2%20%D8%AC%D8%AF%D9%8A%D8…
+
+فيه %0A بدل السطر الجديد: true
+الرسالة اللي واتساب هيقراها:
+حجز جديد
+الاسم: سلمى & أحمد
+الميعاد: 2026-07-01T10:30
+ملاحظات: أول زيارة
+
+من غير encodeURIComponent:
+new URL('https://wa.me/?text=سلمى & أحمد').searchParams.get('text') = "سلمى "
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك عايز يشيل الملخص ويكتفي بالرسالة الحمرا تحت كل حقل. اكتبله في ٣ سطور إمتى الملخص بيفرق.`, done: R`الشرح فيه: الفورم الطويل اللي الغلط فيه تحت الشاشة، ومستخدم قارئ الشاشة اللي بيسمع العدد واللينكات مرة واحدة، والموبايل اللي الرسالة الحمرا فيه ممكن تبقى برّه الشاشة.`, sol: R`**الرد النموذجي لزميلك:**
+
+~~~text الشرح
+الرسالة تحت الحقل كفاية لو الفورم قصير والغلط قدامك. الملخص بيفرق في ٣ حالات:
+١. فورم طويل والغلطة في حقل تحت الشاشة: من غير ملخص المستخدم بيدوس إرسال ومش شايف أي حاجة حصلت.
+٢. قارئ الشاشة: بيسمع «فيه ٣ غلطات» والأسامي مرة واحدة، ويدخل على اللينك مباشرة بدل ما يدوّر حقل حقل.
+٣. الموبايل: الشاشة صغيرة والكيبورد واكلة نصها، فالرسالة الحمرا غالبًا برّه الشاشة.
+~~~
+
+**الحل الصح الاتنين مع بعض:** الملخص بيقول إيه الغلط، والرسالة تحت كل حقل بتقول إزاي تصلّحه. والصفحة دي بتوضّح الحالة الأولى: الحقل فوق والزرار تحت:
+
+~~~live 600 720
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فورم طويل</title>
+<style>.gap { height: 1400px; }</style>
+</head>
+<body>
+<main>
+<h1>فورم طويل</h1>
+<form novalidate>
+  <label for="e">الإيميل</label>
+  <input id="e" required>
+  <p class="err" hidden>اكتب إيميلك</p>
+  <div class="gap"></div>
+  <button type="button" onclick="document.querySelector('.err').hidden = false">ابعت</button>
+</form>
 </main>
 </body>
 </html>
 ~~~
 
-**إزاي تتأكد إن الـ fallback سليم، مع إن Chrome بيدعم subgrid:** غيّر الشرط مؤقتًا لشرط **دايمًا** صح، زي [[@supports not (display: nothing)]]، فالجزء يتنفّذ. وبعد التجربة رجّعه.
-
-و [[@supports not (display: grid)]] اللي في نص التمرين عكس كده: عمره ما بيتنفّذ في Chrome، وده بيأكد إن قاعدة [[not]] مش بتشتغل على متصفح داعم.
-
-**الغلطة الشائعة:** تكتب fallback ومتجربهوش أبدًا، لأن متصفحك مش محتاجه. كود مش بيتشغّل هو كود بايظ.
+**الغلطة الشائعة:** تحط الملخص من غير ما تنقل الـ focus له. قارئ الشاشة مش هيعرف إنه ظهر، إلا لو عليه [[role="alert"]] أو الـ focus راحله.
 
 ~~~text الناتج
-CSS.supports('grid-template-rows', 'subgrid') = true
-
-الشرط الأصلي في Chrome: display الكارت = grid  (subgrid شغال)
-                  top الزراير: 272 , 272
-
-الـ fallback بالقوة، على عرض 600: display الكارت = flex
-                  bottom الزراير نسبة لآخر الكارت: 13 , 13
-                  top الوصف في الكارتين: 211 , 243  (مش متصف، زي ما التمرين قال)
-
-@supports not (display: grid) في Chrome: display الكارت = grid  (الجزء ما اتنفّذش)
+شاشة 360×640، نزلت لآخر الفورم ودست ابعت:
+الرسالة الحمرا موقعها y = -823، يعني فوق الشاشة ومش باينة
+هل ظهرت في الشاشة؟ لأ
+وكل اللي المستخدم شايفه: زرار مفيش بعده أي تغيير
 ~~~` },
           ],
+          title: "الفورم رفض: المستخدم يعرف الغلط فين، وميبعتش مرتين",
+          desc: R`لما الإرسال يفشل، اعمل 3 حاجات: رسالة جنب كل حقل غلط ومربوطة بيه بـ [[aria-describedby]] ومعاها [[aria-invalid="true"]]، وملخص فوق الفورم فيه لينك لكل حقل غلط (مهم في الفورمات الطويلة)، وحط الـ focus على أول حقل غلط عشان قارئ الشاشة يقول اسمه والغلط بتاعه على طول.
+
+ولما الإرسال يبدأ فعلًا، امنع الضغطة التانية: flag في الكود، والزرار يبقى [[aria-disabled]] لحد ما الرد يرجع.
+
+الـ HTML المتوقع: كل حقل ليه [[id]] و [[aria-describedby="<id>-err"]] وبعده [[<p id="<id>-err">]]، وفوق الفورم [[<div id="summary" hidden>]] فيه [[<h2>]] و [[<ul>]].`,
+          example: R`const form = document.querySelector('#signup');
+const summary = document.querySelector('#summary');
+const submitBtn = form.querySelector('[type=submit]');
+let sending = false;
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (sending) return;
+  const fields = [...form.querySelectorAll('input, select, textarea')];
+  const bad = fields.filter((el) => !el.checkValidity());
+  for (const el of fields) {
+    el.setAttribute('aria-invalid', String(!el.validity.valid));
+    document.getElementById(el.id + '-err').textContent = el.validationMessage;
+  }
+  summary.hidden = bad.length === 0;
+  summary.querySelector('h2').textContent = $__btفيه $__{bad.length} حاجات محتاجة تتصلح$__bt;
+  summary.querySelector('ul').innerHTML = bad.map((el) => $__bt<li><a href="#$__{el.id}">$__{el.labels[0].textContent}</a></li>$__bt).join('');
+  if (bad.length) return bad[0].focus();
+  sending = true;
+  submitBtn.setAttribute('aria-disabled', 'true');
+  try {
+    await fetch(form.action, { method: 'POST', body: new FormData(form) });
+  } finally {
+    sending = false;
+    submitBtn.removeAttribute('aria-disabled');
+  }
+});`,
+          try: R`اعمل فورم فيه الاسم والإيميل (required) بالـ HTML اللي في الشرح، وحط [[novalidate]] على الفورم وشغّل السكربت. دوس سجّل والحقول فاضية: الـ focus راح فين؟ الملخص فيه كام لينك؟ وبعدين املاهم صح، ودوس سجّل مرتين ورا بعض بسرعة وبص في Network › Fetch/XHR: كام request اتبعت؟`,
+          flag: "script",
+          deep: {
+            why: R`لو الفورم رفض من غير ما يقول ليه، أو الرسالة ظهرت فوق والمستخدم تحت، أو قارئ الشاشة فضل ساكت، المستخدم بيمشي. والضغطة المزدوجة على «ادفع» أو «اطلب» بتعمل طلبين ودفع مرتين، ودي من أشهر مشاكل المتاجر.`,
+            how: R`[[aria-describedby]] بيخلي قارئ الشاشة يقرا الرسالة بعد اسم الحقل ونوعه: «الإيميل، edit، invalid entry، اكتب الإيميل». و [[aria-invalid]] هو اللي بيقول «invalid». فلما الـ focus يروح لأول حقل غلط، المستخدم بيسمع كل اللي محتاجه في جملة واحدة.
+
+الملخص: اللينكات [[href="#email"]] بتنقل الـ focus للحقل نفسه لما تتضغط. في فورم قصير (2 أو 3 حقول) ممكن تستغنى عن الملخص وتكتفي بالـ focus على أول حقل. في فورم طويل (زي GOV.UK) بيحطوا الـ focus على الملخص نفسه ([[tabindex="-1"]]) عشان المستخدم يعرف العدد الأول.
+
+الـ [[validationMessage]] بيبقى فاضي لما الحقل سليم، فنفس السطر بيمسح الرسالة القديمة. ورسايل المتصفح بلغته، ولو عايز رسايلك انت استخدم [[setCustomValidity]] (الدرس اللي فات).
+
+ليه [[aria-disabled]] مش [[disabled]]؟ [[disabled]] بيشيل الزرار من الـ Tab، فلو الـ focus كان عليه بيضيع لأول الصفحة. [[aria-disabled]] بيقول لقارئ الشاشة إنه مقفول والـ focus بيفضل مكانه، والـ flag [[sending]] هو اللي بيمنع فعلًا. وفي React 19 فيه [[useFormStatus]] بيدّيك [[pending]] جوه الفورم، وفي السيرفر الحماية الحقيقية idempotency key (نفس المفتاح مرتين = طلب واحد).`,
+            when: R`أي فورم فيه أكتر من حقل، وخصوصًا الدفع والتسجيل. ومنع الضغطة المزدوجة في أي زرار بيعمل حاجة مش بتتعاد (طلب، دفع، إرسال رسالة).`,
+            mistakes: R`رسالة واحدة عامة «فيه أخطاء» من غير ما تقول فين. الأخطاء بالأحمر بس (اللي عنده عمى ألوان مش هيشوفها). رسالة مش مربوطة بالحقل فقارئ الشاشة ميقولهاش. الـ focus يفضل على الزرار. [[disabled]] على الزرار وقت الإرسال فالـ focus يضيع. تنسى ترجّع الزرار لو الطلب فشل فالمستخدم يفضل محبوس. و [[innerHTML]] بكلام جاي من المستخدم (XSS)، هنا الـ labels بتاعتنا فمفيش مشكلة، بس لو فيه أي قيمة من المستخدم استخدم [[textContent]].`
+          },
+          teach: R`## الفكرة في سطرين
+
+الكود ده بيستلم حدث الإرسال بنفسه: يفحص كل حقل، ويكتب رسالة تحت كل حقل غلط، ويعمل ملخص فوقه، ويحط الـ focus على أول غلط. ولو كله سليم يبعت بـ [[fetch]] ويمنع الضغطة التانية. جرّبته في Chrome (headless) على الـ HTML اللي في الحل (الاسم والإيميل required و [[novalidate]] على الفورم)، والسيرفر المحلي بيتأخر ثانية قبل ما يرد عشان أقدر أدوس تاني والطلب لسه شغال.
+
+---
+
+## ١. التجهيز
+
+~~~text app.js
+const form = document.querySelector('#signup');
+const summary = document.querySelector('#summary');
+const submitBtn = form.querySelector('[type=submit]');
+let sending = false;
+~~~
+
+- [[[type=submit]]]: selector بالـ attribute: العنصر اللي [[type]] بتاعه [[submit]]. و [[form.querySelector]] بيدوّر جوه الفورم بس.
+- [[let]]: متغير هيتغيّر (عكس [[const]]). [[sending]] اسمه flag: true أو false بيقول «فيه إرسال شغال دلوقتي».
+
+---
+
+## ٢. أول الـ listener
+
+~~~text app.js
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (sending) return;
+~~~
+
+- [[async]]: الدالة جواها [[await]] (هنستنى الـ fetch).
+- [[e.preventDefault()]]: امنع الإرسال العادي (اللي بيعمل reload)، إحنا اللي هنبعت.
+- [[if (sending) return;]]: لو فيه طلب لسه مخلصش، اخرج من غير ما تعمل حاجة.
+
+---
+
+## ٣. مين الغلط؟
+
+~~~text app.js
+const fields = [...form.querySelectorAll('input, select, textarea')];
+const bad = fields.filter((el) => !el.checkValidity());
+~~~
+
+- [[querySelectorAll('input, select, textarea')]]: الفاصلة في الـ selector معناها «أو». بيرجّع NodeList.
+- [[[...]]] حوالين الـ NodeList: الـ [[...]] (spread) بيفرده جوه array جديدة، عشان يبقى عندنا [[filter]].
+- [[filter]]: بيرجّع array فيها العناصر اللي الشرط بتاعها true بس. والشرط [[!el.checkValidity()]] يعني «الحقل مش سليم».
+
+---
+
+## ٤. علامة ورسالة على كل حقل
+
+~~~text app.js
+for (const el of fields) {
+  el.setAttribute('aria-invalid', String(!el.validity.valid));
+  document.getElementById(el.id + '-err').textContent = el.validationMessage;
+}
+~~~
+
+- [[for (const el of fields)]]: لف على كل حقل، واسمه جوه اللفة [[el]].
+- [[String(!el.validity.valid)]]: عكس [[valid]] ومحوّل لنص: [[true]] أو [[false]]. و [[setAttribute]] بيحطه على العنصر.
+- [[el.id + '-err']]: لو الـ id [[email]] يبقى [[email-err]]، وده الـ [[<p>]] اللي تحت الحقل.
+- [[textContent]] = الرسالة. والحقل السليم رسالته [[""]]، فنفس السطر بيمسح الرسالة القديمة.
+
+---
+
+## ٥. الملخص
+
+~~~text app.js
+summary.hidden = bad.length === 0;
+summary.querySelector('h2').textContent = $__btفيه $__{bad.length} حاجات محتاجة تتصلح$__bt;
+summary.querySelector('ul').innerHTML = bad.map((el) => $__bt<li><a href="#$__{el.id}">$__{el.labels[0].textContent}</a></li>$__bt).join('');
+~~~
+
+- [[hidden]]: لو مفيش غلط (الطول 0) خبّي الملخص.
+- الـ backticks حوالين النص اسمها template literal، و [[$__{...}]] جواها بيحط قيمة.
+- [[bad.map(...)]]: بيحوّل كل حقل غلط لسطر [[<li>]] فيه لينك [[#id]]، والاسم من [[el.labels[0].textContent]] (أول label مربوط بالحقل).
+- [[.join('')]]: يلزق السطور في string واحد من غير فاصل.
+
+---
+
+## ٦. الـ focus، وبعدين الإرسال
+
+~~~text app.js
+if (bad.length) return bad[0].focus();
+sending = true;
+submitBtn.setAttribute('aria-disabled', 'true');
+try {
+  await fetch(form.action, { method: 'POST', body: new FormData(form) });
+} finally {
+  sending = false;
+  submitBtn.removeAttribute('aria-disabled');
+}
+~~~
+
+- لو فيه غلط: الـ focus على أول واحد ([[bad[0]]]) واخرج.
+- [[sending = true]] **قبل** الـ [[await]]: ده اللي بيقفل الباب على الضغطة التانية.
+- [[try]] و [[finally]]: اللي في [[finally]] بيتنفّذ دايمًا، سواء الطلب نجح أو رمى error، فالزرار مبيفضلش مقفول للأبد.
+- [[fetch(form.action, ...)]]: يبعت لنفس العنوان اللي في [[action]]، بـ [[POST]]، والجسم [[new FormData(form)]].
+
+---
+
+## ٧. اللي اتقاس
+
+### دوست «سجّل» والحقلين فاضيين
+
+~~~text الناتج
+الـ focus على:      name
+الملخص ظاهر:        نعم
+العنوان:            فيه 2 حاجات محتاجة تتصلح
+الـ ul:             <li><a href="#name">الاسم</a></li><li><a href="#email">الإيميل</a></li>
+name:  aria-invalid=true   الرسالة: Please fill out this field.
+email: aria-invalid=true   الرسالة: Please fill out this field.
+~~~
+
+وفي شجرة الـ accessibility كل حقل بقى كده:
+
+~~~text الناتج
+textbox "الإيميل"  invalid=true  description: Please fill out this field.
+~~~
+
+الـ description جاية من [[aria-describedby="email-err"]] اللي في الـ HTML، فقارئ الشاشة بيقول الاسم وإنه غلط والرسالة مع بعض. وضغطت على لينك «الإيميل» في الملخص: الـ hash بقى [[#email]] والـ focus راح للحقل نفسه.
+
+### ملّيتهم صح ودوست دبل كليك
+
+~~~text الناتج
+حدث submit:   مرتين (بينهم 1 ملّي ثانية)
+POST للسيرفر: واحد بس
+~~~
+
+الضغطة التانية لقت [[sending]] بـ [[true]] فرجعت. ونفس النتيجة مع Enter مرتين ورا بعض في حقل الإيميل. وفي الثانية اللي الطلب شغال فيها: [[aria-disabled="true"]] على الزرار، وبعد ما الرد رجع اتشال.
+
+---
+
+## الخلاصة
+
+| الخطوة | السطر |
+|---|---|
+| امنع الإرسال العادي | [[e.preventDefault()]] |
+| امنع الضغطة التانية | [[if (sending) return]] و [[sending = true]] قبل الـ await |
+| مين الغلط | [[filter(el => !el.checkValidity())]] |
+| علّم كل حقل | [[aria-invalid]] ورسالة في [[<p id="...-err">]] |
+| ملخص بلينكات | [[href="#id"]] |
+| الـ focus | [[bad[0].focus()]] |
+| رجّع الزرار مهما حصل | [[finally]] |`,
+          lines: [
+            "الفورم (عليه novalidate في الـ HTML).",
+            "صندوق الملخص فوق الفورم.",
+            R`زرار الإرسال: [[form.querySelector('[type=submit]')]] بيمسك الزرار اللي بيبعت الفورم، عشان نقفله وقت الإرسال.`,
+            "flag: بنبعت دلوقتي ولا لأ.",
+            R`لما الفورم تتبعت: الـ function [[async]] عشان نقدر نستنى الـ fetch جواها بـ [[await]].`,
+            "إحنا اللي هنبعت بـ fetch، فامنع الإرسال العادي.",
+            "لو فيه طلب لسه مخلصش، تجاهل الضغطة دي.",
+            R`كل الحقول (من غير الأزرار، لأن الزرار كمان ليه [[checkValidity]]).`,
+            R`الحقول الغلط بس: [[filter]] بيسيب الحقل اللي [[checkValidity()]] بيرجّعه false.`,
+            R`نلف على كل الحقول (السليم والغلط)، عشان السليم كمان لازم رسالته القديمة تتمسح.`,
+            R`[[aria-invalid]] بـ true أو false حسب حالته.`,
+            "رسالته تحته، وبتتمسح لوحدها لو بقى سليم.",
+            "قفلة.",
+            "الملخص يظهر لو فيه غلط.",
+            R`عنوان الملخص فيه عدد الأخطاء، عشان أول حاجة قارئ الشاشة يقولها لما يوصل للملخص «فيه 2 حاجات محتاجة تتصلح».`,
+            "لينك لكل حقل غلط باسمه من الـ label.",
+            "لو فيه غلط: الـ focus على أول حقل غلط ووقف هنا.",
+            "كله سليم: علّم إننا بنبعت.",
+            "الزرار يبان مقفول ويفضل ماسك الـ focus.",
+            R`[[try]] عشان لو الطلب فشل (النت قطع مثلًا) الكود اللي في [[finally]] يشتغل برضه.`,
+            R`الطلب نفسه: [[fetch]] لعنوان الـ [[action]] بـ POST، و [[new FormData(form)]] بيجمع كل حقل ليه name.`,
+            "...ومهما حصل (نجح أو فشل)...",
+            R`...افتح الإرسال تاني: [[sending = false]] عشان الضغطة الجاية تتقبل.`,
+            R`...ورجّع الزرار: شيل [[aria-disabled]] فقارئ الشاشة مبقاش يقول إنه مقفول.`,
+            "قفلة الـ finally.",
+            "قفلة الـ listener."
+          ],
+          sol: R`أول submit والحقول فاضية: الـ focus بيروح لحقل الاسم (أول حقل غلط)، وقارئ الشاشة بيقول اسمه و invalid والرسالة. الملخص بيظهر وفيه لينكين (الاسم والإيميل) والعنوان «فيه 2 حاجات محتاجة تتصلح». وكل حقل عليه [[aria-invalid="true"]] وتحته رسالة المتصفح.
+
+بعد ما تملاهم صح وتدوس مرتين بسرعة: request واحد بس في Network، لأن الضغطة التانية لقت [[sending]] بـ true ورجعت. ولو لقيت اتنين يبقى الـ flag اتحط بعد الـ await مش قبله.
+
+لو الـ focus مراحش للحقل: اتأكد إن الـ id في الـ HTML زي اللي في [[aria-describedby]]، وإن الـ [[<p>]] بتاع الغلط موجود (لو مش موجود [[getElementById]] بيرجع null والسكربت يقع).`,
+          solCode: R`<div id="summary" hidden>
+  <h2></h2>
+  <ul></ul>
+</div>
+<form id="signup" action="/api/signup" novalidate>
+  <label for="name">الاسم</label>
+  <input id="name" name="name" required aria-describedby="name-err">
+  <p id="name-err"></p>
+  <label for="email">الإيميل</label>
+  <input id="email" name="email" type="email" required aria-describedby="email-err">
+  <p id="email-err"></p>
+  <button type="submit">سجّل</button>
+</form>`
         }
       ]
     }

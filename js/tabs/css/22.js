@@ -1,2854 +1,2952 @@
-// الكلام جوه الفقرة: strong و em وإخواتهم (وحدة من منهج syllabus/css.json)
+// تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: R`HTML: معنى الكلام جوه الفقرة`,
-      l: 1,
-      n: "عناصر صغيرة جوه السطر، كل واحد بيقول الكلمة دي إيه (مهمة، متشالة، كود، تاريخ)، مش شكلها إيه",
+      t: "مكونات بتتعاد: cn و cva و shadcn",
       pre: [
-        { to: "css/مقدمة HTML والـ Tags", why: R`لازم تكون عارف الـ tag والـ attribute والفرق بين عنصر بياخد سطر لوحده وعنصر جوه السطر` },
-        { to: "css/semantic HTML", why: R`نفس الفكرة بس على مستوى الصفحة: العنصر بيتختار بمعناه مش بشكله` },
+        { to: "css/variants", why: R`الـ classes اللي cn و cva بيركّبوها` },
+        { to: "react", why: R`الـ components و props و className` },
       ],
-      goal: [
-        R`تختار العنصر الصح لأي كلمة جوه فقرة: [[<strong>]] للمهم، و [[<em>]] للضغطة اللي بتغيّر المعنى، و [[<mark>]] للي ليه علاقة باللي القارئ بيدوّر عليه، و [[<del>]] و [[<ins>]] للتعديل، وتعرف ليه [[<b>]] و [[<i>]] و [[<u>]] و [[<s>]] لسه موجودين ومعناهم إيه النهارده.`,
-        R`تكتب تاريخ وسعر واختصار بطريقة البني آدم يقراها والكمبيوتر يفهمها: [[<time datetime>]] و [[<data value>]] و [[<abbr title>]] و [[<dfn>]] و [[<address>]].`,
-        R`تعرض كود ومفاتيح كيبورد وناتج برنامج في صفحة: [[<code>]] و [[<pre>]] و [[<kbd>]] و [[<samp>]] و [[<var>]]، وتكتب [[&lt;]] و [[&amp;]] و [[&nbsp;]] في مكانهم.`,
-        R`تكتب H₂O و م² وعنوان على كذا سطر واسم ملف طويل من غير ما الصفحة تتكسر على الموبايل: [[<sub>]] و [[<sup>]] و [[<br>]] و [[<wbr>]] و [[<hr>]]، وتعرف [[<ruby>]] و [[<bdo>]] بيتستخدموا إمتى.`,
-        R`تثبت كل ده بقياس من المتصفح: الشكل الافتراضي من تاب Computed، والدور من تاب Accessibility، مش بالنظر.`,
-      ],
-      use: {
-        prog: R`أي نص بيتكتب لصفحة (مقال، ووصف منتج، و README، ورسالة خطأ) فيه كلام مهم وكود وتواريخ. ولما تتعلم CSS هتلاقي إن العناصر دي هي اللي بتمسكها عشان تلوّن وتنسّق.`,
-        work: R`محرر النصوص في أي لوحة تحكم (زرار B و I) بيطلّع [[<strong>]] و [[<em>]]. وصفحات الأسعار فيها [[<s>]] و [[<small>]]، والمدونات فيها [[<time>]]، ووثائق أي مكتبة مليانة [[<code>]] و [[<kbd>]] و [[<pre>]].`,
-        cs: R`الفصل بين المعنى (HTML) والشكل (CSS)، وإزاي نفس النص بيتقدّم لتلات قرّاء: عين، وقارئ شاشة، وبرنامج.`,
-      },
+      l: 2,
+      n: "cn بيدمج الكلاسات، و cva بيعمل variants، و shadcn بينسخ مكونات accessible جاهزة في مشروعك",
       projects: [
-        { lvl: 'صغير', dir: "lab-sign", t: R`لافتة تحذير لباب معمل`, what: R`صفحة واحدة بـ HTML بس للافتة على باب معمل كيميا في مدرسة متخيلة: عنوان، وتحذير أساسي وجواه حتة أخطر (درجتين من [[strong]])، وجملة فيها ضغطة على كلمة ([[em]])، واسم مادة بالإنجليزي ([[i]] بـ [[lang]])، واسمين جهازين بـ [[b]]، وسطر صغير في الآخر بمين المسؤول ([[small]]). من درسي «strong و em» و «mark و small و del و ins».`, done: R`في تاب Accessibility: دور [[strong]] مرتين (واحد جوه التاني) ودور [[emphasis]] مرة. وفي تاب Computed: الـ strong الداخلي وزنه 900 والـ small حجمه 13.33px. ولو شلت كل الـ tags ولسه بتفهم مين التحذير (لأن كلمة «تحذير» مكتوبة)، يبقى صح.`, sol: R`~~~live 280 330 اللافتة
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>معمل الكيميا: تعليمات الدخول</title>
-</head>
-<body>
-<main>
-  <h1>معمل الكيميا</h1>
-  <p><strong>تحذير: ممنوع الدخول من غير نضارة وبالطو. <strong>وممنوع الأكل والشرب نهائي.</strong></strong></p>
-  <p>اغسل إيدك <em>قبل</em> ما تخرج، مش بعد ما توصل الفصل.</p>
-  <p>الزجاجة الزرقا فيها <i lang="en">copper sulfate</i>: متتلمسش بالإيد.</p>
-  <p>مكان <b>طفاية الحريق</b> و <b>دش الطوارئ</b> جنب الباب على طول.</p>
-  <p><small>المسؤول: أ. هشام، أوضة ١٢.</small></p>
-</main>
-</body>
-</html>
+        { lvl: 'صغير', dir: "cn-tests", t: R`cn من الصفر بالاختبارات`, what: R`اكتب [[cn]] بنفسك (clsx و twMerge)، وملف اختبارات فيه ١٠ حالات منهم حالة [[text-display]] المخصوص و [[extendTailwindMerge]]. من درس [[cn()]].`, done: R`[[node --test]] بيعدّي الـ ١٠، وفيه README سطرين بيقولوا إمتى تحتاج [[extendTailwindMerge]].`, sol: R`~~~bash الترمنال
+npm init -y
+npm i clsx@2.1.1 tailwind-merge@3.7.0
+node --test
 ~~~
 
-**ليه كده:**
+~~~js cn.mjs
+import { clsx } from "clsx";
+import { twMerge, extendTailwindMerge } from "tailwind-merge";
 
-- التحذير كله [[strong]] (خطورة)، ومنع الأكل [[strong]] تاني جواه: في معمل كيميا ده أخطر بند، والمواصفة بتقول إن كل [[strong]] زيادة درجة أهمية أعلى.
-- «قبل» عليها [[em]]: هي اللي بتفرّق المعنى، والجملة مكتوب فيها المقابل («مش بعد»).
-- اسم المادة [[i]] بـ [[lang="en"]]: مصطلح بلغة تانية.
-- الطفاية والدش [[b]]: حاجتين عايز العين تلقطهم، من غير ما يبقوا «تحذير».
-- المسؤول [[small]]: ملحوظة جانبية قصيرة.
-- كلمة «تحذير» مكتوبة بالحروف: المعنى واصل حتى للي مش شايف التُّقل.
+// cn = clsx (join, skip false/null, read objects and arrays) + twMerge (the LAST class of the same kind wins)
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
 
-**الغلطة الشائعة:** اللافتة كلها [[strong]] «عشان هي تحذير». ساعتها مكان الطفاية بنفس وزن منع الأكل، ومحدش عارف يبدأ منين.
+// our project has a custom font size "text-display" (from @theme: --text-display).
+// twMerge doesn't know it, so we tell it: "text-display" belongs to the font-size group
+const twMergeApp = extendTailwindMerge({
+  extend: { classGroups: { "font-size": [{ text: ["display"] }] } },
+});
+export function cnApp(...inputs) {
+  return twMergeApp(clsx(inputs));
+}
+~~~
 
-~~~text الناتج (Chrome 157)
-strong: 2 (700 ثم 900)   em: 1   i: 1 (lang = en)   b: 2   small: 1 (13.3333px)
-الأدوار: main ، heading ، strong ، strong ، emphasis
+~~~js cn.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { cn, cnApp } from "./cn.mjs";
+
+test("1. joins classes", () => assert.equal(cn("p-4", "font-bold"), "p-4 font-bold"));
+test("2. skips false, null, undefined, empty", () => assert.equal(cn("p-4", false, null, undefined, "", "m-2"), "p-4 m-2"));
+test("3. object: only the true keys", () => assert.equal(cn("btn", { "opacity-50": true, hidden: false }), "btn opacity-50"));
+test("4. arrays, even nested", () => assert.equal(cn(["p-4", ["m-2", ["text-sm"]]]), "p-4 m-2 text-sm"));
+test("5. the last padding wins", () => assert.equal(cn("p-4", "p-2"), "p-2"));
+test("6. px after p: keeps p, overrides x only", () => assert.equal(cn("p-4", "px-2"), "p-4 px-2"));
+test("7. same property, different variant: both stay", () => assert.equal(cn("bg-red-500", "hover:bg-blue-500"), "bg-red-500 hover:bg-blue-500"));
+test("8. className from outside beats the default", () => assert.equal(cn("rounded-lg bg-brand px-4", "px-1"), "rounded-lg bg-brand px-1"));
+test("9. text-display + text-red-500 with plain cn: one is LOST (twMerge thinks both are colours)", () =>
+  assert.equal(cn("text-display", "text-red-500"), "text-red-500"));
+test("10. with extendTailwindMerge both stay (size and colour are different groups)", () =>
+  assert.equal(cnApp("text-display", "text-red-500"), "text-display text-red-500"));
+~~~
+
+~~~text README.md
+# cn
+
+تحتاج $__btextendTailwindMerge$__bt لما يبقى عندك كلاس من عندك (من $__bt@theme$__bt) اسمه شبه كلاس Tailwind بيعمل حاجة تانية، زي $__bttext-display$__bt (مقاس خط) و $__bttext-red-500$__bt (لون): twMerge بيفتكرهم نفس النوع ويمسح واحد.
+قولّه الكلاس بتاعك تبع أنهي مجموعة ($__btfont-size$__bt هنا)، وهو يدمج صح.
+~~~
+
+**هتشوف إيه:** مفيش صفحة هنا: الناتج هو [[node --test]] بيطبع ✔ قدام الـ ١٠ حالات.
+
+**[[cn]] = حاجتين ورا بعض:**
+- [[clsx]] بيجمع: نصوص، و objects (المفتاح بيدخل لو قيمته true)، و arrays جوه arrays، ويرمي [[false]] و [[null]] و [[undefined]] و [[""]].
+- [[twMerge]] بيشيل التعارض: لو فيه كلاسين بيعملوا نفس الحاجة ([[p-4]] و [[p-2]])، **الأخير** بيكسب والأول بيتمسح. ده اللي بيخلي [[className]] اللي جاي من برّه يغلب الافتراضي في أي مكون.
+
+**الحالات اللي محتاجة تفكير:** (٦) [[p-4 px-2]]: الاتنين بيفضلوا، لأن [[px-2]] بيغيّر الأفقي بس. (٧) [[bg-red-500 hover:bg-blue-500]]: الاتنين بيفضلوا، لأن الـ variant مختلف.
+
+**الحالة ٩ و ١٠ (ليه [[extendTailwindMerge]]):** [[text-display]] مقاس خط من [[@theme]] بتاعك ([[--text-display]]). [[twMerge]] ميعرفوش، وشايف [[text-]] في الأول، فبيفتكره لون زي [[text-red-500]] ويمسح واحد منهم. الاختبار ٩ بيثبت المشكلة (طلع [[text-red-500]] بس). [[extendTailwindMerge]] بيقوله إن [[display]] تبع مجموعة [[font-size]]، فبيسيب الاتنين (اختبار ١٠).
+
+~~~text node --test
+✔ 1. joins classes
+✔ 2. skips false, null, undefined, empty
+✔ 3. object: only the true keys
+✔ 4. arrays, even nested
+✔ 5. the last padding wins
+✔ 6. px after p: keeps p, overrides x only
+✔ 7. same property, different variant: both stay
+✔ 8. className from outside beats the default
+✔ 9. text-display + text-red-500 with plain cn: one is LOST (twMerge thinks both are colours)
+✔ 10. with extendTailwindMerge both stay (size and colour are different groups)
+ℹ tests 10
+ℹ pass 10
+ℹ fail 0
 ~~~` },
-        { lvl: 'صغير', dir: "shortcuts-card", t: R`كارت اختصارات كيبورد`, what: R`صفحة «اختصارات محرر قلم» (محرر نصوص متخيل): عنوان، وخمس اختصارات كل واحد في فقرة: المفاتيح بـ [[kbd]] جوه [[kbd]]، وبيعمل إيه. وسطر فيه أمر بيتكتب ([[kbd]]) واسم ملف الإعدادات ([[code]])، وسطر فيه الرسالة اللي بتطلع لما الحفظ ينجح ([[samp]])، واختصار [[abbr]] مفكوك. من درسي «code و pre و kbd» و «abbr و dfn و time». (لما تتعلم القوايم في الوحدة الجاية، الخمس فقرات هيبقوا قايمة.)`, done: R`كل اختصار مكتوب [[<kbd><kbd>…</kbd>+<kbd>…</kbd></kbd>]]، والصفحة فيها ١٧ [[kbd]] و [[code]] واحد و [[samp]] واحد، وكل النص الإنجليزي اللي جواهم بخط monospace حجمه 13px، وعلى عرض 360 مفيش scroll أفقي.`, sol: R`~~~live 420 400 كارت الاختصارات
+        { lvl: 'صغير', dir: "badge-cva", t: R`Badge بـ cva`, what: R`[[Badge]] بـ ٤ ألوان × شكلين، وكلها من توكنز، ومعاه [[className]] من برا عن طريق cn. من درس [[cva]].`, done: R`الـ ٨ تركيبات في صفحة واحدة، و TypeScript بيرفض قيمة مش موجودة، و [[className="px-1"]] بيكسب على padding الـ badge.`, sol: R`~~~text badge-cva/
+index.html  vite.config.ts  tsconfig.json  .gitignore  package.json
+src/main.tsx  src/index.css  src/lib/cn.ts  src/components/badge.tsx  src/App.tsx
+~~~
+
+~~~bash الترمنال
+npm init -y
+npm i react@19.3.1 react-dom@19.3.1 class-variance-authority@0.7.1 clsx@2.1.1 tailwind-merge@3.7.0 radix-ui@1.8.1
+npm i -D vite@8.3.6 @vitejs/plugin-react@6.2.1 typescript@7.0.2 @types/react@19.3.0 @types/react-dom@19.3.0 tailwindcss@4.3.4 @tailwindcss/vite@4.3.4
+npx tsc -p .          # فحص الأنواع
+npx vite              # تشغيل وانت بتكتب
+npx vite build        # النسخة النهائية في dist/
+~~~
+
+~~~ts vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
+~~~
+
+~~~json tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "types": ["vite/client"]
+  },
+  "include": ["src"]
+}
+~~~
+
+~~~text .gitignore
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.log
+~~~
+
+~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اختصارات محرر قلم</title>
+<title>Badge بـ cva</title>
 </head>
 <body>
-<main>
-  <h1>اختصارات «قلم»</h1>
-  <p><kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd> حفظ الملف.</p>
-  <p><kbd><kbd>Ctrl</kbd>+<kbd>Z</kbd></kbd> تراجع عن آخر تعديل.</p>
-  <p><kbd><kbd>Ctrl</kbd>+<kbd>F</kbd></kbd> بحث في الملف.</p>
-  <p><kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></kbd> قايمة الأوامر.</p>
-  <p><kbd><kbd>Alt</kbd>+<kbd>↑</kbd></kbd> حرّك السطر لفوق.</p>
-  <hr>
-  <p>من قايمة الأوامر اكتب <kbd>open settings</kbd> عشان تفتح الملف <code>qalam.json</code>.</p>
-  <p>لما الحفظ ينجح هتشوف تحت: <samp>Saved</samp></p>
-  <p>الاختصارات دي لنظام Windows. على macOS (<abbr>Mac</abbr>) بدّل Ctrl بـ Cmd.</p>
-</main>
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
 ~~~
 
-**ليه كده:**
+~~~tsx src/main.tsx
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App";
 
-- [[kbd]] جوه [[kbd]]: الخارجي الاختصار كله، وكل داخلي مفتاح واحد (مثال المواصفة). لما تتعلم CSS هتقدر تدّي المفاتيح الداخلية شكل زرار، والخارجي لأ.
-- علامة [[+]] برّه المفاتيح الداخلية: هي مش مفتاح بيتداس.
-- [[open settings]] [[kbd]] مش [[code]]: المستخدم هو اللي هيكتبها.
-- [[qalam.json]] اسم ملف، يعني [[code]]. و [[Saved]] البرنامج هو اللي بيعرضها، يعني [[samp]].
-- [[hr]]: فوقه الاختصارات وتحته ملحوظات عن الاستخدام. الموضوع اتغيّر ومفيش عنوان فرعي.
-- «Mac» اختصار مفكوك قبله في النص («macOS»)، فالـ [[abbr]] من غير [[title]].
+createRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);
+~~~
 
-**الغلطة الشائعة:** [[<kbd>Ctrl+S</kbd>]] واحدة لكل حاجة. مش غلط (المواصفة بتقول الدقة مش إجبارية)، بس لما تيجي ترسم كل مفتاح زرار مش هتعرف تمسكه.
+~~~css src/index.css
+@import "tailwindcss";
 
-~~~text الناتج (Chrome 157)
-kbd: 17 (٥ خارجيين + ١١ مفتاح + أمر واحد)   code: 1   samp: 1   abbr: 1   hr: 1
-kbd و code و samp:  font-family = monospace   font-size = 13px
-عرض 360:  scrollWidth = 360
+/* the components use these names only: bg-surface, text-fg, bg-primary… never a palette colour */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-ring: var(--ring);
+  --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+}
+
+:root {
+  --bg: #f8fafc; --surface: #ffffff; --fg: #0f172a; --muted: #475569; --line: #e2e8f0;
+  --primary: #4338ca; --on-primary: #ffffff; --primary-soft: #e0e7ff;
+  --ok: #15803d; --ok-soft: #dcfce7; --warn: #a16207; --warn-soft: #fef9c3;
+  --danger: #b91c1c; --danger-soft: #fee2e2; --ring: #f59e0b;
+}
+[data-theme="dark"] {
+  --bg: #0b1120; --surface: #111827; --fg: #e5e7eb; --muted: #9ca3af; --line: #1f2937;
+  --primary: #a5b4fc; --on-primary: #0b1120; --primary-soft: #1e1b4b;
+  --ok: #4ade80; --ok-soft: #052e16; --warn: #facc15; --warn-soft: #422006;
+  --danger: #f87171; --danger-soft: #450a0a; --ring: #fbbf24;
+}
+
+body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
+~~~
+
+~~~ts src/lib/cn.ts
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+// join the classes, then let the LAST class of the same kind win (so className from outside beats the defaults)
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+~~~
+
+~~~tsx src/components/badge.tsx
+import type { ComponentProps } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/cn";
+
+// the shared look, then a table: every tone and every look, and what to use when nothing is passed
+export const badgeVariants = cva(
+  "inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold",
+  {
+    variants: {
+      tone: {
+        primary: "",
+        ok: "",
+        warn: "",
+        danger: "",
+      },
+      look: {
+        soft: "",
+        solid: "text-on-primary",
+      },
+    },
+    // tone and look together decide the colours
+    compoundVariants: [
+      { tone: "primary", look: "soft", class: "bg-primary-soft text-primary" },
+      { tone: "ok", look: "soft", class: "bg-ok-soft text-ok" },
+      { tone: "warn", look: "soft", class: "bg-warn-soft text-warn" },
+      { tone: "danger", look: "soft", class: "bg-danger-soft text-danger" },
+      { tone: "primary", look: "solid", class: "bg-primary" },
+      { tone: "ok", look: "solid", class: "bg-ok" },
+      { tone: "warn", look: "solid", class: "bg-warn" },
+      { tone: "danger", look: "solid", class: "bg-danger" },
+    ],
+    defaultVariants: { tone: "primary", look: "soft" },
+  },
+);
+
+type BadgeProps = ComponentProps<"span"> & VariantProps<typeof badgeVariants>;
+
+export function Badge({ tone, look, className, ...props }: BadgeProps) {
+  // className from outside goes LAST into cn, so it wins over the defaults
+  return <span className={cn(badgeVariants({ tone, look }), className)} {...props} />;
+}
+~~~
+
+~~~tsx src/App.tsx
+import { Badge } from "./components/badge";
+
+const tones = ["primary", "ok", "warn", "danger"] as const;
+const looks = ["soft", "solid"] as const;
+const labels = { primary: "جديد", ok: "اتسلّم", warn: "متأخر", danger: "اتلغى" };
+
+export default function App() {
+  return (
+    <main className="mx-auto max-w-2xl space-y-6 p-4">
+      <h1 className="text-2xl font-bold">Badge: ٤ ألوان × شكلين</h1>
+      {looks.map(look => (
+        <section key={look} className="space-y-2">
+          <h2 className="font-semibold text-muted">{look === "soft" ? "فاتح" : "مليان"}</h2>
+          <div className="flex flex-wrap gap-2">
+            {tones.map(tone => <Badge key={tone} tone={tone} look={look}>{labels[tone]}</Badge>)}
+          </div>
+        </section>
+      ))}
+      <section className="space-y-2">
+        <h2 className="font-semibold text-muted">className من برّه: px-1 بيكسب على px-2.5</h2>
+        <div className="flex gap-2"><Badge>عادي</Badge><Badge className="px-1" data-test="override">px-1</Badge></div>
+      </section>
+    </main>
+  );
+}
+~~~
+
+~~~view 420 520 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)
+<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Badge بـ cva</title>
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-space-y-reverse:0;--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--spacing:.25rem;--container-2xl:42rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-semibold:600;--font-weight-bold:700;--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mx-auto{margin-inline:auto}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.max-w-2xl{max-width:var(--container-2xl)}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.gap-2{gap:calc(var(--spacing) * 2)}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.rounded-full{border-radius:2147483647px}.bg-danger{background-color:var(--danger)}.bg-danger-soft{background-color:var(--danger-soft)}.bg-ok{background-color:var(--ok)}.bg-ok-soft{background-color:var(--ok-soft)}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.bg-warn{background-color:var(--warn)}.bg-warn-soft{background-color:var(--warn-soft)}.p-4{padding:calc(var(--spacing) * 4)}.px-1{padding-inline:var(--spacing)}.px-2\.5{padding-inline:calc(var(--spacing) * 2.5)}.py-0\.5{padding-block:calc(var(--spacing) * .5)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-danger{color:var(--danger)}.text-muted{color:var(--muted)}.text-ok{color:var(--ok)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.text-warn{color:var(--warn)}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-font-weight{syntax:"*";inherits:false}
+
+</style>
+</head>
+<body>
+<div id="root"><main class="mx-auto max-w-2xl space-y-6 p-4"><h1 class="text-2xl font-bold">Badge: ٤ ألوان × شكلين</h1><section class="space-y-2"><h2 class="font-semibold text-muted">فاتح</h2><div class="flex flex-wrap gap-2"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-primary-soft text-primary">جديد</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-ok-soft text-ok">اتسلّم</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-warn-soft text-warn">متأخر</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-danger-soft text-danger">اتلغى</span></div></section><section class="space-y-2"><h2 class="font-semibold text-muted">مليان</h2><div class="flex flex-wrap gap-2"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-primary">جديد</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-ok">اتسلّم</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-warn">متأخر</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-danger">اتلغى</span></div></section><section class="space-y-2"><h2 class="font-semibold text-muted">className من برّه: px-1 بيكسب على px-2.5</h2><div class="flex gap-2"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-primary-soft text-primary">عادي</span><span class="inline-flex items-center rounded-full py-0.5 text-sm font-semibold bg-primary-soft text-primary px-1" data-test="override">px-1</span></div></section></main></div>
+
+
+</body></html>
+~~~
+
+**هتشوف إيه:** سطرين شارات: فاتح (جديد، واتسلّم، ومتأخر، واتلغى بخلفيات فاتحة) ومليان (نفس الألوان مليانة وكلامها أبيض)، وتحتهم شارتين: عادية، والتانية [[px-1]] أضيق.
+
+**[[cva]] بيعمل جدول:** الكلاسات المشتركة (كبسولة، وخط صغير تقيل)، وبعدين [[variants]]: [[tone]] (٤) و [[look]] (٢)، و [[defaultVariants]] لو محدش بعت. وبيرجّع دالة: [[badgeVariants({ tone: "ok", look: "solid" })]] ← نص الكلاسات.
+
+**[[compoundVariants]]:** اللون بيعتمد على الاتنين مع بعض: «ok + soft» خلفية فاتحة وكلام أخضر، و «ok + solid» خلفية خضرا. فالـ [[tone]] والـ [[look]] نفسهم فاضيين، والتركيبات الـ ٨ في [[compoundVariants]].
+
+**التوكنز:** كل الألوان من [[@theme inline]] ([[bg-ok-soft]] و [[text-ok]]…)، فالمكون شغال في الثيم الغامق من غير ولا [[dark:]].
+
+**TypeScript بيرفض القيمة الغلط:** [[VariantProps<typeof badgeVariants>]] بيطلّع الأنواع من الجدول نفسه، فـ [[tone="pink"]] error وانت بتكتب.
+
+**[[className]] بيكسب:** [[cn(badgeVariants(...), className)]]: الـ className في الآخر، و [[twMerge]] بيمسح [[px-2.5]] لما ييجي [[px-1]].
+
+**[[.gitignore]] مش رفاهية هنا:** Tailwind 4 بيدوّر على الكلاسات في كل ملفات المشروع، ما عدا اللي في [[.gitignore]]. من غيره بيقرا [[dist/]] (الـ JS بتاع البناء اللي فات) وأي ملف تاني، ويولّد كلاسات ملهاش لازمة. اتقاس في مشروع المكتبة: الـ CSS بقى 28.92KB في البناء التاني، ومع [[.gitignore]] رجع 14.17KB.
+
+**[[types: ["vite/client"]]] في tsconfig:** من غيره TypeScript 7 قال [[error TS2882: Cannot find module or type declarations for side-effect import of './index.css']]: مبيعرفش يعني إيه [[import]] لملف CSS. أنواع Vite بتعرّفه.
+
+~~~text الناتج
+npx tsc -p .          (من غير رسايل = الأنواع سليمة)
+tsc على ملف فيه <Badge tone="pink">:
+src/wrong.tsx(2,25): error TS2322: Type '"pink"' is not assignable to type '"danger" | "ok" | "primary" | "warn" | null | undefined'.
+
+npx vite build
+dist/assets/index-BX7F2VyS.css    7.07 kB │ gzip:  2.34 kB
+✓ built in 166ms
+
+Chrome 157: 10 شارات، padding-inline-start العادية 10px والـ px-1 = 4px
+المليانة: rgb(67, 56, 202) و rgb(21, 128, 61) و rgb(161, 98, 7) و rgb(185, 28, 28)، والكلام rgb(255, 255, 255)
+axe: 0 violations   الـ validator: مفيش رسايل
 ~~~` },
-        { lvl: 'متوسط', dir: "coffee-product", t: R`صفحة عرض منتج في متجر بن`, what: R`صفحة منتج لـ «بُن الصباح» (متجر متخيل) بـ HTML بس: اسم المنتج، وكود المنتج في [[<data value>]]، والسعر القديم [[s]] والجديد، وميعاد نهاية العرض بـ [[<time datetime>]] بفرق التوقيت، وملحوظة [[small]] عن الضريبة والشحن، والوزن بـ [[&nbsp;]] بين الرقم والوحدة، وجملة عن درجة التحميص فيها حاشية بـ [[sup]] ولينك، وزرار «أضف للسلة»، وفي الـ [[footer]] معلومات التواصل في [[address]]. من دروس الوحدة كلها ومن «a و button».`, done: R`[[document.querySelector('time').dateTime]] بيرجّع تاريخ فيه [[+02:00]]، و [[document.querySelector('data').value]] بيرجّع الكود، والسعر القديم دوره [[deletion]]، ولينك الحاشية بينزل للملحوظة، والـ [[address]] جوه [[footer]] وفيه لينك [[tel:]]، وعلى 360 مفيش scroll أفقي و «٢٥٠ جم» مبتتفصلش على سطرين.`, sol: R`~~~live 420 560 صفحة المنتج
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بن يمني محمّص | بُن الصباح</title>
-</head>
-<body>
-<main>
-  <h1>بن يمني محمّص</h1>
-  <p>كود المنتج: <data value="SKU-4471">٤٤٧١</data>. الوزن: ٢٥٠&nbsp;جم.</p>
-  <p>السعر قبل العرض <s>٣٢٠ جنيه</s>، ودلوقتي <strong>٢٦٠ جنيه</strong>.</p>
-  <p>العرض ساري لحد <time datetime="2026-12-31T23:59+02:00">آخر يوم في ديسمبر ٢٠٢٦</time>.</p>
-  <p><small>السعر شامل الضريبة ومش شامل الشحن.</small></p>
-  <p>تحميص وسط<sup id="ref-roast"><a href="#note-roast">[1]</a></sup>، بطعم شوكولاتة <em>خفيف</em> من غير مرارة.</p>
-  <p><button type="button">أضف للسلة</button></p>
-  <hr>
-  <p id="note-roast"><small>[1] التحميص الوسط بيخلّص عند حوالي ٢١٠ درجة. <a href="#ref-roast">ارجع</a></small></p>
-</main>
-<footer>
-  <address>
-    بُن الصباح<br>
-    <a href="tel:+200000000000" dir="ltr">+20 000 000 0000</a><br>
-    <a href="mailto:hello@example.test">hello@example.test</a>
-  </address>
-</footer>
-</body>
-</html>
+        { lvl: 'متوسط', dir: "button-kit", t: R`Button kit بكل الحالات`, what: R`زرار بـ cva فيه ٤ أشكال × ٣ أحجام، وحالات hover و active و focus-visible و disabled و loading، و [[asChild]] بـ [[Slot]] عشان يبقى لينك من غير ما تكرر الكلاسات. من دروس [[cn()]] و [[cva]] و [[shadcn/ui]].`, done: R`صفحة بتعرض الـ ١٢ تركيبة × الحالات، و [[<Button asChild><a href="/x">]] بيطلع [[<a>]] حقيقي بنفس الشكل، واختبار التعارض (twMerge على كل تركيبة) بيعدّي.`, sol: R`ملفات الإعداد ([[vite.config.ts]] و [[tsconfig.json]] و [[.gitignore]] و [[src/main.tsx]] و [[src/index.css]] و [[src/lib/cn.ts]]) زي مشروع «Badge بـ cva» بالظبط، وأوامر التثبيت نفسها.
+
+~~~ts src/components/button-variants.ts
+import { cva, type VariantProps } from "class-variance-authority";
+
+export const buttonVariants = cva(
+  // shared: layout, focus ring, disabled, and the loading look (from aria-busy)
+  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors " +
+    "focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring " +
+    "disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress",
+  {
+    variants: {
+      variant: {
+        solid: "bg-primary text-on-primary hover:opacity-90 active:opacity-80",
+        soft: "bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30",
+        outline: "border border-primary text-primary hover:bg-primary-soft active:bg-primary/20",
+        ghost: "text-primary hover:bg-primary-soft active:bg-primary/20",
+      },
+      size: {
+        sm: "h-8 px-3 text-sm",
+        md: "h-10 px-4",
+        lg: "h-12 px-6 text-lg",
+      },
+    },
+    defaultVariants: { variant: "solid", size: "md" },
+  },
+);
+
+export type ButtonVariantProps = VariantProps<typeof buttonVariants>;
 ~~~
 
-**ليه كده:**
+~~~tsx src/components/button.tsx
+import type { ComponentProps } from "react";
+import { Slot } from "radix-ui";
+import { cn } from "../lib/cn.ts";
+import { buttonVariants, type ButtonVariantProps } from "./button-variants.ts";
 
-- [[data]]: القارئ شايف «٤٤٧١»، وأي سكربت (سلة، أو تتبّع) يقرا [[SKU-4471]] من [[value]].
-- [[s]] مش [[del]]: السعر مبقاش ساري، محدش عدّل مستند. وجنبه «قبل العرض» بالكلام.
-- السعر الجديد [[strong]]: دي أهم معلومة في الصفحة للي بيشتري.
-- [[time]] بفرق التوقيت: نهاية العرض لحظة محددة، والزبون ممكن يكون في بلد تانية.
-- [[small]] لملحوظة الضريبة: small print بالمعنى الحرفي. وجملة قصيرة، مش فقرة شروط.
-- [[&nbsp;]]: «٢٥٠» و «جم» لو اتفرّقوا على سطرين الرقم بيتقري لوحده.
-- الحاشية [[sup]] ولينك رايح جاي. و [[hr]] قبل الحواشي.
-- [[address]] في الـ [[footer]]: معلومات التواصل مع صاحب الصفحة. ورقم التليفون [[dir="ltr"]].
+type ButtonProps = ComponentProps<"button"> & ButtonVariantProps & {
+  asChild?: boolean;     // true: no <button>; the classes go on the child (an <a> for example)
+  loading?: boolean;
+};
 
-**الغلطة الشائعة:** [[<mark>]] على السعر الجديد «عشان يبان». [[mark]] للي ليه علاقة ببحث أو مرجع، والسعر «مهم»، يعني [[strong]].
+export function Button({ variant, size, asChild, loading, className, disabled, children, ...props }: ButtonProps) {
+  const classes = cn(buttonVariants({ variant, size }), className);
+  if (asChild) return <Slot.Root className={classes} {...props}>{children}</Slot.Root>;
+  return (
+    <button
+      className={classes}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...props}
+    >
+      {loading && <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none" />}
+      {children}
+    </button>
+  );
+}
+~~~
 
-~~~text الناتج (Chrome 157)
-time.dateTime = 2026-12-31T23:59+02:00
-data.value    = SKU-4471
-s: الدور = deletion     strong: 1     small: 2     sup: 1     address: 1 (الدور = group)
-الحرف بين «٢٥٠» و «جم»: كوده 160
-عرض 360:  scrollWidth = 360
+~~~tsx src/App.tsx
+import { Button } from "./components/button.tsx";
+
+const variants = ["solid", "soft", "outline", "ghost"] as const;
+const sizes = ["sm", "md", "lg"] as const;
+const names = { solid: "مليان", soft: "فاتح", outline: "بحد", ghost: "شفاف" };
+
+export default function App() {
+  return (
+    <main className="mx-auto max-w-4xl space-y-8 p-4">
+      <h1 className="text-2xl font-bold">زراير: ٤ أشكال × ٣ مقاسات</h1>
+      {variants.map(v => (
+        <section key={v} className="space-y-3">
+          <h2 className="font-semibold text-muted">{names[v]}</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            {sizes.map(s => <Button key={s} variant={v} size={s}>احجز ({s})</Button>)}
+            <Button variant={v} disabled>مقفول</Button>
+            <Button variant={v} loading>بيحفظ</Button>
+          </div>
+        </section>
+      ))}
+      <section className="space-y-3">
+        <h2 className="font-semibold text-muted">asChild: لينك بشكل زرار</h2>
+        <Button asChild variant="outline"><a href="#pricing">شوف الأسعار</a></Button>
+      </section>
+    </main>
+  );
+}
+~~~
+
+~~~ts button.test.ts
+// node --test : every one of the 12 combinations, with className from outside, keeps ONE padding and ONE height
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { buttonVariants } from "./src/components/button-variants.ts";
+import { cn } from "./src/lib/cn.ts";
+
+for (const variant of ["solid", "soft", "outline", "ghost"] as const) {
+  for (const size of ["sm", "md", "lg"] as const) {
+    test(variant + " " + size + " + px-1 h-20", () => {
+      const out = cn(buttonVariants({ variant, size }), "px-1 h-20").split(" ");
+      assert.deepEqual(out.filter(c => /^px-/.test(c)), ["px-1"]);   // the old px-* is gone
+      assert.deepEqual(out.filter(c => /^h-/.test(c)), ["h-20"]);     // the old h-* is gone
+    });
+  }
+}
+~~~
+
+~~~view 720 900 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)
+<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Button kit</title>
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-space-y-reverse:0;--tw-border-style:solid;--tw-font-weight:initial;--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--spacing:.25rem;--container-4xl:56rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-semibold:600;--font-weight-bold:700;--radius-lg:.5rem;--animate-spin:spin 1s linear infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mx-auto{margin-inline:auto}.flex{display:flex}.inline-flex{display:inline-flex}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-10{height:calc(var(--spacing) * 10)}.h-12{height:calc(var(--spacing) * 12)}.h-20{height:calc(var(--spacing) * 20)}.max-w-4xl{max-width:var(--container-4xl)}.animate-spin{animation:var(--animate-spin)}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-8>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 8) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 8) * calc(1 - var(--tw-space-y-reverse)))}.rounded-full{border-radius:2147483647px}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-current{border-color:currentColor}.border-primary{border-color:var(--primary)}.border-e-transparent{border-inline-end-color:#0000}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.p-4{padding:calc(var(--spacing) * 4)}.px-1{padding-inline:var(--spacing)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-muted{color:var(--muted)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){.hover\:bg-primary-soft:hover{background-color:var(--primary-soft)}.hover\:bg-primary\/20:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\:bg-primary\/20:hover{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.hover\:opacity-90:hover{opacity:.9}}.focus-visible\:outline-3:focus-visible{outline-style:var(--tw-outline-style);outline-width:3px}.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}.focus-visible\:outline-ring:focus-visible{outline-color:var(--ring)}.active\:bg-primary\/20:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/20:active{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.active\:bg-primary\/30:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/30:active{background-color:color-mix(in oklab, var(--primary) 30%, transparent)}}.active\:opacity-80:active{opacity:.8}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.aria-busy\:cursor-progress[aria-busy=true]{cursor:progress}@media (prefers-reduced-motion:reduce){.motion-reduce\:animate-none{animation:none}}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+<body>
+<div id="root"><main class="mx-auto max-w-4xl space-y-8 p-4"><h1 class="text-2xl font-bold">زراير: ٤ أشكال × ٣ مقاسات</h1><section class="space-y-3"><h2 class="font-semibold text-muted">مليان</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-8 px-3 text-sm">احجز (sm)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4">احجز (md)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-12 px-6 text-lg">احجز (lg)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4" disabled="">مقفول</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button></div></section><section class="space-y-3"><h2 class="font-semibold text-muted">فاتح</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm">احجز (sm)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4">احجز (md)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-12 px-6 text-lg">احجز (lg)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4" disabled="">مقفول</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button></div></section><section class="space-y-3"><h2 class="font-semibold text-muted">بحد</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-8 px-3 text-sm">احجز (sm)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">احجز (md)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-12 px-6 text-lg">احجز (lg)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" disabled="">مقفول</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button></div></section><section class="space-y-3"><h2 class="font-semibold text-muted">شفاف</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-8 px-3 text-sm">احجز (sm)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">احجز (md)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-12 px-6 text-lg">احجز (lg)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" disabled="">مقفول</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button></div></section><section class="space-y-3"><h2 class="font-semibold text-muted">asChild: لينك بشكل زرار</h2><a href="#pricing" class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">شوف الأسعار</a></section></main></div>
+
+
+</body></html>
+~~~
+
+**هتشوف إيه:** ٤ مجموعات زراير (مليان، وفاتح، وبحد، وشفاف)، في كل واحدة ٣ مقاسات، وزرار مقفول باهت، وزرار «بيحفظ» فيه دايرة بتلف. وتحت «شوف الأسعار» لينك بشكل زرار بحد.
+
+**الكلاسات في ملف لوحده:** [[button-variants.ts]] مفيهوش JSX، فـ Node يقدر يختبره مباشرة ([[node --test button.test.ts]]: Node 24 بيقرا TypeScript من غير build لو مفيش JSX).
+
+**الحالات:** [[hover:]] و [[active:]] جوه كل variant، و [[focus-visible:outline-3]] في المشترك، و [[disabled:opacity-50]]. و [[loading]] بيعمل ٣ حاجات: [[disabled]] (ميتداسش مرتين)، و [[aria-busy]] (قارئ الشاشة يعرف إنه شغال، و [[aria-busy:cursor-progress]] بيغيّر شكل الماوس)، ودايرة بتلف بـ [[animate-spin]] وبتقف مع [[motion-reduce:]].
+
+**[[asChild]] و [[Slot]]:** [[<Button asChild><a href="#pricing">…</a></Button>]] مبيعملش [[<button>]] خالص: [[Slot]] من radix بيحط الكلاسات والـ props على الابن اللي جواه. فالنتيجة [[<a>]] حقيقي (بيفتح في tab جديدة، والـ crawler بيشوفه لينك) بشكل الزرار، ومن غير ما تكرر الكلاسات. اتقاس: العنصر [[A]] بـ [[href="#pricing"]] وفيه [[h-10]].
+
+**اختبار التعارض:** لكل تركيبة من الـ ١٢، [[cn(buttonVariants(...), "px-1 h-20")]] لازم يطلّع [[px-1]] واحد و [[h-20]] واحد. لو مقاس كان كاتب [[p-4]] بدل [[px-4]]، أو فيه كلاس طول ميعرفوش twMerge، الاختبار كان هيقع.
+
+~~~text الناتج
+node --test button.test.ts
+✔ solid sm + px-1 h-20
+... (الـ 12)
+✔ ghost lg + px-1 h-20
+ℹ tests 12   ℹ pass 12   ℹ fail 0
+
+Chrome 157: 20 زرار، والطول 32 و 40 و 48 (sm و md و lg)
+loading: disabled = true و aria-busy = true
+asChild: A #pricing، وفيه h-10
+Tab: حلقة solid 3px   hover على المليان: opacity 0.9
+axe: 0 violations   الـ validator: مفيش رسايل
 ~~~` },
-        { lvl: 'متوسط', dir: "changelog", t: R`سجل تغييرات (changelog) لتطبيق`, what: R`صفحة «إيه الجديد» لتطبيق متخيل اسمه «دفتر»: كل إصدار [[<article>]] فيه عنوان برقم الإصدار، وتاريخه بـ [[<time>]]، وكذا فقرة باللي اتغيّر. فيها أسامي إعدادات وملفات بـ [[code]]، واختصار كيبورد جديد بـ [[kbd]]، ورسالة خطأ اتصلّحت بـ [[samp]]، وتحذير بـ [[strong]] في الإصدار اللي بيكسر حاجة قديمة. وفي آخر إصدار: جملة في السجل نفسه اتصحّحت بعد النشر، والتصحيح باين بـ [[del]] و [[ins]] عليهم [[datetime]] و [[cite]]. ده شكل صفحة حقيقية في أي مشروع برمجي.`, done: R`الصفحة فيها ٣ [[article]] مترتبين من الأحدث، وكل واحد فيه [[time]] بصيغة [[YYYY-MM-DD]]، و [[del]] و [[ins]] الاتنين عليهم نفس [[datetime]]، ولو رتّبت قيم [[dateTime]] بتاعة الإصدارات أبجديًا يطلعوا مترتبين زمنيًا، وكل نص إنجليزي جوه عنصره الصح.`, sol: R`~~~live 550 640 سجل التغييرات
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إيه الجديد | دفتر</title>
-</head>
-<body>
-<main>
-  <h1>إيه الجديد في «دفتر»</h1>
-  <article>
-    <h2>الإصدار 2.0</h2>
-    <p>صدر يوم <time datetime="2026-11-15">١٥ نوفمبر ٢٠٢٦</time>.</p>
-    <p><strong>تنبيه: الإصدار ده بيغيّر مكان ملف الإعدادات.</strong> انقل <code>settings.json</code> لفولدر <code>config</code> قبل ما تحدّث.</p>
-    <p>البحث بقى بيدوّر في <del cite="/changelog-fixes.html#f3" datetime="2026-11-16">العناوين بس</del> <ins cite="/changelog-fixes.html#f3" datetime="2026-11-16">العناوين ونص الملاحظات</ins>.</p>
-  </article>
-  <article>
-    <h2>الإصدار 1.5</h2>
-    <p>صدر يوم <time datetime="2026-09-02">٢ سبتمبر ٢٠٢٦</time>.</p>
-    <p>اختصار جديد: <kbd><kbd>Ctrl</kbd>+<kbd>K</kbd></kbd> بيفتح البحث السريع.</p>
-    <p>إعداد جديد اسمه <code>autoSave</code>، قيمته الافتراضية <code>true</code>.</p>
-  </article>
-  <article>
-    <h2>الإصدار 1.4</h2>
-    <p>صدر يوم <time datetime="2026-06-20">٢٠ يونيو ٢٠٢٦</time>.</p>
-    <p>صلّحنا الخطأ <samp>Cannot save: disk is full</samp> اللي كان بيظهر والديسك فاضي.</p>
-  </article>
-</main>
-</body>
-</html>
+        { lvl: 'متوسط', dir: "pricing-data", t: R`صفحة أسعار من بيانات`, what: R`array فيها ٣ باقات (اسم، وسعر شهري وسنوي، ومميزات، و [[highlighted]])، وكارت بـ cva و subgrid (درس [[subgrid]])، و toggle شهري وسنوي، وزرار الاشتراك بيفتح Dialog تأكيد. بيجمع [[cva]] و [[Dialog]].`, done: R`تغيير الـ array بس بيغيّر الصفحة كلها، والكروت متصفة، والـ Dialog بيرجّع الـ focus للزرار اللي فتحه، ومفيش scroll أفقي على 360.`, sol: R`ملفات الإعداد ([[vite.config.ts]] و [[tsconfig.json]] و [[.gitignore]] و [[src/main.tsx]] و [[src/index.css]] و [[src/lib/cn.ts]]) زي مشروع «Badge بـ cva» بالظبط، وأوامر التثبيت نفسها. و [[button.tsx]] و [[button-variants.ts]] من مشروع «Button kit».
+
+~~~ts src/plans.ts
+// the whole page comes from here: change this array and the page changes
+export type Plan = { id: string; name: string; monthly: number; yearly: number; features: string[]; highlighted?: boolean };
+
+export const plans: Plan[] = [
+  { id: "kids", name: "أطفال", monthly: 450, yearly: 4300, features: ["حصتين في الأسبوع", "مدرب لكل ٦ أطفال"] },
+  { id: "adults", name: "كبار", monthly: 650, yearly: 6200, features: ["٣ حصص في الأسبوع", "حمام السباحة مفتوح الجمعة", "متابعة شهرية للمستوى"], highlighted: true },
+  { id: "family", name: "عيلة", monthly: 1500, yearly: 14400, features: ["٤ أفراد", "كل الحصص"] },
+];
 ~~~
 
-**ليه كده:**
+~~~tsx src/components/plan-card.tsx
+import { cva } from "class-variance-authority";
+import type { ReactNode } from "react";
+import { cn } from "../lib/cn.ts";
 
-- كل إصدار [[article]]: حتة مستقلة ليها عنوانها وتاريخها (من درس «semantic HTML»).
-- [[time]] بالتاريخ بس: يوم الإصدار مش لحظة، فمفيش وقت ولا فرق توقيت.
-- [[del]] و [[ins]] هنا مش [[s]]: دي جملة في السجل نفسه اتكتبت غلط واتصحّحت بعد النشر بيوم. المستند اتعدّل، والقارئ اللي قرا النسخة الأولى من حقه يشوف الفرق. و [[cite]] بيشاور على صفحة التصحيحات.
-- التنبيه [[strong]]: اللي هيحدّث من غير ما يقراه هيخسر إعداداته (خطورة).
-- [[autoSave]] و [[true]] و [[settings.json]] و [[config]]: [[code]]. والاختصار [[kbd]]. والرسالة اللي كانت بتظهر [[samp]].
+// a card is 4 rows of the parent grid (subgrid): name, price, features, button line up across the cards
+const card = cva("row-span-4 grid grid-rows-subgrid gap-3 rounded-2xl bg-surface p-6", {
+  variants: {
+    highlighted: {
+      true: "ring-2 ring-primary shadow-lg",
+      false: "ring-1 ring-line",
+    },
+  },
+  defaultVariants: { highlighted: false },
+});
 
-**الغلطة الشائعة:** تكتب التاريخ في العنوان بس كنص («الإصدار 2.0، ١٥ نوفمبر»). أي أداة بتجمع آخر التحديثات مش هتعرف تقراه. الـ [[datetime]] هو اللي بيخلي الصفحة تتقري آليًا.
+export function PlanCard({ highlighted, className, children }: { highlighted?: boolean; className?: string; children: ReactNode }) {
+  return <li className={cn(card({ highlighted }), className)}>{children}</li>;
+}
+~~~
 
-~~~text الناتج (Chrome 157)
-article: 3   time: 3   →  2026-11-15 ، 2026-09-02 ، 2026-06-20
-del.dateTime = ins.dateTime = 2026-11-16      del: الدور = deletion   ins: الدور = insertion
-code: 4   kbd: 3   samp: 1   strong: 1
+~~~tsx src/App.tsx
+import { useState } from "react";
+import { Dialog } from "radix-ui";
+import { plans } from "./plans.ts";
+import { PlanCard } from "./components/plan-card.tsx";
+import { Button } from "./components/button.tsx";
+
+const money = (n: number) => n.toLocaleString("ar-EG") + " ج";
+
+export default function App() {
+  const [yearly, setYearly] = useState(false);
+  return (
+    <main className="mx-auto max-w-5xl space-y-6 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold">باقات نادي الموجة</h1>
+        <fieldset className="flex rounded-full bg-primary-soft p-1">
+          <legend className="sr-only">طريقة الدفع</legend>
+          {[["monthly", "شهري"], ["yearly", "سنوي"]].map(([v, label]) => (
+            <label key={v} className="cursor-pointer rounded-full px-4 py-1.5 font-semibold text-primary has-checked:bg-primary has-checked:text-on-primary has-focus-visible:outline-3 has-focus-visible:outline-ring">
+              <input type="radio" name="period" value={v} className="sr-only" checked={yearly === (v === "yearly")} onChange={() => setYearly(v === "yearly")} />
+              {label}
+            </label>
+          ))}
+        </fieldset>
+      </div>
+
+      <ul className="grid gap-4 md:grid-cols-3">
+        {plans.map(p => (
+          <PlanCard key={p.id} highlighted={p.highlighted}>
+            <h2 className="text-xl font-bold">{p.name}</h2>
+            <p className="text-3xl font-extrabold text-primary">{money(yearly ? p.yearly : p.monthly)} <span className="text-base font-normal text-muted">/ {yearly ? "سنة" : "شهر"}</span></p>
+            <ul className="list-disc space-y-1 ps-5 text-muted">{p.features.map(f => <li key={f}>{f}</li>)}</ul>
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <Button className="self-end" variant={p.highlighted ? "solid" : "outline"}>اشترك في {p.name}</Button>
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+                <Dialog.Content className="fixed inset-x-0 top-1/2 mx-auto w-[min(28rem,calc(100vw-2rem))] -translate-y-1/2 space-y-4 rounded-2xl bg-surface p-6 text-fg shadow-2xl">
+                  <Dialog.Title className="text-xl font-bold">تأكيد الاشتراك</Dialog.Title>
+                  <Dialog.Description className="text-muted">باقة {p.name}، {money(yearly ? p.yearly : p.monthly)} {yearly ? "في السنة" : "في الشهر"}.</Dialog.Description>
+                  <div className="flex gap-3">
+                    <Dialog.Close asChild><Button>أكّد</Button></Dialog.Close>
+                    <Dialog.Close asChild><Button variant="ghost">رجوع</Button></Dialog.Close>
+                  </div>
+                </Dialog.Content>
+              </Dialog.Portal>
+            </Dialog.Root>
+          </PlanCard>
+        ))}
+      </ul>
+    </main>
+  );
+}
+~~~
+
+~~~view 520 900 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)، والـ Dialog بيظهر لما تدوس «اشترك» في مشروعك
+<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات نادي سباحة</title>
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-black:#000;--spacing:.25rem;--container-5xl:64rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--text-3xl:1.875rem;--text-3xl--line-height:calc(2.25 / 1.875);--font-weight-normal:400;--font-weight-semibold:600;--font-weight-bold:700;--font-weight-extrabold:800;--radius-lg:.5rem;--radius-2xl:1rem;--animate-spin:spin 1s linear infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.fixed{position:fixed}.inset-0{inset:0}.inset-x-0{inset-inline:0}.top-1\/2{top:50%}.row-span-4{grid-row:span 4/span 4}.mx-auto{margin-inline:auto}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-10{height:calc(var(--spacing) * 10)}.h-12{height:calc(var(--spacing) * 12)}.w-\[min\(28rem\,calc\(100vw-2rem\)\)\]{width:min(28rem,100vw - 2rem)}.max-w-5xl{max-width:var(--container-5xl)}.-translate-y-1\/2{--tw-translate-y:calc(calc(1 / 2 * 100%) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.animate-spin{animation:var(--animate-spin)}.cursor-pointer{cursor:pointer}.list-disc{list-style-type:disc}.grid-rows-subgrid{grid-template-rows:subgrid}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.self-end{align-self:flex-end}.rounded-2xl{border-radius:var(--radius-2xl)}.rounded-full{border-radius:2147483647px}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-current{border-color:currentColor}.border-primary{border-color:var(--primary)}.border-e-transparent{border-inline-end-color:#0000}.bg-black\/50{background-color:#00000080}@supports (color:color-mix(in lab, red, red)){.bg-black\/50{background-color:color-mix(in oklab, var(--color-black) 50%, transparent)}}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.bg-surface{background-color:var(--surface)}.p-1{padding:var(--spacing)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-1\.5{padding-block:calc(var(--spacing) * 1.5)}.ps-5{padding-inline-start:calc(var(--spacing) * 5)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-3xl{font-size:var(--text-3xl);line-height:var(--tw-leading,var(--text-3xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-extrabold{--tw-font-weight:var(--font-weight-extrabold);font-weight:var(--font-weight-extrabold)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-fg{color:var(--fg)}.text-muted{color:var(--muted)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-2{--tw-ring-shadow:var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-line{--tw-ring-color:var(--line)}.ring-primary{--tw-ring-color:var(--primary)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){.hover\:bg-primary-soft:hover{background-color:var(--primary-soft)}.hover\:bg-primary\/20:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\:bg-primary\/20:hover{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.hover\:opacity-90:hover{opacity:.9}}.focus-visible\:outline-3:focus-visible{outline-style:var(--tw-outline-style);outline-width:3px}.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}.focus-visible\:outline-ring:focus-visible{outline-color:var(--ring)}.active\:bg-primary\/20:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/20:active{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.active\:bg-primary\/30:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/30:active{background-color:color-mix(in oklab, var(--primary) 30%, transparent)}}.active\:opacity-80:active{opacity:.8}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.has-checked\:bg-primary:has(:checked){background-color:var(--primary)}.has-checked\:text-on-primary:has(:checked){color:var(--on-primary)}.has-focus-visible\:outline-3:has(:focus-visible){outline-style:var(--tw-outline-style);outline-width:3px}.has-focus-visible\:outline-ring:has(:focus-visible){outline-color:var(--ring)}.aria-busy\:cursor-progress[aria-busy=true]{cursor:progress}@media (prefers-reduced-motion:reduce){.motion-reduce\:animate-none{animation:none}}@media (width>=48rem){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+<body>
+<div id="root"><main class="mx-auto max-w-5xl space-y-6 p-4"><div class="flex flex-wrap items-center justify-between gap-4"><h1 class="text-2xl font-bold">باقات نادي الموجة</h1><fieldset class="flex rounded-full bg-primary-soft p-1"><legend class="sr-only">طريقة الدفع</legend><label class="cursor-pointer rounded-full px-4 py-1.5 font-semibold text-primary has-checked:bg-primary has-checked:text-on-primary has-focus-visible:outline-3 has-focus-visible:outline-ring"><input class="sr-only" type="radio" value="monthly" checked="" name="period">شهري</label><label class="cursor-pointer rounded-full px-4 py-1.5 font-semibold text-primary has-checked:bg-primary has-checked:text-on-primary has-focus-visible:outline-3 has-focus-visible:outline-ring"><input class="sr-only" type="radio" value="yearly" name="period">سنوي</label></fieldset></div><ul class="grid gap-4 md:grid-cols-3"><li class="row-span-4 grid grid-rows-subgrid gap-3 rounded-2xl bg-surface p-6 ring-1 ring-line"><h2 class="text-xl font-bold">أطفال</h2><p class="text-3xl font-extrabold text-primary">٤٥٠ ج <span class="text-base font-normal text-muted">/ شهر</span></p><ul class="list-disc space-y-1 ps-5 text-muted"><li>حصتين في الأسبوع</li><li>مدرب لكل ٦ أطفال</li></ul><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4 self-end" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">اشترك في أطفال</button></li><li class="row-span-4 grid grid-rows-subgrid gap-3 rounded-2xl bg-surface p-6 ring-2 ring-primary shadow-lg"><h2 class="text-xl font-bold">كبار</h2><p class="text-3xl font-extrabold text-primary">٦٥٠ ج <span class="text-base font-normal text-muted">/ شهر</span></p><ul class="list-disc space-y-1 ps-5 text-muted"><li>٣ حصص في الأسبوع</li><li>حمام السباحة مفتوح الجمعة</li><li>متابعة شهرية للمستوى</li></ul><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4 self-end" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">اشترك في كبار</button></li><li class="row-span-4 grid grid-rows-subgrid gap-3 rounded-2xl bg-surface p-6 ring-1 ring-line"><h2 class="text-xl font-bold">عيلة</h2><p class="text-3xl font-extrabold text-primary">١٬٥٠٠ ج <span class="text-base font-normal text-muted">/ شهر</span></p><ul class="list-disc space-y-1 ps-5 text-muted"><li>٤ أفراد</li><li>كل الحصص</li></ul><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4 self-end" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">اشترك في عيلة</button></li></ul></main></div>
+
+
+</body></html>
+~~~
+
+**هتشوف إيه:** «باقات نادي الموجة»، وجنبها مفتاح «شهري / سنوي»، و ٣ كروت باقات: «كبار» في النص بإطار أزرق وظل، وكل الزراير على خط واحد. الضغط على «سنوي» بيغيّر الأسعار، و «اشترك» بيفتح صندوق تأكيد في نص الشاشة فيه اسم الباقة والسعر.
+
+**الصفحة كلها من [[plans.ts]]:** الـ JSX بيلف على الـ array ([[plans.map]]). اتقاس: زوّدت باقة رابعة في الـ array بس، والصفحة بقت ٤ كروت.
+
+**الكارت بـ cva و subgrid:** [[highlighted]] variant فيه [[true]] و [[false]] (cva بيقبل boolean). و [[row-span-4 grid grid-rows-subgrid]]: الاسم والسعر والمميزات والزرار على نفس الخطوط في الـ ٣ كروت، حتى لو «كبار» فيها مميزات أكتر.
+
+**«شهري / سنوي»:** radio buttons حقيقية [[sr-only]] جوه labels، فالأسهم بتشتغل بينهم من الكيبورد. والشكل من [[has-checked:bg-primary]] على الـ label، والحلقة من [[has-focus-visible:]].
+
+**الـ Dialog من radix:** [[Dialog.Trigger asChild]] بيخلي زرارنا هو اللي بيفتح. و radix بيعمل الصعب: الـ focus بيدخل الـ Dialog ومبيخرجش منه بالـ Tab، و Escape بيقفل، والـ focus بيرجع للزرار اللي فتحه، و [[Dialog.Title]] بيبقى اسم الـ dialog لقارئ الشاشة. والتوسيط: [[fixed inset-x-0 mx-auto]] بعرض محدد، من غير [[translate]] أفقي، فبيشتغل في rtl و ltr. أول نسخة كانت [[start-1/2]] و [[translate-x]] بـ variants للاتجاهين، وده كان أعقد من اللازم.
+
+**فخ في الاختبار:** أول قياس على 360 قال إن الـ focus مرجعش للزرار. السكربت كان بيدوس Escape على طول بعد ما الـ Dialog يتفتح. بعد 200ms (زي ما أي حد بيستخدمه) الـ focus رجع في كل المقاسات.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+360:  scrollWidth 360/360، الزراير تحت بعض (308 و 592 و 848)
+1280: الزراير على خط واحد: 288 و 288 و 288
+شهري «٤٥٠ ج / شهر» ← سنوي «٤٬٣٠٠ ج / سنة»
+«اشترك في كبار»: Dialog «تأكيد الاشتراك | باقة كبار، ٦٬٢٠٠ ج في السنة.»، ونصه في نص الشاشة (180 من 360، و 640 من 1280)
+Escape (بعد 200ms): الـ focus على «اشترك في كبار» في 360 و 1280
+باقة رابعة في plans.ts بس: 3 كروت ← 4 (أطفال، كبار، عيلة، محترفين)
+axe: 0 violations   الـ validator: مفيش رسايل
 ~~~` },
-        { lvl: 'كبير', dir: "html-article", t: R`مقال تعليمي كامل بكل عناصر الوحدة`, what: R`مقال «إزاي تاخد نسخة احتياطية من صورك» لمدونة متخيلة، صفحة واحدة بـ HTML بس، بالشكل اللي بيتنشر بيه مقال تقني حقيقي: [[header]] فيه العنوان وتاريخ النشر ([[time]]) والكاتبة ([[address]] جوه الـ [[article]])، ومقدمة فيها مصطلح بيتعرّف ([[dfn]]) واختصار ([[abbr]])، وتحذير ([[strong]])، وخطوات فيها أوامر ([[kbd]] و [[code]] و [[<pre><code>]])، وناتج متوقع ([[<pre><samp>]])، ومتغير ([[var]])، واسم فولدر طويل بـ [[wbr]]، وحاشية وأُس بـ [[sup]]، وفاصل [[hr]]، وتصحيح اتعمل بعد النشر ([[del]] و [[ins]])، وحقوق النشر ([[small]] و [[&copy;]]) في الـ [[footer]] مع [[address]] الموقع. يجمع الوحدة كلها.`, done: R`الـ validator على validator.w3.org/nu مبيطلّعش ولا error. وشجرة الـ accessibility فيها [[article]] و [[heading]] مستوى 1 وتلاتة مستوى 2، وأدوار [[strong]] و [[term]] و [[time]] و [[code]] و [[deletion]] و [[insertion]] و [[separator]]. وكل [[<]] في الكود المعروض مكتوبة [[&lt;]]. وعلى عرض 360 [[document.documentElement.scrollWidth]] بيساوي 360. وفي الصفحة [[address]] اتنين: واحد للكاتبة جوه الـ article وواحد للموقع في الـ footer.`, ext: R`زوّد قسم «أسئلة بتتكرر» فيه تلات مصطلحات كل واحد [[dfn]] بـ [[id]]، ولينك من أول المقال لكل تعريف. ولما تتعلم القوايم في الوحدة الجاية حوّل الخطوات لـ [[<ol>]]. ولما تتعلم CSS ادّي كل [[kbd]] داخلي شكل زرار، وكل [[pre]] خلفية و [[overflow-x: auto]]، وشوف إزاي العناصر اللي اخترتها بمعناها هي نفسها اللي بتمسكها عشان تنسّق.`, sol: R`**شجرة الملفات:** ملف واحد.
-
-~~~text الملفات
-backup-article/
-└── index.html
+        { lvl: 'كبير', dir: "ui-kit", t: R`مكتبة مكونات صغيرة بصفحة توثيق`, what: R`مشروع Vite + React + Tailwind v4 فيه: Button و Badge و Card و Input و Dialog و Sheet، كل واحد بـ cva و cn، وألوان من [[@theme inline]] بتشتغل في light و dark، وعربي وإنجليزي بـ utilities منطقية. وصفحة توثيق بتعرض كل variant وكوده، واختبارات لـ cn والـ variants، واختبار Playwright للـ Dialog والـ Sheet، وفحص axe على صفحة التوثيق. بيجمع الوحدة دي مع وحدة Tailwind.`, done: R`[[npm test]] بيعدّي (cn و variants و Playwright)، و axe على صفحة التوثيق صفر مشاكل في الثيمين، و [[npm run build]] بيعدّي من غير warnings، وكل مكون بيقبل [[className]] من برا وبيكسب، وفيه [[CHANGELOG.md]] بأول نسخة.`, ext: R`انشرها كـ registry لـ shadcn (ملف JSON لكل مكون)، وزوّد Combobox و Toast، و visual regression بلقطات Playwright بتفشل لو مكون اتغيّر شكله.`, sol: R`~~~text ui-kit/
+package.json  vite.config.ts  tsconfig.json  .gitignore  playwright.config.ts  CHANGELOG.md
+index.html  src/main.tsx  src/index.css  src/lib/cn.ts  src/App.tsx (صفحة التوثيق)
+src/components/ui/  button-variants.ts  button.tsx  badge-variants.ts  badge.tsx  card.tsx  input.tsx  dialog.tsx  sheet.tsx
+tests/  button.test.ts  cn-badge.test.ts
+e2e/    ui.spec.ts
 ~~~
 
-**ترتيب البناء:**
+**ترتيب البناء:** (١) التوكنز في [[index.css]] (فاتح وغامق). (٢) [[cn]]. (٣) كل مكون بـ cva وملف variants لوحده. (٤) صفحة التوثيق. (٥) اختبارات الـ variants. (٦) Playwright و axe. (٧) [[npm run build]] من غير warnings.
 
-1. الهيكل: [[<!doctype html>]] والـ [[head]]، وجوه الـ [[body]]: [[main]] فيه [[article]]، وبعده [[footer]].
-2. جوه الـ [[article]]: [[header]] (العنوان والتاريخ والكاتبة)، وبعده تلات [[section]] كل واحد بـ [[h2]].
-3. اكتب النص كله كفقرات عادية الأول، من غير أي عنصر من الوحدة دي.
-4. عدّي على النص جملة جملة واسأل: فيه هنا حاجة مهمة؟ كود؟ تاريخ؟ مصطلح؟ وحط العنصر.
-5. افتح على 360 وقيس [[scrollWidth]]. لو أكبر من 360 دوّر على الكلمة الطويلة اللي من غير مسافات.
-6. الـ validator.
+~~~json package.json
+{
+  "name": "nasig-ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p . && vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/*.test.ts && playwright test"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "radix-ui": "^1.8.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.0",
+    "@tailwindcss/vite": "^4.3.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "tailwindcss": "^4.3.4",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.6"
+  }
+}
+~~~
 
-~~~live 1050 1150 index.html
+~~~bash الترمنال
+npm i react@19.3.1 react-dom@19.3.1 class-variance-authority@0.7.1 clsx@2.1.1 tailwind-merge@3.7.0 radix-ui@1.8.1
+npm i -D vite@8.3.6 @vitejs/plugin-react@6.2.1 typescript@7.0.2 @types/react@19.3.0 @types/react-dom@19.3.0 tailwindcss@4.3.4 @tailwindcss/vite@4.3.4 @playwright/test@1.65.0 @axe-core/playwright@4.14.0
+npm run build
+npm test
+~~~
+
+[[vite.config.ts]] و [[tsconfig.json]] و [[src/main.tsx]] و [[src/index.css]] و [[src/lib/cn.ts]] زي مشروع «Badge بـ cva». و [[button-variants.ts]] و [[button.tsx]] من «Button kit» (بس الـ import بقى [[../../lib/cn.ts]]).
+
+~~~text .gitignore
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.log
+~~~
+
+~~~ts src/components/ui/badge-variants.ts
+import { cva, type VariantProps } from "class-variance-authority";
+
+// the shared look, then a table: every tone and every look, and what to use when nothing is passed
+export const badgeVariants = cva(
+  "inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold",
+  {
+    variants: {
+      tone: {
+        primary: "",
+        ok: "",
+        warn: "",
+        danger: "",
+      },
+      look: {
+        soft: "",
+        solid: "text-on-primary",
+      },
+    },
+    // tone and look together decide the colours
+    compoundVariants: [
+      { tone: "primary", look: "soft", class: "bg-primary-soft text-primary" },
+      { tone: "ok", look: "soft", class: "bg-ok-soft text-ok" },
+      { tone: "warn", look: "soft", class: "bg-warn-soft text-warn" },
+      { tone: "danger", look: "soft", class: "bg-danger-soft text-danger" },
+      { tone: "primary", look: "solid", class: "bg-primary" },
+      { tone: "ok", look: "solid", class: "bg-ok" },
+      { tone: "warn", look: "solid", class: "bg-warn" },
+      { tone: "danger", look: "solid", class: "bg-danger" },
+    ],
+    defaultVariants: { tone: "primary", look: "soft" },
+  },
+);
+
+export type BadgeVariantProps = VariantProps<typeof badgeVariants>;
+~~~
+
+~~~tsx src/components/ui/badge.tsx
+import type { ComponentProps } from "react";
+import { cn } from "../../lib/cn.ts";
+import { badgeVariants, type BadgeVariantProps } from "./badge-variants.ts";
+
+type BadgeProps = ComponentProps<"span"> & BadgeVariantProps;
+
+export function Badge({ tone, look, className, ...props }: BadgeProps) {
+  // className from outside goes LAST into cn, so it wins over the defaults
+  return <span className={cn(badgeVariants({ tone, look }), className)} {...props} />;
+}
+~~~
+
+~~~tsx src/components/ui/card.tsx
+import type { ComponentProps } from "react";
+import { cn } from "../../lib/cn.ts";
+
+// a card is a few small parts, each one takes className so the page can adjust it
+export function Card({ className, ...props }: ComponentProps<"section">) {
+  return <section className={cn("rounded-2xl bg-surface p-5 ring-1 ring-line", className)} {...props} />;
+}
+// the heading level depends on the page around the card, so the page chooses it (h3 by default)
+export function CardTitle({ as: Tag = "h3", className, ...props }: ComponentProps<"h3"> & { as?: "h2" | "h3" | "h4" }) {
+  return <Tag className={cn("text-lg font-bold", className)} {...props} />;
+}
+export function CardText({ className, ...props }: ComponentProps<"p">) {
+  return <p className={cn("mt-1 text-muted", className)} {...props} />;
+}
+~~~
+
+~~~tsx src/components/ui/input.tsx
+import { useId, type ComponentProps } from "react";
+import { cn } from "../../lib/cn.ts";
+
+type InputProps = ComponentProps<"input"> & { label: string; hint?: string; error?: string };
+
+// the label, the hint and the error are wired to the input (htmlFor, aria-describedby, aria-invalid)
+export function Input({ label, hint, error, className, id, ...props }: InputProps) {
+  const auto = useId();
+  const inputId = id ?? auto;
+  const noteId = inputId + "-note";
+  return (
+    <div className="grid gap-1">
+      <label htmlFor={inputId} className="font-semibold">{label}</label>
+      <input
+        id={inputId}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={hint || error ? noteId : undefined}
+        className={cn(
+          "h-10 rounded-lg border border-muted bg-surface px-3 text-fg",
+          "focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-ring",
+          "aria-invalid:border-danger",
+          className,
+        )}
+        {...props}
+      />
+      {(hint || error) && <p id={noteId} className={cn("text-sm", error ? "text-danger" : "text-muted")}>{error ?? hint}</p>}
+    </div>
+  );
+}
+~~~
+
+~~~tsx src/components/ui/dialog.tsx
+import type { ReactNode } from "react";
+import { Dialog as D } from "radix-ui";
+import { cn } from "../../lib/cn.ts";
+
+// radix gives the behaviour (focus trap, Escape, focus back to the trigger, aria); this file gives the look
+export const Dialog = D.Root;
+export const DialogTrigger = D.Trigger;
+export const DialogClose = D.Close;
+
+export function DialogContent({ title, description, className, children }: { title: string; description?: string; className?: string; children?: ReactNode }) {
+  return (
+    <D.Portal>
+      <D.Overlay className="fixed inset-0 bg-black/50" />
+      <D.Content
+        className={cn("fixed inset-x-0 top-1/2 mx-auto w-[min(28rem,calc(100vw-2rem))] -translate-y-1/2 space-y-4 rounded-2xl bg-surface p-6 text-fg shadow-2xl", className)}
+      >
+        <D.Title className="text-xl font-bold">{title}</D.Title>
+        {description ? <D.Description className="text-muted">{description}</D.Description> : <D.Description className="sr-only">{title}</D.Description>}
+        {children}
+      </D.Content>
+    </D.Portal>
+  );
+}
+~~~
+
+~~~tsx src/components/ui/sheet.tsx
+import type { ReactNode } from "react";
+import { Dialog as D } from "radix-ui";
+import { cn } from "../../lib/cn.ts";
+
+// a sheet is a dialog that sits on the END side of the screen, full height. Same behaviour, another look
+export const Sheet = D.Root;
+export const SheetTrigger = D.Trigger;
+export const SheetClose = D.Close;
+
+export function SheetContent({ title, className, children }: { title: string; className?: string; children?: ReactNode }) {
+  return (
+    <D.Portal>
+      <D.Overlay className="fixed inset-0 bg-black/50" />
+      <D.Content className={cn("fixed inset-y-0 end-0 w-[min(22rem,85vw)] space-y-4 bg-surface p-6 text-fg shadow-2xl", className)}>
+        <D.Title className="text-xl font-bold">{title}</D.Title>
+        <D.Description className="sr-only">{title}</D.Description>
+        {children}
+      </D.Content>
+    </D.Portal>
+  );
+}
+~~~
+
+~~~tsx src/App.tsx
+import { useEffect, useState, type ReactNode } from "react";
+import { Button } from "./components/ui/button.tsx";
+import { Badge } from "./components/ui/badge.tsx";
+import { Card, CardText, CardTitle } from "./components/ui/card.tsx";
+import { Input } from "./components/ui/input.tsx";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./components/ui/dialog.tsx";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./components/ui/sheet.tsx";
+
+// one docs block: a name, the live example, and the code that makes it
+function Demo({ id, title, code, children }: { id: string; title: string; code: string; children: ReactNode }) {
+  return (
+    <section aria-labelledby={id} className="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line">
+      <h2 id={id} className="text-xl font-bold">{title}</h2>
+      <div className="flex flex-wrap items-center gap-3">{children}</div>
+      <pre dir="ltr" className="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabIndex={0} role="region" aria-label={"كود " + title}><code>{code}</code></pre>
+    </section>
+  );
+}
+
+export default function App() {
+  const [dark, setDark] = useState(false);
+  const [en, setEn] = useState(false);
+  useEffect(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
+  useEffect(() => { document.documentElement.dir = en ? "ltr" : "rtl"; document.documentElement.lang = en ? "en" : "ar"; }, [en]);
+
+  return (
+    <main className="mx-auto max-w-4xl space-y-6 p-4">
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">«نسيج»: مكتبة مكونات</h1>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" aria-pressed={dark} onClick={() => setDark(d => !d)}>الوضع الغامق</Button>
+          <Button variant="outline" size="sm" aria-pressed={en} onClick={() => setEn(e => !e)}>LTR</Button>
+        </div>
+      </header>
+
+      <Demo id="d-button" title="Button" code={'<Button variant="soft" size="lg">احجز</Button>\n<Button loading>بيحفظ</Button>\n<Button asChild><a href="#">لينك</a></Button>'}>
+        <Button>مليان</Button>
+        <Button variant="soft">فاتح</Button>
+        <Button variant="outline">بحد</Button>
+        <Button variant="ghost">شفاف</Button>
+        <Button size="sm">صغير</Button>
+        <Button size="lg">كبير</Button>
+        <Button loading>بيحفظ</Button>
+        <Button asChild variant="soft"><a href="#d-card">لينك بشكل زرار</a></Button>
+        <Button className="rounded-full" data-test="override">className من برّه</Button>
+      </Demo>
+
+      <Demo id="d-badge" title="Badge" code={'<Badge tone="ok">اتسلّم</Badge>\n<Badge tone="danger" look="solid">اتلغى</Badge>'}>
+        <Badge tone="ok">اتسلّم</Badge>
+        <Badge tone="warn">متأخر</Badge>
+        <Badge tone="danger">اتلغى</Badge>
+        <Badge tone="primary" look="solid">جديد</Badge>
+      </Demo>
+
+      <Demo id="d-card" title="Card" code={'<Card>\n  <CardTitle>العنوان</CardTitle>\n  <CardText>الكلام</CardText>\n</Card>'}>
+        <Card className="w-full sm:w-64"><CardTitle>طلب #٢٠٤١</CardTitle><CardText>٣ منتجات، ٤٥٠ ج</CardText></Card>
+      </Demo>
+
+      <Demo id="d-input" title="Input" code={'<Input label="الإيميل" type="email" hint="هنبعتلك الفاتورة عليه" />\n<Input label="الموبايل" error="الرقم ناقص" />'}>
+        <div className="grid w-full gap-4 sm:grid-cols-2">
+          <Input label="الإيميل" type="email" autoComplete="email" hint="هنبعتلك الفاتورة عليه" />
+          <Input label="الموبايل" type="tel" autoComplete="tel" defaultValue="0100" error="الرقم ناقص" />
+        </div>
+      </Demo>
+
+      <Demo id="d-dialog" title="Dialog" code={'<Dialog>\n  <DialogTrigger asChild><Button>امسح</Button></DialogTrigger>\n  <DialogContent title="متأكد؟">…</DialogContent>\n</Dialog>'}>
+        <Dialog>
+          <DialogTrigger asChild><Button variant="outline" data-test="open-dialog">امسح الطلب</Button></DialogTrigger>
+          <DialogContent title="تمسح الطلب؟" description="مش هتقدر ترجّعه بعد كده.">
+            <div className="flex gap-3">
+              <DialogClose asChild><Button>امسح</Button></DialogClose>
+              <DialogClose asChild><Button variant="ghost">رجوع</Button></DialogClose>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </Demo>
+
+      <Demo id="d-sheet" title="Sheet" code={'<Sheet>\n  <SheetTrigger asChild><Button>الفلاتر</Button></SheetTrigger>\n  <SheetContent title="فلاتر">…</SheetContent>\n</Sheet>'}>
+        <Sheet>
+          <SheetTrigger asChild><Button variant="outline" data-test="open-sheet">الفلاتر</Button></SheetTrigger>
+          <SheetContent title="فلاتر الطلبات">
+            <Input label="رقم الطلب" inputMode="numeric" />
+            <SheetClose asChild><Button className="w-full">طبّق</Button></SheetClose>
+          </SheetContent>
+        </Sheet>
+      </Demo>
+    </main>
+  );
+}
+~~~
+
+~~~ts tests/cn-badge.test.ts
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { cn } from "../src/lib/cn.ts";
+import { badgeVariants } from "../src/components/ui/badge-variants.ts";
+
+test("cn: className from outside wins", () => assert.equal(cn("rounded-lg px-4", "rounded-full"), "px-4 rounded-full"));
+test("cn: false and null are dropped", () => assert.equal(cn("a", false && "b", null), "a"));
+test("badge default = primary soft", () => assert.match(badgeVariants(), /bg-primary-soft text-primary/));
+test("badge ok solid", () => assert.match(badgeVariants({ tone: "ok", look: "solid" }), /bg-ok/));
+test("badge: every tone x look has a background", () => {
+  for (const tone of ["primary", "ok", "warn", "danger"] as const)
+    for (const look of ["soft", "solid"] as const)
+      assert.match(badgeVariants({ tone, look }), /\bbg-/);
+});
+~~~
+
+~~~ts playwright.config.ts
+import { defineConfig } from "@playwright/test";
+
+// builds the docs page, serves it, and runs the browser tests against it (Chrome installed on the machine)
+export default defineConfig({
+  testDir: "e2e",
+  use: { baseURL: "http://127.0.0.1:4173", channel: "chrome" },
+  webServer: { command: "npx vite preview --host 127.0.0.1 --port 4173 --strictPort", url: "http://127.0.0.1:4173", reuseExistingServer: false },
+});
+~~~
+
+~~~ts e2e/ui.spec.ts
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+test("Dialog: opens, traps focus, Escape closes, focus goes back", async ({ page }) => {
+  await page.goto("/");
+  const open = page.locator("[data-test=open-dialog]");
+  await open.click();
+  const dialog = page.getByRole("dialog", { name: "تمسح الطلب؟" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "امسح" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");                       // two Tabs: still inside the dialog
+  await expect(dialog.locator(":focus")).toHaveCount(1);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(open).toBeFocused();
+});
+
+test("Sheet: comes from the end side in rtl and in ltr", async ({ page }) => {
+  await page.goto("/");
+  for (const ltr of [false, true]) {
+    if (ltr) await page.getByRole("button", { name: "LTR" }).click();
+    await page.locator("[data-test=open-sheet]").click();
+    const sheet = page.getByRole("dialog", { name: "فلاتر الطلبات" });
+    const box = (await sheet.boundingBox())!;
+    const width = page.viewportSize()!.width;
+    if (ltr) expect(Math.round(box.x + box.width)).toBe(width);   // touches the right edge
+    else expect(Math.round(box.x)).toBe(0);                          // touches the left edge
+    await page.keyboard.press("Escape");
+  }
+});
+
+test("className from outside wins (rounded-full on a Button)", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("[data-test=override]")).toHaveClass(/rounded-full/);
+  await expect(page.locator("[data-test=override]")).not.toHaveClass(/rounded-lg/);
+});
+
+for (const dark of [false, true]) {
+  test("axe: no violations, " + (dark ? "dark" : "light"), async ({ page }) => {
+    await page.goto("/");
+    if (dark) await page.getByRole("button", { name: "الوضع الغامق" }).click();
+    const r = await new AxeBuilder({ page }).analyze();
+    expect(r.violations.map(v => v.id)).toEqual([]);
+  });
+}
+~~~
+
+~~~text CHANGELOG.md
+# Changelog
+
+## 0.1.0 (أول نسخة)
+
+- Button: ٤ أشكال × ٣ مقاسات، و loading و disabled، و asChild.
+- Badge: ٤ ألوان × شكلين.
+- Card و CardTitle و CardText.
+- Input: label و hint و error متربطين بالخانة.
+- Dialog و Sheet فوق radix-ui.
+- ثيم فاتح وغامق من @theme inline، وعربي وإنجليزي بـ utilities منطقية.
+~~~
+
+~~~view 760 900 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)
 <!doctype html>
-<html lang="ar" dir="rtl">
-<head>
+<html lang="ar" dir="rtl" data-theme="light"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إزاي تاخد نسخة احتياطية من صورك | مدونة الحروف</title>
+<title>«نسيج»: مكتبة مكونات صغيرة</title>
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-black:#000;--spacing:.25rem;--container-4xl:56rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-semibold:600;--font-weight-bold:700;--radius-lg:.5rem;--radius-2xl:1rem;--animate-spin:spin 1s linear infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.fixed{position:fixed}.inset-0{inset:0}.inset-x-0{inset-inline:0}.inset-y-0{inset-block:0}.end-0{inset-inline-end:calc(var(--spacing) * 0)}.top-1{top:var(--spacing)}.top-1\/2{top:50%}.mx-auto{margin-inline:auto}.mt-1{margin-top:var(--spacing)}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.table{display:table}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-10{height:calc(var(--spacing) * 10)}.h-12{height:calc(var(--spacing) * 12)}.h-20{height:calc(var(--spacing) * 20)}.w-\[min\(22rem\,85vw\)\]{width:min(22rem,85vw)}.w-\[min\(28rem\,calc\(100vw-2rem\)\)\]{width:min(28rem,100vw - 2rem)}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.-translate-y-1{--tw-translate-y:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-1\/2{--tw-translate-y:calc(calc(1 / 2 * 100%) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.animate-spin{animation:var(--animate-spin)}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:var(--spacing)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.overflow-x-auto{overflow-x:auto}.rounded-2xl{border-radius:var(--radius-2xl)}.rounded-full{border-radius:2147483647px}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-current{border-color:currentColor}.border-muted{border-color:var(--muted)}.border-primary{border-color:var(--primary)}.border-e-transparent{border-inline-end-color:#0000}.bg-bg{background-color:var(--bg)}.bg-black{background-color:var(--color-black)}.bg-black\/50{background-color:#00000080}@supports (color:color-mix(in lab, red, red)){.bg-black\/50{background-color:color-mix(in oklab, var(--color-black) 50%, transparent)}}.bg-danger{background-color:var(--danger)}.bg-danger-soft{background-color:var(--danger-soft)}.bg-ok{background-color:var(--ok)}.bg-ok-soft{background-color:var(--ok-soft)}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.bg-surface{background-color:var(--surface)}.bg-warn{background-color:var(--warn)}.bg-warn-soft{background-color:var(--warn-soft)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-6{padding:calc(var(--spacing) * 6)}.px-1{padding-inline:var(--spacing)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-0{padding-block:0}.py-0\.5{padding-block:calc(var(--spacing) * .5)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-danger{color:var(--danger)}.text-fg{color:var(--fg)}.text-muted{color:var(--muted)}.text-ok{color:var(--ok)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.text-warn{color:var(--warn)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-line{--tw-ring-color:var(--line)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){.hover\:bg-primary-soft:hover{background-color:var(--primary-soft)}.hover\:bg-primary\/20:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\:bg-primary\/20:hover{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.hover\:opacity-90:hover{opacity:.9}}.focus-visible\:outline-3:focus-visible{outline-style:var(--tw-outline-style);outline-width:3px}.focus-visible\:outline-offset-1:focus-visible{outline-offset:1px}.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}.focus-visible\:outline-ring:focus-visible{outline-color:var(--ring)}.active\:bg-primary\/20:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/20:active{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.active\:bg-primary\/30:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/30:active{background-color:color-mix(in oklab, var(--primary) 30%, transparent)}}.active\:opacity-80:active{opacity:.8}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.aria-busy\:cursor-progress[aria-busy=true]{cursor:progress}.aria-invalid\:border-danger[aria-invalid=true]{border-color:var(--danger)}@media (prefers-reduced-motion:reduce){.motion-reduce\:animate-none{animation:none}}@media (width>=40rem){.sm\:w-64{width:calc(var(--spacing) * 64)}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
 </head>
 <body>
-<main>
-<article>
-  <header>
-    <h1>إزاي تاخد نسخة احتياطية من صورك</h1>
-    <p>اتنشر يوم <time datetime="2026-11-10">١٠ نوفمبر ٢٠٢٦</time>. وقت القراية: <time datetime="PT6M">٦ دقايق</time>.</p>
-    <address>كتبته <a href="mailto:nour@example.test">نور الدين</a></address>
-  </header>
+<div id="root"><main class="mx-auto max-w-4xl space-y-6 p-4"><header class="flex flex-wrap items-center justify-between gap-3"><h1 class="text-2xl font-bold">«نسيج»: مكتبة مكونات</h1><div class="flex gap-2"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-8 px-3 text-sm" aria-pressed="false">الوضع الغامق</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-8 px-3 text-sm" aria-pressed="false">LTR</button></div></header><section aria-labelledby="d-button" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-button" class="text-xl font-bold">Button</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4">مليان</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4">فاتح</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">بحد</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">شفاف</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-8 px-3 text-sm">صغير</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-12 px-6 text-lg">كبير</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button><a href="#d-card" class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4">لينك بشكل زرار</a><button class="inline-flex items-center justify-center gap-2 font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4 rounded-full" data-test="override">className من برّه</button></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Button"><code>&lt;Button variant="soft" size="lg"&gt;احجز&lt;/Button&gt;
+&lt;Button loading&gt;بيحفظ&lt;/Button&gt;
+&lt;Button asChild&gt;&lt;a href="#"&gt;لينك&lt;/a&gt;&lt;/Button&gt;</code></pre></section><section aria-labelledby="d-badge" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-badge" class="text-xl font-bold">Badge</h2><div class="flex flex-wrap items-center gap-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-ok-soft text-ok">اتسلّم</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-warn-soft text-warn">متأخر</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-danger-soft text-danger">اتلغى</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-primary">جديد</span></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Badge"><code>&lt;Badge tone="ok"&gt;اتسلّم&lt;/Badge&gt;
+&lt;Badge tone="danger" look="solid"&gt;اتلغى&lt;/Badge&gt;</code></pre></section><section aria-labelledby="d-card" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-card" class="text-xl font-bold">Card</h2><div class="flex flex-wrap items-center gap-3"><section class="rounded-2xl bg-surface p-5 ring-1 ring-line w-full sm:w-64"><h3 class="text-lg font-bold">طلب #٢٠٤١</h3><p class="mt-1 text-muted">٣ منتجات، ٤٥٠ ج</p></section></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Card"><code>&lt;Card&gt;
+  &lt;CardTitle&gt;العنوان&lt;/CardTitle&gt;
+  &lt;CardText&gt;الكلام&lt;/CardText&gt;
+&lt;/Card&gt;</code></pre></section><section aria-labelledby="d-input" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-input" class="text-xl font-bold">Input</h2><div class="flex flex-wrap items-center gap-3"><div class="grid w-full gap-4 sm:grid-cols-2"><div class="grid gap-1"><label for="_r_0_" class="font-semibold">الإيميل</label><input id="_r_0_" aria-describedby="_r_0_-note" class="h-10 rounded-lg border border-muted bg-surface px-3 text-fg focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-ring aria-invalid:border-danger" autocomplete="email" type="email"><p id="_r_0_-note" class="text-sm text-muted">هنبعتلك الفاتورة عليه</p></div><div class="grid gap-1"><label for="_r_1_" class="font-semibold">الموبايل</label><input id="_r_1_" aria-invalid="true" aria-describedby="_r_1_-note" class="h-10 rounded-lg border border-muted bg-surface px-3 text-fg focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-ring aria-invalid:border-danger" autocomplete="tel" type="tel" value="0100"><p id="_r_1_-note" class="text-sm text-danger">الرقم ناقص</p></div></div></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Input"><code>&lt;Input label="الإيميل" type="email" hint="هنبعتلك الفاتورة عليه" /&gt;
+&lt;Input label="الموبايل" error="الرقم ناقص" /&gt;</code></pre></section><section aria-labelledby="d-dialog" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-dialog" class="text-xl font-bold">Dialog</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" data-test="open-dialog" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">امسح الطلب</button></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Dialog"><code>&lt;Dialog&gt;
+  &lt;DialogTrigger asChild&gt;&lt;Button&gt;امسح&lt;/Button&gt;&lt;/DialogTrigger&gt;
+  &lt;DialogContent title="متأكد؟"&gt;…&lt;/DialogContent&gt;
+&lt;/Dialog&gt;</code></pre></section><section aria-labelledby="d-sheet" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-sheet" class="text-xl font-bold">Sheet</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" data-test="open-sheet" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">الفلاتر</button></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Sheet"><code>&lt;Sheet&gt;
+  &lt;SheetTrigger asChild&gt;&lt;Button&gt;الفلاتر&lt;/Button&gt;&lt;/SheetTrigger&gt;
+  &lt;SheetContent title="فلاتر"&gt;…&lt;/SheetContent&gt;
+&lt;/Sheet&gt;</code></pre></section></main></div>
 
-  <section>
-    <h2>ليه أصلًا؟</h2>
-    <p><dfn>النسخة الاحتياطية</dfn> (backup) هي نسخة تانية من ملفاتك في مكان غير الجهاز نفسه. لو الجهاز باظ أو اتسرق، النسخة موجودة.</p>
-    <p>هننسخ الصور على هارد خارجي متوصّل بـ Universal Serial Bus (<abbr>USB</abbr>).</p>
-    <p><strong>تحذير: النسخة اللي على نفس الهارد بتاع الجهاز مش نسخة احتياطية.</strong> لو الهارد باظ، الاتنين هيروحوا <em>مع بعض</em>.</p>
-  </section>
 
-  <section>
-    <h2>الخطوات</h2>
-    <p>١. وصّل الهارد وافتح الترمنال: دوس <kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd></kbd>.</p>
-    <p>٢. اعرف حجم فولدر الصور. اكتب <kbd>du -sh Pictures</kbd> وهيطلعلك حاجة زي:</p>
-<pre dir="ltr"><samp>48G    Pictures</samp></pre>
-    <p>٣. انسخ الفولدر. بدّل <var>disk-name</var> باسم الهارد عندك:</p>
-<pre dir="ltr"><code>cp -r Pictures /media/<var>disk-name</var>/backup</code></pre>
-    <p>٤. اتأكد إن العدد واحد في المكانين. الأمر <code>ls Pictures | wc -l</code> بيعدّ الملفات، والرمز <code>|</code> بيودّي ناتج الأمر الأول للتاني.</p>
-    <p>لو الصور عندك في فولدر اسمه طويل زي family_<wbr>photos_<wbr>2019_<wbr>to_<wbr>2026_<wbr>originals_<wbr>do_<wbr>not_<wbr>delete اكتب اسمه مكان <code>Pictures</code>.</p>
-  </section>
-
-  <hr>
-
-  <section>
-    <h2>ملحوظات</h2>
-    <p>الهارد اللي مساحته ١ تيرابايت بيشيل حوالي <del datetime="2026-11-12">٥٠٠ ألف</del> <ins datetime="2026-11-12">٢٥٠ ألف</ins> صورة موبايل<sup id="ref-1"><a href="#note-1">[1]</a></sup>.</p>
-    <p>ولو بتكتب عن الأوامر دي في صفحة HTML، الرمز <code>&lt;</code> بيتكتب <code>&amp;lt;</code> والرمز <code>&amp;</code> بيتكتب <code>&amp;amp;</code>.</p>
-    <p id="note-1"><small>[1] بحساب إن الصورة حوالي ٤&nbsp;ميجابايت، يعني ٢<sup>22</sup> بايت. <a href="#ref-1">ارجع</a></small></p>
-  </section>
-</article>
-</main>
-<footer>
-  <p><small>&copy; ٢٠٢٦ مدونة الحروف. المقال للتعليم، جرّب على ملفات مش مهمة الأول.</small></p>
-  <address>
-    مدونة الحروف<br>
-    <a href="mailto:hello@example.test">hello@example.test</a>
-  </address>
-</footer>
-</body>
-</html>
+</body></html>
 ~~~
 
-**كل عنصر وليه:**
+**هتشوف إيه:** صفحة توثيق «نسيج»: فوق زرارين (الوضع الغامق و LTR)، وتحت ٦ أقسام: Button و Badge و Card و Input و Dialog و Sheet. كل قسم فيه المكون شغال، وتحته الكود اللي بيعمله.
 
-| الحتة | العنصر | السبب |
+**قاعدة المكتبة:** كل مكون ألوانه من التوكنز بس، وبياخد [[className]] من برّه ويحطه آخر حاجة في [[cn]]. فالصفحة تقدر تعدّل أي مكون من غير ما تفتح ملفه (اتختبر: [[className="rounded-full"]] على Button شال [[rounded-lg]]).
+
+**Input:** الـ label متربط بـ [[htmlFor]] و [[useId]] (اسم مختلف لكل خانة حتى لو المكون اتكرر)، والـ hint والـ error بـ [[aria-describedby]]، والخانة الغلط [[aria-invalid]] وحدها حمرا ([[aria-invalid:border-danger]]).
+
+**Dialog و Sheet:** الاتنين فوق [[Dialog]] بتاع radix (نفس السلوك: الـ focus جوه، و Escape، ورجوع الـ focus)، والفرق في الشكل بس: الـ Sheet [[fixed inset-y-0 end-0]] على النهاية بطول الشاشة. و radix بيطلب [[Description]] لكل dialog، فلو مفيش وصف بنحط العنوان [[sr-only]] بدل ما نسيبه فاضي.
+
+**الاختبارات (3 أنواع):**
+- [[node --test]] للـ variants و cn (من غير متصفح، سريع).
+- Playwright للسلوك في متصفح حقيقي: الـ Dialog بيمسك الـ focus ويرجّعه، والـ Sheet بيلمس الحافة الصح في rtl و ltr.
+- axe جوه Playwright في الثيمين.
+و [[playwright.config.ts]] بيشغّل [[vite preview]] لوحده قبل الاختبارات.
+
+**٣ غلطات مسكهم القياس:**
+- **الـ CSS اتضاعف:** البناء التاني طلع 28.92KB بدل 14.17KB. Tailwind 4 بيدوّر على كلاسات في كل ملفات المشروع ما عدا اللي في [[.gitignore]]، وقرا [[dist/]] و [[build.log]]. [[.gitignore]] رجّعه 14.17KB.
+- **[[Timed out waiting 60000ms from config.webServer]]:** [[vite preview]] كان سامع على [[localhost]] والاختبار مستني [[127.0.0.1]]. [[--host 127.0.0.1]] صلّحها.
+- **الـ validator على صفحة التوثيق:** [[aria-label]] على [[<pre>]] من غير role (نفس غلطة الـ div). الـ [[<pre>]] بيتسكرول وعليه [[tabIndex]]، فبقى [[role="region"]].
+
+~~~text npm run build
+> tsc -p . && vite build
+dist/index.html                   0.40 kB │ gzip:  0.31 kB
+dist/assets/index-BNgLzU64.css   14.17 kB │ gzip:  3.85 kB
+dist/assets/index-ByDekDJ0.js   295.87 kB │ gzip: 93.03 kB
+✓ built in 175ms
+(كلمة warn في الناتج: 0)
+~~~
+
+~~~text npm test
+> node --test tests/*.test.ts && playwright test
+ℹ tests 17   ℹ pass 17   ℹ fail 0
+
+Running 5 tests using 1 worker
+  ok 1 e2e\ui.spec.ts › Dialog: opens, traps focus, Escape closes, focus goes back
+  ok 2 e2e\ui.spec.ts › Sheet: comes from the end side in rtl and in ltr
+  ok 3 e2e\ui.spec.ts › className from outside wins (rounded-full on a Button)
+  ok 4 e2e\ui.spec.ts › axe: no violations, light
+  ok 5 e2e\ui.spec.ts › axe: no violations, dark
+  5 passed (5.9s)
+
+الـ validator على صفحة التوثيق بعد ما React رسمها: مفيش رسايل (كانت 6 على aria-label في pre)
+~~~` },
+        { lvl: 'فكرة', dir: "my-ds", t: R`design system بتاعك`, what: R`قرّر الهوية (ألوان وخطوط وتدوير ومسافات) واعمل منها مكتبة مكونات بالأسماء اللي تناسب مشروع حقيقي عندك، وانقل شاشة كاملة من مشروعك ليها.`, done: R`الشاشة المنقولة مفيهاش ولا كلاس لون أو تدوير مكتوب بإيدك برا المكونات، وفيه صفحة توثيق بتعرض كل مكون.`, ext: R`اعمل registry بتاعك (ملف JSON زي shadcn) عشان تضيف مكوناتك لأي مشروع بأمر واحد، وزوّد visual regression بلقطات Playwright.`, sol: R`المثال اللي عملته: «نسيج» نفسها (المشروع اللي فات) هويتي، والشاشة المنقولة «طلبات النهارده» لمتجر ورد متخيل: كروت طلبات، وكل كارت فيه شارة الحالة وزرار «التفاصيل» بيفتح Dialog بالمنتجات. ده بيغطي فكرة «مودال تفاصيل طلب بشارات الحالة» من بنك الأفكار.
+
+~~~text DECISIONS.md
+# «نسيج»: قرارات الهوية
+
+| القرار | القيمة | ليه |
 |---|---|---|
-| تاريخ النشر ووقت القراية | [[<time>]] | الأول تاريخ ([[2026-11-10]]) والتاني مدة ([[PT6M]]) |
-| الكاتبة | [[<address>]] جوه الـ article | معلومات التواصل لأقرب article |
-| «النسخة الاحتياطية» | [[<dfn>]] | أول مرة المصطلح بيتعرّف، والتعريف في نفس الفقرة |
-| USB | [[<abbr>]] من غير title | الفك مكتوب في النص قبله |
-| التحذير | [[<strong>]] | خطورة: اللي مش هيقراه هيخسر صوره |
-| «مع بعض» | [[<em>]] | الضغطة هي اللي بتشرح ليه |
-| Ctrl+Alt+T | [[<kbd>]] جوه [[<kbd>]] | اختصار، وكل مفتاح لوحده |
-| الأمر اللي هيتكتب في جملة | [[<kbd>]] | القارئ هو اللي هيدخّله |
-| ناتج الأمر | [[<pre><samp>]] | البرنامج طلّعه، والمسافات جزء منه |
-| أمر النسخ | [[<pre><code>]] وجواه [[<var>]] | كود يتنسخ، وفيه حتة تتبدّل |
-| اسم الفولدر الطويل | [[<wbr>]] بعد كل [[_]] | عشان ميزقّش الصفحة على الموبايل |
-| الفاصل | [[<hr>]] | من الخطوات للملحوظات: الموضوع اتغيّر |
-| الرقم اللي اتصحّح | [[<del>]] و [[<ins>]] بـ [[datetime]] | المقال اتعدّل بعد النشر، والتعديل باين |
-| رقم الحاشية و ٢ أُس ٢٢ | [[<sup>]] | حاشية وأُس |
-| [[<]] و [[&]] جوه الشرح | [[&lt;]] و [[&amp;]] | وعشان أعرض [[&lt;]] نفسها كتبت [[&amp;lt;]] |
-| حقوق النشر | [[<small>]] و [[&copy;]] | small print |
-| التواصل مع الموقع | [[<address>]] في الـ footer | معلومات التواصل للصفحة كلها |
+| اللون الأساسي | $__bt--primary$__bt نيلي $__bt#4338ca$__bt (غامق: $__bt#a5b4fc$__bt) | متجر ورد: لون هادي مش وردي عشان الورد نفسه هو اللي يلفت النظر |
+| الحالات | $__btok$__bt أخضر، $__btwarn$__bt أصفر غامق، $__btdanger$__bt أحمر | المعنى المتعارف عليه، وكل واحد ليه $__bt-soft$__bt للخلفيات الفاتحة |
+| التدوير | $__btrounded-lg$__bt للزراير والخانات، $__btrounded-2xl$__bt للكروت، $__btrounded-full$__bt للشارات | كل ما العنصر أكبر التدوير أكبر |
+| الخط | خط النظام ($__btsystem-ui$__bt) | بيظهر على طول ومن غير تحميل، وبيدعم العربي |
+| المسافات | مقياس Tailwind ($__btgap-3$__bt، $__btp-5$__bt…) | مفيش ولا قيمة $__bt[...]$__bt غير عرض الـ Dialog والـ Sheet |
 
-**جرّبت أشيل الـ [[wbr]]:** على الكمبيوتر مفيش فرق. على 360 [[scrollWidth]] بقى أكبر من 360 والصفحة كلها بتتسحب بالعرض. رجّعته ورجع 360. (الأرقام تحت.)
+القاعدة: الشاشات بتستخدم المكونات وكلاسات الـ layout بس (grid و gap و spacing). أي لون أو تدوير أو ظل جوه $__btsrc/components/ui$__bt.
+~~~
 
-**و [[hr]] واحد بس:** بين كل [[section]] والتاني ملوش لزوم، المواصفة بتقول إن العناوين كفاية. حطيته قبل «ملحوظات» بس، لأنها مش خطوة من الشرح. ولو شلته هو كمان الصفحة لسه سليمة.
+~~~ts vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
-**الغلطة الشائعة:** تبدأ بالعناصر وانت بتكتب. اكتب النص الأول، وبعدين علّم. كده كل عنصر بيتحط عشان الكلام محتاجه، مش عشان «لازم أستخدم [[mark]] في حتة».
+// two pages: the docs (index.html) and the real screen moved to the components (orders.html)
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  build: { rollupOptions: { input: { docs: "index.html", orders: "orders.html" } } },
+});
+~~~
 
-~~~text الناتج (Chrome 157)
-article: 1   section: 3   h1: 1   h2: 3   address: 2   hr: 1
-time: 2 (2026-11-10 و PT6M)   dfn: 1 (term)   abbr: 1   strong: 1   em: 1
-kbd: 5   code: 8   samp: 1   var: 2   pre: 2   wbr: 8   del: 1   ins: 1   sup: 2   small: 2
-عرض 360:  scrollWidth = 360         من غير wbr:  scrollWidth = 364
-~~~` },
-        { lvl: 'فكرة', dir: "my-recipe", t: R`صفحة وصفة أكلة بتحبها`, what: R`صفحة لوصفة انت بتعملها فعلًا: اسمها، ووقت التحضير والتسوية، والمكونات بكمياتها، والخطوات، وتحذير واحد حقيقي (سخونة، أو حساسية)، وملحوظة جانبية. انت اللي بتقرر كل عنصر يتحط فين: الهدف إنك تبرّر كل اختيار.`, done: R`كل مدة في الصفحة جوه [[time]] بصيغة مدة سليمة (بتبدأ بـ [[PT]])، وفيه [[strong]] واحد أو اتنين بالكتير على التحذير الحقيقي، ومفيش ولا [[b]] أو [[i]] أو [[u]] محطوط للشكل، وتقدر تقول لكل عنصر في الصفحة «ده هنا عشان…» في جملة.`, ext: R`زوّد سطر «آخر تعديل» بـ [[time]]، ولو غيّرت كمية بعد ما جرّبت الوصفة تاني ورّي التعديل بـ [[del]] و [[ins]]. ولما تتعلم القوايم خلي المكونات [[<ul>]] والخطوات [[<ol>]]، ولما تتعلم CSS نسّقها واطبعها ورقة للمطبخ.`, sol: R`**نسخة نموذجية واحدة** (وصفة كيكة برتقال). وصفتك هتبقى مختلفة، المهم نفس طريقة التفكير.
-
-~~~live 650 620 الوصفة
+~~~html orders.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كيكة البرتقال</title>
+<title>طلبات متجر ورد</title>
 </head>
 <body>
-<main>
-<article>
-  <h1>كيكة البرتقال</h1>
-  <p>التحضير <time datetime="PT15M">ربع ساعة</time>، والتسوية <time datetime="PT40M">٤٠ دقيقة</time>. بتكفّي <data value="8">تمن أفراد</data>.</p>
-
-  <h2>المكونات</h2>
-  <p>٢ كوباية دقيق (حوالي ٢٥٠&nbsp;جم)</p>
-  <p>١ كوباية سكر</p>
-  <p>٣ بيضات</p>
-  <p>نص كوباية عصير برتقال <em>طازة</em>، مش من العلبة</p>
-  <p>١ <abbr title="معلقة كبيرة">م.ك</abbr> (معلقة كبيرة) بيكنج بودر</p>
-
-  <h2>الطريقة</h2>
-  <p>١. سخّن الفرن على ١٨٠ درجة.</p>
-  <p>٢. اضرب البيض والسكر لحد ما يبقوا <dfn>كريمي</dfn>: يعني اللون يفتح والقوام يتقل ويسيب أثر لما ترفع المضرب.</p>
-  <p>٣. زوّد العصير، وبعده الدقيق والبيكنج بودر.</p>
-  <p>٤. صب في قالب قطره ٢٢&nbsp;سم وسوّيه.</p>
-  <p><strong>تحذير: القالب بيطلع سخن جدًا. استخدم ماسكة ومتحطوش على رخام مبلول.</strong></p>
-
-  <hr>
-  <p><small>الوصفة فيها بيض وقمح (جلوتين).</small></p>
-</article>
-</main>
+<div id="root"></div>
+<script type="module" src="/src/orders-main.tsx"></script>
 </body>
 </html>
 ~~~
 
-**ليه اخترت التصميم ده:**
+~~~tsx src/orders-main.tsx
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import Orders from "./Orders";
 
-- المدتين [[time]] بصيغة [[PT15M]] و [[PT40M]]: دي أكتر معلومة حد بيدوّر عليها في وصفة، وأي برنامج يقدر يقراها.
-- عدد الأفراد [[data]]: مكتوب بالحروف للقارئ، وبالرقم [[8]] لأي سكربت يحسب الكميات لعدد تاني.
-- [[strong]] واحد بس، على الحاجة اللي ممكن تأذي فعلًا. «سخّن الفرن» تعليمة عادية مش تحذير.
-- «طازة» [[em]]: هي اللي بتفرّق، والجملة فيها المقابل.
-- «م.ك» اختصار، ومفكوك في النص جنبه. وحطيت [[title]] كمان عشان الاختصار هيتكرر في وصفات تانية من غير فك. ده قرار فيه تمن: قارئ الشاشة ممكن يقرا الفك مرتين في السطر ده.
-- «كريمي» [[dfn]]: مصطلح مطبخ اللي أول مرة يخبز مش هيعرفه، وتعريفه في نفس الفقرة.
-- [[&nbsp;]] بين كل رقم ووحدته.
-- [[hr]] قبل ملحوظة الحساسية: خرجنا من الوصفة لمعلومة عنها.
-- المكونات والخطوات فقرات دلوقتي. مكانهم الصح قايمة ([[<ul>]] و [[<ol>]])، ودي الوحدة الجاية.
+createRoot(document.getElementById("root")!).render(<StrictMode><Orders /></StrictMode>);
+~~~
 
-**اللي متعملوش:** درجة الحرارة «١٨٠ درجة» مش [[time]] ولا محتاجة [[data]]. مش كل رقم لازم يتلف في عنصر. العنصر بيتحط لما فيه حد هيستفيد من المعلومة اللي بيضيفها.
+~~~ts src/orders-data.ts
+export type Status = "paid" | "pending" | "shipped" | "cancelled";
+export type Order = { id: string; customer: string; total: number; items: string[]; status: Status };
 
-**الغلطة الشائعة:** [[<b>]] على كل كمية «عشان تبان». لو كل سطر فيه حاجة تقيلة، العين مبتلاقيش التحذير.
+export const orders: Order[] = [
+  { id: "١٠٤١", customer: "هالة سمير", total: 450, items: ["بوكيه ورد بلدي", "كارت تهنئة"], status: "paid" },
+  { id: "١٠٤٢", customer: "مروان فتحي", total: 120, items: ["وردة جوري"], status: "pending" },
+  { id: "١٠٤٣", customer: "نادية عادل", total: 800, items: ["سلة ورد كبيرة", "شوكولاتة"], status: "shipped" },
+  { id: "١٠٤٤", customer: "طارق منير", total: 250, items: ["بوكيه توليب"], status: "cancelled" },
+];
 
-~~~text الناتج (Chrome 157)
-time: 2  →  PT15M و PT40M        data.value = 8
-strong: 1   em: 1   dfn: 1 (term)   abbr: 1 (title = معلقة كبيرة)   small: 1   hr: 1
-b: 0   i: 0   u: 0
-عرض 360:  scrollWidth = 360
+// the status decides the badge: the screen never picks a colour itself
+export const statusBadge = {
+  paid: { tone: "ok", label: "اتدفع" },
+  pending: { tone: "warn", label: "مستني الدفع" },
+  shipped: { tone: "primary", label: "في الطريق" },
+  cancelled: { tone: "danger", label: "اتلغى" },
+} as const;
+~~~
+
+~~~tsx src/Orders.tsx
+import { orders, statusBadge } from "./orders-data.ts";
+import { Badge } from "./components/ui/badge.tsx";
+import { Button } from "./components/ui/button.tsx";
+import { Card, CardText, CardTitle } from "./components/ui/card.tsx";
+import { Input } from "./components/ui/input.tsx";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./components/ui/dialog.tsx";
+
+const money = (n: number) => n.toLocaleString("ar-EG") + " ج";
+
+// layout classes only (grid, gap, spacing). Every colour, radius and shadow comes from a component
+export default function Orders() {
+  return (
+    <main className="mx-auto max-w-4xl space-y-6 p-4">
+      <h1 className="text-2xl font-bold">طلبات النهارده</h1>
+      <div className="max-w-sm"><Input label="دوّر برقم الطلب" inputMode="numeric" /></div>
+      <ul className="grid gap-4 sm:grid-cols-2">
+        {orders.map(o => (
+          <li key={o.id}>
+            <Card className="flex h-full flex-col gap-3">
+              <div className="flex items-start justify-between gap-3">
+                <CardTitle as="h2">طلب #{o.id}</CardTitle>
+                <Badge tone={statusBadge[o.status].tone}>{statusBadge[o.status].label}</Badge>
+              </div>
+              <CardText>{o.customer}، {money(o.total)}</CardText>
+              <Dialog>
+                <DialogTrigger asChild><Button variant="soft" size="sm" className="mt-auto self-start">التفاصيل</Button></DialogTrigger>
+                <DialogContent title={"طلب #" + o.id} description={o.customer + "، " + money(o.total)}>
+                  <Badge tone={statusBadge[o.status].tone} look="solid">{statusBadge[o.status].label}</Badge>
+                  <ul className="list-disc space-y-1 ps-5">{o.items.map(i => <li key={i}>{i}</li>)}</ul>
+                  <DialogClose asChild><Button className="w-full">تمام</Button></DialogClose>
+                </DialogContent>
+              </Dialog>
+            </Card>
+          </li>
+        ))}
+      </ul>
+    </main>
+  );
+}
+~~~
+
+~~~tsx src/components/ui/card.tsx (بعد إضافة as)
+import type { ComponentProps } from "react";
+import { cn } from "../../lib/cn.ts";
+
+// a card is a few small parts, each one takes className so the page can adjust it
+export function Card({ className, ...props }: ComponentProps<"section">) {
+  return <section className={cn("rounded-2xl bg-surface p-5 ring-1 ring-line", className)} {...props} />;
+}
+// the heading level depends on the page around the card, so the page chooses it (h3 by default)
+export function CardTitle({ as: Tag = "h3", className, ...props }: ComponentProps<"h3"> & { as?: "h2" | "h3" | "h4" }) {
+  return <Tag className={cn("text-lg font-bold", className)} {...props} />;
+}
+export function CardText({ className, ...props }: ComponentProps<"p">) {
+  return <p className={cn("mt-1 text-muted", className)} {...props} />;
+}
+~~~
+
+باقي الملفات (المكونات وصفحة التوثيق [[index.html]]) زي مشروع المكتبة.
+
+~~~view 560 900 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)، و «التفاصيل» بيفتح الـ Dialog في مشروعك
+<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>طلبات متجر ورد</title>
+  
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-black:#000;--spacing:.25rem;--container-sm:24rem;--container-4xl:56rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-semibold:600;--font-weight-bold:700;--radius-lg:.5rem;--radius-2xl:1rem;--animate-spin:spin 1s linear infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.fixed{position:fixed}.inset-0{inset:0}.inset-x-0{inset-inline:0}.inset-y-0{inset-block:0}.end-0{inset-inline-end:calc(var(--spacing) * 0)}.top-1{top:var(--spacing)}.top-1\/2{top:50%}.mx-auto{margin-inline:auto}.mt-1{margin-top:var(--spacing)}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.table{display:table}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-10{height:calc(var(--spacing) * 10)}.h-12{height:calc(var(--spacing) * 12)}.h-full{height:100%}.w-\[min\(22rem\,85vw\)\]{width:min(22rem,85vw)}.w-\[min\(28rem\,calc\(100vw-2rem\)\)\]{width:min(28rem,100vw - 2rem)}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.max-w-sm{max-width:var(--container-sm)}.-translate-y-1{--tw-translate-y:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-1\/2{--tw-translate-y:calc(calc(1 / 2 * 100%) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.animate-spin{animation:var(--animate-spin)}.list-disc{list-style-type:disc}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:var(--spacing)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.self-start{align-self:flex-start}.overflow-x-auto{overflow-x:auto}.rounded-2xl{border-radius:var(--radius-2xl)}.rounded-full{border-radius:2147483647px}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-current{border-color:currentColor}.border-muted{border-color:var(--muted)}.border-primary{border-color:var(--primary)}.border-e-transparent{border-inline-end-color:#0000}.bg-bg{background-color:var(--bg)}.bg-black{background-color:var(--color-black)}.bg-black\/50{background-color:#00000080}@supports (color:color-mix(in lab, red, red)){.bg-black\/50{background-color:color-mix(in oklab, var(--color-black) 50%, transparent)}}.bg-danger{background-color:var(--danger)}.bg-danger-soft{background-color:var(--danger-soft)}.bg-ok{background-color:var(--ok)}.bg-ok-soft{background-color:var(--ok-soft)}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.bg-surface{background-color:var(--surface)}.bg-warn{background-color:var(--warn)}.bg-warn-soft{background-color:var(--warn-soft)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-6{padding:calc(var(--spacing) * 6)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-0{padding-block:0}.py-0\.5{padding-block:calc(var(--spacing) * .5)}.ps-5{padding-inline-start:calc(var(--spacing) * 5)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-danger{color:var(--danger)}.text-fg{color:var(--fg)}.text-muted{color:var(--muted)}.text-ok{color:var(--ok)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.text-warn{color:var(--warn)}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-line{--tw-ring-color:var(--line)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){.hover\:bg-primary-soft:hover{background-color:var(--primary-soft)}.hover\:bg-primary\/20:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\:bg-primary\/20:hover{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.hover\:opacity-90:hover{opacity:.9}}.focus-visible\:outline-3:focus-visible{outline-style:var(--tw-outline-style);outline-width:3px}.focus-visible\:outline-offset-1:focus-visible{outline-offset:1px}.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}.focus-visible\:outline-ring:focus-visible{outline-color:var(--ring)}.active\:bg-primary\/20:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/20:active{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.active\:bg-primary\/30:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/30:active{background-color:color-mix(in oklab, var(--primary) 30%, transparent)}}.active\:opacity-80:active{opacity:.8}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.aria-busy\:cursor-progress[aria-busy=true]{cursor:progress}.aria-invalid\:border-danger[aria-invalid=true]{border-color:var(--danger)}@media (prefers-reduced-motion:reduce){.motion-reduce\:animate-none{animation:none}}@media (width>=40rem){.sm\:w-64{width:calc(var(--spacing) * 64)}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+<body>
+<div id="root"><main class="mx-auto max-w-4xl space-y-6 p-4"><h1 class="text-2xl font-bold">طلبات النهارده</h1><div class="max-w-sm"><div class="grid gap-1"><label for="_r_0_" class="font-semibold">دوّر برقم الطلب</label><input id="_r_0_" class="h-10 rounded-lg border border-muted bg-surface px-3 text-fg focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-ring aria-invalid:border-danger" inputmode="numeric"></div></div><ul class="grid gap-4 sm:grid-cols-2"><li><section class="rounded-2xl bg-surface p-5 ring-1 ring-line flex h-full flex-col gap-3"><div class="flex items-start justify-between gap-3"><h2 class="text-lg font-bold">طلب #١٠٤١</h2><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-ok-soft text-ok">اتدفع</span></div><p class="mt-1 text-muted">هالة سمير، ٤٥٠ ج</p><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm mt-auto self-start" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">التفاصيل</button></section></li><li><section class="rounded-2xl bg-surface p-5 ring-1 ring-line flex h-full flex-col gap-3"><div class="flex items-start justify-between gap-3"><h2 class="text-lg font-bold">طلب #١٠٤٢</h2><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-warn-soft text-warn">مستني الدفع</span></div><p class="mt-1 text-muted">مروان فتحي، ١٢٠ ج</p><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm mt-auto self-start" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">التفاصيل</button></section></li><li><section class="rounded-2xl bg-surface p-5 ring-1 ring-line flex h-full flex-col gap-3"><div class="flex items-start justify-between gap-3"><h2 class="text-lg font-bold">طلب #١٠٤٣</h2><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-primary-soft text-primary">في الطريق</span></div><p class="mt-1 text-muted">نادية عادل، ٨٠٠ ج</p><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm mt-auto self-start" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">التفاصيل</button></section></li><li><section class="rounded-2xl bg-surface p-5 ring-1 ring-line flex h-full flex-col gap-3"><div class="flex items-start justify-between gap-3"><h2 class="text-lg font-bold">طلب #١٠٤٤</h2><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-danger-soft text-danger">اتلغى</span></div><p class="mt-1 text-muted">طارق منير، ٢٥٠ ج</p><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm mt-auto self-start" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">التفاصيل</button></section></li></ul></main></div>
+
+
+</body></html>
+~~~
+
+**هتشوف إيه:** «طلبات النهارده»، وخانة بحث، و ٤ كروت طلبات، في كل كارت رقم الطلب وشارة حالته الملونة (اتدفع أخضر، ومستني الدفع أصفر، وفي الطريق نيلي، واتلغى أحمر) واسم العميل والمبلغ وزرار «التفاصيل».
+
+**الاختبار الحقيقي للـ design system:** الشاشة مفيهاش ولا كلاس لون أو تدوير أو ظل. اتعدّت بـ grep على [[Orders.tsx]] لـ [[bg-]] و [[text-]] (غير المقاسات) و [[border-]] و [[ring-]] و [[rounded-]] و [[shadow-]]: 0. كل اللي فيها layout ([[grid]] و [[gap]] و [[space-y]]) ومكونات.
+
+**الحالة بتختار الشارة، مش الشاشة:** [[statusBadge]] في [[orders-data.ts]] بيقول «paid = ok و اتدفع». الشاشة بتقول [[statusBadge[o.status].tone]] ومش بتعرف أي لون.
+
+**صفحتين في مشروع واحد:** [[build.rollupOptions.input]] في [[vite.config.ts]]: التوثيق ([[index.html]]) والشاشة ([[orders.html]])، والاتنين بيستخدموا نفس المكونات، و Vite حط المكونات المشتركة في ملف واحد.
+
+**غلطة مسكها axe وغيّرت المكتبة نفسها:** [[CardTitle]] كان دايمًا [[h3]]. في صفحة التوثيق ده صح (جوه أقسام [[h2]])، بس هنا الكروت تحت [[h1]] على طول، و axe قال [[heading-order]]. مستوى العنوان بيعتمد على الصفحة، فـ [[CardTitle]] بقى بياخد [[as="h2"]] (والافتراضي [[h3]]). design system حقيقي بيتغيّر لما شاشة حقيقية تتنقل ليه، وده المقصود من المشروع.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+grep في Orders.tsx لـ bg- text-(لون) border- ring- rounded- shadow-: 0
+npx vite build: orders-*.js 2.20 kB و docs-*.js 5.15 kB، والمكونات المشتركة في ملف واحد
+«التفاصيل» في طلب ١٠٤٣: Dialog «طلب #١٠٤٣» فيه 2 منتج، و Escape رجّع الـ focus للزرار
+360: scrollWidth 360/360
+axe والـ Dialog مفتوح: 0   مقفول: 0 (كانت heading-order:1 قبل as="h2")   الـ validator: مفيش رسايل
 ~~~` },
       ],
       items: [
         {
-          cmd: "strong و em",
+          cmd: "cn()",
+          ref: [
+            { t: "clsx (GitHub)", url: "https://github.com/lukeed/clsx" },
+            { t: "tailwind-merge (GitHub)", url: "https://github.com/dcastil/tailwind-merge" },
+            { t: "shadcn/ui: Manual installation (lib/utils و cn)", url: "https://ui.shadcn.com/docs/installation/manual" },
+          ],
+          title: "دمج الكلاسات من غير ما يتخانقوا",
+          desc: R`[[cn()]] دالة صغيرة في كل مشروع shadcn: [[clsx]] بيجمّع الكلاسات ويشيل الشرطية اللي false، و [[twMerge]] بيحل التعارض: لو فيه [[px-4]] و [[px-6]] بيسيب الأخير بس.
+
+ودي بتخلي المكون ياخد [[className]] من برا ويغلب الافتراضي بتاعه بأمان.`,
+          example: R`// lib/utils.ts
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+// الاستخدام
+cn("px-4 py-2", isActive && "bg-brand text-white", { "opacity-50": disabled });
+cn("px-4 bg-gray-100", "px-6"); // "bg-gray-100 px-6"
+cn("text-sm text-gray-600", className);`,
+          try: R`في مشروع الـ lab سطّب [[clsx tailwind-merge]] واعمل [[cn]]. اطبع [[cn("p-2", "px-4")]] و [[cn("px-4", "p-2")]] وقارن: الأولى بتسيب الاتنين (px-4 بيغلب الجزء الأفقي بس)، والتانية بتسيب [[p-2]] بس.`,
+          flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اختار العنصر:** خمس جمل، كل واحدة محتاجة [[strong]] أو [[em]] أو [[b]] أو [[i]] أو ولا حاجة:
-١. لافتة: «متسيبش الأطفال لوحدهم جنب البسين.»
-٢. «أنا طلبت شاي، مش قهوة.» (الزبون بيصحّح للجرسون)
-٣. مراجعة فيها اسمين منتجين: «مكنسة ريح ٣» و «مكنسة ريح ٥».
-٤. الاسم العلمي للقطة: Felis catus.
-٥. «المحل بيفتح الساعة ٩ الصبح.»`, done: R`في الصفحة: [[strong]] واحد، و [[em]] واحد، و [[b]] اتنين، و [[i]] واحد عليه [[lang="la"]]، والجملة الخامسة من غير أي عنصر. والتلات جمل الأولانية شكلهم تقيل أو مايل، بس كل واحدة لسبب مختلف تقدر تقوله.`, work: { h: 250, start: R`<p>متسيبش الأطفال لوحدهم جنب البسين.</p>
-<p>أنا طلبت شاي، مش قهوة.</p>
-<p>جرّبنا مكنسة ريح ٣ و مكنسة ريح ٥ أسبوع كامل.</p>
-<p>القطة اسمها العلمي Felis catus.</p>
-<p>المحل بيفتح الساعة ٩ الصبح.</p>`, checks: [
-              { say: R`لافتة البسين فيها [[<strong>]] واحد`, q: "strong", has: "الأطفال", n: 1 },
-              { say: R`كلمة «شاي» عليها [[<em>]]`, q: "em", has: "شاي", n: 1 },
-              { say: R`اسمين المنتجين كل واحد في [[<b>]]`, q: "b", n: 2 },
-              { say: R`الاسم العلمي في [[<i>]] ومعاه [[lang="la"]]`, q: "i", has: "Felis", attr: ["lang", "la"], n: 1 },
-              { say: R`جملة الساعة ٩ من غير أي عنصر عليها`, q: "strong, em, b, i", has: "٩", n: 0 },
-            ] }, sol: R`~~~live 200 250 الحل
-<p><strong>متسيبش الأطفال لوحدهم جنب البسين.</strong></p>
-<p>أنا طلبت <em>شاي</em>، مش قهوة.</p>
-<p>جرّبنا <b>مكنسة ريح ٣</b> و <b>مكنسة ريح ٥</b> أسبوع كامل.</p>
-<p>القطة اسمها العلمي <i lang="la">Felis catus</i>.</p>
-<p>المحل بيفتح الساعة ٩ الصبح.</p>
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج كل سطر قبل ما تشغّله: [[cn("p-4", "px-6")]]، و [[cn("px-6", "p-4")]]، و [[cn("mt-2", "my-4")]]، و [[cn("my-4", "mt-2")]]، و [[cn("a", 0 && "b", ["c", { d: true, e: false }])]].`, done: R`بـ clsx 2.1.1 و tailwind-merge 3.7.0: [["p-4 px-6"]]، و [["p-4"]]، و [["my-4"]]، و [["my-4 mt-2"]]، و [["a c d"]]. وفهمت إن الأخير بيكسب لو بيغطي اللي قبله كله، وإن الأدق بعد العام بيتساب (mt-2 بعد my-4 بيعدّل حتة منه بس).`, sol: R`~~~js lib/utils.mjs
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
 ~~~
 
-**ليه كل واحد:**
+~~~js predict.mjs
+import { cn } from "./lib/utils.mjs";
 
-- الأولى تحذير ممكن حد يتأذى لو مقراهوش: ده «خطورة»، يعني [[strong]].
-- التانية فيها كلمة بتتنطق بضغطة عشان تصحّح: لو شلت الضغطة من «شاي» المعنى بيضعف. يعني [[em]].
-- التالتة أسامي منتجات عايز العين تلقطها وهي بتجري على المراجعة، من غير ما تكون أهم من باقي الكلام: [[b]].
-- الرابعة اسم علمي بلغة تانية (لاتيني): نبرة مختلفة عن باقي الجملة، يعني [[i]]، ومعاها [[lang="la"]] عشان قارئ الشاشة يعرف إنها مش عربي.
-- الخامسة معلومة عادية. مش كل جملة محتاجة عنصر.
+console.log(cn("p-4", "px-6"));
+console.log(cn("px-6", "p-4"));
+console.log(cn("mt-2", "my-4"));
+console.log(cn("my-4", "mt-2"));
+console.log(cn("a", 0 && "b", ["c", { d: true, e: false }]));
+~~~
 
-**الغلطة الشائعة:** تحط [[strong]] على الخمسة «عشان يبانوا». لما كل حاجة مهمة مفيش حاجة مهمة، والتحذير الحقيقي بيضيع وسطهم.
+~~~bash
+npm i clsx@2.1.1 tailwind-merge@3.7.0
+node predict.mjs
+~~~
+
+**القاعدة:** [[clsx]] بيجمّع القيم ويشيل الفاضي، و [[twMerge]] بيمشي من الآخر للأول ويحذف اللي اتغطى.
+
+- [[cn("p-4", "px-6")]]: [[px-6]] أدق وجاي بعد [[p-4]]، فبيعدّل حتة منه بس. الاتنين يفضلوا.
+- [[cn("px-6", "p-4")]]: [[p-4]] الأخير بيغطي كل الاتجاهات، فـ [[px-6]] مبقالهاش لزمة.
+- [[cn("mt-2", "my-4")]]: نفس الكلام، [[my-4]] بيغطي فوق وتحت.
+- [[cn("my-4", "mt-2")]]: [[mt-2]] بيعدّل فوق بس.
+- الأخير: [[0 && "b"]] قيمته [[0]] فبيتشال، والـ array بيتفرد، والـ object بياخد المفاتيح اللي قيمتها true.
+
+**الغلطة الشائعة:** تفتكر إن «الأخير بيكسب» معناها الأخير بس يفضل. لو الأخير أضيق من اللي قبله، الاتنين بيفضلوا، وده الصح.
 
 ~~~text الناتج
-strong: 1   em: 1   b: 2   i: 1
-font-weight:  strong = 700   b = 700   باقي الكلام = 400
-font-style:   em = italic    i = italic
-الدور (computedRole):  strong = strong   em = emphasis   b = generic   i = generic
+p-4 px-6
+p-4
+my-4
+my-4 mt-2
+a c d
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<h1>عروض <strong>الجمعة</strong></h1>]]. العنوان أصلًا تقيل. الـ [[font-weight]] بتاع كلمة «الجمعة» هيبقى كام؟ وهتشوف فرق بعينك؟ توقّع وبعدين افتح تاب Computed.`, done: R`الـ h1 وزنه 700 والـ strong اللي جواه 900، وبالخط الافتراضي مفيش فرق باين خالص (عرض الكلمة هو هو). وعرفت ليه: المتصفح بيكتب [[font-weight: bolder]] مش [[bold]]، والخط نفسه مفيهوش وزن أتقل من 700.`, sol: R`~~~live 90 110 strong جوه h1
-<h1>عروض <strong>الجمعة</strong></h1>
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في [[@theme]] فيه [[--text-display: 3rem]]، والعنوان [[cn("text-white", "text-display")]] بيطلع أسود. اطبع الناتج وصلّح.`, done: R`[[cn]] رجّع [["text-display"]] بس: tailwind-merge مش عارف [[display]] حجم، فاعتبره لون ومسح [[text-white]]. بعد [[extendTailwindMerge({ extend: { theme: { text: ["display"] } } })]] الناتج [["text-white text-display"]]، و [[cn("text-lg", "text-display")]] بقت [["text-display"]].`, sol: R`~~~js fix.mjs
+import { clsx } from "clsx";
+import { twMerge, extendTailwindMerge } from "tailwind-merge";
+
+// قبل: tailwind-merge العادي مش عارف إن display حجم خط
+const before = (...i) => twMerge(clsx(i));
+console.log(before("text-white", "text-display"));
+
+// بعد: بنعرّفه على التوكن بتاعنا
+const merge = extendTailwindMerge({ extend: { theme: { text: ["display"] } } });
+const cn = (...i) => merge(clsx(i));
+console.log(cn("text-white", "text-display"));
+console.log(cn("text-lg", "text-display"));
 ~~~
 
-**التوقّع الصح:** الرقم بيعلى لـ 900، والشكل مبيتغيّرش.
+**ليه [[text-white]] اتمسحت:** [[text-*]] في Tailwind معناه حاجتين: لون أو حجم. tailwind-merge بيعرف الأحجام المشهورة ([[text-lg]] وأخواتها)، بس [[--text-display]] توكن انت اللي عملته. فلما شاف [[text-display]] مش عارفها حجم، اعتبرها لون، فحذف اللون اللي قبلها.
 
-**ليه 900؟** الستايل الافتراضي للمتصفح (مكتوب في مواصفة HTML، قسم Rendering) هو [[b, strong { font-weight: bolder; }]]. [[bolder]] معناها «أتقل من أبويا بدرجة»: لو الأب 400 يبقى 700، ولو الأب 700 (زي الـ h1) يبقى 900.
+**التصليح:** [[extendTailwindMerge]] بيقوله إن [[display]] حجم خط. دلوقتي [[text-white]] و [[text-display]] مش متعارضين، و [[text-lg]] و [[text-display]] متعارضين صح.
 
-**وليه مفيش فرق باين؟** الخط الافتراضي هنا (Times New Roman) فيه وزنين بس: عادي وتقيل. فالمتصفح لما بتطلب منه 900 بيرسم التقيل اللي عنده. قست عرض نفس الكلمة بـ 700 وبـ 900 وطلع نفس الرقم.
-
-**المعنى موجود برضه:** الدور [[strong]] موجود في شجرة الـ accessibility حتى لو العين مش شايفة فرق. ولو عايز الفرق يبان، ده شغل CSS (لون مثلًا)، وده في وحدة «CSS: مين بيكسب ومساحة كل عنصر».
-
-**الغلطة الشائعة:** تشيل الـ strong «عشان مش باين». المعنى مش الشكل: الشكل بيتظبط بعدين بالـ CSS، والعنصر يفضل.
+**الغلطة الشائعة:** تلف حوالين المشكلة وتحط [[!text-white]]. كده الباج فاضل لكل مكوّن تاني. وأي توكن custom في [[@theme]] من namespace بيتشارك معناه ([[text-]] و [[shadow-]] و [[rounded-]]) لازم تعرّفه لـ tailwind-merge. احفظ [[cn]] في مكان واحد.
 
 ~~~text الناتج
-h1      font-weight = 700
-strong  font-weight = 900   الدور = strong
-عرض كلمة «الجمعة»: بوزن 700 = 69.3px   بوزن 900 = 69.3px
+text-display                 ← قبل: text-white اتمسحت
+text-white text-display      ← بعد
+text-display                 ← text-lg و text-display: واحد بس، وده الصح
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة مطعم متخيل، كل عنصر فيها متاخد بشكله:
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** [[cn.test.mjs]] بـ [[node:test]] فيه ٦ حالات على الأقل: تعارض، وشرط false، و object، و array، و undefined، و variant زي [[hover:]] و [[md:]] مع بعض.`, done: R`[[node --test]] بيعدّي كله، وفيه حالة [[cn("hover:bg-gray-100", "hover:bg-gray-200", "md:bg-white")]] = [["hover:bg-gray-200 md:bg-white"]]، ولو كسرت cn (شيلت twMerge) ٣ اختبارات على الأقل بتفشل.`, sol: R`~~~js cn.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { cn } from "./lib/utils.mjs";
 
-~~~html
-<p><b>تحذير: الأرضية مبلولة.</b></p>
-<p><strong>عن المطعم</strong></p>
-<p>بنقدّم أكل بيتي من سنة <i>٢٠١٥</i>، وكل الخضار <i>طازة</i> من السوق كل يوم.</p>
-<p><em>التوصيل مجاني جوه المدينة، والطلب بالتليفون أو من الموقع، والدفع كاش أو فيزا.</em></p>
+test("التعارض: الأخير بيكسب", () => {
+  assert.equal(cn("p-2", "p-4"), "p-4");
+});
+test("شرط false بيتشال", () => {
+  assert.equal(cn("a", false && "b", null, "c"), "a c");
+});
+test("object: المفاتيح اللي قيمتها true بس", () => {
+  assert.equal(cn({ a: true, b: false, c: 1 }), "a c");
+});
+test("array متداخل", () => {
+  assert.equal(cn(["a", ["b"]], "c"), "a b c");
+});
+test("undefined مبيطلعش كلمة undefined", () => {
+  assert.equal(cn("a", undefined), "a");
+});
+test("كل variant ليه حسابه لوحده", () => {
+  assert.equal(cn("hover:bg-gray-100", "hover:bg-gray-200", "md:bg-white"), "hover:bg-gray-200 md:bg-white");
+});
+test("اتنين variants مع بعض", () => {
+  assert.equal(cn("md:hover:p-2", "md:hover:p-4"), "md:hover:p-4");
+});
 ~~~
 
-فيها ٤ غلطات. لاقيهم وصلّحهم.`, done: R`بعد التصليح: التحذير بقى [[strong]]، و «عن المطعم» بقى [[<h2>]] (وتاب Accessibility بيقول heading مستوى 2)، و «طازة» بقت [[em]] والسنة من غير عنصر، والفقرة الأخيرة من غير [[em]] خالص. والعدد: strong 1، و em 1، و b صفر، و i صفر، و h2 واحد.`, work: { h: 230, start: R`<p><b>تحذير: الأرضية مبلولة.</b></p>
-<p><strong>عن المطعم</strong></p>
-<p>بنقدّم أكل بيتي من سنة <i>٢٠١٥</i>، وكل الخضار <i>طازة</i> من السوق كل يوم.</p>
-<p><em>التوصيل مجاني جوه المدينة، والطلب بالتليفون أو من الموقع، والدفع كاش أو فيزا.</em></p>`, checks: [
-              { say: R`التحذير جوه [[<strong>]] مش [[<b>]]`, q: "strong", has: "تحذير" },
-              { say: R`«عن المطعم» بقى عنوان [[<h2>]]`, q: "h2", has: "عن المطعم" },
-              { say: R`كلمة «طازة» عليها [[<em>]]`, q: "em", has: "طازة", n: 1 },
-              { say: R`مفيش [[<b>]] ولا [[<i>]] في الصفحة`, q: "b, i", n: 0 },
-              { say: R`فقرة التوصيل من غير [[<em>]]`, q: "em", has: "التوصيل", n: 0 },
-            ] }, sol: R`~~~live 220 230 بعد التصليح
-<p><strong>تحذير: الأرضية مبلولة.</strong></p>
-<h2>عن المطعم</h2>
-<p>بنقدّم أكل بيتي من سنة ٢٠١٥، وكل الخضار <em>طازة</em> من السوق كل يوم.</p>
-<p>التوصيل مجاني جوه المدينة، والطلب بالتليفون أو من الموقع، والدفع كاش أو فيزا.</p>
+~~~bash
+node --test cn.test.mjs
 ~~~
 
-**الغلطات الأربعة:**
+**ليه الحالات دي:** كل واحدة بتحرس سلوك مختلف. التعارض بيحرس [[twMerge]]، والباقي بيحرس [[clsx]]، وآخر حالتين بيتأكدوا إن كل variant ليه حسابه لوحده: [[hover:bg-gray-100]] مبتتعارضش مع [[md:bg-white]].
 
-1. تحذير بـ [[b]]. المواصفة نفسها كاتبة المثال ده كاستخدام غلط لـ [[b]]: التحذير «خطورة»، ودي شغلة [[strong]].
-2. [[<p><strong>عن المطعم</strong></p>]] عنوان متنكّر. شكله عنوان، بس قارئ الشاشة اللي بيتنقل بين العناوين مش هيلاقيه. العنوان [[<h2>]].
-3. [[i]] على سنة وعلى كلمة «طازة». السنة ملهاش أي نبرة مختلفة، فمتاخدش حاجة. و «طازة» الكاتب بيشدّ عليها، يعني [[em]].
-4. [[em]] على فقرة كاملة عشان تبقى مايلة. دي مش ضغطة على كلمة، دي تنسيق. لو عايزها مايلة فعلًا يبقى CSS ([[font-style: italic]])، ودلوقتي سيبها عادية.
+**جرّب تكسره:** شيل [[twMerge]] من [[cn]] وشغّل تاني. الاختبار اللي بيعدّي في كل الحالات مش اختبار.
 
-**الغلطة الشائعة:** تصلّح الشكل بس: تبدّل [[b]] بـ [[strong]] في كل حتة من غير ما تسأل «هو ده مهم فعلًا؟». التبديل الأعمى بيطلّع نفس المشكلة باسم تاني.
+**الغلطة الشائعة:** تكتب اختبار بيقارن النتيجة بنفس الدالة، زي [[assert.equal(cn("a"), cn("a"))]]. دايمًا اكتب القيمة المتوقعة بالحرف.
 
 ~~~text الناتج
-                 strong   em   b   i   h2
-قبل التصليح        1      1    1   2   0
-بعد التصليح        1      1    0   0   1
-الدور بتاع «عن المطعم»:  قبل = strong جوه paragraph    بعد = heading
+cn سليم:
+ℹ tests 7
+ℹ pass 7
+ℹ fail 0
+
+بعد ما شيلت twMerge:
+ℹ tests 7
+ℹ pass 4
+ℹ fail 3
+✖ التعارض: الأخير بيكسب
+✖ كل variant ليه حسابه لوحده
+✖ اتنين variants مع بعض
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** بطاقة تعليمات لدوا كحة متخيل اسمه «هدوءين»: عنوان، وجملة تعريف فيها اسم المادة الفعالة بالإنجليزي، والجرعة، وتحذير خطير (متاخدوش مع أدوية الضغط)، وجوّه التحذير حتة أخطر (ولا للأطفال أقل من ٦ سنين)، وجملة فيها ضغطة على كلمة («بعد الأكل، مش قبله»).`, done: R`البطاقة فيها [[strong]] جوه [[strong]] (والداخلي وزنه 900)، و [[em]] واحد، و [[i lang="en"]] لاسم المادة، و [[b]] لاسم الدوا في جملة التعريف، ومفيش ولا [[strong]] على كلام عادي زي الجرعة.`, work: { h: 300, start: R`هدوءين: شراب للكحة
-هدوءين شراب بيهدّي الكحة الناشفة. المادة الفعالة اسمها calmoxine (اسم متخيل).
-الجرعة: معلقة صغيرة ٣ مرات في اليوم، بعد الأكل مش قبله.
-تحذير: متاخدوش مع أدوية الضغط. وممنوع للأطفال أقل من ٦ سنين.`, checks: [
-              { say: R`اسم البطاقة عنوان [[<h2>]]`, q: "h1, h2, h3", has: "هدوءين" },
-              { say: R`اسم الدوا في أول جملة [[<b>]]`, q: "b", has: "هدوءين" },
-              { say: R`اسم المادة [[<i>]] ومعاه [[lang="en"]]`, q: "i", has: "calmoxine", attr: ["lang", "en"] },
-              { say: R`كلمة «بعد» عليها [[<em>]]`, q: "em", has: "بعد", n: 1 },
-              { say: R`التحذير [[<strong>]] وجواه حتة الأطفال [[<strong>]] تاني`, q: "strong strong", has: "أطفال", n: 1 },
-              { say: R`الجرعة كلام عادي من غير [[<strong>]]`, q: "strong", has: "الجرعة", n: 0 },
-            ] }, sol: R`~~~live 220 300 بطاقة الدوا
-<article>
-  <h2>هدوءين: شراب للكحة</h2>
-  <p><b>هدوءين</b> شراب بيهدّي الكحة الناشفة. المادة الفعالة اسمها <i lang="en">calmoxine</i> (اسم متخيل).</p>
-  <p>الجرعة: معلقة صغيرة ٣ مرات في اليوم، <em>بعد</em> الأكل مش قبله.</p>
-  <p><strong>تحذير: متاخدوش مع أدوية الضغط. <strong>وممنوع للأطفال أقل من ٦ سنين.</strong></strong></p>
-</article>
+            { lvl: 'تطبيق', t: R`**ابني:** component [[NavLink]] بياخد [[href]] و [[active]] و [[className]]: كلاسات أساسية، و [[active && "bg-brand text-white"]]، والـ className آخر حاجة. استخدمه في navbar وغيّر لون لينك واحد من برا.`, done: R`اللينك النشط بس عليه الخلفية، و [[aria-current="page"]] عليه، واللينك اللي اديته [[className="text-red-600"]] لونه اتغير والباقي زي ما هو، ومفيش لينك فيه كلاسين لون في الـ DOM.`, sol: R`~~~tsx NavLink.tsx
+import { cn } from "./cn";
+
+type Props = React.ComponentProps<"a"> & { active?: boolean };
+
+export function NavLink({ active, className, ...props }: Props) {
+  return (
+    <a
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100",
+        active && "bg-brand text-white hover:bg-brand",
+        className
+      )}
+      {...props}
+    />
+  );
+}
 ~~~
 
-**القرارات:**
+~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { NavLink } from "./NavLink";
 
-- اسم الدوا في أول جملة [[b]]: عايز العين تلقطه، بس هو مش «أهم» من باقي الجملة.
-- اسم المادة [[i]] ومعاه [[lang="en"]]: مصطلح بلغة تانية. الـ [[lang]] بيخلي قارئ الشاشة ينطقه إنجليزي.
-- «بعد» عليها [[em]]: لو قريتها بصوت هتشدّ عليها، وهي اللي بتفرّق المعنى عن «قبل».
-- التحذير كله [[strong]]، والحتة اللي عن الأطفال [[strong]] تاني جواه: المواصفة بتقول إن كل [[strong]] زيادة بيعلّي درجة الأهمية.
-- الجرعة كلام عادي. لو حطيتها [[strong]] هي كمان، التحذير مبقاش بيتميّز.
+createRoot(document.getElementById("root")!).render(
+  <main>
+  <h1 className="p-4 text-2xl font-bold">متجر النور</h1>
+  <nav aria-label="الرئيسية" className="flex gap-2 p-4">
+    <NavLink href="/" active>الرئيسية</NavLink>
+    <NavLink href="/products">المنتجات</NavLink>
+    <NavLink href="/offers" className="text-red-600">العروض</NavLink>
+  </nav>
+  </main>
+);
+~~~
 
-**الغلطة الشائعة:** تقفل الـ tags بترتيب غلط: [[<strong>...<em>...</strong></em>]]. اللي اتفتح آخر واحد بيتقفل الأول.
+و [[cn.ts]] بتاعك من الدرس، و [[in.css]] فيه [[--color-brand]].
+
+**الترتيب في [[cn()]] هو المعنى:** الأساس الأول، وبعده حالة active، و [[className]] آخر حاجة. كده اللي بيستخدم المكوّن هو صاحب الكلمة الأخيرة. و twMerge بيشيل [[text-gray-700]] لما ييجي لون تاني، فمفيش كلاسين لون على نفس العنصر.
+
+**[[aria-current="page"]]:** قارئ الشاشة بيقول «الصفحة الحالية». اللون لوحده ميقولش ده لحد مش شايف.
+
+**[[undefined]] مش [[false]]:** لو كتبت [[aria-current={active}]] هيطلع [[aria-current="false"]] على كل لينك. [[undefined]] بيشيل الـ attribute.
+
+**الغلطة الشائعة:** تحط [[className]] في الأول، فكلاسات الأساس تكسب ومحدش يقدر يغيّر حاجة من برا.
 
 ~~~text الناتج
-strong: 2  (الخارجي font-weight = 700، والداخلي = 900)
-em: 1   b: 1   i: 1 (lang = en)
-الأدوار: article ، heading (مستوى 2) ، strong ، strong ، emphasis
+الرئيسية   class: rounded-lg px-3 py-2 bg-brand text-white hover:bg-brand
+           aria-current="page" ، اللون rgb(255, 255, 255)
+المنتجات   class: rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100
+العروض     class: rounded-lg px-3 py-2 hover:bg-gray-100 text-red-600
+           (text-gray-700 اتشالت)
+
+axe صفر
 ~~~` },
-            { lvl: 'تحدي', t: R`**اشرحها:** اكتب الجملة «أنا مش هسافر بكرة» أربع مرات، وكل مرة [[em]] على كلمة مختلفة. واكتب تحت كل واحدة: الجملة دي رد على إيه؟ وبعدين جاوب: لو شلت كل الـ tags، الأربع جمل هيفضل بينهم فرق؟`, done: R`كتبت أربع معاني مختلفة فعلًا (مين اللي هيسافر، وهل هيسافر أصلًا، وهيعمل إيه بدل السفر، وهيسافر إمتى)، وعرفت إن النص من غير tags واحد في الأربعة: الفرق كله شايله الـ [[em]].`, sol: R`~~~live 160 250 أربع ضغطات، أربع معاني
-<p><em>أنا</em> مش هسافر بكرة.</p>
-<p>أنا <em>مش</em> هسافر بكرة.</p>
-<p>أنا مش <em>هسافر</em> بكرة.</p>
-<p>أنا مش هسافر <em>بكرة</em>.</p>
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[clsx("px-6", "px-2")]] من غير twMerge: الـ div بيبقى عليه الكلاسين. اعمل build وقيس [[padding-left]]: أنهي واحد كسب؟ وليه مش «الأخير في الـ class»؟`, done: R`كسب [[px-6]] (24px) رغم إن [[px-2]] آخر حاجة في الـ class، لأن ترتيب الكلاسات في الـ HTML ملوش لازمة: اللي بيكسب الأخير في **ملف الـ CSS**، و Tailwind حاطط [[.px-6]] بعد [[.px-2]]. وده بالظبط اللي twMerge بيحله.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>مين كسب</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<div id="a" class="px-6 px-2">px-6 الأول</div>
+<div id="b" class="px-2 px-6">px-2 الأول</div>
+</body>
+</html>
 ~~~
 
-| الضغطة على | بترد على إيه |
-|---|---|
-| أنا | «مين اللي مسافر؟» أنا لأ، حد تاني هو اللي هيسافر |
-| مش | «انت مسافر بكرة صح؟» لأ خالص، نفي قاطع |
-| هسافر | «هتعمل إيه بكرة؟» هعمل حاجة تانية غير السفر |
-| بكرة | «مسافر إمتى؟» مش بكرة، يوم تاني |
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+~~~
 
-**ده تعريف [[em]] في المواصفة:** مكان الضغطة بيغيّر معنى الجملة، فالعنصر جزء من المحتوى نفسه مش زينة. وعشان كده اسمه emphasis مش italic.
+**ليه مش «الأخير في الـ class»:** لما كلاسين ليهم نفس الـ specificity، اللي بيكسب هو اللي جاي أخيرًا في **ملف الـ CSS**. ترتيب الأسماء جوه attribute [[class]] ملوش أي معنى عند المتصفح، ده مجرد set.
 
-**ولو شلت الـ tags؟** النص الخام واحد في الأربعة. قريت [[textContent]] بتاع كل فقرة وطلعوا نفس السطر بالحرف. يعني المعلومة اللي بتفرّق بينهم موجودة في العنصر بس.
+والعنصرين هنا ترتيبهم مختلف في الـ HTML، والنتيجة واحدة، لأن [[.px-6]] جاية بعد [[.px-2]] في [[out.css]].
 
-**الغلطة الشائعة:** تحط [[em]] على الجملة كلها. ساعتها مفيش كلمة بتتميّز، والمعنى رجع زي الجملة العادية بس مايلة.
+**عشان كده twMerge موجود:** بيشيل الكلاس المغلوب من الأول، فمش بتبقى تحت رحمة ترتيب الملف.
+
+**الغلطة الشائعة:** تعكس الكلاسات في الـ HTML وتستغرب إن مفيش حاجة اتغيرت.
 
 ~~~text الناتج
-عدد الفقرات: 4    عدد النصوص المختلفة (textContent): 1
-النص: أنا مش هسافر بكرة.
-كل em:  font-style = italic   الدور = emphasis
-~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** افتح قسم [[b]] في مواصفة HTML (اللينك تحت الدرس) وجاوب من النص نفسه: المواصفة بتقول تستخدم [[b]] إمتى بالظبط؟ وإيه العناصر الأربعة اللي بتقول جرّبهم الأول؟ وإيه المثال اللي كاتباه كاستخدام غلط؟`, done: R`جبت الجملة اللي فيها «last resort»، وعدّيت العناصر الأربعة (العناوين، و [[em]]، و [[strong]]، و [[mark]])، ولقيت مثال التحذير اللي المواصفة بتقول إن الصح فيه [[strong]].`, sol: R`**الإجابة من نص المواصفة (قسم 4.5.21 The b element):**
+class="px-6 px-2"   padding-left = 24px
+class="px-2 px-6"   padding-left = 24px
 
-~~~text من المواصفة
-The b element should be used as a last resort when no other element is more
-appropriate. In particular, headings should use the h1 to h6 elements, stress
-emphasis should use the em element, importance should be denoted with the
-strong element, and text marked or highlighted should use the mark element.
+مكان القاعدة في out.css: .px-2 عند 4641 ، .px-6 عند 4701
+يعني px-6 بعدها، فبتكسب في الحالتين.
 ~~~
 
-يعني [[b]] هو آخر اختيار: لما تكون عايز تلفت النظر لكلمة، ومفيش عنصر تاني معناه ينطبق عليها. والأربعة اللي يتجرّبوا الأول:
-
-| لو الكلام ده | العنصر |
-|---|---|
-| عنوان | [[<h1>]] لحد [[<h6>]] |
-| عليه ضغطة بتغيّر المعنى | [[<em>]] |
-| مهم أو خطير أو مستعجل | [[<strong>]] |
-| متعلّم عليه عشان ليه علاقة بحاجة | [[<mark>]] (الدرس الجاي) |
-
-والاستخدامات الصح اللي المواصفة عدّتها لـ [[b]]: كلمات مفتاحية في ملخص، وأسامي منتجات في مراجعة، وأول جملة في خبر (الـ lede).
-
-**المثال الغلط في المواصفة** هو ده، وبتقول إن الصح فيه [[strong]]:
-
-~~~live 60 70 الغلط حسب المواصفة
-<p><b>WARNING!</b> Do not frob the barbinator!</p>
-~~~
-
-~~~live 60 70 الصح
-<p><strong>WARNING!</strong> Do not frob the barbinator!</p>
-~~~
-
-الاتنين شكلهم واحد بالظبط. الفرق في المعنى اللي بيوصل لأي حد مش بيشوف الشاشة.
-
-**الغلطة الشائعة:** تصدّق إن [[b]] «اتلغى» من HTML. هو لسه عنصر سليم، بس معناه اتغيّر من «تقيل» لـ «لفت نظر من غير أهمية».
-
-~~~text الناتج
-النسخة الأولى:  b       font-weight = 700   الدور = generic
-النسخة التانية: strong  font-weight = 700   الدور = strong
+~~~view 120 120 الشكل في المتصفح (build حقيقي بـ Tailwind 4.3.4)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>مين كسب</title><style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--spacing:.25rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.px-2{padding-inline:calc(var(--spacing) * 2)}.px-6{padding-inline:calc(var(--spacing) * 6)}}
+</style></head>
+<body>
+<div id="a" class="px-6 px-2">px-6 الأول</div>
+<div id="b" class="px-2 px-6">px-2 الأول</div>
+</body>
+</html>
 ~~~` },
           ],
-          title: "كلمة مهمة ولا كلمة عليها ضغطة؟ strong و em، وإخواتهم b و i",
-          desc: R`[[<strong>]] بيقول إن الكلام ده مهم أو خطير أو مستعجل. و [[<em>]] بيقول إن الكلمة دي بتتنطق بضغطة بتغيّر معنى الجملة. المتصفح بيرسم الأول تقيل والتاني مايل، بس ده مجرد الشكل الافتراضي: العنصر بيتختار بمعناه.
-
-و [[<b>]] و [[<i>]] شكلهم زيهم بالظبط ومعناهم مختلف: [[<b>]] لفت نظر من غير أهمية (اسم منتج، كلمة مفتاحية)، و [[<i>]] كلام بنبرة تانية (كلمة أجنبية، اسم علمي، فكرة في دماغ شخصية).`,
-          example: R`<p><strong>تحذير:</strong> متقفلش الجهاز والتحديث شغال.</p>
-<p>أنا <em>مقولتش</em> إنه خد الفلوس.</p>
-<p>أنا مقولتش إنه <em>خد</em> الفلوس.</p>
-<p>اللابتوب <b>نجم ١٤</b> أخف من <b>نجم ١٦</b> بنص كيلو.</p>
-<p>الفرنساويين بيقولوا <i lang="fr">déjà vu</i> على الإحساس ده.</p>
-<p><strong>ممنوع الدخول. <strong>خطر كهربا.</strong></strong></p>`,
-          try: R`اكتب الجملة «أنا مقولتش إنه خد الفلوس» مرتين: مرة [[em]] على «مقولتش» ومرة على «الفلوس»، واقراهم بصوت عالي. وبعدين بدّل [[em]] بـ [[i]] في واحدة منهم: الشكل اتغيّر؟ افتح DevTools ← Elements ← تاب Accessibility ودوس على الكلمة في الحالتين وقارن.`,
-          flag: "script",
           deep: {
-            why: R`زمان HTML كان فيه عناصر للشكل بس: [[<b>]] يعني bold و [[<i>]] يعني italic. المشكلة إن «تقيل» مبيقولش ليه. هل ده تحذير؟ عنوان؟ اسم منتج؟ العين بتخمّن من السياق، بس قارئ الشاشة والبرامج مبيخمّنوش. فالمواصفة الحالية خلّت كل عنصر ليه معنى: [[strong]] للأهمية، و [[em]] للضغطة، وعرّفت [[b]] و [[i]] من جديد بمعاني تانية بدل ما تلغيهم. والشكل نفسه اتنقل للـ CSS.`,
-            how: R`المتصفح عنده ملف CSS داخلي (اسمه user agent stylesheet) فيه [[b, strong { font-weight: bolder }]] و [[i, em { font-style: italic }]]. عشان كده [[strong]] و [[b]] شكلهم واحد. الفرق في شجرة الـ accessibility اللي المتصفح بيبنيها من الصفحة: [[strong]] دوره [[strong]]، و [[em]] دوره [[emphasis]]، و [[b]] و [[i]] دورهم [[generic]] (يعني «حتة نص من غير معنى خاص»). ده اتقاس في Chrome 157.
+            why: R`لو مكون Button فيه [[px-4]] وانت عايز زرار معين [[px-6]]، والـ className بيتضاف جنبه، هيبقى عندك [[px-4 px-6]]. مين يكسب؟ مش اللي مكتوب آخر في الـ className، اللي مكتوب آخر في ملف الـ CSS الناتج، ودا مش في إيدك. twMerge بيشيل [[px-4]] خالص فمفيش خناقة.`,
+            how: R`[[clsx]] مجرد تجميع: [[clsx("a", false && "b", { c: true, d: false }, ["e"])]] = [[a c e]]. مبيعرفش حاجة عن Tailwind.
 
-الأربعة عناصر جوه السطر (inline): مبيكسروش السطر، وبيتحطوا جوه [[<p>]] أو عنوان أو أي عنصر فيه نص. وينفع يتحطوا جوه بعض، وكل [[strong]] جوه [[strong]] بيعلّي درجة الأهمية، وكل [[em]] جوه [[em]] بيعلّي درجة الضغطة.`,
-            when: R`اسأل السؤال بالترتيب: الكلام ده خطير أو مهم أو لازم يتقري الأول؟ يبقى [[strong]]. لو قريته بصوت هشدّ على الكلمة دي والمعنى هيتغيّر من غيرها؟ يبقى [[em]]. كلمة أجنبية أو اسم علمي أو فكرة في دماغ حد؟ [[i]] (ومعاها [[lang]] لو لغة تانية). اسم منتج أو كلمة مفتاحية عايز العين تلقطها بس؟ [[b]]. عايز الكلام يبقى تقيل «عشان شكله أحلى»؟ ولا واحد فيهم: ده CSS.`,
-            mistakes: R`[[strong]] بدل العنوان: [[<p><strong>الأسعار</strong></p>]] شكله عنوان ومش عنوان، واللي بيتنقل بين العناوين بقارئ الشاشة مش هيلاقيه. الصح [[<h2>]].
+[[twMerge]] عنده خريطة بكل مجموعات Tailwind: كل كلاس بيتصنف (padding-x، و background-color، و font-size...) ومعاه الـ variants بتاعته ([[hover:]] و [[md:]]). لما يلاقي اتنين في نفس المجموعة بنفس الـ variants، بيسيب الأخير. وبيفهم العلاقات: [[p-2]] بعد [[px-4]] يشيل px-4، بس [[px-4]] بعد [[p-2]] يسيبهم الاتنين.
 
-[[strong]] على نص الصفحة كله أو على كل تاني جملة: لما كل حاجة مهمة مفيش حاجة بتتميّز.
+الترتيب مهم: [[cn(defaults, className)]] عشان اللي جاي من برا يكسب. لو عكست، الافتراضي هيغلب اللي المستخدم طالبه.
 
-[[em]] على فقرة كاملة عشان تبقى مايلة: دي مش ضغطة، ده تنسيق.
-
-الخط المايل في العربي: الكتابة العربي تقليديًا مفيهاش خط مايل، وخطوط عربي كتير مفيهاش نسخة italic فالمتصفح بيميّل الحروف هندسيًا. شكله مش دايمًا مريح، وناس كتير بتغيّر شكل [[em]] في العربي بالـ CSS (لون مثلًا). ده مش سبب تسيب [[em]]: المعنى زي ما هو والشكل بيتغيّر.
-
-ترتيب القفل: [[<strong>مهم <em>جدًا</strong></em>]] غلط. اللي اتفتح الأخير يتقفل الأول: [[<strong>مهم <em>جدًا</em></strong>]].`
+tailwind-merge v3 لـ Tailwind v4 (و v2.6 لـ v3). الألوان الجديدة من [[@theme]] بيفهمها لوحده، بس أحجام خط أو مسافات بأسماء جديدة ([[--text-hero]]) لازم تعرّفه بيها بـ [[extendTailwindMerge]]، وإلا ممكن يفتكر [[text-hero]] لون ويشيل [[text-white]] اللي معاه.`,
+            when: "أي مكون بياخد className من برا، وأي كلاسات شرطية. ولكلاسات ثابتة في مكان واحد، string عادي كفاية.",
+            mistakes: R`template literal بدل cn: [[className={$__bt$__{base} $__{className}$__bt}]] فالتعارض مش بيتحل. وترتيب معكوس ([[cn(className, defaults)]]). وتوكن حجم خط مخصص من غير extendTailwindMerge، فيضيع اللون أو الحجم من غير سبب واضح.`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## دالة من سطر واحد بتحل مشكلة حقيقية
 
-فيه أربع عناصر شكلهم اتنين بس: [[strong]] و [[b]] تقال، و [[em]] و [[i]] مايلين. اللي بيفرّق بينهم المعنى: مهم، ولا عليه ضغطة، ولا لفت نظر، ولا نبرة تانية.
-
-كل الأرقام اللي في الوحدة دي اتقاست في **Chrome 157 (headless) على Windows 11**: الشكل من [[getComputedStyle]] (نفس اللي بتشوفه في DevTools ← Elements ← تاب Computed)، والدور من [[computedRole]] (نفس اللي في تاب Accessibility).
+[[cn]] بتاخد كلاسات بأي شكل (strings، وشروط، و objects) وترجّع string واحد نضيف مفيهوش كلاسين بيتخانقوا على نفس الخاصية. جربنا كل سطر في المثال بـ Node (clsx 2.1.1 و tailwind-merge 3.7.0)، والكلاسات نفسها في صفحة Vite بـ Tailwind 4.3.3 في Chrome.
 
 ---
 
-## ١. [[<strong>]]: الكلام ده مهم
+## ١. المشكلة الأول: مين يكسب في [[px-6 px-4]]؟
 
-المواصفة بتقول إن [[strong]] بيمثّل **أهمية أو خطورة أو استعجال**:
+حطينا الاتنين على نفس الـ div بترتيبين مختلفين وقرينا الـ padding:
 
-- **أهمية:** الحتة اللي فعلًا تهم في عنوان أو فقرة، وباقي الكلام تفاصيل.
-- **خطورة:** تحذير أو تنبيه.
-- **استعجال:** حاجة القارئ لازم يشوفها قبل غيرها.
-
-~~~live 90 120 strong
-<p><strong>تحذير:</strong> متقفلش الجهاز والتحديث شغال.</p>
-<p>الطلب بيوصل في ٣ أيام. <strong>الدفع عند الاستلام بس.</strong></p>
+~~~text getComputedStyle في Chrome
+class="px-6 px-4"   paddingLeft = 24px
+class="px-4 px-6"   paddingLeft = 24px
 ~~~
 
-الكلمة التقيلة في السطر الأول هي عنوان التحذير، وفي التاني جملة كاملة هي أهم حاجة في الفقرة.
+في الحالتين [[px-6]] كسب (24px)، حتى لما كان الأول في الـ class. ليه؟ لأن ترتيب الكلاسات جوه [[class]] ملوش أي لازمة في CSS. لما قاعدتين ليهم نفس الـ specificity (كلاس واحد)، اللي **مكتوبة آخر في ملف الـ CSS** هي اللي بتكسب. وده ملف الـ CSS اللي Tailwind طلّعه:
 
-ونقطة مهمة في المواصفة: [[strong]] **مبيغيّرش معنى الجملة**. «الدفع عند الاستلام بس» معناها واحد بالعنصر ومن غيره، هو بس بيقول إنها أهم من اللي حواليها.
+~~~text من الـ CSS الناتج
+.px-4{padding-inline:calc(var(--spacing) * 4)}
+.px-6{padding-inline:calc(var(--spacing) * 6)}
+~~~
+
+[[.px-6]] مكتوبة بعد [[.px-4]]، فهي اللي بتكسب دايمًا. يعني لو مكون فيه [[px-6]] افتراضي، وانت بعتله [[px-4]] من برا، طلبك هيتجاهل من غير أي error. ده بالظبط اللي [[cn]] جاية تحله.
 
 ---
 
-## ٢. [[<em>]]: الضغطة اللي بتغيّر المعنى
+## ٢. ملف [[lib/utils.ts]] سطر سطر
 
-[[em]] اختصار emphasis، والمواصفة بتسميه stress emphasis: الضغطة اللي بتحطها بصوتك على كلمة وانت بتتكلم. وعكس [[strong]]، مكان الضغطة **بيغيّر المعنى**:
+### [[import { clsx, type ClassValue } from "clsx";]]
 
-~~~live 130 170 نفس الجملة، تلات معاني
-<p>أنا <em>مقولتش</em> إنه خد الفلوس.</p>
-<p>أنا مقولتش إنه <em>خد</em> الفلوس.</p>
-<p>أنا مقولتش إنه خد <em>الفلوس</em>.</p>
-~~~
+- [[clsx]]: دالة من package اسمه clsx، شغلتها تجميع بس.
+- [[type ClassValue]]: كلمة [[type]] قبل الاسم معناها «ده type بتاع TypeScript مش كود»، فبيتشال خالص من الـ JavaScript الناتج. و [[ClassValue]] هو النوع اللي بيوصف «أي حاجة clsx تقبلها»: string أو رقم أو [[null]] أو [[false]] أو object أو array منهم.
 
-| الضغطة على | المعنى اللي بيوصل |
-|---|---|
-| مقولتش | أنا منطقتهاش (يمكن لمّحت، يمكن كتبتها) |
-| خد | يمكن استلفها أو لقاها، بس «خد» دي مش كلمتي |
-| الفلوس | هو خد حاجة، بس مش الفلوس |
+### [[import { twMerge } from "tailwind-merge";]]
 
-اقرا التلاتة بصوت عالي وهتلاقي نفسك بتشدّ على الكلمة المايلة. ده بالظبط اللي العنصر بيقوله.
+[[twMerge]] من package اسمه tailwind-merge. دي اللي فاهمة Tailwind: بتعرف إن [[px-4]] و [[px-6]] الاتنين padding أفقي، فتشيل الأولاني.
 
----
+### [[export function cn(...inputs: ClassValue[])]]
 
-## ٣. [[<b>]]: لفت نظر من غير أهمية
+- [[export]]: عشان أي ملف تاني يقدر يعمل [[import { cn } from "@/lib/utils"]]. و [[@]] ده اختصار لفولدر [[src]] متعرّف في إعدادات المشروع.
+- [[...inputs]]: الـ [[...]] هنا اسمها rest parameter، يعني «لمّ كل الـ arguments اللي هتيجي في array واحدة اسمها inputs». فتقدر تنادي [[cn("a")]] أو [[cn("a", "b", x)]] بأي عدد.
+- [[: ClassValue[]]]: نوع الـ array دي: كل عنصر فيها [[ClassValue]]. و [[[]]] بعد النوع معناها «array من».
 
-المواصفة: [[b]] حتة نص بنلفت لها النظر **لسبب عملي**، من غير أي أهمية زيادة ومن غير نبرة تانية. الأمثلة اللي كاتباها: كلمات مفتاحية في ملخص، وأسامي منتجات في مراجعة، وأول جملة في خبر.
+### [[return twMerge(clsx(inputs));]]
 
-~~~live 80 80 b
-<p>اللابتوب <b>نجم ١٤</b> أخف من <b>نجم ١٦</b> بنص كيلو، وبطاريته بتعيش أكتر.</p>
-~~~
+بيتقرا من جوه لبرة:
 
-الأسامي تقيلة عشان اللي بيمسح المراجعة بعينه يلاقيهم. بس «نجم ١٤» مش أهم من «بطاريته بتعيش أكتر». والمواصفة بتقول صراحة إن [[b]] هو **آخر اختيار**: لو فيه عنصر معناه ينطبق (عنوان، أو [[em]]، أو [[strong]]، أو [[mark]]) استخدمه هو.
+1. [[clsx(inputs)]]: يجمّع كل حاجة في string واحد ويشيل اللي قيمته false.
+2. [[twMerge(...)]]: ياخد الـ string ده ويشيل الكلاسات اللي اتغلبت.
 
 ---
 
-## ٤. [[<i>]]: كلام بنبرة تانية
+## ٣. [[clsx]] لوحده: تجميع
 
-المواصفة: [[i]] حتة نص بصوت أو مزاج مختلف عن الكلام اللي حواليها. وعدّت: اسم علمي (تصنيف)، ومصطلح تقني، وتعبير من لغة تانية، وفكرة في دماغ شخصية، واسم سفينة.
-
-~~~live 90 120 i
-<p>الفرنساويين بيقولوا <i lang="fr">déjà vu</i> على الإحساس ده.</p>
-<p><i>يا ترى قفلت الباب؟</i> فكّرت وهي نازلة السلم.</p>
+~~~text Node
+clsx("a", false && "b", { c: true, d: false }, ["e"])   →   "a c e"
 ~~~
 
-### [[lang="fr"]]
+- [[false && "b"]]: الـ [[&&]] بيرجّع اللي على الشمال لو كان false، وإلا بيرجّع اللي على اليمين. فهنا رجّع [[false]]، و clsx بيتجاهله.
+- [[{ c: true, d: false }]]: object كل key فيه كلاس، والقيمة شرطه. [[c]] قيمته true فدخل، و [[d]] لأ.
+- [[["e"]]]: array بيتفرد.
 
-[[lang]] اتشرح في درس «lang و dir»: بيقول لغة الحتة دي. المواصفة بتطلبه على أي كلمة من لغة غير لغة الصفحة، عشان قارئ الشاشة ينطقها بلغتها. وهنا [[fr]] يعني فرنساوي.
+## ٤. سطور الاستخدام
 
----
+### السطر الأول: كلاسات شرطية
 
-## ٥. نفس الشكل، معنى مختلف: القياس
-
-حطيت الأربعة في فقرة واحدة وقريت الشكل والدور:
-
-| العنصر | [[font-weight]] | [[font-style]] | الدور في شجرة الـ accessibility |
-|---|---|---|---|
-| [[<strong>]] | 700 | normal | [[strong]] |
-| [[<b>]] | 700 | normal | [[generic]] |
-| [[<em>]] | 400 | italic | [[emphasis]] |
-| [[<i>]] | 400 | italic | [[generic]] |
-
-- [[font-weight]] تُقل الخط: 400 العادي و 700 التقيل.
-- [[font-style]] الخط مايل ولا لأ.
-- الدور (role) هو اللي قارئ الشاشة بياخده. [[generic]] معناها «حتة نص عادية»: يعني [[b]] و [[i]] مبيوصّلوش أي معنى زيادة للي مش شايف الشاشة.
-
-فالعين مبتفرّقش بين [[strong]] و [[b]]، والشجرة بتفرّق.
-
----
-
-## ٦. عنصر جوه عنصر
-
-### [[<strong>]] جوه [[<strong>]]
-
-~~~live 60 80 درجتين من الأهمية
-<p><strong>ممنوع الدخول. <strong>خطر كهربا.</strong></strong></p>
+~~~text App.tsx
+cn("px-4 py-2", isActive && "bg-brand text-white", { "opacity-50": disabled });
 ~~~
 
-المواصفة: درجة الأهمية = عدد عناصر [[strong]] اللي الكلام جواها. فـ «خطر كهربا» أهم من «ممنوع الدخول». والقياس:
-
-~~~text font-weight
-strong الخارجي = 700
-strong الداخلي = 900
-~~~
-
-الرقم علي عشان الستايل الافتراضي [[bolder]] (أتقل من الأب بدرجة). بس بالخط الافتراضي مش هتشوف فرق بعينك، لأن الخط مفيهوش وزن أتقل من 700. فالدرجة التانية موجودة في المعنى، ولو عايزها تبان هتحتاج CSS.
-
-ونفس الكلام في [[em]]: [[em]] جوه [[em]] ضغطة أقوى، والاتنين [[italic]] فمفيش فرق في الشكل.
-
-### [[<strong>]] و [[<em>]] مع بعض
-
-~~~live 60 80 مهم وعليه ضغطة
-<p>الباب ده <strong>بيتقفل <em>لوحده</em></strong> بعد دقيقة.</p>
-~~~
-
-«لوحده» تقيلة ومايلة: مهمة، وعليها ضغطة. والقاعدة في القفل: اللي اتفتح آخر واحد يتقفل الأول ([[</em>]] قبل [[</strong>]]).
-
----
-
-## ٧. ليه مش «تقيل = strong»؟
-
-لأن فيه تلات حاجات شكلها تقيل ومعناها مختلف. دي النسخة الغلط:
-
-~~~live 110 150 غلط: strong عشان الشكل
-<p><strong>مواعيد العمل</strong></p>
-<p><strong>من السبت للخميس، من ٩ الصبح لـ ٥ المغرب. يوم الجمعة إجازة. الحجز بالتليفون.</strong></p>
-~~~
-
-ودي الصح:
-
-~~~live 130 150 صح: كل حاجة بمعناها
-<h2>مواعيد العمل</h2>
-<p>من السبت للخميس، من ٩ الصبح لـ ٥ المغرب. <strong>يوم الجمعة إجازة.</strong> الحجز بالتليفون.</p>
-~~~
-
-| | النسخة الغلط | النسخة الصح |
+| [[isActive]] و [[disabled]] | الناتج | ليه |
 |---|---|---|
-| عدد العناوين (heading) | 0 | 1 (مستوى 2) |
-| عدد [[strong]] | 2 | 1 |
-| إيه اللي متميّز في الفقرة | ولا حاجة (كلها تقيلة) | «يوم الجمعة إجازة» بس |
+| الاتنين [[true]] | [[px-4 py-2 bg-brand text-white opacity-50]] | الشرط والـ object الاتنين اتحققوا فاتضافوا |
+| الاتنين [[false]] | [[px-4 py-2]] | [[false]] بيختفي، والمفتاح اللي قيمته false مبيتكتبش |
 
-في الغلط: «مواعيد العمل» مش عنوان، فاللي بيتنقل بين العناوين مش هيوصلها. والفقرة كلها مهمة، يعني مفيش حاجة مهمة.
+### السطر التاني: تعارض
 
-ولو كل اللي انت عايزه إن الكلام يبقى تقيل من غير معنى، ده CSS:
-
-~~~live 60 80 تقيل بالـ CSS
-<p style="font-weight: bold">الكلام ده تقيل وخلاص، من غير ما يقول إنه مهم.</p>
+~~~text Node
+clsx("px-4 bg-gray-100", "px-6")   →   "px-4 bg-gray-100 px-6"
+cn("px-4 bg-gray-100", "px-6")     →   "bg-gray-100 px-6"
 ~~~
 
-[[style="font-weight: bold"]] سطر CSS مكتوب على العنصر نفسه بيقول «خلي الخط تقيل». هتتعلمه في درس «مقدمة CSS وتنسيق العناصر». دلوقتي كفاية تعرف إن الشكل ليه مكان تاني غير الـ HTML.
+clsx لوحده ساب الاتنين (والمتصفح هيختار حسب ترتيب ملف الـ CSS زي ما شفنا). [[cn]] شال [[px-4]] لأن [[px-6]] جه بعده في نفس المجموعة (padding أفقي). و [[bg-gray-100]] فضل لأنه مجموعة تانية (لون خلفية).
+
+وفي الصفحة: [[cn("px-6", "px-4")]] طلّع [[class="px-4"]] و paddingLeft = **16px**. اللي جه آخر في الـ arguments كسب فعلًا، عكس الـ div اللي فوق.
+
+### السطر التالت: النمط بتاع أي مكون
+
+~~~text App.tsx
+cn("text-sm text-gray-600", className);
+~~~
+
+[[className]] هو اللي جاي من برا (prop). بيتحط **آخر حاجة** عشان يكسب:
+
+| [[className]] اللي جاي من برا | الناتج بعد cn |
+|---|---|
+| [["text-red-600"]] | [[text-sm text-red-600]] (اللون اتغير والحجم فضل) |
+| [["text-base"]] | [[text-gray-600 text-base]] (الحجم اتغير واللون فضل) |
+| [[undefined]] | [[text-sm text-gray-600]] (الافتراضي زي ما هو) |
+
+لاحظ إن twMerge عارف إن [[text-sm]] حجم و [[text-gray-600]] لون، رغم إن الاتنين بيبدأوا بـ [[text-]].
 
 ---
 
-## ٨. قارئ الشاشة ومحرك البحث بياخدوا إيه؟
+## ٥. حالات بيفهمها twMerge
 
-**قارئ الشاشة:** بياخد الدور من الشجرة ([[strong]] و [[emphasis]]، زي ما اتقاس). هل بيغيّر صوته عند الكلمة؟ دي معرفتش أجرّبها (مفيش قارئ شاشة في المعمل). صفحة [[em]] في MDN بتقول إن البرنامج اللي بيقرا النص هينطق الكلمة بضغطة، بس ده متروك لكل قارئ شاشة وإعداداته. فمتعتمدش على العنصر لوحده في تحذير: اكتب كلمة «تحذير» نفسها زي المثال، عشان المعنى يوصل بالنص كمان.
+| النداء | الناتج | ليه |
+|---|---|---|
+| [[cn("p-2", "px-4")]] | [[p-2 px-4]] | [[px-4]] بيغطي الجنبين بس، و [[p-2]] لسه محتاجينه لفوق وتحت |
+| [[cn("px-4", "p-2")]] | [[p-2]] | [[p-2]] بيغطي كل الاتجاهات، فـ [[px-4]] ملوش لازمة |
+| [[cn("hover:bg-red-500", "bg-blue-500", "hover:bg-blue-500")]] | [[bg-blue-500 hover:bg-blue-500]] | التعارض بيتحسب لكل variant لوحده |
+| [[cn("text-hero", "text-white")]] | [[text-white]] | twMerge مش عارف [[text-hero]]، فافتكره لون وشاله |
 
-**محرك البحث:** بيقرا نفس الـ HTML، فالعنصر قدامه. بس مفيش في المواصفة ولا في MDN أي وعد إن [[strong]] بيرفع ترتيب الصفحة، فمتحشيش الصفحة [[strong]] عشان جوجل.
+السطر الأخير هو الغلطة اللي في «أخطاء شائعة»: لو [[--text-hero]] حجم خط عملته في [[@theme]]، لازم تعرّفه لـ twMerge بـ [[extendTailwindMerge]].
 
----
+> في مشروع shadcn جديد (CLI 4.21.3) هتلاقي [[lib/utils.ts]] سطر واحد: [[export { cn } from "cn"]]. ده package اسمه [[cn]] من shadcn بيعمل شغل clsx و twMerge مع بعض. جربنا عليه نفس النداءات اللي في الجدول وطلّع نفس النتايج بالظبط، فكل اللي فوق ينطبق عليه.
 
 ## الخلاصة
 
-| عايز تقول إيه | العنصر | الشكل الافتراضي |
-|---|---|---|
-| ده مهم أو خطير أو مستعجل | [[<strong>]] | تقيل |
-| الكلمة دي عليها ضغطة بتغيّر المعنى | [[<em>]] | مايل |
-| بصّ هنا (اسم منتج، كلمة مفتاحية)، من غير أهمية | [[<b>]] | تقيل |
-| نبرة تانية: كلمة أجنبية، اسم علمي، فكرة | [[<i>]] | مايل |
-| عنوان | [[<h2>]] مش [[strong]] | |
-| تقيل أو مايل عشان الشكل بس | CSS | |`,
+- ترتيب الكلاسات في [[class]] ملوش لازمة، اللي بيكسب ترتيب القواعد في ملف الـ CSS.
+- [[clsx]] بيجمّع ويشيل الـ false، و [[twMerge]] بيشيل الكلاس اللي اتغلب في نفس المجموعة.
+- دايمًا [[cn(defaults, className)]]: اللي من برا آخر حاجة.`,
           lines: [
-            R`[[strong]] على كلمة «تحذير:» بس: هي عنوان التنبيه، والجملة اللي بعدها تفاصيله. ده استخدام «الخطورة».`,
-            R`[[em]] على «مقولتش»: الضغطة هنا معناها إني منطقتش الكلام ده (يمكن لمّحت).`,
-            R`نفس الجملة والضغطة على «خد»: المعنى بقى إنه يمكن استلفها أو لقاها. الكلمات واحدة والمعنى اتغيّر.`,
-            R`[[b]] على اسمين منتجين: لفت نظر للعين وهي بتمسح المراجعة، من غير ما الأسامي تبقى أهم من باقي الجملة.`,
-            R`[[i]] لتعبير من لغة تانية، و [[lang="fr"]] بيقول إنه فرنساوي عشان قارئ الشاشة ينطقه صح.`,
-            R`[[strong]] جوه [[strong]]: «خطر كهربا» درجة أهمية أعلى من «ممنوع الدخول». الداخلي وزنه المحسوب 900 والخارجي 700.`
+            R`[[clsx]]: بيجمّع strings و objects و arrays ويشيل false و null و undefined.`,
+            R`[[twMerge]]: بيفهم كلاسات Tailwind ويشيل المتعارض.`,
+            "الدالة بتاخد أي عدد من الكلاسات بأي شكل.",
+            "clsx الأول يجمّع، و twMerge بعده ينضّف.",
+            "قفلة.",
+            R`كلاس شرطي بـ [[&&]] و object: لو isActive بـ false الجزء ده بيختفي.`,
+            R`تعارض: [[px-4]] و [[px-6]]، الأخير يكسب.`,
+            R`النمط الأساسي: الافتراضي الأول، والـ [[className]] اللي جاي من برا آخر حاجة عشان يكسب.`
           ],
-          sol: R`**الشكل:** مبيتغيّرش خالص. [[em]] و [[i]] الاتنين [[font-style: italic]]، فلو بصّيت على الصفحة بس مش هتعرف مين فيهم مين.
+          sol: R`[[cn("p-2", "px-4")]] بيرجع [[p-2 px-4]]: الاتنين فضلوا، لأن [[px-4]] بيغطي الجزء الأفقي بس، والـ [[p-2]] لسه محتاجينه للرأسي، و tailwind-merge عارف إن اللي جاي بعد هو الأقوى. [[cn("px-4", "p-2")]] بيرجع [[p-2]] بس: الـ [[p-2]] جه بعد وبيغطي كل الاتجاهات، فالـ [[px-4]] ملوش لازمة.
 
-**تاب Accessibility:** لما تدوس على الكلمة وهي [[em]] هتلاقي دورها [[emphasis]]. ولما تبدّلها بـ [[i]] الدور ده بيختفي والكلمة بتبقى نص عادي جوه الفقرة (الدور المحسوب [[generic]]).
+جرّبت كمان: [[cn("px-4 bg-gray-100", "px-6")]] ← [[bg-gray-100 px-6]]، و [[cn("text-brand", "text-lg")]] ← [[text-brand text-lg]] (مش بيتخانقوا لأن واحد لون والتاني حجم). ولو [[cn]] رجّع الاتنين في [[cn("px-4", "px-6")]]، يبقى انت عامل [[clsx]] لوحده من غير [[twMerge]].
 
-**وانت بتقرا بصوت:** في الأولى بتشدّ على «مقولتش» (بتنفي إنك قلت)، وفي التانية على «الفلوس» (هو خد حاجة تانية). ده معنى مش شكل، وعشان كده مكانه [[em]] مش [[i]] ومش CSS.
-
-~~~text الناتج (Chrome 157)
-<em>مقولتش</em>   font-style = italic   الدور = emphasis
-<i>مقولتش</i>     font-style = italic   الدور = generic
-~~~`,
-          ref: [
-            { t: "WHATWG: the strong element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-strong-element" },
-            { t: "WHATWG: the em element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-em-element" },
-            { t: "WHATWG: the b element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-b-element" },
-            { t: "WHATWG: the i element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-i-element" },
-            { t: "MDN: <strong>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/strong" },
-            { t: "MDN: <em>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/em" },
-            { t: "MDN: <b>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/b" },
-            { t: "MDN: <i>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/i" },
-          ],
-          pre: [{ to: "css/lang و dir", why: R`الـ [[lang]] اللي بنحطه على الكلمة الأجنبية جوه [[<i>]] مشروح هناك` }]
+الغلط الشائع: تفتكر إن ترتيب الكلاسات في الـ HTML هو اللي بيحدد مين يكسب. في CSS اللي بيكسب هو ترتيب القواعد في ملف الـ CSS، مش في الـ class، وعشان كده محتاج twMerge يشيل الخسران من الأول.`,
+          solCode: R`// cn.mjs  (npm i clsx tailwind-merge ثم node cn.mjs)
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+const cn = (...inputs) => twMerge(clsx(inputs));
+console.log(cn("p-2", "px-4"));              // p-2 px-4
+console.log(cn("px-4", "p-2"));              // p-2
+console.log(cn("px-4 bg-gray-100", "px-6")); // bg-gray-100 px-6
+console.log(cn("text-brand", "text-lg"));    // text-brand text-lg`
         },
         {
-          cmd: "mark و small و del و ins",
+          cmd: "cva",
+          ref: [
+            { t: "cva: Variants", url: "https://cva.style/getting-started/variants/" },
+            { t: "cva: TypeScript (VariantProps)", url: "https://cva.style/getting-started/typescript/" },
+          ],
+          title: "زرار بأشكال وأحجام من غير if كتير",
+          desc: R`[[cva]] (من class-variance-authority) بتعرّف مكون بكلاسات أساسية، و variants بأسماء (نوع وحجم)، وقيم افتراضية. بترجع دالة تدّيها [[{ variant: "outline", size: "sm" }]] وترجعلك الكلاسات.
+
+ومعاها [[VariantProps]] بتطلّع الأنواع لـ TypeScript، فلو كتبت [[variant="outlinee"]] غلط الـ editor يعلّم عليها.`,
+          example: R`import type { ComponentProps } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+const buttonVariants = cva("inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50", {
+  variants: {
+    variant: { primary: "bg-brand text-white hover:bg-brand/90", outline: "border hover:bg-gray-50", ghost: "hover:bg-gray-100" },
+    size: { sm: "h-9 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6 text-lg" },
+  },
+  compoundVariants: [{ variant: "outline", size: "lg", class: "border-2" }],
+  defaultVariants: { variant: "primary", size: "md" },
+});
+type ButtonProps = ComponentProps<"button"> & VariantProps<typeof buttonVariants>;
+export function Button({ className, variant, size, ...props }: ButtonProps) {
+  return <button className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}`,
+          try: R`اعمل الزرار ده واستخدمه [[<Button variant="outline" size="lg">]]. وبعدين اكتب [[variant="danger"]] وشوف TypeScript بيعترض. ضيف danger للـ variants وشوفه قبله.`,
+          flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اختار العنصر:** [[s]] ولا [[del]] و [[ins]] ولا ولا حاجة؟
-١. كارت منتج: السعر كان ٤٠٠ وبقى ٣٢٠.
-٢. خبر منشور كان مكتوب فيه «٣ مصابين» والمحرر صحّحه لـ «٥ مصابين» وعايز التصحيح يبان.
-٣. إعلان: «العرض ساري لحد الجمعة» والعرض خلص، بس الإعلان لسه معروض.
-٤. لايحة النادي: بند اتشال رسميًا يوم ١ نوفمبر وبند جديد اتحط مكانه.`, done: R`السعر القديم والعرض المنتهي [[s]]، وتصحيح الخبر وتعديل اللايحة [[del]] مع [[ins]]، وعلى تعديل اللايحة [[datetime="2026-11-01"]]. والعدد في الصفحة: [[s]] اتنين، و [[del]] اتنين، و [[ins]] اتنين.`, work: { h: 200, start: R`<p>السعر: ٤٠٠ جنيه ٣٢٠ جنيه.</p>
-<p>الحادثة فيها ٣ ٥ مصابين.</p>
-<p>العرض ساري لحد الجمعة. العرض خلص.</p>
-<p>الضيف بيدخل ببلاش. الضيف بيدفع تذكرة يوم.</p>`, checks: [
-              { say: R`السعر القديم «٤٠٠ جنيه» في [[<s>]]`, q: "s", has: "٤٠٠" },
-              { say: R`العرض المنتهي «ساري لحد الجمعة» في [[<s>]]`, q: "s", has: "العرض ساري" },
-              { say: R`تصحيح الخبر وتعديل اللايحة: [[<del>]] اتنين`, q: "del", n: 2 },
-              { say: R`وجنب كل [[<del>]] واحد [[<ins>]]: اتنين`, q: "ins", n: 2 },
-              { say: R`تعديل اللايحة عليه [[datetime="2026-11-01"]] في الاتنين`, q: "del, ins", attr: ["datetime", "2026-11-01"], n: 2 },
-            ] }, sol: R`~~~live 160 200 الحل
-<p>السعر: <s>٤٠٠ جنيه</s> ٣٢٠ جنيه.</p>
-<p>الحادثة فيها <del>٣</del> <ins>٥</ins> مصابين.</p>
-<p><s>العرض ساري لحد الجمعة.</s> العرض خلص.</p>
-<p><del datetime="2026-11-01">الضيف بيدخل ببلاش.</del> <ins datetime="2026-11-01">الضيف بيدفع تذكرة يوم.</ins></p>
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بـ [[buttonVariants]] بتاع الدرس: إيه ناتج [[({})]] و [[({ variant: "outline", size: "lg" })]] و [[({ size: null })]] و [[({ variant: "danger" })]]؟ شغّلهم بـ Node.`, done: R`الأول فيه primary و md. التاني فيه [[border]] و [[h-12 px-6 text-lg]] وفي الآخر [[border-2]] (الـ compound اشتغل). التالت مفيهوش ولا كلاس حجم ([[null]] بيلغي الافتراضي، و [[undefined]] لأ). الرابع مفيهوش ولا كلاس شكل ومفيش error: الاسم الغلط بيعدّي في سكوت، ودا سبب [[VariantProps]].`, sol: R`~~~js cva-base.mjs
+import { cva } from "class-variance-authority";
+
+export const buttonVariants = cva("inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50", {
+  variants: {
+    variant: { primary: "bg-brand text-white hover:bg-brand/90", outline: "border hover:bg-gray-50", ghost: "hover:bg-gray-100" },
+    size: { sm: "h-9 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6 text-lg" },
+  },
+  compoundVariants: [{ variant: "outline", size: "lg", class: "border-2" }],
+  defaultVariants: { variant: "primary", size: "md" },
+});
 ~~~
 
-**السؤال اللي بيفرّق:** هل المستند نفسه اتعدّل، وعايز التعديل يبان؟
+~~~js predict.mjs
+import { buttonVariants as b } from "./cva-base.mjs";
 
-- السعر القديم والعرض المنتهي: محدش «عدّل مستند». دي معلومة مبقتش سارية ولسه معروضة عشان المقارنة. ده تعريف [[s]] في المواصفة: كلام مبقاش دقيق أو مبقاش يخص.
-- الخبر واللايحة: فيه نسخة قديمة ونسخة جديدة من نفس النص، والقارئ من حقه يشوف إيه اللي اتغيّر. ده [[del]] (اتشال) و [[ins]] (اتضاف).
+console.log(b({}));
+console.log(b({ variant: "outline", size: "lg" }));
+console.log(b({ size: null }));
+console.log(b({ variant: "danger" }));
+~~~
 
-والمواصفة كاتباها صريحة في قسم [[s]]: العنصر ده مش مناسب لتعديلات المستند، للتعديلات استخدم [[del]].
+**اللي بيحصل في كل سطر:**
 
-**الغلطة الشائعة:** [[del]] على السعر القديم. الشكل واحد بالظبط (خط في النص)، بس المعنى بقى «السعر ده اتمسح من المستند» بدل «السعر ده مبقاش ساري».
+1. [[({})]]: مفيش قيم، فـ [[defaultVariants]] بتتطبق: primary و md.
+2. outline و lg: كلاسات الاتنين، وبعدها الـ compound اللي شرطه اتحقق ([[border-2]]).
+3. [[({ size: null })]]: [[null]] معناها «مش عايز قيمة هنا»، فبيلغي الافتراضي. أما [[undefined]] فمعناها «مقلتش»، فالافتراضي يفضل.
+4. [[({ variant: "danger" })]]: الاسم مش موجود، فمفيش كلاسات شكل ولا error في JavaScript. وده اللي [[VariantProps]] بيمسكه وقت الكتابة في TypeScript.
+
+**الغلطة الشائعة:** تعتمد على الـ runtime يقولك الاسم غلط. الزرار هيطلع من غير لون في سكوت.
 
 ~~~text الناتج
-s: 2   del: 2   ins: 2
-text-decoration:  s = line-through   del = line-through   ins = underline
-del التاني:  dateTime = 2026-11-01
+(الجزء الأساسي «inline-flex ... disabled:opacity-50» متكرر في الأربعة، فاتشال هنا)
+
+1. bg-brand text-white hover:bg-brand/90 h-10 px-4
+2. border hover:bg-gray-50 h-12 px-6 text-lg border-2
+3. bg-brand text-white hover:bg-brand/90
+4. h-10 px-4
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الخط العادي 16px. [[<small>]] جواه [[<small>]] جواه [[<small>]]: حجم كل واحد كام؟ و [[<small>]] جوه [[<h1>]] (اللي حجمه 32px)؟ توقّع وبعدين شوف تاب Computed.`, done: R`الأرقام: 13.33 ثم 11.11 ثم 9.26 بيكسل، وجوه الـ h1 بقى 26.67. وعرفت إن [[small]] مش «حجم ثابت صغير»: هو أصغر من أبوه بنسبة (هنا خمسة على ستة)، وإن تلات درجات بيطلّعوا خط محدش يعرف يقراه.`, sol: R`~~~live 120 160 small جوه small
-<h1>عنوان <small>وجنبه ملحوظة</small></h1>
-<p>عادي <small>واحد <small>اتنين <small>تلاتة</small></small></small></p>
+            { lvl: 'تطبيق', t: R`**ابني:** [[Badge]] بـ cva: [[tone]] (success و warning و danger و neutral) × [[look]] (soft و solid)، و compound لـ solid + danger يبقى [[font-bold]]، وألوان من توكنز [[@theme]].`, done: R`صفحة فيها الـ ٨ تركيبات، و TypeScript بيرفض [[tone="info"]]، وكل badge الكلام عليه مقري (contrast 4.5:1 أو أكتر في DevTools)، و [[solid danger]] بس اللي عريض.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --color-success: #166534;
+  --color-success-soft: #dcfce7;
+  --color-warning: #92400e;
+  --color-warning-soft: #fef3c7;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fee2e2;
+  --color-neutral: #374151;
+  --color-neutral-soft: #f3f4f6;
+}
 ~~~
 
-**ليه الأرقام دي:** الستايل الافتراضي في المواصفة [[small { font-size: smaller; }]]. [[smaller]] معناها «أصغر من الأب بدرجة»، و Chrome بيحسبها هنا بضرب حجم الأب في ٥/٦:
+~~~tsx Badge.tsx
+import { cva, type VariantProps } from "class-variance-authority";
 
-- 16 × ٥/٦ = 13.33
-- 13.33 × ٥/٦ = 11.11
-- 11.11 × ٥/٦ = 9.26
-- وجوه الـ h1: 32 × ٥/٦ = 26.67
+const badge = cva("inline-flex items-center rounded-full px-3 py-1 text-sm", {
+  variants: {
+    tone: { success: "", warning: "", danger: "", neutral: "" },
+    look: { soft: "", solid: "text-white" },
+  },
+  compoundVariants: [
+    { tone: "success", look: "soft", class: "bg-success-soft text-success" },
+    { tone: "warning", look: "soft", class: "bg-warning-soft text-warning" },
+    { tone: "danger", look: "soft", class: "bg-danger-soft text-danger" },
+    { tone: "neutral", look: "soft", class: "bg-neutral-soft text-neutral" },
+    { tone: "success", look: "solid", class: "bg-success" },
+    { tone: "warning", look: "solid", class: "bg-warning" },
+    { tone: "danger", look: "solid", class: "bg-danger font-bold" },
+    { tone: "neutral", look: "solid", class: "bg-neutral" },
+  ],
+  defaultVariants: { tone: "neutral", look: "soft" },
+});
 
-**الدرس من ده:** [[small]] معناه «ملحوظة جانبية»، ومعنى زي ده مبيتكررش جوه نفسه. لو لقيت نفسك بتحط [[small]] جوه [[small]] عشان الخط يصغر أكتر، انت بتستخدمه للشكل، وده شغل CSS.
+type BadgeProps = React.ComponentProps<"span"> & VariantProps<typeof badge>;
 
-**الغلطة الشائعة:** [[<h1>العنوان <small>عنوان فرعي</small></h1>]] عشان العنوان الفرعي يطلع أصغر. المواصفة بتقول صراحة إن [[small]] ممنوع للعناوين الفرعية.
+export function Badge({ tone, look, className, ...props }: BadgeProps) {
+  return <span className={badge({ tone, look, className })} {...props} />;
+}
+~~~
+
+~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { Badge } from "./Badge";
+
+const tones = ["success", "warning", "danger", "neutral"] as const;
+const looks = ["soft", "solid"] as const;
+
+createRoot(document.getElementById("root")!).render(
+  <main className="grid gap-3 p-6">
+    <h1 className="text-2xl font-bold">الحالات</h1>
+    {looks.map((look) => (
+      <p key={look} className="flex flex-wrap gap-2">
+        {tones.map((tone) => (
+          <Badge key={tone} tone={tone} look={look}>{tone}</Badge>
+        ))}
+      </p>
+    ))}
+  </main>
+);
+~~~
+
+**ليه compound لكل تركيبة:** اللون معتمد على الـ tone والـ look مع بعض، فكلاس زي [[bg-success]] مينفعش يتحط في variant واحد. فالـ variants فاضية، وبتعرّف الأسماء والـ types، والـ compound فيها الألوان. والكلاسات مكتوبة كاملة عشان Tailwind يشوفها.
+
+**[[VariantProps]]** بيقرا الأسماء من الـ [[cva]] نفسها، فالـ TypeScript بيرفض أي اسم مش موجود من غير ما تكرر النوع.
+
+**الغلطة الشائعة:** تختار لون التحذير [[#f59e0b]] مع كلام أبيض، فالتباين يقع تحت 3. عشان كده الـ warning هنا درجة غامقة، وقس كل واحدة بدل ما تثق في عينك.
 
 ~~~text الناتج
-h1 = 32px          small جوه h1 = 26.6667px
-p = 16px           small = 13.3333px   small small = 11.1111px   small small small = 9.25926px
+tone      soft       solid
+success   6.49:1     7.13:1
+warning   6.37:1     7.09:1
+danger    5.30:1     6.47:1 (و font-weight: 700 ، لوحده)
+neutral   9.37:1     10.31:1
+
+tsc على <Badge tone="info">:
+bad.tsx(2,25): error TS2322: Type '"info"' is not assignable to type
+'"success" | "warning" | "danger" | "neutral" | null | undefined'.
+
+axe صفر ، وعلى 360 مفيش scroll أفقي
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** إعلان اشتراك في جيم متخيل:
+            { lvl: 'تطبيق', t: R`**ابني:** كارت باقة بـ cva: [[tone]] (plain و featured) و [[period]] (month و year)، و compound: featured + year = [[ring-2 ring-brand]]. والباقات جاية من array فيها [[highlighted]].`, done: R`[[plan({ tone: "featured", period: "year" })]] بيرجّع [["rounded-3xl p-8 bg-gray-950 text-white ring-2 ring-brand"]] (أو كلاساتك بنفس الترتيب)، والتلات باقات بتترسم من الـ array بـ map، وتغيير [[highlighted]] في الداتا بس بيغيّر أنهي واحدة مميزة.`, sol: R`~~~js plan.mjs
+import { cva } from "class-variance-authority";
 
-~~~html
-<p><u>مهم جدًا:</u> العرض لحد آخر الشهر بس.</p>
-<p>الاشتراك <del>٤٠٠ جنيه</del> ٣٢٠ جنيه في الشهر. <mark>وفّر ٨٠ جنيه!</mark></p>
-<p><small>الاشتراك بيتجدد كل شهر لوحده. تقدر تلغي في أي وقت من صفحة حسابك. لو لغيت في نص الشهر الاشتراك بيفضل شغال لآخره. الفلوس مبتتردش عن الشهر اللي بدأ.</small></p>
-<p>السعر مش شامل الضريبة.</p>
+export const plan = cva("rounded-3xl p-8", {
+  variants: {
+    tone: { plain: "bg-white text-gray-950", featured: "bg-gray-950 text-white" },
+    period: { month: "", year: "" },
+  },
+  compoundVariants: [{ tone: "featured", period: "year", class: "ring-2 ring-brand" }],
+  defaultVariants: { tone: "plain", period: "month" },
+});
+
+const plans = [
+  { name: "البداية", price: 99, highlighted: false },
+  { name: "الاحترافية", price: 299, highlighted: true },
+  { name: "الشركات", price: 999, highlighted: false },
+];
+
+for (const p of plans) {
+  const tone = p.highlighted ? "featured" : "plain";
+  console.log(p.name, "=>", plan({ tone, period: "year" }));
+}
 ~~~
 
-فيها ٤ عناصر في غير مكانها، وجملة محتاجة عنصر ومش واخداه.`, done: R`بعد التصليح مفيش [[u]] ولا [[del]] ولا [[mark]]: «مهم جدًا» بقت [[strong]]، والسعر القديم [[s]]، و «وفّر ٨٠ جنيه» [[b]]، وفقرة الشروط الطويلة من غير [[small]]، وجملة الضريبة هي اللي بقت [[small]].`, work: { h: 260, start: R`<p><u>مهم جدًا:</u> العرض لحد آخر الشهر بس.</p>
-<p>الاشتراك <del>٤٠٠ جنيه</del> ٣٢٠ جنيه في الشهر. <mark>وفّر ٨٠ جنيه!</mark></p>
-<p><small>الاشتراك بيتجدد كل شهر لوحده. تقدر تلغي في أي وقت من صفحة حسابك. لو لغيت في نص الشهر الاشتراك بيفضل شغال لآخره. الفلوس مبتتردش عن الشهر اللي بدأ.</small></p>
-<p>السعر مش شامل الضريبة.</p>`, checks: [
-              { say: R`«مهم جدًا» بقت [[<strong>]]`, q: "strong", has: "مهم جدًا" },
-              { say: R`مفيش [[<u>]] ولا [[<del>]] ولا [[<mark>]] في الصفحة`, q: "u, del, mark", n: 0 },
-              { say: R`السعر القديم «٤٠٠ جنيه» في [[<s>]]`, q: "s", has: "٤٠٠" },
-              { say: R`«وفّر ٨٠ جنيه» في [[<b>]]`, q: "b", has: "وفّر" },
-              { say: R`فقرة الشروط الطويلة من غير [[<small>]]`, q: "small", has: "بيتجدد", n: 0 },
-              { say: R`جملة الضريبة هي اللي في [[<small>]]`, q: "small", has: "الضريبة", n: 1 },
-            ] }, sol: R`~~~live 200 260 بعد التصليح
-<p><strong>مهم جدًا:</strong> العرض لحد آخر الشهر بس.</p>
-<p>الاشتراك <s>٤٠٠ جنيه</s> ٣٢٠ جنيه في الشهر. <b>وفّر ٨٠ جنيه!</b></p>
-<p>الاشتراك بيتجدد كل شهر لوحده. تقدر تلغي في أي وقت من صفحة حسابك. لو لغيت في نص الشهر الاشتراك بيفضل شغال لآخره. الفلوس مبتتردش عن الشهر اللي بدأ.</p>
-<p><small>السعر مش شامل الضريبة.</small></p>
+في React بتبقى:
+
+~~~tsx Plans.tsx
+{plans.map((p) => (
+  <article key={p.name} className={plan({ tone: p.highlighted ? "featured" : "plain", period: "year" })}>
+    <h2>{p.name}</h2>
+    <p>{p.price} جنيه</p>
+  </article>
+))}
 ~~~
 
-**الخمس تصليحات:**
+**الفكرة:** [[period]] variant قيمه فاضية، ووجوده بس عشان الـ compound يقدر يشترط عليه. و [[ring-2 ring-brand]] مبتظهرش غير لو الشرطين اتحققوا مع بعض.
 
-1. [[u]] على «مهم جدًا»: خط تحت كلمة في صفحة ويب معناه عند القارئ «لينك». والمعنى المطلوب أهمية، يعني [[strong]].
-2. [[del]] على السعر القديم: السعر مبقاش ساري، مش «اتمسح من مستند». يبقى [[s]].
-3. [[mark]] على «وفّر ٨٠ جنيه»: [[mark]] للحتة اللي ليها علاقة باللي القارئ بيعمله دلوقتي (زي كلمة البحث)، مش للدعاية. دي جملة عايزين العين تلقطها، يعني [[b]].
-4. [[small]] على فقرة شروط من أربع جمل: المواصفة بتقول إن [[small]] لحتة قصيرة، مش لفقرات. والشروط دي أصلًا مهمة للي هيدفع، فمينفعش تتصغّر.
-5. «السعر مش شامل الضريبة» هي الملحوظة الجانبية القصيرة (small print) اللي [[small]] معمول عشانها.
+**الداتا هي اللي بتقرر:** مفيش [[if]] جوه الـ JSX لكل باقة. تغيير [[highlighted]] من باقة لباقة سطر في الـ array.
 
-**الغلطة الشائعة:** تصغّر الشروط «عشان الصفحة تبقى أنضف». لو المعلومة هتفرق مع القارئ، مكانها نص عادي.
+**الغلطة الشائعة:** تكتب [[className={p.highlighted ? "bg-gray-950 ..." : "bg-white ..."}]] في كل مكان. كده الشكل متفرق، و cva بتجمّعه في مكان واحد.
 
 ~~~text الناتج
-          u   del   mark   small   strong   s   b
-قبل       1    1     1       1       0      0   0
-بعد       0    0     0       1       1      1   1
-small بعد التصليح: «السعر مش شامل الضريبة.»  font-size = 13.3333px
+البداية => rounded-3xl p-8 bg-white text-gray-950
+الاحترافية => rounded-3xl p-8 bg-gray-950 text-white ring-2 ring-brand
+الشركات => rounded-3xl p-8 bg-white text-gray-950
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة نتايج بحث في مكتبة متخيلة عن كلمة «رواية»: عنوان فيه الكلمة اللي اتبحث عنها، وتلات نتايج، كل نتيجة [[<article>]] فيه عنوان الكتاب ([[<h3>]]) وسطر وصف، وكلمة «رواية» متعلّم عليها في كل مكان ظهرت فيه، وتحت كل نتيجة ملحوظة صغيرة بحالة التوفر.`, done: R`الصفحة فيها ٣ [[article]]، وكلمة «رواية» جوه [[mark]] في كل مرة ظهرت في النتايج (٥ مرات)، وخلفيتها صفرا، وكل نتيجة تحتها [[small]] واحد. ومفيش [[mark]] في عنوان الصفحة نفسه.`, work: { h: 440, start: R`نتايج البحث عن «رواية»
-البحر البعيد
-أول رواية للكاتبة، عن صياد بيدوّر على أخوه.
-متوفرة: ٤ نسخ
-ليالي المدينة
-رواية قصيرة في ١٢٠ صفحة.
-متوفرة: نسخة واحدة
-إزاي تكتب رواية
-كتاب تعليمي لأي حد عايز يكتب أول رواية ليه.
-مش متوفر دلوقتي`, checks: [
-              { say: R`تلات نتايج كل واحدة [[<article>]]`, q: "article", n: 3 },
-              { say: R`عنوان كل كتاب [[<h3>]] جوه الـ [[<article>]] بتاعه`, q: "article > h3", n: 3 },
-              { say: R`كلمة «رواية» جوه [[<mark>]] في كل مرة ظهرت في النتايج (٥ مرات)`, q: "mark", has: "رواية", n: 5 },
-              { say: R`مفيش [[<mark>]] في عنوان الصفحة نفسه`, q: "h1 mark, h2 mark", n: 0 },
-              { say: R`تحت كل نتيجة [[<small>]] لحالة التوفر`, q: "article small", n: 3 },
-            ] }, sol: R`~~~live 410 520 نتايج البحث
-<h2>نتايج البحث عن «رواية»</h2>
-<article>
-  <h3><mark>رواية</mark> البحر البعيد</h3>
-  <p>أول <mark>رواية</mark> للكاتبة، عن صياد بيدوّر على أخوه.</p>
-  <p><small>متوفرة: ٤ نسخ</small></p>
-</article>
-<article>
-  <h3>ليالي المدينة</h3>
-  <p><mark>رواية</mark> قصيرة في ١٢٠ صفحة.</p>
-  <p><small>متوفرة: نسخة واحدة</small></p>
-</article>
-<article>
-  <h3>إزاي تكتب <mark>رواية</mark></h3>
-  <p>كتاب تعليمي لأي حد عايز يكتب أول <mark>رواية</mark> ليه.</p>
-  <p><small>مش متوفر دلوقتي</small></p>
-</article>
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<button className={buttonVariants({ variant, size, class: className })}>]] و [[size: { md: "px-6 ..." }]]، وحد بعت [[className="px-2"]] ومفيش أي تغيير. ليه؟ صلّح.`, done: R`cva بتلزق [[class]] في الآخر من غير ما تحل التعارض، فالعنصر عليه [[px-6 px-2]] و [[.px-6]] جاية بعد [[.px-2]] في الـ CSS فبتكسب (24px). بعد [[cn(buttonVariants({ variant, size }), className)]] الـ class فيه [[px-2]] بس والـ padding بقى 8px.`, sol: R`~~~tsx Button.tsx
+import { cn } from "@/lib/utils";
+
+export function Button({ className, variant, size, ...props }: ButtonProps) {
+  return <button className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}
 ~~~
 
-**ليه [[mark]] هنا بالذات:** المواصفة بتقول إن [[mark]] في نص الصفحة العادي معناه «الحتة دي ليها علاقة باللي المستخدم بيعمله دلوقتي»، ومثالها هو ده بالظبط: الكلمات اللي طابقت البحث. الكتاب نفسه مش مكتوب فيه إن الكلمة دي مهمة، انت اللي علّمت عليها عشان القارئ بيدوّر عليها.
+**ليه مكانش بيتغيّر:** cva مش بتفهم Tailwind. لما تديها [[class]]، بتلزقها في آخر النص وخلاص. فالعنصر عليه [[px-6]] و [[px-2]] مع بعض، واللي بيكسب هو الأخير في ملف الـ CSS، وده [[px-6]].
 
-**وليه مفيش [[mark]] في عنوان الصفحة:** «رواية» في العنوان هي كلمة البحث نفسها، مش نتيجة طابقتها.
+**التصليح:** ناتج cva يعدّي على [[cn()]]، و twMerge يحذف [[px-6]] لأن [[px-2]] جاية بعدها.
 
-**و [[small]]:** حالة التوفر ملحوظة جانبية قصيرة تحت كل نتيجة.
-
-**الغلطة الشائعة:** [[<span style="background: yellow">]] بدل [[mark]]. الشكل واحد، بس [[mark]] بيحط الدور [[mark]] في الشجرة، والـ span مبيقولش حاجة.
+**الغلطة الشائعة:** تفتكر إن [[class]] جوه cva بديل لـ [[cn]]. ده بيشتغل بس لو مفيش تعارض، وأول مرة يحصل تعارض مش هتلاقي أي رسالة.
 
 ~~~text الناتج
-article: 3   mark: 5   small: 3
-mark:  background-color = rgb(255, 255, 0)   color = rgb(0, 0, 0)   الدور = mark
+قبل:  class="rounded-lg px-6 py-2 px-2"   padding-left = 24px
+بعد:  class="rounded-lg py-2 px-2"        padding-left = 8px
 ~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** دي «سياسة الاسترجاع» لمتجر متخيل قبل وبعد تعديل اتعمل يوم ١٢ نوفمبر ٢٠٢٦ الساعة ١٠ الصبح بتوقيت القاهرة (+02:00)، وشرح التعديل في صفحة [[/policy-changes.html#nov-2026]]:
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** لف على كل تركيبات [[variant]] × [[size]] في [[buttonVariants]]، ولكل واحدة تأكد إن [[twMerge(out) === out]] (يعني مفيش كلاسين بيتخانقوا جوه الـ variants نفسها).`, done: R`الاختبار بيقع من أول تشغيلة على [[outline × lg]] لأن [[border]] و [[border-2]] متعارضين، وبعد ما نقلت الـ border لـ compound بيعدّي على الـ ٩ تركيبات. ولما تزوّد [[px-5]] على variant (وهو أصلًا فيه px من الحجم) الاختبار بيفشل ويطبع التركيبات اللي فيها التعارض.`, sol: R`~~~js variants.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { twMerge } from "tailwind-merge";
+import { buttonVariants } from "./cva-base.mjs";
 
-~~~text قبل
-تقدر ترجّع أي منتج خلال ٣٠ يوم.
-المنتج لازم يكون في علبته.
-مصاريف الشحن علينا.
+const variants = ["primary", "outline", "ghost"];
+const sizes = ["sm", "md", "lg"];
+
+for (const variant of variants) {
+  for (const size of sizes) {
+    test($__bt$__{variant} × $__{size} مفيهاش كلاسين بيتخانقوا$__bt, () => {
+      const out = buttonVariants({ variant, size });
+      assert.equal(twMerge(out), out);
+    });
+  }
+}
 ~~~
 
-~~~text بعد
-تقدر ترجّع أي منتج خلال ١٤ يوم.
-المنتج لازم يكون في علبته.
-مصاريف الشحن على العميل.
-المنتجات المخفّضة مبتترجعش.
+**الاختبار كشف مشكلة حقيقية من أول تشغيلة:** الزرار [[outline]] و [[lg]] فيه [[border]] من الـ variant و [[border-2]] من الـ compound، والاتنين بيتخانقوا على نفس الخاصية. فـ twMerge بيشيل [[border]] والناتج بيختلف.
+
+في الزرار الحقيقي [[cn]] بيداري ده، بس الكلاس الزيادة لسه غلط. التصليح: [[border]] يتنقل لـ compound، عشان كل مقاس ياخد سُمك واحد:
+
+~~~js cva-base-fixed.mjs
+import { cva } from "class-variance-authority";
+
+export const buttonVariants = cva("inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50", {
+  variants: {
+    variant: { primary: "bg-brand text-white hover:bg-brand/90", outline: "hover:bg-gray-50", ghost: "hover:bg-gray-100" },
+    size: { sm: "h-9 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6 text-lg" },
+  },
+  compoundVariants: [
+    { variant: "outline", size: ["sm", "md"], class: "border" },
+    { variant: "outline", size: "lg", class: "border-2" },
+  ],
+  defaultVariants: { variant: "primary", size: "md" },
+});
 ~~~
 
-اكتب نسخة واحدة التعديلات باينة فيها.`, done: R`الصفحة فيها ٢ [[del]] و ٣ [[ins]]، كلهم عليهم نفس [[datetime]] ونفس [[cite]]، والسطر اللي متغيّرش من غير أي عنصر، والسطر الجديد كله [[<ins>]] حوالين [[<p>]]. ولو قريت الصفحة وطنّشت المشطوب تطلع نسخة «بعد» بالظبط.`, work: { h: 260, start: R`<h2>سياسة الاسترجاع</h2>
-<p>تقدر ترجّع أي منتج خلال ٣٠ يوم.</p>
-<p>المنتج لازم يكون في علبته.</p>
-<p>مصاريف الشحن علينا.</p>`, checks: [
-              { say: R`الحاجات اللي اتشالت في [[<del>]]: اتنين`, q: "del", n: 2 },
-              { say: R`الحاجات الجديدة في [[<ins>]]: تلاتة`, q: "ins", n: 3 },
-              { say: R`السطر الجديد كله [[<ins>]] حوالين [[<p>]]`, q: "ins > p", has: "مبتترجعش", n: 1 },
-              { say: R`كل [[<del>]] و [[<ins>]] عليه [[datetime="2026-11-12T10:00+02:00"]]`, q: "del, ins", attr: ["datetime", "2026-11-12T10:00+02:00"], n: 5 },
-              { say: R`وكلهم عليهم [[cite="/policy-changes.html#nov-2026"]]`, q: "del, ins", attr: ["cite", "/policy-changes.html#nov-2026"], n: 5 },
-              { say: R`السطر اللي متغيّرش («في علبته») من غير [[<del>]] ولا [[<ins>]]`, q: "del, ins", has: "علبته", n: 0 },
-            ] }, sol: R`~~~live 210 260 السياسة والتعديلات باينة
-<h2>سياسة الاسترجاع</h2>
-<p>تقدر ترجّع أي منتج خلال <del cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">٣٠</del> <ins cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">١٤</ins> يوم.</p>
-<p>المنتج لازم يكون في علبته.</p>
-<p>مصاريف الشحن <del cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">علينا</del> <ins cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">على العميل</ins>.</p>
-<ins cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">
-  <p>المنتجات المخفّضة مبتترجعش.</p>
-</ins>
-~~~
+**ليه الفكرة شغالة:** [[twMerge(out) === out]] معناها «مفيش حاجة تتحذف»، يعني مفيش كلاسين متعارضين. والاختبار بيلف بـ [[for]] فمحدش بينسى تركيبة، واسم كل test فيه التركيبة.
 
-**القرارات:**
-
-- التعديل على قد اللي اتغيّر: «٣٠» بقت «١٤»، مش الجملة كلها. كده القارئ بيشوف الفرق من أول نظرة.
-- السطر التاني متغيّرش، فمفيش عليه حاجة.
-- السطر الرابع فقرة جديدة كاملة، فالـ [[ins]] حوالين الـ [[<p>]] مش جواه. [[del]] و [[ins]] هما العنصرين الوحيدين في الوحدة دي اللي ينفع يتحطوا حوالين فقرات.
-- [[datetime]] بالصيغة الكاملة: التاريخ، ثم [[T]]، ثم الساعة، ثم فرق التوقيت عن UTC ([[+02:00]] للقاهرة).
-- [[cite]] لينك لصفحة بتشرح التعديل. مش بيظهر للقارئ، فلو عايزه يتشاف اكتب لينك عادي تحت السياسة.
-
-**الغلطة الشائعة:** [[<ins>]] واحد يبدأ في نص فقرة ويخلص في نص الفقرة اللي بعدها. المواصفة بتقول إن التعديل ميعدّيش حدود الفقرة: كل فقرة ليها عنصرها.
+**الغلطة الشائعة:** تعدّل الاختبار لما يقع عشان يعدّي. هنا الاختبار كان صح، والكود هو اللي محتاج تصليح.
 
 ~~~text الناتج
-del: 2   ins: 3
-كل واحد:  dateTime = 2026-11-12T10:00+02:00
-          cite = https://example.test/policy-changes.html#nov-2026   (لو الصفحة على example.test)
-آخر ins:  جواه عنصر p واحد
-النص من غير المشطوب: نفس نسخة «بعد» سطر بسطر
+buttonVariants بتاع الدرس:
+ℹ tests 9 ، pass 8 ، fail 1
+✖ outline × lg مفيهاش كلاسين بيتخانقوا
+  actual:   ... hover:bg-gray-50 h-12 px-6 text-lg border-2
+  expected: ... border hover:bg-gray-50 h-12 px-6 text-lg border-2
+
+بعد نقل border للـ compound:
+ℹ tests 9 ، pass 9 ، fail 0
+
+بعد ما زوّدت px-5 على outline:
+ℹ tests 9 ، pass 6 ، fail 3
+✖ outline × sm ، outline × md ، outline × lg
 ~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** [[cite]] و [[datetime]] مبيظهروش في الصفحة. اثبت إنهم موجودين: اكتب [[<del cite="/log.html#fix" datetime="2026-11-10">غلط</del>]] في صفحة، وفي الـ Console اقرا [[document.querySelector('del').cite]] و [[.dateTime]]. وبعدين غيّر الـ [[datetime]] لكلمة «امبارح» واقرا تاني: حصل خطأ؟`, done: R`[[.cite]] رجّع العنوان كامل (المتصفح كمّل المسار على عنوان الصفحة)، و [[.dateTime]] رجّع النص زي ما كتبته. و «امبارح» مطلّعتش أي خطأ ولا تحذير، بس [[new Date('امبارح')]] بيرجّع [[Invalid Date]]: يعني المتصفح مش بيراجع القيمة، وانت المسؤول عن الصيغة.`, sol: R`~~~live 60 80 الصفحة
-<p>الإجابة: <del cite="/log.html#fix" datetime="2026-11-10">غلط</del> <ins cite="/log.html#fix" datetime="2026-11-10">صح</ins></p>
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من README بتاع class-variance-authority: إزاي compound variant يطابق أكتر من قيمة (outline أو ghost مع بعض)؟ وإزاي تعمل variant boolean ([[disabled: true]])؟ جرّب الاتنين.`, done: R`لقيت إن القيمة في compound ممكن تبقى array ([[variant: ["outline", "ghost"]]])، وإن الـ boolean بيتكتب [[{ true: "opacity-50", false: "" }]]، و [[cva("x", { variants: { disabled: { true: "opacity-50", false: "" } } })({ disabled: true })]] رجّع [["x opacity-50"]].`, sol: R`~~~js try.mjs
+import { cva } from "class-variance-authority";
+
+const btn = cva("btn", {
+  variants: {
+    variant: { solid: "s", outline: "o", ghost: "g" },
+    disabled: { true: "opacity-50", false: "" },
+  },
+  compoundVariants: [{ variant: ["outline", "ghost"], class: "bg-transparent" }],
+});
+
+console.log(btn({ variant: "outline" }));
+console.log(btn({ variant: "ghost" }));
+console.log(btn({ variant: "solid" }));
+console.log(cva("x", { variants: { disabled: { true: "opacity-50", false: "" } } })({ disabled: true }));
 ~~~
 
-وفي الـ Console (السطور دي JavaScript، هتتعلمه في كورسه. دلوقتي انسخها زي ما هي):
+**الإجابة من README بتاع class-variance-authority:**
 
-~~~js
-document.querySelector('del').cite
-document.querySelector('del').dateTime
-new Date(document.querySelector('del').dateTime)
-~~~
+- القيمة في compound ممكن تبقى array: [[variant: ["outline", "ghost"]]] معناها «أي واحدة منهم».
+- الـ boolean variant بيتكتب بمفاتيح [[true]] و [[false]]. وبعد كده [[{ disabled: true }]] بتشتغل. واكتب [[false: ""]] لو حابب تحط [[defaultVariants]] لها.
 
-**اللي بيحصل:**
+**الغلطة الشائعة:** تكرر compound مرتين، مرة لـ outline ومرة لـ ghost. أو تنادي بالـ string [["true"]] بدل الـ boolean في TypeScript.
 
-- [[.cite]] خاصية بترجّع قيمة الـ attribute بعد ما المتصفح يحوّلها لعنوان كامل. أنا كتبت [[/log.html#fix]] والصفحة كانت مفتوحة من ملف على الجهاز، فرجع [[file:///C:/log.html#fix]]. على موقع حقيقي هيرجع [[https://موقعك/log.html#fix]].
-- [[.dateTime]] (بحرف T كبير في JavaScript) بترجّع النص زي ما هو.
-- [[new Date(...)]] بيحاول يفهم النص كتاريخ. مع [[2026-11-10]] نجح، ومع «امبارح» رجّع [[Invalid Date]].
-
-**ليه مفيش خطأ؟** المتصفح مبيعملش حاجة بالـ [[datetime]] غير إنه يحفظه. المواصفة بتقول إن القيمة اللي مش تاريخ سليم معناها «التعديل ده ملوش وقت مسجّل»، والصفحة بتكمّل عادي. اللي بيمسك الغلطة دي هو الـ validator (validator.w3.org/nu)، مش المتصفح.
-
-**الغلطة الشائعة:** تكتب التاريخ بالشكل اللي بتقراه ([[10/11/2026]]). ده عند ناس ١٠ نوفمبر وعند ناس ١١ أكتوبر. الصيغة الوحيدة المقبولة سنة-شهر-يوم.
-
-~~~text الناتج (الصفحة مفتوحة كملف)
-del.cite      = file:///C:/log.html#fix
-del.dateTime  = 2026-11-10
-new Date(...) = 2026-11-10T00:00:00.000Z
-
-بعد ما datetime بقى «امبارح»:
-del.dateTime  = امبارح
-new Date(...) = Invalid Date
-أخطاء في الـ Console: 0
+~~~text الناتج
+btn o bg-transparent
+btn g bg-transparent
+btn s
+x opacity-50
 ~~~` },
           ],
-          title: "هايلايت، وملحوظة جانبية، وتعديل باين: mark و small و del و ins (ومعاهم s و u)",
-          desc: R`[[<mark>]] بيعلّم على حتة ليها علاقة باللي القارئ بيدوّر عليه (زي كلمة البحث). و [[<small>]] ملحوظة جانبية قصيرة (small print). و [[<del>]] و [[<ins>]] بيورّوا إن المستند اتعدّل: ده اتشال وده اتضاف. و [[<s>]] كلام مبقاش ساري (سعر قديم)، و [[<u>]] تعليم من غير كلام (زي غلطة إملائية).
-
-الستة ليهم شكل افتراضي (خلفية صفرا، خط أصغر، خط في النص، خط تحت)، وكل واحد معناه مختلف عن اللي شكله زيه.`,
-          example: R`<p>نتايج البحث عن «قهوة»: أحسن <mark>قهوة</mark> يمني في المنصورة.</p>
-<p>الاشتراك ٩٩ جنيه في الشهر. <small>السعر مش شامل الضريبة.</small></p>
-<p>السعر قبل الخصم <s>٢٥٠ جنيه</s>، ودلوقتي ١٩٩ جنيه.</p>
-<p>ميعاد الورشة: <del cite="/changes.html#c12" datetime="2026-11-10">الخميس</del> <ins cite="/changes.html#c12" datetime="2026-11-10T14:05+02:00">السبت</ins>.</p>
-<p>كتب في الامتحان: الفاعل <u>منصوب</u> دايمًا.</p>`,
-          try: R`اكتب سطرين شكلهم واحد: [[<p>السعر <s>٢٥٠</s> ١٩٩</p>]] و [[<p>السعر <del>٢٥٠</del> ١٩٩</p>]]. قارنهم بعينك، وبعدين افتح تاب Accessibility ودوس على الرقم المشطوب في كل واحد. وبعدها زوّد سطر فيه [[<u>كلمة</u>]] وجنبه لينك [[<a href="#">لينك</a>]]: تعرف تفرّق بينهم من غير اللون؟`,
-          flag: "script",
           deep: {
-            why: R`فيه أربع حاجات بتحصل للنص في أي موقع حقيقي ومفيش كلمة عادية بتقولها: «دي الحتة اللي بتدوّر عليها» (نتايج البحث)، و «دي ملحوظة قانونية جنب السعر»، و «ده كان السعر»، و «الجملة دي اتغيّرت يوم كذا». من غير عناصر ليها معنى هتعملهم بـ [[<span>]] ولون، والمعنى هيفضل محبوس في الشكل: اللي مش شايف اللون مش هيعرف إن السعر ده قديم.`,
-            how: R`الستة عناصر جوه السطر (inline). الستايل الافتراضي في مواصفة HTML: [[mark { background: yellow; color: black }]]، و [[small { font-size: smaller }]]، و [[del, s { text-decoration: line-through }]]، و [[ins, u { text-decoration: underline }]].
+            why: "من غير cva، زرار بـ 3 أشكال و 3 أحجام بيبقى ternaries جوه ternaries في الـ className، وكل واحد يضيف شكل يكسر حاجة. cva بتخلي كل الاختيارات جدول واضح، والـ TypeScript بيقفل الأسماء.",
+            how: R`cva مش بتعمل سحر: بتبني string. [[buttonVariants({ variant: "outline", size: "lg" })]] بترجع الـ base + كلاسات outline + كلاسات lg + أي compoundVariant اتطابقت. ومش بتحل التعارض بين الكلاسات، عشان كده بتتلف في [[cn]].
 
-والأدوار اللي Chrome 157 بيحطها في شجرة الـ accessibility: [[mark]] دوره [[mark]]، و [[del]] و [[s]] دورهم [[deletion]]، و [[ins]] دوره [[insertion]]، و [[small]] و [[u]] دورهم [[generic]].
+[[VariantProps<typeof buttonVariants>]] بيطلّع نوع فيه [[variant]] و [[size]] بالقيم المسموحة بس، فالمكون مش هيقبل غيرها.
 
-[[del]] و [[ins]] مختلفين عن الباقي في حاجتين: ليهم attributes ([[cite]] و [[datetime]])، وينفع يتحطوا حوالين فقرات كاملة مش بس جوه السطر.`,
-            when: R`[[mark]]: كلمات البحث في النتايج، أو حتة في اقتباس انت عايز تلفت لها النظر والكاتب الأصلي مكانش مميّزها.
+ودا بالظبط شكل [[components/ui/button.tsx]] في shadcn: الـ cva اسمها [[buttonVariants]] ومتصدّرة، فتقدر تستخدمها على لينك ([[<Link className={buttonVariants({ variant: "outline" })}>]]) من غير ما تعمل زرار.
 
-[[small]]: «السعر مش شامل الضريبة»، وسطر حقوق النشر، و «الصورة للتوضيح بس»، وأي تنويه قصير.
-
-[[s]]: سعر قديم، وعرض خلص، ومعلومة مبقتش صح ولسه معروضة.
-
-[[del]] و [[ins]]: تصحيح في خبر، وتعديل في سياسة أو لايحة، وأي مكان القارئ من حقه يعرف إن النص اتغيّر.
-
-[[u]]: تقريبًا مش هتحتاجه. المواصفة عدّت استخدامين: تعليم غلطة إملائية، وعلامة أسماء العلم في الصيني.`,
-            mistakes: R`[[mark]] للأهمية: «مهم» شغلة [[strong]]. [[mark]] معناه «ليه علاقة»، مش «مهم».
-
-[[small]] على فقرات أو صفحة شروط كاملة: المواصفة بتقول إنه لحتة قصيرة بس، وإن صفحة الشروط نفسها محتواها هو النص الأساسي مش ملحوظة جانبية.
-
-[[small]] للعنوان الفرعي: ممنوع بنص المواصفة.
-
-[[del]] للسعر القديم: ده [[s]]. و [[s]] لتعديل المستند: ده [[del]].
-
-[[u]] للتأكيد أو لعنوان كتاب: القارئ هيفتكره لينك ويدوس عليه.
-
-الاعتماد على الخط المشطوب لوحده: اللي مش شايف الشاشة ممكن ميوصلوش إن الرقم ده قديم. اكتب «قبل الخصم» أو «السعر القديم» بالكلام.
-
-[[datetime="10/11/2026"]]: مش صيغة سليمة. الصيغة [[2026-11-10]].`
+في React 19 الـ [[ref]] بقى prop عادي، فمش محتاج [[forwardRef]] زي النسخ القديمة من shadcn: [[...props]] بيعدّيه لوحده.`,
+            when: "أي مكون UI ليه أشكال: Button و Badge و Alert و Input. لو المكون شكل واحد بس، cn كفاية.",
+            mistakes: R`تبني كلاسات الـ variants بـ template فـ Tailwind ميشوفهاش. تنسى [[defaultVariants]] فالزرار من غير props يطلع من غير حجم. وفي مشروع حقيقي الـ Button كان لسه بـ [[forwardRef]] و [[displayName]] على React 19: شغال، بس كود زيادة ملوش لازمة.`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## جدول اختيارات بيتحوّل لكلاسات
 
-الدرس اللي فات كان عن كلام **مهم** أو **عليه ضغطة**. الدرس ده عن أربع حالات تانية: كلام **ليه علاقة** باللي بتدوّر عليه، وكلام **جانبي**، وكلام **مبقاش ساري**، وكلام **اتعدّل**. والقياسات من Chrome 157.
-
----
-
-## ١. [[<mark>]]: الحتة اللي ليها علاقة
-
-تخيّل قلم الهايلايتر الأصفر. المواصفة بتقول إن [[mark]] حتة نص متعلّم عليها **للرجوع ليها**، عشان ليها علاقة بسياق تاني. وفي نص الصفحة العادي: حتة ليها علاقة باللي المستخدم بيعمله دلوقتي.
-
-~~~live 90 110 mark في نتايج البحث
-<p>نتايج البحث عن «قهوة»:</p>
-<p>أحسن <mark>قهوة</mark> يمني في المنصورة، محمّصة طازة كل أسبوع.</p>
-~~~
-
-الكلمة اللي خلفيتها صفرا هي اللي طابقت البحث. اللي كتب وصف المحل مكانش مميّزها، الصفحة هي اللي علّمت عليها عشانك.
-
-### [[mark]] ولا [[strong]]؟
-
-~~~live 80 100 مهم، وليه علاقة
-<p><strong>أي شغل مش محفوظ هيتمسح لما تقفل.</strong> <mark>الملف بيتحفظ في فولدر المستندات.</mark></p>
-~~~
-
-لو القارئ سأل «الملف بيتحفظ فين؟»: الجملة الأولى **مهمة** دايمًا لأي حد (تحذير)، والتانية هي اللي **ليها علاقة** بسؤاله هو. المواصفة فيها مثال بنفس الفكرة: كتاب مدرسي متعلّم فيه على اللي جاي في الامتحان، وتحذيرات الأمان مهمة بس مش متعلّم عليها.
-
-والقياس:
-
-~~~text mark
-background-color = rgb(255, 255, 0)    (أصفر)
-color            = rgb(0, 0, 0)        (أسود، حتى لو باقي الصفحة لونها تاني)
-الدور            = mark
-~~~
-
-**مش لتلوين الكود:** تلوين كلمات الكود (syntax highlighting) بيتعمل بـ [[<span>]] و CSS. المواصفة و MDN قايلينها الاتنين.
+[[cva]] بتاخد منك الكلاسات اللي في كل الزراير، وجدول فيه كل شكل وكل حجم وكلاساته، وترجّعلك دالة: تدّيها [[{ variant, size }]] ترجّع الـ string. حطينا الكود ده بالظبط في مشروع Vite (Tailwind 4.3.3، و class-variance-authority 0.7.1، و TypeScript 6.0.3، و [[--color-brand]] متعرّف في [[@theme]])، وقسنا الزراير في Chrome.
 
 ---
 
-## ٢. [[<small>]]: الملحوظة الجانبية
+## ١. الـ imports
 
-المواصفة: [[small]] بيمثّل **side comments** زي الـ small print: تنويهات، وتحفّظات، وقيود قانونية، وحقوق نشر.
-
-~~~live 90 120 small
-<p>الاشتراك ٩٩ جنيه في الشهر. <small>السعر مش شامل الضريبة.</small></p>
-<p><small>© ٢٠٢٦ جيم الأبطال. كل الحقوق محفوظة.</small></p>
+~~~text Button.tsx
+import type { ComponentProps } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 ~~~
 
-~~~text small
-font-size: الفقرة = 16px    small = 13.3333px
-الدور = generic
+- [[import type]]: السطر كله types بس، بيتشال من الـ JavaScript الناتج.
+- [[ComponentProps]]: type من React بيدّيك كل الـ props بتاعة عنصر HTML. [[ComponentProps<"button">]] = [[onClick]] و [[disabled]] و [[type]] و [[aria-label]] وكل اللي الـ [[<button>]] بياخده.
+- [[cva]]: الدالة نفسها. والاسم اختصار class-variance-authority.
+- [[VariantProps]]: type بيطلّع أسماء الـ variants وقيمها من الـ cva.
+- [[cn]]: من الدرس اللي فات.
+
+## ٢. [[cva(base, config)]]
+
+~~~text Button.tsx
+const buttonVariants = cva("inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50", {
 ~~~
 
-13.33 جاية من [[font-size: smaller]]: أصغر من الأب بدرجة (Chrome ضرب 16 في ٥/٦). مش رقم ثابت: [[small]] جوه عنوان 32px هيبقى 26.67.
+الـ argument الأول هو الـ **base**: كلاسات بتتحط على كل زرار مهما كان شكله:
 
-تلات حاجات المواصفة بتقولها ومش واضحة من الاسم:
+| الكلاس | يعني |
+|---|---|
+| [[inline-flex items-center justify-center]] | الأيقونة والكلام جنب بعض وفي النص |
+| [[gap-2]] | 8px بين الأيقونة والكلام |
+| [[rounded-lg]] | تدوير الأركان 8px |
+| [[font-medium]] | وزن الخط 500، أتقل من العادي |
+| [[disabled:opacity-50]] | لو عليه [[disabled]] يبقى نص شفاف |
 
-- [[small]] **مبيقللش الأهمية**. [[<strong><small>...</small></strong>]] معناها «small print مهم»، وده مسموح.
-- **لحتة قصيرة بس.** مش لفقرات ولا قوايم ولا صفحة شروط كاملة.
-- **ممنوع للعناوين الفرعية.**
+والتاني object فيه ٣ حاجات:
+
+### [[variants]]
+
+~~~text Button.tsx
+variants: {
+  variant: { primary: "bg-brand text-white hover:bg-brand/90", outline: "border hover:bg-gray-50", ghost: "hover:bg-gray-100" },
+  size: { sm: "h-9 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6 text-lg" },
+},
+~~~
+
+- [[variant]] و [[size]] أسامي انت اللي اخترتها، ودي هتبقى أسامي الـ props.
+- جوه كل واحد: اسم الاختيار وكلاساته. [[primary]] و [[outline]] و [[ghost]] (شفاف من غير border).
+- [[hover:bg-brand/90]]: الـ [[/90]] بعد اللون = نفس اللون بشفافية 90٪.
+- [[h-9]] و [[h-10]] و [[h-12]] = ارتفاع 36 و 40 و 48px (كل وحدة 4px).
+
+### [[compoundVariants]]
+
+~~~text Button.tsx
+compoundVariants: [{ variant: "outline", size: "lg", class: "border-2" }],
+~~~
+
+array من «تركيبات»: الكلاس [[border-2]] بيتضاف بس لو [[variant]] هو outline **و** [[size]] هو lg مع بعض.
+
+### [[defaultVariants]]
+
+~~~text Button.tsx
+defaultVariants: { variant: "primary", size: "md" },
+~~~
+
+لو اللي بيستخدم الزرار محددش، دي القيم.
+
+### بتطلّع إيه؟
+
+ناديناها وطبعنا الناتج:
+
+~~~text الناتج
+buttonVariants()
+→ inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50 bg-brand text-white hover:bg-brand/90 h-10 px-4
+
+buttonVariants({ variant: "outline", size: "lg" })
+→ inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50 border hover:bg-gray-50 h-12 px-6 text-lg border-2
+~~~
+
+الترتيب دايمًا: base، وبعدين كلاسات الـ variant، وبعدين الـ size، وفي الآخر الـ compound. ولاحظ إن التانية فيها [[border]] و [[border-2]] الاتنين: cva بتلزق بس، مش بتحل تعارض.
 
 ---
 
-## ٣. [[<s>]]: كلام مبقاش ساري
+## ٣. الـ type
 
-المواصفة: [[s]] محتوى **مبقاش دقيق أو مبقاش يخص**. أشهر استخدام السعر القديم:
-
-~~~live 90 120 s
-<p>السعر قبل الخصم <s>٢٥٠ جنيه</s>، ودلوقتي ١٩٩ جنيه.</p>
-<p><s>العرض ساري لحد ٣٠ نوفمبر.</s> العرض اتمدّ لحد ١٥ ديسمبر.</p>
+~~~text Button.tsx
+type ButtonProps = ComponentProps<"button"> & VariantProps<typeof buttonVariants>;
 ~~~
 
-الكلام المشطوب لسه معروض عن قصد: القارئ محتاج يشوف السعر القديم عشان يعرف هو وفّر كام.
+من جوه لبرة:
 
----
+1. [[typeof buttonVariants]]: [[typeof]] هنا (في مكان type) معناها «هات الـ type بتاع المتغير ده».
+2. [[VariantProps<...>]]: يطلّع منه [[{ variant?: "primary" | "outline" | "ghost" | null; size?: "sm" | "md" | "lg" | null }]]. الـ [[?]] = اختياري، والـ [[|]] = «واحد من دول».
+3. [[&]]: بيدمج الاتنين: كل props الزرار العادية **و** variant و size.
 
-## ٤. [[<del>]] و [[<ins>]]: المستند اتعدّل
+جربنا [[<Button variant="danger">]] و [[<Button size="xl">]] وشغّلنا [[tsc]]:
 
-[[del]] من delete: حتة **اتشالت** من المستند. و [[ins]] من insert: حتة **اتضافت**. الاتنين مع بعض بيعملوا اللي برامج الكتابة بتسميه track changes.
-
-~~~live 60 80 del و ins
-<p>ميعاد الورشة: <del>الخميس</del> <ins>السبت</ins> الساعة ٧ مساءً.</p>
+~~~text الناتج
+error TS2322: Type '"danger"' is not assignable to type '"primary" | "outline" | "ghost" | null | undefined'.
+error TS2322: Type '"xl"' is not assignable to type '"sm" | "md" | "lg" | null | undefined'.
 ~~~
 
-المشطوب هو القديم، واللي تحته خط هو الجديد.
+## ٤. المكون
 
-### [[<del cite="..." datetime="...">]]
-
-العنصرين ليهم نفس الاتنين attributes، وهما اختياريين:
-
-~~~html
-<p>ميعاد الورشة: <del cite="/changes.html#c12" datetime="2026-11-10">الخميس</del> <ins cite="/changes.html#c12" datetime="2026-11-10T14:05+02:00">السبت</ins>.</p>
+~~~text Button.tsx
+export function Button({ className, variant, size, ...props }: ButtonProps) {
+  return <button className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}
 ~~~
 
-- [[cite]]: عنوان (URL) لصفحة **بتشرح التعديل** (محضر اجتماع، أو سجل تغييرات). المواصفة بتقول إنه معمول أساسًا للاستخدام الداخلي (سكربتات بتجمع إحصائيات عن تعديلات الموقع)، مش للقارئ. والمتصفح مبيعرضوش.
-- [[datetime]]: **إمتى** التعديل حصل. لازم تاريخ بالصيغة [[2026-11-10]] (سنة-شهر-يوم)، ولو عايز الساعة: حرف [[T]] ثم الوقت ثم فرق التوقيت ([[+02:00]] للقاهرة).
+- [[{ className, variant, size, ...props }]]: destructuring. بيطلّع التلاتة دول بأساميهم، و [[...props]] = «كل الباقي» ([[onClick]] و [[disabled]] و [[id]]...).
+- [[buttonVariants({ variant, size })]]: الكلاسات من الجدول. و [[{ variant, size }]] اختصار [[{ variant: variant, size: size }]].
+- [[cn(..., className)]]: الـ className اللي من برا آخر حاجة عشان يكسب، و cn بتشيل المتعارض.
+- [[{...props}]]: يفرد الباقي على الـ [[<button>]] الحقيقي.
 
-الشكل في الصفحة مبيتغيّرش خالص بيهم. اللي اتغيّر إن المعلومة بقت موجودة لأي برنامج يقرا الصفحة:
+## ٥. القياس في Chrome
 
-~~~text اللي المتصفح شايفه
-del.cite      = https://example.test/changes.html#c12     (المسار اتكمّل على عنوان الموقع)
-del.dateTime  = 2026-11-10
-ins.dateTime  = 2026-11-10T14:05+02:00
-~~~
+| الاستخدام | الارتفاع | padding جنب | border | حجم الخط |
+|---|---|---|---|---|
+| [[<Button>]] | 40 | 16px | 0 | 16px |
+| [[<Button variant="outline" size="lg">]] | 48 | 24px | **2px** | 18px |
+| [[<Button variant="ghost" size="sm" className="px-8">]] | 36 | **32px** | 0 | 14px |
+| [[<Button disabled>]] | 40 | 16px | 0 | 16px و opacity 0.5 |
 
-ولو كتبت قيمة مش تاريخ ([[datetime="امبارح"]])؟ جرّبتها: مفيش خطأ والصفحة شغالة. المواصفة بتقول إن التعديل ساعتها «ملوش وقت مسجّل». اللي بيمسكها الـ validator.
-
-### تعديل فقرة كاملة
-
-[[del]] و [[ins]] ينفع يتحطوا **حوالين** فقرات، مش بس جواها:
-
-~~~live 90 130 فقرة اتشالت وفقرة اتحطت
-<del datetime="2026-11-12">
-  <p>الاشتراك السنوي بيترد كامل في أي وقت.</p>
-</del>
-<ins datetime="2026-11-12">
-  <p>الاشتراك السنوي بيترد كامل في أول ١٤ يوم بس.</p>
-</ins>
-~~~
-
-اتأكدت من الشجرة: الـ [[<p>]] فضل ابن الـ [[<del>]]. لكن العكس مينفعش: لو كتبت [[<p>]] جوه [[<del>]] جوه [[<p>]] تاني، المتصفح بيقفل الفقرة الأولى أول ما يشوف التانية، لأن [[<p>]] مينفعش يبقى جواه [[<p>]]. جرّبت [[<p>فقرة <del><p>جوه</p></del> باقي</p>]]: الفقرة الخارجية طلع نصها «فقرة » بس، والباقي خرج برّاها.
-
-والقاعدة من المواصفة: التعديل الواحد **ميعدّيش حدود الفقرة**. لو التعديل في فقرتين، كل فقرة ليها [[del]] أو [[ins]] بتاعها.
-
----
-
-## ٥. [[<s>]] ولا [[<del>]]؟
-
-الاتنين خط في نص الكلام، وده أكتر اتنين بيتلخبطوا.
-
-| | [[<s>]] | [[<del>]] |
-|---|---|---|
-| المعنى | مبقاش ساري أو مبقاش دقيق | اتشال من المستند |
-| السؤال | المعلومة دي لسه صح؟ | النص ده اتعدّل وعايز التعديل يبان؟ |
-| مثال | سعر قديم، عرض خلص | تصحيح خبر، تعديل لايحة |
-| attributes | مفيش | [[cite]] و [[datetime]] |
-| حوالين فقرات | لأ، جوه السطر بس | ينفع |
-| معاه غالبًا | السعر الجديد كنص عادي | [[<ins>]] بالنص الجديد |
-
----
-
-## ٦. [[<u>]]: خط تحت الكلمة
-
-[[u]] زمان كان underline وخلاص. المواصفة الحالية عرّفته: حتة نص عليها **تعليم من غير كلام** (non-textual annotation). والمثالين اللي كاتباهم: كلمة مكتوبة غلط، وعلامة أسماء العلم في الكتابة الصيني.
-
-~~~live 60 80 u لغلطة
-<p>كتب في الامتحان: الفاعل <u>منصوب</u> دايمًا.</p>
-~~~
-
-الخط بيقول «فيه حاجة في الكلمة دي» من غير ما يقول إيه (الصح «مرفوع»).
-
-والمشكلة اللي المواصفة بتحذّر منها: الخط ده نفس شكل اللينك.
-
-~~~live 60 80 غلط: u للتأكيد
-<p>اقرا <u>الشروط</u> قبل ما تدوس على <a href="#top">التسجيل</a>.</p>
-~~~
-
-~~~text u واللينك
-u:  text-decoration = underline   color = rgb(0, 0, 0)     cursor = auto
-a:  text-decoration = underline   color = rgb(0, 0, 238)   cursor = pointer
-~~~
-
-الفرق لون وشكل الماوس بس. اللي مبيفرّقش الألوان، أو على موبايل مفيهوش ماوس، هيدوس على «الشروط» ومش هيحصل حاجة. والصح هنا [[strong]]:
-
-~~~live 60 80 صح
-<p>اقرا <strong>الشروط</strong> قبل ما تدوس على <a href="#top">التسجيل</a>.</p>
-~~~
-
----
-
-## ٧. القياس: الستة جنب بعض
-
-| العنصر | الشكل الافتراضي (متقاس) | الدور |
-|---|---|---|
-| [[<mark>]] | خلفية [[rgb(255, 255, 0)]] ولون أسود | [[mark]] |
-| [[<small>]] | [[font-size]] 13.33px لما الأب 16px | [[generic]] |
-| [[<s>]] | [[text-decoration: line-through]] | [[deletion]] |
-| [[<del>]] | [[text-decoration: line-through]] | [[deletion]] |
-| [[<ins>]] | [[text-decoration: underline]] | [[insertion]] |
-| [[<u>]] | [[text-decoration: underline]] | [[generic]] |
-
-[[text-decoration]] خاصية CSS بترسم خط على النص: [[line-through]] في نصه، و [[underline]] تحته.
-
----
-
-## ٨. الشكل لوحده مش كفاية
-
-الأدوار [[deletion]] و [[insertion]] و [[mark]] موجودة في الشجرة (اتقاست). هل قارئ الشاشة بينطق «محذوف»؟ معرفتش أجرّب (مفيش قارئ شاشة في المعمل)، وده بيختلف من برنامج لبرنامج. فاكتب المعنى بالكلام جنب العنصر:
-
-~~~live 60 80 غلط: الخط لوحده
-<p><s>٢٥٠ جنيه</s> ١٩٩ جنيه</p>
-~~~
-
-~~~live 60 80 صح: الكلام بيقول
-<p>السعر قبل الخصم <s>٢٥٠ جنيه</s>، ودلوقتي ١٩٩ جنيه.</p>
-~~~
-
-لو النص اتقرى من غير أي تنسيق، الأولى بتطلع «٢٥٠ جنيه ١٩٩ جنيه» (سعرين؟)، والتانية مفهومة.
-
----
+- التاني: الـ class النهائي فيه [[border-2]] بس، لأن cn شالت [[border]].
+- التالت: [[px-8]] اللي من برا شال [[px-3]] بتاع sm، فالـ padding بقى 32px.
+- الـ primary لونه [[oklch(0.55 0.2 265)]]، ووقت الـ hover بقى نفس اللون بـ [[/ 0.9]] (الشفافية).
 
 ## الخلاصة
 
-| عايز تقول إيه | العنصر |
+| الجزء | بيعمل إيه |
 |---|---|
-| الحتة دي هي اللي بتدوّر عليها | [[<mark>]] |
-| ملحوظة جانبية قصيرة، حقوق نشر | [[<small>]] |
-| ده كان السعر، العرض ده خلص | [[<s>]] |
-| ده اتشال من النص وده اتحط | [[<del>]] و [[<ins>]] |
-| إمتى اتعدّل وليه | [[datetime]] و [[cite]] عليهم |
-| الكلمة دي فيها غلطة | [[<u>]] |
-| ده مهم | [[<strong>]] مش [[mark]] ولا [[u]] |`,
+| base | كلاسات كل الأشكال |
+| [[variants]] | جدول الاختيارات: كل اسم وكلاساته |
+| [[compoundVariants]] | كلاسات لتركيبة معينة |
+| [[defaultVariants]] | القيم لو محدش حدد |
+| [[VariantProps]] | الأسماء المسموحة لـ TypeScript |
+| [[cn(..., className)]] | يحل التعارض ويخلي اللي من برا يكسب |`,
           lines: [
-            R`[[mark]] على كلمة «قهوة» في نتيجة البحث: دي الكلمة اللي طابقت اللي المستخدم كتبه، وخلفيتها بتطلع صفرا.`,
-            R`[[small]] لملحوظة جانبية قصيرة جنب السعر. الخط بيصغر لـ 13.33px، والمعنى «small print».`,
-            R`[[s]] على السعر القديم: معلومة مبقتش سارية ولسه معروضة للمقارنة. وكلمة «قبل الخصم» بتقول المعنى بالنص كمان.`,
-            R`[[del]] اللي اتشال و [[ins]] اللي اتضاف. [[cite]] لينك لشرح التعديل، و [[datetime]] وقته: مرة تاريخ بس، ومرة تاريخ وساعة وفرق توقيت.`,
-            R`[[u]] على كلمة غلط في إجابة: الخط بيعلّم عليها من غير ما يقول الغلطة إيه.`
+            "نوع الـ props بتاعة أي عنصر HTML.",
+            R`استيراد [[cva]] نفسها، والنوع [[VariantProps]] اللي بيطلّع أسماء الاختيارات لـ TypeScript.`,
+            "cn من الدرس اللي فات.",
+            "الكلاسات اللي في كل الأشكال.",
+            R`بداية [[variants]]: كل مفتاح جواه اسم prop، وكل قيمة جواه اختيار بكلاساته.`,
+            "الشكل: 3 اختيارات، كل واحد وكلاساته.",
+            R`الحجم: 3 اختيارات (sm و md و lg)، كل واحد بارتفاع و padding وخط.`,
+            "قفلة variants.",
+            "تركيبة معينة: outline و lg مع بعض بس ياخدوا border أتقل.",
+            "لو محدش حدد: primary و md.",
+            "قفلة.",
+            R`props الزرار العادية + [[variant]] و [[size]] بأنواعهم من cva.`,
+            R`الـ component نفسه: بياخد [[className]] و [[variant]] و [[size]]، والباقي ([[...props]]) بيروح للـ button.`,
+            "cva تطلّع الكلاسات، و cn تدمج معاها الـ className اللي من برا.",
+            "قفلة."
           ],
-          sol: R`**بعينك:** السطرين متطابقين. [[s]] و [[del]] الاتنين [[text-decoration: line-through]].
+          sol: R`[[<Button variant="outline" size="lg">]] بيطلع زرار شفاف ليه border وارتفاعه 48px. الكلاسات اللي بيولّدها [[buttonVariants]] بالترتيب: الأساسية، وبعدين [[border hover:bg-gray-50]]، وبعدين [[h-12 px-6 text-lg]]، وفي الآخر [[border-2]] من الـ compoundVariants. و [[cn]] بيشيل [[border]] لأن [[border-2]] بيغطيه، فالـ border بيبقى 2px.
 
-**في تاب Accessibility:** في Chrome 157 الاتنين طلع دورهم [[deletion]]. يعني Chrome نفسه مبيفرّقش بينهم في الشجرة. الفرق في المعنى اللي في المواصفة وفي اللي كل واحد بيسمح بيه: [[del]] بياخد [[cite]] و [[datetime]] وبيتحط حوالين فقرات، و [[s]] لأ. وأي برنامج بيقرا الـ HTML (مش الشجرة) شايف اسم العنصر.
+[[variant="danger"]] قبل ما تضيفه: TypeScript بيعترض بالرسالة دي بالظبط:
+[[Type '"danger"' is not assignable to type '"primary" | "outline" | "ghost" | null | undefined'.]] (ترتيب الأسماء في الرسالة ممكن يختلف حسب نسخة TypeScript)
+بعد ما تضيف [[danger]] للـ variants الخطأ بيختفي من غير ما تلمس الـ type، لأن [[VariantProps]] بيقرا الأنواع من الـ cva نفسه. والزرار بيطلع أحمر بنفس ارتفاع md لأن الـ size الافتراضي md.
 
-**[[u]] واللينك:** الاتنين تحتهم خط. اللي بيفرّق اللون (اللينك أزرق [[rgb(0, 0, 238)]]) وشكل الماوس لما تقف عليه. على موبايل مفيش ماوس، فالفرق لون بس. ده سبب إن [[u]] ميتحطش على كلام عادي.
-
-~~~text الناتج (Chrome 157)
-<s>٢٥٠</s>     text-decoration = line-through   الدور = deletion
-<del>٢٥٠</del> text-decoration = line-through   الدور = deletion
-<u>كلمة</u>    underline   color = rgb(0, 0, 0)     cursor = auto
-<a>لينك</a>    underline   color = rgb(0, 0, 238)   cursor = pointer
-~~~`,
-          ref: [
-            { t: "WHATWG: the mark element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-mark-element" },
-            { t: "WHATWG: the small element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-small-element" },
-            { t: "WHATWG: the s element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-s-element" },
-            { t: "WHATWG: the u element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-u-element" },
-            { t: "WHATWG: edits (ins, del, cite, datetime)", url: "https://html.spec.whatwg.org/multipage/edits.html" },
-            { t: "MDN: <mark>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/mark" },
-            { t: "MDN: <small>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/small" },
-            { t: "MDN: <del>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/del" },
-            { t: "MDN: <ins>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ins" },
-            { t: "MDN: <s>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/s" },
-            { t: "MDN: <u>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/u" },
-          ],
-          pre: ["css/strong و em"]
+لو TypeScript مااعترضش على danger، غالبًا الـ props متعرّفة [[any]] أو انت شايل [[VariantProps]] من الـ type. ولو الزرار طلع من غير ستايل، يبقى الكلاسات زي [[bg-brand]] مش متعرّفة في الـ theme.`,
+          solCode: R`variants: {
+  variant: {
+    primary: "bg-brand text-white hover:bg-brand/90",
+    outline: "border hover:bg-gray-50",
+    ghost: "hover:bg-gray-100",
+    danger: "bg-red-600 text-white hover:bg-red-700",
+  },
+  size: { sm: "h-9 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6 text-lg" },
+},
+// <Button variant="danger">امسح</Button>
+// → ... bg-red-600 text-white hover:bg-red-700 h-10 px-4`
         },
         {
-          cmd: "abbr و dfn و time",
+          cmd: "shadcn/ui",
+          ref: [
+            { t: "shadcn/ui: Introduction", url: "https://ui.shadcn.com/docs" },
+            { t: "shadcn/ui: CLI", url: "https://ui.shadcn.com/docs/cli" },
+            { t: "shadcn/ui: components.json", url: "https://ui.shadcn.com/docs/components-json" },
+            { t: "shadcn/ui: Button", url: "https://ui.shadcn.com/docs/components/radix/button" },
+          ],
+          title: "مكتبة مكونات بتنسخ الكود عندك بدل ما تسطّبه",
+          desc: R`shadcn/ui مش package بتسطّبه وتستورد منه. هو CLI بينسخ كود المكون نفسه في مشروعك ([[components/ui/button.tsx]])، فالكود بقى بتاعك: تعدّله وتغيّر شكله براحتك.
+
+كل مكون مبني على primitive جاهز للـ accessibility (Radix UI أو Base UI) + Tailwind + cva. ومن يوليو 2026 الـ init الجديد بيختار Base UI افتراضيًا، و [[-b radix]] لو عايز Radix. المشاريع القديمة على Radix مش محتاجة تتغير.`,
+          example: R`npx shadcn@latest init
+npx shadcn@latest init -b radix --rtl
+npx shadcn@latest add button dialog dropdown-menu
+npx shadcn@latest add button --overwrite
+cat components.json
+git diff components/ui/button.tsx`,
+          try: R`في مشروع Next أو Vite نفّذ init و [[add button]]، وافتح [[components/ui/button.tsx]]: هتلاقي cva و cn اللي اتعلمتهم. غيّر التدوير الافتراضي وشوفه اتغير في كل الزراير.`,
           practice: [
-            { lvl: 'سريع', t: R`**اكتب القيمة:** اكتب [[<time>]] بالـ [[datetime]] الصح لكل واحدة:
-١. «٢٥ يناير ٢٠٢٧»
-٢. «تسعة ونص الصبح»
-٣. «شهر مارس ٢٠٢٧»
-٤. «السبت ٥ ديسمبر ٢٠٢٦ الساعة ٧:٣٠ مساءً» بتوقيت القاهرة
-٥. «ساعتين وربع» (مدة)`, done: R`الخمس قيم: [[2027-01-25]] و [[09:30]] و [[2027-03]] و [[2026-12-05T19:30+02:00]] و [[PT2H15M]]. والنص اللي القارئ شايفه فضل بالعربي زي ما هو.`, work: { h: 220, start: R`<p>التسليم ٢٥ يناير ٢٠٢٧.</p>
-<p>بنفتح تسعة ونص الصبح.</p>
-<p>الخصم طول شهر مارس ٢٠٢٧.</p>
-<p>الورشة السبت ٥ ديسمبر ٢٠٢٦ الساعة ٧:٣٠ مساءً.</p>
-<p>مدتها ساعتين وربع.</p>`, checks: [
-              { say: R`«٢٥ يناير ٢٠٢٧» في [[<time>]] قيمته [[2027-01-25]]`, q: 'time[datetime="2027-01-25"]', has: "يناير" },
-              { say: R`«تسعة ونص» في [[<time>]] قيمته [[09:30]]`, q: 'time[datetime="09:30"]', has: "تسعة" },
-              { say: R`«شهر مارس» في [[<time>]] قيمته [[2027-03]]`, q: 'time[datetime="2027-03"]', has: "مارس" },
-              { say: R`ميعاد الورشة بالتاريخ والساعة وفرق التوقيت [[2026-12-05T19:30+02:00]]`, q: 'time[datetime="2026-12-05T19:30+02:00"]', has: "ديسمبر" },
-              { say: R`«ساعتين وربع» مدة: [[PT2H15M]]`, q: 'time[datetime="PT2H15M"]', has: "ساعتين" },
-            ] }, sol: R`~~~live 200 220 الحل
-<p>التسليم <time datetime="2027-01-25">٢٥ يناير ٢٠٢٧</time>.</p>
-<p>بنفتح <time datetime="09:30">تسعة ونص الصبح</time>.</p>
-<p>الخصم طول <time datetime="2027-03">شهر مارس ٢٠٢٧</time>.</p>
-<p>الورشة <time datetime="2026-12-05T19:30+02:00">السبت ٥ ديسمبر ٢٠٢٦ الساعة ٧:٣٠ مساءً</time>.</p>
-<p>مدتها <time datetime="PT2H15M">ساعتين وربع</time>.</p>
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من [[npx shadcn@latest add --help]]: أنهي flag بيوريك اللي هيتكتب من غير ما يكتب حاجة؟ وأنهي flag بيقارن ملفك بالنسخة الأصلية؟`, done: R`لقيت [[--dry-run]] (معاينة من غير كتابة) و [[--diff [path]]] (يوريك الفرق لملف) و [[--view [path]]] (يعرض المحتوى). جرّبت [[--dry-run]] على مكون جديد ومفيش ملف اتغيّر ([[git status]] نضيف).`, sol: R`~~~bash
+npx shadcn@latest add --help
+npx shadcn@latest add badge --dry-run
+git status --short
+npx shadcn@latest add button --diff src/components/ui/button.tsx
 ~~~
 
-**القواعد اللي ورا كل قيمة:**
+**الإجابة:** [[--dry-run]] بيوريك اللي هيتكتب من غير ما يكتب. و [[--diff [path]]] بيقارن ملفك بالنسخة الأصلية. و [[--view [path]]] بيعرض المحتوى.
 
-- التاريخ دايمًا من الكبير للصغير: سنة ٤ أرقام، ثم شهر رقمين، ثم يوم رقمين، وبينهم [[-]]. يناير [[01]] مش [[1]].
-- الوقت بنظام ٢٤ ساعة: [[09:30]] الصبح و [[19:30]] المسا. مفيش AM و PM.
-- شهر من غير يوم: [[2027-03]].
-- تاريخ ووقت مع بعض: بينهم حرف [[T]]، وفي الآخر فرق التوقيت عن UTC. القاهرة [[+02:00]].
-- المدة بتبدأ بـ [[P]] (من Period)، وبعدها [[T]] قبل أجزاء الوقت: [[2H]] ساعتين و [[15M]] ربع ساعة.
+**ليه ده مهم:** الكود هنا بتاعك انت، فأي تحديث هيكتب فوق تعديلاتك. الـ flags دي بتخليك تشوف قبل ما تقرر.
 
-**الغلطة الشائعة:** تسيب فرق التوقيت في ميعاد أونلاين. [[2026-12-05T19:30]] من غير [[+02:00]] معناها «٧:٣٠ بتوقيت اللي بيقرا»، فاللي في بلد تاني هيدخل في ساعة غلط. الميعاد اللي بيحصل في لحظة واحدة لكل الناس لازم ياخد فرق التوقيت.
-
-~~~text الناتج (خاصية dateTime لكل عنصر)
-2027-01-25
-09:30
-2027-03
-2026-12-05T19:30+02:00
-PT2H15M
-الدور بتاع كل واحد: time
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p>للتواصل: <address>مكتبة الحروف</address> شكرًا</p>]]. كام [[<p>]] هيطلع في الصفحة؟ والـ [[address]] هيبقى جوه الفقرة؟ وكلمة «شكرًا» هتبقى فين؟`, done: R`طلع ٢ [[p]] مش واحد: الأولى فيها «للتواصل: » بس، والـ [[address]] برّاها، و «شكرًا» نص سايب من غير فقرة، وبعده فقرة فاضية. وعرفت السبب: [[address]] عنصر بياخد سطر لوحده، فمينفعش يتحط جوه [[<p>]].`, sol: R`~~~live 110 150 المتصفح عمل إيه
-<p>للتواصل: <address>مكتبة الحروف</address> شكرًا</p>
-~~~
-
-بصّ على النتيجة: «مكتبة الحروف» نزلت في سطر لوحدها ومايلة، و «شكرًا» في سطر تالت. ده مش اللي الكود بيقوله.
-
-**اللي حصل بالترتيب:**
-
-1. المتصفح فتح [[<p>]] وحط فيه «للتواصل: ».
-2. قابل [[<address>]]. ده عنصر بياخد سطر لوحده (block)، والفقرة مينفعش يبقى جواها غير عناصر السطر. فالمتصفح **قفل الفقرة لوحده** وحط الـ address بعدها.
-3. «شكرًا» اتحطت بعد الـ address كنص مش جوه أي فقرة.
-4. قابل [[</p>]] ومفيش فقرة مفتوحة، فعمل فقرة فاضية.
-
-**الحل:** الـ address أخو الفقرة مش ابنها:
-
-~~~live 130 120 الصح
-<p>للتواصل:</p>
-<address>مكتبة الحروف</address>
-<p>شكرًا</p>
-~~~
-
-**الغلطة الشائعة:** تفتكر إن [[address]] زي [[strong]] و [[time]] عنصر جوه السطر عشان هو «حتة معلومة». كل عناصر الوحدة دي جوه السطر إلا تلاتة بياخدوا سطر لوحدهم: [[address]] و [[pre]] و [[hr]]. و [[del]] و [[ins]] بينفعوا في الحالتين.
-
-~~~text الناتج (الشجرة اللي اتبنت)
-<p>للتواصل: </p>
-<address>مكتبة الحروف</address>
- شكرًا
-<p></p>
-
-عدد p: 2     أبو address: الحاوية اللي برّه، مش p
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة تأكيد طلب في متجر متخيل (النهارده الأربع ١٨ نوفمبر ٢٠٢٦):
-
-~~~html
-<p>التسليم <time>بعد بكرة</time> قبل الساعة <time>٥ العصر</time>.</p>
-<p>الوزن ٥ <abbr title="اختصار كيلوجرام وهي وحدة قياس الوزن">كجم</abbr>.</p>
-<address>آخر تحديث: ١٠ نوفمبر ٢٠٢٦</address>
-<address>هنشحن على: ٤ شارع الورد، طنطا</address>
-~~~
-
-فيها ٤ غلطات.`, done: R`بعد التصليح: الـ [[time]] الاتنين عليهم [[datetime]] ([[2026-11-20]] و [[17:00]])، والـ [[title]] بتاع [[abbr]] فيه «كيلوجرام» بس، ومفيش ولا [[address]] في الصفحة: «آخر تحديث» بقت فقرة فيها [[time]]، وعنوان الشحن فقرة بـ [[<br>]].`, work: { h: 220, start: R`<p>التسليم <time>بعد بكرة</time> قبل الساعة <time>٥ العصر</time>.</p>
-<p>الوزن ٥ <abbr title="اختصار كيلوجرام وهي وحدة قياس الوزن">كجم</abbr>.</p>
-<address>آخر تحديث: ١٠ نوفمبر ٢٠٢٦</address>
-<address>هنشحن على: ٤ شارع الورد، طنطا</address>`, checks: [
-              { say: R`«بعد بكرة» في [[<time>]] قيمته [[2026-11-20]]`, q: 'time[datetime="2026-11-20"]', has: "بعد بكرة" },
-              { say: R`«٥ العصر» في [[<time>]] قيمته [[17:00]]`, q: 'time[datetime="17:00"]', has: "العصر" },
-              { say: R`الـ [[title]] بتاع [[<abbr>]] هو «كيلوجرام» بس`, q: "abbr", attr: ["title", "كيلوجرام"], n: 1 },
-              { say: R`مفيش [[<address>]] في الصفحة`, q: "address", n: 0 },
-              { say: R`«آخر تحديث» فيها [[<time>]] بتاريخها`, q: "p time[datetime]", has: "١٠ نوفمبر", n: 1 },
-              { say: R`عنوان الشحن فقرة فيها [[<br>]] بين سطوره`, q: "p br", min: 2 },
-            ] }, sol: R`~~~live 200 220 بعد التصليح
-<p>التسليم <time datetime="2026-11-20">بعد بكرة</time> قبل الساعة <time datetime="17:00">٥ العصر</time>.</p>
-<p>الوزن ٥ <abbr title="كيلوجرام">كجم</abbr>.</p>
-<p>آخر تحديث: <time datetime="2026-11-10">١٠ نوفمبر ٢٠٢٦</time></p>
-<p>هنشحن على:<br>٤ شارع الورد<br>طنطا</p>
-~~~
-
-**الغلطات الأربعة:**
-
-1. [[<time>بعد بكرة</time>]] من غير [[datetime]]. المواصفة: لو مفيش [[datetime]]، النص نفسه لازم يكون بصيغة الكمبيوتر. «بعد بكرة» و «٥ العصر» مش صيغة، فالعنصر مبقاش بيقول حاجة لأي برنامج. الحل [[datetime]] بالقيمة الفعلية، والنص يفضل زي ما هو.
-2. الـ [[title]] فيه شرح: «اختصار كيلوجرام وهي وحدة قياس الوزن». المواصفة: الـ title بتاع [[abbr]] يبقى فيه **فك الاختصار وبس**.
-3. [[address]] لتاريخ آخر تحديث. المواصفة كاتبة المثال ده نفسه كاستخدام غلط: [[address]] لمعلومات التواصل وبس. التاريخ مكانه [[time]].
-4. [[address]] لعنوان شحن العميل. [[address]] مش «أي عنوان بريدي»: هو معلومات التواصل مع صاحب الصفحة أو المقال. عنوان الشحن بيانات في الطلب، والمواصفة بتقول إن العناوين البريدية العادية مكانها [[<p>]].
-
-**الغلطة الشائعة:** تحسب «بعد بكرة» وتكتب التاريخ وتنسى إن الصفحة هتتفتح بكرة كمان. الصفحات اللي فيها «بكرة» و «من ٣ أيام» بتتولّد من سيرفر أو JavaScript، والـ [[datetime]] هو اللي بيفضل صح.
+**الغلطة الشائعة:** تشغّل [[add]] على طول على مكوّن عدّلته. استخدم [[--diff]] الأول.
 
 ~~~text الناتج
-                time بـ datetime   time من غيره   address   abbr.title
-قبل التصليح          0               2            2       اختصار كيلوجرام وهي وحدة قياس الوزن
-بعد التصليح          3               0            0       كيلوجرام
+من --help (shadcn 4.23.0):
+-o, --overwrite    overwrite existing files. (default: false)
+--dry-run          preview changes without writing files. (default: false)
+--diff [path]      show diff for a file.
+--view [path]      show file contents.
+
+add badge --dry-run:
+├ Files (1) +1 new
+│ + src\components\ui\badge.tsx  create
+└ Run without --dry-run to apply.
+
+git status --short: فاضي
+add button --diff ...: (skip) No changes.
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت إعلان عن ورشة في مكتبة متخيلة: [[<article>]] فيه عنوان، وجملة فيها اختصار «UX» مفكوك في النص ومتعلّم بـ [[abbr]]، وتعريف لمصطلح «wireframe» بـ [[dfn]]، وميعاد البداية بالتاريخ والساعة وفرق التوقيت، والمدة، وفي الآخر معلومات التواصل مع المنظِّمة (اسم وإيميل وتليفون).`, done: R`الكارت فيه [[time]] اتنين (واحد قيمته فيها [[+02:00]] وواحد بيبدأ بـ [[PT]])، و [[dfn]] واحد دوره [[term]]، و [[abbr]] واحد والاختصار مفكوك قبله في النص، و [[address]] واحد جوه الـ [[article]] فيه لينك [[mailto:]] ولينك [[tel:]].`, work: { h: 400, start: R`<article>
-  ورشة: أول تصميم ليك
-  ورشة للمبتدئين في User Experience (UX)، يعني تجربة المستخدم.
-  هنرسم wireframe: رسمة بسيطة بالخطوط بتورّي كل حاجة في الصفحة مكانها فين، من غير ألوان ولا صور.
-  الميعاد: السبت ١٢ ديسمبر ٢٠٢٦، ٦ مساءً بتوقيت القاهرة. المدة: ساعة ونص.
-  للحجز: سلمى منصور
-  salma@example.test
-  +20 000 000 0000
-</article>`, checks: [
-              { say: R`عنوان الكارت [[<h2>]] جوه الـ [[<article>]]`, q: "article h1, article h2, article h3" },
-              { say: R`«UX» في [[<abbr>]]`, q: "abbr", has: "UX", n: 1 },
-              { say: R`«wireframe» في [[<dfn>]]`, q: "dfn", has: "wireframe", n: 1 },
-              { say: R`ميعاد البداية [[<time>]] فيه فرق التوقيت [[+02:00]]`, q: 'time[datetime*="+02:00"]', n: 1 },
-              { say: R`المدة [[<time>]] قيمتها بتبدأ بـ [[PT]]`, q: 'time[datetime^="PT"]', n: 1 },
-              { say: R`معلومات التواصل [[<address>]] فيه لينك [[mailto:]] ولينك [[tel:]]`, q: 'article address a[href^="mailto:"], article address a[href^="tel:"]', n: 2 },
-            ] }, sol: R`~~~live 280 400 كارت الورشة
-<article>
-  <h2>ورشة: أول تصميم ليك</h2>
-  <p>ورشة للمبتدئين في User Experience (<abbr>UX</abbr>)، يعني تجربة المستخدم.</p>
-  <p>هنرسم <dfn>wireframe</dfn>: رسمة بسيطة بالخطوط بتورّي كل حاجة في الصفحة مكانها فين، من غير ألوان ولا صور.</p>
-  <p>الميعاد: <time datetime="2026-12-12T18:00+02:00">السبت ١٢ ديسمبر، ٦ مساءً</time>. المدة: <time datetime="PT1H30M">ساعة ونص</time>.</p>
-  <address>
-    للحجز: سلمى منصور<br>
-    <a href="mailto:salma@example.test">salma@example.test</a><br>
-    <a href="tel:+200000000000" dir="ltr">+20 000 000 0000</a>
-  </address>
-</article>
+            { lvl: 'تطبيق', t: R`**refactor:** في [[components/ui/button.tsx]] زوّد prop اسمه [[loading]]: بيعرض spinner صغير ويعمل [[disabled]] و [[aria-busy="true"]]، من غير ما تبوّظ أي variant موجود.`, done: R`[[git diff components/ui/button.tsx]] مش بيلمس بلوك [[cva]] خالص (التغيير كله في الـ function)، وكل الـ variants القديمة بتترسم زي ما هي، والزرار وهو [[loading]] مبيتضغطش و Tab بيعدّيه، وقارئ الشاشة بيقول إنه busy.`, sol: R`ملف shadcn النهائي بعد التعديل (السطور المهمة في الـ function تحت [[cva]]، وبلوك [[cva]] نفسه زي ما هو):
+
+~~~tsx components/ui/button.tsx
+function Button({
+  className,
+  variant = "default",
+  size = "default",
+  loading = false,
+  disabled,
+  children,
+  ...props
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { loading?: boolean }) {
+  return (
+    <ButtonPrimitive
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...props}
+    >
+      {loading && (
+        <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none" />
+      )}
+      {children}
+    </ButtonPrimitive>
+  );
+}
 ~~~
 
-**القرارات:**
+**ليه كده:**
 
-- الاختصار مفكوك في النص نفسه («User Experience») قبل ما يظهر. ده اللي MDN بينصح بيه: الفك في النص بيوصل لكل الناس، والـ [[title]] بيوصل للي معاه ماوس بس. وعشان الفك موجود، الـ [[abbr]] من غير [[title]].
-- [[dfn]] على أول مرة المصطلح بيتعرّف فيها، والتعريف في نفس الفقرة.
-- ميعاد الورشة لحظة محددة، فلازم فرق التوقيت. والمدة [[PT1H30M]].
-- [[address]] جوه الـ [[article]]: المواصفة بتقول إنه بيمثّل معلومات التواصل لأقرب [[article]] أو [[body]] فوقه. يعني دي بيانات التواصل بتاعة الورشة دي، مش الموقع كله.
-- [[dir="ltr"]] على لينك التليفون عشان الرقم ميتقلبش (من درس «lang و dir»).
+- [[disabled={disabled || loading}]]: الزرار الواقف مبيتضغطش ومبيوصلهوش Tab. واللي مبعوت [[disabled]] من برا لسه شغال.
+- [[aria-busy]]: قيمته [[undefined]] لما مفيش تحميل، فالـ attribute بيختفي.
+- الـ spinner [[aria-hidden]]: زينة، والاسم فضل من [[children]].
+- [[motion-reduce:animate-none]]: اللي طالب حركة أقل يشوف دايرة واقفة.
+- [[children]] طلعت من [[props]] عشان تترسم بعد الـ spinner.
 
-**الغلطة الشائعة:** تحط الميعاد جوه الـ [[address]]. الـ address لمعلومات التواصل بس.
+**الغلطة الشائعة:** تعدّل بلوك [[cva]]، فأي merge مع نسخة shadcn الجديدة يتعقد. خلي تعديلاتك في الـ function.
+
+ملحوظة: النسخة الأحدث من shadcn بتيجي بـ [[@base-ui/react]]، وفي نسخ تانية بـ Radix. الفكرة واحدة.
 
 ~~~text الناتج
-time: 2   →  2026-12-12T18:00+02:00  و  PT1H30M
-dfn: 1  (الدور = term ، font-style = italic)
-abbr: 1 (من غير title ، مفيش خط منقّط)
-address: 1  (الدور = group ، display = block ، font-style = italic) وفيه لينكين
+git diff --numstat: 12 إضافة ، 2 مسح (سطر الـ type وسطر قفل العنصر)
+مفيش سطر جوه بلوك cva اتلمس
+
+الزرار وهو loading:
+disabled = true ، aria-busy = "true" ، الـ spinner موجود
+ضغطة عليه: onClick اشتغل 0 مرة
+Tab: عادي ← outline ← اللينك (عدّى الزرار الواقف)
+
+ariaSnapshot:
+- button "عادي"
+- button "outline"
+- button "بيحفظ" [disabled]
 ~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اثبت إن [[datetime]] هو اللي بيخلي الكمبيوتر يفهم. أربع مواعيد قطارات مكتوبين بالكلام: «٨:١٥ الصبح» و «٧ إلا تلت الصبح» و «واحدة وخمسة الضهر» و «حداشر ونص بالليل» (ده بتاع الليلة اللي قبلها). رتّبهم مرة بالنص ومرة بالـ [[datetime]] وقارن.`, done: R`الترتيب بالنص طلع ملوش معنى (أبجدي)، والترتيب بالـ [[datetime]] طلع صح: قطر حداشر ونص بالليل الأول (لأنه اليوم اللي قبله)، ثم ٧ إلا تلت، ثم ٨:١٥، ثم واحدة وخمسة.`, sol: R`~~~live 280 420 مواعيد القطارات
-<p>القطر الأول <time datetime="2026-12-01T08:15+02:00">٨:١٥ الصبح</time></p>
-<p>القطر التاني <time datetime="2026-12-01T06:40+02:00">٧ إلا تلت الصبح</time></p>
-<p>القطر التالت <time datetime="2026-12-01T13:05+02:00">واحدة وخمسة الضهر</time></p>
-<p>القطر الرابع <time datetime="2026-11-30T23:30+02:00">حداشر ونص بالليل</time></p>
-<hr>
-<p>بالنص: <span id="byText"></span></p>
-<p>بالـ datetime: <span id="byDate"></span></p>
-<script>
-  const times = [...document.querySelectorAll('time')];
-  const byText = times.map(t => t.textContent).sort();
-  const byDate = times.slice().sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)).map(t => t.textContent);
-  document.querySelector('#byText').textContent = byText.join(' ← ');
-  document.querySelector('#byDate').textContent = byDate.join(' ← ');
-</script>
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** اعمل commit للتعديل اللي فوق، وبعدين شغّل [[add button --overwrite]] واعمل [[git diff]]، وبعدين رجّع نسختك بـ [[git checkout -- components/ui/button.tsx]].`, done: R`الـ diff بعد الـ overwrite بيوري سطور الـ [[loading]] بتاعتك متشالة، وبعد [[git checkout]] الـ diff فاضي تاني. وكتبت قاعدة لنفسك: commit قبل أي [[--overwrite]].`, sol: R`~~~bash
+git add -A && git commit -m "button: loading prop"
+npx shadcn@latest add button --overwrite --yes
+git diff --numstat -- components/ui/button.tsx
+git checkout -- components/ui/button.tsx
+git diff --stat -- components/ui/button.tsx
 ~~~
 
-الـ [[<script>]] ده JavaScript (كورسه جاي). انسخه زي ما هو، والمهم تفهم هو بيعمل إيه:
+**ليه الـ commit أول خطوة:** [[--overwrite]] بيكتب نسخة shadcn الأصلية فوق ملفك. [[git diff]] بيقارن بآخر commit، و [[git checkout]] بيرجّع آخر commit. لو تعديلك مش متعمله commit، مفيش حاجة ترجع لها.
 
-- بيجيب كل عناصر [[time]] في الصفحة.
-- [[byText]]: بيرتّب **النص** اللي القارئ شايفه. الكمبيوتر مبيفهمش «إلا تلت»، فبيرتّب بالحروف.
-- [[byDate]]: بيحوّل كل [[dateTime]] لتاريخ حقيقي ([[new Date(...)]]) ويرتّب بيه.
+جرّبت الحالتين: من غير commit، سطور الـ [[loading]] راحت، و [[git diff]] طلع فاضي، فالتعديل ضاع ومفيش حاجة تقولك.
 
-**النتيجة:** السطر الأول لخبطة، والتاني صح. ونفس الفكرة هي اللي بتخلي تطبيق يقدر يكتب «القطر الجاي بعد ٢٠ دقيقة» أو يضيف الميعاد للتقويم: هو بيقرا الـ [[datetime]]، مش الكلام.
+**القاعدة:** commit قبل أي [[--overwrite]]، أو استخدم [[--diff]] وادمج بإيدك.
 
-**الغلطة الشائعة:** تكتب الوقت بس ([[23:30]]) لميعاد في يوم تاني. من غير التاريخ، حداشر ونص بالليل هتترتب آخر واحدة.
+**الغلطة الشائعة:** تشوف diff فاضي بعد overwrite وتفتكر إن مفيش حاجة حصلت.
 
 ~~~text الناتج
-بالنص:        حداشر ونص بالليل ← واحدة وخمسة الضهر ← ٧ إلا تلت الصبح ← ٨:١٥ الصبح
-بالـ datetime: حداشر ونص بالليل ← ٧ إلا تلت الصبح ← ٨:١٥ الصبح ← واحدة وخمسة الضهر
+من غير commit قبل الـ overwrite:
+الملف فيه loading؟  لأ
+git diff:           فاضي (التعديل ضاع)
+
+مع commit:
+git diff --numstat:  2  12  components/ui/button.tsx
+                     (2 سطر رجعوا، و 12 سطر بتوعك اتشالوا)
+بعد git checkout:    الـ diff فاضي ، والملف فيه loading تاني
 ~~~` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميلك كتب [[<abbr title="Search Engine Optimization">SEO</abbr>]] وقال «كده أي حد هيعرف معناها». اكتبله في ٣ سطور ليه الـ [[title]] لوحده مش كفاية، وإيه اللي يكتبه بداله.`, done: R`الشرح فيه التلات نقط: التولتيب بيظهر بالماوس بس (الموبايل والكيبورد لأ)، والعنصر مبيتوصلوش بـ Tab ([[tabIndex]] بيساوي -1)، والحل إن الفك يتكتب في النص أول مرة الاختصار بيظهر.`, sol: R`**إجابة نموذجية:**
+            { lvl: 'تحدي', t: R`**اشرحها:** زميل بيسأل: «ليه shadcn بينسخ الكود في مشروعي بدل ما يبقى package أعمله update؟». اكتبله ٣ سطور فيهم ميزة وعيب وإمتى تختار مكتبة عادية.`, done: R`السطور فيها: الكود بتاعك تعدّله براحتك (ميزة)، والتحديثات مش بتوصلك لوحدها وانت اللي بتدمجها بـ diff (عيب)، ومكتبة جاهزة أحسن لو مش ناوي تغيّر الشكل وعايز تحديثات تلقائي.`, sol: R`**الإجابة النموذجية:**
 
-> الـ [[title]] بيظهر كتولتيب لما الماوس يقف على الكلمة، وده بس. على الموبايل مفيش ماوس يقف، وبالكيبورد العنصر مبيتوصلوش أصلًا.
-> فاللي هيعرف المعنى هو اللي معاه ماوس وخطر على باله يقف على كلمة تحتها نقط.
-> اكتب الفك في النص أول مرة: «Search Engine Optimization (SEO)»، وبعد كده استخدم الاختصار لوحده.
+> shadcn بينسخ كود الزرار في مشروعك، فتقدر تغيّر أي سطر من غير ما تحارب مكتبة أو تكتب override.
+> العيب إن التحديثات مش بتوصلك لوحدها: انت اللي بتشغّل [[--diff]] وتدمج، والإصلاحات الأمنية وباجات الـ accessibility مسؤوليتك.
+> لو مش ناوي تغيّر الشكل وعايز تحديثات بـ [[npm update]] بس، مكتبة عادية زي MUI أحسن.
 
-**اللي ورا كل سطر:**
+**ليه الإجابة دي كاملة:** فيها ميزة (ملكية الكود)، وعيب حقيقي (مين بيتابع التحديث)، ومعيار قرار. الإجابة اللي فيها «أحسن لأنه مرن» بس مش بتساعد زميلك يقرر.
 
-- قست [[tabIndex]] بتاع [[abbr]] وطلع [[-1]]: يعني مش في ترتيب Tab، فمفيش طريقة بالكيبورد تخلي التولتيب يظهر.
-- صفحة [[title]] في MDN بتقول إن الاعتماد عليه «highly problematic» لمستخدمي اللمس، والكيبورد، وقارئ الشاشة والمكبّرات.
-- وصفحة [[abbr]] في MDN بتقول: حط [[title]] بس لما مينفعش تفك الاختصار في النص.
-
-والنسختين:
-
-~~~live 60 80 title بس
-<p>بنشتغل على <abbr title="Search Engine Optimization">SEO</abbr> الموقع.</p>
-~~~
-
-~~~live 80 80 الفك في النص
-<p>بنشتغل على Search Engine Optimization (<abbr>SEO</abbr>)، يعني تظبيط الموقع لمحركات البحث.</p>
-~~~
-
-**الغلطة الشائعة:** تحط الاتنين: الفك في النص و [[title]] بنفس الكلام. قارئ الشاشة اللي بيقرا الـ title هيقول الفك مرتين.
+**الغلطة الشائعة:** تقول إن shadcn مكتبة. هو أداة بتنسخ كود، والـ primitives اللي تحته (Radix أو Base UI) هي اللي packages وبتتحدّث عادي.
 
 ~~~text الناتج
-النسخة الأولى:  abbr  text-decoration = underline dotted   tabIndex = -1   النص الظاهر: SEO
-النسخة التانية: abbr  text-decoration = none               النص الظاهر فيه الفك كامل
+٣ سطور: ميزة ، وعيب ، وإمتى تختار مكتبة عادية.
 ~~~` },
           ],
-          title: "اختصار، ومصطلح بيتعرّف، وتاريخ الكمبيوتر يفهمه: abbr و dfn و time (ومعاهم data و address)",
-          desc: R`العناصر دي بتربط الكلام اللي البني آدم بيقراه بمعلومة تانية وراه: [[<abbr>]] اختصار وفكّه، و [[<dfn>]] أول مرة مصطلح بيتعرّف، و [[<time>]] تاريخ أو وقت ومعاه صيغة الكمبيوتر يفهمها، و [[<data>]] أي قيمة تانية للكمبيوتر (كود منتج مثلًا)، و [[<address>]] معلومات التواصل مع صاحب الصفحة أو المقال.
-
-تلاتة منهم ملهمش أي شكل افتراضي يتشاف ([[time]] و [[data]] و [[abbr]] من غير title). فايدتهم كلها في المعلومة اللي بيشيلوها.`,
-          example: R`<p>الصفحة مكتوبة بـ <abbr title="HyperText Markup Language">HTML</abbr>.</p>
-<p><dfn>الـ viewport</dfn> هو الجزء اللي باين من الصفحة على الشاشة.</p>
-<p>الورشة يوم <time datetime="2026-12-05T19:30+02:00">السبت ٥ ديسمبر الساعة ٧:٣٠ مساءً</time>.</p>
-<p>المنتج: <data value="SKU-4471">بن يمني ٢٥٠ جم</data></p>
-<address>
-  مكتبة الحروف<br>
-  <a href="mailto:hello@example.test">hello@example.test</a>
-</address>`,
-          try: R`اكتب [[<p>الاجتماع <time datetime="2026-12-05T19:30+02:00">السبت الجاي</time></p>]] وافتح الـ Console واكتب [[document.querySelector('time').dateTime]] وبعدين [[document.querySelector('time').textContent]]. إيه الفرق بين الاتنين؟ وبعدين زوّد [[<abbr title="HyperText Markup Language">HTML</abbr>]] وحاول توصل للتولتيب بالكيبورد بس (Tab).`,
-          flag: "script",
           deep: {
-            why: R`«السبت الجاي الساعة ٧ ونص» جملة واضحة لأي بني آدم وملهاش أي معنى لبرنامج: أنهي سبت؟ ٧ الصبح ولا بالليل؟ بتوقيت مين؟ لو الصفحة عايزة تطبيق تقويم يلقط الميعاد، أو سكربت يكتب «فاضل يومين»، لازم نفس المعلومة تتكتب مرة تانية بصيغة ثابتة. بدل ما تتكتب في مكان مستخبي بعيد عن النص، HTML بيحطها على نفس الكلمة: النص للبني آدم، والـ attribute للكمبيوتر. ونفس الفكرة في الاختصار (النص المختصر وفكّه) وفي المصطلح (الكلمة وتعريفها).`,
-            how: R`[[abbr]] و [[dfn]] و [[time]] و [[data]] عناصر جوه السطر. [[address]] بياخد سطر لوحده.
+            why: R`مكتبات المكونات التقليدية بتديك مكون جاهز، ولما تيجي تغيّر حاجة مش متوقعة بتحارب المكتبة: props مش موجودة، و CSS بيتغلب بالعافية، وترقية تكسر شكلك. shadcn بيقلب الفكرة: «ده مش component library، ده الطريقة اللي تبني بيها الـ library بتاعتك». بيديك نقطة بداية كويسة والكود كله قدامك.`,
+            how: R`الـ CLI بيقرا [[components.json]] عشان يعرف يحط الملفات فين، والـ aliases ([[@/components]] و [[@/lib/utils]])، وأنهي style ومكتبة. بعدين بيجيب كود المكون من الـ registry (JSON فيه الكود والـ dependencies)، ويكتبه في مشروعك، ويسطّب اللي محتاجه (زي [[radix-ui]] أو Base UI).
 
-الشكل الافتراضي (Chrome 157): [[abbr]] اللي عليه [[title]] بياخد خط منقّط تحته ([[text-decoration: underline dotted]])، ومن غير title مفيش أي حاجة. [[dfn]] و [[address]] مايلين ([[font-style: italic]]). [[time]] و [[data]] من غير أي ستايل.
+المكون نفسه طبقتين: primitive بيعمل السلوك والـ accessibility (focus trap، و Escape، و aria، والكيبورد) من غير أي شكل، و Tailwind + cva فوقه للشكل. انت بتعدّل الطبقة التانية براحتك، والأولى غالبًا متلمسهاش.
 
-والأدوار: [[dfn]] دوره [[term]]، و [[time]] دوره [[time]]، و [[address]] دوره [[group]]، و [[data]] دوره [[generic]]. و [[abbr]] اللي عليه title الاسم المحسوب بتاعه هو نص الـ title.
+الألوان في shadcn متغيرات CSS ([[--primary]] و [[--background]] و [[--border]]) متوصّلة بـ [[@theme inline]]، فالكلاسات [[bg-primary]] و [[text-muted-foreground]]، وتغيير الثيم كله بيبقى تغيير المتغيرات.
 
-كل عنصر ليه خاصية في JavaScript بتقرا قيمته: [[time.dateTime]] و [[data.value]] و [[abbr.title]].`,
-            when: R`[[abbr]]: اختصار القارئ ممكن ميعرفوش، وعايز تفكّه. الأفضل تفكّه في النص أول مرة.
+و [[--rtl]] في الـ init (أو [[shadcn migrate rtl]] لمشروع قايم) بيحوّل الكلاسات الـ physical في المكونات لـ logical ([[ml-4]] لـ [[ms-4]])، ودا مهم لأي موقع عربي.
 
-[[dfn]]: أول مكان في الصفحة مصطلح بيتشرح فيه (مقال تعليمي، وثائق، قاموس).
-
-[[time]]: أي تاريخ أو وقت أو مدة ليه قيمة محددة: تاريخ نشر مقال، وميعاد حدث، ومواعيد العمل، ومدة فيديو.
-
-[[data]]: قيمة للكمبيوتر مش تاريخ: كود منتج، أو رقم مكتوب بالحروف.
-
-[[address]]: معلومات التواصل مع صاحب الصفحة (غالبًا في الـ [[footer]]) أو كاتب المقال (جوه الـ [[article]]).`,
-            mistakes: R`الاعتماد على [[title]] لوحده: مبيوصلش للموبايل ولا للكيبورد. فك الاختصار في النص.
-
-[[title]] فيه شرح مش فك: المواصفة بتقول الفك وبس.
-
-[[<time>بكرة</time>]] من غير [[datetime]]: من غير الـ attribute النص نفسه لازم يكون بصيغة الكمبيوتر ([[<time>2026-12-05</time>]]).
-
-[[datetime="5/12/2026"]] أو [[datetime="7:30 PM"]]: مش صيغ سليمة. التاريخ سنة-شهر-يوم والوقت ٢٤ ساعة.
-
-[[address]] لأي عنوان بريدي (عنوان عميل، أو فرع في جدول فروع): هو لمعلومات التواصل مع صاحب الصفحة أو المقال بس.
-
-[[address]] جوه [[<p>]]: المتصفح بيقفل الفقرة قبله.
-
-[[dfn]] والتعريف في فقرة تانية: المواصفة بتشترط إن الفقرة (أو القسم) اللي فيها الـ dfn يبقى فيها التعريف.`
+المقابل: مفيش [[npm update]] للمكونات. لو shadcn صلّح bug، انت اللي بتجيبه ([[add]] تاني وتدمج بإيدك).`,
+            when: "مشروع React أو Next عايز مكونات جاهزة ومحترمة للـ accessibility وشكلها بتاعك. لو عايز كل حاجة جاهزة ومش هتعدّل، مكتبة تقليدية ممكن تبقى أسرع.",
+            mistakes: R`تعامل [[components/ui]] كأنه node_modules متلمسوش، وتعمل wrapper فوق wrapper عشان تغيّر حاجة بسيطة: عدّل الملف نفسه، ده الهدف. أو العكس: [[add --overwrite]] بعد ما عدّلت فتضيع تعديلاتك. وتنسخ مكونات من مشروع قديم (Radix و Tailwind v3) لمشروع جديد (Base UI و v4) فالكلاسات والـ imports تتلخبط.`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## CLI بيكتب كود في مشروعك
 
-كل عنصر هنا فيه نصّين: واحد القارئ بيشوفه، وواحد وراه لمين يحتاجه. «HTML» ووراها «HyperText Markup Language». «السبت الجاي» ووراها [[2026-12-05]]. القياسات من Chrome 157.
-
----
-
-## ١. [[<abbr title="...">]]: الاختصار وفكّه
-
-[[abbr]] من abbreviation. المواصفة: اختصار، ومعاه اختياريًا فكّه في الـ [[title]].
-
-~~~live 60 80 abbr بـ title ومن غيره
-<p>الصفحة مكتوبة بـ <abbr title="HyperText Markup Language">HTML</abbr> وشكلها بـ <abbr>CSS</abbr>.</p>
-~~~
-
-«HTML» تحتها خط منقّط، و «CSS» لأ. قف بالماوس على HTML وهيظهر التولتيب.
-
-### الـ [[title]]
-
-[[title]] attribute بيتحط على أي عنصر في HTML (global attribute) وبيدّي «معلومة استشارية» بتظهر كتولتيب. على [[abbr]] ليه معنى خاص في المواصفة: **فك الاختصار، ولا حاجة تانية**.
-
-~~~text القياس
-abbr بـ title:    text-decoration = underline dotted   الاسم المحسوب = HyperText Markup Language
-abbr من غير title: text-decoration = none
-tabIndex = -1     (مش في ترتيب Tab)
-~~~
-
-السطر الأخير هو المشكلة: التولتيب بيظهر لما الماوس **يقف** على العنصر. والعنصر مبيتوصلوش بالكيبورد، والموبايل مفيهوش وقوف بالماوس. صفحة [[title]] في MDN بتقول إن الاعتماد عليه «highly problematic» للمس والكيبورد وقارئات الشاشة.
-
-### الطريقة الأحسن: الفك في النص
-
-~~~live 80 100 الفك في النص أول مرة
-<p>الصفحة مكتوبة بـ HyperText Markup Language (<abbr>HTML</abbr>). كل عنصر في HTML ليه معنى.</p>
-~~~
-
-أول مرة الاسم كامل وبعده الاختصار، وبعد كده الاختصار لوحده. و [[abbr]] من غير title لسه ليه فايدة: بيقول «دي اختصار»، وتقدر تمسكه بالـ CSS بعدين. و MDN بيقولها كده: حط [[title]] بس لما مينفعش تفك الاختصار في النص.
-
-والمواصفة بتقول إنك مش لازم تعلّم على كل اختصار في الصفحة. [[abbr]] للاختصار اللي عايز تفكّه أو اللي القارئ غالبًا ميعرفوش.
+كل أمر في المثال بيعدّل ملفات في مشروعك: [[init]] بيجهّز، و [[add]] بينسخ مكونات. شغّلنا الأوامر دي على مشروع Vite + React + Tailwind 4.3.3 فاضي (shadcn 4.21.3، أكتوبر 2026)، ومتابعين كل تغيير بـ git. في Vite الكود بيتحط تحت [[src/]]، فـ [[components/ui]] بتبقى [[src/components/ui]].
 
 ---
 
-## ٢. [[<dfn>]]: المكان اللي المصطلح بيتعرّف فيه
+## ١. [[npx shadcn@latest init]]
 
-[[dfn]] من definition. المواصفة: **defining instance** بتاع مصطلح، يعني المرة اللي بتشرحه فيها. والشرط: الفقرة (أو القسم) اللي فيها الـ [[dfn]] لازم يبقى فيها التعريف.
+- [[npx]]: بيشغّل أمر من package على npm من غير ما تسطّبه global. بينزّله في cache ويشغّله.
+- [[shadcn@latest]]: اسم الـ package، و [[@latest]] = آخر نسخة، عشان تاخد آخر registry.
+- [[init]]: الأمر الفرعي اللي بيجهّز المشروع.
 
-~~~live 80 100 dfn
-<p><dfn>الـ viewport</dfn> هو الجزء اللي باين من الصفحة على الشاشة. لما تصغّر الشباك، الـ viewport بيصغر معاه.</p>
+أول سؤال بيسأله اختيار الـ preset (الشكل العام):
+
+~~~text الناتج
+? Which preset would you like to use?
+>   Nova - Lucide / Geist
+    Vega
+    Maia
+    ...
 ~~~
 
-«الـ viewport» مايلة في أول مرة بس (اللي فيها التعريف). المرة التانية في نفس الفقرة كلام عادي.
+ولو عايز من غير أسئلة: [[-p nova]]. شغّلنا [[init -p nova -y]] ([[-y]] = متسألنيش أكد) وبصينا على [[components.json]]:
 
-~~~text dfn
-font-style = italic    الدور = term
+~~~text components.json
+"style": "base-nova",
+"rtl": false,
 ~~~
 
-### [[dfn]] مع [[abbr]] ومع لينك
+[[base-nova]] يعني المكونات مبنية على **Base UI**، واتسطّب [[@base-ui/react]]. ده الافتراضي الجديد.
 
-لو المصطلح اختصار، الاتنين بيتحطوا جوه بعض. ولو حطيت [[id]] على الـ [[dfn]]، أي مكان تاني في الصفحة يقدر يلينك على التعريف:
+## ٢. [[npx shadcn@latest init -b radix --rtl]]
 
-~~~live 90 140 تعريف ولينك ليه
-<p><dfn id="def-css"><abbr title="Cascading Style Sheets">CSS</abbr></dfn> هي اللغة اللي بتحدد شكل الصفحة.</p>
-<p>هنبدأ <a href="#def-css">CSS</a> في الوحدة الجاية.</p>
+- [[-b radix]]: [[-b]] اختصار [[--base]]، يعني المكتبة اللي تحت المكونات. القيم: [[base]] و [[radix]] و [[aria]].
+- [[--rtl]]: المكونات تتكتب بكلاسات logical عشان العربي.
+
+شغّلناه بـ [[-p nova -y]] وده اللي طلع:
+
+~~~text الناتج
+✔ Verifying framework. Found Vite.
+✔ Validating Tailwind CSS. Found v4.
+✔ Validating import alias.
+✔ Writing components.json.
+✔ Installing dependencies.
+✔ Created 1 file:
+  - src\lib\utils.ts
+✔ Updating src\index.css
 ~~~
 
-المواصفة: لما [[dfn]] يبقى جواه [[abbr]] عليه title بس، المصطلح اللي بيتعرّف هو نص الـ title. واللينك اللي بيشاور على [[dfn]] بيمثّل «استخدام» للمصطلح ده.
-
----
-
-## ٣. [[<time datetime="...">]]: التاريخ اللي الكمبيوتر يفهمه
-
-المواصفة: [[time]] بيمثّل محتواه، ومعاه صيغة الكمبيوتر يقراها في [[datetime]]. والمحتوى محدود في: تواريخ، وأوقات، وفروق توقيت، ومدد.
-
-~~~live 60 80 time
-<p>الورشة يوم <time datetime="2026-12-05T19:30+02:00">السبت ٥ ديسمبر الساعة ٧:٣٠ مساءً</time>.</p>
-~~~
-
-مفيش أي حاجة باينة: لا خط ولا لون. قست الفرق بين [[time]] و [[<span>]] عادي في ١٩ خاصية شكل وطلع صفر. الفرق كله في المعلومة:
-
-~~~text القياس
-time.textContent = السبت ٥ ديسمبر الساعة ٧:٣٠ مساءً      (للبني آدم)
-time.dateTime    = 2026-12-05T19:30+02:00                (للكمبيوتر)
-الدور            = time
-new Date(time.dateTime) → 2026-12-05T17:30:00.000Z       (JavaScript فهمها: ٥:٣٠ مساءً UTC)
-~~~
-
-### فك [[2026-12-05T19:30+02:00]]
-
-| الحتة | معناها |
+| الملف | اتغير إزاي |
 |---|---|
-| [[2026-12-05]] | التاريخ: سنة ٤ أرقام، شهر رقمين، يوم رقمين |
-| [[T]] | فاصل بين التاريخ والوقت (Time). ومسافة مكانه مسموحة كمان |
-| [[19:30]] | الوقت بنظام ٢٤ ساعة. ٧:٣٠ مساءً = 19:30 |
-| [[+02:00]] | فرق التوقيت عن UTC: القاهرة متقدمة ساعتين. و [[Z]] معناها UTC نفسه |
+| [[components.json]] | جديد: [["style": "radix-nova"]] و [["rtl": true]] والـ aliases |
+| [[package.json]] | اتضاف [[radix-ui]] و [[class-variance-authority]] و [[lucide-react]] و [[cn]] و [[tw-animate-css]] وغيرهم |
+| [[src/lib/utils.ts]] | ملف جديد فيه [[cn]] (تحت) |
+| [[src/index.css]] | اتضاف [[@theme inline]] و متغيرات الألوان في [[:root]] و [[.dark]] |
 
-### الصيغ اللي [[datetime]] بيقبلها
+وحاجة جديدة: [[src/lib/utils.ts]] طلع سطر واحد:
 
-دي من قايمة المواصفة:
+~~~text src/lib/utils.ts
+export { cn } from "cn"
+~~~
 
-| عايز تكتب | الصيغة | مثال |
+يعني الـ CLI الجديد مش بيكتب [[clsx]] و [[twMerge]] زي درس [[cn()]]، بيستخدم package اسمه [[cn]] من shadcn بيعمل نفس الشغل. جربنا عليه نفس أمثلة الدرس ده وطلّع نفس النتايج بالظبط ([[cn("px-4", "p-2")]] ← [[p-2]]). المشاريع القديمة فيها الشكل الأول، والاتنين نفس الفكرة.
+
+## ٣. [[npx shadcn@latest add button dialog dropdown-menu]]
+
+[[add]] وبعده أسامي المكونات، أي عدد:
+
+~~~text الناتج
+✔ Created 3 files:
+  - src\components\ui\button.tsx
+  - src\components\ui\dropdown-menu.tsx
+  - src\components\ui\dialog.tsx
+~~~
+
+افتح [[button.tsx]] هتلاقي اللي اتعلمته:
+
+~~~text src/components/ui/button.tsx (مختصر)
+const buttonVariants = cva("group/button inline-flex ... rounded-lg ...", {
+  variants: {
+    variant: { default: ..., outline: ..., secondary: ..., ghost: ..., destructive: ..., link: ... },
+    size: { default: "h-8 ...", xs: ..., sm: ..., lg: ..., icon: "size-8", ... },
+  },
+  defaultVariants: { variant: "default", size: "default" },
+})
+...
+className={cn(buttonVariants({ variant, size, className }))}
+~~~
+
+نفس [[cva]] بتاع الدرس اللي فات، والألوان أسامي متغيرات ([[bg-primary]] و [[text-primary-foreground]]) مش ألوان ثابتة.
+
+وأثر [[--rtl]]: عملنا [[add dropdown-menu]] في مشروع من غير [[--rtl]] وقارنّا:
+
+| من غير [[--rtl]] | بـ [[--rtl]] | يعني |
 |---|---|---|
-| تاريخ | [[YYYY-MM-DD]] | [[2026-12-05]] |
-| شهر | [[YYYY-MM]] | [[2026-12]] |
-| يوم في السنة من غير سنة (عيد ميلاد) | [[MM-DD]] | [[12-05]] |
-| سنة | ٤ أرقام | [[2026]] |
-| وقت | [[HH:MM]] أو بالثواني | [[19:30]] |
-| تاريخ ووقت محلي | تاريخ ثم [[T]] ثم وقت | [[2026-12-05T19:30]] |
-| لحظة واحدة لكل العالم | نفسه وبعده فرق التوقيت | [[2026-12-05T19:30+02:00]] |
-| أسبوع | سنة ثم [[-W]] ثم رقم الأسبوع | [[2026-W49]] |
-| مدة | [[P]] ثم [[T]] ثم الأجزاء | [[PT1H30M]] (ساعة ونص) |
+| [[ml-auto]] | [[ms-auto]] | margin على البداية بدل الشمال |
+| [[pl-7]] | [[ps-7]] | padding على البداية بدل الشمال |
+| [[pr-8]] | [[pe-8]] | padding على النهاية بدل اليمين |
 
-**بفرق توقيت ولا من غيره؟** المواصفة بتفرّق: حدث بيحصل في لحظة واحدة لكل الناس (مكالمة فيديو، ماتش) ياخد فرق التوقيت. وحدث بيحصل «الساعة كذا في كل بلد بتوقيتها» (رأس السنة) من غير فرق توقيت.
+## ٤. [[npx shadcn@latest add button --overwrite]]
 
-### من غير [[datetime]]
+[[--overwrite]] (أو [[-o]]) = اكتب فوق الملف الموجود. جربنا: غيّرنا [[rounded-lg]] لـ [[rounded-full]] في button.tsx، و [[git diff --stat]] طلّع:
 
-الـ attribute اختياري، بس ساعتها **النص نفسه** لازم يكون بواحدة من الصيغ دي:
-
-~~~html
-<time>2026-12-05</time>       سليم: النص نفسه صيغة
-<time>السبت الجاي</time>      غلط: مفيش datetime والنص مش صيغة
+~~~text الناتج قبل
+ src/components/ui/button.tsx | 2 +-
 ~~~
 
-المتصفح مبيعترضش على التانية (جرّبت: مفيش خطأ، و [[dateTime]] رجّع نص فاضي). اللي بيمسكها الـ validator. بس أي برنامج بيقرا العنصر مش هيلاقي فيه تاريخ.
+بعد [[add button --overwrite]]: الـ CLI قال [[Updated 1 file]]، و [[git diff --stat]] طلع **فاضي**. تعديلك راح.
 
-### مين بيستخدمه؟
+## ٥. [[cat components.json]]
 
-MDN: العنصر ده بيخلي المتصفح أو أي برنامج يقدر مثلًا يعرض إضافة الحدث للتقويم، وبيساعد محركات البحث تعرف التواريخ. وأي سكربت في صفحتك يقدر يقرا [[dateTime]] ويكتب «من ٣ أيام» أو يرتّب بالتاريخ (فيه تمرين بيثبت ده).
+[[cat]] بيطبع الملف. ده ملف إعدادات shadcn، والـ CLI بيقراه في كل [[add]]:
+
+| المفتاح | يعني |
+|---|---|
+| [[style]] | المكتبة والـ preset ([[radix-nova]]) |
+| [[tailwind.css]] | ملف الـ CSS اللي هيحط فيه المتغيرات |
+| [[iconLibrary]] | [[lucide]]: مكتبة الأيقونات اللي المكونات بتستورد منها |
+| [[rtl]] | يكتب logical ولا لأ |
+| [[aliases]] | [[@/components/ui]] و [[@/lib/utils]]: فين يحط الملفات وإزاي يعمل import |
+
+(على ويندوز PowerShell: [[cat]] شغال كاسم تاني لـ [[Get-Content]].)
+
+## ٦. [[git diff components/ui/button.tsx]]
+
+بيوريك الفرق بين الملف دلوقتي وآخر commit: السطور اللي اتشالت بـ [[-]] واللي اتضافت بـ [[+]]. عشان كده اعمل commit **قبل** أي [[--overwrite]]، فتقدر تشوف اللي اتمسح وترجّعه.
 
 ---
 
-## ٤. [[<data value="...">]]: أي قيمة تانية للكمبيوتر
+## ٧. التدوير من مكان واحد
 
-نفس فكرة [[time]] بس لأي حاجة مش تاريخ. المواصفة: [[data]] بيمثّل محتواه ومعاه صيغة الكمبيوتر يقراها في [[value]]، و [[value]] هنا **إجباري**.
+في [[index.css]] فيه [[--radius: 0.625rem]] (10px)، و [[rounded-lg]] طالع في الـ CSS كده:
 
-~~~live 90 110 data
-<p>المنتج: <data value="SKU-4471">بن يمني ٢٥٠ جم</data></p>
-<p>عدد الفروع: <data value="8">تمانية</data></p>
+~~~text من الـ CSS الناتج
+.rounded-lg{border-radius:var(--radius)}
 ~~~
 
-~~~text القياس
-data.value = SKU-4471        الدور = generic        الشكل: زي أي نص
-~~~
+قسنا الزراير في Chrome، وبعدين غيّرنا [[--radius]] لـ [[1rem]]:
 
-مفيش شكل ومفيش دور خاص. فايدته لسكربت في صفحتك محتاج القيمة الخام: يرتّب عمود مكتوب بالحروف («تمانية») بالرقم [[8]]، أو يعرف كود المنتج اللي اتداس عليه. المواصفة بتقول: لو القيمة تاريخ أو وقت استخدم [[time]]، وصيغة الـ value انت اللي بتحددها حسب السكربت اللي هيقراها.
+| الزرار | قبل | بعد [[--radius: 1rem]] |
+|---|---|---|
+| [[size="default"]] | 10px | 16px |
+| [[size="lg"]] | 10px | 16px |
+| [[size="sm"]] | 8px | 12px |
 
----
-
-## ٥. [[<address>]]: معلومات التواصل
-
-المواصفة: [[address]] بيمثّل **معلومات التواصل** لأقرب [[<article>]] أو [[<body>]] فوقه. لو فوقه الـ body، يبقى دي معلومات التواصل للصفحة كلها.
-
-~~~live 170 250 address للمقال و address للصفحة
-<article>
-  <h2>إزاي تختار أول كتاب تقراه</h2>
-  <p>ابدأ بكتاب قصير في موضوع بتحبه.</p>
-  <address>كتبته <a href="mailto:nour@example.test">نور الدين</a></address>
-</article>
-<footer>
-  <address>
-    مكتبة الحروف<br>
-    <a href="mailto:hello@example.test">hello@example.test</a>
-  </address>
-</footer>
-~~~
-
-الأول جوه [[article]]: ده إزاي توصل لكاتبة المقال. والتاني في الـ [[footer]] وفوقه الـ [[body]]: ده إزاي توصل لصاحب الصفحة.
-
-~~~text القياس
-display = block (بياخد سطر لوحده)    font-style = italic    الدور = group
-~~~
-
-واللي جواه ممكن يبقى أي وسيلة تواصل: إيميل، وتليفون، وعنوان مكان، ولينك لحساب. و MDN بيقول إن اسم الشخص أو الجهة يتكتب معاهم.
-
-اللي **ميتحطش** فيه (من المواصفة):
-
-- أي عنوان بريدي مش معلومات تواصل للصفحة (عنوان عميل، قايمة فروع). ده مكانه [[<p>]].
-- أي حاجة غير معلومات التواصل. مثال المواصفة للغلط: [[<address>Last Modified: 1999/12/24</address>]].
-- عناوين ([[<h2>]])، أو [[<article>]] و [[<section>]]، أو [[<header>]] و [[<footer>]]، أو [[address]] تاني.
-
-ولأنه block، مينفعش يتحط جوه [[<p>]]: المتصفح بيقفل الفقرة قبله (فيه تمرين على ده).
-
----
+الـ sm مكتوب فيه [[rounded-[min(var(--radius-md),12px)]]]: يعني أصغر قيمة من الاتنين، فمش بيعدّي 12px.
 
 ## الخلاصة
 
-| العنصر | النص الظاهر | المعلومة اللي وراه | الشكل الافتراضي |
-|---|---|---|---|
-| [[<abbr title="...">]] | الاختصار | الفك في [[title]] (والأحسن في النص) | خط منقّط لو فيه title |
-| [[<dfn>]] | المصطلح | التعريف في نفس الفقرة | مايل |
-| [[<time datetime="...">]] | التاريخ بالكلام | الصيغة في [[datetime]] | ولا حاجة |
-| [[<data value="...">]] | أي نص | القيمة في [[value]] | ولا حاجة |
-| [[<address>]] | معلومات التواصل | بتخص أقرب article أو الصفحة | مايل وفي سطر لوحده |`,
+| الأمر | بيعمل إيه |
+|---|---|
+| [[init]] | [[components.json]] و [[lib/utils.ts]] والمتغيرات والـ packages |
+| [[init -b radix --rtl]] | نفسه بس Radix بدل Base UI، ومكونات logical |
+| [[add <names>]] | ينسخ كود المكونات في [[components/ui]] |
+| [[add <name> --overwrite]] | يكتب الأصلي فوق نسختك |
+
+- الكود بقى بتاعك: عدّله في الملف نفسه.
+- commit قبل أي [[--overwrite]].`,
           lines: [
-            R`[[abbr]] حوالين الاختصار، و [[title]] فيه الفك وبس. بيطلع تحته خط منقّط وتولتيب بالماوس.`,
-            R`[[dfn]] على المصطلح في الجملة اللي بتعرّفه. بيطلع مايل ودوره [[term]].`,
-            R`النص للقارئ بالعربي، و [[datetime]] نفس الميعاد بصيغة ثابتة: تاريخ، ثم [[T]]، ثم الوقت ٢٤ ساعة، ثم فرق التوقيت.`,
-            R`[[data]] زي [[time]] بس لقيمة مش تاريخ: القارئ شايف اسم المنتج، والسكربت يقرا الكود من [[value]].`,
-            R`[[address]] معلومات التواصل. فوقه الـ body، فدي معلومات التواصل للصفحة كلها.`,
-            R`اسم الجهة، وبعده [[<br>]] عشان اللي بعده ينزل سطر (مشروح في آخر درس في الوحدة).`,
-            R`لينك [[mailto:]] بيفتح برنامج الإيميل. والإيميل مكتوب كنص كمان عشان يتنسخ.`,
-            R`قفلة الـ address. هو عنصر block، فبيتحط برّه أي [[<p>]].`
+            R`يجهّز المشروع: [[components.json]]، و [[cn]] في lib/utils، ومتغيرات الألوان في الـ CSS.`,
+            "نفسه بس بـ Radix بدل Base UI (الافتراضي الجديد)، ومكونات logical جاهزة للعربي.",
+            "ينسخ كود المكونات دي في components/ui، ويسطّب الـ packages اللي محتاجاها.",
+            "يرجّع النسخة الأصلية فوق نسختك. خد بالك: تعديلاتك هتروح.",
+            "إعدادات shadcn: الـ style، والمكتبة، ومسارات الـ aliases، وملف الـ CSS.",
+            "قبل ما تعمل commit، شوف الفرق بين نسختك والأصلية بعد الـ overwrite."
           ],
-          sol: R`**الفرق:** [[.dateTime]] رجّع [[2026-12-05T19:30+02:00]] و [[.textContent]] رجّع «السبت الجاي». ده النصّين اللي العنصر شايلهم: واحد للكمبيوتر وواحد للقارئ. «السبت الجاي» هتبقى غلط بعد أسبوع، والـ datetime هيفضل صح.
+          sol: R`بعد [[init]] هتلاقي [[components.json]] و [[lib/utils.ts]] فيه [[cn]] (في المشاريع القديمة بـ clsx و twMerge زي درس [[cn()]]، والـ CLI الجديد بيكتب [[export { cn } from "cn"]] من package بنفس الشغل)، والـ globals.css اتضاف فيه متغيرات زي [[--radius]] و [[--primary]] و [[--background]]. بعد [[add button]] هتلاقي [[components/ui/button.tsx]] جواه [[const buttonVariants = cva(...)]] وفيه variants زي [[default]] و [[destructive]] و [[outline]] و [[secondary]] و [[ghost]] و [[link]]، وأحجام زي [[default]] و [[sm]] و [[lg]] و [[icon]]، والـ component بيعمل [[cn(buttonVariants({ variant, size, className }))]]. (الأسماء بالظبط ممكن تختلف حسب الـ style اللي اخترته في init.)
 
-**التولتيب بالكيبورد:** مش هتوصله. Tab بيعدّي من فوق الـ [[abbr]] كأنه مش موجود، لأن [[tabIndex]] بتاعه [[-1]]. التولتيب بيظهر بوقوف الماوس بس. وده سبب إن الفك يتكتب في النص.
+عشان تغيّر التدوير: فيه طريقتين. الأولى في button.tsx: غيّر [[rounded-lg]] في الـ string الأساسي لـ [[rounded-full]] مثلًا، وخلي بالك إن بعض الأحجام ممكن تكون كاتبة تدوير تاني جواها (في style nova الـ [[sm]] و [[xs]] فيهم [[rounded-[min(var(--radius-md),12px)]]])، فلازم تغيّرها هي كمان وإلا هتلاقي الزراير الصغيرة لسه زي ما هي. التانية في globals.css: غيّر [[--radius]] على [[:root]]، ودي بتغيّر كل المكونات مش الزراير بس، لأن [[rounded-md]] و [[rounded-lg]] محسوبين منه (قستها: [[--radius: 1rem]] خلّى الزرار العادي 16px بدل 10px).
 
-~~~text الناتج (Chrome 157)
-time.dateTime     = 2026-12-05T19:30+02:00
-time.textContent  = السبت الجاي
-abbr.title        = HyperText Markup Language
-abbr.tabIndex     = -1
-~~~`,
-          ref: [
-            { t: "WHATWG: the abbr element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-abbr-element" },
-            { t: "WHATWG: the dfn element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-dfn-element" },
-            { t: "WHATWG: the time element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-time-element" },
-            { t: "WHATWG: the data element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-data-element" },
-            { t: "WHATWG: the address element", url: "https://html.spec.whatwg.org/multipage/sections.html#the-address-element" },
-            { t: "MDN: <abbr>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/abbr" },
-            { t: "MDN: <dfn>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dfn" },
-            { t: "MDN: <time>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/time" },
-            { t: "MDN: <data>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/data" },
-            { t: "MDN: <address>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/address" },
-            { t: "MDN: title (global attribute)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/title" },
-          ],
-          pre: ["css/mark و small و del و ins", { to: "css/semantic HTML", why: R`[[<address>]] معناه بيتحدد بأقرب [[<article>]] أو [[<body>]] فوقه` }]
+بعد التعديل، [[git diff components/ui/button.tsx]] بيوريك التغيير بتاعك. ولو عملت [[add button --overwrite]] بعدين هيمسحه، ودي النقطة اللي تفرّق shadcn عن مكتبة متسطبة: الكود بتاعك وانت المسؤول عنه.`
         },
         {
-          cmd: "code و pre و kbd",
-          practice: [
-            { lvl: 'سريع', t: R`**اختار العنصر:** [[code]] ولا [[kbd]] ولا [[samp]] ولا [[var]]؟
-١. «افتح الملف index.html»
-٢. «دوس Enter»
-٣. «هتطلعلك الرسالة: File not found»
-٤. «اكتب اسمك مكان username»
-٥. «من القايمة اختار File وبعدين Save»`, done: R`اسم الملف [[code]]، و Enter [[kbd]]، ورسالة البرنامج [[samp]]، و username [[var]]، واختيار القايمة [[kbd]]. والعدد: code 1، و kbd 2، و samp 1، و var 1. وتلاتة منهم خطهم monospace و [[var]] مايل.`, work: { h: 230, start: R`<p>افتح الملف index.html.</p>
-<p>دوس Enter.</p>
-<p>هتطلعلك الرسالة: File not found</p>
-<p>اكتب اسمك مكان username.</p>
-<p>من القايمة اختار File وبعدين Save.</p>`, checks: [
-              { say: R`اسم الملف في [[<code>]]`, q: "code", has: "index.html", n: 1 },
-              { say: R`زرار Enter في [[<kbd>]]`, q: "kbd", has: "Enter" },
-              { say: R`رسالة البرنامج في [[<samp>]]`, q: "samp", has: "File not found", n: 1 },
-              { say: R`«username» في [[<var>]]`, q: "var", has: "username", n: 1 },
-              { say: R`القايمة (File ثم Save) في [[<kbd>]] كمان: [[<kbd>]] اتنين في الصفحة`, q: "kbd", n: 2 },
-            ] }, sol: R`~~~live 200 230 الحل
-<p>افتح الملف <code>index.html</code>.</p>
-<p>دوس <kbd>Enter</kbd>.</p>
-<p>هتطلعلك الرسالة: <samp>File not found</samp></p>
-<p>اكتب اسمك مكان <var>username</var>.</p>
-<p>من القايمة اختار <kbd>File | Save</kbd>.</p>
-~~~
-
-**السؤال اللي بيفرّق: مين اللي كتب الحروف دي؟**
-
-- حاجة الكمبيوتر بيتعرّف عليها (اسم ملف، أمر، اسم عنصر): [[code]].
-- حاجة **المستخدم** بيدخّلها (مفتاح، أمر بيكتبه، اختيار من قايمة): [[kbd]]. المواصفة بتقول إن [[kbd]] «إدخال المستخدم» عمومًا، مش الكيبورد بس، ومثالها نفسه فيه اختيار من قايمة: [[<kbd>File | Eat Apple...</kbd>]].
-- حاجة **البرنامج** طلّعها: [[samp]] (من sample output).
-- اسم بيتبدّل بقيمة (متغير، أو مكان فاضي تملاه): [[var]].
-
-**الغلطة الشائعة:** كل حاجة «شكلها كمبيوتر» تبقى [[code]]. الشكل هيطلع زي بعضه تقريبًا، بس لما تيجي تنسّق بالـ CSS (المفاتيح شكل زرار، والناتج بلون تاني) هتلاقي كل حاجة متلخبطة في عنصر واحد.
-
-~~~text الناتج
-code: 1   kbd: 2   samp: 1   var: 1
-code و kbd و samp:  font-family = monospace   font-size = 13px
-var:                font-style = italic       font-size = 16px
-الأدوار:  code = code    والباقي = generic
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** خمس فقرات، كل واحدة هتطلع إزاي؟
-
-~~~html
-<p>شركة AT&T</p>
-<p>&copy 2026</p>
-<p>لو 5 < 6 يبقى صح</p>
-<p>لو a<b يبقى صح</p>
-<p>اكتب &amp;nbsp; عشان مسافة</p>
-~~~
-
-توقّع وبعدين افتحها. خد بالك من الفقرة الرابعة واللي بعدها.`, done: R`الأولى والتالتة طلعوا زي ما هما، والتانية طلعت © حتى من غير [[;]]، والرابعة اتقطعت عند «لو a» والفقرة اللي بعدها بقت تقيلة (المتصفح فتح عنصر [[<b>]])، والخامسة عرضت النص [[&nbsp;]] بالحروف. وصلّحت الرابعة بـ [[&lt;]].`, sol: R`~~~live 200 220 اللي المتصفح عرضه
-<p>شركة AT&T</p>
-<p>&copy 2026</p>
-<p>لو 5 < 6 يبقى صح</p>
-<p>لو a<b يبقى صح</p>
-<p>اكتب &amp;nbsp; عشان مسافة</p>
-~~~
-
-**واحدة واحدة:**
-
-1. [[AT&T]]: المتصفح بيدوّر بعد الـ [[&]] على اسم entity. مفيش entity اسمه [[T]]، فساب الـ [[&]] زي ما هو. اشتغلت بالحظ.
-2. [[&copy 2026]]: شوية أسامي قديمة (منهم [[copy]] و [[amp]] و [[lt]] و [[nbsp]]) المتصفح بيقبلهم من غير [[;]]. فطلعت ©. ده سلوك موروث ومتعتمدش عليه.
-3. [[5 < 6]]: بعد الـ [[<]] مسافة، والـ tag لازم يبدأ بحرف، فالمتصفح اعتبرها نص.
-4. [[a<b]]: بعد الـ [[<]] حرف، فالمتصفح قرا [[<b]] كبداية عنصر [[b]]، وكل اللي بعده لحد أول [[>]] بقى attributes ليه. فكلمة «يبقى صح» اختفت، وقفلة الفقرة اتاكلت معاها، والعنصر [[b]] فضل مفتوح، فالفقرة الخامسة طلعت تقيلة.
-5. [[&amp;nbsp;]]: الـ [[&amp;]] اتحوّل لـ [[&]] وبس، والباقي نص. دي الطريقة اللي تعرض بيها اسم entity في صفحة.
-
-**التصليح:**
-
-~~~live 200 220 بعد التصليح
-<p>شركة AT&amp;T</p>
-<p>&copy; 2026</p>
-<p>لو 5 &lt; 6 يبقى صح</p>
-<p>لو a&lt;b يبقى صح</p>
-<p>اكتب &amp;nbsp; عشان مسافة</p>
-~~~
-
-**الغلطة الشائعة:** تجرّب [[5 < 6]] وتلاقيها شغالة فتستنتج إن [[<]] مش محتاج [[&lt;]]. اشتغلت عشان المسافة بس. القاعدة اللي متغلطش: أي [[<]] وأي [[&]] في النص يتكتبوا [[&lt;]] و [[&amp;]].
-
-~~~text الناتج (النص اللي اتعرض)
-قبل:
-1  شركة AT&T
-2  © 2026
-3  لو 5 < 6 يبقى صح
-4  لو a                    ← الباقي اتاكل، واتفتح عنصر b
-5  اكتب &nbsp; عشان مسافة    ← تقيل: النص بقى جوه عنصر b (font-weight = 700)
-
-بعد:
-عدد عناصر b في الصفحة: 0     الفقرة الرابعة: لو a<b يبقى صح     الخامسة مفيهاش b ووزنها 400
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة بتشرح للمبتدئين إزاي يكتبوا عنوان وفقرة، بس الشرح مش باين:
-
-~~~html
-<p>العنوان بيتكتب بـ <code><h1></code> والفقرة بـ <code><p></code>.</p>
-<pre>
-    <h1>متجري</h1>
-    <p>أهلًا بيك</p>
-</pre>
-~~~
-
-افتحها وشوف إيه اللي ظهر، وصلّحها عشان الكود نفسه هو اللي يتعرض.`, done: R`قبل التصليح الصفحة فيها عنوان حقيقي «متجري» وعناصر [[code]] فاضية. بعده: مفيش ولا [[h1]] في الصفحة، وكل [[code]] جواه النص ([[<h1>]] و [[<p>]])، والـ [[pre]] بيعرض سطرين الكود بحروفهم ومن غير مسافات زيادة في أولهم، واتجاهه [[ltr]].`, work: { h: 240, solAt: 1, start: R`<p>العنوان بيتكتب بـ <code><h1></code> والفقرة بـ <code><p></code>.</p>
-<pre>
-    <h1>متجري</h1>
-    <p>أهلًا بيك</p>
-</pre>`, checks: [
-              { say: R`مفيش عنوان [[<h1>]] حقيقي في الصفحة (الكود بيتعرض مش بيتنفّذ)`, q: "h1", n: 0 },
-              { say: R`كل [[<]] مكتوبة [[&lt;]]`, src: "&lt;" },
-              { say: R`جوه [[<code>]] ظاهر النص [[<h1>]] بحروفه`, q: "code", has: "<h1>", min: 2 },
-              { say: R`البلوك بيعرض سطر [[<p>]] الكود بحروفه`, q: "pre code", has: "<p>أهلًا بيك</p>" },
-              { say: R`البلوك [[<pre>]] اتجاهه [[dir="ltr"]]`, q: "pre", attr: ["dir", "ltr"] },
-            ] }, sol: R`**قبل:** ده اللي الصفحة البايظة بتعرضه. الكود اتنفّذ بدل ما يتعرض:
-
-~~~live 560 240 قبل التصليح
-<p>العنوان بيتكتب بـ <code><h1></code> والفقرة بـ <code><p></code>.</p>
-<pre>
-    <h1>متجري</h1>
-    <p>أهلًا بيك</p>
-</pre>
-~~~
-
-**بعد:**
-
-~~~live 100 150 بعد التصليح
-<p>العنوان بيتكتب بـ <code>&lt;h1&gt;</code> والفقرة بـ <code>&lt;p&gt;</code>.</p>
-<pre dir="ltr"><code>&lt;h1&gt;متجري&lt;/h1&gt;
-&lt;p&gt;أهلًا بيك&lt;/p&gt;</code></pre>
-~~~
-
-**التلات تصليحات:**
-
-1. [[<code><h1></code>]]: [[code]] و [[pre]] **مبيمنعوش** المتصفح إنه يقرا اللي جواهم كـ HTML. هما بيغيّروا الخط والمسافات بس. فالـ [[<h1>]] اللي جوه اتفتح كعنوان حقيقي. الحل إن كل [[<]] تتكتب [[&lt;]] وكل [[>]] تتكتب [[&gt;]].
-2. المسافات اللي في أول السطور: [[pre]] بيعرض كل مسافة زي ما هي في الملف، حتى الأربع مسافات اللي انت حاططهم عشان الملف يبقى مترتب. فالكود جوه [[pre]] بيبدأ من أول السطر، والـ [[<pre><code>]] على نفس سطر أول سطر كود.
-3. [[dir="ltr"]]: الصفحة عربي، فالـ [[pre]] بياخد اتجاه [[rtl]] وكود الـ HTML (حروف إنجليزي ورموز) بيتلخبط ترتيبه. الكود دايمًا شمال ليمين.
-
-و [[<code>]] جوه [[<pre>]]: الـ [[pre]] بيقول «المسافات والسطور زي ما هي»، والـ [[code]] بيقول «ده كود». المواصفة بتقول إن بلوك الكود يتكتب بالاتنين مع بعض.
-
-**الغلطة الشائعة:** تسيب القفلة [[</code></pre>]] في سطر لوحدها. السطر الجديد اللي قبلها جزء من الـ pre، فبيطلع سطر فاضي في الآخر.
-
-~~~text الناتج
-                 h1 في الصفحة   نص أول code     نص pre
-قبل التصليح          2          (فاضي)        عنوان حقيقي «متجري» وفقرة حقيقية، مش كود
-بعد التصليح          0           <h1>         <h1>متجري</h1> ثم <p>أهلًا بيك</p>
-pre بعد التصليح:  direction = ltr   white-space = pre
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة «إزاي تشغّل المشروع» لتطبيق متخيل اسمه «دفتر»: عنوان، وتلات خطوات كل واحدة فقرة. الخطوة الأولى فيها أمر التسطيب في بلوك كود. والتانية أمر التشغيل والناتج اللي بيطلع منه في بلوك واحد (اللي المستخدم بيكتبه متميّز عن اللي البرنامج بيطبعه). والتالتة إزاي توقفه بالكيبورد، وإن رقم البورت يتغيّر من ملف الإعدادات.`, done: R`الصفحة فيها ٢ [[pre]]: الأول جواه [[code]]، والتاني جواه [[samp]] وجوه الـ samp فيه [[kbd]] للأمر اللي المستخدم كتبه. والاختصار [[<kbd><kbd>Ctrl</kbd>+<kbd>C</kbd></kbd>]] مكتوب kbd جوه kbd، ورقم البورت [[var]]، واسم الملف [[code]]، وعلى 360 مفيش scroll أفقي للصفحة.`, work: { h: 480, start: R`إزاي تشغّل «دفتر»
-١. سطّب المكتبات: npm install
-٢. شغّل السيرفر. هتكتب الأمر npm run dev وهيطلعلك السطرين:
-Daftar is running
-Local: http://localhost:3000
-٣. عشان توقفه دوس Ctrl+C. والبورت 3000 بيتغيّر من الملف daftar.config.json.`, checks: [
-              { say: R`فيه بلوكين [[<pre>]]: واحد للتسطيب وواحد للتشغيل`, q: "pre", n: 2 },
-              { say: R`أمر التسطيب جوه [[<pre>]] و [[<code>]]`, q: "pre > code", has: "npm install", n: 1 },
-              { say: R`الأمر اللي المستخدم كتبه [[<kbd>]] جوه [[<samp>]] اللي فيها الناتج`, q: "pre samp kbd", has: "npm run dev" },
-              { say: R`الاختصار [[<kbd>]] جوه [[<kbd>]]: Ctrl و C`, q: "kbd kbd", n: 2 },
-              { say: R`رقم البورت [[<var>]]`, q: "var", has: "3000" },
-              { say: R`اسم ملف الإعدادات [[<code>]]`, q: "code", has: "daftar.config.json" },
-            ] }, sol: R`~~~live 290 480 إزاي تشغّل «دفتر»
-<h2>إزاي تشغّل «دفتر»</h2>
-<p>١. سطّب المكتبات:</p>
-<pre dir="ltr"><code>npm install</code></pre>
-<p>٢. شغّل السيرفر. هتكتب الأمر وهيطلعلك السطرين اللي تحته:</p>
-<pre dir="ltr"><samp>$ <kbd>npm run dev</kbd>
-Daftar is running
-Local: http://localhost:<var>3000</var></samp></pre>
-<p>٣. عشان توقفه دوس <kbd><kbd>Ctrl</kbd>+<kbd>C</kbd></kbd>. والبورت <var>3000</var> بيتغيّر من الملف <code>daftar.config.json</code>.</p>
-~~~
-
-**القرارات:**
-
-- الخطوة الأولى كود هيتنسخ: [[<pre><code>]].
-- الخطوة التانية «جلسة ترمنال»: كلها ناتج على الشاشة، يعني [[<pre><samp>]]. والأمر اللي المستخدم كتبه جوّاها [[kbd]]. المواصفة: [[kbd]] جوه [[samp]] معناه «الإدخال زي ما النظام رجّع عرضه».
-- [[<kbd><kbd>Ctrl</kbd>+<kbd>C</kbd></kbd>]]: الـ kbd الخارجي هو الإدخال كله، وكل kbd داخلي مفتاح واحد. ده مثال المواصفة بالظبط.
-- [[3000]] جوه [[var]]: رقم بيتغيّر من جهاز لجهاز.
-- [[dir="ltr"]] على كل [[pre]] عشان السطور الإنجليزي تبدأ من الشمال.
-- السطور قصيرة عن قصد: [[pre]] مبيكسرش السطر، فالسطر الطويل بيزق الصفحة على الموبايل (التمرين الجاي).
-
-**الغلطة الشائعة:** تكتب علامة الـ prompt ([[$]]) جوه الـ [[kbd]]. المستخدم مبيكتبهاش، دي البرنامج اللي طابعها.
-
-~~~text الناتج
-pre: 2   code: 2   samp: 1   kbd: 4 (واحد للأمر، وواحد خارجي وجواه اتنين للمفاتيح)   var: 2
-عرض الصفحة على 360:  scrollWidth = 360  (مفيش scroll أفقي)
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** حط أمر طويل (٧٠ حرف) في [[<pre dir="ltr"><code>]] وافتح الصفحة على عرض 360 (DevTools ← وضع الموبايل). تقدر تقرا آخر الأمر؟ اكتب في الـ Console [[document.querySelector('pre').scrollWidth]] و [[.clientWidth]]. وبعدين جرّب حلّين، كل واحد سطر CSS على الـ [[pre]]: [[style="overflow-x: auto"]] و [[style="white-space: pre-wrap"]]. وقيس تاني.`, done: R`من غير حل: [[scrollWidth]] بتاع الـ pre (554) أكبر من [[clientWidth]] (344)، وآخر الأمر مقطوع ومفيش طريقة توصله. مع [[overflow-x: auto]] الـ pre بقى بيتسحب لوحده. ومع [[pre-wrap]] الرقمين بقوا متساويين والسطر اتكسر على سطرين. وعرفت تختار إمتى ده وإمتى ده.`, sol: R`~~~live 250 250 التلاتة تحت بعض
-<p>من غير حل:</p>
-<pre dir="ltr"><code>npm install --save-dev some-very-long-package-name another-long-package</code></pre>
-<p>بـ overflow-x: auto</p>
-<pre dir="ltr" style="overflow-x: auto"><code>npm install --save-dev some-very-long-package-name another-long-package</code></pre>
-<p>بـ white-space: pre-wrap</p>
-<pre dir="ltr" style="white-space: pre-wrap"><code>npm install --save-dev some-very-long-package-name another-long-package</code></pre>
-~~~
-
-دوس على زرار «موبايل» فوق المعاينة وشوف التلاتة: الأول مقطوع من اليمين، والتاني تحته شريط سحب، والتالت على سطرين.
-
-**ليه الأول مقطوع:** الستايل الافتراضي للـ [[pre]] هو [[white-space: pre]]، يعني «متكسرش السطر غير عند سطر جديد في الملف». فالسطر بيفضل ماشي لحد ما يخلص، حتى لو خرج برّه الـ pre. والصفحة عربي (بتبدأ من اليمين)، فالمتصفح بيعمل scroll للي خارج من الشمال بس. والكود [[ltr]] بيخرج من اليمين، فبيتقطع ومفيش scroll يوصّلك ليه: القارئ مش هيشوف آخر الأمر خالص.
-
-ولو شلت [[dir="ltr"]] من الـ pre، السطر بيخرج من الشمال والصفحة **كلها** بتتزق: قست عرض الصفحة وطلع 562 على شاشة 360. الحالتين غلط.
-
-**الحلّين (CSS، هتتعلمه في الوحدات الجاية):**
-
-- [[overflow-x: auto]]: «لو المحتوى أعرض منك، اعمل شريط سحب جواك انت». السطر بيفضل سطر واحد، والـ pre بس هو اللي بيتسحب. ده المناسب للكود: كسر السطر في نص أمر ممكن يلخبط اللي بينسخه.
-- [[white-space: pre-wrap]]: «حافظ على المسافات والسطور، بس اكسر السطر لو مفيش مكان». مناسب لنص عادي جوه pre (رسالة، قصيدة)، مش للكود.
-
-**الغلطة الشائعة:** تختبر على الكمبيوتر بس. السطر اللي ٧٠ حرف بيبان عادي على شاشة عريضة، وعلى الموبايل نصه مش باين.
-
-~~~text الناتج (عرض 360)
-                         pre.scrollWidth   pre.clientWidth   ارتفاع الـ pre
-من غير حل                     554              344              15
-overflow-x: auto              554              344              30   (السطر + شريط السحب)
-white-space: pre-wrap         344              344              30   (سطرين)
-
-عرض الصفحة (documentElement.scrollWidth) = 360 في التلاتة
-ومن غير dir="ltr" ومن غير حل: عرض الصفحة = 562
-~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** افتح قسم [[kbd]] في مواصفة HTML (اللينك تحت الدرس) وجاوب: إيه معنى [[kbd]] جوه [[kbd]]؟ و [[kbd]] جوه [[samp]]؟ و [[samp]] جوه [[kbd]]؟ واكتب مثال للتالتة: «من القايمة اختار File ثم Save».`, done: R`جبت التلات جمل من المواصفة، وكتبت المثال بـ [[samp]] جوه [[kbd]] جوه [[kbd]]، وعرفت إن المواصفة نفسها بتقول إن الدقة دي مش إجبارية وإن [[<kbd>File | Save</kbd>]] كفاية.`, sol: R`**من نص المواصفة (قسم 4.5.18 The kbd element):**
-
-~~~text من المواصفة
-When the kbd element is nested inside a samp element, it represents the input
-as it was echoed by the system.
-
-When the kbd element contains a samp element, it represents input based on
-system output, for example invoking a menu item.
-
-When the kbd element is nested inside another kbd element, it represents an
-actual key or other single unit of input as appropriate for the input mechanism.
-~~~
-
-| التركيبة | المعنى | مثال |
-|---|---|---|
-| [[kbd]] جوه [[kbd]] | مفتاح واحد أو خطوة واحدة من إدخال أكبر | Ctrl جوه Ctrl+C |
-| [[kbd]] جوه [[samp]] | اللي المستخدم كتبه، زي ما الشاشة رجّعت عرضه | الأمر في جلسة ترمنال |
-| [[samp]] جوه [[kbd]] | إدخال مبني على حاجة البرنامج عارضها | اسم بند في قايمة بتدوس عليه |
-
-والمثال بالدقة الكاملة، وبالطريقة البسيطة:
-
-~~~live 90 120 الاتنين صح
-<p>من القايمة اختار <kbd><kbd><samp>File</samp></kbd> | <kbd><samp>Save</samp></kbd></kbd>.</p>
-<p>من القايمة اختار <kbd>File | Save</kbd>.</p>
-~~~
-
-**ليه [[samp]] جوه [[kbd]]؟** كلمة «File» البرنامج هو اللي كاتبها على الشاشة (ناتج، يعني [[samp]])، وانت بتختارها (إدخال، يعني [[kbd]]). والـ kbd الخارجي بيجمع الخطوتين في إدخال واحد.
-
-**والمواصفة نفسها بتقول** بعد المثال ده: «Such precision isn't necessary»، وإن السطر التاني مقبول زيه. استخدم الدقة لما تكون هتنسّق كل جزء بشكل مختلف.
-
-**الغلطة الشائعة:** تعكسهم وتكتب [[<samp><kbd>File</kbd></samp>]] لبند القايمة. ده معناه «حاجة المستخدم كتبها والشاشة رجّعتها»، مش «حاجة معروضة بيختارها».
-
-~~~text الناتج
-السطر الأول:  kbd = 3   samp = 2      السطر التاني:  kbd = 1   samp = 0
-الشكل: السطرين متطابقين (كله monospace 13px)
-~~~` },
-          ],
-          title: "كود، ومفاتيح، وناتج برنامج: code و pre و kbd (ومعاهم samp و var، والـ entities)",
-          desc: R`[[<code>]] حتة كود (أمر، اسم ملف، اسم عنصر). [[<kbd>]] حاجة المستخدم بيدخّلها (مفتاح، أمر بيكتبه). [[<samp>]] حاجة البرنامج طلّعها. [[<var>]] اسم بيتبدّل بقيمة. و [[<pre>]] بلوك نص المسافات والسطور فيه بتتعرض زي ما هي في الملف، وده اللي بتحط جواه كود من كذا سطر.
-
-ولما تعرض كود HTML نفسه في صفحة، الحروف [[<]] و [[&]] ليها معنى عند المتصفح، فبتتكتب بأسامي بديلة اسمها entities: [[&lt;]] و [[&gt;]] و [[&amp;]].`,
-          example: R`<p>شغّل <code>npm run dev</code> وبعدين دوس <kbd><kbd>Ctrl</kbd>+<kbd>C</kbd></kbd> عشان توقفه.</p>
-<p>هيطلعلك: <samp>Server stopped</samp></p>
-<p>المساحة = <var>الطول</var> × <var>العرض</var></p>
-<pre dir="ltr"><code>&lt;h1&gt;متجري&lt;/h1&gt;
-&lt;p&gt;أهلًا بيك&lt;/p&gt;</code></pre>
-<p>&copy; ٢٠٢٦ مكتبة الحروف. السعر ١٠٠&nbsp;جنيه.</p>`,
-          try: R`اكتب [[<p>الفقرة بتتكتب <code><p></code> كده</p>]] وافتحها: كلمة «كده» راحت فين؟ عدّ الفقرات في تاب Elements. وبعدين بدّل اللي جوه الـ code بـ [[&lt;p&gt;]] وافتح تاني.`,
-          flag: "script",
-          deep: {
-            why: R`أي صفحة بتشرح حاجة تقنية (وثائق مكتبة، أو README، أو مقال تعليمي، أو صفحة مساعدة) فيها أربع أنواع نص شكلهم قريب ومعناهم مختلف: اللي تكتبه في ملف، واللي تدوسه على الكيبورد، واللي هيطلعلك على الشاشة، والحتة اللي تبدّلها بقيمتك. لو كلهم [[<span>]] بخط واحد، القارئ مش هيعرف «ده أكتبه ولا ده اللي هيظهر؟». والـ entities موجودة لسبب تاني: HTML نفسه بيستخدم [[<]] و [[&]] كرموز، فلازم طريقة تكتب بيها الحرف من غير ما المتصفح ينفّذه.`,
-            how: R`[[code]] و [[kbd]] و [[samp]] و [[var]] عناصر جوه السطر. الستايل الافتراضي في المواصفة: [[code, kbd, samp { font-family: monospace }]] و [[var { font-style: italic }]]. monospace خط كل حروفه بنفس العرض.
-
-في Chrome 157 الخط الـ monospace بيطلع 13px والصفحة 16px. ده مش من المواصفة: المتصفحات بتصغّر الـ monospace الافتراضي عشان حروفه بتبان أكبر من الخط العادي بنفس الرقم.
-
-[[pre]] عنصر block. الستايل الافتراضي: [[display: block; font-family: monospace; white-space: pre; margin: 1em 0]]. [[white-space: pre]] معناه إن المسافات والسطور الجديدة بتتعرض زي ما هي والسطر مبيتكسرش لوحده. في أي عنصر تاني المتصفح بيضم المسافات المتتالية لمسافة واحدة.
-
-الأدوار: [[code]] دوره [[code]]، والباقي ([[kbd]] و [[samp]] و [[var]] و [[pre]]) [[generic]].
-
-الـ entity بيبدأ بـ [[&]] وبيخلص بـ [[;]]. المتصفح بيبدّله بالحرف وهو بيقرا الملف، قبل ما يبني الشجرة. فالشجرة فيها الحرف [[<]] نفسه كنص، مش كبداية tag.`,
-            when: R`[[code]]: اسم ملف، أمر، اسم عنصر أو خاصية أو function جوه جملة.
-
-[[<pre><code>]]: كود من سطر كامل أو أكتر.
-
-[[kbd]]: مفتاح أو اختصار، أو أمر المستخدم هيكتبه، أو بند قايمة هيختاره.
-
-[[samp]]: رسالة خطأ، أو ناتج أمر، أو أي حاجة البرنامج عرضها. و [[<pre><samp>]] لناتج من كذا سطر.
-
-[[var]]: متغير في معادلة، أو اسم مكان هيتبدّل («حط اسمك مكان username»).
-
-[[&lt;]] و [[&amp;]]: كل ما تكتب [[<]] أو [[&]] كنص. [[&quot;]]: علامة تنصيص جوه قيمة attribute محاطة بتنصيص. [[&nbsp;]]: بين رقم ووحدته، أو كلمتين مينفعش يتفرّقوا على سطرين.`,
-            mistakes: R`كود HTML جوه [[code]] من غير entities: المتصفح بينفّذه. [[<code><p></code>]] بيفتح فقرة.
-
-[[pre]] متزاح جوه الملف: المسافات اللي في أول السطور بتتعرض.
-
-[[pre]] بسطور طويلة: بيزق الصفحة على الموبايل.
-
-[[pre]] في صفحة عربي من غير [[dir="ltr"]]: الكود الإنجليزي ترتيبه بيتلخبط.
-
-رسمة بالحروف (ASCII art) في [[pre]] من غير وصف: قارئ الشاشة هيقراها حرف حرف. MDN بينصح بوصف نصي ليها.
-
-[[&nbsp;]] ورا بعض عشان تعمل مسافة أو تزق كلمة: المسافات شغل CSS.
-
-[[&]] سايب في لينك: [[href="?a=1&copy=2"]] اشتغلت في Chrome، لأن المواصفة فيها استثناء قديم: جوه attribute، لو بعد الاسم [[=]] أو حرف، المتصفح بيسيبه زي ما هو. متعتمدش على الاستثناء ده: الصح [[&amp;]] دايمًا.
-
-[[<kbd>]] بدل [[<code>]] للأمر جوه شرح: لو بتقول «الأمر ده بيعمل كذا» يبقى [[code]]. لو بتقول «اكتب الأمر ده» يبقى [[kbd]].`
-          },
-          teach: R`## الفكرة في سطرين
-
-أربع عناصر لأربع أنواع نص «كمبيوتري»: كود، وإدخال، وناتج، ومتغير. وعنصر خامس ([[pre]]) بيحافظ على المسافات والسطور. وبعدهم الـ entities: إزاي تكتب [[<]] من غير ما المتصفح يفتكرها tag. القياسات من Chrome 157.
-
----
-
-## ١. [[<code>]]: حتة كود
-
-المواصفة: [[code]] بيمثّل **fragment of computer code**: اسم عنصر، أو اسم ملف، أو برنامج، أو أي نص الكمبيوتر بيتعرّف عليه.
-
-~~~live 60 80 code
-<p>شغّل <code>npm run dev</code> وافتح الملف <code>index.html</code>.</p>
-~~~
-
-الأمر واسم الملف بخط مختلف حروفه كلها بنفس العرض، وأصغر شوية.
-
-~~~text القياس
-code:   font-family = monospace   font-size = 13px   الدور = code
-الفقرة: font-family = Times New Roman   font-size = 16px
-~~~
-
-13 مش 16: المتصفحات بتصغّر الـ monospace الافتراضي. الحجم ده نسبي: نفس الـ [[code]] جوه [[<h2>]] حجمه 24px طلع 19.5px.
-
-مفيش attribute للغة الكود. المواصفة بتقترح class بيبدأ بـ [[language-]]، زي [[<code class="language-js">]]، ومكتبات تلوين الكود بتقراه.
-
----
-
-## ٢. [[<kbd>]]: اللي المستخدم بيدخّله
-
-[[kbd]] من keyboard. المواصفة: **user input**، غالبًا من الكيبورد، وممكن أي إدخال تاني (أمر صوتي مثلًا).
-
-~~~live 90 110 kbd
-<p>عشان تحفظ دوس <kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd>.</p>
-<p>في الترمنال اكتب <kbd>npm test</kbd> ودوس <kbd>Enter</kbd>.</p>
-~~~
-
-### [[<kbd>]] جوه [[<kbd>]]
-
-في السطر الأول: الـ [[kbd]] الخارجي هو الإدخال كله (الاختصار)، وكل واحد جواه **مفتاح واحد فعلي**. ده مثال المواصفة نفسه. والشكل الافتراضي للاتنين واحد (monospace 13px)، فالفرق هيبان لما تنسّق المفاتيح بالـ CSS على شكل زراير.
-
----
-
-## ٣. [[<samp>]]: اللي البرنامج طلّعه
-
-[[samp]] من sample. المواصفة: **sample or quoted output** من برنامج أو نظام.
-
-~~~live 60 80 samp
-<p>لو الملف مش موجود هيطلعلك: <samp>Error: file not found</samp></p>
-~~~
-
-والفرق بين التلاتة في جملة واحدة: الأمر اللي بتتكلم عنه [[code]]، واللي بتقول للقارئ اكتبه [[kbd]]، واللي هيشوفه على الشاشة [[samp]].
-
----
-
-## ٤. [[<var>]]: اسم بيتبدّل بقيمة
-
-المواصفة: [[var]] **متغير**: في معادلة، أو في كود، أو اسم ثابت، أو مجرد كلمة مكانها هيتملى بحاجة.
-
-~~~live 90 110 var
-<p>المساحة = <var>الطول</var> × <var>العرض</var></p>
-<p>اكتب <kbd>cd <var>اسم-الفولدر</var></kbd> عشان تدخله.</p>
-~~~
-
-~~~text القياس
-var:  font-style = italic   font-family = نفس خط الفقرة (مش monospace)   الدور = generic
-~~~
-
-في السطر التاني: الأمر كله [[kbd]] (المستخدم هيكتبه)، وجواه [[var]] للحتة اللي هيبدّلها باسم الفولدر بتاعه.
-
----
-
-## ٥. [[<pre>]]: المسافات والسطور زي ما هي
-
-[[pre]] من preformatted. المواصفة: بلوك نص **متنسّق مسبقًا**، شكله جاي من المسافات والسطور مش من العناصر.
-
-في أي عنصر عادي المتصفح بيضم المسافات والسطور الجديدة لمسافة واحدة. قارن:
-
-~~~live 120 200 نفس النص في p وفي pre
-<p>سطر ١
-    سطر ٢ بأربع مسافات
-        سطر ٣ بتمانية</p>
-<pre>سطر ١
-    سطر ٢ بأربع مسافات
-        سطر ٣ بتمانية</pre>
-~~~
-
-الفقرة طلعت سطر واحد، والـ [[pre]] تلات سطور والإزاحة فيهم.
-
-~~~text القياس
-pre:  display = block   white-space = pre   font-family = monospace   font-size = 13px
-      margin فوق وتحت = 13px (يعني 1em)   tab-size = 8   الدور = generic
-ارتفاع الفقرة = 18px (سطر واحد)
-~~~
-
-- [[white-space: pre]] هو اللي بيعمل الشغل: حافظ على المسافات والسطور، ومتكسرش السطر لوحدك.
-- [[tab-size: 8]]: حرف الـ Tab بيتعرض بعرض ٨ مسافات.
-
-### بلوك كود: [[<pre><code>]]
-
-الـ [[pre]] لوحده معناه «نص متنسّق». عشان تقول «وده كود»، المواصفة بتقول حط جواه [[code]]. ولناتج برنامج: [[<pre><samp>]].
-
-~~~live 80 110 pre وجواه code
-<pre dir="ltr"><code>function hello() {
-  return "hi";
-}</code></pre>
-~~~
-
-تلات تفاصيل في السطرين دول:
-
-- [[<pre><code>]] على **نفس السطر** مع أول سطر كود، والقفلة [[</code></pre>]] لازقة في آخر سطر. أي سطر جديد جوه الـ pre بيتعرض. فيه استثناء واحد في المواصفة: سطر جديد واحد بعد [[<pre>]] على طول بيتشال. جرّبت: سطر واحد اتشال، ولما كانوا اتنين فضل واحد.
-- الكود **مش متزاح** مع باقي الملف. لو زحته أربع مسافات عشان الترتيب، الأربع مسافات هيتعرضوا.
-- [[dir="ltr"]]: الـ [[pre]] في صفحة عربي بياخد [[direction: rtl]] (اتقاس)، والكود شمال ليمين. من درس «lang و dir».
-
-### السطر الطويل
-
-[[pre]] مبيكسرش السطر. جرّبت سطر من ٧٠ حرف على موبايل عرضه 360: محتوى الـ pre عرضه 554 والـ pre نفسه 344. في صفحة عربي والـ pre عليه [[dir="ltr"]]، آخر السطر بيخرج من يمين الشاشة ومفيش scroll يوصّلك ليه. ومن غير [[dir]]، الصفحة كلها بقى عرضها 562 وبتتزق يمين وشمال. الحل سطر CSS، وفيه تمرين بيقيسه.
-
-### رسمة بالحروف
-
-لو حطيت رسمة ASCII في [[pre]]، قارئ الشاشة هيقراها رموز ورا بعض. المواصفة بتقول فكّر اللي مش شايف هياخد إيه، و MDN بينصح بوصف نصي للرسمة.
-
----
-
-## ٦. الـ entities: لما الحرف نفسه ليه معنى في HTML
-
-### المشكلة
-
-عايز تكتب في صفحة إن الفقرة بتتكتب بـ [[<p>]]:
-
-~~~live 90 110 غلط: المتصفح نفّذ الكود
-<p>الفقرة بتتكتب <code><p></code> كده</p>
-~~~
-
-«كده» نزلت في سطر لوحدها، والـ [[code]] فاضي. اللي حصل: المتصفح شاف [[<p>]] جوه الـ code ففتح فقرة جديدة (وقفل اللي قبلها).
-
-~~~text الشجرة اللي اتبنت
-<p>الفقرة بتتكتب <code></code></p>
-<p> كده</p>
-~~~
-
-[[code]] مبيحميش اللي جواه. الحل إنك متكتبش الحرف [[<]] نفسه، تكتب اسمه:
-
-~~~live 60 80 صح: entities
-<p>الفقرة بتتكتب <code>&lt;p&gt;</code> كده</p>
-~~~
-
-~~~text القياس
-اللي في الملف:        &lt;p&gt;
-النص في الشجرة:      <p>        (تلات حروف نص، مش عنصر)
-عدد الفقرات: 1
-~~~
-
-### شكل الـ entity
-
-اسمه الرسمي character reference. بيبدأ بـ [[&]]، وبعده اسم، وبيخلص بـ [[;]]. المتصفح بيبدّله بالحرف وهو بيقرا الملف.
-
-| اللي تكتبه | بيطلع | الاسم جاي من | لازم إمتى |
-|---|---|---|---|
-| [[&lt;]] | [[<]] | less than | أي [[<]] في النص، عشان متتقراش بداية tag |
-| [[&gt;]] | [[>]] | greater than | مش إجباري في النص، بس اكتبه مع [[&lt;]] عشان الكود يبقى واضح |
-| [[&amp;]] | [[&]] | ampersand | أي [[&]] في النص أو في لينك، عشان متتقراش بداية entity |
-| [[&quot;]] | " | quotation mark | علامة تنصيص جوه قيمة attribute محاطة بنفس العلامة |
-| [[&nbsp;]] | مسافة مبتتكسرش | non-breaking space | بين كلمتين لازم يفضلوا على نفس السطر |
-| [[&copy;]] | © | copyright | مش لازم خالص: اكتب © نفسها |
-
-### [[&quot;]]: تنصيص جوه attribute
-
-~~~live 60 80 قف بالماوس على الكلمة
-<p title="قال &quot;أهلًا&quot; ومشي">قف هنا بالماوس</p>
-~~~
-
-قيمة الـ [[title]] محاطة بعلامتين تنصيص. لو كتبت علامة تنصيص جواها المتصفح هيفتكر القيمة خلصت. [[&quot;]] بيحلها: قريت [[title]] وطلع «قال "أهلًا" ومشي».
-
-### [[&nbsp;]]: المسافة اللي مبتتكسرش
-
-المسافة العادية مكان مسموح للمتصفح يكسر السطر عنده. [[&nbsp;]] شكلها مسافة بس الكسر عندها ممنوع، فاللي قبلها واللي بعدها بيفضلوا مع بعض.
-
-~~~live 60 110 صغّر العرض: الرقم والعملة مع بعض
-<p>سعر الاشتراك السنوي بعد الخصم ١٠٠&nbsp;جنيه بس.</p>
-~~~
-
-~~~text القياس
-كود الحرف:  المسافة العادية = 32     &nbsp; = 160
-~~~
-
-استخدمها بين رقم ووحدته. ومتستخدمهاش ورا بعض عشان تعمل فراغ: ده شغل CSS.
-
-### بالرقم بدل الاسم
-
-أي حرف ينفع يتكتب برقمه في Unicode: [[&#169;]] (عشري) أو [[&#xA9;]] (ست عشري)، والاتنين بيطلعوا ©. جرّبت التلاتة ([[&copy;]] و [[&#169;]] و [[&#xA9;]]) وطلعوا نفس الحرف.
-
-### لازم أحفظهم؟
-
-لأ. الصفحة [[<meta charset="utf-8">]] (من درس «<!doctype html>»)، فأي حرف يتكتب زي ما هو: © و € و ← والعربي كله. الـ entities اللي **لازم** تعرفهم تلاتة: [[&lt;]] و [[&amp;]] دايمًا، و [[&quot;]] جوه الـ attributes. و [[&nbsp;]] لما تحتاجها.
-
-### لو نسيت الـ [[;]]
-
-جرّبت شوية حالات في نص فقرة:
-
-| اللي في الملف | اللي اتعرض | ليه |
-|---|---|---|
-| [[&copy 2026]] | © 2026 | أسامي قديمة قليلة بتتقبل من غير [[;]] |
-| [[&copyright]] | ©right | قرا [[&copy]] ووقف، والباقي نص |
-| [[&notit;]] | ¬it; | قرا [[&not]] (علامة النفي ¬) وساب الباقي |
-| [[AT&T]] | AT&T | مفيش entity بيبدأ بـ T، فساب الـ [[&]] |
-| [[&unknown;]] | &unknown; | اسم مش موجود: اتعرض زي ما هو |
-
-التاني والتالت هما الخطر: نص عادي فيه [[&]] وبعده كلمة بتبدأ باسم entity. عشان كده القاعدة: أي [[&]] مقصود بيه الحرف يتكتب [[&amp;]]، وأي entity يتقفل بـ [[;]].
-
----
-
-## الخلاصة
-
-| النص ده | العنصر | الشكل الافتراضي |
-|---|---|---|
-| كود جوه جملة | [[<code>]] | monospace |
-| كود من كذا سطر | [[<pre><code>]] | monospace والمسافات زي ما هي |
-| المستخدم بيدخّله | [[<kbd>]] | monospace |
-| البرنامج طلّعه | [[<samp>]] | monospace |
-| اسم بيتبدّل بقيمة | [[<var>]] | مايل |
-| الحرف [[<]] أو [[&]] كنص | [[&lt;]] و [[&amp;]] | |
-| مسافة مبتتكسرش | [[&nbsp;]] | |`,
-          lines: [
-            R`[[code]] للأمر اللي بنتكلم عنه، و [[kbd]] جوه [[kbd]] للاختصار: الخارجي الإدخال كله وكل داخلي مفتاح واحد.`,
-            R`[[samp]] للنص اللي البرنامج هيطبعه على الشاشة، عشان القارئ يعرف إنه مش هيكتبه.`,
-            R`[[var]] على الأسامي اللي هتتبدّل بأرقام. بيطلعوا مايلين وبخط الفقرة العادي.`,
-            R`[[<pre><code>]] بلوك كود. الكود نفسه HTML، فكل [[<]] مكتوبة [[&lt;]] وكل [[>]] مكتوبة [[&gt;]]. و [[dir="ltr"]] عشان الكود يبدأ من الشمال.`,
-            R`السطر التاني من الكود، وبعده القفلة لازقة فيه عشان ميطلعش سطر فاضي في آخر الـ pre.`,
-            R`[[&copy;]] بيطلع ©، و [[&nbsp;]] مسافة مبتتكسرش بين الرقم و «جنيه» فيفضلوا على نفس السطر.`
-          ],
-          sol: R`**«كده» راحت فين؟** نزلت في فقرة تانية لوحدها. في تاب Elements هتلاقي فقرتين مش واحدة: الأولى فيها «الفقرة بتتكتب» و [[code]] فاضي، والتانية فيها « كده». المتصفح قرا [[<p>]] اللي جوه الـ code كبداية فقرة جديدة، والفقرة مينفعش تبقى جوه فقرة، فقفل الأولى.
-
-**بعد [[&lt;p&gt;]]:** فقرة واحدة، والـ code جواه التلات حروف [[<p>]] كنص، والجملة كاملة على سطر واحد.
-
-~~~text الناتج (Chrome 157)
-قبل:  عدد الفقرات = 2    نص code = (فاضي)    نص الفقرة الأولى = «الفقرة بتتكتب »
-بعد:  عدد الفقرات = 1    نص code = <p>       innerHTML بتاعه = &lt;p&gt;
-~~~`,
+          cmd: "Dialog",
           ref: [
-            { t: "WHATWG: the code element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-code-element" },
-            { t: "WHATWG: the kbd element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-kbd-element" },
-            { t: "WHATWG: the samp element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-samp-element" },
-            { t: "WHATWG: the var element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-var-element" },
-            { t: "WHATWG: the pre element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-pre-element" },
-            { t: "WHATWG: named character references", url: "https://html.spec.whatwg.org/multipage/named-characters.html" },
-            { t: "MDN: <code>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/code" },
-            { t: "MDN: <pre>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/pre" },
-            { t: "MDN: <kbd>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/kbd" },
-            { t: "MDN: <samp>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/samp" },
-            { t: "MDN: <var>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/var" },
-            { t: "MDN: Character reference", url: "https://developer.mozilla.org/en-US/docs/Glossary/Character_reference" },
+            { t: "Radix Primitives: Dialog", url: "https://www.radix-ui.com/primitives/docs/components/dialog" },
+            { t: "WAI-ARIA APG: Dialog (Modal) pattern", url: "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/" },
+            { t: "shadcn/ui: Dialog", url: "https://ui.shadcn.com/docs/components/radix/dialog" },
           ],
-          pre: ["css/abbr و dfn و time", { to: "css/<!doctype html>", why: R`الـ [[charset]] هو اللي بيخليك تكتب © والعربي من غير entities` }]
-        },
-        {
-          cmd: "sub و sup و br",
-          practice: [
-            { lvl: 'سريع', t: R`**اختار العنصر:** [[sub]] ولا [[sup]]؟ اكتب الخمسة صح:
-١. تاني أكسيد الكربون CO2
-٢. س تربيع
-٣. حجم الأوضة ٤٠ متر مكعب
-٤. حمض الكبريتيك H2SO4
-٥. رقم حاشية [1] بعد جملة`, done: R`الصفحة فيها ٣ [[sub]] (واحد في CO₂ واتنين في H₂SO₄) و ٣ [[sup]] (التربيع، والتكعيب، والحاشية)، والحاشية جواها لينك بيودّي للملحوظة تحت.`, work: { h: 270, start: R`<p>تاني أكسيد الكربون CO2</p>
-<p>س تربيع: س2</p>
-<p>حجم الأوضة ٤٠ م3</p>
-<p>حمض الكبريتيك H2SO4</p>
-<p>النبات بيطلّع أكسجين بالنهار [1].</p>
-<p id="note-1"><small>[1] من كتاب العلوم، الفصل التالت.</small></p>`, checks: [
-              { say: R`الأرقام اللي تحت السطر في [[<sub>]]: تلاتة (CO2 وH2SO4)`, q: "sub", n: 3 },
-              { say: R`الأرقام اللي فوق في [[<sup>]]: تلاتة (التربيع والتكعيب والحاشية)`, q: "sup", n: 3 },
-              { say: R`متر مكعب: [[3]] جوه [[<sup>]]`, q: "sup", has: "3" },
-              { say: R`رقم الحاشية لينك بيودّي لـ [[#note-1]] جوه [[<sup>]]`, q: 'sup a[href="#note-1"]', n: 1 },
-            ] }, sol: R`~~~live 250 270 الحل
-<p>تاني أكسيد الكربون CO<sub>2</sub></p>
-<p><var>س</var><sup>2</sup></p>
-<p>حجم الأوضة ٤٠ م<sup>3</sup></p>
-<p>حمض الكبريتيك H<sub>2</sub>SO<sub>4</sub></p>
-<p>النبات بيطلّع أكسجين بالنهار<sup><a href="#note-1">[1]</a></sup>.</p>
-<p id="note-1"><small>[1] من كتاب العلوم، الفصل التالت.</small></p>
-~~~
+          title: "مودال بيحترم الكيبورد وقارئ الشاشة من غير ما تكتبه",
+          desc: R`الـ primitives (Radix أو Base UI) بتديك مكونات من غير شكل بس سلوكها كامل: الـ Dialog بيحبس الـ focus جواه، و Escape بيقفله، والـ focus بيرجع للزرار اللي فتحه، والصفحة اللي ورا مبتعملش scroll.
 
-**القاعدة:** عدد الذرات في الكيميا تحت ([[sub]])، والأُس ووحدات المساحة والحجم ورقم الحاشية فوق ([[sup]]).
-
-**ليه دي عناصر مش مجرد شكل؟** المواصفة بتقول استخدمهم لما غيابهم **يغيّر المعنى**. «م3» ممكن تتقري «م تلاتة»، و «س2» مش «س تربيع». وعشان كده برضه مينفعش تستخدمهم لمجرد إن الحرف يطلع صغير ومرفوع.
-
-**الحاشية:** الرقم [[sup]] وجواه لينك [[href="#note-1"]] بيودّي للعنصر اللي عليه [[id="note-1"]] (من درس «a و button»). MDN عادّد أرقام الحواشي من استخدامات [[sup]].
-
-**الغلطة الشائعة:** تكتب الرقم الصغير الجاهز من الكيبورد (² أو ₂) مرة و [[sup]] مرة في نفس الصفحة. الاتنين بيتعرضوا، بس البحث عن «CO2» مش هيلاقي «CO₂». اختار طريقة واحدة، والعنصر بيخلي النص الخام رقم عادي.
-
-~~~text الناتج
-sub: 3   sup: 3
-sub:  vertical-align = sub     font-size = 13.3333px   الدور = subscript
-sup:  vertical-align = super   font-size = 13.3333px   الدور = superscript
-النص الخام للسطر الأول: تاني أكسيد الكربون CO2
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p>سطر<br><br><br>سطر</p>]]. الفقرة هتبقى كام سطر؟ وكام واحد منهم فاضي؟ وبعدين: [[textContent]] بتاع الفقرة فيه سطور جديدة ولا لأ؟`, done: R`الفقرة ٤ سطور (ارتفاعها 72px والسطر 18px): سطر، وسطرين فاضيين، وسطر. مش ٥ ولا ٣. و [[textContent]] طلع «سطرسطر» من غير أي فاصل، و [[innerText]] هو اللي فيه السطور الجديدة.`, sol: R`~~~live 110 130 تلات br ورا بعض
-<p>سطر<br><br><br>سطر</p>
-~~~
-
-**العدّ:** كل [[<br>]] بينهي السطر اللي هو فيه. الأول بينهي سطر «سطر». التاني بينهي سطر فاضي. التالت بينهي سطر فاضي تاني. وبعدهم «سطر» الأخيرة. المجموع ٤ سطور، منهم ٢ فاضيين. يعني عدد السطور الفاضية = عدد الـ br ناقص واحد.
-
-**[[textContent]] و [[innerText]]:** الـ [[br]] عنصر مش حرف، فالنص الخام بتاع الفقرة مفيهوش أي حاجة بين الكلمتين: «سطرسطر». [[innerText]] بيرجّع النص «زي ما بيتعرض»، فبيحط سطر جديد مكان كل br.
-
-**وده استخدام غلط أصلًا:** الـ br هنا معمول عشان يعمل فراغ. المواصفة بتقول إن [[br]] لكسر سطر **جزء من المحتوى** (قصيدة، عنوان)، ومش للفصل بين مجموعات. لو دول فقرتين، يبقوا [[<p>]] اتنين والمسافة بينهم تتظبط بالـ CSS.
-
-**الغلطة الشائعة:** تعدّ الـ br وتقول «تلات سطور فاضية».
-
-~~~text الناتج
-ارتفاع الفقرة = 72px   ارتفاع السطر = 18px   →  4 سطور
-textContent = "سطرسطر"
-innerText   = "سطر\n\n\nسطر"
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «عن الشركة» لشركة متخيلة:
-
-~~~html
-<p>شركة النور<sup>للتجارة</sup></p>
-<hr>
-<p>بدأنا سنة ٢٠١٠ في طنطا.<br><br>دلوقتي عندنا ٨ فروع.</p>
-<hr>
-<p>العنوان: ٤ شارع الورد<br>طنطا</p>
-<hr>
-~~~
-
-فيها ٣ أنواع غلط (واحد منهم متكرر). وفيها [[br]] واحد صح: متشيلوش.`, done: R`بعد التصليح: مفيش [[sup]]، ومفيش [[<br><br>]] (الجملتين بقوا فقرتين)، وفضل [[hr]] واحد بس بين الكلام عن الشركة ومعلومات العنوان، والـ [[br]] اللي في العنوان زي ما هو. والعدد: p تلاتة وعنوان، و br واحد، و hr واحد.`, work: { h: 260, start: R`<p>شركة النور<sup>للتجارة</sup></p>
-<hr>
-<p>بدأنا سنة ٢٠١٠ في طنطا.<br><br>دلوقتي عندنا ٨ فروع.</p>
-<hr>
-<p>العنوان: ٤ شارع الورد<br>طنطا</p>
-<hr>`, checks: [
-              { say: R`مفيش [[<sup>]] في الصفحة`, q: "sup", n: 0 },
-              { say: R`مفيش [[<br><br>]] ورا بعض: الجملتين بقوا فقرتين`, nosrc: "<br><br>" },
-              { say: R`فضل [[<hr>]] واحد بس`, q: "hr", n: 1 },
-              { say: R`فضل [[<br>]] واحد بس: اللي في العنوان`, q: "br", n: 1 },
-              { say: R`العنوان لسه فقرة فيها [[<br>]]`, q: "p br", n: 1 },
-            ] }, sol: R`~~~live 220 260 بعد التصليح
-<h2>شركة النور للتجارة</h2>
-<p>بدأنا سنة ٢٠١٠ في طنطا.</p>
-<p>دلوقتي عندنا ٨ فروع.</p>
-<hr>
-<p>العنوان: ٤ شارع الورد<br>طنطا</p>
-~~~
-
-**الغلطات:**
-
-1. [[<sup>للتجارة</sup>]]: [[sup]] اتاخد عشان الكلمة تطلع صغيرة ومرفوعة زي اللوجو. المواصفة بتقول إن [[sub]] و [[sup]] لكتابة ليها معنى (أُس، حاشية)، مش للشكل، وبتدّي مثال قريب: مينفعش يتستخدموا لتنسيق اسم LaTeX. شكل اللوجو CSS. وده اسم الشركة فالأنسب يبقى عنوان.
-2. [[<br><br>]] بين جملتين: ده فصل بين فقرتين معمول بكسر سطور. الصح [[<p>]] لكل واحدة.
-3. [[<hr>]] بعد كل فقرة وفي آخر الصفحة: [[hr]] معناه «الموضوع اتغيّر»، مش «خط للزينة». فضل واحد بس: قبله كلام عن تاريخ الشركة، وبعده معلومات المكان. والأخير اللي مفيش بعده حاجة اتشال (مفيش موضوع جاي يفصل عنه).
-
-**والـ [[br]] الصح:** اللي في العنوان. الشارع في سطر والمدينة في سطر: ده كسر جزء من المحتوى، ومثال المواصفة نفسه عنوان بريدي.
-
-**الغلطة الشائعة:** تشيل كل الـ br «عشان br غلط». هو غلط للمسافات، وصح للعناوين والشعر.
-
-~~~text الناتج
-              sup   br   hr   p   h2
-قبل التصليح    1    3    3    3   0
-بعد التصليح    0    1    1    3   1
-hr:  الدور = separator
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** ورقة مراجعة علوم صغيرة: عنوان، وتلات معلومات كيميا فيها صيغ (المية، وتاني أكسيد الكربون، وملح الطعام NaCl)، وبعدها الموضوع بيتغيّر لفيزيا: قانون [[E = mc²]] بمتغيراته، ومساحة الدايرة [[πr²]]، وجملة فيها حاشية برقم، وتحت خالص الحاشية نفسها.`, done: R`الورقة فيها [[hr]] اتنين (واحد بين الكيميا والفيزيا، وواحد قبل الحواشي)، وكل صيغة كيميا بـ [[sub]]، وكل أُس بـ [[sup]]، والحروف E و m و c و r جوه [[var]]، ولينك الحاشية بيودّيك لتحت ولينك تاني بيرجّعك.`, work: { h: 400, start: R`مراجعة علوم: الأسبوع التالت
-المية: H2O (ذرتين هيدروجين وذرة أكسجين).
-تاني أكسيد الكربون: CO2.
-ملح الطعام: NaCl (من غير أرقام: ذرة من كل عنصر).
-الطاقة والكتلة: E = mc2، و c سرعة الضوء[1].
-مساحة الدايرة: πr2، و r نص القطر.
-[1] حوالي ٣٠٠ ألف كيلومتر في الثانية.`, checks: [
-              { say: R`عنوان الورقة [[<h2>]]`, q: "h1, h2, h3" },
-              { say: R`أرقام الصيغ الكيميائية في [[<sub>]]: اتنين (H2O وCO2)`, q: "sub", n: 2 },
-              { say: R`الأسس في [[<sup>]]: تلاتة (c² وr² ورقم الحاشية)`, q: "sup", n: 3 },
-              { say: R`حروف E و m و c و r جوه [[<var>]]`, q: "var", min: 4 },
-              { say: R`[[<hr>]] اتنين: واحد بين الكيميا والفيزيا وواحد قبل الحاشية`, q: "hr", n: 2 },
-              { say: R`لينك الحاشية بيودّي لتحت ولينك تاني بيرجّعك`, q: 'a[href^="#"]', min: 2 },
-            ] }, sol: R`~~~live 330 400 ورقة المراجعة
-<h2>مراجعة علوم: الأسبوع التالت</h2>
-<p>المية: H<sub>2</sub>O (ذرتين هيدروجين وذرة أكسجين).</p>
-<p>تاني أكسيد الكربون: CO<sub>2</sub>.</p>
-<p>ملح الطعام: NaCl (من غير أرقام: ذرة من كل عنصر).</p>
-<hr>
-<p>الطاقة والكتلة: <var>E</var> = <var>m</var><var>c</var><sup>2</sup>، و <var>c</var> سرعة الضوء<sup id="ref-1"><a href="#note-1">[1]</a></sup>.</p>
-<p>مساحة الدايرة: π<var>r</var><sup>2</sup>، و <var>r</var> نص القطر.</p>
-<hr>
-<p id="note-1"><small>[1] حوالي ٣٠٠ ألف كيلومتر في الثانية. <a href="#ref-1">ارجع</a></small></p>
-~~~
-
-**القرارات:**
-
-- [[hr]] الأول: الورقة قسم واحد من غير عناوين فرعية، والموضوع اتنقل من كيميا لفيزيا. ده «thematic break» اللي المواصفة بتوصفه. لو كان لكل موضوع [[<h3>]] مكانش فيه لزوم للـ hr: المواصفة بتقول إن العناوين نفسها بتقول إن الموضوع اتغيّر.
-- [[hr]] التاني قبل الحواشي: برضه تغيير (من المحتوى لملحوظاته).
-- [[<var>m</var><var>c</var><sup>2</sup>]]: كل حرف متغير لوحده، والأُس على [[c]] بس. ده مكتوب كده في المواصفة بالحرف.
-- π مش [[var]]: دي ثابت معروف مش متغير.
-- الحاشية رايح جاي: [[href="#note-1"]] بينزل، و [[href="#ref-1"]] بيرجّع للمكان اللي كنت فيه.
-- المواصفة بتقول إن المعادلات المعقدة مكانها MathML (لغة تانية للرياضة)، وإن [[sub]] و [[sup]] مقبولين للبسيط زي ده.
-
-**الغلطة الشائعة:** [[<sup>]] على «c2» كلها: [[<sup>c2</sup>]]. الأُس هو الـ 2 بس.
-
-~~~text الناتج
-hr: 2 (الدور = separator)   sub: 2   sup: 3 (أُسّين ورقم الحاشية)   var: 6
-النص الخام لسطر الطاقة: الطاقة والكتلة: E = mc2، و c سرعة الضوء[1].
-~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اسم ملف طويل مفيهوش مسافات: [[quarterly_financial_report_final_version_2026_approved_by_manager.pdf]]. حطه في فقرة وافتح الصفحة على عرض 360 واكتب في الـ Console [[document.documentElement.scrollWidth]]. وبعدين حط [[<wbr>]] بعد كل [[_]] وقيس تاني. وأخيرًا: [[textContent]] بتاع الفقرة اتغيّر طوله؟`, done: R`من غير [[wbr]]: [[scrollWidth]] طلع 487 على شاشة 360 (الصفحة بتتزق). بعده: 360، والاسم اتكسر عند واحدة من الـ [[_]]. وطول [[textContent]] هو هو (87 حرف) في الحالتين: [[wbr]] مبيضيفش أي حرف للنص.`, sol: R`~~~live 150 200 من غير wbr وبيه
-<p>حمّل الملف quarterly_financial_report_final_version_2026_approved_by_manager.pdf من هنا</p>
-<p>حمّل الملف quarterly_<wbr>financial_<wbr>report_<wbr>final_<wbr>version_<wbr>2026_<wbr>approved_<wbr>by_<wbr>manager.pdf من هنا</p>
-~~~
-
-دوس «موبايل» فوق المعاينة: الفقرة الأولى بتخلي الصفحة تتسحب بالعرض، والتانية لأ.
-
-**ليه الأول بيبوّظ:** المتصفح بيكسر السطر عند المسافات (وعند حاجات زي الشرطة [[-]])، واسم الملف مفيهوش ولا واحدة: الـ [[_]] مش مكان كسر. فالاسم كله «كلمة واحدة» عرضها أكبر من الشاشة.
-
-**[[<wbr>]]** من word break opportunity. المواصفة: «فرصة كسر سطر». يعني بتقول للمتصفح: لو احتجت تكسر، ينفع هنا. ولو السطر مكفّي، مبيحصلش حاجة ومبيبانش.
-
-**والفرق عن [[<br>]]:** [[br]] بيكسر دايمًا. [[wbr]] بيكسر لو لازم بس.
-
-**والفرق عن [[&shy;]]** (soft hyphen): MDN بيقول إن [[wbr]] مبيحطش شرطة عند الكسر، و [[&shy;]] بيحط. واسم ملف مينفعش تتزاد عليه شرطة (القارئ هينسخها)، فالمناسب [[wbr]]. و [[&shy;]] كمان حرف حقيقي بيدخل في النص: نفس الفقرة بيه طولها بقى 95 بدل 87.
-
-**الغلطة الشائعة:** تحط مسافات في اسم الملف عشان يتكسر. اللي هينسخه هينسخ اسم غلط.
-
-~~~text الناتج (عرض 360)
-                  عرض الفقرة (scrollWidth)   ارتفاعها     scrollWidth للصفحة
-من غير wbr              479                 54            487
-بـ wbr                  344                 36            360
-طول textContent:  من غير wbr = 87    بـ wbr = 87    بـ &shy; = 95
-~~~` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** صفحة عربي ([[dir="rtl"]]) فيها تلات سطور. كل واحد هيتعرض إزاي؟
-
-~~~html
-<p>أ: <bdo dir="rtl">ABC</bdo></p>
-<p>ب: <bdo dir="ltr">سلام</bdo></p>
-<p>ج: <bdi>ABC</bdi></p>
-~~~`, done: R`«أ» اتعرضت CBA (الحروف الإنجليزي اتقلبت)، و «ب» حروف «سلام» اترصّت من الشمال لليمين فبقت مقلوبة، و «ج» ABC عادي. وعرفت الفرق: [[bdo]] بيجبر الاتجاه على كل حرف، و [[bdi]] بيعزل الحتة ويسيب حروفها تترتب طبيعي.`, sol: R`~~~live 130 170 التلاتة
-<p>أ: <bdo dir="rtl">ABC</bdo></p>
-<p>ب: <bdo dir="ltr">سلام</bdo></p>
-<p>ج: <bdi>ABC</bdi></p>
-~~~
-
-**أ:** الحروف الإنجليزي طبيعتها شمال ليمين، حتى جوه صفحة عربي. [[<bdo dir="rtl">]] لغى الطبيعة دي وأجبرهم يترصّوا يمين لشمال. فالـ A (أول حرف) بقت في أقصى اليمين، وبتقراها بعينك من الشمال CBA.
-
-**ب:** العكس: الحروف العربي أُجبرت تترص شمال ليمين. السين (أول حرف) بقت في أقصى الشمال، والكلمة بقت مقلوبة للي بيقرا عربي.
-
-**ج:** [[bdi]] (من درس «lang و dir») مبيجبرش حاجة. بيعزل الحتة عن اللي حواليها بس، وحروفها بتترتب بطبيعتها: ABC.
-
-**القاعدة:** ٩٩٪ من الوقت انت محتاج [[bdi]] أو [[dir]] (نص اتجاهه مش معروف، رقم تليفون، كود خصم). [[bdo]] للحالة النادرة اللي عايز فيها ترتيب الحروف نفسه يتلغي: مثال تعليمي عن الاتجاهات زي ده، أو نص متخزن بترتيب العرض مش ترتيب القراية.
-
-**الغلطة الشائعة:** تستخدم [[bdo]] عشان «تصلّح» رقم أو كود متلخبط في جملة عربي. هو هيقلب حروفه. اللي بيصلّح اللخبطة العزل ([[bdi]] أو [[<span dir="ltr">]]).
-
-~~~text الناتج (مكان كل حرف على الشاشة، بالبيكسل من الشمال، عرض المعاينة 360)
-أ:  A عند x أكبر من B، و B أكبر من C     →  بتتشاف: CBA
-ب:  س عند x أصغر من ل، ثم ا، ثم م       →  الحروف من الشمال لليمين
-ج:  A أصغر من B أصغر من C               →  بتتشاف: ABC
-bdo:  unicode-bidi = isolate-override       bdi:  unicode-bidi = isolate
-~~~` },
-          ],
-          title: "حرف تحت السطر وفوقه، وكسر السطر: sub و sup و br (ومعاهم wbr و hr و ruby و bdo)",
-          desc: R`[[<sub>]] حرف تحت السطر (H₂O) و [[<sup>]] حرف فوقه (م²، ورقم الحاشية). [[<br>]] كسر سطر جزء من المحتوى (عنوان، قصيدة). [[<wbr>]] مكان مسموح للمتصفح يكسر عنده لو السطر مكفّاش. [[<hr>]] فاصل معناه إن الموضوع اتغيّر.
-
-ومعاهم عنصرين هتقابلهم قليل: [[<ruby>]] (ومعاه [[<rt>]] و [[<rp>]]) بيكتب النطق فوق الكلمة، و [[<bdo>]] بيجبر اتجاه الحروف.`,
-          example: R`<p>المية H<sub>2</sub>O، ومساحة الشقة ١٢٠ م<sup>2</sup>.</p>
-<p>مكتبة الحروف<br>١٢ شارع النيل<br>المنصورة</p>
-<p>حمّل الملف quarterly_<wbr>financial_<wbr>report_<wbr>2026.pdf من هنا.</p>
-<hr>
-<p>الشبكة اسمها <ruby>Wi-Fi<rp> (</rp><rt>واي فاي</rt><rp>)</rp></ruby>.</p>
-<p>الحروف معكوسة: <bdo dir="rtl">ABC</bdo></p>`,
-          try: R`اكتب فقرة من سطرين طوال، وفي نص السطر الأول حط [[م<sup>2</sup>]]. بصّ على المسافة بين السطرين: زي باقي الفقرات؟ وبعدين اكتب عنوان من تلات سطور مرة بـ [[<br>]] ومرة كل سطر في [[<p>]] وقارن الشكل.`,
+انت بتركّب الأجزاء ([[Root]] و [[Trigger]] و [[Portal]] و [[Overlay]] و [[Content]] و [[Title]]) وتحط عليهم كلاسات Tailwind.`,
+          example: R`import { Dialog } from "radix-ui";
+<Dialog.Root>
+  <Dialog.Trigger className="rounded-lg bg-red-600 px-4 py-2 text-white">امسح</Dialog.Trigger>
+  <Dialog.Portal>
+    <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+    <Dialog.Content className="fixed top-1/2 left-1/2 w-[min(90vw,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6">
+      <Dialog.Title className="text-lg font-bold">متأكد؟</Dialog.Title>
+      <Dialog.Description>الحذف مش هيترجع.</Dialog.Description>
+      <Dialog.Close onClick={onConfirm}>أيوه امسح</Dialog.Close>
+    </Dialog.Content>
+  </Dialog.Portal>
+</Dialog.Root>`,
+          try: R`افتح المودال واضغط Tab كذا مرة: الـ focus مش هيخرج برا. دوس Escape: هيقفل والـ focus يرجع لزرار «امسح». وقارن ده بمودال معمول بـ [[useState]] و div.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** المودال بتاع الدرس مفتوح وفيه زرارين. هتدوس Tab ٥ مرات: الـ focus هيروح فين؟ وبعد Escape هيبقى فين؟ جرّب بالكيبورد وراقب [[document.activeElement]].`, done: R`الـ focus لف بين الزرارين جوه المودال بس (في المعمل: yes و no و yes و no و yes) ومطلعش للصفحة، وبعد Escape المودال اتشال والـ focus رجع لزرار «امسح» اللي فتحه.`, sol: R`~~~tsx ConfirmDialog.tsx
+import { Dialog } from "radix-ui";
+
+export function ConfirmDialog() {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger id="open" className="rounded-lg bg-red-700 px-4 py-2 text-white">امسح</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 w-[min(90vw,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6">
+          <Dialog.Title className="text-lg font-bold">متأكد؟</Dialog.Title>
+          <Dialog.Description>الحذف مش هيترجع.</Dialog.Description>
+          <div className="mt-4 flex gap-2">
+            <Dialog.Close id="yes" className="rounded-lg bg-red-700 px-4 py-2 text-white">أيوه امسح</Dialog.Close>
+            <Dialog.Close id="no" className="rounded-lg border px-4 py-2">لأ</Dialog.Close>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+~~~
+
+~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { ConfirmDialog } from "./ConfirmDialog";
+
+createRoot(document.getElementById("root")!).render(
+  <main className="p-6">
+    <h1 className="mb-4 text-2xl font-bold">الملفات</h1>
+    <a href="#before" className="me-4">لينك قبل</a>
+    <ConfirmDialog />
+    <a href="#after" className="ms-4">لينك بعد</a>
+  </main>
+);
+~~~
+
+**بيحصل إيه:**
+
+- أول ما المودال يفتح، Radix بينقل الـ focus لأول عنصر جواه.
+- Tab عند آخر عنصر بيرجع لأول عنصر، ولينك «قبل» و «بعد» مبيتوصلوش. ده الـ focus trap.
+- Escape بيقفل، و Radix فاكر مين فتحه، فبيرجّع الـ focus لزرار «امسح».
+
+لو الـ focus مرجعش، مستخدم الكيبورد هيلاقي نفسه في أول الصفحة ويبدأ من الأول.
+
+**الغلطة الشائعة:** تعدّ ٥ ضغطات وتفتكر إنها هتوصل لعنصر برا لأن المودال فيه زرارين بس. اللف جوه هو المطلوب.
+
+~~~text الناتج
+بعد الفتح: yes
+Tab 1: no
+Tab 2: yes
+Tab 3: no
+Tab 4: yes
+Tab 5: no
+aria-expanded على الزرار: true
+
+بعد Escape: عدد [role=dialog] = 0 ، document.activeElement = زرار «امسح»
+~~~
+
+(ابتدينا من yes، فآخر وقفة هنا no. لو ابتدى من no الترتيب بيتقلب.)` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** Dialog من غير [[Dialog.Title]]. Radix 1.8.1 مش بيطبع أي تحذير في الـ Console، بس فيه حاجة ناقصة. لاقيها في Elements وفي Accessibility tree وصلّح من غير ما العنوان يبان على الشاشة.`, done: R`الـ [[role="dialog"]] مفيهوش [[aria-labelledby]] والـ dialog ملوش اسم في Accessibility tree. بعد [[<VisuallyHidden.Root asChild><Dialog.Title>...</Dialog.Title></VisuallyHidden.Root>]] (أو Title عادي) الـ attribute رجع والاسم ظهر، والشكل متغيرش.`, sol: R`~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { Dialog, VisuallyHidden } from "radix-ui";
+
+function Modal({ id, children }: { id: string; children?: React.ReactNode }) {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger id={id}>افتح {id}</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Content aria-describedby={undefined} className="fixed inset-10 bg-white p-6">
+          {children}
+          <p>هتحذف الملف؟</p>
+          <Dialog.Close>قفل</Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <main>
+    <Modal id="bad" />
+    <Modal id="good">
+      <VisuallyHidden.Root asChild>
+        <Dialog.Title>تأكيد الحذف</Dialog.Title>
+      </VisuallyHidden.Root>
+    </Modal>
+  </main>
+);
+~~~
+
+**اللي ناقص:** من غير [[Dialog.Title]]، الـ [[role="dialog"]] مفيهوش [[aria-labelledby]]، فقارئ الشاشة بيقول «dialog» بس، والمستخدم مش عارف ده مودال إيه.
+
+**التصليح:** [[VisuallyHidden.Root asChild]] بيخفي العنوان من الشاشة بس، ويفضل في شجرة الـ accessibility. Radix بيربطه بـ [[aria-labelledby]] لوحده.
+
+**ليه مش [[display: none]]:** ده بيشيله من شجرة الـ accessibility كمان، فالاسم يرجع يختفي.
+
+**الغلطة الشائعة:** تعتمد على الكونسول. في Radix 1.8.1 مفيش ولا تحذير، في dev ولا production. لازم تبص بنفسك على الشجرة.
+
+~~~text الناتج
+من غير Title:
+aria-labelledby = null
+Console: مفيش تحذير (dev و production)
+ariaSnapshot:
+- dialog:
+  - paragraph: هتحذف الملف؟
+  - button "قفل"
+
+مع VisuallyHidden:
+aria-labelledby = radix-_r_4_
+ariaSnapshot:
+- dialog "تأكيد الحذف":
+  - heading "تأكيد الحذف" [level=2]
+  - paragraph: هتحذف الملف؟
+  - button "قفل"
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** مودال معمول بـ [[useState]] و div، ومودال Radix، و [[<dialog>]] أصلي بـ [[showModal()]]. لكل واحد: Tab ٣ مرات، و Escape، والـ focus بعد القفل.`, done: R`عندك جدول ٣ × ٣: الـ div الـ Tab طلع لعناصر الصفحة ورا و Escape ملوش أثر، و Radix محبوس و Escape بيقفل والـ focus راجع للزرار، و [[<dialog>]] الـ Tab مش بيوصل لعناصر الصفحة و Escape بيقفل والـ focus راجع للزرار اللي فتحه.`, sol: R`~~~tsx main.tsx
+import { useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
+import { ConfirmDialog } from "./ConfirmDialog";
+
+function DivModal() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button id="open-div" onClick={() => setOpen(true)}>div</button>
+      {open && (
+        <div id="m-div" className="fixed inset-10 bg-white p-6">
+          <button id="div-1">أيوه</button>
+          <button id="div-2" onClick={() => setOpen(false)}>لأ</button>
+        </div>
+      )}
+    </>
+  );
+}
+
+function NativeModal() {
+  const ref = useRef<HTMLDialogElement>(null);
+  return (
+    <>
+      <button id="open-native" onClick={() => ref.current?.showModal()}>dialog</button>
+      <dialog id="m-native" ref={ref} className="m-auto p-6">
+        <button id="nat-1">أيوه</button>
+        <button id="nat-2" onClick={() => ref.current?.close()}>لأ</button>
+      </dialog>
+    </>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <main className="flex gap-3 p-6">
+    <DivModal />
+    <ConfirmDialog />
+    <NativeModal />
+    <a id="after" href="#after">عنصر في الصفحة ورا</a>
+  </main>
+);
+~~~
+
+و [[ConfirmDialog]] هو بتاع التمرين الأول.
+
+**القراية:**
+
+- **div بـ useState:** ده مجرد عنصر في الصفحة. Tab بيعدّيه ويكمّل على اللي وراه، و Escape ملوش معنى، والـ focus مبيتحركش لوحده.
+- **Radix:** كل حاجة جاهزة.
+- **[[<dialog>]] مع [[showModal()]]:** المتصفح بيعمل [[inert]] للصفحة ورا المودال، و Escape بيقفل، والـ focus بيرجع لوحده. الفرق عن Radix إن Tab ممكن يروح لشريط المتصفح قبل ما يرجع (BODY في القياس)، وده طبيعي.
+
+**ازاي تختار:** [[<dialog>]] لو عايز من غير مكتبة، و Radix لو عندك حركات ومشروع React كبير ومحتاج [[asChild]]. والـ div لأ.
+
+**الغلطة الشائعة:** تزوّد [[role="dialog"]] على div وتفتكر إنه بقى مودال. الـ role بيغيّر الاسم بس، مش السلوك.
+
+~~~text الناتج
+                 Tab 3 مرات                 بعد Escape             الـ focus بعد القفل
+div              زرارين ثم عنصر في الصفحة    لسه مفتوح              اتحرك لعنصر تاني
+Radix            yes no yes no              اتقفل                  زرار الفتح
+<dialog>         nat-1 nat-2 BODY nat-1     اتقفل                  زرار الفتح
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** Sheet (درج جانبي) بـ Dialog: [[Dialog.Content]] [[fixed inset-y-0 inset-e-0 w-80]]، وداخل بحركة من ناحية النهاية بـ [[data-[state=open]:]] و [[rtl:]]، وفيه لينكات القايمة.`, done: R`في rtl الدرج بيطلع من الشمال وفي ltr من اليمين، و [[data-state]] على الـ Content بتبقى [[open]] وهو مفتوح، والصفحة اللي ورا مبتعملش scroll ([[overflow: hidden]] على الـ body)، والـ focus جوه الدرج.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --animate-in-end: in-end 0.3s ease-out;
+  --animate-in-end-rtl: in-end-rtl 0.3s ease-out;
+  @keyframes in-end { from { translate: 100% 0; } }
+  @keyframes in-end-rtl { from { translate: -100% 0; } }
+}
+~~~
+
+~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { Dialog } from "radix-ui";
+
+function Sheet() {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger id="open" className="rounded-lg border px-4 py-2">القايمة</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <Dialog.Content
+          aria-describedby={undefined}
+          className="fixed inset-y-0 inset-e-0 w-80 max-w-full bg-white p-6 transition-transform duration-300
+                     data-[state=open]:animate-in-end rtl:data-[state=open]:animate-in-end-rtl"
+        >
+          <Dialog.Title className="text-lg font-bold">القايمة</Dialog.Title>
+          <nav className="mt-4 grid gap-2">
+            <a href="/products">المنتجات</a>
+            <a href="/offers">العروض</a>
+            <a href="/contact">كلّمنا</a>
+          </nav>
+          <Dialog.Close className="mt-6 rounded-lg border px-4 py-2">قفل</Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <main className="p-6">
+    <h1 className="mb-4 text-2xl font-bold">الرئيسية</h1>
+    <Sheet />
+    <div className="h-[200vh]"></div>
+  </main>
+);
+~~~
+
+**ليه شغال:**
+
+- [[inset-y-0 inset-e-0]]: logical، يعني ناحية النهاية. في rtl شمال، وفي ltr يمين، من غير ولا سطر زيادة.
+- الحركة بـ [[translate]]، وده مش logical، فمحتاج keyframes لكل اتجاه: [[100%]] في ltr و [[-100%]] في rtl.
+- [[data-[state=open]:animate-in-end]]: Radix بيحط [[data-state]]، فالحركة بتشتغل وقت الفتح بس.
+- [[rtl:data-[state=open]:animate-in-end-rtl]] بتكسب في العربي لأنها أخص.
+- قفل الـ scroll و حبس الـ focus بييجوا من Dialog ببلاش.
+
+**الغلطة الشائعة:** تكتب [[translate: 100% 0]] ثابتة، فالدرج في العربي يدخل من الناحية الغلط أو يطلع برا الشاشة. جرّب [[dir]] الاتنين.
+
+~~~text الناتج
+                 left    right    الحركة          data-state
+rtl              0       320      in-end-rtl      open
+ltr              960     1280     in-end          open
+
+وهو مفتوح في الاتجاهين:
+body: overflow hidden ، data-scroll-locked موجود
+wheel على الصفحة: scrollY = 0
+الـ focus جوه الدرج: true
+~~~` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** بـ Playwright: افتح المودال بـ Enter، وتأكد إن [[aria-expanded="true"]] على الـ trigger، و Tab ٥ مرات والـ focus جوه [[[role="dialog"]]]، و Escape يرجّع الـ focus للـ trigger.`, done: R`الاختبار بيعدّي، ولما تبدّل Radix بـ div الاختبار بيفشل في خطوة الـ Tab بالظبط (يعني بيمسك المشكلة اللي اتعمل عشانها). ولو شلت [[Dialog.Portal]] لوحده لسه بيعدّي، لأن حبس الـ focus مش معتمد عليه.`, sol: R`~~~js dialog.spec.mjs
+import { test, expect } from "@playwright/test";
+
+test("المودال بيحبس الـ focus ويرجّعه", async ({ page }) => {
+  await page.goto(process.env.URL);
+  // includeHidden: Radix بيحط aria-hidden على الصفحة ورا المودال، فالزرار بيختفي من شجرة الـ accessibility
+  const trigger = page.getByRole("button", { name: "امسح", exact: true, includeHidden: true });
+
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  for (let i = 0; i < 5; i++) {
+    await page.keyboard.press("Tab");
+    await expect(page.locator('[role="dialog"] :focus')).toHaveCount(1);
+  }
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+~~~
+
+~~~bash
+npm i -D @playwright/test@1.64.1
+URL=http://localhost:4000/ npx playwright test
+~~~
+
+**ليه [[exact]] و [[includeHidden]]:**
+
+- [[exact: true]]: من غيرها الاسم «امسح» بيطابق «أيوه امسح» كمان، فـ Playwright بيقع بـ strict mode violation.
+- [[includeHidden: true]]: وقت ما المودال مفتوح، Radix بيحط [[aria-hidden]] على الصفحة ورا. الزرار خرج من شجرة الـ accessibility، فـ [[getByRole]] العادية مش بتلاقيه. يعني الفشل ده دليل إن المودال شغال صح.
+
+**[[page.locator('[role="dialog"] :focus')]]** بيتأكد إن العنصر اللي عليه focus جوه المودال بعد كل Tab.
+
+**الاختبار بيمسك إيه فعلًا:** لما بدّلت Radix بـ div، وقع في خطوة الـ Tab. ولما شيلت [[Dialog.Portal]] لسه عدّى، لأن حبس الـ focus مش معتمد على الـ Portal. الـ Portal شغلته مكان الرسم و [[z-index]]، فلو عايز تحرسه محتاج اختبار تاني.
+
+**الغلطة الشائعة:** تستخدم [[waitForTimeout]] بعد كل ضغطة. [[expect]] بيستنى لوحده.
+
+~~~text الناتج
+Radix بتاع الدرس:     1 passed (1.3s)
+من غير Dialog.Portal:  1 passed (1.2s)
+div بدل Radix:         1 failed
+  > await expect(page.locator('[role="dialog"] :focus')).toHaveCount(1);
+~~~` },
+          ],
           deep: {
-            why: R`فيه كتابة مكان الحرف فيها جزء من المعنى: «م2» و «م²» مش واحد، و «H2O» الكيميائي بيكتبها H₂O. وفيه نص السطور فيه جزء منه: العنوان البريدي تلات سطور مش جملة واحدة. الحاجات دي مش «تنسيق» يتساب للـ CSS، لأنها لو راحت النص بيتقري غلط. وفي الناحية التانية، المتصفح بيكسر السطور لوحده حسب عرض الشاشة، وساعات محتاج مساعدة (اسم ملف طويل) أو منع (الدرس اللي فات: [[&nbsp;]]).`,
-            how: R`[[sub]] و [[sup]]: الستايل الافتراضي في المواصفة [[vertical-align: sub]] و [[super]]، و [[font-size: smaller]]. اتقاس في Chrome 157: 13.33px لما الأب 16px. والأدوار [[subscript]] و [[superscript]].
+            why: R`مودال «بسيط» بـ div و useState بيبان شغال بالماوس، بس: الـ Tab بيخرج للصفحة اللي ورا، و Escape مش شغال، والـ focus بيضيع بعد ما يقفل، وقارئ الشاشة مش عارف إن فيه dialog، والصفحة ورا بتعمل scroll. تظبيط ده كله صح عشرات السطور وحالات كتير، والـ primitives مكتوبة ومتجرّبة.`,
+            how: R`الـ Dialog بيطبّق نمط الـ dialog بتاع WAI-ARIA: لما يفتح بيحط الـ focus جواه، وبيحبس الـ Tab و Shift+Tab جواه (focus trap)، وبيخفي باقي الصفحة عن قارئ الشاشة، وبيقفل الـ scroll بتاع الـ body. ولما يقفل بيرجّع الـ focus للـ Trigger. والـ Content عليه [[role="dialog"]] ومربوط بالعنوان والوصف لوحده.
 
-[[br]] و [[wbr]] عناصر فاضية (void): ملهمش قفلة ولا محتوى. [[br]] بيكسر السطر دايمًا، و [[wbr]] بيدّي فرصة كسر.
+الأجزاء بتتكلم مع بعض بـ React context جوه الـ Root، فتقدر تحط الـ Trigger في أي مكان جواه. و [[asChild]] على أي جزء بيخليه يلبس سلوكه على العنصر اللي جواه بدل ما يعمل عنصر جديد: [[<Dialog.Trigger asChild><Button>...</Button></Dialog.Trigger>]].
 
-[[hr]] عنصر block فاضي. اتقاس: [[margin]] فوق وتحت 8px، و [[border]] سمكه 1px بستايل [[inset]] رمادي، وارتفاعه الكلي 2px، وعرضه عرض الأب كله. ودوره [[separator]].
+الحالة بتظهر كـ attribute: [[data-state="open"]] أو [[closed]]، فتعمل animations بـ Tailwind: [[data-[state=open]:opacity-100]].
 
-[[ruby]] بيتعرض [[display: ruby]]، و [[rt]] جواه [[display: ruby-text]] وحجمه نص حجم الأب (8px)، و [[rp]] [[display: none]].
-
-[[bdo]]: [[unicode-bidi: isolate-override]] ومعاه الاتجاه اللي في [[dir]].`,
-            when: R`[[sub]]: صيغ كيميا، ورقم متغير في سلسلة (x₁).
-
-[[sup]]: أُس، ووحدات مربعة ومكعبة، ورقم حاشية، وترتيب بالإنجليزي (1st).
-
-[[br]]: عنوان بريدي، وقصيدة، وكلمات أغنية، وأي نص تقسيم سطوره من أصله.
-
-[[wbr]]: اسم ملف أو URL أو كلمة طويلة من غير مسافات ممكن تبوّظ عرض الصفحة.
-
-[[hr]]: تغيير مشهد في قصة، أو انتقال لموضوع تاني جوه نفس القسم من غير عنوان جديد.
-
-[[ruby]]: نطق كلمة فوقها. أساسًا للياباني والصيني، وينفع لنطق مصطلح أجنبي.
-
-[[bdo]]: نادر جدًا. لما تكون عايز ترتيب حروف معيّن بالإجبار.`,
-            mistakes: R`[[<br><br>]] عشان مسافة بين فقرتين: دول [[<p>]] اتنين. MDN بيقول إن ده مشكلة لقارئ الشاشة كمان: ممكن يعلن عن العنصر ومفيش محتوى.
-
-[[br]] بين حقول فورم أو لينكات عشان ينزلوا تحت بعض: المواصفة كاتبة المثالين دول كاستخدام غلط.
-
-[[sup]] أو [[sub]] للشكل (اسم شركة، كلمة صغيرة مرفوعة): CSS.
-
-[[sup]] بيعلّي السطر: السطر اللي فيه [[sup]] بيبقى أطول شوية من اللي حواليه (اتقاس 22.3px بدل 18). بيتصلّح بالـ CSS.
-
-[[hr]] للزينة أو بين كل فقرتين: MDN بيقول لو عايز خط وبس، ارسمه بـ border في الـ CSS.
-
-[[hr]] بين [[<section>]] و [[<section>]]: المواصفة بتقول ملوش لزوم، العناوين بتقول إن الموضوع اتغيّر.
-
-[[bdo]] من غير [[dir]]: المواصفة بتقول إن [[dir]] إجباري عليه، و [[auto]] ممنوعة.
-
-[[bdo]] بدل [[bdi]] لعزل نص: هيقلب الحروف.
-
-[[<ruby>]] من غير [[<rp>]]: هيشتغل في المتصفحات الحالية، بس أي برنامج بياخد النص الخام هيلزّق النطق في الكلمة.`
+ونفس الفكرة في DropdownMenu (أسهم الكيبورد، والبحث بأول حرف، والقفل لما تضغط برا)، و Popover، و Tooltip، و Tabs، و Select. وفي موقع عربي، [[Direction.Provider]] بـ [[dir="rtl"]] بيخلي أسهم الكيبورد في القوايم تمشي في الاتجاه الصح.`,
+            when: "أي مودال أو dropdown أو popover أو tabs أو tooltip. متكتبش السلوك ده بنفسك إلا لو بتتعلم. وفي مشروع shadcn هتلاقيهم متغلّفين جاهزين في components/ui.",
+            mistakes: R`تشيل [[Dialog.Title]] لأن التصميم مفيهوش عنوان، فالـ dialog يبقى من غير اسم وقارئ الشاشة يقول «dialog» وخلاص. نسخ Radix القديمة كانت بتطلّع تحذير في الكونسول، بس radix-ui 1.7 مبقتش بتطلّعه (جربناها)، فمحدش هينبهك: خليه وخبّيه بصريًا ([[sr-only]]). و [[asChild]] على مكون مش بيعدّي الـ props والـ ref للعنصر، فالزرار مش بيفتح حاجة. وفي مشروع حقيقي dropdown كان معمول بإيدك بـ [[mousedown]] على الـ document عشان يقفل لما تضغط برا: مفيش Escape ولا أسهم ولا إدارة focus، ودا بالظبط اللي DropdownMenu بيحله.`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## أجزاء بتتكلم مع بعض
 
-تلات مجموعات: حروف بتطلع وتنزل عن السطر ([[sub]] و [[sup]])، وعناصر بتتحكم في كسر السطر والفصل ([[br]] و [[wbr]] و [[hr]])، وعنصرين نادرين للنطق والاتجاه ([[ruby]] و [[bdo]]). القياسات من Chrome 157.
+كل [[Dialog.Something]] في المثال قطعة ليها شغلانة، والـ [[Root]] بيربطهم. انت بتحط الشكل بكلاسات Tailwind، و Radix بيحط السلوك والـ attributes. حطينا المثال في مشروع Vite ([[radix-ui]] 1.7.0، و React 19.3، و Tailwind 4.3.3) جوه صفحة [[dir="rtl"]] عرضها 800 وطولها 600، و [[onConfirm]] دالة بتعدّ مرات الضغط، وجربنا بالكيبورد والماوس في Chrome.
 
 ---
 
-## ١. [[<sub>]] و [[<sup>]]: تحت السطر وفوقه
+## ١. [[import { Dialog } from "radix-ui";]]
 
-[[sub]] من subscript (تحت)، و [[sup]] من superscript (فوق).
+[[radix-ui]] package واحد فيه كل الـ primitives. [[Dialog]] object جواه القطع كلها: [[Dialog.Root]] و [[Dialog.Trigger]] وهكذا. والنقطة معناها «القطعة اللي اسمها كذا جوه Dialog».
 
-~~~live 70 80 sub و sup
-<p>المية H<sub>2</sub>O، ومساحة الشقة ١٢٠ م<sup>2</sup>، و <var>س</var><sup>3</sup> يعني س تكعيب.</p>
+## ٢. [[<Dialog.Root>]]
+
+مش بيرسم أي عنصر في الصفحة. شايل حالة «مفتوح ولا مقفول»، وبيدّيها لكل القطع اللي جواه (React context). عشان كده كل القطع لازم تبقى جواه.
+
+## ٣. [[<Dialog.Trigger>]]
+
+بيرسم [[<button>]] حقيقي. ده الـ HTML اللي طلع قبل وبعد الفتح:
+
+~~~text attributes الزرار
+مقفول:  type=button aria-haspopup=dialog aria-expanded=false data-state=closed
+مفتوح:  type=button aria-haspopup=dialog aria-expanded=true  data-state=open  aria-controls=radix-_r_0_
 ~~~
 
-~~~text القياس
-sub:  vertical-align = sub     font-size = 13.3333px (الفقرة 16px)   الدور = subscript
-sup:  vertical-align = super   font-size = 13.3333px                 الدور = superscript
-النص الخام (textContent):  المية H2O، ومساحة الشقة ١٢٠ م2، و س3 يعني س تكعيب.
-~~~
-
-- [[vertical-align]] خاصية CSS بتحدد العنصر واقف فين بالنسبة للسطر: [[sub]] نازل و [[super]] طالع.
-- النص الخام فيه الرقم العادي. فالبحث في الصفحة عن «H2O» بيلاقيها.
-
-### إمتى؟
-
-المواصفة: العنصرين دول لكتابة **ليها معنى محدد**، مش للشكل. والقاعدة اللي كاتباها: استخدمهم بس لو غيابهم يغيّر معنى المحتوى.
-
-| صح | غلط |
+| الـ attribute | يعني |
 |---|---|
-| H₂O، وأُس، و م²، ورقم حاشية | كلمة صغيرة مرفوعة في لوجو |
-| ترتيب بالإنجليزي (4th)، واختصارات فرنساوي (Mlle) | أي حاجة عايزها «أصغر شوية وفوق» |
+| [[type=button]] | لو جوه form ميبعتوش |
+| [[aria-haspopup=dialog]] | قارئ الشاشة يقول إن الزرار بيفتح dialog |
+| [[aria-expanded]] | مفتوح ولا لأ |
+| [[data-state]] | نفس المعلومة للـ CSS: [[data-[state=open]:...]] في Tailwind |
+| [[aria-controls]] | الـ id بتاع المودال اللي بيتحكم فيه |
 
-### [[sup]] بيعلّي السطر
+## ٤. [[<Dialog.Portal>]]
 
-~~~live 130 150 السطر اللي فيه sup أطول
-<p style="width: 150px">كلام كلام كلام كلام كلام كلام كلام كلام</p>
-<p style="width: 150px">كلام كلام م<sup>2</sup> كلام كلام كلام كلام كلام</p>
+كل اللي جواه بيترسم كآخر حاجة في [[<body>]] مش مكانه في الكود. قسنا: الأب بتاع المودال طلع [[BODY]]. ليه؟ لو أي أب فوقه عليه [[overflow: hidden]] أو [[transform]]، الـ [[fixed]] ممكن يتقص أو يتحسب من الأب ده بدل الشاشة. برا كل ده مفيش مشكلة.
+
+## ٥. [[<Dialog.Overlay className="fixed inset-0 bg-black/50" />]]
+
+- [[fixed]]: ثابت على الشاشة مش بيتحرك مع الـ scroll.
+- [[inset-0]]: [[top]] و [[right]] و [[bottom]] و [[left]] كلهم 0، فبيغطي الشاشة كلها.
+- [[bg-black/50]]: أسود بشفافية 50٪. في Chrome: [[oklab(0 0 0 / 0.5)]].
+
+ضغطنا بالماوس على الخلفية برا الصندوق: المودال اتقفل.
+
+## ٦. [[<Dialog.Content className="...">]]
+
+الصندوق نفسه. الكلاسات:
+
+| الكلاس | يعني |
+|---|---|
+| [[fixed top-1/2 left-1/2]] | الركن الفوقاني الشمال في نص الشاشة |
+| [[-translate-x-1/2 -translate-y-1/2]] | ارجع نص عرضك ونص طولك، فالـ **نص** بتاعك يبقى في نص الشاشة |
+| [[w-[min(90vw,28rem)]]] | العرض الأصغر من: 90٪ من عرض الشاشة، أو 28rem (448px) |
+| [[rounded-xl bg-white p-6]] | تدوير، وأبيض، و padding 24px |
+
+القياس: الصندوق [[x=176 y=238]] وعرضه 448 وطوله 124. الشاشة 800، و 90vw = 720 أكبر من 448، فالعرض 448. و (800 − 448) ÷ 2 = 176، يعني في النص بالظبط.
+
+والـ attributes اللي Radix حطها عليه:
+
+~~~text attributes الصندوق
+role=dialog  id=radix-_r_0_  data-state=open  tabindex=-1
+aria-labelledby=radix-_r_1_  aria-describedby=radix-_r_2_
 ~~~
 
-[[style="width: 150px"]] سطر CSS بيضيّق الفقرة عشان تتكسر على سطرين. قست فقرتين زي دول بعرض 120px:
+- [[role=dialog]]: قارئ الشاشة يعرف إنه dialog.
+- [[aria-labelledby]]: بيشاور على id الـ Title، فاسم الـ dialog = «متأكد؟».
+- [[aria-describedby]]: بيشاور على الـ Description.
+- [[tabindex=-1]]: يقدر ياخد focus بالكود من غير ما يدخل في ترتيب الـ Tab.
 
-~~~text القياس
-من غير sup:  ارتفاع الفقرة = 36px      (سطرين × 18)
-بـ sup:      ارتفاع الفقرة = 40.3px    (السطر اللي فيه sup بقى 22.3)
+## ٧. [[Dialog.Title]] و [[Dialog.Description]]
+
+الـ Title بيترسم [[<h2>]]، والـ Description [[<p>]]. ده الـ Accessibility tree اللي Chrome شايفه وهو مفتوح:
+
+~~~text الناتج
+- dialog "متأكد؟":
+  - heading "متأكد؟" [level=2]
+  - paragraph: الحذف مش هيترجع.
+  - button "أيوه امسح"
 ~~~
 
-الحرف المرفوع محتاج مكان فوق، فالسطر بتاعه بيطول والمسافات بين السطور مبتبقاش متساوية. ده بيتصلّح بالـ CSS (خاصية [[line-height]]). دلوقتي كفاية تعرف إنه طبيعي.
+وجربنا نشيل الـ Title: بقى [[- dialog:]] من غير اسم، ومفيش أي تحذير في الـ Console (radix-ui 1.7).
+
+## ٨. [[<Dialog.Close onClick={onConfirm}>]]
+
+زرار بيقفل المودال. و [[onClick]] بتاعك بيشتغل الأول: ضغطناه، المودال اتقفل، والعداد بقى 1، والـ focus رجع لزرار «امسح».
 
 ---
 
-## ٢. [[<br>]]: كسر سطر من المحتوى
+## ٩. السلوك اللي جه ببلاش
 
-[[br]] من break. المواصفة: [[br]] بيمثّل **كسر سطر**، ولازم يتستخدم بس للكسر اللي هو **جزء من المحتوى فعلًا**، زي القصايد والعناوين.
+فتحنا بالكيبورد (Enter على «امسح») وقسنا:
 
-~~~live 100 110 br في عنوان
-<p>مكتبة الحروف<br>١٢ شارع النيل<br>المنصورة</p>
-~~~
+| التجربة | النتيجة |
+|---|---|
+| الـ focus بعد الفتح | زرار «أيوه امسح» (أول حاجة ينفع تاخد focus جوه) |
+| Tab خمس مرات | فضل على «أيوه امسح» كل مرة (الوحيد جوه) |
+| Shift+Tab | نفس الزرار |
+| [[#root]] (باقي الصفحة) | [[aria-hidden="true"]] و [[pointer-events: none]] |
+| الـ body | [[overflow: hidden]] و [[data-scroll-locked]] |
+| scroll بالماوس 500px | [[scrollY]] فضل 0 |
+| Escape | المودال اتشال من الصفحة، والـ focus رجع لـ «امسح»، و [[aria-expanded=false]] |
+| scroll بعد القفل | [[scrollY]] بقى 500 |
 
-فقرة واحدة على تلات سطور. العنوان البريدي بيتكتب كده على أي ظرف، فالكسر جزء منه.
-
-[[br]] عنصر فاضي (void): ملوش قفلة. [[<br>]] وبس. (والدرس الأول شرح إن [[<br/>]] مقبولة و [[</br>]] بتتحوّل لـ br تاني.)
-
-### الغلط: [[br]] للمسافات
-
-~~~live 100 170 غلط: فقرتين معمولين بـ br
-<p>بدأنا سنة ٢٠١٠ في طنطا.<br><br>دلوقتي عندنا ٨ فروع.</p>
-~~~
-
-~~~live 90 150 صح: فقرتين
-<p>بدأنا سنة ٢٠١٠ في طنطا.</p>
-<p>دلوقتي عندنا ٨ فروع.</p>
-~~~
-
-الشكل قريب، والشجرة مختلفة:
-
-| | الغلط | الصح |
-|---|---|---|
-| عدد الفقرات ([[paragraph]]) | 1 | 2 |
-| عدد [[br]] | 2 | 0 |
-| المسافة بين الجملتين | سطر فاضي كامل (18px) | الـ margin بتاع الفقرات (16px)، وبيتغيّر بالـ CSS |
-
-قارئ الشاشة بيتنقل فقرة فقرة، وفي الغلط هيلاقي فقرة واحدة. والمواصفة كاتبة حالتين تانيين كاستخدام غلط: [[br]] بين لينكات عشان ينزلوا تحت بعض، و [[br]] بين حقول فورم.
-
----
-
-## ٣. [[<wbr>]]: فرصة كسر
-
-[[wbr]] من word break opportunity. المواصفة: [[wbr]] بيمثّل **line break opportunity**: مكان المتصفح **مسموح له** يكسر السطر عنده لو احتاج.
-
-المتصفح بيكسر عند المسافات. الكلمة الطويلة اللي مفيهاش مسافات (اسم ملف، أو URL) بتفضل قطعة واحدة ولو أعرض من الشاشة:
-
-~~~live 150 170 دوس «موبايل»: الأولى بتزق الصفحة
-<p>حمّل الملف quarterly_financial_report_final_version_2026_approved_by_manager.pdf من هنا</p>
-<p>حمّل الملف quarterly_<wbr>financial_<wbr>report_<wbr>final_<wbr>version_<wbr>2026_<wbr>approved_<wbr>by_<wbr>manager.pdf من هنا</p>
-~~~
-
-~~~text القياس (عرض 360)
-من غير wbr:  عرض الفقرة = 479    scrollWidth للصفحة = 487   (scroll أفقي)
-بـ wbr:      عرض الفقرة = 344    scrollWidth للصفحة = 360
-~~~
-
-على شاشة عريضة الفقرتين شكلهم واحد: [[wbr]] مبيبانش ومبيعملش حاجة غير لما السطر يضيق. وطول النص الخام واحد في الاتنين (87 حرف): العنصر مبيضيفش حرف.
-
-| | [[<br>]] | [[<wbr>]] | [[&nbsp;]] |
-|---|---|---|---|
-| بيعمل إيه | بيكسر السطر دايمًا | بيسمح بالكسر لو لازم | بيمنع الكسر |
-
-و MDN بيقول إن [[wbr]] مبيحطش شرطة عند الكسر. لو عايز شرطة تظهر عند الكسر بس، فيه [[&shy;]] (soft hyphen).
-
----
-
-## ٤. [[<hr>]]: الموضوع اتغيّر
-
-[[hr]] كان اسمه horizontal rule (خط أفقي). المواصفة الحالية عرّفته بالمعنى: **thematic break** على مستوى الفقرات. مثالينها: تغيير المشهد في قصة، والانتقال لموضوع تاني جوه قسم في كتاب.
-
-~~~live 110 190 hr بين مشهدين
-<p>قفلت نور اللابتوب ونامت وهي لسه بتفكر في الباج.</p>
-<hr>
-<p>الصبح، أول ما فتحت عينيها، عرفت الغلطة فين.</p>
-~~~
-
-~~~text القياس
-display = block   margin فوق وتحت = 8px   border = 1px inset rgb(128, 128, 128)
-الارتفاع الكلي = 2px   العرض = عرض الأب كله   الدور = separator
-~~~
-
-[[hr]] عنصر فاضي زي [[br]]: ملوش قفلة. وبياخد سطر لوحده، فبيتحط **بين** الفقرات مش جواها.
-
-تلات حاجات من المواصفة و MDN:
-
-- **مش للزينة.** لو عايز خط وبس، MDN بيقول ارسمه بـ border في الـ CSS.
-- **مش بين الأقسام.** بين [[<section>]] و [[<section>]] ملوش لزوم: كل قسم ليه عنوان، والعنوان بيقول إن الموضوع اتغيّر.
-- شكله (اللون والسمك) بيتغيّر بالـ CSS زي أي عنصر. المعنى ثابت.
-
----
-
-## ٥. [[<ruby>]] و [[<rt>]] و [[<rp>]]: النطق فوق الكلمة
-
-المواصفة: [[ruby]] بيخليك تحط **ruby annotation** على نص: كلام قصير بيتعرض جنب النص الأساسي، وأشهر استخدام ليه في الياباني والصيني كدليل نطق.
-
-~~~live 60 110 ruby
-<p>العاصمة <ruby>東京<rp>(</rp><rt>طوكيو</rt><rp>)</rp></ruby>، والشبكة اسمها <ruby>Wi-Fi<rp> (</rp><rt>واي فاي</rt><rp>)</rp></ruby>.</p>
-~~~
-
-النطق صغير فوق الكلمة.
-
-### التلات عناصر
-
-- [[<ruby>]]: الحاوية. جواها النص الأساسي على طول.
-- [[<rt>]] (من ruby text): النص اللي بيتعرض فوق. المواصفة: لازم يبقى ابن مباشر لـ [[ruby]].
-- [[<rp>]] (من ruby parenthesis): أقواس احتياطية. المتصفح اللي بيدعم ruby **مبيعرضهاش**. المتصفح أو البرنامج اللي مبيدعمش هيعرض النص ورا بعض، فالأقواس بتخليه «東京(طوكيو)» بدل «東京طوكيو».
-
-~~~text القياس
-ruby: display = ruby
-rt:   display = ruby-text   font-size = 8px (نص الـ 16)
-rp:   display = none
-textContent = 東京(طوكيو)       (النص الخام فيه الأقواس)
-innerText   = 東京طوكيو         (المعروض مفيهوش)
-~~~
-
-آخر سطرين بيورّوا فايدة [[rp]]: أي حاجة بتاخد النص الخام (نسخ من برنامج، أو فهرس بحث) هتاخده بالأقواس ومفهوم.
-
-في صفحة عربي هتحتاجه قليل: نطق مصطلح أجنبي، أو موقع بيعلّم لغة. بس لازم تعرف شكله لما تقابله.
-
----
-
-## ٦. [[<bdo dir="...">]]: إجبار الاتجاه
-
-درس «lang و dir» شرح إن المتصفح بيرتّب الحروف العربي والإنجليزي جنب بعض بخوارزمية (الـ Bidi)، وإن [[<bdi>]] بيعزل حتة نص عشان متلخبطش اللي حواليها. [[bdo]] من bidirectional **override**: المواصفة بتقول إنه بيخليك **تلغي** الخوارزمية وتجبر اتجاه.
-
-~~~live 90 110 bdo
-<p>العادي: ABC</p>
-<p>بـ bdo: <bdo dir="rtl">ABC</bdo></p>
-~~~
-
-السطر التاني بيتشاف CBA. الحروف هي هي بنفس ترتيبها في الملف ([[textContent]] لسه ABC)، بس اترصّت على الشاشة من اليمين للشمال.
-
-~~~text القياس
-bdo dir="rtl":  unicode-bidi = isolate-override   direction = rtl
-مكان الحروف (x من الشمال):  A أبعد حرف يمين، وبعده B، وبعده C
-~~~
-
-### [[dir]] إجباري
-
-المواصفة: لازم تكتب [[dir]] على [[bdo]]، بـ [[ltr]] أو [[rtl]]. والقيمة [[auto]] ممنوعة.
-
-### [[bdo]] ولا [[bdi]] ولا [[dir]]؟
-
-| | بيعمل إيه | مثال |
-|---|---|---|
-| [[<span dir="ltr">]] | بيقول اتجاه الحتة دي، والحروف جواها بتترتب طبيعي | رقم تليفون في جملة عربي |
-| [[<bdi>]] | بيعزل حتة اتجاهها مش معروف، والحروف بتترتب طبيعي | اسم مستخدم، كود خصم |
-| [[<bdo dir="rtl">]] | بيلغي الترتيب الطبيعي ويجبر كل حرف | نادر: مثال تعليمي، أو نص متخزن بترتيب العرض |
-
-لو بتصلّح لخبطة في جملة فيها عربي وإنجليزي، الحل عمره ما [[bdo]].
-
----
+- **focus trap**: الـ Tab محبوس جوه المودال.
+- [[aria-hidden]] على باقي الصفحة: قارئ الشاشة مش هيقرا اللي ورا.
+- قفل الـ scroll: الصفحة اللي ورا متتحركش.
+- رجوع الـ focus: الكيبورد يكمّل من نفس المكان.
 
 ## الخلاصة
 
-| العنصر | معناه | الشكل الافتراضي |
+| القطعة | بترسم | شغلتها |
 |---|---|---|
-| [[<sub>]] | حرف تحت السطر ليه معنى (H₂O) | أصغر ونازل |
-| [[<sup>]] | حرف فوق السطر ليه معنى (م²، حاشية) | أصغر وطالع |
-| [[<br>]] | كسر سطر من المحتوى (عنوان، قصيدة) | سطر جديد |
-| [[<wbr>]] | مسموح تكسر هنا لو لازم | مبيبانش |
-| [[<hr>]] | الموضوع اتغيّر | خط رمادي بعرض الصفحة |
-| [[<ruby>]] و [[<rt>]] و [[<rp>]] | نطق فوق الكلمة، وأقواس احتياطية | نص صغير فوق |
-| [[<bdo dir="rtl">]] | إجبار اتجاه الحروف | الحروف بتتقلب |`,
+| [[Root]] | ولا حاجة | الحالة |
+| [[Trigger]] | [[<button>]] | يفتح، وعليه [[aria-expanded]] |
+| [[Portal]] | ولا حاجة | يطلّع المودال لآخر الـ body |
+| [[Overlay]] | [[<div>]] | الخلفية، والضغط عليها يقفل |
+| [[Content]] | [[<div role="dialog">]] | الصندوق والـ focus trap |
+| [[Title]] / [[Description]] | [[<h2>]] / [[<p>]] | اسم ووصف الـ dialog |
+| [[Close]] | [[<button>]] | يقفل |
+
+- متشيلش الـ Title: من غيره الـ dialog ملوش اسم، ومفيش تحذير ينبهك.
+- انت بتكتب الشكل بس، والسلوك كله من Radix.`,
           lines: [
-            R`[[sub]] للرقم اللي تحت في الصيغة الكيميائية، و [[sup]] للـ 2 بتاعة المتر المربع. الاتنين بيصغروا لـ 13.33px.`,
-            R`عنوان بريدي في فقرة واحدة، وكل [[<br>]] بينزّل اللي بعده سطر. الكسر هنا جزء من العنوان نفسه.`,
-            R`[[<wbr>]] بعد كل [[_]] في اسم الملف: لو الشاشة ضيقة المتصفح يكسر عند واحدة منهم بدل ما الصفحة تتزق.`,
-            R`[[hr]] فاصل معناه إن اللي جاي موضوع تاني. عنصر فاضي ملوش قفلة، ودوره [[separator]].`,
-            R`[[ruby]] حوالين الكلمة، و [[rt]] النطق اللي بيتعرض فوقها، و [[rp]] أقواس بتظهر بس في برنامج مبيدعمش ruby.`,
-            R`[[bdo]] مع [[dir="rtl"]] بيجبر الحروف الإنجليزي تترص من اليمين، فبتتشاف CBA.`
+            R`الـ package الموحّد بتاع Radix (أو [[@radix-ui/react-dialog]] في المشاريع القديمة).`,
+            R`الـ Root: شايل حالة مفتوح ومقفول. تقدر تتحكم فيها بـ [[open]] و [[onOpenChange]].`,
+            R`زرار الفتح: [[<button>]] حقيقي عليه [[aria-expanded]].`,
+            "بيطلّع المودال في آخر الـ body، برا أي transform أو overflow أو z-index ممكن يحبسه.",
+            "الخلفية الغامقة، والضغط عليها بيقفل.",
+            "صندوق المودال في نص الشاشة.",
+            "العنوان: قارئ الشاشة بيقوله أول ما المودال يفتح.",
+            "الوصف: بيتقري بعد العنوان.",
+            "زرار بيقفل، وهنا كمان بينفّذ الحذف.",
+            R`قفلة [[Dialog.Content]]: الـ focus هيفضل محبوس جوه اللي فوق ده بس.`,
+            R`قفلة [[Dialog.Portal]]: كل اللي جواه اتنقل لآخر الـ body.`,
+            R`قفلة [[Dialog.Root]]، وكده المودال كامل بسلوكه.`
           ],
-          sol: R`**المسافة بين السطرين:** لأ، مش زي الباقي. السطر اللي فيه [[sup]] أطول شوية: الحرف المرفوع محتاج مكان فوق، فالمتصفح بيعلّي السطر كله. في القياس السطر بقى 22.3px بدل 18.
+          sol: R`أول ما تدوس «امسح»: المودال بيفتح والـ focus بيروح على أول عنصر ممكن يتوصله جواه (زرار «أيوه امسح»). اضغط Tab كذا مرة: الـ focus بيلف جوه المودال وعمره ما يخرج (في تجربتي 5 Tabs ورا بعض فضلوا على نفس الزرار لأنه الوحيد جواه). الـ Content عليه [[role="dialog"]] واسمه «متأكد؟» جاي من [[Dialog.Title]]، وباقي الصفحة عليها [[aria-hidden]] ومبتقبلش الماوس.
 
-**العنوان بـ [[br]] وبـ [[p]]:** بالـ [[br]] التلات سطور لازقين في بعض (فقرة واحدة، ارتفاعها 54px). وبالـ [[p]] بين كل سطر والتاني مسافة 16px (الـ margin بتاع الفقرة)، فالعنوان بيبان كإنه تلات حاجات مش حاجة واحدة. العنوان حاجة واحدة، فالصح [[br]].
+Escape: المودال بيقفل والـ focus بيرجع على زرار «امسح» نفسه، فقارئ الشاشة والكيبورد بيكمّلوا من نفس المكان.
 
-~~~text الناتج (Chrome 157)
-فقرة سطرين من غير sup = 36px      بـ sup = 40.3px
-العنوان بـ br:  1 فقرة ، ارتفاعها 54px
-العنوان بـ p:   3 فقرات ، بين كل اتنين 16px
-~~~`,
-          ref: [
-            { t: "WHATWG: the sub and sup elements", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-sub-and-sup-elements" },
-            { t: "WHATWG: the br element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-br-element" },
-            { t: "WHATWG: the wbr element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-wbr-element" },
-            { t: "WHATWG: the hr element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-hr-element" },
-            { t: "WHATWG: the ruby element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-ruby-element" },
-            { t: "WHATWG: the bdo element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-bdo-element" },
-            { t: "MDN: <sub>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/sub" },
-            { t: "MDN: <sup>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/sup" },
-            { t: "MDN: <br>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/br" },
-            { t: "MDN: <wbr>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/wbr" },
-            { t: "MDN: <hr>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hr" },
-            { t: "MDN: <ruby>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ruby" },
-            { t: "MDN: <bdo>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/bdo" },
-          ],
-          pre: ["css/code و pre و kbd", { to: "css/lang و dir", why: R`[[<bdo>]] مبني على الـ Bidi و [[<bdi>]] المشروحين هناك` }]
-        },
+المودال المعمول بـ [[useState]] و div: Tab بيطلع من المودال على طول ويوصل لعناصر الصفحة اللي ورا (في تجربتي راح للـ body وبعدين لزرار الـ trigger ولينك تحت)، و Escape مش بيعمل أي حاجة، ولما يقفل الـ focus بيضيع على الـ body. كل ده انت كنت هتكتبه بإيدك. ولو شلت الـ Title، الـ dialog بيظهر في الـ Accessibility tree من غير اسم (نسخ Radix القديمة كانت بتطلّع تحذير في الـ Console إن [[DialogContent]] محتاج [[DialogTitle]]، و radix-ui 1.7 مبقتش بتطلّعه)؛ حطه ولو مخفي بـ [[VisuallyHidden]] أو [[sr-only]].`
+        }
       ]
-    },
+    }
 ]);

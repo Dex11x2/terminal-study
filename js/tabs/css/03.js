@@ -1,4075 +1,2854 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "الجداول",
-      pre: [
-        { to: "css/semantic HTML", why: R`الجدول للبيانات بس، والاختيار ده بنفس منطق الـ semantic HTML` },
-      ],
-      projects: [
-        { lvl: 'صغير', dir: "gym-compare", t: R`جدول باقات جيم متخيل`, what: R`جدول بيقارن ٣ باقات لـ «جيم الأبطال» (شهري، ٣ شهور، سنوي): caption، و th بـ [[scope="col"]] لأسامي الباقات، و th بـ [[scope="row"]] لكل ميزة (السعر، الحصص، الساونا)، وعلامة ✓ أو ✗ في الخلايا ومعاها كلام مخفي بالشكل للقارئ («موجود» أو «مش موجود»)، و tfoot فيه زرار «اشترك» لكل باقة. من درس «table».`, done: R`تاب Accessibility بيقول [[columnheader]] لأسامي الباقات و [[rowheader]] للمميزات، واسم الجدول من الـ caption، وقارئ الشاشة (أو ARIA snapshot) بيقرا «الساونا، سنوي، موجود» مش «✓» بس.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>قارن الباقات: جيم الأبطال</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
-  table { width: 100%; max-width: 640px; margin-inline: auto; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
-  h1 { max-width: 640px; margin: 0 auto 12px; font-size: 24px; }
-  caption { font-size: 18px; font-weight: 700; padding-block: 0 12px; }
-  th, td { padding: 12px 10px; border-block-end: 1px solid #e2e8f0; text-align: center; }
-  thead th { background: #0f766e; color: white; }
-  tbody th { text-align: start; font-weight: 600; }
-  .yes { color: #15803d; font-size: 20px; }
-  .no { color: #b91c1c; font-size: 20px; }
-  tfoot td { border: 0; }
-  tfoot a { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
-  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-</style>
-</head>
-<body>
-<main>
-<h1>باقات جيم الأبطال</h1>
-<table>
-  <caption>قارن باقات جيم الأبطال</caption>
-  <thead>
-    <tr>
-      <td></td>
-      <th scope="col">شهري</th>
-      <th scope="col">٣ شهور</th>
-      <th scope="col">سنوي</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">السعر</th>
-      <td>٥٠٠ ج</td><td>١٣٠٠ ج</td><td>٤٥٠٠ ج</td>
-    </tr>
-    <tr>
-      <th scope="row">حصص مع مدرب</th>
-      <td>٢</td><td>٨</td><td>٤٠</td>
-    </tr>
-    <tr>
-      <th scope="row">الساونا</th>
-      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
-      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
-      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
-    </tr>
-    <tr>
-      <th scope="row">تجميد الاشتراك</th>
-      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
-      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
-      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td></td>
-      <td><a href="signup.html?plan=month" aria-label="اشترك في الباقة الشهري">اشترك</a></td>
-      <td><a href="signup.html?plan=quarter" aria-label="اشترك في باقة ٣ شهور">اشترك</a></td>
-      <td><a href="signup.html?plan=year" aria-label="اشترك في الباقة السنوي">اشترك</a></td>
-    </tr>
-  </tfoot>
-</table>
-</main>
-</body>
-</html>
-~~~
-
-~~~view 420 460 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>قارن الباقات: جيم الأبطال</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
-  table { width: 100%; max-width: 640px; margin-inline: auto; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
-  h1 { max-width: 640px; margin: 0 auto 12px; font-size: 24px; }
-  caption { font-size: 18px; font-weight: 700; padding-block: 0 12px; }
-  th, td { padding: 12px 10px; border-block-end: 1px solid #e2e8f0; text-align: center; }
-  thead th { background: #0f766e; color: white; }
-  tbody th { text-align: start; font-weight: 600; }
-  .yes { color: #15803d; font-size: 20px; }
-  .no { color: #b91c1c; font-size: 20px; }
-  tfoot td { border: 0; }
-  tfoot a { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #0f766e; color: white; text-decoration: none; font-weight: 700; }
-  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-</style>
-</head>
-<body>
-<main>
-<h1>باقات جيم الأبطال</h1>
-<table>
-  <caption>قارن باقات جيم الأبطال</caption>
-  <thead>
-    <tr>
-      <td></td>
-      <th scope="col">شهري</th>
-      <th scope="col">٣ شهور</th>
-      <th scope="col">سنوي</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">السعر</th>
-      <td>٥٠٠ ج</td><td>١٣٠٠ ج</td><td>٤٥٠٠ ج</td>
-    </tr>
-    <tr>
-      <th scope="row">حصص مع مدرب</th>
-      <td>٢</td><td>٨</td><td>٤٠</td>
-    </tr>
-    <tr>
-      <th scope="row">الساونا</th>
-      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
-      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
-      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
-    </tr>
-    <tr>
-      <th scope="row">تجميد الاشتراك</th>
-      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
-      <td><span class="no" aria-hidden="true">✗</span><span class="visually-hidden">مش موجود</span></td>
-      <td><span class="yes" aria-hidden="true">✓</span><span class="visually-hidden">موجود</span></td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td></td>
-      <td><a href="signup.html?plan=month" aria-label="اشترك في الباقة الشهري">اشترك</a></td>
-      <td><a href="signup.html?plan=quarter" aria-label="اشترك في باقة ٣ شهور">اشترك</a></td>
-      <td><a href="signup.html?plan=year" aria-label="اشترك في الباقة السنوي">اشترك</a></td>
-    </tr>
-  </tfoot>
-</table>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** عنوان، وتحته جدول أبيض بحواف مدوّرة: صف أخضر غامق فوق فيه أسامي الباقات، وكل صف تحته ميزة (السعر، والحصص، والساونا، وتجميد الاشتراك)، والعلامات ✓ خضرا و ✗ حمرا، وفي الآخر زرار «اشترك» أخضر تحت كل باقة.
-
-**ليه كل حتة:**
-- [[<caption>]]: اسم الجدول. قارئ الشاشة بيقوله أول ما يدخل الجدول، وهو اللي بيبقى اسم الـ table في شجرة الـ accessibility.
-- [[<th scope="col">]] لأسامي الباقات و [[<th scope="row">]] لأسامي المميزات: كده كل خلية ليها عنوانين. قارئ الشاشة وانت ماشي في الجدول بيقول «سنوي، الساونا، موجود».
-- الخانة الفاضية فوق على اليمين [[<td>]] مش [[<th>]]: هي مش عنوان لحاجة.
-- ✓ و ✗ عليهم [[aria-hidden="true"]]، وجنبهم كلام مخفي بالشكل بس («موجود» أو «مش موجود»). من غيره قارئ الشاشة بيقول «check mark» أو «multiplication x»، أو مبيقولش حاجة خالص.
-- [[<tfoot>]] للأزرار: صف تحت كل الأعمدة. واللينك عليه [[aria-label]] بالباقة، عشان لو حد عرض لستة اللينكات في الصفحة ميلاقيش «اشترك» تلات مرات من غير ما يعرف أنهي.
-
-**الغلطة اللي axe مسكها:** النسخة الأولى مكانش فيها [[<h1>]] ([[page-has-heading-one]]). الـ caption اسم الجدول، مش عنوان الصفحة.
-
-~~~text الناتج (Chrome، شجرة الـ accessibility)
-table "قارن باقات جيم الأبطال"
-  cell (فاضية)   columnheader "شهري"   columnheader "٣ شهور"   columnheader "سنوي"
-  rowheader "السعر"           cell "٥٠٠ ج"     cell "١٣٠٠ ج"    cell "٤٥٠٠ ج"
-  rowheader "الساونا"         cell "مش موجود"  cell "موجود"     cell "موجود"
-  rowheader "تجميد الاشتراك"  cell "مش موجود"  cell "مش موجود"  cell "موجود"
-  cell "اشترك في الباقة الشهري"   cell "اشترك في باقة ٣ شهور"   cell "اشترك في الباقة السنوي"
-axe: 0 violations (كانت page-has-heading-one قبل الـ h1)   الـ validator: مفيش رسايل   overflow على 360: 0
-~~~` },
-        { lvl: 'صغير', dir: "clinic-hours", t: R`مواعيد عيادة على الموبايل`, what: R`جدول مواعيد أطبا لـ «عيادة الشفاء» فيه ٧ أعمدة (أيام الأسبوع) جوه wrapper بـ [[overflow-x: auto]] و [[tabindex="0"]] و [[role="region"]]، وأول عمود (اسم الدكتور) [[position: sticky]] على [[inset-inline-start: 0]] عشان يفضل ظاهر وانت بتعمل scroll. من درس «جدول responsive».`, done: R`على 360px الصفحة مفيهاش scroll أفقي ([[document.documentElement.scrollWidth]] = 360) والجدول بس اللي بيتحرك، واسم الدكتور فاضل مكانه وانت بتتحرك، والـ wrapper بياخد focus بـ Tab والأسهم بتحرّكه.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مواعيد الأطبا: عيادة الشفاء</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f0f9ff; color: #0c4a6e; }
-  h1 { font-size: 22px; margin: 0 0 12px; }
-  /* only this box scrolls sideways, never the page */
-  .scroll { overflow-x: auto; border-radius: 12px; background: white; }
-  .scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
-  table { border-collapse: separate; border-spacing: 0; min-width: 760px; }
-  caption { text-align: start; padding: 12px; font-weight: 700; }
-  th, td { padding: 10px 12px; border-block-end: 1px solid #e0f2fe; white-space: nowrap; text-align: center; }
-  thead th { background: #e0f2fe; }
-  /* the doctor's name stays on the start side while the days move under it */
-  tbody th, thead th:first-child { position: sticky; inset-inline-start: 0; background: white; text-align: start; box-shadow: -1px 0 0 #bae6fd inset; }
-  thead th:first-child { background: #e0f2fe; z-index: 1; }
-  .off { color: #94a3b8; }
-</style>
-</head>
-<body>
-<main>
-<h1>مواعيد الأطبا</h1>
-<div class="scroll" role="region" aria-labelledby="cap" tabindex="0">
-  <table>
-    <caption id="cap">مواعيد الأسبوع (حرّك الجدول بالعرض)</caption>
-    <thead>
-      <tr><th scope="col">الدكتور</th><th scope="col">السبت</th><th scope="col">الحد</th><th scope="col">الاتنين</th><th scope="col">التلات</th><th scope="col">الأربع</th><th scope="col">الخميس</th><th scope="col">الجمعة</th></tr>
-    </thead>
-    <tbody>
-      <tr><th scope="row">د. سلمى فؤاد (قلب)</th><td>٥–٩</td><td class="off">إجازة</td><td>٥–٩</td><td class="off">إجازة</td><td>٥–٩</td><td>١٠–٢</td><td class="off">إجازة</td></tr>
-      <tr><th scope="row">د. كريم ناجي (عظام)</th><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td></tr>
-      <tr><th scope="row">د. هالة سمير (جلدية)</th><td>١٠–٢</td><td>١٠–٢</td><td>١٠–٢</td><td class="off">إجازة</td><td>٦–١٠</td><td class="off">إجازة</td><td class="off">إجازة</td></tr>
-    </tbody>
-  </table>
-</div>
-</main>
-</body>
-</html>
-~~~
-
-~~~view 300 300 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مواعيد الأطبا: عيادة الشفاء</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f0f9ff; color: #0c4a6e; }
-  h1 { font-size: 22px; margin: 0 0 12px; }
-  /* only this box scrolls sideways, never the page */
-  .scroll { overflow-x: auto; border-radius: 12px; background: white; }
-  .scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
-  table { border-collapse: separate; border-spacing: 0; min-width: 760px; }
-  caption { text-align: start; padding: 12px; font-weight: 700; }
-  th, td { padding: 10px 12px; border-block-end: 1px solid #e0f2fe; white-space: nowrap; text-align: center; }
-  thead th { background: #e0f2fe; }
-  /* the doctor's name stays on the start side while the days move under it */
-  tbody th, thead th:first-child { position: sticky; inset-inline-start: 0; background: white; text-align: start; box-shadow: -1px 0 0 #bae6fd inset; }
-  thead th:first-child { background: #e0f2fe; z-index: 1; }
-  .off { color: #94a3b8; }
-</style>
-</head>
-<body>
-<main>
-<h1>مواعيد الأطبا</h1>
-<div class="scroll" role="region" aria-labelledby="cap" tabindex="0">
-  <table>
-    <caption id="cap">مواعيد الأسبوع (حرّك الجدول بالعرض)</caption>
-    <thead>
-      <tr><th scope="col">الدكتور</th><th scope="col">السبت</th><th scope="col">الحد</th><th scope="col">الاتنين</th><th scope="col">التلات</th><th scope="col">الأربع</th><th scope="col">الخميس</th><th scope="col">الجمعة</th></tr>
-    </thead>
-    <tbody>
-      <tr><th scope="row">د. سلمى فؤاد (قلب)</th><td>٥–٩</td><td class="off">إجازة</td><td>٥–٩</td><td class="off">إجازة</td><td>٥–٩</td><td>١٠–٢</td><td class="off">إجازة</td></tr>
-      <tr><th scope="row">د. كريم ناجي (عظام)</th><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td><td>٤–٨</td><td class="off">إجازة</td></tr>
-      <tr><th scope="row">د. هالة سمير (جلدية)</th><td>١٠–٢</td><td>١٠–٢</td><td>١٠–٢</td><td class="off">إجازة</td><td>٦–١٠</td><td class="off">إجازة</td><td class="off">إجازة</td></tr>
-    </tbody>
-  </table>
-</div>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** على الكمبيوتر الجدول كله ظاهر. على «موبايل» بتشوف عمود الدكتور وجنبه يومين تلاتة بس، والصندوق الأبيض بيتحرك بالعرض (بالصباع أو بالأسهم) والصفحة نفسها ثابتة. وانت بتحرّكه اسم الدكتور فاضل مكانه والأيام بتعدّي تحته.
-
-**ليه كده:**
-- **[[overflow-x: auto]] على الـ div، مش على الجدول ولا الصفحة:** الجدول نفسه عرضه 760px ([[min-width]])، والصندوق بس اللي بيعمل scroll. الصفحة عرضها 360 زي ما هي.
-- **[[tabindex="0"]]:** من غيره الصندوق مبياخدش focus، واللي معهوش ماوس ولا صباع (كيبورد بس) ميقدرش يحرّكه. و [[role="region"]] و [[aria-labelledby]] بيدّوه اسم، عشان قارئ الشاشة يقول إيه اللي واقف عليه.
-- **[[position: sticky]] و [[inset-inline-start: 0]] على أول عمود:** [[inset-inline-start]] معناها «أول السطر»، يعني اليمين في صفحة عربي والشمال في صفحة إنجليزي. ولازم الخلية يبقى ليها [[background]]، وإلا الأيام اللي بتعدّي تحتها هتبان من وراها.
-- **[[border-collapse: separate]]:** مع [[collapse]] الحدود ممكن تختفي من الخلية اللازقة وانت بتعمل scroll، فبنستخدم [[box-shadow]] كخط فاصل.
-- **[[white-space: nowrap]]:** «د. سلمى فؤاد (قلب)» تفضل سطر واحد.
-
-**فخ اتقاس:** في صفحة [[dir="rtl"]] الـ [[scrollLeft]] بيبدأ من [[0]] ويروح **بالسالب** وانت بتتحرك (اتقاس: [[-120]] بعد ٣ أسهم). لو كتبت JavaScript بيقول «لو [[scrollLeft > 0]] يبقى المستخدم اتحرك»، مش هيشتغل في العربي أبدًا. استخدم [[Math.abs(box.scrollLeft)]].
-
-~~~text الناتج (Chrome، موبايل 360)
-الصفحة                scrollWidth = 360 من 360 (مفيش scroll أفقي)
-الصندوق               scrollWidth = 760 جوه 328
-Tab                   الـ focus على .scroll
-٣ ضغطات سهم شمال      scrollLeft = -120
-اسم الدكتور           حافته فضلت عند 344 قبل وبعد
-أول يوم (السبت)        حافته اتحركت من 145 لـ 265 (دخل تحت عمود الاسم)
-axe: 0 violations   الـ validator: مفيش رسايل
-~~~` },
-        { lvl: 'صغير', dir: "progress-report", t: R`تقرير تقدّم مشروع: كروت أرقام وجدول بأشرطة`, what: R`صفحة واحدة غامقة بـ HTML و CSS بس (من غير JavaScript) لتقرير أسبوعي عن تطبيق متخيل اسمه «رسمة»: فوق ٤ كروت أرقام كبيرة ([[<ul>]]، و grid بـ [[auto-fit]] و [[minmax(min(160px, 100%), 1fr)]])، وتحت جدول الأجزاء: اسم الجزء [[<th scope="row">]]، وشريط تقدّم عرضه جاي من رقم مكتوب في الـ HTML نفسه ([[style="--p: 85"]] و [[width: calc(var(--p) * 1%)]])، والرقم جنبه مكتوب كلام، وعمود اختبارات بـ [[tabular-nums]]، وشارة حالة ملوّنة. نمط تقارير التقدّم اللي أي فريق بيبعتها كل أسبوع. من دروس «table» و «جدول responsive».`, done: R`تغيير [[--p]] في سطر واحد في الـ HTML بيغيّر طول الشريط بس (من غير ما تلمس الـ CSS)، والشرايط بتطلع 100% و 85% و 70% و 40% و 0% من عرض مكانها، والكروت ٤ جنب بعض على 800 وواحد في السطر على 360 من غير scroll أفقي، و axe صفر violations (التباين كمان على الخلفية الغامقة).`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تقرير تقدّم: تطبيق «رسمة»</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; background: #0f172a; color: #e2e8f0; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
-  main { max-width: 820px; margin-inline: auto; }
-  h1 { margin: 0 0 4px; font-size: 24px; }
-  .sub { margin: 0 0 16px; color: #94a3b8; }
-
-  /* the KPI cards: as many as fit, never narrower than 160px */
-  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 12px; margin: 0 0 20px; padding: 0; list-style: none; }
-  .kpis li { padding: 14px; border-radius: 14px; background: #1e293b; }
-  .kpis b { display: block; font-size: 30px; font-variant-numeric: tabular-nums; color: white; }
-  .kpis span { color: #94a3b8; font-size: 14px; }
-
-  table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 14px; overflow: hidden; }
-  caption { text-align: start; font-weight: 700; padding-block-end: 8px; }
-  th, td { padding: 10px 12px; text-align: start; border-block-end: 1px solid #334155; }
-  thead th { color: #94a3b8; font-weight: 600; font-size: 13px; }
-  .num { text-align: end; font-variant-numeric: tabular-nums; }
-
-  /* the bar's width comes from the number in the HTML: style="--p: 72" */
-  .meter { display: flex; align-items: center; gap: 8px; }
-  .meter i { flex: 1; height: 8px; border-radius: 99px; background: #334155; overflow: hidden; }
-  .meter i::before { content: ""; display: block; height: 100%; width: calc(var(--p) * 1%); background: #38bdf8; border-radius: inherit; }
-
-  .badge { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 13px; font-weight: 700; }
-  .done { background: #14532d; color: #bbf7d0; }
-  .doing { background: #713f12; color: #fde68a; }
-  .todo { background: #334155; color: #e2e8f0; }
-</style>
-</head>
-<body>
-<main>
-  <h1>تقرير تقدّم: تطبيق «رسمة»</h1>
-  <p class="sub">الأسبوع ٤٧ · مقارنة بالأداة المرجعية</p>
-
-  <ul class="kpis">
-    <li><b>٧٢٪</b><span>الميزات اللي خلصت</span></li>
-    <li><b>٤٧٨/٤٨٠</b><span>فريم مطابق للمرجع</span></li>
-    <li><b>١٢</b><span>باج اتقفل الأسبوع ده</span></li>
-    <li><b>٣</b><span>مفتوح لسه</span></li>
-  </ul>
-
-  <table>
-    <caption>الأجزاء</caption>
-    <thead><tr><th scope="col">الجزء</th><th scope="col">التقدّم</th><th scope="col" class="num">الاختبارات</th><th scope="col">الحالة</th></tr></thead>
-    <tbody>
-      <tr><th scope="row">التايم لاين</th><td><div class="meter"><i style="--p: 100" aria-hidden="true"></i><span>١٠٠٪</span></div></td><td class="num">٤٢</td><td><span class="badge done">خلص</span></td></tr>
-      <tr><th scope="row">أدوات الرسم</th><td><div class="meter"><i style="--p: 85" aria-hidden="true"></i><span>٨٥٪</span></div></td><td class="num">٣١</td><td><span class="badge doing">شغالين</span></td></tr>
-      <tr><th scope="row">الطبقات</th><td><div class="meter"><i style="--p: 70" aria-hidden="true"></i><span>٧٠٪</span></div></td><td class="num">١٨</td><td><span class="badge doing">شغالين</span></td></tr>
-      <tr><th scope="row">التصدير</th><td><div class="meter"><i style="--p: 40" aria-hidden="true"></i><span>٤٠٪</span></div></td><td class="num">٦</td><td><span class="badge doing">شغالين</span></td></tr>
-      <tr><th scope="row">الصوت</th><td><div class="meter"><i style="--p: 0" aria-hidden="true"></i><span>٠٪</span></div></td><td class="num">٠</td><td><span class="badge todo">لسه</span></td></tr>
-    </tbody>
-  </table>
-</main>
-</body>
-</html>
-~~~
-
-~~~view 560 900 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تقرير تقدّم: تطبيق «رسمة»</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; background: #0f172a; color: #e2e8f0; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
-  main { max-width: 820px; margin-inline: auto; }
-  h1 { margin: 0 0 4px; font-size: 24px; }
-  .sub { margin: 0 0 16px; color: #94a3b8; }
-
-  /* the KPI cards: as many as fit, never narrower than 160px */
-  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 12px; margin: 0 0 20px; padding: 0; list-style: none; }
-  .kpis li { padding: 14px; border-radius: 14px; background: #1e293b; }
-  .kpis b { display: block; font-size: 30px; font-variant-numeric: tabular-nums; color: white; }
-  .kpis span { color: #94a3b8; font-size: 14px; }
-
-  table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 14px; overflow: hidden; }
-  caption { text-align: start; font-weight: 700; padding-block-end: 8px; }
-  th, td { padding: 10px 12px; text-align: start; border-block-end: 1px solid #334155; }
-  thead th { color: #94a3b8; font-weight: 600; font-size: 13px; }
-  .num { text-align: end; font-variant-numeric: tabular-nums; }
-
-  /* the bar's width comes from the number in the HTML: style="--p: 72" */
-  .meter { display: flex; align-items: center; gap: 8px; }
-  .meter i { flex: 1; height: 8px; border-radius: 99px; background: #334155; overflow: hidden; }
-  .meter i::before { content: ""; display: block; height: 100%; width: calc(var(--p) * 1%); background: #38bdf8; border-radius: inherit; }
-
-  .badge { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 13px; font-weight: 700; }
-  .done { background: #14532d; color: #bbf7d0; }
-  .doing { background: #713f12; color: #fde68a; }
-  .todo { background: #334155; color: #e2e8f0; }
-</style>
-</head>
-<body>
-<main>
-  <h1>تقرير تقدّم: تطبيق «رسمة»</h1>
-  <p class="sub">الأسبوع ٤٧ · مقارنة بالأداة المرجعية</p>
-
-  <ul class="kpis">
-    <li><b>٧٢٪</b><span>الميزات اللي خلصت</span></li>
-    <li><b>٤٧٨/٤٨٠</b><span>فريم مطابق للمرجع</span></li>
-    <li><b>١٢</b><span>باج اتقفل الأسبوع ده</span></li>
-    <li><b>٣</b><span>مفتوح لسه</span></li>
-  </ul>
-
-  <table>
-    <caption>الأجزاء</caption>
-    <thead><tr><th scope="col">الجزء</th><th scope="col">التقدّم</th><th scope="col" class="num">الاختبارات</th><th scope="col">الحالة</th></tr></thead>
-    <tbody>
-      <tr><th scope="row">التايم لاين</th><td><div class="meter"><i style="--p: 100" aria-hidden="true"></i><span>١٠٠٪</span></div></td><td class="num">٤٢</td><td><span class="badge done">خلص</span></td></tr>
-      <tr><th scope="row">أدوات الرسم</th><td><div class="meter"><i style="--p: 85" aria-hidden="true"></i><span>٨٥٪</span></div></td><td class="num">٣١</td><td><span class="badge doing">شغالين</span></td></tr>
-      <tr><th scope="row">الطبقات</th><td><div class="meter"><i style="--p: 70" aria-hidden="true"></i><span>٧٠٪</span></div></td><td class="num">١٨</td><td><span class="badge doing">شغالين</span></td></tr>
-      <tr><th scope="row">التصدير</th><td><div class="meter"><i style="--p: 40" aria-hidden="true"></i><span>٤٠٪</span></div></td><td class="num">٦</td><td><span class="badge doing">شغالين</span></td></tr>
-      <tr><th scope="row">الصوت</th><td><div class="meter"><i style="--p: 0" aria-hidden="true"></i><span>٠٪</span></div></td><td class="num">٠</td><td><span class="badge todo">لسه</span></td></tr>
-    </tbody>
-  </table>
-</main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** خلفية كحلي غامق جدًا، وعنوان أبيض، وتحته ٤ كروت أغمق شوية كل واحد فيه رقم كبير أبيض وكلمة رمادي تحته. وبعدهم جدول كل صف فيه اسم الجزء، وشريط رمادي جواه لون لبني على قد النسبة، والرقم جنبه، وشارة: أخضر «خلص»، وبني «شغالين»، ورمادي «لسه».
-
-**ليه كده:**
-- **الشريط من متغيّر:** [[style="--p: 85"]] على العنصر، والـ CSS بيقول [[width: calc(var(--p) * 1%)]]. الرقم في مكان واحد، ولما التقرير يتعمل من بيانات (في كورس JavaScript) السكربت هيغيّر [[--p]] بس.
-- **الشريط [[aria-hidden="true"]] والرقم مكتوب جنبه:** الشريط شكل بس، والرقم هو المعلومة. كده قارئ الشاشة بيقرا «٨٥٪» مرة واحدة. (البديل [[<progress>]] أو [[<meter>]]، بس تلوينهم في كل المتصفحات أصعب بكتير.)
-- **الكروت [[<ul>]]:** ٤ حاجات من نفس النوع، فهي لستة. وقارئ الشاشة بيقول «list, 4 items».
-- **[[minmax(min(160px, 100%), 1fr)]]:** الكارت ميصغرش عن 160px، و [[min(..., 100%)]] بتمنعه يطلع برّه الشاشة لو هي أضيق من 160.
-- **الألوان على خلفية غامقة:** الكلام الرمادي [[#94a3b8]] على [[#1e293b]]، والشارات كلامها فاتح على خلفية غامقة من نفس اللون. axe بيقيس التباين فعلًا، وطلع صفر مشاكل.
-
-~~~text الناتج (Chrome)
-عرض الشرايط من مكانها     100% 85% 70% 40% 0%
-الكروت على 800            4 أعمدة كل واحد 182.2px
-الكروت على 360            عمود واحد، و overflow = 0
-axe: 0 violations   الـ validator: مفيش رسايل
-~~~` },
-        { lvl: 'متوسط', dir: "orders-board", t: R`لوحة طلبات لمتجر متخيل`, what: R`جدول طلبات فيه ٣٠ طلب من JSON: عناوين لازقة فوق، وصفوف مخططة، وحالة كل طلب شارة ملوّنة (مدفوع، مستني، ملغي) بلون خلفية فاتح ولون كلام غامق من نفس العيلة، وعمود أرقام [[tabular-nums]]، وترتيب بأزرار جوه الـ th و [[aria-sort]]، والحالة كلها في الـ URL. من دروس الوحدة كلها.`, done: R`الضغط على «الإجمالي» بيرتب تصاعدي وتاني ضغطة تنازلي، والـ URL بيتغيّر و Back بيرجّع الترتيب اللي قبله، والـ refresh بيفتح على نفس الترتيب، وكل شارة تباينها 4.5:1 أو أكتر في DevTools، و axe صفر violations.`, sol: R`~~~text
-orders-board/
-├── index.html   الجدول فاضي (العناوين بس)
-├── style.css    الصندوق والعناوين اللازقة والشارات
-├── orders.js    بيانات ٣٠ طلب
-└── app.js       الرسم والترتيب والـ URL
-~~~
-
-**ليه البيانات في [[orders.js]] مش [[orders.json]]:** [[fetch('orders.json')]] مبيشتغلش لو فتحت الصفحة كملف ([[file://]]). [[orders.js]] فيه نفس شكل الـ JSON بالظبط، وبيشتغل من غير سيرفر. ولما الطلبات تيجي من API حقيقي، السطر ده بس اللي بيتغيّر.
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطلبات: متجر نسمة</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main>
-<h1>الطلبات</h1>
-<div class="scroll" role="region" aria-labelledby="cap" tabindex="0">
-  <table>
-    <caption id="cap">آخر ٣٠ طلب في متجر نسمة</caption>
-    <thead>
-      <tr>
-        <th scope="col" data-key="id"><button type="button">رقم الطلب</button></th>
-        <th scope="col" data-key="name"><button type="button">العميل</button></th>
-        <th scope="col" data-key="date"><button type="button">التاريخ</button></th>
-        <th scope="col" data-key="items" class="num"><button type="button">القطع</button></th>
-        <th scope="col" data-key="total" class="num"><button type="button">الإجمالي</button></th>
-        <th scope="col">الحالة</th>
-      </tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
-</div>
-</main>
-<script src="orders.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
-main { max-width: 900px; margin-inline: auto; }
-h1 { margin: 0 0 12px; }
-
-/* the box scrolls both ways, so the sticky header sticks to the box, not the page */
-.scroll { max-height: 70vh; overflow: auto; border-radius: 12px; background: white; }
-.scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
-table { width: 100%; min-width: 620px; border-collapse: separate; border-spacing: 0; }
-caption { padding: 12px; text-align: start; font-weight: 700; }
-th, td { padding: 8px 12px; text-align: start; border-block-end: 1px solid #e2e8f0; }
-
-thead th { position: sticky; top: 0; z-index: 1; background: #1e293b; color: white; }
-thead button { all: unset; cursor: pointer; font-weight: 700; }
-thead button:focus-visible { outline: 2px solid #fbbf24; outline-offset: 3px; }
-/* the arrow comes from aria-sort itself, so the look and what a screen reader hears can't disagree */
-th[aria-sort="ascending"] button::after { content: " ▲"; }
-th[aria-sort="descending"] button::after { content: " ▼"; }
-
-tbody tr:nth-child(even) { background: #f8fafc; }
-tbody tr:hover { background: #eef2ff; }
-.num { text-align: end; font-variant-numeric: tabular-nums; }
-
-.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
-.paid { background: #dcfce7; color: #166534; }
-.pending { background: #fef3c7; color: #92400e; }
-.cancelled { background: #fee2e2; color: #991b1b; }
-~~~
-
-~~~js orders.js
-// 30 orders of an invented shop (the same shape an API would send as JSON)
-const ORDERS = [
-  { id: 1001, name: "منى سامي", date: "2026-11-01", items: 1, total: 120, status: "paid" },
-  { id: 1002, name: "ياسين طارق", date: "2026-11-01", items: 2, total: 257, status: "pending" },
-  { id: 1003, name: "ليلى فؤاد", date: "2026-11-02", items: 3, total: 394, status: "paid" },
-  { id: 1004, name: "كريم ناجي", date: "2026-11-02", items: 4, total: 531, status: "cancelled" },
-  { id: 1005, name: "هدى رمزي", date: "2026-11-03", items: 1, total: 668, status: "paid" },
-  { id: 1006, name: "عمر خالد", date: "2026-11-04", items: 2, total: 805, status: "pending" },
-  { id: 1007, name: "سارة علي", date: "2026-11-04", items: 3, total: 942, status: "paid" },
-  { id: 1008, name: "آدم شريف", date: "2026-11-05", items: 4, total: 199, status: "pending" },
-  { id: 1009, name: "نور حسام", date: "2026-11-05", items: 1, total: 336, status: "paid" },
-  { id: 1010, name: "حسن عادل", date: "2026-11-06", items: 2, total: 473, status: "cancelled" },
-  { id: 1011, name: "منى سامي", date: "2026-11-07", items: 3, total: 610, status: "paid" },
-  { id: 1012, name: "ياسين طارق", date: "2026-11-07", items: 4, total: 747, status: "pending" },
-  { id: 1013, name: "ليلى فؤاد", date: "2026-11-08", items: 1, total: 884, status: "paid" },
-  { id: 1014, name: "كريم ناجي", date: "2026-11-08", items: 2, total: 141, status: "pending" },
-  { id: 1015, name: "هدى رمزي", date: "2026-11-09", items: 3, total: 278, status: "paid" },
-  { id: 1016, name: "عمر خالد", date: "2026-11-10", items: 4, total: 415, status: "cancelled" },
-  { id: 1017, name: "سارة علي", date: "2026-11-10", items: 1, total: 552, status: "paid" },
-  { id: 1018, name: "آدم شريف", date: "2026-11-11", items: 2, total: 689, status: "pending" },
-  { id: 1019, name: "نور حسام", date: "2026-11-11", items: 3, total: 826, status: "paid" },
-  { id: 1020, name: "حسن عادل", date: "2026-11-12", items: 4, total: 963, status: "pending" },
-  { id: 1021, name: "منى سامي", date: "2026-11-13", items: 1, total: 220, status: "paid" },
-  { id: 1022, name: "ياسين طارق", date: "2026-11-13", items: 2, total: 357, status: "cancelled" },
-  { id: 1023, name: "ليلى فؤاد", date: "2026-11-14", items: 3, total: 494, status: "paid" },
-  { id: 1024, name: "كريم ناجي", date: "2026-11-14", items: 4, total: 631, status: "pending" },
-  { id: 1025, name: "هدى رمزي", date: "2026-11-15", items: 1, total: 768, status: "paid" },
-  { id: 1026, name: "عمر خالد", date: "2026-11-16", items: 2, total: 905, status: "pending" },
-  { id: 1027, name: "سارة علي", date: "2026-11-16", items: 3, total: 162, status: "paid" },
-  { id: 1028, name: "آدم شريف", date: "2026-11-17", items: 4, total: 299, status: "cancelled" },
-  { id: 1029, name: "نور حسام", date: "2026-11-17", items: 1, total: 436, status: "paid" },
-  { id: 1030, name: "حسن عادل", date: "2026-11-18", items: 2, total: 573, status: "pending" }
-];
-~~~
-
-~~~js app.js
-const rows = document.getElementById('rows');
-const heads = [...document.querySelectorAll('th[data-key]')];
-const LABEL = { paid: 'مدفوع', pending: 'مستني', cancelled: 'ملغي' };
-const money = n => n.toLocaleString('ar-EG') + ' ج';
-
-// the sort lives in the URL: ?sort=total&dir=desc
-function readState() {
-  const p = new URLSearchParams(location.search);
-  const sort = heads.some(h => h.dataset.key === p.get('sort')) ? p.get('sort') : 'id';
-  const dir = p.get('dir') === 'desc' ? 'desc' : 'asc';
-  return { sort, dir };
-}
-
-function render() {
-  const { sort, dir } = readState();
-  const list = [...ORDERS].sort((a, b) => {
-    const x = a[sort], y = b[sort];
-    const c = typeof x === 'number' ? x - y : x.localeCompare(y, 'ar');
-    return dir === 'asc' ? c : -c;
-  });
-  rows.innerHTML = '';
-  for (const o of list) {
-    const tr = document.createElement('tr');
-    tr.innerHTML =
-      '<td>' + o.id + '</td><td></td><td>' + o.date + '</td>' +
-      '<td class="num">' + o.items + '</td><td class="num">' + money(o.total) + '</td>' +
-      '<td><span class="badge ' + o.status + '">' + LABEL[o.status] + '</span></td>';
-    tr.children[1].textContent = o.name; // a name typed by a customer is text, never HTML
-    rows.append(tr);
-  }
-  for (const h of heads) {
-    if (h.dataset.key === sort) h.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
-    else h.removeAttribute('aria-sort');
-  }
-}
-
-for (const h of heads) {
-  h.querySelector('button').addEventListener('click', () => {
-    const { sort, dir } = readState();
-    const next = sort === h.dataset.key && dir === 'asc' ? 'desc' : 'asc';
-    // pushState: every sort is a step in history, so Back returns to the one before
-    history.pushState(null, '', '?sort=' + h.dataset.key + '&dir=' + next);
-    render();
-  });
-}
-window.addEventListener('popstate', render);
-render();
-~~~
-
-~~~view 560 600 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطلبات: متجر نسمة</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
-main { max-width: 900px; margin-inline: auto; }
-h1 { margin: 0 0 12px; }
-
-/* the box scrolls both ways, so the sticky header sticks to the box, not the page */
-.scroll { max-height: 70vh; overflow: auto; border-radius: 12px; background: white; }
-.scroll:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
-table { width: 100%; min-width: 620px; border-collapse: separate; border-spacing: 0; }
-caption { padding: 12px; text-align: start; font-weight: 700; }
-th, td { padding: 8px 12px; text-align: start; border-block-end: 1px solid #e2e8f0; }
-
-thead th { position: sticky; top: 0; z-index: 1; background: #1e293b; color: white; }
-thead button { all: unset; cursor: pointer; font-weight: 700; }
-thead button:focus-visible { outline: 2px solid #fbbf24; outline-offset: 3px; }
-/* the arrow comes from aria-sort itself, so the look and what a screen reader hears can't disagree */
-th[aria-sort="ascending"] button::after { content: " ▲"; }
-th[aria-sort="descending"] button::after { content: " ▼"; }
-
-tbody tr:nth-child(even) { background: #f8fafc; }
-tbody tr:hover { background: #eef2ff; }
-.num { text-align: end; font-variant-numeric: tabular-nums; }
-
-.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
-.paid { background: #dcfce7; color: #166534; }
-.pending { background: #fef3c7; color: #92400e; }
-.cancelled { background: #fee2e2; color: #991b1b; }
-</style>
-</head>
-<body>
-<main>
-<h1>الطلبات</h1>
-<div class="scroll" role="region" aria-labelledby="cap" tabindex="0">
-  <table>
-    <caption id="cap">آخر ٣٠ طلب في متجر نسمة</caption>
-    <thead>
-      <tr>
-        <th scope="col" data-key="id"><button type="button">رقم الطلب</button></th>
-        <th scope="col" data-key="name"><button type="button">العميل</button></th>
-        <th scope="col" data-key="date"><button type="button">التاريخ</button></th>
-        <th scope="col" data-key="items" class="num"><button type="button">القطع</button></th>
-        <th scope="col" data-key="total" class="num"><button type="button">الإجمالي</button></th>
-        <th scope="col">الحالة</th>
-      </tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
-</div>
-</main>
-<script>
-// 30 orders of an invented shop (the same shape an API would send as JSON)
-const ORDERS = [
-  { id: 1001, name: "منى سامي", date: "2026-11-01", items: 1, total: 120, status: "paid" },
-  { id: 1002, name: "ياسين طارق", date: "2026-11-01", items: 2, total: 257, status: "pending" },
-  { id: 1003, name: "ليلى فؤاد", date: "2026-11-02", items: 3, total: 394, status: "paid" },
-  { id: 1004, name: "كريم ناجي", date: "2026-11-02", items: 4, total: 531, status: "cancelled" },
-  { id: 1005, name: "هدى رمزي", date: "2026-11-03", items: 1, total: 668, status: "paid" },
-  { id: 1006, name: "عمر خالد", date: "2026-11-04", items: 2, total: 805, status: "pending" },
-  { id: 1007, name: "سارة علي", date: "2026-11-04", items: 3, total: 942, status: "paid" },
-  { id: 1008, name: "آدم شريف", date: "2026-11-05", items: 4, total: 199, status: "pending" },
-  { id: 1009, name: "نور حسام", date: "2026-11-05", items: 1, total: 336, status: "paid" },
-  { id: 1010, name: "حسن عادل", date: "2026-11-06", items: 2, total: 473, status: "cancelled" },
-  { id: 1011, name: "منى سامي", date: "2026-11-07", items: 3, total: 610, status: "paid" },
-  { id: 1012, name: "ياسين طارق", date: "2026-11-07", items: 4, total: 747, status: "pending" },
-  { id: 1013, name: "ليلى فؤاد", date: "2026-11-08", items: 1, total: 884, status: "paid" },
-  { id: 1014, name: "كريم ناجي", date: "2026-11-08", items: 2, total: 141, status: "pending" },
-  { id: 1015, name: "هدى رمزي", date: "2026-11-09", items: 3, total: 278, status: "paid" },
-  { id: 1016, name: "عمر خالد", date: "2026-11-10", items: 4, total: 415, status: "cancelled" },
-  { id: 1017, name: "سارة علي", date: "2026-11-10", items: 1, total: 552, status: "paid" },
-  { id: 1018, name: "آدم شريف", date: "2026-11-11", items: 2, total: 689, status: "pending" },
-  { id: 1019, name: "نور حسام", date: "2026-11-11", items: 3, total: 826, status: "paid" },
-  { id: 1020, name: "حسن عادل", date: "2026-11-12", items: 4, total: 963, status: "pending" },
-  { id: 1021, name: "منى سامي", date: "2026-11-13", items: 1, total: 220, status: "paid" },
-  { id: 1022, name: "ياسين طارق", date: "2026-11-13", items: 2, total: 357, status: "cancelled" },
-  { id: 1023, name: "ليلى فؤاد", date: "2026-11-14", items: 3, total: 494, status: "paid" },
-  { id: 1024, name: "كريم ناجي", date: "2026-11-14", items: 4, total: 631, status: "pending" },
-  { id: 1025, name: "هدى رمزي", date: "2026-11-15", items: 1, total: 768, status: "paid" },
-  { id: 1026, name: "عمر خالد", date: "2026-11-16", items: 2, total: 905, status: "pending" },
-  { id: 1027, name: "سارة علي", date: "2026-11-16", items: 3, total: 162, status: "paid" },
-  { id: 1028, name: "آدم شريف", date: "2026-11-17", items: 4, total: 299, status: "cancelled" },
-  { id: 1029, name: "نور حسام", date: "2026-11-17", items: 1, total: 436, status: "paid" },
-  { id: 1030, name: "حسن عادل", date: "2026-11-18", items: 2, total: 573, status: "pending" }
-];
-</script>
-<script>
-const rows = document.getElementById('rows');
-const heads = [...document.querySelectorAll('th[data-key]')];
-const LABEL = { paid: 'مدفوع', pending: 'مستني', cancelled: 'ملغي' };
-const money = n => n.toLocaleString('ar-EG') + ' ج';
-
-// the sort lives in the URL: ?sort=total&dir=desc
-function readState() {
-  const p = new URLSearchParams(location.search);
-  const sort = heads.some(h => h.dataset.key === p.get('sort')) ? p.get('sort') : 'id';
-  const dir = p.get('dir') === 'desc' ? 'desc' : 'asc';
-  return { sort, dir };
-}
-
-function render() {
-  const { sort, dir } = readState();
-  const list = [...ORDERS].sort((a, b) => {
-    const x = a[sort], y = b[sort];
-    const c = typeof x === 'number' ? x - y : x.localeCompare(y, 'ar');
-    return dir === 'asc' ? c : -c;
-  });
-  rows.innerHTML = '';
-  for (const o of list) {
-    const tr = document.createElement('tr');
-    tr.innerHTML =
-      '<td>' + o.id + '</td><td></td><td>' + o.date + '</td>' +
-      '<td class="num">' + o.items + '</td><td class="num">' + money(o.total) + '</td>' +
-      '<td><span class="badge ' + o.status + '">' + LABEL[o.status] + '</span></td>';
-    tr.children[1].textContent = o.name; // a name typed by a customer is text, never HTML
-    rows.append(tr);
-  }
-  for (const h of heads) {
-    if (h.dataset.key === sort) h.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
-    else h.removeAttribute('aria-sort');
-  }
-}
-
-for (const h of heads) {
-  h.querySelector('button').addEventListener('click', () => {
-    const { sort, dir } = readState();
-    const next = sort === h.dataset.key && dir === 'asc' ? 'desc' : 'asc';
-    // pushState: every sort is a step in history, so Back returns to the one before
-    history.pushState(null, '', '?sort=' + h.dataset.key + '&dir=' + next);
-    render();
-  });
-}
-window.addEventListener('popstate', render);
-render();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** صندوق أبيض فيه صف عناوين كحلي غامق، والصفوف مخططة أبيض ورمادي فاتح، وكل طلب جنبه شارة مدوّرة: خضرا «مدفوع»، وصفرا «مستني»، وحمرا «ملغي». دوس «الإجمالي» وجنبه يظهر ▲ والطلبات تترتب من الأرخص، ودوسة تانية ▼ من الأغلى. انزل جوه الصندوق وصف العناوين يفضل فوق.
-
-**ليه كده:**
-- **العناوين لازقة جوه الصندوق:** [[position: sticky]] و [[top: 0]] على الـ [[th]]. الصندوق عليه [[overflow: auto]]، فالعناوين بتلزق في أوله هو مش في أول الصفحة. وده سبب [[max-height: 70vh]]: من غيره الصندوق بيطول على قد الجدول ومفيش scroll جواه يلزق فيه.
-- **زرار جوه الـ [[th]]:** العنوان نفسه مش بيتداس بالكيبورد. الزرار بيتوصله بـ Tab وبيشتغل بـ Enter والمسافة.
-- **السهم من [[aria-sort]]:** [[th[aria-sort="ascending"] button::after]]. حالة واحدة بيقراها قارئ الشاشة («sorted ascending») وبيشوفها اللي بيبص، فمستحيل الاتنين يختلفوا.
-- **الترتيب في الـ URL بـ [[pushState]]:** كل ترتيب خطوة في الـ history، فـ Back بيرجّع اللي قبله، و [[popstate]] بيعيد الرسم. والـ refresh بيقرا الـ URL فبيفتح على نفس الترتيب، واللينك اللي تبعته لحد بيفتح عنده بنفس الترتيب.
-- **اسم العميل [[textContent]] مش [[innerHTML]]:** الاسم كتبه عميل. لو كتب [[<img src=x onerror=...>]] وحطيناه بـ [[innerHTML]] السكربت بتاعه هيشتغل عندك في لوحة الأدمن.
-- **[[tabular-nums]]:** كل الأرقام نفس العرض، فالإجماليات تحت بعض بالظبط.
-- **الشارات:** خلفية فاتحة وكلام غامق من نفس اللون. قست التباين: كلهم فوق 6:1 (المطلوب 4.5:1).
-
-~~~text الناتج (Chrome)
-أول فتح                      أول ٣ إجماليات: ١٢٠ ج | ٢٥٧ ج | ٣٩٤ ج   (بالترتيب الأصلي)
-ضغطة على «الإجمالي»           ?sort=total&dir=asc    ١٢٠ ج | ١٤١ ج | ١٦٢ ج   aria-sort=ascending
-ضغطة تانية                   ?sort=total&dir=desc   ٩٦٣ ج | ٩٤٢ ج | ٩٠٥ ج   aria-sort=descending
-Back                         ?sort=total&dir=asc    ١٢٠ ج | ١٤١ ج | ١٦٢ ج
-Refresh                      ?sort=total&dir=asc    نفس الترتيب
-scroll 400 جوه الصندوق        مكان صف العناوين: 47px من فوق قبل، و 0px بعد (لزق)
-تباين الشارات                 مدفوع 6.49:1   مستني 6.37:1   ملغي 6.80:1
-axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
-~~~` },
-        { lvl: 'متوسط', dir: "books-catalog", t: R`كتالوج كتب بالبحث والصفحات`, what: R`جدول ١٠٠ كتاب لـ «مكتبة الحروف» (اسم متخيل): حقل بحث بيفلتر بالعنوان أو الكاتب ويكتب [[?q=]] بـ [[replaceState]] (مش مع كل حرف خطوة history)، وصفحات ٢٠ كتاب بأزرار «اللي قبله» و «اللي بعده» وأرقام، وعداد «لقينا ١٢ كتاب» عليه [[aria-live="polite"]]. من درس «ترتيب وصفحات في الـ URL».`, done: R`كتابة «نجيب» بتفلتر من غير reload وزرار Back بيرجّعك للصفحة اللي قبل البحث بضغطة واحدة، و [[?page=99]] بيفتح آخر صفحة مش صفحة فاضية، و [[?q=]] بكلمة عربي بيشتغل لو اتبعت لحد تاني.`, sol: R`~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كتالوج مكتبة الحروف</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; background: #fffbeb; color: #292524; font: 15px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
-  main { max-width: 760px; margin-inline: auto; }
-  h1 { margin: 0 0 12px; }
-  .search { display: grid; gap: 4px; margin-block-end: 8px; font-weight: 600; }
-  .search input { font: inherit; padding: 10px 12px; border: 1px solid #a8a29e; border-radius: 10px; }
-  #count { margin: 0 0 8px; color: #57534e; }
-  table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
-  th, td { padding: 8px 12px; text-align: start; border-block-end: 1px solid #f5f5f4; }
-  thead th { background: #78350f; color: #fffbeb; }
-  .num { font-variant-numeric: tabular-nums; }
-  nav ul { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 12px 0 0; list-style: none; }
-  nav a { display: inline-block; min-width: 40px; padding: 6px 10px; border: 1px solid #d6d3d1; border-radius: 8px; text-align: center; color: inherit; text-decoration: none; background: white; }
-  nav a[aria-current="page"] { background: #78350f; border-color: #78350f; color: white; }
-  nav a[aria-disabled="true"] { opacity: .4; pointer-events: none; }
-</style>
-</head>
-<body>
-<main>
-  <h1>كتالوج مكتبة الحروف</h1>
-  <label class="search">دوّر بالعنوان أو الكاتب
-    <input id="q" type="search" autocomplete="off">
-  </label>
-  <p id="count" aria-live="polite"></p>
-  <table>
-    <thead><tr><th scope="col">العنوان</th><th scope="col">الكاتب</th><th scope="col" class="num">السنة</th></tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
-  <nav aria-label="صفحات النتايج"><ul id="pages"></ul></nav>
-</main>
-<script src="books.js"></script>
-<script>
-  const PER = 20;
-  const q = document.getElementById('q');
-  // أ إ آ → ا، ة → ه، ى → ي، ومن غير تشكيل: «أحمد» و «احمد» يلاقوا نفس الكتب
-  const norm = s => s.normalize('NFKD').replace(/[ً-ٟ]/g, '')
-    .replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase().trim();
-
-  function state() {
-    const p = new URLSearchParams(location.search);
-    return { q: p.get('q') || '', page: parseInt(p.get('page'), 10) || 1 };
-  }
-  function url(s) {
-    const p = new URLSearchParams();
-    if (s.q) p.set('q', s.q);
-    if (s.page > 1) p.set('page', s.page);
-    return '?' + p.toString();
-  }
-
-  function render() {
-    const s = state();
-    const found = BOOKS.filter(b => norm(b.title + ' ' + b.author).includes(norm(s.q)));
-    const last = Math.max(1, Math.ceil(found.length / PER));
-    // ?page=99 → the last page, never an empty one
-    const page = Math.min(Math.max(1, s.page), last);
-    if (page !== s.page) history.replaceState(null, '', url({ q: s.q, page }));
-
-    document.getElementById('count').textContent = 'لقينا ' + found.length + ' كتاب' + (last > 1 ? '، صفحة ' + page + ' من ' + last : '');
-    const tbody = document.getElementById('rows');
-    tbody.innerHTML = '';
-    for (const b of found.slice((page - 1) * PER, page * PER)) {
-      const tr = tbody.insertRow();
-      tr.insertCell().textContent = b.title;
-      tr.insertCell().textContent = b.author;
-      const y = tr.insertCell(); y.textContent = b.year; y.className = 'num';
-    }
-
-    const ul = document.getElementById('pages');
-    ul.innerHTML = '';
-    const link = (text, n, label) => {
-      const a = document.createElement('a');
-      a.textContent = text;
-      a.href = url({ q: s.q, page: n });
-      if (label) a.setAttribute('aria-label', label);
-      if (n === page && !label) a.setAttribute('aria-current', 'page');
-      if (n < 1 || n > last) a.setAttribute('aria-disabled', 'true');
-      const li = document.createElement('li'); li.append(a); ul.append(li);
-    };
-    link('‹', page - 1, 'الصفحة اللي قبلها');
-    for (let n = 1; n <= last; n++) link(String(n), n);
-    link('›', page + 1, 'الصفحة اللي بعدها');
-    if (document.activeElement !== q) q.value = s.q;
-  }
-
-  // typing replaces the current URL (no history step per letter); Back leaves the search in one press
-  q.addEventListener('input', () => {
-    history.replaceState(null, '', url({ q: q.value.trim(), page: 1 }));
-    render();
-  });
-  // page links: a real step in history, without reloading
-  document.getElementById('pages').addEventListener('click', e => {
-    const a = e.target.closest('a');
-    if (!a || a.getAttribute('aria-disabled') === 'true') return;
-    e.preventDefault();
-    history.pushState(null, '', a.getAttribute('href'));
-    render();
-  });
-  window.addEventListener('popstate', render);
-  render();
-</script>
-</body>
-</html>
-~~~
-
-~~~js books.js
-// 100 invented books of an invented library
-const BOOKS = [
-  { id: 1, title: "ليالي البحر", author: "نجيب سالم", year: 1990 },
-  { id: 2, title: "بيت البحر", author: "منى فهمي", year: 1997 },
-  { id: 3, title: "رسايل البحر", author: "طارق شاكر", year: 2004 },
-  { id: 4, title: "حكايات البحر", author: "ليلى عادل", year: 2011 },
-  { id: 5, title: "أسرار البحر", author: "نجيب حمدي", year: 2018 },
-  { id: 6, title: "طريق البحر", author: "هالة نصر", year: 1990 },
-  { id: 7, title: "مدينة البحر", author: "يوسف عادل", year: 1997 },
-  { id: 8, title: "نجوم البحر", author: "سلوى رأفت", year: 2004 },
-  { id: 9, title: "بحر البحر", author: "نجيب سالم", year: 2011 },
-  { id: 10, title: "شتا البحر", author: "منى فهمي", year: 2018 },
-  { id: 11, title: "ليالي الجدة", author: "طارق شاكر", year: 1990 },
-  { id: 12, title: "بيت الجدة", author: "ليلى عادل", year: 1997 },
-  { id: 13, title: "رسايل الجدة", author: "نجيب حمدي", year: 2004 },
-  { id: 14, title: "حكايات الجدة", author: "هالة نصر", year: 2011 },
-  { id: 15, title: "أسرار الجدة", author: "يوسف عادل", year: 2018 },
-  { id: 16, title: "طريق الجدة", author: "سلوى رأفت", year: 1990 },
-  { id: 17, title: "مدينة الجدة", author: "نجيب سالم", year: 1997 },
-  { id: 18, title: "نجوم الجدة", author: "منى فهمي", year: 2004 },
-  { id: 19, title: "بحر الجدة", author: "طارق شاكر", year: 2011 },
-  { id: 20, title: "شتا الجدة", author: "ليلى عادل", year: 2018 },
-  { id: 21, title: "ليالي الصحرا", author: "نجيب حمدي", year: 1990 },
-  { id: 22, title: "بيت الصحرا", author: "هالة نصر", year: 1997 },
-  { id: 23, title: "رسايل الصحرا", author: "يوسف عادل", year: 2004 },
-  { id: 24, title: "حكايات الصحرا", author: "سلوى رأفت", year: 2011 },
-  { id: 25, title: "أسرار الصحرا", author: "نجيب سالم", year: 2018 },
-  { id: 26, title: "طريق الصحرا", author: "منى فهمي", year: 1990 },
-  { id: 27, title: "مدينة الصحرا", author: "طارق شاكر", year: 1997 },
-  { id: 28, title: "نجوم الصحرا", author: "ليلى عادل", year: 2004 },
-  { id: 29, title: "بحر الصحرا", author: "نجيب حمدي", year: 2011 },
-  { id: 30, title: "شتا الصحرا", author: "هالة نصر", year: 2018 },
-  { id: 31, title: "ليالي القمر", author: "يوسف عادل", year: 1990 },
-  { id: 32, title: "بيت القمر", author: "سلوى رأفت", year: 1997 },
-  { id: 33, title: "رسايل القمر", author: "نجيب سالم", year: 2004 },
-  { id: 34, title: "حكايات القمر", author: "منى فهمي", year: 2011 },
-  { id: 35, title: "أسرار القمر", author: "طارق شاكر", year: 2018 },
-  { id: 36, title: "طريق القمر", author: "ليلى عادل", year: 1990 },
-  { id: 37, title: "مدينة القمر", author: "نجيب حمدي", year: 1997 },
-  { id: 38, title: "نجوم القمر", author: "هالة نصر", year: 2004 },
-  { id: 39, title: "بحر القمر", author: "يوسف عادل", year: 2011 },
-  { id: 40, title: "شتا القمر", author: "سلوى رأفت", year: 2018 },
-  { id: 41, title: "ليالي الغريب", author: "نجيب سالم", year: 1990 },
-  { id: 42, title: "بيت الغريب", author: "منى فهمي", year: 1997 },
-  { id: 43, title: "رسايل الغريب", author: "طارق شاكر", year: 2004 },
-  { id: 44, title: "حكايات الغريب", author: "ليلى عادل", year: 2011 },
-  { id: 45, title: "أسرار الغريب", author: "نجيب حمدي", year: 2018 },
-  { id: 46, title: "طريق الغريب", author: "هالة نصر", year: 1990 },
-  { id: 47, title: "مدينة الغريب", author: "يوسف عادل", year: 1997 },
-  { id: 48, title: "نجوم الغريب", author: "سلوى رأفت", year: 2004 },
-  { id: 49, title: "بحر الغريب", author: "نجيب سالم", year: 2011 },
-  { id: 50, title: "شتا الغريب", author: "منى فهمي", year: 2018 },
-  { id: 51, title: "ليالي النيل", author: "طارق شاكر", year: 1990 },
-  { id: 52, title: "بيت النيل", author: "ليلى عادل", year: 1997 },
-  { id: 53, title: "رسايل النيل", author: "نجيب حمدي", year: 2004 },
-  { id: 54, title: "حكايات النيل", author: "هالة نصر", year: 2011 },
-  { id: 55, title: "أسرار النيل", author: "يوسف عادل", year: 2018 },
-  { id: 56, title: "طريق النيل", author: "سلوى رأفت", year: 1990 },
-  { id: 57, title: "مدينة النيل", author: "نجيب سالم", year: 1997 },
-  { id: 58, title: "نجوم النيل", author: "منى فهمي", year: 2004 },
-  { id: 59, title: "بحر النيل", author: "طارق شاكر", year: 2011 },
-  { id: 60, title: "شتا النيل", author: "ليلى عادل", year: 2018 },
-  { id: 61, title: "ليالي الحارة", author: "نجيب حمدي", year: 1990 },
-  { id: 62, title: "بيت الحارة", author: "هالة نصر", year: 1997 },
-  { id: 63, title: "رسايل الحارة", author: "يوسف عادل", year: 2004 },
-  { id: 64, title: "حكايات الحارة", author: "سلوى رأفت", year: 2011 },
-  { id: 65, title: "أسرار الحارة", author: "نجيب سالم", year: 2018 },
-  { id: 66, title: "طريق الحارة", author: "منى فهمي", year: 1990 },
-  { id: 67, title: "مدينة الحارة", author: "طارق شاكر", year: 1997 },
-  { id: 68, title: "نجوم الحارة", author: "ليلى عادل", year: 2004 },
-  { id: 69, title: "بحر الحارة", author: "نجيب حمدي", year: 2011 },
-  { id: 70, title: "شتا الحارة", author: "هالة نصر", year: 2018 },
-  { id: 71, title: "ليالي الشمال", author: "يوسف عادل", year: 1990 },
-  { id: 72, title: "بيت الشمال", author: "سلوى رأفت", year: 1997 },
-  { id: 73, title: "رسايل الشمال", author: "نجيب سالم", year: 2004 },
-  { id: 74, title: "حكايات الشمال", author: "منى فهمي", year: 2011 },
-  { id: 75, title: "أسرار الشمال", author: "طارق شاكر", year: 2018 },
-  { id: 76, title: "طريق الشمال", author: "ليلى عادل", year: 1990 },
-  { id: 77, title: "مدينة الشمال", author: "نجيب حمدي", year: 1997 },
-  { id: 78, title: "نجوم الشمال", author: "هالة نصر", year: 2004 },
-  { id: 79, title: "بحر الشمال", author: "يوسف عادل", year: 2011 },
-  { id: 80, title: "شتا الشمال", author: "سلوى رأفت", year: 2018 },
-  { id: 81, title: "ليالي المطر", author: "نجيب سالم", year: 1990 },
-  { id: 82, title: "بيت المطر", author: "منى فهمي", year: 1997 },
-  { id: 83, title: "رسايل المطر", author: "طارق شاكر", year: 2004 },
-  { id: 84, title: "حكايات المطر", author: "ليلى عادل", year: 2011 },
-  { id: 85, title: "أسرار المطر", author: "نجيب حمدي", year: 2018 },
-  { id: 86, title: "طريق المطر", author: "هالة نصر", year: 1990 },
-  { id: 87, title: "مدينة المطر", author: "يوسف عادل", year: 1997 },
-  { id: 88, title: "نجوم المطر", author: "سلوى رأفت", year: 2004 },
-  { id: 89, title: "بحر المطر", author: "نجيب سالم", year: 2011 },
-  { id: 90, title: "شتا المطر", author: "منى فهمي", year: 2018 },
-  { id: 91, title: "ليالي الحديقة", author: "طارق شاكر", year: 1990 },
-  { id: 92, title: "بيت الحديقة", author: "ليلى عادل", year: 1997 },
-  { id: 93, title: "رسايل الحديقة", author: "نجيب حمدي", year: 2004 },
-  { id: 94, title: "حكايات الحديقة", author: "هالة نصر", year: 2011 },
-  { id: 95, title: "أسرار الحديقة", author: "يوسف عادل", year: 2018 },
-  { id: 96, title: "طريق الحديقة", author: "سلوى رأفت", year: 1990 },
-  { id: 97, title: "مدينة الحديقة", author: "نجيب سالم", year: 1997 },
-  { id: 98, title: "نجوم الحديقة", author: "منى فهمي", year: 2004 },
-  { id: 99, title: "بحر الحديقة", author: "طارق شاكر", year: 2011 },
-  { id: 100, title: "شتا الحديقة", author: "ليلى عادل", year: 2018 }
-];
-~~~
-
-~~~view 620 760 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كتالوج مكتبة الحروف</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; background: #fffbeb; color: #292524; font: 15px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
-  main { max-width: 760px; margin-inline: auto; }
-  h1 { margin: 0 0 12px; }
-  .search { display: grid; gap: 4px; margin-block-end: 8px; font-weight: 600; }
-  .search input { font: inherit; padding: 10px 12px; border: 1px solid #a8a29e; border-radius: 10px; }
-  #count { margin: 0 0 8px; color: #57534e; }
-  table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
-  th, td { padding: 8px 12px; text-align: start; border-block-end: 1px solid #f5f5f4; }
-  thead th { background: #78350f; color: #fffbeb; }
-  .num { font-variant-numeric: tabular-nums; }
-  nav ul { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 12px 0 0; list-style: none; }
-  nav a { display: inline-block; min-width: 40px; padding: 6px 10px; border: 1px solid #d6d3d1; border-radius: 8px; text-align: center; color: inherit; text-decoration: none; background: white; }
-  nav a[aria-current="page"] { background: #78350f; border-color: #78350f; color: white; }
-  nav a[aria-disabled="true"] { opacity: .4; pointer-events: none; }
-</style>
-</head>
-<body>
-<main>
-  <h1>كتالوج مكتبة الحروف</h1>
-  <label class="search">دوّر بالعنوان أو الكاتب
-    <input id="q" type="search" autocomplete="off">
-  </label>
-  <p id="count" aria-live="polite"></p>
-  <table>
-    <thead><tr><th scope="col">العنوان</th><th scope="col">الكاتب</th><th scope="col" class="num">السنة</th></tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
-  <nav aria-label="صفحات النتايج"><ul id="pages"></ul></nav>
-</main>
-<script>
-// 100 invented books of an invented library
-const BOOKS = [
-  { id: 1, title: "ليالي البحر", author: "نجيب سالم", year: 1990 },
-  { id: 2, title: "بيت البحر", author: "منى فهمي", year: 1997 },
-  { id: 3, title: "رسايل البحر", author: "طارق شاكر", year: 2004 },
-  { id: 4, title: "حكايات البحر", author: "ليلى عادل", year: 2011 },
-  { id: 5, title: "أسرار البحر", author: "نجيب حمدي", year: 2018 },
-  { id: 6, title: "طريق البحر", author: "هالة نصر", year: 1990 },
-  { id: 7, title: "مدينة البحر", author: "يوسف عادل", year: 1997 },
-  { id: 8, title: "نجوم البحر", author: "سلوى رأفت", year: 2004 },
-  { id: 9, title: "بحر البحر", author: "نجيب سالم", year: 2011 },
-  { id: 10, title: "شتا البحر", author: "منى فهمي", year: 2018 },
-  { id: 11, title: "ليالي الجدة", author: "طارق شاكر", year: 1990 },
-  { id: 12, title: "بيت الجدة", author: "ليلى عادل", year: 1997 },
-  { id: 13, title: "رسايل الجدة", author: "نجيب حمدي", year: 2004 },
-  { id: 14, title: "حكايات الجدة", author: "هالة نصر", year: 2011 },
-  { id: 15, title: "أسرار الجدة", author: "يوسف عادل", year: 2018 },
-  { id: 16, title: "طريق الجدة", author: "سلوى رأفت", year: 1990 },
-  { id: 17, title: "مدينة الجدة", author: "نجيب سالم", year: 1997 },
-  { id: 18, title: "نجوم الجدة", author: "منى فهمي", year: 2004 },
-  { id: 19, title: "بحر الجدة", author: "طارق شاكر", year: 2011 },
-  { id: 20, title: "شتا الجدة", author: "ليلى عادل", year: 2018 },
-  { id: 21, title: "ليالي الصحرا", author: "نجيب حمدي", year: 1990 },
-  { id: 22, title: "بيت الصحرا", author: "هالة نصر", year: 1997 },
-  { id: 23, title: "رسايل الصحرا", author: "يوسف عادل", year: 2004 },
-  { id: 24, title: "حكايات الصحرا", author: "سلوى رأفت", year: 2011 },
-  { id: 25, title: "أسرار الصحرا", author: "نجيب سالم", year: 2018 },
-  { id: 26, title: "طريق الصحرا", author: "منى فهمي", year: 1990 },
-  { id: 27, title: "مدينة الصحرا", author: "طارق شاكر", year: 1997 },
-  { id: 28, title: "نجوم الصحرا", author: "ليلى عادل", year: 2004 },
-  { id: 29, title: "بحر الصحرا", author: "نجيب حمدي", year: 2011 },
-  { id: 30, title: "شتا الصحرا", author: "هالة نصر", year: 2018 },
-  { id: 31, title: "ليالي القمر", author: "يوسف عادل", year: 1990 },
-  { id: 32, title: "بيت القمر", author: "سلوى رأفت", year: 1997 },
-  { id: 33, title: "رسايل القمر", author: "نجيب سالم", year: 2004 },
-  { id: 34, title: "حكايات القمر", author: "منى فهمي", year: 2011 },
-  { id: 35, title: "أسرار القمر", author: "طارق شاكر", year: 2018 },
-  { id: 36, title: "طريق القمر", author: "ليلى عادل", year: 1990 },
-  { id: 37, title: "مدينة القمر", author: "نجيب حمدي", year: 1997 },
-  { id: 38, title: "نجوم القمر", author: "هالة نصر", year: 2004 },
-  { id: 39, title: "بحر القمر", author: "يوسف عادل", year: 2011 },
-  { id: 40, title: "شتا القمر", author: "سلوى رأفت", year: 2018 },
-  { id: 41, title: "ليالي الغريب", author: "نجيب سالم", year: 1990 },
-  { id: 42, title: "بيت الغريب", author: "منى فهمي", year: 1997 },
-  { id: 43, title: "رسايل الغريب", author: "طارق شاكر", year: 2004 },
-  { id: 44, title: "حكايات الغريب", author: "ليلى عادل", year: 2011 },
-  { id: 45, title: "أسرار الغريب", author: "نجيب حمدي", year: 2018 },
-  { id: 46, title: "طريق الغريب", author: "هالة نصر", year: 1990 },
-  { id: 47, title: "مدينة الغريب", author: "يوسف عادل", year: 1997 },
-  { id: 48, title: "نجوم الغريب", author: "سلوى رأفت", year: 2004 },
-  { id: 49, title: "بحر الغريب", author: "نجيب سالم", year: 2011 },
-  { id: 50, title: "شتا الغريب", author: "منى فهمي", year: 2018 },
-  { id: 51, title: "ليالي النيل", author: "طارق شاكر", year: 1990 },
-  { id: 52, title: "بيت النيل", author: "ليلى عادل", year: 1997 },
-  { id: 53, title: "رسايل النيل", author: "نجيب حمدي", year: 2004 },
-  { id: 54, title: "حكايات النيل", author: "هالة نصر", year: 2011 },
-  { id: 55, title: "أسرار النيل", author: "يوسف عادل", year: 2018 },
-  { id: 56, title: "طريق النيل", author: "سلوى رأفت", year: 1990 },
-  { id: 57, title: "مدينة النيل", author: "نجيب سالم", year: 1997 },
-  { id: 58, title: "نجوم النيل", author: "منى فهمي", year: 2004 },
-  { id: 59, title: "بحر النيل", author: "طارق شاكر", year: 2011 },
-  { id: 60, title: "شتا النيل", author: "ليلى عادل", year: 2018 },
-  { id: 61, title: "ليالي الحارة", author: "نجيب حمدي", year: 1990 },
-  { id: 62, title: "بيت الحارة", author: "هالة نصر", year: 1997 },
-  { id: 63, title: "رسايل الحارة", author: "يوسف عادل", year: 2004 },
-  { id: 64, title: "حكايات الحارة", author: "سلوى رأفت", year: 2011 },
-  { id: 65, title: "أسرار الحارة", author: "نجيب سالم", year: 2018 },
-  { id: 66, title: "طريق الحارة", author: "منى فهمي", year: 1990 },
-  { id: 67, title: "مدينة الحارة", author: "طارق شاكر", year: 1997 },
-  { id: 68, title: "نجوم الحارة", author: "ليلى عادل", year: 2004 },
-  { id: 69, title: "بحر الحارة", author: "نجيب حمدي", year: 2011 },
-  { id: 70, title: "شتا الحارة", author: "هالة نصر", year: 2018 },
-  { id: 71, title: "ليالي الشمال", author: "يوسف عادل", year: 1990 },
-  { id: 72, title: "بيت الشمال", author: "سلوى رأفت", year: 1997 },
-  { id: 73, title: "رسايل الشمال", author: "نجيب سالم", year: 2004 },
-  { id: 74, title: "حكايات الشمال", author: "منى فهمي", year: 2011 },
-  { id: 75, title: "أسرار الشمال", author: "طارق شاكر", year: 2018 },
-  { id: 76, title: "طريق الشمال", author: "ليلى عادل", year: 1990 },
-  { id: 77, title: "مدينة الشمال", author: "نجيب حمدي", year: 1997 },
-  { id: 78, title: "نجوم الشمال", author: "هالة نصر", year: 2004 },
-  { id: 79, title: "بحر الشمال", author: "يوسف عادل", year: 2011 },
-  { id: 80, title: "شتا الشمال", author: "سلوى رأفت", year: 2018 },
-  { id: 81, title: "ليالي المطر", author: "نجيب سالم", year: 1990 },
-  { id: 82, title: "بيت المطر", author: "منى فهمي", year: 1997 },
-  { id: 83, title: "رسايل المطر", author: "طارق شاكر", year: 2004 },
-  { id: 84, title: "حكايات المطر", author: "ليلى عادل", year: 2011 },
-  { id: 85, title: "أسرار المطر", author: "نجيب حمدي", year: 2018 },
-  { id: 86, title: "طريق المطر", author: "هالة نصر", year: 1990 },
-  { id: 87, title: "مدينة المطر", author: "يوسف عادل", year: 1997 },
-  { id: 88, title: "نجوم المطر", author: "سلوى رأفت", year: 2004 },
-  { id: 89, title: "بحر المطر", author: "نجيب سالم", year: 2011 },
-  { id: 90, title: "شتا المطر", author: "منى فهمي", year: 2018 },
-  { id: 91, title: "ليالي الحديقة", author: "طارق شاكر", year: 1990 },
-  { id: 92, title: "بيت الحديقة", author: "ليلى عادل", year: 1997 },
-  { id: 93, title: "رسايل الحديقة", author: "نجيب حمدي", year: 2004 },
-  { id: 94, title: "حكايات الحديقة", author: "هالة نصر", year: 2011 },
-  { id: 95, title: "أسرار الحديقة", author: "يوسف عادل", year: 2018 },
-  { id: 96, title: "طريق الحديقة", author: "سلوى رأفت", year: 1990 },
-  { id: 97, title: "مدينة الحديقة", author: "نجيب سالم", year: 1997 },
-  { id: 98, title: "نجوم الحديقة", author: "منى فهمي", year: 2004 },
-  { id: 99, title: "بحر الحديقة", author: "طارق شاكر", year: 2011 },
-  { id: 100, title: "شتا الحديقة", author: "ليلى عادل", year: 2018 }
-];
-</script>
-<script>
-  const PER = 20;
-  const q = document.getElementById('q');
-  // أ إ آ → ا، ة → ه، ى → ي، ومن غير تشكيل: «أحمد» و «احمد» يلاقوا نفس الكتب
-  const norm = s => s.normalize('NFKD').replace(/[ً-ٟ]/g, '')
-    .replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase().trim();
-
-  function state() {
-    const p = new URLSearchParams(location.search);
-    return { q: p.get('q') || '', page: parseInt(p.get('page'), 10) || 1 };
-  }
-  function url(s) {
-    const p = new URLSearchParams();
-    if (s.q) p.set('q', s.q);
-    if (s.page > 1) p.set('page', s.page);
-    return '?' + p.toString();
-  }
-
-  function render() {
-    const s = state();
-    const found = BOOKS.filter(b => norm(b.title + ' ' + b.author).includes(norm(s.q)));
-    const last = Math.max(1, Math.ceil(found.length / PER));
-    // ?page=99 → the last page, never an empty one
-    const page = Math.min(Math.max(1, s.page), last);
-    if (page !== s.page) history.replaceState(null, '', url({ q: s.q, page }));
-
-    document.getElementById('count').textContent = 'لقينا ' + found.length + ' كتاب' + (last > 1 ? '، صفحة ' + page + ' من ' + last : '');
-    const tbody = document.getElementById('rows');
-    tbody.innerHTML = '';
-    for (const b of found.slice((page - 1) * PER, page * PER)) {
-      const tr = tbody.insertRow();
-      tr.insertCell().textContent = b.title;
-      tr.insertCell().textContent = b.author;
-      const y = tr.insertCell(); y.textContent = b.year; y.className = 'num';
-    }
-
-    const ul = document.getElementById('pages');
-    ul.innerHTML = '';
-    const link = (text, n, label) => {
-      const a = document.createElement('a');
-      a.textContent = text;
-      a.href = url({ q: s.q, page: n });
-      if (label) a.setAttribute('aria-label', label);
-      if (n === page && !label) a.setAttribute('aria-current', 'page');
-      if (n < 1 || n > last) a.setAttribute('aria-disabled', 'true');
-      const li = document.createElement('li'); li.append(a); ul.append(li);
-    };
-    link('‹', page - 1, 'الصفحة اللي قبلها');
-    for (let n = 1; n <= last; n++) link(String(n), n);
-    link('›', page + 1, 'الصفحة اللي بعدها');
-    if (document.activeElement !== q) q.value = s.q;
-  }
-
-  // typing replaces the current URL (no history step per letter); Back leaves the search in one press
-  q.addEventListener('input', () => {
-    history.replaceState(null, '', url({ q: q.value.trim(), page: 1 }));
-    render();
-  });
-  // page links: a real step in history, without reloading
-  document.getElementById('pages').addEventListener('click', e => {
-    const a = e.target.closest('a');
-    if (!a || a.getAttribute('aria-disabled') === 'true') return;
-    e.preventDefault();
-    history.pushState(null, '', a.getAttribute('href'));
-    render();
-  });
-  window.addEventListener('popstate', render);
-  render();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** خلفية كريمي، وحقل بحث، وتحته «لقينا 100 كتاب، صفحة 1 من 5»، وجدول بصف عناوين بني غامق، وتحت الجدول أزرار صفحات صغيرة (‹ 1 2 3 4 5 ›) والصفحة اللي انت فيها بني. اكتب «نجيب» والجدول بيتفلتر وانت بتكتب.
-
-**ليه كده:**
-- **البحث بـ [[replaceState]]:** كل حرف بيغيّر الـ URL من غير ما يزوّد خطوة في الـ history. لو استخدمت [[pushState]]، «نجيب» = ٤ خطوات، والمستخدم هيدوس Back ٤ مرات عشان يخرج.
-- **الصفحات بـ [[pushState]]:** تقليب الصفحات خطوة حقيقية، فـ Back بيرجّع الصفحة اللي قبلها. والأزرار لينكات [[<a href="?page=2">]] حقيقية (تتفتح في تاب جديد بالضغط الوسطاني)، والـ JavaScript بيمنع الـ reload بس.
-- **[[?page=99]]:** بنحسب آخر صفحة ونرجع لها، وبنصلّح الـ URL بـ [[replaceState]] عشان ميفضلش 99.
-- **بحث عربي سليم:** [[norm()]] بتشيل التشكيل وبتخلي [[أ إ آ]] = [[ا]] و [[ة]] = [[ه]] و [[ى]] = [[ي]]. الناس بتكتب «اسرار» من غير همزة، والكتاب اسمه «أسرار».
-- **[[URLSearchParams]]:** بيعمل encode للعربي لوحده ([[?q=%D9%86%D8%AC...]]) وبيرجّعه نص لما تقراه، فاللينك العربي بيشتغل لو اتبعت.
-- **العداد [[aria-live="polite"]]:** قارئ الشاشة بيقول «لقينا 25 كتاب» بعد ما تخلص كتابة.
-- **[[aria-current="page"]]** على رقم الصفحة الحالية، و [[aria-label]] على ‹ و › لأن السهم لوحده ملوش اسم.
-
-~~~text الناتج (Chrome)
-أول فتح                     لقينا 100 كتاب، صفحة 1 من 5   (7 لينكات: ‹ 1 2 3 4 5 ›)
-كتبت «نجيب» بالكيبورد        ?q=نجيب   لقينا 25 كتاب، صفحة 1 من 2   أول كتاب: ليالي البحر · نجيب سالم · 1990
-history.length              14 قبل الكتابة و 14 بعدها (مفيش خطوة لكل حرف)
-Back                        رجّعني للصفحة اللي قبل الكتالوج على طول
-?page=99                    الـ URL بقى ?page=5   لقينا 100 كتاب، صفحة 5 من 5   20 صف
-?q=اسرار (رابط متبعت)        لقينا 10 كتاب، أولهم «أسرار البحر»
-axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
-~~~` },
-        { lvl: 'كبير', dir: "shop-invoice", t: R`فاتورة ومخزن لمحل متخيل`, what: R`أداة لمحل أدوات منزلية متخيل: فورم بيزوّد صنف (الاسم، والكمية، والسعر) لجدول الفاتورة، والإجمالي والضريبة بيتحسبوا في الـ tfoot، وحذف صنف بزرار ليه [[aria-label]] باسم الصنف، والفاتورة بتتحفظ في localStorage وترجع بعد الـ refresh، ورقم الفاتورة بيزيد لوحده. وصفحة الطباعة: A4 بهامش 12mm، ورقم «صفحة ١ من ٢» تحت، والـ thead والـ tfoot بيتكرروا، والصف مبيتقطعش، والأزرار والفورم مخفيين، وشعار المحل ولون عنوان الجدول بيتطبعوا. يجمع الوحدة دي مع وحدة الفورم.`, done: R`بـ ٤٠ صنف الـ Save as PDF بيطلع أكتر من ورقة وكل ورقة فيها العناوين فوق والإجمالي تحت ورقمها، ومفيش زرار ولا حقل في الورق، والرقم الغلط (كمية 0 أو سعر سالب) بيترفض برسالة جنب الحقل، والـ refresh مبيضيّعش الفاتورة، والطباعة مرتين ورا بعض بتطلع نفس الـ PDF، و axe صفر violations على الشاشة.`, ext: R`زوّد تصدير CSV بزرار، وفلتر بالتاريخ، ونسخة «إيصال كاشير» بـ [[size: 80mm 200mm]]، وخلي الـ PDF يتعمل في السيرفر بـ Playwright ([[page.pdf]]) لما تتعلم Node.`, sol: R`~~~text
-shop-invoice/
-├── index.html   الهيدر والفورم والجدول
-├── style.css    الشاشة، والورق (@page و @media print)
-└── app.js       الحساب والحفظ والإضافة والحذف
-~~~
-
-**ترتيب البناء:** (١) الجدول بـ [[thead]] و [[tbody]] و [[tfoot]] وصفين مكتوبين بإيدك عشان تظبط الشكل. (٢) الـ CSS للشاشة. (٣) [[app.js]]: [[render()]] من مصفوفة، وبعدين الإضافة، وبعدين الحذف، وبعدين [[localStorage]]. (٤) آخر حاجة الطباعة: اضغط Ctrl+P وانت شغال، أو DevTools › Rendering › Emulate CSS media type › print.
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فاتورة: أدوات البيت</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main>
-  <header class="shop">
-    <svg class="logo" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#b45309"/><path d="M10 28V16l10-7 10 7v12H24v-7h-8v7z" fill="white"/></svg>
-    <div>
-      <h1>أدوات البيت</h1>
-      <p>فاتورة رقم <b id="number"></b> · <span id="today"></span></p>
-    </div>
-  </header>
-
-  <form id="add" class="no-print" novalidate>
-    <div class="field name">
-      <label for="item">الصنف</label>
-      <input id="item" name="item" required maxlength="60" aria-describedby="item-err">
-      <span class="err" id="item-err"></span>
-    </div>
-    <div class="field">
-      <label for="qty">الكمية</label>
-      <input id="qty" name="qty" type="number" min="1" step="1" value="1" required aria-describedby="qty-err">
-      <span class="err" id="qty-err"></span>
-    </div>
-    <div class="field">
-      <label for="price">سعر الوحدة</label>
-      <input id="price" name="price" type="number" min="0.01" step="0.01" required aria-describedby="price-err">
-      <span class="err" id="price-err"></span>
-    </div>
-    <button>زوّد</button>
-  </form>
-
-  <table>
-    <caption>الأصناف</caption>
-    <thead>
-      <tr><th scope="col">#</th><th scope="col">الصنف</th><th scope="col" class="num">الكمية</th><th scope="col" class="num">السعر</th><th scope="col" class="num">المجموع</th><th scope="col" class="no-print"><span class="visually-hidden">حذف</span></th></tr>
-    </thead>
-    <tbody id="rows"></tbody>
-    <tfoot>
-      <tr><th scope="row" colspan="4">قبل الضريبة</th><td class="num" id="sub"></td><td class="no-print"></td></tr>
-      <tr><th scope="row" colspan="4">ضريبة ١٤٪</th><td class="num" id="vat"></td><td class="no-print"></td></tr>
-      <tr class="grand"><th scope="row" colspan="4">الإجمالي</th><td class="num" id="total"></td><td class="no-print"></td></tr>
-    </tfoot>
-  </table>
-  <p id="empty" class="empty">الفاتورة لسه فاضية. زوّد أول صنف من فوق.</p>
-
-  <div class="actions no-print">
-    <button type="button" id="print">اطبع</button>
-    <button type="button" id="fresh">فاتورة جديدة</button>
-  </div>
-</main>
-<script src="app.js"></script>
-</body>
-</html>
-~~~
-
-~~~css style.css
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
-main { max-width: 820px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
-
-.shop { display: flex; gap: 12px; align-items: center; margin-block-end: 16px; }
-.shop h1 { margin: 0; font-size: 22px; }
-.shop p { margin: 0; color: #57534e; }
-
-form { display: grid; grid-template-columns: 1fr; gap: 10px; align-items: start; margin-block-end: 16px; padding: 12px; border-radius: 12px; background: #fafaf9; }
-@media (min-width: 640px) { form { grid-template-columns: 2fr 1fr 1fr auto; } form button { margin-block-start: 26px; } }
-.field { display: grid; gap: 4px; min-width: 0; }
-label { font-weight: 600; }
-input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
-[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
-.err { min-height: 1.2em; color: #b91c1c; font-size: 13px; }
-button { font: inherit; font-weight: 700; padding: 8px 16px; border: 0; border-radius: 8px; background: #b45309; color: white; cursor: pointer; }
-
-table { width: 100%; border-collapse: collapse; }
-caption { text-align: start; font-weight: 700; padding-block-end: 6px; }
-th, td { padding: 8px 10px; text-align: start; border-block-end: 1px solid #e7e5e4; }
-thead th { background: #b45309; color: white; }
-.num { text-align: end; font-variant-numeric: tabular-nums; }
-tfoot th { text-align: end; font-weight: 600; }
-.grand th, .grand td { font-size: 18px; font-weight: 800; border-block-start: 2px solid #1c1917; }
-.del { padding: 4px 10px; background: transparent; color: #b91c1c; border: 1px solid #fca5a5; }
-.empty { color: #78716c; }
-.actions { display: flex; gap: 8px; margin-block-start: 16px; }
-.actions #fresh { background: white; color: #b45309; border: 1px solid #b45309; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* ---------- the paper ---------- */
-@page {
-  size: A4;
-  margin: 12mm;
-  @bottom-center { content: "صفحة " counter(page) " من " counter(pages); font: 10px system-ui, sans-serif; color: #57534e; }
-}
-@media print {
-  body { padding: 0; background: white; }
-  main { max-width: none; padding: 0; border-radius: 0; }
-  .no-print, .empty { display: none !important; }
-  /* thead and tfoot repeat on every page by default (table-header-group / table-footer-group); a row never splits */
-  tr { break-inside: avoid; }
-  /* without this the browser drops background colors to save ink: the header row and the logo would print white */
-  thead th, .logo { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-}
-~~~
-
-~~~js app.js
-const KEY = 'home-tools-invoice';
-const VAT = 0.14;
-const form = document.getElementById('add');
-const rows = document.getElementById('rows');
-const money = n => n.toLocaleString('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-// ---------- saved state: { number, items: [{ name, qty, price }] } ----------
-function load() {
-  try {
-    const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && Array.isArray(s.items) && Number.isInteger(s.number)) return s;
-  } catch {}
-  return { number: 1, items: [] };
-}
-let invoice = load();
-function save() { try { localStorage.setItem(KEY, JSON.stringify(invoice)); } catch {} }
-
-// ---------- the table ----------
-function render() {
-  document.getElementById('number').textContent = String(invoice.number).padStart(4, '0');
-  document.getElementById('today').textContent = new Date().toLocaleDateString('ar-EG', { dateStyle: 'long' });
-  rows.innerHTML = '';
-  // money in piasters (whole numbers) so 0.1 + 0.2 never becomes 0.30000000000000004
-  let sub = 0;
-  invoice.items.forEach((it, i) => {
-    const line = Math.round(it.price * 100) * it.qty;
-    sub += line;
-    const tr = rows.insertRow();
-    tr.insertCell().textContent = i + 1;
-    tr.insertCell().textContent = it.name;
-    const q = tr.insertCell(); q.textContent = it.qty; q.className = 'num';
-    const p = tr.insertCell(); p.textContent = money(it.price); p.className = 'num';
-    const l = tr.insertCell(); l.textContent = money(line / 100); l.className = 'num';
-    const d = tr.insertCell(); d.className = 'no-print';
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'del'; b.textContent = 'احذف';
-    b.setAttribute('aria-label', 'احذف ' + it.name);
-    b.addEventListener('click', () => { invoice.items.splice(i, 1); save(); render(); });
-    d.append(b);
-  });
-  const vat = Math.round(sub * VAT);
-  document.getElementById('sub').textContent = money(sub / 100);
-  document.getElementById('vat').textContent = money(vat / 100);
-  document.getElementById('total').textContent = money((sub + vat) / 100);
-  document.getElementById('empty').hidden = invoice.items.length > 0;
-}
-
-// ---------- add an item, the error next to its field ----------
-form.addEventListener('submit', e => {
-  e.preventDefault();
-  let first = null;
-  for (const f of form.elements) {
-    // the submit button is in form.elements too, and willValidate is true for it: only fields that have an error line
-    const err = document.getElementById(f.id + '-err');
-    if (!f.willValidate || !err) continue;
-    const ok = f.checkValidity();
-    f.setAttribute('aria-invalid', String(!ok));
-    err.textContent = ok ? '' : f.validationMessage;
-    if (!ok && !first) first = f;
-  }
-  if (first) { first.focus(); return; }
-  invoice.items.push({ name: form.item.value.trim(), qty: form.qty.valueAsNumber, price: form.price.valueAsNumber });
-  save();
-  render();
-  form.reset();
-  form.item.focus();
-});
-
-document.getElementById('print').addEventListener('click', () => print());
-document.getElementById('fresh').addEventListener('click', () => {
-  if (invoice.items.length && !confirm('تبدأ فاتورة جديدة؟ الحالية هتتمسح من الشاشة.')) return;
-  invoice = { number: invoice.number + 1, items: [] };
-  save();
-  render();
-});
-render();
-~~~
-
-~~~view 640 900 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فاتورة: أدوات البيت</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
-main { max-width: 820px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
-
-.shop { display: flex; gap: 12px; align-items: center; margin-block-end: 16px; }
-.shop h1 { margin: 0; font-size: 22px; }
-.shop p { margin: 0; color: #57534e; }
-
-form { display: grid; grid-template-columns: 1fr; gap: 10px; align-items: start; margin-block-end: 16px; padding: 12px; border-radius: 12px; background: #fafaf9; }
-@media (min-width: 640px) { form { grid-template-columns: 2fr 1fr 1fr auto; } form button { margin-block-start: 26px; } }
-.field { display: grid; gap: 4px; min-width: 0; }
-label { font-weight: 600; }
-input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
-[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
-.err { min-height: 1.2em; color: #b91c1c; font-size: 13px; }
-button { font: inherit; font-weight: 700; padding: 8px 16px; border: 0; border-radius: 8px; background: #b45309; color: white; cursor: pointer; }
-
-table { width: 100%; border-collapse: collapse; }
-caption { text-align: start; font-weight: 700; padding-block-end: 6px; }
-th, td { padding: 8px 10px; text-align: start; border-block-end: 1px solid #e7e5e4; }
-thead th { background: #b45309; color: white; }
-.num { text-align: end; font-variant-numeric: tabular-nums; }
-tfoot th { text-align: end; font-weight: 600; }
-.grand th, .grand td { font-size: 18px; font-weight: 800; border-block-start: 2px solid #1c1917; }
-.del { padding: 4px 10px; background: transparent; color: #b91c1c; border: 1px solid #fca5a5; }
-.empty { color: #78716c; }
-.actions { display: flex; gap: 8px; margin-block-start: 16px; }
-.actions #fresh { background: white; color: #b45309; border: 1px solid #b45309; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* ---------- the paper ---------- */
-@page {
-  size: A4;
-  margin: 12mm;
-  @bottom-center { content: "صفحة " counter(page) " من " counter(pages); font: 10px system-ui, sans-serif; color: #57534e; }
-}
-@media print {
-  body { padding: 0; background: white; }
-  main { max-width: none; padding: 0; border-radius: 0; }
-  .no-print, .empty { display: none !important; }
-  /* thead and tfoot repeat on every page by default (table-header-group / table-footer-group); a row never splits */
-  tr { break-inside: avoid; }
-  /* without this the browser drops background colors to save ink: the header row and the logo would print white */
-  thead th, .logo { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-}
-</style>
-</head>
-<body>
-<main>
-  <header class="shop">
-    <svg class="logo" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#b45309"/><path d="M10 28V16l10-7 10 7v12H24v-7h-8v7z" fill="white"/></svg>
-    <div>
-      <h1>أدوات البيت</h1>
-      <p>فاتورة رقم <b id="number"></b> · <span id="today"></span></p>
-    </div>
-  </header>
-
-  <form id="add" class="no-print" novalidate>
-    <div class="field name">
-      <label for="item">الصنف</label>
-      <input id="item" name="item" required maxlength="60" aria-describedby="item-err">
-      <span class="err" id="item-err"></span>
-    </div>
-    <div class="field">
-      <label for="qty">الكمية</label>
-      <input id="qty" name="qty" type="number" min="1" step="1" value="1" required aria-describedby="qty-err">
-      <span class="err" id="qty-err"></span>
-    </div>
-    <div class="field">
-      <label for="price">سعر الوحدة</label>
-      <input id="price" name="price" type="number" min="0.01" step="0.01" required aria-describedby="price-err">
-      <span class="err" id="price-err"></span>
-    </div>
-    <button>زوّد</button>
-  </form>
-
-  <table>
-    <caption>الأصناف</caption>
-    <thead>
-      <tr><th scope="col">#</th><th scope="col">الصنف</th><th scope="col" class="num">الكمية</th><th scope="col" class="num">السعر</th><th scope="col" class="num">المجموع</th><th scope="col" class="no-print"><span class="visually-hidden">حذف</span></th></tr>
-    </thead>
-    <tbody id="rows"></tbody>
-    <tfoot>
-      <tr><th scope="row" colspan="4">قبل الضريبة</th><td class="num" id="sub"></td><td class="no-print"></td></tr>
-      <tr><th scope="row" colspan="4">ضريبة ١٤٪</th><td class="num" id="vat"></td><td class="no-print"></td></tr>
-      <tr class="grand"><th scope="row" colspan="4">الإجمالي</th><td class="num" id="total"></td><td class="no-print"></td></tr>
-    </tfoot>
-  </table>
-  <p id="empty" class="empty">الفاتورة لسه فاضية. زوّد أول صنف من فوق.</p>
-
-  <div class="actions no-print">
-    <button type="button" id="print">اطبع</button>
-    <button type="button" id="fresh">فاتورة جديدة</button>
-  </div>
-</main>
-<script>
-const KEY = 'home-tools-invoice';
-const VAT = 0.14;
-const form = document.getElementById('add');
-const rows = document.getElementById('rows');
-const money = n => n.toLocaleString('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-// ---------- saved state: { number, items: [{ name, qty, price }] } ----------
-function load() {
-  try {
-    const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && Array.isArray(s.items) && Number.isInteger(s.number)) return s;
-  } catch {}
-  return { number: 7, items: [{ name: "مقشة", qty: 2, price: 45 }, { name: "جردل", qty: 1, price: 60 }, { name: "ممسحة", qty: 1, price: 85.5 }, { name: "صابون سايل", qty: 3, price: 32.75 }] };
-}
-let invoice = load();
-function save() { try { localStorage.setItem(KEY, JSON.stringify(invoice)); } catch {} }
-
-// ---------- the table ----------
-function render() {
-  document.getElementById('number').textContent = String(invoice.number).padStart(4, '0');
-  document.getElementById('today').textContent = new Date().toLocaleDateString('ar-EG', { dateStyle: 'long' });
-  rows.innerHTML = '';
-  // money in piasters (whole numbers) so 0.1 + 0.2 never becomes 0.30000000000000004
-  let sub = 0;
-  invoice.items.forEach((it, i) => {
-    const line = Math.round(it.price * 100) * it.qty;
-    sub += line;
-    const tr = rows.insertRow();
-    tr.insertCell().textContent = i + 1;
-    tr.insertCell().textContent = it.name;
-    const q = tr.insertCell(); q.textContent = it.qty; q.className = 'num';
-    const p = tr.insertCell(); p.textContent = money(it.price); p.className = 'num';
-    const l = tr.insertCell(); l.textContent = money(line / 100); l.className = 'num';
-    const d = tr.insertCell(); d.className = 'no-print';
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'del'; b.textContent = 'احذف';
-    b.setAttribute('aria-label', 'احذف ' + it.name);
-    b.addEventListener('click', () => { invoice.items.splice(i, 1); save(); render(); });
-    d.append(b);
-  });
-  const vat = Math.round(sub * VAT);
-  document.getElementById('sub').textContent = money(sub / 100);
-  document.getElementById('vat').textContent = money(vat / 100);
-  document.getElementById('total').textContent = money((sub + vat) / 100);
-  document.getElementById('empty').hidden = invoice.items.length > 0;
-}
-
-// ---------- add an item, the error next to its field ----------
-form.addEventListener('submit', e => {
-  e.preventDefault();
-  let first = null;
-  for (const f of form.elements) {
-    // the submit button is in form.elements too, and willValidate is true for it: only fields that have an error line
-    const err = document.getElementById(f.id + '-err');
-    if (!f.willValidate || !err) continue;
-    const ok = f.checkValidity();
-    f.setAttribute('aria-invalid', String(!ok));
-    err.textContent = ok ? '' : f.validationMessage;
-    if (!ok && !first) first = f;
-  }
-  if (first) { first.focus(); return; }
-  invoice.items.push({ name: form.item.value.trim(), qty: form.qty.valueAsNumber, price: form.price.valueAsNumber });
-  save();
-  render();
-  form.reset();
-  form.item.focus();
-});
-
-document.getElementById('print').addEventListener('click', () => print());
-document.getElementById('fresh').addEventListener('click', () => {
-  if (invoice.items.length && !confirm('تبدأ فاتورة جديدة؟ الحالية هتتمسح من الشاشة.')) return;
-  invoice = { number: invoice.number + 1, items: [] };
-  save();
-  render();
-});
-render();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** ورقة بيضا فيها لوجو بني صغير (بيت) واسم المحل ورقم الفاتورة والتاريخ، وتحتها فورم من ٣ حقول وزرار «زوّد»، وبعدين الجدول بصف عناوين بني والأصناف، وتحت: قبل الضريبة، والضريبة ١٤٪، والإجمالي بخط تقيل. (المعاينة فيها ٤ أصناف مثال. عندك هتبدأ فاضية.)
-
-**الحساب:**
-- **الفلوس بالقروش:** [[Math.round(price * 100) * qty]] وبنقسم على 100 في الآخر بس. لأن الكسور في JavaScript مش مظبوطة: [[0.1 + 0.2]] = [[0.30000000000000004]]، ومع فاتورة طويلة الفرق بيبان في آخر رقم.
-- **[[toLocaleString('ar-EG', { minimumFractionDigits: 2 })]]:** أرقام عربي و رقمين بعد العلامة دايمًا ([[٠٫٤٠]] مش [[٠٫٤]]).
-
-**الأخطاء جنب الحقل:** [[min="1"]] و [[step="1"]] للكمية، و [[min="0.01"]] للسعر، و [[novalidate]] على الفورم عشان رسالة كل حقل تظهر في السطر اللي تحته ([[aria-describedby]] بيربطهم) بدل فقاعة واحدة.
-
-**باج لقيته في حلي وانا بجرّب:** النسخة الأولى كانت بتلف على كل [[form.elements]] وتكتب الرسالة في [[document.getElementById(f.id + '-err')]]. زرار «زوّد» نفسه جوه [[form.elements]] و [[willValidate]] بتاعه [[true]]، وملوش id، فـ [[getElementById('-err')]] رجّع [[null]] والـ handler وقع بـ [[Cannot set properties of null]]. ولأن [[preventDefault()]] كان أول سطر، الصفحة مكانتش بتعمل أي حاجة ومفيش رسالة للمستخدم. الحل: اتأكد إن العنصر ليه سطر خطأ قبل ما تكتب فيه.
-
-**الحفظ:** الفاتورة كلها ([[{ number, items }]]) بتتحفظ بعد كل تغيير، وبترجع مع الـ refresh. و [[load()]] بتتأكد من الشكل ([[Array.isArray]] و [[Number.isInteger]]) قبل ما تصدّق البيانات، عشان لو حد عدّلها من DevTools بإيده الصفحة متقعش. و «فاتورة جديدة» بتزوّد الرقم.
-
-**الحذف:** كل زرار [[aria-label="احذف مقشة"]]، لأن «احذف» عشرين مرة في لستة الأزرار ملهاش معنى.
-
-**الورق:**
-- [[@page { size: A4; margin: 12mm; }]]، وجواها [[@bottom-center]] فيه [[counter(page)]] و [[counter(pages)]]: رقم الصفحة من عدد الصفحات تحت كل ورقة. (Chrome بيدعم مربعات هامش الصفحة دي من نسخة 131.)
-- [[thead]] و [[tfoot]] بيتكرروا في كل ورقة لوحدهم: ده سلوكهم الافتراضي في الطباعة ([[table-header-group]] و [[table-footer-group]]). يعني متكتبش [[display: block]] عليهم.
-- [[tr { break-inside: avoid; }]]: الصف ميتقسمش نصه في ورقة ونصه في اللي بعدها.
-- [[.no-print]]: الفورم والأزرار وعمود الحذف مالهمش لازمة في الورق.
-- [[print-color-adjust: exact]] على صف العناوين واللوجو: نافذة الطباعة في Chrome فيها خيار «Background graphics» مقفول من الأول، والمتصفح بيشيل الخلفيات عشان الحبر. الـ property دي بتقول للمتصفح إن اللون ده جزء من المعنى (من وثائق MDN). ملحوظة: في اختباري بـ [[--print-to-pdf]] (Chrome من غير شاشة) الخلفية اتطبعت في الحالتين، فجرّب انت من نافذة الطباعة الحقيقية.
-
-~~~text الناتج (Chrome)
-كمية 0 وسعر -5          Value must be greater than or equal to 1.   /   Value must be greater than or equal to 0.01.
-                        الـ focus راح لـ #qty، ومفيش صف اتزوّد
-الصنف فاضي              Please fill out this field.
-مقشة 2 × 0.1 + جردل 1 × 0.2
-                        قبل الضريبة ٠٫٤٠   الضريبة ٠٫٠٦   الإجمالي ٠٫٤٦
-زرار الحذف               aria-label="احذف مقشة"
-localStorage            {"number":1,"items":[{"name":"مقشة","qty":2,"price":0.1},{"name":"جردل","qty":1,"price":0.2}]}
-
-الطباعة بـ 40 صنف (--print-to-pdf مرتين):
-  ورقتين A4 (595 × 842 نقطة)
-  ورقة 1: «صفحة 1 من 2»، وفيها صف العناوين، وتحت: قبل الضريبة والضريبة والإجمالي
-  ورقة 2: «صفحة 2 من 2»، وأولها صف العناوين تاني، وفي الآخر الإجمالي تاني
-  الـ 40 صنف موجودين، و «احذف» و «زوّد» و «اطبع» و «فاتورة جديدة»: 0 مرة في الورق
-  الطبعتين: نفس النص بالظبط (الملفين بيختلفوا في CreationDate بس)
-axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
-~~~` },
-        { lvl: 'فكرة', dir: "my-tracker", t: R`جدول لحاجة بتتابعها انت`, what: R`مصاريفك، أو ماتشات فريقك، أو مذاكرتك: جدول بياناته حقيقية من عندك، بترتيب وبحث وصفحة طباعة. انت اللي تحدد الأعمدة.`, done: R`فيه ٣٠ صف حقيقي على الأقل، والترتيب والبحث في الـ URL، والطباعة نضيفة، وواحد صاحبك فتح اللينك وشاف نفس الترتيب.`, ext: R`زوّد رسم بياني بسيط بـ SVG أو CSS (أعمدة بـ [[height]] من متغير) جنب الجدول.`, sol: R`نسخة نموذجية: مصاريف شهر واحد (٣٠ بند، والأرقام متخيلة). انت هتحط بياناتك الحقيقية مكان [[DATA]].
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مصاريفي في نوفمبر</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; background: #f0fdf4; color: #14532d; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
-  main { max-width: 720px; margin-inline: auto; }
-  h1 { margin: 0 0 4px; }
-  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-block: 12px; }
-  .bar label { display: grid; gap: 2px; font-weight: 600; flex: 1 1 200px; }
-  input { font: inherit; padding: 8px 10px; border: 1px solid #86efac; border-radius: 8px; }
-  button { font: inherit; font-weight: 700; padding: 8px 14px; border: 1px solid #15803d; border-radius: 8px; background: white; color: #15803d; }
-  table { width: 100%; border-collapse: collapse; background: white; }
-  th, td { padding: 6px 10px; text-align: start; border-block-end: 1px solid #dcfce7; }
-  thead th { background: #15803d; color: white; }
-  thead button { all: unset; cursor: pointer; }
-  th[aria-sort="ascending"] button::after { content: " ▲"; }
-  th[aria-sort="descending"] button::after { content: " ▼"; }
-  .num { text-align: end; font-variant-numeric: tabular-nums; }
-  tfoot td, tfoot th { font-weight: 800; border-block-start: 2px solid #14532d; }
-  @page { size: A4; margin: 12mm; }
-  @media print {
-    body { background: white; padding: 0; }
-    .bar { display: none; }
-    thead th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-    tr { break-inside: avoid; }
-  }
-</style>
-</head>
-<body>
-<main>
-  <h1>مصاريفي في نوفمبر</h1>
-  <div class="bar">
-    <label>دوّر في البند أو القسم <input id="q" type="search" autocomplete="off"></label>
-    <button type="button" id="print">اطبع</button>
-  </div>
-  <table>
-    <thead><tr>
-      <th scope="col" data-key="day"><button type="button">اليوم</button></th>
-      <th scope="col" data-key="what"><button type="button">البند</button></th>
-      <th scope="col" data-key="kind"><button type="button">القسم</button></th>
-      <th scope="col" data-key="amount" class="num"><button type="button">المبلغ</button></th>
-    </tr></thead>
-    <tbody id="rows"></tbody>
-    <tfoot><tr><th scope="row" colspan="3" id="label">المجموع</th><td class="num" id="sum"></td></tr></tfoot>
-  </table>
-</main>
-<script>
-  // my real month, 30 lines (the amounts are made up for the example)
-  const DATA = [
-    [1,'مواصلات الشغل','مواصلات',45],[1,'فطار','أكل',35],[2,'شحن موبايل','فواتير',100],[3,'خضار وفاكهة','بيت',180],
-    [4,'مواصلات الشغل','مواصلات',45],[5,'غدا مع أصحابي','أكل',150],[6,'كتاب برمجة','تعليم',320],[7,'مواصلات الشغل','مواصلات',45],
-    [8,'فاتورة النت','فواتير',350],[9,'قهوة','أكل',40],[10,'جيم (شهر)','صحة',500],[11,'مواصلات الشغل','مواصلات',45],
-    [12,'هدية عيد ميلاد','هدايا',250],[13,'فطار','أكل',35],[14,'سوبر ماركت','بيت',420],[15,'كورس أونلاين','تعليم',600],
-    [16,'مواصلات الشغل','مواصلات',45],[17,'أدوية','صحة',210],[18,'عشا برّه','أكل',260],[19,'فاتورة الكهربا','فواتير',280],
-    [20,'مواصلات الشغل','مواصلات',45],[21,'قهوة','أكل',40],[22,'تصليح جزمة','بيت',60],[23,'سينما','خروج',180],
-    [24,'مواصلات الشغل','مواصلات',45],[25,'سوبر ماركت','بيت',390],[26,'فطار','أكل',35],[27,'تاكسي متأخر','مواصلات',120],
-    [28,'شحن موبايل','فواتير',100],[30,'خروجة آخر الشهر','خروج',300],
-  ].map(([day, what, kind, amount]) => ({ day, what, kind, amount }));
-  const heads = [...document.querySelectorAll('th[data-key]')];
-  const q = document.getElementById('q');
-
-  function state() {
-    const p = new URLSearchParams(location.search);
-    return { q: p.get('q') || '', sort: p.get('sort') || 'day', dir: p.get('dir') === 'desc' ? 'desc' : 'asc' };
-  }
-  function go(s, push) {
-    const p = new URLSearchParams();
-    if (s.q) p.set('q', s.q);
-    p.set('sort', s.sort); p.set('dir', s.dir);
-    history[push ? 'pushState' : 'replaceState'](null, '', '?' + p);
-    render();
-  }
-  function render() {
-    const s = state();
-    const list = DATA.filter(r => (r.what + ' ' + r.kind).includes(s.q))
-      .sort((a, b) => { const x = a[s.sort], y = b[s.sort]; const c = typeof x === 'number' ? x - y : x.localeCompare(y, 'ar'); return s.dir === 'asc' ? c : -c; });
-    const tb = document.getElementById('rows'); tb.innerHTML = '';
-    for (const r of list) {
-      const tr = tb.insertRow();
-      tr.insertCell().textContent = r.day + ' نوفمبر';
-      tr.insertCell().textContent = r.what;
-      tr.insertCell().textContent = r.kind;
-      const a = tr.insertCell(); a.textContent = r.amount.toLocaleString('ar-EG') + ' ج'; a.className = 'num';
-    }
-    document.getElementById('label').textContent = 'المجموع (' + list.length + ' بند)';
-    document.getElementById('sum').textContent = list.reduce((n, r) => n + r.amount, 0).toLocaleString('ar-EG') + ' ج';
-    for (const h of heads) h.dataset.key === s.sort ? h.setAttribute('aria-sort', s.dir === 'asc' ? 'ascending' : 'descending') : h.removeAttribute('aria-sort');
-    if (document.activeElement !== q) q.value = s.q;
-  }
-  for (const h of heads) h.querySelector('button').addEventListener('click', () => {
-    const s = state();
-    go({ ...s, sort: h.dataset.key, dir: s.sort === h.dataset.key && s.dir === 'asc' ? 'desc' : 'asc' }, true);
-  });
-  q.addEventListener('input', () => go({ ...state(), q: q.value.trim() }, false));
-  document.getElementById('print').addEventListener('click', () => print());
-  window.addEventListener('popstate', render);
-  render();
-</script>
-</body>
-</html>
-~~~
-
-~~~view 640 760 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مصاريفي في نوفمبر</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; padding: 16px; background: #f0fdf4; color: #14532d; font: 15px/1.5 system-ui, "Segoe UI", Tahoma, sans-serif; }
-  main { max-width: 720px; margin-inline: auto; }
-  h1 { margin: 0 0 4px; }
-  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-block: 12px; }
-  .bar label { display: grid; gap: 2px; font-weight: 600; flex: 1 1 200px; }
-  input { font: inherit; padding: 8px 10px; border: 1px solid #86efac; border-radius: 8px; }
-  button { font: inherit; font-weight: 700; padding: 8px 14px; border: 1px solid #15803d; border-radius: 8px; background: white; color: #15803d; }
-  table { width: 100%; border-collapse: collapse; background: white; }
-  th, td { padding: 6px 10px; text-align: start; border-block-end: 1px solid #dcfce7; }
-  thead th { background: #15803d; color: white; }
-  thead button { all: unset; cursor: pointer; }
-  th[aria-sort="ascending"] button::after { content: " ▲"; }
-  th[aria-sort="descending"] button::after { content: " ▼"; }
-  .num { text-align: end; font-variant-numeric: tabular-nums; }
-  tfoot td, tfoot th { font-weight: 800; border-block-start: 2px solid #14532d; }
-  @page { size: A4; margin: 12mm; }
-  @media print {
-    body { background: white; padding: 0; }
-    .bar { display: none; }
-    thead th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-    tr { break-inside: avoid; }
-  }
-</style>
-</head>
-<body>
-<main>
-  <h1>مصاريفي في نوفمبر</h1>
-  <div class="bar">
-    <label>دوّر في البند أو القسم <input id="q" type="search" autocomplete="off"></label>
-    <button type="button" id="print">اطبع</button>
-  </div>
-  <table>
-    <thead><tr>
-      <th scope="col" data-key="day"><button type="button">اليوم</button></th>
-      <th scope="col" data-key="what"><button type="button">البند</button></th>
-      <th scope="col" data-key="kind"><button type="button">القسم</button></th>
-      <th scope="col" data-key="amount" class="num"><button type="button">المبلغ</button></th>
-    </tr></thead>
-    <tbody id="rows"></tbody>
-    <tfoot><tr><th scope="row" colspan="3" id="label">المجموع</th><td class="num" id="sum"></td></tr></tfoot>
-  </table>
-</main>
-<script>
-  // my real month, 30 lines (the amounts are made up for the example)
-  const DATA = [
-    [1,'مواصلات الشغل','مواصلات',45],[1,'فطار','أكل',35],[2,'شحن موبايل','فواتير',100],[3,'خضار وفاكهة','بيت',180],
-    [4,'مواصلات الشغل','مواصلات',45],[5,'غدا مع أصحابي','أكل',150],[6,'كتاب برمجة','تعليم',320],[7,'مواصلات الشغل','مواصلات',45],
-    [8,'فاتورة النت','فواتير',350],[9,'قهوة','أكل',40],[10,'جيم (شهر)','صحة',500],[11,'مواصلات الشغل','مواصلات',45],
-    [12,'هدية عيد ميلاد','هدايا',250],[13,'فطار','أكل',35],[14,'سوبر ماركت','بيت',420],[15,'كورس أونلاين','تعليم',600],
-    [16,'مواصلات الشغل','مواصلات',45],[17,'أدوية','صحة',210],[18,'عشا برّه','أكل',260],[19,'فاتورة الكهربا','فواتير',280],
-    [20,'مواصلات الشغل','مواصلات',45],[21,'قهوة','أكل',40],[22,'تصليح جزمة','بيت',60],[23,'سينما','خروج',180],
-    [24,'مواصلات الشغل','مواصلات',45],[25,'سوبر ماركت','بيت',390],[26,'فطار','أكل',35],[27,'تاكسي متأخر','مواصلات',120],
-    [28,'شحن موبايل','فواتير',100],[30,'خروجة آخر الشهر','خروج',300],
-  ].map(([day, what, kind, amount]) => ({ day, what, kind, amount }));
-  const heads = [...document.querySelectorAll('th[data-key]')];
-  const q = document.getElementById('q');
-
-  function state() {
-    const p = new URLSearchParams(location.search);
-    return { q: p.get('q') || '', sort: p.get('sort') || 'day', dir: p.get('dir') === 'desc' ? 'desc' : 'asc' };
-  }
-  function go(s, push) {
-    const p = new URLSearchParams();
-    if (s.q) p.set('q', s.q);
-    p.set('sort', s.sort); p.set('dir', s.dir);
-    history[push ? 'pushState' : 'replaceState'](null, '', '?' + p);
-    render();
-  }
-  function render() {
-    const s = state();
-    const list = DATA.filter(r => (r.what + ' ' + r.kind).includes(s.q))
-      .sort((a, b) => { const x = a[s.sort], y = b[s.sort]; const c = typeof x === 'number' ? x - y : x.localeCompare(y, 'ar'); return s.dir === 'asc' ? c : -c; });
-    const tb = document.getElementById('rows'); tb.innerHTML = '';
-    for (const r of list) {
-      const tr = tb.insertRow();
-      tr.insertCell().textContent = r.day + ' نوفمبر';
-      tr.insertCell().textContent = r.what;
-      tr.insertCell().textContent = r.kind;
-      const a = tr.insertCell(); a.textContent = r.amount.toLocaleString('ar-EG') + ' ج'; a.className = 'num';
-    }
-    document.getElementById('label').textContent = 'المجموع (' + list.length + ' بند)';
-    document.getElementById('sum').textContent = list.reduce((n, r) => n + r.amount, 0).toLocaleString('ar-EG') + ' ج';
-    for (const h of heads) h.dataset.key === s.sort ? h.setAttribute('aria-sort', s.dir === 'asc' ? 'ascending' : 'descending') : h.removeAttribute('aria-sort');
-    if (document.activeElement !== q) q.value = s.q;
-  }
-  for (const h of heads) h.querySelector('button').addEventListener('click', () => {
-    const s = state();
-    go({ ...s, sort: h.dataset.key, dir: s.sort === h.dataset.key && s.dir === 'asc' ? 'desc' : 'asc' }, true);
-  });
-  q.addEventListener('input', () => go({ ...state(), q: q.value.trim() }, false));
-  document.getElementById('print').addEventListener('click', () => print());
-  window.addEventListener('popstate', render);
-  render();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** خلفية خضرا فاتحة، وحقل بحث وزرار «اطبع»، وجدول بصف عناوين أخضر، وفي آخره سطر «المجموع (30 بند)» والرقم. دوس «المبلغ» مرتين والأغلى بيطلع فوق. اكتب «مواصلات» والمجموع بيتحسب للمواصلات بس.
-
-**ليه كده:**
-- **كل حاجة بتتغيّر بتتكتب في الـ URL:** البحث بـ [[replaceState]] والترتيب بـ [[pushState]]، والقراية من الـ URL بس ([[state()]]). فاللينك اللي تبعته لصاحبك بيفتح عنده بنفس البحث والترتيب.
-- **المجموع للي ظاهر بس:** بيتحسب من [[list]] بعد الفلتر، مش من كل البيانات. ده اللي بيخلي الجدول يجاوب على سؤال حقيقي: «صرفت كام على المواصلات؟».
-- **الطباعة:** البحث والزرار مخفيين، والعناوين بلونها، والصف ميتقسمش.
-- **ليه الشكل ده:** جدول واحد بيعمل حاجة واحدة كويس أحسن من dashboard كبير مش بتستخدمه. لو حسيت إنك محتاج رسم، ده الـ «خليه بتاعك».
-
-~~~text الناتج (Chrome)
-أول فتح                  30 صف، المجموع ٥٬٢٧٠ ج
-«المبلغ» مرتين            ?sort=amount&dir=desc   أول صف: 15 نوفمبر · كورس أونلاين · تعليم · ٦٠٠ ج
-كتبت «مواصلات»           ?q=مواصلات&sort=amount&dir=desc   المجموع (8 بند) = ٤٣٥ ج
-نفس اللينك في صفحة تانية   المجموع (8 بند)، وأول صف: 27 نوفمبر · تاكسي متأخر · مواصلات · ١٢٠ ج
-axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
-~~~` },
-      ],
+      t: R`HTML: معنى الكلام جوه الفقرة`,
       l: 1,
-      n: "جدول بيانات حقيقي: عناوين مربوطة بالخلايا، وبيتعرض على الموبايل، وبيترتب ويتقسم صفحات",
+      n: "عناصر صغيرة جوه السطر، كل واحد بيقول الكلمة دي إيه (مهمة، متشالة، كود، تاريخ)، مش شكلها إيه",
+      pre: [
+        { to: "css/مقدمة HTML والـ Tags", why: R`لازم تكون عارف الـ tag والـ attribute والفرق بين عنصر بياخد سطر لوحده وعنصر جوه السطر` },
+        { to: "css/semantic HTML", why: R`نفس الفكرة بس على مستوى الصفحة: العنصر بيتختار بمعناه مش بشكله` },
+      ],
+      goal: [
+        R`تختار العنصر الصح لأي كلمة جوه فقرة: [[<strong>]] للمهم، و [[<em>]] للضغطة اللي بتغيّر المعنى، و [[<mark>]] للي ليه علاقة باللي القارئ بيدوّر عليه، و [[<del>]] و [[<ins>]] للتعديل، وتعرف ليه [[<b>]] و [[<i>]] و [[<u>]] و [[<s>]] لسه موجودين ومعناهم إيه النهارده.`,
+        R`تكتب تاريخ وسعر واختصار بطريقة البني آدم يقراها والكمبيوتر يفهمها: [[<time datetime>]] و [[<data value>]] و [[<abbr title>]] و [[<dfn>]] و [[<address>]].`,
+        R`تعرض كود ومفاتيح كيبورد وناتج برنامج في صفحة: [[<code>]] و [[<pre>]] و [[<kbd>]] و [[<samp>]] و [[<var>]]، وتكتب [[&lt;]] و [[&amp;]] و [[&nbsp;]] في مكانهم.`,
+        R`تكتب H₂O و م² وعنوان على كذا سطر واسم ملف طويل من غير ما الصفحة تتكسر على الموبايل: [[<sub>]] و [[<sup>]] و [[<br>]] و [[<wbr>]] و [[<hr>]]، وتعرف [[<ruby>]] و [[<bdo>]] بيتستخدموا إمتى.`,
+        R`تثبت كل ده بقياس من المتصفح: الشكل الافتراضي من تاب Computed، والدور من تاب Accessibility، مش بالنظر.`,
+      ],
+      use: {
+        prog: R`أي نص بيتكتب لصفحة (مقال، ووصف منتج، و README، ورسالة خطأ) فيه كلام مهم وكود وتواريخ. ولما تتعلم CSS هتلاقي إن العناصر دي هي اللي بتمسكها عشان تلوّن وتنسّق.`,
+        work: R`محرر النصوص في أي لوحة تحكم (زرار B و I) بيطلّع [[<strong>]] و [[<em>]]. وصفحات الأسعار فيها [[<s>]] و [[<small>]]، والمدونات فيها [[<time>]]، ووثائق أي مكتبة مليانة [[<code>]] و [[<kbd>]] و [[<pre>]].`,
+        cs: R`الفصل بين المعنى (HTML) والشكل (CSS)، وإزاي نفس النص بيتقدّم لتلات قرّاء: عين، وقارئ شاشة، وبرنامج.`,
+      },
+      projects: [
+        { lvl: 'صغير', dir: "lab-sign", t: R`لافتة تحذير لباب معمل`, what: R`صفحة واحدة بـ HTML بس للافتة على باب معمل كيميا في مدرسة متخيلة: عنوان، وتحذير أساسي وجواه حتة أخطر (درجتين من [[strong]])، وجملة فيها ضغطة على كلمة ([[em]])، واسم مادة بالإنجليزي ([[i]] بـ [[lang]])، واسمين جهازين بـ [[b]]، وسطر صغير في الآخر بمين المسؤول ([[small]]). من درسي «strong و em» و «mark و small و del و ins».`, done: R`في تاب Accessibility: دور [[strong]] مرتين (واحد جوه التاني) ودور [[emphasis]] مرة. وفي تاب Computed: الـ strong الداخلي وزنه 900 والـ small حجمه 13.33px. ولو شلت كل الـ tags ولسه بتفهم مين التحذير (لأن كلمة «تحذير» مكتوبة)، يبقى صح.`, sol: R`~~~live 280 330 اللافتة
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معمل الكيميا: تعليمات الدخول</title>
+</head>
+<body>
+<main>
+  <h1>معمل الكيميا</h1>
+  <p><strong>تحذير: ممنوع الدخول من غير نضارة وبالطو. <strong>وممنوع الأكل والشرب نهائي.</strong></strong></p>
+  <p>اغسل إيدك <em>قبل</em> ما تخرج، مش بعد ما توصل الفصل.</p>
+  <p>الزجاجة الزرقا فيها <i lang="en">copper sulfate</i>: متتلمسش بالإيد.</p>
+  <p>مكان <b>طفاية الحريق</b> و <b>دش الطوارئ</b> جنب الباب على طول.</p>
+  <p><small>المسؤول: أ. هشام، أوضة ١٢.</small></p>
+</main>
+</body>
+</html>
+~~~
+
+**ليه كده:**
+
+- التحذير كله [[strong]] (خطورة)، ومنع الأكل [[strong]] تاني جواه: في معمل كيميا ده أخطر بند، والمواصفة بتقول إن كل [[strong]] زيادة درجة أهمية أعلى.
+- «قبل» عليها [[em]]: هي اللي بتفرّق المعنى، والجملة مكتوب فيها المقابل («مش بعد»).
+- اسم المادة [[i]] بـ [[lang="en"]]: مصطلح بلغة تانية.
+- الطفاية والدش [[b]]: حاجتين عايز العين تلقطهم، من غير ما يبقوا «تحذير».
+- المسؤول [[small]]: ملحوظة جانبية قصيرة.
+- كلمة «تحذير» مكتوبة بالحروف: المعنى واصل حتى للي مش شايف التُّقل.
+
+**الغلطة الشائعة:** اللافتة كلها [[strong]] «عشان هي تحذير». ساعتها مكان الطفاية بنفس وزن منع الأكل، ومحدش عارف يبدأ منين.
+
+~~~text الناتج (Chrome 157)
+strong: 2 (700 ثم 900)   em: 1   i: 1 (lang = en)   b: 2   small: 1 (13.3333px)
+الأدوار: main ، heading ، strong ، strong ، emphasis
+~~~` },
+        { lvl: 'صغير', dir: "shortcuts-card", t: R`كارت اختصارات كيبورد`, what: R`صفحة «اختصارات محرر قلم» (محرر نصوص متخيل): عنوان، وخمس اختصارات كل واحد في فقرة: المفاتيح بـ [[kbd]] جوه [[kbd]]، وبيعمل إيه. وسطر فيه أمر بيتكتب ([[kbd]]) واسم ملف الإعدادات ([[code]])، وسطر فيه الرسالة اللي بتطلع لما الحفظ ينجح ([[samp]])، واختصار [[abbr]] مفكوك. من درسي «code و pre و kbd» و «abbr و dfn و time». (لما تتعلم القوايم في الوحدة الجاية، الخمس فقرات هيبقوا قايمة.)`, done: R`كل اختصار مكتوب [[<kbd><kbd>…</kbd>+<kbd>…</kbd></kbd>]]، والصفحة فيها ١٧ [[kbd]] و [[code]] واحد و [[samp]] واحد، وكل النص الإنجليزي اللي جواهم بخط monospace حجمه 13px، وعلى عرض 360 مفيش scroll أفقي.`, sol: R`~~~live 420 400 كارت الاختصارات
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختصارات محرر قلم</title>
+</head>
+<body>
+<main>
+  <h1>اختصارات «قلم»</h1>
+  <p><kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd> حفظ الملف.</p>
+  <p><kbd><kbd>Ctrl</kbd>+<kbd>Z</kbd></kbd> تراجع عن آخر تعديل.</p>
+  <p><kbd><kbd>Ctrl</kbd>+<kbd>F</kbd></kbd> بحث في الملف.</p>
+  <p><kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></kbd> قايمة الأوامر.</p>
+  <p><kbd><kbd>Alt</kbd>+<kbd>↑</kbd></kbd> حرّك السطر لفوق.</p>
+  <hr>
+  <p>من قايمة الأوامر اكتب <kbd>open settings</kbd> عشان تفتح الملف <code>qalam.json</code>.</p>
+  <p>لما الحفظ ينجح هتشوف تحت: <samp>Saved</samp></p>
+  <p>الاختصارات دي لنظام Windows. على macOS (<abbr>Mac</abbr>) بدّل Ctrl بـ Cmd.</p>
+</main>
+</body>
+</html>
+~~~
+
+**ليه كده:**
+
+- [[kbd]] جوه [[kbd]]: الخارجي الاختصار كله، وكل داخلي مفتاح واحد (مثال المواصفة). لما تتعلم CSS هتقدر تدّي المفاتيح الداخلية شكل زرار، والخارجي لأ.
+- علامة [[+]] برّه المفاتيح الداخلية: هي مش مفتاح بيتداس.
+- [[open settings]] [[kbd]] مش [[code]]: المستخدم هو اللي هيكتبها.
+- [[qalam.json]] اسم ملف، يعني [[code]]. و [[Saved]] البرنامج هو اللي بيعرضها، يعني [[samp]].
+- [[hr]]: فوقه الاختصارات وتحته ملحوظات عن الاستخدام. الموضوع اتغيّر ومفيش عنوان فرعي.
+- «Mac» اختصار مفكوك قبله في النص («macOS»)، فالـ [[abbr]] من غير [[title]].
+
+**الغلطة الشائعة:** [[<kbd>Ctrl+S</kbd>]] واحدة لكل حاجة. مش غلط (المواصفة بتقول الدقة مش إجبارية)، بس لما تيجي ترسم كل مفتاح زرار مش هتعرف تمسكه.
+
+~~~text الناتج (Chrome 157)
+kbd: 17 (٥ خارجيين + ١١ مفتاح + أمر واحد)   code: 1   samp: 1   abbr: 1   hr: 1
+kbd و code و samp:  font-family = monospace   font-size = 13px
+عرض 360:  scrollWidth = 360
+~~~` },
+        { lvl: 'متوسط', dir: "coffee-product", t: R`صفحة عرض منتج في متجر بن`, what: R`صفحة منتج لـ «بُن الصباح» (متجر متخيل) بـ HTML بس: اسم المنتج، وكود المنتج في [[<data value>]]، والسعر القديم [[s]] والجديد، وميعاد نهاية العرض بـ [[<time datetime>]] بفرق التوقيت، وملحوظة [[small]] عن الضريبة والشحن، والوزن بـ [[&nbsp;]] بين الرقم والوحدة، وجملة عن درجة التحميص فيها حاشية بـ [[sup]] ولينك، وزرار «أضف للسلة»، وفي الـ [[footer]] معلومات التواصل في [[address]]. من دروس الوحدة كلها ومن «a و button».`, done: R`[[document.querySelector('time').dateTime]] بيرجّع تاريخ فيه [[+02:00]]، و [[document.querySelector('data').value]] بيرجّع الكود، والسعر القديم دوره [[deletion]]، ولينك الحاشية بينزل للملحوظة، والـ [[address]] جوه [[footer]] وفيه لينك [[tel:]]، وعلى 360 مفيش scroll أفقي و «٢٥٠ جم» مبتتفصلش على سطرين.`, sol: R`~~~live 420 560 صفحة المنتج
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بن يمني محمّص | بُن الصباح</title>
+</head>
+<body>
+<main>
+  <h1>بن يمني محمّص</h1>
+  <p>كود المنتج: <data value="SKU-4471">٤٤٧١</data>. الوزن: ٢٥٠&nbsp;جم.</p>
+  <p>السعر قبل العرض <s>٣٢٠ جنيه</s>، ودلوقتي <strong>٢٦٠ جنيه</strong>.</p>
+  <p>العرض ساري لحد <time datetime="2026-12-31T23:59+02:00">آخر يوم في ديسمبر ٢٠٢٦</time>.</p>
+  <p><small>السعر شامل الضريبة ومش شامل الشحن.</small></p>
+  <p>تحميص وسط<sup id="ref-roast"><a href="#note-roast">[1]</a></sup>، بطعم شوكولاتة <em>خفيف</em> من غير مرارة.</p>
+  <p><button type="button">أضف للسلة</button></p>
+  <hr>
+  <p id="note-roast"><small>[1] التحميص الوسط بيخلّص عند حوالي ٢١٠ درجة. <a href="#ref-roast">ارجع</a></small></p>
+</main>
+<footer>
+  <address>
+    بُن الصباح<br>
+    <a href="tel:+200000000000" dir="ltr">+20 000 000 0000</a><br>
+    <a href="mailto:hello@example.test">hello@example.test</a>
+  </address>
+</footer>
+</body>
+</html>
+~~~
+
+**ليه كده:**
+
+- [[data]]: القارئ شايف «٤٤٧١»، وأي سكربت (سلة، أو تتبّع) يقرا [[SKU-4471]] من [[value]].
+- [[s]] مش [[del]]: السعر مبقاش ساري، محدش عدّل مستند. وجنبه «قبل العرض» بالكلام.
+- السعر الجديد [[strong]]: دي أهم معلومة في الصفحة للي بيشتري.
+- [[time]] بفرق التوقيت: نهاية العرض لحظة محددة، والزبون ممكن يكون في بلد تانية.
+- [[small]] لملحوظة الضريبة: small print بالمعنى الحرفي. وجملة قصيرة، مش فقرة شروط.
+- [[&nbsp;]]: «٢٥٠» و «جم» لو اتفرّقوا على سطرين الرقم بيتقري لوحده.
+- الحاشية [[sup]] ولينك رايح جاي. و [[hr]] قبل الحواشي.
+- [[address]] في الـ [[footer]]: معلومات التواصل مع صاحب الصفحة. ورقم التليفون [[dir="ltr"]].
+
+**الغلطة الشائعة:** [[<mark>]] على السعر الجديد «عشان يبان». [[mark]] للي ليه علاقة ببحث أو مرجع، والسعر «مهم»، يعني [[strong]].
+
+~~~text الناتج (Chrome 157)
+time.dateTime = 2026-12-31T23:59+02:00
+data.value    = SKU-4471
+s: الدور = deletion     strong: 1     small: 2     sup: 1     address: 1 (الدور = group)
+الحرف بين «٢٥٠» و «جم»: كوده 160
+عرض 360:  scrollWidth = 360
+~~~` },
+        { lvl: 'متوسط', dir: "changelog", t: R`سجل تغييرات (changelog) لتطبيق`, what: R`صفحة «إيه الجديد» لتطبيق متخيل اسمه «دفتر»: كل إصدار [[<article>]] فيه عنوان برقم الإصدار، وتاريخه بـ [[<time>]]، وكذا فقرة باللي اتغيّر. فيها أسامي إعدادات وملفات بـ [[code]]، واختصار كيبورد جديد بـ [[kbd]]، ورسالة خطأ اتصلّحت بـ [[samp]]، وتحذير بـ [[strong]] في الإصدار اللي بيكسر حاجة قديمة. وفي آخر إصدار: جملة في السجل نفسه اتصحّحت بعد النشر، والتصحيح باين بـ [[del]] و [[ins]] عليهم [[datetime]] و [[cite]]. ده شكل صفحة حقيقية في أي مشروع برمجي.`, done: R`الصفحة فيها ٣ [[article]] مترتبين من الأحدث، وكل واحد فيه [[time]] بصيغة [[YYYY-MM-DD]]، و [[del]] و [[ins]] الاتنين عليهم نفس [[datetime]]، ولو رتّبت قيم [[dateTime]] بتاعة الإصدارات أبجديًا يطلعوا مترتبين زمنيًا، وكل نص إنجليزي جوه عنصره الصح.`, sol: R`~~~live 550 640 سجل التغييرات
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إيه الجديد | دفتر</title>
+</head>
+<body>
+<main>
+  <h1>إيه الجديد في «دفتر»</h1>
+  <article>
+    <h2>الإصدار 2.0</h2>
+    <p>صدر يوم <time datetime="2026-11-15">١٥ نوفمبر ٢٠٢٦</time>.</p>
+    <p><strong>تنبيه: الإصدار ده بيغيّر مكان ملف الإعدادات.</strong> انقل <code>settings.json</code> لفولدر <code>config</code> قبل ما تحدّث.</p>
+    <p>البحث بقى بيدوّر في <del cite="/changelog-fixes.html#f3" datetime="2026-11-16">العناوين بس</del> <ins cite="/changelog-fixes.html#f3" datetime="2026-11-16">العناوين ونص الملاحظات</ins>.</p>
+  </article>
+  <article>
+    <h2>الإصدار 1.5</h2>
+    <p>صدر يوم <time datetime="2026-09-02">٢ سبتمبر ٢٠٢٦</time>.</p>
+    <p>اختصار جديد: <kbd><kbd>Ctrl</kbd>+<kbd>K</kbd></kbd> بيفتح البحث السريع.</p>
+    <p>إعداد جديد اسمه <code>autoSave</code>، قيمته الافتراضية <code>true</code>.</p>
+  </article>
+  <article>
+    <h2>الإصدار 1.4</h2>
+    <p>صدر يوم <time datetime="2026-06-20">٢٠ يونيو ٢٠٢٦</time>.</p>
+    <p>صلّحنا الخطأ <samp>Cannot save: disk is full</samp> اللي كان بيظهر والديسك فاضي.</p>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+**ليه كده:**
+
+- كل إصدار [[article]]: حتة مستقلة ليها عنوانها وتاريخها (من درس «semantic HTML»).
+- [[time]] بالتاريخ بس: يوم الإصدار مش لحظة، فمفيش وقت ولا فرق توقيت.
+- [[del]] و [[ins]] هنا مش [[s]]: دي جملة في السجل نفسه اتكتبت غلط واتصحّحت بعد النشر بيوم. المستند اتعدّل، والقارئ اللي قرا النسخة الأولى من حقه يشوف الفرق. و [[cite]] بيشاور على صفحة التصحيحات.
+- التنبيه [[strong]]: اللي هيحدّث من غير ما يقراه هيخسر إعداداته (خطورة).
+- [[autoSave]] و [[true]] و [[settings.json]] و [[config]]: [[code]]. والاختصار [[kbd]]. والرسالة اللي كانت بتظهر [[samp]].
+
+**الغلطة الشائعة:** تكتب التاريخ في العنوان بس كنص («الإصدار 2.0، ١٥ نوفمبر»). أي أداة بتجمع آخر التحديثات مش هتعرف تقراه. الـ [[datetime]] هو اللي بيخلي الصفحة تتقري آليًا.
+
+~~~text الناتج (Chrome 157)
+article: 3   time: 3   →  2026-11-15 ، 2026-09-02 ، 2026-06-20
+del.dateTime = ins.dateTime = 2026-11-16      del: الدور = deletion   ins: الدور = insertion
+code: 4   kbd: 3   samp: 1   strong: 1
+~~~` },
+        { lvl: 'كبير', dir: "html-article", t: R`مقال تعليمي كامل بكل عناصر الوحدة`, what: R`مقال «إزاي تاخد نسخة احتياطية من صورك» لمدونة متخيلة، صفحة واحدة بـ HTML بس، بالشكل اللي بيتنشر بيه مقال تقني حقيقي: [[header]] فيه العنوان وتاريخ النشر ([[time]]) والكاتبة ([[address]] جوه الـ [[article]])، ومقدمة فيها مصطلح بيتعرّف ([[dfn]]) واختصار ([[abbr]])، وتحذير ([[strong]])، وخطوات فيها أوامر ([[kbd]] و [[code]] و [[<pre><code>]])، وناتج متوقع ([[<pre><samp>]])، ومتغير ([[var]])، واسم فولدر طويل بـ [[wbr]]، وحاشية وأُس بـ [[sup]]، وفاصل [[hr]]، وتصحيح اتعمل بعد النشر ([[del]] و [[ins]])، وحقوق النشر ([[small]] و [[&copy;]]) في الـ [[footer]] مع [[address]] الموقع. يجمع الوحدة كلها.`, done: R`الـ validator على validator.w3.org/nu مبيطلّعش ولا error. وشجرة الـ accessibility فيها [[article]] و [[heading]] مستوى 1 وتلاتة مستوى 2، وأدوار [[strong]] و [[term]] و [[time]] و [[code]] و [[deletion]] و [[insertion]] و [[separator]]. وكل [[<]] في الكود المعروض مكتوبة [[&lt;]]. وعلى عرض 360 [[document.documentElement.scrollWidth]] بيساوي 360. وفي الصفحة [[address]] اتنين: واحد للكاتبة جوه الـ article وواحد للموقع في الـ footer.`, ext: R`زوّد قسم «أسئلة بتتكرر» فيه تلات مصطلحات كل واحد [[dfn]] بـ [[id]]، ولينك من أول المقال لكل تعريف. ولما تتعلم القوايم في الوحدة الجاية حوّل الخطوات لـ [[<ol>]]. ولما تتعلم CSS ادّي كل [[kbd]] داخلي شكل زرار، وكل [[pre]] خلفية و [[overflow-x: auto]]، وشوف إزاي العناصر اللي اخترتها بمعناها هي نفسها اللي بتمسكها عشان تنسّق.`, sol: R`**شجرة الملفات:** ملف واحد.
+
+~~~text الملفات
+backup-article/
+└── index.html
+~~~
+
+**ترتيب البناء:**
+
+1. الهيكل: [[<!doctype html>]] والـ [[head]]، وجوه الـ [[body]]: [[main]] فيه [[article]]، وبعده [[footer]].
+2. جوه الـ [[article]]: [[header]] (العنوان والتاريخ والكاتبة)، وبعده تلات [[section]] كل واحد بـ [[h2]].
+3. اكتب النص كله كفقرات عادية الأول، من غير أي عنصر من الوحدة دي.
+4. عدّي على النص جملة جملة واسأل: فيه هنا حاجة مهمة؟ كود؟ تاريخ؟ مصطلح؟ وحط العنصر.
+5. افتح على 360 وقيس [[scrollWidth]]. لو أكبر من 360 دوّر على الكلمة الطويلة اللي من غير مسافات.
+6. الـ validator.
+
+~~~live 1050 1150 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إزاي تاخد نسخة احتياطية من صورك | مدونة الحروف</title>
+</head>
+<body>
+<main>
+<article>
+  <header>
+    <h1>إزاي تاخد نسخة احتياطية من صورك</h1>
+    <p>اتنشر يوم <time datetime="2026-11-10">١٠ نوفمبر ٢٠٢٦</time>. وقت القراية: <time datetime="PT6M">٦ دقايق</time>.</p>
+    <address>كتبته <a href="mailto:nour@example.test">نور الدين</a></address>
+  </header>
+
+  <section>
+    <h2>ليه أصلًا؟</h2>
+    <p><dfn>النسخة الاحتياطية</dfn> (backup) هي نسخة تانية من ملفاتك في مكان غير الجهاز نفسه. لو الجهاز باظ أو اتسرق، النسخة موجودة.</p>
+    <p>هننسخ الصور على هارد خارجي متوصّل بـ Universal Serial Bus (<abbr>USB</abbr>).</p>
+    <p><strong>تحذير: النسخة اللي على نفس الهارد بتاع الجهاز مش نسخة احتياطية.</strong> لو الهارد باظ، الاتنين هيروحوا <em>مع بعض</em>.</p>
+  </section>
+
+  <section>
+    <h2>الخطوات</h2>
+    <p>١. وصّل الهارد وافتح الترمنال: دوس <kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd></kbd>.</p>
+    <p>٢. اعرف حجم فولدر الصور. اكتب <kbd>du -sh Pictures</kbd> وهيطلعلك حاجة زي:</p>
+<pre dir="ltr"><samp>48G    Pictures</samp></pre>
+    <p>٣. انسخ الفولدر. بدّل <var>disk-name</var> باسم الهارد عندك:</p>
+<pre dir="ltr"><code>cp -r Pictures /media/<var>disk-name</var>/backup</code></pre>
+    <p>٤. اتأكد إن العدد واحد في المكانين. الأمر <code>ls Pictures | wc -l</code> بيعدّ الملفات، والرمز <code>|</code> بيودّي ناتج الأمر الأول للتاني.</p>
+    <p>لو الصور عندك في فولدر اسمه طويل زي family_<wbr>photos_<wbr>2019_<wbr>to_<wbr>2026_<wbr>originals_<wbr>do_<wbr>not_<wbr>delete اكتب اسمه مكان <code>Pictures</code>.</p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>ملحوظات</h2>
+    <p>الهارد اللي مساحته ١ تيرابايت بيشيل حوالي <del datetime="2026-11-12">٥٠٠ ألف</del> <ins datetime="2026-11-12">٢٥٠ ألف</ins> صورة موبايل<sup id="ref-1"><a href="#note-1">[1]</a></sup>.</p>
+    <p>ولو بتكتب عن الأوامر دي في صفحة HTML، الرمز <code>&lt;</code> بيتكتب <code>&amp;lt;</code> والرمز <code>&amp;</code> بيتكتب <code>&amp;amp;</code>.</p>
+    <p id="note-1"><small>[1] بحساب إن الصورة حوالي ٤&nbsp;ميجابايت، يعني ٢<sup>22</sup> بايت. <a href="#ref-1">ارجع</a></small></p>
+  </section>
+</article>
+</main>
+<footer>
+  <p><small>&copy; ٢٠٢٦ مدونة الحروف. المقال للتعليم، جرّب على ملفات مش مهمة الأول.</small></p>
+  <address>
+    مدونة الحروف<br>
+    <a href="mailto:hello@example.test">hello@example.test</a>
+  </address>
+</footer>
+</body>
+</html>
+~~~
+
+**كل عنصر وليه:**
+
+| الحتة | العنصر | السبب |
+|---|---|---|
+| تاريخ النشر ووقت القراية | [[<time>]] | الأول تاريخ ([[2026-11-10]]) والتاني مدة ([[PT6M]]) |
+| الكاتبة | [[<address>]] جوه الـ article | معلومات التواصل لأقرب article |
+| «النسخة الاحتياطية» | [[<dfn>]] | أول مرة المصطلح بيتعرّف، والتعريف في نفس الفقرة |
+| USB | [[<abbr>]] من غير title | الفك مكتوب في النص قبله |
+| التحذير | [[<strong>]] | خطورة: اللي مش هيقراه هيخسر صوره |
+| «مع بعض» | [[<em>]] | الضغطة هي اللي بتشرح ليه |
+| Ctrl+Alt+T | [[<kbd>]] جوه [[<kbd>]] | اختصار، وكل مفتاح لوحده |
+| الأمر اللي هيتكتب في جملة | [[<kbd>]] | القارئ هو اللي هيدخّله |
+| ناتج الأمر | [[<pre><samp>]] | البرنامج طلّعه، والمسافات جزء منه |
+| أمر النسخ | [[<pre><code>]] وجواه [[<var>]] | كود يتنسخ، وفيه حتة تتبدّل |
+| اسم الفولدر الطويل | [[<wbr>]] بعد كل [[_]] | عشان ميزقّش الصفحة على الموبايل |
+| الفاصل | [[<hr>]] | من الخطوات للملحوظات: الموضوع اتغيّر |
+| الرقم اللي اتصحّح | [[<del>]] و [[<ins>]] بـ [[datetime]] | المقال اتعدّل بعد النشر، والتعديل باين |
+| رقم الحاشية و ٢ أُس ٢٢ | [[<sup>]] | حاشية وأُس |
+| [[<]] و [[&]] جوه الشرح | [[&lt;]] و [[&amp;]] | وعشان أعرض [[&lt;]] نفسها كتبت [[&amp;lt;]] |
+| حقوق النشر | [[<small>]] و [[&copy;]] | small print |
+| التواصل مع الموقع | [[<address>]] في الـ footer | معلومات التواصل للصفحة كلها |
+
+**جرّبت أشيل الـ [[wbr]]:** على الكمبيوتر مفيش فرق. على 360 [[scrollWidth]] بقى أكبر من 360 والصفحة كلها بتتسحب بالعرض. رجّعته ورجع 360. (الأرقام تحت.)
+
+**و [[hr]] واحد بس:** بين كل [[section]] والتاني ملوش لزوم، المواصفة بتقول إن العناوين كفاية. حطيته قبل «ملحوظات» بس، لأنها مش خطوة من الشرح. ولو شلته هو كمان الصفحة لسه سليمة.
+
+**الغلطة الشائعة:** تبدأ بالعناصر وانت بتكتب. اكتب النص الأول، وبعدين علّم. كده كل عنصر بيتحط عشان الكلام محتاجه، مش عشان «لازم أستخدم [[mark]] في حتة».
+
+~~~text الناتج (Chrome 157)
+article: 1   section: 3   h1: 1   h2: 3   address: 2   hr: 1
+time: 2 (2026-11-10 و PT6M)   dfn: 1 (term)   abbr: 1   strong: 1   em: 1
+kbd: 5   code: 8   samp: 1   var: 2   pre: 2   wbr: 8   del: 1   ins: 1   sup: 2   small: 2
+عرض 360:  scrollWidth = 360         من غير wbr:  scrollWidth = 364
+~~~` },
+        { lvl: 'فكرة', dir: "my-recipe", t: R`صفحة وصفة أكلة بتحبها`, what: R`صفحة لوصفة انت بتعملها فعلًا: اسمها، ووقت التحضير والتسوية، والمكونات بكمياتها، والخطوات، وتحذير واحد حقيقي (سخونة، أو حساسية)، وملحوظة جانبية. انت اللي بتقرر كل عنصر يتحط فين: الهدف إنك تبرّر كل اختيار.`, done: R`كل مدة في الصفحة جوه [[time]] بصيغة مدة سليمة (بتبدأ بـ [[PT]])، وفيه [[strong]] واحد أو اتنين بالكتير على التحذير الحقيقي، ومفيش ولا [[b]] أو [[i]] أو [[u]] محطوط للشكل، وتقدر تقول لكل عنصر في الصفحة «ده هنا عشان…» في جملة.`, ext: R`زوّد سطر «آخر تعديل» بـ [[time]]، ولو غيّرت كمية بعد ما جرّبت الوصفة تاني ورّي التعديل بـ [[del]] و [[ins]]. ولما تتعلم القوايم خلي المكونات [[<ul>]] والخطوات [[<ol>]]، ولما تتعلم CSS نسّقها واطبعها ورقة للمطبخ.`, sol: R`**نسخة نموذجية واحدة** (وصفة كيكة برتقال). وصفتك هتبقى مختلفة، المهم نفس طريقة التفكير.
+
+~~~live 650 620 الوصفة
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كيكة البرتقال</title>
+</head>
+<body>
+<main>
+<article>
+  <h1>كيكة البرتقال</h1>
+  <p>التحضير <time datetime="PT15M">ربع ساعة</time>، والتسوية <time datetime="PT40M">٤٠ دقيقة</time>. بتكفّي <data value="8">تمن أفراد</data>.</p>
+
+  <h2>المكونات</h2>
+  <p>٢ كوباية دقيق (حوالي ٢٥٠&nbsp;جم)</p>
+  <p>١ كوباية سكر</p>
+  <p>٣ بيضات</p>
+  <p>نص كوباية عصير برتقال <em>طازة</em>، مش من العلبة</p>
+  <p>١ <abbr title="معلقة كبيرة">م.ك</abbr> (معلقة كبيرة) بيكنج بودر</p>
+
+  <h2>الطريقة</h2>
+  <p>١. سخّن الفرن على ١٨٠ درجة.</p>
+  <p>٢. اضرب البيض والسكر لحد ما يبقوا <dfn>كريمي</dfn>: يعني اللون يفتح والقوام يتقل ويسيب أثر لما ترفع المضرب.</p>
+  <p>٣. زوّد العصير، وبعده الدقيق والبيكنج بودر.</p>
+  <p>٤. صب في قالب قطره ٢٢&nbsp;سم وسوّيه.</p>
+  <p><strong>تحذير: القالب بيطلع سخن جدًا. استخدم ماسكة ومتحطوش على رخام مبلول.</strong></p>
+
+  <hr>
+  <p><small>الوصفة فيها بيض وقمح (جلوتين).</small></p>
+</article>
+</main>
+</body>
+</html>
+~~~
+
+**ليه اخترت التصميم ده:**
+
+- المدتين [[time]] بصيغة [[PT15M]] و [[PT40M]]: دي أكتر معلومة حد بيدوّر عليها في وصفة، وأي برنامج يقدر يقراها.
+- عدد الأفراد [[data]]: مكتوب بالحروف للقارئ، وبالرقم [[8]] لأي سكربت يحسب الكميات لعدد تاني.
+- [[strong]] واحد بس، على الحاجة اللي ممكن تأذي فعلًا. «سخّن الفرن» تعليمة عادية مش تحذير.
+- «طازة» [[em]]: هي اللي بتفرّق، والجملة فيها المقابل.
+- «م.ك» اختصار، ومفكوك في النص جنبه. وحطيت [[title]] كمان عشان الاختصار هيتكرر في وصفات تانية من غير فك. ده قرار فيه تمن: قارئ الشاشة ممكن يقرا الفك مرتين في السطر ده.
+- «كريمي» [[dfn]]: مصطلح مطبخ اللي أول مرة يخبز مش هيعرفه، وتعريفه في نفس الفقرة.
+- [[&nbsp;]] بين كل رقم ووحدته.
+- [[hr]] قبل ملحوظة الحساسية: خرجنا من الوصفة لمعلومة عنها.
+- المكونات والخطوات فقرات دلوقتي. مكانهم الصح قايمة ([[<ul>]] و [[<ol>]])، ودي الوحدة الجاية.
+
+**اللي متعملوش:** درجة الحرارة «١٨٠ درجة» مش [[time]] ولا محتاجة [[data]]. مش كل رقم لازم يتلف في عنصر. العنصر بيتحط لما فيه حد هيستفيد من المعلومة اللي بيضيفها.
+
+**الغلطة الشائعة:** [[<b>]] على كل كمية «عشان تبان». لو كل سطر فيه حاجة تقيلة، العين مبتلاقيش التحذير.
+
+~~~text الناتج (Chrome 157)
+time: 2  →  PT15M و PT40M        data.value = 8
+strong: 1   em: 1   dfn: 1 (term)   abbr: 1 (title = معلقة كبيرة)   small: 1   hr: 1
+b: 0   i: 0   u: 0
+عرض 360:  scrollWidth = 360
+~~~` },
+      ],
       items: [
         {
-          cmd: "table",
-          ref: [
-            { t: "WHATWG: the table element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-table-element" },
-            { t: "MDN: <table>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/table" },
-            { t: "WHATWG: the caption element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-caption-element" },
-            { t: "MDN: <caption>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/caption" },
-            { t: "WHATWG: the tbody element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-tbody-element" },
-            { t: "MDN: <tbody>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/tbody" },
-            { t: "WHATWG: the tfoot element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-tfoot-element" },
-            { t: "MDN: <tfoot>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/tfoot" },
-            { t: "WHATWG: the thead element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-thead-element" },
-            { t: "MDN: <thead>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/thead" },
-          ],
+          cmd: "strong و em",
           practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** جدول حصص أسبوعي لـ «جيم الأبطال»: الأيام في الـ thead (th بـ [[scope="col"]])، والأوقات أول عمود (th بـ [[scope="row"]])، وحصة طولها ساعتين بـ [[rowspan="2"]]، و caption «جدول الحصص».`, done: R`الجدول مفيهوش خلية زيادة ولا ناقصة (كل صف عدد خلاياه صح بعد حساب الـ rowspan)، والخلية الطويلة ارتفاعها قد صفين ([[getBoundingClientRect]])، وتاب Accessibility بيقول columnheader للأيام و rowheader للأوقات.`, sol: R`~~~live 290 290
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>جدول الحصص</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  table { border-collapse: collapse; width: 100%; max-width: 640px; }
-  caption { font-weight: 700; padding-block-end: 8px; }
-  th, td { border: 1px solid #a1a1aa; padding: 8px; text-align: center; }
-  thead th { background: #f4f4f5; }
-</style>
-</head>
-<body>
-<main>
-<h1>جيم الأبطال</h1>
-<table>
-  <caption>جدول الحصص</caption>
-  <thead>
-    <tr>
-      <th scope="col">الوقت</th>
-      <th scope="col">السبت</th>
-      <th scope="col">الأحد</th>
-      <th scope="col">الاتنين</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">6 م</th>
-      <td id="long" rowspan="2">كروس فت (ساعتين)</td>
-      <td>يوجا</td>
-      <td>ملاكمة</td>
-    </tr>
-    <tr>
-      <th scope="row">7 م</th>
-      <td>سباحة</td>
-      <td>يوجا</td>
-    </tr>
-    <tr>
-      <th scope="row">8 م</th>
-      <td>ملاكمة</td>
-      <td>—</td>
-      <td>كارديو</td>
-    </tr>
-  </tbody>
-</table>
-</main>
-</body>
-</html>
+            { lvl: 'سريع', t: R`**اختار العنصر:** خمس جمل، كل واحدة محتاجة [[strong]] أو [[em]] أو [[b]] أو [[i]] أو ولا حاجة:
+١. لافتة: «متسيبش الأطفال لوحدهم جنب البسين.»
+٢. «أنا طلبت شاي، مش قهوة.» (الزبون بيصحّح للجرسون)
+٣. مراجعة فيها اسمين منتجين: «مكنسة ريح ٣» و «مكنسة ريح ٥».
+٤. الاسم العلمي للقطة: Felis catus.
+٥. «المحل بيفتح الساعة ٩ الصبح.»`, done: R`في الصفحة: [[strong]] واحد، و [[em]] واحد، و [[b]] اتنين، و [[i]] واحد عليه [[lang="la"]]، والجملة الخامسة من غير أي عنصر. والتلات جمل الأولانية شكلهم تقيل أو مايل، بس كل واحدة لسبب مختلف تقدر تقوله.`, work: { h: 250, start: R`<p>متسيبش الأطفال لوحدهم جنب البسين.</p>
+<p>أنا طلبت شاي، مش قهوة.</p>
+<p>جرّبنا مكنسة ريح ٣ و مكنسة ريح ٥ أسبوع كامل.</p>
+<p>القطة اسمها العلمي Felis catus.</p>
+<p>المحل بيفتح الساعة ٩ الصبح.</p>`, checks: [
+              { say: R`لافتة البسين فيها [[<strong>]] واحد`, q: "strong", has: "الأطفال", n: 1 },
+              { say: R`كلمة «شاي» عليها [[<em>]]`, q: "em", has: "شاي", n: 1 },
+              { say: R`اسمين المنتجين كل واحد في [[<b>]]`, q: "b", n: 2 },
+              { say: R`الاسم العلمي في [[<i>]] ومعاه [[lang="la"]]`, q: "i", has: "Felis", attr: ["lang", "la"], n: 1 },
+              { say: R`جملة الساعة ٩ من غير أي عنصر عليها`, q: "strong, em, b, i", has: "٩", n: 0 },
+            ] }, sol: R`~~~live 200 250 الحل
+<p><strong>متسيبش الأطفال لوحدهم جنب البسين.</strong></p>
+<p>أنا طلبت <em>شاي</em>، مش قهوة.</p>
+<p>جرّبنا <b>مكنسة ريح ٣</b> و <b>مكنسة ريح ٥</b> أسبوع كامل.</p>
+<p>القطة اسمها العلمي <i lang="la">Felis catus</i>.</p>
+<p>المحل بيفتح الساعة ٩ الصبح.</p>
 ~~~
 
-**السطر اللي بيلخبط:** الخلية اللي عليها [[rowspan="2"]] واخدة مكان في الصف اللي تحتها. فالصف بتاع «7 م» فيه عنوان وخليتين بس، مش ٣. لو كتبت خلية زيادة الصف هيطلع عمود خامس.
+**ليه كل واحد:**
 
-- [[scope="col"]] يعني العنوان ده لكل العمود اللي تحته، و [[scope="row"]] لكل الصف اللي جنبه. قارئ الشاشة بيستخدمهم عشان يقول «الأحد، 6 م، يوجا» مش «يوجا» بس.
-- [[caption]] لازم أول ابن في [[table]]، وهو اسم الجدول.
-- [[border-collapse: collapse]] بيخلي الحدود خط واحد.
+- الأولى تحذير ممكن حد يتأذى لو مقراهوش: ده «خطورة»، يعني [[strong]].
+- التانية فيها كلمة بتتنطق بضغطة عشان تصحّح: لو شلت الضغطة من «شاي» المعنى بيضعف. يعني [[em]].
+- التالتة أسامي منتجات عايز العين تلقطها وهي بتجري على المراجعة، من غير ما تكون أهم من باقي الكلام: [[b]].
+- الرابعة اسم علمي بلغة تانية (لاتيني): نبرة مختلفة عن باقي الجملة، يعني [[i]]، ومعاها [[lang="la"]] عشان قارئ الشاشة يعرف إنها مش عربي.
+- الخامسة معلومة عادية. مش كل جملة محتاجة عنصر.
 
-**الغلطة الشائعة:** تحسب عدد الخلايا في كل صف من غير ما تنقص الـ rowspan. جرّب [[table.rows[1].cells.length]] تلاقيها ٣ وباقي الصفوف ٤، وده صح مش غلط.
+**الغلطة الشائعة:** تحط [[strong]] على الخمسة «عشان يبانوا». لما كل حاجة مهمة مفيش حاجة مهمة، والتحذير الحقيقي بيضيع وسطهم.
 
 ~~~text الناتج
-عدد الخلايا في كل صف: 4 , 4 , 3 , 4  (التاني ٣ بسبب الـ rowspan)
-ارتفاع الصف الواحد 38px، والخلية الطويلة 76px
-أدوار Chrome: rowheader = 3 , columnheader = 4
-validator: 0 error
-overflow على 360: 0px   axe: 0 violations
+strong: 1   em: 1   b: 2   i: 1
+font-weight:  strong = 700   b = 700   باقي الكلام = 400
+font-style:   em = italic    i = italic
+الدور (computedRole):  strong = strong   em = emphasis   b = generic   i = generic
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** حد كتب ملاحظة جوه الجدول نفسه: [[<table><tr><td>1</td></tr><p>ملاحظة</p></table>]]. الملاحظة هتظهر فين؟ تحت الجدول، ولا فوقه، ولا جوه خلية؟`, done: R`ظهرت **فوق** الجدول: [[document.body.innerHTML]] رجّع [[<p>ملاحظة</p><table>...]]. المتصفح بيطلّع أي حاجة مش خلية برّه الجدول وبيحطها قبله. ونفس الحاجة بتحصل لو نسيت [[</table>]]: الكلام اللي بعده بيطلع فوقه.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الملاحظة</title>
-</head>
-<body>
-<table><tr><td>1</td></tr><p>ملاحظة</p></table>
-</body>
-</html>
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<h1>عروض <strong>الجمعة</strong></h1>]]. العنوان أصلًا تقيل. الـ [[font-weight]] بتاع كلمة «الجمعة» هيبقى كام؟ وهتشوف فرق بعينك؟ توقّع وبعدين افتح تاب Computed.`, done: R`الـ h1 وزنه 700 والـ strong اللي جواه 900، وبالخط الافتراضي مفيش فرق باين خالص (عرض الكلمة هو هو). وعرفت ليه: المتصفح بيكتب [[font-weight: bolder]] مش [[bold]]، والخط نفسه مفيهوش وزن أتقل من 700.`, sol: R`~~~live 90 110 strong جوه h1
+<h1>عروض <strong>الجمعة</strong></h1>
 ~~~
 
-**الإجابة:** فوق الجدول. جوه [[table]] المسموح صفوف وخلايا بس. ولما المتصفح يلاقي حاجة تانية زي [[p]]، بيطبّق قاعدة اسمها foster parenting: بيطلّعها برّه الجدول ويحطها **قبله**.
+**التوقّع الصح:** الرقم بيعلى لـ 900، والشكل مبيتغيّرش.
 
-والمفاجأة إن المتصفح زوّد كمان [[tbody]] لوحده، رغم إنك مكتبتهوش.
+**ليه 900؟** الستايل الافتراضي للمتصفح (مكتوب في مواصفة HTML، قسم Rendering) هو [[b, strong { font-weight: bolder; }]]. [[bolder]] معناها «أتقل من أبويا بدرجة»: لو الأب 400 يبقى 700، ولو الأب 700 (زي الـ h1) يبقى 900.
 
-**التصليح:** حط الملاحظة في المكان اللي ينفع. لو عايزها تتقري مع الجدول، خليها [[caption]] أو خلية. ولو برّه، حطها بعد [[</table>]]:
+**وليه مفيش فرق باين؟** الخط الافتراضي هنا (Times New Roman) فيه وزنين بس: عادي وتقيل. فالمتصفح لما بتطلب منه 900 بيرسم التقيل اللي عنده. قست عرض نفس الكلمة بـ 700 وبـ 900 وطلع نفس الرقم.
+
+**المعنى موجود برضه:** الدور [[strong]] موجود في شجرة الـ accessibility حتى لو العين مش شايفة فرق. ولو عايز الفرق يبان، ده شغل CSS (لون مثلًا)، وده في وحدة «CSS: مين بيكسب ومساحة كل عنصر».
+
+**الغلطة الشائعة:** تشيل الـ strong «عشان مش باين». المعنى مش الشكل: الشكل بيتظبط بعدين بالـ CSS، والعنصر يفضل.
+
+~~~text الناتج
+h1      font-weight = 700
+strong  font-weight = 900   الدور = strong
+عرض كلمة «الجمعة»: بوزن 700 = 69.3px   بوزن 900 = 69.3px
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة مطعم متخيل، كل عنصر فيها متاخد بشكله:
 
 ~~~html
-<table>
-  <caption>ملاحظة</caption>
-  <tr><td>1</td></tr>
-</table>
+<p><b>تحذير: الأرضية مبلولة.</b></p>
+<p><strong>عن المطعم</strong></p>
+<p>بنقدّم أكل بيتي من سنة <i>٢٠١٥</i>، وكل الخضار <i>طازة</i> من السوق كل يوم.</p>
+<p><em>التوصيل مجاني جوه المدينة، والطلب بالتليفون أو من الموقع، والدفع كاش أو فيزا.</em></p>
 ~~~
 
-**الغلطة الشائعة:** تحط [[<div>]] أو [[<form>]] بين الصفوف عشان تلف صف. ده بيطلع برّه الجدول برضه، والصف بيفضل في مكانه. لو عايز صف قابل للإرسال، حط الفورم جوه خلية.
+فيها ٤ غلطات. لاقيهم وصلّحهم.`, done: R`بعد التصليح: التحذير بقى [[strong]]، و «عن المطعم» بقى [[<h2>]] (وتاب Accessibility بيقول heading مستوى 2)، و «طازة» بقت [[em]] والسنة من غير عنصر، والفقرة الأخيرة من غير [[em]] خالص. والعدد: strong 1، و em 1، و b صفر، و i صفر، و h2 واحد.`, work: { h: 230, start: R`<p><b>تحذير: الأرضية مبلولة.</b></p>
+<p><strong>عن المطعم</strong></p>
+<p>بنقدّم أكل بيتي من سنة <i>٢٠١٥</i>، وكل الخضار <i>طازة</i> من السوق كل يوم.</p>
+<p><em>التوصيل مجاني جوه المدينة، والطلب بالتليفون أو من الموقع، والدفع كاش أو فيزا.</em></p>`, checks: [
+              { say: R`التحذير جوه [[<strong>]] مش [[<b>]]`, q: "strong", has: "تحذير" },
+              { say: R`«عن المطعم» بقى عنوان [[<h2>]]`, q: "h2", has: "عن المطعم" },
+              { say: R`كلمة «طازة» عليها [[<em>]]`, q: "em", has: "طازة", n: 1 },
+              { say: R`مفيش [[<b>]] ولا [[<i>]] في الصفحة`, q: "b, i", n: 0 },
+              { say: R`فقرة التوصيل من غير [[<em>]]`, q: "em", has: "التوصيل", n: 0 },
+            ] }, sol: R`~~~live 220 230 بعد التصليح
+<p><strong>تحذير: الأرضية مبلولة.</strong></p>
+<h2>عن المطعم</h2>
+<p>بنقدّم أكل بيتي من سنة ٢٠١٥، وكل الخضار <em>طازة</em> من السوق كل يوم.</p>
+<p>التوصيل مجاني جوه المدينة، والطلب بالتليفون أو من الموقع، والدفع كاش أو فيزا.</p>
+~~~
+
+**الغلطات الأربعة:**
+
+1. تحذير بـ [[b]]. المواصفة نفسها كاتبة المثال ده كاستخدام غلط لـ [[b]]: التحذير «خطورة»، ودي شغلة [[strong]].
+2. [[<p><strong>عن المطعم</strong></p>]] عنوان متنكّر. شكله عنوان، بس قارئ الشاشة اللي بيتنقل بين العناوين مش هيلاقيه. العنوان [[<h2>]].
+3. [[i]] على سنة وعلى كلمة «طازة». السنة ملهاش أي نبرة مختلفة، فمتاخدش حاجة. و «طازة» الكاتب بيشدّ عليها، يعني [[em]].
+4. [[em]] على فقرة كاملة عشان تبقى مايلة. دي مش ضغطة على كلمة، دي تنسيق. لو عايزها مايلة فعلًا يبقى CSS ([[font-style: italic]])، ودلوقتي سيبها عادية.
+
+**الغلطة الشائعة:** تصلّح الشكل بس: تبدّل [[b]] بـ [[strong]] في كل حتة من غير ما تسأل «هو ده مهم فعلًا؟». التبديل الأعمى بيطلّع نفس المشكلة باسم تاني.
 
 ~~~text الناتج
-document.body.innerHTML:
-<p>ملاحظة</p><table><tbody><tr><td>1</td></tr></tbody></table>
+                 strong   em   b   i   h2
+قبل التصليح        1      1    1   2   0
+بعد التصليح        1      1    0   0   1
+الدور بتاع «عن المطعم»:  قبل = strong جوه paragraph    بعد = heading
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** جدول طلبات العناوين فيه مكتوبة [[<td><b>العميل</b></td>]]، فشكلها عنوان. افتح تاب Accessibility على خلية عادية وبص اسم العمود، وبعدين صلّحه.`, done: R`قبل: كل الخلايا دورها [[LayoutTableCell]] (Chrome اعتبره جدول تنسيق) ومفيش [[columnheader]] خالص، فقارئ الشاشة بيقرا الأرقام من غير أسامي أعمدتها. بعد [[<th scope="col">]]: العناوين بقت columnheader والخط التقيل جه لوحده من غير [[<b>]].`, sol: R`قبل:
-
-~~~html
-<table>
-  <tr><td><b>العميل</b></td><td><b>الإجمالي</b></td></tr>
-  <tr><td>منى علي</td><td>1250</td></tr>
-</table>
-~~~
-
-بعد:
-
-~~~live 160 160
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطلبات</title>
-<style>th { text-align: start; }</style>
-</head>
-<body>
-<main>
-<h1>الطلبات</h1>
-<table>
-  <caption>آخر الطلبات</caption>
-  <thead>
-    <tr><th scope="col">العميل</th><th scope="col">الإجمالي</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>منى علي</td><td>1250</td></tr>
-  </tbody>
-</table>
-</main>
-</body>
-</html>
-~~~
-
-**ليه التصليح ده مهم:** [[<b>]] تقيل في الشكل بس. Chrome شاف جدول مفيهوش أي عنوان فاعتبره جدول تنسيق، ودور خلاياه [[LayoutTableCell]]، يعني قارئ الشاشة ممكن يقراه كلام عادي من غير ما يقول إنه جدول. ولما المستخدم يوصل لـ 1250 يسمع الرقم من غير ما يعرف ده إيه. مع [[th]] بيسمع «الإجمالي، 1250».
-
-و [[th]] تقيل وفي النص افتراضيًا، فالـ [[<b>]] مبقتش لازمة. و [[text-align: start]] بترجّعه لبداية الخلية لو عايز.
-
-**الغلطة الشائعة:** تستخدم [[<td class="header">]] وتعمله تقيل بالـ CSS. نفس المشكلة: الشكل عنوان، والمعنى خلية.
-
-~~~text الناتج
-الأدوار في شجرة Chrome:
-قبل: LayoutTableCell = 4
-بعد: cell = 2 , columnheader = 2
-وزن الخط في th من غير b: 700
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** حوّل الـ CSV ده لجدول: [[id,customer,total,status]] وتحته ٥ سطور زي [[1042,منى علي,1250,paid]] و [[1043,كريم,90,pending]]. الحالة تبقى كلمة عربي (مدفوع، مستني) مش الكلمة الإنجليزي.`, done: R`الجدول فيه caption و thead و ٥ صفوف، والإجمالي متنسّق [[1,250 ج]] (بـ [[toLocaleString]] أو بإيدك)، وعمود الأرقام محاذي للآخر، والـ id عنوان كل صف ([[scope="row"]]).`, sol: R`~~~live 360 360
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطلبات</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  table { border-collapse: collapse; width: 100%; max-width: 560px; }
-  th, td { padding: 8px; border-block-end: 1px solid #d4d4d8; text-align: start; }
-  .num { text-align: end; font-variant-numeric: tabular-nums; }
-</style>
-</head>
-<body>
-<main>
-<h1>الطلبات</h1>
-<table>
-  <caption>طلبات الأسبوع</caption>
-  <thead>
-    <tr>
-      <th scope="col">الرقم</th>
-      <th scope="col">العميل</th>
-      <th scope="col" class="num">الإجمالي</th>
-      <th scope="col">الحالة</th>
-    </tr>
-  </thead>
-  <tbody id="rows"></tbody>
-</table>
-</main>
-<script>
-  const CSV = $__btid,customer,total,status
-1042,منى علي,1250,paid
-1043,كريم,90,pending
-1044,سلمى فؤاد,4300,paid
-1045,عادل,760,cancelled
-1046,هدى سامي,12500,pending$__bt;
-
-  const STATUS = { paid: 'مدفوع', pending: 'مستني', cancelled: 'ملغي' };
-
-  const [head, ...lines] = CSV.trim().split('\n');
-  const keys = head.split(',');
-  const orders = lines.map((line) => {
-    const values = line.split(',');
-    return Object.fromEntries(keys.map((k, i) => [k, values[i]]));
-  });
-
-  document.querySelector('#rows').innerHTML = orders.map((o) => $__bt
-    <tr>
-      <th scope="row">$__{o.id}</th>
-      <td>$__{o.customer}</td>
-      <td class="num">$__{Number(o.total).toLocaleString('en-US')} ج</td>
-      <td>$__{STATUS[o.status] ?? o.status}</td>
-    </tr>$__bt).join('');
-$__lt/script>
-</body>
-</html>
-~~~
-
-**خطوات التحويل:**
-
-- [[const [head, ...lines] = ...]]: أول سطر العناوين، والباقي بيانات.
-- [[Object.fromEntries]]: بيحوّل أزواج [[[مفتاح, قيمة]]] لـ object، فنكتب [[o.total]] بدل [[values[2]]].
-- [[STATUS[o.status] ?? o.status]]: لو حالة جديدة مش في القاموس، اعرضها زي ما هي بدل [[undefined]].
-- [[toLocaleString('en-US')]] بيضيف الفصلة كل ٣ أرقام.
-- [[text-align: end]]: الأرقام تتحاذى من آخرها، فالآحاد تحت الآحاد.
-- [[tabular-nums]]: كل رقم بنفس العرض، فالأعمدة متتهزش.
-
-**الغلطة الشائعة:** تسيب [[1250]] زي ما هي وتحاذيها للبداية، فالعين متقدرش تقارن الأرقام. وفي CSV حقيقي، لو القيمة فيها فصلة [[split(',')]] هيبوظها، ووقتها استخدم مكتبة زي Papa Parse.
-
-و [[innerHTML]] هنا آمن لأن البيانات مكتوبة في الملف. لو جاية من مستخدم، [[textContent]] أو escape.
-
-~~~text الناتج
-1042  |  منى علي  |  1,250 ج  |  مدفوع
-1043  |  كريم  |  90 ج  |  مستني
-1044  |  سلمى فؤاد  |  4,300 ج  |  مدفوع
-1045  |  عادل  |  760 ج  |  ملغي
-1046  |  هدى سامي  |  12,500 ج  |  مستني
-
-عدد الصفوف = 5   caption = طلبات الأسبوع
-الحافة الشمال لكل رقم في عمود الإجمالي: 836 , 836 , 836 , 836 , 836  (كلهم نفس الخط، لأن end في rtl شمال)
-السطر بتاع 1042 عنوان صف: row
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** شارات حالة (pills) لعمود الحالة: [[border-radius: 999px]] و [[padding: 2px 10px]] وخط صغير، وكل حالة ليها متغيرين: لون خلفية فاتح ([[--ok-soft]]) ولون كلام غامق من نفس اللون ([[--ok-text]]). ٤ حالات: مدفوع، ومستني، وملغي، ومرتجع.`, done: R`الأربع شارات بنفس الارتفاع ومدورين من الجنبين، وتباين كل واحدة 4.5:1 أو أكتر في الـ color picker بتاع DevTools، والحالة مكتوبة كلام مش لون بس (اللي مبيفرّقش الألوان يقدر يقراها).`, sol: R`~~~live 130 130
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الحالات</title>
-<style>
-  :root {
-    --ok-soft: #dcfce7;     --ok-text: #166534;
-    --wait-soft: #fef3c7;   --wait-text: #854d0e;
-    --bad-soft: #fee2e2;    --bad-text: #991b1b;
-    --back-soft: #e0e7ff;   --back-text: #3730a3;
-  }
-  body { font-family: system-ui; margin: 16px; }
-  .pill {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 999px;
-    font-size: .8125rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .pill--ok { background: var(--ok-soft); color: var(--ok-text); }
-  .pill--wait { background: var(--wait-soft); color: var(--wait-text); }
-  .pill--bad { background: var(--bad-soft); color: var(--bad-text); }
-  .pill--back { background: var(--back-soft); color: var(--back-text); }
-</style>
-</head>
-<body>
-<main>
-<h1>حالات الطلب</h1>
-<span class="pill pill--ok">مدفوع</span>
-<span class="pill pill--wait">مستني</span>
-<span class="pill pill--bad">ملغي</span>
-<span class="pill pill--back">مرتجع</span>
-</main>
-</body>
-</html>
-~~~
-
-**اللي بيعمل الشكل:**
-
-- [[border-radius: 999px]] رقم أكبر من نص الارتفاع، فالجنبين يبقوا نص دايرة مهما كان طول الكلمة.
-- [[display: inline-block]]: عشان الـ [[padding]] يتحسب في ارتفاع السطر صح.
-- كل حالة ليها متغيرين من نفس اللون: فاتح للخلفية وغامق للكلام، فالعين تربطهم، والتباين يفضل عالي.
-- [[white-space: nowrap]]: الكلمة متتكسرش لو العمود ضاق.
-
-**ليه الكلمة لازم تفضل مكتوبة:** واحد من كل ١٢ راجل تقريبًا عنده مشكلة في تمييز الأحمر والأخضر. لو الحالة نقطة ملونة بس، مش هيعرف الطلب اتدفع ولا اتلغى.
-
-**الغلطة الشائعة:** تختار [[--ok-text]] أخضر متوسط عشان «يبان أخضر». على خلفية فاتحة بيطلع تباين أقل من 3. لازم غامق.
-
-~~~text الناتج
-الشارة     الارتفاع   الكلام            الخلفية            التباين
-مدفوع     21.0   rgb(22, 101, 52)   rgb(220, 252, 231)   6.49:1
-مستني     21.0   rgb(133, 77, 14)   rgb(254, 243, 199)   6.15:1
-ملغي      21.0   rgb(153, 27, 27)   rgb(254, 226, 226)   6.8:1
-مرتجع     21.0   rgb(55, 48, 163)   rgb(224, 231, 255)   8.06:1
-
-أقل تباين مطلوب: 4.5:1
-axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** جدول بعناوين على مستويين (مثلًا «الربع الأول» فوق يناير وفبراير ومارس). من MDN اعرف [[scope="colgroup"]] و [[<colgroup>]] و attribute [[headers]]، واعمله.`, done: R`العنوان اللي فوق واخد ٣ أعمدة بـ [[colspan="3"]] و [[scope="colgroup"]]، وفهمت إمتى تحتاج [[headers="id1 id2"]] على الخلية (الجداول اللي العناوين فيها مش في صف وعمود واضحين).`, sol: R`~~~live 200 220
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>المبيعات</title>
-<style>
-  table { border-collapse: collapse; }
-  th, td { border: 1px solid #a1a1aa; padding: 6px 10px; text-align: center; }
-  .q2 { background: #f4f4f5; }
-</style>
-</head>
-<body>
-<main>
-<h1>المبيعات</h1>
-<table>
-  <caption>مبيعات النص الأول من السنة</caption>
-  <colgroup>
-    <col>
-    <col span="3">
-    <col span="3" class="q2">
-  </colgroup>
-  <thead>
-    <tr>
-      <td rowspan="2"></td>
-      <th scope="colgroup" colspan="3" id="q1">الربع الأول</th>
-      <th scope="colgroup" colspan="3" id="q2">الربع التاني</th>
-    </tr>
-    <tr>
-      <th scope="col" id="jan">يناير</th>
-      <th scope="col">فبراير</th>
-      <th scope="col">مارس</th>
-      <th scope="col">أبريل</th>
-      <th scope="col">مايو</th>
-      <th scope="col">يونيو</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row" id="north">الفرع الشمالي</th>
-      <td headers="q1 jan north">120</td>
-      <td>98</td>
-      <td>143</td>
-      <td>160</td>
-      <td>171</td>
-      <td>155</td>
-    </tr>
-  </tbody>
-</table>
-</main>
-</body>
-</html>
-~~~
-
-**الإجابات:**
-
-- [[scope="colgroup"]]: العنوان ده لمجموعة أعمدة كاملة، مش عمود واحد. فـ «الربع الأول» بيتقال مع يناير وفبراير ومارس.
-- [[colspan="3"]]: الخلية واخدة ٣ أعمدة في الرسم.
-- [[<colgroup>]] و [[<col>]]: بيعرّفوا الأعمدة في مكان واحد، فتقدر تلوّن عمود كامل زي [[.q2]] من غير ما تحط class على كل خلية. لازم ييجوا بعد [[caption]] وقبل [[thead]].
-- [[headers="q1 jan north"]]: ربط يدوي بين الخلية و id العناوين بتاعتها.
-
-**إمتى تحتاج** [[headers]]**:** لما العناوين مش في صف وعمود واضحين. زي جدول فيه عناوين في نص الجدول، أو خلية تابعة لعنوان مش فوقها مباشرة. في الجداول العادية [[scope]] كفاية، و [[headers]] مكتوبة هنا على خلية واحدة للتوضيح.
-
-**الغلطة الشائعة:** تحط [[colgroup]] قبل [[caption]]، فالـ validator يرفضه. أو تحاول تحط [[padding]] على [[col]]. [[col]] بيقبل خصايص قليلة جدًا زي [[background]] و [[width]].
-
-~~~text الناتج
-عرض «الربع الأول» 149.58px = عرض الأشهر التلاتة 149.58px
-خلفية خلية في الربع التاني: لون col من الـ colgroup = rgb(244, 244, 245)
-validator: 0 error
-overflow على 1280: 0px   axe: 0 violations
-~~~` },
-          ],
-          title: "جدول بيانات يفهمه قارئ الشاشة",
-          desc: R`[[<table>]] للبيانات اللي ليها صفوف وأعمدة بس (طلبات، مستخدمين، أسعار)، مش لتقسيم الصفحة. و [[<caption>]] عنوان الجدول، و [[<thead>]] و [[<tbody>]] و [[<tfoot>]] بيقسموه، و [[<th>]] خلية عنوان.
-
-و [[scope="col"]] بيقول إن الـ th ده عنوان العمود اللي تحته، و [[scope="row"]] عنوان الصف اللي جنبه. فقارئ الشاشة وهو ماشي في الخلايا بيقول «الإجمالي، 1,250 ج» مش «1,250 ج» وخلاص.`,
-          example: R`<table>
-  <caption>طلبات الأسبوع ده</caption>
-  <thead>
-    <tr>
-      <th scope="col">رقم الطلب</th>
-      <th scope="col">العميل</th>
-      <th scope="col">الإجمالي</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1042</th>
-      <td>منى علي</td>
-      <td>1,250 ج</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <th scope="row" colspan="2">المجموع</th>
-      <td>1,250 ج</td>
-    </tr>
-  </tfoot>
-</table>`,
-          try: R`اعمل الجدول وزوّد 3 طلبات. افتح DevTools › Elements واختار خلية [[<td>]]، وافتح تاب Accessibility (جنب Styles) وبص على الـ role. وبعدين غيّر كل [[<th>]] لـ [[<td>]] وبص تاني. ولو معاك قارئ شاشة: في NVDA ادخل الجدول واتنقل بـ Ctrl+Alt+الأسهم، وفي VoiceOver بـ Ctrl+Option+الأسهم.`,
-          flag: "script",
-          deep: {
-            why: R`لوحات الأدمن والداشبوردات أغلبها جداول. والجدول من غير عناوين مربوطة بالنسبة لقارئ الشاشة لستة أرقام ملهاش معنى: «1,250، 980، 3,400» من غير ما يعرف دي إيه. ولو عملته بـ divs و grid، بيضيع التنقل بالصف والعمود خالص.`,
-            how: R`المتصفح بيبني من الجدول شجرة accessibility فيها [[table]] و [[row]] و [[columnheader]] و [[rowheader]] و [[cell]]. قارئ الشاشة بيستخدمها في وضع الجدول: لما تتحرك عمود يقول عنوان العمود الجديد، ولما تنزل صف يقول عنوان الصف.
-
-[[<caption>]] هو الاسم (accessible name) بتاع الجدول، ولازم يبقى أول حاجة جوه [[<table>]]. ولو مش عايزه يبان، خبيه بـ [[sr-only]] بدل ما تشيله.
-
-الجدول البسيط (صف عناوين واحد فوق) المتصفح غالبًا بيخمّن الـ scope صح لوحده، بس [[scope]] بيخليه أكيد، وضروري لو فيه عناوين صفوف. والجداول المعقدة (عنوانين متداخلين) محتاجة [[headers]] و [[id]]، بس الأحسن تقسمها لجداول أبسط.
-
-و [[colspan]] و [[rowspan]] بيدمجوا خلايا. و [[tfoot]] للمجموع، وبيتقري في آخر الجدول.`,
-            when: R`أي بيانات القارئ ممكن يقارن فيها بين صفوف أو أعمدة. لو كل عنصر ليه صورة ووصف وزرار (كروت منتجات)، ده مش جدول، ده list أو grid عادي.`,
-            mistakes: R`جدول لتقسيم الصفحة (ده كان من 2005). [[<td><b>]] بدل [[<th>]]. من غير caption فالجدول ملوش اسم. جدول بـ divs و [[display: grid]] وبعدين محتاج [[role="table"]] و [[role="row"]] على كل حاجة. وتغيّر [[display]] بتاع [[<table>]] أو [[<tr>]] لـ block أو flex عشان الموبايل: في متصفحات (Safari بالذات، ولو في نسخ قديمة) ده كان بيشيل معنى الجدول من قارئ الشاشة، فلو عملت كده اختبر.`
-          },
-          teach: R`## الفكرة في سطرين
-
-جدول فيه صف عناوين فوق، وصف بيانات، وصف مجموع تحت. كل خلية عنوان معمولة [[<th>]] ومكتوب عليها هي عنوان لعمود ولا لصف، فقارئ الشاشة يعرف كل رقم تبع إيه. فتحته في Chrome (headless) وطلّعت شجرة الـ accessibility بتاعة Chrome، وبعدين غيّرت حاجات وقارنت.
-
----
-
-## ١. العناصر واحد واحد
-
-| العنصر | اختصار إيه | دوره |
-|---|---|---|
-| [[<table>]] | | الجدول كله |
-| [[<caption>]] | | عنوان الجدول. لازم أول حاجة جوه table |
-| [[<thead>]] | table head | جزء العناوين |
-| [[<tbody>]] | table body | جزء البيانات |
-| [[<tfoot>]] | table foot | جزء المجموع تحت |
-| [[<tr>]] | table row | صف |
-| [[<th>]] | table header | خلية عنوان |
-| [[<td>]] | table data | خلية بيانات |
-
-والـ attributes:
-
-- [[scope="col"]]: الـ th ده عنوان العمود اللي تحته. [[col]] من column.
-- [[scope="row"]]: الـ th ده عنوان الصف اللي هو فيه.
-- [[colspan="2"]]: الخلية دي واخدة عرض عمودين. اتقاس [[cell.colSpan]] = 2 لخلية «المجموع».
-
----
-
-## ٢. الشكل الافتراضي
-
-قست كل خلية:
-
-| الخلية | [[font-weight]] | [[text-align]] |
-|---|---|---|
-| [[th]] | 700 (تقيل) | center |
-| [[td]] | 400 (عادي) | start |
-
-يعني المتصفح بيفرّق بينهم في الشكل كمان، بس الأهم الفرق في المعنى.
-
----
-
-## ٣. اللي قارئ الشاشة شايفه
-
-~~~text شجرة الـ accessibility
-table "طلبات الأسبوع ده"
-  caption
-  rowgroup
-    row
-      columnheader "رقم الطلب"
-      columnheader "العميل"
-      columnheader "الإجمالي"
-  row
-    rowheader "1042"
-    cell "منى علي"
-    cell "1,250 ج"
-  rowgroup
-    row
-      rowheader "المجموع"
-      cell "1,250 ج"
-~~~
-
-اقراها كده:
-
-- [[table "طلبات الأسبوع ده"]]: اسم الجدول جه من الـ caption.
-- [[columnheader]]: الـ th اللي عليه [[scope="col"]].
-- [[rowheader]]: الـ th اللي عليه [[scope="row"]]. فلما قارئ الشاشة يقف على «1,250 ج» يقدر يقول «الطلب 1042، الإجمالي».
-- [[rowgroup]]: الـ thead والـ tfoot. (الـ tbody هنا Chrome مش بيعرضه كـ node لوحده، الصف بيبان تحت الجدول على طول.)
-
----
-
-## ٤. لو كل الـ th بقوا td
-
-~~~text شجرة الـ accessibility
-table "طلبات الأسبوع ده"
-  row
-    cell "رقم الطلب"
-    cell "العميل"
-    cell "الإجمالي"
-  row
-    cell "1042"
-    cell "منى علي"
-    cell "1,250 ج"
-~~~
-
-مفيش ولا [[columnheader]] ولا [[rowheader]]: كله [[cell]]. الشكل كمان اتغيّر (كلهم 400 و start)، بس قارئ الشاشة خسر أكتر: مبقاش عارف «1,250 ج» تبع أنهي عمود.
-
----
-
-## ٥. لو الـ caption برا الـ table
-
-حطيت [[<caption>]] قبل [[<table>]] بدل جواه:
-
-~~~text شجرة الـ accessibility
-StaticText "طلبات الأسبوع ده"
-table
-  ...
-~~~
-
-الكلام بقى نص عادي برا، والجدول بقى [[table]] من غير اسم. ده لأن [[caption]] برا [[table]] ملوش معنى، فالمتصفح اتجاهله كعنصر وساب الكلام بس.
-
----
-
-## الخلاصة
-
-| عايز | استخدم |
-|---|---|
-| اسم للجدول | [[<caption>]] أول حاجة جوه [[<table>]] |
-| عنوان عمود | [[<th scope="col">]] |
-| عنوان صف | [[<th scope="row">]] |
-| خلية تاخد عمودين | [[colspan="2"]] |
-| تقسيم الأجزاء | [[thead]] و [[tbody]] و [[tfoot]] |
-
-- [[<td><b>]] مش بديل لـ [[<th>]]: الشكل تقيل بس قارئ الشاشة شايفه [[cell]].`,
-          lines: [
-            R`بداية الجدول: كل اللي جواه صفوف وأعمدة. المتصفح بيدّيه role [[table]] فقارئ الشاشة بيقول عدد الصفوف والأعمدة أول ما يدخله.`,
-            "عنوان الجدول، واسمه عند قارئ الشاشة.",
-            R`[[<thead>]] جزء العناوين: الصفوف اللي جواه بتتكرر فوق كل صفحة لو الجدول اتطبع على كذا ورقة.`,
-            R`[[<tr>]] من table row: صف واحد. كل الخلايا اللي جواه بتتحط جنب بعض في سطر.`,
-            R`عنوان عمود: [[<th>]] بدل [[<td>]] عشان دي خلية عنوان، و [[scope="col"]] بيقول إنه عنوان الخلايا اللي تحته في نفس العمود.`,
-            R`عنوان العمود التاني «العميل» بنفس الطريقة: [[scope="col"]] فأي td تحته بيتقري «العميل، منى علي».`,
-            R`عنوان العمود التالت «الإجمالي». الخط بيبقى تقيل ومتوسّط لوحده لأن المتصفح بيدّي الـ th تنسيق جاهز.`,
-            R`نهاية صف العناوين: التلات th دول هما كل أعمدة الجدول، وأي صف تحت لازم يبقى فيه ٣ خلايا (أو colspan بيكمّلها).`,
-            R`نهاية الـ thead. من غيره الجدول بيشتغل، بس المتصفح مش هيعرف يكرر العناوين في الطباعة.`,
-            R`[[<tbody>]] جسم الجدول: صفوف البيانات. لو مكتبتهوش المتصفح بيضيفه لوحده حوالين الصفوف (هتلاقيه في Elements).`,
-            R`صف طلب واحد. كل طلب جديد يبقى [[<tr>]] جديد جوه نفس الـ tbody.`,
-            R`رقم الطلب عنوان الصف ده: [[scope="row"]].`,
-            R`خلية بيانات: [[<td>]] من table data. قارئ الشاشة بيقراها «العميل، منى علي» لأنها تحت th العميل.`,
-            R`خلية الإجمالي: رقم عادي، بس هيتقري ومعاه اسم العمود والصف («1042، الإجمالي، 1,250 ج»).`,
-            R`نهاية صف الطلب: فيه ٣ خلايا زي عدد الأعمدة بالظبط.`,
-            R`نهاية الـ tbody: الطلبات خلصت، واللي بعده المجموع.`,
-            R`[[<tfoot>]] جزء المجموع تحت. بيتكتب بعد الـ tbody، وبيتكرر تحت كل صفحة في الطباعة زي الـ thead فوق.`,
-            R`صف المجموع: [[<tr>]] عادي بس جوه الـ tfoot.`,
-            R`عنوان صف واخد عمودين بـ [[colspan="2"]].`,
-            R`قيمة المجموع في عمود الإجمالي بالظبط، لأن الـ th اللي قبلها واخد العمودين الأولانيين.`,
-            R`نهاية صف المجموع: عموديين (colspan) + خلية = ٣ زي باقي الصفوف.`,
-            R`نهاية الـ tfoot: صف المجموع خلص، ومفيش صفوف بعده جوه الجدول.`,
-            R`نهاية الجدول: أي كلام بعدها برّه الجدول. لو نسيتها الكلام اللي بعده ممكن يتحط فوق الجدول بدل تحته (المتصفح بيطلّع أي حاجة مش خلية برّه الجدول).`
-          ],
-          sol: R`مع [[<th scope="col">]]، تاب Accessibility بيعرض الـ role بتاع العناوين [[columnheader]]، والخلية [[cell]]، وعنوان الصف [[rowheader]]، والجدول اسمه «طلبات الأسبوع ده» من الـ caption.
-
-لما تحوّل الـ th لـ td: العناوين بقت [[cell]] عادية، ولو قارئ الشاشة شغال هتلاحظ إنه بيقول الرقم لوحده من غير اسم العمود. ودا بالظبط الفرق اللي المستخدم الكفيف بيحس بيه.
-
-لو الجدول ملوش اسم في تاب Accessibility، اتأكد إن الـ [[<caption>]] أول حاجة جوه [[<table>]] مش قبله.`
-        },
-        {
-          cmd: "جدول responsive",
-          ref: [
-            { t: "MDN: border-collapse", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/border-collapse" },
-            { t: "MDN: border-spacing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/border-spacing" },
-            { t: "MDN: max-height", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/max-height" },
-            { t: "MDN: width", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/width" },
-          ],
-          practice: [
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس جدول الطلبات بـ ٣ طرق على الموبايل: (١) wrapper بـ scroll زي الدرس، (٢) كروت: كل [[tr]] بقى كارت و [[td::before { content: attr(data-label) }]] بيكتب اسم العمود، (٣) إخفاء الأعمدة المش مهمة تحت عرض معيّن.`, done: R`في التلاتة على 360px [[document.documentElement.scrollWidth]] بيساوي 360 (مفيش scroll أفقي للصفحة)، وكتبت لكل طريقة عيب: الأولى محتاجة scroll، والتانية طويلة، والتالتة بتخبّي بيانات.`, sol: R`~~~live 530 620
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>٣ طرق</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  table { border-collapse: collapse; width: 100%; }
-  th, td { padding: 8px; border-block-end: 1px solid #ccc; text-align: start; white-space: nowrap; }
-
-  /* ١: scroll جوه الصندوق */
-  .scroll { overflow-x: auto; }
-  .scroll table { min-width: 520px; }
-
-  @media (max-width: 40rem) {
-    /* ٢: كل صف كارت */
-    .cards thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-    .cards tr { display: block; border: 1px solid #ccc; border-radius: 8px; margin-block-end: 8px; padding: 8px; }
-    .cards td { display: flex; justify-content: space-between; border: 0; padding: 4px 0; white-space: normal; }
-    .cards td::before { content: attr(data-label); font-weight: 600; }
-
-    /* ٣: إخفاء الأعمدة غير المهمة */
-    .hide .opt { display: none; }
-  }
-</style>
-</head>
-<body>
-<main>
-<h1>نفس الجدول ٣ طرق</h1>
-
-<h2>١: scroll</h2>
-<div class="scroll" role="region" aria-label="الطلبات، scroll" tabindex="0">
-<table>
-  <thead><tr><th scope="col">الرقم</th><th scope="col">العميل</th><th scope="col">التاريخ</th><th scope="col">الفرع</th><th scope="col">الإجمالي</th></tr></thead>
-  <tbody><tr><td>1042</td><td>منى علي</td><td>2026-03-01</td><td>الشمالي</td><td>1,250 ج</td></tr></tbody>
-</table>
-</div>
-
-<h2>٢: كروت</h2>
-<table class="cards">
-  <thead><tr><th scope="col">الرقم</th><th scope="col">العميل</th><th scope="col">التاريخ</th><th scope="col">الفرع</th><th scope="col">الإجمالي</th></tr></thead>
-  <tbody><tr>
-    <td data-label="الرقم">1042</td><td data-label="العميل">منى علي</td>
-    <td data-label="التاريخ">2026-03-01</td><td data-label="الفرع">الشمالي</td>
-    <td data-label="الإجمالي">1,250 ج</td>
-  </tr></tbody>
-</table>
-
-<h2>٣: إخفاء</h2>
-<table class="hide">
-  <thead><tr><th scope="col">الرقم</th><th scope="col">العميل</th><th scope="col" class="opt">التاريخ</th><th scope="col" class="opt">الفرع</th><th scope="col">الإجمالي</th></tr></thead>
-  <tbody><tr><td>1042</td><td>منى علي</td><td class="opt">2026-03-01</td><td class="opt">الشمالي</td><td>1,250 ج</td></tr></tbody>
-</table>
-</main>
-</body>
-</html>
-~~~
-
-| الطريقة | العيب | تناسب |
-|---|---|---|
-| scroll | البيانات مخفية لحد ما تسحب، والمقارنة بين الأعمدة صعبة | جداول كبيرة بتتقارن |
-| كروت | الصفحة بتطول، والمقارنة بين الصفوف صعبة | لستة طلبات بتتقري واحد واحد |
-| إخفاء | بيانات مش متاحة خالص على الموبايل | عمود مش ضروري فعلًا |
-
-**تفاصيل مهمة:**
-
-- [[tabindex="0"]] و [[role="region"]] على صندوق الـ scroll: عشان اللي بالكيبورد يقدر يقف عليه ويحرّكه بالأسهم.
-- [[content: attr(data-label)]]: الـ CSS بيقرا اسم العمود من الـ HTML. كده الاسم في الـ HTML مرة واحدة لكل خلية.
-- [[thead]] مخفي بالشكل بس في الكروت، عشان قارئ الشاشة يفضل شايفه.
-
-**الغلطة الشائعة:** تعالج overflow الجدول بـ [[body { overflow-x: hidden }]]. الجدول مقصوص، والبيانات راحت من غير ما حد يعرف.
-
-~~~text الناتج
-على 360:
-scrollWidth للصفحة = 360   (= عرض الشاشة)
-الطريقة ١: الجدول 520px جوه صندوق 328px
-الطريقة ٢: ارتفاع الجدول 171px
-الطريقة ٣: ظاهر 3 أعمدة من 5
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة فيها عنصر عريض عامل scroll أفقي، فحد حط [[html, body { overflow-x: hidden; }]]. الـ scroll راح، بس الهيدر اللي عليه [[position: sticky; top: 0]] مبقاش بيلزق.`, done: R`في Chrome بعد النزول الهيدر بقى برّه الشاشة (الـ top بالسالب) مع [[hidden]]، ورجع يلزق (top = 0) لما غيّرتها لـ [[overflow-x: clip]]، لأن hidden بيخلي الـ body منطقة scroll لوحده والـ sticky بيلزق فيها هي. والأحسن من الاتنين تلاقي العنصر العريض وتصلّحه.`, sol: R`الصفحة وفيها الغلط، على 360:
-
-~~~live 600 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الهيدر</title>
-<style>
-  html, body { overflow-x: hidden; }
-  body { margin: 0; }
-  header { position: sticky; top: 0; background: #124; color: #fff; padding: 12px; }
-  .wide { width: 600px; height: 40px; background: #fca5a5; }
-  main { height: 2000px; }
-</style>
-</head>
-<body>
-<header>الهيدر</header>
-<main>
-  <h1>المحتوى</h1>
-  <div class="wide">عنصر عريض</div>
-</main>
-</body>
-</html>
-~~~
-
-**التصليح الأحسن:** تلاقي العنصر العريض وتصلّحه:
-
-~~~css
-.wide { width: 600px; max-width: 100%; }
-~~~
-
-ولو لازم تقص، [[clip]] مش [[hidden]]:
-
-~~~css
-html, body { overflow-x: clip; }
-~~~
-
-**ليه** [[hidden]] **كسر الـ sticky:** [[overflow: hidden]] بيخلي العنصر منطقة scroll لوحده، حتى لو مبيتحركش. والـ sticky بيلزق في أقرب منطقة scroll فوقه. فالهيدر بقى لازق في الـ body مش في الشاشة، والـ body نفسه مش بيتحرك، فالهيدر بيطلع مع الصفحة.
-
-أما [[clip]] فبيقص بس، ومبيعملش منطقة scroll، فالـ sticky بيشتغل عادي.
-
-**الغلطة الشائعة:** تشوف الـ scroll الأفقي راح وتعتبر المشكلة اتحلّت. العنصر العريض لسه طالع برّه ومقصوص، ومستخدم الموبايل مش هيشوف آخره.
-
-~~~text الناتج
-نزلنا 500px على عرض 360:
-                         top الهيدر     scroll أفقي
-overflow-x: hidden       -500          0px
-overflow-x: clip         0          0px
-max-width: 100%          0          0px
-~~~` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** سطر تلزقه في الـ Console يطلّع كل عنصر طالع برّه عرض الشاشة: [[ [...document.querySelectorAll('body *')].filter((el) => { const r = el.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }) ]]. لاحظ إن في صفحة RTL العنصر العريض بيطلع من الشمال، فالـ left بيبقى بالسالب.`, done: R`على صفحة فيها جدول من غير wrapper على 360px بيطلّع الجدول وكل اللي جواه. وبعد الـ wrapper السطر لسه بيطلّعهم (هم فعلًا برّه الشاشة بس جوه صندوق scroll)، فزوّدت شرط يعدّي أي عنصر جوه أب [[overflow-x]] بتاعه مش [[visible]] فرجعت لستة فاضية، و [[document.documentElement.scrollWidth]] بقى 360. وجربته على صفحة عربي واتأكدت إن شرط [[r.left < -1]] هو اللي مسكه.`, sol: R`~~~js
-[...document.querySelectorAll('body *')].filter((el) => {
-  const r = el.getBoundingClientRect();
-  return r.right > innerWidth + 1 || r.left < -1;
-});
-~~~
-
-وصفحة تجرب عليها:
-
-~~~live 130 130
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطلبات</title>
-<style>td { padding: 8px 40px; white-space: nowrap; }</style>
-</head>
-<body>
-<main id="box">
-  <h1>الطلبات</h1>
-  <table>
-    <tr><td>1042</td><td>منى علي</td><td>2026-03-01</td><td>1,250 ج</td></tr>
-  </table>
-</main>
-</body>
-</html>
-~~~
-
-والتصليح:
-
-~~~css
-#box { overflow-x: auto; }
-~~~
-
-بعد التصليح السطر الأول لسه هيطلّع نفس العناصر، لأنها فعلًا برّه الشاشة بس جوه صندوق scroll. النسخة دي بتعدّي أي عنصر جوه صندوق بيتعامل مع الزيادة:
-
-~~~js
-[...document.querySelectorAll('body *')].filter((el) => {
-  const r = el.getBoundingClientRect();
-  if (r.right <= innerWidth + 1 && r.left >= -1) return false;
-  for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
-    if (getComputedStyle(p).overflowX !== 'visible') return false;
-  }
-  return true;
-});
-~~~
-
-**ليه الشرطين:** في صفحة [[ltr]] العنصر العريض بيطلع من اليمين، فـ [[r.right]] يبقى أكبر من [[innerWidth]]. في [[rtl]] بيبدأ من اليمين ويتمد ناحية الشمال، فبيطلع من الشمال، و [[r.left]] يبقى سالب. لو فحصت [[right]] بس، الأداة مش هتشوف حاجة في صفحة عربي.
-
-- الـ [[+ 1]] و [[-1]]: سماح لكسور البكسل.
-- [[getBoundingClientRect]]: موقع العنصر فعليًا على الشاشة.
-
-**الفحص النهائي للصفحة كلها:** [[document.documentElement.scrollWidth]] لازم يساوي عرض الشاشة. السطر بيقولك مين طالع، والرقم ده بيقولك الصفحة نفسها فيها scroll ولا لأ.
-
-**الغلطة الشائعة:** تستنى لما تلاقي الـ scroll بعينك. الأداة دي بتديك أسامي العناصر، فتعرف السبب بدل ما تخمّن.
-
-~~~text الناتج
-الصفحة على 360، قبل الـ wrapper:
-عدد العناصر: 5   أول عناصر: table , tbody , tr , td , td
-أول عنصر: left = -178   right = 352
-الشرط اللي مسكه: r.left < -1
-
-بعد overflow-x: auto على الأب:
-السطر الأول لسه بيطلّع 5 عناصر (جوه الـ wrapper، ومش مشكلة)
-النسخة اللي بتعدّي صناديق الـ scroll: 0 عنصر
-scrollWidth للصفحة = 360  على عرض 360
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** جدول طلبات لوحة تحكم: wrapper بـ [[max-height: 70dvh]] وعناوين لازقة، وصفوف مخططة، وعمود «إجراءات» فيه زرارين أيقونة (تعديل وحذف) كل واحد [[aria-label]] فيه رقم الطلب ([[aria-label="احذف الطلب 1042"]]).`, done: R`العناوين فاضلة فوق وانت نازل جوه الجدول، و ARIA snapshot بيقول «احذف الطلب 1042» مش «زرار» بس، وكل زرار 44×44 على الأقل، والصفحة على 360px مفيهاش scroll أفقي.`, sol: R`~~~live 180 180
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطلبات</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  .wrap { max-height: 70dvh; overflow: auto; border: 1px solid #d4d4d8; border-radius: 8px; }
-  table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 420px; }
-  th, td { padding: 8px 12px; text-align: start; }
-  thead th { position: sticky; top: 0; background: #f4f4f5; z-index: 1; }
-  tbody tr:nth-child(even) { background: #fafafa; }
-  .icon { width: 44px; height: 44px; padding: 0; font: inherit; cursor: pointer; }
-</style>
-</head>
-<body>
-<main>
-<h1>الطلبات</h1>
-<div class="wrap" role="region" aria-label="جدول الطلبات" tabindex="0">
-  <table>
-    <thead>
-      <tr><th scope="col">الرقم</th><th scope="col">العميل</th><th scope="col">الإجمالي</th><th scope="col">إجراءات</th></tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
-</div>
-</main>
-<script>
-  const rows = [];
-  for (let id = 1042; id < 1072; id++) {
-    rows.push($__bt<tr>
-      <td>$__{id}</td><td>عميل $__{id}</td><td>$__{id * 3} ج</td>
-      <td>
-        <button class="icon" type="button" aria-label="عدّل الطلب $__{id}">✎</button>
-        <button class="icon" type="button" aria-label="احذف الطلب $__{id}">✕</button>
-      </td></tr>$__bt);
-  }
-  document.querySelector('#rows').innerHTML = rows.join('');
-$__lt/script>
-</body>
-</html>
-~~~
-
-**السطور المهمة:**
-
-- [[max-height: 70dvh]] مع [[overflow: auto]]: الصندوق نفسه بيعمل scroll، مش الصفحة. وده اللي بيخلي العناوين تلزق جواه.
-- [[position: sticky; top: 0]] على الـ [[th]] مش الـ [[thead]] ولا الـ [[tr]]: على الخلية بيشتغل في كل المتصفحات.
-- [[background]] على الـ [[th]] لازم، وإلا الصفوف هتظهر من تحته.
-- [[border-collapse: separate]]: مع [[collapse]] الحدود بتسيب العنوان وهو لازق، فبنستخدم separate و [[border-spacing: 0]].
-- [[aria-label="احذف الطلب 1042"]]: لو كل الأزرار اسمها «احذف»، قارئ الشاشة بيقراهم زي بعض، ومش هتعرف بتحذف أنهي طلب.
-
-**الغلطة الشائعة:** تحط [[overflow-x: auto]] من غير [[max-height]] وتستنى العناوين تلزق. الصندوق ارتفاعه قد المحتوى، فمفيش scroll جواه، والـ sticky ملوش حاجة يلزق فيها. وتجنّب [[overflow: hidden]] على أب فوقه لنفس السبب.
-
-~~~text الناتج
-الصفوف = 30
-قبل النزول: top العنوان = 86.88، وبعد النزول 400px جوه الجدول: 86.88  (أعلى الصندوق = 85.88)
-اسم أول زرارين: عدّل الطلب 1042 , احذف الطلب 1042
-مقاس الزرار: 44×44
-overflow على 360: 0px   axe: 0 violations
-~~~` },
-            { lvl: 'تحدي', t: R`**أشكال:** نسخة الكروت للموبايل: تحت 40rem كل صف بقى كارت بحدود و [[border-radius]]، وجوه الكارت كل خلية سطر فيه [[grid-template-columns: 8rem 1fr]]: اسم العمود من [[data-label]] على اليمين والقيمة جنبه، والـ thead مخفي بالشكل بس.`, done: R`على 360px كل طلب كارت لوحده واسم العمود قدام كل قيمة، وعلى 800px رجع جدول عادي، وتاب Accessibility لسه شايف [[table]] و [[columnheader]] في الحالتين (لأنك خبّيت الـ thead بالشكل مش بـ [[display: none]]).`, sol: R`~~~live 240 370
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطلبات</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  table { border-collapse: collapse; width: 100%; }
-  th, td { padding: 8px; text-align: start; border-block-end: 1px solid #d4d4d8; }
-
-  @media (max-width: 40rem) {
-    table, tbody { display: block; }
-    thead {
-      position: absolute;
-      width: 1px; height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-    }
-    tr {
-      display: block;
-      border: 1px solid #d4d4d8;
-      border-radius: 12px;
-      padding: 8px;
-      margin-block-end: 12px;
-    }
-    td {
-      display: grid;
-      grid-template-columns: 8rem 1fr;
-      border: 0;
-      padding: 4px 0;
-    }
-    td::before {
-      content: attr(data-label);
-      font-weight: 600;
-    }
-  }
-</style>
-</head>
-<body>
-<main>
-<h1>الطلبات</h1>
-<table>
-  <caption>طلبات اليوم</caption>
-  <thead>
-    <tr>
-      <th scope="col">الرقم</th>
-      <th scope="col">العميل</th>
-      <th scope="col">الإجمالي</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td data-label="الرقم">1042</td>
-      <td data-label="العميل">منى علي</td>
-      <td data-label="الإجمالي">1,250 ج</td>
-    </tr>
-    <tr>
-      <td data-label="الرقم">1043</td>
-      <td data-label="العميل">كريم عادل</td>
-      <td data-label="الإجمالي">90 ج</td>
-    </tr>
-  </tbody>
-</table>
-</main>
-</body>
-</html>
-~~~
-
-**سؤال الـ accessibility:** تغيير [[display]] على [[table]] و [[tr]] و [[td]] كان بيخلي بعض المتصفحات تعتبره مش جدول. في Chrome 156 قسناها: الأدوار فضلت كاملة من غير ولا [[role]] مكتوبة. لو لازم تدعم Safari القديم، زوّد [[role="table"]] و [[role="row"]] و [[role="cell"]] و [[role="columnheader"]]. الجزء ده عن Safari من مقالات الـ accessibility، مش من تجربة هنا.
-
-**باقي الحل:**
-
-- [[thead]] مخفي بالشكل بس، مش [[display: none]]، عشان العناوين تفضل في شجرة الـ accessibility.
-- [[grid-template-columns: 8rem 1fr]]: عمود ثابت لاسم الحقل، والباقي للقيمة، فكل القيم تبدأ من نفس الخط.
-- [[td::before]] هو أول عنصر في الشبكة، والقيمة التاني. ده لأن النص بيبقى grid item تلقائي.
-- كل القواعد جوه [[@media]]: فوق 40rem الجدول عادي.
-
-**الغلطة الشائعة:** تكتب الكروت برّه الـ media query أو تستخدم [[thead { display: none }]]. قارئ الشاشة هيخسر أسامي الأعمدة.
-
-~~~text الناتج
-                        360                  800
-الـ display بتاع tr      block               table-row
-أعمدة td                128px 182px          none
-overflow                0px                 0px
-
-الأدوار في شجرة Chrome:
-على 360:  table=1 , row=3 , cell=6 , columnheader=3
-على 800:  table=1 , row=3 , cell=6 , columnheader=3
-axe: 0 violations
-~~~` },
-          ],
-          title: "جدول عريض على موبايل عرضه 375",
-          desc: R`الجدول مبيتكسرش زي الكلام، فعلى الموبايل بيوسّع الصفحة كلها ويعمل scroll أفقي. الحل: لفّه في [[<div>]] عليه [[overflow-x: auto]]، فالجدول هو اللي يعمل scroll جوه مكانه والصفحة تفضل ثابتة.
-
-والـ div ده بياخد [[tabindex="0"]] عشان مستخدم الكيبورد يقدر يعمل scroll بالأسهم، و [[role="region"]] مع [[aria-labelledby]] للـ caption عشان قارئ الشاشة يعرف هو إيه.
-
-وتحسينات: عناوين ثابتة فوق بـ [[position: sticky]]، وصفوف مخططة (zebra) بـ [[nth-child(even)]]، و hover على الصف، والأرقام [[tabular-nums]] ومحاذية للآخر. وفي Tailwind: [[overflow-x-auto]] و [[sticky top-0]] و [[even:bg-gray-50]] و [[hover:bg-gray-100]] و [[tabular-nums]].`,
-          example: R`<div class="table-wrap" role="region" aria-labelledby="orders-cap" tabindex="0">
-  <table>
-    <caption id="orders-cap">الطلبات</caption>
-    ...
-  </table>
-</div>
-// styles.css
-.table-wrap { overflow: auto; max-height: 70dvh; }
-.table-wrap table { border-collapse: separate; border-spacing: 0; min-width: 40rem; width: 100%; }
-.table-wrap th, .table-wrap td { padding: 0.5rem 0.75rem; text-align: start; white-space: nowrap; border-block-end: 1px solid var(--color-border); }
-.table-wrap thead th { position: sticky; top: 0; z-index: 1; background: var(--color-bg); }
-.table-wrap tbody tr:nth-child(even) { background: var(--color-muted); }
-.table-wrap tbody tr:hover { background: var(--color-hover); }
-.table-wrap .num { text-align: end; font-variant-numeric: tabular-nums; }
-.table-wrap:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }`,
-          try: R`اعمل جدول 8 أعمدة و 30 صف، وافتحه في وضع الموبايل في DevTools من غير الـ wrapper: الصفحة كلها بتتحرك يمين وشمال. حط الـ wrapper: الجدول بس اللي بيتحرك. وبعدين دوس Tab لحد ما الـ wrapper ياخد focus وجرّب الأسهم، وانزل تحت وشوف العناوين فاضلة فوق ولا لأ. وأخيرًا غيّر [[separate]] لـ [[collapse]] وبص على خط العناوين وانت نازل.`,
-          flag: "script",
-          deep: {
-            why: R`لوحات الأدمن بتتفتح من الموبايل أكتر مما تتخيل. والجدول اللي بيوسّع الصفحة بيبوّظ كل حاجة تانية: الـ header بيتحرك، والأزرار بتخرج برا الشاشة. والعناوين الثابتة مهمة لأن بعد 20 صف محدش فاكر العمود التالت كان إيه.`,
-            how: R`[[overflow: auto]] بيخلي الـ div ده scroll container. و [[position: sticky]] بيلزق في أقرب scroll container فوقه، فالـ th هنا بيلزق في أول الـ wrapper مش في أول الشاشة. عشان كده الـ wrapper محتاج [[max-height]]: من غيرها مفيش scroll رأسي جواه، والعناوين مش هتلزق.
-
-[[border-collapse: collapse]] بيخلي البوردرات تتشارك بين الخلايا، وده بيخلي بوردر الـ th الـ sticky ميتحركش معاه. عشان كده [[separate]] مع [[border-spacing: 0]] والبوردر على كل خلية. والـ [[background]] على الـ th ضروري، وإلا الصفوف هتبان من ورا العنوان وهي بتعدّي.
-
-[[tabular-nums]] بيخلي كل الأرقام نفس العرض فالأعمدة تبقى على خط واحد. و [[text-align: start]] و [[end]] بدل left و right عشان يتقلبوا لوحدهم في العربي.
-
-و [[tabindex="0"]] على div عادي محتاج role واسم، وإلا قارئ الشاشة هيقول «clickable» أو ولا حاجة. و Chrome الحديث بيدّي الـ scroll containers focus لوحده، بس مش كل المتصفحات، فخليه صريح.
-
-البديل التاني على الموبايل: كل صف يتحول لكارت (label و value). بيبقى أحلى في الجداول الصغيرة، بس بيضيّع المقارنة بين الصفوف، ومحتاج CSS كتير. ابدأ بالـ scroll.`,
-            when: R`أي جدول أكتر من 3 أو 4 أعمدة. الـ sticky header لما الجدول أطول من الشاشة. الـ zebra في الجداول العريضة عشان العين متتوهش في الصف.`,
-            mistakes: R`[[overflow-x: auto]] على [[<table>]] نفسه (مش بيشتغل، الجدول مبيعملش overflow). sticky من غير max-height على الـ wrapper. th sticky من غير background. [[border-collapse: collapse]] فالبوردر يفضل مكانه. [[text-align: left]] في موقع عربي. وتقطع الأعمدة على الموبايل بـ [[display: none]] فالمستخدم ميعرفش إنها موجودة.`
-          },
-          teach: R`## الفكرة في سطرين
-
-بنلف الجدول في [[div]] بيعمل scroll لوحده، فالجدول العريض يتحرك جوه مكانه والصفحة تفضل ثابتة، وصف العناوين يفضل لازق فوق وانت نازل. جرّبت جدول 8 أعمدة و 30 صف بالـ CSS ده بالظبط في Chrome (headless) على موبايل عرضه 375، وعرّفت الألوان كده عشان الـ [[var()]] تشتغل:
-
-~~~text style.css
-:root { --color-border: #ddd; --color-bg: #fff; --color-muted: #f5f5f5; --color-hover: #eef; --color-brand: #2563eb; }
-~~~
-
-[[--color-bg]] اسمه CSS variable (متغير بيبدأ بـ [[--]])، و [[var(--color-bg)]] بتجيب قيمته. و [[:root]] هو [[<html>]]. (المتغيرات ليها درس في «الوحدات والمتغيرات».)
-
----
-
-## ١. الـ HTML
-
-~~~text index.html
-<div class="table-wrap" role="region" aria-labelledby="orders-cap" tabindex="0">
-  <table>
-    <caption id="orders-cap">الطلبات</caption>
-~~~
-
-| الحتة | ليه |
-|---|---|
-| [[class="table-wrap"]] | عشان الـ CSS يمسكه |
-| [[role="region"]] | يقول لقارئ الشاشة «دي منطقة» |
-| [[aria-labelledby="orders-cap"]] | اسم المنطقة = كلام العنصر اللي الـ id بتاعه [[orders-cap]] (الـ caption) |
-| [[tabindex="0"]] | خلي الـ div ياخد focus بـ Tab. [[0]] = بالترتيب الطبيعي |
-
-في شجرة الـ accessibility ظهر [[region "الطلبات" focusable=true]].
-
----
-
-## ٢. الـ wrapper: [[overflow: auto; max-height: 70dvh;]]
-
-- [[overflow: auto]]: لو المحتوى أكبر من الصندوق، اعمل scroll جواه (ولو مش أكبر، متعملش scrollbar).
-- [[max-height: 70dvh]]: أقصى ارتفاع 70% من ارتفاع الشاشة. [[dvh]] = 1% من ارتفاع الشاشة الظاهرة فعلًا (dynamic viewport height).
-
-القياس:
-
-| | عرض الصفحة كلها ([[scrollWidth]]) | عرض الشاشة |
-|---|---|---|
-| الجدول من غير wrapper | 648 | 375 |
-| جوه الـ wrapper | 375 | 375 |
-
-من غير الـ wrapper الصفحة كلها بقت 648 عرض، يعني scroll أفقي للصفحة كلها. معاه: الصفحة 375، والـ wrapper عرضه 359 والجدول جواه 640، فالـ 281 الزيادة بيتحركوا جوه الـ wrapper بس. وارتفاع الـ wrapper اتقاس 467 (70% من 667).
-
----
-
-## ٣. الجدول: [[border-collapse: separate; border-spacing: 0; min-width: 40rem; width: 100%;]]
-
-- [[min-width: 40rem]]: [[rem]] = حجم خط الصفحة (16px افتراضيًا)، يعني 640px على الأقل. ده اللي بيخلي الأعمدة متتزنقش.
-- [[width: 100%]]: ولو المساحة أكبر من 640، املاها.
-- [[border-collapse]] و [[border-spacing]]: شرحهم تحت في السطر بتاع الـ sticky.
-
----
-
-## ٤. الخلايا
-
-~~~text style.css
-.table-wrap th, .table-wrap td { padding: 0.5rem 0.75rem; text-align: start; white-space: nowrap; border-block-end: 1px solid var(--color-border); }
-~~~
-
-- الفاصلة بين الـ selectors: القاعدة على الاتنين.
-- [[padding: 0.5rem 0.75rem]]: قيمتين = فوق وتحت 8px، والجنبين 12px.
-- [[text-align: start]]: أول السطر حسب الاتجاه، يعني يمين في العربي.
-- [[white-space: nowrap]]: متكسرش الكلام على سطرين.
-- [[border-block-end]]: الخط اللي **تحت** الخلية. [[block]] هو الاتجاه الرأسي و [[end]] آخره.
-
----
-
-## ٥. العناوين اللازقة
-
-~~~text style.css
-.table-wrap thead th { position: sticky; top: 0; z-index: 1; background: var(--color-bg); }
-~~~
-
-- [[position: sticky]] و [[top: 0]]: العنصر يمشي عادي، ولما يوصل لأول الـ scroll container يلزق فيه.
-- [[z-index: 1]]: يبقى فوق الصفوف اللي بتعدّي تحته.
-- [[background]]: من غيرها الصفوف تبان من ورا العنوان. اتقاست [[rgb(255, 255, 255)]].
-
-نزلت في الـ wrapper بالأسهم وقست:
-
-| | [[scrollTop]] بتاع الـ wrapper | أول الـ wrapper | أول الـ th |
-|---|---|---|---|
-| قبل | 0 | 8 | 26 (تحت الـ caption) |
-| بعد سهمين لتحت | 120 | 8 | **8** |
-| بعد PageDown | 528 | 8 | **8** |
-
-الـ caption طلع لفوق واختفى، والـ th فضل لازق في أول الـ wrapper.
-
-### ليه [[max-height]] ضرورية؟
-
-شلتها ونزلت الصفحة 400 بيكسل: ارتفاع الـ wrapper بقى 1103 (الجدول كله)، و [[scrollTop]] جواه فضل 0، والـ th بقى عند -338 (طلع برا الشاشة). يعني مفيش scroll رأسي جوه الـ wrapper، فالـ sticky ملوش حاجة يلزق فيها.
-
-### ليه [[separate]] مش [[collapse]]؟
-
-خليت خط الخلايا أحمر وتخين ونزلت، وصوّرت الجزء اللي فوق:
-
-- مع [[collapse]]: الـ th لازق فوق بس **من غير** الخط اللي تحته، والخط فضل مكانه الأصلي واتحرك مع الصفوف.
-- مع [[separate]]: الخط لازق تحت العنوان.
-
-في collapse البوردر بيبقى مشترك بين الخلية واللي تحتها، فمش ملك الـ th لوحده عشان يتحرك معاه. و [[border-spacing: 0]] بيشيل الفراغ اللي [[separate]] بيحطه بين الخلايا.
-
----
-
-## ٦. باقي السطور
-
-| السطر | اتقاس |
-|---|---|
-| [[tbody tr:nth-child(even)]] (الصفوف الزوجية) | الصف 1 شفاف، والصف 2 [[rgb(245, 245, 245)]] |
-| [[tbody tr:hover]] | لون الصف اللي الماوس عليه |
-| [[.num { text-align: end; font-variant-numeric: tabular-nums; }]] | محاذاة [[end]] (شمال في العربي)، وكل رقم نفس العرض |
-| [[.table-wrap:focus-visible]] | بعد Tab: outline [[solid rgb(37, 99, 235)]] |
-
----
-
-## ٧. بالكيبورد
-
-دوست Tab لحد ما الـ wrapper اتعلّم، وبعدين الأسهم:
-
-~~~text الناتج
-سهم شمال مرة:    scrollLeft = -40
-سهم شمال مرتين:  scrollLeft = -80
-~~~
-
-كل سهم 40 بيكسل. والرقم بالسالب لأن الصفحة RTL: الـ scroll بيبدأ من اليمين (0) ويمشي ناحية الشمال بالسالب.
-
----
-
-## الخلاصة
-
-| عايز | الحل |
-|---|---|
-| الصفحة متتوسعش | wrapper بـ [[overflow: auto]] |
-| العناوين تلزق | [[position: sticky; top: 0]] + [[max-height]] على الـ wrapper + [[background]] |
-| الخط يلزق مع العنوان | [[border-collapse: separate; border-spacing: 0]] |
-| الكيبورد يعمل scroll | [[tabindex="0"]] و [[role="region"]] واسم |`,
-          lines: [
-            R`الـ wrapper: منطقة ليها اسم، وبتاخد focus عشان الكيبورد يعمل scroll.`,
-            R`الجدول نفسه جوه الـ wrapper: هو اللي عرضه كبير، والـ wrapper عرضه عرض الشاشة، فالفرق بيبقى scroll جوه الـ wrapper بس.`,
-            R`الـ caption ليه id عشان الـ wrapper ياخد اسمه منه.`,
-            "الصفوف (زي الدرس اللي فات).",
-            R`نهاية الجدول: لازم تبقى جوه الـ div، عشان لو الجدول برّه الـ wrapper الصفحة كلها هتعمل scroll أفقي تاني.`,
-            R`نهاية الـ wrapper: الـ scroll والـ focus والاسم كلهم على العنصر ده، مش على الجدول.`,
-            R`الـ scroll جوه الـ wrapper في الاتجاهين، وأقصى ارتفاع 70% من الشاشة عشان الـ sticky يشتغل.`,
-            R`عرض أدنى للجدول (غير كده الأعمدة هتتزنق)، و [[separate]] عشان البوردر يتحرك مع العنوان الـ sticky.`,
-            R`مسافات، ومحاذاة للبداية (يمين في العربي)، ومن غير كسر سطر، وخط تحت كل خلية.`,
-            R`العناوين بتلزق فوق وهي جوه الـ wrapper، وخلفية عشان الصفوف متبانش من وراها.`,
-            "الصفوف الزوجية بلون خفيف (zebra).",
-            "الصف اللي الماوس عليه بيتلوّن.",
-            "أعمدة الأرقام: للآخر وكل الأرقام نفس العرض.",
-            "لما الـ wrapper ياخد focus من الكيبورد يبان."
-          ],
-          sol: R`من غير الـ wrapper: الصفحة كلها بيبقى فيها scroll أفقي، والـ header واللينكات بيتحركوا مع الجدول. مع الـ wrapper: الصفحة ثابتة، والجدول بس اللي بيتحرك جوه مكانه.
-
-بالكيبورد: Tab بيوصل للـ wrapper وبيظهر عليه outline، والأسهم يمين وشمال وتحت وفوق بتعمل scroll. قارئ الشاشة بيقول «الطلبات، region».
-
-وانت نازل: العناوين فاضلة فوق الـ wrapper. لو مش لازقة، يبقى الـ wrapper ملوش [[max-height]] (فالـ scroll بيحصل في الصفحة مش جواه). ومع [[collapse]] هتلاقي خط تحت العناوين فاضل مكانه والعناوين طالعة من غيره: ده السبب إننا استخدمنا [[separate]].`
-        },
-        {
-          cmd: "ترتيب وصفحات في الـ URL",
-          ref: [
-            { t: "MDN: URLSearchParams", url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams" },
-            { t: "MDN: History.pushState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/pushState" },
-            { t: "MDN: History.replaceState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/replaceState" },
-            { t: "MDN: popstate event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event" },
-            { t: "MDN: aria-sort", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-sort" },
-          ],
-          practice: [
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[pageList(current, total)]] بترجّع أرقام أزرار الصفحات بالشكل ده: [[pageList(5, 20)]] → [[ [1, '…', 4, 5, 6, '…', 20] ]]. أول صفحة وآخر صفحة دايمًا ظاهرين، وجنب الحالية صفحة من كل ناحية.`, done: R`[[pageList(1, 1)]] → [[ [1] ]]، و [[pageList(1, 5)]] → [[ [1, 2, '…', 5] ]]، و [[pageList(2, 3)]] → [[ [1, 2, 3] ]] (من غير نقط لما مفيش فجوة)، و [[pageList(20, 20)]] → [[ [1, '…', 19, 20] ]]، و [[pageList(99, 20)]] بتتعامل مع 99 كأنها 20.`, sol: R`~~~js
-function pageList(current, total) {
-  const cur = Math.min(Math.max(current, 1), total);
-  const wanted = [...new Set([1, cur - 1, cur, cur + 1, total])]
-    .filter((n) => n >= 1 && n <= total);
-
-  const out = [];
-  wanted.forEach((n, i) => {
-    if (i > 0 && n - wanted[i - 1] > 1) out.push('…');
-    out.push(n);
-  });
-  return out;
-}
-~~~
-
-**الفكرة في ٣ خطوات:**
-
-1. اظبط الصفحة الحالية: [[Math.min]] و [[Math.max]] بيخلوا 99 تبقى 20 و 0 تبقى 1. ده اسمه clamp.
-2. لستة الصفحات اللي عايزين نعرضها: الأولى، واللي قبل الحالية، والحالية، واللي بعدها، والأخيرة. [[Set]] بتشيل المكرر، زي صفحة 1 لما تبقى هي الحالية. و [[filter]] بتشيل 0 و 21.
-3. لف عليهم، ولو الفرق بين رقمين أكبر من 1 يبقى فيه فجوة، فحط [[…]] بينهم.
-
-**ليه مفيش sort:** الأرقام مكتوبة أصلًا من الصغير للكبير، و [[Set]] بتحافظ على ترتيب الإضافة.
-
-**الغلطة الشائعة:** تكتب شروط [[if]] لكل حالة طرفية. مع الطريقة دي الحالات كلها بتتحل بنفس السطور.
-
-~~~text الناتج
-pageList(5, 20)    → [1,"…",4,5,6,"…",20]
-pageList(1, 1)     → [1]
-pageList(1, 5)     → [1,2,"…",5]
-pageList(2, 3)     → [1,2,3]
-pageList(20, 20)   → [1,"…",19,20]
-pageList(99, 20)   → [1,"…",19,20]
-pageList(0, 4)     → [1,2,"…",4]
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل بحث بيعمل [[history.pushState(null, '', '?q=' + input.value)]] مع كل حرف. المستخدم كتب «قهوة» وعايز يرجع للصفحة اللي قبل البحث.`, done: R`قبل: كتابة ٤ حروف زوّدت [[history.length]] بـ 4 (اتقاس في Chrome)، فكان محتاج يدوس Back ٤ مرات. بعد [[pushState]] مرة واحدة عند أول حرف و [[replaceState]] لباقي الحروف: بقت Back واحدة بترجّع الصفحة من غير بحث.`, sol: R`~~~live 120 120
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بحث</title>
-</head>
-<body>
-<main>
-<h1>المنتجات</h1>
-<label for="q">دوّر</label>
-<input id="q" type="search">
-</main>
-<script>
-  const input = document.querySelector('#q');
-  const urlFor = (q) => '?q=' + encodeURIComponent(q);
-
-  let typing = false;
-
-  input.addEventListener('input', () => {
-    if (!typing) {
-      // أول حرف: سطر جديد، فالسطر اللي قبله يفضل الصفحة من غير بحث
-      history.pushState(null, '', urlFor(input.value));
-      typing = true;
-    } else {
-      // باقي الحروف: عدّل نفس السطر
-      history.replaceState(null, '', urlFor(input.value));
-    }
-  });
-
-  // لما يخلص: البحث الجاي يبدأ سطر جديد
-  input.addEventListener('change', () => {
-    typing = false;
-  });
-$__lt/script>
-</body>
-</html>
-~~~
-
-**الفرق بين الاتنين:**
-
-- [[pushState]] بيزوّد سطر جديد في تاريخ التاب، فكل حرف بقى «صفحة» لازم تدوس Back عشان تعدّيها.
-- [[replaceState]] بيعدّل السطر الحالي، فالـ URL بيتغيّر والتاريخ مبيزيدش.
-
-**ليه** [[pushState]] **عند أول حرف مش عند Enter:** لو سبت [[replaceState]] يشتغل من أول حرف، هيكتب فوق سطر الصفحة اللي من غير بحث، فالـ Back مش هيلاقي حاجة يرجعلها. و [[pushState]] مرة واحدة في الأول بتسيب السطر ده سليم.
-
-و [[change]] بيتنادي لما المستخدم يدوس Enter أو يسيب الحقل، فده اللي بيعتبر «البحث خلص».
-
-و [[encodeURIComponent]] عشان العربي والرموز زي [[&]] يتكتبوا صح في الـ URL.
-
-**الغلطة الشائعة:** تعمل [[pushState]] عند Enter بعد ما [[replaceState]] كتبت نفس الـ URL. هيبقى عندك سطرين بنفس البحث، و Back مش هيغيّر حاجة في الشاشة.
-
-~~~text الناتج
-فتحنا الصفحة من غير بحث، وكتبنا «قهوة» ٤ حروف، ودسنا Enter.
-
-قبل (pushState مع كل حرف):
-history.length زاد 4
-عدد مرات Back عشان ترجع للصفحة من غير بحث: 4
-
-بعد (pushState لأول حرف، و replaceState للباقي):
-history.length زاد 1
-عدد مرات Back: 1
-~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const u = new URLSearchParams('?q=قهوة+سادة&tag=a&tag=b')]]. إيه ناتج [[u.get('q')]] و [[u.get('tag')]] و [[u.getAll('tag')]] و [[u.toString()]]؟`, done: R`طلعوا [[قهوة سادة]] (الـ + بقت مسافة)، و [[a]] بس (أول واحدة)، و [[ ['a', 'b'] ]]، و [[toString()]] رجّع العربي متشفّر [[%D9%82...]] والمسافة [[+]]. فالفلاتر اللي ليها أكتر من قيمة تتقري بـ getAll.`, sol: R`~~~js
-const u = new URLSearchParams('?q=قهوة+سادة&tag=a&tag=b');
-console.log(u.get('q'));
-console.log(u.get('tag'));
-console.log(u.getAll('tag'));
-console.log(u.toString());
-~~~
-
-**ليه كده:**
-
-- الـ [[?]] في أول النص بيتشال لوحده.
-- [[+]] في الـ query معناها مسافة، من أيام الفورمات القديمة. فـ [[get('q')]] رجّعت مسافة.
-- [[get]] بترجّع أول قيمة بس، فـ [[tag]] طلعت [[a]]. لو القيم كتير استخدم [[getAll]].
-- [[toString()]] بتكتب النص جاهز للـ URL: العربي متشفّر، والمسافة [[+]].
-
-**الغلطة الشائعة:** تعمل [[location.search.split('&')]] بإيدك. هتتعب مع الـ + والتشفير والقيم المكررة، و [[URLSearchParams]] بتعمل ده كله.
-
-وفيه فخ تاني: لو عايز [[+]] حقيقية في القيمة، زي [[c++]]، استخدم [[u.set('q', 'c++')]]، وهي هتشفّرها [[%2B]]. لو كتبتها في النص بإيدك هتتقري مسافات.
-
-~~~text الناتج
-u.get('q')     → قهوة سادة
-u.get('tag')   → a
-u.getAll('tag') → ["a","b"]
-u.toString()   → q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&tag=a&tag=b
-
-new URLSearchParams('q=c++').get('q') → "c  "
-بعد u.set('q','c++'): q=c%2B%2B
-~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** بحث فوق جدول المنتجات بيكتب [[?q=]] في الـ URL، بيستنى 300ms بعد آخر حرف قبل ما يفلتر (debounce)، وتحت الحقل [[<p aria-live="polite">]] بيقول «لقينا ٣ منتجات».`, done: R`كتابة كلمة بسرعة بتفلتر مرة واحدة بعد ما تقف (حط [[console.count]] في الفلتر)، والـ refresh على [[?q=ماوس]] بيفتح والبحث متملي والجدول متفلتر، والعدد بيتقري لقارئ الشاشة من غير ما الـ focus يتحرك.`, sol: R`~~~html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>المنتجات</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  table { border-collapse: collapse; width: 100%; max-width: 480px; margin-block-start: 8px; }
-  th, td { padding: 8px; border-block-end: 1px solid #d4d4d8; text-align: start; }
-</style>
-</head>
-<body>
-<main>
-<h1>المنتجات</h1>
-<label for="q">دوّر</label>
-<input id="q" type="search">
-<p id="status" aria-live="polite"></p>
-<table>
-  <thead><tr><th scope="col">المنتج</th><th scope="col">السعر</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
-</main>
-<script>
-  const PRODUCTS = [
-    { name: 'ماوس لاسلكي', price: 350 },
-    { name: 'ماوس ألعاب', price: 900 },
-    { name: 'ماوس مكتب', price: 200 },
-    { name: 'كيبورد ميكانيكال', price: 1500 },
-    { name: 'سماعة', price: 600 },
-  ];
-  const input = document.querySelector('#q');
-  const rows = document.querySelector('#rows');
-  const status = document.querySelector('#status');
-
-  function countText(n) {
-    if (n === 0) return 'مفيش نتايج';
-    if (n === 1) return 'لقينا منتج واحد';
-    return 'لقينا ' + n.toLocaleString('ar-EG') + ' منتجات';
-  }
-
-  function apply() {
-    console.count('filter');
-    const q = input.value.trim();
-    const found = PRODUCTS.filter((p) => p.name.includes(q));
-    rows.innerHTML = '';
-    for (const p of found) {
-      const tr = rows.insertRow();
-      tr.insertCell().textContent = p.name;
-      tr.insertCell().textContent = p.price + ' ج';
-    }
-    status.textContent = countText(found.length);
-    history.replaceState(null, '', q ? '?q=' + encodeURIComponent(q) : location.pathname);
-  }
-
-  let timer;
-  input.addEventListener('input', () => {
-    clearTimeout(timer);
-    timer = setTimeout(apply, 300);
-  });
-
-  input.value = new URLSearchParams(location.search).get('q') ?? '';
-  apply();
-$__lt/script>
-</body>
-</html>
-~~~
-
-**الـ debounce في ٣ سطور:** مع كل حرف بنلغي العداد القديم بـ [[clearTimeout]] ونبدأ واحد جديد. فالفلتر بيشتغل بس لما يعدّي 300ms من غير كتابة.
-
-- آخر سطرين في السكربت: أول ما الصفحة تفتح بنقرا الـ URL ونحط القيمة في الحقل، وده اللي بيخلي الـ refresh فاكر البحث.
-- [[textContent]] مش [[innerHTML]] للبيانات، عشان اسم منتج فيه [[<]] ميبقاش كود.
-- [[aria-live="polite"]]: قارئ الشاشة بيقرا النتيجة لما يخلص كلامه، والـ focus فاضل في الحقل.
-- [[replaceState]] عشان الكتابة متملاش الـ history.
-
-**الغلطة الشائعة:** تعمل [[setTimeout]] من غير [[clearTimeout]]. ده تأخير بس مش debounce، والفلتر هيتنفّذ مرة لكل حرف، بس متأخر.
-
-~~~text الناتج
-كتابة «ماوس» بسرعة: الفلتر اشتغل 1 مرة
-الـ URL: ?q=ماوس
-الكلام اللي تحت الحقل: لقينا ٣ منتجات
-الـ focus بعد الفلترة: #q
-
-refresh على ?q=ماوس:
-قيمة الحقل = ماوس   عدد الصفوف = 3
-overflow على 360: 0px   axe: 0 violations
-~~~
-
-~~~view 410 410 الشكل في المتصفح (الحل نفسه، وسطور للـ preview بس)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<script>/* للـ preview بس: الصفحة جوه srcdoc مالهاش رابط، فـ replaceState بيرمي error. السطر ده بيخليه يتجاهل، والبحث يشتغل */
-for (const k of ["replaceState", "pushState"]) { const f = history[k].bind(history); history[k] = (...a) => { try { f(...a); } catch {} }; }
-</script>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>المنتجات</title>
-<style>
-  body { font-family: system-ui; margin: 16px; }
-  table { border-collapse: collapse; width: 100%; max-width: 480px; margin-block-start: 8px; }
-  th, td { padding: 8px; border-block-end: 1px solid #d4d4d8; text-align: start; }
-</style>
-</head>
-<body>
-<main>
-<h1>المنتجات</h1>
-<label for="q">دوّر</label>
-<input id="q" type="search">
-<p id="status" aria-live="polite"></p>
-<table>
-  <thead><tr><th scope="col">المنتج</th><th scope="col">السعر</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
-</main>
-<script>
-  const PRODUCTS = [
-    { name: 'ماوس لاسلكي', price: 350 },
-    { name: 'ماوس ألعاب', price: 900 },
-    { name: 'ماوس مكتب', price: 200 },
-    { name: 'كيبورد ميكانيكال', price: 1500 },
-    { name: 'سماعة', price: 600 },
-  ];
-  const input = document.querySelector('#q');
-  const rows = document.querySelector('#rows');
-  const status = document.querySelector('#status');
-
-  function countText(n) {
-    if (n === 0) return 'مفيش نتايج';
-    if (n === 1) return 'لقينا منتج واحد';
-    return 'لقينا ' + n.toLocaleString('ar-EG') + ' منتجات';
-  }
-
-  function apply() {
-    console.count('filter');
-    const q = input.value.trim();
-    const found = PRODUCTS.filter((p) => p.name.includes(q));
-    rows.innerHTML = '';
-    for (const p of found) {
-      const tr = rows.insertRow();
-      tr.insertCell().textContent = p.name;
-      tr.insertCell().textContent = p.price + ' ج';
-    }
-    status.textContent = countText(found.length);
-    history.replaceState(null, '', q ? '?q=' + encodeURIComponent(q) : location.pathname);
-  }
-
-  let timer;
-  input.addEventListener('input', () => {
-    clearTimeout(timer);
-    timer = setTimeout(apply, 300);
-  });
-
-  input.value = new URLSearchParams(location.search).get('q') ?? '';
-  apply();
-</script>
-</body>
-</html>
-~~~` },
-            { lvl: 'سريع', t: R`**اشرحها:** ليه [[readState]] بترفض أي [[sort]] مش في [[COLS]] بدل ما تاخد اللي في الـ URL زي ما هو؟ اكتب ٣ سطور لزميل بيقول «ده جدول في المتصفح، إيه الخطر؟».`, done: R`الشرح فيه: الـ URL أي حد بيكتبه (يعني input مش مضمون)، ولو نفس القيمة اتبعتت للسيرفر وحطها في [[ORDER BY]] من غير allowlist يبقى فيه SQL injection، وحتى في المتصفح [[?sort=hack]] من غير الفحص كان هيرتب بعمود مش موجود ويبوّظ الصفحة.`, sol: R`**الرد النموذجي على زميلك:**
-
-~~~text الشرح
-الـ URL أي حد بيكتبه أو بيغيّره، يعني ده input زيه زي أي فورم، ومينفعش تثق فيه.
-في المتصفح: من غير الفحص ?sort=hack كان هيرتب بعمود مش موجود، فكل القيم undefined والجدول يطلع ملخبط أو يقع.
-والأهم: نفس القيمة غالبًا هتتبعت للسيرفر، ولو اتحطت في ORDER BY من غير allowlist يبقى فيه SQL injection.
-~~~
-
-~~~js
-const COLS = ['name', 'price', 'stock'];
-const p = new URLSearchParams(location.search);
-const sort = COLS.includes(p.get('sort')) ? p.get('sort') : 'name';
-~~~
-
-**ليه allowlist مش blocklist:** [[COLS.includes]] بتقول «اللي في اللستة دي بس هو المسموح». أما رفض كلمات معينة فدايمًا هتنسى كلمة.
-
-**ليه الفلاتر الـ parameters العادية مش بتكفي هنا:** في SQL الـ prepared statement بيحمي **القيم**، زي [[WHERE id = $1]]. لكن اسم عمود في [[ORDER BY]] مش قيمة، ومينفعش يتبعت parameter. عشان كده الفحص باللستة هو الحل الوحيد. وده الجزء اللي ناس كتير مش بتعرفه.
-
-**الغلطة الشائعة:** تفحص في المتصفح بس. أي حد يقدر يبعت الطلب للسيرفر مباشرة من غير صفحتك، فالفحص لازم يتكرر في السيرفر.
-
-~~~text الناتج
-?sort=price             → sort = price
-?sort=hack              → sort = name
-?sort=name;DROP TABLE x → sort = name
-من غير sort             → sort = name
-~~~` },
-          ],
-          title: "جدول بيترتب ويتقسم صفحات، والرابط فاكر مكانك",
-          desc: R`حالة الجدول (مترتب بإيه، وأنهي صفحة، وبتدوّر على إيه) مكانها الـ URL: [[?sort=price&dir=desc&page=2]]. كده الـ refresh مبيرجّعكش للأول، وزرار Back بيشتغل، وتقدر تبعت اللينك لزميلك يشوف نفس اللي انت شايفه.
-
-الترتيب: [[<button>]] جوه الـ [[<th>]] (عشان يتضغط بالكيبورد)، و [[aria-sort="ascending"]] أو [[descending]] على الـ th المترتب بيه بس.
-
-ولو البيانات كبيرة (آلاف الصفوف)، الترتيب والتقسيم بيحصلوا في السيرفر (LIMIT و OFFSET أو cursor، في «تاب SQL و Prisma»)، والصفحة بتبعت الـ query بس. وفي React فيه TanStack Table: مكتبة headless بتدّيك منطق الترتيب والفلترة والصفحات، وانت اللي بترسم الـ HTML (راجع «تاب React» لـ TanStack Query من نفس العيلة).`,
-          example: R`const COLS = ['name', 'price', 'stock'];
-function readState(search = location.search) {
-  const p = new URLSearchParams(search);
-  const sort = COLS.includes(p.get('sort')) ? p.get('sort') : 'name';
-  const dir = p.get('dir') === 'desc' ? 'desc' : 'asc';
-  const page = Math.max(1, Number.parseInt(p.get('page'), 10) || 1);
-  return { sort, dir, page };
-}
-document.querySelector('thead').addEventListener('click', (e) => {
-  const col = e.target.closest('button')?.closest('th')?.dataset.col;
-  if (!col) return;
-  const s = readState();
-  const p = new URLSearchParams(location.search);
-  p.set('sort', col);
-  p.set('dir', s.sort === col && s.dir === 'asc' ? 'desc' : 'asc');
-  p.delete('page');
-  history.pushState(null, '', '?' + p);
-  render();
-});
-window.addEventListener('popstate', render);
-function render() {
-  const { sort, dir } = readState();
-  for (const th of document.querySelectorAll('thead th[data-col]')) {
-    if (th.dataset.col === sort) th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
-    else th.removeAttribute('aria-sort');
-  }
-  // وارسم الصفوف: view(rows, readState()) وحط النتيجة في tbody
-}`,
-          try: R`اكتب الدالة [[view(rows, state, perPage)]] اللي بترتب الصفوف حسب [[sort]] و [[dir]] وترجع صفوف الصفحة المطلوبة وعدد الصفحات. جرّبها في node على 5 منتجات بـ [[readState('?sort=price&dir=desc&page=2')]] و [[perPage = 2]]، وكمان على [[?page=99]] و [[?sort=hack]].`,
-          flag: "script",
-          deep: {
-            why: R`أشهر شكوى في لوحات الأدمن: «رتّبت وفلترت ودخلت على طلب ورجعت، لقيت كل حاجة راحت». لو الحالة في [[useState]] بس، أي refresh أو Back بيمسحها. الـ URL هو الـ state الوحيد اللي بيعيش مع الـ refresh والـ history والمشاركة.`,
-            how: R`[[URLSearchParams]] بيقرا ويكتب الـ query بأمان (بيعمل encode للعربي والمسافات). [[history.pushState]] بيغيّر الـ URL من غير reload وبيضيف خطوة في الـ history، و [[replaceState]] بيغيّره من غير خطوة (مناسب للكتابة في البحث حرف حرف). و [[popstate]] بيحصل لما المستخدم يدوس Back أو Forward، فبترسم تاني من الـ URL.
-
-كل حاجة جاية من الـ URL مدخلات من المستخدم: عشان كده [[COLS.includes]] (قايمة بالأعمدة المسموحة) و [[parseInt]] مع حد أدنى. ولو الـ sort بيتحط في SQL من غير تحقق، دي SQL injection.
-
-لما الترتيب يتغير، الصفحة ترجع للأولى ([[p.delete('page')]])، وإلا هتفضل في صفحة 7 من ترتيب جديد ملوش علاقة.
-
-[[aria-sort]] بيتحط على عمود واحد بس في المرة، وقارئ الشاشة بيقول «السعر، ascending». والزرار جوه الـ th مش الـ th نفسه اللي بيتضغط، عشان ياخد focus ويشتغل بـ Enter.
-
-في Next.js الصفحة (server component) بتستلم [[searchParams]] وتجيب الصفحة المطلوبة بس من الداتابيز، واللينكات بين الصفحات [[<Link href="?page=3">]] (تفاصيل في «تاب Next.js»). وفي client component بتقرا بـ [[useSearchParams]] وتكتب بـ [[router.replace]].`,
-            when: R`أي جدول فيه ترتيب أو فلترة أو صفحات. لو الصفوف أقل من كام مية، رتّب وقسّم في المتصفح. لو أكتر، في السيرفر. و TanStack Table لما يبقى عندك جداول كتير بمميزات كتير (إخفاء أعمدة، اختيار صفوف، فلترة لكل عمود)، مش لجدول واحد بسيط.`,
-            mistakes: R`الحالة في state بس فتضيع مع الـ refresh. تثق في [[?sort=]] وتحطه في SQL. متصفّرش الصفحة لما الترتيب يتغير. [[pushState]] مع كل حرف في البحث فالـ Back يبقى 20 ضغطة. تعمل الـ th كله clickable من غير زرار. [[aria-sort]] على كل الأعمدة. وتجيب 10,000 صف للمتصفح عشان تعرض 20. وسؤال انترفيو: «offset ولا cursor pagination؟» offset سهل ويدّيك «صفحة 7 من 20» بس بيبطأ في الصفحات البعيدة وبيكرر أو يفوّت صفوف لو البيانات بتتغير، و cursor سريع وثابت بس مفيهوش «روح لصفحة 7».`
-          },
-          teach: R`## الفكرة في سطرين
-
-حالة الجدول (مترتب بأنهي عمود، وتصاعدي ولا تنازلي، وفي أنهي صفحة) مكتوبة في الـ URL بعد الـ [[?]]. الكود فيه 3 أجزاء: دالة بتقرا الحالة من الـ URL، وضغطة على عنوان عمود بتكتب حالة جديدة في الـ URL، ودالة رسم بتحط [[aria-sort]]. جرّبت [[readState]] و [[view]] (من الحل) في Node، وجرّبت الضغطات والـ Back في Chrome (headless) على جدول عناوينه كده:
-
-~~~text index.html
-<th data-col="name"><button>الاسم</button></th>
-<th data-col="price"><button>السعر</button></th>
-<th data-col="stock"><button>المخزون</button></th>
-~~~
-
-[[data-col]] attribute من عندنا: أي attribute بيبدأ بـ [[data-]] مسموح تخترعه، وبتقراه من JavaScript بـ [[el.dataset.col]].
-
----
-
-## ١. شكل الـ query
-
-~~~text الـ URL
-/orders?sort=price&dir=desc&page=2
-~~~
-
-بعد [[?]] أزواج [[key=value]] بينهم [[&]]. [[desc]] اختصار descending (تنازلي، من الكبير للصغير)، و [[asc]] ascending (تصاعدي).
-
----
-
-## ٢. [[readState]]: اقرا الحالة بأمان
-
-~~~text app.js
-const COLS = ['name', 'price', 'stock'];
-function readState(search = location.search) {
-  const p = new URLSearchParams(search);
-  const sort = COLS.includes(p.get('sort')) ? p.get('sort') : 'name';
-  const dir = p.get('dir') === 'desc' ? 'desc' : 'asc';
-  const page = Math.max(1, Number.parseInt(p.get('page'), 10) || 1);
-  return { sort, dir, page };
-}
-~~~
-
-- [[search = location.search]]: باراميتر ليه قيمة افتراضية. [[location.search]] هو الجزء من [[?]] لآخره. والقيمة الافتراضية دي هي اللي خلتني أجرّب الدالة في Node وأديها string بإيدي.
-- [[new URLSearchParams(search)]]: بيفك الـ query، و [[p.get('sort')]] بيرجّع القيمة أو [[null]] لو مش موجودة.
-- [[COLS.includes(...)]]: القيمة في قايمة المسموح؟ وإلا [[name]]. ده اسمه allowlist.
-- [[dir]]: [[desc]] بالظبط وإلا [[asc]].
-- [[Number.parseInt(x, 10)]]: حوّل لرقم صحيح بالنظام العشري (الـ [[10]]). لو مش رقم بيرجّع [[NaN]]، و [[|| 1]] بتاخد 1 بداله (لأن NaN بيتعامل كـ false). و [[Math.max(1, ...)]] بيرجّع الأكبر، فأي رقم أقل من 1 يبقى 1.
-- [[return { sort, dir, page }]]: object، و [[{ sort }]] اختصار [[{ sort: sort }]].
-
-اللي رجع في Node:
-
-| الـ query | النتيجة |
-|---|---|
-| [[?sort=price&dir=desc&page=2]] | [[{ sort: 'price', dir: 'desc', page: 2 }]]: كله مسموح فاتقري زي ما هو |
-| [[?sort=hack&page=-3]] | [[{ sort: 'name', dir: 'asc', page: 1 }]]: عمود مش في اللستة وصفحة سالبة، فرجعوا للافتراضي |
-| [[?page=abc&dir=DESC]] | [[{ sort: 'name', dir: 'asc', page: 1 }]]: [[abc]] مش رقم، و [[DESC]] كابيتال مش [[desc]] |
-| [[?page=2.7]] | [[page: 2]]: [[parseInt]] بيقطع الكسر |
-| [[?page=99]] | [[page: 99]] (القص لآخر صفحة بيحصل في [[view]]) |
-
-لاحظ [[DESC]] بحروف كبيرة اترفضت: المقارنة [[===]] حساسة لحالة الحروف.
-
----
-
-## ٣. الضغطة على عنوان
-
-~~~text app.js
-document.querySelector('thead').addEventListener('click', (e) => {
-  const col = e.target.closest('button')?.closest('th')?.dataset.col;
-  if (!col) return;
-~~~
-
-listener واحد على الـ [[thead]] كله بدل واحد لكل زرار (اسمها event delegation). السطر الطويل من الشمال لليمين:
-
-1. [[e.target]]: العنصر اللي اتضغط بالظبط.
-2. [[.closest('button')]]: أقرب [[button]] من العنصر ده لفوق (أو هو نفسه). لو الضغطة مش على زرار بيرجّع [[null]].
-3. [[?.]]: اسمها optional chaining: لو اللي قبلها [[null]] وقّف ورجّع [[undefined]] بدل ما الكود يقع.
-4. [[.closest('th')]]: الـ th اللي فيه الزرار.
-5. [[.dataset.col]]: قيمة [[data-col]].
-
-و [[if (!col) return]]: لو مفيش عمود، اخرج.
-
-~~~text app.js
-  const s = readState();
-  const p = new URLSearchParams(location.search);
-  p.set('sort', col);
-  p.set('dir', s.sort === col && s.dir === 'asc' ? 'desc' : 'asc');
-  p.delete('page');
-  history.pushState(null, '', '?' + p);
-  render();
-});
-~~~
-
-- [[p.set]] بيغيّر قيمة (أو يضيفها)، و [[p.delete]] بيشيلها.
-- [[&&]] يعني «و»: نفس العمود **و** كان تصاعدي؟ يبقى تنازلي. أي حاجة تانية: تصاعدي.
-- [[history.pushState(null, '', '?' + p)]]: غيّر الـ URL من غير reload، وضيف خطوة في الـ history. [[p]] لما يتلزق في string بيتحوّل لـ [[sort=...&dir=...]].
-
----
-
-## ٤. [[render]] و [[popstate]]
-
-~~~text app.js
-window.addEventListener('popstate', render);
-function render() {
-  const { sort, dir } = readState();
-  for (const th of document.querySelectorAll('thead th[data-col]')) {
-    if (th.dataset.col === sort) th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
-    else th.removeAttribute('aria-sort');
-  }
-}
-~~~
-
-- [[popstate]]: الحدث اللي بيحصل لما المستخدم يدوس Back أو Forward.
-- [[const { sort, dir } = readState()]]: destructuring: خد الخانتين دول من الـ object في متغيرين بنفس الاسم.
-- [[th[data-col]]]: كل th عليه الـ attribute ده.
-- [[aria-sort]] على العمود المترتب بيه بس، وبيتشال من الباقي.
-
----
-
-## ٥. اللي حصل في المتصفح
-
-| الخطوة | الـ URL | [[aria-sort]] |
-|---|---|---|
-| فتحت الصفحة | (فاضي) | name: ascending |
-| ضغطت «السعر» | [[?sort=price&dir=asc]] | price: ascending |
-| ضغطت «السعر» تاني | [[?sort=price&dir=desc]] | price: descending |
-| زوّدت [[&page=4&q=سماعة]] وضغطت «الاسم» | [[?sort=name&dir=asc&q=...]] | name: ascending |
-| Back | [[?sort=price&dir=desc&page=4&q=...]] | price: descending |
-| Back | [[?sort=price&dir=asc]] | price: ascending |
-| Refresh | [[?sort=price&dir=asc]] | price: ascending |
-
-- الـ [[page]] اتمسحت لما الترتيب اتغيّر، والـ [[q]] (البحث) فضلت لأننا بدأنا من نسخة الـ query الحالية.
-- الـ [[q]] ظهرت [[%D8%B3...]]: ده الـ encoding بتاع «سماعة» عشان الـ URL ميبقاش فيه حروف غير ASCII.
-- الـ Back رجّع كل حالة قديمة، والـ refresh مضيّعش حاجة.
-
----
-
-## ٦. [[view]] من الحل
-
-| الاستدعاء | الصفوف | page | pages |
-|---|---|---|---|
-| [[?sort=price&dir=desc&page=2]] و 2 في الصفحة | شاحن 250، ماوس 180 | 2 | 3 |
-| [[?page=99]] و 2 في الصفحة | ماوس 180 | 3 | 3 |
-
-- [[toSorted]]: ترتيب في نسخة جديدة (الأصل ميتغيّرش).
-- [[a[sort] - b[sort]]] للأرقام: سالب يعني a قبل b.
-- [[localeCompare(b, 'ar')]] للكلام: ترتيب القاموس العربي. الفرق بيبان مع الهمزات:
-
-~~~text الناتج في Node
-sort() عادي:     آمنة أحمد إبراهيم ابتسام بسمة ياسر
-localeCompare:   آمنة ابتسام إبراهيم أحمد بسمة ياسر
-~~~
-
-الـ [[sort()]] العادي رتّب بأرقام الحروف في Unicode، فـ «أ» و «إ» جم قبل «ا».
-
-- [[Math.ceil(5 / 2)]] = 3: [[ceil]] بيقرّب لفوق. و [[Math.min(page, pages)]] بيقص 99 لـ 3.
-- [[slice((p - 1) * perPage, p * perPage)]]: صفحة 2 بـ 2 في الصفحة = من 2 لـ 4 (من غير 4)، يعني الصف التالت والرابع.
-
----
-
-## الخلاصة
-
-| الحتة | الدور |
-|---|---|
-| [[URLSearchParams]] | يقرا ويكتب الـ query |
-| allowlist و [[Math.max]] | أي حاجة جاية من الـ URL مدخلات مش مضمونة |
-| [[pushState]] | URL جديد من غير reload وبخطوة في الـ history |
-| [[popstate]] | ارسم تاني لما Back أو Forward |
-| [[p.delete('page')]] | ترتيب جديد = صفحة أولى |
-| [[aria-sort]] | على عمود واحد بس |`,
-          lines: [
-            R`الأعمدة المسموح الترتيب بيها. أي حاجة تانية في الـ URL بتتجاهل.`,
-            "بتقرا الحالة من الـ URL.",
-            R`[[URLSearchParams]] بتفك الـ query لأجزاء: [[p.get('sort')]] بيرجّع القيمة أو [[null]] لو مش موجودة، وبيفك [[%20]] وأي ترميز لوحده.`,
-            R`عمود الترتيب لو مسموح، غير كده [[name]].`,
-            R`الاتجاه: لو القيمة [[desc]] بالظبط يبقى تنازلي، وأي حاجة تانية (حتى [[DESC]] أو فاضي) تبقى [[asc]]، فمفيش قيمة غريبة تعدّي.`,
-            "رقم الصفحة، ولو مش رقم أو أقل من 1 يبقى 1.",
-            R`ترجع object فيه التلاتة، وكل اللي بعد كده (الرسم والترتيب) بيقرا منه، مش من الـ URL على طول.`,
-            "قفلة.",
-            "ضغطة على أي حاجة في العناوين...",
-            R`...لو كانت على زرار جوه th عليه [[data-col]]، خد اسم العمود.`,
-            "مش زرار ترتيب؟ اخرج.",
-            R`الحالة اللي قبل الضغطة، عشان نعرف العمود ده كان مترتب بيه قبل كده ولا لأ.`,
-            "نسخة من الـ query عشان نعدّلها ونسيب الباقي (زي البحث).",
-            R`حط العمود اللي اتضغط في [[sort]]، وأي مفتاح تاني في الـ query (زي [[q]] بتاع البحث) بيفضل زي ما هو.`,
-            "نفس العمود وكان تصاعدي؟ يبقى تنازلي. غير كده تصاعدي.",
-            "الترتيب اتغير، فارجع للصفحة الأولى.",
-            "غيّر الـ URL من غير reload، وضيف خطوة في الـ history.",
-            R`ارسم الجدول تاني من الـ URL الجديد: [[pushState]] مش بيعمل reload، فلازم نرسم بنفسنا.`,
-            "قفلة.",
-            "Back و Forward: ارسم من الـ URL تاني.",
-            R`[[render]] بتحدّث الصفحة من الـ URL بس: مفيش state محفوظ في متغير، فالـ refresh والـ Back بيدّوا نفس النتيجة.`,
-            "الحالة من الـ URL.",
-            R`لف على كل th عليه [[data-col]] (العناوين اللي بتترتب)، عشان عمود زي «صورة» مالوش ترتيب يتساب.`,
-            R`العمود المترتب بيه ياخد [[aria-sort]]...`,
-            R`...والباقي نشيل منهم [[aria-sort]] خالص، عشان قارئ الشاشة يقول «مترتب» على عمود واحد بس.`,
-            "قفلة الـ for.",
-            "قفلة."
-          ],
-          sol: R`على 5 منتجات (سماعة 450، ماوس 180، كيبورد 900، شاحن 250، كابل 60) بـ [[?sort=price&dir=desc&page=2]] و 2 في الصفحة: الترتيب تنازلي 900، 450، 250، 180، 60، فصفحة 2 فيها الشاحن (250) والماوس (180)، و [[pages]] بـ 3.
-
-[[?sort=hack&page=-3]] بيرجع [[{ sort: 'name', dir: 'asc', page: 1 }]]، و [[?page=99]] بيرجع آخر صفحة (3) مش صفحة فاضية.
-
-الغلط الشائع: ترتيب الأسماء العربي بـ [[a < b]] أو [[sort()]] من غير دالة، فالترتيب يمشي بأكواد الحروف. [[localeCompare(b, 'ar')]] بترتب زي القاموس. والغلط التاني: [[rows.sort()]] بيغيّر المصفوفة الأصلية، و [[toSorted()]] بيرجّع نسخة.`,
-          solCode: R`function view(rows, { sort, dir, page }, perPage = 20) {
-  const sorted = rows.toSorted((a, b) => {
-    const r = typeof a[sort] === 'number' ? a[sort] - b[sort] : a[sort].localeCompare(b[sort], 'ar');
-    return dir === 'asc' ? r : -r;
-  });
-  const pages = Math.max(1, Math.ceil(sorted.length / perPage));
-  const p = Math.min(page, pages);
-  return { rows: sorted.slice((p - 1) * perPage, p * perPage), page: p, pages };
-}
-const rows = [
-  { name: 'سماعة', price: 450, stock: 12 },
-  { name: 'ماوس', price: 180, stock: 0 },
-  { name: 'كيبورد', price: 900, stock: 5 },
-  { name: 'شاحن', price: 250, stock: 30 },
-  { name: 'كابل', price: 60, stock: 100 },
-];
-console.log(view(rows, readState('?sort=price&dir=desc&page=2'), 2));
-// { rows: [ شاحن 250, ماوس 180 ], page: 2, pages: 3 }`
-        },
-        {
-          cmd: "@media print",
-          ref: [
-            { t: "MDN: @media", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media" },
-            { t: "MDN: @page", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@page" },
-            { t: "MDN: print-color-adjust", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/print-color-adjust" },
-            { t: "MDN: pt", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Values_and_units/Numeric_data_types" },
-          ],
-          title: "فاتورة بتتطبع A4 صح: @media print و @page",
-          desc: R`لما حد يدوس Ctrl+P، المتصفح بيرسم الصفحة تاني على ورق: [[@media print]] بيدّيك CSS بيشتغل في الطباعة بس، فتخبّي الـ navbar والأزرار، وتخلي الخلفية بيضا والكلام أسود، وتكبّر الخط بالـ [[pt]]. و [[@page]] بيحدد الورقة نفسها: [[size: A4]] والهوامش بـ [[margin]]، وفي Chrome الحديث كمان رقم الصفحة تحت بـ [[@bottom-center]] و [[counter(page)]].
-
-والجدول الطويل بيتقسم على كذا ورقة: الـ [[thead]] بيتكرر فوق كل ورقة والـ [[tfoot]] تحت كل ورقة لوحدهم، و [[break-inside: avoid]] على الـ [[tr]] بيمنع إن صف يتقطع نصين بين ورقتين. والخلفيات الملوّنة مبتتطبعش من الأول (عشان الحبر)، إلا لو كتبت [[print-color-adjust: exact]] على العنصر ده.
-
-الدرس ده بيكمّل دروس الجداول (الفاتورة جدول فيه thead و tbody و tfoot)، وبيستخدم [[@media]] اللي هتتشرح بالتفصيل في «media queries».`,
-          example: R`<header class="site-header no-print">بُن الصباح</header>
-<main class="invoice">
-  <h1>فاتورة رقم <bdi>INV-1042</bdi></h1>
-  <table class="items">
-    <thead><tr><th scope="col">الصنف</th><th scope="col">الكمية</th><th scope="col">السعر</th></tr></thead>
-    <tbody>...</tbody>
-    <tfoot><tr><th scope="row" colspan="2">الإجمالي</th><td>1,250 ج</td></tr></tfoot>
-  </table>
-  <p class="note">الدفع خلال 14 يوم. <a href="https://example.com/pay">ادفع أونلاين</a></p>
-</main>
-<button type="button" class="no-print" onclick="print()">اطبع الفاتورة</button>
-// print.css
-@page { size: A4; margin: 12mm; }
-@page { @bottom-center { content: "صفحة " counter(page) " من " counter(pages); } }
-@media print {
-  .no-print { display: none; }
-  body { margin: 0; font-size: 11pt; color: black; background: white; }
-  .items tr { break-inside: avoid; }
-  .items thead th { background: #e8eef8; print-color-adjust: exact; }
-  .note a::after { content: " (" attr(href) ")"; }
-}`,
-          try: R`اعمل الفاتورة دي وحط في الـ tbody ٦٠ صف (بـ JavaScript أو انسخ صف واحد كتير)، ودوس Ctrl+P وبص على الـ preview: كام ورقة؟ العناوين والإجمالي ظاهرين فين؟ وبعدين اقفل «Background graphics» من «More settings» وبص على لون العناوين. وأخيرًا امسح سطر [[print-color-adjust]] وبص تاني.`,
-          flag: "script",
-          deep: {
-            why: R`الفواتير والإيصالات وتذاكر الحجز والشهادات وأي صفحة «اطبعها وامشي» بتتطبع فعلًا، أو بتتحفظ PDF من نفس نافذة الطباعة (Save as PDF). من غير CSS للطباعة الورقة بيطلع عليها الـ navbar والأزرار والخلفية الغامقة، والجدول بيتقطع في نص صف، ومحدش يعرف دي ورقة كام من كام. والحل مش مكتبة PDF: سطور CSS قليلة على نفس الصفحة.`,
-            how: R`لما تطبع، المتصفح بيعمل layout جديد للصفحة بعرض الورقة (A4 = 210×297mm، يعني 595×842 نقطة في الـ PDF) ناقص الهوامش، وبيطبّق القواعد اللي جوه [[@media print]] فوق العادية (نفس الـ cascade، بس شرط الـ media بقى صح). وبعدين بيقسم المحتوى على صفحات (fragmentation): كل عنصر ممكن يتقطع إلا لو قلتله [[break-inside: avoid]]، وتقدر تجبر ورقة جديدة بـ [[break-before: page]].
-
-الـ [[thead]] و [[tfoot]] ليهم [[display: table-header-group]] و [[table-footer-group]] من المتصفح نفسه، وده اللي بيخليهم يتكرروا في كل ورقة. لو غيّرتهم لـ [[display: block]] (زي ما بيحصل لما الجدول يتحول لكروت على الموبايل) التكرار بيقف.
-
-وفي الـ PDF اللي Chrome عمله، لون [[#e8eef8]] اتلاقى مرسوم في الـ content stream لما [[print-color-adjust: exact]] موجود، ومش موجود خالص لما شلته والـ Background graphics مقفولة. يعني الخاصية دي بتقول للمتصفح «ده لون مهم مش زينة، اطبعه».`,
-            when: R`أي صفحة الناس هتطبعها أو تحفظها PDF: فاتورة، وإيصال، وتذكرة، وشهادة، ومقال طويل، ووصفة أكل. ولو عايز PDF بيتعمل في السيرفر من غير ما حد يدوس Ctrl+P، نفس الـ CSS ده بيشتغل مع Playwright أو Puppeteer ([[page.pdf()]] و [[preferCSSPageSize: true]])، ودي الطريقة اللي اتعملت بيها كل الأرقام اللي في الدرس.`,
-            mistakes: R`تحط [[display: none]] للطباعة على عنصر برّه [[@media print]] فيختفي من الشاشة كمان. أو تكتب الأحجام بـ [[px]] وتستغرب إن الورق بيطلع مختلف (استخدم [[pt]] أو [[mm]] في الطباعة). أو تخلي الخلفية غامقة والكلام أبيض فالطابعة تطبع أبيض على أبيض لأن الخلفية مبتتطبعش. أو تحول الجدول لكروت على الموبايل بـ [[thead { display: none }]] من غير ما ترجّعه في الطباعة. أو تحط [[print-color-adjust: exact]] على [[*]] فتطبع كل خلفية في الصفحة وتصرف حبر على الفاضي. أو تنسى إن [[min-width]] وقت الطباعة بيتحسب بعرض الورقة مش الشاشة: على A4 في Chrome 156 الصفحة طابقت [[min-width: 718px]] بهامش 12mm و [[790px]] من غير هامش، فأي layout مكتوب لـ [[min-width: 1024px]] مش هيشتغل على الورق.`
-          },
-          teach: R`## الفكرة في سطرين
-
-نفس الصفحة بتترسم مرتين: مرة على الشاشة ومرة على الورق. [[@media print]] هو الـ CSS اللي بيشتغل في المرة التانية بس، و [[@page]] بيوصف الورقة نفسها. كل الأرقام هنا من Chrome 156: الفاتورة اتعملت PDF بـ Playwright ([[page.pdf]] مع [[preferCSSPageSize: true]] والخلفيات مقفولة زي الإعداد الافتراضي)، والصفحات اتقرت بـ pdf.js.
-
----
-
-## ١. الـ HTML: فاتورة عادية
-
-~~~html invoice.html
-<header class="site-header no-print">بُن الصباح</header>
-<main class="invoice">
-  <h1>فاتورة رقم <bdi>INV-1042</bdi></h1>
-  <table class="items">...</table>
-  <p class="note">الدفع خلال 14 يوم. <a href="https://example.com/pay">ادفع أونلاين</a></p>
-</main>
-<button type="button" class="no-print" onclick="print()">اطبع الفاتورة</button>
-~~~
-
-- [[class="no-print"]]: اسم اخترناه بنفسنا، علامة على أي حاجة ملهاش لازمة على الورق (الهيدر وزرار الطباعة).
-- [[<bdi>INV-1042</bdi>]]: رقم الفاتورة إنجليزي جوه جملة عربي، فبنعزله عشان يتطبع بنفس ترتيبه (درس «lang و dir»).
-- [[onclick="print()"]]: [[print()]] هي [[window.print()]]، بتفتح نافذة الطباعة نفسها اللي Ctrl+P بيفتحها.
-- الجدول نفس جدول درس «table»: thead للعناوين، و tbody للأصناف، و tfoot للإجمالي.
-
----
-
-## ٢. [[@page]]: الورقة نفسها
-
-~~~css الورقة
-@page { size: A4; margin: 12mm; }
-@page { @bottom-center { content: "صفحة " counter(page) " من " counter(pages); } }
-~~~
-
-- [[size: A4]]: الـ PDF طلع كل صفحة فيه 595×842 نقطة، وده مقاس A4 بالظبط. ولما جربت [[size: A5 landscape]] طلع 595×420. وفيه كمان [[letter]] و [[A3]]، أو مقاس بإيدك [[size: 80mm 200mm]] لإيصال طابعة كاشير.
-- [[margin: 12mm]]: الهامش الأبيض حوالين كل ورقة. الطابعات مبتطبعش لحد الحرف أصلًا، فمتنزلش أقل من حوالي 10mm.
-- [[@bottom-center]]: «صندوق» في الهامش اللي تحت في النص، و [[counter(page)]] رقم الصفحة دي و [[counter(pages)]] عدد الصفحات كله. في الـ PDF أول كلام في كل صفحة كان «1 من 3» و «2 من 3» و «3 من 3». ده جديد (Chrome 131 وطالع)؛ المتصفح اللي مش بيدعمه بيتجاهله والفاتورة بتتطبع عادي من غير رقم.
-
----
-
-## ٣. [[@media print]]: سطر سطر
-
-~~~css الطباعة
-@media print {
-  .no-print { display: none; }
-  body { margin: 0; font-size: 11pt; color: black; background: white; }
-  .items tr { break-inside: avoid; }
-  .items thead th { background: #e8eef8; print-color-adjust: exact; }
-  .note a::after { content: " (" attr(href) ")"; }
-}
-~~~
-
-| السطر | بيعمل إيه في الورق |
-|---|---|
-| [[.no-print { display: none; }]] | الهيدر والزرار اختفوا: كلمة «بُن الصباح» مش موجودة في نص أي صفحة في الـ PDF |
-| [[font-size: 11pt]] | [[pt]] وحدة الطباعة (1pt = 1/72 بوصة). 11pt حجم مريح على الورق |
-| [[color: black; background: white]] | مفيش ثيم غامق على الورق: الحبر للكلام بس |
-| [[break-inside: avoid]] على [[tr]] | الصف مبيتقطعش بين ورقتين (التجربة تحت) |
-| [[print-color-adjust: exact]] | لون العناوين اتطبع رغم إن الخلفيات مقفولة |
-| [[a::after]] و [[attr(href)]] | الورق ملوش لينكات بتتضغط، فالرابط نفسه اتكتب جنب الكلمة: [[example.com/pay]] ظهر في نص آخر صفحة |
-
----
-
-## ٤. الجدول الطويل على كذا ورقة
-
-حطيت في الـ tbody أصناف بأعداد مختلفة:
-
-| عدد الأصناف | عدد الورق |
-|---|---|
-| 26 | 1 |
-| 28 | 2 |
-| 60 | 3 |
-
-وفي الـ ٦٠: كلمة «الصنف» (عنوان أول عمود) موجودة في نص التلات صفحات، و «1,250 ج الإجمالي» هو آخر كلام في كل صفحة. يعني الـ thead اتكرر فوق والـ tfoot اتكرر تحت **من غير ولا سطر CSS** ليهم.
-
-### الصف اللي بيتقطع
-
-عملت ١٢ صف كل واحد فيه ٨ سطور ([[R5L0]] لحد [[R5L7]])، وعدّيت كل صف ظهر في كام صفحة:
-
-| | صفوف اتقطعت بين ورقتين |
-|---|---|
-| من غير [[break-inside: avoid]] | الصف 5 والصف 11 |
-| بيه | ولا صف |
-
-Chrome بيقطع الصف العالي من نصه لو مكانش فيه مكان. مع [[avoid]] الصف كله بينزل الورقة اللي بعدها.
-
-### لو غيّرت [[display]] بتاع الـ thead
-
-لما خليت [[.items thead { display: block; }]] (اللي بيحصل في جدول الموبايل اللي بيتحول لكروت)، «الصنف» ظهرت في أول صفحة بس. فلو عندك CSS كده للموبايل، رجّعه في الطباعة: [[@media print { .items thead { display: table-header-group; } }]].
-
----
-
-## ٥. الخلفيات: مقفولة من الأول
-
-| | الخلفيات مقفولة (الافتراضي) |
-|---|---|
-| [[background: #e8eef8]] لوحده | اللون مش موجود في الـ PDF خالص |
-| ومعاه [[print-color-adjust: exact]] | اللون موجود ([[.9098 .9333 .9725 rg]] في الـ content stream، ودي #e8eef8 بالأرقام من 0 لـ 1) |
-
-المستخدم يقدر يفتح الخلفيات من «More settings › Background graphics» في نافذة الطباعة، بس متعتمدش على ده. حط [[exact]] على الحاجات اللي معناها في لونها بس (عنوان الجدول، وشارة «مدفوع» الخضرا)، مش على الصفحة كلها. والمواقع القديمة بتكتب معاه [[-webkit-print-color-adjust: exact]] للنسخ القديمة من المتصفحات.
-
----
-
-## ٦. تجرّب من غير ما تطبع
-
-- DevTools › Ctrl+Shift+P › اكتب «Rendering» › «Emulate CSS media type» › print: الصفحة بتتعرض بـ CSS الطباعة على الشاشة (من غير تقسيم صفحات).
-- Ctrl+P › الوجهة «Save as PDF»: بيوريك التقسيم الحقيقي وعدد الورق.
-
----
-
-## الخلاصة
-
-- [[@media print { ... }]] للشكل على الورق، و [[@page { size; margin }]] للورقة نفسها.
-- thead و tfoot بيتكرروا لوحدهم طول ما الـ [[display]] بتاعهم الافتراضي.
-- [[break-inside: avoid]] على الصف أو الكارت عشان ميتقطعش.
-- الخلفيات مبتتطبعش إلا بـ [[print-color-adjust: exact]].
-- اطبع الروابط بـ [[attr(href)]]، وخبّي كل اللي ملوش لازمة على الورق.`,
-          lines: [
-            R`هيدر الموقع، وعليه class تاني [[no-print]] (اسم من عندنا) عشان يختفي من الورق بس ويفضل على الشاشة.`,
-            R`الفاتورة نفسها جوه [[<main>]]: ده المحتوى اللي هيتطبع.`,
-            R`عنوان الفاتورة، والرقم الإنجليزي جوه [[<bdi>]] عشان يتطبع بنفس ترتيب حروفه وسط الكلام العربي.`,
-            R`جدول الأصناف بالـ class اللي الـ CSS هيستخدمه.`,
-            R`صف العناوين جوه [[<thead>]]: ده اللي بيتكرر فوق كل ورقة لوحده.`,
-            R`صفوف الأصناف (هنا [[...]] مكان الصفوف الحقيقية): كل صنف [[<tr>]].`,
-            R`صف الإجمالي جوه [[<tfoot>]]: بيتكرر تحت كل ورقة، و [[colspan="2"]] بيخلي «الإجمالي» ياخد مكان عمودين.`,
-            R`نهاية الجدول: الملاحظة اللي بعده برّه الجدول فبتتطبع مرة واحدة في آخر ورقة، مش مع كل ورقة زي الـ tfoot.`,
-            R`ملاحظة الدفع وفيها لينك. على الورق اللينك مبيتضغطش، فالـ CSS هيكتب الرابط جنبه.`,
-            R`نهاية الـ main: الفاتورة خلصت، والزرار اللي بعدها برّه المحتوى اللي بيتطبع.`,
-            R`زرار بيفتح نافذة الطباعة: [[print()]] هي [[window.print()]]. وعليه [[no-print]] لأن الزرار ملوش معنى على الورق.`,
-            R`الورقة: [[size: A4]] (في الـ PDF طلعت 595×842 نقطة) وهامش [[12mm]] من كل ناحية.`,
-            R`رقم الصفحة في الهامش اللي تحت في النص: [[counter(page)]] الصفحة دي و [[counter(pages)]] العدد كله. اتجرّب في Chrome 156، والمتصفح اللي مش بيدعمه بيتجاهله.`,
-            R`كل اللي جوه القوسين ده بيشتغل وقت الطباعة بس (أو Save as PDF أو محاكاة print في DevTools).`,
-            R`أي عنصر عليه [[no-print]] بيختفي من الورق: الهيدر والزرار.`,
-            R`من غير هامش زيادة (الـ [[@page]] عامل الهامش)، وخط [[11pt]] (وحدة الطباعة)، وكلام أسود على أبيض.`,
-            R`الصف مبيتقطعش نصين بين ورقتين: لو مش هيكفي، بينزل كله في الورقة اللي بعدها.`,
-            R`لون خلفية العناوين، و [[print-color-adjust: exact]] بيخليه يتطبع حتى لو «Background graphics» مقفولة (وهي مقفولة من الأول).`,
-            R`بعد اللينك اكتب الرابط بين قوسين: [[attr(href)]] بيجيب قيمة الـ [[href]] نفسها.`,
-            R`نهاية الـ [[@media print]].`
-          ],
-          sol: R`بـ ٦٠ صنف الـ preview بيقول ٣ ورقات A4 (في Chrome 156 بالخط ده؛ لو خطك أكبر ممكن تطلع ٤). كل ورقة فوقها صف العناوين (الصنف، الكمية، السعر) وتحتها صف «الإجمالي 1,250 ج»، وتحت خالص «صفحة 1 من 3» وهكذا. الهيدر «بُن الصباح» وزرار «اطبع الفاتورة» مش موجودين، والرابط [[https://example.com/pay]] مكتوب جنب «ادفع أونلاين» في آخر ورقة.
-
-لما «Background graphics» مقفولة: خلفية العناوين اللبني لسه ظاهرة (بسبب [[print-color-adjust: exact]])، وخلفية الصفحة الرمادي اللي على الشاشة مش ظاهرة. ولما تمسح سطر [[print-color-adjust]]: العناوين بقت بيضا من غير لون. ولو فتحت Background graphics اللون بيرجع، بس ده قرار المستخدم مش قرارك.`,
-          practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** إيصال حجز لـ «عيادة الشفاء» (اسم متخيل) بيتطبع على [[size: A5]]: اسم المريض، والميعاد، ورقم الحجز جوه [[<bdi>]]، وجدول صغير بالخدمات، وشارة «مدفوع» خضرا بـ [[print-color-adjust: exact]]، وزرار «اطبع» مبيظهرش على الورق.`, done: R`في Save as PDF الإيصال ورقة A5 واحدة، والشارة الخضرا ظاهرة والخلفيات مقفولة، والزرار مش موجود، والإيصال على الشاشة لسه شكله زي ما هو.`, sol: R`~~~live 420 420
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إيصال حجز</title>
-<style>
-  body { font-family: system-ui; margin: 16px; color: #111; }
-  .receipt { max-width: 420px; margin-inline: auto; }
-  table { border-collapse: collapse; width: 100%; }
-  th, td { padding: 6px; border-block-end: 1px solid #ccc; text-align: start; }
-  .paid {
-    display: inline-block;
-    padding: 2px 12px;
-    border-radius: 999px;
-    background: #15803d;
-    color: #fff;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-  }
-  @page { size: A5; margin: 12mm; }
-  @media print {
-    .no-print { display: none; }
-    body { margin: 0; }
-  }
-</style>
-</head>
-<body>
-<main class="receipt">
-  <h1>عيادة الشفاء</h1>
-  <p>المريض: منى علي</p>
-  <p>الميعاد: ١ مارس، ١٠:٣٠ صباحًا</p>
-  <p>رقم الحجز: <bdi>BK-2026-17</bdi></p>
-  <table>
-    <caption>الخدمات</caption>
-    <thead><tr><th scope="col">الخدمة</th><th scope="col">السعر</th></tr></thead>
-    <tbody>
-      <tr><td>كشف</td><td>300 ج</td></tr>
-      <tr><td>أشعة</td><td>450 ج</td></tr>
-    </tbody>
-  </table>
-  <p><span class="paid">مدفوع</span></p>
-  <button type="button" class="no-print" onclick="window.print()">اطبع</button>
-</main>
-</body>
-</html>
-~~~
-
-**السطور المهمة:**
-
-- [[@page { size: A5; }]]: مقاس الورقة نفسها. وفي نافذة الطباعة Chrome بياخد المقاس ده، ومبيبقاش فيه اختيار تاني.
-- المتصفحات مبتطبعش الخلفيات افتراضيًا عشان توفر الحبر. [[print-color-adjust: exact]] بتقول «اللون ده معلومة، اطبعه». والسطر اللي بـ [[-webkit-]] للمتصفحات الأقدم.
-- [[.no-print]]: مش عايزين زرار على ورقة.
-- [[bdi]]: عشان رقم الحجز الإنجليزي ميتلخبطش جوه السطر العربي.
-
-**الغلطة الشائعة:** تعتقد إن الشارة الخضرا هتطلع لوحدها، فتطبع الكلام الأبيض على ورقة بيضا: كلمة «مدفوع» تختفي. جرّب Save as PDF والخلفيات مقفولة، زي أغلب الناس.
-
-~~~text الناتج
-Save as PDF والخلفيات مقفولة (printBackground: false):
-عدد الورق = 1   المقاس = 420x595 نقطة (A5 = 420×595)
-اللون الأخضر موجود في الـ PDF: true
-من غير print-color-adjust: false
-
-display بتاع الزرار في الطباعة: none   وعلى الشاشة: inline-block
-axe: 0 violations
-~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مقالة في مدونة متخيلة بثيم غامق ([[background: #111; color: #eee]]) وفيها navbar و sidebar وزرار مشاركة. لما حد طبعها طلعت ٧ ورقات فيهم القايمة، والكلام باهت جدًا، واللينكات مش معروف رايحة فين.`, done: R`بعد [[@media print]]: الـ nav والـ aside والأزرار مخفيين، والكلام أسود على أبيض، وكل لينك جنبه الرابط بين قوسين، وعدد الورق قلّ (اكتب الرقم قبل وبعد).`, sol: R`~~~live 600 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مقالة</title>
-<style>
-  body { background: #111; color: #eee; font-family: system-ui; margin: 0; }
-  nav, aside { background: #222; padding: 16px; }
-  main { padding: 16px; line-height: 1.8; font-size: 1.125rem; }
-  a { color: #93c5fd; }
-
-  @media print {
-    nav, aside, .share { display: none; }
-    body { background: #fff; color: #000; }
-    main { padding: 0; font-size: 12pt; line-height: 1.5; }
-    a { color: #000; }
-    main a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .85em; }
-    h1, h2 { break-after: avoid; }
-    p { orphans: 3; widows: 3; }
-  }
-</style>
-</head>
-<body>
-<nav aria-label="الرئيسية"><a href="/">الرئيسية</a></nav>
-<aside aria-label="مقالات تانية"><p>مقالات شبهها</p><p>الأكثر قراءة</p></aside>
-<main id="m">
-  <h1>إزاي تخزن القهوة</h1>
-  <button class="share" type="button">شارك</button>
-  <p>القهوة بتفقد ريحتها بسرعة، واقرا <a href="https://example.com/coffee">الدليل الكامل</a> لتفاصيل أكتر.</p>
-</main>
-<script>
-  // بيكرر فقرة عشان المقالة تبقى طويلة زي مقالة حقيقية
-  const main = document.querySelector('#m');
-  for (let i = 0; i < 30; i++) {
-    const p = document.createElement('p');
-    p.textContent = 'خلي البن في علبة مقفولة بعيد عن الضوء والحرارة، واشتري كميات صغيرة، وماتطحنش غير اللي هتستخدمه. '.repeat(4);
-    main.append(p);
-  }
-$__lt/script>
-</body>
-</html>
+            { lvl: 'تطبيق', t: R`**ابني:** بطاقة تعليمات لدوا كحة متخيل اسمه «هدوءين»: عنوان، وجملة تعريف فيها اسم المادة الفعالة بالإنجليزي، والجرعة، وتحذير خطير (متاخدوش مع أدوية الضغط)، وجوّه التحذير حتة أخطر (ولا للأطفال أقل من ٦ سنين)، وجملة فيها ضغطة على كلمة («بعد الأكل، مش قبله»).`, done: R`البطاقة فيها [[strong]] جوه [[strong]] (والداخلي وزنه 900)، و [[em]] واحد، و [[i lang="en"]] لاسم المادة، و [[b]] لاسم الدوا في جملة التعريف، ومفيش ولا [[strong]] على كلام عادي زي الجرعة.`, work: { h: 300, start: R`هدوءين: شراب للكحة
+هدوءين شراب بيهدّي الكحة الناشفة. المادة الفعالة اسمها calmoxine (اسم متخيل).
+الجرعة: معلقة صغيرة ٣ مرات في اليوم، بعد الأكل مش قبله.
+تحذير: متاخدوش مع أدوية الضغط. وممنوع للأطفال أقل من ٦ سنين.`, checks: [
+              { say: R`اسم البطاقة عنوان [[<h2>]]`, q: "h1, h2, h3", has: "هدوءين" },
+              { say: R`اسم الدوا في أول جملة [[<b>]]`, q: "b", has: "هدوءين" },
+              { say: R`اسم المادة [[<i>]] ومعاه [[lang="en"]]`, q: "i", has: "calmoxine", attr: ["lang", "en"] },
+              { say: R`كلمة «بعد» عليها [[<em>]]`, q: "em", has: "بعد", n: 1 },
+              { say: R`التحذير [[<strong>]] وجواه حتة الأطفال [[<strong>]] تاني`, q: "strong strong", has: "أطفال", n: 1 },
+              { say: R`الجرعة كلام عادي من غير [[<strong>]]`, q: "strong", has: "الجرعة", n: 0 },
+            ] }, sol: R`~~~live 220 300 بطاقة الدوا
+<article>
+  <h2>هدوءين: شراب للكحة</h2>
+  <p><b>هدوءين</b> شراب بيهدّي الكحة الناشفة. المادة الفعالة اسمها <i lang="en">calmoxine</i> (اسم متخيل).</p>
+  <p>الجرعة: معلقة صغيرة ٣ مرات في اليوم، <em>بعد</em> الأكل مش قبله.</p>
+  <p><strong>تحذير: متاخدوش مع أدوية الضغط. <strong>وممنوع للأطفال أقل من ٦ سنين.</strong></strong></p>
+</article>
 ~~~
 
 **القرارات:**
 
-- [[display: none]] على القايمة والجانب والأزرار: لا ليهم معنى على ورق.
-- أسود على أبيض: المتصفح بيشيل الخلفية الغامقة، بس لون الكلام [[#eee]] بيفضل، فبيطبع رمادي فاتح على ورقة بيضا. ده اللي كان «باهت».
-- [[attr(href)]]: الورقة مفيهاش ضغط، فلازم الرابط نفسه يتكتب. و [[^="http"]] بيخليه للروابط الكاملة بس.
-- [[break-after: avoid]]: العنوان ميفضلش لوحده في آخر ورقة.
-- [[orphans]] و [[widows]]: أقل عدد سطور يفضل في أول أو آخر ورقة من الفقرة.
+- اسم الدوا في أول جملة [[b]]: عايز العين تلقطه، بس هو مش «أهم» من باقي الجملة.
+- اسم المادة [[i]] ومعاه [[lang="en"]]: مصطلح بلغة تانية. الـ [[lang]] بيخلي قارئ الشاشة ينطقه إنجليزي.
+- «بعد» عليها [[em]]: لو قريتها بصوت هتشدّ عليها، وهي اللي بتفرّق المعنى عن «قبل».
+- التحذير كله [[strong]]، والحتة اللي عن الأطفال [[strong]] تاني جواه: المواصفة بتقول إن كل [[strong]] زيادة بيعلّي درجة الأهمية.
+- الجرعة كلام عادي. لو حطيتها [[strong]] هي كمان، التحذير مبقاش بيتميّز.
 
-**الغلطة الشائعة:** تكتب ملف CSS منفصل للطباعة وتنساه لما التصميم يتغيّر. [[@media print]] في نفس الملف بيبقى قدامك.
+**الغلطة الشائعة:** تقفل الـ tags بترتيب غلط: [[<strong>...<em>...</strong></em>]]. اللي اتفتح آخر واحد بيتقفل الأول.
 
 ~~~text الناتج
-                 قبل           بعد
-عدد الورق         6            4
-لون الكلام        rgb(238, 238, 238)   rgb(0, 0, 0)
-nav ظاهر          block            none
-
-آخر اللينك في الطباعة: " (https://example.com/coffee)"
-تباين الكلام على ورقة بيضا: قبل 1.16:1  بعد 21:1
-axe: 0 violations
+strong: 2  (الخارجي font-weight = 700، والداخلي = 900)
+em: 1   b: 1   i: 1 (lang = en)
+الأدوار: article ، heading (مستوى 2) ، strong ، strong ، emphasis
 ~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** جدول ١٢ صف كل صف فيه ملاحظة طويلة (٨ سطور). اعمله PDF مرة من غير [[tr { break-inside: avoid; }]] ومرة بيه، وفي كل مرة عدّ الصفوف اللي اتقطعت بين ورقتين.`, done: R`من غير avoid فيه صفوف اتقطعت (في Chrome 156 بالـ A4 وخط 14pt اتقطع صف واحد في صفحة الحل، والعدد بيتغيّر مع طول المحتوى)، وبيه صفر، وعدد الورق ممكن يزيد ورقة عشان الصف بينزل كله. وكتبت ليه ده أحسن في فاتورة.`, sol: R`~~~live 600 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الملاحظات</title>
-<style>
-  @page { size: A4; margin: 15mm; }
-  body { font: 14pt system-ui; margin: 0; }
-  table { border-collapse: collapse; width: 100%; }
-  th, td { border: 1px solid #999; padding: 6px; text-align: start; vertical-align: top; }
-  tr { break-inside: avoid; }
-</style>
-</head>
-<body>
-<main>
-<h1>تقرير الصيانة</h1>
-<table>
-  <thead><tr><th scope="col">رقم</th><th scope="col">الملاحظة</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
-</main>
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب الجملة «أنا مش هسافر بكرة» أربع مرات، وكل مرة [[em]] على كلمة مختلفة. واكتب تحت كل واحدة: الجملة دي رد على إيه؟ وبعدين جاوب: لو شلت كل الـ tags، الأربع جمل هيفضل بينهم فرق؟`, done: R`كتبت أربع معاني مختلفة فعلًا (مين اللي هيسافر، وهل هيسافر أصلًا، وهيعمل إيه بدل السفر، وهيسافر إمتى)، وعرفت إن النص من غير tags واحد في الأربعة: الفرق كله شايله الـ [[em]].`, sol: R`~~~live 160 250 أربع ضغطات، أربع معاني
+<p><em>أنا</em> مش هسافر بكرة.</p>
+<p>أنا <em>مش</em> هسافر بكرة.</p>
+<p>أنا مش <em>هسافر</em> بكرة.</p>
+<p>أنا مش هسافر <em>بكرة</em>.</p>
+~~~
+
+| الضغطة على | بترد على إيه |
+|---|---|
+| أنا | «مين اللي مسافر؟» أنا لأ، حد تاني هو اللي هيسافر |
+| مش | «انت مسافر بكرة صح؟» لأ خالص، نفي قاطع |
+| هسافر | «هتعمل إيه بكرة؟» هعمل حاجة تانية غير السفر |
+| بكرة | «مسافر إمتى؟» مش بكرة، يوم تاني |
+
+**ده تعريف [[em]] في المواصفة:** مكان الضغطة بيغيّر معنى الجملة، فالعنصر جزء من المحتوى نفسه مش زينة. وعشان كده اسمه emphasis مش italic.
+
+**ولو شلت الـ tags؟** النص الخام واحد في الأربعة. قريت [[textContent]] بتاع كل فقرة وطلعوا نفس السطر بالحرف. يعني المعلومة اللي بتفرّق بينهم موجودة في العنصر بس.
+
+**الغلطة الشائعة:** تحط [[em]] على الجملة كلها. ساعتها مفيش كلمة بتتميّز، والمعنى رجع زي الجملة العادية بس مايلة.
+
+~~~text الناتج
+عدد الفقرات: 4    عدد النصوص المختلفة (textContent): 1
+النص: أنا مش هسافر بكرة.
+كل em:  font-style = italic   الدور = emphasis
+~~~` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** افتح قسم [[b]] في مواصفة HTML (اللينك تحت الدرس) وجاوب من النص نفسه: المواصفة بتقول تستخدم [[b]] إمتى بالظبط؟ وإيه العناصر الأربعة اللي بتقول جرّبهم الأول؟ وإيه المثال اللي كاتباه كاستخدام غلط؟`, done: R`جبت الجملة اللي فيها «last resort»، وعدّيت العناصر الأربعة (العناوين، و [[em]]، و [[strong]]، و [[mark]])، ولقيت مثال التحذير اللي المواصفة بتقول إن الصح فيه [[strong]].`, sol: R`**الإجابة من نص المواصفة (قسم 4.5.21 The b element):**
+
+~~~text من المواصفة
+The b element should be used as a last resort when no other element is more
+appropriate. In particular, headings should use the h1 to h6 elements, stress
+emphasis should use the em element, importance should be denoted with the
+strong element, and text marked or highlighted should use the mark element.
+~~~
+
+يعني [[b]] هو آخر اختيار: لما تكون عايز تلفت النظر لكلمة، ومفيش عنصر تاني معناه ينطبق عليها. والأربعة اللي يتجرّبوا الأول:
+
+| لو الكلام ده | العنصر |
+|---|---|
+| عنوان | [[<h1>]] لحد [[<h6>]] |
+| عليه ضغطة بتغيّر المعنى | [[<em>]] |
+| مهم أو خطير أو مستعجل | [[<strong>]] |
+| متعلّم عليه عشان ليه علاقة بحاجة | [[<mark>]] (الدرس الجاي) |
+
+والاستخدامات الصح اللي المواصفة عدّتها لـ [[b]]: كلمات مفتاحية في ملخص، وأسامي منتجات في مراجعة، وأول جملة في خبر (الـ lede).
+
+**المثال الغلط في المواصفة** هو ده، وبتقول إن الصح فيه [[strong]]:
+
+~~~live 60 70 الغلط حسب المواصفة
+<p><b>WARNING!</b> Do not frob the barbinator!</p>
+~~~
+
+~~~live 60 70 الصح
+<p><strong>WARNING!</strong> Do not frob the barbinator!</p>
+~~~
+
+الاتنين شكلهم واحد بالظبط. الفرق في المعنى اللي بيوصل لأي حد مش بيشوف الشاشة.
+
+**الغلطة الشائعة:** تصدّق إن [[b]] «اتلغى» من HTML. هو لسه عنصر سليم، بس معناه اتغيّر من «تقيل» لـ «لفت نظر من غير أهمية».
+
+~~~text الناتج
+النسخة الأولى:  b       font-weight = 700   الدور = generic
+النسخة التانية: strong  font-weight = 700   الدور = strong
+~~~` },
+          ],
+          title: "كلمة مهمة ولا كلمة عليها ضغطة؟ strong و em، وإخواتهم b و i",
+          desc: R`[[<strong>]] بيقول إن الكلام ده مهم أو خطير أو مستعجل. و [[<em>]] بيقول إن الكلمة دي بتتنطق بضغطة بتغيّر معنى الجملة. المتصفح بيرسم الأول تقيل والتاني مايل، بس ده مجرد الشكل الافتراضي: العنصر بيتختار بمعناه.
+
+و [[<b>]] و [[<i>]] شكلهم زيهم بالظبط ومعناهم مختلف: [[<b>]] لفت نظر من غير أهمية (اسم منتج، كلمة مفتاحية)، و [[<i>]] كلام بنبرة تانية (كلمة أجنبية، اسم علمي، فكرة في دماغ شخصية).`,
+          example: R`<p><strong>تحذير:</strong> متقفلش الجهاز والتحديث شغال.</p>
+<p>أنا <em>مقولتش</em> إنه خد الفلوس.</p>
+<p>أنا مقولتش إنه <em>خد</em> الفلوس.</p>
+<p>اللابتوب <b>نجم ١٤</b> أخف من <b>نجم ١٦</b> بنص كيلو.</p>
+<p>الفرنساويين بيقولوا <i lang="fr">déjà vu</i> على الإحساس ده.</p>
+<p><strong>ممنوع الدخول. <strong>خطر كهربا.</strong></strong></p>`,
+          try: R`اكتب الجملة «أنا مقولتش إنه خد الفلوس» مرتين: مرة [[em]] على «مقولتش» ومرة على «الفلوس»، واقراهم بصوت عالي. وبعدين بدّل [[em]] بـ [[i]] في واحدة منهم: الشكل اتغيّر؟ افتح DevTools ← Elements ← تاب Accessibility ودوس على الكلمة في الحالتين وقارن.`,
+          flag: "script",
+          deep: {
+            why: R`زمان HTML كان فيه عناصر للشكل بس: [[<b>]] يعني bold و [[<i>]] يعني italic. المشكلة إن «تقيل» مبيقولش ليه. هل ده تحذير؟ عنوان؟ اسم منتج؟ العين بتخمّن من السياق، بس قارئ الشاشة والبرامج مبيخمّنوش. فالمواصفة الحالية خلّت كل عنصر ليه معنى: [[strong]] للأهمية، و [[em]] للضغطة، وعرّفت [[b]] و [[i]] من جديد بمعاني تانية بدل ما تلغيهم. والشكل نفسه اتنقل للـ CSS.`,
+            how: R`المتصفح عنده ملف CSS داخلي (اسمه user agent stylesheet) فيه [[b, strong { font-weight: bolder }]] و [[i, em { font-style: italic }]]. عشان كده [[strong]] و [[b]] شكلهم واحد. الفرق في شجرة الـ accessibility اللي المتصفح بيبنيها من الصفحة: [[strong]] دوره [[strong]]، و [[em]] دوره [[emphasis]]، و [[b]] و [[i]] دورهم [[generic]] (يعني «حتة نص من غير معنى خاص»). ده اتقاس في Chrome 157.
+
+الأربعة عناصر جوه السطر (inline): مبيكسروش السطر، وبيتحطوا جوه [[<p>]] أو عنوان أو أي عنصر فيه نص. وينفع يتحطوا جوه بعض، وكل [[strong]] جوه [[strong]] بيعلّي درجة الأهمية، وكل [[em]] جوه [[em]] بيعلّي درجة الضغطة.`,
+            when: R`اسأل السؤال بالترتيب: الكلام ده خطير أو مهم أو لازم يتقري الأول؟ يبقى [[strong]]. لو قريته بصوت هشدّ على الكلمة دي والمعنى هيتغيّر من غيرها؟ يبقى [[em]]. كلمة أجنبية أو اسم علمي أو فكرة في دماغ حد؟ [[i]] (ومعاها [[lang]] لو لغة تانية). اسم منتج أو كلمة مفتاحية عايز العين تلقطها بس؟ [[b]]. عايز الكلام يبقى تقيل «عشان شكله أحلى»؟ ولا واحد فيهم: ده CSS.`,
+            mistakes: R`[[strong]] بدل العنوان: [[<p><strong>الأسعار</strong></p>]] شكله عنوان ومش عنوان، واللي بيتنقل بين العناوين بقارئ الشاشة مش هيلاقيه. الصح [[<h2>]].
+
+[[strong]] على نص الصفحة كله أو على كل تاني جملة: لما كل حاجة مهمة مفيش حاجة بتتميّز.
+
+[[em]] على فقرة كاملة عشان تبقى مايلة: دي مش ضغطة، ده تنسيق.
+
+الخط المايل في العربي: الكتابة العربي تقليديًا مفيهاش خط مايل، وخطوط عربي كتير مفيهاش نسخة italic فالمتصفح بيميّل الحروف هندسيًا. شكله مش دايمًا مريح، وناس كتير بتغيّر شكل [[em]] في العربي بالـ CSS (لون مثلًا). ده مش سبب تسيب [[em]]: المعنى زي ما هو والشكل بيتغيّر.
+
+ترتيب القفل: [[<strong>مهم <em>جدًا</strong></em>]] غلط. اللي اتفتح الأخير يتقفل الأول: [[<strong>مهم <em>جدًا</em></strong>]].`
+          },
+          teach: R`## الفكرة في سطرين
+
+فيه أربع عناصر شكلهم اتنين بس: [[strong]] و [[b]] تقال، و [[em]] و [[i]] مايلين. اللي بيفرّق بينهم المعنى: مهم، ولا عليه ضغطة، ولا لفت نظر، ولا نبرة تانية.
+
+كل الأرقام اللي في الوحدة دي اتقاست في **Chrome 157 (headless) على Windows 11**: الشكل من [[getComputedStyle]] (نفس اللي بتشوفه في DevTools ← Elements ← تاب Computed)، والدور من [[computedRole]] (نفس اللي في تاب Accessibility).
+
+---
+
+## ١. [[<strong>]]: الكلام ده مهم
+
+المواصفة بتقول إن [[strong]] بيمثّل **أهمية أو خطورة أو استعجال**:
+
+- **أهمية:** الحتة اللي فعلًا تهم في عنوان أو فقرة، وباقي الكلام تفاصيل.
+- **خطورة:** تحذير أو تنبيه.
+- **استعجال:** حاجة القارئ لازم يشوفها قبل غيرها.
+
+~~~live 90 120 strong
+<p><strong>تحذير:</strong> متقفلش الجهاز والتحديث شغال.</p>
+<p>الطلب بيوصل في ٣ أيام. <strong>الدفع عند الاستلام بس.</strong></p>
+~~~
+
+الكلمة التقيلة في السطر الأول هي عنوان التحذير، وفي التاني جملة كاملة هي أهم حاجة في الفقرة.
+
+ونقطة مهمة في المواصفة: [[strong]] **مبيغيّرش معنى الجملة**. «الدفع عند الاستلام بس» معناها واحد بالعنصر ومن غيره، هو بس بيقول إنها أهم من اللي حواليها.
+
+---
+
+## ٢. [[<em>]]: الضغطة اللي بتغيّر المعنى
+
+[[em]] اختصار emphasis، والمواصفة بتسميه stress emphasis: الضغطة اللي بتحطها بصوتك على كلمة وانت بتتكلم. وعكس [[strong]]، مكان الضغطة **بيغيّر المعنى**:
+
+~~~live 130 170 نفس الجملة، تلات معاني
+<p>أنا <em>مقولتش</em> إنه خد الفلوس.</p>
+<p>أنا مقولتش إنه <em>خد</em> الفلوس.</p>
+<p>أنا مقولتش إنه خد <em>الفلوس</em>.</p>
+~~~
+
+| الضغطة على | المعنى اللي بيوصل |
+|---|---|
+| مقولتش | أنا منطقتهاش (يمكن لمّحت، يمكن كتبتها) |
+| خد | يمكن استلفها أو لقاها، بس «خد» دي مش كلمتي |
+| الفلوس | هو خد حاجة، بس مش الفلوس |
+
+اقرا التلاتة بصوت عالي وهتلاقي نفسك بتشدّ على الكلمة المايلة. ده بالظبط اللي العنصر بيقوله.
+
+---
+
+## ٣. [[<b>]]: لفت نظر من غير أهمية
+
+المواصفة: [[b]] حتة نص بنلفت لها النظر **لسبب عملي**، من غير أي أهمية زيادة ومن غير نبرة تانية. الأمثلة اللي كاتباها: كلمات مفتاحية في ملخص، وأسامي منتجات في مراجعة، وأول جملة في خبر.
+
+~~~live 80 80 b
+<p>اللابتوب <b>نجم ١٤</b> أخف من <b>نجم ١٦</b> بنص كيلو، وبطاريته بتعيش أكتر.</p>
+~~~
+
+الأسامي تقيلة عشان اللي بيمسح المراجعة بعينه يلاقيهم. بس «نجم ١٤» مش أهم من «بطاريته بتعيش أكتر». والمواصفة بتقول صراحة إن [[b]] هو **آخر اختيار**: لو فيه عنصر معناه ينطبق (عنوان، أو [[em]]، أو [[strong]]، أو [[mark]]) استخدمه هو.
+
+---
+
+## ٤. [[<i>]]: كلام بنبرة تانية
+
+المواصفة: [[i]] حتة نص بصوت أو مزاج مختلف عن الكلام اللي حواليها. وعدّت: اسم علمي (تصنيف)، ومصطلح تقني، وتعبير من لغة تانية، وفكرة في دماغ شخصية، واسم سفينة.
+
+~~~live 90 120 i
+<p>الفرنساويين بيقولوا <i lang="fr">déjà vu</i> على الإحساس ده.</p>
+<p><i>يا ترى قفلت الباب؟</i> فكّرت وهي نازلة السلم.</p>
+~~~
+
+### [[lang="fr"]]
+
+[[lang]] اتشرح في درس «lang و dir»: بيقول لغة الحتة دي. المواصفة بتطلبه على أي كلمة من لغة غير لغة الصفحة، عشان قارئ الشاشة ينطقها بلغتها. وهنا [[fr]] يعني فرنساوي.
+
+---
+
+## ٥. نفس الشكل، معنى مختلف: القياس
+
+حطيت الأربعة في فقرة واحدة وقريت الشكل والدور:
+
+| العنصر | [[font-weight]] | [[font-style]] | الدور في شجرة الـ accessibility |
+|---|---|---|---|
+| [[<strong>]] | 700 | normal | [[strong]] |
+| [[<b>]] | 700 | normal | [[generic]] |
+| [[<em>]] | 400 | italic | [[emphasis]] |
+| [[<i>]] | 400 | italic | [[generic]] |
+
+- [[font-weight]] تُقل الخط: 400 العادي و 700 التقيل.
+- [[font-style]] الخط مايل ولا لأ.
+- الدور (role) هو اللي قارئ الشاشة بياخده. [[generic]] معناها «حتة نص عادية»: يعني [[b]] و [[i]] مبيوصّلوش أي معنى زيادة للي مش شايف الشاشة.
+
+فالعين مبتفرّقش بين [[strong]] و [[b]]، والشجرة بتفرّق.
+
+---
+
+## ٦. عنصر جوه عنصر
+
+### [[<strong>]] جوه [[<strong>]]
+
+~~~live 60 80 درجتين من الأهمية
+<p><strong>ممنوع الدخول. <strong>خطر كهربا.</strong></strong></p>
+~~~
+
+المواصفة: درجة الأهمية = عدد عناصر [[strong]] اللي الكلام جواها. فـ «خطر كهربا» أهم من «ممنوع الدخول». والقياس:
+
+~~~text font-weight
+strong الخارجي = 700
+strong الداخلي = 900
+~~~
+
+الرقم علي عشان الستايل الافتراضي [[bolder]] (أتقل من الأب بدرجة). بس بالخط الافتراضي مش هتشوف فرق بعينك، لأن الخط مفيهوش وزن أتقل من 700. فالدرجة التانية موجودة في المعنى، ولو عايزها تبان هتحتاج CSS.
+
+ونفس الكلام في [[em]]: [[em]] جوه [[em]] ضغطة أقوى، والاتنين [[italic]] فمفيش فرق في الشكل.
+
+### [[<strong>]] و [[<em>]] مع بعض
+
+~~~live 60 80 مهم وعليه ضغطة
+<p>الباب ده <strong>بيتقفل <em>لوحده</em></strong> بعد دقيقة.</p>
+~~~
+
+«لوحده» تقيلة ومايلة: مهمة، وعليها ضغطة. والقاعدة في القفل: اللي اتفتح آخر واحد يتقفل الأول ([[</em>]] قبل [[</strong>]]).
+
+---
+
+## ٧. ليه مش «تقيل = strong»؟
+
+لأن فيه تلات حاجات شكلها تقيل ومعناها مختلف. دي النسخة الغلط:
+
+~~~live 110 150 غلط: strong عشان الشكل
+<p><strong>مواعيد العمل</strong></p>
+<p><strong>من السبت للخميس، من ٩ الصبح لـ ٥ المغرب. يوم الجمعة إجازة. الحجز بالتليفون.</strong></p>
+~~~
+
+ودي الصح:
+
+~~~live 130 150 صح: كل حاجة بمعناها
+<h2>مواعيد العمل</h2>
+<p>من السبت للخميس، من ٩ الصبح لـ ٥ المغرب. <strong>يوم الجمعة إجازة.</strong> الحجز بالتليفون.</p>
+~~~
+
+| | النسخة الغلط | النسخة الصح |
+|---|---|---|
+| عدد العناوين (heading) | 0 | 1 (مستوى 2) |
+| عدد [[strong]] | 2 | 1 |
+| إيه اللي متميّز في الفقرة | ولا حاجة (كلها تقيلة) | «يوم الجمعة إجازة» بس |
+
+في الغلط: «مواعيد العمل» مش عنوان، فاللي بيتنقل بين العناوين مش هيوصلها. والفقرة كلها مهمة، يعني مفيش حاجة مهمة.
+
+ولو كل اللي انت عايزه إن الكلام يبقى تقيل من غير معنى، ده CSS:
+
+~~~live 60 80 تقيل بالـ CSS
+<p style="font-weight: bold">الكلام ده تقيل وخلاص، من غير ما يقول إنه مهم.</p>
+~~~
+
+[[style="font-weight: bold"]] سطر CSS مكتوب على العنصر نفسه بيقول «خلي الخط تقيل». هتتعلمه في درس «مقدمة CSS وتنسيق العناصر». دلوقتي كفاية تعرف إن الشكل ليه مكان تاني غير الـ HTML.
+
+---
+
+## ٨. قارئ الشاشة ومحرك البحث بياخدوا إيه؟
+
+**قارئ الشاشة:** بياخد الدور من الشجرة ([[strong]] و [[emphasis]]، زي ما اتقاس). هل بيغيّر صوته عند الكلمة؟ دي معرفتش أجرّبها (مفيش قارئ شاشة في المعمل). صفحة [[em]] في MDN بتقول إن البرنامج اللي بيقرا النص هينطق الكلمة بضغطة، بس ده متروك لكل قارئ شاشة وإعداداته. فمتعتمدش على العنصر لوحده في تحذير: اكتب كلمة «تحذير» نفسها زي المثال، عشان المعنى يوصل بالنص كمان.
+
+**محرك البحث:** بيقرا نفس الـ HTML، فالعنصر قدامه. بس مفيش في المواصفة ولا في MDN أي وعد إن [[strong]] بيرفع ترتيب الصفحة، فمتحشيش الصفحة [[strong]] عشان جوجل.
+
+---
+
+## الخلاصة
+
+| عايز تقول إيه | العنصر | الشكل الافتراضي |
+|---|---|---|
+| ده مهم أو خطير أو مستعجل | [[<strong>]] | تقيل |
+| الكلمة دي عليها ضغطة بتغيّر المعنى | [[<em>]] | مايل |
+| بصّ هنا (اسم منتج، كلمة مفتاحية)، من غير أهمية | [[<b>]] | تقيل |
+| نبرة تانية: كلمة أجنبية، اسم علمي، فكرة | [[<i>]] | مايل |
+| عنوان | [[<h2>]] مش [[strong]] | |
+| تقيل أو مايل عشان الشكل بس | CSS | |`,
+          lines: [
+            R`[[strong]] على كلمة «تحذير:» بس: هي عنوان التنبيه، والجملة اللي بعدها تفاصيله. ده استخدام «الخطورة».`,
+            R`[[em]] على «مقولتش»: الضغطة هنا معناها إني منطقتش الكلام ده (يمكن لمّحت).`,
+            R`نفس الجملة والضغطة على «خد»: المعنى بقى إنه يمكن استلفها أو لقاها. الكلمات واحدة والمعنى اتغيّر.`,
+            R`[[b]] على اسمين منتجين: لفت نظر للعين وهي بتمسح المراجعة، من غير ما الأسامي تبقى أهم من باقي الجملة.`,
+            R`[[i]] لتعبير من لغة تانية، و [[lang="fr"]] بيقول إنه فرنساوي عشان قارئ الشاشة ينطقه صح.`,
+            R`[[strong]] جوه [[strong]]: «خطر كهربا» درجة أهمية أعلى من «ممنوع الدخول». الداخلي وزنه المحسوب 900 والخارجي 700.`
+          ],
+          sol: R`**الشكل:** مبيتغيّرش خالص. [[em]] و [[i]] الاتنين [[font-style: italic]]، فلو بصّيت على الصفحة بس مش هتعرف مين فيهم مين.
+
+**تاب Accessibility:** لما تدوس على الكلمة وهي [[em]] هتلاقي دورها [[emphasis]]. ولما تبدّلها بـ [[i]] الدور ده بيختفي والكلمة بتبقى نص عادي جوه الفقرة (الدور المحسوب [[generic]]).
+
+**وانت بتقرا بصوت:** في الأولى بتشدّ على «مقولتش» (بتنفي إنك قلت)، وفي التانية على «الفلوس» (هو خد حاجة تانية). ده معنى مش شكل، وعشان كده مكانه [[em]] مش [[i]] ومش CSS.
+
+~~~text الناتج (Chrome 157)
+<em>مقولتش</em>   font-style = italic   الدور = emphasis
+<i>مقولتش</i>     font-style = italic   الدور = generic
+~~~`,
+          ref: [
+            { t: "WHATWG: the strong element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-strong-element" },
+            { t: "WHATWG: the em element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-em-element" },
+            { t: "WHATWG: the b element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-b-element" },
+            { t: "WHATWG: the i element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-i-element" },
+            { t: "MDN: <strong>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/strong" },
+            { t: "MDN: <em>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/em" },
+            { t: "MDN: <b>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/b" },
+            { t: "MDN: <i>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/i" },
+          ],
+          pre: [{ to: "css/lang و dir", why: R`الـ [[lang]] اللي بنحطه على الكلمة الأجنبية جوه [[<i>]] مشروح هناك` }]
+        },
+        {
+          cmd: "mark و small و del و ins",
+          practice: [
+            { lvl: 'سريع', t: R`**اختار العنصر:** [[s]] ولا [[del]] و [[ins]] ولا ولا حاجة؟
+١. كارت منتج: السعر كان ٤٠٠ وبقى ٣٢٠.
+٢. خبر منشور كان مكتوب فيه «٣ مصابين» والمحرر صحّحه لـ «٥ مصابين» وعايز التصحيح يبان.
+٣. إعلان: «العرض ساري لحد الجمعة» والعرض خلص، بس الإعلان لسه معروض.
+٤. لايحة النادي: بند اتشال رسميًا يوم ١ نوفمبر وبند جديد اتحط مكانه.`, done: R`السعر القديم والعرض المنتهي [[s]]، وتصحيح الخبر وتعديل اللايحة [[del]] مع [[ins]]، وعلى تعديل اللايحة [[datetime="2026-11-01"]]. والعدد في الصفحة: [[s]] اتنين، و [[del]] اتنين، و [[ins]] اتنين.`, work: { h: 200, start: R`<p>السعر: ٤٠٠ جنيه ٣٢٠ جنيه.</p>
+<p>الحادثة فيها ٣ ٥ مصابين.</p>
+<p>العرض ساري لحد الجمعة. العرض خلص.</p>
+<p>الضيف بيدخل ببلاش. الضيف بيدفع تذكرة يوم.</p>`, checks: [
+              { say: R`السعر القديم «٤٠٠ جنيه» في [[<s>]]`, q: "s", has: "٤٠٠" },
+              { say: R`العرض المنتهي «ساري لحد الجمعة» في [[<s>]]`, q: "s", has: "العرض ساري" },
+              { say: R`تصحيح الخبر وتعديل اللايحة: [[<del>]] اتنين`, q: "del", n: 2 },
+              { say: R`وجنب كل [[<del>]] واحد [[<ins>]]: اتنين`, q: "ins", n: 2 },
+              { say: R`تعديل اللايحة عليه [[datetime="2026-11-01"]] في الاتنين`, q: "del, ins", attr: ["datetime", "2026-11-01"], n: 2 },
+            ] }, sol: R`~~~live 160 200 الحل
+<p>السعر: <s>٤٠٠ جنيه</s> ٣٢٠ جنيه.</p>
+<p>الحادثة فيها <del>٣</del> <ins>٥</ins> مصابين.</p>
+<p><s>العرض ساري لحد الجمعة.</s> العرض خلص.</p>
+<p><del datetime="2026-11-01">الضيف بيدخل ببلاش.</del> <ins datetime="2026-11-01">الضيف بيدفع تذكرة يوم.</ins></p>
+~~~
+
+**السؤال اللي بيفرّق:** هل المستند نفسه اتعدّل، وعايز التعديل يبان؟
+
+- السعر القديم والعرض المنتهي: محدش «عدّل مستند». دي معلومة مبقتش سارية ولسه معروضة عشان المقارنة. ده تعريف [[s]] في المواصفة: كلام مبقاش دقيق أو مبقاش يخص.
+- الخبر واللايحة: فيه نسخة قديمة ونسخة جديدة من نفس النص، والقارئ من حقه يشوف إيه اللي اتغيّر. ده [[del]] (اتشال) و [[ins]] (اتضاف).
+
+والمواصفة كاتباها صريحة في قسم [[s]]: العنصر ده مش مناسب لتعديلات المستند، للتعديلات استخدم [[del]].
+
+**الغلطة الشائعة:** [[del]] على السعر القديم. الشكل واحد بالظبط (خط في النص)، بس المعنى بقى «السعر ده اتمسح من المستند» بدل «السعر ده مبقاش ساري».
+
+~~~text الناتج
+s: 2   del: 2   ins: 2
+text-decoration:  s = line-through   del = line-through   ins = underline
+del التاني:  dateTime = 2026-11-01
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الخط العادي 16px. [[<small>]] جواه [[<small>]] جواه [[<small>]]: حجم كل واحد كام؟ و [[<small>]] جوه [[<h1>]] (اللي حجمه 32px)؟ توقّع وبعدين شوف تاب Computed.`, done: R`الأرقام: 13.33 ثم 11.11 ثم 9.26 بيكسل، وجوه الـ h1 بقى 26.67. وعرفت إن [[small]] مش «حجم ثابت صغير»: هو أصغر من أبوه بنسبة (هنا خمسة على ستة)، وإن تلات درجات بيطلّعوا خط محدش يعرف يقراه.`, sol: R`~~~live 120 160 small جوه small
+<h1>عنوان <small>وجنبه ملحوظة</small></h1>
+<p>عادي <small>واحد <small>اتنين <small>تلاتة</small></small></small></p>
+~~~
+
+**ليه الأرقام دي:** الستايل الافتراضي في المواصفة [[small { font-size: smaller; }]]. [[smaller]] معناها «أصغر من الأب بدرجة»، و Chrome بيحسبها هنا بضرب حجم الأب في ٥/٦:
+
+- 16 × ٥/٦ = 13.33
+- 13.33 × ٥/٦ = 11.11
+- 11.11 × ٥/٦ = 9.26
+- وجوه الـ h1: 32 × ٥/٦ = 26.67
+
+**الدرس من ده:** [[small]] معناه «ملحوظة جانبية»، ومعنى زي ده مبيتكررش جوه نفسه. لو لقيت نفسك بتحط [[small]] جوه [[small]] عشان الخط يصغر أكتر، انت بتستخدمه للشكل، وده شغل CSS.
+
+**الغلطة الشائعة:** [[<h1>العنوان <small>عنوان فرعي</small></h1>]] عشان العنوان الفرعي يطلع أصغر. المواصفة بتقول صراحة إن [[small]] ممنوع للعناوين الفرعية.
+
+~~~text الناتج
+h1 = 32px          small جوه h1 = 26.6667px
+p = 16px           small = 13.3333px   small small = 11.1111px   small small small = 9.25926px
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** إعلان اشتراك في جيم متخيل:
+
+~~~html
+<p><u>مهم جدًا:</u> العرض لحد آخر الشهر بس.</p>
+<p>الاشتراك <del>٤٠٠ جنيه</del> ٣٢٠ جنيه في الشهر. <mark>وفّر ٨٠ جنيه!</mark></p>
+<p><small>الاشتراك بيتجدد كل شهر لوحده. تقدر تلغي في أي وقت من صفحة حسابك. لو لغيت في نص الشهر الاشتراك بيفضل شغال لآخره. الفلوس مبتتردش عن الشهر اللي بدأ.</small></p>
+<p>السعر مش شامل الضريبة.</p>
+~~~
+
+فيها ٤ عناصر في غير مكانها، وجملة محتاجة عنصر ومش واخداه.`, done: R`بعد التصليح مفيش [[u]] ولا [[del]] ولا [[mark]]: «مهم جدًا» بقت [[strong]]، والسعر القديم [[s]]، و «وفّر ٨٠ جنيه» [[b]]، وفقرة الشروط الطويلة من غير [[small]]، وجملة الضريبة هي اللي بقت [[small]].`, work: { h: 260, start: R`<p><u>مهم جدًا:</u> العرض لحد آخر الشهر بس.</p>
+<p>الاشتراك <del>٤٠٠ جنيه</del> ٣٢٠ جنيه في الشهر. <mark>وفّر ٨٠ جنيه!</mark></p>
+<p><small>الاشتراك بيتجدد كل شهر لوحده. تقدر تلغي في أي وقت من صفحة حسابك. لو لغيت في نص الشهر الاشتراك بيفضل شغال لآخره. الفلوس مبتتردش عن الشهر اللي بدأ.</small></p>
+<p>السعر مش شامل الضريبة.</p>`, checks: [
+              { say: R`«مهم جدًا» بقت [[<strong>]]`, q: "strong", has: "مهم جدًا" },
+              { say: R`مفيش [[<u>]] ولا [[<del>]] ولا [[<mark>]] في الصفحة`, q: "u, del, mark", n: 0 },
+              { say: R`السعر القديم «٤٠٠ جنيه» في [[<s>]]`, q: "s", has: "٤٠٠" },
+              { say: R`«وفّر ٨٠ جنيه» في [[<b>]]`, q: "b", has: "وفّر" },
+              { say: R`فقرة الشروط الطويلة من غير [[<small>]]`, q: "small", has: "بيتجدد", n: 0 },
+              { say: R`جملة الضريبة هي اللي في [[<small>]]`, q: "small", has: "الضريبة", n: 1 },
+            ] }, sol: R`~~~live 200 260 بعد التصليح
+<p><strong>مهم جدًا:</strong> العرض لحد آخر الشهر بس.</p>
+<p>الاشتراك <s>٤٠٠ جنيه</s> ٣٢٠ جنيه في الشهر. <b>وفّر ٨٠ جنيه!</b></p>
+<p>الاشتراك بيتجدد كل شهر لوحده. تقدر تلغي في أي وقت من صفحة حسابك. لو لغيت في نص الشهر الاشتراك بيفضل شغال لآخره. الفلوس مبتتردش عن الشهر اللي بدأ.</p>
+<p><small>السعر مش شامل الضريبة.</small></p>
+~~~
+
+**الخمس تصليحات:**
+
+1. [[u]] على «مهم جدًا»: خط تحت كلمة في صفحة ويب معناه عند القارئ «لينك». والمعنى المطلوب أهمية، يعني [[strong]].
+2. [[del]] على السعر القديم: السعر مبقاش ساري، مش «اتمسح من مستند». يبقى [[s]].
+3. [[mark]] على «وفّر ٨٠ جنيه»: [[mark]] للحتة اللي ليها علاقة باللي القارئ بيعمله دلوقتي (زي كلمة البحث)، مش للدعاية. دي جملة عايزين العين تلقطها، يعني [[b]].
+4. [[small]] على فقرة شروط من أربع جمل: المواصفة بتقول إن [[small]] لحتة قصيرة، مش لفقرات. والشروط دي أصلًا مهمة للي هيدفع، فمينفعش تتصغّر.
+5. «السعر مش شامل الضريبة» هي الملحوظة الجانبية القصيرة (small print) اللي [[small]] معمول عشانها.
+
+**الغلطة الشائعة:** تصغّر الشروط «عشان الصفحة تبقى أنضف». لو المعلومة هتفرق مع القارئ، مكانها نص عادي.
+
+~~~text الناتج
+          u   del   mark   small   strong   s   b
+قبل       1    1     1       1       0      0   0
+بعد       0    0     0       1       1      1   1
+small بعد التصليح: «السعر مش شامل الضريبة.»  font-size = 13.3333px
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة نتايج بحث في مكتبة متخيلة عن كلمة «رواية»: عنوان فيه الكلمة اللي اتبحث عنها، وتلات نتايج، كل نتيجة [[<article>]] فيه عنوان الكتاب ([[<h3>]]) وسطر وصف، وكلمة «رواية» متعلّم عليها في كل مكان ظهرت فيه، وتحت كل نتيجة ملحوظة صغيرة بحالة التوفر.`, done: R`الصفحة فيها ٣ [[article]]، وكلمة «رواية» جوه [[mark]] في كل مرة ظهرت في النتايج (٥ مرات)، وخلفيتها صفرا، وكل نتيجة تحتها [[small]] واحد. ومفيش [[mark]] في عنوان الصفحة نفسه.`, work: { h: 440, start: R`نتايج البحث عن «رواية»
+البحر البعيد
+أول رواية للكاتبة، عن صياد بيدوّر على أخوه.
+متوفرة: ٤ نسخ
+ليالي المدينة
+رواية قصيرة في ١٢٠ صفحة.
+متوفرة: نسخة واحدة
+إزاي تكتب رواية
+كتاب تعليمي لأي حد عايز يكتب أول رواية ليه.
+مش متوفر دلوقتي`, checks: [
+              { say: R`تلات نتايج كل واحدة [[<article>]]`, q: "article", n: 3 },
+              { say: R`عنوان كل كتاب [[<h3>]] جوه الـ [[<article>]] بتاعه`, q: "article > h3", n: 3 },
+              { say: R`كلمة «رواية» جوه [[<mark>]] في كل مرة ظهرت في النتايج (٥ مرات)`, q: "mark", has: "رواية", n: 5 },
+              { say: R`مفيش [[<mark>]] في عنوان الصفحة نفسه`, q: "h1 mark, h2 mark", n: 0 },
+              { say: R`تحت كل نتيجة [[<small>]] لحالة التوفر`, q: "article small", n: 3 },
+            ] }, sol: R`~~~live 410 520 نتايج البحث
+<h2>نتايج البحث عن «رواية»</h2>
+<article>
+  <h3><mark>رواية</mark> البحر البعيد</h3>
+  <p>أول <mark>رواية</mark> للكاتبة، عن صياد بيدوّر على أخوه.</p>
+  <p><small>متوفرة: ٤ نسخ</small></p>
+</article>
+<article>
+  <h3>ليالي المدينة</h3>
+  <p><mark>رواية</mark> قصيرة في ١٢٠ صفحة.</p>
+  <p><small>متوفرة: نسخة واحدة</small></p>
+</article>
+<article>
+  <h3>إزاي تكتب <mark>رواية</mark></h3>
+  <p>كتاب تعليمي لأي حد عايز يكتب أول <mark>رواية</mark> ليه.</p>
+  <p><small>مش متوفر دلوقتي</small></p>
+</article>
+~~~
+
+**ليه [[mark]] هنا بالذات:** المواصفة بتقول إن [[mark]] في نص الصفحة العادي معناه «الحتة دي ليها علاقة باللي المستخدم بيعمله دلوقتي»، ومثالها هو ده بالظبط: الكلمات اللي طابقت البحث. الكتاب نفسه مش مكتوب فيه إن الكلمة دي مهمة، انت اللي علّمت عليها عشان القارئ بيدوّر عليها.
+
+**وليه مفيش [[mark]] في عنوان الصفحة:** «رواية» في العنوان هي كلمة البحث نفسها، مش نتيجة طابقتها.
+
+**و [[small]]:** حالة التوفر ملحوظة جانبية قصيرة تحت كل نتيجة.
+
+**الغلطة الشائعة:** [[<span style="background: yellow">]] بدل [[mark]]. الشكل واحد، بس [[mark]] بيحط الدور [[mark]] في الشجرة، والـ span مبيقولش حاجة.
+
+~~~text الناتج
+article: 3   mark: 5   small: 3
+mark:  background-color = rgb(255, 255, 0)   color = rgb(0, 0, 0)   الدور = mark
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** دي «سياسة الاسترجاع» لمتجر متخيل قبل وبعد تعديل اتعمل يوم ١٢ نوفمبر ٢٠٢٦ الساعة ١٠ الصبح بتوقيت القاهرة (+02:00)، وشرح التعديل في صفحة [[/policy-changes.html#nov-2026]]:
+
+~~~text قبل
+تقدر ترجّع أي منتج خلال ٣٠ يوم.
+المنتج لازم يكون في علبته.
+مصاريف الشحن علينا.
+~~~
+
+~~~text بعد
+تقدر ترجّع أي منتج خلال ١٤ يوم.
+المنتج لازم يكون في علبته.
+مصاريف الشحن على العميل.
+المنتجات المخفّضة مبتترجعش.
+~~~
+
+اكتب نسخة واحدة التعديلات باينة فيها.`, done: R`الصفحة فيها ٢ [[del]] و ٣ [[ins]]، كلهم عليهم نفس [[datetime]] ونفس [[cite]]، والسطر اللي متغيّرش من غير أي عنصر، والسطر الجديد كله [[<ins>]] حوالين [[<p>]]. ولو قريت الصفحة وطنّشت المشطوب تطلع نسخة «بعد» بالظبط.`, work: { h: 260, start: R`<h2>سياسة الاسترجاع</h2>
+<p>تقدر ترجّع أي منتج خلال ٣٠ يوم.</p>
+<p>المنتج لازم يكون في علبته.</p>
+<p>مصاريف الشحن علينا.</p>`, checks: [
+              { say: R`الحاجات اللي اتشالت في [[<del>]]: اتنين`, q: "del", n: 2 },
+              { say: R`الحاجات الجديدة في [[<ins>]]: تلاتة`, q: "ins", n: 3 },
+              { say: R`السطر الجديد كله [[<ins>]] حوالين [[<p>]]`, q: "ins > p", has: "مبتترجعش", n: 1 },
+              { say: R`كل [[<del>]] و [[<ins>]] عليه [[datetime="2026-11-12T10:00+02:00"]]`, q: "del, ins", attr: ["datetime", "2026-11-12T10:00+02:00"], n: 5 },
+              { say: R`وكلهم عليهم [[cite="/policy-changes.html#nov-2026"]]`, q: "del, ins", attr: ["cite", "/policy-changes.html#nov-2026"], n: 5 },
+              { say: R`السطر اللي متغيّرش («في علبته») من غير [[<del>]] ولا [[<ins>]]`, q: "del, ins", has: "علبته", n: 0 },
+            ] }, sol: R`~~~live 210 260 السياسة والتعديلات باينة
+<h2>سياسة الاسترجاع</h2>
+<p>تقدر ترجّع أي منتج خلال <del cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">٣٠</del> <ins cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">١٤</ins> يوم.</p>
+<p>المنتج لازم يكون في علبته.</p>
+<p>مصاريف الشحن <del cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">علينا</del> <ins cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">على العميل</ins>.</p>
+<ins cite="/policy-changes.html#nov-2026" datetime="2026-11-12T10:00+02:00">
+  <p>المنتجات المخفّضة مبتترجعش.</p>
+</ins>
+~~~
+
+**القرارات:**
+
+- التعديل على قد اللي اتغيّر: «٣٠» بقت «١٤»، مش الجملة كلها. كده القارئ بيشوف الفرق من أول نظرة.
+- السطر التاني متغيّرش، فمفيش عليه حاجة.
+- السطر الرابع فقرة جديدة كاملة، فالـ [[ins]] حوالين الـ [[<p>]] مش جواه. [[del]] و [[ins]] هما العنصرين الوحيدين في الوحدة دي اللي ينفع يتحطوا حوالين فقرات.
+- [[datetime]] بالصيغة الكاملة: التاريخ، ثم [[T]]، ثم الساعة، ثم فرق التوقيت عن UTC ([[+02:00]] للقاهرة).
+- [[cite]] لينك لصفحة بتشرح التعديل. مش بيظهر للقارئ، فلو عايزه يتشاف اكتب لينك عادي تحت السياسة.
+
+**الغلطة الشائعة:** [[<ins>]] واحد يبدأ في نص فقرة ويخلص في نص الفقرة اللي بعدها. المواصفة بتقول إن التعديل ميعدّيش حدود الفقرة: كل فقرة ليها عنصرها.
+
+~~~text الناتج
+del: 2   ins: 3
+كل واحد:  dateTime = 2026-11-12T10:00+02:00
+          cite = https://example.test/policy-changes.html#nov-2026   (لو الصفحة على example.test)
+آخر ins:  جواه عنصر p واحد
+النص من غير المشطوب: نفس نسخة «بعد» سطر بسطر
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[cite]] و [[datetime]] مبيظهروش في الصفحة. اثبت إنهم موجودين: اكتب [[<del cite="/log.html#fix" datetime="2026-11-10">غلط</del>]] في صفحة، وفي الـ Console اقرا [[document.querySelector('del').cite]] و [[.dateTime]]. وبعدين غيّر الـ [[datetime]] لكلمة «امبارح» واقرا تاني: حصل خطأ؟`, done: R`[[.cite]] رجّع العنوان كامل (المتصفح كمّل المسار على عنوان الصفحة)، و [[.dateTime]] رجّع النص زي ما كتبته. و «امبارح» مطلّعتش أي خطأ ولا تحذير، بس [[new Date('امبارح')]] بيرجّع [[Invalid Date]]: يعني المتصفح مش بيراجع القيمة، وانت المسؤول عن الصيغة.`, sol: R`~~~live 60 80 الصفحة
+<p>الإجابة: <del cite="/log.html#fix" datetime="2026-11-10">غلط</del> <ins cite="/log.html#fix" datetime="2026-11-10">صح</ins></p>
+~~~
+
+وفي الـ Console (السطور دي JavaScript، هتتعلمه في كورسه. دلوقتي انسخها زي ما هي):
+
+~~~js
+document.querySelector('del').cite
+document.querySelector('del').dateTime
+new Date(document.querySelector('del').dateTime)
+~~~
+
+**اللي بيحصل:**
+
+- [[.cite]] خاصية بترجّع قيمة الـ attribute بعد ما المتصفح يحوّلها لعنوان كامل. أنا كتبت [[/log.html#fix]] والصفحة كانت مفتوحة من ملف على الجهاز، فرجع [[file:///C:/log.html#fix]]. على موقع حقيقي هيرجع [[https://موقعك/log.html#fix]].
+- [[.dateTime]] (بحرف T كبير في JavaScript) بترجّع النص زي ما هو.
+- [[new Date(...)]] بيحاول يفهم النص كتاريخ. مع [[2026-11-10]] نجح، ومع «امبارح» رجّع [[Invalid Date]].
+
+**ليه مفيش خطأ؟** المتصفح مبيعملش حاجة بالـ [[datetime]] غير إنه يحفظه. المواصفة بتقول إن القيمة اللي مش تاريخ سليم معناها «التعديل ده ملوش وقت مسجّل»، والصفحة بتكمّل عادي. اللي بيمسك الغلطة دي هو الـ validator (validator.w3.org/nu)، مش المتصفح.
+
+**الغلطة الشائعة:** تكتب التاريخ بالشكل اللي بتقراه ([[10/11/2026]]). ده عند ناس ١٠ نوفمبر وعند ناس ١١ أكتوبر. الصيغة الوحيدة المقبولة سنة-شهر-يوم.
+
+~~~text الناتج (الصفحة مفتوحة كملف)
+del.cite      = file:///C:/log.html#fix
+del.dateTime  = 2026-11-10
+new Date(...) = 2026-11-10T00:00:00.000Z
+
+بعد ما datetime بقى «امبارح»:
+del.dateTime  = امبارح
+new Date(...) = Invalid Date
+أخطاء في الـ Console: 0
+~~~` },
+          ],
+          title: "هايلايت، وملحوظة جانبية، وتعديل باين: mark و small و del و ins (ومعاهم s و u)",
+          desc: R`[[<mark>]] بيعلّم على حتة ليها علاقة باللي القارئ بيدوّر عليه (زي كلمة البحث). و [[<small>]] ملحوظة جانبية قصيرة (small print). و [[<del>]] و [[<ins>]] بيورّوا إن المستند اتعدّل: ده اتشال وده اتضاف. و [[<s>]] كلام مبقاش ساري (سعر قديم)، و [[<u>]] تعليم من غير كلام (زي غلطة إملائية).
+
+الستة ليهم شكل افتراضي (خلفية صفرا، خط أصغر، خط في النص، خط تحت)، وكل واحد معناه مختلف عن اللي شكله زيه.`,
+          example: R`<p>نتايج البحث عن «قهوة»: أحسن <mark>قهوة</mark> يمني في المنصورة.</p>
+<p>الاشتراك ٩٩ جنيه في الشهر. <small>السعر مش شامل الضريبة.</small></p>
+<p>السعر قبل الخصم <s>٢٥٠ جنيه</s>، ودلوقتي ١٩٩ جنيه.</p>
+<p>ميعاد الورشة: <del cite="/changes.html#c12" datetime="2026-11-10">الخميس</del> <ins cite="/changes.html#c12" datetime="2026-11-10T14:05+02:00">السبت</ins>.</p>
+<p>كتب في الامتحان: الفاعل <u>منصوب</u> دايمًا.</p>`,
+          try: R`اكتب سطرين شكلهم واحد: [[<p>السعر <s>٢٥٠</s> ١٩٩</p>]] و [[<p>السعر <del>٢٥٠</del> ١٩٩</p>]]. قارنهم بعينك، وبعدين افتح تاب Accessibility ودوس على الرقم المشطوب في كل واحد. وبعدها زوّد سطر فيه [[<u>كلمة</u>]] وجنبه لينك [[<a href="#">لينك</a>]]: تعرف تفرّق بينهم من غير اللون؟`,
+          flag: "script",
+          deep: {
+            why: R`فيه أربع حاجات بتحصل للنص في أي موقع حقيقي ومفيش كلمة عادية بتقولها: «دي الحتة اللي بتدوّر عليها» (نتايج البحث)، و «دي ملحوظة قانونية جنب السعر»، و «ده كان السعر»، و «الجملة دي اتغيّرت يوم كذا». من غير عناصر ليها معنى هتعملهم بـ [[<span>]] ولون، والمعنى هيفضل محبوس في الشكل: اللي مش شايف اللون مش هيعرف إن السعر ده قديم.`,
+            how: R`الستة عناصر جوه السطر (inline). الستايل الافتراضي في مواصفة HTML: [[mark { background: yellow; color: black }]]، و [[small { font-size: smaller }]]، و [[del, s { text-decoration: line-through }]]، و [[ins, u { text-decoration: underline }]].
+
+والأدوار اللي Chrome 157 بيحطها في شجرة الـ accessibility: [[mark]] دوره [[mark]]، و [[del]] و [[s]] دورهم [[deletion]]، و [[ins]] دوره [[insertion]]، و [[small]] و [[u]] دورهم [[generic]].
+
+[[del]] و [[ins]] مختلفين عن الباقي في حاجتين: ليهم attributes ([[cite]] و [[datetime]])، وينفع يتحطوا حوالين فقرات كاملة مش بس جوه السطر.`,
+            when: R`[[mark]]: كلمات البحث في النتايج، أو حتة في اقتباس انت عايز تلفت لها النظر والكاتب الأصلي مكانش مميّزها.
+
+[[small]]: «السعر مش شامل الضريبة»، وسطر حقوق النشر، و «الصورة للتوضيح بس»، وأي تنويه قصير.
+
+[[s]]: سعر قديم، وعرض خلص، ومعلومة مبقتش صح ولسه معروضة.
+
+[[del]] و [[ins]]: تصحيح في خبر، وتعديل في سياسة أو لايحة، وأي مكان القارئ من حقه يعرف إن النص اتغيّر.
+
+[[u]]: تقريبًا مش هتحتاجه. المواصفة عدّت استخدامين: تعليم غلطة إملائية، وعلامة أسماء العلم في الصيني.`,
+            mistakes: R`[[mark]] للأهمية: «مهم» شغلة [[strong]]. [[mark]] معناه «ليه علاقة»، مش «مهم».
+
+[[small]] على فقرات أو صفحة شروط كاملة: المواصفة بتقول إنه لحتة قصيرة بس، وإن صفحة الشروط نفسها محتواها هو النص الأساسي مش ملحوظة جانبية.
+
+[[small]] للعنوان الفرعي: ممنوع بنص المواصفة.
+
+[[del]] للسعر القديم: ده [[s]]. و [[s]] لتعديل المستند: ده [[del]].
+
+[[u]] للتأكيد أو لعنوان كتاب: القارئ هيفتكره لينك ويدوس عليه.
+
+الاعتماد على الخط المشطوب لوحده: اللي مش شايف الشاشة ممكن ميوصلوش إن الرقم ده قديم. اكتب «قبل الخصم» أو «السعر القديم» بالكلام.
+
+[[datetime="10/11/2026"]]: مش صيغة سليمة. الصيغة [[2026-11-10]].`
+          },
+          teach: R`## الفكرة في سطرين
+
+الدرس اللي فات كان عن كلام **مهم** أو **عليه ضغطة**. الدرس ده عن أربع حالات تانية: كلام **ليه علاقة** باللي بتدوّر عليه، وكلام **جانبي**، وكلام **مبقاش ساري**، وكلام **اتعدّل**. والقياسات من Chrome 157.
+
+---
+
+## ١. [[<mark>]]: الحتة اللي ليها علاقة
+
+تخيّل قلم الهايلايتر الأصفر. المواصفة بتقول إن [[mark]] حتة نص متعلّم عليها **للرجوع ليها**، عشان ليها علاقة بسياق تاني. وفي نص الصفحة العادي: حتة ليها علاقة باللي المستخدم بيعمله دلوقتي.
+
+~~~live 90 110 mark في نتايج البحث
+<p>نتايج البحث عن «قهوة»:</p>
+<p>أحسن <mark>قهوة</mark> يمني في المنصورة، محمّصة طازة كل أسبوع.</p>
+~~~
+
+الكلمة اللي خلفيتها صفرا هي اللي طابقت البحث. اللي كتب وصف المحل مكانش مميّزها، الصفحة هي اللي علّمت عليها عشانك.
+
+### [[mark]] ولا [[strong]]؟
+
+~~~live 80 100 مهم، وليه علاقة
+<p><strong>أي شغل مش محفوظ هيتمسح لما تقفل.</strong> <mark>الملف بيتحفظ في فولدر المستندات.</mark></p>
+~~~
+
+لو القارئ سأل «الملف بيتحفظ فين؟»: الجملة الأولى **مهمة** دايمًا لأي حد (تحذير)، والتانية هي اللي **ليها علاقة** بسؤاله هو. المواصفة فيها مثال بنفس الفكرة: كتاب مدرسي متعلّم فيه على اللي جاي في الامتحان، وتحذيرات الأمان مهمة بس مش متعلّم عليها.
+
+والقياس:
+
+~~~text mark
+background-color = rgb(255, 255, 0)    (أصفر)
+color            = rgb(0, 0, 0)        (أسود، حتى لو باقي الصفحة لونها تاني)
+الدور            = mark
+~~~
+
+**مش لتلوين الكود:** تلوين كلمات الكود (syntax highlighting) بيتعمل بـ [[<span>]] و CSS. المواصفة و MDN قايلينها الاتنين.
+
+---
+
+## ٢. [[<small>]]: الملحوظة الجانبية
+
+المواصفة: [[small]] بيمثّل **side comments** زي الـ small print: تنويهات، وتحفّظات، وقيود قانونية، وحقوق نشر.
+
+~~~live 90 120 small
+<p>الاشتراك ٩٩ جنيه في الشهر. <small>السعر مش شامل الضريبة.</small></p>
+<p><small>© ٢٠٢٦ جيم الأبطال. كل الحقوق محفوظة.</small></p>
+~~~
+
+~~~text small
+font-size: الفقرة = 16px    small = 13.3333px
+الدور = generic
+~~~
+
+13.33 جاية من [[font-size: smaller]]: أصغر من الأب بدرجة (Chrome ضرب 16 في ٥/٦). مش رقم ثابت: [[small]] جوه عنوان 32px هيبقى 26.67.
+
+تلات حاجات المواصفة بتقولها ومش واضحة من الاسم:
+
+- [[small]] **مبيقللش الأهمية**. [[<strong><small>...</small></strong>]] معناها «small print مهم»، وده مسموح.
+- **لحتة قصيرة بس.** مش لفقرات ولا قوايم ولا صفحة شروط كاملة.
+- **ممنوع للعناوين الفرعية.**
+
+---
+
+## ٣. [[<s>]]: كلام مبقاش ساري
+
+المواصفة: [[s]] محتوى **مبقاش دقيق أو مبقاش يخص**. أشهر استخدام السعر القديم:
+
+~~~live 90 120 s
+<p>السعر قبل الخصم <s>٢٥٠ جنيه</s>، ودلوقتي ١٩٩ جنيه.</p>
+<p><s>العرض ساري لحد ٣٠ نوفمبر.</s> العرض اتمدّ لحد ١٥ ديسمبر.</p>
+~~~
+
+الكلام المشطوب لسه معروض عن قصد: القارئ محتاج يشوف السعر القديم عشان يعرف هو وفّر كام.
+
+---
+
+## ٤. [[<del>]] و [[<ins>]]: المستند اتعدّل
+
+[[del]] من delete: حتة **اتشالت** من المستند. و [[ins]] من insert: حتة **اتضافت**. الاتنين مع بعض بيعملوا اللي برامج الكتابة بتسميه track changes.
+
+~~~live 60 80 del و ins
+<p>ميعاد الورشة: <del>الخميس</del> <ins>السبت</ins> الساعة ٧ مساءً.</p>
+~~~
+
+المشطوب هو القديم، واللي تحته خط هو الجديد.
+
+### [[<del cite="..." datetime="...">]]
+
+العنصرين ليهم نفس الاتنين attributes، وهما اختياريين:
+
+~~~html
+<p>ميعاد الورشة: <del cite="/changes.html#c12" datetime="2026-11-10">الخميس</del> <ins cite="/changes.html#c12" datetime="2026-11-10T14:05+02:00">السبت</ins>.</p>
+~~~
+
+- [[cite]]: عنوان (URL) لصفحة **بتشرح التعديل** (محضر اجتماع، أو سجل تغييرات). المواصفة بتقول إنه معمول أساسًا للاستخدام الداخلي (سكربتات بتجمع إحصائيات عن تعديلات الموقع)، مش للقارئ. والمتصفح مبيعرضوش.
+- [[datetime]]: **إمتى** التعديل حصل. لازم تاريخ بالصيغة [[2026-11-10]] (سنة-شهر-يوم)، ولو عايز الساعة: حرف [[T]] ثم الوقت ثم فرق التوقيت ([[+02:00]] للقاهرة).
+
+الشكل في الصفحة مبيتغيّرش خالص بيهم. اللي اتغيّر إن المعلومة بقت موجودة لأي برنامج يقرا الصفحة:
+
+~~~text اللي المتصفح شايفه
+del.cite      = https://example.test/changes.html#c12     (المسار اتكمّل على عنوان الموقع)
+del.dateTime  = 2026-11-10
+ins.dateTime  = 2026-11-10T14:05+02:00
+~~~
+
+ولو كتبت قيمة مش تاريخ ([[datetime="امبارح"]])؟ جرّبتها: مفيش خطأ والصفحة شغالة. المواصفة بتقول إن التعديل ساعتها «ملوش وقت مسجّل». اللي بيمسكها الـ validator.
+
+### تعديل فقرة كاملة
+
+[[del]] و [[ins]] ينفع يتحطوا **حوالين** فقرات، مش بس جواها:
+
+~~~live 90 130 فقرة اتشالت وفقرة اتحطت
+<del datetime="2026-11-12">
+  <p>الاشتراك السنوي بيترد كامل في أي وقت.</p>
+</del>
+<ins datetime="2026-11-12">
+  <p>الاشتراك السنوي بيترد كامل في أول ١٤ يوم بس.</p>
+</ins>
+~~~
+
+اتأكدت من الشجرة: الـ [[<p>]] فضل ابن الـ [[<del>]]. لكن العكس مينفعش: لو كتبت [[<p>]] جوه [[<del>]] جوه [[<p>]] تاني، المتصفح بيقفل الفقرة الأولى أول ما يشوف التانية، لأن [[<p>]] مينفعش يبقى جواه [[<p>]]. جرّبت [[<p>فقرة <del><p>جوه</p></del> باقي</p>]]: الفقرة الخارجية طلع نصها «فقرة » بس، والباقي خرج برّاها.
+
+والقاعدة من المواصفة: التعديل الواحد **ميعدّيش حدود الفقرة**. لو التعديل في فقرتين، كل فقرة ليها [[del]] أو [[ins]] بتاعها.
+
+---
+
+## ٥. [[<s>]] ولا [[<del>]]؟
+
+الاتنين خط في نص الكلام، وده أكتر اتنين بيتلخبطوا.
+
+| | [[<s>]] | [[<del>]] |
+|---|---|---|
+| المعنى | مبقاش ساري أو مبقاش دقيق | اتشال من المستند |
+| السؤال | المعلومة دي لسه صح؟ | النص ده اتعدّل وعايز التعديل يبان؟ |
+| مثال | سعر قديم، عرض خلص | تصحيح خبر، تعديل لايحة |
+| attributes | مفيش | [[cite]] و [[datetime]] |
+| حوالين فقرات | لأ، جوه السطر بس | ينفع |
+| معاه غالبًا | السعر الجديد كنص عادي | [[<ins>]] بالنص الجديد |
+
+---
+
+## ٦. [[<u>]]: خط تحت الكلمة
+
+[[u]] زمان كان underline وخلاص. المواصفة الحالية عرّفته: حتة نص عليها **تعليم من غير كلام** (non-textual annotation). والمثالين اللي كاتباهم: كلمة مكتوبة غلط، وعلامة أسماء العلم في الكتابة الصيني.
+
+~~~live 60 80 u لغلطة
+<p>كتب في الامتحان: الفاعل <u>منصوب</u> دايمًا.</p>
+~~~
+
+الخط بيقول «فيه حاجة في الكلمة دي» من غير ما يقول إيه (الصح «مرفوع»).
+
+والمشكلة اللي المواصفة بتحذّر منها: الخط ده نفس شكل اللينك.
+
+~~~live 60 80 غلط: u للتأكيد
+<p>اقرا <u>الشروط</u> قبل ما تدوس على <a href="#top">التسجيل</a>.</p>
+~~~
+
+~~~text u واللينك
+u:  text-decoration = underline   color = rgb(0, 0, 0)     cursor = auto
+a:  text-decoration = underline   color = rgb(0, 0, 238)   cursor = pointer
+~~~
+
+الفرق لون وشكل الماوس بس. اللي مبيفرّقش الألوان، أو على موبايل مفيهوش ماوس، هيدوس على «الشروط» ومش هيحصل حاجة. والصح هنا [[strong]]:
+
+~~~live 60 80 صح
+<p>اقرا <strong>الشروط</strong> قبل ما تدوس على <a href="#top">التسجيل</a>.</p>
+~~~
+
+---
+
+## ٧. القياس: الستة جنب بعض
+
+| العنصر | الشكل الافتراضي (متقاس) | الدور |
+|---|---|---|
+| [[<mark>]] | خلفية [[rgb(255, 255, 0)]] ولون أسود | [[mark]] |
+| [[<small>]] | [[font-size]] 13.33px لما الأب 16px | [[generic]] |
+| [[<s>]] | [[text-decoration: line-through]] | [[deletion]] |
+| [[<del>]] | [[text-decoration: line-through]] | [[deletion]] |
+| [[<ins>]] | [[text-decoration: underline]] | [[insertion]] |
+| [[<u>]] | [[text-decoration: underline]] | [[generic]] |
+
+[[text-decoration]] خاصية CSS بترسم خط على النص: [[line-through]] في نصه، و [[underline]] تحته.
+
+---
+
+## ٨. الشكل لوحده مش كفاية
+
+الأدوار [[deletion]] و [[insertion]] و [[mark]] موجودة في الشجرة (اتقاست). هل قارئ الشاشة بينطق «محذوف»؟ معرفتش أجرّب (مفيش قارئ شاشة في المعمل)، وده بيختلف من برنامج لبرنامج. فاكتب المعنى بالكلام جنب العنصر:
+
+~~~live 60 80 غلط: الخط لوحده
+<p><s>٢٥٠ جنيه</s> ١٩٩ جنيه</p>
+~~~
+
+~~~live 60 80 صح: الكلام بيقول
+<p>السعر قبل الخصم <s>٢٥٠ جنيه</s>، ودلوقتي ١٩٩ جنيه.</p>
+~~~
+
+لو النص اتقرى من غير أي تنسيق، الأولى بتطلع «٢٥٠ جنيه ١٩٩ جنيه» (سعرين؟)، والتانية مفهومة.
+
+---
+
+## الخلاصة
+
+| عايز تقول إيه | العنصر |
+|---|---|
+| الحتة دي هي اللي بتدوّر عليها | [[<mark>]] |
+| ملحوظة جانبية قصيرة، حقوق نشر | [[<small>]] |
+| ده كان السعر، العرض ده خلص | [[<s>]] |
+| ده اتشال من النص وده اتحط | [[<del>]] و [[<ins>]] |
+| إمتى اتعدّل وليه | [[datetime]] و [[cite]] عليهم |
+| الكلمة دي فيها غلطة | [[<u>]] |
+| ده مهم | [[<strong>]] مش [[mark]] ولا [[u]] |`,
+          lines: [
+            R`[[mark]] على كلمة «قهوة» في نتيجة البحث: دي الكلمة اللي طابقت اللي المستخدم كتبه، وخلفيتها بتطلع صفرا.`,
+            R`[[small]] لملحوظة جانبية قصيرة جنب السعر. الخط بيصغر لـ 13.33px، والمعنى «small print».`,
+            R`[[s]] على السعر القديم: معلومة مبقتش سارية ولسه معروضة للمقارنة. وكلمة «قبل الخصم» بتقول المعنى بالنص كمان.`,
+            R`[[del]] اللي اتشال و [[ins]] اللي اتضاف. [[cite]] لينك لشرح التعديل، و [[datetime]] وقته: مرة تاريخ بس، ومرة تاريخ وساعة وفرق توقيت.`,
+            R`[[u]] على كلمة غلط في إجابة: الخط بيعلّم عليها من غير ما يقول الغلطة إيه.`
+          ],
+          sol: R`**بعينك:** السطرين متطابقين. [[s]] و [[del]] الاتنين [[text-decoration: line-through]].
+
+**في تاب Accessibility:** في Chrome 157 الاتنين طلع دورهم [[deletion]]. يعني Chrome نفسه مبيفرّقش بينهم في الشجرة. الفرق في المعنى اللي في المواصفة وفي اللي كل واحد بيسمح بيه: [[del]] بياخد [[cite]] و [[datetime]] وبيتحط حوالين فقرات، و [[s]] لأ. وأي برنامج بيقرا الـ HTML (مش الشجرة) شايف اسم العنصر.
+
+**[[u]] واللينك:** الاتنين تحتهم خط. اللي بيفرّق اللون (اللينك أزرق [[rgb(0, 0, 238)]]) وشكل الماوس لما تقف عليه. على موبايل مفيش ماوس، فالفرق لون بس. ده سبب إن [[u]] ميتحطش على كلام عادي.
+
+~~~text الناتج (Chrome 157)
+<s>٢٥٠</s>     text-decoration = line-through   الدور = deletion
+<del>٢٥٠</del> text-decoration = line-through   الدور = deletion
+<u>كلمة</u>    underline   color = rgb(0, 0, 0)     cursor = auto
+<a>لينك</a>    underline   color = rgb(0, 0, 238)   cursor = pointer
+~~~`,
+          ref: [
+            { t: "WHATWG: the mark element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-mark-element" },
+            { t: "WHATWG: the small element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-small-element" },
+            { t: "WHATWG: the s element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-s-element" },
+            { t: "WHATWG: the u element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-u-element" },
+            { t: "WHATWG: edits (ins, del, cite, datetime)", url: "https://html.spec.whatwg.org/multipage/edits.html" },
+            { t: "MDN: <mark>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/mark" },
+            { t: "MDN: <small>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/small" },
+            { t: "MDN: <del>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/del" },
+            { t: "MDN: <ins>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ins" },
+            { t: "MDN: <s>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/s" },
+            { t: "MDN: <u>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/u" },
+          ],
+          pre: ["css/strong و em"]
+        },
+        {
+          cmd: "abbr و dfn و time",
+          practice: [
+            { lvl: 'سريع', t: R`**اكتب القيمة:** اكتب [[<time>]] بالـ [[datetime]] الصح لكل واحدة:
+١. «٢٥ يناير ٢٠٢٧»
+٢. «تسعة ونص الصبح»
+٣. «شهر مارس ٢٠٢٧»
+٤. «السبت ٥ ديسمبر ٢٠٢٦ الساعة ٧:٣٠ مساءً» بتوقيت القاهرة
+٥. «ساعتين وربع» (مدة)`, done: R`الخمس قيم: [[2027-01-25]] و [[09:30]] و [[2027-03]] و [[2026-12-05T19:30+02:00]] و [[PT2H15M]]. والنص اللي القارئ شايفه فضل بالعربي زي ما هو.`, work: { h: 220, start: R`<p>التسليم ٢٥ يناير ٢٠٢٧.</p>
+<p>بنفتح تسعة ونص الصبح.</p>
+<p>الخصم طول شهر مارس ٢٠٢٧.</p>
+<p>الورشة السبت ٥ ديسمبر ٢٠٢٦ الساعة ٧:٣٠ مساءً.</p>
+<p>مدتها ساعتين وربع.</p>`, checks: [
+              { say: R`«٢٥ يناير ٢٠٢٧» في [[<time>]] قيمته [[2027-01-25]]`, q: 'time[datetime="2027-01-25"]', has: "يناير" },
+              { say: R`«تسعة ونص» في [[<time>]] قيمته [[09:30]]`, q: 'time[datetime="09:30"]', has: "تسعة" },
+              { say: R`«شهر مارس» في [[<time>]] قيمته [[2027-03]]`, q: 'time[datetime="2027-03"]', has: "مارس" },
+              { say: R`ميعاد الورشة بالتاريخ والساعة وفرق التوقيت [[2026-12-05T19:30+02:00]]`, q: 'time[datetime="2026-12-05T19:30+02:00"]', has: "ديسمبر" },
+              { say: R`«ساعتين وربع» مدة: [[PT2H15M]]`, q: 'time[datetime="PT2H15M"]', has: "ساعتين" },
+            ] }, sol: R`~~~live 200 220 الحل
+<p>التسليم <time datetime="2027-01-25">٢٥ يناير ٢٠٢٧</time>.</p>
+<p>بنفتح <time datetime="09:30">تسعة ونص الصبح</time>.</p>
+<p>الخصم طول <time datetime="2027-03">شهر مارس ٢٠٢٧</time>.</p>
+<p>الورشة <time datetime="2026-12-05T19:30+02:00">السبت ٥ ديسمبر ٢٠٢٦ الساعة ٧:٣٠ مساءً</time>.</p>
+<p>مدتها <time datetime="PT2H15M">ساعتين وربع</time>.</p>
+~~~
+
+**القواعد اللي ورا كل قيمة:**
+
+- التاريخ دايمًا من الكبير للصغير: سنة ٤ أرقام، ثم شهر رقمين، ثم يوم رقمين، وبينهم [[-]]. يناير [[01]] مش [[1]].
+- الوقت بنظام ٢٤ ساعة: [[09:30]] الصبح و [[19:30]] المسا. مفيش AM و PM.
+- شهر من غير يوم: [[2027-03]].
+- تاريخ ووقت مع بعض: بينهم حرف [[T]]، وفي الآخر فرق التوقيت عن UTC. القاهرة [[+02:00]].
+- المدة بتبدأ بـ [[P]] (من Period)، وبعدها [[T]] قبل أجزاء الوقت: [[2H]] ساعتين و [[15M]] ربع ساعة.
+
+**الغلطة الشائعة:** تسيب فرق التوقيت في ميعاد أونلاين. [[2026-12-05T19:30]] من غير [[+02:00]] معناها «٧:٣٠ بتوقيت اللي بيقرا»، فاللي في بلد تاني هيدخل في ساعة غلط. الميعاد اللي بيحصل في لحظة واحدة لكل الناس لازم ياخد فرق التوقيت.
+
+~~~text الناتج (خاصية dateTime لكل عنصر)
+2027-01-25
+09:30
+2027-03
+2026-12-05T19:30+02:00
+PT2H15M
+الدور بتاع كل واحد: time
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p>للتواصل: <address>مكتبة الحروف</address> شكرًا</p>]]. كام [[<p>]] هيطلع في الصفحة؟ والـ [[address]] هيبقى جوه الفقرة؟ وكلمة «شكرًا» هتبقى فين؟`, done: R`طلع ٢ [[p]] مش واحد: الأولى فيها «للتواصل: » بس، والـ [[address]] برّاها، و «شكرًا» نص سايب من غير فقرة، وبعده فقرة فاضية. وعرفت السبب: [[address]] عنصر بياخد سطر لوحده، فمينفعش يتحط جوه [[<p>]].`, sol: R`~~~live 110 150 المتصفح عمل إيه
+<p>للتواصل: <address>مكتبة الحروف</address> شكرًا</p>
+~~~
+
+بصّ على النتيجة: «مكتبة الحروف» نزلت في سطر لوحدها ومايلة، و «شكرًا» في سطر تالت. ده مش اللي الكود بيقوله.
+
+**اللي حصل بالترتيب:**
+
+1. المتصفح فتح [[<p>]] وحط فيه «للتواصل: ».
+2. قابل [[<address>]]. ده عنصر بياخد سطر لوحده (block)، والفقرة مينفعش يبقى جواها غير عناصر السطر. فالمتصفح **قفل الفقرة لوحده** وحط الـ address بعدها.
+3. «شكرًا» اتحطت بعد الـ address كنص مش جوه أي فقرة.
+4. قابل [[</p>]] ومفيش فقرة مفتوحة، فعمل فقرة فاضية.
+
+**الحل:** الـ address أخو الفقرة مش ابنها:
+
+~~~live 130 120 الصح
+<p>للتواصل:</p>
+<address>مكتبة الحروف</address>
+<p>شكرًا</p>
+~~~
+
+**الغلطة الشائعة:** تفتكر إن [[address]] زي [[strong]] و [[time]] عنصر جوه السطر عشان هو «حتة معلومة». كل عناصر الوحدة دي جوه السطر إلا تلاتة بياخدوا سطر لوحدهم: [[address]] و [[pre]] و [[hr]]. و [[del]] و [[ins]] بينفعوا في الحالتين.
+
+~~~text الناتج (الشجرة اللي اتبنت)
+<p>للتواصل: </p>
+<address>مكتبة الحروف</address>
+ شكرًا
+<p></p>
+
+عدد p: 2     أبو address: الحاوية اللي برّه، مش p
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة تأكيد طلب في متجر متخيل (النهارده الأربع ١٨ نوفمبر ٢٠٢٦):
+
+~~~html
+<p>التسليم <time>بعد بكرة</time> قبل الساعة <time>٥ العصر</time>.</p>
+<p>الوزن ٥ <abbr title="اختصار كيلوجرام وهي وحدة قياس الوزن">كجم</abbr>.</p>
+<address>آخر تحديث: ١٠ نوفمبر ٢٠٢٦</address>
+<address>هنشحن على: ٤ شارع الورد، طنطا</address>
+~~~
+
+فيها ٤ غلطات.`, done: R`بعد التصليح: الـ [[time]] الاتنين عليهم [[datetime]] ([[2026-11-20]] و [[17:00]])، والـ [[title]] بتاع [[abbr]] فيه «كيلوجرام» بس، ومفيش ولا [[address]] في الصفحة: «آخر تحديث» بقت فقرة فيها [[time]]، وعنوان الشحن فقرة بـ [[<br>]].`, work: { h: 220, start: R`<p>التسليم <time>بعد بكرة</time> قبل الساعة <time>٥ العصر</time>.</p>
+<p>الوزن ٥ <abbr title="اختصار كيلوجرام وهي وحدة قياس الوزن">كجم</abbr>.</p>
+<address>آخر تحديث: ١٠ نوفمبر ٢٠٢٦</address>
+<address>هنشحن على: ٤ شارع الورد، طنطا</address>`, checks: [
+              { say: R`«بعد بكرة» في [[<time>]] قيمته [[2026-11-20]]`, q: 'time[datetime="2026-11-20"]', has: "بعد بكرة" },
+              { say: R`«٥ العصر» في [[<time>]] قيمته [[17:00]]`, q: 'time[datetime="17:00"]', has: "العصر" },
+              { say: R`الـ [[title]] بتاع [[<abbr>]] هو «كيلوجرام» بس`, q: "abbr", attr: ["title", "كيلوجرام"], n: 1 },
+              { say: R`مفيش [[<address>]] في الصفحة`, q: "address", n: 0 },
+              { say: R`«آخر تحديث» فيها [[<time>]] بتاريخها`, q: "p time[datetime]", has: "١٠ نوفمبر", n: 1 },
+              { say: R`عنوان الشحن فقرة فيها [[<br>]] بين سطوره`, q: "p br", min: 2 },
+            ] }, sol: R`~~~live 200 220 بعد التصليح
+<p>التسليم <time datetime="2026-11-20">بعد بكرة</time> قبل الساعة <time datetime="17:00">٥ العصر</time>.</p>
+<p>الوزن ٥ <abbr title="كيلوجرام">كجم</abbr>.</p>
+<p>آخر تحديث: <time datetime="2026-11-10">١٠ نوفمبر ٢٠٢٦</time></p>
+<p>هنشحن على:<br>٤ شارع الورد<br>طنطا</p>
+~~~
+
+**الغلطات الأربعة:**
+
+1. [[<time>بعد بكرة</time>]] من غير [[datetime]]. المواصفة: لو مفيش [[datetime]]، النص نفسه لازم يكون بصيغة الكمبيوتر. «بعد بكرة» و «٥ العصر» مش صيغة، فالعنصر مبقاش بيقول حاجة لأي برنامج. الحل [[datetime]] بالقيمة الفعلية، والنص يفضل زي ما هو.
+2. الـ [[title]] فيه شرح: «اختصار كيلوجرام وهي وحدة قياس الوزن». المواصفة: الـ title بتاع [[abbr]] يبقى فيه **فك الاختصار وبس**.
+3. [[address]] لتاريخ آخر تحديث. المواصفة كاتبة المثال ده نفسه كاستخدام غلط: [[address]] لمعلومات التواصل وبس. التاريخ مكانه [[time]].
+4. [[address]] لعنوان شحن العميل. [[address]] مش «أي عنوان بريدي»: هو معلومات التواصل مع صاحب الصفحة أو المقال. عنوان الشحن بيانات في الطلب، والمواصفة بتقول إن العناوين البريدية العادية مكانها [[<p>]].
+
+**الغلطة الشائعة:** تحسب «بعد بكرة» وتكتب التاريخ وتنسى إن الصفحة هتتفتح بكرة كمان. الصفحات اللي فيها «بكرة» و «من ٣ أيام» بتتولّد من سيرفر أو JavaScript، والـ [[datetime]] هو اللي بيفضل صح.
+
+~~~text الناتج
+                time بـ datetime   time من غيره   address   abbr.title
+قبل التصليح          0               2            2       اختصار كيلوجرام وهي وحدة قياس الوزن
+بعد التصليح          3               0            0       كيلوجرام
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت إعلان عن ورشة في مكتبة متخيلة: [[<article>]] فيه عنوان، وجملة فيها اختصار «UX» مفكوك في النص ومتعلّم بـ [[abbr]]، وتعريف لمصطلح «wireframe» بـ [[dfn]]، وميعاد البداية بالتاريخ والساعة وفرق التوقيت، والمدة، وفي الآخر معلومات التواصل مع المنظِّمة (اسم وإيميل وتليفون).`, done: R`الكارت فيه [[time]] اتنين (واحد قيمته فيها [[+02:00]] وواحد بيبدأ بـ [[PT]])، و [[dfn]] واحد دوره [[term]]، و [[abbr]] واحد والاختصار مفكوك قبله في النص، و [[address]] واحد جوه الـ [[article]] فيه لينك [[mailto:]] ولينك [[tel:]].`, work: { h: 400, start: R`<article>
+  ورشة: أول تصميم ليك
+  ورشة للمبتدئين في User Experience (UX)، يعني تجربة المستخدم.
+  هنرسم wireframe: رسمة بسيطة بالخطوط بتورّي كل حاجة في الصفحة مكانها فين، من غير ألوان ولا صور.
+  الميعاد: السبت ١٢ ديسمبر ٢٠٢٦، ٦ مساءً بتوقيت القاهرة. المدة: ساعة ونص.
+  للحجز: سلمى منصور
+  salma@example.test
+  +20 000 000 0000
+</article>`, checks: [
+              { say: R`عنوان الكارت [[<h2>]] جوه الـ [[<article>]]`, q: "article h1, article h2, article h3" },
+              { say: R`«UX» في [[<abbr>]]`, q: "abbr", has: "UX", n: 1 },
+              { say: R`«wireframe» في [[<dfn>]]`, q: "dfn", has: "wireframe", n: 1 },
+              { say: R`ميعاد البداية [[<time>]] فيه فرق التوقيت [[+02:00]]`, q: 'time[datetime*="+02:00"]', n: 1 },
+              { say: R`المدة [[<time>]] قيمتها بتبدأ بـ [[PT]]`, q: 'time[datetime^="PT"]', n: 1 },
+              { say: R`معلومات التواصل [[<address>]] فيه لينك [[mailto:]] ولينك [[tel:]]`, q: 'article address a[href^="mailto:"], article address a[href^="tel:"]', n: 2 },
+            ] }, sol: R`~~~live 280 400 كارت الورشة
+<article>
+  <h2>ورشة: أول تصميم ليك</h2>
+  <p>ورشة للمبتدئين في User Experience (<abbr>UX</abbr>)، يعني تجربة المستخدم.</p>
+  <p>هنرسم <dfn>wireframe</dfn>: رسمة بسيطة بالخطوط بتورّي كل حاجة في الصفحة مكانها فين، من غير ألوان ولا صور.</p>
+  <p>الميعاد: <time datetime="2026-12-12T18:00+02:00">السبت ١٢ ديسمبر، ٦ مساءً</time>. المدة: <time datetime="PT1H30M">ساعة ونص</time>.</p>
+  <address>
+    للحجز: سلمى منصور<br>
+    <a href="mailto:salma@example.test">salma@example.test</a><br>
+    <a href="tel:+200000000000" dir="ltr">+20 000 000 0000</a>
+  </address>
+</article>
+~~~
+
+**القرارات:**
+
+- الاختصار مفكوك في النص نفسه («User Experience») قبل ما يظهر. ده اللي MDN بينصح بيه: الفك في النص بيوصل لكل الناس، والـ [[title]] بيوصل للي معاه ماوس بس. وعشان الفك موجود، الـ [[abbr]] من غير [[title]].
+- [[dfn]] على أول مرة المصطلح بيتعرّف فيها، والتعريف في نفس الفقرة.
+- ميعاد الورشة لحظة محددة، فلازم فرق التوقيت. والمدة [[PT1H30M]].
+- [[address]] جوه الـ [[article]]: المواصفة بتقول إنه بيمثّل معلومات التواصل لأقرب [[article]] أو [[body]] فوقه. يعني دي بيانات التواصل بتاعة الورشة دي، مش الموقع كله.
+- [[dir="ltr"]] على لينك التليفون عشان الرقم ميتقلبش (من درس «lang و dir»).
+
+**الغلطة الشائعة:** تحط الميعاد جوه الـ [[address]]. الـ address لمعلومات التواصل بس.
+
+~~~text الناتج
+time: 2   →  2026-12-12T18:00+02:00  و  PT1H30M
+dfn: 1  (الدور = term ، font-style = italic)
+abbr: 1 (من غير title ، مفيش خط منقّط)
+address: 1  (الدور = group ، display = block ، font-style = italic) وفيه لينكين
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اثبت إن [[datetime]] هو اللي بيخلي الكمبيوتر يفهم. أربع مواعيد قطارات مكتوبين بالكلام: «٨:١٥ الصبح» و «٧ إلا تلت الصبح» و «واحدة وخمسة الضهر» و «حداشر ونص بالليل» (ده بتاع الليلة اللي قبلها). رتّبهم مرة بالنص ومرة بالـ [[datetime]] وقارن.`, done: R`الترتيب بالنص طلع ملوش معنى (أبجدي)، والترتيب بالـ [[datetime]] طلع صح: قطر حداشر ونص بالليل الأول (لأنه اليوم اللي قبله)، ثم ٧ إلا تلت، ثم ٨:١٥، ثم واحدة وخمسة.`, sol: R`~~~live 280 420 مواعيد القطارات
+<p>القطر الأول <time datetime="2026-12-01T08:15+02:00">٨:١٥ الصبح</time></p>
+<p>القطر التاني <time datetime="2026-12-01T06:40+02:00">٧ إلا تلت الصبح</time></p>
+<p>القطر التالت <time datetime="2026-12-01T13:05+02:00">واحدة وخمسة الضهر</time></p>
+<p>القطر الرابع <time datetime="2026-11-30T23:30+02:00">حداشر ونص بالليل</time></p>
+<hr>
+<p>بالنص: <span id="byText"></span></p>
+<p>بالـ datetime: <span id="byDate"></span></p>
 <script>
-  const rows = [];
-  for (let i = 1; i <= 12; i++) {
-    const lines = Array.from({ length: 8 }, (_, n) => 'R' + i + 'L' + (n + 1) + ' ملاحظة الزيارة');
-    rows.push('<tr><td>' + i + '</td><td>' + lines.join('<br>') + '</td></tr>');
-  }
-  document.querySelector('#rows').innerHTML = rows.join('');
-$__lt/script>
-</body>
-</html>
+  const times = [...document.querySelectorAll('time')];
+  const byText = times.map(t => t.textContent).sort();
+  const byDate = times.slice().sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)).map(t => t.textContent);
+  document.querySelector('#byText').textContent = byText.join(' ← ');
+  document.querySelector('#byDate').textContent = byDate.join(' ← ');
+</script>
 ~~~
 
-**السطر محل التجربة:** [[tr { break-inside: avoid; }]]. من غيره الصف بيتقسم عند أي سطر، فنص الملاحظة في ورقة ونصها في التانية. وبيه، لو الصف مش هيكفي في الورقة، بينزل كله للي بعدها.
+الـ [[<script>]] ده JavaScript (كورسه جاي). انسخه زي ما هو، والمهم تفهم هو بيعمل إيه:
 
-**إزاي عدّينا:** كل سطر جواه علامة زي [[R3L1]] لأول سطر و [[R3L8]] لآخر سطر. قرينا نص كل ورقة في الـ PDF: الصف مقطوع لو علامته الأولى في ورقة والأخيرة في ورقة تانية. ولو عايز تعد بعينك، افتح الـ PDF ودوّر على الصف اللي نصه في آخر الورقة.
+- بيجيب كل عناصر [[time]] في الصفحة.
+- [[byText]]: بيرتّب **النص** اللي القارئ شايفه. الكمبيوتر مبيفهمش «إلا تلت»، فبيرتّب بالحروف.
+- [[byDate]]: بيحوّل كل [[dateTime]] لتاريخ حقيقي ([[new Date(...)]]) ويرتّب بيه.
 
-**ليه ده أحسن في فاتورة:** بند مقسوم بين ورقتين بيخلي الاسم في ورقة والسعر في ورقة، والقارئ يغلط في الجمع، وورقة زيادة أرخص من غلطة.
+**النتيجة:** السطر الأول لخبطة، والتاني صح. ونفس الفكرة هي اللي بتخلي تطبيق يقدر يكتب «القطر الجاي بعد ٢٠ دقيقة» أو يضيف الميعاد للتقويم: هو بيقرا الـ [[datetime]]، مش الكلام.
 
-**الغلطة الشائعة:** تحط [[break-inside: avoid]] على [[table]] كلها. لو الجدول أطول من ورقة، المتصفح مش هيقدر، وممكن يبدأ الجدول في ورقة جديدة ويسيب اللي قبلها فاضية.
+**الغلطة الشائعة:** تكتب الوقت بس ([[23:30]]) لميعاد في يوم تاني. من غير التاريخ، حداشر ونص بالليل هتترتب آخر واحدة.
 
 ~~~text الناتج
-Chrome، A4، خط 14pt، ١٢ صف كل صف ٨ سطور:
-
-                   عدد الورق     صفوف مقطوعة
-من غير avoid       3             1  (الصفوف 9)
-بـ avoid           3             0
+بالنص:        حداشر ونص بالليل ← واحدة وخمسة الضهر ← ٧ إلا تلت الصبح ← ٨:١٥ الصبح
+بالـ datetime: حداشر ونص بالليل ← ٧ إلا تلت الصبح ← ٨:١٥ الصبح ← واحدة وخمسة الضهر
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** جدول الطلبات اتحوّل لكروت على الموبايل بـ [[.items thead { display: block; }]] (أو none) برّه أي media query. لما الجدول الطويل يتطبع، العناوين هتتكرر فوق كل ورقة؟`, done: R`لأ: في التجربة كلمة العنوان ظهرت في أول ورقة بس، لأن التكرار جاي من [[display: table-header-group]] الافتراضي. الحل [[@media print { .items thead { display: table-header-group; } }]] أو تحط CSS الكروت جوه media query للشاشات الصغيرة بس.`, sol: R`~~~live 600 720
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الطلبات</title>
-<style>
-  /* الغلط: برّه أي media query */
-  .items thead { display: block; }
-  table { width: 100%; border-collapse: collapse; }
-  td, th { border: 1px solid #999; padding: 40px 8px; }
-</style>
-</head>
-<body>
-<main>
-<h1>الطلبات</h1>
-<table class="items">
-  <thead><tr><th scope="col">HEADWORD</th><th scope="col">الإجمالي</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
-</main>
-<script>
-  let html = '';
-  for (let i = 1; i <= 40; i++) html += '<tr><td>' + i + '</td><td>100 ج</td></tr>';
-  document.querySelector('#rows').innerHTML = html;
-$__lt/script>
-</body>
-</html>
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك كتب [[<abbr title="Search Engine Optimization">SEO</abbr>]] وقال «كده أي حد هيعرف معناها». اكتبله في ٣ سطور ليه الـ [[title]] لوحده مش كفاية، وإيه اللي يكتبه بداله.`, done: R`الشرح فيه التلات نقط: التولتيب بيظهر بالماوس بس (الموبايل والكيبورد لأ)، والعنصر مبيتوصلوش بـ Tab ([[tabIndex]] بيساوي -1)، والحل إن الفك يتكتب في النص أول مرة الاختصار بيظهر.`, sol: R`**إجابة نموذجية:**
+
+> الـ [[title]] بيظهر كتولتيب لما الماوس يقف على الكلمة، وده بس. على الموبايل مفيش ماوس يقف، وبالكيبورد العنصر مبيتوصلوش أصلًا.
+> فاللي هيعرف المعنى هو اللي معاه ماوس وخطر على باله يقف على كلمة تحتها نقط.
+> اكتب الفك في النص أول مرة: «Search Engine Optimization (SEO)»، وبعد كده استخدم الاختصار لوحده.
+
+**اللي ورا كل سطر:**
+
+- قست [[tabIndex]] بتاع [[abbr]] وطلع [[-1]]: يعني مش في ترتيب Tab، فمفيش طريقة بالكيبورد تخلي التولتيب يظهر.
+- صفحة [[title]] في MDN بتقول إن الاعتماد عليه «highly problematic» لمستخدمي اللمس، والكيبورد، وقارئ الشاشة والمكبّرات.
+- وصفحة [[abbr]] في MDN بتقول: حط [[title]] بس لما مينفعش تفك الاختصار في النص.
+
+والنسختين:
+
+~~~live 60 80 title بس
+<p>بنشتغل على <abbr title="Search Engine Optimization">SEO</abbr> الموقع.</p>
 ~~~
 
-**التوقّع الصح:** لأ، هتظهر في أول ورقة بس.
-
-**ليه:** [[thead]] افتراضيًا [[display: table-header-group]]، والقيمة دي هي اللي بتقول للمتصفح «كرر الصف ده فوق كل ورقة». أول ما كتبت [[display: block]] أو [[none]]، الميزة دي راحت. و [[display: none]] أسوأ: مفيش عنوان خالص.
-
-**التصليح الأحسن:** خلي CSS الكروت للشاشات الصغيرة بس، فالطباعة متتأثرش:
-
-~~~css
-@media screen and (max-width: 40rem) {
-  .items thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-}
+~~~live 80 80 الفك في النص
+<p>بنشتغل على Search Engine Optimization (<abbr>SEO</abbr>)، يعني تظبيط الموقع لمحركات البحث.</p>
 ~~~
 
-ولو الكود مش في إيدك، رجّعها في الطباعة:
-
-~~~css
-@media print {
-  .items thead { display: table-header-group; }
-}
-~~~
-
-و [[@media screen]] مهمة: [[max-width]] لوحدها ممكن تتطبق على عرض ورقة A4 لو كان أقل من الرقم.
-
-**الغلطة الشائعة:** تعالج الموبايل وتنسى الطباعة، والمشكلة مبتبانش غير لما عميل يطبع فاتورة طويلة.
+**الغلطة الشائعة:** تحط الاتنين: الفك في النص و [[title]] بنفس الكلام. قارئ الشاشة اللي بيقرا الـ title هيقول الفك مرتين.
 
 ~~~text الناتج
-                                   عدد الورق     الورق اللي فيه العنوان
-thead { display: block } (الغلط)    4             1
-بعد @media print                    5             5
+النسخة الأولى:  abbr  text-decoration = underline dotted   tabIndex = -1   النص الظاهر: SEO
+النسخة التانية: abbr  text-decoration = none               النص الظاهر فيه الفك كامل
 ~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN اعرف [[@page :first]] و [[break-before: page]] و [[orphans]] و [[widows]]، واعمل تقرير بيتطبع: صفحة غلاف من غير رقم صفحة، وكل قسم يبدأ في ورقة جديدة، ومفيش سطر لوحده في آخر ورقة أو أولها.`, done: R`الغلاف ورقة لوحده ومفيش عليه «صفحة 1» (حطيت [[@page :first { @bottom-center { content: none; } }]])، وكل h2 بيبدأ ورقة جديدة، وفهمت إن orphans و widows بيشتغلوا على السطور جوه الفقرة الواحدة.`, sol: R`~~~live 480 480
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تقرير المبيعات</title>
-<style>
-  @page {
-    size: A4;
-    margin: 20mm;
-    @bottom-center { content: "Page " counter(page); }
-  }
-  @page :first {
-    @bottom-center { content: none; }
-  }
-  body { font: 12pt/1.6 system-ui; margin: 0; }
-  .cover { text-align: center; padding-block-start: 30vh; }
-  h2 { break-before: page; }
-  p { orphans: 3; widows: 3; }
-</style>
-</head>
-<body>
-<main>
-  <section class="cover">
-    <h1>تقرير المبيعات</h1>
-    <p>الربع الأول</p>
-  </section>
-  <section><h2>الملخص</h2><p>Section-one المبيعات زادت في كل الفروع.</p></section>
-  <section><h2>الفروع</h2><p>Section-two الفرع الشمالي الأعلى.</p></section>
-  <section><h2>التوصيات</h2><p>Section-three زوّدوا المخزون.</p></section>
-</main>
-</body>
-</html>
+          ],
+          title: "اختصار، ومصطلح بيتعرّف، وتاريخ الكمبيوتر يفهمه: abbr و dfn و time (ومعاهم data و address)",
+          desc: R`العناصر دي بتربط الكلام اللي البني آدم بيقراه بمعلومة تانية وراه: [[<abbr>]] اختصار وفكّه، و [[<dfn>]] أول مرة مصطلح بيتعرّف، و [[<time>]] تاريخ أو وقت ومعاه صيغة الكمبيوتر يفهمها، و [[<data>]] أي قيمة تانية للكمبيوتر (كود منتج مثلًا)، و [[<address>]] معلومات التواصل مع صاحب الصفحة أو المقال.
+
+تلاتة منهم ملهمش أي شكل افتراضي يتشاف ([[time]] و [[data]] و [[abbr]] من غير title). فايدتهم كلها في المعلومة اللي بيشيلوها.`,
+          example: R`<p>الصفحة مكتوبة بـ <abbr title="HyperText Markup Language">HTML</abbr>.</p>
+<p><dfn>الـ viewport</dfn> هو الجزء اللي باين من الصفحة على الشاشة.</p>
+<p>الورشة يوم <time datetime="2026-12-05T19:30+02:00">السبت ٥ ديسمبر الساعة ٧:٣٠ مساءً</time>.</p>
+<p>المنتج: <data value="SKU-4471">بن يمني ٢٥٠ جم</data></p>
+<address>
+  مكتبة الحروف<br>
+  <a href="mailto:hello@example.test">hello@example.test</a>
+</address>`,
+          try: R`اكتب [[<p>الاجتماع <time datetime="2026-12-05T19:30+02:00">السبت الجاي</time></p>]] وافتح الـ Console واكتب [[document.querySelector('time').dateTime]] وبعدين [[document.querySelector('time').textContent]]. إيه الفرق بين الاتنين؟ وبعدين زوّد [[<abbr title="HyperText Markup Language">HTML</abbr>]] وحاول توصل للتولتيب بالكيبورد بس (Tab).`,
+          flag: "script",
+          deep: {
+            why: R`«السبت الجاي الساعة ٧ ونص» جملة واضحة لأي بني آدم وملهاش أي معنى لبرنامج: أنهي سبت؟ ٧ الصبح ولا بالليل؟ بتوقيت مين؟ لو الصفحة عايزة تطبيق تقويم يلقط الميعاد، أو سكربت يكتب «فاضل يومين»، لازم نفس المعلومة تتكتب مرة تانية بصيغة ثابتة. بدل ما تتكتب في مكان مستخبي بعيد عن النص، HTML بيحطها على نفس الكلمة: النص للبني آدم، والـ attribute للكمبيوتر. ونفس الفكرة في الاختصار (النص المختصر وفكّه) وفي المصطلح (الكلمة وتعريفها).`,
+            how: R`[[abbr]] و [[dfn]] و [[time]] و [[data]] عناصر جوه السطر. [[address]] بياخد سطر لوحده.
+
+الشكل الافتراضي (Chrome 157): [[abbr]] اللي عليه [[title]] بياخد خط منقّط تحته ([[text-decoration: underline dotted]])، ومن غير title مفيش أي حاجة. [[dfn]] و [[address]] مايلين ([[font-style: italic]]). [[time]] و [[data]] من غير أي ستايل.
+
+والأدوار: [[dfn]] دوره [[term]]، و [[time]] دوره [[time]]، و [[address]] دوره [[group]]، و [[data]] دوره [[generic]]. و [[abbr]] اللي عليه title الاسم المحسوب بتاعه هو نص الـ title.
+
+كل عنصر ليه خاصية في JavaScript بتقرا قيمته: [[time.dateTime]] و [[data.value]] و [[abbr.title]].`,
+            when: R`[[abbr]]: اختصار القارئ ممكن ميعرفوش، وعايز تفكّه. الأفضل تفكّه في النص أول مرة.
+
+[[dfn]]: أول مكان في الصفحة مصطلح بيتشرح فيه (مقال تعليمي، وثائق، قاموس).
+
+[[time]]: أي تاريخ أو وقت أو مدة ليه قيمة محددة: تاريخ نشر مقال، وميعاد حدث، ومواعيد العمل، ومدة فيديو.
+
+[[data]]: قيمة للكمبيوتر مش تاريخ: كود منتج، أو رقم مكتوب بالحروف.
+
+[[address]]: معلومات التواصل مع صاحب الصفحة (غالبًا في الـ [[footer]]) أو كاتب المقال (جوه الـ [[article]]).`,
+            mistakes: R`الاعتماد على [[title]] لوحده: مبيوصلش للموبايل ولا للكيبورد. فك الاختصار في النص.
+
+[[title]] فيه شرح مش فك: المواصفة بتقول الفك وبس.
+
+[[<time>بكرة</time>]] من غير [[datetime]]: من غير الـ attribute النص نفسه لازم يكون بصيغة الكمبيوتر ([[<time>2026-12-05</time>]]).
+
+[[datetime="5/12/2026"]] أو [[datetime="7:30 PM"]]: مش صيغ سليمة. التاريخ سنة-شهر-يوم والوقت ٢٤ ساعة.
+
+[[address]] لأي عنوان بريدي (عنوان عميل، أو فرع في جدول فروع): هو لمعلومات التواصل مع صاحب الصفحة أو المقال بس.
+
+[[address]] جوه [[<p>]]: المتصفح بيقفل الفقرة قبله.
+
+[[dfn]] والتعريف في فقرة تانية: المواصفة بتشترط إن الفقرة (أو القسم) اللي فيها الـ dfn يبقى فيها التعريف.`
+          },
+          teach: R`## الفكرة في سطرين
+
+كل عنصر هنا فيه نصّين: واحد القارئ بيشوفه، وواحد وراه لمين يحتاجه. «HTML» ووراها «HyperText Markup Language». «السبت الجاي» ووراها [[2026-12-05]]. القياسات من Chrome 157.
+
+---
+
+## ١. [[<abbr title="...">]]: الاختصار وفكّه
+
+[[abbr]] من abbreviation. المواصفة: اختصار، ومعاه اختياريًا فكّه في الـ [[title]].
+
+~~~live 60 80 abbr بـ title ومن غيره
+<p>الصفحة مكتوبة بـ <abbr title="HyperText Markup Language">HTML</abbr> وشكلها بـ <abbr>CSS</abbr>.</p>
 ~~~
 
-**اللي طلع من الوثائق:**
+«HTML» تحتها خط منقّط، و «CSS» لأ. قف بالماوس على HTML وهيظهر التولتيب.
 
-- [[@page :first]]: قواعد لأول ورقة بس. فالغلاف مفيهوش رقم، و [[content: none]] بتلغي اللي اتكتب في [[@page]] العام.
-- [[@bottom-center]]: مكان في هامش الورقة (margin box)، و [[counter(page)]] رقم الورقة.
-- [[break-before: page]]: ابدأ ورقة جديدة قبل العنصر ده.
-- [[orphans]]: أقل عدد سطور يفضل في **آخر** الورقة لو الفقرة هتتقسم. و [[widows]]: أقل عدد ينزل في **أول** الورقة الجاية. الاتنين بيشتغلوا جوه الفقرة الواحدة، مش بين فقرتين.
+### الـ [[title]]
 
-استخدمنا كلمة [[Page]] بالإنجليزي عشان القراءة الآلية للـ PDF تعدّها بسهولة. في تقرير عربي اكتب [[content: "صفحة " counter(page)]].
+[[title]] attribute بيتحط على أي عنصر في HTML (global attribute) وبيدّي «معلومة استشارية» بتظهر كتولتيب. على [[abbr]] ليه معنى خاص في المواصفة: **فك الاختصار، ولا حاجة تانية**.
 
-**الغلطة الشائعة:** تحط [[break-before: page]] على [[section]] الأول كمان، فتبقى فيه ورقة فاضية بعد الغلاف. هنا العنوان بس هو اللي بيكسر، والغلاف مفيهوش h2.
+~~~text القياس
+abbr بـ title:    text-decoration = underline dotted   الاسم المحسوب = HyperText Markup Language
+abbr من غير title: text-decoration = none
+tabIndex = -1     (مش في ترتيب Tab)
+~~~
+
+السطر الأخير هو المشكلة: التولتيب بيظهر لما الماوس **يقف** على العنصر. والعنصر مبيتوصلوش بالكيبورد، والموبايل مفيهوش وقوف بالماوس. صفحة [[title]] في MDN بتقول إن الاعتماد عليه «highly problematic» للمس والكيبورد وقارئات الشاشة.
+
+### الطريقة الأحسن: الفك في النص
+
+~~~live 80 100 الفك في النص أول مرة
+<p>الصفحة مكتوبة بـ HyperText Markup Language (<abbr>HTML</abbr>). كل عنصر في HTML ليه معنى.</p>
+~~~
+
+أول مرة الاسم كامل وبعده الاختصار، وبعد كده الاختصار لوحده. و [[abbr]] من غير title لسه ليه فايدة: بيقول «دي اختصار»، وتقدر تمسكه بالـ CSS بعدين. و MDN بيقولها كده: حط [[title]] بس لما مينفعش تفك الاختصار في النص.
+
+والمواصفة بتقول إنك مش لازم تعلّم على كل اختصار في الصفحة. [[abbr]] للاختصار اللي عايز تفكّه أو اللي القارئ غالبًا ميعرفوش.
+
+---
+
+## ٢. [[<dfn>]]: المكان اللي المصطلح بيتعرّف فيه
+
+[[dfn]] من definition. المواصفة: **defining instance** بتاع مصطلح، يعني المرة اللي بتشرحه فيها. والشرط: الفقرة (أو القسم) اللي فيها الـ [[dfn]] لازم يبقى فيها التعريف.
+
+~~~live 80 100 dfn
+<p><dfn>الـ viewport</dfn> هو الجزء اللي باين من الصفحة على الشاشة. لما تصغّر الشباك، الـ viewport بيصغر معاه.</p>
+~~~
+
+«الـ viewport» مايلة في أول مرة بس (اللي فيها التعريف). المرة التانية في نفس الفقرة كلام عادي.
+
+~~~text dfn
+font-style = italic    الدور = term
+~~~
+
+### [[dfn]] مع [[abbr]] ومع لينك
+
+لو المصطلح اختصار، الاتنين بيتحطوا جوه بعض. ولو حطيت [[id]] على الـ [[dfn]]، أي مكان تاني في الصفحة يقدر يلينك على التعريف:
+
+~~~live 90 140 تعريف ولينك ليه
+<p><dfn id="def-css"><abbr title="Cascading Style Sheets">CSS</abbr></dfn> هي اللغة اللي بتحدد شكل الصفحة.</p>
+<p>هنبدأ <a href="#def-css">CSS</a> في الوحدة الجاية.</p>
+~~~
+
+المواصفة: لما [[dfn]] يبقى جواه [[abbr]] عليه title بس، المصطلح اللي بيتعرّف هو نص الـ title. واللينك اللي بيشاور على [[dfn]] بيمثّل «استخدام» للمصطلح ده.
+
+---
+
+## ٣. [[<time datetime="...">]]: التاريخ اللي الكمبيوتر يفهمه
+
+المواصفة: [[time]] بيمثّل محتواه، ومعاه صيغة الكمبيوتر يقراها في [[datetime]]. والمحتوى محدود في: تواريخ، وأوقات، وفروق توقيت، ومدد.
+
+~~~live 60 80 time
+<p>الورشة يوم <time datetime="2026-12-05T19:30+02:00">السبت ٥ ديسمبر الساعة ٧:٣٠ مساءً</time>.</p>
+~~~
+
+مفيش أي حاجة باينة: لا خط ولا لون. قست الفرق بين [[time]] و [[<span>]] عادي في ١٩ خاصية شكل وطلع صفر. الفرق كله في المعلومة:
+
+~~~text القياس
+time.textContent = السبت ٥ ديسمبر الساعة ٧:٣٠ مساءً      (للبني آدم)
+time.dateTime    = 2026-12-05T19:30+02:00                (للكمبيوتر)
+الدور            = time
+new Date(time.dateTime) → 2026-12-05T17:30:00.000Z       (JavaScript فهمها: ٥:٣٠ مساءً UTC)
+~~~
+
+### فك [[2026-12-05T19:30+02:00]]
+
+| الحتة | معناها |
+|---|---|
+| [[2026-12-05]] | التاريخ: سنة ٤ أرقام، شهر رقمين، يوم رقمين |
+| [[T]] | فاصل بين التاريخ والوقت (Time). ومسافة مكانه مسموحة كمان |
+| [[19:30]] | الوقت بنظام ٢٤ ساعة. ٧:٣٠ مساءً = 19:30 |
+| [[+02:00]] | فرق التوقيت عن UTC: القاهرة متقدمة ساعتين. و [[Z]] معناها UTC نفسه |
+
+### الصيغ اللي [[datetime]] بيقبلها
+
+دي من قايمة المواصفة:
+
+| عايز تكتب | الصيغة | مثال |
+|---|---|---|
+| تاريخ | [[YYYY-MM-DD]] | [[2026-12-05]] |
+| شهر | [[YYYY-MM]] | [[2026-12]] |
+| يوم في السنة من غير سنة (عيد ميلاد) | [[MM-DD]] | [[12-05]] |
+| سنة | ٤ أرقام | [[2026]] |
+| وقت | [[HH:MM]] أو بالثواني | [[19:30]] |
+| تاريخ ووقت محلي | تاريخ ثم [[T]] ثم وقت | [[2026-12-05T19:30]] |
+| لحظة واحدة لكل العالم | نفسه وبعده فرق التوقيت | [[2026-12-05T19:30+02:00]] |
+| أسبوع | سنة ثم [[-W]] ثم رقم الأسبوع | [[2026-W49]] |
+| مدة | [[P]] ثم [[T]] ثم الأجزاء | [[PT1H30M]] (ساعة ونص) |
+
+**بفرق توقيت ولا من غيره؟** المواصفة بتفرّق: حدث بيحصل في لحظة واحدة لكل الناس (مكالمة فيديو، ماتش) ياخد فرق التوقيت. وحدث بيحصل «الساعة كذا في كل بلد بتوقيتها» (رأس السنة) من غير فرق توقيت.
+
+### من غير [[datetime]]
+
+الـ attribute اختياري، بس ساعتها **النص نفسه** لازم يكون بواحدة من الصيغ دي:
+
+~~~html
+<time>2026-12-05</time>       سليم: النص نفسه صيغة
+<time>السبت الجاي</time>      غلط: مفيش datetime والنص مش صيغة
+~~~
+
+المتصفح مبيعترضش على التانية (جرّبت: مفيش خطأ، و [[dateTime]] رجّع نص فاضي). اللي بيمسكها الـ validator. بس أي برنامج بيقرا العنصر مش هيلاقي فيه تاريخ.
+
+### مين بيستخدمه؟
+
+MDN: العنصر ده بيخلي المتصفح أو أي برنامج يقدر مثلًا يعرض إضافة الحدث للتقويم، وبيساعد محركات البحث تعرف التواريخ. وأي سكربت في صفحتك يقدر يقرا [[dateTime]] ويكتب «من ٣ أيام» أو يرتّب بالتاريخ (فيه تمرين بيثبت ده).
+
+---
+
+## ٤. [[<data value="...">]]: أي قيمة تانية للكمبيوتر
+
+نفس فكرة [[time]] بس لأي حاجة مش تاريخ. المواصفة: [[data]] بيمثّل محتواه ومعاه صيغة الكمبيوتر يقراها في [[value]]، و [[value]] هنا **إجباري**.
+
+~~~live 90 110 data
+<p>المنتج: <data value="SKU-4471">بن يمني ٢٥٠ جم</data></p>
+<p>عدد الفروع: <data value="8">تمانية</data></p>
+~~~
+
+~~~text القياس
+data.value = SKU-4471        الدور = generic        الشكل: زي أي نص
+~~~
+
+مفيش شكل ومفيش دور خاص. فايدته لسكربت في صفحتك محتاج القيمة الخام: يرتّب عمود مكتوب بالحروف («تمانية») بالرقم [[8]]، أو يعرف كود المنتج اللي اتداس عليه. المواصفة بتقول: لو القيمة تاريخ أو وقت استخدم [[time]]، وصيغة الـ value انت اللي بتحددها حسب السكربت اللي هيقراها.
+
+---
+
+## ٥. [[<address>]]: معلومات التواصل
+
+المواصفة: [[address]] بيمثّل **معلومات التواصل** لأقرب [[<article>]] أو [[<body>]] فوقه. لو فوقه الـ body، يبقى دي معلومات التواصل للصفحة كلها.
+
+~~~live 170 250 address للمقال و address للصفحة
+<article>
+  <h2>إزاي تختار أول كتاب تقراه</h2>
+  <p>ابدأ بكتاب قصير في موضوع بتحبه.</p>
+  <address>كتبته <a href="mailto:nour@example.test">نور الدين</a></address>
+</article>
+<footer>
+  <address>
+    مكتبة الحروف<br>
+    <a href="mailto:hello@example.test">hello@example.test</a>
+  </address>
+</footer>
+~~~
+
+الأول جوه [[article]]: ده إزاي توصل لكاتبة المقال. والتاني في الـ [[footer]] وفوقه الـ [[body]]: ده إزاي توصل لصاحب الصفحة.
+
+~~~text القياس
+display = block (بياخد سطر لوحده)    font-style = italic    الدور = group
+~~~
+
+واللي جواه ممكن يبقى أي وسيلة تواصل: إيميل، وتليفون، وعنوان مكان، ولينك لحساب. و MDN بيقول إن اسم الشخص أو الجهة يتكتب معاهم.
+
+اللي **ميتحطش** فيه (من المواصفة):
+
+- أي عنوان بريدي مش معلومات تواصل للصفحة (عنوان عميل، قايمة فروع). ده مكانه [[<p>]].
+- أي حاجة غير معلومات التواصل. مثال المواصفة للغلط: [[<address>Last Modified: 1999/12/24</address>]].
+- عناوين ([[<h2>]])، أو [[<article>]] و [[<section>]]، أو [[<header>]] و [[<footer>]]، أو [[address]] تاني.
+
+ولأنه block، مينفعش يتحط جوه [[<p>]]: المتصفح بيقفل الفقرة قبله (فيه تمرين على ده).
+
+---
+
+## الخلاصة
+
+| العنصر | النص الظاهر | المعلومة اللي وراه | الشكل الافتراضي |
+|---|---|---|---|
+| [[<abbr title="...">]] | الاختصار | الفك في [[title]] (والأحسن في النص) | خط منقّط لو فيه title |
+| [[<dfn>]] | المصطلح | التعريف في نفس الفقرة | مايل |
+| [[<time datetime="...">]] | التاريخ بالكلام | الصيغة في [[datetime]] | ولا حاجة |
+| [[<data value="...">]] | أي نص | القيمة في [[value]] | ولا حاجة |
+| [[<address>]] | معلومات التواصل | بتخص أقرب article أو الصفحة | مايل وفي سطر لوحده |`,
+          lines: [
+            R`[[abbr]] حوالين الاختصار، و [[title]] فيه الفك وبس. بيطلع تحته خط منقّط وتولتيب بالماوس.`,
+            R`[[dfn]] على المصطلح في الجملة اللي بتعرّفه. بيطلع مايل ودوره [[term]].`,
+            R`النص للقارئ بالعربي، و [[datetime]] نفس الميعاد بصيغة ثابتة: تاريخ، ثم [[T]]، ثم الوقت ٢٤ ساعة، ثم فرق التوقيت.`,
+            R`[[data]] زي [[time]] بس لقيمة مش تاريخ: القارئ شايف اسم المنتج، والسكربت يقرا الكود من [[value]].`,
+            R`[[address]] معلومات التواصل. فوقه الـ body، فدي معلومات التواصل للصفحة كلها.`,
+            R`اسم الجهة، وبعده [[<br>]] عشان اللي بعده ينزل سطر (مشروح في آخر درس في الوحدة).`,
+            R`لينك [[mailto:]] بيفتح برنامج الإيميل. والإيميل مكتوب كنص كمان عشان يتنسخ.`,
+            R`قفلة الـ address. هو عنصر block، فبيتحط برّه أي [[<p>]].`
+          ],
+          sol: R`**الفرق:** [[.dateTime]] رجّع [[2026-12-05T19:30+02:00]] و [[.textContent]] رجّع «السبت الجاي». ده النصّين اللي العنصر شايلهم: واحد للكمبيوتر وواحد للقارئ. «السبت الجاي» هتبقى غلط بعد أسبوع، والـ datetime هيفضل صح.
+
+**التولتيب بالكيبورد:** مش هتوصله. Tab بيعدّي من فوق الـ [[abbr]] كأنه مش موجود، لأن [[tabIndex]] بتاعه [[-1]]. التولتيب بيظهر بوقوف الماوس بس. وده سبب إن الفك يتكتب في النص.
+
+~~~text الناتج (Chrome 157)
+time.dateTime     = 2026-12-05T19:30+02:00
+time.textContent  = السبت الجاي
+abbr.title        = HyperText Markup Language
+abbr.tabIndex     = -1
+~~~`,
+          ref: [
+            { t: "WHATWG: the abbr element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-abbr-element" },
+            { t: "WHATWG: the dfn element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-dfn-element" },
+            { t: "WHATWG: the time element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-time-element" },
+            { t: "WHATWG: the data element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-data-element" },
+            { t: "WHATWG: the address element", url: "https://html.spec.whatwg.org/multipage/sections.html#the-address-element" },
+            { t: "MDN: <abbr>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/abbr" },
+            { t: "MDN: <dfn>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dfn" },
+            { t: "MDN: <time>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/time" },
+            { t: "MDN: <data>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/data" },
+            { t: "MDN: <address>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/address" },
+            { t: "MDN: title (global attribute)", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/title" },
+          ],
+          pre: ["css/mark و small و del و ins", { to: "css/semantic HTML", why: R`[[<address>]] معناه بيتحدد بأقرب [[<article>]] أو [[<body>]] فوقه` }]
+        },
+        {
+          cmd: "code و pre و kbd",
+          practice: [
+            { lvl: 'سريع', t: R`**اختار العنصر:** [[code]] ولا [[kbd]] ولا [[samp]] ولا [[var]]؟
+١. «افتح الملف index.html»
+٢. «دوس Enter»
+٣. «هتطلعلك الرسالة: File not found»
+٤. «اكتب اسمك مكان username»
+٥. «من القايمة اختار File وبعدين Save»`, done: R`اسم الملف [[code]]، و Enter [[kbd]]، ورسالة البرنامج [[samp]]، و username [[var]]، واختيار القايمة [[kbd]]. والعدد: code 1، و kbd 2، و samp 1، و var 1. وتلاتة منهم خطهم monospace و [[var]] مايل.`, work: { h: 230, start: R`<p>افتح الملف index.html.</p>
+<p>دوس Enter.</p>
+<p>هتطلعلك الرسالة: File not found</p>
+<p>اكتب اسمك مكان username.</p>
+<p>من القايمة اختار File وبعدين Save.</p>`, checks: [
+              { say: R`اسم الملف في [[<code>]]`, q: "code", has: "index.html", n: 1 },
+              { say: R`زرار Enter في [[<kbd>]]`, q: "kbd", has: "Enter" },
+              { say: R`رسالة البرنامج في [[<samp>]]`, q: "samp", has: "File not found", n: 1 },
+              { say: R`«username» في [[<var>]]`, q: "var", has: "username", n: 1 },
+              { say: R`القايمة (File ثم Save) في [[<kbd>]] كمان: [[<kbd>]] اتنين في الصفحة`, q: "kbd", n: 2 },
+            ] }, sol: R`~~~live 200 230 الحل
+<p>افتح الملف <code>index.html</code>.</p>
+<p>دوس <kbd>Enter</kbd>.</p>
+<p>هتطلعلك الرسالة: <samp>File not found</samp></p>
+<p>اكتب اسمك مكان <var>username</var>.</p>
+<p>من القايمة اختار <kbd>File | Save</kbd>.</p>
+~~~
+
+**السؤال اللي بيفرّق: مين اللي كتب الحروف دي؟**
+
+- حاجة الكمبيوتر بيتعرّف عليها (اسم ملف، أمر، اسم عنصر): [[code]].
+- حاجة **المستخدم** بيدخّلها (مفتاح، أمر بيكتبه، اختيار من قايمة): [[kbd]]. المواصفة بتقول إن [[kbd]] «إدخال المستخدم» عمومًا، مش الكيبورد بس، ومثالها نفسه فيه اختيار من قايمة: [[<kbd>File | Eat Apple...</kbd>]].
+- حاجة **البرنامج** طلّعها: [[samp]] (من sample output).
+- اسم بيتبدّل بقيمة (متغير، أو مكان فاضي تملاه): [[var]].
+
+**الغلطة الشائعة:** كل حاجة «شكلها كمبيوتر» تبقى [[code]]. الشكل هيطلع زي بعضه تقريبًا، بس لما تيجي تنسّق بالـ CSS (المفاتيح شكل زرار، والناتج بلون تاني) هتلاقي كل حاجة متلخبطة في عنصر واحد.
 
 ~~~text الناتج
-عدد الورق = 4
-
-ورقة 1: الغلاف   رقم الصفحة: مفيش
-ورقة 2: Section-one   رقم الصفحة: Page 2
-ورقة 3: Section-two   رقم الصفحة: Page 3
-ورقة 4: Section-three   رقم الصفحة: Page 4
-axe: 0 violations
+code: 1   kbd: 2   samp: 1   var: 1
+code و kbd و samp:  font-family = monospace   font-size = 13px
+var:                font-style = italic       font-size = 16px
+الأدوار:  code = code    والباقي = generic
 ~~~` },
-          ]
-        }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** خمس فقرات، كل واحدة هتطلع إزاي؟
+
+~~~html
+<p>شركة AT&T</p>
+<p>&copy 2026</p>
+<p>لو 5 < 6 يبقى صح</p>
+<p>لو a<b يبقى صح</p>
+<p>اكتب &amp;nbsp; عشان مسافة</p>
+~~~
+
+توقّع وبعدين افتحها. خد بالك من الفقرة الرابعة واللي بعدها.`, done: R`الأولى والتالتة طلعوا زي ما هما، والتانية طلعت © حتى من غير [[;]]، والرابعة اتقطعت عند «لو a» والفقرة اللي بعدها بقت تقيلة (المتصفح فتح عنصر [[<b>]])، والخامسة عرضت النص [[&nbsp;]] بالحروف. وصلّحت الرابعة بـ [[&lt;]].`, sol: R`~~~live 200 220 اللي المتصفح عرضه
+<p>شركة AT&T</p>
+<p>&copy 2026</p>
+<p>لو 5 < 6 يبقى صح</p>
+<p>لو a<b يبقى صح</p>
+<p>اكتب &amp;nbsp; عشان مسافة</p>
+~~~
+
+**واحدة واحدة:**
+
+1. [[AT&T]]: المتصفح بيدوّر بعد الـ [[&]] على اسم entity. مفيش entity اسمه [[T]]، فساب الـ [[&]] زي ما هو. اشتغلت بالحظ.
+2. [[&copy 2026]]: شوية أسامي قديمة (منهم [[copy]] و [[amp]] و [[lt]] و [[nbsp]]) المتصفح بيقبلهم من غير [[;]]. فطلعت ©. ده سلوك موروث ومتعتمدش عليه.
+3. [[5 < 6]]: بعد الـ [[<]] مسافة، والـ tag لازم يبدأ بحرف، فالمتصفح اعتبرها نص.
+4. [[a<b]]: بعد الـ [[<]] حرف، فالمتصفح قرا [[<b]] كبداية عنصر [[b]]، وكل اللي بعده لحد أول [[>]] بقى attributes ليه. فكلمة «يبقى صح» اختفت، وقفلة الفقرة اتاكلت معاها، والعنصر [[b]] فضل مفتوح، فالفقرة الخامسة طلعت تقيلة.
+5. [[&amp;nbsp;]]: الـ [[&amp;]] اتحوّل لـ [[&]] وبس، والباقي نص. دي الطريقة اللي تعرض بيها اسم entity في صفحة.
+
+**التصليح:**
+
+~~~live 200 220 بعد التصليح
+<p>شركة AT&amp;T</p>
+<p>&copy; 2026</p>
+<p>لو 5 &lt; 6 يبقى صح</p>
+<p>لو a&lt;b يبقى صح</p>
+<p>اكتب &amp;nbsp; عشان مسافة</p>
+~~~
+
+**الغلطة الشائعة:** تجرّب [[5 < 6]] وتلاقيها شغالة فتستنتج إن [[<]] مش محتاج [[&lt;]]. اشتغلت عشان المسافة بس. القاعدة اللي متغلطش: أي [[<]] وأي [[&]] في النص يتكتبوا [[&lt;]] و [[&amp;]].
+
+~~~text الناتج (النص اللي اتعرض)
+قبل:
+1  شركة AT&T
+2  © 2026
+3  لو 5 < 6 يبقى صح
+4  لو a                    ← الباقي اتاكل، واتفتح عنصر b
+5  اكتب &nbsp; عشان مسافة    ← تقيل: النص بقى جوه عنصر b (font-weight = 700)
+
+بعد:
+عدد عناصر b في الصفحة: 0     الفقرة الرابعة: لو a<b يبقى صح     الخامسة مفيهاش b ووزنها 400
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة بتشرح للمبتدئين إزاي يكتبوا عنوان وفقرة، بس الشرح مش باين:
+
+~~~html
+<p>العنوان بيتكتب بـ <code><h1></code> والفقرة بـ <code><p></code>.</p>
+<pre>
+    <h1>متجري</h1>
+    <p>أهلًا بيك</p>
+</pre>
+~~~
+
+افتحها وشوف إيه اللي ظهر، وصلّحها عشان الكود نفسه هو اللي يتعرض.`, done: R`قبل التصليح الصفحة فيها عنوان حقيقي «متجري» وعناصر [[code]] فاضية. بعده: مفيش ولا [[h1]] في الصفحة، وكل [[code]] جواه النص ([[<h1>]] و [[<p>]])، والـ [[pre]] بيعرض سطرين الكود بحروفهم ومن غير مسافات زيادة في أولهم، واتجاهه [[ltr]].`, work: { h: 240, solAt: 1, start: R`<p>العنوان بيتكتب بـ <code><h1></code> والفقرة بـ <code><p></code>.</p>
+<pre>
+    <h1>متجري</h1>
+    <p>أهلًا بيك</p>
+</pre>`, checks: [
+              { say: R`مفيش عنوان [[<h1>]] حقيقي في الصفحة (الكود بيتعرض مش بيتنفّذ)`, q: "h1", n: 0 },
+              { say: R`كل [[<]] مكتوبة [[&lt;]]`, src: "&lt;" },
+              { say: R`جوه [[<code>]] ظاهر النص [[<h1>]] بحروفه`, q: "code", has: "<h1>", min: 2 },
+              { say: R`البلوك بيعرض سطر [[<p>]] الكود بحروفه`, q: "pre code", has: "<p>أهلًا بيك</p>" },
+              { say: R`البلوك [[<pre>]] اتجاهه [[dir="ltr"]]`, q: "pre", attr: ["dir", "ltr"] },
+            ] }, sol: R`**قبل:** ده اللي الصفحة البايظة بتعرضه. الكود اتنفّذ بدل ما يتعرض:
+
+~~~live 560 240 قبل التصليح
+<p>العنوان بيتكتب بـ <code><h1></code> والفقرة بـ <code><p></code>.</p>
+<pre>
+    <h1>متجري</h1>
+    <p>أهلًا بيك</p>
+</pre>
+~~~
+
+**بعد:**
+
+~~~live 100 150 بعد التصليح
+<p>العنوان بيتكتب بـ <code>&lt;h1&gt;</code> والفقرة بـ <code>&lt;p&gt;</code>.</p>
+<pre dir="ltr"><code>&lt;h1&gt;متجري&lt;/h1&gt;
+&lt;p&gt;أهلًا بيك&lt;/p&gt;</code></pre>
+~~~
+
+**التلات تصليحات:**
+
+1. [[<code><h1></code>]]: [[code]] و [[pre]] **مبيمنعوش** المتصفح إنه يقرا اللي جواهم كـ HTML. هما بيغيّروا الخط والمسافات بس. فالـ [[<h1>]] اللي جوه اتفتح كعنوان حقيقي. الحل إن كل [[<]] تتكتب [[&lt;]] وكل [[>]] تتكتب [[&gt;]].
+2. المسافات اللي في أول السطور: [[pre]] بيعرض كل مسافة زي ما هي في الملف، حتى الأربع مسافات اللي انت حاططهم عشان الملف يبقى مترتب. فالكود جوه [[pre]] بيبدأ من أول السطر، والـ [[<pre><code>]] على نفس سطر أول سطر كود.
+3. [[dir="ltr"]]: الصفحة عربي، فالـ [[pre]] بياخد اتجاه [[rtl]] وكود الـ HTML (حروف إنجليزي ورموز) بيتلخبط ترتيبه. الكود دايمًا شمال ليمين.
+
+و [[<code>]] جوه [[<pre>]]: الـ [[pre]] بيقول «المسافات والسطور زي ما هي»، والـ [[code]] بيقول «ده كود». المواصفة بتقول إن بلوك الكود يتكتب بالاتنين مع بعض.
+
+**الغلطة الشائعة:** تسيب القفلة [[</code></pre>]] في سطر لوحدها. السطر الجديد اللي قبلها جزء من الـ pre، فبيطلع سطر فاضي في الآخر.
+
+~~~text الناتج
+                 h1 في الصفحة   نص أول code     نص pre
+قبل التصليح          2          (فاضي)        عنوان حقيقي «متجري» وفقرة حقيقية، مش كود
+بعد التصليح          0           <h1>         <h1>متجري</h1> ثم <p>أهلًا بيك</p>
+pre بعد التصليح:  direction = ltr   white-space = pre
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة «إزاي تشغّل المشروع» لتطبيق متخيل اسمه «دفتر»: عنوان، وتلات خطوات كل واحدة فقرة. الخطوة الأولى فيها أمر التسطيب في بلوك كود. والتانية أمر التشغيل والناتج اللي بيطلع منه في بلوك واحد (اللي المستخدم بيكتبه متميّز عن اللي البرنامج بيطبعه). والتالتة إزاي توقفه بالكيبورد، وإن رقم البورت يتغيّر من ملف الإعدادات.`, done: R`الصفحة فيها ٢ [[pre]]: الأول جواه [[code]]، والتاني جواه [[samp]] وجوه الـ samp فيه [[kbd]] للأمر اللي المستخدم كتبه. والاختصار [[<kbd><kbd>Ctrl</kbd>+<kbd>C</kbd></kbd>]] مكتوب kbd جوه kbd، ورقم البورت [[var]]، واسم الملف [[code]]، وعلى 360 مفيش scroll أفقي للصفحة.`, work: { h: 480, start: R`إزاي تشغّل «دفتر»
+١. سطّب المكتبات: npm install
+٢. شغّل السيرفر. هتكتب الأمر npm run dev وهيطلعلك السطرين:
+Daftar is running
+Local: http://localhost:3000
+٣. عشان توقفه دوس Ctrl+C. والبورت 3000 بيتغيّر من الملف daftar.config.json.`, checks: [
+              { say: R`فيه بلوكين [[<pre>]]: واحد للتسطيب وواحد للتشغيل`, q: "pre", n: 2 },
+              { say: R`أمر التسطيب جوه [[<pre>]] و [[<code>]]`, q: "pre > code", has: "npm install", n: 1 },
+              { say: R`الأمر اللي المستخدم كتبه [[<kbd>]] جوه [[<samp>]] اللي فيها الناتج`, q: "pre samp kbd", has: "npm run dev" },
+              { say: R`الاختصار [[<kbd>]] جوه [[<kbd>]]: Ctrl و C`, q: "kbd kbd", n: 2 },
+              { say: R`رقم البورت [[<var>]]`, q: "var", has: "3000" },
+              { say: R`اسم ملف الإعدادات [[<code>]]`, q: "code", has: "daftar.config.json" },
+            ] }, sol: R`~~~live 290 480 إزاي تشغّل «دفتر»
+<h2>إزاي تشغّل «دفتر»</h2>
+<p>١. سطّب المكتبات:</p>
+<pre dir="ltr"><code>npm install</code></pre>
+<p>٢. شغّل السيرفر. هتكتب الأمر وهيطلعلك السطرين اللي تحته:</p>
+<pre dir="ltr"><samp>$ <kbd>npm run dev</kbd>
+Daftar is running
+Local: http://localhost:<var>3000</var></samp></pre>
+<p>٣. عشان توقفه دوس <kbd><kbd>Ctrl</kbd>+<kbd>C</kbd></kbd>. والبورت <var>3000</var> بيتغيّر من الملف <code>daftar.config.json</code>.</p>
+~~~
+
+**القرارات:**
+
+- الخطوة الأولى كود هيتنسخ: [[<pre><code>]].
+- الخطوة التانية «جلسة ترمنال»: كلها ناتج على الشاشة، يعني [[<pre><samp>]]. والأمر اللي المستخدم كتبه جوّاها [[kbd]]. المواصفة: [[kbd]] جوه [[samp]] معناه «الإدخال زي ما النظام رجّع عرضه».
+- [[<kbd><kbd>Ctrl</kbd>+<kbd>C</kbd></kbd>]]: الـ kbd الخارجي هو الإدخال كله، وكل kbd داخلي مفتاح واحد. ده مثال المواصفة بالظبط.
+- [[3000]] جوه [[var]]: رقم بيتغيّر من جهاز لجهاز.
+- [[dir="ltr"]] على كل [[pre]] عشان السطور الإنجليزي تبدأ من الشمال.
+- السطور قصيرة عن قصد: [[pre]] مبيكسرش السطر، فالسطر الطويل بيزق الصفحة على الموبايل (التمرين الجاي).
+
+**الغلطة الشائعة:** تكتب علامة الـ prompt ([[$]]) جوه الـ [[kbd]]. المستخدم مبيكتبهاش، دي البرنامج اللي طابعها.
+
+~~~text الناتج
+pre: 2   code: 2   samp: 1   kbd: 4 (واحد للأمر، وواحد خارجي وجواه اتنين للمفاتيح)   var: 2
+عرض الصفحة على 360:  scrollWidth = 360  (مفيش scroll أفقي)
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** حط أمر طويل (٧٠ حرف) في [[<pre dir="ltr"><code>]] وافتح الصفحة على عرض 360 (DevTools ← وضع الموبايل). تقدر تقرا آخر الأمر؟ اكتب في الـ Console [[document.querySelector('pre').scrollWidth]] و [[.clientWidth]]. وبعدين جرّب حلّين، كل واحد سطر CSS على الـ [[pre]]: [[style="overflow-x: auto"]] و [[style="white-space: pre-wrap"]]. وقيس تاني.`, done: R`من غير حل: [[scrollWidth]] بتاع الـ pre (554) أكبر من [[clientWidth]] (344)، وآخر الأمر مقطوع ومفيش طريقة توصله. مع [[overflow-x: auto]] الـ pre بقى بيتسحب لوحده. ومع [[pre-wrap]] الرقمين بقوا متساويين والسطر اتكسر على سطرين. وعرفت تختار إمتى ده وإمتى ده.`, sol: R`~~~live 250 250 التلاتة تحت بعض
+<p>من غير حل:</p>
+<pre dir="ltr"><code>npm install --save-dev some-very-long-package-name another-long-package</code></pre>
+<p>بـ overflow-x: auto</p>
+<pre dir="ltr" style="overflow-x: auto"><code>npm install --save-dev some-very-long-package-name another-long-package</code></pre>
+<p>بـ white-space: pre-wrap</p>
+<pre dir="ltr" style="white-space: pre-wrap"><code>npm install --save-dev some-very-long-package-name another-long-package</code></pre>
+~~~
+
+دوس على زرار «موبايل» فوق المعاينة وشوف التلاتة: الأول مقطوع من اليمين، والتاني تحته شريط سحب، والتالت على سطرين.
+
+**ليه الأول مقطوع:** الستايل الافتراضي للـ [[pre]] هو [[white-space: pre]]، يعني «متكسرش السطر غير عند سطر جديد في الملف». فالسطر بيفضل ماشي لحد ما يخلص، حتى لو خرج برّه الـ pre. والصفحة عربي (بتبدأ من اليمين)، فالمتصفح بيعمل scroll للي خارج من الشمال بس. والكود [[ltr]] بيخرج من اليمين، فبيتقطع ومفيش scroll يوصّلك ليه: القارئ مش هيشوف آخر الأمر خالص.
+
+ولو شلت [[dir="ltr"]] من الـ pre، السطر بيخرج من الشمال والصفحة **كلها** بتتزق: قست عرض الصفحة وطلع 562 على شاشة 360. الحالتين غلط.
+
+**الحلّين (CSS، هتتعلمه في الوحدات الجاية):**
+
+- [[overflow-x: auto]]: «لو المحتوى أعرض منك، اعمل شريط سحب جواك انت». السطر بيفضل سطر واحد، والـ pre بس هو اللي بيتسحب. ده المناسب للكود: كسر السطر في نص أمر ممكن يلخبط اللي بينسخه.
+- [[white-space: pre-wrap]]: «حافظ على المسافات والسطور، بس اكسر السطر لو مفيش مكان». مناسب لنص عادي جوه pre (رسالة، قصيدة)، مش للكود.
+
+**الغلطة الشائعة:** تختبر على الكمبيوتر بس. السطر اللي ٧٠ حرف بيبان عادي على شاشة عريضة، وعلى الموبايل نصه مش باين.
+
+~~~text الناتج (عرض 360)
+                         pre.scrollWidth   pre.clientWidth   ارتفاع الـ pre
+من غير حل                     554              344              15
+overflow-x: auto              554              344              30   (السطر + شريط السحب)
+white-space: pre-wrap         344              344              30   (سطرين)
+
+عرض الصفحة (documentElement.scrollWidth) = 360 في التلاتة
+ومن غير dir="ltr" ومن غير حل: عرض الصفحة = 562
+~~~` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** افتح قسم [[kbd]] في مواصفة HTML (اللينك تحت الدرس) وجاوب: إيه معنى [[kbd]] جوه [[kbd]]؟ و [[kbd]] جوه [[samp]]؟ و [[samp]] جوه [[kbd]]؟ واكتب مثال للتالتة: «من القايمة اختار File ثم Save».`, done: R`جبت التلات جمل من المواصفة، وكتبت المثال بـ [[samp]] جوه [[kbd]] جوه [[kbd]]، وعرفت إن المواصفة نفسها بتقول إن الدقة دي مش إجبارية وإن [[<kbd>File | Save</kbd>]] كفاية.`, sol: R`**من نص المواصفة (قسم 4.5.18 The kbd element):**
+
+~~~text من المواصفة
+When the kbd element is nested inside a samp element, it represents the input
+as it was echoed by the system.
+
+When the kbd element contains a samp element, it represents input based on
+system output, for example invoking a menu item.
+
+When the kbd element is nested inside another kbd element, it represents an
+actual key or other single unit of input as appropriate for the input mechanism.
+~~~
+
+| التركيبة | المعنى | مثال |
+|---|---|---|
+| [[kbd]] جوه [[kbd]] | مفتاح واحد أو خطوة واحدة من إدخال أكبر | Ctrl جوه Ctrl+C |
+| [[kbd]] جوه [[samp]] | اللي المستخدم كتبه، زي ما الشاشة رجّعت عرضه | الأمر في جلسة ترمنال |
+| [[samp]] جوه [[kbd]] | إدخال مبني على حاجة البرنامج عارضها | اسم بند في قايمة بتدوس عليه |
+
+والمثال بالدقة الكاملة، وبالطريقة البسيطة:
+
+~~~live 90 120 الاتنين صح
+<p>من القايمة اختار <kbd><kbd><samp>File</samp></kbd> | <kbd><samp>Save</samp></kbd></kbd>.</p>
+<p>من القايمة اختار <kbd>File | Save</kbd>.</p>
+~~~
+
+**ليه [[samp]] جوه [[kbd]]؟** كلمة «File» البرنامج هو اللي كاتبها على الشاشة (ناتج، يعني [[samp]])، وانت بتختارها (إدخال، يعني [[kbd]]). والـ kbd الخارجي بيجمع الخطوتين في إدخال واحد.
+
+**والمواصفة نفسها بتقول** بعد المثال ده: «Such precision isn't necessary»، وإن السطر التاني مقبول زيه. استخدم الدقة لما تكون هتنسّق كل جزء بشكل مختلف.
+
+**الغلطة الشائعة:** تعكسهم وتكتب [[<samp><kbd>File</kbd></samp>]] لبند القايمة. ده معناه «حاجة المستخدم كتبها والشاشة رجّعتها»، مش «حاجة معروضة بيختارها».
+
+~~~text الناتج
+السطر الأول:  kbd = 3   samp = 2      السطر التاني:  kbd = 1   samp = 0
+الشكل: السطرين متطابقين (كله monospace 13px)
+~~~` },
+          ],
+          title: "كود، ومفاتيح، وناتج برنامج: code و pre و kbd (ومعاهم samp و var، والـ entities)",
+          desc: R`[[<code>]] حتة كود (أمر، اسم ملف، اسم عنصر). [[<kbd>]] حاجة المستخدم بيدخّلها (مفتاح، أمر بيكتبه). [[<samp>]] حاجة البرنامج طلّعها. [[<var>]] اسم بيتبدّل بقيمة. و [[<pre>]] بلوك نص المسافات والسطور فيه بتتعرض زي ما هي في الملف، وده اللي بتحط جواه كود من كذا سطر.
+
+ولما تعرض كود HTML نفسه في صفحة، الحروف [[<]] و [[&]] ليها معنى عند المتصفح، فبتتكتب بأسامي بديلة اسمها entities: [[&lt;]] و [[&gt;]] و [[&amp;]].`,
+          example: R`<p>شغّل <code>npm run dev</code> وبعدين دوس <kbd><kbd>Ctrl</kbd>+<kbd>C</kbd></kbd> عشان توقفه.</p>
+<p>هيطلعلك: <samp>Server stopped</samp></p>
+<p>المساحة = <var>الطول</var> × <var>العرض</var></p>
+<pre dir="ltr"><code>&lt;h1&gt;متجري&lt;/h1&gt;
+&lt;p&gt;أهلًا بيك&lt;/p&gt;</code></pre>
+<p>&copy; ٢٠٢٦ مكتبة الحروف. السعر ١٠٠&nbsp;جنيه.</p>`,
+          try: R`اكتب [[<p>الفقرة بتتكتب <code><p></code> كده</p>]] وافتحها: كلمة «كده» راحت فين؟ عدّ الفقرات في تاب Elements. وبعدين بدّل اللي جوه الـ code بـ [[&lt;p&gt;]] وافتح تاني.`,
+          flag: "script",
+          deep: {
+            why: R`أي صفحة بتشرح حاجة تقنية (وثائق مكتبة، أو README، أو مقال تعليمي، أو صفحة مساعدة) فيها أربع أنواع نص شكلهم قريب ومعناهم مختلف: اللي تكتبه في ملف، واللي تدوسه على الكيبورد، واللي هيطلعلك على الشاشة، والحتة اللي تبدّلها بقيمتك. لو كلهم [[<span>]] بخط واحد، القارئ مش هيعرف «ده أكتبه ولا ده اللي هيظهر؟». والـ entities موجودة لسبب تاني: HTML نفسه بيستخدم [[<]] و [[&]] كرموز، فلازم طريقة تكتب بيها الحرف من غير ما المتصفح ينفّذه.`,
+            how: R`[[code]] و [[kbd]] و [[samp]] و [[var]] عناصر جوه السطر. الستايل الافتراضي في المواصفة: [[code, kbd, samp { font-family: monospace }]] و [[var { font-style: italic }]]. monospace خط كل حروفه بنفس العرض.
+
+في Chrome 157 الخط الـ monospace بيطلع 13px والصفحة 16px. ده مش من المواصفة: المتصفحات بتصغّر الـ monospace الافتراضي عشان حروفه بتبان أكبر من الخط العادي بنفس الرقم.
+
+[[pre]] عنصر block. الستايل الافتراضي: [[display: block; font-family: monospace; white-space: pre; margin: 1em 0]]. [[white-space: pre]] معناه إن المسافات والسطور الجديدة بتتعرض زي ما هي والسطر مبيتكسرش لوحده. في أي عنصر تاني المتصفح بيضم المسافات المتتالية لمسافة واحدة.
+
+الأدوار: [[code]] دوره [[code]]، والباقي ([[kbd]] و [[samp]] و [[var]] و [[pre]]) [[generic]].
+
+الـ entity بيبدأ بـ [[&]] وبيخلص بـ [[;]]. المتصفح بيبدّله بالحرف وهو بيقرا الملف، قبل ما يبني الشجرة. فالشجرة فيها الحرف [[<]] نفسه كنص، مش كبداية tag.`,
+            when: R`[[code]]: اسم ملف، أمر، اسم عنصر أو خاصية أو function جوه جملة.
+
+[[<pre><code>]]: كود من سطر كامل أو أكتر.
+
+[[kbd]]: مفتاح أو اختصار، أو أمر المستخدم هيكتبه، أو بند قايمة هيختاره.
+
+[[samp]]: رسالة خطأ، أو ناتج أمر، أو أي حاجة البرنامج عرضها. و [[<pre><samp>]] لناتج من كذا سطر.
+
+[[var]]: متغير في معادلة، أو اسم مكان هيتبدّل («حط اسمك مكان username»).
+
+[[&lt;]] و [[&amp;]]: كل ما تكتب [[<]] أو [[&]] كنص. [[&quot;]]: علامة تنصيص جوه قيمة attribute محاطة بتنصيص. [[&nbsp;]]: بين رقم ووحدته، أو كلمتين مينفعش يتفرّقوا على سطرين.`,
+            mistakes: R`كود HTML جوه [[code]] من غير entities: المتصفح بينفّذه. [[<code><p></code>]] بيفتح فقرة.
+
+[[pre]] متزاح جوه الملف: المسافات اللي في أول السطور بتتعرض.
+
+[[pre]] بسطور طويلة: بيزق الصفحة على الموبايل.
+
+[[pre]] في صفحة عربي من غير [[dir="ltr"]]: الكود الإنجليزي ترتيبه بيتلخبط.
+
+رسمة بالحروف (ASCII art) في [[pre]] من غير وصف: قارئ الشاشة هيقراها حرف حرف. MDN بينصح بوصف نصي ليها.
+
+[[&nbsp;]] ورا بعض عشان تعمل مسافة أو تزق كلمة: المسافات شغل CSS.
+
+[[&]] سايب في لينك: [[href="?a=1&copy=2"]] اشتغلت في Chrome، لأن المواصفة فيها استثناء قديم: جوه attribute، لو بعد الاسم [[=]] أو حرف، المتصفح بيسيبه زي ما هو. متعتمدش على الاستثناء ده: الصح [[&amp;]] دايمًا.
+
+[[<kbd>]] بدل [[<code>]] للأمر جوه شرح: لو بتقول «الأمر ده بيعمل كذا» يبقى [[code]]. لو بتقول «اكتب الأمر ده» يبقى [[kbd]].`
+          },
+          teach: R`## الفكرة في سطرين
+
+أربع عناصر لأربع أنواع نص «كمبيوتري»: كود، وإدخال، وناتج، ومتغير. وعنصر خامس ([[pre]]) بيحافظ على المسافات والسطور. وبعدهم الـ entities: إزاي تكتب [[<]] من غير ما المتصفح يفتكرها tag. القياسات من Chrome 157.
+
+---
+
+## ١. [[<code>]]: حتة كود
+
+المواصفة: [[code]] بيمثّل **fragment of computer code**: اسم عنصر، أو اسم ملف، أو برنامج، أو أي نص الكمبيوتر بيتعرّف عليه.
+
+~~~live 60 80 code
+<p>شغّل <code>npm run dev</code> وافتح الملف <code>index.html</code>.</p>
+~~~
+
+الأمر واسم الملف بخط مختلف حروفه كلها بنفس العرض، وأصغر شوية.
+
+~~~text القياس
+code:   font-family = monospace   font-size = 13px   الدور = code
+الفقرة: font-family = Times New Roman   font-size = 16px
+~~~
+
+13 مش 16: المتصفحات بتصغّر الـ monospace الافتراضي. الحجم ده نسبي: نفس الـ [[code]] جوه [[<h2>]] حجمه 24px طلع 19.5px.
+
+مفيش attribute للغة الكود. المواصفة بتقترح class بيبدأ بـ [[language-]]، زي [[<code class="language-js">]]، ومكتبات تلوين الكود بتقراه.
+
+---
+
+## ٢. [[<kbd>]]: اللي المستخدم بيدخّله
+
+[[kbd]] من keyboard. المواصفة: **user input**، غالبًا من الكيبورد، وممكن أي إدخال تاني (أمر صوتي مثلًا).
+
+~~~live 90 110 kbd
+<p>عشان تحفظ دوس <kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd>.</p>
+<p>في الترمنال اكتب <kbd>npm test</kbd> ودوس <kbd>Enter</kbd>.</p>
+~~~
+
+### [[<kbd>]] جوه [[<kbd>]]
+
+في السطر الأول: الـ [[kbd]] الخارجي هو الإدخال كله (الاختصار)، وكل واحد جواه **مفتاح واحد فعلي**. ده مثال المواصفة نفسه. والشكل الافتراضي للاتنين واحد (monospace 13px)، فالفرق هيبان لما تنسّق المفاتيح بالـ CSS على شكل زراير.
+
+---
+
+## ٣. [[<samp>]]: اللي البرنامج طلّعه
+
+[[samp]] من sample. المواصفة: **sample or quoted output** من برنامج أو نظام.
+
+~~~live 60 80 samp
+<p>لو الملف مش موجود هيطلعلك: <samp>Error: file not found</samp></p>
+~~~
+
+والفرق بين التلاتة في جملة واحدة: الأمر اللي بتتكلم عنه [[code]]، واللي بتقول للقارئ اكتبه [[kbd]]، واللي هيشوفه على الشاشة [[samp]].
+
+---
+
+## ٤. [[<var>]]: اسم بيتبدّل بقيمة
+
+المواصفة: [[var]] **متغير**: في معادلة، أو في كود، أو اسم ثابت، أو مجرد كلمة مكانها هيتملى بحاجة.
+
+~~~live 90 110 var
+<p>المساحة = <var>الطول</var> × <var>العرض</var></p>
+<p>اكتب <kbd>cd <var>اسم-الفولدر</var></kbd> عشان تدخله.</p>
+~~~
+
+~~~text القياس
+var:  font-style = italic   font-family = نفس خط الفقرة (مش monospace)   الدور = generic
+~~~
+
+في السطر التاني: الأمر كله [[kbd]] (المستخدم هيكتبه)، وجواه [[var]] للحتة اللي هيبدّلها باسم الفولدر بتاعه.
+
+---
+
+## ٥. [[<pre>]]: المسافات والسطور زي ما هي
+
+[[pre]] من preformatted. المواصفة: بلوك نص **متنسّق مسبقًا**، شكله جاي من المسافات والسطور مش من العناصر.
+
+في أي عنصر عادي المتصفح بيضم المسافات والسطور الجديدة لمسافة واحدة. قارن:
+
+~~~live 120 200 نفس النص في p وفي pre
+<p>سطر ١
+    سطر ٢ بأربع مسافات
+        سطر ٣ بتمانية</p>
+<pre>سطر ١
+    سطر ٢ بأربع مسافات
+        سطر ٣ بتمانية</pre>
+~~~
+
+الفقرة طلعت سطر واحد، والـ [[pre]] تلات سطور والإزاحة فيهم.
+
+~~~text القياس
+pre:  display = block   white-space = pre   font-family = monospace   font-size = 13px
+      margin فوق وتحت = 13px (يعني 1em)   tab-size = 8   الدور = generic
+ارتفاع الفقرة = 18px (سطر واحد)
+~~~
+
+- [[white-space: pre]] هو اللي بيعمل الشغل: حافظ على المسافات والسطور، ومتكسرش السطر لوحدك.
+- [[tab-size: 8]]: حرف الـ Tab بيتعرض بعرض ٨ مسافات.
+
+### بلوك كود: [[<pre><code>]]
+
+الـ [[pre]] لوحده معناه «نص متنسّق». عشان تقول «وده كود»، المواصفة بتقول حط جواه [[code]]. ولناتج برنامج: [[<pre><samp>]].
+
+~~~live 80 110 pre وجواه code
+<pre dir="ltr"><code>function hello() {
+  return "hi";
+}</code></pre>
+~~~
+
+تلات تفاصيل في السطرين دول:
+
+- [[<pre><code>]] على **نفس السطر** مع أول سطر كود، والقفلة [[</code></pre>]] لازقة في آخر سطر. أي سطر جديد جوه الـ pre بيتعرض. فيه استثناء واحد في المواصفة: سطر جديد واحد بعد [[<pre>]] على طول بيتشال. جرّبت: سطر واحد اتشال، ولما كانوا اتنين فضل واحد.
+- الكود **مش متزاح** مع باقي الملف. لو زحته أربع مسافات عشان الترتيب، الأربع مسافات هيتعرضوا.
+- [[dir="ltr"]]: الـ [[pre]] في صفحة عربي بياخد [[direction: rtl]] (اتقاس)، والكود شمال ليمين. من درس «lang و dir».
+
+### السطر الطويل
+
+[[pre]] مبيكسرش السطر. جرّبت سطر من ٧٠ حرف على موبايل عرضه 360: محتوى الـ pre عرضه 554 والـ pre نفسه 344. في صفحة عربي والـ pre عليه [[dir="ltr"]]، آخر السطر بيخرج من يمين الشاشة ومفيش scroll يوصّلك ليه. ومن غير [[dir]]، الصفحة كلها بقى عرضها 562 وبتتزق يمين وشمال. الحل سطر CSS، وفيه تمرين بيقيسه.
+
+### رسمة بالحروف
+
+لو حطيت رسمة ASCII في [[pre]]، قارئ الشاشة هيقراها رموز ورا بعض. المواصفة بتقول فكّر اللي مش شايف هياخد إيه، و MDN بينصح بوصف نصي للرسمة.
+
+---
+
+## ٦. الـ entities: لما الحرف نفسه ليه معنى في HTML
+
+### المشكلة
+
+عايز تكتب في صفحة إن الفقرة بتتكتب بـ [[<p>]]:
+
+~~~live 90 110 غلط: المتصفح نفّذ الكود
+<p>الفقرة بتتكتب <code><p></code> كده</p>
+~~~
+
+«كده» نزلت في سطر لوحدها، والـ [[code]] فاضي. اللي حصل: المتصفح شاف [[<p>]] جوه الـ code ففتح فقرة جديدة (وقفل اللي قبلها).
+
+~~~text الشجرة اللي اتبنت
+<p>الفقرة بتتكتب <code></code></p>
+<p> كده</p>
+~~~
+
+[[code]] مبيحميش اللي جواه. الحل إنك متكتبش الحرف [[<]] نفسه، تكتب اسمه:
+
+~~~live 60 80 صح: entities
+<p>الفقرة بتتكتب <code>&lt;p&gt;</code> كده</p>
+~~~
+
+~~~text القياس
+اللي في الملف:        &lt;p&gt;
+النص في الشجرة:      <p>        (تلات حروف نص، مش عنصر)
+عدد الفقرات: 1
+~~~
+
+### شكل الـ entity
+
+اسمه الرسمي character reference. بيبدأ بـ [[&]]، وبعده اسم، وبيخلص بـ [[;]]. المتصفح بيبدّله بالحرف وهو بيقرا الملف.
+
+| اللي تكتبه | بيطلع | الاسم جاي من | لازم إمتى |
+|---|---|---|---|
+| [[&lt;]] | [[<]] | less than | أي [[<]] في النص، عشان متتقراش بداية tag |
+| [[&gt;]] | [[>]] | greater than | مش إجباري في النص، بس اكتبه مع [[&lt;]] عشان الكود يبقى واضح |
+| [[&amp;]] | [[&]] | ampersand | أي [[&]] في النص أو في لينك، عشان متتقراش بداية entity |
+| [[&quot;]] | " | quotation mark | علامة تنصيص جوه قيمة attribute محاطة بنفس العلامة |
+| [[&nbsp;]] | مسافة مبتتكسرش | non-breaking space | بين كلمتين لازم يفضلوا على نفس السطر |
+| [[&copy;]] | © | copyright | مش لازم خالص: اكتب © نفسها |
+
+### [[&quot;]]: تنصيص جوه attribute
+
+~~~live 60 80 قف بالماوس على الكلمة
+<p title="قال &quot;أهلًا&quot; ومشي">قف هنا بالماوس</p>
+~~~
+
+قيمة الـ [[title]] محاطة بعلامتين تنصيص. لو كتبت علامة تنصيص جواها المتصفح هيفتكر القيمة خلصت. [[&quot;]] بيحلها: قريت [[title]] وطلع «قال "أهلًا" ومشي».
+
+### [[&nbsp;]]: المسافة اللي مبتتكسرش
+
+المسافة العادية مكان مسموح للمتصفح يكسر السطر عنده. [[&nbsp;]] شكلها مسافة بس الكسر عندها ممنوع، فاللي قبلها واللي بعدها بيفضلوا مع بعض.
+
+~~~live 60 110 صغّر العرض: الرقم والعملة مع بعض
+<p>سعر الاشتراك السنوي بعد الخصم ١٠٠&nbsp;جنيه بس.</p>
+~~~
+
+~~~text القياس
+كود الحرف:  المسافة العادية = 32     &nbsp; = 160
+~~~
+
+استخدمها بين رقم ووحدته. ومتستخدمهاش ورا بعض عشان تعمل فراغ: ده شغل CSS.
+
+### بالرقم بدل الاسم
+
+أي حرف ينفع يتكتب برقمه في Unicode: [[&#169;]] (عشري) أو [[&#xA9;]] (ست عشري)، والاتنين بيطلعوا ©. جرّبت التلاتة ([[&copy;]] و [[&#169;]] و [[&#xA9;]]) وطلعوا نفس الحرف.
+
+### لازم أحفظهم؟
+
+لأ. الصفحة [[<meta charset="utf-8">]] (من درس «<!doctype html>»)، فأي حرف يتكتب زي ما هو: © و € و ← والعربي كله. الـ entities اللي **لازم** تعرفهم تلاتة: [[&lt;]] و [[&amp;]] دايمًا، و [[&quot;]] جوه الـ attributes. و [[&nbsp;]] لما تحتاجها.
+
+### لو نسيت الـ [[;]]
+
+جرّبت شوية حالات في نص فقرة:
+
+| اللي في الملف | اللي اتعرض | ليه |
+|---|---|---|
+| [[&copy 2026]] | © 2026 | أسامي قديمة قليلة بتتقبل من غير [[;]] |
+| [[&copyright]] | ©right | قرا [[&copy]] ووقف، والباقي نص |
+| [[&notit;]] | ¬it; | قرا [[&not]] (علامة النفي ¬) وساب الباقي |
+| [[AT&T]] | AT&T | مفيش entity بيبدأ بـ T، فساب الـ [[&]] |
+| [[&unknown;]] | &unknown; | اسم مش موجود: اتعرض زي ما هو |
+
+التاني والتالت هما الخطر: نص عادي فيه [[&]] وبعده كلمة بتبدأ باسم entity. عشان كده القاعدة: أي [[&]] مقصود بيه الحرف يتكتب [[&amp;]]، وأي entity يتقفل بـ [[;]].
+
+---
+
+## الخلاصة
+
+| النص ده | العنصر | الشكل الافتراضي |
+|---|---|---|
+| كود جوه جملة | [[<code>]] | monospace |
+| كود من كذا سطر | [[<pre><code>]] | monospace والمسافات زي ما هي |
+| المستخدم بيدخّله | [[<kbd>]] | monospace |
+| البرنامج طلّعه | [[<samp>]] | monospace |
+| اسم بيتبدّل بقيمة | [[<var>]] | مايل |
+| الحرف [[<]] أو [[&]] كنص | [[&lt;]] و [[&amp;]] | |
+| مسافة مبتتكسرش | [[&nbsp;]] | |`,
+          lines: [
+            R`[[code]] للأمر اللي بنتكلم عنه، و [[kbd]] جوه [[kbd]] للاختصار: الخارجي الإدخال كله وكل داخلي مفتاح واحد.`,
+            R`[[samp]] للنص اللي البرنامج هيطبعه على الشاشة، عشان القارئ يعرف إنه مش هيكتبه.`,
+            R`[[var]] على الأسامي اللي هتتبدّل بأرقام. بيطلعوا مايلين وبخط الفقرة العادي.`,
+            R`[[<pre><code>]] بلوك كود. الكود نفسه HTML، فكل [[<]] مكتوبة [[&lt;]] وكل [[>]] مكتوبة [[&gt;]]. و [[dir="ltr"]] عشان الكود يبدأ من الشمال.`,
+            R`السطر التاني من الكود، وبعده القفلة لازقة فيه عشان ميطلعش سطر فاضي في آخر الـ pre.`,
+            R`[[&copy;]] بيطلع ©، و [[&nbsp;]] مسافة مبتتكسرش بين الرقم و «جنيه» فيفضلوا على نفس السطر.`
+          ],
+          sol: R`**«كده» راحت فين؟** نزلت في فقرة تانية لوحدها. في تاب Elements هتلاقي فقرتين مش واحدة: الأولى فيها «الفقرة بتتكتب» و [[code]] فاضي، والتانية فيها « كده». المتصفح قرا [[<p>]] اللي جوه الـ code كبداية فقرة جديدة، والفقرة مينفعش تبقى جوه فقرة، فقفل الأولى.
+
+**بعد [[&lt;p&gt;]]:** فقرة واحدة، والـ code جواه التلات حروف [[<p>]] كنص، والجملة كاملة على سطر واحد.
+
+~~~text الناتج (Chrome 157)
+قبل:  عدد الفقرات = 2    نص code = (فاضي)    نص الفقرة الأولى = «الفقرة بتتكتب »
+بعد:  عدد الفقرات = 1    نص code = <p>       innerHTML بتاعه = &lt;p&gt;
+~~~`,
+          ref: [
+            { t: "WHATWG: the code element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-code-element" },
+            { t: "WHATWG: the kbd element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-kbd-element" },
+            { t: "WHATWG: the samp element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-samp-element" },
+            { t: "WHATWG: the var element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-var-element" },
+            { t: "WHATWG: the pre element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-pre-element" },
+            { t: "WHATWG: named character references", url: "https://html.spec.whatwg.org/multipage/named-characters.html" },
+            { t: "MDN: <code>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/code" },
+            { t: "MDN: <pre>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/pre" },
+            { t: "MDN: <kbd>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/kbd" },
+            { t: "MDN: <samp>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/samp" },
+            { t: "MDN: <var>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/var" },
+            { t: "MDN: Character reference", url: "https://developer.mozilla.org/en-US/docs/Glossary/Character_reference" },
+          ],
+          pre: ["css/abbr و dfn و time", { to: "css/<!doctype html>", why: R`الـ [[charset]] هو اللي بيخليك تكتب © والعربي من غير entities` }]
+        },
+        {
+          cmd: "sub و sup و br",
+          practice: [
+            { lvl: 'سريع', t: R`**اختار العنصر:** [[sub]] ولا [[sup]]؟ اكتب الخمسة صح:
+١. تاني أكسيد الكربون CO2
+٢. س تربيع
+٣. حجم الأوضة ٤٠ متر مكعب
+٤. حمض الكبريتيك H2SO4
+٥. رقم حاشية [1] بعد جملة`, done: R`الصفحة فيها ٣ [[sub]] (واحد في CO₂ واتنين في H₂SO₄) و ٣ [[sup]] (التربيع، والتكعيب، والحاشية)، والحاشية جواها لينك بيودّي للملحوظة تحت.`, work: { h: 270, start: R`<p>تاني أكسيد الكربون CO2</p>
+<p>س تربيع: س2</p>
+<p>حجم الأوضة ٤٠ م3</p>
+<p>حمض الكبريتيك H2SO4</p>
+<p>النبات بيطلّع أكسجين بالنهار [1].</p>
+<p id="note-1"><small>[1] من كتاب العلوم، الفصل التالت.</small></p>`, checks: [
+              { say: R`الأرقام اللي تحت السطر في [[<sub>]]: تلاتة (CO2 وH2SO4)`, q: "sub", n: 3 },
+              { say: R`الأرقام اللي فوق في [[<sup>]]: تلاتة (التربيع والتكعيب والحاشية)`, q: "sup", n: 3 },
+              { say: R`متر مكعب: [[3]] جوه [[<sup>]]`, q: "sup", has: "3" },
+              { say: R`رقم الحاشية لينك بيودّي لـ [[#note-1]] جوه [[<sup>]]`, q: 'sup a[href="#note-1"]', n: 1 },
+            ] }, sol: R`~~~live 250 270 الحل
+<p>تاني أكسيد الكربون CO<sub>2</sub></p>
+<p><var>س</var><sup>2</sup></p>
+<p>حجم الأوضة ٤٠ م<sup>3</sup></p>
+<p>حمض الكبريتيك H<sub>2</sub>SO<sub>4</sub></p>
+<p>النبات بيطلّع أكسجين بالنهار<sup><a href="#note-1">[1]</a></sup>.</p>
+<p id="note-1"><small>[1] من كتاب العلوم، الفصل التالت.</small></p>
+~~~
+
+**القاعدة:** عدد الذرات في الكيميا تحت ([[sub]])، والأُس ووحدات المساحة والحجم ورقم الحاشية فوق ([[sup]]).
+
+**ليه دي عناصر مش مجرد شكل؟** المواصفة بتقول استخدمهم لما غيابهم **يغيّر المعنى**. «م3» ممكن تتقري «م تلاتة»، و «س2» مش «س تربيع». وعشان كده برضه مينفعش تستخدمهم لمجرد إن الحرف يطلع صغير ومرفوع.
+
+**الحاشية:** الرقم [[sup]] وجواه لينك [[href="#note-1"]] بيودّي للعنصر اللي عليه [[id="note-1"]] (من درس «a و button»). MDN عادّد أرقام الحواشي من استخدامات [[sup]].
+
+**الغلطة الشائعة:** تكتب الرقم الصغير الجاهز من الكيبورد (² أو ₂) مرة و [[sup]] مرة في نفس الصفحة. الاتنين بيتعرضوا، بس البحث عن «CO2» مش هيلاقي «CO₂». اختار طريقة واحدة، والعنصر بيخلي النص الخام رقم عادي.
+
+~~~text الناتج
+sub: 3   sup: 3
+sub:  vertical-align = sub     font-size = 13.3333px   الدور = subscript
+sup:  vertical-align = super   font-size = 13.3333px   الدور = superscript
+النص الخام للسطر الأول: تاني أكسيد الكربون CO2
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p>سطر<br><br><br>سطر</p>]]. الفقرة هتبقى كام سطر؟ وكام واحد منهم فاضي؟ وبعدين: [[textContent]] بتاع الفقرة فيه سطور جديدة ولا لأ؟`, done: R`الفقرة ٤ سطور (ارتفاعها 72px والسطر 18px): سطر، وسطرين فاضيين، وسطر. مش ٥ ولا ٣. و [[textContent]] طلع «سطرسطر» من غير أي فاصل، و [[innerText]] هو اللي فيه السطور الجديدة.`, sol: R`~~~live 110 130 تلات br ورا بعض
+<p>سطر<br><br><br>سطر</p>
+~~~
+
+**العدّ:** كل [[<br>]] بينهي السطر اللي هو فيه. الأول بينهي سطر «سطر». التاني بينهي سطر فاضي. التالت بينهي سطر فاضي تاني. وبعدهم «سطر» الأخيرة. المجموع ٤ سطور، منهم ٢ فاضيين. يعني عدد السطور الفاضية = عدد الـ br ناقص واحد.
+
+**[[textContent]] و [[innerText]]:** الـ [[br]] عنصر مش حرف، فالنص الخام بتاع الفقرة مفيهوش أي حاجة بين الكلمتين: «سطرسطر». [[innerText]] بيرجّع النص «زي ما بيتعرض»، فبيحط سطر جديد مكان كل br.
+
+**وده استخدام غلط أصلًا:** الـ br هنا معمول عشان يعمل فراغ. المواصفة بتقول إن [[br]] لكسر سطر **جزء من المحتوى** (قصيدة، عنوان)، ومش للفصل بين مجموعات. لو دول فقرتين، يبقوا [[<p>]] اتنين والمسافة بينهم تتظبط بالـ CSS.
+
+**الغلطة الشائعة:** تعدّ الـ br وتقول «تلات سطور فاضية».
+
+~~~text الناتج
+ارتفاع الفقرة = 72px   ارتفاع السطر = 18px   →  4 سطور
+textContent = "سطرسطر"
+innerText   = "سطر\n\n\nسطر"
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «عن الشركة» لشركة متخيلة:
+
+~~~html
+<p>شركة النور<sup>للتجارة</sup></p>
+<hr>
+<p>بدأنا سنة ٢٠١٠ في طنطا.<br><br>دلوقتي عندنا ٨ فروع.</p>
+<hr>
+<p>العنوان: ٤ شارع الورد<br>طنطا</p>
+<hr>
+~~~
+
+فيها ٣ أنواع غلط (واحد منهم متكرر). وفيها [[br]] واحد صح: متشيلوش.`, done: R`بعد التصليح: مفيش [[sup]]، ومفيش [[<br><br>]] (الجملتين بقوا فقرتين)، وفضل [[hr]] واحد بس بين الكلام عن الشركة ومعلومات العنوان، والـ [[br]] اللي في العنوان زي ما هو. والعدد: p تلاتة وعنوان، و br واحد، و hr واحد.`, work: { h: 260, start: R`<p>شركة النور<sup>للتجارة</sup></p>
+<hr>
+<p>بدأنا سنة ٢٠١٠ في طنطا.<br><br>دلوقتي عندنا ٨ فروع.</p>
+<hr>
+<p>العنوان: ٤ شارع الورد<br>طنطا</p>
+<hr>`, checks: [
+              { say: R`مفيش [[<sup>]] في الصفحة`, q: "sup", n: 0 },
+              { say: R`مفيش [[<br><br>]] ورا بعض: الجملتين بقوا فقرتين`, nosrc: "<br><br>" },
+              { say: R`فضل [[<hr>]] واحد بس`, q: "hr", n: 1 },
+              { say: R`فضل [[<br>]] واحد بس: اللي في العنوان`, q: "br", n: 1 },
+              { say: R`العنوان لسه فقرة فيها [[<br>]]`, q: "p br", n: 1 },
+            ] }, sol: R`~~~live 220 260 بعد التصليح
+<h2>شركة النور للتجارة</h2>
+<p>بدأنا سنة ٢٠١٠ في طنطا.</p>
+<p>دلوقتي عندنا ٨ فروع.</p>
+<hr>
+<p>العنوان: ٤ شارع الورد<br>طنطا</p>
+~~~
+
+**الغلطات:**
+
+1. [[<sup>للتجارة</sup>]]: [[sup]] اتاخد عشان الكلمة تطلع صغيرة ومرفوعة زي اللوجو. المواصفة بتقول إن [[sub]] و [[sup]] لكتابة ليها معنى (أُس، حاشية)، مش للشكل، وبتدّي مثال قريب: مينفعش يتستخدموا لتنسيق اسم LaTeX. شكل اللوجو CSS. وده اسم الشركة فالأنسب يبقى عنوان.
+2. [[<br><br>]] بين جملتين: ده فصل بين فقرتين معمول بكسر سطور. الصح [[<p>]] لكل واحدة.
+3. [[<hr>]] بعد كل فقرة وفي آخر الصفحة: [[hr]] معناه «الموضوع اتغيّر»، مش «خط للزينة». فضل واحد بس: قبله كلام عن تاريخ الشركة، وبعده معلومات المكان. والأخير اللي مفيش بعده حاجة اتشال (مفيش موضوع جاي يفصل عنه).
+
+**والـ [[br]] الصح:** اللي في العنوان. الشارع في سطر والمدينة في سطر: ده كسر جزء من المحتوى، ومثال المواصفة نفسه عنوان بريدي.
+
+**الغلطة الشائعة:** تشيل كل الـ br «عشان br غلط». هو غلط للمسافات، وصح للعناوين والشعر.
+
+~~~text الناتج
+              sup   br   hr   p   h2
+قبل التصليح    1    3    3    3   0
+بعد التصليح    0    1    1    3   1
+hr:  الدور = separator
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** ورقة مراجعة علوم صغيرة: عنوان، وتلات معلومات كيميا فيها صيغ (المية، وتاني أكسيد الكربون، وملح الطعام NaCl)، وبعدها الموضوع بيتغيّر لفيزيا: قانون [[E = mc²]] بمتغيراته، ومساحة الدايرة [[πr²]]، وجملة فيها حاشية برقم، وتحت خالص الحاشية نفسها.`, done: R`الورقة فيها [[hr]] اتنين (واحد بين الكيميا والفيزيا، وواحد قبل الحواشي)، وكل صيغة كيميا بـ [[sub]]، وكل أُس بـ [[sup]]، والحروف E و m و c و r جوه [[var]]، ولينك الحاشية بيودّيك لتحت ولينك تاني بيرجّعك.`, work: { h: 400, start: R`مراجعة علوم: الأسبوع التالت
+المية: H2O (ذرتين هيدروجين وذرة أكسجين).
+تاني أكسيد الكربون: CO2.
+ملح الطعام: NaCl (من غير أرقام: ذرة من كل عنصر).
+الطاقة والكتلة: E = mc2، و c سرعة الضوء[1].
+مساحة الدايرة: πr2، و r نص القطر.
+[1] حوالي ٣٠٠ ألف كيلومتر في الثانية.`, checks: [
+              { say: R`عنوان الورقة [[<h2>]]`, q: "h1, h2, h3" },
+              { say: R`أرقام الصيغ الكيميائية في [[<sub>]]: اتنين (H2O وCO2)`, q: "sub", n: 2 },
+              { say: R`الأسس في [[<sup>]]: تلاتة (c² وr² ورقم الحاشية)`, q: "sup", n: 3 },
+              { say: R`حروف E و m و c و r جوه [[<var>]]`, q: "var", min: 4 },
+              { say: R`[[<hr>]] اتنين: واحد بين الكيميا والفيزيا وواحد قبل الحاشية`, q: "hr", n: 2 },
+              { say: R`لينك الحاشية بيودّي لتحت ولينك تاني بيرجّعك`, q: 'a[href^="#"]', min: 2 },
+            ] }, sol: R`~~~live 330 400 ورقة المراجعة
+<h2>مراجعة علوم: الأسبوع التالت</h2>
+<p>المية: H<sub>2</sub>O (ذرتين هيدروجين وذرة أكسجين).</p>
+<p>تاني أكسيد الكربون: CO<sub>2</sub>.</p>
+<p>ملح الطعام: NaCl (من غير أرقام: ذرة من كل عنصر).</p>
+<hr>
+<p>الطاقة والكتلة: <var>E</var> = <var>m</var><var>c</var><sup>2</sup>، و <var>c</var> سرعة الضوء<sup id="ref-1"><a href="#note-1">[1]</a></sup>.</p>
+<p>مساحة الدايرة: π<var>r</var><sup>2</sup>، و <var>r</var> نص القطر.</p>
+<hr>
+<p id="note-1"><small>[1] حوالي ٣٠٠ ألف كيلومتر في الثانية. <a href="#ref-1">ارجع</a></small></p>
+~~~
+
+**القرارات:**
+
+- [[hr]] الأول: الورقة قسم واحد من غير عناوين فرعية، والموضوع اتنقل من كيميا لفيزيا. ده «thematic break» اللي المواصفة بتوصفه. لو كان لكل موضوع [[<h3>]] مكانش فيه لزوم للـ hr: المواصفة بتقول إن العناوين نفسها بتقول إن الموضوع اتغيّر.
+- [[hr]] التاني قبل الحواشي: برضه تغيير (من المحتوى لملحوظاته).
+- [[<var>m</var><var>c</var><sup>2</sup>]]: كل حرف متغير لوحده، والأُس على [[c]] بس. ده مكتوب كده في المواصفة بالحرف.
+- π مش [[var]]: دي ثابت معروف مش متغير.
+- الحاشية رايح جاي: [[href="#note-1"]] بينزل، و [[href="#ref-1"]] بيرجّع للمكان اللي كنت فيه.
+- المواصفة بتقول إن المعادلات المعقدة مكانها MathML (لغة تانية للرياضة)، وإن [[sub]] و [[sup]] مقبولين للبسيط زي ده.
+
+**الغلطة الشائعة:** [[<sup>]] على «c2» كلها: [[<sup>c2</sup>]]. الأُس هو الـ 2 بس.
+
+~~~text الناتج
+hr: 2 (الدور = separator)   sub: 2   sup: 3 (أُسّين ورقم الحاشية)   var: 6
+النص الخام لسطر الطاقة: الطاقة والكتلة: E = mc2، و c سرعة الضوء[1].
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اسم ملف طويل مفيهوش مسافات: [[quarterly_financial_report_final_version_2026_approved_by_manager.pdf]]. حطه في فقرة وافتح الصفحة على عرض 360 واكتب في الـ Console [[document.documentElement.scrollWidth]]. وبعدين حط [[<wbr>]] بعد كل [[_]] وقيس تاني. وأخيرًا: [[textContent]] بتاع الفقرة اتغيّر طوله؟`, done: R`من غير [[wbr]]: [[scrollWidth]] طلع 487 على شاشة 360 (الصفحة بتتزق). بعده: 360، والاسم اتكسر عند واحدة من الـ [[_]]. وطول [[textContent]] هو هو (87 حرف) في الحالتين: [[wbr]] مبيضيفش أي حرف للنص.`, sol: R`~~~live 150 200 من غير wbr وبيه
+<p>حمّل الملف quarterly_financial_report_final_version_2026_approved_by_manager.pdf من هنا</p>
+<p>حمّل الملف quarterly_<wbr>financial_<wbr>report_<wbr>final_<wbr>version_<wbr>2026_<wbr>approved_<wbr>by_<wbr>manager.pdf من هنا</p>
+~~~
+
+دوس «موبايل» فوق المعاينة: الفقرة الأولى بتخلي الصفحة تتسحب بالعرض، والتانية لأ.
+
+**ليه الأول بيبوّظ:** المتصفح بيكسر السطر عند المسافات (وعند حاجات زي الشرطة [[-]])، واسم الملف مفيهوش ولا واحدة: الـ [[_]] مش مكان كسر. فالاسم كله «كلمة واحدة» عرضها أكبر من الشاشة.
+
+**[[<wbr>]]** من word break opportunity. المواصفة: «فرصة كسر سطر». يعني بتقول للمتصفح: لو احتجت تكسر، ينفع هنا. ولو السطر مكفّي، مبيحصلش حاجة ومبيبانش.
+
+**والفرق عن [[<br>]]:** [[br]] بيكسر دايمًا. [[wbr]] بيكسر لو لازم بس.
+
+**والفرق عن [[&shy;]]** (soft hyphen): MDN بيقول إن [[wbr]] مبيحطش شرطة عند الكسر، و [[&shy;]] بيحط. واسم ملف مينفعش تتزاد عليه شرطة (القارئ هينسخها)، فالمناسب [[wbr]]. و [[&shy;]] كمان حرف حقيقي بيدخل في النص: نفس الفقرة بيه طولها بقى 95 بدل 87.
+
+**الغلطة الشائعة:** تحط مسافات في اسم الملف عشان يتكسر. اللي هينسخه هينسخ اسم غلط.
+
+~~~text الناتج (عرض 360)
+                  عرض الفقرة (scrollWidth)   ارتفاعها     scrollWidth للصفحة
+من غير wbr              479                 54            487
+بـ wbr                  344                 36            360
+طول textContent:  من غير wbr = 87    بـ wbr = 87    بـ &shy; = 95
+~~~` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** صفحة عربي ([[dir="rtl"]]) فيها تلات سطور. كل واحد هيتعرض إزاي؟
+
+~~~html
+<p>أ: <bdo dir="rtl">ABC</bdo></p>
+<p>ب: <bdo dir="ltr">سلام</bdo></p>
+<p>ج: <bdi>ABC</bdi></p>
+~~~`, done: R`«أ» اتعرضت CBA (الحروف الإنجليزي اتقلبت)، و «ب» حروف «سلام» اترصّت من الشمال لليمين فبقت مقلوبة، و «ج» ABC عادي. وعرفت الفرق: [[bdo]] بيجبر الاتجاه على كل حرف، و [[bdi]] بيعزل الحتة ويسيب حروفها تترتب طبيعي.`, sol: R`~~~live 130 170 التلاتة
+<p>أ: <bdo dir="rtl">ABC</bdo></p>
+<p>ب: <bdo dir="ltr">سلام</bdo></p>
+<p>ج: <bdi>ABC</bdi></p>
+~~~
+
+**أ:** الحروف الإنجليزي طبيعتها شمال ليمين، حتى جوه صفحة عربي. [[<bdo dir="rtl">]] لغى الطبيعة دي وأجبرهم يترصّوا يمين لشمال. فالـ A (أول حرف) بقت في أقصى اليمين، وبتقراها بعينك من الشمال CBA.
+
+**ب:** العكس: الحروف العربي أُجبرت تترص شمال ليمين. السين (أول حرف) بقت في أقصى الشمال، والكلمة بقت مقلوبة للي بيقرا عربي.
+
+**ج:** [[bdi]] (من درس «lang و dir») مبيجبرش حاجة. بيعزل الحتة عن اللي حواليها بس، وحروفها بتترتب بطبيعتها: ABC.
+
+**القاعدة:** ٩٩٪ من الوقت انت محتاج [[bdi]] أو [[dir]] (نص اتجاهه مش معروف، رقم تليفون، كود خصم). [[bdo]] للحالة النادرة اللي عايز فيها ترتيب الحروف نفسه يتلغي: مثال تعليمي عن الاتجاهات زي ده، أو نص متخزن بترتيب العرض مش ترتيب القراية.
+
+**الغلطة الشائعة:** تستخدم [[bdo]] عشان «تصلّح» رقم أو كود متلخبط في جملة عربي. هو هيقلب حروفه. اللي بيصلّح اللخبطة العزل ([[bdi]] أو [[<span dir="ltr">]]).
+
+~~~text الناتج (مكان كل حرف على الشاشة، بالبيكسل من الشمال، عرض المعاينة 360)
+أ:  A عند x أكبر من B، و B أكبر من C     →  بتتشاف: CBA
+ب:  س عند x أصغر من ل، ثم ا، ثم م       →  الحروف من الشمال لليمين
+ج:  A أصغر من B أصغر من C               →  بتتشاف: ABC
+bdo:  unicode-bidi = isolate-override       bdi:  unicode-bidi = isolate
+~~~` },
+          ],
+          title: "حرف تحت السطر وفوقه، وكسر السطر: sub و sup و br (ومعاهم wbr و hr و ruby و bdo)",
+          desc: R`[[<sub>]] حرف تحت السطر (H₂O) و [[<sup>]] حرف فوقه (م²، ورقم الحاشية). [[<br>]] كسر سطر جزء من المحتوى (عنوان، قصيدة). [[<wbr>]] مكان مسموح للمتصفح يكسر عنده لو السطر مكفّاش. [[<hr>]] فاصل معناه إن الموضوع اتغيّر.
+
+ومعاهم عنصرين هتقابلهم قليل: [[<ruby>]] (ومعاه [[<rt>]] و [[<rp>]]) بيكتب النطق فوق الكلمة، و [[<bdo>]] بيجبر اتجاه الحروف.`,
+          example: R`<p>المية H<sub>2</sub>O، ومساحة الشقة ١٢٠ م<sup>2</sup>.</p>
+<p>مكتبة الحروف<br>١٢ شارع النيل<br>المنصورة</p>
+<p>حمّل الملف quarterly_<wbr>financial_<wbr>report_<wbr>2026.pdf من هنا.</p>
+<hr>
+<p>الشبكة اسمها <ruby>Wi-Fi<rp> (</rp><rt>واي فاي</rt><rp>)</rp></ruby>.</p>
+<p>الحروف معكوسة: <bdo dir="rtl">ABC</bdo></p>`,
+          try: R`اكتب فقرة من سطرين طوال، وفي نص السطر الأول حط [[م<sup>2</sup>]]. بصّ على المسافة بين السطرين: زي باقي الفقرات؟ وبعدين اكتب عنوان من تلات سطور مرة بـ [[<br>]] ومرة كل سطر في [[<p>]] وقارن الشكل.`,
+          flag: "script",
+          deep: {
+            why: R`فيه كتابة مكان الحرف فيها جزء من المعنى: «م2» و «م²» مش واحد، و «H2O» الكيميائي بيكتبها H₂O. وفيه نص السطور فيه جزء منه: العنوان البريدي تلات سطور مش جملة واحدة. الحاجات دي مش «تنسيق» يتساب للـ CSS، لأنها لو راحت النص بيتقري غلط. وفي الناحية التانية، المتصفح بيكسر السطور لوحده حسب عرض الشاشة، وساعات محتاج مساعدة (اسم ملف طويل) أو منع (الدرس اللي فات: [[&nbsp;]]).`,
+            how: R`[[sub]] و [[sup]]: الستايل الافتراضي في المواصفة [[vertical-align: sub]] و [[super]]، و [[font-size: smaller]]. اتقاس في Chrome 157: 13.33px لما الأب 16px. والأدوار [[subscript]] و [[superscript]].
+
+[[br]] و [[wbr]] عناصر فاضية (void): ملهمش قفلة ولا محتوى. [[br]] بيكسر السطر دايمًا، و [[wbr]] بيدّي فرصة كسر.
+
+[[hr]] عنصر block فاضي. اتقاس: [[margin]] فوق وتحت 8px، و [[border]] سمكه 1px بستايل [[inset]] رمادي، وارتفاعه الكلي 2px، وعرضه عرض الأب كله. ودوره [[separator]].
+
+[[ruby]] بيتعرض [[display: ruby]]، و [[rt]] جواه [[display: ruby-text]] وحجمه نص حجم الأب (8px)، و [[rp]] [[display: none]].
+
+[[bdo]]: [[unicode-bidi: isolate-override]] ومعاه الاتجاه اللي في [[dir]].`,
+            when: R`[[sub]]: صيغ كيميا، ورقم متغير في سلسلة (x₁).
+
+[[sup]]: أُس، ووحدات مربعة ومكعبة، ورقم حاشية، وترتيب بالإنجليزي (1st).
+
+[[br]]: عنوان بريدي، وقصيدة، وكلمات أغنية، وأي نص تقسيم سطوره من أصله.
+
+[[wbr]]: اسم ملف أو URL أو كلمة طويلة من غير مسافات ممكن تبوّظ عرض الصفحة.
+
+[[hr]]: تغيير مشهد في قصة، أو انتقال لموضوع تاني جوه نفس القسم من غير عنوان جديد.
+
+[[ruby]]: نطق كلمة فوقها. أساسًا للياباني والصيني، وينفع لنطق مصطلح أجنبي.
+
+[[bdo]]: نادر جدًا. لما تكون عايز ترتيب حروف معيّن بالإجبار.`,
+            mistakes: R`[[<br><br>]] عشان مسافة بين فقرتين: دول [[<p>]] اتنين. MDN بيقول إن ده مشكلة لقارئ الشاشة كمان: ممكن يعلن عن العنصر ومفيش محتوى.
+
+[[br]] بين حقول فورم أو لينكات عشان ينزلوا تحت بعض: المواصفة كاتبة المثالين دول كاستخدام غلط.
+
+[[sup]] أو [[sub]] للشكل (اسم شركة، كلمة صغيرة مرفوعة): CSS.
+
+[[sup]] بيعلّي السطر: السطر اللي فيه [[sup]] بيبقى أطول شوية من اللي حواليه (اتقاس 22.3px بدل 18). بيتصلّح بالـ CSS.
+
+[[hr]] للزينة أو بين كل فقرتين: MDN بيقول لو عايز خط وبس، ارسمه بـ border في الـ CSS.
+
+[[hr]] بين [[<section>]] و [[<section>]]: المواصفة بتقول ملوش لزوم، العناوين بتقول إن الموضوع اتغيّر.
+
+[[bdo]] من غير [[dir]]: المواصفة بتقول إن [[dir]] إجباري عليه، و [[auto]] ممنوعة.
+
+[[bdo]] بدل [[bdi]] لعزل نص: هيقلب الحروف.
+
+[[<ruby>]] من غير [[<rp>]]: هيشتغل في المتصفحات الحالية، بس أي برنامج بياخد النص الخام هيلزّق النطق في الكلمة.`
+          },
+          teach: R`## الفكرة في سطرين
+
+تلات مجموعات: حروف بتطلع وتنزل عن السطر ([[sub]] و [[sup]])، وعناصر بتتحكم في كسر السطر والفصل ([[br]] و [[wbr]] و [[hr]])، وعنصرين نادرين للنطق والاتجاه ([[ruby]] و [[bdo]]). القياسات من Chrome 157.
+
+---
+
+## ١. [[<sub>]] و [[<sup>]]: تحت السطر وفوقه
+
+[[sub]] من subscript (تحت)، و [[sup]] من superscript (فوق).
+
+~~~live 70 80 sub و sup
+<p>المية H<sub>2</sub>O، ومساحة الشقة ١٢٠ م<sup>2</sup>، و <var>س</var><sup>3</sup> يعني س تكعيب.</p>
+~~~
+
+~~~text القياس
+sub:  vertical-align = sub     font-size = 13.3333px (الفقرة 16px)   الدور = subscript
+sup:  vertical-align = super   font-size = 13.3333px                 الدور = superscript
+النص الخام (textContent):  المية H2O، ومساحة الشقة ١٢٠ م2، و س3 يعني س تكعيب.
+~~~
+
+- [[vertical-align]] خاصية CSS بتحدد العنصر واقف فين بالنسبة للسطر: [[sub]] نازل و [[super]] طالع.
+- النص الخام فيه الرقم العادي. فالبحث في الصفحة عن «H2O» بيلاقيها.
+
+### إمتى؟
+
+المواصفة: العنصرين دول لكتابة **ليها معنى محدد**، مش للشكل. والقاعدة اللي كاتباها: استخدمهم بس لو غيابهم يغيّر معنى المحتوى.
+
+| صح | غلط |
+|---|---|
+| H₂O، وأُس، و م²، ورقم حاشية | كلمة صغيرة مرفوعة في لوجو |
+| ترتيب بالإنجليزي (4th)، واختصارات فرنساوي (Mlle) | أي حاجة عايزها «أصغر شوية وفوق» |
+
+### [[sup]] بيعلّي السطر
+
+~~~live 130 150 السطر اللي فيه sup أطول
+<p style="width: 150px">كلام كلام كلام كلام كلام كلام كلام كلام</p>
+<p style="width: 150px">كلام كلام م<sup>2</sup> كلام كلام كلام كلام كلام</p>
+~~~
+
+[[style="width: 150px"]] سطر CSS بيضيّق الفقرة عشان تتكسر على سطرين. قست فقرتين زي دول بعرض 120px:
+
+~~~text القياس
+من غير sup:  ارتفاع الفقرة = 36px      (سطرين × 18)
+بـ sup:      ارتفاع الفقرة = 40.3px    (السطر اللي فيه sup بقى 22.3)
+~~~
+
+الحرف المرفوع محتاج مكان فوق، فالسطر بتاعه بيطول والمسافات بين السطور مبتبقاش متساوية. ده بيتصلّح بالـ CSS (خاصية [[line-height]]). دلوقتي كفاية تعرف إنه طبيعي.
+
+---
+
+## ٢. [[<br>]]: كسر سطر من المحتوى
+
+[[br]] من break. المواصفة: [[br]] بيمثّل **كسر سطر**، ولازم يتستخدم بس للكسر اللي هو **جزء من المحتوى فعلًا**، زي القصايد والعناوين.
+
+~~~live 100 110 br في عنوان
+<p>مكتبة الحروف<br>١٢ شارع النيل<br>المنصورة</p>
+~~~
+
+فقرة واحدة على تلات سطور. العنوان البريدي بيتكتب كده على أي ظرف، فالكسر جزء منه.
+
+[[br]] عنصر فاضي (void): ملوش قفلة. [[<br>]] وبس. (والدرس الأول شرح إن [[<br/>]] مقبولة و [[</br>]] بتتحوّل لـ br تاني.)
+
+### الغلط: [[br]] للمسافات
+
+~~~live 100 170 غلط: فقرتين معمولين بـ br
+<p>بدأنا سنة ٢٠١٠ في طنطا.<br><br>دلوقتي عندنا ٨ فروع.</p>
+~~~
+
+~~~live 90 150 صح: فقرتين
+<p>بدأنا سنة ٢٠١٠ في طنطا.</p>
+<p>دلوقتي عندنا ٨ فروع.</p>
+~~~
+
+الشكل قريب، والشجرة مختلفة:
+
+| | الغلط | الصح |
+|---|---|---|
+| عدد الفقرات ([[paragraph]]) | 1 | 2 |
+| عدد [[br]] | 2 | 0 |
+| المسافة بين الجملتين | سطر فاضي كامل (18px) | الـ margin بتاع الفقرات (16px)، وبيتغيّر بالـ CSS |
+
+قارئ الشاشة بيتنقل فقرة فقرة، وفي الغلط هيلاقي فقرة واحدة. والمواصفة كاتبة حالتين تانيين كاستخدام غلط: [[br]] بين لينكات عشان ينزلوا تحت بعض، و [[br]] بين حقول فورم.
+
+---
+
+## ٣. [[<wbr>]]: فرصة كسر
+
+[[wbr]] من word break opportunity. المواصفة: [[wbr]] بيمثّل **line break opportunity**: مكان المتصفح **مسموح له** يكسر السطر عنده لو احتاج.
+
+المتصفح بيكسر عند المسافات. الكلمة الطويلة اللي مفيهاش مسافات (اسم ملف، أو URL) بتفضل قطعة واحدة ولو أعرض من الشاشة:
+
+~~~live 150 170 دوس «موبايل»: الأولى بتزق الصفحة
+<p>حمّل الملف quarterly_financial_report_final_version_2026_approved_by_manager.pdf من هنا</p>
+<p>حمّل الملف quarterly_<wbr>financial_<wbr>report_<wbr>final_<wbr>version_<wbr>2026_<wbr>approved_<wbr>by_<wbr>manager.pdf من هنا</p>
+~~~
+
+~~~text القياس (عرض 360)
+من غير wbr:  عرض الفقرة = 479    scrollWidth للصفحة = 487   (scroll أفقي)
+بـ wbr:      عرض الفقرة = 344    scrollWidth للصفحة = 360
+~~~
+
+على شاشة عريضة الفقرتين شكلهم واحد: [[wbr]] مبيبانش ومبيعملش حاجة غير لما السطر يضيق. وطول النص الخام واحد في الاتنين (87 حرف): العنصر مبيضيفش حرف.
+
+| | [[<br>]] | [[<wbr>]] | [[&nbsp;]] |
+|---|---|---|---|
+| بيعمل إيه | بيكسر السطر دايمًا | بيسمح بالكسر لو لازم | بيمنع الكسر |
+
+و MDN بيقول إن [[wbr]] مبيحطش شرطة عند الكسر. لو عايز شرطة تظهر عند الكسر بس، فيه [[&shy;]] (soft hyphen).
+
+---
+
+## ٤. [[<hr>]]: الموضوع اتغيّر
+
+[[hr]] كان اسمه horizontal rule (خط أفقي). المواصفة الحالية عرّفته بالمعنى: **thematic break** على مستوى الفقرات. مثالينها: تغيير المشهد في قصة، والانتقال لموضوع تاني جوه قسم في كتاب.
+
+~~~live 110 190 hr بين مشهدين
+<p>قفلت نور اللابتوب ونامت وهي لسه بتفكر في الباج.</p>
+<hr>
+<p>الصبح، أول ما فتحت عينيها، عرفت الغلطة فين.</p>
+~~~
+
+~~~text القياس
+display = block   margin فوق وتحت = 8px   border = 1px inset rgb(128, 128, 128)
+الارتفاع الكلي = 2px   العرض = عرض الأب كله   الدور = separator
+~~~
+
+[[hr]] عنصر فاضي زي [[br]]: ملوش قفلة. وبياخد سطر لوحده، فبيتحط **بين** الفقرات مش جواها.
+
+تلات حاجات من المواصفة و MDN:
+
+- **مش للزينة.** لو عايز خط وبس، MDN بيقول ارسمه بـ border في الـ CSS.
+- **مش بين الأقسام.** بين [[<section>]] و [[<section>]] ملوش لزوم: كل قسم ليه عنوان، والعنوان بيقول إن الموضوع اتغيّر.
+- شكله (اللون والسمك) بيتغيّر بالـ CSS زي أي عنصر. المعنى ثابت.
+
+---
+
+## ٥. [[<ruby>]] و [[<rt>]] و [[<rp>]]: النطق فوق الكلمة
+
+المواصفة: [[ruby]] بيخليك تحط **ruby annotation** على نص: كلام قصير بيتعرض جنب النص الأساسي، وأشهر استخدام ليه في الياباني والصيني كدليل نطق.
+
+~~~live 60 110 ruby
+<p>العاصمة <ruby>東京<rp>(</rp><rt>طوكيو</rt><rp>)</rp></ruby>، والشبكة اسمها <ruby>Wi-Fi<rp> (</rp><rt>واي فاي</rt><rp>)</rp></ruby>.</p>
+~~~
+
+النطق صغير فوق الكلمة.
+
+### التلات عناصر
+
+- [[<ruby>]]: الحاوية. جواها النص الأساسي على طول.
+- [[<rt>]] (من ruby text): النص اللي بيتعرض فوق. المواصفة: لازم يبقى ابن مباشر لـ [[ruby]].
+- [[<rp>]] (من ruby parenthesis): أقواس احتياطية. المتصفح اللي بيدعم ruby **مبيعرضهاش**. المتصفح أو البرنامج اللي مبيدعمش هيعرض النص ورا بعض، فالأقواس بتخليه «東京(طوكيو)» بدل «東京طوكيو».
+
+~~~text القياس
+ruby: display = ruby
+rt:   display = ruby-text   font-size = 8px (نص الـ 16)
+rp:   display = none
+textContent = 東京(طوكيو)       (النص الخام فيه الأقواس)
+innerText   = 東京طوكيو         (المعروض مفيهوش)
+~~~
+
+آخر سطرين بيورّوا فايدة [[rp]]: أي حاجة بتاخد النص الخام (نسخ من برنامج، أو فهرس بحث) هتاخده بالأقواس ومفهوم.
+
+في صفحة عربي هتحتاجه قليل: نطق مصطلح أجنبي، أو موقع بيعلّم لغة. بس لازم تعرف شكله لما تقابله.
+
+---
+
+## ٦. [[<bdo dir="...">]]: إجبار الاتجاه
+
+درس «lang و dir» شرح إن المتصفح بيرتّب الحروف العربي والإنجليزي جنب بعض بخوارزمية (الـ Bidi)، وإن [[<bdi>]] بيعزل حتة نص عشان متلخبطش اللي حواليها. [[bdo]] من bidirectional **override**: المواصفة بتقول إنه بيخليك **تلغي** الخوارزمية وتجبر اتجاه.
+
+~~~live 90 110 bdo
+<p>العادي: ABC</p>
+<p>بـ bdo: <bdo dir="rtl">ABC</bdo></p>
+~~~
+
+السطر التاني بيتشاف CBA. الحروف هي هي بنفس ترتيبها في الملف ([[textContent]] لسه ABC)، بس اترصّت على الشاشة من اليمين للشمال.
+
+~~~text القياس
+bdo dir="rtl":  unicode-bidi = isolate-override   direction = rtl
+مكان الحروف (x من الشمال):  A أبعد حرف يمين، وبعده B، وبعده C
+~~~
+
+### [[dir]] إجباري
+
+المواصفة: لازم تكتب [[dir]] على [[bdo]]، بـ [[ltr]] أو [[rtl]]. والقيمة [[auto]] ممنوعة.
+
+### [[bdo]] ولا [[bdi]] ولا [[dir]]؟
+
+| | بيعمل إيه | مثال |
+|---|---|---|
+| [[<span dir="ltr">]] | بيقول اتجاه الحتة دي، والحروف جواها بتترتب طبيعي | رقم تليفون في جملة عربي |
+| [[<bdi>]] | بيعزل حتة اتجاهها مش معروف، والحروف بتترتب طبيعي | اسم مستخدم، كود خصم |
+| [[<bdo dir="rtl">]] | بيلغي الترتيب الطبيعي ويجبر كل حرف | نادر: مثال تعليمي، أو نص متخزن بترتيب العرض |
+
+لو بتصلّح لخبطة في جملة فيها عربي وإنجليزي، الحل عمره ما [[bdo]].
+
+---
+
+## الخلاصة
+
+| العنصر | معناه | الشكل الافتراضي |
+|---|---|---|
+| [[<sub>]] | حرف تحت السطر ليه معنى (H₂O) | أصغر ونازل |
+| [[<sup>]] | حرف فوق السطر ليه معنى (م²، حاشية) | أصغر وطالع |
+| [[<br>]] | كسر سطر من المحتوى (عنوان، قصيدة) | سطر جديد |
+| [[<wbr>]] | مسموح تكسر هنا لو لازم | مبيبانش |
+| [[<hr>]] | الموضوع اتغيّر | خط رمادي بعرض الصفحة |
+| [[<ruby>]] و [[<rt>]] و [[<rp>]] | نطق فوق الكلمة، وأقواس احتياطية | نص صغير فوق |
+| [[<bdo dir="rtl">]] | إجبار اتجاه الحروف | الحروف بتتقلب |`,
+          lines: [
+            R`[[sub]] للرقم اللي تحت في الصيغة الكيميائية، و [[sup]] للـ 2 بتاعة المتر المربع. الاتنين بيصغروا لـ 13.33px.`,
+            R`عنوان بريدي في فقرة واحدة، وكل [[<br>]] بينزّل اللي بعده سطر. الكسر هنا جزء من العنوان نفسه.`,
+            R`[[<wbr>]] بعد كل [[_]] في اسم الملف: لو الشاشة ضيقة المتصفح يكسر عند واحدة منهم بدل ما الصفحة تتزق.`,
+            R`[[hr]] فاصل معناه إن اللي جاي موضوع تاني. عنصر فاضي ملوش قفلة، ودوره [[separator]].`,
+            R`[[ruby]] حوالين الكلمة، و [[rt]] النطق اللي بيتعرض فوقها، و [[rp]] أقواس بتظهر بس في برنامج مبيدعمش ruby.`,
+            R`[[bdo]] مع [[dir="rtl"]] بيجبر الحروف الإنجليزي تترص من اليمين، فبتتشاف CBA.`
+          ],
+          sol: R`**المسافة بين السطرين:** لأ، مش زي الباقي. السطر اللي فيه [[sup]] أطول شوية: الحرف المرفوع محتاج مكان فوق، فالمتصفح بيعلّي السطر كله. في القياس السطر بقى 22.3px بدل 18.
+
+**العنوان بـ [[br]] وبـ [[p]]:** بالـ [[br]] التلات سطور لازقين في بعض (فقرة واحدة، ارتفاعها 54px). وبالـ [[p]] بين كل سطر والتاني مسافة 16px (الـ margin بتاع الفقرة)، فالعنوان بيبان كإنه تلات حاجات مش حاجة واحدة. العنوان حاجة واحدة، فالصح [[br]].
+
+~~~text الناتج (Chrome 157)
+فقرة سطرين من غير sup = 36px      بـ sup = 40.3px
+العنوان بـ br:  1 فقرة ، ارتفاعها 54px
+العنوان بـ p:   3 فقرات ، بين كل اتنين 16px
+~~~`,
+          ref: [
+            { t: "WHATWG: the sub and sup elements", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-sub-and-sup-elements" },
+            { t: "WHATWG: the br element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-br-element" },
+            { t: "WHATWG: the wbr element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-wbr-element" },
+            { t: "WHATWG: the hr element", url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-hr-element" },
+            { t: "WHATWG: the ruby element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-ruby-element" },
+            { t: "WHATWG: the bdo element", url: "https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-bdo-element" },
+            { t: "MDN: <sub>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/sub" },
+            { t: "MDN: <sup>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/sup" },
+            { t: "MDN: <br>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/br" },
+            { t: "MDN: <wbr>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/wbr" },
+            { t: "MDN: <hr>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hr" },
+            { t: "MDN: <ruby>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ruby" },
+            { t: "MDN: <bdo>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/bdo" },
+          ],
+          pre: ["css/code و pre و kbd", { to: "css/lang و dir", why: R`[[<bdo>]] مبني على الـ Bidi و [[<bdi>]] المشروحين هناك` }]
+        },
       ]
     }
 ]);

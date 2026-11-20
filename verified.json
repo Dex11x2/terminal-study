@@ -4560,9 +4560,9 @@
   "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
  },
  "css|filter و backdrop-filter": {
-  "hash": "ae41bf7426c5",
+  "hash": "f165e41bde6c",
   "date": "2026-11-19",
-  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
+  "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation؛ لينك ref اتنقل ٢٠ نوفمبر"
  },
  "css|flex-flow و grid-template": {
   "hash": "a53292844fca",
@@ -4885,9 +4885,9 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|replaced elements والتراخيص": {
-  "hash": "59ffed754cf2",
+  "hash": "3de74752f36b",
   "date": "2026-11-19",
-  "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
+  "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing؛ لينك ref اتنقل ٢٠ نوفمبر"
  },
  "css|rgb و hsl و oklch": {
   "hash": "e4fd4a6a94ff",
@@ -5060,9 +5060,9 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود؛ حلول تمارين اتضاف لها عرض حي (view من ملفات الحل أو live للحتة) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|white-space و overflow-wrap": {
-  "hash": "99473a0a419c",
+  "hash": "3c4fa7cc4242",
   "date": "2026-11-19",
-  "on": "Chrome 157 headless on Windows 11 (computed values, screenshots, local Node server for fonts); docs: :visited rendering, font block period, hyphens: auto, other browsers"
+  "on": "Chrome 157 headless on Windows 11 (computed values, screenshots, local Node server for fonts); docs: :visited rendering, font block period, hyphens: auto, other browsers؛ لينك ref اتنقل ٢٠ نوفمبر"
  },
  "css|z-index": {
   "hash": "20d484894bcf",
