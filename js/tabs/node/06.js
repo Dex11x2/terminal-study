@@ -1174,12 +1174,17 @@ prof.samples.forEach((id, i) => {
 console.log("top self time:", [...self].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([n, t]) => n + " " + (t / total).toFixed(2)).join(" | "));
 console.log("slowUnique share: of all " + (inSlow / total).toFixed(2) + ", of JS " + (inSlow / js).toFixed(2));
 console.log("slowUnique holds most of the JS time:", inSlow / js > 0.5);`, expect: [R`unique: 15000`, R`slowUnique holds most of the JS time: true`] },
-            { os: [R`macos`], sh: R`node`, run: R`// الماك (Apple Silicon في GitHub Actions، ٢٠ نوفمبر): بـ --no-turbo-inlining لوحده، أتقل نقطة كانت (anonymous)@app.mjs:1:1 (0.93):
-// الكود اللي في أول الملف، يعني slowUnique اندمجت جواه. V8 فيه compiler تاني (Maglev) بيدمج هو كمان، فالفحص بيجرّب الاتنين.
+            { os: [R`macos`], sh: R`node`, run: R`// الماك (Apple Silicon في GitHub Actions، ٢٠ نوفمبر): أتقل نقطة (anonymous)@app.mjs:1:1 (الكود اللي بينادي slowUnique)، و slowUnique 0.01،
+// حتى مع --no-turbo-inlining و --no-maglev-inlining: يعني مش inlining. التشغيل التالت بيشيل includes() (دالة builtin جوه V8) ويحط loop عادي.
 import { writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
-writeFileSync("app.mjs", 'function slowUnique(list) { const out = []; for (const x of list) if (!out.includes(x)) out.push(x); return out; }\nconst ids = Array.from({ length: 30000 }, (_, i) => "u" + (i % 15000));\nconsole.log("unique:", slowUnique(ids).length);\n');
-for (const flags of [["--no-turbo-inlining"], ["--no-turbo-inlining", "--no-maglev-inlining"]]) {
+const runs = [
+  ["includes، turbo off", 'function slowUnique(list) { const out = []; for (const x of list) if (!out.includes(x)) out.push(x); return out; }\nconst ids = Array.from({ length: 30000 }, (_, i) => "u" + (i % 15000));\nconsole.log("unique:", slowUnique(ids).length);\n', ["--no-turbo-inlining"]],
+  ["includes، turbo و maglev off", 'function slowUnique(list) { const out = []; for (const x of list) if (!out.includes(x)) out.push(x); return out; }\nconst ids = Array.from({ length: 30000 }, (_, i) => "u" + (i % 15000));\nconsole.log("unique:", slowUnique(ids).length);\n', ["--no-turbo-inlining", "--no-maglev-inlining"]],
+  ["loop عادي من غير builtin", 'function slowUnique(list) { const out = []; for (const x of list) { let seen = false; for (let i = 0; i < out.length; i++) if (out[i] === x) { seen = true; break; } if (!seen) out.push(x); } return out; }\nconst ids = Array.from({ length: 30000 }, (_, i) => "u" + (i % 15000));\nconsole.log("unique:", slowUnique(ids).length);\n', []],
+];
+for (const [label, src, flags] of runs) {
+  writeFileSync("app.mjs", src);
   const r = spawnSync(process.execPath, [...flags, "--cpu-prof", "--cpu-prof-name=p.cpuprofile", "app.mjs"], { encoding: "utf8" });
   const prof = JSON.parse(readFileSync("p.cpuprofile", "utf8"));
   const byId = new Map(prof.nodes.map((n) => [n.id, n]));
@@ -1188,7 +1193,7 @@ for (const flags of [["--no-turbo-inlining"], ["--no-turbo-inlining", "--no-magl
   prof.samples.forEach((id, i) => { total += prof.timeDeltas[i]; for (let x = id; x !== undefined; x = parent.get(x)) if (byId.get(x).callFrame.functionName === "slowUnique") { inSlow += prof.timeDeltas[i]; break; } });
   const top = [...prof.samples.reduce((m, id, i) => m.set(id, (m.get(id) ?? 0) + prof.timeDeltas[i]), new Map())].sort((a, b) => b[1] - a[1])[0][0];
   const c = byId.get(top).callFrame;
-  console.log(r.stdout.trim(), "|", flags.join(" "), "| slowUnique " + (inSlow / total).toFixed(2), "| heaviest:", (c.functionName || "(anonymous)") + "@" + (c.url.split("/").pop() || "-") + ":" + (c.lineNumber + 1) + ":" + (c.columnNumber + 1));
+  console.log(r.stdout.trim(), "|", label, "| slowUnique " + (inSlow / total).toFixed(2), "| heaviest:", (c.functionName || "(anonymous)") + "@" + (c.url.split("/").pop() || "-") + ":" + (c.lineNumber + 1) + ":" + (c.columnNumber + 1));
 }`, expect: [R`unique: 15000`, R`heaviest:`], show: true },
           ],
         },
