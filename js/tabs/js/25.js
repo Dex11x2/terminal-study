@@ -1,1318 +1,1433 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "Web Components",
+      t: "PWA و service worker",
       l: 3,
-      n: "عناصر HTML بتعملها بنفسك (<user-card>) من غير framework: custom elements و shadow DOM و slots، وإزاي تستخدمها جوه React و Vue، وتدخل الفورم بـ ElementInternals، وتظهر من غير flash بـ Declarative Shadow DOM و :defined",
+      n: "الموقع يتسطّب ويشتغل من غير نت: manifest، ودورة حياة الـ SW، واستراتيجيات الكاش، وزرار «نسخة جديدة»، و IndexedDB ومساحة التخزين، والـ push و Background Sync",
       projects: [
-        { lvl: 'صغير', t: R`[[<relative-time>]] زي GitHub`, what: R`[[<relative-time datetime="2026-10-29T10:00:00Z">]] بيكتب «قبل 3 دقائق» بـ [[Intl.RelativeTimeFormat("ar", { numeric: "auto" })]] (درس customElements.define)، وبيتحدّث كل دقيقة بـ [[setInterval]] بيتعمل في [[connectedCallback]] ويتمسح في [[disconnectedCallback]]، وبيسمع لتغيير [[datetime]].`, done: R`تاريخ من 3 دقايق بيطلع «قبل 3 دقائق» ومن يوم بيطلع «أمس»، وبعد دقيقة النص بيتغير لوحده، و [[setAttribute("datetime", ...)]] بيحدّثه على طول، و [[remove()]] بيوقّف الـ interval (عدّاد في الـ callback بيقف)، وتاريخ غلط بيكتب «تاريخ غلط» مش «Invalid Date».` },
-        { lvl: 'صغير', t: R`[[<toggle-switch>]] بالكيبورد`, what: R`مفتاح on/off بـ shadow DOM (درس ٢) و [[checked]] boolean بيعمل reflect (درس ٤): [[role="switch"]] و [[aria-checked]] و [[tabindex="0"]]، وبيتقلب بالضغط أو Space أو Enter، وبيبعت [[change]] event فيه [[detail.checked]].`, done: R`Tab بيوصله و Space بيقلبه، و [[el.checked = true]] بيحط attribute [[checked]] و [[removeAttribute("checked")]] بيرجّع [[el.checked]] بـ [[false]]، و [[aria-checked]] ماشي مع الحالة، والـ [[change]] بيتبعت مرة واحدة لكل تغيير من اليوزر ومبيتبعتش لما الكود يغيّر [[checked]].` },
-        { lvl: 'متوسط', t: R`[[<tab-group>]] بالـ slots`, what: R`[[<tab-group>]] جواه [[<button slot="tab">]] و [[<section slot="panel">]] بأي عدد (درس slots)، و [[slotchange]] بيربط كل تاب باللوحة بتاعته، والأسهم يمين وشمال بتتنقل بين التابات، والتاب النشط attribute [[selected]] (درس ٤)، و event [[tab-change]] بـ [[composed: true]].`, done: R`٣ تابات بيشتغلوا بالماوس والأسهم، وتزويد تاب رابع من Console بيشتغل من غير refresh، و [[selected="2"]] في الـ HTML بيفتح التالت، والـ CSS بتاع الصفحة مبيبوّظش شكل التابات، و listener على [[document]] بيستقبل [[tab-change]] بالـ index الصح.` },
-        { lvl: 'متوسط', t: R`design system صغير`, what: R`٣ components ([[<ui-button>]] و [[<ui-card>]] و [[<ui-badge>]]) بيشاركوا [[CSSStyleSheet]] واحد بـ [[adoptedStyleSheets]] (درس shadow DOM)، والألوان كلها CSS custom properties، و [[::part]] للأجزاء اللي مسموح تتغير، وصفحة demo فيها الـ light و dark بتغيير variables على [[:root]] بس.`, done: R`تغيير [[--ui-primary]] في [[:root]] بيغيّر الـ ٣ components مع بعض، و [[p { color: red }]] في الصفحة مبيأثرش جواهم، و [[ui-button::part(label)]] بيكبّر الخط، والـ dark mode بيتقلب بزرار واحد من غير ما يلمس أي component، والـ stylesheet اتعمل مرة واحدة بس (ابحث في الكود: [[new CSSStyleSheet]] مرة واحدة).` },
-        { lvl: 'كبير', t: R`[[<image-uploader>]] تستخدمه في أي framework`, what: R`component بيجمع الوحدة دي مع APIs المتصفح: input و drag and drop ومعاينة وفحص النوع بأول bytes والحجم، ورفع بـ progress وإلغاء. attributes [[accept]] و [[max-size]] و [[endpoint]] و [[multiple]]، و events [[upload-start]] و [[upload-done]] و [[upload-error]] بـ [[composed: true]]، و slots للنص والأيقونة، و [[revokeObjectURL]] و [[abort()]] لكل حاجة في [[disconnectedCallback]]. واستخدمه في صفحة HTML عادية، و React 19، و Vue.`, done: R`ملف أكبر من [[max-size]] أو نوعه غلط بيطلع [[upload-error]] فيه السبب ومبيتبعتش، والرفع على Slow 4G بيبين progress والإلغاء بيشتغل، وشيل العنصر من الصفحة في نص الرفع بيلغي الـ request (Network يأكد)، ونفس الـ component شغال في التلات أماكن والـ events بتوصل لـ state بتاع React و Vue، و تستات بـ [[node:test]] و jsdom بتتأكد من الـ attributes والـ events من غير متصفح.`, ext: R`خليه form-associated بـ [[attachInternals()]] عشان يتبعت مع الفورم، وزوّد crop للصورة، وانشره على npm بـ README وصفحة demo.` },
-        { lvl: 'فكرة', t: R`component تستخدمه في كل مشاريعك`, what: R`اختار حاجة بتعملها في كل مشروع (modal، أو toast، أو dropdown، أو date picker، أو rating) وابنيها Web Component واحد يشتغل مع أي framework: attributes للقيم البسيطة، و properties للمعقدة، و events للي بيحصل، و slots للمحتوى، و CSS variables للشكل.`, done: R`فيه صفحة demo فيها كل الحالات، وبيشتغل بالكيبورد بس، ومستخدم في مشروعين مختلفين على الأقل (واحد منهم React أو Vue)، و README بيشرح كل attribute و event بمثال.`, ext: R`اعمله بـ Lit وقارن حجم الكود والـ bundle بالنسخة اللي من غير مكتبة، وزوّد Declarative Shadow DOM عشان يترندر من السيرفر.` },
+        { lvl: 'صغير', t: R`مشروع قديم يتسطّب`, what: R`خد أي موقع عملته قبل كده وزوّد له [[manifest.webmanifest]] كامل (درس ١): [[name]] و [[short_name]] و [[start_url]] و [[display]] وأيقونة 192 و 512 وأيقونة maskable، واربطه من كل صفحة.`, done: R`Application ← Manifest مفيهوش ولا warning، وأيقونة التسطيب بتظهر في شريط العنوان في Chrome (ده محتاج كمان service worker بسيط لو المتصفح طالبه)، والتطبيق بعد التسطيب بيفتح في شباك لوحده بالاسم والأيقونة بتوعك، والأيقونة الـ maskable جوه دايرة الأمان في معاينة DevTools.` },
+        { lvl: 'صغير', t: R`صفحة «انت offline» محترمة`, what: R`service worker صغير (درس ٢) بيعمل precache لـ [[offline.html]] وملف CSS بتاعها بس، وفي الـ fetch لأي [[navigate]] بيجرّب الشبكة ولو فشلت يرجّع [[offline.html]] (درس ٣).`, done: R`Network ← Offline وتفتح أي صفحة حتى لو مزرتهاش: [[offline.html]] بتظهر بالـ CSS بتاعها مش ديناصور Chrome، ولما ترجع Online الصفحات بترجع عادي، والصور والـ API مش بيتكيّشوا (Cache storage فيه ملفين بس).` },
+        { lvl: 'متوسط', t: R`موقع شرح بيشتغل من غير نت`, what: R`موقع ٥ صفحات: precache للـ shell في الـ install، و network-first للصفحات، و cache-first للـ assets، و stale-while-revalidate للـ JSON (درس ٣)، ومسح الكاش القديم في activate (درس ٢)، وشريط «فيه نسخة جديدة» (درس ٤).`, done: R`بعد ما تزور الصفحات مرة، Offline بيفتحها كلها، وعمود Size في Network فيه [[(ServiceWorker)]] للملفات، وتغيير [[CACHE]] بيظهر الشريط، و «حدّث» بيعمل reload مرة واحدة، و Cache storage بعدها فيه الكاش الجديد بس.` },
+        { lvl: 'متوسط', t: R`ملاحظات offline في كل التابات`, what: R`صفحة ملاحظات بـ IndexedDB و [[idb]] (درس ٦): إضافة وتعديل ومسح وترتيب بـ index على [[updatedAt]]، و BroadcastChannel بيحدّث التابات التانية، و [[navigator.storage.persist()]]، وكل ده جوه PWA بـ vite-plugin-pwa (درس ٥).`, done: R`ملاحظة تضيفها في تاب بتظهر في التاب التاني من غير refresh، والداتا بتفضل بعد ما تقفل المتصفح وتفتحه وانت Offline، ومسح ملاحظة بيختفي من التابين، و Application ← IndexedDB فيه نفس عدد الملاحظات اللي في الصفحة.` },
+        { lvl: 'كبير', t: R`تطبيق مهام PWA بيزامن لما النت يرجع`, what: R`تطبيق مهام بـ Vite و vite-plugin-pwa بـ [[registerType: "prompt"]] (درس ٥): المهام في IndexedDB (درس ٦)، وأي تغيير وانت offline بيتحط في store اسمه [[outbox]] وبيتبعت لـ API بـ Express على localhost لما [[online]] يحصل أو الصفحة تفتح. فيه: فحص المدخلات (عنوان فاضي أو أطول من 200 حرف بيترفض)، و upgrade لـ version 2 بيزوّد index من غير ما يمسح الداتا، و [[QuotaExceededError]] متمسوك برسالة، وزرار «نسخة جديدة» (درس ٤)، و BroadcastChannel بين التابات.`, done: R`Offline: تضيف ٣ مهام وتعدّل واحدة، و [[outbox]] فيه ٤ عمليات. Online: لوج السيرفر فيه ٤ requests بنفس الترتيب، و [[outbox]] بيفضى، ولو السيرفر رجّع 500 العمليات بتفضل مستنية ومبتتمسحش. version 2 فتح على داتا version 1 والمهام كلها موجودة. التطبيق بيتسطّب وبيفتح Offline من أول مرة بعد التسطيب، وتشغيله مرتين في تابين مبيبعتش نفس العملية مرتين.`, ext: R`زوّد login وكل يوزر ليه مهامه، وحل التعارض لو نفس المهمة اتعدّلت من جهازين، و push notifications للتذكير، وانشره على HTTPS وسطّبه على موبايلك.` },
+        { lvl: 'فكرة', t: R`حوّل حاجة بتستخدمها لـ PWA`, what: R`فكّر في أداة صغيرة بتفتحها كل يوم ومحتاجها حتى من غير نت (قايمة مشتريات، مصاريف، مذاكرة بالكروت، تايمر تمارين) وابنيها PWA من الأول: انت اللي بتقرر إيه يتكيّش، وإيه يتحفظ في IndexedDB، وإيه محتاج نت.`, done: R`فيه README بيقول كل نوع request بيستخدم أنهي استراتيجية وليه، والتطبيق بيتسطّب على موبايلك، وبيشتغل في وضع الطيارة، وفيه طريقة تصدّر الداتا كـ JSON عشان متضيعش لو المتصفح مسحها.`, ext: R`زوّد sync مع سيرفر بتاعك، و shortcuts في الـ manifest، و share target لو بتستقبل لينكات، وجرّبه على iOS واكتب الفروق اللي لقيتها.` },
       ],
       items: [
         {
-          cmd: "customElements.define",
-          title: "تعمل tag HTML جديد بـ customElements.define (custom elements)",
-          desc: R`[[customElements.define("user-card", UserCard)]] بيسجّل tag جديد، و [[UserCard]] class بيورث [[HTMLElement]]. من ساعتها أي [[<user-card>]] في الصفحة (حتى اللي كان موجود قبل التسجيل) بيبقى instance من الـ class ده.
+          cmd: "manifest.webmanifest",
+          title: "تخلي الموقع يتسطّب كتطبيق إزاي؟",
+          desc: R`الـ PWA (Progressive Web App) موقع عادي بيتسطّب على الموبايل والكمبيوتر كأنه تطبيق: أيقونة على الشاشة، ويفتح في شباك لوحده من غير شريط العنوان، وممكن يشتغل من غير نت. أول حتة هي الـ manifest: ملف JSON بيوصف التطبيق، وبتربطه من الـ HTML بـ [[<link rel="manifest" href="manifest.webmanifest">]].
 
-الـ class ليه lifecycle callbacks: [[connectedCallback]] لما يدخل الصفحة، و [[disconnectedCallback]] لما يتشال، و [[attributeChangedCallback]] لما attribute من اللي في [[observedAttributes]] يتغير. والاسم **لازم** فيه [[-]].`,
-          example: R`class UserCard extends HTMLElement {
-  static observedAttributes = ["name", "role"];
-  constructor() {
-    super();
-    console.log("constructor");
-  }
-  connectedCallback() {
-    console.log("connected");
-    this.render();
-  }
-  disconnectedCallback() {
-    console.log("disconnected");
-  }
-  attributeChangedCallback(name, oldValue, newValue) {
-    console.log($__btattribute $__{name}: $__{oldValue} -> $__{newValue}$__bt);
-    this.render();
-  }
-  render() {
-    const name = this.getAttribute("name") ?? "Guest";
-    const role = this.getAttribute("role") ?? "member";
-    this.textContent = $__bt$__{name} ($__{role})$__bt;
-  }
-}
-customElements.define("user-card", UserCard);`,
-          try: R`احفظ المثال [[user-card.js]]، واعمل صفحة فيها [[<user-card name="Sara" role="admin"></user-card>]] و [[<script type="module" src="user-card.js">]]. افتح Console: الترتيب إيه؟ وبعدين في الـ Console: [[document.querySelector("user-card").setAttribute("role", "owner")]]، وبعدين [[.remove()]]، وبعدين جرّب [[customElements.define("usercard", class extends HTMLElement {})]].`,
+الموقع اللي انت بتذاكر فيه ده نفسه PWA: ده الـ manifest بتاعه تقريبًا زي ما هو. أهم الحقول: [[name]] و [[short_name]] (تحت الأيقونة)، و [[start_url]] (يفتح على فين)، و [[display: "standalone"]] (من غير شريط المتصفح)، و [[icons]] (192 و 512 على الأقل، وواحدة [[maskable]] عشان Android يقصّها دايرة أو مربع من غير ما تتقطع)، و [[theme_color]] و [[background_color]] (لون الشريط وشاشة البداية)، و [[lang]] و [[dir]] للعربي.`,
+          example: R`// manifest.webmanifest (بتاع الموقع ده، مختصر)
+{
+  "name": "الترمنال بإيدك",
+  "short_name": "الترمنال",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1f2430",
+  "theme_color": "#1f2430",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}`,
+          try: R`افتح الموقع ده في Chrome، و DevTools ← Application ← Manifest: شوف الحقول والأيقونات وأي warnings. وبعدين في مشروع عندك: اعمل manifest بنفس الشكل وأيقونات (ممكن تولّدها بـ [[npx @vite-pwa/assets-generator]] أو أي أداة)، واربطه، وشوف أيقونة التسطيب ظهرت في شريط العنوان ولا لأ. ولو مظهرتش، Application ← Manifest هيقولك الناقص.`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل جوه try/catch: [[customElements.define("usercard", class extends HTMLElement {})]]، وبعدها تعرّف [[user-x]] مرتين، وبعدها نفس الـ class بإسمين مختلفين.`, done: R`الأول بيرمي [[DOMException]] اسمها [[SyntaxError]] (الاسم لازم فيه [[-]])، والتاني والتالت بيرموا [[NotSupportedError]] (الاسم أو الـ class اتسجّلوا قبل كده)، وتقدر تقول إزاي تتجنب التاني في ملف ممكن يتحمّل مرتين ([[if (!customElements.get("user-x"))]]).` },
-            { lvl: 'تطبيق', t: R`ابني [[<copy-button text="npm i idb">]]: زرار بيكتب «انسخ»، والضغط بيعمل [[navigator.clipboard.writeText]] للـ [[text]]، ويكتب «اتنسخ ✓» لمدة ثانيتين ويرجع، ولو النسخ فشل يكتب «مقدرتش أنسخ».`, done: R`تضغط وتعمل paste في أي حتة فيطلع النص بالظبط، والزرار بيرجع «انسخ» بعد ثانيتين، والضغط مرتين بسرعة مبيخليش النص يرجع بدري (الـ timeout القديم اتلغى)، وتغيير [[text]] من Console بينسخ القيمة الجديدة.` },
-            { lvl: 'تحدي', t: R`صلّح باج الـ upgrade: الكود بيعمل [[el.name = "Sara"]] على [[<user-card>]] **قبل** [[customElements.define]] (السكربت اتحمّل متأخر)، والـ class فيه [[set name(v)]] بيرسم. الاسم مبيظهرش. صلّحها في [[connectedCallback]]، وخبّي العنصر لحد ما يتعرّف بـ [[user-card:not(:defined)]].`, done: R`قبل التصليح [[el.textContent]] فاضي و [[Object.hasOwn(el, "name")]] بـ [[true]] (الـ property العادية غطّت الـ setter)، وبعد التصليح (تقرا القيمة، و [[delete this.name]]، وتحطها تاني) بيرسم «Sara»، والصفحة مبيبانش فيها العنصر فاضي قبل التعريف، و [[customElements.whenDefined("user-card")]] بيتحل بعد [[define]].` },
+            { lvl: 'سريع', t: R`صلّح الـ manifest البايظ: حط comma زيادة بعد آخر حقل، واكتب [["display": "standlone"]] بغلطة إملائية، وافحصه بـ [[node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest', 'utf8'))"]] وبـ Application ← Manifest.`, done: R`Node بيطلّع [[SyntaxError]] للـ comma، وبعد ما تشيلها الأمر بيخلص من غير ولا سطر، بس الـ [[display]] لسه غلط و JSON.parse مبيشتكيش (JSON صالح ومعناه غلط)، والمتصفح بيتجاهل القيمة اللي ميعرفهاش ويرجع للـ default ([[browser]]) فالتطبيق بعد التسطيب مبيفتحش في شباك لوحده، ولما تصلّحها لـ [[standalone]] بيفتح.` },
+            { lvl: 'تطبيق', t: R`ابني أداة: [[check-manifest.mjs]] بتقرا الـ manifest وبتتأكد إن فيه [[name]] و [[start_url]] و [[display]] من القيم المسموحة، وأيقونة [[192x192]] وأيقونة [[512x512]]، وإن ملفات الأيقونات موجودة على الديسك. بتطبع كل مشكلة في سطر وتخرج بـ [[process.exitCode = 1]].`, done: R`manifest الدرس بيعدّي من غير ناتج وكود 0، وشيل أيقونة الـ 512 بيطبع سطر بيقول إنها ناقصة، ومسار أيقونة غلط بيطبع اسم الملف، و [[display: "standlone"]] بيترفض، و [[echo $?]] (أو [[$LASTEXITCODE]]) بيرجّع 1 في كل الحالات دي.` },
+            { lvl: 'تحدي', t: R`ابني أيقونة maskable صح: اللوجو جوه دايرة قطرها 80٪ من الأيقونة، والخلفية مليانة لحد الأطراف. افحصها بـ «Show only the minimum safe area for maskable icons» في Application ← Manifest.`, done: R`مفيش أي جزء من اللوجو بيتقص في المعاينة، ومفيش حواف شفافة، والأيقونة العادية (من غير [[purpose: "maskable"]]) لسه موجودة جنبها للأماكن اللي مبتقصّش.` },
           ],
           flag: "script",
           deep: {
-            why: R`عايز component (كارت، زرار، date picker) يشتغل في أي صفحة: React أو Vue أو HTML عادي أو CMS، من غير ما تعيد كتابته لكل framework. Web Components جزء من المتصفح نفسه، فمش محتاجة مكتبة ولا build. Design systems كبيرة (زي Shoelace/Web Awesome و Material Web) مبنية كده.`,
-            how: R`[[customElements]] هو الـ registry (السجل) بتاع الصفحة. [[define(name, Class)]] بيربط الاسم بالـ class، والمتصفح بيعمل «upgrade» لكل [[<user-card>]] موجود: يشغّل الـ [[constructor]]، وبعدين [[attributeChangedCallback]] لكل attribute متابَع موجود، وبعدين [[connectedCallback]].
+            why: "تطبيق موبايل كامل (Flutter أو React Native) معناه store ومراجعة وتحديثات بتستنى اليوزر. الـ PWA موقعك نفسه، بيتحدّث أول ما تنشر، واليوزر يسطّبه بضغطة. لأدوات داخلية، و dashboards، ومواقع مذاكرة زي دي، وأي حاجة اليوزر بيفتحها كل يوم، ده غالبًا كفاية (تاب Desktop و Mobile بيقارن).",
+            how: R`المتصفح بيقرا الـ manifest ويقرر إن الموقع «installable». في Chromium الشروط: HTTPS (أو localhost)، و manifest فيه [[name]] أو [[short_name]] وأيقونة 144 pixel على الأقل بتتحمّل فعلًا (والمستحسن 192 و 512) و [[start_url]] و [[display]] مش [["browser"]]. (زمان كان لازم كمان service worker بـ fetch handler، و Chrome شال الشرط ده في نسخه الحديثة، بس من غير SW مفيش offline.)
 
-[[static observedAttributes]]: الـ attributes اللي عايز تتبلّغ بيها. أي attribute تاني (زي [[title]]) بيتغير من غير ما الـ callback يتنادى.
+في Chrome و Edge بيظهر زرار تسطيب في شريط العنوان، وتقدر تعمل زرار بنفسك بـ [[beforeinstallprompt]] (Chromium بس). في Safari على iOS مفيش prompt: اليوزر لازم يضغط Share ← «Add to Home Screen» بنفسه، فلازم تشرحله. وفي Safari على الماك «Add to Dock».
 
-[[super()]] لازم أول سطر في الـ constructor (عشان [[HTMLElement]] يتجهز). ومتقراش attributes ولا تضيف أولاد في الـ constructor: لو العنصر اتعمل بـ [[createElement]] لسه معندوش attributes. اعمل ده في [[connectedCallback]].
-
-الاسم لازم فيه [[-]] وحروف صغيرة: ده اللي بيفرّق الـ custom elements عن الـ tags الحقيقية (HTML عمره ما هيضيف tag فيه [[-]]). وكل اسم بيتسجّل مرة واحدة في الصفحة.`,
-            when: R`components لازم تشتغل في أكتر من framework أو في صفحات مش بتاعتك (widgets، embeds)، و design systems، وصفحات من غير build. لتطبيق React كامل جوه React، الـ components العادية أسهل.`,
-            mistakes: R`اسم من غير [[-]]: [[SyntaxError: ... is not a valid custom element name]]. وتسجّل نفس الاسم مرتين (ملف اتحمّل مرتين): [[NotSupportedError: ... has already been used with this registry]]. وتقرا [[getAttribute]] في الـ constructor. وتنسى [[observedAttributes]] فالـ callback عمره ما يتنادى. والصفحة بتظهر العنصر فاضي قبل التسجيل (FOUC): [[user-card:not(:defined) { visibility: hidden; }]].`
+[[scope]] بيحدد الـ URLs اللي تفضل جوه التطبيق؛ أي لينك برّاه بيفتح في المتصفح. و [[id]] (اختياري) هوية التطبيق لو [[start_url]] اتغير بعدين. والـ manifest نفسه بيتكاش عادي، فالتغييرات فيه (أيقونة جديدة) بتاخد وقت عشان تظهر للي مسطّبين.`,
+            when: R`أي موقع اليوزر بيرجعله كتير. والـ manifest لوحده (من غير SW) لسه مفيد: أيقونة ولون وشاشة بداية لما حد يضيفه للشاشة.`,
+            mistakes: R`أيقونة maskable محتواها لحد الحواف فبيتقص (خلي المحتوى في الـ 80% اللي في النص). و [[start_url]] مطلق ([["/"]]) والموقع في فولدر فرعي على GitHub Pages. ومفيش [[dir: "rtl"]] لموقع عربي. وتتوقع prompt تلقائي على iPhone.`
           },
-          teach: R`## الصفحة اللي اتجرّبت
+          teach: R`## الفكرة في سطر
 
-اتجرّب في Chrome 156 headless (عن طريق playwright-core) وسيرفر static صغير على localhost.
+الـ manifest ملف JSON بيقول للمتصفح «الموقع ده اسمه كذا، وأيقونته دي، ولما يتسطّب يفتح كده». مفيهوش كود بيتنفذ: المتصفح بيقراه ويقرر الموقع ينفع يتسطّب ولا لأ.
 
-~~~text wc1.html
-<!doctype html>
-<style>user-card:not(:defined) { visibility: hidden; }</style>
-<user-card name="Sara" role="admin"></user-card>
-<script>console.log("before define:", document.querySelector("user-card").textContent === "" ? "empty" : "?", customElements.get("user-card"));</script>
-<script type="module" src="user-card.js"></script>
+جرّبته في Chrome headless (عن طريق playwright-core) على سيرفر Node صغير على localhost: [[index.html]] فيه [[<link rel="manifest">]]، والـ manifest ده بالظبط، و ٣ أيقونات PNG بالمقاسات المكتوبة. وسألت Chrome نفسه عن رأيه بأمر من DevTools Protocol اسمه [[Page.getInstallabilityErrors]] (نفس اللي بيعرضه DevTools ← Application ← Manifest ← Installability).
+
+---
+
+## ١. الربط من الـ HTML
+
+~~~text index.html
+<link rel="manifest" href="manifest.webmanifest">
 ~~~
 
-- [[<user-card>]] قبل التسجيل: المتصفح بيعتبره عنصر مجهول وفاضي، مش error.
-- [[:not(:defined)]]: CSS selector بيمسك الـ custom elements اللي لسه ماتسجّلتش، فمنظهرهاش فاضية.
-- [[customElements.get("user-card")]]: الـ class المسجّل بالاسم ده، أو [[undefined]].
+- [[rel="manifest"]]: نوع العلاقة. المتصفح بيدوّر على [[link]] بالـ rel ده بالظبط.
+- [[href]]: مسار الملف، نسبي للصفحة. الامتداد [[.webmanifest]] هو الرسمي، و [[manifest.json]] بيشتغل برضه.
+
+لما فتحت الصفحة، السيرفر استلم بالترتيب ده:
+
+~~~text طلبات السيرفر
+GET /
+GET /manifest.webmanifest
+GET /icons/icon-192.png
+~~~
+
+يعني المتصفح بيطلب الـ manifest لوحده بعد الـ HTML، وبيحمّل الأيقونة اللي محتاجها.
 
 ---
 
-## ١. [[class UserCard extends HTMLElement]]
+## ٢. أول سطر: التعليق
 
-- [[extends HTMLElement]]: الـ class بيورث كل حاجة في أي عنصر: [[getAttribute]] و [[textContent]] و [[addEventListener]] و [[remove()]].
-- [[static observedAttributes = ["name", "role"]]]: [[static]] يعني الخاصية على الـ class نفسه مش على كل instance. المتصفح بيقراها مرة وقت [[define]].
+~~~text manifest.webmanifest
+// manifest.webmanifest (بتاع الموقع ده، مختصر)
+~~~
+
+ده عنوان للدرس بس، **مش جزء من الملف**. JSON مفيهوش تعليقات، و [[JSON.parse]] بيرفضه:
+
+~~~text الناتج (Node 24)
+JSON.parse: Unexpected token '/', "// c
+{}" is not valid JSON
+~~~
+
+في تجربتي Chrome عدّى السطر ده وقرا الباقي عادي، بس متعتمدش على كده: أدوات تانية (ومتصفحات تانية) ممكن ترفض الملف كله. احذفه في الملف الحقيقي.
 
 ---
 
-## ٢. الـ callbacks
+## ٣. الحقول واحد واحد
 
-| الـ callback | بيتنادى إمتى |
+~~~text manifest.webmanifest
+{
+  "name": "الترمنال بإيدك",
+  "short_name": "الترمنال",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1f2430",
+  "theme_color": "#1f2430",
+~~~
+
+| الحقل | معناه | ليه بالقيمة دي |
+|---|---|---|
+| [[name]] | الاسم الكامل | بيظهر في شاشة التسطيب وقايمة البرامج |
+| [[short_name]] | الاسم القصير | تحت الأيقونة على الموبايل، المكان ضيق |
+| [[lang]] | لغة النصوص | [[ar]] = عربي |
+| [[dir]] | اتجاه الكتابة | [[rtl]] = Right To Left، من اليمين للشمال |
+| [[start_url]] | الصفحة اللي التطبيق يفتح عليها | [["./"]] نسبي لمكان الـ manifest |
+| [[scope]] | الـ URLs اللي تعتبر «جوه التطبيق» | أي لينك برّاها يفتح في المتصفح العادي |
+| [[display]] | شكل الشباك | [[standalone]] = من غير شريط عنوان |
+| [[background_color]] | لون شاشة البداية (splash) | قبل ما الصفحة ترسم |
+| [[theme_color]] | لون شريط العنوان أو النظام | |
+
+الألوان مكتوبة hex: [[#1f2430]] يعني أحمر [[1f]] وأخضر [[24]] وأزرق [[30]] بالـ base 16. Chrome بيحوّلها لصيغته الداخلية، ولما سألته رجّع:
+
+~~~text الناتج (Chrome، مختصر)
+"name":"الترمنال بإيدك"
+"display":"kStandalone"
+"startUrl":"http://localhost:PORT/"
+"scope":"http://localhost:PORT/"
+"id":"http://localhost:PORT/"
+"themeColor":"rgba(31,36,48,1)"
+"backgroundColor":"rgba(31,36,48,1)"
+~~~
+
+- [[./]] اتحوّل لـ URL كامل حسب مكان الـ manifest. ده بالظبط ليه بنكتبه نسبي: الموقع ده على GitHub Pages في فولدر فرعي، فـ [["/"]] كانت هتودّي لبرّه.
+- [[31,36,48]] هي نفس [[1f]] و [[24]] و [[30]] بالعشري.
+- [[id]] مكتبناهوش، فـ Chrome خده من [[start_url]]. ده هوية التطبيق المتسطّب.
+
+### الأيقونات
+
+~~~text manifest.webmanifest
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
+~~~
+
+- [[src]]: مسار الصورة، نسبي للـ manifest.
+- [[sizes]]: العرض × الطول بالـ pixel. المتصفح بيختار المقاس الأقرب للي محتاجه.
+- [[type]]: نوع الملف (MIME type).
+- [[purpose: "maskable"]]: الأيقونة دي مسموح تتقص بأي شكل (دايرة، مربع بحواف مدورة). المحتوى المهم لازم يبقى في النص.
+
+---
+
+## ٤. Chrome بيقول إيه لو حاجة ناقصة؟
+
+غيّرت الـ manifest كل مرة حاجة وسألت [[getInstallabilityErrors]]:
+
+| التغيير | رد Chrome |
 |---|---|
-| [[constructor()]] | العنصر اتعمل أو اتعمله upgrade |
-| [[connectedCallback()]] | دخل الـ document |
-| [[disconnectedCallback()]] | اتشال من الـ document |
-| [[attributeChangedCallback(name, old, new)]] | attribute متابَع اتغير (أو اتحط أول مرة) |
+| الملف زي ما هو | [[[]]] (مفيش أخطاء، ينفع يتسطّب) |
+| [[display: "browser"]] | [[manifest-display-not-supported]]: الـ browser معناه تاب عادي، فمفيش حاجة تتسطّب |
+| [[minimal-ui]] | مفيش أخطاء، لأنه شباك لوحده بزراير رجوع صغيرة |
+| من غير [[name]] و [[short_name]] | [[manifest-missing-name-or-short-name]]: مفيش اسم يتكتب تحت الأيقونة |
+| من غير [[start_url]] | [[start-url-not-valid]]: مش عارف يفتح أنهي صفحة لما تدوس الأيقونة |
+| أيقونة 192 بس (من غير 512) | مفيش أخطاء |
+| أيقونة 192 بمسار غلط ولا غيرها | [[no-acceptable-icon]] و [[minimum-icon-size-in-pixels: 144]] |
+| [[icons]] فاضية | [[manifest-missing-suitable-icon]]: مفيش أي أيقونة يحطها على الشاشة الرئيسية |
 
-- [[render()]]: دالة بتاعتنا مش من المتصفح. [[?? "Guest"]]: لو [[getAttribute]] رجّع [[null]] خد [["Guest"]].
-- [[this.textContent = ...]]: [[this]] هو العنصر نفسه.
+يعني Chrome فعلًا بيطلب أيقونة واحدة على الأقل 144 pixel وتتحمّل فعلًا. الـ 192 والـ 512 هما المقاسات اللي بيوصّوا بيها عشان كل الشاشات تبقى حلوة (192 للأيقونة، و 512 لشاشة البداية)، فحطهم الاتنين.
 
----
-
-## ٣. الترتيب الحقيقي
-
-~~~text Console
-before define: empty undefined
-constructor
-attribute name: null -> Sara
-attribute role: null -> admin
-connected
-~~~
-
-قبل التسجيل: العنصر فاضي و [[get]] رجّع [[undefined]]. وبعد [[define]]: upgrade → [[constructor]] → [[attributeChangedCallback]] لكل attribute موجود (القيمة القديمة [[null]]) → [[connectedCallback]].
-
----
-
-## ٤. اللي حصل بعدها (من الـ Console)
-
-~~~text الناتج
-text: Sara (admin)
-card.setAttribute("role", "owner")    → attribute role: admin -> owner     text: Sara (owner)
-card.setAttribute("title", "x")       → (ولا حاجة: مش في observedAttributes)
-card.remove()                          → disconnected
-~~~
-
-### بـ [[createElement]]
-
-~~~text الناتج
-const c2 = document.createElement("user-card");   → constructor
-c2.setAttribute("name", "Ali");                    → attribute name: null -> Ali
-document.body.append(c2);                          → connected
-c2: Ali (member) | instanceof HTMLElement: true
-~~~
-
-لاحظ: الـ constructor اتنادى **قبل** أي attribute. لو كنت قريت [[getAttribute("name")]] في الـ constructor كان رجع [[null]].
-
----
-
-## ٥. الأخطاء
-
-~~~text الناتج
-SyntaxError: Failed to execute 'define' on 'CustomElementRegistry': "usercard" is not a valid custom element name
-NotSupportedError: Failed to execute 'define' on 'CustomElementRegistry': the name "user-card" has already been used with this registry
-~~~
-
-و [[await customElements.whenDefined("user-card")]] بيستنى لحد ما الاسم يتسجّل (لو الكود اللي بيستخدمه اشتغل قبل ملف الـ component).
+> الأخطاء دي بالظبط بتظهر بالكلام العادي في DevTools ← Application ← Manifest ← Installability. لو زرار التسطيب مظهرش، ده أول مكان تبص فيه.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | معناها |
+| لازم لـ Chrome | مستحسن |
 |---|---|
-| [[customElements.define("x-y", Class)]] | سجّل tag، والاسم فيه [[-]] |
-| [[observedAttributes]] | الـ attributes اللي تتبلّغ بيها |
-| [[connectedCallback]] | المكان الصح للـ render والـ listeners |
-| [[disconnectedCallback]] | نضّف (timers، listeners على [[window]]) |
-| [[:not(:defined)]] | خبّي العنصر لحد ما يتسجّل |`,
+| HTTPS أو localhost | [[short_name]] و [[lang]] و [[dir]] |
+| [[name]] أو [[short_name]] | أيقونة 192 و 512 وواحدة [[maskable]] |
+| [[start_url]] صالح | [[theme_color]] و [[background_color]] (لون شريط العنوان وشاشة البداية) |
+| [[display]] مش [[browser]] | [[scope]] نسبي زي [[start_url]]، عشان يحدد الصفحات اللي جوه التطبيق |
+| أيقونة 144 pixel أو أكبر بتتحمّل | |
+
+- المسارات النسبية ([["./"]]) بتتحسب من مكان الـ manifest، مش من الصفحة.
+- مفيش تعليقات في JSON.
+- على iPhone مفيش زرار تسطيب خالص: اليوزر بيضغط Share ← Add to Home Screen.`,
           lines: [
-            R`بنعرّف class بيورث [[HTMLElement]]، فالعنصر بتاعنا يبقى عنصر HTML حقيقي بكل خصايصه ([[getAttribute]] و [[textContent]] والـ events). من غير الوراثة دي المتصفح مش هيقدر يعمل منه عنصر.`,
-            R`[[observedAttributes]]: الـ attributes اللي عايزين المتصفح يبلّغنا لما تتغير. [[static]] لأن المتصفح بيقراها من الـ class نفسه مرة وقت [[define]]. أي attribute مش في الليستة بيتغير من غير ما [[attributeChangedCallback]] تتنادى.`,
-            R`الـ [[constructor]] بيتنادى لما العنصر يتعمل (من الـ HTML أو [[createElement]])، قبل ما يدخل الصفحة. متقراش attributes هنا: مع [[createElement]] لسه متحطتش، فـ [[getAttribute]] هترجّع [[null]].`,
-            R`[[super()]] بينادي constructor بتاع [[HTMLElement]]. لازم يبقى أول سطر: قبله [[this]] مش موجود، وأي استخدام ليه يرمي [[ReferenceError]].`,
-            R`سطر للتجربة: نشوف في الـ console إمتى الـ constructor اتنادى بالنسبة للـ callbacks التانية.`,
-            R`نهاية الـ [[constructor]].`,
-            R`[[connectedCallback]]: بيتنادى كل ما العنصر يدخل الصفحة. ده المكان الصح ترسم فيه وتبدأ timers. ولو العنصر اتنقل من مكان لمكان بيتنادى تاني، فخليه ميعملش حاجة مرتين.`,
-            R`سطر للتجربة: يبيّن إن connected بيتنادى بعد الـ constructor والـ attributes.`,
-            R`ارسم المحتوى أول ما العنصر يدخل الصفحة. الرسم في دالة لوحده لأننا هنحتاجه تاني لما attribute يتغير.`,
-            R`نهاية [[connectedCallback]].`,
-            R`[[disconnectedCallback]]: بيتنادى لما العنصر يتشال من الصفحة. هنا تنضّف أي حاجة بدأتها في connected (timers أو listeners على [[window]])، وإلا تفضل شغالة بعد ما العنصر اختفى.`,
-            R`سطر للتجربة: نتأكد إن الشيلة اتلقطت.`,
-            R`نهاية [[disconnectedCallback]].`,
-            R`[[attributeChangedCallback]]: بيتنادى لما attribute من اللي في [[observedAttributes]] يتغير، ومعاه اسمه وقيمته القديمة والجديدة. وبيتنادى كمان لكل attribute موجود في الـ HTML من الأول، قبل [[connectedCallback]].`,
-            R`اطبع اسم الـ attribute والقيمة القديمة والجديدة. أول مرة القيمة القديمة بتبقى [[null]] لأن الـ attribute مكانش موجود قبلها.`,
-            R`ارسم تاني عشان النص يعكس القيمة الجديدة على طول، من غير ما اللي غيّر الـ attribute يعمل حاجة زيادة.`,
-            R`نهاية [[attributeChangedCallback]].`,
-            R`[[render]] دالة بتاعتنا (مش من المتصفح): بتكتب المحتوى من الـ attributes الحالية. الـ callbacks الاتنين بينادوها، فالرسم مكتوب في مكان واحد.`,
-            R`اقرا [[name]]. [[getAttribute]] بترجّع [[null]] لو الـ attribute مش موجود، و [[??]] بتحط [[Guest]] بدلها. ([[??]] مش [[||]]: لو كتبت [[name=""]] النص الفاضي يفضل فاضي.)`,
-            R`اقرا [[role]] بنفس الطريقة، والافتراضي [[member]].`,
-            R`اكتب الاسم والدور كنص جوه العنصر. [[textContent]] مش [[innerHTML]]، فلو الاسم فيه [[<script>]] هيتعرض كنص ومش هيتنفّذ.`,
-            R`نهاية [[render]].`,
-            R`نهاية الـ class.`,
-            R`سجّل الـ tag [[user-card]] واربطه بالـ class: من اللحظة دي أي [[<user-card>]] في الصفحة (موجود أو هيتضاف) يبقى instance منه. الاسم لازم فيه [[-]] عشان ميتلخبطش مع tags الـ HTML الحالية أو اللي هتتضاف بعدين.`,
+            R`بداية الـ manifest: ملف JSON عادي، object واحد. لازم يبقى JSON سليم (من غير تعليقات ولا فاصلة زيادة في الآخر)، وإلا المتصفح يطلّع syntax error ويتجاهل الملف، فالموقع مش هيتسطّب.`,
+            R`[[name]]: الاسم الكامل للتطبيق، بيظهر في رسالة التسطيب وفي قايمة التطبيقات. Chrome محتاج [[name]] أو [[short_name]] على الأقل عشان يعتبر الموقع قابل للتسطيب.`,
+            R`[[short_name]]: اسم قصير يتكتب تحت الأيقونة على الشاشة الرئيسية. المساحة هناك صغيرة، فالاسم الطويل بيتقص بـ «...»، عشان كده بنديله اسم مخصوص.`,
+            R`[[lang]]: لغة النصوص اللي جوه الـ manifest نفسه (الاسم والوصف)، عشان النظام يعرضها صح. مش بتغيّر لغة الصفحة؛ دي بيحددها [[lang]] على [[<html>]].`,
+            R`[[dir]]: اتجاه النصوص اللي في الـ manifest. [[rtl]] لأن الاسم عربي، فيتعرض من اليمين للشمال صح في شاشة التسطيب والقوايم.`,
+            R`[[start_url]]: الصفحة اللي تفتح لما اليوزر يدوس على الأيقونة. [[./]] نسبي لمكان ملف الـ manifest مش للصفحة الحالية، فالموقع يفتح صح حتى لو متحطوط في فولدر فرعي (زي GitHub Pages).`,
+            R`[[scope]]: الـ URLs اللي تتحسب «جوه التطبيق». لو اليوزر راح لرابط بره الـ scope، المتصفح يعرضه بشريط عنوان أو في المتصفح العادي بدل شباك التطبيق. ولازم [[start_url]] يبقى جواه، وإلا المتصفح يتجاهل الـ scope ده.`,
+            R`[[standalone]]: التطبيق يفتح في شباك لوحده من غير شريط العنوان والتابات، فيحس إنه تطبيق متسطّب. القيم التانية: [[browser]] (تاب عادي) و [[minimal-ui]] و [[fullscreen]].`,
+            R`[[background_color]]: لون الخلفية في شاشة البداية (splash) اللي بتظهر لحد ما الصفحة تحمّل. خليه نفس لون خلفية الموقع، وإلا هتشوف فلاش بلون تاني قبل ما الـ CSS يشتغل.`,
+            R`[[theme_color]]: لون شريط العنوان وشريط النظام حوالين شباك التطبيق. خليه متناسق مع ألوان الموقع عشان الشباك يبان حتة واحدة.`,
+            R`بداية ليستة الأيقونات. المتصفح بيختار منها المقاس الأنسب لكل مكان (الشاشة الرئيسية، شاشة البداية، قايمة التطبيقات)، عشان كده بنحط أكتر من مقاس.`,
+            R`أيقونة 192×192 للشاشة الرئيسية والأماكن الصغيرة. [[sizes]] و [[type]] بيخلوا المتصفح يختار من غير ما يحمّل كل الصور يجرّبها. وChrome محتاج 192 و 512 على الأقل عشان يسمح بالتسطيب.`,
+            R`أيقونة 512×512 لشاشة البداية والتسطيب والشاشات عالية الدقة، عشان متتمطّش وتبان مبكسلة.`,
+            R`[[maskable]]: أيقونة مرسومة بهامش أمان حوالين الرسمة، فـ Android يقدر يقصها دايرة أو مربع بحواف من غير ما يقطع منها حاجة. من غير الـ [[purpose]] ده، Android بيحط الأيقونة العادية صغيرة جوه شكل بخلفية.`,
+            R`نهاية ليستة [[icons]]. ومفيش فاصلة بعد آخر أيقونة قبلها، لأن JSON مبيقبلش الفاصلة الزيادة.`,
+            R`نهاية الـ manifest.`,
           ],
-          sol: R`الترتيب الحقيقي في Chrome 156:
-[[constructor]] ← [[attribute name: null -> Sara]] ← [[attribute role: null -> admin]] ← [[connected]].
-[[setAttribute("role", "owner")]] ← [[attribute role: admin -> owner]] والنص بقى [[Sara (owner)]].
-[[remove()]] ← [[disconnected]].
-[[define("usercard", ...)]] ← [[SyntaxError: ... "usercard" is not a valid custom element name]].`
+          sol: R`Application ← Manifest بيعرض الاسم والألوان والأيقونات التلاتة، ولو فيه مشكلة (أيقونة ناقصة أو مقاس غلط) بتظهر كـ warning فوق. وفي «Installability» لو فيه سبب يمنع التسطيب.
+
+في مشروعك: أيقونة التسطيب بتظهر في شريط العنوان على Chrome/Edge بعد ما الـ manifest يتقري صح والموقع على [[localhost]] أو HTTPS. الأسباب الشائعة إنها متظهرش: أيقونة 512 ناقصة، أو مسار أيقونة غلط (404 في Network)، أو [[display: "browser"]]، أو فاتح الملف بـ [[file://]]. وعلى iPhone مفيش أيقونة في الشريط أصلًا، التسطيب من زرار Share.`
         },
         {
-          cmd: "shadow DOM",
-          title: "shadow DOM: CSS جوه الـ component ميهربش ومحدش يدخله",
-          desc: R`[[this.attachShadow({ mode: "open" })]] بيدّي العنصر DOM خاص بيه (shadow root): الـ CSS اللي جواه مبيأثرش على الصفحة، و CSS الصفحة مبيدخلوش. فـ [[p { color: red }]] في الصفحة مش هيلوّن الـ [[<p>]] اللي جوه الـ component.
+          cmd: "دورة حياة الـ SW",
+          title: "الـ service worker بيتسطّب ويشتغل إزاي، وليه التحديث مش بيظهر؟",
+          desc: R`الـ service worker ملف JS بيشتغل في الخلفية بين صفحتك والشبكة: كل request من الصفحة بيعدّي عليه ([[fetch]] event)، ويقدر يرد من كاش أو من الشبكة. من غير DOM ومن غير [[window]]، وبيشتغل بس على HTTPS أو localhost.
 
-الطرق الرسمية للتخصيص من بره: CSS custom properties ([[--tag-bg]]) بتعدّي جوه، و [[::part(name)]] لعناصر الـ component علّم عليها بـ [[part]]، و [[:host]] جوه بيستايل العنصر نفسه.`,
-          example: R`const sheet = new CSSStyleSheet();
-sheet.replaceSync($__bt
-  :host { display: inline-block; padding: 4px 8px; border-radius: 6px; background: var(--tag-bg, #eee); }
-  :host([sale]) { background: #fde68a; }
-  p { margin: 0; color: green; font-weight: bold; }
-$__bt);
-class PriceTag extends HTMLElement {
-  constructor() {
-    super();
-    const root = this.attachShadow({ mode: "open" });
-    root.adoptedStyleSheets = [sheet];
-    root.innerHTML = $__bt<p part="amount"></p>$__bt;
-  }
-  connectedCallback() {
-    this.shadowRoot.querySelector("p").textContent = $__bt$__{this.getAttribute("amount") ?? 0} EGP$__bt;
-  }
-}
-customElements.define("price-tag", PriceTag);`,
-          try: R`احفظ المثال [[price-tag.js]]، واعمل صفحة فيها [[p { color: red; }]] و [[price-tag { --tag-bg: #dbeafe; }]] و [[price-tag::part(amount) { font-size: 20px; }]]، وفيها [[<p>]] عادي و [[<price-tag amount="250">]] و [[<price-tag amount="99" sale>]]. لون أنهي [[p]] أحمر؟ وجرّب [[document.querySelectorAll("p").length]] و [[getComputedStyle]] على الـ [[p]] اللي جوه.`,
+دورة حياته: [[register]] من الصفحة ← install (تحفظ الملفات الأساسية في الكاش) ← waiting ← activate (تمسح الكاش القديم) ← يتحكم في الصفحات.
+
+waiting هي سر «عملت deploy والتحديث مش ظاهر»: لما يبقى فيه SW جديد، بيتسطّب ويستنى لحد ما كل التابات اللي شغالة بالقديم تتقفل. الـ refresh مش كفاية. [[self.skipWaiting()]] بيخليه يتفعّل فورًا، و [[clients.claim()]] بيخليه يمسك الصفحات المفتوحة من غير ما تتعمل reload.`,
+          example: R`// في الصفحة (app.js):
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
+// في sw.js:
+const CACHE = "app-v2";
+const PRECACHE = ["/", "/offline.html", "/app.css", "/app.js"];
+self.addEventListener("install", (e) => {
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)));
+});
+self.addEventListener("activate", (e) => {
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
+    await self.clients.claim();
+  })());
+});
+self.addEventListener("message", (e) => {
+  if (e.data === "SKIP_WAITING") self.skipWaiting();
+});`,
+          try: R`اعمل مشروع صغير بالملفات دي وشغّله على localhost. افتح Application ← Service workers وشوف الحالة. غيّر [[CACHE]] لـ [["app-v3"]] واعمل refresh: فيه SW في حالة «waiting to activate»؟ اعمل refresh تاني: اتفعّل؟ وبعدين دوس «skipWaiting» في DevTools، وبص على Cache storage: القديم اتمسح؟ وآخر حاجة: افتح [[sw.js]] بتاع الموقع ده في الـ repo واعرف هو بيعمل skipWaiting فين.`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين جرّب: نفس [[PriceTag]] مرة بـ [[mode: "open"]] ومرة بـ [[mode: "closed"]]. إيه ناتج [[el.shadowRoot]] و [[document.querySelector("price-tag p")]] في كل مرة؟`, done: R`في الـ open [[el.shadowRoot]] بيرجّع ShadowRoot وفي الـ closed بيرجّع [[null]]، و [[querySelector]] من الـ document بيرجّع [[null]] في الحالتين (مبيدخلش جوه الـ shadow)، و [[el.shadowRoot.querySelector("p")]] بيلاقيه في الـ open بس.` },
-            { lvl: 'تطبيق', t: R`ابني theming لـ [[price-tag]]: [[--tag-bg]] و [[--tag-color]] و [[--tag-radius]] بقيم default جوه الـ component، وصفحة فيها زرار dark mode بيغيّر الـ variables على [[:root]] بس، و [[::part(amount)]] للخط.`, done: R`زرار الـ dark بيغيّر شكل كل الـ tags مع بعض، والـ tag من غير أي variable متعرّف بياخد الـ default، و [[p { color: red }]] في الصفحة مبيأثرش جوه، لكن [[font-family]] على [[body]] بيوصل جوه (الخصائص اللي بتتورث بتعدّي الـ shadow boundary).` },
-            { lvl: 'تحدي', t: R`اتوقع وصلّح: listener على [[document]] لـ [[click]]، واضغط على الـ [[<p>]] اللي جوه الـ shadow. اطبع [[e.target.tagName]] و [[e.composedPath().at(0).tagName]]. وبعدين ابعت من جوه [[new CustomEvent("price-click", { bubbles: true })]] وشوف الـ document بيستقبله ولا لأ.`, done: R`[[e.target.tagName]] بيطلع [[PRICE-TAG]] (retargeting) و [[composedPath().at(0)]] بيطلع [[P]]، والـ [[price-click]] مبيوصلش الـ document لحد ما تزوّد [[composed: true]]، وبعدها بيوصل، وتقدر تقول ليه الـ [[click]] العادي وصل من غير ما تعمل حاجة (الأحداث المدمجة composed).` },
+            { lvl: 'سريع', t: R`اتوقع الترتيب الأول وبعدين جرّب: حط [[console.log]] في [[install]] و [[activate]] ومعاه رقم النسخة. إيه اللي هيتطبع في (١) أول زيارة، (٢) refresh عادي، (٣) refresh بعد ما تغيّر حرف في [[sw.js]]؟`, done: R`(١) install وبعدها activate، (٢) ولا حاجة، (٣) install للنسخة الجديدة بس من غير activate، و Application ← Service workers بيعرضها «waiting to activate». لو توقعك كان غير كده، كتبت السبب في سطر.` },
+            { lvl: 'تطبيق', t: R`ابني badge صغير في فوتر الصفحة بيقول «SW: مفيش» أو «SW: شغّال app-v2» ([[navigator.serviceWorker.controller]] ورسالة للـ SW بتسأله عن [[CACHE]])، وبيتحدّث على [[controllerchange]]. جرّبه مرة من غير [[clients.claim()]] ومرة بيه (Unregister الأول من DevTools).`, done: R`من غير [[claim]] أول زيارة الـ badge بيقول «مفيش» ومبيتغيرش لحد refresh. مع [[claim]] بيتقلب لـ «شغّال app-v2» لوحده في أول زيارة من غير refresh، وبعد تحديث وتفعيل نسخة جديدة بيعرض الاسم الجديد.` },
+            { lvl: 'تحدي', t: R`صلّح الـ scope: سجّل الـ SW من [[/js/sw.js]]، واطبع [[reg.scope]]، وافتح [[/]] و [[/js/page.html]]. وبعدين صلّحها بطريقتين.`, done: R`[[reg.scope]] بيخلص بـ [[/js/]]، والصفحة اللي على [[/]] [[controller]] بتاعها [[null]] واللي جوه [[/js/]] controlled. التصليح الأول: الملف في الـ root. التاني: header [[Service-Worker-Allowed: /]] مع [[sw.js]] والتسجيل بـ [[{ scope: "/" }]]. ومن غير الـ header التسجيل بـ [[scope: "/"]] بيرمي error بيقول إن الـ scope مش مسموح.` },
           ],
           flag: "script",
           deep: {
-            why: R`أي component بيتحط في صفحة مش بتاعتك بيواجه مشكلتين: CSS الصفحة بيبوّظه ([[p { color: red }]] أو [[* { box-sizing }]] أو reset)، و CSS بتاعه بيبوّظ الصفحة. الـ shadow DOM بيحل الاتنين من غير BEM ولا CSS modules.`,
-            how: R`[[attachShadow]] بيعمل shadow root متعلّق بالعنصر (الـ host). اللي جوه shadow root ليه scope لوحده: الـ selectors اللي جوه مبتشوفش بره والعكس، و [[document.querySelector]] مبيدخلوش. [[mode: "open"]] معناها [[el.shadowRoot]] متاح من بره (للأدوات والاختبارات)، و [["closed"]] بيرجّع [[null]].
+            why: "أول ما تحط SW في موقع، أول شكوى هتسمعها «أنا مش شايف التعديل». الـ SW بيتحكم في كل request، فلو فهمت دورة حياته غلط ممكن تقفل اليوزرز على نسخة قديمة أسابيع. ودي من أشهر مشاكل الـ PWAs في الشغل الحقيقي (وتاب «من مشاريعي» فيه أمثلة).",
+            how: R`المتصفح بيفحص [[sw.js]] عند كل تنقل (وكل ٢٤ ساعة على الأكتر، و [[reg.update()]] يدوي). لو الملف اختلف ولو byte واحد، يعتبره SW جديد ويبدأ install. عشان كده بتغيّر اسم الكاش أو أي حاجة فيه مع كل release (أو الأدوات بتحط hashes الملفات فيه لوحدها). والمتصفح بيتجاهل الـ HTTP cache لـ [[sw.js]] نفسه افتراضيًا، بس ملفات [[importScripts]] ممكن تتكاش.
 
-اللي بيعدّي جوه: الخصائص اللي بتتورث (inherited) زي [[color]] و [[font-family]] بتتورث من الـ host عادي، والـ CSS custom properties ([[--x]]) كمان. فـ [[var(--tag-bg, #eee)]] بياخد القيمة من الصفحة أو [[#eee]].
+[[e.waitUntil(promise)]] بيقول «متعتبرش الـ install خلص لحد ما ده يخلص». لو أي ملف في [[addAll]] رجع 404، الـ install كله بيفشل والقديم يفضل شغال.
 
-[[:host]] = العنصر نفسه من جوه، و [[:host([sale])]] = لو عليه attribute [[sale]]. وقواعد الصفحة على الـ host نفسه ([[price-tag { background: pink }]]) **بتكسب** على [[:host]]: الـ component بيحط افتراضي والصفحة تقدر تغيّره.
+ليه waiting موجود أصلًا؟ الصفحة المفتوحة اتحمّلت بـ HTML وJS قديم. لو SW جديد مسك كاش جديد في النص، الصفحة ممكن تطلب [[chunk-abc.js]] القديم فميلاقيهوش. فالافتراضي الآمن: استنى لما مفيش حد شغال بالقديم. والـ refresh مش كفاية لأن الصفحة الجديدة بتبدأ قبل ما القديمة تتقفل، فدايمًا فيه client.
 
-[[CSSStyleSheet]] + [[replaceSync]] + [[adoptedStyleSheets]] (Constructable Stylesheets): الـ CSS بيتعمل parse مرة واحدة ويتشارك بين كل الـ instances، بدل [[<style>]] في كل واحد.`,
-            when: R`أي component هيتحط في صفحات تانية، أو design system. ولو component داخلي في تطبيقك والـ CSS بتاعك متحكم فيه، ممكن متحتاجش shadow DOM (وتستخدم الـ light DOM عادي).`,
-            mistakes: R`تحط [[<link rel="stylesheet">]] بتاع الموقع وتستغرب إنه مش بيأثر جوه. وفورمات جوه shadow DOM: [[<input>]] جوه shadow root مش بيتبعت مع [[<form>]] بره (محتاج form-associated custom elements و [[ElementInternals]]). و [[document.querySelector]] في الاختبارات مش لاقي العنصر: ادخل بـ [[el.shadowRoot.querySelector]] (و Playwright بيدخل الـ open shadow لوحده). و [[mode: "closed"]] فاكره حماية: مش أمان، بس بيصعّب الاختبار.`
+الموقع ده بيعمل [[skipWaiting()]] في الـ install و [[clients.claim()]] في الـ activate، ومعاهم كاش network-first (الدرس الجاي)، فالتحديث بيظهر من أول تحميل. ده مناسب لأن كل الملفات بتتجاب من الشبكة أصلًا، بس مع cache-first و chunks بـ hashes الأضمن تسأل اليوزر (زرار «نسخة جديدة»).`,
+            when: R`أي PWA. وفي الـ dev خلي «Update on reload» متعلّم في DevTools ← Application ← Service workers، وإلا هتقعد تتلخبط.`,
+            mistakes: R`SW على [[/js/sw.js]]: الـ scope بتاعه [[/js/]] بس، فمش هيتحكم في الصفحة (حطه في الـ root). وتنسى تمسح الكاش القديم في activate فالتخزين يكبر. و skipWaiting دايمًا مع cache-first فالصفحة المفتوحة تتكسر. و [[Cache-Control: max-age]] طويل على sw.js في CDN قديم. وفي الانترفيو: «ليه SW الجديد مش بيتفعّل؟» الإجابة waiting، والحل skipWaiting بموافقة اليوزر أو قفل كل التابات.`
           },
-          teach: R`## الصفحة
+          teach: R`## الفكرة في سطر
 
-اتجرّب في Chrome 156 headless، والقيم من [[getComputedStyle]] (القيمة النهائية بعد كل الـ CSS).
+سطر واحد في الصفحة بيسجّل [[sw.js]]، وجوه [[sw.js]] بنسمع لـ ٣ events: [[install]] (احفظ الملفات)، و [[activate]] (امسح القديم وامسك الصفحات)، و [[message]] (اليوزر وافق، اتفعّل دلوقتي).
 
-~~~text wc2.html
-<style>
-  p { color: red; }
-  price-tag { --tag-bg: #dbeafe; }
-  price-tag::part(amount) { font-size: 20px; }
-</style>
-<p id="page-p">paragraph in the page</p>
-<price-tag amount="250"></price-tag>
-<price-tag amount="99" sale></price-tag>
+جرّبته في Chrome headless (عن طريق playwright-core، بروفايل مؤقت) على سيرفر Node صغير على localhost فيه [[index.html]] و [[app.css]] و [[app.js]] و [[offline.html]] و [[sw.js]] بالظبط زي المثال. وبعد كل خطوة سألت الصفحة: مين الـ SW اللي بيتحكم؟ ومين active ومين waiting؟ وإيه الكاشات الموجودة؟
+
+---
+
+## ١. التسجيل من الصفحة
+
+~~~text app.js
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
+~~~
+
+- [[navigator]]: object فيه معلومات وقدرات المتصفح.
+- [["serviceWorker" in navigator]]: [[in]] بيسأل «الخاصية دي موجودة؟». المتصفحات القديمة، أو صفحة مش على HTTPS ولا localhost، مفيهاش [[serviceWorker]]، فالسطر ميعملش حاجة بدل ما يرمي error.
+- [[register("/sw.js")]]: نزّل الملف ده وسطّبه كـ service worker. بيرجّع Promise بالـ registration.
+
+مكان الملف مهم: [[/sw.js]] في الـ root فبيتحكم في الموقع كله. لما جربت [[/js/sw.js]]:
+
+~~~text الناتج (Chrome)
+{"scope":"/js/","active":"activated","controller":false}
+after reload controller: false
+~~~
+
+اتسطّب واشتغل، بس الـ scope بتاعه [[/js/]] فمش بيتحكم في الصفحة [[/]] حتى بعد refresh. ولو طلبت scope أوسع بإيدك:
+
+~~~text الناتج (Chrome)
+SecurityError: Failed to register a ServiceWorker for scope ('http://localhost:PORT/') with script ('http://localhost:PORT/js/sw.js'): The path of the provided scope ('/') is not under the max scope allowed ('/js/'). Adjust the scope, move the Service Worker script, or use the Service-Worker-Allowed HTTP header to allow the scope.
 ~~~
 
 ---
 
-## ١. الـ stylesheet المشترك
+## ٢. اسم الكاش وقايمة الملفات
 
-~~~text price-tag.js
-const sheet = new CSSStyleSheet();
-sheet.replaceSync($__bt ... $__bt);
+~~~text sw.js
+const CACHE = "app-v2";
+const PRECACHE = ["/", "/offline.html", "/app.css", "/app.js"];
 ~~~
 
-- [[new CSSStyleSheet()]]: stylesheet فاضي من JavaScript.
-- [[replaceSync(css)]]: حط فيه الـ CSS ده. بيتعمل مرة واحدة بره الـ class، فكل الـ [[price-tag]] بيشاوروا على نفس الـ object.
-- جوه الـ CSS:
-  - [[:host { ... background: var(--tag-bg, #eee); }]]: العنصر نفسه. [[var(--tag-bg, #eee)]] = قيمة المتغير لو موجود، وإلا [[#eee]].
-  - [[:host([sale])]]: العنصر لو عليه [[sale]].
-  - [[p { color: green }]]: الـ [[p]] اللي **جوه** الـ shadow root بس.
+- [[CACHE]]: اسم «درج» في Cache Storage (مخزن في المتصفح بيشيل request ← response). بنغيّر الرقم مع كل نسخة.
+- [[PRECACHE]]: الملفات اللي لازم تبقى موجودة من أول لحظة عشان الموقع يفتح من غير نت. [["/"]] هي الصفحة الرئيسية نفسها.
 
 ---
 
-## ٢. الـ constructor
+## ٣. [[install]]
 
-- [[this.attachShadow({ mode: "open" })]]: اعمل shadow root ورجّعه. ومن ساعتها [[this.shadowRoot]] بيشاور عليه.
-- [[root.adoptedStyleSheets = [sheet]]]: استخدم الـ stylesheet المشترك جوه.
-- [[root.innerHTML = $__bt<p part="amount"></p>$__bt]]: محتوى الـ shadow. [[part="amount"]] بيعلّم العنصر ده إن الصفحة مسموحلها تستايله بـ [[::part(amount)]].
+~~~text sw.js
+self.addEventListener("install", (e) => {
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)));
+});
+~~~
 
-و [[connectedCallback]] بيكتب [[250 EGP]] جوه الـ [[p]] اللي في الـ shadow.
+- [[self]]: جوه الـ SW مفيش [[window]]، و [[self]] هو الـ worker نفسه.
+- [[install]]: بيتنادى مرة واحدة لكل نسخة جديدة من [[sw.js]].
+- [[caches.open(CACHE)]]: افتح الدرج ده (أو اعمله لو مش موجود). بيرجّع Promise بالكاش.
+- [[c.addAll(PRECACHE)]]: اطلب كل الملفات دي من السيرفر واحفظها. لو أي واحد فشل، مفيش حاجة بتتحفظ خالص (كله أو ولا حاجة).
+- [[e.waitUntil(promise)]]: «متعتبرش الـ install خلص لحد ما الـ Promise ده يخلص». ولو اترفض، الـ install كله فشل.
+
+بعد أول تحميل، السيرفر استلم الطلبات دي (الـ ٤ الأخيرين من الـ SW وهو بيعمل [[addAll]]):
+
+~~~text طلبات السيرفر
+GET /  GET /app.css  GET /app.js  GET /favicon.ico  GET /sw.js
+GET /  GET /offline.html  GET /app.css  GET /app.js
+~~~
+
+ولما حطيت ملف مش موجود ([["/missing.js"]]) في القايمة في نسخة جديدة [["app-v4"]]:
+
+~~~text الناتج (Chrome)
+{"active":null,"installing":null,"keys":["app-v4"],"v4entries":0}
+~~~
+
+السيرفر رد 404، فالـ install فشل والـ worker اترمى (مفيش active ولا installing). الدرج [["app-v4"]] نفسه اتعمل بـ [[caches.open]] بس فاضي (صفر ملفات). ولما ده حصل على موقع فيه نسخة شغالة قبل كده، القديمة فضلت active ومحدش حس.
 
 ---
 
-## ٣. النتيجة
+## ٤. [[activate]]
 
-~~~text الناتج
-page p color: rgb(255, 0, 0)
-shadow p color: rgb(0, 128, 0) | font-size: 20px
-host bg: rgb(219, 234, 254) | sale bg: rgb(253, 230, 138)
-querySelectorAll('p') from document: 1
-a.textContent: '' | shadow text: '250 EGP'
-shadowRoot mode: open
+~~~text sw.js
+self.addEventListener("activate", (e) => {
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
+    await self.clients.claim();
+  })());
+});
 ~~~
 
-| السطر | معناه |
+### من جوه لبرّه
+
+1. [[(async () => { ... })()]]: دالة async بنعرّفها وننادّيها في نفس اللحظة، عشان نقدر نستخدم [[await]] ونرجّع Promise واحد لـ [[waitUntil]].
+2. [[caches.keys()]]: أسماء كل الأدراج، مثلًا [[["app-v2", "app-v3"]]].
+3. [[.filter((k) => k !== CACHE)]]: سيب بس اللي اسمه مش الحالي.
+4. [[.map((k) => caches.delete(k))]]: لكل واحد قديم ابدأ مسح، فيطلع array من Promises.
+5. [[Promise.all(...)]]: استنى كل المسح يخلص.
+6. [[self.clients.claim()]]: «clients» هي الصفحات المفتوحة. من غيرها، الصفحة اللي سجّلت الـ SW لأول مرة مش بتبقى تحت تحكمه لحد الـ refresh.
+
+---
+
+## ٥. [[message]]
+
+~~~text sw.js
+self.addEventListener("message", (e) => {
+  if (e.data === "SKIP_WAITING") self.skipWaiting();
+});
+~~~
+
+- [[message]]: الصفحة بعتت رسالة بـ [[worker.postMessage(...)]]، و [[e.data]] هو اللي اتبعت.
+- [[self.skipWaiting()]]: متستناش التابات القديمة تتقفل، اتفعّل دلوقتي.
+
+---
+
+## ٦. اللي حصل لما شغّلته
+
+~~~text الناتج (Chrome)
+أول تحميل (فورًا)       {"controller":false,"active":null,"waiting":null,"caches":[]}
+بعد ready               {"controller":true,"active":"activated","waiting":null,"caches":["app-v2"]}
+refresh                 {"controller":true,"active":"activated","waiting":null,"caches":["app-v2"]}
+CACHE=app-v3 + refresh  {"controller":true,"active":"activated","waiting":"installed","caches":["app-v2","app-v3"]}
+refresh تاني            {"controller":true,"active":"activated","waiting":"installed","caches":["app-v2","app-v3"]}
+بعد SKIP_WAITING        {"controller":true,"active":"activated","waiting":null,"caches":["app-v3"]}
+~~~
+
+اقرا كل عمود كده:
+
+| العمود | معناه |
 |---|---|
-| [[page p]] أحمر | قاعدة الصفحة اشتغلت على [[p]] الصفحة |
-| [[shadow p]] أخضر | [[p { color: red }]] ماعدّاش جوه، و [[green]] بتاع الـ component هو اللي اشتغل |
-| [[font-size: 20px]] | [[::part(amount)]] من الصفحة عدّى، لأن الـ component سمح بـ [[part]] |
-| [[host bg]] أزرق فاتح | [[--tag-bg]] من الصفحة عدّى جوه [[var()]] |
-| [[sale bg]] أصفر | [[:host([sale])]] اشتغلت لأن العنصر عليه attribute اسمه [[sale]] |
-| [[querySelectorAll('p')]] = 1 | الـ document مش شايف الـ [[p]] اللي جوه الـ shadow |
-| [[textContent]] فاضي | النص في الـ shadow مش في العنصر نفسه |
+| [[controller]] | فيه SW بيتحكم في الصفحة دي دلوقتي؟ ([[navigator.serviceWorker.controller]]) |
+| [[active]] | حالة الـ SW الشغال ([[reg.active.state]]) |
+| [[waiting]] | فيه نسخة جديدة متسطّبة ومستنية؟ ([[reg.waiting]]) |
+| [[caches]] | [[caches.keys()]] |
 
-[[rgb(219, 234, 254)]] هو [[#dbeafe]]: [[getComputedStyle]] بيرجّع الألوان دايمًا بصيغة [[rgb()]].
+- **أول تحميل:** لسه مفيش حاجة. بعد [[navigator.serviceWorker.ready]] (Promise بيخلص لما يبقى فيه SW active) الـ controller بقى true في نفس الصفحة من غير refresh، وده بفضل [[clients.claim()]].
+- **غيّرت [[CACHE]] لـ [["app-v3"]]:** المتصفح لقى [[sw.js]] اتغير، فسطّب النسخة الجديدة (درج [["app-v3"]] اتعمل) ووقفها في [[waiting]] بحالة [["installed"]]. القديمة لسه active، والدرج القديم لسه موجود.
+- **refresh تاني:** ولا حاجة اتغيرت. التاب نفسه لسه client بالقديم، والصفحة الجديدة بتتحمّل قبل ما القديمة تتقفل.
+- **بعد [[postMessage("SKIP_WAITING")]]:** الجديدة بقت active، والـ activate مسح [["app-v2"]].
 
-### مين يكسب؟
-
-ضفت للصفحة [[price-tag { background: pink; font-family: monospace; }]]:
-
-~~~text الناتج
-host bg with outer rule: rgb(255, 192, 203) | inner font-family (inherited): monospace
-~~~
-
-- قاعدة الصفحة على الـ host كسبت [[:host]]: الـ component بيدّي افتراضي، والصفحة تقدر تغيّره.
-- [[font-family]] بتتورث، فعدّت جوه الـ shadow عادي.
+> ملحوظة من التجربة: Chrome بيفحص [[sw.js]] بعد التنقل بشوية، مش قبله. فأول refresh بعد التغيير بيرجّع الصفحة لسه بالقديم، والفحص بيحصل في الخلفية.
 
 ---
 
 ## الخلاصة
 
-| من بره الـ component | بيعدّي جوه؟ |
-|---|---|
-| [[p { color: red }]] (selector عادي) | لأ، الـ selectors بتاعة الصفحة مبتوصلش للعناصر اللي جوه الـ shadow |
-| خصائص بتتورث ([[color]] و [[font-family]] على الـ host) | آه، بتنزل من الـ host لولاده زي أي عنصر |
-| [[--custom-property]] | آه، وده الطريق الرسمي عشان الصفحة تغيّر ألوان الـ component |
-| [[::part(name)]] | آه، للعناصر اللي عليها [[part]] |
-| [[document.querySelector]] | لأ، ادخل بـ [[el.shadowRoot]] |`,
+| المرحلة | بتحصل إمتى | بنعمل فيها إيه |
+|---|---|---|
+| [[register]] | من الصفحة | نسجّل [[/sw.js]] من الـ root |
+| [[install]] | مرة لكل نسخة جديدة | [[addAll]] للملفات الأساسية |
+| waiting | فيه تاب شغال بالقديم | نستنى، أو [[skipWaiting]] بموافقة اليوزر |
+| [[activate]] | القديم مشي | نمسح الأدراج القديمة و [[clients.claim()]] |
+
+- أي byte اتغير في [[sw.js]] = نسخة جديدة. عشان كده بنغيّر [[CACHE]].
+- ملف واحد 404 في [[addAll]] = الـ install فشل واليوزرز فاضلين على القديم.
+- الـ refresh مش بيفعّل النسخة الجديدة: لازم كل التابات تتقفل أو [[skipWaiting]].`,
           lines: [
-            R`[[CSSStyleSheet]] جديد معمول بالـ JS (constructable stylesheet). بنعمله مرة واحدة برّه الـ class، فكل [[price-tag]] في الصفحة يستخدم نفس الـ object بدل ما كل واحد يعمل parse لنفس الـ CSS.`,
-            R`[[replaceSync]] بتحط الـ CSS ده جوه الـ stylesheet. السطر ده بيفتح template literal، فالـ CSS مكتوب على كذا سطر تحته.`,
-            R`[[:host]] = العنصر [[price-tag]] نفسه من جوه الـ shadow. الخلفية [[var(--tag-bg, #eee)]]: لو الصفحة عرّفت [[--tag-bg]] تاخده (الـ CSS variables بتعدّي جوه الـ shadow)، وإلا الرمادي الافتراضي. ده الطريق الرسمي للصفحة تغيّر اللون.`,
-            R`[[:host([sale])]]: لو العنصر نفسه عليه attribute [[sale]] (زي [[<price-tag sale>]]) الخلفية تبقى صفرا. كده الصفحة تغيّر الشكل بـ attribute من غير ما تلمس الـ CSS اللي جوه.`,
-            R`استايل للـ [[p]] اللي جوه الـ shadow بس. الـ [[p]] اللي في الصفحة مش هيتأثر، و CSS الصفحة (زي [[p { color: red; }]]) مش هيوصل للـ [[p]] ده. ده العزل اللي shadow DOM معمول عشانه.`,
-            R`نهاية الـ template literal بتاع الـ CSS وقفلة [[replaceSync]].`,
-            R`class العنصر، بيورث [[HTMLElement]] زي أي custom element.`,
-            R`الـ [[constructor]]: هنا بنعمل الـ shadow root مرة واحدة لكل عنصر.`,
-            R`[[super()]] لازم الأول قبل أي استخدام لـ [[this]].`,
-            R`[[attachShadow]] بتعمل شجرة DOM مستخبية جوه العنصر وبترجّعها. [[mode: "open"]] يعني الصفحة تقدر توصلها بـ [[el.shadowRoot]] (مفيد للتست والـ debugging)؛ مع [[closed]] بترجّع [[null]]. وبتتنادى مرة واحدة بس لكل عنصر، التانية بترمي error.`,
-            R`[[adoptedStyleSheets]]: ليستة الـ stylesheets اللي الـ shadow ده بيستخدمها. بنحط فيها الـ [[sheet]] المشترك، فالـ CSS يتطبّق جوه الـ shadow بس.`,
-            R`محتوى الـ shadow: [[p]] فاضي هنكتب فيه السعر. [[part="amount"]] بيفتح باب للصفحة تستايل العنصر ده بالذات بـ [[price-tag::part(amount)]]، وباقي الـ shadow يفضل مقفول.`,
-            R`نهاية الـ [[constructor]].`,
-            R`[[connectedCallback]]: لما العنصر يدخل الصفحة، ساعتها الـ attributes بتاعته موجودة ونقدر نقراها.`,
-            R`اكتب السعر جوه الـ [[p]] اللي في الـ shadow، من attribute [[amount]] أو 0. لازم [[this.shadowRoot.querySelector]] مش [[this.querySelector]]: التانية بتدوّر في أولاد العنصر العاديين (light DOM) ومش هتلاقي الـ [[p]].`,
-            R`نهاية [[connectedCallback]].`,
-            R`نهاية الـ class.`,
-            R`سجّل [[price-tag]] واربطه بالـ class، فأي [[<price-tag>]] في الصفحة يشتغل بالـ shadow والاستايل ده.`,
+            R`في الصفحة: لو المتصفح بيدعم service workers ([[serviceWorker]] موجودة في [[navigator]]) سجّل [[/sw.js]]. الشرط بيخلي الموقع يشتغل عادي في المتصفحات القديمة أو على صفحة مش HTTPS بدل ما يرمي error. ومكان الملف مهم: [[/sw.js]] في الـ root يتحكم في كل صفحات الموقع.`,
+            R`اسم الكاش وفيه رقم النسخة. لما تغيّر أي ملف من اللي بتتحفظ غيّر الرقم ([[app-v3]]): ده بيغيّر محتوى [[sw.js]] نفسه، فالمتصفح يعتبره نسخة جديدة ويعمل install، و [[activate]] يمسح الكاش القديم بالاسم.`,
+            R`ليستة الملفات اللي التطبيق محتاجها عشان يفتح من غير نت: الصفحة الرئيسية وصفحة [[offline.html]] والـ CSS والـ JS. هتتحمّل وتتحفظ مرة واحدة وقت الـ install.`,
+            R`[[install]] بيحصل مرة لكل نسخة من [[sw.js]]: أول زيارة، أو لما المتصفح يلاقي الملف اتغير ولو بايت واحد. ده الوقت الصح تحفظ فيه الملفات الأساسية.`,
+            R`افتح الكاش بالاسم واحفظ فيه كل ملفات [[PRECACHE]]. [[waitUntil]] بتقول للمتصفح «الـ install مخلصش لحد ما الـ promise دي تخلص». ولو ملف واحد فشل، [[addAll]] كلها بتفشل والـ install يفشل، والنسخة القديمة تفضل شغالة بدل نسخة ناقصة.`,
+            R`نهاية الـ [[install]] listener.`,
+            R`[[activate]] بيحصل لما النسخة دي تستلم فعلًا: يا إما مفيش قديمة، يا إما القديمة مشيت (كل تابات الموقع اتقفلت أو اتعمل [[skipWaiting]]). ده الوقت الأمان تمسح فيه حاجات النسخة القديمة، لأن محدش بقى بيستخدمها.`,
+            R`[[waitUntil]] محتاجة promise، فبنكتب دالة [[async]] وننديها على طول، عشان نستخدم [[await]] جواها ونديها الـ promise اللي راجعة. كده المتصفح بيأجّل الـ fetch events لحد ما التنضيف يخلص.`,
+            R`[[caches.keys()]] بترجّع أسامي كل الكاشات اللي الموقع ده عملها، بما فيهم بتوع النسخ القديمة ([[app-v1]] مثلًا).`,
+            R`سيب الاسم الحالي ([[CACHE]]) وامسح الباقي كلهم مع بعض بـ [[Promise.all]]. من غير السطر ده، الكاشات القديمة تفضل واكلة مساحة على جهاز اليوزر.`,
+            R`[[clients.claim()]]: خلي الـ SW ده يتحكم في الصفحات المفتوحة دلوقتي على طول. من غيرها، في أول زيارة الصفحة اللي سجّلت الـ SW مش بتبقى تحت تحكمه لحد ما تعمل reload.`,
+            R`نهاية الدالة الـ [[async]] وندهها، وقفلة [[waitUntil]].`,
+            R`نهاية الـ [[activate]] listener.`,
+            R`استقبل رسايل من الصفحة (اللي بتتبعت بـ [[postMessage]]). ده الطريق اللي الصفحة بتكلّم بيه الـ SW، زي «اليوزر وافق على التحديث».`,
+            R`لو الرسالة [[SKIP_WAITING]]: [[skipWaiting()]] بتخلي النسخة الجديدة اللي مستنية تتفعّل دلوقتي بدل ما تستنى كل التابات تتقفل. بنعملها بس بعد ما اليوزر يوافق، لأن الصفحة المفتوحة محمّلة بـ JS قديم وممكن تطلب ملفات النسخة القديمة اللي اتمسحت.`,
+            R`نهاية الـ [[message]] listener.`,
           ],
-          sol: R`الناتج الحقيقي في Chrome 156:
-[[p]] الصفحة: [[rgb(255, 0, 0)]] (أحمر). [[p]] اللي جوه: [[rgb(0, 128, 0)]] (أخضر) و [[font-size: 20px]] من [[::part]].
-خلفية الأول [[rgb(219, 234, 254)]] (من [[--tag-bg]])، والتاني [[rgb(253, 230, 138)]] (من [[:host([sale])]]).
-[[document.querySelectorAll("p").length]] = [[1]]: الـ document مش شايف اللي جوه الـ shadow.`
+          sol: R`بعد تغيير [[CACHE]] وأول refresh: DevTools بيعرض SW جديد «waiting to activate» والقديم لسه «activated and is running». الـ refresh التاني غالبًا مش هيفعّله، لأن التاب نفسه client بالقديم. لازم تقفل كل التابات أو تدوس skipWaiting. بعدها الـ activate بيشتغل، و Cache storage فيه [["app-v3"]] بس.
+
+في [[sw.js]] بتاع الموقع ده: [[await self.skipWaiting()]] في آخر الـ install، و [[self.clients.claim()]] في آخر الـ activate بعد ما يمسح أي كاش غير [[CACHE]]. يعني مفيش waiting خالص، ودا آمن هنا لأن استراتيجيته network-first.`
         },
         {
-          cmd: "slots",
-          title: "slots: المحتوى اللي جوه الـ tag يظهر في مكان تحدده",
-          desc: R`[[<slot>]] جوه الـ shadow DOM مكان فاضي بيتملي بالأولاد اللي اليوزر كتبهم جوه الـ tag. [[<slot name="title">]] بيتملي بالعنصر اللي عليه [[slot="title"]]، و [[<slot>]] من غير اسم بياخد الباقي. والمحتوى اللي جوه [[<slot>]] نفسه بيظهر لو مفيش حاجة اتحطت (fallback).
+          cmd: "استراتيجيات الكاش",
+          title: "ترد من الكاش ولا من الشبكة؟ (network-first و cache-first و stale-while-revalidate)",
+          desc: R`في [[fetch]] event بتاع الـ SW بتقرر لكل request:
 
-العناصر دي بتفضل في الـ light DOM (بتاعة الصفحة)، فـ CSS الصفحة بيأثر عليها، والـ component بيستايلها بـ [[::slotted()]].`,
-          example: R`class AppCard extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: "open" }).innerHTML = $__bt
-      <style>
-        article { border: 1px solid #ccc; border-radius: 8px; padding: 12px; }
-        ::slotted(h3) { margin: 0 0 8px; color: navy; }
-        footer { color: gray; font-size: 12px; }
-      </style>
-      <article>
-        <slot name="title"><h3>No title</h3></slot>
-        <slot></slot>
-        <footer><slot name="footer">default footer</slot></footer>
-      </article>$__bt;
-    this.shadowRoot.querySelector("slot:not([name])").addEventListener("slotchange", (e) => {
-      console.log("slotchange: body has", e.target.assignedElements().length, "element(s)");
-    });
+network-first: جرّب الشبكة، ولو فشلت رد من الكاش. للـ HTML (الصفحات): اليوزر يشوف الأحدث دايمًا، ومن غير نت يشوف آخر نسخة. ده اللي الموقع ده بيعمله لكل حاجة.
+
+cache-first: لو في الكاش رد منه ومتسألش الشبكة. للـ assets اللي في اسمها hash ([[app.3f9a1c.js]]): المحتوى عمره ما هيتغير لنفس الاسم، فمفيش سبب تسأل.
+
+stale-while-revalidate: رد من الكاش فورًا (سريع)، وفي نفس الوقت هات من الشبكة وحدّث الكاش للمرة الجاية. لحاجات تتحمل تكون قديمة شوية: أفاتارات، وخطوط، و API مش حساس.
+
+ومن غير نت وصفحة مش في الكاش: رد بـ [[offline.html]] اللي حفظته في الـ install.`,
+          example: R`self.addEventListener("fetch", (e) => {
+  const req = e.request;
+  const url = new URL(req.url);
+  if (req.method !== "GET" || url.origin !== self.location.origin) return;
+  if (req.mode === "navigate") return e.respondWith(networkFirst(req));
+  if (url.pathname.startsWith("/assets/")) return e.respondWith(cacheFirst(req));
+  if (url.pathname.startsWith("/api/public/")) return e.respondWith(staleWhileRevalidate(req, e));
+});
+async function networkFirst(req) {
+  const cache = await caches.open(CACHE);
+  try {
+    const res = await fetch(req);
+    if (res.ok) cache.put(req, res.clone());
+    return res;
+  } catch {
+    return (await cache.match(req)) ?? (await cache.match("/offline.html"));
   }
 }
-customElements.define("app-card", AppCard);`,
-          try: R`احفظ المثال [[app-card.js]] واعمل كارتين: الأول فيه [[<h3 slot="title">Order #42</h3>]] و [[<p>]] و [[<button>]]، والتاني فيه [[<p>]] بس. إيه اللي ظهر في التاني مكان العنوان والفوتر؟ وبعدين ضيف للتاني [[<span slot="footer">paid</span>]] من الـ Console، وضيف [[<p>]] جديد للأول: إمتى [[slotchange]] بيتنادى؟`,
+async function cacheFirst(req) {
+  const hit = await caches.match(req);
+  if (hit) return hit;
+  const res = await fetch(req);
+  if (res.ok) (await caches.open(CACHE)).put(req, res.clone());
+  return res;
+}
+async function staleWhileRevalidate(req, e) {
+  const cache = await caches.open(CACHE);
+  const hit = await cache.match(req);
+  const fresh = fetch(req).then((res) => {
+    if (res.ok) cache.put(req, res.clone());
+    return res;
+  });
+  e.waitUntil(fresh.catch(() => {}));
+  return hit ?? fresh;
+}`,
+          try: R`كمّل على مشروع الدرس اللي فات: ضيف الكود ده في [[sw.js]]، واعمل [[offline.html]]. اعمل Offline من DevTools ← Network، وافتح صفحة زرتها قبل كده وصفحة مزرتهاش. وبعدين بص على عمود Size في Network: الـ requests اللي جاية من الـ SW مكتوب جنبها إيه؟ وآخر حاجة: ليه الـ API الخاص بكل يوزر ([[/api/me]]) مش في أي استراتيجية؟`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع: [[<app-card>]] جواه [[<h3 slot="title">]] و [[<p>]] كل واحد في سطر لوحده. الـ slot اللي من غير اسم: [[assignedNodes().length]] كام و [[assignedElements().length]] كام؟ وبعدين شغّل.`, done: R`[[assignedElements()]] بيرجّع 1 (الـ [[p]] بس)، و [[assignedNodes()]] بيرجّع أكتر (الـ text nodes بتاعة المسافات والسطور الجديدة بتتحسب، في الشكل ده 4)، والـ [[h3]] مش منهم لأنه راح للـ slot اللي اسمه [[title]].` },
-            { lvl: 'تطبيق', t: R`ابني [[<info-alert type="warning">]]: slot اسمه [[icon]] فيه fallback «⚠» (و «ℹ» لو [[type="info"]])، و slot عادي للرسالة، وزرار إغلاق جوه الـ shadow بيشيل العنصر ويبعت [[close]] event.`, done: R`alert من غير أيقونة بيظهر الـ fallback الصح حسب [[type]]، وأيقونة [[<span slot="icon">]] بتاعتك بتظهر مكانها، والإغلاق بيشيل العنصر والـ listener على العنصر بيستقبل [[close]]، والـ CSS بتاع الصفحة بيلوّن الرسالة (لأنها لسه في الـ light DOM).` },
-            { lvl: 'تحدي', t: R`ابني footer بيختفي لوحده: شيل الـ fallback من slot الـ [[footer]] في [[AppCard]]، وفي [[slotchange]] حط [[hidden]] على الـ [[<footer>]] لو [[assignedNodes({ flatten: true }).length]] بصفر. وجرّب تضيف وتشيل [[<span slot="footer">]] من Console.`, done: R`كارت من غير footer مفيهوش الخط الرمادي ولا المسافة بتاعته، وإضافة [[<span slot="footer">paid</span>]] بتظهره على طول، وشيلها بيخفيه تاني، و [[slotchange]] بيتنادى مع كل إضافة أو شيل للـ slot ده بس مش لما تغيّر نص جوه الـ span.` },
+            { lvl: 'سريع', t: R`محاكاة في Node: [[cacheFirst(req)]] بتاعة الدرس، بس [[caches]] عبارة عن [[Map]] بإيدك و [[fetch]] دالة وهمية بتزوّد عدّاد وبترجّع [[new Response("ok")]] (و [[status: 500]] لـ [[/broken]]).`, done: R`طلبين لنفس الـ URL: العدّاد 1 والتاني جه من الـ Map. طلبين لـ [[/broken]]: العدّاد بيزيد 2 (الـ 500 متكيّشش عشان [[res.ok]])، و [[await res.text()]] على الـ response اللي جه من الكاش بيرجّع [["ok"]] (عشان اتحفظ [[res.clone()]] مش الأصل).` },
+            { lvl: 'تطبيق', t: R`مسألة: كاش للصور بـ cache-first بحد أقصى ٥٠ صورة: [[trimCache(name, max)]] بعد كل [[put]]، بتعمل [[cache.keys()]] ولو أكتر من [[max]] تمسح الأقدم (أول keys في اللستة). جرّبها الأول على الـ Map بتاع التمرين اللي فات.`, done: R`بعد ٦٠ صورة مختلفة الكاش فيه ٥٠ بس وأول ١٠ اتمسحوا، و [[max]] بصفر بيمسح كله، وصورة موجودة بتتطلب تاني مبتزوّدش العدد، و Cache storage في المتصفح بيأكد نفس العدد.` },
+            { lvl: 'تحدي', t: R`قارن وقيس: network-first بـ timeout ٣ ثواني بـ [[Promise.race]]، والـ response اللي يوصل متأخر يتحط في الكاش. قيس وقت ظهور الصفحة بـ custom throttling في Network بـ latency ٥ ثواني، مرة بالـ timeout ومرة من غيره.`, done: R`من غير الـ timeout الصفحة بتستنى حوالي ٥ ثواني، وبيه بتظهر بعد حوالي ٣ من الكاش، وبعدها الكاش بيتحدّث بالنسخة الجديدة. على شبكة سريعة بترد من الشبكة على طول، و Offline خالص بيرد من الكاش من غير ما يستنى الـ ٣ ثواني.` },
           ],
           flag: "script",
           deep: {
-            why: R`component زي كارت أو dialog أو layout محتاج ياخد محتوى من اللي بيستخدمه (عنوان، نص، أزرار) ويحطه في أماكن معينة جوه التصميم بتاعه. ده نفس فكرة [[children]] في React و [[<slot>]] في Vue (Vue أخدت الاسم والفكرة من هنا).`,
-            how: R`الأولاد اللي اليوزر كتبهم جوه [[<app-card>]] مش بيتنقلوا جوه الـ shadow: بيفضلوا أولاد العنصر في الـ light DOM، والمتصفح بس بيعرضهم (render) مكان الـ [[<slot>]] المناسب. عشان كده [[h3.parentNode === card]] و CSS الصفحة شغال عليهم.
+            why: "الاستراتيجية الغلط بتعمل واحد من اتنين: موقع بطيء (network-first لملفات مش بتتغير) أو موقع عالق على نسخة قديمة (cache-first للـ HTML). الـ bug الشهير «عملت deploy واليوزرز لسه شايفين القديم بعد أسبوع» غالبًا cache-first على [[index.html]].",
+            how: R`[[req.mode === "navigate"]] معناها request لصفحة (كتبت URL أو ضغطت لينك)، وده الـ HTML. [[e.respondWith(promise)]] بيقول للمتصفح «أنا هرد»، ولو مناديتهاش ([[return]] من غير حاجة) الـ request بيروح للشبكة عادي كأن مفيش SW.
 
-كل عنصر عليه [[slot="x"]] بيروح لـ [[<slot name="x">]]. الباقي (من غير [[slot]]) بيروح للـ slot اللي من غير اسم، ولو مفيش، مش بيظهر. لو slot ماجلوش حاجة، المحتوى اللي جواه هو اللي بيظهر (fallback).
+[[res.clone()]]: الـ Response body stream بيتقري مرة واحدة، فبتعمل نسخة للكاش ونسخة للصفحة. و [[res.ok]] قبل الحفظ عشان متكاشش صفحة 500 أو 404.
 
-[[slot.assignedElements()]]: العناصر اللي اتحطت فيه. و [[slotchange]] event بيتنادى على الـ slot لما الليستة دي تتغير (وأول مرة كمان). و [[::slotted(h3)]]: من جوه الـ shadow، استايل للـ [[h3]] اللي اتحط في slot (العنصر نفسه بس، مش أولاده).`,
-            when: R`أي component بيغلّف محتوى: cards، و modals، و tabs، و layouts. ولو المحتوى داتا (array of items) مش HTML، مرّرها property (درس [[attributes و properties]]).`,
-            mistakes: R`تنسى [[slot="title"]] على العنصر فيروح للـ slot الافتراضي. وتحاول تستايل أولاد العنصر اللي في الـ slot بـ [[::slotted(div p)]]: مش شغال، [[::slotted]] بيمسك العنصر اللي في الـ slot مباشرة بس. وتدوّر على الـ [[h3]] في [[shadowRoot.querySelector]]: هو في الـ light DOM.`
+في SWR: [[hit ?? fresh]] يعني لو في الكاش رد بيه فورًا، وإلا استنى الشبكة. و [[e.waitUntil(fresh)]] بيخلي الـ SW يفضل صاحي لحد ما التحديث يخلص حتى بعد ما رديت (المتصفح ممكن يوقف الـ SW لو فاضي). و [[catch]] هناك عشان فشل التحديث في الخلفية ميطلعش error ملوش لازمة.
+
+الـ requests اللي من origin تاني (CDN أو API خارجي) بنتجاهلها هنا. الموقع ده بيستثني Google Fonts بس، وردها «opaque» (مش مقروء بسبب CORS)، فمينفعش تعرف هو ok ولا لأ.
+
+وفي HTTP headers نفسها (درس «ETag و Cache-Control» في تاب APIs متقدمة): الـ assets بـ hash [[Cache-Control: max-age=31536000, immutable]]، والـ HTML [[no-cache]]. الـ SW بيشتغل فوق ده مش بداله.`,
+            when: R`HTML: network-first. JS/CSS/خطوط بـ hash: cache-first. صور وأفاتارات و API عام: SWR. وأي حاجة خاصة باليوزر (حسابه، سلته) أو POST: متكاشهاش في الـ SW خالص، أو بحذر شديد.`,
+            mistakes: R`cache-first للـ HTML. وكاش لـ responses فيها بيانات يوزر، فيعمل logout ويدخل يوزر تاني على نفس الجهاز ويشوف بيانات الأول. وتحفظ 500 في الكاش. وتنسى تمسح الكاشات القديمة فالتخزين يتملي. و [[respondWith]] جوه [[await]] (لازم تتنادى sync في الـ event، ابعتلها promise).`
           },
-          teach: R`## الصفحة
+          teach: R`## الفكرة في سطر
 
-اتجرّب في Chrome 156 headless.
+كل request من الصفحة بيعدّي على [[fetch]] event في الـ SW. الكود ده بيبص على نوع الـ request ويوزّعه على واحدة من ٣ دوال: صفحة ← network-first، ملف بـ hash ← cache-first، API عام ← stale-while-revalidate.
 
-~~~text wc3.html
-<app-card id="c1">
-  <h3 slot="title">Order #42</h3>
-  <p>3 items, 250 EGP</p>
-  <button>Pay</button>
-</app-card>
-<app-card id="c2"><p>no title, no footer</p></app-card>
+جرّبته في Chrome headless (عن طريق playwright-core، بروفايل مؤقت) على سيرفر Node على localhost. الـ SW فيه الكود ده بالظبط ومعاه [[const CACHE = "app-v1"]] و install بيحفظ [[/offline.html]]. الصفحات: [[/]] و [[/about.html]] و [[/never.html]]، والصفحة الرئيسية بتحمّل [[/assets/app.3f9a1c.js]]. و [[/api/public/news]] بيرجّع [[{"version": N}]] والسيرفر بيزوّد N مع كل طلب، عشان نعرف الرد جه من الشبكة ولا قديم من الكاش.
+
+---
+
+## ١. الموزّع: [[fetch]] event
+
+~~~text sw.js
+self.addEventListener("fetch", (e) => {
+  const req = e.request;
+  const url = new URL(req.url);
+  if (req.method !== "GET" || url.origin !== self.location.origin) return;
+  if (req.mode === "navigate") return e.respondWith(networkFirst(req));
+  if (url.pathname.startsWith("/assets/")) return e.respondWith(cacheFirst(req));
+  if (url.pathname.startsWith("/api/public/")) return e.respondWith(staleWhileRevalidate(req, e));
+});
 ~~~
 
+- [[e.request]]: الـ Request object: فيه [[url]] و [[method]] و [[mode]] والـ headers.
+- [[new URL(req.url)]]: بيفك الـ URL لحتت: [[origin]] (البروتوكول والدومين والبورت) و [[pathname]] (المسار).
+- [[req.method !== "GET"]]: POST و PUT ودول بيغيّروا داتا، ومينفعش يتكاشوا. [[return]] من غير [[respondWith]] = «مليش دعوة»، والـ request يروح للشبكة عادي.
+- [[url.origin !== self.location.origin]]: request لموقع تاني (CDN، API خارجي): برضه سيبه.
+- [[req.mode === "navigate"]]: المتصفح بيفتح صفحة (كتبت URL أو ضغطت لينك). ده الـ HTML.
+- [[startsWith("/assets/")]]: المسار بيبدأ بكده.
+- [[e.respondWith(promise)]]: «أنا اللي هرد، والرد هو اللي الـ Promise ده هيرجّعه». لازم تتنادى على طول جوه الـ event، مش بعد [[await]].
+
+فـ [[return e.respondWith(...)]] معناها: رد، واخرج من الدالة عشان باقي الـ ifs متتفحصش.
+
 ---
 
-## ١. الـ template جوه الـ shadow
+## ٢. network-first (للصفحات)
 
-- [[this.attachShadow({ mode: "open" }).innerHTML = ...]]: [[attachShadow]] بيرجّع الـ shadow root، فبنكتب فيه على طول.
-- [[<slot name="title"><h3>No title</h3></slot>]]: مكان للعنوان، ولو مفيش: [[No title]].
-- [[<slot></slot>]]: الـ slot الافتراضي: أي ابن من غير [[slot=]].
-- [[<slot name="footer">default footer</slot>]]: مكان للفوتر، وافتراضيًا [[default footer]].
-- [[::slotted(h3)]]: استايل للـ [[h3]] اللي اتحط في أي slot.
+~~~text sw.js
+async function networkFirst(req) {
+  const cache = await caches.open(CACHE);
+  try {
+    const res = await fetch(req);
+    if (res.ok) cache.put(req, res.clone());
+    return res;
+  } catch {
+    return (await cache.match(req)) ?? (await cache.match("/offline.html"));
+  }
+}
+~~~
+
+1. [[caches.open(CACHE)]]: افتح الدرج.
+2. [[try]]: جرّب [[fetch(req)]] من الشبكة.
+3. [[res.ok]]: true لو الـ status من 200 لـ 299. صفحة 404 أو 500 متتحفظش.
+4. [[cache.put(req, res.clone())]]: احفظ الرد. [[clone()]] لأن الـ body بيتقري مرة واحدة: نسخة للكاش ونسخة للصفحة. ومن غير [[await]] عشان الصفحة متستناش الحفظ.
+5. [[catch]]: [[fetch]] بيرمي error بس لما الشبكة نفسها تفشل (مفيش نت، السيرفر مش موجود). الـ 404 مش error.
+6. [[cache.match(req)]]: دوّر على نسخة محفوظة، أو [[undefined]].
+7. [[?? cache.match("/offline.html")]]: لو مفيش، رجّع صفحة الـ offline.
 
 ---
 
-## ٢. مين راح فين
+## ٣. cache-first (للملفات اللي في اسمها hash)
+
+~~~text sw.js
+async function cacheFirst(req) {
+  const hit = await caches.match(req);
+  if (hit) return hit;
+  const res = await fetch(req);
+  if (res.ok) (await caches.open(CACHE)).put(req, res.clone());
+  return res;
+}
+~~~
+
+- [[caches.match(req)]] (من غير open): بيدوّر في **كل** الأدراج.
+- لو لقاه، رد بيه فورًا ومتكلّمش الشبكة خالص.
+- لو لأ، هاته واحفظه للمرة الجاية. [[(await caches.open(CACHE)).put(...)]]: الأقواس عشان [[await]] يخلص الأول وبعدين ننادي [[put]] على النتيجة.
+
+---
+
+## ٤. stale-while-revalidate (لـ API عام)
+
+~~~text sw.js
+async function staleWhileRevalidate(req, e) {
+  const cache = await caches.open(CACHE);
+  const hit = await cache.match(req);
+  const fresh = fetch(req).then((res) => {
+    if (res.ok) cache.put(req, res.clone());
+    return res;
+  });
+  e.waitUntil(fresh.catch(() => {}));
+  return hit ?? fresh;
+}
+~~~
+
+- [[hit]]: النسخة القديمة (stale) لو موجودة.
+- [[fresh]]: طلب الشبكة بيبدأ دلوقتي **من غير [[await]]**، فبيشتغل في الخلفية، ولما يرجع يحدّث الكاش.
+- [[e.waitUntil(fresh.catch(() => {}))]]: خلي الـ SW صاحي لحد ما التحديث يخلص (المتصفح بيوقف الـ SW الفاضي). و [[catch]] الفاضية عشان لو مفيش نت الفشل ده ميطلعش error.
+- [[hit ?? fresh]]: لو فيه قديم رد بيه فورًا، وإلا استنى الجديد.
+
+---
+
+## ٥. اللي حصل لما شغّلته
+
+### online
 
 ~~~text الناتج
-c1 -> title: H3 | (default): P,BUTTON | footer: fallback
-c2 -> title: fallback | (default): P | footer: fallback
-h3 color: rgb(0, 0, 128) | still in light DOM: true
+online / → server got: GET /
+SWR #1: {"version":1} server: GET /api/public/news
+SWR #2: {"version":1} server: GET /api/public/news
+SWR #3: {"version":2} server: GET /api/public/news
+POST server: POST /api/public/news
 ~~~
 
-| | [[title]] | الافتراضي | [[footer]] |
+- فتح [[/]] للمرة التانية: السيرفر استلم [[GET /]] بس. الـ [[app.3f9a1c.js]] جه من الكاش (cache-first) والسيرفر مشافهوش.
+- SWR #1: مفيش كاش، فاستنى الشبكة وجاب version 1.
+- SWR #2: رد فورًا بالقديم (version 1)، مع إن السيرفر اتطلب منه في الخلفية وطلّع version 2 واتحفظ.
+- SWR #3: رد بـ version 2 اللي اتحفظ في المرة اللي فاتت. يعني SWR دايمًا متأخر خطوة: اللي بتشوفه هو نتيجة الطلب اللي قبله.
+- POST: راح للسيرفر عادي والـ SW مقربلوش.
+
+ده محتوى الكاش بعدها:
+
+~~~text الناتج
+[ '/offline.html', '/assets/app.3f9a1c.js', '/about.html', '/', '/api/public/news' ]
+~~~
+
+### offline (عملت [[setOffline(true)]] زي Offline في DevTools)
+
+~~~text الناتج
+offline / → home | home
+offline /about.html → about | about
+offline /never.html → offline | مفيش نت
+SWR offline: {"version":3}
+/api/me offline: TypeError: Failed to fetch
+~~~
+
+- [[/]] و [[/about.html]] اتزاروا قبل كده، فـ network-first فشل ورجع للكاش.
+- [[/never.html]] متزارتش، فرجعت [[offline.html]].
+- SWR رجّع آخر نسخة محفوظة (3)، والتحديث في الخلفية فشل بهدوء بسبب [[catch]].
+- [[/api/me]] مش في أي استراتيجية، فراح للشبكة وفشل بـ [[TypeError: Failed to fetch]]. ده مقصود: بيانات خاصة باليوزر متتحفظش في Cache Storage.
+
+---
+
+## الخلاصة
+
+| الاستراتيجية | بترد من | سؤال الشبكة | لمين |
 |---|---|---|---|
-| [[c1]] | الـ [[h3]] | [[p]] و [[button]] | [[default footer]] |
-| [[c2]] | [[No title]] | [[p]] | [[default footer]] |
+| network-first | الشبكة، ولو فشلت الكاش | كل مرة | الـ HTML |
+| cache-first | الكاش، ولو مش موجود الشبكة | أول مرة بس | ملفات بـ hash |
+| stale-while-revalidate | الكاش فورًا | كل مرة في الخلفية | API عام، صور |
+| مفيش [[respondWith]] | الشبكة عادي | | POST، origins تانية، بيانات اليوزر |
 
-- [[assignedElements()]] رجّع العناصر اللي في كل slot، و [[fallback]] (كلمة من سكربت الاختبار) يعني ليستة فاضية فالمحتوى الافتراضي ظهر.
-- [[rgb(0, 0, 128)]] = [[navy]]: [[::slotted(h3)]] اشتغل.
-- [[still in light DOM: true]]: [[h3.parentNode]] لسه هو [[c1]] نفسه. اتعرض جوه، بس مكانه في الشجرة متغيرش.
-
----
-
-## ٣. [[slotchange]]
-
-~~~text الناتج (Console)
-slotchange: body has 2 element(s)
-slotchange: body has 1 element(s)
-slotchange: body has 3 element(s)
-~~~
-
-| السطر | ليه |
-|---|---|
-| 2 | أول ما [[c1]] اتعمل: [[p]] و [[button]] |
-| 1 | [[c2]]: [[p]] |
-| 3 | ضفت [[<p>more</p>]] لـ [[c1]] بـ [[append]] |
-
-ولما ضفت [[<span slot="footer">paid</span>]] لـ [[c2]]: الفوتر بقى [[SPAN]] (بدل [[default footer]])، بس مفيش سطر [[slotchange]]، لأن الـ listener على الـ slot الافتراضي بس:
-
-~~~text الناتج
-c2 after append -> title: fallback | (default): P | footer: SPAN
-~~~
-
-- [[querySelector("slot:not([name])")]]: الـ slot اللي ملوش [[name]].
-- [[e.target]]: الـ slot نفسه. [[assignedElements()]]: العناصر (مش النصوص) اللي فيه.
-
----
-
-## الخلاصة
-
-| الحاجة | معناها |
-|---|---|
-| [[<slot>]] | الأولاد اللي من غير [[slot=]] |
-| [[<slot name="x">]] + [[slot="x"]] | عنصر في مكان معين |
-| محتوى جوه [[<slot>]] | fallback لو مفيش حاجة |
-| [[::slotted(sel)]] | استايل للعنصر اللي في الـ slot (مش أولاده) |
-| [[slotchange]] و [[assignedElements()]] | اعرف إيه اللي اتحط |
-
-العناصر في الـ slots بتفضل في الـ light DOM: CSS الصفحة شغال عليها، و [[document.querySelector]] بيلاقيها.`,
+- [[clone()]] قبل [[put]]، و [[res.ok]] قبل الحفظ.
+- [[fetch]] بيرمي error لما الشبكة تقع بس، مش مع 404.`,
           lines: [
-            R`class الكارت، بيورث [[HTMLElement]]. فكرته: هيكل ثابت (إطار وعنوان وفوتر) والصفحة هي اللي تحط المحتوى جواه.`,
-            R`الـ [[constructor]]: هنعمل فيه الـ shadow والـ template مرة واحدة.`,
-            R`[[super()]] بينادي constructor بتاع [[HTMLElement]]، ولازم يبقى الأول قبل أي [[this]].`,
-            R`[[attachShadow]] بترجّع الـ shadow root، فبنكتب [[innerHTML]] عليه على طول في نفس السطر. والـ template literal بيبدأ هنا ويكمّل لحد [[</article>]].`,
-            R`[[<style>]] جوه الـ shadow: الاستايل ده بيطبّق على عناصر الـ shadow بس، ومش بيطلع للصفحة.`,
-            R`شكل الكارت: إطار رمادي وحواف مدوّرة ومسافة جوه. الـ [[article]] ده جوه الـ shadow، فأي [[article]] في الصفحة مش هيتأثر.`,
-            R`[[::slotted(h3)]]: استايل لأي [[h3]] الصفحة حطته في slot. العناصر دي فاضلة في الـ light DOM، فده الطريق من جوه الـ shadow تستايلها. بيمسك العنصر المحطوط نفسه بس، مش أولاده.`,
-            R`استايل الـ [[footer]] اللي جوه الـ shadow: رمادي وخط صغير.`,
-            R`نهاية الـ [[<style>]]، وبعده محتوى الكارت نفسه.`,
-            R`[[<article>]]: الإطار اللي فيه الأماكن التلاتة.`,
-            R`slot اسمه [[title]]: أي عنصر في الصفحة عليه [[slot="title"]] يتعرض هنا. والـ [[h3]] اللي جواه fallback بيظهر بس لو الصفحة محطتش عنوان.`,
-            R`الـ slot الافتراضي (من غير [[name]]): بياخد كل أولاد العنصر اللي مش عليهم [[slot]]، زي [[p]] و [[button]]. لو مفيش slot زي ده، الأولاد دول مش هيظهروا خالص.`,
-            R`slot اسمه [[footer]] جوه [[<footer>]]، فاللي الصفحة تحطه فيه ياخد استايل الفوتر. ولو محطتش حاجة، يظهر نص default footer.`,
-            R`نهاية [[<article>]] والـ template literal، فالـ [[innerHTML]] اتكتب.`,
-            R`هات الـ slot اللي ملوش [[name]] (الافتراضي) واسمع لـ [[slotchange]]: بيتنادى لما العناصر المتحطوطة فيه تتغير (ولد اتضاف أو اتشال)، وأول مرة يتحطوا كمان.`,
-            R`[[e.target]] هو الـ slot نفسه، و [[assignedElements()]] بترجّع العناصر اللي اتحطت فيه (من غير النصوص والمسافات). بنطبع عددهم عشان نشوف التغيير.`,
-            R`نهاية الـ [[slotchange]] listener.`,
-            R`نهاية الـ [[constructor]].`,
-            R`نهاية الـ class.`,
-            R`سجّل [[app-card]]، فأي [[<app-card>]] في الصفحة ياخد الهيكل ده وأولاده يتوزعوا على الـ slots.`,
+            R`[[fetch]] بيتنادى على كل request بتطلبه أي صفحة تحت الـ scope (الصفحة نفسها، الصور، الـ CSS، الـ API). هنا بنقرر لكل request: نرد من الكاش ولا من الشبكة.`,
+            R`[[e.request]]: الـ request نفسه (الـ URL والـ method والـ mode). بنحطه في متغير قصير لأننا هنقرا منه كتير وهنبعته للـ fetch والكاش زي ما هو.`,
+            R`بنحوّل الـ URL النص لـ [[URL]] object عشان نقرا [[pathname]] و [[origin]] على طول بدل ما نقطّع النص بإيدنا.`,
+            R`لو مش [[GET]] (زي POST) أو الـ request رايح لموقع تاني: [[return]] من غير [[respondWith]]، فالمتصفح يكمّل بالشبكة عادي. الكاش بيخزّن GET بس ([[cache.put]] بيرمي error مع POST)، وردود المواقع التانية ممكن تبقى opaque فمنعرفش هي نجحت ولا لأ.`,
+            R`[[navigate]] يعني اليوزر بيفتح صفحة (HTML). network-first: هات الأحدث من الشبكة، والكاش احتياطي لما النت يقع، فاليوزر مش هيشوف صفحة قديمة طول ما النت شغال.`,
+            R`ملفات [[/assets/]] اسمها فيه hash (زي [[app.3f9a.js]])، فلو المحتوى اتغير الاسم يتغير. يبقى أي نسخة في الكاش صح دايمًا، و cache-first بيرد فورًا من غير شبكة.`,
+            R`API عام (داتا مش بتتغير كل ثانية ومش خاصة بيوزر): stale-while-revalidate يرد بالقديم فورًا ويحدّثه في الخلفية للمرة الجاية. متستخدمهاش مع داتا شخصية أو لازم تبقى لحظية، لأن اليوزر هيشوف نسخة متأخرة.`,
+            R`نهاية الـ [[fetch]] listener. أي request مدخلش في الشروط دي بيروح الشبكة عادي، لأننا ما ندهناش [[respondWith]].`,
+            R`network-first: جرّب الشبكة الأول، ولو فشلت ارجع للكاش. بتاخد الـ request وترجّع promise بالـ Response.`,
+            R`افتح الكاش بتاعنا بالاسم اللي في [[CACHE]] (بيتعمل لو مش موجود)، عشان نحفظ فيه ونقرا منه.`,
+            R`[[try]] لأن [[fetch]] بيرمي error لما مفيش نت خالص، وعايزين نمسك الحالة دي ونرد من الكاش بدل ما الصفحة تقع.`,
+            R`هات الصفحة من الشبكة. خلي بالك: [[fetch]] مبيرميش على 404 أو 500، بيرمي بس لو الشبكة نفسها فشلت.`,
+            R`احفظ نسخة في الكاش بس لو الرد ناجح ([[ok]] يعني 200 لـ 299)، عشان متحفظش صفحة error. و [[clone()]] لأن الـ body بيتقري مرة واحدة: نسخة للكاش ونسخة للصفحة.`,
+            R`رجّع الرد الأصلي للصفحة، حتى لو 404: ده رد حقيقي من السيرفر واليوزر لازم يشوفه.`,
+            R`وصلنا هنا يبقى [[fetch]] رمى: غالبًا مفيش نت. [[catch]] من غير متغير لأننا مش محتاجين الـ error نفسه.`,
+            R`رجّع الصفحة من الكاش لو اتحفظت قبل كده، ولو مش موجودة ([[match]] رجّعت [[undefined]] فـ [[??]] تكمّل) رجّع [[offline.html]] اللي اتحفظت وقت الـ install، بدل صفحة error بتاعة المتصفح.`,
+            R`نهاية الـ [[catch]].`,
+            R`نهاية [[networkFirst]].`,
+            R`cache-first: دوّر في الكاش الأول، ومتروحش للشبكة إلا لو الملف مش موجود. أسرع استراتيجية، بس مناسبة بس للملفات اللي مبتتغيرش تحت نفس الاسم.`,
+            R`[[caches.match]] بتدوّر في كل الكاشات مش كاش واحد، فتلاقي الملف حتى لو اتحفظ في الـ precache. بترجّع [[undefined]] لو ملقيتهوش.`,
+            R`لقيناه: رد بيه فورًا من غير شبكة خالص، فده بيشتغل offline وبسرعة.`,
+            R`مش في الكاش (أول مرة نطلبه): هاته من الشبكة. ولو مفيش نت هنا، الـ error يطلع والـ request يفشل، لأن مفيش حاجة نرد بيها.`,
+            R`لو الرد سليم احفظ نسخة ([[clone]]) في كاشنا، فالمرة الجاية السطر اللي فوق يلاقيه.`,
+            R`رجّع الرد الأصلي للصفحة.`,
+            R`نهاية [[cacheFirst]].`,
+            R`stale-while-revalidate: رد بالقديم فورًا، وفي نفس الوقت هات الجديد وحدّث الكاش. بتاخد [[e]] كمان عشان محتاجين [[waitUntil]].`,
+            R`افتح كاشنا عشان نقرا منه ونحدّثه.`,
+            R`دوّر على نسخة محفوظة من قبل. ممكن تبقى [[undefined]] لو دي أول مرة.`,
+            R`ابدأ طلب الشبكة **من غير** [[await]]، فهو يكمّل في الخلفية واحنا نرد بالقديم على طول. [[fresh]] هنا promise بالرد الجديد.`,
+            R`لما الجديد يوصل وهو سليم، حط نسخة منه في الكاش مكان القديمة، فالزيارة الجاية تاخد الأحدث.`,
+            R`رجّع الرد الجديد من الـ [[then]]، فـ [[fresh]] يبقى promise بالـ Response. ده اللي هنستخدمه لو مفيش قديم.`,
+            R`نهاية الـ [[then]].`,
+            R`[[waitUntil]] بتقول للمتصفح «متقفلش الـ SW لحد ما التحديث ده يخلص»، وإلا ممكن يقفله بعد ما الرد يوصل للصفحة والكاش ميتحدّثش. و [[catch(() => {})]] عشان لو مفيش نت، الفشل ده ميطلعش unhandled rejection.`,
+            R`لو فيه قديم رد بيه فورًا، ولو مفيش استنى الجديد. ولأن الدالة [[async]]، رجوع promise منها بيستنى نتيجته، فالاتنين بيوصلوا Response. ولو مفيش قديم والنت واقع، الـ request يفشل.`,
+            R`نهاية [[staleWhileRevalidate]].`,
           ],
-          sol: R`في التاني ظهر [[No title]] و [[default footer]] (الـ fallback). وبعد ما ضفت [[<span slot="footer">paid</span>]] الفوتر بقى [[paid]].
+          sol: R`Offline: الصفحة اللي زرتها قبل كده بتفتح من الكاش (network-first فشل فرجع للكاش)، واللي مزرتهاش بيظهر مكانها [[offline.html]]. ولو مظهرتش ولا دي ولا دي، غالبًا [[offline.html]] مش في [[PRECACHE]] أو الـ install فشل.
 
-[[slotchange]] اتنادى ٣ مرات: [[2]] (أول [[c1]])، و [[1]] (أول [[c2]])، و [[3]] (لما ضفت [[p]] لـ [[c1]]). إضافة الـ [[span]] لـ [[c2]] ماطلّعتش سطر لأن الـ listener على الـ slot الافتراضي بس، مش [[footer]].`
+في Network عمود Size بيقول «(ServiceWorker)» للـ requests اللي الـ SW رد عليها، وفي Chrome كمان بيظهر request تاني بترس ⚙ للـ fetch اللي الـ SW نفسه عمله للشبكة.
+
+[[/api/me]] مش متكاش بقصد: بيانات خاصة، ولو اتحفظت في Cache Storage هتفضل موجودة بعد الـ logout ويشوفها أي حد يفتح الجهاز. ولو محتاجها offline، خزّنها في IndexedDB وامسحها في الـ logout.`
         },
         {
-          cmd: "attributes و properties",
-          title: "attributes ولا properties، والـ events من الـ component",
-          desc: R`الـ attribute نص في الـ HTML ([[value="3"]])، والـ property قيمة JavaScript على العنصر ([[el.value = 3]]، أو array، أو object). الـ component الكويس بيعمل getter/setter يربط الاتنين للقيم البسيطة (reflect)، والـ boolean بيبقى «الـ attribute موجود ولا لأ» مش قيمته، والداتا المعقدة property بس.
+          cmd: "نسخة جديدة، حدّث",
+          title: "تعمل زرار «فيه نسخة جديدة، حدّث» إزاي؟",
+          desc: R`بدل skipWaiting أوتوماتيك (يكسر الصفحات المفتوحة) أو الاستنى لحد ما اليوزر يقفل كل التابات (ممكن أيام): اسأله. الصفحة تعرف إن فيه SW جديد في حالة waiting، فتظهر شريط «فيه نسخة جديدة» وزرار. لما يضغط، الصفحة تبعت للـ SW رسالة [["SKIP_WAITING"]] (الـ listener اللي عملناه في درس دورة الحياة)، والـ SW يتفعّل، والصفحة تسمع [[controllerchange]] وتعمل reload مرة واحدة.
 
-ولما حاجة تحصل جوه بيبعت [[CustomEvent]] بـ [[detail]]، و [[bubbles: true]] عشان يطلع لفوق، و [[composed: true]] عشان يعدّي حدود الـ shadow DOM.`,
-          example: R`class StarRating extends HTMLElement {
-  static observedAttributes = ["value", "disabled"];
-  #labels = ["bad", "ok", "good", "great", "perfect"];
-  constructor() {
-    super();
-    this.attachShadow({ mode: "open" });
-    this.shadowRoot.addEventListener("click", (e) => {
-      const btn = e.target.closest("button");
-      if (!btn || this.disabled) return;
-      this.value = Number(btn.dataset.v);
-      this.dispatchEvent(new CustomEvent("rating-change", {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }));
-    });
-  }
-  get value() { return Number(this.getAttribute("value") ?? 0); }
-  set value(v) { this.setAttribute("value", String(v)); }
-  get disabled() { return this.hasAttribute("disabled"); }
-  set disabled(on) { this.toggleAttribute("disabled", Boolean(on)); }
-  get labels() { return this.#labels; }
-  set labels(list) { this.#labels = list; this.render(); }
-  attributeChangedCallback() { this.render(); }
-  connectedCallback() { this.render(); }
-  render() {
-    this.shadowRoot.innerHTML = this.#labels.map((label, i) =>
-      $__bt<button data-v="$__{i + 1}" title="$__{label}" $__{this.disabled ? "disabled" : ""}>$__{i < this.value ? "★" : "☆"}</button>$__bt
-    ).join("");
-  }
+الحالتين اللي لازم تمسكهم: SW جديد بيتسطّب دلوقتي ([[updatefound]] ثم [[statechange]] لـ [["installed"]])، و SW كان مستني من قبل ما الصفحة تفتح ([[reg.waiting]] موجود من الأول).`,
+          example: R`// في app.js (type="module" عشان top-level await)
+const reg = await navigator.serviceWorker.register("/sw.js");
+const bar = document.querySelector("#update-bar");
+function showUpdate(worker) {
+  bar.hidden = false;
+  bar.querySelector("button").onclick = () => worker.postMessage("SKIP_WAITING");
 }
-customElements.define("star-rating", StarRating);`,
-          try: R`احفظ المثال [[star-rating.js]] وحط [[<div id="box"><star-rating value="3"></star-rating></div>]]. من الـ Console: اقرا [[r.value]] ونوعه، واعمل [[r.value = 5]] وبص على الـ HTML، و [[r.disabled = true]]، و [[r.setAttribute("disabled", "false")]] واقرا [[r.disabled]]، و [[r.setAttribute("labels", "a,b,c")]] مقابل [[r.labels = ["no", "maybe", "yes"]]]. وحط listener على [[#box]] واضغط نجمة.`,
-          practice: [
-            { lvl: 'سريع', t: R`ابني property [[size]] على [[star-rating]] بتعمل reflect لـ attribute [[size]] ([["s"]] أو [["m"]] أو [["l"]]) والـ default [["m"]]، والـ CSS جوه بـ [[:host([size="l"])]].`, done: R`[[r.size = "l"]] بيحط [[size="l"]] في الـ HTML والنجوم بتكبر، و [[r.removeAttribute("size")]] بيخلّي [[r.size]] يرجّع [["m"]]، و [[r.size = "xl"]] بيتجاهل القيمة وبيكتب warning وبيفضل على القديمة.` },
-            { lvl: 'تطبيق', t: R`اكتب اختبار بـ [[node:test]] و jsdom (custom elements شغالة فيه) لـ [[value]]: لازم يبقى رقم صحيح من 0 لعدد الـ labels، وأي حاجة برا كده تتقص للحد، و [[NaN]] تتجاهل. التستات الأول وبعدين التصليح في الـ setter.`, done: R`التستات بتقع على كود الدرس الأصلي، وبعد التصليح [[r.value = 9]] بيبقى 5 و [[r.value = -1]] بيبقى 0 و [[r.value = 2.7]] بيبقى 3 و [[r.value = "abc"]] مبيغيّرش القيمة، و [[node --test]] بيعدّي، والـ attribute في الـ HTML بيطابق الـ property في كل حالة.` },
-            { lvl: 'تحدي', t: R`ابني star-rating يتبعت مع الفورم: [[static formAssociated = true]] و [[this.#internals = this.attachInternals()]] و [[setFormValue(String(value))]] مع كل تغيير، و [[required]] بيعمل [[setValidity({ valueMissing: true }, "اختار تقييم")]] لما القيمة صفر. (jsdom مبيدعمش [[setFormValue]]، فجرّبه في المتصفح).`, done: R`[[new FormData(form).get("rating")]] بيرجّع [["4"]] بعد ما تختار 4 نجوم، والفورم اللي فيه [[required]] من غير تقييم مبيتبعتش وبيظهر «اختار تقييم»، و [[form.reset()]] بيرجّع النجوم صفر لو عملت [[formResetCallback]]، والـ rating بيظهر في [[form.elements]].` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`الـ HTML مبيعرفش غير نصوص: [[<star-rating value="3">]] قيمته [["3"]] مش 3. والـ frameworks (React و Vue) بتمرّر arrays و objects. لو الـ component فاهم attributes بس، مستحيل تديله ليستة. ولو فاهم properties بس، مينفعش يتكتب في HTML عادي. والـ events هي الطريقة الوحيدة يقول بيها للصفحة «اليوزر عمل حاجة».`,
-            how: R`[[get value()]] / [[set value(v)]]: لما حد يكتب [[el.value = 5]] الـ setter بيكتبها attribute، و [[attributeChangedCallback]] بيعيد الرسم. فالمصدر واحد (الـ attribute) والاتنين متطابقين: ده اسمه reflect.
-
-Boolean attributes في HTML: الوجود هو المعنى. [[disabled="false"]] لسه **disabled**، لأن [[hasAttribute]] بيسأل «موجود؟» مش «قيمته إيه؟». و [[toggleAttribute(name, force)]] بيحطه أو يشيله.
-
-[[#labels]]: الـ [[#]] = private field، محدش يوصله من بره الـ class. و [[labels]] property بس من غير attribute: array مينفعش يبقى attribute من غير ما تعمل parse لنص.
-
-الـ events: [[dispatchEvent(new CustomEvent(name, { detail, bubbles, composed }))]]. [[bubbles]] = يطلع للأب وأبوه. [[composed]] = يعدّي من shadow root للـ document. لو بتعمل dispatch على [[this]] (الـ host) و الـ host نفسه في الـ document، [[bubbles]] كفاية. لكن لو الـ component نفسه جوه shadow root تاني (component جوه component)، من غير [[composed]] الـ event بيقف عند الـ shadow root ده. وعشان كده بنحطها دايمًا.`,
-            when: R`أي component هيتستخدم من framework أو بداتا مش نص. اعمل reflect للقيم البسيطة (string و number و boolean)، و property بس للـ arrays والـ objects، وevent لكل تغيير بيعمله اليوزر.`,
-            mistakes: R`[[disabled="false"]] وتستغرب إنه disabled. وتقرا [[getAttribute("value")]] وتقارنه برقم: نص. وتعمل reflect لـ object فيبقى [["[object Object]"]] في الـ HTML. وتنسى [[composed: true]] والـ component هيتحط جوه component تاني. واسم event بحروف كبيرة ([[ratingChange]]): بعض الـ frameworks بتحوّل الأسامي لحروف صغيرة، فخليه [[rating-change]].`
-          },
-          teach: R`## الصفحة
-
-اتجرّب في Chrome 156 headless، والكود في الـ Console بتاع الصفحة.
-
-~~~text wc4.html
-<div id="box"><star-rating value="3"></star-rating></div>
-<script type="module" src="star-rating.js"></script>
-~~~
-
----
-
-## ١. [[value]]: attribute ↔ property
-
-~~~text الناتج
-attr "3" -> property: 3 (number) | ★★★☆☆
-r.value = 5 -> attribute: "5" | ★★★★★
-~~~
-
-- [[get value()]]: [[getAttribute("value")]] نص أو [[null]]، و [[?? 0]] لو مش موجود، و [[Number()]] يحوّله. فـ [[r.value]] رقم.
-- [[set value(v)]]: [[setAttribute("value", String(v))]]: الـ property بتتكتب attribute.
-- الـ attribute اتغير ← [[attributeChangedCallback]] ← [[render()]]: النجوم اتحدّثت لوحدها.
-
----
-
-## ٢. [[disabled]]: boolean attribute
-
-~~~text الناتج
-r.disabled = true -> outerHTML: <star-rating value="5" disabled=""></star-rating>
-setAttribute("disabled","false") -> r.disabled = true
-~~~
-
-- [[toggleAttribute("disabled", true)]] حط [[disabled=""]]: القيمة فاضية، المهم إنه موجود.
-- [[setAttribute("disabled", "false")]] لسه **true**: [[hasAttribute]] بيسأل عن الوجود. زي [[<button disabled="false">]] في HTML: الزرار disabled. عشان تلغيه: [[removeAttribute("disabled")]] أو [[r.disabled = false]].
-
----
-
-## ٣. [[labels]]: property بس
-
-~~~text الناتج
-setAttribute("labels","a,b,c") -> buttons: 5
-r.labels = [3 items] -> buttons: 3 | attribute labels: a,b,c
-~~~
-
-- الـ attribute [[labels]] ملوش أي معنى عند الـ component (مش في [[observedAttributes]] ومحدش بيقراه)، فالأزرار فضلت 5.
-- [[r.labels = [...]]]: الـ setter حط الـ array في [[#labels]] وعمل render: 3 أزرار.
-- والـ attribute القديم [[a,b,c]] فضل في الـ HTML زي ما هو ملوش لازمة.
-
----
-
-## ٤. الضغطة والـ event
-
-~~~text الناتج
-box got rating-change: {"value":2} | target: STAR-RATING | composedPath[0]: STAR-RATING
-document click target: STAR-RATING
-after click: value=2 | ★★☆
-~~~
-
-خطوات الـ click handler:
-
-1. [[e.target.closest("button")]]: أقرب [[button]] للمكان اللي اتضغط (أو هو نفسه). لو الضغطة بره الأزرار: [[null]].
-2. [[if (!btn || this.disabled) return]]: مفيش زرار أو الـ component disabled: متعملش حاجة.
-3. [[this.value = Number(btn.dataset.v)]]: [[dataset.v]] = قيمة [[data-v]] (نص). وده بيعدّي على الـ setter فبيتعمل reflect و render.
-4. [[dispatchEvent(new CustomEvent("rating-change", {...}))]]: [[detail]] الداتا اللي عايز تبعتها.
-
-- [[#box]] (الأب) استلم الـ event لأن [[bubbles: true]].
-- [[document click target: STAR-RATING]]: الـ click الأصلي حصل على [[button]] **جوه** الـ shadow، بس من بره الـ target بقى الـ host. ده اسمه retargeting: الصفحة مش بتشوف تفاصيل جوه الـ component.
-- النجوم 3 بس دلوقتي ([[★★☆]]) لأن [[labels]] بقت 3.
-
-### ليه [[composed: true]]؟
-
-حطيت [[<star-rating>]] جوه shadow root بتاع [[div]] تاني (component جوه component)، وبعت اتنين events من الـ star-rating:
-
-~~~text الناتج
-document got composed event, target=DIV
-shadow root got plain event
-~~~
-
-- [[composed: true]]: عدّى لحد الـ document، والـ target بقى [[DIV]] (الـ host الخارجي، retargeting تاني).
-- من غير [[composed]]: وقف عند الـ shadow root اللي فيه، والـ document ماشافهوش.
-
----
-
-## الخلاصة
-
-| النوع | الطريقة | مثال |
-|---|---|---|
-| نص أو رقم | attribute ↔ property (reflect) | [[value]] |
-| boolean | الوجود: [[hasAttribute]] و [[toggleAttribute]] | [[disabled]] |
-| array أو object | property بس | [[labels]] |
-| حاجة حصلت | [[CustomEvent]] + [[detail]] + [[bubbles]] + [[composed]] | [[rating-change]] |`,
-          lines: [
-            R`class عنصر التقييم بالنجوم، بيورث [[HTMLElement]]. هيبيّن الفرق بين attributes (نص في الـ HTML) و properties (أي قيمة JS على الـ object).`,
-            R`بنتابع [[value]] و [[disabled]] بس: لو أي واحد فيهم اتغير (من الـ HTML أو [[setAttribute]] أو الـ setters اللي تحت) [[attributeChangedCallback]] تتنادى فنرسم تاني.`,
-            R`private field ([[#]]): أسامي النجوم، ومحدش من برّه الـ class يوصله مباشرة. ده property بس من غير attribute، لأن array مينفعش يتحط في attribute من غير ما يتحوّل لنص. الافتراضي 5 أسامي، يعني 5 نجوم.`,
-            R`الـ [[constructor]]: shadow root ومستمع واحد للضغط.`,
-            R`[[super()]] لازم الأول قبل [[this]].`,
-            R`اعمل shadow root مفتوح؛ الأزرار هتترسم جواه في [[render]].`,
-            R`مستمع واحد على الـ shadow root كله بدل listener على كل زرار (event delegation). ليه؟ [[render]] بيعمل الأزرار من جديد كل مرة، فأي listener على زرار بعينه كان هيضيع مع كل رسم.`,
-            R`[[closest("button")]]: الضغطة ممكن تبقى على حاجة جوه الزرار، فبنطلع لأقرب [[button]]. ولو الضغطة بره أي زرار بترجّع [[null]].`,
-            R`مفيش زرار، أو العنصر [[disabled]]: اخرج ومتغيرش حاجة. ([[this.disabled]] هنا بينادي الـ getter اللي تحت.)`,
-            R`[[dataset.v]] رقم النجمة من [[data-v]] بس كنص، فـ [[Number]] بيحوّله. والكتابة في [[this.value]] بتعدّي على الـ setter اللي بيكتب الـ attribute، وده بيشغّل [[attributeChangedCallback]] فيرسم.`,
-            R`بلّغ الصفحة إن اليوزر غيّر التقييم بـ [[CustomEvent]] اسمه [[rating-change]]. الاسم حروف صغيرة وشرطة لأن بعض الـ frameworks بتحوّل أسامي الـ events لحروف صغيرة.`,
-            R`[[detail]]: الداتا اللي بتتبعت مع الـ event. اللي بيسمع بيقراها من [[e.detail.value]].`,
-            R`[[bubbles: true]]: الـ event يطلع من العنصر لأبوه وجدّه، فتقدر تسمعله على أي أب (زي [[document]]). من غيرها لازم الـ listener يبقى على العنصر نفسه.`,
-            R`[[composed: true]]: الـ event يعدّي حدود الـ shadow root. ضروري لو العنصر ده نفسه اتحط جوه shadow DOM بتاع component تاني، وإلا الـ event يقف عنده.`,
-            R`نهاية الـ options وقفلة [[CustomEvent]] و [[dispatchEvent]].`,
-            R`نهاية الـ click listener.`,
-            R`نهاية الـ [[constructor]].`,
-            R`getter لـ [[value]]: لما حد يقرا [[el.value]] بنرجّع الـ attribute كرقم. [[Number]] لأن [[getAttribute]] دايمًا بترجّع نص، و [[?? 0]] لو مفيش attribute.`,
-            R`setter لـ [[value]]: [[el.value = 3]] بتكتب [[value="3"]] على العنصر. ده اسمه reflect: الـ property والـ attribute دايمًا متطابقين، وتغيير الـ attribute بيشغّل الرسم.`,
-            R`getter لـ [[disabled]]: boolean attribute، المعنى في وجوده مش قيمته. [[hasAttribute]] بترجّع [[true]] حتى لو مكتوب [[disabled="false"]].`,
-            R`setter لـ [[disabled]]: [[toggleAttribute(name, force)]] بتحط الـ attribute لو [[force]] بـ [[true]] وتشيله لو [[false]]. و [[Boolean(on)]] بتحوّل أي قيمة ([[0]] أو نص فاضي مثلًا) لـ true أو false صريحة.`,
-            R`getter لـ [[labels]]: بيرجّع الـ array الخاص. مفيش attribute ليها، فالطريق الوحيد تقراها أو تغيّرها هو الـ property.`,
-            R`setter لـ [[labels]]: بيحفظ الـ array الجديد ويرسم على طول، لأن [[labels]] مش attribute ومش في [[observedAttributes]]، فمحدش هينادي [[attributeChangedCallback]] لوحده.`,
-            R`[[value]] أو [[disabled]] اتغيروا (بأي طريقة): ارسم من جديد. مش محتاجين الـ arguments لأن الرسم بيقرا كل حاجة من الأول.`,
-            R`أول ما العنصر يدخل الصفحة ارسم. من غيره، عنصر ملوش attributes متابَعة مش هيترسم خالص، لأن [[attributeChangedCallback]] مش هتتنادى.`,
-            R`[[render]]: بيبني الأزرار من الـ state الحالي.`,
-            R`استبدل محتوى الـ shadow كله بزرار لكل اسم في [[#labels]]. [[map]] بتدّي الاسم ورقمه [[i]] (بيبدأ من 0).`,
-            R`كل زرار: [[data-v]] رقم النجمة ([[i + 1]] عشان يبدأ من 1)، و [[title]] الاسم اللي يظهر لما تقف عليه، و [[disabled]] لو العنصر disabled، والنجمة مليانة ★ لو رقمها أقل من أو يساوي القيمة وإلا فاضية ☆.`,
-            R`[[map]] بترجّع array نصوص، و [[join("")]] بتلزقهم نص واحد. من غيرها [[innerHTML]] كان هيحوّل الـ array لنص بفواصل، فتظهر [[,]] بين النجوم.`,
-            R`نهاية [[render]].`,
-            R`نهاية الـ class.`,
-            R`سجّل [[star-rating]]. الدرس الجاي بيستخدمه من React و Vue.`,
-          ],
-          sol: R`الناتج الحقيقي في Chrome 156:
-[[r.value]] ← [[3]] ونوعه [[number]]. [[r.value = 5]] ← الـ HTML بقى [[value="5"]].
-[[r.disabled = true]] ← [[<star-rating value="5" disabled="">]]. و [[setAttribute("disabled", "false")]] ← [[r.disabled]] لسه [[true]].
-[[setAttribute("labels", "a,b,c")]] ← لسه 5 أزرار. [[r.labels = ["no", "maybe", "yes"]]] ← 3 أزرار.
-ضغطة النجمة التانية ← [[#box]] استلم [[rating-change]] و [[detail]] = [[{"value":2}]] و [[target]] = [[STAR-RATING]].`
-        },
-        {
-          cmd: "Web Components في React و Vue",
-          title: "تستخدم custom element جوه React 19 و Vue",
-          desc: R`React 19 بيدعم الـ custom elements كاملة: لو العنصر عنده property بنفس الاسم بيحطها property (فالـ arrays والـ objects بتوصل صح)، وإلا attribute، و [[onrating-change]] بيسمع لـ event اسمه [[rating-change]]. React 18 كان بيحوّل كل حاجة attribute نص، ومكانش بيسمع للـ custom events.
-
-Vue بيدعمها من زمان: [[:labels="labels"]] و [[@rating-change="..."]] شغالين، بس لازم تقول للـ compiler إن الـ tag ده مش component بتاع Vue: [[compilerOptions.isCustomElement]].`,
-          example: R`import { useState } from "react";
-import { createRoot } from "react-dom/client";
-import "./star-rating.js";
-function App() {
-  const [rating, setRating] = useState(4);
-  return (
-    <>
-      <star-rating
-        value={rating}
-        labels={["bad", "ok", "great"]}
-        onrating-change={(e) => setRating(e.detail.value)}
-      />
-      <p id="react-out">rating in React: {rating}</p>
-    </>
-  );
-}
-createRoot(document.querySelector("#root")).render(<App />);`,
-          try: R`خد [[star-rating.js]] من الدرس اللي فات، واعمل المثال بـ React 19 (Vite أو esbuild). اضغط النجمة التانية: الرقم في الـ [[<p>]] اتغير؟ وكام زرار ظهر؟ وبعدين نفس الكود بـ React 18: إيه اللي اتغير في الـ HTML؟ وفي Vue اكتب [[<star-rating :value="rating" :labels="labels" @rating-change="rating = $event.detail.value" />]].`,
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين جرّب في React 19: [[<star-rating onRatingChange={...} />]] مقابل [[onrating-change={...}]] لما العنصر بيبعت [[rating-change]].`, done: R`[[onrating-change]] بيشتغل و [[onRatingChange]] لأ: React 19 بيسمع لـ event اسمه بالظبط زي اللي بعد [[on]] ([[RatingChange]] بالحروف دي)، فلو عايز camelCase لازم العنصر يبعت event اسمه كده. ولو ابعت [[RatingChange]] من Console الـ handler التاني بيشتغل.` },
-            { lvl: 'تطبيق', t: R`صلّح التحذير في Vue: استخدم [[<star-rating>]] في Vite + Vue من غير config، وشوف Console، وبعدين زوّد [[compilerOptions.isCustomElement]] في [[vue()]] جوه [[vite.config]] بحيث أي tag فيه [[-]] ومش component بتاعك يتساب.`, done: R`قبل التصليح Console فيه [[Failed to resolve component: star-rating]]، وبعده التحذير بيختفي، و [[:labels]] بيوصل كـ array (٣ زراير مش ٥)، و [[@rating-change]] بيحدّث الـ ref، والـ components بتاعتك اللي فيها [[-]] (لو عندك) لسه شغالة.` },
-            { lvl: 'تحدي', t: R`صلّح باج ترتيب التحميل: في React 19 خلّي [[import "./star-rating.js"]] يحصل **بعد** [[createRoot().render()]] (مثلًا [[setTimeout(() => import("./star-rating.js"))]])، واعمل [[labels={["bad", "ok", "great"]}]]. عدّ الزراير وبص على الـ HTML، وبعدين صلّحها.`, done: R`قبل التصليح بيظهر ٥ زراير مش ٣، والـ HTML فيه [[labels="bad,ok,great"]] كنص (React لقى العنصر مش متعرّف فحطها attribute)، وبعد التصليح ([[import]] قبل الـ render، أو [[await customElements.whenDefined("star-rating")]] قبل [[createRoot]]) بيظهر ٣ ومفيش attribute اسمه [[labels]].` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`أغلب ما هتقابل Web Components هيبقى جوه تطبيق React أو Vue: design system الشركة، أو widget من طرف تالت (دفع، خرايط، chat). لازم تعرف تبعتلهم داتا وتسمع للـ events، والفروق بين النسخ بتعمل bugs غريبة (array بقى نص [["bad,ok,great"]]).`,
-            how: R`React 19: لما يرسم tag فيه [[-]]، لكل prop بيسأل «العنصر عنده property بالاسم ده؟» ([["labels" in el]]). لو آه بيعمل [[el.labels = value]]، وإلا [[setAttribute]]. والـ props اللي بتبدأ بـ [[on]] بتتحول [[addEventListener]] على اسم الـ event بعد [[on]] بالظبط ([[onrating-change]] ← [[rating-change]]). عشان كده الـ component لازم يتسجّل (يتعمل import) قبل الرسم.
-
-React 18 وأقدم: كل prop على custom element بيبقى attribute نص (فالـ array بقى [["bad,ok,great"]])، والـ events لازم [[ref]] و [[addEventListener]] بإيدك.
-
-Vue: الـ compiler لازم يعرف إن [[star-rating]] مش component. في Vite: [[vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.includes("-") } } })]]. من غيرها بيحاول يعمل [[resolveComponent]] ويطلّع warning. و [[:prop]] بيحطها property لو العنصر عنده property بالاسم ده (زي React 19). و Vue كمان بيعمل Web Components: [[defineCustomElement]] بيحوّل component بتاع Vue لـ custom element يشتغل في أي صفحة.`,
-            when: R`design system مبني Web Components بيتستخدم في تطبيق React أو Vue، أو العكس: component بتاع Vue عايز تديه لفريق React (بـ [[defineCustomElement]]).`,
-            mistakes: R`React 18: تبعت array وتلاقيه نص في الـ attribute، أو [[onRatingChange]] ومحدش بينادي. React 19: [[onRatingChange]] بحروف كبيرة بيسمع لـ [[RatingChange]] مش [[rating-change]]، فاكتب اسم الـ event زي ما هو. Vue: تنسى [[isCustomElement]] مع SFC في Vite فيطلع [[Failed to resolve component]]. وتعمل import للـ component بعد ما React رسم فيتعامل كعنصر مجهول وقتها.`
-          },
-          teach: R`## React 19
-
-الـ bundle اتعمل بـ esbuild 0.28 (React 19.3.1)، واتجرّب في Chrome 156 headless. [[star-rating.js]] هو بتاع درس [[attributes و properties]].
-
----
-
-## ١. الكود
-
-- [[import "./star-rating.js"]]: import من غير أسماء = شغّل الملف بس، فيسجّل [[<star-rating>]]. لازم قبل [[render]].
-- [[value={rating}]]: رقم. React شاف إن العنصر عنده property [[value]] (الـ getter/setter) فعمل [[el.value = 4]].
-- [[labels={["bad", "ok", "great"]}]]: array، و [[labels]] property، فوصل array.
-- [[onrating-change={(e) => setRating(e.detail.value)}]]: [[on]] + اسم الـ event بالظبط. [[e.detail.value]] الداتا اللي الـ component بعتها.
-- [[<>...</>]]: Fragment، أكتر من عنصر من غير div زيادة.
-
-## ٢. النتيجة
-
-~~~text الناتج (React 19.3.1)
-html: <star-rating value="4"></star-rating>
-buttons: 3 | value prop: 4
-rating in React: 2      (بعد الضغط على النجمة التانية)
-~~~
-
-- [[value="4"]] في الـ HTML: React حط الـ property، والـ setter عمل reflect.
-- 3 أزرار: الـ array وصل.
-- [[rating in React: 2]]: الـ event وصل و [[setRating]] اشتغل.
-
-## ٣. نفس الكود بـ React 18.3
-
-~~~text الناتج (React 18)
-html: <star-rating value="4" labels="bad,ok,great"></star-rating>
-buttons: 5 | value prop: 4
-rating in React: 4      (بعد نفس الضغطة)
-~~~
-
-- [[labels="bad,ok,great"]]: React 18 حوّل الـ array لنص وحطه attribute، والـ component مش بيقرا attribute اسمه [[labels]]، فـ 5 أزرار (الافتراضي).
-- [[rating in React: 4]]: [[onrating-change]] اتجاهل خالص.
-
-| | React 18 | React 19 |
-|---|---|---|
-| prop بسيط ([[value]]) | attribute نص | property لو موجودة |
-| array / object | attribute نص ([["bad,ok,great"]]) | property (الـ array نفسه) |
-| [[onxxx]] | متجاهل (محتاج ref و addEventListener) | [[addEventListener("xxx")]] |
-
----
-
-## Vue 3.5
-
-~~~text vue-app.js (المهم)
-const app = createApp({
-  setup() {
-    const rating = ref(4);
-    const labels = ["bad", "ok", "great"];
-    return { rating, labels };
-  },
-  template: $__bt
-    <star-rating :value="rating" :labels="labels" @rating-change="rating = $event.detail.value" />
-    <p id="vue-out">rating in Vue: {{ rating }}</p>$__bt,
+if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
+reg.addEventListener("updatefound", () => {
+  const next = reg.installing;
+  next.addEventListener("statechange", () => {
+    if (next.state === "installed" && navigator.serviceWorker.controller) showUpdate(next);
+  });
 });
-app.config.compilerOptions.isCustomElement = (tag) => tag.includes("-");
-app.mount("#app");
-~~~
-
-- [[:labels="labels"]]: الـ [[:]] = قيمة JavaScript مش نص. Vue شاف إن [[labels]] property على العنصر فحطها property.
-- [[@rating-change="..."]]: [[addEventListener("rating-change")]]، و [[$event]] هو الـ event نفسه.
-- [[isCustomElement]]: «أي tag فيه [[-]] اعتبره عنصر HTML، متدوّرش عليه كـ component».
-
-~~~text الناتج (Vue 3.5.44)
-html: <star-rating value="4"></star-rating>
-buttons: 3
-rating in Vue: 2
-~~~
-
-### من غير [[isCustomElement]]
-
-الـ compiler بيطلّع كود مختلف. جرّبته بـ [[@vue/compiler-dom]] على نفس الـ template:
-
-~~~text الناتج
-without isCustomElement: const _component_star_rating = _resolveComponent("star-rating") | return (_openBlock(), _createBlock(_component_star_rating, {
-with isCustomElement:    return (_openBlock(), _createElementBlock("star-rating", {
-~~~
-
-من غيره بيدوّر على component اسمه [[star-rating]]، ومش هيلاقيه:
-
-~~~text Console
-[Vue warn]: Failed to resolve component: star-rating
-If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement.
-~~~
-
-(في الـ template اللي بيتعمله compile في المتصفح، Vue بيسأل [[customElements.get(tag)]] لوحده فاشتغل من غير الإعداد. بس مع SFC في Vite، الـ compile بيحصل وقت الـ build ومحدش يعرف إيه المسجّل، فالإعداد لازم في [[vite.config]].)
-
-### Vue بيعمل Web Component
-
-~~~text vue-app.js
-const HelloBadge = defineCustomElement({
-  props: { name: String },
-  styles: ["span { color: purple; }"],
-  setup(props) {
-    return () => h("span", $__btHi $__{props.name} from a Vue-made element$__bt);
-  },
+let reloading = false;
+navigator.serviceWorker.addEventListener("controllerchange", () => {
+  if (reloading) return;
+  reloading = true;
+  location.reload();
 });
-customElements.define("hello-badge", HelloBadge);
-~~~
-
-~~~text الناتج: hello-badge.shadowRoot.innerHTML
-<style>span { color: purple; }</style><span>Hi Sara from a Vue-made element</span>
-~~~
-
-component بتاع Vue بقى [[<hello-badge name="Sara">]] يشتغل في أي صفحة، بـ shadow DOM والـ styles جواه.
-
----
-
-## الخلاصة
-
-| | React 19 | Vue 3 |
-|---|---|---|
-| تبعت array | [[labels={arr}]] | [[:labels="arr"]] |
-| تسمع لـ event | [[onrating-change={fn}]] | [[@rating-change="fn"]] |
-| إعداد | ولا حاجة | [[isCustomElement]] في الـ compiler |
-| تعمل Web Component | مكتبات بره React | [[defineCustomElement]] |
-
-وفي React 18 أو أقدم: [[ref]] و [[el.labels = ...]] و [[addEventListener]] بإيدك.`,
-          lines: [
-            R`[[useState]] من React عشان نحفظ التقييم في state، والـ component يترسم تاني لما يتغير.`,
-            R`[[createRoot]] من [[react-dom/client]]: بتربط React بعنصر في الصفحة وترسم فيه.`,
-            R`import من غير أسامي: بيشغّل الملف وبس، والملف بينادي [[customElements.define]]. لازم قبل الرسم، لأن React 19 بيسأل «العنصر عنده property بالاسم ده؟»، ولو العنصر لسه مش متسجّل مش هيلاقي [[labels]] فيبعتها attribute نص.`,
-            R`component اسمه [[App]]، فيه الـ custom element وسطر بيعرض القيمة.`,
-            R`state للتقييم بيبدأ بـ 4. و [[setRating]] هنستخدمها لما الـ component يبلّغنا بتغيير.`,
-            R`الـ JSX اللي [[App]] بيرسمه.`,
-            R`Fragment ([[<>]]): بيلم العنصرين من غير ما يضيف [[div]] زيادة في الصفحة، لأن الـ component لازم يرجّع حاجة واحدة.`,
-            R`الـ custom element نفسه. React بيعرف إنه custom element من الشرطة في الاسم، فبيتعامل مع الـ props بطريقة غير [[div]].`,
-            R`[[value]] رقم. React 19 لقى إن العنصر عنده property اسمها [[value]] (الـ getter/setter)، فعمل [[el.value = 4]] بدل [[setAttribute]]، والـ setter عمل reflect للـ attribute. React 18 كان بيحطه attribute نص على طول.`,
-            R`array: [[labels]] property على العنصر، فـ React 19 بيبعت الـ array نفسه وتظهر 3 نجوم. في React 18 كان بيبقى attribute نص [[bad,ok,great]] والعنصر مش بيقراه، فتفضل 5.`,
-            R`[[on]] + اسم الـ event بالظبط: React 19 بيسمع لـ event اسمه [[rating-change]]. لما اليوزر يضغط نجمة، [[e.detail.value]] فيها الرقم فنحدّث الـ state. لو كتبت [[onRatingChange]] هيسمع لـ [[RatingChange]] ومحدش بيبعته.`,
-            R`نهاية [[<star-rating>]] (self-closing: من غير أولاد).`,
-            R`سطر بيعرض القيمة اللي في state بتاع React، عشان نتأكد إن الـ event وصل وحدّثها.`,
-            R`نهاية الـ Fragment اللي لامم العنصرين.`,
-            R`نهاية الـ [[return]].`,
-            R`نهاية [[App]].`,
-            R`دوّر على [[#root]] في الصفحة، واعمل منه root لـ React، وارسم [[<App />]] جواه.`,
-          ],
-          sol: R`React 19.3.1: [[<star-rating value="4">]] و 3 أزرار، وبعد الضغطة [[rating in React: 2]].
-React 18.3: [[<star-rating value="4" labels="bad,ok,great">]] و 5 أزرار، والرقم فضل [[4]] (الـ event متجاهل).
-Vue 3.5.44 بالـ template ده و [[isCustomElement]]: 3 أزرار و [[rating in Vue: 2]].`
-        },
-        {
-          cmd: "form-associated و ElementInternals",
-          title: "component يدخل الفورم زي input حقيقي: قيمة، و required، و reset (ElementInternals)",
-          desc: R`الـ custom element العادي الفورم مش شايفه: [[new FormData(form)]] مبيلاقيش قيمته، و [[required]] عليه ملوش معنى، و [[form.reset()]] مبيرجّعوش. الحل سطرين: [[static formAssociated = true]] في الـ class، و [[this.attachInternals()]] اللي بيرجّع [[ElementInternals]]: object خاص بالـ component بيكلّم بيه الفورم.
-
-من [[ElementInternals]]: [[setFormValue(value)]] (القيمة اللي هتتبعت باسم الـ [[name]])، و [[setValidity(flags, message)]] (صالح ولا لأ، والرسالة)، و [[form]] و [[labels]]، و [[role]] و [[ariaValueNow]] لقارئ الشاشة من غير ما تحط attributes على العنصر، و [[states]] لـ [[:state()]] في CSS. ومعاهم callbacks: [[formResetCallback]] و [[formDisabledCallback]] و [[formAssociatedCallback]].
-
-ده اللي بيخلّي مكتبات زي Shoelace و Material Web تعمل [[<sl-input>]] يتبعت مع الفورم من غير [[<input type="hidden">]] مخبّي جنبه.`,
-          example: R`class StarRating extends HTMLElement {
-  static formAssociated = true;
-  #internals = this.attachInternals();
-  #value = 0;
-  connectedCallback() {
-    this.tabIndex = 0;
-    this.#internals.role = "slider";
-    this.#internals.ariaValueMax = "5";
-    this.addEventListener("click", () => (this.value = (this.#value % 5) + 1));
-    this.#sync();
-  }
-  get value() { return this.#value; }
-  set value(v) { this.#value = Number(v); this.#sync(); }
-  get form() { return this.#internals.form; }
-  get name() { return this.getAttribute("name"); }
-  formResetCallback() { this.value = 0; }
-  #sync() {
-    this.#internals.setFormValue(this.#value ? String(this.#value) : null);
-    if (this.hasAttribute("required") && !this.#value) this.#internals.setValidity({ valueMissing: true }, "اختار عدد النجوم");
-    else this.#internals.setValidity({});
-    this.#internals.ariaValueNow = String(this.#value);
-    this.textContent = "★".repeat(this.#value) + "☆".repeat(5 - this.#value);
-  }
-}
-customElements.define("star-rating", StarRating);
-const form = document.querySelector("form");
-const stars = form.querySelector("star-rating");
-console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
-stars.click();
-stars.click();
-console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
-form.reset();
-console.log(stars.value, JSON.stringify([...new FormData(form)]));`,
-          try: R`حط فوق الـ script ده الـ HTML: [[<form><label>تقييمك <star-rating name="rating" required></star-rating></label><input name="note" value="hi"><button>ابعت</button></form>]]، وفي الـ CSS [[star-rating:invalid { outline: 2px solid red; }]]. افتح الصفحة: الإطار الأحمر ظاهر؟ دوس «ابعت» من غير نجوم: الفورم اتبعت ولا لأ؟ وبعدين امسح سطر [[static formAssociated = true]] وشوف أول error في الـ Console.`,
+setInterval(() => reg.update(), 60 * 60 * 1000);`,
+          try: R`ضيف [[<div id="update-bar" hidden>فيه نسخة جديدة <button>حدّث</button></div>]] في الصفحة، وشيل [[skipWaiting()]] من الـ install لو موجودة (خليها في الـ message بس). غيّر [[CACHE]] في sw.js، واعمل refresh: الشريط ظهر؟ اضغط «حدّث». وبعدين افتح الموقع في تابين وحدّث من واحد: التاني عمل إيه؟`,
           practice: [
-            { lvl: 'سريع', t: R`صلّح الكود البايظ: component اسمه [[<color-pick>]] فيه [[static formAssociated = true]]، والـ constructor بيعمل [[this.attachInternals()]]، و [[connectedCallback]] بيعمل [[this.attachInternals()]] تاني عشان يحط القيمة. شغّله وانقل العنصر من مكان لمكان في الصفحة ([[append]] في div تاني)، واقرا الـ error وصلّحه.`, done: R`ظهر [[NotSupportedError]] برسالة فيها [[ElementInternals for the specified element was already attached.]] أول ما الـ [[connectedCallback]] اتنادى، وصلّحته بإن الـ internals تتعمل مرة واحدة في field ([[#internals = this.attachInternals()]]) وكل حتة تستخدمها، والنقل بين الأماكن بقى يشتغل من غير errors.` },
-            { lvl: 'تطبيق', t: R`ابني [[<tag-input name="tags">]]: بتكتب كلمة وتدوس Enter تبقى tag، وكل tag فيه ✕ يمسحه. القيمة اللي بتتبعت مع الفورم الـ tags كلها، كل واحد لوحده: اعمل [[FormData]] جوه الـ component وابعته لـ [[setFormValue]]، و [[min="1"]] بيخلّيه [[valueMissing]] لو فاضي، و [[formResetCallback]] بيفضّيه.`, done: R`بعد ٣ tags، [[new FormData(form).getAll("tags")]] بيرجّع الـ ٣ كلمات في array، و [[form.checkValidity()]] بـ [[false]] وهو فاضي و [[true]] بعد أول tag، و [[form.reset()]] بيفضّيه ويخلّي [[getAll]] array فاضية، والإيرور اللي بيظهر وانت بتبعت فاضي هو رسالتك انت.` },
-            { lvl: 'تحدي', t: R`اكتب اختبار: بـ playwright (أو في الـ Console لو مش متاح) اكتب ٦ تستات لـ [[star-rating]] بتاع الدرس: قيمة أول ما يفتح، وضغطة، و ٦ ضغطات بترجع لـ 1، و [[reset()]]، و [[required]] بيمنع [[submit]] (اسمع لـ [[invalid]] event)، و [[<fieldset disabled>]] حواليه بيخلّي [[formDisabledCallback]] يتنادى بـ [[true]]. وبعدين زوّد دعم الكيبورد (الأسهم) وخلّي التستات تمسكه.`, done: R`التستات الست بتعدّي، وتست الـ [[submit]] بيلاقي [[invalid]] event على [[STAR-RATING]] والفورم مااتبعتش، وبعد ضغطة واحدة [[submit]] اتبعت بـ [[rating=1]]، وتست الكيبورد بيفشل قبل ما تزوّد الأسهم وبيعدّي بعدها، و [[formDisabledCallback]] اتنادى بـ [[true]] ثم [[false]].` },
+            { lvl: 'سريع', t: R`ابني الـ toast بتاع التحديث: مخفي من الأول، فيه «حدّث» و «بعدين». «بعدين» بيخفيه لحد ما نسخة أجدد تيجي ([[updatefound]] تاني)، و «حدّث» بيعطّل نفسه بعد أول ضغطة عشان متتبعتش رسالتين.`, done: R`الـ toast بيظهر بعد ما تغيّر [[sw.js]] وتعمل refresh، و «بعدين» بيخفيه و refresh عادي مبيرجّعوش، والضغط مرتين بسرعة على «حدّث» بيعمل reload مرة واحدة، وبعد الـ reload [[reg.waiting]] بـ [[null]].` },
+            { lvl: 'تطبيق', t: R`اشرحها: ارسم الخطوات من «غيّرت sw.js» لحد «الصفحة عملت reload» بأسماء الأحداث ([[updatefound]] و [[statechange]] و [[postMessage]] و [[controllerchange]]...) ومين بيعملها (الصفحة ولا الـ SW). وبعدين حط [[console.log]] في كل خطوة (فعّل Preserve log) وقارن.`, done: R`كل حدث في رسمتك ظهر في اللوج (وحالات الـ worker: [[installing]] ثم [[installed]] ثم [[activating]] ثم [[activated]])، ولو الترتيب اختلف عن رسمتك كتبت ليه، وتقدر تشرح الرسمة لزميل في دقيقة.` },
+            { lvl: 'تحدي', t: R`محاكاة يوزر عنده ٣ تابات: افتح الموقع ٣ مرات، وغيّر [[sw.js]]، واعمل refresh في واحد بس، واضغط «حدّث» منه. صلّح أي تاب بيعمل reload أكتر من مرة.`, done: R`الشريط بيظهر في التلات تابات، والضغط من تاب واحد بيعمل reload للتلاتة مرة واحدة لكل تاب، ومفيش reload loop حتى لو [[controllerchange]] اتنادى أكتر من مرة، وبعدها Application ← Service workers فيه worker واحد بس activated.` },
           ],
           flag: "script",
           deep: {
-            why: R`أي design system فيه inputs مخصوصة: تقييم بالنجوم، و date picker، و tags، و rich text. من غير form-associated، كل واحد محتاج [[<input type="hidden">]] بيتنسخ له القيمة بإيدك، والـ validation والـ reset والـ autofill كلهم بيتكتبوا من الأول وبيبوظوا. بالـ ElementInternals الـ component بيبقى input حقيقي: الفورم والـ CSS ([[:invalid]]) وقارئ الشاشة كلهم بيتعاملوا معاه زي [[<input>]].`,
-            how: R`[[static formAssociated = true]] بيقول للمتصفح «العنصر ده بيتبع الفورم اللي حواليه». و [[attachInternals()]] مسموحة مرة واحدة لكل عنصر، ولـ custom elements بس ([[NotSupportedError]] على [[div]]).
+            why: "ده الحل المتوازن لمشكلة waiting: اليوزر بياخد التحديث بسرعة، ومفيش صفحة بتتكسر في النص، ومفيش reload فجأة وهو بيكتب. وكل مكتبات الـ PWA (vite-plugin-pwa و Workbox و Serwist) بتقدّم نفس الـ pattern جاهز.",
+            how: R`[[navigator.serviceWorker.controller]] بيبقى null في أول زيارة خالص (مفيش SW بيتحكم لسه). من غيره، أول تسطيب هيطلّع «نسخة جديدة» وده غلط: دي أول نسخة.
 
-[[setFormValue(v)]]: [[v]] نص أو [[File]] أو [[FormData]] (لأكتر من قيمة)، و [[null]] يعني «مفيش قيمة» فمش هيتبعت خالص (زي checkbox مش متعلّم). [[setValidity({ valueMissing: true }, msg)]] بيخلّيه invalid، و [[setValidity({})]] صالح. الـ flags نفس أسامي [[ValidityState]]: [[valueMissing]] و [[tooShort]] و [[patternMismatch]] و [[customError]]...
+[[updatefound]] بيتنادى لما المتصفح يلاقي sw.js اتغير ويبدأ يسطّبه، و [[reg.installing]] هو الـ worker الجديد. لما حالته تبقى [["installed"]] وفيه controller قديم، يبقى هو في waiting.
 
-الـ callbacks: [[formAssociatedCallback(form)]] لما يدخل فورم أو يخرج، و [[formDisabledCallback(disabled)]] لما [[<fieldset disabled>]] حواليه يتغير، و [[formResetCallback()]] مع [[form.reset()]]، و [[formStateRestoreCallback(state)]] لما المتصفح يرجّع القيمة (back أو autofill).
+لما اليوزر يضغط: [[postMessage("SKIP_WAITING")]] ← الـ SW الجديد ينادي [[skipWaiting()]] ← activate ← (و [[clients.claim()]] لو موجودة) ← كل التابات المفتوحة تاخد [[controllerchange]] ← reload. عشان كده التاب التاني بيعمل reload هو كمان. الـ [[reloading]] flag بيمنع reload مرتين (في DevTools مع «Update on reload» ممكن يحصل loop).
 
-[[internals.role]] و [[ariaValueNow]] (اسمها ARIA reflection) بيحطوا الدور والقيمة في شجرة الـ accessibility من غير attributes ظاهرة في الـ HTML يقدر حد من برّه يغيّرها. و [[internals.states.add("on")]] بيخلّي [[:state(on)]] في CSS تمسك.`,
-            when: R`أي component هيتحط جوه [[<form>]] وليه قيمة: تقييم، وتاريخ، وألوان، وtags، و rich text، و select مخصوص. ومش لزرار أو كارت أو حاجة عرض: دول مش محتاجين يتبعتوا مع الفورم.`,
-            mistakes: R`تنسى [[static formAssociated = true]] فـ [[setFormValue]] يرمي [[NotSupportedError: ... The target element is not a form-associated custom element.]] وتنادي [[attachInternals()]] في [[connectedCallback]] فتتنادى تاني لما العنصر يتنقل وترمي. وتعمل [[getter]] لـ [[value]] من غير ما تنادي [[setFormValue]] لما القيمة تتغير، فالفورم بيبعت القيمة القديمة. وتنسى [[formResetCallback]] فالـ [[reset]] بيرجّع كل الخانات إلا بتاعتك. وتنسى [[tabIndex]] فمحدش يقدر يوصله بالكيبورد. وتنسى إن [[name]] لازم attribute على العنصر عشان القيمة تتبعت باسم.`
+[[reg.update()]] كل ساعة للتطبيقات اللي بتفضل مفتوحة أيام (dashboard على شاشة)، لأن الفحص التلقائي بيحصل مع التنقل بس.
+
+صفحة الـ offline: [[offline.html]] في الـ PRECACHE، ترد بيها في network-first لما الـ fetch يفشل ومفيش نسخة (الدرس اللي فات). خليها صفحة لوحدها بـ CSS inline ومن غير JS خارجي، عشان مش هتلاقي حاجة تانية من غير نت.`,
+            when: R`أي PWA بـ cache-first لملفات الـ JS. و autoUpdate (skipWaiting دايمًا) بس لو الموقع network-first أو static بسيط (زي الموقع ده).`,
+            mistakes: R`تنسى فحص controller فيظهر الشريط أول زيارة. وتنسى [[reg.waiting]] عند فتح الصفحة فاللي فتح بعد ما التحديث اتسطب مش هيشوف الشريط. و reload في controllerchange من غير flag. وتنسى إن [[clients.claim()]] بيطلّع controllerchange في أول زيارة كمان فيحصل reload زيادة (ابدأ الـ flag بـ [[!navigator.serviceWorker.controller]]). و reload وهو في نص فورم: احفظ المسودة الأول أو خلي الزرار هو اللي يبدأ الـ reload بس.`
           },
           teach: R`## الفكرة في سطر
 
-[[<star-rating name="rating" required>]] لازم يتصرف زي [[<input name="rating" required>]]: قيمته تتبعت مع الفورم، والفورم ميتبعتش لو هو فاضي، و [[reset]] يرجّعه صفر. المثال بيعمل ده بـ [[ElementInternals]] من غير أي [[<input type="hidden">]].
+الصفحة بتراقب: لو فيه SW جديد واقف في waiting، تظهر شريط. اليوزر يضغط ← الصفحة تبعت [["SKIP_WAITING"]] ← الـ SW الجديد يتفعّل ← الصفحة تسمع [[controllerchange]] وتعمل reload مرة واحدة.
 
-اتشغّل في Chrome 156 headless (عن طريق playwright-core) بالـ HTML اللي في «جرّب» (فورم فيه [[star-rating]] و [[input]] اسمه [[note]] قيمته [[hi]]).
+جرّبته في Chrome headless (عن طريق playwright-core، بروفايل مؤقت) على سيرفر Node على localhost: [[index.html]] فيه [[<div id="update-bar" hidden>فيه نسخة جديدة <button>حدّث</button></div>]] و [[<script type="module" src="/app.js">]]، و [[app.js]] هو المثال بالظبط، و [[sw.js]] من درس دورة الحياة من غير [[skipWaiting]] في الـ install (فيه [[clients.claim()]] في الـ activate والـ message listener).
 
 ---
 
-## ١. السطرين اللي بيدخّلوه الفورم
+## ١. التسجيل
 
 ~~~text app.js
-class StarRating extends HTMLElement {
-  static formAssociated = true;
-  #internals = this.attachInternals();
-  #value = 0;
+const reg = await navigator.serviceWorker.register("/sw.js");
+const bar = document.querySelector("#update-bar");
 ~~~
 
-- [[static formAssociated = true]]: [[static]] يعني على الـ class نفسه مش على كل عنصر. المتصفح بيقرا الخاصية دي وقت [[customElements.define]] ويقول «ده عنصر فورم».
-- [[#internals = this.attachInternals()]]: field خاص (الـ [[#]] من درس «EventEmitter»). [[attachInternals()]] بترجّع [[ElementInternals]]: الـ object اللي الـ component بيكلّم بيه الفورم والـ accessibility. بنحطه في [[#]] عشان محدش برّه يقدر يغيّر قيمة الفورم من ورا الـ component.
-- [[#value = 0]]: القيمة الحقيقية: عدد النجوم.
+- [[await]] برّه أي دالة (top-level await) مسموح بس في module، عشان كده [[type="module"]] في الـ script.
+- [[reg]]: الـ ServiceWorkerRegistration. فيه [[reg.installing]] و [[reg.waiting]] و [[reg.active]]، كل واحد worker أو [[null]].
 
-جرّبت [[attachInternals()]] مرتين على نفس العنصر، وعلى [[div]]، وجرّبت [[setFormValue]] على component من غير [[formAssociated]]:
+---
 
-~~~text الناتج (Chrome)
-NotSupportedError: Failed to execute 'attachInternals' on 'HTMLElement': ElementInternals for the specified element was already attached.
-NotSupportedError: Failed to execute 'attachInternals' on 'HTMLElement': Unable to attach ElementInternals to non-custom elements.
-NotSupportedError: Failed to execute 'setFormValue' on 'ElementInternals': The target element is not a form-associated custom element.
-~~~
-
-## ٢. [[connectedCallback]]: الكيبورد وقارئ الشاشة
+## ٢. دالة إظهار الشريط
 
 ~~~text app.js
-  connectedCallback() {
-    this.tabIndex = 0;
-    this.#internals.role = "slider";
-    this.#internals.ariaValueMax = "5";
-    this.addEventListener("click", () => (this.value = (this.#value % 5) + 1));
-    this.#sync();
-  }
+function showUpdate(worker) {
+  bar.hidden = false;
+  bar.querySelector("button").onclick = () => worker.postMessage("SKIP_WAITING");
+}
 ~~~
 
-- [[tabIndex = 0]]: يخلّي العنصر يتوصله بـ Tab زي أي input.
-- [[#internals.role = "slider"]]: يقول لقارئ الشاشة «ده slider». ده اسمه ARIA reflection: نفس [[role="slider"]] بس من غير attribute ظاهر في الـ HTML يقدر حد يمسحه.
-- [[ariaValueMax = "5"]]: أقصى قيمة. من غيرها الـ slider كان بيتقري من 0 لـ 100 (شفت ده في شجرة الـ accessibility).
-- [[(this.#value % 5) + 1]]: [[%]] باقي القسمة: كل ضغطة بتزوّد نجمة، وبعد 5 بترجع 1 (0←1، 4←5، 5←1).
-- [[this.#sync()]]: يحدّث القيمة في الفورم والشكل أول مرة.
+- [[bar.hidden = false]]: شيل الـ attribute [[hidden]] فالشريط يظهر.
+- [[onclick = ...]]: لما الزرار يتضغط. بنستخدم [[onclick]] مش [[addEventListener]] عشان لو الدالة اتنادت مرتين، الـ handler يتبدّل بدل ما يتكرر.
+- [[worker.postMessage("SKIP_WAITING")]]: ابعت الرسالة للـ worker **الجديد** ده بالذات (مش للـ controller القديم). جوه [[sw.js]] الـ message listener بينادي [[skipWaiting()]].
 
-دي شجرة الـ accessibility بعد ضغطة (من Chrome DevTools Protocol):
+---
+
+## ٣. الحالتين اللي بنمسكهم
+
+### كان مستني من قبل ما الصفحة تفتح
+
+~~~text app.js
+if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
+~~~
+
+- [[reg.waiting]]: فيه نسخة متسطّبة ومستنية.
+- [[navigator.serviceWorker.controller]]: الـ SW اللي بيتحكم في الصفحة دي. [[null]] في أول زيارة خالص، فالشرط ده بيمنع «نسخة جديدة» في أول مرة.
+- [[&&]]: الاتنين لازم يبقوا موجودين.
+
+### بيتسطّب دلوقتي
+
+~~~text app.js
+reg.addEventListener("updatefound", () => {
+  const next = reg.installing;
+  next.addEventListener("statechange", () => {
+    if (next.state === "installed" && navigator.serviceWorker.controller) showUpdate(next);
+  });
+});
+~~~
+
+1. [[updatefound]]: المتصفح لقى [[sw.js]] اتغير وبدأ يسطّبه.
+2. [[reg.installing]]: الـ worker الجديد، حالته [["installing"]].
+3. [[statechange]]: كل ما حالته تتغير: [[installing]] ← [[installed]] ← [[activating]] ← [[activated]] (أو [[redundant]] لو فشل).
+4. [["installed"]] وفيه controller قديم = هو في waiting، فاعرض الشريط.
+
+---
+
+## ٤. الـ reload
+
+~~~text app.js
+let reloading = false;
+navigator.serviceWorker.addEventListener("controllerchange", () => {
+  if (reloading) return;
+  reloading = true;
+  location.reload();
+});
+~~~
+
+- [[controllerchange]]: الـ SW اللي بيتحكم في الصفحة اتغير. بيحصل في **كل** التابات المفتوحة.
+- [[reloading]]: flag عشان نعمل reload مرة واحدة حتى لو الـ event جه مرتين.
+- [[location.reload()]]: حمّل الصفحة من جديد، فتيجي الملفات الجديدة.
+
+---
+
+## ٥. الفحص الدوري
+
+~~~text app.js
+setInterval(() => reg.update(), 60 * 60 * 1000);
+~~~
+
+- [[setInterval(fn, ms)]]: نادي الدالة كل كذا millisecond.
+- [[60 * 60 * 1000]]: 60 دقيقة × 60 ثانية × 1000 ms = 3600000 = ساعة.
+- [[reg.update()]]: روح شوف [[sw.js]] اتغير ولا لأ دلوقتي. لو اتغير بيبدأ install، فـ [[updatefound]] يتنادى.
+
+---
+
+## ٦. اللي حصل لما شغّلته
+
+فتحت تاب A، وبعدين غيّرت [[CACHE]] في [[sw.js]] لـ [["v2"]]، وفتحت تاب B، وضغطت الزرار في A. وعدّيت مرات تحميل كل تاب:
 
 ~~~text الناتج
-slider "تقييمك" invalid="false" focusable=true valuemin=0 valuemax=5 value=1
+أول زيارة: الشريط مخفي controller: true
+refresh: الشريط مخفي
+بعد v2 + refresh: الشريط ظاهر
+تاب B اتفتح بعد التحديث: الشريط ظاهر (reg.waiting: true)
+loads قبل: {"A":4,"B":1} بعد الضغط: {"A":5,"B":2}
+caches: ["v2"] bar A: مخفي bar B: مخفي
 ~~~
 
-الاسم [["تقييمك"]] جه من الـ [[<label>]] اللي حواليه لوحده: عناصر الفورم بس هي اللي الـ label بيتربط بيها، والـ [[formAssociated]] خلّاه منهم.
+- **أول زيارة:** الشريط مخفي بسبب شرط الـ controller.
+- **بعد v2:** [[updatefound]] ← [[statechange]] لـ [["installed"]] ← الشريط ظهر.
+- **تاب B:** اتفتح والـ SW الجديد كان واقف في waiting، فالشرط الأولاني ([[reg.waiting]]) هو اللي ظهّر الشريط. من غير السطر ده B مكانش هيعرف.
+- **بعد الضغط في A:** كل تاب اتحمّل **مرة واحدة زيادة بالظبط** (A من 4 لـ 5، و B من 1 لـ 2)، والكاش القديم اتمسح.
 
-## ٣. الـ getters والـ setters
+### مفاجأة: reload زيادة في أول زيارة
+
+ليه A اتحمّل 4 مرات قبل الضغط مع إننا عملنا goto و refresh مرتين بس (3)؟ قِست أول زيارة لوحدها:
+
+~~~text الناتج
+loads after first visit: 2 2 x GET /
+~~~
+
+في أول زيارة الصفحة اتفتحت من غير controller، وبعدين الـ SW عمل [[clients.claim()]] فالـ controller اتغير من [[null]] لـ SW، فـ [[controllerchange]] اتنادى وعمل reload مش محتاجينه. الحل: ابدأ الـ flag بـ true لو مفيش controller أصلًا:
 
 ~~~text app.js
-  get value() { return this.#value; }
-  set value(v) { this.#value = Number(v); this.#sync(); }
-  get form() { return this.#internals.form; }
-  get name() { return this.getAttribute("name"); }
+let reloading = !navigator.serviceWorker.controller;
 ~~~
 
-- [[value]]: بيقرا ويكتب [[#value]]، والكتابة بتنادي [[#sync]] عشان الفورم يعرف على طول. [[Number(v)]] عشان [[stars.value = "3"]] تشتغل.
-- [[form]]: الفورم اللي العنصر جواه. [[#internals.form]] بيعرفه لوحده (جرّبت: [[stars.form === form]] بـ [[true]]).
-- [[name]]: زي [[input.name]]. الـ [[name]] الحقيقي اللي بيتبعت هو الـ attribute، والـ getter ده للي بيكتب JS بس.
-
-## ٤. [[formResetCallback]]
-
-~~~text app.js
-  formResetCallback() { this.value = 0; }
+~~~text الناتج بعد التعديل
+loads after first visit: 1 1 x GET /
 ~~~
 
-المتصفح بيناديها لوحده لما [[form.reset()]] يحصل (أو زرار [[type="reset"]]). وفيه أخواتها:
-
-| الـ callback | بيتنادى إمتى |
-|---|---|
-| [[formResetCallback()]] | [[form.reset()]]: رجّع القيمة الأولانية |
-| [[formDisabledCallback(disabled)]] | [[<fieldset disabled>]] حواليه اتقفل أو اتفتح (جرّبتها: [[true]] ثم [[false]]) |
-| [[formAssociatedCallback(form)]] | العنصر دخل فورم أو خرج منه (جرّبتها: اتنادى بالـ [[FORM]]) |
-| [[formStateRestoreCallback(state)]] | المتصفح بيرجّع قيمة قديمة (Back، أو autofill)، من الـ docs |
-
-## ٥. [[#sync]]: القيمة والـ validation
-
-~~~text app.js
-  #sync() {
-    this.#internals.setFormValue(this.#value ? String(this.#value) : null);
-    if (this.hasAttribute("required") && !this.#value) this.#internals.setValidity({ valueMissing: true }, "اختار عدد النجوم");
-    else this.#internals.setValidity({});
-    this.#internals.ariaValueNow = String(this.#value);
-    this.textContent = "★".repeat(this.#value) + "☆".repeat(5 - this.#value);
-  }
-~~~
-
-- [[#sync()]]: method خاصة (نفس فكرة الـ [[#]]).
-- [[setFormValue(...)]]: دي القيمة اللي [[FormData]] هيشوفها باسم الـ [[name]]. لو صفر بنبعت [[null]] يعني «مفيش قيمة»، فمش هتتبعت خالص زي checkbox مش متعلّم.
-- [[setValidity({ valueMissing: true }, "اختار عدد النجوم")]]: «أنا invalid، والسبب إن القيمة ناقصة، والرسالة دي». الـ flags نفس أسامي [[input.validity]]: [[valueMissing]] و [[tooShort]] و [[rangeOverflow]] و [[customError]]...
-- [[setValidity({})]]: object فاضي يعني «مفيش مشاكل، أنا صالح».
-- [[ariaValueNow]]: القيمة الحالية لقارئ الشاشة.
-- [[textContent = "★".repeat(n) + "☆".repeat(5 - n)]]: [[repeat]] بتكرر النص n مرة: نجوم مليانة بالعدد، والباقي فاضية.
-
-## ٦. التشغيل
-
-~~~text app.js
-customElements.define("star-rating", StarRating);
-const form = document.querySelector("form");
-const stars = form.querySelector("star-rating");
-console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
-stars.click();
-stars.click();
-console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
-form.reset();
-console.log(stars.value, JSON.stringify([...new FormData(form)]));
-~~~
-
-~~~text الناتج (Chrome 156)
-false [["note","hi"]]
-true [["rating","2"],["note","hi"]]
-0 [["note","hi"]]
-~~~
-
-- [[[...new FormData(form)]]]: [[FormData]] بيلم كل قيم الفورم، و [[...]] بيحوّلها array من أزواج [[[name, value]]] عشان نطبعها.
-- **السطر الأول**: [[checkValidity()]] بـ [[false]] لأن [[required]] والقيمة صفر، و [[rating]] مش في الـ FormData (القيمة [[null]]).
-- **التاني**: بعد ضغطتين القيمة 2، فبقى صالح و [[rating]] بقى [["2"]] **قبل** [[note]]، بترتيب العناصر في الـ HTML زي أي input.
-- **التالت**: [[form.reset()]] نادى [[formResetCallback]] فرجع صفر واختفى من الـ FormData.
-
-### وكمان جرّبت
-
-- [[star-rating:invalid]] في الـ CSS مسكت العنصر وهو فاضي: [[stars.matches(":invalid")]] بـ [[true]].
-- [[form.requestSubmit()]] وهو فاضي: [[submit]] مااتعملش، وبدله [[invalid]] event اتبعت على [[STAR-RATING]]. وبعد ضغطة واحدة [[submit]] اتعمل بـ [[[["rating","1"],["note","hi"]]]].
-- [[this.#internals.states.add("on")]] خلّى [[x-t:state(on) { color: red }]] تشتغل (لونه طلع [[rgb(255, 0, 0)]]): كده تعمل حالات CSS خاصة بالـ component.
+وباقي السيناريو اشتغل زي ما هو (الشريط ظهر في A و B، وكل تاب اتحمّل مرة واحدة بعد الضغط). الثمن: الصفحة اللي اتفتحت أول زيارة مش هتعمل reload لوحدها لو جه تحديث وهي لسه مفتوحة، وده مقبول (هتاخده المرة الجاية).
 
 ---
 
 ## الخلاصة
 
-| الحاجة | معناها |
-|---|---|
-| [[static formAssociated = true]] | العنصر ده بيتبع الفورم اللي حواليه زي input |
-| [[this.attachInternals()]] | مرة واحدة بس، وبترجّع [[ElementInternals]] |
-| [[setFormValue(v)]] | القيمة اللي هتتبعت، و [[null]] يعني متتبعتش |
-| [[setValidity(flags, msg)]] و [[setValidity({})]] | invalid بسبب ورسالة، أو صالح |
-| [[internals.role]] و [[ariaValueNow]] | الدور والقيمة لقارئ الشاشة من غير attributes |
-| [[formResetCallback]] و [[formDisabledCallback]] | الفورم اتعمله reset أو الـ fieldset اتقفل |
+| الحدث | معناه | بنعمل إيه |
+|---|---|---|
+| [[reg.waiting]] عند الفتح | نسخة مستنية من قبل | اعرض الشريط |
+| [[updatefound]] ← [["installed"]] | نسخة اتسطّبت دلوقتي | اعرض الشريط |
+| ضغطة الزرار | اليوزر وافق | [[postMessage("SKIP_WAITING")]] للجديد |
+| [[controllerchange]] | الجديد استلم | reload مرة واحدة |
 
-- لازم [[name]] attribute عشان القيمة تتبعت باسم.
-- كل ما القيمة تتغير نادي [[setFormValue]] و [[setValidity]] مع بعض.
-- [[tabIndex = 0]] ودعم الكيبورد عليك انت، الـ internals مبتعملهمش.`,
+- شرط [[controller]] بيفرّق أول زيارة عن التحديث.
+- [[clients.claim()]] بيطلّع [[controllerchange]] في أول زيارة كمان، فخلي بالك من reload زيادة.
+- كل التابات بتعمل reload مع بعض، لأن الـ SW واحد للـ origin كله.`,
           lines: [
-            R`component اسمه [[StarRating]] بيورث [[HTMLElement]] زي أي custom element (درس «customElements.define»).`,
-            R`[[static]] على الـ class نفسه: بيقول للمتصفح وقت الـ [[define]] إن العنصر ده بيتبع الفورم زي [[<input>]]. من غيره [[setFormValue]] بترمي [[NotSupportedError]].`,
-            R`[[attachInternals()]] بترجّع [[ElementInternals]]: الـ object اللي الـ component بيكلّم بيه الفورم وقارئ الشاشة. مسموحة مرة واحدة بس، عشان كده في field بيتعمل مع العنصر، و [[#]] بتخليه خاص فمحدش برّه يغيّر قيمة الفورم.`,
-            R`عدد النجوم الحالي، خاص برضه. القيمة اللي الفورم بيشوفها بتيجي من هنا عن طريق [[#sync]].`,
-            R`بيتنادى لما العنصر يدخل الصفحة، فبنجهّز فيه الكيبورد وقارئ الشاشة والضغط.`,
-            R`[[tabIndex = 0]] بيخلّي العنصر ياخد focus بـ Tab زي أي input، وإلا اللي بيستخدم الكيبورد مش هيوصله.`,
-            R`بيقول لقارئ الشاشة إن ده [[slider]]، من غير attribute [[role]] ظاهر في الـ HTML (اسمها ARIA reflection). والاسم بييجي من الـ [[<label>]] اللي حواليه لوحده.`,
-            R`أقصى قيمة 5. من غيرها قارئ الشاشة كان بيقول إن المدى من 0 لـ 100، لأن ده الافتراضي للـ slider.`,
-            R`كل ضغطة بتزوّد نجمة، و [[% 5]] (باقي القسمة على 5) بيخلّيها ترجع 1 بعد 5. وبنكتب في [[this.value]] (الـ setter) مش في [[#value]] مباشرة، عشان الـ setter هو اللي بيبلّغ الفورم.`,
-            R`بنحدّث القيمة في الفورم والشكل من أول ما العنصر يظهر، عشان [[required]] يتحسب صح قبل أي ضغطة.`,
-            R`نهاية [[connectedCallback]].`,
-            R`القراية: [[stars.value]] بيرجّع عدد النجوم كرقم.`,
-            R`الكتابة: [[Number(v)]] عشان [[stars.value = "3"]] نص يشتغل برضه، وبعدها [[#sync]] يبلّغ الفورم ويرسم. أي كتابة من برّه أو من الضغط بتعدّي من هنا.`,
-            R`الفورم اللي العنصر جواه، زي [[input.form]]. [[#internals.form]] بيعرفه لوحده من مكان العنصر في الصفحة.`,
-            R`الاسم زي [[input.name]]. القيمة بتتبعت باسم الـ attribute [[name]]، والـ getter ده بس عشان الكود اللي بيقرا [[el.name]] يلاقيه.`,
-            R`المتصفح بيناديها لوحده مع [[form.reset()]] أو زرار [[type="reset"]]: بنرجّع صفر، والـ setter بيبلّغ الفورم.`,
-            R`method خاصة بتعمل كل اللي لازم يحصل لما القيمة تتغير، في مكان واحد.`,
-            R`القيمة اللي [[FormData]] هيشوفها باسم الـ [[name]]. صفر يعني [[null]]: «مفيش قيمة» فمش هتتبعت خالص، زي checkbox مش متعلّم.`,
-            R`لو عليه [[required]] والقيمة صفر: invalid بسبب [[valueMissing]] (نفس اسم [[input.validity.valueMissing]])، والرسالة اللي المتصفح هيعرضها لما الفورم يتبعت.`,
-            R`غير كده [[setValidity({})]]: object فاضي يعني «مفيش مشاكل». لازم تناديها صراحةً، وإلا العنصر يفضل invalid من آخر مرة.`,
-            R`القيمة الحالية لقارئ الشاشة، فبيقول «1 من 5» مثلًا.`,
-            R`الشكل: [[repeat]] بتكرر النجمة المليانة بعدد القيمة، والفاضية للباقي لحد 5.`,
-            R`نهاية [[#sync]].`,
-            R`نهاية الـ class.`,
-            R`بنسجّل الـ tag. المتصفح هنا بيقرا [[formAssociated]] ويربط أي [[<star-rating>]] بالفورم اللي حواليه.`,
-            R`الفورم من الـ HTML اللي في «جرّب».`,
-            R`الـ component جوه الفورم.`,
-            R`[[checkValidity()]] بـ [[false]] لأنه [[required]] وفاضي. و [[[...new FormData(form)]]] بيحوّل قيم الفورم لـ array من أزواج عشان نطبعها، و [[rating]] مش فيها لأن القيمة [[null]].`,
-            R`ضغطة: القيمة بقت 1.`,
-            R`ضغطة تانية: القيمة بقت 2.`,
-            R`دلوقتي [[true]]، و [[rating]] بقى [["2"]] في الـ FormData قبل [[note]] بترتيب العناصر في الـ HTML.`,
-            R`[[reset()]] بيرجّع كل خانات الفورم، وبينادي [[formResetCallback]] بتاعنا.`,
-            R`القيمة رجعت 0، و [[rating]] اختفى من الـ FormData تاني.`,
+            R`سجّل الـ SW واستنى الـ registration object، اللي منه هنعرف لو فيه نسخة مستنية أو جديدة بتتسطّب. [[await]] برّه دالة محتاج الملف يتحمّل كـ module ([[type="module"]]).`,
+            R`الشريط اللي هيقول «فيه نسخة جديدة» وفيه زرار. بيبدأ [[hidden]] في الـ HTML ومش هيظهر إلا لما يبقى فيه تحديث فعلًا.`,
+            R`دالة بتظهر الشريط وتربط الزرار بالـ worker الجديد اللي مستني. بتاخد الـ worker عشان الزرار يبعتله هو بالذات.`,
+            R`اظهر الشريط: [[hidden = false]] بتشيل الـ attribute فيبان.`,
+            R`لما اليوزر يدوس، ابعت [[SKIP_WAITING]] للـ worker الجديد، فهو ينادي [[skipWaiting()]] ويتفعّل. [[onclick]] مش [[addEventListener]]، عشان لو الدالة اتندهت مرتين الزرار ميبقاش عليه اتنين listeners.`,
+            R`نهاية [[showUpdate]].`,
+            R`الحالة الأولى: الصفحة فتحت وفيه بالفعل نسخة مستنية من قبل ([[reg.waiting]])، فاعرض الشريط على طول. و [[controller]] بيتأكد إن فيه SW شغال بيتحكم في الصفحة دلوقتي؛ لو مفيش (زي أول زيارة) يبقى مفيش نسخة قديمة نحدّثها.`,
+            R`الحالة التانية: [[updatefound]] يعني المتصفح لقى إن [[sw.js]] اتغير وبدأ يسطّب النسخة الجديدة والصفحة مفتوحة.`,
+            R`[[reg.installing]]: الـ worker الجديد اللي لسه بيتسطّب. بنحفظه في متغير عشان نتابعه، لأنه لسه مخلصش install.`,
+            R`[[statechange]] بيتنادى كل ما حالة الـ worker تتغير ([[installing]] ثم [[installed]] ثم [[activating]] ثم [[activated]])، فبنستنى اللحظة الصح نظهر فيها الشريط.`,
+            R`لما يبقى [[installed]] وفيه SW قديم بيتحكم في الصفحة، يبقى الجديد واقف في waiting: اعرض الشريط. من غير شرط [[controller]] الشريط كان هيظهر في أول زيارة خالص، ومفيش حاجة قديمة نحدّثها.`,
+            R`نهاية الـ [[statechange]] listener.`,
+            R`نهاية الـ [[updatefound]] listener.`,
+            R`علامة إننا عملنا reload. محتاجينها لأن [[controllerchange]] ممكن يتنادى أكتر من مرة (زي لما DevTools يبقى عليه «Update on reload»)، ومن غيرها الصفحة تدخل في reload ورا reload.`,
+            R`[[controllerchange]]: الـ SW اللي بيتحكم في الصفحة اتغير، يعني الجديد اتفعّل بعد [[skipWaiting]] و [[clients.claim]]. الصفحة دلوقتي شغالة بـ JS قديم مع SW جديد، فلازم reload.`,
+            R`لو عملنا reload خلاص، اخرج ومتعملش تاني.`,
+            R`علّم إننا بدأنا الـ reload قبل ما ننديه، فأي نداء تاني يقف عند السطر اللي فوق.`,
+            R`حمّل الصفحة من جديد، فتيجي الـ HTML والـ JS من النسخة الجديدة اللي الـ SW الجديد بيقدّمها.`,
+            R`نهاية الـ [[controllerchange]] listener.`,
+            R`المتصفح بيفحص [[sw.js]] لوحده لما اليوزر يفتح صفحة، بس اللي سايب التاب مفتوح أيام مش بيفتح صفحات جديدة. [[reg.update()]] كل ساعة بتفحص بإيدك، ولو لقت نسخة جديدة [[updatefound]] يتنادى والشريط يظهر.`,
           ],
-          sol: R`الناتج في Chrome 156: [[false [["note","hi"]]]] ثم [[true [["rating","2"],["note","hi"]]]] ثم [[0 [["note","hi"]]]]. الإطار الأحمر ظاهر وهو فاضي ([[:invalid]] مسكت)، ودوسة «ابعت» من غير نجوم مبعتتش الفورم: بدلها [[invalid]] event اتبعت على العنصر والمتصفح عرض «اختار عدد النجوم» (شكل الفقاعة نفسها من الـ docs، لأن الـ headless مبيرسمهاش).
+          sol: R`بعد تغيير [[CACHE]] والـ refresh: الـ SW الجديد بيتسطّب ويقف في waiting، فالشريط بيظهر. الضغط على «حدّث» بيعمل reload واحد، والصفحة بقت تحت الـ SW الجديد (Application ← Service workers بيعرض واحد بس activated).
 
-لما تمسح [[static formAssociated = true]]، أول [[setFormValue]] جوه [[#sync]] بيرمي: [[NotSupportedError: Failed to execute 'setFormValue' on 'ElementInternals': The target element is not a form-associated custom element.]] ([[attachInternals()]] نفسها بتنجح، بس مش بتربطه بالفورم).
+في التابين: التاني بيعمل reload لوحده في نفس اللحظة، لأن الـ SW واحد لكل الـ origin، ولما اتغير كل التابات خدت [[controllerchange]]. ده غالبًا اللي انت عايزه (مفيش تاب شغال بنسخة قديمة مع SW جديد)، بس لو فيه تاب فيه فورم نصه مكتوب، احفظ المسودة قبل الـ reload (درس visibilitychange).
 
-الدعم من الـ docs (MDN: ElementInternals): Chrome و Edge و Firefox، و Safari من 16.4.`
+ولو الشريط ظهر في أول زيارة خالص: نسيت شرط [[navigator.serviceWorker.controller]].`
         },
         {
-          cmd: "Declarative Shadow DOM و :defined",
-          title: "الـ component يظهر صح من أول لحظة (من غير flash)، حتى قبل ما الـ JS يتحمّل",
-          desc: R`الـ custom element بيبقى عنصر فاضي مالوش شكل لحد ما الـ JS يتحمّل ويعمل [[customElements.define]]. على نت بطيء ده بيبان: الصفحة بتظهر بالنص الخام أو فاضية، وبعدين فجأة الـ component يترسم ويزق اللي تحته (flash وlayout shift).
+          cmd: "vite-plugin-pwa و Serwist",
+          title: "تعمل PWA في مشروع Vite أو Next.js من غير ما تكتب SW بإيدك",
+          desc: R`كتابة SW بإيدك مفيدة عشان تفهم، بس في المشاريع الحقيقية فيه مشكلة: الـ build بيطلّع ملفات بأسماء فيها hashes بتتغير كل مرة، ولازم قايمة الـ precache تبقى مظبوطة. الأدوات بتعمل ده لوحدها: بتولّد القايمة من الـ build وبتحطها في الـ SW، وبتدّيك الاستراتيجيات والـ update prompt جاهزين. الاتنين مبنيين على أفكار Workbox بتاعة Google.
 
-فيه حلّين بيكمّلوا بعض:
+Vite (React أو Vue أو أي حاجة): [[vite-plugin-pwa]]. بتضيف [[VitePWA({...})]] في [[vite.config]] بالـ manifest، و [[registerType: "prompt"]] للزرار أو [[autoUpdate]]، وفي الكود [[registerSW]] من [[virtual:pwa-register]] (أو [[useRegisterSW]] من [[virtual:pwa-register/react]]).
 
-• **Declarative Shadow DOM**: [[<template shadowrootmode="open">]] جوه العنصر في الـ HTML نفسه. الـ parser بيعمل الـ shadow root منه على طول، فالشكل والـ CSS الداخلي يظهروا قبل أي JS (وده اللي بيخلّي SSR للـ Web Components ممكن).
-• **[[:defined]] و [[customElements.whenDefined]]**: [[:not(:defined)]] في CSS بتمسك العنصر لحد ما يتسجّل، فتحجز له مكان أو تخفيه، و [[whenDefined("x-y")]] Promise بتتحل لما يتسجّل عشان الكود اللي محتاجه يستنى.`,
-          example: R`<style>
-  user-badge:not(:defined) { opacity: 0.5; pointer-events: none; }
-</style>
-<user-badge>
-  <template shadowrootmode="open">
-    <style>b { color: teal; }</style>
-    <b>★</b> <slot></slot>
-  </template>
-  سارة
-</user-badge>
-<script type="module">
-  const first = document.querySelector("user-badge");
-  console.log("قبل:", first.matches(":defined"), !!first.shadowRoot, getComputedStyle(first).opacity);
-  class UserBadge extends HTMLElement {
-    constructor() {
-      super();
-      if (!this.shadowRoot) this.attachShadow({ mode: "open" }).innerHTML = "<style>b { color: teal; }</style><b>★</b> <slot></slot>";
-      this.shadowRoot.querySelector("b").addEventListener("click", () => this.toggleAttribute("starred"));
-    }
-  }
-  customElements.whenDefined("user-badge").then(() => console.log("whenDefined اتحلّت"));
-  customElements.define("user-badge", UserBadge);
-  console.log("بعد:", first.matches(":defined"), getComputedStyle(first).opacity);
-  const extra = document.createElement("user-badge");
-  extra.textContent = "علي";
-  document.body.append(extra);
-  console.log("من JS:", extra.shadowRoot.innerHTML.length > 0);
-</script>`,
-          try: R`احفظ المثال كـ [[index.html]] وشغّله بـ [[npx serve]]. وبعدين خلّي الـ [[define]] يتأخر: لفّه في [[setTimeout(() => { ... }, 2000)]] واعمل refresh: النجمة واللون ظاهرين من الأول؟ والعنصر باهت لمدة ثانيتين؟ وبعدين امسح الـ [[<template>]] من الـ HTML (يعني من غير Declarative Shadow DOM) وجرّب تاني: إيه اللي بيظهر في الثانيتين؟ وأخيرًا شيل [[if (!this.shadowRoot)]] وخلّي [[attachShadow]] دايمًا: إيه اللي اتكسر؟`,
+Next.js: [[Serwist]] (fork من Workbox بيتطور). بتكتب [[app/sw.ts]] صغير بـ [[new Serwist({...})]]، وبتلف الـ config بـ [[withSerwistInit]] من [[@serwist/next]]. ولـ Turbopack فيه [[@serwist/turbopack]] بطريقة setup مختلفة شوية (route handler)، فبص على الـ docs بتاعة النسخة اللي عندك.`,
+          example: R`// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
+export default defineConfig({
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "prompt",
+      includeAssets: ["favicon.svg", "apple-touch-icon.png"],
+      manifest: {
+        name: "مهامي", short_name: "مهامي", lang: "ar", dir: "rtl", theme_color: "#1f2430",
+        icons: [
+          { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
+          { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },
+        ],
+      },
+      workbox: { globPatterns: ["**/*.{js,css,html,svg,png,woff2}"] },
+    }),
+  ],
+});
+// src/pwa.ts
+import { registerSW } from "virtual:pwa-register";
+const updateSW = registerSW({
+  onNeedRefresh() {
+    if (confirm("فيه نسخة جديدة، تحدّث؟")) updateSW(true);
+  },
+  onOfflineReady() {
+    console.log("الموقع جاهز يشتغل من غير نت");
+  },
+});`,
+          try: R`اعمل [[npm create vite@latest pwa-lab -- --template react-ts]]، و [[npm i -D vite-plugin-pwa]]، وحط الـ config ده، و [[import "./pwa"]] في [[main.tsx]]. اعمل [[npm run build]] و [[npm run preview]] (الـ SW مش بيشتغل في [[dev]] افتراضيًا). بص على [[dist/sw.js]]: فيه أسماء ملفاتك؟ غيّر أي نص في App، واعمل build و preview تاني، واعمل refresh: الـ confirm ظهر؟`,
           practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[div.innerHTML = '<x-y><template shadowrootmode="open"><b>hi</b></template></x-y>']] وبعدين [[div.firstChild.shadowRoot]]: هيرجّع إيه؟ ونفس الكلام بـ [[div.setHTMLUnsafe(...)]] بدل [[innerHTML]]؟ اكتب توقعك وبعدين شغّله في Console بتاع Chrome.`, done: R`[[innerHTML]] رجّع [[null]] والـ [[<template>]] فضل template عادي جوه العنصر، والـ Console طلّع تحذير فيه [[Use setHTMLUnsafe() or parseHTMLUnsafe() instead.]]، و [[setHTMLUnsafe]] رجّع shadow root فعلًا، وتقدر تقول ليه [[innerHTML]] مبيعملهاش (عشان الكود القديم ميتفاجئش).` },
-            { lvl: 'تطبيق', t: R`ابني [[<product-card>]] بيظهر صح على 3G: خلّي السيرفر (Node صغير أو حتى ملف HTML) يرجّع ٣ كروت كل واحد فيه [[<template shadowrootmode="open">]] بالصورة والاسم والسعر والـ CSS، وزرار «أضف للسلة» مبيشتغلش غير بعد الـ [[define]]. والكروت اللي بتتضاف بعدين من JS ([[createElement]]) بتعمل نفس الـ shadow بنفسها.`, done: R`في DevTools ← Network ← Slow 3G مع تعطيل كاش، الكروت بتبان بشكلها الكامل قبل ما ملف الـ JS يخلص تحميل، والزرار باهت ومبيستجبش بـ [[:not(:defined)]]، وبعد الـ [[define]] بيشتغل، و Lighthouse بيقول CLS قريب من 0، وكارت جديد من JS شكله زي القديم بالظبط.` },
-            { lvl: 'تحدي', t: R`قارن وقيس: نفس صفحة الـ ٣ كروت بطريقتين: (١) من غير DSD و [[product-card:not(:defined) { visibility: hidden }]]، و (٢) بـ DSD. قيس في Chrome DevTools ← Performance (أو Lighthouse) بـ Slow 3G: إمتى الكروت تظهر (FCP و LCP)، وكام CLS، واكتب جدول بالأرقام.`, done: R`عندك جدول فيه FCP و LCP و CLS للطريقتين من ٣ تشغيلات لكل واحدة، والـ DSD بيظهر الكروت قبل ما الـ JS يخلص (LCP أقل بفرق واضح على Slow 3G)، وكتبت جملة بالعيب: الـ HTML بقى أكبر لأن الـ CSS بيتكرر في كل كارت.` },
+            { lvl: 'سريع', t: R`ابني في [[pwa.ts]] شريط بدل الـ [[confirm]]: [[onNeedRefresh]] بيظهر شريط فيه «حدّث» بينادي [[updateSW(true)]]، و [[onOfflineReady]] بيظهر toast «الموقع جاهز من غير نت» ويختفي بعد ٣ ثواني.`, done: R`بعد أول [[npm run build]] و [[npm run preview]] الـ toast بيظهر مرة واحدة ويختفي لوحده، وبعد ما تغيّر نص في App وتعمل build تاني و refresh الشريط بيظهر، و «حدّث» بيجيب النص الجديد.` },
+            { lvl: 'تطبيق', t: R`دوّر بنفسك في docs بتاعة vite-plugin-pwa و Workbox: إزاي تعمل [[runtimeCaching]] لـ [[/api/]] بـ NetworkFirst، واسم الكاش [[api]]، وحد أقصى ٥٠ entry، وتسيب الـ network ياخد ٣ ثواني بالكتير؟ اكتبها من غير ما تنسخ مثال جاهز.`, done: R`الـ config فيه [[urlPattern]] و [[handler: "NetworkFirst"]] وجوه [[options]]: [[cacheName: "api"]] و [[expiration: { maxEntries: 50 }]] و [[networkTimeoutSeconds: 3]]، والـ build بيعدّي، و Cache storage فيه كاش [[api]] بعد أول نداء، و Offline الصفحة بتعرض آخر داتا جت.` },
+            { lvl: 'تحدي', t: R`صلّح باج: في SPA فيه [[navigateFallback]]، لينك [[/api/export.csv]] بيرجّع [[index.html]] بدل الملف، حتى Online (الـ NavigationRoute بيرد من الـ precache على أي navigation). صلّحها بـ [[navigateFallbackDenylist]] لـ [[/api/]] و [[/admin/]].`, done: R`Offline، refresh على [[/settings]] لسه بيفتح التطبيق، و [[/api/export.csv]] بيروح للشبكة (فبينزّل الملف Online وبيفشل Offline) ومبيرجّعش HTML، و [[dist/sw.js]] فيه الـ regex بتاع الـ denylist، وتقدر تقول ليه رجوع [[index.html]] لـ API كان هيبقى bug صعب تلاقيه.` },
           ],
           flag: "script",
           deep: {
-            why: R`الـ Web Components من غير DSD كانت محتاجة JS عشان تتعرض خالص، فمكانتش بتنفع مع SSR ولا مع SEO ولا على نت بطيء: الصفحة بتفضل فاضية أو بتنط. DSD خلّى السيرفر يبعت الـ shadow DOM جاهز في الـ HTML، و [[:defined]] بيخلّيك تتحكم في الشكل في الفترة اللي قبل ما الـ JS يوصل.`,
-            how: R`الـ parser لما يلاقي [[<template shadowrootmode="open">]] كأول ولد لعنصر، بيعمل [[attachShadow]] للعنصر ويحط محتوى الـ template جوه الـ shadow root، والـ template نفسه بيختفي من الـ DOM (جرّبت: [[document.querySelectorAll("template").length]] بـ 0). ده بيحصل وقت الـ parsing بس: [[innerHTML]] مبيعملهوش، لازم [[setHTMLUnsafe]] أو [[Document.parseHTMLUnsafe]].
+            why: "الـ SW بإيدك مع build tool حديث معناه إنك لازم كل مرة تعرف أسماء الملفات الجديدة وتحدّث القايمة وتتأكد إن مفيش حاجة ناقصة. غلطة واحدة = install بيفشل أو يوزرز عالقين. الأدوات دي بتشيل ده، وبتسيبلك انت القرارات: prompt ولا auto، وإيه اللي يتكاش.",
+            how: R`vite-plugin-pwa بعد الـ build بيلف على [[dist/]] ويطابق [[globPatterns]]، ويعمل قايمة [[{ url, revision }]] (الـ revision hash للمحتوى)، ويولّد [[sw.js]] بـ Workbox فيه القايمة دي كـ precache. أي ملف اتغير = revision جديد = sw.js اتغير = تحديث. و [[registerType: "prompt"]] معناه الـ SW مش بيعمل skipWaiting لوحده، و [[onNeedRefresh]] بتتنادى لما يبقى فيه واحد waiting (نفس اللي عملناه بإيدنا في الدرس اللي فات)، و [[updateSW(true)]] بتبعت skipWaiting وتعمل reload.
 
-لما الـ [[define]] يحصل بعدين، الـ constructor بيلاقي [[this.shadowRoot]] موجود فعلًا. لو ناديت [[attachShadow]] على عنصر عنده declarative shadow root، المتصفح بيرجّع **نفس** الـ root بس **فاضي** (جرّبتها: [[r === el.shadowRoot]] بـ [[true]] و [[innerHTML]] بـ [[""]]). عشان كده [[if (!this.shadowRoot)]].
+و [[navigateFallback]] (افتراضيًا index.html في الـ SPA) بيخلي أي navigation من غير نت يرد بالـ index.html المتكاش، فالراوتر بتاعك يكمّل. وفيه وضع [[injectManifest]] لو عايز تكتب الـ SW بنفسك وهو يحقن القايمة بس.
 
-[[shadowrootmode="closed"]]: [[el.shadowRoot]] بـ [[null]] من برّه، والـ component يوصله من [[this.attachInternals().shadowRoot]] (جرّبت: رجّع المحتوى).
+Serwist في Next: [[self.__SW_MANIFEST]] بيتبدّل وقت الـ build بقايمة الـ precache، و [[defaultCache]] فيه استراتيجيات معقولة لكل نوع (صفحات، RSC payloads، صور، خطوط)، و [[fallbacks]] لصفحة offline ([[/~offline]] في الـ docs). وفي Next الـ HTML ممكن يكون ديناميك، فخلي بالك إيه اللي بيتكاش.
 
-[[:defined]] بتمسك أي عنصر HTML عادي، وأي custom element **بعد** ما اتسجّل. و [[customElements.whenDefined(name)]] بتتحل بالـ class لما الاسم يتسجّل، كـ microtask بعد الـ [[define]] (جرّبت: [[بعد:]] اتطبعت قبل [[whenDefined اتحلّت]]).`,
-            when: R`DSD: أي component بيترسم من السيرفر (Lit SSR، و Astro، و Enhance، أو HTML بتكتبه بإيدك) أو في صفحة السرعة فيها مهمة. و [[:not(:defined)]]: دايمًا تقريبًا، ولو بس عشان تحجز مكان ([[display: block; min-height]]) بدل ما الصفحة تنط. و [[whenDefined]]: لما كود محتاج methods العنصر (زي [[el.open()]]) وانت مش ضامن الـ script اتحمّل.`,
-            mistakes: R`[[attachShadow]] من غير ما تبص على [[this.shadowRoot]] فتمسح الـ DSD وتعمل flash بإيدك. وتحط الـ template بـ [[innerHTML]] وتستغرب إنه مااشتغلش. و [[:not(:defined) { display: none }]] على component عنده DSD: كده خبّيت الشكل اللي السيرفر تعب فيه. وتنادي methods على العنصر قبل الـ [[define]] (لسه [[HTMLElement]] عادي): [[el.open is not a function]]. وعنصر اتعمل بـ [[createElement]] قبل الـ [[define]] ومش في الصفحة مبيتعملوش upgrade لوحده (جرّبت: فضل [[HTMLElement]] لحد [[customElements.upgrade(el)]]).`
+والأيقونات: [[@vite-pwa/assets-generator]] بيولّد كل المقاسات (ومنها maskable و apple-touch-icon) من SVG واحد.`,
+            when: R`أي مشروع Vite أو Next عايزه PWA. الـ SW بإيدك لمواقع static صغيرة من غير build (زي الموقع ده)، أو لما تحتاج تحكم كامل (وقتها injectManifest).`,
+            mistakes: R`تجرّب في [[npm run dev]] وتستغرب إن مفيش SW (فعّل [[devOptions: { enabled: true }]] لو محتاج). و [[autoUpdate]] مع تطبيق فيه فورمز طويلة. و globPatterns بتاخد ملفات ضخمة (فيديو، source maps) فالـ install ياخد ميجات. وتنسى إن النسخة القديمة من Workbox في الـ SW القديم لسه شغالة عند اليوزرز لحد ما يتحدثوا.`
           },
           teach: R`## الفكرة في سطر
 
-[[<user-badge>]] جه من السيرفر جاهز بالـ shadow DOM بتاعه (النجمة واللون)، فبيظهر صح قبل الـ JS. لحد ما الـ JS يسجّله هو باهت ومبيستجبش ([[:not(:defined)]])، وبعد الـ [[define]] الـ class بيستخدم الـ shadow root الموجود بدل ما يعمل واحد جديد.
+بدل ما تكتب [[sw.js]] بإيدك، بتضيف plugin في [[vite.config.ts]]، وهو وقت الـ build بيولّد الـ manifest والـ SW وقايمة الملفات اللي تتحفظ. وفي الكود بتنادي [[registerSW]] وتقول هتعمل إيه لما تيجي نسخة جديدة.
 
-اتشغّل في Chrome 156 headless (عن طريق playwright-core) من [[http://127.0.0.1]].
+جرّبته فعلًا: [[npm create vite@latest pwa-lab -- --template react-ts]] (طلع Vite 8.3) و [[npm i -D vite-plugin-pwa]] (طلع 2.0.0)، والـ config ده بالظبط، و [[import "./pwa"]] أول سطر في [[src/main.tsx]]، و ٣ أيقونات PNG في [[public/]]. وبعدين [[npm run build]] و [[vite preview]] وفتحته في Chrome headless (playwright-core، بروفايل مؤقت). Serwist و Next.js مجرّبتهمش هنا: الكلام عنهم من الـ docs بتاعتهم.
 
 ---
 
-## ١. الـ CSS: قبل التسجيل
+## ١. [[vite.config.ts]]: الـ imports
 
-~~~text index.html
-<style>
-  user-badge:not(:defined) { opacity: 0.5; pointer-events: none; }
-</style>
+~~~text vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
 ~~~
 
-- [[:defined]]: pseudo-class بتمسك أي عنصر «متعرّف»: كل عناصر HTML العادية، وأي custom element **بعد** [[customElements.define]].
-- [[:not(:defined)]]: العكس: الـ custom element اللي لسه متسجّلش.
-- [[opacity: 0.5]]: باهت، عشان اليوزر يحس إنه لسه مش جاهز.
-- [[pointer-events: none]]: الضغط عليه مبيعملش حاجة، لأن الـ listeners لسه مااتحطتش.
+- [[defineConfig]]: دالة بترجّع الـ object زي ما هو، فايدتها إن الـ editor يكمّلك أسماء الإعدادات.
+- [[react]]: الـ plugin بتاع React (JSX و Fast Refresh). كان موجود في الـ template.
+- [[{ VitePWA }]]: الأقواس يعني named import: هات الحاجة اللي اسمها [[VitePWA]] بس من الـ package.
 
-لو الـ component **مفيهوش** DSD (هيترسم من الـ JS بس)، الأحسن تحجز مكانه بدل ما تخفيه، عشان الصفحة متنطش لما يظهر:
+## ٢. إعدادات الـ plugin
 
-~~~text style.css
-product-card:not(:defined) { display: block; min-height: 320px; }
+~~~text vite.config.ts
+VitePWA({
+  registerType: "prompt",
+  includeAssets: ["favicon.svg", "apple-touch-icon.png"],
+  manifest: { name: "مهامي", short_name: "مهامي", lang: "ar", dir: "rtl", theme_color: "#1f2430", icons: [...] },
+  workbox: { globPatterns: ["**/*.{js,css,html,svg,png,woff2}"] },
+}),
 ~~~
 
-## ٢. الـ HTML: Declarative Shadow DOM
+| الإعداد | معناه |
+|---|---|
+| [[registerType: "prompt"]] | الـ SW الجديد يستنى في waiting لحد ما الكود بتاعك يقول (التاني [[autoUpdate]]: يتفعّل لوحده) |
+| [[includeAssets]] | ملفات من [[public/]] تدخل الـ precache حتى لو مش متوصّل بيها من الكود |
+| [[manifest]] | نفس حقول [[manifest.webmanifest]] (الدرس الأول)، والـ plugin بيكتب الملف |
+| [[workbox.globPatterns]] | أنواع الملفات من [[dist/]] اللي تتحفظ |
 
-~~~text index.html
-<user-badge>
-  <template shadowrootmode="open">
-    <style>b { color: teal; }</style>
-    <b>★</b> <slot></slot>
-  </template>
-  سارة
-</user-badge>
+### الـ glob
+
+[[**/*.{js,css,html,svg,png,woff2}]]:
+
+- [[**/]]: أي فولدر بأي عمق.
+- [[*]]: أي اسم ملف.
+- [[{js,css,...}]]: واحد من الامتدادات دي.
+
+## ٣. الـ build
+
+~~~text الناتج (npm run build، مختصر)
+dist/manifest.webmanifest                          0.31 kB
+dist/index.html                                    0.50 kB
+dist/assets/index-D64VDMd1.css                     4.10 kB
+dist/assets/workbox-window.prod.es5-Bd17z0YL.js    5.65 kB
+dist/assets/index-Dt7RnCgD.js                    225.14 kB
+✓ built in 407ms
+
+PWA v2.0.0
+mode      generateSW
+precache  17 entries (272.23 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-2fbc6a65.js
 ~~~
 
-- [[<template shadowrootmode="open">]]: لما الـ parser يقابل template بالـ attribute ده كأول ولد لعنصر، بيعمل shadow root للعنصر ويحط جواه محتوى الـ template. [[open]] زي [[attachShadow({ mode: "open" })]]: الـ JS من برّه يقدر يوصل بـ [[el.shadowRoot]].
-- [[<style>b { color: teal; }</style>]]: CSS جوه الـ shadow، مقفول عليه زي درس «shadow DOM».
-- [[<slot></slot>]]: هنا هيظهر اللي جوه العنصر من برّه (درس «slots»).
-- [[سارة]]: ده الـ light DOM: محتوى عادي جوه [[<user-badge>]]، والـ slot بيعرضه.
+- [[mode generateSW]]: الـ plugin كتب الـ SW كله لوحده (التاني [[injectManifest]]: انت تكتبه وهو يحقن القايمة بس).
+- [[precache 17 entries]]: ١٧ ملف هيتحفظوا في الـ install.
+- [[D64VDMd1]] و [[Dt7RnCgD]]: الـ hash بتاع المحتوى في الاسم. أي تعديل = اسم جديد.
 
-جرّبت وده قبل أي [[define]]:
+وأضاف لوحده سطر الـ manifest في [[dist/index.html]]:
+
+~~~text dist/index.html
+<link rel="manifest" href="/manifest.webmanifest"></head>
+~~~
+
+### جوه [[dist/sw.js]] (مختصر)
+
+~~~text dist/sw.js
+self.addEventListener("message",e=>{e.data&&"SKIP_WAITING"===e.data.type&&self.skipWaiting()}),
+e.precacheAndRoute([{url:"index.html",revision:"82654995126a90ce03408e36429fb177"},
+  {url:"assets/index-Dt7RnCgD.js",revision:null}, ...]),
+e.cleanupOutdatedCaches(),
+e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))
+~~~
+
+ده نفس اللي عملناه بإيدنا في الدروس اللي فاتت:
+
+| السطر | يقابل إيه بإيدنا |
+|---|---|
+| [[message]] و [[SKIP_WAITING]] | الـ message listener. بس هنا الرسالة object فيه [[type]]، مش string |
+| [[precacheAndRoute([...])]] | [[PRECACHE]] و [[addAll]] و cache-first ليهم |
+| [[revision: null]] | الاسم فيه hash، فالاسم لوحده كفاية |
+| [[revision: "8265..."]] | [[index.html]] اسمه ثابت، فالـ hash بتاع المحتوى هنا |
+| [[cleanupOutdatedCaches()]] | مسح الكاش القديم في activate |
+| [[NavigationRoute(... "index.html")]] | أي صفحة (navigate) ترد بـ [[index.html]] المتكاش، فالراوتر بتاع React يكمّل |
+
+> لاحظت إن [[favicon.svg]] و [[apple-touch-icon.png]] والأيقونتين طلعوا مرتين في القايمة: مرة من [[includeAssets]] ومرة من [[globPatterns]] (لأنهم بيتنسخوا لـ [[dist/]]). التسطيب عدّى عادي (نفس الـ URL بنفس الـ revision مش مشكلة)، بس ده بيوضّح إن [[includeAssets]] مش محتاجه لو الـ glob بيغطي الملفات دي.
+
+---
+
+## ٤. [[src/pwa.ts]]
+
+~~~text src/pwa.ts
+import { registerSW } from "virtual:pwa-register";
+const updateSW = registerSW({
+  onNeedRefresh() {
+    if (confirm("فيه نسخة جديدة، تحدّث؟")) updateSW(true);
+  },
+  onOfflineReady() {
+    console.log("الموقع جاهز يشتغل من غير نت");
+  },
+});
+~~~
+
+- [["virtual:pwa-register"]]: مفيش ملف بالاسم ده. الـ plugin بيعمله وقت الـ build (virtual module).
+- [[registerSW({...})]]: بيسجّل [[/sw.js]] وبيتابع الحالات اللي عملناها بإيدنا (waiting و updatefound). بيرجّع دالة شايلناها في [[updateSW]].
+- [[onNeedRefresh]]: فيه نسخة في waiting (بتاع الشريط في الدرس اللي فات).
+- [[confirm(...)]]: dialog فيه OK و Cancel، بيرجّع true أو false.
+- [[updateSW(true)]]: ابعت [[SKIP_WAITING]] واعمل reload لما الجديد يستلم.
+- [[onOfflineReady]]: أول تسطيب خلص والملفات اتحفظت.
+
+### أول error
+
+أول [[npm run build]] وقع قبل Vite نفسه، في [[tsc]]:
 
 ~~~text الناتج
-قبل: false true 0.5
+src/pwa.ts(1,28): error TS2307: Cannot find module 'virtual:pwa-register' or its corresponding type declarations.
 ~~~
 
-يعني: لسه مش [[:defined]]، بس الـ [[shadowRoot]] **موجود فعلًا**، والـ CSS بتاع [[:not(:defined)]] شغّال (0.5). ولون النجمة جوه الـ shadow طلع [[rgb(0, 128, 128)]] (teal) من غير أي JS. والـ [[<template>]] نفسه اختفى: [[document.querySelectorAll("template").length]] بقى 0.
+TypeScript ميعرفش الـ virtual module. الحل إنك تضيف الـ types بتاعته في [[tsconfig.app.json]]:
 
-### ليه مبيشتغلش مع [[innerHTML]]؟
-
-~~~text الناتج (Chrome)
-Found declarative shadowrootmode attribute on a template, but declarative Shadow DOM is not being parsed. Use setHTMLUnsafe() or parseHTMLUnsafe() instead.
-innerHTML: false
-setHTMLUnsafe: true
+~~~text tsconfig.app.json
+"types": ["vite/client", "vite-plugin-pwa/client"],
 ~~~
 
-الـ DSD بيتعمل وقت تحميل الصفحة بس. لو بتحط HTML من JS، [[innerHTML]] بيسيب الـ template عادي (عشان الكود القديم ميتغيّرش سلوكه فجأة)، و [[el.setHTMLUnsafe(html)]] هي اللي بتفهم DSD. («Unsafe» لأنها مش بتنضّف الـ HTML زي [[innerHTML]] بالظبط: متحطش فيها حاجة من اليوزر من غير تنضيف، درس XSS في وحدة الـ DOM.)
+(أو سطر [[/// <reference types="vite-plugin-pwa/client" />]] في ملف [[.d.ts]].) بعدها الـ build عدّى.
 
-## ٣. الـ class: استخدم الموجود
+---
 
-~~~text index.html
-  class UserBadge extends HTMLElement {
-    constructor() {
-      super();
-      if (!this.shadowRoot) this.attachShadow({ mode: "open" }).innerHTML = "<style>b { color: teal; }</style><b>★</b> <slot></slot>";
-      this.shadowRoot.querySelector("b").addEventListener("click", () => this.toggleAttribute("starred"));
-    }
-  }
-~~~
+## ٥. اللي حصل في المتصفح
 
-- [[if (!this.shadowRoot)]]: لو العنصر جه من السيرفر بـ DSD، الـ shadow root موجود: متعملش واحد جديد. لو اتعمل من JS ([[createElement]])، مفيش: اعمله بنفس المحتوى.
-- [[attachShadow(...).innerHTML = "..."]]: [[attachShadow]] بترجّع الـ shadow root، فبنحط جواه المحتوى في نفس السطر.
-- [[this.shadowRoot.querySelector("b")]]: في الحالتين دلوقتي فيه shadow root، فبنحط الـ listener: الضغط على النجمة بيعمل [[toggleAttribute("starred")]] (يحط الـ attribute لو مش موجود ويشيله لو موجود). جرّبت: بعد ضغطة [[hasAttribute("starred")]] بـ [[true]].
-
-### ليه الـ [[if]] مهم؟
-
-جرّبت [[attachShadow]] على عنصر عنده declarative shadow root:
+شغّلت [[vite preview --port 4789]] وفتحت الصفحة، وبعدين غيّرت [[<h1>]] في [[App.tsx]] لـ «نسخة 2» وعملت build تاني وrefresh:
 
 ~~~text الناتج
-attachShadow on DSD: true ""
+console: الموقع جاهز يشتغل من غير نت
+h1: Get started
+dialog: confirm فيه نسخة جديدة، تحدّث؟
+h1 بعد: نسخة 2 loads: 3
+offline /any/route h1: نسخة 2
 ~~~
 
-رجّع **نفس** الـ root ([[true]])، بس **فاضي** ([[""]]): المتصفح مسح المحتوى اللي جه من السيرفر. يعني من غير الـ [[if]]، كل الشغل ده بيتمسح ويترسم تاني من JS: نفس الـ flash اللي كنا بنهرب منه.
+1. أول فتح: [[onOfflineReady]] اتنادت.
+2. بعد الـ build الجديد والـ refresh: [[onNeedRefresh]] اتنادت وظهر الـ confirm. ضغطت OK.
+3. الصفحة عملت reload لوحدها وبقت «نسخة 2». ([[loads: 3]] = الفتح الأول، والـ refresh، والـ reload بعد OK.)
+4. من غير نت، [[/any/route]] (مسار مش موجود كملف) فتح عادي، بسبب الـ [[NavigationRoute]].
 
-> لو الـ template [[shadowrootmode="closed"]]: [[el.shadowRoot]] بـ [[null]] حتى من جوه الـ class. الـ component يوصله بـ [[this.attachInternals().shadowRoot]] (جرّبتها: رجّع المحتوى).
+> ليه [[preview]] مش [[dev]]؟ الـ docs بتقول إن الـ SW مش بيتولّد في [[npm run dev]] إلا لو فعّلت [[devOptions: { enabled: true }]]. وفي [[dev]] مفيش [[dist/]] أصلًا.
 
-## ٤. [[whenDefined]] و [[define]]
+---
 
-~~~text index.html
-  customElements.whenDefined("user-badge").then(() => console.log("whenDefined اتحلّت"));
-  customElements.define("user-badge", UserBadge);
-  console.log("بعد:", first.matches(":defined"), getComputedStyle(first).opacity);
+## ٦. Next.js و Serwist (من الـ docs)
+
+نفس الفكرة: [[withSerwistInit]] من [[@serwist/next]] بيلف [[next.config]]، وانت بتكتب [[app/sw.ts]] فيه [[new Serwist({ precacheEntries: self.__SW_MANIFEST, ... })]]. الـ [[__SW_MANIFEST]] بيتبدّل وقت الـ build بقايمة الملفات، زي القايمة اللي شوفناها في [[dist/sw.js]] فوق.
+
+---
+
+## الخلاصة
+
+| بإيدك (الدروس اللي فاتت) | vite-plugin-pwa |
+|---|---|
+| [[manifest.webmanifest]] | [[manifest: {...}]] في الـ config |
+| [[PRECACHE]] بإيدك | بيتولّد من [[dist/]] بـ [[globPatterns]] |
+| تغيّر [[CACHE]] كل release | الـ revisions بتتغير لوحدها |
+| شريط و [[postMessage]] و [[controllerchange]] | [[onNeedRefresh]] و [[updateSW(true)]] |
+
+- جرّب بـ [[build]] و [[preview]]، مش [[dev]].
+- مع TypeScript ضيف [[vite-plugin-pwa/client]] للـ types.`,
+          lines: [
+            R`[[defineConfig]] من Vite: بترجّع الـ config زي ما هو، وفايدتها إن المحرر يعرف شكل الـ config فيكمّلك الأسامي ويعلّم على أي خاصية غلط.`,
+            R`plugin الـ React الرسمي لـ Vite: بيحوّل JSX وبيشغّل Fast Refresh في الـ dev. مالوش علاقة بالـ PWA، موجود لأن ده config مشروع React عادي.`,
+            R`[[VitePWA]]: الـ plugin اللي بيولّد [[sw.js]] و [[manifest.webmanifest]] وقت الـ build، بدل ما تكتبهم بإيدك زي الدروس اللي فاتت.`,
+            R`الـ config نفسه، و [[export default]] لأن Vite بيدوّر على الـ default export في [[vite.config.ts]].`,
+            R`ليستة الـ plugins اللي Vite هيشغّلهم وقت الـ dev والـ build.`,
+            R`شغّل plugin الـ React بالإعدادات الافتراضية.`,
+            R`شغّل plugin الـ PWA، وكل اللي جوه الـ object ده إعداداته.`,
+            R`[[prompt]]: لما تنزل نسخة جديدة، الـ SW الجديد يفضل waiting ويستنى اليوزر يوافق (هتشوف [[onNeedRefresh]] تحت). البديل [[autoUpdate]] بيحدّث ويعمل reload لوحده، وده ممكن يضيّع على اليوزر حاجة كان بيكتبها في فورم.`,
+            R`ملفات من فولدر [[public/]] بنقول للـ plugin يضمها صراحة للـ precache، زي الـ favicon و [[apple-touch-icon]] اللي iOS بيستخدمها للشاشة الرئيسية، فتفضل موجودة من غير نت.`,
+            R`[[manifest]]: نفس حقول [[manifest.webmanifest]] من الدرس الأول بس كـ object. الـ plugin بيكتب منه الملف وقت الـ build ويضيف الـ link بتاعه في الـ HTML لوحده.`,
+            R`الاسم الكامل والقصير، واللغة عربي، والاتجاه من اليمين، ولون شريط النظام. نفس معنى الحقول في درس [[manifest.webmanifest]] بالظبط.`,
+            R`ليستة الأيقونات اللي هتتكتب في الـ manifest. الصور نفسها لازم تبقى موجودة في [[public/]]؛ الـ plugin بيكتب أساميها بس، مش بيعملها.`,
+            R`أيقونة 192×192 للشاشة الرئيسية. Chrome محتاج 192 و 512 عشان يسمح بالتسطيب.`,
+            R`أيقونة 512×512 لشاشة البداية والشاشات عالية الدقة.`,
+            R`نهاية ليستة [[icons]].`,
+            R`نهاية [[manifest]].`,
+            R`[[workbox]]: إعدادات Workbox اللي بيولّد الـ SW. [[globPatterns]] بتحدد أنهي ملفات من [[dist/]] تدخل الـ precache. لو نسيت امتداد (زي [[woff2]] للخطوط)، الملفات دي مش هتتحفظ والموقع يفتح offline من غيرها.`,
+            R`نهاية إعدادات [[VitePWA]].`,
+            R`نهاية ليستة الـ [[plugins]].`,
+            R`نهاية [[defineConfig]] وآخر [[vite.config.ts]].`,
+            R`[[virtual:pwa-register]]: module مش موجود كملف عندك؛ الـ plugin بيولّده وفيه كود التسجيل ومتابعة التحديثات اللي كتبناه بإيدنا في درس «نسخة جديدة، حدّث». مع TypeScript ضيف [[vite-plugin-pwa/client]] للـ types عشان يتعرف عليه.`,
+            R`[[registerSW]] بتسجّل الـ SW وبتنادي الدوال اللي تحت لما يحصل حاجة، وبترجّع دالة [[updateSW]] اللي بنفعّل بيها النسخة الجديدة.`,
+            R`[[onNeedRefresh]]: بتتنادى لما نسخة جديدة اتسطّبت وواقفة waiting. نفس اللحظة اللي كنا بنظهر فيها الشريط بإيدنا.`,
+            R`اسأل اليوزر. لو وافق، [[updateSW(true)]] بتخلي الـ SW الجديد يعمل skipWaiting وتعمل reload للصفحة. [[confirm]] هنا للتبسيط؛ في تطبيق حقيقي اعمل شريط مش بيوقف الصفحة.`,
+            R`نهاية [[onNeedRefresh]].`,
+            R`[[onOfflineReady]]: بتتنادى بعد أول تسطيب لما الـ precache يخلص، يعني كل الملفات اتحفظت والموقع يقدر يفتح من غير نت.`,
+            R`بلّغ إن الموقع جاهز offline. في تطبيق حقيقي اعرض رسالة صغيرة لليوزر بدل الـ console.`,
+            R`نهاية [[onOfflineReady]].`,
+            R`نهاية [[registerSW]].`,
+          ],
+          sol: R`[[dist/sw.js]] (أو ملف workbox جنبه) فيه قايمة زي [[{url:"assets/index-B3k9.js",revision:null}]] و [[{url:"index.html",revision:"a1b2..."}]]. الملفات اللي في اسمها hash الـ revision بتاعها null (الاسم نفسه كفاية)، والباقي ليه hash.
+
+بعد تغيير النص و build و preview والـ refresh: الـ confirm «فيه نسخة جديدة» بيظهر. لو ضغطت OK بيعمل reload بالنسخة الجديدة. لو Cancel، الصفحة تفضل بالقديم لحد ما تقفل كل التابات.
+
+لو مظهرش: اتأكد إنك في [[preview]] مش [[dev]]، وإن [[import "./pwa"]] موجود، وإنك مش فاتح DevTools بـ «Update on reload» (دي بتعمل skipWaiting لوحدها فمتشوفش الـ prompt).`
+        },
+        {
+          cmd: "IndexedDB و BroadcastChannel",
+          title: "تخزّن داتا كتير في المتصفح وتزامن التابات إزاي؟ (وحدود iOS)",
+          desc: R`[[localStorage]] strings بس، و sync (بيوقف الصفحة)، وحوالي 5MB، ومش متاح جوه الـ SW. للداتا الحقيقية offline (مسودات، رسايل، طلبات مستنية النت) فيه IndexedDB: داتابيز جوه المتصفح، بتخزّن objects و Blobs، و async، وبـ indexes، ومساحته بالـ GB حسب الجهاز. بس الـ API الأصلي قديم ومبني على events ومتعب.
+
+عشان كده بتستخدم wrapper: [[idb]] (صغيرة، نفس الـ API بس بـ promises) أو [[Dexie]] (أكبر، فيها queries و live queries لـ React).
+
+و [[BroadcastChannel]]: قناة رسايل بين كل التابات (والـ workers) اللي على نفس الـ origin. لما تاب يغيّر حاجة، يقول للباقي «حدّثوا».`,
+          example: R`import { openDB } from "idb";
+const db = await openDB("notes-app", 1, {
+  upgrade(db) {
+    const store = db.createObjectStore("notes", { keyPath: "id" });
+    store.createIndex("byUpdated", "updatedAt");
+  },
+});
+async function addNote(text) {
+  await db.put("notes", { id: crypto.randomUUID(), text, updatedAt: Date.now() });
+  channel.postMessage({ type: "notes-changed" });
+}
+const channel = new BroadcastChannel("notes");
+channel.onmessage = async (e) => {
+  if (e.data.type === "notes-changed") render(await db.getAllFromIndex("notes", "byUpdated"));
+};
+function render(notes) {
+  console.log(notes.map((n) => n.text));
+}
+await addNote("اشتري لبن");
+render(await db.getAllFromIndex("notes", "byUpdated"));
+if (navigator.storage?.persist) console.log("persisted:", await navigator.storage.persist());`,
+          try: R`اعمل صفحة بـ Vite (عشان الـ import) فيها input وزرار «ضيف»، وافتح الصفحة في تابين. ضيف ملاحظة في واحد: التاني اتحدّث؟ الملاحظة ظهرت في التاب اللي ضافها؟ وبعدين DevTools ← Application ← IndexedDB وشوف الداتا. وجرّب في Console [[await navigator.storage.estimate()]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل (في المتصفح أو Node بـ [[fake-indexeddb]]): [[db.put("notes", ...)]] مرتين بنفس الـ [[id]] بنصين مختلفين، وبعدين [[db.add("notes", ...)]] بنفس الـ [[id]] جوه try/catch. [[db.count]] كام؟ والـ error اسمه إيه؟`, done: R`[[db.count("notes")]] بيرجّع 1، و [[db.get]] بيرجّع النص التاني ([[put]] بيستبدل)، و [[add]] بيرمي error اسمه [[ConstraintError]] والداتا متغيرتش.` },
+            { lvl: 'تطبيق', t: R`ابني migration: ارفع الـ version لـ 2، وفي [[upgrade(db, oldVersion, newVersion, tx)]] زوّد index اسمه [[byTag]] على الـ store الموجود بـ [[tx.objectStore("notes").createIndex(...)]]، من غير ما تعمل الـ store تاني، وخلّي الكود يشتغل صح لو اليوزر جاي من version 0 أو 1.`, done: R`الـ upgrade بيتنادى بـ [[oldVersion]] 1 و [[newVersion]] 2، والملاحظات القديمة كلها لسه موجودة، و [[indexNames]] فيه [[byTag]] و [[byUpdated]]، ومتصفح جديد (version 0) بيعمل الاتنين من غير error، وفتح بـ version 1 بعدها بيرمي [[VersionError]].` },
+            { lvl: 'تحدي', t: R`محاكاة outbox: لما [[navigator.onLine]] يبقى [[false]] الإضافة تتحط في store اسمه [[outbox]]، وعلى [[online]] تتبعت لسيرفر Express على localhost واحدة واحدة بالترتيب وتتمسح بعد ما السيرفر يرد [[ok]] بس، وتبعت [[BroadcastChannel]] للتابات.`, done: R`Offline تضيف ٣ وترجع Online: لوج السيرفر فيه ٣ requests بنفس الترتيب و [[outbox]] بيفضى. لو السيرفر رجّع 500 العملية بتفضل في [[outbox]]. التاب التاني بيتحدّث، والتاب اللي بعت مبيستقبلش رسالته (BroadcastChannel مبيرجّعش للـ object اللي بعت).` },
+          ],
+          flag: "script",
+          deep: {
+            why: "PWA بيشتغل offline محتاج مكان يحفظ فيه اللي اليوزر عمله لحد ما النت يرجع. ولما اليوزر فاتح التطبيق في تابين، من غير مزامنة واحد فيهم هيعرض داتا قديمة ولو حفظ منه هيمسح تعديلات التاني.",
+            how: R`[[openDB(name, version, { upgrade })]]: الـ upgrade بيتنادى بس لما الـ version يزيد (أو أول مرة)، وهو المكان الوحيد اللي تعمل فيه object stores و indexes، زي migrations. عايز تضيف index؟ زوّد الـ version وضيفه في upgrade. [[keyPath: "id"]] يعني المفتاح جوه الـ object نفسه، و [[put]] بتضيف أو تستبدل. و [[getAllFromIndex]] بترجّع مترتبة حسب الـ index. كل عملية جوه transaction؛ idb بتفتحها وتقفلها لك.
+
+بالـ Dexie نفس الكلام: [[db.version(1).stores({ notes: "id, updatedAt" })]] و [[db.notes.orderBy("updatedAt").toArray()]]، و [[useLiveQuery]] في React بتحدّث الـ component لوحدها لما الداتا تتغير (حتى من تاب تاني).
+
+BroadcastChannel بيوصّل الرسالة لكل الـ instances بنفس الاسم ما عدا اللي بعت. عشان كده التاب اللي ضاف لازم يعمل render بنفسه. الرسالة بتتنسخ (structured clone) فمينفعش تبعت دوال.
+
+المساحة: المتصفح ممكن يمسح داتا الموقع لو المساحة قلت (best-effort). [[navigator.storage.persist()]] بيطلب إنه ميتمسحش (Chrome بيوافق غالبًا للمواقع المسطّبة أو اللي اليوزر بيستخدمها كتير، و Firefox ممكن يسأل اليوزر).
+
+حدود iOS/Safari: كل المتصفحات على iPhone بتستخدم WebKit (مع استثناءات في أوروبا). Safari بيمسح كل التخزين اللي بيكتبه JS (IndexedDB و localStorage و Cache Storage) للموقع اللي اليوزر مفتحهوش ٧ أيام، إلا لو الموقع متسطّب على الشاشة الرئيسية. مفيش [[beforeinstallprompt]]. والـ push notifications شغالة بس للـ PWA المتسطّب (من iOS 16.4). و Background Sync مش مدعوم. فمتعتمدش على التخزين المحلي كمصدر وحيد للداتا: السيرفر هو المصدر، والمحلي كاش ومسودات.`,
+            when: R`IndexedDB: مسودات، وداتا offline، و queue لطلبات مستنية النت، وملفات كبيرة (Blobs). localStorage: إعدادات صغيرة (theme، آخر تاب). BroadcastChannel: logout في كل التابات، ومزامنة سلة أو إشعارات. وفي الـ SW: IndexedDB بس (localStorage مش موجود هناك).`,
+            mistakes: R`localStorage لداتا كبيرة أو objects ([[JSON.stringify]] كل مرة ويوقف الصفحة). وتغيّر الـ schema من غير ما تزوّد الـ version. وتنسى إن الداتا خاصة بالجهاز والمتصفح (مش sync بين الأجهزة). وتخزّن tokens حساسة في IndexedDB وتفتكره آمن من XSS (أي JS على الصفحة يقراه). وتعتمد على التخزين المحلي على iPhone لداتا مهمة.`
+          },
+          teach: R`## الفكرة في سطر
+
+بنفتح داتابيز اسمها [[notes-app]] جوه المتصفح فيها جدول (store) اسمه [[notes]]، ونضيف ملاحظة، ونقول لباقي التابات «الداتا اتغيرت» عن طريق قناة [[BroadcastChannel]]، فكل تاب يقرا من جديد ويرسم.
+
+جرّبته بطريقتين:
+
+- **في Chrome headless** (playwright-core، بروفايل مؤقت) على سيرفر Node على localhost، بالمثال زي ما هو. بدل Vite استخدمت import map بيقول للمتصفح إن [["idb"]] هو ملف [[idb/build/index.js]] (نسخة 8.0.4)، وفتحت الصفحة في تابين.
+- **في Node 24** الـ solCode، ومعاه [[fake-indexeddb]] (IndexedDB مكتوبة بـ JS، عشان Node معندوش واحدة).
+
+---
+
+## ١. فتح الداتابيز
+
+~~~text app.js
+import { openDB } from "idb";
+const db = await openDB("notes-app", 1, {
+  upgrade(db) {
+    const store = db.createObjectStore("notes", { keyPath: "id" });
+    store.createIndex("byUpdated", "updatedAt");
+  },
+});
 ~~~
 
-- [[customElements.whenDefined(name)]]: Promise بتتحل لما الاسم ده يتسجّل (بالـ class نفسه). لو متسجّل خلاص، بتتحل على طول.
-- [[define]]: العنصر اللي في الصفحة بيتعمله **upgrade**: الـ constructor بيتنادى عليه، ويبقى [[:defined]].
+- [[openDB(name, version, { upgrade })]]: افتح الداتابيز دي بالـ version ده.
+- [[1]]: رقم الـ schema. لو الداتابيز مش موجودة، أو موجودة برقم أقل، [[upgrade]] بتتنادى.
+- [[upgrade(db)]]: المكان الوحيد اللي تعمل فيه stores و indexes. زي migration.
+- [[createObjectStore("notes", { keyPath: "id" })]]: store اسمه [[notes]] (زي جدول)، والمفتاح بتاع كل object هو الخاصية [[id]] اللي جواه.
+- [[createIndex("byUpdated", "updatedAt")]]: index اسمه [[byUpdated]] على الخاصية [[updatedAt]]، عشان نجيب الملاحظات مترتبة بالوقت.
+
+---
+
+## ٢. إضافة ملاحظة
+
+~~~text app.js
+async function addNote(text) {
+  await db.put("notes", { id: crypto.randomUUID(), text, updatedAt: Date.now() });
+  channel.postMessage({ type: "notes-changed" });
+}
+~~~
+
+- [[db.put(store, value)]]: ضيف، ولو فيه واحد بنفس المفتاح استبدله.
+- [[crypto.randomUUID()]]: id عشوائي فريد زي [[52d6a70d-a233-4d1b-9b78-9d1d3d7ec978]] (ده طلع لما جربته في Node).
+- [[text]] لوحدها جوه الـ object اختصار [[text: text]].
+- [[Date.now()]]: الوقت دلوقتي بالـ millisecond من 1970.
+- [[channel.postMessage(...)]]: ابعت رسالة لكل التابات التانية. ([[channel]] متعرّف تحت، بس الدالة مش بتتنادى غير بعد ما يتعرّف، فمفيش مشكلة.)
+
+---
+
+## ٣. القناة
+
+~~~text app.js
+const channel = new BroadcastChannel("notes");
+channel.onmessage = async (e) => {
+  if (e.data.type === "notes-changed") render(await db.getAllFromIndex("notes", "byUpdated"));
+};
+~~~
+
+- [[new BroadcastChannel("notes")]]: اشترك في قناة اسمها [[notes]]. أي تاب أو worker على نفس الـ origin ومشترك في نفس الاسم بيسمع.
+- [[onmessage]]: جالك رسالة. [[e.data]] هو الـ object اللي اتبعت.
+- [[getAllFromIndex("notes", "byUpdated")]]: كل الملاحظات مترتبة بـ [[updatedAt]] من الأقدم للأحدث.
+
+---
+
+## ٤. الرسم والتشغيل
+
+~~~text app.js
+function render(notes) {
+  console.log(notes.map((n) => n.text));
+}
+await addNote("اشتري لبن");
+render(await db.getAllFromIndex("notes", "byUpdated"));
+if (navigator.storage?.persist) console.log("persisted:", await navigator.storage.persist());
+~~~
+
+- [[render]]: هنا بتطبع النصوص بس، في تطبيق حقيقي بترسم الليستة.
+- السطر قبل الأخير: التاب اللي ضاف **مبيستلمش رسالته**، فلازم يرسم بنفسه.
+- [[navigator.storage?.persist]]: [[?.]] لو [[storage]] مش موجود رجّع [[undefined]] بدل error. و [[persist()]] بتطلب إن المتصفح ميمسحش الداتا دي لما المساحة تقل، وبترجّع true أو false.
+
+---
+
+## ٥. اللي حصل في Chrome (تابين)
 
 ~~~text الناتج
-بعد: true 1
+A: [اشتري لبن]
+A: persisted: false
+B: [اشتري لبن, اشتري لبن]
+A: [اشتري لبن, اشتري لبن]
+B: persisted: false
+--- A adds 'كلم ماما'
+B: [اشتري لبن, اشتري لبن, كلم ماما]
 ~~~
 
-الـ CSS اتشال لوحده (opacity رجعت 1)، من غير ما نكتب أي سطر JS يشيل class.
+- A فتح: ضاف ملاحظة ورسم نفسه.
+- B فتح: هو كمان نفّذ [[addNote("اشتري لبن")]] (فبقوا اتنين)، ورسم نفسه، وA سمع الرسالة ورسم.
+- A ضاف «كلم ماما»: B بس اللي طبع. A مطبعش لأنه مبيستلمش رسالته، و [[addNote]] نفسها مبترسمش. ده بالظبط الـ bug اللي في الـ sol.
+- [[persisted: false]]: Chrome رفض الطلب هنا (بروفايل مؤقت ومش متسطّب). في موقع متسطّب أو بيتزار كتير غالبًا بيوافق.
+- (وكان فيه سطر [[Failed to load resource: 404]]: ده [[favicon.ico]] مش موجود، ملوش علاقة.)
 
-## ٥. عنصر جديد من JS
-
-~~~text index.html
-  const extra = document.createElement("user-badge");
-  extra.textContent = "علي";
-  document.body.append(extra);
-  console.log("من JS:", extra.shadowRoot.innerHTML.length > 0);
-~~~
+ودي المساحة اللي Chrome اداها للموقع:
 
 ~~~text الناتج
-من JS: true
+estimate: {"quota":10737491968,"usage":73728} 10.0 GB
 ~~~
 
-هنا مفيش DSD، فالـ [[if]] عمل [[attachShadow]] والمحتوى اتحط، ولون النجمة برضه teal. نفس الـ component بيشتغل في الحالتين.
+[[quota]] الحد الأقصى بالبايت (هنا 10 GB في البروفايل المؤقت، وفي بروفايل عادي بيبقى نسبة من مساحة الديسك الفاضية)، و [[usage]] اللي الموقع مستخدمه فعلًا (حوالي 72 KB).
 
-### الترتيب الكامل
+---
 
-~~~text الناتج (Chrome 156)
-قبل: false true 0.5
-بعد: true 1
-من JS: true
-whenDefined اتحلّت
+## ٦. الـ solCode في Node
+
+~~~text app.js
+import "fake-indexeddb/auto";
 ~~~
 
-[[whenDefined]] اتحلّت **آخر حاجة**، مع إن الـ [[define]] كان قبل «بعد»: الـ [[.then]] بيشتغل microtask بعد ما الكود اللي شغّال يخلص (درس «microtasks و macrotasks»).
+ده بيحط [[indexedDB]] global في Node، فـ [[idb]] تشتغل زي المتصفح. وبعدين بيعمل قناتين بنفس الاسم في نفس البرنامج ([[tabA]] و [[tabB]]) كأنهم تابين، و A بيبعت. و [[close()]] في الآخر عشان القناة المفتوحة اللي عليها [[onmessage]] بتخلي Node مستني ومبيقفلش (جربت من غيرها: البرنامج فضل شغال لحد ما قفلته بعد ٥ ثواني).
 
-### عنصر اتعمل قبل الـ define
+~~~text الناتج (Node 24)
+B: [ 'اشتري لبن' ]
+~~~
+
+سطر «A استلم» مظهرش: نفس النتيجة، الـ instance اللي بعت مبيستلمش.
+
+---
+
+## ٧. المساحة: [[storage.estimate]] و quota و eviction
+
+IndexedDB و Cache Storage (بتاع الـ service worker) بياكلوا من **نفس** المساحة المسموحة للموقع (الـ quota). لو عدّيتها، الكتابة بتفشل. ولو الجهاز نفسه المساحة قلّت فيه، المتصفح ممكن **يمسح** داتا موقعك كلها (ده اسمه eviction).
+
+### كام مستخدم وكام فاضل؟
+
+~~~text app.js
+const mb = (n) => (n / 1024 / 1024).toFixed(1) + " MB";
+const { quota, usage, usageDetails } = await navigator.storage.estimate();
+console.log("usage:", mb(usage), "quota:", mb(quota), JSON.stringify(usageDetails));
+~~~
+
+- [[navigator.storage.estimate()]]: بترجّع Promise بـ object فيه [[usage]] (اللي موقعك مستخدمه بالبايت) و [[quota]] (أقصى حاجة مسموحة)، والاتنين **تقريب** مش رقم بالبايت الظبط (عشان المواقع متقدرش تعرف حاجات عن الجهاز من الأرقام دي).
+- [[usageDetails]]: في Chrome بس، بيقسّم الاستخدام: [[indexedDB]] و [[caches]] و [[serviceWorkerRegistrations]].
+- [[mb]]: دالة صغيرة بتحوّل البايت لـ MB برقم عشري واحد ([[toFixed(1)]]).
+
+حطيت ملف عشوائي 50 MB كـ Blob في IndexedDB وقستها قبل وبعد (Chrome 156 headless):
 
 ~~~text الناتج
-before define: HTMLElement
-after define, not in doc: HTMLElement
-after upgrade: LateEl
+قبل      usage: 0.0 MB   quota: 10240.0 MB
+بعد      usage: 50.0 MB  {"indexedDB":52430644,"serviceWorkerRegistrations":588}
 ~~~
 
-[[createElement("late-el")]] قبل الـ [[define]]، ومش متحط في الصفحة: الـ define مبيعملوش upgrade لوحده لأنه مش في الـ document، لحد ما تحطه في الصفحة أو تنادي [[customElements.upgrade(el)]].
+ملاحظة غريبة: لما حطيت 50 MB **أصفار** بدل بيانات عشوائية، [[usage]] طلع حوالي 5 MB بس: Chrome بيضغط الداتا اللي جوه IndexedDB، فالرقم بيعتمد على الداتا نفسها مش حجمها في JS.
+
+### لما المساحة تخلص: [[QuotaExceededError]]
+
+خلّيت Chrome يدّي الموقع 4 MB بس (بأمر DevTools Protocol اسمه [[Storage.overrideQuotaForOrigin]]، ونفس الحاجة في DevTools ← Application ← Storage ← Simulate custom storage quota)، وحطيت 1 MB وبعدين حاولت 5 MB:
+
+~~~text الناتج
+بعد 1MB       usage: 1.1 MB
+catch: QuotaExceededError |
+بعد المحاولة   usage: 1.1 MB
+cache catch: QuotaExceededError | Quota exceeded.
+~~~
+
+- الـ transaction بتاع IndexedDB **اتلغى كله** ([[tx.onabort]] و [[tx.error.name]] بـ [[QuotaExceededError]] والرسالة فاضية)، والـ 1 MB القديم فضل زي ما هو: يا كله يا بلاش.
+- [[cache.put]] بيرمي نفس الاسم برسالة [[Quota exceeded.]]
+- يعني أي كتابة لازم تبقى جوه [[try]]، وتقول لليوزر «المساحة خلصت، امسح حاجات قديمة» بدل ما التطبيق يقف ساكت.
+- و [[estimate()]] فضل يقول 10 GB حتى مع الحد ده، فمتعتمدش على [[quota - usage]] كرقم مضمون: الفيصل هو الـ error.
+
+### الـ eviction: إمتى المتصفح يمسح داتا موقعك؟
+
+ده من الـ docs (MDN: Storage quotas and eviction criteria)، لأنه بيحصل لما ديسك الجهاز نفسه يتملي:
+
+| المتصفح | الـ quota تقريبًا | بيمسح إمتى |
+|---|---|---|
+| Chrome و Edge | لحد حوالي 60٪ من مساحة الديسك لكل موقع | لما الديسك يقرب يتملي، بيمسح المواقع اللي بقالها أطول وقت مااتفتحتش الأول (LRU) |
+| Firefox | حوالي 10٪ من الديسك أو 10 GB لكل مجموعة مواقع، الأقل فيهم | نفس فكرة الأقدم استخدامًا الأول |
+| Safari | حوالي 60٪ للمتصفح نفسه، وأقل للتطبيقات اللي جواها WebView | وكمان بيمسح كل التخزين لأي موقع اليوزر مفتحهوش ٧ أيام، إلا المتسطّب على الشاشة الرئيسية |
+
+الـ eviction بيمسح **الموقع كله** مرة واحدة (IndexedDB و Cache و localStorage مع بعض)، مش جزء منه، عشان متلاقيش داتا نصها موجود.
+
+### [[persist()]]: متمسحش داتايا
+
+~~~text app.js
+console.log("persisted:", await navigator.storage.persisted());
+console.log("persist():", await navigator.storage.persist());
+~~~
+
+- [[persisted()]]: الداتا دي محمية دلوقتي؟ ([[true]] أو [[false]]) من غير ما تطلب حاجة.
+- [[persist()]]: اطلب الحماية. لو اتوافق عليها، المتصفح مش هيمسح داتا موقعك لوحده لما الديسك يتملي، اليوزر بس يقدر يمسحها.
+- في تجربتي (بروفايل جديد، موقع مش متسطّب ومحدش زاره قبل كده) الاتنين رجّعوا [[false]]. حسب الـ docs، Chrome بيقرّر لوحده من غير ما يسأل: بيوافق غالبًا لو الموقع متسطّب، أو في الـ bookmarks، أو اليوزر بيزوره كتير، أو الإشعارات متفعّلة. و Firefox بيطلّع سؤال لليوزر.
+- اطلبها في الوقت اللي الداتا بقت مهمة فعلًا (أول ما اليوزر يحفظ أول ملاحظة offline)، مش أول ما الصفحة تفتح.
 
 ---
 
@@ -1320,51 +1435,324 @@ after upgrade: LateEl
 
 | الحاجة | بتعمل إيه |
 |---|---|
-| [[<template shadowrootmode="open">]] | shadow root جاهز من الـ HTML وقت التحميل، من غير JS |
-| [[if (!this.shadowRoot)]] | استخدم الـ root اللي جه من السيرفر، و [[attachShadow]] عليه بيفضّيه |
-| [[setHTMLUnsafe(html)]] | DSD من JS، لأن [[innerHTML]] بيتجاهله |
-| [[:not(:defined)]] | شكل العنصر قبل الـ [[define]]: باهت، أو مكان محجوز |
-| [[customElements.whenDefined(name)]] | Promise بتتحل لما الاسم يتسجّل |
-| [[customElements.upgrade(el)]] | upgrade لعنصر اتعمل قبل الـ define ومش في الصفحة |
+| [[openDB(name, v, { upgrade })]] | تفتح، و upgrade بتتنادى لما الـ version يزيد |
+| [[createObjectStore]] و [[createIndex]] | جوه upgrade بس |
+| [[db.put]] | ضيف أو استبدل |
+| [[getAllFromIndex]] | كله مترتب بالـ index |
+| [[BroadcastChannel]] | رسالة لكل التابات **ما عدا** اللي بعت |
+| [[navigator.storage.persist()]] | اطلب الداتا متتمسحش |
+| [[navigator.storage.estimate()]] | [[usage]] و [[quota]] تقريبًا، والفيصل الحقيقي هو [[QuotaExceededError]] وقت الكتابة |
 
-- DSD للشكل قبل الـ JS، و [[:defined]] للحالة لحد ما يبقى تفاعلي: الاتنين مع بعض.
-- متخبّيش بـ [[display: none]] component عنده DSD.
-- الدعم (من الـ docs، MDN): Chrome و Edge من 111، و Safari من 16.4، و Firefox من 123.`,
+- عايز تغيّر الـ schema؟ زوّد الـ version.
+- التاب اللي غيّر يرسم بنفسه.`,
           lines: [
-            R`CSS عادي للصفحة. لازم يكون في الـ [[<head>]] أو قبل العنصر، عشان يشتغل من أول ما الصفحة ترسم.`,
-            R`[[:not(:defined)]] بتمسك [[<user-badge>]] بس لحد ما الـ JS يعمل [[define]]: باهت ومبيستقبلش ضغطات، عشان اليوزر ميدوسش على حاجة لسه مبتشتغلش. وبعد الـ define القاعدة بتتشال لوحدها.`,
-            R`نهاية الـ [[<style>]] بتاع الصفحة. القاعدة دي بتفضل موجودة على طول، بس [[:not(:defined)]] هي اللي بتقرر تمسك العنصر ولا لأ.`,
-            R`العنصر نفسه في الـ HTML. المتصفح مش عارفه لسه، فبيعامله كعنصر عادي لحد الـ [[define]].`,
-            R`Declarative Shadow DOM: template كأول ولد بـ [[shadowrootmode="open"]] بيخلّي الـ parser يعمل shadow root للعنصر ويحط المحتوى ده جواه، قبل أي JS.`,
-            R`CSS جوه الـ shadow: بيلوّن الـ [[<b>]] اللي جوه بس، ومبيأثرش على أي [[<b>]] في الصفحة.`,
-            R`النجمة، وبعدها [[<slot>]]: المكان اللي هيظهر فيه المحتوى العادي اللي جوه [[<user-badge>]] (هنا «سارة»).`,
-            R`نهاية الـ template. بعد الـ parsing الـ template نفسه بيختفي من الـ DOM ويبقى shadow root.`,
-            R`المحتوى العادي (light DOM): الاسم اللي بيتعرض في الـ slot. ده بيفضل نص عادي في الصفحة، فمحركات البحث وقارئ الشاشة شايفينه.`,
-            R`نهاية [[<user-badge>]]. لحد هنا كل حاجة HTML بس: لو الـ JS اتأخر أو فشل، العنصر لسه ظاهر بالنجمة والاسم.`,
-            R`[[type="module"]]: بيتنفّذ بعد ما الصفحة كلها تتعمل parse (زي [[defer]])، فالعنصر والـ shadow بتاعه موجودين ساعتها.`,
-            R`بنمسك أول [[<user-badge>]] (اللي جه من الـ HTML).`,
-            R`قبل الـ [[define]]: [[matches(":defined")]] بـ [[false]]، والـ [[shadowRoot]] **موجود** بفضل الـ DSD، والـ opacity 0.5 من قاعدة [[:not(:defined)]]. الناتج: [[قبل: false true 0.5]].`,
-            R`الـ class بتاع الـ component.`,
-            R`الـ constructor بيتنادى لما الـ [[define]] يحصل (للعناصر اللي في الصفحة) أو مع [[createElement]] بعدها.`,
-            R`[[super()]] لازم أول سطر في constructor أي class بيورث، عشان [[HTMLElement]] يجهّز العنصر.`,
-            R`لو مفيش shadow root (العنصر اتعمل من JS)، اعمل واحد وحط فيه نفس المحتوى اللي في الـ template. ولو موجود من الـ DSD، سيبه: [[attachShadow]] عليه كان هيرجّعه فاضي ويمسح اللي السيرفر بعته.`,
-            R`في الحالتين فيه shadow root دلوقتي، فبنحط الـ listener على النجمة: كل ضغطة بتقلب attribute [[starred]] (موجود ← مش موجود والعكس). الـ JS بيضيف التفاعل بس، الشكل كان جاهز.`,
-            R`نهاية الـ constructor.`,
-            R`نهاية الـ class.`,
-            R`[[whenDefined]] Promise بتتحل لما [[user-badge]] يتسجّل. الكود اللي محتاج العنصر جاهز يستنى هنا. والـ [[then]] بيشتغل كـ microtask، فالسطر ده هيطبع **آخر حاجة**.`,
-            R`التسجيل: العنصر اللي في الصفحة بيتعمله upgrade على طول (الـ constructor بيتنادى عليه) ويبقى [[:defined]].`,
-            R`بعد الـ [[define]]: [[true]] والـ opacity رجعت 1 لوحدها لأن [[:not(:defined)]] مبقتش ماسكة. الناتج: [[بعد: true 1]].`,
-            R`عنصر تاني من JS. هنا مفيش DSD، فالـ constructor هيعمل الـ shadow بنفسه.`,
-            R`المحتوى العادي بتاعه، اللي هيظهر في الـ slot.`,
-            R`بنحطه في آخر الـ [[body]]. الـ shadow اتعمل خلاص في الـ constructor (وقت [[createElement]] لأن الاسم متسجّل)، فبيظهر بشكله على طول.`,
-            R`الـ shadow root اتعمل وفيه محتوى: [[من JS: true]]. يعني نفس الـ class شغّال للعنصر اللي جه من السيرفر واللي اتعمل من JS.`,
-            R`نهاية الـ [[<script>]]. ولأنه module، أي متغير جواه ([[first]] و [[extra]]) مش global ومش هيتلخبط مع scripts تانية.`,
+            R`[[idb]]: مكتبة صغيرة بتلف IndexedDB بـ promises. الـ API الأصلي شغال بـ events ([[onsuccess]] و [[onerror]]) على كل عملية فالكود بيطول؛ بـ [[idb]] تكتب [[await]] عادي.`,
+            R`افتح داتابيز اسمها [[notes-app]] بـ version 1، ولو مش موجودة تتعمل. [[await]] برّه دالة لأن الملف module. الـ version رقم صحيح بتزوّده كل ما تغيّر شكل الداتا.`,
+            R`[[upgrade]] بتتنادى بس لما الداتابيز تتعمل أول مرة أو الـ version المطلوب أعلى من اللي على الجهاز. هي المكان الوحيد اللي تقدر تعمل فيه stores و indexes، زي migration.`,
+            R`اعمل store (زي جدول) اسمه [[notes]]. [[keyPath: "id"]] يعني المفتاح بيتاخد من خاصية [[id]] جوه كل object فمش محتاج تبعته لوحده. ولو حاولت تعمل store موجود بنفس الاسم يرمي error، عشان كده جوه [[upgrade]] بس.`,
+            R`index على [[updatedAt]]: بيخلي الداتابيز تجيب الملاحظات مترتبة بالتاريخ من غير ما تحمّل الكل وترتّب بإيدك. [[byUpdated]] اسم الـ index اللي هنقرا بيه.`,
+            R`نهاية [[upgrade]].`,
+            R`نهاية الـ options وقفلة [[openDB]].`,
+            R`دالة بتضيف ملاحظة وتبلّغ باقي التابات. [[async]] لأن الكتابة في IndexedDB بتاخد وقت ومش بتوقف الصفحة.`,
+            R`[[put]] بتضيف الـ object، ولو فيه واحد بنفس الـ [[id]] بتستبدله (عكس [[add]] اللي بترمي error). [[crypto.randomUUID()]] بيعمل id فريد، و [[updatedAt]] هو اللي الـ index بيرتّب بيه.`,
+            R`بعد ما الكتابة تخلص، ابعت رسالة صغيرة على القناة إن الداتا اتغيرت. مش بنبعت الداتا نفسها: كل تاب يقرا من الداتابيز، فالكل يبقى على نفس المصدر.`,
+            R`نهاية [[addNote]].`,
+            R`قناة باسم [[notes]]: أي تاب أو worker من نفس الـ origin يعمل قناة بنفس الاسم بيستلم اللي يتبعت عليها. [[addNote]] فوق بتستخدمها، وده سليم لأن الدالة مش بتتنادى غير بعد السطر ده.`,
+            R`لما رسالة توصل من تاب تاني. [[async]] لأننا هنقرا من الداتابيز جوه.`,
+            R`لو الرسالة بتقول إن الملاحظات اتغيرت: اقرا كلهم مترتبين بالـ index ([[getAllFromIndex]]) وارسمهم، فالتاب التاني يتحدّث من غير reload.`,
+            R`نهاية [[onmessage]].`,
+            R`دالة الرسم. هنا بتطبع في الـ console بس عشان المثال يبان؛ في تطبيق حقيقي بتبني الليستة في الصفحة.`,
+            R`اطبع نصوص الملاحظات بس: [[map]] بتاخد [[text]] من كل object.`,
+            R`نهاية [[render]].`,
+            R`ضيف ملاحظة: تتحفظ في الداتابيز وتتبعت رسالة للتابات التانية.`,
+            R`التاب اللي بعت الرسالة مبيستلمهاش هو ([[BroadcastChannel]] بيوصّل لكل القنوات بنفس الاسم ما عدا اللي بعتت)، فلازم يرسم بنفسه بعد الإضافة، وإلا الملاحظة الجديدة متظهرش عنده.`,
+            R`[[persist()]] بتطلب من المتصفح إن داتا الموقع متتمسحش لما مساحة الجهاز تقل؛ من غيرها الداتا ممكن تتمسح لو المتصفح احتاج مساحة. بترجّع [[true]] أو [[false]] حسب قرار المتصفح، و [[?.]] عشان المتصفحات اللي مش بتدعمها.`,
           ],
-          sol: R`الناتج في Chrome 156 بالترتيب: [[قبل: false true 0.5]] ثم [[بعد: true 1]] ثم [[من JS: true]] ثم [[whenDefined اتحلّت]]. ولون النجمة جوه الـ shadow [[rgb(0, 128, 128)]] قبل الـ define وبعده.
+          sol: R`التاب التاني بيتحدّث فورًا ويعرض الملاحظة الجديدة. التاب اللي ضاف مش بيستلم رسالته، فلو معملتش render فيه بعد الإضافة مش هتظهر فيه لحد الـ refresh. ده أكتر حاجة بتلخبط في BroadcastChannel.
 
-مع [[setTimeout]] ثانيتين: النجمة واللون والاسم ظاهرين من أول لحظة (الـ DSD)، والعنصر باهت لمدة ثانيتين وبعدين بيبقى عادي. من غير الـ [[<template>]]: في الثانيتين بيظهر «سارة» بس كنص عادي باهت من غير نجمة، وبعدين النجمة تظهر فجأة (ده الـ flash). ولو شلت [[if (!this.shadowRoot)]]: [[attachShadow]] على الـ DSD بيرجّع الـ root فاضي، فالمحتوى بيتمسح ويترسم من الـ string اللي في الـ JS، والنتيجة شكلها واحد بس الشغل اللي السيرفر بعته اترمى، ولو المحتوى في الـ string مختلف عن الـ template هتشوف نط.
+في Application ← IndexedDB ← notes-app ← notes هتلاقي الـ objects بالـ id و text و updatedAt، وتحت الـ store الـ index [[byUpdated]].
 
-(الشكل البصري في الثانيتين اتأكد بـ [[getComputedStyle]]؛ الإحساس بالـ flash نفسه على نت بطيء جرّبه بإيدك في DevTools.)`
+[[estimate()]] بترجّع [[{ quota, usage }]] بالبايت. الـ quota غالبًا بالـ GB (نسبة من مساحة الديسك الفاضية)، والـ usage اللي موقعك مستخدمه فعلًا (IndexedDB و Cache Storage مع بعض).`,
+          solCode: R`import "fake-indexeddb/auto";
+import { openDB } from "idb";
+const db = await openDB("notes-app", 1, {
+  upgrade(db) {
+    db.createObjectStore("notes", { keyPath: "id" }).createIndex("byUpdated", "updatedAt");
+  },
+});
+const tabA = new BroadcastChannel("notes");
+const tabB = new BroadcastChannel("notes");
+tabA.onmessage = () => console.log("A استلم (مش المفروض يحصل)");
+tabB.onmessage = async () => {
+  console.log("B:", (await db.getAllFromIndex("notes", "byUpdated")).map((n) => n.text));
+  tabA.close();
+  tabB.close();
+};
+await db.put("notes", { id: crypto.randomUUID(), text: "اشتري لبن", updatedAt: Date.now() });
+tabA.postMessage({ type: "notes-changed" });`
+        },
+        {
+          cmd: "push و Background Sync",
+          title: "توصّل إشعار والموقع مقفول، وتبعت اللي اتعمل offline أول ما النت يرجع",
+          desc: R`**Push API**: السيرفر بتاعك يبعت رسالة لليوزر حتى لو موقعك مش مفتوح خالص. الـ service worker بيصحى، وياخد الرسالة في [[push]] event، ويطلّع إشعار بـ [[registration.showNotification]]. ده اللي بيخلي «طلبك اتشحن» يوصل وانت قافل المتصفح.
+
+**Background Sync**: اليوزر عمل حاجة وهو offline (بعت رسالة، أو حفظ طلب). بدل ما تقوله «جرّب تاني»، بتعمل [[reg.sync.register("send-outbox")]]، والمتصفح بيصحّي الـ service worker بـ [[sync]] event أول ما النت يرجع، حتى لو اليوزر قفل التاب.
+
+الاتنين محتاجين service worker (درس «دورة حياة الـ SW»)، و HTTPS أو localhost. والـ push محتاج إذن الإشعارات (درس «Notification و permissions» في وحدة APIs المتصفح). Background Sync في Chrome و Edge بس، فلازم يبقى عندك بديل.`,
+          example: R`// الصفحة: بعد ضغطة زرار والإذن granted (درس «Notification و permissions»)
+const reg = await navigator.serviceWorker.ready;
+const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC_KEY });
+await fetch("/api/push/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(sub) });
+async function queueSend() {
+  if ("sync" in reg) await reg.sync.register("send-outbox");
+  else await sendOutbox();
+}
+// sw.js
+self.addEventListener("push", (event) => {
+  const data = event.data?.json() ?? { title: "جديد" };
+  event.waitUntil(self.registration.showNotification(data.title, { body: data.body, tag: data.tag, data: { url: data.url } }));
+});
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url));
+});
+self.addEventListener("sync", (event) => {
+  if (event.tag === "send-outbox") event.waitUntil(sendOutbox());
+});
+// السيرفر: Node بمكتبة web-push
+import webpush from "web-push";
+webpush.setVapidDetails("mailto:dev@example.com", process.env.VAPID_PUBLIC, process.env.VAPID_PRIVATE);
+await webpush.sendNotification(subscription, JSON.stringify({ title: "طلب جديد", body: "رقم 42", tag: "order-42", url: "/orders/42" }));`,
+          try: R`اعمل مفاتيح بـ [[npx web-push generate-vapid-keys]]، وسيرفر Node صغير على localhost فيه [[POST /api/push/subscribe]] بيحفظ الـ subscription في ملف JSON، و [[POST /api/send]] بيبعت إشعار لكل اللي في الملف. اشترك من Chrome، واقفل التاب، وابعت بـ [[curl -X POST localhost:3000/api/send]]: الإشعار ظهر والتاب مقفول؟ وبعدين DevTools ← Network ← Offline، ونادي [[queueSend()]]، وارجع Online وشوف [[/api/outbox]] في لوج السيرفر.`,
+          practice: [
+            { lvl: 'سريع', t: R`اشرحها: ارسم في ٥ خطوات بالترتيب رحلة إشعار «طلبك اتشحن» من لحظة ما اليوزر داس «فعّل الإشعارات» لحد ما ضغط على الإشعار وفتح صفحة الطلب. كل خطوة: مين بيعمل إيه (الصفحة، أو الـ SW، أو سيرفرك، أو push service زي FCM)، وإيه اللي بيتنقل.`, done: R`الخطوات فيها: [[requestPermission]] ثم [[pushManager.subscribe]] بالـ public key، والـ subscription بيتبعت لسيرفرك ويتحفظ، والسيرفر بيبعت بالـ private key للـ [[endpoint]] (مش للمتصفح مباشرة)، والـ SW بيصحى في [[push]] ويعمل [[showNotification]]، والضغطة [[notificationclick]] بتفتح [[data.url]]. وتقدر تقول ليه السيرفر مبيكلّمش المتصفح مباشرة.` },
+            { lvl: 'تطبيق', t: R`ابني «صندوق صادر» (outbox): فورم تعليق، لو [[navigator.onLine]] بـ false أو الـ [[fetch]] فشل، التعليق يتحفظ في IndexedDB (درس «IndexedDB و BroadcastChannel») ويتنادى [[queueSend()]]. و [[sendOutbox()]] واحدة بتشتغل في الصفحة والـ SW: بتقرا كل اللي في الـ outbox، وتبعته، وتمسح اللي اتبعت بس.`, done: R`٣ تعليقات وانت Offline بيوصلوا السيرفر بالترتيب أول ما ترجع Online (في Chrome حتى لو قفلت التاب قبلها)، ومفيش تعليق بيتبعت مرتين لو النت فصل في النص، وفي Firefox (من غير [[sync]]) بيتبعتوا لما تفتح الصفحة تاني أو [[online]] event يحصل.` },
+            { lvl: 'تحدي', t: R`محاكاة سيرفر حقيقي: [[sendToAll(subscriptions, payload)]] في Node بتبعت لـ ٥٠٠ subscription بحد ١٠ في نفس الوقت (فكرة [[mapLimit]])، وأي واحد يرجّع [[410]] أو [[404]] يتمسح من التخزين، وأي error تاني يتسجّل ويتعاد مرة واحدة بعد ثانيتين، وفي الآخر ملخص: اتبعت كام، واتمسح كام، وفشل كام.`, done: R`جرّبتها بـ subscription حقيقي واحد و subscription عملتله [[unsubscribe()]] من الصفحة: الأول بيرجّع [[201]] والتاني [[WebPushError]] بـ [[statusCode]] [[410]] واتمسح من الملف، والملخص بيطلع أرقام صح، وتشغيلها مرتين ورا بعض مبيبعتش للممسوح تاني.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`من غير push، الموقع بيعرف يكلّمك بس وانت فاتحه، والتطبيقات الـ native بتكسب. ومن غير Background Sync، أي حاجة بتتعمل في مترو أو أسانسير بتضيع أو بتطلب من اليوزر يفتكر يعيدها. الاتنين بيخلّوا الـ PWA تتصرف زي تطبيق متسطّب: بتوصلك وبتكمّل شغلها لوحدها.`,
+            how: R`**الـ push**: [[pushManager.subscribe]] بيكلّم الـ push service بتاع المتصفح (Chrome: FCM، و Firefox: Mozilla autopush، و Safari: Apple) وبيرجّع subscription فيه [[endpoint]] (URL عند الـ push service) و [[keys]] ([[p256dh]] و [[auth]]). السيرفر بتاعك بيعمل POST للـ endpoint ده، والرسالة **متشفّرة** بالـ keys دي فالـ push service مبيقدرش يقراها، وموقّعة بالـ VAPID private key فمحدش غيرك يقدر يبعت لليوزرز بتوعك. و [[userVisibleOnly: true]] وعد إن كل push هيطلّع إشعار، و Chrome مبيقبلش غيره.
+
+**الـ sync**: [[reg.sync.register(tag)]] بيسجّل «لما يبقى فيه نت، صحّيني بالـ tag ده». نفس الـ tag مرتين بيبقى تسجيل واحد. الـ SW بيصحى بـ [[sync]] event، ولو الـ Promise اللي في [[waitUntil]] اترفض، المتصفح بيعيد بعدين بفترات بتزيد، وآخر محاولة [[event.lastChance]] بيبقى [[true]].
+
+[[event.waitUntil(promise)]] في الاتنين: بيقول للمتصفح «متقفلش الـ SW لحد ما ده يخلص». من غيره الـ SW ممكن يتقفل قبل ما الإشعار يظهر أو الطلب يتبعت.`,
+            when: R`push: رسايل شات، وحالة طلب، وتنبيه أمني، وتذكير اليوزر طلبه بنفسه. مش للتسويق كل يوم. و Background Sync: أي حاجة اليوزر بيكتبها ولازم توصل (تعليق، طلب، رسالة، form)، مع outbox في IndexedDB. ولمزامنة دورية (أخبار كل ساعة) فيه Periodic Background Sync، بس في Chrome بس وللـ PWA المتسطّبة (من الـ docs).`,
+            mistakes: R`تحط الـ VAPID private key في كود الصفحة (هو للسيرفر بس، والـ public بس اللي في الصفحة). وتنسى [[event.waitUntil]] فالإشعار يظهر ساعات ويختفي ساعات. وتفترض إن [[reg.sync]] موجود في كل المتصفحات (Chrome و Edge بس). ومتمسحش الـ subscriptions اللي بترجّع [[410]] فسيرفرك بيبعت لناس مش موجودين للأبد. وتبعت push من غير [[showNotification]]: Chrome بيطلّع إشعار افتراضي بيقول إن الموقع اتحدّث في الخلفية (من الـ docs). وتنسى إن Safari على iPhone بيدعم Web Push للموقع المتسطّب على الشاشة الرئيسية بس.`
+          },
+          teach: R`## الفكرة في سطر
+
+٣ أماكن بتشتغل مع بعض: **الصفحة** بتشترك وتبعت الاشتراك لسيرفرك، و**سيرفرك** بيبعت رسالة لما حاجة تحصل، و**الـ service worker** بيصحى وياخدها ويطلّع إشعار. ونفس الـ SW بيصحى تاني لما النت يرجع عشان يبعت اللي اتساب offline.
+
+جرّبت الكود ده كله من أوله لآخره: Chrome 156 headless ببروفايل حقيقي (عن طريق playwright-core، على [[http://127.0.0.1]]) وسيرفر Node 24 بـ [[web-push]] 3.6.7. الاشتراك اتعمل فعلًا على FCM (سيرفرات Google للـ push)، والرسالة اتبعتت ووصلت للـ SW. شكل الإشعار على الشاشة **من الـ docs**، لأن الـ headless مبيرسمش إشعارات.
+
+---
+
+## ١. المفاتيح: VAPID
+
+قبل أي حاجة، سيرفرك محتاج زوج مفاتيح (اسمهم VAPID: Voluntary Application Server Identification):
+
+~~~powershell
+npx web-push generate-vapid-keys
+~~~
+
+~~~text الناتج (المفاتيح نفسها مستخبية)
+=======================================
+
+Public Key:
+<KEY>
+
+Private Key:
+<KEY>
+
+=======================================
+~~~
+
+- **الـ public key** (87 حرف): بيتحط في الصفحة، وبتقوله للمتصفح وانت بتشترك.
+- **الـ private key** (43 حرف): في السيرفر بس، في متغير بيئة. بيه بتوقّع كل رسالة، فالـ push service يعرف إنها منك انت.
+- بتعملهم **مرة واحدة** للمشروع. لو غيّرتهم، كل الاشتراكات القديمة بتبوظ.
+
+## ٢. الصفحة: الاشتراك
+
+~~~text app.js
+const reg = await navigator.serviceWorker.ready;
+const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC_KEY });
+await fetch("/api/push/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(sub) });
+~~~
+
+- [[navigator.serviceWorker.ready]]: Promise بتتحل لما يبقى فيه SW شغّال، وبترجّع الـ registration.
+- [[reg.pushManager.subscribe(...)]]: اشترك في الـ push. المتصفح بيكلّم الـ push service بتاعه وبيرجّع subscription.
+- [[userVisibleOnly: true]]: وعد إن كل رسالة هتطلّع إشعار يشوفه اليوزر. جرّبت من غيرها:
+
+~~~text الناتج (Chrome)
+NotAllowedError: Registration failed - permission denied
+Chrome currently only supports the Push API for subscriptions that will result in user-visible messages. You can indicate this by calling pushManager.subscribe({userVisibleOnly: true}) instead.
+~~~
+
+- [[applicationServerKey]]: الـ public key. ومن غيره:
+
+~~~text الناتج (Chrome)
+AbortError: Registration failed - missing applicationServerKey, and manifest empty or missing
+~~~
+
+- [[fetch("/api/push/subscribe", ...)]]: ابعت الاشتراك لسيرفرك يحفظه (في داتابيز، مع اليوزر صاحبه). [[JSON.stringify(sub)]] بيحوّله لـ:
+
+~~~text اللي السيرفر استلمه
+endpoint, expirationTime, keys  |  endpoint host: fcm.googleapis.com
+~~~
+
+| الحقل | معناه |
+|---|---|
+| [[endpoint]] | URL عند الـ push service (هنا FCM) بيمثّل المتصفح ده بالظبط، وسيرفرك بيبعت عليه |
+| [[keys.p256dh]] و [[keys.auth]] | مفاتيح التشفير: سيرفرك بيشفّر الرسالة بيهم، فـ FCM نفسه مبيقدرش يقراها |
+| [[expirationTime]] | امتى الاشتراك ينتهي، وكان [[null]] (مفيش ميعاد) |
+
+> الـ endpoint ده سرّ صغير: أي حد معاه + المفاتيح يقدر يحاول يبعت، بس من غير الـ VAPID private key بتاعك الرسالة مش هتتقبل. خزّنه زي أي داتا يوزر.
+
+## ٣. الصفحة: لما النت مش موجود
+
+~~~text app.js
+async function queueSend() {
+  if ("sync" in reg) await reg.sync.register("send-outbox");
+  else await sendOutbox();
+}
+~~~
+
+- الفكرة: اليوزر داس «ابعت» وهو offline. انت حفظت الرسالة في IndexedDB في store اسمه outbox (درس «IndexedDB و BroadcastChannel»)، وبعدين بتنادي [[queueSend()]].
+- [[("sync" in reg)]]: هل Background Sync موجود؟ في Chrome و Edge آه، في Firefox و Safari لأ (من الـ docs، MDN: Background Synchronization API).
+- [[reg.sync.register("send-outbox")]]: «لما النت يرجع، صحّي الـ SW بالاسم ده». الاسم (tag) انت اللي بتختاره.
+- [[else await sendOutbox()]]: البديل: حاول دلوقتي، ولو فشل خلّيه في الـ outbox وحاول تاني على [[online]] event أو أول ما الصفحة تفتح.
+- [[sendOutbox()]]: دالة انت بتكتبها: تقرا كل اللي في الـ outbox، وتعمل POST لكل واحد، وتمسح اللي اتبعت. نفس الدالة بتتحط في الصفحة وفي الـ SW.
+
+جرّبت: وانا Offline الـ [[register]] نجح و [[reg.sync.getTags()]] رجّع [[["send-outbox"]]]، ومحصلش حاجة. أول ما رجعت Online، الـ SW صحي لوحده وسيرفري استلم:
+
+~~~text لوج السيرفر
+server /api/outbox from-sync
+~~~
+
+وجرّبت كمان: لو الإذن [["background-sync"]] متقفل في إعدادات الموقع، [[register]] بيرمي [[NotAllowedError: Permission denied.]]، فحطه جوه [[try]] واعتبره زي «مفيش sync».
+
+## ٤. الـ SW: الـ [[push]] event
+
+~~~text sw.js
+self.addEventListener("push", (event) => {
+  const data = event.data?.json() ?? { title: "جديد" };
+  event.waitUntil(self.registration.showNotification(data.title, { body: data.body, tag: data.tag, data: { url: data.url } }));
+});
+~~~
+
+- [[self]]: الـ SW نفسه (زي [[window]] في الصفحة).
+- [[event.data?.json()]]: الرسالة اللي سيرفرك بعتها، كـ JSON. و [[?.]] لأن push ممكن يوصل من غير داتا خالص، و [[?? { title: "جديد" }]] قيمة احتياطي.
+- [[self.registration.showNotification(title, options)]]: نفس [[new Notification]] بس من الـ SW، وبيشتغل والموقع مقفول. نفس الـ options: [[body]] و [[tag]]، و [[data]] أي حاجة عايزها وقت الضغط (هنا اللينك).
+- [[event.waitUntil(...)]]: «متقفلنيش لحد ما الإشعار يظهر». الـ SW بيتقفل لوحده لما مفيش شغل، فمن غير ده ممكن يموت في النص.
+
+جرّبت أبعت رسالتين من السيرفر، والـ SW استلم الاتنين:
+
+~~~text الناتج
+server: sendNotification status 201
+server: second status 201
+~~~
+
+[[201]] معناه إن FCM قبل الرسالة وهيوصّلها. الرسالتين بنفس [[tag: "order-42"]]، فحسب الـ docs التانية بتبدّل الأولى في مركز الإشعارات بدل ما يبقوا اتنين.
+
+## ٥. الـ SW: الضغط على الإشعار
+
+~~~text sw.js
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url));
+});
+~~~
+
+- [[event.notification]]: الإشعار اللي اتداس عليه. [[close()]] بتشيله.
+- [[event.notification.data.url]]: اللي حطيناه في [[data]] وقت [[showNotification]].
+- [[clients.openWindow(url)]]: افتح تاب جديد على اللينك ده. [[clients]] هي التابات المفتوحة من موقعك. (في مشروع حقيقي دوّر الأول بـ [[clients.matchAll()]]: لو فيه تاب مفتوح، اعمله [[focus()]] بدل تاب جديد.)
+
+> الـ headless مبيقدرش «يدوس» على إشعار، فالجزء ده من الـ docs (MDN: notificationclick).
+
+## ٦. الـ SW: الـ [[sync]] event
+
+~~~text sw.js
+self.addEventListener("sync", (event) => {
+  if (event.tag === "send-outbox") event.waitUntil(sendOutbox());
+});
+~~~
+
+- [[event.tag]]: الاسم اللي سجّلته بيه. ممكن يبقى عندك أكتر من نوع (outbox و likes...).
+- [[event.waitUntil(sendOutbox())]]: لو الـ Promise اترفض (السيرفر وقع مثلًا)، المتصفح هيعيد المحاولة بعدين لوحده بفترات بتطول، وآخر محاولة [[event.lastChance]] بيبقى [[true]] (جرّبتها: أول مرة كان [[false]]). عشان كده [[sendOutbox]] لازم **ترمي** لو فشلت، مش تبلع الـ error.
+
+## ٧. السيرفر: الإرسال
+
+~~~text server.mjs
+import webpush from "web-push";
+webpush.setVapidDetails("mailto:dev@example.com", process.env.VAPID_PUBLIC, process.env.VAPID_PRIVATE);
+await webpush.sendNotification(subscription, JSON.stringify({ title: "طلب جديد", body: "رقم 42", tag: "order-42", url: "/orders/42" }));
+~~~
+
+- [[web-push]]: مكتبة npm بتعمل التشفير والتوقيع والـ POST للـ endpoint. (تتسطّب بـ [[npm i web-push]].)
+- [[setVapidDetails(subject, public, private)]]: الـ subject لازم يبدأ بـ [[mailto:]] أو [[https:]]، عشان الـ push service يكلّمك لو فيه مشكلة. جرّبت من غير [[mailto:]]:
+
+~~~text الناتج
+Vapid subject is not a valid URL. dev@example.com
+~~~
+
+وبمفتاح غلط: [[Vapid public key should be 65 bytes long when decoded.]]
+
+- [[sendNotification(subscription, payload)]]: [[subscription]] هو الـ object اللي الصفحة بعتته وانت حفظته، والـ payload نص (هنا JSON) وده اللي [[event.data.json()]] بيقراه في الـ SW.
+
+### الاشتراك اللي مات
+
+اليوزر لغى الإذن، أو مسح داتا المتصفح، أو الاشتراك انتهى. جرّبت [[unsubscribe()]] من الصفحة وبعدين بعت من السيرفر:
+
+~~~text الناتج
+WebPushError 410 push subscription has unsubscribed or expired.
+~~~
+
+[[410]] (أو [[404]]) معناها «امسحه من الداتابيز». لو مامسحتهوش، كل مرة هتبعت لعدد ناس بيزيد ومش موجودين.
+
+---
+
+## الخلاصة
+
+| الحاجة | فين | بتعمل إيه |
+|---|---|---|
+| [[pushManager.subscribe({ userVisibleOnly, applicationServerKey })]] | الصفحة | بترجّع subscription فيه [[endpoint]] و [[keys]]، وبتبعته لسيرفرك |
+| [[webpush.sendNotification(sub, payload)]] | السيرفر | بتشفّر وتوقّع وتبعت للـ endpoint، و [[410]] يعني امسح الاشتراك |
+| [[push]] و [[showNotification]] | الـ SW | بتصحى وتطلّع الإشعار، جوه [[event.waitUntil]] |
+| [[notificationclick]] و [[clients.openWindow]] | الـ SW | بتفتح الصفحة اللي في [[data.url]] |
+| [[reg.sync.register(tag)]] | الصفحة | صحّي الـ SW لما النت يرجع (Chrome و Edge بس) |
+| [[sync]] event | الـ SW | ابعت الـ outbox، ولو رميت error المتصفح بيعيد |
+
+- الـ private key في السيرفر بس، والـ public في الصفحة.
+- [[event.waitUntil]] في كل event في الـ SW بيعمل شغل async.
+- Background Sync مش في Firefox و Safari: لازم بديل بـ [[online]] event.
+- Web Push على iPhone للموقع المتسطّب على الشاشة الرئيسية بس (iOS 16.4 وبعده، من الـ docs).`,
+          lines: [
+            R`استنى لحد ما يبقى فيه service worker شغّال، وخد الـ registration بتاعه. الـ push والـ sync الاتنين بيتسجّلوا على الـ registration ده، مش على الصفحة.`,
+            R`اشترك في الـ push: المتصفح بيكلّم الـ push service بتاعه (FCM في Chrome) وبيرجّع subscription. [[userVisibleOnly: true]] وعد إن كل رسالة هتطلّع إشعار (Chrome مبيقبلش غيره)، و [[applicationServerKey]] هو الـ VAPID public key بتاع سيرفرك.`,
+            R`ابعت الاشتراك لسيرفرك يحفظه مع اليوزر. [[JSON.stringify(sub)]] بيطلّع [[endpoint]] و [[expirationTime]] و [[keys]]، ودول كل اللي السيرفر محتاجه عشان يبعت بعدين.`,
+            R`دالة بتتنادى لما اليوزر يبعت حاجة والنت مش موجود، بعد ما الحاجة اتحفظت في outbox في IndexedDB.`,
+            R`لو المتصفح فيه Background Sync (Chrome و Edge)، سجّل tag اسمه [[send-outbox]]: المتصفح هيصحّي الـ SW بيه أول ما النت يرجع، حتى لو التاب اتقفل.`,
+            R`غير كده (Firefox و Safari) حاول تبعت دلوقتي بنفس الدالة، ولو فشلت الحاجة تفضل في الـ outbox لحد [[online]] event أو الزيارة الجاية.`,
+            R`نهاية [[queueSend]].`,
+            R`في الـ SW: [[push]] بيحصل لما رسالة توصل من سيرفرك عن طريق الـ push service، والـ SW بيصحى عشانها حتى لو الموقع مش مفتوح.`,
+            R`اقرا الرسالة كـ JSON. [[?.]] لأن push ممكن يوصل من غير داتا، و [[??]] بتدّي عنوان احتياطي بدل ما الكود يقع.`,
+            R`اطلّع الإشعار من الـ SW بنفس الـ options بتاعة [[new Notification]]، و [[data.url]] بيتحفظ مع الإشعار عشان نعرف نفتح إيه لما يتداس. [[event.waitUntil]] بيمنع المتصفح يقفل الـ SW قبل ما الإشعار يظهر.`,
+            R`نهاية الـ push listener.`,
+            R`[[notificationclick]] بيحصل لما اليوزر يدوس على إشعار طلع من الـ SW ده.`,
+            R`شيل الإشعار من مركز الإشعارات، عشان ميفضلش موجود بعد ما اليوزر شافه.`,
+            R`افتح تاب على اللينك اللي اتحفظ في [[data.url]]. [[clients]] هي تابات موقعك، و [[waitUntil]] عشان الـ SW يفضل صاحي لحد ما التاب يتفتح.`,
+            R`نهاية الـ notificationclick listener.`,
+            R`[[sync]] بيحصل لما المتصفح يشوف إن النت رجع وفيه tag متسجّل.`,
+            R`لو الـ tag هو بتاعنا، ابعت الـ outbox. لو الـ Promise اترفض، المتصفح بيعيد المحاولة بعدين لوحده، فـ [[sendOutbox]] لازم ترمي error لو فشلت.`,
+            R`نهاية الـ sync listener.`,
+            R`في السيرفر: مكتبة [[web-push]] بتعمل تشفير الرسالة بمفاتيح الاشتراك وتوقيعها بالـ VAPID key والـ POST للـ endpoint.`,
+            R`عرّف سيرفرك للـ push services: الـ subject لازم [[mailto:]] أو [[https:]] (وإلا [[Vapid subject is not a valid URL]])، والمفتاحين من متغيرات البيئة مش مكتوبين في الكود.`,
+            R`ابعت رسالة لاشتراك واحد. [[subscription]] اللي اتحفظ من الصفحة، والنص JSON بيوصل للـ SW في [[event.data.json()]]. بترجّع [[statusCode]] [[201]] لو اتقبلت، وبترمي [[WebPushError]] بـ [[410]] لو الاشتراك مات.`,
+          ],
+          sol: R`اتجرّب كله في Chrome 156 headless ببروفايل حقيقي و Node 24 و [[web-push]] 3.6.7: الاشتراك رجع endpoint على [[fcm.googleapis.com]]، و [[sendNotification]] رجّعت [[201]] مرتين والـ SW استلم الرسالتين في [[push]]، ووانا Offline [[reg.sync.register("send-outbox")]] نجح و [[getTags()]] رجّع [[["send-outbox"]]]، وأول ما رجعت Online السيرفر استلم [[POST /api/outbox]] من الـ SW لوحده. وبعد [[unsubscribe()]] الإرسال رمى [[WebPushError 410 push subscription has unsubscribed or expired.]]
+
+اللي من الـ docs (MDN: Push API و Background Synchronization API و notificationclick): شكل الإشعار على الشاشة وهو ظاهر والتاب مقفول، وإن الضغطة بتفتح [[/orders/42]]، وإن Firefox و Safari مفيهمش [[reg.sync]]، و Web Push على iPhone للموقع المتسطّب بس.`
         }
       ]
     }

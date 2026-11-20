@@ -9619,6 +9619,46 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|Date.UTC و Date.parse": {
+  "hash": "df12e3103bb4",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Date: getTime و valueOf و Symbol.toPrimitive": {
+  "hash": "c60a32872e22",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Date: getTimezoneOffset والتوقيت الصيفي": {
+  "hash": "10df3a91b0b0",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Date: toISOString و toJSON و toLocaleDateString": {
+  "hash": "8a48ecbb9ba8",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Date: الحساب الصح": {
+  "hash": "f5bcda2ce215",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Date: الـ getters و getUTC": {
+  "hash": "9feb2ae9a946",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Date: الـ setters و setUTC": {
+  "hash": "7171ec053ab7",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Date: جدول كل الـ members": {
+  "hash": "b9f8f85ccf01",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
  "js|Declarative Shadow DOM و :defined": {
   "hash": "cdb189476479",
   "date": "2026-10-29",
@@ -9654,15 +9694,65 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|Intl.Collator: الترتيب و resolvedOptions": {
+  "hash": "f8e6a4a7bbe5",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Intl.DateTimeFormat: formatToParts و formatRange": {
+  "hash": "50e106467902",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Intl.DisplayNames": {
+  "hash": "3a9ca8766ac3",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Intl.DurationFormat": {
+  "hash": "0c24d2a5953b",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Intl.ListFormat": {
+  "hash": "f2fafc7ee813",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Intl.Locale": {
+  "hash": "b994ad557a1b",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Intl.NumberFormat": {
+  "hash": "4fb27335ad72",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Intl.PluralRules": {
+  "hash": "6c51803dfe1e",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
  "js|Intl.RelativeTimeFormat": {
   "hash": "19281fea86a0",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|Intl.RelativeTimeFormat: formatToParts و resolvedOptions": {
+  "hash": "f5abf5b00d87",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
  "js|Intl.Segmenter": {
   "hash": "3abaa9db586c",
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
+ "js|Intl: الـ locale والتفاوض و supportedValuesOf": {
+  "hash": "da20efc705dc",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
  },
  "js|JSON": {
   "hash": "1f1da0771004",
