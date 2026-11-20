@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "الصور والفيديو و SVG",
+      pre: [
+        { to: "css/img", why: R`width و height و alt و srcset اللي الوحدة دي بتكمّل عليهم` },
+        { to: "css/media queries", why: R`picture بيختار الصورة بـ media` },
+      ],
       l: 1,
       n: "صورة بتملا مكانها من غير ما تتمط، وصيغ حديثة بـ fallback، وفيديو و YouTube و SVG بيتصرفوا صح",
       projects: [
@@ -1963,6 +1967,10 @@ CSS validator: 31 رسالة كلها container-type و cqi (الـ validator ل
       items: [
         {
           cmd: "object-fit",
+          ref: [
+            { t: "MDN: object-position", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/object-position" },
+            { t: "MDN: object-fit", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/object-fit" },
+          ],
           title: "صورة الكارت تملا المكان من غير ما تتمط",
           desc: R`لما تدّي صورة عرض وارتفاع مش بنفس نسبتها، المتصفح بيمطّها. [[object-fit: cover]] بيخليها تملا المكان كله وتتقص من الأطراف، و [[contain]] بيخليها تبان كلها وتسيب فراغ (مناسب للّوجو وصور المنتجات اللي مينفعش حاجة منها تتقص).
 
@@ -2333,6 +2341,11 @@ ariaSnapshot للصفحة:
         },
         {
           cmd: "picture",
+          ref: [
+            { t: "MDN: Responsive images", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Responsive_images" },
+            { t: "WHATWG: the picture element", url: "https://html.spec.whatwg.org/multipage/embedded-content.html#the-picture-element" },
+            { t: "MDN: <picture>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/picture" },
+          ],
           title: "صورة مختلفة للموبايل، و AVIF مع fallback",
           desc: R`[[<picture>]] بيحط جواه كذا [[<source>]] وفي الآخر [[<img>]]. المتصفح بيمشي على الـ sources بالترتيب وياخد أول واحد ينفع (نوعه مدعوم و [[media]] بتاعته متحققة)، ويعرضه في الـ img. ولو ولا واحد نفع، بياخد الـ img نفسه.
 
@@ -2626,6 +2639,13 @@ AVIF بقت مدعومة في كل المتصفحات الحديثة، بس ال
         },
         {
           cmd: "video و iframe",
+          ref: [
+            { t: "WHATWG: the iframe element", url: "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element" },
+            { t: "MDN: <iframe>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe" },
+            { t: "WHATWG: the video element", url: "https://html.spec.whatwg.org/multipage/media.html#the-video-element" },
+            { t: "MDN: <video>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/video" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           title: "فيديو بيشتغل لوحده على الموبايل، و YouTube ميتقّلش الصفحة",
           desc: R`[[<video>]] محتاج [[controls]] عشان المستخدم يشغّل ويوقف، و [[poster]] صورة لحد ما يشتغل، و [[preload="metadata"]] عشان ميحمّلش الفيديو كله على الفاضي. والترجمة بـ [[<track kind="captions">]] وملف WebVTT.
 
@@ -3019,6 +3039,12 @@ WEBVTT
         },
         {
           cmd: "SVG",
+          ref: [
+            { t: "MDN: <svg>", url: "https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/svg" },
+            { t: "MDN: SVG tutorial", url: "https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorials/SVG_from_scratch" },
+            { t: "MDN: fill (SVG)", url: "https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/fill" },
+            { t: "MDN: param()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/param" },
+          ],
           title: "SVG: inline ولا img؟ و currentColor و svgo",
           desc: R`[[<img src="logo.svg">]]: سهل وبيتكاش، بس الـ CSS بتاع صفحتك مش بيوصل جواه، فمتقدرش تغيّر لونه مع الـ hover أو الـ dark mode.
 

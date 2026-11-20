@@ -2,6 +2,9 @@
 MORE("css", [
     {
       t: "الجداول",
+      pre: [
+        { to: "css/semantic HTML", why: R`الجدول للبيانات بس، والاختيار ده بنفس منطق الـ semantic HTML` },
+      ],
       projects: [
         { lvl: 'صغير', dir: "gym-compare", t: R`جدول باقات جيم متخيل`, what: R`جدول بيقارن ٣ باقات لـ «جيم الأبطال» (شهري، ٣ شهور، سنوي): caption، و th بـ [[scope="col"]] لأسامي الباقات، و th بـ [[scope="row"]] لكل ميزة (السعر، الحصص، الساونا)، وعلامة ✓ أو ✗ في الخلايا ومعاها كلام مخفي بالشكل للقارئ («موجود» أو «مش موجود»)، و tfoot فيه زرار «اشترك» لكل باقة. من درس «table».`, done: R`تاب Accessibility بيقول [[columnheader]] لأسامي الباقات و [[rowheader]] للمميزات، واسم الجدول من الـ caption، وقارئ الشاشة (أو ARIA snapshot) بيقرا «الساونا، سنوي، موجود» مش «✓» بس.`, sol: R`~~~html index.html
 <!doctype html>
@@ -1861,6 +1864,18 @@ axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360:
       items: [
         {
           cmd: "table",
+          ref: [
+            { t: "WHATWG: the table element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-table-element" },
+            { t: "MDN: <table>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/table" },
+            { t: "WHATWG: the caption element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-caption-element" },
+            { t: "MDN: <caption>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/caption" },
+            { t: "WHATWG: the tbody element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-tbody-element" },
+            { t: "MDN: <tbody>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/tbody" },
+            { t: "WHATWG: the tfoot element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-tfoot-element" },
+            { t: "MDN: <tfoot>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/tfoot" },
+            { t: "WHATWG: the thead element", url: "https://html.spec.whatwg.org/multipage/tables.html#the-thead-element" },
+            { t: "MDN: <thead>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/thead" },
+          ],
           practice: [
             { lvl: 'تطبيق', t: R`**ابني:** جدول حصص أسبوعي لـ «جيم الأبطال»: الأيام في الـ thead (th بـ [[scope="col"]])، والأوقات أول عمود (th بـ [[scope="row"]])، وحصة طولها ساعتين بـ [[rowspan="2"]]، و caption «جدول الحصص».`, done: R`الجدول مفيهوش خلية زيادة ولا ناقصة (كل صف عدد خلاياه صح بعد حساب الـ rowspan)، والخلية الطويلة ارتفاعها قد صفين ([[getBoundingClientRect]])، وتاب Accessibility بيقول columnheader للأيام و rowheader للأوقات.`, sol: R`~~~html
 <!doctype html>
@@ -2418,6 +2433,12 @@ table
         },
         {
           cmd: "جدول responsive",
+          ref: [
+            { t: "MDN: border-collapse", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/border-collapse" },
+            { t: "MDN: border-spacing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/border-spacing" },
+            { t: "MDN: max-height", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/max-height" },
+            { t: "MDN: width", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/width" },
+          ],
           practice: [
             { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس جدول الطلبات بـ ٣ طرق على الموبايل: (١) wrapper بـ scroll زي الدرس، (٢) كروت: كل [[tr]] بقى كارت و [[td::before { content: attr(data-label) }]] بيكتب اسم العمود، (٣) إخفاء الأعمدة المش مهمة تحت عرض معيّن.`, done: R`في التلاتة على 360px [[document.documentElement.scrollWidth]] بيساوي 360 (مفيش scroll أفقي للصفحة)، وكتبت لكل طريقة عيب: الأولى محتاجة scroll، والتانية طويلة، والتالتة بتخبّي بيانات.`, sol: R`~~~html
 <!doctype html>
@@ -2973,6 +2994,13 @@ axe: 0 violations
         },
         {
           cmd: "ترتيب وصفحات في الـ URL",
+          ref: [
+            { t: "MDN: URLSearchParams", url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams" },
+            { t: "MDN: History.pushState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/pushState" },
+            { t: "MDN: History.replaceState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/replaceState" },
+            { t: "MDN: popstate event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event" },
+            { t: "MDN: aria-sort", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-sort" },
+          ],
           practice: [
             { lvl: 'تحدي', t: R`**مسألة:** اكتب [[pageList(current, total)]] بترجّع أرقام أزرار الصفحات بالشكل ده: [[pageList(5, 20)]] → [[ [1, '…', 4, 5, 6, '…', 20] ]]. أول صفحة وآخر صفحة دايمًا ظاهرين، وجنب الحالية صفحة من كل ناحية.`, done: R`[[pageList(1, 1)]] → [[ [1] ]]، و [[pageList(1, 5)]] → [[ [1, 2, '…', 5] ]]، و [[pageList(2, 3)]] → [[ [1, 2, 3] ]] (من غير نقط لما مفيش فجوة)، و [[pageList(20, 20)]] → [[ [1, '…', 19, 20] ]]، و [[pageList(99, 20)]] بتتعامل مع 99 كأنها 20.`, sol: R`~~~js
 function pageList(current, total) {
@@ -3484,6 +3512,12 @@ console.log(view(rows, readState('?sort=price&dir=desc&page=2'), 2));
         },
         {
           cmd: "@media print",
+          ref: [
+            { t: "MDN: @media", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media" },
+            { t: "MDN: @page", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@page" },
+            { t: "MDN: print-color-adjust", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/print-color-adjust" },
+            { t: "MDN: pt", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Values_and_units/Numeric_data_types" },
+          ],
           title: "فاتورة بتتطبع A4 صح: @media print و @page",
           desc: R`لما حد يدوس Ctrl+P، المتصفح بيرسم الصفحة تاني على ورق: [[@media print]] بيدّيك CSS بيشتغل في الطباعة بس، فتخبّي الـ navbar والأزرار، وتخلي الخلفية بيضا والكلام أسود، وتكبّر الخط بالـ [[pt]]. و [[@page]] بيحدد الورقة نفسها: [[size: A4]] والهوامش بـ [[margin]]، وفي Chrome الحديث كمان رقم الصفحة تحت بـ [[@bottom-center]] و [[counter(page)]].
 

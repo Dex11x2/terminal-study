@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "الوحدات والمتغيرات",
+      pre: [
+        { to: "css/box model", why: R`الـ padding والـ margin اللي هتكتبهم بـ rem و clamp()` },
+        { to: "css/cascade", why: R`المتغير بيتورث زي أي خاصية` },
+      ],
       projects: [
         { lvl: 'صغير', dir: "type-scale", t: R`مقياس خطوط بيكبر مع الشاشة`, what: R`صفحة فيها ٦ مستويات خط (h1 لحد الفقرة الصغيرة)، كل مستوى [[clamp()]] جواها جزء rem وجزء vw، ومتغيرات [[--step-0]] لحد [[--step-5]] على [[:root]]، وجنب كل مستوى رقم بيتحدّث بيقول حجمه الحالي بالبكسل ([[getComputedStyle]] مع [[resize]]). من دروس «rem و em» و «clamp()» و «CSS variables».`, done: R`على 375 و 768 و 1440 الأرقام بتتغيّر ومحدش فيهم نزل تحت حده الأدنى ولا عدّى الأقصى، ولما تكبّر خط المتصفح لـ Large كل المستويات بتكبر، والـ zoom لـ 200% بيكبّرهم كلهم.`, sol: R`~~~html index.html
 <!doctype html>
@@ -1752,6 +1756,14 @@ axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Er
       items: [
         {
           cmd: "rem و em",
+          ref: [
+            { t: "MDN: rem", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Values_and_units/Numeric_data_types" },
+            { t: "MDN: <dimension>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/dimension" },
+            { t: "MDN: <length>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length" },
+            { t: "MDN: <length-percentage>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length-percentage" },
+            { t: "MDN: <percentage>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/percentage" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** [[html { font-size: 100% }]] والمستخدم مخلّي خط المتصفح 20px (Large). احسب بالبكسل: [[h2 { font-size: 1.5rem }]]، و [[.btn { font-size: 0.875rem; padding: 0.75em 1.5em }]]، و [[.note { font-size: 0.8em }]] جوه فقرة [[1.25rem]].`, done: R`h2 = 30، والزرار خطه 17.5 والـ padding 13.125 و 26.25، والـ note = 0.8 × 25 = 20. واتأكدت من Computed بعد ما غيّرت الخط لـ Large.`, sol: R`~~~html
 <!doctype html>
@@ -2124,6 +2136,10 @@ font-size: 20px   padding-top: 10px   padding-left: 20px
         },
         {
           cmd: "dvh",
+          ref: [
+            { t: "MDN: dvh", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**قارن وقيس:** على الكمبيوتر، قيس ارتفاع ٤ عناصر: [[100vh]] و [[100svh]] و [[100lvh]] و [[100dvh]]، وقارنهم بـ [[innerHeight]].`, done: R`في Chrome على الكمبيوتر الأربعة نفس الرقم (700 في نافذة ارتفاعها 700) لأن مفيش شريط بيظهر ويختفي. الفرق بيبان على الموبايل بس، فاعرف إن DevTools وضع الموبايل مش بيحاكي الشريط ده، ولازم تجرّب على جهاز حقيقي.`, sol: R`~~~html
 <!doctype html>
@@ -2526,6 +2542,16 @@ grid-template-rows: 18px 764px 18px
         },
         {
           cmd: "clamp()",
+          ref: [
+            { t: "MDN: clamp()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp" },
+            { t: "MDN: gap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/gap" },
+            { t: "MDN: margin-inline", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/margin-inline" },
+            { t: "MDN: padding-block", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-block" },
+            { t: "MDN: max()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/max" },
+            { t: "MDN: min()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/min" },
+            { t: "MDN: padding-block-end", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-block-end" },
+            { t: "MDN: padding-block-start", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-block-start" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** [[font-size: clamp(1rem, 0.5rem + 2vw, 1.5rem)]]. احسب الحجم على 375 و 768 و 1440، وبعدين اتأكد من Computed.`, done: R`375: 8 + 7.5 = 15.5 أقل من 16 فطلع 16px. 768: 8 + 15.36 = 23.36px. 1440: 8 + 28.8 = 36.8 أكبر من 24 فطلع 24px. و Chrome قال نفس التلاتة.`, sol: R`~~~html
 <!doctype html>
@@ -2876,6 +2902,11 @@ clamp(2rem, 2.5rem + 1vw, 5rem)  52.8px  46.4px                92.8px        76%
         },
         {
           cmd: "CSS variables",
+          ref: [
+            { t: "MDN: Using CSS custom properties", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascading_variables/Using_custom_properties" },
+            { t: "MDN: var()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/var" },
+            { t: "MDN: --*", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/--*" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:root { --gap: 20; }]] (من غير px) و [[.card { padding: 8px; padding: var(--gap); }]]. الـ padding هيبقى كام: 8 ولا 20 ولا صفر؟`, done: R`صفر ([[0px]] في Chrome)، مش 8! المتصفح بيقبل السطر وقت القراية لأن فيه [[var()]]، ولما يحسب القيمة يلاقيها [[20]] من غير وحدة فيرجّع الخاصية لقيمتها الأصلية (initial)، والسطر اللي قبله (8px) خلاص اتشال. الحل [[--gap: 20px]] أو [[calc(var(--gap) * 1px)]].`, sol: R`~~~html
 <!doctype html>

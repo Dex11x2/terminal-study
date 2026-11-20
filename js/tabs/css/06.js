@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "Flexbox و Grid",
+      pre: [
+        { to: "css/display", why: R`flex و grid قيم لـ display` },
+        { to: "css/box model", why: R`الـ gap والمقاسات جوه الصندوق` },
+      ],
       l: 1,
       n: "flex لصف أو عمود واحد، و grid لشبكة بصفوف وأعمدة مع بعض",
       projects: [
@@ -2399,6 +2403,15 @@ axe: 0 violations (كان scrollable-region-focusable قبل tabindex)   الـ 
       items: [
         {
           cmd: "flexbox",
+          ref: [
+            { t: "MDN: align-items", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/align-items" },
+            { t: "MDN: justify-content", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/justify-content" },
+            { t: "MDN: min-height", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-height" },
+            { t: "MDN: vh", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Values_and_units/Numeric_data_types" },
+            { t: "MDN: flex-direction", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-direction" },
+            { t: "MDN Curriculum: CSS text styling", url: "https://developer.mozilla.org/en-US/curriculum/core/css-text-styling/" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
           title: "رص عناصر جنب بعض واتحكم في المسافات",
           desc: R`[[display: flex]] على الأب بيخلي أولاده يترصّوا في صف. [[justify-content]] بيوزّعهم على الاتجاه الأساسي (أفقي)، و [[align-items]] بيظبطهم على الاتجاه التاني (رأسي)، و [[gap]] المسافة بينهم. و [[flex-direction: column]] بيقلب الاتجاه الأساسي لرأسي.
 
@@ -2832,6 +2845,13 @@ flex جوه flex: الـ ul نفسه ابن في الـ nav، وفي نفس ال
         },
         {
           cmd: "flex: 1",
+          ref: [
+            { t: "MDN: flex", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex" },
+            { t: "MDN: flex-wrap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-wrap" },
+            { t: "MDN: flex-basis", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-basis" },
+            { t: "MDN: flex-grow", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-grow" },
+            { t: "MDN: flex-shrink", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-shrink" },
+          ],
           title: "مين ياخد المساحة الفاضية ومين يتزنق",
           desc: R`كل ابن في flex ليه 3 قيم: [[flex-grow]] (ياخد من المساحة الفاضية ولا لأ)، و [[flex-shrink]] (يصغر لو المكان مش كفاية ولا لأ)، و [[flex-basis]] (حجمه قبل التوزيع). [[flex: 1]] اختصار لـ [[1 1 0%]]: كبّر وصغّر وابدأ من صفر، فكل اللي عليهم flex: 1 بياخدوا نفس المساحة.
 
@@ -3229,6 +3249,14 @@ calc(50% - 0.5rem) + wrap     492         أيوه
         },
         {
           cmd: "grid",
+          ref: [
+            { t: "MDN: grid", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid" },
+            { t: "MDN: grid-column", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-column" },
+            { t: "MDN: grid-row", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-row" },
+            { t: "MDN: grid-auto-flow", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-auto-flow" },
+            { t: "MDN: grid-auto-rows", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-auto-rows" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
           title: "شبكة صفوف وأعمدة بتتحكم فيها من الأب",
           desc: R`[[display: grid]] مع [[grid-template-columns]] بيقسّم الأب لأعمدة. [[1fr]] = جزء من المساحة الفاضية، فـ [[1fr 1fr 1fr]] = 3 أعمدة متساوية، و [[250px 1fr]] = sidebar ثابت ومحتوى ياخد الباقي. و [[repeat(3, 1fr)]] اختصار.
 
@@ -3649,6 +3677,11 @@ grid-template-rows:    100px 100px 100px
         },
         {
           cmd: "auto-fit و minmax",
+          ref: [
+            { t: "MDN: <flex>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/flex_value" },
+            { t: "MDN: minmax()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/minmax" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
           title: "كروت responsive من غير ولا media query",
           desc: R`[[repeat(auto-fit, minmax(250px, 1fr))]] معناها: اعمل أعمدة على قد ما تقدر، كل عمود مش أقل من 250، والباقي يتوزّع عليهم. على الموبايل عمود، وعلى التابلت 2 أو 3، وعلى شاشة كبيرة 4 أو أكتر، من غير سطر media query.
 
@@ -3980,6 +4013,9 @@ grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
         },
         {
           cmd: "grid-template-areas",
+          ref: [
+            { t: "MDN: grid-template-areas", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-areas" },
+          ],
           title: "ارسم الصفحة بأسماء وغيّر شكلها على الموبايل",
           desc: R`بدل أرقام الخطوط، بتسمّي كل جزء ([[grid-area: header]]) وترسم الـ layout بالكلام في [[grid-template-areas]]: كل string صف، وكل كلمة خانة.
 
@@ -4424,6 +4460,11 @@ CSS.supports("grid-template-areas", '"main aside" "main footer"')  true
         },
         {
           cmd: "subgrid",
+          ref: [
+            { t: "MDN: grid-template-columns", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-columns" },
+            { t: "MDN: grid-template-rows", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-rows" },
+            { t: "MDN: row-gap", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/row-gap" },
+          ],
           title: "كروت أجزاؤها على نفس الخط: subgrid",
           desc: R`كروت أسعار جنب بعض: الأول وصفه سطر، والتاني وصفه ٣ سطور. كل كارت grid لوحده، فالعنوان والوصف والمميزات والزرار كل واحد بيبدأ من مكان مختلف في كل كارت، والصف كله شكله مايل.
 

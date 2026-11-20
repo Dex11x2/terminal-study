@@ -2,6 +2,9 @@
 MORE("css", [
     {
       t: "CSS: مين بيكسب ومساحة كل عنصر",
+      pre: [
+        { to: "css/<!doctype html>", why: R`ملف الـ CSS بيتربط من الـ head بـ link` },
+      ],
       projects: [
         { lvl: 'صغير', dir: "menu-card", t: R`كارت منيو بملف CSS خارجي`, what: R`خد كارت المطعم من مشروع الوحدة الأولى وزوّدله [[style.css]] واحد: خط ومسافة سطور للفقرات، وعنوان ملوّن، وزرار [[.btn]] بخلفية وزوايا مدورة، و [[box-sizing: border-box]] على كل حاجة. من دروس «مقدمة CSS» و «selectors» و «box model».`, done: R`الـ HTML زي ما هو (اللي اتزوّد سطر الـ link و class على الكارت والزرار بس)، والكارت عرضه 320px بالظبط شامل الـ padding والحدود (Computed)، ومفيش ولا [[style=""]] ولا id في الـ CSS.`, sol: R`ده نفس ملف [[index.html]] بتاع مشروع المطعم في الوحدة الأولى، واتزوّد عليه ٣ حاجات بس: سطر [[<link>]] في الـ head، و [[class="card"]] على [[<main>]]، و [[class="btn"]] على الزرار. وحط [[logo.svg]] بتاع المشروع ده جنبه زي ما هو.
 
@@ -1656,6 +1659,12 @@ axe: 0 violations في الشكلين   الـ validator: مفيش رسايل   
       items: [
         {
           cmd: "مقدمة CSS وتنسيق العناصر",
+          ref: [
+            { t: "MDN: CSS syntax", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Syntax/Introduction" },
+            { t: "MDN: <number>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/number" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+            { t: "MDN Curriculum: CSS text styling", url: "https://developer.mozilla.org/en-US/curriculum/core/css-text-styling/" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الـ CSS سطرين: [[colr: red;]] (حرف ناقص) و [[font-size: big;]] (قيمة مش موجودة). العنوان هيتغيّر؟ والسطور التانية اللي في نفس القاعدة هتشتغل؟`, done: R`السطرين اتجاهلوا والعنوان فضل بلونه وحجمه، والسطور التانية في نفس القاعدة اشتغلت عادي. في DevTools › Styles هتلاقي السطرين متشطّب عليهم وجنبهم علامة تحذير. المتصفح بيرمي السطر الغلط بس، مش القاعدة كلها.`, sol: R`~~~html
 <!doctype html>
@@ -2058,6 +2067,17 @@ h1        { color  :  #2563eb  ;  }
         },
         {
           cmd: "selectors",
+          ref: [
+            { t: "MDN: Type selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Type_selectors" },
+            { t: "MDN: Class selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Class_selectors" },
+            { t: "MDN: Attribute selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Attribute_selectors" },
+            { t: "MDN: Child combinator", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Child_combinator" },
+            { t: "MDN: Descendant combinator", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Descendant_combinator" },
+            { t: "MDN: Pseudo-classes", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Pseudo-classes" },
+            { t: "MDN: Pseudo-elements", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Pseudo-elements" },
+            { t: "MDN: :focus-visible", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:focus-visible" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<ul class="menu">]] فيه ٣ [[li]]، وأول li جواه [[ul]] تاني فيه ٢ [[li]]. كام عنصر بيرجع من [[.menu > li]]؟ ومن [[.menu li]]؟ ومن [[.menu li:nth-child(odd)]]؟ وبعدين اسأل [[querySelectorAll]].`, done: R`٣ و ٥ و ٣: الـ [[>]] الأولاد المباشرين بس، والمسافة كل الأحفاد، والـ odd اختار الأول والتالت في القايمة الكبيرة والأول في الصغيرة (كل li بيتعدّ وسط إخواته هو بس).`, sol: R`~~~html
 <!doctype html>
@@ -2445,6 +2465,11 @@ document.querySelectorAll(".menu li").length   // 4`
         },
         {
           cmd: "specificity",
+          ref: [
+            { t: "MDN: Specificity", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity" },
+            { t: "MDN: ID selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/ID_selectors" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+          ],
           practice: [
             { lvl: 'تطبيق', t: R`**مسألة:** رتّب الـ selectors دي من الأضعف للأقوى، واكتب وزن كل واحد: [[ul li a]] و [[.nav a:hover]] و [[#main .btn]] و [[a[href^="http"] ]] و [[:is(#a, .b) p]] و [[:where(#a) p]]. وبعدين اتأكد بالماوس في DevTools.`, done: R`[[:where(#a) p]] (0,0,1)، و [[ul li a]] (0,0,3)، و [[a[href^="http"] ]] (0,1,1)، و [[.nav a:hover]] (0,2,1)، و [[:is(#a, .b) p]] (1,0,1) لأن is بتاخد وزن أقوى حاجة جواها، و [[#main .btn]] (1,1,0). والـ tooltip في DevTools قال نفس الأرقام.`, sol: R`~~~html
 <!doctype html>
@@ -2763,6 +2788,13 @@ Chrome فك [[:where(.nav) .btn]] وحسب حتة واحدة بس: [[.btn]].
         },
         {
           cmd: "cascade",
+          ref: [
+            { t: "MDN: Introduction to the CSS cascade", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Introduction" },
+            { t: "MDN: Inheritance", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Inheritance" },
+            { t: "MDN: color", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color" },
+            { t: "MDN: @layer", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@layer" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ body عليه [[font-family: "Times New Roman"]]. زرار [[<button>]] جوه الصفحة خطه هيبقى إيه؟ ورث من الـ body؟`, done: R`لأ: في Chrome على ويندوز الزرار طلع [[Arial]] وحجمه [[13.3333px]]، لأن المتصفح بيدّي الأزرار والحقول خط من عنده بيغلب الوراثة. الحل اللي في كل reset: [[button, input, select, textarea { font: inherit; }]].`, sol: R`~~~html
 <!doctype html>
@@ -3156,6 +3188,16 @@ a { color: red; }
         },
         {
           cmd: "box model",
+          ref: [
+            { t: "MDN: Introduction to the CSS basic box model", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Introduction" },
+            { t: "MDN: box-sizing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/box-sizing" },
+            { t: "MDN: Mastering margin collapsing", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Margin_collapsing" },
+            { t: "MDN: Universal selectors", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Universal_selectors" },
+            { t: "MDN: Selector list", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Selector_list" },
+            { t: "MDN: Next-sibling combinator", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Next-sibling_combinator" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** [[width: 300px; padding: 20px; border: 5px solid; margin: 10px]]. احسب العرض اللي العنصر بياخده على الشاشة (من الحد للحد) والمساحة اللي بيحجزها شامل الـ margin، مرة بـ [[content-box]] ومرة بـ [[border-box]].`, done: R`content-box: الصندوق 350 (300 + 40 + 10) والمحجوز 370، والمحتوى 300. border-box: الصندوق 300 والمحجوز 320 والمحتوى 250. والرسمة في Computed قالت نفس الأرقام.`, sol: R`~~~html
 <!doctype html>
@@ -3615,6 +3657,17 @@ Tailwind بيحط [[box-sizing: border-box]] على كل حاجة في الـ Pr
         },
         {
           cmd: "display",
+          ref: [
+            { t: "MDN: display", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/display" },
+            { t: "MDN: <display-legacy>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/display-legacy" },
+            { t: "MDN: <display-outside>", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/display-outside" },
+            { t: "MDN: opacity", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/opacity" },
+            { t: "MDN: pointer-events", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/pointer-events" },
+            { t: "MDN: visibility", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/visibility" },
+            { t: "MDN: inset()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/basic-shape/inset" },
+            { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
+            { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** لينك جوه فقرة عليه [[padding: 10px; margin-top: 20px; margin-bottom: 20px]]. الفقرة هتطول؟ والفقرة اللي تحتها هتنزل؟`, done: R`لأ: ارتفاع الفقرة فضل 18 ومكان الفقرة اللي تحتها فضل زي ما هو، رغم إن Computed بيقول [[margin-top: 20px]]. الـ inline بيتجاهل الـ margin الرأسي، والـ padding بيترسم (خلفية اللينك كبرت) بس مش بيزق السطور فممكن يغطي على السطر اللي فوقه.`, sol: R`~~~html
 <!doctype html>
@@ -4004,6 +4057,11 @@ display: contents: المسافة بين ١ و ٢ = 8px   (الـ gap شغال �
         },
         {
           cmd: "BEM و CSS Modules",
+          ref: [
+            { t: "BEM: Methodology", url: "https://en.bem.info/methodology/" },
+            { t: "CSS Modules (GitHub)", url: "https://github.com/css-modules/css-modules" },
+            { t: "MDN: @scope", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@scope" },
+          ],
           title: "تنظيم الـ CSS: أسماء classes مبتتخانقش (BEM و CSS Modules و @scope)",
           desc: R`كل الـ CSS في الصفحة عالمي: أي [[.title]] في أي ملف بيطبّق على أي عنصر عليه [[class="title"]] في الموقع كله. فلما ملف الهيدر وملف الكارت الاتنين فيهم [[.title]]، اللي اتحمّل آخر بيكسب والتاني بيبوظ. ده سبب أغلب «قاعدتي مش شغالة» و [[!important]] اللي بيتكتب في كل حتة.
 

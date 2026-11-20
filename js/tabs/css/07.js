@@ -2,6 +2,10 @@
 MORE("css", [
     {
       t: "position و responsive",
+      pre: [
+        { to: "css/display", why: R`الـ flow العادي اللي position بيطلّع منه` },
+        { to: "css/grid", why: R`الـ layouts اللي الـ media queries بتغيّرها` },
+      ],
       l: 1,
       n: "position بيطلّع العنصر من الترتيب العادي، و media queries بتغيّر الشكل حسب الشاشة",
       projects: [
@@ -2212,6 +2216,13 @@ axe على المصلّحة: 0 violations   الـ validator: مفيش رساي�
       items: [
         {
           cmd: "position: absolute",
+          ref: [
+            { t: "MDN: position", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position" },
+            { t: "MDN: inset", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset" },
+            { t: "MDN: inset-inline-end", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset-inline-end" },
+            { t: "MDN: top", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/top" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
           title: "حط شارة على ركن الكارت بالظبط",
           desc: R`[[position: relative]] العنصر في مكانه العادي، بس بيبقى «مرجع» لأي ابن [[absolute]]. [[position: absolute]] بيطلّع العنصر من الترتيب خالص (الباقي بيتصرف كأنه مش موجود)، ومكانه بيتحسب من أقرب جد عليه position غير [[static]].
 
@@ -2608,6 +2619,10 @@ axe: 0 violations
         },
         {
           cmd: "sticky و fixed",
+          ref: [
+            { t: "MDN: position", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
           title: "هيدر ثابت وانت بتعمل scroll",
           desc: R`[[position: fixed]] ثابت في الشاشة نفسها مهما عملت scroll (هيدر، أو زرار واتساب في الركن). وبيطلع من الـ flow، فلازم تسيب مكانه بـ padding.
 
@@ -2989,6 +3004,11 @@ whatsapp left: 16   top: 766   width: 37.72   height: 18
         },
         {
           cmd: "z-index",
+          ref: [
+            { t: "MDN: z-index", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/z-index" },
+            { t: "MDN: translateY()", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/transform-function/translateY" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
           title: "مين فوق مين: الطبقات في الصفحة",
           desc: R`[[z-index]] بيحدد مين فوق مين، بس بيشتغل على عنصر position بتاعه مش static (أو ابن flex أو grid). والأهم: المقارنة بتحصل جوه نفس الـ stacking context بس.
 
@@ -3344,6 +3364,12 @@ elementFromPoint(50, 150) → MAIN.hero
         },
         {
           cmd: "media queries",
+          ref: [
+            { t: "MDN: Using media queries", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Using" },
+            { t: "MDN: @media", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media" },
+            { t: "WHATWG: media attribute", url: "https://html.spec.whatwg.org/multipage/semantics.html#attr-link-media" },
+            { t: "MDN Curriculum: CSS layout", url: "https://developer.mozilla.org/en-US/curriculum/core/css-layout/" },
+          ],
           title: "تصميم يبدأ من الموبايل ويكبر",
           desc: R`[[@media (min-width: 48rem) { ... }]] = القواعد دي تشتغل بس لما الشاشة 768 أو أكبر. mobile-first معناها تكتب الـ CSS العادي للموبايل الأول (عمود واحد، وخط أصغر)، وتضيف بـ [[min-width]] للشاشات الأكبر.
 
@@ -3793,6 +3819,12 @@ axe: 0 violations
         },
         {
           cmd: "مصفوفة مقاسات",
+          ref: [
+            { t: "MDN: Responsive design", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design" },
+            { t: "MDN: Element.scrollWidth", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollWidth" },
+            { t: "MDN: FontFaceSet.ready", url: "https://developer.mozilla.org/en-US/docs/Web/API/FontFaceSet/ready" },
+            { t: "Playwright: page.setViewportSize()", url: "https://playwright.dev/docs/api/class-page#page-set-viewport-size" },
+          ],
           title: "اختبار responsive بجد: كل العروض × العربي والإنجليزي، وقياس الـ scroll الأفقي، ولقطة لكل مقاس",
           desc: R`سحب حافة المتصفح بإيدك بيفوّت حاجات: بتبص على ٣ عروض بلغة واحدة. الطريقة اللي بتمسك المقاسات اللي بتتكسر **فعلًا**: سكربت Playwright بيلف على مصفوفة عروض ([[320]] و [[360]] و [[375]] و [[414]] و [[600]] و [[761]] لحد [[1024]] و [[1100]] و [[1440]] و [[1920]]) × لغتين (عربي RTL وإنجليزي)، ولكل واحدة: [[page.setViewportSize]]، ويقيس [[document.documentElement.scrollWidth]] مقابل [[innerWidth]] (أكبر = فيه scroll أفقي)، ويطلّع العناصر اللي خارجة برا الشاشة بالاسم، ويقيس أهداف اللمس الصغيرة، وياخد لقطة.
 

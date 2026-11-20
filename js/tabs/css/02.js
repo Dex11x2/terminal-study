@@ -2,6 +2,9 @@
 MORE("css", [
     {
       t: "الفورم: كل أنواع الحقول والأخطاء",
+      pre: [
+        { to: "css/form و label", why: R`الـ label و for و required والـ submit اللي الوحدة دي بتبني عليهم` },
+      ],
       projects: [
         { lvl: 'صغير', dir: "bmi-calc", t: R`حاسبة BMI`, what: R`فورم فيه الوزن ([[type="number"]] و [[min="20"]] و [[max="300"]] و [[step="0.1"]]) والطول بالسنتي، والنتيجة في [[<output>]] عليه [[aria-live="polite"]] بتتحدّث مع كل [[input]]، وجنبها التصنيف (نحيف، طبيعي، زيادة). من دروس «textarea و date و number» و «Constraint Validation API».`, done: R`70 كيلو و 175 سم بيطلّعوا 22.9 «طبيعي»، والحقل الفاضي أو 500 كيلو بيطلّع رسالة المتصفح ([[rangeOverflow]]) ومفيش رقم غلط في النتيجة، وكتابة حرف [[e]] لوحده في الوزن مش بتكسر الحساب ([[validity.badInput]]).`, sol: R`~~~html index.html
 <!doctype html>
@@ -2043,6 +2046,16 @@ axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360:
       items: [
         {
           cmd: "fieldset و radio",
+          ref: [
+            { t: "WHATWG: the fieldset element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-fieldset-element" },
+            { t: "MDN: <fieldset>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/fieldset" },
+            { t: "MDN: <input type=\"radio\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/radio" },
+            { t: "WHATWG: the legend element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-legend-element" },
+            { t: "MDN: <legend>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/legend" },
+            { t: "WHATWG: the select element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-select-element" },
+            { t: "MDN: <select>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/select" },
+            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
+          ],
           practice: [
             { lvl: 'تطبيق', t: R`**أشكال:** اختيار باقة في جيم متخيل بـ ٣ كروت: كل كارت [[<label class="plan">]] جواه radio ونص، والـ radio مخفي بالشكل بس (حجم 1px و [[clip-path: inset(50%)]])، والكارت المختار حدوده بلون مختلف بـ [[.plan:has(input:checked)]].`, done: R`الضغط على أي حتة في الكارت بيختاره، والأسهم بتنقّل بين الكروت، و [[getComputedStyle(card).borderColor]] على المختار بيرجّع اللون اللي حطيته في الـ :has، ومفيش ولا سطر JavaScript.`, sol: R`~~~html
 <!doctype html>
@@ -2561,6 +2574,15 @@ get('notify')     →  null
         },
         {
           cmd: "textarea و date و number",
+          ref: [
+            { t: "WHATWG: the textarea element", url: "https://html.spec.whatwg.org/multipage/form-elements.html#the-textarea-element" },
+            { t: "MDN: <textarea>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/textarea" },
+            { t: "MDN: <input type=\"date\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/date" },
+            { t: "MDN: <input type=\"number\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/number" },
+            { t: "MDN: <input type=\"url\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/url" },
+            { t: "WHATWG: inputmode attribute", url: "https://html.spec.whatwg.org/multipage/interaction.html#attr-inputmode" },
+            { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** على جهاز توقيته نيويورك (في DevTools: Sensors › Location، أو [[timezoneId]] في Playwright) إيه ناتج [[new Date('2026-06-26').getDate()]] و [[new Date('2026-06-26T00:00').getDate()]]؟`, done: R`الأول طلع 25 والتاني 26: النص اللي فيه تاريخ بس بيتقري منتصف الليل UTC (ودي الساعة 8 بالليل يوم 25 في نيويورك)، واللي فيه وقت من غير Z بيتقري بالتوقيت المحلي. وده نفس اللي بيرجع من [[date.valueAsDate]] (اتطبع [[2026-06-26T00:00:00.000Z]]).`, sol: R`~~~js
 // في Console على جهاز توقيته نيويورك
@@ -2975,6 +2997,12 @@ qty.valueAsNumber + 1
         },
         {
           cmd: "Constraint Validation API",
+          ref: [
+            { t: "MDN: Constraint validation", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Constraint_validation" },
+            { t: "MDN: ValidityState", url: "https://developer.mozilla.org/en-US/docs/Web/API/ValidityState" },
+            { t: "MDN: setCustomValidity()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setCustomValidity" },
+            { t: "MDN: :user-invalid", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:user-invalid" },
+          ],
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** حقل [[type="email"]]. أنهي قيمة هتعدّي: [[a@b]] و [[a@b.]] و [[a..b@c.com]] و [[a b@c.com]] و [[أحمد@example.com]] و [[ a@b.com ]] (بمسافات)؟ قول الأول وبعدين اسأل [[validity.valid]].`, done: R`في Chrome عدّوا [[a@b]] (مش لازم .com) و [[a..b@c.com]] واللي بمسافات (المتصفح بيشيل المسافات من الأول والآخر)، ووقعوا [[a@b.]] واللي فيه مسافة في النص والعربي. يعني validation المتصفح شكل بس، والسيرفر لازم يتأكد تاني.`, sol: R`~~~js
 const i = document.createElement('input');
@@ -3507,6 +3535,12 @@ form.addEventListener('submit', (e) => {
         },
         {
           cmd: "ملخص الأخطاء",
+          ref: [
+            { t: "MDN: Client-side form validation", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation" },
+            { t: "WAI Tutorials: User notifications (forms)", url: "https://www.w3.org/WAI/tutorials/forms/notifications/" },
+            { t: "MDN: aria-disabled", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-disabled" },
+            { t: "MDN: aria-invalid", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid" },
+          ],
           practice: [
             { lvl: 'تطبيق', t: R`**ابني:** فورم طلب لمتجر قهوة متخيل في شبكة: [[.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }]]، والعنوان حقل طويل [[grid-column: 1 / -1]]، وعلى الموبايل عمود واحد، وفوقه صندوق الملخص.`, done: R`على 800px الاسم والموبايل جنب بعض والعنوان واخد السطر كله، وعلى 360px كله تحت بعض، والملخص بيظهر فوق الشبكة مش جواها، والأخطاء تحت كل حقل مش بتكسر الشبكة.`, sol: R`~~~html
 <!doctype html>
