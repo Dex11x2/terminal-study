@@ -147,7 +147,7 @@
 **الدفعة ١٠ (١٩ نوفمبر): البند ١١ بدأ، حلول المشاريع: ٨٤ من ٢٠٨ (كانت ٧٨).** وحدة «HTML: هيكل الصفحة ومعناها» (01.js): الـ ٦ مشاريع بقى ليهم `dir` و `sol` (كل ملف بكوده، و `view` بالشكل النهائي، والناتج المتقاس). كل صفحة اتعدّت على Nu validator (curl لـ validator.w3.org/nu بمحتوى مخترع) و axe-core 4.10.2 و Chrome 157. طريقة الشغل اللي نفعت: الملفات في الـ scratchpad ← سيرفر محلي ← قياس كل `done` ← مولّد بيبني الـ sol من الملفات المتجرّبة نفسها (`apply.js` بيحط `dir` و `sol` في سطر المشروع). الصور في الـ `view` بتتحط data URI لأن الـ srcdoc مبيحمّلش مسارات نسبية.
 - **اتقاس واتصلح في المطلوب نفسه:** `done` في «صفحة هبوط لعيادة» كان بيقول صور الأطبا مش هتتحمّل قبل النزول، و Chrome حمّلها لأنها على بعد 284px بس (الحد بين 1200 و 1300px على نت سريع)، فالتجربة بقت بـ div طوله 3000px و Disable cache (والصورة بتيجي من الذاكرة لو نفس التاب). و`done` في «موقع مكتبة» كان بيقول الموبايل بياخد ملف أصغر: موبايل DPR 3 خد `cover-600` وكمبيوتر DPR 1 خد `cover-300`، و `sizes` اتصلح لـ 300px (من غير CSS الصورة دايمًا 300px)، و Lighthouse اتشال من المطلوب (مش متاح يتشغّل هنا، و axe موجود).
 - اللي الـ validator مسكه في الحلول: `action=""` (Must be non-empty) و `<` جوه data URI في `src`. و axe مسك صفحة من غير `main` (`landmark-one-main` و `region`). اتكتبوا في الحلول.
-- [ ] فاضل في البند ١١: ٨ وحدات قديمة: الحركة، والأداء، و CSS الحديث، و widgets، والانترفيو، والمشروعين الكاملين، وبنك التمارين. وحدة أو اتنين في الدفعة بنفس الطريقة. وبعدهم باقي البند ١١ (`work` و `pre` و `ref` للقديم، و `resplit`، وقرارات الاستبعاد).
+- [ ] فاضل في البند ١١: ٧ وحدات قديمة: والأداء، و CSS الحديث، و widgets، والانترفيو، والمشروعين الكاملين، وبنك التمارين. وحدة أو اتنين في الدفعة بنفس الطريقة. وبعدهم باقي البند ١١ (`work` و `pre` و `ref` للقديم، و `resplit`، وقرارات الاستبعاد).
 
 **الدفعة ١١ (١٩ نوفمبر): حلول المشاريع ٩٢ من ٢١٠.** وحدة «الفورم: كل أنواع الحقول والأخطاء» (02.js): الـ ٦ مشاريع بحلولها، و**مشروعين جداد من بنك الأفكار** (فورم «اقرا الفصل الأول ببلاش» بأرقام عربي و `:user-invalid`، وصفحة دفع بتابات من غير JavaScript وقيمة طويلة جنب زرار «انسخ»). اتقاس واتكتب في الحلول: الدبل كليك على فورم عادي بيوصّل طلبين للسيرفر على Slow 3G بس (على السيرفر المحلي السريع واحد حتى من غير حماية)؛ و `setInterval` بتاع المسودة رجّع كتبها بعد `removeItem` لأن الصفحة اللي بعدها خدت ثانيتين (باج في حلي أنا، الحل `clearInterval` الأول)؛ و Chrome شغّل `app.js` القديم من الذاكرة بعد التعديل؛ و `autocomplete="street-address"` مرفوض على `input` (للـ textarea بس)؛ والسهم الشمال هو «اللي بعده» في radios جوه `dir="rtl"`؛ و outline `3px` بيتقاس `2.4px` على شاشة 125%.
 - طلب صاحب المشروع (١٩ نوفمبر): «خد الحاجات الجديدة ال ف المواقع ال بنعملها… كمشاريع وتصماميم وافكار»، و «ده غير افكارك انت برده… المشاريع الكتير كويسه ف التعلم»، و «المشاكل والحلول ال عملناها برده دي مهمه جدا». يعني: كل وحدة بتاخد سلّمتها كاملة **وزيادة** مشاريع من البنك ده، والحالات بتتكتب في كورسها.
@@ -257,6 +257,22 @@
 - [ ] **درس (تاب ps):** `$LASTEXITCODE` بعد برنامج native، و `Select-Object -First` بيوقف البرنامج بدري فبيغيّر الكود (اتقاس: ٢ ← ١).
 - [ ] **درس (تاب npm):** `npm install --package-lock-only` بيعمل `package-lock.json` من غير `node_modules` (عشان `npm ci` في الـ CI)، و `npm view <pkg> time --json` لتاريخ كل نسخة (قاعدة «أسبوعين على الأقل»).
 - [ ] **درس (تاب git/gh):** `gh api repos/<owner>/<repo>/releases --jq '[.[]|select(.prerelease|not)|.tag_name]'` لآخر نسخ action قبل ما تكتبها في workflow.
+
+**الدفعة ٢٤ (٢٠ نوفمبر): وحدة «الحركة» (14.js)، حلول المشاريع 175 من 213.** الـ ٦ مشاريع: ٣ loaders، وكارت فريق بيتقلب، وصفحة قصة «حبّاية» (hero بـ keyframes، و reveal، وعدّادات، و marquee)، ومنيو «سفرة» بيتقلب زي الكتاب في RTL و LTR، و«معمل التأثيرات» (١٠ تأثيرات، وزرار «حركة أقل»، وجدول التكلفة)، وتوكنز حركة لـ «نسمة» مع `check-tokens.mjs`. اتقاس واتكتب في الحلول:
+- **فخ قياس على Windows:** Chrome بيدوّر على proxy (WPAD) أول ما يفتح، فـ `responseEnd` كان 500 لـ 970ms حتى لصفحة سطر على سيرفر Node، و FCP حوالي 900ms. بـ `--no-proxy-server`: الرد 4ms و FCP 188ms.
+- **هيرو بيبدأ من `opacity: 0` مبيتحسبش LCP:** الـ LCP بقى فقرة من الـ reveal في 864ms؛ بـ `translate` بس بقى الـ h1 في 136ms. اتضافت جملة لتمرين «initial opacity 0» في درس motion.
+- `requestAnimationFrame` ممكن ييجي بوقت أقدم من `performance.now()` اللي اتسجل قبله ← عدّاد طلّع «-١٢»؛ `start ??= now`.
+- `tabular-nums` مبيغيّرش عرض الأرقام العربي (١١١١ = 41.7px و ٨٨٨٨ = 97.3px في system-ui/Segoe UI)؛ الحل تثبيت عرض الصندوق على «٨» بنفس عدد الخانات.
+- specificity في reduced motion: `.dots span { animation: none }` خسر قدام `.dots span:not(.sr-only)` ← 3 animations فضلوا شغالين.
+- من غير `backface-visibility: hidden` الكارت **وهو واقف** بيوري الضهر معكوس فوق الوش (نفس المستوى، اللي بعد في الـ DOM فوق).
+- trace: `stackTrace` للـ forced layout بيظهر بس مع `disabled-by-default-devtools.timeline.stack`؛ و write ثم read لازم يكون لحاجة بتغيّر الـ layout (كتابة transform بس = style recalc). نسخة tilt غلط: 40 forced layout، والسليمة 0؛ والـ frames ماتفرقتش حتى على CPU 6x (الصفحة صغيرة).
+- Chrome بيقصّر transition بيرجع في نصه (background-color 154.78ms بدل 160).
+- regex `\bease\b` بيمسك `var(--ease)`؛ `(?<![-\w])ease`.
+- vnu: مفيش رسايل (24 صفحة). CSS validator: No Error Found (٧ ملفات). axe 0 على الـ ٦. Lighthouse 13.6.0 على «حبّاية»: 100/100، LCP 0.8s.
+
+- [ ] **درس (تاب web أو diag):** Chrome على Windows بيعمل proxy auto-detect (WPAD) أول طلب، فالقياس المحلي بيزيد ~850ms؛ اتقاس بـ `performance.getEntriesByType("navigation")[0].responseEnd` (824ms ← 4ms)، والحل `--no-proxy-server` في التشغيل أو إعدادات الـ proxy.
+- [ ] **درس (تاب perf أو css):** Playwright `browser.startTracing` بالـ categories `devtools.timeline` و `disabled-by-default-devtools.timeline.stack`، وعدّ أحداث `Layout` اللي فيها `args.beginData.stackTrace` (forced) واسم الدالة؛ و `Emulation.setCPUThrottlingRate` من `newCDPSession`.
+- [ ] **درس (تاب js):** `requestAnimationFrame(now)` و `performance.now()`: أول frame ممكن يبقى أقدم، فابدأ العد من أول frame.
 
 **قرارات صاحب المشروع (٢٠ نوفمبر، بعد الدفعة ١٧):**
 - الميزات التجريبية المشروحة (headingoffset و alpha/colorspace و selectedcontent و calc-size و corner-shape و flex-line-count و param) **تفضل**، بشرط الدارس يفهم هي إيه: كل قسم فيه هي إيه، وحالتها المتقاسة، وتستخدم إيه النهارده، وسطر ثابت بيودّي لدرس «Baseline و @supports» (اتضاف للـ ٧ أقسام).

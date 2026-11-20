@@ -4795,9 +4795,9 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|motion": {
-  "hash": "f648c72094d0",
-  "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+  "hash": "a3967e0f8dd6",
+  "date": "2026-11-20",
+  "on": "Windows: Chrome 157 + Playwright 1.64.1 (--no-proxy-server): LCP entries للهيرو fade من 0 (فقرة 864ms) مقابل translate بس (h1 136ms)"
  },
  "css|next/font": {
   "hash": "c791940a6b4d",
