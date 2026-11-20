@@ -1765,7 +1765,7 @@ axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Er
             { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
           ],
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** [[html { font-size: 100% }]] والمستخدم مخلّي خط المتصفح 20px (Large). احسب بالبكسل: [[h2 { font-size: 1.5rem }]]، و [[.btn { font-size: 0.875rem; padding: 0.75em 1.5em }]]، و [[.note { font-size: 0.8em }]] جوه فقرة [[1.25rem]].`, done: R`h2 = 30، والزرار خطه 17.5 والـ padding 13.125 و 26.25، والـ note = 0.8 × 25 = 20. واتأكدت من Computed بعد ما غيّرت الخط لـ Large.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**مسألة:** [[html { font-size: 100% }]] والمستخدم مخلّي خط المتصفح 20px (Large). احسب بالبكسل: [[h2 { font-size: 1.5rem }]]، و [[.btn { font-size: 0.875rem; padding: 0.75em 1.5em }]]، و [[.note { font-size: 0.8em }]] جوه فقرة [[1.25rem]].`, done: R`h2 = 30، والزرار خطه 17.5 والـ padding 13.125 و 26.25، والـ note = 0.8 × 25 = 20. واتأكدت من Computed بعد ما غيّرت الخط لـ Large.`, sol: R`~~~live 240 240
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1813,7 +1813,7 @@ h2 font-size    = 30px
 .btn padding    = 13.125px 26.25px
 .note font-size = 20px
 ~~~` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** حد كتب [[html { font-size: 62.5%; }]] عشان «1rem = 10px أسهل في الحساب»، وعنده [[@media (min-width: 40rem)]]. على شاشة عرضها 500: عنصر [[width: 40rem]] عرضه كام؟ والـ media query دي شغالة؟`, done: R`العنصر 400px (40 × 10)، بس الـ media query **مش** شغالة: الـ rem جوه media query بيتحسب على 16 مش على html، يعني 640px. اتقاس في Chrome: [[matchMedia('(min-width: 40rem)').matches]] رجّع false و [[30rem]] (480) رجّع true. فالـ 62.5% بتخلي الأرقام في الـ CSS والـ media queries تتكلم لغتين.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** حد كتب [[html { font-size: 62.5%; }]] عشان «1rem = 10px أسهل في الحساب»، وعنده [[@media (min-width: 40rem)]]. على شاشة عرضها 500: عنصر [[width: 40rem]] عرضه كام؟ والـ media query دي شغالة؟`, done: R`العنصر 400px (40 × 10)، بس الـ media query **مش** شغالة: الـ rem جوه media query بيتحسب على 16 مش على html، يعني 640px. اتقاس في Chrome: [[matchMedia('(min-width: 40rem)').matches]] رجّع false و [[30rem]] (480) رجّع true. فالـ 62.5% بتخلي الأرقام في الـ CSS والـ media queries تتكلم لغتين.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1850,7 +1850,7 @@ h2 font-size    = 30px
 matchMedia('(min-width: 40rem)').matches = false
 matchMedia('(min-width: 30rem)').matches = true   (30 × 16 = 480)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** قايمة متداخلة ٣ مستويات، وكل [[li]] عليه [[font-size: 0.9em]]، والمستوى التالت بقى صغير جدًا (اتقاس 11.664px في الدرس).`, done: R`بعد [[font-size: 0.9rem]] التلات مستويات بقوا 14.4px كلهم، ولو عايز المستوى الأول بس أصغر استخدم [[.menu > li]]. وكتبت إمتى em جوه em بيبقى مقصود (padding الزرار) وإمتى غلط (الخط المتداخل).`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** قايمة متداخلة ٣ مستويات، وكل [[li]] عليه [[font-size: 0.9em]]، والمستوى التالت بقى صغير جدًا (اتقاس 11.664px في الدرس).`, done: R`بعد [[font-size: 0.9rem]] التلات مستويات بقوا 14.4px كلهم، ولو عايز المستوى الأول بس أصغر استخدم [[.menu > li]]. وكتبت إمتى em جوه em بيبقى مقصود (padding الزرار) وإمتى غلط (الخط المتداخل).`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1890,7 +1890,7 @@ matchMedia('(min-width: 30rem)').matches = true   (30 × 16 = 480)
 قبل (0.9em)      14.4px       12.96px       11.664px
 بعد (0.9rem)     14.4px       14.4px       14.4px
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** ٣ أزرار sm و md و lg، الفرق بينهم سطر [[font-size]] بس، والـ padding و [[border-radius]] والأيقونة ([[width: 1.25em]]) كلهم بـ em فبيكبروا لوحدهم.`, done: R`الـ CSS بتاع الأحجام ٣ سطور بس، وفي Computed الـ padding بتاع الـ lg ضعف الـ sm لو الخط ضعف، والأيقونة دايمًا قد الكلام، والـ border نفسه [[1px]] في التلاتة.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** ٣ أزرار sm و md و lg، الفرق بينهم سطر [[font-size]] بس، والـ padding و [[border-radius]] والأيقونة ([[width: 1.25em]]) كلهم بـ em فبيكبروا لوحدهم.`, done: R`الـ CSS بتاع الأحجام ٣ سطور بس، وفي Computed الـ padding بتاع الـ lg ضعف الـ sm لو الخط ضعف، والأيقونة دايمًا قد الكلام، والـ border نفسه [[1px]] في التلاتة.`, sol: R`~~~live 160 160
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1944,7 +1944,7 @@ axe: 0 violations
 ~~~` },
             { lvl: 'سريع', t: R`**قارن وقيس:** صفحتين نسخة واحدة، واحدة كلها px وواحدة كلها rem. كبّر خط المتصفح من الإعدادات لـ Very large، وقيس h1 والفقرة والـ padding في الاتنين.`, done: R`صفحة الـ px متغيّرتش ولا بكسل، وصفحة الـ rem كبرت كلها بنفس النسبة. وكتبت ليه ده بيفرق لمستخدم نظره ضعيف (مش بيعمل zoom، بيغيّر الخط من الإعدادات مرة واحدة).`, sol: R`الصفحتين نسخة واحدة، والفرق الوحدة:
 
-~~~html px.html
+~~~live 200 200 px.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1963,7 +1963,7 @@ axe: 0 violations
 </html>
 ~~~
 
-~~~html rem.html
+~~~live 200 200 rem.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2141,7 +2141,7 @@ font-size: 20px   padding-top: 10px   padding-left: 20px
             { t: "MDN Curriculum: CSS fundamentals", url: "https://developer.mozilla.org/en-US/curriculum/core/css-fundamentals/" },
           ],
           practice: [
-            { lvl: 'سريع', t: R`**قارن وقيس:** على الكمبيوتر، قيس ارتفاع ٤ عناصر: [[100vh]] و [[100svh]] و [[100lvh]] و [[100dvh]]، وقارنهم بـ [[innerHeight]].`, done: R`في Chrome على الكمبيوتر الأربعة نفس الرقم (700 في نافذة ارتفاعها 700) لأن مفيش شريط بيظهر ويختفي. الفرق بيبان على الموبايل بس، فاعرف إن DevTools وضع الموبايل مش بيحاكي الشريط ده، ولازم تجرّب على جهاز حقيقي.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**قارن وقيس:** على الكمبيوتر، قيس ارتفاع ٤ عناصر: [[100vh]] و [[100svh]] و [[100lvh]] و [[100dvh]]، وقارنهم بـ [[innerHeight]].`, done: R`في Chrome على الكمبيوتر الأربعة نفس الرقم (700 في نافذة ارتفاعها 700) لأن مفيش شريط بيظهر ويختفي. الفرق بيبان على الموبايل بس، فاعرف إن DevTools وضع الموبايل مش بيحاكي الشريط ده، ولازم تجرّب على جهاز حقيقي.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2189,7 +2189,7 @@ console.log('innerHeight', innerHeight);
 100dvh  = 700
 innerHeight = 700
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** هيرو عليه [[height: 100vh]] وزرار «احجز» في آخره، وعلى موبايل حقيقي الزرار تحت شريط المتصفح. وكمان فيه [[.banner { width: 100vw }]] عامل scroll أفقي على ويندوز.`, done: R`الهيرو بقى [[min-height: 100svh]] (و [[100vh]] قبلها للمتصفحات القديمة) فالزرار ظاهر على الموبايل والمحتوى لو طويل بيطوّل الهيرو بدل ما يتقص، والـ banner بقى [[width: 100%]] و [[scrollWidth]] بقى زي [[clientWidth]].`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** هيرو عليه [[height: 100vh]] وزرار «احجز» في آخره، وعلى موبايل حقيقي الزرار تحت شريط المتصفح. وكمان فيه [[.banner { width: 100vw }]] عامل scroll أفقي على ويندوز.`, done: R`الهيرو بقى [[min-height: 100svh]] (و [[100vh]] قبلها للمتصفحات القديمة) فالزرار ظاهر على الموبايل والمحتوى لو طويل بيطوّل الهيرو بدل ما يتقص، والـ banner بقى [[width: 100%]] و [[scrollWidth]] بقى زي [[clientWidth]].`, sol: R`~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2244,7 +2244,7 @@ banner: 100%         785           785           0px
 الهيرو: min-height = 600px  وارتفاعه الفعلي 600 على نافذة 600
 لو المحتوى طويل، الهيرو بقى 1054.88 بدل ما يتقص
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شاشة شات لتطبيق متخيل: [[.chat { height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; }]]، والرسايل في النص عليها [[overflow-y: auto]]، وحقل الكتابة تحت.`, done: R`الهيدر وحقل الكتابة ثابتين والرسايل بس اللي بتعمل scroll، والصفحة نفسها مفيهاش scroll ([[document.documentElement.scrollHeight]] = [[innerHeight]])، وعلى موبايل حقيقي حقل الكتابة مش بيستخبى تحت الشريط.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** شاشة شات لتطبيق متخيل: [[.chat { height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; }]]، والرسايل في النص عليها [[overflow-y: auto]]، وحقل الكتابة تحت.`, done: R`الهيدر وحقل الكتابة ثابتين والرسايل بس اللي بتعمل scroll، والصفحة نفسها مفيهاش scroll ([[document.documentElement.scrollHeight]] = [[innerHeight]])، وعلى موبايل حقيقي حقل الكتابة مش بيستخبى تحت الشريط.`, sol: R`~~~live 140 140
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2303,7 +2303,7 @@ bottom الحقل = 640
 من غير overflow-y: auto: scrollHeight للصفحة = 1934
 overflow أفقي: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الوحدات اللي من نفس العيلة غير vh: [[vi]] و [[vb]] و [[vmin]] و [[vmax]]، وإيه علاقة [[vi]] بالـ RTL والكتابة الرأسي.`, done: R`كتبت تعريف كل واحدة، وعرفت إن [[vi]] و [[vb]] «logical» (inline و block) فبتتبع اتجاه الكتابة، وإن [[vmin]] مفيدة لحاجة لازم تكفي الشاشة في الاتجاهين (لوجو في نص الشاشة مثلًا).`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الوحدات اللي من نفس العيلة غير vh: [[vi]] و [[vb]] و [[vmin]] و [[vmax]]، وإيه علاقة [[vi]] بالـ RTL والكتابة الرأسي.`, done: R`كتبت تعريف كل واحدة، وعرفت إن [[vi]] و [[vb]] «logical» (inline و block) فبتتبع اتجاه الكتابة، وإن [[vmin]] مفيدة لحاجة لازم تكفي الشاشة في الاتجاهين (لوجو في نص الشاشة مثلًا).`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2347,7 +2347,7 @@ overflow أفقي: 0px   axe: 0 violations
 10vmin     80
 10vmax     128
 ~~~` },
-            { lvl: 'تطبيق', t: R`**محاكاة:** اعمل صفحة بتطبع في ركنها [[innerHeight]] وارتفاع عنصر [[100vh]] و [[100dvh]] و [[100svh]] كل ما الشاشة تتغيّر ([[resize]])، وافتحها من موبايلك وانزل وطلع عشان الشريط يختفي ويظهر.`, done: R`كتبت الأرقام في الحالتين (الشريط ظاهر ومستخبي) من موبايلك واسم المتصفح ونسخته، ولاحظت مين فيهم اتغيّر (dvh) ومين ثابت (svh و lvh)، والـ vh ساوى أنهي واحد فيهم.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**محاكاة:** اعمل صفحة بتطبع في ركنها [[innerHeight]] وارتفاع عنصر [[100vh]] و [[100dvh]] و [[100svh]] كل ما الشاشة تتغيّر ([[resize]])، وافتحها من موبايلك وانزل وطلع عشان الشريط يختفي ويظهر.`, done: R`كتبت الأرقام في الحالتين (الشريط ظاهر ومستخبي) من موبايلك واسم المتصفح ونسخته، ولاحظت مين فيهم اتغيّر (dvh) ومين ثابت (svh و lvh)، والـ vh ساوى أنهي واحد فيهم.`, sol: R`~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2553,7 +2553,7 @@ grid-template-rows: 18px 764px 18px
             { t: "MDN: padding-block-start", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding-block-start" },
           ],
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** [[font-size: clamp(1rem, 0.5rem + 2vw, 1.5rem)]]. احسب الحجم على 375 و 768 و 1440، وبعدين اتأكد من Computed.`, done: R`375: 8 + 7.5 = 15.5 أقل من 16 فطلع 16px. 768: 8 + 15.36 = 23.36px. 1440: 8 + 28.8 = 36.8 أكبر من 24 فطلع 24px. و Chrome قال نفس التلاتة.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**مسألة:** [[font-size: clamp(1rem, 0.5rem + 2vw, 1.5rem)]]. احسب الحجم على 375 و 768 و 1440، وبعدين اتأكد من Computed.`, done: R`375: 8 + 7.5 = 15.5 أقل من 16 فطلع 16px. 768: 8 + 15.36 = 23.36px. 1440: 8 + 28.8 = 36.8 أكبر من 24 فطلع 24px. و Chrome قال نفس التلاتة.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2587,7 +2587,7 @@ grid-template-rows: 18px 764px 18px
 768   → 23.36px
 1440  → 24px
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** إيقاع مسافات واحد لكل أجزاء الصفحة: متغير [[--section-space: clamp(3rem, 8vw, 8rem)]] و [[section { padding-block: var(--section-space) }]]، و container بـ [[width: min(100% - 2rem, 1200px)]].`, done: R`على 375 الـ padding فوق وتحت 48px والـ container 343 (لو الـ body من غير margin)، وعلى 768 الـ padding 61.44 والـ container 736، وعلى 1440 الـ padding 115.2 والـ container 1200 وفي النص. ومفيش ولا media query.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** إيقاع مسافات واحد لكل أجزاء الصفحة: متغير [[--section-space: clamp(3rem, 8vw, 8rem)]] و [[section { padding-block: var(--section-space) }]]، و container بـ [[width: min(100% - 2rem, 1200px)]].`, done: R`على 375 الـ padding فوق وتحت 48px والـ container 343 (لو الـ body من غير margin)، وعلى 768 الـ padding 61.44 والـ container 736، وعلى 1440 الـ padding 115.2 والـ container 1200 وفي النص. ومفيش ولا media query.`, sol: R`~~~live 600 520
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2631,7 +2631,7 @@ grid-template-rows: 18px 764px 18px
 media queries في الملف: 0
 axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** footer فيه اسم المتجر بخط عملاق ورا الروابط كخلفية: [[font-size: clamp(5rem, 20vw, 18rem)]] و [[line-height: 0.8]] و [[opacity: 0.08]]، ونصه السفلاني مقصوص بـ [[overflow: hidden]] على الـ footer.`, done: R`الكلمة عرضها قريب من عرض الشاشة على 375 و 1440 من غير ما تعمل scroll أفقي، والروابط اللي فوقها مقروءة وبتتضغط ([[pointer-events: none]] على الكلمة أو z-index)، والكلمة عليها [[aria-hidden="true"]] عشان متتقريش مرتين.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**أشكال:** footer فيه اسم المتجر بخط عملاق ورا الروابط كخلفية: [[font-size: clamp(5rem, 20vw, 18rem)]] و [[line-height: 0.8]] و [[opacity: 0.08]]، ونصه السفلاني مقصوص بـ [[overflow: hidden]] على الـ footer.`, done: R`الكلمة عرضها قريب من عرض الشاشة على 375 و 1440 من غير ما تعمل scroll أفقي، والروابط اللي فوقها مقروءة وبتتضغط ([[pointer-events: none]] على الكلمة أو z-index)، والكلمة عليها [[aria-hidden="true"]] عشان متتقريش مرتين.`, sol: R`~~~live 190 190
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2699,7 +2699,7 @@ font-size: 375 = 80px   1440 = 288px
 تباين الروابط: 17.49:1
 axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** عنوان عربي كبير [[clamp()]] عليه [[letter-spacing: -0.02em]] (زي ما المواقع الإنجليزي بتعمل للعناوين). قيس عرض الكلام بـ [[Range.getBoundingClientRect()]] مع وبدون، وجرّب [[0.2em]] كمان، وبص على الحروف متوصلة ولا لأ.`, done: R`في Chrome 156 الحروف العربي فضلت متوصلة والعرض اتغيّر بالكاد (304 و 302 و 324 بخط 48px على «قهوة الصباح الطازة»، والفرق جاي من المسافات بين الكلمات) لأن Chrome مش بيفرّق حروف الكلمة العربي. المتصفحات التانية ممكن تفرّقها، فالمواقع بتكتب [[:lang(ar) h1 { letter-spacing: 0; }]] احتياطي.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** عنوان عربي كبير [[clamp()]] عليه [[letter-spacing: -0.02em]] (زي ما المواقع الإنجليزي بتعمل للعناوين). قيس عرض الكلام بـ [[Range.getBoundingClientRect()]] مع وبدون، وجرّب [[0.2em]] كمان، وبص على الحروف متوصلة ولا لأ.`, done: R`في Chrome 156 الحروف العربي فضلت متوصلة والعرض اتغيّر بالكاد (304 و 302 و 324 بخط 48px على «قهوة الصباح الطازة»، والفرق جاي من المسافات بين الكلمات) لأن Chrome مش بيفرّق حروف الكلمة العربي. المتصفحات التانية ممكن تفرّقها، فالمواقع بتكتب [[:lang(ar) h1 { letter-spacing: 0; }]] احتياطي.`, sol: R`~~~live 300 300
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2908,7 +2908,7 @@ clamp(2rem, 2.5rem + 1vw, 5rem)  52.8px  46.4px                92.8px        76%
             { t: "MDN: --*", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/--*" },
           ],
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:root { --gap: 20; }]] (من غير px) و [[.card { padding: 8px; padding: var(--gap); }]]. الـ padding هيبقى كام: 8 ولا 20 ولا صفر؟`, done: R`صفر ([[0px]] في Chrome)، مش 8! المتصفح بيقبل السطر وقت القراية لأن فيه [[var()]]، ولما يحسب القيمة يلاقيها [[20]] من غير وحدة فيرجّع الخاصية لقيمتها الأصلية (initial)، والسطر اللي قبله (8px) خلاص اتشال. الحل [[--gap: 20px]] أو [[calc(var(--gap) * 1px)]].`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:root { --gap: 20; }]] (من غير px) و [[.card { padding: 8px; padding: var(--gap); }]]. الـ padding هيبقى كام: 8 ولا 20 ولا صفر؟`, done: R`صفر ([[0px]] في Chrome)، مش 8! المتصفح بيقبل السطر وقت القراية لأن فيه [[var()]]، ولما يحسب القيمة يلاقيها [[20]] من غير وحدة فيرجّع الخاصية لقيمتها الأصلية (initial)، والسطر اللي قبله (8px) خلاص اتشال. الحل [[--gap: 20px]] أو [[calc(var(--gap) * 1px)]].`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3010,7 +3010,7 @@ calc(var(--gap) * 1px) مع 20 → padding = 20px
 تغيير --brand لـ #dc2626 من الـ Console:
 خلفية الزرار = rgb(220, 38, 38)   حدود الكارت = rgb(220, 38, 38)   خلفية الشارة = rgb(220, 38, 38)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** دايرة تقدم من غير SVG: [[background: conic-gradient(var(--c) calc(var(--v) * 1%), #ddd 0)]] و [[border-radius: 50%]]، ودايرة أصغر فوقها بلون الخلفية فيها الرقم. ٣ دواير لتطبيق عادات متخيل بـ [[style="--v: 72; --c: green"]] وزيّه.`, done: R`الدايرة اللي [[--v: 72]] متلوّنة ٧٢٪ بالظبط (Computed بيقول [[conic-gradient(rgb(0, 128, 0) 72%, ...)]])، وتغيير الرقم في الـ style بيغيّر الشكل من غير CSS جديد، والدايرة عليها [[role="progressbar"]] و [[aria-valuenow]] بنفس الرقم.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**أشكال:** دايرة تقدم من غير SVG: [[background: conic-gradient(var(--c) calc(var(--v) * 1%), #ddd 0)]] و [[border-radius: 50%]]، ودايرة أصغر فوقها بلون الخلفية فيها الرقم. ٣ دواير لتطبيق عادات متخيل بـ [[style="--v: 72; --c: green"]] وزيّه.`, done: R`الدايرة اللي [[--v: 72]] متلوّنة ٧٢٪ بالظبط (Computed بيقول [[conic-gradient(rgb(0, 128, 0) 72%, ...)]])، وتغيير الرقم في الـ style بيغيّر الشكل من غير CSS جديد، والدايرة عليها [[role="progressbar"]] و [[aria-valuenow]] بنفس الرقم.`, sol: R`~~~live 200 200
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3072,7 +3072,7 @@ conic-gradient(rgb(0, 128, 0) 30%, rgb(221, 221, 221) 0deg)
 الأدوار: progressbar "الشرب": "72" ، progressbar "المشي": "40" ، progressbar "القراية": "95"
 overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كروت ٧ أقسام لمكتبة متخيلة (روايات، وعلوم، وأطفال...) كل كارت عليه [[style="--c: ..."]] بلون مختلف، وكل أجزاء الكارت (الشريط اللي فوق، والأيقونة، والحدود، والخلفية الفاتحة بـ [[color-mix(in oklch, var(--c), white 85%)]]) بتقرا [[var(--c)]].`, done: R`فيه قاعدة CSS واحدة للكارت مش ٧، وزوّدت قسم تامن بسطر HTML بس، والـ hover بـ [[color-mix]] من نفس اللون، والكلام على كل خلفية تباينه 4.5:1 أو أكتر.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** كروت ٧ أقسام لمكتبة متخيلة (روايات، وعلوم، وأطفال...) كل كارت عليه [[style="--c: ..."]] بلون مختلف، وكل أجزاء الكارت (الشريط اللي فوق، والأيقونة، والحدود، والخلفية الفاتحة بـ [[color-mix(in oklch, var(--c), white 85%)]]) بتقرا [[var(--c)]].`, done: R`فيه قاعدة CSS واحدة للكارت مش ٧، وزوّدت قسم تامن بسطر HTML بس، والـ hover بـ [[color-mix]] من نفس اللون، والكلام على كل خلفية تباينه 4.5:1 أو أكتر.`, sol: R`~~~live 230 360
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3139,7 +3139,7 @@ overflow على 360: 0px   axe: 0 violations
 hover على أول كارت: الخلفية بقت rgb(242, 193, 186)
 overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:root { --bp: 400px; }]] و [[@media (min-width: var(--bp)) { p { color: red } }]] على شاشة 500. الفقرة هتبقى حمرا؟`, done: R`لأ: فضلت سودا في Chrome. الـ [[var()]] مبيشتغلش جوه شرط الـ media query (المتغيرات بتتحسب على العناصر، والـ media query مش عنصر). فالـ breakpoints بتتكتب أرقام، أو بأداة build زي Sass أو PostCSS أو [[@custom-media]] لما يبقى مدعوم.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:root { --bp: 400px; }]] و [[@media (min-width: var(--bp)) { p { color: red } }]] على شاشة 500. الفقرة هتبقى حمرا؟`, done: R`لأ: فضلت سودا في Chrome. الـ [[var()]] مبيشتغلش جوه شرط الـ media query (المتغيرات بتتحسب على العناصر، والـ media query مش عنصر). فالـ breakpoints بتتكتب أرقام، أو بأداة build زي Sass أو PostCSS أو [[@custom-media]] لما يبقى مدعوم.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3176,7 +3176,7 @@ matchMedia('(min-width: var(--bp))').matches = false
 نص الشرط بعد ما المتصفح قراه = (min-width: var(--bp))
 لو كتبت 400px مباشرة: لون الفقرة = rgb(255, 0, 0)
 ~~~` },
-            { lvl: 'تحدي', t: R`**بيانات حقيقية:** من JavaScript اقرا كل المتغيرات اللي على [[:root]] ([[getComputedStyle(document.documentElement).getPropertyValue('--brand')]] لكل اسم) واعمل منهم جدول ([[console.table]]) فيه الاسم والقيمة، وبعدين غيّر واحد بـ [[document.documentElement.style.setProperty('--brand', '...')]].`, done: R`الجدول فيه كل الأسامي وقيمها زي ما هي مكتوبة (في Chrome 156 [[--brand]] رجعت [[oklch(0.55 0.2 265)]] من غير مسافات زيادة)، والـ setProperty غيّرت الصفحة كلها في نفس اللحظة، و [[removeProperty]] رجّعتها.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** من JavaScript اقرا كل المتغيرات اللي على [[:root]] ([[getComputedStyle(document.documentElement).getPropertyValue('--brand')]] لكل اسم) واعمل منهم جدول ([[console.table]]) فيه الاسم والقيمة، وبعدين غيّر واحد بـ [[document.documentElement.style.setProperty('--brand', '...')]].`, done: R`الجدول فيه كل الأسامي وقيمها زي ما هي مكتوبة (في Chrome 156 [[--brand]] رجعت [[oklch(0.55 0.2 265)]] من غير مسافات زيادة)، والـ setProperty غيّرت الصفحة كلها في نفس اللحظة، و [[removeProperty]] رجّعتها.`, sol: R`~~~live 140 140
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>

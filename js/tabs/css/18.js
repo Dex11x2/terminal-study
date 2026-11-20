@@ -2144,7 +2144,7 @@ axe: 0
           title: "اشرح الـ box model (Explain the CSS box model)",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين block فوق بعض، الأول [[margin-bottom: 30px]] والتاني [[margin-top: 20px]]. المسافة بينهم كام؟ وكام لو الأب بقى [[display: flex; flex-direction: column]]؟ اكتب، وبعدين قيس بـ [[getBoundingClientRect()]].`, done: R`30px في الـ block (الـ margins بتتلم وبياخد الأكبر)، و 50px في الـ flex (مفيش collapse)، والقياس طابق.`,
-              sol: R`~~~html margin.html
+              sol: R`~~~live 220 220 margin.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>margin collapse</title>
@@ -2179,7 +2179,7 @@ block:              30px
 flex column:        50px
 ~~~` },
             { lvl: 'تطبيق', t: R`**مسألة:** أب عرضه 600px، وجواه عنصر [[width: 50%; padding: 10%; border: 5px solid]]. العرض الكلي كام في content-box وكام في border-box؟ وكام الـ padding الرأسي؟`, done: R`الـ padding ‏60px من كل ناحية (النسبة من عرض الأب حتى فوق وتحت). content-box: ‏300 + 120 + 10 = 430px. border-box: ‏300px والمحتوى 170px. واتأكدت من Computed في DevTools.`,
-              sol: R`~~~html box.html
+              sol: R`~~~live 390 390 box.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>box model</title>
@@ -2394,7 +2394,7 @@ button { background: gray !important; }           /* reset */
 .bg-red { background: red !important; }           /* utility */
 ~~~
 
-~~~html بعد: buttons.html
+~~~live 120 120 بعد: buttons.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>layers</title>
@@ -2559,7 +2559,7 @@ C  أنواع العناصر والـ pseudo-elements    nav  a  ::after
           title: "إمتى تستخدم flex وإمتى grid؟ (Flexbox vs Grid)",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** حاوية 700px و ٥ كروت من غير gap. مرة [[display: flex; flex-wrap: wrap]] والكروت [[flex: 1 1 200px]]، ومرة [[grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))]]. عرض كروت الصف التاني كام في كل واحدة؟`, done: R`flex: الصف الأول ٣ كروت 233.3px والتاني كارتين 350px (بيتمدّوا يملوا الصف). grid: الصفين أعمدتهم 233.3px والكارتين اللي تحت نفس عرض اللي فوق. وقست بـ DevTools.`,
-              sol: R`~~~html wrap-vs-fill.html
+              sol: R`~~~live 190 190 wrap-vs-fill.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>flex ضد grid</title>
@@ -2592,7 +2592,7 @@ flex: 233.3  233.3  233.3  350.0  350.0
 grid: 233.3  233.3  233.3  233.3  233.3
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** ٣ كروت أسعار عناوينهم ومميزاتهم أطوال مختلفة. مرة بـ flex ومرة بـ grid و [[subgrid]] (الكارت [[grid-row: span 3]] و [[grid-template-rows: subgrid]]).`, done: R`في نسخة subgrid العناوين على خط واحد والأزرار على خط واحد في الـ ٣ كروت، وفي flex لأ. ولقطة الاتنين جنب بعض مع overlay الـ grid من DevTools.`,
-              sol: R`~~~html pricing-subgrid.html
+              sol: R`~~~live 590 720 pricing-subgrid.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>subgrid</title>
@@ -2795,7 +2795,7 @@ grid for the page shell, flex inside each component.
           title: "إيه الفرق بين قيم position الخمسة؟",
           practice: [
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** sidebar عليه [[position: sticky; top: 1rem]] ومبيلزقش. جد ليه في النص عليه [[overflow: hidden]] (اتحط زمان عشان يقص ظل). لاقيه من DevTools وصلّحه من غير ما الظل يبوظ.`, done: R`لقيت الجد في Computed، وغيّرته لـ [[overflow: clip]] (مش بيعمل scroll container فالـ sticky بيشتغل) أو شلته، والـ sidebar بقى بيلزق، والظل لسه مقصوص.`,
-              sol: R`~~~html sticky-fix.html
+              sol: R`~~~live 380 380 sticky-fix.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>sticky</title>
@@ -2838,7 +2838,7 @@ overflow: clip    ← top = 16px (لازق)
 الظل والقص: overflow = clip
 ~~~` },
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** مودال [[position: fixed; inset: 0]] جوه كارت عليه [[transform: translateY(-4px)]] وقت الـ hover. لما تفتحه والماوس على الكارت، هيغطي الشاشة ولا الكارت بس؟`, done: R`الكارت بس: الـ transform خلّى الكارت containing block للـ fixed. واتأكدت بـ [[getBoundingClientRect()]] على المودال (مقاسه مقاس الكارت)، والحل portal على الـ body أو [[<dialog>]] بـ [[showModal()]] (بيطلع في الـ top layer).`,
-              sol: R`~~~html fixed-in-transform.html
+              sol: R`~~~live 360 360 fixed-in-transform.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>fixed جوه transform</title>
@@ -3057,7 +3057,7 @@ fixed جوه transform:   618 ← 218    (مشي مع الصفحة)
 فروق بين النسختين: 0
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع عليه [[html, body { overflow-x: hidden }]] عشان «فيه scroll أفقي على الموبايل». شيله، ولاقي العنصر اللي طالع برا الشاشة على 360px بسطر في الكونسول بيدوّر على أي عنصر [[getBoundingClientRect().right]] بتاعه أكبر من [[innerWidth]].`, done: R`لقيت العنصر بالاسم (صورة من غير [[max-width: 100%]] أو عنصر [[width: 100vw]] أو margin سالب)، وصلّحته هو بس، و [[document.documentElement.scrollWidth]] بقى زي [[clientWidth]] من غير overflow على html.`,
-              sol: R`~~~html overflow-hunt.html
+              sol: R`~~~live 160 160 overflow-hunt.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>scroll أفقي</title>
@@ -3253,7 +3253,7 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
           title: "إيه الفرق بين px و em و rem؟ (px vs em vs rem)",
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** html ‏16px، و [[ul { font-size: 0.9em }]]، وفيه ٣ قوايم جوه بعض. الخط في التالتة كام؟ وكام لو [[0.9rem]]؟`, done: R`em: ‏16 × 0.9 × 0.9 × 0.9 = 11.66px (بيصغر كل مستوى). rem: ‏14.4px في الـ ٣. واتأكدت من Computed.`,
-              sol: R`~~~html em-rem.html
+              sol: R`~~~live 210 210 em-rem.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>em و rem</title>
@@ -3282,7 +3282,7 @@ em في المستوى التالت:  11.664px
 rem في المستوى التالت: 14.4px
 ~~~` },
             { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحتين نفس الشكل: واحدة كلها px وواحدة rem. غيّر حجم الخط من إعدادات Chrome (Appearance › Font size › Very large) وبعدين جرّب zoom 200%.`, done: R`مع إعداد الخط صفحة الـ rem كبرت وصفحة الـ px فضلت زي ما هي، ومع الـ zoom الاتنين كبروا. وكتبت ليه ده مهم (ناس كتير بتكبّر الخط من الإعدادات مش بالـ zoom).`,
-              sol: R`~~~html fonts.html
+              sol: R`~~~live 220 220 fonts.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>px و rem</title>
@@ -3687,7 +3687,7 @@ px-5           أيوه  (رغم إنها في تعليق!)
           title: "إيه أهم حاجات الـ accessibility في الفرونت إند؟",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الـ role والاسم في الـ accessibility tree لـ: [[<div onclick="save()">حفظ</div>]]، و [[<button>حفظ</button>]]، و [[<a href="/p">التفاصيل</a>]]، و [[<button><svg aria-hidden="true">…</svg></button>]]؟`, done: R`generic من غير اسم مفيد ومش focusable، و button «حفظ»، و link «التفاصيل»، و button من غير اسم (axe بيطلّع [[button-name]]). واتأكدت من DevTools › Accessibility.`,
-              sol: R`~~~html roles.html
+              sol: R`~~~live 140 140 roles.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>roles</title></head>
@@ -3724,7 +3724,7 @@ px-5           أيوه  (رغم إنها في تعليق!)
 axe: button-name:1
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة فيها المشاكل اللي بتتكرر: [[outline: none]] من غير بديل، و [[onclick]] على div، ومودال مبيحبسش الـ focus، و emoji أيقونات من غير اسم، وحالة باللون بس، و [[text-align: right !important]] على كل [[[dir=rtl]]]، ومفيش skip link، ومفيش [[prefers-reduced-motion]]. صلّح التمانية.`, done: R`axe صفر، والصفحة كلها بالكيبورد بـ focus باين، والمودال بيرجّع الـ focus، والعناصر اللي لازم تتوسّط اتوسّطت تاني، ومع reduce مفيش حركة.`,
-              sol: R`~~~html fixed-page.html
+              sol: R`~~~live 270 270 fixed-page.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>الطلبات</title>
@@ -3920,7 +3920,7 @@ distance fraction = 0.25  (اتحرك ربع ارتفاع الشاشة)
 layout shift      = 1 × 0.25 = 0.25
 ~~~
 
-~~~html banner.html: نفس السيناريو بقياس حقيقي
+~~~live 330 330 banner.html: نفس السيناريو بقياس حقيقي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>CLS</title>
@@ -4149,7 +4149,7 @@ paint بس (رسم من غير ما حاجة تتحرك):    color، و box-shad
 composite غالبًا (من غير رسم):    transform، و opacity
 ~~~
 
-~~~html stages.html: كل خاصية بتتغير 30 مرة، وبنعد المراحل
+~~~live 190 190 stages.html: كل خاصية بتتغير 30 مرة، وبنعد المراحل
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>مراحل الرسم</title>
@@ -4177,7 +4177,7 @@ transform   Layout: 0   Paint: 0.0ms
 opacity     Layout: 0   Paint: 0.0ms
 ~~~` },
             { lvl: 'تطبيق', t: R`**قارن وقيس:** مربع بيتحرك يمين وشمال على طول، مرة بـ [[left]] ومرة بـ [[transform: translateX()]]. سجّل Performance ٥ ثواني بـ CPU 6x slowdown.`, done: R`نسخة left فيها Layout و Paint في كل frame وفريمات أطول، ونسخة transform مفيهاش، وكتبت متوسط مدة الـ frame في الاتنين من الـ Frames track.`,
-              sol: R`~~~html box-left.html
+              sol: R`~~~live 170 170 box-left.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>left</title>
@@ -4355,7 +4355,7 @@ items.forEach((it, i) => it.style.width = (ws[i] + 1) + 'px');
           title: "ليه z-index: 9999 مش بيطلّع العنصر فوق؟",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** هيدر [[position: sticky; z-index: 10]]، و [[main]] عليه [[transform: translateZ(0)]]، وجوه main مودال [[position: fixed; z-index: 9999]]. مين فوق مين؟ وإيه اللي يحصل لو شلت الـ transform؟`, done: R`الهيدر فوق المودال، لأن main بقى context بـ [[z-index: auto]] قدام الهيدر. ولما الـ transform اتشال المودال طلع فوق (وغطّى الشاشة كلها كمان). واتأكدت بـ [[document.elementFromPoint()]] على نقطة في الهيدر.`,
-              sol: R`~~~html stack.html
+              sol: R`~~~live 140 140 stack.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>stacking</title>

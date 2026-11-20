@@ -2004,7 +2004,7 @@ axe: 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
           title: "accordion و FAQ من غير ولا سطر JavaScript",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** سؤالين [[<details name="f">]] والأول [[open]]. دوست على الـ summary بتاع التاني: الأول هيبقى إيه؟ وبعدين من الكونسول عملت [[a.open = true]] للأول: التاني هيبقى إيه؟`, done: R`بعد الضغطة: الأول اتقفل والتاني اتفتح. وبعد [[a.open = true]]: الأول اتفتح والتاني اتقفل لوحده، يعني الـ [[name]] بيشتغل حتى من JavaScript. اتقاس في Chrome 156.`,
-              sol: R`~~~html details-name.html
+              sol: R`~~~live 150 150 details-name.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>مجموعة details</title></head>
@@ -2031,7 +2031,7 @@ axe: 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
 بعد a.open = true:           a.open = true   b.open = false
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** حركة فتح وقفل للـ FAQ من غير JavaScript: [[:root { interpolate-size: allow-keywords }]] و [[details::details-content { block-size: 0; overflow: clip; transition: block-size .4s, content-visibility .4s allow-discrete }]] و [[details[open]::details-content { block-size: auto }]].`, done: R`الإجابة بتنزل بنعومة: قسناها على إجابة 200px في Chrome 156، بعد 200ms من الفتح ارتفاع الـ details كان حوالي 178px (اقراه في كل frame بـ requestAnimationFrame) وفي الآخر 218px. وفي المتصفح اللي مش بيدعم [[::details-content]] أو [[interpolate-size]] بتفتح عادي من غير حركة، ومع reduce من غير حركة.`,
-              sol: R`~~~html faq-anim.html
+              sol: R`~~~live 120 120 faq-anim.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>FAQ بحركة</title>
@@ -2071,7 +2071,7 @@ axe: 0   الـ validator: مفيش رسايل   CSS validator: No Error Found
 مع reduce بعد 50ms:     218px
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** FAQ معمول بـ [[<div class="q" onclick="this.classList.toggle('open')">]] والإجابة [[display: none]] لحد ما الكلاس يتحط. حوّله لـ details و summary.`, done: R`مفيش ولا سطر JavaScript، والسؤال بيتفتح بـ Enter و Space، وقارئ الشاشة بيقول collapsed و expanded، و axe صفر مشاكل، والـ CSS بقى بيستخدم [[details[open]]] بدل [[.open]].`,
-              sol: R`~~~html faq-fixed.html
+              sol: R`~~~live 160 160 faq-fixed.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>الأسئلة</title>
@@ -2333,7 +2333,7 @@ Ctrl+F على كلمة في إجابة مقفولة: في Chrome و Edge الـ 
           title: "tabs بتتحرك بالأسهم زي البرامج الحقيقية",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٤ tabs في صفحة RTL، والـ focus على الأول (اللي على اليمين خالص). دوست سهم شمال: هيروح فين؟ وسهم يمين؟ و End؟`, done: R`سهم شمال = التاني (اللي بعده في القراية)، وسهم يمين = الرابع (لف من الأول للآخر)، و End = الرابع. وكل مرة المحتوى اتغير و [[aria-selected]] اتنقل. واتأكدت بالكيبورد.`,
-              sol: R`~~~html tabs-rtl.html
+              sol: R`~~~live 130 130 tabs-rtl.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>tabs RTL</title></head>
@@ -2468,7 +2468,7 @@ test("التنقل بالكيبورد في tabs عربي", async t => {
 من غير حساب rtl:           pass 0, fail 1 (سهم شمال لازم يروح للتاني)
 ~~~` },
             { lvl: 'تحدي', t: R`**ابني:** لستة نتايج بحث بـ [[aria-activedescendant]] بدل roving: الـ focus فاضل في الـ input، والأسهم بتغيّر الـ option المختار ([[aria-selected]] وكلاس للشكل)، و Enter بيختاره.`, done: R`[[document.activeElement]] هو الـ input وانت بتمشي بالأسهم، وكل option ليه id، و [[aria-activedescendant]] بيتغير معاه، وقارئ الشاشة بيقول اسم الـ option. وكتبت إمتى ده أحسن من roving (لما الكتابة لازم تفضل شغالة).`,
-              sol: R`~~~html search-list.html
+              sol: R`~~~live 260 260 search-list.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>بحث</title>
@@ -2788,7 +2788,7 @@ function select(tab) {
           title: "carousel من CSS بس، وعنوان ميستخباش تحت الـ header",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** carousel في صفحة [[dir="rtl"]]. [[scrollLeft]] بيبدأ بكام؟ ولو عملت [[scrollBy({ left: -100 })]] بيبقى كام؟ وإيه اللي ده بيعنيه لزرار «اللي بعده»؟`, done: R`بيبدأ 0 وبعد الـ scrollBy بقى -100 (اتقاس في Chrome 156): في RTL الـ scroll للشمال بالسالب. فزرار «اللي بعده» في العربي لازم [[scrollBy({ left: -width })]]، والأحسن تضرب في [[dir === "rtl" ? -1 : 1]].`,
-              sol: R`~~~html rtl-scroll.html
+              sol: R`~~~live 170 170 rtl-scroll.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>scrollLeft في RTL</title>
@@ -2826,7 +2826,7 @@ scrollLeft في الأول: 0
 أقصى قيمة: -324
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** زرارين قبل وبعد للـ carousel بـ [[scrollBy]] بعرض كارت + الـ gap، وبيتعطّلوا لما توصل للأول أو الآخر (من [[scrollLeft]] و [[scrollWidth - clientWidth]] بالقيمة المطلقة)، وليهم أسامي عربي.`, done: R`الزراير بتمشي صح في الاتجاهين، والـ snap بيقف على أول الكارت بالظبط، والزرار بيبقى [[disabled]] في الأطراف، وقارئ الشاشة بيقول «اللي بعده، زرار».`,
-              sol: R`~~~html carousel-buttons.html
+              sol: R`~~~live 230 230 carousel-buttons.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>carousel بزراير</title>
@@ -2877,7 +2877,7 @@ scrollLeft في الأول: 0
 axe: 0
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** carousel بيقلب لوحده كل ٣ ثواني بـ [[setInterval]] ومفيش طريقة توقّفه (WCAG 2.2.2). زوّد زرار وقوف وتشغيل، ووقّف مع [[:hover]] و [[:focus-within]] (من JavaScript بـ [[matches]])، وما يشتغلش خالص مع reduce.`, done: R`الزرار بيبدّل [[aria-pressed]] وكلمته، والـ carousel بيقف لما الماوس عليه أو الـ focus جواه، ومع reduce مفيش autoplay من الأول.`,
-              sol: R`~~~html carousel-auto.html
+              sol: R`~~~live 230 230 carousel-auto.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>carousel بيتوقف</title>
@@ -2933,7 +2933,7 @@ WCAG 2.2.2 بيقول: أي حركة بتبدأ لوحدها وبتطول أكت
 axe: 0
 ~~~` },
             { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة بهيدر sticky ارتفاعه 64px، ولينك [[#prices]] لعنوان تحت. دوس اللينك من غير [[scroll-margin-top]] واطبع [[document.querySelector("#prices").getBoundingClientRect().top]]، وبعدين حطه وقيس تاني.`, done: R`قبل: الرقم أقل من 64 (العنوان تحت الهيدر)، وبعد: أكبر من 64 والعنوان باين كله.`,
-              sol: R`~~~html scroll-margin.html
+              sol: R`~~~live 600 720 scroll-margin.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>scroll-margin</title>
@@ -3144,7 +3144,7 @@ h2[id] { scroll-margin-top: 6rem; }
           title: "حركة ناعمة بين حالتين أو صفحتين",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين في الصفحة عليهم نفس [[view-transition-name: product-42]] في نفس الوقت، وبدأت [[document.startViewTransition()]]. هيحصل إيه؟`, done: R`مفيش حركة خالص: الكونسول طلّع «Unexpected duplicate view-transition-name: product-42»، و [[transition.ready]] اترفض بـ «InvalidStateError: Transition was aborted because of invalid state. Snapshot capture failed» (Chrome 156). الاسم لازم يبقى فريد في كل لحظة.`,
-              sol: R`~~~html vt-dup.html
+              sol: R`~~~live 130 130 vt-dup.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>اسم مكرر</title>
@@ -3171,7 +3171,7 @@ h2[id] { scroll-margin-top: 6rem; }
 transition.ready: InvalidStateError: Transition was aborted because of invalid state. Snapshot capture failed
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** شبكة كروت فيها فلتر chips، وكل كارت [[view-transition-name: card-<id>]] (اسم فريد). الفلتر بيتطبق جوه [[startViewTransition]]، فالكروت الفاضلة بتتزحلق لأماكنها الجديدة واللي اتشالت بتختفي.`, done: R`الكروت بتتحرك لأماكنها بدل ما تقفز، ومفيش duplicate في الكونسول، والفلتر شغال من غير حركة في المتصفح اللي مش بيدعم ومع reduce، والـ focus فاضل على الـ chip.`,
-              sol: R`~~~html vt-filter.html
+              sol: R`~~~live 290 290 vt-filter.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>فلتر بحركة</title>
@@ -3444,7 +3444,7 @@ ready ← InvalidStateError
           title: "عنوان سطره الأخير كلمة لوحدها",
           practice: [
             { lvl: 'تطبيق', t: R`**قارن وقيس:** عنوان عربي طويل في كارت عرضه 260 و 300 و 340px، مرة من غير [[text-wrap]] ومرة بـ [[balance]]. قيس عرض كل سطر بـ [[Range.getClientRects()]] (أو بعينك من DevTools).`, done: R`جدول بعرض كل سطر في الحالات الست. ولاحظت إن في مقاسات العنوان أصلًا متوازن فمفيش فرق، وفي مقاسات تانية السطر الأخير بقى أطول بكتير مع [[balance]]، فالخاصية بتفرق في حالات معينة مش كلها.`,
-              sol: R`~~~html wrap-compare.html
+              sol: R`~~~live 600 720 wrap-compare.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>balance</title>
@@ -3495,7 +3495,7 @@ ready ← InvalidStateError
 عنوان تاني على 260: عادي 190 | 200، و balance 190 | 200
 ~~~` },
             { lvl: 'سريع', t: R`**دوّر بنفسك:** [[text-wrap: balance]] حطيته على فقرة ١٢ سطر ومفيش فرق. دوّر في MDN أو وثائق Chrome ليه.`, done: R`عرفت إن المتصفحات بتحدد عدد سطور للـ balance (في Chrome حوالي ٦ سطور، و Firefox أكتر) عشان الحساب تقيل، وإن الفقرات ليها [[pretty]] مش [[balance]]، وكتبت المصدر.`,
-              sol: R`~~~html balance-limit.html
+              sol: R`~~~live 120 120 balance-limit.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>حد الـ balance</title>
@@ -3527,7 +3527,7 @@ ready ← InvalidStateError
 12 سطور: آخر سطر من غير balance 88px، ومعاه 88px ← مفيش فرق
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** كارت منتج: الاسم [[line-clamp-2]]، والسعر [[white-space: nowrap]] برقم وعملة ([[Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" })]])، والوصف [[text-wrap: pretty]]. جرّبه باسم ٣ سطور وسعر كبير.`, done: R`الاسم بيقف على سطرين بـ «…» وقارئ الشاشة لسه بيقرا الاسم كامل (القص شكل بس)، والسعر والعملة على سطر واحد مبيتقسموش، والكارت ارتفاعه ثابت مهما الاسم طال.`,
-              sol: R`~~~html product-text.html
+              sol: R`~~~live 330 330 product-text.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>كارت منتج</title>
@@ -3732,7 +3732,7 @@ CSS.supports('text-wrap', 'balance')   → true
           title: "الميزة دي أستخدمها ولا لسه؟ Baseline و caniuse و @supports",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[CSS.supports("(:has(a))")]] و [[CSS.supports("selector(:has(a))")]]: كل واحد بيرجّع إيه في Chrome 156؟ وليه؟`, done: R`الأول [[false]] والتاني [[true]] (اتقاس). الـ selectors لازم تتسأل بـ [[selector()]]، و [[@supports (:has(a))]] من غيرها دايمًا false فالـ fallback بيشتغل حتى في المتصفح اللي بيدعم.`,
-              sol: R`~~~html supports.html
+              sol: R`~~~live 120 120 supports.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>supports</title></head>
@@ -3792,7 +3792,7 @@ cross-document VT  Limited
 text-wrap: pretty  Limited
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** navbar زجاجي: [[backdrop-filter: blur(12px)]] وخلفية شبه شفافة، و [[@supports not (backdrop-filter: blur(1px))]] بيدّيه خلفية شبه مصمتة. جرّب الـ fallback بإنك تشيل الخاصية من DevTools.`, done: R`في الحالتين الكلام 4.5:1 أو أكتر فوق أفتح وأغمق جزء في الصفحة تحته (اتقاس من DevTools)، والـ fallback شكله مقصود مش مكسور.`,
-              sol: R`~~~html glass-nav.html
+              sol: R`~~~live 260 260 glass-nav.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>navbar زجاجي</title>

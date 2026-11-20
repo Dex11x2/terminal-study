@@ -2057,7 +2057,7 @@ axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360:
             { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
           ],
           practice: [
-            { lvl: 'تطبيق', t: R`**أشكال:** اختيار باقة في جيم متخيل بـ ٣ كروت: كل كارت [[<label class="plan">]] جواه radio ونص، والـ radio مخفي بالشكل بس (حجم 1px و [[clip-path: inset(50%)]])، والكارت المختار حدوده بلون مختلف بـ [[.plan:has(input:checked)]].`, done: R`الضغط على أي حتة في الكارت بيختاره، والأسهم بتنقّل بين الكروت، و [[getComputedStyle(card).borderColor]] على المختار بيرجّع اللون اللي حطيته في الـ :has، ومفيش ولا سطر JavaScript.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**أشكال:** اختيار باقة في جيم متخيل بـ ٣ كروت: كل كارت [[<label class="plan">]] جواه radio ونص، والـ radio مخفي بالشكل بس (حجم 1px و [[clip-path: inset(50%)]])، والكارت المختار حدوده بلون مختلف بـ [[.plan:has(input:checked)]].`, done: R`الضغط على أي حتة في الكارت بيختاره، والأسهم بتنقّل بين الكروت، و [[getComputedStyle(card).borderColor]] على المختار بيرجّع اللون اللي حطيته في الـ :has، ومفيش ولا سطر JavaScript.`, sol: R`~~~live 310 310
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2129,7 +2129,7 @@ overflow على 360: 0px   axe: 0 violations
 
 والـ HTML كامل عشان تجرب:
 
-~~~html
+~~~live 260 260
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2168,7 +2168,7 @@ overflow على 360: 0px   axe: 0 violations
 display: none          BUTTON               ولا حاجة             0
 مخفي بالشكل بس         INPUT a               b             2
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مجموعة radios اسمها [[pay]] ومفيش ولا واحد متعلّم. [[form.elements.pay.value]] هيرجّع إيه؟ وبعد ما تعلّم «كاش» ([[value="cod"]])؟ وهل [[pay]] هيبقى موجود في [[FormData]] قبل الاختيار؟`, done: R`قبل الاختيار رجّع نص فاضي [[""]] (مش null)، وبعده [[cod]]، و [[new FormData(form).has('pay')]] كان [[false]] قبل الاختيار: المجموعة اللي مفيهاش اختيار مبتتبعتش خالص.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مجموعة radios اسمها [[pay]] ومفيش ولا واحد متعلّم. [[form.elements.pay.value]] هيرجّع إيه؟ وبعد ما تعلّم «كاش» ([[value="cod"]])؟ وهل [[pay]] هيبقى موجود في [[FormData]] قبل الاختيار؟`, done: R`قبل الاختيار رجّع نص فاضي [[""]] (مش null)، وبعده [[cod]]، و [[new FormData(form).has('pay')]] كان [[false]] قبل الاختيار: المجموعة اللي مفيهاش اختيار مبتتبعتش خالص.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2204,7 +2204,7 @@ form.elements.pay.value;
 بعد «كاش»:   value = "cod"   FormData.has = true
 نوع form.elements.pay = RadioNodeList
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم دفع فيه [[<input type="radio" name="pay1" value="card">]] و [[<input type="radio" name="pay2" value="cod">]]، و [[<legend>]] مكتوب برّه الـ fieldset. المستخدم قدر يعلّم الاتنين!`, done: R`بعد ما بقوا نفس الـ [[name]] تعليم واحد بيشيل التاني، و [[FormData]] فيه قيمة واحدة لـ [[pay]]، والـ legend جوه الـ fieldset كأول عنصر فتاب Accessibility بقى بيقول اسم المجموعة «طريقة الدفع».`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم دفع فيه [[<input type="radio" name="pay1" value="card">]] و [[<input type="radio" name="pay2" value="cod">]]، و [[<legend>]] مكتوب برّه الـ fieldset. المستخدم قدر يعلّم الاتنين!`, done: R`بعد ما بقوا نفس الـ [[name]] تعليم واحد بيشيل التاني، و [[FormData]] فيه قيمة واحدة لـ [[pay]]، والـ legend جوه الـ fieldset كأول عنصر فتاب Accessibility بقى بيقول اسم المجموعة «طريقة الدفع».`, sol: R`~~~live 150 150
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2249,7 +2249,7 @@ form.elements.pay.value;
   - text: كاش عند الاستلام
 axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** اختبار صغير «أنسب قهوة ليك» من ٣ أسئلة، كل سؤال fieldset و legend و ٣ radios ليهم [[value]] بنقط (1 و 2 و 3)، وزرار يحسب المجموع ويعرض النتيجة في [[<output aria-live="polite">]].`, done: R`لو سؤال مش متجاوب الإرسال بيقف عنده (حط [[required]] على أول radio في كل مجموعة)، والمجموع 3 بيقول «إسبريسو» و 9 بيقول «لاتيه» مثلًا، والنتيجة بتتغيّر من غير reload.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**ابني:** اختبار صغير «أنسب قهوة ليك» من ٣ أسئلة، كل سؤال fieldset و legend و ٣ radios ليهم [[value]] بنقط (1 و 2 و 3)، وزرار يحسب المجموع ويعرض النتيجة في [[<output aria-live="polite">]].`, done: R`لو سؤال مش متجاوب الإرسال بيقف عنده (حط [[required]] على أول radio في كل مجموعة)، والمجموع 3 بيقول «إسبريسو» و 9 بيقول «لاتيه» مثلًا، والنتيجة بتتغيّر من غير reload.`, sol: R`~~~live 550 550
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2328,7 +2328,7 @@ $__lt/script>
 الصفحة اتعمل لها reload: false
 overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[<select>]] و [[<input list="...">]] مع [[<datalist>]]، واعمل حقل «المدينة» بـ datalist فيه ٥ مدن.`, done: R`تقدر تختار من الاقتراحات أو تكتب مدينة مش في اللستة وتتبعت عادي (ده الفرق: datalist اقتراح مش إجبار)، والـ select مبيقبلش غير اللي فيه.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[<select>]] و [[<input list="...">]] مع [[<datalist>]]، واعمل حقل «المدينة» بـ datalist فيه ٥ مدن.`, done: R`تقدر تختار من الاقتراحات أو تكتب مدينة مش في اللستة وتتبعت عادي (ده الفرق: datalist اقتراح مش إجبار)، والـ select مبيقبلش غير اللي فيه.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2634,7 +2634,7 @@ isExpired('2026-06-26', new Date('2026-06-26T00:30'))  → false
 
 الحل الغلط new Date(dateStr) < now في القاهرة 3:01 الفجر يوم 26 → true
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** حاسبة BMI: وزن ([[step="0.1"]] و min و max) وطول بالسنتي، والنتيجة في [[<output>]] بـ [[aria-live="polite"]] بتتحدّث مع كل حرف، وبتستخدم [[valueAsNumber]] مش [[Number(value)]].`, done: R`70 و 175 بيطلّعوا 22.9، والحقل الفاضي بيخلي [[valueAsNumber]] بـ [[NaN]] والنتيجة بتقول «اكتب الوزن» مش NaN، وكتابة 70.55 في الوزن بتطلّع رسالة المتصفح عن أقرب قيمتين.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** حاسبة BMI: وزن ([[step="0.1"]] و min و max) وطول بالسنتي، والنتيجة في [[<output>]] بـ [[aria-live="polite"]] بتتحدّث مع كل حرف، وبتستخدم [[valueAsNumber]] مش [[Number(value)]].`, done: R`70 و 175 بيطلّعوا 22.9، والحقل الفاضي بيخلي [[valueAsNumber]] بـ [[NaN]] والنتيجة بتقول «اكتب الوزن» مش NaN، وكتابة 70.55 في الوزن بتطلّع رسالة المتصفح عن أقرب قيمتين.`, sol: R`~~~live 290 290
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2707,7 +2707,7 @@ overflow على 360: 0px   axe: 0 violations
 
 بعد:
 
-~~~html
+~~~live 130 130
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2740,7 +2740,7 @@ overflow على 360: 0px   axe: 0 violations
 بعد: ta.value = ""   valueMissing = true   الفورم بيتبعت = false
 axe: 0 violations
 ~~~` },
-            { lvl: 'سريع', t: R`**قارن وقيس:** حقل [[type="number" step="1"]]: اكتب فيه 2.5 بالكيبورد واقرا [[validity.stepMismatch]] و [[validationMessage]]. وبعدين غيّر لـ [[step="any"]].`, done: R`مع step 1 رجّع [[true]] والرسالة في Chrome «Please enter a valid value. The two nearest valid values are 2 and 3.»، ومع [[step="any"]] بقى سليم. والفلوس والوزن محتاجين [[step="0.01"]] أو any.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**قارن وقيس:** حقل [[type="number" step="1"]]: اكتب فيه 2.5 بالكيبورد واقرا [[validity.stepMismatch]] و [[validationMessage]]. وبعدين غيّر لـ [[step="any"]].`, done: R`مع step 1 رجّع [[true]] والرسالة في Chrome «Please enter a valid value. The two nearest valid values are 2 and 3.»، ومع [[step="any"]] بقى سليم. والفلوس والوزن محتاجين [[step="0.01"]] أو any.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3035,7 +3035,7 @@ for (const v of ['a@b', 'a@b.', 'a..b@c.com', 'a b@c.com', 'أحمد@example.com
 "أحمد@example.com"   "أحمد@example.com"   false
 " a@b.com "   "a@b.com"   true
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل اسم مستخدم عليه [[pattern="[a-z0-9-]+"]]، والمستخدم كتب [[ABC]] والفورم اتبعت عادي! افتح الـ Console قبل ما تصلّح.`, done: R`الـ Console فيه «Pattern attribute value [a-z0-9-]+ is not a valid regular expression» لأن Chrome بيقرا الـ pattern بفلاج [[v]] وفيه الشَرطة في الآخر لازم تتهرّب، فالـ pattern اتجاهل خالص. بعد [[pattern="[a-z0-9\-]+"]] الـ ABC بقى [[patternMismatch]] و [[ab-1]] بيعدّي.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل اسم مستخدم عليه [[pattern="[a-z0-9-]+"]]، والمستخدم كتب [[ABC]] والفورم اتبعت عادي! افتح الـ Console قبل ما تصلّح.`, done: R`الـ Console فيه «Pattern attribute value [a-z0-9-]+ is not a valid regular expression» لأن Chrome بيقرا الـ pattern بفلاج [[v]] وفيه الشَرطة في الآخر لازم تتهرّب، فالـ pattern اتجاهل خالص. بعد [[pattern="[a-z0-9\-]+"]] الـ ABC بقى [[patternMismatch]] و [[ab-1]] بيعدّي.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3073,7 +3073,7 @@ ABC  → patternMismatch = true  valid = false
 ab-1 → patternMismatch = false  valid = true
 axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيعرض رسالة عربي: [[email.addEventListener('invalid', () => email.setCustomValidity('اكتب إيميل صح'))]]. المستخدم غلط مرة، وبعدين كتب إيميل سليم، ولسه مش قادر يبعت.`, done: R`عرفت إن [[customError]] فضل [[true]] بعد الإيميل السليم ([[checkValidity()]] رجّع false)، لأن محدش رجّعها فاضية. بعد ما زوّدت [[email.addEventListener('input', () => email.setCustomValidity(''))]] بقى بيبعت.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيعرض رسالة عربي: [[email.addEventListener('invalid', () => email.setCustomValidity('اكتب إيميل صح'))]]. المستخدم غلط مرة، وبعدين كتب إيميل سليم، ولسه مش قادر يبعت.`, done: R`عرفت إن [[customError]] فضل [[true]] بعد الإيميل السليم ([[checkValidity()]] رجّع false)، لأن محدش رجّعها فاضية. بعد ما زوّدت [[email.addEventListener('input', () => email.setCustomValidity(''))]] بقى بيبعت.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3118,7 +3118,7 @@ $__lt/script>
 بعد التصليح، نفس الخطوات:        customError = false  checkValidity = true
 axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** مقياس قوة كلمة السر: [[<meter min="0" max="4" low="2" high="3" optimum="4">]] بيتحدّث مع كل حرف (نقطة للطول 8+، وللحروف الكبيرة، وللأرقام، وللرموز)، و [[setCustomValidity]] بيرفض أقل من 3 برسالة بتقول ناقص إيه.`, done: R`[[abc]] بيسيب المقياس فاضي (صفر نقطة) و [[abc1]] بيدّيه أحمر، والاتنين ليهم رسالة فيها الناقص، و [[Abcdef12!]] بيدّيه أخضر والفورم بيتبعت، والمقياس ليه label مربوط ([[<label for="strength">]]) فتاب Accessibility بيقول اسمه.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**ابني:** مقياس قوة كلمة السر: [[<meter min="0" max="4" low="2" high="3" optimum="4">]] بيتحدّث مع كل حرف (نقطة للطول 8+، وللحروف الكبيرة، وللأرقام، وللرموز)، و [[setCustomValidity]] بيرفض أقل من 3 برسالة بتقول ناقص إيه.`, done: R`[[abc]] بيسيب المقياس فاضي (صفر نقطة) و [[abc1]] بيدّيه أحمر، والاتنين ليهم رسالة فيها الناقص، و [[Abcdef12!]] بيدّيه أخضر والفورم بيتبعت، والمقياس ليه label مربوط ([[<label for="strength">]]) فتاب Accessibility بيقول اسمه.`, sol: R`~~~live 260 260
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3211,7 +3211,7 @@ report(document.forms[0]);
 
 وفورم تجرب عليه:
 
-~~~html
+~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3252,7 +3252,7 @@ age: valueMissing
 
 Object.keys(el.validity).length = 0
 ~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** صفحة [[ValidityState]] على MDN فيها ١١ property. اعمل حقل يطلّع [[badInput]] وحقل يطلّع [[rangeOverflow]].`, done: R`[[badInput]] طلع لما كتبت حرف [[e]] لوحده في [[type="number"]] (والـ value بقى [[""]] والرسالة «Please enter a number.»)، و [[rangeOverflow]] لما كتبت 15 في حقل [[max="10"]] (الرسالة «Value must be less than or equal to 10.»).`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** صفحة [[ValidityState]] على MDN فيها ١١ property. اعمل حقل يطلّع [[badInput]] وحقل يطلّع [[rangeOverflow]].`, done: R`[[badInput]] طلع لما كتبت حرف [[e]] لوحده في [[type="number"]] (والـ value بقى [[""]] والرسالة «Please enter a number.»)، و [[rangeOverflow]] لما كتبت 15 في حقل [[max="10"]] (الرسالة «Value must be less than or equal to 10.»).`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3542,7 +3542,7 @@ form.addEventListener('submit', (e) => {
             { t: "MDN: aria-invalid", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid" },
           ],
           practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** فورم طلب لمتجر قهوة متخيل في شبكة: [[.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }]]، والعنوان حقل طويل [[grid-column: 1 / -1]]، وعلى الموبايل عمود واحد، وفوقه صندوق الملخص.`, done: R`على 800px الاسم والموبايل جنب بعض والعنوان واخد السطر كله، وعلى 360px كله تحت بعض، والملخص بيظهر فوق الشبكة مش جواها، والأخطاء تحت كل حقل مش بتكسر الشبكة.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** فورم طلب لمتجر قهوة متخيل في شبكة: [[.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }]]، والعنوان حقل طويل [[grid-column: 1 / -1]]، وعلى الموبايل عمود واحد، وفوقه صندوق الملخص.`, done: R`على 800px الاسم والموبايل جنب بعض والعنوان واخد السطر كله، وعلى 360px كله تحت بعض، والملخص بيظهر فوق الشبكة مش جواها، والأخطاء تحت كل حقل مش بتكسر الشبكة.`, sol: R`~~~live 510 620
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3619,7 +3619,7 @@ form.addEventListener('submit', (e) => {
 overflow: 0px
 axe: 0 violations
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الملخص لينك [[<a href="#email">الإيميل</a>]]. لما تدوس عليه، الـ focus هيروح فين: اللينك، ولا الحقل نفسه، ولا مفيش؟`, done: R`في Chrome [[document.activeElement]] بقى الحقل نفسه ([[#email]])، فالمستخدم يكتب على طول. ده بيحصل بس لو الهدف عنصر بيتركّز عليه (input)؛ لو اللينك رايح لـ div الـ focus مش بيروح له.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الملخص لينك [[<a href="#email">الإيميل</a>]]. لما تدوس عليه، الـ focus هيروح فين: اللينك، ولا الحقل نفسه، ولا مفيش؟`, done: R`في Chrome [[document.activeElement]] بقى الحقل نفسه ([[#email]])، فالمستخدم يكتب على طول. ده بيحصل بس لو الهدف عنصر بيتركّز عليه (input)؛ لو اللينك رايح لـ div الـ focus مش بيروح له.`, sol: R`~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3661,7 +3661,7 @@ document.activeElement = body
 بعد tabindex="-1" على الصندوق:
 document.activeElement = div#box
 ~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** زرارين «بيبعت…»: واحد [[disabled]] وواحد [[aria-disabled="true"]]. من الحقل اللي قبلهم دوس Tab، وبعدين دوس Enter على اللي وصلت له.`, done: R`الـ Tab عدّى الـ disabled ووقف على الـ aria-disabled، والضغط عليه شغّل الـ onclick عادي (اتعدّ مرتين في التجربة). يعني aria-disabled بيسيب الزرار في الكيبورد ويقول إنه مقفول، بس الكود لازم يتأكد بنفسه بـ flag زي [[sending]] في الدرس.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** زرارين «بيبعت…»: واحد [[disabled]] وواحد [[aria-disabled="true"]]. من الحقل اللي قبلهم دوس Tab، وبعدين دوس Enter على اللي وصلت له.`, done: R`الـ Tab عدّى الـ disabled ووقف على الـ aria-disabled، والضغط عليه شغّل الـ onclick عادي (اتعدّ مرتين في التجربة). يعني aria-disabled بيسيب الزرار في الكيبورد ويقول إنه مقفول، بس الكود لازم يتأكد بنفسه بـ flag زي [[sending]] في الدرس.`, sol: R`~~~live 160 160
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3716,7 +3716,7 @@ Enter عليه + Space عليه: العداد = 2
 - button "بيبعت…" [disabled]
 axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**محاكاة:** خلي السيرفر بطيء: بدل الـ fetch حط [[await new Promise((r) => setTimeout(r, 2000))]]، وغيّر كلمة الزرار لـ «بيبعت…» وقت الانتظار. اضغط ٥ مرات ورا بعض بسرعة.`, done: R`عداد في الكود بيقول إن الإرسال اتنفّذ مرة واحدة بس، والزرار رجع «سجّل» بعد ثانيتين، ولو رميت error جوه الـ Promise الزرار برضه رجع (بسبب [[finally]]).`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**محاكاة:** خلي السيرفر بطيء: بدل الـ fetch حط [[await new Promise((r) => setTimeout(r, 2000))]]، وغيّر كلمة الزرار لـ «بيبعت…» وقت الانتظار. اضغط ٥ مرات ورا بعض بسرعة.`, done: R`عداد في الكود بيقول إن الإرسال اتنفّذ مرة واحدة بس، والزرار رجع «سجّل» بعد ثانيتين، ولو رميت error جوه الـ Promise الزرار برضه رجع (بسبب [[finally]]).`, sol: R`~~~live 160 160
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3789,7 +3789,7 @@ $__lt/script>
 الضغط تاني اشتغل: مرات الإرسال = 3
 axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** فورم حجز لعيادة متخيلة بيفتح واتساب برسالة جاهزة: الاسم والميعاد والملاحظات في سطور، و [[window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener')]].`, done: R`الرسالة بتوصل كاملة بالسطور (الـ [[\n]] اتحوّلت [[%0A]])، واسم زي «سلمى & أحمد» بيوصل كامل. ومن غير [[encodeURIComponent]] الـ [[&]] بتقطع الرسالة: [[new URL('https://wa.me/?text=سلمى & أحمد').searchParams.get('text')]] رجّع [[سلمى ]] بس.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**ابني:** فورم حجز لعيادة متخيلة بيفتح واتساب برسالة جاهزة: الاسم والميعاد والملاحظات في سطور، و [[window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener')]].`, done: R`الرسالة بتوصل كاملة بالسطور (الـ [[\n]] اتحوّلت [[%0A]])، واسم زي «سلمى & أحمد» بيوصل كامل. ومن غير [[encodeURIComponent]] الـ [[&]] بتقطع الرسالة: [[new URL('https://wa.me/?text=سلمى & أحمد').searchParams.get('text')]] رجّع [[سلمى ]] بس.`, sol: R`~~~live 390 390
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3869,7 +3869,7 @@ overflow على 360: 0px   axe: 0 violations
 
 **الحل الصح الاتنين مع بعض:** الملخص بيقول إيه الغلط، والرسالة تحت كل حقل بتقول إزاي تصلّحه. والصفحة دي بتوضّح الحالة الأولى: الحقل فوق والزرار تحت:
 
-~~~html
+~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>

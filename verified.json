@@ -4175,14 +4175,14 @@
   "on": "Chrome 157 headless on Windows 11 (file:/// and local Node servers), nginx:alpine in Docker, validator.nu; docs: screen readers, SEO, mail/phone app launch, other browsers"
  },
  "css|(id, class, type)": {
-  "hash": "bff2098a78bb",
+  "hash": "2896e5a2330f",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|4 طبقات و box-sizing": {
-  "hash": "8373d3bd8ae8",
+  "hash": "d6140adfe7fb",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|::before و ::after": {
   "hash": "bb813cf261fa",
@@ -4200,9 +4200,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|:has()": {
-  "hash": "18b379f10efa",
+  "hash": "1d8358865c08",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|:is و :where و :not": {
   "hash": "7915964190e1",
@@ -4225,9 +4225,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|<!doctype html>": {
-  "hash": "25cb26226978",
+  "hash": "a25bbb026361",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|@font-face و font-display": {
   "hash": "617153efe599",
@@ -4240,14 +4240,14 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|@media print": {
-  "hash": "3d973ba0629b",
+  "hash": "85aed56f8be8",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|@property": {
-  "hash": "1501f356beeb",
+  "hash": "a285d264780a",
   "date": "2026-11-20",
-  "on": "Windows: Chrome 157 + Playwright 1.64.1: getComputedStyle backgroundImage على a بـ href وجوه منه (واقف) مقابل a من غير href و button (بيلف)، ولقطتين بعد 300ms متطابقين؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "Windows: Chrome 157 + Playwright 1.64.1: getComputedStyle backgroundImage على a بـ href وجوه منه (واقف) مقابل a من غير href و button (بيلف)، ولقطتين بعد 300ms متطابقين؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|@theme": {
   "hash": "d2aa92f38882",
@@ -4255,34 +4255,34 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|BEM و CSS Modules": {
-  "hash": "039f2e6244d7",
+  "hash": "dc76aa86ed59",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|Baseline و @supports": {
-  "hash": "e4f556cc7194",
+  "hash": "6eb8ffa68285",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|CLS": {
-  "hash": "9e736b8c6b12",
+  "hash": "09b961145f7a",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|CSS nesting": {
-  "hash": "914bc0b9e778",
+  "hash": "450f583edff1",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|CSS variables": {
-  "hash": "1ec64a72c50f",
+  "hash": "01104937046c",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|Constraint Validation API": {
-  "hash": "a0bc7c51d7e0",
+  "hash": "ffa01d455ab1",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|Dialog": {
   "hash": "6db1fd311327",
@@ -4315,14 +4315,14 @@
   "on": "PowerShell 7.6 + 5.1 + Git Bash on Windows 11, Chrome 157 headless, Nu Html Checker, VS Code 1.147 (code . once); docs: VS Code UI steps, Emmet expansions, Live Server, Mac open, Linux xdg-open"
  },
  "css|View Transitions": {
-  "hash": "daeb08ede6f8",
+  "hash": "2e704b70658d",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|WCAG 2.2": {
-  "hash": "9f37d23c9119",
+  "hash": "d19bcb4ebdef",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|[attr] و combinators": {
   "hash": "e7bddc1394c9",
@@ -4330,9 +4330,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|a و button": {
-  "hash": "8747c2fd8e47",
+  "hash": "f268c2bb3a58",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|abbr و dfn و time": {
   "hash": "f76b27c7ac92",
@@ -4340,9 +4340,9 @@
   "on": "Chrome 157 headless on Windows 11; docs: screen reader speech, validator, Firefox/Safari"
  },
  "css|accessibility: لحد axe صفر": {
-  "hash": "e948d65b219b",
+  "hash": "722f38edbe34",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|angle و time و ident": {
   "hash": "56d056d8a80f",
@@ -4350,9 +4350,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, CSS.supports, screenshots); docs: Firefox/Safari support, :fullscreen, :autofill, screen readers, Baseline years"
  },
  "css|animation-timeline": {
-  "hash": "66cdec2e9f6c",
+  "hash": "e8d15814a3e8",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|appearance وتنسيق الفورم": {
   "hash": "11fac411b88c",
@@ -4365,9 +4365,9 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|aria": {
-  "hash": "d04d96680731",
+  "hash": "0a34629b5851",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|audio و source": {
   "hash": "c5cc9b9fecfb",
@@ -4375,9 +4375,9 @@
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
  },
  "css|auto-fit و minmax": {
-  "hash": "a277af199346",
+  "hash": "4e3dda7b434b",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|autofocus و accesskey و draggable": {
   "hash": "34ea7378286a",
@@ -4385,9 +4385,9 @@
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
  },
  "css|axe و Lighthouse": {
-  "hash": "a45ea435bcd0",
+  "hash": "8fc108033e70",
   "date": "2026-11-20",
-  "on": "Windows: Chrome 157 + axe-core 4.14.0 (Playwright 1.64.1): الفقرة لوحدها violations 1، ومع هيدر عربي inapplicable، و isIconLigature بالترتيب؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "Windows: Chrome 157 + axe-core 4.14.0 (Playwright 1.64.1): الفقرة لوحدها violations 1، ومع هيدر عربي inapplicable، و isIconLigature بالترتيب؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|background-color و background-image": {
   "hash": "9ff29cc280f7",
@@ -4410,9 +4410,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
  "css|box model": {
-  "hash": "fbb30f0ae5f2",
+  "hash": "d2130dc740ea",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|canvas و noscript و template": {
   "hash": "5ffe2a25ab54",
@@ -4420,14 +4420,14 @@
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
  },
  "css|cascade": {
-  "hash": "aaed37a8770a",
+  "hash": "943a8cbd2b37",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|clamp()": {
-  "hash": "0c6627c2d6c8",
+  "hash": "9651cc75879c",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|cn()": {
   "hash": "761555fc2142",
@@ -4460,14 +4460,14 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
  },
  "css|container queries": {
-  "hash": "7ff67e0c6607",
+  "hash": "a53d81d5763e",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|containing block": {
-  "hash": "60c8551abd53",
+  "hash": "707352bec6ad",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|content-visibility و will-change": {
   "hash": "73f621fc56e8",
@@ -4480,14 +4480,14 @@
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
  },
  "css|contrast ratio": {
-  "hash": "e05a8e586b54",
+  "hash": "acb4b29561ba",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|critical CSS": {
-  "hash": "f755eeadc30b",
+  "hash": "576eb62fb737",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|cubic-bezier و steps و linear": {
   "hash": "959cf75b596c",
@@ -4505,9 +4505,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
  },
  "css|dark mode": {
-  "hash": "e3016a6df071",
+  "hash": "ded1ad7de185",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|datalist و output": {
   "hash": "76f84ee2d1f3",
@@ -4515,9 +4515,9 @@
   "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
  },
  "css|details و summary": {
-  "hash": "5cf6f2faae52",
+  "hash": "ba9d8654a8fa",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|dialog و closedby": {
   "hash": "fc6c81647f80",
@@ -4525,9 +4525,9 @@
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
  },
  "css|display": {
-  "hash": "fa162d47ef9a",
+  "hash": "84317c9e7d9f",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|dl و dt و dd": {
   "hash": "cf51522e43ac",
@@ -4540,14 +4540,14 @@
   "on": "Chrome 157 headless on Windows 11 (file:/// and local Node servers), nginx:alpine in Docker, validator.nu; docs: screen readers, SEO, mail/phone app launch, other browsers"
  },
  "css|dvh": {
-  "hash": "96c6c1678e61",
+  "hash": "6ffa850c9a17",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|fieldset و radio": {
-  "hash": "9fa865b6b949",
+  "hash": "b6ecb5f8a753",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|figure و figcaption": {
   "hash": "0905a72738b7",
@@ -4570,14 +4570,14 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
  },
  "css|flex: 1": {
-  "hash": "02b4bae7d27f",
+  "hash": "026e42355486",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|flexbox": {
-  "hash": "d13ac89e2926",
+  "hash": "7318178e3cb5",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|float و clear": {
   "hash": "40d879bd906d",
@@ -4585,9 +4585,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, rects, screenshots), W3C CSS validator; docs: DevTools UI steps, touch behaviour, other browsers"
  },
  "css|focus-visible": {
-  "hash": "bb9dda1906c2",
+  "hash": "515b3eb73c6e",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|font-family و font-size": {
   "hash": "ee5959aced58",
@@ -4605,19 +4605,19 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, screenshots, local Node server for fonts); docs: :visited rendering, font block period, hyphens: auto, other browsers"
  },
  "css|form و label": {
-  "hash": "2dcb2c6f49d6",
+  "hash": "3103b36cd61c",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|grid": {
-  "hash": "90a8507fea23",
+  "hash": "aa0e16800dad",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|grid-template-areas": {
-  "hash": "f0b54f3e3763",
+  "hash": "f0e1374f7de8",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|group و peer": {
   "hash": "55ffd157218e",
@@ -4640,9 +4640,9 @@
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
  },
  "css|img": {
-  "hash": "33427beda5c6",
+  "hash": "09e90055af6e",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|inherit و initial و revert": {
   "hash": "dce2d3eb810f",
@@ -4660,59 +4660,59 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|landing page: الأسئلة والـ CTA والـ footer والحركة": {
-  "hash": "87fbd42ceee4",
+  "hash": "c1620685956e",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|landing page: الألوان والثيم والعربي": {
-  "hash": "9aeb43295666",
+  "hash": "07f44ca82716",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|landing page: الصورة الكبيرة": {
-  "hash": "3ee3d578e4ed",
+  "hash": "6e428b30e645",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|landing page: الـ header والـ hero": {
-  "hash": "a07dc8192e63",
+  "hash": "65e993d63d79",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|landing page: المميزات والآراء والأسعار": {
-  "hash": "8bf8c122ea62",
+  "hash": "0bfb1a95b510",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|landing page: فحص accessibility والنشر والغلطات": {
-  "hash": "e2b20e00c1e5",
+  "hash": "038a5fa4a4da",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|landing page: فورم تسجيل accessible": {
-  "hash": "43959dd7c2a0",
+  "hash": "e18835bcf1b0",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|landing page: مصفوفة المقاسات والأداء": {
-  "hash": "da094ab43ca7",
+  "hash": "b7c59f352ee0",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|lang و dir": {
-  "hash": "71494bff62ee",
+  "hash": "a5f6db1edca0",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|layout thrashing": {
-  "hash": "881e31ec5531",
+  "hash": "b6f50cbec8a3",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|layouts بالـ flex والـ grid": {
-  "hash": "ba1e806d97b6",
+  "hash": "a1d276c3654a",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|linear-gradient و radial-gradient": {
   "hash": "6f65a9fcb2c2",
@@ -4730,9 +4730,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, screenshots, local Node server for fonts); docs: :visited rendering, font block period, hyphens: auto, other browsers"
  },
  "css|logical properties": {
-  "hash": "17ab5863193d",
+  "hash": "707bca9fea11",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|lucide-react": {
   "hash": "18937ae338fe",
@@ -4760,9 +4760,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values and screenshots); docs: Safari/Firefox, wide-gamut rendering, Forced Colors, EXIF orientation"
  },
  "css|media queries": {
-  "hash": "6ca93a91dd81",
+  "hash": "2730cc2ce379",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|meta http-equiv و theme-color": {
   "hash": "a4c161993985",
@@ -4790,9 +4790,9 @@
   "on": "PowerShell 7.6 + 5.1 + Git Bash on Windows 11, Chrome 157 headless, Nu Html Checker, VS Code 1.147 (code . once); docs: VS Code UI steps, Emmet expansions, Live Server, Mac open, Linux xdg-open"
  },
  "css|mobile-first": {
-  "hash": "6e010b3b7051",
+  "hash": "2d332bc07d60",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|motion": {
   "hash": "603e6a5710dd",
@@ -4800,9 +4800,9 @@
   "on": "Windows: Chrome 157 + Playwright 1.64.1 (--no-proxy-server): LCP entries للهيرو fade من 0 (فقرة 864ms) مقابل translate بس (h1 136ms)؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|next/font": {
-  "hash": "f0856057558a",
+  "hash": "52e56f5ed6cc",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|normal flow و margin collapsing": {
   "hash": "782b2c393920",
@@ -4840,9 +4840,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
  },
  "css|picture": {
-  "hash": "9cfab92b8bb1",
+  "hash": "5b28672ffeae",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|place-items و align-self": {
   "hash": "5ba58c5d0b16",
@@ -4855,9 +4855,9 @@
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
  },
  "css|position: absolute": {
-  "hash": "cde1437d0723",
+  "hash": "4ca1eae798d0",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|preload و preconnect و prefetch": {
   "hash": "7503c3f09c3c",
@@ -4875,14 +4875,14 @@
   "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
  },
  "css|rem من الـ root": {
-  "hash": "bcafe68b810f",
+  "hash": "4ff5a928d523",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|rem و em": {
-  "hash": "d3a827d3cc5e",
+  "hash": "944d7b2794af",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|replaced elements والتراخيص": {
   "hash": "59ffed754cf2",
@@ -4920,9 +4920,9 @@
   "on": "Chrome 157 headless on Windows 11 (local Node server with delays, CDP network and accessibility tree); docs: search engines, PWA install, screen readers, dns-prefetch, theme-color"
  },
  "css|scroll-snap و scroll-margin": {
-  "hash": "c5cbc3e812d7",
+  "hash": "0a7845823c4d",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|search": {
   "hash": "1045e545e65e",
@@ -4930,19 +4930,19 @@
   "on": "Chrome 157 headless on Windows 11 (file:/// and local Node servers), nginx:alpine in Docker, validator.nu; docs: screen readers, SEO, mail/phone app launch, other browsers"
  },
  "css|selectors": {
-  "hash": "4bf0dbb9ad7b",
+  "hash": "958531a019bf",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|semantic HTML": {
-  "hash": "95bb42b27076",
+  "hash": "26c0f8ac06f2",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|semantic HTML أولًا": {
-  "hash": "73a9f6884df1",
+  "hash": "9a43edb38415",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|shadcn/ui": {
   "hash": "c89227965aba",
@@ -4950,14 +4950,14 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|specificity": {
-  "hash": "911c3c5bc9d9",
+  "hash": "0008ebcdc9ff",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|stacking context": {
-  "hash": "317255322560",
+  "hash": "ff8371fefab3",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|start index.html و Ctrl+R": {
   "hash": "a9a5576fa9ea",
@@ -4965,9 +4965,9 @@
   "on": "PowerShell 7.6 + 5.1 + Git Bash on Windows 11, Chrome 157 headless, Nu Html Checker, VS Code 1.147 (code . once); docs: VS Code UI steps, Emmet expansions, Live Server, Mac open, Linux xdg-open"
  },
  "css|sticky و fixed": {
-  "hash": "9257d72af0c2",
+  "hash": "7729d9ef837e",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|stroke-dasharray و fill-rule": {
   "hash": "ec935f8ca614",
@@ -4990,9 +4990,9 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|table": {
-  "hash": "2fd7751b1f52",
+  "hash": "ec0ef914d32d",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|table-layout و caption-side": {
   "hash": "30a893c31eff",
@@ -5015,14 +5015,14 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, screenshots, local Node server for fonts); docs: :visited rendering, font block period, hyphens: auto, other browsers"
  },
  "css|text-wrap": {
-  "hash": "4c1086098046",
+  "hash": "b318554883f9",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|textarea و date و number": {
-  "hash": "3b036040cc70",
+  "hash": "7a3f49ed7174",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|track و WebVTT": {
   "hash": "0fac6a925368",
@@ -5040,9 +5040,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
  },
  "css|transition و @keyframes": {
-  "hash": "c18bae882671",
+  "hash": "9a2024e18097",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|ul و ol": {
   "hash": "1526de52d052",
@@ -5055,9 +5055,9 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|video و iframe": {
-  "hash": "19b5a533e3d4",
+  "hash": "d0f07c7de334",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|white-space و overflow-wrap": {
   "hash": "99473a0a419c",
@@ -5065,9 +5065,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, screenshots, local Node server for fonts); docs: :visited rendering, font block period, hyphens: auto, other browsers"
  },
  "css|z-index": {
-  "hash": "3e61a2d22f20",
+  "hash": "20d484894bcf",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|أزرار الفورم: formaction وإخواته": {
   "hash": "edcf4b11dae4",
@@ -5075,9 +5075,9 @@
   "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
  },
  "css|أشكال بالـ CSS": {
-  "hash": "4733d3b60f4e",
+  "hash": "97bad9d79b7e",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|أنواع input كلها": {
   "hash": "d38f72851b35",
@@ -5095,9 +5095,9 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|احجز المكان": {
-  "hash": "fe31fb55a5d3",
+  "hash": "aba95dee07ba",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|المراجعة النهائية: مقاسات و a11y وأداء ونشر": {
   "hash": "9d4e43832e74",
@@ -5130,14 +5130,14 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|بُعد واحد وبُعدين": {
-  "hash": "c506559053b3",
+  "hash": "05262cd44fce",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|ترتيب وصفحات في الـ URL": {
-  "hash": "71f704d5e838",
+  "hash": "f1fb630e8bce",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|تكبير الخط و prefers-reduced-motion": {
   "hash": "d52b37769da2",
@@ -5145,9 +5145,9 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
  },
  "css|توقّع الـ cascade": {
-  "hash": "b13f83a0499b",
+  "hash": "464ecea26903",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|توليد on-demand": {
   "hash": "4a01dd6ffe22",
@@ -5155,9 +5155,9 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|جدول responsive": {
-  "hash": "4af204fd581d",
+  "hash": "87fcbe602b22",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|داشبورد ١: الـ shell والـ sidebar والأرقام": {
   "hash": "270476fa7a52",
@@ -5175,19 +5175,19 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|صفحات بتفيض على 360": {
-  "hash": "39f05f69e061",
+  "hash": "2f686e91079f",
   "date": "2026-11-20",
-  "on": "Chrome 157 بـ Playwright على Windows 11: الفحص الذاتي بسطر التوصيل جوه { } (PASS 4 الفرع)، وفحص الفيضان على الصفحة البايظة 0 من 8 والسليمة 8 من 8 بعد %20 في الـ data URI؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "Chrome 157 بـ Playwright على Windows 11: الفحص الذاتي بسطر التوصيل جوه { } (PASS 4 الفرع)، وفحص الفيضان على الصفحة البايظة 0 من 8 والسليمة 8 من 8 بعد %20 في الـ data URI؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|صفحات من وصف": {
-  "hash": "abb6e308b5af",
+  "hash": "6814620e1bba",
   "date": "2026-11-20",
-  "on": "Chrome 157 بـ Playwright على Windows 11: الفحص الذاتي بسطر التوصيل جوه { } (PASS 4 الفرع)، وفحص الفيضان على الصفحة البايظة 0 من 8 والسليمة 8 من 8 بعد %20 في الـ data URI؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "Chrome 157 بـ Playwright على Windows 11: الفحص الذاتي بسطر التوصيل جوه { } (PASS 4 الفرع)، وفحص الفيضان على الصفحة البايظة 0 من 8 والسليمة 8 من 8 بعد %20 في الـ data URI؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|صلّح الكود البايظ": {
-  "hash": "aebbaaba904b",
+  "hash": "62068cc13771",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|فحص الـ CSS: validator و DevTools": {
   "hash": "8cb81f48f367",
@@ -5205,14 +5205,14 @@
   "on": "Chrome 157 headless on Windows 11; Nu Html Checker; docs: screen reader speech (W3C WAI, MDN)"
  },
  "css|كلمة بتتبدّل في عنوان": {
-  "hash": "96ba3f487864",
+  "hash": "96fa31e218b2",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|كيبورد وقارئ شاشة": {
-  "hash": "3fd14f54ee22",
+  "hash": "d6e0f8612009",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|ليه الـ accessibility": {
   "hash": "007649656b7c",
@@ -5220,14 +5220,14 @@
   "on": "Chrome 157 headless on Windows 11 (computed values, sampled animations, screenshots); docs: W3C WAI, MDN, Google Search Central, assistive technology behaviour, other browsers"
  },
  "css|مراحل الرسم": {
-  "hash": "6bd4d0b3c1c7",
+  "hash": "1e7f76de977c",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|مسائل بالـ JS على الصفحة": {
-  "hash": "c6e4200e3366",
+  "hash": "d9de60e35d93",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|مشروع portfolio و dashboard: الخريطة": {
   "hash": "15923dcc5158",
@@ -5235,14 +5235,14 @@
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
  },
  "css|مصفوفة مقاسات": {
-  "hash": "922269ba0797",
+  "hash": "5e87cc4f61ac",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|مقدمة CSS وتنسيق العناصر": {
-  "hash": "b85929d92846",
+  "hash": "91b98d2ca3ea",
   "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس"
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs؛ ref اتضاف ٢٠ نوفمبر من غير تغيير في باقي الدرس؛ حلول التمارين بقت ~~~live (عرض حي) ٢٠ نوفمبر من غير تغيير في الكود"
  },
  "css|مقدمة HTML والـ Tags": {
   "hash": "ef952f4770bb",

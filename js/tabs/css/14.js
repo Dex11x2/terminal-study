@@ -2378,7 +2378,7 @@ axe (والـ dialog مفتوح): 0   الـ validator: مفيش رسايل   CS
           ],
           title: "حركة ناعمة بالـ CSS بس",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مع [[transition: all 300ms]]، أنهي تغيير من دول هيتحرك بنعومة وأنهي هيقفز: [[opacity: 0 → 1]]، و [[transform: scale(.9) → none]]، و [[background-color]]، و [[display: none → block]]، و [[height: 0 → auto]]، و [[visibility: hidden → visible]]؟ اكتب، وجرّب كل واحد بكلاس بيتضاف.`, done: R`opacity و transform و background-color ناعمين، و display و [[height: auto]] بيقفزوا (محتاجين [[@starting-style]] و [[transition-behavior: allow-discrete]] و [[interpolate-size]] في درس لاحق)، و visibility بيتقلب مرة واحدة في أول أو آخر الـ transition. وفهمت ليه [[transition: all]] خطر: بيحرّك حاجات مكنتش قاصدها.`, sol: R`~~~html test.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مع [[transition: all 300ms]]، أنهي تغيير من دول هيتحرك بنعومة وأنهي هيقفز: [[opacity: 0 → 1]]، و [[transform: scale(.9) → none]]، و [[background-color]]، و [[display: none → block]]، و [[height: 0 → auto]]، و [[visibility: hidden → visible]]؟ اكتب، وجرّب كل واحد بكلاس بيتضاف.`, done: R`opacity و transform و background-color ناعمين، و display و [[height: auto]] بيقفزوا (محتاجين [[@starting-style]] و [[transition-behavior: allow-discrete]] و [[interpolate-size]] في درس لاحق)، و visibility بيتقلب مرة واحدة في أول أو آخر الـ transition. وفهمت ليه [[transition: all]] خطر: بيحرّك حاجات مكنتش قاصدها.`, sol: R`~~~live 190 190 test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2436,7 +2436,7 @@ display block ، height 18px ، visibility visible            (وصلوا فور
 
 display و height مش في اللستة خالص.
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقع حاطط [[@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important } }]] بس، وفيه loader بـ [[infinite]]. فعّل reduce من DevTools › Rendering وبص على الـ loader، واطبع [[document.getAnimations()[0].effect.getComputedTiming().currentIteration]].`, done: R`الـ loader بيترعش بدل ما يقف، والرقم بيطلع بالآلاف (قسناه 10001 بعد 300ms في Chrome 156). بعد ما زوّدت [[animation-iteration-count: 1 !important]] الحركة خلصت و [[getAnimations()]] رجّعت لستة فاضية.`, sol: R`~~~html loader.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقع حاطط [[@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important } }]] بس، وفيه loader بـ [[infinite]]. فعّل reduce من DevTools › Rendering وبص على الـ loader، واطبع [[document.getAnimations()[0].effect.getComputedTiming().currentIteration]].`, done: R`الـ loader بيترعش بدل ما يقف، والرقم بيطلع بالآلاف (قسناه 10001 بعد 300ms في Chrome 156). بعد ما زوّدت [[animation-iteration-count: 1 !important]] الحركة خلصت و [[getAnimations()]] رجّعت لستة فاضية.`, sol: R`~~~live 130 130 loader.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2472,7 +2472,7 @@ display و height مش في اللستة خالص.
 
 (الرقم بيتغيّر مع وقت القياس. الدرس قاس 10001.)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** اعمل ٣ حركات صغيرة من غير JavaScript: نقطة «مباشر» بتنبض بـ [[scale]] و [[opacity]] (ping)، ونجوم بتلمع كل واحدة بـ [[animation-delay]] مختلف من [[--i]]، و «موجة صوت» من ٥ أعمدة بـ [[scaleY]] و delays متدرجة.`, done: R`التلاتة شغالين بـ transform و opacity بس (مفيش width ولا height ولا top في الـ keyframes)، والأعمدة بتتحرك من تحت مش من النص ([[transform-origin: bottom]])، ومع reduce التلاتة واقفين في شكل مفهوم.`, sol: R`~~~html shapes.html
+            { lvl: 'تطبيق', t: R`**أشكال:** اعمل ٣ حركات صغيرة من غير JavaScript: نقطة «مباشر» بتنبض بـ [[scale]] و [[opacity]] (ping)، ونجوم بتلمع كل واحدة بـ [[animation-delay]] مختلف من [[--i]]، و «موجة صوت» من ٥ أعمدة بـ [[scaleY]] و delays متدرجة.`, done: R`التلاتة شغالين بـ transform و opacity بس (مفيش width ولا height ولا top في الـ keyframes)، والأعمدة بتتحرك من تحت مش من النص ([[transform-origin: bottom]])، ومع reduce التلاتة واقفين في شكل مفهوم.`, sol: R`~~~live 350 350 shapes.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2537,7 +2537,7 @@ axe صفر ، وعلى 360 مفيش scroll أفقي
 ~~~` },
             { lvl: 'تطبيق', t: R`**قارن وقيس:** shimmer للـ skeleton مرتين: مرة بـ [[@keyframes]] على [[background-position]]، ومرة بـ [[::after]] فيه gradient بيتحرك بـ [[translateX]]. شغّل DevTools › Rendering › Paint flashing.`, done: R`النسخة الأولى بتنوّر أخضر طول الوقت (repaint كل frame)، والتانية مبتنوّرش غير مرة في الأول لأن transform بيتعمل في الـ compositor. وكتبت إمتى الفرق ده يهم (لستة فيها ٢٠ skeleton على موبايل ضعيف).`, sol: R`النسخة التقيلة:
 
-~~~html bad.html
+~~~live 160 160 bad.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2556,7 +2556,7 @@ axe صفر ، وعلى 360 مفيش scroll أفقي
 
 النسخة الخفيفة:
 
-~~~html good.html
+~~~live 160 160 good.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2589,7 +2589,7 @@ trace لمدة ثانية واحدة:
 background     608       0
 transform      28        0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** scroll reveal: [[[data-reveal]]] بيبدأ [[opacity: 0; translate: 0 16px]] وبيظهر لما يدخل الشاشة بكلاس [[in]] من IntersectionObserver، وكل عنصر [[transition-delay: calc(var(--i) * 80ms)]]، و [[unobserve]] بعد أول ظهور. والإخفاء بيبدأ بس لو html عليه كلاس [[js]].`, done: R`مع JavaScript مقفول كل المحتوى ظاهر من الأول، ومعاه العناصر بتطلع ورا بعض مرة واحدة بس (الـ scroll لفوق وتحت مبيعيدهاش)، ومع reduce بتظهر من غير حركة.`, sol: R`~~~html reveal.html
+            { lvl: 'تطبيق', t: R`**ابني:** scroll reveal: [[[data-reveal]]] بيبدأ [[opacity: 0; translate: 0 16px]] وبيظهر لما يدخل الشاشة بكلاس [[in]] من IntersectionObserver، وكل عنصر [[transition-delay: calc(var(--i) * 80ms)]]، و [[unobserve]] بعد أول ظهور. والإخفاء بيبدأ بس لو html عليه كلاس [[js]].`, done: R`مع JavaScript مقفول كل المحتوى ظاهر من الأول، ومعاه العناصر بتطلع ورا بعض مرة واحدة بس (الـ scroll لفوق وتحت مبيعيدهاش)، ومع reduce بتظهر من غير حركة.`, sol: R`~~~live 470 470 reveal.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2650,7 +2650,7 @@ JavaScript مقفول: الكروت الـ 3 ظاهرة في لقطة الصفح
 reduce: opacity 1 ، transition-duration 0s
 axe صفر
 ~~~` },
-            { lvl: 'تحدي', t: R`**مسألة:** marquee لوجوهات لا نهائي: المحتوى مكرر مرتين جوه [[display: flex; width: max-content]] و [[translateX(-50%)]] بيلف من غير ما يبان مكان الوصلة. وقّفه مع [[:hover]] و [[:focus-within]] بـ [[animation-play-state: paused]]، وظبّطه في RTL، ومع reduce خليه لستة بـ scroll أفقي عادي.`, done: R`مفيش نطة ولا فراغ عند نقطة التكرار في الاتجاهين، وفي RTL عملت keyframes تانية لـ [[translateX(50%)]] (لأن [[animation-direction: reverse]] بيعكس الوقت مش الاتجاه فبيبيّن فراغ)، والنسخة المكررة عليها [[aria-hidden="true"]] فقارئ الشاشة بيقرا اللوجوهات مرة واحدة.`, sol: R`~~~html marquee.html
+            { lvl: 'تحدي', t: R`**مسألة:** marquee لوجوهات لا نهائي: المحتوى مكرر مرتين جوه [[display: flex; width: max-content]] و [[translateX(-50%)]] بيلف من غير ما يبان مكان الوصلة. وقّفه مع [[:hover]] و [[:focus-within]] بـ [[animation-play-state: paused]]، وظبّطه في RTL، ومع reduce خليه لستة بـ scroll أفقي عادي.`, done: R`مفيش نطة ولا فراغ عند نقطة التكرار في الاتجاهين، وفي RTL عملت keyframes تانية لـ [[translateX(50%)]] (لأن [[animation-direction: reverse]] بيعكس الوقت مش الاتجاه فبيبيّن فراغ)، والنسخة المكررة عليها [[aria-hidden="true"]] فقارئ الشاشة بيقرا اللوجوهات مرة واحدة.`, sol: R`~~~live 160 160 marquee.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3451,7 +3451,7 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
           },
           sol: R`(١) [[textContent]]: على 900 حافة آخر كلمة بتتحرك مع كل تبديل (في المعمل 667 ثم 657 ثم 496)، وعلى 360 ارتفاع العنوان بيتغيّر (52 و 104). (٢) [[absolute]]: عرض الـ span صفر، والكلمة راكبة على اللي بعدها، وعلى 360 [[scrollWidth]] أكبر من 360. (٣) [[inline-grid]]: عرض الـ span ثابت = أطول كلمة (258 في المعمل)، وحافة آخر كلمة ثابتة، والارتفاع ثابت. ولو العنوان كبير والكلمة الطويلة خرجت برا 360، صغّر الخط بـ [[clamp()]].`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[.swap { display: inline-grid }]] فيه ٣ كلمات عرضها 87 و 97 و 258، وكلهم [[grid-area: 1 / 1]] والمستخبيين [[opacity: 0]]. عرض [[.swap]] كام؟ ولو المستخبيين [[display: none]] بدل [[opacity: 0]]؟ اكتب، وبعدين قيس بـ [[getBoundingClientRect().width]].`, done: R`كتبت 258 في الحالة الأولى، وفي التانية عرض الكلمة الظاهرة بس (87 أو 97 أو 258 حسب الظاهرة)، والقياس طابق.`, sol: R`~~~html test.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[.swap { display: inline-grid }]] فيه ٣ كلمات عرضها 87 و 97 و 258، وكلهم [[grid-area: 1 / 1]] والمستخبيين [[opacity: 0]]. عرض [[.swap]] كام؟ ولو المستخبيين [[display: none]] بدل [[opacity: 0]]؟ اكتب، وبعدين قيس بـ [[getBoundingClientRect().width]].`, done: R`كتبت 258 في الحالة الأولى، وفي التانية عرض الكلمة الظاهرة بس (87 أو 97 أو 258 حسب الظاهرة)، والقياس طابق.`, sol: R`~~~live 120 120 test.html
 <!doctype html>
 <meta charset="utf-8">
 <title>عرض الخلية</title>
@@ -3477,7 +3477,7 @@ $__lt/script>
 opacity: 0    →  258
 display: none →  87 (عرض الكلمة الظاهرة)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** الـ hero ده: عنوان فيه كلمة بتتبدّل بين ٤ كلمات (عربي)، وزرار تحت العنوان. اعمله بـ [[inline-grid]]، و [[prefers-reduced-motion]]، وجملة [[sr-only]]. اتأكد بـ Playwright إن مكان الزرار ([[getBoundingClientRect().top]]) ثابت في ٤ تبديلات على 1440 و 360.`, done: R`٨ أرقام لـ [[top]] الزرار: ٤ متساويين على 1440، و ٤ متساويين على 360، ومفيش scroll أفقي على 360.`, sol: R`~~~html hero.html
+            { lvl: 'تطبيق', t: R`**ابني:** الـ hero ده: عنوان فيه كلمة بتتبدّل بين ٤ كلمات (عربي)، وزرار تحت العنوان. اعمله بـ [[inline-grid]]، و [[prefers-reduced-motion]]، وجملة [[sr-only]]. اتأكد بـ Playwright إن مكان الزرار ([[getBoundingClientRect().top]]) ثابت في ٤ تبديلات على 1440 و 360.`, done: R`٨ أرقام لـ [[top]] الزرار: ٤ متساويين على 1440، و ٤ متساويين على 360، ومفيش scroll أفقي على 360.`, sol: R`~~~live 240 150 hero.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3541,7 +3541,7 @@ scrollWidth = clientWidth في الاتنين ، axe صفر
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<span class="w"></span>]] و [[setInterval(() => w.textContent = words[i++ % 3], 2000)]]، والكلام اللي بعد الكلمة بيتنطط. حوّله لـ [[inline-grid]] من غير ما تغيّر الكلمات ولا الوقت، وقيس [[right]] بتاع الكلمة اللي بعده قبل وبعد.`, done: R`قبل: ٣ قيم مختلفة لـ [[right]]. بعد: قيمة واحدة في الـ ٣ تبديلات.`, sol: R`قبل:
 
-~~~html before.html
+~~~live 250 250 before.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>قبل</title><style>body { font: 2rem system-ui; }</style></head>
@@ -3560,7 +3560,7 @@ $__lt/script>
 
 بعد:
 
-~~~html after.html
+~~~live 250 290 after.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3622,7 +3622,7 @@ h1 { font-size: clamp(1.75rem, 8vw, 5rem); }
 
 الثابت طالع برا في 320 و 360.
 ~~~` },
-            { lvl: 'تحدي', t: R`**أشكال:** اعمل تأثير gooey بالفلتر اللي في الدرس، بس الفلتر يتحط بكلاس [[morphing]] وقت التبديل بس (٦٠٠ms) ويتشال بعدها. خد لقطتين بـ Playwright: والعنوان واقف، ووسط التبديل. والعربي لازم يبقى مقري في اللقطة الأولى.`, done: R`لقطة الوقوف: الحروف والنقط واضحة ومفيش فلتر على العنصر ([[getComputedStyle(el).filter]] = [[none]]). لقطة التبديل: الكلمتين ملزوقين كـ blob، و [[filter]] فيها [[url]].`, sol: R`~~~html gooey.html
+            { lvl: 'تحدي', t: R`**أشكال:** اعمل تأثير gooey بالفلتر اللي في الدرس، بس الفلتر يتحط بكلاس [[morphing]] وقت التبديل بس (٦٠٠ms) ويتشال بعدها. خد لقطتين بـ Playwright: والعنوان واقف، ووسط التبديل. والعربي لازم يبقى مقري في اللقطة الأولى.`, done: R`لقطة الوقوف: الحروف والنقط واضحة ومفيش فلتر على العنصر ([[getComputedStyle(el).filter]] = [[none]]). لقطة التبديل: الكلمتين ملزوقين كـ blob، و [[filter]] فيها [[url]].`, sol: R`~~~live 210 210 gooey.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>

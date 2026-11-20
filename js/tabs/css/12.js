@@ -1825,7 +1825,7 @@ CSS validator: No Error Found (الملفين)
           ],
           title: "لما HTML لوحده ميكفيش: قول لقارئ الشاشة الحالة",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الـ role والاسم، وهل بيتوصل بـ Tab، لكل واحد: [[<button aria-label="القايمة"><svg aria-hidden="true">…</svg></button>]]، و [[<div role="button">حفظ</div>]]، و [[<a>الأسعار</a>]] من غير href، و [[<img src="logo.png" alt="">]]. اكتب، وبعدين افتح DevTools › Elements › Accessibility لكل واحد.`, done: R`الأول button اسمه «القايمة» وبيتوصل، والتاني button اسمه «حفظ» بس مش بيتوصل بـ Tab ولا Enter بيشغّله، والتالت مش link أصلًا (generic) ومش بيتوصل، والرابع ignored (زخرفة). وفهمت ليه [[<button>]] أحسن من [[role="button"]].`, sol: R`~~~html test.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الـ role والاسم، وهل بيتوصل بـ Tab، لكل واحد: [[<button aria-label="القايمة"><svg aria-hidden="true">…</svg></button>]]، و [[<div role="button">حفظ</div>]]، و [[<a>الأسعار</a>]] من غير href، و [[<img src="logo.png" alt="">]]. اكتب، وبعدين افتح DevTools › Elements › Accessibility لكل واحد.`, done: R`الأول button اسمه «القايمة» وبيتوصل، والتاني button اسمه «حفظ» بس مش بيتوصل بـ Tab ولا Enter بيشغّله، والتالت مش link أصلًا (generic) ومش بيتوصل، والرابع ignored (زخرفة). وفهمت ليه [[<button>]] أحسن من [[role="button"]].`, sol: R`~~~live 150 150 test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>مين اسمه إيه؟</title></head>
@@ -1866,7 +1866,7 @@ CSS validator: No Error Found (الملفين)
 
 Tab: one ، BODY ، one ، BODY   (الزرار الحقيقي بس)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة عربي فيها زرار تغيير اللغة بـ [[aria-label="Switch language"]] إنجليزي، وزرار منيو موبايل من غير [[aria-expanded]]، وأزرار مشاركة جواها emoji بس، وحالة الطلب بتتعرض بنقطة حمرا أو خضرا من غير كلام. صلّح الأربعة.`, done: R`الـ labels بقت عربي، و [[aria-expanded]] بيتقلب [[true]] و [[false]] مع الفتح والقفل، والـ emoji عليها [[aria-hidden]] والزرار ليه اسم، والحالة جنبها كلمة («اتشحن»)، و axe صفر مشاكل.`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة عربي فيها زرار تغيير اللغة بـ [[aria-label="Switch language"]] إنجليزي، وزرار منيو موبايل من غير [[aria-expanded]]، وأزرار مشاركة جواها emoji بس، وحالة الطلب بتتعرض بنقطة حمرا أو خضرا من غير كلام. صلّح الأربعة.`, done: R`الـ labels بقت عربي، و [[aria-expanded]] بيتقلب [[true]] و [[false]] مع الفتح والقفل، والـ emoji عليها [[aria-hidden]] والزرار ليه اسم، والحالة جنبها كلمة («اتشحن»)، و axe صفر مشاكل.`, sol: R`~~~live 190 190 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1928,7 +1928,7 @@ ariaSnapshot:
 - button "انسخ الرابط"
 - paragraph: طلب 1042 اتشحن
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** نظام toast: حاوية [[<div role="status" aria-live="polite">]] موجودة فاضية في الصفحة من أول ما تفتح، ورسالة «اتحفظ» بتتحط جواها بعد الحفظ وتختفي بعد ٤ ثواني، ورسايل الخطأ في حاوية تانية [[role="alert"]].`, done: R`NVDA أو Narrator بيقول «اتحفظ» من غير ما الـ focus يتحرك ([[document.activeElement]] قبل وبعد نفس العنصر)، والخطأ بيتقري على طول حتى لو فيه كلام شغال. وجرّبت تعمل الحاوية والرسالة مع بعض في نفس اللحظة ولاحظت إن القارئ ممكن ميقولش حاجة، فعرفت ليه الحاوية لازم تبقى موجودة قبل الرسالة.`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**ابني:** نظام toast: حاوية [[<div role="status" aria-live="polite">]] موجودة فاضية في الصفحة من أول ما تفتح، ورسالة «اتحفظ» بتتحط جواها بعد الحفظ وتختفي بعد ٤ ثواني، ورسايل الخطأ في حاوية تانية [[role="alert"]].`, done: R`NVDA أو Narrator بيقول «اتحفظ» من غير ما الـ focus يتحرك ([[document.activeElement]] قبل وبعد نفس العنصر)، والخطأ بيتقري على طول حتى لو فيه كلام شغال. وجرّبت تعمل الحاوية والرسالة مع بعض في نفس اللحظة ولاحظت إن القارئ ممكن ميقولش حاجة، فعرفت ليه الحاوية لازم تبقى موجودة قبل الرسالة.`, sol: R`~~~live 160 180 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2281,7 +2281,7 @@ status live="polite" atomic=true relevant="additions text"
           ],
           title: "الموقع بيشتغل بالكيبورد لوحده؟",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:focus-visible]] هيطابق ولا لأ في الحالات دي: دوست على [[<button>]] بالماوس، ودوست على [[<input>]] بالماوس، ووصلت للزرار بـ Tab؟ اكتب، وبعدين جرّب بـ [[document.activeElement.matches(":focus-visible")]] في الكونسول.`, done: R`الزرار بالماوس [[false]]، والـ input بالماوس [[true]] (حقول الكتابة بتبيّن الـ focus دايمًا)، والزرار بـ Tab [[true]]. اتقاس كده في Chrome 156.`, sol: R`~~~html test.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:focus-visible]] هيطابق ولا لأ في الحالات دي: دوست على [[<button>]] بالماوس، ودوست على [[<input>]] بالماوس، ووصلت للزرار بـ Tab؟ اكتب، وبعدين جرّب بـ [[document.activeElement.matches(":focus-visible")]] في الكونسول.`, done: R`الزرار بالماوس [[false]]، والـ input بالماوس [[true]] (حقول الكتابة بتبيّن الـ focus دايمًا)، والزرار بـ Tab [[true]]. اتقاس كده في Chrome 156.`, sol: R`~~~live 120 120 test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>focus-visible</title></head>
@@ -2310,7 +2310,7 @@ document.activeElement.matches(":focus-visible")
 input بالماوس:  true
 زرار بـ Tab:    true
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[*:focus { outline: none }]] عشان «شكله وحش»، وفيه [[:focus-visible { border-radius: 4px }]] بيغيّر شكل الزراير المدورة وقت الـ focus. شيل الاتنين واعمل حلقة focus واحدة بتبان على الفاتح والغامق: [[outline: 2px solid var(--ring)]] و [[outline-offset: 2px]].`, done: R`Tab على كل عنصر بيطلّع حلقة 2px أو أكتر، تباينها مع اللي جنبها 3:1 أو أكتر في الثيمين (من مربع اللون في DevTools)، وشكل الزرار المدوّر مبيتغيرش، وبالماوس مفيش حلقة على الزراير.`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[*:focus { outline: none }]] عشان «شكله وحش»، وفيه [[:focus-visible { border-radius: 4px }]] بيغيّر شكل الزراير المدورة وقت الـ focus. شيل الاتنين واعمل حلقة focus واحدة بتبان على الفاتح والغامق: [[outline: 2px solid var(--ring)]] و [[outline-offset: 2px]].`, done: R`Tab على كل عنصر بيطلّع حلقة 2px أو أكتر، تباينها مع اللي جنبها 3:1 أو أكتر في الثيمين (من مربع اللون في DevTools)، وشكل الزرار المدوّر مبيتغيرش، وبالماوس مفيش حلقة على الزراير.`, sol: R`~~~live 190 190 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2354,7 +2354,7 @@ Tab على اللينك:   solid 2px ، offset 2px ، rgb(15, 118, 110)
 الثيم الغامق:     solid 2px ، rgb(45, 212, 191)
 axe صفر
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** skip link و [[<main id="main" tabindex="-1">]] في صفحة طويلة بهيدر sticky ارتفاعه 64px. امشي بـ Tab لتحت: لينكات بتستخبى تحت الهيدر. صلّحها بـ [[scroll-padding-top: 72px]] على html (WCAG 2.4.11 Focus Not Obscured).`, done: R`أول Tab بيطلّع لينك التخطي و Enter بينقل الـ focus لـ main، ولما تمشي بـ Tab للآخر [[document.activeElement.getBoundingClientRect().top]] دايمًا أكبر من 64، يعني مفيش عنصر عليه focus تحت الهيدر.`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**ابني:** skip link و [[<main id="main" tabindex="-1">]] في صفحة طويلة بهيدر sticky ارتفاعه 64px. امشي بـ Tab لتحت: لينكات بتستخبى تحت الهيدر. صلّحها بـ [[scroll-padding-top: 72px]] على html (WCAG 2.4.11 Focus Not Obscured).`, done: R`أول Tab بيطلّع لينك التخطي و Enter بينقل الـ focus لـ main، ولما تمشي بـ Tab للآخر [[document.activeElement.getBoundingClientRect().top]] دايمًا أكبر من 64، يعني مفيش عنصر عليه focus تحت الهيدر.`, sol: R`~~~live 600 720 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2410,7 +2410,7 @@ Shift+Tab من غيره:
 آخر رقمين تحت الهيدر.
 axe صفر
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** مودال بـ [[<dialog>]] و [[showModal()]]: فيه حقل وزرار «قفل». افتحه بزرار، وامشي جواه بـ Tab، واقفله بـ Escape.`, done: R`أول ما يفتح الـ focus على الحقل، و Tab بيلف بين الحقل والزرار (وممكن يعدّي على شريط المتصفح) ومبيوصلش لأي عنصر ورا المودال، وبعد Escape [[document.activeElement]] هو زرار الفتح. اتقاس في Chrome 156: الترتيب حقل ← قفل ← المتصفح ← حقل، وبعد Escape رجع للزرار.`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**ابني:** مودال بـ [[<dialog>]] و [[showModal()]]: فيه حقل وزرار «قفل». افتحه بزرار، وامشي جواه بـ Tab، واقفله بـ Escape.`, done: R`أول ما يفتح الـ focus على الحقل، و Tab بيلف بين الحقل والزرار (وممكن يعدّي على شريط المتصفح) ومبيوصلش لأي عنصر ورا المودال، وبعد Escape [[document.activeElement]] هو زرار الفتح. اتقاس في Chrome 156: الترتيب حقل ← قفل ← المتصفح ← حقل، وبعد Escape رجع للزرار.`, sol: R`~~~live 160 160 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2460,7 +2460,7 @@ Tab 3:          name
 بعد Escape:     open (زرار الفتح) ، dialog.open = false
 axe صفر
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها بالترتيب: [[<button>]] ثم [[<input>]] ثم [[<div tabindex="2">]] ثم [[<div tabindex="1">]] ثم [[<a href="#">]]. ترتيب Tab هيبقى إيه؟ وليه الـ tabindex الموجب ممنوع تقريبًا؟`, done: R`الترتيب: [[tabindex="1"]] ثم [[tabindex="2"]] ثم الزرار ثم الـ input ثم اللينك (الموجب بيتنط قبل كل الصفحة)، واتأكدت بالضغط على Tab. وكتبت إن الحل [[0]] أو [[-1]] بس، والترتيب ييجي من ترتيب الـ HTML.`, sol: R`~~~html test.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها بالترتيب: [[<button>]] ثم [[<input>]] ثم [[<div tabindex="2">]] ثم [[<div tabindex="1">]] ثم [[<a href="#">]]. ترتيب Tab هيبقى إيه؟ وليه الـ tabindex الموجب ممنوع تقريبًا؟`, done: R`الترتيب: [[tabindex="1"]] ثم [[tabindex="2"]] ثم الزرار ثم الـ input ثم اللينك (الموجب بيتنط قبل كل الصفحة)، واتأكدت بالضغط على Tab. وكتبت إن الحل [[0]] أو [[-1]] بس، والترتيب ييجي من ترتيب الـ HTML.`, sol: R`~~~live 170 170 test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>ترتيب Tab</title></head>
@@ -2491,7 +2491,7 @@ axe صفر
 ~~~text الناتج
 Tab: one ← two ← btn ← inp ← lnk
 ~~~` },
-            { lvl: 'تحدي', t: R`**مسألة:** mega menu بيفتح بـ [[:hover]] بس، فبالكيبورد اللينكات اللي جواه مخفية ومبتتوصلش. خليه يفتح بالكيبورد كمان من غير JavaScript بـ [[:focus-within]]، ويفضل مفتوح وانت ماشي جواه بـ Tab، ويتقفل لما تخرج منه.`, done: R`بالماوس بعيد: Tab على عنوان القسم بيفتح المنيو، و Tab جواه بيعدّي على كل لينك وهو باين، و Tab بعد آخر لينك بيقفله. والـ outline باين على كل لينك.`, sol: R`~~~html index.html
+            { lvl: 'تحدي', t: R`**مسألة:** mega menu بيفتح بـ [[:hover]] بس، فبالكيبورد اللينكات اللي جواه مخفية ومبتتوصلش. خليه يفتح بالكيبورد كمان من غير JavaScript بـ [[:focus-within]]، ويفضل مفتوح وانت ماشي جواه بـ Tab، ويتقفل لما تخرج منه.`, done: R`بالماوس بعيد: Tab على عنوان القسم بيفتح المنيو، و Tab جواه بيعدّي على كل لينك وهو باين، و Tab بعد آخر لينك بيقفله. والـ outline باين على كل لينك.`, sol: R`~~~live 140 140 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2787,7 +2787,7 @@ node --test contrast.test.mjs
 ℹ pass 4
 ℹ fail 0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في كارت منتج: الكلام الباهت [[#8a8f98]] على أبيض، و badge «عرض» خلفيته [[#f59e0b]] (كهرماني) والكلام عليه أبيض. قيس الاتنين وصلّحهم من غير ما الكهرماني يتغير.`, done: R`قبل: 3.25:1 للباهت و 2.15:1 للـ badge. بعد: الباهت [[#6b7280]] (‏4.83:1)، والـ badge فضل كهرماني بس الكلام عليه غامق [[#1f2937]] (‏6.83:1)، و axe مبيطلّعش [[color-contrast]].`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في كارت منتج: الكلام الباهت [[#8a8f98]] على أبيض، و badge «عرض» خلفيته [[#f59e0b]] (كهرماني) والكلام عليه أبيض. قيس الاتنين وصلّحهم من غير ما الكهرماني يتغير.`, done: R`قبل: 3.25:1 للباهت و 2.15:1 للـ badge. بعد: الباهت [[#6b7280]] (‏4.83:1)، والـ badge فضل كهرماني بس الكلام عليه غامق [[#1f2937]] (‏6.83:1)، و axe مبيطلّعش [[color-contrast]].`, sol: R`~~~live 200 200 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>

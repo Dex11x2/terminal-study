@@ -1287,7 +1287,7 @@ img.childNodes.length = 0
 <div><img src="x.png" width="100" height="100"></div>
 ~~~
 
-~~~html b.html
+~~~live 120 120 b.html
 <!doctype html>
 <div><img src="x.png" width="100" height="100"></div>
 ~~~
@@ -1312,7 +1312,7 @@ document.querySelector('div').getBoundingClientRect().height
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «جيم الأبطال» عنوانها في التاب طالع [[Ø¬ÙŠÙ… Ø§Ù„Ø£Ø¨Ø·Ø§Ù„]]، والـ head فيه [[<meta charset="iso-8859-1">]]. اعرف السبب من [[document.characterSet]] وصلّحه.`, done: R`قبل التصليح [[document.characterSet]] رجّع [[windows-1252]] (المتصفح بيعامل iso-8859-1 كده)، يعني كل حرف عربي (بايتين في UTF-8) اتقري حرفين لاتيني. بعد [[<meta charset="utf-8">]] في أول الـ head بيرجّع [[UTF-8]] والعنوان «جيم الأبطال».`, sol: R`الـ head بعد التصليح:
 
-~~~html
+~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1627,7 +1627,7 @@ interactive h1=true
             { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
           ],
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]] فيه فقرتين عرضهم 300px: واحدة [[text-align: start]] وواحدة [[text-align: left]]. لو غيّرت الصفحة لـ [[dir="ltr"]]، أنهي فقرة هتغيّر مكان الكلام؟`, done: R`اللي [[start]] بس: كانت يمين وبقت شمال لأن «البداية» بتمشي مع الاتجاه، واللي [[left]] فضلت شمال في الحالتين. وده سبب إن الكود اللي بيشتغل عربي وإنجليزي بيكتب start و end مش left و right.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]] فيه فقرتين عرضهم 300px: واحدة [[text-align: start]] وواحدة [[text-align: left]]. لو غيّرت الصفحة لـ [[dir="ltr"]]، أنهي فقرة هتغيّر مكان الكلام؟`, done: R`اللي [[start]] بس: كانت يمين وبقت شمال لأن «البداية» بتمشي مع الاتجاه، واللي [[left]] فضلت شمال في الحالتين. وده سبب إن الكود اللي بيشتغل عربي وإنجليزي بيكتب start و end مش left و right.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1658,7 +1658,7 @@ interactive h1=true
 start       272    0     اتحركت
 left        0      0       فضلت شمال
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** لستة تعليقات في صفحة عربي، والاسم جاي من الداتابيز: [[<li>Mona_7 5 تعليقات</li>]]. افتحها وبص الرقم 5 لازق في مين، وبعدين صلّحها.`, done: R`من غير عزل الرقم 5 اتعرض يمين الاسم ولازق فيه كأنه جزء منه ([[Mona_7 5]] وبعدهم [[تعليقات]] لوحدها)، لأن الرقم بياخد اتجاه الكلام الإنجليزي اللي جنبه. بـ [[<bdi>Mona_7</bdi> 5 تعليقات]] الرقم رجع جنب كلمة تعليقات. اتقاس بمكان كل حرف بـ Range في Chrome.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** لستة تعليقات في صفحة عربي، والاسم جاي من الداتابيز: [[<li>Mona_7 5 تعليقات</li>]]. افتحها وبص الرقم 5 لازق في مين، وبعدين صلّحها.`, done: R`من غير عزل الرقم 5 اتعرض يمين الاسم ولازق فيه كأنه جزء منه ([[Mona_7 5]] وبعدهم [[تعليقات]] لوحدها)، لأن الرقم بياخد اتجاه الكلام الإنجليزي اللي جنبه. بـ [[<bdi>Mona_7</bdi> 5 تعليقات]] الرقم رجع جنب كلمة تعليقات. اتقاس بمكان كل حرف بـ Range في Chrome.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1692,7 +1692,7 @@ left        0      0       فضلت شمال
 قبل: الرقم على يمين الاسم مباشرة (لازق فيه)
 بعد: الرقم بين الاسم وكلمة تعليقات، جنب كلمة تعليقات
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت حجز لـ «عيادة الشفاء» (اسم متخيل) في صفحة عربي فيه: رقم تليفون بـ +، وإيميل، وكود حجز زي [[BK-2026-17]]، وميعاد [[10:30 AM]]، وحقل إيميل يكتب فيه المريض.`, done: R`كل قيمة إنجليزي بتظهر بنفس ترتيب حروفها اللي كتبتها (الـ + في الأول)، و [[getComputedStyle(el).direction]] على كل span منهم بيرجّع [[ltr]]، وحقل الإيميل المؤشر فيه بيبدأ من الشمال.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** كارت حجز لـ «عيادة الشفاء» (اسم متخيل) في صفحة عربي فيه: رقم تليفون بـ +، وإيميل، وكود حجز زي [[BK-2026-17]]، وميعاد [[10:30 AM]]، وحقل إيميل يكتب فيه المريض.`, done: R`كل قيمة إنجليزي بتظهر بنفس ترتيب حروفها اللي كتبتها (الـ + في الأول)، و [[getComputedStyle(el).direction]] على كل span منهم بيرجّع [[ltr]]، وحقل الإيميل المؤشر فيه بيبدأ من الشمال.`, sol: R`~~~live 400 400
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1739,7 +1739,7 @@ direction الحقل: ltr   text-align المحسوبة: start
 المؤشر بيبدأ من شمال الحقل: x الـ input = 25
 overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** حقل بحث بـ [[dir="auto"]]. اكتب فيه [[hello]] وبعدين امسحه واكتب [[أهلا]]، وفي كل مرة اسأل [[input.matches(':dir(rtl)')]] في الـ Console.`, done: R`مع الإنجليزي الحقل بقى ltr ([[:dir(ltr)]] رجّع [[true]])، ومع العربي بقى rtl، من غير JavaScript. وعرفت إن [[dir="auto"]] بيختار حسب أول حرف «قوي» في الكلام، فهو أنسب لحقل ممكن يتكتب فيه أي لغة.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** حقل بحث بـ [[dir="auto"]]. اكتب فيه [[hello]] وبعدين امسحه واكتب [[أهلا]]، وفي كل مرة اسأل [[input.matches(':dir(rtl)')]] في الـ Console.`, done: R`مع الإنجليزي الحقل بقى ltr ([[:dir(ltr)]] رجّع [[true]])، ومع العربي بقى rtl، من غير JavaScript. وعرفت إن [[dir="auto"]] بيختار حسب أول حرف «قوي» في الكلام، فهو أنسب لحقل ممكن يتكتب فيه أي لغة.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1777,7 +1777,7 @@ hello       true        false
 ~~~` },
             { lvl: 'سريع', t: R`**دوّر بنفسك:** [[lang]] مش لقارئ الشاشة بس. دوّر في MDN على ٣ حاجات تانية بتتغيّر حسب قيمته (ابدأ بصفحة [[hyphens]] و [[:lang()]]).`, done: R`عندك ٣: تقسيم الكلمات في آخر السطر ([[hyphens: auto]] مش بيشتغل من غير lang)، و selector [[:lang(en)]]، واختيار الخط والترجمة التلقائية في المتصفح. ولكل واحد سطر كود جربته.`, sol: R`**الإجابة النموذجية: ٣ حاجات بتتغيّر بـ** [[lang]] **غير قارئ الشاشة:**
 
-~~~html
+~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1954,7 +1954,7 @@ hyphens: auto: ارتفاع الفقرة بـ lang = 18px ومن غيره 18px (
             { t: "MDN Curriculum: Accessibility", url: "https://developer.mozilla.org/en-US/curriculum/core/accessibility/" },
           ],
           practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة هبوط لـ «عيادة الابتسامة» (اسم متخيل) من ٧ أجزاء: الهيرو، والخدمات، والخطوات، والأطبا، والأسعار، والأسئلة، والتواصل. كل جزء [[<section id="...">]] وجواه h2، والـ header فيه nav بلينك لكل جزء، والفوتر برّه الـ main.`, done: R`تاب Accessibility (أو ARIA snapshot) بيورّي banner و navigation و main و contentinfo، وفيه h1 واحد وتحته ٧ h2، والضغط على أي لينك في الـ nav بينزل للجزء بتاعه والـ URL بيبقى فيه [[#الاسم]].`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة هبوط لـ «عيادة الابتسامة» (اسم متخيل) من ٧ أجزاء: الهيرو، والخدمات، والخطوات، والأطبا، والأسعار، والأسئلة، والتواصل. كل جزء [[<section id="...">]] وجواه h2، والـ header فيه nav بلينك لكل جزء، والفوتر برّه الـ main.`, done: R`تاب Accessibility (أو ARIA snapshot) بيورّي banner و navigation و main و contentinfo، وفيه h1 واحد وتحته ٧ h2، والضغط على أي لينك في الـ nav بينزل للجزء بتاعه والـ URL بيبقى فيه [[#الاسم]].`, sol: R`~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2021,7 +2021,7 @@ overflow على 360: 0px   axe: 0 violations
 ~~~` },
             { lvl: 'تطبيق', t: R`**refactor:** خد الصفحة دي: [[<div class="header">]] فيه اللوجو والقايمة، و [[<div class="content">]] للمحتوى، و [[<div class="footer">]]. حوّلها لعناصر semantic من غير ما الشكل يتغيّر ولا class واحد يتشال.`, done: R`قبل: axe طلّع [[region]] (محتوى برّه أي landmark). بعد: صفر violations، والصفحة شكلها نفس الشكل بالظبط (خد screenshot قبل وبعد وقارن)، والـ landmarks الأربعة ظاهرين في تاب Accessibility.`, sol: R`قبل:
 
-~~~html before.html
+~~~live 260 260 before.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2048,7 +2048,7 @@ overflow على 360: 0px   axe: 0 violations
 
 بعد (نفس الـ classes، والـ tags بس اللي اتغيّرت):
 
-~~~html after.html
+~~~live 260 260 after.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2086,7 +2086,7 @@ axe بعد: 0 violations
 الـ screenshot قبل وبعد متطابقين بايت ببايت على 1280: true
 overflow على 360: 0px
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها header فوق خالص، و article جواه header و footer، و aside، و section ليه [[aria-labelledby]]، و section تاني من غيره. اكتب الـ role اللي تتوقّعه لكل واحد، وبعدين شوف تاب Accessibility.`, done: R`الـ header اللي فوق banner، بس الـ header والـ footer اللي جوه الـ article ملهمش landmark خالص (بقوا جزء من الـ article)، و aside بقى complementary، والـ section اللي ليه اسم بقى region، واللي من غير اسم ملوش role. اتشاف في ARIA snapshot من Chrome.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها header فوق خالص، و article جواه header و footer، و aside، و section ليه [[aria-labelledby]]، و section تاني من غيره. اكتب الـ role اللي تتوقّعه لكل واحد، وبعدين شوف تاب Accessibility.`, done: R`الـ header اللي فوق banner، بس الـ header والـ footer اللي جوه الـ article ملهمش landmark خالص (بقوا جزء من الـ article)، و aside بقى complementary، والـ section اللي ليه اسم بقى region، واللي من غير اسم ملوش role. اتشاف في ARIA snapshot من Chrome.`, sol: R`~~~live 290 290
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2138,7 +2138,7 @@ ARIA snapshot من Chrome:
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة فيها اتنين [[<main>]]، والعنوان اللي بعد h1 هو h4 «عشان الخط أصغر». شغّل axe (إضافة axe DevTools أو Lighthouse) وصلّح كل اللي يطلع.`, done: R`axe قبل التصليح طلّع [[landmark-no-duplicate-main]] و [[heading-order]] (ومعاهم [[landmark-unique]])، وبعد ما بقى main واحد والعنوان h2 (والخط صغّرته بـ CSS) بقوا صفر.`, sol: R`قبل:
 
-~~~html before.html
+~~~live 160 160 before.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2155,7 +2155,7 @@ ARIA snapshot من Chrome:
 
 بعد:
 
-~~~html after.html
+~~~live 150 150 after.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2189,7 +2189,7 @@ axe قبل: heading-order , landmark-no-duplicate-main , landmark-unique
 axe بعد: 0 violations
 عدد main بعد = 1   العناوين: H1 32px , H2 16px
 ~~~` },
-            { lvl: 'تحدي', t: R`**أشكال:** ٣ كروت آراء عملا بـ [[<figure>]] و [[<blockquote>]] و [[<figcaption>]]، وكل كارت فيه دايرة بأول حرف من اسم العميل (من غير صور: [[width]] و [[height]] 48px و [[border-radius: 50%]] ولون خلفية)، وعلامة تنصيص كبيرة باهتة بـ [[::before]].`, done: R`الدواير مدورة بالظبط ([[getBoundingClientRect]] بيقول 48×48)، والحرف في نص الدايرة، والكلام نفسه جوه blockquote واسم العميل جوه figcaption في تاب Elements. وعلامة التنصيص زينة: لو تاب Accessibility بيقراها جزء من الرأي، خليها [[content: "”" / ""]] عشان متتقريش.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**أشكال:** ٣ كروت آراء عملا بـ [[<figure>]] و [[<blockquote>]] و [[<figcaption>]]، وكل كارت فيه دايرة بأول حرف من اسم العميل (من غير صور: [[width]] و [[height]] 48px و [[border-radius: 50%]] ولون خلفية)، وعلامة تنصيص كبيرة باهتة بـ [[::before]].`, done: R`الدواير مدورة بالظبط ([[getBoundingClientRect]] بيقول 48×48)، والحرف في نص الدايرة، والكلام نفسه جوه blockquote واسم العميل جوه figcaption في تاب Elements. وعلامة التنصيص زينة: لو تاب Accessibility بيقراها جزء من الرأي، خليها [[content: "”" / ""]] عشان متتقريش.`, sol: R`~~~live 360 500
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2255,7 +2255,7 @@ axe بعد: 0 violations
 overflow على 360: 0px   axe: 0 violations
 اللي بيتقري من أول كارت: - figure "منى سامي": - blockquote: الطلب وصل في نفس اليوم والخدمة ممتازة. - text: منى سامي
 ~~~` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك JSON فيه ٤ مقالات لمدونة طبخ متخيلة: [[{"title":"عيش بلدي في البيت","date":"2026-03-01","author":"شيف سلمى"}]] وزيّه ٣. اكتب لكل مقال [[<article>]] فيه h2 و [[<time datetime="2026-03-01">١ مارس</time>]] واسم الكاتب.`, done: R`كل article ليه عنوان، وكل [[time]] الـ datetime بتاعه بصيغة [[YYYY-MM-DD]] والكلام اللي جواه مكتوب للقارئ، والـ validator مش بيشتكي من أي datetime، والمقالات الأربعة جوه section واحد عنوانه «أحدث الوصفات».`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك JSON فيه ٤ مقالات لمدونة طبخ متخيلة: [[{"title":"عيش بلدي في البيت","date":"2026-03-01","author":"شيف سلمى"}]] وزيّه ٣. اكتب لكل مقال [[<article>]] فيه h2 و [[<time datetime="2026-03-01">١ مارس</time>]] واسم الكاتب.`, done: R`كل article ليه عنوان، وكل [[time]] الـ datetime بتاعه بصيغة [[YYYY-MM-DD]] والكلام اللي جواه مكتوب للقارئ، والـ validator مش بيشتكي من أي datetime، والمقالات الأربعة جوه section واحد عنوانه «أحدث الوصفات».`, sol: R`~~~live 420 420
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2468,7 +2468,7 @@ region "الأكثر مبيعًا"
             { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
           ],
           practice: [
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** متجر فيه [[<a href="#" onclick="addToCart()">أضف للسلة</a>]] و [[<div class="btn" onclick="openMenu()">القايمة</div>]]. جرّبهم بالكيبورد بس وصلّحهم.`, done: R`الـ div مكانش بيتوصله بـ Tab، واللينك كان بيزوّد [[#]] في الـ URL ويطلع الصفحة لفوق. بعد ما الاتنين بقوا [[<button type="button">]]: الاتنين بيتوصلهم بـ Tab ويشتغلوا بـ Enter و Space، والـ URL مبيتغيّرش.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** متجر فيه [[<a href="#" onclick="addToCart()">أضف للسلة</a>]] و [[<div class="btn" onclick="openMenu()">القايمة</div>]]. جرّبهم بالكيبورد بس وصلّحهم.`, done: R`الـ div مكانش بيتوصله بـ Tab، واللينك كان بيزوّد [[#]] في الـ URL ويطلع الصفحة لفوق. بعد ما الاتنين بقوا [[<button type="button">]]: الاتنين بيتوصلهم بـ Tab ويشتغلوا بـ Enter و Space، والـ URL مبيتغيّرش.`, sol: R`~~~live 160 160
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2511,7 +2511,7 @@ Space على التاني →  القايمة اتفتحت
 الـ URL اتغيّر: false
 axe: 0 violations
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فورم بحث [[method="get"]] فيه [[<input name="q">]] وزرار «مسح» من غير type، والـ onclick بتاعه بيفضّي الحقل. اكتب في الحقل «قهوة» ودوس «مسح». إيه اللي هيحصل للصفحة؟`, done: R`الصفحة اتبعتت واتحمّلت من الأول والـ URL بقى فيه [[?q=]] فاضي: الزرار من غير type جوه فورم بيبقى submit، فالـ onclick فضّى الحقل وبعدها الفورم اتبعت. الحل [[type="button"]].`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فورم بحث [[method="get"]] فيه [[<input name="q">]] وزرار «مسح» من غير type، والـ onclick بتاعه بيفضّي الحقل. اكتب في الحقل «قهوة» ودوس «مسح». إيه اللي هيحصل للصفحة؟`, done: R`الصفحة اتبعتت واتحمّلت من الأول والـ URL بقى فيه [[?q=]] فاضي: الزرار من غير type جوه فورم بيبقى submit، فالـ onclick فضّى الحقل وبعدها الفورم اتبعت. الحل [[type="button"]].`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2550,7 +2550,7 @@ axe: 0 violations
 الـ URL بعد الضغط: /p.html
 قيمة الحقل: «»
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** شريط تواصل لـ «بُن الصباح» (متجر قهوة متخيل): لينك «المنيو» لصفحة تانية، وزرار «أضف للسلة»، ولينك «اتصل» بـ [[tel:]]، ولينك واتساب خارجي في تاب جديدة، ولينك «حمّل المنيو» لملف PDF بـ [[download]].`, done: R`بـ Tab بتعدّي على الخمسة بالترتيب، وتاب Accessibility بيقول ٤ link وواحد button، واللينك الخارجي عليه [[rel="noopener noreferrer"]]، ولينك الـ PDF بينزّل الملف بدل ما يفتحه.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** شريط تواصل لـ «بُن الصباح» (متجر قهوة متخيل): لينك «المنيو» لصفحة تانية، وزرار «أضف للسلة»، ولينك «اتصل» بـ [[tel:]]، ولينك واتساب خارجي في تاب جديدة، ولينك «حمّل المنيو» لملف PDF بـ [[download]].`, done: R`بـ Tab بتعدّي على الخمسة بالترتيب، وتاب Accessibility بيقول ٤ link وواحد button، واللينك الخارجي عليه [[rel="noopener noreferrer"]]، ولينك الـ PDF بينزّل الملف بدل ما يفتحه.`, sol: R`~~~live 150 200
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2596,7 +2596,7 @@ overflow على 360: 0px   axe: 0 violations
 ~~~` },
             { lvl: 'تحدي', t: R`**قارن وقيس:** لينك [[target="_blank"]] من غير [[rel]] خالص. في الصفحة اللي بتفتح اطبع [[window.opener]]. وبعدين اقرا ليه الدرس لسه بيقولك تكتب [[rel="noopener noreferrer"]].`, done: R`في Chrome الحديث طلع [[null]] حتى من غير rel، لأن المتصفحات بقت بتحط noopener لوحدها مع [[_blank]]. بس [[noreferrer]] لسه بيمنع إن الموقع التاني يعرف انت جاي منين، والمتصفحات القديمة مبتعملش noopener لوحدها، فكتابتها لسه صح.`, sol: R`الصفحة اللي فيها اللينكات:
 
-~~~html from.html
+~~~live 120 120 from.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2647,7 +2647,7 @@ $__lt/script>
 noopener noreferrer  null        (فاضي)
 rel="opener"     Window            عنوان صفحتك: /from.html
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ٣ أزرار من غير أي مكتبة: زرار كبسولة ([[border-radius: 999px]])، وزرار دايرة فيه أيقونة × بس، وزرار شفاف بحدود (ghost). خلي ألوانهم من متغيرين [[--bg]] و [[--fg]] والـ ghost يغيّرهم بس.`, done: R`كل زرار مقاسه 44×44 على الأقل ([[getBoundingClientRect]])، وزرار الأيقونة ليه [[aria-label="اقفل"]] فاسمه في تاب Accessibility «اقفل» مش ×، والـ ghost الـ CSS بتاعه سطرين بس بيغيّروا المتغيرات.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**أشكال:** ٣ أزرار من غير أي مكتبة: زرار كبسولة ([[border-radius: 999px]])، وزرار دايرة فيه أيقونة × بس، وزرار شفاف بحدود (ghost). خلي ألوانهم من متغيرين [[--bg]] و [[--fg]] والـ ghost يغيّرهم بس.`, done: R`كل زرار مقاسه 44×44 على الأقل ([[getBoundingClientRect]])، وزرار الأيقونة ليه [[aria-label="اقفل"]] فاسمه في تاب Accessibility «اقفل» مش ×، والـ ghost الـ CSS بتاعه سطرين بس بيغيّروا المتغيرات.`, sol: R`~~~live 140 140
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2869,7 +2869,7 @@ generic
             { t: "MDN Curriculum: Semantic HTML", url: "https://developer.mozilla.org/en-US/curriculum/core/semantic-html/" },
           ],
           practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** فورم حجز حصة تجريبية في «جيم الأبطال»: الاسم، والموبايل بـ [[pattern="01[0125][0-9]{8}"]] و [[title]] بيشرح الشكل، والإيميل، والفرع ([[<select>]])، و checkbox الموافقة. كل حقل ليه label مربوط و autocomplete مناسب.`, done: R`إرسال فاضي بيقف عند الاسم، و [[0123]] في الموبايل بيطلّع رسالة فيها كلام الـ title، و [[01012345678]] بيعدّي، و [[form.checkValidity()]] بيرجّع [[true]] بس لما كله سليم.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** فورم حجز حصة تجريبية في «جيم الأبطال»: الاسم، والموبايل بـ [[pattern="01[0125][0-9]{8}"]] و [[title]] بيشرح الشكل، والإيميل، والفرع ([[<select>]])، و checkbox الموافقة. كل حقل ليه label مربوط و autocomplete مناسب.`, done: R`إرسال فاضي بيقف عند الاسم، و [[0123]] في الموبايل بيطلّع رسالة فيها كلام الـ title، و [[01012345678]] بيعدّي، و [[form.checkValidity()]] بيرجّع [[true]] بس لما كله سليم.`, sol: R`~~~live 490 490
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2937,7 +2937,7 @@ generic
 autocomplete: name , tel , email
 overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم فيه [[<label for="mail">الإيميل</label><input id="email" type="email" placeholder="الإيميل">]] وحقل كلمة سر من غير [[name]]. الإيميل بيوصل للسيرفر وكلمة السر لأ، والضغط على الكلمة مش بيعمل حاجة.`, done: R`[[document.querySelector('#email').labels.length]] بقى 1 بعد ما خليت for = id، و [[new FormData(form)]] بقى فيه [[password]]، وشلت الـ placeholder اللي كان بيكرر الـ label (لأنه بيختفي أول ما تكتب).`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم فيه [[<label for="mail">الإيميل</label><input id="email" type="email" placeholder="الإيميل">]] وحقل كلمة سر من غير [[name]]. الإيميل بيوصل للسيرفر وكلمة السر لأ، والضغط على الكلمة مش بيعمل حاجة.`, done: R`[[document.querySelector('#email').labels.length]] بقى 1 بعد ما خليت for = id، و [[new FormData(form)]] بقى فيه [[password]]، وشلت الـ placeholder اللي كان بيكرر الـ label (لأنه بيختفي أول ما تكتب).`, sol: R`~~~live 120 130
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2981,7 +2981,7 @@ labels.length للإيميل = 1
 الضغط على «الإيميل» ركّز في: email
 axe: 0 violations
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فورم GET فيه: [[name="q"]] قيمته قهوة، و input من غير name، و [[name="code"]] عليه [[disabled]]، و checkbox [[news]] مش متعلّم، و checkbox [[terms]] متعلّم. إيه اللي هيظهر في الـ URL؟`, done: R`ظهر [[q=قهوة&terms=on]] بس (في Chrome): الحقل اللي من غير name مش بيتبعت، والـ disabled مش بيتبعت، والـ checkbox اللي مش متعلّم مش بيتبعت خالص (مش [[news=off]])، والمتعلّم من غير value بيتبعت [[on]].`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فورم GET فيه: [[name="q"]] قيمته قهوة، و input من غير name، و [[name="code"]] عليه [[disabled]]، و checkbox [[news]] مش متعلّم، و checkbox [[terms]] متعلّم. إيه اللي هيظهر في الـ URL؟`, done: R`ظهر [[q=قهوة&terms=on]] بس (في Chrome): الحقل اللي من غير name مش بيتبعت، والـ disabled مش بيتبعت، والـ checkbox اللي مش متعلّم مش بيتبعت خالص (مش [[news=off]])، والمتعلّم من غير value بيتبعت [[on]].`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3025,7 +3025,7 @@ location.search الخام:
 بعد decodeURIComponent:
 ?q=قهوة&terms=on
 ~~~` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** حقلين فيهم نفس الرقم [[01001234567]]: واحد [[type="number"]] وواحد [[type="tel"]]. اضغط في كل واحد ودوس سهم لفوق.`, done: R`الـ number بقى [[1001234568]]: الصفر اللي في الأول راح والرقم زاد واحد، والـ tel فضل زي ما هو. فالموبايل ورقم البطاقة والكود البريدي [[tel]] أو [[text]] مع [[inputmode="numeric"]]، والـ number للكميات بس.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** حقلين فيهم نفس الرقم [[01001234567]]: واحد [[type="number"]] وواحد [[type="tel"]]. اضغط في كل واحد ودوس سهم لفوق.`, done: R`الـ number بقى [[1001234568]]: الصفر اللي في الأول راح والرقم زاد واحد، والـ tel فضل زي ما هو. فالموبايل ورقم البطاقة والكود البريدي [[tel]] أو [[text]] مع [[inputmode="numeric"]]، والـ number للكميات بس.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3063,7 +3063,7 @@ location.search الخام:
 number     01001234567      1001234568
 tel        01001234567      01001234567
 ~~~` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة [[autocomplete]] على MDN طلّع القيم اللي تخلي المتصفح يملا فورم عنوان شحن كامل: الاسم، والشارع، والمدينة، والكود البريدي، والبلد، والتليفون.`, done: R`فورمك فيه [[name]] و [[street-address]] (أو [[address-line1]]) و [[address-level2]] و [[postal-code]] و [[country]] و [[tel]]، و Chrome عرض يملاهم كلهم مرة واحدة من عنوان محفوظ.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة [[autocomplete]] على MDN طلّع القيم اللي تخلي المتصفح يملا فورم عنوان شحن كامل: الاسم، والشارع، والمدينة، والكود البريدي، والبلد، والتليفون.`, done: R`فورمك فيه [[name]] و [[street-address]] (أو [[address-line1]]) و [[address-level2]] و [[postal-code]] و [[country]] و [[tel]]، و Chrome عرض يملاهم كلهم مرة واحدة من عنوان محفوظ.`, sol: R`~~~live 600 610
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3136,7 +3136,7 @@ validator: عدد الـ errors = 0
 validator لو حطيت street-address على input: 1 error
 axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**أشكال:** label عايم من غير JavaScript: الـ label فوق الحقل كأنه placeholder، ولما تركّز أو تكتب يطلع لفوق ويصغر. الحيلة: [[placeholder=" "]] على الحقل، والـ label بعده، و [[input:focus + label, input:not(:placeholder-shown) + label]] بتحرّكه بـ transform.`, done: R`الـ label بيطلع لفوق لما تدوس على الحقل، وبيفضل فوق لو فيه كلام، وبيرجع مكانه لو مسحت الكلام وطلعت، والربط [[for]] و [[id]] لسه موجود (تاب Accessibility بيقول اسم الحقل)، وفي RTL الـ label بيبدأ من اليمين.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**أشكال:** label عايم من غير JavaScript: الـ label فوق الحقل كأنه placeholder، ولما تركّز أو تكتب يطلع لفوق ويصغر. الحيلة: [[placeholder=" "]] على الحقل، والـ label بعده، و [[input:focus + label, input:not(:placeholder-shown) + label]] بتحرّكه بـ transform.`, done: R`الـ label بيطلع لفوق لما تدوس على الحقل، وبيفضل فوق لو فيه كلام، وبيرجع مكانه لو مسحت الكلام وطلعت، والربط [[for]] و [[id]] لسه موجود (تاب Accessibility بيقول اسم الحقل)، وفي RTL الـ label بيبدأ من اليمين.`, sol: R`~~~live 160 160
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3375,7 +3375,7 @@ application/x-www-form-urlencoded
             { t: "MDN: px", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Values_and_units/Numeric_data_types" },
           ],
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** صورة الهيرو اللي في المثال ([[400w]] و [[800w]] و [[1600w]] و [[sizes="(min-width: 768px) 50vw, 100vw"]]). احسب بإيدك أنهي ملف المتصفح هيختار على: موبايل عرضه 400 و DPR 2، وموبايل 360 و DPR 3، وكمبيوتر 1280 و DPR 1. وبعدين اتأكد من [[img.currentSrc]] في وضع الموبايل.`, done: R`الحساب: 400×2 = 800 → [[800w]]، و 360×3 = 1080 → [[1600w]] (أول ملف أكبر من المطلوب)، و 1280×0.5 = 640 → [[800w]]. و Chrome اختار نفس التلاتة.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**مسألة:** صورة الهيرو اللي في المثال ([[400w]] و [[800w]] و [[1600w]] و [[sizes="(min-width: 768px) 50vw, 100vw"]]). احسب بإيدك أنهي ملف المتصفح هيختار على: موبايل عرضه 400 و DPR 2، وموبايل 360 و DPR 3، وكمبيوتر 1280 و DPR 1. وبعدين اتأكد من [[img.currentSrc]] في وضع الموبايل.`, done: R`الحساب: 400×2 = 800 → [[800w]]، و 360×3 = 1080 → [[1600w]] (أول ملف أكبر من المطلوب)، و 1280×0.5 = 640 → [[800w]]. و Chrome اختار نفس التلاتة.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3416,7 +3416,7 @@ currentSrc من Chrome:
 ~~~` },
             { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة فيها ٢٠ صورة طول كل واحدة 300px. افتحها على عرض 360 وارتفاع 640 مرة من غير [[loading="lazy"]] ومرة بيه، وعدّ الصور اللي اتحمّلت من Network (فلتر Img) من غير ما تنزل.`, done: R`من غير lazy اتحمّلوا الـ ٢٠ كلهم، وبيه ٧ بس في Chrome على localhost: اللي في الشاشة وشوية تحتها (المتصفح بيحمّل قبل ما توصل بمسافة). الصور اللي فوق خالص متحطش عليها lazy.`, sol: R`نفس الصفحة مرتين، والفرق خاصية واحدة. حط أي صورة جنبها باسم [[photo.jpg]]، وافتح الصفحة من سيرفر محلي ([[npx serve .]]):
 
-~~~html
+~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3454,7 +3454,7 @@ $__lt/script>
 من غير lazy: اتحمّلت 20 صورة
 بـ loading="lazy": اتحمّلت 20 صورة
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة منتج فيها [[alt="صورة"]] على صورة المنتج، و [[alt="IMG_2034.jpg"]] على صورة تانية، وأيقونة سلة جنب كلمة «السلة» عليها [[alt="سلة"]]، وصورة الهيرو عليها [[loading="lazy"]].`, done: R`كل alt بقى بيوصف اللي في الصورة ([[alt="سماعة لاسلكي سودا من الجنب"]])، والأيقونة اللي جنب الكلمة بقت [[alt=""]] عشان قارئ الشاشة ميقولش «السلة» مرتين، والهيرو من غير lazy وعليه [[fetchpriority="high"]]، و Lighthouse مبقاش بيقول إن صورة الـ LCP اتحمّلت lazy.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة منتج فيها [[alt="صورة"]] على صورة المنتج، و [[alt="IMG_2034.jpg"]] على صورة تانية، وأيقونة سلة جنب كلمة «السلة» عليها [[alt="سلة"]]، وصورة الهيرو عليها [[loading="lazy"]].`, done: R`كل alt بقى بيوصف اللي في الصورة ([[alt="سماعة لاسلكي سودا من الجنب"]])، والأيقونة اللي جنب الكلمة بقت [[alt=""]] عشان قارئ الشاشة ميقولش «السلة» مرتين، والهيرو من غير lazy وعليه [[fetchpriority="high"]]، و Lighthouse مبقاش بيقول إن صورة الـ LCP اتحمّلت lazy.`, sol: R`~~~live 140 140
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3503,7 +3503,7 @@ axe: 0 violations
 Lighthouse نفسه ما اتشغّلش هنا: القياس من PerformanceObserver في Chrome،
 وهو نفس الرقم اللي Lighthouse بيبني عليه تحذير الـ LCP lazy.
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ألبوم صور رحلة متخيلة بشكل «بولارويد»: كل صورة جوه [[<figure>]] بإطار أبيض ([[padding]] أكبر من تحت)، ومايلة شوية ([[rotate: -3deg]] للفردي و [[rotate: 2deg]] للزوجي بـ [[:nth-child]])، وظل خفيف، و figcaption تحتها.`, done: R`٦ صور، كل واحدة مايلة عكس اللي جنبها، والكلام تحت كل صورة جوه figcaption، وكل صورة ليها width و height فمفيش حاجة بتتنط وهي بتحمّل (Performance مبيطلّعش layout shift).`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**أشكال:** ألبوم صور رحلة متخيلة بشكل «بولارويد»: كل صورة جوه [[<figure>]] بإطار أبيض ([[padding]] أكبر من تحت)، ومايلة شوية ([[rotate: -3deg]] للفردي و [[rotate: 2deg]] للزوجي بـ [[:nth-child]])، وظل خفيف، و figcaption تحتها.`, done: R`٦ صور، كل واحدة مايلة عكس اللي جنبها، والكلام تحت كل صورة جوه figcaption، وكل صورة ليها width و height فمفيش حاجة بتتنط وهي بتحمّل (Performance مبيطلّعش layout shift).`, sol: R`~~~live 560 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3568,7 +3568,7 @@ width و height في الـ HTML هما مقاس الملف الحقيقي، و�
 
 والكود الصح:
 
-~~~html
+~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>

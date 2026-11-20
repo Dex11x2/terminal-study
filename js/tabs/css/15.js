@@ -1746,7 +1746,7 @@ axe: 0 (بعد ما اللوجو بقى h1: «page-has-heading-one»)   الـ v
           ],
           title: "الصفحة بتتنط وانت بتقرا",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي تغيير من دول بيعمل layout shift: عنصر [[position: relative]] الـ [[top]] بتاعه اتغير من 0 لـ 40px، وعنصر عليه [[transform: translateY(40px)]]، و div ارتفاعه 80px اتحط في أول الـ body؟ اكتب، وبعدين جرّب بـ [[new PerformanceObserver(l => console.log(l.getEntries())).observe({ type: "layout-shift", buffered: true })]].`, done: R`[[top]] طلّع entry، و transform مطلّعش حاجة، والـ div اللي اتحط فوق طلّع entry قيمته أكبر (قسناها 0.022 في Chrome 156) لأنه زق كل اللي تحته. فالحركة بـ transform مبتأثرش على CLS.`, sol: R`~~~html test.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي تغيير من دول بيعمل layout shift: عنصر [[position: relative]] الـ [[top]] بتاعه اتغير من 0 لـ 40px، وعنصر عليه [[transform: translateY(40px)]]، و div ارتفاعه 80px اتحط في أول الـ body؟ اكتب، وبعدين جرّب بـ [[new PerformanceObserver(l => console.log(l.getEntries())).observe({ type: "layout-shift", buffered: true })]].`, done: R`[[top]] طلّع entry، و transform مطلّعش حاجة، والـ div اللي اتحط فوق طلّع entry قيمته أكبر (قسناها 0.022 في Chrome 156) لأنه زق كل اللي تحته. فالحركة بـ transform مبتأثرش على CLS.`, sol: R`~~~live 420 420 test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1791,7 +1791,7 @@ div فوق كل حاجة:       entry بقيمة 0.0372
 ~~~` },
             { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة فيها ٣ صور من غير [[width]] و [[height]]. افتحها بـ Slow 4G و Disable cache وقيس CLS بالـ snippet أو Lighthouse، وبعدين زوّد المقاسات وقيس تاني.`, done: R`رقمين قبل وبعد، والبعد صفر أو قريب منه، وفي Performance › Layout Shifts مبقاش فيه مستطيلات على الصور.`, sol: R`قبل:
 
-~~~html before.html
+~~~live 310 310 before.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>من غير مقاسات</title>
@@ -1806,7 +1806,7 @@ div فوق كل حاجة:       entry بقيمة 0.0372
 
 بعد:
 
-~~~html after.html
+~~~live 600 720 after.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>بمقاسات</title>
@@ -1836,7 +1836,7 @@ div فوق كل حاجة:       entry بقيمة 0.0372
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** بانر «خصم ٢٠٪» بيتحط في أول الصفحة بـ JavaScript بعد ثانية من التحميل وبيزق كل حاجة لتحت. صلّحه بطريقتين: مكان محجوز بـ [[min-height]] من الأول، أو بانر [[position: fixed]] فوق المحتوى.`, done: R`الـ snippet بيطلّع صفر layout shifts من البانر في الطريقتين، والبانر لسه بيتقفل بزرار ليه اسم، وفي طريقة الـ fixed المحتوى اللي تحته مش مستخبي (فيه [[padding]] بنفس ارتفاعه أو البانر تحت).`, sol: R`الطريقة ١، مكان محجوز:
 
-~~~html reserve.html
+~~~live 210 210 reserve.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1868,7 +1868,7 @@ $__lt/script>
 
 الطريقة ٢، فوق المحتوى:
 
-~~~html fixed.html
+~~~live 220 220 fixed.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1910,7 +1910,7 @@ $__lt/script>
 fixed            0         «اقفل العرض»      البانر راح
 axe صفر في الطريقتين
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** لستة جاية من API وهمي بتتأخر 1.5 ثانية. وهي بتتحمّل اعرض skeleton بنفس مقاس الكارت الحقيقي (shimmer من درس الحركة)، والحاوية عليها [[aria-busy="true"]] لحد ما البيانات توصل.`, done: R`CLS صفر لحظة ما البيانات تيجي، وارتفاع الـ skeleton والكارت الحقيقي الفرق بينهم أقل من 4px، و [[aria-busy]] بقى [[false]] بعدها، والـ shimmer واقف مع reduce.`, sol: R`~~~html list.html
+            { lvl: 'تطبيق', t: R`**ابني:** لستة جاية من API وهمي بتتأخر 1.5 ثانية. وهي بتتحمّل اعرض skeleton بنفس مقاس الكارت الحقيقي (shimmer من درس الحركة)، والحاوية عليها [[aria-busy="true"]] لحد ما البيانات توصل.`, done: R`CLS صفر لحظة ما البيانات تيجي، وارتفاع الـ skeleton والكارت الحقيقي الفرق بينهم أقل من 4px، و [[aria-busy]] بقى [[false]] بعدها، والـ shimmer واقف مع reduce.`, sol: R`~~~live 440 440 list.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2270,7 +2270,7 @@ fetchpriority="high"   High                مطلبش        10.7 s
 في صفحة فيها CSS وست سكربتات:
 lazy 7.7 s ، fetchpriority 7.3 s
 ~~~` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عملت [[<link rel="preload" href="/f.woff2" as="font" type="font/woff2" crossorigin>]] بس مفيش CSS بيستخدم الخط ده. الكونسول هيقول إيه بعد التحميل؟`, done: R`Chrome 156 طلّع تحذير: «The resource http://…/f.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate [[as]] value and it is preloaded intentionally.» يعني preload غلط بيضيّع bandwidth من حاجات تانية.`, sol: R`~~~html preload.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عملت [[<link rel="preload" href="/f.woff2" as="font" type="font/woff2" crossorigin>]] بس مفيش CSS بيستخدم الخط ده. الكونسول هيقول إيه بعد التحميل؟`, done: R`Chrome 156 طلّع تحذير: «The resource http://…/f.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate [[as]] value and it is preloaded intentionally.» يعني preload غلط بيضيّع bandwidth من حاجات تانية.`, sol: R`~~~live 120 120 preload.html
 <!doctype html>
 <html lang="ar">
 <head>
@@ -2492,7 +2492,7 @@ console.log("قراية ثم كتابة", performance.now() - t);
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** هيدر بيصغر مع الـ scroll: الـ handler بيقرا [[scrollY]] و [[header.offsetHeight]] ويكتب [[style.height]] و [[style.padding]] في كل event. سجّل Performance وانت بتعمل scroll، وصلّحه: اقرا مرة، واكتب في [[requestAnimationFrame]]، وغيّر [[transform: scale]] بدل الارتفاع.`, done: R`الـ trace قبل فيه علامات بنفسجي «Forced reflow»، وبعد مفيش، والـ frames أقصر. وعارف إن فيه حل من غير JavaScript خالص بـ [[animation-timeline: scroll()]] في وحدة CSS الحديث.`, sol: R`قبل:
 
-~~~html before.html
+~~~live 600 720 before.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>هيدر تقيل</title>
@@ -2514,7 +2514,7 @@ $__lt/script>
 
 بعد:
 
-~~~html after.html
+~~~live 600 720 after.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2590,7 +2590,7 @@ trace وانت بتعمل scroll 30 خطوة:
 لستة ٨ بنود.
 (إجابة من الوثائق، مش ناتج تشغيل.)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** عدّاد أرقام بيعد من 0 لـ 12,500 في ثانية ونص لما يظهر (IntersectionObserver ثم [[requestAnimationFrame]])، بـ [[font-variant-numeric: tabular-nums]] و [[min-inline-size]] بعدد الحروف، و [[Intl.NumberFormat("ar-EG")]] للأرقام. ومع reduce يطلع الرقم النهائي على طول.`, done: R`العرض ثابت وهو بيعد (الكلام اللي جنبه مبيتهزش و layout-shift صفر)، ومفيش forced reflow في كل frame (مبتقراش مقاسات جوه الـ loop)، والرقم النهائي بيتقري لقارئ الشاشة مرة واحدة مش كل رقم.`, sol: R`~~~html counter.html
+            { lvl: 'تطبيق', t: R`**ابني:** عدّاد أرقام بيعد من 0 لـ 12,500 في ثانية ونص لما يظهر (IntersectionObserver ثم [[requestAnimationFrame]])، بـ [[font-variant-numeric: tabular-nums]] و [[min-inline-size]] بعدد الحروف، و [[Intl.NumberFormat("ar-EG")]] للأرقام. ومع reduce يطلع الرقم النهائي على طول.`, done: R`العرض ثابت وهو بيعد (الكلام اللي جنبه مبيتهزش و layout-shift صفر)، ومفيش forced reflow في كل frame (مبتقراش مقاسات جوه الـ loop)، والرقم النهائي بيتقري لقارئ الشاشة مرة واحدة مش كل رقم.`, sol: R`~~~live 380 380 counter.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>

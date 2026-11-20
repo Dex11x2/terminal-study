@@ -2065,7 +2065,7 @@ axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Er
 بـ @custom-variant:   rgb(255, 255, 255)           أبيض
 من غيره:              oklch(0.13 0.028 261.692)    غامق
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة HTML عادية من غير Tailwind ولا React: كل الألوان توكنز في [[:root]] ([[--bg]] و [[--surface]] و [[--fg]] و [[--muted]] و [[--brand]] و [[--line]])، و [[:root[data-theme="dark"]]] بيعيد تعريفهم هما بس، ومعاهم [[color-scheme]] في الاتنين. زرار [[role="switch"]] بـ [[aria-checked]] بيبدّل ويحفظ في localStorage جوه [[try/catch]].`, done: R`مفيش ولا لون (hex أو [[rgb(]] أو [[oklch(]]) برا بلوكات التوكنز، والزرار بيقلب الصفحة كلها ومعاها الـ scrollbar وحقل input، وقارئ الشاشة (أو Accessibility pane في DevTools) بيقول switch و on/off. ولو فتحتها في نافذة Incognito والكوكيز متقفلة (localStorage بيرمي error) الصفحة لسه بتشتغل والزرار بيقلب، بس مش بيفتكر.`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة HTML عادية من غير Tailwind ولا React: كل الألوان توكنز في [[:root]] ([[--bg]] و [[--surface]] و [[--fg]] و [[--muted]] و [[--brand]] و [[--line]])، و [[:root[data-theme="dark"]]] بيعيد تعريفهم هما بس، ومعاهم [[color-scheme]] في الاتنين. زرار [[role="switch"]] بـ [[aria-checked]] بيبدّل ويحفظ في localStorage جوه [[try/catch]].`, done: R`مفيش ولا لون (hex أو [[rgb(]] أو [[oklch(]]) برا بلوكات التوكنز، والزرار بيقلب الصفحة كلها ومعاها الـ scrollbar وحقل input، وقارئ الشاشة (أو Accessibility pane في DevTools) بيقول switch و on/off. ولو فتحتها في نافذة Incognito والكوكيز متقفلة (localStorage بيرمي error) الصفحة لسه بتشتغل والزرار بيقلب، بس مش بيفتكر.`, sol: R`~~~live 600 620 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2163,7 +2163,7 @@ axe: صفر في الوضعين ، وعلى 360 مفيش scroll أفقي
 localStorage بيرمي SecurityError:
 الزرار قلب لـ dark ، وبعد reload رجع light (بيشتغل بس مش بيفتكر)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الثيم بيتحط في [[useEffect]] بعد ما الصفحة تترسم: [[document.documentElement.classList.toggle("dark", localStorage.theme === "dark")]]. اختار dark واعمل refresh: الصفحة بتفتح بيضا لحظة وبعدين تغمق. صلّحه من غير next-themes: سكربت inline صغير في أول الـ [[<head>]] بيعمل نفس السطر قبل الرسم، وبيرجع لـ [[matchMedia("(prefers-color-scheme: dark)")]] لو مفيش اختيار.`, done: R`في DevTools › Performance مع CPU 4x slowdown و Screenshots شغالة، أول frame فيه محتوى غامق ومفيش ولا frame أبيض. وفي View Source السكربت قبل أي [[<link rel="stylesheet">]].`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الثيم بيتحط في [[useEffect]] بعد ما الصفحة تترسم: [[document.documentElement.classList.toggle("dark", localStorage.theme === "dark")]]. اختار dark واعمل refresh: الصفحة بتفتح بيضا لحظة وبعدين تغمق. صلّحه من غير next-themes: سكربت inline صغير في أول الـ [[<head>]] بيعمل نفس السطر قبل الرسم، وبيرجع لـ [[matchMedia("(prefers-color-scheme: dark)")]] لو مفيش اختيار.`, done: R`في DevTools › Performance مع CPU 4x slowdown و Screenshots شغالة، أول frame فيه محتوى غامق ومفيش ولا frame أبيض. وفي View Source السكربت قبل أي [[<link rel="stylesheet">]].`, sol: R`~~~live 150 150 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2291,7 +2291,7 @@ $__lt/script>
 لقطة قبل وبعد في الوضع الغامق: متطابقة byte بـ byte
 grep -c "dark:" في الـ HTML بعد التحويل: 0
 ~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** حط [[* { transition: background-color .4s, color .4s }]] ودوس زرار الثيم: كل عنصر بيتلوّن لوحده والصفحة «بتسيح». اعمل نسخة تانية فيها كلاس [[theme-switching]] على html بيقفل الـ transitions ([[.theme-switching * { transition: none !important }]])، يتحط قبل التبديل ويتشال بعد [[requestAnimationFrame]] مرتين. وقيس الفرق بـ [[document.getAnimations().length]] في الكونسول على طول بعد الضغطة.`, done: R`النسخة الأولى بتطلّع رقم أكبر من صفر (في صفحة فيها body و ٤ عناصر اتقاس 5 transitions شغالين مع بعض)، والتانية صفر والتبديل بيبان في frame واحد. وفهمت إن ده نفس اللي [[disableTransitionOnChange]] بيعمله في next-themes.`, sol: R`~~~html index.html
+            { lvl: 'تحدي', t: R`**قارن وقيس:** حط [[* { transition: background-color .4s, color .4s }]] ودوس زرار الثيم: كل عنصر بيتلوّن لوحده والصفحة «بتسيح». اعمل نسخة تانية فيها كلاس [[theme-switching]] على html بيقفل الـ transitions ([[.theme-switching * { transition: none !important }]])، يتحط قبل التبديل ويتشال بعد [[requestAnimationFrame]] مرتين. وقيس الفرق بـ [[document.getAnimations().length]] في الكونسول على طول بعد الضغطة.`, done: R`النسخة الأولى بتطلّع رقم أكبر من صفر (في صفحة فيها body و ٤ عناصر اتقاس 5 transitions شغالين مع بعض)، والتانية صفر والتبديل بيبان في frame واحد. وفهمت إن ده نفس اللي [[disableTransitionOnChange]] بيعمله في next-themes.`, sol: R`~~~live 230 230 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2541,7 +2541,7 @@ A tree hydrated but some attributes of the server rendered HTML didn't match the
           ],
           title: "مكون واحد يشتغل عربي وإنجليزي من غير rtl: في كل حتة",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]: [[.a { margin-inline-start: 2rem }]] و [[.b { translate: 20px 0 }]] و [[.c { background: linear-gradient(to right, red, blue) }]] و [[.d { border-start-start-radius: 1rem }]]. كل واحدة هتأثر على أنهي ناحية؟ اكتب، وبعدين اتأكد من Computed في DevTools.`, done: R`[[.a]] يمين، و [[.b]] يمين برضه (translate مش logical)، و [[.c]] الأحمر لسه شمال (الـ gradient مش بيتقلب)، و [[.d]] الركن اللي فوق على اليمين: Computed بيقول [[border-top-right-radius: 16px]] و [[border-top-left-radius: 0px]].`, sol: R`~~~html test.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]: [[.a { margin-inline-start: 2rem }]] و [[.b { translate: 20px 0 }]] و [[.c { background: linear-gradient(to right, red, blue) }]] و [[.d { border-start-start-radius: 1rem }]]. كل واحدة هتأثر على أنهي ناحية؟ اكتب، وبعدين اتأكد من Computed في DevTools.`, done: R`[[.a]] يمين، و [[.b]] يمين برضه (translate مش logical)، و [[.c]] الأحمر لسه شمال (الـ gradient مش بيتقلب)، و [[.d]] الركن اللي فوق على اليمين: Computed بيقول [[border-top-right-radius: 16px]] و [[border-top-left-radius: 0px]].`, sol: R`~~~live 120 120 test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2579,7 +2579,7 @@ A tree hydrated but some attributes of the server rendered HTML didn't match the
 .c   linear-gradient(to right, rgb(255, 0, 0), rgb(0, 0, 255))
 .d   border-top-right-radius: 16px ، border-top-left-radius: 0px
 ~~~` },
-            { lvl: 'تطبيق', t: R`**refactor:** كارت تعليق مكتوب بـ [[padding-left]] و [[border-left]] و [[text-align: left]] و [[float: right]] لزرار الرد، و badge بـ [[position: absolute; right: 8px]]. حوّل كل خاصية لـ logical (أو Tailwind: [[ps-*]] و [[border-s]] و [[text-start]] و [[inset-e-*]]) واقلب [[dir]] على html.`, done: R`مفيش ولا [[left]] ولا [[right]] في الـ CSS، ولقطة الشاشة في RTL مراية للقطة LTR بالظبط (البادج في الركن التاني، والخط على الناحية التانية)، من غير ولا سطر [[[dir=rtl]]].`, sol: R`~~~html comment.html
+            { lvl: 'تطبيق', t: R`**refactor:** كارت تعليق مكتوب بـ [[padding-left]] و [[border-left]] و [[text-align: left]] و [[float: right]] لزرار الرد، و badge بـ [[position: absolute; right: 8px]]. حوّل كل خاصية لـ logical (أو Tailwind: [[ps-*]] و [[border-s]] و [[text-start]] و [[inset-e-*]]) واقلب [[dir]] على html.`, done: R`مفيش ولا [[left]] ولا [[right]] في الـ CSS، ولقطة الشاشة في RTL مراية للقطة LTR بالظبط (البادج في الركن التاني، والخط على الناحية التانية)، من غير ولا سطر [[[dir=rtl]]].`, sol: R`~~~live 200 200 comment.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2667,7 +2667,7 @@ grep -c "!important" style.css  0
 
 (CSS الملف ده سطرين، والشكل في اللغتين بيطلع نفس اللي اتقاس في التمرين اللي قبله.)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**مسألة:** في صفحة عربي اكتب الجملتين دول: «المستخدم Sara_99! كسب» و «كلمني على +20 100 000 0000». شوف الـ ! بتظهر فين والرقم بيتقري إزاي، وصلّحهم بـ [[<bdi>]] للاسم و [[dir="ltr"]] للرقم.`, done: R`قبل التصليح الـ ! ظهرت شمال الاسم «!Sara_99» والرقم اتلخبط («100» بقت شمال «+20»)، وبعده الاسم بقى «Sara_99!» والرقم بالترتيب. اتأكدنا بمكان كل حرف من [[Range.getBoundingClientRect()]] في Chrome 156: الـ ! كانت شمال الـ S وبقت يمين الـ 9.`, sol: R`~~~html bidi.html
+            { lvl: 'تطبيق', t: R`**مسألة:** في صفحة عربي اكتب الجملتين دول: «المستخدم Sara_99! كسب» و «كلمني على +20 100 000 0000». شوف الـ ! بتظهر فين والرقم بيتقري إزاي، وصلّحهم بـ [[<bdi>]] للاسم و [[dir="ltr"]] للرقم.`, done: R`قبل التصليح الـ ! ظهرت شمال الاسم «!Sara_99» والرقم اتلخبط («100» بقت شمال «+20»)، وبعده الاسم بقى «Sara_99!» والرقم بالترتيب. اتأكدنا بمكان كل حرف من [[Range.getBoundingClientRect()]] في Chrome 156: الـ ! كانت شمال الـ S وبقت يمين الـ 9.`, sol: R`~~~live 300 300 bidi.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2706,7 +2706,7 @@ grep -c "!important" style.css  0
 قبل               1160.5     1101.1     1047      (+20 يمين و 100 شماله)
 بعد dir="ltr"     1014.7     1055.4     1163.4    (بالترتيب من الشمال)
 ~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** drawer بيطلع من ناحية النهاية: [[inset-inline-end: 0]]، ومقفول بـ [[translate]] برا الشاشة. الـ translate مش logical، فاستخدم متغير [[--dir]] (‏1 في LTR و -1 في RTL بـ [[:dir(rtl)]]) و [[translate: calc(100% * var(--dir)) 0]].`, done: R`في الإنجليزي بيطلع من اليمين وفي العربي من الشمال، والصفحة وهو مقفول مفيهاش scroll أفقي ([[document.documentElement.scrollWidth === document.documentElement.clientWidth]] بيرجّع [[true]] في الاتجاهين)، و Escape بيقفله.`, sol: R`~~~html drawer.html
+            { lvl: 'تحدي', t: R`**ابني:** drawer بيطلع من ناحية النهاية: [[inset-inline-end: 0]]، ومقفول بـ [[translate]] برا الشاشة. الـ translate مش logical، فاستخدم متغير [[--dir]] (‏1 في LTR و -1 في RTL بـ [[:dir(rtl)]]) و [[translate: calc(100% * var(--dir)) 0]].`, done: R`في الإنجليزي بيطلع من اليمين وفي العربي من الشمال، والصفحة وهو مقفول مفيهاش scroll أفقي ([[document.documentElement.scrollWidth === document.documentElement.clientWidth]] بيرجّع [[true]] في الاتجاهين)، و Escape بيقفله.`, sol: R`~~~live 120 120 drawer.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3058,7 +3058,7 @@ Lighthouse 13.6 ، مرتين لكل طريقة:
 الصفحة خفيفة، فالـ LCP = الـ FCP في كل تشغيلة. والفرق بين (أ) و (ب) هنا
 جوه تذبذب الشبكة، أما (ج) فأسرع بوضوح.
 ~~~` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** عرّفنا خطين بنفس الاسم: ملف عربي بـ [[unicode-range: U+0600-06FF]] وملف لاتيني بـ [[unicode-range: U+0000-00FF]]. صفحة فيها كلام عربي بس: المتصفح هينزّل كام ملف؟ اكتب، وبعدين افتح Network › Font.`, done: R`نزّل الاتنين، مش العربي بس! السبب المسافة: [[U+0020]] جوه الـ range اللاتيني، وأي صفحة فيها مسافة. ولما غيّرنا اللاتيني لـ [[U+0041-005A, U+0061-007A]] (حروف بس) نزل العربي لوحده. اتقاس في Chrome 156 بعدّ طلبات الخطوط.`, sol: R`~~~html test.html
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** عرّفنا خطين بنفس الاسم: ملف عربي بـ [[unicode-range: U+0600-06FF]] وملف لاتيني بـ [[unicode-range: U+0000-00FF]]. صفحة فيها كلام عربي بس: المتصفح هينزّل كام ملف؟ اكتب، وبعدين افتح Network › Font.`, done: R`نزّل الاتنين، مش العربي بس! السبب المسافة: [[U+0020]] جوه الـ range اللاتيني، وأي صفحة فيها مسافة. ولما غيّرنا اللاتيني لـ [[U+0041-005A, U+0061-007A]] (حروف بس) نزل العربي لوحده. اتقاس في Chrome 156 بعدّ طلبات الخطوط.`, sol: R`~~~live 120 120 test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3086,7 +3086,7 @@ Lighthouse 13.6 ، مرتين لكل طريقة:
 U+0000-00FF:                 /ar.woff2 و /lat.woff2
 U+0041-005A, U+0061-007A:    /ar.woff2 بس
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[html[dir=rtl] * { font-family: "Cairo" !important }]]، فبلوكات الكود في صفحة الشرح طلعت بخط Cairo مش mono. وفيه label بـ [[text-transform: uppercase; letter-spacing: .18em]] متطبّق على العربي والإنجليزي. صلّح الاتنين: الخط متغير على [[body]] بيتورّث، والـ label بقاعدة [[:lang(ar)]] بتصفّر الـ letter-spacing.`, done: R`Computed font-family بتاع [[<code>]] بيبدأ بخط mono، و [[!important]] اتمسحت، والـ label العربي letter-spacing بتاعه [[normal]]. ملاحظة اتقاست: Chrome 156 أصلًا مش بيطبّق letter-spacing على العربي (عرض «مبرمجين» فضل 114.3px بيه ومن غيره، و «Coders» زاد من 96.9 لـ 135.3)، بس متصفحات تانية أو نسخ قديمة ممكن تقطّع الحروف، فالتصفير لسه صح.`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[html[dir=rtl] * { font-family: "Cairo" !important }]]، فبلوكات الكود في صفحة الشرح طلعت بخط Cairo مش mono. وفيه label بـ [[text-transform: uppercase; letter-spacing: .18em]] متطبّق على العربي والإنجليزي. صلّح الاتنين: الخط متغير على [[body]] بيتورّث، والـ label بقاعدة [[:lang(ar)]] بتصفّر الـ letter-spacing.`, done: R`Computed font-family بتاع [[<code>]] بيبدأ بخط mono، و [[!important]] اتمسحت، والـ label العربي letter-spacing بتاعه [[normal]]. ملاحظة اتقاست: Chrome 156 أصلًا مش بيطبّق letter-spacing على العربي (عرض «مبرمجين» فضل 114.3px بيه ومن غيره، و «Coders» زاد من 96.9 لـ 135.3)، بس متصفحات تانية أو نسخ قديمة ممكن تقطّع الحروف، فالتصفير لسه صح.`, sol: R`~~~live 160 160 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>

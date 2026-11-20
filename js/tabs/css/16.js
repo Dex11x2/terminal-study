@@ -2067,7 +2067,7 @@ axe: 0 على الـ ٥   الـ validator (vnu) بيقول «Property field-siz
           title: "مكون يغيّر شكله حسب المكان اللي هو فيه",
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** [[.t { font-size: clamp(1rem, 4cqi, 1.5rem) }]] جوه containers عرضها 600 و 350 و 500px. الخط هيبقى كام في كل واحدة؟ وكام لو مفيش container خالص والشاشة 1280؟`, done: R`24 و 16 و 20px (‏4% من 600 = 24، ومن 350 = 14 فبيترفع لـ 16، ومن 500 = 20)، ومن غير container الـ [[cqi]] بيرجع لعرض الشاشة (4% من 1280 = 51) فبيتقص لـ 24. اتقاس كده في Chrome 156.`,
-              sol: R`~~~html container-math.html
+              sol: R`~~~live 270 240 container-math.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>حساب cqi</title>
@@ -2103,7 +2103,7 @@ axe: 0 على الـ ٥   الـ validator (vnu) بيقول «Property field-siz
 من غير container => 24px
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** widget جوه [[display: flex]] عليه [[container-type: inline-size]] ومفيهوش عرض، فاختفى. صلّحه من غير ما تشيل الـ container.`, done: R`عرضه كان 0 (اتقاس)، وبعد [[flex: 1]] (أو [[inline-size: 100%]]) بقى عرض المساحة المتاحة (1264px في تجربتنا)، والـ [[@container]] اللي جواه بقى بيشتغل.`,
-              sol: R`~~~html widget-fixed.html
+              sol: R`~~~live 120 120 widget-fixed.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>widget جوه flex</title>
@@ -2141,7 +2141,7 @@ axe: 0 على الـ ٥   الـ validator (vnu) بيقول «Property field-siz
 display بتاع .inner = flex (يعني الـ @container اشتغل)
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** كارت منتج واحد بيتحط في ٣ أماكن على نفس الشاشة: grid بـ ٤ أعمدة، و sidebar، و dialog عريض. ٣ أشكال بـ container queries بس: رأسي صغير، وأفقي من 28rem، و «مميز» من 48rem بصورة أكبر ووصف.`, done: R`لقطة واحدة فيها الـ ٣ أشكال في نفس الوقت، وملف الكارت مفيهوش ولا [[@media]]، ولو نقلت الكارت من مكان لمكان بيتغير لوحده.`,
-              sol: R`~~~html product-card.html
+              sol: R`~~~live 410 410 product-card.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>كارت في ٣ أماكن</title>
@@ -2391,7 +2391,7 @@ container 300px:  display=block  h3=16px   (4% = 12 → اترفع لـ 16)
           title: "نسّق الأب حسب اللي جواه",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** كارت جواه [[<figure><img></figure>]]: [[.card:has(img)]] بيطابق؟ و [[.card:has(> img)]]؟ و [[h2:has(+ p)]] على h2 بعده div ثم p؟ و [[.list:not(:has(li))]] على [[<ul class="list">]] فيها تعليق HTML بس؟`, done: R`الأول آه (أي عمق)، والتاني لأ (ابن مباشر بس)، والتالت لأ (لازم p بعده على طول)، والرابع آه (التعليق مش عنصر). واتأكدت بـ [[element.matches()]] في الكونسول.`,
-              sol: R`~~~html has-predict.html
+              sol: R`~~~live 170 170 has-predict.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>:has توقّع</title></head>
@@ -2425,7 +2425,7 @@ h2:has(+ p)           false
 .list:not(:has(li))   true
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** اختيار طريقة دفع بكروت: كل كارت [[<label>]] فيه radio مخفي بصريًا بس، و [[label:has(input:checked)]] للحد والخلفية، و [[label:has(input:focus-visible)]] لحلقة focus، و [[label:has(input:disabled)]] باهت.`, done: R`الأسهم بتنقل بين الكروت، والمختار باين بعلامة مش لون بس، والـ disabled مبيتختارش ومش بيتوصل بـ Tab، والـ input لسه موجود لقارئ الشاشة (بيقول radio و checked).`,
-              sol: R`~~~html pay.html
+              sol: R`~~~live 340 340 pay.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>طريقة الدفع</title>
@@ -2486,7 +2486,7 @@ html { scrollbar-gutter: stable; }
 body:has(dialog[open]) { overflow: hidden; }
 ~~~
 
-~~~html صفحة التجربة
+~~~live 320 320 صفحة التجربة
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>scrollbar-gutter</title>
@@ -2516,7 +2516,7 @@ document.body.clientWidth قبل الفتح ← بعد الفتح
 بعد التصليح:             1249 ← 1249 (مفيش حركة)
 ~~~` },
             { lvl: 'تطبيق', t: R`**قارن وقيس:** فلتر أعمال بـ chips من غير JavaScript: كل chip radio، و [[.grid:has(#f-design:checked) .card:not([data-cat~="design"]) { display: none }]]. واعمله تاني بـ JavaScript (event وفلترة). قارن.`, done: R`النسختين بيفلتروا نفس الكروت، ونسخة :has() شغالة والـ JavaScript مقفول، وكتبت عدد السطور في الاتنين وإمتى الـ JavaScript لازم (فلاتر كتير متداخلة، أو حفظ الفلتر في الـ URL).`,
-              sol: R`~~~html filter-css.html (من غير JavaScript)
+              sol: R`~~~live 190 190 filter-css.html (من غير JavaScript)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>فلتر بـ :has</title>
@@ -2564,7 +2564,7 @@ document.querySelector(".chips").addEventListener("change", e => {
 JavaScript  4 ثابتة        2 كروت   2 كروت   3 كروت (مفلترتش)
 ~~~` },
             { lvl: 'تحدي', t: R`**ابني:** فورم تسجيل: [[.field:has(input:user-invalid)]] بيحمّر الـ label ويظهر رسالة، و [[form:has(:user-invalid) [type=submit]]] بيظهر جنبه «فيه حقول محتاجة تتصلّح»، والحقول المطلوبة ليها نجمة بـ [[:has(input:required)]].`, done: R`الألوان مبتظهرش قبل ما المستخدم يكتب ويخرج من الحقل ([[:user-invalid]] مش [[:invalid]])، والرسالة مربوطة بالحقل بـ [[aria-describedby]]، والنجمة [[aria-hidden]] والحقل عليه [[required]].`,
-              sol: R`~~~html signup-has.html
+              sol: R`~~~live 290 290 signup-has.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>تسجيل</title>
@@ -2780,7 +2780,7 @@ h2 بعده div:  32px
           title: "قواعد جوه قواعد من غير Sass",
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** جوه [[.card { }]] كتبنا [[&-title { color: red }]] (زي Sass) و [[h3 { color: green }]] من غير [[&]]. أنهي واحد هيشتغل؟`, done: R`[[h3]] اشتغلت (أخضر، يعني [[.card h3]])، و [[&-title]] مشتغلتش و [[.card-title]] فضل أسود: الـ nesting بتاع المتصفح مش بيلزّق نص زي Sass. اتقاس في Chrome 156.`,
-              sol: R`~~~html nest.html
+              sol: R`~~~live 130 130 nest.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>nesting توقّع</title>
@@ -2813,7 +2813,7 @@ h3           => rgb(0, 128, 0)  (أخضر: اشتغل)
 .card-title  => rgb(0, 0, 0)  (لسه اللون الافتراضي: [[&-title]] اتجاهل)
 ~~~` },
             { lvl: 'تطبيق', t: R`**مسألة:** [[.a, #b { & .c { color: red } }]] وبعدها [[.a .c.d { color: blue }]]. عنصر [[.c.d]] جوه [[.a]] لونه إيه؟ وليه؟`, done: R`أحمر، مع إن [[.a .c.d]] (0,3,0) شكله أقوى من [[.a .c]]. السبب إن الـ nesting بيتحوّل لـ [[:is(.a, #b) .c]]، و [[:is()]] بياخد specificity أقوى واحد في اللستة (الـ id)، فبقت (1,1,0). اتقاس في Chrome 156، والحل متحطش id جنب class في نفس القاعدة الأب.`,
-              sol: R`~~~html nest-spec.html
+              sol: R`~~~live 120 120 nest-spec.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>specificity الـ nesting</title>
@@ -3269,7 +3269,7 @@ background-image = none
 مسجّل:     عند 1s = 25px  عند 2.5s = 62.5px
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[@property --glow { syntax: "<color>"; inherits: false; }]] و [[.btn { --glow: transparent; transition: --glow .3s } .btn:hover { --glow: var(--brand) }]]، والظل بيظهر فجأة من غير حركة ومفيش ولا error.`, done: R`عرفت إن [[initial-value]] ناقصة فالقاعدة اتجاهلت، وبعد ما زوّدت [[initial-value: transparent]] الـ hover بقى بيعمل transition ([[btn.getAnimations().length]] = 1 وقت الـ hover).`,
-              sol: R`~~~html glow.html
+              sol: R`~~~live 130 130 glow.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>glow</title>
@@ -3305,7 +3305,7 @@ background-image = none
 بعد التصليح:          getAnimations().length = 1، و box-shadow في النص: rgba(29, 78, 216, 0.682) 0px 0px 16px 4px
 ~~~` },
             { lvl: 'تطبيق', t: R`**أشكال:** لوجو بيعدّي عليه شعاع ضوء: اللوجو SVG كـ [[mask-image]] على عنصر، وخلفيته [[linear-gradient(105deg, var(--fg) 40%, white 50%, var(--fg) 60%)]] بـ [[background-size: 300% 100%]]، والـ [[background-position]] بيتحرك بمتغير مسجّل [[--sweep]] من نوع [[<percentage>]].`, done: R`الشعاع بيعدّي كل ٣ ثواني من غير ما بداية التكرار تبان (الحركة بتبدأ وتخلص والشعاع برا اللوجو)، وفي العربي بيعدّي من الناحية التانية، ومع reduce اللوجو ثابت بلون واحد.`,
-              sol: R`~~~html shine.html
+              sol: R`~~~live 250 250 shine.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>لوجو بيلمع</title>
@@ -3353,7 +3353,7 @@ background-image = none
 axe: 0
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** gauge لقياس السرعة بـ [[conic-gradient]] على نص دايرة ([[from -90deg]] و 180deg بس)، والإبرة [[rotate: calc(var(--val) * 1.8deg - 90deg)]]، و [[--val]] مسجّل [[<number>]] وبيتغير من JavaScript بـ transition، و [[role="meter"]] بـ [[aria-valuenow]].`, done: R`من الكونسول [[g.style.setProperty("--val", 80)]] الإبرة والقوس بيتحركوا مع بعض بنعومة، و [[aria-valuenow]] بيتحدّث معاه، وقيمة 150 بتتقص لـ 100 بـ [[clamp()]] جوه الـ calc.`,
-              sol: R`~~~html gauge.html
+              sol: R`~~~live 210 210 gauge.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>gauge</title>
@@ -3411,7 +3411,7 @@ setProperty("--val", 150): rotate = 90deg، و aria-valuenow = 100
 axe: 0
 ~~~` },
             { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الحد اللي بيلف بطريقتين: [[@property]] زي المثال، و [[::before]] مربع أكبر من الكارت عليه [[conic-gradient]] ثابت وبيلف بـ [[transform: rotate()]] ومستخبي بـ [[overflow: hidden]]. حط ٣٠ كارت من كل نوع وشغّل Paint flashing و Performance.`, done: R`كتبت جدول: نسخة [[@property]] بتنوّر أخضر (repaint) كل frame، ونسخة الـ rotate مبتنوّرش لأنها transform، ووقت الـ Paint في Performance للنوعين. وقرار مكتوب: كارت أو اتنين [[@property]] أبسط، ولستة طويلة الـ rotate أرخص.`,
-              sol: R`~~~html border-a.html (نسخة @property، وكرر الكارت ٣٠ مرة)
+              sol: R`~~~live 600 720 border-a.html (نسخة @property، وكرر الكارت ٣٠ مرة)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>حد بيلف: @property</title>
@@ -3632,7 +3632,7 @@ scrollY=1000  1.00 / 0px           both: فاضل ظاهر
 لو مفيش أي حاجة بتتحرك: افتح الصفحة في Chrome أو Edge 115+ أو Safari 26+، و [[CSS.supports("animation-timeline: view()")]] في الكونسول لازم يرجّع [[true]]. ولو الشريط ثابت والكروت شغالة، غالبًا الصفحة مش هي اللي بتعمل scroll: فيه أب عليه [[overflow: auto]] و [[height: 100vh]]، فاستخدم [[scroll(nearest)]] أو انقل الـ scroll للصفحة.`,
           practice: [
             { lvl: 'سريع', t: R`**مسألة:** كارت ارتفاعه 300px بيبدأ عند 1500px من أول الصفحة، والشاشة ارتفاعها 700. بـ [[animation-range: entry 0% cover 50%]]، الحركة بتبدأ عند scrollY كام وبتخلص عند كام؟ احسب، وبعدين قيس بـ [[getComputedStyle(card).opacity]] عند الرقمين.`, done: R`البداية 800 (‏1500 − 700)، ورحلة cover ‏700 + 300 = 1000 ونصها 500، فالآخر عند 1300. والقياس: [[opacity]] صفر عند 800 وواحد عند 1300.`,
-              sol: R`~~~html range.html
+              sol: R`~~~live 600 720 range.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>animation-range</title>
@@ -3677,7 +3677,7 @@ scrollY = 1300  opacity = 1.000
 @keyframes zoom { from { scale: 1; } to { scale: 1.3; } }
 ~~~
 
-~~~html صفحة التجربة
+~~~live 580 580 صفحة التجربة
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>hero</title>
@@ -3706,7 +3706,7 @@ scrollY = 1300  opacity = 1.000
 الترتيب الصح:   timeline = ViewTimeline، و scale عند scrollY 0 و 900 = 1.000 و 1.285
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** carousel أفقي بـ [[scroll-snap]] وتحته شريط تقدّم مربوط بالـ scroll الأفقي بتاعه: الـ carousel عليه [[scroll-timeline: --gallery inline]]، والأب المشترك عليه [[timeline-scope: --gallery]] عشان الشريط (أخوه مش ابنه) يقدر يستخدم [[animation-timeline: --gallery]].`, done: R`الشريط بيتملي وانت بتسحب الـ carousel بالماوس أو اللمس أو الأسهم، ومبيتأثرش بـ scroll الصفحة، وفي العربي بيتملي من اليمين، ومن غير [[timeline-scope]] الشريط مبيتحركش (جرّبت وشفت).`,
-              sol: R`~~~html gallery.html
+              sol: R`~~~live 490 490 gallery.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>شريط تقدم</title>
@@ -3761,7 +3761,7 @@ scroll الصفحة 500px       scale لسه = 1.000
 من غير timeline-scope: أول الـ carousel scale = 1.000، وآخره scale = 1.000 (مبيتحركش)
 ~~~` },
             { lvl: 'تطبيق', t: R`**قارن وقيس:** شريط القراية مرتين: مرة بـ [[animation-timeline]]، ومرة بـ JavaScript ([[scroll]] listener بيحسب النسبة ويكتبها في [[--p]] جوه [[requestAnimationFrame]]). شغّل Performance مع CPU 4x slowdown وانت بتعمل scroll، وفي الكونسول شغّل loop تقيل ثانيتين في النص.`, done: R`جدول: عدد سطور كل نسخة، ووقت الـ Scripting في كل frame، وإيه اللي حصل وقت الـ loop التقيل (نسخة JavaScript الشريط وقف لحد ما الـ loop خلص، ونسخة CSS كملت أو اتأثرت أقل، اكتب اللي شفته فعلًا عندك).`,
-              sol: R`~~~html progress-css.html
+              sol: R`~~~live 600 620 progress-css.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>شريط القراية</title>
@@ -3807,7 +3807,7 @@ CSS          3             0.0ms
 JavaScript   9             16.9ms
 ~~~` },
             { lvl: 'تحدي', t: R`**ابني:** parallax لهيرو بـ ٣ طبقات (سما، وجبال، وأرض) كل طبقة بتتحرك بـ [[translate]] بسرعة مختلفة مع [[view()]] على الهيرو نفسه و [[animation-range: exit]]، ومع reduce كلهم ثابتين، ومن غير دعم الهيرو شكله كامل وسليم.`, done: R`وانت نازل الطبقة البعيدة أبطأ من القريبة، ومفيش layout shift ولا فراغ بيبان على الأطراف، و reduce بيوقّفهم كلهم، و [[@supports not (animation-timeline: view())]] (أو تجربة في متصفح من غير دعم) الهيرو ثابت ومش ناقص حاجة.`,
-              sol: R`~~~html parallax.html
+              sol: R`~~~live 290 290 parallax.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>parallax</title>
@@ -3983,7 +3983,7 @@ await b.close();
 الحجم: 12.4KB (بدل 3MB)
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** JSON-LD لصفحة كورس في [[<script type="application/ld+json">]] من object في JavaScript، وقبل ما تحطه حوّل كل [[<]] لـ [[\u003c]]. جرّب وصف فيه [[</script><script>alert(1)</script>]].`, done: R`Rich Results Test بيقرا الـ Course من غير errors، ومع الوصف الخبيث الصفحة مبتتكسرش ومفيش alert، ومن غير التحويل الـ script بيتقفل بدري (جرّبتها وشفت المشكلة).`,
-              sol: R`~~~html course-ld.html
+              sol: R`~~~live 120 120 course-ld.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>كورس React</title></head>

@@ -4887,7 +4887,7 @@ img/hero-600.jpg 19KB
 قسم CTA عليه id؟ لأ
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** نفس الهيكل لموضوع تاني (جيم أو مكتبة أو مدرسة لغات متخيلة): ٧ أقسام بأسئلة مختلفة تناسبه. اكتب السؤال اللي كل قسم بيرد عليه كتعليق HTML فوقه.`, done: R`[[lint.mjs]] عليه [[0 problems]]، وشجرة الـ accessibility فيها banner و main و contentinfo و h1 واحد، وكل قسم فوقه تعليق [[<!-- «...؟» -->]] بسؤال مختلف.`,
-              sol: R`~~~html index.html (جيم متخيل اسمه «حديد»)
+              sol: R`~~~live 460 500 index.html (جيم متخيل اسمه «حديد»)
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -4941,7 +4941,7 @@ h1: 1، و h2: 6
 تعليقات بسؤال: 7
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الهيكل ده «شغال»: [[<div class="header"><h1>حبّة</h1></div><div class="main"><h1>بن طازة</h1><a href="#Pricing">الأسعار</a><div id="pricing">...</div></div>]]. لقيلو ٤ مشاكل قبل ما تفتح DevTools، وبعدين أثبت كل واحدة.`, done: R`لقيت: مفيش landmarks (div بدل header و main)، و h1 اتنين، واللينك [[#Pricing]] مش هيلاقي [[id="pricing"]] لأن الـ id حساس لحالة الحروف، ومفيش [[lang]] و [[dir]]. وبعد التصليح الـ lint صفر واللينك بيقفز.`,
-              sol: R`~~~html بعد التصليح
+              sol: R`~~~live 200 200 بعد التصليح
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>محمصة حبّة</title></head>
@@ -5483,7 +5483,7 @@ a { color: inherit; }
 - العربي: خطوط الجهاز، و [[line-height]] أكبر، ومفيش [[letter-spacing]]، والأرقام والإيميل جوه [[bdi]] أو [[dir="ltr"]].`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها [[:root { color-scheme: light dark; --bg: light-dark(white, black); }]] و [[.card { color-scheme: dark; background: var(--bg); }]]. الجهاز على الفاتح: خلفية الكارت هتبقى إيه؟ وخلفية الصفحة؟ جرّب.`, done: R`كتبت توقعك، وجرّبت: الكارت أسود والصفحة بيضا، لأن [[light-dark()]] بتتحل حسب [[color-scheme]] على العنصر اللي بيستخدمها مش على المكان اللي اتعرّف فيه المتغير. وعرفت إن ده بيخليك تعمل قسم غامق جوه صفحة فاتحة بسطر واحد.`,
-              sol: R`~~~html light-dark.html
+              sol: R`~~~live 170 170 light-dark.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>light-dark</title>
@@ -5693,7 +5693,7 @@ fixContrast("#8f7f72", "#ffffff") = #837468  بنسبة 4.50
 node --test: pass 3، fail 0
 ~~~` },
             { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN عن [[light-dark()]] اعرف: بتقبل غير الألوان (زي صورتين أو طولين)؟ ولو [[color-scheme: normal]] على الـ root، هترجع أنهي قيمة؟`, done: R`كتبت الإجابتين ومعاهم رابط الصفحة ونسخة المتصفح اللي جرّبت عليها، وجرّبت إجابة التانية بإيدك: [[color-scheme: normal]] على الـ root والجهاز غامق، وشوفت أنهي قيمة رجعت في Computed.`,
-              sol: R`~~~html light-dark-tests.html
+              sol: R`~~~live 120 120 light-dark-tests.html
 <!doctype html>
 <html lang="ar">
 <head><meta charset="utf-8"><title>light-dark normal</title>
@@ -6022,7 +6022,7 @@ h1 { font-size: clamp(2rem, 1.2rem + 4vw, 3.6rem); }
 - الـ media queries في آخر الملف.`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p hidden class="note">مرحبا</p>]] و [[.note { display: block; }]]. الفقرة هتبان؟ و [[document.querySelector(".note").hidden]] هيرجّع إيه؟ جرّب، وبعدين زوّد [[[hidden] { display: none !important; }]].`, done: R`توقعت صح إنها هتبان و [[hidden]] لسه [[true]]، وبعد القاعدة اختفت. وكتبت ليه: ستايل المتصفح لـ [[hidden]] أضعف من أي قاعدة بتكتبها.`,
-              sol: R`~~~html hidden-test.html
+              sol: R`~~~live 120 120 hidden-test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>hidden</title>
@@ -6048,7 +6048,7 @@ h1 { font-size: clamp(2rem, 1.2rem + 4vw, 3.6rem); }
 بعد القاعدة: الارتفاع 0px، و .hidden = true
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** header بـ [[position: sticky; top: 0]] ومش لازق خالص. الأب [[<div class="page" style="overflow: hidden">]]. لقيت ليه من Computed، وصلّحه من غير ما تشيل الـ overflow الأفقي اللي الـ page محتاجه.`, done: R`لقيت إن [[overflow: hidden]] على الأب عمله scroll container فالـ sticky لازق جوه الـ div مش في الصفحة، وبدّلته بـ [[overflow-x: clip]] (بيقص من غير ما يعمل scroll container) والـ header لزق، وأثبت بـ [[getBoundingClientRect().top]] = ٠ بعد سكرول ١٠٠٠.`,
-              sol: R`~~~html sticky-page.html
+              sol: R`~~~live 600 720 sticky-page.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>sticky</title>
@@ -6514,7 +6514,7 @@ document.querySelectorAll("[data-plan]").forEach((a) => a.addEventListener("clic
 - الكارت المقلوب: متغيرين، وزرار مقلوب بسطر، ومفيش براند على [[--ink]].`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٣ كروت في [[repeat(auto-fit, minmax(200px, 1fr))]] على عرض ١٠٠٠ (من غير gap). كام عمود، وعرض كل كارت؟ وبـ [[auto-fill]] بدل [[auto-fit]]؟ جرّب وقيس بـ [[getBoundingClientRect().width]].`, done: R`كتبت توقعك وجرّبت: [[auto-fit]] = ٣ كروت كل واحد حوالي ٣٣٣، و [[auto-fill]] = ٥ أعمدة (٢ فاضيين) والكروت ٢٠٠ بس، وفهمت إن الفرق بيبان لما الكروت أقل من الأعمدة اللي تساعها الشاشة.`,
-              sol: R`~~~html fit-fill.html
+              sol: R`~~~live 130 130 fit-fill.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>auto-fit</title>
@@ -6648,7 +6648,7 @@ billing.addEventListener("change", (e) => showPrices(e.target.value === "yearly"
 JavaScript مقفول: السعر ٢٤٠ جنيه / شهر | ٤٤٠ جنيه / شهر | ٨٢٠ جنيه / شهر، والتبديل display: none
 ~~~` },
             { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف إمتى [[:has()]] بيبقى «forgiving» ومين لأ: لو كتبت [[.block:has(:checked, :unknown-thing)]] القاعدة كلها هتتلغي ولا الجزء الغلط بس؟`, done: R`كتبت الإجابة ومعاها المصدر، وجرّبتها في Chrome بإنك لقيت القاعدة في Styles (اتطبّقت ولا اتشطبت).`,
-              sol: R`~~~html forgiving.html
+              sol: R`~~~live 190 190 forgiving.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>forgiving</title>
@@ -6945,7 +6945,7 @@ document.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
 - الحركة: الإخفاء بشرط [[.js]] **و** [[no-preference]]، و [[opacity]] و [[translate]] بس، واختبر ٣ حالات.`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٣ details، أول اتنين [[name="a"]] والتالت [[name="b"]]، والأول والتالت [[open]]. افتح التاني: كام واحد هيفضل مفتوح، وأنهي؟ جرّب.`, done: R`اتنين مفتوحين: التاني والتالت، لأن الأول بس في نفس المجموعة مع التاني فاتقفل، والتالت مجموعة لوحده. وكتبت إن المجموعة بالـ name مش بالترتيب ولا بالمكان.`,
-              sol: R`~~~html details-groups.html
+              sol: R`~~~live 180 180 details-groups.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>مجموعات</title></head>
@@ -7016,7 +7016,7 @@ JSON.parse: نجح، @type = FAQPage، وعدد mainEntity = 4
 عدد الـ script بعد تشغيله مرتين: 1
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شريط شعارات بيتحرك ([[@keyframes slide { to { transform: translateX(-50%); } }]]) في صفحة RTL، وحد كتب [[animation-direction: reverse]] عشان «يمشي في الاتجاه التاني». الشريط بيسيب فراغ وبيطلع بره. صلّحه، وزوّد إيقاف عند الـ hover والـ focus، واحترم reduce.`, done: R`عرفت إن [[reverse]] بيعكس الزمن مش المكان، وعملت keyframes لـ RTL بـ [[translateX(50%)]] (أو [[:dir(rtl)]])، والشريط ماشي من غير فراغ، و [[animation-play-state: paused]] عند [[:hover]] و [[:focus-within]]، ومع reduce واقف، والنسخة المكررة عليها [[aria-hidden]].`,
-              sol: R`~~~html marquee.html
+              sol: R`~~~live 130 130 marquee.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>شريط شعارات</title>
@@ -7733,7 +7733,7 @@ dark form with 6 errors → violations: 0 | phone description: زي 01012345678�
 - إرسال واحد بـ flag و [[aria-disabled]]، ورد السيرفر بيرجع للخانة بتاعته، والسيرفر بيتحقق تاني.`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<input type="email" required>]] فيه [[mona@site]] (من غير [[.com]]). [[validity.typeMismatch]] هيرجّع إيه؟ وفي [[<input type="url">]] [[example.com]] من غير [[https://]]؟ جرّب في الـ Console.`, done: R`كتبت توقعك، وجرّبت: [[mona@site]] إيميل صح عند المتصفح (المواصفة مبتطلبش نقطة في الدومين)، و [[example.com]] في url غلط. وكتبت إن ده سبب إن السيرفر لازم يتحقق بقواعده.`,
-              sol: R`~~~html validity.html
+              sol: R`~~~live 120 130 validity.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>validity</title></head>
@@ -7816,7 +7816,7 @@ PASS confirm: changing the first brings it back
 axe على الفورم بعد خطأ التأكيد: 0
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<input placeholder="الإيميل" style="border-color: red">]] و [[<span class="error">مطلوب</span>]] تحتها من غير أي ربط، والزرار [[<div onclick="send()">إرسال</div>]]. صلّح كل حاجة وأثبت بـ axe وبـ Tab.`, done: R`فيه label بـ for، و [[aria-describedby]] بيربط الغلط، و [[aria-invalid]] بدل اللون بس، والزرار [[<button type="submit">]] بيوصله Tab ويشتغل بـ Enter و Space، و axe صفر، وكتبت ٤ أسباب للتغيير.`,
-              sol: R`~~~html form-fixed.html
+              sol: R`~~~live 150 150 form-fixed.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>تسجيل</title>
@@ -8181,7 +8181,7 @@ await browser.close();
 - اقرا الأرقام: FCP = LCP معناها الرسم مستني الـ CSS، وأي فرق أصغر من التذبذب مش فرق، وكل تحسين يتقاس قبل ما يدخل.`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة RTL فيها [[.badge { position: absolute; inset-inline-start: -20px; }]]. هيبقى فيه scroll أفقي؟ ومن أنهي ناحية؟ والفلتر اللي بيشيّك [[b.right > vw]] بس هيلاقيه؟ جرّب بـ [[matrix.mjs]] قبل وبعد ما تشيل [[b.left < -0.5]].`, done: R`كتبت إن [[inline-start]] في RTL = يمين، فالبادج بيطلع من اليمين (ومفيش scroll، لأن اللي بيطلع من الناحية اللي الصفحة بتبدأ منها بيتقص)، وجرّبت [[inset-inline-end]] بدلها فطلع من الشمال والمصفوفة لقته بـ [[left < 0]] بس.`,
-              sol: R`~~~html badge-rtl.html
+              sol: R`~~~live 180 180 badge-rtl.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>badge</title>
@@ -8884,7 +8884,7 @@ for (const [, block] of html.matchAll(/<picture\b[^>]*>([\s\S]*?)<\/picture>/g))
 }
 ~~~
 
-~~~html tools/bad.html (الـ ٣ غلطات)
+~~~live 120 120 tools/bad.html (الـ ٣ غلطات)
 <!doctype html><html lang="ar" dir="rtl"><head><title>x</title></head><body><main><h1>x</h1>
 <a href="https://shop.example/" target="_blank">متجر</a>
 <picture><source type="image/webp" srcset="a.webp 600w" sizes="100vw"><img src="a.jpg" alt="" width="10" height="10" sizes="50vw" srcset="a.jpg 600w"></picture>

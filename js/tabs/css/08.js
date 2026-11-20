@@ -1993,7 +1993,7 @@ CSS validator: 31 رسالة كلها container-type و cqi (الـ validator ل
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** صورة بانوراما 1200 × 400 في صندوق 300 × 300. مع [[contain]]: الصورة هتترسم بمقاس كام، والفاضي فين وقد إيه؟ ومع [[cover]]: أنهي جزء هيتقص؟`, done: R`contain: الصورة 300 × 100 (صغرت لـ ربع)، وفاضي 100 فوق و 100 تحت. cover: الصورة اتكبّرت لـ 900 × 300 واتقص 300 من كل جنب، فالنص بس باين. وأكّدت بلقطة شاشة أو بلون أول وآخر سطر.`, sol: R`الحساب أولًا، وبعدين صفحة صغيرة تأكّده بلون أول وآخر الصورة.
 
-~~~html predict.html
+~~~live 600 640 predict.html
 <!doctype html>
 <meta charset="utf-8">
 <title>contain و cover</title>
@@ -2020,7 +2020,7 @@ CSS validator: 31 رسالة كلها container-type و cqi (الـ validator ل
 لون (2, 150)            أخضر (أول الصورة)           أزرق (الأخضر اتقص كله)
 لون (297, 150)          أحمر (آخر الصورة)           أزرق (الأحمر اتقص كله)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة فريق لمكتبة متخيلة: ٨ كروت بصور مختلفة النسب (طولي وعرضي ومربع)، كل صورة [[aspect-ratio: 4 / 5]] و [[object-fit: cover]] و [[object-position: 50% 20%]]، والشبكة auto-fit.`, done: R`على 360 و 768 و 1280 كل الكروت في الصف نفس الارتفاع بالظبط (قيس [[height]] بتاع كل صورة)، ومفيش صورة متمطّطة، والوشوش باينة في الصور الطولية، ومفيش scroll أفقي.`, sol: R`~~~html team.html
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة فريق لمكتبة متخيلة: ٨ كروت بصور مختلفة النسب (طولي وعرضي ومربع)، كل صورة [[aspect-ratio: 4 / 5]] و [[object-fit: cover]] و [[object-position: 50% 20%]]، والشبكة auto-fit.`, done: R`على 360 و 768 و 1280 كل الكروت في الصف نفس الارتفاع بالظبط (قيس [[height]] بتاع كل صورة)، ومفيش صورة متمطّطة، والوشوش باينة في الصور الطولية، ومفيش scroll أفقي.`, sol: R`~~~live 600 720 team.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2086,7 +2086,7 @@ $__lt/script>
 من تقسيم العرض على 7، وده كسر بكسل مش بيتشاف.
 axe: صفر مشاكل.
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<img src="/a.jpg" width="800" height="600" style="width: 100%; aspect-ratio: 1">]] جوه كارت عرضه 400، والمفروض يبقى مربع. قيس الارتفاع وصلّح.`, done: R`قبل: الارتفاع 600 (الـ [[height]] اللي في الـ HTML كسب على الـ aspect-ratio). بعد [[height: auto]]: 400 × 400، ومن غير ما تمسح [[width]] و [[height]] من الـ HTML (لسه محتاجهم لحجز المكان).`, sol: R`~~~html fix.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<img src="/a.jpg" width="800" height="600" style="width: 100%; aspect-ratio: 1">]] جوه كارت عرضه 400، والمفروض يبقى مربع. قيس الارتفاع وصلّح.`, done: R`قبل: الارتفاع 600 (الـ [[height]] اللي في الـ HTML كسب على الـ aspect-ratio). بعد [[height: auto]]: 400 × 400، ومن غير ما تمسح [[width]] و [[height]] من الـ HTML (لسه محتاجهم لحجز المكان).`, sol: R`~~~live 420 420 fix.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>كارت مربع</title></head>
@@ -2111,7 +2111,7 @@ axe: صفر مشاكل.
 قبل (height من HTML)  400      600
 بعد height: auto      400      400
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ألبوم صور رحلة متخيلة على شكل polaroid: [[<figure>]] بإطار أبيض وظل، والصورة مربعة [[cover]]، و [[figcaption]] تحت، وكل صورة متلفّة زاوية مختلفة بـ [[:nth-child]] و [[rotate]].`, done: R`كل الصور نفس المقاس رغم إن الملفات مختلفة، والكروت متلفّة بـ ٣ زوايا على الأقل، والـ caption مقري، ولما تقف على كارت بيتعدل ([[rotate: 0deg]]) ويكبر شوية من غير ما يزق اللي جنبه.`, sol: R`~~~html album.html
+            { lvl: 'تطبيق', t: R`**أشكال:** ألبوم صور رحلة متخيلة على شكل polaroid: [[<figure>]] بإطار أبيض وظل، والصورة مربعة [[cover]]، و [[figcaption]] تحت، وكل صورة متلفّة زاوية مختلفة بـ [[:nth-child]] و [[rotate]].`, done: R`كل الصور نفس المقاس رغم إن الملفات مختلفة، والكروت متلفّة بـ ٣ زوايا على الأقل، والـ caption مقري، ولما تقف على كارت بيتعدل ([[rotate: 0deg]]) ويكبر شوية من غير ما يزق اللي جنبه.`, sol: R`~~~live 600 720 album.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2179,7 +2179,7 @@ rotate = 0deg ، scale = 1.06
 offsetLeft للكارت اللي جنبه: 652 قبل و 652 بعد (متحركش)
 axe: صفر مشاكل.
 ~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الصورة مرة [[<img>]] بـ [[object-fit: cover]] ومرة [[div]] بـ [[background-image]] و [[background-size: cover]]. قارن في DevTools: اسم العنصر في Accessibility tree، وهل [[loading="lazy"]] ينفع، وهل [[srcset]] ينفع.`, done: R`عندك جدول ٣ صفوف: الـ img ليه اسم (الـ alt) والـ div ملوش، والـ img بيدعم lazy و srcset والـ div لأ (محتاج [[image-set()]] و JavaScript)، والشكل على الشاشة واحد. وكتبت إمتى الـ background مقبول (زينة بس).`, sol: R`~~~html compare.html
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الصورة مرة [[<img>]] بـ [[object-fit: cover]] ومرة [[div]] بـ [[background-image]] و [[background-size: cover]]. قارن في DevTools: اسم العنصر في Accessibility tree، وهل [[loading="lazy"]] ينفع، وهل [[srcset]] ينفع.`, done: R`عندك جدول ٣ صفوف: الـ img ليه اسم (الـ alt) والـ div ملوش، والـ img بيدعم lazy و srcset والـ div لأ (محتاج [[image-set()]] و JavaScript)، والشكل على الشاشة واحد. وكتبت إمتى الـ background مقبول (زينة بس).`, sol: R`~~~live 600 720 compare.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2449,7 +2449,7 @@ npx sharp-cli -i photo.png -o hero-mobile.avif --format avif resize 800 1000 --f
 npx sharp-cli -i photo.png -o hero-mobile.webp --format webp resize 800 1000 --fit cover
 ~~~
 
-~~~html index.html
+~~~live 600 540 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2500,7 +2500,7 @@ hero-1600.jpg     70,113
 - [[loading="lazy"]] بيقول للمتصفح «استنى لحد ما تعرف الصورة دي قريبة من الشاشة». والمعلومة دي مش معروفة غير بعد ما الـ CSS ييجي والـ layout يتحسب، فالصورة بتفقد تحميلها البدري اللي الـ preload scanner كان بيعمله. لو الصورة دي عنصر الـ LCP، الـ LCP نفسه بيتأخر.
 - [[fetchpriority="high"]] مبيغيّرش **هل** الصورة هتتحمّل، بيغيّر ترتيبها في الطابور. الصور اللي فوق الشاشة Chrome بيرفع أولويتها لوحده، بس بعد ما يعرف مكانها. الـ attribute بيقوله كده من الأول. بيفرق لما الصفحة فيها طلبات كتير بتتنافس على نت بطيء، ومفيش فرق تقريبًا في صفحة فيها صورة واحدة.
 
-~~~html test.html
+~~~live 560 310 test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2690,7 +2690,7 @@ NotAllowedError: play() failed because the user didn't interact with the documen
 ~~~
 
 (اتقاس في Chrome بـ [[--autoplay-policy=document-user-activation-required]]، وده اللي زائر جديد بيقابله.)` },
-            { lvl: 'تطبيق', t: R`**ابني:** فيديو خلفية للهيرو بزرار «إيقاف/تشغيل» عليه [[aria-pressed]]، ولو المستخدم مفعّل [[prefers-reduced-motion: reduce]] الفيديو ميشتغلش لوحده ويبان الـ poster.`, done: R`من DevTools › Rendering مع [[reduce]]: [[video.paused]] = [[true]] والـ poster ظاهر. من غيره بيشتغل، والزرار بيوقّفه ويغيّر [[aria-pressed]]، والزرار بيتوصل بالـ Tab وليه اسم.`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**ابني:** فيديو خلفية للهيرو بزرار «إيقاف/تشغيل» عليه [[aria-pressed]]، ولو المستخدم مفعّل [[prefers-reduced-motion: reduce]] الفيديو ميشتغلش لوحده ويبان الـ poster.`, done: R`من DevTools › Rendering مع [[reduce]]: [[video.paused]] = [[true]] والـ poster ظاهر. من غيره بيشتغل، والزرار بيوقّفه ويغيّر [[aria-pressed]]، والزرار بيتوصل بالـ Tab وليه اسم.`, sol: R`~~~live 120 120 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2773,7 +2773,7 @@ WEBVTT
 وهنا بنغلّفها ونبعتها لك.
 ~~~
 
-~~~html index.html
+~~~live 170 170 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>ترجمة</title></head>
@@ -2803,7 +2803,7 @@ $__lt/script>
 من غير سطر WEBVTT:    cues.length = 0 ، readyState = 3 (ERROR)
                       مفيش ولا رسالة error في الكونسول بخصوص الترجمة
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** iframe يوتيوب (أو خريطة) responsive بـ [[width: 100%; height: auto; aspect-ratio: 16 / 9]] بدل حيلة [[padding-top: 56.25%]] القديمة.`, done: R`على 360 ارتفاع الـ iframe 202.5 (= 360 × 9 ÷ 16)، وعلى 768 قد 432، ومفيش wrapper ولا [[position: absolute]] في الـ CSS، والـ iframe عليه [[title]].`, sol: R`~~~html index.html
+            { lvl: 'تطبيق', t: R`**ابني:** iframe يوتيوب (أو خريطة) responsive بـ [[width: 100%; height: auto; aspect-ratio: 16 / 9]] بدل حيلة [[padding-top: 56.25%]] القديمة.`, done: R`على 360 ارتفاع الـ iframe 202.5 (= 360 × 9 ÷ 16)، وعلى 768 قد 432، ومفيش wrapper ولا [[position: absolute]] في الـ CSS، والـ iframe عليه [[title]].`, sol: R`~~~live 520 290 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2846,7 +2846,7 @@ $__lt/script>
 ffmpeg -f lavfi -i testsrc2=size=640x360:rate=24 -f lavfi -i sine=frequency=330 -t 60 -c:v libx264 -pix_fmt yuv420p -b:v 500k -c:a aac -b:a 64k -movflags +faststart v.mp4
 ~~~
 
-~~~html index.html
+~~~live 170 170 index.html
 <!doctype html>
 <meta charset="utf-8">
 <title>preload</title>
@@ -3079,7 +3079,7 @@ WEBVTT
 قبل: عرض الدايرة 20px (في ركن الـ 48)
 بعد: عرض الدايرة 40px (ماليّة الـ 48 مع هامش 4 من كل ناحية)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** sprite فيه ٦ أيقونات متخيلة بـ [[<symbol id="i-cart" viewBox="0 0 24 24">]] جوه [[<svg style="display: none">]] في أول الـ body، وكل زرار بيستخدم [[<svg><use href="#i-cart"/></svg>]] و [[stroke="currentColor"]].`, done: R`الستة أزرار بتتلوّن مع [[color]] بتاع الزرار (hover بيغيّرهم كلهم)، وكل زرار ليه [[aria-label]] والـ svg جواه [[aria-hidden="true"]]، وتعريف كل أيقونة موجود مرة واحدة بس في الـ HTML.`, sol: R`~~~html icons.html
+            { lvl: 'تطبيق', t: R`**ابني:** sprite فيه ٦ أيقونات متخيلة بـ [[<symbol id="i-cart" viewBox="0 0 24 24">]] جوه [[<svg style="display: none">]] في أول الـ body، وكل زرار بيستخدم [[<svg><use href="#i-cart"/></svg>]] و [[stroke="currentColor"]].`, done: R`الستة أزرار بتتلوّن مع [[color]] بتاع الزرار (hover بيغيّرهم كلهم)، وكل زرار ليه [[aria-label]] والـ svg جواه [[aria-hidden="true"]]، وتعريف كل أيقونة موجود مرة واحدة بس في الـ HTML.`, sol: R`~~~live 170 170 icons.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3147,7 +3147,7 @@ ariaSnapshot:
 - button "قفل"
 axe: صفر مشاكل.
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** حلقة تقدّم SVG: دايرة [[r="40"]] و [[stroke-dasharray]] = محيطها و [[stroke-dashoffset]] محسوب من [[--p]] بـ [[calc()]]، وملفوفة [[rotate(-90deg)]] عشان تبدأ من فوق، والرقم في النص.`, done: R`مع [[--p: 75]] الحلقة مكمّلة ٣ أرباع من فوق مع عقارب الساعة، و [[getComputedStyle]] بيقول dasharray ≈ 251.33 و dashoffset ≈ 62.83. ولما تغيّر [[--p]] من DevTools الحلقة بتتغيّر من غير JavaScript.`, sol: R`~~~html ring.html
+            { lvl: 'تطبيق', t: R`**أشكال:** حلقة تقدّم SVG: دايرة [[r="40"]] و [[stroke-dasharray]] = محيطها و [[stroke-dashoffset]] محسوب من [[--p]] بـ [[calc()]]، وملفوفة [[rotate(-90deg)]] عشان تبدأ من فوق، والرقم في النص.`, done: R`مع [[--p: 75]] الحلقة مكمّلة ٣ أرباع من فوق مع عقارب الساعة، و [[getComputedStyle]] بيقول dasharray ≈ 251.33 و dashoffset ≈ 62.83. ولما تغيّر [[--p]] من DevTools الحلقة بتتغيّر من غير JavaScript.`, sol: R`~~~live 290 290 ring.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3205,7 +3205,7 @@ stroke-dashoffset = calc(62.8319px)
 stroke-dashoffset = calc(175.929px)   (من غير JavaScript)
 axe: صفر مشاكل.
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** خط تحت كلمة في عنوان كأنه مرسوم بالقلم: [[<path pathLength="1">]] و [[stroke-dasharray: 1]] و [[stroke-dashoffset]] من 1 لـ 0 بـ animation، ومعاه [[prefers-reduced-motion]].`, done: R`الخط بيترسم من البداية للنهاية مرة واحدة لما الصفحة تفتح، ومع [[reduce]] في Rendering بيبان مرسوم على طول من غير حركة، وفي rtl بيترسم من اليمين (اعكس الـ path أو استخدم [[scale: -1 1]]).`, sol: R`~~~html underline.html
+            { lvl: 'تطبيق', t: R`**أشكال:** خط تحت كلمة في عنوان كأنه مرسوم بالقلم: [[<path pathLength="1">]] و [[stroke-dasharray: 1]] و [[stroke-dashoffset]] من 1 لـ 0 بـ animation، ومعاه [[prefers-reduced-motion]].`, done: R`الخط بيترسم من البداية للنهاية مرة واحدة لما الصفحة تفتح، ومع [[reduce]] في Rendering بيبان مرسوم على طول من غير حركة، وفي rtl بيترسم من اليمين (اعكس الـ path أو استخدم [[scale: -1 1]]).`, sol: R`~~~live 120 170 underline.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>

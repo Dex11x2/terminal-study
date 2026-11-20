@@ -3417,7 +3417,7 @@ PASS 10 الشطرنج
           try: R`اعمل ملف [[shapes.html]] فيه العشر عناصر بالـ ids اللي في الشرح، وارسمهم واحد واحد، والصق الفحص الذاتي بعد كل شكل. مش لازم تبدأ بالترتيب: ابدأ بالدايرة والمثلث، وسيب القلب والتذكرة للآخر. وبعدها اكتب [[regularPolygon]] و [[starPolygon]] في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصر [[width: 0; height: 0; border: 20px solid; border-color: red green blue orange]]. قبل ما تفتحه ارسم على ورقة اللي هيظهر، واكتب [[offsetWidth]] هيبقى كام. وبعدين افتحه وقيس في الـ Console.`, done: R`رسمت مربع 40 × 40 متقسم ٤ مثلثات بتتقابل في النص (أحمر فوق، وأخضر يمين، وأزرق تحت، وبرتقاني شمال)، و [[offsetWidth]] طلع 40، وفهمت إن المثلث في التمرين الأول هو ده بالظبط بس ٣ منهم شفافين.`,
-              sol: R`~~~html borders.html
+              sol: R`~~~live 130 130 borders.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>border</title>
@@ -3471,7 +3471,7 @@ PASS 6 اللودر: reduced motion
 FAIL 6 اللودر: reduced motion ← مفيش @media (prefers-reduced-motion: reduce) بيوقّف الحركة على العنصر ده
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** شارة سداسية 100 × 100 لونها [[#7c3aed]] جواها رقم «٧» أبيض في النص بالظبط، بـ [[clip-path]] من [[regularPolygon(6)]] و [[display: grid; place-items: center]]. وبعدين خليها تلف ببطء ٦٠ درجة بس لما الماوس يقف عليها.`, done: R`الـ clip-path في Computed هو [[polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)]]، والرقم في النص (الفرق بين مركز الرقم ومركز الشارة صفر بـ [[getBoundingClientRect]])، والدوران على [[:hover]] بـ [[transition]] وبيرجع لما الماوس يمشي.`,
-              sol: R`~~~html badge.html
+              sol: R`~~~live 190 190 badge.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>شارة</title>
@@ -3508,7 +3508,7 @@ rotate عند hover: 60deg
 rotate بعد ما الماوس مشي: none
 ~~~` },
             { lvl: 'تحدي', t: R`**قارن وقيس:** ارسم الشطرنج مرتين: مرة بـ ٦٤ [[<div>]] جوه grid، ومرة بـ gradient واحد. في كل مرة اطبع [[document.querySelectorAll('*').length]]، وسجّل Performance في DevTools وانت بتغيّر حجم الشاشة ٥ ثواني، وقارن وقت Layout.`, done: R`عندك رقمين لعدد العناصر (الفرق ٦٤ بالظبط) ورقمين لوقت Layout من تاب Performance، ومكتوب جنبهم أنهي أسرع وبكام. ولو الفرق صغير جدًا مكتوب كده بصراحة: ٦٤ عنصر قليلين، والفرق بيبان في جدول فيه آلاف الخانات.`,
-              sol: R`~~~html chess-divs.html
+              sol: R`~~~live 570 440 chess-divs.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>شطرنج</title>
@@ -3967,7 +3967,7 @@ PASS 8 navbar عربي: logical properties بس
           try: R`اعمل [[layouts.html]] فيه الأجزاء التمانية بنفس الـ ids والـ classes (الهيكل كله في الحل)، وابني layout واحد كل مرة والصق الفحص على 1200 وعلى 360 من Device Toolbar. وبعدها اكتب [[autoFitColumns]] و [[trackWidth]] و [[spanSize]] في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** حاوية عرضها 700px، و [[grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px]]. هيطلع كام عمود وعرض كل واحد كام؟ احسب بالمعادلة على ورقة، وبعدين افتحه وقيس بـ [[getBoundingClientRect().width]].`, done: R`حسبت [[floor(716 / 236) = 3]] عواميد، وكل واحد [[(700 − 32) / 3 = 222.67]]، والمتصفح طلّع 3 عواميد و [[222.65625]] (الفرق من تقريب البكسل لـ 1/64).`,
-              sol: R`~~~html autofit.html
+              sol: R`~~~live 140 140 autofit.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>auto-fit</title>
@@ -3995,7 +3995,7 @@ PASS 8 navbar عربي: logical properties بس
 العرض: 222.65625
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مودال [[.overlay { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; }]] و [[<div class="overlay" hidden>]]، والصفحة كلها متغطية رمادي من أول ما تفتح. لاقي السبب من Elements › Computed › display، وصلّحه بسطر واحد من غير ما تشيل [[display: flex]].`, done: R`Computed قال [[display: flex]] مع إن العنصر عليه [[hidden]]، وفهمت إن [[hidden]] مجرد [[display: none]] بأقل specificity، وزوّدت [[.overlay[hidden] { display: none; }]]، وفحص المودال بقى PASS في الحالتين.`,
-              sol: R`~~~html modal-hidden.html
+              sol: R`~~~live 120 120 modal-hidden.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>overlay</title>
@@ -4022,7 +4022,7 @@ PASS 8 navbar عربي: logical properties بس
 بعد التصليح، مفتوح: display = flex
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** dashboard: هيدر فوق، وسايدبار، و ٤ كروت أرقام (KPI) في صف بيبقى ٢ × ٢ على التابلت وواحد تحت التاني على الموبايل، وتحتهم جدول بياخد العرض كله. كله بـ grid واحد و [[grid-template-areas]] بتتغير في media query.`, done: R`على 1200 الكروت ٤ في صف، وعلى 768 اتنين في صف، وعلى 360 واحد، والجدول تحتهم بعرض المحتوى في التلاتة، والـ HTML نفسه متغيرش بين العروض (الترتيب كله من الـ CSS)، وفحص الـ overflow بتاع الدرس اللي بعده بيقول [[مفيش scroll أفقي]].`,
-              sol: R`~~~html dashboard.html
+              sol: R`~~~live 420 550 dashboard.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>داشبورد</title>
@@ -4086,7 +4086,7 @@ scroll أفقي على التلاتة: 0 و 0 و 0
 axe: 0
 ~~~` },
             { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل نفس شبكة الكروت مرة بـ [[auto-fit]] ومرة بـ [[auto-fill]]، بـ ٣ كروت بس، على 1200. إيه الفرق في عرض الكارت؟ وامتى تختار دي ودي؟`, done: R`مع [[auto-fit]] الـ ٣ كروت بيتمدوا يملوا الصف (حوالي 379px كل واحد)، ومع [[auto-fill]] فضلوا قريب من 220 وفيه خانات فاضية في الآخر، والقياس مكتوب بالأرقام، ومكتوب إن auto-fill أحسن لما عايز الكروت متتمددش لما يبقوا قليلين.`,
-              sol: R`~~~html fit-fill-1200.html
+              sol: R`~~~live 250 510 fit-fill-1200.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>auto-fit و auto-fill</title>
@@ -4125,7 +4125,7 @@ auto-fill: عرض الكارت 220.80، والمسارات 220.797px 220.797px 2
 margin-inline-start: auto معناها «قبل» في اللغتين، فبتشتغل من غير أي شرط على اللغة.
 ~~~
 
-~~~html nav.html: جرّبها على navbar بلغتين
+~~~live 120 120 nav.html: جرّبها على navbar بلغتين
 <!doctype html>
 <html lang="en" dir="ltr">
 <head><meta charset="utf-8"><title>nav</title>
@@ -4482,7 +4482,7 @@ PASS s8 ٨ صف المنتج
           try: R`انسخ الصفحة البايظة من «الحل» (الجزء اللي قبل التصليح)، وافتحها على 360 في Device Toolbar، وشغّل الكود اللي في المثال وبعده الفحص الذاتي. صلّح الأجزاء التمانية واحد واحد، وبعد كل تصليح شغّل الفحص تاني لحد ما يطلع [[النتيجة: 8 من 8]] والصفحة 360 = 360. وجرّب حيلة [[overflow-x: hidden]] مرة عشان تشوف الفحص بيكشفها.`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة [[dir="rtl"]] فيها صورة [[width="600"]] على شاشة 360. الكود ده هيلاقيها؟ [[[...document.querySelectorAll('*')].filter(el => el.getBoundingClientRect().right > innerWidth)]]. اكتب إجابتك وبعدين جرّب.`, done: R`كتبت «لأ» قبل التجربة لأن في RTL الصورة بتبدأ من اليمين وآخرها جوه الشاشة وأولها بالسالب، والكود رجّع array فاضية فعلًا، ولما زوّدت [[|| r.left < 0]] لقاها.`,
-              sol: R`~~~html rtl-image.html
+              sol: R`~~~live 390 390 rtl-image.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>صورة</title>
@@ -4507,7 +4507,7 @@ scrollWidth − clientWidth: 240
 حدود الصورة: left -240، و right 360
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كارت فيه [[display: flex]]: أيقونة، و [[<h3>]] فيه اسم ملف طويل من غير مسافات ([[تقرير_المبيعات_الشهري_النهائي_بعد_التعديل.xlsx]])، وزرار «تحميل». على 360 الزرار طالع برا. صلّحه من غير ما تخلي الاسم يتقص بـ [[...]].`, done: R`الفحص الذاتي على الكارت PASS، والاسم بيتكسر على سطرين جوه الكارت، والزرار جوه الشاشة. والتصليح [[min-width: 0]] على الـ h3 (أو على الـ wrapper بتاعه) و [[overflow-wrap: anywhere]]، ومكتوب ليه [[min-width: 0]] لوحدها مش كفاية (الكلمة لسه مبتتكسرش).`,
-              sol: R`~~~html file-card.html
+              sol: R`~~~live 130 150 file-card.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ملف</title>
@@ -4566,7 +4566,7 @@ javascript:(()=>{const K='data-of-old';const on=document.querySelectorAll('['+K+
 عنصر ليه outline: 3px dashed blue قبل: blue dashed 3px، وبعد الضغطتين: blue dashed 3px
 ~~~` },
             { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[overflow: hidden]] و [[overflow: clip]]: أنهي واحد بيعمل scroll container؟ وأنهي واحد بيسمح بـ [[overflow-clip-margin]]؟ وجرّب الاتنين على أب جواه [[position: sticky]].`, done: R`مكتوب إن [[hidden]] بيعمل scroll container (الـ sticky بيلزق جواه ومش في الشاشة، والعنصر لسه بيتعمله scroll بـ JS)، و [[clip]] مش بيعمل (الـ sticky شغال)، وإن [[overflow-clip-margin]] مع [[clip]] بس، والتجربة على الـ sticky طلّعت نفس الكلام.`,
-              sol: R`~~~html clip-vs-hidden.html
+              sol: R`~~~live 600 720 clip-vs-hidden.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>clip</title>
@@ -4910,7 +4910,7 @@ good.css: 0 problems
           try: R`انسخ الحل من «الحل»، وارجّعه بايظ: حط الـ CSS اللي في المثال في آخر الـ [[<style>]] مكان سطور التصليح، وشيل [[group]] من [[.card-link]] و [[popover]] من [[.alert]] و [[width]] و [[height]] من [[.banner]]. شغّل الفحص على 360 (لازم [[0 من 11]])، وصلّح خطأ خطأ بالترتيب اللي في الشرح، وقبل كل تصليح اكتب السبب في سطر قبل ما تبص في الجدول.`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<header style="position: sticky; top: 0">]] جوه [[<div style="overflow: auto; height: 300px">]] جوه صفحة طويلة. لما تعمل scroll للصفحة كلها (مش الـ div) الهيدر هيلزق في الشاشة؟ اكتب، وبعدين جرّب.`, done: R`كتبت «لأ» قبل التجربة، والهيدر مشي مع الصفحة فعلًا، وفهمت إنه بيلزق جوه الـ div بس لما الـ div نفسه يعمل scroll، لأن الـ div بقى أقرب scroll container ليه.`,
-              sol: R`~~~html sticky-inner.html
+              sol: R`~~~live 600 720 sticky-inner.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>sticky</title></head>
@@ -4936,7 +4936,7 @@ scroll الصفحة 500: top = -420 (مشي مع الصفحة)
 scroll جوه الـ div 200: top بالنسبة للـ div = 0 (لزق)
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مودال [[position: fixed; inset: 0; z-index: 1000]] جوه [[<main class="fade-in">]]، و [[.fade-in { animation: fade .4s forwards }]] بيغيّر [[opacity]] من 0 لـ 1، والهيدر [[position: sticky; z-index: 50]]. المودال بيظهر تحت الهيدر. لاقي السبب بـ [[getComputedStyle]] على آباء المودال، وصلّحه بـ [[<dialog>]] و [[showModal()]].`, done: R`[[getComputedStyle(main).opacity]] طلع [[1]] بعد ثانية ونص والمودال لسه تحت الهيدر، و [[document.getAnimations().length]] طلع 1: الأنيميشن بـ [[forwards]] لسه «شغال» (ماسك آخر frame)، وأنيميشن على [[opacity]] بيفضل عامل stacking context طول ما هو شغال حتى لو القيمة 1. والتصليح بـ [[<dialog>]]: [[elementFromPoint]] على مكان الهيدر رجّع الـ dialog من أول لحظة، و Escape بيقفله لوحده.`,
-              sol: R`~~~html modal-fade.html
+              sol: R`~~~live 170 170 modal-fade.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>مودال</title>
@@ -5016,7 +5016,7 @@ variant جديد .btn-warn: rgb(180, 83, 9)
 عدد !important: قبل 7، وبعد 0
 ~~~` },
             { lvl: 'تحدي', t: R`**اكتب اختبار:** زوّد على الفحص الذاتي خطأ ١١: «الـ sticky في grid من غير [[align-self: start]]». ابني الحالة الأول (sticky بيتمد بطول الصف فمبيلزقش)، واكتب الـ [[ok(...)]] اللي يلقطها برسالة بتقول السبب.`, done: R`الفحص الجديد بيقيس إن ارتفاع الـ sticky بيساوي ارتفاع أبوه (وده معناه إنه متمد ومش هيتحرك)، وبيطبع FAIL برسالة فيها [[align-self]] على الحالة البايظة و PASS بعد ما تزوّد [[align-self: start]]، والـ ١١ القديمين لسه PASS.`,
-              sol: R`~~~html sticky-grid.html: الحالة نفسها
+              sol: R`~~~live 600 720 sticky-grid.html: الحالة نفسها
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>sticky في grid</title>
@@ -5429,7 +5429,7 @@ button { background: none; }
 @layer reset:    rgb(0, 0, 255)
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** صفحة فيها ٣ layers بالترتيب [[@layer reset, components, utilities]]، وزرار ليه [[.btn]] في components و [[.mt-4]] و [[.bg-red]] في utilities. اثبت إن الـ utility بيكسب الـ component حتى لو الـ component selector أتقل ([[.card .btn]]).`, done: R`[[getComputedStyle]] على الزرار طلّع خلفية [[.bg-red]] مع إن [[.card .btn]] (0, 2, 0) أتقل من [[.bg-red]] (0, 1, 0)، ولما شيلت سطر [[@layer reset, components, utilities]] من فوق والترتيب بقى حسب أول ظهور، النتيجة اتغيرت أو فضلت، ومكتوب ليه.`,
-              sol: R`~~~html layers.html
+              sol: R`~~~live 130 130 layers.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>layers</title>
@@ -5494,7 +5494,7 @@ Tailwind حاطط الـ utilities في @layer utilities عشان الترتيب
 وده سبب شائع لـ «الـ class بتاعة Tailwind مش شغالة»: حط الـ CSS بتاعك في @layer base أو @layer components.
 ~~~
 
-~~~html tw-sim.html: نفس الموقف من غير Tailwind
+~~~live 170 170 tw-sim.html: نفس الموقف من غير Tailwind
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>layers و Tailwind</title>
@@ -5999,7 +5999,7 @@ PASS 10 الأهداف ٢٤×٢٤ على الأقل (WCAG 2.2)
           try: R`انسخ الصفحة البايظة من الشرح لملف، وافتحه في Chrome، وشغّل كود axe (لازم 8 violations) والفحص الذاتي (لازم [[0 من 10]]). صلّح خطأ خطأ لحد ما الاتنين يبقوا نضاف، وفي الآخر اعمل جدول الكيبورد بإيدك من غير ماوس خالص.`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<button><img src="trash.svg" alt=""></button>]]. الزرار ده اسمه إيه لقارئ الشاشة؟ وaxe هيقول إيه؟ وبعدين: نفس الزرار بس [[alt="امسح الطلب"]]؟`, done: R`كتبت إن الأول ملوش اسم (الـ alt الفاضي بيقول «الصورة ديكور») و axe هيطلّع [[button-name]]، والتاني اسمه «امسح الطلب» من الـ alt. شغّلت axe على الاتنين وطلع كده، وشفت الاسم في DevTools › Accessibility › Name.`,
-              sol: R`~~~html buttons.html
+              sol: R`~~~live 120 120 buttons.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>اسم الزرار</title></head>
@@ -6025,7 +6025,7 @@ PASS 10 الأهداف ٢٤×٢٤ على الأقل (WCAG 2.2)
 axe: button-name:1
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** قايمة منسدلة [[<div class="dropdown" onclick="toggle()">الحساب ▾</div>]] وتحتها [[<div class="menu" style="display:none">]] فيها ٣ لينكات. حوّلها لحاجة بتشتغل بالكيبورد وقارئ الشاشة: [[<button aria-expanded aria-controls>]]، و Escape بيقفل ويرجّع الـ focus للزرار.`, done: R`Tab بيوصل للزرار، و Enter و Space بيفتحوا، و [[aria-expanded]] بيتقلب [[true]] و [[false]] (شفته في Elements وهو بيتغير)، و Escape بيقفل والـ focus بيرجع للزرار، والفحص الذاتي بند ٦ PASS، و axe صفر.`,
-              sol: R`~~~html dropdown.html
+              sol: R`~~~live 120 120 dropdown.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>قايمة</title>
@@ -6404,7 +6404,7 @@ border: 1px solid; width: calc(100% - 2rem)
 node --test: pass 2، fail 0
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** صفحة «مدقق الألوان»: خانتين [[<input type="color">]] للكلام والخلفية، ومعاينة لجملة عربي بالألوان دي، والنسبة بـ [[contrastRatio]]، وتلات علامات AA و AAA و «كبير»، وبتتحدّث مع كل تغيير ([[input]] event).`, done: R`أسود على أبيض بيطلع 21 والتلاتة ✓، و [[#777777]] بيطلع 4.48 و AA ✗ و «كبير» ✓، والنتيجة بتتقري لقارئ الشاشة ([[aria-live="polite"]])، والصفحة نفسها بتعدّي الفحص الذاتي بتاع درس «accessibility: لحد axe صفر».`,
-              sol: R`~~~html contrast-tool.html
+              sol: R`~~~live 300 320 contrast-tool.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>مدقق الألوان</title>
@@ -6977,7 +6977,7 @@ PASS 3 الاختيار: الـ radio لسه بيوصله بالكيبورد
           try: R`خد الـ HTML من «الحل» من غير الـ CSS، وابني التلات أجزاء من الجداول اللي في الشرح بس (متبصش على الحل). الصق الفحص على 1200 وعلى 360 لحد ما يبقى [[8 من 8]] و [[7 من 7]]، وبعدين اتنقل في الصفحة كلها بـ Tab والأسهم بس.`,
           practice: [
             { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٣ كروت في [[display: flex]] (مش grid)، كل كارت [[flex: 1]] وطول الكلام فيهم مختلف. الكروت هتبقى بنفس الطول؟ والزراير على خط واحد من غير [[margin-block-start: auto]]؟`, done: R`كتبت إن الطول هيتساوى (الـ flex row بيمد الأولاد بـ [[align-items: stretch]] زي الـ grid) بس الزراير لأ (كل زرار بعد الكلام بتاعه على طول)، وجربت وقست [[bottom]] الزراير وطلع مختلف، ولما زوّدت [[margin-block-start: auto]] اتساووا.`,
-              sol: R`~~~html flex-cards.html
+              sol: R`~~~live 230 320 flex-cards.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>flex</title>
@@ -7021,7 +7021,7 @@ PASS 3 الاختيار: الـ radio لسه بيوصله بالكيبورد
 من غير ما تطلع برا      ← overflow: hidden على غلاف الصورة
 ~~~
 
-~~~html product-grid.html
+~~~live 600 720 product-grid.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>منتجات</title>
@@ -7073,7 +7073,7 @@ scale عند focus-within: matrix(1.05, 0, 0, 1.05, 0, 0)
 axe: 0
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** اختيار باقات بـ [[<div class="opt" onclick="select(this)">]] و JavaScript بيحط [[.active]]، والـ radio مستخبي بـ [[display: none]]. حوّله لـ [[<label>]] و [[<input type="radio">]] حقيقي و [[:has()]] بس، وامسح الـ JavaScript كله.`, done: R`مفيش [[<script>]] في الصفحة، والأسهم في الكيبورد بتنقل الاختيار بين الكروت (ده سلوك الـ radio الطبيعي)، والفحص بند ٣ الاتنين PASS، والفورم لما يتبعت [[FormData]] فيه القيمة المختارة.`,
-              sol: R`~~~html plans-radio.html
+              sol: R`~~~live 310 310 plans-radio.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>اختيار الباقة</title>
@@ -7148,7 +7148,7 @@ HTML على 360:       شكل محترف، بداية، شركات  ← Tab مح
 HTML على 1200:      شكل بداية، محترف، شركات  ← Tab محترف، بداية، شركات  (مختلف)
 ~~~` },
             { lvl: 'تحدي', t: R`**اكتب اختبار:** زوّد على الفحص بند لجملة جديدة في الوصف: «لما اليوزر يختار "استلام من الفرع"، يظهر تحت الكروت حقل "اختار الفرع"، ويختفي مع الاختيارين التانيين، من غير JavaScript». ابنيه بـ [[:has()]] على الـ [[fieldset]] أو الـ section، واكتب الـ [[ok(...)]] اللي يختبره بالـ [[click()]].`, done: R`الحقل بيظهر ويختفي بـ [[#picker:has(input[value="pickup"]:checked) .branch { display: block }]]، والفحص بيدوس على التلاتة واحد واحد ويقيس [[display]] بتاع الحقل في كل مرة ويرجّع الاختيار الأصلي، وبيطبع PASS، ولو شيلت القاعدة بيطبع FAIL برسالة فيها الاختيار اللي فشل.`,
-              sol: R`~~~html delivery.html
+              sol: R`~~~live 150 150 delivery.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>التوصيل</title>

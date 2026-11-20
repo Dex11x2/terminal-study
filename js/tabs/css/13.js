@@ -2656,7 +2656,7 @@ bookmarklet.txt: 6425 حرف، و new Function(decodeURIComponent(...)) بيقر
   .map(({ el, box }) => $__bt$__{el.tagName} «$__{el.textContent.trim() || el.getAttribute("aria-label")}» $__{Math.round(box.width)}×$__{Math.round(box.height)}$__bt);
 ~~~
 
-~~~html test.html
+~~~live 210 210 test.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2698,7 +2698,7 @@ A «الشروط» 48×21
 بعد min-inline-size و min-block-size:
 A «الشروط» 48×21     ← لينك جوه جملة، مستثنى في 2.5.8
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** planner أسبوعي بيرتّب الأيام بـ drag and drop بس. ده بيكسر 2.5.7 Dragging Movements. زوّد زرارين لكل كارت «لفوق» و «لتحت» بأسامي فيها اسم اليوم ([[aria-label="انقل الاتنين لفوق"]]).`, done: R`تقدر ترتّب كل الأيام بالكيبورد وبالضغط من غير سحب، وبعد الضغط الـ focus فاضل على نفس الزرار في المكان الجديد، ورسالة «الاتنين بقى رقم ٢» بتتقري في [[role="status"]].`, sol: R`~~~html planner.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** planner أسبوعي بيرتّب الأيام بـ drag and drop بس. ده بيكسر 2.5.7 Dragging Movements. زوّد زرارين لكل كارت «لفوق» و «لتحت» بأسامي فيها اسم اليوم ([[aria-label="انقل الاتنين لفوق"]]).`, done: R`تقدر ترتّب كل الأيام بالكيبورد وبالضغط من غير سحب، وبعد الضغط الـ focus فاضل على نفس الزرار في المكان الجديد، ورسالة «الاتنين بقى رقم ٢» بتتقري في [[role="status"]].`, sol: R`~~~live 500 500 planner.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2978,7 +2978,7 @@ POUR مش checklist، هي طريقة تفكير: لكل مكون اسأل: حد
           ],
           title: "الفحص الأوتوماتيك: بيمسك إيه وبيفوّت إيه؟",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة من غير [[lang]]، فيها [[<img>]] من غير alt، و [[<input type="email">]] من غير label، وزرار جواه svg بس، وكلام لونه [[#aaa]] على أبيض، و [[<a href="/x"></a>]] فاضي، ومفيش [[h1]]. axe هيطلّع أنهي rules؟ اكتب لستة، وبعدين شغّله.`, done: R`axe-core 4.14 على Chrome 156 طلّع ٧: [[button-name]] و [[color-contrast]] و [[html-has-lang]] و [[image-alt]] و [[label]] و [[link-name]] و [[page-has-heading-one]]. ولما شغّلته بـ [[withTags(["wcag2a","wcag2aa"])]] الأخيرة اختفت لأنها best-practice مش بند WCAG.`, sol: R`~~~html page.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة من غير [[lang]]، فيها [[<img>]] من غير alt، و [[<input type="email">]] من غير label، وزرار جواه svg بس، وكلام لونه [[#aaa]] على أبيض، و [[<a href="/x"></a>]] فاضي، ومفيش [[h1]]. axe هيطلّع أنهي rules؟ اكتب لستة، وبعدين شغّله.`, done: R`axe-core 4.14 على Chrome 156 طلّع ٧: [[button-name]] و [[color-contrast]] و [[html-has-lang]] و [[image-alt]] و [[label]] و [[link-name]] و [[page-has-heading-one]]. ولما شغّلته بـ [[withTags(["wcag2a","wcag2aa"])]] الأخيرة اختفت لأنها best-practice مش بند WCAG.`, sol: R`~~~live 120 120 page.html
 <!doctype html>
 <html>
 <head><meta charset="utf-8"><title>صفحة فيها مشاكل</title>
@@ -3020,7 +3020,7 @@ label ، link-name ، page-has-heading-one
 ~~~` },
             { lvl: 'تطبيق', t: R`**قارن وقيس:** على صفحة واحدة شغّل axe و Lighthouse › Accessibility، وبعدين اعمل فيها ٣ حاجات غلط مفيش أداة بتشوفها: [[alt="IMG_2041.jpg"]]، وترتيب Tab بالعكس بـ [[order]] في flex، و [[outline: none]] على زرار من غير بديل.`, done: R`جدول: عدد مشاكل كل أداة قبل وبعد التغييرات التلاتة. الأرقام ماتغيرتش أو اتغيرت قليل، فكتبت إن الفحص الأوتوماتيك بيمسك «الحاجة موجودة ولا لأ» مش «هي صح ولا لأ».`, sol: R`نضيفة:
 
-~~~html clean.html
+~~~live 210 210 clean.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3047,7 +3047,7 @@ label ، link-name ، page-has-heading-one
 
 بعد الـ ٣ حاجات الغلط:
 
-~~~html broken.html
+~~~live 210 210 broken.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3876,7 +3876,7 @@ Here are the accessible roles:
           practice: [
             { lvl: 'تطبيق', t: R`**محاكاة:** اعمل جولة الكيبورد على صفحة تسجيل من موقعك: الماوس بعيد، و snippet في الكونسول بيطبع كل عنصر بياخد focus ([[document.addEventListener("focusin", e => console.log(e.target))]]). خلّص التسجيل كله بالكيبورد.`, done: R`لستة بكل وقفة بالترتيب، وجنبها أي مشكلة (عنصر مخفي واخد focus، أو focus مختفي، أو ترتيب غريب، أو مكان مبتعرفش تخرج منه)، وعدد المشاكل قبل وبعد التصليح.`, sol: R`الصفحة التجريبية فيها مشكلتين متعمدين:
 
-~~~html signup.html
+~~~live 150 180 signup.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><title>تسجيل</title>
@@ -3941,7 +3941,7 @@ H3 بياناتك     ← نط من h1 لـ h3
 H1 تسجيل
 H2 بياناتك
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** dropdown مخصص لاختيار الدولة فيه [[keydown]] بيعمل [[e.preventDefault()]] على أي زرار عشان الأسهم تشتغل، فـ Tab جواه مبيخرجش (keyboard trap، بند 2.1.2). صلّحه.`, done: R`الأسهم بتتنقل بين الدول، و Enter بيختار، و Escape بيقفل ويرجّع الـ focus للزرار، و Tab بيخرج للعنصر اللي بعده. والـ [[preventDefault]] بقى على الأسهم بس.`, sol: R`~~~html dropdown.html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** dropdown مخصص لاختيار الدولة فيه [[keydown]] بيعمل [[e.preventDefault()]] على أي زرار عشان الأسهم تشتغل، فـ Tab جواه مبيخرجش (keyboard trap، بند 2.1.2). صلّحه.`, done: R`الأسهم بتتنقل بين الدول، و Enter بيختار، و Escape بيقفل ويرجّع الـ focus للزرار، و Tab بيخرج للعنصر اللي بعده. والـ [[preventDefault]] بقى على الأسهم بس.`, sol: R`~~~live 160 160 dropdown.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>

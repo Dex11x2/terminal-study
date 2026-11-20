@@ -2241,7 +2241,7 @@ axe على المصلّحة: 0 violations   الـ validator: مفيش رساي�
           try: R`امسح [[position: relative]] من الكارت وشوف الشارة طارت لركن الصفحة (أو لأقرب جد relative). وبعدين دوس على أي مكان في الكارت: اللينك بيشتغل بسبب [[::after]].`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** شارة [[position: absolute; top: 8px; inset-inline-end: 8px]] جوه كارت **مش** عليه [[relative]]، بس جد الكارت (div حواليه) عليه [[transform: translateY(0)]]. الشارة هتتحسب من مين؟ وبعدين قيس.`, done: R`الشارة اتحسبت من الجد اللي عليه transform مش من الصفحة: في المعمل الجد بيبدأ عند (400، 100) والشارة عند (408، 108) في rtl. عرفت إن [[transform]] بيعمل containing block للـ absolute زي ما بيعمل للـ fixed.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** شارة [[position: absolute; top: 8px; inset-inline-end: 8px]] جوه كارت **مش** عليه [[relative]]، بس جد الكارت (div حواليه) عليه [[transform: translateY(0)]]. الشارة هتتحسب من مين؟ وبعدين قيس.`, done: R`الشارة اتحسبت من الجد اللي عليه transform مش من الصفحة: في المعمل الجد بيبدأ عند (400، 100) والشارة عند (408، 108) في rtl. عرفت إن [[transform]] بيعمل containing block للـ absolute زي ما بيعمل للـ fixed.`, sol: R`~~~live 300 300
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2281,7 +2281,7 @@ axe على المصلّحة: 0 violations   الـ validator: مفيش رساي�
 والحل المقصود: position: relative على الكارت:
 الشارة عند (408, 108)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت منتج لمحل ورد متخيل: صورتين فوق بعض (التانية [[absolute; inset: 0; opacity: 0]] وتظهر مع [[:hover]] و [[:focus-within]])، وشارة خصم على ناحية النهاية، وزرار مفضّلة على ناحية البداية، والكارت كله لينك بـ [[::after]]، بس زرار المفضّلة لسه بيتضغط لوحده.`, done: R`[[document.elementFromPoint]] فوق زرار المفضّلة بيرجّع [[BUTTON]]، وفوق أي حتة تانية في الكارت بيرجّع [[A]]. بـ Tab على اللينك الصورة التانية بتظهر من غير ماوس. ولما تقلب [[dir]] الشارة والزرار بيبدّلوا الناحية.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** كارت منتج لمحل ورد متخيل: صورتين فوق بعض (التانية [[absolute; inset: 0; opacity: 0]] وتظهر مع [[:hover]] و [[:focus-within]])، وشارة خصم على ناحية النهاية، وزرار مفضّلة على ناحية البداية، والكارت كله لينك بـ [[::after]]، بس زرار المفضّلة لسه بيتضغط لوحده.`, done: R`[[document.elementFromPoint]] فوق زرار المفضّلة بيرجّع [[BUTTON]]، وفوق أي حتة تانية في الكارت بيرجّع [[A]]. بـ Tab على اللينك الصورة التانية بتظهر من غير ماوس. ولما تقلب [[dir]] الشارة والزرار بيبدّلوا الناحية.`, sol: R`~~~live 360 360
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2343,7 +2343,7 @@ rtl         993        1211
 ltr         209        25
 overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل بحث في صفحة عربي: الأيقونة [[position: absolute; left: 12px]] والحقل [[padding-left: 40px]]. الكلام اللي بتكتبه بيبدأ تحت الأيقونة. صلّحه بحيث نفس الـ CSS يشتغل في العربي والإنجليزي.`, done: R`بعد [[inset-inline-start: 12px]] و [[padding-inline-start: 40px]]: في rtl الأيقونة يمين والكلام بيبدأ بعدها، وفي ltr الأيقونة شمال، ومفيش ولا [[left]] ولا [[right]] في الـ CSS.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل بحث في صفحة عربي: الأيقونة [[position: absolute; left: 12px]] والحقل [[padding-left: 40px]]. الكلام اللي بتكتبه بيبدأ تحت الأيقونة. صلّحه بحيث نفس الـ CSS يشتغل في العربي والإنجليزي.`, done: R`بعد [[inset-inline-start: 12px]] و [[padding-inline-start: 40px]]: في rtl الأيقونة يمين والكلام بيبدأ بعدها، وفي ltr الأيقونة شمال، ومفيش ولا [[left]] ولا [[right]] في الـ CSS.`, sol: R`~~~live 130 130
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2385,7 +2385,7 @@ ltr              شمال            12px                  40px
 left أو right في الـ CSS: 0
 axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** فقاعة كلام (tooltip) بديل مثلث بـ [[::after]] و [[border]] شفاف من ٣ نواحي، والمثلث تحت الفقاعة على ناحية البداية، بـ [[inset-inline-start]].`, done: R`المثلث لازق في الفقاعة من غير خط أبيض بينهم، ولما تقلب [[dir]] بيروح للناحية التانية لوحده، والفقاعة مبتأثرش على مكان أي عنصر حواليها (absolute).`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**أشكال:** فقاعة كلام (tooltip) بديل مثلث بـ [[::after]] و [[border]] شفاف من ٣ نواحي، والمثلث تحت الفقاعة على ناحية البداية، بـ [[inset-inline-start]].`, done: R`المثلث لازق في الفقاعة من غير خط أبيض بينهم، ولما تقلب [[dir]] بيروح للناحية التانية لوحده، والفقاعة مبتأثرش على مكان أي عنصر حواليها (absolute).`, sol: R`~~~live 320 320
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2449,7 +2449,7 @@ axe: 0 violations
 مكان الفقرة اللي بعدها، مع الفقاعة ومن غيرها: 213.44 و 213.44
 axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**ابني:** سلايدر «قبل وبعد» لصور ترميم متخيلة: صورتين فوق بعض في أب [[relative]]، والعليا [[clip-path: inset(0 0 0 var(--pos))]]، وفوقهم [[<input type="range">]] شفاف [[absolute; inset: 0]] بيكتب قيمته في [[--pos]]، وخط رأسي عند [[--pos]].`, done: R`الأسهم من الكيبورد بتحرّك الخط (لأن الـ range input حقيقي)، وعند 50 الخط في نص الصورة بالظبط، وعلى 360 الصورتين بعرض الشاشة ومفيش scroll أفقي، وكتبت إن [[clip-path]] و [[left]] مش logical فلازم تختبر في rtl.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**ابني:** سلايدر «قبل وبعد» لصور ترميم متخيلة: صورتين فوق بعض في أب [[relative]]، والعليا [[clip-path: inset(0 0 0 var(--pos))]]، وفوقهم [[<input type="range">]] شفاف [[absolute; inset: 0]] بيكتب قيمته في [[--pos]]، وخط رأسي عند [[--pos]].`, done: R`الأسهم من الكيبورد بتحرّك الخط (لأن الـ range input حقيقي)، وعند 50 الخط في نص الصورة بالظبط، وعلى 360 الصورتين بعرض الشاشة ومفيش scroll أفقي، وكتبت إن [[clip-path]] و [[left]] مش logical فلازم تختبر في rtl.`, sol: R`~~~live 470 290
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2643,7 +2643,7 @@ axe: 0 violations
           try: R`اعمل صفحة طويلة بالهيدر ده، وبعدين حط [[overflow: hidden]] على div بيلف الصفحة كلها: الـ sticky هيبطّل. غيّره لـ [[overflow: clip]] وشوفه رجع يشتغل.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** صفحة تفاصيل كورس: grid بعمودين ([[1fr 22rem]])، والـ aside فيه كارت الحجز عليه [[position: sticky; top: 6rem]]، ومش بيلزق. الـ CSS مفيهوش overflow خالص. لاقي السبب.`, done: R`الـ aside بيتمطّ لطول الصف كله (align الافتراضي stretch)، فمفيش مكان يتحرك فيه: في المعمل طوله 3000 وبعد scroll 800 الـ top بقى -800. بعد [[align-self: start]] طوله قد محتواه وفضل لازق عند 96 (6rem).`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** صفحة تفاصيل كورس: grid بعمودين ([[1fr 22rem]])، والـ aside فيه كارت الحجز عليه [[position: sticky; top: 6rem]]، ومش بيلزق. الـ CSS مفيهوش overflow خالص. لاقي السبب.`, done: R`الـ aside بيتمطّ لطول الصف كله (align الافتراضي stretch)، فمفيش مكان يتحرك فيه: في المعمل طوله 3000 وبعد scroll 800 الـ top بقى -800. بعد [[align-self: start]] طوله قد محتواه وفضل لازق عند 96 (6rem).`, sol: R`~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2683,7 +2683,7 @@ axe: 0 violations
 بعد (align-self: start) 55            96   (6rem = 96)
 axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** ٣ صفحات فيها نفس الهيدر [[sticky; top: 0]]: (١) [[body { overflow-x: hidden }]]، (٢) [[html, body { overflow-x: hidden }]]، (٣) [[html, body { overflow-x: clip }]]. بعد [[scrollTo(0, 1000)]] الهيدر هيبقى فين في كل واحدة؟`, done: R`(١) [[top]] = 0 (لازق، لأن overflow الـ body لوحده بيتنقل للـ viewport)، (٢) [[top]] = -1000 (الـ body بقى scroll container مبيعملش scroll، فالهيدر مشي مع الصفحة)، (٣) [[top]] = 0. وعرفت ليه [[overflow-x: clip]] هو البديل الآمن.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** ٣ صفحات فيها نفس الهيدر [[sticky; top: 0]]: (١) [[body { overflow-x: hidden }]]، (٢) [[html, body { overflow-x: hidden }]]، (٣) [[html, body { overflow-x: clip }]]. بعد [[scrollTo(0, 1000)]] الهيدر هيبقى فين في كل واحدة؟`, done: R`(١) [[top]] = 0 (لازق، لأن overflow الـ body لوحده بيتنقل للـ viewport)، (٢) [[top]] = -1000 (الـ body بقى scroll container مبيعملش scroll، فالهيدر مشي مع الصفحة)، (٣) [[top]] = 0. وعرفت ليه [[overflow-x: clip]] هو البديل الآمن.`, sol: R`~~~live 600 720
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2725,7 +2725,7 @@ html, body { overflow-x: clip; }         /* ٣ */
 ٢  html, body { overflow-x: hidden }  top = -1000
 ٣  html, body { overflow-x: clip }    top = 0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** navbar كبسولة عايمة لمدونة رحالة متخيلة: [[position: fixed; inset-inline: 0; top: 0.75rem]]، وجواه صندوق [[max-width]] ومدوّر بالكامل وخلفيته نص شفافة و [[backdrop-filter: blur(16px)]]، ومعاه [[@supports not (backdrop-filter: blur(1px))]] بخلفية مصمتة. والأقسام عليها [[scroll-margin-top]] قد الـ nav.`, done: R`لما تدوس على لينك [[#الأقسام]] العنوان بيبان كله تحت الـ nav مش مستخبي وراه (الـ top بتاع العنوان أكبر من أو يساوي bottom بتاع الـ nav)، والـ nav فاضل على بعد 12 من فوق بعد أي scroll، وأول محتوى في الصفحة مش مستخبي (padding-top على الـ main).`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** navbar كبسولة عايمة لمدونة رحالة متخيلة: [[position: fixed; inset-inline: 0; top: 0.75rem]]، وجواه صندوق [[max-width]] ومدوّر بالكامل وخلفيته نص شفافة و [[backdrop-filter: blur(16px)]]، ومعاه [[@supports not (backdrop-filter: blur(1px))]] بخلفية مصمتة. والأقسام عليها [[scroll-margin-top]] قد الـ nav.`, done: R`لما تدوس على لينك [[#الأقسام]] العنوان بيبان كله تحت الـ nav مش مستخبي وراه (الـ top بتاع العنوان أكبر من أو يساوي bottom بتاع الـ nav)، والـ nav فاضل على بعد 12 من فوق بعد أي scroll، وأول محتوى في الصفحة مش مستخبي (padding-top على الـ main).`, sol: R`~~~live 370 370
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2786,7 +2786,7 @@ top أول h1 قبل أي scroll = 101.44   وbottom الـ nav = 68
 الـ URL: #africa
 overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** جدول طلبات طويل جوه صندوق [[max-height: 20rem; overflow: auto]] ورأسه [[th { position: sticky; top: 0 }]] بخلفية، وتحت الشاشة على الموبايل شريط تنقل [[fixed]] بـ [[padding-bottom: env(safe-area-inset-bottom)]].`, done: R`لما تعمل scroll **جوه** صندوق الجدول، الـ th بيفضل فوق الصندوق (هنا الـ overflow هو المقصود: الصندوق نفسه بيعمل scroll). وآخر صف في الصفحة باين فوق الشريط اللي تحت مش مستخبي تحته.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** جدول طلبات طويل جوه صندوق [[max-height: 20rem; overflow: auto]] ورأسه [[th { position: sticky; top: 0 }]] بخلفية، وتحت الشاشة على الموبايل شريط تنقل [[fixed]] بـ [[padding-bottom: env(safe-area-inset-bottom)]].`, done: R`لما تعمل scroll **جوه** صندوق الجدول، الـ th بيفضل فوق الصندوق (هنا الـ overflow هو المقصود: الصندوق نفسه بيعمل scroll). وآخر صف في الصفحة باين فوق الشريط اللي تحت مش مستخبي تحته.`, sol: R`~~~live 540 540
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2846,7 +2846,7 @@ top العنوان قبل وبعد scroll 300 جوه الصندوق: 102.88 و 1
 bottom آخر سطر = 458.88   top الشريط = 582   (السطر فوق الشريط)
 overflow: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الهيدر (ارتفاعه 64) مرة [[fixed]] ومرة [[sticky]]، وتحته [[<h1>]]. قيس [[top]] بتاع الـ h1 قبل أي scroll في الاتنين، وصلّح نسخة الـ fixed.`, done: R`مع sticky الـ h1 بيبدأ تحت الهيدر (top أكبر من أو يساوي 64). مع fixed الـ h1 بيبدأ من فوق خالص تحت الهيدر ومستخبي (top أقل من 64)، والتصليح [[padding-top: 64px]] على الـ body أو متغير [[--nav-h]] بيرجّعه 64 أو أكتر.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الهيدر (ارتفاعه 64) مرة [[fixed]] ومرة [[sticky]]، وتحته [[<h1>]]. قيس [[top]] بتاع الـ h1 قبل أي scroll في الاتنين، وصلّح نسخة الـ fixed.`, done: R`مع sticky الـ h1 بيبدأ تحت الهيدر (top أكبر من أو يساوي 64). مع fixed الـ h1 بيبدأ من فوق خالص تحت الهيدر ومستخبي (top أقل من 64)، والتصليح [[padding-top: 64px]] على الـ body أو متغير [[--nav-h]] بيرجّعه 64 أو أكتر.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3027,7 +3027,7 @@ whatsapp left: 16   top: 766   width: 37.72   height: 18
           try: R`اعمل الكود ده وشوف القايمة مستخبية تحت الهيرو رغم الـ 9999. غيّر z-index الهيدر لـ 3 وشوفها ظهرت. وبعدين ضيف [[opacity: 0.99]] على الهيدر من غير z-index وشوف إنه عمل طبقة جديدة برضه.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** كارت عليه [[transform: translateY(-4px)]] عند الـ hover، وجواه قايمة [[absolute; z-index: 50]] بتنزل على الكارت اللي بعده (اللي عليه نفس الـ hover). لما تقف على الكارت الأول القايمة هتبان؟ ولما الماوس يروح على القايمة نفسها؟`, done: R`كتبت توقعك، وجرّبت: الـ transform عمل stacking context للكارت، فالقايمة اتحبست جواه، والكارت اللي بعده (جاي بعده في الـ HTML وفي نفس المستوى) بيغطيها. والحل [[position: relative; z-index: 1]] على الكارت اللي عليه hover أو [[:focus-within]]، أو portal.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** كارت عليه [[transform: translateY(-4px)]] عند الـ hover، وجواه قايمة [[absolute; z-index: 50]] بتنزل على الكارت اللي بعده (اللي عليه نفس الـ hover). لما تقف على الكارت الأول القايمة هتبان؟ ولما الماوس يروح على القايمة نفسها؟`, done: R`كتبت توقعك، وجرّبت: الـ transform عمل stacking context للكارت، فالقايمة اتحبست جواه، والكارت اللي بعده (جاي بعده في الـ HTML وفي نفس المستوى) بيغطيها. والحل [[position: relative; z-index: 1]] على الكارت اللي عليه hover أو [[:focus-within]]، أو portal.`, sol: R`~~~live 240 240
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3072,7 +3072,7 @@ hover على الأول، نقطة جوه القايمة فوق الكارت ا�
 بعد الحل: elementFromPoint = DIV.menu
        بعد تحريك الماوس لنفس النقطة: القايمة ظاهرة؟ true
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** المثال بتاع الدرس بالظبط (هيدر [[z-index: 1]] وجواه قايمة [[9999]] وهيرو [[2]]). صلّحه بـ **تلات** طرق مختلفة ومن غير ما تزوّد أي رقم على القايمة.`, done: R`في التلات طرق [[document.elementFromPoint(50, 150)]] بيرجّع [[DIV.dropdown]]: (١) الهيدر [[z-index: 3]]، (٢) شيل الـ z-index من الهيدر، (٣) شيل [[z-index]] من الهيرو أو خليه [[auto]]. وكتبت أنهي واحدة أأمن لما الصفحة تكبر.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** المثال بتاع الدرس بالظبط (هيدر [[z-index: 1]] وجواه قايمة [[9999]] وهيرو [[2]]). صلّحه بـ **تلات** طرق مختلفة ومن غير ما تزوّد أي رقم على القايمة.`, done: R`في التلات طرق [[document.elementFromPoint(50, 150)]] بيرجّع [[DIV.dropdown]]: (١) الهيدر [[z-index: 3]]، (٢) شيل الـ z-index من الهيدر، (٣) شيل [[z-index]] من الهيرو أو خليه [[auto]]. وكتبت أنهي واحدة أأمن لما الصفحة تكبر.`, sol: R`~~~live 390 390
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3120,7 +3120,7 @@ elementFromPoint(50, 150):
 ٣  الهيرو z-index: auto:    DIV.dropdown
 قايمة 99999:                MAIN.hero
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** scale طبقات كتوكنز: [[--z-sticky: 10]] و [[--z-dropdown: 40]] و [[--z-modal: 50]] و [[--z-toast: 100]]، وصفحة فيها هيدر sticky وقايمة ومودال و toast كلهم فوق نفس النقطة.`, done: R`[[elementFromPoint]] عند النقطة اللي فيها الأربعة بيرجّع الـ toast، ولما تقفل الـ toast بيرجّع المودال، و grep على الـ CSS مفيهوش [[z-index:]] برقم مكتوب غير في تعريف التوكنز.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** scale طبقات كتوكنز: [[--z-sticky: 10]] و [[--z-dropdown: 40]] و [[--z-modal: 50]] و [[--z-toast: 100]]، وصفحة فيها هيدر sticky وقايمة ومودال و toast كلهم فوق نفس النقطة.`, done: R`[[elementFromPoint]] عند النقطة اللي فيها الأربعة بيرجّع الـ toast، ولما تقفل الـ toast بيرجّع المودال، و grep على الـ CSS مفيهوش [[z-index:]] برقم مكتوب غير في تعريف التوكنز.`, sol: R`~~~live 290 290
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3169,7 +3169,7 @@ elementFromPoint(50, 150):
 
 z-index برقم مكتوب برّه تعريف التوكنز: 0
 ~~~` },
-            { lvl: 'تطبيق', t: R`**أشكال:** كوتشينة ٣ كروت فوق بعض متفرّدين بـ [[rotate]] و [[translate]]، والكارت اللي الماوس عليه يطلع فوق الكل من غير ما الباقيين يتحركوا.`, done: R`الكارت اللي عليه hover أو focus هو اللي [[elementFromPoint]] بيرجّعه في المكان اللي متداخل فيه، والترتيب بيرجع زي ما كان لما الماوس يمشي، وكل الـ z-index أرقام صغيرة (1 لـ 3).`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**أشكال:** كوتشينة ٣ كروت فوق بعض متفرّدين بـ [[rotate]] و [[translate]]، والكارت اللي الماوس عليه يطلع فوق الكل من غير ما الباقيين يتحركوا.`, done: R`الكارت اللي عليه hover أو focus هو اللي [[elementFromPoint]] بيرجّعه في المكان اللي متداخل فيه، والترتيب بيرجع زي ما كان لما الماوس يمشي، وكل الـ z-index أرقام صغيرة (1 لـ 3).`, sol: R`~~~live 350 350
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3228,7 +3228,7 @@ z-index برقم مكتوب برّه تعريف التوكنز: 0
 rotate الكارت الأول قبل وبعد: -12deg و -12deg
 overflow على 360: 0px   axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN (صفحة «Stacking context») لاقي ٣ خصائص بتعمل stacking context ومش مذكورة في الدرس، وجرّب كل واحدة على الهيدر بتاع المثال من غير z-index.`, done: R`عندك ٣ خصائص (مثلًا [[mix-blend-mode]] و [[contain: layout]] و [[perspective]] و [[view-transition-name]]) والرابط، ولكل واحدة ناتج [[elementFromPoint]] في نقطة جوه الهيدر نفسه (عشان القص ميلخبطش النتيجة): لو رجّعت [[MAIN.hero]] يبقى عملت context وحبست القايمة. ولو خاصية مكتوبة في MDN ومطلعتش context عندك (في Chrome 156 جربنا [[container-type: inline-size]] ومعملش) اكتب ده.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN (صفحة «Stacking context») لاقي ٣ خصائص بتعمل stacking context ومش مذكورة في الدرس، وجرّب كل واحدة على الهيدر بتاع المثال من غير z-index.`, done: R`عندك ٣ خصائص (مثلًا [[mix-blend-mode]] و [[contain: layout]] و [[perspective]] و [[view-transition-name]]) والرابط، ولكل واحدة ناتج [[elementFromPoint]] في نقطة جوه الهيدر نفسه (عشان القص ميلخبطش النتيجة): لو رجّعت [[MAIN.hero]] يبقى عملت context وحبست القايمة. ولو خاصية مكتوبة في MDN ومطلعتش context عندك (في Chrome 156 جربنا [[container-type: inline-size]] ومعملش) اكتب ده.`, sol: R`~~~live 300 300
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3390,7 +3390,7 @@ elementFromPoint(50, 150) → MAIN.hero
           try: R`افتح DevTools وضع الموبايل (Ctrl+Shift+M) واسحب العرض ببطء، وشوف عدد الأعمدة بيتغير عند 640 و 1024. وبعدين من DevTools › Rendering › Emulate CSS media feature جرّب prefers-color-scheme: dark.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[@media (max-width: 768px) { .x { color: red } }]] وبعدها [[@media (min-width: 768px) { .x { color: blue } }]]. اللون هيبقى إيه على 767 و 768 و 769؟`, done: R`على 767 أحمر، وعلى 768 أزرق (الشرطين اتحققوا، والأخير في الملف كسب)، وعلى 769 أزرق. وعرفت ليه خلط [[max-width]] و [[min-width]] بنفس الرقم بيعمل نقطة فيها القاعدتين.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[@media (max-width: 768px) { .x { color: red } }]] وبعدها [[@media (min-width: 768px) { .x { color: blue } }]]. اللون هيبقى إيه على 767 و 768 و 769؟`, done: R`على 767 أحمر، وعلى 768 أزرق (الشرطين اتحققوا، والأخير في الملف كسب)، وعلى 769 أزرق. وعرفت ليه خلط [[max-width]] و [[min-width]] بنفس الرقم بيعمل نقطة فيها القاعدتين.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3429,7 +3429,7 @@ elementFromPoint(50, 150) → MAIN.hero
 768 → rgb(0, 0, 255)
 769 → rgb(0, 0, 255)
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** قسم باقات mobile-first: عمود واحد، ومن [[40rem]] عمودين، ومن [[64rem]] ٣. على الموبايل الباقة المميزة تيجي الأول بـ [[order: -1]]، وعلى الديسكتوب ترجع في النص.`, done: R`على 360 المميزة أول كارت، وعلى 768 عمودين، وعلى 1280 ٣ أعمدة والمميزة في النص. والـ CSS مفيهوش ولا [[max-width]]، ومفيش scroll أفقي في التلاتة.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** قسم باقات mobile-first: عمود واحد، ومن [[40rem]] عمودين، ومن [[64rem]] ٣. على الموبايل الباقة المميزة تيجي الأول بـ [[order: -1]]، وعلى الديسكتوب ترجع في النص.`, done: R`على 360 المميزة أول كارت، وعلى 768 عمودين، وعلى 1280 ٣ أعمدة والمميزة في النص. والـ CSS مفيهوش ولا [[max-width]]، ومفيش scroll أفقي في التلاتة.`, sol: R`~~~live 370 500
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3485,7 +3485,7 @@ axe: 0 violations
 ~~~` },
             { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة الـ media queries بتاعتها صح بس على الموبايل الحقيقي بتظهر بشكل الديسكتوب. شغّلها في DevTools وضع الموبايل (أو Playwright بـ [[isMobile: true]] وعرض 390) واقرا [[innerWidth]].`, done: R`قبل: [[innerWidth]] = 980 وقاعدة [[min-width: 48rem]] متحققة على موبايل 390. بعد ما ضفت [[<meta name="viewport" content="width=device-width, initial-scale=1">]]: [[innerWidth]] = 390 والقاعدة مش متحققة.`, sol: R`الصفحة بعد التصليح:
 
-~~~html
+~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3599,7 +3599,7 @@ console.table(Object.entries(count).sort((a, b) => b[0] - a[0]));
 1280   قبل 4  بعد 4  متطابق
 axe: 0 violations
 ~~~` },
-            { lvl: 'تطبيق', t: R`**ابني:** ٣ شروط مش للعرض: [[(hover: none)]] أزرار «أضف للسلة» تبان دايمًا على اللمس، و [[(prefers-reduced-motion: reduce)]] يلغي حركة الكروت، و [[print]] يخفي الـ nav والفوتر.`, done: R`من DevTools › Rendering جرّبت [[prefers-reduced-motion]] والحركة وقفت، ومن وضع الموبايل الأزرار باينة من غير hover، و Ctrl+P بيطلّع صفحة من غير nav.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**ابني:** ٣ شروط مش للعرض: [[(hover: none)]] أزرار «أضف للسلة» تبان دايمًا على اللمس، و [[(prefers-reduced-motion: reduce)]] يلغي حركة الكروت، و [[print]] يخفي الـ nav والفوتر.`, done: R`من DevTools › Rendering جرّبت [[prefers-reduced-motion]] والحركة وقفت، ومن وضع الموبايل الأزرار باينة من غير hover، و Ctrl+P بيطلّع صفحة من غير nav.`, sol: R`~~~live 290 290
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3655,7 +3655,7 @@ hover مع reduced-motion: transform = none
 طباعة: nav = none   footer = none
 axe: 0 violations
 ~~~` },
-            { lvl: 'تحدي', t: R`**refactor:** حوّل الـ media queries بتاعة المثال للشكل الجديد [[(width >= 40rem)]] و [[(40rem <= width < 64rem)]] وشيل أي تداخل.`, done: R`على 639 و 640 و 1023 و 1024 عدد الأعمدة نفسه زي قبل التحويل (1 و 2 و 2 و 4 في [[gridTemplateColumns]])، ومفيش عرض بتتحقق فيه قاعدتين متعارضتين.`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**refactor:** حوّل الـ media queries بتاعة المثال للشكل الجديد [[(width >= 40rem)]] و [[(40rem <= width < 64rem)]] وشيل أي تداخل.`, done: R`على 639 و 640 و 1023 و 1024 عدد الأعمدة نفسه زي قبل التحويل (1 و 2 و 2 و 4 في [[gridTemplateColumns]])، ومفيش عرض بتتحقق فيه قاعدتين متعارضتين.`, sol: R`~~~live 210 340
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -4063,7 +4063,7 @@ all sizes OK
 
 والإجابة على السؤال: أيوه. تصليح اللوجو على التابلت ([[flex: none]]) خلّى 375 و 414 (اللي كانوا من غير scroll أفقي) يطلّعوا [[scrollWidth=407]] و [[420]]. ده اللي بيحصل لما تصلّح وانت بتبص على مقاس واحد.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة RTL فيها زرار [[position: absolute; left: -40px]]. [[document.documentElement.scrollWidth > innerWidth]] هيرجّع إيه؟ والفلتر اللي بيدوّر على [[b.right > innerWidth]] بس هيلاقي الزرار؟ جرّب في Console.`, done: R`كتبت توقعك للاتنين، وجربت: الفلتر بـ [[right]] بس ملقاش الزرار، والفلتر بـ [[left < 0]] لقاه.`, sol: R`~~~html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة RTL فيها زرار [[position: absolute; left: -40px]]. [[document.documentElement.scrollWidth > innerWidth]] هيرجّع إيه؟ والفلتر اللي بيدوّر على [[b.right > innerWidth]] بس هيلاقي الزرار؟ جرّب في Console.`, done: R`كتبت توقعك للاتنين، وجربت: الفلتر بـ [[right]] بس ملقاش الزرار، والفلتر بـ [[left < 0]] لقاه.`, sol: R`~~~live 120 120
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -4108,7 +4108,7 @@ left الزرار               -40          -40
 ~~~` },
             { lvl: 'تطبيق', t: R`**ابني:** صفحة navbar بالعربي والإنجليزي (٦ روابط وزرارين ولوجو)، وشغّل عليها [[matrix.js]] من غير تعديل. اكتب جدول: كل مقاس [[BROKEN]] والعنصر الخارج، ومجمّعة في «نطاقات» (من كام لكام).`, done: R`عندك جدول فيه نطاق واحد على الأقل بيختلف بين العربي والإنجليزي، وكل سطر فيه اسم العنصر الخارج من ناتج السكربت.`, sol: R`الصفحة، وبتفتح بـ [[?lang=ar]] أو [[?lang=en]]. وشغّل عليها [[matrix.js]] من الدرس زي ما هو:
 
-~~~html
+~~~live 150 150
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -4168,7 +4168,7 @@ broken: ar-320 ar-360 ar-375 ar-414 en-320 en-360 en-375 en-414 en-600 en-761 en
 ar        320     414      links , a , actions , cta
 en        320     820      links , a , actions , cta
 ~~~` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[@media (max-width: 359px) { .menu-btn { padding: 4px } }]] اتكتب عشان زرار القايمة برا الشاشة على «الموبايلات الصغيرة»، والمصفوفة لسه بتقول [[360 BROKEN]]. ليه؟ صلّحه بقيمة متقاسة مش متخمّنة، وأثبت بالمصفوفة.`, done: R`شرحت إن 360 مش أقل من 359، ولقيت أصغر عرض سليم بالمصفوفة، والحد الجديد بيخلّي 320 و 360 و 375 [[OK]] من غير ما يكسر الباقي.`, sol: R`~~~html
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[@media (max-width: 359px) { .menu-btn { padding: 4px } }]] اتكتب عشان زرار القايمة برا الشاشة على «الموبايلات الصغيرة»، والمصفوفة لسه بتقول [[360 BROKEN]]. ليه؟ صلّحه بقيمة متقاسة مش متخمّنة، وأثبت بالمصفوفة.`, done: R`شرحت إن 360 مش أقل من 359، ولقيت أصغر عرض سليم بالمصفوفة، والحد الجديد بيخلّي 320 و 360 و 375 [[OK]] من غير ما يكسر الباقي.`, sol: R`~~~live 150 150
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -4361,7 +4361,7 @@ matrix: 320 359 360 375 414 760 761 768 1024 1100 1101 1280 1439 1440
 
 matrix.js بعد التعديل لف على 14 عرض، وآخر سطر: all sizes OK
 ~~~` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الصفحة بخط من Google Fonts. شغّل المصفوفة مرة من غير انتظار الخط، ومرة بعد [[await page.evaluate(() => document.fonts.ready)]]. فيه مقاس نتيجته اختلفت؟ اكتب ليه.`, done: R`عندك نتيجتين، ولو فيه فرق مكتوب المقاس واللي اتغيّر (عرض أو ارتفاع اللوجو)، ولو مفيش مكتوب ليه (الخط كان متخزّن، أو مقاساته قريبة من الافتراضي).`, sol: R`~~~html
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الصفحة بخط من Google Fonts. شغّل المصفوفة مرة من غير انتظار الخط، ومرة بعد [[await page.evaluate(() => document.fonts.ready)]]. فيه مقاس نتيجته اختلفت؟ اكتب ليه.`, done: R`عندك نتيجتين، ولو فيه فرق مكتوب المقاس واللي اتغيّر (عرض أو ارتفاع اللوجو)، ولو مفيش مكتوب ليه (الخط كان متخزّن، أو مقاساته قريبة من الافتراضي).`, sol: R`~~~live 140 160
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
