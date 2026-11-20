@@ -1635,6 +1635,9 @@ test("the file name carries the filters and the day", () => {
   <meta name="robots" content="noindex">
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 28 14 6l6 12 3-5 5 15z' fill='%231f6f8b'/%3E%3C/svg%3E">
+  <script>/* للـ preview بس: الصفحة جوه srcdoc مالهاش عنوان، فـ pushState و replaceState بيرموا error. السطر ده بيخليهم يتجاهلوا، والفلاتر تشتغل */
+for (const k of ["replaceState", "pushState"]) { const f = history[k].bind(history); history[k] = (...a) => { try { f(...a); } catch {} }; }
+</script>
   <script>/* للـ preview بس: الصفحة هنا ملهاش عنوان، فملفات data/*.json جوه الصفحة، و fetch بيرجّعها بدل ما يطلبها من السيرفر */
 const LAB_DATA = {"classes.json":[{"id":1,"title":"أطفال 8–12","coach":"شادي","day":0,"start":"17:00","end":"18:30","spots":14,"booked":12},{"id":2,"title":"قوة الأصابع","coach":"رحاب","day":0,"start":"19:00","end":"20:00","spots":12,"booked":11},{"id":3,"title":"بولدرينج للمبتدئين","coach":"رحاب","day":0,"start":"20:30","end":"22:00","spots":15,"booked":15},{"id":4,"title":"بولدرينج للمبتدئين","coach":"رحاب","day":1,"start":"17:00","end":"18:30","spots":10,"booked":3},{"id":5,"title":"قوة الأصابع","coach":"رحاب","day":2,"start":"17:00","end":"18:30","spots":9,"booked":3},{"id":6,"title":"مرونة ويوجا","coach":"دينا","day":2,"start":"19:00","end":"20:00","spots":13,"booked":13},{"id":7,"title":"بولدرينج للمبتدئين","coach":"رحاب","day":2,"start":"20:30","end":"22:00","spots":15,"booked":12},{"id":8,"title":"تقنية متقدمة","coach":"مهاب","day":3,"start":"07:00","end":"08:00","spots":14,"booked":8},{"id":9,"title":"مرونة ويوجا","coach":"دينا","day":3,"start":"17:00","end":"18:30","spots":9,"booked":1},{"id":10,"title":"قوة الأصابع","coach":"رحاب","day":3,"start":"20:30","end":"22:00","spots":10,"booked":10},{"id":11,"title":"مرونة ويوجا","coach":"دينا","day":4,"start":"17:00","end":"18:30","spots":11,"booked":6},{"id":12,"title":"تسلّق بالحبل","coach":"شادي","day":4,"start":"20:30","end":"22:00","spots":11,"booked":0},{"id":13,"title":"قوة الأصابع","coach":"رحاب","day":5,"start":"07:00","end":"08:00","spots":9,"booked":1},{"id":14,"title":"تسلّق بالحبل","coach":"شادي","day":5,"start":"17:00","end":"18:30","spots":9,"booked":0},{"id":15,"title":"تقنية متقدمة","coach":"مهاب","day":5,"start":"19:00","end":"20:00","spots":8,"booked":2}],"kpi.json":{"active":44,"checkins":[59,77,60,73,74,51,81,77,74,64,68,63,79,73],"revenue":186400,"revenuePrev":171250,"renewal":78},"members.json":[{"id":1001,"name":"نور البنا","plan":"yearly","status":"active","joined":"2025-04-22","lastVisit":"2026-10-25","visits":12},{"id":1002,"name":"مريم عبد الحميد","plan":"quarterly","status":"active","joined":"2024-11-03","lastVisit":"2026-10-25","visits":15},{"id":1003,"name":"هنا منصور","plan":"pass10","status":"active","joined":"2025-02-14","lastVisit":"2026-10-24","visits":11},{"id":1004,"name":"سيف الشاذلي","plan":"pass10","status":"active","joined":"2024-11-26","lastVisit":"2026-10-24","visits":4},{"id":1005,"name":"فرح الشاذلي","plan":"quarterly","status":"active","joined":"2025-10-13","lastVisit":"2026-10-25","visits":7},{"id":1006,"name":"مريم سالم","plan":"yearly","status":"active","joined":"2025-07-02","lastVisit":"2026-10-25","visits":19},{"id":1007,"name":"سيف الجمّال","plan":"pass10","status":"frozen","joined":"2026-06-26","lastVisit":"2026-08-16","visits":0},{"id":1008,"name":"آدم الشاذلي","plan":"monthly","status":"active","joined":"2024-12-15","lastVisit":"2026-10-29","visits":8},{"id":1009,"name":"مالك سالم","plan":"pass10","status":"active","joined":"2025-08-02","lastVisit":"2026-10-26","visits":3},{"id":1010,"name":"يوسف البنا","plan":"pass10","status":"active","joined":"2026-04-17","lastVisit":"2026-10-24","visits":6},{"id":1011,"name":"يوسف الشاذلي","plan":"monthly","status":"active","joined":"2026-01-26","lastVisit":"2026-10-27","visits":21},{"id":1012,"name":"ليلى رشدي","plan":"yearly","status":"active","joined":"2025-12-15","lastVisit":"2026-10-31","visits":17},{"id":1013,"name":"سيف منصور","plan":"yearly","status":"active","joined":"2025-09-26","lastVisit":"2026-10-25","visits":14},{"id":1014,"name":"ليلى عبد الحميد","plan":"monthly","status":"active","joined":"2026-02-13","lastVisit":"2026-10-27","visits":7},{"id":1015,"name":"زياد الشاذلي","plan":"pass10","status":"expired","joined":"2025-08-18","lastVisit":"2026-09-08","visits":0},{"id":1016,"name":"سيف فهمي","plan":"quarterly","status":"active","joined":"2025-04-03","lastVisit":"2026-10-26","visits":19},{"id":1017,"name":"سلمى الجمّال","plan":"monthly","status":"active","joined":"2025-01-06","lastVisit":"2026-10-28","visits":16},{"id":1018,"name":"يوسف الشاذلي","plan":"yearly","status":"active","joined":"2025-11-22","lastVisit":"2026-10-23","visits":2},{"id":1019,"name":"زياد فهمي","plan":"yearly","status":"expired","joined":"2025-11-13","lastVisit":"2026-09-15","visits":0},{"id":1020,"name":"يوسف رشدي","plan":"pass10","status":"active","joined":"2025-07-14","lastVisit":"2026-10-29","visits":16},{"id":1021,"name":"مالك شوقي","plan":"quarterly","status":"active","joined":"2026-08-18","lastVisit":"2026-10-27","visits":17},{"id":1022,"name":"عمر النجار","plan":"pass10","status":"active","joined":"2026-06-04","lastVisit":"2026-10-31","visits":6},{"id":1023,"name":"آدم عبد الحميد","plan":"pass10","status":"active","joined":"2026-04-01","lastVisit":"2026-10-31","visits":5},{"id":1024,"name":"مريم شوقي","plan":"monthly","status":"active","joined":"2025-01-28","lastVisit":"2026-10-31","visits":16},{"id":1025,"name":"جنى رشدي","plan":"quarterly","status":"active","joined":"2025-09-12","lastVisit":"2026-10-28","visits":15},{"id":1026,"name":"ليلى رشدي","plan":"yearly","status":"expired","joined":"2025-03-26","lastVisit":"2026-08-10","visits":1},{"id":1027,"name":"يوسف شوقي","plan":"yearly","status":"active","joined":"2025-08-27","lastVisit":"2026-10-23","visits":18},{"id":1028,"name":"مريم رشدي","plan":"quarterly","status":"expired","joined":"2026-09-06","lastVisit":"2026-09-19","visits":2},{"id":1029,"name":"سيف فهمي","plan":"yearly","status":"active","joined":"2026-09-15","lastVisit":"2026-10-24","visits":13},{"id":1030,"name":"سلمى منصور","plan":"monthly","status":"active","joined":"2026-05-24","lastVisit":"2026-10-25","visits":3},{"id":1031,"name":"فرح منصور","plan":"monthly","status":"active","joined":"2026-09-29","lastVisit":"2026-10-30","visits":18},{"id":1032,"name":"ليلى فهمي","plan":"quarterly","status":"frozen","joined":"2025-07-20","lastVisit":"2026-08-18","visits":1},{"id":1033,"name":"مريم الشاذلي","plan":"monthly","status":"active","joined":"2026-01-27","lastVisit":"2026-10-27","visits":5},{"id":1034,"name":"ليلى الشاذلي","plan":"quarterly","status":"expired","joined":"2025-12-12","lastVisit":"2026-08-28","visits":0},{"id":1035,"name":"سيف الجمّال","plan":"pass10","status":"active","joined":"2026-07-06","lastVisit":"2026-10-25","visits":4},{"id":1036,"name":"مالك رشدي","plan":"yearly","status":"expired","joined":"2025-05-26","lastVisit":"2026-08-06","visits":0},{"id":1037,"name":"نور رشدي","plan":"quarterly","status":"active","joined":"2026-05-17","lastVisit":"2026-10-26","visits":5},{"id":1038,"name":"زياد الجمّال","plan":"monthly","status":"active","joined":"2025-11-11","lastVisit":"2026-10-27","visits":4},{"id":1039,"name":"مالك شوقي","plan":"monthly","status":"active","joined":"2025-02-06","lastVisit":"2026-10-24","visits":16},{"id":1040,"name":"ليلى الشاذلي","plan":"pass10","status":"active","joined":"2025-07-21","lastVisit":"2026-10-23","visits":7},{"id":1041,"name":"ليلى البنا","plan":"pass10","status":"active","joined":"2025-07-26","lastVisit":"2026-10-31","visits":14},{"id":1042,"name":"سلمى فهمي","plan":"monthly","status":"frozen","joined":"2024-12-21","lastVisit":"2026-10-08","visits":1},{"id":1043,"name":"فرح سالم","plan":"monthly","status":"active","joined":"2026-05-22","lastVisit":"2026-10-26","visits":13},{"id":1044,"name":"مالك النجار","plan":"pass10","status":"active","joined":"2024-11-30","lastVisit":"2026-10-30","visits":20},{"id":1045,"name":"تامر منصور","plan":"pass10","status":"active","joined":"2025-12-28","lastVisit":"2026-10-29","visits":2},{"id":1046,"name":"نور البنا","plan":"quarterly","status":"active","joined":"2026-02-01","lastVisit":"2026-10-29","visits":10},{"id":1047,"name":"مريم الجمّال","plan":"quarterly","status":"active","joined":"2025-05-08","lastVisit":"2026-10-25","visits":20},{"id":1048,"name":"هنا عبد الحميد","plan":"monthly","status":"active","joined":"2025-02-17","lastVisit":"2026-10-30","visits":7},{"id":1049,"name":"ليلى شوقي","plan":"yearly","status":"frozen","joined":"2026-01-19","lastVisit":"2026-09-08","visits":2},{"id":1050,"name":"فرح منصور","plan":"pass10","status":"active","joined":"2025-08-25","lastVisit":"2026-10-31","visits":18},{"id":1051,"name":"سلمى شوقي","plan":"pass10","status":"active","joined":"2026-07-26","lastVisit":"2026-10-23","visits":8},{"id":1052,"name":"زياد رشدي","plan":"quarterly","status":"active","joined":"2025-11-18","lastVisit":"2026-10-30","visits":20},{"id":1053,"name":"زياد رشدي","plan":"monthly","status":"frozen","joined":"2025-04-28","lastVisit":"2026-10-01","visits":1},{"id":1054,"name":"فرح البنا","plan":"pass10","status":"expired","joined":"2025-10-20","lastVisit":"2026-08-13","visits":0},{"id":1055,"name":"كريم رشدي","plan":"quarterly","status":"active","joined":"2026-08-09","lastVisit":"2026-10-25","visits":11},{"id":1056,"name":"جنى شوقي","plan":"monthly","status":"expired","joined":"2026-02-10","lastVisit":"2026-08-07","visits":2},{"id":1057,"name":"رنا الجمّال","plan":"quarterly","status":"active","joined":"2025-12-13","lastVisit":"2026-10-31","visits":14}]};
 const realFetch = window.fetch;
@@ -2034,6 +2037,832 @@ await b.close();
           what: R`بدّل [[data/*.json]] بـ API صغير (من تاب «Backend بـ Node» أو FastAPI): [[GET /members?status=&q=&sort=&page=]] بيعمل الفلترة والترتيب في السيرفر ويرجّع [[total]]، و [[POST /members]] و [[POST /classes/:id/book]] بيرجّعوا 409 لو الحصة اتملت. الواجهة نفسها متتغيرش غير في [[loadMembers]]: نفس [[parseState]] بيبني الـ query. ومعاه optimistic update للحجز بيرجع لورا لو السيرفر رفض.`,
           done: R`تفتح رابط [[?status=active&page=3]] في تاب جديد فتلاقي نفس الصفحة، وحجز حصة كاملة من تابين في نفس اللحظة: واحد بيكسب والتاني بيشوف toast «الحصة اتملت» والعداد بيرجع، و [[check-dashboard.mjs]] و [[audit-dashboard.mjs]] لسه بيعدّوا كلهم، والسيرفر بيكتب لوج لكل طلب.`,
           ext: R`زوّد تسجيل دخول للأدمن (cookie [[HttpOnly]]) وخلي إخفاء زرار «عضو جديد» عن الموظف مش هو الحماية: السيرفر هو اللي يرفض بـ 403.`,
+          dir: R`pd-lab`,
+          cont: true,
+          sol: R`**الفكرة:** لحد دلوقتي الصفحة بتنزّل [[data/members.json]] كله وبتفلتر في المتصفح. ده كويس لـ ٥٧ عضو، بس مع ٥٠ ألف عضو الملف كله بيتنزّل لكل زائر، والحجز مش محفوظ في أي حتة (refresh والمكان بيرجع فاضي)، وأي حد يقدر يحجز مكان مفيش. الحل سيرفر صغير ([[api.mjs]]) هو اللي عنده الداتا: بيفلتر ويرتّب ويقسّم صفحات ويرجّع صفحة واحدة، وبيقرر الحجز.
+
+**الملفات:** [[api.mjs]] جديد (Node من غير ولا مكتبة)، و [[table.js]] اتغير في جزء التحميل بس، و [[schedule.js]] في الحجز، وسطرين في [[kpi.js]] و [[app.js]]. [[state.js]] زي ما هو بالظبط، وده أهم حاجة في الحل (تحت). والتشغيل:
+
+~~~bash
+node api.mjs
+# dashboard + API -> http://127.0.0.1:5504/  (57 members, 15 classes)
+~~~
+
+وافتح [[http://127.0.0.1:5504/]]. السيرفر بيقدّم الصفحة نفسها والـ API من نفس العنوان، فمفيش CORS.
+
+~~~js api.mjs
+// node api.mjs: the dashboard's own server on :5504, the page (dashboard/) and a small JSON API (/api/...)
+// the data lives in memory, read from dashboard/data/*.json at start: restarting the server = fresh data
+import http from "node:http";
+import fs from "node:fs";
+import path from "node:path";
+import { parseState, view } from "./dashboard/js/state.js";   // the same code the page uses to read its URL: same filter, same sort, same pages
+
+const ROOT = path.resolve("dashboard"), PORT = 5504;
+const load = f => JSON.parse(fs.readFileSync(path.join(ROOT, "data", f), "utf8"));
+const members = load("members.json"), classes = load("classes.json"), kpi = load("kpi.json");
+const PLANS = ["monthly", "quarterly", "yearly", "pass10"];
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml" };
+
+const send = (res, status, body) => { res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }); res.end(JSON.stringify(body)); };
+
+async function readJSON(req) {
+  let raw = "";
+  for await (const chunk of req) { raw += chunk; if (raw.length > 10_000) throw Object.assign(new Error("body too big"), { status: 413 }); }
+  try { return JSON.parse(raw || "{}"); } catch { throw Object.assign(new Error("not JSON"), { status: 400 }); }
+}
+
+async function api(req, res, u) {
+  const p = u.pathname;
+  if (req.method === "GET" && p === "/api/members") return send(res, 200, view(members, parseState(u.search)));   // {total, pages, page, rows}
+  if (req.method === "POST" && p === "/api/members") {
+    const b = await readJSON(req);
+    const name = String(b.name ?? "").trim();
+    if (name.length < 3 || name.length > 60) return send(res, 400, { error: "الاسم لازم من ٣ لـ ٦٠ حرف" });   // the page checks too, but the server is the one that decides
+    if (!PLANS.includes(b.plan)) return send(res, 400, { error: "باقة مش معروفة" });
+    const today = new Date().toISOString().slice(0, 10);
+    const m = { id: Math.max(1000, ...members.map(x => x.id)) + 1, name, plan: b.plan, status: "active", joined: today, lastVisit: today, visits: 0 };
+    members.push(m);
+    return send(res, 201, m);
+  }
+  if (req.method === "GET" && p === "/api/classes") return send(res, 200, classes);
+  const book = p.match(/^\/api\/classes\/(\d+)\/book$/);
+  if (req.method === "POST" && book) {
+    const c = classes.find(x => x.id === Number(book[1]));
+    if (!c) return send(res, 404, { error: "مفيش حصة بالرقم ده" });
+    // Node runs one request handler at a time: the check and the +1 can't be split by another request, so two last-seat bookings can't both win
+    if (c.booked >= c.spots) return send(res, 409, { error: "full", booked: c.booked, spots: c.spots });
+    c.booked++;
+    return send(res, 200, { booked: c.booked, spots: c.spots });
+  }
+  if (req.method === "GET" && p === "/api/kpi") return send(res, 200, { ...kpi, members: members.length, active: members.filter(m => m.status === "active").length });
+  return send(res, 404, { error: "مفيش حاجة هنا" });
+}
+
+http.createServer(async (req, res) => {
+  const t0 = performance.now(), u = new URL(req.url, "http://x");
+  res.on("finish", () => console.log($__bt$__{new Date().toISOString().slice(11, 23)} $__{req.method.padEnd(4)} $__{decodeURIComponent(req.url)} $__{res.statusCode} $__{Math.round(performance.now() - t0)}ms$__bt));
+  try {
+    if (u.pathname.startsWith("/api/")) {
+      const delay = Number(u.searchParams.get("delay") || 0);          // lab only, like serve.mjs: ?delay slows the answer, ?fail=1 breaks it
+      if (delay) await new Promise(r => setTimeout(r, Math.min(delay, 10_000)));
+      if (u.searchParams.get("fail") === "1") return send(res, 500, { error: "db down" });
+      return await api(req, res, u);
+    }
+    let file = path.join(ROOT, decodeURIComponent(u.pathname));
+    if (u.pathname.endsWith("/")) file = path.join(file, "index.html");
+    if (!file.startsWith(ROOT + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return send(res, 404, { error: "404 " + u.pathname });
+    res.writeHead(200, { "content-type": types[path.extname(file)] || "application/octet-stream", "cache-control": "no-store" });
+    fs.createReadStream(file).pipe(res);
+  } catch (err) {
+    send(res, err.status || 500, { error: err.status ? err.message : "server error" });
+    if (!err.status) console.error(err);
+  }
+}).listen(PORT, "127.0.0.1", () => console.log($__btdashboard + API -> http://127.0.0.1:$__{PORT}/  ($__{members.length} members, $__{classes.length} classes)$__bt));
+~~~
+
+~~~js dashboard/js/table.js
+// members table: the URL is the state. Read it, draw, and write it back on every change.
+import { parseState, toQuery, DEFAULTS } from "./state.js";
+import { num, shortDate } from "./lib.js";
+
+const PLAN = { monthly: "شهري", quarterly: "3 شهور", yearly: "سنوي", pass10: "10 زيارات" };
+const STATUS = { active: "نشط", frozen: "متجمّد", expired: "منتهي" };
+const COLS = ["الاسم", "الباقة", "الحالة", "آخر زيارة", "زيارات الشهر"];
+const table = document.getElementById("table"), tbody = document.getElementById("rows");
+const form = document.getElementById("filters"), pager = document.getElementById("pager"), count = document.getElementById("count");
+let state = parseState(location.search), total = 0, ctrl;
+
+const lab = new URLSearchParams(location.search);          // lab only: ?delay=1500 slows the data, ?fail=1 breaks the first try
+let labDelay = lab.get("delay"), labFail = lab.get("fail") === "1";
+
+function td(text, label, cls) {
+  const c = document.createElement("td");
+  c.dataset.label = label;
+  if (cls) c.className = cls;
+  if (text instanceof Node) c.append(text); else c.textContent = text;
+  return c;
+}
+
+function stateRow(kind, text, button) {
+  const tr = document.createElement("tr"), c = document.createElement("td");
+  tr.className = "state-row " + kind;
+  c.colSpan = COLS.length;
+  c.append(text);
+  if (button) { c.append(" "); c.append(button); }
+  tr.append(c);
+  tbody.replaceChildren(tr);
+}
+
+export function skeleton(n = DEFAULTS.size) {
+  table.setAttribute("aria-busy", "true");
+  tbody.replaceChildren(...Array.from({ length: n }, () => {
+    const tr = document.createElement("tr");
+    tr.className = "skel";
+    tr.innerHTML = "<td><span></span></td>".repeat(COLS.length);
+    return tr;
+  }));
+}
+
+function render(v) {
+  if (v.page !== state.page) { state.page = v.page; history.replaceState(null, "", toQuery(state) || location.pathname); }
+  table.setAttribute("aria-busy", "false");
+  for (const th of table.querySelectorAll("th[data-sort]")) {
+    if (th.dataset.sort === state.sort) th.setAttribute("aria-sort", state.dir === "asc" ? "ascending" : "descending");
+    else th.removeAttribute("aria-sort");
+  }
+  count.textContent = v.total ? $__bt$__{num.format(v.total)} عضو، صفحة $__{num.format(v.page)} من $__{num.format(v.pages)}$__bt : "مفيش نتايج";
+  if (!v.total) {
+    const clear = document.createElement("button");
+    clear.type = "button"; clear.className = "btn ghost"; clear.textContent = "امسح الفلاتر";
+    clear.onclick = () => form.reset();
+    stateRow("empty", "مفيش أعضاء بالفلتر ده.", clear);
+  } else {
+    tbody.replaceChildren(...v.rows.map(m => {
+      const tr = document.createElement("tr");
+      const b = document.createElement("span");
+      b.className = "badge " + m.status; b.textContent = STATUS[m.status];
+      tr.append(td(m.name, COLS[0]), td(PLAN[m.plan], COLS[1]), td(b, COLS[2]),
+        td(shortDate.format(new Date(m.lastVisit)), COLS[3]), td(num.format(m.visits), COLS[4], "num"));
+      return tr;
+    }));
+  }
+  pager.replaceChildren();
+  const btn = (label, page, extra = {}) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label; b.dataset.page = page;
+    Object.assign(b, extra);
+    if (page === v.page && !extra.ariaLabel) b.setAttribute("aria-current", "page");
+    pager.append(b);
+  };
+  btn("‹", v.page - 1, { ariaLabel: "الصفحة اللي فاتت", disabled: v.page === 1 });
+  for (let p = 1; p <= v.pages; p++) btn(num.format(p), p);
+  btn("›", v.page + 1, { ariaLabel: "الصفحة الجاية", disabled: v.page === v.pages });
+}
+
+function update(patch, mode = "push") {
+  state = { ...state, ...patch };
+  const url = toQuery(state) || location.pathname;
+  if (mode === "push") history.pushState(null, "", url); else history.replaceState(null, "", url);
+  refresh();
+}
+
+function syncForm() {
+  form.q.value = state.q; form.status.value = state.status; form.plan.value = state.plan;
+}
+
+let timer;
+form.addEventListener("input", e => {
+  clearTimeout(timer);
+  const patch = { [e.target.name]: e.target.value, page: 1 };
+  if (e.target.name === "q") timer = setTimeout(() => update({ ...patch, q: e.target.value.trim() }, "replace"), 250);
+  else update(patch, "push");
+});
+form.addEventListener("reset", () => setTimeout(() => update({ q: "", status: "all", plan: "all", page: 1 }, "push")));
+form.addEventListener("submit", e => e.preventDefault());
+table.querySelector("thead").addEventListener("click", e => {
+  const th = e.target.closest("th[data-sort]");
+  if (!th) return;
+  const k = th.dataset.sort;
+  update({ sort: k, dir: state.sort === k && state.dir === "asc" ? "desc" : "asc", page: 1 });
+});
+pager.addEventListener("click", e => {
+  const b = e.target.closest("button[data-page]");
+  if (!b || b.disabled) return;
+  update({ page: Number(b.dataset.page) });
+  document.getElementById("mem-h").scrollIntoView({ block: "start" });
+});
+addEventListener("popstate", () => { state = parseState(location.search); syncForm(); refresh(); });
+
+// one page of members from the server. The query is the page's own URL (toQuery), so a shared link and the server always agree
+async function fetchView() {
+  ctrl?.abort();                                           // a newer state wins: an older answer that arrives late must not draw over it
+  ctrl = new AbortController();
+  const q = new URLSearchParams(toQuery(state));
+  if (labDelay) q.set("delay", labDelay);
+  if (labFail) q.set("fail", "1");
+  const res = await fetch("api/members" + (q.size ? "?" + q : ""), { signal: ctrl.signal });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
+}
+
+async function refresh() {
+  table.setAttribute("aria-busy", "true");
+  try {
+    const v = await fetchView();
+    labDelay = null;                                       // lab: only the first load is slow
+    total = v.total;
+    render(v);
+  } catch (err) {
+    if (err.name === "AbortError") return;                 // a newer request replaced this one: nothing to show
+    labFail = false; labDelay = null;
+    table.setAttribute("aria-busy", "false");
+    count.textContent = "حصل خطأ في التحميل";
+    const retry = document.createElement("button");
+    retry.type = "button"; retry.className = "btn"; retry.textContent = "جرّب تاني";
+    retry.onclick = () => loadMembers();
+    stateRow("error", "مقدرناش نجيب الأعضاء (" + err.message + ").", retry);
+    retry.focus();
+  }
+}
+
+export async function loadMembers() {
+  syncForm();
+  skeleton();
+  count.textContent = "بيحمّل…";
+  await refresh();
+  return total;
+}
+
+// the server gives the id and checks the name again; the page only draws what came back
+export async function addMember(m) {
+  const res = await fetch("api/members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(m) });
+  const body = await res.json();
+  if (!res.ok) throw new Error(body.error || "HTTP " + res.status);
+  await refresh();
+  return body;
+}
+~~~
+
+~~~js dashboard/js/schedule.js
+// weekly schedule: each class is a button placed on the grid by custom properties (day = column, time = rows)
+import { gridRow, toMin } from "./lib.js";
+import { openDialog, toast } from "./ui.js";
+const DAYS = ["السبت", "الأحد", "الاتنين", "التلات", "الأربع", "الخميس", "الجمعة"];
+const week = document.getElementById("week"), dlg = document.getElementById("dlg-class");
+const ampm = hhmm => { const m = toMin(hhmm), h = Math.floor(m / 60) % 12 || 12; return h + ":" + String(m % 60).padStart(2, "0") + (m < 720 ? " ص" : " م"); };
+
+function cell(cls, text, vars) {
+  const el = document.createElement(cls === "slot" ? "button" : "div");
+  el.className = cls;
+  el.textContent = text;
+  for (const [k, v] of Object.entries(vars)) el.style.setProperty("--" + k, v);
+  return el;
+}
+
+function slot(c) {
+  const { row, span } = gridRow(c.start, c.end);
+  const b = cell("slot", "", { col: c.day, row, span, fill: Math.round((c.booked / c.spots) * 100) + "%" });
+  b.type = "button";
+  b.classList.toggle("full", c.booked >= c.spots);
+  const title = document.createElement("b");
+  title.textContent = c.title;
+  b.append(title, $__bt$__{ampm(c.start)} · $__{c.booked}/$__{c.spots}$__bt);
+  b.setAttribute("aria-label", $__bt$__{c.title}، $__{DAYS[c.day]} $__{ampm(c.start)} لـ $__{ampm(c.end)}، $__{c.booked} من $__{c.spots} محجوز$__bt);
+  b.onclick = () => {
+    document.getElementById("dc-h").textContent = c.title;
+    document.getElementById("dc-body").textContent = $__bt$__{DAYS[c.day]}، من $__{ampm(c.start)} لـ $__{ampm(c.end)} مع الكوتش $__{c.coach}. محجوز $__{c.booked} من $__{c.spots}.$__bt;
+    const book = document.getElementById("dc-book");
+    book.disabled = c.booked >= c.spots;
+    book.textContent = book.disabled ? "الحصة كاملة" : "احجز مكان";
+    openDialog(dlg, async v => {
+      if (v !== "book") return;
+      // optimistic: the seat shows as taken right away, and the server decides a moment later
+      c.booked++;
+      let now = slot(c);
+      b.replaceWith(now);
+      try {
+        const res = await fetch($__btapi/classes/$__{c.id}/book$__bt, { method: "POST" });
+        const r = await res.json();
+        if (!res.ok) throw Object.assign(new Error(r.error || "HTTP " + res.status), { status: res.status, r });
+        c.booked = r.booked;                                   // the server's count, which may include other people's bookings
+        toast($__btاتحجز مكان في «$__{c.title}» يوم $__{DAYS[c.day]}$__bt);
+      } catch (err) {
+        c.booked = err.r?.booked ?? c.booked - 1;              // undo the +1; if the server sent the real count, show that
+        toast(err.status === 409 ? $__btالحصة اتملت: «$__{c.title}»$__bt : "الحجز موصلش، جرّب تاني");
+      }
+      const fresh = slot(c);
+      now.replaceWith(fresh);
+    });
+  };
+  return b;
+}
+
+export async function loadSchedule() {
+  const classes = await (await fetch("api/classes")).json();
+  const parts = DAYS.map((d, i) => cell("day", d, { col: i }));
+  for (let h = 7; h < 22; h++) parts.push(cell("hour", ampm(String(h).padStart(2, "0") + ":00"), { row: (h - 7) * 2 + 1 }));
+  week.replaceChildren(...parts, ...classes.map(slot));
+}
+~~~
+
+~~~js dashboard/js/kpi.js (اللي اتغير)
+export async function loadKpis() {
+  const k = await (await fetch("api/kpi")).json();
+  document.getElementById("k-active").textContent = num.format(k.active);
+  document.getElementById("k-total").textContent = num.format(k.members);
+~~~
+
+~~~js dashboard/js/app.js (اللي اتغير)
+import { loadMembers, addMember } from "./table.js";
+…
+members.then(() => loadKpis()).catch(() => toast("الأرقام مش متاحة دلوقتي"));
+…
+  openDialog(dlg, async v => {
+    if (v !== "save") return;
+    const name = nameIn.value.trim();
+    try { await addMember({ name, plan: form.elements.plan.value }); toast($__btاتضاف «$__{name}»$__bt); }
+    catch (err) { toast("مقدرناش نضيف العضو: " + err.message); }
+  });
+~~~
+
+~~~view 720 720 الـ dashboard على الـ API (جوه الصندوق سطور بتقلّد api.mjs؛ احجز «قوة الأصابع» مرتين)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>لوحة صالة الصخرة للتسلق</title>
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 28 14 6l6 12 3-5 5 15z' fill='%231f6f8b'/%3E%3C/svg%3E">
+  <script>/* للـ preview بس: الصفحة جوه srcdoc مالهاش عنوان، فـ pushState و replaceState بيرموا error. السطر ده بيخليهم يتجاهلوا، والفلاتر تشتغل */
+for (const k of ["replaceState", "pushState"]) { const f = history[k].bind(history); history[k] = (...a) => { try { f(...a); } catch {} }; }
+</script>
+  <script>
+// before the first paint: saved theme and saved sidebar state, so nothing flips after the page shows
+try {
+  const t = localStorage.getItem("theme");
+  if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+  if (localStorage.getItem("side") === "collapsed") document.documentElement.dataset.side = "collapsed";
+} catch {}
+</script>
+  <style>
+/* ---------- tokens: light, then dark (system default or the saved choice) ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f3f5f7; --surface: #ffffff; --ink: #17202a; --muted: #56606b; --line: #d9dee4;
+  --brand: #1f6f8b; --brand-ink: #ffffff; --brand-soft: #dceef4;
+  --ok: #156c2f; --ok-soft: #dcf3e3; --warn: #8a5a00; --warn-soft: #fbefd5; --bad: #b42318; --bad-soft: #fde4e1;
+  --skel: #e6eaee; --skel-hi: #f5f7f9;
+  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --r: 12px; --side-w: 15rem; --top-h: 4rem;
+  --shadow: 0 1px 2px rgb(16 24 32 / 0.06), 0 4px 16px rgb(16 24 32 / 0.06);
+  --z-top: 20; --z-drawer: 40; --z-toast: 60;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  color-scheme: dark;
+  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
+  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
+  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
+  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+} }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1419; --surface: #171d24; --ink: #e6ebf0; --muted: #9ba6b2; --line: #2a333d;
+  --brand: #6cc3e0; --brand-ink: #08202a; --brand-soft: #16323d;
+  --ok: #57d07a; --ok-soft: #12301c; --warn: #f2c063; --warn-soft: #362a10; --bad: #ff8a7a; --bad-soft: #3a1714;
+  --skel: #222a33; --skel-hi: #2c3540; --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font: 1rem/1.6 var(--font); color: var(--ink); background: var(--bg); }
+h1, h2 { line-height: 1.3; margin: 0; }
+h1 { font-size: 1.15rem; }
+h2 { font-size: 1.3rem; margin-block-end: 1rem; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: 100; padding: 0.5rem 1rem; background: var(--ink); color: var(--bg); }
+.skip:focus { top: 1rem; }
+.sprite { position: absolute; }
+svg { width: 1.4rem; height: 1.4rem; fill: currentColor; flex: none; }
+.btn { --b: var(--brand); --f: var(--brand-ink); min-height: 44px; padding: 0.4rem 1.1rem; border: 2px solid var(--b); border-radius: 10px; background: var(--b); color: var(--f); font: inherit; font-weight: 600; cursor: pointer; }
+.btn.ghost { --b: transparent; --f: var(--brand); border-color: var(--line); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.icon-btn { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.icon-btn[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); }
+
+/* ---------- app shell: grid areas ---------- */
+.shell {
+  display: grid; min-height: 100dvh;
+  grid-template-columns: var(--side-w) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "side top" "side main";
+  transition: grid-template-columns 0.2s ease;
+}
+.shell[data-collapsed] { --side-w: 4.75rem; }
+.side { grid-area: side; position: sticky; top: 0; height: 100dvh; overflow-y: auto; background: var(--surface); border-inline-end: 1px solid var(--line); padding: 0.75rem; }
+.side-head { display: flex; align-items: center; gap: 0.5rem; min-height: 44px; margin-block-end: 1rem; font-weight: 700; }
+.logo { color: var(--brand); font-size: 1.4rem; width: 2rem; text-align: center; }
+.collapse { margin-inline-start: auto; }
+.side nav { display: grid; gap: 0.25rem; }
+.side nav a { display: flex; align-items: center; gap: 0.75rem; min-height: 44px; padding: 0.4rem 0.75rem; border-radius: 10px; color: var(--ink); text-decoration: none; }
+.side nav a:hover { background: var(--bg); }
+.side nav a[aria-current="page"] { background: var(--brand-soft); color: var(--ink); font-weight: 600; }
+.shell[data-collapsed] .side .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.shell[data-collapsed] .side-head { flex-direction: column; }
+.shell[data-collapsed] .collapse { margin: 0; }
+.shell[data-collapsed] .collapse svg { transform: scaleX(-1); }
+
+.topbar { grid-area: top; position: sticky; top: 0; z-index: var(--z-top); display: flex; align-items: center; gap: 0.75rem; min-height: var(--top-h); padding: 0.5rem 1.25rem; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(8px); border-block-end: 1px solid var(--line); }
+.topbar h1 { margin-inline-end: auto; }
+.menu { display: none; }
+main { grid-area: main; min-width: 0; padding: 1.25rem; display: grid; gap: 2rem; align-content: start; }
+main section { scroll-margin-top: calc(var(--top-h) + 1rem); min-width: 0; }   /* a grid item never shrinks below its content without this */
+.scrim { position: fixed; inset: 0; background: rgb(10 14 20 / 0.5); z-index: calc(var(--z-drawer) - 1); }
+
+/* ---------- KPI cards ---------- */
+.kpis { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); min-height: 8.5rem; display: grid; align-content: start; gap: 0.25rem; }
+.kpi p { margin: 0; }
+.k-label { color: var(--muted); font-size: 0.9rem; }
+.k-num { font-size: 1.8rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; min-height: 1.2em; }
+.k-sub { color: var(--muted); font-size: 0.9rem; }
+.delta { font-weight: 600; display: inline-block; min-width: 5em; }   /* "—" then "▲ +8.8%": same box, so the words after it stay put */
+.delta.up { color: var(--ok); } .delta.down { color: var(--bad); }
+.spark { width: 100%; height: 2.25rem; }
+.spark polyline { fill: none; stroke: var(--brand); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.ring-card { grid-template-columns: auto 1fr; align-items: center; column-gap: 1rem; }
+.ring-card .k-label { grid-column: 1 / -1; }
+.ring { width: 4.5rem; height: 4.5rem; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 3.5; }
+.ring-bg { stroke: var(--line); }
+.ring-fg { stroke: var(--brand); stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+
+/* ---------- filters + table ---------- */
+.filters { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem 1rem; margin-block-end: 0.75rem; }
+.filters label { display: grid; gap: 0.25rem; color: var(--muted); font-size: 0.9rem; }
+input, select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-height: 44px; padding: 0.3rem 0.6rem; }
+.count { margin: 0 0 0.5rem; color: var(--muted); min-height: 1.6em; }
+.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.members { width: 100%; border-collapse: collapse; }
+.members th, .members td { padding: 0 0.9rem; height: 3rem; text-align: start; border-block-end: 1px solid var(--line); white-space: nowrap; }
+.members thead th { position: sticky; top: var(--top-h); z-index: 1; background: var(--surface); box-shadow: 0 1px 0 var(--line); }
+.members th button { all: unset; cursor: pointer; font-weight: 600; display: inline-flex; gap: 0.3rem; align-items: center; min-height: 44px; }
+.members th button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+.members th button::after { content: "▲" / ""; font-size: 0.7em; color: var(--brand); visibility: hidden; }   /* the space is there before sorting, so nothing moves */
+.members th[aria-sort] button::after { visibility: visible; }
+.members th[aria-sort="descending"] button::after { content: "▼" / ""; }
+.members td.num { font-variant-numeric: tabular-nums; }
+.members tbody tr:last-child td { border-block-end: 0; }
+.badge { display: inline-block; padding: 0.05rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+.badge.active { background: var(--ok-soft); color: var(--ok); }
+.badge.frozen { background: var(--warn-soft); color: var(--warn); }
+.badge.expired { background: var(--bad-soft); color: var(--bad); }
+.skel span { display: block; height: 0.9em; border-radius: 6px; background: linear-gradient(90deg, var(--skel) 25%, var(--skel-hi) 50%, var(--skel) 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.state-row td { height: auto; padding: 2rem 1rem; text-align: center; white-space: normal; }
+.state-row.error td { color: var(--bad); }
+.pager { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-start: 0.75rem; }
+.pager button { min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; font-variant-numeric: tabular-nums; }
+.pager button[aria-current="page"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.pager button:disabled { opacity: 0.5; cursor: default; }
+
+/* ---------- schedule: 7 days x 30 half-hours ---------- */
+.hint { margin: -0.5rem 0 0.75rem; color: var(--muted); }
+.week-wrap { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline-start: 4.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.week {
+  display: grid; grid-template-columns: 4.5rem repeat(7, minmax(9rem, 1fr)); grid-template-rows: 2.5rem repeat(30, 1.75rem);
+  background: repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 3.5rem) 0 2.5rem / 100% calc(100% - 2.5rem) no-repeat;
+}
+.day { grid-row: 1; grid-column: calc(var(--col) + 2); display: grid; place-items: center; font-weight: 600; border-block-end: 1px solid var(--line); scroll-snap-align: start; }
+.hour { white-space: nowrap; grid-column: 1; grid-row: calc(var(--row) + 1) / span 2; position: sticky; inset-inline-start: 0; z-index: 1; background: var(--surface); color: var(--muted); font-size: 0.8rem; padding-inline: 0.5rem; font-variant-numeric: tabular-nums; border-inline-end: 1px solid var(--line); }
+.slot {
+  grid-column: calc(var(--col) + 2); grid-row: calc(var(--row) + 1) / span var(--span);
+  margin: 2px 4px; padding: 0.25rem 0.5rem; border: 1px solid var(--brand); border-radius: 8px; text-align: start; font: inherit; font-size: 0.85rem; line-height: 1.3; color: var(--ink); cursor: pointer; overflow: hidden;
+  background: linear-gradient(to left, var(--brand-soft) var(--fill), var(--surface) 0);
+}
+:dir(ltr) .slot { background: linear-gradient(to right, var(--brand-soft) var(--fill), var(--surface) 0); }
+.slot b { display: block; }
+.slot.full { border-style: dashed; border-color: var(--muted); }
+
+/* ---------- dialog + toasts ---------- */
+dialog { border: 0; border-radius: var(--r); padding: 0; width: min(28rem, calc(100% - 2rem)); background: var(--surface); color: var(--ink); box-shadow: 0 20px 50px rgb(0 0 0 / 0.3);
+  opacity: 0; translate: 0 12px; transition: opacity 0.2s, translate 0.2s, overlay 0.2s allow-discrete, display 0.2s allow-discrete; }
+dialog[open] { opacity: 1; translate: 0 0; }
+@starting-style { dialog[open] { opacity: 0; translate: 0 12px; } }
+dialog::backdrop { background: rgb(10 14 20 / 0.55); }
+dialog form { display: grid; gap: 1rem; padding: 1.5rem; }   /* padding on the form, so a click on the dialog itself = the backdrop */
+dialog label { display: grid; gap: 0.3rem; }
+.dlg-actions { display: flex; gap: 0.75rem; }
+.toasts { position: fixed; inset-block-end: 1rem; inset-inline-end: 1rem; z-index: var(--z-toast); display: grid; gap: 0.5rem; width: min(22rem, calc(100% - 2rem)); }
+.toast { padding: 0.75rem 1rem; border-radius: 10px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); animation: toast-in 0.25s ease; }
+@keyframes toast-in { from { opacity: 0; translate: 0 12px; } }
+
+/* ---------- under 64rem: sidebar becomes a drawer ---------- */
+@media (max-width: 63.99rem) {
+  .shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "main"; }
+  .side { --out: -100%; position: fixed; inset-block: 0; inset-inline-start: 0; z-index: var(--z-drawer); width: min(17rem, 85vw);
+    transform: translateX(var(--out)); visibility: hidden; transition: transform 0.25s ease, visibility 0s 0.25s; }
+  [dir="rtl"] .side { --out: 100%; }
+  .shell[data-open] .side { transform: none; visibility: visible; transition: transform 0.25s ease; }
+  .collapse { display: none; }
+  .menu { display: inline-grid; }
+  .shell[data-collapsed] .side .label { position: static; width: auto; height: auto; clip-path: none; }
+}
+
+/* ---------- under 40rem: rows become cards ---------- */
+@media (max-width: 40rem) {
+  .topbar { padding-inline: 0.75rem; gap: 0.5rem; }
+  .topbar h1 { font-size: 1rem; }
+  main { padding: 0.75rem; }
+  .filters label, .filters input, .filters select { width: 100%; }
+  .table-wrap { background: none; border: 0; }
+  .members thead tr { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 0.75rem; }
+  .members thead th { position: static; height: auto; padding: 0 0.6rem; border: 1px solid var(--line); border-radius: 999px; box-shadow: none; }
+  .members tbody, .members tr, .members td { display: block; }
+  .members tbody tr { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 0.5rem 0.9rem; margin-block-end: 0.75rem; }
+  .members td { height: auto; padding: 0.3rem 0; border: 0; display: grid; grid-template-columns: 7.5rem 1fr; white-space: normal; }
+  .members td::before { content: attr(data-label); color: var(--muted); }
+  .members td > .badge { justify-self: start; }   /* a grid item stretches by default */
+  .members .state-row td, .members .skel td { display: block; }
+  .members .skel td::before, .members .state-row td::before { content: none; }
+  .members .skel td { height: calc(1.6em + 0.6rem); display: flex; align-items: center; }   /* same height as a real card line */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+  <svg width="0" height="0" class="sprite" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M1 21c0-4 4-7 8-7s8 3 8 7zM16 4a4 4 0 0 1 0 8m3 9c0-3-1-5-3-6 3 0 7 2 7 6z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><path d="M4 5h16v16H4zM4 9h16M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-side" viewBox="0 0 24 24"><path d="M3 4h18v16H3zM9 4v16" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15A8 8 0 1 1 9 4a7 7 0 0 0 11 11z"/></symbol>
+  </svg>
+  <a class="skip" href="#main">اتخطّى للمحتوى</a>
+  <div class="shell" id="shell">
+    <aside class="side" id="side" aria-label="القايمة الرئيسية">
+      <div class="side-head">
+        <span class="logo" aria-hidden="true">▲</span><span class="label">الصخرة</span>
+        <button class="icon-btn collapse" id="collapse" type="button" aria-expanded="true" aria-controls="side" aria-label="القايمة الجانبية">
+          <svg aria-hidden="true"><use href="#i-side"/></svg>
+        </button>
+      </div>
+      <nav>
+        <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg><span class="label">نظرة عامة</span></a>
+        <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg><span class="label">الأعضاء</span></a>
+        <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg><span class="label">جدول الحصص</span></a>
+      </nav>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+
+    <header class="topbar">
+      <button class="icon-btn menu" id="menu" type="button" aria-expanded="false" aria-controls="side" aria-label="افتح القايمة">
+        <svg aria-hidden="true"><use href="#i-side"/></svg>
+      </button>
+      <h1>صالة الصخرة للتسلق</h1>
+      <button class="icon-btn" id="theme" type="button" aria-pressed="false" aria-label="الوضع الداكن"><svg aria-hidden="true"><use href="#i-moon"/></svg></button>
+      <button class="btn" id="add" type="button">عضو جديد</button>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section id="overview" aria-labelledby="ov-h">
+        <h2 id="ov-h">نظرة عامة</h2>
+        <ul class="kpis" role="list">
+          <li class="kpi"><p class="k-label">أعضاء نشطين</p><p class="k-num" id="k-active">—</p><p class="k-sub">من <span id="k-total">—</span> مسجّل</p></li>
+          <li class="kpi"><p class="k-label">دخول النهارده</p><p class="k-num" id="k-in">—</p>
+            <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" role="img" aria-labelledby="spark-t"><title id="spark-t">دخول آخر ١٤ يوم</title><polyline id="spark" points=""/></svg></li>
+          <li class="kpi"><p class="k-label">إيراد الشهر</p><p class="k-num" id="k-rev">—</p><p class="k-sub"><span class="delta" id="k-delta">—</span> عن الشهر اللي فات</p></li>
+          <li class="kpi ring-card"><p class="k-label">نسبة التجديد</p>
+            <svg class="ring" viewBox="0 0 36 36" role="img" aria-labelledby="ring-t"><title id="ring-t">نسبة التجديد</title>
+              <circle class="ring-bg" cx="18" cy="18" r="15.9" pathLength="100"/><circle class="ring-fg" id="ring" cx="18" cy="18" r="15.9" pathLength="100"/></svg>
+            <p class="k-num ring-num" id="k-ren">—</p></li>
+        </ul>
+      </section>
+
+      <section id="members" aria-labelledby="mem-h">
+        <h2 id="mem-h">الأعضاء</h2>
+        <form class="filters" id="filters" role="search" aria-label="فلترة الأعضاء">
+          <label>دوّر بالاسم أو الرقم <input type="search" name="q" autocomplete="off"></label>
+          <label>الحالة
+            <select name="status"><option value="all">الكل</option><option value="active">نشط</option><option value="frozen">متجمّد</option><option value="expired">منتهي</option></select></label>
+          <label>الباقة
+            <select name="plan"><option value="all">الكل</option><option value="monthly">شهري</option><option value="quarterly">3 شهور</option><option value="yearly">سنوي</option><option value="pass10">10 زيارات</option></select></label>
+          <button class="btn ghost" type="reset">امسح الفلاتر</button>
+        </form>
+        <p class="count" id="count" aria-live="polite"></p>
+        <div class="table-wrap">
+          <table class="members" id="table" aria-labelledby="mem-h" aria-busy="true">
+            <thead><tr>
+              <th scope="col" data-sort="name"><button type="button">الاسم</button></th>
+              <th scope="col" data-sort="plan"><button type="button">الباقة</button></th>
+              <th scope="col" data-sort="status"><button type="button">الحالة</button></th>
+              <th scope="col" data-sort="lastVisit"><button type="button">آخر زيارة</button></th>
+              <th scope="col" data-sort="visits"><button type="button">زيارات الشهر</button></th>
+            </tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <nav class="pager" id="pager" aria-label="صفحات الأعضاء"></nav>
+      </section>
+
+      <section id="schedule" aria-labelledby="sch-h">
+        <h2 id="sch-h">جدول الحصص</h2>
+        <p class="hint">اضغط على حصة عشان تشوف تفاصيلها وتحجز مكان.</p>
+        <div class="week-wrap" tabindex="0" role="region" aria-label="جدول الأسبوع، بيتسكرول بالعرض">
+          <div class="week" id="week"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="dlg-member" aria-labelledby="dm-h">
+    <form method="dialog" id="member-form">
+      <h2 id="dm-h">عضو جديد</h2>
+      <label>الاسم <input name="name" required minlength="3" autocomplete="off" autofocus></label>
+      <label>الباقة <select name="plan"><option value="monthly">شهري</option><option value="quarterly">3 شهور</option><option value="yearly">سنوي</option><option value="pass10">10 زيارات</option></select></label>
+      <div class="dlg-actions">
+        <button class="btn" value="save">ضيف</button>
+        <button class="btn ghost" value="cancel" formnovalidate>إلغاء</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-class" aria-labelledby="dc-h">
+    <form method="dialog">
+      <h2 id="dc-h"></h2>
+      <p id="dc-body"></p>
+      <div class="dlg-actions">
+        <button class="btn" value="book" id="dc-book">احجز مكان</button>
+        <button class="btn ghost" value="cancel">اقفل</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  <script type="importmap">{"imports":{"lab/app.js":"data:text/javascript;charset=utf-8,%2F%2F%20entry%3A%20shell%20first%20(so%20the%20menu%20works%20while%20data%20loads)%2C%20then%20the%20three%20data%20parts%20in%20parallel%0Aimport%20%22lab%2Fshell.js%22%3B%0Aimport%20%7B%20loadMembers%2C%20addMember%20%7D%20from%20%22lab%2Ftable.js%22%3B%0Aimport%20%7B%20loadKpis%20%7D%20from%20%22lab%2Fkpi.js%22%3B%0Aimport%20%7B%20loadSchedule%20%7D%20from%20%22lab%2Fschedule.js%22%3B%0Aimport%20%7B%20openDialog%2C%20toast%20%7D%20from%20%22lab%2Fui.js%22%3B%0A%0Aconst%20members%20%3D%20loadMembers()%3B%0Amembers.then(()%20%3D%3E%20loadKpis()).catch(()%20%3D%3E%20toast(%22%D8%A7%D9%84%D8%A3%D8%B1%D9%82%D8%A7%D9%85%20%D9%85%D8%B4%20%D9%85%D8%AA%D8%A7%D8%AD%D8%A9%20%D8%AF%D9%84%D9%88%D9%82%D8%AA%D9%8A%22))%3B%0AloadSchedule().catch(()%20%3D%3E%20toast(%22%D8%A7%D9%84%D8%AC%D8%AF%D9%88%D9%84%20%D9%85%D8%B4%20%D9%85%D8%AA%D8%A7%D8%AD%20%D8%AF%D9%84%D9%88%D9%82%D8%AA%D9%8A%22))%3B%0A%0Aconst%20dlg%20%3D%20document.getElementById(%22dlg-member%22)%2C%20form%20%3D%20document.getElementById(%22member-form%22)%3B%0Aconst%20nameIn%20%3D%20form.elements.name%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20form.elements%3A%20form.name%20is%20also%20the%20form's%20own%20name%20attribute%0AnameIn.addEventListener(%22input%22%2C%20()%20%3D%3E%20nameIn.setCustomValidity(%22%22))%3B%0AnameIn.addEventListener(%22invalid%22%2C%20()%20%3D%3E%20nameIn.setCustomValidity(nameIn.validity.valueMissing%20%3F%20%22%D8%A7%D9%83%D8%AA%D8%A8%20%D8%A7%D8%B3%D9%85%20%D8%A7%D9%84%D8%B9%D8%B6%D9%88%22%20%3A%20%22%D8%A7%D9%84%D8%A7%D8%B3%D9%85%20%D9%84%D8%A7%D8%B2%D9%85%20%D9%A3%20%D8%AD%D8%B1%D9%88%D9%81%20%D8%B9%D9%84%D9%89%20%D8%A7%D9%84%D8%A3%D9%82%D9%84%22))%3B%0Adocument.getElementById(%22add%22).addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20form.reset()%3B%0A%20%20openDialog(dlg%2C%20async%20v%20%3D%3E%20%7B%0A%20%20%20%20if%20(v%20!%3D%3D%20%22save%22)%20return%3B%0A%20%20%20%20const%20name%20%3D%20nameIn.value.trim()%3B%0A%20%20%20%20try%20%7B%20await%20addMember(%7B%20name%2C%20plan%3A%20form.elements.plan.value%20%7D)%3B%20toast(%60%D8%A7%D8%AA%D8%B6%D8%A7%D9%81%20%C2%AB%24%7Bname%7D%C2%BB%60)%3B%20%7D%0A%20%20%20%20catch%20(err)%20%7B%20toast(%22%D9%85%D9%82%D8%AF%D8%B1%D9%86%D8%A7%D8%B4%20%D9%86%D8%B6%D9%8A%D9%81%20%D8%A7%D9%84%D8%B9%D8%B6%D9%88%3A%20%22%20%2B%20err.message)%3B%20%7D%0A%20%20%7D)%3B%0A%7D)%3B%0A","lab/csv.js":"data:text/javascript;charset=utf-8,%2F%2F%20CSV%20for%20Excel%3A%20text%20only%2C%20no%20DOM%2C%20so%20Node%20can%20test%20it%0Aconst%20BOM%20%3D%20%22%5CuFEFF%22%3B%20%20%20%2F%2F%20tells%20Excel%20the%20file%20is%20UTF-8%3B%20without%20it%20Arabic%20opens%20as%20gibberish%0A%0A%2F%2F%20one%20cell%3A%20quotes%20around%20it%20when%20it%20has%20a%20comma%2C%20a%20quote%20or%20a%20line%20break%2C%20and%20every%20%22%20inside%20becomes%20%22%22%0A%2F%2F%20a%20cell%20that%20starts%20with%20%3D%20%2B%20-%20%40%20gets%20a%20'%20first%2C%20so%20Excel%20shows%20it%20as%20text%20instead%20of%20running%20it%20as%20a%20formula%0Aexport%20function%20cell(v)%20%7B%0A%20%20let%20s%20%3D%20String(v%20%3F%3F%20%22%22)%3B%0A%20%20if%20(%2F%5E%5B%3D%2B%5C-%40%5D%2F.test(s))%20s%20%3D%20%22'%22%20%2B%20s%3B%0A%20%20return%20%2F%5B%22%2C%5Cr%5Cn%5D%2F.test(s)%20%3F%20'%22'%20%2B%20s.replaceAll('%22'%2C%20'%22%22')%20%2B%20'%22'%20%3A%20s%3B%0A%7D%0A%0Aexport%20const%20toCSV%20%3D%20(head%2C%20rows)%20%3D%3E%20BOM%20%2B%20%5Bhead%2C%20...rows%5D.map(r%20%3D%3E%20r.map(cell).join(%22%2C%22)).join(%22%5Cr%5Cn%22)%20%2B%20%22%5Cr%5Cn%22%3B%0A%0A%2F%2F%20members-frozen-2026-11-20.csv%3A%20the%20filters%20that%20are%20on%2C%20then%20the%20date%0Aexport%20function%20fileName(s%2C%20day)%20%7B%0A%20%20const%20parts%20%3D%20%5B%22members%22%5D%3B%0A%20%20if%20(s.status%20!%3D%3D%20%22all%22)%20parts.push(s.status)%3B%0A%20%20if%20(s.plan%20!%3D%3D%20%22all%22)%20parts.push(s.plan)%3B%0A%20%20if%20(s.q)%20parts.push(%22search%22)%3B%0A%20%20return%20parts.join(%22-%22)%20%2B%20%22-%22%20%2B%20day%20%2B%20%22.csv%22%3B%0A%7D%0A","lab/kpi.js":"data:text/javascript;charset=utf-8,%2F%2F%20KPI%20cards%3A%20numbers%2C%20sparkline%2C%20ring.%20The%20cards%20keep%20their%20size%20while%20loading%2C%20so%20nothing%20jumps.%0Aimport%20%7B%20sparkPoints%2C%20ringOffset%2C%20num%2C%20money%2C%20delta%20%7D%20from%20%22lab%2Flib.js%22%3B%0Aexport%20async%20function%20loadKpis()%20%7B%0A%20%20const%20k%20%3D%20await%20(await%20fetch(%22api%2Fkpi%22)).json()%3B%0A%20%20document.getElementById(%22k-active%22).textContent%20%3D%20num.format(k.active)%3B%0A%20%20document.getElementById(%22k-total%22).textContent%20%3D%20num.format(k.members)%3B%0A%20%20document.getElementById(%22k-in%22).textContent%20%3D%20num.format(k.checkins.at(-1))%3B%0A%20%20document.getElementById(%22spark%22).setAttribute(%22points%22%2C%20sparkPoints(k.checkins))%3B%0A%20%20document.getElementById(%22spark-t%22).textContent%20%3D%20%22%D8%AF%D8%AE%D9%88%D9%84%20%D8%A2%D8%AE%D8%B1%20%D9%A1%D9%A4%20%D9%8A%D9%88%D9%85%3A%20%D9%85%D9%86%20%22%20%2B%20Math.min(...k.checkins)%20%2B%20%22%20%D9%84%D9%80%20%22%20%2B%20Math.max(...k.checkins)%20%2B%20%22%D8%8C%20%D9%88%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%B1%D8%AF%D9%87%20%22%20%2B%20k.checkins.at(-1)%3B%0A%20%20document.getElementById(%22k-rev%22).textContent%20%3D%20money.format(k.revenue)%3B%0A%20%20const%20d%20%3D%20delta(k.revenue%2C%20k.revenuePrev)%2C%20el%20%3D%20document.getElementById(%22k-delta%22)%3B%0A%20%20el.textContent%20%3D%20(d.up%20%3F%20%22%E2%96%B2%20%2B%22%20%3A%20%22%E2%96%BC%20%22)%20%2B%20d.pct%20%2B%20%22%25%22%3B%0A%20%20el.className%20%3D%20%22delta%20%22%20%2B%20(d.up%20%3F%20%22up%22%20%3A%20%22down%22)%3B%0A%20%20document.getElementById(%22k-ren%22).textContent%20%3D%20k.renewal%20%2B%20%22%25%22%3B%0A%20%20document.getElementById(%22ring-t%22).textContent%20%3D%20%22%D9%86%D8%B3%D8%A8%D8%A9%20%D8%A7%D9%84%D8%AA%D8%AC%D8%AF%D9%8A%D8%AF%20%22%20%2B%20k.renewal%20%2B%20%22%25%22%3B%0A%20%20requestAnimationFrame(()%20%3D%3E%20(document.getElementById(%22ring%22).style.strokeDashoffset%20%3D%20ringOffset(k.renewal)))%3B%0A%7D%0A","lab/lib.js":"data:text/javascript;charset=utf-8,%2F%2F%20small%20pure%20helpers%3A%20sparkline%20points%2C%20ring%20offset%2C%20schedule%20rows%2C%20number%20formats.%20No%20DOM%2C%20Node%20can%20test%20them.%0Aexport%20function%20sparkPoints(values%2C%20w%20%3D%20100%2C%20h%20%3D%2032%2C%20pad%20%3D%202)%20%7B%0A%20%20if%20(!values.length)%20return%20%22%22%3B%0A%20%20const%20min%20%3D%20Math.min(...values)%2C%20max%20%3D%20Math.max(...values)%2C%20span%20%3D%20max%20-%20min%3B%0A%20%20const%20step%20%3D%20values.length%20%3E%201%20%3F%20(w%20-%20pad%20*%202)%20%2F%20(values.length%20-%201)%20%3A%200%3B%0A%20%20return%20values.map((v%2C%20i)%20%3D%3E%20%7B%0A%20%20%20%20const%20x%20%3D%20pad%20%2B%20i%20*%20step%3B%0A%20%20%20%20const%20y%20%3D%20span%20%3F%20h%20-%20pad%20-%20((v%20-%20min)%20%2F%20span)%20*%20(h%20-%20pad%20*%202)%20%3A%20h%20%2F%202%3B%20%20%20%2F%2F%20SVG%20y%20grows%20downward%3B%20a%20flat%20line%20sits%20in%20the%20middle%0A%20%20%20%20return%20%2Bx.toFixed(1)%20%2B%20%22%2C%22%20%2B%20%2By.toFixed(1)%3B%0A%20%20%7D).join(%22%20%22)%3B%0A%7D%0A%0Aexport%20const%20ringOffset%20%3D%20pct%20%3D%3E%20100%20-%20Math.min(100%2C%20Math.max(0%2C%20pct))%3B%20%20%20%2F%2F%20with%20pathLength%3D%22100%22%20the%20dash%20is%20just%20the%20percent%0A%0Aexport%20const%20DAY0%20%3D%207%20*%2060%2C%20SLOT%20%3D%2030%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20the%20grid%20starts%20at%2007%3A00%2C%20one%20row%20%3D%2030%20minutes%0Aexport%20const%20toMin%20%3D%20hhmm%20%3D%3E%20%7B%20const%20%5Bh%2C%20m%5D%20%3D%20hhmm.split(%22%3A%22).map(Number)%3B%20return%20h%20*%2060%20%2B%20m%3B%20%7D%3B%0Aexport%20function%20gridRow(start%2C%20end)%20%7B%0A%20%20const%20row%20%3D%20(toMin(start)%20-%20DAY0)%20%2F%20SLOT%20%2B%201%3B%0A%20%20const%20span%20%3D%20Math.ceil((toMin(end)%20-%20toMin(start))%20%2F%20SLOT)%3B%0A%20%20return%20%7B%20row%2C%20span%20%7D%3B%0A%7D%0Aexport%20function%20overlaps(a%2C%20b)%20%7B%20return%20a.day%20%3D%3D%3D%20b.day%20%26%26%20toMin(a.start)%20%3C%20toMin(b.end)%20%26%26%20toMin(b.start)%20%3C%20toMin(a.end)%3B%20%7D%0A%0Aexport%20const%20num%20%3D%20new%20Intl.NumberFormat(%22ar-EG%22%2C%20%7B%20numberingSystem%3A%20%22latn%22%20%7D)%3B%0Aexport%20const%20money%20%3D%20new%20Intl.NumberFormat(%22ar-EG%22%2C%20%7B%20style%3A%20%22currency%22%2C%20currency%3A%20%22EGP%22%2C%20maximumFractionDigits%3A%200%2C%20numberingSystem%3A%20%22latn%22%20%7D)%3B%0Aexport%20const%20shortDate%20%3D%20new%20Intl.DateTimeFormat(%22ar-EG%22%2C%20%7B%20day%3A%20%22numeric%22%2C%20month%3A%20%22short%22%2C%20timeZone%3A%20%22UTC%22%2C%20numberingSystem%3A%20%22latn%22%20%7D)%3B%0Aexport%20function%20delta(now%2C%20prev)%20%7B%0A%20%20const%20pct%20%3D%20prev%20%3F%20((now%20-%20prev)%20%2F%20prev)%20*%20100%20%3A%200%3B%0A%20%20return%20%7B%20pct%3A%20Math.round(pct%20*%2010)%20%2F%2010%2C%20up%3A%20pct%20%3E%3D%200%20%7D%3B%0A%7D%0A","lab/schedule.js":"data:text/javascript;charset=utf-8,%2F%2F%20weekly%20schedule%3A%20each%20class%20is%20a%20button%20placed%20on%20the%20grid%20by%20custom%20properties%20(day%20%3D%20column%2C%20time%20%3D%20rows)%0Aimport%20%7B%20gridRow%2C%20toMin%20%7D%20from%20%22lab%2Flib.js%22%3B%0Aimport%20%7B%20openDialog%2C%20toast%20%7D%20from%20%22lab%2Fui.js%22%3B%0Aconst%20DAYS%20%3D%20%5B%22%D8%A7%D9%84%D8%B3%D8%A8%D8%AA%22%2C%20%22%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%22%2C%20%22%D8%A7%D9%84%D8%A7%D8%AA%D9%86%D9%8A%D9%86%22%2C%20%22%D8%A7%D9%84%D8%AA%D9%84%D8%A7%D8%AA%22%2C%20%22%D8%A7%D9%84%D8%A3%D8%B1%D8%A8%D8%B9%22%2C%20%22%D8%A7%D9%84%D8%AE%D9%85%D9%8A%D8%B3%22%2C%20%22%D8%A7%D9%84%D8%AC%D9%85%D8%B9%D8%A9%22%5D%3B%0Aconst%20week%20%3D%20document.getElementById(%22week%22)%2C%20dlg%20%3D%20document.getElementById(%22dlg-class%22)%3B%0Aconst%20ampm%20%3D%20hhmm%20%3D%3E%20%7B%20const%20m%20%3D%20toMin(hhmm)%2C%20h%20%3D%20Math.floor(m%20%2F%2060)%20%25%2012%20%7C%7C%2012%3B%20return%20h%20%2B%20%22%3A%22%20%2B%20String(m%20%25%2060).padStart(2%2C%20%220%22)%20%2B%20(m%20%3C%20720%20%3F%20%22%20%D8%B5%22%20%3A%20%22%20%D9%85%22)%3B%20%7D%3B%0A%0Afunction%20cell(cls%2C%20text%2C%20vars)%20%7B%0A%20%20const%20el%20%3D%20document.createElement(cls%20%3D%3D%3D%20%22slot%22%20%3F%20%22button%22%20%3A%20%22div%22)%3B%0A%20%20el.className%20%3D%20cls%3B%0A%20%20el.textContent%20%3D%20text%3B%0A%20%20for%20(const%20%5Bk%2C%20v%5D%20of%20Object.entries(vars))%20el.style.setProperty(%22--%22%20%2B%20k%2C%20v)%3B%0A%20%20return%20el%3B%0A%7D%0A%0Afunction%20slot(c)%20%7B%0A%20%20const%20%7B%20row%2C%20span%20%7D%20%3D%20gridRow(c.start%2C%20c.end)%3B%0A%20%20const%20b%20%3D%20cell(%22slot%22%2C%20%22%22%2C%20%7B%20col%3A%20c.day%2C%20row%2C%20span%2C%20fill%3A%20Math.round((c.booked%20%2F%20c.spots)%20*%20100)%20%2B%20%22%25%22%20%7D)%3B%0A%20%20b.type%20%3D%20%22button%22%3B%0A%20%20b.classList.toggle(%22full%22%2C%20c.booked%20%3E%3D%20c.spots)%3B%0A%20%20const%20title%20%3D%20document.createElement(%22b%22)%3B%0A%20%20title.textContent%20%3D%20c.title%3B%0A%20%20b.append(title%2C%20%60%24%7Bampm(c.start)%7D%20%C2%B7%20%24%7Bc.booked%7D%2F%24%7Bc.spots%7D%60)%3B%0A%20%20b.setAttribute(%22aria-label%22%2C%20%60%24%7Bc.title%7D%D8%8C%20%24%7BDAYS%5Bc.day%5D%7D%20%24%7Bampm(c.start)%7D%20%D9%84%D9%80%20%24%7Bampm(c.end)%7D%D8%8C%20%24%7Bc.booked%7D%20%D9%85%D9%86%20%24%7Bc.spots%7D%20%D9%85%D8%AD%D8%AC%D9%88%D8%B2%60)%3B%0A%20%20b.onclick%20%3D%20()%20%3D%3E%20%7B%0A%20%20%20%20document.getElementById(%22dc-h%22).textContent%20%3D%20c.title%3B%0A%20%20%20%20document.getElementById(%22dc-body%22).textContent%20%3D%20%60%24%7BDAYS%5Bc.day%5D%7D%D8%8C%20%D9%85%D9%86%20%24%7Bampm(c.start)%7D%20%D9%84%D9%80%20%24%7Bampm(c.end)%7D%20%D9%85%D8%B9%20%D8%A7%D9%84%D9%83%D9%88%D8%AA%D8%B4%20%24%7Bc.coach%7D.%20%D9%85%D8%AD%D8%AC%D9%88%D8%B2%20%24%7Bc.booked%7D%20%D9%85%D9%86%20%24%7Bc.spots%7D.%60%3B%0A%20%20%20%20const%20book%20%3D%20document.getElementById(%22dc-book%22)%3B%0A%20%20%20%20book.disabled%20%3D%20c.booked%20%3E%3D%20c.spots%3B%0A%20%20%20%20book.textContent%20%3D%20book.disabled%20%3F%20%22%D8%A7%D9%84%D8%AD%D8%B5%D8%A9%20%D9%83%D8%A7%D9%85%D9%84%D8%A9%22%20%3A%20%22%D8%A7%D8%AD%D8%AC%D8%B2%20%D9%85%D9%83%D8%A7%D9%86%22%3B%0A%20%20%20%20openDialog(dlg%2C%20async%20v%20%3D%3E%20%7B%0A%20%20%20%20%20%20if%20(v%20!%3D%3D%20%22book%22)%20return%3B%0A%20%20%20%20%20%20%2F%2F%20optimistic%3A%20the%20seat%20shows%20as%20taken%20right%20away%2C%20and%20the%20server%20decides%20a%20moment%20later%0A%20%20%20%20%20%20c.booked%2B%2B%3B%0A%20%20%20%20%20%20let%20now%20%3D%20slot(c)%3B%0A%20%20%20%20%20%20b.replaceWith(now)%3B%0A%20%20%20%20%20%20try%20%7B%0A%20%20%20%20%20%20%20%20const%20res%20%3D%20await%20fetch(%60api%2Fclasses%2F%24%7Bc.id%7D%2Fbook%60%2C%20%7B%20method%3A%20%22POST%22%20%7D)%3B%0A%20%20%20%20%20%20%20%20const%20r%20%3D%20await%20res.json()%3B%0A%20%20%20%20%20%20%20%20if%20(!res.ok)%20throw%20Object.assign(new%20Error(r.error%20%7C%7C%20%22HTTP%20%22%20%2B%20res.status)%2C%20%7B%20status%3A%20res.status%2C%20r%20%7D)%3B%0A%20%20%20%20%20%20%20%20c.booked%20%3D%20r.booked%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20the%20server's%20count%2C%20which%20may%20include%20other%20people's%20bookings%0A%20%20%20%20%20%20%20%20toast(%60%D8%A7%D8%AA%D8%AD%D8%AC%D8%B2%20%D9%85%D9%83%D8%A7%D9%86%20%D9%81%D9%8A%20%C2%AB%24%7Bc.title%7D%C2%BB%20%D9%8A%D9%88%D9%85%20%24%7BDAYS%5Bc.day%5D%7D%60)%3B%0A%20%20%20%20%20%20%7D%20catch%20(err)%20%7B%0A%20%20%20%20%20%20%20%20c.booked%20%3D%20err.r%3F.booked%20%3F%3F%20c.booked%20-%201%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20undo%20the%20%2B1%3B%20if%20the%20server%20sent%20the%20real%20count%2C%20show%20that%0A%20%20%20%20%20%20%20%20toast(err.status%20%3D%3D%3D%20409%20%3F%20%60%D8%A7%D9%84%D8%AD%D8%B5%D8%A9%20%D8%A7%D8%AA%D9%85%D9%84%D8%AA%3A%20%C2%AB%24%7Bc.title%7D%C2%BB%60%20%3A%20%22%D8%A7%D9%84%D8%AD%D8%AC%D8%B2%20%D9%85%D9%88%D8%B5%D9%84%D8%B4%D8%8C%20%D8%AC%D8%B1%D9%91%D8%A8%20%D8%AA%D8%A7%D9%86%D9%8A%22)%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20const%20fresh%20%3D%20slot(c)%3B%0A%20%20%20%20%20%20now.replaceWith(fresh)%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D%3B%0A%20%20return%20b%3B%0A%7D%0A%0Aexport%20async%20function%20loadSchedule()%20%7B%0A%20%20const%20classes%20%3D%20await%20(await%20fetch(%22api%2Fclasses%22)).json()%3B%0A%20%20const%20parts%20%3D%20DAYS.map((d%2C%20i)%20%3D%3E%20cell(%22day%22%2C%20d%2C%20%7B%20col%3A%20i%20%7D))%3B%0A%20%20for%20(let%20h%20%3D%207%3B%20h%20%3C%2022%3B%20h%2B%2B)%20parts.push(cell(%22hour%22%2C%20ampm(String(h).padStart(2%2C%20%220%22)%20%2B%20%22%3A00%22)%2C%20%7B%20row%3A%20(h%20-%207)%20*%202%20%2B%201%20%7D))%3B%0A%20%20week.replaceChildren(...parts%2C%20...classes.map(slot))%3B%0A%7D%0A","lab/shell.js":"data:text/javascript;charset=utf-8,%2F%2F%20sidebar%3A%20collapses%20on%20wide%20screens%2C%20becomes%20a%20drawer%20on%20narrow%20ones%3B%20plus%20the%20theme%20switch%0Aconst%20shell%20%3D%20document.getElementById(%22shell%22)%2C%20side%20%3D%20document.getElementById(%22side%22)%3B%0Aconst%20menu%20%3D%20document.getElementById(%22menu%22)%2C%20collapse%20%3D%20document.getElementById(%22collapse%22)%2C%20scrim%20%3D%20document.getElementById(%22scrim%22)%3B%0Aconst%20narrow%20%3D%20matchMedia(%22(max-width%3A%2063.99rem)%22)%3B%0Aconst%20behind%20%3D%20%5Bdocument.querySelector(%22.topbar%22)%2C%20document.getElementById(%22main%22)%5D%3B%0A%0Afunction%20setCollapsed(on)%20%7B%0A%20%20shell.toggleAttribute(%22data-collapsed%22%2C%20on)%3B%0A%20%20collapse.setAttribute(%22aria-expanded%22%2C%20String(!on))%3B%0A%20%20try%20%7B%20localStorage.setItem(%22side%22%2C%20on%20%3F%20%22collapsed%22%20%3A%20%22open%22)%3B%20%7D%20catch%20%7B%7D%0A%7D%0Aif%20(document.documentElement.dataset.side%20%3D%3D%3D%20%22collapsed%22)%20setCollapsed(true)%3B%0Acollapse.addEventListener(%22click%22%2C%20()%20%3D%3E%20setCollapsed(!shell.hasAttribute(%22data-collapsed%22)))%3B%0A%0Afunction%20setDrawer(open)%20%7B%0A%20%20shell.toggleAttribute(%22data-open%22%2C%20open)%3B%0A%20%20menu.setAttribute(%22aria-expanded%22%2C%20String(open))%3B%0A%20%20menu.setAttribute(%22aria-label%22%2C%20open%20%3F%20%22%D8%A7%D9%82%D9%81%D9%84%20%D8%A7%D9%84%D9%82%D8%A7%D9%8A%D9%85%D8%A9%22%20%3A%20%22%D8%A7%D9%81%D8%AA%D8%AD%20%D8%A7%D9%84%D9%82%D8%A7%D9%8A%D9%85%D8%A9%22)%3B%0A%20%20scrim.hidden%20%3D%20!open%3B%0A%20%20behind.forEach(el%20%3D%3E%20(el.inert%20%3D%20open))%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20while%20the%20drawer%20is%20open%2C%20Tab%20can't%20wander%20behind%20it%0A%20%20if%20(open)%20side.querySelector(%22a%22).focus()%3B%0A%20%20else%20if%20(side.contains(document.activeElement)%20%7C%7C%20document.activeElement%20%3D%3D%3D%20document.body)%20menu.focus()%3B%0A%7D%0Amenu.addEventListener(%22click%22%2C%20()%20%3D%3E%20setDrawer(true))%3B%0Ascrim.addEventListener(%22click%22%2C%20()%20%3D%3E%20setDrawer(false))%3B%0Adocument.addEventListener(%22keydown%22%2C%20e%20%3D%3E%20%7B%20if%20(e.key%20%3D%3D%3D%20%22Escape%22%20%26%26%20shell.hasAttribute(%22data-open%22))%20setDrawer(false)%3B%20%7D)%3B%0Aside.addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%0A%20%20const%20a%20%3D%20e.target.closest(%22a%22)%3B%0A%20%20if%20(!a)%20return%3B%0A%20%20side.querySelectorAll(%22a%22).forEach(x%20%3D%3E%20x.toggleAttribute(%22aria-current%22%2C%20x%20%3D%3D%3D%20a))%3B%0A%20%20if%20(a.hasAttribute(%22aria-current%22))%20a.setAttribute(%22aria-current%22%2C%20%22page%22)%3B%0A%20%20if%20(narrow.matches)%20setDrawer(false)%3B%0A%7D)%3B%0Anarrow.addEventListener(%22change%22%2C%20()%20%3D%3E%20setDrawer(false))%3B%20%2F%2F%20rotate%20or%20resize%20to%20wide%3A%20never%20leave%20the%20page%20inert%0A%0Aconst%20theme%20%3D%20document.getElementById(%22theme%22)%3B%0Aconst%20isDark%20%3D%20()%20%3D%3E%20document.documentElement.dataset.theme%20%3D%3D%3D%20%22dark%22%20%7C%7C%20(!document.documentElement.dataset.theme%20%26%26%20matchMedia(%22(prefers-color-scheme%3A%20dark)%22).matches)%3B%0Atheme.setAttribute(%22aria-pressed%22%2C%20String(isDark()))%3B%0Atheme.addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20const%20next%20%3D%20isDark()%20%3F%20%22light%22%20%3A%20%22dark%22%3B%0A%20%20document.documentElement.dataset.theme%20%3D%20next%3B%0A%20%20theme.setAttribute(%22aria-pressed%22%2C%20String(next%20%3D%3D%3D%20%22dark%22))%3B%0A%20%20try%20%7B%20localStorage.setItem(%22theme%22%2C%20next)%3B%20%7D%20catch%20%7B%7D%0A%7D)%3B%0A","lab/state.js":"data:text/javascript;charset=utf-8,%2F%2F%20table%20state%20%3C-%3E%20URL%2C%20plus%20filter%2Fsort%2Fpage.%20No%20DOM%20here%2C%20so%20Node%20can%20test%20it.%0Aexport%20const%20DEFAULTS%20%3D%20%7B%20q%3A%20%22%22%2C%20status%3A%20%22all%22%2C%20plan%3A%20%22all%22%2C%20sort%3A%20%22name%22%2C%20dir%3A%20%22asc%22%2C%20page%3A%201%2C%20size%3A%2010%20%7D%3B%0Aconst%20STATUS%20%3D%20%5B%22active%22%2C%20%22frozen%22%2C%20%22expired%22%5D%3B%0Aconst%20PLANS%20%3D%20%5B%22monthly%22%2C%20%22quarterly%22%2C%20%22yearly%22%2C%20%22pass10%22%5D%3B%0Aconst%20SORTS%20%3D%20%5B%22name%22%2C%20%22plan%22%2C%20%22status%22%2C%20%22lastVisit%22%2C%20%22visits%22%5D%3B%0Aconst%20ORDER%20%3D%20%7B%20plan%3A%20PLANS%2C%20status%3A%20STATUS%20%7D%3B%0A%0Aexport%20function%20parseState(search)%20%7B%0A%20%20const%20p%20%3D%20new%20URLSearchParams(search)%3B%0A%20%20const%20s%20%3D%20%7B%20...DEFAULTS%20%7D%3B%0A%20%20s.q%20%3D%20(p.get(%22q%22)%20%7C%7C%20%22%22).trim().slice(0%2C%2050)%3B%0A%20%20if%20(STATUS.includes(p.get(%22status%22)))%20s.status%20%3D%20p.get(%22status%22)%3B%0A%20%20if%20(PLANS.includes(p.get(%22plan%22)))%20s.plan%20%3D%20p.get(%22plan%22)%3B%0A%20%20if%20(SORTS.includes(p.get(%22sort%22)))%20s.sort%20%3D%20p.get(%22sort%22)%3B%0A%20%20if%20(p.get(%22dir%22)%20%3D%3D%3D%20%22desc%22)%20s.dir%20%3D%20%22desc%22%3B%0A%20%20const%20page%20%3D%20Number.parseInt(p.get(%22page%22)%2C%2010)%3B%0A%20%20if%20(page%20%3E%3D%201)%20s.page%20%3D%20page%3B%0A%20%20return%20s%3B%0A%7D%0A%0Aexport%20function%20toQuery(s)%20%7B%0A%20%20const%20p%20%3D%20new%20URLSearchParams()%3B%0A%20%20for%20(const%20k%20of%20%5B%22q%22%2C%20%22status%22%2C%20%22plan%22%2C%20%22sort%22%2C%20%22dir%22%2C%20%22page%22%5D)%20if%20(s%5Bk%5D%20!%3D%3D%20DEFAULTS%5Bk%5D%20%26%26%20s%5Bk%5D%20!%3D%3D%20%22%22)%20p.set(k%2C%20s%5Bk%5D)%3B%0A%20%20const%20q%20%3D%20p.toString()%3B%0A%20%20return%20q%20%3F%20%22%3F%22%20%2B%20q%20%3A%20%22%22%3B%0A%7D%0A%0A%2F%2F%20Arabic%20search%3A%20%C2%AB%D8%A7%D8%AD%D9%85%D8%AF%C2%BB%20should%20find%20%C2%AB%D8%A3%D8%AD%D9%85%D8%AF%C2%BB%2C%20and%20%C2%AB%D9%87%D9%86%D8%A7%C2%BB%20should%20find%20%C2%AB%D9%87%D9%86%D8%A7%C2%BB%2F%C2%AB%D9%87%D9%86%D8%A7%D8%A1%C2%BB%20typed%20with%20%D8%A9%20or%20%D9%89%0Aexport%20const%20norm%20%3D%20t%20%3D%3E%20t.toLowerCase().replace(%2F%5B%D8%A3%D8%A5%D8%A2%5D%2Fg%2C%20%22%D8%A7%22).replace(%2F%D8%A9%2Fg%2C%20%22%D9%87%22).replace(%2F%D9%89%2Fg%2C%20%22%D9%8A%22).replace(%2F%5B%5Cu064B-%5Cu0652%5D%2Fg%2C%20%22%22)%3B%0Aconst%20coll%20%3D%20new%20Intl.Collator(%22ar%22)%3B%0A%0Afunction%20compare(k%2C%20a%2C%20b)%20%7B%0A%20%20if%20(ORDER%5Bk%5D)%20return%20ORDER%5Bk%5D.indexOf(a%5Bk%5D)%20-%20ORDER%5Bk%5D.indexOf(b%5Bk%5D)%3B%0A%20%20if%20(typeof%20a%5Bk%5D%20%3D%3D%3D%20%22number%22)%20return%20a%5Bk%5D%20-%20b%5Bk%5D%3B%0A%20%20if%20(k%20%3D%3D%3D%20%22name%22)%20return%20coll.compare(a%5Bk%5D%2C%20b%5Bk%5D)%3B%0A%20%20return%20a%5Bk%5D%20%3C%20b%5Bk%5D%20%3F%20-1%20%3A%20a%5Bk%5D%20%3E%20b%5Bk%5D%20%3F%201%20%3A%200%3B%20%20%20%20%20%20%20%20%20%20%2F%2F%20ISO%20dates%20sort%20as%20text%0A%7D%0A%0Aexport%20function%20view(rows%2C%20s)%20%7B%0A%20%20const%20q%20%3D%20norm(s.q)%3B%0A%20%20const%20hit%20%3D%20m%20%3D%3E%20(s.status%20%3D%3D%3D%20%22all%22%20%7C%7C%20m.status%20%3D%3D%3D%20s.status)%20%26%26%20(s.plan%20%3D%3D%3D%20%22all%22%20%7C%7C%20m.plan%20%3D%3D%3D%20s.plan)%0A%20%20%20%20%26%26%20(!q%20%7C%7C%20norm(m.name).includes(q)%20%7C%7C%20String(m.id)%20%3D%3D%3D%20q)%3B%0A%20%20const%20d%20%3D%20s.dir%20%3D%3D%3D%20%22desc%22%20%3F%20-1%20%3A%201%3B%0A%20%20const%20sorted%20%3D%20rows.filter(hit).sort((a%2C%20b)%20%3D%3E%20d%20*%20compare(s.sort%2C%20a%2C%20b)%20%7C%7C%20a.id%20-%20b.id)%3B%0A%20%20const%20pages%20%3D%20Math.max(1%2C%20Math.ceil(sorted.length%20%2F%20s.size))%3B%0A%20%20const%20page%20%3D%20Math.min(s.page%2C%20pages)%3B%0A%20%20return%20%7B%20total%3A%20sorted.length%2C%20pages%2C%20page%2C%20rows%3A%20sorted.slice((page%20-%201)%20*%20s.size%2C%20page%20*%20s.size)%20%7D%3B%0A%7D%0A","lab/table.js":"data:text/javascript;charset=utf-8,%2F%2F%20members%20table%3A%20the%20URL%20is%20the%20state.%20Read%20it%2C%20draw%2C%20and%20write%20it%20back%20on%20every%20change.%0Aimport%20%7B%20parseState%2C%20toQuery%2C%20DEFAULTS%20%7D%20from%20%22lab%2Fstate.js%22%3B%0Aimport%20%7B%20num%2C%20shortDate%20%7D%20from%20%22lab%2Flib.js%22%3B%0A%0Aconst%20PLAN%20%3D%20%7B%20monthly%3A%20%22%D8%B4%D9%87%D8%B1%D9%8A%22%2C%20quarterly%3A%20%223%20%D8%B4%D9%87%D9%88%D8%B1%22%2C%20yearly%3A%20%22%D8%B3%D9%86%D9%88%D9%8A%22%2C%20pass10%3A%20%2210%20%D8%B2%D9%8A%D8%A7%D8%B1%D8%A7%D8%AA%22%20%7D%3B%0Aconst%20STATUS%20%3D%20%7B%20active%3A%20%22%D9%86%D8%B4%D8%B7%22%2C%20frozen%3A%20%22%D9%85%D8%AA%D8%AC%D9%85%D9%91%D8%AF%22%2C%20expired%3A%20%22%D9%85%D9%86%D8%AA%D9%87%D9%8A%22%20%7D%3B%0Aconst%20COLS%20%3D%20%5B%22%D8%A7%D9%84%D8%A7%D8%B3%D9%85%22%2C%20%22%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%22%2C%20%22%D8%A7%D9%84%D8%AD%D8%A7%D9%84%D8%A9%22%2C%20%22%D8%A2%D8%AE%D8%B1%20%D8%B2%D9%8A%D8%A7%D8%B1%D8%A9%22%2C%20%22%D8%B2%D9%8A%D8%A7%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B4%D9%87%D8%B1%22%5D%3B%0Aconst%20table%20%3D%20document.getElementById(%22table%22)%2C%20tbody%20%3D%20document.getElementById(%22rows%22)%3B%0Aconst%20form%20%3D%20document.getElementById(%22filters%22)%2C%20pager%20%3D%20document.getElementById(%22pager%22)%2C%20count%20%3D%20document.getElementById(%22count%22)%3B%0Alet%20state%20%3D%20parseState(location.search)%2C%20total%20%3D%200%2C%20ctrl%3B%0A%0Aconst%20lab%20%3D%20new%20URLSearchParams(location.search)%3B%20%20%20%20%20%20%20%20%20%20%2F%2F%20lab%20only%3A%20%3Fdelay%3D1500%20slows%20the%20data%2C%20%3Ffail%3D1%20breaks%20the%20first%20try%0Alet%20labDelay%20%3D%20lab.get(%22delay%22)%2C%20labFail%20%3D%20lab.get(%22fail%22)%20%3D%3D%3D%20%221%22%3B%0A%0Afunction%20td(text%2C%20label%2C%20cls)%20%7B%0A%20%20const%20c%20%3D%20document.createElement(%22td%22)%3B%0A%20%20c.dataset.label%20%3D%20label%3B%0A%20%20if%20(cls)%20c.className%20%3D%20cls%3B%0A%20%20if%20(text%20instanceof%20Node)%20c.append(text)%3B%20else%20c.textContent%20%3D%20text%3B%0A%20%20return%20c%3B%0A%7D%0A%0Afunction%20stateRow(kind%2C%20text%2C%20button)%20%7B%0A%20%20const%20tr%20%3D%20document.createElement(%22tr%22)%2C%20c%20%3D%20document.createElement(%22td%22)%3B%0A%20%20tr.className%20%3D%20%22state-row%20%22%20%2B%20kind%3B%0A%20%20c.colSpan%20%3D%20COLS.length%3B%0A%20%20c.append(text)%3B%0A%20%20if%20(button)%20%7B%20c.append(%22%20%22)%3B%20c.append(button)%3B%20%7D%0A%20%20tr.append(c)%3B%0A%20%20tbody.replaceChildren(tr)%3B%0A%7D%0A%0Aexport%20function%20skeleton(n%20%3D%20DEFAULTS.size)%20%7B%0A%20%20table.setAttribute(%22aria-busy%22%2C%20%22true%22)%3B%0A%20%20tbody.replaceChildren(...Array.from(%7B%20length%3A%20n%20%7D%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20tr%20%3D%20document.createElement(%22tr%22)%3B%0A%20%20%20%20tr.className%20%3D%20%22skel%22%3B%0A%20%20%20%20tr.innerHTML%20%3D%20%22%3Ctd%3E%3Cspan%3E%3C%2Fspan%3E%3C%2Ftd%3E%22.repeat(COLS.length)%3B%0A%20%20%20%20return%20tr%3B%0A%20%20%7D))%3B%0A%7D%0A%0Afunction%20render(v)%20%7B%0A%20%20if%20(v.page%20!%3D%3D%20state.page)%20%7B%20state.page%20%3D%20v.page%3B%20history.replaceState(null%2C%20%22%22%2C%20toQuery(state)%20%7C%7C%20location.pathname)%3B%20%7D%0A%20%20table.setAttribute(%22aria-busy%22%2C%20%22false%22)%3B%0A%20%20for%20(const%20th%20of%20table.querySelectorAll(%22th%5Bdata-sort%5D%22))%20%7B%0A%20%20%20%20if%20(th.dataset.sort%20%3D%3D%3D%20state.sort)%20th.setAttribute(%22aria-sort%22%2C%20state.dir%20%3D%3D%3D%20%22asc%22%20%3F%20%22ascending%22%20%3A%20%22descending%22)%3B%0A%20%20%20%20else%20th.removeAttribute(%22aria-sort%22)%3B%0A%20%20%7D%0A%20%20count.textContent%20%3D%20v.total%20%3F%20%60%24%7Bnum.format(v.total)%7D%20%D8%B9%D8%B6%D9%88%D8%8C%20%D8%B5%D9%81%D8%AD%D8%A9%20%24%7Bnum.format(v.page)%7D%20%D9%85%D9%86%20%24%7Bnum.format(v.pages)%7D%60%20%3A%20%22%D9%85%D9%81%D9%8A%D8%B4%20%D9%86%D8%AA%D8%A7%D9%8A%D8%AC%22%3B%0A%20%20if%20(!v.total)%20%7B%0A%20%20%20%20const%20clear%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20clear.type%20%3D%20%22button%22%3B%20clear.className%20%3D%20%22btn%20ghost%22%3B%20clear.textContent%20%3D%20%22%D8%A7%D9%85%D8%B3%D8%AD%20%D8%A7%D9%84%D9%81%D9%84%D8%A7%D8%AA%D8%B1%22%3B%0A%20%20%20%20clear.onclick%20%3D%20()%20%3D%3E%20form.reset()%3B%0A%20%20%20%20stateRow(%22empty%22%2C%20%22%D9%85%D9%81%D9%8A%D8%B4%20%D8%A3%D8%B9%D8%B6%D8%A7%D8%A1%20%D8%A8%D8%A7%D9%84%D9%81%D9%84%D8%AA%D8%B1%20%D8%AF%D9%87.%22%2C%20clear)%3B%0A%20%20%7D%20else%20%7B%0A%20%20%20%20tbody.replaceChildren(...v.rows.map(m%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20tr%20%3D%20document.createElement(%22tr%22)%3B%0A%20%20%20%20%20%20const%20b%20%3D%20document.createElement(%22span%22)%3B%0A%20%20%20%20%20%20b.className%20%3D%20%22badge%20%22%20%2B%20m.status%3B%20b.textContent%20%3D%20STATUS%5Bm.status%5D%3B%0A%20%20%20%20%20%20tr.append(td(m.name%2C%20COLS%5B0%5D)%2C%20td(PLAN%5Bm.plan%5D%2C%20COLS%5B1%5D)%2C%20td(b%2C%20COLS%5B2%5D)%2C%0A%20%20%20%20%20%20%20%20td(shortDate.format(new%20Date(m.lastVisit))%2C%20COLS%5B3%5D)%2C%20td(num.format(m.visits)%2C%20COLS%5B4%5D%2C%20%22num%22))%3B%0A%20%20%20%20%20%20return%20tr%3B%0A%20%20%20%20%7D))%3B%0A%20%20%7D%0A%20%20pager.replaceChildren()%3B%0A%20%20const%20btn%20%3D%20(label%2C%20page%2C%20extra%20%3D%20%7B%7D)%20%3D%3E%20%7B%0A%20%20%20%20const%20b%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20b.type%20%3D%20%22button%22%3B%20b.textContent%20%3D%20label%3B%20b.dataset.page%20%3D%20page%3B%0A%20%20%20%20Object.assign(b%2C%20extra)%3B%0A%20%20%20%20if%20(page%20%3D%3D%3D%20v.page%20%26%26%20!extra.ariaLabel)%20b.setAttribute(%22aria-current%22%2C%20%22page%22)%3B%0A%20%20%20%20pager.append(b)%3B%0A%20%20%7D%3B%0A%20%20btn(%22%E2%80%B9%22%2C%20v.page%20-%201%2C%20%7B%20ariaLabel%3A%20%22%D8%A7%D9%84%D8%B5%D9%81%D8%AD%D8%A9%20%D8%A7%D9%84%D9%84%D9%8A%20%D9%81%D8%A7%D8%AA%D8%AA%22%2C%20disabled%3A%20v.page%20%3D%3D%3D%201%20%7D)%3B%0A%20%20for%20(let%20p%20%3D%201%3B%20p%20%3C%3D%20v.pages%3B%20p%2B%2B)%20btn(num.format(p)%2C%20p)%3B%0A%20%20btn(%22%E2%80%BA%22%2C%20v.page%20%2B%201%2C%20%7B%20ariaLabel%3A%20%22%D8%A7%D9%84%D8%B5%D9%81%D8%AD%D8%A9%20%D8%A7%D9%84%D8%AC%D8%A7%D9%8A%D8%A9%22%2C%20disabled%3A%20v.page%20%3D%3D%3D%20v.pages%20%7D)%3B%0A%7D%0A%0Afunction%20update(patch%2C%20mode%20%3D%20%22push%22)%20%7B%0A%20%20state%20%3D%20%7B%20...state%2C%20...patch%20%7D%3B%0A%20%20const%20url%20%3D%20toQuery(state)%20%7C%7C%20location.pathname%3B%0A%20%20if%20(mode%20%3D%3D%3D%20%22push%22)%20history.pushState(null%2C%20%22%22%2C%20url)%3B%20else%20history.replaceState(null%2C%20%22%22%2C%20url)%3B%0A%20%20refresh()%3B%0A%7D%0A%0Afunction%20syncForm()%20%7B%0A%20%20form.q.value%20%3D%20state.q%3B%20form.status.value%20%3D%20state.status%3B%20form.plan.value%20%3D%20state.plan%3B%0A%7D%0A%0Alet%20timer%3B%0Aform.addEventListener(%22input%22%2C%20e%20%3D%3E%20%7B%0A%20%20clearTimeout(timer)%3B%0A%20%20const%20patch%20%3D%20%7B%20%5Be.target.name%5D%3A%20e.target.value%2C%20page%3A%201%20%7D%3B%0A%20%20if%20(e.target.name%20%3D%3D%3D%20%22q%22)%20timer%20%3D%20setTimeout(()%20%3D%3E%20update(%7B%20...patch%2C%20q%3A%20e.target.value.trim()%20%7D%2C%20%22replace%22)%2C%20250)%3B%0A%20%20else%20update(patch%2C%20%22push%22)%3B%0A%7D)%3B%0Aform.addEventListener(%22reset%22%2C%20()%20%3D%3E%20setTimeout(()%20%3D%3E%20update(%7B%20q%3A%20%22%22%2C%20status%3A%20%22all%22%2C%20plan%3A%20%22all%22%2C%20page%3A%201%20%7D%2C%20%22push%22)))%3B%0Aform.addEventListener(%22submit%22%2C%20e%20%3D%3E%20e.preventDefault())%3B%0Atable.querySelector(%22thead%22).addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%0A%20%20const%20th%20%3D%20e.target.closest(%22th%5Bdata-sort%5D%22)%3B%0A%20%20if%20(!th)%20return%3B%0A%20%20const%20k%20%3D%20th.dataset.sort%3B%0A%20%20update(%7B%20sort%3A%20k%2C%20dir%3A%20state.sort%20%3D%3D%3D%20k%20%26%26%20state.dir%20%3D%3D%3D%20%22asc%22%20%3F%20%22desc%22%20%3A%20%22asc%22%2C%20page%3A%201%20%7D)%3B%0A%7D)%3B%0Apager.addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%0A%20%20const%20b%20%3D%20e.target.closest(%22button%5Bdata-page%5D%22)%3B%0A%20%20if%20(!b%20%7C%7C%20b.disabled)%20return%3B%0A%20%20update(%7B%20page%3A%20Number(b.dataset.page)%20%7D)%3B%0A%20%20document.getElementById(%22mem-h%22).scrollIntoView(%7B%20block%3A%20%22start%22%20%7D)%3B%0A%7D)%3B%0AaddEventListener(%22popstate%22%2C%20()%20%3D%3E%20%7B%20state%20%3D%20parseState(location.search)%3B%20syncForm()%3B%20refresh()%3B%20%7D)%3B%0A%0A%2F%2F%20one%20page%20of%20members%20from%20the%20server.%20The%20query%20is%20the%20page's%20own%20URL%20(toQuery)%2C%20so%20a%20shared%20link%20and%20the%20server%20always%20agree%0Aasync%20function%20fetchView()%20%7B%0A%20%20ctrl%3F.abort()%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20a%20newer%20state%20wins%3A%20an%20older%20answer%20that%20arrives%20late%20must%20not%20draw%20over%20it%0A%20%20ctrl%20%3D%20new%20AbortController()%3B%0A%20%20const%20q%20%3D%20new%20URLSearchParams(toQuery(state))%3B%0A%20%20if%20(labDelay)%20q.set(%22delay%22%2C%20labDelay)%3B%0A%20%20if%20(labFail)%20q.set(%22fail%22%2C%20%221%22)%3B%0A%20%20const%20res%20%3D%20await%20fetch(%22api%2Fmembers%22%20%2B%20(q.size%20%3F%20%22%3F%22%20%2B%20q%20%3A%20%22%22)%2C%20%7B%20signal%3A%20ctrl.signal%20%7D)%3B%0A%20%20if%20(!res.ok)%20throw%20new%20Error(%22HTTP%20%22%20%2B%20res.status)%3B%0A%20%20return%20res.json()%3B%0A%7D%0A%0Aasync%20function%20refresh()%20%7B%0A%20%20table.setAttribute(%22aria-busy%22%2C%20%22true%22)%3B%0A%20%20try%20%7B%0A%20%20%20%20const%20v%20%3D%20await%20fetchView()%3B%0A%20%20%20%20labDelay%20%3D%20null%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20lab%3A%20only%20the%20first%20load%20is%20slow%0A%20%20%20%20total%20%3D%20v.total%3B%0A%20%20%20%20render(v)%3B%0A%20%20%7D%20catch%20(err)%20%7B%0A%20%20%20%20if%20(err.name%20%3D%3D%3D%20%22AbortError%22)%20return%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20a%20newer%20request%20replaced%20this%20one%3A%20nothing%20to%20show%0A%20%20%20%20labFail%20%3D%20false%3B%20labDelay%20%3D%20null%3B%0A%20%20%20%20table.setAttribute(%22aria-busy%22%2C%20%22false%22)%3B%0A%20%20%20%20count.textContent%20%3D%20%22%D8%AD%D8%B5%D9%84%20%D8%AE%D8%B7%D8%A3%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AA%D8%AD%D9%85%D9%8A%D9%84%22%3B%0A%20%20%20%20const%20retry%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20retry.type%20%3D%20%22button%22%3B%20retry.className%20%3D%20%22btn%22%3B%20retry.textContent%20%3D%20%22%D8%AC%D8%B1%D9%91%D8%A8%20%D8%AA%D8%A7%D9%86%D9%8A%22%3B%0A%20%20%20%20retry.onclick%20%3D%20()%20%3D%3E%20loadMembers()%3B%0A%20%20%20%20stateRow(%22error%22%2C%20%22%D9%85%D9%82%D8%AF%D8%B1%D9%86%D8%A7%D8%B4%20%D9%86%D8%AC%D9%8A%D8%A8%20%D8%A7%D9%84%D8%A3%D8%B9%D8%B6%D8%A7%D8%A1%20(%22%20%2B%20err.message%20%2B%20%22).%22%2C%20retry)%3B%0A%20%20%20%20retry.focus()%3B%0A%20%20%7D%0A%7D%0A%0Aexport%20async%20function%20loadMembers()%20%7B%0A%20%20syncForm()%3B%0A%20%20skeleton()%3B%0A%20%20count.textContent%20%3D%20%22%D8%A8%D9%8A%D8%AD%D9%85%D9%91%D9%84%E2%80%A6%22%3B%0A%20%20await%20refresh()%3B%0A%20%20return%20total%3B%0A%7D%0A%0A%2F%2F%20the%20server%20gives%20the%20id%20and%20checks%20the%20name%20again%3B%20the%20page%20only%20draws%20what%20came%20back%0Aexport%20async%20function%20addMember(m)%20%7B%0A%20%20const%20res%20%3D%20await%20fetch(%22api%2Fmembers%22%2C%20%7B%20method%3A%20%22POST%22%2C%20headers%3A%20%7B%20%22content-type%22%3A%20%22application%2Fjson%22%20%7D%2C%20body%3A%20JSON.stringify(m)%20%7D)%3B%0A%20%20const%20body%20%3D%20await%20res.json()%3B%0A%20%20if%20(!res.ok)%20throw%20new%20Error(body.error%20%7C%7C%20%22HTTP%20%22%20%2B%20res.status)%3B%0A%20%20await%20refresh()%3B%0A%20%20return%20body%3B%0A%7D%0A","lab/ui.js":"data:text/javascript;charset=utf-8,%2F%2F%20toasts%20in%20one%20live%20region%20that%20exists%20from%20the%20start%2C%20and%20a%20helper%20for%20native%20%3Cdialog%3E%0Aconst%20box%20%3D%20document.getElementById(%22toasts%22)%3B%0Aexport%20function%20toast(text%2C%20ms%20%3D%204000)%20%7B%0A%20%20const%20el%20%3D%20document.createElement(%22p%22)%3B%0A%20%20el.className%20%3D%20%22toast%22%3B%0A%20%20el.textContent%20%3D%20text%3B%0A%20%20box.append(el)%3B%0A%20%20setTimeout(()%20%3D%3E%20el.remove()%2C%20ms)%3B%0A%7D%0A%0Aexport%20function%20openDialog(dlg%2C%20onClose)%20%7B%0A%20%20dlg.returnValue%20%3D%20%22%22%3B%0A%20%20dlg.showModal()%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20modal%3A%20focus%20moves%20in%2C%20Esc%20closes%2C%20the%20rest%20of%20the%20page%20is%20inert%0A%20%20dlg.addEventListener(%22close%22%2C%20()%20%3D%3E%20onClose%3F.(dlg.returnValue)%2C%20%7B%20once%3A%20true%20%7D)%3B%0A%7D%0A%2F%2F%20a%20click%20on%20the%20backdrop%20lands%20on%20the%20%3Cdialog%3E%20itself%20(the%20form%20inside%20covers%20the%20box)%0Adocument.addEventListener(%22click%22%2C%20e%20%3D%3E%20%7B%20if%20(e.target%20instanceof%20HTMLDialogElement)%20e.target.close(%22cancel%22)%3B%20%7D)%3B%0A"}}</script>
+  <script type="module">
+/* للـ preview بس: مفيش سيرفر جوه الصندوق ده، فالسطور دي بتقلّد api.mjs بنفس state.js ونفس قاعدة الـ 409. على جهازك الصفحة بتكلّم api.mjs الحقيقي */
+import { parseState, view } from "lab/state.js";
+const DB = {"classes":[{"id":1,"title":"أطفال 8–12","coach":"شادي","day":0,"start":"17:00","end":"18:30","spots":14,"booked":12},{"id":2,"title":"قوة الأصابع","coach":"رحاب","day":0,"start":"19:00","end":"20:00","spots":12,"booked":11},{"id":3,"title":"بولدرينج للمبتدئين","coach":"رحاب","day":0,"start":"20:30","end":"22:00","spots":15,"booked":15},{"id":4,"title":"بولدرينج للمبتدئين","coach":"رحاب","day":1,"start":"17:00","end":"18:30","spots":10,"booked":3},{"id":5,"title":"قوة الأصابع","coach":"رحاب","day":2,"start":"17:00","end":"18:30","spots":9,"booked":3},{"id":6,"title":"مرونة ويوجا","coach":"دينا","day":2,"start":"19:00","end":"20:00","spots":13,"booked":13},{"id":7,"title":"بولدرينج للمبتدئين","coach":"رحاب","day":2,"start":"20:30","end":"22:00","spots":15,"booked":12},{"id":8,"title":"تقنية متقدمة","coach":"مهاب","day":3,"start":"07:00","end":"08:00","spots":14,"booked":8},{"id":9,"title":"مرونة ويوجا","coach":"دينا","day":3,"start":"17:00","end":"18:30","spots":9,"booked":1},{"id":10,"title":"قوة الأصابع","coach":"رحاب","day":3,"start":"20:30","end":"22:00","spots":10,"booked":10},{"id":11,"title":"مرونة ويوجا","coach":"دينا","day":4,"start":"17:00","end":"18:30","spots":11,"booked":6},{"id":12,"title":"تسلّق بالحبل","coach":"شادي","day":4,"start":"20:30","end":"22:00","spots":11,"booked":0},{"id":13,"title":"قوة الأصابع","coach":"رحاب","day":5,"start":"07:00","end":"08:00","spots":9,"booked":1},{"id":14,"title":"تسلّق بالحبل","coach":"شادي","day":5,"start":"17:00","end":"18:30","spots":9,"booked":0},{"id":15,"title":"تقنية متقدمة","coach":"مهاب","day":5,"start":"19:00","end":"20:00","spots":8,"booked":2}],"kpi":{"active":44,"checkins":[59,77,60,73,74,51,81,77,74,64,68,63,79,73],"revenue":186400,"revenuePrev":171250,"renewal":78},"members":[{"id":1001,"name":"نور البنا","plan":"yearly","status":"active","joined":"2025-04-22","lastVisit":"2026-10-25","visits":12},{"id":1002,"name":"مريم عبد الحميد","plan":"quarterly","status":"active","joined":"2024-11-03","lastVisit":"2026-10-25","visits":15},{"id":1003,"name":"هنا منصور","plan":"pass10","status":"active","joined":"2025-02-14","lastVisit":"2026-10-24","visits":11},{"id":1004,"name":"سيف الشاذلي","plan":"pass10","status":"active","joined":"2024-11-26","lastVisit":"2026-10-24","visits":4},{"id":1005,"name":"فرح الشاذلي","plan":"quarterly","status":"active","joined":"2025-10-13","lastVisit":"2026-10-25","visits":7},{"id":1006,"name":"مريم سالم","plan":"yearly","status":"active","joined":"2025-07-02","lastVisit":"2026-10-25","visits":19},{"id":1007,"name":"سيف الجمّال","plan":"pass10","status":"frozen","joined":"2026-06-26","lastVisit":"2026-08-16","visits":0},{"id":1008,"name":"آدم الشاذلي","plan":"monthly","status":"active","joined":"2024-12-15","lastVisit":"2026-10-29","visits":8},{"id":1009,"name":"مالك سالم","plan":"pass10","status":"active","joined":"2025-08-02","lastVisit":"2026-10-26","visits":3},{"id":1010,"name":"يوسف البنا","plan":"pass10","status":"active","joined":"2026-04-17","lastVisit":"2026-10-24","visits":6},{"id":1011,"name":"يوسف الشاذلي","plan":"monthly","status":"active","joined":"2026-01-26","lastVisit":"2026-10-27","visits":21},{"id":1012,"name":"ليلى رشدي","plan":"yearly","status":"active","joined":"2025-12-15","lastVisit":"2026-10-31","visits":17},{"id":1013,"name":"سيف منصور","plan":"yearly","status":"active","joined":"2025-09-26","lastVisit":"2026-10-25","visits":14},{"id":1014,"name":"ليلى عبد الحميد","plan":"monthly","status":"active","joined":"2026-02-13","lastVisit":"2026-10-27","visits":7},{"id":1015,"name":"زياد الشاذلي","plan":"pass10","status":"expired","joined":"2025-08-18","lastVisit":"2026-09-08","visits":0},{"id":1016,"name":"سيف فهمي","plan":"quarterly","status":"active","joined":"2025-04-03","lastVisit":"2026-10-26","visits":19},{"id":1017,"name":"سلمى الجمّال","plan":"monthly","status":"active","joined":"2025-01-06","lastVisit":"2026-10-28","visits":16},{"id":1018,"name":"يوسف الشاذلي","plan":"yearly","status":"active","joined":"2025-11-22","lastVisit":"2026-10-23","visits":2},{"id":1019,"name":"زياد فهمي","plan":"yearly","status":"expired","joined":"2025-11-13","lastVisit":"2026-09-15","visits":0},{"id":1020,"name":"يوسف رشدي","plan":"pass10","status":"active","joined":"2025-07-14","lastVisit":"2026-10-29","visits":16},{"id":1021,"name":"مالك شوقي","plan":"quarterly","status":"active","joined":"2026-08-18","lastVisit":"2026-10-27","visits":17},{"id":1022,"name":"عمر النجار","plan":"pass10","status":"active","joined":"2026-06-04","lastVisit":"2026-10-31","visits":6},{"id":1023,"name":"آدم عبد الحميد","plan":"pass10","status":"active","joined":"2026-04-01","lastVisit":"2026-10-31","visits":5},{"id":1024,"name":"مريم شوقي","plan":"monthly","status":"active","joined":"2025-01-28","lastVisit":"2026-10-31","visits":16},{"id":1025,"name":"جنى رشدي","plan":"quarterly","status":"active","joined":"2025-09-12","lastVisit":"2026-10-28","visits":15},{"id":1026,"name":"ليلى رشدي","plan":"yearly","status":"expired","joined":"2025-03-26","lastVisit":"2026-08-10","visits":1},{"id":1027,"name":"يوسف شوقي","plan":"yearly","status":"active","joined":"2025-08-27","lastVisit":"2026-10-23","visits":18},{"id":1028,"name":"مريم رشدي","plan":"quarterly","status":"expired","joined":"2026-09-06","lastVisit":"2026-09-19","visits":2},{"id":1029,"name":"سيف فهمي","plan":"yearly","status":"active","joined":"2026-09-15","lastVisit":"2026-10-24","visits":13},{"id":1030,"name":"سلمى منصور","plan":"monthly","status":"active","joined":"2026-05-24","lastVisit":"2026-10-25","visits":3},{"id":1031,"name":"فرح منصور","plan":"monthly","status":"active","joined":"2026-09-29","lastVisit":"2026-10-30","visits":18},{"id":1032,"name":"ليلى فهمي","plan":"quarterly","status":"frozen","joined":"2025-07-20","lastVisit":"2026-08-18","visits":1},{"id":1033,"name":"مريم الشاذلي","plan":"monthly","status":"active","joined":"2026-01-27","lastVisit":"2026-10-27","visits":5},{"id":1034,"name":"ليلى الشاذلي","plan":"quarterly","status":"expired","joined":"2025-12-12","lastVisit":"2026-08-28","visits":0},{"id":1035,"name":"سيف الجمّال","plan":"pass10","status":"active","joined":"2026-07-06","lastVisit":"2026-10-25","visits":4},{"id":1036,"name":"مالك رشدي","plan":"yearly","status":"expired","joined":"2025-05-26","lastVisit":"2026-08-06","visits":0},{"id":1037,"name":"نور رشدي","plan":"quarterly","status":"active","joined":"2026-05-17","lastVisit":"2026-10-26","visits":5},{"id":1038,"name":"زياد الجمّال","plan":"monthly","status":"active","joined":"2025-11-11","lastVisit":"2026-10-27","visits":4},{"id":1039,"name":"مالك شوقي","plan":"monthly","status":"active","joined":"2025-02-06","lastVisit":"2026-10-24","visits":16},{"id":1040,"name":"ليلى الشاذلي","plan":"pass10","status":"active","joined":"2025-07-21","lastVisit":"2026-10-23","visits":7},{"id":1041,"name":"ليلى البنا","plan":"pass10","status":"active","joined":"2025-07-26","lastVisit":"2026-10-31","visits":14},{"id":1042,"name":"سلمى فهمي","plan":"monthly","status":"frozen","joined":"2024-12-21","lastVisit":"2026-10-08","visits":1},{"id":1043,"name":"فرح سالم","plan":"monthly","status":"active","joined":"2026-05-22","lastVisit":"2026-10-26","visits":13},{"id":1044,"name":"مالك النجار","plan":"pass10","status":"active","joined":"2024-11-30","lastVisit":"2026-10-30","visits":20},{"id":1045,"name":"تامر منصور","plan":"pass10","status":"active","joined":"2025-12-28","lastVisit":"2026-10-29","visits":2},{"id":1046,"name":"نور البنا","plan":"quarterly","status":"active","joined":"2026-02-01","lastVisit":"2026-10-29","visits":10},{"id":1047,"name":"مريم الجمّال","plan":"quarterly","status":"active","joined":"2025-05-08","lastVisit":"2026-10-25","visits":20},{"id":1048,"name":"هنا عبد الحميد","plan":"monthly","status":"active","joined":"2025-02-17","lastVisit":"2026-10-30","visits":7},{"id":1049,"name":"ليلى شوقي","plan":"yearly","status":"frozen","joined":"2026-01-19","lastVisit":"2026-09-08","visits":2},{"id":1050,"name":"فرح منصور","plan":"pass10","status":"active","joined":"2025-08-25","lastVisit":"2026-10-31","visits":18},{"id":1051,"name":"سلمى شوقي","plan":"pass10","status":"active","joined":"2026-07-26","lastVisit":"2026-10-23","visits":8},{"id":1052,"name":"زياد رشدي","plan":"quarterly","status":"active","joined":"2025-11-18","lastVisit":"2026-10-30","visits":20},{"id":1053,"name":"زياد رشدي","plan":"monthly","status":"frozen","joined":"2025-04-28","lastVisit":"2026-10-01","visits":1},{"id":1054,"name":"فرح البنا","plan":"pass10","status":"expired","joined":"2025-10-20","lastVisit":"2026-08-13","visits":0},{"id":1055,"name":"كريم رشدي","plan":"quarterly","status":"active","joined":"2026-08-09","lastVisit":"2026-10-25","visits":11},{"id":1056,"name":"جنى شوقي","plan":"monthly","status":"expired","joined":"2026-02-10","lastVisit":"2026-08-07","visits":2},{"id":1057,"name":"رنا الجمّال","plan":"quarterly","status":"active","joined":"2025-12-13","lastVisit":"2026-10-31","visits":14}]};
+const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
+const real = window.fetch;
+window.fetch = async (u, o = {}) => {
+  const url = new URL(String(u), "https://lab.invalid/"), m = (o.method || "GET").toUpperCase(), p = url.pathname;
+  if (!p.startsWith("/api/")) return real(u, o);
+  if (m === "GET" && p === "/api/members") return json(200, view(DB.members, parseState(url.search)));
+  if (m === "POST" && p === "/api/members") { const b = JSON.parse(o.body || "{}"), name = String(b.name || "").trim(); if (name.length < 3) return json(400, { error: "الاسم لازم من ٣ لـ ٦٠ حرف" });
+    const x = { id: Math.max(1000, ...DB.members.map(y => y.id)) + 1, name, plan: b.plan, status: "active", joined: "2026-11-20", lastVisit: "2026-11-20", visits: 0 }; DB.members.push(x); return json(201, x); }
+  if (m === "GET" && p === "/api/classes") return json(200, DB.classes);
+  const bk = p.match(/^\/api\/classes\/(\d+)\/book$/);
+  if (m === "POST" && bk) { const c = DB.classes.find(x => x.id === +bk[1]); if (c.booked >= c.spots) return json(409, { error: "full", booked: c.booked, spots: c.spots }); c.booked++; return json(200, { booked: c.booked, spots: c.spots }); }
+  if (m === "GET" && p === "/api/kpi") return json(200, { ...DB.kpi, members: DB.members.length, active: DB.members.filter(x => x.status === "active").length });
+  return json(404, { error: "404" });
+};
+</script>
+  <script type="module">import "lab/app.js";</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** نفس الـ dashboard بالظبط، نفس الشكل ونفس الكروت. الفرق كله تحت السطح: الجدول بيطلب صفحة واحدة من السيرفر مع كل فلتر أو ترتيب أو صفحة. حصة «قوة الأصابع» يوم السبت ٧ بالليل فيها ١١ من ١٢: احجزها، فبتبقى 12/12 وتتلوّن كاملة وتطلع رسالة «اتحجز مكان». افتحها تاني، فزرار الحجز بيبقى «الحصة كاملة». جوه صندوق العرض هنا مفيش سيرفر، فسطور للـ preview بس بتقلّد [[api.mjs]] بنفس [[state.js]] ونفس قاعدة الـ 409 (مكتوب ده في أول السطور دي)؛ على جهازك الصفحة بتكلّم [[api.mjs]] الحقيقي.
+
+**١. السيرفر بيستخدم نفس [[state.js]] بتاع الصفحة.** [[parseState]] و [[view]] من الوحدة مكتوبين من غير DOM (عشان اختبارات Node)، فالسيرفر بيعملهم [[import]] زي ما هم. يعني اللينك [[?status=active&page=3]] بيتقري بنفس الكود في المتصفح وفي السيرفر، ومستحيل الاتنين يختلفوا على «الصفحة ٣ فيها مين». ولو حد غيّر الترتيب العربي في [[state.js]] بكرة، الاتنين بياخدوه مع بعض. ده اللي المطلوب بيقصده بـ «نفس [[parseState]] بيبني الـ query»: الصفحة بتبعت [[toQuery(state)]]، اللي هو نفس الجزء اللي في الرابط.
+
+**٢. الـ API:**
+
+| الطلب | بيرجّع |
+|---|---|
+| [[GET /api/members?status=&q=&sort=&dir=&page=]] | [[{ total, pages, page, rows }]]: صفحة واحدة (١٠) وعدد الكل |
+| [[POST /api/members]] بـ [[{ name, plan }]] | 201 والعضو برقمه، أو 400 والسبب |
+| [[GET /api/classes]] | الحصص |
+| [[POST /api/classes/2/book]] | 200 و [[{ booked, spots }]]، أو 409 لو كاملة، أو 404 لو مفيش حصة بالرقم |
+| [[GET /api/kpi]] | أرقام الكروت، و [[members]] (العدد الكلي) |
+
+**[[readJSON]]:** الـ body بيوصل حتت ([[for await (const chunk of req)]])، وبيتقفل لو عدّى ١٠ آلاف حرف (413)، ولو مش JSON (400). من غير الحد ده، حد يقدر يبعت جيجا ويفضل السيرفر يجمّعها في الذاكرة.
+
+**السيرفر هو اللي بيقرر:** الفورم في الصفحة بيمنع اسم أقل من ٣ حروف، بس أي حد يقدر يبعت [[POST]] بـ [[curl]] من غير الصفحة. فالسيرفر بيعيد نفس الفحص:
+
+~~~text curl (اتشغّل فعلًا)
+$ curl -s -X POST -d '{"name":"سا","plan":"monthly"}' -w " %{http_code}\n" http://127.0.0.1:5504/api/members
+{"error":"الاسم لازم من ٣ لـ ٦٠ حرف"} 400
+$ curl -s -X POST -d 'not json' -w " %{http_code}\n" http://127.0.0.1:5504/api/members
+{"error":"not JSON"} 400
+~~~
+
+ونفس الفكرة في الـ ext: إخفاء زرار «عضو جديد» عن الموظف بيريّح عينه بس، مش حماية. الحماية إن السيرفر يرفض بـ 403.
+
+**اللوج:** [[res.on("finish")]] بيتشغّل بعد ما الرد يخلص، فبيعرف الـ status الحقيقي والوقت. سطر لكل طلب: الوقت، والـ method، والعنوان، والـ status، والمدة.
+
+**الداتا في الذاكرة:** السيرفر بيقرا الـ JSON مرة وقت التشغيل، والعضو الجديد والحجز بيتحفظوا في الـ arrays. يعني restart = داتا من الأول. ده مقصود في المعمل: كل تشغيل للفحوص بيبدأ من نفس الحالة. (لو مش كده، تاني تشغيل لـ [[check-dashboard.mjs]] هيلاقي ٥٨ عضو بدل ٥٧ ويقول غلط.) في الحقيقة الداتا بتبقى في داتابيز، وده تاب الـ Backend.
+
+**٣. الصفحة: جزء التحميل بس.** [[render()]] بقى بياخد النتيجة [[render(v)]] بدل ما يحسبها، و [[update()]] و [[popstate]] بينادوا [[refresh()]] بدل [[render()]]. والباقي (الـ skeleton، والخطأ وزرار «جرّب تاني»، والترتيب، والصفحات، والبحث، والرابط) متغيرش ولا سطر.
+
+**[[ctrl?.abort()]]: إجابة قديمة متكتبش فوق جديدة.** بقى فيه طلب لكل تغيير. لو كتبت «ن» وبعدها «نور» بسرعة، فيه طلبين في الطريق، ومحدش بيضمن إن الأول هيرجع الأول. اتجرّب: [[late-check.mjs]] بيأخّر إجابة «ن» ٨٠٠ ملّي ثانية، وإجابة «نور» بترجع على طول:
+
+~~~js late-check.mjs
+// node late-check.mjs: type «ن» (its answer held 800ms) then «نور» (fast). Which list stays on the screen?
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ channel: "chrome" });
+const p = await b.newPage();
+await p.goto("http://127.0.0.1:5504/"); await p.waitForSelector("#rows tr:not(.skel)");
+await p.route("**/api/members?q=%D9%86", async r => { await new Promise(x => setTimeout(x, 800)); await r.continue().catch(e => console.log("  held request:", e.message.split("\n")[0])); });
+await p.fill("input[name=q]", "ن"); await p.waitForTimeout(300);
+await p.fill("input[name=q]", "نور"); await p.waitForTimeout(400);
+console.log("  after 400ms:", await p.textContent("#count"), "| box:", await p.inputValue("input[name=q]"));
+await p.waitForTimeout(1200);
+console.log("  after 1.6s :", await p.textContent("#count"), "| box:", await p.inputValue("input[name=q]"), "| url:", decodeURIComponent(new URL(p.url()).search));
+await b.close();
+~~~
+
+~~~text node late-check.mjs: من غير abort، وبعدين بالحل
+== without abort
+  after 400ms: 3 عضو، صفحة 1 من 1 | box: نور
+  after 1.6s : 18 عضو، صفحة 1 من 2 | box: نور | url: ?q=نور
+== with abort (the solution)
+  after 400ms: 3 عضو، صفحة 1 من 1 | box: نور
+  after 1.6s : 3 عضو، صفحة 1 من 1 | box: نور | url: ?q=نور
+~~~
+
+من غير abort: الخانة بتقول «نور» والرابط [[?q=نور]]، والجدول فيه **١٨** عضو، اللي هم نتيجة «ن». الإجابة القديمة وصلت متأخر ورسمت فوق الجديدة، وده bug مش هيظهر على جهازك (النت سريع والإجابات بترجع بالترتيب) وهيظهر عند المستخدم على 3G. [[AbortController]] بيلغي الطلب القديم أول ما يبدأ واحد جديد، و [[fetch]] بيرمي [[AbortError]]، و [[refresh()]] بيتجاهله (الطلب الجديد هو اللي هيرسم).
+
+**٤. الحجز: optimistic، والسيرفر بيقول الكلمة الأخيرة.** أول ما تدوس «احجز مكان» العداد بيزيد على طول (من غير ما يستنى الشبكة)، وبعدين [[POST]]. لو رجع 200، العداد بياخد رقم السيرفر ([[r.booked]])، لأن ممكن ناس تانية حجزت في نفس الوقت. لو رجع 409، العداد بياخد رقم السيرفر برضه (اللي بيقول «كاملة»)، والرسالة «الحصة اتملت». ولو الشبكة وقعت خالص (مفيش رقم)، الـ [[+1]] بيترجع ([[c.booked - 1]]) والرسالة «الحجز موصلش». يعني «رجوع العداد» معناه: اللي ظاهر بيرجع للحقيقة، مش للرقم القديم بالعافية. لو حطيت الرقم القديم ([[11/12]]) وانت عارف إن السيرفر قال إنها اتملت، هتعرض مكان مش موجود.
+
+**٥. ليه مستحيل اتنين ياخدوا آخر مكان.** Node بيشغّل كود JavaScript واحد في المرة. السطرين [[if (c.booked >= c.spots) …]] و [[c.booked++]] مفيش بينهم [[await]]، فمفيش طلب تاني يقدر يدخل في النص. اتجرّب بـ ٥ طلبات في نفس اللحظة لآخر مكان:
+
+~~~js race.mjs
+// node race.mjs: 5 bookings for the last seat of class 2 (11 of 12) sent together, without waiting for each other
+const results = await Promise.all(Array.from({ length: 5 }, (_, i) =>
+  fetch("http://127.0.0.1:5504/api/classes/2/book", { method: "POST" }).then(async r => $__bt#$__{i + 1} $__{r.status} $__{JSON.stringify(await r.json())}$__bt)));
+console.log(results.join("\n"));
+const c = (await (await fetch("http://127.0.0.1:5504/api/classes")).json()).find(x => x.id === 2);
+console.log($__btclass 2 now: $__{c.booked} of $__{c.spots}$__bt);
+~~~
+
+~~~text node race.mjs (اتشغّل فعلًا، والـ ٥ وصلوا في ٤ ملّي ثانية)
+#1 200 {"booked":12,"spots":12}
+#2 409 {"error":"full","booked":12,"spots":12}
+#3 409 {"error":"full","booked":12,"spots":12}
+#4 409 {"error":"full","booked":12,"spots":12}
+#5 409 {"error":"full","booked":12,"spots":12}
+class 2 now: 12 of 12
+~~~
+
+**تجربة متعمّدة: [[await]] واحد بين الفحص والزيادة.** نسخة من السيرفر فيها [[await new Promise(r => setTimeout(r, 5))]] بين السطرين (زي ما يحصل لو الفحص قراية من داتابيز والزيادة كتابة فيها):
+
+~~~text node race.mjs على النسخة دي
+#1 200 {"booked":12,"spots":12}
+#2 200 {"booked":13,"spots":12}
+#3 200 {"booked":14,"spots":12}
+#4 200 {"booked":15,"spots":12}
+#5 200 {"booked":16,"spots":12}
+class 2 now: 16 of 12
+~~~
+
+الخمسة عدّوا الفحص وهم مستنيين، وبعدين الخمسة زادوا. ١٦ من ١٢. ده اسمه race condition (check-then-act). لما الداتا تبقى في داتابيز، الفحص والزيادة لازم يبقوا خطوة واحدة جوه الداتابيز نفسها: [[UPDATE classes SET booked = booked + 1 WHERE id = $1 AND booked < spots]]، ولو عدد الصفوف اللي اتعدّلت صفر يبقى 409. (أو transaction بـ [[SELECT … FOR UPDATE]].)
+
+**القياس:**
+
+~~~js api-check.mjs
+// node api-check.mjs: the dashboard on the API (:5504). A shared link, two tabs booking the last seat at the same moment, and an old answer arriving late
+import { chromium } from "playwright-core";
+const B = "http://127.0.0.1:5504/";
+const b = await chromium.launch({ channel: "chrome" });
+const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } });
+const firstCells = p => p.$$eval("#rows tr", t => t.map(r => r.cells[0].textContent).join("، "));
+
+// 1. a link opened in a new tab shows the same page
+const t1 = await ctx.newPage(); await t1.goto(B); await t1.waitForSelector("#rows tr:not(.skel)");
+await t1.selectOption("select[name=status]", "active"); await t1.waitForTimeout(150);
+await t1.click('#pager button[data-page="3"]'); await t1.waitForTimeout(150);
+const link = t1.url();
+const t2 = await ctx.newPage(); await t2.goto(link); await t2.waitForSelector("#rows tr:not(.skel)");
+console.log("link:", link.replace(B, "/"));
+console.log("  tab 1:", await t1.textContent("#count"), "|", await firstCells(t1));
+console.log("  tab 2:", await t2.textContent("#count"), "|", await firstCells(t2));
+
+// 2. the last seat: class 2 has 11 of 12. Both tabs open it, then both press «احجز مكان» at the same moment
+const open = async p => { await p.goto(B); await p.waitForSelector(".slot"); await p.locator(".slot").nth(1).click(); await p.waitForSelector("#dlg-class[open]"); };
+await open(t1); await open(t2);
+console.log("before:", await t1.textContent("#dc-body"));
+await Promise.all([t1.click("#dc-book"), t2.click("#dc-book")]);
+await t1.waitForTimeout(600);
+for (const [n, p] of [["tab 1", t1], ["tab 2", t2]]) console.log($__bt  $__{n}: toast «$__{await p.textContent("#toasts")}» | slot «$__{await p.locator(".slot").nth(1).textContent()}» | full: $__{await p.locator(".slot").nth(1).evaluate(e => e.classList.contains("full"))}$__bt);
+const t3 = await ctx.newPage(); await t3.goto(B); await t3.waitForSelector(".slot");
+console.log("  new tab after:", await t3.locator(".slot").nth(1).textContent());
+
+// 3. type fast: «ن» answers slowly, «نور» answers fast. The late answer must not draw over the newer one
+await t3.waitForSelector("#rows tr:not(.skel)");
+await t3.route("**/api/members?q=%D9%86", async r => { await new Promise(x => setTimeout(x, 800)); await r.continue(); });   // only «ن» is slow
+await t3.fill("input[name=q]", "ن"); await t3.waitForTimeout(300);
+await t3.fill("input[name=q]", "نور"); await t3.waitForTimeout(1500);
+console.log("typed ن then نور:", await t3.textContent("#count"), "|", await firstCells(t3));
+await b.close();
+~~~
+
+~~~text node api-check.mjs (اتشغّل فعلًا، Chrome 156، السيرفر لسه مشتغل)
+link: /?status=active&page=3
+  tab 1: 44 عضو، صفحة 3 من 5 | كريم رشدي، ليلى البنا، ليلى الشاذلي، ليلى رشدي، ليلى عبد الحميد، مالك النجار، مالك سالم، مالك شوقي، مالك شوقي، مريم الجمّال
+  tab 2: 44 عضو، صفحة 3 من 5 | كريم رشدي، ليلى البنا، ليلى الشاذلي، ليلى رشدي، ليلى عبد الحميد، مالك النجار، مالك سالم، مالك شوقي، مالك شوقي، مريم الجمّال
+before: السبت، من 7:00 م لـ 8:00 م مع الكوتش رحاب. محجوز 11 من 12.
+  tab 1: toast «اتحجز مكان في «قوة الأصابع» يوم السبت» | slot «قوة الأصابع7:00 م · 12/12» | full: true
+  tab 2: toast «الحصة اتملت: «قوة الأصابع»» | slot «قوة الأصابع7:00 م · 12/12» | full: true
+  new tab after: قوة الأصابع7:00 م · 12/12
+typed ن then نور: 3 عضو، صفحة 1 من 1 | نور البنا، نور البنا، نور رشدي
+~~~
+
+(في الجزء ٢ الضغطتين من التابين وصلوا السيرفر بفرق ١٨٤ ملّي ثانية، لأن Playwright بيدوس على واحد ورا التاني. عشان كده فيه [[race.mjs]] فوق: ده اللي بيبعت في نفس اللحظة فعلًا.)
+
+~~~text اللوج بتاع السيرفر وقت الحجز
+19:04:25.525 POST /api/classes/2/book 200 0ms
+19:04:25.709 POST /api/classes/2/book 409 0ms
+~~~
+
+**فحوص الوحدة لسه بتعدّي:** [[check-dashboard.mjs]] و [[audit-dashboard.mjs]] اتشغّلوا على [[api.mjs]] (السطر [[const B]] بس اتغير لـ [[http://127.0.0.1:5504/]])، والناتج اتقارن سطر بسطر بناتج نفس الفحوص على الصفحة القديمة: **مطابق**، ماعدا رقمين بيتغيروا مع كل تشغيل أصلًا: زاوية الـ ring في كارت التجديد (بتتحرك بـ transition، والفحص بيقراها في لحظة مختلفة لأن الكروت بقت بتستنى السيرفر)، والـ LCP (1152 و 1144ms بدل 1172 و 1180ms). يعني كل حاجة من الـ skeleton وصفحة الخطأ وزرار «جرّب تاني» و [[?page=99]] بيرجع للصفحة ٦، والبحث من غير ما الـ history يكبر، والـ dialog، و axe صفر في الأربع حالات، والـ matrix، و CLS صفر. و [[?delay]] و [[?fail=1]] بيشتغلوا على الـ API زي ما كانوا شغالين على [[serve.mjs]].`,
         },
         {
           lvl: R`كبير`,
