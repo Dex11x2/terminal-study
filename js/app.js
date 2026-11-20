@@ -171,6 +171,14 @@ function showHTML(code, name, h, hm, auto){
     [['360', 'موبايل'], ['768', 'تابلت'], ['', 'كامل']].map(([w, l]) => '<button type="button" data-lw="'+w+'"'+(w ? '' : ' class="on"')+'>'+l+'</button>').join('')+'</span></div>'+
     '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="'+esc(name)+'"'+(auto ? ' data-auto="1"' : '')+' style="--h:'+h+'px;--hm:'+hm+'px" srcdoc="'+esc(liveFrame(code))+'"></iframe></div></div>';
 }
+/* the solution box of a project or challenge: closed (the reader tries first), but its summary is a big, obvious button
+   that says what is inside (owner, 20 Nov: the code and the explanation were there but nobody noticed the small line) */
+const solBox = (sol, first) => {
+  if (!sol) return '';
+  const files = [...String(sol).matchAll(/^~~~\w+[ \t]+([\w.-]+(?:\/[\w.-]+)*\.\w+)[ \t]*$/gm)].length;
+  const what = files === 2 ? 'الكود الكامل (ملفين) والشرح خطوة بخطوة' : files > 2 ? 'الكود الكامل ('+files.toLocaleString('ar-EG')+' ملفات) والشرح خطوة بخطوة' : files === 1 ? 'الكود الكامل والشرح خطوة بخطوة' : 'الحل والشرح خطوة بخطوة';
+  return '<details class="psol psol--sol"><summary><span class="psol-t">'+what+'</span><span class="psol-h">'+first+'، وبعدين افتحه وقارن</span></summary><div class="psol-b">'+mdHTML(sol)+'</div></details>';
+};
 const solFences = sol => [...String(sol || '').matchAll(/^~~~(live|view|html)[ \t]*([^\n]*)\n([\s\S]*?)^~~~[ \t]*$/gm)].map(m => ({lang: m[1], title: m[2].trim(), code: m[3].replace(/\n$/, '')}));
 const fenceH = (f, cap) => { const m = f.title.match(/^(\d{2,4})(?:\s+(\d{2,4}))?/), h = m ? +m[1] : 280; return [Math.min(h, cap), Math.min(m && m[2] ? +m[2] : h, cap)]; };
 function projShowHTML(p){
@@ -218,7 +226,7 @@ function projStartHTML(p){
     '~~~powershell\nstart index.html\n~~~\n\n~~~bash\nopen index.html       # الماك\nxdg-open index.html   # لينكس\n~~~\n\n'+
     'الصفحة هتفتح في المتصفح الأساسي عندك. لو مش Chrome: اسحب [[index.html]] من VS Code وارميه على نافذة Chrome. **وبعد كل تعديل:** احفظ في VS Code، وارجع للمتصفح ودوس [[Ctrl+R]] عشان يقرا الملف من جديد.\n\n'+
     '**٥. افحصها زي المحترف.** في Chrome دوس [[F12]]: تاب Elements بيوريك الشجرة اللي المتصفح فهمها من كودك، و [[Ctrl+Shift+M]] بيوريك الصفحة على عرض موبايل (اختار 360). قارن اللي شايفه ببند «تعرف إنك خلصت» اللي تحت.\n\n'+
-    '**٦. قارن بالحل.** بعد ما تخلّص نسختك، افتح «الحل والشرح»: هتلاقي الكود كامل والصفحة مرسومة، وزرار «عدّل وجرّب» بيخليك تغيّر في الحل وتشوف الفرق.\n\n'+
+    '**٦. قارن بالحل.** بعد ما تخلّص نسختك، افتح زرار «الكود الكامل والشرح» تحت المشروع: هتلاقي الكود كامل والصفحة مرسومة، وزرار «عدّل وجرّب» بيخليك تغيّر في الحل وتشوف الفرق.\n\n'+
     '> محتاج تراجع؟ [[code .]] و Emmet في كورس VS Code، و Elements و Device Toolbar في كورس «المتصفح و DevTools».'
   )+(shell === 'css' ? '<p class="pre"><b>الشرح الكامل للخطوات دي:</b> وحدة «HTML: من الملف للمتصفح»، وأولها <a href="#css/'+encodeURIComponent('mkdir و ni و touch')+'">درس «mkdir و ni و touch»</a>.</p>' : '')+'</div></details>';
 }
@@ -414,7 +422,7 @@ function workEval(code, checks, live){
     return c.n !== undefined ? els.length === c.n : els.length >= (c.min || 1);
   });
 }
-const workMsg = ok => { const n = ok.filter(Boolean).length; return n === ok.length ? 'كل الشروط اتحققت. افتح «الحل والشرح» وقارن طريقتك بيه.' : 'اتحقق '+n+' من '+ok.length+'. كمّل على اللي عليه ✗.'; };
+const workMsg = ok => { const n = ok.filter(Boolean).length; return n === ok.length ? 'كل الشروط اتحققت. افتح زرار «الكود الكامل والشرح» تحت وقارن طريقتك بيه.' : 'اتحقق '+n+' من '+ok.length+'. كمّل على اللي عليه ✗.'; };
 function workHTML(w, key){
   if (!w || !Array.isArray(w.checks) || !w.checks.length) return '';
   const start = w.start || '', saved = store.get('work:'+key), code = saved !== null && saved !== undefined ? saved : start;
@@ -458,7 +466,7 @@ function practiceHTML(c){
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
       drillShowHTML(p)+workHTML(p.work, shell+':'+c+':'+i)+
       // the solution stays closed until asked for: try first, then compare
-      (p.sol?'<details class="psol"><summary>الحل والشرح (جرّب الأول)</summary><div class="psol-b">'+mdHTML(p.sol)+'</div></details>':'')+
+      solBox(p.sol, 'جرّبه الأول')+
       '<label class="ptick"><input type="checkbox" data-d="'+esc(k)+'"'+(on?' checked':'')+'> عملته</label></li>';
   }).join('');
   return '<div class="practice"><span class="lbl">تمارين عملية</span><ol class="projlist">'+rows+'</ol></div>';
@@ -484,7 +492,7 @@ function unitFoot(cat, id){
       projShowHTML(p)+projStartHTML(p)+
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
       (p.ext?'<span class="pdone"><b>خليه بتاعك:</b> '+fmt(p.ext)+'</span>':'')+
-      (p.sol?'<details class="psol"><summary>الحل والشرح (ابنيه الأول)</summary><div class="psol-b">'+mdHTML(p.sol)+'</div></details>':'')+
+      solBox(p.sol, 'ابنيه الأول')+
       (p.lvl==='كبير'||p.lvl==='فكرة'?'<span class="pfolio">ينفع يتحط في الـ portfolio: ارفعه repo على GitHub فيه README بيقول بيعمل إيه وإزاي يتشغّل، وصورة أو ناتج حقيقي.</span>':'')+
       '</li>').join('')+'</ol></div>' : '';
   return '<div class="unit-two uf" id="'+id+'-foot">'+lab+pr+'</div>';
